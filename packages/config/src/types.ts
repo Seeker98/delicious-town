@@ -1,3 +1,6 @@
+import type { GoodsUse } from './goodsUse';
+import type { Tuning } from './tuning';
+
 export interface IdNum {
   id: number;
   num: number;
@@ -50,6 +53,8 @@ export interface Goods {
   effects: Record<string, number>;
   /** value 为数组时，解析成礼包项 */
   gift: GiftItem[] | null;
+  /** 使用效果；null = 不能使用 */
+  use: GoodsUse | null;
 }
 
 export interface IdNumFood {
@@ -141,6 +146,7 @@ export interface Task {
   cond: { kind: 'counter' | 'state'; key: string; target: number };
   award: Award;
   href: string;
+  feature: string;
 }
 
 export interface ActivationTask {
@@ -173,6 +179,59 @@ export interface RestaurantDefaults {
   streetId: number;
   tableNum: number;
   giftGoods: IdNum[];
+  giftFoods: IdNum[];
+}
+
+export interface CookbookGrade {
+  grade: number;
+  name: string;
+  atRatePerCookbook: number;
+  spCoinAddRate: number;
+  upgradeCoin: number;
+  shellPerFood: number;
+}
+
+export interface ShopSpecialTier {
+  name: string;
+  discount: number;
+  stock: number;
+  /** 随机数落在 [from, to) 时选中这一档 */
+  from: number;
+  to: number;
+}
+
+export interface CollectionTier {
+  count: number;
+  name: string;
+  effects: Record<string, number>;
+}
+
+export interface GuessAward {
+  hits: number;
+  award: Award;
+}
+
+export interface GuessBonus {
+  minHits: number;
+  award: Award;
+}
+
+export interface ActionMap {
+  /** 行为键 → 活跃项名称 */
+  activation: Record<string, string>;
+  /** 事件键前缀 → 功能名 */
+  features: Record<string, string>;
+}
+
+export interface Holidays {
+  solarMultiplier: number;
+  lunarMultiplier: number;
+  /** MM-DD → 名称 */
+  solar: Record<string, string>;
+  /** 年份 → 清明 MM-DD */
+  qingming: Record<string, string>;
+  /** YYYY-MM-DD → 名称 */
+  lunar: Record<string, string>;
 }
 
 export interface ConfigBundle {
@@ -190,6 +249,17 @@ export interface ConfigBundle {
   tasks: Task[];
   activationTasks: ActivationTask[];
   activationRewards: ActivationReward[];
+  cookbookGrades: CookbookGrade[];
+  shopSpecialTiers: ShopSpecialTier[];
+  shopPools: { special: number[]; black: number[] };
+  potTiers: CollectionTier[];
+  paintingTiers: CollectionTier[];
+  marketGuessFoods: number[];
+  guessAwards: GuessAward[];
+  guessBonus: GuessBonus[];
+  actionMap: ActionMap;
+  holidays: Holidays;
+  tuning: Tuning;
   restaurantDefaults: RestaurantDefaults;
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */
   extra: Record<string, unknown[]>;

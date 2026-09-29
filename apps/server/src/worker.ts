@@ -1,6 +1,7 @@
 import pino from 'pino';
 import { createDeps } from './deps';
 import { loadEnv } from './env';
+import { createGame } from './game';
 import { waitForLeadership } from './worker/leader';
 import { startScheduler } from './worker/scheduler';
 import { workerJobs } from './worker/jobs';
@@ -8,6 +9,7 @@ import { workerJobs } from './worker/jobs';
 const env = loadEnv();
 const log = pino({ level: env.LOG_LEVEL });
 const deps = createDeps(env);
+const game = createGame(deps);
 const ac = new AbortController();
 process.once('SIGTERM', () => ac.abort());
 process.once('SIGINT', () => ac.abort());
@@ -22,7 +24,7 @@ if (leader) {
     process.exit(1);
   });
   log.info('became leader, starting jobs');
-  const scheduler = startScheduler(workerJobs(deps), log);
+  const scheduler = startScheduler(workerJobs(game, log), log);
   await new Promise<void>((resolve) => ac.signal.addEventListener('abort', () => resolve()));
   scheduler.stop();
   await leader.end();

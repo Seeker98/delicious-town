@@ -9,10 +9,36 @@ type Nullable<T> = ColumnType<T | null, T | null | undefined, T | null>;
 type Json<T> = ColumnType<T, string, string>;
 type JsonDefault<T> = ColumnType<T, string | undefined, string>;
 
+/** 每张桌子当前的状态（规格书 01 §1.4）；customer 为顾客类型，-3 = 被蟑螂药消灭 */
 export interface TableState {
   no: number;
   floor: number;
   customer: number;
+  /** 蟑螂：放蟑螂的人（自然产生为 null）和时间 */
+  roach?: { by: number | null; at: string };
+  /** 白食者（子项目 3 写入）；coin/exp 是他在这桌累计得到的 */
+  freeloader?: { restId: number; level: number; since: string; coin: number; exp: number };
+  /** 上一轮这桌的结果 */
+  last?: TableResult;
+}
+
+export interface TableResult {
+  type: number;
+  coin: number;
+  exp: number;
+  oil: number;
+  /** 挑剔顾客要求的品级、实际品级、食谱 */
+  req?: number;
+  grade?: number;
+  cookbookId?: number;
+  satisfied?: boolean;
+}
+
+/** 已学食谱的派生计数：grade[L] = 当前品级恰好为 L 的食谱数；street[s] = 该街道已学数 */
+export interface CookbookCounts {
+  learned: number;
+  grade: number[];
+  street: Record<string, number>;
 }
 
 export interface AccountTable {
@@ -82,7 +108,13 @@ export interface RestaurantTable {
   /** 1 营业，2 停业 */
   state: Default<number>;
   /** 派生：各品级 / 各街道已学食谱数（子项目 2 维护） */
-  cookbook_counts: JsonDefault<Record<string, unknown>>;
+  cookbook_counts: JsonDefault<CookbookCounts>;
+  promo_on: Default<boolean>;
+  cte_on: Default<boolean>;
+  cookfoods_flag: Default<number>;
+  plaque2_open: Default<boolean>;
+  main_task_step: Default<number>;
+  state_reason: Nullable<string>;
   effect_agg: JsonDefault<Record<string, number>>;
   effect_next_expire_at: TsNullable;
   effect_dirty: Default<boolean>;
@@ -157,6 +189,112 @@ export interface AuditLogTable {
   created_at: TsDefault;
 }
 
+export interface CupboardFoodTable {
+  rest_id: number;
+  foods_id: number;
+  num: Default<number>;
+  fridge_num: Default<number>;
+  locked: Default<boolean>;
+  fridge_unread: Default<boolean>;
+}
+
+export interface RestaurantDeviceTable {
+  rest_id: number;
+  slot: number;
+  goods_id: number;
+  placed_at: Ts;
+  expires_at: TsNullable;
+}
+
+export interface WorldStateTable {
+  shard_id: number;
+  weather_id: number;
+  weather_until: Ts;
+  krab_street: number;
+  plankton_rest_id: Nullable<number>;
+  updated_at: TsDefault;
+}
+
+export interface MarketItemTable {
+  id: Generated<number>;
+  shard_id: number;
+  shelf: number;
+  period: string;
+  foods_id: number;
+  stock: number;
+  sold: Default<number>;
+  hot: Default<boolean>;
+  opened_at: Ts;
+}
+
+export interface MarketBuyTable {
+  market_item_id: number;
+  subject: string;
+  num: number;
+}
+
+export interface MarketGuessTable {
+  shard_id: number;
+  period: string;
+  rest_id: number;
+  foods_ids: number[];
+  hits: Nullable<number>;
+  settled_at: TsNullable;
+  created_at: Ts;
+}
+
+export interface ShopSpecialTable {
+  shard_id: number;
+  day: string;
+  goods_id: number;
+  discount: number;
+  tier_name: string;
+  stock: number;
+  sold: Default<number>;
+}
+
+export interface EventCounterTable {
+  rest_id: number;
+  key: string;
+  count: Default<number>;
+}
+
+export interface TaskDoneTable {
+  rest_id: number;
+  task_id: number;
+  done_at: Ts;
+}
+
+export interface IncomeRoundTable {
+  id: Generated<number>;
+  rest_id: number;
+  round_no: number;
+  coin: number;
+  exp: number;
+  oil: number;
+  customers: Json<Record<string, number>>;
+  rates: Json<Record<string, unknown>>;
+  drops: Json<Array<{ goodsId: number; num: number }>>;
+  created_at: Ts;
+}
+
+export interface RestLogTable {
+  id: Generated<number>;
+  rest_id: number;
+  type: string;
+  params: JsonDefault<Record<string, unknown>>;
+  created_at: Ts;
+}
+
+export interface JobRunTable {
+  shard_id: number;
+  job: string;
+  period: string;
+  started_at: Ts;
+  finished_at: TsNullable;
+  stats: JsonDefault<Record<string, unknown>>;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -171,6 +309,18 @@ export interface DB {
   ledger: LedgerTable;
   news: NewsTable;
   audit_log: AuditLogTable;
+  cupboard_food: CupboardFoodTable;
+  restaurant_device: RestaurantDeviceTable;
+  world_state: WorldStateTable;
+  market_item: MarketItemTable;
+  market_buy: MarketBuyTable;
+  market_guess: MarketGuessTable;
+  shop_special: ShopSpecialTable;
+  event_counter: EventCounterTable;
+  task_done: TaskDoneTable;
+  income_round: IncomeRoundTable;
+  rest_log: RestLogTable;
+  job_run: JobRunTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;

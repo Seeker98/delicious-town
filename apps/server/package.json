@@ -9,7 +9,10 @@
     "worker:dev": "tsx --env-file=.env.development src/worker.ts",
     "migrate:dev": "tsx --env-file=.env.development src/cli/migrate.ts",
     "shard": "tsx --env-file=.env.development src/cli/shard.ts",
-    "build": "tsup"
+    "build": "tsup",
+    "sim": "tsx --env-file=.env.development src/sim/cli.ts run",
+    "sim:explain": "tsx --env-file=.env.development src/sim/cli.ts explain",
+    "sim:bench": "tsx --env-file=.env.development src/sim/cli.ts bench"
   },
   "dependencies": {
     "@dt/config": "workspace:*",

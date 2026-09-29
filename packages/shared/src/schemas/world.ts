@@ -1,0 +1,47 @@
+export interface WeatherDto {
+  id: number;
+  name: string;
+  type: number;
+  effects: Record<string, number>;
+  note: string;
+  until: string;
+}
+
+export interface WorldDto {
+  weather: WeatherDto;
+  krabStreet: number;
+  krabStreetName: string;
+  holidayMultiplier: number;
+  planktonRestId: number | null;
+}
+
+export interface CatalogGoodsDto {
+  id: number;
+  name: string;
+  type: number;
+  deviceType: number | null;
+  level: number;
+  desc: string;
+  coin: number;
+  diamond: number;
+  stackable: boolean;
+}
+
+export interface CatalogFoodDto {
+  id: number;
+  name: string;
+  level: number;
+  odds: number;
+  coin: number;
+  type: number | null;
+}
+
+/** 前端显示名称用的目录（道具、食材、街道、天气、设施位），按配置版本缓存 */
+export interface CatalogDto {
+  version: string;
+  goods: CatalogGoodsDto[];
+  foods: CatalogFoodDto[];
+  streets: Array<{ id: number; name: string; cookName: string }>;
+  weather: Array<{ id: number; name: string }>;
+  devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;
+}

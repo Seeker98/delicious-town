@@ -14,7 +14,11 @@ export const SOURCE_FILES = [
   'dataset/devices',
   'dataset/activation_tasks',
   'dataset/activation_rewards',
+  'dataset/suit_pot',
+  'dataset/suit_painting',
+  'dataset/market_guess_foods',
   'designed/cookbooks_price',
+  'designed/cookbook_grades',
   'designed/goods_awardflag',
   'designed/weather',
   'designed/star_need',
@@ -27,6 +31,12 @@ export const SOURCE_FILES = [
   'designed/goods_exchange',
   'designed/renown_shop',
   'designed/bless',
+  'designed/shop_special_rate',
+  'designed/shop_pools',
+  'game/tuning',
+  'game/holidays',
+  'game/market_guess_award',
+  'game/action_map',
   'restaurant_defaults',
 ] as const;
 
@@ -39,7 +49,8 @@ export function readSourceDir(dir: string): SourceData {
   const out: SourceData = {};
   for (const name of SOURCE_FILES) {
     const json = JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8')) as { data?: unknown };
-    out[name] = name === 'restaurant_defaults' ? json : json.data;
+    // data/game/ 下的文件和 restaurant_defaults 是整个对象；数据集文件取 data 数组
+    out[name] = name === 'restaurant_defaults' || name.startsWith('game/') ? json : json.data;
   }
   return out;
 }

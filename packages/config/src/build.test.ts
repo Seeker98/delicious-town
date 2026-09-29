@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildBundle } from './build';
+import { buildBundle, featureOfKey } from './build';
 import { defaultDataDir, readSourceDir } from './source';
 
 const source = () => readSourceDir(defaultDataDir());
@@ -70,5 +70,85 @@ describe('buildBundle（坏数据）', () => {
     foods[0]!.coin = 'abc';
     const { errors } = buildBundle({ ...src, 'dataset/foods': foods });
     expect(errors.some((e) => e.startsWith('dataset/foods: 0.coin'))).toBe(true);
+  });
+});
+describe('2A 新增配置', () => {
+  it('新表都已规范化', () => {
+    const b = buildBundle(source()).bundle!;
+    expect(b.cookbookGrades.map((g) => g.grade)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(b.cookbookGrades[6]).toMatchObject({
+      name: '佳肴',
+      atRatePerCookbook: 0.00011,
+      spCoinAddRate: 1.3,
+    });
+    expect(b.shopSpecialTiers.map((t) => t.discount)).toEqual([0.9, 0.8, 0.7, 0.5, 0.1]);
+    expect(b.shopSpecialTiers[0]).toMatchObject({ name: '九折', from: 0, to: 0.5, stock: 50 });
+    expect(b.shopPools.special).toContain(21);
+    expect(b.shopPools.black).toContain(86);
+    expect(b.potTiers.map((t) => t.count)).toEqual([4, 6, 7]);
+    expect(b.potTiers[0]!.effects).toEqual({ coinRate: 0.08 });
+    expect(b.paintingTiers.map((t) => t.count)).toEqual([7, 10, 13]);
+    expect(b.paintingTiers[0]!.effects).toEqual({ autoAddOil: 1, mcCoinAdd: 1 });
+    expect(b.marketGuessFoods).toHaveLength(108);
+    expect(b.guessAwards.map((a) => a.hits)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(b.guessBonus.map((a) => a.minHits)).toEqual([5, 4]);
+    expect(b.tuning.settlement.autoRefuelThreshold).toBe(2000);
+    expect(b.tuning.market.shelfLimits).toEqual([1000, 1, 9]);
+    expect(b.holidays.lunar['2026-02-17']).toBe('春节');
+    expect(b.actionMap.activation['oil.fill']).toBe('给自己添油');
+  });
+
+  it('任务按事件键归属到功能', () => {
+    const b = buildBundle(source()).bundle!;
+    const main = (step: number) => b.tasks.find((t) => t.main && t.step === step)!;
+    expect(main(1).feature).toBe('growth'); // oil.fill
+    expect(main(3).feature).toBe('cookbook'); // cookbooks.learned
+    expect(main(7).feature).toBe('task'); // signin
+    expect(main(8).feature).toBe('friend'); // roach.kill
+    expect(main(10).feature).toBe('restaurant'); // rest.level
+    expect(b.tasks.find((t) => t.cond.key === 'rest.thumbs')!.feature).toBe('friend');
+  });
+
+  it('featureOfKey 取最长前缀；找不到返回 null', () => {
+    const f = { 'rest.': 'restaurant', 'rest.thumbs': 'friend', signin: 'task' };
+    expect(featureOfKey('rest.level', f)).toBe('restaurant');
+    expect(featureOfKey('rest.thumbs', f)).toBe('friend');
+    expect(featureOfKey('signin', f)).toBe('task');
+    expect(featureOfKey('unknown.key', f)).toBeNull();
+  });
+
+  it('活跃映射引用了不存在的活跃项', () => {
+    const src = source();
+    const map = structuredClone(src['game/action_map']) as { activation: Record<string, string> };
+    map.activation['oil.fill'] = '不存在的活跃';
+    const { errors } = buildBundle({ ...src, 'game/action_map': map });
+    expect(errors).toContain('action_map activation oil.fill references unknown activation 不存在的活跃');
+  });
+
+  it('任务的事件键找不到功能', () => {
+    const src = source();
+    const map = structuredClone(src['game/action_map']) as { features: Record<string, string> };
+    delete map.features['oil.'];
+    const { errors } = buildBundle({ ...src, 'game/action_map': map });
+    expect(errors).toContain('task 1 key oil.fill has no feature');
+  });
+
+  it('tuning 缺字段时报错', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { rest: Record<string, unknown> };
+    delete tuning.rest.atRateBase;
+    const { bundle, errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(bundle).toBeNull();
+    expect(errors.some((e) => e.startsWith('game/tuning: rest.atRateBase'))).toBe(true);
+  });
+
+  it('竞猜奖励引用了不存在的道具', () => {
+    const src = source();
+    const award = structuredClone(src['game/market_guess_award']) as {
+      byHits: Array<{ award: { goods: Array<{ id: number }> } }>;
+    };
+    award.byHits[0]!.award.goods[0]!.id = 999999;
+    const { errors } = buildBundle({ ...src, 'game/market_guess_award': award });
+    expect(errors).toContain('market_guess_award hits 1 references unknown goods 999999');
   });
 });

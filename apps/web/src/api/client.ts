@@ -1,5 +1,12 @@
-import type { ApiResponse } from '@dt/shared';
+import type { ApiResponse, GameEvent } from '@dt/shared';
 import { deviceId } from './device';
+
+type EventsListener = (events: GameEvent[]) => void;
+let eventsListener: EventsListener | null = null;
+/** 写操作返回的得失提示统一交给这个回调（App 里接到提示组件上） */
+export function setEventsListener(fn: EventsListener | null): void {
+  eventsListener = fn;
+}
 
 export class ApiError extends Error {
   readonly code: string;
@@ -43,6 +50,7 @@ export function createApiClient(
       throw new ApiError('NETWORK', { status: res.status });
     }
     if (!payload.ok) throw new ApiError(payload.code, payload.params ?? {});
+    if (payload.events.length > 0) eventsListener?.(payload.events);
     return payload.data;
   }
 

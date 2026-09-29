@@ -24,3 +24,17 @@ describe('resolveShardSettings', () => {
     expect(() => resolveShardSettings(config, { restaurant: { coin: -1 } })).toThrow();
   });
 });
+describe('区服 tuning 覆盖', () => {
+  it('没有覆盖时等于基础 tuning', () => {
+    expect(resolveShardSettings(config, {}).tuning).toEqual(config.tuning);
+  });
+  it('部分覆盖只改指定字段', () => {
+    const s = resolveShardSettings(config, { tuning: { market: { specialPrice: 1999 } } });
+    expect(s.tuning.market.specialPrice).toBe(1999);
+    expect(s.tuning.market.dailyStock).toBe(config.tuning.market.dailyStock);
+    expect(s.tuning.rest).toEqual(config.tuning.rest);
+  });
+  it('覆盖成非法值时报错', () => {
+    expect(() => resolveShardSettings(config, { tuning: { rest: { tablesPerFloor: 0 } } })).toThrow();
+  });
+});

@@ -9,7 +9,7 @@ export interface NewsInput {
 }
 
 /** 新闻只存事件类型和参数，文案由前端生成 */
-export async function postNews(db: Kysely<DB>, news: NewsInput): Promise<void> {
+export async function postNews(db: Kysely<DB>, news: NewsInput, at?: Date): Promise<void> {
   await db
     .insertInto('news')
     .values({
@@ -17,6 +17,7 @@ export async function postNews(db: Kysely<DB>, news: NewsInput): Promise<void> {
       type: news.type,
       rest_id: news.restId ?? null,
       params: JSON.stringify(news.params ?? {}),
+      ...(at ? { created_at: at } : {}),
     })
     .execute();
 }

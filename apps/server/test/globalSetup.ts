@@ -20,8 +20,9 @@ export default async function setup(): Promise<void> {
   await sql`create schema public`.execute(db);
   await migrateToLatest(db);
   const yesterday = new Date(Date.now() - 86_400_000);
-  await ensureDailyPartitions(db, 'ledger', yesterday, 5);
-  await ensureDailyPartitions(db, 'news', yesterday, 5);
+  for (const table of ['ledger', 'news', 'income_round', 'rest_log'] as const) {
+    await ensureDailyPartitions(db, table, yesterday, 5);
+  }
   await db.destroy();
 
   const redis = createRedis(testEnv.REDIS_URL!);

@@ -2,7 +2,19 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
-import type { ActivationReward, Award, ConfigBundle, Cookbook, Food, GiftItem, Goods, IdNum } from './types';
+import { deriveGoodsUse } from './goodsUse';
+import { tuningSchema } from './tuning';
+import type {
+  ActivationReward,
+  Award,
+  CollectionTier,
+  ConfigBundle,
+  Cookbook,
+  Food,
+  GiftItem,
+  Goods,
+  IdNum,
+} from './types';
 
 export interface BuildResult {
   bundle: ConfigBundle | null;
@@ -17,6 +29,29 @@ function numericEntries(v: unknown): Record<string, number> {
   const out: Record<string, number> = {};
   if (isPlainObject(v)) for (const [k, x] of Object.entries(v)) if (typeof x === 'number') out[k] = x;
   return out;
+}
+
+/** 事件键归属的功能：按前缀匹配，取最长的前缀；找不到返回 null */
+export function featureOfKey(key: string, features: Record<string, string>): string | null {
+  let best: string | null = null;
+  for (const prefix of Object.keys(features)) {
+    if (key.startsWith(prefix) && (best === null || prefix.length > best.length)) best = prefix;
+  }
+  return best === null ? null : features[best]!;
+}
+
+function tiersFrom(list: Array<{ dictname: string; dictval: number; note: string }>): CollectionTier[] {
+  return list
+    .map((t) => {
+      let note: unknown = {};
+      try {
+        note = JSON.parse(t.note);
+      } catch {
+        note = {};
+      }
+      return { count: t.dictval, name: t.dictname, effects: numericEntries(note) };
+    })
+    .sort((a, b) => a.count - b.count);
 }
 
 function splitTaste(s: string | null | undefined): number[] {
@@ -58,6 +93,16 @@ export function buildBundle(src: SourceData): BuildResult {
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
   const renownRaw = parse('designed/renown_shop', z.array(raw.rawRenownShop));
   const blessRaw = parse('designed/bless', z.array(raw.rawBless));
+  const potRaw = parse('dataset/suit_pot', z.array(raw.rawDictTier));
+  const paintingRaw = parse('dataset/suit_painting', z.array(raw.rawDictTier));
+  const guessFoodsRaw = parse('dataset/market_guess_foods', z.array(raw.rawGuessFood));
+  const gradesRaw = parse('designed/cookbook_grades', z.array(raw.rawCookbookGrade));
+  const specialTiersRaw = parse('designed/shop_special_rate', z.array(raw.rawSpecialTier));
+  const shopPoolsRaw = parse('designed/shop_pools', z.array(raw.rawShopPool));
+  const tuning = parse('game/tuning', tuningSchema);
+  const holidays = parse('game/holidays', raw.holidaysFile);
+  const guessAwardRaw = parse('game/market_guess_award', raw.guessAwardFile);
+  const actionMap = parse('game/action_map', raw.actionMapFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -83,6 +128,16 @@ export function buildBundle(src: SourceData): BuildResult {
     !goodsExRaw ||
     !renownRaw ||
     !blessRaw ||
+    !potRaw ||
+    !paintingRaw ||
+    !guessFoodsRaw ||
+    !gradesRaw ||
+    !specialTiersRaw ||
+    !shopPoolsRaw ||
+    !tuning ||
+    !holidays ||
+    !guessAwardRaw ||
+    !actionMap ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -129,7 +184,7 @@ export function buildBundle(src: SourceData): BuildResult {
       if (r.success) gift = r.data;
       else errors.push(`goods ${g.id} gift is malformed: ${r.error.issues[0]?.message ?? ''}`);
     }
-    return {
+    const item: Goods = {
       id: g.id,
       name: g.name,
       type: g.type,
@@ -146,7 +201,10 @@ export function buildBundle(src: SourceData): BuildResult {
       value,
       effects: numericEntries(value),
       gift,
+      use: null,
     };
+    item.use = deriveGoodsUse(item);
+    return item;
   });
   unique(
     'goods',
@@ -304,15 +362,20 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   for (const o of oilNeed) checkGoodsList(`oil_need ${o.level}`, o.needGoods);
 
-  const tasks = tasksRaw.map((t) => ({
-    id: t.id,
-    main: t.mainflag === 1,
-    step: t.step,
-    name: t.taskname,
-    cond: t.cond,
-    award: t.award,
-    href: t.href,
-  }));
+  const tasks = tasksRaw.map((t) => {
+    const feature = featureOfKey(t.cond.key, actionMap.features);
+    if (feature === null) errors.push(`task ${t.id} key ${t.cond.key} has no feature`);
+    return {
+      id: t.id,
+      main: t.mainflag === 1,
+      step: t.step,
+      name: t.taskname,
+      cond: t.cond,
+      award: t.award,
+      href: t.href,
+      feature: feature ?? '',
+    };
+  });
   unique(
     'tasks',
     tasks.map((t) => t.id),
@@ -334,6 +397,46 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`activation_reward ${r.dictval} note is not a valid award`);
     }
   }
+
+  const activationNames = new Set(activationTasks.map((a) => a.name));
+  for (const [key, name] of Object.entries(actionMap.activation)) {
+    if (!activationNames.has(name))
+      errors.push(`action_map activation ${key} references unknown activation ${name}`);
+  }
+
+  // ---------- 2A 新表 ----------
+  const cookbookGrades = gradesRaw.map((g) => ({ ...g })).sort((a, b) => a.grade - b.grade);
+  contiguous(
+    'cookbook_grades',
+    cookbookGrades.map((g) => g.grade),
+  );
+
+  const shopSpecialTiers = specialTiersRaw
+    .map((t) => ({ name: t.name, discount: t.foodsrate, stock: t.num, from: t.startrate, to: t.endrate }))
+    .sort((a, b) => a.from - b.from);
+  if (shopSpecialTiers[0]?.from !== 0 || shopSpecialTiers.at(-1)?.to !== 1)
+    errors.push('shop_special_rate must cover [0, 1)');
+
+  const shopPools = { special: [] as number[], black: [] as number[] };
+  for (const p of shopPoolsRaw) {
+    for (const id of p.goods) {
+      if (!goodsIds.has(id)) errors.push(`shop_pools ${p.pool} references unknown goods ${id}`);
+    }
+    shopPools[p.pool] = p.goods;
+  }
+  if (!goodsIds.has(tuning.shop.specialFallbackGoods))
+    errors.push(
+      `tuning shop.specialFallbackGoods references unknown goods ${tuning.shop.specialFallbackGoods}`,
+    );
+
+  const marketGuessFoods = guessFoodsRaw.map((f) => f.i);
+  for (const id of marketGuessFoods)
+    if (!foodIds.has(id)) errors.push(`market_guess_foods references unknown food ${id}`);
+
+  const guessAwards = guessAwardRaw.byHits.sort((a, b) => a.hits - b.hits);
+  for (const a of guessAwards) checkAward(`market_guess_award hits ${a.hits}`, a.award);
+  const guessBonus = guessAwardRaw.bonus.sort((a, b) => b.minHits - a.minHits);
+  for (const a of guessBonus) checkAward(`market_guess_award bonus ${a.minHits}`, a.award);
 
   // ---------- 以后子项目用到的表 ----------
   const seedIds = new Set(seedsRaw.map((s) => s.id));
@@ -364,6 +467,9 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);
   }
+  for (const f of defaults.giftFoods) {
+    if (!foodIds.has(f.id)) errors.push(`restaurant_defaults gift references unknown food ${f.id}`);
+  }
   if (!streetIds.has(defaults.streetId))
     errors.push(`restaurant_defaults references unknown street ${defaults.streetId}`);
 
@@ -383,6 +489,17 @@ export function buildBundle(src: SourceData): BuildResult {
     tasks,
     activationTasks,
     activationRewards,
+    cookbookGrades,
+    shopSpecialTiers,
+    shopPools,
+    potTiers: tiersFrom(potRaw),
+    paintingTiers: tiersFrom(paintingRaw),
+    marketGuessFoods,
+    guessAwards,
+    guessBonus,
+    actionMap,
+    holidays,
+    tuning,
     restaurantDefaults: defaults,
     extra: {
       seeds: seedsRaw,

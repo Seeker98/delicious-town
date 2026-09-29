@@ -1,21 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { ErrorCode } from '@dt/shared';
-import { errorText } from './zh-CN';
+import { errorText, setNameResolver } from './zh-CN';
 
-describe('errorText', () => {
-  it('每个错误码都有中文文案', () => {
-    for (const code of Object.values(ErrorCode)) {
-      expect(errorText(code)).not.toContain(code);
-    }
-    expect(errorText('NETWORK')).toBe('网络连接失败，请稍后再试');
+describe('错误文案', () => {
+  it('资源不够时说清楚缺什么', () => {
+    setNameResolver({ goodsName: () => '升星凭证', foodName: () => '大米' });
+    expect(errorText('NOT_ENOUGH', { kind: 'coin', need: 500, have: 100 })).toBe(
+      '银币不够（需要 500，现有 100）',
+    );
+    expect(errorText('NOT_ENOUGH', { kind: 'goods', id: 86, need: 1, have: 0 })).toBe(
+      '升星凭证不够（需要 1，现有 0）',
+    );
+    expect(errorText('NOT_ENOUGH', { kind: 'foods', id: 101, need: 3, have: 1 })).toBe(
+      '大米不够（需要 3，现有 1）',
+    );
   });
-
-  it('餐厅名错误按原因给出具体提示', () => {
-    expect(errorText('RESTAURANT_NAME_INVALID', { reason: 'reserved' })).toContain('官方');
-    expect(errorText('RESTAURANT_NAME_INVALID', { reason: 'too_long' })).toContain('8 个汉字');
-  });
-
-  it('未知错误码有兜底', () => {
-    expect(errorText('SOMETHING_NEW')).toBe('出错了（SOMETHING_NEW）');
+  it('条件、上限、状态按原因说明', () => {
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'level', need: 13, have: 12 })).toBe(
+      '餐厅等级不够（需要 13 级）',
+    );
+    expect(errorText('LIMIT_REACHED', { what: 'market', limit: 1 })).toBe('这批货每人限购 1 份');
+    expect(errorText('INVALID_STATE', { reason: 'oil_full' })).toBe('油壶已经是满的');
+    expect(errorText('INVALID_STATE', { reason: 'no_such_reason' })).toBe('当前状态下不能这样做');
   });
 });

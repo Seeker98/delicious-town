@@ -16,6 +16,8 @@ describe('maintainPartitions', () => {
     const in3Days = new Date(now.getTime() + 3 * DAY).toISOString().slice(0, 10);
     expect(created).toContain(partitionName('ledger', in3Days));
     expect(created).toContain(partitionName('news', in3Days));
+    expect(created).toContain(partitionName('income_round', in3Days));
+    expect(created).toContain(partitionName('rest_log', in3Days));
     expect(dropped).toContain(old);
     const { rows } = await sql<{
       n: number;

@@ -6,13 +6,17 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev": "pnpm --filter @dt/server --filter @dt/web --parallel run \"/^(dev|worker:dev)$/\"",
     "typecheck": "pnpm -r --parallel typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
     "infra:test": "docker compose -f infra/compose.test.yml up -d --wait",
-    "infra:dev": "docker compose -f infra/compose.dev.yml up -d --wait"
+    "infra:dev": "docker compose -f infra/compose.dev.yml up -d --wait",
+    "sim": "pnpm --filter @dt/server sim",
+    "sim:explain": "pnpm --filter @dt/server sim:explain",
+    "sim:bench": "pnpm --filter @dt/server sim:bench"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

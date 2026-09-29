@@ -1,8 +1,9 @@
 import type { Insertable } from 'kysely';
 import type { GameConfig, RestaurantDefaults } from '@dt/config';
-import { levelUpExp, type RestaurantDto } from '@dt/shared';
+import { levelUpExp, type DeviceSlotDto, type RestaurantDto, type RoundSummaryDto } from '@dt/shared';
 import type { RestaurantRow, RestaurantTable, TableState } from '../../db/schema';
 import type { ActiveEffect } from '../effects/service';
+import { tableDto } from './reads';
 
 export const TABLES_PER_FLOOR = 16;
 
@@ -48,11 +49,19 @@ export function newRestaurantValues(
   };
 }
 
+export interface OverviewExtra {
+  devices: DeviceSlotDto[];
+  lastRound: RoundSummaryDto | null;
+  weather: { id: number; name: string } | null;
+  isPlanktonHost: boolean;
+}
+
 export function toRestaurantDto(
   r: RestaurantRow,
   tables: TableState[],
   effects: ActiveEffect[],
   config: GameConfig,
+  extra: OverviewExtra,
 ): RestaurantDto {
   return {
     id: r.id,
@@ -85,11 +94,26 @@ export function toRestaurantDto(
     storeNum: r.store_num,
     foodsMaxNum: r.foods_max_num,
     foodsLockNum: r.foods_lock_num,
-    tables: tables.map((t) => ({ no: t.no, floor: t.floor, customer: t.customer })),
+    tables: tables.map(tableDto),
+    oilLevel: r.oil_level,
+    state: r.state,
+    stateReason: r.state_reason,
+    promoOn: r.promo_on,
+    cteOn: r.cte_on,
+    cookfoodsFlag: r.cookfoods_flag,
+    plaque2Open: r.plaque2_open,
+    mainTaskStep: r.main_task_step,
+    devices: extra.devices,
+    lastRound: extra.lastRound,
+    weather: extra.weather,
+    isPlanktonHost: extra.isPlanktonHost,
     effects: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,
-      name: config.goods.get(e.sourceId)?.name ?? e.sourceType,
+      name:
+        e.sourceType === 'device'
+          ? (config.devices.get(e.sourceId)?.name ?? '设施')
+          : (config.goods.get(e.sourceId)?.name ?? e.sourceType),
       effects: e.effects,
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),
