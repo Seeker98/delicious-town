@@ -148,6 +148,12 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/MoreView.vue'),
     meta: { needRestaurant: true },
   },
+  {
+    path: '/admin',
+    component: () => import('./views/admin/AdminLayout.vue'),
+    meta: { admin: true },
+    children: [],
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
