@@ -85,18 +85,37 @@ export async function lastRound(db: Kysely<DB>, restId: number): Promise<RoundSu
   return r ? roundDto(r) : null;
 }
 
+/** 游标"时间~id"：同一时刻写的多条记录按 id 继续往下翻，不会整组跳过 */
+function parseCursor(before: string): { at: Date; id: string | null } {
+  const [at, id] = before.split('~');
+  return { at: new Date(at!), id: id ?? null };
+}
+const cursorOf = (at: Date, id: string | number) => `${at.toISOString()}~${id}`;
+
 export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<IncomePageDto> {
   let s = db
     .selectFrom('income_round')
-    .select(['round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
+    .select(['id', 'round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
     .where('rest_id', '=', restId);
-  if (q.before) s = s.where('created_at', '<', new Date(q.before));
+  if (q.before) {
+    const c = parseCursor(q.before);
+    s = c.id
+      ? s.where((eb) =>
+          eb.or([eb('created_at', '<', c.at), eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))])]),
+        )
+      : s.where('created_at', '<', c.at);
+  }
   const rows = await s
     .orderBy('created_at', 'desc')
+    .orderBy('id', 'desc')
     .limit(q.limit + 1)
     .execute();
-  const items = rows.slice(0, q.limit).map(roundDto);
-  return { items, nextBefore: rows.length > q.limit ? items.at(-1)!.at : null };
+  const page = rows.slice(0, q.limit);
+  const last = page.at(-1);
+  return {
+    items: page.map(roundDto),
+    nextBefore: rows.length > q.limit && last ? cursorOf(last.created_at, last.id) : null,
+  };
 }
 
 export async function buffsOf(
@@ -139,14 +158,27 @@ export async function buffsOf(
 }
 
 export async function logPage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<LogPageDto> {
-  let s = db.selectFrom('rest_log').select(['type', 'params', 'created_at']).where('rest_id', '=', restId);
-  if (q.before) s = s.where('created_at', '<', new Date(q.before));
+  let s = db
+    .selectFrom('rest_log')
+    .select(['id', 'type', 'params', 'created_at'])
+    .where('rest_id', '=', restId);
+  if (q.before) {
+    const c = parseCursor(q.before);
+    s = c.id
+      ? s.where((eb) =>
+          eb.or([eb('created_at', '<', c.at), eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))])]),
+        )
+      : s.where('created_at', '<', c.at);
+  }
   const rows = await s
     .orderBy('created_at', 'desc')
+    .orderBy('id', 'desc')
     .limit(q.limit + 1)
     .execute();
-  const items = rows
-    .slice(0, q.limit)
-    .map((r) => ({ type: r.type, params: r.params, at: r.created_at.toISOString() }));
-  return { items, nextBefore: rows.length > q.limit ? items.at(-1)!.at : null };
+  const page = rows.slice(0, q.limit);
+  const last = page.at(-1);
+  return {
+    items: page.map((r) => ({ type: r.type, params: r.params, at: r.created_at.toISOString() })),
+    nextBefore: rows.length > q.limit && last ? cursorOf(last.created_at, last.id) : null,
+  };
 }

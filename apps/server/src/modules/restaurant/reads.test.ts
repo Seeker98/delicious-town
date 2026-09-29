@@ -87,4 +87,26 @@ describe('餐厅读接口', () => {
     expect(page2.items.map((x: { params: { to: number } }) => x.params.to)).toEqual([4]);
     expect(page2.nextBefore).toBeNull();
   });
+
+  it('个人日志分页：同一时刻写的多条日志跨页时不丢（游标带 id）', async () => {
+    const p = await playerWithRestaurant();
+    const at = new Date();
+    for (let i = 0; i < 3; i++) {
+      await http.deps.db
+        .insertInto('rest_log')
+        .values({
+          rest_id: p.restId,
+          type: 'level.up',
+          params: JSON.stringify({ to: i + 2 }),
+          created_at: at,
+        })
+        .execute();
+    }
+    const page1 = (await get(p.cookie, '/log?limit=2')).json.data;
+    expect(page1.items).toHaveLength(2);
+    const page2 = (await get(p.cookie, `/log?limit=2&before=${encodeURIComponent(page1.nextBefore)}`)).json
+      .data;
+    const all = [...page1.items, ...page2.items].map((x: { params: { to: number } }) => x.params.to);
+    expect(all.sort()).toEqual([2, 3, 4]);
+  });
 });

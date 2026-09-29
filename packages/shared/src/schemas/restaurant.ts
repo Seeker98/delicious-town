@@ -122,7 +122,11 @@ export interface LogPageDto {
 }
 
 export const pageQuery = z.object({
-  before: z.string().datetime().optional(),
+  /** 分页游标：上一页返回的 nextBefore，格式"时间~id"（也接受只有时间） */
+  before: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}T[\d:.]+Z(~\d+)?$/)
+    .optional(),
   limit: z.coerce.number().int().min(1).max(100).default(30),
 });
 export type PageQuery = z.infer<typeof pageQuery>;
