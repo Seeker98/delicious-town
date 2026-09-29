@@ -7,7 +7,14 @@ import { endpoints } from '../api/endpoints';
 import RestaurantHomeView from './RestaurantHomeView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { overview: vi.fn(), tasks: vi.fn(), refuel: vi.fn(), claimTask: vi.fn(), devices: vi.fn() },
+  endpoints: {
+    overview: vi.fn(),
+    tasks: vi.fn(),
+    refuel: vi.fn(),
+    claimTask: vi.fn(),
+    devices: vi.fn(),
+    placeDevice: vi.fn(),
+  },
 }));
 
 const dto: RestaurantDto = {
@@ -114,6 +121,45 @@ describe('RestaurantHomeView', () => {
     expect(w.text()).toContain('填一次油');
     expect(w.findAll('[data-testid^="slot-"]')).toHaveLength(2);
     expect(w.text()).toContain('上座率+35% 幸运+36');
+  });
+
+  it('替换还没到期的设施要先确认（替换后不退还）', async () => {
+    const future = new Date(Date.now() + 3 * 86_400_000).toISOString();
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      devices: [
+        {
+          slot: 1,
+          name: '宣传海报',
+          deviceType: 1,
+          needStar: 0,
+          unlocked: true,
+          goodsId: 13,
+          expiresAt: future,
+        },
+      ],
+    });
+    vi.mocked(endpoints.devices).mockResolvedValue({
+      slots: dto.devices,
+      store: [{ goodsId: 14, deviceType: 1, num: 1 }],
+    } as never);
+    vi.mocked(endpoints.placeDevice).mockResolvedValue({} as never);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const w = await mountView();
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    const pick = () => w.findAll('button').find((b) => b.text().includes('×1'))!;
+    await pick().trigger('click');
+    await flushPromises();
+    expect(confirm).toHaveBeenCalled();
+    expect(endpoints.placeDevice).not.toHaveBeenCalled();
+    confirm.mockReturnValue(true);
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    await pick().trigger('click');
+    await flushPromises();
+    expect(endpoints.placeDevice).toHaveBeenCalledWith(1, 14);
+    confirm.mockRestore();
   });
 
   it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {

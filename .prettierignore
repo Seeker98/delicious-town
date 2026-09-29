@@ -4,3 +4,4 @@ docs/
 **/.test/
 packages/config/data/
 apps/web/public/pack/
+.superpowers/

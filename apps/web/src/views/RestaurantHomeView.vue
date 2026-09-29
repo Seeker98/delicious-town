@@ -74,6 +74,16 @@ const choices = computed(() => {
 function place(goodsId: number) {
   const slot = pickingSlot.value!;
   pickingSlot.value = null;
+  // 替换还没到期的设施：旧设施直接作废、不退还，先让玩家确认
+  const current = rest.value?.devices.find((d) => d.slot === slot);
+  if (
+    current?.goodsId &&
+    (current.expiresAt === null || new Date(current.expiresAt).getTime() > Date.now()) &&
+    !window.confirm(
+      `${catalog.goodsName(current.goodsId)}还没到期（${expiresText(current.expiresAt)}），替换后不会退还，确定替换吗？`,
+    )
+  )
+    return;
   return act(() => endpoints.placeDevice(slot, goodsId), '摆放失败');
 }
 
