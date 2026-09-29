@@ -51,6 +51,8 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'goods.drop': (p, names) => `超过持有上限，丢掉了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
   'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
   'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
+  'admin.rename': (p) =>
+    `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」：${String(p.reason ?? '')}`,
   'market.guess': (p) => `菜场竞猜开奖：猜中 ${n(p, 'hits')} 种`,
   'market.guess.refund': (p) => {
     const [day, hour] = String(p.period ?? '').split('@');

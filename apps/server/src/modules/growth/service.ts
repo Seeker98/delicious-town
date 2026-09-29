@@ -1,6 +1,5 @@
 import { GOODS, GOODS_TYPE } from '@dt/config';
 import {
-  checkRestaurantName,
   ErrorCode,
   type AttrResultDto,
   type DeviceOptionsDto,
@@ -22,9 +21,7 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice, removeDevice } from './devices';
-import { oilChecks, starChecks } from './rules';
-
-const NAME_CHARS = /^[\p{Script=Han}A-Za-z0-9]+$/u;
+import { oilChecks, renameProblem, starChecks } from './rules';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -210,12 +207,8 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
     rename(ctx: RestCtx, rawName: string) {
       return op(ctx, 'rest.rename', async (o) => {
         const name = rawName.trim();
-        const check = checkRestaurantName(name);
-        if (check !== 'ok') throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: check });
-        if (!NAME_CHARS.test(name))
-          throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: 'bad_chars' });
-        if ([...name].length > o.tuning.growth.renameMaxLength)
-          throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: 'too_long' });
+        const problem = renameProblem(name, o.tuning.growth.renameMaxLength);
+        if (problem) throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: problem });
         if (name === o.rest.name) throw invalidState('same_name');
         await consumeGoods(o, GOODS.renameCard, 1);
         // 上周被放蟑螂数：子项目 3 接入前为 0（设计文档 裁定 8）
