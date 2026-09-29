@@ -8,3 +8,4 @@ infra/.env
 apps/web/public/pack/
 apps/web/playwright-report/
 apps/web/test-results/
+sim-out/
