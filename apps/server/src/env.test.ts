@@ -16,6 +16,8 @@ describe('loadEnv', () => {
     expect(env.TRUST_CF_HEADER).toBe(false);
     expect(env.SESSION_TTL_DAYS).toBe(30);
     expect(env.COOKIE_DOMAIN).toBeUndefined();
+    // 默认连接池要能容纳结算并发（tuning.settlement.concurrency 16）+ 4（docs/deploy.md）
+    expect(env.DB_POOL_SIZE).toBe(20);
   });
 
   it('解析布尔值和空字符串', () => {

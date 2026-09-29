@@ -7,7 +7,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().default(3000),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   DATABASE_URL: z.string().url(),
-  DB_POOL_SIZE: z.coerce.number().int().min(1).default(10),
+  DB_POOL_SIZE: z.coerce.number().int().min(1).default(20),
   REDIS_URL: z.string().url(),
   CONFIG_BUNDLE_PATH: z.string().min(1),
   WEB_ORIGIN: z.string().url(),
