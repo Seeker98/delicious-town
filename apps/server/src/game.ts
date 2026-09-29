@@ -6,6 +6,7 @@ import { createAccountService, type AccountService } from './modules/account/ser
 import { statDailyJob } from './modules/admin/stats';
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
+import { createSocialService, type SocialService } from './modules/friend/service';
 import { createGrowthService, type GrowthService } from './modules/growth/service';
 import { marketJobs } from './modules/market/jobs';
 import { createMarketService, type MarketService } from './modules/market/service';
@@ -35,6 +36,7 @@ export interface Game {
   shop: ShopService;
   market: MarketService;
   task: TaskService;
+  social: SocialService;
   jobs: PeriodicJob[];
 }
 
@@ -73,6 +75,7 @@ export function createGame(app: AppDeps): Game {
     shop,
     market,
     task: createTaskService(deps),
+    social: createSocialService(deps, world),
     jobs,
   };
 }
