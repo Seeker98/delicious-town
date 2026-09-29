@@ -289,7 +289,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
 
     drivePlankton(ctx: RestCtx, way: 'strength' | 'book') {
       return op(ctx, 'plankton.drive', async (o) => {
-        const snap = await world.ensure(o.shardId, o.now);
+        const snap = await world.ensure(o.shardId, o.now, o.tx);
         if (snap.planktonRestId !== o.rest.id) throw invalidState('not_plankton_host');
         const t = o.tuning.growth;
         const renown = Math.floor(Math.sqrt(o.rest.level)) * t.drivePlanktonRenownPerSqrt;

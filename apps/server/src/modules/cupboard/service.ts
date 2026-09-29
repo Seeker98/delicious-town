@@ -177,7 +177,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         const used = await incrementDaily(o.tx, o.rest.id, HANDLE_KEY, 1, gameDay(o.now));
         const strengthUsed = used > freeHandles(o.rest.star_level, o.tuning.cupboard) ? 1 : 0;
         spendStrength(o, strengthUsed);
-        const snap = await world.ensure(o.shardId, o.now);
+        const snap = await world.ensure(o.shardId, o.now, o.tx);
         const agg = await opAgg(o);
         const { rate } = await opLuck(o);
         const outcome = runHandle(

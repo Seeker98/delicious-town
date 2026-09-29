@@ -241,7 +241,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           .returning('sold')
           .executeTakeFirst();
         if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
-        const snap = await world.ensure(o.shardId, o.now);
+        const snap = await world.ensure(o.shardId, o.now, o.tx);
         spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
         if (shelf === 1) {
           const ok = await d.redis.eval(

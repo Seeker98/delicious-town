@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { GOODS, type Award, type Task } from '@dt/config';
+import { GOODS, type Award, type ShardSettings, type Task } from '@dt/config';
 import { ErrorCode, gameDay, type ActivationDto, type TaskDto, type TasksDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
@@ -20,8 +20,9 @@ const claimKey = (points: number) => `act.claim:${points}`;
 export function createTaskService(d: GameDeps) {
   const mains = d.config.bundle.tasks.filter((t) => t.main).sort((a, b) => a.step - b.step);
 
-  async function snapshot(db: Kysely<DB>, rest: RestaurantRow) {
-    const settings = await d.shards.settings(rest.shard_id);
+  /** 玩家事务里调用时传 o.tx 和 o.settings，不能另向连接池要连接 */
+  async function snapshot(db: Kysely<DB>, rest: RestaurantRow, known?: ShardSettings) {
+    const settings = known ?? (await d.shards.settings(rest.shard_id));
     const available = (f: string) => featureAvailable(settings, f);
     const done = new Set(
       (await db.selectFrom('task_done').select('task_id').where('rest_id', '=', rest.id).execute()).map(
@@ -115,7 +116,7 @@ export function createTaskService(d: GameDeps) {
 
     claimTask(ctx: RestCtx, taskId: number) {
       return runOp(d, ctx, { feature: 'task', source: 'task' }, async (o: Op) => {
-        const s = await snapshot(o.tx, o.rest);
+        const s = await snapshot(o.tx, o.rest, o.settings);
         const t = s.main?.id === taskId ? s.main : s.side.find((x) => x.id === taskId);
         if (!t) throw invalidState('not_visible', { taskId });
         const progress = s.progressOf(t);

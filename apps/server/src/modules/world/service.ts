@@ -28,14 +28,14 @@ export function createWorldService(d: GameDeps) {
     return db.selectFrom('world_state').selectAll().where('shard_id', '=', shardId).executeTakeFirst();
   }
 
-  /** 取区服小镇状态；新区服第一次访问时创建 */
-  async function ensure(shardId: number, now: Date = d.now()): Promise<WorldSnapshot> {
-    let row = await read(d.db, shardId);
+  /** 取区服小镇状态；新区服第一次访问时创建。玩家事务里调用时传 o.tx，不能另向连接池要连接 */
+  async function ensure(shardId: number, now: Date = d.now(), db: Kysely<DB> = d.db): Promise<WorldSnapshot> {
+    let row = await read(db, shardId);
     if (!row) {
       const { tuning } = await d.shards.settings(shardId);
       const rng = seededRng(hashSeed(shardId, 'world-init'));
       const w = rollWeather(d.config, gameParts(now).hour, tuning.world, rng);
-      await d.db
+      await db
         .insertInto('world_state')
         .values({
           shard_id: shardId,
@@ -46,7 +46,7 @@ export function createWorldService(d: GameDeps) {
         })
         .onConflict((oc) => oc.column('shard_id').doNothing())
         .execute();
-      row = (await read(d.db, shardId))!;
+      row = (await read(db, shardId))!;
     }
     return {
       weather: weatherOf(row.weather_id),

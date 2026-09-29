@@ -8,7 +8,9 @@ pg.types.setTypeParser(pg.types.builtins.DATE, (v) => v);
 
 export function createDb(url: string, max = 10): Kysely<DB> {
   return new Kysely<DB>({
-    dialect: new PostgresDialect({ pool: new pg.Pool({ connectionString: url, max }) }),
+    dialect: new PostgresDialect({
+      pool: new pg.Pool({ connectionString: url, max, connectionTimeoutMillis: 10_000 }),
+    }),
   });
 }
 
