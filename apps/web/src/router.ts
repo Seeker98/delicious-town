@@ -157,6 +157,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'shards/:id/history', component: () => import('./views/admin/AdminShardHistoryView.vue') },
       { path: 'players', component: () => import('./views/admin/AdminPlayersView.vue') },
       { path: 'players/:id', component: () => import('./views/admin/AdminPlayerView.vue') },
+      { path: 'grants', component: () => import('./views/admin/AdminGrantsView.vue') },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },
