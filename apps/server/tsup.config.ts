@@ -6,6 +6,7 @@ export default defineConfig({
     worker: 'src/worker.ts',
     'cli/shard': 'src/cli/shard.ts',
     'cli/migrate': 'src/cli/migrate.ts',
+    'cli/account': 'src/cli/account.ts',
   },
   format: ['esm'],
   platform: 'node',

@@ -16,3 +16,4 @@ export * from './schemas/store';
 export * from './schemas/shop';
 export * from './schemas/market';
 export * from './schemas/task';
+export * from './schemas/admin';

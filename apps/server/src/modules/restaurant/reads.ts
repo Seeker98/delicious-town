@@ -86,11 +86,11 @@ export async function lastRound(db: Kysely<DB>, restId: number): Promise<RoundSu
 }
 
 /** 游标"时间~id"：同一时刻写的多条记录按 id 继续往下翻，不会整组跳过 */
-function parseCursor(before: string): { at: Date; id: string | null } {
+export function parseCursor(before: string): { at: Date; id: string | null } {
   const [at, id] = before.split('~');
   return { at: new Date(at!), id: id ?? null };
 }
-const cursorOf = (at: Date, id: string | number) => `${at.toISOString()}~${id}`;
+export const cursorOf = (at: Date, id: string | number) => `${at.toISOString()}~${id}`;
 
 export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<IncomePageDto> {
   let s = db
