@@ -275,7 +275,7 @@ autoRefuel(rest, effectAgg): { oilAdded; coinSpent }
 - 购买：规格书 06 §6.2（不含 stockMan 相关规则）
   - 价格 = 食材 coin × (1 + 天气.marketCoin)；特价固定 2999 × 天气系数；高级 ×2
   - 限购按 `market_buy` 的三个 subject 分别计数；设备码取请求头里的设备标识（子项目 1 已生成），服务端只存 sha256 前 16 位
-  - 特价要求邮箱已验证；同 IP 两次间隔 10 分钟，用 Redis 键 `mkt-ip:<shard>:<ip>` 带 600 秒过期
+  - 特价要求邮箱已验证；同 IP 两次间隔 10 分钟：Redis 键 `mkt-ip:<shard>:<ip>` 记下上次购买的游戏时间，按游戏时间比较（模拟器的虚拟时钟也适用），检查和写入用一个 Lua 脚本原子完成
   - 高级要求持有有效的爱心项链(167)
 - 竞猜：下一轮日常菜场开货前，花 2 张神秘礼券，从 1~2 级食材池选若干种；每轮只能参加一次；开货时按竞猜奖励表发放（12、18 点两轮额外奖励）
 
@@ -297,7 +297,7 @@ autoRefuel(rest, effectAgg): { oilAdded; coinSpent }
 
 - 可见任务：主线 step == main_task_step 的一条；支线 step < main_task_step 且未完成的
 - 条件：counter 读 `event_counter`；state 由状态注册表计算（`rest.level`、`rest.star`、`oil.level`、`cookbooks.learned`、`cookbooks.gradeN`）
-- 功能可用 = 该功能已由某个模块注册且在区服开启；不可用时按裁定 7 处理（主线跳过：读任务时发现当前主线步不可用，就在锁内推进 main_task_step 直到可用的一步）
+- 功能可用 = 该功能已由某个模块注册且在区服开启；不可用时按裁定 7 处理（主线跳过：读任务时从 main_task_step 往后跳过不可用的步骤得到"有效步骤"，领奖时把 main_task_step 写成有效步骤 +1）
 - 领奖：主线 step+1；支线写 task_done；奖励走 grantAward
 - 活跃度：当日总分 = Σ 各活跃项 min(次数, 上限) × 分值；档位奖励每天每档一次，持有有效爱心项链(167)时 ×2；经验类奖励按"× 餐厅等级"
 - 签到：每天一次，获得每日签到礼包(115)，发行为事件 `signin`
@@ -358,7 +358,7 @@ interface PeriodicJob {
 | task | tasks、activation | claimTask、claimActivation、signIn |
 | world | weather | – |
 
-测试环境额外提供 `POST /api/v1/test/tick`（推进虚拟时钟并执行到期任务），只在 `NODE_ENV=test` 时注册。
+开发和端到端测试额外提供 `POST /api/v1/test/tick`（推进时钟并执行到期任务），只在 `ENABLE_TEST_API=true` 时注册；生产环境开启会拒绝启动。
 
 ### 7.2 页面
 
