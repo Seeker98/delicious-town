@@ -47,8 +47,9 @@ export interface AccountTable {
   password_hash: string;
   email: string;
   email_verified_at: TsNullable;
-  role: Default<'player' | 'admin'>;
+  role: Default<'player' | 'mod' | 'admin'>;
   banned_at: TsNullable;
+  ban_reason: Nullable<string>;
   invite_code: Nullable<string>;
   invited_by: Nullable<number>;
   created_at: TsDefault;
@@ -73,6 +74,7 @@ export interface ShardTable {
 export interface ShardConfigTable {
   shard_id: number;
   override: JsonDefault<unknown>;
+  version: Default<number>;
   updated_at: TsDefault;
 }
 
@@ -295,6 +297,50 @@ export interface JobRunTable {
   stats: JsonDefault<Record<string, unknown>>;
 }
 
+export interface ShardConfigHistoryTable {
+  id: Generated<number>;
+  shard_id: number;
+  version: number;
+  override: Json<Record<string, unknown>>;
+  actor_account_id: Nullable<number>;
+  note: string;
+  created_at: TsDefault;
+}
+
+export interface AdminGrantTable {
+  id: Generated<number>;
+  shard_id: number;
+  target: 'rest' | 'shard';
+  rest_id: Nullable<number>;
+  min_level: Nullable<number>;
+  items: Json<unknown>;
+  reason: string;
+  status: 'pending' | 'running' | 'done' | 'failed';
+  total: Default<number>;
+  done_count: Default<number>;
+  failed_count: Default<number>;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+  finished_at: TsNullable;
+}
+
+export interface AdminGrantDoneTable {
+  grant_id: number;
+  rest_id: number;
+  ok: boolean;
+  error: Nullable<string>;
+  created_at: TsDefault;
+}
+
+export interface StatDailyTable {
+  shard_id: number;
+  /** 北京时间的游戏日 YYYY-MM-DD */
+  day: string;
+  kind: string;
+  source: string;
+  amount: number;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -321,6 +367,10 @@ export interface DB {
   income_round: IncomeRoundTable;
   rest_log: RestLogTable;
   job_run: JobRunTable;
+  shard_config_history: ShardConfigHistoryTable;
+  admin_grant: AdminGrantTable;
+  admin_grant_done: AdminGrantDoneTable;
+  stat_daily: StatDailyTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
