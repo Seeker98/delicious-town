@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/generated
+**/.test
+.git
+.superpowers
+apps/web
+docs
+infra
