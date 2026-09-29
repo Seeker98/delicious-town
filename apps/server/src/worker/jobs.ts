@@ -2,6 +2,7 @@ import type { Kysely } from 'kysely';
 import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { Game } from '../game';
+import { processGrants } from '../modules/admin/grants';
 import { runDueJobs } from './periodic';
 import { pullOffset } from '../infra/clock';
 import type { Job, JobLogger } from './scheduler';
@@ -53,6 +54,13 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       run: async () => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
         await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
+      },
+    },
+    {
+      name: 'admin-grants',
+      intervalMs: 5_000,
+      run: async () => {
+        await processGrants(game, log);
       },
     },
   ];

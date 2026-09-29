@@ -100,3 +100,57 @@ export const adminRenameBody = z.object({
   reason: z.string().trim().min(1).max(200),
 });
 export const roleBody = z.object({ role: z.enum(['player', 'mod', 'admin']) });
+export const GRANT_LIMITS = { coin: 100_000_000, exp: 100_000_000, diamond: 100_000, item: 9999 } as const;
+
+const idNum = z.object({
+  id: z.number().int().positive(),
+  num: z.number().int().min(1).max(GRANT_LIMITS.item),
+});
+
+export const grantItems = z
+  .object({
+    coin: z.number().int().min(1).max(GRANT_LIMITS.coin).optional(),
+    diamond: z.number().int().min(1).max(GRANT_LIMITS.diamond).optional(),
+    exp: z.number().int().min(1).max(GRANT_LIMITS.exp).optional(),
+    goods: z.array(idNum).max(50).optional(),
+    foods: z.array(idNum).max(50).optional(),
+  })
+  .refine((i) => Boolean(i.coin || i.diamond || i.exp || i.goods?.length || i.foods?.length), {
+    message: 'empty',
+  });
+export type GrantItems = z.infer<typeof grantItems>;
+
+export const createGrantBody = z
+  .object({
+    shardId: z.number().int().positive(),
+    target: z.enum(['rest', 'shard']),
+    restId: z.number().int().positive().optional(),
+    minLevel: z.number().int().min(1).optional(),
+    items: grantItems,
+    reason: z.string().trim().min(1).max(200),
+  })
+  .refine((b) => b.target === 'shard' || b.restId !== undefined, { path: ['restId'], message: 'required' });
+export type CreateGrantInput = z.infer<typeof createGrantBody>;
+
+export const grantPreviewQuery = z.object({
+  shardId: z.coerce.number().int().positive(),
+  minLevel: z.coerce.number().int().min(1).optional(),
+});
+export const grantListQuery = z.object({ shardId: z.coerce.number().int().positive().optional() });
+
+export interface GrantDto {
+  id: number;
+  shardId: number;
+  target: 'rest' | 'shard';
+  restId: number | null;
+  minLevel: number | null;
+  items: GrantItems;
+  reason: string;
+  status: 'pending' | 'running' | 'done' | 'failed';
+  total: number;
+  doneCount: number;
+  failedCount: number;
+  actor: string | null;
+  createdAt: string;
+  finishedAt: string | null;
+}

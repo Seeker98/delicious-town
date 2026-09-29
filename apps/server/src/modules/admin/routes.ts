@@ -2,6 +2,9 @@ import type { FastifyPluginAsync } from 'fastify';
 import {
   adminLedgerQuery,
   adminRenameBody,
+  createGrantBody,
+  grantListQuery,
+  grantPreviewQuery,
   idParam,
   pageQuery,
   playerSearchQuery,
@@ -15,6 +18,7 @@ import type { Game } from '../../game';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireRole } from './access';
+import { createAdminGrants } from './grants';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 
@@ -70,6 +74,21 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/players/:id/role', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await players.setRole(a, id(req), parse(roleBody, req.body).role));
+    });
+
+    const grants = createAdminGrants(game);
+    r.get('/grants/preview', async (req) => {
+      await requireRole(db, req, 'admin');
+      const q = parse(grantPreviewQuery, req.query);
+      return ok(await grants.preview(q.shardId, q.minLevel));
+    });
+    r.post('/grants', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await grants.create(a, parse(createGrantBody, req.body)));
+    });
+    r.get('/grants', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await grants.list(parse(grantListQuery, req.query).shardId));
     });
 
     const shards = createAdminShards(game);

@@ -22,6 +22,9 @@ describe('个人日志文案', () => {
     );
     expect(logText({ type: 'krab.angry', params: {}, at: '' }, names)).toBe('蟹老板扫兴而归');
     expect(logText({ type: 'unknown.type', params: {}, at: '' }, names)).toBe('unknown.type');
+    expect(logText({ type: 'admin.grant', params: { reason: '停服补偿' }, at: '' }, names)).toBe(
+      '系统补偿：停服补偿',
+    );
     expect(
       logText({ type: 'admin.rename', params: { from: 'A', to: 'B', reason: '违规' }, at: '' }, names),
     ).toBe('管理员把店名从「A」改为「B」：违规');
