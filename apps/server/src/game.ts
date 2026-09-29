@@ -3,6 +3,7 @@ import type { AppDeps } from './app';
 import type { GameDeps } from './core/deps';
 import type { PeriodicJob } from './core/jobs';
 import { createAccountService, type AccountService } from './modules/account/service';
+import { createGrowthService, type GrowthService } from './modules/growth/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { settlementJobs } from './modules/settlement/jobs';
@@ -17,6 +18,7 @@ export interface Game {
   account: AccountService;
   restaurant: RestaurantService;
   world: WorldService;
+  growth: GrowthService;
   jobs: PeriodicJob[];
 }
 
@@ -42,6 +44,7 @@ export function createGame(app: AppDeps): Game {
     account: createAccountService(app),
     restaurant: createRestaurantService(app, shards, world),
     world,
+    growth: createGrowthService(deps, world),
     jobs,
   };
 }

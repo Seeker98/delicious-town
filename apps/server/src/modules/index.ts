@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { Game } from '../game';
 import { accountRoutes } from './account/routes';
+import { growthRoutes } from './growth/routes';
 import { restaurantRoutes } from './restaurant/routes';
 import { shardRoutes } from './shard/routes';
 import { worldRoutes } from './world/routes';
@@ -11,4 +12,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(shardRoutes(game.shards), { prefix: '/api/v1/shard' });
   app.register(restaurantRoutes(game.restaurant), { prefix: '/api/v1/restaurant' });
   app.register(worldRoutes(game.world), { prefix: '/api/v1/world' });
+  app.register(growthRoutes(game.growth), { prefix: '/api/v1/growth' });
 }
