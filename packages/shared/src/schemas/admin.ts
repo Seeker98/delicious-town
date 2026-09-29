@@ -190,3 +190,22 @@ export interface SettlementRoundDto {
   closed: number;
   failed: number;
 }
+export const auditQuery = pageQuery.extend({
+  actor: z.string().trim().max(32).optional(),
+  action: z.string().trim().max(64).optional(),
+});
+
+export interface AuditRowDto {
+  id: number;
+  actor: string | null;
+  action: string;
+  target: string | null;
+  detail: Record<string, unknown>;
+  ip: string | null;
+  at: string;
+}
+
+export interface AuditPageDto {
+  items: AuditRowDto[];
+  nextBefore: string | null;
+}

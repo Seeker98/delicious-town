@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from 'fastify';
 import {
   adminLedgerQuery,
   adminRenameBody,
+  auditQuery,
   createGrantBody,
   economyQuery,
   grantListQuery,
@@ -21,6 +22,7 @@ import type { Game } from '../../game';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireRole } from './access';
+import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
@@ -108,6 +110,11 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       await requireRole(db, req, 'mod');
       const q = parse(settlementQuery, req.query);
       return ok(await settlementRounds(db, q.shardId, q.rounds));
+    });
+
+    r.get('/audit', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await auditPage(db, parse(auditQuery, req.query)));
     });
 
     const shards = createAdminShards(game);
