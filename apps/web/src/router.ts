@@ -107,6 +107,42 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/society',
+    name: 'society',
+    component: () => import('./views/SocietyView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/society/star',
+    name: 'society-star',
+    component: () => import('./views/SocietyStarView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/society/oil',
+    name: 'society-oil',
+    component: () => import('./views/SocietyOilView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/society/rename',
+    name: 'society-rename',
+    component: () => import('./views/SocietyRenameView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/society/move',
+    name: 'society-move',
+    component: () => import('./views/SocietyMoveView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/weather',
+    name: 'weather',
+    component: () => import('./views/WeatherView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/more',
     name: 'more',
     component: () => import('./views/MoreView.vue'),
