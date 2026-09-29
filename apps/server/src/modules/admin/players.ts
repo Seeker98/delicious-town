@@ -234,7 +234,10 @@ export function createAdminPlayers(game: Game) {
     },
 
     async unban(actor: AdminActor, accountId: number): Promise<{ banned: boolean }> {
-      await accountRow(accountId);
+      const target = await accountRow(accountId);
+      // 和封号对称：mod 解封 admin 等于恢复了一个管理员的权限
+      if (target.role === 'admin' && actor.role !== 'admin')
+        throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'admin' });
       await db.transaction().execute(async (tx) => {
         await tx
           .updateTable('account')

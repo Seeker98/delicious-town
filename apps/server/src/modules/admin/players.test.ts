@@ -90,6 +90,15 @@ describe('封号', () => {
     expect(audit.map((x) => x.action)).toEqual(['player.ban', 'player.unban']);
   });
 
+  it('mod 不能解封被封的 admin（否则等于恢复了管理员权限）', async () => {
+    const other = await userWithRole(ctx, 'admin');
+    expect((await post(admin.cookie, `/players/${other.accountId}/ban`, { reason: '账号被盗' })).status).toBe(
+      200,
+    );
+    expect((await post(mod.cookie, `/players/${other.accountId}/unban`, {})).status).toBe(403);
+    expect((await post(admin.cookie, `/players/${other.accountId}/unban`, {})).status).toBe(200);
+  });
+
   it('mod 不能封 admin；谁都不能封自己', async () => {
     expect((await post(mod.cookie, `/players/${admin.accountId}/ban`, { reason: 'x' })).status).toBe(403);
     expect((await post(admin.cookie, `/players/${admin.accountId}/ban`, { reason: 'x' })).status).toBe(403);

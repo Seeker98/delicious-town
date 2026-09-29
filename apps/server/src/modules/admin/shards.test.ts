@@ -74,6 +74,26 @@ describe('区服数值（HTTP）', () => {
     expect(r.json.params.issues[0].path).toBe('tuning.settlement.expMultiplier');
   });
 
+  it('配置结构以外的键（拼错的路径、不存在的功能）400 并指出路径', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const save = (override: unknown) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override, note: 'x', version: 0 },
+      });
+    const typo = await save({ tuning: { settlement: { expMultipler: 10 } } });
+    expect(typo.status).toBe(400);
+    expect(typo.json.code).toBe('INVALID_CONFIG');
+    expect(typo.json.params.issues[0].path).toBe('tuning.settlement.expMultipler');
+    const feature = await save({ features: { pnod: false } });
+    expect(feature.json.params.issues[0].path).toBe('features.pnod');
+    const top = await save({ whatever: 1 });
+    expect(top.status).toBe(400);
+    expect(
+      (await save({ tuning: { settlement: { expMultiplier: 10 } }, features: { market: false } })).status,
+    ).toBe(200);
+  });
+
   it('mod 不能保存（404）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const r = await call(ctx.app, 'POST', `${S}/${shardId}/override`, {

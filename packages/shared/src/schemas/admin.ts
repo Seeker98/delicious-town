@@ -107,6 +107,9 @@ const idNum = z.object({
   num: z.number().int().min(1).max(GRANT_LIMITS.item),
 });
 
+const uniqueIds = (rows?: Array<{ id: number }>) =>
+  !rows || new Set(rows.map((r) => r.id)).size === rows.length;
+
 export const grantItems = z
   .object({
     coin: z.number().int().min(1).max(GRANT_LIMITS.coin).optional(),
@@ -117,7 +120,9 @@ export const grantItems = z
   })
   .refine((i) => Boolean(i.coin || i.diamond || i.exp || i.goods?.length || i.foods?.length), {
     message: 'empty',
-  });
+  })
+  // 同一种道具或食材只能列一次，否则可以绕过每种的数量上限
+  .refine((i) => uniqueIds(i.goods) && uniqueIds(i.foods), { message: 'duplicate' });
 export type GrantItems = z.infer<typeof grantItems>;
 
 export const createGrantBody = z

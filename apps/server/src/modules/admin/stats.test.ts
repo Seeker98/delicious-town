@@ -67,6 +67,31 @@ describe('每日汇总', () => {
     expect(stored.every((r) => r.day === DAY)).toBe(true);
   });
 
+  it('只有系统自动产生的流水（自动加油、结算消耗食材、捕鼠夹、竞猜加奖）的店不算活跃', async () => {
+    const db = ctx.deps.db;
+    const shardId = await createShard(db);
+    const a = await shopIn(shardId);
+    const at = gameTime(DAY, 12);
+    await db
+      .insertInto('ledger')
+      .values([
+        { rest_id: a, kind: 'oil', delta: 100, source: 'oil.auto', created_at: at },
+        {
+          rest_id: a,
+          kind: 'foods',
+          item_id: 101,
+          delta: -1,
+          source: 'settlement.cookfoods',
+          created_at: at,
+        },
+        { rest_id: a, kind: 'coin', delta: 50, source: 'mouse.trap', created_at: at },
+        { rest_id: a, kind: 'goods', item_id: 240, delta: 15, source: 'market.guess.bonus', created_at: at },
+      ])
+      .execute();
+    const rows = await aggregateDay(db, shardId, DAY);
+    expect(rows.find((r) => r.kind === 'active')).toBeUndefined();
+  });
+
   it('周期键：00:10 之后才汇总前一天', () => {
     const job = statDailyJob(ctx.deps.db);
     const s = {} as never;

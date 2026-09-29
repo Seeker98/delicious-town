@@ -66,6 +66,19 @@ describe('补偿（HTTP）', () => {
     expect(await foodNum(t, r0.restaurantId, 101)).toMatchObject({ num: 0, fridge: 2 });
   });
 
+  it('同一种道具或食材重复列出 400，不能绕过每种的上限', async () => {
+    const r0 = await newRestaurant(t);
+    const base = { shardId: r0.shardId, target: 'rest', restId: r0.restaurantId, reason: 'x' };
+    const goods = Array.from({ length: 3 }, () => ({ id: 1, num: 9999 }));
+    expect((await grant(admin.cookie, { ...base, items: { goods } })).status).toBe(400);
+    const foods = [
+      { id: 101, num: 1 },
+      { id: 101, num: 1 },
+    ];
+    expect((await grant(admin.cookie, { ...base, items: { foods } })).status).toBe(400);
+    expect(await goodsNum(t, r0.restaurantId, 1)).toBe(0);
+  });
+
   it('超上限、不存在的道具、空内容都 400；mod 404', async () => {
     const r0 = await newRestaurant(t);
     const base = { shardId: r0.shardId, target: 'rest', restId: r0.restaurantId, reason: 'x' };

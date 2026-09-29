@@ -14,14 +14,12 @@ import type { PeriodicJob } from '../../core/jobs';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 
-/** 不算"玩家操作"的流水来源（设计文档 裁定 10） */
-export const SYSTEM_SOURCES = [
-  'settlement',
-  'mouse',
-  'market.guess',
-  'market.guess.refund',
-  'admin.grant',
-] as const;
+/**
+ * 不算"玩家操作"的流水来源（设计文档 裁定 10）：按前缀匹配，子来源一并排除
+ * （settlement.cookfoods、mouse.trap、market.guess.bonus / refund、admin.grant）；另加结算自动加油 oil.auto
+ */
+export const SYSTEM_SOURCE_PREFIXES = ['settlement', 'mouse', 'market.guess', 'admin.'] as const;
+export const SYSTEM_SOURCES_EXACT = ['oil.auto'] as const;
 
 /** 一个区服一个游戏日（北京时间）的经济汇总：流水按 (kind, source)，结算收益记 source=settlement，外加活跃店数 */
 export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string): Promise<EconomyRowDto[]> {
@@ -54,7 +52,14 @@ export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string)
     .where('r.shard_id', '=', shardId)
     .where('l.created_at', '>=', start)
     .where('l.created_at', '<', end)
-    .where('l.source', 'not in', [...SYSTEM_SOURCES])
+    .where((eb) =>
+      eb.not(
+        eb.or([
+          ...SYSTEM_SOURCE_PREFIXES.map((p) => eb('l.source', 'like', `${p}%`)),
+          eb('l.source', 'in', [...SYSTEM_SOURCES_EXACT]),
+        ]),
+      ),
+    )
     .executeTakeFirstOrThrow();
   const rows = new Map<string, EconomyRowDto>();
   const add = (kind: string, source: string, amount: number) => {

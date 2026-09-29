@@ -9,13 +9,42 @@ import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 import { diffPaths } from './diff';
 
+const isPlain = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
 const asObject = (v: unknown): Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
 
 export function createAdminShards(game: Game) {
   const { db, redis, config } = game.app;
 
+  /** 配置结构以外的路径（拼错的键、不存在的功能）：zod 会静默剥掉，必须显式拒绝，否则保存"成功"却没生效 */
+  function unknownPaths(override: Record<string, unknown>): string[] {
+    const bad: string[] = [];
+    const walk = (o: Record<string, unknown>, base: unknown, prefix: string) => {
+      for (const [k, v] of Object.entries(o)) {
+        const path = prefix ? `${prefix}.${k}` : k;
+        const b = asObject(base)[k];
+        if (b === undefined) bad.push(path);
+        else if (isPlain(v) && isPlain(b)) walk(v, b, path);
+      }
+    };
+    const { features, ...rest } = override;
+    walk(rest, { restaurant: config.bundle.restaurantDefaults, tuning: config.tuning }, '');
+    if (features !== undefined) {
+      if (!isPlain(features)) bad.push('features');
+      else
+        for (const name of Object.keys(features))
+          if (!IMPLEMENTED_FEATURES.has(name)) bad.push(`features.${name}`);
+    }
+    return bad;
+  }
+
   function validate(override: Record<string, unknown>): void {
+    const bad = unknownPaths(override);
+    if (bad.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: bad.map((path) => ({ path, message: 'unknown' })),
+      });
     try {
       resolveShardSettings(config, override);
     } catch (e) {
