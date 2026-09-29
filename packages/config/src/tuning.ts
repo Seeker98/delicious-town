@@ -38,6 +38,8 @@ export const tuningSchema = z.object({
     planktonRateBase: num,
     planktonRatePerStar: num,
     planktonMultiplier: num,
+    /** 全服经营经验倍率：每桌经验和挑剔消耗食材经验都乘它（原作为 1） */
+    expMultiplier: num,
     roachRateBase: num,
     roachRatePerStar: num,
     squidwardRate: num,

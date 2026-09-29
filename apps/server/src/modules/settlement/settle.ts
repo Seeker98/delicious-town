@@ -53,7 +53,9 @@ function cookFoods(
       if (food.level === 5) odds5 += 101 - food.odds;
       krab += food.level * (101 - food.odds);
     }
-    exp += Math.floor(Math.floor(price / 100) * (1 + rates.expRate.total) * (1 + flags.cookfoodSpExpRate));
+    exp += Math.floor(
+      Math.floor(price / 100) * (1 + rates.expRate.total) * (1 + flags.cookfoodSpExpRate) * t.expMultiplier,
+    );
     const times = Math.floor(1 + odds5 / t.dtTicketOddsDivisor);
     const p = t.dtTicketBaseRate * g.holidayMultiplier + flags.luckRate / t.dtTicketLuckDivisor;
     let tickets = 0;

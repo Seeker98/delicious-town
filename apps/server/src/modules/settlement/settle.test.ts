@@ -8,8 +8,14 @@ import type { SettleGlobals } from './types';
 const config = testConfig();
 const price = (id: number) => config.cookbookIndex.coin[id]!;
 const street1 = config.cookbookIndex.idsByStreet.get(1)![0]!;
+/** 规则测试按原作数值断言，经验倍率固定为 1 */
+const withMultiplier = (m: number) => ({
+  ...config.tuning,
+  settlement: { ...config.tuning.settlement, expMultiplier: m },
+});
+const rules = withMultiplier(1);
 const settle = (patch: InputPatch, g: Partial<SettleGlobals>, rng: number[]) =>
-  settleRestaurant(buildInput(config, patch), buildGlobals(config, config.tuning, g), sequenceRng(rng));
+  settleRestaurant(buildInput(config, patch), buildGlobals(config, rules, g), sequenceRng(rng));
 
 describe('incomeValue（规格书 01 §1.6）', () => {
   it('有加成时向下取整且至少为 1；没有加成时取整', () => {
@@ -29,6 +35,12 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r).toMatchObject({ closed: false, coin: 10, exp: 3, oil: 2 });
     expect(r.customers).toEqual({ '1': 1, '0': 3 });
     expect(r.tables[0]).toMatchObject({ customer: 1, last: { type: 1, coin: 10, exp: 2, oil: 2 } });
+  });
+
+  it('经验倍率：每桌经验先乘倍率，再吃经验加成', () => {
+    const r = settle({}, { tuning: withMultiplier(5) }, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(r.tables[0]!.last).toMatchObject({ exp: 10, coin: 10 });
+    expect(r.exp).toBe(16);
   });
 
   it('每桌银币加成只加一次（设计文档 裁定 1）', () => {
@@ -204,6 +216,14 @@ describe('挑剔消耗食材（规格书 01 §1.8）', () => {
       return s + food.level * (101 - food.odds);
     }, 0);
     expect(r.renown).toBe(Math.sqrt(krab) / 100 > 0.2 ? 1 : 0);
+  });
+
+  it('挑剔消耗食材的经验也乘经验倍率', () => {
+    const g = { tuning: withMultiplier(5) };
+    const used = settle(patch(60), g, seq);
+    const none = settle(patch(49), g, seq);
+    const foodPrice = need.reduce((s, f) => s + config.requireFood(f.foodsId).coin * f.num, 0);
+    expect(used.exp - none.exp).toBe(5 * Math.floor(foodPrice / 100));
   });
 
   it('任何一种食材少于 档位×50 就不消耗', () => {

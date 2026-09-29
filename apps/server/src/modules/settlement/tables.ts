@@ -298,7 +298,7 @@ export function allocateTables(
     if (PAYING.has(type)) {
       oilT = realValue(oil, rates.oilValue.total);
       coinT = coin + rates.coinValue.total + mcCoin;
-      expT = realValue(exp + mcExp, rates.expValue.total);
+      expT = realValue(exp + mcExp, rates.expValue.total) * t.expMultiplier;
     }
     const cond = satisfied ? coinT * flags.spCoinRate : 0;
     out.oil += oilT;
