@@ -16,10 +16,12 @@
     "@dt/shared": "workspace:*",
     "ioredis": "^5.11.1",
     "kysely": "^0.27.6",
+    "nodemailer": "^6.10.1",
     "pg": "^8.23.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.24",
     "@types/pg": "^8.23.1",
     "tsx": "^4.23.15"
   }
