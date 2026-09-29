@@ -1,7 +1,6 @@
-import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { userWithRole } from '../../../test/admin';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import type { AdminActor } from './access';
@@ -156,14 +155,7 @@ describe('全区服发放（worker）', () => {
     const shardId = await createShard(t.db);
     const ok = await newRestaurant(t, { shardId, patch: { coin: 0 } });
     const broken = await newRestaurant(t, { shardId, patch: { coin: 0 } });
-    await sql`create or replace function fail_grant_log() returns trigger as $$
-      begin raise exception 'boom'; end $$ language plpgsql`.execute(t.db);
-    await sql
-      .raw(
-        `create trigger fail_grant_log_${broken.restaurantId} before insert on rest_log for each row
-         when (new.rest_id = ${broken.restaurantId}) execute function fail_grant_log()`,
-      )
-      .execute(t.db);
+    const restore = await failRestLog(t.db, broken.restaurantId);
     try {
       const g = await shardGrant(shardId);
       await drain(g.id);
@@ -172,7 +164,7 @@ describe('全区服发放（worker）', () => {
       expect((await restRow(t, broken.restaurantId)).coin).toBe(0);
       expect(log.error).toHaveBeenCalled();
     } finally {
-      await sql.raw(`drop trigger fail_grant_log_${broken.restaurantId} on rest_log`).execute(t.db);
+      await restore();
     }
   });
 

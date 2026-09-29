@@ -23,6 +23,19 @@ export default async function setup(): Promise<void> {
   for (const table of ['ledger', 'news', 'income_round', 'rest_log'] as const) {
     await ensureDailyPartitions(db, table, yesterday, 5);
   }
+  // 测试专用：test_fail_rest 里的餐厅写个人日志时报错，用来模拟单店处理失败。
+  // 必须在这里建好：测试运行期间对分区表做 DDL 会和其他测试文件的并发查询死锁
+  await sql`create table test_fail_rest (rest_id integer primary key)`.execute(db);
+  await sql`create function test_fail_rest_log() returns trigger as $$
+    begin
+      if exists (select 1 from test_fail_rest where rest_id = new.rest_id) then
+        raise exception 'test failure for restaurant %', new.rest_id;
+      end if;
+      return new;
+    end $$ language plpgsql`.execute(db);
+  await sql`create trigger test_fail_rest_log before insert on rest_log for each row execute function test_fail_rest_log()`.execute(
+    db,
+  );
   await db.destroy();
 
   const redis = createRedis(testEnv.REDIS_URL!);
