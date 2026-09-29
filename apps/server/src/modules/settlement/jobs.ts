@@ -15,7 +15,8 @@ export function settlementJobs(d: GameDeps, world: WorldService): PeriodicJob[] 
       name: 'settlement',
       feature: 'settlement',
       period: (now) => String(roundOf(now)),
-      run: ({ shardId, period, now }) => settleShardRound(d, world, shardId, Number(period), now),
+      run: ({ shardId, period, now, log }) =>
+        settleShardRound(d, world, shardId, Number(period), now, { log }),
     },
     {
       name: 'strength',

@@ -1,10 +1,11 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { roundOf } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import { grantGoods } from '../store/grant';
+import { runDueJobs } from '../../worker/periodic';
 import { settleShardRound } from './runner';
 
 let t: TestGame;
@@ -60,6 +61,25 @@ describe('settleShardRound', () => {
       .where('rest_id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
     expect(tables.tables.filter((x) => x.customer === 3)).toEqual([]);
+  });
+
+  it('单店结算出错时经由 worker 的日志记下区服、轮次和餐厅（设计文档 §4.1）', async () => {
+    const shardId = await createShard(t.db);
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 1000 } });
+    await t.db
+      .updateTable('restaurant_tables')
+      .set({ tables: JSON.stringify({ broken: true }) })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    const log = { error: vi.fn() };
+    const jobs = t.game.jobs.filter((j) => j.name === 'settlement');
+    await runDueJobs({ db: t.db, shards: t.game.shards, now: () => t.clock.now, log }, jobs, {
+      shardIds: [shardId],
+    });
+    expect(log.error).toHaveBeenCalledWith(
+      expect.objectContaining({ shardId, restId: ctx.restaurantId, round: expect.any(Number) }),
+      'settlement failed',
+    );
   });
 
   it('没油：停业，不写收益；停业店不再进入结算', async () => {

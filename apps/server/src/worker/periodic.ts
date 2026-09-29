@@ -49,7 +49,7 @@ export async function runDueJobs(
         .executeTakeFirst();
       if (!claimed) continue;
       try {
-        const stats = await job.run({ shardId, period, now, settings });
+        const stats = await job.run({ shardId, period, now, settings, log: d.log });
         await d.db
           .updateTable('job_run')
           .set({ finished_at: d.now(), stats: JSON.stringify(stats) })
