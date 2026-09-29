@@ -124,15 +124,19 @@ onBeforeUnmount(() => {
       <div class="col-6">声望 {{ rest.renown }}</div>
     </div>
     <div
-      class="progress my-2"
+      class="progress my-2 position-relative"
       role="progressbar"
       :aria-valuenow="expPercent"
       aria-valuemin="0"
       aria-valuemax="100"
     >
-      <div class="progress-bar bg-warning text-dark" :style="{ width: `${expPercent}%` }">
-        {{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}
-      </div>
+      <div class="progress-bar bg-warning" :style="{ width: `${expPercent}%` }"></div>
+      <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
+      <span
+        data-testid="exp-text"
+        class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
+        >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
+      >
     </div>
     <div class="d-flex align-items-center gap-2 small">
       <span><i class="bi bi-droplet"></i> 油 {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>

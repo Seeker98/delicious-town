@@ -116,6 +116,13 @@ describe('RestaurantHomeView', () => {
     expect(w.text()).toContain('上座率+35% 幸运+36');
   });
 
+  it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {
+    const w = await mountView();
+    const text = w.find('[data-testid="exp-text"]');
+    expect(text.text()).toBe('0/500');
+    expect(w.find('.progress-bar').find('[data-testid="exp-text"]').exists()).toBe(false);
+  });
+
   it('加油：显示花费，点击后刷新', async () => {
     vi.mocked(endpoints.refuel).mockResolvedValue({ oil: 1000 });
     const w = await mountView();
