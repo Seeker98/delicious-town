@@ -73,8 +73,11 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
       return op(ctx, 'oil.fill', async (o) => {
         const need = o.rest.oil_max - o.rest.oil;
         if (need <= 0) throw invalidState('oil_full');
-        spendCoin(o, need);
-        gainOil(o, need);
+        // 规格书是"加满"；银币不够时有多少加多少，否则没油停业的店可能永远开不了（设计文档裁定 9：油 > 0 就恢复营业）
+        const add = Math.min(need, o.rest.coin);
+        if (add <= 0) throw notEnough('coin', need, o.rest.coin);
+        spendCoin(o, add);
+        gainOil(o, add);
         if (o.rest.state === 2) {
           setRest(o, 'state', 1);
           setRest(o, 'state_reason', null);

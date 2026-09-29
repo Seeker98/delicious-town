@@ -42,11 +42,18 @@ describe('加油（规格书 02 §2.5）', () => {
       state_reason: null,
     });
   });
-  it('油满了、银币不够时报错', async () => {
+  it('银币不够加满时有多少加多少，停业的店照样恢复营业（避免停业后永远开不了店）', async () => {
+    const poor = await newRestaurant(t, {
+      patch: { coin: 10, oil: 0, oil_max: 1000, state: 2, state_reason: 'no_oil' },
+    });
+    await t.game.growth.refuel(poor);
+    expect(await restRow(t, poor.restaurantId)).toMatchObject({ coin: 0, oil: 10, state: 1 });
+  });
+  it('油满了、一个银币都没有时报错', async () => {
     const full = await newRestaurant(t, { patch: { oil: 1000, oil_max: 1000 } });
     await expect(t.game.growth.refuel(full)).rejects.toMatchObject({ code: 'INVALID_STATE' });
-    const poor = await newRestaurant(t, { patch: { coin: 10, oil: 0, oil_max: 1000 } });
-    await expect(t.game.growth.refuel(poor)).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
+    const broke = await newRestaurant(t, { patch: { coin: 0, oil: 0, oil_max: 1000 } });
+    await expect(t.game.growth.refuel(broke)).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
   });
 });
 

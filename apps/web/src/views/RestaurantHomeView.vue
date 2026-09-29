@@ -48,7 +48,9 @@ async function act(fn: () => Promise<unknown>, fallback: string) {
 const expPercent = computed(() =>
   rest.value ? Math.min(100, Math.floor((rest.value.exp / rest.value.expToNext) * 100)) : 0,
 );
-const refuelCost = computed(() => (rest.value ? rest.value.oilMax - rest.value.oil : 0));
+/** 银币不够加满时有多少加多少（服务端同样处理） */
+const refuelNeed = computed(() => (rest.value ? rest.value.oilMax - rest.value.oil : 0));
+const refuelCost = computed(() => (rest.value ? Math.min(refuelNeed.value, rest.value.coin) : 0));
 const customers = computed(() =>
   Object.entries(rest.value?.lastRound?.customers ?? {})
     .filter(([k]) => k !== '0')
@@ -140,7 +142,7 @@ onBeforeUnmount(() => {
         :disabled="busy || refuelCost <= 0"
         @click="act(() => endpoints.refuel(), '加油失败')"
       >
-        加满（{{ formatNum(refuelCost) }} 银币）
+        {{ refuelCost < refuelNeed ? '加油' : '加满' }}（{{ formatNum(refuelCost) }} 银币）
       </button>
     </div>
 

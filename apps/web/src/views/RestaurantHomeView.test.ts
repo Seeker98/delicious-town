@@ -126,4 +126,12 @@ describe('RestaurantHomeView', () => {
     expect(endpoints.refuel).toHaveBeenCalled();
     expect(endpoints.overview).toHaveBeenCalledTimes(2);
   });
+
+  it('银币不够加满时显示"加油"和实际花费', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, coin: 250 });
+    const w = await mountView();
+    const btn = w.find('[data-testid="refuel"]');
+    expect(btn.text()).toContain('加油（250 银币）');
+    expect(btn.attributes('disabled')).toBeUndefined();
+  });
 });
