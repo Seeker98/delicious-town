@@ -19,8 +19,11 @@ export async function mailLink(request: APIRequestContext, to: string): Promise<
   throw new Error(`no mail for ${to}`);
 }
 
-/** 注册 → 验证邮箱 → 选一服 → 开店，返回店名 */
-export async function registerAndOpen(page: Page, request: APIRequestContext): Promise<string> {
+/** 注册 → 验证邮箱 → 选一服 → 开店，返回用户名和店名 */
+export async function registerAndOpen(
+  page: Page,
+  request: APIRequestContext,
+): Promise<{ username: string; name: string }> {
   const id = Date.now().toString(36).slice(-7);
   const username = `e${id}`;
   const email = `${username}@e2e.local`;
@@ -39,5 +42,5 @@ export async function registerAndOpen(page: Page, request: APIRequestContext): P
   await page.getByPlaceholder('餐厅名称').fill(name);
   await page.getByRole('button', { name: '开张' }).click();
   await expect(page.getByTestId('rest-name')).toHaveText(name);
-  return name;
+  return { username, name };
 }

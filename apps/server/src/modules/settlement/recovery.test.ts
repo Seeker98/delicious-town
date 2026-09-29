@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { sql } from 'kysely';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { mouseRound } from './mouse';
 import { regenStrength } from './strength';
@@ -72,14 +71,7 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
     const broken = await newRestaurant(t, { shardId, foods: { 101: 5 } });
     const ok = await newRestaurant(t, { shardId, foods: { 101: 5 } });
     // 让 broken 这家店写个人日志时报错，模拟单店处理失败
-    await sql`create or replace function fail_rest_log() returns trigger as $$
-      begin raise exception 'boom'; end $$ language plpgsql`.execute(t.db);
-    await sql
-      .raw(
-        `create trigger fail_rest_log_${broken.restaurantId} before insert on rest_log for each row
-         when (new.rest_id = ${broken.restaurantId}) execute function fail_rest_log()`,
-      )
-      .execute(t.db);
+    const restore = await failRestLog(t.db, broken.restaurantId);
     try {
       const log = { error: vi.fn() };
       const s = await mouseRound(t.game.deps, shardId, 'p1', new Date(), log);
@@ -91,7 +83,7 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
         'mouse failed',
       );
     } finally {
-      await sql.raw(`drop trigger fail_rest_log_${broken.restaurantId} on rest_log`).execute(t.db);
+      await restore();
     }
   });
 

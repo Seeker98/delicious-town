@@ -39,6 +39,11 @@ export function createShardService(d: { db: Kysely<DB>; sessions: SessionStore; 
     settings,
     assertOpen,
 
+    /** 区服配置被后台修改后清掉缓存；下一次读取从库里重新解析 */
+    invalidate(shardId: number): void {
+      cache.delete(shardId);
+    },
+
     async list(accountId: number): Promise<ShardDto[]> {
       const rows = await d.db
         .selectFrom('shard')

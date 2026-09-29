@@ -2,6 +2,7 @@ import pino from 'pino';
 import { createDeps } from './deps';
 import { loadEnv } from './env';
 import { createGame } from './game';
+import { subscribeSettings } from './infra/settingsBus';
 import { waitForLeadership } from './worker/leader';
 import { startScheduler } from './worker/scheduler';
 import { workerJobs } from './worker/jobs';
@@ -10,6 +11,7 @@ const env = loadEnv();
 const log = pino({ level: env.LOG_LEVEL });
 const deps = createDeps(env);
 const game = createGame(deps);
+const settingsSub = subscribeSettings(env.REDIS_URL, (id) => game.shards.invalidate(id));
 const ac = new AbortController();
 process.once('SIGTERM', () => ac.abort());
 process.once('SIGINT', () => ac.abort());
@@ -29,5 +31,6 @@ if (leader) {
   scheduler.stop();
   await leader.end();
 }
+settingsSub.close();
 await deps.db.destroy();
 deps.redis.disconnect();

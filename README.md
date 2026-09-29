@@ -13,6 +13,7 @@ pnpm --filter @dt/config build                   # 生成配置包
 pnpm --filter @dt/server migrate:dev
 pnpm --filter @dt/server shard ensure --id 1 --name 一服
 pnpm dev                                         # 一起启动 API(:3000)、worker、网页(:5173)
+pnpm --filter @dt/server account role <用户名> admin   # 把自己设为管理员，后台在 http://localhost:5173/admin
 ```
 
 打开 http://localhost:5173 注册、验证邮箱、开店。开发环境的邮件在 http://localhost:8025 查看。

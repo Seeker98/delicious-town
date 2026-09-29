@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useSessionStore } from '../stores/session';
 
-const links = [
+const session = useSessionStore();
+const base = [
   { to: '/rest/tasks', icon: 'bi-check2-square', label: '任务与活跃' },
   { to: '/store', icon: 'bi-archive', label: '仓库' },
   { to: '/shop', icon: 'bi-bag', label: '商店' },
@@ -12,6 +15,12 @@ const links = [
   { to: '/weather', icon: 'bi-cloud-sun', label: '天气' },
   { to: '/shards', icon: 'bi-arrow-left-right', label: '切换区服' },
 ];
+/** 协管和管理员多一个后台入口 */
+const links = computed(() =>
+  session.me && session.me.role !== 'player'
+    ? [...base, { to: '/admin', icon: 'bi-shield-lock', label: '管理后台' }]
+    : base,
+);
 </script>
 
 <template>

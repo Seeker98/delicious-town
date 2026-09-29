@@ -131,19 +131,20 @@ export function createAccountService(d: AccountDeps) {
     async login(input: LoginInput): Promise<{ token: string; accountId: number }> {
       const account = await d.db
         .selectFrom('account')
-        .select(['id', 'password_hash', 'banned_at'])
+        .select(['id', 'password_hash', 'banned_at', 'ban_reason'])
         .where(sql<string>`lower(username)`, '=', input.username.toLowerCase())
         .executeTakeFirst();
       const valid = await verifyPassword(account?.password_hash ?? null, input.password);
       if (!account || !valid) throw new AppError(ErrorCode.INVALID_CREDENTIALS, 401);
-      if (account.banned_at) throw new AppError(ErrorCode.ACCOUNT_BANNED, 403);
+      if (account.banned_at)
+        throw new AppError(ErrorCode.ACCOUNT_BANNED, 403, { reason: account.ban_reason });
       return { token: await d.sessions.create(account.id), accountId: account.id };
     },
 
     async me(accountId: number, sel: Pick<SessionData, 'shardId' | 'restaurantId'>): Promise<MeDto> {
       const a = await d.db
         .selectFrom('account')
-        .select(['id', 'username', 'email', 'email_verified_at'])
+        .select(['id', 'username', 'email', 'email_verified_at', 'role'])
         .where('id', '=', accountId)
         .executeTakeFirst();
       if (!a) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
@@ -152,6 +153,7 @@ export function createAccountService(d: AccountDeps) {
         username: a.username,
         email: a.email,
         emailVerified: a.email_verified_at !== null,
+        role: a.role,
         shardId: sel.shardId,
         restaurantId: sel.restaurantId,
       };

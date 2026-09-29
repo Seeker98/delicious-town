@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { Game } from '../game';
 import { accountRoutes } from './account/routes';
+import { adminRoutes } from './admin/routes';
 import { cookbookRoutes } from './cookbook/routes';
 import { cupboardRoutes } from './cupboard/routes';
 import { growthRoutes } from './growth/routes';
@@ -25,4 +26,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(shopRoutes(game.shop), { prefix: '/api/v1/shop' });
   app.register(marketRoutes(game.market), { prefix: '/api/v1/market' });
   app.register(taskRoutes(game.task), { prefix: '/api/v1/task' });
+  app.register(adminRoutes(game), { prefix: '/api/v1/admin' });
 }

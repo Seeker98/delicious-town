@@ -227,3 +227,24 @@ describe('邀请码', () => {
     expect(bogus.status).toBe(200);
   });
 });
+describe('角色和封禁原因', () => {
+  it('me 返回角色，默认 player', async () => {
+    const u = await registerUser(ctx.app);
+    const me = await call(ctx.app, 'GET', '/api/v1/account/me', { cookie: u.cookie });
+    expect(me.json.data.role).toBe('player');
+  });
+
+  it('被封的账号登录时带出封禁原因', async () => {
+    const u = await registerUser(ctx.app);
+    await ctx.deps.db
+      .updateTable('account')
+      .set({ banned_at: new Date(), ban_reason: '刷分' })
+      .where('id', '=', u.accountId)
+      .execute();
+    const r = await call(ctx.app, 'POST', '/api/v1/account/login', {
+      body: { username: u.username, password: 'secret123' },
+    });
+    expect(r.status).toBe(403);
+    expect(r.json).toMatchObject({ code: 'ACCOUNT_BANNED', params: { reason: '刷分' } });
+  });
+});

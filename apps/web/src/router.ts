@@ -148,6 +148,21 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/MoreView.vue'),
     meta: { needRestaurant: true },
   },
+  {
+    path: '/admin',
+    component: () => import('./views/admin/AdminLayout.vue'),
+    meta: { admin: true },
+    children: [
+      { path: 'shards/:id', component: () => import('./views/admin/AdminShardView.vue') },
+      { path: 'shards/:id/history', component: () => import('./views/admin/AdminShardHistoryView.vue') },
+      { path: 'players', component: () => import('./views/admin/AdminPlayersView.vue') },
+      { path: 'players/:id', component: () => import('./views/admin/AdminPlayerView.vue') },
+      { path: 'grants', component: () => import('./views/admin/AdminGrantsView.vue') },
+      { path: '', component: () => import('./views/admin/AdminHomeView.vue') },
+      { path: 'stats', component: () => import('./views/admin/AdminStatsView.vue') },
+      { path: 'audit', component: () => import('./views/admin/AdminAuditView.vue') },
+    ],
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
