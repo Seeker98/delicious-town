@@ -71,6 +71,24 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/cookbooks',
+    name: 'cookbooks',
+    component: () => import('./views/CookbooksView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/cookbooks/:id',
+    name: 'cookbook',
+    component: () => import('./views/CookbookInfoView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/cupboard',
+    name: 'cupboard',
+    component: () => import('./views/CupboardView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/more',
     name: 'more',
     component: () => import('./views/MoreView.vue'),
