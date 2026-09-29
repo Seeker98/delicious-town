@@ -10,3 +10,4 @@ export * from './schemas/shard';
 export * from './schemas/restaurant';
 export * from './schemas/world';
 export * from './schemas/growth';
+export * from './schemas/cookbook';
