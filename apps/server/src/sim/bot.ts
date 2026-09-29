@@ -1,4 +1,4 @@
-import type { GoodsUse } from '@dt/config';
+import { GOODS, type GoodsUse } from '@dt/config';
 import type { RestCtx } from '../core/deps';
 import type { Game } from '../game';
 import { AppError } from '../http/errors';
@@ -154,6 +154,17 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
       await attempt(() => game.growth.placeDevice(ctx, { slot: slot.slot, goodsId: g }));
     }
   }
+
+  // 升级只提高餐桌上限，实际的桌子去商店买餐桌A补上（设计文档 裁定 10）
+  r = await rest();
+  const tableCap = Math.min(r.tableNum, (r.starLevel + 1) * config.tuning.rest.tablesPerFloor);
+  const tableA = config.requireGoods(GOODS.tableA);
+  const tables = Math.min(
+    tableCap - r.tables.length,
+    Math.floor((r.coin - r.oilMax - 20_000) / Math.max(1, tableA.coin)),
+  );
+  if (tables > 0 && (await attempt(() => game.shop.buy(ctx, { goodsId: tableA.id, num: tables }))))
+    for (let i = 0; i < tables; i++) await attempt(() => game.store.use(ctx, { goodsId: tableA.id, num: 1 }));
 
   const star = await game.growth.starNeed(ctx);
   if (star.available && star.nextStar !== null) {
