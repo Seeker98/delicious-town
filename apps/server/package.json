@@ -1,0 +1,26 @@
+{
+  "name": "@dt/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "dev": "tsx watch --env-file=.env.development src/main.ts",
+    "worker:dev": "tsx --env-file=.env.development src/worker.ts",
+    "migrate:dev": "tsx --env-file=.env.development src/cli/migrate.ts",
+    "shard": "tsx --env-file=.env.development src/cli/shard.ts",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@dt/config": "workspace:*",
+    "@dt/shared": "workspace:*",
+    "ioredis": "^5.11.1",
+    "kysely": "^0.27.6",
+    "pg": "^8.23.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15"
+  }
+}
