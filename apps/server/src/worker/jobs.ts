@@ -3,6 +3,7 @@ import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { Game } from '../game';
 import { runDueJobs } from './periodic';
+import { pullOffset } from '../infra/clock';
 import type { Job, JobLogger } from './scheduler';
 
 export const RETENTION_DAYS = { ledger: 30, news: 30, income_round: 3, rest_log: 30 } as const;
@@ -50,6 +51,7 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       name: 'periodic',
       intervalMs: 5_000,
       run: async () => {
+        if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
         await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
       },
     },

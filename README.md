@@ -17,7 +17,7 @@ pnpm dev                                         # 一起启动 API(:3000)、wor
 
 打开 http://localhost:5173 注册、验证邮箱、开店。开发环境的邮件在 http://localhost:8025 查看。
 
-worker 负责每 4 分钟的结算和体力、老鼠、天气、菜场等周期任务，**不启动 worker 餐厅不会有收益**。单独启动：`pnpm --filter @dt/server dev`（API）、`pnpm --filter @dt/server worker:dev`（worker）、`pnpm --filter @dt/web dev`（网页）。开发环境开启了测试接口，`POST /api/v1/test/tick`（body `{"minutes": 4}`）可以把游戏时间往前推进。
+worker 负责每 4 分钟的结算和体力、老鼠、天气、菜场等周期任务，**不启动 worker 餐厅不会有收益**。单独启动：`pnpm --filter @dt/server dev`（API）、`pnpm --filter @dt/server worker:dev`（worker）、`pnpm --filter @dt/web dev`（网页）。开发环境开启了测试接口，`POST /api/v1/test/tick`（需要登录，body `{"minutes": 4}`）可以把游戏时间往前推进，API 和 worker 共用这个偏移（存在 Redis 里，重启不回退）。
 
 ## 数值模拟器
 
