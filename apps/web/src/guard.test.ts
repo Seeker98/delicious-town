@@ -7,6 +7,7 @@ const me = (patch: Partial<MeDto> = {}): MeDto => ({
   username: 'u',
   email: 'u@x',
   emailVerified: true,
+  role: 'player',
   shardId: null,
   restaurantId: null,
   ...patch,

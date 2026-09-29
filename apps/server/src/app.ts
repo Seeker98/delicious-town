@@ -12,6 +12,7 @@ import { createGame } from './game';
 import { registerClientIp } from './http/clientIp';
 import { registerErrorHandling } from './http/errorHandling';
 import { registerHealth } from './http/health';
+import { subscribeSettings } from './infra/settingsBus';
 import { testApiRoutes } from './http/testApi';
 import type { Captcha } from './infra/captcha';
 import type { ShiftClock } from './infra/clock';
@@ -63,6 +64,8 @@ export async function buildApp(
   registerIdempotency(app, deps.redis);
   registerHealth(app, deps);
   const game = createGame(deps);
+  const settingsSub = subscribeSettings(deps.env.REDIS_URL, (id) => game.shards.invalidate(id));
+  app.addHook('onClose', async () => settingsSub.close());
   registerModules(app, game);
   if (deps.env.ENABLE_TEST_API && deps.clock) {
     app.register(testApiRoutes(game, deps.clock), { prefix: '/api/v1/test' });

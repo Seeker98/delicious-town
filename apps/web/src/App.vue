@@ -12,6 +12,8 @@ const route = useRoute();
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const inGame = computed(() => route.meta.needRestaurant === true);
+/** 后台页面用宽布局 */
+const wide = computed(() => route.path.startsWith('/admin'));
 
 setEventsListener((events) => {
   for (const e of events) toast.push(eventText(e, catalog), e.type === 'gain' ? 'success' : 'info');
@@ -23,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dt-app">
+  <div :class="['dt-app', { 'dt-app-wide': wide }]">
     <header class="dt-header d-flex align-items-center px-2">
       <i class="bi bi-shop me-1"></i>
       <span class="fw-bold">美味小镇</span>

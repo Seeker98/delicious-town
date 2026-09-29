@@ -1,3 +1,4 @@
+import { checkRestaurantName } from '@dt/shared';
 import type { OilNeed, StarNeed } from '@dt/config';
 import type { NeedCheckDto } from '@dt/shared';
 import type { CookbookCounts } from '../../db/schema';
@@ -45,4 +46,14 @@ export function oilChecks(
     });
   }
   return checks;
+}
+const NAME_CHARS = /^[\p{Script=Han}A-Za-z0-9]+$/u;
+
+/** 改名校验（玩家改名和后台强制改名共用）：有问题返回原因，没问题返回 null */
+export function renameProblem(name: string, maxLength: number): string | null {
+  const check = checkRestaurantName(name);
+  if (check !== 'ok') return check;
+  if (!NAME_CHARS.test(name)) return 'bad_chars';
+  if ([...name].length > maxLength) return 'too_long';
+  return null;
 }

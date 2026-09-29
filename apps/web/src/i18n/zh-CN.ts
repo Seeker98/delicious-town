@@ -34,6 +34,8 @@ const TEXT: Record<ErrorCode | 'NETWORK', string> = {
   COOKBOOK_MAX_GRADE: '这道菜已经是最高品级了',
   SOLD_OUT: '已经卖完了',
   COOLDOWN: '操作太快了，请稍后再试',
+  INVALID_CONFIG: '配置不合法，请检查标红的项',
+  VERSION_CONFLICT: '配置已被别人修改，请刷新后再改',
   INVALID_STATE: '当前状态下不能这样做',
   INTERNAL: '服务器开小差了，请稍后再试',
   NETWORK: '网络连接失败，请稍后再试',
@@ -118,6 +120,9 @@ const STATE: Record<string, string> = {
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
+  if (code === 'ACCOUNT_BANNED' && typeof params.reason === 'string' && params.reason) {
+    return `账号已被封禁：${params.reason}`;
+  }
   if (code === 'RESTAURANT_NAME_INVALID' && typeof params.reason === 'string' && NAME_REASON[params.reason]) {
     return NAME_REASON[params.reason]!;
   }

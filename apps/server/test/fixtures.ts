@@ -1,4 +1,4 @@
-import type { Insertable, Kysely } from 'kysely';
+import { sql, type Insertable, type Kysely } from 'kysely';
 import type { DB } from '../src/db';
 import { uniqueViolation } from '../src/db/errors';
 import type { CookbookCounts, RestaurantTable, TableState } from '../src/db/schema';
@@ -121,4 +121,12 @@ export async function createRestaurantFull(
     .execute();
   await db.insertInto('restaurant_cookbooks').values({ rest_id: restId, levels }).execute();
   return restId;
+}
+
+/** 让这家店之后写个人日志时报错（模拟单店处理失败）；返回撤销函数。触发器在 globalSetup 里建好 */
+export async function failRestLog(db: Kysely<DB>, restId: number): Promise<() => Promise<void>> {
+  await sql`insert into test_fail_rest (rest_id) values (${restId})`.execute(db);
+  return async () => {
+    await sql`delete from test_fail_rest where rest_id = ${restId}`.execute(db);
+  };
 }

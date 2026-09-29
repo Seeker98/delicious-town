@@ -48,3 +48,14 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - `ENABLE_TEST_API` 只能在开发环境开启；生产环境设成 true 会拒绝启动。
 - 结算并发数和批大小在配置 `tuning.settlement.concurrency / batchSize`，数据库连接池 `DB_POOL_SIZE` 应不小于并发数 + 4。
 - 区服数值可以通过 `shard_config.override.tuning` 覆盖（深合并，覆盖后重新校验；写错会导致该区服操作报错，修改前先用 `pnpm sim --tuning` 验证）。
+
+## 运营控制台
+
+- 后台在网页的 `/admin`，接口前缀 `/api/v1/admin`。没有权限的账号看到的是"页面不存在"。
+- 设置第一个管理员（在服务器上执行）：
+  `docker compose -f compose.prod.yml run --rm api node dist/cli/account.js role <用户名> admin`
+  开发环境：`pnpm --filter @dt/server account role <用户名> admin`
+  之后管理员可以在后台给别人设"协管"（只读 + 封号 + 强制改名）或"管理员"。
+- 区服数值保存后，API 和 worker 通过 Redis 频道 `shard-settings` 立即清缓存，不需要重启。
+- 全区服补偿和每日统计汇总都由 worker 执行：**生产环境必须跑 worker**。
+- 可选：用反向代理限制 `/admin` 和 `/api/v1/admin` 的来源 IP。

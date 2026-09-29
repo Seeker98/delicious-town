@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { errorText, setNameResolver } from './zh-CN';
 
 describe('错误文案', () => {
+  it('封禁带原因', () => {
+    expect(errorText('ACCOUNT_BANNED', { reason: '刷分' })).toBe('账号已被封禁：刷分');
+  });
   it('资源不够时说清楚缺什么', () => {
     setNameResolver({ goodsName: () => '升星凭证', foodName: () => '大米' });
     expect(errorText('NOT_ENOUGH', { kind: 'coin', need: 500, have: 100 })).toBe(

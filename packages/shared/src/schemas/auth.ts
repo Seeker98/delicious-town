@@ -32,11 +32,14 @@ export type LoginInput = z.input<typeof loginBody>;
 export type ForgotPasswordInput = z.input<typeof forgotPasswordBody>;
 export type ResetPasswordInput = z.input<typeof resetPasswordBody>;
 
+export type AccountRole = 'player' | 'mod' | 'admin';
+
 export interface MeDto {
   accountId: number;
   username: string;
   email: string;
   emailVerified: boolean;
+  role: AccountRole;
   shardId: number | null;
   restaurantId: number | null;
 }

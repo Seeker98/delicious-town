@@ -13,6 +13,10 @@ body {
   min-height: 100vh;
   background: #fff;
 }
+
+.dt-app-wide {
+  max-width: 1200px;
+}
 .dt-header {
   height: 44px;
   background: var(--dt-header-bg);
