@@ -1929,7 +1929,7 @@ export function roundOf(date: Date): number {
 
 /** slotKey 的逆运算 */
 export function parseSlotKey(key: string): Slot {
-  const m = /^(d{4}-d{2}-d{2})@(d{2})$/.exec(key);
+  const m = /^(\d{4}-\d{2}-\d{2})@(\d{2})$/.exec(key);
   if (!m) throw new Error(`bad slot key ${key}`);
   return slot(m[1]!, Number(m[2]));
 }
