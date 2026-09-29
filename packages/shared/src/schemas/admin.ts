@@ -154,3 +154,39 @@ export interface GrantDto {
   createdAt: string;
   finishedAt: string | null;
 }
+const dayString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+export const shardQuery = z.object({ shardId: z.coerce.number().int().positive() });
+export const economyQuery = shardQuery.extend({ from: dayString, to: dayString });
+export const settlementQuery = shardQuery.extend({
+  rounds: z.coerce.number().int().min(1).max(360).default(90),
+});
+
+export interface EconomyRowDto {
+  day: string;
+  kind: string;
+  source: string;
+  amount: number;
+}
+
+export interface BucketDto {
+  from: number;
+  to: number;
+  count: number;
+}
+
+export interface DistributionDto {
+  open: number;
+  closed: number;
+  levels: BucketDto[];
+  stars: Array<{ star: number; count: number }>;
+  cookbooks: BucketDto[];
+}
+
+export interface SettlementRoundDto {
+  round: number;
+  at: string;
+  ms: number;
+  settled: number;
+  closed: number;
+  failed: number;
+}

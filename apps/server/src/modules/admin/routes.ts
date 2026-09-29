@@ -3,6 +3,7 @@ import {
   adminLedgerQuery,
   adminRenameBody,
   createGrantBody,
+  economyQuery,
   grantListQuery,
   grantPreviewQuery,
   idParam,
@@ -12,6 +13,8 @@ import {
   roleBody,
   rollbackBody,
   saveOverrideBody,
+  settlementQuery,
+  shardQuery,
   type AdminMeDto,
 } from '@dt/shared';
 import type { Game } from '../../game';
@@ -21,6 +24,7 @@ import { requireRole } from './access';
 import { createAdminGrants } from './grants';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
+import { distribution, economy, settlementRounds } from './stats';
 
 /** 后台路由（/api/v1/admin）：每个处理函数第一步都是 requireRole */
 export function adminRoutes(game: Game): FastifyPluginAsync {
@@ -89,6 +93,21 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/grants', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await grants.list(parse(grantListQuery, req.query).shardId));
+    });
+
+    r.get('/stats/economy', async (req) => {
+      await requireRole(db, req, 'mod');
+      const q = parse(economyQuery, req.query);
+      return ok(await economy(db, q.shardId, q.from, q.to, game.deps.now()));
+    });
+    r.get('/stats/distribution', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await distribution(db, parse(shardQuery, req.query).shardId));
+    });
+    r.get('/stats/settlement', async (req) => {
+      await requireRole(db, req, 'mod');
+      const q = parse(settlementQuery, req.query);
+      return ok(await settlementRounds(db, q.shardId, q.rounds));
     });
 
     const shards = createAdminShards(game);

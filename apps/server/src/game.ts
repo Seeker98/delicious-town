@@ -3,6 +3,7 @@ import type { AppDeps } from './app';
 import type { GameDeps } from './core/deps';
 import type { PeriodicJob } from './core/jobs';
 import { createAccountService, type AccountService } from './modules/account/service';
+import { statDailyJob } from './modules/admin/stats';
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
 import { createGrowthService, type GrowthService } from './modules/growth/service';
@@ -57,6 +58,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...shopJobs(shop));
   const market = createMarketService(deps, world);
   jobs.push(...marketJobs(market));
+  jobs.push(statDailyJob(app.db));
   return {
     app,
     deps,
