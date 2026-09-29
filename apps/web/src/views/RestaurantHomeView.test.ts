@@ -64,6 +64,8 @@ const dto: RestaurantDto = {
   },
   weather: { id: 1, name: '晴' },
   isPlanktonHost: false,
+  door: 0,
+  avatar: null,
   tables: [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 })),
   effects: [
     {

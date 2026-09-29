@@ -94,7 +94,7 @@ export function toRestaurantDto(
     storeNum: r.store_num,
     foodsMaxNum: r.foods_max_num,
     foodsLockNum: r.foods_lock_num,
-    tables: tables.map(tableDto),
+    tables: tables.map((t) => tableDto(t)),
     oilLevel: r.oil_level,
     state: r.state,
     stateReason: r.state_reason,
@@ -107,6 +107,8 @@ export function toRestaurantDto(
     lastRound: extra.lastRound,
     weather: extra.weather,
     isPlanktonHost: extra.isPlanktonHost,
+    door: r.door,
+    avatar: r.avatar,
     effects: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,

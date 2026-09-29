@@ -43,15 +43,28 @@ export async function deviceSlots(
     });
 }
 
-export function tableDto(t: TableState): TableDto {
+export function tableDto(t: TableState, names?: ReadonlyMap<number, string>): TableDto {
   return {
     no: t.no,
     floor: t.floor,
     customer: t.customer,
-    ...(t.roach ? { roach: true } : {}),
-    ...(t.freeloader ? { freeloaderRestId: t.freeloader.restId } : {}),
+    ...(t.roach ? { roach: true, roachBy: t.roach.by } : {}),
+    ...(t.freeloader
+      ? {
+          freeloaderRestId: t.freeloader.restId,
+          freeloaderSince: t.freeloader.since,
+          ...(names?.has(t.freeloader.restId) ? { freeloaderName: names.get(t.freeloader.restId)! } : {}),
+        }
+      : {}),
     ...(t.last ? { last: t.last } : {}),
   };
+}
+
+/** 一批餐厅的名称 */
+export async function restNames(db: Kysely<DB>, ids: number[]): Promise<Map<number, string>> {
+  if (ids.length === 0) return new Map();
+  const rows = await db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ids).execute();
+  return new Map(rows.map((r) => [r.id, r.name]));
 }
 
 type IncomeRow = {

@@ -19,7 +19,7 @@ import { postNews } from '../news/news';
 import type { ShardService } from '../shard/service';
 import { grantGoods } from '../store/grant';
 import type { WorldService } from '../world/service';
-import { buffsOf, deviceSlots, incomePage, lastRound, logPage, tableDto } from './reads';
+import { buffsOf, deviceSlots, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 
 export interface RestaurantDeps {
@@ -140,7 +140,9 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         .select('tables')
         .where('rest_id', '=', restId)
         .executeTakeFirstOrThrow();
-      return r.tables.map(tableDto);
+      const ids = r.tables.flatMap((t) => (t.freeloader ? [t.freeloader.restId] : []));
+      const names = await restNames(d.db, ids);
+      return r.tables.map((t) => tableDto(t, names));
     },
     income: (restId: number, q: PageQuery) => incomePage(d.db, restId, q),
     buffs: (restId: number) => buffsOf(d.db, d.config, restId, d.now()),

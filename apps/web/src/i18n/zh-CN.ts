@@ -36,6 +36,7 @@ const TEXT: Record<ErrorCode | 'NETWORK', string> = {
   COOLDOWN: '操作太快了，请稍后再试',
   INVALID_CONFIG: '配置不合法，请检查标红的项',
   VERSION_CONFLICT: '配置已被别人修改，请刷新后再改',
+  NOT_FRIEND: '你们还不是好友',
   INVALID_STATE: '当前状态下不能这样做',
   INTERNAL: '服务器开小差了，请稍后再试',
   NETWORK: '网络连接失败，请稍后再试',

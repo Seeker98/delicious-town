@@ -8,7 +8,12 @@ export interface TableDto {
   /** 顾客类型（规格书 01 §1.4），0 = 空桌 */
   customer: number;
   roach?: boolean;
+  /** 放蟑螂的店；自然产生的为 null */
+  roachBy?: number | null;
   freeloaderRestId?: number;
+  freeloaderName?: string;
+  /** 白食开始时间 */
+  freeloaderSince?: string;
   last?: TableResultDto;
 }
 
@@ -59,6 +64,9 @@ export interface RestaurantDto {
   lastRound: RoundSummaryDto | null;
   weather: { id: number; name: string } | null;
   isPlanktonHost: boolean;
+  door: number;
+  /** null = 没设置头像 */
+  avatar: number | null;
   effects: EffectDto[];
   createdAt: string;
 }
