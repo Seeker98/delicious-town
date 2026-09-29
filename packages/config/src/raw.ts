@@ -178,3 +178,46 @@ export const rawRenownShop = z.object({ goodsId: int }).passthrough();
 export const rawBless = z
   .object({ id: int, value: z.object({ goodsId: int.optional() }).passthrough().nullable() })
   .passthrough();
+
+export const rawCookbookGrade = z.object({
+  grade: int,
+  name: z.string(),
+  atRatePerCookbook: z.number(),
+  spCoinAddRate: z.number(),
+  upgradeCoin: z.number(),
+  shellPerFood: int,
+});
+
+export const rawSpecialTier = z.object({
+  name: z.string(),
+  foodsrate: z.number(),
+  num: int,
+  startrate: z.number(),
+  endrate: z.number(),
+});
+
+export const rawShopPool = z.object({ pool: z.enum(['special', 'black']), goods: z.array(int) });
+
+export const rawDictTier = z.object({ dictname: z.string(), dictval: int, note: z.string() });
+
+export const rawGuessFood = z.object({ i: int, l: int, n: z.string(), o: z.number() });
+
+export const guessAwardFile = z.object({
+  byHits: z.array(z.object({ hits: int.min(1), award: awardSchema })),
+  bonus: z.array(z.object({ minHits: int.min(1), award: awardSchema })),
+});
+
+export const actionMapFile = z.object({
+  activation: z.record(z.string(), z.string()),
+  features: z.record(z.string(), z.string()),
+});
+
+const mmdd = z.string().regex(/^\d{2}-\d{2}$/);
+const ymd = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+export const holidaysFile = z.object({
+  solarMultiplier: int,
+  lunarMultiplier: int,
+  solar: z.record(mmdd, z.string()),
+  qingming: z.record(z.string().regex(/^\d{4}$/), mmdd),
+  lunar: z.record(ymd, z.string()),
+});
