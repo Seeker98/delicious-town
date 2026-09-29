@@ -8,3 +8,4 @@ export * from './rules/restaurantName';
 export * from './schemas/auth';
 export * from './schemas/shard';
 export * from './schemas/restaurant';
+export * from './schemas/world';

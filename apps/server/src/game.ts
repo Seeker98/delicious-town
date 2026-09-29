@@ -5,6 +5,8 @@ import type { PeriodicJob } from './core/jobs';
 import { createAccountService, type AccountService } from './modules/account/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
+import { worldJobs } from './modules/world/jobs';
+import { createWorldService, type WorldService } from './modules/world/service';
 
 /** 所有游戏服务的装配：HTTP 路由、worker、模拟器共用 */
 export interface Game {
@@ -13,6 +15,7 @@ export interface Game {
   shards: ShardService;
   account: AccountService;
   restaurant: RestaurantService;
+  world: WorldService;
   jobs: PeriodicJob[];
 }
 
@@ -27,13 +30,16 @@ export function createGame(app: AppDeps): Game {
     rng: app.rng ?? cryptoRng,
     shards,
   };
+  const world = createWorldService(deps);
   const jobs: PeriodicJob[] = [];
+  jobs.push(...worldJobs(world));
   return {
     app,
     deps,
     shards,
     account: createAccountService(app),
     restaurant: createRestaurantService(app, shards),
+    world,
     jobs,
   };
 }
