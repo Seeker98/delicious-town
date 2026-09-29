@@ -22,6 +22,7 @@ const envSchema = z.object({
   MAIL_FROM: z.string().default('美味小镇 <noreply@localhost>'),
   SESSION_TTL_DAYS: z.coerce.number().int().min(1).default(30),
   MIGRATE_ON_START: bool.default('false'),
+  ENABLE_TEST_API: bool.default('false'),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -31,6 +32,7 @@ export function loadEnv(source: Record<string, string | undefined> = process.env
   if (env.NODE_ENV === 'production') {
     if (!env.TURNSTILE_SECRET) throw new Error('TURNSTILE_SECRET is required in production');
     if (!env.COOKIE_SECURE) throw new Error('COOKIE_SECURE must be true in production');
+    if (env.ENABLE_TEST_API) throw new Error('ENABLE_TEST_API must be false in production');
   }
   return env;
 }
