@@ -1,0 +1,10 @@
+node_modules/
+dist/
+generated/
+.test/
+coverage/
+.env
+infra/.env
+apps/web/public/pack/
+apps/web/playwright-report/
+apps/web/test-results/
