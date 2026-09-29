@@ -28,7 +28,7 @@ export function settlementJobs(d: GameDeps, world: WorldService): PeriodicJob[] 
       name: 'mouse',
       feature: 'settlement',
       period: (now) => String(Math.floor(now.getTime() / HALF_HOUR)),
-      run: ({ shardId, period, now }) => mouseRound(d, shardId, period, now),
+      run: ({ shardId, period, now, log }) => mouseRound(d, shardId, period, now, log),
     },
   ];
 }

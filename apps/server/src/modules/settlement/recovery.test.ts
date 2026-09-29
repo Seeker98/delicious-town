@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { sql } from 'kysely';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { mouseRound } from './mouse';
@@ -63,6 +64,35 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
     expect(logs.map((l) => [l.type, l.params])).toEqual([['mouse.steal', { foodsId: 101, num: 1 }]]);
+  });
+
+  it('老鼠只进营业中的店；一家店出错只记日志，其他店照常', async () => {
+    const shardId = await alwaysMouseShard();
+    const closed = await newRestaurant(t, { shardId, patch: { state: 2 }, foods: { 101: 5 } });
+    const broken = await newRestaurant(t, { shardId, foods: { 101: 5 } });
+    const ok = await newRestaurant(t, { shardId, foods: { 101: 5 } });
+    // 让 broken 这家店写个人日志时报错，模拟单店处理失败
+    await sql`create or replace function fail_rest_log() returns trigger as $$
+      begin raise exception 'boom'; end $$ language plpgsql`.execute(t.db);
+    await sql
+      .raw(
+        `create trigger fail_rest_log_${broken.restaurantId} before insert on rest_log for each row
+         when (new.rest_id = ${broken.restaurantId}) execute function fail_rest_log()`,
+      )
+      .execute(t.db);
+    try {
+      const log = { error: vi.fn() };
+      const s = await mouseRound(t.game.deps, shardId, 'p1', new Date(), log);
+      expect((await foodNum(t, closed.restaurantId, 101)).num).toBe(5);
+      expect((await foodNum(t, ok.restaurantId, 101)).num).toBe(4);
+      expect(s.triggered).toBe(2);
+      expect(log.error).toHaveBeenCalledWith(
+        expect.objectContaining({ shardId, restId: broken.restaurantId }),
+        'mouse failed',
+      );
+    } finally {
+      await sql.raw(`drop trigger fail_rest_log_${broken.restaurantId} on rest_log`).execute(t.db);
+    }
   });
 
   it('只有锁定的食材时什么也偷不到', async () => {

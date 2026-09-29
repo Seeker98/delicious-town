@@ -59,12 +59,16 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
   return { outcome, map };
 }
 
-/** 老鼠捣乱（规格书 01 §1.9）：先按固定种子判定触发，只对触发的店加锁处理 */
+/**
+ * 老鼠捣乱（规格书 01 §1.9）：只进营业中的店（设计 §4.3，运营者裁定）。
+ * 先按固定种子判定触发，只对触发的店加锁处理；一家店出错只记日志，不影响其他店
+ */
 export async function mouseRound(
   d: GameDeps,
   shardId: number,
   period: string,
   now: Date,
+  log?: { error(obj: object, msg: string): void },
 ): Promise<MouseStats> {
   const { tuning } = await d.shards.settings(shardId);
   const mt = tuning.mouse;
@@ -72,6 +76,7 @@ export async function mouseRound(
     .selectFrom('restaurant')
     .select(['id', 'star_level', 'street_id'])
     .where('shard_id', '=', shardId)
+    .where('state', '=', 1)
     .orderBy('id')
     .execute();
   const stats: MouseStats = { triggered: 0, escaped: 0, trapped: 0, stolen: 0, nothing: 0, maps: 0 };
@@ -80,9 +85,13 @@ export async function mouseRound(
     const rate = (mt.rateBase - mt.ratePerStar * r.star_level) * (r.street_id === 0 ? mt.newbieFactor : 1);
     if (!rng.chance(rate)) continue;
     stats.triggered += 1;
-    const res = await runSystemOp(d, shardId, r.id, { source: 'mouse', now, rng }, visit);
-    stats[res.outcome] += 1;
-    if (res.map) stats.maps += 1;
+    try {
+      const res = await runSystemOp(d, shardId, r.id, { source: 'mouse', now, rng }, visit);
+      stats[res.outcome] += 1;
+      if (res.map) stats.maps += 1;
+    } catch (err) {
+      log?.error({ err, shardId, period, restId: r.id }, 'mouse failed');
+    }
   }
   return stats;
 }
