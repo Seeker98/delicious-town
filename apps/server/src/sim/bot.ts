@@ -155,7 +155,7 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     }
   }
 
-  // 升星只差凭证时：钱够就买凭证升星；钱不够就把凭证的钱攒下来，本次不再花在餐桌、油壶和菜场上
+  // 升星只差凭证时：钱够就买凭证升星；钱不够就把凭证的钱攒下来，本次不再花在油壶、餐桌和菜场上
   const star = await game.growth.starNeed(ctx);
   let saving = 0;
   if (star.available && star.nextStar !== null) {
@@ -169,6 +169,27 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     if (others) await attempt(() => game.growth.starUp(ctx));
   }
 
+  // 扩油壶：等级和星级够了就扩；银币不够时把钱攒下来（油壶小，夜里没人上线会断油停业）
+  const oil = await game.growth.oilNeed(ctx);
+  const oilGate = oil.checks.filter((c) => c.key === 'level' || c.key === 'star').every((c) => c.ok);
+  if (saving === 0 && oil.nextLevel !== null && oilGate) {
+    const lacking = oil.checks.filter((x) => x.key === 'goods' && !x.ok);
+    const goodsCost = lacking.reduce(
+      (sum, c) => sum + config.requireGoods(c.id!).coin * (c.need - c.have),
+      0,
+    );
+    const cost = (oil.checks.find((c) => c.key === 'coin')?.need ?? 0) + goodsCost;
+    if ((await rest()).coin >= cost) {
+      for (const c of lacking) {
+        const g = config.requireGoods(c.id!);
+        const num = c.need - c.have;
+        if (g.onSale) await attempt(() => game.shop.buy(ctx, { goodsId: g.id, num }));
+        else await attempt(() => game.shop.buyBlack(ctx, { goodsId: g.id, num }));
+      }
+      await attempt(() => game.growth.oilExpand(ctx));
+    } else saving = cost;
+  }
+
   // 升级只提高餐桌上限，实际的桌子去商店买餐桌A补上（设计文档 裁定 10）
   r = await rest();
   const tableCap = Math.min(r.tableNum, (r.starLevel + 1) * config.tuning.rest.tablesPerFloor);
@@ -179,21 +200,6 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
   );
   if (tables > 0 && (await attempt(() => game.shop.buy(ctx, { goodsId: tableA.id, num: tables }))))
     for (let i = 0; i < tables; i++) await attempt(() => game.store.use(ctx, { goodsId: tableA.id, num: 1 }));
-
-  const oil = await game.growth.oilNeed(ctx);
-  if (
-    saving === 0 &&
-    oil.nextLevel !== null &&
-    oil.checks.filter((c) => c.key !== 'goods').every((c) => c.ok)
-  ) {
-    for (const c of oil.checks.filter((x) => x.key === 'goods' && !x.ok)) {
-      const g = config.requireGoods(c.id!);
-      const num = c.need - c.have;
-      if (g.onSale) await attempt(() => game.shop.buy(ctx, { goodsId: g.id, num }));
-      else await attempt(() => game.shop.buyBlack(ctx, { goodsId: g.id, num }));
-    }
-    await attempt(() => game.growth.oilExpand(ctx));
-  }
 
   await shopForFoods(game, bot, attempt, saving);
 
