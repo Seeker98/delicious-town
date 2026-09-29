@@ -1,0 +1,60 @@
+import type { GameEvent, RestLogDto } from '@dt/shared';
+import { formatNum } from './format';
+
+export interface Names {
+  goodsName(id: number): string;
+  foodName(id: number): string;
+}
+
+const KIND_NAMES: Record<string, string> = {
+  coin: '银币',
+  diamond: '钻石',
+  exp: '经验',
+  renown: '声望',
+  oil: '油',
+  strength: '体力',
+};
+
+export function eventText(e: GameEvent, names: Names): string {
+  const verb = e.type === 'gain' ? '获得' : '消耗';
+  let what: string;
+  if (e.kind === 'goods') what = `${names.goodsName(e.id ?? 0)}×${formatNum(e.num)}`;
+  else if (e.kind === 'foods') what = `${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
+  else what = `${KIND_NAMES[e.kind] ?? e.kind} ${formatNum(e.num)}`;
+  return `${verb} ${what}${e.lucky ? '（幸运）' : ''}`;
+}
+
+type P = Record<string, unknown>;
+const n = (p: P, k: string) => Number(p[k] ?? 0);
+
+const LOGS: Record<string, (p: P, names: Names) => string> = {
+  'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,
+  'star.up': (p) => `餐厅升到了 ${n(p, 'star')} 星`,
+  'oil.expand': (p) => `油壶扩容到 ${n(p, 'level')} 级（上限 ${formatNum(n(p, 'oilMax'))}）`,
+  'rest.closed': () => '油用光了，餐厅停业',
+  'rest.reopen': () => '加满了油，餐厅恢复营业',
+  'rest.rename': (p) => `餐厅改名为「${String(p.to ?? '')}」`,
+  'rest.move': () => '餐厅搬家了',
+  'mouse.escape': () => '老鼠来了，幸运地躲过一劫',
+  'mouse.trap': (p) => `捕鼠夹抓到了老鼠，得到 ${formatNum(n(p, 'coin'))} 银币`,
+  'mouse.steal': (p, names) => `老鼠偷走了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
+  'mouse.nothing': () => '老鼠来了，什么也没偷到',
+  'mouse.map': () => '老鼠留下了一张探险图',
+  'krab.happy': () => '蟹老板吃得很满意，回味无穷',
+  'krab.angry': () => '蟹老板扫兴而归',
+  'krab.husky': () => '蟹老板摸了摸二哈，没有生气',
+  'krab.painting': () => '蟹老板欣赏名画，心满意足',
+  'krab.driven': () => '赶走了生气的蟹老板',
+  'plankton.appear': () => '痞老板来店里了',
+  'plankton.driven': () => '赶走了痞老板',
+  'fridge.drop': (p, names) => `冰箱满了，丢掉了 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
+  'goods.drop': (p, names) => `超过持有上限，丢掉了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
+  'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
+  'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
+  'market.guess': (p) => `菜场竞猜开奖：猜中 ${n(p, 'hits')} 种`,
+};
+
+export function logText(l: RestLogDto, names: Names): string {
+  const f = LOGS[l.type];
+  return f ? f(l.params, names) : l.type;
+}

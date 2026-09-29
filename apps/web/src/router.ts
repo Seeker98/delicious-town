@@ -46,6 +46,12 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/RestaurantHomeView.vue'),
     meta: { needRestaurant: true },
   },
+  {
+    path: '/more',
+    name: 'more',
+    component: () => import('./views/MoreView.vue'),
+    meta: { needRestaurant: true },
+  },
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 

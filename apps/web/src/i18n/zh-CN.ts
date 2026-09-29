@@ -46,9 +46,99 @@ const NAME_REASON: Record<string, string> = {
   reserved: '名称里不能包含小镇人物或官方字样',
 };
 
+export interface NameResolver {
+  goodsName(id: number): string;
+  foodName(id: number): string;
+}
+let names: NameResolver = { goodsName: (id) => `道具${id}`, foodName: (id) => `食材${id}` };
+/** 由目录 store 在加载后注入，错误文案里才能显示道具、食材名称 */
+export function setNameResolver(r: NameResolver): void {
+  names = r;
+}
+
+const KIND: Record<string, string> = {
+  coin: '银币',
+  diamond: '钻石',
+  strength: '体力',
+  attrPoint: '属性点',
+};
+
+const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
+  level: (p) => `餐厅等级不够（需要 ${String(p.need)} 级）`,
+  star: (p) => `星级不够（需要 ${String(p.need)} 星）`,
+  cookbooks: (p) => `学会的食谱不够（需要 ${String(p.need)} 道）`,
+  not_available: () => '这个星级暂未开放',
+  slot_locked: () => '这个设施位还没开放',
+  statue: (p) => `需要持有 ${names.goodsName(Number(p.goodsId))}`,
+  necklace: () => '需要佩戴有效的爱心项链',
+  task: (p) => `任务还没完成（${String(p.progress)}/${String(p.target)}）`,
+  activation: (p) => `活跃度不够（需要 ${String(p.need)}）`,
+};
+
+const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
+  market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
+  foods_max: (p) => `单种食材最多 ${String(p.max)} 个`,
+  tables: () => '餐桌已经摆满了（受等级和楼层限制）',
+  lock: () => '锁定格用完了',
+  owned: () => '已经拥有了，不能再买',
+  max: (p) => `最多持有 ${String(p.max)} 个`,
+};
+
+const STATE: Record<string, string> = {
+  oil_full: '油壶已经是满的',
+  max_star: '已经是最高星级了',
+  max_oil: '油壶已经是最高级了',
+  wrong_device: '这个道具不能摆在这个位置',
+  plaque_in_use: '这块牌匾已经摆在别的位置了',
+  same_name: '新名字和现在一样',
+  bad_street: '不能搬到这条街',
+  already_on: '已经开启了',
+  already_off: '已经关闭了',
+  flag: '档位不对',
+  not_plankton_host: '痞老板不在你店里',
+  no_angry_krab: '蟹老板没有生气',
+  no_food: '橱柜里没有这种食材',
+  not_locked: '这种食材没有锁定',
+  fridge_empty: '冰箱里没有这种食材',
+  cannot_handle: '这个等级的食材不能这样处理',
+  odd_num: '合成需要成对的食材',
+  no_batch: '这个道具不能批量使用',
+  no_points_to_reset: '还没有加过属性点',
+  not_on_sale: '没有在售',
+  no_special: '今天还没有特价',
+  single: '一次只能买 1 个',
+  not_sellable: '这个道具不能出售',
+  keep_one_plaque: '牌匾至少要留 1 块',
+  not_discardable: '这个道具不能丢弃',
+  not_owned: '没有这个道具',
+  item_gone: '这批货已经下架了',
+  pick_count: '竞猜的食材数量不对',
+  bad_food: '只能竞猜 1~2 级食材',
+  not_visible: '这个任务现在不能领取',
+};
+
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
   if (code === 'RESTAURANT_NAME_INVALID' && typeof params.reason === 'string' && NAME_REASON[params.reason]) {
     return NAME_REASON[params.reason]!;
+  }
+  if (code === 'NOT_ENOUGH') {
+    const kind = String(params.kind ?? '');
+    const what =
+      kind === 'goods'
+        ? names.goodsName(Number(params.id))
+        : kind === 'foods'
+          ? names.foodName(Number(params.id))
+          : (KIND[kind] ?? '数量');
+    return `${what}不够（需要 ${String(params.need)}，现有 ${String(params.have)}）`;
+  }
+  if (code === 'REQUIREMENT_NOT_MET' && typeof params.reason === 'string' && REQUIREMENT[params.reason]) {
+    return REQUIREMENT[params.reason]!(params);
+  }
+  if (code === 'LIMIT_REACHED' && typeof params.what === 'string' && LIMIT[params.what]) {
+    return LIMIT[params.what]!(params);
+  }
+  if (code === 'INVALID_STATE' && typeof params.reason === 'string' && STATE[params.reason]) {
+    return STATE[params.reason]!;
   }
   return (TEXT as Record<string, string>)[code] ?? `出错了（${code}）`;
 }

@@ -26,3 +26,40 @@ body {
   height: 24px;
   object-fit: contain;
 }
+.dt-main-nav {
+  padding-bottom: 72px;
+}
+.dt-bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: 720px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  z-index: 1030;
+}
+.dt-bottom-nav a {
+  color: #666;
+  text-decoration: none;
+}
+.dt-bottom-nav a.router-link-exact-active {
+  color: var(--dt-primary);
+}
+.dt-toasts {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 76px;
+  width: calc(100% - 32px);
+  max-width: 688px;
+  z-index: 1040;
+}
+.dt-tag {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: #f1f3f5;
+  font-size: 12px;
+}
