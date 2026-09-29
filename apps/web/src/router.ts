@@ -47,6 +47,30 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/rest/floor',
+    name: 'floor',
+    component: () => import('./views/RestFloorView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/rest/income',
+    name: 'income',
+    component: () => import('./views/RestIncomeView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/rest/info',
+    name: 'info',
+    component: () => import('./views/RestInfoView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/rest/tasks',
+    name: 'tasks',
+    component: () => import('./views/RestTasksView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/more',
     name: 'more',
     component: () => import('./views/MoreView.vue'),
