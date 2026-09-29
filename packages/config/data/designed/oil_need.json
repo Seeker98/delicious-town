@@ -1,0 +1,259 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "1 级来自 HAR；0~5 级容量由真实餐厅反推(1000/1500/2500/4000/5000/6500)；其余为新设计",
+ "count": 16,
+ "data": [
+  {
+   "oillevel": 1,
+   "needRestlevel": 3,
+   "needStarlevel": 0,
+   "needCoin": 5000,
+   "needGoods": [
+    {
+     "id": 24,
+     "num": 1
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 500,
+   "oilnummax": 1500
+  },
+  {
+   "oillevel": 2,
+   "needRestlevel": 8,
+   "needStarlevel": 0,
+   "needCoin": 30000,
+   "needGoods": [
+    {
+     "id": 24,
+     "num": 2
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 1000,
+   "oilnummax": 2500
+  },
+  {
+   "oillevel": 3,
+   "needRestlevel": 15,
+   "needStarlevel": 1,
+   "needCoin": 100000,
+   "needGoods": [
+    {
+     "id": 24,
+     "num": 3
+    },
+    {
+     "id": 25,
+     "num": 1
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 1500,
+   "oilnummax": 4000
+  },
+  {
+   "oillevel": 4,
+   "needRestlevel": 22,
+   "needStarlevel": 1,
+   "needCoin": 300000,
+   "needGoods": [
+    {
+     "id": 25,
+     "num": 2
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 1000,
+   "oilnummax": 5000
+  },
+  {
+   "oillevel": 5,
+   "needRestlevel": 30,
+   "needStarlevel": 1,
+   "needCoin": 800000,
+   "needGoods": [
+    {
+     "id": 25,
+     "num": 3
+    },
+    {
+     "id": 26,
+     "num": 1
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 1500,
+   "oilnummax": 6500
+  },
+  {
+   "oillevel": 6,
+   "needRestlevel": 40,
+   "needStarlevel": 2,
+   "needCoin": 2000000,
+   "needGoods": [
+    {
+     "id": 26,
+     "num": 2
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 1500,
+   "oilnummax": 8000
+  },
+  {
+   "oillevel": 7,
+   "needRestlevel": 50,
+   "needStarlevel": 3,
+   "needCoin": 5000000,
+   "needGoods": [
+    {
+     "id": 26,
+     "num": 3
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 2000,
+   "oilnummax": 10000
+  },
+  {
+   "oillevel": 8,
+   "needRestlevel": 60,
+   "needStarlevel": 4,
+   "needCoin": 10000000,
+   "needGoods": [
+    {
+     "id": 26,
+     "num": 3
+    },
+    {
+     "id": 27,
+     "num": 1
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 2000,
+   "oilnummax": 12000
+  },
+  {
+   "oillevel": 9,
+   "needRestlevel": 75,
+   "needStarlevel": 5,
+   "needCoin": 20000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 2
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 3000,
+   "oilnummax": 15000
+  },
+  {
+   "oillevel": 10,
+   "needRestlevel": 90,
+   "needStarlevel": 6,
+   "needCoin": 40000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 3
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 3000,
+   "oilnummax": 18000
+  },
+  {
+   "oillevel": 11,
+   "needRestlevel": 99,
+   "needStarlevel": 7,
+   "needCoin": 80000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 5
+    }
+   ],
+   "needPurpleshell": 0,
+   "addOilnum": 4000,
+   "oilnummax": 22000
+  },
+  {
+   "oillevel": 12,
+   "needRestlevel": 102,
+   "needStarlevel": 8,
+   "needCoin": 100000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 6
+    }
+   ],
+   "needPurpleshell": 20,
+   "addOilnum": 3000,
+   "oilnummax": 25000
+  },
+  {
+   "oillevel": 13,
+   "needRestlevel": 105,
+   "needStarlevel": 9,
+   "needCoin": 200000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 7
+    }
+   ],
+   "needPurpleshell": 40,
+   "addOilnum": 3000,
+   "oilnummax": 28000
+  },
+  {
+   "oillevel": 14,
+   "needRestlevel": 108,
+   "needStarlevel": 10,
+   "needCoin": 300000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 8
+    }
+   ],
+   "needPurpleshell": 60,
+   "addOilnum": 3000,
+   "oilnummax": 31000
+  },
+  {
+   "oillevel": 15,
+   "needRestlevel": 111,
+   "needStarlevel": 11,
+   "needCoin": 400000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 9
+    }
+   ],
+   "needPurpleshell": 80,
+   "addOilnum": 3000,
+   "oilnummax": 34000
+  },
+  {
+   "oillevel": 16,
+   "needRestlevel": 114,
+   "needStarlevel": 12,
+   "needCoin": 500000000,
+   "needGoods": [
+    {
+     "id": 27,
+     "num": 10
+    }
+   ],
+   "needPurpleshell": 100,
+   "addOilnum": 4000,
+   "oilnummax": 38000
+  }
+ ]
+}

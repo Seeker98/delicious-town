@@ -1,0 +1,20 @@
+{
+  "name": "@dt/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "sync": "tsx scripts/sync-data.ts",
+    "build": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15"
+  }
+}

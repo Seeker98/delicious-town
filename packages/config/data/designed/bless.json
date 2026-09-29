@@ -1,0 +1,180 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "许愿时按 odds 抽 1 个作为当天全镇星愿；buff 同时作为当天祝福加成；type 0 自选/1 指定食材/2 道具/3 银币/4 钻石/5 随机食材",
+ "count": 12,
+ "data": [
+  {
+   "id": 1,
+   "name": "五谷丰登",
+   "type": 5,
+   "num": 3,
+   "needAct": 60,
+   "value": {
+    "level": [
+     1,
+     2
+    ]
+   },
+   "buff": {
+    "atRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 2,
+   "name": "山珍海味",
+   "type": 5,
+   "num": 2,
+   "needAct": 100,
+   "value": {
+    "level": [
+     3,
+     4
+    ]
+   },
+   "buff": {
+    "coinRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 3,
+   "name": "心想事成",
+   "type": 0,
+   "num": 1,
+   "needAct": 120,
+   "value": {
+    "level": [
+     5,
+     5
+    ]
+   },
+   "buff": {
+    "expRate": 0.1
+   },
+   "odds": 10
+  },
+  {
+   "id": 4,
+   "name": "招财进宝",
+   "type": 3,
+   "num": 200000,
+   "needAct": 80,
+   "value": null,
+   "buff": {
+    "coinRate": 0.08
+   },
+   "odds": 10
+  },
+  {
+   "id": 5,
+   "name": "钻石恒久远",
+   "type": 4,
+   "num": 5,
+   "needAct": 150,
+   "value": null,
+   "buff": {
+    "expRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 6,
+   "name": "礼券满堂",
+   "type": 2,
+   "num": 30,
+   "needAct": 60,
+   "value": {
+    "goodsId": 1
+   },
+   "buff": {
+    "atRate": 0.03
+   },
+   "odds": 10
+  },
+  {
+   "id": 7,
+   "name": "神秘来客",
+   "type": 2,
+   "num": 1,
+   "needAct": 150,
+   "value": {
+    "goodsId": 139
+   },
+   "buff": {
+    "spRate": 0.03
+   },
+   "odds": 10
+  },
+  {
+   "id": 8,
+   "name": "蟹运当头",
+   "type": 2,
+   "num": 2,
+   "needAct": 120,
+   "value": {
+    "goodsId": 240
+   },
+   "buff": {
+    "coinRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 9,
+   "name": "探险家",
+   "type": 2,
+   "num": 2,
+   "needAct": 100,
+   "value": {
+    "goodsId": 170
+   },
+   "buff": {
+    "expRate": 0.08
+   },
+   "odds": 10
+  },
+  {
+   "id": 10,
+   "name": "万能之选",
+   "type": 2,
+   "num": 1,
+   "needAct": 100,
+   "value": {
+    "goodsId": 131
+   },
+   "buff": {
+    "atRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 11,
+   "name": "体力充沛",
+   "type": 2,
+   "num": 2,
+   "needAct": 80,
+   "value": {
+    "goodsId": 28
+   },
+   "buff": {
+    "expRate": 0.05
+   },
+   "odds": 10
+  },
+  {
+   "id": 12,
+   "name": "幸运饼干",
+   "type": 2,
+   "num": 3,
+   "needAct": 120,
+   "value": {
+    "goodsId": 491
+   },
+   "buff": {
+    "coinRate": 0.05
+   },
+   "odds": 10
+  }
+ ]
+}

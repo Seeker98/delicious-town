@@ -1,0 +1,103 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "weekGroup=0 常驻；雕像分 4 组按 ISO 周数%4+1 轮换；稀有品每人限 1 个",
+ "count": 12,
+ "data": [
+  {
+   "goodsId": 310,
+   "renown": 60,
+   "rareflag": 0,
+   "weeklyLimit": 10,
+   "weekGroup": 0,
+   "require": null
+  },
+  {
+   "goodsId": 506,
+   "renown": 120,
+   "rareflag": 0,
+   "weeklyLimit": 20,
+   "weekGroup": 0,
+   "require": "xz"
+  },
+  {
+   "goodsId": 507,
+   "renown": 100,
+   "rareflag": 0,
+   "weeklyLimit": 20,
+   "weekGroup": 0,
+   "require": "xz"
+  },
+  {
+   "goodsId": 508,
+   "renown": 90,
+   "rareflag": 0,
+   "weeklyLimit": 20,
+   "weekGroup": 0,
+   "require": "xz"
+  },
+  {
+   "goodsId": 610,
+   "renown": 150,
+   "rareflag": 0,
+   "weeklyLimit": 10,
+   "weekGroup": 0,
+   "require": "tz"
+  },
+  {
+   "goodsId": 397,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 1,
+   "require": null
+  },
+  {
+   "goodsId": 402,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 2,
+   "require": null
+  },
+  {
+   "goodsId": 438,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 3,
+   "require": null
+  },
+  {
+   "goodsId": 439,
+   "renown": 5000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 4,
+   "require": null
+  },
+  {
+   "goodsId": 460,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 1,
+   "require": null
+  },
+  {
+   "goodsId": 476,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 2,
+   "require": null
+  },
+  {
+   "goodsId": 484,
+   "renown": 3000,
+   "rareflag": 1,
+   "weeklyLimit": 1,
+   "weekGroup": 3,
+   "require": null
+  }
+ ]
+}

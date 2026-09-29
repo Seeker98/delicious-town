@@ -1,0 +1,179 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "1~7 星 = 升星礼包 117~122、321（礼包内容在道具表 value）；泛紫为新设计",
+ "count": 12,
+ "data": [
+  {
+   "starlevel": 1,
+   "award": {
+    "goods": [
+     {
+      "id": 117,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 2,
+   "award": {
+    "goods": [
+     {
+      "id": 118,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 3,
+   "award": {
+    "goods": [
+     {
+      "id": 119,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 4,
+   "award": {
+    "goods": [
+     {
+      "id": 120,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 5,
+   "award": {
+    "goods": [
+     {
+      "id": 121,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 6,
+   "award": {
+    "goods": [
+     {
+      "id": 122,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 7,
+   "award": {
+    "goods": [
+     {
+      "id": 321,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 8,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 800
+     },
+     {
+      "id": 310,
+      "num": 36
+     },
+     {
+      "id": 87,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 9,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 900
+     },
+     {
+      "id": 310,
+      "num": 72
+     },
+     {
+      "id": 87,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 10,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 1000
+     },
+     {
+      "id": 310,
+      "num": 108
+     },
+     {
+      "id": 87,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 11,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 1100
+     },
+     {
+      "id": 310,
+      "num": 144
+     },
+     {
+      "id": 87,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "starlevel": 12,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 1200
+     },
+     {
+      "id": 310,
+      "num": 180
+     },
+     {
+      "id": 87,
+      "num": 1
+     }
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,176 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "3/4/5/6/80/81 来自 HAR；100 真爱套装为新设计；90/99(玉•/铉•帽)是单件专属，不算套装",
+ "count": 7,
+ "data": [
+  {
+   "suitid": 3,
+   "name": "宋嫂套装",
+   "maxnum": 4,
+   "tiers": [
+    {
+     "neednum": 3,
+     "desc": "上座率+5%, 刀工+3%",
+     "value": {
+      "atRate": 0.05,
+      "cutting": 0.03
+     }
+    },
+    {
+     "neednum": 4,
+     "desc": "火候+5%",
+     "value": {
+      "fire": 0.05
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 4,
+   "name": "灵魂套装",
+   "maxnum": 2,
+   "tiers": [
+    {
+     "neednum": 2,
+     "desc": "上座率+3%, 被挑战时额外提升: 刀工+4%,火候+4%",
+     "value": {
+      "atRate": 0.03,
+      "defendCutting": 0.04,
+      "defendFire": 0.04
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 5,
+   "name": "沉默套装",
+   "maxnum": 3,
+   "tiers": [
+    {
+     "neednum": 2,
+     "desc": "刀工+4%,火候+4%",
+     "value": {
+      "cutting": 0.04,
+      "fire": 0.04
+     }
+    },
+    {
+     "neednum": 3,
+     "desc": "上座率+4%, 探险时额外降低2%的迷路概率",
+     "value": {
+      "atRate": 0.04,
+      "exploreSuccessRate": 0.02
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 6,
+   "name": "裁决套装",
+   "maxnum": 3,
+   "tiers": [
+    {
+     "neednum": 2,
+     "desc": "厨艺+5%,调味+6%",
+     "value": {
+      "cook": 0.05,
+      "season": 0.06
+     }
+    },
+    {
+     "neednum": 3,
+     "desc": "上座率+8%, 分解食材时5%的概率多得到一个低级食材",
+     "value": {
+      "atRate": 0.08,
+      "operFoodsAddRate": 0.05
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 80,
+   "name": "仿食神套装",
+   "maxnum": 5,
+   "tiers": [
+    {
+     "neednum": 4,
+     "desc": "厨艺+8%,调味+8%",
+     "value": {
+      "cook": 0.08,
+      "season": 0.08
+     }
+    },
+    {
+     "neednum": 5,
+     "desc": "幸运+32, 被挑战时额外提升: 刀工+6%,火候+6%",
+     "value": {
+      "luckValue": 32,
+      "defendCutting": 0.06,
+      "defendFire": 0.06
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 81,
+   "name": "食神套装",
+   "maxnum": 5,
+   "tiers": [
+    {
+     "neednum": 3,
+     "desc": "厨艺+10%",
+     "value": {
+      "cook": 0.1
+     }
+    },
+    {
+     "neednum": 4,
+     "desc": "调味+10%, 主动挑战时额外提升: 刀工+8%,火候+8%",
+     "value": {
+      "season": 0.1,
+      "attackCutting": 0.08,
+      "attackFire": 0.08
+     }
+    },
+    {
+     "neednum": 5,
+     "desc": "挑剔率+3%, 幸运+36",
+     "value": {
+      "spRate": 0.05,
+      "luckValue": 36
+     }
+    }
+   ],
+   "src": "har"
+  },
+  {
+   "suitid": 100,
+   "name": "真爱套装",
+   "maxnum": 5,
+   "src": "design",
+   "tiers": [
+    {
+     "neednum": 3,
+     "desc": "上座率+5%, 挑剔率+3%",
+     "value": {
+      "atRate": 0.05,
+      "spRate": 0.03
+     }
+    },
+    {
+     "neednum": 5,
+     "desc": "最终银币+5%, 幸运+52",
+     "value": {
+      "coinRate": 0.05,
+      "luckValue": 52
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "source": "嘻哈男孩出没地点 /Tools/getListPlace",
+ "count": 6,
+ "data": [
+  {
+   "id": 2,
+   "value": null,
+   "state": "商店"
+  },
+  {
+   "id": 1,
+   "value": null,
+   "state": "菜场"
+  },
+  {
+   "id": 3,
+   "value": null,
+   "state": "酒吧"
+  },
+  {
+   "id": 6,
+   "value": null,
+   "state": "神殿"
+  },
+  {
+   "id": 5,
+   "value": null,
+   "state": "厨塔"
+  },
+  {
+   "id": 4,
+   "value": null,
+   "state": "协会"
+  }
+ ]
+}

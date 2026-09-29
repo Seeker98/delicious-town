@@ -1,0 +1,30 @@
+{
+ "source": "集雕像阈值 dict typeid=55【新版】",
+ "count": 2,
+ "data": [
+  {
+   "id": 340,
+   "typeid": 55,
+   "typename": "雕像效果",
+   "dictname": "四像镇荒",
+   "dictval": 4,
+   "inputtime": "2026-08-12 10:47:55",
+   "state": 1,
+   "note": "{\"spBaseCoinRate\": 0.1,\"extendTimeRate\":0.1,\"info\":\"满足的挑剔顾客的挑剔菜银币+10%,餐厅摆放的设施持续时间+10%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 341,
+   "typeid": 55,
+   "typename": "雕像效果",
+   "dictname": "七像凌穹",
+   "dictval": 7,
+   "inputtime": "2026-08-12 10:47:57",
+   "state": 1,
+   "note": "{\"expRate\":0.5,\"info\":\"最终经验收益+50%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  }
+ ]
+}

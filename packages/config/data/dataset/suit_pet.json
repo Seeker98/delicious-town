@@ -1,0 +1,30 @@
+{
+ "source": "集宠物阈值 dict typeid=54【新版】",
+ "count": 2,
+ "data": [
+  {
+   "id": 337,
+   "typeid": 54,
+   "typename": "宠物效果",
+   "dictname": "三灵归元",
+   "dictval": 3,
+   "inputtime": "2026-08-11 17:06:51",
+   "state": 1,
+   "note": "{\"fogPotHour\":2,\"info\":\"揽雾瓶时长延长至4小时\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 338,
+   "typeid": 54,
+   "typename": "宠物效果",
+   "dictname": "七灵归一",
+   "dictval": 7,
+   "inputtime": "2026-08-11 17:06:51",
+   "state": 1,
+   "note": "{\"coinRate\":0.12,\"info\":\"最终银币收益+12%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  }
+ ]
+}

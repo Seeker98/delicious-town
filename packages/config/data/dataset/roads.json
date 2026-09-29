@@ -1,0 +1,41 @@
+{
+ "source": "HAR Rest/getListRoad (dict typeid=13)",
+ "count": 7,
+ "data": [
+  {
+   "id": 1,
+   "name": "一道",
+   "dictId": 103
+  },
+  {
+   "id": 2,
+   "name": "二道",
+   "dictId": 104
+  },
+  {
+   "id": 3,
+   "name": "三道",
+   "dictId": 105
+  },
+  {
+   "id": 4,
+   "name": "四道",
+   "dictId": 106
+  },
+  {
+   "id": 5,
+   "name": "五道",
+   "dictId": 107
+  },
+  {
+   "id": 6,
+   "name": "六道",
+   "dictId": 108
+  },
+  {
+   "id": 7,
+   "name": "兽",
+   "dictId": 110
+  }
+ ]
+}

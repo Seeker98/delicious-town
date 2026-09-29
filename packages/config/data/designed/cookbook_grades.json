@@ -1,0 +1,87 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "1~7 品级来自源码；8~10 为新设计外推。仙贝：升到该品级时，所需每种食材按 type 0红/1黄/2蓝 各消耗 shellPerFood 个",
+ "count": 10,
+ "data": [
+  {
+   "grade": 1,
+   "name": "普通",
+   "atRatePerCookbook": 9.8e-05,
+   "spCoinAddRate": 0.2,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 2,
+   "name": "中品",
+   "atRatePerCookbook": 9.8e-05,
+   "spCoinAddRate": 0.4,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 3,
+   "name": "上品",
+   "atRatePerCookbook": 9.8e-05,
+   "spCoinAddRate": 0.6,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 4,
+   "name": "极品",
+   "atRatePerCookbook": 9.8e-05,
+   "spCoinAddRate": 0.8,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 5,
+   "name": "金牌",
+   "atRatePerCookbook": 9.8e-05,
+   "spCoinAddRate": 1.0,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 6,
+   "name": "珍品",
+   "atRatePerCookbook": 9.5e-05,
+   "spCoinAddRate": 1.2,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 7,
+   "name": "佳肴",
+   "atRatePerCookbook": 0.00011,
+   "spCoinAddRate": 1.3,
+   "upgradeCoin": 0,
+   "shellPerFood": 0
+  },
+  {
+   "grade": 8,
+   "name": "仙珍",
+   "atRatePerCookbook": 0.00012,
+   "spCoinAddRate": 1.6,
+   "upgradeCoin": 2000000,
+   "shellPerFood": 1
+  },
+  {
+   "grade": 9,
+   "name": "圣宴",
+   "atRatePerCookbook": 0.00013,
+   "spCoinAddRate": 1.9,
+   "upgradeCoin": 3000000,
+   "shellPerFood": 2
+  },
+  {
+   "grade": 10,
+   "name": "天馔",
+   "atRatePerCookbook": 0.00014,
+   "spCoinAddRate": 2.2,
+   "upgradeCoin": 4000000,
+   "shellPerFood": 3
+  }
+ ]
+}

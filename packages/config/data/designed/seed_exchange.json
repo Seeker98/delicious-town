@@ -1,0 +1,487 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "配方精华(470) 换种子；持有不足一律不能兑换（修正旧版持有 0 可白换）",
+ "count": 96,
+ "data": [
+  {
+   "seedId": 1,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 2,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 3,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 4,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 5,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 6,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 7,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 8,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 9,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 10,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 11,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 12,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 13,
+   "seednum": 5,
+   "remnantnum": 2
+  },
+  {
+   "seedId": 14,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 15,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 16,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 17,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 18,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 19,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 20,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 21,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 22,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 23,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 24,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 25,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 26,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 27,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 28,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 29,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 30,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 31,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 32,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 33,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 34,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 35,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 36,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 37,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 38,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 39,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 40,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 41,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 42,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 43,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 44,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 45,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 46,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 47,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 48,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 49,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 50,
+   "seednum": 5,
+   "remnantnum": 3
+  },
+  {
+   "seedId": 51,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 52,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 53,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 54,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 55,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 56,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 57,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 58,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 59,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 60,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 61,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 62,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 63,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 64,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 65,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 66,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 67,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 68,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 69,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 70,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 71,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 72,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 73,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 74,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 75,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 76,
+   "seednum": 3,
+   "remnantnum": 4
+  },
+  {
+   "seedId": 77,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 78,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 79,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 80,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 81,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 82,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 83,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 84,
+   "seednum": 2,
+   "remnantnum": 5
+  },
+  {
+   "seedId": 85,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 86,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 87,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 88,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 89,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 90,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 91,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 92,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 93,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 94,
+   "seednum": 1,
+   "remnantnum": 6
+  },
+  {
+   "seedId": 95,
+   "seednum": 1,
+   "remnantnum": 30
+  },
+  {
+   "seedId": 96,
+   "seednum": 1,
+   "remnantnum": 30
+  }
+ ]
+}

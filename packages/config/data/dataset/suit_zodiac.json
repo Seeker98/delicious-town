@@ -1,0 +1,42 @@
+{
+ "source": "集生肖阈值 dict typeid=52【新版】",
+ "count": 3,
+ "data": [
+  {
+   "id": 321,
+   "typeid": 52,
+   "typename": "十二生肖效果",
+   "dictname": "四生肖",
+   "dictval": 4,
+   "inputtime": "2026-03-23 16:22:18",
+   "state": 1,
+   "note": "{\"expRate\":0.20,\"info\":\"最终经验收益+20%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 322,
+   "typeid": 52,
+   "typename": "十二生肖效果",
+   "dictname": "八生肖",
+   "dictval": 8,
+   "inputtime": "2026-03-23 16:22:18",
+   "state": 1,
+   "note": "{\"coinRate\":0.10,\"info\":\"最终银币收益+10%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 324,
+   "typeid": 52,
+   "typename": "十二生肖效果",
+   "dictname": "十二生肖",
+   "dictval": 12,
+   "inputtime": "2026-03-23 16:22:18",
+   "state": 1,
+   "note": "{\"expRate\":0.30,\"coinRate\":0.15,\"info\":\"最终经验收益+30%,最终银币收益+15%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  }
+ ]
+}

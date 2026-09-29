@@ -1,0 +1,57 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "界面说明里的 10 种饲料食材；rate=1 个食材转化的饲料量",
+ "count": 10,
+ "data": [
+  {
+   "foodsId": 238,
+   "kind": "grass",
+   "rate": 5
+  },
+  {
+   "foodsId": 256,
+   "kind": "grass",
+   "rate": 5
+  },
+  {
+   "foodsId": 122,
+   "kind": "grass",
+   "rate": 8
+  },
+  {
+   "foodsId": 563,
+   "kind": "grass",
+   "rate": 6
+  },
+  {
+   "foodsId": 529,
+   "kind": "grass",
+   "rate": 8
+  },
+  {
+   "foodsId": 239,
+   "kind": "meat",
+   "rate": 5
+  },
+  {
+   "foodsId": 298,
+   "kind": "meat",
+   "rate": 5
+  },
+  {
+   "foodsId": 260,
+   "kind": "meat",
+   "rate": 8
+  },
+  {
+   "foodsId": 262,
+   "kind": "meat",
+   "rate": 6
+  },
+  {
+   "foodsId": 242,
+   "kind": "meat",
+   "rate": 4
+  }
+ ]
+}

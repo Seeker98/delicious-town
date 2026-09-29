@@ -1,0 +1,115 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "1 星来自 HAR；2~7 星、泛紫 1~5 星为新设计（泛紫按前端：需要天馔食谱数 + 泛紫海螺 50×n）",
+ "count": 12,
+ "data": [
+  {
+   "starlevel": 1,
+   "name": "1星",
+   "needRestlevel": 13,
+   "needCookbooksnum": 15,
+   "cookbooksKind": "learned",
+   "needCertnum": 1,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 2,
+   "name": "2星",
+   "needRestlevel": 30,
+   "needCookbooksnum": 100,
+   "cookbooksKind": "learned",
+   "needCertnum": 2,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 3,
+   "name": "3星",
+   "needRestlevel": 45,
+   "needCookbooksnum": 300,
+   "cookbooksKind": "learned",
+   "needCertnum": 3,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 4,
+   "name": "4星",
+   "needRestlevel": 60,
+   "needCookbooksnum": 600,
+   "cookbooksKind": "learned",
+   "needCertnum": 4,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 5,
+   "name": "5星",
+   "needRestlevel": 75,
+   "needCookbooksnum": 1000,
+   "cookbooksKind": "learned",
+   "needCertnum": 5,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 6,
+   "name": "6星",
+   "needRestlevel": 90,
+   "needCookbooksnum": 1500,
+   "cookbooksKind": "learned",
+   "needCertnum": 6,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 7,
+   "name": "7星",
+   "needRestlevel": 99,
+   "needCookbooksnum": 2000,
+   "cookbooksKind": "learned",
+   "needCertnum": 7,
+   "needPurpleshell": 0
+  },
+  {
+   "starlevel": 8,
+   "name": "泛紫1星",
+   "needRestlevel": 102,
+   "needCookbooksnum": 200,
+   "cookbooksKind": "tianzhuan",
+   "needCertnum": 8,
+   "needPurpleshell": 50
+  },
+  {
+   "starlevel": 9,
+   "name": "泛紫2星",
+   "needRestlevel": 105,
+   "needCookbooksnum": 500,
+   "cookbooksKind": "tianzhuan",
+   "needCertnum": 9,
+   "needPurpleshell": 100
+  },
+  {
+   "starlevel": 10,
+   "name": "泛紫3星",
+   "needRestlevel": 108,
+   "needCookbooksnum": 1000,
+   "cookbooksKind": "tianzhuan",
+   "needCertnum": 10,
+   "needPurpleshell": 150
+  },
+  {
+   "starlevel": 11,
+   "name": "泛紫4星",
+   "needRestlevel": 111,
+   "needCookbooksnum": 1600,
+   "cookbooksKind": "tianzhuan",
+   "needCertnum": 11,
+   "needPurpleshell": 200
+  },
+  {
+   "starlevel": 12,
+   "name": "泛紫5星",
+   "needRestlevel": 114,
+   "needCookbooksnum": 2363,
+   "cookbooksKind": "tianzhuan",
+   "needCertnum": 12,
+   "needPurpleshell": 250
+  }
+ ]
+}

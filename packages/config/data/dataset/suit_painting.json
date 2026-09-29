@@ -1,0 +1,42 @@
+{
+ "source": "集名画阈值 dict typeid=51",
+ "count": 3,
+ "data": [
+  {
+   "id": 286,
+   "typeid": 51,
+   "typename": "名画效果",
+   "dictname": "七韵丹青",
+   "dictval": 7,
+   "inputtime": "2025-10-15 20:51:36",
+   "state": 1,
+   "note": "{\"autoAddOil\":1,\"mcCoinAdd\":1,\"info\":\"每日在油量首次低于2000时,将自动填满油壶! 烹制的特色菜最终价值+1  \"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 287,
+   "typeid": 51,
+   "typename": "名画效果",
+   "dictname": "十方绘卷",
+   "dictval": 10,
+   "inputtime": "2025-10-15 20:51:36",
+   "state": 1,
+   "note": "{\"reapAddNum\":1,\"info\":\"菜园收获时数量额外+1\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 288,
+   "typeid": 51,
+   "typename": "名画效果",
+   "dictname": "十三曜彩",
+   "dictval": 13,
+   "inputtime": "2025-10-15 20:51:36",
+   "state": 1,
+   "note": "{\"expRate\":0.80,\"info\":\"有15%概率使得蟹老板必定满足(且将延至5小时)! 最终经验收益+80%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  }
+ ]
+}

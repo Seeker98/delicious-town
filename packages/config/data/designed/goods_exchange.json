@@ -1,0 +1,1102 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "物品集合来自公开接口的获取途径(镇长-蟹黄堡/美味券/万能碎片/其他)；价格按道具等级定档，勋章/牌匾限兑 1 次",
+ "count": 73,
+ "data": [
+  {
+   "id": 1,
+   "category": "bg",
+   "goodsId": 139,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 2
+    }
+   ],
+   "times": -1,
+   "newsflag": 0
+  },
+  {
+   "id": 2,
+   "category": "bg",
+   "goodsId": 238,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 3,
+   "category": "bg",
+   "goodsId": 239,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 4,
+   "category": "bg",
+   "goodsId": 246,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 5,
+   "category": "bg",
+   "goodsId": 247,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 6,
+   "category": "bg",
+   "goodsId": 248,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 7,
+   "category": "bg",
+   "goodsId": 249,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 8,
+   "category": "bg",
+   "goodsId": 254,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 9,
+   "category": "bg",
+   "goodsId": 255,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 10,
+   "category": "bg",
+   "goodsId": 256,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 11,
+   "category": "bg",
+   "goodsId": 258,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 12,
+   "category": "bg",
+   "goodsId": 296,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 13,
+   "category": "bg",
+   "goodsId": 297,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 14,
+   "category": "bg",
+   "goodsId": 306,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 15,
+   "category": "bg",
+   "goodsId": 328,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 16,
+   "category": "bg",
+   "goodsId": 334,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 17,
+   "category": "bg",
+   "goodsId": 338,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 18,
+   "category": "bg",
+   "goodsId": 339,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 19,
+   "category": "bg",
+   "goodsId": 346,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 20,
+   "category": "bg",
+   "goodsId": 350,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 21,
+   "category": "bg",
+   "goodsId": 359,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 22,
+   "category": "bg",
+   "goodsId": 375,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 23,
+   "category": "bg",
+   "goodsId": 378,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 24,
+   "category": "bg",
+   "goodsId": 387,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 25,
+   "category": "bg",
+   "goodsId": 396,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 2
+    }
+   ],
+   "times": -1,
+   "newsflag": 0
+  },
+  {
+   "id": 26,
+   "category": "bg",
+   "goodsId": 406,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 27,
+   "category": "bg",
+   "goodsId": 408,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 28,
+   "category": "bg",
+   "goodsId": 415,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 29,
+   "category": "bg",
+   "goodsId": 416,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 30,
+   "category": "bg",
+   "goodsId": 422,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 31,
+   "category": "bg",
+   "goodsId": 461,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 5
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 32,
+   "category": "bg",
+   "goodsId": 468,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 33,
+   "category": "bg",
+   "goodsId": 472,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 34,
+   "category": "bg",
+   "goodsId": 474,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 3
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 35,
+   "category": "bg",
+   "goodsId": 528,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 180,
+     "num": 8
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 36,
+   "category": "dt",
+   "goodsId": 162,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 3
+    }
+   ],
+   "times": -1,
+   "newsflag": 0
+  },
+  {
+   "id": 37,
+   "category": "dt",
+   "goodsId": 166,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 36
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 38,
+   "category": "dt",
+   "goodsId": 238,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 99
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 39,
+   "category": "dt",
+   "goodsId": 240,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 2
+    }
+   ],
+   "times": -1,
+   "newsflag": 0
+  },
+  {
+   "id": 40,
+   "category": "dt",
+   "goodsId": 306,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 99
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 41,
+   "category": "dt",
+   "goodsId": 311,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 66
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 42,
+   "category": "dt",
+   "goodsId": 312,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 99
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 43,
+   "category": "dt",
+   "goodsId": 323,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 66
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 44,
+   "category": "dt",
+   "goodsId": 325,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 36
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 45,
+   "category": "dt",
+   "goodsId": 332,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 20
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 46,
+   "category": "dt",
+   "goodsId": 360,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 36
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 47,
+   "category": "dt",
+   "goodsId": 388,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 66
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 48,
+   "category": "dt",
+   "goodsId": 407,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 36
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 49,
+   "category": "dt",
+   "goodsId": 411,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 99
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 50,
+   "category": "dt",
+   "goodsId": 415,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 66
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 51,
+   "category": "dt",
+   "goodsId": 465,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 66
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 52,
+   "category": "dt",
+   "goodsId": 526,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 36
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 53,
+   "category": "dt",
+   "goodsId": 619,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 310,
+     "num": 99
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 54,
+   "category": "chip",
+   "goodsId": 207,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 55,
+   "category": "chip",
+   "goodsId": 208,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 56,
+   "category": "chip",
+   "goodsId": 209,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 57,
+   "category": "chip",
+   "goodsId": 210,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 80
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 58,
+   "category": "chip",
+   "goodsId": 216,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 59,
+   "category": "chip",
+   "goodsId": 217,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 60,
+   "category": "chip",
+   "goodsId": 219,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 80
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 61,
+   "category": "chip",
+   "goodsId": 336,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 62,
+   "category": "chip",
+   "goodsId": 337,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 63,
+   "category": "chip",
+   "goodsId": 410,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 64,
+   "category": "chip",
+   "goodsId": 423,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 65,
+   "category": "chip",
+   "goodsId": 448,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 66,
+   "category": "chip",
+   "goodsId": 469,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 50
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 67,
+   "category": "chip",
+   "goodsId": 477,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 68,
+   "category": "chip",
+   "goodsId": 478,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 69,
+   "category": "chip",
+   "goodsId": 482,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 70,
+   "category": "chip",
+   "goodsId": 483,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 71,
+   "category": "chip",
+   "goodsId": 531,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 30
+    }
+   ],
+   "times": 1,
+   "newsflag": 0
+  },
+  {
+   "id": 72,
+   "category": "chip",
+   "goodsId": 533,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 185,
+     "num": 80
+    }
+   ],
+   "times": 1,
+   "newsflag": 1
+  },
+  {
+   "id": 73,
+   "category": "so",
+   "goodsId": 94,
+   "num": 1,
+   "needGoods": [
+    {
+     "type": "goods",
+     "id": 240,
+     "num": 2
+    }
+   ],
+   "times": -1,
+   "newsflag": 0
+  }
+ ]
+}
