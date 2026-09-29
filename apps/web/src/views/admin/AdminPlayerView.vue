@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import type {
   AccountRole,
   AdminLedgerRowDto,
@@ -209,6 +209,12 @@ const rename = () =>
         >
           强制改名
         </button>
+        <RouterLink
+          :to="`/admin/grants?restId=${restId}`"
+          class="btn btn-outline-primary btn-sm"
+          data-testid="grant-link"
+          >给这家店发补偿</RouterLink
+        >
       </div>
       <div class="row">
         <div class="col-md-6">

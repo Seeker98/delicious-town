@@ -72,6 +72,9 @@ export interface PlayerDetailDto extends PlayerBriefDto {
 
 export interface AdminRestaurantDto {
   overview: RestaurantDto;
+  /** 店主和区服：发补偿前用来确认对象 */
+  owner: { accountId: number; username: string };
+  shardName: string;
   store: Array<{ goodsId: number; num: number; expiresAt: string | null }>;
   cupboard: Array<{ foodsId: number; num: number; fridgeNum: number; locked: boolean }>;
 }

@@ -137,6 +137,13 @@ export function createAdminPlayers(game: Game) {
 
     async restaurant(restId: number): Promise<AdminRestaurantDto> {
       await restaurantRow(restId);
+      const who = await db
+        .selectFrom('restaurant')
+        .innerJoin('account', 'account.id', 'restaurant.account_id')
+        .innerJoin('shard', 'shard.id', 'restaurant.shard_id')
+        .select(['account.id as account_id', 'account.username', 'shard.name as shard_name'])
+        .where('restaurant.id', '=', restId)
+        .executeTakeFirstOrThrow();
       const [overview, store, cupboard] = await Promise.all([
         game.restaurant.overview(restId),
         db
@@ -154,6 +161,8 @@ export function createAdminPlayers(game: Game) {
       ]);
       return {
         overview,
+        owner: { accountId: who.account_id, username: who.username },
+        shardName: who.shard_name,
         store: store.map((s) => ({
           goodsId: s.goods_id,
           num: s.num,

@@ -61,6 +61,9 @@ describe('玩家查询', () => {
     expect(d).toMatchObject({ accountId: p.accountId, role: 'player', banned: false, banReason: null });
     const rest = (await get(mod.cookie, `/restaurants/${p.restId}`)).json.data;
     expect(rest.overview.name).toBe('详情测试店');
+    // 发补偿前要能确认对象：返回店主和区服
+    expect(rest.owner).toEqual({ accountId: p.accountId, username: p.username });
+    expect(typeof rest.shardName).toBe('string');
     expect(Array.isArray(rest.store)).toBe(true);
     const ledger = (await get(mod.cookie, `/restaurants/${p.restId}/ledger?kind=goods`)).json.data;
     expect(ledger.items).toEqual([expect.objectContaining({ kind: 'goods', itemId: 1, source: 'y' })]);

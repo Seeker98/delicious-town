@@ -62,6 +62,8 @@ describe('AdminPlayerView', () => {
         oil: 800,
         oilMax: 1000,
       } as never,
+      owner: { accountId: 7, username: 'alice' },
+      shardName: '一服',
       store: [{ goodsId: 1, num: 3, expiresAt: null }],
       cupboard: [{ foodsId: 101, num: 4, fridgeNum: 1, locked: false }],
     });
@@ -84,6 +86,7 @@ describe('AdminPlayerView', () => {
       before: undefined,
     });
     expect(w.text()).toContain('admin.grant');
+    expect(w.find('[data-testid="grant-link"]').attributes('href')).toBe('/admin/grants?restId=3');
   });
 
   it('封号要填原因；协管看不到改角色', async () => {

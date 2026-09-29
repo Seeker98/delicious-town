@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import type { GrantDto, GrantItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -13,6 +14,31 @@ const toast = useToastStore();
 
 const target = ref<'rest' | 'shard'>('rest');
 const restId = ref<number | ''>('');
+/** 发给谁：输入餐厅 id 后立即查出店名、店主和区服，避免把账号 id 当成餐厅 id 发错人 */
+const restWho = ref<{ ok: boolean; text: string } | null>(null);
+const route = useRoute();
+let whoSeq = 0;
+async function lookupRest() {
+  const id = Number(restId.value);
+  const seq = ++whoSeq;
+  if (!id) {
+    restWho.value = null;
+    return;
+  }
+  try {
+    const r = await adminApi.restaurant(id);
+    if (seq !== whoSeq) return;
+    const other = admin.shardId && r.overview.shardId !== admin.shardId;
+    restWho.value = {
+      ok: !other,
+      text: `${r.overview.name} · 店主 ${r.owner.username}（账号 #${r.owner.accountId}）· ${r.shardName}${other ? ' · 不在当前区服' : ''}`,
+    };
+  } catch {
+    if (seq === whoSeq)
+      restWho.value = { ok: false, text: '找不到这家餐厅（注意这里填的是餐厅 id，不是账号 id）' };
+  }
+}
+watch(restId, lookupRest);
 const minLevel = ref<number | ''>('');
 const coin = ref<number | ''>('');
 const diamond = ref<number | ''>('');
@@ -64,6 +90,13 @@ async function submit() {
   if (!shardId) return;
   busy.value = true;
   try {
+    if (target.value === 'rest') {
+      if (!restWho.value?.ok) {
+        toast.push(restWho.value?.text ?? '请先填写餐厅 id', 'danger');
+        return;
+      }
+      if (!window.confirm(`发给 ${restWho.value.text}：${summary(items())}。确定吗？`)) return;
+    }
     if (target.value === 'shard') {
       const { count } = await adminApi.grantPreview(
         shardId,
@@ -94,6 +127,8 @@ async function submit() {
 
 let timer: ReturnType<typeof setInterval> | null = null;
 onMounted(() => {
+  const q = Number(route.query.restId);
+  if (q) restId.value = q;
   void loadList();
   timer = setInterval(() => {
     if (list.value.some((g) => g.status === 'pending' || g.status === 'running')) void loadList();
@@ -125,6 +160,13 @@ watch(() => admin.shardId, loadList);
         placeholder="餐厅 id"
         data-testid="grant-rest"
       />
+      <span
+        v-if="target === 'rest' && restWho"
+        class="align-self-center"
+        :class="restWho.ok ? 'text-success' : 'text-danger'"
+        data-testid="grant-rest-who"
+        >{{ restWho.text }}</span
+      >
       <input
         v-else
         v-model.number="minLevel"
