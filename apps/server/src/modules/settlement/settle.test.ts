@@ -74,6 +74,17 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(kept.tables[0]).toMatchObject({ customer: 3, roach: { by: 7 } });
   });
 
+  it('关闭自然蟑螂时不产生新蟑螂，原有蟑螂照常处理', () => {
+    const tables = [
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      { no: 2, floor: 1, customer: 0 },
+    ];
+    const r = settle({ tables }, { naturalRoach: false }, Array(12).fill(0.001) as number[]);
+    expect(r.tables[0]).toMatchObject({ customer: 3, roach: { by: 7 } });
+    expect(r.tables[1]!.customer).not.toBe(3);
+    expect(r.tables[1]!.roach).toBeUndefined();
+  });
+
   it('蟹老板满足：得到回味无穷(133)，银币 = 售价 ×(1+品级加成)×5', () => {
     const r = settle(
       { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 3 } },

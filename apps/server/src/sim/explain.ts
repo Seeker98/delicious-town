@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { loadGameConfig, type GameConfig } from '@dt/config';
 import { hashSeed, seededRng } from '@dt/shared';
 import { createDb } from '../db';
+import { IMPLEMENTED_FEATURES } from '../core/features';
 import { buildGlobals, buildInput, normalizeCounts, type InputPatch } from '../modules/settlement/globals';
 import { settleRestaurant } from '../modules/settlement/settle';
 import type { RatePart, SettleGlobals, SettleInput } from '../modules/settlement/types';
@@ -89,6 +90,7 @@ async function fromDb(
         krabStreet: ws?.krab_street ?? null,
         planktonRestId: ws?.plankton_rest_id ?? null,
         holidayMultiplier: config.holidayMultiplier(now),
+        naturalRoach: IMPLEMENTED_FEATURES.has('friend'),
       }),
     };
   } finally {

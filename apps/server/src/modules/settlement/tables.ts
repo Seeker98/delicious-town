@@ -181,7 +181,7 @@ export function allocateTables(
       out.drops.push({ goodsId: GOODS.plankton, num: 1 });
       out.logs.push({ type: 'plankton.appear', params: { table: table.no } });
       out.planktonAppeared = true;
-    } else if (rng.chance((t.roachRateBase - t.roachRatePerStar * s) * flags.roachMul)) {
+    } else if (g.naturalRoach && rng.chance((t.roachRateBase - t.roachRatePerStar * s) * flags.roachMul)) {
       // A2. 蟑螂
       type = 3;
       next = { ...next, customer: 3, roach: { by: null, at: input.now.toISOString() } };

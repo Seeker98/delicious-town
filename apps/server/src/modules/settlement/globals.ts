@@ -12,6 +12,7 @@ export function buildGlobals(
     krabStreet: null,
     planktonRestId: null,
     holidayMultiplier: 1,
+    naturalRoach: true,
     bless: {},
     tuning,
     cookbooks: config.cookbookIndex,

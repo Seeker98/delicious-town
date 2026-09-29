@@ -1,6 +1,7 @@
 import { hashSeed, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg } from '../../core/luck';
+import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
@@ -178,6 +179,7 @@ export async function settleShardRound(
     krabStreet: snap.krabStreet,
     planktonRestId: snap.planktonRestId,
     holidayMultiplier: d.config.holidayMultiplier(now),
+    naturalRoach: featureAvailable(settings, 'friend'),
   });
   const ids = (
     await d.db

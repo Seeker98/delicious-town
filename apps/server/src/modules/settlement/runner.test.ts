@@ -43,6 +43,25 @@ describe('settleShardRound', () => {
     expect(await income(ctx.restaurantId)).toHaveLength(1);
   });
 
+  it('打蟑螂（friend 功能）不可用时不自然产生蟑螂，否则餐桌会被永久占满', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { settlement: { roachRateBase: 1, roachRatePerStar: 0 } } }),
+      })
+      .execute();
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 1000 } });
+    await settle(shardId);
+    const tables = await t.db
+      .selectFrom('restaurant_tables')
+      .select('tables')
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(tables.tables.filter((x) => x.customer === 3)).toEqual([]);
+  });
+
   it('没油：停业，不写收益；停业店不再进入结算', async () => {
     const shardId = await createShard(t.db);
     const ctx = await newRestaurant(t, { shardId, patch: { oil: 0 } });
