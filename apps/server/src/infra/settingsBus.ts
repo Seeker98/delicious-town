@@ -14,6 +14,7 @@ export function subscribeSettings(url: string, onChange: (shardId: number) => vo
     const id = Number(msg);
     if (Number.isInteger(id)) onChange(id);
   });
-  void sub.subscribe(SETTINGS_CHANNEL);
+  // 进程很快退出（测试里建完就关）时订阅可能还没建立，这时的失败直接忽略
+  sub.subscribe(SETTINGS_CHANNEL).catch(() => undefined);
   return { close: () => sub.disconnect() };
 }
