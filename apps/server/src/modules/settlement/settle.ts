@@ -1,5 +1,6 @@
 import { GOODS } from '@dt/config';
 import type { Rng } from '@dt/shared';
+import { dtTicketDraws } from '../../core/tickets';
 import { computeRates } from './rates';
 import { allocateTables, type Candidate } from './tables';
 import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleResult } from './types';
@@ -57,9 +58,7 @@ function cookFoods(
       Math.floor(price / 100) * (1 + rates.expRate.total) * (1 + flags.cookfoodSpExpRate) * t.expMultiplier,
     );
     const times = Math.floor(1 + odds5 / t.dtTicketOddsDivisor);
-    const p = t.dtTicketBaseRate * g.holidayMultiplier + flags.luckRate / t.dtTicketLuckDivisor;
-    let tickets = 0;
-    for (let i = 0; i < times; i++) if (rng.chance(p)) tickets += 1;
+    const tickets = dtTicketDraws(times, flags.luckRate, g.holidayMultiplier, t, rng).num;
     if (tickets > 0) drops.push({ goodsId: GOODS.dtTicket, num: tickets });
     const curOdd = Math.sqrt(krab) / 100;
     if (

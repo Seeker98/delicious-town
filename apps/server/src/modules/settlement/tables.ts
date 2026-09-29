@@ -46,6 +46,30 @@ export interface TableOutcome {
   planktonAppeared: boolean;
 }
 
+/** 白食桌每轮（规格书 01 §1.5B）：店主的油、白食者本轮累计的经验、店主被吃掉的银币 */
+export function dineAccrual(
+  f: { level: number; since: string },
+  now: Date,
+  star: number,
+  base: { oilBase: number; coinBase: number; expBase: number },
+  rng: Rng,
+): { oil: number; exp: number; loss: number } {
+  const tt = Math.floor(Math.sqrt(f.level));
+  const hours = (now.getTime() - Date.parse(f.since)) / 3_600_000;
+  if (hours < 7) {
+    return {
+      oil: base.oilBase + 1 + Math.floor(Math.sqrt(tt)),
+      exp: (base.expBase + star) * 3 + rng.int(6 * tt),
+      loss: (base.coinBase + star) * 3 + rng.int(3 * tt),
+    };
+  }
+  return {
+    oil: base.oilBase + 1,
+    exp: base.expBase + star + rng.int(tt),
+    loss: base.coinBase + star + rng.int(tt),
+  };
+}
+
 /** 付费的顾客类型：普通、挑剔、章鱼哥、痞老板、蟹老板 */
 const PAYING: ReadonlySet<number> = new Set([1, 2, 6, 7, 8]);
 
@@ -117,19 +141,10 @@ export function allocateTables(
     // B. 白食桌
     if (table.customer === 9 && table.freeloader) {
       const f = table.freeloader;
-      const tt = Math.floor(Math.sqrt(f.level));
-      const hours = (input.now.getTime() - Date.parse(f.since)) / 3_600_000;
-      let loss: number;
-      let fexp: number;
-      if (hours < 7) {
-        oil = oilBase + 1 + Math.floor(Math.sqrt(tt));
-        fexp = (expBase + s) * 3 + rng.int(6 * tt);
-        loss = (coinBase + s) * 3 + rng.int(3 * tt);
-      } else {
-        oil = oilBase + 1;
-        fexp = expBase + s + rng.int(tt);
-        loss = coinBase + s + rng.int(tt);
-      }
+      const acc = dineAccrual(f, input.now, s, { oilBase, coinBase, expBase }, rng);
+      oil = acc.oil;
+      const loss = acc.loss;
+      const fexp = acc.exp;
       if (table.no <= seatedLimit) seatedLimit += 1;
       const oilT = realValue(oil, rates.oilValue.total);
       out.oil += oilT;
