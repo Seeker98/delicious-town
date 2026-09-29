@@ -107,6 +107,7 @@ describe('RestaurantHomeView', () => {
   it('显示概况、本轮收益、主线任务、设施位和加成', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="rest-name"]').text()).toBe('开张大吉店');
+    expect(w.findAll('a').some((a) => a.text() === '切换区服')).toBe(true);
     expect(w.find('[data-testid="rest-level"]').text()).toBe('1');
     expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
     expect(w.find('[data-testid="last-round"]').text()).toContain('12');

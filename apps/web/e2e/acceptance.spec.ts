@@ -1,23 +1,5 @@
-import { expect, test, type APIRequestContext } from '@playwright/test';
-
-const MAILPIT = 'http://localhost:8025';
-
-/** 轮询 Mailpit，取出发给 to 的最新邮件里的链接 */
-async function mailLink(request: APIRequestContext, to: string): Promise<string> {
-  for (let i = 0; i < 40; i++) {
-    const search = await request.get(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${to}"`)}`);
-    const { messages } = (await search.json()) as { messages: Array<{ ID: string }> };
-    if (messages.length > 0) {
-      const msg = (await (await request.get(`${MAILPIT}/api/v1/message/${messages[0]!.ID}`)).json()) as {
-        Text: string;
-      };
-      const m = /https?:\/\/\S+token=[A-Za-z0-9_-]+/.exec(msg.Text);
-      if (m) return m[0];
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`no mail for ${to}`);
-}
+import { expect, test } from '@playwright/test';
+import { mailLink } from './helpers';
 
 test('注册 → 验证邮箱 → 选区服 → 开店；同一账号在二服再开一家，互不影响', async ({ page, request }) => {
   const id = Date.now().toString(36).slice(-7);

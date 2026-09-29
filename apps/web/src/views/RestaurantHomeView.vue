@@ -103,9 +103,10 @@ onBeforeUnmount(() => {
   <div v-else>
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="mb-0" data-testid="rest-name">{{ rest.name }}</h5>
-      <RouterLink to="/weather" class="small">
-        <i class="bi bi-cloud-sun"></i> {{ rest.weather?.name ?? '' }}
-      </RouterLink>
+      <span class="small">
+        <RouterLink to="/weather"><i class="bi bi-cloud-sun"></i> {{ rest.weather?.name ?? '' }}</RouterLink>
+        <RouterLink to="/shards" class="ms-2">切换区服</RouterLink>
+      </span>
     </div>
     <div class="small text-muted mb-2">
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
