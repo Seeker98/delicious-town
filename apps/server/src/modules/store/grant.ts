@@ -1,21 +1,22 @@
-import { sql, type Kysely } from 'kysely';
-import { goodsEffectHours, type GameConfig, type Goods } from '@dt/config';
+import type { Kysely } from 'kysely';
+import { DEVICE_TYPE, goodsEffectHours, GOODS_TYPE, type GameConfig, type Goods } from '@dt/config';
 import type { DB } from '../../db/schema';
-import { upsertEffectSource } from '../effects/service';
+import { markEffectsDirty, upsertEffectSource } from '../effects/service';
 
-const HONOR_TYPE = 9;
-const STREET_MEDAL_BASE = 140;
+/** 街道勋章：type 9 且 devicetype 是街道号（江西街起 id 不连续，不能按 140 + 街道号判断） */
+export function sourceTypeForGoods(g: Goods, config: GameConfig): 'street' | 'honor' {
+  return config.isStreetMedal(g) ? 'street' : 'honor';
+}
 
-/** 街道勋章：id = 140 + 街道号，devicetype = 街道号（规格书 00 §0.6） */
-export function sourceTypeForGoods(g: Goods): 'street' | 'honor' {
-  const isStreetMedal =
-    g.type === HONOR_TYPE && g.deviceType !== null && g.id === STREET_MEDAL_BASE + g.deviceType;
-  return isStreetMedal ? 'street' : 'honor';
+export interface GrantResult {
+  granted: number;
+  dropped: number;
+  expiresAt: Date | null;
 }
 
 /**
- * 给餐厅发道具（规格书 00 §0.9）：勋章数量恒为 1、再次获得刷新有效期，并写入加成来源；
- * 可叠加道具累加到持有上限。不可叠加的厨具实例在子项目 2 实现。
+ * 给餐厅发道具（规格书 00 §0.9）：勋章数量恒为 1、再次获得刷新有效期并写入加成来源；
+ * 其他道具累加到持有上限，超出部分丢弃。只有勋章在仓库里带有效期，设施的时长在摆放时才开始算。
  */
 export async function grantGoods(
   db: Kysely<DB>,
@@ -24,29 +25,40 @@ export async function grantGoods(
   goodsId: number,
   num: number,
   now: Date,
-): Promise<void> {
+  opts: { hours?: number | null } = {},
+): Promise<GrantResult> {
   const g = config.requireGoods(goodsId);
-  const hours = goodsEffectHours(g);
+  const isHonor = g.type === GOODS_TYPE.honor;
+  const hours = isHonor ? (opts.hours !== undefined ? opts.hours : goodsEffectHours(g)) : null;
   const expiresAt = hours !== null ? new Date(now.getTime() + hours * 3600_000) : null;
-  const isHonor = g.type === HONOR_TYPE;
-  const qty = isHonor ? 1 : Math.min(num, g.maxNum);
+  const before = await db
+    .selectFrom('store_item')
+    .select('num')
+    .where('rest_id', '=', restId)
+    .where('goods_id', '=', goodsId)
+    .executeTakeFirst();
+  const have = before?.num ?? 0;
+  const target = isHonor ? 1 : Math.min(have + num, g.maxNum);
+  const granted = isHonor ? 1 : target - have;
+  const dropped = isHonor ? 0 : num - granted;
   await db
     .insertInto('store_item')
-    .values({ rest_id: restId, goods_id: goodsId, num: qty, acquired_at: now, expires_at: expiresAt })
+    .values({ rest_id: restId, goods_id: goodsId, num: target, acquired_at: now, expires_at: expiresAt })
     .onConflict((oc) =>
-      oc.columns(['rest_id', 'goods_id']).doUpdateSet({
-        num: isHonor ? 1 : sql<number>`least(store_item.num + ${qty}, ${g.maxNum})`,
-        acquired_at: now,
-        expires_at: expiresAt,
-      }),
+      oc
+        .columns(['rest_id', 'goods_id'])
+        .doUpdateSet({ num: target, acquired_at: now, expires_at: expiresAt }),
     )
     .execute();
   if (isHonor) {
     await upsertEffectSource(db, restId, {
-      sourceType: sourceTypeForGoods(g),
+      sourceType: sourceTypeForGoods(g, config),
       sourceId: g.id,
       effects: g.effects,
       expiresAt,
     });
+  } else if (g.type === GOODS_TYPE.device && g.deviceType === DEVICE_TYPE.plaque && have === 0) {
+    await markEffectsDirty(db, restId);
   }
+  return { granted, dropped, expiresAt };
 }

@@ -38,8 +38,9 @@ describe('grantGoods', () => {
   });
 
   it('街道勋章的来源类型是 street，永久有效', async () => {
-    expect(sourceTypeForGoods(config.requireGoods(140))).toBe('street');
-    expect(sourceTypeForGoods(config.requireGoods(100))).toBe('honor');
+    expect(sourceTypeForGoods(config.requireGoods(140), config)).toBe('street');
+    expect(sourceTypeForGoods(config.requireGoods(187), config)).toBe('street');
+    expect(sourceTypeForGoods(config.requireGoods(100), config)).toBe('honor');
     const restId = await newRest();
     await grantGoods(db, config, restId, 140, 1, new Date());
     const [effect] = await listActiveEffects(db, restId, new Date());
