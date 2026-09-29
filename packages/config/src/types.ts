@@ -1,3 +1,4 @@
+import type { GoodsUse } from './goodsUse';
 import type { Tuning } from './tuning';
 
 export interface IdNum {
@@ -52,6 +53,8 @@ export interface Goods {
   effects: Record<string, number>;
   /** value 为数组时，解析成礼包项 */
   gift: GiftItem[] | null;
+  /** 使用效果；null = 不能使用 */
+  use: GoodsUse | null;
 }
 
 export interface IdNumFood {

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
+import { deriveGoodsUse } from './goodsUse';
 import { tuningSchema } from './tuning';
 import type {
   ActivationReward,
@@ -183,7 +184,7 @@ export function buildBundle(src: SourceData): BuildResult {
       if (r.success) gift = r.data;
       else errors.push(`goods ${g.id} gift is malformed: ${r.error.issues[0]?.message ?? ''}`);
     }
-    return {
+    const item: Goods = {
       id: g.id,
       name: g.name,
       type: g.type,
@@ -200,7 +201,10 @@ export function buildBundle(src: SourceData): BuildResult {
       value,
       effects: numericEntries(value),
       gift,
+      use: null,
     };
+    item.use = deriveGoodsUse(item);
+    return item;
   });
   unique(
     'goods',

@@ -1,17 +1,20 @@
 import { z } from 'zod';
 import { restaurantDefaultsSchema } from './raw';
 import type { GameConfig } from './runtime';
+import { tuningSchema, type Tuning } from './tuning';
 import type { RestaurantDefaults } from './types';
 
 export interface ShardSettings {
   /** 功能开关：未列出的功能默认开启 */
   features: Record<string, boolean>;
   restaurant: RestaurantDefaults;
+  tuning: Tuning;
 }
 
 const shardSettingsSchema = z.object({
   features: z.record(z.string(), z.boolean()),
   restaurant: restaurantDefaultsSchema,
+  tuning: tuningSchema,
 });
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
@@ -27,7 +30,11 @@ function deepMerge(base: unknown, override: unknown): unknown {
 
 /** 基础配置 + 区服覆盖（深合并，数组整体替换），结果再校验一遍 */
 export function resolveShardSettings(config: GameConfig, override: unknown): ShardSettings {
-  const base: ShardSettings = { features: {}, restaurant: config.bundle.restaurantDefaults };
+  const base: ShardSettings = {
+    features: {},
+    restaurant: config.bundle.restaurantDefaults,
+    tuning: config.tuning,
+  };
   return shardSettingsSchema.parse(deepMerge(base, isPlainObject(override) ? override : {}));
 }
 
