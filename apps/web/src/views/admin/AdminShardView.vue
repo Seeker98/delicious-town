@@ -1,0 +1,210 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
+import type { ShardSettingsDto } from '@dt/shared';
+import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
+import SettingRow from '../../components/admin/SettingRow.vue';
+import { errorMessage } from '../../i18n/zh-CN';
+import { useAdminStore } from '../../stores/admin';
+import { useToastStore } from '../../stores/toast';
+import { getAt, groupOf, leafPaths, removeAt, setAt, type Tree } from '../../utils/settingsTree';
+
+/** 常用项置顶（设计文档第 5 节） */
+const PINNED = [
+  'tuning.settlement.expMultiplier',
+  'tuning.market.dailyStock',
+  'tuning.market.dailyKinds',
+  'tuning.market.specialKinds',
+  'tuning.rest.atRateBase',
+  'restaurant.coin',
+  'restaurant.giftFoods',
+];
+
+const route = useRoute();
+const admin = useAdminStore();
+const toast = useToastStore();
+const shardId = computed(() => Number(route.params.id));
+const data = ref<ShardSettingsDto | null>(null);
+const draft = ref<Tree>({});
+const note = ref('');
+const busy = ref(false);
+const badInput = ref(new Set<string>());
+/** 写错的原文：标红时仍显示用户输入的内容，不回退成旧值 */
+const rawText = ref<Record<string, string>>({});
+const badServer = ref(new Set<string>());
+const readOnly = computed(() => admin.me?.role !== 'admin');
+
+async function load() {
+  try {
+    data.value = await adminApi.settings(shardId.value);
+    draft.value = structuredClone(data.value.override) as Tree;
+    badInput.value = new Set();
+    badServer.value = new Set();
+  } catch (e) {
+    toast.push(errorMessage(e, '读取配置失败'), 'danger');
+  }
+}
+watch(shardId, load, { immediate: true });
+
+const defaults = computed<Tree>(() =>
+  data.value ? { restaurant: data.value.defaults.restaurant, tuning: data.value.defaults.tuning } : {},
+);
+const paths = computed(() => leafPaths(defaults.value));
+const pinned = computed(() => PINNED.filter((p) => paths.value.includes(p)));
+const groups = computed(() => {
+  const m = new Map<string, string[]>();
+  for (const p of paths.value) {
+    if (PINNED.includes(p)) continue;
+    const g = groupOf(p);
+    m.set(g, [...(m.get(g) ?? []), p]);
+  }
+  return [...m.entries()];
+});
+
+function kindOf(p: string): 'number' | 'boolean' | 'json' {
+  const v = getAt(defaults.value, p);
+  return typeof v === 'number' ? 'number' : typeof v === 'boolean' ? 'boolean' : 'json';
+}
+const current = (p: string) => {
+  if (badInput.value.has(p) && p in rawText.value) return rawText.value[p];
+  const o = getAt(draft.value, p);
+  return o === undefined ? getAt(defaults.value, p) : o;
+};
+const rowProps = (p: string) => ({
+  path: p,
+  kind: kindOf(p),
+  def: getAt(defaults.value, p),
+  value: current(p),
+  effective: getAt(data.value?.effective, p),
+  overridden: getAt(draft.value, p) !== undefined,
+  readOnly: readOnly.value,
+  error: badInput.value.has(p) || badServer.value.has(p),
+});
+
+function mark(p: string, bad: boolean) {
+  const s = new Set(badInput.value);
+  if (bad) s.add(p);
+  else s.delete(p);
+  badInput.value = s;
+}
+
+function onInput(p: string, e: Event) {
+  const el = e.target as HTMLInputElement | HTMLTextAreaElement;
+  const kind = kindOf(p);
+  let v: unknown;
+  if (kind === 'number') {
+    if (el.value === '' || !Number.isFinite(Number(el.value))) {
+      rawText.value = { ...rawText.value, [p]: el.value };
+      return mark(p, true);
+    }
+    v = Number(el.value);
+  } else if (kind === 'boolean') {
+    v = (el as HTMLInputElement).checked;
+  } else {
+    try {
+      v = JSON.parse(el.value);
+    } catch {
+      rawText.value = { ...rawText.value, [p]: el.value };
+      return mark(p, true);
+    }
+  }
+  mark(p, false);
+  draft.value = setAt(draft.value, p, v);
+}
+
+function reset(p: string) {
+  mark(p, false);
+  draft.value = removeAt(draft.value, p);
+}
+
+const featureOn = (name: string) => getAt(draft.value, `features.${name}`) !== false;
+function setFeature(name: string, enabled: boolean) {
+  draft.value = enabled
+    ? removeAt(draft.value, `features.${name}`)
+    : setAt(draft.value, `features.${name}`, false);
+}
+
+const dirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(data.value?.override ?? {}));
+
+async function save() {
+  if (!data.value) return;
+  busy.value = true;
+  try {
+    await adminApi.saveOverride(shardId.value, {
+      override: draft.value,
+      note: note.value.trim(),
+      version: data.value.version,
+    });
+    toast.push('已保存，所有进程立即生效');
+    note.value = '';
+    await load();
+  } catch (e) {
+    toast.push(errorMessage(e, '保存失败'), 'danger');
+    if (e instanceof ApiError && e.code === 'INVALID_CONFIG') {
+      const issues = (e.params.issues ?? []) as Array<{ path: string }>;
+      badServer.value = new Set(issues.map((i) => i.path));
+    }
+  } finally {
+    busy.value = false;
+  }
+}
+</script>
+
+<template>
+  <div v-if="data">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <h5 class="mb-0">区服数值</h5>
+      <span class="small text-muted">版本 {{ data.version }}</span>
+      <RouterLink :to="`/admin/shards/${shardId}/history`" class="small ms-auto">修改历史</RouterLink>
+    </div>
+    <p v-if="readOnly" class="small text-muted">你是协管，只能查看。</p>
+    <h6>常用</h6>
+    <SettingRow
+      v-for="p in pinned"
+      :key="p"
+      v-bind="rowProps(p)"
+      @edit="onInput(p, $event)"
+      @reset="reset(p)"
+    />
+    <h6 class="mt-3">功能开关</h6>
+    <div class="d-flex flex-wrap gap-3 small">
+      <label v-for="f in data.features" :key="f.name">
+        <input
+          type="checkbox"
+          class="form-check-input me-1"
+          :checked="featureOn(f.name)"
+          :disabled="readOnly"
+          :data-testid="`feature-${f.name}`"
+          @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
+        />{{ f.name }}
+      </label>
+    </div>
+    <details v-for="[g, ps] in groups" :key="g" class="mt-2">
+      <summary>{{ g }}（{{ ps.length }}）</summary>
+      <SettingRow
+        v-for="p in ps"
+        :key="p"
+        v-bind="rowProps(p)"
+        @edit="onInput(p, $event)"
+        @reset="reset(p)"
+      />
+    </details>
+    <div v-if="!readOnly" class="sticky-bottom bg-white border-top py-2 mt-3 d-flex gap-2">
+      <input
+        v-model="note"
+        class="form-control form-control-sm"
+        placeholder="修改说明（必填）"
+        data-testid="save-note"
+      />
+      <button
+        class="btn btn-primary btn-sm text-nowrap"
+        data-testid="save-settings"
+        :disabled="busy || !dirty || !note.trim() || badInput.size > 0"
+        @click="save"
+      >
+        保存
+      </button>
+    </div>
+  </div>
+</template>
