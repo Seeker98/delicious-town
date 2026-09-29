@@ -27,6 +27,19 @@ export const GOODS = {
   an2025Plaque: 526, // 2025 纪念牌匾
   mdcgPlaque: 619, // 马到成功
   purpleShell: 610, // 泛紫海螺
+  redPants: 100, // 红内裤
+  roachKiller: 156, // 午夜蟑螂杀手（灭蟑能手）
+  firecracker: 157, // 鞭炮
+  lantern: 158, // 灯笼
+  fu: 159, // 福
+  bangle: 228, // 银手镯
+  heartache: 250, // 痛心入骨
+  godsHand: 251, // 神之一手
+  thumbKing: 348, // 点赞王
+  magicLamp: 389, // 神灯
+  excitedHeart: 406, // 激动的心
+  voodoo: 423, // 巫毒娃娃
+  townCare: 459, // 镇长的关心
 } as const;
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */

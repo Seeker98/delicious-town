@@ -147,5 +147,31 @@
       [30, 25]
     ],
     "dayWeightScale": 100
+  },
+  "friend": {
+    "requireVerifiedEmail": true,
+    "maxFriends": 199,
+    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "heartExpMul": 3, "heartStrengthMul": 1.5, "baseSeats": 1 },
+    "roach": {
+      "layBase": 3, "layLevelRate": 0.2, "layCoin": 5, "layExp": 5,
+      "killCoin": 10, "killExp": 5, "killCoinLevelRate": 0.5, "killSelfRate": 1.5,
+      "killStrength": { "self": 1, "friend": 2, "npc": 0 },
+      "ticketRate": 0.1, "ticketMax": 3
+    },
+    "flip": {
+      "baseSlots": 5, "slotsPerStar": 5, "coolHours": 22, "coolRandHours": 4, "npcCoolHours": 10,
+      "cheapTimes": 100, "caughtCoinPerLevel": 100, "npcCaughtCoinPerStar": 10,
+      "hitRate": 0.3, "blessedRate": 0.8, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
+    },
+    "exchange": {
+      "maxLevel": 5, "base": 14, "feeRate": 0.5, "lockedFeeMul": 2, "perDayTotalMul": 10, "takenBase": 10,
+      "npcBase": 8, "stormCaughtRate": 0.5, "bangleBase": 0.3, "bangleFactor": 0.0006
+    },
+    "thumbs": { "rewardTimes": 10, "ticketMax": 2, "overRenown": -1, "strengthMax": 3 },
+    "refuel": { "bigTank": 8000, "drawsPerChunk": 2 },
+    "npc": {
+      "name": "蟹老板", "level": 60, "star": 5, "tables": 32, "oil": 1000000000, "avatar": 12, "door": 7,
+      "roachRate": 0.02, "restockKinds": 30, "restockNum": 5
+    }
   }
 }

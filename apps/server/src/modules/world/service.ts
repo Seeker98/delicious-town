@@ -159,6 +159,7 @@ export function createWorldService(d: GameDeps) {
           deviceType: x.deviceType,
           needStar: x.needStar,
         })),
+        looks: d.config.bundle.looks,
       };
       return catalog;
     },

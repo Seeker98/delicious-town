@@ -261,6 +261,13 @@ export interface ConfigBundle {
   holidays: Holidays;
   tuning: Tuning;
   restaurantDefaults: RestaurantDefaults;
+  looks: Looks;
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */
   extra: Record<string, unknown[]>;
+}
+
+export interface Looks {
+  doors: Array<{ id: number; name: string; coin: number }>;
+  avatars: Array<{ id: number; name: string }>;
+  icons: Array<{ key: string; title: string; desc: string }>;
 }

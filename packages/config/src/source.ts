@@ -37,6 +37,7 @@ export const SOURCE_FILES = [
   'game/holidays',
   'game/market_guess_award',
   'game/action_map',
+  'game/looks',
   'restaurant_defaults',
 ] as const;
 

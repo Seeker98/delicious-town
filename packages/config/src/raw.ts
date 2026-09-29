@@ -223,3 +223,11 @@ export const holidaysFile = z.object({
   qingming: z.record(z.string().regex(/^\d{4}$/), mmdd),
   lunar: z.record(ymd, z.string()),
 });
+
+export const looksFile = z.object({
+  doors: z.array(z.object({ id: int.min(0), name: z.string().min(1), coin: int.min(0) })).min(1),
+  avatars: z.array(z.object({ id: int.min(1), name: z.string().min(1) })).min(1),
+  icons: z.array(
+    z.object({ key: z.string().regex(/^[a-z0-9_-]{1,32}$/), title: z.string().min(1), desc: z.string() }),
+  ),
+});
