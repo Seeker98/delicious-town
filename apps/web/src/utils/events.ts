@@ -52,6 +52,10 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
   'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
   'market.guess': (p) => `菜场竞猜开奖：猜中 ${n(p, 'hits')} 种`,
+  'market.guess.refund': (p) => {
+    const [day, hour] = String(p.period ?? '').split('@');
+    return `菜场竞猜 ${day} ${Number(hour)} 点那一轮没有开奖，退还了报名费`;
+  },
 };
 
 export function logText(l: RestLogDto, names: Names): string {

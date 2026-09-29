@@ -9,7 +9,7 @@ export function marketJobs(market: MarketService): PeriodicJob[] {
     name,
     feature: 'market',
     period: (now, s) => latestSlot(now, hours(s.tuning.market)).key,
-    run: ({ shardId, period, now }) => market.refresh(shardId, shelf, parseSlotKey(period), now),
+    run: ({ shardId, period, now, log }) => market.refresh(shardId, shelf, parseSlotKey(period), now, log),
   });
   return [
     job('market-daily', 0, (t) => t.dailyHours),

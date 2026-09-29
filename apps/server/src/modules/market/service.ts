@@ -19,7 +19,7 @@ import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
 import { addFoods, cupboardSlotsUsed, foodsMap } from '../cupboard/foods';
 import { postNews } from '../news/news';
-import { consumeGoods, hasValidHonor } from '../store/goods';
+import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { personLimit, rollShelf, unitPrice, type Shelf } from './rules';
 
@@ -53,32 +53,76 @@ async function claimLimit(o: Op, itemId: number, subject: string, num: number, l
 }
 
 export function createMarketService(d: GameDeps, world: WorldService) {
-  async function settleGuesses(shardId: number, slot: Slot, opened: number[], now: Date): Promise<number> {
+  type Log = { error(obj: object, msg: string): void };
+
+  async function settleGuess(shardId: number, slot: Slot, opened: number[], now: Date, restId: number) {
+    await runSystemOp(d, shardId, restId, { source: 'market.guess', now }, async (o) => {
+      const g = await o.tx
+        .selectFrom('market_guess')
+        .selectAll()
+        .where('shard_id', '=', shardId)
+        .where('period', '=', slot.key)
+        .where('rest_id', '=', restId)
+        .where('settled_at', 'is', null)
+        .executeTakeFirst();
+      if (!g) return;
+      const hits = g.foods_ids.filter((id) => opened.includes(id)).length;
+      const award = o.config.bundle.guessAwards.find((a) => a.hits === hits);
+      if (award) await grantAward(o, award.award, { source: 'market.guess' });
+      if (o.tuning.market.guessBonusHours.includes(slot.hour)) {
+        const bonus = o.config.bundle.guessBonus.find((b) => hits >= b.minHits);
+        if (bonus) await grantAward(o, bonus.award, { source: 'market.guess.bonus' });
+      }
+      await o.tx
+        .updateTable('market_guess')
+        .set({ hits, settled_at: now })
+        .where('shard_id', '=', shardId)
+        .where('period', '=', slot.key)
+        .where('rest_id', '=', restId)
+        .execute();
+      restLog(o, 'market.guess', { period: slot.key, hits });
+    });
+  }
+
+  /** 报名的那一轮因为 worker 停机没有开奖：退还报名费，标记已结算（hits 留空） */
+  async function refundGuess(shardId: number, period: string, now: Date, restId: number) {
+    await runSystemOp(d, shardId, restId, { source: 'market.guess.refund', now }, async (o) => {
+      const r = await o.tx
+        .updateTable('market_guess')
+        .set({ settled_at: now })
+        .where('shard_id', '=', shardId)
+        .where('period', '=', period)
+        .where('rest_id', '=', restId)
+        .where('settled_at', 'is', null)
+        .returning('rest_id')
+        .executeTakeFirst();
+      if (!r) return;
+      await grantGoodsOp(o, GOODS.mysteryTicket, o.tuning.market.guessCost, {
+        source: 'market.guess.refund',
+      });
+      restLog(o, 'market.guess.refund', { period });
+    });
+  }
+
+  /**
+   * 日常菜场刷新时开奖：本轮的报名按新货架结算；更早还没结算的（错过的轮次）退还报名费。
+   * 每个报名单独处理，一个出错只记日志，不影响其他人。
+   */
+  async function settleGuesses(shardId: number, slot: Slot, opened: number[], now: Date, log?: Log) {
     const guesses = await d.db
       .selectFrom('market_guess')
-      .selectAll()
+      .select(['period', 'rest_id'])
       .where('shard_id', '=', shardId)
-      .where('period', '=', slot.key)
+      .where('period', '<=', slot.key)
       .where('settled_at', 'is', null)
       .execute();
     for (const g of guesses) {
-      const hits = g.foods_ids.filter((id) => opened.includes(id)).length;
-      await runSystemOp(d, shardId, g.rest_id, { source: 'market.guess', now }, async (o) => {
-        const award = o.config.bundle.guessAwards.find((a) => a.hits === hits);
-        if (award) await grantAward(o, award.award, { source: 'market.guess' });
-        if (o.tuning.market.guessBonusHours.includes(slot.hour)) {
-          const bonus = o.config.bundle.guessBonus.find((b) => hits >= b.minHits);
-          if (bonus) await grantAward(o, bonus.award, { source: 'market.guess.bonus' });
-        }
-        await o.tx
-          .updateTable('market_guess')
-          .set({ hits, settled_at: now })
-          .where('shard_id', '=', shardId)
-          .where('period', '=', slot.key)
-          .where('rest_id', '=', g.rest_id)
-          .execute();
-        restLog(o, 'market.guess', { period: slot.key, hits });
-      });
+      try {
+        if (g.period === slot.key) await settleGuess(shardId, slot, opened, now, g.rest_id);
+        else await refundGuess(shardId, g.period, now, g.rest_id);
+      } catch (err) {
+        log?.error({ err, shardId, period: g.period, restId: g.rest_id }, 'market guess settle failed');
+      }
     }
     return guesses.length;
   }
@@ -165,6 +209,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       shelf: Shelf,
       slot: Slot,
       now: Date,
+      log?: Log,
     ): Promise<{ foods: number[]; guesses: number }> {
       const { tuning } = await d.shards.settings(shardId);
       const rng = seededRng(hashSeed(shardId, 'market', shelf, slot.key));
@@ -198,7 +243,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         );
       });
       const foods = items.map((x) => x.foodsId);
-      const guesses = shelf === 0 ? await settleGuesses(shardId, slot, foods, now) : 0;
+      const guesses = shelf === 0 ? await settleGuesses(shardId, slot, foods, now, log) : 0;
       return { foods, guesses };
     },
 

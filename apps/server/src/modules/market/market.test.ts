@@ -184,4 +184,24 @@ describe('竞猜（规格书 06 §6.3）', () => {
     expect(g).toMatchObject({ hits: 5 });
     t.clock.set(new Date());
   });
+
+  it('worker 停机错过了报名那一轮：下次日常刷新时退还神秘礼券并标记已结算', async () => {
+    const ctx = await newRestaurant(t, { goods: { 1: 5 } });
+    t.clock.set(gameTime('2026-09-30', 9, 30));
+    const r = await m().joinGuess(ctx, [238, 240]);
+    expect(r.data.period).toBe('2026-09-30@10');
+    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(3);
+    const slot = latestSlot(gameTime('2026-09-30', 12), t_.dailyHours);
+    t.clock.set(slot.start);
+    await m().refresh(ctx.shardId, 0, slot, slot.start);
+    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(5);
+    const g = await t.db
+      .selectFrom('market_guess')
+      .selectAll()
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(g.settled_at).not.toBeNull();
+    expect(g.hits).toBeNull();
+    t.clock.set(new Date());
+  });
 });

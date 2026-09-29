@@ -22,5 +22,8 @@ describe('个人日志文案', () => {
     );
     expect(logText({ type: 'krab.angry', params: {}, at: '' }, names)).toBe('蟹老板扫兴而归');
     expect(logText({ type: 'unknown.type', params: {}, at: '' }, names)).toBe('unknown.type');
+    expect(logText({ type: 'market.guess.refund', params: { period: '2026-09-30@10' }, at: '' }, names)).toBe(
+      '菜场竞猜 2026-09-30 10 点那一轮没有开奖，退还了报名费',
+    );
   });
 });
