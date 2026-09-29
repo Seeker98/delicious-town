@@ -12,7 +12,12 @@ interface ActionPayload {
 }
 
 /** 玩家行为 → 全历史计数（任务）+ 当日活跃（设计文档 §5.1） */
+/** 已经注册过任务处理器的事件总线：同一个总线上多次 createGame 也只注册一次，避免计数翻倍 */
+const registered = new WeakSet<EventBus>();
+
 export function registerTaskHandlers(bus: EventBus, config: GameConfig): void {
+  if (registered.has(bus)) return;
+  registered.add(bus);
   bus.on('action', async (tx, e) => {
     const p = e.payload as unknown as ActionPayload;
     await tx
