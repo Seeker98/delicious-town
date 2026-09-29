@@ -6,6 +6,7 @@ import { cupboardRoutes } from './cupboard/routes';
 import { growthRoutes } from './growth/routes';
 import { restaurantRoutes } from './restaurant/routes';
 import { shardRoutes } from './shard/routes';
+import { shopRoutes } from './shop/routes';
 import { storeRoutes } from './store/routes';
 import { worldRoutes } from './world/routes';
 
@@ -19,4 +20,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(cookbookRoutes(game.cookbook), { prefix: '/api/v1/cookbook' });
   app.register(cupboardRoutes(game.cupboard), { prefix: '/api/v1/cupboard' });
   app.register(storeRoutes(game.store), { prefix: '/api/v1/store' });
+  app.register(shopRoutes(game.shop), { prefix: '/api/v1/shop' });
 }
