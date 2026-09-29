@@ -1,9 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
+import { testConfig } from '../../../test/config';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
 import { getEffectAgg, listActiveEffects, removeEffectSource, upsertEffectSource } from './service';
 
 const db = testDb();
+const config = testConfig();
+const agg = (restId: number, at: Date) => getEffectAgg(db, restId, at, config, config.tuning);
 let shardId: number;
 afterAll(() => db.destroy());
 beforeAll(async () => {
@@ -27,7 +30,12 @@ describe('effects service', () => {
       effects: { atRate: 0.35, luckValue: 36 },
       expiresAt: null,
     });
-    expect(await getEffectAgg(db, restId, now)).toEqual({ atRate: 0.45, luckValue: 36 });
+    expect(await agg(restId, now)).toEqual({
+      atRate: 0.45,
+      luckValue: 36,
+      honorAddCoin: 0.004,
+      honorAddExp: 0.004,
+    });
 
     // 绕过服务直接改数据：缓存没失效，仍返回旧值（证明走了缓存）
     await db
@@ -36,10 +44,15 @@ describe('effects service', () => {
       .where('rest_id', '=', restId)
       .where('source_id', '=', 1)
       .execute();
-    expect(await getEffectAgg(db, restId, now)).toEqual({ atRate: 0.45, luckValue: 36 });
+    expect(await agg(restId, now)).toEqual({
+      atRate: 0.45,
+      luckValue: 36,
+      honorAddCoin: 0.004,
+      honorAddExp: 0.004,
+    });
 
     await removeEffectSource(db, restId, 'honor', 1);
-    expect(await getEffectAgg(db, restId, now)).toEqual({ atRate: 0.35, luckValue: 36 });
+    expect(await agg(restId, now)).toEqual({ atRate: 0.35, luckValue: 36 });
   });
 
   it('有来源到期时自动重新汇总', async () => {
@@ -51,9 +64,9 @@ describe('effects service', () => {
       effects: { expRate: 1 },
       expiresAt: new Date(now.getTime() + 3600_000),
     });
-    expect(await getEffectAgg(db, restId, now)).toEqual({ expRate: 1 });
+    expect(await agg(restId, now)).toEqual({ expRate: 1, honorAddCoin: 0.004, honorAddExp: 0.004 });
     const twoHoursLater = new Date(now.getTime() + 2 * 3600_000);
-    expect(await getEffectAgg(db, restId, twoHoursLater)).toEqual({});
+    expect(await agg(restId, twoHoursLater)).toEqual({});
     expect(await listActiveEffects(db, restId, twoHoursLater)).toEqual([]);
   });
 
@@ -74,5 +87,33 @@ describe('effects service', () => {
     const list = await listActiveEffects(db, restId, new Date());
     expect(list).toHaveLength(1);
     expect(list[0]!.effects).toEqual({ a: 2 });
+  });
+});
+
+describe('收集类加成进入汇总', () => {
+  it('仓库里的不同牌匾、有效勋章、盆栽勋章都计入', async () => {
+    const restId = await newRest();
+    const now = new Date();
+    // 两种牌匾（88 一星牌匾、89 二星牌匾）放在仓库里
+    await db
+      .insertInto('store_item')
+      .values([
+        { rest_id: restId, goods_id: 88, num: 1 },
+        { rest_id: restId, goods_id: 89, num: 1 },
+      ])
+      .execute();
+    // 四个盆栽勋章（devicetype 36）
+    for (const id of [248, 249, 254, 338]) {
+      await upsertEffectSource(db, restId, {
+        sourceType: 'honor',
+        sourceId: id,
+        effects: {},
+        expiresAt: null,
+      });
+    }
+    const a = await agg(restId, now);
+    expect(a.plaqueSum).toBeCloseTo(0.02);
+    expect(a.honorAddCoin).toBeCloseTo(0.016);
+    expect(a.potCoinRate).toBeCloseTo(0.08);
   });
 });
