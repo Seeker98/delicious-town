@@ -37,7 +37,7 @@ describe('区服', () => {
     const u = await registerUser(ctx.app);
     const missing = await call(ctx.app, 'POST', `${S}/select`, {
       cookie: u.cookie,
-      body: { shardId: 1_999_999 },
+      body: { shardId: 999 },
     });
     expect(missing.status).toBe(404);
     expect(missing.json.code).toBe('SHARD_NOT_FOUND');

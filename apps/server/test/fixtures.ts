@@ -1,5 +1,6 @@
 import type { Insertable, Kysely } from 'kysely';
 import type { DB } from '../src/db';
+import { uniqueViolation } from '../src/db/errors';
 import type { RestaurantTable } from '../src/db/schema';
 
 let seq = Math.floor(Math.random() * 1_000_000);
@@ -14,16 +15,20 @@ export async function createShard(
   db: Kysely<DB>,
   opts: { status?: 'open' | 'closed'; name?: string } = {},
 ): Promise<number> {
-  const row = await db
-    .selectFrom('shard')
-    .select((eb) => eb.fn.coalesce(eb.fn.max('id'), eb.val(100000)).as('max'))
-    .executeTakeFirstOrThrow();
-  const id = Number(row.max) + 1;
-  await db
-    .insertInto('shard')
-    .values({ id, name: opts.name ?? `测试服${id}`, status: opts.status ?? 'open' })
-    .execute();
-  return id;
+  // 测试文件可能并行运行，用随机 id + 冲突重试，避免"最大 id + 1"的竞争
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const id = 1_000_000 + Math.floor(Math.random() * 2_000_000_000);
+    try {
+      await db
+        .insertInto('shard')
+        .values({ id, name: opts.name ?? `测试服${id}`, status: opts.status ?? 'open' })
+        .execute();
+      return id;
+    } catch (e) {
+      if (uniqueViolation(e) === null) throw e;
+    }
+  }
+  throw new Error('failed to allocate a test shard id');
 }
 
 export async function createAccountRow(db: Kysely<DB>): Promise<number> {
