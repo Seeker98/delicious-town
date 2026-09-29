@@ -9,6 +9,7 @@ import { memoryMailer, type MemoryMailer } from '../src/infra/mailer';
 import { createRedis } from '../src/infra/redis';
 import type { RateRule, RateRuleName } from '../src/security/rateLimiter';
 import { createSessionStore } from '../src/security/sessionStore';
+import { uniqueName } from './fixtures';
 
 /** 测试默认放宽限流，只有限流测试自己收紧 */
 export const GENEROUS_RULES: Record<RateRuleName, RateRule> = {
@@ -100,4 +101,25 @@ export function cookieOf(res: LightMyRequestResponse): string {
   const found = list.find((c) => c.startsWith('dt_sid='));
   if (!found) throw new Error('no dt_sid cookie in response');
   return found.split(';')[0]!;
+}
+
+export async function registerUser(
+  app: FastifyInstance,
+  opts: { username?: string; password?: string; ip?: string } = {},
+): Promise<{ username: string; email: string; cookie: string; accountId: number }> {
+  const username = opts.username ?? uniqueName('u');
+  const email = `${uniqueName('m')}@test.local`;
+  const r = await call(app, 'POST', '/api/v1/account/register', {
+    body: { username, password: opts.password ?? 'secret123', email, captchaToken: 't' },
+    ip: opts.ip,
+  });
+  if (r.status !== 200) throw new Error(`register failed: ${r.res.body}`);
+  return { username, email, cookie: cookieOf(r.res), accountId: r.json.data.accountId as number };
+}
+
+/** 从邮件正文里取出链接中的 token */
+export function tokenFromMail(text: string): string {
+  const m = /token=([A-Za-z0-9_-]+)/.exec(text);
+  if (!m) throw new Error('no token in mail');
+  return m[1]!;
 }
