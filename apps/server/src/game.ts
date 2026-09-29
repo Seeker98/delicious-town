@@ -5,6 +5,7 @@ import type { PeriodicJob } from './core/jobs';
 import { createAccountService, type AccountService } from './modules/account/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
+import { settlementJobs } from './modules/settlement/jobs';
 import { worldJobs } from './modules/world/jobs';
 import { createWorldService, type WorldService } from './modules/world/service';
 
@@ -33,6 +34,7 @@ export function createGame(app: AppDeps): Game {
   const world = createWorldService(deps);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
+  jobs.push(...settlementJobs(deps, world));
   return {
     app,
     deps,
