@@ -155,28 +155,37 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     }
   }
 
+  // 升星只差凭证时：钱够就买凭证升星；钱不够就把凭证的钱攒下来，本次不再花在餐桌、油壶和菜场上
+  const star = await game.growth.starNeed(ctx);
+  let saving = 0;
+  if (star.available && star.nextStar !== null) {
+    const cert = star.checks.find((c) => c.key === 'goods');
+    const others = star.checks.filter((c) => c.key !== 'goods').every((c) => c.ok);
+    if (others && cert && !cert.ok) {
+      const num = cert.need - cert.have;
+      if (!(await attempt(() => game.shop.buy(ctx, { goodsId: cert.id!, num }))))
+        saving = config.requireGoods(cert.id!).coin * num;
+    }
+    if (others) await attempt(() => game.growth.starUp(ctx));
+  }
+
   // 升级只提高餐桌上限，实际的桌子去商店买餐桌A补上（设计文档 裁定 10）
   r = await rest();
   const tableCap = Math.min(r.tableNum, (r.starLevel + 1) * config.tuning.rest.tablesPerFloor);
   const tableA = config.requireGoods(GOODS.tableA);
   const tables = Math.min(
     tableCap - r.tables.length,
-    Math.floor((r.coin - r.oilMax - 20_000) / Math.max(1, tableA.coin)),
+    Math.floor((r.coin - r.oilMax - 20_000 - saving) / Math.max(1, tableA.coin)),
   );
   if (tables > 0 && (await attempt(() => game.shop.buy(ctx, { goodsId: tableA.id, num: tables }))))
     for (let i = 0; i < tables; i++) await attempt(() => game.store.use(ctx, { goodsId: tableA.id, num: 1 }));
 
-  const star = await game.growth.starNeed(ctx);
-  if (star.available && star.nextStar !== null) {
-    const cert = star.checks.find((c) => c.key === 'goods');
-    const others = star.checks.filter((c) => c.key !== 'goods').every((c) => c.ok);
-    if (others && cert && !cert.ok)
-      await attempt(() => game.shop.buy(ctx, { goodsId: cert.id!, num: cert.need - cert.have }));
-    if (others) await attempt(() => game.growth.starUp(ctx));
-  }
-
   const oil = await game.growth.oilNeed(ctx);
-  if (oil.nextLevel !== null && oil.checks.filter((c) => c.key !== 'goods').every((c) => c.ok)) {
+  if (
+    saving === 0 &&
+    oil.nextLevel !== null &&
+    oil.checks.filter((c) => c.key !== 'goods').every((c) => c.ok)
+  ) {
     for (const c of oil.checks.filter((x) => x.key === 'goods' && !x.ok)) {
       const g = config.requireGoods(c.id!);
       const num = c.need - c.have;
@@ -186,7 +195,7 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     await attempt(() => game.growth.oilExpand(ctx));
   }
 
-  await shopForFoods(game, bot, attempt);
+  await shopForFoods(game, bot, attempt, saving);
 
   for (let street = 0; street <= 13; street++) {
     const list = await game.cookbook.list(ctx, { street, page: 1, filter: 'learnable' });
@@ -197,14 +206,14 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
   return stats;
 }
 
-/** 买"把所有食谱学到 1 品级还缺"的食材；留出加满一次油的钱 */
-async function shopForFoods(game: Game, bot: Bot, attempt: Attempt): Promise<void> {
+/** 买"把所有食谱学到 1 品级还缺"的食材；留出加满一次油的钱和正在攒的钱 */
+async function shopForFoods(game: Game, bot: Bot, attempt: Attempt, saving: number): Promise<void> {
   const ctx = bot.ctx;
   const need = await game.cookbook.foodsNeed(ctx, { target: 1 });
   const lack = new Map(need.items.filter((x) => x.lack > 0).map((x) => [x.foodsId, x.lack]));
   const market = await game.market.view(ctx);
   let r = await game.restaurant.overview(ctx.restaurantId);
-  const reserve = r.oilMax + 20_000;
+  const reserve = r.oilMax + 20_000 + saving;
   for (const it of [...market.daily, ...market.special]) {
     const want = lack.get(it.foodsId) ?? 0;
     const room = Math.min(it.limit - it.bought, it.left, want);
