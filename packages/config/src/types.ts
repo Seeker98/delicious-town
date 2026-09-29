@@ -179,6 +179,7 @@ export interface RestaurantDefaults {
   streetId: number;
   tableNum: number;
   giftGoods: IdNum[];
+  giftFoods: IdNum[];
 }
 
 export interface CookbookGrade {

@@ -467,6 +467,9 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);
   }
+  for (const f of defaults.giftFoods) {
+    if (!foodIds.has(f.id)) errors.push(`restaurant_defaults gift references unknown food ${f.id}`);
+  }
   if (!streetIds.has(defaults.streetId))
     errors.push(`restaurant_defaults references unknown street ${defaults.streetId}`);
 

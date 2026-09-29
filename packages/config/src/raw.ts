@@ -164,6 +164,8 @@ export const restaurantDefaultsSchema = z.object({
   streetId: int.min(0),
   tableNum: int.min(1),
   giftGoods: z.array(z.object({ id: int, num: int.min(1) })),
+  /** 开局食材：新手街几道菜的材料和低级万能食材，让新号当天就能学菜 */
+  giftFoods: z.array(z.object({ id: int, num: int.min(1) })).default([]),
 });
 
 export const rawSeed = z.object({ id: int, foodsId: int }).passthrough();

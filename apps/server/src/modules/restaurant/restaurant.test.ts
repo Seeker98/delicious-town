@@ -20,6 +20,25 @@ const create = (cookie: string, name: string, headers?: Record<string, string>) 
   call(ctx.app, 'POST', `${R}/create`, { cookie, body: { name }, headers });
 
 describe('开店', () => {
+  it('新店送开局食材：新手街 3 道菜能立刻学会，另有 1~3 级万能食材', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const u = await playerIn(shardId);
+    const r = await create(u.cookie, '开局食材店');
+    expect(r.status).toBe(200);
+    for (const cookbookId of [441, 442, 446]) {
+      const learn = await call(ctx.app, 'POST', '/api/v1/cookbook/learn', {
+        cookie: u.cookie,
+        body: { cookbookId },
+      });
+      expect(learn.status).toBe(200);
+    }
+    const cup = await call(ctx.app, 'GET', '/api/v1/cupboard/list', { cookie: u.cookie });
+    const nums = new Map(
+      cup.json.data.items.map((x: { foodsId: number; num: number }) => [x.foodsId, x.num]),
+    );
+    expect([nums.get(467), nums.get(468), nums.get(469)]).toEqual([3, 3, 3]);
+  });
+
   it('新店初始值与规格一致（规格书 02 §2.1）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const u = await playerIn(shardId);
@@ -83,7 +102,8 @@ describe('开店', () => {
       .execute();
     expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual([81, 100, 140]);
     const ledger = await db.selectFrom('ledger').selectAll().where('rest_id', '=', restId).execute();
-    expect(ledger).toHaveLength(3);
+    expect(ledger.filter((l) => l.kind === 'goods')).toHaveLength(3);
+    expect(ledger.filter((l) => l.kind === 'foods')).toHaveLength(10);
     expect(ledger.every((l) => l.source === 'restaurant.create')).toBe(true);
     const news = await db
       .selectFrom('news')

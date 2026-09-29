@@ -90,15 +90,30 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         .values({ rest_id: id, levels: emptyCookbookLevels(d.config.maxCookbookId) })
         .execute();
       for (const gift of defaults.giftGoods) await grantGoods(tx, d.config, id, gift.id, gift.num, now);
+      // 新店橱柜是空的，开局食材直接放进去（种类远少于橱柜格数）
+      if (defaults.giftFoods.length > 0)
+        await tx
+          .insertInto('cupboard_food')
+          .values(defaults.giftFoods.map((f) => ({ rest_id: id, foods_id: f.id, num: f.num })))
+          .execute();
       await recordLedger(
         tx,
-        defaults.giftGoods.map((g) => ({
-          restId: id,
-          kind: 'goods' as const,
-          itemId: g.id,
-          delta: g.num,
-          source: 'restaurant.create',
-        })),
+        [
+          ...defaults.giftGoods.map((g) => ({
+            restId: id,
+            kind: 'goods' as const,
+            itemId: g.id,
+            delta: g.num,
+            source: 'restaurant.create',
+          })),
+          ...defaults.giftFoods.map((f) => ({
+            restId: id,
+            kind: 'foods' as const,
+            itemId: f.id,
+            delta: f.num,
+            source: 'restaurant.create',
+          })),
+        ],
         now,
       );
       await postNews(tx, { shardId, type: 'restaurant.open', restId: id, params: { name } }, now);
