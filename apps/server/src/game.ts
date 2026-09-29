@@ -40,7 +40,7 @@ export function createGame(app: AppDeps): Game {
     deps,
     shards,
     account: createAccountService(app),
-    restaurant: createRestaurantService(app, shards),
+    restaurant: createRestaurantService(app, shards, world),
     world,
     jobs,
   };

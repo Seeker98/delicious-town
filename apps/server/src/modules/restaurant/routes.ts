@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { createRestaurantBody } from '@dt/shared';
+import { createRestaurantBody, pageQuery } from '@dt/shared';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireAccount, requireRestaurant } from '../../security/session';
@@ -13,5 +13,13 @@ export function restaurantRoutes(svc: RestaurantService): FastifyPluginAsync {
       return ok(await svc.create(session, name));
     });
     r.get('/overview', async (req) => ok(await svc.overview(requireRestaurant(req).restaurantId)));
+    r.get('/floor', async (req) => ok(await svc.floor(requireRestaurant(req).restaurantId)));
+    r.get('/income', async (req) =>
+      ok(await svc.income(requireRestaurant(req).restaurantId, parse(pageQuery, req.query))),
+    );
+    r.get('/buffs', async (req) => ok(await svc.buffs(requireRestaurant(req).restaurantId)));
+    r.get('/log', async (req) =>
+      ok(await svc.log(requireRestaurant(req).restaurantId, parse(pageQuery, req.query))),
+    );
   };
 }

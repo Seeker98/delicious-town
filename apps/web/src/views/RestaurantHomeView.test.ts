@@ -33,6 +33,18 @@ const dto: RestaurantDto = {
   storeNum: 20,
   foodsMaxNum: 999,
   foodsLockNum: 15,
+  oilLevel: 0,
+  state: 1,
+  stateReason: null,
+  promoOn: false,
+  cteOn: false,
+  cookfoodsFlag: 0,
+  plaque2Open: false,
+  mainTaskStep: 1,
+  devices: [],
+  lastRound: null,
+  weather: null,
+  isPlanktonHost: false,
   tables: [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 })),
   effects: [
     {

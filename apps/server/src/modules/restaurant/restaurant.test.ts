@@ -1,8 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
-import { createShardService } from '../shard/service';
-import { createRestaurantService } from './service';
+import { createGame } from '../../game';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -164,7 +163,7 @@ describe('开店', () => {
     const token = u.cookie.slice('dt_sid='.length);
     const session = { token, data: (await ctx.deps.sessions.get(token))! };
     await ctx.deps.sessions.update(token, { shardId: s2, restaurantId: null });
-    const svc = createRestaurantService(ctx.deps, createShardService(ctx.deps));
+    const svc = createGame(ctx.deps).restaurant;
     const dto = await svc.create(session, '跨服小店');
     expect(await ctx.deps.sessions.get(token)).toMatchObject({ shardId: s1, restaurantId: dto.id });
   });

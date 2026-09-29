@@ -1,0 +1,152 @@
+import type { Kysely } from 'kysely';
+import type { Device, GameConfig } from '@dt/config';
+import type {
+  BuffsDto,
+  DeviceSlotDto,
+  IncomePageDto,
+  LogPageDto,
+  PageQuery,
+  RateBreakdownDto,
+  RoundSummaryDto,
+  TableDto,
+} from '@dt/shared';
+import type { DB, RestaurantRow, TableState } from '../../db/schema';
+import { listActiveEffects } from '../effects/service';
+
+/** 设施位是否已开放：星级够；第二牌匾位（7）还要先开通 */
+export function slotUnlocked(d: Device, rest: Pick<RestaurantRow, 'star_level' | 'plaque2_open'>): boolean {
+  return rest.star_level >= d.needStar && (d.id !== 7 || rest.plaque2_open);
+}
+
+export async function deviceSlots(
+  db: Kysely<DB>,
+  config: GameConfig,
+  rest: RestaurantRow,
+  now: Date,
+): Promise<DeviceSlotDto[]> {
+  const rows = await db.selectFrom('restaurant_device').selectAll().where('rest_id', '=', rest.id).execute();
+  const bySlot = new Map(rows.map((r) => [r.slot, r]));
+  return [...config.devices.values()]
+    .sort((a, b) => a.id - b.id)
+    .map((d) => {
+      const row = bySlot.get(d.id);
+      const active = row !== undefined && (row.expires_at === null || row.expires_at > now);
+      return {
+        slot: d.id,
+        name: d.name,
+        deviceType: d.deviceType,
+        needStar: d.needStar,
+        unlocked: slotUnlocked(d, rest),
+        goodsId: active ? row.goods_id : null,
+        expiresAt: active && row.expires_at ? row.expires_at.toISOString() : null,
+      };
+    });
+}
+
+export function tableDto(t: TableState): TableDto {
+  return {
+    no: t.no,
+    floor: t.floor,
+    customer: t.customer,
+    ...(t.roach ? { roach: true } : {}),
+    ...(t.freeloader ? { freeloaderRestId: t.freeloader.restId } : {}),
+    ...(t.last ? { last: t.last } : {}),
+  };
+}
+
+type IncomeRow = {
+  round_no: number;
+  coin: number;
+  exp: number;
+  oil: number;
+  customers: Record<string, number>;
+  created_at: Date;
+};
+
+function roundDto(r: IncomeRow): RoundSummaryDto {
+  return {
+    roundNo: r.round_no,
+    coin: r.coin,
+    exp: r.exp,
+    oil: r.oil,
+    customers: r.customers,
+    at: r.created_at.toISOString(),
+  };
+}
+
+export async function lastRound(db: Kysely<DB>, restId: number): Promise<RoundSummaryDto | null> {
+  const r = await db
+    .selectFrom('income_round')
+    .select(['round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
+    .where('rest_id', '=', restId)
+    .orderBy('created_at', 'desc')
+    .limit(1)
+    .executeTakeFirst();
+  return r ? roundDto(r) : null;
+}
+
+export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<IncomePageDto> {
+  let s = db
+    .selectFrom('income_round')
+    .select(['round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
+    .where('rest_id', '=', restId);
+  if (q.before) s = s.where('created_at', '<', new Date(q.before));
+  const rows = await s
+    .orderBy('created_at', 'desc')
+    .limit(q.limit + 1)
+    .execute();
+  const items = rows.slice(0, q.limit).map(roundDto);
+  return { items, nextBefore: rows.length > q.limit ? items.at(-1)!.at : null };
+}
+
+export async function buffsOf(
+  db: Kysely<DB>,
+  config: GameConfig,
+  restId: number,
+  now: Date,
+): Promise<BuffsDto> {
+  const r = await db
+    .selectFrom('income_round')
+    .select(['round_no', 'rates'])
+    .where('rest_id', '=', restId)
+    .orderBy('created_at', 'desc')
+    .limit(1)
+    .executeTakeFirst();
+  const effects = await listActiveEffects(db, restId, now);
+  const raw = (r?.rates ?? null) as (Record<string, unknown> & { seated?: number }) | null;
+  let rates: Record<string, RateBreakdownDto> | null = null;
+  if (raw) {
+    rates = {};
+    for (const [k, v] of Object.entries(raw)) {
+      if (typeof v === 'object' && v !== null && 'total' in v) rates[k] = v as RateBreakdownDto;
+    }
+  }
+  return {
+    roundNo: r?.round_no ?? null,
+    rates,
+    seated: raw?.seated ?? null,
+    sources: effects.map((e) => ({
+      sourceType: e.sourceType,
+      sourceId: e.sourceId,
+      name:
+        e.sourceType === 'device'
+          ? (config.devices.get(e.sourceId)?.name ?? '设施')
+          : (config.goods.get(e.sourceId)?.name ?? e.sourceType),
+      effects: e.effects,
+      expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
+    })),
+  };
+}
+
+export async function logPage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<LogPageDto> {
+  let s = db.selectFrom('rest_log').select(['type', 'params', 'created_at']).where('rest_id', '=', restId);
+  if (q.before) s = s.where('created_at', '<', new Date(q.before));
+  const rows = await s
+    .orderBy('created_at', 'desc')
+    .limit(q.limit + 1)
+    .execute();
+  const items = rows
+    .slice(0, q.limit)
+    .map((r) => ({ type: r.type, params: r.params, at: r.created_at.toISOString() }));
+  return { items, nextBefore: rows.length > q.limit ? items.at(-1)!.at : null };
+}
