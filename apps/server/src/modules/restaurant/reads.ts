@@ -101,7 +101,10 @@ export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): 
     const c = parseCursor(q.before);
     s = c.id
       ? s.where((eb) =>
-          eb.or([eb('created_at', '<', c.at), eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))])]),
+          eb.or([
+            eb('created_at', '<', c.at),
+            eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))]),
+          ]),
         )
       : s.where('created_at', '<', c.at);
   }
@@ -166,7 +169,10 @@ export async function logPage(db: Kysely<DB>, restId: number, q: PageQuery): Pro
     const c = parseCursor(q.before);
     s = c.id
       ? s.where((eb) =>
-          eb.or([eb('created_at', '<', c.at), eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))])]),
+          eb.or([
+            eb('created_at', '<', c.at),
+            eb.and([eb('created_at', '=', c.at), eb('id', '<', Number(c.id))]),
+          ]),
         )
       : s.where('created_at', '<', c.at);
   }
