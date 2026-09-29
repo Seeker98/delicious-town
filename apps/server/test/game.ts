@@ -2,7 +2,7 @@ import type { Kysely } from 'kysely';
 import type { AppDeps } from '../src/app';
 import type { RestCtx } from '../src/core/deps';
 import { createDb } from '../src/db';
-import type { DB, RestaurantRow } from '../src/db/schema';
+import type { DB, RestaurantRow, TableState } from '../src/db/schema';
 import { EventBus } from '../src/events/bus';
 import { createGame, type Game } from '../src/game';
 import { fixedCaptcha } from '../src/infra/captcha';
@@ -128,4 +128,44 @@ export async function foodNum(
     .where('foods_id', '=', foodsId)
     .executeTakeFirst();
   return { num: r?.num ?? 0, fridge: r?.fridge_num ?? 0 };
+}
+
+/** 同一区服、都已验证邮箱的两家店；b 默认和 a 同区服 */
+export async function newPair(
+  t: TestGame,
+  a: NewRestaurantOptions = {},
+  b: NewRestaurantOptions = {},
+): Promise<[RestCtx, RestCtx]> {
+  const x = await newRestaurant(t, { verified: true, ...a });
+  const y = await newRestaurant(t, { verified: true, shardId: x.shardId, ...b });
+  return [x, y];
+}
+
+/** 直接写两条好友关系 */
+export async function befriend(t: TestGame, a: number, b: number): Promise<void> {
+  await t.db
+    .insertInto('friend')
+    .values([
+      { rest_id: a, friend_id: b },
+      { rest_id: b, friend_id: a },
+    ])
+    .onConflict((oc) => oc.doNothing())
+    .execute();
+}
+
+export async function setTables(t: TestGame, restId: number, tables: TableState[]): Promise<void> {
+  await t.db
+    .updateTable('restaurant_tables')
+    .set({ tables: JSON.stringify(tables) })
+    .where('rest_id', '=', restId)
+    .execute();
+}
+
+export async function tablesOf(t: TestGame, restId: number): Promise<TableState[]> {
+  const r = await t.db
+    .selectFrom('restaurant_tables')
+    .select('tables')
+    .where('rest_id', '=', restId)
+    .executeTakeFirstOrThrow();
+  return r.tables;
 }
