@@ -1,0 +1,77 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "菜园：餐厅收益 = (L×2×(自己地?2:1)+1) × coin/exp；土地经验改用独立字段 landExp（修正旧版混用 exp 的问题）",
+ "count": 10,
+ "data": [
+  {
+   "id": 20,
+   "name": "打蟑螂",
+   "coin": 10,
+   "exp": 5,
+   "formula": "coin×(1+0.5L)×rate, exp×(1+L)×rate"
+  },
+  {
+   "id": 25,
+   "name": "放置蟑螂",
+   "coin": 5,
+   "exp": 5,
+   "formula": "×(1+0.2L)"
+  },
+  {
+   "id": 26,
+   "name": "改名",
+   "coin": 0,
+   "exp": 0,
+   "formula": "只记录花费"
+  },
+  {
+   "id": 50,
+   "name": "播种",
+   "coin": 1,
+   "exp": 2,
+   "landExp": 10
+  },
+  {
+   "id": 51,
+   "name": "浇水",
+   "coin": 1,
+   "exp": 1,
+   "landExp": 5
+  },
+  {
+   "id": 52,
+   "name": "除草",
+   "coin": 1,
+   "exp": 1,
+   "landExp": 5
+  },
+  {
+   "id": 53,
+   "name": "除虫",
+   "coin": 1,
+   "exp": 1,
+   "landExp": 5
+  },
+  {
+   "id": 54,
+   "name": "收获",
+   "coin": 2,
+   "exp": 3,
+   "landExp": 20
+  },
+  {
+   "id": 55,
+   "name": "铲除",
+   "coin": 0,
+   "exp": 1,
+   "landExp": 2
+  },
+  {
+   "id": 56,
+   "name": "施肥",
+   "coin": 1,
+   "exp": 1,
+   "landExp": 5
+  }
+ ]
+}

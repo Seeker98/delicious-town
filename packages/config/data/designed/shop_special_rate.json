@@ -1,0 +1,42 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "每日 12:00 按 [0,1) 随机数落区间定档",
+ "count": 5,
+ "data": [
+  {
+   "name": "九折",
+   "foodsrate": 0.9,
+   "num": 50,
+   "startrate": 0.0,
+   "endrate": 0.5
+  },
+  {
+   "name": "八折",
+   "foodsrate": 0.8,
+   "num": 30,
+   "startrate": 0.5,
+   "endrate": 0.8
+  },
+  {
+   "name": "七折",
+   "foodsrate": 0.7,
+   "num": 20,
+   "startrate": 0.8,
+   "endrate": 0.93
+  },
+  {
+   "name": "五折",
+   "foodsrate": 0.5,
+   "num": 10,
+   "startrate": 0.93,
+   "endrate": 0.99
+  },
+  {
+   "name": "一折",
+   "foodsrate": 0.1,
+   "num": 3,
+   "startrate": 0.99,
+   "endrate": 1.0
+  }
+ ]
+}

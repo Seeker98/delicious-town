@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "attrLeft": 3,
+  "strength": 100,
+  "strengthMax": 100,
+  "oil": 1000,
+  "oilMax": 1000,
+  "coin": 100000,
+  "diamond": 0,
+  "cupboardNum": 100,
+  "storeNum": 20,
+  "foodsMaxNum": 999,
+  "foodsLockNum": 15,
+  "renown": 10,
+  "streetId": 0,
+  "tableNum": 4,
+  "giftGoods": [
+    { "id": 81, "num": 1 },
+    { "id": 100, "num": 1 },
+    { "id": 140, "num": 1 }
+  ]
+}

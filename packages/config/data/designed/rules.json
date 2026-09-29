@@ -1,0 +1,66 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "无数据表的规则常量（原来藏在 SQL 里）",
+ "count": 1,
+ "data": [
+  {
+   "mcRoad": {
+    "sameRoadPerLearned": 0.02,
+    "sameRoadCap": 0.3,
+    "otherRoadPerLearned": 0.005,
+    "otherRoadCap": 0.1
+   },
+   "plaqueSum": {
+    "perDistinctPlaque": 0.01,
+    "an2023Multiplier": 2,
+    "appliesTo": [
+     "coinRate",
+     "expRate"
+    ]
+   },
+   "honorAdd": {
+    "perValidHonor": 0.004,
+    "mdcgMultiplier": 1.5,
+    "an2025CoinBonus": 0.16,
+    "appliesTo": [
+     "coinRate",
+     "expRate"
+    ]
+   },
+   "restAttr": "属性 = 属性点 + 装备 + 宝石；再 ×(1+套装对应百分比)；进攻时刀工/火候再 ×(1+attackX)，防守时 ×(1+defendX)；厨力 = 五项之和 + 幸运/2",
+   "templeMaster": {
+    "baseHp": 10000,
+    "perStar": 5000,
+    "reset": "每日 00:00"
+   },
+   "kraken": {
+    "feedHours": [
+     [
+      11,
+      14
+     ],
+     [
+      17,
+      21
+     ]
+    ],
+    "dailyMc": "每日 00:00 从 1~5 级可鉴定特色菜按 odds 抽 1 道"
+   },
+   "roachStrength": {
+    "self": 1,
+    "friend": 2,
+    "krab": 0
+   },
+   "towerDaily": {
+    "base": 5,
+    "perTicket": 1
+   },
+   "dictSourceNames": "重写改用枚举，不再需要 typeid 8/12",
+   "nightWeatherOdds": {
+    "夜间晴": 40,
+    "夜间多云": 35,
+    "夜间雾": 25
+   }
+  }
+ ]
+}

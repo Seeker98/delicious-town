@@ -1,0 +1,34 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "骑手初始值与每级成长；successOdds 为千分比；deliveryTimeSub 为减少的百分比(修正旧版符号 bug)",
+ "count": 1,
+ "data": [
+  {
+   "init": {
+    "deliveryTimeSub": 0,
+    "expAdd": 0,
+    "coinAdd": 0,
+    "renownAdd": 0,
+    "successOdds": 800,
+    "maxNum": 1
+   },
+   "perLevel": {
+    "deliveryTimeSub": 1,
+    "expAdd": 2,
+    "coinAdd": 1,
+    "successOdds": 5
+   },
+   "every2Level": {
+    "renownAdd": 1
+   },
+   "every5Level": {
+    "maxNum": 1
+   },
+   "cap": {
+    "deliveryTimeSub": 40,
+    "successOdds": 950
+   },
+   "maxLevel": 50
+  }
+ ]
+}

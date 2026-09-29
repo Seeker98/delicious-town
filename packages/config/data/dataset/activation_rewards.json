@@ -1,0 +1,54 @@
+{
+ "source": "HAR Rest/getListActivationInfo (dict typeid=60)",
+ "count": 4,
+ "data": [
+  {
+   "id": 114,
+   "typeid": 60,
+   "typename": "活跃点奖励",
+   "dictname": "50点",
+   "dictval": 50,
+   "inputtime": "2024-01-26 13:42:07",
+   "state": 1,
+   "note": "{\"exp\":500}",
+   "curAct": 0,
+   "receiveflag": 0
+  },
+  {
+   "id": 115,
+   "typeid": 60,
+   "typename": "活跃点奖励",
+   "dictname": "100点",
+   "dictval": 100,
+   "inputtime": "2024-01-26 13:42:07",
+   "state": 1,
+   "note": "{\"diamond\":2}",
+   "curAct": 0,
+   "receiveflag": 0
+  },
+  {
+   "id": 118,
+   "typeid": 60,
+   "typename": "活跃点奖励",
+   "dictname": "140点",
+   "dictval": 120,
+   "inputtime": "2024-01-26 13:42:07",
+   "state": 1,
+   "note": "{\"exp\":1000}",
+   "curAct": 0,
+   "receiveflag": 0
+  },
+  {
+   "id": 135,
+   "typeid": 60,
+   "typename": "活跃点奖励",
+   "dictname": "150点",
+   "dictval": 150,
+   "inputtime": "2024-01-26 13:42:07",
+   "state": 1,
+   "note": "{\"diamond\":4}",
+   "curAct": 0,
+   "receiveflag": 0
+  }
+ ]
+}

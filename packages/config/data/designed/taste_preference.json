@@ -1,0 +1,43 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "挑剔顾客生成时随机一个口味(1~6)并按 odds 抽偏好标签；只有抽到的食谱含该口味时标签才生效，否则视为寻常。忌口=即使品级达标也不满足；痴迷=满足时额外声望+1。coinRate 只作用于挑剔菜银币(scusCbCoin)。",
+ "count": 5,
+ "data": [
+  {
+   "tag": -2,
+   "name": "忌口",
+   "odds": 8,
+   "coinRate": 0,
+   "satisfy": false
+  },
+  {
+   "tag": -1,
+   "name": "寡味",
+   "odds": 17,
+   "coinRate": -0.2,
+   "satisfy": true
+  },
+  {
+   "tag": 0,
+   "name": "寻常",
+   "odds": 50,
+   "coinRate": 0,
+   "satisfy": true
+  },
+  {
+   "tag": 1,
+   "name": "喜食",
+   "odds": 17,
+   "coinRate": 0.2,
+   "satisfy": true
+  },
+  {
+   "tag": 2,
+   "name": "痴迷",
+   "odds": 8,
+   "coinRate": 0.5,
+   "satisfy": true,
+   "renown": 1
+  }
+ ]
+}

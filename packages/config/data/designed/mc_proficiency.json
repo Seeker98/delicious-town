@@ -1,0 +1,57 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "升到下一级所需熟练度 = 200×等级²，10 级满级(-1)；等级效果沿用源码 (curlevel-1)/25",
+ "count": 10,
+ "data": [
+  {
+   "curlevel": 1,
+   "name": "初学",
+   "expNext": 200
+  },
+  {
+   "curlevel": 2,
+   "name": "入门",
+   "expNext": 800
+  },
+  {
+   "curlevel": 3,
+   "name": "熟练",
+   "expNext": 1800
+  },
+  {
+   "curlevel": 4,
+   "name": "精通",
+   "expNext": 3200
+  },
+  {
+   "curlevel": 5,
+   "name": "专家",
+   "expNext": 5000
+  },
+  {
+   "curlevel": 6,
+   "name": "名厨",
+   "expNext": 7200
+  },
+  {
+   "curlevel": 7,
+   "name": "大厨",
+   "expNext": 9800
+  },
+  {
+   "curlevel": 8,
+   "name": "宗师",
+   "expNext": 12800
+  },
+  {
+   "curlevel": 9,
+   "name": "厨神",
+   "expNext": 16200
+  },
+  {
+   "curlevel": 10,
+   "name": "化境",
+   "expNext": -1
+  }
+ ]
+}

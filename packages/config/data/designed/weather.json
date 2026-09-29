@@ -1,0 +1,554 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "value：20 种来自 HAR 真实数据，其余按说明文字解析(同键名)；type/specialflag 为新设计；夜间天气 odds 自定(见 20)",
+ "count": 29,
+ "data": [
+  {
+   "id": 1,
+   "name": "晴",
+   "daytime": 1,
+   "type": 1,
+   "specialflag": 0,
+   "probability": 0.1793,
+   "value": {
+    "atRate": 0.03
+   },
+   "note": "经营: 上座率+3%",
+   "valueSource": "har"
+  },
+  {
+   "id": 2,
+   "name": "阴",
+   "daytime": 3,
+   "type": 1,
+   "specialflag": 0,
+   "probability": 0.1076,
+   "value": {
+    "atRate": 0.05,
+    "expRate": 0.1,
+    "taCoinRate": 0.1
+   },
+   "note": "经营: 上座率+5%,最终经验+10%\r\n外卖: 银币+10%",
+   "valueSource": "har"
+  },
+  {
+   "id": 3,
+   "name": "多云",
+   "daytime": 1,
+   "type": 1,
+   "specialflag": 0,
+   "probability": 0.1195,
+   "value": {
+    "atRate": 0.05,
+    "coinRate": 0.05,
+    "marketCoin": -0.2,
+    "taCoinRate": 0.05
+   },
+   "note": "菜场食材价格-20%!\r\n经营: 上座率+5%,最终银币+5%\r\n外卖: 银币+5%",
+   "valueSource": "har"
+  },
+  {
+   "id": 4,
+   "name": "沙尘暴",
+   "daytime": 3,
+   "type": 4,
+   "specialflag": 0,
+   "probability": 0.012,
+   "value": {
+    "atRate": 0.03,
+    "coinRate": 0.05,
+    "expRate": -0.5,
+    "marketCoin": 0.5,
+    "foodsOperRate": -0.5,
+    "taNeedtimeRate": 0.6,
+    "taSuccessoddsRate": -0.3,
+    "hitRate": -0.25,
+    "mapLostRate": 0.25
+   },
+   "note": "合成与分解食材成功率-50%!\r\n菜场食材价格+50%!\r\n导弹命中率-25%!\r\n探险时迷路概率+25%!\r\n经营: 上座率+3%,最终银币+5%,最终经验-50%\r\n外卖: 配送时间+60%,成功率-40%",
+   "valueSource": "har"
+  },
+  {
+   "id": 5,
+   "name": "大风",
+   "daytime": 3,
+   "type": 4,
+   "specialflag": 0,
+   "probability": 0.0478,
+   "value": {
+    "spRate": -0.7,
+    "foodsOperRate": 1,
+    "taNeedtimeRate": 0.5,
+    "taSuccessoddsRate": -0.1,
+    "hitRate": -0.2,
+    "mysteriousRate": 0.008
+   },
+   "note": "合成与分解食材100%成功!\r\n探险时获得神秘食材概率+0.8%!\r\n导弹命中率-20%!\r\n经营: 挑剔率-70%\r\n外卖: 配送时间+50%,成功率-10%",
+   "valueSource": "har"
+  },
+  {
+   "id": 6,
+   "name": "虹",
+   "daytime": 1,
+   "type": 1,
+   "specialflag": 1,
+   "probability": 0.0118,
+   "value": {
+    "expRate": 1.2,
+    "krabCoinRate": 0.1,
+    "trialRate": 0.08,
+    "taNeedtimeRate": -0.2,
+    "taExpRate": 1.2,
+    "taRenownRate": 1,
+    "taSuccessoddsRate": 0.2
+   },
+   "note": "打赏时卖艺男孩时获得蟹币概率+10%!\r\n试炼时成功率+8%!\r\n经营: 最终经验+120%\r\n外卖: 配送时间-20%,经验+120%,声望+100%,成功率+20%",
+   "valueSource": "har"
+  },
+  {
+   "id": 7,
+   "name": "飓风",
+   "daytime": 3,
+   "type": 4,
+   "specialflag": 1,
+   "probability": 0.0079,
+   "value": {
+    "changeFoodsFlag": 1,
+    "spRate": -1.2,
+    "foodsOperRate": 1.2,
+    "taNeedtimeRate": 0.8,
+    "taSuccessoddsRate": -0.8,
+    "hitRate": -0.35,
+    "mysteriousRate": 0.012
+   },
+   "note": "合成与分解食材100%成功!\r\n可交换好友加锁食材(手续费翻倍)!\r\n探险时获得神秘食材概率+1.2%!\r\n导弹命中率-35%!\r\n经营: 挑剔率-120%\r\n外卖: 配送时间+80%,成功率-80%",
+   "valueSource": "har"
+  },
+  {
+   "id": 8,
+   "name": "雾",
+   "daytime": 1,
+   "type": 4,
+   "specialflag": 0,
+   "probability": 0.0598,
+   "value": {
+    "spRate": 0.2,
+    "atRate": 0.03,
+    "coinRate": 0.05,
+    "mcGoldRate": 0.2,
+    "taNeedtimeRate": 0.2,
+    "taCoinRate": 0.2,
+    "taSuccessoddsRate": -0.6,
+    "hitRate": -0.4,
+    "mapLostRate": 0.4
+   },
+   "note": "烹制特色菜时高品级概率+20%!\r\n导弹命中率-40%!\r\n探险时迷路概率+40%!\r\n经营: 挑剔率+20%,上座率+3%,最终银币+5%\r\n外卖: 配送时间+20%,银币+20%,成功率-60%",
+   "valueSource": "har"
+  },
+  {
+   "id": 9,
+   "name": "霾",
+   "daytime": 1,
+   "type": 4,
+   "specialflag": 0,
+   "probability": 0.0478,
+   "value": {
+    "spRate": 0.36,
+    "atRate": -0.8,
+    "coinRate": 1,
+    "expRate": 1,
+    "taNeedtimeRate": 0.4,
+    "taCoinRate": 0.3,
+    "taSuccessoddsRate": -0.3,
+    "hitRate": -0.1,
+    "mapLostRate": 0.1
+   },
+   "note": "导弹命中率-10%!\r\n探险时迷路概率+10%!\r\n经营: 挑剔率+36%,上座率-80%,最终银币+100%,最终经验+100%\r\n外卖: 配送时间+40%,银币+30%,成功率-30%",
+   "valueSource": "har"
+  },
+  {
+   "id": 10,
+   "name": "小雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.1016,
+   "value": {
+    "atRate": -0.05,
+    "expValue": 1,
+    "marketCoin": 0.2,
+    "taNeedtimeRate": -0.05,
+    "taCoinRate": -0.1,
+    "taExpRate": 0.2
+   },
+   "note": "菜场食材价格+20%!\r\n经营: 上座率-5%,每桌经验+1\r\n外卖: 配送时间-5%,银币-10%,经验+20%",
+   "valueSource": "har"
+  },
+  {
+   "id": 11,
+   "name": "中雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0598,
+   "value": {
+    "marketCoin": 0.3,
+    "atRate": -0.08,
+    "expValue": 1,
+    "taNeedtimeRate": -0.1,
+    "taCoinRate": -0.2,
+    "taExpRate": 0.4
+   },
+   "note": "菜场食材价格+30%!\r\n经营: 上座率-8%,每桌经验+1\r\n外卖: 配送时间-10%,银币-20%,经验+40%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 12,
+   "name": "大雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0359,
+   "value": {
+    "atRate": -0.12,
+    "expValue": 2,
+    "marketCoin": 0.45,
+    "taNeedtimeRate": -0.15,
+    "taCoinRate": -0.3,
+    "taExpRate": 0.6
+   },
+   "note": "菜场食材价格+45%!\r\n经营: 上座率-12%,每桌经验+2\r\n外卖: 配送时间-15%,银币-30%,经验+60%",
+   "valueSource": "har"
+  },
+  {
+   "id": 13,
+   "name": "暴雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0239,
+   "value": {
+    "marketCoin": 0.6,
+    "krakenFavorRate": 0.25,
+    "atRate": -0.2,
+    "expValue": 3,
+    "taNeedtimeRate": -0.2,
+    "taCoinRate": -0.4,
+    "taExpRate": 0.8,
+    "taSuccessoddsRate": -0.3
+   },
+   "note": "菜场食材价格+60%!\r\n投喂克拉肯好感度+25%!\r\n经营: 上座率-20%,每桌经验+3\r\n外卖: 配送时间-20%,银币-40%,经验+80%,成功率-30%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 14,
+   "name": "雨夹雪",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0179,
+   "value": {
+    "mcNumRate": 0.08,
+    "marketCoin": 0.35,
+    "atRate": -0.25,
+    "spRate": -0.1,
+    "expValue": 2,
+    "taNeedtimeRate": 0.15,
+    "taCoinRate": 0.3
+   },
+   "note": "特色菜烹制份数+8%!\r\n菜场食材价格+35%!\r\n经营: 上座率-25%,挑剔率-10%,每桌经验+2\r\n外卖: 配送时间+15%,银币+30%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 15,
+   "name": "小雪",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 0,
+   "probability": 0.0143,
+   "value": {
+    "mcNumRate": 0.02,
+    "marketCoin": 0.65,
+    "atRate": -0.3,
+    "spRate": -0.2,
+    "expValue": 3,
+    "taNeedtimeRate": 0.25,
+    "taCoinRate": 0.5,
+    "taExpRate": -0.2
+   },
+   "note": "特色菜烹制份数+2%!\r\n菜场食材价格+65%!\r\n经营: 上座率-30%,挑剔率-20%,每桌经验+3\r\n外卖: 配送时间+25%,银币+50%,经验-20%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 16,
+   "name": "雷阵雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0299,
+   "value": {
+    "atRate": -0.1,
+    "expValue": 2,
+    "marketCoin": 0.5,
+    "equipRate": 0.1,
+    "taNeedtimeRate": -0.15,
+    "taCoinRate": -0.15,
+    "taExpRate": 0.5,
+    "missileCrit": 0.05
+   },
+   "note": "强化厨具成功率+10%!\r\n菜场食材价格+50%!\r\n导弹暴击率+5%!\r\n经营: 上座率-10%,每桌经验+2\r\n外卖: 配送时间-15%,银币-15%,经验+50%",
+   "valueSource": "har"
+  },
+  {
+   "id": 17,
+   "name": "阵雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.0478,
+   "value": {
+    "atRate": -0.05,
+    "expValue": 1,
+    "marketCoin": 0.1,
+    "equipRate": 0.03,
+    "taNeedtimeRate": -0.05,
+    "taCoinRate": -0.1,
+    "taExpRate": 0.2
+   },
+   "note": "强化厨具成功率+3%!\r\n菜场食材价格+10%!\r\n经营: 上座率-5%,每桌经验+1\r\n外卖: 配送时间-5%,银币-10%,经验+20%",
+   "valueSource": "har"
+  },
+  {
+   "id": 18,
+   "name": "酸雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 1,
+   "probability": 0.0179,
+   "value": {
+    "gemLevelUpRate": 0.05,
+    "removeGemFree": 1,
+    "atRate": -0.9,
+    "expValue": 2,
+    "marketCoin": 3,
+    "taNeedtimeRate": 1,
+    "taCoinRate": 2,
+    "taExpRate": 4
+   },
+   "note": "宝石升阶成功率+5%!\r\n摘除宝石无需费用!\r\n菜场食材价格+300%!\r\n经营: 上座率-90%,每桌经验+2\r\n外卖: 配送时间+100%,银币+200%,经验+400%",
+   "valueSource": "har"
+  },
+  {
+   "id": 19,
+   "name": "冰雹",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 0,
+   "probability": 0.0108,
+   "value": {
+    "trialRate": 0.01,
+    "marketCoin": 0.4,
+    "atRate": -0.2,
+    "spRate": -0.1,
+    "expValue": 1,
+    "taNeedtimeRate": 0.15,
+    "taCoinRate": 1.5,
+    "taExpRate": 2.5,
+    "taSuccessoddsRate": -0.6
+   },
+   "note": "试炼时成功率+1%!\r\n菜场食材价格+40%!\r\n经营: 上座率-20%,挑剔率-10%,每桌经验+1\r\n外卖: 配送时间+15%,银币+150%,经验+250%,成功率-60%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 20,
+   "name": "中雪",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 0,
+   "probability": 0.0096,
+   "value": {
+    "mcNumRate": 0.03,
+    "marketCoin": 1.0,
+    "atRate": -0.4,
+    "spRate": -0.3,
+    "expValue": 3,
+    "taNeedtimeRate": 0.35,
+    "taCoinRate": 0.7,
+    "taExpRate": -0.3
+   },
+   "note": "特色菜烹制份数+3%!\r\n菜场食材价格+100%!\r\n经营: 上座率-40%,挑剔率-30%,每桌经验+3\r\n外卖: 配送时间+35%,银币+70%,经验-30%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 21,
+   "name": "大雪",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 0,
+   "probability": 0.0072,
+   "value": {
+    "mcNumRate": 0.04,
+    "marketCoin": 1.5,
+    "atRate": -0.5,
+    "spRate": -0.4,
+    "expValue": 4,
+    "coinValue": 1,
+    "taNeedtimeRate": 0.45,
+    "taCoinRate": 0.9,
+    "taExpRate": -0.4
+   },
+   "note": "特色菜烹制份数+4%!\r\n菜场食材价格+150%!\r\n经营: 上座率-50%,挑剔率-40%,每桌经验+4,每桌银币+1\r\n外卖: 配送时间+45%,银币+90%,经验-40%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 22,
+   "name": "特大暴雨",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.006,
+   "value": {
+    "trialRate": 0.02,
+    "marketCoin": 1.0,
+    "atRate": -0.3,
+    "expValue": 5,
+    "taNeedtimeRate": -0.3,
+    "taCoinRate": -0.6,
+    "taExpRate": 1.2,
+    "taSuccessoddsRate": -0.5
+   },
+   "note": "试炼时成功率+2%!\r\n菜场食材价格+100%!\r\n经营: 上座率-30%,每桌经验+5\r\n外卖: 配送时间-30%,银币-60%,经验+120%,成功率-50%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 23,
+   "name": "暴雪",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 0,
+   "probability": 0.0048,
+   "value": {
+    "mcNumRate": 0.05,
+    "trialRate": 0.03,
+    "marketCoin": 2.0,
+    "atRate": -0.6,
+    "spRate": -0.5,
+    "expValue": 4,
+    "coinValue": 1,
+    "taNeedtimeRate": 0.55,
+    "taCoinRate": 1.1,
+    "taExpRate": -0.5,
+    "taSuccessoddsRate": -0.5
+   },
+   "note": "特色菜烹制份数+5%!\r\n试炼时成功率+3%!\r\n菜场食材价格+200%!\r\n经营: 上座率-60%,挑剔率-50%,每桌经验+4,每桌银币+1\r\n外卖: 配送时间+55%,银币+110%,经验-50%,成功率-50%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 24,
+   "name": "雷暴",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 1,
+   "probability": 0.0036,
+   "value": {
+    "equipRate": 0.12,
+    "missileCrit": 0.08,
+    "atRate": -0.3,
+    "spRate": -0.8,
+    "expValue": 3,
+    "taNeedtimeRate": -0.15,
+    "taCoinRate": -0.8,
+    "taExpRate": 0.8
+   },
+   "note": "强化厨具成功率+12%!\r\n导弹暴击率+8%!\r\n经营: 挑剔率-80%,上座率-30%,每桌经验+3\r\n外卖: 配送时间-15%,银币-80%,经验+80%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 25,
+   "name": "雷雨夹雪",
+   "daytime": 3,
+   "type": 2,
+   "specialflag": 0,
+   "probability": 0.006,
+   "value": {
+    "atRate": -0.55,
+    "spRate": -0.3,
+    "expValue": 5,
+    "marketCoin": 1,
+    "mcNumRate": 0.15,
+    "equipRate": 0.05,
+    "taNeedtimeRate": 0.25,
+    "taCoinRate": 0.5,
+    "missileCrit": 0.08
+   },
+   "note": "特色菜烹制份数+15%!\r\n强化厨具成功率+5%!\r\n菜场食材价格+100%!\r\n导弹暴击率+8%!\r\n经营: 上座率-55%,挑剔率-30%,每桌经验+5\r\n外卖: 配送时间+25%,银币+50%",
+   "valueSource": "har"
+  },
+  {
+   "id": 27,
+   "name": "冰冻",
+   "daytime": 3,
+   "type": 3,
+   "specialflag": 1,
+   "probability": 0.0096,
+   "value": {
+    "atRate": -0.7,
+    "spRate": -1,
+    "coinValue": 10,
+    "expValue": 5,
+    "marketCoin": 2.5,
+    "taNeedtimeRate": 1.5,
+    "taCoinRate": 2,
+    "taExpRate": 1,
+    "trialRate": 0.03,
+    "taSuccessoddsRate": -0.5
+   },
+   "note": "试炼时成功率+3%!\r\n菜场食材价格+250%!\r\n经营: 上座率-70%,挑剔率-100%,每桌经验+5,每桌银币+10\r\n外卖: 配送时间+150%,银币+200%,经验+100%,成功率-50%",
+   "valueSource": "har"
+  },
+  {
+   "id": 28,
+   "name": "夜间晴",
+   "daytime": 2,
+   "type": 1,
+   "specialflag": 0,
+   "probability": null,
+   "value": {
+    "atRate": 0.1,
+    "spRate": -0.05
+   },
+   "note": null,
+   "valueSource": "har"
+  },
+  {
+   "id": 29,
+   "name": "夜间多云",
+   "daytime": 2,
+   "type": 1,
+   "specialflag": 0,
+   "probability": null,
+   "value": {
+    "atRate": 0.05,
+    "marketCoin": -0.3
+   },
+   "note": null,
+   "valueSource": "har"
+  },
+  {
+   "id": 30,
+   "name": "夜间雾",
+   "daytime": 2,
+   "type": 4,
+   "specialflag": 0,
+   "probability": null,
+   "value": {
+    "atRate": 0.05,
+    "spRate": 0.1,
+    "mcGoldRate": 0.25,
+    "hitRate": -0.5
+   },
+   "note": null,
+   "valueSource": "har"
+  }
+ ]
+}

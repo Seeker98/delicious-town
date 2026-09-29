@@ -1,0 +1,42 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "前端文字：经验+25%/银币+10%，泛紫五星 50%/20%（中间线性）；1~2级合成6级概率每级+0.1%；泛紫一、五星每桌油耗+1",
+ "count": 5,
+ "data": [
+  {
+   "purple": 1,
+   "expRate": 0.25,
+   "coinRate": 0.1,
+   "f6Rate": 0.001,
+   "oilValue": 1
+  },
+  {
+   "purple": 2,
+   "expRate": 0.3125,
+   "coinRate": 0.125,
+   "f6Rate": 0.002,
+   "oilValue": 0
+  },
+  {
+   "purple": 3,
+   "expRate": 0.375,
+   "coinRate": 0.15,
+   "f6Rate": 0.003,
+   "oilValue": 0
+  },
+  {
+   "purple": 4,
+   "expRate": 0.4375,
+   "coinRate": 0.175,
+   "f6Rate": 0.004,
+   "oilValue": 0
+  },
+  {
+   "purple": 5,
+   "expRate": 0.5,
+   "coinRate": 0.2,
+   "f6Rate": 0.005,
+   "oilValue": 1
+  }
+ ]
+}

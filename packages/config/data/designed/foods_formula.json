@@ -1,0 +1,511 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "结果=全部 6 级食材 + 稀有 4/5 级食材；主料=低一级作物(菜篮)，辅料同级、添加料再低一级；随机种子固定",
+ "count": 56,
+ "data": [
+  {
+   "id": 1,
+   "mainFoodsId": 438,
+   "subFoodsId": 431,
+   "addFoodsId": 551,
+   "resFoodsId": 447,
+   "odds": 10,
+   "name": "牡丹籽油配方"
+  },
+  {
+   "id": 2,
+   "mainFoodsId": 427,
+   "subFoodsId": 437,
+   "addFoodsId": 414,
+   "resFoodsId": 448,
+   "odds": 10,
+   "name": "三文鱼配方"
+  },
+  {
+   "id": 3,
+   "mainFoodsId": 423,
+   "subFoodsId": 429,
+   "addFoodsId": 400,
+   "resFoodsId": 449,
+   "odds": 10,
+   "name": "黑胡椒配方"
+  },
+  {
+   "id": 4,
+   "mainFoodsId": 444,
+   "subFoodsId": 426,
+   "addFoodsId": 415,
+   "resFoodsId": 450,
+   "odds": 10,
+   "name": "迷迭香配方"
+  },
+  {
+   "id": 5,
+   "mainFoodsId": 422,
+   "subFoodsId": 432,
+   "addFoodsId": 140,
+   "resFoodsId": 451,
+   "odds": 10,
+   "name": "意大利面配方"
+  },
+  {
+   "id": 6,
+   "mainFoodsId": 427,
+   "subFoodsId": 432,
+   "addFoodsId": 510,
+   "resFoodsId": 452,
+   "odds": 10,
+   "name": "手指饼干配方"
+  },
+  {
+   "id": 7,
+   "mainFoodsId": 444,
+   "subFoodsId": 428,
+   "addFoodsId": 414,
+   "resFoodsId": 453,
+   "odds": 10,
+   "name": "奎宁牛小排配方"
+  },
+  {
+   "id": 8,
+   "mainFoodsId": 439,
+   "subFoodsId": 431,
+   "addFoodsId": 413,
+   "resFoodsId": 454,
+   "odds": 10,
+   "name": "意大利蕃茄配方"
+  },
+  {
+   "id": 9,
+   "mainFoodsId": 423,
+   "subFoodsId": 445,
+   "addFoodsId": 538,
+   "resFoodsId": 455,
+   "odds": 10,
+   "name": "马斯卡彭芝士配方"
+  },
+  {
+   "id": 10,
+   "mainFoodsId": 151,
+   "subFoodsId": 445,
+   "addFoodsId": 396,
+   "resFoodsId": 456,
+   "odds": 10,
+   "name": "马沙拉白葡萄酒配方"
+  },
+  {
+   "id": 11,
+   "mainFoodsId": 439,
+   "subFoodsId": 428,
+   "addFoodsId": 393,
+   "resFoodsId": 575,
+   "odds": 10,
+   "name": "阿尔马斯鱼子酱配方"
+  },
+  {
+   "id": 12,
+   "mainFoodsId": 423,
+   "subFoodsId": 424,
+   "addFoodsId": 522,
+   "resFoodsId": 576,
+   "odds": 10,
+   "name": "佩里戈尔黑松露配方"
+  },
+  {
+   "id": 13,
+   "mainFoodsId": 432,
+   "subFoodsId": 430,
+   "addFoodsId": 394,
+   "resFoodsId": 577,
+   "odds": 10,
+   "name": "伍氏皮皮虾配方"
+  },
+  {
+   "id": 14,
+   "mainFoodsId": 151,
+   "subFoodsId": 420,
+   "addFoodsId": 417,
+   "resFoodsId": 578,
+   "odds": 10,
+   "name": "蓝鳍金枪鱼排配方"
+  },
+  {
+   "id": 15,
+   "mainFoodsId": 440,
+   "subFoodsId": 429,
+   "addFoodsId": 414,
+   "resFoodsId": 579,
+   "odds": 10,
+   "name": "伊比利亚火腿配方"
+  },
+  {
+   "id": 16,
+   "mainFoodsId": 432,
+   "subFoodsId": 439,
+   "addFoodsId": 403,
+   "resFoodsId": 580,
+   "odds": 10,
+   "name": "藏红花配方"
+  },
+  {
+   "id": 17,
+   "mainFoodsId": 424,
+   "subFoodsId": 429,
+   "addFoodsId": 413,
+   "resFoodsId": 581,
+   "odds": 10,
+   "name": "羽衣甘蓝配方"
+  },
+  {
+   "id": 18,
+   "mainFoodsId": 424,
+   "subFoodsId": 437,
+   "addFoodsId": 143,
+   "resFoodsId": 582,
+   "odds": 10,
+   "name": "红鳍东方鲀配方"
+  },
+  {
+   "id": 19,
+   "mainFoodsId": 444,
+   "subFoodsId": 426,
+   "addFoodsId": 142,
+   "resFoodsId": 583,
+   "odds": 10,
+   "name": "天山雪鸡配方"
+  },
+  {
+   "id": 20,
+   "mainFoodsId": 417,
+   "subFoodsId": 401,
+   "addFoodsId": 387,
+   "resFoodsId": 150,
+   "odds": 40,
+   "name": "长胡椒配方"
+  },
+  {
+   "id": 21,
+   "mainFoodsId": 406,
+   "subFoodsId": 407,
+   "addFoodsId": 376,
+   "resFoodsId": 151,
+   "odds": 40,
+   "name": "银杏果配方"
+  },
+  {
+   "id": 22,
+   "mainFoodsId": 519,
+   "subFoodsId": 539,
+   "addFoodsId": 383,
+   "resFoodsId": 152,
+   "odds": 40,
+   "name": "墨鱼配方"
+  },
+  {
+   "id": 23,
+   "mainFoodsId": 406,
+   "subFoodsId": 140,
+   "addFoodsId": 343,
+   "resFoodsId": 418,
+   "odds": 40,
+   "name": "鱼翅配方"
+  },
+  {
+   "id": 24,
+   "mainFoodsId": 145,
+   "subFoodsId": 394,
+   "addFoodsId": 507,
+   "resFoodsId": 419,
+   "odds": 40,
+   "name": "鲍鱼配方"
+  },
+  {
+   "id": 25,
+   "mainFoodsId": 145,
+   "subFoodsId": 390,
+   "addFoodsId": 335,
+   "resFoodsId": 420,
+   "odds": 40,
+   "name": "鱼肚配方"
+  },
+  {
+   "id": 26,
+   "mainFoodsId": 519,
+   "subFoodsId": 145,
+   "addFoodsId": 138,
+   "resFoodsId": 421,
+   "odds": 40,
+   "name": "燕窝配方"
+  },
+  {
+   "id": 27,
+   "mainFoodsId": 145,
+   "subFoodsId": 402,
+   "addFoodsId": 364,
+   "resFoodsId": 422,
+   "odds": 40,
+   "name": "虫草配方"
+  },
+  {
+   "id": 28,
+   "mainFoodsId": 406,
+   "subFoodsId": 533,
+   "addFoodsId": 345,
+   "resFoodsId": 437,
+   "odds": 40,
+   "name": "全麦粉配方"
+  },
+  {
+   "id": 29,
+   "mainFoodsId": 352,
+   "subFoodsId": 336,
+   "addFoodsId": 295,
+   "resFoodsId": 140,
+   "odds": 100,
+   "name": "橄榄油配方"
+  },
+  {
+   "id": 30,
+   "mainFoodsId": 387,
+   "subFoodsId": 373,
+   "addFoodsId": 324,
+   "resFoodsId": 142,
+   "odds": 100,
+   "name": "肥肠配方"
+  },
+  {
+   "id": 31,
+   "mainFoodsId": 380,
+   "subFoodsId": 359,
+   "addFoodsId": 568,
+   "resFoodsId": 143,
+   "odds": 100,
+   "name": "八角配方"
+  },
+  {
+   "id": 32,
+   "mainFoodsId": 537,
+   "subFoodsId": 535,
+   "addFoodsId": 276,
+   "resFoodsId": 144,
+   "odds": 100,
+   "name": "猪腰配方"
+  },
+  {
+   "id": 33,
+   "mainFoodsId": 383,
+   "subFoodsId": 133,
+   "addFoodsId": 269,
+   "resFoodsId": 145,
+   "odds": 100,
+   "name": "海螺配方"
+  },
+  {
+   "id": 34,
+   "mainFoodsId": 508,
+   "subFoodsId": 507,
+   "addFoodsId": 311,
+   "resFoodsId": 389,
+   "odds": 100,
+   "name": "青蟹配方"
+  },
+  {
+   "id": 35,
+   "mainFoodsId": 346,
+   "subFoodsId": 549,
+   "addFoodsId": 295,
+   "resFoodsId": 390,
+   "odds": 100,
+   "name": "海参配方"
+  },
+  {
+   "id": 36,
+   "mainFoodsId": 380,
+   "subFoodsId": 384,
+   "addFoodsId": 328,
+   "resFoodsId": 400,
+   "odds": 100,
+   "name": "草鸡蛋配方"
+  },
+  {
+   "id": 37,
+   "mainFoodsId": 378,
+   "subFoodsId": 333,
+   "addFoodsId": 563,
+   "resFoodsId": 401,
+   "odds": 100,
+   "name": "金华火腿配方"
+  },
+  {
+   "id": 38,
+   "mainFoodsId": 138,
+   "subFoodsId": 340,
+   "addFoodsId": 263,
+   "resFoodsId": 404,
+   "odds": 100,
+   "name": "山黑猪肉配方"
+  },
+  {
+   "id": 39,
+   "mainFoodsId": 360,
+   "subFoodsId": 500,
+   "addFoodsId": 287,
+   "resFoodsId": 405,
+   "odds": 100,
+   "name": "三黄鸡肉配方"
+  },
+  {
+   "id": 40,
+   "mainFoodsId": 345,
+   "subFoodsId": 383,
+   "addFoodsId": 290,
+   "resFoodsId": 412,
+   "odds": 100,
+   "name": "渤海对虾配方"
+  },
+  {
+   "id": 41,
+   "mainFoodsId": 360,
+   "subFoodsId": 375,
+   "addFoodsId": 289,
+   "resFoodsId": 503,
+   "odds": 100,
+   "name": "牡蛎配方"
+  },
+  {
+   "id": 42,
+   "mainFoodsId": 346,
+   "subFoodsId": 363,
+   "addFoodsId": 274,
+   "resFoodsId": 506,
+   "odds": 100,
+   "name": "猪肝配方"
+  },
+  {
+   "id": 43,
+   "mainFoodsId": 371,
+   "subFoodsId": 329,
+   "addFoodsId": 310,
+   "resFoodsId": 509,
+   "odds": 100,
+   "name": "鲳鱼配方"
+  },
+  {
+   "id": 44,
+   "mainFoodsId": 537,
+   "subFoodsId": 330,
+   "addFoodsId": 268,
+   "resFoodsId": 510,
+   "odds": 100,
+   "name": "蹄筋配方"
+  },
+  {
+   "id": 45,
+   "mainFoodsId": 138,
+   "subFoodsId": 134,
+   "addFoodsId": 288,
+   "resFoodsId": 519,
+   "odds": 100,
+   "name": "马蹄配方"
+  },
+  {
+   "id": 46,
+   "mainFoodsId": 380,
+   "subFoodsId": 362,
+   "addFoodsId": 265,
+   "resFoodsId": 521,
+   "odds": 100,
+   "name": "甲鱼配方"
+  },
+  {
+   "id": 47,
+   "mainFoodsId": 380,
+   "subFoodsId": 375,
+   "addFoodsId": 264,
+   "resFoodsId": 522,
+   "odds": 100,
+   "name": "螃蟹配方"
+  },
+  {
+   "id": 48,
+   "mainFoodsId": 387,
+   "subFoodsId": 365,
+   "addFoodsId": 293,
+   "resFoodsId": 533,
+   "odds": 100,
+   "name": "毛肚配方"
+  },
+  {
+   "id": 49,
+   "mainFoodsId": 371,
+   "subFoodsId": 338,
+   "addFoodsId": 311,
+   "resFoodsId": 534,
+   "odds": 100,
+   "name": "枸杞子配方"
+  },
+  {
+   "id": 50,
+   "mainFoodsId": 361,
+   "subFoodsId": 376,
+   "addFoodsId": 288,
+   "resFoodsId": 536,
+   "odds": 100,
+   "name": "龟肉配方"
+  },
+  {
+   "id": 51,
+   "mainFoodsId": 353,
+   "subFoodsId": 360,
+   "addFoodsId": 276,
+   "resFoodsId": 538,
+   "odds": 100,
+   "name": "牛肚配方"
+  },
+  {
+   "id": 52,
+   "mainFoodsId": 362,
+   "subFoodsId": 340,
+   "addFoodsId": 520,
+   "resFoodsId": 539,
+   "odds": 100,
+   "name": "扇贝配方"
+  },
+  {
+   "id": 53,
+   "mainFoodsId": 134,
+   "subFoodsId": 131,
+   "addFoodsId": 309,
+   "resFoodsId": 550,
+   "odds": 100,
+   "name": "海蚌配方"
+  },
+  {
+   "id": 54,
+   "mainFoodsId": 548,
+   "subFoodsId": 367,
+   "addFoodsId": 278,
+   "resFoodsId": 551,
+   "odds": 100,
+   "name": "乌鸡配方"
+  },
+  {
+   "id": 55,
+   "mainFoodsId": 353,
+   "subFoodsId": 504,
+   "addFoodsId": 563,
+   "resFoodsId": 566,
+   "odds": 100,
+   "name": "泥鳅配方"
+  },
+  {
+   "id": 56,
+   "mainFoodsId": 387,
+   "subFoodsId": 342,
+   "addFoodsId": 294,
+   "resFoodsId": 567,
+   "odds": 100,
+   "name": "竹蛏配方"
+  }
+ ]
+}

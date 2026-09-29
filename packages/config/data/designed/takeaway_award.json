@@ -1,0 +1,37 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "权重由公开接口百分比反推(合计 103)；品级 g 时 odds×(1+gradeBonus×(g-1))，礼券不变",
+ "count": 6,
+ "data": [
+  {
+   "goodsId": 1,
+   "odds": 56,
+   "gradeBonus": 0
+  },
+  {
+   "goodsId": 170,
+   "odds": 30,
+   "gradeBonus": 0.2
+  },
+  {
+   "goodsId": 240,
+   "odds": 8,
+   "gradeBonus": 0.5
+  },
+  {
+   "goodsId": 171,
+   "odds": 6,
+   "gradeBonus": 0.5
+  },
+  {
+   "goodsId": 172,
+   "odds": 2,
+   "gradeBonus": 0.8
+  },
+  {
+   "goodsId": 310,
+   "odds": 1,
+   "gradeBonus": 1.0
+  }
+ ]
+}

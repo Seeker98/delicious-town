@@ -1,0 +1,42 @@
+{
+ "source": "集盆栽阈值 dict typeid=50",
+ "count": 3,
+ "data": [
+  {
+   "id": 282,
+   "typeid": 50,
+   "typename": "盆栽效果",
+   "dictname": "青茵初成",
+   "dictval": 4,
+   "inputtime": "2025-09-30 17:56:05",
+   "state": 1,
+   "note": "{\"coinRate\":0.08,\"info\":\"最终银币收益+8%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 283,
+   "typeid": 50,
+   "typename": "盆栽效果",
+   "dictname": "芳景满园",
+   "dictval": 6,
+   "inputtime": "2025-09-30 17:56:07",
+   "state": 1,
+   "note": "{\"reapAddNum\":1,\"info\":\"菜园收获时数量额外+1\"}",
+   "curAct": null,
+   "receiveflag": 0
+  },
+  {
+   "id": 284,
+   "typeid": 50,
+   "typename": "盆栽效果",
+   "dictname": "七葳成荫",
+   "dictval": 7,
+   "inputtime": "2025-10-09 11:25:06",
+   "state": 1,
+   "note": "{\"expRate\":0.64,\"info\":\"最终经验收益+64%\"}",
+   "curAct": null,
+   "receiveflag": 0
+  }
+ ]
+}

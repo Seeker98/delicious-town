@@ -1,0 +1,44 @@
+{
+ "source": "新设计(design_missing.py)",
+ "rule": "鱼塘全局参数（全部新设计）",
+ "count": 1,
+ "data": [
+  {
+   "buildCoin": 800000,
+   "initSlots": 4,
+   "maxSlots": 12,
+   "expandCoin": "slot×200000",
+   "grassfoodsMax": 500,
+   "meatfoodsMax": 500,
+   "tickMinutes": 10,
+   "purity": {
+    "init": 100,
+    "deadFishPerTick": -5,
+    "meatDirtyRate": 0.1,
+    "meatDirty": -1,
+    "algaeGoodRange": [
+     5,
+     15
+    ],
+    "algaeGood": 1,
+    "algaeBadPer10": -1
+   },
+   "algae": {
+    "grassGrowRate": 0.15,
+    "grow": 1,
+    "max": 100
+   },
+   "health": {
+    "purityHigh": 80,
+    "recover": 2,
+    "purityLow": 50,
+    "decay": 3,
+    "dieBelow": 70,
+    "dieRatePerPoint": 0.002
+   },
+   "yield": "mature 阶段产量从 1 线性增至 maxYield；old 阶段每小时 -1（饥饿时 -2），降到 0 死亡",
+   "cleanCoin": 10000,
+   "pureWaterCoin": 50000
+  }
+ ]
+}
