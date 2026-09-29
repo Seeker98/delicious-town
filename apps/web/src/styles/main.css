@@ -1,0 +1,28 @@
+:root {
+  --dt-primary: #d9480f;
+  --dt-bg: #fff4e6;
+  --dt-header-bg: #ffe8cc;
+}
+body {
+  background: var(--dt-bg);
+  min-width: 360px;
+}
+.dt-app {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #fff;
+}
+.dt-header {
+  height: 44px;
+  background: var(--dt-header-bg);
+  color: var(--dt-primary);
+}
+.dt-main {
+  padding: 8px;
+}
+.game-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
