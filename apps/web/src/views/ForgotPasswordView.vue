@@ -7,6 +7,7 @@ import { errorMessage } from '../i18n/zh-CN';
 
 const email = ref('');
 const captchaToken = ref('');
+const turnstile = ref<InstanceType<typeof TurnstileBox> | null>(null);
 const sent = ref(false);
 const error = ref('');
 const busy = ref(false);
@@ -19,6 +20,9 @@ async function submit() {
     sent.value = true;
   } catch (e) {
     error.value = errorMessage(e, '发送失败');
+    // 人机验证令牌只能用一次，失败后作废并重新出题
+    captchaToken.value = '';
+    turnstile.value?.reset();
   } finally {
     busy.value = false;
   }
@@ -38,7 +42,7 @@ async function submit() {
           placeholder="注册时填写的邮箱"
           required
         />
-        <TurnstileBox @token="captchaToken = $event" />
+        <TurnstileBox ref="turnstile" @token="captchaToken = $event" />
         <div v-if="error" class="alert alert-danger py-1 my-2">{{ error }}</div>
         <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">发送重置邮件</button>
       </form>

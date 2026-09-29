@@ -35,6 +35,23 @@ describe('SessionStore', () => {
     expect(await store.get(token)).toBeNull();
   });
 
+  it('并发登录只保留一个有效会话', async () => {
+    const id = ++accountSeq;
+    const [a, b] = await Promise.all([store.create(id), store.create(id)]);
+    const valid = [await store.get(a), await store.get(b)].filter((s) => s !== null);
+    expect(valid).toHaveLength(1);
+  });
+
+  it('账号指针已不指向该会话时，旧令牌失效；update 不会复活已删除的会话', async () => {
+    const id = ++accountSeq;
+    const token = await store.create(id);
+    await redis.del(`sess-acct:${id}`);
+    expect(await store.get(token)).toBeNull();
+    await redis.del(`sess:${sha256(token)}`);
+    await store.update(token, { shardId: 1 });
+    expect(await redis.exists(`sess:${sha256(token)}`)).toBe(0);
+  });
+
   it('伪造或超长的令牌返回 null', async () => {
     expect(await store.get('not-a-real-token')).toBeNull();
     expect(await store.get('x'.repeat(500))).toBeNull();

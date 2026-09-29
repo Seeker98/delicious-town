@@ -98,7 +98,8 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService)
         return id;
       });
 
-      await d.sessions.update(session.token, { restaurantId: restId });
+      // 区服和餐厅成对写回：期间其他标签页切了区服也不会配错
+      await d.sessions.update(session.token, { shardId, restaurantId: restId });
       return overview(restId);
     },
   };

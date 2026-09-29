@@ -16,5 +16,6 @@ interface ImportMeta {
 interface Window {
   turnstile?: {
     render(el: HTMLElement, opts: { sitekey: string; callback: (token: string) => void }): string;
+    reset(widgetId: string): void;
   };
 }

@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 const emit = defineEmits<{ token: [value: string] }>();
 const siteKey = import.meta.env.VITE_TURNSTILE_SITEKEY ?? '';
 const el = ref<HTMLDivElement | null>(null);
+let widgetId: string | null = null;
 
 function loadScript(): Promise<void> {
   if (window.turnstile) return Promise.resolve();
@@ -17,6 +18,17 @@ function loadScript(): Promise<void> {
   });
 }
 
+/** 令牌只能用一次：提交失败后调用，让验证组件重新出题 */
+function reset(): void {
+  if (!siteKey) {
+    emit('token', 'dev-token');
+    return;
+  }
+  if (widgetId !== null) window.turnstile?.reset(widgetId);
+}
+
+defineExpose({ reset });
+
 onMounted(async () => {
   // 开发环境没配置 site key：服务端同样关闭了校验，直接给一个占位令牌
   if (!siteKey) {
@@ -24,7 +36,7 @@ onMounted(async () => {
     return;
   }
   await loadScript();
-  window.turnstile!.render(el.value!, { sitekey: siteKey, callback: (t) => emit('token', t) });
+  widgetId = window.turnstile!.render(el.value!, { sitekey: siteKey, callback: (t) => emit('token', t) });
 });
 </script>
 

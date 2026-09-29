@@ -46,15 +46,21 @@ export function createSessionStore(redis: Redis, ttlSeconds: number): SessionSto
 
     async get(token) {
       if (!token || token.length > 128) return null;
-      const raw = await redis.get(key(sha256(token)));
-      return raw ? (JSON.parse(raw) as SessionData) : null;
+      const hash = sha256(token);
+      const raw = await redis.get(key(hash));
+      if (!raw) return null;
+      const data = JSON.parse(raw) as SessionData;
+      // 只有账号当前指向的会话才有效：挡住并发登录、update 与注销交错时留下的"孤儿"会话
+      if ((await redis.get(accountKey(data.accountId))) !== hash) return null;
+      return data;
     },
 
     async update(token, patch) {
       const k = key(sha256(token));
       const raw = await redis.get(k);
       if (!raw) return;
-      await redis.set(k, JSON.stringify({ ...(JSON.parse(raw) as SessionData), ...patch }), 'KEEPTTL');
+      // XX：键在读写之间被删除（登出、被挤掉）时不再重建，避免出现永不过期的会话
+      await redis.set(k, JSON.stringify({ ...(JSON.parse(raw) as SessionData), ...patch }), 'KEEPTTL', 'XX');
     },
 
     async destroy(token) {

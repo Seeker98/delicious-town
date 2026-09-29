@@ -9,6 +9,7 @@ import { useSessionStore } from '../stores/session';
 
 const form = ref({ username: '', password: '', password2: '', email: '', inviteCode: '' });
 const captchaToken = ref('');
+const turnstile = ref<InstanceType<typeof TurnstileBox> | null>(null);
 const error = ref('');
 const busy = ref(false);
 const router = useRouter();
@@ -38,6 +39,9 @@ async function submit() {
     await router.replace({ name: 'shards' });
   } catch (e) {
     error.value = errorMessage(e, '注册失败');
+    // 人机验证令牌只能用一次，失败后作废并重新出题
+    captchaToken.value = '';
+    turnstile.value?.reset();
   } finally {
     busy.value = false;
   }
@@ -81,7 +85,7 @@ async function submit() {
           required
         />
         <input v-model.trim="form.inviteCode" class="form-control mb-2" placeholder="邀请码（可不填）" />
-        <TurnstileBox @token="captchaToken = $event" />
+        <TurnstileBox ref="turnstile" @token="captchaToken = $event" />
         <div v-if="localError || error" class="alert alert-danger py-1 my-2">{{ localError || error }}</div>
         <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">注册</button>
       </form>
