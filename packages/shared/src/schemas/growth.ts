@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { DeviceSlotDto } from './restaurant';
 
 const points = z.number().int().min(0).max(10000);
 
@@ -56,4 +57,10 @@ export interface OilNeedDto {
 export interface AttrResultDto {
   attrLeft: number;
   attrs: { cook: number; cutting: number; fire: number; season: number; creatives: number };
+}
+
+export interface DeviceOptionsDto {
+  slots: DeviceSlotDto[];
+  /** 仓库里可以摆放的设施道具 */
+  store: Array<{ goodsId: number; num: number; deviceType: number }>;
 }

@@ -1,16 +1,30 @@
-import { GOODS } from '@dt/config';
-import type { AttrResultDto, OilNeedDto, StarNeedDto } from '@dt/shared';
+import { GOODS, GOODS_TYPE } from '@dt/config';
+import {
+  checkRestaurantName,
+  ErrorCode,
+  type AttrResultDto,
+  type DeviceOptionsDto,
+  type OilNeedDto,
+  type StarNeedDto,
+} from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, notEnough, requirement } from '../../core/errors';
+import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, setRest, type Op, type OpResult } from '../../core/op';
-import { gainOil, spendCoin } from '../../core/resources';
+import { gainExp, gainOil, gainRenown, spendCoin, spendDiamond, spendStrength } from '../../core/resources';
+import { uniqueViolation } from '../../db/errors';
 import type { RestaurantRow } from '../../db/schema';
+import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
+import { deviceSlots } from '../restaurant/reads';
 import { normalizeCounts } from '../settlement/globals';
-import { consumeGoods } from '../store/goods';
+import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
+import { placeDevice, removeDevice } from './devices';
 import { oilChecks, starChecks } from './rules';
+
+const NAME_CHARS = /^[\p{Script=Han}A-Za-z0-9]+$/u;
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -151,6 +165,172 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         restLog(o, 'oil.expand', { level: need.level, oilMax: need.oilMax });
         opNews(o, 'oil.expand', { level: need.level, name: o.rest.name });
         return { oilLevel: need.level, oilMax: need.oilMax };
+      });
+    },
+    async devices(ctx: RestCtx): Promise<DeviceOptionsDto> {
+      const r = await readRest(ctx.restaurantId);
+      const rows = await d.db
+        .selectFrom('store_item')
+        .select(['goods_id', 'num'])
+        .where('rest_id', '=', r.id)
+        .where('num', '>', 0)
+        .orderBy('goods_id')
+        .execute();
+      const store = rows
+        .map((x) => ({ goodsId: x.goods_id, num: x.num, g: d.config.goods.get(x.goods_id) }))
+        .filter((x) => x.g?.type === GOODS_TYPE.device && x.g.deviceType !== null)
+        .map((x) => ({ goodsId: x.goodsId, num: x.num, deviceType: x.g!.deviceType! }));
+      return { slots: await deviceSlots(d.db, d.config, r, d.now()), store };
+    },
+
+    placeDevice(ctx: RestCtx, b: { slot: number; goodsId: number }) {
+      return op(ctx, 'device.place', (o) => placeDevice(o, b.slot, b.goodsId));
+    },
+
+    removeDevice(ctx: RestCtx, b: { slot: number }) {
+      return op(ctx, 'device.remove', (o) => removeDevice(o, b.slot));
+    },
+
+    openPlaque2(ctx: RestCtx) {
+      return op(ctx, 'plaque2.open', async (o) => {
+        const t = o.tuning.growth;
+        if (o.rest.plaque2_open) throw new AppError(ErrorCode.ALREADY_DONE, 400);
+        if (o.rest.star_level < t.plaque2Star)
+          throw requirement('star', { need: t.plaque2Star, have: o.rest.star_level });
+        spendCoin(o, t.plaque2Coin);
+        spendDiamond(o, t.plaque2Diamond);
+        setRest(o, 'plaque2_open', true);
+        return { plaque2Open: true };
+      });
+    },
+
+    rename(ctx: RestCtx, rawName: string) {
+      return op(ctx, 'rest.rename', async (o) => {
+        const name = rawName.trim();
+        const check = checkRestaurantName(name);
+        if (check !== 'ok') throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: check });
+        if (!NAME_CHARS.test(name))
+          throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: 'bad_chars' });
+        if ([...name].length > o.tuning.growth.renameMaxLength)
+          throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: 'too_long' });
+        if (name === o.rest.name) throw invalidState('same_name');
+        await consumeGoods(o, GOODS.renameCard, 1);
+        // 上周被放蟑螂数：子项目 3 接入前为 0（设计文档 裁定 8）
+        const roaches = 0;
+        spendCoin(o, roaches * o.tuning.growth.renameCoinPerRoach * o.rest.level * (o.rest.star_level + 1));
+        try {
+          await o.tx.updateTable('restaurant').set({ name }).where('id', '=', o.rest.id).execute();
+        } catch (e) {
+          if (uniqueViolation(e) === 'restaurant_shard_name')
+            throw new AppError(ErrorCode.RESTAURANT_NAME_TAKEN, 409);
+          throw e;
+        }
+        const from = o.rest.name;
+        o.rest.name = name;
+        restLog(o, 'rest.rename', { from, to: name });
+        opNews(o, 'rest.rename', { from, to: name });
+        return { name };
+      });
+    },
+
+    move(ctx: RestCtx, streetId: number) {
+      return op(ctx, 'rest.move', async (o) => {
+        if (streetId === 0 || !o.config.streets.has(streetId) || streetId === o.rest.street_id)
+          throw invalidState('bad_street', { streetId });
+        if (!(await hasValidHonor(o, GOODS.moveJobHonor))) await consumeGoods(o, GOODS.moveCard, 1);
+        const tr = await o.tx
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirstOrThrow();
+        let cost = Math.floor(tr.tables.length * (o.config.requireGoods(GOODS.tableA).coin / 2));
+        const { rate } = await opLuck(o);
+        if (o.rng.chance(rate)) cost = Math.floor(cost / 2);
+        spendCoin(o, cost);
+        await removeHonor(o, o.config.streetMedalId(o.rest.street_id));
+        await grantGoodsOp(o, o.config.streetMedalId(streetId), 1);
+        const from = o.rest.street_id;
+        setRest(o, 'street_id', streetId);
+        restLog(o, 'rest.move', { from, to: streetId });
+        opNews(o, 'rest.move', { from, to: streetId, name: o.rest.name });
+        return { streetId };
+      });
+    },
+
+    setPromo(ctx: RestCtx, on: boolean) {
+      return op(ctx, 'rest.promo', async (o) => {
+        if (on === o.rest.promo_on) throw invalidState(on ? 'already_on' : 'already_off');
+        if (on) await grantGoodsOp(o, GOODS.promoHonor, 1);
+        else await removeHonor(o, GOODS.promoHonor);
+        setRest(o, 'promo_on', on);
+        return { on };
+      });
+    },
+
+    setCookfoods(ctx: RestCtx, flag: number) {
+      return op(ctx, 'rest.cookfoods', async (o) => {
+        if (flag > 0 && o.rest.star_level < o.tuning.growth.cookfoodsMinStar)
+          throw requirement('star', { need: o.tuning.growth.cookfoodsMinStar, have: o.rest.star_level });
+        if (flag > o.tuning.settlement.cookfoodsMaxFlag)
+          throw invalidState('flag', { max: o.tuning.settlement.cookfoodsMaxFlag });
+        setRest(o, 'cookfoods_flag', flag);
+        return { flag };
+      });
+    },
+
+    setCte(ctx: RestCtx, on: boolean) {
+      return op(ctx, 'rest.cte', async (o) => {
+        if (on && !(await hasValidHonor(o, GOODS.apolloStatue)))
+          throw requirement('statue', { goodsId: GOODS.apolloStatue });
+        setRest(o, 'cte_on', on);
+        return { on };
+      });
+    },
+
+    drivePlankton(ctx: RestCtx, way: 'strength' | 'book') {
+      return op(ctx, 'plankton.drive', async (o) => {
+        const snap = await world.ensure(o.shardId, o.now);
+        if (snap.planktonRestId !== o.rest.id) throw invalidState('not_plankton_host');
+        const t = o.tuning.growth;
+        const renown = Math.floor(Math.sqrt(o.rest.level)) * t.drivePlanktonRenownPerSqrt;
+        if (way === 'strength') {
+          spendStrength(o, t.drivePlanktonStrength);
+          gainRenown(o, renown);
+          gainExp(o, renown * t.drivePlanktonExpPerRenown);
+        } else {
+          await consumeGoods(o, GOODS.krabburgerBook, 1);
+          gainRenown(o, renown);
+          gainExp(o, renown * t.drivePlanktonBookExpPerRenown);
+          await grantGoodsOp(o, GOODS.starBlessing, 1);
+        }
+        await world.setPlankton(o.tx, o.shardId, null, o.rest.id);
+        const tr = await o.tx
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirstOrThrow();
+        const tables = tr.tables.map((x) => (x.customer === 7 ? { ...x, customer: 0 } : x));
+        await o.tx
+          .updateTable('restaurant_tables')
+          .set({ tables: JSON.stringify(tables) })
+          .where('rest_id', '=', o.rest.id)
+          .execute();
+        await removeHonor(o, GOODS.plankton);
+        restLog(o, 'plankton.driven', { way, renown });
+        opNews(o, 'plankton.driven', { way, name: o.rest.name });
+        return { renown };
+      });
+    },
+
+    driveKrab(ctx: RestCtx) {
+      return op(ctx, 'krab.drive', async (o) => {
+        if (!(await hasValidHonor(o, GOODS.armStatue)))
+          throw requirement('statue', { goodsId: GOODS.armStatue });
+        if (!(await hasValidHonor(o, GOODS.krabAngry))) throw invalidState('no_angry_krab');
+        spendStrength(o, o.tuning.growth.driveKrabStrength);
+        await removeHonor(o, GOODS.krabAngry);
+        restLog(o, 'krab.driven');
+        return { ok: true };
       });
     },
   };
