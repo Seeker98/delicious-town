@@ -1,8 +1,9 @@
-import type { Redis } from 'ioredis';
 import type { Kysely } from 'kysely';
 import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
-import type { Job } from './scheduler';
+import type { Game } from '../game';
+import { runDueJobs } from './periodic';
+import type { Job, JobLogger } from './scheduler';
 
 export const RETENTION_DAYS = { ledger: 30, news: 30, income_round: 3, rest_log: 30 } as const;
 const DAY_MS = 86_400_000;
@@ -27,23 +28,29 @@ export async function maintainPartitions(
   return { created, dropped };
 }
 
-export function workerJobs(
-  deps: { db: Kysely<DB>; redis: Redis },
-  now: () => Date = () => new Date(),
-): Job[] {
+export function workerJobs(game: Game, log: JobLogger): Job[] {
+  const { db, redis } = game.app;
+  const now = () => game.deps.now();
   return [
     {
       name: 'partitions',
       intervalMs: 3_600_000,
       run: async () => {
-        await maintainPartitions(deps.db, now());
+        await maintainPartitions(db, now());
       },
     },
     {
       name: 'heartbeat',
       intervalMs: 60_000,
       run: async () => {
-        await deps.redis.set('worker:heartbeat', now().toISOString(), 'EX', 180);
+        await redis.set('worker:heartbeat', now().toISOString(), 'EX', 180);
+      },
+    },
+    {
+      name: 'periodic',
+      intervalMs: 5_000,
+      run: async () => {
+        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
       },
     },
   ];
