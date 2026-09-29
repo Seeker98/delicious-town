@@ -9,6 +9,7 @@ import { restaurantRoutes } from './restaurant/routes';
 import { shardRoutes } from './shard/routes';
 import { shopRoutes } from './shop/routes';
 import { storeRoutes } from './store/routes';
+import { taskRoutes } from './task/routes';
 import { worldRoutes } from './world/routes';
 
 /** 注册所有业务模块的路由 */
@@ -23,4 +24,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(storeRoutes(game.store), { prefix: '/api/v1/store' });
   app.register(shopRoutes(game.shop), { prefix: '/api/v1/shop' });
   app.register(marketRoutes(game.market), { prefix: '/api/v1/market' });
+  app.register(taskRoutes(game.task), { prefix: '/api/v1/task' });
 }

@@ -13,6 +13,8 @@ import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
 import { createShopService, type ShopService } from './modules/shop/service';
 import { createStoreService, type StoreService } from './modules/store/service';
+import { registerTaskHandlers } from './modules/task/handler';
+import { createTaskService, type TaskService } from './modules/task/service';
 import { settlementJobs } from './modules/settlement/jobs';
 import { worldJobs } from './modules/world/jobs';
 import { createWorldService, type WorldService } from './modules/world/service';
@@ -31,6 +33,7 @@ export interface Game {
   store: StoreService;
   shop: ShopService;
   market: MarketService;
+  task: TaskService;
   jobs: PeriodicJob[];
 }
 
@@ -46,6 +49,7 @@ export function createGame(app: AppDeps): Game {
     shards,
   };
   const world = createWorldService(deps);
+  registerTaskHandlers(app.bus, app.config);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
   jobs.push(...settlementJobs(deps, world));
@@ -66,6 +70,7 @@ export function createGame(app: AppDeps): Game {
     store: createStoreService(deps),
     shop,
     market,
+    task: createTaskService(deps),
     jobs,
   };
 }
