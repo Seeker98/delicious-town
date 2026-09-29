@@ -35,6 +35,11 @@ if last and tonumber(ARGV[1]) - tonumber(last) < tonumber(ARGV[2]) then return 0
 redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[3])
 return 1`;
 
+/** 购买失败回滚时撤销刚写入的间隔：只删自己写的那个值，避免误删别的请求写的 */
+const RELEASE_LUA = `
+if redis.call('GET', KEYS[1]) == ARGV[1] then redis.call('DEL', KEYS[1]) end
+return 1`;
+
 /** 限购计数：累加后超过上限就不写入，并报 LIMIT_REACHED（并发时靠行锁串行） */
 async function claimLimit(o: Op, itemId: number, subject: string, num: number, limit: number): Promise<void> {
   if (num > limit) throw limitReached('market', { limit });
@@ -125,6 +130,70 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       }
     }
     return guesses.length;
+  }
+
+  /** 菜场购买的事务部分；写入特价 IP 间隔后通过 onCooldown 告诉调用方，失败时由调用方撤销 */
+  function buyTx(
+    ctx: RestCtx,
+    b: { itemId: number; num: number },
+    onCooldown: (c: { key: string; stamp: string }) => void,
+  ) {
+    return runOp(d, ctx, { feature: 'market', source: 'market.buy' }, async (o) => {
+      const item = await o.tx
+        .selectFrom('market_item')
+        .selectAll()
+        .where('id', '=', b.itemId)
+        .where('shard_id', '=', o.shardId)
+        .executeTakeFirst();
+      if (!item) throw invalidState('item_gone');
+      const shelf = item.shelf as Shelf;
+      const t = o.tuning.market;
+      const food = o.config.requireFood(item.foods_id);
+      if (shelf === 1) {
+        const acc = await o.tx
+          .selectFrom('account')
+          .select('email_verified_at')
+          .where('id', '=', ctx.accountId)
+          .executeTakeFirstOrThrow();
+        if (!acc.email_verified_at) throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403);
+      }
+      if (shelf === 2 && !(await hasValidHonor(o, GOODS.loveNecklace)))
+        throw requirement('necklace', { goodsId: GOODS.loveNecklace });
+      const have = (await foodsMap(o.tx, o.rest.id)).get(food.id)?.num ?? 0;
+      if (have === 0 && (await cupboardSlotsUsed(o.tx, o.rest.id)) >= o.rest.cupboard_num)
+        throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
+      if (have + b.num > o.rest.foods_max_num) throw limitReached('foods_max', { max: o.rest.foods_max_num });
+      const limit = personLimit(shelf, food, item.opened_at, o.now, t);
+      await claimLimit(o, item.id, `rest:${o.rest.id}`, b.num, limit);
+      if (ctx.deviceId) await claimLimit(o, item.id, deviceSubject(ctx.deviceId), b.num, limit);
+      await claimLimit(o, item.id, `ip:${ctx.ip}`, b.num, limit);
+      const sold = await o.tx
+        .updateTable('market_item')
+        .set({ sold: sql<number>`sold + ${b.num}` })
+        .where('id', '=', item.id)
+        .where(sql<boolean>`sold + ${b.num} <= stock`)
+        .returning('sold')
+        .executeTakeFirst();
+      if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
+      const snap = await world.ensure(o.shardId, o.now, o.tx);
+      spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
+      if (shelf === 1) {
+        const ok = await d.redis.eval(
+          COOLDOWN_LUA,
+          1,
+          `mkt-ip:${o.shardId}:${ctx.ip}`,
+          o.now.getTime(),
+          t.specialIpCooldownSec * 1000,
+          86_400,
+        );
+        if (Number(ok) !== 1)
+          throw new AppError(ErrorCode.COOLDOWN, 429, { seconds: t.specialIpCooldownSec });
+        onCooldown({ key: `mkt-ip:${o.shardId}:${ctx.ip}`, stamp: String(o.now.getTime()) });
+      }
+      await addFoods(o, food.id, b.num);
+      await emitAction(o, 'market.buy');
+      return { itemId: item.id, foodsId: food.id, num: b.num };
+    });
   }
 
   return {
@@ -247,63 +316,15 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       return { foods, guesses };
     },
 
-    buy(ctx: RestCtx, b: { itemId: number; num: number }) {
-      return runOp(d, ctx, { feature: 'market', source: 'market.buy' }, async (o) => {
-        const item = await o.tx
-          .selectFrom('market_item')
-          .selectAll()
-          .where('id', '=', b.itemId)
-          .where('shard_id', '=', o.shardId)
-          .executeTakeFirst();
-        if (!item) throw invalidState('item_gone');
-        const shelf = item.shelf as Shelf;
-        const t = o.tuning.market;
-        const food = o.config.requireFood(item.foods_id);
-        if (shelf === 1) {
-          const acc = await o.tx
-            .selectFrom('account')
-            .select('email_verified_at')
-            .where('id', '=', ctx.accountId)
-            .executeTakeFirstOrThrow();
-          if (!acc.email_verified_at) throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403);
-        }
-        if (shelf === 2 && !(await hasValidHonor(o, GOODS.loveNecklace)))
-          throw requirement('necklace', { goodsId: GOODS.loveNecklace });
-        const have = (await foodsMap(o.tx, o.rest.id)).get(food.id)?.num ?? 0;
-        if (have === 0 && (await cupboardSlotsUsed(o.tx, o.rest.id)) >= o.rest.cupboard_num)
-          throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
-        if (have + b.num > o.rest.foods_max_num)
-          throw limitReached('foods_max', { max: o.rest.foods_max_num });
-        const limit = personLimit(shelf, food, item.opened_at, o.now, t);
-        await claimLimit(o, item.id, `rest:${o.rest.id}`, b.num, limit);
-        if (ctx.deviceId) await claimLimit(o, item.id, deviceSubject(ctx.deviceId), b.num, limit);
-        await claimLimit(o, item.id, `ip:${ctx.ip}`, b.num, limit);
-        const sold = await o.tx
-          .updateTable('market_item')
-          .set({ sold: sql<number>`sold + ${b.num}` })
-          .where('id', '=', item.id)
-          .where(sql<boolean>`sold + ${b.num} <= stock`)
-          .returning('sold')
-          .executeTakeFirst();
-        if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
-        const snap = await world.ensure(o.shardId, o.now, o.tx);
-        spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
-        if (shelf === 1) {
-          const ok = await d.redis.eval(
-            COOLDOWN_LUA,
-            1,
-            `mkt-ip:${o.shardId}:${ctx.ip}`,
-            o.now.getTime(),
-            t.specialIpCooldownSec * 1000,
-            86_400,
-          );
-          if (Number(ok) !== 1)
-            throw new AppError(ErrorCode.COOLDOWN, 429, { seconds: t.specialIpCooldownSec });
-        }
-        await addFoods(o, food.id, b.num);
-        await emitAction(o, 'market.buy');
-        return { itemId: item.id, foodsId: food.id, num: b.num };
-      });
+    async buy(ctx: RestCtx, b: { itemId: number; num: number }) {
+      let cooldown: { key: string; stamp: string } | null = null;
+      try {
+        return await buyTx(ctx, b, (c) => (cooldown = c));
+      } catch (e) {
+        const c = cooldown as { key: string; stamp: string } | null;
+        if (c) await d.redis.eval(RELEASE_LUA, 1, c.key, c.stamp);
+        throw e;
+      }
     },
 
     joinGuess(ctx: RestCtx, foodsIds: number[]) {

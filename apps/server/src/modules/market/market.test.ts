@@ -107,6 +107,21 @@ describe('特价和高级菜场', () => {
     await m().buy({ ...ctx, ip }, { itemId: items[1]!.id, num: 1 });
   });
 
+  it('特价购买在写入 IP 间隔之后失败回滚时，不占用这个 IP 的间隔', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000 }, verified: true });
+    const items = await openShelf(ctx.shardId, 1);
+    const ip = uniqueIp();
+    let failNext = true;
+    t.deps.bus.on('action', async (_tx, e) => {
+      if (failNext && e.restId === ctx.restaurantId && e.payload?.key === 'market.buy') {
+        failNext = false;
+        throw new Error('boom');
+      }
+    });
+    await expect(m().buy({ ...ctx, ip }, { itemId: items[0]!.id, num: 1 })).rejects.toThrow('boom');
+    await m().buy({ ...ctx, ip }, { itemId: items[0]!.id, num: 1 });
+  });
+
   it('同一个 IP 的两家店同时抢特价：最多成功一个，不超卖（Review Focus 1）', async () => {
     const a = await newRestaurant(t, { patch: { coin: 100000 }, verified: true });
     const b = await newRestaurant(t, { shardId: a.shardId, patch: { coin: 100000 }, verified: true });
