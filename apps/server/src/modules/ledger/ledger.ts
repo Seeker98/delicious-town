@@ -10,7 +10,7 @@ export interface LedgerEntry {
   refRestId?: number;
 }
 
-export async function recordLedger(db: Kysely<DB>, entries: LedgerEntry[]): Promise<void> {
+export async function recordLedger(db: Kysely<DB>, entries: LedgerEntry[], at?: Date): Promise<void> {
   if (entries.length === 0) return;
   await db
     .insertInto('ledger')
@@ -22,6 +22,7 @@ export async function recordLedger(db: Kysely<DB>, entries: LedgerEntry[]): Prom
         delta: e.delta,
         source: e.source,
         ref_rest_id: e.refRestId ?? null,
+        ...(at ? { created_at: at } : {}),
       })),
     )
     .execute();

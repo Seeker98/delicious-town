@@ -4,7 +4,7 @@ import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { Job } from './scheduler';
 
-export const RETENTION_DAYS = { ledger: 30, news: 30 } as const;
+export const RETENTION_DAYS = { ledger: 30, news: 30, income_round: 3, rest_log: 30 } as const;
 const DAY_MS = 86_400_000;
 
 /** 预建昨天起 5 天的分区，删除超过保留期的分区 */
@@ -14,12 +14,16 @@ export async function maintainPartitions(
 ): Promise<{ created: string[]; dropped: string[] }> {
   const created: string[] = [];
   const dropped: string[] = [];
-  for (const table of ['ledger', 'news'] as const) {
+  for (const table of Object.keys(RETENTION_DAYS) as Array<keyof typeof RETENTION_DAYS>) {
     created.push(...(await ensureDailyPartitions(db, table, new Date(now.getTime() - DAY_MS), 5)));
     dropped.push(
       ...(await dropPartitionsBefore(db, table, new Date(now.getTime() - RETENTION_DAYS[table] * DAY_MS))),
     );
   }
+  await db
+    .deleteFrom('job_run')
+    .where('started_at', '<', new Date(now.getTime() - 7 * DAY_MS))
+    .execute();
   return { created, dropped };
 }
 

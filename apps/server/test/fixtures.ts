@@ -1,7 +1,8 @@
 import type { Insertable, Kysely } from 'kysely';
 import type { DB } from '../src/db';
 import { uniqueViolation } from '../src/db/errors';
-import type { RestaurantTable } from '../src/db/schema';
+import type { CookbookCounts, RestaurantTable, TableState } from '../src/db/schema';
+import { testConfig } from './config';
 
 let seq = Math.floor(Math.random() * 1_000_000);
 
@@ -73,4 +74,51 @@ export async function createRestaurantRow(
     .returning('id')
     .executeTakeFirstOrThrow();
   return row.id;
+}
+
+export function emptyCounts(): CookbookCounts {
+  return { learned: 0, grade: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], street: {} };
+}
+
+export interface FullRestaurantOptions {
+  patch?: Partial<Insertable<RestaurantTable>>;
+  /** 食谱 id → 品级 */
+  cookbooks?: Record<number, number>;
+  tables?: TableState[];
+}
+
+/** 餐厅 + 餐桌 + 已学食谱三行一起建；cookbook_counts 按 cookbooks 算好 */
+export async function createRestaurantFull(
+  db: Kysely<DB>,
+  shardId: number,
+  accountId: number,
+  opts: FullRestaurantOptions = {},
+): Promise<number> {
+  const config = testConfig();
+  const counts = emptyCounts();
+  const levels = Buffer.alloc(config.maxCookbookId + 1);
+  for (const [id, grade] of Object.entries(opts.cookbooks ?? {})) {
+    const cb = config.requireCookbook(Number(id));
+    levels[cb.id] = grade;
+    if (grade > 0) {
+      counts.learned += 1;
+      counts.grade[grade]! += 1;
+      counts.street[String(cb.streetId)] = (counts.street[String(cb.streetId)] ?? 0) + 1;
+    }
+  }
+  const tableNum = opts.patch?.table_num ?? 4;
+  const restId = await createRestaurantRow(db, shardId, accountId, {
+    ...opts.patch,
+    table_num: tableNum,
+    cookbook_counts: JSON.stringify(counts),
+  });
+  const tables =
+    opts.tables ??
+    Array.from({ length: tableNum }, (_, i) => ({ no: i + 1, floor: Math.floor(i / 16) + 1, customer: 0 }));
+  await db
+    .insertInto('restaurant_tables')
+    .values({ rest_id: restId, tables: JSON.stringify(tables) })
+    .execute();
+  await db.insertInto('restaurant_cookbooks').values({ rest_id: restId, levels }).execute();
+  return restId;
 }

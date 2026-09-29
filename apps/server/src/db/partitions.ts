@@ -1,7 +1,7 @@
 import { sql, type Kysely } from 'kysely';
 import type { DB } from './schema';
 
-export type PartitionedTable = 'ledger' | 'news';
+export type PartitionedTable = 'ledger' | 'news' | 'income_round' | 'rest_log';
 const DAY_MS = 86_400_000;
 
 function utcDay(d: Date): string {

@@ -1,5 +1,4 @@
 import type { FastifyInstance, LightMyRequestResponse } from 'fastify';
-import { loadGameConfig, type GameConfig } from '@dt/config';
 import { buildApp, type AppDeps } from '../src/app';
 import { createDb } from '../src/db';
 import { loadEnv, type Env } from '../src/env';
@@ -9,6 +8,7 @@ import { memoryMailer, type MemoryMailer } from '../src/infra/mailer';
 import { createRedis } from '../src/infra/redis';
 import type { RateRule, RateRuleName } from '../src/security/rateLimiter';
 import { createSessionStore } from '../src/security/sessionStore';
+import { testConfig } from './config';
 import { uniqueName } from './fixtures';
 
 /** 测试默认放宽限流，只有限流测试自己收紧 */
@@ -18,11 +18,7 @@ export const GENEROUS_RULES: Record<RateRuleName, RateRule> = {
   email: { capacity: 100_000, refillPerSec: 100_000 },
 };
 
-let config: GameConfig | null = null;
-export function testConfig(): GameConfig {
-  config ??= loadGameConfig(process.env.CONFIG_BUNDLE_PATH!);
-  return config;
-}
+export { testConfig };
 
 export function testEnvWith(patch: Partial<Env> = {}): Env {
   return { ...loadEnv(process.env), ...patch };
