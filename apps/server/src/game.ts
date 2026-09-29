@@ -6,6 +6,8 @@ import { createAccountService, type AccountService } from './modules/account/ser
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
 import { createGrowthService, type GrowthService } from './modules/growth/service';
+import { marketJobs } from './modules/market/jobs';
+import { createMarketService, type MarketService } from './modules/market/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -28,6 +30,7 @@ export interface Game {
   cupboard: CupboardService;
   store: StoreService;
   shop: ShopService;
+  market: MarketService;
   jobs: PeriodicJob[];
 }
 
@@ -48,6 +51,8 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...settlementJobs(deps, world));
   const shop = createShopService(deps);
   jobs.push(...shopJobs(shop));
+  const market = createMarketService(deps, world);
+  jobs.push(...marketJobs(market));
   return {
     app,
     deps,
@@ -60,6 +65,7 @@ export function createGame(app: AppDeps): Game {
     cupboard: createCupboardService(deps, world),
     store: createStoreService(deps),
     shop,
+    market,
     jobs,
   };
 }

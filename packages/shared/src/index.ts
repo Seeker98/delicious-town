@@ -14,3 +14,4 @@ export * from './schemas/cookbook';
 export * from './schemas/cupboard';
 export * from './schemas/store';
 export * from './schemas/shop';
+export * from './schemas/market';
