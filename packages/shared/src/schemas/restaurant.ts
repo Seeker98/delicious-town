@@ -59,6 +59,8 @@ export interface RestaurantDto {
   cteOn: boolean;
   cookfoodsFlag: number;
   plaque2Open: boolean;
+  /** 第二块牌匾位的开通条件（区服数值） */
+  plaque2Cost: { star: number; coin: number; diamond: number };
   mainTaskStep: number;
   devices: DeviceSlotDto[];
   lastRound: RoundSummaryDto | null;

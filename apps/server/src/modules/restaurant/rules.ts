@@ -57,6 +57,7 @@ export interface OverviewExtra {
   isPlanktonHost: boolean;
   /** 展示中的个性图标（问题记录：自己看不到称号） */
   icons: Array<{ key: string; title: string }>;
+  plaque2Cost: { star: number; coin: number; diamond: number };
 }
 
 export function toRestaurantDto(
@@ -105,6 +106,7 @@ export function toRestaurantDto(
     cteOn: r.cte_on,
     cookfoodsFlag: r.cookfoods_flag,
     plaque2Open: r.plaque2_open,
+    plaque2Cost: extra.plaque2Cost,
     mainTaskStep: r.main_task_step,
     devices: extra.devices,
     lastRound: extra.lastRound,

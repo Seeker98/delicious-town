@@ -14,6 +14,7 @@ vi.mock('../api/endpoints', () => ({
     claimTask: vi.fn(),
     devices: vi.fn(),
     placeDevice: vi.fn(),
+    openPlaque2: vi.fn(),
     dineCurrent: vi.fn(),
     dineEnd: vi.fn(),
   },
@@ -51,6 +52,7 @@ const dto: RestaurantDto = {
   cteOn: false,
   cookfoodsFlag: 0,
   plaque2Open: false,
+  plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
   mainTaskStep: 1,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
@@ -227,5 +229,47 @@ describe('RestaurantHomeView', () => {
     await w.find('[data-testid="dine-end"]').trigger('click');
     await flushPromises();
     expect(endpoints.dineEnd).toHaveBeenCalled();
+  });
+  it('第二块牌匾位：满 3 星没开通时可以花银币和钻石开通（问题记录：三星了还是锁定）', async () => {
+    const plaque = {
+      slot: 7,
+      name: '牌匾',
+      deviceType: 6,
+      needStar: 3,
+      unlocked: false,
+      goodsId: null,
+      expiresAt: null,
+    };
+    const rich = { ...dto, starLevel: 3, coin: 20_000_000, diamond: 200, devices: [plaque] };
+    vi.mocked(endpoints.overview).mockResolvedValue(rich);
+    vi.mocked(endpoints.openPlaque2).mockResolvedValue({ plaque2Open: true } as never);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = await mountView();
+    expect(w.find('[data-testid="slot-7"]').text()).toContain('未开通');
+    const btn = w.find('[data-testid="open-plaque2"]');
+    expect(btn.text()).toBe('开通第二块牌匾位（15,000,000 银币 + 188 钻石）');
+    await btn.trigger('click');
+    await flushPromises();
+    expect(confirm).toHaveBeenCalled();
+    expect(endpoints.openPlaque2).toHaveBeenCalledTimes(1);
+    confirm.mockRestore();
+
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...rich, diamond: 100 });
+    const poor = await mountView();
+    expect(poor.find('[data-testid="open-plaque2"]').attributes('disabled')).toBeDefined();
+    expect(poor.find('[data-testid="plaque2-block"]').text()).toBe('钻石不够（要 188）');
+
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...rich, starLevel: 2 });
+    const low = await mountView();
+    expect(low.find('[data-testid="open-plaque2"]').exists()).toBe(false);
+    expect(low.find('[data-testid="slot-7"]').text()).toContain('3 星开放');
+
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...rich,
+      plaque2Open: true,
+      devices: [{ ...plaque, unlocked: true }],
+    });
+    const done = await mountView();
+    expect(done.find('[data-testid="open-plaque2"]').exists()).toBe(false);
   });
 });
