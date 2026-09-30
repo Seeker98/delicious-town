@@ -115,3 +115,13 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 数值在 `tuning.bar`（划拳、猜酒杯、转数字的胜率和新闻门槛，蟹币兑换比例，老虎机保底，随机奖励的类型概率 `awardRates`）
 - 老虎机奖池来自配置包的 `dataset/bar_slot_machine_award`（22 项）
 - 任务 13、108 的链接改为 `/bar`；新状态键 `honor.potCount`（支线"集齐 4 株盆栽"）
+
+
+## 厨塔（子项目 4C-2）
+
+- 迁移 0012 新建 `tower_state`（每店打赢过的最高层）、`tower_watchman_mc`（守塔人当天的菜）、`tower_rank`（每区服每周的赛厨榜）
+- 新功能开关 `features.tower`（默认开）。关闭后厨塔、赛厨榜、好友切磋、声望商店的接口返回"这个区服暂未开放该功能"，厨塔挑战券不能用，主线第 27 步和切磋支线跳过，两个定时任务跳过该区服
+- worker 新任务：`tower-watchman`（每天 05:58 给 4~10 层守塔人换菜）、`tower-rank-week`（每周一 00:01 结算上一周赛厨榜）
+- 数值在 `tuning.tower`（次数、体力、声望、切磋奖励档位、名次礼包、换菜时间）
+- 守塔人来自配置包的 `dataset/tower_floors`，属性在构建时按原版厨力校准；声望商店从 `extra` 挪到正式字段 `renownShop`
+- 活跃映射新增 `tower.rank` → "与好友赛厨"
