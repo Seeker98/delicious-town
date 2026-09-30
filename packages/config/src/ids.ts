@@ -73,6 +73,7 @@ export const GOODS = {
   starTear: 469, // 星神之泪（配方合成额外产出）
   formulaEssence: 470, // 配方精华（essence 是厨具精华）
   borderCollie: 339, // 边牧（偷菜惩罚）
+  towerTicket: 136, // 厨塔挑战券
 } as const;
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */

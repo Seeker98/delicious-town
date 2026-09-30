@@ -12,6 +12,7 @@ import type {
   IncomeAction,
   SeedExchange,
   SlotAward,
+  TowerFloor,
   MapDef,
   MissileDef,
   Seed,
@@ -84,6 +85,8 @@ export interface GameConfig {
   /** 老虎机奖池（按 odds 抽，含空格） */
   readonly slotPool: WeightedPool<SlotAward>;
   readonly slotAwards: ReadonlyMap<number, SlotAward>;
+  /** 守塔人，键 = 层 */
+  readonly towerFloors: ReadonlyMap<number, TowerFloor>;
   incomeAction(id: number): IncomeAction;
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
@@ -240,6 +243,7 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     fertilizers,
     slotPool: buildPool(bundle.slotAwards, (a) => a.odds),
     slotAwards: byId(bundle.slotAwards),
+    towerFloors: new Map(bundle.towerFloors.map((f) => [f.floor, f])),
     incomeAction(id) {
       const a = incomeActions.get(id);
       if (!a) throw new Error(`unknown income action ${id}`);
