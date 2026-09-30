@@ -11,6 +11,7 @@ import type {
   Formula,
   IncomeAction,
   SeedExchange,
+  SlotAward,
   MapDef,
   MissileDef,
   Seed,
@@ -80,6 +81,9 @@ export interface GameConfig {
   readonly seedExchange: ReadonlyMap<number, SeedExchange>;
   /** 肥料（devicetype 80）：道具 id → 每次抵扣的分钟数 */
   readonly fertilizers: ReadonlyMap<number, number>;
+  /** 老虎机奖池（按 odds 抽，含空格） */
+  readonly slotPool: WeightedPool<SlotAward>;
+  readonly slotAwards: ReadonlyMap<number, SlotAward>;
   incomeAction(id: number): IncomeAction;
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
@@ -234,6 +238,8 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     formulaPool: buildPool(bundle.formulas, (f) => f.odds),
     seedExchange: new Map(bundle.seedExchange.map((e) => [e.seedId, e])),
     fertilizers,
+    slotPool: buildPool(bundle.slotAwards, (a) => a.odds),
+    slotAwards: byId(bundle.slotAwards),
     incomeAction(id) {
       const a = incomeActions.get(id);
       if (!a) throw new Error(`unknown income action ${id}`);

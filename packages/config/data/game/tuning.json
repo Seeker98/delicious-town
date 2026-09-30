@@ -241,5 +241,13 @@
       "grassRate": 0.008, "grassDryFactor": 3, "dryAddRate": 0.1,
       "dryStartRate": 0.002, "dryStartGrassRate": 0.008, "wormRate": 0.003
     }
+  },
+  "bar": {
+    "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgNewsStreak": 5,
+    "cupNewsStreak": 4,
+    "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
+    "krabCoinTickets": 100,
+    "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,
+    "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 }
   }
 }

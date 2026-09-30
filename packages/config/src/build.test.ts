@@ -239,3 +239,58 @@ describe('2A 新增配置', () => {
     expect(errors).toContain('market_guess_award hits 1 references unknown goods 999999');
   });
 });
+
+describe('酒吧配置（子项目 4C-1）', () => {
+  it('老虎机奖池 22 项：空格、食材、道具，稀有和新闻标记', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const s = bundle!.slotAwards;
+    expect(s).toHaveLength(22);
+    expect(s.reduce((x, a) => x + a.odds, 0)).toBe(19553);
+    expect(s.find((a) => a.id === 0)).toEqual({
+      id: 0,
+      kind: 'empty',
+      itemId: null,
+      odds: 15000,
+      rare: false,
+      getNum: 1,
+      news: false,
+    });
+    expect(s.find((a) => a.id === 1)).toMatchObject({ kind: 'foods', itemId: 326, odds: 720 });
+    expect(s.find((a) => a.id === 100)).toEqual({
+      id: 100,
+      kind: 'goods',
+      itemId: 180,
+      odds: 12,
+      rare: true,
+      getNum: 1,
+      news: true,
+    });
+    expect(s.filter((a) => a.rare).map((a) => a.id)).toEqual([100]);
+    expect(s.filter((a) => a.news).map((a) => a.id)).toEqual([11, 19, 21, 99, 100]);
+  });
+
+  it('任务 13、108 链接到 /bar', () => {
+    const { bundle } = buildBundle(source());
+    for (const id of [13, 108]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/bar');
+  });
+
+  it('老虎机奖项引用了不存在的食材', () => {
+    const src = source();
+    const awards = structuredClone(src['dataset/bar_slot_machine_award']) as Array<{
+      id: number;
+      foodsId: number | null;
+    }>;
+    awards.find((a) => a.id === 1)!.foodsId = 999999;
+    const { errors } = buildBundle({ ...src, 'dataset/bar_slot_machine_award': awards });
+    expect(errors).toContain('bar_slot_machine_award 1 references unknown food 999999');
+  });
+
+  it('保底奖项不在奖池里', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { bar: { slotFloorAwardId: number } };
+    tuning.bar.slotFloorAwardId = 555;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.bar.slotFloorAwardId 555 not in slot awards');
+  });
+});

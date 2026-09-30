@@ -199,6 +199,17 @@ export const rawIncomeAction = z.object({
   exp: z.number(),
   landExp: int.optional(),
 });
+export const rawSlotAward = z.object({
+  id: int,
+  /** 0 空、1 食材、2 道具 */
+  type: int,
+  goodsId: int.nullish(),
+  foodsId: int.nullish(),
+  odds: int,
+  rareflag: int,
+  getNum: int,
+  newsflag: int,
+});
 export const rawGoodsExchange = z
   .object({ id: int, goodsId: int, needGoods: z.array(z.object({ type: z.string(), id: int, num: int })) })
   .passthrough();

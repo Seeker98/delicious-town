@@ -17,6 +17,7 @@ export const SOURCE_FILES = [
   'dataset/suit_pot',
   'dataset/suit_painting',
   'dataset/market_guess_foods',
+  'dataset/bar_slot_machine_award',
   'designed/cookbooks_price',
   'designed/cookbook_grades',
   'designed/goods_awardflag',
