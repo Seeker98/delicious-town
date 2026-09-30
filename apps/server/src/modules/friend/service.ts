@@ -1,6 +1,7 @@
 import type { GameDeps } from '../../core/deps';
 import type { WorldService } from '../world/service';
 import { createDine } from '../interact/dine';
+import { createRoach } from '../interact/roach';
 import { createFriendReads } from './reads';
 import { createRelations } from './relations';
 
@@ -10,6 +11,7 @@ export function createSocialService(d: GameDeps, world: WorldService) {
   return {
     relations: createRelations(d),
     reads: createFriendReads(d),
+    roach: createRoach(d),
     dine: createDine(d),
   };
 }

@@ -7,6 +7,7 @@ import {
   respondBody,
   restIdBody,
   restIdParam,
+  restTableBody,
   tableBody,
 } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
@@ -48,6 +49,12 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     r.post('/dine/end', async (req) => okOp(await svc.dine.end(restCtxOf(req))));
     r.post('/dine/expel', async (req) =>
       okOp(await svc.dine.expel(restCtxOf(req), parse(tableBody, req.body))),
+    );
+    r.post('/roach/lay', async (req) =>
+      okOp(await svc.roach.lay(restCtxOf(req), parse(restTableBody, req.body))),
+    );
+    r.post('/roach/kill', async (req) =>
+      okOp(await svc.roach.kill(restCtxOf(req), parse(restTableBody, req.body))),
     );
   };
 }

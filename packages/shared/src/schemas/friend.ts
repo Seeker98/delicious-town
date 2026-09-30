@@ -101,3 +101,11 @@ export interface DineRewardDto {
   exp: number;
   strength: number;
 }
+
+export interface KillResultDto {
+  strength: number;
+  coin: number;
+  exp: number;
+  /** 捡到的神秘礼券 */
+  tickets: number;
+}
