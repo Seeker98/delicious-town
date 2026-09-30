@@ -3,6 +3,7 @@ import { roundOf } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { upsertEffectSource } from '../effects/service';
 import { settleShardRound } from '../settlement/runner';
 
 let http: TestContext;
@@ -45,6 +46,37 @@ describe('餐厅读接口', () => {
       isPlanktonHost: false,
     });
     expect(d.weather.name).toBeTruthy();
+  });
+
+  it('概况：厨具、套装的加成来源显示中文名；带自己展示中的个性图标（问题记录：加成里显示 equip、自己看不到称号）', async () => {
+    const p = await playerWithRestaurant();
+    const db = http.deps.db;
+    await upsertEffectSource(db, p.restId, {
+      sourceType: 'equip',
+      sourceId: 0,
+      effects: { luckValue: 3 },
+      expiresAt: null,
+    });
+    await upsertEffectSource(db, p.restId, {
+      sourceType: 'suit',
+      sourceId: 30,
+      effects: { atRate: 0.01 },
+      expiresAt: null,
+    });
+    await db
+      .insertInto('rest_icon')
+      .values({ rest_id: p.restId, icon_key: 'founder', shown: true })
+      .execute();
+    await db
+      .insertInto('rest_icon')
+      .values({ rest_id: p.restId, icon_key: 'helper', shown: false })
+      .execute();
+    const d = (await get(p.cookie, '/overview')).json.data;
+    const names = d.effects.map((e: { name: string }) => e.name);
+    expect(names).toContain('厨具');
+    expect(names).toContain('宋嫂套装（3 件）');
+    expect(names).not.toContain('equip');
+    expect(d.icons).toEqual([{ key: 'founder', title: '开服元老' }]);
   });
 
   it('结算一轮后：楼层显示每桌结果，收益记录一条，加成分项有明细', async () => {

@@ -12,6 +12,7 @@ import type {
 } from '@dt/shared';
 import type { DB, RestaurantRow, TableState } from '../../db/schema';
 import { listActiveEffects } from '../effects/service';
+import { effectSourceName } from '../effects/naming';
 
 /** 设施位是否已开放：星级够；第二牌匾位（7）还要先开通 */
 export function slotUnlocked(d: Device, rest: Pick<RestaurantRow, 'star_level' | 'plaque2_open'>): boolean {
@@ -163,10 +164,7 @@ export async function buffsOf(
     sources: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,
-      name:
-        e.sourceType === 'device'
-          ? (config.devices.get(e.sourceId)?.name ?? '设施')
-          : (config.goods.get(e.sourceId)?.name ?? e.sourceType),
+      name: effectSourceName(e, config),
       effects: e.effects,
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),

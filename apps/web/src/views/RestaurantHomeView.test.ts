@@ -66,6 +66,7 @@ const dto: RestaurantDto = {
   },
   weather: { id: 1, name: '晴' },
   isPlanktonHost: false,
+  icons: [],
   door: 0,
   avatar: null,
   tables: [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 })),
@@ -181,6 +182,15 @@ describe('RestaurantHomeView', () => {
     expect(box.text()).toContain('挑剔率 -120%');
     expect(box.text()).toContain('没人点菜');
     expect(box.text()).toContain('每桌耗油 +5');
+  });
+
+  it('名字下面显示自己展示中的个性图标（问题记录：称号只有好友能看到）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      icons: [{ key: 'founder', title: '开服元老' }],
+    });
+    const w = await mountView();
+    expect(w.find('[data-testid="my-icons"]').text()).toContain('开服元老');
   });
 
   it('加油：显示花费，点击后刷新', async () => {

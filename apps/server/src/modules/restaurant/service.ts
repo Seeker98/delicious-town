@@ -31,6 +31,21 @@ export interface RestaurantDeps {
 }
 
 export function createRestaurantService(d: RestaurantDeps, shards: ShardService, world: WorldService) {
+  async function shownIcons(restId: number): Promise<Array<{ key: string; title: string }>> {
+    const defs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
+    const rows = await d.db
+      .selectFrom('rest_icon')
+      .select('icon_key')
+      .where('rest_id', '=', restId)
+      .where('shown', '=', true)
+      .orderBy('id')
+      .execute();
+    return rows.flatMap((i) => {
+      const def = defs.get(i.icon_key);
+      return def ? [{ key: def.key, title: def.title }] : [];
+    });
+  }
+
   async function overview(restId: number): Promise<RestaurantDto> {
     const row = await d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirst();
     if (!row) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
@@ -47,6 +62,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       lastRound: await lastRound(d.db, restId),
       weather: { id: snap.weather.id, name: snap.weather.name },
       isPlanktonHost: snap.planktonRestId === restId,
+      icons: await shownIcons(restId),
     });
   }
 

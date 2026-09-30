@@ -4,6 +4,7 @@ import { levelUpExp, type DeviceSlotDto, type RestaurantDto, type RoundSummaryDt
 import type { RestaurantRow, RestaurantTable, TableState } from '../../db/schema';
 import type { ActiveEffect } from '../effects/service';
 import { tableDto } from './reads';
+import { effectSourceName } from '../effects/naming';
 
 export const TABLES_PER_FLOOR = 16;
 
@@ -54,6 +55,8 @@ export interface OverviewExtra {
   lastRound: RoundSummaryDto | null;
   weather: { id: number; name: string } | null;
   isPlanktonHost: boolean;
+  /** 展示中的个性图标（问题记录：自己看不到称号） */
+  icons: Array<{ key: string; title: string }>;
 }
 
 export function toRestaurantDto(
@@ -107,15 +110,13 @@ export function toRestaurantDto(
     lastRound: extra.lastRound,
     weather: extra.weather,
     isPlanktonHost: extra.isPlanktonHost,
+    icons: extra.icons,
     door: r.door,
     avatar: r.avatar,
     effects: effects.map((e) => ({
       sourceType: e.sourceType,
       sourceId: e.sourceId,
-      name:
-        e.sourceType === 'device'
-          ? (config.devices.get(e.sourceId)?.name ?? '设施')
-          : (config.goods.get(e.sourceId)?.name ?? e.sourceType),
+      name: effectSourceName(e, config),
       effects: e.effects,
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),
