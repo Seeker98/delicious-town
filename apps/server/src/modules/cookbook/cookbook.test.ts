@@ -61,6 +61,25 @@ describe('食谱列表、详情、需求', () => {
     expect(learnable.items.every((x) => x.learn !== 'z' && x.learn !== 'max')).toBe(true);
   });
 
+  it('筛选：可学只列未学、食材够的；可升级只列已学、食材够升下一级的；带全部食谱总数（问题记录）', async () => {
+    const probe = await newRestaurant(t);
+    const all = await cb().list(probe, { street: 0, page: 1, filter: 'all' });
+    const other = all.items.find((x) => x.id !== 194)!;
+    const need = [
+      ...(await cb().detail(probe, 194)).grades.find((g) => g.grade === 2)!.foods,
+      ...(await cb().detail(probe, other.id)).grades.find((g) => g.grade === 1)!.foods,
+    ];
+    const foods: Record<number, number> = {};
+    for (const f of need) foods[f.foodsId] = (foods[f.foodsId] ?? 0) + f.num;
+    const ctx = await newRestaurant(t, { cookbooks: { 194: 1 }, foods });
+    const learnable = await cb().list(ctx, { street: 0, page: 1, filter: 'learnable' });
+    expect(learnable.items.map((x) => x.id)).toContain(other.id);
+    expect(learnable.items.every((x) => x.grade === 0 && x.learn !== 'z')).toBe(true);
+    const upgradable = await cb().list(ctx, { street: 0, page: 1, filter: 'upgradable' });
+    expect(upgradable.items.map((x) => [x.id, x.grade])).toEqual([[194, 1]]);
+    expect(upgradable.allTotal).toBe(2363);
+  });
+
   it('详情：各品级所需食材', async () => {
     const ctx = await newRestaurant(t);
     const d = await cb().detail(ctx, 194);

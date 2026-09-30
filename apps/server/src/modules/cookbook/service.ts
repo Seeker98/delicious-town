@@ -72,7 +72,10 @@ export function createCookbookService(d: GameDeps) {
       const rows = ids
         .map((id) => rowOf(id, levels, have, max))
         .filter((r) => {
-          if (q.filter === 'learnable') return r.learn !== 'z' && r.learn !== 'max';
+          const can = r.learn !== 'z' && r.learn !== 'max';
+          // 可学：没学过的；可升级：已学的（问题记录）
+          if (q.filter === 'learnable') return can && r.grade === 0;
+          if (q.filter === 'upgradable') return can && r.grade > 0;
           if (q.filter === 'unlearned') return r.grade === 0;
           if (q.filter === 'learned') return r.grade > 0;
           return true;
@@ -94,6 +97,7 @@ export function createCookbookService(d: GameDeps) {
         learned: counts.learned,
         streetLearned: counts.street[String(q.street)] ?? 0,
         streetTotal: ids.length,
+        allTotal: d.config.cookbooks.size,
         gradeCounts: counts.grade,
       };
     },

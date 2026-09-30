@@ -7,19 +7,21 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
+import { formatNum } from '../utils/format';
 import { GRADE_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
 const toast = useToastStore();
 const street = ref(0);
-const filter = ref<'all' | 'learnable' | 'unlearned' | 'learned'>('all');
+const filter = ref<'all' | 'learnable' | 'upgradable' | 'unlearned' | 'learned'>('all');
 const page = ref(1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
 const FILTERS = [
   { key: 'all', label: '全部' },
   { key: 'learnable', label: '可学' },
+  { key: 'upgradable', label: '可升级' },
   { key: 'unlearned', label: '未学' },
   { key: 'learned', label: '已学' },
 ] as const;
@@ -68,7 +70,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="d-flex gap-2 mb-2">
+  <div class="d-flex flex-wrap gap-2 mb-2">
     <select v-model.number="street" class="form-select form-select-sm w-auto">
       <option v-for="s in catalog.streets" :key="s.id" :value="s.id">{{ s.name }}</option>
     </select>
@@ -77,14 +79,16 @@ onMounted(async () => {
         v-for="f in FILTERS"
         :key="f.key"
         :class="['btn', filter === f.key ? 'btn-primary' : 'btn-outline-primary']"
+        :data-testid="`filter-${f.key}`"
         @click="filter = f.key"
       >
         {{ f.label }}
       </button>
     </div>
   </div>
-  <div v-if="list" class="small text-muted mb-2">
-    本街已学 {{ list.streetLearned }}/{{ list.streetTotal }} · 共学会 {{ list.learned }} 道
+  <div v-if="list" class="small text-muted mb-2" data-testid="cookbook-counts">
+    本街已学 {{ list.streetLearned }}/{{ list.streetTotal }} · 共学会 {{ formatNum(list.learned) }} /
+    {{ formatNum(list.allTotal) }} 道
   </div>
   <div v-for="r in list?.items ?? []" :key="r.id" class="border rounded p-2 mb-1 small">
     <div class="d-flex align-items-center">

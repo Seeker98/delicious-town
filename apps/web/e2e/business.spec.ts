@@ -72,7 +72,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   await page.goto('/cookbooks');
   await page.getByTestId('learn-194').click();
   // 学会后这道菜排到后面去了，按"已学数量"确认
-  await expect(page.getByText('共学会 1 道')).toBeVisible();
+  await expect(page.getByTestId('cookbook-counts')).toContainText('共学会 1 / 2,363 道');
 
   const hasHorizontalScroll = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth,
