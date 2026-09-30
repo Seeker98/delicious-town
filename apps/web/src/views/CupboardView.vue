@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { foodLevelLabel } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -125,7 +126,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         :data-testid="`level-${x.lv}`"
         @click="level = x.lv"
       >
-        {{ x.lv }} 级 ({{ x.n }})
+        {{ foodLevelLabel(x.lv) }} ({{ x.n }})
       </button>
     </div>
     <div v-if="shown.length === 0" class="small text-muted">这一级没有食材</div>

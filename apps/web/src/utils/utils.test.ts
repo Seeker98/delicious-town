@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { describeEffects } from './effects';
-import { formatNum } from './format';
+import { foodLevelLabel, formatNum } from './format';
 
 describe('formatNum', () => {
   it('千分位', () => {
@@ -21,5 +21,13 @@ describe('describeEffects', () => {
 
   it('不认识的键不显示', () => {
     expect(describeEffects({ redPants: 1, luckValue: 20 })).toBe('幸运+20');
+  });
+});
+
+describe('foodLevelLabel（问题记录：橱柜分类把神秘、万能食材显示成 7、9 级）', () => {
+  it('7 级是神秘食材，9 级是万能食材，其他显示几级', () => {
+    expect(foodLevelLabel(7)).toBe('神秘');
+    expect(foodLevelLabel(9)).toBe('万能');
+    expect(foodLevelLabel(3)).toBe('3 级');
   });
 });
