@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const cookbookListQuery = z.object({
   street: z.coerce.number().int().min(0).max(50),
   page: z.coerce.number().int().min(1).default(1),
-  filter: z.enum(['all', 'learnable', 'unlearned', 'learned']).default('all'),
+  filter: z.enum(['all', 'learnable', 'upgradable', 'unlearned', 'learned']).default('all'),
 });
 export type CookbookListQuery = z.infer<typeof cookbookListQuery>;
 
@@ -43,6 +43,8 @@ export interface CookbookListDto {
   learned: number;
   streetLearned: number;
   streetTotal: number;
+  /** 全部食谱数（所有街道） */
+  allTotal: number;
   gradeCounts: number[];
 }
 

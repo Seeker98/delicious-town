@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, foodNum, newRestaurant, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
-import { addFoods, planAddFoods, subFoods } from './foods';
+import { addFoods, addFoodsMany, planAddFoods, subFoods } from './foods';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -94,5 +94,80 @@ describe('addFoods / subFoods', () => {
         await subFoods(op, 101, 3);
       }),
     ).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { kind: 'foods', id: 101, need: 3, have: 1 } });
+  });
+});
+
+describe('addFoodsMany（一次加多种，问题记录：多张探险图卡顿）', () => {
+  /** 同样初始状态的店：橱柜 3 格、单种上限 10；101 有 8、102 有 2；120 只在冰箱里有 9 */
+  const setup = async () => {
+    const ctx = await newRestaurant(t, {
+      patch: { cupboard_num: 3, foods_max_num: 10 },
+      foods: { 101: 8, 102: 2, 120: 0 },
+    });
+    await t.db
+      .updateTable('cupboard_food')
+      .set({ fridge_num: 9 })
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('foods_id', '=', 120)
+      .execute();
+    return ctx;
+  };
+  const snapshot = async (restId: number) => ({
+    rows: await t.db
+      .selectFrom('cupboard_food')
+      .select(['foods_id', 'num', 'fridge_num', 'fridge_unread'])
+      .where('rest_id', '=', restId)
+      .orderBy('foods_id')
+      .execute(),
+    ledger: (
+      await t.db
+        .selectFrom('ledger')
+        .select(['kind', 'item_id', 'delta', 'source'])
+        .where('rest_id', '=', restId)
+        .orderBy('id')
+        .execute()
+    ).map((x) => [x.kind, x.item_id, x.delta, x.source]),
+    logs: (
+      await t.db
+        .selectFrom('rest_log')
+        .select(['type', 'params'])
+        .where('rest_id', '=', restId)
+        .orderBy('id')
+        .execute()
+    ).map((x) => [x.type, x.params]),
+  });
+
+  it('结果和逐种 addFoods 完全一样：加满进冰箱、占新格子、格子满进冰箱、冰箱满丢弃', async () => {
+    const add = new Map([
+      [101, 5],
+      [103, 4],
+      [104, 12],
+      [120, 3],
+    ]);
+    const a = await setup();
+    const ra = await run(a, async (op) => {
+      for (const [id, n] of add) await addFoods(op, id, n, { lucky: true });
+    });
+    const b = await setup();
+    const rb = await run(b, (op) => addFoodsMany(op, add, { lucky: true }));
+    expect(rb.events).toEqual(ra.events);
+    expect(await snapshot(b.restaurantId)).toEqual(await snapshot(a.restaurantId));
+    expect((await snapshot(b.restaurantId)).rows).toEqual([
+      { foods_id: 101, num: 10, fridge_num: 3, fridge_unread: true },
+      { foods_id: 102, num: 2, fridge_num: 0, fridge_unread: false },
+      { foods_id: 103, num: 4, fridge_num: 0, fridge_unread: false },
+      { foods_id: 104, num: 0, fridge_num: 10, fridge_unread: true },
+      { foods_id: 120, num: 0, fridge_num: 10, fridge_unread: true },
+    ]);
+  });
+
+  it('空的不做事；数量 ≤ 0 的跳过', async () => {
+    const ctx = await newRestaurant(t);
+    const r = await run(ctx, async (op) => {
+      await addFoodsMany(op, new Map());
+      await addFoodsMany(op, new Map([[101, 0]]));
+    });
+    expect(r.events).toEqual([]);
+    expect(await foodNum(t, ctx.restaurantId, 101)).toEqual({ num: 0, fridge: 0 });
   });
 });
