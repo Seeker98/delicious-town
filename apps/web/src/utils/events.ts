@@ -15,6 +15,18 @@ const KIND_NAMES: Record<string, string> = {
   strength: '体力',
 };
 
+/** 合并同类型、同物品、同幸运标记的事件（一次得到很多东西时不刷屏），保持首次出现的顺序 */
+export function mergeEvents(events: GameEvent[]): GameEvent[] {
+  const out = new Map<string, GameEvent>();
+  for (const e of events) {
+    const key = `${e.type}:${e.kind}:${e.id ?? ''}:${e.lucky ? 1 : 0}`;
+    const cur = out.get(key);
+    if (cur) cur.num += e.num;
+    else out.set(key, { ...e });
+  }
+  return [...out.values()];
+}
+
 export function eventText(e: GameEvent, names: Names): string {
   const verb = e.type === 'gain' ? '获得' : '消耗';
   let what: string;

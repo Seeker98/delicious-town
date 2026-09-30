@@ -113,6 +113,22 @@ describe('使用道具（规格书 07 §7.4）', () => {
   });
 });
 
+describe('批量开礼包（问题记录：99 个随机万能食材礼包要 1.5 秒）', () => {
+  it('同样的奖励合并发放：得到的总数不变，事件和流水按食材合并', async () => {
+    const ctx = await newRestaurant(t, { goods: { 131: 99 } });
+    const r = await s().use(ctx, { goodsId: 131, num: 99 });
+    const foods = await t.db
+      .selectFrom('cupboard_food')
+      .select(['num', 'fridge_num'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    // 每个礼包：万能食材 1 个 + 1 级食材 2 个
+    expect(foods.reduce((n, f) => n + f.num + f.fridge_num, 0)).toBe(99 * 3);
+    // 合并前每开一个礼包就有 2 条（共 199 条）；合并后不超过食材种数
+    expect(r.events.length).toBeLessThanOrEqual(40);
+  });
+});
+
 describe('仓库列表与流水', () => {
   it('列表：可用、可批量、出售价；过期勋章不显示', async () => {
     const ctx = await newRestaurant(t, { goods: { 85: 1, 13: 1 } });
