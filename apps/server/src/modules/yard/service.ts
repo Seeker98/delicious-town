@@ -1,4 +1,11 @@
-import { ErrorCode, type BasketDto, type FormulasDto, type FriendYardDto, type YardDto } from '@dt/shared';
+import {
+  ErrorCode,
+  type BasketDto,
+  type FormulasDto,
+  type FriendYardDto,
+  type SeedsDto,
+  type YardDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
@@ -8,6 +15,7 @@ import { basketView, storeBasket } from './basket';
 import { dewormPlant, feedPlant, plantSeed, reapPlant, removePlant, waterPlant, weedPlant } from './crop';
 import { appraiseFormula, composeFormula, decomposeFormula, formulasView, learnFormula } from './formula';
 import { expandLand } from './land';
+import { buySeed, exchangeSeed, seedsView } from './seed';
 import { stealPlant } from './steal';
 import { friendYardView, yardView } from './view';
 
@@ -129,6 +137,17 @@ export function createYardService(d: GameDeps) {
     },
     composeFormula(ctx: RestCtx, b: { formulaId: number; num: number }) {
       return op(ctx, 'formula.compose', (o) => composeFormula(o, b));
+    },
+
+    async seeds(ctx: RestCtx): Promise<SeedsDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'yard');
+      return seedsView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning.yard);
+    },
+    buySeed(ctx: RestCtx, b: { seedId: number; num: number }) {
+      return op(ctx, 'seed.buy', (o) => buySeed(o, b));
+    },
+    exchangeSeed(ctx: RestCtx, b: { seedId: number; times: number }) {
+      return op(ctx, 'seed.exchange', (o) => exchangeSeed(o, b));
     },
   };
 }

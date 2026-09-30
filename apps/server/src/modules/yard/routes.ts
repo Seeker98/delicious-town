@@ -6,6 +6,8 @@ import {
   formulaDecomposeBody,
   formulaIdBody,
   restIdParam,
+  seedBuyBody,
+  seedExchangeBody,
   yardFeedBody,
   yardPlantBody,
   yardPlantIdBody,
@@ -57,6 +59,13 @@ export function yardRoutes(svc: YardService): FastifyPluginAsync {
     );
     r.post('/yard/formula/compose', async (req) =>
       okOp(await svc.composeFormula(restCtxOf(req), parse(formulaComposeBody, req.body))),
+    );
+    r.get('/yard/seeds', async (req) => ok(await svc.seeds(restCtxOf(req))));
+    r.post('/yard/seed/buy', async (req) =>
+      okOp(await svc.buySeed(restCtxOf(req), parse(seedBuyBody, req.body))),
+    );
+    r.post('/yard/seed/exchange', async (req) =>
+      okOp(await svc.exchangeSeed(restCtxOf(req), parse(seedExchangeBody, req.body))),
     );
   };
 }
