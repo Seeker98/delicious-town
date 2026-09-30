@@ -7,6 +7,7 @@ import { getEffectAgg } from '../effects/service';
 import { restGear } from '../equip/power';
 import type { WorldService } from '../world/service';
 import { shootMissiles } from './guardian';
+import { prepareTrial, refreshTrial, startTrial } from './trial';
 import { exploreMaps } from './explore';
 import { guardianHp, inFeedHours, krakenTarget } from './rules';
 
@@ -117,6 +118,16 @@ export function createTempleService(d: GameDeps, world: WorldService) {
 
     explore(ctx: RestCtx, b: { goodsId: number; times: number }) {
       return op(ctx, 'temple.explore', async (o) => exploreMaps(o, await weatherOf(o), b));
+    },
+
+    prepareTrial(ctx: RestCtx, b: { way: 1 | 2 }) {
+      return op(ctx, 'temple.trial.prepare', (o) => prepareTrial(o, b));
+    },
+    refreshTrial(ctx: RestCtx, b: { mcId?: number }) {
+      return op(ctx, 'temple.trial.refresh', (o) => refreshTrial(o, b));
+    },
+    startTrial(ctx: RestCtx, b: { mainFoodsId: number; subFoodsId: number }) {
+      return op(ctx, 'temple.trial', (o) => startTrial(o, b));
     },
   };
 }

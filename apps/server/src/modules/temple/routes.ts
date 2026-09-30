@@ -14,5 +14,14 @@ export function templeRoutes(svc: TempleService): FastifyPluginAsync {
     r.post('/temple/explore', async (req) =>
       okOp(await svc.explore(restCtxOf(req), parse(exploreBody, req.body))),
     );
+    r.post('/temple/trial/prepare', async (req) =>
+      okOp(await svc.prepareTrial(restCtxOf(req), parse(trialPrepareBody, req.body))),
+    );
+    r.post('/temple/trial/refresh', async (req) =>
+      okOp(await svc.refreshTrial(restCtxOf(req), parse(trialRefreshBody, req.body ?? {}))),
+    );
+    r.post('/temple/trial/start', async (req) =>
+      okOp(await svc.startTrial(restCtxOf(req), parse(trialStartBody, req.body))),
+    );
   };
 }
