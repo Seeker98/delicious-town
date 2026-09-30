@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyLearn, foodsNeedFor, planLearn, streetTargetGrade } from './rules';
+import { applyForget, applyLearn, foodsNeedFor, planLearn, streetTargetGrade } from './rules';
 
 const level = (id: number) => ({ 1: 1, 2: 2, 3: 3, 7: 7 })[id] ?? 1;
 const stock = (m: Record<number, number>) => (id: number) => m[id] ?? 0;
@@ -69,5 +69,12 @@ describe('食材需求（规格书 03 §3.8）', () => {
       [102, 4],
       [101, 1],
     ]);
+  });
+});
+
+describe('applyForget（设计文档 裁定 9）', () => {
+  it('学会数 -1、原品级计数 -1、街道计数 -1', () => {
+    const c = applyForget({ learned: 3, grade: [0, 1, 2, 0], street: { '5': 2, '6': 1 } }, 5, 2);
+    expect(c).toEqual({ learned: 2, grade: [0, 1, 1, 0], street: { '5': 1, '6': 1 } });
   });
 });

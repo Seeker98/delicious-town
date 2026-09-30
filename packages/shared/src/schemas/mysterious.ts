@@ -103,3 +103,48 @@ export interface TasteResultDto {
   /** 这批剩余份数 */
   left: number;
 }
+
+export const lessonOpenBody = z.object({ mcId: id, certId: id });
+export const lessonLearnBody = z.object({ type: z.union([z.literal(1), z.literal(2)]) });
+export const lessonIdParam = z.object({ id: z.coerce.number().int().positive() });
+
+export interface LessonDto {
+  id: number;
+  teacherId: number;
+  teacherName: string;
+  mcId: number;
+  level: number;
+  maxNum: number;
+  learned: number;
+  stolen: number;
+  endsAt: string;
+  /** 我已经试过这门课 */
+  tried: boolean;
+}
+
+export interface LessonCertDto {
+  goodsId: number;
+  num: number;
+  levels: number[];
+  needStrength: number;
+  maxNum: number;
+  lessonHour: number;
+}
+
+export interface LessonsDto {
+  items: LessonDto[];
+  /** 我正在开的课 */
+  mine: LessonDto | null;
+  certs: LessonCertDto[];
+  /** 持有百世之师，可以强制结束 */
+  canForceClose: boolean;
+  forceCloseCoinPerLevel: number;
+  /** 偷学失败遗忘 等级×forgetPerLevel+1 道食谱 */
+  forgetPerLevel: number;
+}
+
+export interface LessonLearnDto {
+  success: boolean;
+  /** 偷学失败时遗忘的普通食谱和特色菜 */
+  forgot: { cookbooks: number[]; mcId: number | null };
+}

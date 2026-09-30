@@ -79,6 +79,18 @@ export function applyLearn(
   return c;
 }
 
+/** 遗忘一道已学食谱（偷学失败，子项目 4A 设计文档 裁定 9）：applyLearn 的反向 */
+export function applyForget(counts: CookbookCounts, streetId: number, from: number): CookbookCounts {
+  const c: CookbookCounts = {
+    learned: Math.max(0, counts.learned - 1),
+    grade: [...counts.grade],
+    street: { ...counts.street },
+  };
+  c.grade[from] = Math.max(0, (c.grade[from] ?? 0) - 1);
+  c.street[String(streetId)] = Math.max(0, (c.street[String(streetId)] ?? 0) - 1);
+  return c;
+}
+
 /** 本街目标品级（规格书 03 §3.8）：从 5 起算，本街全部达到当前目标就 +1，不超过 max */
 export function streetTargetGrade(levels: Uint8Array, ids: readonly number[], max: number): number {
   let t = Math.min(5, max);

@@ -26,6 +26,7 @@ import { restPower } from '../equip/power';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { consumeSpecial, currentCook, endCook } from './cook';
+import { createLessonOps } from './lesson';
 import { addRemnant, subRemnant } from './remnant';
 import {
   addProficiency,
@@ -90,6 +91,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
     }
     return p;
   }
+
+  const lessons = createLessonOps(d);
 
   return {
     async overview(ctx: RestCtx): Promise<McOverviewDto> {
@@ -415,6 +418,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         },
       );
     },
+
+    ...lessons,
   };
 }
 
