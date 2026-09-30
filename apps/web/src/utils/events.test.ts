@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventText, logText, mergeEvents, recordLabel } from './events';
+import { eventText, eventsSummary, logText, mergeEvents, recordLabel } from './events';
 
 const names = { goodsName: (id: number) => ({ 1: '神秘礼券' })[id] ?? `道具${id}`, foodName: () => '大米' };
 
@@ -137,5 +137,35 @@ describe('菜园（子项目 4B-2）', () => {
         names,
       ),
     ).toBe('乙店 偷走了你的 大米×1，被边牧逮住，留下了 大米');
+  });
+});
+
+describe('一次操作的得失合成一条提示（问题记录：弹出的消息框太多）', () => {
+  it('获得在前、消耗在后，同类合并', () => {
+    expect(
+      eventsSummary(
+        [
+          { type: 'gain', kind: 'coin', num: 5 },
+          { type: 'loss', kind: 'strength', num: 1 },
+          { type: 'gain', kind: 'exp', num: 5 },
+          { type: 'gain', kind: 'foods', id: 101, num: 1 },
+          { type: 'gain', kind: 'foods', id: 101, num: 2 },
+        ],
+        names,
+      ),
+    ).toBe('获得 银币 5、经验 5、大米×3；消耗 体力 1');
+    expect(eventsSummary([{ type: 'loss', kind: 'goods', id: 1, num: 2 }], names)).toBe('消耗 神秘礼券×2');
+  });
+
+  it('太多时只列前 8 项，后面写"等 N 项"', () => {
+    const many = Array.from({ length: 11 }, (_, i) => ({
+      type: 'gain' as const,
+      kind: 'goods' as const,
+      id: 100 + i,
+      num: 1,
+    }));
+    const text = eventsSummary(many, names);
+    expect(text.split('、')).toHaveLength(8);
+    expect(text.endsWith('等 11 项')).toBe(true);
   });
 });

@@ -7,6 +7,8 @@ const props = defineProps<{ inGame: boolean }>();
 const route = useRoute();
 const router = useRouter();
 const showBack = computed(() => props.inGame && route.path !== '/');
+/** 游戏里和后台都能点店名回首页；登录、选区服等页面只显示文字 */
+const linked = computed(() => props.inGame || route.path.startsWith('/admin'));
 
 function back() {
   // 直接打开的页面没有上一页时回首页，免得退出游戏
@@ -26,7 +28,7 @@ function back() {
     >
       <i class="bi bi-chevron-left"></i>
     </button>
-    <RouterLink v-if="inGame" to="/" class="text-reset text-decoration-none" data-testid="home">
+    <RouterLink v-if="linked" to="/" class="text-reset text-decoration-none" data-testid="home">
       <i class="bi bi-shop me-1"></i><span class="fw-bold">美味小镇</span>
     </RouterLink>
     <template v-else><i class="bi bi-shop me-1"></i><span class="fw-bold">美味小镇</span></template>

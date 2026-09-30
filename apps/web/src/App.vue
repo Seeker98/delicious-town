@@ -7,7 +7,7 @@ import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useToastStore } from './stores/toast';
-import { eventText, mergeEvents } from './utils/events';
+import { eventsSummary } from './utils/events';
 
 const route = useRoute();
 const catalog = useCatalogStore();
@@ -16,9 +16,14 @@ const inGame = computed(() => route.meta.needRestaurant === true);
 /** 后台页面用宽布局 */
 const wide = computed(() => route.path.startsWith('/admin'));
 
+/** 一次操作的得失合成一条提示（问题记录：弹出的消息框太多） */
 setEventsListener((events) => {
-  for (const e of mergeEvents(events))
-    toast.push(eventText(e, catalog), e.type === 'gain' ? 'success' : 'info');
+  if (events.length === 0) return;
+  toast.push(
+    eventsSummary(events, catalog),
+    events.some((e) => e.type === 'gain') ? 'success' : 'info',
+    4000,
+  );
 });
 
 onMounted(() => {

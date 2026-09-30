@@ -88,7 +88,7 @@ describe('接口', () => {
 
   it('目录接口不需要登录', async () => {
     const r = await call(http.app, 'GET', '/api/v1/world/catalog');
-    expect(r.json.data.goods).toHaveLength(601);
+    expect(r.json.data.goods).toHaveLength(602);
     expect(r.json.data.foods).toHaveLength(313);
     expect(r.json.data.version).toBe(config.version);
   });

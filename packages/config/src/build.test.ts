@@ -9,7 +9,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
-    expect(bundle!.goods).toHaveLength(601);
+    expect(bundle!.goods).toHaveLength(602);
     expect(bundle!.cookbooks).toHaveLength(2363);
     expect(bundle!.streets).toHaveLength(14);
     expect(bundle!.starNeed).toHaveLength(12);

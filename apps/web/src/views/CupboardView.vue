@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { CupboardDto, FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
@@ -14,6 +14,34 @@ const fridge = ref<FridgeDto | null>(null);
 const picked = ref<number | null>(null);
 const num = ref(1);
 const busy = ref(false);
+
+/** 按等级筛选（问题记录：橱柜食材太多时只看某一级）；0 = 全部，记住上次选的 */
+const LEVEL_KEY = 'dt_cupboard_level';
+function savedLevel(): number {
+  try {
+    return Number(localStorage.getItem(LEVEL_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+const level = ref(savedLevel());
+watch(level, (v) => {
+  try {
+    localStorage.setItem(LEVEL_KEY, String(v));
+  } catch {
+    // 存储不可用时忽略
+  }
+});
+const levelOf = (foodsId: number) => catalog.food(foodsId)?.level ?? 0;
+const levels = computed(() => {
+  const count = new Map<number, number>();
+  for (const f of data.value?.items ?? [])
+    count.set(levelOf(f.foodsId), (count.get(levelOf(f.foodsId)) ?? 0) + 1);
+  return [...count].sort((a, b) => a[0] - b[0]).map(([lv, n]) => ({ lv, n }));
+});
+const shown = computed(() =>
+  (data.value?.items ?? []).filter((f) => level.value === 0 || levelOf(f.foodsId) === level.value),
+);
 
 const pickedItem = computed(() => data.value?.items.find((x) => x.foodsId === picked.value) ?? null);
 const pickedLevel = computed(() => (picked.value ? (catalog.food(picked.value)?.level ?? 0) : 0));
@@ -82,8 +110,27 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
       {{ data.foodsMaxNum }} · 今天免体力处理还剩 {{ data.freeHandleLeft }} 次 · 本街目标
       {{ data.targetGrade }} 品
     </div>
+    <div class="d-flex flex-wrap gap-1 mb-2">
+      <button
+        :class="['btn', 'btn-sm', level === 0 ? 'btn-secondary' : 'btn-outline-secondary']"
+        data-testid="level-all"
+        @click="level = 0"
+      >
+        全部 ({{ data.items.length }})
+      </button>
+      <button
+        v-for="x in levels"
+        :key="x.lv"
+        :class="['btn', 'btn-sm', level === x.lv ? 'btn-secondary' : 'btn-outline-secondary']"
+        :data-testid="`level-${x.lv}`"
+        @click="level = x.lv"
+      >
+        {{ x.lv }} 级 ({{ x.n }})
+      </button>
+    </div>
+    <div v-if="shown.length === 0" class="small text-muted">这一级没有食材</div>
     <div class="row g-1">
-      <div v-for="f in data.items" :key="f.foodsId" class="col-4">
+      <div v-for="f in shown" :key="f.foodsId" class="col-4">
         <button
           :class="['btn', 'btn-sm', 'w-100', 'border', picked === f.foodsId ? 'btn-warning' : 'btn-light']"
           :data-testid="`pick-${f.foodsId}`"

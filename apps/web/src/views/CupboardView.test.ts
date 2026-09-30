@@ -79,4 +79,47 @@ describe('CupboardView', () => {
     await w.find('input[type="number"]').setValue('99');
     expect(w.find('[data-testid="decompose"]').text()).toBe('分解 ×7');
   });
+
+  it('按等级筛选（问题记录：橱柜食材太多时只看某一级）；记住上次选的等级', async () => {
+    useCatalogStore().apply({
+      version: 'test',
+      goods: [],
+      foods: [
+        { id: 302, name: '葡萄', level: 2, odds: 100, coin: 1000, type: 2 },
+        { id: 101, name: '大米', level: 1, odds: 100, coin: 100, type: 2 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    });
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      slotsUsed: 2,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      foodsMaxNum: 999,
+      targetGrade: 5,
+      fridgeCount: 0,
+      fridgeUnread: false,
+      freeHandleLeft: 20,
+      handleMax: 100,
+      items: [
+        { foodsId: 302, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
+      ],
+    });
+    localStorage.clear();
+    const w = mount(CupboardView);
+    await flushPromises();
+    expect(w.find('[data-testid="level-all"]').text()).toContain('全部 (2)');
+    expect(w.find('[data-testid="level-1"]').text()).toContain('1 级 (1)');
+    await w.find('[data-testid="level-2"]').trigger('click');
+    expect(w.find('[data-testid="pick-302"]').exists()).toBe(true);
+    expect(w.find('[data-testid="pick-101"]').exists()).toBe(false);
+    const w2 = mount(CupboardView);
+    await flushPromises();
+    expect(w2.find('[data-testid="pick-101"]').exists()).toBe(false);
+    await w2.find('[data-testid="level-all"]').trigger('click');
+    expect(w2.find('[data-testid="pick-101"]').exists()).toBe(true);
+  });
 });

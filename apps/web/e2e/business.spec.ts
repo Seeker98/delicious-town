@@ -43,7 +43,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   const firstBuy = page.locator('[data-testid^="buy-"]').first();
   await expect(firstBuy).toBeVisible();
   await firstBuy.click();
-  await expect(page.getByText(/^获得 .+×1$/)).toBeVisible();
+  await expect(page.getByText(/^获得 .+×1(；消耗 .+)?$/)).toBeVisible();
 
   // 准备第一道菜（新手街 194）需要的食材，然后在食谱页学会它
   const overview = (await (await page.request.get('/api/v1/restaurant/overview')).json()) as {

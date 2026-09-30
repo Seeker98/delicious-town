@@ -124,3 +124,37 @@ describe('菜园索引（子项目 4B-2）', () => {
     expect(config.tuning.yard.events.minutes).toEqual([7, 27, 47]);
   });
 });
+
+describe('2026-09-30 抓取的数据（问题记录）', () => {
+  it('新勋章 PSP；老K、阿黄银币加成 20%', () => {
+    expect(config.requireGoods(627)).toMatchObject({
+      name: 'PSP',
+      type: 9,
+      effects: { spRate: 0.01, luckValue: 2 },
+    });
+    expect(config.requireGoods(621).effects.coinRate).toBe(0.2);
+    expect(config.requireGoods(550).effects.coinRate).toBe(0.2);
+  });
+
+  it('夜间天气：新增夜间多星、血月；夜间天气都有说明；夜间专属权重按实际刷新概率换算', () => {
+    expect(config.weather.get(31)).toMatchObject({ name: '夜间多星', daytime: 2, special: false });
+    expect(config.weather.get(31)!.effects).toMatchObject({
+      starMCBookRate: 0.05,
+      missileCrit: 0.15,
+      spRate: 0.2,
+    });
+    expect(config.weather.get(32)!.effects).toMatchObject({
+      roachRate: 1,
+      mysteriousRate: 0.015,
+      atRate: -0.5,
+    });
+    for (const id of [28, 29, 30, 31, 32]) expect(config.weather.get(id)!.note).not.toBe('');
+    expect(config.tuning.world.nightWeatherOdds).toEqual([
+      [28, 14.35],
+      [29, 9.56],
+      [30, 4.79],
+      [31, 0.36],
+      [32, 0.24],
+    ]);
+  });
+});
