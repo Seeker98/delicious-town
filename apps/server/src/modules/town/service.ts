@@ -7,6 +7,7 @@ import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
 import type { HammerPick } from '../world/rules';
 import type { WorldService } from '../world/service';
+import { feast, wish } from './bless';
 import { broadcast } from './broadcast';
 import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './exchange';
 import { useHammer } from './hammer';
@@ -42,6 +43,12 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     mysteryTicket(ctx: RestCtx, b: { foodsId: number }) {
       return op(ctx, 'town.mysteryTicket', (o) => useMysteryTicket(o, b.foodsId));
+    },
+    wish(ctx: RestCtx) {
+      return op(ctx, 'town.wish', (o) => wish(o));
+    },
+    feast(ctx: RestCtx, b: { foodsId?: number }) {
+      return op(ctx, 'town.feast', (o) => feast(o, b.foodsId));
     },
     hammer(ctx: RestCtx, pick: HammerPick) {
       return op(ctx, 'town.hammer', async (o) => {

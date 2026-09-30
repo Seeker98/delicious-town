@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { levelFoodIds, mysteryFoodIds, pickBigEaterLevel, rollRange, shakeCoin, shakeEgg } from './rules';
+import {
+  blessFoodIds,
+  feastAmount,
+  levelFoodIds,
+  mysteryFoodIds,
+  pickBigEaterLevel,
+  pickDistinct,
+  rollRange,
+  shakeCoin,
+  shakeEgg,
+} from './rules';
 
 const W = [50, 25, 13, 9, 3];
 
@@ -56,5 +66,26 @@ describe('可兑换的食材（设计文档 裁定 5）', () => {
     const open = { ...town, rareExchange: true };
     expect(levelFoodIds(config, open, 1)).toHaveLength(config.foodsByLevel.get(1)!.length);
     expect(mysteryFoodIds(config, open)).toHaveLength(config.foodsByLevel.get(7)!.length);
+  });
+});
+
+describe('星愿规则（设计文档 §3.7、裁定 8、10）', () => {
+  const config = testConfig();
+  it('pickDistinct 不重复，数量不超过候选数', () => {
+    const got = pickDistinct([1, 2, 3, 4], 3, sequenceRng([0.9, 0.9, 0.9]));
+    expect(new Set(got).size).toBe(3);
+    expect(pickDistinct([1, 2], 5, sequenceRng([0]))).toHaveLength(2);
+  });
+  it('神灯加成：银币多 10%，其他数量 +1', () => {
+    const coin = config.bless.get(4)!;
+    expect(feastAmount(coin, false, 0.1)).toBe(200_000);
+    expect(feastAmount(coin, true, 0.1)).toBe(220_000);
+    const goods = config.bless.get(6)!;
+    expect(feastAmount(goods, true, 0.1)).toBe(31);
+    expect(feastAmount(config.bless.get(1)!, true, 0.1)).toBe(4);
+  });
+  it('食材范围：区间内全部 1~6 级食材', () => {
+    const ids = blessFoodIds(config, [1, 2]);
+    expect(ids).toHaveLength(config.foodsByLevel.get(1)!.length + config.foodsByLevel.get(2)!.length);
   });
 });

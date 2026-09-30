@@ -9,6 +9,7 @@ import { consumeSpecial } from '../mysterious/cook';
 import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
 import type { WorldService } from '../world/service';
+import { blessBuff } from '../town/bless';
 import { buildGlobals, normalizeCounts } from './globals';
 import { settleRestaurant } from './settle';
 import type { SettleGlobals, SettleInput } from './types';
@@ -197,6 +198,7 @@ export async function settleShardRound(
     planktonRestId: snap.planktonRestId,
     holidayMultiplier: d.config.holidayMultiplier(now),
     naturalRoach: featureAvailable(settings, 'friend'),
+    bless: await blessBuff(d.db, d.config, shardId, now),
   });
   const ids = (
     await d.db

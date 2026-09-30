@@ -1,4 +1,4 @@
-import { GOODS, type GameConfig, type Tuning } from '@dt/config';
+import { GOODS, type Bless, type GameConfig, type Tuning } from '@dt/config';
 import { buildPool, pickWeighted, type NpcKey, type Rng } from '@dt/shared';
 
 /** [min, max] 闭区间里的整数 */
@@ -51,4 +51,29 @@ export function levelFoodIds(config: GameConfig, town: TownTuning, level: number
 export function mysteryFoodIds(config: GameConfig, town: TownTuning): number[] {
   const ex = new Set(town.rareExchange ? [] : town.mysteryExclude);
   return (config.foodsByLevel.get(7) ?? []).filter((f) => !ex.has(f.id)).map((f) => f.id);
+}
+
+/** 从候选里不重复地抽 n 个（候选不够时全给） */
+export function pickDistinct<T>(items: readonly T[], n: number, rng: Rng): T[] {
+  const a = [...items];
+  const k = Math.min(n, a.length);
+  for (let i = 0; i < k; i++) {
+    const j = i + rng.int(a.length - i);
+    [a[i], a[j]] = [a[j]!, a[i]!];
+  }
+  return a.slice(0, k);
+}
+
+/** 共飨数量（设计文档 裁定 8）：有神灯时银币多 lampCoinBonus，其他 +1 */
+export function feastAmount(b: Bless, lamp: boolean, lampCoinBonus: number): number {
+  if (!lamp) return b.num;
+  return b.type === 3 ? Math.round(b.num * (1 + lampCoinBonus)) : b.num + 1;
+}
+
+/** 星愿食材范围（设计文档 裁定 10）：区间内 1~6 级的全部食材 */
+export function blessFoodIds(config: GameConfig, levels: [number, number]): number[] {
+  const out: number[] = [];
+  for (let l = Math.max(1, levels[0]); l <= Math.min(6, levels[1]); l++)
+    for (const f of config.foodsByLevel.get(l) ?? []) out.push(f.id);
+  return out;
 }

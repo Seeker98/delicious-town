@@ -51,6 +51,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     base: rt.spRateBase + rt.spRatePerStar * s,
     effects: v(a, 'spRate'),
     weather: v(w, 'spRate'),
+    bless: v(b, 'spRate'),
     float: spFloat,
   });
   const spOverflow = v(a, 'adiao') > 0 && sp.total > 1 ? (sp.total - 1) * st.adiaoOverflowRate : 0;
