@@ -181,6 +181,7 @@ const STATE: Record<string, string> = {
   mc_cooking: '已经有在售的特色菜了，卖完或倒掉后再烹制',
   no_cooking: '现在没有在售的特色菜',
   mc_learned: '已经学会这道特色菜了',
+  nothing_to_learn: '没有能学的特色菜（同一道菜的残卷要攒够 3 张）',
   mc_not_learned: '还没学会这道特色菜',
   lesson_over: '这门课已经结束了',
   steal_full: '这门课偷学的人太多了',

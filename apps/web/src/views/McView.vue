@@ -38,6 +38,40 @@ const nameOf = (id: number) => catalog.mcName(id);
 /** 填的数超过持有时按持有算 */
 const numOf = (mcId: number, max: number) => Math.max(1, Math.min(qty[mcId] ?? 1, max));
 const learnedIds = computed(() => new Set(o.value?.learned.map((m) => m.mcId) ?? []));
+/** 用残卷学会要 3 张 */
+const LEARN_REMNANTS = 3;
+/** 等级从高到低，同级按道 */
+const byLevel = (a: number, b: number) =>
+  (dish(b)?.level ?? 0) - (dish(a)?.level ?? 0) || (dish(a)?.road ?? 0) - (dish(b)?.road ?? 0) || a - b;
+const sortedLearned = computed(() => [...(o.value?.learned ?? [])].sort((a, b) => byLevel(a.mcId, b.mcId)));
+/** 残卷分三组（问题记录：能学和不能学的混在一起） */
+const groups = computed(() => {
+  const rs = [...(o.value?.remnants ?? [])].sort((a, b) => byLevel(a.mcId, b.mcId));
+  const known = learnedIds.value;
+  return [
+    {
+      key: 'learnable',
+      title: '可以学习',
+      items: rs.filter((r) => !known.has(r.mcId) && r.num >= LEARN_REMNANTS),
+    },
+    {
+      key: 'short',
+      title: '残卷不够（3 张学会一道）',
+      items: rs.filter((r) => !known.has(r.mcId) && r.num < LEARN_REMNANTS),
+    },
+    { key: 'learned', title: '已学会的菜（残卷可出售或分解）', items: rs.filter((r) => known.has(r.mcId)) },
+  ].filter((g) => g.items.length > 0);
+});
+function learnAll() {
+  return act(
+    async () => {
+      const r = await endpoints.mcLearnAll();
+      toast.push(`学会了 ${r.learned.length} 道特色菜：${r.learned.map(nameOf).join('、')}`);
+    },
+    null,
+    '学习失败',
+  );
+}
 
 async function openCook(mcId: number) {
   try {
@@ -105,7 +139,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取特色菜�
       还没有学会特色菜：在神殿鉴定神秘食谱得到残卷，3 张残卷就能学会。
     </div>
     <div
-      v-for="m in o.learned"
+      v-for="m in sortedLearned"
       :key="m.mcId"
       class="border-bottom py-1 small"
       :data-testid="`learned-${m.mcId}`"
@@ -172,50 +206,70 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取特色菜�
 
     <h6 class="mt-3">残卷</h6>
     <div v-if="o.remnants.length === 0" class="small text-muted">没有残卷</div>
-    <div
-      v-for="r in o.remnants"
-      :key="r.mcId"
-      class="d-flex align-items-center gap-1 border-bottom py-1 small"
-    >
-      <div class="flex-fill">
-        <b>{{ nameOf(r.mcId) }}</b> ×{{ r.num }}
-        <span class="text-muted"
-          >{{ dish(r.mcId)?.level }} 级 · 单价 {{ formatNum(dish(r.mcId)?.coin ?? 0) }}</span
+    <div v-for="g in groups" :key="g.key" class="mb-2" :data-testid="`group-${g.key}`">
+      <div class="d-flex align-items-center small fw-bold text-muted mt-1">
+        <span class="flex-fill">{{ g.title }}（{{ g.items.length }}）</span>
+        <button
+          v-if="g.key === 'learnable'"
+          class="btn btn-sm btn-success"
+          data-testid="learn-all"
+          :disabled="busy"
+          @click="learnAll"
         >
+          全部学会
+        </button>
       </div>
-      <button
-        class="btn btn-sm btn-outline-success"
-        :data-testid="`learn-${r.mcId}`"
-        :disabled="busy || r.num < 3 || learnedIds.has(r.mcId)"
-        @click="act(() => endpoints.mcLearn(r.mcId), `学会了${nameOf(r.mcId)}`, '学习失败')"
+      <div
+        v-for="r in g.items"
+        :key="r.mcId"
+        :class="[
+          'd-flex align-items-center gap-1 border-bottom py-1 small',
+          { 'bg-success-subtle': g.key === 'learnable' },
+        ]"
       >
-        {{ learnedIds.has(r.mcId) ? '已学' : '学习' }}
-      </button>
-      <input
-        v-model.number="qty[r.mcId]"
-        type="number"
-        min="1"
-        :max="r.num"
-        class="form-control form-control-sm"
-        style="width: 60px"
-        :data-testid="`remnant-num-${r.mcId}`"
-      />
-      <button
-        class="btn btn-sm btn-outline-secondary"
-        :data-testid="`sell-${r.mcId}`"
-        :disabled="busy"
-        @click="act(() => endpoints.mcRemnantSell(r.mcId, numOf(r.mcId, r.num)), '已出售', '出售失败')"
-      >
-        出售
-      </button>
-      <button
-        class="btn btn-sm btn-outline-secondary"
-        :data-testid="`decompose-${r.mcId}`"
-        :disabled="busy"
-        @click="act(() => endpoints.mcRemnantDecompose(r.mcId, numOf(r.mcId, r.num)), '已分解', '分解失败')"
-      >
-        分解
-      </button>
+        <div class="flex-fill">
+          <b>{{ nameOf(r.mcId) }}</b> ×{{ r.num }}
+          <span class="text-muted">
+            {{ dish(r.mcId)?.level }} 级 · {{ ROAD_NAMES[dish(r.mcId)?.road ?? 0] }} · 单价
+            {{ formatNum(dish(r.mcId)?.coin ?? 0) }}
+          </span>
+          <span v-if="g.key === 'short'" class="text-danger"> · 还差 {{ LEARN_REMNANTS - r.num }} 张</span>
+        </div>
+        <button
+          v-if="g.key === 'learnable'"
+          class="btn btn-sm btn-success"
+          :data-testid="`learn-${r.mcId}`"
+          :disabled="busy"
+          @click="act(() => endpoints.mcLearn(r.mcId), `学会了${nameOf(r.mcId)}`, '学习失败')"
+        >
+          学习
+        </button>
+        <input
+          v-model.number="qty[r.mcId]"
+          type="number"
+          min="1"
+          :max="r.num"
+          class="form-control form-control-sm"
+          style="width: 60px"
+          :data-testid="`remnant-num-${r.mcId}`"
+        />
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          :data-testid="`sell-${r.mcId}`"
+          :disabled="busy"
+          @click="act(() => endpoints.mcRemnantSell(r.mcId, numOf(r.mcId, r.num)), '已出售', '出售失败')"
+        >
+          出售
+        </button>
+        <button
+          class="btn btn-sm btn-outline-secondary"
+          :data-testid="`decompose-${r.mcId}`"
+          :disabled="busy"
+          @click="act(() => endpoints.mcRemnantDecompose(r.mcId, numOf(r.mcId, r.num)), '已分解', '分解失败')"
+        >
+          分解
+        </button>
+      </div>
     </div>
   </div>
 </template>

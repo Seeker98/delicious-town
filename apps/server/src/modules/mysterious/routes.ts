@@ -28,6 +28,7 @@ export function mysteriousRoutes(svc: MysteriousService): FastifyPluginAsync {
       okOp(await svc.decomposeRemnant(restCtxOf(req), parse(remnantBody, req.body))),
     );
     r.post('/mc/learn', async (req) => okOp(await svc.learn(restCtxOf(req), parse(mcLearnBody, req.body))));
+    r.post('/mc/learnAll', async (req) => okOp(await svc.learnAll(restCtxOf(req))));
     r.get('/mc/:id/preview', async (req) =>
       ok(await svc.preview(restCtxOf(req), parse(mcIdParam, req.params).id)),
     );

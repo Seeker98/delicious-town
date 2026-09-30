@@ -230,6 +230,35 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
       });
     },
 
+    /** 一键学习（问题记录）：残卷 ≥3 张且没学过的全部学会 */
+    learnAll(ctx: RestCtx) {
+      return op(ctx, 'mc.learn', async (o): Promise<{ learned: number[] }> => {
+        const known = new Set(
+          (await o.tx.selectFrom('rest_mc').select('mc_id').where('rest_id', '=', o.rest.id).execute()).map(
+            (r) => r.mc_id,
+          ),
+        );
+        const rows = await o.tx
+          .selectFrom('mc_remnant')
+          .select('mc_id')
+          .where('rest_id', '=', o.rest.id)
+          .where('num', '>=', LEARN_REMNANTS)
+          .orderBy('mc_id')
+          .execute();
+        const ids = rows.map((r) => r.mc_id).filter((id) => !known.has(id) && o.config.mysterious.has(id));
+        if (ids.length === 0) throw invalidState('nothing_to_learn');
+        for (const id of ids) {
+          await subRemnant(o, id, LEARN_REMNANTS);
+          await o.tx
+            .insertInto('rest_mc')
+            .values({ rest_id: o.rest.id, mc_id: id, way: 1, learned_at: o.now })
+            .execute();
+          restLog(o, 'mc.learn', { mcId: id, via: 'remnant' });
+        }
+        return { learned: ids };
+      });
+    },
+
     async preview(ctx: RestCtx, mcId: number): Promise<McPreviewDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'mysterious');
       const mc = mcOf(mcId);
