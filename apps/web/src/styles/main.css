@@ -154,3 +154,20 @@ body {
 .dt-act-locked .dt-act-bar {
   visibility: hidden;
 }
+/* 列表行：统一最小高度、右侧操作区（问题记录：仓库、商店行高不同） */
+.dt-row {
+  min-height: 42px;
+}
+.dt-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.dt-clamp2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

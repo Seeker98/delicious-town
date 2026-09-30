@@ -14,6 +14,14 @@ const shop = ref<ShopDto | null>(null);
 const special = ref<ShopSpecialDto | null>(null);
 const qty = reactive<Record<string, number>>({});
 const busy = ref(false);
+/** 点名字展开完整描述（默认最多两行） */
+const expanded = ref(new Set<number>());
+function toggleDesc(id: number) {
+  const s = new Set(expanded.value);
+  if (s.has(id)) s.delete(id);
+  else s.add(id);
+  expanded.value = s;
+}
 
 async function load() {
   [shop.value, special.value] = await Promise.all([endpoints.shop(), endpoints.shopSpecial()]);
@@ -67,36 +75,53 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
     <div
       v-for="it in tab === 'coin' ? shop.coin : shop.black"
       :key="it.goodsId"
-      class="d-flex align-items-center gap-2 border-bottom py-1 small"
+      class="dt-row d-flex align-items-center gap-2 border-bottom py-1 small"
     >
-      <div class="flex-fill">
-        <b>{{ catalog.goodsName(it.goodsId) }}</b>
-        <div class="text-muted">
+      <div class="flex-fill" style="min-width: 0">
+        <b role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
+          catalog.goodsName(it.goodsId)
+        }}</b>
+        <span class="text-muted ms-1">
           {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }} ·
           <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
             capText(it)
           }}</span>
-          <span v-if="catalog.goods(it.goodsId)?.desc">· {{ catalog.goods(it.goodsId)?.desc }}</span>
+        </span>
+        <div
+          v-if="catalog.goods(it.goodsId)?.desc"
+          :class="['text-muted', { 'dt-clamp2': !expanded.has(it.goodsId) }]"
+          :data-testid="`desc-${it.goodsId}`"
+        >
+          {{ catalog.goods(it.goodsId)?.desc }}
         </div>
       </div>
-      <input
-        v-if="it.limit !== 1"
-        v-model.number="qty[key(it)]"
-        type="number"
-        min="1"
-        :max="Math.max(1, it.maxBuy)"
-        :data-testid="`qty-${it.goodsId}`"
-        class="form-control form-control-sm"
-        style="width: 64px"
-      />
-      <button
-        class="btn btn-sm btn-primary"
-        :disabled="busy || it.maxBuy === 0"
-        :data-testid="`buy-${it.goodsId}`"
-        @click="buy(it)"
-      >
-        买
-      </button>
+      <div class="dt-row-actions" style="width: 112px">
+        <input
+          v-if="it.limit !== 1"
+          v-model.number="qty[key(it)]"
+          type="number"
+          min="1"
+          :max="Math.max(1, it.maxBuy)"
+          :data-testid="`qty-${it.goodsId}`"
+          class="form-control form-control-sm"
+          style="width: 64px"
+        />
+        <span
+          v-else
+          class="text-muted text-center"
+          style="width: 64px"
+          :data-testid="`qty-hint-${it.goodsId}`"
+          >限 1 个</span
+        >
+        <button
+          class="btn btn-sm btn-primary"
+          :disabled="busy || it.maxBuy === 0"
+          :data-testid="`buy-${it.goodsId}`"
+          @click="buy(it)"
+        >
+          买
+        </button>
+      </div>
     </div>
   </template>
   <template v-if="tab === 'special'">
