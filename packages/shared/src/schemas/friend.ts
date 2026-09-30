@@ -134,3 +134,28 @@ export interface FlipResultDto {
   strength: number;
   dtTickets: number;
 }
+
+const foodsId = z.number().int().positive();
+export const foodsExchangeBody = z.object({ restId, giveFoodsId: foodsId, takeFoodsId: foodsId });
+export const exchangeFoodsQuery = z.object({ level: z.coerce.number().int().min(1).max(5) });
+
+export interface ExchangeFoodsDto {
+  level: number;
+  /** 对方这个等级的食材；fee = 换它要付的手续费 */
+  theirs: Array<{ foodsId: number; num: number; locked: boolean; fee: number }>;
+  /** 我这个等级的食材 */
+  mine: Array<{ foodsId: number; num: number }>;
+  /** 今天和它还能换几次 */
+  left: number;
+  /** 飓风天：可以换对方锁定的食材 */
+  storm: boolean;
+  npc: boolean;
+}
+
+export interface ExchangeResultDto {
+  /** caught = 飓风天偷换锁定食材被抓 */
+  result: 'ok' | 'caught';
+  fee: number;
+  /** 对方有红内裤时我额外损失的食材 */
+  redPantsFoodsId: number | null;
+}

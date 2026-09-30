@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   dineStartBody,
+  foodsExchangeBody,
+  exchangeFoodsQuery,
   flipBody,
   friendListQuery,
   friendSearchQuery,
@@ -66,6 +68,18 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     );
     r.post('/cupboard/flip', async (req) =>
       okOp(await svc.flip.flip(restCtxOf(req), parse(flipBody, req.body))),
+    );
+    r.get('/friend/foods/:restId', async (req) =>
+      ok(
+        await svc.exchange.foods(
+          restCtxOf(req),
+          parse(restIdParam, req.params).restId,
+          parse(exchangeFoodsQuery, req.query).level,
+        ),
+      ),
+    );
+    r.post('/foods/exchange', async (req) =>
+      okOp(await svc.exchange.exchange(restCtxOf(req), parse(foodsExchangeBody, req.body))),
     );
   };
 }
