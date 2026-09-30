@@ -108,3 +108,35 @@ describe('黑市、出售、丢弃', () => {
     });
   });
 });
+
+describe('列表给出一次最多能买几个（问题记录：商店不显示最大可购买数量）', () => {
+  const item = (
+    l: Awaited<ReturnType<ReturnType<typeof shop>['items']>>,
+    tab: 'coin' | 'black',
+    id: number,
+  ) => l[tab].find((x) => x.goodsId === id)!;
+
+  it('受银币 / 钻石限制，买不起时给出原因', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 3500, diamond: 12 } });
+    const l = await shop().items(ctx);
+    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 3, blocked: null });
+    expect(item(l, 'coin', 86)).toMatchObject({ maxBuy: 0, blocked: 'money' });
+    expect(item(l, 'black', 86)).toMatchObject({ maxBuy: 2, blocked: null });
+  });
+
+  it('受持有上限和单次 999 个限制；厨具一次只能买 1 件', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000_000_000 }, goods: { 29: 9998, 52: 9999 } });
+    const l = await shop().items(ctx);
+    expect(item(l, 'coin', 29)).toMatchObject({ maxBuy: 1, blocked: null });
+    expect(item(l, 'coin', 52)).toMatchObject({ maxBuy: 0, blocked: 'max' });
+    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 999, blocked: null });
+    expect(item(l, 'coin', 30)).toMatchObject({ maxBuy: 1, blocked: null });
+  });
+
+  it('仓库满了：新种类为 0（store），已有的种类照常能买', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, store_num: 1 }, goods: { 86: 1 } });
+    const l = await shop().items(ctx);
+    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 0, blocked: 'store' });
+    expect(item(l, 'coin', 86)).toMatchObject({ maxBuy: 18, blocked: null });
+  });
+});

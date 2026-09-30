@@ -23,6 +23,15 @@ async function load() {
 const tool = computed(() => o.value?.tools.find((t) => t.goodsId === toolId.value) ?? null);
 const maxTimes = computed(() => Math.min(o.value?.recipes ?? 0, tool.value?.num ?? 0, 99));
 const n = computed(() => Math.max(1, Math.min(times.value || 1, maxTimes.value)));
+/** 按钮灰掉的原因（问题记录：下拉框里的道具有，按钮却是灰的） */
+const blockReason = computed(() => {
+  if (!o.value) return '';
+  if (o.value.star < 1) return '1 星以后才能鉴定';
+  if (o.value.recipes < 1)
+    return '没有神秘食谱：每次鉴定要消耗 1 个神秘食谱和 1 个鉴定道具（神秘食谱在商店有售）';
+  if ((tool.value?.num ?? 0) < 1) return '没有这个鉴定道具，换一个试试';
+  return '';
+});
 
 async function appraise() {
   if (busy.value || toolId.value === null) return;
@@ -48,7 +57,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取失败'), 
     <h6>鉴定神秘食谱</h6>
     <p class="small text-muted">
       每次消耗 1 个神秘食谱和 1 个鉴定道具，成功得到残卷。持有神秘食谱 {{ o.recipes }} 个。
-      <span v-if="o.star < 1">1 星以后才能鉴定。</span>
     </p>
     <select v-model.number="toolId" class="form-select form-select-sm mb-1" data-testid="tool">
       <option v-for="t in o.tools" :key="t.goodsId" :value="t.goodsId">
@@ -74,6 +82,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取失败'), 
       >
         鉴定 ×{{ n }}
       </button>
+    </div>
+    <div v-if="blockReason" class="small text-danger mb-1" data-testid="appraise-block">
+      {{ blockReason }}
     </div>
     <label v-if="o.starBook" class="small d-block">
       <input v-model="noRetry" type="checkbox" class="form-check-input me-1" data-testid="no-retry" />低于 5

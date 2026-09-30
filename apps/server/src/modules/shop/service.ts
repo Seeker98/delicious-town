@@ -17,8 +17,16 @@ import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendDiamond } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { postNews } from '../news/news';
-import { assertStoreRoom, consumeGoods, countGoods, grantGoodsOp, removeHonor } from '../store/goods';
+import {
+  assertStoreRoom,
+  consumeGoods,
+  countGoods,
+  grantGoodsOp,
+  looseEquipCount,
+  removeHonor,
+} from '../store/goods';
 import { isPlaque, sellPrice } from '../store/rules';
+import { buyCap } from './rules';
 
 /** 勋章、牌匾只能一个一个买；永久的已拥有就不能再买；其他道具受持有上限和仓库容量限制 */
 async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
@@ -49,20 +57,46 @@ export function createShopService(d: GameDeps) {
 
   return {
     async items(ctx: RestCtx): Promise<ShopDto> {
+      const { tuning } = await d.shards.settings(ctx.shardId);
+      const now = d.now();
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select(['coin', 'diamond', 'store_num'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
       const rows = await d.db
         .selectFrom('store_item')
-        .select(['goods_id', 'num'])
+        .select(['goods_id', 'num', 'expires_at'])
         .where('rest_id', '=', ctx.restaurantId)
         .execute();
-      const owned = new Map(rows.map((r) => [r.goods_id, r.num]));
+      const owned = new Map(
+        rows.map((r) => [r.goods_id, r.expires_at !== null && r.expires_at <= now ? 0 : r.num]),
+      );
+      // 仓库占用：与 storeKinds 同一口径（非勋章种数 + 未穿戴厨具件数）
+      const kinds =
+        rows.filter((r) => r.num > 0 && d.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length +
+        (await looseEquipCount(d.db, ctx.restaurantId));
+      const storeFull = kinds >= rest.store_num;
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);
-      const coin: ShopItemDto[] = d.config.bundle.goods
+      const row = (g: Goods, price: number, money: number): ShopItemDto => {
+        const have = owned.get(g.id) ?? 0;
+        const cap = buyCap(g, { owned: have, money, price, storeFull }, tuning.shop.maxBuy);
+        return {
+          goodsId: g.id,
+          price,
+          owned: have,
+          limit: limitOf(g),
+          maxBuy: cap.max,
+          blocked: cap.blocked,
+        };
+      };
+      const coin = d.config.bundle.goods
         .filter((g) => g.onSale && g.coin > 0)
-        .map((g) => ({ goodsId: g.id, price: g.coin, owned: owned.get(g.id) ?? 0, limit: limitOf(g) }));
-      const black: ShopItemDto[] = d.config.bundle.shopPools.black
+        .map((g) => row(g, g.coin, rest.coin));
+      const black = d.config.bundle.shopPools.black
         .map((id) => d.config.requireGoods(id))
         .filter((g) => g.diamond > 0)
-        .map((g) => ({ goodsId: g.id, price: g.diamond, owned: owned.get(g.id) ?? 0, limit: limitOf(g) }));
+        .map((g) => row(g, g.diamond, rest.diamond));
       return { coin, black };
     },
 
