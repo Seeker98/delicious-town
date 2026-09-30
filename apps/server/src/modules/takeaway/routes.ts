@@ -11,5 +11,6 @@ export function takeawayRoutes(svc: TakeawayService): FastifyPluginAsync {
     r.post('/takeaway/open', async (req) =>
       okOp(await svc.open(restCtxOf(req), parse(takeawayOpenBody, req.body))),
     );
+    r.post('/takeaway/refresh', async (req) => okOp(await svc.refresh(restCtxOf(req))));
   };
 }

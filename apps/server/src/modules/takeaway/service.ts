@@ -2,6 +2,7 @@ import type { TakeawayDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { openTakeaway } from './open';
+import { refreshPrivate } from './orders';
 import { takeawayView } from './view';
 
 export function createTakeawayService(d: GameDeps) {
@@ -17,6 +18,9 @@ export function createTakeawayService(d: GameDeps) {
     },
     open(ctx: RestCtx, b: { way: 'ticket' | 'coin' }) {
       return op(ctx, 'takeaway.open', (o) => openTakeaway(o, b.way));
+    },
+    refresh(ctx: RestCtx) {
+      return op(ctx, 'takeaway.refresh', (o) => refreshPrivate(o));
     },
   };
 }
