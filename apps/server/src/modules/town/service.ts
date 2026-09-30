@@ -1,4 +1,4 @@
-import type { NewsPageDto, NpcKey, ShakeResultDto } from '@dt/shared';
+import type { NewsPageDto, NpcKey, ShakeResultDto, TownExchangeDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op';
@@ -8,6 +8,7 @@ import { npcIdOf } from '../npc/npc';
 import type { HammerPick } from '../world/rules';
 import type { WorldService } from '../world/service';
 import { broadcast } from './broadcast';
+import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './exchange';
 import { useHammer } from './hammer';
 import { shake } from './shake';
 import { talk } from './talk';
@@ -28,6 +29,19 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     talk(ctx: RestCtx, b: { npc: NpcKey }) {
       return op(ctx, 'town.talk', (o) => talk(o, b.npc));
+    },
+    async exchangeView(ctx: RestCtx): Promise<TownExchangeDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'town');
+      return exchangeView(d.db, d.config, s.tuning.town, ctx.restaurantId, d.now());
+    },
+    exchange(ctx: RestCtx, b: { id: number; num: number }) {
+      return op(ctx, 'town.exchange', (o) => doExchange(o, b.id, b.num));
+    },
+    levelTicket(ctx: RestCtx, b: { level: number; picks: Array<{ foodsId: number; num: number }> }) {
+      return op(ctx, 'town.levelTicket', (o) => useLevelTicket(o, b.level, b.picks));
+    },
+    mysteryTicket(ctx: RestCtx, b: { foodsId: number }) {
+      return op(ctx, 'town.mysteryTicket', (o) => useMysteryTicket(o, b.foodsId));
     },
     hammer(ctx: RestCtx, pick: HammerPick) {
       return op(ctx, 'town.hammer', async (o) => {

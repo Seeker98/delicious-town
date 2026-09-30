@@ -1,4 +1,4 @@
-import { GOODS, type Tuning } from '@dt/config';
+import { GOODS, type GameConfig, type Tuning } from '@dt/config';
 import { buildPool, pickWeighted, type NpcKey, type Rng } from '@dt/shared';
 
 /** [min, max] 闭区间里的整数 */
@@ -36,4 +36,19 @@ export function shakeEgg(id: number, s: ShakeTuning): { goodsId: number; num: nu
   return Math.floor(id / s.eggMod) % s.burgerEvery === 1
     ? { goodsId: GOODS.krabBurger, num: s.burgerNum }
     : { goodsId: GOODS.krabCoin, num: s.krabCoinNum };
+}
+
+type TownTuning = Tuning['town'];
+
+/** N 级食材兑换券能换的食材：稀有兑换关闭时只要 odds = 100 的（设计文档 裁定 5） */
+export function levelFoodIds(config: GameConfig, town: TownTuning, level: number): number[] {
+  return (config.foodsByLevel.get(level) ?? [])
+    .filter((f) => town.rareExchange || f.odds === 100)
+    .map((f) => f.id);
+}
+
+/** 神秘食材兑换券能换的 7 级食材：稀有兑换关闭时去掉 mysteryExclude */
+export function mysteryFoodIds(config: GameConfig, town: TownTuning): number[] {
+  const ex = new Set(town.rareExchange ? [] : town.mysteryExclude);
+  return (config.foodsByLevel.get(7) ?? []).filter((f) => !ex.has(f.id)).map((f) => f.id);
 }

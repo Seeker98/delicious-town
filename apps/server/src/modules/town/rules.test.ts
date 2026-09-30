@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { pickBigEaterLevel, rollRange, shakeCoin, shakeEgg } from './rules';
+import { levelFoodIds, mysteryFoodIds, pickBigEaterLevel, rollRange, shakeCoin, shakeEgg } from './rules';
 
 const W = [50, 25, 13, 9, 3];
 
@@ -36,5 +36,25 @@ describe('摇钱包规则', () => {
     expect(shakeEgg(188, S)).toEqual({ goodsId: 180, num: 1 });
     expect(shakeEgg(988, S)).toEqual({ goodsId: 180, num: 1 });
     expect(shakeEgg(288, S)).toEqual({ goodsId: 240, num: 8 });
+  });
+});
+
+describe('可兑换的食材（设计文档 裁定 5）', () => {
+  const config = testConfig();
+  const town = config.tuning.town;
+  it('稀有兑换关闭时：N 级券只换 odds = 100 的这一级食材；神秘券不能换 573、574', () => {
+    const ids = levelFoodIds(config, town, 1);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) expect(config.requireFood(id)).toMatchObject({ level: 1, odds: 100 });
+    const m = mysteryFoodIds(config, town);
+    expect(m.length).toBeGreaterThan(0);
+    for (const id of m) expect(config.requireFood(id).level).toBe(7);
+    expect(m).not.toContain(573);
+    expect(m).not.toContain(574);
+  });
+  it('稀有兑换打开时不再限制', () => {
+    const open = { ...town, rareExchange: true };
+    expect(levelFoodIds(config, open, 1)).toHaveLength(config.foodsByLevel.get(1)!.length);
+    expect(mysteryFoodIds(config, open)).toHaveLength(config.foodsByLevel.get(7)!.length);
   });
 });
