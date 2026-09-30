@@ -127,4 +127,9 @@ describe('FriendRestView', () => {
     expect(w2.find('[data-testid="act-taste"]').attributes('disabled')).toBeDefined();
     expect(w2.find('[data-testid="act-taste"]').text()).toBe('已品尝');
   });
+
+  it('好友页有"去它的菜园"链接', async () => {
+    const w = await mountView();
+    expect(w.find('[data-testid="to-yard"]').attributes('href')).toBe('/yard?friend=2');
+  });
 });

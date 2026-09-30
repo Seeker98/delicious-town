@@ -137,6 +137,13 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <RouterLink class="btn btn-sm btn-outline-primary" :to="`/friends/${restId}/exchange`"
         >换食材</RouterLink
       >
+      <RouterLink
+        v-if="!rest.npc"
+        class="btn btn-sm btn-outline-primary"
+        :to="`/yard?friend=${restId}`"
+        data-testid="to-yard"
+        >去它的菜园</RouterLink
+      >
       <button v-if="!rest.npc" class="btn btn-sm btn-outline-danger ms-auto" :disabled="busy" @click="remove">
         删除好友
       </button>

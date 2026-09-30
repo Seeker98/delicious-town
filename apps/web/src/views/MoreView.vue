@@ -10,6 +10,7 @@ const base = [
   { to: '/shop', icon: 'bi-bag', label: '商店' },
   { to: '/mc', icon: 'bi-stars', label: '特色菜' },
   { to: '/temple', icon: 'bi-bank2', label: '神殿' },
+  { to: '/yard', icon: 'bi-flower1', label: '菜园' },
   { to: '/classroom', icon: 'bi-easel', label: '教室' },
   { to: '/society', icon: 'bi-bank', label: '协会' },
   { to: '/rest/floor', icon: 'bi-grid-3x3', label: '楼层餐桌' },
