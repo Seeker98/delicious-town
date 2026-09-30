@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ShardSettingsDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { useAdminStore } from '../../stores/admin';
+import { useToastStore } from '../../stores/toast';
 import AdminShardView from './AdminShardView.vue';
 
 vi.mock('../../api/admin', () => ({ adminApi: { settings: vi.fn(), saveOverride: vi.fn() } }));
@@ -59,6 +60,26 @@ describe('AdminShardView', () => {
     expect(adminApi.saveOverride).toHaveBeenCalledWith(1, {
       override: { tuning: { settlement: { expMultiplier: 10 } } },
       note: '加速',
+      version: 2,
+    });
+  });
+
+  it('已有覆盖时进页面不报错、显示覆盖值；改别的项保存时覆盖不丢', async () => {
+    const withOverride = structuredClone(dto);
+    withOverride.override = { tuning: { settlement: { expMultiplier: 1000 } } };
+    vi.mocked(adminApi.settings).mockResolvedValue(withOverride);
+    const w = await mountView('admin');
+    expect(useToastStore().items).toHaveLength(0);
+    expect((w.find(field('tuning.settlement.expMultiplier')).element as HTMLInputElement).value).toBe('1000');
+    const kinds = w.find(field('tuning.market.dailyKinds'));
+    await kinds.setValue('6');
+    await kinds.trigger('change');
+    await w.find('[data-testid="save-note"]').setValue('多一种菜');
+    await w.find('[data-testid="save-settings"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.saveOverride).toHaveBeenCalledWith(1, {
+      override: { tuning: { settlement: { expMultiplier: 1000 }, market: { dailyKinds: 6 } } },
+      note: '多一种菜',
       version: 2,
     });
   });

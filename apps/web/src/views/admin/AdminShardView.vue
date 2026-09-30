@@ -37,8 +37,10 @@ const readOnly = computed(() => admin.me?.role !== 'admin');
 
 async function load() {
   try {
-    data.value = await adminApi.settings(shardId.value);
-    draft.value = structuredClone(data.value.override) as Tree;
+    // 从接口返回的普通对象复制：data.value 是响应式代理，structuredClone 复制代理会抛错
+    const res = await adminApi.settings(shardId.value);
+    draft.value = structuredClone(res.override) as Tree;
+    data.value = res;
     badInput.value = new Set();
     badServer.value = new Set();
   } catch (e) {
