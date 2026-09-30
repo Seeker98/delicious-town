@@ -33,6 +33,8 @@ export const FEED_TYPES = [
   'lesson.taught',
   'friend.apply',
   'friend.accept',
+  'yard.helped',
+  'yard.stolen',
 ] as const;
 const FEED_DAYS = 3;
 

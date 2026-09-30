@@ -117,3 +117,25 @@ describe('神殿（子项目 4B-1）', () => {
     );
   });
 });
+
+describe('菜园（子项目 4B-2）', () => {
+  it('菜篮的得失提示和流水名称；好友动态', () => {
+    expect(eventText({ type: 'gain', kind: 'basket', id: 101, num: 21 }, names)).toBe('获得 菜篮·大米×21');
+    expect(recordLabel({ kind: 'basket', itemId: 101 }, names)).toBe('菜篮·大米');
+    expect(
+      logText({ type: 'yard.helped', params: { byName: '乙店', what: 'weed', foodsId: 101 }, at: '' }, names),
+    ).toBe('乙店 帮你的大米除了草');
+    expect(
+      logText(
+        { type: 'yard.stolen', params: { byName: '乙店', foodsId: 101, num: 2, punished: null }, at: '' },
+        names,
+      ),
+    ).toBe('乙店 偷走了你的 大米×2');
+    expect(
+      logText(
+        { type: 'yard.stolen', params: { byName: '乙店', foodsId: 101, num: 1, punished: 101 }, at: '' },
+        names,
+      ),
+    ).toBe('乙店 偷走了你的 大米×1，被边牧逮住，留下了 大米');
+  });
+});

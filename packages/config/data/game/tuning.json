@@ -224,5 +224,20 @@
     "krakenRates": { "same": 2.4, "road": 1, "other": 0.5 },
     "krabCoinRate": 0.32, "tentacleFavor": 35, "tentacleRate": 0.3, "forgetRate": 0.25,
     "shopSlots": 6, "shopExclude": [249]
+  },
+  "yard": {
+    "maxLands": 9, "landBaseCoin": 50000, "landMaxLevel": 10, "yieldPerLevel": 8,
+    "dryWaterSub": 5, "dryWaterMinRate": 0.5, "removeSeedRate": 0.3,
+    "stealKeepRate": 0.7, "stealMax": 2, "reapPunishRate": 0.25,
+    "seedShop": true, "seedPriceRate": 1,
+    "formulaMainRate": 0.25, "formulaAppraiseRatePerLuck": 0.1,
+    "composeStrength": 3, "composeCritRate": 0.1,
+    "essenceMain": 3, "essenceSub": 1,
+    "events": {
+      "minutes": [7, 27, 47], "nightMinute": 27, "dayFrom": 7, "dayTo": 22,
+      "wormEatRate": 0.2, "grassEatRate": 0.03, "dryDeath": 100,
+      "grassRate": 0.008, "grassDryFactor": 3, "dryAddRate": 0.1,
+      "dryStartRate": 0.002, "dryStartGrassRate": 0.008, "wormRate": 0.003
+    }
   }
 }

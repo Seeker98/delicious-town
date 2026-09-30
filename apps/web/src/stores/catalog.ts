@@ -28,6 +28,7 @@ export const useCatalogStore = defineStore('catalog', {
         goodsName: (id) => this.goodsName(id),
         foodName: (id) => this.foodName(id),
         mcName: (id) => this.mcName(id),
+        seedName: (id) => this.seedName(id),
       });
     },
     /** 目录按配置版本缓存在浏览器里（只是加速；读不到时直接请求） */

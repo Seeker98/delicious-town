@@ -50,11 +50,17 @@ export function createTaskService(d: GameDeps) {
       .select((eb) => eb.fn.countAll<number>().as('n'))
       .where('rest_id', '=', rest.id)
       .executeTakeFirstOrThrow();
+    const lands = await db
+      .selectFrom('yard_land')
+      .select((eb) => eb.fn.countAll<number>().as('n'))
+      .where('rest_id', '=', rest.id)
+      .executeTakeFirstOrThrow();
     const extra = {
       'friends.count': Number(friends.n),
       'rest.thumbs': counters.get('thumbs.received') ?? 0,
       'equip.maxStress': Number(maxStress?.m ?? 0),
       'mc.learned': Number(mcLearned.n),
+      'yard.lands': Number(lands.n),
     };
     const progressOf = (t: Task) =>
       t.cond.kind === 'counter'

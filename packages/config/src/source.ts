@@ -28,6 +28,7 @@ export const SOURCE_FILES = [
   'designed/seeds',
   'designed/seed_exchange',
   'designed/foods_formula',
+  'designed/income_action',
   'designed/goods_exchange',
   'designed/renown_shop',
   'designed/bless',

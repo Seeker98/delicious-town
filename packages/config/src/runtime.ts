@@ -8,6 +8,9 @@ import type { Tuning } from './tuning';
 import type {
   ActivationTask,
   AppraiseDef,
+  Formula,
+  IncomeAction,
+  SeedExchange,
   MapDef,
   MissileDef,
   Seed,
@@ -71,6 +74,13 @@ export interface GameConfig {
   readonly seedPool: WeightedPool<Seed>;
   readonly missiles: ReadonlyMap<number, MissileDef>;
   readonly maps: ReadonlyMap<number, MapDef>;
+  readonly formulas: ReadonlyMap<number, Formula>;
+  readonly formulaPool: WeightedPool<Formula>;
+  /** 按种子 id */
+  readonly seedExchange: ReadonlyMap<number, SeedExchange>;
+  /** 肥料（devicetype 80）：道具 id → 每次抵扣的分钟数 */
+  readonly fertilizers: ReadonlyMap<number, number>;
+  incomeAction(id: number): IncomeAction;
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
   randomGoodsIds(level: number): readonly number[];
@@ -126,6 +136,12 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   const teacherCerts = new Map<number, TeacherCertDef>();
   const missiles = new Map<number, MissileDef>();
   const maps = new Map<number, MapDef>();
+  const fertilizers = new Map<number, number>();
+  for (const g of bundle.goods) {
+    const minutes = g.effects.plantTime;
+    if (g.deviceType === 80 && minutes !== undefined && minutes > 0) fertilizers.set(g.id, minutes);
+  }
+  const incomeActions = byId(bundle.incomeActions);
   for (const g of bundle.goods) {
     if (g.deviceType === 97) {
       const m = parseMissileDef(g.value);
@@ -214,6 +230,15 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     seedPool: buildPool(bundle.seeds, (s) => s.odds),
     missiles,
     maps,
+    formulas: byId(bundle.formulas),
+    formulaPool: buildPool(bundle.formulas, (f) => f.odds),
+    seedExchange: new Map(bundle.seedExchange.map((e) => [e.seedId, e])),
+    fertilizers,
+    incomeAction(id) {
+      const a = incomeActions.get(id);
+      if (!a) throw new Error(`unknown income action ${id}`);
+      return a;
+    },
     appraiseTools,
     teacherCerts,
     requireMc(id) {

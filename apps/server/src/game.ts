@@ -18,6 +18,8 @@ import { createMarketService, type MarketService } from './modules/market/servic
 import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
 import { createTempleService, type TempleService } from './modules/temple/service';
+import { yardJobs } from './modules/yard/jobs';
+import { createYardService, type YardService } from './modules/yard/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -48,6 +50,7 @@ export interface Game {
   equip: EquipService;
   mysterious: MysteriousService;
   temple: TempleService;
+  yard: YardService;
   jobs: PeriodicJob[];
 }
 
@@ -77,6 +80,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(friendWeeklyJob(deps));
   jobs.push(...equipJobs(deps));
   jobs.push(...mysteriousJobs(deps));
+  jobs.push(...yardJobs(deps, world));
   return {
     app,
     deps,
@@ -91,6 +95,7 @@ export function createGame(app: AppDeps): Game {
     equip: createEquipService(deps, world),
     mysterious: createMysteriousService(deps, world),
     temple: createTempleService(deps, world),
+    yard: createYardService(deps),
     shop,
     market,
     task: createTaskService(deps),

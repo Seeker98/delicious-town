@@ -570,6 +570,62 @@ export interface RestSeedTable {
   num: number;
 }
 
+/** 菜园土地（子项目 4B-2）：no 从 1 起，最多 9 块 */
+export interface YardLandTable {
+  id: Generated<number>;
+  rest_id: number;
+  no: number;
+  level: Default<number>;
+  exp: Default<number>;
+  created_at: TsDefault;
+}
+
+/** 作物：一块地一株；stage 1 幼年期、2 育苗期、3 成长期、4 收获期、5 枯叶期；stage_at 是进入本阶段的时刻 */
+export interface YardPlantTable {
+  id: Generated<number>;
+  rest_id: number;
+  shard_id: number;
+  land_id: number;
+  seed_id: number;
+  foods_id: number;
+  stage: number;
+  stage_at: Ts;
+  /** 本阶段施肥抵扣的分钟数，进入下一阶段时清零 */
+  feed_min: Default<number>;
+  /** 各阶段分钟数：播种时从种子复制，干涸浇水会缩短 */
+  infancy: number;
+  maturity: number;
+  autumn: number;
+  harvest: number;
+  /** 剩余产量 / 播种时的产量（含土地加成） */
+  harvest_num: number;
+  harvest_max: number;
+  worm: Default<number>;
+  grass: Default<number>;
+  dry: Default<number>;
+  planted_at: TsDefault;
+}
+
+export interface YardStealTable {
+  plant_id: number;
+  rest_id: number;
+  created_at: TsDefault;
+}
+
+export interface YardBasketTable {
+  rest_id: number;
+  foods_id: number;
+  num: number;
+}
+
+export interface RestFormulaTable {
+  rest_id: number;
+  formula_id: number;
+  main_num: Default<number>;
+  sub_num: Default<number>;
+  learned: Default<boolean>;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -624,8 +680,15 @@ export interface DB {
   kraken_feed: KrakenFeedTable;
   tentacle_shop: TentacleShopTable;
   rest_seed: RestSeedTable;
+  yard_land: YardLandTable;
+  yard_plant: YardPlantTable;
+  yard_steal: YardStealTable;
+  yard_basket: YardBasketTable;
+  rest_formula: RestFormulaTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
 export type McCookRow = Selectable<McCookTable>;
 export type McLessonRow = Selectable<McLessonTable>;
+export type YardLandRow = Selectable<YardLandTable>;
+export type YardPlantRow = Selectable<YardPlantTable>;

@@ -6,7 +6,12 @@ describe('错误文案', () => {
     expect(errorText('ACCOUNT_BANNED', { reason: '刷分' })).toBe('账号已被封禁：刷分');
   });
   it('资源不够时说清楚缺什么', () => {
-    setNameResolver({ goodsName: () => '升星凭证', foodName: () => '大米', mcName: () => '秘·仿膳饽饽' });
+    setNameResolver({
+      goodsName: () => '升星凭证',
+      foodName: () => '大米',
+      mcName: () => '秘·仿膳饽饽',
+      seedName: () => '大米种子',
+    });
     expect(errorText('NOT_ENOUGH', { kind: 'remnant', id: 1, need: 3, have: 1 })).toBe(
       '秘·仿膳饽饽残卷不够（需要 3，现有 1）',
     );
@@ -44,5 +49,29 @@ describe('好友互动的错误文案', () => {
       '特价菜同一网络 10 分钟内只能抢一次，还要等 9 分钟',
     );
     expect(errorText('NOT_FRIEND')).toBe('你们还不是好友');
+  });
+  it('菜园：种子、菜篮、碎片、声望、地块上限、状态', () => {
+    setNameResolver({
+      goodsName: () => '升星凭证',
+      foodName: () => '大米',
+      mcName: () => '秘·仿膳饽饽',
+      seedName: () => '大米种子',
+    });
+    expect(errorText('NOT_ENOUGH', { kind: 'seed', id: 1, need: 1, have: 0 })).toBe(
+      '大米种子不够（需要 1，现有 0）',
+    );
+    expect(errorText('NOT_ENOUGH', { kind: 'basket', id: 101, need: 3, have: 1 })).toBe(
+      '菜篮里的大米不够（需要 3，现有 1）',
+    );
+    expect(errorText('NOT_ENOUGH', { kind: 'fragment', part: 'sub', id: 1, need: 1, have: 0 })).toBe(
+      '配方辅碎片不够（需要 1，现有 0）',
+    );
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'renown', need: 1 })).toBe(
+      '声望不够（偷菜要 1 点声望）',
+    );
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'renown' })).toBe('声望为负时不能点赞');
+    expect(errorText('LIMIT_REACHED', { what: 'lands', max: 9 })).toBe('最多开垦 9 块地');
+    expect(errorText('INVALID_STATE', { reason: 'withered' })).toBe('作物已经枯萎，只能铲除');
+    expect(errorText('ALREADY_DONE', { what: 'steal' })).toBe('这株你已经偷过了');
   });
 });

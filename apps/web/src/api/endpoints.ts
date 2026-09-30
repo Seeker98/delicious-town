@@ -1,4 +1,12 @@
 import type {
+  BasketDto,
+  ComposeResultDto,
+  FormulaAppraiseResultDto,
+  FormulasDto,
+  FriendYardDto,
+  ReapResultDto,
+  SeedsDto,
+  YardDto,
   ExploreResultDto,
   KrakenFeedDto,
   MissileResultDto,
@@ -258,4 +266,33 @@ export const endpoints = {
   tentacleShop: () => api.get<TentacleShopDto>('/api/v1/temple/tentacle'),
   tentacleRefresh: () => api.post<TentacleShopDto>('/api/v1/temple/tentacle/refresh'),
   tentacleExchange: (slot: number) => api.post<TentacleShopDto>('/api/v1/temple/tentacle/exchange', { slot }),
+  yard: () => api.get<YardDto>('/api/v1/yard'),
+  yardFriend: (restId: number) => api.get<FriendYardDto>(`/api/v1/yard/friend/${restId}`),
+  yardExpand: () => api.post<{ no: number; coin: number }>('/api/v1/yard/land/expand'),
+  yardPlant: (landNo: number, seedId: number) =>
+    api.post<{ plantId: number }>('/api/v1/yard/plant', { landNo, seedId }),
+  yardWater: (plantId: number) => api.post<{ stage: number }>('/api/v1/yard/water', { plantId }),
+  yardFeed: (plantId: number, goodsId: number) =>
+    api.post<{ feedMin: number }>('/api/v1/yard/feed', { plantId, goodsId }),
+  yardWeed: (plantId: number) => api.post<{ plantId: number }>('/api/v1/yard/weed', { plantId }),
+  yardDeworm: (plantId: number) => api.post<{ plantId: number }>('/api/v1/yard/deworm', { plantId }),
+  yardRemove: (plantId: number) => api.post<{ seedBack: boolean }>('/api/v1/yard/remove', { plantId }),
+  yardReap: (plantId: number) => api.post<ReapResultDto>('/api/v1/yard/reap', { plantId }),
+  basket: () => api.get<BasketDto>('/api/v1/yard/basket'),
+  basketStore: (foodsId: number, num: number) =>
+    api.post<{ stored: number; dropped: number }>('/api/v1/yard/basket/store', { foodsId, num }),
+  formulas: () => api.get<FormulasDto>('/api/v1/yard/formulas'),
+  formulaAppraise: (toolId: number, times: number) =>
+    api.post<FormulaAppraiseResultDto>('/api/v1/yard/formula/appraise', { toolId, times }),
+  formulaLearn: (formulaId: number) =>
+    api.post<{ formulaId: number }>('/api/v1/yard/formula/learn', { formulaId }),
+  formulaDecompose: (formulaId: number, part: 'main' | 'sub', num: number) =>
+    api.post<{ essence: number }>('/api/v1/yard/formula/decompose', { formulaId, part, num }),
+  formulaCompose: (formulaId: number, num: number) =>
+    api.post<ComposeResultDto>('/api/v1/yard/formula/compose', { formulaId, num }),
+  seeds: () => api.get<SeedsDto>('/api/v1/yard/seeds'),
+  seedBuy: (seedId: number, num: number) =>
+    api.post<{ coin: number }>('/api/v1/yard/seed/buy', { seedId, num }),
+  seedExchange: (seedId: number, times: number) =>
+    api.post<{ seeds: number }>('/api/v1/yard/seed/exchange', { seedId, times }),
 };

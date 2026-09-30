@@ -68,6 +68,11 @@ export const GOODS = {
   exploreBook: 416, // 探险者秘籍
   tentacle: 434, // 克拉肯断裂的触手
   dreamNet: 468, // 捕梦网
+  formulaScroll: 464, // 玄奥配方
+  moonScroll: 465, // 星月密卷（配方鉴定 +10%、辅碎片转主碎片）
+  starTear: 469, // 星神之泪（配方合成额外产出）
+  formulaEssence: 470, // 配方精华（essence 是厨具精华）
+  borderCollie: 339, // 边牧（偷菜惩罚）
 } as const;
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */
