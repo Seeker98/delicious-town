@@ -3,6 +3,7 @@ import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
 import { buildSuits, parseEquipDef, parseGemDef } from './equip';
+import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
@@ -102,6 +103,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const specialTiersRaw = parse('designed/shop_special_rate', z.array(raw.rawSpecialTier));
   const shopPoolsRaw = parse('designed/shop_pools', z.array(raw.rawShopPool));
   const suitsRaw = parse('designed/equip_suits', z.array(raw.rawSuit));
+  const mcProfRaw = parse('designed/mc_proficiency', z.array(raw.rawMcProficiency));
   const tuning = parse('game/tuning', tuningSchema);
   const holidays = parse('game/holidays', raw.holidaysFile);
   const guessAwardRaw = parse('game/market_guess_award', raw.guessAwardFile);
@@ -116,6 +118,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !cookbooksRaw ||
     !streetsRaw ||
     !mysteriousRaw ||
+    !mcProfRaw ||
     !devicesRaw ||
     !actTasksRaw ||
     !actRewardsRaw ||
@@ -300,13 +303,30 @@ export function buildBundle(src: SourceData): BuildResult {
       coin: m.coin ?? 0,
       odds: m.odds ?? 0,
       taste: splitTaste(m.taste),
-      foods: m.foods,
+      appraisable: m.appraisable ?? true,
+      // 数据里的 num 是食材等级，不是数量（设计文档 裁定 1）
+      foods: m.foods.map((f) => f.foodsId),
     };
   });
   unique(
     'mysterious_cookbooks',
     mysteriousCookbooks.map((m) => m.id),
   );
+  const mcProficiency = [...mcProfRaw]
+    .sort((a, b) => a.curlevel - b.curlevel)
+    .map((p) => ({ curlevel: p.curlevel, name: p.name, expNext: p.expNext < 0 ? null : p.expNext }));
+  mcProficiency.forEach((p, i) => {
+    if (p.curlevel !== i + 1) errors.push(`mc_proficiency: curlevel ${p.curlevel} out of order`);
+  });
+  for (const g of goods) {
+    if (g.deviceType === 177) {
+      const c = parseTeacherCert(g.value);
+      if (typeof c === 'string') errors.push(`goods ${g.id} teacher cert ${c}`);
+    }
+    const a = parseAppraiseDef(g.value);
+    if (a && !mysteriousCookbooks.some((m) => m.appraisable && m.level >= a.min && m.level <= a.max))
+      errors.push(`goods ${g.id} appraise range ${a.min}-${a.max} has no dish`);
+  }
 
   // ---------- 厨具套装、宝石升阶 ----------
   const suits = buildSuits(suitsRaw);
@@ -535,6 +555,7 @@ export function buildBundle(src: SourceData): BuildResult {
     cookbooks,
     streets,
     mysteriousCookbooks,
+    mcProficiency,
     weather,
     devices,
     starNeed,

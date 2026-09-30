@@ -90,12 +90,40 @@ export interface MysteriousCookbook {
   id: number;
   name: string;
   level: number;
+  /** 1~6 一道~六道，7 兽 */
   road: number;
   nutritive: number;
+  /** 残卷出售单价，也是学费的基数 */
   coin: number;
   odds: number;
   taste: number[];
-  foods: IdNumFood[];
+  /** 能不能被鉴定 / 探险抽到 */
+  appraisable: boolean;
+  /** 所需食材 id：每批每种消耗 1 个（设计文档 裁定 1） */
+  foods: number[];
+}
+
+/** 熟练度等级（规格书 20 §20.4）；curexp 为累计值，达到 expNext 升级，null = 满级 */
+export interface McProficiency {
+  curlevel: number;
+  name: string;
+  expNext: number | null;
+}
+
+/** 鉴定道具的 value（规格书 04 §4.3） */
+export interface AppraiseDef {
+  min: number;
+  max: number;
+  rate: number;
+  num: number;
+}
+
+/** 教师证（devicetype 177）的 value（规格书 04 §4.7） */
+export interface TeacherCertDef {
+  levels: number[];
+  needStrength: number;
+  maxNum: number;
+  lessonHour: number;
 }
 
 export interface Weather {
@@ -246,6 +274,7 @@ export interface ConfigBundle {
   cookbooks: Cookbook[];
   streets: Street[];
   mysteriousCookbooks: MysteriousCookbook[];
+  mcProficiency: McProficiency[];
   weather: Weather[];
   devices: Device[];
   starNeed: StarNeed[];

@@ -17,6 +17,14 @@ export const GOODS = {
   plankton: 363, // 痞老板
   starBlessing: 364, // 星神眷顾
   krabburgerBook: 165, // 蟹黄堡秘方
+  mysteryRecipe: 162, // 神秘食谱
+  fragmentBase: 180, // 残卷碎片 = 180 + 特色菜等级（181~186）
+  hundredMaster: 216, // 百世之师（强制结束课程）
+  spongeBob: 304, // 海绵宝宝（烹制时点赞）
+  starBook: 323, // 星神之书（鉴定重抽）
+  humanSon: 349, // 人类之子-名画（每份价值加成，计划裁定 2）
+  thinker: 397, // 思想者-雕像
+  luckyCookie: 491, // 幸运饼干
   loveNecklace: 167, // 爱心项链
   adventureMap: 170, // 探险图
   krabCoin: 240, // 蟹币

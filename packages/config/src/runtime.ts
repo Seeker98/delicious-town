@@ -2,9 +2,14 @@ import { readFileSync } from 'node:fs';
 import { buildPool, gameDay, type WeightedPool } from '@dt/shared';
 import { featureOfKey } from './build';
 import { DEVICE_TYPE, GOODS_TYPE } from './ids';
+import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import type { Tuning } from './tuning';
 import type {
   ActivationTask,
+  AppraiseDef,
+  McProficiency,
+  MysteriousCookbook,
+  TeacherCertDef,
   Award,
   ConfigBundle,
   Cookbook,
@@ -53,6 +58,12 @@ export interface GameConfig {
   readonly activationByName: ReadonlyMap<string, ActivationTask>;
   readonly guessFoodIds: ReadonlySet<number>;
   readonly suits: ReadonlyMap<number, SuitDef>;
+  readonly mysterious: ReadonlyMap<number, MysteriousCookbook>;
+  /** 下标 = curlevel - 1 */
+  readonly mcProficiency: readonly McProficiency[];
+  readonly appraiseTools: ReadonlyMap<number, AppraiseDef>;
+  readonly teacherCerts: ReadonlyMap<number, TeacherCertDef>;
+  requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
   randomGoodsIds(level: number): readonly number[];
   streetMedalId(streetId: number): number;
@@ -102,6 +113,17 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   const cookbooks = byId(bundle.cookbooks);
   const streets = byId(bundle.streets);
   const tuning = bundle.tuning;
+  const mysterious = byId(bundle.mysteriousCookbooks);
+  const appraiseTools = new Map<number, AppraiseDef>();
+  const teacherCerts = new Map<number, TeacherCertDef>();
+  for (const g of bundle.goods) {
+    const a = parseAppraiseDef(g.value);
+    if (a) appraiseTools.set(g.id, a);
+    if (g.deviceType === 177) {
+      const c = parseTeacherCert(g.value);
+      if (typeof c !== 'string') teacherCerts.set(g.id, c);
+    }
+  }
 
   const foodsByLevel = groupBy(bundle.foods, (f) => f.level);
   const foodPools = new Map<number, WeightedPool<Food>>();
@@ -166,6 +188,15 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     activationByName: new Map(bundle.activationTasks.map((a) => [a.name, a])),
     guessFoodIds: new Set(bundle.marketGuessFoods),
     suits: new Map(bundle.suits.map((s) => [s.id, s])),
+    mysterious,
+    mcProficiency: bundle.mcProficiency,
+    appraiseTools,
+    teacherCerts,
+    requireMc(id) {
+      const m = mysterious.get(id);
+      if (!m) throw new Error(`unknown mysterious cookbook ${id}`);
+      return m;
+    },
     grade(g) {
       const x = grades.get(g);
       if (!x) throw new Error(`unknown cookbook grade ${g}`);

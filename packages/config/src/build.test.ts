@@ -16,6 +16,18 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.version).toMatch(/^[0-9a-f]{12}$/);
   });
 
+  it('特色菜：食材只留 id（"[4]海参"的 4 是等级，设计文档 裁定 1）；熟练度表 10 级', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.mysteriousCookbooks).toHaveLength(277);
+    const m1 = bundle!.mysteriousCookbooks.find((m) => m.id === 1)!;
+    expect(m1.foods).toEqual([390, 412, 261]);
+    expect(m1.appraisable).toBe(true);
+    expect(bundle!.mysteriousCookbooks.filter((m) => !m.appraisable)).toHaveLength(27);
+    expect(bundle!.mcProficiency).toHaveLength(10);
+    expect(bundle!.mcProficiency[0]).toEqual({ curlevel: 1, name: '初学', expNext: 200 });
+    expect(bundle!.mcProficiency[9]).toEqual({ curlevel: 10, name: '化境', expNext: null });
+  });
+
   it('合并了新设计的售价和 awardflag', () => {
     const { bundle } = buildBundle(source());
     const cb = bundle!.cookbooks.find((c) => c.id === 1)!;
