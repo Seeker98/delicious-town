@@ -626,6 +626,25 @@ export interface RestFormulaTable {
   learned: Default<boolean>;
 }
 
+/** 酒吧（子项目 4C-1）：每店一行，只存三个游戏的上一局结果（1 胜 / 0 平 / -1 负）和连续次数，老虎机连续没出稀有的格数 */
+export interface BarStateTable {
+  rest_id: number;
+  fg_result: number | null;
+  fg_times: Default<number>;
+  cup_result: number | null;
+  cup_times: Default<number>;
+  num_result: number | null;
+  num_times: Default<number>;
+  slot_fail: Default<number>;
+}
+
+/** 老虎机统计：每个奖项（含空格 0）累计格数 */
+export interface BarSlotStatTable {
+  rest_id: number;
+  award_id: number;
+  num: number;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -685,6 +704,8 @@ export interface DB {
   yard_steal: YardStealTable;
   yard_basket: YardBasketTable;
   rest_formula: RestFormulaTable;
+  bar_state: BarStateTable;
+  bar_slot_stat: BarSlotStatTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
@@ -692,3 +713,4 @@ export type McCookRow = Selectable<McCookTable>;
 export type McLessonRow = Selectable<McLessonTable>;
 export type YardLandRow = Selectable<YardLandTable>;
 export type YardPlantRow = Selectable<YardPlantTable>;
+export type BarStateRow = Selectable<BarStateTable>;
