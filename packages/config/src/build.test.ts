@@ -375,3 +375,47 @@ describe('外卖配置（子项目 4D）', () => {
     expect(errors).toContain('tuning.takeaway.gradeRates must sum to 1');
   });
 });
+
+describe('小镇（子项目 4E-1）', () => {
+  it('镇长兑换和星愿类型化', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    expect(bundle!.goodsExchange).toHaveLength(73);
+    expect(bundle!.goodsExchange[1]).toEqual({
+      id: 2,
+      category: 'bg',
+      goodsId: 238,
+      num: 1,
+      need: [{ goodsId: 180, num: 8 }],
+      times: 1,
+      news: true,
+    });
+    expect(bundle!.bless).toHaveLength(12);
+    expect(bundle!.bless[0]).toEqual({
+      id: 1,
+      name: '五谷丰登',
+      type: 5,
+      num: 3,
+      needAct: 60,
+      levels: [1, 2],
+      goodsId: null,
+      buff: { atRate: 0.05 },
+      odds: 10,
+    });
+    expect(bundle!.bless.find((b) => b.id === 6)).toMatchObject({ type: 2, goodsId: 1, levels: null });
+    expect('goodsExchange' in bundle!.extra).toBe(false);
+    expect('bless' in bundle!.extra).toBe(false);
+    expect(bundle!.tuning.town.shake).toMatchObject({ limitIp: false, limitDevice: false });
+  });
+
+  it('嘻哈男孩和论坛的事件键不再归到 town（裁定 22）', () => {
+    const { bundle } = buildBundle(source());
+    const f = bundle!.actionMap.features;
+    expect(featureOfKey('hiphop.reward', f)).toBe('hiphop');
+    expect(featureOfKey('post.create', f)).toBe('forum');
+    expect(featureOfKey('broadcast', f)).toBe('town');
+    expect(featureOfKey('krab.shake', f)).toBe('town');
+    expect(bundle!.tasks.find((t) => t.id === 102)!.href).toBe('/town');
+    expect(bundle!.tasks.find((t) => t.id === 109)!.href).toBe('/town');
+  });
+});

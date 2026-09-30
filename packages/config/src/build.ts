@@ -12,12 +12,14 @@ import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
   Award,
+  Bless,
   CollectionTier,
   ConfigBundle,
   Cookbook,
   Food,
   GiftItem,
   Goods,
+  GoodsExchange,
   IdNum,
   RenownShopItem,
   SlotAward,
@@ -647,19 +649,56 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const id of [263, 108]) if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);
   if (Math.abs(tuning.takeaway.gradeRates.reduce((s, x) => s + x, 0) - 1) > 1e-9)
     errors.push('tuning.takeaway.gradeRates must sum to 1');
-  for (const e of goodsExRaw) {
+  // ---------- 小镇（子项目 4E-1） ----------
+  const goodsExchange: GoodsExchange[] = goodsExRaw.map((e) => ({
+    id: e.id,
+    category: e.category,
+    goodsId: e.goodsId,
+    num: e.num,
+    need: e.needGoods.map((n) => ({ goodsId: n.id, num: n.num })),
+    times: e.times,
+    news: e.newsflag === 1,
+  }));
+  unique(
+    'goods_exchange',
+    goodsExchange.map((e) => e.id),
+  );
+  for (const e of goodsExchange) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
-    for (const n of e.needGoods) {
-      if (n.type === 'goods' && !goodsIds.has(n.id))
-        errors.push(`goods_exchange ${e.id} references unknown goods ${n.id}`);
-    }
+    for (const n of e.need)
+      if (!goodsIds.has(n.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${n.goodsId}`);
+    if (e.times === 0 || e.times < -1) errors.push(`goods_exchange ${e.id} times must be -1 or positive`);
   }
-  for (const r of renownRaw)
-    if (!goodsIds.has(r.goodsId)) errors.push(`renown_shop references unknown goods ${r.goodsId}`);
-  for (const b of blessRaw) {
-    const gid = b.value?.goodsId;
-    if (gid !== undefined && !goodsIds.has(gid)) errors.push(`bless ${b.id} references unknown goods ${gid}`);
+  const bless: Bless[] = blessRaw.map((x) => ({
+    id: x.id,
+    name: x.name,
+    type: x.type,
+    num: x.num,
+    needAct: x.needAct,
+    levels: x.value?.level ?? null,
+    goodsId: x.value?.goodsId ?? null,
+    buff: x.buff,
+    odds: x.odds,
+  }));
+  unique(
+    'bless',
+    bless.map((x) => x.id),
+  );
+  for (const x of bless) {
+    if (x.goodsId !== null && !goodsIds.has(x.goodsId))
+      errors.push(`bless ${x.id} references unknown goods ${x.goodsId}`);
+    if (x.type === 2 && x.goodsId === null) errors.push(`bless ${x.id} needs goodsId`);
+    if (
+      (x.type === 0 || x.type === 5) &&
+      (x.levels === null || x.levels[0] < 1 || x.levels[1] > 6 || x.levels[0] > x.levels[1])
+    )
+      errors.push(`bless ${x.id} needs a level range within 1~6`);
   }
+  // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、雷神锤、喇叭、神灯、幸运饼干
+  for (const id of [1, 19, 20, 180, 240, 241, 242, 243, 244, 245, 256, 315, 389, 491])
+    if (!goodsIds.has(id)) errors.push(`town references unknown goods ${id}`);
+  for (const id of tuning.town.mysteryExclude)
+    if (!foodIds.has(id)) errors.push(`tuning.town.mysteryExclude references unknown food ${id}`);
 
   // ---------- 开店默认值 ----------
   for (const g of defaults.giftGoods) {
@@ -731,10 +770,9 @@ export function buildBundle(src: SourceData): BuildResult {
     restaurantDefaults: defaults,
     looks,
     suits,
-    extra: {
-      goodsExchange: goodsExRaw,
-      bless: blessRaw,
-    },
+    goodsExchange,
+    bless,
+    extra: {},
   };
   const version = createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 12);
   return { bundle: { version, ...body }, errors: [] };

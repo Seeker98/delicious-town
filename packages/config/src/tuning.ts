@@ -442,6 +442,32 @@ export const tuningSchema = z.object({
     keepOpenDays: int.min(0),
     keepDoneDays: int.min(0),
   }),
+  town: z.object({
+    broadcast: z.object({ minStar: int.min(0), cooldownSec: int.min(0), maxLen: int.min(1) }),
+    npc: z.object({
+      bigEaterLevelWeights: z.array(num.min(0)).length(5),
+      bigEaterNum: z.tuple([int.min(1), int.min(1)]),
+      wenjieNum: z.tuple([int.min(1), int.min(1)]),
+      bro13Num: z.tuple([int.min(1), int.min(1)]),
+    }),
+    shake: z.object({
+      base: int.min(1),
+      rand: int.min(1),
+      eggMod: int.min(1),
+      eggTail: int.min(0),
+      burgerEvery: int.min(1),
+      burgerNum: int.min(1),
+      krabCoinNum: int.min(1),
+      limitIp: z.boolean(),
+      limitDevice: z.boolean(),
+    }),
+    hammer: z.object({ cooldownHours: num.min(0), gapSec: int.min(0), coin: int.min(0), diamond: int.min(0) }),
+    bless: z.object({ lampCoinBonus: num.min(0) }),
+    news: z.object({ pageSize: int.min(1).max(200) }),
+    rareExchange: z.boolean(),
+    mysteryExclude: z.array(int),
+    exchangeMaxNum: int.min(1),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;
