@@ -1,0 +1,119 @@
+import { z } from 'zod';
+import type { BarAwardDto } from './bar';
+
+export const towerChallengeBody = z.object({
+  floor: z.number().int().min(1).max(10),
+  test: z.boolean().default(false),
+});
+export const rankBody = z.object({ rank: z.number().int().min(1).max(15) });
+export const duelBody = z.object({ restId: z.number().int().positive() });
+export const renownBuyBody = z.object({
+  goodsId: z.number().int().positive(),
+  num: z.number().int().min(1).max(99),
+});
+
+export interface DuelSideDto {
+  name: string;
+  power: number;
+  /** 色、香、味、形、养 */
+  scores: number[];
+  sum: number;
+}
+
+export interface DuelResultDto {
+  win: boolean;
+  me: DuelSideDto;
+  them: DuelSideDto;
+  /** 我的声望变化 */
+  renown: number;
+  awards: BarAwardDto[];
+  /** 试打 */
+  test: boolean;
+  /** 赛厨榜：挑战后我的名次（没上榜为 null）；其他挑战为 null */
+  rank: number | null;
+}
+
+export interface TowerFloorDto {
+  floor: number;
+  name: string;
+  title: string;
+  note: string;
+  minLevel: number;
+  power: number;
+  maxTimes: number;
+  /** 我今天还能挑战他几次 */
+  left: number;
+  unlocked: boolean;
+  /** 正式挑战要的体力 */
+  cost: number;
+  /** 当天的特色菜；1~3 层和还没换菜时为 null */
+  mc: { mcId: number; price: number } | null;
+}
+
+export interface TowerDto {
+  floors: TowerFloorDto[];
+  /** 我的进攻厨力 */
+  power: number;
+  /** 今日厨塔剩余次数、总次数（5 + 用掉的挑战券） */
+  left: number;
+  dailyTotal: number;
+  /** 持有的挑战券 */
+  tickets: number;
+  bestFloor: number;
+  strength: number;
+  level: number;
+  /** 当前游戏时间的小时；nightFloor 层以上 openHour 点前不能挑战 */
+  hour: number;
+  nightFloor: number;
+  openHour: number;
+  /** 试打要的体力 */
+  testCost: number;
+}
+
+export interface RankSlotDto {
+  rank: number;
+  restId: number | null;
+  name: string | null;
+  level: number | null;
+}
+
+export interface RankDto {
+  /** 本周一 */
+  week: string;
+  /** 本周结束（下周一 0 点）的 ISO 时间 */
+  weekEnd: string;
+  slots: RankSlotDto[];
+  myRank: number | null;
+  /** 今日赛厨榜剩余次数 */
+  left: number;
+  /** 今日切磋总次数（好友切磋 + 赛厨榜） */
+  spar: number;
+  strength: number;
+  rankTop: number;
+  rankGap: number;
+  duelStrength: number;
+}
+
+export interface DuelInfoDto {
+  /** 今天还能和他切磋几次 */
+  left: number;
+  spar: number;
+  strength: number;
+  duelStrength: number;
+}
+
+export interface RenownShopItemDto {
+  goodsId: number;
+  renown: number;
+  weeklyLimit: number;
+  /** 本周已兑 */
+  bought: number;
+  rare: boolean;
+  /** 稀有品是否已拥有 */
+  owned: boolean;
+}
+
+export interface RenownShopDto {
+  renown: number;
+  items: RenownShopItemDto[];
+}

@@ -21,6 +21,7 @@ import { createTempleService, type TempleService } from './modules/temple/servic
 import { yardJobs } from './modules/yard/jobs';
 import { createYardService, type YardService } from './modules/yard/service';
 import { createBarService, type BarService } from './modules/bar/service';
+import { createTowerService, type TowerService } from './modules/tower/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -53,6 +54,7 @@ export interface Game {
   temple: TempleService;
   yard: YardService;
   bar: BarService;
+  tower: TowerService;
   jobs: PeriodicJob[];
 }
 
@@ -99,6 +101,7 @@ export function createGame(app: AppDeps): Game {
     temple: createTempleService(deps, world),
     yard: createYardService(deps),
     bar: createBarService(deps),
+    tower: createTowerService(deps),
     shop,
     market,
     task: createTaskService(deps),

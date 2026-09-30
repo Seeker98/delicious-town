@@ -23,3 +23,4 @@ export * from './schemas/mysterious';
 export * from './schemas/temple';
 export * from './schemas/yard';
 export * from './schemas/bar';
+export * from './schemas/tower';

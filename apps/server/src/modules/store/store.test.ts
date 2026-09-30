@@ -106,10 +106,9 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(await goodsNum(t, ctx.restaurantId, 1)).toBeGreaterThanOrEqual(20);
   });
 
-  it('不能用的道具、功能没开的道具报 NOT_USABLE', async () => {
-    const ctx = await newRestaurant(t, { goods: { 86: 1, 136: 1 } });
+  it('不能用的道具报 NOT_USABLE', async () => {
+    const ctx = await newRestaurant(t, { goods: { 86: 1 } });
     await expect(s().use(ctx, { goodsId: 86, num: 1 })).rejects.toMatchObject({ code: 'NOT_USABLE' });
-    await expect(s().use(ctx, { goodsId: 136, num: 1 })).rejects.toMatchObject({ code: 'NOT_USABLE' });
   });
 });
 
