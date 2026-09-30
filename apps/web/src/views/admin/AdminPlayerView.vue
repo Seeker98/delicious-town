@@ -10,6 +10,7 @@ import type {
   RestLogDto,
 } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import RestIcons from '../../components/admin/RestIcons.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
@@ -216,6 +217,7 @@ const rename = () =>
           >给这家店发补偿</RouterLink
         >
       </div>
+      <RestIcons v-if="restId !== null" :restId="restId" />
       <div class="row">
         <div class="col-md-6">
           <h6>仓库</h6>

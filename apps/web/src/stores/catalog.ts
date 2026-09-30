@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto } from '@dt/shared';
+import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto, LooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { setNameResolver } from '../i18n/zh-CN';
 
@@ -10,6 +10,7 @@ export const useCatalogStore = defineStore('catalog', {
     goodsMap: new Map<number, CatalogGoodsDto>(),
     foodsMap: new Map<number, CatalogFoodDto>(),
     streets: [] as CatalogDto['streets'],
+    looks: null as LooksDto | null,
     loaded: false,
   }),
   actions: {
@@ -17,6 +18,7 @@ export const useCatalogStore = defineStore('catalog', {
       this.goodsMap = new Map(c.goods.map((g) => [g.id, g]));
       this.foodsMap = new Map(c.foods.map((f) => [f.id, f]));
       this.streets = c.streets;
+      this.looks = c.looks ?? null;
       this.loaded = true;
       setNameResolver({ goodsName: (id) => this.goodsName(id), foodName: (id) => this.foodName(id) });
     },

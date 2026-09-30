@@ -1,6 +1,7 @@
 import type {
   AccountRole,
   AdminLedgerPageDto,
+  AdminIconDto,
   AdminMeDto,
   AdminRestaurantDto,
   AdminShardDto,
@@ -62,4 +63,9 @@ export const adminApi = {
     api.get<SettlementRoundDto[]>(`${A}/stats/settlement${qs({ shardId, rounds })}`),
   audit: (q: { actor?: string; action?: string; before?: string }) =>
     api.get<AuditPageDto>(`${A}/audit${qs(q)}`),
+  icons: (restId: number) => api.get<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`),
+  grantIcon: (restId: number, key: string) =>
+    api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`, { key }),
+  revokeIcon: (restId: number, iconId: number) =>
+    api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons/${iconId}/revoke`),
 };

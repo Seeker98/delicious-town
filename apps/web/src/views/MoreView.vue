@@ -12,6 +12,7 @@ const base = [
   { to: '/rest/floor', icon: 'bi-grid-3x3', label: '楼层餐桌' },
   { to: '/rest/income', icon: 'bi-graph-up', label: '收益记录' },
   { to: '/rest/info', icon: 'bi-person-badge', label: '餐厅信息' },
+  { to: '/rest/look', icon: 'bi-palette', label: '装扮' },
   { to: '/weather', icon: 'bi-cloud-sun', label: '天气' },
   { to: '/shards', icon: 'bi-arrow-left-right', label: '切换区服' },
 ];
