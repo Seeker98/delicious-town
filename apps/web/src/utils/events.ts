@@ -28,6 +28,8 @@ type P = Record<string, unknown>;
 const n = (p: P, k: string) => Number(p[k] ?? 0);
 
 const LOGS: Record<string, (p: P, names: Names) => string> = {
+  'equip.stress': (p, names) =>
+    `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
   'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,
   'star.up': (p) => `餐厅升到了 ${n(p, 'star')} 星`,
   'oil.expand': (p) => `油壶扩容到 ${n(p, 'level')} 级（上限 ${formatNum(n(p, 'oilMax'))}）`,

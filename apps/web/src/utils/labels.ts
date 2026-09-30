@@ -61,3 +61,17 @@ export function pct(x: number): string {
   const v = Math.round(x * 1000) / 10;
   return `${v >= 0 ? '+' : ''}${v}%`;
 }
+
+/** 厨具部位（下标 = part） */
+export const PART_NAMES = ['', '铲', '刀', '锅', '瓶', '帽'];
+
+export const ATTR_KEYS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const;
+
+export const ATTR_NAMES: Record<string, string> = {
+  cook: '厨艺',
+  cutting: '刀工',
+  fire: '火候',
+  season: '调味',
+  creatives: '创意',
+  luck: '幸运',
+};

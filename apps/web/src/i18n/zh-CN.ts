@@ -82,6 +82,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
+  presets: (p) => `预设最多 ${String(p.max)} 套`,
   market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
   foods_max: (p) => `单种食材最多 ${String(p.max)} 个`,
   tables: (p) => `餐桌已经摆满了：最多 ${String(p.cap)} 张（受等级和楼层限制），已有 ${String(p.have)} 张`,
@@ -101,6 +102,21 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const STATE: Record<string, string> = {
+  locked: '厨具已锁定，先解锁',
+  has_gems: '厨具上镶着宝石，先摘下来',
+  in_preset: '厨具在预设里，先删掉那个预设',
+  worn: '厨具正穿在身上，先卸下',
+  not_worn: '这件厨具没有穿戴',
+  max_stress: '已经强化到最高了',
+  no_stress: '这件厨具还没有强化过',
+  hole_full: '孔位已经打满了',
+  cannot_drill: '这件厨具不能打孔',
+  no_hole: '没有空的孔位了',
+  gem_max: '已经是最高阶的宝石',
+  not_gem: '这不是宝石',
+  not_back_stress: '这个道具不能回退强化',
+  preset_name: '预设名称重复了',
+  batch_dirty: '有厨具不满足条件（锁定、穿戴、强化过、有宝石或在预设里），请刷新后重试',
   oil_full: '油壶已经是满的',
   max_star: '已经是最高星级了',
   max_oil: '油壶已经是最高级了',
