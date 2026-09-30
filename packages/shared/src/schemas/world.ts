@@ -25,6 +25,10 @@ export interface CatalogGoodsDto {
   coin: number;
   diamond: number;
   stackable: boolean;
+  /** 厨具：部位、等级门槛、套装、强化一次的精华、最大孔数 */
+  equip?: { part: number; minLevel: number; suitId: number; essence: number; maxHole: number };
+  /** 宝石：阶数、下一阶 */
+  gem?: { level: number; nextId: number | null };
 }
 
 export interface CatalogFoodDto {
@@ -46,6 +50,8 @@ export interface CatalogDto {
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;
   /** 门、头像、个性图标；旧缓存里没有 */
   looks?: LooksDto;
+  /** 厨具套装；旧缓存里没有 */
+  suits?: Array<{ id: number; name: string; maxNum: number; tiers: Array<{ need: number; desc: string }> }>;
 }
 
 export interface LooksDto {
