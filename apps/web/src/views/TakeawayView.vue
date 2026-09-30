@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { TakeawayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import DeliveriesPanel from '../components/takeaway/DeliveriesPanel.vue';
@@ -23,13 +23,20 @@ const toast = useToastStore();
 const tab = ref<Tab>(savedTab());
 const data = ref<TakeawayDto | null>(null);
 
+/** 读取序号：几次读取同时进行时只采用最新一次的结果 */
+let seq = 0;
 async function load() {
+  const mine = ++seq;
   try {
-    data.value = await endpoints.takeaway();
+    const v = await endpoints.takeaway();
+    if (mine === seq) data.value = v;
   } catch (e) {
-    toast.push(errorMessage(e, '读取外卖失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, '读取外卖失败'), 'danger');
   }
 }
+/** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2） */
+let timer: ReturnType<typeof setInterval> | undefined;
+onBeforeUnmount(() => clearInterval(timer));
 watch(tab, (v) => {
   try {
     localStorage.setItem(KEY, v);
@@ -39,7 +46,10 @@ watch(tab, (v) => {
   // 切标签时重新读取：旧面板卸载后收不到它发出的刷新通知（比如接单后马上切到配送中）
   void load();
 });
-onMounted(load);
+onMounted(() => {
+  void load();
+  timer = setInterval(() => void load(), 60_000);
+});
 
 const tabs = computed(() =>
   data.value

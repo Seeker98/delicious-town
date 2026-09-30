@@ -1,7 +1,8 @@
-import type { RiderCandidateDto, TakeawayClaimDto, TakeawayDto } from '@dt/shared';
+import { ErrorCode, type RiderCandidateDto, type TakeawayClaimDto, type TakeawayDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { runPairOp } from '../../core/pair';
+import { AppError } from '../../http/errors';
 import type { WorldService } from '../world/service';
 import { settleDelivery } from './claim';
 import { deliverOrder } from './deliver';
@@ -71,9 +72,15 @@ export function createTakeawayService(d: GameDeps, world: WorldService) {
         .execute();
       const out: OpResult<TakeawayClaimDto[]> = { data: [], events: [] };
       for (const { id } of ids) {
-        const r = await claimOne(ctx, id, false);
-        out.data.push(r.data);
-        out.events.push(...r.events);
+        try {
+          const r = await claimOne(ctx, id, false);
+          out.data.push(r.data);
+          out.events.push(...r.events);
+        } catch (e) {
+          // 同时有别的请求领走了这一单（delivery_gone）：跳过，前面已结算的照常返回（终审 I1）
+          if (e instanceof AppError && e.code === ErrorCode.INVALID_STATE) continue;
+          throw e;
+        }
       }
       return out;
     },

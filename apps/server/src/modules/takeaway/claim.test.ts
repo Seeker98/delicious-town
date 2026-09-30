@@ -246,4 +246,13 @@ describe('领取（设计文档 §3.4）', () => {
     await claim(ctx, id);
     await expect(claim(ctx, id)).rejects.toMatchObject({ params: { reason: 'delivery_gone' } });
   });
+
+  it('两次全部领取同时进行：都成功返回，每单只领一次（终审 I1）', async () => {
+    const { ctx, rider } = await cook();
+    await t.db.updateTable('takeaway_rider').set({ level: 10 }).where('id', '=', rider).execute();
+    const ids = [await take(ctx, rider), await take(ctx, rider), await take(ctx, rider)];
+    later();
+    const [a, b] = await Promise.all([t.game.takeaway.claimAll(ctx), t.game.takeaway.claimAll(ctx)]);
+    expect([...a.data, ...b.data].map((x) => x.deliveryId).sort((x, y) => x - y)).toEqual(ids);
+  });
 });

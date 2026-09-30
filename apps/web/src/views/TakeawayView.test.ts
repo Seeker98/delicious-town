@@ -54,4 +54,21 @@ describe('TakeawayView', () => {
     await again.find('[data-testid="tab-riders"]').trigger('click');
     expect(again.text()).toContain('riders-panel');
   });
+
+  it('停在页面上时每分钟重新读取，倒计时和"已送到"会更新（终审 I2）', async () => {
+    vi.useFakeTimers();
+    try {
+      vi.mocked(endpoints.takeaway).mockResolvedValue(takeawayData());
+      const w = mount(TakeawayView, { global: { stubs } });
+      await flushPromises();
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(1);
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
+      w.unmount();
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
