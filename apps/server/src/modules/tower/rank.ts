@@ -139,19 +139,26 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
   };
 }
 
-/** 周结算的周期：每周一 00:01 结算上一周；返回被结算那一周的周一 */
-export function rankWeekPeriod(now: Date): string {
+/**
+ * 周结算的周期：每周一 00:01 结算上一周；返回被结算那一周的周一。
+ * 周一 00:00~00:01 返回 null（上上周早已结算，不依赖 job_run 的保留天数去重）
+ */
+export function rankWeekPeriod(now: Date): string | null {
   const mon = mondayOf(gameParts(now).day);
-  return now >= gameTime(mon, 0, 1) ? addDays(mon, -7) : addDays(mon, -14);
+  return now >= gameTime(mon, 0, 1) ? addDays(mon, -7) : null;
 }
 
-/** 结算一周（设计文档 §3.3）：按名次打开礼包（每家店一个系统操作）；有前三名时发一条新闻 */
+/**
+ * 结算一周（设计文档 §3.3）：按名次打开礼包（每家店一个系统操作）；有前三名时跟着第一家成功的店发一条新闻。
+ * 一家店失败只记日志，不影响其他名次（周期任务不重试）
+ */
 export async function settleRankWeek(
   d: GameDeps,
   shardId: number,
   week: string,
   now: Date,
-): Promise<{ awarded: number }> {
+  log: { error(obj: object, msg: string): void },
+): Promise<{ awarded: number; failed: number }> {
   const { tuning } = await d.shards.settings(shardId);
   const rows = await d.db
     .selectFrom('tower_rank as k')
@@ -163,16 +170,22 @@ export async function settleRankWeek(
     .execute();
   const top = rows.filter((r) => r.rank <= 3).map((r) => ({ rank: r.rank, restId: r.rest_id, name: r.name }));
   let awarded = 0;
+  let failed = 0;
   for (const row of rows) {
     const giftId = rankGift(row.rank, tuning.tower);
     if (giftId === null) continue;
     const first = awarded === 0;
-    await runSystemOp(d, shardId, row.rest_id, { source: 'tower.rank.week', now }, async (op) => {
-      await openGift(op, op.config.requireGoods(giftId), 1, { source: 'tower.rank.week' });
-      restLog(op, 'tower.rank.week', { week, rank: row.rank, goodsId: giftId });
-      if (first && top.length > 0) opNews(op, 'tower.rank.week', { week, top });
-    });
-    awarded += 1;
+    try {
+      await runSystemOp(d, shardId, row.rest_id, { source: 'tower.rank.week', now }, async (op) => {
+        await openGift(op, op.config.requireGoods(giftId), 1, { source: 'tower.rank.week' });
+        restLog(op, 'tower.rank.week', { week, rank: row.rank, goodsId: giftId });
+        if (first && top.length > 0) opNews(op, 'tower.rank.week', { week, top });
+      });
+      awarded += 1;
+    } catch (err) {
+      failed += 1;
+      log.error({ err, shardId, week, rank: row.rank, restId: row.rest_id }, 'tower rank gift failed');
+    }
   }
-  return { awarded };
+  return { awarded, failed };
 }

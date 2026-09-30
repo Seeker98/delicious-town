@@ -1,7 +1,9 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
+import { useToastStore } from '../../stores/toast';
 import FriendDuel from './FriendDuel.vue';
 import { duelResult } from './testData';
 
@@ -39,5 +41,12 @@ describe('FriendDuel', () => {
     const tired = mount(FriendDuel, { props: { restId: 2 } });
     await flushPromises();
     expect(tired.find('[data-testid="duel-block"]').text()).toBe('体力不够（要 5）');
+  });
+  it('区服没开放厨塔时整块不显示、也不弹错误（最终审查 Important 2）', async () => {
+    vi.mocked(endpoints.duelInfo).mockRejectedValue(new ApiError('FEATURE_DISABLED', { feature: 'tower' }));
+    const w = mount(FriendDuel, { props: { restId: 2 } });
+    await flushPromises();
+    expect(w.find('[data-testid="friend-duel"]').exists()).toBe(false);
+    expect(useToastStore().items).toHaveLength(0);
   });
 });

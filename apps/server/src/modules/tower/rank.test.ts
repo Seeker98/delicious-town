@@ -140,7 +140,7 @@ describe('周结算（设计文档 §3.3）', () => {
     const v = await t.game.tower.rank(a);
     expect(v).toMatchObject({ week: '2026-10-05', myRank: null });
     expect(v.slots.every((s) => s.restId === null)).toBe(true);
-    expect(rankWeekPeriod(new Date(gameTime('2026-10-05', 0).getTime() + 30_000))).toBe('2026-09-21');
+    expect(rankWeekPeriod(new Date(gameTime('2026-10-05', 0).getTime() + 30_000))).toBeNull();
     expect(rankWeekPeriod(gameTime('2026-10-05', 0, 1))).toBe(WEEK);
     const out = await t.game.jobs
       .find((j) => j.name === 'tower-rank-week')!
@@ -151,7 +151,7 @@ describe('周结算（设计文档 §3.3）', () => {
         settings: await t.game.shards.settings(a.shardId),
         log: { error: () => undefined },
       });
-    expect(out).toEqual({ awarded: 3 });
+    expect(out).toEqual({ awarded: 3, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, 199)).toBe(1);
     expect((await restRow(t, a.restaurantId)).renown).toBe(500);
     expect((await restRow(t, b.restaurantId)).renown).toBe(150);
@@ -164,5 +164,41 @@ describe('周结算（设计文档 §3.3）', () => {
       .execute();
     expect(news).toHaveLength(1);
     expect(news[0]!.params).toMatchObject({ week: WEEK, top: [{ rank: 1, restId: a.restaurantId }] });
+  });
+
+  it('一家店结算失败不影响其他名次；新闻跟着第一家成功的店发；失败记日志（最终审查 Important 1）', async () => {
+    const [a, b] = await two();
+    const c = await newRestaurant(t, { shardId: a.shardId });
+    await occupy(a, 1);
+    await occupy(b, 4);
+    await occupy(c, 9);
+    // 第 1 名的礼包加 500 声望会让 integer 溢出，这家店的结算失败
+    await t.db
+      .updateTable('restaurant')
+      .set({ renown: 2_147_483_600 })
+      .where('id', '=', a.restaurantId)
+      .execute();
+    t.clock.set(gameTime('2026-10-05', 0, 1));
+    const errors: unknown[] = [];
+    const out = await t.game.jobs
+      .find((j) => j.name === 'tower-rank-week')!
+      .run({
+        shardId: a.shardId,
+        period: WEEK,
+        now: t.clock.now,
+        settings: await t.game.shards.settings(a.shardId),
+        log: { error: (obj) => errors.push(obj) },
+      });
+    expect(out).toEqual({ awarded: 2, failed: 1 });
+    expect(errors).toHaveLength(1);
+    expect((await restRow(t, b.restaurantId)).renown).toBe(150);
+    expect((await restRow(t, c.restaurantId)).renown).toBe(100);
+    const news = await t.db
+      .selectFrom('news')
+      .select('rest_id')
+      .where('shard_id', '=', a.shardId)
+      .where('type', '=', 'tower.rank.week')
+      .execute();
+    expect(news).toEqual([{ rest_id: b.restaurantId }]);
   });
 });

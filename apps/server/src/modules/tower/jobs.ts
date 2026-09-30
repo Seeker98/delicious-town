@@ -17,7 +17,7 @@ export function towerJobs(d: GameDeps): PeriodicJob[] {
       name: 'tower-rank-week',
       feature: 'tower',
       period: (now) => rankWeekPeriod(now),
-      run: ({ shardId, period, now }) => settleRankWeek(d, shardId, period, now),
+      run: ({ shardId, period, now, log }) => settleRankWeek(d, shardId, period, now, log),
     },
   ];
 }

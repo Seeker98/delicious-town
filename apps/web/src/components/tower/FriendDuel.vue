@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import type { DuelInfoDto, DuelResultDto } from '@dt/shared';
+import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
@@ -11,11 +12,17 @@ const toast = useToastStore();
 const info = ref<DuelInfoDto | null>(null);
 const last = ref<DuelResultDto | null>(null);
 const busy = ref(false);
+/** 区服没开放厨塔：整块不显示 */
+const disabled = ref(false);
 
 async function load() {
   try {
     info.value = await endpoints.duelInfo(props.restId);
   } catch (e) {
+    if (e instanceof ApiError && e.code === 'FEATURE_DISABLED') {
+      disabled.value = true;
+      return;
+    }
     toast.push(errorMessage(e, '读取切磋次数失败'), 'danger');
   }
 }
@@ -42,7 +49,7 @@ onMounted(load);
 </script>
 
 <template>
-  <div data-testid="friend-duel">
+  <div v-if="!disabled" data-testid="friend-duel">
     <button
       class="btn btn-sm btn-outline-success"
       data-testid="act-duel"
