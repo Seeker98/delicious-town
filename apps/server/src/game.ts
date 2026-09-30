@@ -15,6 +15,7 @@ import { marketJobs } from './modules/market/jobs';
 import { npcJobs } from './modules/npc/jobs';
 import { registerNpcHandlers } from './modules/npc/npc';
 import { createMarketService, type MarketService } from './modules/market/service';
+import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
@@ -73,6 +74,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...npcJobs(deps));
   jobs.push(friendWeeklyJob(deps));
   jobs.push(...equipJobs(deps));
+  jobs.push(...mysteriousJobs(deps));
   return {
     app,
     deps,
