@@ -6,6 +6,7 @@ import { createFlip } from '../interact/flip';
 import { createRefuel } from '../interact/refuel';
 import { createExchange } from '../interact/exchange';
 import { createThumbs } from '../interact/thumbs';
+import { createLooks } from './looks';
 import { createFriendReads } from './reads';
 import { createRelations } from './relations';
 
@@ -14,6 +15,7 @@ export function createSocialService(d: GameDeps, world: WorldService) {
   return {
     relations: createRelations(d),
     reads: createFriendReads(d),
+    looks: createLooks(d),
     thumbs: createThumbs(d),
     exchange: createExchange(d, world),
     refuel: createRefuel(d),

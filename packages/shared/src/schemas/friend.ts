@@ -182,3 +182,15 @@ export interface ReturnAllDto {
   ok: number[];
   failed: Array<{ restId: number; code: string }>;
 }
+
+export const doorBody = z.object({ door: z.number().int().min(0).max(1000) });
+export const avatarBody = z.object({ avatar: z.number().int().min(1).max(1000) });
+export const noticeBody = z.object({ text: z.string().max(200) });
+export const iconShowBody = z.object({ iconId: z.number().int().positive(), shown: z.boolean() });
+
+export interface MyLooksDto {
+  door: number;
+  avatar: number | null;
+  notice: string;
+  icons: Array<{ id: number; key: string; title: string; desc: string; shown: boolean }>;
+}

@@ -1,10 +1,12 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  ErrorCode,
   adminLedgerQuery,
   adminRenameBody,
   auditQuery,
   createGrantBody,
   economyQuery,
+  grantIconBody,
   grantListQuery,
   grantPreviewQuery,
   idParam,
@@ -19,11 +21,13 @@ import {
   type AdminMeDto,
 } from '@dt/shared';
 import type { Game } from '../../game';
+import { AppError } from '../../http/errors';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireRole } from './access';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
+import { createAdminIcons } from './icons';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 import { distribution, economy, settlementRounds } from './stats';
@@ -80,6 +84,22 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/players/:id/role', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await players.setRole(a, id(req), parse(roleBody, req.body).role));
+    });
+
+    const icons = createAdminIcons(game);
+    r.get('/restaurants/:id/icons', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await icons.list(id(req)));
+    });
+    r.post('/restaurants/:id/icons', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await icons.grant(a, id(req), parse(grantIconBody, req.body).key));
+    });
+    r.post('/restaurants/:id/icons/:iconId/revoke', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      const iconId = Number((req.params as { iconId: string }).iconId);
+      if (!Number.isInteger(iconId) || iconId <= 0) throw new AppError(ErrorCode.NOT_FOUND, 404);
+      return ok(await icons.revoke(a, id(req), iconId));
     });
 
     const grants = createAdminGrants(game);

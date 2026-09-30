@@ -1,11 +1,15 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  avatarBody,
   dineStartBody,
-  foodsExchangeBody,
+  doorBody,
   exchangeFoodsQuery,
   flipBody,
+  foodsExchangeBody,
   friendListQuery,
   friendSearchQuery,
+  iconShowBody,
+  noticeBody,
   pageQuery,
   refuelBody,
   respondBody,
@@ -86,5 +90,19 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
       okOp(await svc.thumbs.up(restCtxOf(req), parse(restIdBody, req.body).restId)),
     );
     r.post('/thumbs/returnAll', async (req) => okOp(await svc.thumbs.returnAll(restCtxOf(req))));
+    r.get('/rest/looks', async (req) => ok(await svc.looks.mine(restCtxOf(req))));
+    r.post('/rest/door', async (req) =>
+      okOp(await svc.looks.door(restCtxOf(req), parse(doorBody, req.body).door)),
+    );
+    r.post('/rest/avatar', async (req) =>
+      okOp(await svc.looks.avatar(restCtxOf(req), parse(avatarBody, req.body).avatar)),
+    );
+    r.post('/rest/notice', async (req) =>
+      okOp(await svc.looks.notice(restCtxOf(req), parse(noticeBody, req.body).text)),
+    );
+    r.post('/rest/icon/show', async (req) => {
+      const b = parse(iconShowBody, req.body);
+      return okOp(await svc.looks.iconShow(restCtxOf(req), b.iconId, b.shown));
+    });
   };
 }
