@@ -5,8 +5,11 @@ import {
   equipIdParam,
   equipListQuery,
   equipRollbackBody,
+  gemLevelUpBody,
+  inlayBody,
   lockBody,
   stressBody,
+  ungemBody,
 } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
@@ -38,6 +41,15 @@ export function equipRoutes(svc: EquipService): FastifyPluginAsync {
     r.post('/equip/sell', async (req) => okOp(await svc.sell(restCtxOf(req), parse(equipIdBody, req.body))));
     r.post('/equip/batch', async (req) =>
       okOp(await svc.batch(restCtxOf(req), parse(equipBatchBody, req.body))),
+    );
+    r.post('/equip/drill', async (req) =>
+      okOp(await svc.drill(restCtxOf(req), parse(equipIdBody, req.body))),
+    );
+    r.post('/equip/inlay', async (req) => okOp(await svc.inlay(restCtxOf(req), parse(inlayBody, req.body))));
+    r.post('/equip/ungem', async (req) => okOp(await svc.ungem(restCtxOf(req), parse(ungemBody, req.body))));
+    r.get('/gem/list', async (req) => ok(await svc.gems(restCtxOf(req))));
+    r.post('/gem/levelup', async (req) =>
+      okOp(await svc.gemLevelUp(restCtxOf(req), parse(gemLevelUpBody, req.body))),
     );
   };
 }

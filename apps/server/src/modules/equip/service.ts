@@ -2,12 +2,15 @@ import type { Kysely } from 'kysely';
 import { EQUIP_ATTRS, GOODS, type EquipAttr, type Tuning } from '@dt/config';
 import {
   ErrorCode,
+  luckRate,
   type AttrsDto,
   type EquipBatchDto,
   type EquipDetailDto,
   type EquipDto,
   type EquipOverviewDto,
   type EquipPresetDto,
+  type GemLevelUpDto,
+  type GemsDto,
   type StressResultDto,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
@@ -15,7 +18,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
-import { gainCoin, spendCoin } from '../../core/resources';
+import { gainCoin, gainExp, spendCoin, spendStrength } from '../../core/resources';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { aggregateEffects } from '../effects/aggregate';
@@ -30,6 +33,8 @@ import {
   addAttrs,
   attrSeq,
   attrSummary,
+  gemLevelUp,
+  gemRate,
   rollStress,
   stressGain,
   stressRate,
@@ -511,6 +516,135 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         if (essence > 0) await grantGoodsOp(o, GOODS.essence, essence);
         gainCoin(o, coin);
         return { count: rows.length, essence, coin };
+      });
+    },
+    drill(ctx: RestCtx, b: { id: number }) {
+      return op(ctx, 'equip.drill', async (o) => {
+        const e = await own(o, b.id);
+        if (e.max_hole === 0) throw invalidState('cannot_drill');
+        if (e.cur_hole >= e.max_hole) throw invalidState('hole_full');
+        await consumeGoods(o, GOODS.drillStone, 1);
+        await o.tx
+          .updateTable('equip')
+          .set({ cur_hole: e.cur_hole + 1 })
+          .where('id', '=', e.id)
+          .execute();
+        await emitAction(o, 'equip.drill');
+        return { curHole: e.cur_hole + 1 };
+      });
+    },
+
+    inlay(ctx: RestCtx, b: { id: number; gemId: number }) {
+      return op(ctx, 'equip.inlay', async (o) => {
+        const e = await own(o, b.id);
+        const gem = o.config.goods.get(b.gemId)?.gem;
+        if (!gem) throw invalidState('not_gem', { goodsId: b.gemId });
+        const used = await o.tx
+          .selectFrom('equip_gem')
+          .select((eb) => eb.fn.countAll<number>().as('n'))
+          .where('equip_id', '=', e.id)
+          .executeTakeFirstOrThrow();
+        if (Number(used.n) >= e.cur_hole) throw invalidState('no_hole');
+        await consumeGoods(o, b.gemId, 1);
+        spendStrength(o, gem.level);
+        const row = await o.tx
+          .insertInto('equip_gem')
+          .values({
+            equip_id: e.id,
+            rest_id: o.rest.id,
+            gem_goods_id: b.gemId,
+            level: gem.level,
+            created_at: o.now,
+            ...gem.attrs,
+          })
+          .returning('id')
+          .executeTakeFirstOrThrow();
+        if (e.worn) await syncEquipEffects(o);
+        await emitAction(o, 'equip.gemIn');
+        return { gemRowId: row.id };
+      });
+    },
+
+    ungem(ctx: RestCtx, b: { gemRowId: number }) {
+      return op(ctx, 'equip.ungem', async (o) => {
+        const t = o.tuning.equip;
+        const g = await o.tx
+          .selectFrom('equip_gem')
+          .selectAll()
+          .where('id', '=', b.gemRowId)
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirst();
+        if (!g) throw notFound('gem', b.gemRowId);
+        const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
+        const free = (weather.removeGemFree ?? 0) > 0 || o.rest.star_level < t.ungemMinStar;
+        const coin = free ? 0 : g.level * t.ungemCoinPerLevel;
+        spendCoin(o, coin);
+        await o.tx.deleteFrom('equip_gem').where('id', '=', g.id).execute();
+        await grantGoodsOp(o, g.gem_goods_id, 1);
+        const e = await own(o, g.equip_id);
+        if (e.worn) await syncEquipEffects(o);
+        return { coin };
+      });
+    },
+
+    async gems(ctx: RestCtx): Promise<GemsDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'equip');
+      const now = d.now();
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select(['luck', 'strength'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
+      const luckValue =
+        aggregateEffects(await listActiveEffects(d.db, ctx.restaurantId, now), now).agg.luckValue ?? 0;
+      const weather = (await world.ensure(ctx.shardId, now)).weather.effects;
+      const rows = await d.db
+        .selectFrom('store_item')
+        .select(['goods_id', 'num'])
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('num', '>', 0)
+        .orderBy('goods_id')
+        .execute();
+      return {
+        items: rows.flatMap((r) => {
+          const gem = d.config.goods.get(r.goods_id)?.gem;
+          if (!gem) return [];
+          return [
+            {
+              goodsId: r.goods_id,
+              num: r.num,
+              level: gem.level,
+              nextId: gem.nextId,
+              rate: gemRate(gem.level, weather.gemLevelUpRate ?? 0, s.tuning.equip),
+              attrs: gem.attrs,
+            },
+          ];
+        }),
+        luckRate: luckRate(rest.luck + luckValue),
+        strength: rest.strength,
+      };
+    },
+
+    gemLevelUp(ctx: RestCtx, b: { goodsId: number; num: number }) {
+      return op(ctx, 'gem.levelUp', async (o): Promise<GemLevelUpDto> => {
+        const t = o.tuning.equip;
+        const gem = o.config.goods.get(b.goodsId)?.gem;
+        if (!gem) throw invalidState('not_gem', { goodsId: b.goodsId });
+        if (gem.nextId === null) throw invalidState('gem_max', { goodsId: b.goodsId });
+        await consumeGoods(o, b.goodsId, 2 * b.num);
+        spendStrength(o, b.num * gem.level);
+        const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
+        const { rate } = await opLuck(o);
+        const r = gemLevelUp(b.num, gem.level, weather.gemLevelUpRate ?? 0, rate, t, o.rng);
+        if (r.success > 0) await grantGoodsOp(o, gem.nextId, r.success);
+        const exp = r.fail * gem.level * t.gemExpPerLevel;
+        gainExp(o, exp);
+        const nextLevel = o.config.requireGoods(gem.nextId).gem!.level;
+        if (r.success > 0 && nextLevel > t.gemNewsLevel)
+          opNews(o, 'gem.levelUp', { goodsId: gem.nextId, num: r.success, name: o.rest.name });
+        if (r.fail > 0 && nextLevel >= t.gemBrokenNewsLevel)
+          opNews(o, 'gem.broken', { goodsId: b.goodsId, num: r.fail * 2, name: o.rest.name });
+        return { ...r, exp };
       });
     },
   };
