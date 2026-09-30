@@ -35,4 +35,18 @@ describe('StoreView', () => {
     await flushPromises();
     expect(endpoints.useGoods).toHaveBeenCalledWith(85, 99);
   });
+
+  it('现在用不了（上限为 0）时使用按钮禁用并提示', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        { goodsId: 82, num: 3, expiresAt: null, usable: true, batch: true, maxUse: 0, sellPrice: 3500 },
+      ],
+    });
+    const w = mount(StoreView);
+    await flushPromises();
+    const use = w.findAll('button').find((b) => b.text().startsWith('使用'))!;
+    expect(use.attributes('disabled')).toBeDefined();
+    expect(w.text()).toContain('已达上限');
+  });
 });

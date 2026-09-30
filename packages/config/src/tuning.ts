@@ -148,7 +148,7 @@ export const tuningSchema = z.object({
     discardable: z.array(int),
     maxBuy: int.min(1),
   }),
-  store: z.object({ batchUsable: z.array(int), maxBatch: int.min(1) }),
+  store: z.object({ maxBatch: int.min(1) }),
   world: z.object({
     weatherHours: z.array(int).min(1),
     nightFrom: int,

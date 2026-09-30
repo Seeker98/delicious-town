@@ -27,13 +27,37 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(await goodsNum(t, ctx.restaurantId, 85)).toBe(0);
   });
 
-  it('扩容卡不能批量；橱柜格数不超过食材种类总数', async () => {
-    const ctx = await newRestaurant(t, { patch: { cupboard_num: 310 }, goods: { 3: 2, 5: 1 } });
-    await expect(s().use(ctx, { goodsId: 3, num: 2 })).rejects.toMatchObject({
+  it('餐桌A、扩建卡可以批量；洗点卡不能批量（问题记录：餐桌A、大扩建卡只能用一个）', async () => {
+    const tables = [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 }));
+    const ctx = await newRestaurant(t, {
+      patch: { table_num: 10, store_num: 20, attr_cook: 3 },
+      tables,
+      goods: { 82: 5, 8: 3, 55: 2 },
+    });
+    await s().use(ctx, { goodsId: 82, num: 3 });
+    expect(await tablesOf(ctx.restaurantId)).toHaveLength(7);
+    await s().use(ctx, { goodsId: 8, num: 3 });
+    expect((await restRow(t, ctx.restaurantId)).store_num).toBe(50);
+    await expect(s().use(ctx, { goodsId: 55, num: 2 })).rejects.toMatchObject({
       params: { reason: 'no_batch' },
     });
-    await s().use(ctx, { goodsId: 5, num: 1 });
+  });
+
+  it('扩容卡：橱柜格数不超过食材种类总数；超过所需张数报上限，满了再用报橱柜已满，都不扣道具', async () => {
+    const ctx = await newRestaurant(t, { patch: { cupboard_num: config.foods.size - 15 }, goods: { 5: 5 } });
+    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === 5)?.maxUse).toBe(2);
+    await expect(s().use(ctx, { goodsId: 5, num: 3 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'batch', max: 2 },
+    });
+    await s().use(ctx, { goodsId: 5, num: 2 });
     expect((await restRow(t, ctx.restaurantId)).cupboard_num).toBe(config.foods.size);
+    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === 5)?.maxUse).toBe(0);
+    await expect(s().use(ctx, { goodsId: 5, num: 1 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'cupboard_slots' },
+    });
+    expect(await goodsNum(t, ctx.restaurantId, 5)).toBe(3);
   });
 
   it('餐桌A：加一张桌，受餐桌上限限制；超出时报错且不扣道具', async () => {
@@ -101,13 +125,21 @@ describe('仓库列表与流水', () => {
   });
 
   it('列表给出每个道具一次最多能用几个（问题记录：批量使用不提示上限）', async () => {
-    const ctx = await newRestaurant(t, { goods: { 85: 150, 29: 3, 82: 2, 13: 1 } });
+    // 上限 6 张，现有 4 张：餐桌A 最多用 2 个；鞋带受普通飞弹数量限制（80 / 36 = 2）
+    const tables = [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 }));
+    const ctx = await newRestaurant(t, {
+      patch: { table_num: 6 },
+      tables,
+      goods: { 85: 150, 29: 3, 82: 5, 13: 1, 55: 2, 169: 5, 18: 80 },
+    });
     const l = await s().list(ctx, {});
-    const max = (id: number) => l.items.find((x) => x.goodsId === id)?.maxUse;
-    expect(max(85)).toBe(99);
-    expect(max(29)).toBe(3);
-    expect(max(82)).toBe(1);
-    expect(max(13)).toBe(0);
+    const item = (id: number) => l.items.find((x) => x.goodsId === id);
+    expect(item(85)?.maxUse).toBe(99);
+    expect(item(29)?.maxUse).toBe(3);
+    expect(item(82)).toMatchObject({ batch: true, maxUse: 2 });
+    expect(item(169)).toMatchObject({ batch: true, maxUse: 2 });
+    expect(item(55)).toMatchObject({ batch: false, maxUse: 1 });
+    expect(item(13)?.maxUse).toBe(0);
   });
 
   it('批量超过单次上限时报 LIMIT_REACHED 并带上限，不扣道具', async () => {

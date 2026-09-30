@@ -12,7 +12,7 @@ import { featureAvailable } from '../../core/features';
 import { runOp } from '../../core/op';
 import { looseEquipCount } from './goods';
 import { sellPrice } from './rules';
-import { useGoods } from './use';
+import { NO_BATCH_KINDS, useCap, useGoods } from './use';
 
 const HOUR = 3600_000;
 
@@ -32,7 +32,7 @@ export function createStoreService(d: GameDeps) {
       const [rest, settings] = await Promise.all([
         d.db
           .selectFrom('restaurant')
-          .select('store_num')
+          .select(['store_num', 'table_num', 'star_level', 'cupboard_num'])
           .where('id', '=', ctx.restaurantId)
           .executeTakeFirstOrThrow(),
         d.shards.settings(ctx.shardId),
@@ -45,21 +45,34 @@ export function createStoreService(d: GameDeps) {
         .where((eb) => eb.or([eb('expires_at', 'is', null), eb('expires_at', '>', now)]))
         .orderBy('goods_id')
         .execute();
+      const tr = await d.db
+        .selectFrom('restaurant_tables')
+        .select('tables')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst();
+      const held = new Map(rows.map((r) => [r.goods_id, r.num]));
+      const capInput = {
+        tables: tr?.tables.length ?? 0,
+        tableNum: rest.table_num,
+        star: rest.star_level,
+        cupboardNum: rest.cupboard_num,
+        foodsTotal: d.config.foods.size,
+        have: (id: number) => held.get(id) ?? 0,
+      };
       const items = rows
         .map((r) => ({ r, g: d.config.goods.get(r.goods_id) }))
         .filter((x) => x.g !== undefined && (q.type === undefined || x.g.type === q.type))
         .map(({ r, g }) => {
           const use = g!.use;
           const usable = use !== null && (use.kind !== 'towerTicket' || featureAvailable(settings, 'tower'));
-          const batch =
-            usable && (use!.kind === 'gift' || settings.tuning.store.batchUsable.includes(r.goods_id));
+          const batch = usable && !NO_BATCH_KINDS.has(use!.kind);
           return {
             goodsId: r.goods_id,
             num: r.num,
             expiresAt: r.expires_at ? r.expires_at.toISOString() : null,
             usable,
             batch,
-            maxUse: !usable ? 0 : batch ? Math.min(r.num, settings.tuning.store.maxBatch) : 1,
+            maxUse: !usable ? 0 : Math.min(r.num, useCap(use!, capInput, settings.tuning)),
             sellPrice: sellPrice(g!, settings.tuning),
           };
         });

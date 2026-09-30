@@ -110,11 +110,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
         class="form-control form-control-sm"
         style="width: 60px"
       />
-      <span v-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
+      <span v-if="it.usable && it.maxUse === 0" class="text-danger">已达上限</span>
+      <span v-else-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
       <button
         v-if="it.usable"
         class="btn btn-sm btn-primary"
-        :disabled="busy"
+        :disabled="busy || it.maxUse === 0"
         @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
       >
         {{ it.batch ? `使用 ×${useN(it)}` : '使用' }}
