@@ -268,6 +268,13 @@ export function createFriendReads(d: GameDeps) {
         .where('from_rest', '=', ctx.restaurantId)
         .where('to_rest', '=', restId)
         .executeTakeFirst();
+      const equips = await d.db
+        .selectFrom('equip')
+        .select(['part', 'goods_id', 'stress'])
+        .where('rest_id', '=', restId)
+        .where('worn', '=', true)
+        .orderBy('part')
+        .execute();
       return {
         id: r.id,
         name: r.name,
@@ -287,6 +294,7 @@ export function createFriendReads(d: GameDeps) {
         plaques,
         tables: tables.map((x) => tableDto(x, names)),
         thumbedToday: thumbed !== undefined,
+        equips: equips.map((e) => ({ part: e.part, goodsId: e.goods_id, stress: e.stress })),
       };
     },
 

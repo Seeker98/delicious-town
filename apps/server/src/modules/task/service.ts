@@ -40,7 +40,16 @@ export function createTaskService(d: GameDeps) {
       .select((eb) => eb.fn.countAll<number>().as('n'))
       .where('rest_id', '=', rest.id)
       .executeTakeFirstOrThrow();
-    const extra = { 'friends.count': Number(friends.n), 'rest.thumbs': counters.get('thumbs.received') ?? 0 };
+    const maxStress = await db
+      .selectFrom('equip')
+      .select((eb) => eb.fn.max('stress').as('m'))
+      .where('rest_id', '=', rest.id)
+      .executeTakeFirst();
+    const extra = {
+      'friends.count': Number(friends.n),
+      'rest.thumbs': counters.get('thumbs.received') ?? 0,
+      'equip.maxStress': Number(maxStress?.m ?? 0),
+    };
     const progressOf = (t: Task) =>
       t.cond.kind === 'counter'
         ? (counters.get(t.cond.key) ?? 0)

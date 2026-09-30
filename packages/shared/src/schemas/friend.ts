@@ -78,6 +78,8 @@ export interface FriendRestDto {
   tables: TableDto[];
   /** 我今天已经给它点过赞 */
   thumbedToday: boolean;
+  /** 对方穿着的厨具（子项目 2B） */
+  equips: Array<{ part: number; goodsId: number; stress: number }>;
 }
 
 const tableNo = z.number().int().min(1).max(500);
