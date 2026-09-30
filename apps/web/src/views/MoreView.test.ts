@@ -37,6 +37,9 @@ describe('MoreView', () => {
   it('有特色菜、神殿、菜园、酒吧、厨塔、教室入口', () => {
     useSessionStore().me = me('player');
     const text = mountView().text();
-    for (const x of ['特色菜', '神殿', '教室', '菜园', '酒吧', '厨塔']) expect(text).toContain(x);
+    for (const x of ['特色菜', '神殿', '教室', '菜园', '酒吧', '厨塔', '厨具与加点'])
+      expect(text).toContain(x);
+    // 和底部弹出的面板同一套分组
+    for (const g of ['经营', '玩法', '其他']) expect(text).toContain(g);
   });
 });
