@@ -1,14 +1,16 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  dineStartBody,
   friendListQuery,
   friendSearchQuery,
   pageQuery,
   respondBody,
   restIdBody,
   restIdParam,
+  tableBody,
 } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
-import { ok } from '../../http/reply';
+import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
 import type { SocialService } from './service';
 
@@ -38,6 +40,14 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     );
     r.get('/friend/feed', async (req) =>
       ok(await svc.reads.feed(restCtxOf(req), parse(pageQuery, req.query))),
+    );
+    r.get('/dine/current', async (req) => ok(await svc.dine.current(restCtxOf(req))));
+    r.post('/dine/start', async (req) =>
+      okOp(await svc.dine.start(restCtxOf(req), parse(dineStartBody, req.body))),
+    );
+    r.post('/dine/end', async (req) => okOp(await svc.dine.end(restCtxOf(req))));
+    r.post('/dine/expel', async (req) =>
+      okOp(await svc.dine.expel(restCtxOf(req), parse(tableBody, req.body))),
     );
   };
 }

@@ -79,3 +79,25 @@ export interface FriendRestDto {
   /** 我今天已经给它点过赞 */
   thumbedToday: boolean;
 }
+
+const tableNo = z.number().int().min(1).max(500);
+export const dineStartBody = z.object({ restId, tableNo });
+export const tableBody = z.object({ tableNo });
+/** restId 为自己时表示自己店 */
+export const restTableBody = z.object({ restId, tableNo });
+
+export interface DineCurrentDto {
+  hostRestId: number;
+  hostName: string;
+  tableNo: number;
+  startedAt: string;
+  minutes: number;
+  /** 已满最短时长，可以结束 */
+  canEnd: boolean;
+}
+
+export interface DineRewardDto {
+  coin: number;
+  exp: number;
+  strength: number;
+}
