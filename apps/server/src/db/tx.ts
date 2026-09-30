@@ -20,7 +20,8 @@ export async function withRestaurants<T>(
         .selectFrom('restaurant')
         .selectAll()
         .where('id', '=', id)
-        .forUpdate()
+        // NO KEY UPDATE：同店操作照样串行，但不挡外键检查的 KEY SHARE（后台批量插入邀请等不会和双店操作成环）
+        .forNoKeyUpdate()
         .executeTakeFirst();
       if (!row) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId: id });
       rests.set(id, row);

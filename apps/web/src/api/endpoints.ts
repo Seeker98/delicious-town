@@ -7,21 +7,34 @@ import type {
   CookbookListDto,
   CupboardDto,
   DeviceOptionsDto,
+  DineCurrentDto,
+  DineRewardDto,
+  ExchangeFoodsDto,
+  ExchangeResultDto,
+  FlipResultDto,
+  FlipSlotsDto,
   FoodsNeedDto,
   ForgotPasswordInput,
   FridgeDto,
+  FriendRequestDto,
+  FriendRestDto,
+  FriendsDto,
   HandleResultDto,
   IncomePageDto,
+  KillResultDto,
   LearnResultDto,
   LedgerRecordDto,
   LogPageDto,
   LoginInput,
   MarketDto,
   MeDto,
+  MyLooksDto,
   OilNeedDto,
   RegisterInput,
   ResetPasswordInput,
+  RestBriefDto,
   RestaurantDto,
+  ReturnAllDto,
   SelectShardResult,
   ShardDto,
   ShopDto,
@@ -31,6 +44,8 @@ import type {
   TableDto,
   TasksDto,
   ThawResultDto,
+  ThumbResultDto,
+  ThumbTodayDto,
   WorldDto,
 } from '@dt/shared';
 import { api } from './client';
@@ -125,4 +140,44 @@ export const endpoints = {
   claimTask: (taskId: number) => api.post<Anything>('/api/v1/task/claim', { taskId }),
   claimActivation: (points: number) => api.post<Anything>('/api/v1/task/activation/claim', { points }),
   signIn: () => api.post<Anything>('/api/v1/task/signin'),
+  friendList: (sort: 'level' | 'star' | 'recent' = 'level') =>
+    api.get<FriendsDto>(`/api/v1/friend/list${qs({ sort })}`),
+  friendRequests: () => api.get<FriendRequestDto[]>('/api/v1/friend/requests'),
+  friendSearch: (q: string) => api.get<RestBriefDto[]>(`/api/v1/friend/search${qs({ q })}`),
+  friendStreet: () => api.get<RestBriefDto[]>('/api/v1/friend/street'),
+  friendApply: (restId: number) =>
+    api.post<{ status: 'requested' | 'friends' }>('/api/v1/friend/apply', { restId }),
+  friendRespond: (restId: number, accept: boolean) =>
+    api.post<{ status: 'friends' | 'rejected' }>('/api/v1/friend/respond', { restId, accept }),
+  friendRemove: (restId: number) => api.post<{ removed: true }>('/api/v1/friend/remove', { restId }),
+  friendDetail: (restId: number) => api.get<FriendRestDto>(`/api/v1/friend/detail/${restId}`),
+  friendFeed: (before?: string) => api.get<LogPageDto>(`/api/v1/friend/feed${qs({ before })}`),
+  dineCurrent: () => api.get<DineCurrentDto | null>('/api/v1/dine/current'),
+  dineStart: (restId: number, tableNo: number) =>
+    api.post<Anything>('/api/v1/dine/start', { restId, tableNo }),
+  dineEnd: () => api.post<DineRewardDto>('/api/v1/dine/end'),
+  dineExpel: (tableNo: number) =>
+    api.post<{ hostCoin: number; dinerLoss: number }>('/api/v1/dine/expel', { tableNo }),
+  roachLay: (restId: number, tableNo: number) =>
+    api.post<{ coin: number; exp: number }>('/api/v1/roach/lay', { restId, tableNo }),
+  roachKill: (restId: number, tableNo: number) =>
+    api.post<KillResultDto>('/api/v1/roach/kill', { restId, tableNo }),
+  friendRefuel: (restId: number, num: number) =>
+    api.post<{ oil: number; tickets: number }>('/api/v1/friend/refuel', { restId, num }),
+  flipSlots: (restId: number) => api.get<FlipSlotsDto>(`/api/v1/friend/cupboard/${restId}`),
+  flip: (restId: number, slotNo: number) =>
+    api.post<FlipResultDto>('/api/v1/cupboard/flip', { restId, slotNo }),
+  exchangeFoods: (restId: number, level: number) =>
+    api.get<ExchangeFoodsDto>(`/api/v1/friend/foods/${restId}${qs({ level })}`),
+  exchange: (b: { restId: number; giveFoodsId: number; takeFoodsId: number }) =>
+    api.post<ExchangeResultDto>('/api/v1/foods/exchange', b),
+  thumbsToday: () => api.get<ThumbTodayDto[]>('/api/v1/thumbs/today'),
+  thumbUp: (restId: number) => api.post<ThumbResultDto>('/api/v1/thumbs/up', { restId }),
+  thumbsReturnAll: () => api.post<ReturnAllDto>('/api/v1/thumbs/returnAll'),
+  myLooks: () => api.get<MyLooksDto>('/api/v1/rest/looks'),
+  setDoor: (door: number) => api.post<{ door: number }>('/api/v1/rest/door', { door }),
+  setAvatar: (avatar: number) => api.post<{ avatar: number }>('/api/v1/rest/avatar', { avatar }),
+  setNotice: (text: string) => api.post<{ notice: string }>('/api/v1/rest/notice', { text }),
+  iconShow: (iconId: number, shown: boolean) =>
+    api.post<{ iconId: number; shown: boolean }>('/api/v1/rest/icon/show', { iconId, shown }),
 };

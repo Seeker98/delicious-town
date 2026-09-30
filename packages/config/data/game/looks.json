@@ -1,0 +1,34 @@
+{
+  "doors": [
+    { "id": 0, "name": "木门", "coin": 0 },
+    { "id": 1, "name": "红漆门", "coin": 20000 },
+    { "id": 2, "name": "玻璃门", "coin": 20000 },
+    { "id": 3, "name": "竹门", "coin": 20000 },
+    { "id": 4, "name": "铁艺门", "coin": 20000 },
+    { "id": 5, "name": "圆拱门", "coin": 20000 },
+    { "id": 6, "name": "海盗门", "coin": 20000 },
+    { "id": 7, "name": "蟹黄堡门", "coin": 20000 }
+  ],
+  "avatars": [
+    { "id": 1, "name": "小厨师" },
+    { "id": 2, "name": "大厨" },
+    { "id": 3, "name": "服务员" },
+    { "id": 4, "name": "采购员" },
+    { "id": 5, "name": "美食家" },
+    { "id": 6, "name": "甜点师" },
+    { "id": 7, "name": "面点师" },
+    { "id": 8, "name": "烧烤师" },
+    { "id": 9, "name": "调酒师" },
+    { "id": 10, "name": "渔夫" },
+    { "id": 11, "name": "园丁" },
+    { "id": 12, "name": "蟹老板" }
+  ],
+  "icons": [
+    { "key": "founder", "title": "开服元老", "desc": "开服第一周加入小镇" },
+    { "key": "helper", "title": "热心帮手", "desc": "帮小镇找到了问题" },
+    { "key": "tester", "title": "测试先锋", "desc": "参加了内测" },
+    { "key": "champion", "title": "比赛冠军", "desc": "小镇活动的冠军" },
+    { "key": "artist", "title": "小镇画家", "desc": "为小镇画了图" },
+    { "key": "chef", "title": "金牌大厨", "desc": "厨艺出众" }
+  ]
+}

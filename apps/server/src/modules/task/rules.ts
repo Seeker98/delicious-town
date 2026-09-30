@@ -6,7 +6,9 @@ export function stateValue(
   key: string,
   rest: { level: number; star_level: number; oil_level: number },
   counts: CookbookCounts,
+  extra: Record<string, number> = {},
 ): number | null {
+  if (key in extra) return extra[key]!;
   if (key === 'rest.level') return rest.level;
   if (key === 'rest.star') return rest.star_level;
   if (key === 'oil.level') return rest.oil_level;

@@ -103,6 +103,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const holidays = parse('game/holidays', raw.holidaysFile);
   const guessAwardRaw = parse('game/market_guess_award', raw.guessAwardFile);
   const actionMap = parse('game/action_map', raw.actionMapFile);
+  const looks = parse('game/looks', raw.looksFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -138,6 +139,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !holidays ||
     !guessAwardRaw ||
     !actionMap ||
+    !looks ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -473,6 +475,28 @@ export function buildBundle(src: SourceData): BuildResult {
   if (!streetIds.has(defaults.streetId))
     errors.push(`restaurant_defaults references unknown street ${defaults.streetId}`);
 
+  // ---------- 装扮 ----------
+  const doorIds = new Set<number>();
+  for (const d of looks.doors) {
+    if (doorIds.has(d.id)) errors.push(`looks: duplicate door ${d.id}`);
+    doorIds.add(d.id);
+  }
+  if (looks.doors.find((d) => d.id === 0)?.coin !== 0) errors.push('looks: door 0 must be free');
+  const avatarIds = new Set<number>();
+  for (const a of looks.avatars) {
+    if (avatarIds.has(a.id)) errors.push(`looks: duplicate avatar ${a.id}`);
+    avatarIds.add(a.id);
+  }
+  const iconKeys = new Set<string>();
+  for (const i of looks.icons) {
+    if (iconKeys.has(i.key)) errors.push(`looks: duplicate icon ${i.key}`);
+    iconKeys.add(i.key);
+  }
+  if (!avatarIds.has(tuning.friend.npc.avatar))
+    errors.push(`tuning.friend.npc.avatar ${tuning.friend.npc.avatar} not in looks`);
+  if (!doorIds.has(tuning.friend.npc.door))
+    errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
+
   if (errors.length > 0) return { bundle: null, errors };
 
   const body: Omit<ConfigBundle, 'version'> = {
@@ -501,6 +525,7 @@ export function buildBundle(src: SourceData): BuildResult {
     holidays,
     tuning,
     restaurantDefaults: defaults,
+    looks,
     extra: {
       seeds: seedsRaw,
       seedExchange: seedExRaw,

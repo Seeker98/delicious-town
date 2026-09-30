@@ -44,4 +44,12 @@ export interface CatalogDto {
   streets: Array<{ id: number; name: string; cookName: string }>;
   weather: Array<{ id: number; name: string }>;
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;
+  /** 门、头像、个性图标；旧缓存里没有 */
+  looks?: LooksDto;
+}
+
+export interface LooksDto {
+  doors: Array<{ id: number; name: string; coin: number }>;
+  avatars: Array<{ id: number; name: string }>;
+  icons: Array<{ key: string; title: string; desc: string }>;
 }

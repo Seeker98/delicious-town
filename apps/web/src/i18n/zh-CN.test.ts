@@ -26,3 +26,17 @@ describe('错误文案', () => {
     expect(errorText('INVALID_STATE', { reason: 'no_such_reason' })).toBe('当前状态下不能这样做');
   });
 });
+
+describe('好友互动的错误文案', () => {
+  it('按 reason / what / who 出文案', () => {
+    expect(errorText('INVALID_STATE', { reason: 'table_occupied' })).toBe('这张桌子有人了');
+    expect(errorText('LIMIT_REACHED', { what: 'seats', max: 2 })).toBe('对方的白食位满了（最多 2 人）');
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'dine_minutes', need: 30 })).toBe(
+      '白食满 30 分钟才能结束或请走',
+    );
+    expect(errorText('ALREADY_DONE', { what: 'thumb' })).toBe('今天已经给它点过赞了');
+    expect(errorText('EMAIL_NOT_VERIFIED', { who: 'target' })).toBe('对方还没验证邮箱，不能互动');
+    expect(errorText('COOLDOWN', { what: 'flip' })).toBe('这个橱柜位还在冷却中');
+    expect(errorText('NOT_FRIEND')).toBe('你们还不是好友');
+  });
+});

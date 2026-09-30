@@ -217,3 +217,13 @@ export interface AuditPageDto {
   items: AuditRowDto[];
   nextBefore: string | null;
 }
+
+export const grantIconBody = z.object({ key: z.string().regex(/^[a-z0-9_-]{1,32}$/) });
+
+export interface AdminIconDto {
+  id: number;
+  key: string;
+  title: string;
+  shown: boolean;
+  grantedAt: string;
+}

@@ -59,3 +59,11 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 区服数值保存后，API 和 worker 通过 Redis 频道 `shard-settings` 立即清缓存，不需要重启。
 - 全区服补偿和每日统计汇总都由 worker 执行：**生产环境必须跑 worker**。
 - 可选：用反向代理限制 `/admin` 和 `/api/v1/admin` 的来源 IP。
+
+## 好友互动
+
+- 每个区服有一家 NPC 餐厅「蟹老板」，由 worker 的 `npc-maintain` 任务每小时检查并创建（新区服、首次部署后一小时内出现），同时向邮箱已验证的玩家发好友申请（每家店只发一次）；`npc-restock` 每天 00:05 给它补橱柜
+- 周奖励 `friend-weekly` 每周一 07:59 之后发放：上周翻橱被夹最多、被翻最多前 4、灭蟑螂最多前 2
+- 互动默认要求双方邮箱已验证；本地没配邮件时可在控制台把区服数值 `tuning.friend.requireVerifiedEmail` 改成 `false`
+- 区服关闭 `features.friend` 后所有互动接口返回"这个区服暂未开放该功能"，自然蟑螂也会停止
+- 限流倍数 `RATE_LIMIT_SCALE`（默认 1）：开发环境 `.env.development` 设成 10，因为端到端测试的多个玩家都来自 localhost 同一个 IP；生产不要改

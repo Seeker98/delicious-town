@@ -18,6 +18,7 @@ vi.mock('../../api/admin', () => ({
     unban: vi.fn(),
     rename: vi.fn(),
     setRole: vi.fn(),
+    icons: vi.fn().mockResolvedValue([]),
   },
 }));
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { DeviceOptionsDto, EffectDto, TaskDto } from '@dt/shared';
+import type { DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
@@ -19,6 +19,7 @@ const rest = computed(() => store.rest);
 const error = ref('');
 const busy = ref(false);
 const mainTask = ref<TaskDto | null>(null);
+const dining = ref<DineCurrentDto | null>(null);
 const options = ref<DeviceOptionsDto | null>(null);
 const pickingSlot = ref<number | null>(null);
 
@@ -26,6 +27,7 @@ async function load() {
   try {
     await store.refresh();
     mainTask.value = (await endpoints.tasks()).main;
+    dining.value = await endpoints.dineCurrent();
     error.value = '';
   } catch (e) {
     error.value = errorMessage(e, '获取餐厅信息失败');
@@ -169,6 +171,22 @@ onBeforeUnmount(() => {
       <RouterLink to="/rest/floor" class="ms-3">楼层餐桌 ›</RouterLink>
     </div>
 
+    <div v-if="dining" class="card mb-2" data-testid="dine-card">
+      <div class="card-body py-2 d-flex align-items-center small">
+        <div class="flex-fill">
+          正在 <RouterLink :to="`/friends/${dining.hostRestId}`">{{ dining.hostName }}</RouterLink> 第
+          {{ dining.tableNo }} 桌白食，已 {{ dining.minutes }} 分钟
+        </div>
+        <button
+          class="btn btn-sm btn-primary"
+          data-testid="dine-end"
+          :disabled="busy || !dining.canEnd"
+          @click="act(() => endpoints.dineEnd(), '结束白食失败')"
+        >
+          结束白食
+        </button>
+      </div>
+    </div>
     <div v-if="mainTask" class="border rounded p-2 my-2 small">
       <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
       <span class="text-muted"

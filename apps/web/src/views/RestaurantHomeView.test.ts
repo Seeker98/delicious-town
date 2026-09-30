@@ -14,6 +14,8 @@ vi.mock('../api/endpoints', () => ({
     claimTask: vi.fn(),
     devices: vi.fn(),
     placeDevice: vi.fn(),
+    dineCurrent: vi.fn(),
+    dineEnd: vi.fn(),
   },
 }));
 
@@ -64,6 +66,8 @@ const dto: RestaurantDto = {
   },
   weather: { id: 1, name: '晴' },
   isPlanktonHost: false,
+  door: 0,
+  avatar: null,
   tables: [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 })),
   effects: [
     {
@@ -92,6 +96,7 @@ describe('RestaurantHomeView', () => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
     vi.mocked(endpoints.overview).mockResolvedValue(dto);
+    vi.mocked(endpoints.dineCurrent).mockResolvedValue(null);
     vi.mocked(endpoints.tasks).mockResolvedValue({
       mainStep: 1,
       main: {
@@ -186,5 +191,22 @@ describe('RestaurantHomeView', () => {
     const btn = w.find('[data-testid="refuel"]');
     expect(btn.text()).toContain('加油（250 银币）');
     expect(btn.attributes('disabled')).toBeUndefined();
+  });
+
+  it('正在白食时显示卡片，满 30 分钟可以结束', async () => {
+    vi.mocked(endpoints.dineCurrent).mockResolvedValue({
+      hostRestId: 2,
+      hostName: '乙店',
+      tableNo: 3,
+      startedAt: '2026-09-30T00:00:00Z',
+      minutes: 45,
+      canEnd: true,
+    });
+    vi.mocked(endpoints.dineEnd).mockResolvedValue({ coin: 10, exp: 5, strength: 0 });
+    const w = await mountView();
+    expect(w.find('[data-testid="dine-card"]').text()).toContain('乙店');
+    await w.find('[data-testid="dine-end"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.dineEnd).toHaveBeenCalled();
   });
 });

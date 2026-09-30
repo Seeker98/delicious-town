@@ -44,23 +44,32 @@ describe('settleShardRound', () => {
     expect(await income(ctx.restaurantId)).toHaveLength(1);
   });
 
-  it('打蟑螂（friend 功能）不可用时不自然产生蟑螂，否则餐桌会被永久占满', async () => {
-    const shardId = await createShard(t.db);
+  it('自然蟑螂跟随 friend 功能：开启时产生，区服关闭 friend 时不产生', async () => {
+    // 概率给到 100：乘上任何天气系数都必定出现
+    const tuning = { settlement: { roachRateBase: 100, roachRatePerStar: 0 } };
+    const on = await createShard(t.db);
+    const off = await createShard(t.db);
     await t.db
       .insertInto('shard_config')
-      .values({
-        shard_id: shardId,
-        override: JSON.stringify({ tuning: { settlement: { roachRateBase: 1, roachRatePerStar: 0 } } }),
-      })
+      .values([
+        { shard_id: on, override: JSON.stringify({ tuning }) },
+        { shard_id: off, override: JSON.stringify({ tuning, features: { friend: false } }) },
+      ])
       .execute();
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 1000 } });
-    await settle(shardId);
-    const tables = await t.db
-      .selectFrom('restaurant_tables')
-      .select('tables')
-      .where('rest_id', '=', ctx.restaurantId)
-      .executeTakeFirstOrThrow();
-    expect(tables.tables.filter((x) => x.customer === 3)).toEqual([]);
+    const a = await newRestaurant(t, { shardId: on, patch: { coin: 1000, oil: 1000 } });
+    const b = await newRestaurant(t, { shardId: off, patch: { coin: 1000, oil: 1000 } });
+    await settle(on);
+    await settle(off);
+    const roaches = async (restId: number) =>
+      (
+        await t.db
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', restId)
+          .executeTakeFirstOrThrow()
+      ).tables.filter((x) => x.customer === 3).length;
+    expect(await roaches(a.restaurantId)).toBe(4);
+    expect(await roaches(b.restaurantId)).toBe(0);
   });
 
   it('单店结算出错时经由 worker 的日志记下区服、轮次和餐厅（设计文档 §4.1）', async () => {

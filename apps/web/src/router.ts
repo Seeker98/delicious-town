@@ -71,6 +71,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/rest/look',
+    name: 'look',
+    component: () => import('./views/RestLookView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/cookbooks',
     name: 'cookbooks',
     component: () => import('./views/CookbooksView.vue'),
@@ -140,6 +146,30 @@ export const routes: RouteRecordRaw[] = [
     path: '/weather',
     name: 'weather',
     component: () => import('./views/WeatherView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends',
+    name: 'friends',
+    component: () => import('./views/FriendsView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends/:restId(\\d+)',
+    name: 'friend-rest',
+    component: () => import('./views/FriendRestView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends/:restId(\\d+)/flip',
+    name: 'friend-flip',
+    component: () => import('./views/FriendFlipView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends/:restId(\\d+)/exchange',
+    name: 'friend-exchange',
+    component: () => import('./views/FriendExchangeView.vue'),
     meta: { needRestaurant: true },
   },
   {

@@ -50,6 +50,7 @@ export interface AccountTable {
   role: Default<'player' | 'mod' | 'admin'>;
   banned_at: TsNullable;
   ban_reason: Nullable<string>;
+  is_system: Default<boolean>;
   invite_code: Nullable<string>;
   invited_by: Nullable<number>;
   created_at: TsDefault;
@@ -117,6 +118,11 @@ export interface RestaurantTable {
   plaque2_open: Default<boolean>;
   main_task_step: Default<number>;
   state_reason: Nullable<string>;
+  npc: Default<boolean>;
+  door: Default<number>;
+  /** null = 没设置头像（不能白食） */
+  avatar: Nullable<number>;
+  notice: Default<string>;
   effect_agg: JsonDefault<Record<string, number>>;
   effect_next_expire_at: TsNullable;
   effect_dirty: Default<boolean>;
@@ -341,6 +347,57 @@ export interface StatDailyTable {
   amount: number;
 }
 
+export interface FriendTable {
+  rest_id: number;
+  friend_id: number;
+  created_at: TsDefault;
+}
+
+export interface FriendRequestTable {
+  from_rest: number;
+  to_rest: number;
+  created_at: TsDefault;
+}
+
+export interface DineDashTable {
+  diner_rest_id: number;
+  host_rest_id: number;
+  table_no: number;
+  started_at: Ts;
+}
+
+export interface CupboardFlipTable {
+  host_rest_id: number;
+  slot_no: number;
+  by_rest_id: number;
+  cool_until: Ts;
+}
+
+export interface ThumbTable {
+  /** YYYY-MM-DD（游戏日） */
+  day: string;
+  from_rest: number;
+  to_rest: number;
+  ip: Nullable<string>;
+  returned: Default<boolean>;
+  created_at: TsDefault;
+}
+
+/** 蟹老板已经邀请过的店（每家只邀请一次） */
+export interface NpcInviteTable {
+  rest_id: number;
+  created_at: TsDefault;
+}
+
+export interface RestIconTable {
+  id: Generated<number>;
+  rest_id: number;
+  icon_key: string;
+  shown: Default<boolean>;
+  granted_at: TsDefault;
+  granted_by: Nullable<number>;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -371,6 +428,13 @@ export interface DB {
   admin_grant: AdminGrantTable;
   admin_grant_done: AdminGrantDoneTable;
   stat_daily: StatDailyTable;
+  friend: FriendTable;
+  friend_request: FriendRequestTable;
+  dine_dash: DineDashTable;
+  cupboard_flip: CupboardFlipTable;
+  thumb: ThumbTable;
+  rest_icon: RestIconTable;
+  npc_invite: NpcInviteTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;

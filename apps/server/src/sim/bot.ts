@@ -129,6 +129,12 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     await attempt(() => game.growth.allocate(ctx, { cook: r.attrLeft, cutting: 0, fire: 0 }));
   r = await rest();
   if (r.oil < r.oilMax * 0.6) await attempt(() => game.growth.refuel(ctx));
+  // 自然蟑螂占着餐桌不走，有体力就灭掉（自己店不要求验证邮箱）
+  for (const tb of await game.restaurant.floor(ctx.restaurantId)) {
+    if (tb.customer !== 3) continue;
+    if (!(await attempt(() => game.social.roach.kill(ctx, { restId: ctx.restaurantId, tableNo: tb.no }))))
+      break;
+  }
 
   for (let i = 0; i < 5; i++) {
     const t = await game.task.tasks(ctx);

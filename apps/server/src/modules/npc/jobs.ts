@@ -1,0 +1,52 @@
+import { gameParts, hashSeed, seededRng } from '@dt/shared';
+import type { GameDeps } from '../../core/deps';
+import type { PeriodicJob } from '../../core/jobs';
+import { withRestaurant } from '../../db/tx';
+import { ensureNpc, npcIdOf, npcInvite, restockNpc } from './npc';
+
+const HOUR = 3_600_000;
+
+export function npcJobs(d: GameDeps): PeriodicJob[] {
+  return [
+    {
+      // 每小时：没有蟹老板就建（新区服、首次部署），并补发邀请
+      name: 'npc-maintain',
+      feature: 'friend',
+      period: (now) => String(Math.floor(now.getTime() / HOUR)),
+      run: async ({ shardId, settings, period }) => {
+        const npc = await ensureNpc(
+          d.db,
+          d.config,
+          settings.tuning.friend.npc,
+          shardId,
+          seededRng(hashSeed(shardId, 'npc-create', period)),
+        );
+        const invited = await npcInvite(d.db, { shardId });
+        return { npcId: npc.id, created: npc.created, invited };
+      },
+    },
+    {
+      // 每天 00:05 之后补一次货
+      name: 'npc-restock',
+      feature: 'friend',
+      period: (now) => {
+        const p = gameParts(now);
+        return p.hour * 60 + p.minute >= 5 ? p.day : null;
+      },
+      run: async ({ shardId, settings, period }) => {
+        const id = await npcIdOf(d.db, shardId);
+        if (id === null) return { skipped: true };
+        const kinds = await withRestaurant(d.db, id, (tx) =>
+          restockNpc(
+            tx,
+            d.config,
+            settings.tuning.friend.npc,
+            id,
+            seededRng(hashSeed(shardId, 'npc-restock', period)),
+          ),
+        );
+        return { kinds };
+      },
+    },
+  ];
+}

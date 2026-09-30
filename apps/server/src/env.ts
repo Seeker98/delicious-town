@@ -23,6 +23,8 @@ const envSchema = z.object({
   SESSION_TTL_DAYS: z.coerce.number().int().min(1).default(30),
   MIGRATE_ON_START: bool.default('false'),
   ENABLE_TEST_API: bool.default('false'),
+  /** 限流倍数：开发环境调大（e2e 的多个玩家共用 localhost 一个 IP），生产保持 1 */
+  RATE_LIMIT_SCALE: z.coerce.number().positive().default(1),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -6,8 +6,12 @@ import { createAccountService, type AccountService } from './modules/account/ser
 import { statDailyJob } from './modules/admin/stats';
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
+import { createSocialService, type SocialService } from './modules/friend/service';
+import { friendWeeklyJob } from './modules/friend/weekly';
 import { createGrowthService, type GrowthService } from './modules/growth/service';
 import { marketJobs } from './modules/market/jobs';
+import { npcJobs } from './modules/npc/jobs';
+import { registerNpcHandlers } from './modules/npc/npc';
 import { createMarketService, type MarketService } from './modules/market/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
@@ -35,6 +39,7 @@ export interface Game {
   shop: ShopService;
   market: MarketService;
   task: TaskService;
+  social: SocialService;
   jobs: PeriodicJob[];
 }
 
@@ -51,6 +56,7 @@ export function createGame(app: AppDeps): Game {
   };
   const world = createWorldService(deps);
   registerTaskHandlers(app.bus, app.config);
+  registerNpcHandlers(app.bus);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
   jobs.push(...settlementJobs(deps, world));
@@ -59,6 +65,8 @@ export function createGame(app: AppDeps): Game {
   const market = createMarketService(deps, world);
   jobs.push(...marketJobs(market));
   jobs.push(statDailyJob(app.db));
+  jobs.push(...npcJobs(deps));
+  jobs.push(friendWeeklyJob(deps));
   return {
     app,
     deps,
@@ -73,6 +81,7 @@ export function createGame(app: AppDeps): Game {
     shop,
     market,
     task: createTaskService(deps),
+    social: createSocialService(deps, world),
     jobs,
   };
 }

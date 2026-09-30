@@ -5,7 +5,7 @@ import { call, createTestApp, registerUser, type TestContext } from '../../../te
 
 let ctx: TestContext;
 const routes = new Set<string>();
-let ids: { shardId: number; accountId: number; restId: number };
+let ids: { shardId: number; accountId: number; restId: number; iconId: number };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
 beforeAll(async () => {
@@ -19,7 +19,13 @@ beforeAll(async () => {
   const shardId = await createShard(ctx.deps.db);
   const target = await registerUser(ctx.app);
   const restId = await createRestaurantFull(ctx.deps.db, shardId, target.accountId);
-  ids = { shardId, accountId: target.accountId, restId };
+  // 给"收回个性图标"用：管理员那一次调用会真的收回它
+  const icon = await ctx.deps.db
+    .insertInto('rest_icon')
+    .values({ rest_id: restId, icon_key: 'tester' })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  ids = { shardId, accountId: target.accountId, restId, iconId: icon.id };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
     mod: (await userWithRole(ctx, 'mod')).cookie,
@@ -115,6 +121,25 @@ const CASES: Case[] = [
     url: () => `/api/v1/admin/restaurants/${ids.restId}/rename`,
     body: () => ({ name: `权限${ids.restId % 10000}`, reason: '权限测试' }),
     min: 'mod',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/restaurants/:id/icons',
+    url: () => `/api/v1/admin/restaurants/${ids.restId}/icons`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/restaurants/:id/icons',
+    url: () => `/api/v1/admin/restaurants/${ids.restId}/icons`,
+    body: () => ({ key: 'founder' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/restaurants/:id/icons/:iconId/revoke',
+    url: () => `/api/v1/admin/restaurants/${ids.restId}/icons/${ids.iconId}/revoke`,
+    min: 'admin',
   },
   {
     method: 'POST',

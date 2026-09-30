@@ -23,6 +23,7 @@ import { registerRateLimit } from './security/rateLimit';
 import {
   createRateLimiter,
   DEFAULT_RATE_RULES,
+  scaleRules,
   type RateRule,
   type RateRuleName,
 } from './security/rateLimiter';
@@ -60,7 +61,11 @@ export async function buildApp(
   registerClientIp(app, deps.env.TRUST_CF_HEADER);
   registerErrorHandling(app);
   registerSession(app, deps.sessions);
-  registerRateLimit(app, createRateLimiter(deps.redis), { ...DEFAULT_RATE_RULES, ...deps.rateRules });
+  registerRateLimit(
+    app,
+    createRateLimiter(deps.redis),
+    scaleRules({ ...DEFAULT_RATE_RULES, ...deps.rateRules }, deps.env.RATE_LIMIT_SCALE),
+  );
   registerIdempotency(app, deps.redis);
   registerHealth(app, deps);
   const game = createGame(deps);
