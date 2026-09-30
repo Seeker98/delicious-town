@@ -530,6 +530,46 @@ export interface McLessonStudentTable {
   created_at: TsDefault;
 }
 
+/** 试炼对象（子项目 4B-1）：一家店一行 */
+export interface RestTrialTable {
+  rest_id: number;
+  mc_id: number;
+  /** 1 注射 / 2 冥想 */
+  way: number;
+  prepared_at: TsDefault;
+}
+
+export interface KrakenFeedTable {
+  id: Generated<number>;
+  rest_id: number;
+  shard_id: number;
+  /** 游戏日 YYYY-MM-DD */
+  day: string;
+  mc_id: number;
+  target_mc_id: number;
+  num: number;
+  favor: number;
+  created_at: TsDefault;
+}
+
+export interface TentacleSlot {
+  mcId: number;
+  bought: boolean;
+}
+
+export interface TentacleShopTable {
+  rest_id: number;
+  day: string;
+  refreshes: Default<number>;
+  slots: Json<TentacleSlot[]>;
+}
+
+export interface RestSeedTable {
+  rest_id: number;
+  seed_id: number;
+  num: number;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -580,6 +620,10 @@ export interface DB {
   mc_eat: McEatTable;
   mc_lesson: McLessonTable;
   mc_lesson_student: McLessonStudentTable;
+  rest_trial: RestTrialTable;
+  kraken_feed: KrakenFeedTable;
+  tentacle_shop: TentacleShopTable;
+  rest_seed: RestSeedTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
