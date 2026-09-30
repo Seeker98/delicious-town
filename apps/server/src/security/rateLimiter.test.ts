@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { createRedis } from '../infra/redis';
-import { createRateLimiter } from './rateLimiter';
+import { createRateLimiter, scaleRules } from './rateLimiter';
 
 const redis = createRedis(process.env.REDIS_URL!);
 const limiter = createRateLimiter(redis);
@@ -35,5 +35,16 @@ describe('token bucket', () => {
     expect(await limiter.consume(a, rule, 1, 0)).toBe(true);
     expect(await limiter.consume(a, rule, 1, 0)).toBe(false);
     expect(await limiter.consume(b, rule, 1, 0)).toBe(true);
+  });
+});
+
+describe('scaleRules', () => {
+  it('按倍数放大容量和补充速度（开发环境用，生产为 1）', () => {
+    const rules = { default: { capacity: 60, refillPerSec: 10 }, auth: { capacity: 10, refillPerSec: 0.2 } };
+    expect(scaleRules(rules, 10)).toEqual({
+      default: { capacity: 600, refillPerSec: 100 },
+      auth: { capacity: 100, refillPerSec: 2 },
+    });
+    expect(scaleRules(rules, 1)).toEqual(rules);
   });
 });

@@ -13,6 +13,14 @@ export const DEFAULT_RATE_RULES: Record<RateRuleName, RateRule> = {
   email: { capacity: 3, refillPerSec: 1 / 60 },
 };
 
+/** 按倍数放大所有规则（RATE_LIMIT_SCALE：开发环境里两个自动化玩家共用一个 IP，生产为 1） */
+export function scaleRules<K extends string>(rules: Record<K, RateRule>, scale: number): Record<K, RateRule> {
+  const out = {} as Record<K, RateRule>;
+  for (const k of Object.keys(rules) as K[])
+    out[k] = { capacity: rules[k].capacity * scale, refillPerSec: rules[k].refillPerSec * scale };
+  return out;
+}
+
 export interface RateLimiter {
   consume(key: string, rule: RateRule, cost?: number, nowMs?: number): Promise<boolean>;
 }
