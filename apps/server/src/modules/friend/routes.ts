@@ -81,5 +81,10 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     r.post('/foods/exchange', async (req) =>
       okOp(await svc.exchange.exchange(restCtxOf(req), parse(foodsExchangeBody, req.body))),
     );
+    r.get('/thumbs/today', async (req) => ok(await svc.thumbs.today(restCtxOf(req))));
+    r.post('/thumbs/up', async (req) =>
+      okOp(await svc.thumbs.up(restCtxOf(req), parse(restIdBody, req.body).restId)),
+    );
+    r.post('/thumbs/returnAll', async (req) => okOp(await svc.thumbs.returnAll(restCtxOf(req))));
   };
 }

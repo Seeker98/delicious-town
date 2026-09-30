@@ -159,3 +159,26 @@ export interface ExchangeResultDto {
   /** 对方有红内裤时我额外损失的食材 */
   redPantsFoodsId: number | null;
 }
+
+export interface ThumbResultDto {
+  /** 我今天第几次点赞 */
+  count: number;
+  /** 前 10 次有奖励，之后每次扣 1 声望 */
+  rewarded: boolean;
+  tickets: number;
+  strength: number;
+}
+
+export interface ThumbTodayDto {
+  restId: number;
+  name: string;
+  avatar: number | null;
+  at: string;
+  /** 我已经回赞 */
+  returned: boolean;
+}
+
+export interface ReturnAllDto {
+  ok: number[];
+  failed: Array<{ restId: number; code: string }>;
+}
