@@ -19,6 +19,7 @@ import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
 import { createTempleService, type TempleService } from './modules/temple/service';
 import { yardJobs } from './modules/yard/jobs';
+import { towerJobs } from './modules/tower/jobs';
 import { createYardService, type YardService } from './modules/yard/service';
 import { createBarService, type BarService } from './modules/bar/service';
 import { createTowerService, type TowerService } from './modules/tower/service';
@@ -85,6 +86,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...equipJobs(deps));
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
+  jobs.push(...towerJobs(deps));
   return {
     app,
     deps,
