@@ -20,3 +20,4 @@ export * from './schemas/admin';
 export * from './schemas/friend';
 export * from './schemas/equip';
 export * from './schemas/mysterious';
+export * from './schemas/temple';

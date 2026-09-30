@@ -187,6 +187,7 @@ export function createWorldService(d: GameDeps) {
           coin: m.coin,
           foods: m.foods,
         })),
+        seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
       };
       return catalog;
     },

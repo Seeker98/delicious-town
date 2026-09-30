@@ -15,6 +15,7 @@ export const IMPLEMENTED_FEATURES: ReadonlySet<string> = new Set([
   'friend',
   'equip',
   'mysterious',
+  'temple',
 ]);
 
 export function featureAvailable(settings: ShardSettings, feature: string): boolean {
