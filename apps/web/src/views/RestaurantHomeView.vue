@@ -89,6 +89,29 @@ function place(goodsId: number) {
   return act(() => endpoints.placeDevice(slot, goodsId), '摆放失败');
 }
 
+/** 第二块牌匾位（设施位 7）：满星级后还要花银币和钻石开通 */
+const PLAQUE2_SLOT = 7;
+const plaque2Offer = computed(
+  () => !!rest.value && !rest.value.plaque2Open && rest.value.starLevel >= rest.value.plaque2Cost.star,
+);
+const plaque2Block = computed(() => {
+  const r = rest.value;
+  if (!r) return '';
+  if (r.coin < r.plaque2Cost.coin) return `银币不够（要 ${formatNum(r.plaque2Cost.coin)}）`;
+  if (r.diamond < r.plaque2Cost.diamond) return `钻石不够（要 ${r.plaque2Cost.diamond}）`;
+  return '';
+});
+/** 锁定文字的星级：第二块牌匾位按区服的开通星级 */
+const needStarOf = (d: { slot: number; needStar: number }) =>
+  d.slot === PLAQUE2_SLOT && rest.value ? Math.max(d.needStar, rest.value.plaque2Cost.star) : d.needStar;
+function openPlaque2() {
+  const c = rest.value!.plaque2Cost;
+  if (plaque2Block.value) return;
+  if (!window.confirm(`花 ${formatNum(c.coin)} 银币和 ${c.diamond} 钻石开通第二块牌匾位吗？`)) return;
+  // 花费由全局的得失提示显示
+  return act(() => endpoints.openPlaque2(), '开通失败');
+}
+
 function expiresText(at: string | null): string {
   if (!at) return '永久';
   const hours = Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000));
@@ -241,7 +264,10 @@ onBeforeUnmount(() => {
           @click="openSlot(d.slot)"
         >
           <div class="text-muted">{{ d.name }}</div>
-          <div v-if="!d.unlocked"><i class="bi bi-lock"></i> {{ d.needStar }} 星开放</div>
+          <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
+            <i class="bi bi-lock"></i> 未开通
+          </div>
+          <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ needStarOf(d) }} 星开放</div>
           <div v-else-if="d.goodsId">
             {{ catalog.goodsName(d.goodsId) }}<br /><span class="text-muted">{{
               expiresText(d.expiresAt)
@@ -250,6 +276,17 @@ onBeforeUnmount(() => {
           <div v-else>空</div>
         </button>
       </div>
+    </div>
+    <div v-if="plaque2Offer" class="small mt-1">
+      <button
+        class="btn btn-sm btn-outline-primary"
+        data-testid="open-plaque2"
+        :disabled="busy || !!plaque2Block"
+        @click="openPlaque2"
+      >
+        开通第二块牌匾位（{{ formatNum(rest.plaque2Cost.coin) }} 银币 + {{ rest.plaque2Cost.diamond }} 钻石）
+      </button>
+      <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{ plaque2Block }}</span>
     </div>
     <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
       <div class="d-flex justify-content-between">

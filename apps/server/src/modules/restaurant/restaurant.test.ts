@@ -70,6 +70,9 @@ describe('开店', () => {
       foodsMaxNum: 999,
       foodsLockNum: 15,
       attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+      plaque2Open: false,
+      // 第二块牌匾位的开通条件（问题记录：页面上没有开通按钮）
+      plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
     });
     expect(d.tables).toHaveLength(4);
     expect(d.effects.map((e: { sourceId: number }) => e.sourceId).sort()).toEqual([100, 140, 81]);

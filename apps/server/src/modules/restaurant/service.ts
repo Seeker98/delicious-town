@@ -57,12 +57,14 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const now = d.now();
     const effects = await listActiveEffects(d.db, restId, now);
     const snap = await world.ensure(row.shard_id, now);
+    const growth = (await shards.settings(row.shard_id)).tuning.growth;
     return toRestaurantDto(row, tables.tables, effects, d.config, {
       devices: await deviceSlots(d.db, d.config, row, now),
       lastRound: await lastRound(d.db, restId),
       weather: { id: snap.weather.id, name: snap.weather.name },
       isPlanktonHost: snap.planktonRestId === restId,
       icons: await shownIcons(restId),
+      plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
     });
   }
 

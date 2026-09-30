@@ -67,3 +67,48 @@ body {
   background: #f1f3f5;
   font-size: 12px;
 }
+/* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
+.dt-more-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+.dt-more-link {
+  font-size: 11px;
+  color: #495057;
+  padding: 4px 0;
+  border-radius: 6px;
+  line-height: 1.2;
+}
+.dt-more-link:hover {
+  background: #f1f3f5;
+}
+.dt-more-link i {
+  font-size: 18px;
+  color: var(--dt-primary);
+}
+.dt-more-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  /* 在底部导航之下：面板打开时仍能直接点别的标签 */
+  z-index: 1028;
+}
+.dt-more-sheet {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: 720px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  /* 底部留出导航栏的高度 */
+  padding: 12px 16px 64px;
+  z-index: 1029;
+}
+.dt-bottom-nav a.dt-more-on {
+  color: var(--dt-primary);
+}

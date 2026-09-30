@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import AttrPoints from '../components/equip/AttrPoints.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -110,7 +111,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
 <template>
   <div v-if="o">
     <h5>
-      厨具 <small class="text-muted">共 {{ o.count }} 件</small>
+      厨具与加点 <small class="text-muted">共 {{ o.count }} 件厨具</small>
     </h5>
     <table class="table table-sm small mb-2">
       <thead>
@@ -134,9 +135,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
         </tr>
       </tbody>
     </table>
+    <AttrPoints @done="load" />
     <div class="small mb-2">
       厨力 <b data-testid="power">{{ o.attrs.power }}</b>
-      <span class="text-muted">（五项之和 + 幸运/2；厨塔、切磋开放后使用）</span>
+      <span class="text-muted">（五项之和 + 幸运/2；厨塔、赛厨榜、好友切磋按它比拼）</span>
     </div>
 
     <div class="row g-1 mb-2">
