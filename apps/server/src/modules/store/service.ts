@@ -10,6 +10,7 @@ import {
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { featureAvailable } from '../../core/features';
 import { runOp } from '../../core/op';
+import { looseEquipCount } from './goods';
 import { sellPrice } from './rules';
 import { useGoods } from './use';
 
@@ -62,8 +63,10 @@ export function createStoreService(d: GameDeps) {
             sellPrice: sellPrice(g!, settings.tuning),
           };
         });
-      const kinds = rows.filter((r) => d.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length;
-      return { kinds, storeNum: rest.store_num, items };
+      const equips = await looseEquipCount(d.db, ctx.restaurantId);
+      const kinds =
+        rows.filter((r) => d.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length + equips;
+      return { kinds, storeNum: rest.store_num, equips, items };
     },
 
     async records(ctx: RestCtx, q: { range: RecordsRange }): Promise<LedgerRecordDto[]> {

@@ -7,6 +7,7 @@ import { statDailyJob } from './modules/admin/stats';
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
 import { createSocialService, type SocialService } from './modules/friend/service';
+import { equipJobs } from './modules/equip/jobs';
 import { friendWeeklyJob } from './modules/friend/weekly';
 import { createGrowthService, type GrowthService } from './modules/growth/service';
 import { marketJobs } from './modules/market/jobs';
@@ -67,6 +68,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(statDailyJob(app.db));
   jobs.push(...npcJobs(deps));
   jobs.push(friendWeeklyJob(deps));
+  jobs.push(...equipJobs(deps));
   return {
     app,
     deps,
