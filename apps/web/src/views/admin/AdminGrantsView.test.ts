@@ -8,7 +8,13 @@ import { useAdminStore } from '../../stores/admin';
 import AdminGrantsView from './AdminGrantsView.vue';
 
 vi.mock('../../api/admin', () => ({
-  adminApi: { grantPreview: vi.fn(), createGrant: vi.fn(), grants: vi.fn(), restaurant: vi.fn() },
+  adminApi: {
+    grantPreview: vi.fn(),
+    createGrant: vi.fn(),
+    grants: vi.fn(),
+    restaurant: vi.fn(),
+    searchPlayers: vi.fn(),
+  },
 }));
 
 const done: GrantDto = {
@@ -134,5 +140,34 @@ describe('AdminGrantsView', () => {
     await flushPromises();
     expect(w.find('form').exists()).toBe(false);
     expect(w.text()).toContain('补偿');
+  });
+
+  it('按店名或用户名查餐厅，点一下填入餐厅 id；只列当前区服的店（问题记录：不知道餐厅 id 在哪查）', async () => {
+    vi.mocked(adminApi.grants).mockResolvedValue([]);
+    vi.mocked(adminApi.restaurant).mockResolvedValue(shop);
+    vi.mocked(adminApi.searchPlayers).mockResolvedValue([
+      {
+        accountId: 7,
+        username: 'alice',
+        email: 'a@x',
+        role: 'player',
+        banned: false,
+        restaurants: [
+          { id: 3, shardId: 1, shardName: '一服', name: '爱丽丝店', level: 12, star: 1, state: 1 },
+          { id: 9, shardId: 2, shardName: '二服', name: '爱丽丝二店', level: 3, star: 0, state: 1 },
+        ],
+      },
+    ]);
+    const w = await setup('admin');
+    await flushPromises();
+    await w.find('[data-testid="grant-search"]').setValue('ali');
+    await w.find('[data-testid="grant-search-go"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.searchPlayers).toHaveBeenCalledWith('ali');
+    expect(w.find('[data-testid="grant-pick-9"]').exists()).toBe(false);
+    await w.find('[data-testid="grant-pick-3"]').trigger('click');
+    await flushPromises();
+    expect((w.find('[data-testid="grant-rest"]').element as HTMLInputElement).value).toBe('3');
+    expect(adminApi.restaurant).toHaveBeenCalledWith(3);
   });
 });

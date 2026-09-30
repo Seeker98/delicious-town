@@ -52,7 +52,7 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
 
   await page.getByTestId('tab-trial').click();
   await page.getByTestId('trial-meditate').click();
-  await expect(page.getByText('试炼对象')).toBeVisible();
+  await expect(page.getByTestId('trial-target')).toBeVisible();
   await page.getByTestId('trial-main').selectOption('150');
   await page.getByTestId('trial-sub').selectOption('423');
   await page.getByTestId('trial-start').click();

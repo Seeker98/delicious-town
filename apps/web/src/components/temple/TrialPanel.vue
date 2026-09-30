@@ -32,6 +32,8 @@ onMounted(async () => {
 
 const trial = computed(() => props.data.trial);
 const dish = computed(() => (trial.value.mcId === null ? undefined : catalog.mc(trial.value.mcId)));
+/** 试炼对象当前的试炼价值 / 经验（问题记录：试炼的选项说明不够） */
+const stat = computed(() => learned.value.find((m) => m.mcId === trial.value.mcId));
 const foodLabel = (f: CupboardFoodDto) => {
   const d = catalog.food(f.foodsId);
   return `${catalog.foodName(f.foodsId)}（${d?.level ?? '?'} 级${d && d.odds < RARE ? '，稀有' : ''}）×${f.num}`;
@@ -81,6 +83,32 @@ const start = () =>
       试炼能提高特色菜的试炼价值（每份价值，最多 +50%）和试炼经验（烹制时的餐厅经验，最多 +150%）。创意
       {{ trial.creatives }}。
     </p>
+    <details class="mb-2" data-testid="trial-help">
+      <summary>玩法说明</summary>
+      <ol class="mb-0 ps-3">
+        <li>
+          先准备：<b>注射</b>花 250,000 银币，得"创意药水"勋章（创意
+          +25）；<b>冥想</b>免费，得"冥想"勋章（创意 +5）。勋章 1
+          小时内有效，有效期内可以试炼任意次，创意越高成功率越高。
+        </li>
+        <li>
+          准备时会从你学会的 1~5 级特色菜里随机选一道作为<b>试炼对象</b>。不满意可以花 20,000
+          银币换一道，或者用 1 条<b>触手</b>（投喂克拉肯得到）指定一道。
+        </li>
+        <li>
+          每次试炼花 10,000 银币，消耗你选的<b>主料</b>和<b>辅料</b>各 1 个（相同时扣 2
+          个），再加这道菜的每种食材各 1 个。
+        </li>
+        <li>
+          成功率看三样：创意、食材比这道菜高出的等级（主料影响更大）、食材的稀有度（<b>稀有</b> =
+          下拉框里标"稀有"的，权重低于 100）。
+        </li>
+        <li>
+          成功后：试炼经验 +1~4%（主辅都稀有最多）；<b>主料稀有</b>时试炼价值再 +1~2%；熟练度 +800 ×
+          熟练度等级。试炼价值最多 50%（提高每份价值），试炼经验最多 150%（烹制时额外得餐厅经验）。
+        </li>
+      </ol>
+    </details>
     <div v-if="trial.readyMinutes === 0" class="d-flex gap-1 mb-2">
       <button
         class="btn btn-sm btn-outline-primary"
@@ -101,12 +129,16 @@ const start = () =>
     </div>
     <div v-else class="mb-1 text-success">准备勋章还剩 {{ trial.readyMinutes }} 分钟</div>
     <template v-if="dish">
-      <div class="mb-1">
+      <div class="mb-1" data-testid="trial-target">
         试炼对象：<b>{{ dish.name }}</b
         >（{{ dish.level }} 级）
         <button class="btn btn-sm btn-link" data-testid="trial-refresh" :disabled="busy" @click="refresh()">
           换一道（20,000 银币）
         </button>
+        <div v-if="stat" class="text-muted">
+          当前试炼价值 {{ stat.trialWorth }}% / 50%，试炼经验 {{ stat.trialExp }}% / 150%，熟练度
+          {{ stat.levelName }}
+        </div>
       </div>
       <div class="d-flex gap-1 mb-2">
         <select v-model.number="pick" class="form-select form-select-sm" data-testid="trial-pick">

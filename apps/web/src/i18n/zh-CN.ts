@@ -218,6 +218,8 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   }
   if (code === 'EMAIL_NOT_VERIFIED' && params.who === 'target') return '对方还没验证邮箱，不能互动';
   if (code === 'COOLDOWN' && params.what === 'flip') return '这个橱柜位还在冷却中';
+  if (code === 'COOLDOWN' && params.what === 'market_special')
+    return `特价菜同一网络 ${String(params.minutes ?? 10)} 分钟内只能抢一次，还要等 ${Math.ceil(Number(params.seconds ?? 60) / 60)} 分钟`;
   if (code === 'NOT_ENOUGH') {
     const kind = String(params.kind ?? '');
     const what =

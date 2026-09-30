@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import type { MarketDto, MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
@@ -19,9 +19,20 @@ const time = (iso: string) =>
   new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 const sections = [
   { key: 'daily', title: '日常菜场', next: 'nextDaily' },
-  { key: 'special', title: '特价菜场（需验证邮箱，每人 1 份）', next: 'nextSpecial' },
+  { key: 'special', title: '特价菜场', next: 'nextSpecial' },
   { key: 'premium', title: '高级菜场（需爱心项链）', next: 'nextPremium' },
 ] as const;
+
+/** 特价同一网络的购买间隔（规格书 06；问题记录：买第二个只提示"操作太快"） */
+const specialWait = computed(() => {
+  const until = data.value?.specialCooldownUntil;
+  if (!until) return 0;
+  return Math.max(0, Math.ceil((new Date(until).getTime() - Date.now()) / 60_000));
+});
+const sectionNote = (key: string) =>
+  key === 'special' && data.value
+    ? `需验证邮箱，每种每人 1 份；同一网络 ${data.value.specialCooldownMin} 分钟内只能抢一次`
+    : '';
 
 async function load() {
   data.value = await endpoints.market();
@@ -52,8 +63,18 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">
       <div class="d-flex align-items-center">
-        <h6 class="mb-1">{{ s.title }}</h6>
+        <h6 class="mb-1">
+          {{ s.title
+          }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">（{{ sectionNote(s.key) }}）</small>
+        </h6>
         <span class="small text-muted ms-auto">下次进货 {{ time(data[s.next]) }}</span>
+      </div>
+      <div
+        v-if="s.key === 'special' && specialWait > 0"
+        class="small text-danger"
+        data-testid="special-cooldown"
+      >
+        刚抢过特价，同一网络还要等 {{ specialWait }} 分钟才能再抢
       </div>
       <div v-if="data[s.key].length === 0" class="small text-muted">还没有进货</div>
       <div
@@ -80,7 +101,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         <button
           class="btn btn-sm btn-primary"
           :data-testid="`buy-${it.id}`"
-          :disabled="busy || it.left <= 0 || it.bought >= it.limit"
+          :disabled="
+            busy || it.left <= 0 || it.bought >= it.limit || (s.key === 'special' && specialWait > 0)
+          "
           @click="buy(it)"
         >
           买

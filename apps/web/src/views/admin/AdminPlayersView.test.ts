@@ -33,6 +33,7 @@ describe('AdminPlayersView', () => {
     await flushPromises();
     expect(adminApi.searchPlayers).toHaveBeenCalledWith('ali');
     expect(w.text()).toContain('爱丽丝店');
+    expect(w.text()).toContain('餐厅 id 3');
     expect(w.text()).toContain('已封禁');
     expect(w.find('a[href="/admin/players/7"]').exists()).toBe(true);
   });

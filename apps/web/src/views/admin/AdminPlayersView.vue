@@ -59,7 +59,7 @@ async function search() {
         <td :class="{ 'text-danger': r.banned }">{{ r.banned ? '已封禁' : '正常' }}</td>
         <td>
           <div v-for="s in r.restaurants" :key="s.id">
-            {{ s.shardName }} · {{ s.name }} · {{ s.level }} 级 {{ s.star }} 星{{
+            {{ s.shardName }} · {{ s.name }}（餐厅 id {{ s.id }}） · {{ s.level }} 级 {{ s.star }} 星{{
               s.state === 2 ? ' · 停业' : ''
             }}
           </div>

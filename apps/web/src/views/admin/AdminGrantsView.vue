@@ -18,6 +18,28 @@ const restId = ref<number | ''>('');
 const restWho = ref<{ ok: boolean; text: string } | null>(null);
 const route = useRoute();
 let whoSeq = 0;
+/** 按店名或用户名查餐厅 id（问题记录：不知道餐厅 id 在哪查）；只列当前区服的店 */
+const searchQ = ref('');
+const hits = ref<Array<{ id: number; name: string; shardName: string; owner: string; level: number }>>([]);
+async function searchRest() {
+  const q = searchQ.value.trim();
+  if (!q) return;
+  try {
+    const players = await adminApi.searchPlayers(q);
+    hits.value = players.flatMap((p) =>
+      p.restaurants
+        .filter((r) => !admin.shardId || r.shardId === admin.shardId)
+        .map((r) => ({ id: r.id, name: r.name, shardName: r.shardName, owner: p.username, level: r.level })),
+    );
+    if (hits.value.length === 0) toast.push('当前区服没有找到匹配的餐厅', 'danger');
+  } catch (e) {
+    toast.push(errorMessage(e, '查询失败'), 'danger');
+  }
+}
+function pickRest(id: number) {
+  restId.value = id;
+  hits.value = [];
+}
 async function lookupRest() {
   const id = Number(restId.value);
   const seq = ++whoSeq;
@@ -167,6 +189,35 @@ watch(() => admin.shardId, loadList);
         data-testid="grant-rest-who"
         >{{ restWho.text }}</span
       >
+      <div v-if="target === 'rest'" class="d-flex gap-1 w-100">
+        <input
+          v-model="searchQ"
+          class="form-control form-control-sm w-auto"
+          placeholder="不知道 id？按店名或用户名查"
+          data-testid="grant-search"
+          @keydown.enter.prevent="searchRest"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-testid="grant-search-go"
+          @click="searchRest"
+        >
+          查找
+        </button>
+      </div>
+      <div v-if="target === 'rest' && hits.length > 0" class="w-100">
+        <button
+          v-for="h in hits"
+          :key="h.id"
+          type="button"
+          class="btn btn-sm btn-link p-0 me-3"
+          :data-testid="`grant-pick-${h.id}`"
+          @click="pickRest(h.id)"
+        >
+          {{ h.name }}（餐厅 id {{ h.id }}，{{ h.owner }}，{{ h.level }} 级）
+        </button>
+      </div>
       <input
         v-else
         v-model.number="minLevel"
