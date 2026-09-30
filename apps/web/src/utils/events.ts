@@ -4,7 +4,10 @@ import { formatNum } from './format';
 export interface Names {
   goodsName(id: number): string;
   foodName(id: number): string;
+  mcName?(id: number): string;
 }
+
+const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `特色菜${id}`;
 
 const KIND_NAMES: Record<string, string> = {
   coin: '银币',
@@ -32,6 +35,7 @@ export function eventText(e: GameEvent, names: Names): string {
   let what: string;
   if (e.kind === 'goods') what = `${names.goodsName(e.id ?? 0)}×${formatNum(e.num)}`;
   else if (e.kind === 'foods') what = `${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
+  else if (e.kind === 'remnant') what = `${mcNameOf(names, e.id ?? 0)}残卷×${formatNum(e.num)}`;
   else what = `${KIND_NAMES[e.kind] ?? e.kind} ${formatNum(e.num)}`;
   return `${verb} ${what}${e.lucky ? '（幸运）' : ''}`;
 }
@@ -40,6 +44,12 @@ type P = Record<string, unknown>;
 const n = (p: P, k: string) => Number(p[k] ?? 0);
 
 const LOGS: Record<string, (p: P, names: Names) => string> = {
+  'mc.learn': (p, names) => `学会了特色菜「${mcNameOf(names, n(p, 'mcId'))}」`,
+  'mc.levelUp': (p, names) => `「${mcNameOf(names, n(p, 'mcId'))}」熟练度升到 ${n(p, 'curlevel')} 级`,
+  'mc.forget': (p, names) => {
+    const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
+    return `偷学失败，遗忘了 ${k} 道食谱${p.mcId ? `和特色菜「${mcNameOf(names, n(p, 'mcId'))}」` : ''}`;
+  },
   'equip.stress': (p, names) =>
     `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
   'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,

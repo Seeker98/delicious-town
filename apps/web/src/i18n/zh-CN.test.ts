@@ -6,7 +6,10 @@ describe('错误文案', () => {
     expect(errorText('ACCOUNT_BANNED', { reason: '刷分' })).toBe('账号已被封禁：刷分');
   });
   it('资源不够时说清楚缺什么', () => {
-    setNameResolver({ goodsName: () => '升星凭证', foodName: () => '大米' });
+    setNameResolver({ goodsName: () => '升星凭证', foodName: () => '大米', mcName: () => '秘·仿膳饽饽' });
+    expect(errorText('NOT_ENOUGH', { kind: 'remnant', id: 1, need: 3, have: 1 })).toBe(
+      '秘·仿膳饽饽残卷不够（需要 3，现有 1）',
+    );
     expect(errorText('NOT_ENOUGH', { kind: 'coin', need: 500, have: 100 })).toBe(
       '银币不够（需要 500，现有 100）',
     );

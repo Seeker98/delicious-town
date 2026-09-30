@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto, LooksDto } from '@dt/shared';
+import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto, CatalogMcDto, LooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { setNameResolver } from '../i18n/zh-CN';
 
@@ -9,6 +9,7 @@ export const useCatalogStore = defineStore('catalog', {
   state: () => ({
     goodsMap: new Map<number, CatalogGoodsDto>(),
     foodsMap: new Map<number, CatalogFoodDto>(),
+    mcMap: new Map<number, CatalogMcDto>(),
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
     loaded: false,
@@ -20,7 +21,12 @@ export const useCatalogStore = defineStore('catalog', {
       this.streets = c.streets;
       this.looks = c.looks ?? null;
       this.loaded = true;
-      setNameResolver({ goodsName: (id) => this.goodsName(id), foodName: (id) => this.foodName(id) });
+      this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
+      setNameResolver({
+        goodsName: (id) => this.goodsName(id),
+        foodName: (id) => this.foodName(id),
+        mcName: (id) => this.mcName(id),
+      });
     },
     /** 目录按配置版本缓存在浏览器里（只是加速；读不到时直接请求） */
     async load() {
@@ -44,6 +50,12 @@ export const useCatalogStore = defineStore('catalog', {
     },
     foodName(id: number): string {
       return this.foodsMap.get(id)?.name ?? `食材${id}`;
+    },
+    mcName(id: number): string {
+      return this.mcMap.get(id)?.name ?? `特色菜${id}`;
+    },
+    mc(id: number): CatalogMcDto | undefined {
+      return this.mcMap.get(id);
     },
     goods(id: number): CatalogGoodsDto | undefined {
       return this.goodsMap.get(id);

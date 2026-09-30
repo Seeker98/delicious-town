@@ -1,4 +1,11 @@
 import type {
+  AppraiseResultDto,
+  CookResultDto,
+  LessonLearnDto,
+  LessonsDto,
+  McOverviewDto,
+  McPreviewDto,
+  TasteResultDto,
   ActivationDto,
   AttrResultDto,
   BuffsDto,
@@ -211,4 +218,23 @@ export const endpoints = {
   equipPresetSave: (name: string) => api.post<{ id: number }>('/api/v1/equip/preset/save', { name }),
   equipPresetApply: (id: number) => api.post<{ skipped: number[] }>('/api/v1/equip/preset/apply', { id }),
   equipPresetDelete: (id: number) => api.post<Anything>('/api/v1/equip/preset/delete', { id }),
+  mc: () => api.get<McOverviewDto>('/api/v1/mc'),
+  mcPreview: (mcId: number) => api.get<McPreviewDto>(`/api/v1/mc/${mcId}/preview`),
+  mcAppraise: (toolId: number, times: number, noRetry: boolean) =>
+    api.post<AppraiseResultDto>('/api/v1/mc/appraise', { toolId, times, noRetry }),
+  mcRemnantSell: (mcId: number, num: number) =>
+    api.post<{ coin: number }>('/api/v1/mc/remnant/sell', { mcId, num }),
+  mcRemnantDecompose: (mcId: number, num: number) =>
+    api.post<{ goodsId: number; num: number }>('/api/v1/mc/remnant/decompose', { mcId, num }),
+  mcLearn: (mcId: number) => api.post<{ mcId: number }>('/api/v1/mc/learn', { mcId }),
+  mcCook: (mcId: number, cookNum: number, cookie: boolean) =>
+    api.post<CookResultDto>('/api/v1/mc/cook', { mcId, cookNum, cookie }),
+  mcDump: () => api.post<{ id: number }>('/api/v1/mc/dump'),
+  mcTaste: (restId: number) => api.post<TasteResultDto>('/api/v1/mc/taste', { restId }),
+  lessons: () => api.get<LessonsDto>('/api/v1/mc/lessons'),
+  lessonOpen: (mcId: number, certId: number) =>
+    api.post<{ id: number }>('/api/v1/mc/lesson/open', { mcId, certId }),
+  lessonLearn: (id: number, type: 1 | 2) =>
+    api.post<LessonLearnDto>(`/api/v1/mc/lesson/${id}/learn`, { type }),
+  lessonClose: () => api.post<{ id: number }>('/api/v1/mc/lesson/close'),
 };

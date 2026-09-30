@@ -52,3 +52,23 @@ describe('mergeEvents（问题记录：一次得到很多东西时提示刷屏�
     ]);
   });
 });
+
+describe('特色菜（子项目 4A）', () => {
+  const names = {
+    goodsName: (id: number) => `道具${id}`,
+    foodName: (id: number) => `食材${id}`,
+    mcName: (id: number) => `秘·${id}`,
+  };
+  it('残卷事件显示特色菜名', () => {
+    expect(eventText({ type: 'gain', kind: 'remnant', id: 7, num: 2 }, names)).toBe('获得 秘·7残卷×2');
+  });
+  it('学会、遗忘的日志', () => {
+    const at = '2026-09-30T00:00:00Z';
+    expect(logText({ type: 'mc.learn', params: { mcId: 7, via: 'remnant' }, at } as never, names)).toBe(
+      '学会了特色菜「秘·7」',
+    );
+    expect(
+      logText({ type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: 9 }, at } as never, names),
+    ).toBe('偷学失败，遗忘了 3 道食谱和特色菜「秘·9」');
+  });
+});

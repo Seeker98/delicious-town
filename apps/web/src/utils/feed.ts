@@ -21,6 +21,11 @@ export function describeFeed(item: RestLogDto, foodName: (id: number) => string)
       return `${who} 翻了你的橱柜，什么也没拿到`;
     case 'exchange':
       return p.result === 'caught' ? `${who} 偷换你锁定的食材被抓住了` : `${who} 和你交换了食材`;
+    case 'mc.eaten':
+      return `${who} 品尝了你的特色菜`;
+    case 'lesson.taught':
+      if (!p.success) return `${who} 在你的课上${p.type === 2 ? '偷学失败' : '没学会'}`;
+      return `${who} 在你的课上${p.type === 2 ? '偷学成功' : '学会了特色菜'}`;
     case 'thumb':
       return `${who} 给你点了赞`;
     case 'friend.apply':
