@@ -40,6 +40,9 @@ describe('好友互动的错误文案', () => {
     expect(errorText('ALREADY_DONE', { what: 'thumb' })).toBe('今天已经给它点过赞了');
     expect(errorText('EMAIL_NOT_VERIFIED', { who: 'target' })).toBe('对方还没验证邮箱，不能互动');
     expect(errorText('COOLDOWN', { what: 'flip' })).toBe('这个橱柜位还在冷却中');
+    expect(errorText('COOLDOWN', { what: 'market_special', seconds: 540 })).toBe(
+      '特价菜同一网络 10 分钟内只能抢一次，还要等 9 分钟',
+    );
     expect(errorText('NOT_FRIEND')).toBe('你们还不是好友');
   });
 });

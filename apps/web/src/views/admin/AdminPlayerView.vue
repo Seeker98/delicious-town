@@ -189,7 +189,7 @@ const rename = () =>
           void loadRest();
         "
       >
-        {{ s.shardName }} · {{ s.name }}
+        {{ s.shardName }} · {{ s.name }}（餐厅 id {{ s.id }}）
       </button>
     </div>
 

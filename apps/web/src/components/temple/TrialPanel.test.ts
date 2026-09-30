@@ -87,4 +87,29 @@ describe('TrialPanel', () => {
     expect(endpoints.trialStart).toHaveBeenCalledWith(150, 423);
     expect(w.find('[data-testid="trial-result"]').text()).toContain('试炼价值 +1%');
   });
+
+  it('有玩法说明，显示试炼对象当前的试炼价值和经验及上限（问题记录：试炼的选项说明不够）', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      learned: [
+        {
+          mcId: 3,
+          curlevel: 2,
+          levelName: '入门',
+          curexp: 300,
+          expNext: 800,
+          trialWorth: 4,
+          trialExp: 10,
+          way: 1,
+        },
+      ],
+    } as never);
+    const w = mount(TrialPanel, {
+      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+    });
+    await flushPromises();
+    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼价值 4% / 50%');
+    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼经验 10% / 150%');
+    const help = w.find('[data-testid="trial-help"]').text();
+    for (const x of ['注射', '冥想', '触手', '稀有', '主料']) expect(help).toContain(x);
+  });
 });

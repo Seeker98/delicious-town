@@ -27,11 +27,14 @@ const deviceSubject = (id: string) => `dev:${createHash('sha256').update(id).dig
 
 /**
  * 特价的同 IP 间隔（规格书 06 §6.2）：记下上次购买的游戏时间，按游戏时间比较（模拟器的虚拟时钟也适用），
- * 检查和写入在一个脚本里原子完成。KEYS[1]=键，ARGV=现在(毫秒)、间隔(毫秒)、键的保留秒数
+ * 检查和写入在一个脚本里原子完成。KEYS[1]=键，ARGV=现在(毫秒)、间隔(毫秒)、键的保留秒数。
+ * 可以买时返回 1；还在间隔内时返回 −剩余毫秒
  */
 const COOLDOWN_LUA = `
 local last = redis.call('GET', KEYS[1])
-if last and tonumber(ARGV[1]) - tonumber(last) < tonumber(ARGV[2]) then return 0 end
+if last and tonumber(ARGV[1]) - tonumber(last) < tonumber(ARGV[2]) then
+  return tonumber(last) + tonumber(ARGV[2]) - tonumber(ARGV[1]) > 0 and -(tonumber(last) + tonumber(ARGV[2]) - tonumber(ARGV[1])) or 0
+end
 redis.call('SET', KEYS[1], ARGV[1], 'EX', ARGV[3])
 return 1`;
 
@@ -187,7 +190,11 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           86_400,
         );
         if (Number(ok) !== 1)
-          throw new AppError(ErrorCode.COOLDOWN, 429, { seconds: t.specialIpCooldownSec });
+          throw new AppError(ErrorCode.COOLDOWN, 429, {
+            what: 'market_special',
+            minutes: Math.round(t.specialIpCooldownSec / 60),
+            seconds: Math.max(1, Math.ceil(-Number(ok) / 1000)),
+          });
         onCooldown({ key: `mkt-ip:${o.shardId}:${ctx.ip}`, stamp: String(o.now.getTime()) });
       }
       await addFoods(o, food.id, b.num);
@@ -238,6 +245,9 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           openedAt: r.opened_at.toISOString(),
         };
       };
+      // 特价同 IP 间隔（规格书 06：同 IP 两次购买间隔 10 分钟）；页面据此提示还要等多久
+      const lastSpecial = await d.redis.get(`mkt-ip:${ctx.shardId}:${ctx.ip}`);
+      const until = lastSpecial ? Number(lastSpecial) + t.specialIpCooldownSec * 1000 : 0;
       const period = nextSlot(now, t.dailyHours).key;
       const joined = await d.db
         .selectFrom('market_guess')
@@ -261,6 +271,8 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         nextDaily: nextSlot(now, t.dailyHours).start.toISOString(),
         nextSpecial: nextSlot(now, t.specialHours).start.toISOString(),
         nextPremium: nextSlot(now, t.premiumHours).start.toISOString(),
+        specialCooldownUntil: until > now.getTime() ? new Date(until).toISOString() : null,
+        specialCooldownMin: Math.round(t.specialIpCooldownSec / 60),
         guess: {
           period,
           joined: joined?.foods_ids ?? null,

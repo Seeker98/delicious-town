@@ -28,6 +28,10 @@ export interface MarketDto {
   nextDaily: string;
   nextSpecial: string;
   nextPremium: string;
+  /** 这个网络的特价冷却结束时间；null = 现在能买 */
+  specialCooldownUntil: string | null;
+  /** 特价同一网络的购买间隔（分钟） */
+  specialCooldownMin: number;
   guess: {
     period: string;
     joined: number[] | null;

@@ -107,6 +107,22 @@ describe('特价和高级菜场', () => {
     await m().buy({ ...ctx, ip }, { itemId: items[1]!.id, num: 1 });
   });
 
+  it('冷却中：列表给出冷却结束时间，报错带原因和剩余秒数（问题记录：买第二个提示操作太快，很疑惑）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000 }, verified: true });
+    const items = await openShelf(ctx.shardId, 1);
+    const ip = uniqueIp();
+    const before = await m().view({ ...ctx, ip });
+    expect(before).toMatchObject({ specialCooldownUntil: null, specialCooldownMin: 10 });
+    await m().buy({ ...ctx, ip }, { itemId: items[0]!.id, num: 1 });
+    const after = await m().view({ ...ctx, ip });
+    expect(new Date(after.specialCooldownUntil!).getTime()).toBe(t.clock.now.getTime() + 600_000);
+    t.clock.advance(60_000);
+    await expect(m().buy({ ...ctx, ip }, { itemId: items[1]!.id, num: 1 })).rejects.toMatchObject({
+      code: 'COOLDOWN',
+      params: { what: 'market_special', minutes: 10, seconds: 540 },
+    });
+  });
+
   it('特价购买在写入 IP 间隔之后失败回滚时，不占用这个 IP 的间隔', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 }, verified: true });
     const items = await openShelf(ctx.shardId, 1);
