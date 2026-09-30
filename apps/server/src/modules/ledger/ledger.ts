@@ -3,7 +3,7 @@ import type { DB } from '../../db/schema';
 
 export interface LedgerEntry {
   restId: number;
-  kind: 'goods' | 'foods' | 'coin' | 'diamond' | 'exp' | 'renown' | 'oil' | 'strength';
+  kind: 'goods' | 'foods' | 'coin' | 'diamond' | 'exp' | 'renown' | 'oil' | 'strength' | 'remnant';
   itemId?: number;
   delta: number;
   source: string;

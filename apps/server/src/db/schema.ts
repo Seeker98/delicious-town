@@ -125,6 +125,8 @@ export interface RestaurantTable {
   notice: Default<string>;
   /** 赶走痞老板后到这个时间前不会再被选为驻留店 */
   plankton_cooldown_until: TsNullable;
+  /** 当前在售的特色菜（子项目 4A）；卖完、倒掉、被吃完后置空 */
+  mc_cook_id: Nullable<number>;
   effect_agg: JsonDefault<Record<string, number>>;
   effect_next_expire_at: TsNullable;
   effect_dirty: Default<boolean>;
@@ -459,6 +461,75 @@ export interface EquipPresetTable {
   created_at: TsDefault;
 }
 
+/** 已学特色菜（子项目 4A）；curexp 为累计熟练度 */
+export interface RestMcTable {
+  rest_id: number;
+  mc_id: number;
+  curlevel: Default<number>;
+  curexp: Default<number>;
+  trial_worth: Default<number>;
+  trial_exp: Default<number>;
+  /** 1 残卷 / 2 课程 / 3 偷学 */
+  way: number;
+  master_rest_id: Nullable<number>;
+  learned_at: TsDefault;
+}
+
+export interface McRemnantTable {
+  rest_id: number;
+  mc_id: number;
+  num: number;
+}
+
+/** 一次烹制；price 为每份价值 */
+export interface McCookTable {
+  id: Generated<number>;
+  rest_id: number;
+  shard_id: number;
+  mc_id: number;
+  level: number;
+  grade: number;
+  cook_num: number;
+  total_num: number;
+  left_num: number;
+  price: number;
+  luck: Default<boolean>;
+  eat_count: Default<number>;
+  created_at: TsDefault;
+  ended_at: TsNullable;
+  /** sold / dumped / eaten */
+  end_reason: Nullable<string>;
+}
+
+export interface McEatTable {
+  cook_id: number;
+  eater_rest_id: number;
+  eaten_at: TsDefault;
+}
+
+export interface McLessonTable {
+  id: Generated<number>;
+  shard_id: number;
+  teacher_rest_id: number;
+  mc_id: number;
+  level: number;
+  max_num: number;
+  ends_at: Ts;
+  learned: Default<number>;
+  stolen: Default<number>;
+  closed_at: TsNullable;
+  created_at: TsDefault;
+}
+
+export interface McLessonStudentTable {
+  lesson_id: number;
+  rest_id: number;
+  /** 1 学 / 2 偷 */
+  type: number;
+  success: boolean;
+  created_at: TsDefault;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -503,6 +574,14 @@ export interface DB {
   equip_gem: EquipGemTable;
   equip_stress_log: EquipStressLogTable;
   equip_preset: EquipPresetTable;
+  rest_mc: RestMcTable;
+  mc_remnant: McRemnantTable;
+  mc_cook: McCookTable;
+  mc_eat: McEatTable;
+  mc_lesson: McLessonTable;
+  mc_lesson_student: McLessonStudentTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
+export type McCookRow = Selectable<McCookTable>;
+export type McLessonRow = Selectable<McLessonTable>;
