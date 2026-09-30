@@ -112,3 +112,45 @@ body {
 .dt-bottom-nav a.dt-more-on {
   color: var(--dt-primary);
 }
+/* 任务页的活跃项：进行中白底橙条、做满浅绿、星级不够灰底（问题记录：灰色黑色分不清） */
+.dt-act-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+.dt-act {
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: #fff;
+  min-width: 0;
+}
+.dt-act-bar {
+  height: 4px;
+  background: #f1f3f5;
+  border-radius: 2px;
+  margin: 3px 0 2px;
+  overflow: hidden;
+}
+.dt-act-bar > div {
+  height: 100%;
+  background: #fd7e14;
+}
+.dt-act-pts {
+  font-size: 11px;
+  color: #868e96;
+}
+.dt-act-done {
+  background: #ebfbee;
+  border-color: #b2f2bb;
+}
+.dt-act-done .dt-act-bar > div {
+  background: #40c057;
+}
+.dt-act-locked {
+  background: #f1f3f5;
+  color: #868e96;
+}
+.dt-act-locked .dt-act-bar {
+  visibility: hidden;
+}
