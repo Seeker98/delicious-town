@@ -143,6 +143,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/friends',
+    name: 'friends',
+    component: () => import('./views/FriendsView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/more',
     name: 'more',
     component: () => import('./views/MoreView.vue'),

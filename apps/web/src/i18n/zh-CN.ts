@@ -76,6 +76,9 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   necklace: () => '需要佩戴有效的爱心项链',
   task: (p) => `任务还没完成（${String(p.progress)}/${String(p.target)}）`,
   activation: (p) => `活跃度不够（需要 ${String(p.need)}）`,
+  avatar: () => '先在"装扮"里设置头像才能白食',
+  dine_minutes: (p) => `白食满 ${String(p.need)} 分钟才能结束或请走`,
+  renown: () => '声望为负时不能点赞',
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -85,6 +88,15 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   lock: () => '锁定格用完了',
   owned: () => '已经拥有了，不能再买',
   max: (p) => `最多持有 ${String(p.max)} 个`,
+  friends: (p) => `好友已满（最多 ${String(p.max)} 个）`,
+  target_friends: () => '对方的好友已满',
+  dine: () => '今天已经白食过了，明天再来',
+  seats: (p) => `对方的白食位满了（最多 ${String(p.max)} 人）`,
+  roach_lay: (p) => `今天放蟑螂的次数用完了（${String(p.max)} 次）`,
+  exchange: (p) => `今天和它的交换次数用完了（${String(p.max)} 次）`,
+  exchange_total: () => '今天换得太多了，明天再来',
+  exchange_taken: () => '对方今天已经被换太多次了，放过它吧',
+  icons: (p) => `最多展示 ${String(p.max)} 个图标`,
 };
 
 const STATE: Record<string, string> = {
@@ -118,6 +130,32 @@ const STATE: Record<string, string> = {
   pick_count: '竞猜的食材数量不对',
   bad_food: '只能竞猜 1~2 级食材',
   not_visible: '这个任务现在不能领取',
+  target_self: '不能对自己这样做',
+  target_npc: '不用申请，蟹老板会主动来加你',
+  target_banned: '对方账号已被封禁',
+  target_closed: '对方正在停业',
+  target_no_food: '对方已经没有这个食材了',
+  no_request: '没有这条好友申请',
+  no_table: '没有这张桌子',
+  already_dining: '你已经在别人店里白食了',
+  not_dining: '没有在白食',
+  diner_protected: '对方受蟹老板庇佑（神灯），请不走',
+  table_occupied: '这张桌子有人了',
+  no_roach: '这张桌上没有蟑螂',
+  own_roach: '不能消灭自己放的蟑螂',
+  friend_oil_full: '好友的油壶已经满了',
+  bad_slot: '没有这个橱柜位',
+  blessed: '对方的餐厅受到蟹老板的庇佑，这次什么也没翻到',
+  level_mismatch: '只能交换同等级、5 级以内的食材',
+  foods_locked: '对方锁定了这种食材，飓风天才能换',
+  bad_look: '没有这个款式',
+  same_door: '已经是这扇门了',
+};
+
+const ALREADY: Record<string, string> = {
+  friend: '已经是好友了',
+  thumb: '今天已经给它点过赞了',
+  thumb_ip: '同一网络今天已经给它点过赞了',
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
@@ -127,6 +165,11 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   if (code === 'RESTAURANT_NAME_INVALID' && typeof params.reason === 'string' && NAME_REASON[params.reason]) {
     return NAME_REASON[params.reason]!;
   }
+  if (code === 'ALREADY_DONE' && typeof params.what === 'string' && ALREADY[params.what]) {
+    return ALREADY[params.what]!;
+  }
+  if (code === 'EMAIL_NOT_VERIFIED' && params.who === 'target') return '对方还没验证邮箱，不能互动';
+  if (code === 'COOLDOWN' && params.what === 'flip') return '这个橱柜位还在冷却中';
   if (code === 'NOT_ENOUGH') {
     const kind = String(params.kind ?? '');
     const what =
