@@ -38,6 +38,8 @@ export const tuningSchema = z.object({
     planktonRateBase: num,
     planktonRatePerStar: num,
     planktonMultiplier: num,
+    /** 赶走痞老板的店多少小时内不再被选为驻留店（原版没有；小区服里总是同一家） */
+    planktonHostCooldownHours: num,
     /** 全服经营经验倍率：每桌经验和挑剔消耗食材经验都乘它（原作为 1） */
     expMultiplier: z.number().positive(),
     roachRateBase: num,

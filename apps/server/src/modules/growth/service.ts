@@ -231,7 +231,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
 
     move(ctx: RestCtx, streetId: number) {
       return op(ctx, 'rest.move', async (o) => {
-        if (streetId === 0 || !o.config.streets.has(streetId) || streetId === o.rest.street_id)
+        if (!o.config.streets.has(streetId) || streetId === o.rest.street_id)
           throw invalidState('bad_street', { streetId });
         if (!(await hasValidHonor(o, GOODS.moveJobHonor))) await consumeGoods(o, GOODS.moveCard, 1);
         const tr = await o.tx
@@ -300,6 +300,11 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           await grantGoodsOp(o, GOODS.starBlessing, 1);
         }
         await world.setPlankton(o.tx, o.shardId, null, o.rest.id);
+        setRest(
+          o,
+          'plankton_cooldown_until',
+          new Date(o.now.getTime() + o.tuning.settlement.planktonHostCooldownHours * 3600_000),
+        );
         const tr = await o.tx
           .selectFrom('restaurant_tables')
           .select('tables')

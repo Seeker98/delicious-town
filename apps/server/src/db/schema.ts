@@ -123,6 +123,8 @@ export interface RestaurantTable {
   /** null = 没设置头像（不能白食） */
   avatar: Nullable<number>;
   notice: Default<string>;
+  /** 赶走痞老板后到这个时间前不会再被选为驻留店 */
+  plankton_cooldown_until: TsNullable;
   effect_agg: JsonDefault<Record<string, number>>;
   effect_next_expire_at: TsNullable;
   effect_dirty: Default<boolean>;

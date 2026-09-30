@@ -50,12 +50,15 @@ export function createStoreService(d: GameDeps) {
         .map(({ r, g }) => {
           const use = g!.use;
           const usable = use !== null && (use.kind !== 'towerTicket' || featureAvailable(settings, 'tower'));
+          const batch =
+            usable && (use!.kind === 'gift' || settings.tuning.store.batchUsable.includes(r.goods_id));
           return {
             goodsId: r.goods_id,
             num: r.num,
             expiresAt: r.expires_at ? r.expires_at.toISOString() : null,
             usable,
-            batch: usable && (use!.kind === 'gift' || settings.tuning.store.batchUsable.includes(r.goods_id)),
+            batch,
+            maxUse: !usable ? 0 : batch ? Math.min(r.num, settings.tuning.store.maxBatch) : 1,
             sellPrice: sellPrice(g!, settings.tuning),
           };
         });

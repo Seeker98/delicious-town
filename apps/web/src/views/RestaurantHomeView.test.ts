@@ -174,6 +174,15 @@ describe('RestaurantHomeView', () => {
     expect(w.find('.progress-bar').find('[data-testid="exp-text"]').exists()).toBe(false);
   });
 
+  it('痞老板驻留时写明他的坏处（问题记录：看不出痞老板有没有负面效果）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, isPlanktonHost: true });
+    const w = await mountView();
+    const box = w.find('[data-testid="plankton"]');
+    expect(box.text()).toContain('挑剔率 -120%');
+    expect(box.text()).toContain('没人点菜');
+    expect(box.text()).toContain('每桌耗油 +5');
+  });
+
   it('加油：显示花费，点击后刷新', async () => {
     vi.mocked(endpoints.refuel).mockResolvedValue({ oil: 1000 });
     const w = await mountView();

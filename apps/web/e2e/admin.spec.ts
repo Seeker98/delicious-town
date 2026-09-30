@@ -5,7 +5,7 @@ import { registerAndOpen } from './helpers';
 const DB_URL = process.env.E2E_DATABASE_URL ?? 'postgres://dt:dt@localhost:5432/dt';
 const PATH = 'tuning.settlement.expMultiplier';
 
-test('后台：设为管理员 → 改经验倍率并立即生效 → 审计里有记录 → 恢复默认', async ({ page, request }) => {
+test('后台：设为管理员 → 改经验倍率并立即生效 → 审计里有记录 → 改回原值', async ({ page, request }) => {
   const { username } = await registerAndOpen(page, request);
   // 等同于 pnpm --filter @dt/server account role <用户名> admin
   const client = new pg.Client({ connectionString: DB_URL });
@@ -20,6 +20,8 @@ test('后台：设为管理员 → 改经验倍率并立即生效 → 审计里�
   const input = page.getByTestId(`setting-${PATH}`);
   await expect(input).toBeVisible();
   const before = (await page.getByTestId(`effective-${PATH}`).innerText()).trim();
+  // e2e 跑在开发库上：原来有覆盖就在最后改回原值，不能把开发者自己的设置清掉
+  const wasOverridden = (await page.getByTestId(`reset-${PATH}`).count()) > 0;
   const target = before === '10' ? '11' : '10';
   await input.fill(target);
   await input.blur();
@@ -27,10 +29,18 @@ test('后台：设为管理员 → 改经验倍率并立即生效 → 审计里�
   await page.getByTestId('save-settings').click();
   await expect(page.getByTestId(`effective-${PATH}`)).toHaveText(target);
 
-  await page.getByTestId(`reset-${PATH}`).click();
-  await page.getByTestId('save-note').fill('e2e 恢复默认');
-  await page.getByTestId('save-settings').click();
-  await expect(page.getByTestId(`reset-${PATH}`)).toHaveCount(0);
+  if (wasOverridden) {
+    await input.fill(before);
+    await input.blur();
+    await page.getByTestId('save-note').fill('e2e 恢复原值');
+    await page.getByTestId('save-settings').click();
+    await expect(page.getByTestId(`effective-${PATH}`)).toHaveText(before);
+  } else {
+    await page.getByTestId(`reset-${PATH}`).click();
+    await page.getByTestId('save-note').fill('e2e 恢复默认');
+    await page.getByTestId('save-settings').click();
+    await expect(page.getByTestId(`reset-${PATH}`)).toHaveCount(0);
+  }
 
   await page.goto('/admin/audit');
   await expect(page.getByRole('cell', { name: '修改区服数值' }).first()).toBeVisible();

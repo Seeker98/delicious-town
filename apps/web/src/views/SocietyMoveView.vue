@@ -13,7 +13,7 @@ const toast = useToastStore();
 const target = ref<number | null>(null);
 const busy = ref(false);
 const rest = computed(() => restaurant.rest);
-const streets = computed(() => catalog.streets.filter((s) => s.id !== 0 && s.id !== rest.value?.streetId));
+const streets = computed(() => catalog.streets.filter((s) => s.id !== rest.value?.streetId));
 const cost = computed(() =>
   rest.value ? rest.value.tables.length * Math.floor((catalog.goods(82)?.coin ?? 5000) / 2) : 0,
 );
