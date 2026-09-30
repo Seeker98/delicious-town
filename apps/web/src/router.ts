@@ -149,6 +149,24 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/friends/:restId(\\d+)',
+    name: 'friend-rest',
+    component: () => import('./views/FriendRestView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends/:restId(\\d+)/flip',
+    name: 'friend-flip',
+    component: () => import('./views/FriendFlipView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/friends/:restId(\\d+)/exchange',
+    name: 'friend-exchange',
+    component: () => import('./views/FriendExchangeView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/more',
     name: 'more',
     component: () => import('./views/MoreView.vue'),
