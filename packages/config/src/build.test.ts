@@ -32,12 +32,34 @@ describe('buildBundle（真实数据）', () => {
     expect(goods.get(3)!.value).toBe(1);
   });
 
+  it('厨具和宝石解析出定义，套装 7 套，引用都有效', () => {
+    const { bundle } = buildBundle(source());
+    const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
+    expect(goods.get(30)!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
+    expect(goods.get(56)!.equip).toMatchObject({ part: 3, total: 25, suitId: 5 });
+    expect(goods.get(41)!.gem).toMatchObject({ level: 1, nextId: 274 });
+    expect(goods.get(341)!.gem).toMatchObject({ level: 6, nextId: null });
+    expect(goods.get(13)!.equip).toBeNull();
+    expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
+    expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
+    expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 80, 81, 100]);
+  });
+
   it('同样的输入生成同样的版本号', () => {
     expect(buildBundle(source()).bundle!.version).toBe(buildBundle(source()).bundle!.version);
   });
 });
 
 describe('buildBundle（坏数据）', () => {
+  it('厨具引用了不存在的套装', () => {
+    const src = source();
+    const goods = structuredClone(src['dataset/goods']) as Array<{ id: number; value: string }>;
+    const g = goods.find((x) => x.id === 30)!;
+    g.value = g.value.replace('"suitid": 0', '"suitid": 777');
+    const { errors } = buildBundle({ ...src, 'dataset/goods': goods });
+    expect(errors).toContain('goods 30 references unknown suit 777');
+  });
+
   it('食谱引用了不存在的食材', () => {
     const src = source();
     const cookbooks = structuredClone(src['dataset/cookbooks']) as Array<{

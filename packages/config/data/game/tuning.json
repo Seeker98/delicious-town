@@ -174,5 +174,22 @@
       "name": "蟹老板", "level": 60, "star": 5, "tables": 32, "oil": 1000000000, "avatar": 12, "door": 7,
       "roachRate": 0.02, "restockKinds": 30, "restockNum": 5
     }
+  },
+  "equip": {
+    "maxStress": 10,
+    "baseRate": 0.8,
+    "ratePerStress": 0.08,
+    "floorPerFail": 0.01,
+    "coinPerEssence": 10000,
+    "newsFromStress": 8,
+    "gemBaseRate": 0.95,
+    "gemRatePerLevel": 0.18,
+    "gemExpPerLevel": 1000,
+    "gemNewsLevel": 3,
+    "gemBrokenNewsLevel": 5,
+    "ungemCoinPerLevel": 10000,
+    "ungemMinStar": 2,
+    "maxPresets": 5,
+    "historyLimit": 50
   }
 }

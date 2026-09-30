@@ -15,6 +15,7 @@ import type {
   OilNeed,
   StarNeed,
   Street,
+  SuitDef,
   Weather,
 } from './types';
 
@@ -51,6 +52,7 @@ export interface GameConfig {
   readonly oilNeed: ReadonlyMap<number, OilNeed>;
   readonly activationByName: ReadonlyMap<string, ActivationTask>;
   readonly guessFoodIds: ReadonlySet<number>;
+  readonly suits: ReadonlyMap<number, SuitDef>;
   grade(g: number): CookbookGrade;
   randomGoodsIds(level: number): readonly number[];
   streetMedalId(streetId: number): number;
@@ -163,6 +165,7 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     oilNeed: new Map(bundle.oilNeed.map((o) => [o.level, o])),
     activationByName: new Map(bundle.activationTasks.map((a) => [a.name, a])),
     guessFoodIds: new Set(bundle.marketGuessFoods),
+    suits: new Map(bundle.suits.map((s) => [s.id, s])),
     grade(g) {
       const x = grades.get(g);
       if (!x) throw new Error(`unknown cookbook grade ${g}`);

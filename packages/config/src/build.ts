@@ -2,7 +2,9 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
+import { buildSuits, parseEquipDef, parseGemDef } from './equip';
 import { deriveGoodsUse } from './goodsUse';
+import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import type {
   ActivationReward,
@@ -99,6 +101,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const gradesRaw = parse('designed/cookbook_grades', z.array(raw.rawCookbookGrade));
   const specialTiersRaw = parse('designed/shop_special_rate', z.array(raw.rawSpecialTier));
   const shopPoolsRaw = parse('designed/shop_pools', z.array(raw.rawShopPool));
+  const suitsRaw = parse('designed/equip_suits', z.array(raw.rawSuit));
   const tuning = parse('game/tuning', tuningSchema);
   const holidays = parse('game/holidays', raw.holidaysFile);
   const guessAwardRaw = parse('game/market_guess_award', raw.guessAwardFile);
@@ -135,6 +138,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !gradesRaw ||
     !specialTiersRaw ||
     !shopPoolsRaw ||
+    !suitsRaw ||
     !tuning ||
     !holidays ||
     !guessAwardRaw ||
@@ -204,8 +208,19 @@ export function buildBundle(src: SourceData): BuildResult {
       effects: numericEntries(value),
       gift,
       use: null,
+      equip: null,
+      gem: null,
     };
     item.use = deriveGoodsUse(item);
+    if (item.type === GOODS_TYPE.equip) {
+      const d = parseEquipDef(value);
+      if (typeof d === 'string') errors.push(`goods ${g.id} equip ${d}`);
+      else item.equip = d;
+    } else if (item.type === GOODS_TYPE.gem) {
+      const d = parseGemDef(value);
+      if (typeof d === 'string') errors.push(`goods ${g.id} gem ${d}`);
+      else item.gem = d;
+    }
     return item;
   });
   unique(
@@ -292,6 +307,21 @@ export function buildBundle(src: SourceData): BuildResult {
     'mysterious_cookbooks',
     mysteriousCookbooks.map((m) => m.id),
   );
+
+  // ---------- 厨具套装、宝石升阶 ----------
+  const suits = buildSuits(suitsRaw);
+  unique(
+    'equip_suits',
+    suits.map((s) => s.id),
+  );
+  const suitIds = new Set(suits.map((s) => s.id));
+  const goodsById = new Map(goods.map((g) => [g.id, g]));
+  for (const g of goods) {
+    if (g.equip && !NON_SUIT_IDS.has(g.equip.suitId) && !suitIds.has(g.equip.suitId))
+      errors.push(`goods ${g.id} references unknown suit ${g.equip.suitId}`);
+    if (g.gem && g.gem.nextId !== null && !goodsById.get(g.gem.nextId)?.gem)
+      errors.push(`goods ${g.id} gem next ${g.gem.nextId} is not a gem`);
+  }
 
   // ---------- 奖励引用检查 ----------
   const checkAward = (where: string, a: Award) => {
@@ -526,6 +556,7 @@ export function buildBundle(src: SourceData): BuildResult {
     tuning,
     restaurantDefaults: defaults,
     looks,
+    suits,
     extra: {
       seeds: seedsRaw,
       seedExchange: seedExRaw,

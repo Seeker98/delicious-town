@@ -1,4 +1,5 @@
 import type { GoodsUse } from './goodsUse';
+import type { EQUIP_ATTRS } from './ids';
 import type { Tuning } from './tuning';
 
 export interface IdNum {
@@ -55,6 +56,10 @@ export interface Goods {
   gift: GiftItem[] | null;
   /** 使用效果；null = 不能使用 */
   use: GoodsUse | null;
+  /** 厨具（type 4）的定义；其他为 null */
+  equip: EquipDef | null;
+  /** 宝石（type 5）的定义；其他为 null */
+  gem: GemDef | null;
 }
 
 export interface IdNumFood {
@@ -262,6 +267,7 @@ export interface ConfigBundle {
   tuning: Tuning;
   restaurantDefaults: RestaurantDefaults;
   looks: Looks;
+  suits: SuitDef[];
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */
   extra: Record<string, unknown[]>;
 }
@@ -270,4 +276,42 @@ export interface Looks {
   doors: Array<{ id: number; name: string; coin: number }>;
   avatars: Array<{ id: number; name: string }>;
   icons: Array<{ key: string; title: string; desc: string }>;
+}
+
+export type EquipAttr = (typeof EQUIP_ATTRS)[number];
+export type EquipAttrs = Record<EquipAttr, number>;
+
+/** 厨具道具的 value（规格书 07 §7.7） */
+export interface EquipDef {
+  /** 1 铲 2 刀 3 锅 4 瓶 5 帽 */
+  part: number;
+  essence: number;
+  hole: number;
+  maxHole: number;
+  minLevel: number;
+  suitId: number;
+  /** 有 total 时按部位顺序在范围内随机分配；null = 固定属性 */
+  total: number | null;
+  ranges: Record<EquipAttr, number | [number, number]>;
+}
+
+export interface GemDef {
+  level: number;
+  /** null = 最高阶 */
+  nextId: number | null;
+  attrs: EquipAttrs;
+}
+
+export interface SuitTier {
+  need: number;
+  desc: string;
+  /** 百分比放大属性的键已改名为 cookPct / cuttingPct / firePct / seasonPct */
+  effects: Record<string, number>;
+}
+
+export interface SuitDef {
+  id: number;
+  name: string;
+  maxNum: number;
+  tiers: SuitTier[];
 }

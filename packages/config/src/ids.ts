@@ -40,6 +40,11 @@ export const GOODS = {
   excitedHeart: 406, // 激动的心
   voodoo: 423, // 巫毒娃娃
   townCare: 459, // 镇长的关心
+  essence: 52, // 厨具精华
+  stressStone: 40, // 强化石
+  drillStone: 46, // 打孔石
+  backStressOne: 225, // 归元石（回退 1 级）
+  backStressAll: 224, // 神秘水晶（回退 10 级）
 } as const;
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */
@@ -63,3 +68,9 @@ export const GOODS_TYPE = {
 
 /** 牌匾的 devicetype；盆栽、名画勋章的 devicetype */
 export const DEVICE_TYPE = { plaque: 6, pot: 36, painting: 41 } as const;
+
+/** 厨具六项属性（生成、强化、宝石都按这个名字） */
+export const EQUIP_ATTRS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const;
+
+/** 不构成套装的 suitid：0 无套装，90 玉•xx之帽、99 铉•xx之帽（规格书 20 §20.15） */
+export const NON_SUIT_IDS: ReadonlySet<number> = new Set([0, 90, 99]);

@@ -231,3 +231,10 @@ export const looksFile = z.object({
     z.object({ key: z.string().regex(/^[a-z0-9_-]{1,32}$/), title: z.string().min(1), desc: z.string() }),
   ),
 });
+
+export const rawSuit = z.object({
+  suitid: int,
+  name: z.string(),
+  maxnum: int,
+  tiers: z.array(z.object({ neednum: int.min(1), desc: z.string(), value: z.record(z.number()) })).min(1),
+});
