@@ -66,7 +66,11 @@ export function slotFloorRate(fail: number, lamp: boolean, t: BarTuning): number
   return fail * t.slotFloorRate * (lamp ? 2 : 1);
 }
 
-/** 距离强制保底还剩几次 */
+/**
+ * 最多再抽几次必出保底：没出稀有时，从现在数第 (总格数 − fail) 格（从 0 数）被强制保底，
+ * 落在第 ⌊(总格数 − fail) / 每次格数⌋ + 1 次里（终审 Minor 2：设计文档的 100 − ⌊fail/3⌋ 会少算 1 次）
+ */
 export function slotFloorLeft(fail: number, t: BarTuning): number {
-  return Math.max(0, t.slotFloorSpins - Math.floor(fail / t.slotCells));
+  const total = t.slotFloorSpins * t.slotCells;
+  return Math.floor((total - Math.min(fail, total)) / t.slotCells) + 1;
 }

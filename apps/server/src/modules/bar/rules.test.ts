@@ -90,14 +90,17 @@ describe('转数字（设计文档 §3.4）', () => {
 });
 
 describe('老虎机（设计文档 §3.5）', () => {
-  it('⌊fail/3⌋ ≥ 100 强制保底；提前保底率 = fail × 0.0000016，神灯翻倍；距离保底次数', () => {
+  it('⌊fail/3⌋ ≥ 100 强制保底；提前保底率 = fail × 0.0000016，神灯翻倍；最多再抽几次必出', () => {
     expect(slotForced(299, t)).toBe(false);
     expect(slotForced(300, t)).toBe(true);
     expect(slotFloorRate(100, false, t)).toBeCloseTo(0.00016, 12);
     expect(slotFloorRate(100, true, t)).toBeCloseTo(0.00032, 12);
-    expect(slotFloorLeft(0, t)).toBe(100);
+    // 最多再抽几次必出保底：第 300−fail 格（从 0 数）出保底，在第 ⌊(300−fail)/3⌋+1 次里（终审 Minor 2）
+    expect(slotFloorLeft(0, t)).toBe(101);
     expect(slotFloorLeft(5, t)).toBe(99);
+    expect(slotFloorLeft(297, t)).toBe(2);
+    expect(slotFloorLeft(298, t)).toBe(1);
     expect(slotFloorLeft(299, t)).toBe(1);
-    expect(slotFloorLeft(300, t)).toBe(0);
+    expect(slotFloorLeft(300, t)).toBe(1);
   });
 });

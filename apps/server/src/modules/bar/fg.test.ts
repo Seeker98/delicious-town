@@ -128,7 +128,7 @@ describe('酒吧概览', () => {
       fg: { result: null, times: 0 },
       cup: { result: null, times: 0, nextCost: 1 },
       num: { result: null, times: 0, cost: 8, max: 25 },
-      slot: { emailVerified: false, lamp: false, floorLeft: 100, stats: [] },
+      slot: { emailVerified: false, lamp: false, floorLeft: 101, stats: [] },
       krabCoinTickets: 100,
     });
     expect(v.slot.pool).toHaveLength(22);

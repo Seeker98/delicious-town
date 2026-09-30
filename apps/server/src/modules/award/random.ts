@@ -102,8 +102,10 @@ export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<Rand
     const pool = awardGoodsPool(o.config.bundle.goods, level, equipFlag, opts.noTicket ?? false);
     if (pool.length === 0) return coinOrExp('coin');
     const id = pool[o.rng.int(pool.length)]!;
-    await grantGoodsOp(o, id, num, { ...gain, lucky });
-    return { kind, id, num, lucky };
+    // 勋章只能有 1 个，不翻倍；返回实际到账的数量（持有上限会丢掉超出的部分）
+    const want = o.config.requireGoods(id).type === GOODS_TYPE.honor ? 1 : num;
+    const granted = await grantGoodsOp(o, id, want, { ...gain, lucky: lucky && want > 1 });
+    return { kind, id, num: granted, lucky: lucky && granted > 1 };
   }
   const pool = awardFoodsPool(o.config.bundle.foods, level);
   const id = pool[o.rng.int(pool.length)]!;

@@ -117,6 +117,17 @@ describe('randomAward（发放）', () => {
     expect(r.data).toEqual({ kind: 'goods', id: pool[pool.length - 1], num: 1, lucky: false });
   });
 
+  it('勋章不翻倍：幸运时也只发 1 个，返回的数量和幸运标记按实际到账（终审 Minor 1）', async () => {
+    const ctx = await newRestaurant(t, { patch: { luck: 300 } });
+    const pool = awardGoodsPool(config.bundle.goods, 10, 0, true);
+    const idx = pool.findIndex((id) => config.requireGoods(id).type === GOODS_TYPE.honor);
+    expect(idx).toBeGreaterThanOrEqual(0);
+    rngValues = [0.2, (idx + 0.5) / pool.length]; // 幸运（< 0.3）；抽到这枚勋章
+    const r = await run(ctx, (o) => randomAward(o, { level: 10, onlyGoods: true, noTicket: true }));
+    expect(r.data).toEqual({ kind: 'goods', id: pool[idx], num: 1, lucky: false });
+    expect(await goodsNum(t, ctx.restaurantId, pool[idx]!)).toBe(1);
+  });
+
   it('物品池空时改发银币', async () => {
     const ctx = await newRestaurant(t);
     rngValues = [0.5];

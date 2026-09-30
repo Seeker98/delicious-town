@@ -23,7 +23,7 @@ const newsOf = (restId: number) =>
   t.db.selectFrom('news').select(['type', 'params']).where('rest_id', '=', restId).orderBy('id').execute();
 
 describe('老虎机（设计文档 §3.5）', () => {
-  it('抽 2 次：每次 3 格，相同奖项合并发放；扣蟹币；统计累计；距离保底；支线「玩一次老虎机」完成', async () => {
+  it('抽 2 次：每次 3 格，相同奖项合并发放；扣蟹币；统计累计；最多再抽几次必出；支线「玩一次老虎机」完成', async () => {
     const ctx = await newRestaurant(t, { verified: true, goods: { 240: 5 }, patch: { main_task_step: 16 } });
     rngValues = [0.5, 0.77]; // 每格：不提前保底；抽到十三香
     expect((await t.game.bar.slot(ctx, { times: 2 })).data).toEqual({
@@ -33,7 +33,7 @@ describe('老虎机（设计文档 §3.5）', () => {
       ],
       rewards: [{ awardId: 1, kind: 'foods', itemId: 326, num: 6 }],
       krabCoins: 3,
-      floorLeft: 98,
+      floorLeft: 99,
     });
     expect((await foodNum(t, ctx.restaurantId, 326)).num).toBe(6);
     expect(await goodsNum(t, ctx.restaurantId, 240)).toBe(3);
@@ -45,7 +45,7 @@ describe('老虎机（设计文档 §3.5）', () => {
     });
     expect((await t.game.bar.overview(ctx)).slot).toMatchObject({
       emailVerified: true,
-      floorLeft: 97,
+      floorLeft: 98,
       stats: [
         { awardId: 0, num: 3 },
         { awardId: 1, num: 6 },

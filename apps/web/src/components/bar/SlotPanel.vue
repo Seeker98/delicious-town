@@ -74,7 +74,7 @@ async function exchange() {
 <template>
   <div class="small">
     <div class="text-muted mb-2">
-      每次 1 个蟹币，开 3 格。距离保底还剩 <b data-testid="floor-left">{{ slot.floorLeft }}</b> 次<span
+      每次 1 个蟹币，开 3 格。最多再抽 <b data-testid="floor-left">{{ slot.floorLeft }}</b> 次必出稀有<span
         v-if="slot.lamp"
         >（有神灯：提前出保底的机会翻倍）</span
       >

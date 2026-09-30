@@ -48,7 +48,7 @@ export interface BarDto {
     emailVerified: boolean;
     /** 持有有效神灯（提前保底率翻倍） */
     lamp: boolean;
-    /** 距离保底还剩几次 */
+    /** 最多再抽几次必出保底（稀有） */
     floorLeft: number;
     pool: SlotAwardDto[];
     /** 我的统计：每个奖项累计格数（含空格 id 0），按奖项 id 排序 */
