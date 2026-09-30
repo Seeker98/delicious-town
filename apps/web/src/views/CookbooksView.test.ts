@@ -75,4 +75,14 @@ describe('CookbooksView', () => {
     expect(card.find('.dt-cb-foods').text()).toContain('1/1');
     expect(card.find('[data-testid="learn-194"]').classes()).toContain('dt-btn-xs');
   });
+
+  it('食材行可以折行，缺料项不会被截掉（审查）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.find('[data-testid="cb-194"] .dt-cb-foods').classes()).not.toContain('text-truncate');
+  });
 });

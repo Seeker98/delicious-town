@@ -96,7 +96,7 @@ onMounted(async () => {
         <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{ r.name }}</RouterLink>
         <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
       </div>
-      <div v-if="r.next" class="dt-cb-foods text-truncate">
+      <div v-if="r.next" class="dt-cb-foods">
         <span
           v-for="f in r.next"
           :key="f.foodsId"

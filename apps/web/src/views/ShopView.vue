@@ -84,10 +84,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
           }}</b>
         </div>
         <div class="text-truncate" style="font-size: 12px" :data-testid="`info-${it.goodsId}`">
-          {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }} ·
+          <!-- "最多几个"放最前面，截断时不会丢（审查） -->
           <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
             capText(it)
           }}</span>
+          · {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }}
         </div>
         <div
           v-if="catalog.goods(it.goodsId)?.desc"

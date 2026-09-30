@@ -73,4 +73,10 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     await w.find('[data-testid="name-99"]').trigger('click');
     expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
   });
+
+  it('价格那一行把"最多几个"放最前面，截断时不会丢（审查）', async () => {
+    const w = mount(ShopView);
+    await flushPromises();
+    expect(w.find('[data-testid="info-13"]').text()).toMatch(/^最多 3/);
+  });
 });

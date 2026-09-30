@@ -318,4 +318,11 @@ describe('RestaurantHomeView', () => {
     await w.find('[data-testid="effects-more"]').trigger('click');
     expect(w.findAll('[data-testid="effect-row"]')).toHaveLength(7);
   });
+
+  it('设施格同一行一样高，名字太长时截断（审查）', async () => {
+    const w = await mountView();
+    const slot = w.find('[data-testid="slot-1"]');
+    expect(slot.classes()).toContain('h-100');
+    expect(slot.find('.text-truncate').exists()).toBe(true);
+  });
 });

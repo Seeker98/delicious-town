@@ -93,9 +93,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
       :key="it.goodsId"
       class="dt-row d-flex align-items-center gap-1 border-bottom py-1 small"
     >
-      <div class="flex-fill text-truncate" style="min-width: 0">
-        <b>{{ catalog.goodsName(it.goodsId) }}</b> ×{{ formatNum(it.num) }}
-        <span class="text-muted">{{ expires(it.expiresAt) }}</span>
+      <div class="flex-fill" style="min-width: 0">
+        <!-- 只截名字，数量总是显示；剩余时间放第二行（审查） -->
+        <div class="d-flex gap-1">
+          <b class="text-truncate">{{ catalog.goodsName(it.goodsId) }}</b>
+          <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+        </div>
+        <div v-if="it.expiresAt" class="text-muted" style="font-size: 11px">{{ expires(it.expiresAt) }}</div>
       </div>
       <div class="dt-row-actions">
         <input

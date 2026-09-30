@@ -300,12 +300,12 @@ onBeforeUnmount(() => {
     <div class="row g-1">
       <div v-for="d in rest.devices" :key="d.slot" class="col-3">
         <button
-          class="btn btn-light border w-100 p-1 dt-slot"
+          class="btn btn-light border w-100 h-100 p-1 dt-slot"
           :data-testid="`slot-${d.slot}`"
           :disabled="!d.unlocked || busy"
           @click="openSlot(d.slot)"
         >
-          <div class="text-muted">{{ d.name }}</div>
+          <div class="text-muted text-truncate">{{ d.name }}</div>
           <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
             <i class="bi bi-lock"></i> 未开通
           </div>
