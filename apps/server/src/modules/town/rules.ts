@@ -1,3 +1,4 @@
+import { GOODS, type Tuning } from '@dt/config';
 import { buildPool, pickWeighted, type NpcKey, type Rng } from '@dt/shared';
 
 /** [min, max] 闭区间里的整数 */
@@ -21,3 +22,18 @@ export const NPC_TALK: Record<NpcKey, string> = {
   bro13: '爱就直接去做!!!',
 };
 export const BIG_EATER_FIRST_TALK = '你! 很有个性是吧!';
+
+type ShakeTuning = Tuning['town']['shake'];
+
+/** 摇到的银币 = (base − rand[0, rand)) × 星级，至少 1（设计文档 §3.4） */
+export function shakeCoin(star: number, s: ShakeTuning, rng: Rng): number {
+  return Math.max(1, (s.base - rng.int(s.rand)) * star);
+}
+
+/** 流水号尾数彩蛋（设计文档 裁定 14） */
+export function shakeEgg(id: number, s: ShakeTuning): { goodsId: number; num: number } | null {
+  if (id % s.eggMod !== s.eggTail) return null;
+  return Math.floor(id / s.eggMod) % s.burgerEvery === 1
+    ? { goodsId: GOODS.krabBurger, num: s.burgerNum }
+    : { goodsId: GOODS.krabCoin, num: s.krabCoinNum };
+}
