@@ -645,6 +645,31 @@ export interface BarSlotStatTable {
   num: number;
 }
 
+/** 厨塔（子项目 4C-2）：每店打赢过的最高层 */
+export interface TowerStateTable {
+  rest_id: number;
+  best_floor: Default<number>;
+}
+
+/** 守塔人当天抽到的特色菜：每区服每层一行，每天覆盖 */
+export interface TowerWatchmanMcTable {
+  shard_id: number;
+  floor: number;
+  mc_id: number;
+  /** 每份价值 */
+  price: number;
+  /** YYYY-MM-DD（抽菜的游戏日） */
+  day: string;
+}
+
+/** 赛厨榜：只存有人的格子；week 是本周一 */
+export interface TowerRankTable {
+  shard_id: number;
+  week: string;
+  rank: number;
+  rest_id: number;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -706,6 +731,9 @@ export interface DB {
   rest_formula: RestFormulaTable;
   bar_state: BarStateTable;
   bar_slot_stat: BarSlotStatTable;
+  tower_state: TowerStateTable;
+  tower_watchman_mc: TowerWatchmanMcTable;
+  tower_rank: TowerRankTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
@@ -714,3 +742,4 @@ export type McLessonRow = Selectable<McLessonTable>;
 export type YardLandRow = Selectable<YardLandTable>;
 export type YardPlantRow = Selectable<YardPlantTable>;
 export type BarStateRow = Selectable<BarStateTable>;
+export type TowerStateRow = Selectable<TowerStateTable>;
