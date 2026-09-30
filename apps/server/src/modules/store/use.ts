@@ -1,13 +1,15 @@
 import type { GoodsUse, Tuning } from '@dt/config';
-import { ErrorCode } from '@dt/shared';
+import { ErrorCode, gameDay } from '@dt/shared';
 import { featureAvailable } from '../../core/features';
 import { invalidState, limitReached } from '../../core/errors';
 import { restLog, setRest, type Op } from '../../core/op';
 import { gainCoin, gainDiamond, gainStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { openGift } from '../award/award';
+import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
 import { consumeGoods, countGoods, grantGoodsOp } from './goods';
+import { KEY } from '../tower/common';
 
 /** 餐桌A：加 num 张桌，不超过餐桌上限和楼层容量（规格书 07 §7.4、02 §2.7） */
 export async function addTables(op: Op, num: number): Promise<number> {
@@ -149,7 +151,9 @@ export async function useGoods(
       await openGift(op, g, num);
       break;
     case 'towerTicket':
-      throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId });
+      // 当天厨塔次数 +1（4C-2 设计文档 §3.2）；一次 1 张（NO_BATCH_KINDS）
+      await incrementDaily(op.tx, op.rest.id, KEY.ticket, num, gameDay(op.now));
+      break;
   }
   restLog(op, 'store.use', { goodsId, num });
   return { goodsId, num };

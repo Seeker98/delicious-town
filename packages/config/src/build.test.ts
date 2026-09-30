@@ -294,3 +294,57 @@ describe('酒吧配置（子项目 4C-1）', () => {
     expect(errors).toContain('tuning.bar.slotFloorAwardId 555 not in slot awards');
   });
 });
+
+describe('厨塔配置（子项目 4C-2）', () => {
+  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按原版厨力校准', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const f = bundle!.towerFloors;
+    expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(f.map((x) => x.power)).toEqual([29, 96, 211, 334, 508, 707, 961, 1225, 1720, 2603]);
+    expect(f[9]).toMatchObject({
+      name: '彭祖',
+      title: '食神',
+      minLevel: 91,
+      maxTimes: 2,
+      mc: true,
+      note: '你会做蛋炒饭吗?',
+      attrs: { cook: 599, cutting: 599, fire: 599, season: 331, creatives: 331, luck: 288 },
+    });
+    expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
+    expect(f.map((x) => x.maxTimes)).toEqual([10, 10, 10, 10, 5, 3, 2, 1, 1, 2]);
+  });
+
+  it('声望商店是正式字段', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.renownShop).toHaveLength(12);
+    expect(bundle!.renownShop[0]).toEqual({
+      goodsId: 310,
+      renown: 60,
+      rare: false,
+      weeklyLimit: 10,
+      weekGroup: 0,
+      require: null,
+    });
+    expect(bundle!.renownShop.find((x) => x.goodsId === 439)).toMatchObject({
+      renown: 5000,
+      rare: true,
+      weekGroup: 4,
+    });
+    expect(bundle!.renownShop.find((x) => x.goodsId === 506)).toMatchObject({ require: 'xz' });
+    expect('renownShop' in bundle!.extra).toBe(false);
+  });
+
+  it('赛厨榜礼包引用了不存在的道具', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { tower: { rankGifts: number[][] } };
+    tuning.tower.rankGifts[0]![1] = 999999;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.tower.rankGifts references unknown goods 999999');
+  });
+
+  it('赛厨榜挑战计入活跃"与好友赛厨"', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.actionMap.activation['tower.rank']).toBe('与好友赛厨');
+  });
+});

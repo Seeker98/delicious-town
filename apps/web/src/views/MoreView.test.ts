@@ -34,9 +34,9 @@ describe('MoreView', () => {
     expect(mountView().text()).not.toContain('管理后台');
   });
 
-  it('有特色菜、神殿、菜园、酒吧、教室入口', () => {
+  it('有特色菜、神殿、菜园、酒吧、厨塔、教室入口', () => {
     useSessionStore().me = me('player');
     const text = mountView().text();
-    for (const x of ['特色菜', '神殿', '教室', '菜园', '酒吧']) expect(text).toContain(x);
+    for (const x of ['特色菜', '神殿', '教室', '菜园', '酒吧', '厨塔']) expect(text).toContain(x);
   });
 });

@@ -249,5 +249,19 @@
     "krabCoinTickets": 100,
     "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,
     "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 }
+  },
+  "tower": {
+    "dailyBase": 5, "nightFloor": 3, "openHour": 6,
+    "testStrength": 1, "strengthPerFloor": 1, "strengthBase": 4,
+    "winRenownBase": 6, "loseRenown": 6,
+    "rankSize": 15, "rankTop": 8, "rankGap": 3, "rankDaily": 10,
+    "rankWinRenown": 2, "rankLoseRenown": 1,
+    "rankGifts": [[1, 202], [2, 203], [3, 204], [8, 205], [15, 206]],
+    "duelStrength": 5, "duelPerFriend": 10,
+    "duelWeakRate": 0.7, "duelStrongRate": 1.15,
+    "duelRenown": { "weak": [0, -3], "strong": [6, -2], "normal": [5, -2] },
+    "sparFullAt": 20, "sparFullRenown": 2, "sparMaxAt": 50,
+    "sparAwards": [[10, 2, 4], [20, 2, 2], [999999, 1, 2]], "sparEquipFlag": 3,
+    "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }
   }
 }

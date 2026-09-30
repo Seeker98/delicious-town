@@ -280,6 +280,8 @@ export interface ConfigBundle {
   seedExchange: SeedExchange[];
   incomeActions: IncomeAction[];
   slotAwards: SlotAward[];
+  towerFloors: TowerFloor[];
+  renownShop: RenownShopItem[];
   weather: Weather[];
   devices: Device[];
   starNeed: StarNeed[];
@@ -420,4 +422,33 @@ export interface SlotAward {
   /** 每格给几个 */
   getNum: number;
   news: boolean;
+}
+
+/** 厨塔守塔人（dataset/tower_floors；子项目 4C-2）。attrs 由构建按设计文档裁定 1 校准 */
+export interface TowerFloor {
+  floor: number;
+  name: string;
+  title: string;
+  minLevel: number;
+  /** 每人每天能挑战他几次 */
+  maxTimes: number;
+  /** 是否比拼特色菜（每天 05:58 换菜） */
+  mc: boolean;
+  note: string;
+  attrs: EquipAttrs;
+  /** attrs 算出的厨力 */
+  power: number;
+}
+
+/** 声望商店（designed/renown_shop；子项目 4C-2） */
+export interface RenownShopItem {
+  goodsId: number;
+  renown: number;
+  /** 稀有品：每人限拥有 1 个 */
+  rare: boolean;
+  weeklyLimit: number;
+  /** 0 常驻；1~4 按 ISO 周数 % 4 + 1 轮换 */
+  weekGroup: number;
+  /** 前置玩法（xz 仙珍、tz 天馔）；有前置的暂不上架 */
+  require: string | null;
 }

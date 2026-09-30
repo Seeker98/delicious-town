@@ -18,6 +18,7 @@ export const SOURCE_FILES = [
   'dataset/suit_painting',
   'dataset/market_guess_foods',
   'dataset/bar_slot_machine_award',
+  'dataset/tower_floors',
   'designed/cookbooks_price',
   'designed/cookbook_grades',
   'designed/goods_awardflag',

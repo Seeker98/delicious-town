@@ -72,6 +72,7 @@ const KIND: Record<string, string> = {
   strength: '体力',
   attrPoint: '属性点',
   portions: '份数',
+  renown: '声望',
 };
 
 const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -87,7 +88,11 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   avatar: () => '先在"装扮"里设置头像才能白食',
   dine_minutes: (p) => `白食满 ${String(p.need)} 分钟才能结束或请走`,
   renown: (p) =>
-    p.need === undefined ? '声望为负时不能点赞' : `声望不够（偷菜要 ${String(p.need)} 点声望）`,
+    p.what === 'duel'
+      ? '声望为负时不能切磋'
+      : p.need === undefined
+        ? '声望为负时不能点赞'
+        : `声望不够（偷菜要 ${String(p.need)} 点声望）`,
   mc_count: (p) => `学会的特色菜不够（需要 ${String(p.need)} 道）`,
 };
 
@@ -114,6 +119,11 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   lesson_full: () => '这门课人满了',
   lesson_open: () => '你已经有一门进行中的课了',
   lands: (p) => `最多开垦 ${String(p.max)} 块地`,
+  tower: (p) => `今天的厨塔挑战次数用完了（${String(p.max)} 次），可以在仓库用厨塔挑战券加次数`,
+  watchman: (p) => `他今天已经很累了（每人每天 ${String(p.max)} 次），明天再来`,
+  rank: (p) => `今天的赛厨榜挑战次数用完了（${String(p.max)} 次）`,
+  duel: (p) => `今天和它切磋的次数用完了（${String(p.max)} 次）`,
+  weekly: (p) => `本周兑换已达上限（${String(p.max)} 个）`,
 };
 
 const STATE: Record<string, string> = {
@@ -216,6 +226,13 @@ const STATE: Record<string, string> = {
   formula_learned: '已经学会这个配方了',
   seed_shop_closed: '种子商店暂未开放',
   seed_not_sold: '神秘种子不卖，只能兑换或投喂克拉肯得到',
+  floor_locked: '这一层还没解锁：餐厅等级要够，并且先打赢下一层',
+  tower_night: '4 层以上 6 点以后才能挑战',
+  rank_taken: '这个名次已经有人了',
+  rank_empty: '这个名次现在没人，可以直接占位',
+  rank_not_better: '只能往前挑战或占位',
+  rank_gap: '前 8 名只能由名次相差 3 以内的人挑战',
+  npc: '不能和蟹老板切磋',
 };
 
 const ALREADY: Record<string, string> = {

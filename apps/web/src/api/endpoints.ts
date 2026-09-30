@@ -81,6 +81,11 @@ import type {
   ThumbResultDto,
   ThumbTodayDto,
   WorldDto,
+  DuelInfoDto,
+  DuelResultDto,
+  RankDto,
+  RenownShopDto,
+  TowerDto,
 } from '@dt/shared';
 import { api } from './client';
 
@@ -307,4 +312,15 @@ export const endpoints = {
   barNum: (num: number) => api.post<NumResultDto>('/api/v1/bar/num', { num }),
   barSlot: (times: number) => api.post<SlotResultDto>('/api/v1/bar/slot', { times }),
   barExchange: (num: number) => api.post<BarExchangeResultDto>('/api/v1/bar/exchange', { num }),
+  tower: () => api.get<TowerDto>('/api/v1/tower'),
+  towerChallenge: (floor: number, test: boolean) =>
+    api.post<DuelResultDto>('/api/v1/tower/challenge', { floor, test }),
+  towerRank: () => api.get<RankDto>('/api/v1/tower/rank'),
+  rankOccupy: (rank: number) => api.post<{ rank: number }>('/api/v1/tower/rank/occupy', { rank }),
+  rankChallenge: (rank: number) => api.post<DuelResultDto>('/api/v1/tower/rank/challenge', { rank }),
+  duelInfo: (restId: number) => api.get<DuelInfoDto>(`/api/v1/tower/duel/${restId}`),
+  friendDuel: (restId: number) => api.post<DuelResultDto>('/api/v1/tower/duel', { restId }),
+  renownShop: () => api.get<RenownShopDto>('/api/v1/tower/shop'),
+  renownBuy: (goodsId: number, num: number) =>
+    api.post<{ renown: number }>('/api/v1/tower/shop/buy', { goodsId, num }),
 };

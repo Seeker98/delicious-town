@@ -213,7 +213,24 @@ export const rawSlotAward = z.object({
 export const rawGoodsExchange = z
   .object({ id: int, goodsId: int, needGoods: z.array(z.object({ type: z.string(), id: int, num: int })) })
   .passthrough();
-export const rawRenownShop = z.object({ goodsId: int }).passthrough();
+export const rawRenownShop = z.object({
+  goodsId: int,
+  renown: int.min(1),
+  rareflag: int,
+  weeklyLimit: int.min(1),
+  weekGroup: int.min(0).max(4),
+  require: z.string().nullable(),
+});
+export const rawTowerFloor = z.object({
+  floor: int.min(1),
+  watchmanRestName: z.string(),
+  watchman: z.string(),
+  minlevel: int.min(1),
+  challengemaxtimes: int,
+  specialflag: int,
+  attrSum: int,
+  note: z.string().nullish(),
+});
 export const rawBless = z
   .object({ id: int, value: z.object({ goodsId: int.optional() }).passthrough().nullable() })
   .passthrough();

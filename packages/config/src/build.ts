@@ -8,6 +8,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
+import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
   Award,
@@ -18,7 +19,9 @@ import type {
   GiftItem,
   Goods,
   IdNum,
+  RenownShopItem,
   SlotAward,
+  TowerFloor,
 } from './types';
 
 export interface BuildResult {
@@ -97,6 +100,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const formulasRaw = parse('designed/foods_formula', z.array(raw.rawFormula));
   const incomeRaw = parse('designed/income_action', z.array(raw.rawIncomeAction));
   const slotRaw = parse('dataset/bar_slot_machine_award', z.array(raw.rawSlotAward));
+  const towerRaw = parse('dataset/tower_floors', z.array(raw.rawTowerFloor));
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
   const renownRaw = parse('designed/renown_shop', z.array(raw.rawRenownShop));
   const blessRaw = parse('designed/bless', z.array(raw.rawBless));
@@ -138,6 +142,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !formulasRaw ||
     !incomeRaw ||
     !slotRaw ||
+    !towerRaw ||
     !goodsExRaw ||
     !renownRaw ||
     !blessRaw ||
@@ -601,6 +606,38 @@ export function buildBundle(src: SourceData): BuildResult {
     errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
   for (const id of [1, 240, 389]) if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
+  // ---------- 厨塔（子项目 4C-2） ----------
+  const towerFloors: TowerFloor[] = [...towerRaw]
+    .sort((a, b) => a.floor - b.floor)
+    .map((f) => ({
+      floor: f.floor,
+      name: f.watchmanRestName,
+      title: f.watchman,
+      minLevel: f.minlevel,
+      maxTimes: f.challengemaxtimes,
+      mc: f.specialflag === 1,
+      note: f.note ?? '',
+      ...calibrateWatchman(f.floor, f.minlevel, f.attrSum),
+    }));
+  towerFloors.forEach((f, i) => {
+    if (f.floor !== i + 1) errors.push(`tower_floors: floor ${f.floor} out of order`);
+  });
+  for (const f of towerRaw) {
+    if (f.attrSum <= 0 || f.challengemaxtimes <= 0)
+      errors.push(`tower_floors ${f.floor} needs positive attrSum and challengemaxtimes`);
+  }
+  const renownShop: RenownShopItem[] = renownRaw.map((r) => ({
+    goodsId: r.goodsId,
+    renown: r.renown,
+    rare: r.rareflag === 1,
+    weeklyLimit: r.weeklyLimit,
+    weekGroup: r.weekGroup,
+    require: r.require,
+  }));
+  for (const [, id] of tuning.tower.rankGifts)
+    if (!goodsIds.has(id)) errors.push(`tuning.tower.rankGifts references unknown goods ${id}`);
+  // 厨塔挑战券（GOODS.towerTicket）
+  if (!goodsIds.has(136)) errors.push('tower references unknown goods 136');
   for (const e of goodsExRaw) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
     for (const n of e.needGoods) {
@@ -661,6 +698,8 @@ export function buildBundle(src: SourceData): BuildResult {
     seedExchange,
     incomeActions,
     slotAwards,
+    towerFloors,
+    renownShop,
     weather,
     devices,
     starNeed,
@@ -685,7 +724,6 @@ export function buildBundle(src: SourceData): BuildResult {
     suits,
     extra: {
       goodsExchange: goodsExRaw,
-      renownShop: renownRaw,
       bless: blessRaw,
     },
   };
