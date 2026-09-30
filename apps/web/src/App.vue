@@ -6,7 +6,7 @@ import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
 import { useToastStore } from './stores/toast';
-import { eventText } from './utils/events';
+import { eventText, mergeEvents } from './utils/events';
 
 const route = useRoute();
 const catalog = useCatalogStore();
@@ -16,7 +16,8 @@ const inGame = computed(() => route.meta.needRestaurant === true);
 const wide = computed(() => route.path.startsWith('/admin'));
 
 setEventsListener((events) => {
-  for (const e of events) toast.push(eventText(e, catalog), e.type === 'gain' ? 'success' : 'info');
+  for (const e of mergeEvents(events))
+    toast.push(eventText(e, catalog), e.type === 'gain' ? 'success' : 'info');
 });
 
 onMounted(() => {

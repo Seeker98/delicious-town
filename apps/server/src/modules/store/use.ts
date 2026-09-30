@@ -1,3 +1,4 @@
+import type { GoodsUse, Tuning } from '@dt/config';
 import { ErrorCode } from '@dt/shared';
 import { featureAvailable } from '../../core/features';
 import { invalidState, limitReached } from '../../core/errors';
@@ -6,7 +7,7 @@ import { gainCoin, gainDiamond, gainStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { openGift } from '../award/award';
 import { addFoods } from '../cupboard/foods';
-import { consumeGoods, grantGoodsOp } from './goods';
+import { consumeGoods, countGoods, grantGoodsOp } from './goods';
 
 /** 餐桌A：加 num 张桌，不超过餐桌上限和楼层容量（规格书 07 §7.4、02 §2.7） */
 export async function addTables(op: Op, num: number): Promise<number> {
@@ -31,6 +32,58 @@ export async function addTables(op: Op, num: number): Promise<number> {
   return count + num;
 }
 
+/** 不能批量使用的用途：洗点只对当前加点有效；厨塔券在厨塔里一张张用 */
+export const NO_BATCH_KINDS: ReadonlySet<string> = new Set(['resetAttr', 'towerTicket']);
+
+export interface UseCapInput {
+  /** 现有桌数 */
+  tables: number;
+  tableNum: number;
+  star: number;
+  cupboardNum: number;
+  foodsTotal: number;
+  have: (goodsId: number) => number;
+}
+
+/** 一次最多能用几个（不算持有数）；0 = 现在用不了（问题记录：批量上限） */
+export function useCap(use: GoodsUse, x: UseCapInput, tuning: Tuning): number {
+  const maxBatch = tuning.store.maxBatch;
+  if (NO_BATCH_KINDS.has(use.kind)) return 1;
+  switch (use.kind) {
+    case 'addTable': {
+      const cap = Math.min(x.tableNum, (x.star + 1) * tuning.rest.tablesPerFloor);
+      return Math.max(0, Math.min(maxBatch, cap - x.tables));
+    }
+    case 'cupboardNum':
+      return Math.max(0, Math.min(maxBatch, Math.ceil((x.foodsTotal - x.cupboardNum) / use.amount)));
+    case 'bundle':
+      return Math.min(maxBatch, Math.floor(x.have(use.goods) / use.num));
+    default:
+      return maxBatch;
+  }
+}
+
+async function opUseCap(op: Op, use: GoodsUse): Promise<number> {
+  const tr = await op.tx
+    .selectFrom('restaurant_tables')
+    .select('tables')
+    .where('rest_id', '=', op.rest.id)
+    .executeTakeFirstOrThrow();
+  const bundleHave = use.kind === 'bundle' ? await countGoods(op, use.goods) : 0;
+  return useCap(
+    use,
+    {
+      tables: tr.tables.length,
+      tableNum: op.rest.table_num,
+      star: op.rest.star_level,
+      cupboardNum: op.rest.cupboard_num,
+      foodsTotal: op.config.foods.size,
+      have: () => bundleHave,
+    },
+    op.tuning,
+  );
+}
+
 /** 使用道具：按构建时推导的用途分派（设计文档 §5.1）。先扣道具，任何一步失败整体回滚 */
 export async function useGoods(
   op: Op,
@@ -42,9 +95,13 @@ export async function useGoods(
   if (!use) throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId });
   if (use.kind === 'towerTicket' && !featureAvailable(op.settings, 'tower'))
     throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId, reason: 'feature' });
-  if (num > 1 && use.kind !== 'gift' && !op.tuning.store.batchUsable.includes(goodsId))
-    throw invalidState('no_batch', { goodsId });
+  if (num > 1 && NO_BATCH_KINDS.has(use.kind)) throw invalidState('no_batch', { goodsId });
   if (num > op.tuning.store.maxBatch) throw limitReached('batch', { max: op.tuning.store.maxBatch });
+  const cap = await opUseCap(op, use);
+  if (use.kind === 'cupboardNum' && cap === 0)
+    throw limitReached('cupboard_slots', { max: op.config.foods.size });
+  // 餐桌摆满、飞弹不够时让各自的逻辑报更具体的错
+  if (cap > 0 && num > cap) throw limitReached('batch', { max: cap });
   await consumeGoods(op, goodsId, num, { source: 'store.use' });
   switch (use.kind) {
     case 'currency':

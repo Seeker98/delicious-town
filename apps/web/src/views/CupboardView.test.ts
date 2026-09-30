@@ -40,6 +40,7 @@ describe('CupboardView', () => {
       fridgeCount: 0,
       fridgeUnread: false,
       freeHandleLeft: 20,
+      handleMax: 100,
       items: [{ foodsId: 302, num: 4, locked: false, streetNeed: 3 }],
     });
     vi.mocked(endpoints.handleFoods).mockResolvedValue({
@@ -59,5 +60,23 @@ describe('CupboardView', () => {
     await w.find('[data-testid="decompose"]').trigger('click');
     await flushPromises();
     expect(endpoints.handleFoods).toHaveBeenCalledWith({ foodsId: 302, way: 'decompose', num: 1 });
+  });
+
+  it('显示最多能分解、合成几个；数量超过时按上限处理（合成取偶数）（问题记录：合成不显示最大数）', async () => {
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      ...(await endpoints.cupboard()),
+      items: [{ foodsId: 302, num: 7, locked: false, streetNeed: 0 }],
+    });
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.find('[data-testid="pick-302"]').trigger('click');
+    expect(w.text()).toContain('最多分解 7，合成 6');
+    await w.find('input[type="number"]').setValue('7');
+    expect(w.find('[data-testid="compose"]').text()).toBe('合成 ×6');
+    await w.find('[data-testid="compose"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.handleFoods).toHaveBeenLastCalledWith({ foodsId: 302, way: 'compose', num: 6 });
+    await w.find('input[type="number"]').setValue('99');
+    expect(w.find('[data-testid="decompose"]').text()).toBe('分解 ×7');
   });
 });

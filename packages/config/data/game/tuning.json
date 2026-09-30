@@ -134,7 +134,7 @@
     "guessBonusHours": [12, 18]
   },
   "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 21, "discardable": [87], "maxBuy": 999 },
-  "store": { "batchUsable": [28, 29, 85, 139], "maxBatch": 99 },
+  "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
     "nightFrom": 21,

@@ -45,7 +45,10 @@ function pickGiftFood(op: Op, item: Extract<GiftItem, { type: 'foods' }>): numbe
   return pool && pool.total > 0 ? pickWeighted(pool, op.rng).id : null;
 }
 
-/** 打开礼包 times 次（规格书 07 §7.5）：每项独立按 rate + 幸运率判定，超出 rate 的部分算"幸运" */
+/**
+ * 打开礼包 times 次（规格书 07 §7.5）：每项独立按 rate + 幸运率判定，超出 rate 的部分算"幸运"。
+ * 道具和食材先按（类型, id, 是否幸运）累加，最后一次发放：结果不变，查询和事件少很多（问题记录：批量开礼包慢）
+ */
 export async function openGift(
   op: Op,
   goods: Goods,
@@ -55,6 +58,13 @@ export async function openGift(
   const items = goods.gift ?? [];
   const { rate: lr } = await opLuck(op);
   const source = opts.source ?? `gift.${goods.id}`;
+  const pending = new Map<string, { type: 'goods' | 'foods'; id: number; num: number; lucky: boolean }>();
+  const add = (type: 'goods' | 'foods', id: number, num: number, lucky: boolean) => {
+    const key = `${type}:${id}:${lucky}`;
+    const cur = pending.get(key);
+    if (cur) cur.num += num;
+    else pending.set(key, { type, id, num, lucky });
+  };
   for (let i = 0; i < times; i++) {
     for (const item of items) {
       const roll = op.rng.next();
@@ -63,12 +73,12 @@ export async function openGift(
       switch (item.type) {
         case 'goods': {
           const id = item.id > 0 ? item.id : pickRandomGoods(op, item.level ?? 1);
-          if (id !== null) await grantGoodsOp(op, id, item.num, o);
+          if (id !== null) add('goods', id, item.num, o.lucky);
           break;
         }
         case 'foods': {
           const id = pickGiftFood(op, item);
-          if (id !== null) await addFoods(op, id, item.num, o);
+          if (id !== null) add('foods', id, item.num, o.lucky);
           break;
         }
         case 'coin':
@@ -85,5 +95,10 @@ export async function openGift(
           break;
       }
     }
+  }
+  for (const x of pending.values()) {
+    const o = { source, lucky: x.lucky };
+    if (x.type === 'goods') await grantGoodsOp(op, x.id, x.num, o);
+    else await addFoods(op, x.id, x.num, o);
   }
 }

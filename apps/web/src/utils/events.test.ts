@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventText, logText } from './events';
+import { eventText, logText, mergeEvents } from './events';
 
 const names = { goodsName: (id: number) => ({ 1: '神秘礼券' })[id] ?? `道具${id}`, foodName: () => '大米' };
 
@@ -31,5 +31,24 @@ describe('个人日志文案', () => {
     expect(logText({ type: 'market.guess.refund', params: { period: '2026-09-30@10' }, at: '' }, names)).toBe(
       '菜场竞猜 2026-09-30 10 点那一轮没有开奖，退还了报名费',
     );
+  });
+});
+
+describe('mergeEvents（问题记录：一次得到很多东西时提示刷屏）', () => {
+  it('同类型、同物品、同幸运标记的事件合并数量，保持首次出现的顺序', () => {
+    expect(
+      mergeEvents([
+        { type: 'gain', kind: 'foods', id: 101, num: 2 },
+        { type: 'gain', kind: 'coin', num: 5 },
+        { type: 'gain', kind: 'foods', id: 101, num: 1 },
+        { type: 'gain', kind: 'foods', id: 101, num: 1, lucky: true },
+        { type: 'loss', kind: 'goods', id: 131, num: 99 },
+      ]),
+    ).toEqual([
+      { type: 'gain', kind: 'foods', id: 101, num: 3 },
+      { type: 'gain', kind: 'coin', num: 5 },
+      { type: 'gain', kind: 'foods', id: 101, num: 1, lucky: true },
+      { type: 'loss', kind: 'goods', id: 131, num: 99 },
+    ]);
   });
 });
