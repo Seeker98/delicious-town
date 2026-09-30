@@ -108,7 +108,7 @@ export function createGame(app: AppDeps): Game {
     yard: createYardService(deps),
     bar: createBarService(deps),
     tower: createTowerService(deps),
-    takeaway: createTakeawayService(deps),
+    takeaway: createTakeawayService(deps, world),
     shop,
     market,
     task: createTaskService(deps),
