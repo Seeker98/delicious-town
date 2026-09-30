@@ -18,6 +18,12 @@ export interface MarketItemDto {
   limit: number;
   /** 本轮我已经买了多少 */
   bought: number;
+  /** 同一设备或网络本轮已经买了多少（限购按店、设备、网络分别算，取最多的那个） */
+  sharedBought: number;
+  /** 橱柜里已有多少 */
+  have: number;
+  /** 现在最多还能买几个：限购剩余、库存剩余、橱柜单种上限剩余取小（橱柜格子满且没有这种食材时为 0） */
+  canBuy: number;
   openedAt: string;
 }
 
@@ -32,6 +38,9 @@ export interface MarketDto {
   specialCooldownUntil: string | null;
   /** 特价同一网络的购买间隔（分钟） */
   specialCooldownMin: number;
+  /** 橱柜单种食材上限；橱柜格子是否满了 */
+  foodsMaxNum: number;
+  cupboardFull: boolean;
   guess: {
     period: string;
     joined: number[] | null;

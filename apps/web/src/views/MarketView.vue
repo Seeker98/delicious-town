@@ -49,7 +49,31 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
     busy.value = false;
   }
 }
-const buy = (it: MarketItemDto) => run(() => endpoints.marketBuy(it.id, qty[it.id] ?? 1), '购买失败');
+/** 买的数量不超过最多还能买几个 */
+const buy = (it: MarketItemDto) =>
+  run(() => endpoints.marketBuy(it.id, Math.max(1, Math.min(qty[it.id] || 1, it.canBuy))), '购买失败');
+/**
+ * 能买的数量被别的限制压低时写明原因（问题记录：显示能买 1000，实际只能买 996；显示 0/1000 却提示限购已满）。
+ * 限购按店、设备、网络分别算；橱柜有单种上限和格子数
+ */
+function capNote(it: MarketItemDto): string {
+  const d = data.value;
+  if (!d) return '';
+  const limitLeft = it.limit - Math.max(it.bought, it.sharedBought);
+  if (
+    it.sharedBought > it.bought &&
+    limitLeft < Math.min(it.limit - it.bought, it.left) &&
+    it.canBuy <= limitLeft
+  )
+    return `同一网络或设备本轮已买 ${it.sharedBought} 份（限购按店、设备、网络分别算），最多再买 ${it.canBuy}`;
+  if (it.have === 0 && d.cupboardFull) return '橱柜格子满了，先腾出一格';
+  const room = d.foodsMaxNum - it.have;
+  if (it.have > 0 && room < Math.min(limitLeft, it.left))
+    return room <= 0
+      ? `橱柜里已经放满了（单种上限 ${d.foodsMaxNum}）`
+      : `橱柜单种上限 ${d.foodsMaxNum}，已有 ${it.have}，最多再买 ${room}`;
+  return '';
+}
 function togglePick(id: number) {
   const i = picks.value.indexOf(id);
   if (i >= 0) picks.value.splice(i, 1);
@@ -88,22 +112,21 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
           <div class="text-muted">
             {{ formatNum(it.price) }} 银币 · 剩 {{ formatNum(it.left) }} · 限购 {{ it.bought }}/{{ it.limit }}
           </div>
+          <div v-if="capNote(it)" class="text-danger" :data-testid="`cap-${it.id}`">{{ capNote(it) }}</div>
         </div>
         <input
           v-model.number="qty[it.id]"
           :data-testid="`qty-${it.id}`"
           type="number"
           min="1"
-          :max="it.limit"
+          :max="Math.max(1, it.canBuy)"
           class="form-control form-control-sm"
           style="width: 72px"
         />
         <button
           class="btn btn-sm btn-primary"
           :data-testid="`buy-${it.id}`"
-          :disabled="
-            busy || it.left <= 0 || it.bought >= it.limit || (s.key === 'special' && specialWait > 0)
-          "
+          :disabled="busy || it.canBuy < 1 || (s.key === 'special' && specialWait > 0)"
           @click="buy(it)"
         >
           买
