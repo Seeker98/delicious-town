@@ -164,3 +164,56 @@ describe('settleShardRound', () => {
     expect(r.coin).toBeLessThan(100000 + (await income(ctx.restaurantId))[0]!.coin);
   });
 });
+
+describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
+  /** 桌桌坐满、没有挑剔顾客：每桌普通顾客吃 1 份 */
+  const busy = { tuning: { rest: { atRateBase: 5, spRateBase: -5 } } };
+  async function withDish(left: number) {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify(busy) })
+      .execute();
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 100000, star_level: 1 } });
+    const c = await t.db
+      .insertInto('mc_cook')
+      .values({
+        rest_id: ctx.restaurantId,
+        shard_id: shardId,
+        mc_id: 1,
+        level: 4,
+        grade: 3,
+        cook_num: 1,
+        total_num: left,
+        left_num: left,
+        price: 50,
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    await t.db
+      .updateTable('restaurant')
+      .set({ mc_cook_id: c.id })
+      .where('id', '=', ctx.restaurantId)
+      .execute();
+    return { shardId, ctx, cookId: c.id };
+  }
+  const cookOf = (id: number) =>
+    t.db.selectFrom('mc_cook').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
+
+  it('有在售时按顾客扣份数', async () => {
+    const { shardId, cookId } = await withDish(1000);
+    await settle(shardId);
+    const c = await cookOf(cookId);
+    expect(c.left_num).toBeLessThan(1000);
+    expect(c.ended_at).toBeNull();
+  });
+
+  it('卖完：结束这批（sold）、清空餐厅指针', async () => {
+    const { shardId, ctx, cookId } = await withDish(1);
+    await settle(shardId);
+    const c = await cookOf(cookId);
+    expect(c).toMatchObject({ left_num: 0, end_reason: 'sold' });
+    expect(c.ended_at).not.toBeNull();
+    expect((await restRow(t, ctx.restaurantId)).mc_cook_id).toBeNull();
+  });
+});

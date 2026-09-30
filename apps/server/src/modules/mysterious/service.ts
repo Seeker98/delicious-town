@@ -3,22 +3,36 @@ import {
   buildPool,
   ErrorCode,
   type AppraiseResultDto,
+  type CookResultDto,
   type McCookDto,
   type McOverviewDto,
+  type McPreviewDto,
   type WeightedPool,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
-import { restLog, runOp, type Op, type OpResult } from '../../core/op';
-import { gainCoin } from '../../core/resources';
+import { opNews, restLog, runOp, setRest, type Op, type OpResult } from '../../core/op';
+import { gainCoin, gainExp } from '../../core/resources';
 import type { McCookRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
-import { consumeGoods, grantGoodsOp } from '../store/goods';
+import { foodsMap, subFoods } from '../cupboard/foods';
+import { restPower } from '../equip/power';
+import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
+import { currentCook, endCook } from './cook';
 import { addRemnant, subRemnant } from './remnant';
-import { appraisePick, appraiseRate, LEARN_REMNANTS } from './rules';
+import {
+  addProficiency,
+  appraisePick,
+  appraiseRate,
+  bobChance,
+  cookDish,
+  LEARN_REMNANTS,
+  roadRate,
+  trialRestExp,
+} from './rules';
 
 /** 鉴定失败的文案（规格书 04 §4.3） */
 const FAIL_TEXTS = [
@@ -203,6 +217,143 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           .execute();
         restLog(o, 'mc.learn', { mcId: mc.id, via: 'remnant' });
         return { mcId: mc.id };
+      });
+    },
+
+    async preview(ctx: RestCtx, mcId: number): Promise<McPreviewDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'mysterious');
+      const mc = mcOf(mcId);
+      const rid = ctx.restaurantId;
+      const learned = await d.db
+        .selectFrom('rest_mc')
+        .select('mc_id')
+        .where('rest_id', '=', rid)
+        .where('mc_id', '=', mc.id)
+        .executeTakeFirst();
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select('mc_cook_id')
+        .where('id', '=', rid)
+        .executeTakeFirstOrThrow();
+      const fm = await foodsMap(d.db, rid);
+      const have = (f: number) => fm.get(f)?.num ?? 0;
+      const cookie = await d.db
+        .selectFrom('store_item')
+        .select('num')
+        .where('rest_id', '=', rid)
+        .where('goods_id', '=', GOODS.luckyCookie)
+        .executeTakeFirst();
+      return {
+        mcId: mc.id,
+        learned: learned !== undefined,
+        cooking: rest.mc_cook_id !== null,
+        foods: mc.foods.map((foodsId) => ({ foodsId, have: have(foodsId) })),
+        cookNums: s.tuning.mysterious.cookNums.map((n) => ({ n, ok: mc.foods.every((f) => have(f) >= n) })),
+        cookies: cookie?.num ?? 0,
+      };
+    },
+
+    cook(ctx: RestCtx, b: { mcId: number; cookNum: number; cookie: boolean }) {
+      return op(ctx, 'mc.cook', async (o): Promise<CookResultDto> => {
+        const t = o.tuning.mysterious;
+        const mc = mcOf(b.mcId);
+        if (!t.cookNums.includes(b.cookNum)) throw badInput('cook_num');
+        if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+        const row = await o.tx
+          .selectFrom('rest_mc')
+          .selectAll()
+          .where('rest_id', '=', o.rest.id)
+          .where('mc_id', '=', mc.id)
+          .executeTakeFirst();
+        if (!row) throw invalidState('mc_not_learned');
+        if (o.rest.mc_cook_id !== null) throw invalidState('mc_cooking');
+        const agg = await opAgg(o);
+        const { rate: luck } = await opLuck(o);
+        // 烹饪魔书：随机指定一种非 7 级食材不消耗
+        const normal = mc.foods.filter((f) => o.config.requireFood(f).level < 7);
+        const free = (agg.magicBook ?? 0) > 0 && normal.length > 0 ? normal[o.rng.int(normal.length)]! : null;
+        for (const f of mc.foods) if (f !== free) await subFoods(o, f, b.cookNum);
+        if (b.cookie) await consumeGoods(o, GOODS.luckyCookie, b.cookNum);
+        const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
+        const others = (
+          await o.tx
+            .selectFrom('rest_mc')
+            .select('mc_id')
+            .where('rest_id', '=', o.rest.id)
+            .where('mc_id', '!=', mc.id)
+            .execute()
+        ).flatMap((r) => {
+          const m = o.config.mysterious.get(r.mc_id);
+          return m ? [m] : [];
+        });
+        const out = cookDish(
+          {
+            mc,
+            cookNum: b.cookNum,
+            curlevel: row.curlevel,
+            trialWorth: row.trial_worth,
+            star: o.rest.star_level,
+            luckRate: luck,
+            goldRate: (agg.mcGoldRate ?? 0) + (weather.mcGoldRate ?? 0),
+            numRate: (agg.mcNumRate ?? 0) + (weather.mcNumRate ?? 0),
+            roadRate: roadRate(mc.road, others, t),
+            power: await restPower(o.tx, o.rest, o.config.suits),
+            coinAdd: agg.mcCoinAdd ?? 0,
+            humanSon: await hasValidHonor(o, GOODS.humanSon),
+            cookie: b.cookie,
+          },
+          t,
+          o.rng,
+        );
+        const prof = addProficiency(row.curlevel, row.curexp, out.exp, o.config.mcProficiency);
+        await o.tx
+          .updateTable('rest_mc')
+          .set({ curlevel: prof.curlevel, curexp: prof.curexp })
+          .where('rest_id', '=', o.rest.id)
+          .where('mc_id', '=', mc.id)
+          .execute();
+        if (prof.curlevel > row.curlevel) restLog(o, 'mc.levelUp', { mcId: mc.id, curlevel: prof.curlevel });
+        const restExp = row.trial_exp > 0 ? trialRestExp(out.num, o.rest.level, row.trial_exp) : 0;
+        if (restExp > 0) gainExp(o, restExp);
+        const bob = o.rng.chance(bobChance(mc, b.cookNum, t));
+        if (bob) await grantGoodsOp(o, GOODS.spongeBob, 1);
+        const c = await o.tx
+          .insertInto('mc_cook')
+          .values({
+            rest_id: o.rest.id,
+            shard_id: o.shardId,
+            mc_id: mc.id,
+            level: mc.level,
+            grade: out.grade,
+            cook_num: b.cookNum,
+            total_num: out.num,
+            left_num: out.num,
+            price: out.price,
+            luck: out.luck,
+            created_at: o.now,
+          })
+          .returningAll()
+          .executeTakeFirstOrThrow();
+        setRest(o, 'mc_cook_id', c.id);
+        await emitAction(o, 'mc.cook');
+        opNews(o, 'mc.cook', { mcId: mc.id, grade: out.grade, num: out.num });
+        return {
+          cook: cookDto(c),
+          proficiency: out.exp,
+          curlevel: prof.curlevel,
+          levelUp: prof.curlevel > row.curlevel,
+          bob,
+          restExp,
+        };
+      });
+    },
+
+    dump(ctx: RestCtx) {
+      return op(ctx, 'mc.dump', async (o) => {
+        const c = await currentCook(o);
+        if (!c) throw invalidState('no_cooking');
+        await endCook(o, c.id, 'dumped');
+        return { id: c.id };
       });
     },
   };

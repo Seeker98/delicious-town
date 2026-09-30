@@ -5,6 +5,7 @@ import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
+import { consumeSpecial } from '../mysterious/cook';
 import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
 import type { WorldService } from '../world/service';
@@ -68,6 +69,15 @@ export async function settleOne(
     .where('rest_id', '=', op.rest.id)
     .executeTakeFirstOrThrow();
   const agg = await opAgg(op);
+  // 当前在售的特色菜（规格书 01 §1.7）；没有在售的店不多查
+  const cook =
+    op.rest.mc_cook_id === null
+      ? undefined
+      : await op.tx
+          .selectFrom('mc_cook')
+          .select(['id', 'price', 'level', 'left_num'])
+          .where('id', '=', op.rest.mc_cook_id)
+          .executeTakeFirst();
   let cupboard: Map<number, number> | null = null;
   if (op.rest.cookfoods_flag > 0) {
     const rows = await op.tx
@@ -96,7 +106,8 @@ export async function settleOne(
     levels: new Uint8Array(cb.levels),
     counts: normalizeCounts(op.rest.cookbook_counts),
     agg,
-    special: null,
+    special:
+      cook && cook.left_num > 0 ? { price: cook.price, level: cook.level, leftNum: cook.left_num } : null,
     cupboard,
     now: op.now,
   };
@@ -122,6 +133,7 @@ export async function settleOne(
   }
   for (const f of r.foodsUsed)
     await subFoods(op, f.foodsId, f.num, { source: 'settlement.cookfoods', event: false });
+  if (cook && r.specialUsed > 0) await consumeSpecial(op, cook.id, r.specialUsed, 'sold');
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
   autoRefuel(op, agg);

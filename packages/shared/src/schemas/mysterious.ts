@@ -65,3 +65,30 @@ export interface McOverviewDto {
 export interface AppraiseResultDto {
   results: Array<{ ok: boolean; mcId?: number; num?: number; blessed?: boolean; text?: string }>;
 }
+export const mcCookBody = z.object({
+  mcId: id,
+  cookNum: z.number().int().min(1).max(50),
+  cookie: z.boolean().default(false),
+});
+
+export interface McPreviewDto {
+  mcId: number;
+  learned: boolean;
+  /** 已经有在售的特色菜 */
+  cooking: boolean;
+  foods: Array<{ foodsId: number; have: number }>;
+  cookNums: Array<{ n: number; ok: boolean }>;
+  cookies: number;
+}
+
+export interface CookResultDto {
+  cook: McCookDto;
+  /** 本次增加的熟练度 */
+  proficiency: number;
+  curlevel: number;
+  levelUp: boolean;
+  /** 海绵宝宝点赞 */
+  bob: boolean;
+  /** 试炼经验带来的餐厅经验 */
+  restExp: number;
+}
