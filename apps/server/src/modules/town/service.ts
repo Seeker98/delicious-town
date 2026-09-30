@@ -1,9 +1,10 @@
-import type { NewsPageDto } from '@dt/shared';
+import type { NewsPageDto, NpcKey } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { listNews } from '../news/news';
 import type { WorldService } from '../world/service';
 import { broadcast } from './broadcast';
+import { talk } from './talk';
 
 export function createTownService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -19,6 +20,9 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     broadcast(ctx: RestCtx, b: { text: string }) {
       return op(ctx, 'town.broadcast', (o) => broadcast(o, b.text));
+    },
+    talk(ctx: RestCtx, b: { npc: NpcKey }) {
+      return op(ctx, 'town.talk', (o) => talk(o, b.npc));
     },
   };
 }

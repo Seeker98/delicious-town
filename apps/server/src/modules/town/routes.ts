@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { townBroadcastBody, townNewsQuery } from '@dt/shared';
+import { townBroadcastBody, townNewsQuery, townTalkBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -11,5 +11,6 @@ export function townRoutes(svc: TownService): FastifyPluginAsync {
     r.post('/town/broadcast', async (req) =>
       okOp(await svc.broadcast(restCtxOf(req), parse(townBroadcastBody, req.body))),
     );
+    r.post('/town/talk', async (req) => okOp(await svc.talk(restCtxOf(req), parse(townTalkBody, req.body))));
   };
 }
