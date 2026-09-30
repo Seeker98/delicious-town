@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router';
 import type { DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
+import HomeNews from '../components/town/HomeNews.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
@@ -129,6 +130,7 @@ const QUICK = [
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
 const EFFECT_GROUPS: Array<{ type: string; label: string }> = [
+  { type: 'bless', label: '今日星愿' },
   { type: 'street', label: '街道' },
   { type: 'honor', label: '勋章和宠物' },
   { type: 'device', label: '设施' },
@@ -273,6 +275,8 @@ onBeforeUnmount(() => {
         领奖
       </button>
     </div>
+
+    <HomeNews :headlines="rest.headlines" />
 
     <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
       <div>
