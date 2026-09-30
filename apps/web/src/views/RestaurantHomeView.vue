@@ -122,6 +122,9 @@ onBeforeUnmount(() => {
         <RouterLink to="/shards" class="ms-2">切换区服</RouterLink>
       </span>
     </div>
+    <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
+      <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
+    </div>
     <div class="small text-muted mb-2">
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
       <span v-if="rest.state === 2" class="badge bg-danger ms-1">停业</span>

@@ -1,0 +1,46 @@
+import { flushPromises, mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
+import { createMemoryHistory, createRouter } from 'vue-router';
+import AppHeader from './AppHeader.vue';
+
+const makeRouter = () =>
+  createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/:p(.*)*', component: { template: '<p/>' } }],
+  });
+
+describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主界面）', () => {
+  it('游戏内：店名链接回首页；不在首页时有返回按钮，点了回到上一页', async () => {
+    const router = makeRouter();
+    await router.push('/');
+    await router.push('/society/star');
+    const w = mount(AppHeader, { props: { inGame: true }, global: { plugins: [router] } });
+    expect(w.find('[data-testid="home"]').attributes('href')).toBe('/');
+    await w.find('[data-testid="back"]').trigger('click');
+    await flushPromises();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(router.currentRoute.value.path).toBe('/');
+  });
+
+  it('首页没有返回按钮；没有上一页时返回按钮回首页', async () => {
+    const router = makeRouter();
+    await router.push('/');
+    const w = mount(AppHeader, { props: { inGame: true }, global: { plugins: [router] } });
+    expect(w.find('[data-testid="back"]').exists()).toBe(false);
+    const r2 = makeRouter();
+    await r2.push('/market');
+    const w2 = mount(AppHeader, { props: { inGame: true }, global: { plugins: [r2] } });
+    await w2.find('[data-testid="back"]').trigger('click');
+    await flushPromises();
+    expect(r2.currentRoute.value.path).toBe('/');
+  });
+
+  it('登录、选区服等页面（不在游戏里）只显示文字', async () => {
+    const router = makeRouter();
+    await router.push('/login');
+    const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(w.text()).toContain('美味小镇');
+    expect(w.find('[data-testid="home"]').exists()).toBe(false);
+    expect(w.find('[data-testid="back"]').exists()).toBe(false);
+  });
+});

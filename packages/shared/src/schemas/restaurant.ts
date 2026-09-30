@@ -64,6 +64,8 @@ export interface RestaurantDto {
   lastRound: RoundSummaryDto | null;
   weather: { id: number; name: string } | null;
   isPlanktonHost: boolean;
+  /** 展示中的个性图标 */
+  icons: Array<{ key: string; title: string }>;
   door: number;
   /** null = 没设置头像 */
   avatar: number | null;

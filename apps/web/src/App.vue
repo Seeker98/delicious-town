@@ -2,6 +2,7 @@
 import { computed, onMounted } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { setEventsListener } from './api/client';
+import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
@@ -27,10 +28,7 @@ onMounted(() => {
 
 <template>
   <div :class="['dt-app', { 'dt-app-wide': wide }]">
-    <header class="dt-header d-flex align-items-center px-2">
-      <i class="bi bi-shop me-1"></i>
-      <span class="fw-bold">美味小镇</span>
-    </header>
+    <AppHeader :in-game="inGame" />
     <main :class="['dt-main', { 'dt-main-nav': inGame }]">
       <RouterView />
     </main>
