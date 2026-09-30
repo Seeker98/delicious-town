@@ -75,3 +75,22 @@ describe('好友互动的错误文案', () => {
     expect(errorText('ALREADY_DONE', { what: 'steal' })).toBe('这株你已经偷过了');
   });
 });
+
+describe('厨塔的错误文案', () => {
+  it('按 reason / what 出文案', () => {
+    expect(errorText('INVALID_STATE', { reason: 'floor_locked', minLevel: 11, needFloor: 1 })).toBe(
+      '这一层还没解锁：餐厅等级要够，并且先打赢下一层',
+    );
+    expect(errorText('INVALID_STATE', { reason: 'rank_taken' })).toBe('这个名次已经有人了');
+    expect(errorText('LIMIT_REACHED', { what: 'tower', max: 5 })).toBe(
+      '今天的厨塔挑战次数用完了（5 次），可以在仓库用厨塔挑战券加次数',
+    );
+    expect(errorText('LIMIT_REACHED', { what: 'watchman', max: 1 })).toBe(
+      '他今天已经很累了（每人每天 1 次），明天再来',
+    );
+    expect(errorText('LIMIT_REACHED', { what: 'weekly', max: 10 })).toBe('本周兑换已达上限（10 个）');
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'renown', what: 'duel' })).toBe('声望为负时不能切磋');
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'renown' })).toBe('声望为负时不能点赞');
+    expect(errorText('NOT_ENOUGH', { kind: 'renown', need: 60, have: 50 })).toContain('声望');
+  });
+});

@@ -5,6 +5,7 @@ import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
 import TableGrid from '../components/TableGrid.vue';
+import FriendDuel from '../components/tower/FriendDuel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
@@ -158,6 +159,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         {{ rest.requested ? '已申请' : '加好友' }}
       </button>
     </div>
+    <FriendDuel v-if="rest.isFriend && !rest.npc" :key="restId" :rest-id="restId" class="mb-2" />
 
     <TableGrid :tables="rest.tables" :selected="picked?.no ?? null" @pick="(t) => (picked = t)" />
 

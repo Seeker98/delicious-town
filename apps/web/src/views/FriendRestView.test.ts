@@ -18,6 +18,8 @@ vi.mock('../api/endpoints', () => ({
     friendRefuel: vi.fn(),
     friendRemove: vi.fn(),
     mcTaste: vi.fn(),
+    duelInfo: vi.fn(),
+    friendDuel: vi.fn(),
   },
 }));
 
@@ -74,6 +76,7 @@ describe('FriendRestView', () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
     vi.mocked(endpoints.dineStart).mockResolvedValue({});
     vi.mocked(endpoints.roachKill).mockResolvedValue({ strength: 2, coin: 10, exp: 5, tickets: 0 });
+    vi.mocked(endpoints.duelInfo).mockResolvedValue({ left: 10, spar: 0, strength: 100, duelStrength: 5 });
   });
 
   it('显示公告栏和图标；点空桌可以白食', async () => {
@@ -131,5 +134,13 @@ describe('FriendRestView', () => {
   it('好友页有"去它的菜园"链接', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="to-yard"]').attributes('href')).toBe('/yard?friend=2');
+  });
+
+  it('好友店有"切磋"，蟹老板店没有', async () => {
+    const w = await mountView();
+    expect(w.find('[data-testid="act-duel"]').exists()).toBe(true);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
+    const npc = await mountView();
+    expect(npc.find('[data-testid="act-duel"]').exists()).toBe(false);
   });
 });
