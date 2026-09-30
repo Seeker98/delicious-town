@@ -1,6 +1,8 @@
-import type { RankDto, TowerDto } from '@dt/shared';
+import type { DuelInfoDto, RankDto, TowerDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
+import { runPairOp } from '../../core/pair';
+import { duelInfo, friendDuel } from './friendDuel';
 import { challengeRank, occupyRank, rankView } from './rank';
 import { challengeTower, towerView } from './tower';
 
@@ -27,6 +29,19 @@ export function createTowerService(d: GameDeps) {
     },
     challengeRank(ctx: RestCtx, b: { rank: number }) {
       return op(ctx, 'tower.rank', (o) => challengeRank(o, b.rank));
+    },
+    async duelInfo(ctx: RestCtx, restId: number): Promise<DuelInfoDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'tower');
+      return duelInfo(d.db, await restOf(ctx.restaurantId), restId, s.tuning.tower, d.now());
+    },
+    duel(ctx: RestCtx, b: { restId: number }) {
+      return runPairOp(
+        d,
+        ctx,
+        b.restId,
+        { feature: 'tower', source: 'tower.duel', friend: 'required' },
+        (p) => friendDuel(p),
+      );
     },
   };
 }
