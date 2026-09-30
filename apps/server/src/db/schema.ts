@@ -670,6 +670,62 @@ export interface TowerRankTable {
   rest_id: number;
 }
 
+/** 外卖（子项目 4D）：有这一行 = 已开通 */
+export interface TakeawayStateTable {
+  rest_id: number;
+  /** 可雇骑手上限（含自己） */
+  rider_cap: Default<number>;
+  opened_at: Date;
+}
+
+/** 骑手：rest_id 是雇主，rider_rest_id 是骑手店（自己给自己当骑手时两者相同） */
+export interface TakeawayRiderTable {
+  id: Generated<number>;
+  rest_id: number;
+  rider_rest_id: number;
+  level: Default<number>;
+  /** 当前等级里攒的经验 */
+  exp: Default<number>;
+  hired_at: Date;
+}
+
+/** 外卖单：owner_rest_id 为空是全服公共单，否则是这家店的私人单；state 1 可接、2 配送中、3 完成 */
+export interface TakeawayOrderTable {
+  id: Generated<number>;
+  shard_id: number;
+  owner_rest_id: Nullable<number>;
+  cookbook_id: number;
+  grade: number;
+  need_minutes: number;
+  need_renown: number;
+  state: Default<number>;
+  created_at: Date;
+  expires_at: Date;
+}
+
+/** 一次配送：接单时定下的数值；state 1 配送中、2 成功、3 失败 */
+export interface TakeawayDeliveryTable {
+  id: Generated<number>;
+  order_id: number;
+  rest_id: number;
+  rider_id: number;
+  grade: number;
+  private: boolean;
+  double: boolean;
+  mystery_kinds: number;
+  coin: number;
+  exp: number;
+  renown: number;
+  success_odds: number;
+  started_at: Date;
+  arrive_at: Date;
+  state: Default<number>;
+  drone: Default<boolean>;
+  /** 领取结果（写入传 JSON 字符串） */
+  result: ColumnType<Record<string, unknown> | null, string | null | undefined, string | null>;
+  settled_at: TsNullable;
+}
+
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
@@ -734,6 +790,10 @@ export interface DB {
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
+  takeaway_state: TakeawayStateTable;
+  takeaway_rider: TakeawayRiderTable;
+  takeaway_order: TakeawayOrderTable;
+  takeaway_delivery: TakeawayDeliveryTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
@@ -743,3 +803,7 @@ export type YardLandRow = Selectable<YardLandTable>;
 export type YardPlantRow = Selectable<YardPlantTable>;
 export type BarStateRow = Selectable<BarStateTable>;
 export type TowerStateRow = Selectable<TowerStateTable>;
+export type TakeawayStateRow = Selectable<TakeawayStateTable>;
+export type TakeawayRiderRow = Selectable<TakeawayRiderTable>;
+export type TakeawayOrderRow = Selectable<TakeawayOrderTable>;
+export type TakeawayDeliveryRow = Selectable<TakeawayDeliveryTable>;

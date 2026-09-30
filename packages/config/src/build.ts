@@ -638,6 +638,15 @@ export function buildBundle(src: SourceData): BuildResult {
     if (!goodsIds.has(id)) errors.push(`tuning.tower.rankGifts references unknown goods ${id}`);
   // 厨塔挑战券（GOODS.towerTicket）
   if (!goodsIds.has(136)) errors.push('tower references unknown goods 136');
+  // ---------- 外卖（子项目 4D） ----------
+  for (const [id] of tuning.takeaway.awards)
+    if (!goodsIds.has(id)) errors.push(`tuning.takeaway.awards references unknown goods ${id}`);
+  for (const id of [tuning.takeaway.customer.success, tuning.takeaway.customer.fail])
+    if (!goodsIds.has(id)) errors.push(`tuning.takeaway.customer references unknown goods ${id}`);
+  // 外卖券、商店工作证（GOODS.takeawayTicket / shopJobHonor）
+  for (const id of [263, 108]) if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);
+  if (Math.abs(tuning.takeaway.gradeRates.reduce((s, x) => s + x, 0) - 1) > 1e-9)
+    errors.push('tuning.takeaway.gradeRates must sum to 1');
   for (const e of goodsExRaw) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
     for (const n of e.needGoods) {

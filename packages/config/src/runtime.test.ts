@@ -198,3 +198,28 @@ describe('厨塔索引（子项目 4C-2）', () => {
     });
   });
 });
+
+describe('外卖数值（子项目 4D）', () => {
+  it('tuning.takeaway', () => {
+    expect(config.tuning.takeaway).toMatchObject({
+      openStar: 2,
+      openRenown: 888,
+      openCoin: 8_880_000,
+      openDiamond: 300,
+      refreshNum: 15,
+      refreshCoin: 1_000_000,
+      refreshRenown: 160,
+      gradeRates: [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
+      customer: { base: 0.015, luckDiv: 50, success: 265, fail: 266 },
+      rider: { maxLevel: 50, capLevels: [2, 5, 8], oddsBase: 800, oddsMax: 950 },
+      awards: [
+        [1, 56, 0],
+        [170, 30, 0.2],
+        [240, 8, 0.5],
+        [171, 6, 0.5],
+        [172, 2, 0.8],
+        [310, 1, 1],
+      ],
+    });
+  });
+});

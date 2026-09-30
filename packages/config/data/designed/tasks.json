@@ -629,7 +629,7 @@
     "coin": 80000,
     "exp": 8000
    },
-   "href": "/town/takeaway"
+   "href": "/takeaway"
   },
   {
    "id": 35,
@@ -651,7 +651,7 @@
      }
     ]
    },
-   "href": "/town/takeaway"
+   "href": "/takeaway"
   },
   {
    "id": 36,
@@ -1289,7 +1289,7 @@
      }
     ]
    },
-   "href": "/town/takeaway"
+   "href": "/takeaway"
   }
  ]
 }

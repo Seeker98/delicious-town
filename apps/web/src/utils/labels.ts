@@ -78,3 +78,6 @@ export const ATTR_NAMES: Record<string, string> = {
 
 /** 特色菜的道（规格书 04 §4.1） */
 export const ROAD_NAMES = ['', '一道', '二道', '三道', '四道', '五道', '六道', '兽'];
+
+/** 外卖单品级（下标 = 品级，规格书 14.2） */
+export const TAKEAWAY_GRADES = ['', '普通', '中品', '上品', '极品', '金牌', '珍品', '佳肴'];

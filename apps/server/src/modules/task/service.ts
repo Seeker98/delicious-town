@@ -60,6 +60,11 @@ export function createTaskService(d: GameDeps) {
     const pots = (await listActiveEffects(db, rest.id, d.now())).filter(
       (s) => s.sourceType === 'honor' && d.config.goods.get(s.sourceId)?.deviceType === DEVICE_TYPE.pot,
     ).length;
+    const takeaway = await db
+      .selectFrom('takeaway_state')
+      .select('rest_id')
+      .where('rest_id', '=', rest.id)
+      .executeTakeFirst();
     const extra = {
       'friends.count': Number(friends.n),
       'rest.thumbs': counters.get('thumbs.received') ?? 0,
@@ -67,6 +72,7 @@ export function createTaskService(d: GameDeps) {
       'mc.learned': Number(mcLearned.n),
       'yard.lands': Number(lands.n),
       'honor.potCount': pots,
+      'takeaway.open': takeaway ? 1 : 0,
     };
     const progressOf = (t: Task) =>
       t.cond.kind === 'counter'

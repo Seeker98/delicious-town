@@ -94,3 +94,16 @@ describe('厨塔的错误文案', () => {
     expect(errorText('NOT_ENOUGH', { kind: 'renown', need: 60, have: 50 })).toContain('声望');
   });
 });
+
+describe('外卖的错误文案', () => {
+  it('按 reason / what 出文案', () => {
+    expect(errorText('INVALID_STATE', { reason: 'order_taken' })).toBe('这张单已经被别人接走了');
+    expect(errorText('INVALID_STATE', { reason: 'rider_hired' })).toBe('他已经被别人雇为骑手了');
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'double' })).toBe('持有"使命必达"才能加料');
+    expect(errorText('LIMIT_REACHED', { what: 'rider_busy', max: 2 })).toBe(
+      '这个骑手同时送的单已经满了（2 单）',
+    );
+    expect(errorText('LIMIT_REACHED', { what: 'riders', max: 1 })).toBe('骑手已经满员了（1 个）');
+    expect(errorText('ALREADY_DONE', { what: 'takeaway' })).toBe('已经开通外卖了');
+  });
+});

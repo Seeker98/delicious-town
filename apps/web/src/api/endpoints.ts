@@ -86,6 +86,10 @@ import type {
   RankDto,
   RenownShopDto,
   TowerDto,
+  RiderCandidateDto,
+  TakeawayClaimDto,
+  TakeawayDeliveryDto,
+  TakeawayDto,
 } from '@dt/shared';
 import { api } from './client';
 
@@ -323,4 +327,16 @@ export const endpoints = {
   renownShop: () => api.get<RenownShopDto>('/api/v1/tower/shop'),
   renownBuy: (goodsId: number, num: number) =>
     api.post<{ renown: number }>('/api/v1/tower/shop/buy', { goodsId, num }),
+  takeaway: () => api.get<TakeawayDto>('/api/v1/takeaway'),
+  takeawayOpen: (way: 'ticket' | 'coin') => api.post<{ opened: true }>('/api/v1/takeaway/open', { way }),
+  takeawayRefresh: () => api.post<{ created: number }>('/api/v1/takeaway/refresh'),
+  takeawayDeliver: (orderId: number, riderId: number, double: boolean) =>
+    api.post<TakeawayDeliveryDto>('/api/v1/takeaway/deliver', { orderId, riderId, double }),
+  takeawayClaim: (deliveryId: number, drone: boolean) =>
+    api.post<TakeawayClaimDto>('/api/v1/takeaway/claim', { deliveryId, drone }),
+  takeawayClaimAll: () => api.post<TakeawayClaimDto[]>('/api/v1/takeaway/claim-all'),
+  takeawayCandidates: () => api.get<RiderCandidateDto[]>('/api/v1/takeaway/candidates'),
+  takeawayHire: (restId: number) => api.post<{ riderId: number }>('/api/v1/takeaway/hire', { restId }),
+  takeawayDismiss: (riderId: number) =>
+    api.post<{ coin: number; exp: number }>('/api/v1/takeaway/dismiss', { riderId }),
 };

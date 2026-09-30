@@ -94,6 +94,9 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
         ? '声望为负时不能点赞'
         : `声望不够（偷菜要 ${String(p.need)} 点声望）`,
   mc_count: (p) => `学会的特色菜不够（需要 ${String(p.need)} 道）`,
+  not_learned: () => '还没学会这道菜',
+  double: () => '持有"使命必达"才能加料',
+  job_honor: () => '持有有效的商店工作证才能刷新',
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -119,6 +122,8 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   lesson_full: () => '这门课人满了',
   lesson_open: () => '你已经有一门进行中的课了',
   lands: (p) => `最多开垦 ${String(p.max)} 块地`,
+  rider_busy: (p) => `这个骑手同时送的单已经满了（${String(p.max)} 单）`,
+  riders: (p) => `骑手已经满员了（${String(p.max)} 个）`,
   tower: (p) => `今天的厨塔挑战次数用完了（${String(p.max)} 次），可以在仓库用厨塔挑战券加次数`,
   watchman: (p) => `他今天已经很累了（每人每天 ${String(p.max)} 次），明天再来`,
   rank: (p) => `今天的赛厨榜挑战次数用完了（${String(p.max)} 次）`,
@@ -226,6 +231,15 @@ const STATE: Record<string, string> = {
   formula_learned: '已经学会这个配方了',
   seed_shop_closed: '种子商店暂未开放',
   seed_not_sold: '神秘种子不卖，只能兑换或投喂克拉肯得到',
+  takeaway_closed: '还没开通外卖',
+  order_gone: '这张外卖单已经没有了',
+  order_taken: '这张单已经被别人接走了',
+  rider_gone: '没有这个骑手',
+  delivery_gone: '这一单已经领过了',
+  not_arrived: '还没送到，可以用无人机立即送达',
+  rider_hired: '他已经被别人雇为骑手了',
+  rider_self: '不能解雇自己',
+  rider_delivering: '这个骑手正在配送，送完再解雇',
   floor_locked: '这一层还没解锁：餐厅等级要够，并且先打赢下一层',
   tower_night: '4 层以上 6 点以后才能挑战',
   rank_taken: '这个名次已经有人了',
@@ -242,6 +256,7 @@ const ALREADY: Record<string, string> = {
   taste: '这一批特色菜你已经吃过了',
   lesson: '这门课你已经试过了',
   steal: '这株你已经偷过了',
+  takeaway: '已经开通外卖了',
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {

@@ -20,9 +20,11 @@ import { createMysteriousService, type MysteriousService } from './modules/myste
 import { createTempleService, type TempleService } from './modules/temple/service';
 import { yardJobs } from './modules/yard/jobs';
 import { towerJobs } from './modules/tower/jobs';
+import { takeawayJobs } from './modules/takeaway/jobs';
 import { createYardService, type YardService } from './modules/yard/service';
 import { createBarService, type BarService } from './modules/bar/service';
 import { createTowerService, type TowerService } from './modules/tower/service';
+import { createTakeawayService, type TakeawayService } from './modules/takeaway/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -56,6 +58,7 @@ export interface Game {
   yard: YardService;
   bar: BarService;
   tower: TowerService;
+  takeaway: TakeawayService;
   jobs: PeriodicJob[];
 }
 
@@ -87,6 +90,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));
+  jobs.push(...takeawayJobs(deps));
   return {
     app,
     deps,
@@ -104,6 +108,7 @@ export function createGame(app: AppDeps): Game {
     yard: createYardService(deps),
     bar: createBarService(deps),
     tower: createTowerService(deps),
+    takeaway: createTakeawayService(deps, world),
     shop,
     market,
     task: createTaskService(deps),
