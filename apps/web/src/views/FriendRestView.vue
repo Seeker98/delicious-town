@@ -6,12 +6,15 @@ import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
 import TableGrid from '../components/TableGrid.vue';
 import { errorMessage } from '../i18n/zh-CN';
+import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
+import { PART_NAMES } from '../utils/labels';
 
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const catalog = useCatalogStore();
 const session = useSessionStore();
 const restId = computed(() => Number(route.params.restId));
 const rest = ref<FriendRestDto | null>(null);
@@ -91,6 +94,12 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     </div>
     <div v-if="rest.icons.length > 0" class="mb-2">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
+    </div>
+    <div v-if="rest.equips.length > 0" class="small mb-2" data-testid="friend-equips">
+      厨具：
+      <span v-for="e in rest.equips" :key="e.part" class="me-2">
+        {{ PART_NAMES[e.part] }} {{ catalog.goodsName(e.goodsId) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
+      </span>
     </div>
     <div v-if="rest.notice" class="border rounded p-2 mb-2 small" style="white-space: pre-wrap">
       {{ rest.notice }}
