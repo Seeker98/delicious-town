@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { exploreBody, missileBody } from '@dt/shared';
+import { exploreBody, missileBody, trialPrepareBody, trialRefreshBody, trialStartBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
