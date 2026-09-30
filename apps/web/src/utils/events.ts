@@ -1,4 +1,5 @@
 import type { GameEvent, RestLogDto } from '@dt/shared';
+import { describeFeed } from './feed';
 import { formatNum } from './format';
 
 export interface Names {
@@ -85,7 +86,16 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   },
 };
 
+/** 个人日志；好友对我做的操作（好友动态类型）用动态的文案，没有文案时显示类型名 */
 export function logText(l: RestLogDto, names: Names): string {
   const f = LOGS[l.type];
-  return f ? f(l.params, names) : l.type;
+  return f ? f(l.params, names) : describeFeed(l, (id) => names.foodName(id));
+}
+
+/** 流水（道具流水页）的名称 */
+export function recordLabel(r: { kind: string; itemId: number | null }, names: Names): string {
+  if (r.kind === 'goods') return names.goodsName(r.itemId ?? 0);
+  if (r.kind === 'foods') return names.foodName(r.itemId ?? 0);
+  if (r.kind === 'remnant') return `${mcNameOf(names, r.itemId ?? 0)}残卷`;
+  return KIND_NAMES[r.kind] ?? r.kind;
 }

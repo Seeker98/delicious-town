@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { recordLabel } from '../utils/events';
 import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
@@ -56,12 +57,7 @@ const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it
 const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
 const expires = (at: string | null) =>
   at ? `剩余 ${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时` : '';
-const recordName = (r: LedgerRecordDto) =>
-  r.kind === 'goods'
-    ? catalog.goodsName(r.itemId ?? 0)
-    : r.kind === 'foods'
-      ? catalog.foodName(r.itemId ?? 0)
-      : r.kind;
+const recordName = (r: LedgerRecordDto) => recordLabel(r, catalog);
 
 watch(type, () => void load());
 watch(range, () => void loadRecords());
