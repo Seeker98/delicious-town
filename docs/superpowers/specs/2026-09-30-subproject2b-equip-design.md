@@ -4,7 +4,7 @@
 - 状态：待审阅
 - 上位文档：`2026-09-29-rewrite-architecture-design.md`（架构文档）、`2026-09-29-subproject2a-business-loop-design.md`（2A 设计）
 - 游戏规则依据：`../analysis/spec/` 的 00 §0.5~0.6、02 §2.3、07 §7.6~7.7、20 §20.15/§20.18（下文简称"规格书 xx"），以及 `backend_src` 原版源码（`StoreTranServiceImpl`、`RestServiceImpl`、`RestTranServiceImpl`、`Tools.createEquipForStore` / `stressUpEquip`、实体 `DtRestEquip`）
-- 分支：`feat/equip`，基于 `main`
+- 分支：`feat/equip`，基于 `fix/playtest-1`（PR #6）
 
 ## 1. 目标与范围
 
@@ -140,7 +140,7 @@
 
 ## 4. 数据模型
 
-### 4.1 新表（迁移 0005）
+### 4.1 新表（迁移 0006）
 
 | 表 | 列 |
 |---|---|
