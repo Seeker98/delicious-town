@@ -171,3 +171,21 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* 食谱列表的紧凑卡片（问题记录：信息密度低） */
+.dt-cb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 3px 8px;
+  margin-bottom: 3px;
+}
+.dt-cb-foods {
+  font-size: 12px;
+}
+.dt-btn-xs {
+  padding: 1px 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
