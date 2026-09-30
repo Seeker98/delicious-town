@@ -90,28 +90,30 @@ onMounted(async () => {
     本街已学 {{ list.streetLearned }}/{{ list.streetTotal }} · 共学会 {{ formatNum(list.learned) }} /
     {{ formatNum(list.allTotal) }} 道
   </div>
-  <div v-for="r in list?.items ?? []" :key="r.id" class="border rounded p-2 mb-1 small">
-    <div class="d-flex align-items-center">
-      <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{ r.name }}</RouterLink>
-      <span class="dt-tag ms-2">{{ GRADE_NAMES[r.grade] }}</span>
-      <button
-        class="btn btn-sm btn-primary ms-auto"
-        :data-testid="`learn-${r.id}`"
-        :disabled="busy || r.learn === 'z' || r.learn === 'max'"
-        @click="learn(r.id)"
-      >
-        {{ learnLabel(r) }}
-      </button>
+  <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
+    <div class="flex-fill" style="min-width: 0">
+      <div class="text-truncate">
+        <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{ r.name }}</RouterLink>
+        <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
+      </div>
+      <div v-if="r.next" class="dt-cb-foods">
+        <span
+          v-for="f in r.next"
+          :key="f.foodsId"
+          :class="['me-2', f.have >= f.num ? 'text-success' : 'text-danger']"
+        >
+          {{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}
+        </span>
+      </div>
     </div>
-    <div v-if="r.next" class="mt-1">
-      <span
-        v-for="f in r.next"
-        :key="f.foodsId"
-        :class="['me-2', f.have >= f.num ? 'text-success' : 'text-danger']"
-      >
-        {{ catalog.foodName(f.foodsId) }} {{ f.have }}/{{ f.num }}
-      </span>
-    </div>
+    <button
+      class="btn btn-primary dt-btn-xs"
+      :data-testid="`learn-${r.id}`"
+      :disabled="busy || r.learn === 'z' || r.learn === 'max'"
+      @click="learn(r.id)"
+    >
+      {{ learnLabel(r) }}
+    </button>
   </div>
   <div v-if="list && list.total > list.pageSize" class="d-flex justify-content-between mt-2">
     <button class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="page -= 1">上一页</button>

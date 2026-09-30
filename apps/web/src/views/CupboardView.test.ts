@@ -122,4 +122,33 @@ describe('CupboardView', () => {
     await w2.find('[data-testid="level-all"]').trigger('click');
     expect(w2.find('[data-testid="pick-101"]').exists()).toBe(true);
   });
+  it('方块统一两行：没有"本街还需"的第二行也占位（问题记录：方块高度不一）', async () => {
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      slotsUsed: 2,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      foodsMaxNum: 999,
+      targetGrade: 5,
+      fridgeCount: 0,
+      fridgeUnread: false,
+      freeHandleLeft: 20,
+      handleMax: 100,
+      items: [
+        { foodsId: 302, num: 4, locked: false, streetNeed: 3 },
+        { foodsId: 101, num: 9, locked: false, streetNeed: 0 },
+      ],
+    });
+    const w = mount(CupboardView);
+    await flushPromises();
+    for (const id of [302, 101]) {
+      const tile = w.find(`[data-testid="pick-${id}"]`);
+      expect(tile.classes()).toContain('dt-tile');
+      expect(tile.find('.dt-tile-sub').exists()).toBe(true);
+    }
+    expect(w.find('[data-testid="pick-302"] .dt-tile-sub').text()).toBe('本街还需 3');
+    expect(w.find('[data-testid="pick-101"] .dt-tile-sub').text()).toBe('');
+    // 名字太长时只截名字，数量总是显示
+    expect(w.find('[data-testid="pick-101"] .dt-tile-num').text()).toBe('×9');
+  });
 });

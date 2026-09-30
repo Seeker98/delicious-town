@@ -24,3 +24,20 @@ export function describeEffects(effects: Record<string, number>): string {
   }
   return parts.join(' ');
 }
+
+/** 越低越好的键（挑剔率、耗油） */
+const LOWER_IS_BETTER: ReadonlySet<string> = new Set(['spRate', 'oilRate', 'oilValue']);
+
+/** 每项一个标签：good 表示对玩家有利（问题记录：生效的加成展示凌乱） */
+export function effectChips(effects: Record<string, number>): Array<{ text: string; good: boolean }> {
+  const out: Array<{ text: string; good: boolean }> = [];
+  for (const [key, label, kind] of LABELS) {
+    const v = effects[key];
+    if (v === undefined) continue;
+    out.push({
+      text: kind === 'rate' ? `${label}${signed(Math.round(v * 1000) / 10)}%` : `${label}${signed(v)}`,
+      good: LOWER_IS_BETTER.has(key) ? v < 0 : v > 0,
+    });
+  }
+  return out;
+}

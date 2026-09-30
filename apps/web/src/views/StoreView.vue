@@ -91,47 +91,53 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
     <div
       v-for="it in data.items"
       :key="it.goodsId"
-      class="d-flex align-items-center gap-1 border-bottom py-1 small"
+      class="dt-row d-flex align-items-center gap-1 border-bottom py-1 small"
     >
-      <div class="flex-fill">
-        <b>{{ catalog.goodsName(it.goodsId) }}</b> ×{{ formatNum(it.num) }}
-        <span class="text-muted">{{ expires(it.expiresAt) }}</span>
+      <div class="flex-fill" style="min-width: 0">
+        <!-- 只截名字，数量总是显示；剩余时间放第二行（审查） -->
+        <div class="d-flex gap-1">
+          <b class="text-truncate">{{ catalog.goodsName(it.goodsId) }}</b>
+          <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+        </div>
+        <div v-if="it.expiresAt" class="text-muted" style="font-size: 11px">{{ expires(it.expiresAt) }}</div>
       </div>
-      <input
-        v-if="it.batch || it.sellPrice !== null"
-        v-model.number="qty[it.goodsId]"
-        type="number"
-        min="1"
-        :max="it.num"
-        class="form-control form-control-sm"
-        style="width: 60px"
-      />
-      <span v-if="it.usable && it.maxUse === 0" class="text-danger">已达上限</span>
-      <span v-else-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
-      <button
-        v-if="it.usable"
-        class="btn btn-sm btn-primary"
-        :disabled="busy || it.maxUse === 0"
-        @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
-      >
-        {{ it.batch ? `使用 ×${useN(it)}` : '使用' }}
-      </button>
-      <button
-        v-if="it.sellPrice !== null"
-        class="btn btn-sm btn-outline-secondary"
-        :disabled="busy"
-        @click="run(() => endpoints.sell(it.goodsId, sellN(it)), '出售失败')"
-      >
-        卖 {{ formatNum(it.sellPrice * sellN(it)) }}
-      </button>
-      <button
-        v-if="it.goodsId === 87"
-        class="btn btn-sm btn-outline-danger"
-        :disabled="busy"
-        @click="run(() => endpoints.discard(87), '丢弃失败')"
-      >
-        丢弃
-      </button>
+      <div class="dt-row-actions">
+        <input
+          v-if="it.batch || it.sellPrice !== null"
+          v-model.number="qty[it.goodsId]"
+          type="number"
+          min="1"
+          :max="it.num"
+          class="form-control form-control-sm"
+          style="width: 60px"
+        />
+        <span v-if="it.usable && it.maxUse === 0" class="text-danger">已达上限</span>
+        <span v-else-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
+        <button
+          v-if="it.usable"
+          class="btn btn-sm btn-primary"
+          :disabled="busy || it.maxUse === 0"
+          @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
+        >
+          {{ it.batch ? `使用 ×${useN(it)}` : '使用' }}
+        </button>
+        <button
+          v-if="it.sellPrice !== null"
+          class="btn btn-sm btn-outline-secondary"
+          :disabled="busy"
+          @click="run(() => endpoints.sell(it.goodsId, sellN(it)), '出售失败')"
+        >
+          卖 {{ formatNum(it.sellPrice * sellN(it)) }}
+        </button>
+        <button
+          v-if="it.goodsId === 87"
+          class="btn btn-sm btn-outline-danger"
+          :disabled="busy"
+          @click="run(() => endpoints.discard(87), '丢弃失败')"
+        >
+          丢弃
+        </button>
+      </div>
     </div>
   </template>
   <template v-if="tab === 'records'">

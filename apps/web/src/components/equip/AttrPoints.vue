@@ -9,7 +9,8 @@ import { useToastStore } from '../../stores/toast';
 const emit = defineEmits<{ done: [] }>();
 const store = useRestaurantStore();
 const toast = useToastStore();
-const add = reactive({ cook: 0, cutting: 0, fire: 0 });
+/** 输入框默认留空（问题记录：显示 0 时看不出是哪一项） */
+const add = reactive<Record<'cook' | 'cutting' | 'fire', number | ''>>({ cook: '', cutting: '', fire: '' });
 const busy = ref(false);
 const left = computed(() => store.rest?.attrLeft ?? 0);
 /** 清空的输入框（v-model.number 给空串）按 0 算 */
@@ -24,12 +25,18 @@ const FIELDS = [
   { key: 'cutting', label: '刀工' },
   { key: 'fire', label: '火候' },
 ] as const;
+/** 加点前的数值，和加完后的预览 */
+const base = (k: (typeof FIELDS)[number]['key']) => store.rest?.attrs[k] ?? 0;
+const preview = (k: (typeof FIELDS)[number]['key']) => {
+  const n = num(add[k]);
+  return n > 0 ? `${base(k)} → ${base(k) + n}` : String(base(k));
+};
 
 async function allocate() {
   busy.value = true;
   try {
     await endpoints.allocate(points());
-    add.cook = add.cutting = add.fire = 0;
+    add.cook = add.cutting = add.fire = '';
     await store.refresh();
     emit('done');
   } catch (e) {
@@ -46,14 +53,18 @@ onMounted(() => store.refresh().catch(() => undefined));
     <b data-testid="attr-left">剩余点数 {{ left }}</b>
     <div class="row g-1 mt-1">
       <div v-for="f in FIELDS" :key="f.key" class="col-4">
+        <div class="fw-bold" :data-testid="`label-${f.key}`">{{ f.label }}</div>
         <input
           v-model.number="add[f.key]"
           type="number"
           min="0"
           class="form-control form-control-sm"
-          :placeholder="f.label"
+          placeholder="0"
           :data-testid="`add-${f.key}`"
         />
+        <div class="text-muted" style="font-size: 11px" :data-testid="`preview-${f.key}`">
+          {{ preview(f.key) }}
+        </div>
       </div>
       <div class="col-12">
         <button
