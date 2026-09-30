@@ -5,15 +5,16 @@ import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op'
 import { withRestaurants } from '../../db/tx';
 import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
+import type { HammerPick } from '../world/rules';
 import type { WorldService } from '../world/service';
 import { broadcast } from './broadcast';
+import { useHammer } from './hammer';
 import { shake } from './shake';
 import { talk } from './talk';
 
 export function createTownService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
     runOp(d, ctx, { feature: 'town', source }, fn);
-  void world;
 
   return {
     async news(ctx: RestCtx, q: { before?: number }): Promise<NewsPageDto> {
@@ -27,6 +28,12 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     talk(ctx: RestCtx, b: { npc: NpcKey }) {
       return op(ctx, 'town.talk', (o) => talk(o, b.npc));
+    },
+    hammer(ctx: RestCtx, pick: HammerPick) {
+      return op(ctx, 'town.hammer', async (o) => {
+        await world.ensure(o.shardId, o.now, o.tx);
+        return useHammer(o, pick);
+      });
     },
     /** 和蟹老板店一起按店号顺序加锁（计划裁定：避免和好友互动的锁顺序相反） */
     async shake(ctx: RestCtx): Promise<OpResult<ShakeResultDto>> {
