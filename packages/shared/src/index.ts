@@ -18,3 +18,4 @@ export * from './schemas/market';
 export * from './schemas/task';
 export * from './schemas/admin';
 export * from './schemas/friend';
+export * from './schemas/equip';

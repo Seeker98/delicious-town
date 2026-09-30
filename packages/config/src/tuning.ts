@@ -225,6 +225,28 @@ export const tuningSchema = z.object({
       restockNum: int.min(1),
     }),
   }),
+  equip: z.object({
+    maxStress: int.min(1),
+    baseRate: num,
+    ratePerStress: num,
+    /** 连续失败每次加的成功率（保底） */
+    floorPerFail: num,
+    coinPerEssence: int,
+    /** 强化到这一级起发新闻 */
+    newsFromStress: int,
+    gemBaseRate: num,
+    gemRatePerLevel: num,
+    gemExpPerLevel: int,
+    /** 升阶成功得到的宝石阶数大于它时发新闻 */
+    gemNewsLevel: int,
+    /** 下一阶不小于它且有失败时发新闻 */
+    gemBrokenNewsLevel: int,
+    ungemCoinPerLevel: int,
+    /** 从这个星级起摘除宝石要花银币 */
+    ungemMinStar: int,
+    maxPresets: int.min(1),
+    historyLimit: int.min(1),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

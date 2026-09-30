@@ -65,6 +65,15 @@ describe('玩家查询', () => {
     expect(rest.owner).toEqual({ accountId: p.accountId, username: p.username });
     expect(typeof rest.shardName).toBe('string');
     expect(Array.isArray(rest.store)).toBe(true);
+    // 厨具不在仓库表里：后台要能看到（终审 Important 1）
+    await ctx.deps.db
+      .insertInto('equip')
+      .values({ rest_id: p.restId, goods_id: 30, part: 1, stress: 2, worn: true })
+      .execute();
+    const rest2 = (await get(mod.cookie, `/restaurants/${p.restId}`)).json.data;
+    expect(rest2.equips).toEqual([
+      expect.objectContaining({ goodsId: 30, part: 1, stress: 2, worn: true, locked: false, gems: 0 }),
+    ]);
     const ledger = (await get(mod.cookie, `/restaurants/${p.restId}/ledger?kind=goods`)).json.data;
     expect(ledger.items).toEqual([expect.objectContaining({ kind: 'goods', itemId: 1, source: 'y' })]);
     expect((await get(mod.cookie, '/players/999999999')).status).toBe(404);

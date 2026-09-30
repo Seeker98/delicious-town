@@ -12,6 +12,7 @@ vi.mock('../api/endpoints', () => ({
 const data: StoreDto = {
   kinds: 1,
   storeNum: 20,
+  equips: 0,
   items: [{ goodsId: 85, num: 150, expiresAt: null, usable: true, batch: true, maxUse: 99, sellPrice: null }],
 };
 

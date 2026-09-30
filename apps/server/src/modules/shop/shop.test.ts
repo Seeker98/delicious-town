@@ -51,7 +51,14 @@ describe('每日特价（规格书 06 §6.5、20 §20.9）', () => {
     const g = config.requireGoods(sp.goodsId);
     expect(sp.price).toBe(Math.ceil(g.coin * sp.discount));
     await shop().buySpecial(ctx, { num: 1 });
-    expect(await goodsNum(t, ctx.restaurantId, sp.goodsId)).toBeGreaterThanOrEqual(1);
+    // 厨具买到后是实例（子项目 2B），不在仓库表里
+    const pieces = await t.db
+      .selectFrom('equip')
+      .select('id')
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('goods_id', '=', sp.goodsId)
+      .execute();
+    expect((await goodsNum(t, ctx.restaurantId, sp.goodsId)) + pieces.length).toBeGreaterThanOrEqual(1);
     await t.db
       .updateTable('shop_special')
       .set({ sold: sp.stock })

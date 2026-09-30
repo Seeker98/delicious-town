@@ -42,6 +42,7 @@ const detail = (patch: Partial<FriendRestDto> = {}): FriendRestDto => ({
     { no: 2, floor: 1, customer: 3, roach: true, roachBy: null },
   ],
   thumbedToday: false,
+  equips: [],
   ...patch,
 });
 
@@ -96,5 +97,14 @@ describe('FriendRestView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="add-friend"]').exists()).toBe(true);
     expect(w.find('[data-testid="act-bar"]').exists()).toBe(false);
+  });
+
+  it('显示对方穿着的厨具', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({ equips: [{ part: 1, goodsId: 30, stress: 3 }] }),
+    );
+    const w = await mountView();
+    expect(w.find('[data-testid="friend-equips"]').text()).toContain('铲');
+    expect(w.find('[data-testid="friend-equips"]').text()).toContain('+3');
   });
 });

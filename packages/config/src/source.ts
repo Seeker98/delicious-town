@@ -33,6 +33,7 @@ export const SOURCE_FILES = [
   'designed/bless',
   'designed/shop_special_rate',
   'designed/shop_pools',
+  'designed/equip_suits',
   'game/tuning',
   'game/holidays',
   'game/market_guess_award',

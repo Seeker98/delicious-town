@@ -400,6 +400,68 @@ export interface RestIconTable {
   granted_by: Nullable<number>;
 }
 
+type AttrCols<P extends string> = {
+  [K in `${P}${'cook' | 'cutting' | 'fire' | 'season' | 'creatives' | 'luck'}`]: Default<number>;
+};
+
+/** 厨具实例（子项目 2B）：base_ 为生成时的属性，st_ 为强化累计增量 */
+export type EquipTable = {
+  id: Generated<number>;
+  rest_id: number;
+  goods_id: number;
+  /** 1 铲 2 刀 3 锅 4 瓶 5 帽 */
+  part: number;
+  suit_id: Default<number>;
+  min_level: Default<number>;
+  cur_hole: Default<number>;
+  max_hole: Default<number>;
+  stress: Default<number>;
+  fail_streak: Default<number>;
+  locked: Default<boolean>;
+  worn: Default<boolean>;
+  acquired_at: TsDefault;
+} & AttrCols<'base_'> &
+  AttrCols<'st_'>;
+
+export type EquipGemTable = {
+  id: Generated<number>;
+  equip_id: number;
+  rest_id: number;
+  gem_goods_id: number;
+  level: number;
+  created_at: TsDefault;
+} & AttrCols<''>;
+
+export interface EquipStressLogTable {
+  id: Generated<number>;
+  equip_id: number;
+  rest_id: number;
+  /** 这次尝试的目标等级 */
+  stress: number;
+  success: boolean;
+  attr: Nullable<string>;
+  val: Default<number>;
+  lucky: Default<boolean>;
+  floor: Default<boolean>;
+  stone: Default<boolean>;
+  created_at: TsDefault;
+}
+
+export interface EquipPresetTable {
+  id: Generated<number>;
+  rest_id: number;
+  name: string;
+  part1: Nullable<number>;
+  part2: Nullable<number>;
+  part3: Nullable<number>;
+  part4: Nullable<number>;
+  part5: Nullable<number>;
+  created_at: TsDefault;
+}
+
+export type EquipRow = Selectable<EquipTable>;
+export type EquipGemRow = Selectable<EquipGemTable>;
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -437,6 +499,10 @@ export interface DB {
   thumb: ThumbTable;
   rest_icon: RestIconTable;
   npc_invite: NpcInviteTable;
+  equip: EquipTable;
+  equip_gem: EquipGemTable;
+  equip_stress_log: EquipStressLogTable;
+  equip_preset: EquipPresetTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;

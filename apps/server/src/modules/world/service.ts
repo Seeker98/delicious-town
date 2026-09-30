@@ -142,6 +142,18 @@ export function createWorldService(d: GameDeps) {
           coin: g.coin,
           diamond: g.diamond,
           stackable: g.stackable,
+          ...(g.equip
+            ? {
+                equip: {
+                  part: g.equip.part,
+                  minLevel: g.equip.minLevel,
+                  suitId: g.equip.suitId,
+                  essence: g.equip.essence,
+                  maxHole: g.equip.maxHole,
+                },
+              }
+            : {}),
+          ...(g.gem ? { gem: { level: g.gem.level, nextId: g.gem.nextId } } : {}),
         })),
         foods: d.config.bundle.foods.map((f) => ({
           id: f.id,
@@ -160,6 +172,12 @@ export function createWorldService(d: GameDeps) {
           needStar: x.needStar,
         })),
         looks: d.config.bundle.looks,
+        suits: d.config.bundle.suits.map((s) => ({
+          id: s.id,
+          name: s.name,
+          maxNum: s.maxNum,
+          tiers: s.tiers.map((x) => ({ need: x.need, desc: x.desc })),
+        })),
       };
       return catalog;
     },

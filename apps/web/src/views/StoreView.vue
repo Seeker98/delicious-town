@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { LedgerRecordDto, StoreDto, StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
@@ -87,6 +88,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
         <option v-for="t in TYPES" :key="t.label" :value="t.v">{{ t.label }}</option>
       </select>
       <span class="ms-auto text-muted">已用 {{ data.kinds }}/{{ data.storeNum }} 种</span>
+    </div>
+    <div v-if="data.equips > 0" class="small text-muted mb-2">
+      另有 {{ data.equips }} 件厨具在 <RouterLink to="/rest/equip">厨具页</RouterLink>（每件占一格）
     </div>
     <div
       v-for="it in data.items"

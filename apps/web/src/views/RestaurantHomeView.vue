@@ -171,6 +171,10 @@ onBeforeUnmount(() => {
       <RouterLink to="/rest/floor" class="ms-3">楼层餐桌 ›</RouterLink>
     </div>
 
+    <div class="small my-2">
+      <RouterLink to="/rest/equip" data-testid="link-equip"><i class="bi bi-tools"></i> 厨具 ›</RouterLink>
+    </div>
+
     <div v-if="dining" class="card mb-2" data-testid="dine-card">
       <div class="card-body py-2 d-flex align-items-center small">
         <div class="flex-fill">

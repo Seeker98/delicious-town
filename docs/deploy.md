@@ -74,3 +74,11 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 餐厅可以搬回新手街（街道 0）
 - 收益和加成的计算方式见 `docs/rules/收益与加成.md`
 - 本地开发：改了 `packages/config/data/` 之后要重跑 `pnpm --filter @dt/config build` 并重启 `pnpm dev`，否则 API 和 worker 还在用旧的配置包（新增的数值键会让区服配置校验失败，worker 每轮报错）
+
+## 厨具（子项目 2B）
+
+- 迁移 0006 新建 `equip`、`equip_gem`、`equip_stress_log`、`equip_preset`
+- 厨具不再存在仓库表里：发放时每件生成一个实例（按道具 value 随机属性）。旧数据由 worker 的 `equip-convert` 任务每小时转换一次（幂等），部署后最多一小时老号的厨具出现在厨具页
+- 未穿戴的厨具每件占一个仓库格；穿戴中的不占
+- 区服关闭 `features.equip` 后所有厨具接口返回"这个区服暂未开放该功能"，已穿戴厨具的幸运和套装加成照常生效
+- 数值在 `tuning.equip`（强化成功率、保底、宝石升阶、摘除费用、预设上限）

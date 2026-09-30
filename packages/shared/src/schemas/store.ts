@@ -24,6 +24,8 @@ export interface StoreItemDto {
 export interface StoreDto {
   kinds: number;
   storeNum: number;
+  /** 未穿戴的厨具件数（在厨具页，占仓库格） */
+  equips: number;
   items: StoreItemDto[];
 }
 
