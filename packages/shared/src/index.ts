@@ -24,3 +24,4 @@ export * from './schemas/temple';
 export * from './schemas/yard';
 export * from './schemas/bar';
 export * from './schemas/tower';
+export * from './schemas/takeaway';

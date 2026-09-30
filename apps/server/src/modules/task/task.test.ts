@@ -34,8 +34,13 @@ describe('主线任务', () => {
     await expect(task().claimTask(ctx, list.main!.id)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
   });
 
-  it('跳过未开放的功能（设计文档 裁定 7）：第 34、35 步外卖跳到第 36 步投喂克拉肯', async () => {
+  it('跳过区服关闭的功能（设计文档 裁定 7）：关掉外卖后第 34、35 步跳到第 36 步投喂克拉肯', async () => {
     const ctx = await newRestaurant(t, { patch: { main_task_step: 34, level: 5 } });
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { takeaway: false } }) })
+      .execute();
+    t.game.shards.invalidate(ctx.shardId);
     const list = await task().tasks(ctx);
     expect(list.mainStep).toBe(36);
     expect(list.main).toMatchObject({ step: 36, key: 'kraken.feed', done: false });
