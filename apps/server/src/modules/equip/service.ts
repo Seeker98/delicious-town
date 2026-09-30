@@ -15,7 +15,7 @@ import {
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, requirement } from '../../core/errors';
+import { invalidState, limitReached, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, gainExp, spendCoin, spendStrength } from '../../core/resources';
@@ -645,6 +645,82 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         if (r.fail > 0 && nextLevel >= t.gemBrokenNewsLevel)
           opNews(o, 'gem.broken', { goodsId: b.goodsId, num: r.fail * 2, name: o.rest.name });
         return { ...r, exp };
+      });
+    },
+    savePreset(ctx: RestCtx, b: { name: string }) {
+      return op(ctx, 'equip.preset', async (o) => {
+        const t = o.tuning.equip;
+        const presets = await o.tx
+          .selectFrom('equip_preset')
+          .select(['id', 'name'])
+          .where('rest_id', '=', o.rest.id)
+          .execute();
+        if (presets.some((p) => p.name === b.name)) throw invalidState('preset_name');
+        if (presets.length >= t.maxPresets) throw limitReached('presets', { max: t.maxPresets });
+        const worn = await o.tx
+          .selectFrom('equip')
+          .select(['id', 'part'])
+          .where('rest_id', '=', o.rest.id)
+          .where('worn', '=', true)
+          .execute();
+        const parts = Object.fromEntries(
+          PART_COLS.map((c, i) => [c, worn.find((w) => w.part === i + 1)?.id ?? null]),
+        ) as Record<(typeof PART_COLS)[number], number | null>;
+        const row = await o.tx
+          .insertInto('equip_preset')
+          .values({ rest_id: o.rest.id, name: b.name, created_at: o.now, ...parts })
+          .returning('id')
+          .executeTakeFirstOrThrow();
+        return { id: row.id };
+      });
+    },
+
+    applyPreset(ctx: RestCtx, b: { id: number }) {
+      return op(ctx, 'equip.preset', async (o) => {
+        const p = await o.tx
+          .selectFrom('equip_preset')
+          .selectAll()
+          .where('id', '=', b.id)
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirst();
+        if (!p) throw notFound('preset', b.id);
+        await o.tx
+          .updateTable('equip')
+          .set({ worn: false })
+          .where('rest_id', '=', o.rest.id)
+          .where('worn', '=', true)
+          .execute();
+        const skipped: number[] = [];
+        for (const [i, c] of PART_COLS.entries()) {
+          const id = p[c];
+          if (id === null) continue;
+          const e = await o.tx
+            .selectFrom('equip')
+            .selectAll()
+            .where('id', '=', id)
+            .where('rest_id', '=', o.rest.id)
+            .executeTakeFirst();
+          // 裁定 11：等级不够（或厨具已经不在）的部位留空
+          if (!e || o.rest.level < e.min_level) {
+            skipped.push(i + 1);
+            continue;
+          }
+          await putOn(o, e);
+        }
+        await syncEquipEffects(o);
+        return { skipped };
+      });
+    },
+
+    deletePreset(ctx: RestCtx, b: { id: number }) {
+      return op(ctx, 'equip.preset', async (o) => {
+        const r = await o.tx
+          .deleteFrom('equip_preset')
+          .where('id', '=', b.id)
+          .where('rest_id', '=', o.rest.id)
+          .executeTakeFirst();
+        if (Number(r.numDeletedRows) === 0) throw notFound('preset', b.id);
+        return { id: b.id };
       });
     },
   };

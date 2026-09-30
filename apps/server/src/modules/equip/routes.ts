@@ -8,6 +8,7 @@ import {
   gemLevelUpBody,
   inlayBody,
   lockBody,
+  presetSaveBody,
   stressBody,
   ungemBody,
 } from '@dt/shared';
@@ -50,6 +51,15 @@ export function equipRoutes(svc: EquipService): FastifyPluginAsync {
     r.get('/gem/list', async (req) => ok(await svc.gems(restCtxOf(req))));
     r.post('/gem/levelup', async (req) =>
       okOp(await svc.gemLevelUp(restCtxOf(req), parse(gemLevelUpBody, req.body))),
+    );
+    r.post('/equip/preset/save', async (req) =>
+      okOp(await svc.savePreset(restCtxOf(req), parse(presetSaveBody, req.body))),
+    );
+    r.post('/equip/preset/apply', async (req) =>
+      okOp(await svc.applyPreset(restCtxOf(req), parse(equipIdBody, req.body))),
+    );
+    r.post('/equip/preset/delete', async (req) =>
+      okOp(await svc.deletePreset(restCtxOf(req), parse(equipIdBody, req.body))),
     );
   };
 }
