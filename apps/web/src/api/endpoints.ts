@@ -227,6 +227,7 @@ export const endpoints = {
   mcRemnantDecompose: (mcId: number, num: number) =>
     api.post<{ goodsId: number; num: number }>('/api/v1/mc/remnant/decompose', { mcId, num }),
   mcLearn: (mcId: number) => api.post<{ mcId: number }>('/api/v1/mc/learn', { mcId }),
+  mcLearnAll: () => api.post<{ learned: number[] }>('/api/v1/mc/learnAll'),
   mcCook: (mcId: number, cookNum: number, cookie: boolean) =>
     api.post<CookResultDto>('/api/v1/mc/cook', { mcId, cookNum, cookie }),
   mcDump: () => api.post<{ id: number }>('/api/v1/mc/dump'),

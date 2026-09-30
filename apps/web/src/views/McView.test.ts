@@ -17,6 +17,7 @@ vi.mock('../api/endpoints', () => ({
     mcLearn: vi.fn(),
     mcRemnantSell: vi.fn(),
     mcRemnantDecompose: vi.fn(),
+    mcLearnAll: vi.fn(),
   },
 }));
 
@@ -161,15 +162,59 @@ describe('McView', () => {
     confirm.mockRestore();
   });
 
-  it('残卷：不到 3 张不能学；出售数量按输入（不超过持有）', async () => {
+  it('残卷分组（问题记录：学习按钮不显眼、能学和不能学的混在一起）：能学的在最上面，差几张的写明还差几张，已学的只能出售分解', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      remnants: [
+        { mcId: 1, num: 4 },
+        { mcId: 3, num: 5 },
+        { mcId: 4, num: 2 },
+      ],
+    });
     vi.mocked(endpoints.mcRemnantSell).mockResolvedValue({ coin: 1 });
     const w = mountView();
     await flushPromises();
-    expect(w.find('[data-testid="learn-4"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="learn-3"]').attributes('disabled')).toBeUndefined();
+    const learnable = w.find('[data-testid="group-learnable"]');
+    expect(learnable.text()).toContain('秘·凤凰展翅');
+    expect(learnable.find('[data-testid="learn-3"]').attributes('disabled')).toBeUndefined();
+    const short = w.find('[data-testid="group-short"]');
+    expect(short.text()).toContain('秘·芙蓉大虾');
+    expect(short.text()).toContain('还差 1 张');
+    expect(w.find('[data-testid="learn-4"]').exists()).toBe(false);
+    const learned = w.find('[data-testid="group-learned"]');
+    expect(learned.text()).toContain('秘·仿膳饽饽');
+    expect(w.find('[data-testid="learn-1"]').exists()).toBe(false);
     await w.find('[data-testid="remnant-num-3"]').setValue('9');
     await w.find('[data-testid="sell-3"]').trigger('click');
     await flushPromises();
     expect(endpoints.mcRemnantSell).toHaveBeenCalledWith(3, 5);
+  });
+
+  it('全部学会：一次学完能学的，提示学会了哪些', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      remnants: [
+        { mcId: 3, num: 5 },
+        { mcId: 4, num: 3 },
+      ],
+    });
+    vi.mocked(endpoints.mcLearnAll).mockResolvedValue({ learned: [3, 4] });
+    const w = mountView();
+    await flushPromises();
+    await w.find('[data-testid="learn-all"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.mcLearnAll).toHaveBeenCalled();
+    expect(useToastStore().items.some((x) => x.text.includes('学会了 2 道特色菜'))).toBe(true);
+  });
+
+  it('已学列表按等级从高到低排', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [3, 4, 1].map((mcId) => ({ ...overview.learned[0]!, mcId })),
+    });
+    const w = mountView();
+    await flushPromises();
+    const ids = w.findAll('[data-testid^="learned-"]').map((x) => x.attributes('data-testid'));
+    expect(ids).toEqual(['learned-4', 'learned-1', 'learned-3']);
   });
 });

@@ -200,3 +200,32 @@ describe('概览、目录、任务、功能开关', () => {
     });
   });
 });
+
+describe('一键学习（问题记录：学习按钮不显眼，想要一键学习）', () => {
+  it('学会所有残卷 ≥3 张且没学过的特色菜，各扣 3 张；不够 3 张和已学的不动', async () => {
+    const ctx = await newRestaurant(t);
+    await t.db.insertInto('rest_mc').values({ rest_id: ctx.restaurantId, mc_id: 4, way: 1 }).execute();
+    await giveRemnant(ctx, 1, 3);
+    await giveRemnant(ctx, 2, 7);
+    await giveRemnant(ctx, 3, 2);
+    await giveRemnant(ctx, 4, 5);
+    const r = await s().learnAll(ctx);
+    expect(r.data.learned.sort((a, b) => a - b)).toEqual([1, 2]);
+    const learned = await t.db
+      .selectFrom('rest_mc')
+      .select('mc_id')
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    expect(learned.map((x) => x.mc_id).sort((a, b) => a - b)).toEqual([1, 2, 4]);
+    expect(await remnantOf(ctx.restaurantId, 1)).toBe(0);
+    expect(await remnantOf(ctx.restaurantId, 2)).toBe(4);
+    expect(await remnantOf(ctx.restaurantId, 3)).toBe(2);
+    expect(await remnantOf(ctx.restaurantId, 4)).toBe(5);
+  });
+
+  it('没有能学的时报 INVALID_STATE nothing_to_learn', async () => {
+    const ctx = await newRestaurant(t);
+    await giveRemnant(ctx, 3, 2);
+    await expect(s().learnAll(ctx)).rejects.toMatchObject({ params: { reason: 'nothing_to_learn' } });
+  });
+});
