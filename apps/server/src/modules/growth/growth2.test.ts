@@ -136,9 +136,19 @@ describe('搬家（规格书 02 §2.8）', () => {
     await g().move(ctx, 3);
     expect((await restRow(t, ctx.restaurantId)).street_id).toBe(3);
   });
-  it('不能搬到新手街或原街道', async () => {
+  it('能搬回新手街：换回新手街勋章（问题记录：学菜要能搬回来）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000, street_id: 11 }, goods: { 2: 1 } });
+    await grant(ctx.restaurantId, 187);
+    await g().move(ctx, 0);
+    expect((await restRow(t, ctx.restaurantId)).street_id).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, 187)).toBe(0);
+    const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
+    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([140]);
+  });
+  it('不能搬到原街道或不存在的街道', async () => {
     const ctx = await newRestaurant(t, { goods: { 2: 1 } });
     await expect(g().move(ctx, 0)).rejects.toMatchObject({ code: 'INVALID_STATE' });
+    await expect(g().move(ctx, 999)).rejects.toMatchObject({ code: 'INVALID_STATE' });
   });
 });
 

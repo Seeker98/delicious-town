@@ -231,7 +231,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
 
     move(ctx: RestCtx, streetId: number) {
       return op(ctx, 'rest.move', async (o) => {
-        if (streetId === 0 || !o.config.streets.has(streetId) || streetId === o.rest.street_id)
+        if (!o.config.streets.has(streetId) || streetId === o.rest.street_id)
           throw invalidState('bad_street', { streetId });
         if (!(await hasValidHonor(o, GOODS.moveJobHonor))) await consumeGoods(o, GOODS.moveCard, 1);
         const tr = await o.tx
