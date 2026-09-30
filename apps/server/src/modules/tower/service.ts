@@ -1,6 +1,7 @@
-import type { TowerDto } from '@dt/shared';
+import type { RankDto, TowerDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
+import { challengeRank, occupyRank, rankView } from './rank';
 import { challengeTower, towerView } from './tower';
 
 export function createTowerService(d: GameDeps) {
@@ -16,6 +17,16 @@ export function createTowerService(d: GameDeps) {
     },
     challenge(ctx: RestCtx, b: { floor: number; test: boolean }) {
       return op(ctx, 'tower.challenge', (o) => challengeTower(o, b.floor, b.test));
+    },
+    async rank(ctx: RestCtx): Promise<RankDto> {
+      const s = await d.shards.ensureFeature(ctx.shardId, 'tower');
+      return rankView(d.db, await restOf(ctx.restaurantId), s.tuning.tower, d.now());
+    },
+    occupy(ctx: RestCtx, b: { rank: number }) {
+      return op(ctx, 'tower.rank', (o) => occupyRank(o, b.rank));
+    },
+    challengeRank(ctx: RestCtx, b: { rank: number }) {
+      return op(ctx, 'tower.rank', (o) => challengeRank(o, b.rank));
     },
   };
 }

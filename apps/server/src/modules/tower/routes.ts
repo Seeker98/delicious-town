@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { towerChallengeBody } from '@dt/shared';
+import { rankBody, towerChallengeBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -10,6 +10,13 @@ export function towerRoutes(svc: TowerService): FastifyPluginAsync {
     r.get('/tower', async (req) => ok(await svc.overview(restCtxOf(req))));
     r.post('/tower/challenge', async (req) =>
       okOp(await svc.challenge(restCtxOf(req), parse(towerChallengeBody, req.body))),
+    );
+    r.get('/tower/rank', async (req) => ok(await svc.rank(restCtxOf(req))));
+    r.post('/tower/rank/occupy', async (req) =>
+      okOp(await svc.occupy(restCtxOf(req), parse(rankBody, req.body))),
+    );
+    r.post('/tower/rank/challenge', async (req) =>
+      okOp(await svc.challengeRank(restCtxOf(req), parse(rankBody, req.body))),
     );
   };
 }
