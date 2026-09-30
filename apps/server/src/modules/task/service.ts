@@ -35,10 +35,16 @@ export function createTaskService(d: GameDeps) {
       ).map((r) => [r.key, r.count]),
     );
     const counts = normalizeCounts(rest.cookbook_counts);
+    const friends = await db
+      .selectFrom('friend')
+      .select((eb) => eb.fn.countAll<number>().as('n'))
+      .where('rest_id', '=', rest.id)
+      .executeTakeFirstOrThrow();
+    const extra = { 'friends.count': Number(friends.n), 'rest.thumbs': counters.get('thumbs.received') ?? 0 };
     const progressOf = (t: Task) =>
       t.cond.kind === 'counter'
         ? (counters.get(t.cond.key) ?? 0)
-        : (stateValue(t.cond.key, rest, counts) ?? 0);
+        : (stateValue(t.cond.key, rest, counts, extra) ?? 0);
     const mainStep = effectiveMainStep(rest.main_task_step, mains, available);
     const main = mains.find((t) => t.step === mainStep) ?? null;
     const side = visibleSide(d.config.bundle.tasks, mainStep, done, available);

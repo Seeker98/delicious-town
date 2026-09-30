@@ -66,4 +66,15 @@ describe('机器人策略', () => {
     expect(r.tables).toHaveLength(4);
     expect(await marketSpent(ctx.restaurantId)).toBe(0);
   }, 60_000);
+
+  it('有体力时灭掉自己店里的蟑螂', async () => {
+    const tables = [
+      { no: 1, floor: 1, customer: 3, roach: { by: null, at: '2026-09-30T00:00:00Z' } },
+      { no: 2, floor: 1, customer: 0 },
+    ];
+    const ctx = await newRestaurant(t, { patch: { coin: 1000 }, tables });
+    await botTurn(t.game, { name: 'b', persona: PERSONAS[0]!, ctx });
+    const r = await t.game.restaurant.overview(ctx.restaurantId);
+    expect(r.tables.find((x) => x.no === 1)!.customer).not.toBe(3);
+  }, 60_000);
 });

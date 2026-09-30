@@ -67,7 +67,15 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function down(db: Kysely<any>): Promise<void> {
-  for (const t of ['npc_invite', 'rest_icon', 'thumb', 'cupboard_flip', 'dine_dash', 'friend_request', 'friend']) {
+  for (const t of [
+    'npc_invite',
+    'rest_icon',
+    'thumb',
+    'cupboard_flip',
+    'dine_dash',
+    'friend_request',
+    'friend',
+  ]) {
     await sql`drop table if exists ${sql.id(t)} cascade`.execute(db);
   }
   await sql`drop index if exists restaurant_npc_shard`.execute(db);

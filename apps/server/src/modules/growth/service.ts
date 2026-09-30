@@ -16,6 +16,7 @@ import { uniqueViolation } from '../../db/errors';
 import type { RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
+import { lastWeekCount } from '../friend/weekly';
 import { deviceSlots } from '../restaurant/reads';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
@@ -211,8 +212,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         if (problem) throw new AppError(ErrorCode.RESTAURANT_NAME_INVALID, 400, { reason: problem });
         if (name === o.rest.name) throw invalidState('same_name');
         await consumeGoods(o, GOODS.renameCard, 1);
-        // 上周被放蟑螂数：子项目 3 接入前为 0（设计文档 裁定 8）
-        const roaches = 0;
+        const roaches = await lastWeekCount(o.tx, o.rest.id, 'roach.laidOn', o.now);
         spendCoin(o, roaches * o.tuning.growth.renameCoinPerRoach * o.rest.level * (o.rest.star_level + 1));
         try {
           await o.tx.updateTable('restaurant').set({ name }).where('id', '=', o.rest.id).execute();
