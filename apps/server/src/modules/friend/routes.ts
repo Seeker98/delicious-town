@@ -1,9 +1,11 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   dineStartBody,
+  flipBody,
   friendListQuery,
   friendSearchQuery,
   pageQuery,
+  refuelBody,
   respondBody,
   restIdBody,
   restIdParam,
@@ -55,6 +57,15 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     );
     r.post('/roach/kill', async (req) =>
       okOp(await svc.roach.kill(restCtxOf(req), parse(restTableBody, req.body))),
+    );
+    r.post('/friend/refuel', async (req) =>
+      okOp(await svc.refuel.refuel(restCtxOf(req), parse(refuelBody, req.body))),
+    );
+    r.get('/friend/cupboard/:restId', async (req) =>
+      ok(await svc.flip.slots(restCtxOf(req), parse(restIdParam, req.params).restId)),
+    );
+    r.post('/cupboard/flip', async (req) =>
+      okOp(await svc.flip.flip(restCtxOf(req), parse(flipBody, req.body))),
     );
   };
 }

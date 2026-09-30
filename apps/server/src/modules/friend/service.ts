@@ -2,6 +2,8 @@ import type { GameDeps } from '../../core/deps';
 import type { WorldService } from '../world/service';
 import { createDine } from '../interact/dine';
 import { createRoach } from '../interact/roach';
+import { createFlip } from '../interact/flip';
+import { createRefuel } from '../interact/refuel';
 import { createFriendReads } from './reads';
 import { createRelations } from './relations';
 
@@ -11,6 +13,8 @@ export function createSocialService(d: GameDeps, world: WorldService) {
   return {
     relations: createRelations(d),
     reads: createFriendReads(d),
+    refuel: createRefuel(d),
+    flip: createFlip(d),
     roach: createRoach(d),
     dine: createDine(d),
   };

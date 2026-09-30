@@ -109,3 +109,28 @@ export interface KillResultDto {
   /** 捡到的神秘礼券 */
   tickets: number;
 }
+
+export const refuelBody = z.object({
+  restId,
+  /** -1 = 加满 */
+  num: z.union([z.literal(-1), z.number().int().min(1).max(100_000_000)]),
+});
+export const flipBody = z.object({ restId, slotNo: z.number().int().min(1).max(200) });
+
+export interface FlipSlotsDto {
+  slots: number;
+  cooling: Array<{ slotNo: number; until: string }>;
+  /** 我今天已经翻了几次（超过 100 次每次 2 体力） */
+  todayTimes: number;
+}
+
+export type FlipOutcome = 'food' | 'ticket' | 'nothing' | 'caught' | 'escaped';
+
+export interface FlipResultDto {
+  outcome: FlipOutcome;
+  foodsId: number | null;
+  /** 被夹时掉的银币 */
+  coin: number;
+  strength: number;
+  dtTickets: number;
+}
