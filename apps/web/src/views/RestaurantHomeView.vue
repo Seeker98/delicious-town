@@ -101,14 +101,15 @@ const plaque2Block = computed(() => {
   if (r.diamond < r.plaque2Cost.diamond) return `钻石不够（要 ${r.plaque2Cost.diamond}）`;
   return '';
 });
+/** 锁定文字的星级：第二块牌匾位按区服的开通星级 */
+const needStarOf = (d: { slot: number; needStar: number }) =>
+  d.slot === PLAQUE2_SLOT && rest.value ? Math.max(d.needStar, rest.value.plaque2Cost.star) : d.needStar;
 function openPlaque2() {
   const c = rest.value!.plaque2Cost;
   if (plaque2Block.value) return;
   if (!window.confirm(`花 ${formatNum(c.coin)} 银币和 ${c.diamond} 钻石开通第二块牌匾位吗？`)) return;
-  return act(async () => {
-    await endpoints.openPlaque2();
-    toast.push('第二块牌匾位开通了');
-  }, '开通失败');
+  // 花费由全局的得失提示显示
+  return act(() => endpoints.openPlaque2(), '开通失败');
 }
 
 function expiresText(at: string | null): string {
@@ -266,7 +267,7 @@ onBeforeUnmount(() => {
           <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
             <i class="bi bi-lock"></i> 未开通
           </div>
-          <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ d.needStar }} 星开放</div>
+          <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ needStarOf(d) }} 星开放</div>
           <div v-else-if="d.goodsId">
             {{ catalog.goodsName(d.goodsId) }}<br /><span class="text-muted">{{
               expiresText(d.expiresAt)

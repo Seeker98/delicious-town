@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useToastStore } from '../stores/toast';
 import RestaurantHomeView from './RestaurantHomeView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -252,6 +253,8 @@ describe('RestaurantHomeView', () => {
     await flushPromises();
     expect(confirm).toHaveBeenCalled();
     expect(endpoints.openPlaque2).toHaveBeenCalledTimes(1);
+    // 花费由全局的得失提示显示，不再多弹一条（问题记录：消息框太多）
+    expect(useToastStore().items).toHaveLength(0);
     confirm.mockRestore();
 
     vi.mocked(endpoints.overview).mockResolvedValue({ ...rich, diamond: 100 });
@@ -263,6 +266,15 @@ describe('RestaurantHomeView', () => {
     const low = await mountView();
     expect(low.find('[data-testid="open-plaque2"]').exists()).toBe(false);
     expect(low.find('[data-testid="slot-7"]').text()).toContain('3 星开放');
+
+    // 区服把开通星级调到 4：锁定文字按区服数值写，不再停在"3 星开放"（审查）
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...rich,
+      plaque2Cost: { ...rich.plaque2Cost, star: 4 },
+    });
+    const strict = await mountView();
+    expect(strict.find('[data-testid="slot-7"]').text()).toContain('4 星开放');
+    expect(strict.find('[data-testid="open-plaque2"]').exists()).toBe(false);
 
     vi.mocked(endpoints.overview).mockResolvedValue({
       ...rich,

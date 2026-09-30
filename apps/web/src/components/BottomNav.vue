@@ -38,6 +38,7 @@ watch(
       :key="t.to"
       :to="t.to"
       class="flex-fill text-center small py-1 position-relative"
+      @click="moreOpen = false"
     >
       <i :class="['bi', t.icon, 'd-block', 'fs-5']"></i>{{ t.label }}
       <span

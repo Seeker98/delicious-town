@@ -61,4 +61,18 @@ describe('BottomNav', () => {
     expect(router.currentRoute.value.path).toBe('/tower');
     expect(w.find('[data-testid="more-sheet"]').exists()).toBe(false);
   });
+  it('面板打开时点当前页的标签也会收起（审查：路由没变时收不起来）', async () => {
+    vi.mocked(endpoints.friendRequests).mockResolvedValue([]);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: BottomNav }],
+    });
+    await router.push('/cupboard');
+    const w = mount(BottomNav, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.find('[data-testid="tab-more"]').trigger('click');
+    await w.find('nav a[href="/cupboard"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="more-sheet"]').exists()).toBe(false);
+  });
 });

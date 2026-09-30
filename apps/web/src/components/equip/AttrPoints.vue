@@ -12,7 +12,13 @@ const toast = useToastStore();
 const add = reactive({ cook: 0, cutting: 0, fire: 0 });
 const busy = ref(false);
 const left = computed(() => store.rest?.attrLeft ?? 0);
-const sum = computed(() => add.cook + add.cutting + add.fire);
+/** 清空的输入框（v-model.number 给空串）按 0 算 */
+const num = (x: unknown) => Math.max(0, Math.floor(Number(x) || 0));
+const points = () => ({ cook: num(add.cook), cutting: num(add.cutting), fire: num(add.fire) });
+const sum = computed(() => {
+  const p = points();
+  return p.cook + p.cutting + p.fire;
+});
 const FIELDS = [
   { key: 'cook', label: '厨艺' },
   { key: 'cutting', label: '刀工' },
@@ -22,7 +28,7 @@ const FIELDS = [
 async function allocate() {
   busy.value = true;
   try {
-    await endpoints.allocate({ ...add });
+    await endpoints.allocate(points());
     add.cook = add.cutting = add.fire = 0;
     await store.refresh();
     emit('done');

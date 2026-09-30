@@ -169,4 +169,15 @@ describe('EquipView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="add-cook"]').exists()).toBe(false);
   });
+  it('清空一个输入框按 0 算，不会把数字拼成字符串（审查）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ attrLeft: 30 } as never);
+    vi.mocked(endpoints.allocate).mockResolvedValue({} as never);
+    const w = await mountView();
+    await w.find('[data-testid="add-cook"]').setValue('');
+    await w.find('[data-testid="add-cutting"]').setValue('1');
+    expect(w.find('[data-testid="allocate"]').text()).toBe('加点（1）');
+    await w.find('[data-testid="allocate"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0 });
+  });
 });
