@@ -8,6 +8,7 @@ import * as m0006 from './0006_equip';
 import * as m0007 from './0007_equip_preset_idx';
 import * as m0008 from './0008_mysterious';
 import * as m0009 from './0009_temple';
+import * as m0010 from './0010_yard';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -20,4 +21,5 @@ export const migrations: Record<string, Migration> = {
   '0007_equip_preset_idx': m0007,
   '0008_mysterious': m0008,
   '0009_temple': m0009,
+  '0010_yard': m0010,
 };

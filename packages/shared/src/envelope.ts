@@ -3,7 +3,18 @@ import type { ErrorCode } from './errors';
 /** 结构化的得失提示，前端据此生成文案 */
 export interface GameEvent {
   type: 'gain' | 'loss';
-  kind: 'goods' | 'foods' | 'coin' | 'diamond' | 'exp' | 'renown' | 'oil' | 'strength' | 'remnant' | 'seed';
+  kind:
+    | 'goods'
+    | 'foods'
+    | 'coin'
+    | 'diamond'
+    | 'exp'
+    | 'renown'
+    | 'oil'
+    | 'strength'
+    | 'remnant'
+    | 'seed'
+    | 'basket';
   id?: number;
   num: number;
   lucky?: boolean;
