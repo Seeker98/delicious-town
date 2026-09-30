@@ -50,7 +50,7 @@
 | 9 | 共飨前提 | 当天本区服已有人许愿；当天活跃度 ≥ 星愿的 `needAct`；每人每天一次 |
 | 10 | 自选 / 随机食材的范围 | `value.level` 给出的等级区间内全部普通等级食材（1~6 级，不含 7 级神秘和 9 级万能）；随机类抽 num 种不重复的，各 1 个 |
 | 11 | "神秘来客"的 buff | 数据是 `spRate +0.03`，也就是挑剔率 +3%。结算里星愿原来只接了上座率、银币、经验，这次补上挑剔率，照数据生效 |
-| 12 | 摇钱包的限制 | 照原版：同一家店、同一 IP、同一设备当天各一次，按"区服 + 游戏日"算。设备用前端已有的 `x-device-id` 请求头，IP 用请求的来源地址；两者为空时不查。同一台电脑换号也会被拒（原版如此） |
+| 12 | 摇钱包的限制 | 同一家店当天一次（唯一索引兜底）。同一 IP、同一设备当天各一次的原版限制做成 tuning 开关 `town.shake.limitIp` / `limitDevice`，**开发期默认关闭**（用户要求），上线前再打开。设备用前端已有的 `x-device-id` 请求头，IP 用请求的来源地址；两者为空时不查。开关打开时同一台电脑换号会被拒（原版如此） |
 | 13 | 蟹老板的钱 | 从本区服蟹老板店（`npcIdOf`）扣：有多少给多少，最少 1；蟹老板银币 ≤ 0 时报"钱袋空空如也"。蟹老板店不存在时同样报这个错 |
 | 14 | 尾数 88 彩蛋 | 摇钱记录的流水号 % 100 = 88 时触发：流水号 / 100 取整后 % 8 = 1 给蟹黄堡（180）×1，否则蟹币（240）×8；写新闻。流水号全服共用一个序列 |
 | 15 | 雷神锤天气池 | 照原版：先按当前时段筛（夜间用 daytime ∈ {2,3}，白天 {1,3}）；银币方式再按 type 筛（包括该类型里的特殊天气）；钻石方式只在 specialflag = 1 的天气里抽。权重沿用自动轮换的算法（probability × dayWeightScale，夜间专属天气用 nightWeatherOdds）。排除当前天气；筛完为空时报错，不扣钱 |
@@ -104,7 +104,7 @@
 
 - 按裁定 12 检查店 / IP / 设备当天是否已摇；已摇：自己摇过报"蟹老板握紧了他的钱袋"，IP 或设备摇过报"次数已达上限"。
 - 应得银币 x = max(1, (8000 − rand[0, 4999]) × 星级)，所以 0 星也能摇到 1 个。
-- 从蟹老板店扣：在同一个事务里用一条原子更新 `coin = coin - least(coin, x) where coin > 0` 并返回实际扣数，玩家得到这个数；不和玩家店一起加锁（避免锁顺序问题）。没有更新到行（蟹老板银币 ≤ 0 或没有蟹老板店）→ 报"钱袋空空如也"，整个操作回滚。
+- 从蟹老板店扣：和双店操作一样，按店号顺序同时锁住本店和蟹老板店（扣蟹老板银币本身就要锁它那一行，按统一顺序加锁才不会和好友互动互相等待），扣 min(蟹老板银币, x)，玩家得到这个数。蟹老板银币 ≤ 0 或没有蟹老板店 → 报"钱袋空空如也"，整个操作回滚。
 - 插入 `town_shake` 记录（唯一索引兜底并发）；按裁定 14 判断彩蛋。
 - 发事件 `krab.shake`（支线 102 和活跃"摇蟹老板的钱袋"）。
 
@@ -180,7 +180,7 @@
 | `world_state.weather_changed_at` | 可空时间；自动轮换和雷神锤都更新 |
 | `town_bless` | `shard_id, day(text), bless_id, rest_id, created_at`；主键 `(shard_id, day)` |
 | `town_rest` | `rest_id` 主键，`hammer_at`、`broadcast_at` 可空，`big_eater_gift boolean default false` |
-| `town_shake` | `id serial`，`shard_id, day, rest_id, ip, device, coin, created_at`；唯一索引 `(shard_id, day, rest_id)`；部分唯一索引 `(shard_id, day, ip) where ip <> ''`、`(shard_id, day, device) where device <> ''` |
+| `town_shake` | `id serial`，`shard_id, day, rest_id, ip, device, coin, created_at`；唯一索引 `(shard_id, day, rest_id)`；普通索引 `(shard_id, day, ip)`、`(shard_id, day, device)`（IP、设备限制可以关闭，所以不建唯一索引） |
 | `town_exchange_use` | `rest_id, exchange_id, times`；主键 `(rest_id, exchange_id)` |
 
 每日计数用现有的 daily counter：`town.talk.bigEater`、`town.talk.wenjie`、`town.talk.bro13`、`town.feast`。
@@ -193,7 +193,7 @@
 ```
 broadcast: { minStar: 1, cooldownSec: 30, maxLen: 64 }
 npc: { bigEaterLevelWeights: [50,25,13,9,3], bigEaterNum: [1,3], wenjieNum: [1,20], bro13Num: [1,2] }
-shake: { base: 8000, rand: 5000, eggMod: 100, eggTail: 88, burgerEvery: 8 }
+shake: { base: 8000, rand: 5000, eggMod: 100, eggTail: 88, burgerEvery: 8, burgerNum: 1, krabCoinNum: 8, limitIp: false, limitDevice: false }
 hammer: { cooldownHours: 6, gapSec: 90, coin: 100000, diamond: 8 }
 bless: { lampCoinBonus: 0.1 }
 news: { pageSize: 50 }
