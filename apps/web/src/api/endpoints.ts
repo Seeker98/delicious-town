@@ -1,4 +1,10 @@
 import type {
+  BarDto,
+  BarExchangeResultDto,
+  CupResultDto,
+  FgResultDto,
+  NumResultDto,
+  SlotResultDto,
   BasketDto,
   ComposeResultDto,
   FormulaAppraiseResultDto,
@@ -295,4 +301,10 @@ export const endpoints = {
     api.post<{ coin: number }>('/api/v1/yard/seed/buy', { seedId, num }),
   seedExchange: (seedId: number, times: number) =>
     api.post<{ seeds: number }>('/api/v1/yard/seed/exchange', { seedId, times }),
+  bar: () => api.get<BarDto>('/api/v1/bar'),
+  barFg: (hand: number) => api.post<FgResultDto>('/api/v1/bar/fg', { hand }),
+  barCup: (cup: number) => api.post<CupResultDto>('/api/v1/bar/cup', { cup }),
+  barNum: (num: number) => api.post<NumResultDto>('/api/v1/bar/num', { num }),
+  barSlot: (times: number) => api.post<SlotResultDto>('/api/v1/bar/slot', { times }),
+  barExchange: (num: number) => api.post<BarExchangeResultDto>('/api/v1/bar/exchange', { num }),
 };

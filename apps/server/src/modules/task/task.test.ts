@@ -34,11 +34,11 @@ describe('主线任务', () => {
     await expect(task().claimTask(ctx, list.main!.id)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
   });
 
-  it('跳过未开放的功能（设计文档 裁定 7）：第 13 步酒吧跳到第 14 步翻橱', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 13, level: 5 } });
+  it('跳过未开放的功能（设计文档 裁定 7）：第 27 步厨塔跳到第 28 步开垦菜园', async () => {
+    const ctx = await newRestaurant(t, { patch: { main_task_step: 27, level: 5 } });
     const list = await task().tasks(ctx);
-    expect(list.mainStep).toBe(14);
-    expect(list.main).toMatchObject({ step: 14, key: 'cupboard.flip', done: false });
+    expect(list.mainStep).toBe(28);
+    expect(list.main).toMatchObject({ step: 28, key: 'yard.lands', done: false });
   });
 
   it('第 8 步打蟑螂、第 9 步加好友不再跳过', async () => {

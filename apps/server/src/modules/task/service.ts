@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { GOODS, type Award, type ShardSettings, type Task } from '@dt/config';
+import { DEVICE_TYPE, GOODS, type Award, type ShardSettings, type Task } from '@dt/config';
 import { ErrorCode, gameDay, type ActivationDto, type TaskDto, type TasksDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
@@ -10,6 +10,7 @@ import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
 import { incrementDaily } from '../counter/dailyCounter';
+import { listActiveEffects } from '../effects/service';
 import { normalizeCounts } from '../settlement/globals';
 import { grantGoodsOp, hasValidHonor } from '../store/goods';
 import { activationTotal, effectiveMainStep, stateValue, visibleSide } from './rules';
@@ -55,12 +56,17 @@ export function createTaskService(d: GameDeps) {
       .select((eb) => eb.fn.countAll<number>().as('n'))
       .where('rest_id', '=', rest.id)
       .executeTakeFirstOrThrow();
+    // 有效盆栽勋章的种数，和"集盆栽"加成同一套计数（4C-1 设计文档裁定 10）
+    const pots = (await listActiveEffects(db, rest.id, d.now())).filter(
+      (s) => s.sourceType === 'honor' && d.config.goods.get(s.sourceId)?.deviceType === DEVICE_TYPE.pot,
+    ).length;
     const extra = {
       'friends.count': Number(friends.n),
       'rest.thumbs': counters.get('thumbs.received') ?? 0,
       'equip.maxStress': Number(maxStress?.m ?? 0),
       'mc.learned': Number(mcLearned.n),
       'yard.lands': Number(lands.n),
+      'honor.potCount': pots,
     };
     const progressOf = (t: Task) =>
       t.cond.kind === 'counter'

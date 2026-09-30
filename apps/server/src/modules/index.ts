@@ -8,6 +8,7 @@ import { equipRoutes } from './equip/routes';
 import { mysteriousRoutes } from './mysterious/routes';
 import { templeRoutes } from './temple/routes';
 import { yardRoutes } from './yard/routes';
+import { barRoutes } from './bar/routes';
 import { socialRoutes } from './friend/routes';
 import { growthRoutes } from './growth/routes';
 import { marketRoutes } from './market/routes';
@@ -37,4 +38,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(mysteriousRoutes(game.mysterious), { prefix: '/api/v1' });
   app.register(templeRoutes(game.temple), { prefix: '/api/v1' });
   app.register(yardRoutes(game.yard), { prefix: '/api/v1' });
+  app.register(barRoutes(game.bar), { prefix: '/api/v1' });
 }

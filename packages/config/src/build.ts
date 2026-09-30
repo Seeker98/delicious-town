@@ -18,6 +18,7 @@ import type {
   GiftItem,
   Goods,
   IdNum,
+  SlotAward,
 } from './types';
 
 export interface BuildResult {
@@ -95,6 +96,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const seedExRaw = parse('designed/seed_exchange', z.array(raw.rawSeedExchange));
   const formulasRaw = parse('designed/foods_formula', z.array(raw.rawFormula));
   const incomeRaw = parse('designed/income_action', z.array(raw.rawIncomeAction));
+  const slotRaw = parse('dataset/bar_slot_machine_award', z.array(raw.rawSlotAward));
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
   const renownRaw = parse('designed/renown_shop', z.array(raw.rawRenownShop));
   const blessRaw = parse('designed/bless', z.array(raw.rawBless));
@@ -135,6 +137,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !seedExRaw ||
     !formulasRaw ||
     !incomeRaw ||
+    !slotRaw ||
     !goodsExRaw ||
     !renownRaw ||
     !blessRaw ||
@@ -566,6 +569,38 @@ export function buildBundle(src: SourceData): BuildResult {
     if (g.deviceType === 80 && !((g.effects.plantTime ?? 0) > 0))
       errors.push(`goods ${g.id} fertilizer needs a positive plantTime`);
   }
+  // ---------- 酒吧（子项目 4C-1） ----------
+  const SLOT_KINDS = ['empty', 'foods', 'goods'] as const;
+  const slotAwards: SlotAward[] = [];
+  for (const a of slotRaw) {
+    const kind = SLOT_KINDS[a.type];
+    if (kind === undefined) {
+      errors.push(`bar_slot_machine_award ${a.id} has unknown type ${a.type}`);
+      continue;
+    }
+    const itemId = kind === 'foods' ? (a.foodsId ?? null) : kind === 'goods' ? (a.goodsId ?? null) : null;
+    if (kind === 'foods' && (itemId === null || !foodIds.has(itemId)))
+      errors.push(`bar_slot_machine_award ${a.id} references unknown food ${itemId}`);
+    if (kind === 'goods' && (itemId === null || !goodsIds.has(itemId)))
+      errors.push(`bar_slot_machine_award ${a.id} references unknown goods ${itemId}`);
+    slotAwards.push({
+      id: a.id,
+      kind,
+      itemId,
+      odds: a.odds,
+      rare: a.rareflag === 1,
+      getNum: a.getNum,
+      news: a.newsflag === 1,
+    });
+  }
+  unique(
+    'bar_slot_machine_award',
+    slotAwards.map((a) => a.id),
+  );
+  if (!slotAwards.some((a) => a.id === tuning.bar.slotFloorAwardId && a.kind !== 'empty'))
+    errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
+  // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
+  for (const id of [1, 240, 389]) if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
   for (const e of goodsExRaw) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
     for (const n of e.needGoods) {
@@ -625,6 +660,7 @@ export function buildBundle(src: SourceData): BuildResult {
     formulas,
     seedExchange,
     incomeActions,
+    slotAwards,
     weather,
     devices,
     starNeed,

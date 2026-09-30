@@ -279,6 +279,7 @@ export interface ConfigBundle {
   formulas: Formula[];
   seedExchange: SeedExchange[];
   incomeActions: IncomeAction[];
+  slotAwards: SlotAward[];
   weather: Weather[];
   devices: Device[];
   starNeed: StarNeed[];
@@ -406,4 +407,17 @@ export interface IncomeAction {
   coin: number;
   exp: number;
   landExp: number;
+}
+
+/** 老虎机奖项（dataset/bar_slot_machine_award；子项目 4C-1）。库存、过期日不做（设计文档裁定 4） */
+export interface SlotAward {
+  id: number;
+  kind: 'empty' | 'foods' | 'goods';
+  /** 食材或道具 id；空格为 null */
+  itemId: number | null;
+  odds: number;
+  rare: boolean;
+  /** 每格给几个 */
+  getNum: number;
+  news: boolean;
 }

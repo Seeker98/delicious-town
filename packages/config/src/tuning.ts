@@ -346,6 +346,22 @@ export const tuningSchema = z.object({
       wormRate: num,
     }),
   }),
+  bar: z.object({
+    fgWinRate: num,
+    fgDrawRate: num,
+    fgNewsStreak: int.min(1),
+    cupNewsStreak: int.min(1),
+    numMax: int.min(2),
+    numCost: int.min(1),
+    numLuckDiv: num,
+    numAwardLevel: int.min(1),
+    krabCoinTickets: int.min(1),
+    slotCells: int.min(1),
+    slotFloorSpins: int.min(1),
+    slotFloorRate: num,
+    slotFloorAwardId: int,
+    awardRates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;
