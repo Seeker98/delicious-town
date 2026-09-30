@@ -49,7 +49,7 @@ describe('镇长兑换（设计文档 §3.6）', () => {
     expect(n).toMatchObject({ restId: a.restaurantId, params: { exchangeId: 2, goodsId: 238, num: 1 } });
     await expect(t.game.town.exchange(a, { id: 2, num: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
-      params: { what: 'exchange', max: 1, used: 1 },
+      params: { what: 'town_exchange', max: 1, used: 1 },
     });
     expect((await t.game.town.exchangeView(a)).items.find((x) => x.id === 2)!.used).toBe(1);
   });
@@ -57,7 +57,7 @@ describe('镇长兑换（设计文档 §3.6）', () => {
   it('一次兑多份：限次项超出上限整单拒绝；材料按份数不够时什么都不扣', async () => {
     const a = await newRestaurant(t, { goods: { 180: 5 } });
     await expect(t.game.town.exchange(a, { id: 2, num: 2 })).rejects.toMatchObject({
-      params: { what: 'exchange', max: 1, used: 0 },
+      params: { what: 'town_exchange', max: 1, used: 0 },
     });
     await expect(t.game.town.exchange(a, { id: 1, num: 3 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',

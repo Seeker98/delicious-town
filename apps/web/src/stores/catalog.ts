@@ -13,6 +13,7 @@ export const useCatalogStore = defineStore('catalog', {
     seedsMap: new Map<number, { id: number; foodsId: number; level: number }>(),
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
+    weatherMap: new Map<number, string>(),
     loaded: false,
   }),
   actions: {
@@ -20,6 +21,7 @@ export const useCatalogStore = defineStore('catalog', {
       this.goodsMap = new Map(c.goods.map((g) => [g.id, g]));
       this.foodsMap = new Map(c.foods.map((f) => [f.id, f]));
       this.streets = c.streets;
+      this.weatherMap = new Map(c.weather.map((w) => [w.id, w.name]));
       this.looks = c.looks ?? null;
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
@@ -69,6 +71,9 @@ export const useCatalogStore = defineStore('catalog', {
     },
     food(id: number): CatalogFoodDto | undefined {
       return this.foodsMap.get(id);
+    },
+    weatherName(id: number): string {
+      return this.weatherMap.get(id) ?? `天气${id}`;
     },
     streetName(id: number): string {
       return this.streets.find((s) => s.id === id)?.name ?? '';

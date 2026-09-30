@@ -75,7 +75,7 @@ export async function doExchange(o: Op, id: number, num: number): Promise<TownEx
     .where('exchange_id', '=', id)
     .executeTakeFirst();
   const used = row?.times ?? 0;
-  if (e.times > 0 && used + num > e.times) throw limitReached('exchange', { max: e.times, used });
+  if (e.times > 0 && used + num > e.times) throw limitReached('town_exchange', { max: e.times, used });
   await assertStoreRoom(o, e.goodsId);
   for (const n of e.need) await consumeGoods(o, n.goodsId, n.num * num);
   const got = e.num * num;

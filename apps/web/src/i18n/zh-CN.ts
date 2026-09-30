@@ -84,7 +84,10 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   statue: (p) => `需要持有 ${names.goodsName(Number(p.goodsId))}`,
   necklace: () => '需要佩戴有效的爱心项链',
   task: (p) => `任务还没完成（${String(p.progress)}/${String(p.target)}）`,
-  activation: (p) => `活跃度不够（需要 ${String(p.need)}）`,
+  activation: (p) =>
+    p.have === undefined
+      ? `活跃度不够（需要 ${String(p.need)}）`
+      : `活跃度不够（需要 ${String(p.need)}，当前 ${String(p.have)}）`,
   avatar: () => '先在"装扮"里设置头像才能白食',
   dine_minutes: (p) => `白食满 ${String(p.need)} 分钟才能结束或请走`,
   renown: (p) =>
@@ -108,6 +111,8 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   batch: (p) => `一次最多使用 ${String(p.max)} 个`,
   lock: () => '锁定格用完了',
   owned: () => '已经拥有了，不能再买',
+  shake_device: () => '同一网络或设备今天已经摇过了',
+  town_exchange: (p) => `这一项每人限兑 ${String(p.max)} 次（已兑 ${String(p.used)} 次）`,
   max: (p) => `最多持有 ${String(p.max)} 个`,
   friends: (p) => `好友已满（最多 ${String(p.max)} 个）`,
   target_friends: () => '对方的好友已满',
@@ -236,6 +241,13 @@ const STATE: Record<string, string> = {
   order_taken: '这张单已经被别人接走了',
   rider_gone: '没有这个骑手',
   delivery_gone: '这一单已经领过了',
+  broadcast_text: '广播内容要 1~64 个字',
+  krab_broke: '蟹老板的钱袋空空如也',
+  no_bless: '今天还没有人许愿',
+  foods_not_allowed: '这个食材不能换',
+  no_weather: '现在没有可以换的天气',
+  no_exchange: '没有这个兑换项',
+  no_foods: '这一级没有食材',
   not_arrived: '还没送到，可以用无人机立即送达',
   rider_hired: '他已经被别人雇为骑手了',
   rider_self: '不能解雇自己',
@@ -257,6 +269,10 @@ const ALREADY: Record<string, string> = {
   lesson: '这门课你已经试过了',
   steal: '这株你已经偷过了',
   takeaway: '已经开通外卖了',
+  talk: '今天已经聊过了',
+  shake: '蟹老板握紧了他的钱袋（今天已经摇过了）',
+  wish: '今天已经有人许过愿了',
+  feast: '今天已经共飨过了',
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
@@ -271,6 +287,14 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   }
   if (code === 'EMAIL_NOT_VERIFIED' && params.who === 'target') return '对方还没验证邮箱，不能互动';
   if (code === 'COOLDOWN' && params.what === 'flip') return '这个橱柜位还在冷却中';
+  if (code === 'COOLDOWN' && params.what === 'broadcast')
+    return `广播冷却中，还要等 ${String(params.seconds)} 秒`;
+  if (code === 'COOLDOWN' && params.what === 'weather_gap')
+    return `刚换过天气，${String(params.seconds)} 秒后才能再换`;
+  if (code === 'COOLDOWN' && params.what === 'hammer') {
+    const m = Math.ceil(Number(params.seconds ?? 60) / 60);
+    return `雷神锤冷却中，还要等 ${m >= 60 ? `${Math.floor(m / 60)} 小时 ${m % 60} 分钟` : `${m} 分钟`}`;
+  }
   if (code === 'COOLDOWN' && params.what === 'market_special')
     return `特价菜同一网络 ${String(params.minutes ?? 10)} 分钟内只能抢一次，还要等 ${Math.ceil(Number(params.seconds ?? 60) / 60)} 分钟`;
   if (code === 'NOT_ENOUGH') {

@@ -107,3 +107,22 @@ describe('外卖的错误文案', () => {
     expect(errorText('ALREADY_DONE', { what: 'takeaway' })).toBe('已经开通外卖了');
   });
 });
+
+describe('小镇错误文案（4E-1）', () => {
+  it('冷却、已做过、上限、状态', () => {
+    expect(errorText('COOLDOWN', { what: 'broadcast', seconds: 12 })).toBe('广播冷却中，还要等 12 秒');
+    expect(errorText('COOLDOWN', { what: 'hammer', seconds: 3700 })).toBe(
+      '雷神锤冷却中，还要等 1 小时 2 分钟',
+    );
+    expect(errorText('COOLDOWN', { what: 'weather_gap', seconds: 30 })).toBe('刚换过天气，30 秒后才能再换');
+    expect(errorText('ALREADY_DONE', { what: 'talk' })).toBe('今天已经聊过了');
+    expect(errorText('ALREADY_DONE', { what: 'wish' })).toBe('今天已经有人许过愿了');
+    expect(errorText('LIMIT_REACHED', { what: 'town_exchange', max: 1, used: 1 })).toBe(
+      '这一项每人限兑 1 次（已兑 1 次）',
+    );
+    expect(errorText('INVALID_STATE', { reason: 'krab_broke' })).toBe('蟹老板的钱袋空空如也');
+    expect(errorText('REQUIREMENT_NOT_MET', { reason: 'activation', need: 80, have: 12 })).toBe(
+      '活跃度不够（需要 80，当前 12）',
+    );
+  });
+});
