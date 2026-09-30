@@ -40,10 +40,17 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
 
   // 菜场买 1 份日常菜
   await page.goto('/market');
-  const firstBuy = page.locator('[data-testid^="buy-"]').first();
-  await expect(firstBuy).toBeVisible();
-  await firstBuy.click();
-  await expect(page.getByText(/^获得 .+×1(；消耗 .+)?$/)).toBeVisible();
+  // 限购按店、设备、网络分别算：本机（同一网络）试玩时可能已经把这一批买满了。
+  // 能买就买一个第一个还能买的；都买不了时页面要写明是同一网络买满了
+  const daily = page.locator('section').first();
+  await expect(daily.locator('[data-testid^="buy-"]').first()).toBeVisible();
+  const buyable = daily.locator('[data-testid^="buy-"]:not([disabled])');
+  if ((await buyable.count()) > 0) {
+    await buyable.first().click();
+    await expect(page.getByText(/^获得 .+×1(；消耗 .+)?$/)).toBeVisible();
+  } else {
+    await expect(daily.getByText(/同一网络或设备本轮已买/).first()).toBeVisible();
+  }
 
   // 准备第一道菜（新手街 194）需要的食材，然后在食谱页学会它
   const overview = (await (await page.request.get('/api/v1/restaurant/overview')).json()) as {

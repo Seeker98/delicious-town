@@ -47,6 +47,39 @@ describe('日常菜场', () => {
     expect(view.daily.find((x) => x.id === it0.id)).toMatchObject({ bought: 10, left: it0.stock - 10 });
   });
 
+  it('最多还能买几个 = 限购剩余、库存剩余、橱柜单种上限剩余取小（问题记录：显示能买 1000 实际只能买 996）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100_000_000 } });
+    const [item] = await openShelf(ctx.shardId, 0);
+    await t.db
+      .insertInto('cupboard_food')
+      .values({ rest_id: ctx.restaurantId, foods_id: item!.foods_id, num: 3 })
+      .execute();
+    const view = await m().view(ctx);
+    const it0 = view.daily.find((x) => x.id === item!.id)!;
+    expect(view.foodsMaxNum).toBe(999);
+    expect(it0.have).toBe(3);
+    expect(it0.canBuy).toBe(Math.min(it0.limit - it0.bought, it0.left, 996));
+    await expect(
+      m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: it0.canBuy }),
+    ).resolves.toBeTruthy();
+    const after = (await m().view(ctx)).daily.find((x) => x.id === item!.id)!;
+    expect(after.canBuy).toBe(0);
+  });
+
+  it('限购按店、设备、网络分别算：同一网络别的店买过的也算进最多能买几个（问题记录）', async () => {
+    const a = await newRestaurant(t, { patch: { coin: 100_000_000 } });
+    const b = await newRestaurant(t, { shardId: a.shardId, patch: { coin: 100_000_000 } });
+    const [item] = await openShelf(a.shardId, 0);
+    t.clock.set(new Date(t.clock.now.getTime() + 60 * 60_000));
+    const ip = uniqueIp();
+    await m().buy({ ...a, ip }, { itemId: item!.id, num: 5 });
+    const it0 = (await m().view({ ...b, ip })).daily.find((x) => x.id === item!.id)!;
+    expect(it0).toMatchObject({ bought: 0, sharedBought: 5 });
+    expect(it0.canBuy).toBe(Math.min(it0.limit - 5, it0.left, 999));
+    const other = (await m().view({ ...b, ip: uniqueIp() })).daily.find((x) => x.id === item!.id)!;
+    expect(other.sharedBought).toBe(0);
+  });
+
   it('卖完了报 SOLD_OUT；超过每人限购报 LIMIT_REACHED', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100_000_000, foods_max_num: 5000 } });
     const [item] = await openShelf(ctx.shardId, 0);

@@ -216,11 +216,14 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .orderBy('shelf')
         .orderBy('id')
         .execute();
+      // 限购按店、设备、网络分别算（claimLimit）；页面要把同一设备 / 网络买过的也算进去
+      const own = `rest:${ctx.restaurantId}`;
+      const subjects = [own, `ip:${ctx.ip}`, ...(ctx.deviceId ? [deviceSubject(ctx.deviceId)] : [])];
       const bought = rows.length
         ? await d.db
             .selectFrom('market_buy')
-            .select(['market_item_id', 'num'])
-            .where('subject', '=', `rest:${ctx.restaurantId}`)
+            .select(['market_item_id', 'subject', 'num'])
+            .where('subject', 'in', subjects)
             .where(
               'market_item_id',
               'in',
@@ -228,10 +231,28 @@ export function createMarketService(d: GameDeps, world: WorldService) {
             )
             .execute()
         : [];
-      const boughtMap = new Map(bought.map((b) => [b.market_item_id, b.num]));
+      const boughtMap = new Map<number, number>();
+      const sharedMap = new Map<number, number>();
+      for (const b of bought) {
+        const m = b.subject === own ? boughtMap : sharedMap;
+        m.set(b.market_item_id, Math.max(m.get(b.market_item_id) ?? 0, b.num));
+      }
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select(['foods_max_num', 'cupboard_num'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
+      const mine = await foodsMap(d.db, ctx.restaurantId);
+      const cupboardFull = (await cupboardSlotsUsed(d.db, ctx.restaurantId)) >= rest.cupboard_num;
       const dto = (r: (typeof rows)[number]): MarketItemDto => {
         const food = d.config.requireFood(r.foods_id);
         const shelf = r.shelf as Shelf;
+        const limit = personLimit(shelf, food, r.opened_at, now, t);
+        const bought = boughtMap.get(r.id) ?? 0;
+        const sharedBought = sharedMap.get(r.id) ?? 0;
+        const have = mine.get(r.foods_id)?.num ?? 0;
+        // 橱柜单种上限（问题记录：显示能买 1000，已有 3 个时实际只能买 996）
+        const room = have === 0 && cupboardFull ? 0 : rest.foods_max_num - have;
         return {
           id: r.id,
           shelf,
@@ -240,8 +261,11 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           stock: r.stock,
           left: r.stock - r.sold,
           hot: r.hot,
-          limit: personLimit(shelf, food, r.opened_at, now, t),
-          bought: boughtMap.get(r.id) ?? 0,
+          limit,
+          bought,
+          sharedBought,
+          have,
+          canBuy: Math.max(0, Math.min(limit - Math.max(bought, sharedBought), r.stock - r.sold, room)),
           openedAt: r.opened_at.toISOString(),
         };
       };
@@ -273,6 +297,8 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         nextPremium: nextSlot(now, t.premiumHours).start.toISOString(),
         specialCooldownUntil: until > now.getTime() ? new Date(until).toISOString() : null,
         specialCooldownMin: Math.round(t.specialIpCooldownSec / 60),
+        foodsMaxNum: rest.foods_max_num,
+        cupboardFull,
         guess: {
           period,
           joined: joined?.foods_ids ?? null,

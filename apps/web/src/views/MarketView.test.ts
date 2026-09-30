@@ -21,6 +21,9 @@ const view: MarketDto = {
       hot: false,
       limit: 1000,
       bought: 0,
+      sharedBought: 0,
+      have: 0,
+      canBuy: 1000,
       openedAt: '2026-09-30T00:00:00.000Z',
     },
   ],
@@ -31,6 +34,8 @@ const view: MarketDto = {
   nextPremium: '2026-09-30T04:00:00.000Z',
   specialCooldownUntil: null,
   specialCooldownMin: 10,
+  foodsMaxNum: 999,
+  cupboardFull: false,
   guess: { period: '2026-09-30@12', joined: null, last: null, cost: 2, maxPick: 6, pool: [101, 102, 103] },
 };
 
@@ -75,5 +80,35 @@ describe('MarketView', () => {
     await w.find('[data-testid="guess-join"]').trigger('click');
     await flushPromises();
     expect(endpoints.marketGuess).toHaveBeenCalledWith([101, 102]);
+  });
+
+  it('最多能买几个按限购、库存、橱柜单种上限取小，写明原因（问题记录：显示 1000 实际只能买 996）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...view,
+      daily: [
+        { ...view.daily[0]!, have: 3, canBuy: 996 },
+        { ...view.daily[0]!, id: 12, foodsId: 102, have: 999, canBuy: 0 },
+      ],
+    });
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="cap-11"]').text()).toContain('橱柜单种上限 999，已有 3，最多再买 996');
+    await w.find('[data-testid="qty-11"]').setValue(2000);
+    await w.find('[data-testid="buy-11"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.marketBuy).toHaveBeenLastCalledWith(11, 996);
+    expect(w.find('[data-testid="buy-12"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="cap-12"]').text()).toContain('已经放满了');
+  });
+
+  it('同一网络或设备已经买满时写明原因、按钮灰掉（问题记录：显示 0/1000 却提示限购已满）', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...view,
+      daily: [{ ...view.daily[0]!, sharedBought: 1000, canBuy: 0 }],
+    });
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="buy-11"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="cap-11"]').text()).toContain('同一网络或设备本轮已买 1000 份');
   });
 });
