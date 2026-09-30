@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { takeawayDeliverBody, takeawayOpenBody } from '@dt/shared';
+import { takeawayClaimBody, takeawayDeliverBody, takeawayOpenBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -15,5 +15,9 @@ export function takeawayRoutes(svc: TakeawayService): FastifyPluginAsync {
     r.post('/takeaway/deliver', async (req) =>
       okOp(await svc.deliver(restCtxOf(req), parse(takeawayDeliverBody, req.body))),
     );
+    r.post('/takeaway/claim', async (req) =>
+      okOp(await svc.claim(restCtxOf(req), parse(takeawayClaimBody, req.body))),
+    );
+    r.post('/takeaway/claim-all', async (req) => okOp(await svc.claimAll(restCtxOf(req))));
   };
 }
