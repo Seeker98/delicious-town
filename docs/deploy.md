@@ -98,3 +98,12 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 数值在 `tuning.temple`（守护兽血量和掉落、试炼花费和上限、克拉肯投喂时段和倍率、触手商店格数）
 - 种子表从配置包的 `extra` 挪到正式字段 `seeds`
 - 主线第 25、26 步（守护兽、探险）和试炼支线不再跳过
+
+## 菜园（子项目 4B-2）
+
+- 迁移 0010 新建 `yard_land`、`yard_plant`、`yard_steal`、`yard_basket`、`rest_formula`
+- 新功能开关 `features.yard`（默认开）。关闭后菜园、配方、种子接口返回"这个区服暂未开放该功能"，自然事件任务跳过该区服（作物停止变化），主线第 28、29 步跳过
+- worker 新任务 `yard-events`：白天每小时 07、27、47 分，夜里（22 点到次日 6 点）只在 27 分，处理该区服所有未枯萎的作物
+- 数值在 `tuning.yard`（土地、偷菜、种子商店开关和调价 `seedShop` / `seedPriceRate`、配方、自然事件概率）
+- 配方、种子兑换、动作收益从配置包的 `extra` 挪到正式字段 `formulas`、`seedExchange`、`incomeActions`
+- 主线第 28、29 步（开垦、收获）和配方支线不再跳过；支线"鉴定一次食材配方"链接改到菜园
