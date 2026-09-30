@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../../api/endpoints';
 import { useToastStore } from '../../stores/toast';
@@ -27,6 +27,9 @@ async function mountWith(data = friendYardData()) {
   await flushPromises();
   return w;
 }
+
+/** 组件会监听窗口焦点，每个用例结束后卸载，免得旧组件也跟着重新读取 */
+enableAutoUnmount(afterEach);
 
 describe('FriendYard', () => {
   beforeEach(() => {
@@ -80,5 +83,13 @@ describe('FriendYard', () => {
     expect(endpoints.yardDeworm).toHaveBeenCalledWith(7);
     const empty = await mountWith(friendYardData({ lands: [] }));
     expect(empty.find('[data-testid="friend-empty"]').exists()).toBe(true);
+  });
+
+  it('获得焦点时重新读取好友菜园', async () => {
+    const w = await mountWith();
+    window.dispatchEvent(new Event('focus'));
+    await flushPromises();
+    expect(endpoints.yardFriend).toHaveBeenCalledTimes(2);
+    w.unmount();
   });
 });

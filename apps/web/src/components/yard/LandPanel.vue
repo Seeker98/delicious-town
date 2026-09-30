@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { YardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -18,6 +18,11 @@ const fertId = ref<number>(0);
 async function load() {
   try {
     data.value = await endpoints.yard();
+    // 空地的下拉框默认选第一颗种子；选的种子用完后回到还有的种子
+    const stock = new Set(data.value.seeds.map((s) => s.seedId));
+    const first = data.value.seeds[0]?.seedId ?? 0;
+    for (const l of data.value.lands)
+      if (!l.plant && !stock.has(picks.value[l.no] ?? -1)) picks.value[l.no] = first;
     if (!fertId.value)
       fertId.value =
         data.value.fertilizers.find((f) => f.num > 0)?.goodsId ?? data.value.fertilizers[0]?.goodsId ?? 0;
@@ -25,7 +30,18 @@ async function load() {
     toast.push(errorMessage(e, '读取菜园失败'), 'danger');
   }
 }
-onMounted(load);
+/** 倒计时、虫草干涸会随时间变化：获得焦点时和每分钟重新读取 */
+let timer: ReturnType<typeof setInterval> | undefined;
+const onFocus = () => void load();
+onMounted(() => {
+  void load();
+  window.addEventListener('focus', onFocus);
+  timer = setInterval(() => void load(), 60_000);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('focus', onFocus);
+  if (timer) clearInterval(timer);
+});
 
 const cells = computed(() => {
   const d = data.value;

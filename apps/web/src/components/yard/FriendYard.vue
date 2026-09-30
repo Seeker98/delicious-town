@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { FriendYardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -22,7 +22,18 @@ async function load() {
     toast.push(errorMessage(e, '读取好友菜园失败'), 'danger');
   }
 }
-onMounted(load);
+/** 倒计时、虫草干涸会随时间变化：获得焦点时和每分钟重新读取 */
+let timer: ReturnType<typeof setInterval> | undefined;
+const onFocus = () => void load();
+onMounted(() => {
+  void load();
+  window.addEventListener('focus', onFocus);
+  timer = setInterval(() => void load(), 60_000);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('focus', onFocus);
+  if (timer) clearInterval(timer);
+});
 
 async function run(fn: () => Promise<string>, fail: string) {
   if (busy.value) return;

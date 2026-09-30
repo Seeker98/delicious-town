@@ -107,6 +107,8 @@ describe('帮好友照料（规格书 08 §8.3）', () => {
     const logs = (await logsOf(t, b.restaurantId)).filter((l) => l.type === 'yard.helped');
     expect(logs.map((l) => (l.params as { what: string }).what)).toEqual(['deworm', 'weed', 'water']);
     expect(logs[0]!.params).toMatchObject({ by: a.restaurantId, foodsId: 101 });
+    const feed = await t.game.social.reads.feed(b, { limit: 30 });
+    expect(feed.items.filter((x) => x.type === 'yard.helped')).toHaveLength(3);
   });
 });
 
@@ -137,6 +139,8 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
       .where('key', '=', 'yard.steal')
       .executeTakeFirst();
     expect(counter?.count).toBe(1);
+    const feed = await hi.game.social.reads.feed(b, { limit: 30 });
+    expect(feed.items.map((x) => x.type)).toContain('yard.stolen');
   });
 
   it('门槛：剩余 < 种子原产量 × 0.7 报 steal_left（按原产量 20，不含土地加成）；声望不够报 renown；7 级只偷 1', async () => {

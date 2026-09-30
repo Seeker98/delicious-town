@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
 import LandPanel from './LandPanel.vue';
 import { landData, plantData, yardData } from './testData';
@@ -25,6 +25,9 @@ async function mountWith(data = yardData()) {
   await flushPromises();
   return w;
 }
+
+/** 组件会监听窗口焦点，每个用例结束后卸载，免得旧组件也跟着重新读取 */
+enableAutoUnmount(afterEach);
 
 describe('LandPanel', () => {
   beforeEach(() => {
@@ -97,5 +100,48 @@ describe('LandPanel', () => {
     await flushPromises();
     expect(endpoints.yardRemove).toHaveBeenCalledWith(8);
     confirm.mockRestore();
+  });
+
+  it('获得焦点时和每分钟重新读取菜园（倒计时和虫草干涸不会一直停在旧状态）', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+    try {
+      const w = await mountWith();
+      expect(endpoints.yard).toHaveBeenCalledTimes(1);
+      window.dispatchEvent(new Event('focus'));
+      await flushPromises();
+      expect(endpoints.yard).toHaveBeenCalledTimes(2);
+      vi.advanceTimersByTime(60_000);
+      await flushPromises();
+      expect(endpoints.yard).toHaveBeenCalledTimes(3);
+      w.unmount();
+      window.dispatchEvent(new Event('focus'));
+      vi.advanceTimersByTime(60_000);
+      await flushPromises();
+      expect(endpoints.yard).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('播种下拉框默认选第一颗种子；选的种子用完后回到还有的种子', async () => {
+    const w = await mountWith(
+      yardData({
+        seeds: [
+          { seedId: 1, num: 2 },
+          { seedId: 2, num: 1 },
+        ],
+      }),
+    );
+    const sel = () => w.find('[data-testid="sow-seed-1"]').element as HTMLSelectElement;
+    expect(sel().value).toBe('1');
+    await w.find('[data-testid="sow-seed-1"]').setValue('2');
+    vi.mocked(endpoints.yard).mockResolvedValue(yardData({ seeds: [{ seedId: 1, num: 2 }] }));
+    await w.find('[data-testid="sow-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.yardPlant).toHaveBeenLastCalledWith(1, 2);
+    expect(sel().value).toBe('1');
+    await w.find('[data-testid="sow-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.yardPlant).toHaveBeenLastCalledWith(1, 1);
   });
 });
