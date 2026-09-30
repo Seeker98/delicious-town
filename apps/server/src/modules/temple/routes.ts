@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { missileBody } from '@dt/shared';
+import { exploreBody, missileBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -10,6 +10,9 @@ export function templeRoutes(svc: TempleService): FastifyPluginAsync {
     r.get('/temple', async (req) => ok(await svc.overview(restCtxOf(req))));
     r.post('/temple/missile', async (req) =>
       okOp(await svc.missile(restCtxOf(req), parse(missileBody, req.body))),
+    );
+    r.post('/temple/explore', async (req) =>
+      okOp(await svc.explore(restCtxOf(req), parse(exploreBody, req.body))),
     );
   };
 }

@@ -7,6 +7,7 @@ import { getEffectAgg } from '../effects/service';
 import { restGear } from '../equip/power';
 import type { WorldService } from '../world/service';
 import { shootMissiles } from './guardian';
+import { exploreMaps } from './explore';
 import { guardianHp, inFeedHours, krakenTarget } from './rules';
 
 export function createTempleService(d: GameDeps, world: WorldService) {
@@ -112,6 +113,10 @@ export function createTempleService(d: GameDeps, world: WorldService) {
 
     missile(ctx: RestCtx, b: { goodsId: number; num: number }) {
       return op(ctx, 'temple.missile', async (o) => shootMissiles(o, await weatherOf(o), b));
+    },
+
+    explore(ctx: RestCtx, b: { goodsId: number; times: number }) {
+      return op(ctx, 'temple.explore', async (o) => exploreMaps(o, await weatherOf(o), b));
     },
   };
 }
