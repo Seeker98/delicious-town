@@ -17,6 +17,7 @@ vi.mock('../api/endpoints', () => ({
     friendApply: vi.fn(),
     friendRefuel: vi.fn(),
     friendRemove: vi.fn(),
+    mcTaste: vi.fn(),
   },
 }));
 
@@ -107,5 +108,23 @@ describe('FriendRestView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="friend-equips"]').text()).toContain('铲');
     expect(w.find('[data-testid="friend-equips"]').text()).toContain('+3');
+  });
+
+  it('对方有特色菜时可以品尝；吃过显示已品尝', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({ special: { mcId: 1, grade: 3, leftNum: 20, price: 40, eaten: false } }),
+    );
+    vi.mocked(endpoints.mcTaste).mockResolvedValue({ strength: 40, recipe: false, left: 18 });
+    const w = await mountView();
+    expect(w.find('[data-testid="friend-special"]').text()).toContain('剩 20 份');
+    await w.find('[data-testid="act-taste"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.mcTaste).toHaveBeenCalledWith(2);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({ special: { mcId: 1, grade: 3, leftNum: 18, price: 40, eaten: true } }),
+    );
+    const w2 = await mountView();
+    expect(w2.find('[data-testid="act-taste"]').attributes('disabled')).toBeDefined();
+    expect(w2.find('[data-testid="act-taste"]').text()).toBe('已品尝');
   });
 });
