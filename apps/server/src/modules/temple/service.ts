@@ -7,6 +7,7 @@ import { getEffectAgg } from '../effects/service';
 import { restGear } from '../equip/power';
 import type { WorldService } from '../world/service';
 import { shootMissiles } from './guardian';
+import { exchangeTentacle, feedKraken, refreshTentacleShop, tentacleShop } from './kraken';
 import { prepareTrial, refreshTrial, startTrial } from './trial';
 import { exploreMaps } from './explore';
 import { guardianHp, inFeedHours, krakenTarget } from './rules';
@@ -128,6 +129,20 @@ export function createTempleService(d: GameDeps, world: WorldService) {
     },
     startTrial(ctx: RestCtx, b: { mainFoodsId: number; subFoodsId: number }) {
       return op(ctx, 'temple.trial', (o) => startTrial(o, b));
+    },
+
+    feedKraken(ctx: RestCtx, b: { num: number }) {
+      return op(ctx, 'kraken.feed', (o) => feedKraken(o, krakenPool, b));
+    },
+    /** 第一次打开要生成当天的格子（写库），所以也走 runOp（计划裁定 3） */
+    tentacleShop(ctx: RestCtx) {
+      return op(ctx, 'tentacle.view', (o) => tentacleShop(o));
+    },
+    refreshTentacle(ctx: RestCtx) {
+      return op(ctx, 'tentacle.refresh', (o) => refreshTentacleShop(o));
+    },
+    exchangeTentacle(ctx: RestCtx, b: { slot: number }) {
+      return op(ctx, 'tentacle.exchange', (o) => exchangeTentacle(o, b));
     },
   };
 }

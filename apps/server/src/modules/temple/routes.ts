@@ -1,5 +1,13 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { exploreBody, missileBody, trialPrepareBody, trialRefreshBody, trialStartBody } from '@dt/shared';
+import {
+  exploreBody,
+  missileBody,
+  trialPrepareBody,
+  trialRefreshBody,
+  trialStartBody,
+  krakenFeedBody,
+  tentacleExchangeBody,
+} from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -22,6 +30,14 @@ export function templeRoutes(svc: TempleService): FastifyPluginAsync {
     );
     r.post('/temple/trial/start', async (req) =>
       okOp(await svc.startTrial(restCtxOf(req), parse(trialStartBody, req.body))),
+    );
+    r.post('/temple/kraken/feed', async (req) =>
+      okOp(await svc.feedKraken(restCtxOf(req), parse(krakenFeedBody, req.body))),
+    );
+    r.get('/temple/tentacle', async (req) => ok((await svc.tentacleShop(restCtxOf(req))).data));
+    r.post('/temple/tentacle/refresh', async (req) => okOp(await svc.refreshTentacle(restCtxOf(req))));
+    r.post('/temple/tentacle/exchange', async (req) =>
+      okOp(await svc.exchangeTentacle(restCtxOf(req), parse(tentacleExchangeBody, req.body))),
     );
   };
 }
