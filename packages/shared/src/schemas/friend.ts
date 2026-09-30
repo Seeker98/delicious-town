@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { TableDto } from './restaurant';
 
 const restId = z.number().int().positive();
 export const restIdBody = z.object({ restId });
@@ -50,4 +51,31 @@ export interface RestBriefDto {
   isFriend: boolean;
   /** 我已经申请过 */
   requested: boolean;
+}
+
+export interface FriendRestDto {
+  id: number;
+  name: string;
+  level: number;
+  star: number;
+  streetId: number;
+  renown: number;
+  door: number;
+  avatar: number | null;
+  notice: string;
+  npc: boolean;
+  /** 1 营业，2 停业 */
+  state: number;
+  isFriend: boolean;
+  /** 我已经向它申请过 */
+  requested: boolean;
+  /** 展示中的个性图标 */
+  icons: Array<{ key: string; title: string }>;
+  /** 有效勋章（道具 id） */
+  honors: number[];
+  /** 摆着的牌匾（道具 id） */
+  plaques: number[];
+  tables: TableDto[];
+  /** 我今天已经给它点过赞 */
+  thumbedToday: boolean;
 }

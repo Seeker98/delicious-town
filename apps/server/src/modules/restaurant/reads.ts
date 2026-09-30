@@ -173,11 +173,18 @@ export async function buffsOf(
   };
 }
 
-export async function logPage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<LogPageDto> {
+export async function logPage(
+  db: Kysely<DB>,
+  restId: number,
+  q: PageQuery,
+  filter: { types?: readonly string[]; since?: Date } = {},
+): Promise<LogPageDto> {
   let s = db
     .selectFrom('rest_log')
     .select(['id', 'type', 'params', 'created_at'])
     .where('rest_id', '=', restId);
+  if (filter.types) s = s.where('type', 'in', [...filter.types]);
+  if (filter.since) s = s.where('created_at', '>=', filter.since);
   if (q.before) {
     const c = parseCursor(q.before);
     s = c.id

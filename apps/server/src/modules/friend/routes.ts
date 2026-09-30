@@ -1,5 +1,12 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { friendListQuery, friendSearchQuery, respondBody, restIdBody } from '@dt/shared';
+import {
+  friendListQuery,
+  friendSearchQuery,
+  pageQuery,
+  respondBody,
+  restIdBody,
+  restIdParam,
+} from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -25,6 +32,12 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     });
     r.post('/friend/remove', async (req) =>
       ok(await svc.relations.remove(restCtxOf(req), parse(restIdBody, req.body).restId)),
+    );
+    r.get('/friend/detail/:restId', async (req) =>
+      ok(await svc.reads.detail(restCtxOf(req), parse(restIdParam, req.params).restId)),
+    );
+    r.get('/friend/feed', async (req) =>
+      ok(await svc.reads.feed(restCtxOf(req), parse(pageQuery, req.query))),
     );
   };
 }

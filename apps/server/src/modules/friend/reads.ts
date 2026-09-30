@@ -1,9 +1,38 @@
 import { sql, type Kysely } from 'kysely';
-import type { FriendBriefDto, FriendRequestDto, FriendsDto, RestBriefDto } from '@dt/shared';
+import { DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
+import {
+  ErrorCode,
+  gameDay,
+  type FriendBriefDto,
+  type FriendRequestDto,
+  type FriendRestDto,
+  type FriendsDto,
+  type LogPageDto,
+  type PageQuery,
+  type RestBriefDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
+import { isFriend } from '../../core/pair';
 import type { DB } from '../../db/schema';
+import { AppError } from '../../http/errors';
 import { flipSlots } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
+import { logPage, restNames, tableDto } from '../restaurant/reads';
+
+/** 好友动态：别人对我做的操作（设计文档 §4.10） */
+export const FEED_TYPES = [
+  'dine.start',
+  'dine.expelled',
+  'roach.laid',
+  'roach.killed',
+  'friend.refuel',
+  'friend.flip',
+  'exchange',
+  'thumb',
+  'friend.apply',
+  'friend.accept',
+] as const;
+const FEED_DAYS = 3;
 
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
@@ -173,6 +202,99 @@ export function createFriendReads(d: GameDeps) {
         .limit(20)
         .execute();
       return annotate(ctx, rows);
+    },
+
+    async detail(ctx: RestCtx, restId: number): Promise<FriendRestDto> {
+      const now = d.now();
+      const r = await d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirst();
+      if (!r || r.shard_id !== ctx.shardId)
+        throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId });
+      const tables = (
+        await d.db
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', restId)
+          .executeTakeFirstOrThrow()
+      ).tables;
+      const names = await restNames(
+        d.db,
+        tables.flatMap((x) => (x.freeloader ? [x.freeloader.restId] : [])),
+      );
+      const iconDefs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
+      const icons = (
+        await d.db
+          .selectFrom('rest_icon')
+          .select('icon_key')
+          .where('rest_id', '=', restId)
+          .where('shown', '=', true)
+          .orderBy('id')
+          .execute()
+      ).flatMap((i) => {
+        const def = iconDefs.get(i.icon_key);
+        return def ? [{ key: def.key, title: def.title }] : [];
+      });
+      const store = await d.db
+        .selectFrom('store_item')
+        .select(['goods_id', 'expires_at'])
+        .where('rest_id', '=', restId)
+        .where('num', '>', 0)
+        .execute();
+      const honors = store
+        .filter(
+          (s) =>
+            d.config.goods.get(s.goods_id)?.type === GOODS_TYPE.honor &&
+            (s.expires_at === null || s.expires_at > now),
+        )
+        .map((s) => s.goods_id)
+        .sort((x, y) => x - y);
+      const plaques = (
+        await d.db.selectFrom('restaurant_device').select('goods_id').where('rest_id', '=', restId).execute()
+      )
+        .map((x) => x.goods_id)
+        .filter((id) => {
+          const g = d.config.goods.get(id);
+          return g?.type === GOODS_TYPE.device && g.deviceType === DEVICE_TYPE.plaque;
+        });
+      const requested = await d.db
+        .selectFrom('friend_request')
+        .select('to_rest')
+        .where('from_rest', '=', ctx.restaurantId)
+        .where('to_rest', '=', restId)
+        .executeTakeFirst();
+      const thumbed = await d.db
+        .selectFrom('thumb')
+        .select('to_rest')
+        .where('day', '=', gameDay(now))
+        .where('from_rest', '=', ctx.restaurantId)
+        .where('to_rest', '=', restId)
+        .executeTakeFirst();
+      return {
+        id: r.id,
+        name: r.name,
+        level: r.level,
+        star: r.star_level,
+        streetId: r.street_id,
+        renown: r.renown,
+        door: r.door,
+        avatar: r.avatar,
+        notice: r.notice,
+        npc: r.npc,
+        state: r.state,
+        isFriend: restId !== ctx.restaurantId && (await isFriend(d.db, ctx.restaurantId, restId)),
+        requested: requested !== undefined,
+        icons,
+        honors,
+        plaques,
+        tables: tables.map((x) => tableDto(x, names)),
+        thumbedToday: thumbed !== undefined,
+      };
+    },
+
+    feed(ctx: RestCtx, q: PageQuery): Promise<LogPageDto> {
+      return logPage(d.db, ctx.restaurantId, q, {
+        types: FEED_TYPES,
+        since: new Date(d.now().getTime() - FEED_DAYS * 86_400_000),
+      });
     },
   };
 }
