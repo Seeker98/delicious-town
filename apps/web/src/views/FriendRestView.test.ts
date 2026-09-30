@@ -43,6 +43,7 @@ const detail = (patch: Partial<FriendRestDto> = {}): FriendRestDto => ({
   ],
   thumbedToday: false,
   equips: [],
+  special: null,
   ...patch,
 });
 

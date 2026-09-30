@@ -1,27 +1,31 @@
 import { GOODS, type MysteriousCookbook } from '@dt/config';
 import {
   buildPool,
+  gameDay,
+  gameTime,
   ErrorCode,
   type AppraiseResultDto,
   type CookResultDto,
   type McCookDto,
   type McOverviewDto,
   type McPreviewDto,
+  type TasteResultDto,
   type WeightedPool,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, requirement } from '../../core/errors';
+import { invalidState, limitReached, notEnough, requirement } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, setRest, type Op, type OpResult } from '../../core/op';
-import { gainCoin, gainExp } from '../../core/resources';
+import { feedLog, isFriend, runPairOp } from '../../core/pair';
+import { gainCoin, gainExp, gainStrength } from '../../core/resources';
 import type { McCookRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
 import { restPower } from '../equip/power';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
-import { currentCook, endCook } from './cook';
+import { consumeSpecial, currentCook, endCook } from './cook';
 import { addRemnant, subRemnant } from './remnant';
 import {
   addProficiency,
@@ -31,6 +35,9 @@ import {
   cookDish,
   LEARN_REMNANTS,
   roadRate,
+  tasteRecipeRate,
+  tasteStrength,
+  tasteTickets,
   trialRestExp,
 } from './rules';
 
@@ -355,6 +362,58 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         await endCook(o, c.id, 'dumped');
         return { id: c.id };
       });
+    },
+
+    taste(ctx: RestCtx, b: { restId: number }) {
+      return runPairOp(
+        d,
+        ctx,
+        b.restId,
+        { feature: 'mysterious', source: 'mc.taste', friend: 'none' },
+        async (p): Promise<TasteResultDto> => {
+          const t = p.me.tuning.mysterious;
+          if (p.them.rest.state !== 1) throw invalidState('target_closed');
+          const c = await currentCook(p.them);
+          if (!c) throw invalidState('target_no_special');
+          const dayStart = gameTime(gameDay(p.me.now), 0);
+          const today = await p.me.tx
+            .selectFrom('mc_eat')
+            .select((eb) => eb.fn.countAll<number>().as('n'))
+            .where('eater_rest_id', '=', p.me.rest.id)
+            .where('eaten_at', '>=', dayStart)
+            .executeTakeFirstOrThrow();
+          const again = await p.me.tx
+            .selectFrom('mc_eat')
+            .select('cook_id')
+            .where('cook_id', '=', c.id)
+            .where('eater_rest_id', '=', p.me.rest.id)
+            .executeTakeFirst();
+          if (again) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'taste' });
+          if (Number(today.n) >= t.tasteDaily) throw limitReached('taste', { max: t.tasteDaily });
+          const friend = await isFriend(p.me.tx, p.me.rest.id, p.them.rest.id);
+          const portions = friend ? 2 : 1;
+          if (c.left_num < portions) throw notEnough('portions', portions, c.left_num);
+          await p.me.tx
+            .insertInto('mc_eat')
+            .values({ cook_id: c.id, eater_rest_id: p.me.rest.id, eaten_at: p.me.now })
+            .execute();
+          const eatCount = c.eat_count + 1;
+          await p.me.tx.updateTable('mc_cook').set({ eat_count: eatCount }).where('id', '=', c.id).execute();
+          const left = await consumeSpecial(p.them, c.id, portions, 'eaten');
+          const strength = tasteStrength(c.price, friend);
+          gainStrength(p.me, strength);
+          let recipe = false;
+          if (eatCount <= t.tasteAwardMax) {
+            const { rate } = await opLuck(p.me);
+            recipe = p.me.rng.chance(tasteRecipeRate(c.grade, rate, t));
+            if (recipe) await grantGoodsOp(p.me, GOODS.mysteryRecipe, 1);
+            const tickets = tasteTickets(strength, p.them.rest.star_level, p.me.rng);
+            await grantGoodsOp(p.them, GOODS.mysteryTicket, tickets, { event: false });
+          }
+          feedLog(p, 'mc.eaten', { mcId: c.mc_id, portions });
+          return { strength, recipe, left };
+        },
+      );
     },
   };
 }

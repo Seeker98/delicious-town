@@ -92,3 +92,14 @@ export interface CookResultDto {
   /** 试炼经验带来的餐厅经验 */
   restExp: number;
 }
+
+export const tasteBody = z.object({ restId: id });
+
+export interface TasteResultDto {
+  /** 得到的体力 */
+  strength: number;
+  /** 得到了神秘食谱 */
+  recipe: boolean;
+  /** 这批剩余份数 */
+  left: number;
+}

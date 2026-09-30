@@ -29,6 +29,8 @@ export const FEED_TYPES = [
   'friend.flip',
   'exchange',
   'thumb',
+  'mc.eaten',
+  'lesson.taught',
   'friend.apply',
   'friend.accept',
 ] as const;
@@ -275,6 +277,22 @@ export function createFriendReads(d: GameDeps) {
         .where('worn', '=', true)
         .orderBy('part')
         .execute();
+      const cook =
+        r.mc_cook_id === null
+          ? undefined
+          : await d.db
+              .selectFrom('mc_cook')
+              .select(['id', 'mc_id', 'grade', 'left_num', 'price'])
+              .where('id', '=', r.mc_cook_id)
+              .executeTakeFirst();
+      const ate = cook
+        ? await d.db
+            .selectFrom('mc_eat')
+            .select('cook_id')
+            .where('cook_id', '=', cook.id)
+            .where('eater_rest_id', '=', ctx.restaurantId)
+            .executeTakeFirst()
+        : undefined;
       return {
         id: r.id,
         name: r.name,
@@ -295,6 +313,15 @@ export function createFriendReads(d: GameDeps) {
         tables: tables.map((x) => tableDto(x, names)),
         thumbedToday: thumbed !== undefined,
         equips: equips.map((e) => ({ part: e.part, goodsId: e.goods_id, stress: e.stress })),
+        special: cook
+          ? {
+              mcId: cook.mc_id,
+              grade: cook.grade,
+              leftNum: cook.left_num,
+              price: cook.price,
+              eaten: ate !== undefined,
+            }
+          : null,
       };
     },
 

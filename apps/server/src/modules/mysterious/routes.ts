@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { appraiseBody, mcCookBody, mcIdParam, mcLearnBody, remnantBody } from '@dt/shared';
+import { appraiseBody, mcCookBody, mcIdParam, mcLearnBody, remnantBody, tasteBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -23,5 +23,6 @@ export function mysteriousRoutes(svc: MysteriousService): FastifyPluginAsync {
     );
     r.post('/mc/cook', async (req) => okOp(await svc.cook(restCtxOf(req), parse(mcCookBody, req.body))));
     r.post('/mc/dump', async (req) => okOp(await svc.dump(restCtxOf(req))));
+    r.post('/mc/taste', async (req) => okOp(await svc.taste(restCtxOf(req), parse(tasteBody, req.body))));
   };
 }
