@@ -108,3 +108,19 @@ describe('神殿索引（子项目 4B-1）', () => {
     expect(config.tuning.temple.guardianHpBase).toBe(10000);
   });
 });
+
+describe('菜园索引（子项目 4B-2）', () => {
+  it('配方池、种子兑换按种子 id、肥料分钟数、动作收益', () => {
+    expect(config.formulas.get(2)!.resFoodsId).toBe(448);
+    expect(config.formulaPool.items).toHaveLength(56);
+    expect(config.seedExchange.get(1)).toEqual({ seedId: 1, seedNum: 5, essence: 2 });
+    expect([...config.fertilizers]).toEqual([
+      [427, 20],
+      [428, 60],
+    ]);
+    expect(config.incomeAction(51)).toMatchObject({ coin: 1, exp: 1, landExp: 5 });
+    expect(() => config.incomeAction(999)).toThrow();
+    expect(config.tuning.yard.maxLands).toBe(9);
+    expect(config.tuning.yard.events.minutes).toEqual([7, 27, 47]);
+  });
+});

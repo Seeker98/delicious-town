@@ -182,10 +182,23 @@ export const rawSeed = z.object({
   harvestnum: int,
   odds: z.number(),
 });
-export const rawSeedExchange = z.object({ seedId: int }).passthrough();
-export const rawFormula = z
-  .object({ id: int, mainFoodsId: int, subFoodsId: int, addFoodsId: int, resFoodsId: int })
-  .passthrough();
+export const rawSeedExchange = z.object({ seedId: int, seednum: int, remnantnum: int });
+export const rawFormula = z.object({
+  id: int,
+  name: z.string(),
+  mainFoodsId: int,
+  subFoodsId: int,
+  addFoodsId: int,
+  resFoodsId: int,
+  odds: z.number(),
+});
+export const rawIncomeAction = z.object({
+  id: int,
+  name: z.string(),
+  coin: z.number(),
+  exp: z.number(),
+  landExp: int.optional(),
+});
 export const rawGoodsExchange = z
   .object({ id: int, goodsId: int, needGoods: z.array(z.object({ type: z.string(), id: int, num: int })) })
   .passthrough();

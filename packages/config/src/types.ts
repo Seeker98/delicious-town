@@ -276,6 +276,9 @@ export interface ConfigBundle {
   mysteriousCookbooks: MysteriousCookbook[];
   mcProficiency: McProficiency[];
   seeds: Seed[];
+  formulas: Formula[];
+  seedExchange: SeedExchange[];
+  incomeActions: IncomeAction[];
   weather: Weather[];
   devices: Device[];
   starNeed: StarNeed[];
@@ -376,4 +379,31 @@ export interface MapDef {
   num: [number, number];
   mysteriousRate: number;
   needStrength: number;
+}
+
+/** 食材配方（规格书 08 §8.5）：主料从菜篮扣，辅料、添加料从橱柜扣 */
+export interface Formula {
+  id: number;
+  name: string;
+  mainFoodsId: number;
+  subFoodsId: number;
+  addFoodsId: number;
+  resFoodsId: number;
+  odds: number;
+}
+
+/** 配方精华换种子（规格书 20 §20.8）：每次花 essence 个精华换 seedNum 颗 */
+export interface SeedExchange {
+  seedId: number;
+  seedNum: number;
+  essence: number;
+}
+
+/** 动作收益（规格书 20 §20.7）；landExp 只有菜园动作有，其他为 0 */
+export interface IncomeAction {
+  id: number;
+  name: string;
+  coin: number;
+  exp: number;
+  landExp: number;
 }

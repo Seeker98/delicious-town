@@ -79,6 +79,40 @@ describe('buildBundle（真实数据）', () => {
   it('同样的输入生成同样的版本号', () => {
     expect(buildBundle(source()).bundle!.version).toBe(buildBundle(source()).bundle!.version);
   });
+  it('配方、种子兑换、动作收益是正式字段（子项目 4B-2）', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.formulas).toHaveLength(56);
+    expect(bundle!.formulas.find((f) => f.id === 1)).toEqual({
+      id: 1,
+      name: '牡丹籽油配方',
+      mainFoodsId: 438,
+      subFoodsId: 431,
+      addFoodsId: 551,
+      resFoodsId: 447,
+      odds: 10,
+    });
+    expect(bundle!.seedExchange).toHaveLength(96);
+    expect(bundle!.seedExchange.find((e) => e.seedId === 95)).toEqual({
+      seedId: 95,
+      seedNum: 1,
+      essence: 30,
+    });
+    expect(bundle!.incomeActions.find((a) => a.id === 54)).toEqual({
+      id: 54,
+      name: '收获',
+      coin: 2,
+      exp: 3,
+      landExp: 20,
+    });
+    expect(bundle!.incomeActions.find((a) => a.id === 20)!.landExp).toBe(0);
+    expect('formulas' in bundle!.extra).toBe(false);
+    expect('seedExchange' in bundle!.extra).toBe(false);
+  });
+
+  it('任务 114（鉴定一次食材配方）链接到菜园', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.tasks.find((t) => t.id === 114)!.href).toBe('/yard');
+  });
 });
 
 describe('buildBundle（坏数据）', () => {

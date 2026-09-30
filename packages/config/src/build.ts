@@ -94,6 +94,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const seedsRaw = parse('designed/seeds', z.array(raw.rawSeed));
   const seedExRaw = parse('designed/seed_exchange', z.array(raw.rawSeedExchange));
   const formulasRaw = parse('designed/foods_formula', z.array(raw.rawFormula));
+  const incomeRaw = parse('designed/income_action', z.array(raw.rawIncomeAction));
   const goodsExRaw = parse('designed/goods_exchange', z.array(raw.rawGoodsExchange));
   const renownRaw = parse('designed/renown_shop', z.array(raw.rawRenownShop));
   const blessRaw = parse('designed/bless', z.array(raw.rawBless));
@@ -133,6 +134,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !seedsRaw ||
     !seedExRaw ||
     !formulasRaw ||
+    !incomeRaw ||
     !goodsExRaw ||
     !renownRaw ||
     !blessRaw ||
@@ -518,12 +520,51 @@ export function buildBundle(src: SourceData): BuildResult {
   const seedIds = new Set(seedsRaw.map((s) => s.id));
   for (const s of seedsRaw)
     if (!foodIds.has(s.foodsId)) errors.push(`seed ${s.id} references unknown food ${s.foodsId}`);
-  for (const e of seedExRaw)
+  const seedExchange = seedExRaw.map((e) => ({
+    seedId: e.seedId,
+    seedNum: e.seednum,
+    essence: e.remnantnum,
+  }));
+  for (const e of seedExchange) {
     if (!seedIds.has(e.seedId)) errors.push(`seed_exchange references unknown seed ${e.seedId}`);
-  for (const f of formulasRaw) {
+    if (e.seedNum < 1 || e.essence < 1) errors.push(`seed_exchange ${e.seedId} needs positive numbers`);
+  }
+  const formulas = formulasRaw.map((f) => ({
+    id: f.id,
+    name: f.name,
+    mainFoodsId: f.mainFoodsId,
+    subFoodsId: f.subFoodsId,
+    addFoodsId: f.addFoodsId,
+    resFoodsId: f.resFoodsId,
+    odds: f.odds,
+  }));
+  unique(
+    'foods_formula',
+    formulas.map((f) => f.id),
+  );
+  for (const f of formulas) {
     for (const id of [f.mainFoodsId, f.subFoodsId, f.addFoodsId, f.resFoodsId]) {
       if (!foodIds.has(id)) errors.push(`formula ${f.id} references unknown food ${id}`);
     }
+  }
+  const incomeActions = incomeRaw.map((a) => ({
+    id: a.id,
+    name: a.name,
+    coin: a.coin,
+    exp: a.exp,
+    landExp: a.landExp ?? 0,
+  }));
+  unique(
+    'income_action',
+    incomeActions.map((a) => a.id),
+  );
+  for (const id of [50, 51, 52, 53, 54, 55, 56])
+    if (!incomeActions.some((a) => a.id === id)) errors.push(`income_action missing yard action ${id}`);
+  for (const id of [464, 465, 469, 470, 339])
+    if (!goodsIds.has(id)) errors.push(`yard references unknown goods ${id}`);
+  for (const g of goods) {
+    if (g.deviceType === 80 && !((g.effects.plantTime ?? 0) > 0))
+      errors.push(`goods ${g.id} fertilizer needs a positive plantTime`);
   }
   for (const e of goodsExRaw) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
@@ -581,6 +622,9 @@ export function buildBundle(src: SourceData): BuildResult {
     mysteriousCookbooks,
     mcProficiency,
     seeds,
+    formulas,
+    seedExchange,
+    incomeActions,
     weather,
     devices,
     starNeed,
@@ -604,8 +648,6 @@ export function buildBundle(src: SourceData): BuildResult {
     looks,
     suits,
     extra: {
-      seedExchange: seedExRaw,
-      formulas: formulasRaw,
       goodsExchange: goodsExRaw,
       renownShop: renownRaw,
       bless: blessRaw,
