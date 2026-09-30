@@ -1,4 +1,4 @@
-import type { TakeawayClaimDto, TakeawayDto } from '@dt/shared';
+import type { RiderCandidateDto, TakeawayClaimDto, TakeawayDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { runPairOp } from '../../core/pair';
@@ -7,6 +7,7 @@ import { settleDelivery } from './claim';
 import { deliverOrder } from './deliver';
 import { openTakeaway } from './open';
 import { refreshPrivate } from './orders';
+import { dismissRider, hireRider, riderCandidates } from './riders';
 import { takeawayView } from './view';
 
 export function createTakeawayService(d: GameDeps, world: WorldService) {
@@ -75,6 +76,22 @@ export function createTakeawayService(d: GameDeps, world: WorldService) {
         out.events.push(...r.events);
       }
       return out;
+    },
+    async candidates(ctx: RestCtx): Promise<RiderCandidateDto[]> {
+      await d.shards.ensureFeature(ctx.shardId, 'takeaway');
+      return riderCandidates(d.db, await restOf(ctx.restaurantId));
+    },
+    hire(ctx: RestCtx, b: { restId: number }) {
+      return runPairOp(
+        d,
+        ctx,
+        b.restId,
+        { feature: 'takeaway', source: 'takeaway.hire', friend: 'required' },
+        (p) => hireRider(p),
+      );
+    },
+    dismiss(ctx: RestCtx, b: { riderId: number }) {
+      return op(ctx, 'takeaway.dismiss', (o) => dismissRider(o, b.riderId));
     },
   };
 }
