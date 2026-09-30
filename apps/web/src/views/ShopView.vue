@@ -78,18 +78,21 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
       class="dt-row d-flex align-items-center gap-2 border-bottom py-1 small"
     >
       <div class="flex-fill" style="min-width: 0">
-        <b role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
-          catalog.goodsName(it.goodsId)
-        }}</b>
-        <span class="text-muted ms-1">
+        <div class="text-truncate">
+          <b role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
+            catalog.goodsName(it.goodsId)
+          }}</b>
+        </div>
+        <div class="text-truncate" style="font-size: 12px" :data-testid="`info-${it.goodsId}`">
           {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }} ·
           <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
             capText(it)
           }}</span>
-        </span>
+        </div>
         <div
           v-if="catalog.goods(it.goodsId)?.desc"
-          :class="['text-muted', { 'dt-clamp2': !expanded.has(it.goodsId) }]"
+          :class="['text-muted', { 'dt-clamp1': !expanded.has(it.goodsId) }]"
+          style="font-size: 12px"
           :data-testid="`desc-${it.goodsId}`"
         >
           {{ catalog.goods(it.goodsId)?.desc }}

@@ -148,5 +148,7 @@ describe('CupboardView', () => {
     }
     expect(w.find('[data-testid="pick-302"] .dt-tile-sub').text()).toBe('本街还需 3');
     expect(w.find('[data-testid="pick-101"] .dt-tile-sub').text()).toBe('');
+    // 名字太长时只截名字，数量总是显示
+    expect(w.find('[data-testid="pick-101"] .dt-tile-num').text()).toBe('×9');
   });
 });

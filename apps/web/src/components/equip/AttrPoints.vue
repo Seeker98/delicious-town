@@ -53,10 +53,7 @@ onMounted(() => store.refresh().catch(() => undefined));
     <b data-testid="attr-left">剩余点数 {{ left }}</b>
     <div class="row g-1 mt-1">
       <div v-for="f in FIELDS" :key="f.key" class="col-4">
-        <div class="d-flex justify-content-between">
-          <span :data-testid="`label-${f.key}`">{{ f.label }}</span>
-          <span class="text-muted" :data-testid="`preview-${f.key}`">{{ preview(f.key) }}</span>
-        </div>
+        <div class="fw-bold" :data-testid="`label-${f.key}`">{{ f.label }}</div>
         <input
           v-model.number="add[f.key]"
           type="number"
@@ -65,6 +62,9 @@ onMounted(() => store.refresh().catch(() => undefined));
           placeholder="0"
           :data-testid="`add-${f.key}`"
         />
+        <div class="text-muted" style="font-size: 11px" :data-testid="`preview-${f.key}`">
+          {{ preview(f.key) }}
+        </div>
       </div>
       <div class="col-12">
         <button

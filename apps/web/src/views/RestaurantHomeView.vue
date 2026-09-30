@@ -8,7 +8,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
-import { describeEffects } from '../utils/effects';
+import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
 import { CUSTOMER_NAMES } from '../utils/labels';
 
@@ -119,6 +119,41 @@ function expiresText(at: string | null): string {
 }
 const effectExpires = (e: EffectDto) => expiresText(e.expiresAt);
 
+const QUICK = [
+  { to: '/rest/tasks', icon: 'bi-check2-square', label: '任务' },
+  { to: '/rest/equip', icon: 'bi-tools', label: '厨具与加点' },
+  { to: '/store', icon: 'bi-archive', label: '仓库' },
+  { to: '/shop', icon: 'bi-bag', label: '商店' },
+];
+
+/** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
+const EFFECTS_SHOWN = 5;
+const EFFECT_GROUPS: Array<{ type: string; label: string }> = [
+  { type: 'street', label: '街道' },
+  { type: 'honor', label: '勋章和宠物' },
+  { type: 'device', label: '设施' },
+  { type: 'equip', label: '厨具' },
+  { type: 'suit', label: '套装' },
+];
+const effectsAll = ref(false);
+const effectGroups = computed(() => {
+  const all = rest.value?.effects ?? [];
+  const known = new Set(EFFECT_GROUPS.map((g) => g.type));
+  const ordered = [
+    ...EFFECT_GROUPS.map((g) => ({ ...g, items: all.filter((e) => e.sourceType === g.type) })),
+    { type: 'other', label: '其他', items: all.filter((e) => !known.has(e.sourceType)) },
+  ];
+  let left = effectsAll.value ? Infinity : EFFECTS_SHOWN;
+  const out: Array<{ type: string; label: string; items: EffectDto[] }> = [];
+  for (const g of ordered) {
+    if (left <= 0 || g.items.length === 0) continue;
+    const items = g.items.slice(0, left);
+    left -= items.length;
+    out.push({ type: g.type, label: g.label, items });
+  }
+  return out;
+});
+
 let timer: ReturnType<typeof setInterval> | undefined;
 const onVisible = () => {
   if (document.visibilityState === 'visible') void load();
@@ -151,6 +186,17 @@ onBeforeUnmount(() => {
     <div class="small text-muted mb-2">
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
       <span v-if="rest.state === 2" class="badge bg-danger ms-1">停业</span>
+    </div>
+    <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
+    <div class="dt-quick mb-2" data-testid="quick-links">
+      <RouterLink
+        v-for="q in QUICK"
+        :key="q.to"
+        :to="q.to"
+        class="dt-more-link text-center text-decoration-none"
+      >
+        <i :class="['bi', q.icon, 'd-block']"></i>{{ q.label }}
+      </RouterLink>
     </div>
 
     <div class="row g-1 small">
@@ -195,10 +241,6 @@ onBeforeUnmount(() => {
       <div class="text-muted">{{ customers || '没有客人' }}</div>
       <RouterLink to="/rest/income">收益记录 ›</RouterLink>
       <RouterLink to="/rest/floor" class="ms-3">楼层餐桌 ›</RouterLink>
-    </div>
-
-    <div class="small my-2">
-      <RouterLink to="/rest/equip" data-testid="link-equip"><i class="bi bi-tools"></i> 厨具 ›</RouterLink>
     </div>
 
     <div v-if="dining" class="card mb-2" data-testid="dine-card">
@@ -254,11 +296,11 @@ onBeforeUnmount(() => {
       </button>
     </div>
 
-    <h6 class="mt-3">设施</h6>
+    <h6 class="dt-section">设施</h6>
     <div class="row g-1">
-      <div v-for="d in rest.devices" :key="d.slot" class="col-4">
+      <div v-for="d in rest.devices" :key="d.slot" class="col-3">
         <button
-          class="btn btn-light border w-100 small p-1"
+          class="btn btn-light border w-100 p-1 dt-slot"
           :data-testid="`slot-${d.slot}`"
           :disabled="!d.unlocked || busy"
           @click="openSlot(d.slot)"
@@ -304,7 +346,7 @@ onBeforeUnmount(() => {
       </button>
     </div>
 
-    <h6 class="mt-3">经营开关</h6>
+    <h6 class="dt-section">经营开关</h6>
     <div class="small">
       <div class="form-check form-switch">
         <input
@@ -345,13 +387,37 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <h6 class="mt-3">生效的加成</h6>
-    <ul class="list-unstyled small">
-      <li v-for="e in rest.effects" :key="`${e.sourceType}-${e.sourceId}`" class="mb-1">
-        <GameImg :path="`goods/${e.name}`" :alt="e.name" fallback-icon="bi-award" />
-        <b>{{ e.name }}</b> {{ describeEffects(e.effects) }}
-        <span class="text-muted">（{{ effectExpires(e) }}）</span>
-      </li>
-    </ul>
+    <h6 class="dt-section">生效的加成</h6>
+    <div class="small">
+      <template v-for="g in effectGroups" :key="g.type">
+        <div class="text-muted mt-1" data-testid="effect-group">{{ g.label }}</div>
+        <div
+          v-for="e in g.items"
+          :key="`${e.sourceType}-${e.sourceId}`"
+          class="d-flex align-items-center gap-1 border-bottom py-1"
+          data-testid="effect-row"
+        >
+          <GameImg :path="`goods/${e.name}`" :alt="e.name" fallback-icon="bi-award" />
+          <b class="text-nowrap">{{ e.name }}</b>
+          <span class="flex-fill d-flex flex-wrap gap-1">
+            <span
+              v-for="c in effectChips(e.effects)"
+              :key="c.text"
+              :class="['dt-chip', c.good ? 'dt-chip-good' : 'dt-chip-bad']"
+              >{{ c.text }}</span
+            >
+          </span>
+          <span class="text-muted text-nowrap">{{ effectExpires(e) }}</span>
+        </div>
+      </template>
+      <a
+        v-if="rest.effects.length > EFFECTS_SHOWN"
+        href="#"
+        class="d-block mt-1"
+        data-testid="effects-more"
+        @click.prevent="effectsAll = !effectsAll"
+        >{{ effectsAll ? '收起' : `展开全部（共 ${rest.effects.length} 条）` }}</a
+      >
+    </div>
   </div>
 </template>

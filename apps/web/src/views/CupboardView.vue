@@ -144,9 +144,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           :data-testid="`pick-${f.foodsId}`"
           @click="pick(f.foodsId)"
         >
-          <div class="text-truncate">
+          <div class="d-flex justify-content-center gap-1">
             <i v-if="f.locked" class="bi bi-lock-fill"></i>
-            {{ catalog.foodName(f.foodsId) }} ×{{ f.num }}
+            <span class="text-truncate">{{ catalog.foodName(f.foodsId) }}</span>
+            <span class="dt-tile-num text-nowrap">×{{ f.num }}</span>
           </div>
           <!-- 第二行总是占位，方块一样高（问题记录） -->
           <div class="dt-tile-sub text-muted">{{ f.streetNeed > 0 ? `本街还需 ${f.streetNeed}` : ' ' }}</div>

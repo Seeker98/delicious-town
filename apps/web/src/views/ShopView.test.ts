@@ -51,7 +51,7 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.find('[data-testid="cap-86"]').text()).toBe('银币不够');
     expect(w.find('[data-testid="cap-52"]').text()).toBe('已达持有上限');
   });
-  it('每行结构一样：限买 1 个的在数量框的位置写"限 1 个"；描述最多两行，点名字展开（问题记录：行高不同、有的没数字框）', async () => {
+  it('每行结构一样：限买 1 个的在数量框的位置写"限 1 个"；名字、价格、描述各一行，点名字展开描述（问题记录：行高不同、有的没数字框）', async () => {
     vi.mocked(endpoints.shop).mockResolvedValue({
       coin: [
         { goodsId: 99, price: 5, owned: 0, limit: 1, maxBuy: 1, blocked: null },
@@ -68,8 +68,9 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     expect(w.find('[data-testid="qty-99"]').exists()).toBe(false);
     expect(w.find('[data-testid="qty-hint-99"]').text()).toBe('限 1 个');
     const desc = w.find('[data-testid="desc-99"]');
-    expect(desc.classes()).toContain('dt-clamp2');
+    expect(desc.classes()).toContain('dt-clamp1');
+    expect(w.find('[data-testid="info-99"]').classes()).toContain('text-truncate');
     await w.find('[data-testid="name-99"]').trigger('click');
-    expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp2');
+    expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
   });
 });

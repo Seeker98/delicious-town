@@ -129,7 +129,8 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="last-round"]').text()).toContain('12');
     expect(w.text()).toContain('填一次油');
     expect(w.findAll('[data-testid^="slot-"]')).toHaveLength(2);
-    expect(w.text()).toContain('上座率+35% 幸运+36');
+    expect(w.text()).toContain('上座率+35%');
+    expect(w.text()).toContain('幸运+36');
   });
 
   it('替换还没到期的设施要先确认（替换后不退还）', async () => {
@@ -283,5 +284,38 @@ describe('RestaurantHomeView', () => {
     });
     const done = await mountView();
     expect(done.find('[data-testid="open-plaque2"]').exists()).toBe(false);
+  });
+  it('首页排版：快捷入口一排，区块标题统一，设施一行 4 格（问题记录：首页展示效果不佳）', async () => {
+    const w = await mountView();
+    expect(w.find('[data-testid="link-equip"]').exists()).toBe(false);
+    expect(w.findAll('[data-testid="quick-links"] a').map((a) => a.attributes('href'))).toEqual([
+      '/rest/tasks',
+      '/rest/equip',
+      '/store',
+      '/shop',
+    ]);
+    expect(w.findAll('h6.dt-section').map((h) => h.text())).toEqual(['设施', '经营开关', '生效的加成']);
+    expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
+  });
+
+  it('生效的加成：按来源分组，加成绿色、减益红色；超过 5 条先收起', async () => {
+    const effects = [
+      { sourceType: 'street', sourceId: 140, name: '新手街', effects: { atRate: 0.35 }, expiresAt: null },
+      ...[1, 2, 3, 4, 5, 6].map((i) => ({
+        sourceType: 'honor',
+        sourceId: 200 + i,
+        name: `勋章${i}`,
+        effects: { spRate: 0.1 },
+        expiresAt: null,
+      })),
+    ];
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, effects });
+    const w = await mountView();
+    expect(w.findAll('[data-testid="effect-row"]')).toHaveLength(5);
+    expect(w.findAll('[data-testid="effect-group"]').map((g) => g.text())).toEqual(['街道', '勋章和宠物']);
+    expect(w.find('.dt-chip-good').text()).toBe('上座率+35%');
+    expect(w.find('.dt-chip-bad').text()).toBe('挑剔率+10%');
+    await w.find('[data-testid="effects-more"]').trigger('click');
+    expect(w.findAll('[data-testid="effect-row"]')).toHaveLength(7);
   });
 });
