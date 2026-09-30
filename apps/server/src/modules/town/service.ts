@@ -1,4 +1,4 @@
-import type { NewsPageDto, NpcKey, ShakeResultDto, TownExchangeDto } from '@dt/shared';
+import type { NewsPageDto, NpcKey, ShakeResultDto, TownDto, TownExchangeDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op';
@@ -13,12 +13,16 @@ import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './ex
 import { useHammer } from './hammer';
 import { shake } from './shake';
 import { talk } from './talk';
+import { townView } from './view';
 
 export function createTownService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
     runOp(d, ctx, { feature: 'town', source }, fn);
 
   return {
+    overview(ctx: RestCtx): Promise<TownDto> {
+      return townView(d, world, ctx);
+    },
     async news(ctx: RestCtx, q: { before?: number }): Promise<NewsPageDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'town');
       const size = s.tuning.town.news.pageSize;
