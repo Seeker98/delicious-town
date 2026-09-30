@@ -131,7 +131,7 @@ const STATE: Record<string, string> = {
   bad_food: '只能竞猜 1~2 级食材',
   not_visible: '这个任务现在不能领取',
   target_self: '不能对自己这样做',
-  target_npc: '不用申请，蟹老板会主动来加你',
+  target_npc: '不能对蟹老板这样做',
   target_banned: '对方账号已被封禁',
   target_closed: '对方正在停业',
   target_no_food: '对方已经没有这个食材了',

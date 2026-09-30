@@ -186,3 +186,32 @@ describe('白食结束、请走', () => {
     await expect(dine().expel(b, { tableNo: 1 })).rejects.toMatchObject({ params: { reason: 'not_dining' } });
   });
 });
+
+describe('区服关闭 friend 后的收尾（最终审查 Important 4）', () => {
+  const disable = async (shardId: number) => {
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { friend: false } }) })
+      .execute();
+    t.game.shards.invalidate(shardId);
+  };
+
+  it('进行中的白食仍能结束、请走；自己店的蟑螂仍能消灭；新的互动被拒', async () => {
+    const [a, b] = await setup();
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    const [c, e] = await setup();
+    await dine().start(c, { restId: e.restaurantId, tableNo: 1 });
+    await setTables(t, a.restaurantId, [{ no: 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } }]);
+    t.clock.advance(31 * MIN);
+    await disable(a.shardId);
+    await disable(c.shardId);
+    await expect(dine().end(a)).resolves.toMatchObject({ data: { coin: 0 } });
+    await expect(dine().expel(e, { tableNo: 1 })).resolves.toMatchObject({ data: { hostCoin: 0 } });
+    await expect(t.game.social.roach.kill(a, { restId: a.restaurantId, tableNo: 1 })).resolves.toMatchObject({
+      data: { strength: 1 },
+    });
+    await expect(dine().start(a, { restId: b.restaurantId, tableNo: 2 })).rejects.toMatchObject({
+      code: 'FEATURE_DISABLED',
+    });
+  });
+});

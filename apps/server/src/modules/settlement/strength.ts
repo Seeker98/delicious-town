@@ -3,7 +3,7 @@ import { hashSeed, luckRate, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 
 /**
- * 体力恢复（规格书 01 §1.10）：一条批量 UPDATE，相对增量、不锁店。
+ * 体力恢复（规格书 01 §1.10）：一条批量 UPDATE，相对增量；正被锁住的店跳过这一轮。
  * 加成用缓存的 effect_agg（最多滞后一轮结算），避免在锁外重算缓存。
  */
 export async function regenStrength(
@@ -36,10 +36,19 @@ export async function regenStrength(
   }
   let updated = 0;
   for (let i = 0; i < ids.length; i += 1000) {
+    // 按 id 顺序加锁、跳过正被玩家操作锁住的店（它们这一轮不恢复）：
+    // 否则批量 UPDATE 按物理顺序加锁，会和按 id 顺序锁两家店的双店操作形成锁环
     const r = await sql`
+      with u as (
+        select * from unnest(${ids.slice(i, i + 1000)}::int[], ${adds.slice(i, i + 1000)}::int[], ${caps.slice(i, i + 1000)}::int[])
+          as u(id, add, cap)
+      ), l as (
+        select r.id from restaurant r join u on u.id = r.id
+        order by r.id
+        for no key update of r skip locked
+      )
       update restaurant r set strength = least(r.strength + u.add, u.cap)
-      from unnest(${ids.slice(i, i + 1000)}::int[], ${adds.slice(i, i + 1000)}::int[], ${caps.slice(i, i + 1000)}::int[])
-        as u(id, add, cap)
+      from u join l on l.id = u.id
       where r.id = u.id and r.strength < u.cap`.execute(d.db);
     updated += Number(r.numAffectedRows ?? 0);
   }

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { sequenceRng } from '@dt/shared';
+import { seededRng, sequenceRng } from '@dt/shared';
 import { userWithRole } from '../../../test/admin';
 import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
@@ -10,6 +10,7 @@ import { buildGlobals, buildInput } from '../settlement/globals';
 import { settleRestaurant } from '../settlement/settle';
 import type { AdminActor } from './access';
 import { createAdminShards } from './shards';
+import { ensureNpc } from '../npc/npc';
 
 let ctx: TestContext;
 let admin: { cookie: string; accountId: number };
@@ -36,6 +37,13 @@ describe('区服数值（HTTP）', () => {
     expect(d.features).toContainEqual({ name: 'market', enabled: true });
     const list = await call(ctx.app, 'GET', S, { cookie: mod.cookie });
     expect(list.json.data.some((s: { id: number }) => s.id === shardId)).toBe(true);
+  });
+
+  it('区服列表的餐厅数不含蟹老板', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    await ensureNpc(ctx.deps.db, testConfig(), testConfig().tuning.friend.npc, shardId, seededRng(1));
+    const list = await call(ctx.app, 'GET', S, { cookie: mod.cookie });
+    expect(list.json.data.find((x: { id: number }) => x.id === shardId)).toMatchObject({ restaurants: 0 });
   });
 
   it('保存：版本 +1，写历史和审计；再次用旧版本号保存得到 409', async () => {

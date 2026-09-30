@@ -3,6 +3,9 @@ import { userWithRole } from '../../../test/admin';
 import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
+import { seededRng } from '@dt/shared';
+import { testConfig } from '../../../test/config';
+import { ensureNpc } from '../npc/npc';
 import type { AdminActor } from './access';
 import { createAdminGrants, processGrants } from './grants';
 
@@ -147,6 +150,18 @@ describe('全区服发放（worker）', () => {
     }
     throw new Error('grant not finished');
   }
+
+  it('全区服发放不发给蟹老板（最终审查 Important 3）', async () => {
+    const shardId = await createShard(t.db);
+    const npc = (await ensureNpc(t.db, testConfig(), testConfig().tuning.friend.npc, shardId, seededRng(1)))
+      .id;
+    const p = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const g = await shardGrant(shardId);
+    await drain(g.id);
+    expect(await grantRow(g.id)).toMatchObject({ status: 'done', done_count: 1 });
+    expect((await restRow(t, p.restaurantId)).coin).toBe(10);
+    expect((await restRow(t, npc)).coin).toBe(0);
+  });
 
   it('分批处理到完成；min_level 过滤；重跑不重复', async () => {
     const shardId = await createShard(t.db);

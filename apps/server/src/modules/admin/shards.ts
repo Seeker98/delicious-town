@@ -127,7 +127,9 @@ export function createAdminShards(game: Game) {
     async list(): Promise<AdminShardDto[]> {
       const rows = await db
         .selectFrom('shard')
-        .leftJoin('restaurant', 'restaurant.shard_id', 'shard.id')
+        .leftJoin('restaurant', (j) =>
+          j.onRef('restaurant.shard_id', '=', 'shard.id').on('restaurant.npc', '=', false),
+        )
         .select(({ fn }) => [
           'shard.id',
           'shard.name',

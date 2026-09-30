@@ -111,7 +111,7 @@ export function createDine(d: GameDeps) {
       );
     },
 
-    /** 白食者自己结束；删了好友、店主被封也能结束（设计文档 裁定 7） */
+    /** 白食者自己结束；删了好友、店主被封、区服关了 friend 功能也能结束（设计文档 裁定 7；收尾操作只看 restaurant 功能） */
     async end(ctx: RestCtx) {
       const cur = await row(d.db, ctx.restaurantId);
       if (!cur) throw invalidState('not_dining');
@@ -119,7 +119,7 @@ export function createDine(d: GameDeps) {
         d,
         ctx,
         cur.host_rest_id,
-        { feature: 'friend', source: 'dine.end', friend: 'none', lenient: true },
+        { feature: 'restaurant', source: 'dine.end', friend: 'none', lenient: true },
         async (p): Promise<DineRewardDto> => {
           const { me, them } = p;
           const r = await row(me.tx, me.rest.id);
@@ -145,7 +145,7 @@ export function createDine(d: GameDeps) {
       );
     },
 
-    /** 店主请走白食者（me = 店主，them = 白食者）；白食者被封也能请走 */
+    /** 店主请走白食者（me = 店主，them = 白食者）；白食者被封、区服关了 friend 功能也能请走 */
     async expel(ctx: RestCtx, b: { tableNo: number }) {
       const tables = (
         await d.db
@@ -160,7 +160,7 @@ export function createDine(d: GameDeps) {
         d,
         ctx,
         tb.freeloader.restId,
-        { feature: 'friend', source: 'dine.expel', friend: 'none', lenient: true },
+        { feature: 'restaurant', source: 'dine.expel', friend: 'none', lenient: true },
         async (p) => {
           const { me, them } = p;
           const r = await row(me.tx, them.rest.id);

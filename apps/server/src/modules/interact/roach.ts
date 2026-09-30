@@ -94,8 +94,9 @@ export function createRoach(d: GameDeps) {
     },
 
     kill(ctx: RestCtx, b: { restId: number; tableNo: number }) {
+      // 自己店的蟑螂：区服关了 friend 功能也要能清掉，否则桌子永远被占着
       if (b.restId === ctx.restaurantId)
-        return runOp(d, ctx, { feature: 'friend', source: 'roach.kill' }, (o) =>
+        return runOp(d, ctx, { feature: 'restaurant', source: 'roach.kill' }, (o) =>
           killIn(o, o, 'self', b.tableNo, null),
         );
       return runPairOp(

@@ -61,6 +61,16 @@ describe('蟹老板（设计文档 §4.9）', () => {
     expect(list.count).toBe(0);
   });
 
+  it('拒绝或删掉蟹老板后还能主动加它：直接成为好友（最终审查 Important 2）', async () => {
+    const shardId = await createShard(t.db);
+    const npc = (await ensureNpc(t.db, config, npcT, shardId, seededRng(1))).id;
+    const v = await newRestaurant(t, { shardId, verified: true });
+    await npcInvite(t.db, { restId: v.restaurantId });
+    await t.game.social.relations.respond(v, npc, false);
+    expect(await t.game.social.relations.apply(v, npc)).toEqual({ status: 'friends' });
+    expect((await t.game.social.reads.list(v, 'level')).items[0]).toMatchObject({ id: npc, npc: true });
+  });
+
   it('已验证的账号开店时收到邀请', async () => {
     const shardId = await createShard(t.db);
     await ensureNpc(t.db, config, npcT, shardId, seededRng(1));

@@ -211,6 +211,7 @@ export async function processGrants(game: Game, log: JobLogger, batch = 200): Pr
     .selectFrom('restaurant')
     .select('id')
     .where('shard_id', '=', g.shard_id)
+    .where('npc', '=', false)
     .where('created_at', '<=', g.created_at)
     .where(({ not, exists, selectFrom }) =>
       not(

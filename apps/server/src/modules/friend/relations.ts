@@ -103,9 +103,13 @@ export function createRelations(d: GameDeps) {
       return d.db.transaction().execute(async (tx) => {
         await lockPair(tx, ctx.restaurantId, restId);
         const { me, them } = await pair(tx, ctx, restId, t.requireVerifiedEmail);
-        if (them.npc) throw invalidState('target_npc');
         if (await isFriend(tx, me.id, them.id))
           throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'friend' });
+        // 蟹老板不会处理申请：主动加它直接成为好友（拒绝过它的邀请也能加回来），不占好友上限
+        if (them.npc) {
+          await makeFriends(tx, me.id, them.id);
+          return { status: 'friends' as const };
+        }
         if ((await friendCount(tx, me.id)) >= t.maxFriends)
           throw limitReached('friends', { max: t.maxFriends });
         const back = await tx
