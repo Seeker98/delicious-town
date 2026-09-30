@@ -28,6 +28,25 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.mcProficiency[9]).toEqual({ curlevel: 10, name: '化境', expNext: null });
   });
 
+  it('种子是正式字段（96 种）：食材、等级、各阶段分钟数、产量、权重', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.seeds).toHaveLength(96);
+    expect(bundle!.seeds.find((s) => s.id === 1)).toEqual({
+      id: 1,
+      foodsId: 101,
+      name: '大米种子',
+      level: 1,
+      coin: 1800,
+      infancy: 24,
+      maturity: 36,
+      autumn: 60,
+      harvest: 1440,
+      harvestNum: 20,
+      odds: 70,
+    });
+    expect('seeds' in bundle!.extra).toBe(false);
+  });
+
   it('合并了新设计的售价和 awardflag', () => {
     const { bundle } = buildBundle(source());
     const cb = bundle!.cookbooks.find((c) => c.id === 1)!;

@@ -3,10 +3,14 @@ import { buildPool, gameDay, type WeightedPool } from '@dt/shared';
 import { featureOfKey } from './build';
 import { DEVICE_TYPE, GOODS_TYPE } from './ids';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
+import { parseMapDef, parseMissileDef } from './temple';
 import type { Tuning } from './tuning';
 import type {
   ActivationTask,
   AppraiseDef,
+  MapDef,
+  MissileDef,
+  Seed,
   McProficiency,
   MysteriousCookbook,
   TeacherCertDef,
@@ -63,6 +67,10 @@ export interface GameConfig {
   readonly mcProficiency: readonly McProficiency[];
   readonly appraiseTools: ReadonlyMap<number, AppraiseDef>;
   readonly teacherCerts: ReadonlyMap<number, TeacherCertDef>;
+  readonly seeds: ReadonlyMap<number, Seed>;
+  readonly seedPool: WeightedPool<Seed>;
+  readonly missiles: ReadonlyMap<number, MissileDef>;
+  readonly maps: ReadonlyMap<number, MapDef>;
   requireMc(id: number): MysteriousCookbook;
   grade(g: number): CookbookGrade;
   randomGoodsIds(level: number): readonly number[];
@@ -116,6 +124,18 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   const mysterious = byId(bundle.mysteriousCookbooks);
   const appraiseTools = new Map<number, AppraiseDef>();
   const teacherCerts = new Map<number, TeacherCertDef>();
+  const missiles = new Map<number, MissileDef>();
+  const maps = new Map<number, MapDef>();
+  for (const g of bundle.goods) {
+    if (g.deviceType === 97) {
+      const m = parseMissileDef(g.value);
+      if (typeof m !== 'string') missiles.set(g.id, m);
+    }
+    if (g.deviceType === 96) {
+      const m = parseMapDef(g.value);
+      if (typeof m !== 'string') maps.set(g.id, m);
+    }
+  }
   for (const g of bundle.goods) {
     const a = parseAppraiseDef(g.value);
     if (a) appraiseTools.set(g.id, a);
@@ -190,6 +210,10 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     suits: new Map(bundle.suits.map((s) => [s.id, s])),
     mysterious,
     mcProficiency: bundle.mcProficiency,
+    seeds: byId(bundle.seeds),
+    seedPool: buildPool(bundle.seeds, (s) => s.odds),
+    missiles,
+    maps,
     appraiseTools,
     teacherCerts,
     requireMc(id) {

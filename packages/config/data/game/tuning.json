@@ -212,5 +212,17 @@
     "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
     "championGoodsId": 165
+  },
+  "temple": {
+    "guardianHpBase": 10000, "guardianHpPerStar": 5000,
+    "missileTicketRate": 0.10, "missileMapRate": 0.03,
+    "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10,
+    "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,
+    "trialWorthMax": 50, "trialExpMax": 150, "trialProficiencyPerLevel": 800,
+    "trialCap": 0.6, "rareOdds": 100,
+    "krakenHours": [[11, 14], [17, 21]],
+    "krakenRates": { "same": 2.4, "road": 1, "other": 0.5 },
+    "krabCoinRate": 0.32, "tentacleFavor": 35, "tentacleRate": 0.3, "forgetRate": 0.25,
+    "shopSlots": 6, "shopExclude": [249]
   }
 }
