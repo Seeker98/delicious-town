@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { basketStoreBody, yardFeedBody, yardPlantBody, yardPlantIdBody } from '@dt/shared';
+import { basketStoreBody, restIdParam, yardFeedBody, yardPlantBody, yardPlantIdBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -8,6 +8,9 @@ import type { YardService } from './service';
 export function yardRoutes(svc: YardService): FastifyPluginAsync {
   return async (r) => {
     r.get('/yard', async (req) => ok(await svc.overview(restCtxOf(req))));
+    r.get('/yard/friend/:restId', async (req) =>
+      ok(await svc.friend(restCtxOf(req), parse(restIdParam, req.params).restId)),
+    );
     r.post('/yard/land/expand', async (req) => okOp(await svc.expand(restCtxOf(req))));
     r.post('/yard/plant', async (req) =>
       okOp(await svc.plant(restCtxOf(req), parse(yardPlantBody, req.body))),
