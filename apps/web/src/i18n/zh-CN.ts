@@ -84,8 +84,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
   foods_max: (p) => `单种食材最多 ${String(p.max)} 个`,
-  tables: (p) =>
-    `餐桌已经摆满了：最多 ${String(p.cap)} 张（受等级和楼层限制），已有 ${String(p.have)} 张`,
+  tables: (p) => `餐桌已经摆满了：最多 ${String(p.cap)} 张（受等级和楼层限制），已有 ${String(p.have)} 张`,
   batch: (p) => `一次最多使用 ${String(p.max)} 个`,
   lock: () => '锁定格用完了',
   owned: () => '已经拥有了，不能再买',
