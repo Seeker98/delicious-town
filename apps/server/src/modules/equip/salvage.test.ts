@@ -117,3 +117,30 @@ describe('一键处理（设计文档 §3.11）', () => {
     else expect(row).toBeUndefined();
   });
 });
+
+describe('删除厨具留流水（终审 Important 1）', () => {
+  it('分解、出售、一键处理都记一条 厨具 -1', async () => {
+    const ctx = await newRestaurant(t);
+    const a = await piece(ctx, 30);
+    const b = await piece(ctx, 31);
+    const c = await piece(ctx, 32);
+    const d = await piece(ctx, 47);
+    await eq().salvage(ctx, { id: a });
+    await eq().sell(ctx, { id: b });
+    await eq().batch(ctx, { ids: [c, d], way: 'salvage' });
+    const rows = await t.db
+      .selectFrom('ledger')
+      .select(['item_id', 'delta', 'source'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('kind', '=', 'goods')
+      .where('delta', '<', 0)
+      .orderBy('id')
+      .execute();
+    expect(rows).toEqual([
+      { item_id: 30, delta: -1, source: 'equip.salvage' },
+      { item_id: 31, delta: -1, source: 'equip.sell' },
+      { item_id: 32, delta: -1, source: 'equip.batch' },
+      { item_id: 47, delta: -1, source: 'equip.batch' },
+    ]);
+  });
+});

@@ -65,6 +65,7 @@ describe('AdminPlayerView', () => {
       } as never,
       owner: { accountId: 7, username: 'alice' },
       shardName: '一服',
+      equips: [],
       store: [{ goodsId: 1, num: 3, expiresAt: null }],
       cupboard: [{ foodsId: 101, num: 4, fridgeNum: 1, locked: false }],
     });

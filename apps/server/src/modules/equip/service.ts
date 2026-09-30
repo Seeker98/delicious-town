@@ -18,7 +18,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
-import { gainCoin, gainExp, spendCoin, spendStrength } from '../../core/resources';
+import { gainCoin, gainExp, recordChange, spendCoin, spendStrength } from '../../core/resources';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { aggregateEffects } from '../effects/aggregate';
@@ -467,6 +467,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         await assertFree(o, e);
         const essence = o.config.requireGoods(e.goods_id).equip!.essence * (e.stress + 1);
         await o.tx.deleteFrom('equip').where('id', '=', e.id).execute();
+        // 厨具被删掉也要留流水，和获得时的 +1 对应（终审 Important 1）
+        recordChange(o, 'goods', -1, {}, e.goods_id);
         await grantGoodsOp(o, GOODS.essence, essence);
         return { essence };
       });
@@ -479,6 +481,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         const coin = sellPrice(o.config.requireGoods(e.goods_id), o.tuning);
         if (coin === null) throw invalidState('not_sellable', { goodsId: e.goods_id });
         await o.tx.deleteFrom('equip').where('id', '=', e.id).execute();
+        // 厨具被删掉也要留流水，和获得时的 +1 对应（终审 Important 1）
+        recordChange(o, 'goods', -1, {}, e.goods_id);
         gainCoin(o, coin);
         return { coin };
       });
@@ -513,6 +517,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           else coin += sellPrice(g, o.tuning)!;
         }
         await o.tx.deleteFrom('equip').where('id', 'in', ids).execute();
+        for (const e of rows) recordChange(o, 'goods', -1, {}, e.goods_id);
         if (essence > 0) await grantGoodsOp(o, GOODS.essence, essence);
         gainCoin(o, coin);
         return { count: rows.length, essence, coin };

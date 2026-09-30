@@ -146,7 +146,7 @@ export function createAdminPlayers(game: Game) {
         .select(['account.id as account_id', 'account.username', 'shard.name as shard_name'])
         .where('restaurant.id', '=', restId)
         .executeTakeFirstOrThrow();
-      const [overview, store, cupboard] = await Promise.all([
+      const [overview, store, cupboard, equips] = await Promise.all([
         game.restaurant.overview(restId),
         db
           .selectFrom('store_item')
@@ -160,6 +160,25 @@ export function createAdminPlayers(game: Game) {
           .where('rest_id', '=', restId)
           .orderBy('foods_id')
           .execute(),
+        db
+          .selectFrom('equip as e')
+          .select((eb) => [
+            'e.id',
+            'e.goods_id',
+            'e.part',
+            'e.stress',
+            'e.worn',
+            'e.locked',
+            eb
+              .selectFrom('equip_gem as g')
+              .select((x) => x.fn.countAll<number>().as('n'))
+              .whereRef('g.equip_id', '=', 'e.id')
+              .as('gems'),
+          ])
+          .where('e.rest_id', '=', restId)
+          .orderBy('e.part')
+          .orderBy('e.id')
+          .execute(),
       ]);
       return {
         overview,
@@ -169,6 +188,15 @@ export function createAdminPlayers(game: Game) {
           goodsId: s.goods_id,
           num: s.num,
           expiresAt: s.expires_at?.toISOString() ?? null,
+        })),
+        equips: equips.map((e) => ({
+          id: e.id,
+          goodsId: e.goods_id,
+          part: e.part,
+          stress: e.stress,
+          worn: e.worn,
+          locked: e.locked,
+          gems: Number(e.gems ?? 0),
         })),
         cupboard: cupboard.map((c) => ({
           foodsId: c.foods_id,

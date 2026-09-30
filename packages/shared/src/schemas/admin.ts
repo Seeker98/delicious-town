@@ -76,6 +76,16 @@ export interface AdminRestaurantDto {
   owner: { accountId: number; username: string };
   shardName: string;
   store: Array<{ goodsId: number; num: number; expiresAt: string | null }>;
+  /** 厨具实例（不在仓库表里） */
+  equips: Array<{
+    id: number;
+    goodsId: number;
+    part: number;
+    stress: number;
+    worn: boolean;
+    locked: boolean;
+    gems: number;
+  }>;
   cupboard: Array<{ foodsId: number; num: number; fridgeNum: number; locked: boolean }>;
 }
 
