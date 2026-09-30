@@ -1,7 +1,7 @@
 {
  "source": "新设计(design_missing.py)",
- "rule": "value：20 种来自 HAR 真实数据，其余按说明文字解析(同键名)；type/specialflag 为新设计；夜间天气 odds 自定(见 20)",
- "count": 29,
+ "rule": "value：20 种来自 HAR 真实数据，其余按说明文字解析(同键名)；type/specialflag 为新设计；夜间天气的说明、夜间多星和血月取自 2026-09-30 抓取的刷新概率说明；夜间专属权重见 tuning.world.nightWeatherOdds",
+ "count": 31,
  "data": [
   {
    "id": 1,
@@ -517,7 +517,7 @@
     "atRate": 0.1,
     "spRate": -0.05
    },
-   "note": null,
+   "note": "经营: 上座率+10%,挑剔率-5%",
    "valueSource": "har"
   },
   {
@@ -531,7 +531,7 @@
     "atRate": 0.05,
     "marketCoin": -0.3
    },
-   "note": null,
+   "note": "菜场食材价格-30%!\r\n经营: 上座率+5%",
    "valueSource": "har"
   },
   {
@@ -547,8 +547,40 @@
     "mcGoldRate": 0.25,
     "hitRate": -0.5
    },
-   "note": null,
+   "note": "烹制特色菜时高品级概率+25%!\r\n导弹命中率-50%!\r\n经营: 上座率+5%,挑剔率+10%",
    "valueSource": "har"
+  },
+  {
+   "id": 31,
+   "name": "夜间多星",
+   "daytime": 2,
+   "type": 1,
+   "specialflag": 0,
+   "probability": null,
+   "value": {
+    "starMCBookRate": 0.05,
+    "missileCrit": 0.15,
+    "spRate": 0.2
+   },
+   "note": "神秘食谱鉴定成功率+5%!\r\n导弹暴击率+15%!\r\n经营: 挑剔率+20%",
+   "valueSource": "parsed"
+  },
+  {
+   "id": 32,
+   "name": "血月",
+   "daytime": 2,
+   "type": 4,
+   "specialflag": 0,
+   "probability": null,
+   "value": {
+    "roachRate": 1,
+    "mysteriousRate": 0.015,
+    "marketCoin": 1,
+    "atRate": -0.5,
+    "spRate": -0.99
+   },
+   "note": "每桌出现蟑螂概率提升1倍!\r\n探险时获得神秘食材概率+1.5%!\r\n菜场食材价格+100%!\r\n经营: 上座率-50%,挑剔率-99%!",
+   "valueSource": "parsed"
   }
  ]
 }

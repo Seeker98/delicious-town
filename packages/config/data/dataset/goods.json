@@ -1,6 +1,6 @@
 {
  "source": "公开接口 /Tools/getListGoods(全量) + 道具Excel(awardflag) + HAR",
- "count": 601,
+ "count": 602,
  "data": [
   {
    "id": 1,
@@ -9438,8 +9438,8 @@
    "devicetype": 99,
    "invalidhour": null,
    "maxNum": 1,
-   "desc": "阿黄,粉嫩的耳朵让他在狗狗界大杀四方! 拥有它的餐厅: 挑剔率+1%, 最终银币收益+16%, 幸运值+2",
-   "value": "{\"spRate\":0.01,\"coinRate\":0.16,\"luckValue\":2}",
+   "desc": "阿黄,粉嫩的耳朵让他在狗狗界大杀四方! 拥有它的餐厅: 挑剔率+1%, 最终银币收益+20%, 幸运值+2",
+   "value": "{\"spRate\":0.01,\"coinRate\":0.20,\"luckValue\":2}",
    "level": 4,
    "coin": 0,
    "diamond": 0,
@@ -10716,8 +10716,8 @@
    "devicetype": 99,
    "invalidhour": null,
    "maxNum": 1,
-   "desc": "智慧且英勇的老K! 拥有它的餐厅: 挑剔率+1%, 上座率+3%, 最终银币收益+16%, 幸运值+2",
-   "value": "{\"spRate\":0.01,\"atRate\":0.03,\"coinRate\":0.16,\"luckValue\":2}",
+   "desc": "智慧且英勇的老K! 拥有它的餐厅: 挑剔率+1%, 上座率+3%, 最终银币收益+20%, 幸运值+2",
+   "value": "{\"spRate\":0.01,\"atRate\":0.03,\"coinRate\":0.20,\"luckValue\":2}",
    "level": 4,
    "coin": 0,
    "diamond": 0,
@@ -10816,6 +10816,24 @@
    "specialflag": 0,
    "awardflag": null,
    "_src": "tools_api"
+  },
+  {
+   "id": 627,
+   "name": "PSP",
+   "type": 9,
+   "devicetype": 99,
+   "invalidhour": null,
+   "maxNum": 1,
+   "desc": "收藏已久的一台PSP! 拥有它的餐厅: 挑剔率+1%, 幸运值+2",
+   "value": "{\"spRate\":0.01,\"luckValue\":2}",
+   "level": 4,
+   "coin": 0,
+   "diamond": 0,
+   "saleflag": 0,
+   "subflag": 0,
+   "specialflag": 0,
+   "awardflag": null,
+   "_src": "har 2026-09-30"
   }
  ]
 }

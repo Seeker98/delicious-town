@@ -43,4 +43,12 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
     expect(w.find('[data-testid="home"]').exists()).toBe(false);
     expect(w.find('[data-testid="back"]').exists()).toBe(false);
   });
+
+  it('后台页面（问题记录：admin 页左上角点不回主界面）：店名也链接回首页，没有返回按钮', async () => {
+    const router = makeRouter();
+    await router.push('/admin/players');
+    const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(w.find('[data-testid="home"]').attributes('href')).toBe('/');
+    expect(w.find('[data-testid="back"]').exists()).toBe(false);
+  });
 });

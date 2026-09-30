@@ -34,7 +34,24 @@ export function mergeEvents(events: GameEvent[]): GameEvent[] {
 }
 
 export function eventText(e: GameEvent, names: Names): string {
-  const verb = e.type === 'gain' ? '获得' : '消耗';
+  return `${e.type === 'gain' ? '获得' : '消耗'} ${eventItem(e, names)}`;
+}
+
+/** 一次操作的所有得失合成一条提示（问题记录：弹出的消息框太多）；超过 max 项时只列前 max 项 */
+export function eventsSummary(events: GameEvent[], names: Names, max = 8): string {
+  const merged = mergeEvents(events);
+  const items = [...merged.filter((e) => e.type === 'gain'), ...merged.filter((e) => e.type !== 'gain')];
+  const shown = items.slice(0, max);
+  const part = (type: 'gain' | 'loss') => {
+    const xs = shown.filter((e) => (e.type === 'gain') === (type === 'gain')).map((e) => eventItem(e, names));
+    return xs.length === 0 ? '' : `${type === 'gain' ? '获得' : '消耗'} ${xs.join('、')}`;
+  };
+  const text = [part('gain'), part('loss')].filter(Boolean).join('；');
+  return items.length > max ? `${text} 等 ${items.length} 项` : text;
+}
+
+/** 一条得失的物品和数量（不含"获得 / 消耗"） */
+function eventItem(e: GameEvent, names: Names): string {
   let what: string;
   if (e.kind === 'goods') what = `${names.goodsName(e.id ?? 0)}×${formatNum(e.num)}`;
   else if (e.kind === 'foods') what = `${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
@@ -42,7 +59,7 @@ export function eventText(e: GameEvent, names: Names): string {
   else if (e.kind === 'seed') what = `${seedNameOf(names, e.id ?? 0)}×${formatNum(e.num)}`;
   else if (e.kind === 'basket') what = `菜篮·${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
   else what = `${KIND_NAMES[e.kind] ?? e.kind} ${formatNum(e.num)}`;
-  return `${verb} ${what}${e.lucky ? '（幸运）' : ''}`;
+  return `${what}${e.lucky ? '（幸运）' : ''}`;
 }
 
 type P = Record<string, unknown>;
