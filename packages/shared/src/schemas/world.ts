@@ -52,6 +52,18 @@ export interface CatalogDto {
   looks?: LooksDto;
   /** 厨具套装；旧缓存里没有 */
   suits?: Array<{ id: number; name: string; maxNum: number; tiers: Array<{ need: number; desc: string }> }>;
+  /** 特色菜；旧缓存里没有 */
+  mysterious?: CatalogMcDto[];
+}
+
+export interface CatalogMcDto {
+  id: number;
+  name: string;
+  level: number;
+  road: number;
+  nutritive: number;
+  coin: number;
+  foods: number[];
 }
 
 export interface LooksDto {

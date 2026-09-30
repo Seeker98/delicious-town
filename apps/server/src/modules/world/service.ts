@@ -178,6 +178,15 @@ export function createWorldService(d: GameDeps) {
           maxNum: s.maxNum,
           tiers: s.tiers.map((x) => ({ need: x.need, desc: x.desc })),
         })),
+        mysterious: d.config.bundle.mysteriousCookbooks.map((m) => ({
+          id: m.id,
+          name: m.name,
+          level: m.level,
+          road: m.road,
+          nutritive: m.nutritive,
+          coin: m.coin,
+          foods: m.foods,
+        })),
       };
       return catalog;
     },
