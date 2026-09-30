@@ -348,3 +348,30 @@ describe('厨塔配置（子项目 4C-2）', () => {
     expect(bundle!.actionMap.activation['tower.rank']).toBe('与好友赛厨');
   });
 });
+
+describe('外卖配置（子项目 4D）', () => {
+  it('任务 34、35、122 跳到外卖页', () => {
+    const { bundle } = buildBundle(source());
+    for (const id of [34, 35, 122]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/takeaway');
+  });
+
+  it('奖池、神秘顾客引用了不存在的道具', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as {
+      takeaway: { awards: number[][]; customer: { success: number } };
+    };
+    tuning.takeaway.awards[1]![0] = 999998;
+    tuning.takeaway.customer.success = 999999;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.takeaway.awards references unknown goods 999998');
+    expect(errors).toContain('tuning.takeaway.customer references unknown goods 999999');
+  });
+
+  it('品级概率合计必须是 1', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { takeaway: { gradeRates: number[] } };
+    tuning.takeaway.gradeRates[0] = 0.5;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.takeaway.gradeRates must sum to 1');
+  });
+});

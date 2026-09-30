@@ -263,5 +263,24 @@
     "sparFullAt": 20, "sparFullRenown": 2, "sparMaxAt": 50,
     "sparAwards": [[10, 2, 4], [20, 2, 2], [999999, 1, 2]], "sparEquipFlag": 3,
     "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }
+  },
+  "takeaway": {
+    "openStar": 2, "openRenown": 888, "openCoin": 8880000, "openDiamond": 300,
+    "publicBase": 5, "publicRand": 18, "publicPerOpen": 15, "publicMinOpen": 10, "publicOpenFloor": 30,
+    "gradeRates": [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
+    "minutesBase": 20, "minutesPerGrade": 10, "renownPerGrade": 2,
+    "refreshNum": 15, "refreshCoin": 1000000, "refreshRenown": 160,
+    "priceLine": 1000000, "coinRates": [0.24, 0.05], "expRates": [0.72, 0.22], "expDiv": 45,
+    "successFloat": 200, "luckOddsRate": 200,
+    "privateExpRate": 1.5, "friendRiderRate": 0.9, "rebateDiv": 9, "failExpRate": 0.5,
+    "customer": { "base": 0.015, "luckDiv": 50, "success": 265, "fail": 266 },
+    "rider": {
+      "maxLevel": 50, "expPerLevel2": 800, "expBase": 500, "timeSubMax": 40,
+      "expAdd": 2, "coinAdd": 1, "renownEvery": 2,
+      "oddsBase": 800, "oddsPerLevel": 5, "oddsMax": 950, "maxNumEvery": 5,
+      "capLevels": [2, 5, 8], "dismissCoin": 50, "dismissExp": 500
+    },
+    "awards": [[1, 56, 0], [170, 30, 0.2], [240, 8, 0.5], [171, 6, 0.5], [172, 2, 0.8], [310, 1, 1]],
+    "keepOpenDays": 1, "keepDoneDays": 7
   }
 }
