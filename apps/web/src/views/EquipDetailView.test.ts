@@ -113,6 +113,8 @@ describe('EquipDetailView', () => {
 
   it('显示属性分项、成功率、花费；勾强化石强化，提示结果', async () => {
     const { w } = await mountView();
+    // 标题里 +x 和部位之间要有间隔（问题记录）：模板换行处的空白会被 Vue 去掉，靠 ms-1
+    expect(w.find('h5 small').classes()).toContain('ms-1');
     expect(w.text()).toContain('67.0%');
     expect(w.text()).toContain('精华 ×12');
     await w.find('[data-testid="stone"]').setValue(true);
