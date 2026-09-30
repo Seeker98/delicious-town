@@ -3,6 +3,7 @@ import { EQUIP_ATTRS, GOODS, type EquipAttr, type Tuning } from '@dt/config';
 import {
   ErrorCode,
   type AttrsDto,
+  type EquipBatchDto,
   type EquipDetailDto,
   type EquipDto,
   type EquipOverviewDto,
@@ -14,12 +15,12 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
-import { spendCoin } from '../../core/resources';
+import { gainCoin, spendCoin } from '../../core/resources';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { aggregateEffects } from '../effects/aggregate';
 import { listActiveEffects } from '../effects/service';
-import { consumeGoods } from '../store/goods';
+import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { sellPrice } from '../store/rules';
 import type { WorldService } from '../world/service';
 import { syncEquipEffects } from './effects';
@@ -141,6 +142,34 @@ export function createEquipService(d: GameDeps, world: WorldService) {
       .where('worn', '=', true)
       .execute();
     await o.tx.updateTable('equip').set({ worn: true }).where('id', '=', e.id).execute();
+  }
+
+  /** 分解 / 出售的阻挡原因（设计文档 裁定 5）；没有阻挡的不在返回值里 */
+  async function blockers(o: Op, rows: EquipRow[]): Promise<Map<number, string>> {
+    const gems = await loadGems(
+      o.tx,
+      rows.map((r) => r.id),
+    );
+    const names = await presetNames(o.tx, o.rest.id);
+    const out = new Map<number, string>();
+    for (const e of rows) {
+      const reason = e.locked
+        ? 'locked'
+        : e.worn
+          ? 'worn'
+          : (gems.get(e.id)?.length ?? 0) > 0
+            ? 'has_gems'
+            : names.has(e.id)
+              ? 'in_preset'
+              : null;
+      if (reason) out.set(e.id, reason);
+    }
+    return out;
+  }
+
+  async function assertFree(o: Op, e: EquipRow): Promise<void> {
+    const reason = (await blockers(o, [e])).get(e.id);
+    if (reason) throw invalidState(reason);
   }
 
   async function mine(restId: number, part?: number): Promise<EquipRow[]> {
@@ -425,6 +454,63 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         const e = await own(o, b.id);
         await o.tx.updateTable('equip').set({ locked: b.locked }).where('id', '=', e.id).execute();
         return { id: e.id, locked: b.locked };
+      });
+    },
+    salvage(ctx: RestCtx, b: { id: number }) {
+      return op(ctx, 'equip.salvage', async (o) => {
+        const e = await own(o, b.id);
+        await assertFree(o, e);
+        const essence = o.config.requireGoods(e.goods_id).equip!.essence * (e.stress + 1);
+        await o.tx.deleteFrom('equip').where('id', '=', e.id).execute();
+        await grantGoodsOp(o, GOODS.essence, essence);
+        return { essence };
+      });
+    },
+
+    sell(ctx: RestCtx, b: { id: number }) {
+      return op(ctx, 'equip.sell', async (o) => {
+        const e = await own(o, b.id);
+        await assertFree(o, e);
+        const coin = sellPrice(o.config.requireGoods(e.goods_id), o.tuning);
+        if (coin === null) throw invalidState('not_sellable', { goodsId: e.goods_id });
+        await o.tx.deleteFrom('equip').where('id', '=', e.id).execute();
+        gainCoin(o, coin);
+        return { coin };
+      });
+    },
+
+    batch(ctx: RestCtx, b: { ids: number[]; way: 'salvage' | 'sell' }) {
+      return op(ctx, 'equip.batch', async (o): Promise<EquipBatchDto> => {
+        const ids = [...new Set(b.ids)];
+        const rows = await o.tx
+          .selectFrom('equip')
+          .selectAll()
+          .where('rest_id', '=', o.rest.id)
+          .where('id', 'in', ids)
+          .execute();
+        const missing = ids.find((id) => !rows.some((r) => r.id === id));
+        if (missing !== undefined) throw notFound('equip', missing);
+        const block = await blockers(o, rows);
+        const dirty = rows
+          .filter(
+            (e) =>
+              block.has(e.id) ||
+              e.stress > 0 ||
+              (b.way === 'sell' && sellPrice(o.config.requireGoods(e.goods_id), o.tuning) === null),
+          )
+          .map((e) => e.id);
+        if (dirty.length > 0) throw invalidState('batch_dirty', { ids: dirty });
+        let essence = 0;
+        let coin = 0;
+        for (const e of rows) {
+          const g = o.config.requireGoods(e.goods_id);
+          if (b.way === 'salvage') essence += g.equip!.essence;
+          else coin += sellPrice(g, o.tuning)!;
+        }
+        await o.tx.deleteFrom('equip').where('id', 'in', ids).execute();
+        if (essence > 0) await grantGoodsOp(o, GOODS.essence, essence);
+        gainCoin(o, coin);
+        return { count: rows.length, essence, coin };
       });
     },
   };

@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  equipBatchBody,
   equipIdBody,
   equipIdParam,
   equipListQuery,
@@ -31,5 +32,12 @@ export function equipRoutes(svc: EquipService): FastifyPluginAsync {
       okOp(await svc.rollback(restCtxOf(req), parse(equipRollbackBody, req.body))),
     );
     r.post('/equip/lock', async (req) => okOp(await svc.lock(restCtxOf(req), parse(lockBody, req.body))));
+    r.post('/equip/salvage', async (req) =>
+      okOp(await svc.salvage(restCtxOf(req), parse(equipIdBody, req.body))),
+    );
+    r.post('/equip/sell', async (req) => okOp(await svc.sell(restCtxOf(req), parse(equipIdBody, req.body))));
+    r.post('/equip/batch', async (req) =>
+      okOp(await svc.batch(restCtxOf(req), parse(equipBatchBody, req.body))),
+    );
   };
 }
