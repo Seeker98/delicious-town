@@ -134,6 +134,24 @@ describe('settleShardRound', () => {
     expect((await t.game.world.ensure(shardId)).planktonRestId).toBe(star.restaurantId);
   });
 
+  it('刚赶走痞老板的店冷却期内不再被选为驻留店；冷却过后可以（问题记录：痞老板太频繁）', async () => {
+    const shardId = await createShard(t.db);
+    const now = new Date();
+    const star = await newRestaurant(t, {
+      shardId,
+      patch: { star_level: 1, plankton_cooldown_until: new Date(now.getTime() + 3600_000) },
+    });
+    await settle(shardId);
+    expect((await t.game.world.ensure(shardId)).planktonRestId).toBeNull();
+    await t.db
+      .updateTable('restaurant')
+      .set({ plankton_cooldown_until: new Date(now.getTime() - 1000) })
+      .where('id', '=', star.restaurantId)
+      .execute();
+    await settle(shardId);
+    expect((await t.game.world.ensure(shardId)).planktonRestId).toBe(star.restaurantId);
+  });
+
   it('集齐 7 幅名画：油量低于 2000 时自动加满', async () => {
     const shardId = await createShard(t.db);
     const ctx = await newRestaurant(t, { shardId, patch: { coin: 100000, oil: 1000, oil_max: 1500 } });

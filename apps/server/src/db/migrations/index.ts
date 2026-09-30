@@ -3,6 +3,7 @@ import * as m0001 from './0001_init';
 import * as m0002 from './0002_business_loop';
 import * as m0003 from './0003_admin_console';
 import * as m0004 from './0004_friends';
+import * as m0005 from './0005_playtest';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -10,4 +11,5 @@ export const migrations: Record<string, Migration> = {
   '0002_business_loop': m0002,
   '0003_admin_console': m0003,
   '0004_friends': m0004,
+  '0005_playtest': m0005,
 };

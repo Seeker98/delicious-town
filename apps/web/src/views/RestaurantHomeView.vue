@@ -202,8 +202,12 @@ onBeforeUnmount(() => {
       </button>
     </div>
 
-    <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small">
-      痞老板赖在店里不走！
+    <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
+      <div>
+        <b>痞老板赖在店里不走！</b>他带来的勋章在赶走前一直有效：上座率 +50%，但<b>挑剔率 -120%</b>
+        （挑剔顾客不来，没人点菜，只能收基础银币），每桌耗油 +5。偶尔他本人坐下吃饭时那一桌收益 ×5。
+        赶走后一段时间内他不会再选你的店。
+      </div>
       <button
         class="btn btn-sm btn-outline-dark ms-1"
         :disabled="busy"

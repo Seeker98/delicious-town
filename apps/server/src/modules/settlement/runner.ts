@@ -168,6 +168,7 @@ export async function settleShardRound(
       .where('state', '=', 1)
       .where('npc', '=', false)
       .where('star_level', '>=', 1)
+      .where((eb) => eb.or([eb('plankton_cooldown_until', 'is', null), eb('plankton_cooldown_until', '<=', now)]))
       .orderBy('id')
       .execute();
     if (cands.length > 0) {

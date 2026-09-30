@@ -300,6 +300,11 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           await grantGoodsOp(o, GOODS.starBlessing, 1);
         }
         await world.setPlankton(o.tx, o.shardId, null, o.rest.id);
+        setRest(
+          o,
+          'plankton_cooldown_until',
+          new Date(o.now.getTime() + o.tuning.settlement.planktonHostCooldownHours * 3600_000),
+        );
         const tr = await o.tx
           .selectFrom('restaurant_tables')
           .select('tables')

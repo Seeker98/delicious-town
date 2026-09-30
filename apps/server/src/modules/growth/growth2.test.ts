@@ -191,6 +191,10 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
     expect(r).toMatchObject({ strength: 20, renown: 50, level: 16, exp: 12000 });
     expect((await t.game.world.ensure(ctx.shardId)).planktonRestId).toBeNull();
     expect(await goodsNum(t, ctx.restaurantId, 363)).toBe(0);
+    // 赶走后冷却 planktonHostCooldownHours 小时，期间不会再被选为驻留店
+    expect(r.plankton_cooldown_until!.getTime() - t.clock.now.getTime()).toBe(
+      config.tuning.settlement.planktonHostCooldownHours * 3600_000,
+    );
     const tr = await t.db
       .selectFrom('restaurant_tables')
       .select('tables')
