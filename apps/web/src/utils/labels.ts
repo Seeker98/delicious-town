@@ -75,3 +75,6 @@ export const ATTR_NAMES: Record<string, string> = {
   creatives: '创意',
   luck: '幸运',
 };
+
+/** 特色菜的道（规格书 04 §4.1） */
+export const ROAD_NAMES = ['', '一道', '二道', '三道', '四道', '五道', '六道', '兽'];

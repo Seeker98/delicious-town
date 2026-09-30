@@ -9,7 +9,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
-import { PART_NAMES } from '../utils/labels';
+import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
 
 const route = useRoute();
 const router = useRouter();
@@ -100,6 +100,25 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <span v-for="e in rest.equips" :key="e.part" class="me-2">
         {{ PART_NAMES[e.part] }} {{ catalog.goodsName(e.goodsId) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
       </span>
+    </div>
+    <div
+      v-if="rest.special"
+      class="border rounded p-2 mb-2 small d-flex align-items-center"
+      data-testid="friend-special"
+    >
+      <div class="flex-fill">
+        特色菜：<b>{{ catalog.mcName(rest.special.mcId) }}</b> {{ GRADE_NAMES[rest.special.grade] }} · 剩
+        {{ rest.special.leftNum }} 份 · 每份 {{ rest.special.price }} 银币
+      </div>
+      <button
+        v-if="rest.id !== mine"
+        class="btn btn-sm btn-outline-success"
+        data-testid="act-taste"
+        :disabled="busy || rest.special.eaten || rest.state !== 1"
+        @click="act(() => endpoints.mcTaste(restId), '品尝成功，体力增加了', '品尝失败')"
+      >
+        {{ rest.special.eaten ? '已品尝' : '品尝' }}
+      </button>
     </div>
     <div v-if="rest.notice" class="border rounded p-2 mb-2 small" style="white-space: pre-wrap">
       {{ rest.notice }}

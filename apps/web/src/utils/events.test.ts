@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { eventText, logText, mergeEvents } from './events';
+import { eventText, logText, mergeEvents, recordLabel } from './events';
 
 const names = { goodsName: (id: number) => ({ 1: '神秘礼券' })[id] ?? `道具${id}`, foodName: () => '大米' };
 
@@ -50,5 +50,42 @@ describe('mergeEvents（问题记录：一次得到很多东西时提示刷屏�
       { type: 'gain', kind: 'foods', id: 101, num: 1, lucky: true },
       { type: 'loss', kind: 'goods', id: 131, num: 99 },
     ]);
+  });
+});
+
+describe('特色菜（子项目 4A）', () => {
+  const names = {
+    goodsName: (id: number) => `道具${id}`,
+    foodName: (id: number) => `食材${id}`,
+    mcName: (id: number) => `秘·${id}`,
+  };
+  it('残卷事件显示特色菜名', () => {
+    expect(eventText({ type: 'gain', kind: 'remnant', id: 7, num: 2 }, names)).toBe('获得 秘·7残卷×2');
+  });
+  it('学会、遗忘的日志', () => {
+    const at = '2026-09-30T00:00:00Z';
+    expect(logText({ type: 'mc.learn', params: { mcId: 7, via: 'remnant' }, at } as never, names)).toBe(
+      '学会了特色菜「秘·7」',
+    );
+    expect(
+      logText({ type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: 9 }, at } as never, names),
+    ).toBe('偷学失败，遗忘了 3 道食谱和特色菜「秘·9」');
+  });
+});
+
+describe('终审：流水名称和个人日志里的好友动态', () => {
+  const names = { goodsName: () => '神秘礼券', foodName: () => '大米', mcName: (id: number) => `秘·${id}` };
+  const at = '2026-09-30T00:00:00Z';
+  it('流水：道具、食材、残卷显示名称，资源显示中文', () => {
+    expect(recordLabel({ kind: 'remnant', itemId: 7 }, names)).toBe('秘·7残卷');
+    expect(recordLabel({ kind: 'goods', itemId: 1 }, names)).toBe('神秘礼券');
+    expect(recordLabel({ kind: 'foods', itemId: 101 }, names)).toBe('大米');
+    expect(recordLabel({ kind: 'coin', itemId: null }, names)).toBe('银币');
+  });
+  it('好友动态类型在个人日志里也有文案，不显示英文类型名', () => {
+    expect(logText({ type: 'mc.eaten', params: { byName: '甲' }, at } as never, names)).toBe(
+      '甲 品尝了你的特色菜',
+    );
+    expect(logText({ type: 'thumb', params: { byName: '甲' }, at } as never, names)).toBe('甲 给你点了赞');
   });
 });

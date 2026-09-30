@@ -80,6 +80,8 @@ export interface FriendRestDto {
   thumbedToday: boolean;
   /** 对方穿着的厨具（子项目 2B） */
   equips: Array<{ part: number; goodsId: number; stress: number }>;
+  /** 对方当前在售的特色菜（子项目 4A）；eaten = 这一批我已经吃过 */
+  special: { mcId: number; grade: number; leftNum: number; price: number; eaten: boolean } | null;
 }
 
 const tableNo = z.number().int().min(1).max(500);

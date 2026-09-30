@@ -191,5 +191,26 @@
     "ungemMinStar": 2,
     "maxPresets": 5,
     "historyLimit": 50
+  },
+  "mysterious": {
+    "cookNums": [1, 5, 10, 15, 25, 50],
+    "baseNum": 360,
+    "highLevel": 5,
+    "highLevelNumRange": [0.70, 0.95],
+    "gradeBounds": [0.5, 0.8, 0.95, 1.05, 1.15, 1.25],
+    "gradeRatio": [[0, 0.30], [0.28, 0.52], [0.50, 0.64], [0.62, 0.76], [0.74, 0.88], [0.86, 1.00], [0.98, 1.12]],
+    "levelBonusPerLevel": 0.04,
+    "roadSame": 0.02, "roadSameMax": 0.30, "roadOther": 0.005, "roadOtherMax": 0.10,
+    "cookNumPowerDiv": 400,
+    "bobRatePerNutritive": 0.0002,
+    "appraiseRetryBelow": 5,
+    "tasteDaily": 2, "tasteAwardMax": 20, "tasteMcRate": 0.016, "tasteGradeFactor": 0.2,
+    "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02, "thinkerStealBonus": 0.05,
+    "learnStrength": 50, "stealStrength": 80,
+    "tuitionTimes": 3, "teacherShare": 2, "learnFragments": 2, "teacherFragments": 1,
+    "forgetPerLevel": 3, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.05,
+    "forceCloseCoinPerLevel": 50000,
+    "championHour": 9,
+    "championGoodsId": 165
   }
 }

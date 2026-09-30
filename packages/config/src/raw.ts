@@ -86,6 +86,7 @@ export const rawMysterious = z.object({
   odds: z.number().nullish(),
   taste: z.string().nullish(),
   foods: z.array(z.object({ foodsId: int, num: int })),
+  appraisable: z.boolean().nullish(),
 });
 
 export const rawWeather = z.object({
@@ -238,3 +239,5 @@ export const rawSuit = z.object({
   maxnum: int,
   tiers: z.array(z.object({ neednum: int.min(1), desc: z.string(), value: z.record(z.number()) })).min(1),
 });
+
+export const rawMcProficiency = z.object({ curlevel: int, name: z.string(), expNext: int });

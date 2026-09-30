@@ -52,8 +52,13 @@ const NAME_REASON: Record<string, string> = {
 export interface NameResolver {
   goodsName(id: number): string;
   foodName(id: number): string;
+  mcName(id: number): string;
 }
-let names: NameResolver = { goodsName: (id) => `道具${id}`, foodName: (id) => `食材${id}` };
+let names: NameResolver = {
+  goodsName: (id) => `道具${id}`,
+  foodName: (id) => `食材${id}`,
+  mcName: (id) => `特色菜${id}`,
+};
 /** 由目录 store 在加载后注入，错误文案里才能显示道具、食材名称 */
 export function setNameResolver(r: NameResolver): void {
   names = r;
@@ -64,6 +69,7 @@ const KIND: Record<string, string> = {
   diamond: '钻石',
   strength: '体力',
   attrPoint: '属性点',
+  portions: '份数',
 };
 
 const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -79,6 +85,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   avatar: () => '先在"装扮"里设置头像才能白食',
   dine_minutes: (p) => `白食满 ${String(p.need)} 分钟才能结束或请走`,
   renown: () => '声望为负时不能点赞',
+  mc_count: (p) => `学会的特色菜不够（需要 ${String(p.need)} 道）`,
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -100,6 +107,9 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   exchange_total: () => '今天换得太多了，明天再来',
   exchange_taken: () => '对方今天已经被换太多次了，放过它吧',
   icons: (p) => `最多展示 ${String(p.max)} 个图标`,
+  taste: (p) => `今天已经品尝过 ${String(p.max)} 次了`,
+  lesson_full: () => '这门课人满了',
+  lesson_open: () => '你已经有一门进行中的课了',
 };
 
 const STATE: Record<string, string> = {
@@ -168,12 +178,24 @@ const STATE: Record<string, string> = {
   foods_locked: '对方锁定了这种食材，飓风天才能换',
   bad_look: '没有这个款式',
   same_door: '已经是这扇门了',
+  mc_cooking: '已经有在售的特色菜了，卖完或倒掉后再烹制',
+  no_cooking: '现在没有在售的特色菜',
+  mc_learned: '已经学会这道特色菜了',
+  mc_not_learned: '还没学会这道特色菜',
+  lesson_over: '这门课已经结束了',
+  steal_full: '这门课偷学的人太多了',
+  own_lesson: '不能学自己开的课',
+  no_lesson: '你没有进行中的课',
+  lesson_not_full: '人还没满，不能强制结束',
+  target_no_special: '对方没有在售的特色菜',
 };
 
 const ALREADY: Record<string, string> = {
   friend: '已经是好友了',
   thumb: '今天已经给它点过赞了',
   thumb_ip: '同一网络今天已经给它点过赞了',
+  taste: '这一批特色菜你已经吃过了',
+  lesson: '这门课你已经试过了',
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
@@ -195,7 +217,9 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
         ? names.goodsName(Number(params.id))
         : kind === 'foods'
           ? names.foodName(Number(params.id))
-          : (KIND[kind] ?? '数量');
+          : kind === 'remnant'
+            ? `${names.mcName(Number(params.id))}残卷`
+            : (KIND[kind] ?? '数量');
     return `${what}不够（需要 ${String(params.need)}，现有 ${String(params.have)}）`;
   }
   if (code === 'REQUIREMENT_NOT_MET' && typeof params.reason === 'string' && REQUIREMENT[params.reason]) {

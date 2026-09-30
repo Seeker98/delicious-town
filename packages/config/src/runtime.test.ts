@@ -78,3 +78,21 @@ describe('2A 运行时索引', () => {
     expect(cfg.holidayMultiplier(new Date('2026-04-30T16:00:00Z'))).toBe(2);
   });
 });
+
+describe('特色菜索引（子项目 4A）', () => {
+  it('鉴定道具和教师证按道具 id 索引', () => {
+    expect(config.appraiseTools.get(165)).toEqual({ min: 3, max: 5, rate: 1, num: 2 });
+    expect(config.appraiseTools.get(163)).toEqual({ min: 1, max: 6, rate: 0.28, num: 1 });
+    expect(config.appraiseTools.has(162)).toBe(false);
+    expect(config.teacherCerts.get(394)).toEqual({
+      levels: [6],
+      needStrength: 100,
+      maxNum: 5,
+      lessonHour: 32,
+    });
+    expect([...config.teacherCerts.keys()].sort((a, b) => a - b)).toEqual([177, 178, 179, 394]);
+    expect(config.requireMc(1).name).toBe('秘·仿膳饽饽');
+    expect(() => config.requireMc(99999)).toThrow();
+    expect(config.mcProficiency[2]!.name).toBe('熟练');
+  });
+});

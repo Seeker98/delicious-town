@@ -22,3 +22,27 @@ describe('好友动态文案', () => {
     expect(describeFeed({ type: 'weird', params: {}, at }, food)).toBe('weird');
   });
 });
+
+describe('特色菜动态', () => {
+  const at = '2026-09-30T00:00:00Z';
+  it('品尝、课堂', () => {
+    expect(
+      describeFeed(
+        { type: 'mc.eaten', params: { byName: '甲', mcId: 1, portions: 2 }, at } as never,
+        () => '',
+      ),
+    ).toBe('甲 品尝了你的特色菜');
+    expect(
+      describeFeed(
+        { type: 'lesson.taught', params: { byName: '甲', type: 2, success: true }, at } as never,
+        () => '',
+      ),
+    ).toBe('甲 在你的课上偷学成功');
+    expect(
+      describeFeed(
+        { type: 'lesson.taught', params: { byName: '甲', type: 1, success: false }, at } as never,
+        () => '',
+      ),
+    ).toBe('甲 在你的课上没学会');
+  });
+});

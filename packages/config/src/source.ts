@@ -34,6 +34,7 @@ export const SOURCE_FILES = [
   'designed/shop_special_rate',
   'designed/shop_pools',
   'designed/equip_suits',
+  'designed/mc_proficiency',
   'game/tuning',
   'game/holidays',
   'game/market_guess_award',

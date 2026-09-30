@@ -33,4 +33,10 @@ describe('MoreView', () => {
     useSessionStore().me = me('player');
     expect(mountView().text()).not.toContain('管理后台');
   });
+
+  it('有特色菜、神殿、教室入口', () => {
+    useSessionStore().me = me('player');
+    const text = mountView().text();
+    for (const x of ['特色菜', '神殿', '教室']) expect(text).toContain(x);
+  });
 });

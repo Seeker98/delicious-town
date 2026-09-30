@@ -82,3 +82,11 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 未穿戴的厨具每件占一个仓库格；穿戴中的不占
 - 区服关闭 `features.equip` 后所有厨具接口返回"这个区服暂未开放该功能"，已穿戴厨具的幸运和套装加成照常生效
 - 数值在 `tuning.equip`（强化成功率、保底、宝石升阶、摘除费用、预设上限）
+
+## 特色菜与教室（子项目 4A）
+
+- 迁移 0008 新建 `rest_mc`、`mc_remnant`、`mc_cook`、`mc_eat`、`mc_lesson`、`mc_lesson_student`，餐厅表加 `mc_cook_id`（当前在售的批次）
+- 新功能开关 `features.mysterious`（默认开）。关闭后特色菜、神殿鉴定、教室接口返回"这个区服暂未开放该功能"；正在售卖的特色菜照常在结算里卖完；昨日冠军任务跳过该区服
+- worker 新任务 `mc-champion`：每天 `tuning.mysterious.championHour`（默认 9）点发昨日特色菜冠军奖励
+- 数值在 `tuning.mysterious`（批数、份数、品级区间、道份数加成、品尝、教室学 / 偷成功率和遗忘数量、强制结束费用）
+- 主线第 22~24 步（鉴定、学会、烹制特色菜）和教室支线不再跳过；第 25、26 步（守护兽、探险）继续跳过，等 4B
