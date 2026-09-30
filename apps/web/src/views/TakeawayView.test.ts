@@ -44,6 +44,9 @@ describe('TakeawayView', () => {
     expect(endpoints.takeaway).toHaveBeenCalledTimes(2);
     await w.find('[data-testid="tab-deliveries"]').trigger('click');
     expect(w.text()).toContain('deliveries-panel');
+    // 切标签时重新读取：接单后马上切到配送中，旧面板已卸载收不到刷新通知
+    await flushPromises();
+    expect(endpoints.takeaway).toHaveBeenCalledTimes(3);
     expect(localStorage.getItem('dt_takeaway_tab')).toBe('deliveries');
     const again = mount(TakeawayView, { global: { stubs } });
     await flushPromises();

@@ -125,3 +125,12 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 数值在 `tuning.tower`（次数、体力、声望、切磋奖励档位、名次礼包、换菜时间）
 - 守塔人来自配置包的 `dataset/tower_floors`，属性在构建时按原版厨力校准；声望商店从 `extra` 挪到正式字段 `renownShop`
 - 活跃映射新增 `tower.rank` → "与好友赛厨"
+
+
+## 外卖（子项目 4D）
+
+- 迁移 0013 新建 `takeaway_state`（开通状态和可雇骑手上限）、`takeaway_rider`（骑手；一家店同时只能被一个人雇，用部分唯一索引保证）、`takeaway_order`（外卖单）、`takeaway_delivery`（配送）
+- 新功能开关 `features.takeaway`（默认开）。关闭后外卖接口返回"这个区服暂未开放该功能"，主线第 34、35 步和配送支线跳过，定时任务跳过该区服
+- worker 新任务：`takeaway-orders`（每个游戏整点补全服公共单，同时删过期超过 1 天的未接单和 7 天前完成的单）
+- 数值在 `tuning.takeaway`（开通费用、公共单数量、品级概率、私人刷新、数值系数、骑手成长、奖池、神秘顾客、清理天数）
+- 任务 34、35、122 的跳转地址改为 `/takeaway`
