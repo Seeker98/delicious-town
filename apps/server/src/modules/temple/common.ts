@@ -4,7 +4,7 @@ import { ErrorCode, pickWeighted } from '@dt/shared';
 import type { Op } from '../../core/op';
 import { recordChange } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { addFoods } from '../cupboard/foods';
+import { addFoodsMany } from '../cupboard/foods';
 
 export const badInput = (reason: string): AppError =>
   new AppError(ErrorCode.VALIDATION_FAILED, 400, { reason });
@@ -23,9 +23,9 @@ export function pickFood(o: Op, level: number): number {
   return pickWeighted(pool, o.rng).id;
 }
 
-/** 合并后逐种发放（同一种食材只有一个事件、一条流水） */
+/** 合并后一次发放（同一种食材只有一个事件、一条流水；只查、写一次橱柜） */
 export async function addFoodsMerged(o: Op, foods: Map<number, number>): Promise<void> {
-  for (const [id, n] of foods) await addFoods(o, id, n);
+  await addFoodsMany(o, foods);
 }
 
 export async function addSeeds(o: Op, seedId: number, num: number): Promise<void> {
