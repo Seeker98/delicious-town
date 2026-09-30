@@ -45,9 +45,9 @@ const fire = (a: PlantAction) => emit('act', a, props.plant.id);
   <div class="fw-bold">{{ catalog.foodName(plant.foodsId) }} · {{ stageName(plant.stage) }}</div>
   <div>
     产量 {{ plant.harvestNum }}/{{ plant.harvestMax }}
-    <span v-if="plant.worm > 0">🐛{{ plant.worm }}</span>
-    <span v-if="plant.grass > 0">🌿{{ plant.grass }}</span>
-    <span v-if="plant.dry > 0" class="text-danger">干涸 {{ plant.dry }}</span>
+    <span v-if="plant.worm > 0" class="ms-1">🐛{{ plant.worm }}</span>
+    <span v-if="plant.grass > 0" class="ms-1">🌿{{ plant.grass }}</span>
+    <span v-if="plant.dry > 0" class="text-danger ms-1">干涸 {{ plant.dry }}</span>
   </div>
   <div class="text-muted" data-testid="plant-status">{{ statusText(plant) }}</div>
   <div class="d-flex flex-wrap gap-1 mt-1">

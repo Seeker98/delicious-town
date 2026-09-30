@@ -88,7 +88,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
   <div v-if="d && e">
     <h5>
       {{ catalog.goodsName(e.goodsId) }} <span v-if="e.stress > 0" class="text-success">+{{ e.stress }}</span>
-      <small class="text-muted"
+      <small class="text-muted ms-1"
         >{{ PART_NAMES[e.part] }} · {{ e.minLevel }} 级可穿{{ e.worn ? ' · 穿戴中' : '' }}</small
       >
     </h5>

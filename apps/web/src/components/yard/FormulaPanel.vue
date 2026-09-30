@@ -131,8 +131,8 @@ const appraise = () =>
     >
       <span class="me-auto">
         {{ f.name }}
-        <span v-if="f.learned" class="badge text-bg-success">已学会</span>
-        <span class="text-muted">主碎片 {{ f.mainNum }} / 辅碎片 {{ f.subNum }}</span>
+        <span v-if="f.learned" class="badge text-bg-success ms-1">已学会</span>
+        <span class="text-muted ms-1">主碎片 {{ f.mainNum }} / 辅碎片 {{ f.subNum }}</span>
       </span>
       <button
         v-if="!f.learned"

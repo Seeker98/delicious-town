@@ -163,7 +163,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
         <RouterLink :to="`/rest/equip/${e.id}`" class="flex-fill">
           {{ name(e) }}
           <span v-if="e.locked" class="bi bi-lock"></span>
-          <span class="text-muted">
+          <span class="text-muted ms-1">
             {{
               ATTR_KEYS.filter((k) => e.total[k] > 0)
                 .map((k) => `${ATTR_NAMES[k]}${e.total[k]}`)

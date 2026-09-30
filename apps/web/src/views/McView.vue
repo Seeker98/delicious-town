@@ -147,7 +147,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取特色菜�
       <div class="d-flex align-items-center">
         <div class="flex-fill">
           <b>{{ nameOf(m.mcId) }}</b>
-          <span class="text-muted">
+          <span class="text-muted ms-1">
             {{ dish(m.mcId)?.level }} 级 · {{ ROAD_NAMES[dish(m.mcId)?.road ?? 0] }} · {{ m.levelName }}
           </span>
           <div class="progress mt-1" style="height: 6px">

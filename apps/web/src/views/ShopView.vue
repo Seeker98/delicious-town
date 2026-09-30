@@ -132,7 +132,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
     <div v-if="!special" class="small text-muted">今天中午 12 点上新</div>
     <div v-else class="border rounded p-2 small">
       <b>{{ catalog.goodsName(special.goodsId) }}</b>
-      <span class="badge bg-danger">{{ special.tierName }}</span>
+      <span class="badge bg-danger ms-1">{{ special.tierName }}</span>
       <div>
         {{ formatNum(special.price) }} 银币 · 剩 {{ special.stock - special.sold }}/{{ special.stock }}
       </div>

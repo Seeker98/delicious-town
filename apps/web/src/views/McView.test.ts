@@ -115,6 +115,8 @@ describe('McView', () => {
     const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="learned-1"]').text()).toContain('入门');
+    // 菜名和等级之间要有间隔（问题记录）
+    expect(w.find('[data-testid="learned-1"] b + span').classes()).toContain('ms-1');
     await w.find('[data-testid="cook-1"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="cooknum-10"]').attributes('disabled')).toBeDefined();
