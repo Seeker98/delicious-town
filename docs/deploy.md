@@ -107,3 +107,11 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 数值在 `tuning.yard`（土地、偷菜、种子商店开关和调价 `seedShop` / `seedPriceRate`、配方、自然事件概率）
 - 配方、种子兑换、动作收益从配置包的 `extra` 挪到正式字段 `formulas`、`seedExchange`、`incomeActions`
 - 主线第 28、29 步（开垦、收获）和配方支线不再跳过；支线"鉴定一次食材配方"链接改到菜园
+
+## 酒吧（子项目 4C-1）
+
+- 迁移 0011 新建 `bar_state`（每店一行：三个游戏的上一局结果和连续次数、老虎机连续没出稀有的格数）、`bar_slot_stat`（老虎机按奖项累计格数）
+- 新功能开关 `features.bar`（默认开）。关闭后酒吧接口返回"这个区服暂未开放该功能"，主线第 13 步和酒吧支线跳过
+- 数值在 `tuning.bar`（划拳、猜酒杯、转数字的胜率和新闻门槛，蟹币兑换比例，老虎机保底，随机奖励的类型概率 `awardRates`）
+- 老虎机奖池来自配置包的 `dataset/bar_slot_machine_award`（22 项）
+- 任务 13、108 的链接改为 `/bar`；新状态键 `honor.potCount`（支线"集齐 4 株盆栽"）
