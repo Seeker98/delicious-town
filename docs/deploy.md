@@ -67,3 +67,10 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 互动默认要求双方邮箱已验证；本地没配邮件时可在控制台把区服数值 `tuning.friend.requireVerifiedEmail` 改成 `false`
 - 区服关闭 `features.friend` 后所有互动接口返回"这个区服暂未开放该功能"，自然蟑螂也会停止
 - 限流倍数 `RATE_LIMIT_SCALE`（默认 1）：开发环境 `.env.development` 设成 10，因为端到端测试的多个玩家都来自 localhost 同一个 IP；生产不要改
+
+## 试玩问题修复（第一批）
+
+- 迁移 0005 给 `restaurant` 加 `plankton_cooldown_until`：赶走痞老板的店在 `tuning.settlement.planktonHostCooldownHours`（默认 24）小时内不会再被选为驻留店
+- 餐厅可以搬回新手街（街道 0）
+- 收益和加成的计算方式见 `docs/rules/收益与加成.md`
+- 本地开发：改了 `packages/config/data/` 之后要重跑 `pnpm --filter @dt/config build` 并重启 `pnpm dev`，否则 API 和 worker 还在用旧的配置包（新增的数值键会让区服配置校验失败，worker 每轮报错）
