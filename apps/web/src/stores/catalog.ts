@@ -10,6 +10,7 @@ export const useCatalogStore = defineStore('catalog', {
     goodsMap: new Map<number, CatalogGoodsDto>(),
     foodsMap: new Map<number, CatalogFoodDto>(),
     mcMap: new Map<number, CatalogMcDto>(),
+    seedsMap: new Map<number, { id: number; foodsId: number; level: number }>(),
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
     loaded: false,
@@ -22,6 +23,7 @@ export const useCatalogStore = defineStore('catalog', {
       this.looks = c.looks ?? null;
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
+      this.seedsMap = new Map((c.seeds ?? []).map((s) => [s.id, s]));
       setNameResolver({
         goodsName: (id) => this.goodsName(id),
         foodName: (id) => this.foodName(id),
@@ -53,6 +55,10 @@ export const useCatalogStore = defineStore('catalog', {
     },
     mcName(id: number): string {
       return this.mcMap.get(id)?.name ?? `特色菜${id}`;
+    },
+    seedName(id: number): string {
+      const s = this.seedsMap.get(id);
+      return s ? `${this.foodName(s.foodsId)}种子` : `种子${id}`;
     },
     mc(id: number): CatalogMcDto | undefined {
       return this.mcMap.get(id);

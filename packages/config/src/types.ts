@@ -275,6 +275,7 @@ export interface ConfigBundle {
   streets: Street[];
   mysteriousCookbooks: MysteriousCookbook[];
   mcProficiency: McProficiency[];
+  seeds: Seed[];
   weather: Weather[];
   devices: Device[];
   starNeed: StarNeed[];
@@ -343,4 +344,36 @@ export interface SuitDef {
   name: string;
   maxNum: number;
   tiers: SuitTier[];
+}
+
+/** 种子（规格书 20 §20.8）；infancy / maturity / autumn 是三个生长阶段的分钟数，harvest 是收获期分钟数 */
+export interface Seed {
+  id: number;
+  foodsId: number;
+  name: string;
+  level: number;
+  coin: number;
+  infancy: number;
+  maturity: number;
+  autumn: number;
+  harvest: number;
+  harvestNum: number;
+  odds: number;
+}
+
+/** 飞弹（devicetype 97）的 value（规格书 09 §9.1） */
+export interface MissileDef {
+  hitRate: number;
+  crit: number;
+  critRate: number;
+  attack: [number, number];
+}
+
+/** 探险图（devicetype 96）的 value（规格书 09 §9.2） */
+export interface MapDef {
+  rate: number;
+  level: [number, number];
+  num: [number, number];
+  mysteriousRate: number;
+  needStrength: number;
 }

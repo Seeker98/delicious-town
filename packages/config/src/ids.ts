@@ -53,6 +53,21 @@ export const GOODS = {
   drillStone: 46, // 打孔石
   backStressOne: 225, // 归元石（回退 1 级）
   backStressAll: 224, // 神秘水晶（回退 10 级）
+  missileSpeed: 17, // 极速飞弹
+  missileNormal: 18, // 普通飞弹
+  missileBurst: 19, // 爆裂飞弹
+  mapNormal: 170, // 探险图
+  mapHigh: 171, // 高级探险图
+  seal: 164, // 厨神玉玺
+  securityCard: 110, // 保安证
+  creativePotion: 326, // 创意药水（试炼准备：注射）
+  meditation: 327, // 冥想（试炼准备）
+  lamp: 377, // 煤油灯
+  needle: 378, // 欲望之针（规格书写作"指南针"）
+  starKey: 408, // 星光之钥
+  exploreBook: 416, // 探险者秘籍
+  tentacle: 434, // 克拉肯断裂的触手
+  dreamNet: 468, // 捕梦网
 } as const;
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */

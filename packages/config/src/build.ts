@@ -4,6 +4,7 @@ import * as raw from './raw';
 import type { SourceData } from './source';
 import { buildSuits, parseEquipDef, parseGemDef } from './equip';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
+import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
@@ -491,6 +492,29 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const a of guessBonus) checkAward(`market_guess_award bonus ${a.minHits}`, a.award);
 
   // ---------- 以后子项目用到的表 ----------
+  const seeds = seedsRaw.map((s) => ({
+    id: s.id,
+    foodsId: s.foodsId,
+    name: s.name,
+    level: s.foodsLevel,
+    coin: s.coin,
+    infancy: s.infancy,
+    maturity: s.maturity,
+    autumn: s.autumn,
+    harvest: s.harvest,
+    harvestNum: s.harvestnum,
+    odds: s.odds,
+  }));
+  for (const g of goods) {
+    if (g.deviceType === 97) {
+      const m = parseMissileDef(g.value);
+      if (typeof m === 'string') errors.push(`goods ${g.id} missile ${m}`);
+    }
+    if (g.deviceType === 96) {
+      const m = parseMapDef(g.value);
+      if (typeof m === 'string') errors.push(`goods ${g.id} map ${m}`);
+    }
+  }
   const seedIds = new Set(seedsRaw.map((s) => s.id));
   for (const s of seedsRaw)
     if (!foodIds.has(s.foodsId)) errors.push(`seed ${s.id} references unknown food ${s.foodsId}`);
@@ -556,6 +580,7 @@ export function buildBundle(src: SourceData): BuildResult {
     streets,
     mysteriousCookbooks,
     mcProficiency,
+    seeds,
     weather,
     devices,
     starNeed,
@@ -579,7 +604,6 @@ export function buildBundle(src: SourceData): BuildResult {
     looks,
     suits,
     extra: {
-      seeds: seedsRaw,
       seedExchange: seedExRaw,
       formulas: formulasRaw,
       goodsExchange: goodsExRaw,

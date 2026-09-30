@@ -17,6 +17,7 @@ import { registerNpcHandlers } from './modules/npc/npc';
 import { createMarketService, type MarketService } from './modules/market/service';
 import { mysteriousJobs } from './modules/mysterious/jobs';
 import { createMysteriousService, type MysteriousService } from './modules/mysterious/service';
+import { createTempleService, type TempleService } from './modules/temple/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -46,6 +47,7 @@ export interface Game {
   social: SocialService;
   equip: EquipService;
   mysterious: MysteriousService;
+  temple: TempleService;
   jobs: PeriodicJob[];
 }
 
@@ -88,6 +90,7 @@ export function createGame(app: AppDeps): Game {
     store: createStoreService(deps),
     equip: createEquipService(deps, world),
     mysterious: createMysteriousService(deps, world),
+    temple: createTempleService(deps, world),
     shop,
     market,
     task: createTaskService(deps),

@@ -96,3 +96,15 @@ describe('特色菜索引（子项目 4A）', () => {
     expect(config.mcProficiency[2]!.name).toBe('熟练');
   });
 });
+
+describe('神殿索引（子项目 4B-1）', () => {
+  it('飞弹、探险图按道具 id 索引；种子池', () => {
+    expect(config.missiles.get(17)).toEqual({ attack: [5000, 5000], hitRate: 0.96, crit: 0.2, critRate: 2 });
+    expect([...config.missiles.keys()].sort((a, b) => a - b)).toEqual([17, 18, 19]);
+    expect(config.maps.get(171)).toMatchObject({ rate: 0.9, level: [4, 5], num: [10, 20], needStrength: 5 });
+    expect([...config.maps.keys()].sort((a, b) => a - b)).toEqual([170, 171, 172, 396]);
+    expect(config.seeds.get(1)!.foodsId).toBe(101);
+    expect(config.seedPool.items).toHaveLength(96);
+    expect(config.tuning.temple.guardianHpBase).toBe(10000);
+  });
+});

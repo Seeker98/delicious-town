@@ -54,6 +54,8 @@ export interface CatalogDto {
   suits?: Array<{ id: number; name: string; maxNum: number; tiers: Array<{ need: number; desc: string }> }>;
   /** 特色菜；旧缓存里没有 */
   mysterious?: CatalogMcDto[];
+  /** 种子；旧缓存里没有 */
+  seeds?: Array<{ id: number; foodsId: number; level: number }>;
 }
 
 export interface CatalogMcDto {

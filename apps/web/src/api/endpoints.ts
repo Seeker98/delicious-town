@@ -1,4 +1,10 @@
 import type {
+  ExploreResultDto,
+  KrakenFeedDto,
+  MissileResultDto,
+  TempleDto,
+  TentacleShopDto,
+  TrialResultDto,
   AppraiseResultDto,
   CookResultDto,
   LessonLearnDto,
@@ -238,4 +244,18 @@ export const endpoints = {
   lessonLearn: (id: number, type: 1 | 2) =>
     api.post<LessonLearnDto>(`/api/v1/mc/lesson/${id}/learn`, { type }),
   lessonClose: () => api.post<{ id: number }>('/api/v1/mc/lesson/close'),
+  temple: () => api.get<TempleDto>('/api/v1/temple'),
+  templeMissile: (goodsId: number, num: number) =>
+    api.post<MissileResultDto>('/api/v1/temple/missile', { goodsId, num }),
+  templeExplore: (goodsId: number, times: number) =>
+    api.post<ExploreResultDto>('/api/v1/temple/explore', { goodsId, times }),
+  trialPrepare: (way: 1 | 2) => api.post<{ mcId: number }>('/api/v1/temple/trial/prepare', { way }),
+  trialRefresh: (mcId?: number) =>
+    api.post<{ mcId: number }>('/api/v1/temple/trial/refresh', mcId === undefined ? {} : { mcId }),
+  trialStart: (mainFoodsId: number, subFoodsId: number) =>
+    api.post<TrialResultDto>('/api/v1/temple/trial/start', { mainFoodsId, subFoodsId }),
+  krakenFeed: (num: number) => api.post<KrakenFeedDto>('/api/v1/temple/kraken/feed', { num }),
+  tentacleShop: () => api.get<TentacleShopDto>('/api/v1/temple/tentacle'),
+  tentacleRefresh: () => api.post<TentacleShopDto>('/api/v1/temple/tentacle/refresh'),
+  tentacleExchange: (slot: number) => api.post<TentacleShopDto>('/api/v1/temple/tentacle/exchange', { slot }),
 };
