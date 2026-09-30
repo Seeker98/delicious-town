@@ -133,15 +133,24 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
     <div class="row g-1">
       <div v-for="f in shown" :key="f.foodsId" class="col-4">
         <button
-          :class="['btn', 'btn-sm', 'w-100', 'border', picked === f.foodsId ? 'btn-warning' : 'btn-light']"
+          :class="[
+            'btn',
+            'btn-sm',
+            'w-100',
+            'border',
+            'dt-tile',
+            picked === f.foodsId ? 'btn-warning' : 'btn-light',
+          ]"
           :data-testid="`pick-${f.foodsId}`"
           @click="pick(f.foodsId)"
         >
-          <i v-if="f.locked" class="bi bi-lock-fill"></i>
-          {{ catalog.foodName(f.foodsId) }} ×{{ f.num }}
-          <div v-if="f.streetNeed > 0" class="text-muted" style="font-size: 11px">
-            本街还需 {{ f.streetNeed }}
+          <div class="d-flex justify-content-center gap-1">
+            <i v-if="f.locked" class="bi bi-lock-fill"></i>
+            <span class="text-truncate">{{ catalog.foodName(f.foodsId) }}</span>
+            <span class="dt-tile-num text-nowrap">×{{ f.num }}</span>
           </div>
+          <!-- 第二行总是占位，方块一样高（问题记录） -->
+          <div class="dt-tile-sub text-muted">{{ f.streetNeed > 0 ? `本街还需 ${f.streetNeed}` : ' ' }}</div>
         </button>
       </div>
     </div>

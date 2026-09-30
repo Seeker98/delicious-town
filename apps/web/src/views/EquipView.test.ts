@@ -151,7 +151,10 @@ describe('EquipView', () => {
     expect(endpoints.equipBatch).toHaveBeenCalledWith([4], 'salvage');
   });
   it('厨具页可以加点：有剩余点数时显示输入，加点后刷新属性表（问题记录：加点在餐厅信息里很难找）', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({ attrLeft: 3 } as never);
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 3,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
     vi.mocked(endpoints.allocate).mockResolvedValue({} as never);
     const w = await mountView();
     expect(w.find('h5').text()).toContain('厨具与加点');
@@ -164,13 +167,32 @@ describe('EquipView', () => {
     expect(endpoints.equipOverview).toHaveBeenCalledTimes(2);
   });
 
+  it('加点输入框上方写明是哪一项，默认留空；写出加完后的数值（问题记录：不知道加的哪三个）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 3,
+      attrs: { cook: 20, cutting: 5, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    const w = await mountView();
+    expect(w.findAll('[data-testid^="label-"]').map((x) => x.text())).toEqual(['厨艺', '刀工', '火候']);
+    expect((w.find('[data-testid="add-cook"]').element as HTMLInputElement).value).toBe('');
+    await w.find('[data-testid="add-cook"]').setValue('2');
+    expect(w.find('[data-testid="preview-cook"]').text()).toBe('20 → 22');
+    expect(w.find('[data-testid="preview-cutting"]').text()).toBe('5');
+  });
+
   it('没有剩余点数时不显示加点输入', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({ attrLeft: 0 } as never);
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 0,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
     const w = await mountView();
     expect(w.find('[data-testid="add-cook"]').exists()).toBe(false);
   });
   it('清空一个输入框按 0 算，不会把数字拼成字符串（审查）', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({ attrLeft: 30 } as never);
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 30,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
     vi.mocked(endpoints.allocate).mockResolvedValue({} as never);
     const w = await mountView();
     await w.find('[data-testid="add-cook"]').setValue('');

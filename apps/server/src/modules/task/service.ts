@@ -118,6 +118,7 @@ export function createTaskService(d: GameDeps) {
     return {
       total: activationTotal(acts, counts),
       signedIn: (byKey.get(SIGNIN_KEY) ?? 0) > 0,
+      star: rest.star_level,
       items: acts.map((a) => ({
         id: a.id,
         name: a.name,

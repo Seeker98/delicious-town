@@ -63,4 +63,26 @@ describe('CookbooksView', () => {
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'upgradable' });
   });
+  it('紧凑卡片：菜名、品级、食材在左两行，按钮在右（问题记录：信息密度低）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    const card = w.find('[data-testid="cb-194"]');
+    expect(card.classes()).toContain('dt-cb');
+    expect(card.find('.dt-cb-foods').text()).toContain('1/1');
+    expect(card.find('[data-testid="learn-194"]').classes()).toContain('dt-btn-xs');
+  });
+
+  it('食材行可以折行，缺料项不会被截掉（审查）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.find('[data-testid="cb-194"] .dt-cb-foods').classes()).not.toContain('text-truncate');
+  });
 });

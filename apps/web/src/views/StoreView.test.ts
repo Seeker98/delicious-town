@@ -49,4 +49,26 @@ describe('StoreView', () => {
     expect(use.attributes('disabled')).toBeDefined();
     expect(w.text()).toContain('已达上限');
   });
+  it('能卖和不能卖的行结构一样：都有统一高度的行和右侧操作区（问题记录：行高不同）', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        ...structuredClone(data.items),
+        { goodsId: 106, num: 1, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: null },
+      ],
+    });
+    const w = mount(StoreView);
+    await flushPromises();
+    const rows = w.findAll('.dt-row');
+    expect(rows).toHaveLength(2);
+    for (const r of rows) expect(r.find('.dt-row-actions').exists()).toBe(true);
+  });
+
+  it('名字太长时只截名字，数量总是显示，剩余时间放第二行（审查）', async () => {
+    const w = mount(StoreView);
+    await flushPromises();
+    const num = w.find('.dt-store-num');
+    expect(num.text()).toBe('×150');
+    expect(num.element.closest('.text-truncate')).toBeNull();
+  });
 });

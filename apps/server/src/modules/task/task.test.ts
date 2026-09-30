@@ -63,8 +63,8 @@ describe('主线任务', () => {
 });
 
 describe('活跃度（规格书 15 §15.2）', () => {
-  it('签到 +10；给自己添油每次 5 分、每天最多 2 次', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 100000, oil: 0, oil_max: 1000 } });
+  it('签到 +10；给自己添油每次 5 分、每天最多 2 次；带上餐厅星级（问题记录：锁定的活跃项要写明几星开放）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000, oil: 0, oil_max: 1000, star_level: 1 } });
     await task().signIn(ctx);
     for (let i = 0; i < 3; i++) {
       await t.db.updateTable('restaurant').set({ oil: 0 }).where('id', '=', ctx.restaurantId).execute();
@@ -72,6 +72,7 @@ describe('活跃度（规格书 15 §15.2）', () => {
     }
     const a = await task().activation(ctx);
     expect(a.signedIn).toBe(true);
+    expect(a.star).toBe(1);
     expect(a.total).toBe(10 + 10);
     expect(a.items.find((x) => x.name === '给自己添油')).toMatchObject({ count: 3, limit: 2 });
   });
