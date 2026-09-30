@@ -1,9 +1,10 @@
-import type { DuelInfoDto, RankDto, TowerDto } from '@dt/shared';
+import type { DuelInfoDto, RankDto, RenownShopDto, TowerDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { runPairOp } from '../../core/pair';
 import { duelInfo, friendDuel } from './friendDuel';
 import { challengeRank, occupyRank, rankView } from './rank';
+import { buyShop, shopView } from './shop';
 import { challengeTower, towerView } from './tower';
 
 export function createTowerService(d: GameDeps) {
@@ -42,6 +43,13 @@ export function createTowerService(d: GameDeps) {
         { feature: 'tower', source: 'tower.duel', friend: 'required' },
         (p) => friendDuel(p),
       );
+    },
+    async shop(ctx: RestCtx): Promise<RenownShopDto> {
+      await d.shards.ensureFeature(ctx.shardId, 'tower');
+      return shopView(d.db, d.config, await restOf(ctx.restaurantId), d.now());
+    },
+    buy(ctx: RestCtx, b: { goodsId: number; num: number }) {
+      return op(ctx, 'tower.shop', (o) => buyShop(o, b.goodsId, b.num));
     },
   };
 }

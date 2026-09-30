@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { duelBody, rankBody, restIdParam, towerChallengeBody } from '@dt/shared';
+import { duelBody, rankBody, renownBuyBody, restIdParam, towerChallengeBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -22,5 +22,9 @@ export function towerRoutes(svc: TowerService): FastifyPluginAsync {
       ok(await svc.duelInfo(restCtxOf(req), parse(restIdParam, req.params).restId)),
     );
     r.post('/tower/duel', async (req) => okOp(await svc.duel(restCtxOf(req), parse(duelBody, req.body))));
+    r.get('/tower/shop', async (req) => ok(await svc.shop(restCtxOf(req))));
+    r.post('/tower/shop/buy', async (req) =>
+      okOp(await svc.buy(restCtxOf(req), parse(renownBuyBody, req.body))),
+    );
   };
 }
