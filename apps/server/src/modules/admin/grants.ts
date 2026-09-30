@@ -71,7 +71,7 @@ export function createAdminGrants(game: Game) {
   }
 
   function targets(shardId: number, minLevel: number | null | undefined) {
-    let q = db.selectFrom('restaurant').where('shard_id', '=', shardId);
+    let q = db.selectFrom('restaurant').where('shard_id', '=', shardId).where('npc', '=', false);
     if (minLevel) q = q.where('level', '>=', minLevel);
     return q;
   }

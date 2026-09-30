@@ -30,6 +30,7 @@ export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string)
     .innerJoin('restaurant as r', 'r.id', 'l.rest_id')
     .select(['l.kind', 'l.source', sql<number>`sum(l.delta)::bigint`.as('amount')])
     .where('r.shard_id', '=', shardId)
+    .where('r.npc', '=', false)
     .where('l.created_at', '>=', start)
     .where('l.created_at', '<', end)
     .groupBy(['l.kind', 'l.source'])
@@ -42,6 +43,7 @@ export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string)
       sql<number>`coalesce(sum(i.exp), 0)::bigint`.as('exp'),
     ])
     .where('r.shard_id', '=', shardId)
+    .where('r.npc', '=', false)
     .where('i.created_at', '>=', start)
     .where('i.created_at', '<', end)
     .executeTakeFirstOrThrow();
@@ -50,6 +52,7 @@ export async function aggregateDay(db: Kysely<DB>, shardId: number, day: string)
     .innerJoin('restaurant as r', 'r.id', 'l.rest_id')
     .select(sql<number>`count(distinct l.rest_id)`.as('n'))
     .where('r.shard_id', '=', shardId)
+    .where('r.npc', '=', false)
     .where('l.created_at', '>=', start)
     .where('l.created_at', '<', end)
     .where((eb) =>
@@ -146,7 +149,7 @@ function buckets(rows: Array<{ b: number; n: number }>, width: number, minFrom: 
 }
 
 export async function distribution(db: Kysely<DB>, shardId: number): Promise<DistributionDto> {
-  const base = db.selectFrom('restaurant').where('shard_id', '=', shardId);
+  const base = db.selectFrom('restaurant').where('shard_id', '=', shardId).where('npc', '=', false);
   const states = await base
     .select(['state', sql<number>`count(*)`.as('n')])
     .groupBy('state')

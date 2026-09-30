@@ -34,13 +34,16 @@ describe('主线任务', () => {
     await expect(task().claimTask(ctx, list.main!.id)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
   });
 
-  it('第 8 步起跳过未开放的功能（设计文档 裁定 7）', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 8, level: 5 } });
+  it('跳过未开放的功能（设计文档 裁定 7）：第 13 步酒吧跳到第 14 步翻橱', async () => {
+    const ctx = await newRestaurant(t, { patch: { main_task_step: 13, level: 5 } });
     const list = await task().tasks(ctx);
-    expect(list.mainStep).toBe(10);
-    expect(list.main).toMatchObject({ step: 10, key: 'rest.level', done: true });
-    await task().claimTask(ctx, list.main!.id);
-    expect((await restRow(t, ctx.restaurantId)).main_task_step).toBe(11);
+    expect(list.mainStep).toBe(14);
+    expect(list.main).toMatchObject({ step: 14, key: 'cupboard.flip', done: false });
+  });
+
+  it('第 8 步打蟑螂、第 9 步加好友不再跳过', async () => {
+    const ctx = await newRestaurant(t, { patch: { main_task_step: 8 } });
+    expect((await task().tasks(ctx)).main).toMatchObject({ step: 8, key: 'roach.kill' });
   });
 
   it('支线：领完后不再显示', async () => {

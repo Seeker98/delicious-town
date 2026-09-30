@@ -77,6 +77,7 @@ export async function mouseRound(
     .select(['id', 'star_level', 'street_id'])
     .where('shard_id', '=', shardId)
     .where('state', '=', 1)
+    .where('npc', '=', false)
     .orderBy('id')
     .execute();
   const stats: MouseStats = { triggered: 0, escaped: 0, trapped: 0, stolen: 0, nothing: 0, maps: 0 };

@@ -5,6 +5,7 @@ import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
+import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { buildGlobals, normalizeCounts } from './globals';
@@ -165,6 +166,7 @@ export async function settleShardRound(
       .select('id')
       .where('shard_id', '=', shardId)
       .where('state', '=', 1)
+      .where('npc', '=', false)
       .where('star_level', '>=', 1)
       .orderBy('id')
       .execute();
@@ -187,6 +189,7 @@ export async function settleShardRound(
       .select('id')
       .where('shard_id', '=', shardId)
       .where('state', '=', 1)
+      .where('npc', '=', false)
       .orderBy('id')
       .execute()
   ).map((r) => r.id);
@@ -217,6 +220,13 @@ export async function settleShardRound(
       }
       opts.onRestaurant?.(restId, Date.now() - t0);
     });
+  }
+  if (featureAvailable(settings, 'friend')) {
+    try {
+      await npcTableRound(d, shardId, round, now);
+    } catch (err) {
+      opts.log?.error({ err, shardId, round }, 'npc table round failed');
+    }
   }
   stats.ms = Date.now() - started;
   return stats;

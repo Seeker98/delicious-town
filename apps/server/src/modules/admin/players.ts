@@ -84,6 +84,7 @@ export function createAdminPlayers(game: Game) {
         const byAccount = await db
           .selectFrom('account')
           .select('id')
+          .where('is_system', '=', false)
           .where((eb) =>
             eb.or([
               eb(sql<string>`lower(username)`, 'like', prefix),
@@ -104,6 +105,7 @@ export function createAdminPlayers(game: Game) {
       const accounts = await db
         .selectFrom('account')
         .select(['id', 'username', 'email', 'role', 'banned_at'])
+        .where('is_system', '=', false)
         .where('id', 'in', ids)
         .orderBy('id')
         .execute();

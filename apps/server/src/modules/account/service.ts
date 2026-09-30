@@ -17,6 +17,7 @@ import type { Captcha } from '../../infra/captcha';
 import type { Mailer } from '../../infra/mailer';
 import type { SessionData, SessionStore } from '../../security/sessionStore';
 import { newToken, sha256 } from '../../security/tokens';
+import { npcInvite } from '../npc/npc';
 import { hashPassword, verifyPassword } from './password';
 
 export interface AccountDeps {
@@ -131,11 +132,11 @@ export function createAccountService(d: AccountDeps) {
     async login(input: LoginInput): Promise<{ token: string; accountId: number }> {
       const account = await d.db
         .selectFrom('account')
-        .select(['id', 'password_hash', 'banned_at', 'ban_reason'])
+        .select(['id', 'password_hash', 'banned_at', 'ban_reason', 'is_system'])
         .where(sql<string>`lower(username)`, '=', input.username.toLowerCase())
         .executeTakeFirst();
       const valid = await verifyPassword(account?.password_hash ?? null, input.password);
-      if (!account || !valid) throw new AppError(ErrorCode.INVALID_CREDENTIALS, 401);
+      if (!account || !valid || account.is_system) throw new AppError(ErrorCode.INVALID_CREDENTIALS, 401);
       if (account.banned_at)
         throw new AppError(ErrorCode.ACCOUNT_BANNED, 403, { reason: account.ban_reason });
       return { token: await d.sessions.create(account.id), accountId: account.id };
@@ -177,6 +178,7 @@ export function createAccountService(d: AccountDeps) {
         .where('id', '=', accountId)
         .where('email_verified_at', 'is', null)
         .execute();
+      await npcInvite(d.db, { accountId });
     },
 
     /** 无论邮箱是否存在都返回成功，避免被用来探测注册邮箱 */
