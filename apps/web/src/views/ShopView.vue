@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
-import type { ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
+import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -29,13 +29,23 @@ async function run(fn: () => Promise<unknown>) {
     busy.value = false;
   }
 }
-const n = (key: string) => qty[key] ?? 1;
+const key = (it: ShopItemDto) => `${tab.value === 'coin' ? 'c' : 'b'}${it.goodsId}`;
+/** 填的数超过上限时按上限买 */
+const n = (it: ShopItemDto) => Math.max(1, Math.min(qty[key(it)] ?? 1, it.maxBuy));
 const buy = (it: ShopItemDto) =>
   run(() =>
-    tab.value === 'coin'
-      ? endpoints.shopBuy(it.goodsId, n(`c${it.goodsId}`))
-      : endpoints.shopBuyBlack(it.goodsId, n(`b${it.goodsId}`)),
+    tab.value === 'coin' ? endpoints.shopBuy(it.goodsId, n(it)) : endpoints.shopBuyBlack(it.goodsId, n(it)),
   );
+const capText = (it: ShopItemDto) => {
+  if (it.maxBuy > 0) return `最多 ${formatNum(it.maxBuy)}`;
+  const why: Record<Exclude<BuyBlock, null>, string> = {
+    money: tab.value === 'coin' ? '银币不够' : '钻石不够',
+    max: '已达持有上限',
+    owned: '已经拥有',
+    store: '仓库满了',
+  };
+  return it.blocked ? why[it.blocked] : '买不了';
+};
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失败'), 'danger')));
 </script>
 
@@ -62,19 +72,31 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
       <div class="flex-fill">
         <b>{{ catalog.goodsName(it.goodsId) }}</b>
         <div class="text-muted">
-          {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }}
+          {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }} ·
+          <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
+            capText(it)
+          }}</span>
           <span v-if="catalog.goods(it.goodsId)?.desc">· {{ catalog.goods(it.goodsId)?.desc }}</span>
         </div>
       </div>
       <input
         v-if="it.limit !== 1"
-        v-model.number="qty[`${tab === 'coin' ? 'c' : 'b'}${it.goodsId}`]"
+        v-model.number="qty[key(it)]"
         type="number"
         min="1"
+        :max="Math.max(1, it.maxBuy)"
+        :data-testid="`qty-${it.goodsId}`"
         class="form-control form-control-sm"
         style="width: 64px"
       />
-      <button class="btn btn-sm btn-primary" :disabled="busy" @click="buy(it)">买</button>
+      <button
+        class="btn btn-sm btn-primary"
+        :disabled="busy || it.maxBuy === 0"
+        :data-testid="`buy-${it.goodsId}`"
+        @click="buy(it)"
+      >
+        买
+      </button>
     </div>
   </template>
   <template v-if="tab === 'special'">

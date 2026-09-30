@@ -59,3 +59,27 @@ describe('TempleView', () => {
     expect(text).toContain('这只是一堆厕纸而已');
   });
 });
+
+describe('TempleView：按钮灰掉时写明原因（问题记录：鉴定按钮有时是灰色的）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('没有神秘食谱时提示每次鉴定要消耗 1 个', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({ ...structuredClone(overview), recipes: 0 });
+    const w = mount(TempleView);
+    await flushPromises();
+    expect(w.find('[data-testid="appraise"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="appraise-block"]').text()).toContain('没有神秘食谱');
+  });
+
+  it('选中的鉴定道具没有了时提示；有货时不显示提示', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
+    const w = mount(TempleView);
+    await flushPromises();
+    expect(w.find('[data-testid="appraise-block"]').exists()).toBe(false);
+    await w.find('[data-testid="tool"]').setValue('163');
+    expect(w.find('[data-testid="appraise-block"]').text()).toContain('没有这个鉴定道具');
+  });
+});
