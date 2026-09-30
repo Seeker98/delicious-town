@@ -1,5 +1,15 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { basketStoreBody, restIdParam, yardFeedBody, yardPlantBody, yardPlantIdBody } from '@dt/shared';
+import {
+  basketStoreBody,
+  formulaAppraiseBody,
+  formulaComposeBody,
+  formulaDecomposeBody,
+  formulaIdBody,
+  restIdParam,
+  yardFeedBody,
+  yardPlantBody,
+  yardPlantIdBody,
+} from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -34,6 +44,19 @@ export function yardRoutes(svc: YardService): FastifyPluginAsync {
     r.get('/yard/basket', async (req) => ok(await svc.basket(restCtxOf(req))));
     r.post('/yard/basket/store', async (req) =>
       okOp(await svc.storeBasket(restCtxOf(req), parse(basketStoreBody, req.body))),
+    );
+    r.get('/yard/formulas', async (req) => ok(await svc.formulas(restCtxOf(req))));
+    r.post('/yard/formula/appraise', async (req) =>
+      okOp(await svc.appraiseFormula(restCtxOf(req), parse(formulaAppraiseBody, req.body))),
+    );
+    r.post('/yard/formula/learn', async (req) =>
+      okOp(await svc.learnFormula(restCtxOf(req), parse(formulaIdBody, req.body))),
+    );
+    r.post('/yard/formula/decompose', async (req) =>
+      okOp(await svc.decomposeFormula(restCtxOf(req), parse(formulaDecomposeBody, req.body))),
+    );
+    r.post('/yard/formula/compose', async (req) =>
+      okOp(await svc.composeFormula(restCtxOf(req), parse(formulaComposeBody, req.body))),
     );
   };
 }
