@@ -67,6 +67,8 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             .where('fridge_num', '>', 0)
             .executeTakeFirst()) !== undefined,
         freeHandleLeft: Math.max(0, freeHandles(rest.star_level, tuning.cupboard) - used),
+        // 接口参数上限是 100
+        handleMax: Math.min(tuning.cupboard.handleMax, 100),
         items: all
           .filter(([, r]) => r.num > 0)
           .map(([foodsId, r]) => ({

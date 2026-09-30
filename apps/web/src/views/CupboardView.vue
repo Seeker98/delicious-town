@@ -19,6 +19,13 @@ const pickedItem = computed(() => data.value?.items.find((x) => x.foodsId === pi
 const pickedLevel = computed(() => (picked.value ? (catalog.food(picked.value)?.level ?? 0) : 0));
 const canDecompose = computed(() => pickedLevel.value >= 2 && pickedLevel.value <= 6);
 const canCompose = computed(() => pickedLevel.value >= 1 && pickedLevel.value <= 4);
+/** 一次最多分解几个；合成要偶数个（问题记录：合成不显示最大数） */
+const decomposeMax = computed(() => Math.min(data.value?.handleMax ?? 100, pickedItem.value?.num ?? 0));
+const composeMax = computed(() => Math.floor(decomposeMax.value / 2) * 2);
+const decomposeN = computed(() => Math.max(1, Math.min(num.value || 1, decomposeMax.value)));
+const composeN = computed(() =>
+  Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, composeMax.value)),
+);
 
 async function load() {
   data.value = await endpoints.cupboard();
@@ -47,7 +54,8 @@ function pick(id: number) {
 function handle(way: 'compose' | 'decompose') {
   const foodsId = picked.value!;
   return run(async () => {
-    const r = await endpoints.handleFoods({ foodsId, way, num: num.value });
+    const n = way === 'compose' ? composeN.value : decomposeN.value;
+    const r = await endpoints.handleFoods({ foodsId, way, num: n });
     toast.push(`成功 ${r.success}/${r.chances} 次${r.strengthUsed ? '，消耗 1 体力' : ''}`, 'info');
   }, '处理失败');
 }
@@ -103,18 +111,18 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         <button
           class="btn btn-sm btn-outline-primary"
           data-testid="decompose"
-          :disabled="busy || !canDecompose"
+          :disabled="busy || !canDecompose || decomposeMax < 1"
           @click="handle('decompose')"
         >
-          分解
+          分解 ×{{ decomposeN }}
         </button>
         <button
           class="btn btn-sm btn-outline-primary"
           data-testid="compose"
-          :disabled="busy || !canCompose"
+          :disabled="busy || !canCompose || composeMax < 2"
           @click="handle('compose')"
         >
-          合成
+          合成 ×{{ composeN }}
         </button>
         <button
           class="btn btn-sm btn-outline-secondary"
@@ -141,7 +149,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         </button>
       </div>
       <div class="text-muted mt-1">
-        分解：1 个 → 2 次机会得到低一级食材；合成：2 个 → 1 次机会得到高一级食材。
+        一次最多分解 {{ decomposeMax }}，合成 {{ composeMax }}（合成要偶数个）。分解：1 个 → 2
+        次机会得到低一级食材；合成：2 个 → 1 次机会得到高一级食材。
       </div>
     </div>
   </template>

@@ -29,6 +29,8 @@ export interface CupboardDto {
   fridgeCount: number;
   fridgeUnread: boolean;
   freeHandleLeft: number;
+  /** 一次最多分解 / 合成几个 */
+  handleMax: number;
   items: CupboardFoodDto[];
 }
 

@@ -15,7 +15,14 @@ describe('橱柜列表', () => {
   it('格数、锁定格、本街需求', async () => {
     const ctx = await newRestaurant(t, { foods: { 302: 3, 101: 1 } });
     const l = await c().list(ctx);
-    expect(l).toMatchObject({ slotsUsed: 2, slots: 100, lockUsed: 0, lockSlots: 15, targetGrade: 5 });
+    expect(l).toMatchObject({
+      slotsUsed: 2,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      targetGrade: 5,
+      handleMax: 100,
+    });
     expect(l.items.find((x) => x.foodsId === 302)!.streetNeed).toBeGreaterThan(0);
   });
 });
