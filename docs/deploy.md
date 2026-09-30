@@ -90,3 +90,11 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - worker 新任务 `mc-champion`：每天 `tuning.mysterious.championHour`（默认 9）点发昨日特色菜冠军奖励
 - 数值在 `tuning.mysterious`（批数、份数、品级区间、道份数加成、品尝、教室学 / 偷成功率和遗忘数量、强制结束费用）
 - 主线第 22~24 步（鉴定、学会、烹制特色菜）和教室支线不再跳过；第 25、26 步（守护兽、探险）继续跳过，等 4B
+
+## 神殿（子项目 4B-1）
+
+- 迁移 0009 新建 `rest_trial`、`kraken_feed`、`tentacle_shop`、`rest_seed`；守护兽的伤害和是否击败记在 `daily_counter`
+- 新功能开关 `features.temple`（默认开）。关闭后守护兽、探险、试炼、克拉肯、触手商店的接口返回"这个区服暂未开放该功能"；4A 的鉴定属于 `mysterious`，不受影响
+- 数值在 `tuning.temple`（守护兽血量和掉落、试炼花费和上限、克拉肯投喂时段和倍率、触手商店格数）
+- 种子表从配置包的 `extra` 挪到正式字段 `seeds`
+- 主线第 25、26 步（守护兽、探险）和试炼支线不再跳过
