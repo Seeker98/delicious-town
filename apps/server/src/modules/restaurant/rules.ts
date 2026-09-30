@@ -1,6 +1,12 @@
 import type { Insertable } from 'kysely';
 import type { GameConfig, RestaurantDefaults } from '@dt/config';
-import { levelUpExp, type DeviceSlotDto, type RestaurantDto, type RoundSummaryDto } from '@dt/shared';
+import {
+  levelUpExp,
+  type DeviceSlotDto,
+  type HeadlinesDto,
+  type RestaurantDto,
+  type RoundSummaryDto,
+} from '@dt/shared';
 import type { RestaurantRow, RestaurantTable, TableState } from '../../db/schema';
 import type { ActiveEffect } from '../effects/service';
 import { tableDto } from './reads';
@@ -58,6 +64,7 @@ export interface OverviewExtra {
   /** 展示中的个性图标（问题记录：自己看不到称号） */
   icons: Array<{ key: string; title: string }>;
   plaque2Cost: { star: number; coin: number; diamond: number };
+  headlines: HeadlinesDto;
 }
 
 export function toRestaurantDto(
@@ -122,6 +129,7 @@ export function toRestaurantDto(
       effects: e.effects,
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),
+    headlines: extra.headlines,
     createdAt: r.created_at.toISOString(),
   };
 }

@@ -54,6 +54,7 @@ const dto: RestaurantDto = {
   cookfoodsFlag: 0,
   plaque2Open: false,
   plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
+  headlines: { news: [], broadcast: null },
   mainTaskStep: 1,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },

@@ -25,3 +25,5 @@ export * from './schemas/yard';
 export * from './schemas/bar';
 export * from './schemas/tower';
 export * from './schemas/takeaway';
+export * from './schemas/town';
+export * from './news';

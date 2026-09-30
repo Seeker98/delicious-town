@@ -14,6 +14,7 @@ import { AppError } from '../../http/errors';
 import type { LoadedSession } from '../../security/session';
 import type { SessionStore } from '../../security/sessionStore';
 import { listActiveEffects } from '../effects/service';
+import { headlines } from '../news/news';
 import { recordLedger } from '../ledger/ledger';
 import { postNews } from '../news/news';
 import type { ShardService } from '../shard/service';
@@ -65,6 +66,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       isPlanktonHost: snap.planktonRestId === restId,
       icons: await shownIcons(restId),
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
+      headlines: await headlines(d.db, row.shard_id),
     });
   }
 
