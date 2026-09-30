@@ -40,6 +40,7 @@ export function eventText(e: GameEvent, names: Names): string {
   else if (e.kind === 'foods') what = `${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
   else if (e.kind === 'remnant') what = `${mcNameOf(names, e.id ?? 0)}残卷×${formatNum(e.num)}`;
   else if (e.kind === 'seed') what = `${seedNameOf(names, e.id ?? 0)}×${formatNum(e.num)}`;
+  else if (e.kind === 'basket') what = `菜篮·${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
   else what = `${KIND_NAMES[e.kind] ?? e.kind} ${formatNum(e.num)}`;
   return `${verb} ${what}${e.lucky ? '（幸运）' : ''}`;
 }
@@ -106,5 +107,6 @@ export function recordLabel(r: { kind: string; itemId: number | null }, names: N
   if (r.kind === 'foods') return names.foodName(r.itemId ?? 0);
   if (r.kind === 'remnant') return `${mcNameOf(names, r.itemId ?? 0)}残卷`;
   if (r.kind === 'seed') return seedNameOf(names, r.itemId ?? 0);
+  if (r.kind === 'basket') return `菜篮·${names.foodName(r.itemId ?? 0)}`;
   return KIND_NAMES[r.kind] ?? r.kind;
 }

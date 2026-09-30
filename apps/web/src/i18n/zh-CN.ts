@@ -53,11 +53,13 @@ export interface NameResolver {
   goodsName(id: number): string;
   foodName(id: number): string;
   mcName(id: number): string;
+  seedName(id: number): string;
 }
 let names: NameResolver = {
   goodsName: (id) => `道具${id}`,
   foodName: (id) => `食材${id}`,
   mcName: (id) => `特色菜${id}`,
+  seedName: (id) => `种子${id}`,
 };
 /** 由目录 store 在加载后注入，错误文案里才能显示道具、食材名称 */
 export function setNameResolver(r: NameResolver): void {
@@ -84,7 +86,8 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   activation: (p) => `活跃度不够（需要 ${String(p.need)}）`,
   avatar: () => '先在"装扮"里设置头像才能白食',
   dine_minutes: (p) => `白食满 ${String(p.need)} 分钟才能结束或请走`,
-  renown: () => '声望为负时不能点赞',
+  renown: (p) =>
+    p.need === undefined ? '声望为负时不能点赞' : `声望不够（偷菜要 ${String(p.need)} 点声望）`,
   mc_count: (p) => `学会的特色菜不够（需要 ${String(p.need)} 道）`,
 };
 
@@ -110,6 +113,7 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   taste: (p) => `今天已经品尝过 ${String(p.max)} 次了`,
   lesson_full: () => '这门课人满了',
   lesson_open: () => '你已经有一门进行中的课了',
+  lands: (p) => `最多开垦 ${String(p.max)} 块地`,
 };
 
 const STATE: Record<string, string> = {
@@ -196,6 +200,22 @@ const STATE: Record<string, string> = {
   no_lesson: '你没有进行中的课',
   lesson_not_full: '人还没满，不能强制结束',
   target_no_special: '对方没有在售的特色菜',
+  no_land: '这块地还没开垦',
+  land_busy: '这块地上已经有作物了',
+  no_plant: '作物不存在（可能已经收获或铲除），请刷新',
+  no_water: '现在还不能浇水',
+  has_worm: '有虫，先除虫',
+  has_grass: '有草，先除草',
+  not_ripe: '还没到收获期',
+  withered: '作物已经枯萎，只能铲除',
+  no_worm: '没有虫',
+  no_grass: '没有草',
+  feed_useless: '这个阶段剩下的时间不够，肥料用不上了',
+  steal_left: '剩得不多了，给主人留点吧',
+  formula_unlearned: '还没学会这个配方',
+  formula_learned: '已经学会这个配方了',
+  seed_shop_closed: '种子商店暂未开放',
+  seed_not_sold: '神秘种子不卖，只能兑换或投喂克拉肯得到',
 };
 
 const ALREADY: Record<string, string> = {
@@ -204,6 +224,7 @@ const ALREADY: Record<string, string> = {
   thumb_ip: '同一网络今天已经给它点过赞了',
   taste: '这一批特色菜你已经吃过了',
   lesson: '这门课你已经试过了',
+  steal: '这株你已经偷过了',
 };
 
 export function errorText(code: string, params: Record<string, unknown> = {}): string {
@@ -222,14 +243,21 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return `特价菜同一网络 ${String(params.minutes ?? 10)} 分钟内只能抢一次，还要等 ${Math.ceil(Number(params.seconds ?? 60) / 60)} 分钟`;
   if (code === 'NOT_ENOUGH') {
     const kind = String(params.kind ?? '');
+    const id = Number(params.id);
     const what =
       kind === 'goods'
-        ? names.goodsName(Number(params.id))
+        ? names.goodsName(id)
         : kind === 'foods'
-          ? names.foodName(Number(params.id))
+          ? names.foodName(id)
           : kind === 'remnant'
-            ? `${names.mcName(Number(params.id))}残卷`
-            : (KIND[kind] ?? '数量');
+            ? `${names.mcName(id)}残卷`
+            : kind === 'seed'
+              ? names.seedName(id)
+              : kind === 'basket'
+                ? `菜篮里的${names.foodName(id)}`
+                : kind === 'fragment'
+                  ? `配方${params.part === 'main' ? '主' : '辅'}碎片`
+                  : (KIND[kind] ?? '数量');
     return `${what}不够（需要 ${String(params.need)}，现有 ${String(params.have)}）`;
   }
   if (code === 'REQUIREMENT_NOT_MET' && typeof params.reason === 'string' && REQUIREMENT[params.reason]) {

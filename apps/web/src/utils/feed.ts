@@ -30,6 +30,14 @@ export function describeFeed(item: RestLogDto, foodName: (id: number) => string)
       return `${who} 给你点了赞`;
     case 'friend.apply':
       return `${who} 申请加你为好友`;
+    case 'yard.helped': {
+      const what = p.what === 'weed' ? '除了草' : p.what === 'deworm' ? '除了虫' : '浇了水';
+      return `${who} 帮你的${foodName(Number(p.foodsId))}${what}`;
+    }
+    case 'yard.stolen': {
+      const caught = p.punished ? `，被边牧逮住，留下了 ${foodName(Number(p.punished))}` : '';
+      return `${who} 偷走了你的 ${foodName(Number(p.foodsId))}×${String(p.num)}${caught}`;
+    }
     case 'friend.accept':
       return `${who} 同意了你的好友申请`;
     default:
