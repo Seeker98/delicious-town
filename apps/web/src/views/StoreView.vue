@@ -50,7 +50,9 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
     busy.value = false;
   }
 }
-const n = (it: StoreItemDto) => Math.min(qty[it.goodsId] ?? 1, it.num);
+/** 填的数超过上限时按上限算（使用：单次上限 maxUse；出售：持有数） */
+const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.maxUse));
+const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
 const expires = (at: string | null) =>
   at ? `剩余 ${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时` : '';
 const recordName = (r: LedgerRecordDto) =>
@@ -104,21 +106,22 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
         class="form-control form-control-sm"
         style="width: 60px"
       />
+      <span v-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
       <button
         v-if="it.usable"
         class="btn btn-sm btn-primary"
         :disabled="busy"
-        @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? n(it) : 1), '使用失败')"
+        @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
       >
-        使用
+        {{ it.batch ? `使用 ×${useN(it)}` : '使用' }}
       </button>
       <button
         v-if="it.sellPrice !== null"
         class="btn btn-sm btn-outline-secondary"
         :disabled="busy"
-        @click="run(() => endpoints.sell(it.goodsId, n(it)), '出售失败')"
+        @click="run(() => endpoints.sell(it.goodsId, sellN(it)), '出售失败')"
       >
-        卖 {{ formatNum(it.sellPrice * n(it)) }}
+        卖 {{ formatNum(it.sellPrice * sellN(it)) }}
       </button>
       <button
         v-if="it.goodsId === 87"

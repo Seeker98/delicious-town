@@ -100,6 +100,25 @@ describe('仓库列表与流水', () => {
     expect(l.kinds).toBe(2);
   });
 
+  it('列表给出每个道具一次最多能用几个（问题记录：批量使用不提示上限）', async () => {
+    const ctx = await newRestaurant(t, { goods: { 85: 150, 29: 3, 82: 2, 13: 1 } });
+    const l = await s().list(ctx, {});
+    const max = (id: number) => l.items.find((x) => x.goodsId === id)?.maxUse;
+    expect(max(85)).toBe(99);
+    expect(max(29)).toBe(3);
+    expect(max(82)).toBe(1);
+    expect(max(13)).toBe(0);
+  });
+
+  it('批量超过单次上限时报 LIMIT_REACHED 并带上限，不扣道具', async () => {
+    const ctx = await newRestaurant(t, { goods: { 85: 150 } });
+    await expect(s().use(ctx, { goodsId: 85, num: 120 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'batch', max: 99 },
+    });
+    expect(await goodsNum(t, ctx.restaurantId, 85)).toBe(150);
+  });
+
   it('道具流水：最近 1 小时', async () => {
     const ctx = await newRestaurant(t, { goods: { 85: 1 } });
     await s().use(ctx, { goodsId: 85, num: 1 });

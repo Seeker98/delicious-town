@@ -44,6 +44,7 @@ export async function useGoods(
     throw new AppError(ErrorCode.NOT_USABLE, 400, { goodsId, reason: 'feature' });
   if (num > 1 && use.kind !== 'gift' && !op.tuning.store.batchUsable.includes(goodsId))
     throw invalidState('no_batch', { goodsId });
+  if (num > op.tuning.store.maxBatch) throw limitReached('batch', { max: op.tuning.store.maxBatch });
   await consumeGoods(op, goodsId, num, { source: 'store.use' });
   switch (use.kind) {
     case 'currency':
