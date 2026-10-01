@@ -445,6 +445,8 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.memory.lengths).toEqual([3, 5, 7]);
     expect(bar.memory.dailyMax).toBe(20);
     expect(bar.darts.cost).toBe(2);
+    // 全中靶心奖励等级降到 6，避免脚本刷满（4C-3 PR 遗留问题，用户确认）
+    expect(bar.darts.perfectLevel).toBe(6);
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
 });
