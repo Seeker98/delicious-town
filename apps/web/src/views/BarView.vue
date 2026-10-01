@@ -3,18 +3,24 @@ import { onMounted, ref, watch } from 'vue';
 import type { BarDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import CupPanel from '../components/bar/CupPanel.vue';
+import DartsPanel from '../components/bar/DartsPanel.vue';
+import DevilPanel from '../components/bar/DevilPanel.vue';
 import FgPanel from '../components/bar/FgPanel.vue';
+import MemoryPanel from '../components/bar/MemoryPanel.vue';
 import NumPanel from '../components/bar/NumPanel.vue';
 import SlotPanel from '../components/bar/SlotPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
-type Tab = 'fg' | 'cup' | 'num' | 'slot';
+type Tab = 'fg' | 'cup' | 'num' | 'slot' | 'devil' | 'memory' | 'darts';
 const TABS: Array<{ key: Tab; label: string }> = [
   { key: 'fg', label: '划拳' },
   { key: 'cup', label: '猜酒杯' },
   { key: 'num', label: '转数字' },
   { key: 'slot', label: '老虎机' },
+  { key: 'devil', label: '魔鬼辣杯' },
+  { key: 'memory', label: '记忆调酒' },
+  { key: 'darts', label: '飞镖' },
 ];
 const KEY = 'dt_bar_tab';
 function savedTab(): Tab {
@@ -47,25 +53,31 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>酒吧</h5>
-  <div v-if="data" class="small mb-2" data-testid="bar-wallet">
-    神秘礼券 {{ data.tickets }}；蟹币 {{ data.krabCoins }}
+  <div class="dt-page-title">
+    <h5>酒吧</h5>
+    <span v-if="data" class="dt-meta" data-testid="bar-wallet"
+      >神秘礼券 {{ data.tickets }}；蟹币 {{ data.krabCoins }}</span
+    >
   </div>
-  <ul class="nav nav-tabs mb-2">
-    <li v-for="x in TABS" :key="x.key" class="nav-item">
-      <a
-        :class="['nav-link', { active: tab === x.key }]"
-        href="#"
-        :data-testid="`tab-${x.key}`"
-        @click.prevent="tab = x.key"
-        >{{ x.label }}</a
-      >
-    </li>
-  </ul>
+  <!-- 七个游戏放不下一排标签页，用可换行的胶囊（视觉规范 §5） -->
+  <div class="dt-pills">
+    <a
+      v-for="x in TABS"
+      :key="x.key"
+      :class="{ active: tab === x.key }"
+      href="#"
+      :data-testid="`tab-${x.key}`"
+      @click.prevent="tab = x.key"
+      >{{ x.label }}</a
+    >
+  </div>
   <template v-if="data">
     <FgPanel v-if="tab === 'fg'" :data="data" @reload="load" />
     <CupPanel v-else-if="tab === 'cup'" :data="data" @reload="load" />
     <NumPanel v-else-if="tab === 'num'" :data="data" @reload="load" />
-    <SlotPanel v-else :data="data" @reload="load" />
+    <SlotPanel v-else-if="tab === 'slot'" :data="data" @reload="load" />
+    <DevilPanel v-else-if="tab === 'devil'" :data="data" @reload="load" />
+    <MemoryPanel v-else-if="tab === 'memory'" :data="data" @reload="load" />
+    <DartsPanel v-else :data="data" @reload="load" />
   </template>
 </template>
