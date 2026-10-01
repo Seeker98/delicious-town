@@ -132,6 +132,9 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 迁移 0013 新建 `takeaway_state`（开通状态和可雇骑手上限）、`takeaway_rider`（骑手；一家店同时只能被一个人雇，用部分唯一索引保证）、`takeaway_order`（外卖单）、`takeaway_delivery`（配送）
 - 迁移 0014 给 `world_state` 加"上次换天气时间"，新建 `town_bless`（每区服每天的星愿）、`town_rest`（雷神锤、广播冷却和大胃哥首次礼物）、`town_shake`（摇钱包记录）、`town_exchange_use`（镇长兑换次数），并给 `news` 加两个按 id 倒序的索引
 - 迁移 0015 新建 `bar_round`（酒吧魔鬼辣杯、记忆调酒、飞镖进行中的局；一局结束就删除）
+- 迁移 0016 新建 `hiphop_day`（每区每天嘻哈男孩的地点、想要的食材、门槛）、`hiphop_tip`（打赏记录），并给 `market_item` 加 `owner_rest_id`（菜场工作证手动进货的进货人）
+- 新功能开关 `features.hiphop`（默认开）；worker 新任务 `hiphop-daily`（每天 9 点定地点）、`hiphop-weekly`（周日 23 点打赏周榜）、`hiphop-wage`（周一 7:59 工作证工资）
+- **上线前**把 tuning `hiphop.requireVerifiedEmail` 改为 true（开发期为方便测试关闭）
 - 新功能开关 `features.takeaway`（默认开）。关闭后外卖接口返回"这个区服暂未开放该功能"，主线第 34、35 步和配送支线跳过，定时任务跳过该区服
 - worker 新任务：`takeaway-orders`（每个游戏整点补全服公共单，同时删过期超过 1 天的未接单和 7 天前完成的单）
 - 数值在 `tuning.takeaway`（开通费用、公共单数量、品级概率、私人刷新、数值系数、骑手成长、奖池、神秘顾客、清理天数）
