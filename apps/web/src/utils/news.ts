@@ -33,6 +33,8 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
     `${w}获得上周${WEEKLY[str(p.key)] ?? '排行'}第 ${num(p.rank)} 名，奖励 ${x.goodsName(num(p.goodsId))}`,
   'gem.broken': (w, p, x) => `${w}升阶宝石失败，碎了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
   'gem.levelUp': (w, p, x) => `${w}升阶出 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+  'forum.pin': (w, p) => `${w}的帖子《${str(p.title)}》被置顶了`,
+  'forum.feature': (w, p) => `${w}的帖子《${str(p.title)}》被加精了`,
   'hiphop.event': (w) => `${w}开启了嘻哈活动！`,
   'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(240)}×${num(p.num)}`,
   'hiphop.weekly': (w, p, x) =>

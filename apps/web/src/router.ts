@@ -221,6 +221,30 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/forum',
+    name: 'forum',
+    component: () => import('./views/ForumView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/forum/new',
+    name: 'forum-new',
+    component: () => import('./views/ForumEditView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/forum/:id(\\d+)/edit',
+    name: 'forum-edit',
+    component: () => import('./views/ForumEditView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
+    path: '/forum/:id(\\d+)',
+    name: 'forum-post',
+    component: () => import('./views/ForumPostView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/friends/:restId(\\d+)',
     name: 'friend-rest',
     component: () => import('./views/FriendRestView.vue'),

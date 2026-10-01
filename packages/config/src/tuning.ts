@@ -540,6 +540,19 @@ export const tuningSchema = z.object({
     wages: z.array(z.tuple([int, int])),
   }),
   rank: z.object({ top: int.min(1), cacheSeconds: int.min(0), powerCacheSeconds: int.min(0) }),
+  forum: z.object({
+    titleMax: int.min(1),
+    contentMax: int.min(1),
+    replyMax: int.min(1),
+    queryMax: int.min(1),
+    postCooldownSec: int.min(0),
+    postDailyMax: int.min(1),
+    replyCooldownSec: int.min(0),
+    pageSize: int.min(1).max(100),
+    excerpt: int.min(1),
+    readsMax: int.min(1),
+    featureReward: z.object({ goods: z.array(z.tuple([int, int.min(1)])), diamond: int.min(0) }),
+  }),
 });
 
 export type Tuning = z.infer<typeof tuningSchema>;

@@ -125,4 +125,9 @@ describe('小镇错误文案（4E-1）', () => {
       '活跃度不够（需要 80，当前 12）',
     );
   });
+  it('论坛：冷却、上限、长度（4E-3）', () => {
+    expect(errorText('COOLDOWN', { what: 'forum_reply', seconds: 12 })).toBe('回复太快了，12 秒后再试');
+    expect(errorText('LIMIT_REACHED', { what: 'forum_post', max: 10 })).toBe('今天发帖已达上限（10 篇）');
+    expect(errorText('INVALID_STATE', { reason: 'post_locked' })).toBe('置顶或加精的帖子不能删除');
+  });
 });

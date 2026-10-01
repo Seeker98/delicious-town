@@ -104,6 +104,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
+  forum_post: (p) => `今天发帖已达上限（${String(p.max)} 篇）`,
   presets: (p) => `预设最多 ${String(p.max)} 套`,
   market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
   foods_max: (p) => `单种食材最多 ${String(p.max)} 个`,
@@ -182,6 +183,13 @@ const STATE: Record<string, string> = {
   not_owned: '没有这个道具',
   item_gone: '这批货已经下架了',
   not_here: '嘻哈男孩不在这里',
+  post_text: '标题或正文长度不对（标题 1~40 字，正文 1~5000 字）',
+  reply_text: '回复长度不对（1~500 字）',
+  post_locked: '置顶或加精的帖子不能删除',
+  reply_to: '要回复的楼层不存在',
+  query_text: '搜索词太长了（最多 20 字）',
+  cursor: '翻页参数不对，请刷新',
+  post_changed: '帖子状态变了，请刷新后再试',
   hiphop_not_out: '嘻哈男孩今天还没出来，9 点以后再来问镇长吧',
   pick_food: '请选择要打赏的食材',
   pick_count: '竞猜的食材数量不对',
@@ -297,6 +305,10 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   }
   if (code === 'EMAIL_NOT_VERIFIED' && params.who === 'target') return '对方还没验证邮箱，不能互动';
   if (code === 'COOLDOWN' && params.what === 'flip') return '这个橱柜位还在冷却中';
+  if (code === 'COOLDOWN' && params.what === 'forum_post')
+    return `发帖太快了，${String(params.seconds)} 秒后再试`;
+  if (code === 'COOLDOWN' && params.what === 'forum_reply')
+    return `回复太快了，${String(params.seconds)} 秒后再试`;
   if (code === 'COOLDOWN' && params.what === 'broadcast')
     return `广播冷却中，还要等 ${String(params.seconds)} 秒`;
   if (code === 'COOLDOWN' && params.what === 'weather_gap')

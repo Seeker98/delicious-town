@@ -51,6 +51,15 @@ describe('新闻文案', () => {
     expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜：食材3、食材5');
   });
 
+  it('论坛（4E-3）', () => {
+    expect(newsText(n('forum.feature', { postId: 3, title: '攻略' }), names)).toBe(
+      '小王的店的帖子《攻略》被加精了',
+    );
+    expect(newsText(n('forum.pin', { postId: 3, title: '公告' }), names)).toBe(
+      '小王的店的帖子《公告》被置顶了',
+    );
+  });
+
   it('换天气：雷神锤写明是谁；自动轮换没有店名', () => {
     expect(newsText(n('weather.change', { from: 1, to: 13, by: 7 }), names)).toBe(
       '小王的店使用雷神锤，晴转暴雨了',

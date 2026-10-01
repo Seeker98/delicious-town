@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
@@ -62,7 +62,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dt-page-title"><h5>小镇</h5></div>
+  <div class="dt-page-title">
+    <h5>小镇</h5>
+    <RouterLink to="/forum" class="small" data-testid="town-forum"
+      ><i class="bi bi-chat-square-text"></i> 论坛</RouterLink
+    >
+  </div>
   <ul class="nav nav-tabs mb-2">
     <li v-for="x in TABS" :key="x.key" class="nav-item">
       <a

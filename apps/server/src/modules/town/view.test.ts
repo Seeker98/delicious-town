@@ -60,10 +60,9 @@ describe('小镇概览（设计文档 §3.8）', () => {
     expect(v.bless.restName).toEqual(expect.any(String));
   });
 
-  it('支线任务：广播、摇钱包、嘻哈男孩打赏开放（4E-2）；发帖仍隐藏', async () => {
+  it('支线任务：广播、摇钱包、嘻哈男孩打赏（4E-2）、发帖（4E-3）都开放', async () => {
     const a = await newRestaurant(t, { patch: { main_task_step: 50 } });
     const ids = (await t.game.task.tasks(a)).side.map((x) => x.id);
-    expect(ids).toEqual(expect.arrayContaining([101, 102, 109]));
-    expect(ids).not.toContain(107);
+    expect(ids).toEqual(expect.arrayContaining([101, 102, 107, 109]));
   });
 });
