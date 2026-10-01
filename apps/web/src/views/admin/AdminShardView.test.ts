@@ -121,6 +121,17 @@ describe('AdminShardView', () => {
     expect(w.find('[data-testid="save-settings"]').exists()).toBe(false);
   });
 
+  it('功能开关排成网格，鼠标悬停显示说明（问题记录 184）', async () => {
+    const d = structuredClone(dto);
+    d.docs = { features: { market: '菜场开关说明' }, groups: {}, fields: {} };
+    vi.mocked(adminApi.settings).mockResolvedValue(d);
+    const w = await mountView('admin');
+    const grid = w.find('.dt-feature-grid');
+    expect(grid.exists()).toBe(true);
+    expect(grid.find('label').attributes('title')).toBe('菜场开关说明');
+    expect(grid.find('[data-testid="feature-market"]').exists()).toBe(true);
+  });
+
   it('显示说明；按名字或说明搜索，匹配的组展开（问题记录 126）', async () => {
     const d = structuredClone(dto);
     const more = { ...defaults, tuning: { ...defaults.tuning, mail: { listMax: 100 }, rank: { top: 50 } } };
