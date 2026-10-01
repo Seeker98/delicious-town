@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { forumIdParam, forumListQuery, forumPostBody } from '@dt/shared';
+import { forumIdParam, forumListQuery, forumPostBody, forumReplyBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -8,6 +8,12 @@ import type { ForumService } from './service';
 export function forumRoutes(svc: ForumService): FastifyPluginAsync {
   return async (r) => {
     const id = (p: unknown) => parse(forumIdParam, p).id;
+    r.post('/forum/posts/:id/replies', async (req) =>
+      okOp(await svc.reply(restCtxOf(req), id(req.params), parse(forumReplyBody, req.body))),
+    );
+    r.delete('/forum/replies/:id', async (req) =>
+      okOp(await svc.deleteReply(restCtxOf(req), id(req.params))),
+    );
     r.get('/forum/posts', async (req) =>
       ok(await svc.list(restCtxOf(req), parse(forumListQuery, req.query))),
     );
