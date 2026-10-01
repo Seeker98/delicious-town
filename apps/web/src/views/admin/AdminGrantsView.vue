@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { GRANT_LIMITS, type GrantDto, type GrantItems } from '@dt/shared';
+import type { GrantDto, GrantItems, RewardItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import RewardItemsEditor from '../../components/admin/RewardItemsEditor.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import { rewardSummary } from '../../utils/reward';
 
 const admin = useAdminStore();
 const catalog = useCatalogStore();
@@ -62,28 +64,13 @@ async function lookupRest() {
 }
 watch(restId, lookupRest);
 const minLevel = ref<number | ''>('');
-const coin = ref<number | ''>('');
-const diamond = ref<number | ''>('');
-const exp = ref<number | ''>('');
-const goods = ref<Array<{ id: number | ''; num: number | '' }>>([]);
-const foods = ref<Array<{ id: number | ''; num: number | '' }>>([]);
+/** 附件（编辑器输出）；清空时换 key 让编辑器重新挂载 */
+const rewards = ref<RewardItems>({});
+const over = ref<string[]>([]);
+const formKey = ref(0);
+/** 改为发邮件：玩家在邮箱里领取（子项目 6A） */
+const asMail = ref(false);
 const reason = ref('');
-const fmt = (n: number) => n.toLocaleString('en-US');
-/** 每项上限（和服务端 GRANT_LIMITS 一致）：超出时当场列出，禁止发放 */
-const overLimit = computed(() => {
-  const out: string[] = [];
-  const check = (label: string, v: number | '', max: number) => {
-    if (v !== '' && Number(v) > max) out.push(`${label}最多 ${fmt(max)}`);
-  };
-  check('银币', coin.value, GRANT_LIMITS.coin);
-  check('钻石', diamond.value, GRANT_LIMITS.diamond);
-  check('经验', exp.value, GRANT_LIMITS.exp);
-  for (const g of goods.value)
-    if (g.id) check(`${catalog.goodsName(Number(g.id))} `, g.num, GRANT_LIMITS.item);
-  for (const f of foods.value)
-    if (f.id) check(`${catalog.foodName(Number(f.id))} `, f.num, GRANT_LIMITS.item);
-  return out;
-});
 const busy = ref(false);
 const list = ref<GrantDto[]>([]);
 const STATUS: Record<GrantDto['status'], string> = {
@@ -93,27 +80,8 @@ const STATUS: Record<GrantDto['status'], string> = {
   failed: '有失败',
 };
 
-function items(): GrantItems {
-  const out: GrantItems = {};
-  if (coin.value) out.coin = Number(coin.value);
-  if (diamond.value) out.diamond = Number(diamond.value);
-  if (exp.value) out.exp = Number(exp.value);
-  const lines = (rows: Array<{ id: number | ''; num: number | '' }>) =>
-    rows.filter((r) => r.id && r.num).map((r) => ({ id: Number(r.id), num: Number(r.num) }));
-  if (lines(goods.value).length > 0) out.goods = lines(goods.value);
-  if (lines(foods.value).length > 0) out.foods = lines(foods.value);
-  return out;
-}
-
-function summary(i: GrantItems): string {
-  const parts: string[] = [];
-  if (i.coin) parts.push(`银币 ${i.coin}`);
-  if (i.diamond) parts.push(`钻石 ${i.diamond}`);
-  if (i.exp) parts.push(`经验 ${i.exp}`);
-  for (const g of i.goods ?? []) parts.push(`${catalog.goodsName(g.id)}×${g.num}`);
-  for (const f of i.foods ?? []) parts.push(`${catalog.foodName(f.id)}×${f.num}`);
-  return parts.join('、');
-}
+const items = (): GrantItems => rewards.value;
+const summary = (i: GrantItems) => rewardSummary(i, catalog);
 
 async function loadList() {
   try {
@@ -149,11 +117,18 @@ async function submit() {
       ...(target.value === 'shard' && minLevel.value ? { minLevel: Number(minLevel.value) } : {}),
       items: items(),
       reason: reason.value.trim(),
+      ...(asMail.value ? { asMail: true } : {}),
     });
-    toast.push(g.status === 'done' ? '已到账' : '已排队，worker 会分批发放');
-    coin.value = diamond.value = exp.value = '';
-    goods.value = [];
-    foods.value = [];
+    toast.push(
+      asMail.value
+        ? '已发邮件，玩家在邮箱里领取'
+        : g.status === 'done'
+          ? '已到账'
+          : '已排队，worker 会分批发放',
+    );
+    rewards.value = {};
+    formKey.value++;
+    asMail.value = false;
     reason.value = '';
     await loadList();
   } catch (e) {
@@ -243,85 +218,11 @@ watch(() => admin.shardId, loadList);
         data-testid="grant-min-level"
       />
     </div>
-    <div class="d-flex flex-wrap gap-2 mb-2">
-      <input
-        v-model.number="coin"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`银币（≤ ${fmt(GRANT_LIMITS.coin)}）`"
-        :max="GRANT_LIMITS.coin"
-        data-testid="grant-coin"
-      />
-      <input
-        v-model.number="diamond"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`钻石（≤ ${fmt(GRANT_LIMITS.diamond)}）`"
-        :max="GRANT_LIMITS.diamond"
-      />
-      <input
-        v-model.number="exp"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`经验（≤ ${fmt(GRANT_LIMITS.exp)}）`"
-        :max="GRANT_LIMITS.exp"
-      />
-    </div>
-    <div v-for="(g, i) in goods" :key="`g${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <input
-        v-model.number="g.id"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        placeholder="道具 id"
-        :data-testid="`grant-goods-id-${i}`"
-      />
-      <input
-        v-model.number="g.num"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
-        :max="GRANT_LIMITS.item"
-        :data-testid="`grant-goods-num-${i}`"
-      />
-      <span class="text-muted">{{ g.id ? catalog.goodsName(Number(g.id)) : '' }}</span>
-    </div>
-    <div v-for="(f, i) in foods" :key="`f${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <input
-        v-model.number="f.id"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        placeholder="食材 id"
-      />
-      <input
-        v-model.number="f.num"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
-        :max="GRANT_LIMITS.item"
-      />
-      <span class="text-muted">{{ f.id ? catalog.foodName(Number(f.id)) : '' }}</span>
-    </div>
-    <div class="dt-meta mb-1" data-testid="grant-limits">
-      单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
-      {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤
-      {{ fmt(GRANT_LIMITS.item) }}
-    </div>
-    <div v-if="overLimit.length > 0" class="text-danger mb-1" data-testid="grant-over">
-      超出上限：{{ overLimit.join('；') }}
-    </div>
-    <div class="d-flex gap-2 mb-2">
-      <button
-        type="button"
-        class="btn btn-link btn-sm p-0"
-        data-testid="grant-add-goods"
-        @click="goods.push({ id: '', num: 1 })"
-      >
-        + 道具
-      </button>
-      <button type="button" class="btn btn-link btn-sm p-0" @click="foods.push({ id: '', num: 1 })">
-        + 食材
-      </button>
-    </div>
+    <RewardItemsEditor :key="formKey" v-model="rewards" id-prefix="grant" @over="over = $event" />
+    <label class="d-block mb-2">
+      <input v-model="asMail" type="checkbox" data-testid="grant-as-mail" />
+      改为发邮件（玩家在邮箱里领取；全区服只发给现在已开的店）
+    </label>
     <div class="d-flex gap-2">
       <input
         v-model="reason"
@@ -331,7 +232,7 @@ watch(() => admin.shardId, loadList);
       />
       <button
         class="btn btn-primary btn-sm text-nowrap"
-        :disabled="busy || !reason.trim() || overLimit.length > 0"
+        :disabled="busy || !reason.trim() || over.length > 0"
         data-testid="grant-submit"
       >
         发放

@@ -191,4 +191,21 @@ describe('AdminGrantsView', () => {
     expect(w.find('[data-testid="grant-over"]').exists()).toBe(false);
     expect(w.find('[data-testid="grant-submit"]').attributes('disabled')).toBeUndefined();
   });
+
+  it('勾"改为发邮件"后，请求里带 asMail（子项目 6A）', async () => {
+    vi.mocked(adminApi.restaurant).mockResolvedValue(shop);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = await setup('admin');
+    await flushPromises();
+    await w.find('[data-testid="grant-rest"]').setValue('3');
+    await flushPromises();
+    await w.find('[data-testid="grant-coin"]').setValue('500');
+    await w.find('[data-testid="grant-as-mail"]').setValue(true);
+    await w.find('[data-testid="grant-reason"]').setValue('补偿');
+    await w.find('form').trigger('submit');
+    await flushPromises();
+    expect(adminApi.createGrant).toHaveBeenCalledWith(
+      expect.objectContaining({ asMail: true, items: { coin: 500 } }),
+    );
+  });
 });
