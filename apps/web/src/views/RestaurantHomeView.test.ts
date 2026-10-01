@@ -447,4 +447,11 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="home-signin-row"]').exists()).toBe(false);
   });
+
+  it('声望用奖章图标，悬停提示"声望"（问题记录 170）', async () => {
+    const w = await mountView();
+    const cell = w.find('[title="声望"]');
+    expect(cell.find('i.bi-award').exists()).toBe(true);
+    expect(cell.text()).not.toContain('声望');
+  });
 });
