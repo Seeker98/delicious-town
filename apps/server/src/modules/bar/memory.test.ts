@@ -104,4 +104,49 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     t.clock.set(gameTime('2026-10-01', 12));
     await start(a);
   });
+
+  it('答错时说明原因：太早、太晚、记错（终审 I3）', async () => {
+    const a = await player();
+    let r = (await start(a)).data;
+    t.clock.advance(show(3) - 300 - 1);
+    expect((await answer(a, r.seq)).data.reason).toBe('early');
+    r = (await start(a)).data;
+    t.clock.advance(show(3) + 3000 + 3 * 1500 + 1);
+    expect((await answer(a, r.seq)).data.reason).toBe('late');
+    r = (await start(a)).data;
+    t.clock.advance(show(3));
+    expect(
+      (
+        await answer(
+          a,
+          r.seq.map((x) => (x + 1) % 8),
+        )
+      ).data.reason,
+    ).toBe('wrong');
+    r = (await start(a)).data;
+    t.clock.advance(show(3));
+    expect((await answer(a, r.seq)).data.reason).toBeNull();
+  });
+
+  it('刷新页面后能接着这一局：概览给出配方和剩余作答时间（终审 I2）', async () => {
+    const a = await player();
+    const r = (await start(a)).data;
+    t.clock.advance(1000);
+    const v = (await t.game.bar.overview(a)).memory.round!;
+    expect(v).toEqual({ level: 1, passed: false, seq: r.seq, leftMs: show(3) + 3000 + 3 * 1500 - 1000 });
+  });
+
+  it('三关全过的新闻每家店每天只写一条（终审 I4：脚本刷屏）', async () => {
+    const a = newRestaurant(t, { goods: { 1: 50 } });
+    const ctx = await a;
+    for (let k = 0; k < 2; k++) {
+      let r = (await start(ctx)).data;
+      for (const len of [3, 5, 7]) {
+        t.clock.advance(show(len));
+        const ans = (await answer(ctx, r.seq)).data;
+        if (ans.canNext) r = (await t.game.bar.memoryNext(ctx)).data;
+      }
+    }
+    expect(await listNews(t.db, ctx.shardId, { limit: 10, only: ['bar.memory'] })).toHaveLength(1);
+  });
 });

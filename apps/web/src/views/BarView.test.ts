@@ -74,4 +74,19 @@ describe('BarView', () => {
     expect(w.text()).toContain('devil-panel');
     expect(w.find('[data-testid="tab-devil"]').classes()).toContain('active');
   });
+
+  it('切到别的游戏再切回来，面板里进行中的状态还在（终审 I2）', async () => {
+    const Counter = {
+      props: ['data'],
+      data: () => ({ n: 0 }),
+      template: '<button data-testid="inc" @click="n++">{{ n }}</button>',
+    };
+    const w = mount(BarView, { global: { stubs: { ...stubs, MemoryPanel: Counter } } });
+    await flushPromises();
+    await w.find('[data-testid="tab-memory"]').trigger('click');
+    await w.find('[data-testid="inc"]').trigger('click');
+    await w.find('[data-testid="tab-fg"]').trigger('click');
+    await w.find('[data-testid="tab-memory"]').trigger('click');
+    expect(w.find('[data-testid="inc"]').text()).toBe('1');
+  });
 });

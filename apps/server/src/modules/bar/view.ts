@@ -5,6 +5,7 @@ import type { DB, RestaurantRow } from '../../db/schema';
 import { getDaily } from '../counter/dailyCounter';
 import { resultDto } from './common';
 import { devilView, type DevilState } from './devil';
+import { memoryResume, type MemoryState } from './memory';
 import { peekRound } from './round';
 import { cupRound, slotFloorLeft, type BarResult, type BarTuning } from './rules';
 
@@ -39,7 +40,7 @@ export async function barView(
     .execute();
   const day = gameDay(now);
   const devil = await peekRound<DevilState>(db, rest.id, 'devil');
-  const memory = await peekRound<{ level: number; passed: boolean }>(db, rest.id, 'memory');
+  const memory = await peekRound<MemoryState>(db, rest.id, 'memory');
   const darts = await peekRound<{ throws: number[]; aim: unknown }>(db, rest.id, 'darts');
   const cupResult = (s?.cup_result ?? null) as BarResult | null;
   const total = config.slotPool.total;
@@ -77,7 +78,9 @@ export async function barView(
       cost: t.memory.cost,
       played: await getDaily(db, rest.id, 'bar.memory', day),
       max: t.memory.dailyMax,
-      round: memory ? { level: memory.level, passed: memory.passed } : null,
+      flashMs: t.memory.flashMs,
+      gapMs: t.memory.gapMs,
+      round: memory ? memoryResume(memory, t.memory, now) : null,
     },
     darts: {
       cost: t.darts.cost,

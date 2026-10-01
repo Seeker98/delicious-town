@@ -67,7 +67,15 @@ export interface BarDto {
   /** 多少张礼券换 1 个蟹币 */
   krabCoinTickets: number;
   devil: { stakes: number[]; round: DevilDto | null };
-  memory: { cost: number; played: number; max: number; round: { level: number; passed: boolean } | null };
+  memory: {
+    cost: number;
+    played: number;
+    max: number;
+    flashMs: number;
+    gapMs: number;
+    /** 进行中的局；本关没答对时带配方和剩余作答毫秒，刷新页面后可以接着玩（终审 I2） */
+    round: { level: number; passed: boolean; seq: number[] | null; leftMs: number | null } | null;
+  };
   darts: { cost: number; played: number; max: number; round: DartsDto | null };
 }
 
@@ -101,6 +109,8 @@ export interface MemoryRoundDto {
 
 export interface MemoryAnswerDto {
   correct: boolean;
+  /** 答错的原因：太早交、太晚交、记错；答对为 null（终审 I3） */
+  reason: 'early' | 'late' | 'wrong' | null;
   level: number;
   award: BarAwardDto | null;
   /** 答对且还有下一关 */

@@ -50,6 +50,11 @@ describe('DevilPanel', () => {
     await flushPromises();
     expect(endpoints.barDevilDrink).toHaveBeenCalledWith(2);
     expect(w.find('[data-testid="devil-status"]').text()).toBe('调酒师喝了 4 号杯，没事。轮到你了');
+    // 父组件刷新概览后提示不能被冲掉（终审 I1）：概览里的局面没有 lastBartender
+    const fresh = barData();
+    fresh.devil.round = round({ cups: ['me', 'bartender', 'me', 'bartender', null, null], survived: 2 });
+    await w.setProps({ data: fresh });
+    expect(w.find('[data-testid="devil-status"]').text()).toBe('调酒师喝了 4 号杯，没事。轮到你了');
   });
 
   it('赢：亮出特辣酒，提示赢得的礼券；可以再来一局', async () => {

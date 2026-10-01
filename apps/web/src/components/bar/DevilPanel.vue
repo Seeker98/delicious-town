@@ -14,7 +14,11 @@ const local = ref<DevilDto | null>(null);
 watch(
   () => props.data.devil.round,
   (r) => {
-    if (!local.value?.result) local.value = r;
+    const l = local.value;
+    // 结束的结果留着展示；概览里同一个局面没有"调酒师刚喝了哪杯"，保留刚收到的（终审 I1）
+    if (l?.result) return;
+    if (l && r && l.cups.join() === r.cups.join()) return;
+    local.value = r;
   },
   { immediate: true },
 );

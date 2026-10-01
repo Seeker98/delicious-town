@@ -71,7 +71,8 @@ onMounted(load);
       >{{ x.label }}</a
     >
   </div>
-  <template v-if="data">
+  <!-- 切游戏时保留面板状态：记忆调酒、飞镖进行中的局不会因为切标签丢掉（终审 I2） -->
+  <KeepAlive v-if="data">
     <FgPanel v-if="tab === 'fg'" :data="data" @reload="load" />
     <CupPanel v-else-if="tab === 'cup'" :data="data" @reload="load" />
     <NumPanel v-else-if="tab === 'num'" :data="data" @reload="load" />
@@ -79,5 +80,5 @@ onMounted(load);
     <DevilPanel v-else-if="tab === 'devil'" :data="data" @reload="load" />
     <MemoryPanel v-else-if="tab === 'memory'" :data="data" @reload="load" />
     <DartsPanel v-else :data="data" @reload="load" />
-  </template>
+  </KeepAlive>
 </template>

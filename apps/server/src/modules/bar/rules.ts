@@ -77,9 +77,9 @@ export function slotFloorLeft(fail: number, t: BarTuning): number {
 
 // ---------- 酒吧扩展（子项目 4C-3） ----------
 
-/** 魔鬼辣杯赔付：⌊押注 × rate^活过的杯数⌋ */
+/** 魔鬼辣杯赔付：押注 × rate^活过的杯数，四舍五入（终审：向下取整时押 1 张活过 1、2 杯都只拿回本金） */
 export function devilPayout(stake: number, survived: number, rate: number): number {
-  return Math.floor(stake * rate ** survived + 1e-9);
+  return Math.round(stake * rate ** survived);
 }
 
 /** 飞镖准星位置：三角波，周期 period（毫秒），起点相位 phase ∈ [0,1)；返回 [-1, 1] */

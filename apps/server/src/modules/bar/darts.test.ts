@@ -116,4 +116,16 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
       params: { what: 'bar_daily', max: 20 },
     });
   });
+
+  it('全中靶心的新闻每家店每天只写一条（终审 I4：脚本刷屏）', async () => {
+    const a = await player();
+    for (let k = 0; k < 2; k++) {
+      script.push([0.99]);
+      await start(a);
+      await bull(a);
+      await bull(a);
+      await bull(a);
+    }
+    expect(await listNews(t.db, a.shardId, { limit: 10, only: ['bar.darts'] })).toHaveLength(1);
+  });
 });

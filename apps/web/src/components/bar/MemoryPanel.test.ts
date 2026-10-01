@@ -60,6 +60,7 @@ describe('MemoryPanel', () => {
     vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([1, 3, 1]));
     vi.mocked(endpoints.barMemoryAnswer).mockResolvedValue({
       correct: true,
+      reason: null,
       level: 1,
       award: { kind: 'coin', id: null, num: 200, lucky: false },
       canNext: true,
@@ -86,6 +87,7 @@ describe('MemoryPanel', () => {
     vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([1, 3, 1]));
     vi.mocked(endpoints.barMemoryAnswer).mockResolvedValue({
       correct: false,
+      reason: 'wrong',
       level: 1,
       award: null,
       canNext: false,
@@ -100,14 +102,14 @@ describe('MemoryPanel', () => {
     expect(w.find('[data-testid="mem-result"]').text()).toBe('记错了。正确的配方是：伏特加、柠檬、伏特加');
 
     const passed = barData();
-    passed.memory.round = { level: 1, passed: true };
+    passed.memory.round = { level: 1, passed: true, seq: null, leftMs: null };
     expect(
       mount(MemoryPanel, { props: { data: passed } })
         .find('[data-testid="mem-next"]')
         .exists(),
     ).toBe(true);
     const stale = barData();
-    stale.memory.round = { level: 2, passed: false };
+    stale.memory.round = { level: 2, passed: false, seq: null, leftMs: null };
     vi.mocked(endpoints.barMemoryStop).mockResolvedValue({});
     const s = mount(MemoryPanel, { props: { data: stale } });
     await s.find('[data-testid="mem-abandon"]').trigger('click');
@@ -121,5 +123,35 @@ describe('MemoryPanel', () => {
     d.memory.played = 20;
     const w = mount(MemoryPanel, { props: { data: d } });
     expect(w.find('[data-testid="mem-start"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('超时、太早分别说明原因，不说成记错（终审 I3）', async () => {
+    vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([1, 3, 1]));
+    vi.mocked(endpoints.barMemoryAnswer).mockResolvedValue({
+      correct: false,
+      reason: 'late',
+      level: 1,
+      award: null,
+      canNext: false,
+      finished: true,
+    });
+    const w = mount(MemoryPanel, { props: { data: barData() } });
+    await w.find('[data-testid="mem-start"]').trigger('click');
+    await flushPromises();
+    await advance(2200);
+    for (const i of [1, 3, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="mem-result"]').text()).toBe(
+      '超时了，要在 7.5 秒内答完。配方是：伏特加、柠檬、伏特加',
+    );
+  });
+
+  it('刷新页面后接着这一局：重新展示配方再作答（终审 I2）', async () => {
+    const d = barData();
+    d.memory.round = { level: 1, passed: false, seq: [4, 4, 0], leftMs: 9000 };
+    const w = mount(MemoryPanel, { props: { data: d } });
+    await w.find('[data-testid="mem-resume"]').trigger('click');
+    await nextTick();
+    expect(lit(w)).toBe(4);
   });
 });

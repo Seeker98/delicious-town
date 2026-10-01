@@ -70,6 +70,7 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   const score = x === null ? 0 : dartScore(x, d.rings);
   const best = d.rings[0]![1];
   if (score === best) await incrementDaily(o.tx, o.rest.id, 'bar.darts.bull', 1, gameDay(o.now));
+  const day = gameDay(o.now);
   const throws = [...s.throws, score];
   if (throws.length < THROWS) {
     await saveRound(o, 'darts', { ...s, throws, aim: null });
@@ -84,7 +85,9 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   if (result === 'win') {
     const perfect = throws.every((t) => t === best);
     award = await randomAward(o, { level: perfect ? d.perfectLevel : d.winLevel, noTicket: true });
-    if (perfect) opNews(o, 'bar.darts', { score: mine });
+    // 每家店每天只写一条新闻（终审 I4：脚本刷屏）
+    if (perfect && (await incrementDaily(o.tx, o.rest.id, 'bar.darts.news', 1, day)) === 1)
+      opNews(o, 'bar.darts', { score: mine });
   } else if (result === 'draw') {
     refund = d.tieRefund;
     await grantGoodsOp(o, GOODS.mysteryTicket, refund);

@@ -88,14 +88,30 @@ async function pick(i: number) {
   }
 }
 
+/** 刷新页面后接着这一局：重新放一遍配方；作答截止时间仍按服务端最初发出配方的时刻算（终审 I2） */
+function resume() {
+  const r = props.data.memory.round;
+  if (!r?.seq) return;
+  show({
+    level: r.level,
+    seq: r.seq,
+    flashMs: props.data.memory.flashMs,
+    gapMs: props.data.memory.gapMs,
+    answerMs: r.leftMs ?? 0,
+  });
+}
+
 /** 刷新页面后接着上次：本关答对在等选择；没看完的配方看不到了，只能放弃 */
 const resumed = computed(() => (phase.value === 'idle' ? props.data.memory.round : null));
 const limited = computed(() => props.data.memory.played >= props.data.memory.max);
 const resultText = computed(() => {
   const r = last.value;
   if (!r) return '';
-  if (!r.correct)
-    return `记错了。正确的配方是：${(current.value?.seq ?? []).map((m) => MIXES[m]).join('、')}`;
+  const recipe = (current.value?.seq ?? []).map((m) => MIXES[m]).join('、');
+  if (r.reason === 'late')
+    return `超时了，要在 ${(current.value?.answerMs ?? 0) / 1000} 秒内答完。配方是：${recipe}`;
+  if (r.reason === 'early') return `配方还没放完就交了。配方是：${recipe}`;
+  if (!r.correct) return `记错了。正确的配方是：${recipe}`;
   const award = r.award ? `得到 ${awardText(r.award, catalog)}` : '';
   return r.finished ? `三关全过！${award}` : `答对了！${award}`;
 });
@@ -138,6 +154,10 @@ const resultText = computed(() => {
         >
           收手
         </button>
+      </template>
+      <template v-else-if="resumed && resumed.seq">
+        <div class="mb-1">第 {{ resumed.level }} 关还没答完，配方会再放一遍</div>
+        <button class="btn btn-sm btn-primary" data-testid="mem-resume" @click="resume">接着这一局</button>
       </template>
       <template v-else-if="resumed">
         <div class="mb-1">上次的配方没看完，这一局只能放弃了</div>
