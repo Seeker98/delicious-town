@@ -18,6 +18,8 @@ import {
   rollbackBody,
   saveOverrideBody,
   sendMailBody,
+  createSharedCodeBody,
+  createBatchBody,
   settlementQuery,
   shardQuery,
   type AdminMeDto,
@@ -33,6 +35,7 @@ import { createAdminIcons } from './icons';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
+import { createAdminCodes } from '../redeem/admin';
 import { createAdminAnnounce } from '../announce/admin';
 import { distribution, economy, settlementRounds } from './stats';
 
@@ -133,6 +136,29 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/mails/:id/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await mails.revoke(a, id(req)));
+    });
+
+    const codes = createAdminCodes(game);
+    r.get('/codes', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await codes.list({ shardId: parse(grantListQuery, req.query).shardId }));
+    });
+    r.post('/codes', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await codes.createShared(a, parse(createSharedCodeBody, req.body)));
+    });
+    r.post('/codes/batch', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await codes.createBatch(a, parse(createBatchBody, req.body)));
+    });
+    r.post('/codes/:id/disable', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await codes.disable(a, id(req));
+      return ok(null);
+    });
+    r.get('/codes/batches/:id/export', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await codes.exportBatch(a, id(req)));
     });
 
     const announces = createAdminAnnounce(game);
