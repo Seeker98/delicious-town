@@ -628,6 +628,10 @@ body {
 }
 
 /* 顶栏邮箱未读数（子项目 6A） */
+/* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
+.dt-exp-bar {
+  background-color: #ffc078;
+}
 /* 顶栏邮箱（问题记录 200）：图标放大，未读数缩小贴在右上角 */
 .dt-mail-icon {
   font-size: 20px;
@@ -642,8 +646,9 @@ body {
   top: -4px;
   right: -8px;
 }
-/* 浅色描边小标签（问题记录 198：个性图标不再是大黄块，和经验条区分开） */
-.dt-chip {
+/* 浅色描边小标签（问题记录 198：个性图标不再是大黄块）；
+   .dt-chip（生效的加成）、.dt-tag（品级等小标签）都已有别的用处，不能重名（问题记录 212） */
+.dt-icon-tag {
   display: inline-block;
   padding: 1px 8px;
   font-size: 12px;
