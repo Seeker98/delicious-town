@@ -18,33 +18,33 @@ afterAll(async () => {
 });
 
 describe('守护兽（规格书 09 §9.1）', () => {
-  it('极速飞弹两发击败 1 星守护兽：只扣 2 枚；暴击掉礼券和探险图；击败奖励；再打报 guardian_down（Review Focus 1）', async () => {
-    const ctx = await newRestaurant(win, { patch: { star_level: 1 }, goods: { 17: 5 } });
+  it('极速飞弹八发击败 1 星守护兽（试玩修复 14：血量 3 万，暴击 4000）：只扣 8 枚；暴击掉礼券和探险图；击败奖励；再打报 guardian_down（Review Focus 1）', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 1 }, goods: { 17: 10 } });
     const r = await win.game.temple.missile(ctx, { goodsId: 17, num: 99 });
-    expect(r.data.shots).toHaveLength(2);
-    expect(r.data.shots.every((s) => s.hit && s.crit && s.damage === 10000)).toBe(true);
-    expect(r.data).toMatchObject({ hpMax: 15000, hpLeft: 0, killed: true });
-    expect(await goodsNum(win, ctx.restaurantId, 17)).toBe(3);
-    expect(r.data.drops).toMatchObject({ tickets: 2, maps: 2, seals: 0, dtTickets: 200 });
-    expect(await goodsNum(win, ctx.restaurantId, 1)).toBe(2);
-    expect(await goodsNum(win, ctx.restaurantId, 170)).toBe(2);
+    expect(r.data.shots).toHaveLength(8);
+    expect(r.data.shots.every((s) => s.hit && s.crit && s.damage === 4000)).toBe(true);
+    expect(r.data).toMatchObject({ hpMax: 30000, hpLeft: 0, killed: true });
+    expect(await goodsNum(win, ctx.restaurantId, 17)).toBe(2);
+    expect(r.data.drops).toMatchObject({ tickets: 8, maps: 8, seals: 0, dtTickets: 320 });
+    expect(await goodsNum(win, ctx.restaurantId, 1)).toBe(8);
+    expect(await goodsNum(win, ctx.restaurantId, 170)).toBe(8);
     expect(r.data.drops.rare).not.toBeNull();
     expect(config.requireFood(r.data.drops.rare!).level).toBe(7);
     expect(r.data.drops.foods.reduce((n, f) => n + f.num, 0)).toBe(1 + 15 + 25 + 55);
     await expect(win.game.temple.missile(ctx, { goodsId: 17, num: 1 })).rejects.toMatchObject({
       params: { reason: 'guardian_down' },
     });
-    expect(await goodsNum(win, ctx.restaurantId, 17)).toBe(3);
+    expect(await goodsNum(win, ctx.restaurantId, 17)).toBe(2);
   });
 
   it('星级决定血量；伤害当天累计；0 星不能打', async () => {
     const ctx = await newRestaurant(t, { patch: { star_level: 2 }, goods: { 18: 3 } });
     const r = await t.game.temple.missile(ctx, { goodsId: 18, num: 3 });
     const dealt = r.data.shots.reduce((n, s) => n + s.damage, 0);
-    expect(r.data).toMatchObject({ hpMax: 20000, hpLeft: 20000 - dealt, killed: false });
+    expect(r.data).toMatchObject({ hpMax: 40000, hpLeft: 40000 - dealt, killed: false });
     expect((await t.game.temple.overview(ctx)).guardian).toEqual({
-      hpMax: 20000,
-      hpLeft: 20000 - dealt,
+      hpMax: 40000,
+      hpLeft: 40000 - dealt,
       killed: false,
     });
     const zero = await newRestaurant(t, { goods: { 18: 1 } });

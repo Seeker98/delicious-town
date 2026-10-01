@@ -310,6 +310,8 @@ export const tuningSchema = z.object({
     forgetRate: num,
     shopSlots: int.min(1),
     shopExclude: z.array(int),
+    /** 飞弹伤害覆盖：[道具 id, 最小, 最大]（试玩修复 14：极速飞弹太强） */
+    missileAttack: z.array(z.tuple([int, int.min(0), int.min(0)])),
   }),
   yard: z.object({
     maxLands: int.min(1),

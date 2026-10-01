@@ -216,7 +216,7 @@
     "championGoodsId": 165
   },
   "temple": {
-    "guardianHpBase": 10000, "guardianHpPerStar": 5000,
+    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[17, 2000, 2000]],
     "missileTicketRate": 0.10, "missileMapRate": 0.03,
     "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10,
     "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,

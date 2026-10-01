@@ -43,9 +43,9 @@ const dish = (patch: Partial<MysteriousCookbook>): MysteriousCookbook => ({
 });
 
 describe('守护兽（规格书 09 §9.1）', () => {
-  it('血量 10000 + 5000 × 星级', () => {
-    expect(guardianHp(0, t)).toBe(10000);
-    expect(guardianHp(2, t)).toBe(20000);
+  it('血量 20000 + 10000 × 星级（试玩修复 14）', () => {
+    expect(guardianHp(0, t)).toBe(20000);
+    expect(guardianHp(2, t)).toBe(40000);
   });
 
   it('没命中：伤害 0，不再抽后面的', () => {
