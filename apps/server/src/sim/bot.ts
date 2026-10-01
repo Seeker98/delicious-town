@@ -67,7 +67,7 @@ export interface TurnStats {
 }
 
 /** 直接用掉的道具用途 */
-const USE_ALL: ReadonlySet<GoodsUse['kind']> = new Set([
+export const USE_ALL: ReadonlySet<GoodsUse['kind']> = new Set([
   'gift',
   'currency',
   'cupboardNum',
@@ -77,7 +77,7 @@ const USE_ALL: ReadonlySet<GoodsUse['kind']> = new Set([
   'mysteryFood',
 ]);
 /** 设施位没有设施时去商店买的便宜货：海报、奖杯、节油器 */
-const CHEAP_DEVICES: Record<number, number> = { 1: 13, 2: 10, 3: 21 };
+export const CHEAP_DEVICES: Record<number, number> = { 1: 13, 2: 10, 3: 21 };
 
 type Attempt = (fn: () => Promise<unknown>) => Promise<boolean>;
 
