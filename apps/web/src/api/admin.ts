@@ -5,6 +5,10 @@ import type {
   ReportCaseDto,
   ReportDetailDto,
   ReportStatus,
+  SuspiciousBarRow,
+  SuspiciousMultiGroup,
+  SuspiciousRedeemRow,
+  SuspiciousSurgeDto,
   CreateBatchInput,
   CreateSharedCodeInput,
   AdminMailDto,
@@ -79,6 +83,13 @@ export const adminApi = {
   resolveReport: (id: number, b: { note: string; banDays?: 0 | 1 | 7; newName?: string }) =>
     api.post<ReportCaseDto>(`${A}/reports/${id}/resolve`, b),
   rejectReport: (id: number, b: { note: string }) => api.post<ReportCaseDto>(`${A}/reports/${id}/reject`, b),
+  suspiciousBar: (shardId: number) => api.get<SuspiciousBarRow[]>(`${A}/suspicious/bar${qs({ shardId })}`),
+  suspiciousSurge: (shardId: number, day?: string) =>
+    api.get<SuspiciousSurgeDto>(`${A}/suspicious/surge${qs({ shardId, day })}`),
+  suspiciousMulti: (shardId: number) =>
+    api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
+  suspiciousRedeem: (shardId: number) =>
+    api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
   codes: (shardId?: number) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId })}`),
   createCode: (b: CreateSharedCodeInput) => api.post<AdminCodeDto>(`${A}/codes`, b),
   createCodeBatch: (b: CreateBatchInput) => api.post<AdminCodeDto>(`${A}/codes/batch`, b),
