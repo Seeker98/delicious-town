@@ -136,12 +136,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
   },
-  {
-    path: '/classroom',
-    name: 'classroom',
-    component: () => import('./views/ClassroomView.vue'),
-    meta: { needRestaurant: true },
-  },
+  // 教室并进广场（问题记录 122）：旧地址跳到广场的教室标签
+  { path: '/classroom', redirect: { path: '/town', query: { tab: 'classroom' } } },
   {
     path: '/cookbooks',
     name: 'cookbooks',

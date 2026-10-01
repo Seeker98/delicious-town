@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import ClassroomPanel from '../components/town/ClassroomPanel.vue';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
 import RankPanel from '../components/town/RankPanel.vue';
@@ -11,9 +12,18 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 
-type Tab = 'news' | 'town' | 'exchange' | 'rank';
+/** 'town' 是"居民"标签，键名沿用旧的，免得已存的上次标签和旧链接失效 */
+type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom';
 const KEY = 'dt_town_tab';
-const isTab = (v: unknown): v is Tab => v === 'news' || v === 'town' || v === 'exchange' || v === 'rank';
+/** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室也在这里（问题记录 122） */
+const TABS: Array<{ key: Tab; label: string }> = [
+  { key: 'news', label: '新闻' },
+  { key: 'town', label: '居民' },
+  { key: 'exchange', label: '兑换' },
+  { key: 'rank', label: '排行' },
+  { key: 'classroom', label: '教室' },
+];
+const isTab = (v: unknown): v is Tab => TABS.some((t) => t.key === v);
 /** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
 function initialTab(query: unknown): Tab {
   if (isTab(query)) return query;
@@ -24,12 +34,6 @@ function initialTab(query: unknown): Tab {
     return 'news';
   }
 }
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'news', label: '新闻' },
-  { key: 'town', label: '小镇' },
-  { key: 'exchange', label: '兑换' },
-  { key: 'rank', label: '排行' },
-];
 const toast = useToastStore();
 const catalog = useCatalogStore();
 const route = useRoute();
@@ -45,7 +49,7 @@ async function load() {
     const v = await endpoints.town();
     if (mine === seq) data.value = v;
   } catch (e) {
-    if (mine === seq) toast.push(errorMessage(e, '读取小镇失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, '读取广场失败'), 'danger');
   }
 }
 watch(tab, (v) => {
@@ -67,7 +71,7 @@ onMounted(() => {
 
 <template>
   <div class="dt-page-title">
-    <h5>小镇</h5>
+    <h5>广场</h5>
     <RouterLink to="/forum" class="small" data-testid="town-forum"
       ><i class="bi bi-chat-square-text"></i> 论坛</RouterLink
     >
@@ -84,6 +88,7 @@ onMounted(() => {
     </li>
   </ul>
   <ExchangePanel v-if="tab === 'exchange'" />
+  <ClassroomPanel v-else-if="tab === 'classroom'" />
   <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />

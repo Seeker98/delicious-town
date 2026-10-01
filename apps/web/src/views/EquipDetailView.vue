@@ -49,6 +49,8 @@ async function run<T>(fn: () => Promise<T>, fallback: string, reload = true): Pr
 }
 
 const e = computed(() => d.value?.equip ?? null);
+/** 厨具说明（含背景故事，问题记录 134） */
+const desc = computed(() => (e.value ? (catalog.goods(e.value.goodsId)?.desc ?? '') : ''));
 const freeHoles = computed(() => (e.value ? e.value.curHole - e.value.gems.length : 0));
 /** 分解 / 出售的阻挡原因（和服务端一致） */
 const blocked = computed(() => {
@@ -69,6 +71,22 @@ async function stress() {
     toast.push(`强化成功 +${r.stress}：${ATTR_NAMES[r.attr ?? ''] ?? ''} +${r.val}${extra}`);
   } else toast.push('强化失败，下次成功率会提高', 'info');
 }
+/** 回退会降强化等级，先确认（问题记录 128） */
+async function rollback() {
+  const b = d.value?.backItems.find((x) => x.goodsId === backPick.value);
+  if (!b || !e.value) return;
+  // 服务端最多退到 +0：道具级数比已强化的多时，多的作废（终审）
+  const n = Math.min(b.back, e.value.stress);
+  const waste = b.back > n ? `，多出的 ${b.back - n} 级作废` : '';
+  if (!window.confirm(`用 1 个${catalog.goodsName(b.goodsId)}回退 ${n} 级强化${waste}，确定吗？`)) return;
+  await run(() => endpoints.equipRollback(id, b.goodsId), '回退失败');
+}
+/** 摘除要花银币时先确认并写明多少；免费时直接摘（问题记录 128） */
+async function ungem(g: { id: number; level: number }) {
+  const coin = g.level * (d.value?.ungemCoinPerLevel ?? 0);
+  if (coin > 0 && !window.confirm(`摘除这颗宝石要花 ${formatNum(coin)} 银币，确定吗？`)) return;
+  await run(() => endpoints.equipUngem(g.id), '摘除失败');
+}
 async function salvage() {
   if (!e.value || !window.confirm(`分解得到 ${e.value.salvage} 个厨具精华，确定吗？`)) return;
   if ((await run(() => endpoints.equipSalvage(id), '分解失败', false)) !== null)
@@ -86,12 +104,14 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
 
 <template>
   <div v-if="d && e">
-    <h5>
+    <!-- 名字一行、部位和等级要求一行，不再挤在同一行里字号不一、底部对齐（问题记录 130） -->
+    <h5 class="mb-1">
       {{ catalog.goodsName(e.goodsId) }} <span v-if="e.stress > 0" class="text-success">+{{ e.stress }}</span>
-      <small class="text-muted ms-1"
-        >{{ PART_NAMES[e.part] }} · {{ e.minLevel }} 级可穿{{ e.worn ? ' · 穿戴中' : '' }}</small
-      >
     </h5>
+    <div class="dt-meta mb-1" data-testid="equip-meta">
+      {{ PART_NAMES[e.part] }} · {{ e.minLevel }} 级可穿{{ e.worn ? ' · 穿戴中' : '' }}
+    </div>
+    <p v-if="desc" class="small text-muted mb-2" data-testid="equip-desc">{{ desc }}</p>
 
     <table class="table table-sm small">
       <thead>
@@ -140,7 +160,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
           class="btn btn-sm btn-outline-secondary"
           :disabled="busy || backPick === null"
           data-testid="rollback-go"
-          @click="run(() => endpoints.equipRollback(id, backPick!), '回退失败')"
+          @click="rollback"
         >
           回退
         </button>
@@ -151,10 +171,11 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
       <div class="fw-bold mb-1">
         宝石 <span data-testid="hole-count">{{ e.gems.length }}/{{ e.curHole }}</span>
         <span class="text-muted"
-          >（最多 {{ e.maxHole }} 孔；2 星起摘除要花 阶数×{{
-            formatNum(d.ungemCoinPerLevel)
-          }}
-          银币，酸雨免费）</span
+          >（最多 {{ e.maxHole }} 孔；{{
+            d.ungemCoinPerLevel > 0
+              ? `摘除要花 阶数×${formatNum(d.ungemCoinPerLevel)} 银币`
+              : '现在摘除免费（2 星以下或酸雨天）'
+          }}）</span
         >
       </div>
       <div v-for="g in e.gems" :key="g.id" class="d-flex align-items-center gap-1">
@@ -163,7 +184,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
           class="btn btn-sm btn-outline-secondary"
           :disabled="busy"
           :data-testid="`ungem-${g.id}`"
-          @click="run(() => endpoints.equipUngem(g.id), '摘除失败')"
+          @click="ungem(g)"
         >
           摘除
         </button>

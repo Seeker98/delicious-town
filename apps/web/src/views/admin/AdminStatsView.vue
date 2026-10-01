@@ -13,6 +13,7 @@ import LineChart from '../../components/admin/LineChart.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
+import { newsTime } from '../../utils/news';
 
 const admin = useAdminStore();
 const toast = useToastStore();
@@ -102,5 +103,11 @@ const roundSeries = computed(() => [{ name: '结算耗时（ms）', values: roun
     <p class="small text-muted">营业 {{ dist.open }} 家，停业 {{ dist.closed }} 家</p>
   </div>
   <h6 class="mt-3">最近 {{ rounds.length }} 轮结算耗时</h6>
-  <LineChart :labels="rounds.map((r) => String(r.round))" :series="roundSeries" />
+  <!-- 横轴原来写的是轮号，看不出意义；改成结算时间并说明横纵轴（问题记录 124） -->
+  <p class="small text-muted mb-1" data-testid="rounds-axis">
+    横轴：结算时间（每 4 分钟一轮，左旧右新）；纵轴：本区服这一轮结算用的毫秒数。
+  </p>
+  <div data-testid="rounds-chart">
+    <LineChart :labels="rounds.map((r) => newsTime(r.at))" :series="roundSeries" />
+  </div>
 </template>

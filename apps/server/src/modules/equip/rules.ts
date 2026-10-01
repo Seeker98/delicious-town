@@ -4,6 +4,7 @@ import {
   type EquipAttr,
   type EquipAttrs,
   type EquipDef,
+  type GemDef,
   type SuitDef,
   type Tuning,
 } from '@dt/config';
@@ -207,4 +208,15 @@ export function attrSummary(
   const power =
     total.cook + total.cutting + total.fire + total.season + total.creatives + Math.floor(total.luck / 2);
   return { total, power };
+}
+
+/** 宝石排序（问题记录 132）：先按加成的属性（厨艺、刀工、火候、调味、创意、幸运），再按加成值从低到高 */
+export function compareGems(a: { id: number; gem: GemDef }, b: { id: number; gem: GemDef }): number {
+  const key = (g: GemDef) => {
+    const i = EQUIP_ATTRS.findIndex((k) => g.attrs[k] > 0);
+    return { attr: i < 0 ? EQUIP_ATTRS.length : i, val: i < 0 ? 0 : g.attrs[EQUIP_ATTRS[i]!] };
+  };
+  const ka = key(a.gem);
+  const kb = key(b.gem);
+  return ka.attr - kb.attr || ka.val - kb.val || a.id - b.id;
 }

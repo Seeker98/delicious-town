@@ -201,7 +201,8 @@ export function createShopService(d: GameDeps) {
         if (price === null) throw invalidState('not_sellable', { goodsId: g.id });
         if (isPlaque(g) && (await countGoods(o, g.id)) - b.num < 1) throw invalidState('keep_one_plaque');
         await consumeGoods(o, g.id, b.num);
-        gainCoin(o, Math.floor(g.coin * b.num * o.tuning.shop.sellRate));
+        // 按页面上显示的单价乘数量付，确认框写的数和到账一致（终审）
+        gainCoin(o, price * b.num);
         return { goodsId: g.id, num: b.num };
       });
     },

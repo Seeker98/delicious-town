@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
 let seq = [0.5];
@@ -159,5 +160,34 @@ describe('宝石升阶（设计文档 §3.9）', () => {
     expect(g.items.find((x) => x.goodsId === 44)).toMatchObject({ num: 3, level: 1, nextId: 286 });
     expect(g.items.find((x) => x.goodsId === 44)!.rate).toBeCloseTo(0.77);
     expect(g.items.find((x) => x.goodsId === 341)).toMatchObject({ nextId: null });
+  });
+});
+
+describe('宝石排序（问题记录 132）', () => {
+  // 41 智慧一阶、43 黄玉一阶、44 蓝冥一阶、275 智慧三阶、286 蓝冥二阶、344 蓝冥六阶（数据里等级写的 5）、289 蓝冥五阶
+  const goods = { 41: 1, 43: 1, 44: 1, 275: 1, 286: 1, 289: 1, 344: 1 };
+  const ORDER = [44, 286, 289, 344, 43, 41, 275];
+
+  it('宝石页：按属性（厨艺、刀工、火候、调味、创意）分组，组内按加成从低到高', async () => {
+    const ctx = await newRestaurant(t, { goods });
+    expect((await eq().gems(ctx)).items.map((x) => x.goodsId)).toEqual(ORDER);
+  });
+
+  it('厨具详情的镶嵌下拉框同样排序', async () => {
+    const ctx = await newRestaurant(t, { goods });
+    const id = await piece(ctx, 59);
+    expect((await eq().detail(ctx, id)).gems.map((x) => x.goodsId)).toEqual(ORDER);
+  });
+});
+
+describe('详情里的摘除单价（问题记录 128：要花钱的摘除才确认）', () => {
+  it('2 星以下、酸雨天免费时单价是 0；否则是阶数单价', async () => {
+    const poor = await newRestaurant(t, { patch: { star_level: 1 } });
+    expect((await eq().detail(poor, await piece(poor, 56))).ungemCoinPerLevel).toBe(0);
+    const rich = await newRestaurant(t, { shardId: await createShard(t.db), patch: { star_level: 2 } });
+    const id = await piece(rich, 56);
+    expect((await eq().detail(rich, id)).ungemCoinPerLevel).toBe(10_000);
+    await setWeather(rich.shardId, 18);
+    expect((await eq().detail(rich, id)).ungemCoinPerLevel).toBe(0);
   });
 });

@@ -263,14 +263,17 @@ onBeforeUnmount(() => {
         </button>
       </div>
     </div>
-    <div v-if="mainTask" class="dt-card my-2 small">
-      <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
-      <span class="text-muted"
-        >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
-      >
+    <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
+    <div v-if="mainTask" class="dt-card my-2 small d-flex align-items-center gap-2" data-testid="main-task">
+      <div class="flex-fill">
+        <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
+        <span class="text-muted"
+          >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
+        >
+      </div>
       <button
         v-if="mainTask.done"
-        class="btn btn-sm btn-success float-end"
+        class="btn btn-sm btn-success"
         :disabled="busy"
         @click="act(() => endpoints.claimTask(mainTask!.id), '领取失败')"
       >

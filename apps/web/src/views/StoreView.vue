@@ -63,7 +63,19 @@ function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   else if (it.batch) out.push({ text: `一次最多 ${it.maxUse}`, danger: false });
   return out;
 }
-const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
+const sellN = (it: StoreItemDto) => Math.max(1, Math.min(Math.floor(qty[it.goodsId] ?? 1), it.num));
+/** 卖出、丢弃收不回来，先确认（问题记录 128） */
+function sell(it: StoreItemDto) {
+  const n = sellN(it);
+  const coin = n * (it.sellPrice ?? 0);
+  if (!window.confirm(`卖出 ${n} 个${catalog.goodsName(it.goodsId)}，得 ${formatNum(coin)} 银币，确定吗？`))
+    return;
+  void run(() => endpoints.sell(it.goodsId, n), '出售失败');
+}
+function discard(it: StoreItemDto) {
+  if (!window.confirm(`丢弃${catalog.goodsName(it.goodsId)}后加成立即消失，确定吗？`)) return;
+  void run(() => endpoints.discard(it.goodsId), '丢弃失败');
+}
 const expires = (at: string | null) =>
   at ? `剩余 ${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时` : '';
 const recordName = (r: LedgerRecordDto) => recordLabel(r, catalog);
@@ -133,7 +145,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           v-if="it.sellPrice !== null"
           class="btn btn-sm btn-outline-secondary"
           :disabled="busy"
-          @click="run(() => endpoints.sell(it.goodsId, sellN(it)), '出售失败')"
+          @click="sell(it)"
         >
           卖
         </button>
@@ -141,7 +153,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           v-if="it.goodsId === 87"
           class="btn btn-sm btn-outline-danger"
           :disabled="busy"
-          @click="run(() => endpoints.discard(87), '丢弃失败')"
+          @click="discard(it)"
         >
           <i class="bi bi-trash"></i> 丢弃
         </button>
