@@ -16,6 +16,7 @@ import {
   roleBody,
   rollbackBody,
   saveOverrideBody,
+  sendMailBody,
   settlementQuery,
   shardQuery,
   type AdminMeDto,
@@ -30,6 +31,7 @@ import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
+import { createAdminMail } from '../mail/admin';
 import { distribution, economy, settlementRounds } from './stats';
 
 /** 后台路由（/api/v1/admin）：每个处理函数第一步都是 requireRole */
@@ -115,6 +117,20 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/grants', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await grants.list(parse(grantListQuery, req.query).shardId));
+    });
+
+    const mails = createAdminMail(game);
+    r.get('/mails', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await mails.list({ shardId: parse(grantListQuery, req.query).shardId }));
+    });
+    r.post('/mails', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await mails.send(a, parse(sendMailBody, req.body)));
+    });
+    r.post('/mails/:id/revoke', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await mails.revoke(a, id(req)));
     });
 
     r.get('/stats/economy', async (req) => {

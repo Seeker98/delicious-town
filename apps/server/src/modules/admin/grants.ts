@@ -5,6 +5,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { JobLogger } from '../../worker/scheduler';
 import { checkRewardItems, grantRewardOp } from '../mail/reward';
+import { sendMail } from '../mail/send';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 
@@ -79,6 +80,7 @@ export function createAdminGrants(game: Game) {
 
     async create(actor: AdminActor, b: CreateGrantInput): Promise<GrantDto> {
       checkRewardItems(config, b.items);
+      if (b.asMail) return this.createAsMail(actor, b);
       const shard = await db.selectFrom('shard').select('id').where('id', '=', b.shardId).executeTakeFirst();
       if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
       if (b.target === 'rest') {
@@ -152,6 +154,61 @@ export function createAdminGrants(game: Game) {
             minLevel: b.minLevel ?? null,
             total: count,
           },
+        });
+        return g.id;
+      });
+      return one(id);
+    },
+
+    /**
+     * 补偿改为发邮件（设计 裁定 10）：单店发单店邮件，全区服发一封区服邮件（只给发送时已开的店）；
+     * 照常写一条 admin_grant 记录（total 0，表示没有直接到账）
+     */
+    async createAsMail(actor: AdminActor, b: CreateGrantInput): Promise<GrantDto> {
+      const shard = await db.selectFrom('shard').select('id').where('id', '=', b.shardId).executeTakeFirst();
+      if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
+      if (b.target === 'rest') {
+        const rest = await db
+          .selectFrom('restaurant')
+          .select('id')
+          .where('id', '=', b.restId!)
+          .where('shard_id', '=', b.shardId)
+          .executeTakeFirst();
+        if (!rest) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
+      }
+      const id = await db.transaction().execute(async (tx) => {
+        const mailId = await sendMail(tx, {
+          scope: b.target === 'rest' ? 'rest' : 'shard',
+          shardId: b.shardId,
+          restId: b.target === 'rest' ? b.restId! : null,
+          minLevel: b.target === 'shard' ? (b.minLevel ?? null) : null,
+          title: '系统补偿',
+          body: b.reason,
+          items: b.items,
+          source: 'grant',
+          actorAccountId: actor.accountId,
+        });
+        const g = await tx
+          .insertInto('admin_grant')
+          .values({
+            shard_id: b.shardId,
+            target: b.target,
+            rest_id: b.target === 'rest' ? b.restId! : null,
+            min_level: b.target === 'shard' ? (b.minLevel ?? null) : null,
+            items: JSON.stringify(b.items),
+            reason: b.reason,
+            status: 'done',
+            total: 0,
+            actor_account_id: actor.accountId,
+            finished_at: new Date(),
+          })
+          .returning('id')
+          .executeTakeFirstOrThrow();
+        await writeAudit(tx, {
+          actor,
+          action: 'grant.mail',
+          target: b.target === 'rest' ? `restaurant:${b.restId}` : `shard:${b.shardId}`,
+          detail: { grantId: g.id, mailId, items: b.items, reason: b.reason, minLevel: b.minLevel ?? null },
         });
         return g.id;
       });
