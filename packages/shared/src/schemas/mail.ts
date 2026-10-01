@@ -59,6 +59,8 @@ export interface MailDto {
   claimed: boolean;
   /** 领取要求的等级；为 null 或已达到时可领 */
   minLevel: number | null;
+  /** 附件里有配置中已不存在的道具或食材：不能领，可以删 */
+  broken: boolean;
 }
 export interface MailListDto {
   items: MailDto[];

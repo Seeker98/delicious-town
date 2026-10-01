@@ -37,7 +37,7 @@ async function load() {
 onMounted(() => void load());
 
 const hasItems = (m: MailDto) => m.items !== null && Object.keys(m.items).length > 0;
-const claimable = (m: MailDto) => hasItems(m) && !m.claimed;
+const claimable = (m: MailDto) => hasItems(m) && !m.claimed && !m.broken;
 const levelLow = (m: MailDto) => m.minLevel !== null && level.value < m.minLevel;
 const anyClaimable = computed(() => items.value.some((m) => claimable(m) && !levelLow(m)));
 const daysLeft = (m: MailDto) =>
@@ -135,6 +135,7 @@ const claimAll = () =>
       {{ sentAt(m) }} · 还剩 {{ daysLeft(m) }} 天
       <span v-if="claimable(m) && levelLow(m)" class="text-danger">· 需 {{ m.minLevel }} 级</span>
       <span v-if="m.claimed">· 已领取</span>
+      <span v-else-if="m.broken" class="text-danger">· 附件已失效，请联系运营</span>
     </div>
     <div v-if="hasItems(m)" class="dt-meta">附件：{{ rewardSummary(m.items!, catalog) }}</div>
     <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">{{ m.body }}</div>

@@ -142,6 +142,7 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 const STATE: Record<string, string> = {
   mail_claimed: '这封邮件已经领过了',
   mail_no_items: '这封邮件没有附件',
+  mail_broken: '这封邮件的附件已失效，请联系运营',
   mail_unclaimed: '附件还没领，不能删除',
   locked: '厨具已锁定，先解锁',
   has_gems: '厨具上镶着宝石，先摘下来',

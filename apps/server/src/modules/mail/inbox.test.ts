@@ -82,15 +82,25 @@ describe('邮箱（设计 §2 裁定 1~9）', () => {
     await expect(mailSvc().claim(r, expired)).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 
-  it('一键全领：一封出错不影响其他，出错的保持未领', async () => {
+  it('附件里的道具已从配置删除：标成失效，不能领，一键领取跳过它（Review Focus 5）', async () => {
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId, patch: { coin: 0 } });
     await shardMail(shardId);
     const bad = await shardMail(shardId, { items: { goods: [{ id: 999999, num: 1 }] } });
+    const m = (await mailSvc().list(r)).items.find((x) => x.id === bad)!;
+    expect(m.broken).toBe(true);
+    await expect(mailSvc().claim(r, bad)).rejects.toMatchObject({ params: { reason: 'mail_broken' } });
     const res = await mailSvc().claimAll(r);
-    expect(res.data).toMatchObject({ claimed: 1, failed: 1 });
+    expect(res.data).toMatchObject({ claimed: 1, failed: 0 });
     expect((await restRow(t, r.restaurantId)).coin).toBe(100);
-    expect((await mailSvc().list(r)).items.find((m) => m.id === bad)!.claimed).toBe(false);
+  });
+
+  it('附件失效的邮件可以直接删除', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const bad = await shardMail(shardId, { items: { foods: [{ id: 999999, num: 1 }] } });
+    await mailSvc().remove(r, bad);
+    expect((await mailSvc().list(r)).items.map((m) => m.id)).not.toContain(bad);
   });
 
   it('删除：有附件没领不能删；领完能删，删后看不到；只影响自己', async () => {
