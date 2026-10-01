@@ -4,6 +4,7 @@ import type { BarDto, DevilDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
+import { roundGone } from './gone';
 
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -49,6 +50,10 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    if (roundGone(e)) {
+      local.value = null;
+      emit('reload');
+    }
   } finally {
     busy.value = false;
   }

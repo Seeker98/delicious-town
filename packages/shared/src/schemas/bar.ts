@@ -17,7 +17,8 @@ export const barDevilDrinkBody = z.object({ cup: z.number().int().min(0).max(99)
 export const barMemoryAnswerBody = z.object({
   answer: z.array(z.number().int().min(0).max(99)).min(1).max(20),
 });
-export const barDartsThrowBody = z.object({ elapsedMs: z.number().int().min(0).max(600_000) });
+/** 上限放到 1 天：瞄准后放久了再投也按服务端时间判分，不报参数错误（PR28 遗留） */
+export const barDartsThrowBody = z.object({ elapsedMs: z.number().int().min(0).max(86_400_000) });
 
 export type BarResultDto = 'win' | 'draw' | 'lose';
 

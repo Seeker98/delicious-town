@@ -149,4 +149,9 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     }
     expect(await listNews(t.db, ctx.shardId, { limit: 10, only: ['bar.memory'] })).toHaveLength(1);
   });
+
+  it('没有进行中的局时点继续：报"没有进行中的局"（PR28 遗留）', async () => {
+    const a = await player();
+    await expect(t.game.bar.memoryNext(a)).rejects.toMatchObject({ params: { reason: 'no_round' } });
+  });
 });

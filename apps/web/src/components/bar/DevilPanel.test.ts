@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DevilDto } from '@dt/shared';
+import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import DevilPanel from './DevilPanel.vue';
 import { barData } from './testData';
@@ -96,5 +97,18 @@ describe('DevilPanel', () => {
     await flushPromises();
     expect(w.find('[data-testid="devil-result"]').text()).toContain('你喝到了特辣酒，5 张押注没了');
     expect(w.find('[data-testid="devil-result"]').text()).toContain('宿醉');
+  });
+
+  it('局在别处已经结束：清空局面并刷新（PR28 遗留）', async () => {
+    const data = barData();
+    data.devil.round = round({ cups: ['me', 'bartender', null, null, null, null], survived: 1 });
+    vi.mocked(endpoints.barDevilDrink).mockRejectedValue(
+      new ApiError('INVALID_STATE', { reason: 'no_round' }),
+    );
+    const w = mount(DevilPanel, { props: { data } });
+    await w.find('[data-testid="devil-cup-2"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+    expect(w.find('[data-testid="devil-cup-2"]').exists()).toBe(false);
   });
 });
