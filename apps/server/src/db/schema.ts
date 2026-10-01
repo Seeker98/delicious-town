@@ -425,6 +425,10 @@ export type EquipTable = {
   locked: Default<boolean>;
   worn: Default<boolean>;
   acquired_at: TsDefault;
+  /** 命名帽子的名字（子项目 6A） */
+  custom_name: Nullable<string>;
+  /** 这顶命名玉帽换铉的时间，保证只换一次 */
+  xuan_sent_at: TsNullable;
 } & AttrCols<'base_'> &
   AttrCols<'st_'>;
 
@@ -846,6 +850,91 @@ export interface ForumReadTable {
   last_at: Ts;
 }
 
+/** 邮件（子项目 6A）：一封一行，全服邮件不按店复制 */
+export interface MailTable {
+  id: Generated<number>;
+  scope: 'rest' | 'shard' | 'all';
+  shard_id: Nullable<number>;
+  rest_id: Nullable<number>;
+  min_level: Nullable<number>;
+  title: string;
+  body: string;
+  items: ColumnType<unknown | null, string | null | undefined, string | null>;
+  source: string;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+  expires_at: TsDefault;
+  revoked_at: TsNullable;
+}
+
+/** 每家店对一封邮件的已读、已领、已删 */
+export interface MailStateTable {
+  mail_id: number;
+  rest_id: number;
+  read_at: TsNullable;
+  claimed_at: TsNullable;
+  deleted_at: TsNullable;
+}
+
+export interface AnnouncementTable {
+  id: Generated<number>;
+  shard_id: Nullable<number>;
+  title: string;
+  body: string;
+  important: Default<boolean>;
+  starts_at: Ts;
+  ends_at: Ts;
+  actor_account_id: number;
+  created_at: TsDefault;
+  updated_at: TsDefault;
+  deleted_at: TsNullable;
+}
+
+export interface AnnouncementSeenTable {
+  account_id: number;
+  announcement_id: number;
+  seen_at: TsDefault;
+}
+
+export interface RedeemCodeTable {
+  id: Generated<number>;
+  code: string;
+  kind: 'shared' | 'single';
+  batch_id: Nullable<number>;
+  items: Json<unknown>;
+  shard_id: Nullable<number>;
+  min_level: Nullable<number>;
+  max_uses: Nullable<number>;
+  used_count: Default<number>;
+  starts_at: TsNullable;
+  ends_at: TsNullable;
+  note: string;
+  actor_account_id: number;
+  created_at: TsDefault;
+  disabled_at: TsNullable;
+}
+
+export interface RedeemUseTable {
+  id: Generated<number>;
+  code_id: number;
+  rest_id: number;
+  account_id: number;
+  used_at: TsDefault;
+}
+
+export interface InviteRewardTable {
+  invitee_account_id: number;
+  stage: 'newbie' | 'lv10' | 'lv30';
+  inviter_account_id: Nullable<number>;
+  shard_id: number;
+  invitee_rest_id: number;
+  status: 'pending' | 'sent' | 'capped';
+  month: string;
+  mail_id: Nullable<number>;
+  created_at: TsDefault;
+  sent_at: TsNullable;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -911,6 +1000,13 @@ export interface DB {
   forum_reply: ForumReplyTable;
   forum_reaction: ForumReactionTable;
   forum_read: ForumReadTable;
+  mail: MailTable;
+  mail_state: MailStateTable;
+  announcement: AnnouncementTable;
+  announcement_seen: AnnouncementSeenTable;
+  redeem_code: RedeemCodeTable;
+  redeem_use: RedeemUseTable;
+  invite_reward: InviteRewardTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
