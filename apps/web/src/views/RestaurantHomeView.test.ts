@@ -19,6 +19,8 @@ vi.mock('../api/endpoints', () => ({
     dineCurrent: vi.fn(),
     dineEnd: vi.fn(),
     announcements: vi.fn(),
+    activation: vi.fn(),
+    signIn: vi.fn(),
   },
 }));
 
@@ -104,6 +106,13 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue(dto);
     vi.mocked(endpoints.dineCurrent).mockResolvedValue(null);
     vi.mocked(endpoints.announcements).mockResolvedValue({ items: [] });
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      total: 0,
+      signedIn: false,
+      star: 0,
+      items: [],
+      rewards: [],
+    });
     vi.mocked(endpoints.tasks).mockResolvedValue({
       mainStep: 1,
       main: {
@@ -412,5 +421,30 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     expect(w.find('[data-testid="announce-banner"]').text()).toContain('停服维护');
+  });
+
+  it('首页显示今日签到，点了就签（问题记录 144）', async () => {
+    vi.mocked(endpoints.signIn).mockResolvedValue({} as never);
+    const w = await mountView();
+    const btn = w.find('[data-testid="home-signin"]');
+    expect(btn.text()).toContain('签到');
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      total: 0,
+      signedIn: true,
+      star: 0,
+      items: [],
+      rewards: [],
+    });
+    await btn.trigger('click');
+    await flushPromises();
+    expect(endpoints.signIn).toHaveBeenCalled();
+    expect(w.find('[data-testid="home-signin"]').exists()).toBe(false);
+    expect(w.text()).toContain('今天已签到');
+  });
+
+  it('读签到状态失败时不显示这一行', async () => {
+    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.find('[data-testid="home-signin-row"]').exists()).toBe(false);
   });
 });
