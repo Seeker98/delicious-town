@@ -99,13 +99,13 @@ describe('特色菜索引（子项目 4A）', () => {
 
 describe('神殿索引（子项目 4B-1）', () => {
   it('飞弹、探险图按道具 id 索引；种子池', () => {
-    expect(config.missiles.get(17)).toEqual({ attack: [5000, 5000], hitRate: 0.96, crit: 0.2, critRate: 2 });
+    expect(config.missiles.get(17)).toEqual({ attack: [2000, 2000], hitRate: 0.96, crit: 0.2, critRate: 2 });
     expect([...config.missiles.keys()].sort((a, b) => a - b)).toEqual([17, 18, 19]);
     expect(config.maps.get(171)).toMatchObject({ rate: 0.9, level: [4, 5], num: [10, 20], needStrength: 5 });
     expect([...config.maps.keys()].sort((a, b) => a - b)).toEqual([170, 171, 172, 396]);
     expect(config.seeds.get(1)!.foodsId).toBe(101);
     expect(config.seedPool.items).toHaveLength(96);
-    expect(config.tuning.temple.guardianHpBase).toBe(10000);
+    expect(config.tuning.temple.guardianHpBase).toBe(20000);
   });
 });
 
@@ -221,5 +221,17 @@ describe('外卖数值（子项目 4D）', () => {
         [310, 1, 1],
       ],
     });
+  });
+});
+
+describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）', () => {
+  it('极速飞弹伤害按 tuning 覆盖成 2000；普通、爆裂不变', () => {
+    expect(config.missiles.get(17)!.attack).toEqual([2000, 2000]);
+    expect(config.missiles.get(18)!.attack).toEqual([90, 110]);
+    expect(config.missiles.get(19)!.attack).toEqual([80, 130]);
+  });
+  it('血量 2 万 + 1 万 × 星级', () => {
+    expect(config.tuning.temple.guardianHpBase).toBe(20000);
+    expect(config.tuning.temple.guardianHpPerStar).toBe(10000);
   });
 });

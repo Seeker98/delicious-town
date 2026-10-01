@@ -9,10 +9,10 @@ const catalog = useCatalogStore();
 </script>
 
 <template>
-  <div class="border rounded p-2 my-2 small">
+  <div class="dt-card my-2 small">
     <div class="d-flex justify-content-between">
       <b>小镇新闻</b>
-      <RouterLink to="/town" data-testid="home-news-more">更多</RouterLink>
+      <RouterLink to="/town?tab=news" data-testid="home-news-more">更多</RouterLink>
     </div>
     <div v-if="headlines.broadcast" class="text-primary fw-bold dt-clamp1" data-testid="home-broadcast">
       【广播】{{ newsText(headlines.broadcast, catalog) }}

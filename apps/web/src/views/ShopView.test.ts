@@ -64,12 +64,12 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     ]);
     const w = mount(ShopView);
     await flushPromises();
-    expect(w.findAll('.dt-row')).toHaveLength(4);
+    expect(w.findAll('.dt-item')).toHaveLength(4);
     expect(w.find('[data-testid="qty-99"]').exists()).toBe(false);
     expect(w.find('[data-testid="qty-hint-99"]').text()).toBe('限 1 个');
     const desc = w.find('[data-testid="desc-99"]');
     expect(desc.classes()).toContain('dt-clamp1');
-    expect(w.find('[data-testid="info-99"]').classes()).toContain('text-truncate');
+    expect(w.find('[data-testid="info-99"]').classes()).toContain('dt-clamp1');
     await w.find('[data-testid="name-99"]').trigger('click');
     expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
   });

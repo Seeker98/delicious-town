@@ -72,18 +72,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
     </li>
   </ul>
   <template v-if="shop && tab !== 'special'">
-    <div
-      v-for="it in tab === 'coin' ? shop.coin : shop.black"
-      :key="it.goodsId"
-      class="dt-row d-flex align-items-center gap-2 border-bottom py-1 small"
-    >
-      <div class="flex-fill" style="min-width: 0">
-        <div class="text-truncate">
-          <b role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
+    <div v-for="it in tab === 'coin' ? shop.coin : shop.black" :key="it.goodsId" class="dt-item">
+      <div class="dt-item-main">
+        <div class="dt-item-title">
+          <span role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
             catalog.goodsName(it.goodsId)
-          }}</b>
+          }}</span>
         </div>
-        <div class="text-truncate" style="font-size: 12px" :data-testid="`info-${it.goodsId}`">
+        <div class="dt-meta dt-clamp1" :data-testid="`info-${it.goodsId}`">
           <!-- "最多几个"放最前面，截断时不会丢（审查） -->
           <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
             capText(it)
@@ -92,14 +88,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
         </div>
         <div
           v-if="catalog.goods(it.goodsId)?.desc"
-          :class="['text-muted', { 'dt-clamp1': !expanded.has(it.goodsId) }]"
-          style="font-size: 12px"
+          :class="['dt-meta', { 'dt-clamp1': !expanded.has(it.goodsId) }]"
           :data-testid="`desc-${it.goodsId}`"
         >
           {{ catalog.goods(it.goodsId)?.desc }}
         </div>
       </div>
-      <div class="dt-row-actions" style="width: 112px">
+      <div class="dt-item-actions">
         <input
           v-if="it.limit !== 1"
           v-model.number="qty[key(it)]"
@@ -107,16 +102,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
           min="1"
           :max="Math.max(1, it.maxBuy)"
           :data-testid="`qty-${it.goodsId}`"
-          class="form-control form-control-sm"
-          style="width: 64px"
+          class="form-control form-control-sm dt-qty"
         />
-        <span
-          v-else
-          class="text-muted text-center"
-          style="width: 64px"
-          :data-testid="`qty-hint-${it.goodsId}`"
-          >限 1 个</span
-        >
+        <span v-else class="dt-meta dt-qty text-center" :data-testid="`qty-hint-${it.goodsId}`">限 1 个</span>
         <button
           class="btn btn-sm btn-primary"
           :disabled="busy || it.maxBuy === 0"
@@ -130,7 +118,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
   </template>
   <template v-if="tab === 'special'">
     <div v-if="!special" class="small text-muted">今天中午 12 点上新</div>
-    <div v-else class="border rounded p-2 small">
+    <div v-else class="dt-card small">
       <b>{{ catalog.goodsName(special.goodsId) }}</b>
       <span class="badge bg-danger ms-1">{{ special.tierName }}</span>
       <div>

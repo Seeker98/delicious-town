@@ -54,6 +54,15 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 }
 /** 填的数超过上限时按上限算（使用：单次上限 maxUse；出售：持有数） */
 const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.maxUse));
+/** 信息行的各段：只有一段时不带分隔点（终审：开头多一个点） */
+function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
+  const out: Array<{ text: string; danger: boolean }> = [];
+  if (it.expiresAt) out.push({ text: expires(it.expiresAt), danger: false });
+  if (it.sellPrice !== null) out.push({ text: `单价 ${formatNum(it.sellPrice)}`, danger: false });
+  if (it.usable && it.maxUse === 0) out.push({ text: '已达上限', danger: true });
+  else if (it.batch) out.push({ text: `一次最多 ${it.maxUse}`, danger: false });
+  return out;
+}
 const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
 const expires = (at: string | null) =>
   at ? `剩余 ${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时` : '';
@@ -88,31 +97,29 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
     <div v-if="data.equips > 0" class="small text-muted mb-2">
       另有 {{ data.equips }} 件厨具在 <RouterLink to="/rest/equip">厨具页</RouterLink>（每件占一格）
     </div>
-    <div
-      v-for="it in data.items"
-      :key="it.goodsId"
-      class="dt-row d-flex align-items-center gap-1 border-bottom py-1 small"
-    >
-      <div class="flex-fill" style="min-width: 0">
-        <!-- 只截名字，数量总是显示；剩余时间放第二行（审查） -->
+    <div v-for="it in data.items" :key="it.goodsId" class="dt-item">
+      <div class="dt-item-main">
+        <!-- 只截名字，数量总是显示；剩余时间、单价放第二行（审查、视觉规范） -->
         <div class="d-flex gap-1">
-          <b class="text-truncate">{{ catalog.goodsName(it.goodsId) }}</b>
+          <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
           <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
         </div>
-        <div v-if="it.expiresAt" class="text-muted" style="font-size: 11px">{{ expires(it.expiresAt) }}</div>
+        <div v-if="metaParts(it).length > 0" class="dt-meta">
+          <template v-for="(p, i) in metaParts(it)" :key="i"
+            ><span v-if="i > 0"> · </span
+            ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+          >
+        </div>
       </div>
-      <div class="dt-row-actions">
+      <div class="dt-item-actions">
         <input
           v-if="it.batch || it.sellPrice !== null"
           v-model.number="qty[it.goodsId]"
           type="number"
           min="1"
           :max="it.num"
-          class="form-control form-control-sm"
-          style="width: 60px"
+          class="form-control form-control-sm dt-qty"
         />
-        <span v-if="it.usable && it.maxUse === 0" class="text-danger">已达上限</span>
-        <span v-else-if="it.batch" class="text-muted">最多 {{ it.maxUse }}</span>
         <button
           v-if="it.usable"
           class="btn btn-sm btn-primary"
@@ -127,7 +134,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           :disabled="busy"
           @click="run(() => endpoints.sell(it.goodsId, sellN(it)), '出售失败')"
         >
-          卖 {{ formatNum(it.sellPrice * sellN(it)) }}
+          卖
         </button>
         <button
           v-if="it.goodsId === 87"
@@ -151,6 +158,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
         >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b
       >
     </div>
-    <div v-if="records.length === 0" class="small text-muted">这段时间没有变动</div>
+    <div v-if="records.length === 0" class="dt-empty">这段时间没有变动</div>
   </template>
 </template>

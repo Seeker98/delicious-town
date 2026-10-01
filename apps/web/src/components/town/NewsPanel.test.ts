@@ -93,4 +93,35 @@ describe('NewsPanel', () => {
       expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
     });
   });
+
+  it('新闻用紧凑行（问题记录 104：垂直留空太大）', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({ items: [item(1)], hasMore: false });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    expect(w.find('[data-testid="news-row"]').classes()).toContain('dt-feed');
+  });
+
+  it('新闻页的广播带【广播】前缀（终审 I6）', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({
+      items: [item(9, 'town.broadcast', { text: '你好' })],
+      hasMore: false,
+    });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    expect(w.find('[data-testid="news-row"]').text()).toContain('【广播】小王的店：你好');
+  });
+
+  it('加载更多连点两次只请求一次（终审 I6）', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValueOnce({ items: [item(9)], hasMore: true });
+    let release: (v: { items: NewsDto[]; hasMore: boolean }) => void = () => {};
+    vi.mocked(endpoints.townNews).mockImplementationOnce(() => new Promise((r) => (release = r)));
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    await w.find('[data-testid="news-more"]').trigger('click');
+    await w.find('[data-testid="news-more"]').trigger('click');
+    expect(endpoints.townNews).toHaveBeenCalledTimes(2);
+    release({ items: [item(3)], hasMore: false });
+    await flushPromises();
+    expect(w.findAll('[data-testid="news-row"]')).toHaveLength(2);
+  });
 });

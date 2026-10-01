@@ -158,7 +158,10 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   for (const g of bundle.goods) {
     if (g.deviceType === 97) {
       const m = parseMissileDef(g.value);
-      if (typeof m !== 'string') missiles.set(g.id, m);
+      if (typeof m !== 'string') {
+        const o = bundle.tuning.temple.missileAttack.find(([id]) => id === g.id);
+        missiles.set(g.id, o ? { ...m, attack: [o[1], o[2]] } : m);
+      }
     }
     if (g.deviceType === 96) {
       const m = parseMapDef(g.value);

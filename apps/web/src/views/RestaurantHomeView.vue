@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
         </button>
       </div>
     </div>
-    <div v-if="mainTask" class="border rounded p-2 my-2 small">
+    <div v-if="mainTask" class="dt-card my-2 small">
       <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
       <span class="text-muted"
         >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
@@ -323,16 +323,28 @@ onBeforeUnmount(() => {
         </button>
       </div>
     </div>
-    <div v-if="plaque2Offer" class="small mt-1">
-      <button
-        class="btn btn-sm btn-outline-primary"
-        data-testid="open-plaque2"
-        :disabled="busy || !!plaque2Block"
-        @click="openPlaque2"
-      >
-        开通第二块牌匾位（{{ formatNum(rest.plaque2Cost.coin) }} 银币 + {{ rest.plaque2Cost.diamond }} 钻石）
-      </button>
-      <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{ plaque2Block }}</span>
+    <div v-if="plaque2Offer" class="dt-item">
+      <div class="dt-item-main">
+        <div class="dt-item-title">开通第二块牌匾位</div>
+        <div class="dt-meta">
+          <span data-testid="plaque2-cost"
+            >{{ formatNum(rest.plaque2Cost.coin) }} 银币 + {{ rest.plaque2Cost.diamond }} 钻石</span
+          >
+          <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{
+            plaque2Block
+          }}</span>
+        </div>
+      </div>
+      <div class="dt-item-actions">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          data-testid="open-plaque2"
+          :disabled="busy || !!plaque2Block"
+          @click="openPlaque2"
+        >
+          开通
+        </button>
+      </div>
     </div>
     <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
       <div class="d-flex justify-content-between">
