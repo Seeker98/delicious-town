@@ -140,6 +140,8 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const STATE: Record<string, string> = {
+  wrong_password: '旧密码不对',
+  same_password: '新密码不能和旧密码一样',
   mail_claimed: '这封邮件已经领过了',
   mail_no_items: '这封邮件没有附件',
   mail_broken: '这封邮件的附件已失效，请联系运营',
