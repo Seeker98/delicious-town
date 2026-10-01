@@ -30,6 +30,33 @@ export function normalizeCounts(raw: unknown): CookbookCounts {
   return { learned: r.learned ?? 0, grade, street: { ...(r.street ?? {}) } };
 }
 
+/** 拼结算输入需要的全部数据（快速模拟设计 §4.2）：真实结算从数据库组，快速模型从内存组 */
+export interface SettleSource {
+  rest: SettleRest;
+  tables: TableState[];
+  levels: Uint8Array;
+  counts: unknown;
+  agg: Record<string, number>;
+  special: SpecialDish | null;
+  cupboard: ReadonlyMap<number, number> | null;
+  now: Date;
+}
+
+/** 真实结算和快速模型共用：两边拼出来的结算输入一定一致 */
+export function toSettleInput(s: SettleSource): SettleInput {
+  return {
+    rest: s.rest,
+    tables: s.tables,
+    // 只换成 Uint8Array 视图，不复制（结算不改它；每轮复制 2KB 在快速模拟里很费时）
+    levels: new Uint8Array(s.levels.buffer, s.levels.byteOffset, s.levels.byteLength),
+    counts: normalizeCounts(s.counts),
+    agg: s.agg,
+    special: s.special,
+    cupboard: s.cupboard,
+    now: s.now,
+  };
+}
+
 export interface InputPatch {
   rest?: Partial<SettleRest>;
   tables?: TableState[];

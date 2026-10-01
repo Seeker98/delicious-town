@@ -1,6 +1,23 @@
 import { sql } from 'kysely';
-import { hashSeed, luckRate, seededRng } from '@dt/shared';
+import type { Tuning } from '@dt/config';
+import { hashSeed, luckRate, seededRng, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+
+/** 一次体力恢复（真实定时任务和快速模型共用）：已满返回 null */
+export function strengthGain(
+  r: { strength: number; strength_max: number; luck: number },
+  agg: Record<string, number>,
+  tuning: Tuning,
+  rng: Rng,
+): { add: number; cap: number } | null {
+  const cap = r.strength_max + (agg.holyBless ?? 0);
+  if (r.strength >= cap) return null;
+  const base = rng.chance(luckRate(r.luck + (agg.luckValue ?? 0)))
+    ? tuning.strength.luckyRegen
+    : tuning.strength.regen;
+  const mult = (agg.autoReStrength ?? 0) > 0 ? agg.autoReStrength! : 1;
+  return { add: Math.round(base * mult), cap };
+}
 
 /**
  * 体力恢复（规格书 01 §1.10）：一条批量 UPDATE，相对增量；正被锁住的店跳过这一轮。
@@ -22,17 +39,16 @@ export async function regenStrength(
   const adds: number[] = [];
   const caps: number[] = [];
   for (const r of rows) {
-    const agg = r.effect_agg ?? {};
-    const cap = r.strength_max + (agg.holyBless ?? 0);
-    if (r.strength >= cap) continue;
-    const rng = seededRng(hashSeed(shardId, 'strength', period, r.id));
-    const base = rng.chance(luckRate(r.luck + (agg.luckValue ?? 0)))
-      ? tuning.strength.luckyRegen
-      : tuning.strength.regen;
-    const mult = (agg.autoReStrength ?? 0) > 0 ? agg.autoReStrength! : 1;
+    const g = strengthGain(
+      r,
+      r.effect_agg ?? {},
+      tuning,
+      seededRng(hashSeed(shardId, 'strength', period, r.id)),
+    );
+    if (!g) continue;
     ids.push(r.id);
-    adds.push(Math.round(base * mult));
-    caps.push(cap);
+    adds.push(g.add);
+    caps.push(g.cap);
   }
   let updated = 0;
   for (let i = 0; i < ids.length; i += 1000) {

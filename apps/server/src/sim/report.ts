@@ -23,7 +23,19 @@ function short(v: number): string {
 }
 
 /** 自绘折线图（不依赖任何外部资源，断网也能看） */
-export function lineChart(title: string, series: Series[], xLabel: string, yLabel: string): string {
+/** 阴影带：每个横坐标一个 [下沿, 上沿]（快速模拟的 10%~90% 区间） */
+export interface Band {
+  name: string;
+  points: Array<[number, number, number]>;
+}
+
+export function lineChart(
+  title: string,
+  series: Series[],
+  xLabel: string,
+  yLabel: string,
+  band?: Band,
+): string {
   const W = 680;
   const H = 260;
   const L = 64;
@@ -31,7 +43,10 @@ export function lineChart(title: string, series: Series[], xLabel: string, yLabe
   const T = 28;
   const B = 36;
   const xs = series.flatMap((s) => s.points.map((p) => p[0]));
-  const ys = series.flatMap((s) => s.points.map((p) => p[1]));
+  const ys = [
+    ...series.flatMap((s) => s.points.map((p) => p[1])),
+    ...(band?.points.flatMap((p) => [p[1], p[2]]) ?? []),
+  ];
   const xMax = Math.max(1, ...xs);
   const yMax = Math.max(1, ...ys);
   const yMin = Math.min(0, ...ys);
@@ -53,6 +68,13 @@ export function lineChart(title: string, series: Series[], xLabel: string, yLabe
     `<text x="${(L + W) / 2}" y="${H - 4}" text-anchor="middle" font-size="11">${esc(xLabel)}</text>`,
   );
   parts.push(`<text x="12" y="${T - 10}" font-size="11">${esc(yLabel)}</text>`);
+  if (band && band.points.length > 0) {
+    const up = band.points.map(([px, , hi]) => `${x(px).toFixed(1)},${y(hi).toFixed(1)}`);
+    const down = [...band.points].reverse().map(([px, lo]) => `${x(px).toFixed(1)},${y(lo).toFixed(1)}`);
+    parts.push(
+      `<polygon points="${[...up, ...down].join(' ')}" fill="${COLORS[0]}" fill-opacity="0.15" stroke="none"><title>${esc(band.name)}</title></polygon>`,
+    );
+  }
   series.forEach((s, i) => {
     const color = COLORS[i % COLORS.length]!;
     const pts = s.points.map(([px, py]) => `${x(px).toFixed(1)},${y(py).toFixed(1)}`).join(' ');

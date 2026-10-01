@@ -1,8 +1,7 @@
 import type { Kysely } from 'kysely';
-import { DEVICE_TYPE, GOODS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
+import type { GameConfig, Tuning } from '@dt/config';
 import type { DB } from '../../db/schema';
-import { aggregateEffects } from './aggregate';
-import { collectionEffects } from './collection';
+import { computeEffectAgg } from './aggregate';
 
 export interface EffectSourceInput {
   sourceType: string;
@@ -90,45 +89,19 @@ export async function getEffectAgg(
   if (!stale) return r.effect_agg;
 
   const sources = await listActiveEffects(db, restId, now);
-  const { agg, nextExpireAt } = aggregateEffects(sources, now);
-
   const owned = await db
     .selectFrom('store_item')
     .select('goods_id')
     .where('rest_id', '=', restId)
     .where('num', '>', 0)
     .execute();
-  const ownedIds = new Set(owned.map((o) => o.goods_id));
-  let plaques = 0;
-  for (const id of ownedIds) {
-    const g = config.goods.get(id);
-    if (g && g.type === GOODS_TYPE.device && g.deviceType === DEVICE_TYPE.plaque) plaques += 1;
-  }
-  let honors = 0;
-  let pots = 0;
-  let paintings = 0;
-  for (const s of sources) {
-    if (s.sourceType !== 'honor') continue;
-    honors += 1;
-    const dt = config.goods.get(s.sourceId)?.deviceType;
-    if (dt === DEVICE_TYPE.pot) pots += 1;
-    if (dt === DEVICE_TYPE.painting) paintings += 1;
-  }
-  const derived = collectionEffects(
-    {
-      plaques,
-      honors,
-      pots,
-      paintings,
-      an2023: ownedIds.has(GOODS.an2023Plaque),
-      an2025: ownedIds.has(GOODS.an2025Plaque),
-      mdcg: ownedIds.has(GOODS.mdcgPlaque),
-    },
-    tuning.collection,
-    config.bundle.potTiers,
-    config.bundle.paintingTiers,
+  const { agg, nextExpireAt } = computeEffectAgg(
+    sources,
+    new Set(owned.map((o) => o.goods_id)),
+    config,
+    tuning,
+    now,
   );
-  for (const [k, v] of Object.entries(derived)) agg[k] = (agg[k] ?? 0) + v;
 
   await db
     .updateTable('restaurant')
