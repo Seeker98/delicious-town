@@ -36,3 +36,4 @@ export * from './schemas/announce';
 export * from './schemas/redeem';
 export * from './schemas/invite';
 export * from './schemas/report';
+export * from './schemas/ops';

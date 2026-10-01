@@ -163,7 +163,7 @@ onMounted(() => show('friends'));
         :path="`avatar/${f.avatar ?? 0}`"
         :alt="f.name"
         fallback-icon="bi-person-circle"
-        class="me-2 dt-friend-avatar"
+        class="me-1 flex-shrink-0"
       />
       <!-- 问题记录 168：店名、等级、状态压到一行 -->
       <div class="flex-fill dt-friend-line small">
@@ -251,11 +251,3 @@ onMounted(() => show('friends'));
     </div>
   </template>
 </template>
-
-<style scoped>
-/* 问题记录 168：好友行头像缩小，行更紧凑 */
-.dt-friend-avatar {
-  width: 32px;
-  height: 32px;
-}
-</style>

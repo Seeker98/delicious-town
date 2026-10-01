@@ -9,6 +9,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
+import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { calibrateWatchman } from './towerFloor';
 import type {
@@ -123,6 +124,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const looks = parse('game/looks', raw.looksFile);
   const equipLore = parse('game/equip_lore', raw.equipLoreFile);
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
+  const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -166,6 +168,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !looks ||
     !equipLore ||
     !towerFix ||
+    !settingDocs ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -781,6 +784,14 @@ export function buildBundle(src: SourceData): BuildResult {
       if (!foodIds.has(f.id)) errors.push(`invite.${where} references unknown foods ${f.id}`);
   }
 
+  // ---------- 区服数值说明（问题记录 126） ----------
+  checkSettingDocs(
+    settingDocs,
+    tuning as unknown as Record<string, unknown>,
+    defaults as unknown as Record<string, unknown>,
+    errors,
+  );
+
   // ---------- 开店默认值 ----------
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);
@@ -849,6 +860,7 @@ export function buildBundle(src: SourceData): BuildResult {
     holidays,
     tuning,
     restaurantDefaults: defaults,
+    settingDocs,
     looks,
     suits,
     goodsExchange,

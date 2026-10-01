@@ -108,7 +108,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">
       <div class="d-flex align-items-center">
-        <h6 class="mb-1">
+        <h6 class="dt-section mb-1">
           {{ s.title
           }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">（{{ sectionNote(s.key) }}）</small>
         </h6>
@@ -138,7 +138,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         :data-testid="`item-${it.id}`"
       >
         <div class="flex-fill">
-          <b>{{ catalog.foodName(it.foodsId) }}</b>
+          <span>{{ catalog.foodName(it.foodsId) }}</span>
           <span v-if="it.hot" class="badge bg-danger ms-1">热门</span>
           <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
             {{ it.owner.restId === myRest ? '自己的货，免费' : `${it.owner.name} 进的货` }}

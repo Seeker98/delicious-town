@@ -308,6 +308,11 @@ export const rawSuit = z.object({
 
 export const rawMcProficiency = z.object({ curlevel: int, name: z.string(), expNext: int });
 
+/** data/game/setting_docs.json：区服数值说明（问题记录 126）；手写，构建时和数值树交叉检查 */
+export const settingDocsFile = z
+  .object({ features: z.record(z.string()), groups: z.record(z.string()), fields: z.record(z.string()) })
+  .strict();
+
 /** data/game/tower_fix.json：守塔人厨力和换层（问题记录 120）；数据集会被同步覆盖，所以单独放 */
 export const towerFixFile = z.object({
   floors: z.array(

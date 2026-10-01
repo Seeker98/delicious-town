@@ -248,3 +248,18 @@ describe('角色和封禁原因', () => {
     expect(r.json).toMatchObject({ code: 'ACCOUNT_BANNED', params: { reason: '刷分' } });
   });
 });
+
+describe('登录记录（子项目 6B-2）', () => {
+  it('注册、登录时写入 login_trace：IP 和设备', async () => {
+    const u = await registerUser(ctx.app, { ip: '10.77.0.1' });
+    const rows = () =>
+      ctx.deps.db.selectFrom('login_trace').selectAll().where('account_id', '=', u.accountId).execute();
+    expect((await rows()).map((r) => r.ip)).toEqual(['10.77.0.1']);
+    await call(ctx.app, 'POST', `${A}/login`, {
+      body: { username: u.username, password: 'secret123' },
+      ip: '10.77.0.1',
+      headers: { 'x-device-id': 'dev-12345678' },
+    });
+    expect((await rows()).map((r) => r.device_id).sort()).toEqual(['dev-12345678', null]);
+  });
+});

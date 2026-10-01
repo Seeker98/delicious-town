@@ -12,7 +12,9 @@ import {
   grantPreviewQuery,
   idParam,
   banBody,
+  launchCheckFixBody,
   reportListQuery,
+  suspiciousQuery,
   resolveReportBody,
   rejectReportBody,
   pageQuery,
@@ -35,10 +37,12 @@ import { requireRole } from './access';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
+import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
+import { createSuspicious } from '../ops/suspicious';
 import { createAdminReports } from '../report/admin';
 import { createAdminAnnounce } from '../announce/admin';
 import { distribution, economy, settlementRounds } from './stats';
@@ -141,6 +145,35 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/mails/:id/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await mails.revoke(a, id(req)));
+    });
+
+    const launch = createLaunchCheck(game);
+    r.get('/launch-check', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await launch.check());
+    });
+    r.post('/launch-check/fix', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await launch.fix(a, parse(launchCheckFixBody, req.body)));
+    });
+
+    const suspicious = createSuspicious(game);
+    r.get('/suspicious/bar', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await suspicious.bar(parse(suspiciousQuery, req.query).shardId));
+    });
+    r.get('/suspicious/surge', async (req) => {
+      await requireRole(db, req, 'mod');
+      const q = parse(suspiciousQuery, req.query);
+      return ok(await suspicious.surge(q.shardId, q.day));
+    });
+    r.get('/suspicious/multi', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await suspicious.multi(parse(suspiciousQuery, req.query).shardId));
+    });
+    r.get('/suspicious/redeem', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await suspicious.redeemLocked(parse(suspiciousQuery, req.query).shardId));
     });
 
     const reports = createAdminReports(game);

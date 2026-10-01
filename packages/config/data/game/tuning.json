@@ -330,6 +330,7 @@
     "rewards": { "lv10": { "diamond": 20 }, "lv30": { "diamond": 50, "coin": 200000 } }
   },
   "report": { "dailyMax": 10 },
+  "ops": { "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 } },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,

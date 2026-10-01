@@ -24,6 +24,8 @@ export interface ShardSettingsDto {
   override: Record<string, unknown>;
   effective: Record<string, unknown>;
   features: Array<{ name: string; enabled: boolean }>;
+  /** 数值说明（问题记录 126）：功能开关、分组、每个数值各一句 */
+  docs: { features: Record<string, string>; groups: Record<string, string>; fields: Record<string, string> };
 }
 
 const note = z.string().trim().min(1).max(200);
@@ -42,6 +44,20 @@ export interface ShardHistoryDto {
   changed: string[];
   at: string;
 }
+/** 上线检查（子项目 6B-2，设计 §7） */
+export interface LaunchCheckDto {
+  shards: Array<{
+    shardId: number;
+    shardName: string;
+    version: number;
+    items: Array<{ path: string; want: boolean; current: unknown; ok: boolean; why: string }>;
+  }>;
+  allOk: boolean;
+}
+export const launchCheckFixBody = z.object({
+  shardId: z.number().int().positive(),
+  version: z.number().int().min(0),
+});
 export const playerSearchQuery = z.object({ q: z.string().trim().min(1).max(64) });
 
 export interface PlayerRestaurantBriefDto {

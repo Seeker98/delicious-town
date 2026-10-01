@@ -557,6 +557,14 @@ export const tuningSchema = z.object({
     rewards: z.object({ lv10: rewardSchema, lv30: rewardSchema }),
   }),
   report: z.object({ dailyMax: int.min(1) }),
+  ops: z.object({
+    suspicious: z.object({
+      barPerfectDaily: int.min(1),
+      dartsBullDaily: int.min(1),
+      sharedAccounts: int.min(2),
+      topN: int.min(1).max(200),
+    }),
+  }),
   redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),
   forum: z.object({
     titleMax: int.min(1),

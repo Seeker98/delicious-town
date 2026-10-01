@@ -134,4 +134,12 @@ describe('FriendsView', () => {
     expect(line.text()).toContain('级');
     expect(line.text()).toContain('蟑螂 3');
   });
+
+  it('好友行头像不被压缩、不再单独放大（问题记录 179）', async () => {
+    const w = mountView();
+    await flushPromises();
+    const img = w.find('[data-testid^="friend-row-"] .flex-shrink-0');
+    expect(img.exists()).toBe(true);
+    expect(w.find('.dt-friend-avatar').exists()).toBe(false);
+  });
 });

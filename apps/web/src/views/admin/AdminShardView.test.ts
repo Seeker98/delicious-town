@@ -21,6 +21,7 @@ const dto: ShardSettingsDto = {
   override: {},
   effective: { ...defaults },
   features: [{ name: 'market', enabled: true }],
+  docs: { features: {}, groups: {}, fields: {} },
 };
 
 async function mountView(role: 'mod' | 'admin') {
@@ -118,5 +119,34 @@ describe('AdminShardView', () => {
     const w = await mountView('mod');
     expect(w.find(field('tuning.settlement.expMultiplier')).attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="save-settings"]').exists()).toBe(false);
+  });
+
+  it('显示说明；按名字或说明搜索，匹配的组展开（问题记录 126）', async () => {
+    const d = structuredClone(dto);
+    const more = { ...defaults, tuning: { ...defaults.tuning, mail: { listMax: 100 }, rank: { top: 50 } } };
+    d.defaults = more;
+    d.effective = structuredClone(more);
+    d.docs = {
+      features: { market: '菜场开关说明' },
+      groups: { 'tuning.mail': '邮箱组', 'tuning.rank': '排行组' },
+      fields: {
+        'tuning.settlement.expMultiplier': '结算经验倍率',
+        'tuning.mail.listMax': '邮箱最多列出几封',
+        'tuning.rank.top': '排行榜显示前几名',
+      },
+    };
+    vi.mocked(adminApi.settings).mockResolvedValue(d);
+    const w = await mountView('admin');
+    expect(w.find('[data-testid="doc-tuning.settlement.expMultiplier"]').text()).toBe('结算经验倍率');
+    expect(w.find('[data-testid="feature-doc-market"]').text()).toContain('菜场开关说明');
+    expect(w.find('[data-testid="group-tuning.mail"]').text()).toContain('邮箱组');
+    await w.find('[data-testid="setting-search"]').setValue('邮箱');
+    expect(w.find(field('tuning.mail.listMax')).exists()).toBe(true);
+    expect(w.find(field('tuning.rank.top')).exists()).toBe(false);
+    expect(w.find('[data-testid="group-tuning.mail"]').attributes('open')).toBeDefined();
+    expect(w.find('[data-testid="group-tuning.rank"]').exists()).toBe(false);
+    expect(w.find(field('tuning.settlement.expMultiplier')).exists()).toBe(false);
+    await w.find('[data-testid="setting-search"]').setValue('');
+    expect(w.find(field('tuning.rank.top')).exists()).toBe(true);
   });
 });

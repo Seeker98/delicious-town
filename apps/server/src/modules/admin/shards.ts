@@ -164,6 +164,7 @@ export function createAdminShards(game: Game) {
         features: [...IMPLEMENTED_FEATURES]
           .sort()
           .map((name) => ({ name, enabled: isFeatureEnabled(effective, name) })),
+        docs: config.settingDocs,
       };
     },
 

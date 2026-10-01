@@ -167,4 +167,11 @@ describe('MarketView', () => {
     expect(endpoints.marketManualStock).not.toHaveBeenCalled();
     confirm.mockRestore();
   });
+
+  it('分区标题加粗醒目，菜名不加粗（问题记录 176）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('section h6').classes()).toContain('dt-section');
+    expect(w.find('[data-testid="item-11"] b').exists()).toBe(false);
+  });
 });

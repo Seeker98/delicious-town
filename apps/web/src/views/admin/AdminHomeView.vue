@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { gameDay, type EconomyRowDto, type SettlementRoundDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import LaunchCheck from '../../components/admin/LaunchCheck.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -38,6 +39,8 @@ const exp = computed(() => sum('exp', 'settlement'));
 </script>
 
 <template>
+  <!-- 上线检查（子项目 6B-2）：放在最上面，上线前一眼看到 -->
+  <LaunchCheck />
   <h5>今日概览</h5>
   <div class="row g-2 small">
     <div class="col-6 col-md-3">

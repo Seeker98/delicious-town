@@ -35,6 +35,10 @@ describe('区服数值（HTTP）', () => {
     expect(d.override).toEqual({});
     expect(d.effective.tuning.settlement.expMultiplier).toBe(d.defaults.tuning.settlement.expMultiplier);
     expect(d.features).toContainEqual({ name: 'market', enabled: true });
+    // 数值说明随接口下发（问题记录 126）
+    expect(d.docs.fields['tuning.settlement.expMultiplier']).toMatch(/经验/);
+    expect(d.docs.groups['restaurant']).toBeTruthy();
+    expect(d.docs.features.market).toBeTruthy();
     const list = await call(ctx.app, 'GET', S, { cookie: mod.cookie });
     expect(list.json.data.some((s: { id: number }) => s.id === shardId)).toBe(true);
   });

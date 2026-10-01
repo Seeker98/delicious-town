@@ -454,4 +454,11 @@ describe('RestaurantHomeView', () => {
     expect(cell.find('i.bi-award').exists()).toBe(true);
     expect(cell.text()).not.toContain('声望');
   });
+
+  it('经验条紧跟等级那一行，在常用入口之前（问题记录 172）', async () => {
+    const w = await mountView();
+    const exp = w.find('[data-testid="exp-text"]').element;
+    const quick = w.find('[data-testid="quick-links"]').element;
+    expect(exp.compareDocumentPosition(quick) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
 });

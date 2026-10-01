@@ -31,14 +31,19 @@ export interface RestCtx {
 
 const DEVICE_RE = /^[A-Za-z0-9-]{8,64}$/;
 
+/** 请求头 x-device-id 里的设备号；格式不对当作没有 */
+export function deviceIdOf(req: FastifyRequest): string | null {
+  const dev = req.headers['x-device-id'];
+  return typeof dev === 'string' && DEVICE_RE.test(dev) ? dev : null;
+}
+
 export function restCtxOf(req: FastifyRequest): RestCtx {
   const r = requireRestaurant(req);
-  const dev = req.headers['x-device-id'];
   return {
     accountId: r.accountId,
     shardId: r.shardId,
     restaurantId: r.restaurantId,
     ip: req.clientIp,
-    deviceId: typeof dev === 'string' && DEVICE_RE.test(dev) ? dev : null,
+    deviceId: deviceIdOf(req),
   };
 }

@@ -55,4 +55,15 @@ describe('MoreView', () => {
     // 和底部弹出的面板同一套分组
     for (const g of ['经营', '玩法', '其他']) expect(text).toContain(g);
   });
+
+  it('装扮在"其他"组，不在"经营"组（问题记录 173）', () => {
+    useSessionStore().me = me('player');
+    const w = mountView();
+    const group = (title: string) =>
+      w
+        .findAll('.mb-2')
+        .find((g) => g.find('.small.text-muted').exists() && g.find('.small.text-muted').text() === title)!;
+    expect(group('其他').text()).toContain('装扮');
+    expect(group('经营').text()).not.toContain('装扮');
+  });
 });

@@ -14,4 +14,5 @@ export * from './tuning';
 export * from './ids';
 export * from './goodsUse';
 export { PART_MAIN, rewriteStatDesc, scaleToTotal } from './stressTable';
+export { settingGroup, settingLeaves } from './settingDocs';
 export type { StressTableEntry } from './raw';
