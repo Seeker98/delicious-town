@@ -18,7 +18,7 @@ export function forumRoutes(svc: ForumService): FastifyPluginAsync {
     r.post('/forum/posts/:id/replies', async (req) =>
       okOp(await svc.reply(restCtxOf(req), id(req.params), parse(forumReplyBody, req.body))),
     );
-    r.delete('/forum/replies/:id', async (req) =>
+    r.post('/forum/replies/:id/delete', async (req) =>
       okOp(await svc.deleteReply(restCtxOf(req), id(req.params))),
     );
     r.post('/forum/posts/:id/react', async (req) =>
@@ -35,9 +35,11 @@ export function forumRoutes(svc: ForumService): FastifyPluginAsync {
     r.post('/forum/posts', async (req) =>
       okOp(await svc.createPost(restCtxOf(req), parse(forumPostBody, req.body))),
     );
-    r.put('/forum/posts/:id', async (req) =>
+    r.post('/forum/posts/:id/edit', async (req) =>
       okOp(await svc.editPost(restCtxOf(req), id(req.params), parse(forumPostBody, req.body))),
     );
-    r.delete('/forum/posts/:id', async (req) => okOp(await svc.deletePost(restCtxOf(req), id(req.params))));
+    r.post('/forum/posts/:id/delete', async (req) =>
+      okOp(await svc.deletePost(restCtxOf(req), id(req.params))),
+    );
   };
 }

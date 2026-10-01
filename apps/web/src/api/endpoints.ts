@@ -1,4 +1,14 @@
 import type {
+  ForumAdminAction,
+  ForumAdminDto,
+  ForumListDto,
+  ForumPostBody,
+  ForumPostDetailDto,
+  ForumReactDto,
+  ForumReadsDto,
+  ForumReplyBody,
+  ForumReplyDto,
+  ForumTab,
   HiphopSpotDto,
   HiphopTipBody,
   HiphopTipDto,
@@ -380,6 +390,20 @@ export const endpoints = {
   townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),
   townMayor: (place: number) => api.post<TalkResultDto>('/api/v1/town/mayor', { place }),
   rank: (key: string) => api.get<LeaderboardDto>(`/api/v1/rank/${encodeURIComponent(key)}`),
+  forumList: (q: { tab: ForumTab; q?: string; cursor?: string }) =>
+    api.get<ForumListDto>(`/api/v1/forum/posts${qs(q)}`),
+  forumPost: (id: number) => api.get<ForumPostDetailDto>(`/api/v1/forum/posts/${id}`),
+  forumCreate: (b: ForumPostBody) => api.post<{ id: number }>('/api/v1/forum/posts', b),
+  forumEdit: (id: number, b: ForumPostBody) => api.post<{ id: number }>(`/api/v1/forum/posts/${id}/edit`, b),
+  forumDelete: (id: number) => api.post<Anything>(`/api/v1/forum/posts/${id}/delete`),
+  forumReply: (id: number, b: Partial<ForumReplyBody> & { content: string }) =>
+    api.post<ForumReplyDto>(`/api/v1/forum/posts/${id}/replies`, b),
+  forumDeleteReply: (id: number) => api.post<Anything>(`/api/v1/forum/replies/${id}/delete`),
+  forumReact: (id: number, kind: 'up' | 'down') =>
+    api.post<ForumReactDto>(`/api/v1/forum/posts/${id}/react`, { kind }),
+  forumReads: (id: number) => api.get<ForumReadsDto>(`/api/v1/forum/posts/${id}/reads`),
+  forumAdmin: (id: number, action: ForumAdminAction) =>
+    api.post<ForumAdminDto>(`/api/v1/forum/posts/${id}/admin`, { action }),
   hiphopSpot: (q: { place: number } | { restId: number }) => api.get<HiphopSpotDto>(`/api/v1/hiphop${qs(q)}`),
   hiphopTip: (b: HiphopTipBody) => api.post<HiphopTipDto>('/api/v1/hiphop/tip', b),
   townHammer: (body: { mode: 'coin'; type: number } | { mode: 'diamond' }) =>

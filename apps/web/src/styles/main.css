@@ -550,3 +550,10 @@ body {
   color: var(--dt-primary-ink);
   text-align: center;
 }
+
+/* ---------- 论坛（子项目 4E-3） ---------- */
+/* 正文是纯文字：保留换行，长串自动折行 */
+.dt-post-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
