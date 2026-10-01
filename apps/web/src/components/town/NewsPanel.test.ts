@@ -124,4 +124,39 @@ describe('NewsPanel', () => {
     await flushPromises();
     expect(w.findAll('[data-testid="news-row"]')).toHaveLength(2);
   });
+
+  it('广播失败后也通知刷新', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+    vi.mocked(endpoints.townBroadcast).mockRejectedValue(new Error('x'));
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    await w.find('[data-testid="bc-input"]').setValue('大家好');
+    await w.find('[data-testid="bc-send"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+  });
+
+  it('加载更多还没回来时发广播：刷新第一页照样执行，旧的追加作废（PR27 遗留）', async () => {
+    let more!: (v: { items: NewsDto[]; hasMore: boolean }) => void;
+    vi.mocked(endpoints.townNews)
+      .mockResolvedValueOnce({ items: [item(9), item(8)], hasMore: true })
+      .mockImplementationOnce(() => new Promise((r) => (more = r)))
+      .mockResolvedValueOnce({
+        items: [item(12, 'town.broadcast', { text: '刚发的' }), item(9)],
+        hasMore: true,
+      });
+    vi.mocked(endpoints.townBroadcast).mockResolvedValue({ text: '刚发的' });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    await w.find('[data-testid="news-more"]').trigger('click');
+    await w.find('[data-testid="bc-input"]').setValue('刚发的');
+    await w.find('[data-testid="bc-send"]').trigger('click');
+    await flushPromises();
+    more({ items: [item(3)], hasMore: false });
+    await flushPromises();
+    expect(endpoints.townNews).toHaveBeenCalledTimes(3);
+    const rows = w.findAll('[data-testid="news-row"]');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]!.text()).toContain('刚发的');
+  });
 });

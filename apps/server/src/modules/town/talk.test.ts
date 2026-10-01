@@ -67,4 +67,11 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     await expect(talk(a, 'wenjie')).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     await expect(talk(a, 'bro13')).rejects.toMatchObject({ code: 'ALREADY_DONE' });
   });
+
+  it('奖励按实际到账显示：超过持有上限被丢弃的部分不算（PR26 遗留）', async () => {
+    const a = await newRestaurant(t, { goods: { 315: 9999 } });
+    const r = await t.game.town.talk(a, { npc: 'bro13' });
+    expect(r.data.rewards).toEqual([{ kind: 'goods', id: 315, num: 0 }]);
+    expect(await goodsNum(t, a.restaurantId, 315)).toBe(9999);
+  });
 });

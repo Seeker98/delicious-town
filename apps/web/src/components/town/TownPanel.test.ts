@@ -184,4 +184,12 @@ describe('TownPanel', () => {
     for (const id of ['talk-bigEater', 'talk-wenjie', 'talk-bro13', 'shake'])
       expect(w.find('.dt-item-actions [data-testid="' + id + '"]').exists()).toBe(true);
   });
+
+  it('操作失败后也通知刷新：页面可能已经过时（比如别人刚许过愿、跨天了）', async () => {
+    vi.mocked(endpoints.townShake).mockRejectedValue(new Error('x'));
+    const w = mount(TownPanel, { props: { data: townData() } });
+    await w.find('[data-testid="shake"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+  });
 });

@@ -57,6 +57,7 @@ async function go(x: TownExchangeItemDto) {
     await load();
   } catch (e) {
     toast.push(errorMessage(e, '兑换失败'), 'danger');
+    await load();
   } finally {
     busy.value = false;
   }

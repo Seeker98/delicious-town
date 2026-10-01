@@ -41,7 +41,7 @@ describe('许愿（设计文档 §3.7）', () => {
     expect(config.bless.get(bless.id)!.name).toBe(bless.name);
     expect(await goodsNum(t, a.restaurantId, 389)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.bless'] });
-    expect(n).toMatchObject({ restId: a.restaurantId, params: { blessId: bless.id, name: bless.name } });
+    expect(n).toMatchObject({ restId: a.restaurantId, params: { blessId: bless.id, blessName: bless.name } });
   });
 
   it('每区服每天只有第一个许愿的人生效；两人同时许愿只成功一个；第二天可以再许', async () => {

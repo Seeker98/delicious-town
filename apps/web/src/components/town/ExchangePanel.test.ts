@@ -86,4 +86,13 @@ describe('ExchangePanel', () => {
     await w.find('[data-testid="ex-row-1"] .dt-item-title').trigger('click');
     expect(w.find('[data-testid="ex-desc-1"]').classes()).not.toContain('dt-clamp1');
   });
+
+  it('兑换失败后也重新读取', async () => {
+    vi.mocked(endpoints.townExchangeDo).mockRejectedValue(new Error('x'));
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    await w.find('[data-testid="ex-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townExchange).toHaveBeenCalledTimes(2);
+  });
 });

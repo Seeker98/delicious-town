@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
@@ -33,6 +33,7 @@ const TABS: Array<{ key: Tab; label: string }> = [
 const toast = useToastStore();
 const catalog = useCatalogStore();
 const route = useRoute();
+const router = useRouter();
 const tab = ref<Tab>(initialTab(route.query.tab));
 const data = ref<TownDto | null>(null);
 
@@ -53,6 +54,9 @@ watch(tab, (v) => {
   } catch {
     // 存储不可用时忽略
   }
+  // 地址跟着标签走：刷新后停在当前标签，而不是一直回到 ?tab= 指定的那个（PR27 遗留）
+  if (route.query.tab !== undefined && route.query.tab !== v)
+    void router.replace({ query: { ...route.query, tab: v } });
   void load();
 });
 onMounted(() => {

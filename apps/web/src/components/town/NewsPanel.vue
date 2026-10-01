@@ -20,18 +20,22 @@ const busy = ref(false);
 const loading = ref(false);
 const clock = useServerClock(() => props.data.now);
 
+/** 读取序号：刷新第一页总是执行并作废进行中的读取；只有"加载更多"在读取中时被拦住（PR27 遗留） */
+let seq = 0;
 async function load(more = false) {
-  if (loading.value) return;
+  if (more && loading.value) return;
+  const mine = ++seq;
   loading.value = true;
   try {
     const last = items.value.at(-1);
     const page = await endpoints.townNews(more && last ? last.id : undefined);
+    if (mine !== seq) return;
     items.value = more ? [...items.value, ...page.items] : page.items;
     hasMore.value = page.hasMore;
   } catch (e) {
-    toast.push(errorMessage(e, '读取新闻失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, '读取新闻失败'), 'danger');
   } finally {
-    loading.value = false;
+    if (mine === seq) loading.value = false;
   }
 }
 onMounted(() => void load());
@@ -55,6 +59,7 @@ async function send() {
     await load();
   } catch (e) {
     toast.push(errorMessage(e, '广播失败'), 'danger');
+    emit('reload');
   } finally {
     busy.value = false;
   }

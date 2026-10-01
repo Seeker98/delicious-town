@@ -40,6 +40,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, '兑换失败'), 'danger');
+    emit('reload');
   } finally {
     busy.value = false;
   }

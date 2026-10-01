@@ -73,7 +73,7 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
       ? `${w}使用雷神锤，${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}了`
       : `天气变了：${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}`,
   'town.broadcast': (w, p) => `${w}：${str(p.text)}`,
-  'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.name)}`,
+  'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.blessName) || str(p.name)}`,
   'town.shake.lucky': (w, p, x) =>
     `恭喜${w}伸进蟹老板裤兜里掏出：${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
   'town.exchange': (w, p, x) => `${w}在镇长处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
