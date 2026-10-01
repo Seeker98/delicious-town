@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ForumPostDetailDto, ForumReplyDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useSessionStore } from '../stores/session';
 import ForumPostView from './ForumPostView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -169,5 +170,35 @@ describe('ForumPostView', () => {
     const { w } = await mountView();
     expect(w.find('[data-testid="reply-submit"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="reply-wait"]').text()).toMatch(/^(44|45) 秒后可以再回复$/);
+  });
+
+  it('别人的帖子和回复旁有举报，自己的没有（子项目 6B-1）', async () => {
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player' as const,
+      shardId: 1,
+      restaurantId: 8,
+    };
+    vi.mocked(endpoints.forumPost).mockResolvedValue(
+      detail({ replies: [reply(1, { restId: 9, canDelete: false }), reply(2)] }),
+    );
+    const { w } = await mountView();
+    expect(w.find('[data-testid="post-report-open"]').exists()).toBe(true);
+    expect(w.find('[data-testid="reply-report-1-open"]').exists()).toBe(true);
+    expect(w.find('[data-testid="reply-report-2-open"]').exists()).toBe(false);
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player' as const,
+      shardId: 1,
+      restaurantId: 7,
+    };
+    const { w: w2 } = await mountView();
+    expect(w2.find('[data-testid="post-report-open"]').exists()).toBe(false);
   });
 });

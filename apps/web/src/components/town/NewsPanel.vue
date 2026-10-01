@@ -2,8 +2,10 @@
 import { computed, onMounted, ref } from 'vue';
 import { BROADCAST_NEWS, type NewsDto, type TownDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import ReportButton from '../ReportButton.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
+import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
 import { newsText, newsTime } from '../../utils/news';
 import { useServerClock } from '../../utils/serverClock';
@@ -11,6 +13,7 @@ import { useServerClock } from '../../utils/serverClock';
 const props = defineProps<{ data: TownDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
+const myRest = computed(() => useSessionStore().me?.restaurantId ?? null);
 const toast = useToastStore();
 const items = ref<NewsDto[]>([]);
 const hasMore = ref(false);
@@ -96,6 +99,14 @@ async function send() {
   >
     <span class="dt-feed-time">{{ newsTime(n.createdAt) }}</span>
     <span>{{ n.type === BROADCAST_NEWS ? '【广播】' : '' }}{{ newsText(n, catalog) }}</span>
+    <!-- 别人的喇叭可以举报（子项目 6B-1） -->
+    <ReportButton
+      v-if="n.type === BROADCAST_NEWS && n.restId !== null && n.restId !== myRest"
+      class="ms-1"
+      target-type="broadcast"
+      :target-id="n.id"
+      :testid="`news-report-${n.id}`"
+    />
   </div>
   <div v-if="items.length === 0" class="dt-empty">还没有新闻</div>
   <button

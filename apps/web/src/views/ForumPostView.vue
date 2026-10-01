@@ -8,7 +8,9 @@ import {
   type ForumReadsDto,
 } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import ReportButton from '../components/ReportButton.vue';
 import { errorMessage } from '../i18n/zh-CN';
+import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { useCountdown } from '../utils/countdown';
 
@@ -16,6 +18,8 @@ import { useCountdown } from '../utils/countdown';
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+/** 自己的店：别人的帖子、回复才显示举报（子项目 6B-1） */
+const myRest = computed(() => useSessionStore().me?.restaurantId ?? null);
 const id = computed(() => Number(route.params.id));
 const data = ref<ForumPostDetailDto | null>(null);
 const reads = ref<ForumReadsDto | null>(null);
@@ -186,6 +190,12 @@ async function submit() {
       >
         阅读明细
       </button>
+      <ReportButton
+        v-if="data.post.restId !== myRest"
+        target-type="post"
+        :target-id="data.post.id"
+        testid="post-report"
+      />
     </div>
     <div v-if="reads" class="dt-card mb-3" data-testid="post-reads-list">
       <div v-if="reads.items.length === 0" class="dt-empty">还没有人读过</div>
@@ -233,6 +243,12 @@ async function submit() {
         >
           删除
         </button>
+        <ReportButton
+          v-if="!r.deleted && !r.canDelete"
+          target-type="reply"
+          :target-id="r.id"
+          :testid="`reply-report-${r.floor}`"
+        />
       </div>
     </div>
 
