@@ -1,0 +1,68 @@
+{
+  "participation": { "diligent": 1, "normal": 0.7, "casual": 0.4 },
+  "rows": [
+    {
+      "source": "town",
+      "minLevel": 1,
+      "coin": 10500,
+      "goods": [
+        { "id": 1, "num": 10 },
+        { "id": 315, "num": 1 }
+      ],
+      "note": "摇钱树每天一次 shake.base 8000 + 平均 rand 2500；雯姐送神秘礼券 1~20 张取平均 10；13 哥送喇叭 1~2 个取 1。大胃哥送的食材不计"
+    },
+    {
+      "source": "hiphop",
+      "minLevel": 1,
+      "coin": 8000,
+      "note": "打赏收益粗估：worthBase 35000 × 平均倍率约 1.25 ÷ coinWorthDiv 5，约每天一次"
+    },
+    {
+      "source": "bar",
+      "minLevel": 1,
+      "note": "酒吧主要用神秘礼券换食材和蟹币，对主线的银币、经验贡献很小，暂记 0"
+    },
+    {
+      "source": "yard",
+      "minLevel": 1,
+      "note": "菜园产出食材，主线的买菜已按菜场模拟；产出的银币经验很小，暂记 0"
+    },
+    {
+      "source": "tower",
+      "minLevel": 10,
+      "renown": 30,
+      "note": "每天 dailyBase 5 次挑战 × winRenownBase 6 声望；守塔人门槛按 10 级估"
+    },
+    {
+      "source": "temple",
+      "minLevel": 15,
+      "exp": 3000,
+      "note": "试炼每天几次，trialExpMax 150 × 等级系数粗估；开放等级按 15 级估"
+    },
+    {
+      "source": "takeaway",
+      "minLevel": 30,
+      "coin": 200000,
+      "exp": 10000,
+      "note": "开通要 2 星和 888 万银币（这里不扣开通费）；按每天约 10 单、每单约 2 万银币和 1000 经验粗估"
+    },
+    {
+      "source": "equip",
+      "minLevel": 20,
+      "effects": { "coinRate": 0.03, "expRate": 0.03 },
+      "note": "穿戴厨具带来的结算加成粗估：20 级起一套普通厨具"
+    },
+    {
+      "source": "equip",
+      "minLevel": 40,
+      "effects": { "coinRate": 0.08, "expRate": 0.08, "luckValue": 10 },
+      "note": "40 级起换成中档套装并强化"
+    },
+    {
+      "source": "equip",
+      "minLevel": 60,
+      "effects": { "coinRate": 0.15, "expRate": 0.15, "luckValue": 20 },
+      "note": "60 级起高档套装"
+    }
+  ]
+}
