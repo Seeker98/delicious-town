@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 const num = z.number();
 const int = z.number().int();
+/** 奖励（邀请等配置里用）：和后台补偿同样的五项 */
+const idNum = z.object({ id: int, num: int.min(1) });
+const rewardSchema = z.object({
+  coin: int.min(1).optional(),
+  diamond: int.min(1).optional(),
+  exp: int.min(1).optional(),
+  goods: z.array(idNum).optional(),
+  foods: z.array(idNum).optional(),
+});
 const levelWeights = z.array(z.tuple([int, num])).min(1);
 
 /** 数值常量（data/game/tuning.json）。区服可以通过 shard_config.override.tuning 覆盖任意字段 */
@@ -541,6 +550,13 @@ export const tuningSchema = z.object({
   }),
   rank: z.object({ top: int.min(1), cacheSeconds: int.min(0), powerCacheSeconds: int.min(0) }),
   mail: z.object({ expiresDays: int.min(1), listMax: int.min(1).max(500) }),
+  invite: z.object({
+    monthlyCap: int.min(1),
+    levels: z.object({ lv10: int.min(1), lv30: int.min(1) }),
+    newbie: rewardSchema,
+    rewards: z.object({ lv10: rewardSchema, lv30: rewardSchema }),
+  }),
+  redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),
   forum: z.object({
     titleMax: int.min(1),
     contentMax: int.min(1),

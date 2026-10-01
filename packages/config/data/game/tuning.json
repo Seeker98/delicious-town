@@ -323,6 +323,13 @@
   },
   "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 },
   "mail": { "expiresDays": 30, "listMax": 100 },
+  "invite": {
+    "monthlyCap": 20,
+    "levels": { "lv10": 10, "lv30": 30 },
+    "newbie": { "coin": 50000, "goods": [{ "id": 1, "num": 5 }] },
+    "rewards": { "lv10": { "diamond": 20 }, "lv30": { "diamond": 50, "coin": 200000 } }
+  },
+  "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,
