@@ -967,6 +967,16 @@ export interface ReportEntryTable {
   created_at: TsDefault;
 }
 
+/** 登录记录（子项目 6B-2，多号检测）：每账号、IP、设备一行，只留 30 天 */
+export interface LoginTraceTable {
+  account_id: number;
+  ip: string;
+  device_id: Nullable<string>;
+  device_key: Generated<string>;
+  first_seen: TsDefault;
+  last_seen: TsDefault;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1041,6 +1051,7 @@ export interface DB {
   invite_reward: InviteRewardTable;
   report_case: ReportCaseTable;
   report_entry: ReportEntryTable;
+  login_trace: LoginTraceTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

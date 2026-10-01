@@ -3,6 +3,7 @@ import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { Game } from '../game';
 import { processGrants } from '../modules/admin/grants';
+import { cleanLoginTrace } from '../modules/account/loginTrace';
 import { runOpsScan } from '../modules/ops/scan';
 import { runDueJobs } from './periodic';
 import { pullOffset } from '../infra/clock';
@@ -35,6 +36,14 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
   const { db, redis } = game.app;
   const now = () => game.deps.now();
   return [
+    {
+      // 登录记录只留 30 天（子项目 6B-2）
+      name: 'login-trace-clean',
+      intervalMs: 6 * 3_600_000,
+      run: async () => {
+        await cleanLoginTrace(db, now());
+      },
+    },
     {
       name: 'partitions',
       intervalMs: 3_600_000,
