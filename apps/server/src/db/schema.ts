@@ -977,6 +977,46 @@ export interface LoginTraceTable {
   last_seen: TsDefault;
 }
 
+export interface ActivityTable {
+  id: Generated<number>;
+  shard_id: Nullable<number>;
+  kind: 'goals' | 'grid' | 'pass';
+  title: string;
+  body: string;
+  starts_at: Ts;
+  ends_at: Ts;
+  min_level: Default<number>;
+  def: Json<unknown>;
+  actor_account_id: Nullable<number>;
+  created_at: TsDefault;
+  updated_at: TsDefault;
+  deleted_at: TsNullable;
+}
+export interface ActivityCounterTable {
+  activity_id: number;
+  rest_id: number;
+  key: string;
+  /** bigint：pg 读出为字符串，用 Number() 转 */
+  count: ColumnType<string, number | string, number | string>;
+}
+export interface ActivityClaimTable {
+  activity_id: number;
+  rest_id: number;
+  reward_key: string;
+  via: 'page' | 'mail';
+  claimed_at: TsDefault;
+}
+export interface ActivityPassTable {
+  activity_id: number;
+  rest_id: number;
+  unlocked_at: TsDefault;
+}
+export interface ActivitySettleTable {
+  activity_id: number;
+  shard_id: number;
+  settled_at: TsDefault;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1052,6 +1092,11 @@ export interface DB {
   report_case: ReportCaseTable;
   report_entry: ReportEntryTable;
   login_trace: LoginTraceTable;
+  activity: ActivityTable;
+  activity_counter: ActivityCounterTable;
+  activity_claim: ActivityClaimTable;
+  activity_pass: ActivityPassTable;
+  activity_settle: ActivitySettleTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
