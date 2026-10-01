@@ -18,6 +18,7 @@ vi.mock('../api/endpoints', () => ({
     openPlaque2: vi.fn(),
     dineCurrent: vi.fn(),
     dineEnd: vi.fn(),
+    announcements: vi.fn(),
   },
 }));
 
@@ -102,6 +103,7 @@ describe('RestaurantHomeView', () => {
     setActivePinia(createPinia());
     vi.mocked(endpoints.overview).mockResolvedValue(dto);
     vi.mocked(endpoints.dineCurrent).mockResolvedValue(null);
+    vi.mocked(endpoints.announcements).mockResolvedValue({ items: [] });
     vi.mocked(endpoints.tasks).mockResolvedValue({
       mainStep: 1,
       main: {
@@ -392,5 +394,23 @@ describe('RestaurantHomeView', () => {
     const btn = card.find('button');
     expect(btn.text()).toBe('领奖');
     expect(btn.classes()).not.toContain('float-end');
+  });
+
+  it('有公告时首页显示公告横幅（子项目 6A）', async () => {
+    vi.mocked(endpoints.announcements).mockResolvedValue({
+      items: [
+        {
+          id: 1,
+          title: '停服维护',
+          body: '今晚 2 点',
+          important: false,
+          startsAt: '2026-10-01T00:00:00.000Z',
+          endsAt: '2026-10-02T00:00:00.000Z',
+          seen: true,
+        },
+      ],
+    });
+    const w = await mountView();
+    expect(w.find('[data-testid="announce-banner"]').text()).toContain('停服维护');
   });
 });

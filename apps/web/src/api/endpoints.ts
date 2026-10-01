@@ -123,6 +123,7 @@ import type {
   TakeawayClaimDto,
   TakeawayDeliveryDto,
   TakeawayDto,
+  AnnouncementsDto,
   MailClaimAllDto,
   MailClaimDto,
   MailListDto,
@@ -422,6 +423,9 @@ export const endpoints = {
   townWish: () => api.post<WishResultDto>('/api/v1/town/wish'),
   townFeast: (foodsId?: number) =>
     api.post<FeastResultDto>('/api/v1/town/feast', foodsId === undefined ? {} : { foodsId }),
+  announcements: () => api.get<AnnouncementsDto>('/api/v1/announcements'),
+  announcementSeen: (id: number) => api.post<null>(`/api/v1/announcements/${id}/seen`, {}),
+  publicAnnouncements: () => api.get<AnnouncementsDto>('/api/v1/public/announcements'),
   mail: () => api.get<MailListDto>('/api/v1/mail'),
   mailUnread: () => api.get<{ count: number }>('/api/v1/mail/unread'),
   mailRead: (id: number) => api.post<void>(`/api/v1/mail/${id}/read`, {}),

@@ -2,6 +2,7 @@
 import { computed, onMounted } from 'vue';
 import { RouterView, useRoute } from 'vue-router';
 import { setEventsListener } from './api/client';
+import AnnouncePopup from './components/AnnouncePopup.vue';
 import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
@@ -37,6 +38,7 @@ onMounted(() => {
     <main :class="['dt-main', { 'dt-main-nav': inGame }]">
       <RouterView />
     </main>
+    <AnnouncePopup v-if="inGame" />
     <EventToast />
     <BottomNav v-if="inGame" />
   </div>
