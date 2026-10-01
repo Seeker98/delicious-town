@@ -44,6 +44,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
       { to: '/weather', icon: 'bi-cloud-sun', label: '天气' },
       { to: '/rest/look', icon: 'bi-palette', label: '装扮' },
       { to: '/invite', icon: 'bi-person-plus', label: '邀请好友' },
+      { to: '/guide', icon: 'bi-signpost-2', label: '游玩指引' },
       { to: '/redeem', icon: 'bi-ticket-perforated', label: '兑换码' },
       { to: '/shards', icon: 'bi-arrow-left-right', label: '切换区服' },
     ],

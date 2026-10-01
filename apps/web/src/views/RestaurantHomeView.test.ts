@@ -132,6 +132,15 @@ describe('RestaurantHomeView', () => {
     });
   });
 
+  it('等级 < 10 显示新手提示，链到游玩指引；10 级起不显示（问题记录 150）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 9 });
+    const low = await mountView();
+    expect(low.find('[data-testid="guide-hint"]').attributes('href')).toBe('/guide');
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 10 });
+    const high = await mountView();
+    expect(high.find('[data-testid="guide-hint"]').exists()).toBe(false);
+  });
+
   it('显示概况、本轮收益、主线任务、设施位和加成', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="rest-name"]').text()).toBe('开张大吉店');

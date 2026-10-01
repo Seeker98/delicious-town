@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import type { ShardDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
@@ -76,6 +76,10 @@ async function logout() {
       </button>
     </div>
     <p v-if="loaded && shards.length === 0 && !error" class="text-muted small mt-2">暂时没有开放的区服</p>
-    <button type="button" class="btn btn-outline-secondary btn-sm mt-3" @click="logout">退出登录</button>
+    <div class="d-flex gap-3 align-items-center mt-3 small">
+      <RouterLink to="/account">我的账号</RouterLink>
+      <RouterLink to="/guide">游玩指引</RouterLink>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" @click="logout">退出登录</button>
+    </div>
   </div>
 </template>
