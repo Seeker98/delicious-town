@@ -210,7 +210,11 @@ const resultText = computed(() => {
     </div>
 
     <template v-else>
-      <div :class="['fw-bold', last?.correct ? 'text-success' : 'text-danger']" data-testid="mem-result">
+      <div
+        :class="['fw-bold', last?.correct ? 'text-success' : 'text-danger']"
+        aria-live="polite"
+        data-testid="mem-result"
+      >
         {{ resultText }}
       </div>
       <div class="mt-2">

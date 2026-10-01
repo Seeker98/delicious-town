@@ -32,6 +32,9 @@ describe('BarView', () => {
     expect(w.text()).toContain('fg-panel');
     await w.find('[data-testid="tab-slot"]').trigger('click');
     expect(w.text()).toContain('slot-panel');
+    // 当前标签带 aria-current（PR28 遗留）
+    expect(w.find('[data-testid="tab-slot"]').attributes('aria-current')).toBe('page');
+    expect(w.find('[data-testid="tab-fg"]').attributes('aria-current')).toBeUndefined();
     expect(localStorage.getItem('dt_bar_tab')).toBe('slot');
     const again = mount(BarView, { global: { stubs } });
     await flushPromises();

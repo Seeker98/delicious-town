@@ -446,13 +446,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   padding: 8px 4px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--dt-line);
   border-radius: 8px;
   background: #fff;
   font-size: 12px;
-  color: #495057;
+  color: var(--dt-muted);
 }
 .dt-cup i {
   font-size: 22px;
@@ -468,6 +468,10 @@ body {
 .dt-cup-bar {
   background: var(--dt-line);
 }
+/* 结束后没喝的杯子变灰（PR28 遗留） */
+.dt-cup-left {
+  opacity: 0.45;
+}
 .dt-cup-spiked {
   background: #fff5f5;
   border-color: #ffa8a8;
@@ -477,15 +481,17 @@ body {
 .dt-mixes {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 8px;
 }
+/* 触控目标至少 44px（视觉规范） */
 .dt-mix {
-  padding: 10px 0;
-  border: 1px solid #e9ecef;
+  min-height: 44px;
+  padding: 8px 0;
+  border: 1px solid var(--dt-line);
   border-radius: 8px;
   background: #fff;
   font-size: 13px;
-  color: #495057;
+  color: var(--dt-muted);
 }
 .dt-mix:disabled {
   opacity: 1;

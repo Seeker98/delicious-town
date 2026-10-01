@@ -50,12 +50,16 @@ describe('DevilPanel', () => {
     await w.find('[data-testid="devil-cup-2"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDevilDrink).toHaveBeenCalledWith(2);
-    expect(w.find('[data-testid="devil-status"]').text()).toBe('调酒师喝了 4 号杯，没事。轮到你了');
+    expect(w.find('[data-testid="devil-status"]').text()).toBe(
+      '你喝了 3 号杯，没事；调酒师接着喝了 4 号杯，也没事。轮到你了',
+    );
     // 父组件刷新概览后提示不能被冲掉（终审 I1）：概览里的局面没有 lastBartender
     const fresh = barData();
     fresh.devil.round = round({ cups: ['me', 'bartender', 'me', 'bartender', null, null], survived: 2 });
     await w.setProps({ data: fresh });
-    expect(w.find('[data-testid="devil-status"]').text()).toBe('调酒师喝了 4 号杯，没事。轮到你了');
+    expect(w.find('[data-testid="devil-status"]').text()).toBe(
+      '你喝了 3 号杯，没事；调酒师接着喝了 4 号杯，也没事。轮到你了',
+    );
   });
 
   it('赢：亮出特辣酒，提示赢得的礼券；可以再来一局', async () => {
@@ -77,6 +81,10 @@ describe('DevilPanel', () => {
       '调酒师喝到了特辣酒！你活过 1 杯，赢得 7 张神秘礼券',
     );
     expect(w.find('[data-testid="devil-cup-5"]').classes()).toContain('dt-cup-spiked');
+    expect(w.find('[data-testid="devil-result"]').attributes('aria-live')).toBe('polite');
+    // 结束后没喝的杯子变灰（PR28 遗留）
+    expect(w.find('[data-testid="devil-cup-1"]').classes()).toContain('dt-cup-left');
+    expect(w.find('[data-testid="devil-cup-0"]').classes()).not.toContain('dt-cup-left');
     await w.find('[data-testid="devil-again"]').trigger('click');
     expect(w.find('[data-testid="devil-stake-1"]').exists()).toBe(true);
   });

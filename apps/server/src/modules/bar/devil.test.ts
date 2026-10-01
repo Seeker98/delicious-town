@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
-import { listActiveEffects } from '../effects/service';
+import { getEffectAgg, listActiveEffects } from '../effects/service';
 import { listNews } from '../news/news';
 
 /** 每次操作取下一个随机数：开局那个定特辣酒（⌊v×6⌋），之后每次"喝"定调酒师选第几杯（⌊v×剩余杯数⌋） */
@@ -66,6 +66,9 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
 
   it('玩家喝到：输掉押注、宿醉 1 小时上座率 -10%；再次宿醉重新计时、不叠加', async () => {
     const a = await player();
+    const base =
+      (await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, t.deps.config.tuning)).atRate ??
+      0;
     script = [0];
     await start(a, 5);
     const r = (await drink(a, 0)).data;
@@ -88,6 +91,9 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     );
     expect(again).toHaveLength(1);
     expect(again[0]!.expiresAt).toEqual(new Date(t.clock.now.getTime() + 3600_000));
+    // 加成汇总里上座率只扣一次 10%（PR28 遗留）
+    const agg = await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, t.deps.config.tuning);
+    expect(agg.atRate ?? 0).toBeCloseTo(base - 0.1, 6);
   });
 
   it('喝过的杯、越界的杯、没有局时都被拒', async () => {
@@ -108,9 +114,14 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     const a = await player();
     script = [0.9, 0, 0];
     await start(a, 1);
-    await Promise.allSettled([drink(a, 2), drink(a, 3)]);
+    const rs = await Promise.allSettled([drink(a, 2), drink(a, 3)]);
     const v = await t.game.bar.overview(a);
     const round = v.devil.round!;
+    // 两次请求都按顺序生效（各喝一杯），没有被吞掉或重复处理（PR28 遗留：断言加强）
+    expect(rs.map((r) => r.status)).toEqual(['fulfilled', 'fulfilled']);
+    expect(round.cups[2]).toBe('me');
+    expect(round.cups[3]).toBe('me');
+    expect(round.survived).toBe(2);
     expect(round.cups.filter((c) => c === 'me')).toHaveLength(round.survived);
     expect(round.cups.filter((c) => c === 'bartender')).toHaveLength(round.survived);
   });

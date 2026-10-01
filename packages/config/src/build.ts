@@ -714,6 +714,19 @@ export function buildBundle(src: SourceData): BuildResult {
   if (wageCards.size !== hh.weeklyCards.length || hh.weeklyCards.some((c) => !wageCards.has(c)))
     errors.push('tuning.hiphop.wages must cover exactly the weeklyCards');
 
+  // ---------- 酒吧扩展、神殿飞弹（PR27、PR28 遗留） ----------
+  const mem = tuning.bar.memory;
+  if (mem.lengths.length !== mem.awardLevels.length)
+    errors.push('tuning.bar.memory: lengths and awardLevels must have the same count');
+  const darts = tuning.bar.darts;
+  if (darts.periodMs[0] > darts.periodMs[1]) errors.push('tuning.bar.darts.periodMs must be [min, max]');
+  if (darts.rings.some(([r], i) => i > 0 && r <= darts.rings[i - 1]![0]))
+    errors.push('tuning.bar.darts.rings must be sorted by radius');
+  for (const [id, min, max] of tuning.temple.missileAttack) {
+    if (!goodsIds.has(id)) errors.push(`tuning.temple.missileAttack references unknown goods ${id}`);
+    if (min > max) errors.push(`tuning.temple.missileAttack ${id} min > max`);
+  }
+
   // ---------- 论坛（子项目 4E-3） ----------
   for (const [id] of tuning.forum.featureReward.goods)
     if (!goodsIds.has(id)) errors.push(`forum.featureReward references unknown goods ${id}`);

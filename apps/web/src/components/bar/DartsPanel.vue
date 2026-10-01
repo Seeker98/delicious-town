@@ -127,7 +127,7 @@ const resultText = computed(() => {
       今天 {{ data.darts.played }}/{{ data.darts.max }} 局，每局 {{ data.darts.cost }} 张神秘礼券
     </div>
 
-    <div class="dt-board mb-2">
+    <div class="dt-board mb-2" role="img" aria-label="靶条：正中 50 分，向外依次 25、10、5 分，边缘 0 分">
       <div class="dt-board-ring dt-board-r5"></div>
       <div class="dt-board-ring dt-board-r10"></div>
       <div class="dt-board-ring dt-board-r25"></div>
@@ -153,6 +153,7 @@ const resultText = computed(() => {
           'fw-bold',
           last.result === 'win' ? 'text-success' : last.result === 'draw' ? '' : 'text-danger',
         ]"
+        aria-live="polite"
         data-testid="darts-result"
       >
         {{ resultText }}
