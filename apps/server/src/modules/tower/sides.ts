@@ -22,7 +22,7 @@ export async function mcPriceOf(db: Kysely<DB>, rest: RestaurantRow): Promise<nu
 
 /**
  * 一方的对决属性（设计文档 §3.1）：加点 + 厨具 + 宝石，四项乘套装百分比；
- * 刀工、火候再乘套装的进攻或防守加成；幸运 = 基础幸运 + 加成的 luckValue
+ * 厨艺、刀工、火候再乘套装的进攻或防守加成；幸运 = 基础幸运 + 加成的 luckValue
  */
 export async function sideOf(
   db: Kysely<DB>,
@@ -32,12 +32,14 @@ export async function sideOf(
   mode: DuelMode,
 ): Promise<DuelSide> {
   const gear = await restGear(db, rest, config.suits);
+  const cook = suitEffect(gear.suits, mode === 'attack' ? 'attackCook' : 'defendCook');
   const cut = suitEffect(gear.suits, mode === 'attack' ? 'attackCutting' : 'defendCutting');
   const fire = suitEffect(gear.suits, mode === 'attack' ? 'attackFire' : 'defendFire');
   return {
     name: rest.name,
     attrs: {
       ...gear.total,
+      cook: Math.round(gear.total.cook * (1 + cook)),
       cutting: Math.round(gear.total.cutting * (1 + cut)),
       fire: Math.round(gear.total.fire * (1 + fire)),
       luck: rest.luck + luckValue,

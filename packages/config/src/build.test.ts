@@ -9,7 +9,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
-    expect(bundle!.goods).toHaveLength(602);
+    expect(bundle!.goods).toHaveLength(615);
     expect(bundle!.cookbooks).toHaveLength(2363);
     expect(bundle!.streets).toHaveLength(14);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -63,7 +63,7 @@ describe('buildBundle（真实数据）', () => {
     expect(goods.get(3)!.value).toBe(1);
   });
 
-  it('厨具和宝石解析出定义，套装 7 套，引用都有效', () => {
+  it('厨具和宝石解析出定义，套装 9 套，引用都有效', () => {
     const { bundle } = buildBundle(source());
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     expect(goods.get(30)!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
@@ -73,7 +73,7 @@ describe('buildBundle（真实数据）', () => {
     expect(goods.get(13)!.equip).toBeNull();
     expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
     expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
-    expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 80, 81, 100]);
+    expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 7, 80, 81, 82, 100]);
   });
 
   it('同样的输入生成同样的版本号', () => {
@@ -507,6 +507,133 @@ describe('论坛（子项目 4E-3）', () => {
     expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
       'forum.featureReward references unknown goods 999999',
     );
+  });
+});
+
+describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
+  const byId = () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    return {
+      goods: new Map(bundle!.goods.map((g) => [g.id, g])),
+      suits: new Map(bundle!.suits.map((s) => [s.id, s])),
+    };
+  };
+
+  it('旧厨具改名，说明里带背景故事', () => {
+    const { goods } = byId();
+    expect(goods.get(33)!.name).toBe('灵魂之沙利叶的无情之铲');
+    expect(goods.get(34)!.name).toBe('灵魂之沙利叶的无情之刃');
+    expect(goods.get(56)!.name).toBe('沉默之度玛的静谧之镬');
+    expect(goods.get(58)!.name).toBe('沉默之度玛的静谧之冠');
+    expect(goods.get(59)!.name).toBe('裁决之巴贝雷特的悲鸣之铲');
+    expect(goods.get(61)!.name).toBe('裁决之巴贝雷特的悲鸣之冠');
+    expect(goods.get(352)!.name).toBe('神谕之阿卡玛的荣耀之铲');
+    expect(goods.get(413)!.name).toBe('神谕之阿卡玛的荣耀之冠');
+    // 说明保留原来的属性提示，再加故事
+    expect(goods.get(33)!.desc).toMatch(/^厨艺\+18。.+/);
+    expect(goods.get(352)!.desc).toMatch(/^厨艺\+38。.+/);
+    // 数值不变
+    expect(goods.get(59)!.equip).toMatchObject({ part: 1, total: 35, suitId: 6 });
+  });
+
+  it('阿卡玛五件从厨塔第 8 层起掉落（原来没有获得途径）', () => {
+    const { goods } = byId();
+    for (const id of [352, 353, 354, 356, 413]) expect(goods.get(id)!.awardFlag).toBe(8);
+  });
+
+  it('新厨具：沙利叶镬瓶、巴贝雷特镬瓶、古尔图格五件、茵蔯四件', () => {
+    const { goods } = byId();
+    const parts = (ids: number[]) => ids.map((id) => goods.get(id)!.equip!.part);
+    expect(goods.get(628)).toMatchObject({ name: '灵魂之沙利叶的无情之镬', awardFlag: 4, type: 4 });
+    expect(goods.get(628)!.equip).toMatchObject({ part: 3, suitId: 4, minLevel: 20, total: null });
+    expect(goods.get(628)!.equip!.ranges.fire).toBe(18);
+    expect(goods.get(629)!.equip!.ranges.season).toBe(18);
+    expect(parts([630, 631])).toEqual([3, 4]);
+    expect(goods.get(630)!.equip).toMatchObject({ suitId: 6, total: 35 });
+    expect(goods.get(630)!.awardFlag).toBe(6);
+    expect(goods.get(632)!.name).toBe('意志之古尔图格的精华之铲');
+    expect(parts([632, 633, 634, 635, 636])).toEqual([1, 2, 3, 4, 5]);
+    for (const id of [632, 636]) {
+      expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 37, minLevel: 60 });
+      expect(goods.get(id)!.awardFlag).toBe(7);
+    }
+    expect(goods.get(637)!.name).toBe('堕落之茵蔯的炙热之铲');
+    expect(parts([637, 638, 639, 640])).toEqual([1, 2, 3, 4]);
+    for (const id of [637, 640]) {
+      expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 30, minLevel: 30 });
+      expect(goods.get(id)!.awardFlag).toBe(5);
+    }
+    for (const id of [628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640])
+      expect(goods.get(id)!.desc.length).toBeGreaterThan(10);
+  });
+
+  it('套装改名，沙利叶 4 件、巴贝雷特 3/4/5 件、茵蔯 2/4 件、古尔图格 4/5 件', () => {
+    const { suits } = byId();
+    expect([...suits.keys()].sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 7, 80, 81, 82, 100]);
+    expect(suits.get(4)).toMatchObject({ name: '沙利叶的灵魂', maxNum: 4 });
+    expect(suits.get(4)!.tiers.map((t) => t.need)).toEqual([2, 4]);
+    expect(suits.get(4)!.tiers[1]!.effects).toEqual({ cookPct: 0.04, seasonPct: 0.04, luckValue: 8 });
+    expect(suits.get(5)).toMatchObject({ name: '度玛的沉默', maxNum: 3 });
+    expect(suits.get(6)).toMatchObject({ name: '巴贝雷特的裁决', maxNum: 5 });
+    expect(suits.get(6)!.tiers.map((t) => t.need)).toEqual([3, 4, 5]);
+    expect(suits.get(6)!.tiers[0]!.effects).toEqual({ cookPct: 0.05, seasonPct: 0.06 });
+    expect(suits.get(6)!.tiers[1]!.effects).toEqual({ atRate: 0.08, operFoodsAddRate: 0.05 });
+    expect(suits.get(6)!.tiers[2]!.effects).toEqual({ cuttingPct: 0.05, firePct: 0.05, luckValue: 16 });
+    expect(suits.get(7)).toMatchObject({ name: '茵蔯的堕落', maxNum: 4 });
+    expect(suits.get(7)!.tiers.map((t) => t.effects)).toEqual([
+      { firePct: 0.05, atRate: 0.03 },
+      { cookPct: 0.04, cuttingPct: 0.04, luckValue: 12 },
+    ]);
+    expect(suits.get(80)).toMatchObject({ name: '阿卡玛的神谕', maxNum: 5 });
+    expect(suits.get(82)).toMatchObject({ name: '古尔图格的意志', maxNum: 5 });
+    expect(suits.get(82)!.tiers.map((t) => t.effects)).toEqual([
+      { cuttingPct: 0.06, firePct: 0.06 },
+      { atRate: 0.06, luckValue: 24, attackCook: 0.05 },
+    ]);
+  });
+
+  it('每套的件数上限等于这套的厨具数', () => {
+    const { bundle } = buildBundle(source());
+    for (const s of bundle!.suits.filter((x) => [4, 5, 6, 7, 80, 82].includes(x.id)))
+      expect(bundle!.goods.filter((g) => g.equip?.suitId === s.id)).toHaveLength(s.maxNum);
+  });
+
+  it('改名引用了不存在的道具、新增道具 id 重复时构建报错', () => {
+    const src = source();
+    const lore = structuredClone(src['game/equip_lore']) as {
+      rename: Array<{ id: number }>;
+      add: Array<{ id: number }>;
+    };
+    lore.rename[0]!.id = 999999;
+    lore.add[0]!.id = 33;
+    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
+    expect(errors).toContain('equip_lore rename references unknown goods 999999');
+    expect(errors).toContain('equip_lore add duplicates goods 33');
+  });
+
+  it('overlay 写错键名、套装效果键拼错、档位件数超过上限、件数和上限对不上时构建报错（终审 I3）', () => {
+    const src = source();
+    type Lore = {
+      rename: Array<Record<string, unknown>>;
+      suits: Array<{
+        suitid: number;
+        maxnum: number;
+        tiers: Array<{ neednum: number; value: Record<string, number> }>;
+      }>;
+    };
+    const lore = structuredClone(src['game/equip_lore']) as Lore;
+    lore.rename[0]!.awardFlag = 8;
+    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
+    expect(errors).toContainEqual(expect.stringMatching(/^game\/equip_lore: rename\.0.*awardFlag/));
+    const lore2 = structuredClone(src['game/equip_lore']) as Lore;
+    lore2.suits.find((s) => s.suitid === 4)!.tiers[1]!.value = { luckvalue: 8 };
+    lore2.suits.find((s) => s.suitid === 7)!.tiers[1]!.neednum = 5;
+    lore2.suits.find((s) => s.suitid === 82)!.maxnum = 6;
+    const e2 = buildBundle({ ...src, 'game/equip_lore': lore2 }).errors;
+    expect(e2).toContain('equip_suits 4 has unknown effect luckvalue');
+    expect(e2).toContain('equip_suits 7 tier needs 5 pieces but maxnum is 4');
+    expect(e2).toContain('equip_suits 82 has 5 pieces but maxnum is 6');
   });
 });
 

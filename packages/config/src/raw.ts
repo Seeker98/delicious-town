@@ -307,3 +307,14 @@ export const rawSuit = z.object({
 });
 
 export const rawMcProficiency = z.object({ curlevel: int, name: z.string(), expNext: int });
+
+/** data/game/equip_lore.json：厨具改名（带背景故事）、新增厨具、替换或新增套装；手写文件，多写的键报错（终审 I3） */
+export const equipLoreFile = z.object({
+  rename: z.array(
+    z
+      .object({ id: int, name: z.string().min(1), desc: z.string().min(1), awardflag: int.optional() })
+      .strict(),
+  ),
+  add: z.array(rawGoods.extend({ value: z.record(z.union([z.number(), z.string()])) }).strict()),
+  suits: z.array(rawSuit.strict()),
+});

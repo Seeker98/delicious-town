@@ -1,0 +1,142 @@
+{
+  "rename": [
+    { "id": 33, "name": "灵魂之沙利叶的无情之铲", "desc": "厨艺+18。厨塔第四层的守护者沙利叶多年等不来挑战者，只好对着空灶日夜翻炒，铲下从不留情。" },
+    { "id": 34, "name": "灵魂之沙利叶的无情之刃", "desc": "刀工+18。沙利叶切菜从不看砧板，他说刀比人诚实，落下去就不回头。" },
+    { "id": 56, "name": "沉默之度玛的静谧之镬", "desc": "随机增加25点属性。育才长老度玛教徒弟从不开口，只让他们守着这口镬，看火自己说话。" },
+    { "id": 57, "name": "沉默之度玛的静谧之瓶", "desc": "随机增加25点属性。度玛的调味瓶总是满的，他说味道要静下心才尝得出来。" },
+    { "id": 58, "name": "沉默之度玛的静谧之冠", "desc": "随机增加25点属性。度玛收过的弟子里，只有一个再也没回到第五层来戴这顶冠。" },
+    { "id": 59, "name": "裁决之巴贝雷特的悲鸣之铲", "desc": "随机增加35点属性。裁决长老巴贝雷特评判菜品只用这把铲，铲落之处，败者的菜在锅里悲鸣。" },
+    { "id": 60, "name": "裁决之巴贝雷特的悲鸣之刃", "desc": "随机增加35点属性。巴贝雷特说，刀声就是裁决，切得不干净的人连上桌的资格都没有。" },
+    { "id": 61, "name": "裁决之巴贝雷特的悲鸣之冠", "desc": "随机增加35点属性。这顶冠是厨塔给裁决长老的信物，巴贝雷特戴着它判过的比试，没有一场翻过案。" },
+    { "id": 352, "name": "神谕之阿卡玛的荣耀之铲", "desc": "厨艺+38。厨塔塔主阿卡玛以神谕考验来者，这把铲见证了他一生的荣耀。", "awardflag": 8 },
+    { "id": 353, "name": "神谕之阿卡玛的荣耀之刃", "desc": "刀工+38。阿卡玛的刀法从不示人，只在神谕选中的挑战者面前出鞘。", "awardflag": 8 },
+    { "id": 354, "name": "神谕之阿卡玛的荣耀之镬", "desc": "火候+38。阿卡玛说，荣耀是一口烧了一辈子的镬，热度要留给接替他的人。", "awardflag": 8 },
+    { "id": 356, "name": "神谕之阿卡玛的荣耀之瓶", "desc": "调味+38。瓶中的味道据说传自上届食神，阿卡玛珍藏多年，只等有人配得上它。", "awardflag": 8 },
+    { "id": 413, "name": "神谕之阿卡玛的荣耀之冠", "desc": "创意+38。塔主之冠。阿卡玛早已看淡一切，唯一的心愿是在有生之年把它交出去。", "awardflag": 8 }
+  ],
+  "add": [
+    {
+      "id": 628, "name": "灵魂之沙利叶的无情之镬", "type": 4, "devicetype": 3, "maxNum": 99,
+      "desc": "火候+18。沙利叶把等待熬成了火候，这口镬烧了多少年，连他自己也记不清。",
+      "value": { "part": 3, "essence": 18, "fire": 18, "hole": 1, "max_hole": 1, "min_level": 20, "suitid": 4 },
+      "level": 3, "coin": 400000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 4
+    },
+    {
+      "id": 629, "name": "灵魂之沙利叶的无情之瓶", "type": 4, "devicetype": 4, "maxNum": 99,
+      "desc": "调味+18。瓶里是沙利叶调了半辈子的味道，可惜多年没人登上第四层，也就没人尝过。",
+      "value": { "part": 4, "essence": 18, "season": 18, "hole": 1, "max_hole": 1, "min_level": 20, "suitid": 4 },
+      "level": 3, "coin": 400000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 4
+    },
+    {
+      "id": 630, "name": "裁决之巴贝雷特的悲鸣之镬", "type": 4, "devicetype": 3, "maxNum": 99,
+      "desc": "随机增加35点属性。巴贝雷特的镬只用来复核，凡是他亲手重做过一遍的菜，原来的厨师就再也不敢做了。",
+      "value": { "part": 3, "essence": 25, "total": 35, "cook": "0,35", "cutting": "0,35", "fire": "0,35", "season": "0,35", "creatives": "0,35", "luck": "0,35", "hole": 1, "max_hole": 3, "min_level": 13, "suitid": 6 },
+      "level": 5, "coin": 600000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 6
+    },
+    {
+      "id": 631, "name": "裁决之巴贝雷特的悲鸣之瓶", "type": 4, "devicetype": 4, "maxNum": 99,
+      "desc": "随机增加35点属性。瓶身刻满了被裁决者的名字，巴贝雷特说，这些味道他都记得。",
+      "value": { "part": 4, "essence": 28, "total": 35, "cook": "0,35", "cutting": "0,35", "fire": "0,35", "season": "0,35", "creatives": "0,35", "luck": "0,35", "hole": 1, "max_hole": 3, "min_level": 13, "suitid": 6 },
+      "level": 5, "coin": 660000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 6
+    },
+    {
+      "id": 632, "name": "意志之古尔图格的精华之铲", "type": 4, "devicetype": 1, "maxNum": 99,
+      "desc": "随机增加37点属性。厨塔供奉古尔图格在第七层守了一辈子，这把铲是他用尽意志打磨出的精华。",
+      "value": { "part": 1, "essence": 28, "total": 37, "cook": "0,37", "cutting": "0,37", "fire": "0,37", "season": "0,37", "creatives": "0,37", "luck": "0,37", "hole": 1, "max_hole": 3, "min_level": 60, "suitid": 82 },
+      "level": 5, "coin": 700000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 7
+    },
+    {
+      "id": 633, "name": "意志之古尔图格的精华之刃", "type": 4, "devicetype": 2, "maxNum": 99,
+      "desc": "随机增加37点属性。古尔图格说过，下辈子再也不踏进这座塔；可他的刀，一天也没离开过砧板。",
+      "value": { "part": 2, "essence": 28, "total": 37, "cook": "0,37", "cutting": "0,37", "fire": "0,37", "season": "0,37", "creatives": "0,37", "luck": "0,37", "hole": 1, "max_hole": 3, "min_level": 60, "suitid": 82 },
+      "level": 5, "coin": 700000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 7
+    },
+    {
+      "id": 634, "name": "意志之古尔图格的精华之镬", "type": 4, "devicetype": 3, "maxNum": 99,
+      "desc": "随机增加37点属性。这口镬承受过古尔图格最旺的火，也承受过他最深的悔意。",
+      "value": { "part": 3, "essence": 28, "total": 37, "cook": "0,37", "cutting": "0,37", "fire": "0,37", "season": "0,37", "creatives": "0,37", "luck": "0,37", "hole": 1, "max_hole": 3, "min_level": 60, "suitid": 82 },
+      "level": 5, "coin": 700000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 7
+    },
+    {
+      "id": 635, "name": "意志之古尔图格的精华之瓶", "type": 4, "devicetype": 4, "maxNum": 99,
+      "desc": "随机增加37点属性。古尔图格把一生的手艺熬成几滴精华封在瓶里，留给能走到第七层的人。",
+      "value": { "part": 4, "essence": 30, "total": 37, "cook": "0,37", "cutting": "0,37", "fire": "0,37", "season": "0,37", "creatives": "0,37", "luck": "0,37", "hole": 1, "max_hole": 3, "min_level": 60, "suitid": 82 },
+      "level": 5, "coin": 760000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 7
+    },
+    {
+      "id": 636, "name": "意志之古尔图格的精华之冠", "type": 4, "devicetype": 5, "maxNum": 99,
+      "desc": "随机增加37点属性。供奉之冠只赐给守塔最久的人。古尔图格戴着它，却总望着塔外。",
+      "value": { "part": 5, "essence": 34, "total": 37, "cook": "0,37", "cutting": "0,37", "fire": "0,37", "season": "0,37", "creatives": "0,37", "luck": "0,37", "hole": 1, "max_hole": 3, "min_level": 60, "suitid": 82 },
+      "level": 5, "coin": 1000000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 7
+    },
+    {
+      "id": 637, "name": "堕落之茵蔯的炙热之铲", "type": 4, "devicetype": 1, "maxNum": 99,
+      "desc": "随机增加30点属性。茵蔯曾是度玛最得意的弟子，却嫌师父的火太静，执意要把灶烧得更旺。",
+      "value": { "part": 1, "essence": 20, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
+      "level": 4, "coin": 500000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
+    },
+    {
+      "id": 638, "name": "堕落之茵蔯的炙热之刃", "type": 4, "devicetype": 2, "maxNum": 99,
+      "desc": "随机增加30点属性。离开第五层那天，茵蔯只带走了这把刀，刀刃上至今留着灼烧的痕迹。",
+      "value": { "part": 2, "essence": 20, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
+      "level": 4, "coin": 500000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
+    },
+    {
+      "id": 639, "name": "堕落之茵蔯的炙热之镬", "type": 4, "devicetype": 3, "maxNum": 99,
+      "desc": "随机增加30点属性。这口镬永远烧得发红。茵蔯说，只有炙热才能逼出食材全部的味道。",
+      "value": { "part": 3, "essence": 20, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
+      "level": 4, "coin": 500000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
+    },
+    {
+      "id": 640, "name": "堕落之茵蔯的炙热之瓶", "type": 4, "devicetype": 4, "maxNum": 99,
+      "desc": "随机增加30点属性。瓶里是茵蔯在厨塔暗处调出的酱，香得让人忘了回头的路。",
+      "value": { "part": 4, "essence": 22, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
+      "level": 4, "coin": 550000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
+    }
+  ],
+  "suits": [
+    {
+      "suitid": 4, "name": "沙利叶的灵魂", "maxnum": 4,
+      "tiers": [
+        { "neednum": 2, "desc": "上座率+3%, 被挑战时额外提升: 刀工+4%,火候+4%", "value": { "atRate": 0.03, "defendCutting": 0.04, "defendFire": 0.04 } },
+        { "neednum": 4, "desc": "厨艺+4%,调味+4%,幸运+8", "value": { "cook": 0.04, "season": 0.04, "luckValue": 8 } }
+      ]
+    },
+    {
+      "suitid": 5, "name": "度玛的沉默", "maxnum": 3,
+      "tiers": [
+        { "neednum": 2, "desc": "刀工+4%,火候+4%", "value": { "cutting": 0.04, "fire": 0.04 } },
+        { "neednum": 3, "desc": "上座率+4%, 探险时额外降低2%的迷路概率", "value": { "atRate": 0.04, "exploreSuccessRate": 0.02 } }
+      ]
+    },
+    {
+      "suitid": 6, "name": "巴贝雷特的裁决", "maxnum": 5,
+      "tiers": [
+        { "neednum": 3, "desc": "厨艺+5%,调味+6%", "value": { "cook": 0.05, "season": 0.06 } },
+        { "neednum": 4, "desc": "上座率+8%, 分解食材时5%的概率多得到一个低级食材", "value": { "atRate": 0.08, "operFoodsAddRate": 0.05 } },
+        { "neednum": 5, "desc": "刀工+5%,火候+5%,幸运+16", "value": { "cutting": 0.05, "fire": 0.05, "luckValue": 16 } }
+      ]
+    },
+    {
+      "suitid": 7, "name": "茵蔯的堕落", "maxnum": 4,
+      "tiers": [
+        { "neednum": 2, "desc": "火候+5%,上座率+3%", "value": { "fire": 0.05, "atRate": 0.03 } },
+        { "neednum": 4, "desc": "厨艺+4%,刀工+4%,幸运+12", "value": { "cook": 0.04, "cutting": 0.04, "luckValue": 12 } }
+      ]
+    },
+    {
+      "suitid": 80, "name": "阿卡玛的神谕", "maxnum": 5,
+      "tiers": [
+        { "neednum": 4, "desc": "厨艺+8%,调味+8%", "value": { "cook": 0.08, "season": 0.08 } },
+        { "neednum": 5, "desc": "幸运+32, 被挑战时额外提升: 刀工+6%,火候+6%", "value": { "luckValue": 32, "defendCutting": 0.06, "defendFire": 0.06 } }
+      ]
+    },
+    {
+      "suitid": 82, "name": "古尔图格的意志", "maxnum": 5,
+      "tiers": [
+        { "neednum": 4, "desc": "刀工+6%,火候+6%", "value": { "cutting": 0.06, "fire": 0.06 } },
+        { "neednum": 5, "desc": "上座率+6%,幸运+24, 主动挑战时额外提升: 厨艺+5%", "value": { "atRate": 0.06, "luckValue": 24, "attackCook": 0.05 } }
+      ]
+    }
+  ]
+}

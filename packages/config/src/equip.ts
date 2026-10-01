@@ -79,6 +79,26 @@ const PCT: Record<string, string> = {
   season: 'seasonPct',
 };
 
+/** 服务端会用到的套装效果键（cook 等四项在 buildSuits 里换成 *Pct）；其他键写了也不生效，构建时报错 */
+export const SUIT_EFFECT_KEYS = new Set([
+  'cook',
+  'cutting',
+  'fire',
+  'season',
+  'atRate',
+  'spRate',
+  'coinRate',
+  'operFoodsAddRate',
+  'exploreSuccessRate',
+  'luckValue',
+  'attackCook',
+  'attackCutting',
+  'attackFire',
+  'defendCook',
+  'defendCutting',
+  'defendFire',
+]);
+
 export function buildSuits(list: Array<z.infer<typeof rawSuit>>): SuitDef[] {
   return list.map((s) => ({
     id: s.suitid,
