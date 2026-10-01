@@ -26,8 +26,8 @@ const floor1 = config.towerFloors.get(1)!;
 describe('五项评分（规格书 11.1）', () => {
   it('1 层守塔人，随机数 0.4：每项先判正（0.4 < 0.5），波动 = (创意×0.4+1)×1.1×0.4', () => {
     const s = duelScores({ name: '守', attrs: floor1.attrs, mcPrice: 0 }, sequenceRng([0.4]));
-    expect(s).toEqual([8.1, 8, 6.6, 8.8, 3.6]);
-    expect(sumScores(s)).toBe(35.1);
+    expect(s).toEqual([3.8, 3.9, 3.3, 4.1, 1.9]);
+    expect(sumScores(s)).toBe(17);
   });
 
   it('第一个随机数 ≥ 0.5 时再抽一个比幸运率：没中为负，负数记 0', () => {
@@ -56,7 +56,7 @@ describe('五项评分（规格书 11.1）', () => {
   });
 
   it('厨力 = 五项属性 + ⌊幸运/2⌋；duel 按顺序先算挑战方', () => {
-    expect(duelPower(floor1.attrs)).toBe(29);
+    expect(duelPower(floor1.attrs)).toBe(13);
     const r = duel(
       { name: '我', attrs: { ...zero, cook: 20, cutting: 20, fire: 20, season: 10 }, mcPrice: 0 },
       { name: '守', attrs: floor1.attrs, mcPrice: 0 },
@@ -64,7 +64,7 @@ describe('五项评分（规格书 11.1）', () => {
     );
     expect(r.win).toBe(true);
     expect(r.me.scores).toEqual([20.4, 19.4, 15.4, 22.4, 7.4]);
-    expect(r.them).toEqual({ scores: [8.1, 8, 6.6, 8.8, 3.6], sum: 35.1 });
+    expect(r.them).toEqual({ scores: [3.8, 3.9, 3.3, 4.1, 1.9], sum: 17 });
   });
 });
 

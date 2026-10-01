@@ -179,7 +179,7 @@ describe('酒吧索引（子项目 4C-1）', () => {
 
 describe('厨塔索引（子项目 4C-2）', () => {
   it('守塔人按层索引；tuning.tower', () => {
-    expect(config.towerFloors.get(1)).toMatchObject({ name: '见习模范餐厅', minLevel: 1, power: 29 });
+    expect(config.towerFloors.get(1)).toMatchObject({ name: '见习模范餐厅', minLevel: 1, power: 13 });
     expect(config.towerFloors.get(11)).toBeUndefined();
     expect(config.tuning.tower).toMatchObject({
       dailyBase: 5,

@@ -297,12 +297,12 @@ describe('酒吧配置（子项目 4C-1）', () => {
 });
 
 describe('厨塔配置（子项目 4C-2）', () => {
-  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按原版厨力校准', () => {
+  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按 tower_fix 的厨力校准（问题记录 120）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(f.map((x) => x.power)).toEqual([29, 96, 211, 334, 508, 707, 961, 1225, 1720, 2603]);
+    expect(f.map((x) => x.power)).toEqual([13, 66, 169, 234, 421, 494, 640, 803, 1164, 1522]);
     expect(f[9]).toMatchObject({
       name: '彭祖',
       title: '食神',
@@ -310,7 +310,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
       maxTimes: 2,
       mc: true,
       note: '你会做蛋炒饭吗?',
-      attrs: { cook: 599, cutting: 599, fire: 599, season: 331, creatives: 331, luck: 288 },
+      attrs: { cook: 350, cutting: 350, fire: 350, season: 194, creatives: 194, luck: 169 },
     });
     expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
     expect(f.map((x) => x.maxTimes)).toEqual([10, 10, 10, 10, 5, 3, 2, 1, 1, 2]);
@@ -710,6 +710,37 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
     tuning.invite.rewards.lv10.goods = [{ id: 999999, num: 1 }];
     expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
       'invite.rewards.lv10 references unknown goods 999999',
+    );
+  });
+});
+
+describe('守塔人（问题记录 120）', () => {
+  it('第 5、6 层互换；厨力按参照玩家重算', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const f = bundle!.towerFloors;
+    expect(f[4]).toMatchObject({
+      floor: 5,
+      name: '裁决之巴贝雷特',
+      title: '裁决长老',
+      minLevel: 41,
+      maxTimes: 5,
+    });
+    expect(f[5]).toMatchObject({
+      floor: 6,
+      name: '沉默的度玛',
+      title: '育才长老',
+      minLevel: 51,
+      maxTimes: 3,
+    });
+    const want = [14, 66, 168, 236, 420, 494, 640, 802, 1162, 1522];
+    f.forEach((x, i) => expect(Math.abs(x.power - want[i]!)).toBeLessThanOrEqual(3));
+  });
+
+  it('覆盖文件写了不存在的层时报错', () => {
+    const src = source();
+    expect(buildBundle({ ...src, 'game/tower_fix': { floors: [{ floor: 11, power: 1 }] } }).errors).toContain(
+      'tower_fix references unknown floor 11',
     );
   });
 });

@@ -308,6 +308,21 @@ export const rawSuit = z.object({
 
 export const rawMcProficiency = z.object({ curlevel: int, name: z.string(), expNext: int });
 
+/** data/game/tower_fix.json：守塔人厨力和换层（问题记录 120）；数据集会被同步覆盖，所以单独放 */
+export const towerFixFile = z.object({
+  floors: z.array(
+    z
+      .object({
+        floor: int.min(1),
+        power: int.min(1),
+        watchmanRestName: z.string().min(1).optional(),
+        watchman: z.string().min(1).optional(),
+        note: z.string().optional(),
+      })
+      .strict(),
+  ),
+});
+
 /** 强化数值表（问题记录 120）：单件厨具 +0~+10 的属性总和；按套装或道具 id 覆盖，可带穿戴等级 */
 export const stressTableEntry = z
   .object({
