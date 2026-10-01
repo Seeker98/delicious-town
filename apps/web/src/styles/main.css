@@ -473,3 +473,25 @@ body {
   border-color: #ffa8a8;
   color: #c92a2a;
 }
+/* 记忆调酒：8 种配料两行 */
+.dt-mixes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.dt-mix {
+  padding: 10px 0;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  color: #495057;
+}
+.dt-mix:disabled {
+  opacity: 1;
+}
+.dt-mix-on {
+  background: var(--dt-primary-ink);
+  border-color: var(--dt-primary-ink);
+  color: #fff;
+}
