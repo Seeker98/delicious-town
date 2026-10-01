@@ -48,6 +48,16 @@ const pickedItem = computed(() => data.value?.items.find((x) => x.foodsId === pi
 const pickedLevel = computed(() => (picked.value ? (catalog.food(picked.value)?.level ?? 0) : 0));
 const canDecompose = computed(() => pickedLevel.value >= 2 && pickedLevel.value <= 6);
 const canCompose = computed(() => pickedLevel.value >= 1 && pickedLevel.value <= 4);
+/** 问题记录 140：万能食材能不能换稀有食材 */
+const MASTER_HIGH = '三级及以上的万能食材不能兑换稀有食材，只能在学食谱时顶替同级缺的那一种食材。';
+const MASTER_RULE: Record<number, string> = {
+  467: '2 个一级万能食材换 1 个随机二级稀有食材。',
+  468: '2 个二级万能食材换 1 个随机三级稀有食材。',
+  469: MASTER_HIGH,
+  470: MASTER_HIGH,
+  471: MASTER_HIGH,
+};
+
 /** 一次最多分解几个；合成要偶数个（问题记录：合成不显示最大数） */
 const decomposeMax = computed(() => Math.min(data.value?.handleMax ?? 100, pickedItem.value?.num ?? 0));
 const composeMax = computed(() => Math.floor(decomposeMax.value / 2) * 2);
@@ -144,9 +154,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           :data-testid="`pick-${f.foodsId}`"
           @click="pick(f.foodsId)"
         >
-          <div class="d-flex justify-content-center gap-1">
+          <div class="d-flex justify-content-center gap-1 align-items-start">
             <i v-if="f.locked" class="bi bi-lock-fill"></i>
-            <span class="text-truncate">{{ catalog.foodName(f.foodsId) }}</span>
+            <span class="dt-tile-name">{{ catalog.foodName(f.foodsId) }}</span>
             <span class="dt-tile-num text-nowrap">×{{ f.num }}</span>
           </div>
           <!-- 第二行总是占位，方块一样高（问题记录） -->
@@ -205,6 +215,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           兑换稀有食材
         </button>
       </div>
+      <div v-if="MASTER_RULE[pickedItem.foodsId]" class="text-muted mt-1" data-testid="master-rule">
+        {{ MASTER_RULE[pickedItem.foodsId] }}
+      </div>
       <div class="text-muted mt-1">
         一次最多分解 {{ decomposeMax }}，合成 {{ composeMax }}（合成要偶数个）。分解：1 个 → 2
         次机会得到低一级食材；合成：2 个 → 1 次机会得到高一级食材。
@@ -230,3 +243,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
     </div>
   </template>
 </template>
+
+<style scoped>
+/* 问题记录 138：窄屏下五个字以上的食材名不截断，最多两行 */
+.dt-tile-name {
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
