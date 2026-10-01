@@ -32,7 +32,6 @@ import { attrCols, baseAttrs, boostAttrs, gemAttrs, loadGems, pieceTotal } from 
 import {
   activeSuits,
   addAttrs,
-  attrSeq,
   attrSummary,
   compareGems,
   gemLevelUp,
@@ -322,6 +321,13 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           e.stress >= t.maxStress
             ? null
             : stressRate(e.stress, rest.luck + luckValue, weather.equipRate ?? 0, e.fail_streak, t),
+        next:
+          e.stress >= t.maxStress
+            ? null
+            : {
+                gain: (def.stressTable[e.stress + 1] ?? 0) - (def.stressTable[e.stress] ?? 0),
+                total: def.stressTable[e.stress + 1] ?? 0,
+              },
         cost: { essence: def.essence, coin: def.essence * t.coinPerEssence },
         history: history.map((h) => ({
           stress: h.stress,
@@ -377,8 +383,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         const to = e.stress + 1;
         let gain: { attr: EquipAttr; val: number } | null = null;
         if (r.success) {
-          const main = baseAttrs(e)[attrSeq(e.part)[0]!];
-          gain = stressGain(e.part, main, b.stone, o.rng);
+          const table = def.stressTable;
+          gain = stressGain(e.part, (table[to] ?? 0) - (table[e.stress] ?? 0), o.rng);
           const boost = boostAttrs(e);
           boost[gain.attr] += gain.val;
           await o.tx

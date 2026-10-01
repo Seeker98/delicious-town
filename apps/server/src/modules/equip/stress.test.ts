@@ -62,7 +62,7 @@ describe('强化（设计文档 §3.5）', () => {
     expect(await row(id)).toMatchObject({ stress: 1, fail_streak: 0 });
   });
 
-  it('强化石：必定成功，增量 +1（不超过主属性）；没有强化石报 NOT_ENOUGH', async () => {
+  it('强化石：必定成功，增量仍按数值表（问题记录 120 起不再 +1）；没有强化石报 NOT_ENOUGH', async () => {
     const ctx = await rich();
     const id = await piece(ctx, 30, { base_cook: 8 });
     seq = [0.3];
@@ -71,9 +71,9 @@ describe('强化（设计文档 §3.5）', () => {
       params: { kind: 'goods', id: 40 },
     });
     await t.db.insertInto('store_item').values({ rest_id: ctx.restaurantId, goods_id: 40, num: 1 }).execute();
-    // 0.3 选中厨艺，增量 ⌊0.3×9⌋ = 2，强化石 +1
+    // 0.3 选中厨艺；见习之铲 +0→+1 增量 = 3 − 2 = 1
     const r = await eq().stress(ctx, { id, stone: true });
-    expect(r.data).toMatchObject({ success: true, attr: 'cook', val: 3 });
+    expect(r.data).toMatchObject({ success: true, attr: 'cook', val: 1 });
     expect(await goodsNum(t, ctx.restaurantId, 40)).toBe(0);
   });
 
@@ -119,12 +119,12 @@ describe('强化（设计文档 §3.5）', () => {
     const before =
       (await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning))
         .luckValue ?? 0;
-    // 成功 0.01；铲的顺序 厨艺 刀工 火候 调味 幸运：前四个 0.9 跳过，0.1 选中幸运；增量 ⌊0.5×4⌋ = 2
+    // 成功 0.01；铲的顺序 厨艺 刀工 火候 调味 幸运：前四个 0.9 跳过，0.1 选中幸运；增量 = 见习之铲表 +0→+1 = 1
     seq = [0.01, 0.9, 0.9, 0.9, 0.9, 0.1, 0.5];
     const r = await eq().stress(ctx, { id, stone: false });
-    expect(r.data).toMatchObject({ attr: 'luck', val: 2 });
+    expect(r.data).toMatchObject({ attr: 'luck', val: 1 });
     const after = await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
-    expect(after.luckValue).toBe(before + 2);
+    expect(after.luckValue).toBe(before + 1);
   });
 
   it('连点两次（+9 时两个请求同时到）：只有一个成功，不会超过 +10（Review Focus 1）', async () => {
@@ -196,5 +196,44 @@ describe('锁定和详情', () => {
     await eq().lock(ctx, { id, locked: false });
     expect((await row(id)).locked).toBe(false);
     await expect(eq().detail(await newRestaurant(t), id)).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
+
+describe('强化数值表（问题记录 120）', () => {
+  it('成功后属性总和到表里下一档；用强化石不再多加；详情给出下一档', async () => {
+    seq = [0.01];
+    const ctx = await rich();
+    const table = t.deps.config.requireGoods(30).equip!.stressTable;
+    const id = await piece(ctx, 30, { base_cook: table[0]! });
+    const d0 = await eq().detail(ctx, id);
+    expect(d0.next).toEqual({ gain: table[1]! - table[0]!, total: table[1]! });
+    await eq().stress(ctx, { id, stone: false });
+    await t.db.insertInto('store_item').values({ rest_id: ctx.restaurantId, goods_id: 40, num: 1 }).execute();
+    const r = await eq().stress(ctx, { id, stone: true });
+    expect(r.data.val).toBe(table[2]! - table[1]!);
+    const e = await row(id);
+    const sum = (p: 'base_' | 'st_') =>
+      (['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const).reduce(
+        (s, a) => s + Number(e[`${p}${a}`]),
+        0,
+      );
+    expect(sum('base_') + sum('st_')).toBe(table[2]);
+  });
+
+  it('两档相同（增量 0）也算成功，等级 +1，写记录（Review Focus 3）', async () => {
+    seq = [0.01];
+    const ctx = await rich();
+    const def = t.deps.config.requireGoods(30).equip!;
+    const table = def.stressTable as number[];
+    const orig = [...table];
+    table.splice(1, 1, table[0]!);
+    try {
+      const id = await piece(ctx, 30, { base_cook: table[0]! });
+      const r = await eq().stress(ctx, { id, stone: false });
+      expect(r.data).toMatchObject({ success: true, val: 0, stress: 1 });
+      expect((await logs(id)).at(-1)).toMatchObject({ success: true, val: 0 });
+    } finally {
+      table.splice(0, table.length, ...orig);
+    }
   });
 });
