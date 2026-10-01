@@ -22,7 +22,6 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
       { to: '/rest/floor', icon: 'bi-grid-3x3', label: '楼层餐桌' },
       { to: '/rest/income', icon: 'bi-graph-up', label: '收益记录' },
       { to: '/rest/info', icon: 'bi-person-badge', label: '餐厅信息' },
-      { to: '/rest/look', icon: 'bi-palette', label: '装扮' },
     ],
   },
   {
@@ -43,6 +42,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
     title: '其他',
     links: [
       { to: '/weather', icon: 'bi-cloud-sun', label: '天气' },
+      { to: '/rest/look', icon: 'bi-palette', label: '装扮' },
       { to: '/invite', icon: 'bi-person-plus', label: '邀请好友' },
       { to: '/redeem', icon: 'bi-ticket-perforated', label: '兑换码' },
       { to: '/shards', icon: 'bi-arrow-left-right', label: '切换区服' },

@@ -13,6 +13,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
+import { remainText } from '../utils/remain';
 import { CUSTOMER_NAMES } from '../utils/labels';
 
 const store = useRestaurantStore();
@@ -137,11 +138,7 @@ function openPlaque2() {
   return act(() => endpoints.openPlaque2(), '开通失败');
 }
 
-function expiresText(at: string | null): string {
-  if (!at) return '永久';
-  const hours = Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000));
-  return `剩余 ${hours} 小时`;
-}
+const expiresText = (at: string | null) => remainText(at);
 const effectExpires = (e: EffectDto) => expiresText(e.expiresAt);
 
 const QUICK = [
@@ -215,6 +212,22 @@ onBeforeUnmount(() => {
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
       <span v-if="rest.state === 2" class="badge bg-danger ms-1">停业</span>
     </div>
+    <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
+    <div
+      class="progress my-2 position-relative"
+      role="progressbar"
+      :aria-valuenow="expPercent"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div class="progress-bar bg-warning" :style="{ width: `${expPercent}%` }"></div>
+      <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
+      <span
+        data-testid="exp-text"
+        class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
+        >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
+      >
+    </div>
     <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
     <div class="dt-quick mb-2" data-testid="quick-links">
       <RouterLink
@@ -234,21 +247,6 @@ onBeforeUnmount(() => {
       <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
       <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
       <div class="col-6" title="声望"><i class="bi bi-award"></i> {{ rest.renown }}</div>
-    </div>
-    <div
-      class="progress my-2 position-relative"
-      role="progressbar"
-      :aria-valuenow="expPercent"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div class="progress-bar bg-warning" :style="{ width: `${expPercent}%` }"></div>
-      <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
-      <span
-        data-testid="exp-text"
-        class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-        >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
-      >
     </div>
     <div class="d-flex align-items-center gap-2 small">
       <span><i class="bi bi-droplet"></i> 油 {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
