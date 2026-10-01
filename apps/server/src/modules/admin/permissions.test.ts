@@ -12,6 +12,7 @@ let ids: {
   iconId: number;
   mailId: number;
   announcementId: number;
+  activityId: number;
   codeId: number;
   reportIds: number[];
   batchId: number;
@@ -50,6 +51,20 @@ beforeAll(async () => {
       starts_at: new Date(),
       ends_at: new Date(Date.now() + 3_600_000),
       actor_account_id: target.accountId,
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  // 未开始的活动：编辑、提前结束、删除都能走到业务逻辑（矩阵末尾才删除）
+  const activity = await ctx.deps.db
+    .insertInto('activity')
+    .values({
+      shard_id: shardId,
+      kind: 'goals',
+      title: '权限测试',
+      body: 'b',
+      starts_at: new Date(Date.now() + 3_600_000),
+      ends_at: new Date(Date.now() + 7_200_000),
+      def: JSON.stringify(activityBody().def),
     })
     .returning('id')
     .executeTakeFirstOrThrow();
@@ -105,6 +120,7 @@ beforeAll(async () => {
     iconId: icon.id,
     mailId: mail.id,
     announcementId: announcement.id,
+    activityId: activity.id,
     codeId: code.id,
     reportIds,
     batchId: single.id,
@@ -124,6 +140,17 @@ const announceBody = () => ({
   important: false,
   startsAt: new Date().toISOString(),
   endsAt: new Date(Date.now() + 3_600_000).toISOString(),
+});
+
+const activityBody = () => ({
+  shardId: null,
+  kind: 'goals',
+  title: '权限测试',
+  body: 'b',
+  startsAt: new Date(Date.now() + 3_600_000).toISOString(),
+  endsAt: new Date(Date.now() + 7_200_000).toISOString(),
+  minLevel: 1,
+  def: { goals: [{ key: 'signin', target: 1, award: { coin: 1 } }] },
 });
 
 type Case = {
@@ -381,6 +408,39 @@ const CASES: Case[] = [
     min: 'mod',
   },
   { method: 'GET', route: '/api/v1/admin/audit', url: () => '/api/v1/admin/audit', min: 'mod' },
+  { method: 'GET', route: '/api/v1/admin/activities', url: () => '/api/v1/admin/activities', min: 'mod' },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/activities/:id',
+    url: () => `/api/v1/admin/activities/${ids.activityId}`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/activities',
+    url: () => '/api/v1/admin/activities',
+    body: () => activityBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/activities/:id',
+    url: () => `/api/v1/admin/activities/${ids.activityId}`,
+    body: () => activityBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/activities/:id/end',
+    url: () => `/api/v1/admin/activities/${ids.activityId}/end`,
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/activities/:id/delete',
+    url: () => `/api/v1/admin/activities/${ids.activityId}/delete`,
+    min: 'admin',
+  },
 ];
 
 describe('后台权限矩阵', () => {
