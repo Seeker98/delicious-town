@@ -33,6 +33,7 @@ import { createForumService, type ForumService } from './modules/forum/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
+import { createReportService, type ReportService } from './modules/report/service';
 import { createAnnounceService, type AnnounceService } from './modules/announce/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
@@ -75,6 +76,7 @@ export interface Game {
   mail: MailService;
   redeem: RedeemService;
   invite: InviteService;
+  report: ReportService;
   announce: AnnounceService;
   jobs: PeriodicJob[];
 }
@@ -134,6 +136,7 @@ export function createGame(app: AppDeps): Game {
     mail: createMailService(deps),
     redeem: createRedeemService(deps),
     invite: createInviteService(deps),
+    report: createReportService(deps),
     announce: createAnnounceService(deps),
     shop,
     market,
