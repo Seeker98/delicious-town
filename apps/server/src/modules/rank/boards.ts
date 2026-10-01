@@ -69,16 +69,20 @@ const income =
   (col: 'coin' | 'exp', p: 'today' | 'yesterday' | 'round'): Source =>
   (c) => {
     const v = sql.ref(`x.${col}`);
-    if (p === 'round')
+    if (p === 'round') {
+      // 只看最近一天：让按时间分区的表和 (rest_id, created_at) 索引生效，也不把很久以前的轮次当"单轮"（终审 I3）
+      const since = new Date(c.now.getTime() - 86_400_000);
       return run(
         c,
         sql<Row>`select x.rest_id, r.name, sum(${v})::float8 as v
           from income_round x ${JOIN}
-          where ${players(c.shardId)} and x.round_no = (
-            select max(x.round_no) from income_round x ${JOIN} where ${players(c.shardId)}
+          where ${players(c.shardId)} and x.created_at >= ${since} and x.round_no = (
+            select max(x.round_no) from income_round x ${JOIN}
+            where ${players(c.shardId)} and x.created_at >= ${since}
           )
           group by x.rest_id, r.name`,
       );
+    }
     const { fromAt, toAt } = range(c.now, p);
     return run(
       c,

@@ -1,8 +1,9 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { gameTime, RANK_BOARDS } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
+import { BOARD_SOURCES } from './boards';
 
 const DAY = '2026-10-01'; // 周四；本周一 09-28
 let t: TestGame;
@@ -74,6 +75,14 @@ describe('排行榜（设计文档 §2.6）', () => {
   it('收益单轮：只算本区最近一轮', async () => {
     const [a, b] = await rests(2);
     await income(a!.restaurantId, 7, 900, gameTime(DAY, 10));
+    await income(b!.restaurantId, 8, 100, gameTime(DAY, 11));
+    expect(ids((await board(a!, 'income.coin.round')).rows)).toEqual([b!.restaurantId]);
+  });
+
+  it('收益单轮：只看最近一天里的轮次，很久以前的轮次不算（终审 I3）', async () => {
+    const [a, b, c] = await rests(3);
+    await income(c!.restaurantId, 999, 900, gameTime('2026-09-27', 10));
+    await income(a!.restaurantId, 7, 300, gameTime(DAY, 10));
     await income(b!.restaurantId, 8, 100, gameTime(DAY, 11));
     expect(ids((await board(a!, 'income.coin.round')).rows)).toEqual([b!.restaurantId]);
   });
@@ -204,6 +213,25 @@ describe('排行榜（设计文档 §2.6）', () => {
     expect((await board(a, 'power')).me?.value ?? 0).toBe(p0);
     t.clock.advance(600_000);
     expect((await board(a, 'power')).me?.value).toBeGreaterThan(p0);
+  });
+
+  it('缓存过期时同时进来的请求只算一次；算失败不留缓存（终审 I2）', async () => {
+    const [a] = await rests(1);
+    const real = BOARD_SOURCES.renown!;
+    // 放慢 50ms，保证三个请求确实重叠在同一次计算上
+    const spy = vi
+      .spyOn(BOARD_SOURCES, 'renown')
+      .mockImplementation(async (c) => (await new Promise((r) => setTimeout(r, 50)), real(c)));
+    try {
+      await Promise.all([board(a!, 'renown'), board(a!, 'renown'), board(a!, 'renown')]);
+      expect(spy).toHaveBeenCalledTimes(1);
+      t.game.rank.clearCache();
+      spy.mockRejectedValueOnce(new Error('boom'));
+      await expect(board(a!, 'renown')).rejects.toThrow('boom');
+      await expect(board(a!, 'renown')).resolves.toMatchObject({ key: 'renown' });
+    } finally {
+      spy.mockRestore();
+    }
   });
 
   it('区服之间互不影响', async () => {

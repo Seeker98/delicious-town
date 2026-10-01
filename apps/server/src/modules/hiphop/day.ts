@@ -1,6 +1,6 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
 import { GOODS, type Tuning } from '@dt/config';
-import { buildPool, gameDay, gameParts, hashSeed, pickWeighted, seededRng, type Rng } from '@dt/shared';
+import { buildPool, gameDay, gameParts, pickWeighted, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opNews, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -72,7 +72,8 @@ export async function rollHiphopDay(
   if (exist) return { created: false, place: exist.place, restId: exist.rest_id };
   const { tuning } = await d.shards.settings(shardId);
   const t = tuning.hiphop;
-  const rng = seededRng(hashSeed(shardId, 'hiphop', day));
+  // 用服务端随机源，不用区服号 + 日期做种子：那样有源码就能提前算出地点（终审 I1）；幂等靠主键
+  const rng = d.rng();
   let place = pickPlace(t.placeWeights, rng);
   let restId: number | null = null;
   if (place === HIPHOP_RESTAURANT) {
