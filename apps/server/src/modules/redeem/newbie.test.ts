@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { NewbieCode } from '@dt/config';
 import { createAccountRow } from '../../../test/fixtures';
-import { createTestGame, type TestGame } from '../../../test/game';
+import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { randomCode } from './code';
-import { syncNewbieCodes } from './newbie';
+import { guideCodes, syncNewbieCodes } from './newbie';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -73,5 +73,38 @@ describe('新手码同步（设计 §4.2）', () => {
     expect(r.skipped).toEqual([c]);
     expect(l.warn).toHaveBeenCalled();
     expect((await row(c)).items).toEqual({ coin: 1 });
+  });
+});
+
+describe('指引页新手码状态（设计 §4.3）', () => {
+  it('ok / level / used / off 四种状态，顺序和配置一致', async () => {
+    const [a, b, c, d] = [randomCode(), randomCode(), randomCode(), randomCode()];
+    const codes = [
+      nc(a, { minLevel: 1 }),
+      nc(b, { minLevel: 99 }),
+      nc(c, { minLevel: 1 }),
+      nc(d, { minLevel: 1 }),
+    ];
+    await syncNewbieCodes(t.db, codes.slice(0, 3), log());
+    await t.db.updateTable('redeem_code').set({ disabled_at: new Date() }).where('code', '=', c).execute();
+    const ctx = await newRestaurant(t);
+    const list = await guideCodes(t.db, codes, ctx.restaurantId);
+    expect(list.map((x) => [x.code, x.state])).toEqual([
+      [a, 'ok'],
+      [b, 'level'],
+      [c, 'off'],
+      [d, 'off'],
+    ]);
+    await t.game.redeem.redeem(ctx, a);
+    expect((await guideCodes(t.db, codes, ctx.restaurantId))[0]!.state).toBe('used');
+  });
+
+  it('领过的码后来停用，仍显示已领', async () => {
+    const a = randomCode();
+    await syncNewbieCodes(t.db, [nc(a, { minLevel: 1 })], log());
+    const ctx = await newRestaurant(t);
+    await t.game.redeem.redeem(ctx, a);
+    await t.db.updateTable('redeem_code').set({ disabled_at: new Date() }).where('code', '=', a).execute();
+    expect((await guideCodes(t.db, [nc(a, { minLevel: 1 })], ctx.restaurantId))[0]!.state).toBe('used');
   });
 });

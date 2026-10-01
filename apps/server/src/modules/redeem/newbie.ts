@@ -1,5 +1,6 @@
 import type { Kysely } from 'kysely';
 import type { NewbieCode } from '@dt/config';
+import type { GuideCodeDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { npcAccountId } from '../npc/npc';
 
@@ -53,4 +54,45 @@ export async function syncNewbieCodes(
     out.updated++;
   }
   return out;
+}
+
+/** 指引页：配置里的新手码在本店的状态（设计 §4.3）；只认系统账号建的码 */
+export async function guideCodes(
+  db: Kysely<DB>,
+  codes: readonly NewbieCode[],
+  restId: number,
+): Promise<GuideCodeDto[]> {
+  if (codes.length === 0) return [];
+  const actor = await npcAccountId(db);
+  const rest = await db
+    .selectFrom('restaurant')
+    .select('level')
+    .where('id', '=', restId)
+    .executeTakeFirstOrThrow();
+  const rows = await db
+    .selectFrom('redeem_code as c')
+    .leftJoin('redeem_use as u', (j) => j.onRef('u.code_id', '=', 'c.id').on('u.rest_id', '=', restId))
+    .select(['c.code', 'c.disabled_at', 'c.actor_account_id', 'u.id as used'])
+    .where(
+      'c.code',
+      'in',
+      codes.map((c) => c.code),
+    )
+    .execute();
+  const byCode = new Map(rows.map((r) => [r.code, r]));
+  return codes.map((c) => {
+    const r = byCode.get(c.code);
+    // 领过的码即使后来停用也显示"已领"
+    const state: GuideCodeDto['state'] =
+      !r || r.actor_account_id !== actor
+        ? 'off'
+        : r.used !== null
+          ? 'used'
+          : r.disabled_at
+            ? 'off'
+            : rest.level < c.minLevel
+              ? 'level'
+              : 'ok';
+    return { code: c.code, minLevel: c.minLevel, items: c.items, state };
+  });
 }
