@@ -16,6 +16,33 @@ import { advanceWorld, globalsOf, newWorld, pickPlankton } from './world';
  */
 export const SIM_SHARD_ID = 1;
 
+export interface StuckTracker {
+  star: number;
+  /** 当前星级下，等级第一次够到下一星要求的那天；没够到为 null */
+  since: number | null;
+}
+
+/**
+ * 卡点（设计 §7，规则同全真模拟的 detectStuck）：从"当前星级、等级已够下一星"的第一天算起，
+ * 连续 threshold 天以上没升星才算卡住；返回卡了几天，没卡住返回 null。升星后重新算
+ */
+export function trackStuck(
+  t: StuckTracker,
+  day: number,
+  star: number,
+  eligible: boolean,
+  threshold: number,
+): number | null {
+  if (star !== t.star) {
+    t.star = star;
+    t.since = null;
+  }
+  if (!eligible) return null;
+  t.since ??= day;
+  const days = day - t.since;
+  return days >= threshold ? days : null;
+}
+
 export interface FastOptions {
   days: number;
   botsPerPersona: number;
@@ -57,7 +84,7 @@ interface Runner {
   stats: FastStats;
   lastSettle: number;
   lastSide: number;
-  lastStarDay: number;
+  stuck: StuckTracker;
 }
 
 const sumCoin = (s: FastStats, pick: (k: string) => boolean) =>
@@ -104,7 +131,7 @@ export function runFast(
         stats,
         lastSettle: 0,
         lastSide: 0,
-        lastStarDay: 0,
+        stuck: { star: 0, since: null },
       });
     }
   }
@@ -136,17 +163,19 @@ export function runFast(
       });
       x.lastSettle = settle;
       x.lastSide = side;
-      // 卡点：等级够了却超过 stuckDays 天没升星（设计 §7）
+      // 卡点：等级够了却超过 stuckDays 天没升星（设计 §7；规则同全真模拟的 detectStuck）
       const need = config.starNeed.get(r.star + 1);
-      if (need && r.level >= need.needLevel && day - x.lastStarDay >= o.stuckDays) {
+      const eligible = !!need && need.cookbooksKind === 'learned' && r.level >= need.needLevel;
+      const stuckDays = trackStuck(x.stuck, day, r.star, eligible, o.stuckDays);
+      if (stuckDays === null) stuck.delete(x.bot.name);
+      else
         stuck.set(x.bot.name, {
           bot: x.bot.name,
           persona: x.bot.persona.key,
           star: r.star,
-          days: day - x.lastStarDay,
+          days: stuckDays,
           reasons: starBlockers(ctxOf(x.stats, new Date(o.start.getTime() + day * 86_400_000)), r),
         });
-      }
     }
   };
   snapshot(0);
@@ -158,7 +187,6 @@ export function runFast(
   let lastStrength = '';
   let lastMouse = '';
   let regenCount = 0;
-  const stars = new Map(runners.map((x) => [x.bot.name, x.bot.rest.star]));
   while (now.getTime() < end) {
     const round = Math.floor(now.getTime() / ROUND_MS);
     const today = gameDay(now);
@@ -224,11 +252,6 @@ export function runFast(
       for (const x of runners) {
         if (!x.bot.persona.hours.includes(hour)) continue;
         botTurn(ctxOf(x.stats, now), x.bot, market, world, o.side);
-        if (x.bot.rest.star !== stars.get(x.bot.name)) {
-          stars.set(x.bot.name, x.bot.rest.star);
-          x.lastStarDay = dayIndex;
-          stuck.delete(x.bot.name);
-        }
       }
     }
     now = new Date(now.getTime() + ROUND_MS);

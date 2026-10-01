@@ -40,3 +40,19 @@ describe('跑一套数值（设计 §4、§7）', () => {
     expect(last.settleCoin).toBeGreaterThan(0);
   }, 60_000);
 });
+
+describe('卡点从"等级够了"那天算起（终审 I-1，和全真模拟的 detectStuck 一致）', () => {
+  it('第 2 天升到 1 星、第 20 天等级才够：第 20 天不算卡住，第 25 天卡 5 天', async () => {
+    const { trackStuck } = await import('./run');
+    const t = { star: 0, since: null as number | null };
+    expect(trackStuck(t, 0, 0, false, 5)).toBeNull();
+    expect(trackStuck(t, 2, 1, false, 5)).toBeNull();
+    expect(trackStuck(t, 19, 1, false, 5)).toBeNull();
+    expect(trackStuck(t, 20, 1, true, 5)).toBeNull();
+    expect(trackStuck(t, 24, 1, true, 5)).toBeNull();
+    expect(trackStuck(t, 25, 1, true, 5)).toBe(5);
+    // 升星后重新算
+    expect(trackStuck(t, 26, 2, true, 5)).toBeNull();
+    expect(trackStuck(t, 31, 2, true, 5)).toBe(5);
+  });
+});

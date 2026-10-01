@@ -19,7 +19,29 @@ function nest(path: string[], value: unknown): Record<string, unknown> {
   );
 }
 
+const isObj = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
+
+/**
+ * 覆盖里的每个数值路径都必须在当前 tuning 里存在（终审 I-2）：tuning 的 schema 不是严格的，
+ * 写错的键会被悄悄丢掉，结果看起来像"这个数值没影响"
+ */
+function assertKnownPaths(base: unknown, override: unknown, prefix: string, name: string): void {
+  if (!isObj(override)) return;
+  for (const [k, v] of Object.entries(override)) {
+    const path = prefix ? `${prefix}.${k}` : k;
+    if (!isObj(base) || !(k in base)) throw new Error(`数值套「${name}」：tuning 里没有 ${path}，检查拼写`);
+    if (isObj(v)) assertKnownPaths(base[k], v, path, name);
+  }
+}
+
 function resolveTuning(config: GameConfig, name: string, override: unknown): Tuning {
+  if (isObj(override)) {
+    const extra = Object.keys(override).filter((k) => k !== 'tuning');
+    if (extra.length > 0)
+      throw new Error(`数值套「${name}」：覆盖文件只能写 { "tuning": {...} }，不支持 ${extra.join('、')}`);
+    assertKnownPaths(config.tuning, override.tuning, '', name);
+  }
   try {
     return resolveShardSettings(config, override).tuning;
   } catch (e) {

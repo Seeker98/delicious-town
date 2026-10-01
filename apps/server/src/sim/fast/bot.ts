@@ -172,7 +172,7 @@ function useGoods(c: FastCtx, r: FastRest, g: Goods, num: number): boolean {
 
 // ---------- 设施（growth/devices.ts） ----------
 
-function placeDevice(c: FastCtx, r: FastRest, slot: number, goodsId: number): boolean {
+export function placeDevice(c: FastCtx, r: FastRest, slot: number, goodsId: number): boolean {
   const g = c.config.requireGoods(goodsId);
   if (g.deviceType === DEVICE_TYPE.plaque) {
     if (countGoods(c, r, goodsId) < 1) return false;
@@ -208,7 +208,7 @@ function learn(c: FastCtx, r: FastRest, id: number): boolean {
   return true;
 }
 
-function learnable(c: FastCtx, r: FastRest, street: number): number[] {
+export function learnable(c: FastCtx, r: FastRest, street: number): number[] {
   const max = c.tuning.rest.cookbookMaxGrade;
   const have = haveFood(r);
   const lv = levelOfFood(c);

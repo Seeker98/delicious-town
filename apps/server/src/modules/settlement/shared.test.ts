@@ -9,7 +9,7 @@ const config = testConfig();
 const tuning = config.tuning;
 
 describe('共用纯函数（快速模拟设计 §4.2）', () => {
-  it('toSettleInput：补全旧的食谱计数，复制食谱品级', () => {
+  it('toSettleInput：补全旧的食谱计数；品级换成 Uint8Array 视图（不复制）', () => {
     const levels = new Uint8Array([0, 2, 1]);
     const input = toSettleInput({
       rest: {
@@ -69,5 +69,17 @@ describe('共用纯函数（快速模拟设计 §4.2）', () => {
     )!;
     expect(g.cap).toBe(10);
     expect([tuning.strength.regen * 3, tuning.strength.luckyRegen * 3]).toContain(g.add);
+  });
+});
+
+describe('结算不改食谱品级（终审 I-3：toSettleInput 现在给的是视图，不再复制）', () => {
+  it('跑一轮结算后，传进去的品级字节不变', async () => {
+    const { buildGlobals, buildInput } = await import('./globals');
+    const { settleRestaurant } = await import('./settle');
+    const cb = [...config.cookbooks.values()][0]!;
+    const input = buildInput(config, { cookbooks: { [cb.id]: 2 } });
+    const before = Array.from(input.levels);
+    settleRestaurant(input, buildGlobals(config, tuning), seededRng(3));
+    expect(Array.from(input.levels)).toEqual(before);
   });
 });

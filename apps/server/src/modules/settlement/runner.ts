@@ -8,11 +8,12 @@ import { subFoods } from '../cupboard/foods';
 import { consumeSpecial } from '../mysterious/cook';
 import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
+import type { RestaurantRow, TableState } from '../../db/schema';
 import type { WorldService } from '../world/service';
 import { blessBuff } from '../town/bless';
-import { buildGlobals, toSettleInput } from './globals';
+import { buildGlobals, toSettleInput, type SettleSource } from './globals';
 import { settleRestaurant } from './settle';
-import type { SettleGlobals } from './types';
+import type { SettleGlobals, SpecialDish } from './types';
 
 export type RoundStats = {
   round: number;
@@ -49,6 +50,40 @@ export function autoRefuel(op: Op, agg: Record<string, number>): number {
   if (need <= 0 || op.rest.coin < need) return 0;
   spendCoin(op, need, { source: 'oil.auto', event: false });
   return gainOil(op, need, { source: 'oil.auto', event: false });
+}
+
+/** 店铺行 → 结算源（纯函数；快速模拟的 fastSettleSource 和它一一对应，parity 测试保证） */
+export function rowSettleSource(
+  rest: RestaurantRow,
+  tables: TableState[],
+  levels: Uint8Array,
+  agg: Record<string, number>,
+  special: SpecialDish | null,
+  cupboard: ReadonlyMap<number, number> | null,
+  now: Date,
+): SettleSource {
+  return {
+    rest: {
+      id: rest.id,
+      level: rest.level,
+      star: rest.star_level,
+      oil: rest.oil,
+      oilMax: rest.oil_max,
+      coin: rest.coin,
+      streetId: rest.street_id,
+      renown: rest.renown,
+      luck: rest.luck,
+      cteOn: rest.cte_on,
+      cookfoodsFlag: rest.cookfoods_flag,
+    },
+    tables,
+    levels,
+    counts: rest.cookbook_counts,
+    agg,
+    special,
+    cupboard,
+    now,
+  };
 }
 
 /** 一家店的一轮：锁内读三行 + 加成汇总 → 纯函数 → 写回（设计文档 §4.1） */
@@ -89,29 +124,17 @@ export async function settleOne(
       .execute();
     cupboard = new Map(rows.map((r) => [r.foods_id, r.num]));
   }
-  const input = toSettleInput({
-    rest: {
-      id: op.rest.id,
-      level: op.rest.level,
-      star: op.rest.star_level,
-      oil: op.rest.oil,
-      oilMax: op.rest.oil_max,
-      coin: op.rest.coin,
-      streetId: op.rest.street_id,
-      renown: op.rest.renown,
-      luck: op.rest.luck,
-      cteOn: op.rest.cte_on,
-      cookfoodsFlag: op.rest.cookfoods_flag,
-    },
-    tables: tr.tables,
-    levels: cb.levels,
-    counts: op.rest.cookbook_counts,
-    agg,
-    special:
+  const input = toSettleInput(
+    rowSettleSource(
+      op.rest,
+      tr.tables,
+      cb.levels,
+      agg,
       cook && cook.left_num > 0 ? { price: cook.price, level: cook.level, leftNum: cook.left_num } : null,
-    cupboard,
-    now: op.now,
-  });
+      cupboard,
+      op.now,
+    ),
+  );
   const r = settleRestaurant(input, g, op.rng);
   if (r.closed) {
     setRest(op, 'state', 2);

@@ -62,3 +62,33 @@ describe('多套数值（设计 §6）', () => {
     expect(rs[1]!.days).toEqual(rs[0]!.days);
   }, 60_000);
 });
+
+describe('写错的覆盖要报错，不能悄悄当成"没影响"（终审 I-2）', () => {
+  it('--set 的路径不存在时报错', () => {
+    expect(() => buildVariants(config, { variants: [], set: 'settlement.expMultiplir=4' }, none)).toThrow(
+      /settlement\.expMultiplir/,
+    );
+  });
+
+  it('覆盖文件里有不存在的数值、少了 tuning 外层、或有 tuning 以外的键时报错', () => {
+    expect(() =>
+      buildVariants(config, { variants: ['a=x.json'] }, () => ({ tuning: { settlement: { nope: 1 } } })),
+    ).toThrow(/settlement\.nope/);
+    expect(() =>
+      buildVariants(config, { variants: ['b=x.json'] }, () => ({ settlement: { expMultiplier: 4 } })),
+    ).toThrow(/tuning/);
+    expect(() =>
+      buildVariants(config, { variants: ['c=x.json'] }, () => ({ tuning: {}, restaurant: { coin: 1 } })),
+    ).toThrow(/restaurant/);
+  });
+
+  it('覆盖成和当前一样的值不算错（公共随机数测试要用）', () => {
+    expect(() =>
+      buildVariants(
+        config,
+        { variants: [], set: `settlement.expMultiplier=${base.settlement.expMultiplier}` },
+        none,
+      ),
+    ).not.toThrow();
+  });
+});

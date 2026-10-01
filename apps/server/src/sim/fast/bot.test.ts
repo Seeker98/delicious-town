@@ -87,3 +87,62 @@ describe('机器人（设计 §4.5）', () => {
       expect(starBlockers(c, b.rest)).toEqual(expect.arrayContaining(['certs', 'coin']));
   });
 });
+
+describe('机器人决策（终审 I-3，设计 §9）', () => {
+  it('只差凭证但买不起时攒钱：不买桌子，不升星', () => {
+    const c = ctx();
+    const b = bot(c);
+    const need = config.starNeed.get(1)!;
+    b.rest.level = need.needLevel;
+    b.rest.counts.learned = need.needCookbooks;
+    b.rest.tableNum = 7;
+    b.rest.daily.set('signin', 1);
+    b.rest.coin = 40_000; // 凭证 55000 买不起；不攒钱的话够买 3 张桌子
+    botTurn(c, b, newMarket(), world(), null);
+    expect(b.rest.star).toBe(0);
+    expect(b.rest.tables).toHaveLength(4);
+  });
+
+  it('买菜按缺口买，并留出加满一次油和 2 万的钱', async () => {
+    const { unitPrice } = await import('../../modules/market/rules');
+    const c = ctx();
+    const b = bot(c);
+    b.rest.daily.set('signin', 1);
+    b.rest.foods.clear();
+    const cb = [...config.cookbooks.values()].find((x) => (x.needFoods[1] ?? []).length > 0)!;
+    const food = config.requireFood(cb.needFoods[1]![0]!.foodsId);
+    const price = unitPrice(0, food, settings.tuning.market, {});
+    const m = newMarket();
+    m.items.push({
+      id: 1,
+      shelf: 0,
+      foodsId: food.id,
+      stock: 1000,
+      sold: 0,
+      openedAt: new Date(0),
+      bought: new Map(),
+    });
+    b.rest.coin = b.rest.oilMax + 20_000 + Math.floor(price * 2.5);
+    botTurn(c, b, m, world(), null);
+    expect(m.items[0]!.sold).toBe(Math.min(2, cb.needFoods[1]![0]!.num * 999));
+    expect(b.rest.coin).toBeGreaterThanOrEqual(b.rest.oilMax + 20_000 - 1);
+  });
+
+  it('学菜列表：同一条街先列没学过的，再列可升级的', async () => {
+    const { learnable } = await import('./bot');
+    const c = ctx();
+    const b = bot(c);
+    const street = [...config.cookbookIndex.idsByStreet.keys()][0]!;
+    const ids = config.cookbookIndex.idsByStreet.get(street)!;
+    const [a, n] = ids.filter((id) => (config.requireCookbook(id).needFoods[2] ?? []).length > 0);
+    b.rest.levels[a!] = 1;
+    b.rest.foods.clear();
+    for (const g of [1, 2] as const)
+      for (const f of config.requireCookbook(g === 1 ? n! : a!).needFoods[g]!)
+        b.rest.foods.set(f.foodsId, (b.rest.foods.get(f.foodsId) ?? 0) + f.num * 3);
+    for (const mid of [467, 468, 469, 470, 471]) b.rest.foods.set(mid, 99);
+    const list = learnable(c, b.rest, street);
+    expect(list.indexOf(n!)).toBeGreaterThanOrEqual(0);
+    expect(list.indexOf(a!)).toBeGreaterThan(list.indexOf(n!));
+  });
+});
