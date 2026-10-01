@@ -54,8 +54,9 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
 <template>
   <div class="small">
     <div class="dt-meta mb-2">
-      桌上 6 杯酒，其中 1 杯被调酒师加了特辣。你先喝，和调酒师轮流各挑一杯：调酒师喝到，你赢走 押注 × 1.4
-      的（你活过的杯数）次方；你喝到，押注没了，还要宿醉 1 小时（上座率 -10%）。
+      <div>桌上 6 杯酒，其中 1 杯被调酒师加了特辣。你先喝，和调酒师轮流各挑一杯。</div>
+      <div>调酒师喝到：你赢，你每活过一杯，奖池 ×1.4（活过 1/2/3 杯分别赢回押注的 1.4/1.96/2.74 倍）。</div>
+      <div>你喝到：押注没了，还要宿醉 1 小时（上座率 -10%）。</div>
     </div>
     <template v-if="!round">
       <div class="mb-1">押多少张神秘礼券？</div>
