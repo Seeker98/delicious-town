@@ -67,3 +67,26 @@ describe('后台兑换码（HTTP）', () => {
     expect(rows.every((r) => r.disabled_at !== null)).toBe(true);
   });
 });
+
+describe('后台兑换码：每批上限按 tuning.redeem.batchMax（终审修复）', () => {
+  let ctx: TestContext;
+  let admin: { cookie: string };
+  beforeAll(async () => {
+    ctx = await createTestApp();
+    admin = await userWithRole(ctx, 'admin');
+    ctx.deps.config.tuning.redeem.batchMax = 2;
+  });
+  afterAll(async () => {
+    ctx.deps.config.tuning.redeem.batchMax = 1000;
+    await ctx.close();
+  });
+
+  it('超过配置的每批上限报 VALIDATION_FAILED', async () => {
+    const r = await call(ctx.app, 'POST', '/api/v1/admin/codes/batch', {
+      cookie: admin.cookie,
+      body: { count: 3, items: { coin: 1 }, note: '' },
+    });
+    expect(r.status).toBe(400);
+    expect(r.json.code).toBe('VALIDATION_FAILED');
+  });
+});

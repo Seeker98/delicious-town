@@ -202,6 +202,10 @@ export function createAdminCodes(game: Game) {
 
     /** 批量一次性码：每个码只能用一次；batch_id = 这批第一个码的 id */
     async createBatch(actor: AdminActor, b: CreateBatchInput): Promise<AdminCodeDto> {
+      if (b.count > config.tuning.redeem.batchMax)
+        throw new AppError(ErrorCode.VALIDATION_FAILED, 400, {
+          issues: [{ path: 'count', message: 'too_big', max: config.tuning.redeem.batchMax }],
+        });
       await checkInput(b);
       const batchId = await db.transaction().execute(async (tx) => {
         const values = common(b, actor);

@@ -31,6 +31,7 @@ describe('个人日志文案', () => {
     expect(
       logText({ type: 'admin.rename', params: { from: 'A', to: 'B', reason: '违规' }, at: '' }, names),
     ).toBe('管理员把店名从「A」改为「B」：违规');
+    expect(logText({ type: 'redeem', params: { code: 'KAIFU' }, at: '' }, names)).toBe('使用了兑换码 KAIFU');
     expect(logText({ type: 'market.guess.refund', params: { period: '2026-09-30@10' }, at: '' }, names)).toBe(
       '菜场竞猜 2026-09-30 10 点那一轮没有开奖，退还了报名费',
     );

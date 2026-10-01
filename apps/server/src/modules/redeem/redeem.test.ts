@@ -106,3 +106,25 @@ describe('兑换（设计 裁定 13~17）', () => {
     await expect(redeem(r, await code())).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
   });
 });
+
+describe('终审修复', () => {
+  it('附件里的道具已从配置删除的码：报 code_broken，不记用过、不占次数', async () => {
+    const r = await newRestaurant(t);
+    const c = await code({ items: JSON.stringify({ goods: [{ id: 999999, num: 1 }] }) });
+    await expect(redeem(r, c)).rejects.toMatchObject({ params: { reason: 'code_broken' } });
+    const row = await t.db
+      .selectFrom('redeem_code')
+      .select('used_count')
+      .where('code', '=', c)
+      .executeTakeFirstOrThrow();
+    expect(row.used_count).toBe(0);
+  });
+
+  it('输错计数的键总带过期时间：上次只加了数没设上过期（进程中途退出），这次补上', async () => {
+    const r = await newRestaurant(t);
+    const key = `redeem:fail:${r.accountId}`;
+    await t.deps.redis.set(key, '3');
+    await expect(redeem(r, 'NOSUCHCODE')).rejects.toMatchObject({ params: { reason: 'code_not_found' } });
+    expect(await t.deps.redis.ttl(key)).toBeGreaterThan(0);
+  });
+});

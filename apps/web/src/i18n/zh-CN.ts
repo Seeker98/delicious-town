@@ -150,6 +150,7 @@ const STATE: Record<string, string> = {
   code_used: '这个兑换码你已经用过了',
   code_wrong_shard: '这个兑换码不能在本区服使用',
   code_disabled: '兑换码已停用',
+  code_broken: '这个兑换码的奖励已失效，请联系运营',
   too_many_tries: '输错太多次了，请一小时后再试',
   mail_unclaimed: '附件还没领，不能删除',
   locked: '厨具已锁定，先解锁',

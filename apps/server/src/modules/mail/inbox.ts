@@ -6,7 +6,7 @@ import { invalidState } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { notFound } from '../equip/service';
-import { grantRewardOp } from './reward';
+import { brokenItems, grantRewardOp } from './reward';
 import { AppError } from '../../http/errors';
 import type { JobLogger } from '../../worker/scheduler';
 import { claimBlock, hasItems } from './rules';
@@ -42,15 +42,6 @@ function visibleQuery(db: Kysely<DB>, rest: MailRest) {
         eb.and([eb('m.scope', '=', 'all'), eb('m.created_at', '>=', restCreated)]),
       ]),
     );
-}
-
-/** 附件里有配置中已不存在的道具或食材 */
-function brokenItems(config: GameConfig, items: RewardItems | null): boolean {
-  if (!items) return false;
-  return (
-    (items.goods ?? []).some((g) => !config.goods.has(g.id)) ||
-    (items.foods ?? []).some((f) => !config.foods.has(f.id))
-  );
 }
 
 export async function visibleMails(

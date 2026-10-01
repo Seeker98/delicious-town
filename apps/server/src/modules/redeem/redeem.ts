@@ -2,7 +2,7 @@ import type { RedeemResultDto, RewardItems } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import type { Op } from '../../core/op';
-import { grantRewardOp } from '../mail/reward';
+import { brokenItems, grantRewardOp } from '../mail/reward';
 
 const failKey = (accountId: number) => `redeem:fail:${accountId}`;
 
@@ -14,12 +14,19 @@ export async function redeemOp(o: Op, d: GameDeps, ctx: RestCtx, input: string):
   const code = input.trim().toUpperCase();
   const { failLimit, failWindowSec } = o.tuning.redeem;
   const key = failKey(ctx.accountId);
-  if (Number((await d.redis.get(key)) ?? 0) >= failLimit) throw invalidState('too_many_tries');
+  // 计数键总要带过期时间：加数和设过期是两步，中途退出会留下不过期的键，这里补上，免得永久锁住
+  const ensureTtl = async () => {
+    if ((await d.redis.ttl(key)) < 0) await d.redis.expire(key, failWindowSec);
+  };
+  if (Number((await d.redis.get(key)) ?? 0) >= failLimit) {
+    await ensureTtl();
+    throw invalidState('too_many_tries');
+  }
 
   const row = await o.tx.selectFrom('redeem_code').selectAll().where('code', '=', code).executeTakeFirst();
   if (!row) {
-    const n = await d.redis.incr(key);
-    if (n === 1) await d.redis.expire(key, failWindowSec);
+    await d.redis.incr(key);
+    await ensureTtl();
     throw invalidState('code_not_found');
   }
   if (row.disabled_at) throw invalidState('code_disabled');
@@ -28,6 +35,10 @@ export async function redeemOp(o: Op, d: GameDeps, ctx: RestCtx, input: string):
   if (row.shard_id !== null && row.shard_id !== o.shardId) throw invalidState('code_wrong_shard');
   if (row.min_level !== null && row.min_level > o.rest.level)
     throw invalidState('code_level', { level: row.min_level });
+
+  // 附件里的道具已从配置删除：报失效，不记用过、不占次数（和邮件的"附件已失效"一致）
+  const items = row.items as RewardItems;
+  if (brokenItems(o.config, items)) throw invalidState('code_broken');
 
   const used = await o.tx
     .insertInto('redeem_use')
@@ -46,7 +57,6 @@ export async function redeemOp(o: Op, d: GameDeps, ctx: RestCtx, input: string):
     .executeTakeFirst();
   if (!counted) throw invalidState('code_used_up');
 
-  const items = row.items as RewardItems;
   await grantRewardOp(o, items, { source: 'redeem', logType: 'redeem', logParams: { code } });
   return { code, items };
 }
