@@ -173,3 +173,13 @@ describe('一次操作的得失合成一条提示（问题记录：弹出的消�
     expect(text.endsWith('等 11 项')).toBe(true);
   });
 });
+describe('问题记录 154：酒吧、外卖的日志有中文文案', () => {
+  it('记忆调酒、外卖领取', () => {
+    expect(logText({ type: 'bar.memory', params: { level: 3, correct: false }, at: '' }, names)).toBe(
+      '记忆调酒第 3 关没调对',
+    );
+    expect(logText({ type: 'takeaway.claim', params: { success: true, coin: 1200 }, at: '' }, names)).toBe(
+      '外卖送达，获得银币 1,200',
+    );
+  });
+});
