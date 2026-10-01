@@ -1,11 +1,17 @@
 import { sql } from 'kysely';
-import { gameDay, gameTime, type HiphopPlace, type HiphopSpotDto } from '@dt/shared';
+import { gameDay, gameTime, type HiphopPlace, type HiphopSpotDto, type HiphopTipBody } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
+import { runOp } from '../../core/op';
+import type { WorldService } from '../world/service';
 import { mondayOf } from '../friend/weekly';
 import { HIPHOP_RESTAURANT, hiphopDay, hiphopOut } from './day';
+import { tip } from './tip';
 
-export function createHiphopService(d: GameDeps) {
+export function createHiphopService(d: GameDeps, world: WorldService) {
   return {
+    tip(ctx: RestCtx, b: HiphopTipBody) {
+      return runOp(d, ctx, { feature: 'hiphop', source: 'hiphop.tip' }, (o) => tip(o, world, ctx, b));
+    },
     /** 查看某个地点或某家店（设计文档 §2.1）：他不在这里时只回 here:false，不带任何其他字段 */
     async spot(ctx: RestCtx, q: { place?: number; restId?: number }): Promise<HiphopSpotDto> {
       const { tuning } = await d.shards.ensureFeature(ctx.shardId, 'hiphop');
