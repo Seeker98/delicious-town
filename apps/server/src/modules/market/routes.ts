@@ -9,6 +9,7 @@ export function marketRoutes(svc: MarketService): FastifyPluginAsync {
   return async (r) => {
     r.get('/view', async (req) => ok(await svc.view(restCtxOf(req))));
     r.post('/buy', async (req) => okOp(await svc.buy(restCtxOf(req), parse(marketBuyBody, req.body))));
+    r.post('/manual-stock', async (req) => okOp(await svc.manualStock(restCtxOf(req))));
     r.post('/guess', async (req) =>
       okOp(await svc.joinGuess(restCtxOf(req), parse(guessBody, req.body).foodsIds)),
     );
