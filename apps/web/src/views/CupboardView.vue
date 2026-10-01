@@ -62,6 +62,11 @@ const MASTER_RULE: Record<number, string> = {
 const decomposeMax = computed(() => Math.min(data.value?.handleMax ?? 100, pickedItem.value?.num ?? 0));
 const composeMax = computed(() => Math.floor(decomposeMax.value / 2) * 2);
 const decomposeN = computed(() => Math.max(1, Math.min(num.value || 1, decomposeMax.value)));
+/** 兑换稀有食材（问题记录 202）：数量框和合成一样表示消耗几个，2 个换 1 次；一次最多 100 个（50 次） */
+const exchangeMax = computed(() => Math.floor(Math.min(100, pickedItem.value?.num ?? 0) / 2) * 2);
+const exchangeN = computed(() =>
+  Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, exchangeMax.value)),
+);
 const composeN = computed(() =>
   Math.max(2, Math.min(Math.floor((num.value || 2) / 2) * 2, composeMax.value)),
 );
@@ -209,10 +214,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         <button
           v-if="pickedItem.foodsId === 467 || pickedItem.foodsId === 468"
           class="btn btn-sm btn-outline-success"
-          :disabled="busy || pickedItem.num < 2 * num"
-          @click="run(() => endpoints.exchangeMaster(pickedItem!.foodsId as 467 | 468, num), '兑换失败')"
+          data-testid="exchange"
+          :disabled="busy || exchangeMax < 2"
+          @click="
+            run(() => endpoints.exchangeMaster(pickedItem!.foodsId as 467 | 468, exchangeN / 2), '兑换失败')
+          "
         >
-          兑换稀有食材
+          兑换稀有食材 ×{{ exchangeN }}
         </button>
       </div>
       <div v-if="MASTER_RULE[pickedItem.foodsId]" class="text-muted mt-1" data-testid="master-rule">
