@@ -12,6 +12,7 @@ import { barRoutes } from './bar/routes';
 import { towerRoutes } from './tower/routes';
 import { takeawayRoutes } from './takeaway/routes';
 import { townRoutes } from './town/routes';
+import { hiphopRoutes } from './hiphop/routes';
 import { socialRoutes } from './friend/routes';
 import { growthRoutes } from './growth/routes';
 import { marketRoutes } from './market/routes';
@@ -45,4 +46,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(towerRoutes(game.tower), { prefix: '/api/v1' });
   app.register(takeawayRoutes(game.takeaway), { prefix: '/api/v1' });
   app.register(townRoutes(game.town), { prefix: '/api/v1' });
+  app.register(hiphopRoutes(game.hiphop), { prefix: '/api/v1' });
 }

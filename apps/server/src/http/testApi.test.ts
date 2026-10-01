@@ -71,3 +71,27 @@ describe('测试时钟接口', () => {
     ).toThrow('ENABLE_TEST_API');
   });
 });
+
+describe('测试接口：设定嘻哈男孩的地点（4E-2）', () => {
+  it('把今天的地点设到指定位置；需要登录', async () => {
+    const clock = createShiftClock();
+    const ctx = await createTestApp({ env: testEnvWith({ ENABLE_TEST_API: true }), clock, now: clock.now });
+    contexts.push(ctx);
+    const shardId = await createShard(ctx.deps.db);
+    expect((await call(ctx.app, 'POST', '/api/v1/test/hiphop', { body: { shardId, place: 1 } })).status).toBe(
+      401,
+    );
+    const u = await registerUser(ctx.app);
+    const r = await call(ctx.app, 'POST', '/api/v1/test/hiphop', {
+      cookie: u.cookie,
+      body: { shardId, place: 5 },
+    });
+    expect(r.status).toBe(200);
+    const row = await ctx.deps.db
+      .selectFrom('hiphop_day')
+      .select(['place', 'rest_id'])
+      .where('shard_id', '=', shardId)
+      .executeTakeFirstOrThrow();
+    expect(row).toEqual({ place: 5, rest_id: null });
+  });
+});
