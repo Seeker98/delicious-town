@@ -2,12 +2,12 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LessonsDto, McOverviewDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { useCatalogStore } from '../stores/catalog';
-import { useToastStore } from '../stores/toast';
-import ClassroomView from './ClassroomView.vue';
+import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
+import { useToastStore } from '../../stores/toast';
+import ClassroomPanel from './ClassroomPanel.vue';
 
-vi.mock('../api/endpoints', () => ({
+vi.mock('../../api/endpoints', () => ({
   endpoints: {
     lessons: vi.fn(),
     mc: vi.fn(),
@@ -48,7 +48,7 @@ const mc = {
   ],
 } as McOverviewDto;
 
-describe('ClassroomView', () => {
+describe('ClassroomPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
@@ -74,7 +74,7 @@ describe('ClassroomView', () => {
       forgot: { cookbooks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], mcId: null },
     });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const w = mount(ClassroomView);
+    const w = mount(ClassroomPanel);
     await flushPromises();
     await w.find('[data-testid="steal-7"]').trigger('click');
     expect(confirm.mock.calls[0]![0]).toContain('遗忘 10 道食谱');
@@ -89,7 +89,7 @@ describe('ClassroomView', () => {
 
   it('开课：教师证只列等级合适且持有的', async () => {
     vi.mocked(endpoints.lessonOpen).mockResolvedValue({ id: 9 });
-    const w = mount(ClassroomView);
+    const w = mount(ClassroomPanel);
     await flushPromises();
     await w.find('[data-testid="open-mc"]').setValue('1');
     const opts = w.findAll('[data-testid="open-cert"] option').map((o) => o.text());

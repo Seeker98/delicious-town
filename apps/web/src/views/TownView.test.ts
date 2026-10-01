@@ -13,6 +13,8 @@ vi.mock('../api/endpoints', () => ({
     townExchange: vi.fn(),
     rank: vi.fn(),
     catalog: vi.fn(),
+    lessons: vi.fn(),
+    mc: vi.fn(),
   },
 }));
 
@@ -79,5 +81,27 @@ describe('TownView', () => {
     await w.find('[data-testid="tab-town"]').trigger('click');
     await flushPromises();
     expect(router.currentRoute.value.query.tab).toBe('town');
+  });
+
+  it('页面叫"广场"；标签是新闻、居民、兑换、排行、教室（问题记录 122）', async () => {
+    const w = await mountAt('/town?tab=news');
+    expect(w.find('h5').text()).toBe('广场');
+    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '兑换', '排行', '教室']);
+  });
+
+  it('?tab=classroom 打开教室（问题记录 122：教室放进广场）', async () => {
+    vi.mocked(endpoints.lessons).mockResolvedValue({
+      items: [],
+      mine: null,
+      certs: [],
+      canForceClose: false,
+      forceCloseCoinPerLevel: 0,
+      forgetPerLevel: 3,
+    } as never);
+    vi.mocked(endpoints.mc).mockResolvedValue({ items: [] } as never);
+    const w = await mountAt('/town?tab=classroom');
+    expect(w.find('[data-testid="tab-classroom"]').classes()).toContain('active');
+    expect(w.find('[data-testid="classroom-panel"]').exists()).toBe(true);
+    expect(endpoints.lessons).toHaveBeenCalled();
   });
 });

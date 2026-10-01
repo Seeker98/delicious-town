@@ -112,7 +112,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取特色菜�
     <div class="d-flex align-items-center mb-2">
       <h5 class="mb-0 flex-fill">特色菜</h5>
       <RouterLink to="/temple" class="small me-2">神殿鉴定</RouterLink>
-      <RouterLink to="/classroom" class="small">教室</RouterLink>
+      <RouterLink to="/town?tab=classroom" class="small">教室</RouterLink>
     </div>
     <p v-if="o.star < 1" class="small text-muted">1 星以后才能鉴定和烹制特色菜。</p>
 

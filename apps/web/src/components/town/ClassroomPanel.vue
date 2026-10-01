@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import type { LessonDto, LessonsDto, McOverviewDto } from '@dt/shared';
-import { endpoints } from '../api/endpoints';
-import { errorMessage } from '../i18n/zh-CN';
-import { useCatalogStore } from '../stores/catalog';
-import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { endpoints } from '../../api/endpoints';
+import { errorMessage } from '../../i18n/zh-CN';
+import { useCatalogStore } from '../../stores/catalog';
+import { useToastStore } from '../../stores/toast';
+import { formatNum } from '../../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -86,8 +86,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
 </script>
 
 <template>
-  <div v-if="data">
-    <h5>教室</h5>
+  <!-- 教室是广场的一个标签（问题记录 122），原来的独立页面 /classroom 跳到这里 -->
+  <div v-if="data" data-testid="classroom-panel">
     <div v-if="data.mine" class="border rounded p-2 mb-2 small" data-testid="my-lesson">
       我的课：<b>{{ catalog.mcName(data.mine.mcId) }}</b> {{ data.mine.level }} 级 ·
       {{ data.mine.learned + data.mine.stolen }}/{{ data.mine.maxNum }} 人 · 还剩

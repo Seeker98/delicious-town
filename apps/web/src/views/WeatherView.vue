@@ -35,7 +35,7 @@ onMounted(async () => {
       今天是节日，美味券掉落概率 ×{{ world.holidayMultiplier }}
     </p>
     <p class="small">
-      持有雷神锤可以换天气：<RouterLink to="/town" data-testid="weather-hammer">去小镇</RouterLink>
+      持有雷神锤可以换天气：<RouterLink to="/town?tab=town" data-testid="weather-hammer">去广场</RouterLink>
     </p>
   </div>
 </template>
