@@ -589,7 +589,7 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     expect(suits.get(82)).toMatchObject({ name: '古尔图格的意志', maxNum: 5 });
     expect(suits.get(82)!.tiers.map((t) => t.effects)).toEqual([
       { cuttingPct: 0.06, firePct: 0.06 },
-      { atRate: 0.06, luckValue: 24, attackCutting: 0.05, attackFire: 0.05 },
+      { atRate: 0.06, luckValue: 24, attackCook: 0.05 },
     ]);
   });
 
@@ -610,5 +610,29 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
     expect(errors).toContain('equip_lore rename references unknown goods 999999');
     expect(errors).toContain('equip_lore add duplicates goods 33');
+  });
+
+  it('overlay 写错键名、套装效果键拼错、档位件数超过上限、件数和上限对不上时构建报错（终审 I3）', () => {
+    const src = source();
+    type Lore = {
+      rename: Array<Record<string, unknown>>;
+      suits: Array<{
+        suitid: number;
+        maxnum: number;
+        tiers: Array<{ neednum: number; value: Record<string, number> }>;
+      }>;
+    };
+    const lore = structuredClone(src['game/equip_lore']) as Lore;
+    lore.rename[0]!.awardFlag = 8;
+    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
+    expect(errors).toContainEqual(expect.stringMatching(/^game\/equip_lore: rename\.0.*awardFlag/));
+    const lore2 = structuredClone(src['game/equip_lore']) as Lore;
+    lore2.suits.find((s) => s.suitid === 4)!.tiers[1]!.value = { luckvalue: 8 };
+    lore2.suits.find((s) => s.suitid === 7)!.tiers[1]!.neednum = 5;
+    lore2.suits.find((s) => s.suitid === 82)!.maxnum = 6;
+    const e2 = buildBundle({ ...src, 'game/equip_lore': lore2 }).errors;
+    expect(e2).toContain('equip_suits 4 has unknown effect luckvalue');
+    expect(e2).toContain('equip_suits 7 tier needs 5 pieces but maxnum is 4');
+    expect(e2).toContain('equip_suits 82 has 5 pieces but maxnum is 6');
   });
 });

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
-import { buildSuits, parseEquipDef, parseGemDef } from './equip';
+import { SUIT_EFFECT_KEYS, buildSuits, parseEquipDef, parseGemDef } from './equip';
 import { applyEquipLore } from './lore';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
@@ -352,6 +352,17 @@ export function buildBundle(src: SourceData): BuildResult {
     suits.map((s) => s.id),
   );
   const suitIds = new Set(suits.map((s) => s.id));
+  for (const s of lored.suits) {
+    for (const t of s.tiers) {
+      if (t.neednum > s.maxnum)
+        errors.push(`equip_suits ${s.suitid} tier needs ${t.neednum} pieces but maxnum is ${s.maxnum}`);
+      for (const k of Object.keys(t.value))
+        if (!SUIT_EFFECT_KEYS.has(k)) errors.push(`equip_suits ${s.suitid} has unknown effect ${k}`);
+    }
+    const pieces = goods.filter((g) => g.equip?.suitId === s.suitid).length;
+    if (pieces !== s.maxnum)
+      errors.push(`equip_suits ${s.suitid} has ${pieces} pieces but maxnum is ${s.maxnum}`);
+  }
   const goodsById = new Map(goods.map((g) => [g.id, g]));
   for (const g of goods) {
     if (g.equip && !NON_SUIT_IDS.has(g.equip.suitId) && !suitIds.has(g.equip.suitId))

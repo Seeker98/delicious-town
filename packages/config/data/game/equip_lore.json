@@ -23,7 +23,7 @@
     },
     {
       "id": 629, "name": "灵魂之沙利叶的无情之瓶", "type": 4, "devicetype": 4, "maxNum": 99,
-      "desc": "调味+18。瓶里是沙利叶调了半辈子的味道，他嫌太孤单，从不肯给别人尝。",
+      "desc": "调味+18。瓶里是沙利叶调了半辈子的味道，可惜多年没人登上第四层，也就没人尝过。",
       "value": { "part": 4, "essence": 18, "season": 18, "hole": 1, "max_hole": 1, "min_level": 20, "suitid": 4 },
       "level": 3, "coin": 400000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 4
     },
@@ -83,7 +83,7 @@
     },
     {
       "id": 639, "name": "堕落之茵蔯的炙热之镬", "type": 4, "devicetype": 3, "maxNum": 99,
-      "desc": "随机增加30点属性。茵蔯的镬永远烧得发红，茵蔯说只有炙热才能逼出食材全部的味道。",
+      "desc": "随机增加30点属性。这口镬永远烧得发红。茵蔯说，只有炙热才能逼出食材全部的味道。",
       "value": { "part": 3, "essence": 20, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
       "level": 4, "coin": 500000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
     },
@@ -135,7 +135,7 @@
       "suitid": 82, "name": "古尔图格的意志", "maxnum": 5,
       "tiers": [
         { "neednum": 4, "desc": "刀工+6%,火候+6%", "value": { "cutting": 0.06, "fire": 0.06 } },
-        { "neednum": 5, "desc": "上座率+6%,幸运+24, 主动挑战时额外提升: 刀工+5%,火候+5%", "value": { "atRate": 0.06, "luckValue": 24, "attackCutting": 0.05, "attackFire": 0.05 } }
+        { "neednum": 5, "desc": "上座率+6%,幸运+24, 主动挑战时额外提升: 厨艺+5%", "value": { "atRate": 0.06, "luckValue": 24, "attackCook": 0.05 } }
       ]
     }
   ]
