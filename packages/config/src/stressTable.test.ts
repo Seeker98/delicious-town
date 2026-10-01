@@ -1,0 +1,80 @@
+import { describe, expect, it } from 'vitest';
+import { buildBundle } from './build';
+import { defaultDataDir, readSourceDir } from './source';
+import { rewriteStatDesc, scaleToTotal } from './stressTable';
+
+const zero = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
+const source = () => readSourceDir(defaultDataDir());
+
+describe('数值表（问题记录 120）', () => {
+  it('按比例缩放到总和，最大余数法，总和正好相等（Review Focus 2）', () => {
+    expect(scaleToTotal({ ...zero, cook: 1, fire: 8 }, 4, 'fire')).toEqual({ ...zero, fire: 4 });
+    expect(scaleToTotal({ ...zero, cook: 1, fire: 8 }, 28, 'fire')).toEqual({ ...zero, cook: 3, fire: 25 });
+    expect(scaleToTotal({ ...zero, creatives: 22 }, 25, 'creatives')).toEqual({ ...zero, creatives: 25 });
+    expect(scaleToTotal(zero, 6, 'cook')).toEqual({ ...zero, cook: 6 });
+  });
+
+  it('改写说明里的数字', () => {
+    expect(rewriteStatDesc('厨艺+38。阿卡玛……', { ...zero, cook: 51 }, 51)).toBe('厨艺+51。阿卡玛……');
+    expect(rewriteStatDesc('随机增加35点属性。巴贝雷特……', zero, 31)).toBe('随机增加31点属性。巴贝雷特……');
+    expect(rewriteStatDesc('感谢……。增加22点创意。', { ...zero, creatives: 25 }, 25)).toBe(
+      '感谢……。增加25点创意。',
+    );
+    expect(rewriteStatDesc('餐厅12专属厨具，增加22点属性', { ...zero, creatives: 25 }, 25)).toBe(
+      '餐厅12专属厨具，增加25点属性',
+    );
+  });
+
+  it('构建：每件厨具都有表，+0 和穿戴等级按表', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const g = (id: number) => bundle!.goods.find((x) => x.id === id)!;
+    expect(bundle!.goods.filter((x) => x.equip && x.equip.stressTable.length !== 11)).toEqual([]);
+    // 阿卡玛之铲：固定厨艺 51，80 级
+    expect(g(352).equip).toMatchObject({
+      minLevel: 80,
+      total: null,
+      stressTable: [51, 55, 59, 65, 71, 79, 87, 97, 107, 119, 131],
+    });
+    expect(g(352).equip!.ranges.cook).toBe(51);
+    expect(g(352).desc.startsWith('厨艺+51。')).toBe(true);
+    // 巴贝雷特之铲：随机总和 31，60 级
+    expect(g(59).equip).toMatchObject({ minLevel: 60, total: 31 });
+    expect(g(59).desc.startsWith('随机增加31点属性。')).toBe(true);
+    // 中厨之锅：厨艺 1、火候 8 缩放到 4
+    expect(g(49).equip!.ranges).toMatchObject({ cook: 0, fire: 4 });
+    // 赞助帽：玉级 25、铉级 41
+    expect(g(641).equip!.ranges.creatives).toBe(25);
+    expect(g(642).equip!.ranges.creatives).toBe(41);
+    const levels = Object.fromEntries(
+      [33, 637, 59, 56, 632, 352, 358, 73, 30].map((id) => [id, g(id).equip!.minLevel]),
+    );
+    expect(levels).toEqual({ 33: 40, 637: 50, 59: 60, 56: 65, 632: 70, 352: 80, 358: 90, 73: 13, 30: 0 });
+  });
+
+  it('一件厨具没有表、或被两张表覆盖时报错（Review Focus 1）', () => {
+    const src = source();
+    const lore = structuredClone(src['game/equip_lore']) as {
+      stressTables: Array<{ goods?: number[]; suits?: number[] }>;
+    };
+    lore.stressTables[0]!.goods = [...(lore.stressTables[0]!.goods ?? []), 352];
+    const two = buildBundle({ ...src, 'game/equip_lore': lore }).errors;
+    expect(two).toContain('goods 352 equip needs exactly one stress table (found 2)');
+    const lore2 = structuredClone(src['game/equip_lore']) as { stressTables: Array<{ name: string }> };
+    lore2.stressTables = lore2.stressTables.filter((t) => t.name !== '阿卡玛');
+    expect(buildBundle({ ...src, 'game/equip_lore': lore2 }).errors).toContain(
+      'goods 352 equip needs exactly one stress table (found 0)',
+    );
+  });
+
+  it('表必须 11 个数、单调不减', () => {
+    const src = source();
+    const lore = structuredClone(src['game/equip_lore']) as {
+      stressTables: Array<{ name: string; values: number[] }>;
+    };
+    lore.stressTables[0]!.values = [5, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+    expect(buildBundle({ ...src, 'game/equip_lore': lore }).errors).toContain(
+      `stressTables ${lore.stressTables[0]!.name} must not decrease`,
+    );
+  });
+});

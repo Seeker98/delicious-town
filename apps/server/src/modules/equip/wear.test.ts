@@ -51,9 +51,9 @@ describe('穿戴（设计文档 §3.10）', () => {
     const a = await piece(ctx, 56);
     await expect(eq().wear(ctx, { id: a })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'level', need: 13 },
+      params: { reason: 'level', need: 65 },
     });
-    await t.db.updateTable('restaurant').set({ level: 20 }).where('id', '=', ctx.restaurantId).execute();
+    await t.db.updateTable('restaurant').set({ level: 70 }).where('id', '=', ctx.restaurantId).execute();
     await eq().wear(ctx, { id: a });
     const b = await piece(ctx, 56);
     await eq().wear(ctx, { id: b });

@@ -9,6 +9,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
+import { applyStressTables } from './stressTable';
 import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
@@ -195,7 +196,7 @@ export function buildBundle(src: SourceData): BuildResult {
   // ---------- 道具 ----------
   const lored = applyEquipLore(goodsRaw, suitsRaw, equipLore, errors);
   const awardFlags = new Map(awardFlagsRaw.map((a) => [a.id, a.awardflag]));
-  const goods: Goods[] = lored.goods.map((g) => {
+  const builtGoods: Goods[] = lored.goods.map((g) => {
     let value: unknown = null;
     if (g.value !== null && g.value !== undefined && g.value.trim() !== '') {
       try {
@@ -243,6 +244,8 @@ export function buildBundle(src: SourceData): BuildResult {
     }
     return item;
   });
+  // ---------- 强化数值表（问题记录 120） ----------
+  const goods = applyStressTables(builtGoods, equipLore.stressTables, errors);
   unique(
     'goods',
     goods.map((g) => g.id),

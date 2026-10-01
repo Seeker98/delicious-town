@@ -35,6 +35,7 @@ describe('生成（规格书 07 §7.7）', () => {
       suitId: 0,
       total: null,
       ranges: { cook: 3, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 },
+      stressTable: [],
     };
     expect(rollEquipAttrs(def, sequenceRng([0.9]))).toEqual({
       cook: 3,
@@ -55,6 +56,7 @@ describe('生成（规格书 07 §7.7）', () => {
       minLevel: 13,
       suitId: 5,
       total: 25,
+      stressTable: [],
       ranges: {
         cook: range(0, 25),
         cutting: range(0, 25),

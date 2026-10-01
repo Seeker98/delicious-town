@@ -31,7 +31,7 @@ describe('命名帽子（设计 §5）', () => {
       custom_name: '大橘',
       part: 5,
     });
-    expect(e.base_creatives).toBe(22);
+    expect(e.base_creatives).toBe(25);
     const ledger = await t.db
       .selectFrom('ledger')
       .select(['source', 'kind', 'item_id', 'delta'])

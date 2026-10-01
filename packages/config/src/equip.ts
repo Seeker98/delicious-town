@@ -52,6 +52,7 @@ export function parseEquipDef(value: unknown): EquipDef | string {
     suitId: fields.suitId!,
     total: fields.total,
     ranges,
+    stressTable: [],
   };
 }
 
