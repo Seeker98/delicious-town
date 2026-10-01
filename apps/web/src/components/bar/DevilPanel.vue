@@ -4,6 +4,7 @@ import type { BarDto, DevilDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
+import { roundGone } from './gone';
 
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -27,10 +28,13 @@ const finished = computed(() => !!round.value?.result);
 
 const hhmm = (iso: string) =>
   new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+/** 我刚喝的那一杯：状态里先说我的结果，再说调酒师的（PR28 遗留：分两步说明） */
+const mineCup = ref<number | null>(null);
 const status = computed(() => {
   const r = round.value;
   if (!r || r.result || r.lastBartender === null) return '';
-  return `调酒师喝了 ${r.lastBartender + 1} 号杯，没事。轮到你了`;
+  const head = mineCup.value !== null ? `你喝了 ${mineCup.value + 1} 号杯，没事；调酒师接着` : '调酒师';
+  return `${head}喝了 ${r.lastBartender + 1} 号杯，${mineCup.value !== null ? '也' : ''}没事。轮到你了`;
 });
 const resultText = computed(() => {
   const r = round.value;
@@ -41,6 +45,13 @@ const resultText = computed(() => {
 const cupLabel = (c: DevilDto['cups'][number], i: number) =>
   c === 'me' ? '你喝了' : c === 'bartender' ? '调酒师喝了' : `${i + 1} 号杯`;
 
+/** 喝一杯：成功后才记下我喝的是哪杯，失败时状态行不会说错杯号（终审） */
+async function drink(i: number) {
+  const before = local.value;
+  await run(() => endpoints.barDevilDrink(i), '喝酒失败');
+  if (local.value !== before && local.value !== null) mineCup.value = i;
+}
+
 async function run(fn: () => Promise<DevilDto>, fallback: string) {
   if (busy.value) return;
   busy.value = true;
@@ -49,6 +60,10 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    if (roundGone(e)) {
+      local.value = null;
+      emit('reload');
+    }
   } finally {
     busy.value = false;
   }
@@ -86,20 +101,26 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
           :class="[
             'dt-cup',
             'dt-tap',
-            { 'dt-cup-me': c === 'me', 'dt-cup-bar': c === 'bartender', 'dt-cup-spiked': round.spiked === i },
+            {
+              'dt-cup-me': c === 'me',
+              'dt-cup-bar': c === 'bartender',
+              'dt-cup-spiked': round.spiked === i,
+              'dt-cup-left': finished && c === null && round.spiked !== i,
+            },
           ]"
           :disabled="busy || finished || c !== null"
           :data-testid="`devil-cup-${i}`"
-          @click="run(() => endpoints.barDevilDrink(i), '喝酒失败')"
+          @click="drink(i)"
         >
           <i class="bi bi-cup-straw"></i>
           <span>{{ round.spiked === i ? '特辣酒' : cupLabel(c, i) }}</span>
         </button>
       </div>
-      <div v-if="status" class="mt-2" data-testid="devil-status">{{ status }}</div>
+      <div v-if="status" class="mt-2" aria-live="polite" data-testid="devil-status">{{ status }}</div>
       <template v-if="finished">
         <div
           :class="['mt-2', 'fw-bold', round.result === 'win' ? 'text-success' : 'text-danger']"
+          aria-live="polite"
           data-testid="devil-result"
         >
           {{ resultText }}

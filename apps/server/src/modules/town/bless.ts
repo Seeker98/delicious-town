@@ -78,7 +78,8 @@ export async function wish(o: Op): Promise<WishResultDto> {
     .returning('bless_id')
     .executeTakeFirst();
   if (!ins) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'wish' });
-  opNews(o, 'town.bless', { blessId: b.id, name: b.name });
+  // 星愿名不放 name：name 是"店名缺失时的兜底"字段（PR26 遗留）
+  opNews(o, 'town.bless', { blessId: b.id, blessName: b.name });
   restLog(o, 'town.wish', { blessId: b.id });
   return { bless: blessDto(b) };
 }
@@ -103,11 +104,10 @@ export async function feast(o: Op, foodsId?: number): Promise<FeastResultDto> {
   } else if (b.type === 0) {
     if (foodsId === undefined || !blessFoodIds(o.config, b.levels!).includes(foodsId))
       throw invalidState('foods_not_allowed', { foodsId: foodsId ?? null });
-    await addFoods(o, foodsId, n);
-    rewards.push({ kind: 'foods', id: foodsId, num: n });
+    const got = await addFoods(o, foodsId, n);
+    rewards.push({ kind: 'foods', id: foodsId, num: got.toCupboard + got.toFridge });
   } else if (b.type === 2) {
-    await grantGoodsOp(o, b.goodsId!, n);
-    rewards.push({ kind: 'goods', id: b.goodsId, num: n });
+    rewards.push({ kind: 'goods', id: b.goodsId, num: await grantGoodsOp(o, b.goodsId!, n) });
   } else if (b.type === 3) {
     gainCoin(o, n);
     rewards.push({ kind: 'coin', id: null, num: n });

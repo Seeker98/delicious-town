@@ -128,4 +128,24 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     }
     expect(await listNews(t.db, a.shardId, { limit: 10, only: ['bar.darts'] })).toHaveLength(1);
   });
+
+  it('瞄准一次同时投两镖：只有一镖生效（PR28 遗留）', async () => {
+    const a = await player();
+    await start(a);
+    script.push(BULL_AIM);
+    await aim(a);
+    t.clock.advance(450);
+    const rs = await Promise.allSettled([shoot(a, 450), shoot(a, 450)]);
+    expect(rs.filter((r) => r.status === 'fulfilled')).toHaveLength(1);
+    const bad = rs.find((r) => r.status === 'rejected') as PromiseRejectedResult;
+    expect(bad.reason).toMatchObject({ params: { reason: 'no_aim' } });
+  });
+
+  it('每天的局数跨天重置（PR28 遗留）', async () => {
+    const a = await player();
+    await incrementDaily(t.db, a.restaurantId, 'bar.darts', 20, DAY);
+    await expect(start(a)).rejects.toMatchObject({ code: 'LIMIT_REACHED' });
+    t.clock.set(gameTime('2026-10-01', 12));
+    await expect(start(a)).resolves.toBeDefined();
+  });
 });

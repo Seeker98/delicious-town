@@ -57,6 +57,7 @@ async function go(x: TownExchangeItemDto) {
     await load();
   } catch (e) {
     toast.push(errorMessage(e, '兑换失败'), 'danger');
+    await load();
   } finally {
     busy.value = false;
   }
@@ -78,7 +79,14 @@ async function go(x: TownExchangeItemDto) {
     </div>
     <div v-for="x in shown" :key="x.id" class="dt-item" :data-testid="`ex-row-${x.id}`">
       <div class="dt-item-main">
-        <div class="dt-item-title" role="button" @click="toggleDesc(x.id)">
+        <div
+          class="dt-item-title"
+          role="button"
+          tabindex="0"
+          @click="toggleDesc(x.id)"
+          @keydown.enter.prevent="toggleDesc(x.id)"
+          @keydown.space.prevent="toggleDesc(x.id)"
+        >
           {{ catalog.goodsName(x.goodsId) }}<span v-if="x.num > 1" class="ms-1">×{{ x.num }}</span>
         </div>
         <div class="dt-meta dt-clamp1">

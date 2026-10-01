@@ -37,24 +37,44 @@ async function run(fn: () => Promise<void>, fallback: string) {
   }
 }
 
-async function loadFriends() {
-  list.value = await endpoints.friendList(sort.value);
-}
 async function loadRequests() {
   requests.value = await endpoints.friendRequests();
   friendsStore.pending = requests.value.length;
 }
+/**
+ * 切标签读取：不走 run 的忙碌拦截（以前列表还在读时点别的标签，标签切过去了却不读，好友 e2e 偶发失败就是这个）；
+ * 用读取序号丢弃过期的结果
+ */
+let seq = 0;
 async function show(t: Tab) {
   tab.value = t;
-  await run(async () => {
-    if (t === 'friends') await loadFriends();
-    if (t === 'requests') await loadRequests();
-    if (t === 'find') street.value = await endpoints.friendStreet();
-    if (t === 'feed') {
-      feed.value = (await endpoints.friendFeed()).items;
-      thumbs.value = await endpoints.thumbsToday();
+  const mine = ++seq;
+  try {
+    if (t === 'friends') {
+      const v = await endpoints.friendList(sort.value);
+      if (mine === seq) list.value = v;
     }
-  }, '读取失败');
+    if (t === 'requests') {
+      const v = await endpoints.friendRequests();
+      if (mine === seq) {
+        requests.value = v;
+        friendsStore.pending = v.length;
+      }
+    }
+    if (t === 'find') {
+      const v = await endpoints.friendStreet();
+      if (mine === seq) street.value = v;
+    }
+    if (t === 'feed') {
+      const [f, th] = await Promise.all([endpoints.friendFeed(), endpoints.thumbsToday()]);
+      if (mine === seq) {
+        feed.value = f.items;
+        thumbs.value = th;
+      }
+    }
+  } catch (e) {
+    if (mine === seq) toast.push(errorMessage(e, '读取失败'), 'danger');
+  }
 }
 
 function respond(r: FriendRequestDto, accept: boolean) {

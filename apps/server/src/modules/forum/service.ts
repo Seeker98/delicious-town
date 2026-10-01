@@ -7,12 +7,15 @@ import type {
   ForumReplyBody,
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
+import { ErrorCode } from '@dt/shared';
 import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op';
+import { AppError } from '../../http/errors';
 import { withRestaurants } from '../../db/tx';
 import { adminPost, react } from './admin';
 import { createPost, deletePost, editPost } from './posts';
 import { createReply, deleteReply } from './replies';
-import { listPosts, postDetail, postReads } from './view';
+import { isAdmin } from './common';
+import { listPosts, postDetail, postReads, postSource } from './view';
 
 /** 论坛（子项目 4E-3） */
 export function createForumService(d: GameDeps) {
@@ -29,6 +32,9 @@ export function createForumService(d: GameDeps) {
      */
     async admin(ctx: RestCtx, id: number, action: ForumAdminAction): Promise<OpResult<ForumAdminDto>> {
       const settings = await d.shards.ensureFeature(ctx.shardId, 'forum');
+      // 先查权限再锁店：普通玩家反复调用不会锁住帖子作者的店（PR31 遗留）；事务里 adminPost 还会再查一次
+      if (!(await isAdmin(d.db, ctx.accountId)))
+        throw new AppError(ErrorCode.FORBIDDEN, 403, { what: 'forum_admin' });
       const pre = await d.db
         .selectFrom('forum_post')
         .select('rest_id')
@@ -65,7 +71,10 @@ export function createForumService(d: GameDeps) {
       return op(ctx, 'forum.read', (o) => postDetail(o, ctx, id));
     },
     reads(ctx: RestCtx, id: number) {
-      return op(ctx, 'forum.reads', (o) => postReads(o, ctx, id));
+      return postReads(d, ctx, id);
+    },
+    source(ctx: RestCtx, id: number) {
+      return postSource(d, ctx, id);
     },
     createPost(ctx: RestCtx, b: ForumPostBody) {
       return op(ctx, 'forum.post', (o) => createPost(o, ctx, b));

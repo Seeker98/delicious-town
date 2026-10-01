@@ -118,12 +118,12 @@ describe('详情和阅读（设计文档 §2.3）', () => {
       .insertInto('forum_reaction')
       .values({ post_id: id, rest_id: b.restaurantId, kind: 'up', created_at: t.clock.now })
       .execute();
-    const reads = (await f().reads(a, id)).data.items;
+    const reads = (await f().reads(a, id)).items;
     expect(reads).toHaveLength(2);
     expect(reads.find((x) => x.restId === b.restaurantId)).toMatchObject({ times: 3, reaction: 'up' });
     expect(reads.find((x) => x.restId === c.restaurantId)).toMatchObject({ times: 1, reaction: null });
     await expect(f().reads(b, id)).rejects.toMatchObject({ code: 'FORBIDDEN' });
-    expect((await f().reads(m, id)).data.items).toHaveLength(2);
+    expect((await f().reads(m, id)).items).toHaveLength(2);
   });
 
   it('权限字段按身份；删除的帖子读不到', async () => {

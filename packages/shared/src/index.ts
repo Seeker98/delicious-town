@@ -29,4 +29,5 @@ export * from './schemas/town';
 export * from './schemas/hiphop';
 export * from './schemas/forum';
 export * from './rank';
+export * from './goodsIds';
 export * from './news';

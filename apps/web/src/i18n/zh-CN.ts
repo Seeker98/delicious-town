@@ -344,6 +344,13 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
   if (code === 'LIMIT_REACHED' && typeof params.what === 'string' && LIMIT[params.what]) {
     return LIMIT[params.what]!(params);
   }
+  // 论坛长度：用服务端给的上限，改 tuning 后提示也跟着变（PR31 遗留）
+  if (code === 'INVALID_STATE' && params.reason === 'post_text' && params.max !== undefined)
+    return `${params.field === 'title' ? '标题' : '正文'}要 1~${String(params.max)} 字`;
+  if (code === 'INVALID_STATE' && params.reason === 'reply_text' && params.max !== undefined)
+    return `回复要 1~${String(params.max)} 字`;
+  if (code === 'INVALID_STATE' && params.reason === 'query_text' && params.max !== undefined)
+    return `搜索词最多 ${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && typeof params.reason === 'string' && STATE[params.reason]) {
     return STATE[params.reason]!;
   }

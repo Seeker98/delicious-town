@@ -51,6 +51,15 @@ describe('新闻文案', () => {
     expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜：食材3、食材5');
   });
 
+  it('星愿名不再占用店名字段：店不存在时显示"某家餐厅"（PR26 遗留）', () => {
+    expect(newsText(n('town.bless', { blessId: 1, blessName: '五谷丰登' }, null), names)).toBe(
+      '某家餐厅许愿得到星愿：五谷丰登',
+    );
+    expect(newsText(n('town.bless', { blessId: 1, name: '五谷丰登' }), names)).toBe(
+      '小王的店许愿得到星愿：五谷丰登',
+    );
+  });
+
   it('论坛（4E-3）', () => {
     expect(newsText(n('forum.feature', { postId: 3, title: '攻略' }), names)).toBe(
       '小王的店的帖子《攻略》被加精了',

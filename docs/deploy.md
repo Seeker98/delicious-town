@@ -137,6 +137,8 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - **上线前**把 tuning `hiphop.requireVerifiedEmail` 改为 true（开发期为方便测试关闭）
 - 迁移 0017 新建论坛四张表：`forum_post`（帖子，阅读、赞踩、回复数冗余在行上）、`forum_reply`（回复，按帖子编楼层）、`forum_reaction`（赞踩）、`forum_read`（阅读记录）
 - 新功能开关 `features.forum`（默认开）；论坛管理员就是账号角色 `mod` / `admin`（后台设置）
+- 嘻哈男孩定时任务（清理 15）：周榜、工资里某一家店发放失败只记错误日志，其他店照发，不会自动重试，失败的那家请在后台"发放补偿"里手动补；worker 停机跨过周一 7:59 时，那一期的工资会跳过（证有效期 160 小时，下一次结算时已过期）
+- 每日地点抽到某家餐厅、但给那家店发"嘻哈文化"失败时，自动改抽公共地点，当天照样有嘻哈男孩
 - 新功能开关 `features.takeaway`（默认开）。关闭后外卖接口返回"这个区服暂未开放该功能"，主线第 34、35 步和配送支线跳过，定时任务跳过该区服
 - worker 新任务：`takeaway-orders`（每个游戏整点补全服公共单，同时删过期超过 1 天的未接单和 7 天前完成的单）
 - 数值在 `tuning.takeaway`（开通费用、公共单数量、品级概率、私人刷新、数值系数、骑手成长、奖池、神秘顾客、清理天数）

@@ -79,7 +79,8 @@ export async function memoryAnswer(o: Op, answer: number[]): Promise<MemoryAnswe
 /** 继续下一关：不再扣费，生成更长的配方 */
 export async function memoryNext(o: Op): Promise<MemoryRoundDto> {
   const s = await loadRound<MemoryState>(o, 'memory');
-  if (!s || !s.passed) throw invalidState('not_passed');
+  if (!s) throw invalidState('no_round');
+  if (!s.passed) throw invalidState('not_passed');
   const level = s.level + 1;
   const next: MemoryState = { level, seq: newSeq(o, level), shownAt: o.now.getTime(), passed: false };
   await saveRound(o, 'memory', next);

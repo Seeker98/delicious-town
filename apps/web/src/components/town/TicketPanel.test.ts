@@ -39,4 +39,13 @@ describe('TicketPanel', () => {
     await flushPromises();
     expect(endpoints.townMysteryTicket).toHaveBeenCalledWith(702);
   });
+
+  it('兑换失败后也通知刷新', async () => {
+    vi.mocked(endpoints.townLevelTicket).mockRejectedValue(new Error('x'));
+    const w = mount(TicketPanel, { props: { data: exchangeData() } });
+    await w.find('[data-testid="lt-num-101"]').setValue(1);
+    await w.find('[data-testid="lt-go"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+  });
 });

@@ -77,9 +77,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
     <div v-for="it in tab === 'coin' ? shop.coin : shop.black" :key="it.goodsId" class="dt-item">
       <div class="dt-item-main">
         <div class="dt-item-title">
-          <span role="button" :data-testid="`name-${it.goodsId}`" @click="toggleDesc(it.goodsId)">{{
-            catalog.goodsName(it.goodsId)
-          }}</span>
+          <span
+            role="button"
+            tabindex="0"
+            :data-testid="`name-${it.goodsId}`"
+            @click="toggleDesc(it.goodsId)"
+            @keydown.enter.prevent="toggleDesc(it.goodsId)"
+            @keydown.space.prevent="toggleDesc(it.goodsId)"
+            >{{ catalog.goodsName(it.goodsId) }}</span
+          >
         </div>
         <div class="dt-meta dt-clamp1" :data-testid="`info-${it.goodsId}`">
           <!-- "最多几个"放最前面，截断时不会丢（审查） -->
