@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
 let seq = [0.5];
@@ -176,5 +177,17 @@ describe('宝石排序（问题记录 132）', () => {
     const ctx = await newRestaurant(t, { goods });
     const id = await piece(ctx, 59);
     expect((await eq().detail(ctx, id)).gems.map((x) => x.goodsId)).toEqual(ORDER);
+  });
+});
+
+describe('详情里的摘除单价（问题记录 128：要花钱的摘除才确认）', () => {
+  it('2 星以下、酸雨天免费时单价是 0；否则是阶数单价', async () => {
+    const poor = await newRestaurant(t, { patch: { star_level: 1 } });
+    expect((await eq().detail(poor, await piece(poor, 56))).ungemCoinPerLevel).toBe(0);
+    const rich = await newRestaurant(t, { shardId: await createShard(t.db), patch: { star_level: 2 } });
+    const id = await piece(rich, 56);
+    expect((await eq().detail(rich, id)).ungemCoinPerLevel).toBe(10_000);
+    await setWeather(rich.shardId, 18);
+    expect((await eq().detail(rich, id)).ungemCoinPerLevel).toBe(0);
   });
 });

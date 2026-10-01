@@ -117,7 +117,7 @@ export interface EquipDetailDto {
   backItems: Array<{ goodsId: number; num: number; back: number }>;
   /** 持有的宝石（镶嵌时选） */
   gems: Array<{ goodsId: number; num: number; level: number }>;
-  /** 摘除一颗宝石的银币（按阶数算之前的单价；0 = 免费） */
+  /** 摘除一颗宝石的银币单价（乘阶数）；现在免费（2 星以下、酸雨天）时为 0 */
   ungemCoinPerLevel: number;
 }
 

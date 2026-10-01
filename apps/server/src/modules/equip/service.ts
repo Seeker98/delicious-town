@@ -293,7 +293,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
       const def = d.config.requireGoods(e.goods_id).equip!;
       const rest = await d.db
         .selectFrom('restaurant')
-        .select('luck')
+        .select(['luck', 'star_level'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
       // 读接口不写加成缓存：直接从来源求 luckValue（和 opLuck 的口径一致）
@@ -353,7 +353,9 @@ export function createEquipService(d: GameDeps, world: WorldService) {
             num: x.num,
             level: d.config.goods.get(x.goods_id)!.gem!.level,
           })),
-        ungemCoinPerLevel: t.ungemCoinPerLevel,
+        // 和 ungem 的口径一致：2 星以下、酸雨天免费
+        ungemCoinPerLevel:
+          (weather.removeGemFree ?? 0) > 0 || rest.star_level < t.ungemMinStar ? 0 : t.ungemCoinPerLevel,
       };
     },
 

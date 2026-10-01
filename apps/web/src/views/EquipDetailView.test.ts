@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AttrsDto, EquipDetailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import EquipDetailView from './EquipDetailView.vue';
 
@@ -113,8 +114,6 @@ describe('EquipDetailView', () => {
 
   it('显示属性分项、成功率、花费；勾强化石强化，提示结果', async () => {
     const { w } = await mountView();
-    // 标题里 +x 和部位之间要有间隔（问题记录）：模板换行处的空白会被 Vue 去掉，靠 ms-1
-    expect(w.find('h5 small').classes()).toContain('ms-1');
     expect(w.text()).toContain('67.0%');
     expect(w.text()).toContain('精华 ×12');
     await w.find('[data-testid="stone"]').setValue(true);
@@ -125,6 +124,7 @@ describe('EquipDetailView', () => {
   });
 
   it('回退、打孔、镶嵌、摘除调用对应接口', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
     const { w } = await mountView();
     await w.find('[data-testid="rollback-go"]').trigger('click');
     await flushPromises();
@@ -151,5 +151,46 @@ describe('EquipDetailView', () => {
     await flushPromises();
     expect(endpoints.equipSalvage).toHaveBeenCalledWith(7);
     expect(router.currentRoute.value.path).toBe('/rest/equip');
+  });
+
+  it('标题下单独一行写部位和等级要求，再显示厨具说明（问题记录 130、134）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [{ id: 56, name: '沉默之度玛的静谧之镬', desc: '随机增加25点属性。度玛教徒弟从不开口。' }],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    const { w } = await mountView();
+    expect(w.find('h5').text()).toBe('沉默之度玛的静谧之镬 +2');
+    expect(w.find('[data-testid="equip-meta"]').text()).toBe('锅 · 13 级可穿');
+    expect(w.find('[data-testid="equip-desc"]').text()).toBe('随机增加25点属性。度玛教徒弟从不开口。');
+  });
+
+  it('回退要先确认；取消就不回退（问题记录 128）', async () => {
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const { w } = await mountView();
+    await w.find('[data-testid="rollback-go"]').trigger('click');
+    await flushPromises();
+    expect(ask.mock.calls[0]![0]).toContain('回退 1 级');
+    expect(endpoints.equipRollback).not.toHaveBeenCalled();
+  });
+
+  it('摘除要花银币时先确认并写明花多少；免费时直接摘（问题记录 128）', async () => {
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const { w } = await mountView();
+    await w.find('[data-testid="ungem-55"]').trigger('click');
+    await flushPromises();
+    expect(ask.mock.calls[0]![0]).toContain('10,000 银币');
+    expect(endpoints.equipUngem).not.toHaveBeenCalled();
+    ask.mockClear();
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), ungemCoinPerLevel: 0 });
+    const { w: free } = await mountView();
+    expect(free.text()).toContain('现在摘除免费');
+    await free.find('[data-testid="ungem-55"]').trigger('click');
+    await flushPromises();
+    expect(ask).not.toHaveBeenCalled();
+    expect(endpoints.equipUngem).toHaveBeenCalledWith(55);
   });
 });
