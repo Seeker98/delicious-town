@@ -116,3 +116,7 @@ export const EQUIP_ATTRS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'l
 
 /** 不构成套装的 suitid：0 无套装，90 玉•xx之帽、99 铉•xx之帽（规格书 20 §20.15） */
 export const NON_SUIT_IDS: ReadonlySet<number> = new Set([0, 90, 99]);
+
+/** 赞助帽子（子项目 6A）：发放时可以按件命名，显示为"玉•{名字}之帽"；铉级在餐厅六星时自动换给（设计 §5） */
+export const SPONSOR_HATS = { jade: 641, xuan: 642 } as const;
+export type HatTier = keyof typeof SPONSOR_HATS;

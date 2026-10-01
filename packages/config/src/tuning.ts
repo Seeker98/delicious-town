@@ -540,6 +540,7 @@ export const tuningSchema = z.object({
     wages: z.array(z.tuple([int, int])),
   }),
   rank: z.object({ top: int.min(1), cacheSeconds: int.min(0), powerCacheSeconds: int.min(0) }),
+  mail: z.object({ expiresDays: int.min(1), listMax: int.min(1).max(500) }),
   forum: z.object({
     titleMax: int.min(1),
     contentMax: int.min(1),
