@@ -49,6 +49,7 @@ describe('MoreView', () => {
       '邀请好友',
       '兑换码',
       '游玩指引',
+      '我的账号',
     ])
       expect(text).toContain(x);
     expect(text).not.toContain('教室');

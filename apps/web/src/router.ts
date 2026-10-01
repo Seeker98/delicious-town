@@ -35,6 +35,7 @@ export const routes: RouteRecordRaw[] = [
     meta: { public: true },
   },
   { path: '/shards', name: 'shards', component: () => import('./views/ShardSelectView.vue') },
+  { path: '/account', name: 'account', component: () => import('./views/AccountView.vue') },
   {
     path: '/create-restaurant',
     name: 'create-restaurant',
