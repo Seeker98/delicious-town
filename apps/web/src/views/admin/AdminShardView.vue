@@ -53,11 +53,18 @@ const defaults = computed<Tree>(() =>
   data.value ? { restaurant: data.value.defaults.restaurant, tuning: data.value.defaults.tuning } : {},
 );
 const paths = computed(() => leafPaths(defaults.value));
-const pinned = computed(() => PINNED.filter((p) => paths.value.includes(p)));
+/** 搜索（问题记录 126）：按字段名或说明过滤；有搜索词时匹配的组自动展开 */
+const search = ref('');
+const docs = computed(() => data.value?.docs ?? { features: {}, groups: {}, fields: {} });
+const match = (p: string) => {
+  const q = search.value.trim();
+  return !q || p.includes(q) || (docs.value.fields[p] ?? '').includes(q);
+};
+const pinned = computed(() => PINNED.filter((p) => paths.value.includes(p) && match(p)));
 const groups = computed(() => {
   const m = new Map<string, string[]>();
   for (const p of paths.value) {
-    if (PINNED.includes(p)) continue;
+    if (PINNED.includes(p) || !match(p)) continue;
     const g = groupOf(p);
     m.set(g, [...(m.get(g) ?? []), p]);
   }
@@ -82,6 +89,7 @@ const rowProps = (p: string) => ({
   overridden: getAt(draft.value, p) !== undefined,
   readOnly: readOnly.value,
   error: badInput.value.has(p) || badServer.value.has(p),
+  doc: docs.value.fields[p],
 });
 
 function mark(p: string, bad: boolean) {
@@ -161,7 +169,13 @@ async function save() {
       <RouterLink :to="`/admin/shards/${shardId}/history`" class="small ms-auto">修改历史</RouterLink>
     </div>
     <p v-if="readOnly" class="small text-muted">你是协管，只能查看。</p>
-    <h6>常用</h6>
+    <input
+      v-model="search"
+      class="form-control form-control-sm mb-2"
+      placeholder="搜索字段名或说明，比如：经验、菜场"
+      data-testid="setting-search"
+    />
+    <h6 v-if="pinned.length > 0">常用</h6>
     <SettingRow
       v-for="p in pinned"
       :key="p"
@@ -180,10 +194,26 @@ async function save() {
           :data-testid="`feature-${f.name}`"
           @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
         />{{ f.name }}
+        <span
+          v-if="docs.features[f.name]"
+          class="d-block text-muted"
+          :data-testid="`feature-doc-${f.name}`"
+          >{{ docs.features[f.name] }}</span
+        >
       </label>
     </div>
-    <details v-for="[g, ps] in groups" :key="g" class="mt-2">
-      <summary>{{ g }}（{{ ps.length }}）</summary>
+    <details
+      v-for="[g, ps] in groups"
+      :key="g"
+      class="mt-2"
+      :open="search.trim() !== '' || undefined"
+      :data-testid="`group-${g}`"
+    >
+      <summary>
+        {{ g }}（{{ ps.length }}）<span v-if="docs.groups[g]" class="small text-muted ms-1">{{
+          docs.groups[g]
+        }}</span>
+      </summary>
       <SettingRow
         v-for="p in ps"
         :key="p"

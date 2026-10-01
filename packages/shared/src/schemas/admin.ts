@@ -24,6 +24,8 @@ export interface ShardSettingsDto {
   override: Record<string, unknown>;
   effective: Record<string, unknown>;
   features: Array<{ name: string; enabled: boolean }>;
+  /** 数值说明（问题记录 126）：功能开关、分组、每个数值各一句 */
+  docs: { features: Record<string, string>; groups: Record<string, string>; fields: Record<string, string> };
 }
 
 const note = z.string().trim().min(1).max(200);

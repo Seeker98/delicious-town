@@ -31,4 +31,9 @@ describe('SettingRow（问题记录 152）', () => {
       'col-md-3',
     );
   });
+
+  it('字段名下面显示说明（问题记录 126）', () => {
+    const w = mount(SettingRow, { props: { ...props('number', 3), doc: '新店银币' } });
+    expect(w.find('[data-testid="doc-restaurant.giftFoods"]').text()).toBe('新店银币');
+  });
 });
