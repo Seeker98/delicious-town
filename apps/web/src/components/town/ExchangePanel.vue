@@ -86,7 +86,10 @@ async function go(x: TownExchangeItemDto) {
             >{{ i > 0 ? '、' : '' }}{{ catalog.goodsName(m.goodsId) }}×{{ m.num }}（有 {{ m.have }}）</span
           >
           · {{ x.times > 0 ? `限兑 ${x.times} 次，已兑 ${x.used} 次` : '不限次数' }}
-          <span v-if="block(x)" class="text-danger ms-1">{{ block(x) }}</span>
+        </div>
+        <!-- 不能兑的原因单独一行，不被截断（终审 I1） -->
+        <div v-if="block(x)" class="dt-meta text-danger" :data-testid="`ex-block-${x.id}`">
+          {{ block(x) }}
         </div>
         <div
           v-if="catalog.goods(x.goodsId)?.desc"

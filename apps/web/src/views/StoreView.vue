@@ -54,6 +54,15 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 }
 /** 填的数超过上限时按上限算（使用：单次上限 maxUse；出售：持有数） */
 const useN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.maxUse));
+/** 信息行的各段：只有一段时不带分隔点（终审：开头多一个点） */
+function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
+  const out: Array<{ text: string; danger: boolean }> = [];
+  if (it.expiresAt) out.push({ text: expires(it.expiresAt), danger: false });
+  if (it.sellPrice !== null) out.push({ text: `单价 ${formatNum(it.sellPrice)}`, danger: false });
+  if (it.usable && it.maxUse === 0) out.push({ text: '已达上限', danger: true });
+  else if (it.batch) out.push({ text: `一次最多 ${it.maxUse}`, danger: false });
+  return out;
+}
 const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
 const expires = (at: string | null) =>
   at ? `剩余 ${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时` : '';
@@ -95,13 +104,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
           <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
         </div>
-        <div v-if="it.expiresAt || it.sellPrice !== null || it.batch" class="dt-meta">
-          <span v-if="it.expiresAt">{{ expires(it.expiresAt) }}</span>
-          <span v-if="it.sellPrice !== null"
-            >{{ it.expiresAt ? ' · ' : '' }}单价 {{ formatNum(it.sellPrice) }}</span
+        <div v-if="metaParts(it).length > 0" class="dt-meta">
+          <template v-for="(p, i) in metaParts(it)" :key="i"
+            ><span v-if="i > 0"> · </span
+            ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
           >
-          <span v-if="it.usable && it.maxUse === 0" class="text-danger"> · 已达上限</span>
-          <span v-else-if="it.batch"> · 一次最多 {{ it.maxUse }}</span>
         </div>
       </div>
       <div class="dt-item-actions">

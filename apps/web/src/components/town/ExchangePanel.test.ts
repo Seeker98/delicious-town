@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
 import ExchangePanel from './ExchangePanel.vue';
 import { exchangeData } from './testData';
 
@@ -51,5 +52,38 @@ describe('ExchangePanel', () => {
     expect(row.classes()).toContain('dt-item');
     expect(row.find('.dt-item-actions [data-testid="ex-num-1"]').exists()).toBe(true);
     expect(row.find('.dt-item-actions [data-testid="ex-1"]').exists()).toBe(true);
+  });
+
+  it('不能兑的原因单独一行，不会被截断（终审 I1）；点名称展开说明', async () => {
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    const reason = w.find('[data-testid="ex-block-2"]');
+    expect(reason.text()).toBe('材料不够');
+    expect(reason.element.closest('.dt-clamp1')).toBeNull();
+    expect(w.find('[data-testid="ex-block-1"]').exists()).toBe(false);
+  });
+
+  it('说明默认一行，点名称展开（终审 I6）', async () => {
+    useCatalogStore().goodsMap = new Map([
+      [
+        139,
+        {
+          id: 139,
+          name: '神秘食材随机劵',
+          type: 0,
+          deviceType: null,
+          level: 5,
+          desc: '很长的说明',
+          coin: 0,
+          diamond: 0,
+          stackable: true,
+        },
+      ],
+    ]);
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    expect(w.find('[data-testid="ex-desc-1"]').classes()).toContain('dt-clamp1');
+    await w.find('[data-testid="ex-row-1"] .dt-item-title').trigger('click');
+    expect(w.find('[data-testid="ex-desc-1"]').classes()).not.toContain('dt-clamp1');
   });
 });

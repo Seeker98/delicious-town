@@ -2,16 +2,21 @@
   --dt-primary: #d9480f;
   --dt-primary-rgb: 217, 72, 15;
   --dt-primary-dark: #b33c0c;
+  /* 文字、按钮用的品牌色：白底对比度 5.18（终审：#d9480f 只有 4.30，只用于色条、顶栏等装饰） */
+  --dt-primary-ink: #c2410c;
+  --dt-primary-ink-rgb: 194, 65, 12;
   --dt-primary-soft: #fff4e6;
   --dt-bg: #fff4e6;
   --dt-header-bg: #ffe8cc;
-  --dt-muted: #868e96;
+  /* 次要文字：白底对比度 4.69（终审：#868e96 只有 3.32） */
+  --dt-muted: #6c757d;
   --dt-line: #f1f3f5;
   /* Bootstrap 的 primary 统一成品牌色（视觉规范 §2） */
   --bs-primary: var(--dt-primary);
   --bs-primary-rgb: var(--dt-primary-rgb);
-  --bs-link-color: var(--dt-primary);
-  --bs-link-color-rgb: var(--dt-primary-rgb);
+  --bs-link-color: var(--dt-primary-ink);
+  --bs-link-color-rgb: var(--dt-primary-ink-rgb);
+  --bs-focus-ring-color: rgba(var(--dt-primary-rgb), 0.25);
   --bs-link-hover-color: var(--dt-primary-dark);
   --bs-link-hover-color-rgb: 179, 60, 12;
 }
@@ -244,30 +249,32 @@ body {
 
 /* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
 .btn-primary {
-  --bs-btn-bg: var(--dt-primary);
-  --bs-btn-border-color: var(--dt-primary);
+  --bs-btn-bg: var(--dt-primary-ink);
+  --bs-btn-border-color: var(--dt-primary-ink);
+  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
   --bs-btn-hover-bg: var(--dt-primary-dark);
   --bs-btn-hover-border-color: var(--dt-primary-dark);
   --bs-btn-active-bg: var(--dt-primary-dark);
   --bs-btn-active-border-color: var(--dt-primary-dark);
-  --bs-btn-disabled-bg: var(--dt-primary);
-  --bs-btn-disabled-border-color: var(--dt-primary);
+  --bs-btn-disabled-bg: var(--dt-primary-ink);
+  --bs-btn-disabled-border-color: var(--dt-primary-ink);
 }
 .btn-outline-primary {
-  --bs-btn-color: var(--dt-primary);
-  --bs-btn-border-color: var(--dt-primary);
-  --bs-btn-hover-bg: var(--dt-primary);
-  --bs-btn-hover-border-color: var(--dt-primary);
+  --bs-btn-color: var(--dt-primary-ink);
+  --bs-btn-border-color: var(--dt-primary-ink);
+  --bs-btn-hover-bg: var(--dt-primary-ink);
+  --bs-btn-hover-border-color: var(--dt-primary-ink);
+  --bs-btn-focus-shadow-rgb: var(--dt-primary-rgb);
   --bs-btn-active-bg: var(--dt-primary-dark);
   --bs-btn-active-border-color: var(--dt-primary-dark);
-  --bs-btn-disabled-color: var(--dt-primary);
-  --bs-btn-disabled-border-color: var(--dt-primary);
+  --bs-btn-disabled-color: var(--dt-primary-ink);
+  --bs-btn-disabled-border-color: var(--dt-primary-ink);
 }
 .nav-tabs .nav-link {
   color: #495057;
 }
 .nav-tabs .nav-link.active {
-  color: var(--dt-primary);
+  color: var(--dt-primary-ink);
   font-weight: 600;
 }
 .form-control:focus,
@@ -363,7 +370,7 @@ body {
 }
 .dt-pills a.active {
   color: #fff;
-  background: var(--dt-primary);
+  background: var(--dt-primary-ink);
 }
 .dt-empty {
   text-align: center;
@@ -415,4 +422,16 @@ body {
 }
 .dt-span2 {
   grid-column: span 2;
+}
+/* 勾选框、开关、聚焦光圈：Bootstrap 写死了蓝色，统一成品牌色（终审 I5） */
+.form-check-input:checked {
+  background-color: var(--dt-primary-ink);
+  border-color: var(--dt-primary-ink);
+}
+.form-check-input:focus {
+  border-color: rgba(var(--dt-primary-rgb), 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
+}
+.form-switch .form-check-input:focus:not(:checked) {
+  --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e8936b'/%3e%3c/svg%3e");
 }

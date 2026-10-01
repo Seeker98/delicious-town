@@ -84,4 +84,18 @@ describe('守护兽（规格书 09 §9.1）', () => {
     await t.game.temple.missile(ctx, { goodsId: 18, num: 1 });
     expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 25, done: true });
   });
+
+  it('区服覆盖 temple.missileAttack 后，飞弹伤害跟着变（终审 I2）', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { 17: 1 } });
+    await win.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: ctx.shardId,
+        override: JSON.stringify({ tuning: { temple: { missileAttack: [[17, 1500, 1500]] } } }),
+      })
+      .execute();
+    win.game.shards.invalidate(ctx.shardId);
+    const r = await win.game.temple.missile(ctx, { goodsId: 17, num: 1 });
+    expect(r.data.shots[0]!.damage).toBe(3000);
+  });
 });

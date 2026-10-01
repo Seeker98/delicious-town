@@ -85,4 +85,16 @@ describe('StoreView', () => {
     expect(sell.text()).toBe('卖');
     expect(w.find('.dt-item .dt-meta').text()).toContain('单价 2,800');
   });
+
+  it('信息行只在有多段时才用分隔点（终审：开头多一个点）', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        { goodsId: 85, num: 9, expiresAt: null, usable: true, batch: true, maxUse: 5, sellPrice: null },
+      ],
+    });
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.find('.dt-item .dt-meta').text()).toBe('一次最多 5');
+  });
 });
