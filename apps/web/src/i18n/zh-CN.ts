@@ -76,6 +76,7 @@ const KIND: Record<string, string> = {
 };
 
 const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
+  activity: () => '还没有达成',
   level: (p) => `餐厅等级不够（需要 ${String(p.need)} 级）`,
   star: (p) => `星级不够（需要 ${String(p.need)} 星）`,
   cookbooks: (p) => `学会的食谱不够（需要 ${String(p.need)} 道）`,
@@ -140,6 +141,13 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const STATE: Record<string, string> = {
+  not_running: '活动不在进行中（结束后未领的奖励会发到邮箱）',
+  no_reward: '没有这份奖励',
+  not_pass: '这个活动没有进阶奖励',
+  nothing: '没有可以领的奖励',
+  locked_after_start: '活动已开始，只能改标题、说明和延长结束时间',
+  started: '活动已开始，不能删除',
+  ended: '活动已结束，不能再改时间',
   wrong_password: '旧密码不对',
   same_password: '新密码不能和旧密码一样',
   mail_claimed: '这封邮件已经领过了',
@@ -298,6 +306,8 @@ const STATE: Record<string, string> = {
 };
 
 const ALREADY: Record<string, string> = {
+  activity_reward: '这份奖励已经领过了',
+  activity_pass: '已经解锁过了',
   friend: '已经是好友了',
   thumb: '今天已经给它点过赞了',
   thumb_ip: '同一网络今天已经给它点过赞了',

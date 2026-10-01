@@ -30,6 +30,7 @@ import { hiphopJobs } from './modules/hiphop/jobs';
 import { createHiphopService, type HiphopService } from './modules/hiphop/service';
 import { createRankService, type RankService } from './modules/rank/service';
 import { createForumService, type ForumService } from './modules/forum/service';
+import { createActivityService, type ActivityService } from './modules/activity/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -79,6 +80,7 @@ export interface Game {
   invite: InviteService;
   report: ReportService;
   announce: AnnounceService;
+  activity: ActivityService;
   jobs: PeriodicJob[];
 }
 
@@ -140,6 +142,7 @@ export function createGame(app: AppDeps): Game {
     invite: createInviteService(deps),
     report: createReportService(deps),
     announce: createAnnounceService(deps),
+    activity: createActivityService(deps),
     shop,
     market,
     task: createTaskService(deps),
