@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import { useSessionStore } from '../stores/session';
 import AppHeader from './AppHeader.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { mailUnread: vi.fn() } }));
@@ -49,6 +50,23 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
     const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
     expect(w.text()).toContain('美味小镇');
     expect(w.find('[data-testid="home"]').exists()).toBe(false);
+    expect(w.find('[data-testid="back"]').exists()).toBe(false);
+  });
+
+  it('登录后不在游戏里的页面（选区服、没进区服时的指引页）：店名也能点回首页（问题记录 188、190）', async () => {
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player',
+      shardId: null,
+      restaurantId: null,
+    };
+    const router = makeRouter();
+    await router.push('/shards');
+    const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(w.find('[data-testid="home"]').attributes('href')).toBe('/');
     expect(w.find('[data-testid="back"]').exists()).toBe(false);
   });
 
