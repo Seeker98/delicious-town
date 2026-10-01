@@ -35,7 +35,8 @@ export interface CupboardDto {
 }
 
 export interface FridgeDto {
-  items: Array<{ foodsId: number; num: number }>;
+  /** thawable：现在能解冻几个（受橱柜单种上限、空格限制）；thawCoin：解冻这些要花的银币（问题记录 206） */
+  items: Array<{ foodsId: number; num: number; thawable: number; thawCoin: number }>;
 }
 
 export interface HandleResultDto {

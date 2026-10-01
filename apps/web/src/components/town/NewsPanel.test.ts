@@ -185,4 +185,27 @@ describe('NewsPanel', () => {
     expect(w.find('[data-testid="news-report-8-open"]').exists()).toBe(false);
     expect(w.find('[data-testid="news-report-7-open"]').exists()).toBe(false);
   });
+
+  it('广播只加粗内容，时间不加粗；举报按钮跟正文同字号同行高（问题记录 196）', async () => {
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player' as const,
+      shardId: 1,
+      restaurantId: 1,
+    };
+    vi.mocked(endpoints.townNews).mockResolvedValue({
+      items: [item(9, 'town.broadcast', { text: '你好' })],
+      hasMore: false,
+    });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    const row = w.find('[data-testid="news-row"]');
+    expect(row.classes()).not.toContain('fw-bold');
+    expect(row.find('.dt-feed-time').classes()).not.toContain('fw-bold');
+    expect(row.find('[data-testid="news-text"]').classes()).toContain('fw-bold');
+    expect(w.find('[data-testid="news-report-9-open"]').classes()).toContain('dt-inline-btn');
+  });
 });

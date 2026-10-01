@@ -124,7 +124,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
       另有 {{ data.equips }} 件厨具在 <RouterLink to="/rest/equip">厨具页</RouterLink>（每件占一格）
     </div>
     <template v-for="g in groups" :key="g.type">
-      <h6 v-if="type === undefined" class="dt-section mt-2" :data-testid="`store-group-${g.type}`">
+      <h6 v-if="type === undefined" class="dt-group-label" :data-testid="`store-group-${g.type}`">
         {{ TYPE_LABEL[g.type] ?? '其他' }}
       </h6>
       <div v-for="it in g.items" :key="it.goodsId" class="dt-item">

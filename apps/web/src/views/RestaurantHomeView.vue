@@ -206,7 +206,7 @@ onBeforeUnmount(() => {
     <AnnounceBanner :items="announcements" />
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
-      <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
+      <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{ i.title }}</span>
     </div>
     <div class="small text-muted mb-2">
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
@@ -224,7 +224,7 @@ onBeforeUnmount(() => {
       aria-valuemin="0"
       aria-valuemax="100"
     >
-      <div class="progress-bar bg-warning" :style="{ width: `${expPercent}%` }"></div>
+      <div class="progress-bar dt-exp-bar" data-testid="exp-bar" :style="{ width: `${expPercent}%` }"></div>
       <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
       <span
         data-testid="exp-text"

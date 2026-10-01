@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { playerIn } from '../../../test/players';
 import { createShardService } from './service';
 
 let ctx: TestContext;
@@ -22,6 +23,20 @@ describe('区服', () => {
     const r = await call(ctx.app, 'GET', `${S}/list`, { cookie: u.cookie });
     const item = (r.json.data as Array<{ id: number }>).find((s) => s.id === shardId);
     expect(item).toMatchObject({ id: shardId, name: '列表服', status: 'open', hasRestaurant: false });
+  });
+
+  it('已关闭的区服：没在里面开店就不列出；开过店的照样列出、标明已关闭（问题记录 190）', async () => {
+    const empty = await createShard(ctx.deps.db, { status: 'closed' });
+    const mine = await createShard(ctx.deps.db);
+    const p = await playerIn(ctx, mine);
+    await ctx.deps.db.updateTable('shard').set({ status: 'closed' }).where('id', '=', mine).execute();
+    const r = await call(ctx.app, 'GET', `${S}/list`, { cookie: p.cookie });
+    const ids = (r.json.data as Array<{ id: number }>).map((x) => x.id);
+    expect(ids).not.toContain(empty);
+    expect((r.json.data as Array<{ id: number }>).find((x) => x.id === mine)).toMatchObject({
+      status: 'closed',
+      hasRestaurant: true,
+    });
   });
 
   it('选择区服写入会话，me 能看到', async () => {

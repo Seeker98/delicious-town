@@ -152,8 +152,9 @@ watch(
     </div>
     <div class="dt-meta mb-1" :data-testid="tid('limits')">
       单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
-      {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤
-      {{ fmt(GRANT_LIMITS.item) }}
+      {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤ {{ fmt(GRANT_LIMITS.item) }}。
+      <!-- 问题记录 204：发 9999 个只到账 5998，是橱柜、冰箱各有单种上限 -->
+      食材到账时受店的单种食材上限限制：橱柜放满后进冰箱，冰箱也满了，多出的会丢弃，并记进玩家日志。
     </div>
     <div v-if="overLimit.length > 0" class="text-danger mb-1" :data-testid="tid('over')">
       请检查：{{ overLimit.join('；') }}

@@ -109,8 +109,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
   <HiphopCard :place="1" @changed="load" />
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">
-      <div class="d-flex align-items-center">
-        <h6 class="dt-section mb-1">
+      <!-- 间距放在外层：.dt-section 自带上边距，放在 flex 行里会把标题挤低半行（问题记录 192） -->
+      <div class="d-flex align-items-center mt-3 mb-1" :data-testid="`section-head-${s.key}`">
+        <h6 class="dt-section m-0">
           {{ s.title
           }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">（{{ sectionNote(s.key) }}）</small>
         </h6>

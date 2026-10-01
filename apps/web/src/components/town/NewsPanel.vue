@@ -94,11 +94,14 @@ async function send() {
   <div
     v-for="n in items"
     :key="n.id"
-    :class="['dt-feed', { 'text-primary': n.type === BROADCAST_NEWS, 'fw-bold': n.type === BROADCAST_NEWS }]"
+    :class="['dt-feed', { 'text-primary': n.type === BROADCAST_NEWS }]"
     data-testid="news-row"
   >
     <span class="dt-feed-time">{{ newsTime(n.createdAt) }}</span>
-    <span>{{ n.type === BROADCAST_NEWS ? '【广播】' : '' }}{{ newsText(n, catalog) }}</span>
+    <!-- 广播只加粗内容，时间保持普通（问题记录 196） -->
+    <span :class="{ 'fw-bold': n.type === BROADCAST_NEWS }" data-testid="news-text"
+      >{{ n.type === BROADCAST_NEWS ? '【广播】' : '' }}{{ newsText(n, catalog) }}</span
+    >
     <!-- 别人的喇叭可以举报（子项目 6B-1） -->
     <ReportButton
       v-if="n.type === BROADCAST_NEWS && n.restId !== null && n.restId !== myRest"

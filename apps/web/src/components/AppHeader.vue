@@ -2,14 +2,22 @@
 import { computed, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useMailStore } from '../stores/mail';
+import { useSessionStore } from '../stores/session';
 
 /** 顶栏（问题记录：左上角"美味小镇"只是文字，很多页面要靠浏览器连续后退） */
 const props = defineProps<{ inGame: boolean }>();
 const route = useRoute();
 const router = useRouter();
 const showBack = computed(() => props.inGame && route.path !== '/');
-/** 游戏里和后台都能点店名回首页；登录、选区服等页面只显示文字 */
-const linked = computed(() => props.inGame || route.path.startsWith('/admin'));
+const session = useSessionStore();
+/**
+ * 登录以后都能点店名回首页（问题记录 188、190：选区服页、没进区服时的指引页也要能回）；
+ * 没有选店时首页会被守卫送回选区服页。登录、注册等公开页面只显示文字
+ */
+const linked = computed(
+  () =>
+    props.inGame || route.path.startsWith('/admin') || (session.me !== null && route.meta.public !== true),
+);
 /** 邮箱未读数（子项目 6A）：游戏里每次换页刷新一次，30 秒内不重复请求 */
 const mail = useMailStore();
 watch(
@@ -49,7 +57,7 @@ function back() {
       data-testid="mail-link"
       :aria-label="mail.unread > 0 ? `邮箱，${mail.unread} 封未读` : '邮箱'"
     >
-      <i class="bi bi-envelope"></i>
+      <i class="bi bi-envelope dt-mail-icon"></i>
       <span v-if="mail.unread > 0" class="badge rounded-pill bg-danger dt-mail-badge">{{ mail.unread }}</span>
     </RouterLink>
   </header>

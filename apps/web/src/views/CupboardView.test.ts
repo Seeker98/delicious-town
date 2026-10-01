@@ -183,4 +183,58 @@ describe('CupboardView', () => {
     await w.find('[data-testid="pick-469"]').trigger('click');
     expect(w.find('[data-testid="master-rule"]').text()).toContain('三级及以上的万能食材不能兑换稀有食材');
   });
+
+  it('兑换稀有食材：数量框填的是消耗几个万能食材，和合成一样；按钮写明消耗数（问题记录 202）', async () => {
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      slotsUsed: 1,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      foodsMaxNum: 999,
+      targetGrade: 5,
+      fridgeCount: 0,
+      fridgeUnread: false,
+      freeHandleLeft: 20,
+      handleMax: 100,
+      items: [{ foodsId: 468, num: 300, locked: false, streetNeed: 0 }],
+    });
+    vi.mocked(endpoints.exchangeMaster).mockResolvedValue({ gained: [] });
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.find('[data-testid="pick-468"]').trigger('click');
+    await w.find('input[type="number"]').setValue(100);
+    const btn = w.find('[data-testid="exchange"]');
+    expect(btn.text()).toContain('×100');
+    await btn.trigger('click');
+    await flushPromises();
+    expect(endpoints.exchangeMaster).toHaveBeenCalledWith(468, 50);
+    await w.find('input[type="number"]').setValue(7);
+    expect(w.find('[data-testid="exchange"]').text()).toContain('×6');
+  });
+
+  it('冰箱：解冻按钮写明个数和银币，确认后才解冻；放不下时按钮灰掉（问题记录 206）', async () => {
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [
+        { foodsId: 302, num: 5, thawable: 3, thawCoin: 750 },
+        { foodsId: 303, num: 2, thawable: 0, thawCoin: 0 },
+      ],
+    });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.find('[data-testid="tab-fridge"]').trigger('click');
+    await flushPromises();
+    const btn = w.find('[data-testid="thaw-302"]');
+    expect(btn.text()).toContain('×3');
+    expect(btn.text()).toContain('750 银币');
+    await btn.trigger('click');
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(endpoints.thaw).not.toHaveBeenCalled();
+    await btn.trigger('click');
+    await flushPromises();
+    expect(endpoints.thaw).toHaveBeenCalledWith(302);
+    expect(w.find('[data-testid="thaw-303"]').attributes('disabled')).toBeDefined();
+    confirm.mockRestore();
+  });
 });

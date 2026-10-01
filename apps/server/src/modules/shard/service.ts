@@ -51,6 +51,8 @@ export function createShardService(d: { db: Kysely<DB>; sessions: SessionStore; 
           join.onRef('restaurant.shard_id', '=', 'shard.id').on('restaurant.account_id', '=', accountId),
         )
         .select(['shard.id', 'shard.name', 'shard.status', 'shard.opened_at', 'restaurant.id as rest_id'])
+        // 已关闭的区服只给在里面开过店的人看（问题记录 190：测试区服关掉后不该出现在列表里）
+        .where((eb) => eb.or([eb('shard.status', '=', 'open'), eb('restaurant.id', 'is not', null)]))
         .orderBy('shard.id')
         .execute();
       return rows.map((r) => ({

@@ -45,9 +45,18 @@ const view: MarketDto = {
 describe('MarketView', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    vi.mocked(endpoints.market).mockClear();
     vi.mocked(endpoints.market).mockResolvedValue(view);
     vi.mocked(endpoints.marketBuy).mockResolvedValue({});
     vi.mocked(endpoints.marketGuess).mockResolvedValue({ period: '2026-09-30@12' });
+  });
+
+  it('分区标题和右边的进货时间在同一行对齐：标题不带上下外边距，间距放在外层（问题记录 192）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    const head = w.find('[data-testid="section-head-daily"]');
+    expect(head.classes()).toContain('mt-3');
+    expect(head.find('h6').classes()).toEqual(expect.arrayContaining(['dt-section', 'm-0']));
   });
 
   it('买菜：按输入的数量购买，买完刷新', async () => {

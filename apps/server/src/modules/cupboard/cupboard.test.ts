@@ -49,17 +49,32 @@ describe('锁定（规格书 05 §5.3）', () => {
 });
 
 describe('冰箱（规格书 05 §5.2）', () => {
+  it('列表里的解冻数受橱柜单种上限限制，费用按能解冻的个数算（问题记录 206）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 10000, foods_max_num: 10 } });
+    await t.db
+      .insertInto('cupboard_food')
+      .values({ rest_id: ctx.restaurantId, foods_id: 101, num: 7, fridge_num: 5 })
+      .execute();
+    const f = await c().fridge(ctx);
+    expect(f.items[0]).toMatchObject({
+      num: 5,
+      thawable: 3,
+      thawCoin: Math.ceil(3 * config.requireFood(101).coin * 0.25),
+    });
+  });
+
   it('解冻：移回橱柜，花 数量×单价×0.25 银币', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 10000 } });
     await t.db
       .insertInto('cupboard_food')
       .values({ rest_id: ctx.restaurantId, foods_id: 101, num: 0, fridge_num: 2, fridge_unread: true })
       .execute();
+    const cost = Math.ceil(2 * config.requireFood(101).coin * 0.25);
+    // 列表先告诉玩家能解冻几个、要花多少银币（问题记录 206）
     const f = await c().fridge(ctx);
-    expect(f.items).toEqual([{ foodsId: 101, num: 2 }]);
+    expect(f.items).toEqual([{ foodsId: 101, num: 2, thawable: 2, thawCoin: cost }]);
     await c().readFridge(ctx);
     const r = await c().thaw(ctx, 101);
-    const cost = Math.ceil(2 * config.requireFood(101).coin * 0.25);
     expect(r.data).toEqual({ foodsId: 101, moved: 2, coin: cost });
     expect(await foodNum(t, ctx.restaurantId, 101)).toEqual({ num: 2, fridge: 0 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(10000 - cost);

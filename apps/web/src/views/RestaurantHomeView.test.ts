@@ -216,6 +216,13 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     expect(w.find('[data-testid="my-icons"]').text()).toContain('开服元老');
+    // 个性图标用浅色描边小标签，不再和经验条一样是大黄块（问题记录 198）
+    const chip = w.find('[data-testid="my-icons"] span');
+    expect(chip.classes()).toContain('dt-icon-tag');
+    expect(chip.classes()).not.toContain('bg-warning');
+    // 经验条也不再用亮黄色（问题记录 212）
+    expect(w.find('[data-testid="exp-bar"]').classes()).toContain('dt-exp-bar');
+    expect(w.find('[data-testid="exp-bar"]').classes()).not.toContain('bg-warning');
   });
 
   it('加油：显示花费，点击后刷新', async () => {

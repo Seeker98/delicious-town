@@ -90,6 +90,23 @@ body {
   font-size: 12px;
 }
 /* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
+/* 跟正文同字号、同行高的文字按钮（问题记录 196：举报按钮和新闻错开半格、撑高行） */
+.dt-inline-btn {
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+/* 列表里的分类小标题（问题记录 194）：浅色小字加细线，不和加粗的条目名抢层级 */
+.dt-group-label {
+  margin: 12px 0 2px;
+  padding-bottom: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+  border-bottom: 1px solid var(--dt-line);
+}
 /* 区服数值页的功能开关（问题记录 184）：手机一列，宽屏两列，说明在名字下面 */
 .dt-feature-grid {
   display: grid;
@@ -611,9 +628,34 @@ body {
 }
 
 /* 顶栏邮箱未读数（子项目 6A） */
+/* 首页经验条（问题记录 212）：柔和的橙色，不再是亮黄色大块 */
+.dt-exp-bar {
+  background-color: #ffc078;
+}
+/* 顶栏邮箱（问题记录 200）：图标放大，未读数缩小贴在右上角 */
+.dt-mail-icon {
+  font-size: 20px;
+  line-height: 1;
+}
 .dt-mail-badge {
-  font-size: 10px;
+  font-size: 9px;
+  line-height: 1;
+  min-width: 14px;
+  padding: 2px 4px;
   position: absolute;
-  top: -6px;
-  right: -10px;
+  top: -4px;
+  right: -8px;
+}
+/* 浅色描边小标签（问题记录 198：个性图标不再是大黄块）；
+   .dt-chip（生效的加成）、.dt-tag（品级等小标签）都已有别的用处，不能重名（问题记录 212） */
+.dt-icon-tag {
+  display: inline-block;
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  /* 浅底上的小字要够深：对比度约 6.3 */
+  color: #a3360a;
+  background: var(--dt-primary-soft);
+  border: 1px solid #ffd8a8;
+  border-radius: 999px;
 }
