@@ -96,3 +96,14 @@ export function personLimit(shelf: Shelf, food: Food, openedAt: Date, now: Date,
   }
   return base;
 }
+
+/** 手动进货费用（规格书 06 §6.4）：today = 本次之前今天已进货次数 */
+export function manualCost(today: number, t: MarketTuning): number {
+  return t.manualCost * (1 + Math.max(today - 1, 0));
+}
+
+/** 手动进货声望：原版 count > 4 → 500；count < 2 → 花费 × 0.5 / 10000，否则 × 1 */
+export function manualRenown(today: number, cost: number): number {
+  if (today > 4) return 500;
+  return Math.floor(((today < 2 ? 0.5 : 1) * cost) / 10000);
+}
