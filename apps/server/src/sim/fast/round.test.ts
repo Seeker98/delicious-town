@@ -48,3 +48,37 @@ describe('一轮结算（设计 §4.4）', () => {
     expect(settleRound(c, r, g)).toBe('skipped');
   });
 });
+
+describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () => {
+  it('老鼠偷走未锁定的食材：数量 1~(2×星级+1)，规则同 settlement/mouse.ts', async () => {
+    const { mouseVisit } = await import('./round');
+    const c = mk(11);
+    const r = openFastRest(c, 1, settings);
+    r.luck = -1000;
+    r.foods.clear();
+    r.foods.set(239, 5);
+    const out = mouseVisit(c, r);
+    expect(['stolen', 'trapped', 'escaped']).toContain(out);
+    if (out === 'stolen') expect(r.foods.get(239)).toBe(4);
+  });
+
+  it('跑一天：体力每 10 分钟恢复一次（不是每轮）', async () => {
+    const { runFast } = await import('./run');
+    const res = runFast(
+      'x',
+      {
+        days: 1,
+        botsPerPersona: 1,
+        personas: ['casual'],
+        seed: 1,
+        start: new Date('2026-10-01T00:00:00+08:00'),
+        tuning: { ...settings.tuning, strength: { regen: 1, luckyRegen: 1 } },
+        side: null,
+        stuckDays: 5,
+      },
+      config,
+    );
+    expect(res.days).toHaveLength(2);
+    expect(res.regenCount).toBe(144);
+  });
+});

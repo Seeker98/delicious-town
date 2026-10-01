@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { bench } from './bench';
@@ -7,6 +7,8 @@ import { explain } from './explain';
 import { fromInvocation } from './paths';
 import { loadResult, writeReport } from './report';
 import { runSim } from './run';
+import { calibrate } from './fast/calibrate';
+import { writeFastReport } from './fast/report';
 import { loadSideTable } from './fast/side';
 import { buildVariants, runVariants } from './fast/variants';
 import { loadGameConfig } from '@dt/config';
@@ -36,9 +38,30 @@ async function fast(): Promise<void> {
       side: { type: 'string' },
       out: { type: 'string' },
       'stuck-days': { type: 'string', default: '5' },
+      start: { type: 'string', default: '2026-10-01T00:00:00+08:00' },
+      calibrate: { type: 'boolean', default: false },
     },
   });
   const config = loadGameConfig(bundlePath);
+  const start = new Date(values.start);
+  if (values.calibrate) {
+    const days = values.days === '30' ? 5 : Number(values.days);
+    const ok = await calibrate(
+      {
+        adminUrl,
+        redisUrl,
+        bundlePath,
+        days,
+        seed: Number(values.seed),
+        start,
+        bots: values.bots === '20' ? 5 : Number(values.bots),
+      },
+      config,
+      (m) => console.log(m),
+    );
+    process.exitCode = ok ? 0 : 1;
+    return;
+  }
   const readJson = (f: string) => JSON.parse(readFileSync(fromInvocation(f), 'utf8')) as unknown;
   const variants = buildVariants(config, { variants: values.variant ?? [], set: values.set }, readJson);
   const sidePath =
@@ -56,7 +79,7 @@ async function fast(): Promise<void> {
       botsPerPersona: Number(values.bots),
       personas: values.personas.split(',') as Persona['key'][],
       seed: Number(values.seed),
-      start: new Date(Date.UTC(2026, 9, 1, 16, 0, 0)),
+      start,
       side,
       stuckDays: Number(values['stuck-days']),
     },
@@ -68,9 +91,14 @@ async function fast(): Promise<void> {
     values.out ?? join('sim-out', `fast-${new Date().toISOString().replace(/[:.]/g, '-')}`),
   );
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'results.json'), JSON.stringify(results));
+  const files = writeFastReport(dir, results, {
+    days,
+    bots: Number(values.bots),
+    seed: Number(values.seed),
+    side: sidePath ? String(sidePath) : null,
+  });
   for (const r of results) console.log(`${r.name}：用时 ${Math.round(r.elapsedMs / 1000)} 秒`);
-  console.log(`输出：${dir}`);
+  console.log(`报告：${files[0]}`);
 }
 
 async function main(): Promise<void> {

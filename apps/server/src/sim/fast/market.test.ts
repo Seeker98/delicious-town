@@ -22,17 +22,17 @@ describe('菜场（设计 §4.6）', () => {
   it('上新时刻换货；同一时段第二轮不重复上新', () => {
     const m = newMarket();
     const h = t.dailyHours[0]!;
-    expect(restockIfDue(m, config, settings.tuning, gameTime(day, h), () => seededRng(1))).not.toBeNull();
+    expect(restockIfDue(m, config, settings.tuning, gameTime(day, h), 1)).not.toBeNull();
     const ids = m.items.map((x) => x.id);
     expect(ids.length).toBeGreaterThan(0);
-    restockIfDue(m, config, settings.tuning, gameTime(day, h, 4), () => seededRng(1));
+    restockIfDue(m, config, settings.tuning, gameTime(day, h, 4), 1);
     expect(m.items.map((x) => x.id)).toEqual(ids);
   });
 
   it('库存被前面的人买光后，后面的买不到；按店限购', () => {
     const m = newMarket();
     const now = gameTime(day, t.dailyHours[0]!);
-    restockIfDue(m, config, settings.tuning, now, () => seededRng(1));
+    restockIfDue(m, config, settings.tuning, now, 1);
     const it0 = m.items.find((x) => x.shelf === 0)!;
     it0.stock = 3;
     const c = ctx(now);

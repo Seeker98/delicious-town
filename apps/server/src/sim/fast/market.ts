@@ -1,5 +1,5 @@
 import { GOODS, type GameConfig, type Tuning } from '@dt/config';
-import { gameParts, nextSlot, slotKey, type Rng } from '@dt/shared';
+import { gameParts, hashSeed, nextSlot, seededRng, slotKey } from '@dt/shared';
 import { personLimit, rollShelf, unitPrice, type Shelf } from '../../modules/market/rules';
 import { action, addFoods, consumeGoods, countGoods, foodNum, grantAward, slotsUsed, spendCoin } from './ops';
 import type { FastCtx, FastRest } from './state';
@@ -42,7 +42,7 @@ export function restockIfDue(
   config: GameConfig,
   tuning: Tuning,
   now: Date,
-  rngFor: (tag: string) => Rng,
+  shardId: number,
 ): { foods: number[]; key: string; hour: number } | null {
   const { day, hour } = gameParts(now);
   let opened: { foods: number[]; key: string; hour: number } | null = null;
@@ -52,7 +52,14 @@ export function restockIfDue(
     const key = slotKey(day, hour);
     if (m.lastKey[shelf] === key) return;
     m.lastKey[shelf] = key;
-    const rolled = rollShelf(shelf, hour, config, tuning.market, rngFor(`market:${shelf}:${key}`));
+    // 种子和真实的 refresh 完全相同（按区服 id、货架、时段）
+    const rolled = rollShelf(
+      shelf,
+      hour,
+      config,
+      tuning.market,
+      seededRng(hashSeed(shardId, 'market', shelf, key)),
+    );
     m.items = m.items.filter((x) => x.shelf !== shelf);
     for (const x of rolled) {
       m.items.push({

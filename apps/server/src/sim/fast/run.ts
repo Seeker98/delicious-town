@@ -5,10 +5,16 @@ import type { BotDay } from '../metrics';
 import { botTurn, starBlockers, type FastBot } from './bot';
 import { newMarket, restockIfDue, settleGuesses } from './market';
 import { openFastRest } from './ops';
-import { regenRound, settleRound } from './round';
+import { mouseVisit, regenRound, settleRound } from './round';
 import type { SideTable } from './side';
 import type { FastCtx, FastStats, Income } from './state';
 import { advanceWorld, globalsOf, newWorld, pickPlankton } from './world';
+
+/**
+ * 模拟区服的 id：世界、菜场、痞老板的种子按区服 id 派生，和真实定时任务、全真模拟器（区服 1）一致；
+ * --seed 只影响机器人和结算的随机数，和全真模拟器的含义相同
+ */
+export const SIM_SHARD_ID = 1;
 
 export interface FastOptions {
   days: number;
@@ -41,6 +47,8 @@ export interface FastResult {
   /** 画像 → 来源 → 累计收入 */
   income: Record<string, Record<string, Income>>;
   stuck: FastStuck[];
+  /** 体力恢复任务跑了几次（诊断用：真实定时任务每 10 分钟一次） */
+  regenCount: number;
   elapsedMs: number;
 }
 
@@ -101,7 +109,7 @@ export function runFast(
     }
   }
   const rests = new Map(runners.map((x) => [x.bot.rest.id, x.bot.rest]));
-  const world = newWorld(config, tuning, o.start, seededRng(hashSeed(o.seed, 'world-init')));
+  const world = newWorld(config, tuning, o.start, seededRng(hashSeed(SIM_SHARD_ID, 'world-init')));
   const market = newMarket();
   const days: FastDay[] = [];
   const stuck = new Map<string, FastStuck>();
@@ -147,6 +155,9 @@ export function runFast(
   let now = new Date(o.start.getTime());
   let lastDay = gameDay(now);
   let dayIndex = 0;
+  let lastStrength = '';
+  let lastMouse = '';
+  let regenCount = 0;
   const stars = new Map(runners.map((x) => [x.bot.name, x.bot.rest.star]));
   while (now.getTime() < end) {
     const round = Math.floor(now.getTime() / ROUND_MS);
@@ -157,9 +168,9 @@ export function runFast(
         x.bot.rest.day = today;
       }
     }
-    advanceWorld(world, config, tuning, now, (tag) => seededRng(hashSeed(o.seed, 'world', tag)));
-    pickPlankton(world, [...rests.values()], now, seededRng(hashSeed(o.seed, 'plankton', round)));
-    const opened = restockIfDue(market, config, tuning, now, (tag) => seededRng(hashSeed(o.seed, tag)));
+    advanceWorld(world, config, tuning, now, SIM_SHARD_ID);
+    pickPlankton(world, [...rests.values()], now, seededRng(hashSeed(SIM_SHARD_ID, 'plankton', round)));
+    const opened = restockIfDue(market, config, tuning, now, SIM_SHARD_ID);
     if (opened) {
       const c = ctxOf({ income: {} }, now);
       for (const x of runners) {
@@ -179,10 +190,34 @@ export function runFast(
     const g = globalsOf(world, config, tuning, now);
     for (const x of runners) {
       const c = ctxOf(x.stats, now);
-      // 结算和体力恢复共用这家店这一轮的随机源（每轮少派生一次，性能）
-      c.rng = seededRng(hashSeed(o.seed, 'round', x.bot.rest.id, round));
+      c.rng = seededRng(hashSeed(o.seed, 'settle', x.bot.rest.id, round));
       settleRound(c, x.bot.rest, g);
-      regenRound(c, x.bot.rest);
+    }
+    // 体力恢复每 10 分钟、老鼠每 30 分钟（settlement/jobs.ts 的周期）；种子和真实定时任务相同
+    const sp = String(Math.floor(now.getTime() / 600_000));
+    if (sp !== lastStrength) {
+      lastStrength = sp;
+      regenCount += 1;
+      for (const x of runners) {
+        const c = ctxOf(x.stats, now);
+        c.rng = seededRng(hashSeed(SIM_SHARD_ID, 'strength', sp, x.bot.rest.id));
+        regenRound(c, x.bot.rest);
+      }
+    }
+    const mp = String(Math.floor(now.getTime() / 1_800_000));
+    if (mp !== lastMouse) {
+      lastMouse = mp;
+      const mt = tuning.mouse;
+      for (const x of runners) {
+        const r = x.bot.rest;
+        if (r.state !== 1) continue;
+        const rng = seededRng(hashSeed(SIM_SHARD_ID, 'mouse', mp, r.id));
+        const rate = (mt.rateBase - mt.ratePerStar * r.star) * (r.streetId === 0 ? mt.newbieFactor : 1);
+        if (!rng.chance(rate)) continue;
+        const c = ctxOf(x.stats, now);
+        c.rng = rng;
+        mouseVisit(c, r);
+      }
     }
     const { hour, minute } = gameParts(now);
     if (minute < ROUND_MS / 60_000) {
@@ -216,5 +251,5 @@ export function runFast(
       t.diamond += v.diamond;
     }
   }
-  return { name, days, income, stuck: [...stuck.values()], elapsedMs: Date.now() - started };
+  return { name, days, income, stuck: [...stuck.values()], regenCount, elapsedMs: Date.now() - started };
 }

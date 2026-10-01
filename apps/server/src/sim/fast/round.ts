@@ -2,7 +2,18 @@ import { toSettleInput, type SettleSource } from '../../modules/settlement/globa
 import { settleRestaurant } from '../../modules/settlement/settle';
 import { strengthGain } from '../../modules/settlement/strength';
 import type { SettleGlobals } from '../../modules/settlement/types';
-import { aggOf, gainCoin, gainExp, gainOil, gainRenown, grantGoods, spendCoin, subFoods } from './ops';
+import { GOODS } from '@dt/config';
+import {
+  aggOf,
+  gainCoin,
+  gainExp,
+  gainOil,
+  gainRenown,
+  grantGoods,
+  luckOf,
+  spendCoin,
+  subFoods,
+} from './ops';
 import type { FastCtx, FastRest } from './state';
 
 /** 从内存状态组出结算源；字段和 settlement/runner.ts 的 settleOne 一一对应 */
@@ -71,4 +82,30 @@ export function regenRound(c: FastCtx, r: FastRest): void {
     c.rng,
   );
   if (g) r.strength = Math.min(r.strength + g.add, g.cap);
+}
+
+/**
+ * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：按幸运逃走；有捕鼠夹按概率抓住给银币；
+ * 否则从数量大于 0 的食材里随机偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
+ */
+export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'stolen' | 'nothing' {
+  const mt = c.tuning.mouse;
+  const agg = aggOf(c, r);
+  const { sum, rate } = luckOf(c, r);
+  let out: 'escaped' | 'trapped' | 'stolen' | 'nothing';
+  if (c.rng.chance(rate / mt.luckDivisor)) out = 'escaped';
+  else if (c.rng.chance(agg.trapRate ?? 0)) {
+    gainCoin(c, r, Math.floor(r.level * mt.trapCoinPerLevel * (0.5 + c.rng.next()) + sum), 'mouse.trap');
+    out = 'trapped';
+  } else {
+    const foods = [...r.foods].filter(([, n]) => n > 0).sort((a, b) => a[0] - b[0]);
+    if (foods.length === 0) out = 'nothing';
+    else {
+      const [id, have] = foods[c.rng.int(foods.length)]!;
+      subFoods(c, r, id, Math.min(have, c.rng.intMin1(2 * r.star + 1)));
+      out = 'stolen';
+    }
+  }
+  if (c.rng.chance(agg.earnMapRate ?? 0)) grantGoods(c, r, GOODS.adventureMap, 1, 'mouse');
+  return out;
 }
