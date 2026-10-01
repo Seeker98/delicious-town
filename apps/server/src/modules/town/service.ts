@@ -1,4 +1,4 @@
-import type { NewsPageDto, NpcKey, ShakeResultDto, TownDto, TownExchangeDto } from '@dt/shared';
+import type { HiphopPlace, NewsPageDto, NpcKey, ShakeResultDto, TownDto, TownExchangeDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op';
@@ -12,6 +12,7 @@ import { broadcast } from './broadcast';
 import { doExchange, exchangeView, useLevelTicket, useMysteryTicket } from './exchange';
 import { useHammer } from './hammer';
 import { shake } from './shake';
+import { askMayor } from './mayor';
 import { talk } from './talk';
 import { townView } from './view';
 
@@ -31,6 +32,9 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     broadcast(ctx: RestCtx, b: { text: string }) {
       return op(ctx, 'town.broadcast', (o) => broadcast(o, b.text));
+    },
+    mayor(ctx: RestCtx, place: HiphopPlace) {
+      return op(ctx, 'town.mayor', (o) => askMayor(o, place));
     },
     talk(ctx: RestCtx, b: { npc: NpcKey }) {
       return op(ctx, 'town.talk', (o) => talk(o, b.npc));
