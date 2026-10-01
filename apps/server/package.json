@@ -10,6 +10,7 @@
     "migrate:dev": "tsx --env-file=.env.development src/cli/migrate.ts",
     "shard": "tsx --env-file=.env.development src/cli/shard.ts",
     "account": "tsx --env-file=.env.development src/cli/account.ts",
+    "equip:rescale": "tsx --env-file=.env.development src/cli/equip-rescale.ts",
     "build": "tsup",
     "sim": "tsx --env-file=.env.development src/sim/cli.ts run",
     "sim:explain": "tsx --env-file=.env.development src/sim/cli.ts explain",

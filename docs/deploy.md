@@ -162,3 +162,10 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - worker `ops-scan` 现在也发邀请奖励：新手礼包、被邀请人 10 级和 30 级时给邀请人的奖励、邀请人后来在该区开店时补发待发的奖励
 - Redis 键 `redeem:fail:{账号 id}` 记一小时内输错兑换码（码不存在）的次数，到上限后这个账号一小时内不能兑换
 - 后台新页"兑换码"：协管能看，只有管理员能建码、停用、导出一次性码；这些操作都记审计（`code.create`、`code.batch`、`code.disable`、`code.export`）
+
+## 厨具数值重定（问题记录 120）
+
+- 厨具强化改为固定增量：每件厨具 +0~+10 的属性总和写在 `packages/config/data/game/equip_lore.json` 的 `stressTables`（同时定穿戴等级）；构建时按 +0 值缩放基础属性，并改写说明里的数字
+- 守塔人各层厨力和第 5、6 层互换写在 `packages/config/data/game/tower_fix.json`
+- **部署后跑一次** `pnpm --filter @dt/server equip:rescale`（生产环境把脚本里的 `--env-file` 换成生产的配置）：按新表重算已经生成的厨具（基础属性、强化加成、强化记录、穿戴等级）。以后改了表也要再跑；重复跑结果不变
+- 已穿着、但等级低于新穿戴等级的厨具不会被强制卸下
