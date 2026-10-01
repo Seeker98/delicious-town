@@ -714,6 +714,10 @@ export function buildBundle(src: SourceData): BuildResult {
   if (wageCards.size !== hh.weeklyCards.length || hh.weeklyCards.some((c) => !wageCards.has(c)))
     errors.push('tuning.hiphop.wages must cover exactly the weeklyCards');
 
+  // ---------- 论坛（子项目 4E-3） ----------
+  for (const [id] of tuning.forum.featureReward.goods)
+    if (!goodsIds.has(id)) errors.push(`forum.featureReward references unknown goods ${id}`);
+
   // ---------- 开店默认值 ----------
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);

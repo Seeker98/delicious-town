@@ -798,6 +798,54 @@ export interface HiphopTipTable {
   created_at: Ts;
 }
 
+/** 论坛帖子（子项目 4E-3）：计数冗余存在这里，和操作在同一事务里更新 */
+export interface ForumPostTable {
+  id: Generated<number>;
+  shard_id: number;
+  rest_id: number;
+  category: string;
+  title: string;
+  content: string;
+  created_at: Ts;
+  edited_at: TsNullable;
+  deleted_at: TsNullable;
+  pinned_at: TsNullable;
+  featured_at: TsNullable;
+  feature_rewarded: Default<boolean>;
+  read_num: Default<number>;
+  up_num: Default<number>;
+  down_num: Default<number>;
+  reply_count: Default<number>;
+  last_reply_at: TsNullable;
+}
+
+export interface ForumReplyTable {
+  id: Generated<number>;
+  post_id: number;
+  rest_id: number;
+  floor: number;
+  reply_to: Nullable<number>;
+  anonymous: Default<boolean>;
+  content: string;
+  created_at: Ts;
+  deleted_at: TsNullable;
+}
+
+export interface ForumReactionTable {
+  post_id: number;
+  rest_id: number;
+  kind: string;
+  created_at: Ts;
+}
+
+export interface ForumReadTable {
+  post_id: number;
+  rest_id: number;
+  times: number;
+  first_at: Ts;
+  last_at: Ts;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -859,6 +907,10 @@ export interface DB {
   bar_round: BarRoundTable;
   hiphop_day: HiphopDayTable;
   hiphop_tip: HiphopTipTable;
+  forum_post: ForumPostTable;
+  forum_reply: ForumReplyTable;
+  forum_reaction: ForumReactionTable;
+  forum_read: ForumReadTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

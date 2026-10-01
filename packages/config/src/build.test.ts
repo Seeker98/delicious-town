@@ -480,3 +480,32 @@ describe('嘻哈男孩、排行（子项目 4E-2）', () => {
     );
   });
 });
+
+describe('论坛（子项目 4E-3）', () => {
+  it('数值和发帖支线的跳转', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.tuning.forum).toEqual({
+      titleMax: 40,
+      contentMax: 5000,
+      replyMax: 500,
+      queryMax: 20,
+      postCooldownSec: 60,
+      postDailyMax: 10,
+      replyCooldownSec: 60,
+      pageSize: 20,
+      excerpt: 60,
+      readsMax: 200,
+      featureReward: { goods: [[1, 20]], diamond: 50 },
+    });
+    expect(bundle!.tasks.find((t) => t.id === 107)!.href).toBe('/forum');
+  });
+
+  it('加精奖励引用了不存在的道具时构建报错', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { forum: { featureReward: { goods: number[][] } } };
+    tuning.forum.featureReward.goods = [[999999, 1]];
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'forum.featureReward references unknown goods 999999',
+    );
+  });
+});

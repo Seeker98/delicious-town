@@ -19,6 +19,8 @@ export const NEWS_TYPES: readonly string[] = [
   'hiphop.event',
   'hiphop.krab',
   'hiphop.weekly',
+  'forum.pin',
+  'forum.feature',
   'mc.champion',
   'mc.cook',
   'oil.expand',
