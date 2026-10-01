@@ -67,7 +67,8 @@ export function createAdminReports(game: Game) {
   /** 按类型处理内容；内容已经不在（或已不是这家店的）时不做操作，返回 none */
   async function act(o: Op, c: Row, note: string, newName: string | undefined): Promise<string> {
     const target = await loadTarget(o.tx, c.target_type, c.target_id);
-    if (!target || target.restId !== c.target_rest_id) return 'none';
+    // 内容已不在、换了店，或作者已经改过（和举报时的快照不同）：不动内容，只结案（设计 §3.3，终审 I3）
+    if (!target || target.restId !== c.target_rest_id || target.text !== c.snapshot) return 'none';
     switch (c.target_type) {
       case 'post':
         await o.tx
@@ -174,6 +175,8 @@ export function createAdminReports(game: Game) {
       if (c.status !== 'open') throw invalidState('report_closed');
       if (b.banDays === 0 && actor.role !== 'admin')
         throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'ban_days' });
+      // 封号会被拒的（封自己、协管封管理员）先报错，免得内容已处理、邮件已发而封号失败（终审 I2）
+      if (b.banDays !== undefined) await players.checkBan(actor, c.target_account_id, b.banDays);
       const typeName = REPORT_TARGET_NAMES[c.target_type];
       await runSystemOp(game.deps, c.shard_id, c.target_rest_id, { source: 'report.resolve' }, async (o) => {
         const locked = await o.tx

@@ -69,3 +69,40 @@ describe('封号期限（HTTP）', () => {
     ).toBe(200);
   });
 });
+
+describe('封号不能被缩短（终审 I1）', () => {
+  let ctx: TestContext;
+  let admin: { cookie: string };
+  let mod: { cookie: string };
+  beforeAll(async () => {
+    ctx = await createTestApp();
+    admin = await userWithRole(ctx, 'admin');
+    mod = await userWithRole(ctx, 'mod');
+  });
+  afterAll(() => ctx.close());
+  const until = async (id: number) =>
+    (
+      await ctx.deps.db
+        .selectFrom('account')
+        .select('banned_until')
+        .where('id', '=', id)
+        .executeTakeFirstOrThrow()
+    ).banned_until;
+  const ban = (cookie: string, id: number, days: number) =>
+    call(ctx.app, 'POST', `/api/v1/admin/players/${id}/ban`, { cookie, body: { reason: 'x', days } });
+
+  it('已永久封号：协管再封 1 天不改到期时间', async () => {
+    const p = await registerUser(ctx.app);
+    await ban(admin.cookie, p.accountId, 0);
+    expect((await ban(mod.cookie, p.accountId, 1)).status).toBe(200);
+    expect(await until(p.accountId)).toBeNull();
+  });
+
+  it('已封 7 天：再封 1 天保留较晚的到期时间', async () => {
+    const p = await registerUser(ctx.app);
+    await ban(mod.cookie, p.accountId, 7);
+    const seven = (await until(p.accountId))!.getTime();
+    await ban(mod.cookie, p.accountId, 1);
+    expect((await until(p.accountId))!.getTime()).toBe(seven);
+  });
+});

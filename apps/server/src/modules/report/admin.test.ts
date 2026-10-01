@@ -238,4 +238,35 @@ describe('后台举报处理（HTTP，设计 §3.3）', () => {
     expect((await caseRow(r1.caseId)).action).toBe('delete');
     expect((await caseRow(r4.caseId)).action).toBe('rename');
   });
+
+  it('作者已经改了内容（改成别的、不是清空）：照样结案，内容不动（终审 I3）', async () => {
+    const { caseId, bad } = await noticeCase();
+    await db().updateTable('restaurant').set({ notice: '欢迎光临' }).where('id', '=', bad.restId).execute();
+    expect((await post(mod.cookie, `/reports/${caseId}/resolve`, { note: '已自行修改' })).status).toBe(200);
+    const rest = await db()
+      .selectFrom('restaurant')
+      .select('notice')
+      .where('id', '=', bad.restId)
+      .executeTakeFirstOrThrow();
+    expect(rest.notice).toBe('欢迎光临');
+    expect(await caseRow(caseId)).toMatchObject({ status: 'resolved', action: 'none' });
+  });
+
+  it('封号会被拒（被举报的是管理员）：先报错，案子不结、内容不动、不发邮件（终审 I2）', async () => {
+    const boss = await userWithRole(ctx, 'admin');
+    const restId = await createRestaurantFull(db(), shardId, boss.accountId, {
+      patch: { notice: '管理员的公告' },
+    });
+    const { caseId } = await seed('notice', restId, { accountId: boss.accountId, restId }, '管理员的公告');
+    const r = await post(mod.cookie, `/reports/${caseId}/resolve`, { note: 'x', banDays: 7 });
+    expect(r.status).toBe(403);
+    expect((await caseRow(caseId)).status).toBe('open');
+    const rest = await db()
+      .selectFrom('restaurant')
+      .select('notice')
+      .where('id', '=', restId)
+      .executeTakeFirstOrThrow();
+    expect(rest.notice).toBe('管理员的公告');
+    expect(await mails(restId)).toEqual([]);
+  });
 });

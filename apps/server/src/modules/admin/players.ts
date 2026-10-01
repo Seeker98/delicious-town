@@ -255,26 +255,39 @@ export function createAdminPlayers(game: Game) {
     log: (restId: number, q: PageQuery) => logPage(db, restId, q),
     income: (restId: number, q: PageQuery) => incomePage(db, restId, q),
 
-    /** 封号（设计 §4）：协管只能 1 天或 7 天，0 或不填为永久，只有管理员能用 */
-    async ban(
-      actor: AdminActor,
-      accountId: number,
-      reason: string,
-      days?: number,
-    ): Promise<{ banned: boolean }> {
+    /** 封号前的检查（举报处理在动内容之前先调，终审 I2）：不能封自己；协管只能 1/7 天、不能封管理员 */
+    async checkBan(actor: AdminActor, accountId: number, days?: number) {
       if (accountId === actor.accountId) throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'self' });
       if (actor.role !== 'admin' && days !== 1 && days !== 7)
         throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'ban_days' });
       const target = await accountRow(accountId);
       if (target.role === 'admin' && actor.role !== 'admin')
         throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'admin' });
+      return target;
+    },
+
+    /**
+     * 封号（设计 §4）：协管只能 1 天或 7 天，0 或不填为永久，只有管理员能用。
+     * 已在封号中时保留较晚的到期时间（永久最晚），协管不能借再封一次缩短封号（终审 I1）
+     */
+    async ban(
+      actor: AdminActor,
+      accountId: number,
+      reason: string,
+      days?: number,
+    ): Promise<{ banned: boolean }> {
+      const target = await this.checkBan(actor, accountId, days);
+      const now = game.deps.now();
+      let until = banUntil(days, now);
+      if (isBanned(target, now) && until !== null)
+        until = target.banned_until === null || target.banned_until > until ? target.banned_until : until;
       await db.transaction().execute(async (tx) => {
         await tx
           .updateTable('account')
           .set({
-            banned_at: game.deps.now(),
+            banned_at: now,
             ban_reason: reason,
-            banned_until: banUntil(days, game.deps.now()),
+            banned_until: until,
           })
           .where('id', '=', accountId)
           .execute();
