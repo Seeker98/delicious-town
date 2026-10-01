@@ -18,8 +18,16 @@ describe('迁移 0014', () => {
     const a = await newRest();
     const row = { shard_id: shard, day: '2026-09-30', bless_id: 1, rest_id: a, created_at: now };
     await db.insertInto('town_bless').values(row).execute();
-    await expect(db.insertInto('town_bless').values({ ...row, bless_id: 2 }).execute()).rejects.toThrow();
-    await db.insertInto('town_bless').values({ ...row, day: '2026-10-01' }).execute();
+    await expect(
+      db
+        .insertInto('town_bless')
+        .values({ ...row, bless_id: 2 })
+        .execute(),
+    ).rejects.toThrow();
+    await db
+      .insertInto('town_bless')
+      .values({ ...row, day: '2026-10-01' })
+      .execute();
   });
 
   it('小镇个人状态：默认没领过大胃哥首次礼物', async () => {
@@ -44,7 +52,10 @@ describe('迁移 0014', () => {
     };
     await db.insertInto('town_shake').values(row).execute();
     await expect(db.insertInto('town_shake').values(row).execute()).rejects.toThrow();
-    await db.insertInto('town_shake').values({ ...row, rest_id: b }).execute();
+    await db
+      .insertInto('town_shake')
+      .values({ ...row, rest_id: b })
+      .execute();
   });
 
   it('兑换次数：每店每项一行', async () => {
