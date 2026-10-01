@@ -26,4 +26,6 @@ export * from './schemas/bar';
 export * from './schemas/tower';
 export * from './schemas/takeaway';
 export * from './schemas/town';
+export * from './schemas/hiphop';
+export * from './rank';
 export * from './news';

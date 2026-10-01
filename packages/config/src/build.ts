@@ -703,6 +703,17 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const id of tuning.town.mysteryExclude)
     if (!foodIds.has(id)) errors.push(`tuning.town.mysteryExclude references unknown food ${id}`);
 
+  // ---------- 嘻哈男孩（子项目 4E-2） ----------
+  const hh = tuning.hiphop;
+  for (const [place] of hh.placeWeights)
+    if (![1, 2, 3, 4, 5, 6, 9].includes(place))
+      errors.push(`tuning.hiphop.placeWeights has unknown place ${place}`);
+  for (const id of [...hh.weeklyCards, ...hh.wages.flat(), 230, 231, 232])
+    if (!goodsIds.has(id)) errors.push(`hiphop references unknown goods ${id}`);
+  const wageCards = new Set(hh.wages.map(([card]) => card));
+  if (wageCards.size !== hh.weeklyCards.length || hh.weeklyCards.some((c) => !wageCards.has(c)))
+    errors.push('tuning.hiphop.wages must cover exactly the weeklyCards');
+
   // ---------- 开店默认值 ----------
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);

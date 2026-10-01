@@ -60,6 +60,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     coin: rest.coin,
     diamond: rest.diamond,
     talked: talked as Record<NpcKey, boolean>,
+    mayor: { answered: (counters.get('town.talk.mayor') ?? 0) > 0 },
     bigEaterGift: tr?.big_eater_gift ?? false,
     shaken: shaken !== undefined,
     broadcast: {

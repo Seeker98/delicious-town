@@ -267,6 +267,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           have,
           canBuy: Math.max(0, Math.min(limit - Math.max(bought, sharedBought), r.stock - r.sold, room)),
           openedAt: r.opened_at.toISOString(),
+          owner: null,
         };
       };
       // 特价同 IP 间隔（规格书 06：同 IP 两次购买间隔 10 分钟）；页面据此提示还要等多久
@@ -299,6 +300,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         specialCooldownMin: Math.round(t.specialIpCooldownSec / 60),
         foodsMaxNum: rest.foods_max_num,
         cupboardFull,
+        manual: { hasCard: false, cost: t.manualCost },
         guess: {
           period,
           joined: joined?.foods_ids ?? null,

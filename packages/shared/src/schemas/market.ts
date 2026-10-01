@@ -25,6 +25,8 @@ export interface MarketItemDto {
   /** 现在最多还能买几个：限购剩余、库存剩余、橱柜单种上限剩余取小（橱柜格子满且没有这种食材时为 0） */
   canBuy: number;
   openedAt: string;
+  /** 菜场工作证手动进货的货（4E-2）：进货人；系统货为 null */
+  owner: { restId: number; name: string } | null;
 }
 
 export interface MarketDto {
@@ -41,6 +43,8 @@ export interface MarketDto {
   /** 橱柜单种食材上限；橱柜格子是否满了 */
   foodsMaxNum: number;
   cupboardFull: boolean;
+  /** 手动进货：是否持有有效的菜场工作证、本次费用 */
+  manual: { hasCard: boolean; cost: number };
   guess: {
     period: string;
     joined: number[] | null;
@@ -49,4 +53,10 @@ export interface MarketDto {
     maxPick: number;
     pool: number[];
   };
+}
+
+export interface ManualStockDto {
+  foods: number[];
+  cost: number;
+  renown: number;
 }

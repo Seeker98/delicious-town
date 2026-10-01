@@ -448,3 +448,33 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
 });
+
+describe('嘻哈男孩、排行（子项目 4E-2）', () => {
+  it('数值和工作证', () => {
+    const { bundle } = buildBundle(source());
+    const h = bundle!.tuning.hiphop;
+    expect(h.weeklyCards).toEqual([108, 109, 107, 111, 110]);
+    expect(new Set(h.wages.map(([card]) => card))).toEqual(new Set(h.weeklyCards));
+    expect(h.requireVerifiedEmail).toBe(false);
+    expect(bundle!.tuning.market.manualPersonMax).toBe(99);
+    expect(bundle!.tuning.rank.top).toBe(50);
+  });
+
+  it('地点只能是 1~6 和 9', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { hiphop: { placeWeights: number[][] } };
+    tuning.hiphop.placeWeights.push([8, 1]);
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'tuning.hiphop.placeWeights has unknown place 8',
+    );
+  });
+
+  it('工资表的证要和周榜的证一致', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { hiphop: { wages: number[][] } };
+    tuning.hiphop.wages.pop();
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'tuning.hiphop.wages must cover exactly the weeklyCards',
+    );
+  });
+});

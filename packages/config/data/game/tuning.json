@@ -131,7 +131,8 @@
     "hotMinNeedCount": 500,
     "guessCost": 2,
     "guessMaxPick": 6,
-    "guessBonusHours": [12, 18]
+    "guessBonusHours": [12, 18],
+    "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
   "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 21, "discardable": [87], "maxBuy": 999 },
   "store": { "maxBatch": 99 },
@@ -307,5 +308,18 @@
     "rareExchange": false,
     "mysteryExclude": [573, 574],
     "exchangeMaxNum": 99
-  }
+  },
+  "hiphop": {
+    "hour": 9, "closeHour": 22, "weeklyHour": 23,
+    "placeWeights": [[1, 10], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [9, 7]],
+    "restActiveDays": 7,
+    "worthBase": 35000, "worthMin": 1.25, "worthRand": 0.8,
+    "krabRate": 0.1, "foodFactor": 1.5,
+    "coinMax": 100000000, "coinWorthDiv": 5, "coinExpDiv": 210,
+    "diamondMax": 9999, "diamondWorthNum": 10001, "diamondWorthDen": 3, "diamondExpMul": 50,
+    "expJitter": 0.1, "requireVerifiedEmail": false,
+    "weeklyCards": [108, 109, 107, 111, 110],
+    "wages": [[107, 233], [108, 234], [109, 235], [111, 236], [110, 237]]
+  },
+  "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 }
 }

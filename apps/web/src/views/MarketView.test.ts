@@ -25,6 +25,7 @@ const view: MarketDto = {
       have: 0,
       canBuy: 1000,
       openedAt: '2026-09-30T00:00:00.000Z',
+      owner: null,
     },
   ],
   special: [],
@@ -36,6 +37,7 @@ const view: MarketDto = {
   specialCooldownMin: 10,
   foodsMaxNum: 999,
   cupboardFull: false,
+  manual: { hasCard: false, cost: 1_000_000 },
   guess: { period: '2026-09-30@12', joined: null, last: null, cost: 2, maxPick: 6, pool: [101, 102, 103] },
 };
 

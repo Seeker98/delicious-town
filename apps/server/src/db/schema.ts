@@ -238,6 +238,8 @@ export interface MarketItemTable {
   sold: Default<number>;
   hot: Default<boolean>;
   opened_at: Ts;
+  /** 菜场工作证手动进货的进货人（4E-2）；系统货为 null */
+  owner_rest_id: Default<number | null>;
 }
 
 export interface MarketBuyTable {
@@ -771,6 +773,31 @@ export interface TakeawayDeliveryTable {
 export type EquipRow = Selectable<EquipTable>;
 export type EquipGemRow = Selectable<EquipGemTable>;
 
+/** 嘻哈男孩每日地点（子项目 4E-2）：每区每天一行 */
+export interface HiphopDayTable {
+  shard_id: number;
+  day: string;
+  /** 1~6 公共地点，9 某家餐厅 */
+  place: number;
+  rest_id: Nullable<number>;
+  foods_id: number;
+  worth: number;
+  created_at: Ts;
+}
+
+/** 打赏记录（子项目 4E-2） */
+export interface HiphopTipTable {
+  id: Generated<number>;
+  shard_id: number;
+  rest_id: number;
+  kind: string;
+  num: number;
+  foods_id: Nullable<number>;
+  worth: number;
+  krab_coin: Default<number>;
+  created_at: Ts;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -830,6 +857,8 @@ export interface DB {
   bar_state: BarStateTable;
   bar_slot_stat: BarSlotStatTable;
   bar_round: BarRoundTable;
+  hiphop_day: HiphopDayTable;
+  hiphop_tip: HiphopTipTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
