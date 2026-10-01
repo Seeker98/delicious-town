@@ -2,6 +2,9 @@ import type {
   AccountRole,
   AdminAnnouncementDto,
   AdminCodeDto,
+  ReportCaseDto,
+  ReportDetailDto,
+  ReportStatus,
   CreateBatchInput,
   CreateSharedCodeInput,
   AdminMailDto,
@@ -53,7 +56,11 @@ export const adminApi = {
     api.get<LogPageDto>(`${A}/restaurants/${id}/log${qs({ before })}`),
   income: (id: number, before?: string) =>
     api.get<IncomePageDto>(`${A}/restaurants/${id}/income${qs({ before })}`),
-  ban: (id: number, reason: string) => api.post<{ banned: boolean }>(`${A}/players/${id}/ban`, { reason }),
+  ban: (id: number, reason: string, days?: number) =>
+    api.post<{ banned: boolean }>(`${A}/players/${id}/ban`, {
+      reason,
+      ...(days === undefined ? {} : { days }),
+    }),
   unban: (id: number) => api.post<{ banned: boolean }>(`${A}/players/${id}/unban`, {}),
   rename: (restId: number, name: string, reason: string) =>
     api.post<{ name: string }>(`${A}/restaurants/${restId}/rename`, { name, reason }),
@@ -66,6 +73,12 @@ export const adminApi = {
   mails: (shardId?: number) => api.get<AdminMailDto[]>(`${A}/mails${qs({ shardId })}`),
   sendMail: (b: SendMailInput) => api.post<AdminMailDto>(`${A}/mails`, b),
   revokeMail: (id: number) => api.post<AdminMailDto>(`${A}/mails/${id}/revoke`, {}),
+  reports: (q: { shardId?: number; status?: ReportStatus }) =>
+    api.get<ReportCaseDto[]>(`${A}/reports${qs(q)}`),
+  report: (id: number) => api.get<ReportDetailDto>(`${A}/reports/${id}`),
+  resolveReport: (id: number, b: { note: string; banDays?: 0 | 1 | 7; newName?: string }) =>
+    api.post<ReportCaseDto>(`${A}/reports/${id}/resolve`, b),
+  rejectReport: (id: number, b: { note: string }) => api.post<ReportCaseDto>(`${A}/reports/${id}/reject`, b),
   codes: (shardId?: number) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId })}`),
   createCode: (b: CreateSharedCodeInput) => api.post<AdminCodeDto>(`${A}/codes`, b),
   createCodeBatch: (b: CreateBatchInput) => api.post<AdminCodeDto>(`${A}/codes/batch`, b),

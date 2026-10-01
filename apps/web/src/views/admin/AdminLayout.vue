@@ -12,6 +12,7 @@ const links = computed(() => [
   { to: '/admin', label: '概览' },
   { to: `/admin/shards/${admin.shardId ?? 1}`, label: '区服数值' },
   { to: '/admin/players', label: '玩家' },
+  { to: '/admin/reports', label: '举报' },
   { to: '/admin/grants', label: '补偿' },
   { to: '/admin/mail', label: '邮件' },
   { to: '/admin/announce', label: '公告' },

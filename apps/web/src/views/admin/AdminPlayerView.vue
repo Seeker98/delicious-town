@@ -34,6 +34,8 @@ const logRows = ref<RestLogDto[]>([]);
 const incomeRows = ref<RoundSummaryDto[]>([]);
 const next = ref<string | null>(null);
 const banReason = ref('');
+/** 封号天数（子项目 6B-1）：协管只能 1 天或 7 天，管理员还能选永久（0） */
+const banDays = ref(1);
 const renameName = ref('');
 const renameReason = ref('');
 const busy = ref(false);
@@ -92,7 +94,7 @@ watch(tab, () => void loadTab(true));
 const ban = () =>
   run(
     async () => {
-      await adminApi.ban(id.value, banReason.value.trim());
+      await adminApi.ban(id.value, banReason.value.trim(), banDays.value);
       banReason.value = '';
       await load();
     },
@@ -139,7 +141,11 @@ const rename = () =>
     <div class="small mb-2">
       {{ player.email }}（{{ player.emailVerified ? '已验证' : '未验证' }}） · 注册于
       {{ new Date(player.createdAt).toLocaleString('zh-CN') }}
-      <span v-if="player.banned" class="text-danger"> · 已封禁：{{ player.banReason }}</span>
+      <span v-if="player.banned" class="text-danger">
+        · 已封禁：{{ player.banReason }}（{{
+          player.bannedUntil ? `封号至 ${new Date(player.bannedUntil).toLocaleString('zh-CN')}` : '永久封号'
+        }}）</span
+      >
     </div>
 
     <div class="d-flex flex-wrap gap-2 mb-3">
@@ -150,6 +156,11 @@ const rename = () =>
           placeholder="封号原因"
           data-testid="ban-reason"
         />
+        <select v-model.number="banDays" class="form-select form-select-sm w-auto" data-testid="ban-days">
+          <option :value="1">1 天</option>
+          <option :value="7">7 天</option>
+          <option v-if="admin.isAdmin" :value="0">永久</option>
+        </select>
         <button
           class="btn btn-outline-danger btn-sm"
           data-testid="ban"
@@ -160,7 +171,7 @@ const rename = () =>
         </button>
       </template>
       <button
-        v-else
+        v-else-if="admin.isAdmin"
         class="btn btn-outline-success btn-sm"
         data-testid="unban"
         :disabled="busy"
