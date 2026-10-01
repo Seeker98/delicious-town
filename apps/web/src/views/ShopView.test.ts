@@ -79,4 +79,20 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     await flushPromises();
     expect(w.find('[data-testid="info-13"]').text()).toMatch(/^最多 3/);
   });
+
+  it('名称可以用键盘展开描述（PR27 遗留）', async () => {
+    vi.mocked(endpoints.shop).mockResolvedValue({
+      coin: [{ goodsId: 99, price: 5, owned: 0, limit: 1, maxBuy: 1, blocked: null }],
+      black: [],
+    });
+    useCatalogStore().goodsMap = new Map([
+      [99, { id: 99, name: '长描述道具', desc: '很长的描述'.repeat(20) } as CatalogGoodsDto],
+    ]);
+    const w = mount(ShopView);
+    await flushPromises();
+    const name = w.find('[data-testid="name-99"]');
+    expect(name.attributes('tabindex')).toBe('0');
+    await name.trigger('keydown', { key: 'Enter' });
+    expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
+  });
 });

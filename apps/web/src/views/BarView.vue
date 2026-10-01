@@ -67,6 +67,7 @@ onMounted(load);
       v-for="x in TABS"
       :key="x.key"
       :class="{ active: tab === x.key }"
+      :aria-current="tab === x.key ? 'page' : undefined"
       href="#"
       :data-testid="`tab-${x.key}`"
       @click.prevent="tab = x.key"

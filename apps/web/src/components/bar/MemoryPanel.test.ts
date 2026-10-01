@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import type { MemoryRoundDto } from '@dt/shared';
+import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import MemoryPanel from './MemoryPanel.vue';
 import { barData } from './testData';
@@ -153,5 +154,35 @@ describe('MemoryPanel', () => {
     await w.find('[data-testid="mem-resume"]').trigger('click');
     await nextTick();
     expect(lit(w)).toBe(4);
+  });
+
+  it('提交失败后清掉已点的配料，再点一个不会以多一个的长度提交（PR28 遗留）', async () => {
+    vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([1, 3, 1]));
+    vi.mocked(endpoints.barMemoryAnswer).mockRejectedValueOnce(new ApiError('NETWORK'));
+    const w = mount(MemoryPanel, { props: { data: barData() } });
+    await w.find('[data-testid="mem-start"]').trigger('click');
+    await flushPromises();
+    await advance(2200);
+    for (const i of [1, 3, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
+    await flushPromises();
+    expect(endpoints.barMemoryAnswer).toHaveBeenCalledTimes(1);
+    await w.find('[data-testid="mix-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.barMemoryAnswer).toHaveBeenCalledTimes(1);
+  });
+
+  it('局在别处已经结束：回到开局状态并刷新（PR28 遗留）', async () => {
+    vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([1, 3, 1]));
+    vi.mocked(endpoints.barMemoryAnswer).mockRejectedValueOnce(
+      new ApiError('INVALID_STATE', { reason: 'no_round' }),
+    );
+    const w = mount(MemoryPanel, { props: { data: barData() } });
+    await w.find('[data-testid="mem-start"]').trigger('click');
+    await flushPromises();
+    await advance(2200);
+    for (const i of [1, 3, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(2);
+    expect(w.find('[data-testid="mem-start"]').exists()).toBe(true);
   });
 });

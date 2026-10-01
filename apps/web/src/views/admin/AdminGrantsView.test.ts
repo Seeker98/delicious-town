@@ -170,4 +170,25 @@ describe('AdminGrantsView', () => {
     expect((w.find('[data-testid="grant-rest"]').element as HTMLInputElement).value).toBe('3');
     expect(adminApi.restaurant).toHaveBeenCalledWith(3);
   });
+
+  it('每项旁边写出上限；超出时当场提示并禁止发放（问题记录：不知道最大值）', async () => {
+    vi.mocked(adminApi.grants).mockResolvedValue([]);
+    const w = await setup('admin');
+    await flushPromises();
+    expect(w.find('[data-testid="grant-coin"]').attributes('placeholder')).toBe('银币（≤ 100,000,000）');
+    expect(w.find('[data-testid="grant-limits"]').text()).toContain('道具、食材每种 ≤ 9,999');
+    await w.find('[data-testid="grant-coin"]').setValue(200_000_000);
+    await w.find('[data-testid="grant-add-goods"]').trigger('click');
+    await w.find('[data-testid="grant-goods-id-0"]').setValue(1);
+    await w.find('[data-testid="grant-goods-num-0"]').setValue(10_000);
+    await w.find('[data-testid="grant-reason"]').setValue('补偿');
+    expect(w.find('[data-testid="grant-over"]').text()).toBe(
+      '超出上限：银币最多 100,000,000；道具1 最多 9,999',
+    );
+    expect(w.find('[data-testid="grant-submit"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="grant-coin"]').setValue(100);
+    await w.find('[data-testid="grant-goods-num-0"]').setValue(5);
+    expect(w.find('[data-testid="grant-over"]').exists()).toBe(false);
+    expect(w.find('[data-testid="grant-submit"]').attributes('disabled')).toBeUndefined();
+  });
 });

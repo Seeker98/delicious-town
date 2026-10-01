@@ -30,6 +30,7 @@ const list = (patch: Partial<ForumListDto> = {}): ForumListDto => ({
   items: [item(2), item(3, { featured: true })],
   nextCursor: 'c1',
   me: { canPost: true, isAdmin: false, postReadyAt: null, replyReadyAt: null },
+  now: new Date().toISOString(),
   ...patch,
 });
 
@@ -110,5 +111,23 @@ describe('ForumView', () => {
     expect(endpoints.forumList).toHaveBeenLastCalledWith({ tab: 'guide' });
     expect(w.find('[data-testid="forum-item-7"]').exists()).toBe(true);
     expect(w.find('[data-testid="forum-item-2"]').exists()).toBe(false);
+  });
+
+  it('发帖冷却中：按钮灰掉并显示还要等几秒（PR31 遗留）', async () => {
+    vi.mocked(endpoints.forumList).mockResolvedValue(
+      list({
+        me: {
+          canPost: true,
+          isAdmin: false,
+          postReadyAt: new Date(Date.now() + 600_000 + 30_000).toISOString(),
+          replyReadyAt: null,
+        },
+        // 服务器时间比本机快 10 分钟：倒计时要按服务器时间算（终审 I2）
+        now: new Date(Date.now() + 600_000).toISOString(),
+      }),
+    );
+    const { w } = await mountView();
+    expect(w.find('[data-testid="forum-new"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="forum-wait"]').text()).toMatch(/^(29|30) 秒后可以再发帖$/);
   });
 });

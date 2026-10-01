@@ -63,4 +63,14 @@ describe('RankPanel', () => {
     expect(shortNum(45_678)).toBe('4.6万');
     expect(shortNum(9_999)).toBe('9,999');
   });
+
+  it('厨力榜写"每 10 分钟更新"，其他榜每分钟（PR29 遗留）', async () => {
+    vi.mocked(endpoints.rank).mockResolvedValue(board());
+    const w = mount(RankPanel, { global: { stubs: { RouterLink: { template: '<a><slot /></a>' } } } });
+    await flushPromises();
+    expect(w.find('[data-testid="rank-meta"]').text()).toContain('每分钟更新');
+    await w.find('[data-testid="rank-group-厨力"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="rank-meta"]').text()).toContain('每 10 分钟更新');
+  });
 });

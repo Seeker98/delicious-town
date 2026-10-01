@@ -10,6 +10,7 @@ import {
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
+import { useCountdown } from '../utils/countdown';
 
 /** 帖子详情（子项目 4E-3 设计文档 §5）：正文一律按纯文字显示（文本插值 + pre-wrap，不用 v-html） */
 const route = useRoute();
@@ -22,6 +23,11 @@ const busy = ref(false);
 const content = ref('');
 const anonymous = ref(false);
 const replyTo = ref<number | null>(null);
+/** 回复冷却还剩几秒（PR31 遗留） */
+const replyWait = useCountdown(
+  () => data.value?.replyReadyAt,
+  () => data.value?.now,
+);
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString('zh-CN', {
@@ -246,9 +252,12 @@ async function submit() {
         <label class="small"
           ><input v-model="anonymous" type="checkbox" data-testid="reply-anon" /> 匿名</label
         >
+        <small v-if="replyWait > 0" class="dt-meta" data-testid="reply-wait"
+          >{{ replyWait }} 秒后可以再回复</small
+        >
         <button
           class="btn btn-sm btn-primary ms-auto"
-          :disabled="busy"
+          :disabled="busy || replyWait > 0"
           data-testid="reply-submit"
           @click="submit"
         >

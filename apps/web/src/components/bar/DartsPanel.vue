@@ -6,6 +6,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { awardText } from './award';
+import { roundGone } from './gone';
 
 /** 准星位置：三角波，和服务端 dartX 同一个公式；返回 [-1, 1] */
 function dartX(elapsedMs: number, period: number, phase: number): number {
@@ -31,6 +32,8 @@ const aim = ref<DartsAimDto | null>(null);
 const t0 = ref(0);
 const x = ref(0);
 const last = ref<DartsThrowDto | null>(null);
+/** 上一镖无效（出手时间对不上）：不显示准星位置，免得看起来像落在某处却是 0 分 */
+const invalid = ref(false);
 throws.value = props.data.darts.round?.throws ?? null;
 
 let frame = 0;
@@ -52,6 +55,13 @@ async function call<T>(fn: () => Promise<T>, fallback: string): Promise<T | null
     return await fn();
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    if (roundGone(e)) {
+      stopAnim();
+      aim.value = null;
+      last.value = null;
+      throws.value = null;
+      emit('reload');
+    }
     return null;
   } finally {
     busy.value = false;
@@ -70,6 +80,7 @@ async function doAim() {
   const r = await call(() => endpoints.barDartsAim(), '瞄准失败');
   if (!r) return;
   aim.value = r;
+  invalid.value = false;
   t0.value = performance.now();
   x.value = dartX(0, r.period, r.phase);
   stopAnim();
@@ -84,11 +95,13 @@ async function doThrow() {
   if (!r) return;
   last.value = r;
   throws.value = r.throws;
+  invalid.value = r.x === null;
   if (r.x !== null) x.value = r.x;
   if (r.finished) emit('reload');
 }
 function again() {
   last.value = null;
+  invalid.value = false;
   throws.value = null;
 }
 
@@ -114,11 +127,20 @@ const resultText = computed(() => {
       今天 {{ data.darts.played }}/{{ data.darts.max }} 局，每局 {{ data.darts.cost }} 张神秘礼券
     </div>
 
-    <div class="dt-board mb-2">
+    <div class="dt-board mb-2" role="img" aria-label="靶条：正中 50 分，向外依次 25、10、5 分，边缘 0 分">
+      <div class="dt-board-ring dt-board-r5"></div>
       <div class="dt-board-ring dt-board-r10"></div>
       <div class="dt-board-ring dt-board-r25"></div>
       <div class="dt-board-ring dt-board-r50"></div>
-      <div v-if="aim || last" class="dt-board-marker" :style="{ left: pct }" data-testid="darts-marker"></div>
+      <div
+        v-if="(aim || last) && !invalid"
+        class="dt-board-marker"
+        :style="{ left: pct }"
+        data-testid="darts-marker"
+      ></div>
+    </div>
+    <div v-if="invalid && !aim" class="text-danger mb-2" aria-live="polite" data-testid="darts-invalid">
+      这一镖出手时间对不上，判为脱靶，记 0 分
     </div>
 
     <div v-if="throws && throws.length > 0" class="mb-2" data-testid="darts-throws">
@@ -131,6 +153,7 @@ const resultText = computed(() => {
           'fw-bold',
           last.result === 'win' ? 'text-success' : last.result === 'draw' ? '' : 'text-danger',
         ]"
+        aria-live="polite"
         data-testid="darts-result"
       >
         {{ resultText }}

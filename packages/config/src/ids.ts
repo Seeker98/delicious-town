@@ -1,6 +1,8 @@
+import { SHARED_GOODS } from '@dt/shared';
+
 /** 代码里直接引用的道具 id（规格书 00~07、20）。改动时同步检查 data/dataset/goods.json */
 export const GOODS = {
-  mysteryTicket: 1, // 神秘礼券
+  mysteryTicket: SHARED_GOODS.mysteryTicket, // 神秘礼券
   moveCard: 2, // 搬家卡
   mysteryFoodExchange: 20, // 神秘食材兑换券
   shortOilSaver: 21, // 短效节油器
@@ -32,7 +34,7 @@ export const GOODS = {
   luckyCookie: 491, // 幸运饼干
   loveNecklace: 167, // 爱心项链
   adventureMap: 170, // 探险图
-  krabCoin: 240, // 蟹币
+  krabCoin: SHARED_GOODS.krabCoin, // 蟹币
   dtTicket: 310, // 美味券
   apolloStatue: 438, // 阿波罗-雕像（银币转经验）
   armStatue: 439, // 非洲复兴纪念碑-雕像（赶走生气的蟹老板）

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
@@ -36,7 +36,7 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     await addTip(shardId, zero.restaurantId, 0, at);
     const now = gameTime(SUN, 23);
     t.clock.set(now);
-    expect(await awardWeekly(t.game.deps, shardId, MON, now)).toEqual({ winners: 5 });
+    expect(await awardWeekly(t.game.deps, shardId, MON, now)).toEqual({ winners: 5, failed: 0 });
     const cards = [108, 109, 107, 111, 110];
     for (const [i, goodsId] of cards.entries())
       expect(await goodsNum(t, rests[i]!.restaurantId, goodsId)).toBe(1);
@@ -87,7 +87,7 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     await grantGoods(t.db, cfg, b.restaurantId, 107, 1, gameTime(SUN, 23));
     await grantGoods(t.db, cfg, b.restaurantId, 110, 1, gameTime(SUN, 23));
     await grantGoods(t.db, cfg, c.restaurantId, 109, 1, gameTime('2026-09-20', 23));
-    expect(await payWages(t.game.deps, shardId, now)).toEqual({ paid: 3 });
+    expect(await payWages(t.game.deps, shardId, now)).toEqual({ paid: 3, failed: 0 });
     expect(await goodsNum(t, a.restaurantId, 234)).toBe(1);
     expect(await goodsNum(t, b.restaurantId, 233)).toBe(1);
     expect(await goodsNum(t, b.restaurantId, 237)).toBe(1);
@@ -106,5 +106,29 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     t.clock.set(gameTime('2026-10-05', 7, 59));
     const wage = await runDueJobs(deps(), t.game.jobs, { shardIds: [shardId] });
     expect(wage.filter((r) => r.job === 'hiphop-wage')).toHaveLength(1);
+  });
+
+  it('一家店发放失败不影响其他名次；工资不发给被封号的账号（PR29 遗留）', async () => {
+    const shardId = await createShard(t.db);
+    const first = await newRestaurant(t, { shardId });
+    const second = await newRestaurant(t, { shardId });
+    await addTip(shardId, first.restaurantId, 9000, gameTime('2026-09-30', 12));
+    await addTip(shardId, second.restaurantId, 5000, gameTime('2026-09-30', 12));
+    const now = gameTime(SUN, 23);
+    t.clock.set(now);
+    const restore = await failRestLog(t.db, first.restaurantId);
+    expect(await awardWeekly(t.game.deps, shardId, MON, now)).toEqual({ winners: 1, failed: 1 });
+    await restore();
+    expect(await goodsNum(t, first.restaurantId, 108)).toBe(0);
+    expect(await goodsNum(t, second.restaurantId, 109)).toBe(1);
+
+    const banned = await newRestaurant(t, { shardId });
+    await grantGoods(t.db, t.game.deps.config, banned.restaurantId, 110, 1, now);
+    await t.db.updateTable('account').set({ banned_at: now }).where('id', '=', banned.accountId).execute();
+    const wageAt = gameTime('2026-10-05', 7, 59);
+    t.clock.set(wageAt);
+    expect(await payWages(t.game.deps, shardId, wageAt)).toEqual({ paid: 1, failed: 0 });
+    expect(await goodsNum(t, banned.restaurantId, 237)).toBe(0);
+    expect(await goodsNum(t, second.restaurantId, 235)).toBe(1);
   });
 });

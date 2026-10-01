@@ -1,4 +1,4 @@
-import type { NewsDto } from '@dt/shared';
+import { SHARED_GOODS, type NewsDto } from '@dt/shared';
 import { formatNum } from './format';
 
 export interface NewsNames {
@@ -36,7 +36,7 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
   'forum.pin': (w, p) => `${w}的帖子《${str(p.title)}》被置顶了`,
   'forum.feature': (w, p) => `${w}的帖子《${str(p.title)}》被加精了`,
   'hiphop.event': (w) => `${w}开启了嘻哈活动！`,
-  'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(240)}×${num(p.num)}`,
+  'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)}`,
   'hiphop.weekly': (w, p, x) =>
     `恭喜${w}在每周打赏中获得第 ${num(p.rank)} 名，奖励 ${x.goodsName(num(p.goodsId))}（160 小时）`,
   'market.manual': (w, p, x) =>
@@ -73,7 +73,7 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
       ? `${w}使用雷神锤，${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}了`
       : `天气变了：${x.weatherName(num(p.from))}转${x.weatherName(num(p.to))}`,
   'town.broadcast': (w, p) => `${w}：${str(p.text)}`,
-  'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.name)}`,
+  'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.blessName) || str(p.name)}`,
   'town.shake.lucky': (w, p, x) =>
     `恭喜${w}伸进蟹老板裤兜里掏出：${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
   'town.exchange': (w, p, x) => `${w}在镇长处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,

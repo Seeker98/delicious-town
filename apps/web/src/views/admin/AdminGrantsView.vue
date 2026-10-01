@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import type { GrantDto, GrantItems } from '@dt/shared';
+import { GRANT_LIMITS, type GrantDto, type GrantItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
@@ -68,6 +68,22 @@ const exp = ref<number | ''>('');
 const goods = ref<Array<{ id: number | ''; num: number | '' }>>([]);
 const foods = ref<Array<{ id: number | ''; num: number | '' }>>([]);
 const reason = ref('');
+const fmt = (n: number) => n.toLocaleString('en-US');
+/** 每项上限（和服务端 GRANT_LIMITS 一致）：超出时当场列出，禁止发放 */
+const overLimit = computed(() => {
+  const out: string[] = [];
+  const check = (label: string, v: number | '', max: number) => {
+    if (v !== '' && Number(v) > max) out.push(`${label}最多 ${fmt(max)}`);
+  };
+  check('银币', coin.value, GRANT_LIMITS.coin);
+  check('钻石', diamond.value, GRANT_LIMITS.diamond);
+  check('经验', exp.value, GRANT_LIMITS.exp);
+  for (const g of goods.value)
+    if (g.id) check(`${catalog.goodsName(Number(g.id))} `, g.num, GRANT_LIMITS.item);
+  for (const f of foods.value)
+    if (f.id) check(`${catalog.foodName(Number(f.id))} `, f.num, GRANT_LIMITS.item);
+  return out;
+});
 const busy = ref(false);
 const list = ref<GrantDto[]>([]);
 const STATUS: Record<GrantDto['status'], string> = {
@@ -232,20 +248,23 @@ watch(() => admin.shardId, loadList);
         v-model.number="coin"
         type="number"
         class="form-control form-control-sm w-auto"
-        placeholder="银币"
+        :placeholder="`银币（≤ ${fmt(GRANT_LIMITS.coin)}）`"
+        :max="GRANT_LIMITS.coin"
         data-testid="grant-coin"
       />
       <input
         v-model.number="diamond"
         type="number"
         class="form-control form-control-sm w-auto"
-        placeholder="钻石"
+        :placeholder="`钻石（≤ ${fmt(GRANT_LIMITS.diamond)}）`"
+        :max="GRANT_LIMITS.diamond"
       />
       <input
         v-model.number="exp"
         type="number"
         class="form-control form-control-sm w-auto"
-        placeholder="经验"
+        :placeholder="`经验（≤ ${fmt(GRANT_LIMITS.exp)}）`"
+        :max="GRANT_LIMITS.exp"
       />
     </div>
     <div v-for="(g, i) in goods" :key="`g${i}`" class="d-flex gap-2 mb-1 align-items-center">
@@ -260,7 +279,8 @@ watch(() => admin.shardId, loadList);
         v-model.number="g.num"
         type="number"
         class="form-control form-control-sm w-auto"
-        placeholder="数量"
+        :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
+        :max="GRANT_LIMITS.item"
         :data-testid="`grant-goods-num-${i}`"
       />
       <span class="text-muted">{{ g.id ? catalog.goodsName(Number(g.id)) : '' }}</span>
@@ -276,9 +296,18 @@ watch(() => admin.shardId, loadList);
         v-model.number="f.num"
         type="number"
         class="form-control form-control-sm w-auto"
-        placeholder="数量"
+        :placeholder="`数量（≤ ${fmt(GRANT_LIMITS.item)}）`"
+        :max="GRANT_LIMITS.item"
       />
       <span class="text-muted">{{ f.id ? catalog.foodName(Number(f.id)) : '' }}</span>
+    </div>
+    <div class="dt-meta mb-1" data-testid="grant-limits">
+      单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
+      {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤
+      {{ fmt(GRANT_LIMITS.item) }}
+    </div>
+    <div v-if="overLimit.length > 0" class="text-danger mb-1" data-testid="grant-over">
+      超出上限：{{ overLimit.join('；') }}
     </div>
     <div class="d-flex gap-2 mb-2">
       <button
@@ -300,7 +329,13 @@ watch(() => admin.shardId, loadList);
         placeholder="原因（玩家日志里能看到）"
         data-testid="grant-reason"
       />
-      <button class="btn btn-primary btn-sm text-nowrap" :disabled="busy || !reason.trim()">发放</button>
+      <button
+        class="btn btn-primary btn-sm text-nowrap"
+        :disabled="busy || !reason.trim() || overLimit.length > 0"
+        data-testid="grant-submit"
+      >
+        发放
+      </button>
     </div>
   </form>
 

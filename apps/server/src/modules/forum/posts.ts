@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { ErrorCode, gameDay, type ForumPostBody } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { RestCtx } from '../../core/deps';
@@ -7,6 +8,28 @@ import { AppError } from '../../http/errors';
 import { incrementDaily } from '../counter/dailyCounter';
 import { assertReady, assertVerified, isAdmin, loadPost } from './common';
 import { normalizeText, textOk } from './rules';
+
+const POST_NEWS = ['forum.pin', 'forum.feature'];
+
+/** 置顶、加精新闻里的帖子标题跟着帖子走：改标题时更新；删帖时（title = null）删掉这些新闻（PR31 遗留） */
+async function syncPostNews(o: Op, postId: number, title: string | null): Promise<void> {
+  if (title === null) {
+    await o.tx
+      .deleteFrom('news')
+      .where('shard_id', '=', o.shardId)
+      .where('type', 'in', POST_NEWS)
+      .where(sql<boolean>`params->>'postId' = ${String(postId)}`)
+      .execute();
+    return;
+  }
+  await o.tx
+    .updateTable('news')
+    .set({ params: sql<string>`jsonb_set(params, '{title}', to_jsonb(${title}::text))` })
+    .where('shard_id', '=', o.shardId)
+    .where('type', 'in', POST_NEWS)
+    .where(sql<boolean>`params->>'postId' = ${String(postId)}`)
+    .execute();
+}
 
 /** 规整并校验标题、正文（设计文档 §2.1） */
 function cleanPost(o: Op, b: ForumPostBody): { title: string; content: string } {
@@ -55,6 +78,7 @@ export async function editPost(o: Op, ctx: RestCtx, id: number, b: ForumPostBody
     .set({ category: b.category, title, content, edited_at: o.now })
     .where('id', '=', id)
     .execute();
+  await syncPostNews(o, id, title);
   restLog(o, 'forum.edit', { postId: id, by: ctx.accountId });
   return { id };
 }
@@ -68,6 +92,7 @@ export async function deletePost(o: Op, ctx: RestCtx, id: number): Promise<Recor
     if (post.pinned_at || post.featured_at) throw invalidState('post_locked');
   }
   await o.tx.updateTable('forum_post').set({ deleted_at: o.now }).where('id', '=', id).execute();
+  await syncPostNews(o, id, null);
   restLog(o, 'forum.delete', { postId: id, by: ctx.accountId });
   return {};
 }

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
 import { runDueJobs } from '../../worker/periodic';
@@ -124,5 +124,30 @@ describe('嘻哈男孩每日地点（设计文档 §2.1）', () => {
       .where('shard_id', '=', shardId)
       .executeTakeFirst();
     expect(row?.day).toBe(DAY);
+  });
+
+  it('选中的店发嘻哈文化失败时：不留半截，改抽公共地点，全区当天照样有嘻哈男孩（PR29 遗留、终审 I3）', async () => {
+    const shardId = await createShard(t.db);
+    const busy = await newRestaurant(t, { shardId });
+    await insertIncome(busy.restaurantId, t.clock.now);
+    await setTuning(t, shardId, {
+      hiphop: {
+        placeWeights: [
+          [9, 100],
+          [4, 1],
+        ],
+      },
+    });
+    const restore = await failRestLog(t.db, busy.restaurantId);
+    const r = await rollHiphopDay(t.game.deps, shardId, DAY, t.clock.now);
+    await restore();
+    expect(r).toMatchObject({ created: true, place: 4, restId: null });
+    expect(await goodsNum(t, busy.restaurantId, 230)).toBe(0);
+    const row = await t.db
+      .selectFrom('hiphop_day')
+      .select(['place', 'rest_id'])
+      .where('shard_id', '=', shardId)
+      .execute();
+    expect(row).toEqual([{ place: 4, rest_id: null }]);
   });
 });

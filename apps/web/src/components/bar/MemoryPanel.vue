@@ -6,6 +6,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { awardText } from './award';
+import { roundGone } from './gone';
 
 /** 8 种配料，下标就是服务端的配料编号 */
 const MIXES = ['朗姆', '伏特加', '金酒', '柠檬', '薄荷', '糖浆', '冰块', '苏打'];
@@ -50,6 +51,13 @@ async function call<T>(fn: () => Promise<T>, fallback: string): Promise<T | null
     return await fn();
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    if (roundGone(e)) {
+      phase.value = 'idle';
+      current.value = null;
+      last.value = null;
+      on.value = -1;
+      emit('reload');
+    }
     return null;
   } finally {
     busy.value = false;
@@ -81,6 +89,8 @@ async function pick(i: number) {
   picks.value = [...picks.value, i];
   if (picks.value.length < current.value.seq.length) return;
   const r = await call(() => endpoints.barMemoryAnswer(picks.value), '提交失败');
+  // 提交失败：清掉已点的配料重新点，免得下一次以多一个的长度提交（PR28 遗留）
+  if (!r) picks.value = [];
   if (r) {
     last.value = r;
     phase.value = 'result';
@@ -200,7 +210,11 @@ const resultText = computed(() => {
     </div>
 
     <template v-else>
-      <div :class="['fw-bold', last?.correct ? 'text-success' : 'text-danger']" data-testid="mem-result">
+      <div
+        :class="['fw-bold', last?.correct ? 'text-success' : 'text-danger']"
+        aria-live="polite"
+        data-testid="mem-result"
+      >
         {{ resultText }}
       </div>
       <div class="mt-2">

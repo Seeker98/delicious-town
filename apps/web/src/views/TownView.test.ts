@@ -67,4 +67,17 @@ describe('TownView', () => {
     expect(w.find('[data-testid="rank-panel"]').exists()).toBe(true);
     expect(endpoints.rank).toHaveBeenCalledWith('income.coin.today');
   });
+
+  it('切换标签时地址跟着变，刷新后停在当前标签（PR27 遗留）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/town', component: TownView }],
+    });
+    await router.push('/town?tab=news');
+    const w = mount(TownView, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.find('[data-testid="tab-town"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query.tab).toBe('town');
+  });
 });

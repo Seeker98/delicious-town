@@ -15,15 +15,27 @@ const category = ref<ForumCategory>('chat');
 const title = ref('');
 const content = ref('');
 const busy = ref(false);
-const contentLen = computed(() => [...content.value].length);
+/** 按字符计（emoji 算 1，和服务端一致）；不用 maxlength，它按 UTF-16 计会把 emoji 提前截断（PR31 遗留） */
+const TITLE_MAX = 40;
+const CONTENT_MAX = 5000;
+const titleLen = computed(() => [...title.value.trim()].length);
+const contentLen = computed(() => [...content.value.trim()].length);
+const ok = computed(
+  () =>
+    titleLen.value > 0 &&
+    titleLen.value <= TITLE_MAX &&
+    contentLen.value > 0 &&
+    contentLen.value <= CONTENT_MAX,
+);
 
 onMounted(async () => {
   if (editId.value === null) return;
   try {
-    const d = await endpoints.forumPost(editId.value);
-    category.value = d.post.category;
-    title.value = d.post.title;
-    content.value = d.post.content;
+    // 只取正文：不记阅读、不带回复（PR31 遗留）
+    const d = await endpoints.forumSource(editId.value);
+    category.value = d.category;
+    title.value = d.title;
+    content.value = d.content;
   } catch (e) {
     toast.push(errorMessage(e, '读取帖子失败'), 'danger');
   }
@@ -59,22 +71,30 @@ async function submit() {
   </div>
   <input
     v-model="title"
-    class="form-control form-control-sm mb-2"
-    maxlength="40"
+    class="form-control form-control-sm mb-1"
     placeholder="标题（最多 40 字）"
     data-testid="edit-title"
   />
+  <div :class="['dt-meta', 'mb-2', { 'text-danger': titleLen > TITLE_MAX }]" data-testid="edit-title-count">
+    {{ titleLen }}/{{ TITLE_MAX }}
+  </div>
   <textarea
     v-model="content"
     class="form-control form-control-sm mb-1"
     rows="10"
-    maxlength="5000"
     placeholder="正文（纯文字，最多 5000 字）"
     data-testid="edit-content"
   ></textarea>
   <div class="d-flex align-items-center">
-    <span class="dt-meta">{{ contentLen }}/5000</span>
-    <button class="btn btn-sm btn-primary ms-auto" :disabled="busy" data-testid="edit-submit" @click="submit">
+    <span :class="['dt-meta', { 'text-danger': contentLen > CONTENT_MAX }]"
+      >{{ contentLen }}/{{ CONTENT_MAX }}</span
+    >
+    <button
+      class="btn btn-sm btn-primary ms-auto"
+      :disabled="busy || !ok"
+      data-testid="edit-submit"
+      @click="submit"
+    >
       发布
     </button>
   </div>

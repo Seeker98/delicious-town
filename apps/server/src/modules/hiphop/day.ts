@@ -2,7 +2,7 @@ import { sql, type Kysely, type Selectable } from 'kysely';
 import { GOODS, type Tuning } from '@dt/config';
 import { buildPool, gameDay, gameParts, pickWeighted, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import { opNews, runSystemOp } from '../../core/op';
+import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { grantGoodsOp } from '../store/goods';
 import { rollWorth } from './rules';
@@ -62,6 +62,7 @@ export async function rollHiphopDay(
   shardId: number,
   day: string,
   now: Date,
+  log?: { error(obj: object, msg: string): void },
 ): Promise<{ created: boolean; place: number; restId: number | null }> {
   const exist = await d.db
     .selectFrom('hiphop_day')
@@ -74,44 +75,62 @@ export async function rollHiphopDay(
   const t = tuning.hiphop;
   // 用服务端随机源，不用区服号 + 日期做种子：那样有源码就能提前算出地点（终审 I1）；幂等靠主键
   const rng = d.rng();
+  const publicPlace = () =>
+    pickPlace(
+      t.placeWeights.filter(([p]) => p !== HIPHOP_RESTAURANT),
+      rng,
+    );
   let place = pickPlace(t.placeWeights, rng);
   let restId: number | null = null;
   if (place === HIPHOP_RESTAURANT) {
     const rests = await activeRests(d.db, shardId, new Date(now.getTime() - t.restActiveDays * 86_400_000));
     if (rests.length > 0) restId = rests[rng.int(rests.length)]!;
-    else
-      place = pickPlace(
-        t.placeWeights.filter(([p]) => p !== HIPHOP_RESTAURANT),
-        rng,
-      );
+    else place = publicPlace();
   }
   const foods = [1, 2, 3, 4, 5]
     .flatMap((lv) => d.config.foodPools.get(lv)?.items ?? [])
     .map((f) => f.id)
     .sort((a, b) => a - b);
   const foodsId = foods[rng.int(foods.length)]!;
-  const inserted = await d.db
-    .insertInto('hiphop_day')
-    .values({
-      shard_id: shardId,
-      day,
-      place,
-      rest_id: restId,
-      foods_id: foodsId,
-      worth: rollWorth(rng.next(), t),
-      created_at: now,
-    })
-    .onConflict((oc) => oc.columns(['shard_id', 'day']).doNothing())
-    .returning('place')
-    .executeTakeFirst();
-  // 并发时别人先写了：以已有记录为准
-  if (!inserted) return rollHiphopDay(d, shardId, day, now);
+  const row = {
+    shard_id: shardId,
+    day,
+    place,
+    rest_id: restId,
+    foods_id: foodsId,
+    worth: rollWorth(rng.next(), t),
+    created_at: now,
+  };
+  const insert = (db: Kysely<DB>) =>
+    db
+      .insertInto('hiphop_day')
+      .values(row)
+      .onConflict((oc) => oc.columns(['shard_id', 'day']).doNothing())
+      .returning('place')
+      .executeTakeFirst();
+  // 餐厅地点：写地点和给那家店发"嘻哈文化"放在同一个事务里，任一步失败都不留半截（PR29 遗留）
+  let inserted: { place: number } | undefined;
   if (restId !== null) {
-    await runSystemOp(d, shardId, restId, { source: 'hiphop.event', now }, async (o) => {
-      await grantGoodsOp(o, GOODS.hiphopCulture, 1);
-      opNews(o, 'hiphop.event', {});
-    });
+    try {
+      inserted = await runSystemOp(d, shardId, restId, { source: 'hiphop.event', now }, async (o) => {
+        const r = await insert(o.tx);
+        if (!r) return r;
+        await grantGoodsOp(o, GOODS.hiphopCulture, 1);
+        opNews(o, 'hiphop.event', {});
+        restLog(o, 'hiphop.event', { day });
+        return r;
+      });
+    } catch (err) {
+      // 发放失败（锁超时、连接中断等）不能让全区当天没有嘻哈男孩：改抽公共地点（终审 I3）
+      log?.error({ err, shardId, restId, day }, 'hiphop restaurant place failed, fallback to public place');
+      restId = null;
+      place = publicPlace();
+      Object.assign(row, { place, rest_id: null });
+    }
   }
+  if (restId === null) inserted = await insert(d.db);
+  // 并发时别人先写了：以已有记录为准
+  if (!inserted) return rollHiphopDay(d, shardId, day, now, log);
   return { created: true, place, restId };
 }
 

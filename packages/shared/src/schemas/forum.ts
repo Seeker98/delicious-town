@@ -63,6 +63,8 @@ export interface ForumListDto {
   items: ForumPostItemDto[];
   nextCursor: string | null;
   me: { canPost: boolean; isAdmin: boolean; postReadyAt: string | null; replyReadyAt: string | null };
+  /** 服务器时间：前端按它算冷却倒计时，本机时钟不准也不影响 */
+  now: string;
 }
 
 export interface ForumReplyDto {
@@ -86,6 +88,16 @@ export interface ForumPostDetailDto {
   can: { edit: boolean; delete: boolean; admin: boolean; reads: boolean; reply: boolean };
   replies: ForumReplyDto[];
   replyReadyAt: string | null;
+  /** 服务器时间（同上） */
+  now: string;
+}
+
+/** 编辑页要的正文（不记阅读、不带回复） */
+export interface ForumPostSourceDto {
+  id: number;
+  category: ForumCategory;
+  title: string;
+  content: string;
 }
 
 export interface ForumReactDto {

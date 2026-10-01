@@ -8,6 +8,7 @@ import {
   type ForumListQuery,
   type ForumPostDetailDto,
   type ForumPostItemDto,
+  type ForumPostSourceDto,
   type ForumReaction,
   type ForumReadsDto,
   type ForumReplyDto,
@@ -102,6 +103,7 @@ export async function listPosts(d: GameDeps, ctx: RestCtx, q: ForumListQuery): P
     pinned: pinned.map((p) => toItem(p, p.rest_name, t.excerpt)),
     items: page.map((p) => toItem(p, p.rest_name, t.excerpt)),
     nextCursor,
+    now: now.toISOString(),
     me: {
       canPost: await isVerified(d.db, ctx.accountId),
       isAdmin: await isAdmin(d.db, ctx.accountId),
@@ -195,17 +197,39 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
       reply: await isVerified(o.tx, ctx.accountId),
     },
     replies: await loadReplies(o, id, admin),
+    now: o.now.toISOString(),
     replyReadyAt:
       (await readyAt(o.tx, 'forum_reply', o.rest.id, t.replyCooldownSec, o.now))?.toISOString() ?? null,
   };
 }
 
-/** 阅读明细：只有作者和管理员能看；按最后阅读时间倒序 */
-export async function postReads(o: Op, ctx: RestCtx, id: number): Promise<ForumReadsDto> {
-  const post = await loadPost(o, id);
-  if (post.rest_id !== o.rest.id && !(await isAdmin(o.tx, ctx.accountId)))
-    throw new AppError(ErrorCode.FORBIDDEN, 403, { what: 'reads' });
-  const rows = await o.tx
+/** 本区未删除的帖子（纯读，不锁）；作者或管理员才放行，否则 FORBIDDEN */
+async function ownPost(d: GameDeps, ctx: RestCtx, id: number, what: string): Promise<PostRow> {
+  const post = await d.db
+    .selectFrom('forum_post')
+    .selectAll()
+    .where('id', '=', id)
+    .where('shard_id', '=', ctx.shardId)
+    .where('deleted_at', 'is', null)
+    .executeTakeFirst();
+  if (!post) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'post' });
+  if (post.rest_id !== ctx.restaurantId && !(await isAdmin(d.db, ctx.accountId)))
+    throw new AppError(ErrorCode.FORBIDDEN, 403, { what });
+  return post;
+}
+
+/** 编辑页要的正文：不记阅读、不带回复（PR31 遗留） */
+export async function postSource(d: GameDeps, ctx: RestCtx, id: number): Promise<ForumPostSourceDto> {
+  await d.shards.ensureFeature(ctx.shardId, 'forum');
+  const p = await ownPost(d, ctx, id, 'edit');
+  return { id: p.id, category: p.category as ForumCategory, title: p.title, content: p.content };
+}
+
+/** 阅读明细：只有作者和管理员能看；按最后阅读时间倒序。纯读，不锁店（PR31 遗留） */
+export async function postReads(d: GameDeps, ctx: RestCtx, id: number): Promise<ForumReadsDto> {
+  const { tuning } = await d.shards.ensureFeature(ctx.shardId, 'forum');
+  await ownPost(d, ctx, id, 'reads');
+  const rows = await d.db
     .selectFrom('forum_read as x')
     .innerJoin('restaurant as r', 'r.id', 'x.rest_id')
     .leftJoin('forum_reaction as k', (j) =>
@@ -214,7 +238,7 @@ export async function postReads(o: Op, ctx: RestCtx, id: number): Promise<ForumR
     .select(['x.rest_id', 'r.name', 'x.times', 'x.last_at', 'k.kind'])
     .where('x.post_id', '=', id)
     .orderBy('x.last_at', 'desc')
-    .limit(o.tuning.forum.readsMax)
+    .limit(tuning.forum.readsMax)
     .execute();
   return {
     items: rows.map((r) => ({

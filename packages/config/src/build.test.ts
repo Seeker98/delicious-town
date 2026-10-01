@@ -636,3 +636,33 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     expect(e2).toContain('equip_suits 82 has 5 pieces but maxnum is 6');
   });
 });
+
+describe('配置校验补强（PR27、PR28 遗留）', () => {
+  const tuningWith = (patch: (t: Record<string, any>) => void) => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as Record<string, any>;
+    patch(tuning);
+    return buildBundle({ ...src, 'game/tuning': tuning }).errors;
+  };
+  it('记忆调酒：关数和奖励等级数量要一致', () => {
+    expect(tuningWith((t) => t.bar.memory.awardLevels.pop())).toContain(
+      'tuning.bar.memory: lengths and awardLevels must have the same count',
+    );
+  });
+  it('飞镖：摆动周期小的在前；圈按半径从小到大', () => {
+    expect(tuningWith((t) => (t.bar.darts.periodMs = [1400, 900]))).toContain(
+      'tuning.bar.darts.periodMs must be [min, max]',
+    );
+    expect(tuningWith((t) => t.bar.darts.rings.reverse())).toContain(
+      'tuning.bar.darts.rings must be sorted by radius',
+    );
+  });
+  it('飞弹伤害覆盖：道具要存在，最小值不大于最大值', () => {
+    expect(tuningWith((t) => t.temple.missileAttack.push([999999, 1, 2]))).toContain(
+      'tuning.temple.missileAttack references unknown goods 999999',
+    );
+    expect(tuningWith((t) => t.temple.missileAttack.push([17, 9, 3]))).toContain(
+      'tuning.temple.missileAttack 17 min > max',
+    );
+  });
+});

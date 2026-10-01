@@ -108,4 +108,29 @@ describe('HiphopCard', () => {
       '这些食材看起来不怎么新鲜的样子。感谢您的支持和鼓励，你们是我进步的动力！',
     );
   });
+
+  it('橱柜里没有他想要的食材：不默认选别的（给别的食材不算价值，会白扣），写明并要求先选；一样都没有就禁用（终审 I1）', async () => {
+    vi.mocked(endpoints.hiphopSpot).mockResolvedValue({ ...spot, food: { id: 555, level: 2 } });
+    const w = mount(HiphopCard, { props: { place: 1 } });
+    await flushPromises();
+    expect(
+      (
+        w.find('[data-testid="hiphop-food"]').element as HTMLSelectElement
+      ).selectedOptions[0]!.textContent!.trim(),
+    ).toBe('请选择');
+    expect(w.find('[data-testid="hiphop-no-want"]').text()).toBe(
+      '你没有他想要的食材，给别的食材不算打赏价值',
+    );
+    await w.find('[data-testid="hiphop-num"]').setValue(5);
+    expect(w.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="hiphop-food"]').setValue('102');
+    expect(w.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeUndefined();
+    vi.mocked(endpoints.cupboard).mockResolvedValue({ items: [] } as never);
+    const empty = mount(HiphopCard, { props: { place: 1 } });
+    await flushPromises();
+    expect(empty.find('[data-testid="hiphop-no-food"]').text()).toBe(
+      '橱柜里没有食材，可以改用银币或钻石打赏',
+    );
+    expect(empty.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeDefined();
+  });
 });

@@ -119,6 +119,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           min="1"
           :max="it.num"
           class="form-control form-control-sm dt-qty"
+          @change="qty[it.goodsId] = it.batch && it.usable ? useN(it) : sellN(it)"
         />
         <button
           v-if="it.usable"
@@ -126,7 +127,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           :disabled="busy || it.maxUse === 0"
           @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
         >
-          {{ it.batch ? `使用 ×${useN(it)}` : '使用' }}
+          使用
         </button>
         <button
           v-if="it.sellPrice !== null"
@@ -142,7 +143,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           :disabled="busy"
           @click="run(() => endpoints.discard(87), '丢弃失败')"
         >
-          丢弃
+          <i class="bi bi-trash"></i> 丢弃
         </button>
       </div>
     </div>

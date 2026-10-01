@@ -38,6 +38,8 @@ async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: st
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
+    // 失败多半是页面已经过时（别人刚许过愿、跨天等）：重新读一次
+    emit('reload');
   } finally {
     busy.value = false;
   }

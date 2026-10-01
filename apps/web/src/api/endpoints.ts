@@ -4,6 +4,7 @@ import type {
   ForumListDto,
   ForumPostBody,
   ForumPostDetailDto,
+  ForumPostSourceDto,
   ForumReactDto,
   ForumReadsDto,
   ForumReplyBody,
@@ -393,6 +394,7 @@ export const endpoints = {
   forumList: (q: { tab: ForumTab; q?: string; cursor?: string }) =>
     api.get<ForumListDto>(`/api/v1/forum/posts${qs(q)}`),
   forumPost: (id: number) => api.get<ForumPostDetailDto>(`/api/v1/forum/posts/${id}`),
+  forumSource: (id: number) => api.get<ForumPostSourceDto>(`/api/v1/forum/posts/${id}/source`),
   forumCreate: (b: ForumPostBody) => api.post<{ id: number }>('/api/v1/forum/posts', b),
   forumEdit: (id: number, b: ForumPostBody) => api.post<{ id: number }>(`/api/v1/forum/posts/${id}/edit`, b),
   forumDelete: (id: number) => api.post<Anything>(`/api/v1/forum/posts/${id}/delete`),

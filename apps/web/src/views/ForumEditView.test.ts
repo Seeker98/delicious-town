@@ -6,7 +6,7 @@ import { endpoints } from '../api/endpoints';
 import ForumEditView from './ForumEditView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { forumCreate: vi.fn(), forumEdit: vi.fn(), forumPost: vi.fn() },
+  endpoints: { forumCreate: vi.fn(), forumEdit: vi.fn(), forumSource: vi.fn() },
 }));
 
 async function mountAt(path: string) {
@@ -48,9 +48,12 @@ describe('ForumEditView', () => {
   });
 
   it('编辑：预填原内容，保存调用编辑接口', async () => {
-    vi.mocked(endpoints.forumPost).mockResolvedValue({
-      post: { id: 5, category: 'feedback', title: '旧标题', content: '旧正文' },
-    } as never);
+    vi.mocked(endpoints.forumSource).mockResolvedValue({
+      id: 5,
+      category: 'feedback',
+      title: '旧标题',
+      content: '旧正文',
+    });
     vi.mocked(endpoints.forumEdit).mockResolvedValue({ id: 5 });
     const { w } = await mountAt('/forum/5/edit');
     expect((w.find('[data-testid="edit-title"]').element as HTMLInputElement).value).toBe('旧标题');
@@ -62,5 +65,16 @@ describe('ForumEditView', () => {
       title: '新标题',
       content: '旧正文',
     });
+  });
+
+  it('字数按字符算：40 个 emoji 的标题可以发，41 个字不行（PR31 遗留）', async () => {
+    const { w } = await mountAt('/forum/new');
+    await w.find('[data-testid="edit-title"]').setValue('😀'.repeat(40));
+    await w.find('[data-testid="edit-content"]').setValue('正文');
+    expect(w.find('[data-testid="edit-title-count"]').text()).toBe('40/40');
+    expect(w.find('[data-testid="edit-submit"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="edit-title"]').setValue('a'.repeat(41));
+    expect(w.find('[data-testid="edit-title-count"]').classes()).toContain('text-danger');
+    expect(w.find('[data-testid="edit-submit"]').attributes('disabled')).toBeDefined();
   });
 });
