@@ -99,7 +99,8 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   mc_count: (p) => `学会的特色菜不够（需要 ${String(p.need)} 道）`,
   not_learned: () => '还没学会这道菜',
   double: () => '持有"使命必达"才能加料',
-  job_honor: () => '持有有效的商店工作证才能刷新',
+  job_honor: (p) =>
+    p.goodsId ? `需要持有有效的${names.goodsName(Number(p.goodsId))}` : '持有有效的商店工作证才能刷新',
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -180,6 +181,9 @@ const STATE: Record<string, string> = {
   not_discardable: '这个道具不能丢弃',
   not_owned: '没有这个道具',
   item_gone: '这批货已经下架了',
+  not_here: '嘻哈男孩不在这里',
+  hiphop_not_out: '嘻哈男孩今天还没出来，9 点以后再来问镇长吧',
+  pick_food: '请选择要打赏的食材',
   pick_count: '竞猜的食材数量不对',
   bad_food: '只能竞猜 1~2 级食材',
   not_visible: '这个任务现在不能领取',

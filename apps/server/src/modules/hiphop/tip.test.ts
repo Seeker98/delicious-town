@@ -153,7 +153,7 @@ describe('打赏（设计文档 §2.2）', () => {
       code: 'NOT_ENOUGH',
     });
     await expect(t.game.hiphop.tip(a, { place: 1, kind: 'food', num: 1 })).rejects.toMatchObject({
-      params: { reason: 'no_food' },
+      params: { reason: 'pick_food' },
     });
     t.clock.set(gameTime(DAY, 22));
     await expect(t.game.hiphop.tip(a, { place: 1, kind: 'coin', num: 100 })).rejects.toMatchObject({

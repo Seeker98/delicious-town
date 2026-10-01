@@ -38,7 +38,7 @@ export async function tip(o: Op, world: WorldService, ctx: RestCtx, b: HiphopTip
   let exp = 0;
   let fresh = true;
   if (b.kind === 'food') {
-    if (!b.foodsId) throw invalidState('no_food');
+    if (!b.foodsId) throw invalidState('pick_food');
     await subFoods(o, b.foodsId, b.num);
     if (b.foodsId === day.foods_id) {
       const f = o.config.requireFood(day.foods_id);

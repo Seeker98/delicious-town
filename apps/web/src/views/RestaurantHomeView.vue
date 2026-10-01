@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
@@ -182,6 +183,7 @@ onBeforeUnmount(() => {
         <RouterLink to="/shards" class="ms-2">切换区服</RouterLink>
       </span>
     </div>
+    <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
     </div>

@@ -42,6 +42,15 @@ describe('新闻文案', () => {
     );
   });
 
+  it('嘻哈男孩和手动进货（4E-2）', () => {
+    expect(newsText(n('hiphop.event'), names)).toBe('小王的店开启了嘻哈活动！');
+    expect(newsText(n('hiphop.krab', { num: 4 }), names)).toBe('小王的店通过打赏获得 道具240×4');
+    expect(newsText(n('hiphop.weekly', { rank: 2, goodsId: 109 }), names)).toBe(
+      '恭喜小王的店在每周打赏中获得第 2 名，奖励 道具109（160 小时）',
+    );
+    expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜：食材3、食材5');
+  });
+
   it('换天气：雷神锤写明是谁；自动轮换没有店名', () => {
     expect(newsText(n('weather.change', { from: 1, to: 13, by: 7 }), names)).toBe(
       '小王的店使用雷神锤，晴转暴雨了',

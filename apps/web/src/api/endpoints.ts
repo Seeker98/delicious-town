@@ -1,4 +1,7 @@
 import type {
+  HiphopSpotDto,
+  HiphopTipBody,
+  HiphopTipDto,
   DartsAimDto,
   DartsDto,
   DartsThrowDto,
@@ -372,6 +375,8 @@ export const endpoints = {
   townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
   townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),
   townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),
+  hiphopSpot: (q: { place: number } | { restId: number }) => api.get<HiphopSpotDto>(`/api/v1/hiphop${qs(q)}`),
+  hiphopTip: (b: HiphopTipBody) => api.post<HiphopTipDto>('/api/v1/hiphop/tip', b),
   townHammer: (body: { mode: 'coin'; type: number } | { mode: 'diamond' }) =>
     api.post<HammerResultDto>('/api/v1/town/hammer', body),
   townExchangeDo: (id: number, num: number) =>
