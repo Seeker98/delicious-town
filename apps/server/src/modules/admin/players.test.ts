@@ -43,9 +43,20 @@ describe('玩家查询', () => {
   });
 
   it('输入里的 % 和 _ 按字面匹配（Review Focus 1）', async () => {
-    await playerWithShop('通配测试店');
-    expect((await get(mod.cookie, `/players?q=${encodeURIComponent('%')}`)).json.data).toEqual([]);
-    expect((await get(mod.cookie, `/players?q=_`)).json.data).toEqual([]);
+    const p = await playerWithShop('通配测试店');
+    // 测试库是共用的（好友测试会建名字带 % 的店），所以不断言"搜不到"，而是断言搜到的都真含这个字符：
+    // 被当成通配符时，所有玩家都会被搜出来，其中就有这家不含 % 和 _ 的店
+    type Hit = { accountId: number; username: string; email: string; restaurants: Array<{ name: string }> };
+    for (const ch of ['%', '_']) {
+      const hits = (await get(mod.cookie, `/players?q=${encodeURIComponent(ch)}`)).json.data as Hit[];
+      expect(hits.map((h) => h.accountId)).not.toContain(p.accountId);
+      for (const h of hits)
+        expect(
+          h.username.toLowerCase().startsWith(ch) ||
+            h.email.startsWith(ch) ||
+            h.restaurants.some((r) => r.name.includes(ch)),
+        ).toBe(true);
+    }
   });
 
   it('详情、餐厅、流水（按类型筛选）', async () => {
@@ -72,7 +83,15 @@ describe('玩家查询', () => {
       .execute();
     const rest2 = (await get(mod.cookie, `/restaurants/${p.restId}`)).json.data;
     expect(rest2.equips).toEqual([
-      expect.objectContaining({ goodsId: 30, part: 1, stress: 2, worn: true, locked: false, gems: 0 }),
+      expect.objectContaining({
+        goodsId: 30,
+        name: null,
+        part: 1,
+        stress: 2,
+        worn: true,
+        locked: false,
+        gems: 0,
+      }),
     ]);
     const ledger = (await get(mod.cookie, `/restaurants/${p.restId}/ledger?kind=goods`)).json.data;
     expect(ledger.items).toEqual([expect.objectContaining({ kind: 'goods', itemId: 1, source: 'y' })]);

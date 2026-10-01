@@ -17,6 +17,7 @@ import { renameProblem } from '../growth/rules';
 import { cursorOf, incomePage, logPage, parseCursor } from '../restaurant/reads';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
+import { equipDisplayName } from '../equip/hats';
 
 /** LIKE 的通配符按字面匹配（Review Focus 1）；PostgreSQL 默认转义符是反斜杠 */
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
@@ -169,6 +170,7 @@ export function createAdminPlayers(game: Game) {
             'e.stress',
             'e.worn',
             'e.locked',
+            'e.custom_name',
             eb
               .selectFrom('equip_gem as g')
               .select((x) => x.fn.countAll<number>().as('n'))
@@ -192,6 +194,7 @@ export function createAdminPlayers(game: Game) {
         equips: equips.map((e) => ({
           id: e.id,
           goodsId: e.goods_id,
+          name: equipDisplayName(e.goods_id, e.custom_name),
           part: e.part,
           stress: e.stress,
           worn: e.worn,

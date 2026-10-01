@@ -80,6 +80,8 @@ export interface AdminRestaurantDto {
   equips: Array<{
     id: number;
     goodsId: number;
+    /** 命名帽子的显示名，普通厨具为 null */
+    name: string | null;
     part: number;
     stress: number;
     worn: boolean;

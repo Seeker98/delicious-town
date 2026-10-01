@@ -43,7 +43,7 @@ describe('好友餐厅页显示对方穿戴（子项目 3 留给 2B）', () => {
     await piece(b, 31);
     await t.game.equip.wear(b, { id });
     const d = await t.game.social.reads.detail(a, b.restaurantId);
-    expect(d.equips).toEqual([{ part: 1, goodsId: 30, stress: 3 }]);
+    expect(d.equips).toEqual([{ part: 1, goodsId: 30, stress: 3, name: null }]);
   });
 });
 

@@ -42,3 +42,24 @@ describe('命名帽子（设计 §5）', () => {
     );
   });
 });
+
+describe('显示名下发', () => {
+  it('厨具列表、详情、好友店里，命名帽子带显示名，普通厨具为 null', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 20 } });
+    const viewer = await newRestaurant(t, { shardId: ctx.shardId });
+    const hatId = await runSystemOp(t.game.deps, ctx.shardId, ctx.restaurantId, { source: 'test' }, (op) =>
+      grantHatOp(op, 'jade', '大橘', 'test'),
+    );
+    await t.db.updateTable('equip').set({ worn: true }).where('id', '=', hatId).execute();
+    await t.db
+      .insertInto('equip')
+      .values({ rest_id: ctx.restaurantId, goods_id: 30, part: 1, worn: true })
+      .execute();
+    const list = await t.game.equip.list(ctx, {});
+    expect(list.find((e) => e.id === hatId)!.name).toBe('玉•大橘之帽');
+    expect(list.find((e) => e.goodsId === 30)!.name).toBeNull();
+    expect((await t.game.equip.detail(ctx, hatId)).equip.name).toBe('玉•大橘之帽');
+    const friend = await t.game.social.reads.detail(viewer, ctx.restaurantId);
+    expect(friend.equips.map((e) => e.name)).toEqual([null, '玉•大橘之帽']);
+  });
+});
