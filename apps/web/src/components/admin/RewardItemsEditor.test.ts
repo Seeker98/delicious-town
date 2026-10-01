@@ -21,4 +21,12 @@ describe('RewardItemsEditor', () => {
     await w.find('[data-testid="ri-diamond"]').setValue('100001');
     expect(w.emitted('over')!.at(-1)![0]).toEqual(['钻石最多 100,000']);
   });
+
+  it('帽子行没填名字时报出来，父组件据此禁止提交', async () => {
+    const w = mount(RewardItemsEditor, { props: { modelValue: {}, hats: true } });
+    await w.find('[data-testid="ri-add-hat"]').trigger('click');
+    expect(w.emitted('over')!.at(-1)![0]).toEqual(['第 1 顶帽子没填名字']);
+    await w.find('[data-testid="ri-hat-name-0"]').setValue('大橘');
+    expect(w.emitted('over')!.at(-1)![0]).toEqual([]);
+  });
 });

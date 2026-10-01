@@ -40,7 +40,7 @@ function items(): RewardItems {
   return out;
 }
 
-/** 每项上限（和服务端 GRANT_LIMITS 一致）：超出时当场列出，父组件禁止提交 */
+/** 每项上限（和服务端 GRANT_LIMITS 一致）、帽子没填名字：当场列出，父组件禁止提交 */
 const overLimit = computed(() => {
   const out: string[] = [];
   const check = (label: string, v: number | '', max: number) => {
@@ -53,6 +53,10 @@ const overLimit = computed(() => {
     if (g.id) check(`${catalog.goodsName(Number(g.id))} `, g.num, GRANT_LIMITS.item);
   for (const f of foods.value)
     if (f.id) check(`${catalog.foodName(Number(f.id))} `, f.num, GRANT_LIMITS.item);
+  if (props.hats)
+    hatRows.value.forEach((h, i) => {
+      if (!h.name.trim()) out.push(`第 ${i + 1} 顶帽子没填名字`);
+    });
   return out;
 });
 
@@ -152,7 +156,7 @@ watch(
       {{ fmt(GRANT_LIMITS.item) }}
     </div>
     <div v-if="overLimit.length > 0" class="text-danger mb-1" :data-testid="tid('over')">
-      超出上限：{{ overLimit.join('；') }}
+      请检查：{{ overLimit.join('；') }}
     </div>
     <div class="d-flex gap-2 mb-2">
       <button

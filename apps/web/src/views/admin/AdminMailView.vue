@@ -73,7 +73,8 @@ async function send() {
     toast.push(restWho.value?.text ?? '请先填写餐厅 id', 'danger');
     return;
   }
-  if (!window.confirm(`${confirmText()}：「${title.value.trim()}」。确定吗？`)) return;
+  const attach = Object.keys(rewards.value).length > 0 ? rewardSummary(rewards.value, catalog) : '无附件';
+  if (!window.confirm(`${confirmText()}：「${title.value.trim()}」；附件：${attach}。确定吗？`)) return;
   busy.value = true;
   try {
     const b: SendMailInput = {
