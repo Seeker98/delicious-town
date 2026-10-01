@@ -30,7 +30,8 @@ describe('StoreView', () => {
     expect(w.text()).toContain('最多 99');
     await w.find('input[type="number"]').setValue('150');
     const use = w.findAll('button').find((b) => b.text().startsWith('使用'))!;
-    expect(use.text()).toBe('使用 ×99');
+    // 按钮文字不再带数量（数量在输入框里），宽度不会随数量变（PR27 遗留）
+    expect(use.text()).toBe('使用');
     await use.trigger('click');
     await flushPromises();
     expect(endpoints.useGoods).toHaveBeenCalledWith(85, 99);

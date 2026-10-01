@@ -95,4 +95,16 @@ describe('ExchangePanel', () => {
     await flushPromises();
     expect(endpoints.townExchange).toHaveBeenCalledTimes(2);
   });
+
+  it('名称可以用键盘展开说明（PR27 遗留）', async () => {
+    useCatalogStore().goodsMap = new Map([
+      [139, { id: 139, name: '神秘食材随机劵', desc: '很长的说明' } as never],
+    ]);
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    const name = w.find('[data-testid="ex-row-1"] .dt-item-title');
+    expect(name.attributes('tabindex')).toBe('0');
+    await name.trigger('keydown', { key: 'Enter' });
+    expect(w.find('[data-testid="ex-desc-1"]').classes()).not.toContain('dt-clamp1');
+  });
 });

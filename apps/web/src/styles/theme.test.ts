@@ -37,3 +37,20 @@ describe('主题颜色（视觉规范 §2，终审 I3~I5）', () => {
     expect(css).not.toMatch(/#0d6efd/i);
   });
 });
+
+describe('PR27 遗留：禁用按钮、危险和成功色、没用的样式', () => {
+  it('禁用的主按钮变灰，不再是淡橙色', () => {
+    expect(css).toMatch(/\.btn-primary\s*\{[^}]*--bs-btn-disabled-bg:\s*#ced4da/);
+    expect(css).toMatch(/\.btn-outline-primary\s*\{[^}]*--bs-btn-disabled-color:\s*#adb5bd/);
+  });
+  it('危险红、成功绿按视觉规范覆盖 Bootstrap；危险红在白底上可读', () => {
+    expect(varOf('--bs-danger')).toBe('#c92a2a');
+    expect(varOf('--bs-success')).toBe('#2b8a3e');
+    expect(contrast(varOf('--bs-danger'), '#ffffff')).toBeGreaterThanOrEqual(4.5);
+    expect(css).toMatch(/\.btn-outline-danger\s*\{[^}]*--bs-btn-color:\s*#c92a2a/);
+  });
+  it('删掉已经没人用的 .dt-row', () => {
+    expect(css).not.toMatch(/\.dt-row\s*\{/);
+    expect(css).not.toMatch(/\.dt-row-actions/);
+  });
+});
