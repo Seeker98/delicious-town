@@ -5,6 +5,7 @@ import {
   barDevilStartBody,
   barExchangeBody,
   barFgBody,
+  barMemoryAnswerBody,
   barNumBody,
   barSlotBody,
 } from '@dt/shared';
@@ -32,5 +33,11 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
     r.post('/bar/devil/drink', async (req) =>
       okOp(await svc.devilDrink(restCtxOf(req), parse(barDevilDrinkBody, req.body))),
     );
+    r.post('/bar/memory/start', async (req) => okOp(await svc.memoryStart(restCtxOf(req))));
+    r.post('/bar/memory/answer', async (req) =>
+      okOp(await svc.memoryAnswer(restCtxOf(req), parse(barMemoryAnswerBody, req.body))),
+    );
+    r.post('/bar/memory/next', async (req) => okOp(await svc.memoryNext(restCtxOf(req))));
+    r.post('/bar/memory/stop', async (req) => okOp(await svc.memoryStop(restCtxOf(req))));
   };
 }

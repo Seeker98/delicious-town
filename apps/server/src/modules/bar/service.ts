@@ -3,6 +3,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { devilDrink, devilStart } from './devil';
 import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
+import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
 import { playSlot } from './slot';
 import { barView } from './view';
 
@@ -41,6 +42,18 @@ export function createBarService(d: GameDeps) {
     },
     devilDrink(ctx: RestCtx, b: { cup: number }) {
       return op(ctx, 'bar.devil', (o) => devilDrink(o, b.cup));
+    },
+    memoryStart(ctx: RestCtx) {
+      return op(ctx, 'bar.memory', (o) => memoryStart(o));
+    },
+    memoryAnswer(ctx: RestCtx, b: { answer: number[] }) {
+      return op(ctx, 'bar.memory', (o) => memoryAnswer(o, b.answer));
+    },
+    memoryNext(ctx: RestCtx) {
+      return op(ctx, 'bar.memory', (o) => memoryNext(o));
+    },
+    memoryStop(ctx: RestCtx) {
+      return op(ctx, 'bar.memory', (o) => memoryStop(o));
     },
   };
 }
