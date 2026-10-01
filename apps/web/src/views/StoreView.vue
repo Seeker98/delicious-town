@@ -63,7 +63,7 @@ function metaParts(it: StoreItemDto): Array<{ text: string; danger: boolean }> {
   else if (it.batch) out.push({ text: `一次最多 ${it.maxUse}`, danger: false });
   return out;
 }
-const sellN = (it: StoreItemDto) => Math.max(1, Math.min(qty[it.goodsId] ?? 1, it.num));
+const sellN = (it: StoreItemDto) => Math.max(1, Math.min(Math.floor(qty[it.goodsId] ?? 1), it.num));
 /** 卖出、丢弃收不回来，先确认（问题记录 128） */
 function sell(it: StoreItemDto) {
   const n = sellN(it);

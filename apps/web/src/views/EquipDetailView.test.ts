@@ -193,4 +193,16 @@ describe('EquipDetailView', () => {
     expect(ask).not.toHaveBeenCalled();
     expect(endpoints.equipUngem).toHaveBeenCalledWith(55);
   });
+
+  it('回退道具的级数超过已强化的级数时，确认框按实际能退的写，并说明多的作废（终审）', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({
+      ...detail({ stress: 2 }),
+      backItems: [{ goodsId: 226, num: 1, back: 3 }],
+    });
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const { w } = await mountView();
+    await w.find('[data-testid="rollback-go"]').trigger('click');
+    expect(ask.mock.calls[0]![0]).toContain('回退 2 级');
+    expect(ask.mock.calls[0]![0]).toContain('多出的 1 级作废');
+  });
 });

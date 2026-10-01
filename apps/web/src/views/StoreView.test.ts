@@ -112,7 +112,8 @@ describe('StoreView', () => {
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const w = mount(StoreView);
     await flushPromises();
-    await w.find('input[type="number"]').setValue('3');
+    // 填小数时按整数卖（终审）
+    await w.find('input[type="number"]').setValue('3.5');
     const sell = w.findAll('button').find((b) => b.text() === '卖')!;
     await sell.trigger('click');
     await flushPromises();

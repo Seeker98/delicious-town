@@ -4,6 +4,7 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
+import { sellPrice } from '../store/rules';
 
 const config = testConfig();
 let t: TestGame;
@@ -97,6 +98,13 @@ describe('黑市、出售、丢弃', () => {
     await expect(shop().sell(ctx, { goodsId: 167, num: 1 })).rejects.toMatchObject({
       params: { reason: 'not_sellable' },
     });
+  });
+  it('出售按页面上的单价 × 数量付银币，单价没有浮点误差（终审：确认框写的数要和到账一致）', async () => {
+    // 中扩建卡 45,000 × 0.7 用浮点算是 31,499.999…，向下取整会少 1
+    expect(sellPrice(config.requireGoods(7), config.tuning)).toBe(31_500);
+    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { 7: 3 } });
+    await shop().sell(ctx, { goodsId: 7, num: 3 });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 31_500);
   });
   it('只能丢弃升星促销勋章', async () => {
     const ctx = await newRestaurant(t, { goods: { 13: 1 } });

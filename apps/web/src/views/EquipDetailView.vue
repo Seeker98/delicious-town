@@ -74,7 +74,11 @@ async function stress() {
 /** 回退会降强化等级，先确认（问题记录 128） */
 async function rollback() {
   const b = d.value?.backItems.find((x) => x.goodsId === backPick.value);
-  if (!b || !window.confirm(`用 1 个${catalog.goodsName(b.goodsId)}回退 ${b.back} 级强化，确定吗？`)) return;
+  if (!b || !e.value) return;
+  // 服务端最多退到 +0：道具级数比已强化的多时，多的作废（终审）
+  const n = Math.min(b.back, e.value.stress);
+  const waste = b.back > n ? `，多出的 ${b.back - n} 级作废` : '';
+  if (!window.confirm(`用 1 个${catalog.goodsName(b.goodsId)}回退 ${n} 级强化${waste}，确定吗？`)) return;
   await run(() => endpoints.equipRollback(id, b.goodsId), '回退失败');
 }
 /** 摘除要花银币时先确认并写明多少；免费时直接摘（问题记录 128） */
