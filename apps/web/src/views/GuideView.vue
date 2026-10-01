@@ -56,7 +56,7 @@ const DAILY = [
 
   <details open class="mb-2" data-testid="guide-codes">
     <summary class="dt-section">新手兑换码</summary>
-    <p v-if="!hasRest" class="small text-muted mb-1">开店后可以领。每家店每个码领一次。</p>
+    <p v-if="!hasRest" class="small text-muted mb-1">进入区服、开店后可以领。每家店每个码领一次。</p>
     <template v-else>
       <p class="small text-muted mb-1">每家店每个码领一次，等级够了就能领。</p>
       <div v-for="c in codes" :key="c.code" class="dt-item">
@@ -89,16 +89,17 @@ const DAILY = [
     <summary class="dt-section">开店第一天</summary>
     <ul class="small ps-3 mb-1">
       <li>
-        餐厅会自己营业：每过一轮结算一次，按餐桌来客人。桌子越多、会做的菜越多越好、橱柜里的食材越全，收入和经验越高。
+        餐厅会自己营业：每过一轮结算一次，按餐桌来客人。餐桌越多、学会的菜越多、菜谱品级越高，收入和经验越高。
       </li>
+      <li>营业要耗油，油用完就停业，记得在首页加油。</li>
       <li>
-        客人点的菜要用橱柜里的食材来做，食材不够就做不了。食材去<RouterLink to="/market">菜场</RouterLink
+        食材用来学食谱、做特色菜和接外卖，去<RouterLink to="/market">菜场</RouterLink
         >买，买之前看看橱柜还有没有空位。
       </li>
       <li>体力每轮自然恢复。学特色菜、挑战厨塔、打蟑螂等都要花体力，体力卡可以补。</li>
       <li>
         先做这几件事：到<RouterLink to="/rest/equip">厨具与加点</RouterLink
-        >把属性点加上，去菜场买食材，在<RouterLink to="/cookbooks">食谱</RouterLink>里学新菜，回首页签到。
+        >把属性点加上，在首页加油，在<RouterLink to="/cookbooks">食谱</RouterLink>里学新菜，回首页签到。
       </li>
       <li>升星、搬家、改名都在<RouterLink to="/society">协会</RouterLink>里办。</li>
     </ul>
@@ -136,9 +137,9 @@ const DAILY = [
     <summary class="dt-section">游戏规则</summary>
     <ul class="small ps-3 mb-1">
       <li>禁止一人多号刷资源、在多个账号之间转移资源。</li>
-      <li>禁止利用漏洞获利。发现漏洞请到论坛"建议"版报告，不要声张或利用。</li>
+      <li>禁止利用漏洞获利。发现漏洞请到论坛「建议反馈」版告诉管理员，帖子里别写具体做法，也不要利用。</li>
       <li>禁止辱骂、广告、违法和不当内容。看到这类帖子、喇叭、店名、公告可以点举报。</li>
-      <li>违规会被封号 1 天、7 天或永久，违规所得会被收回。</li>
+      <li>违规会被封号 1 天、7 天或永久。</li>
       <li>后台的数据统计只是提醒，处罚前会人工核实。</li>
     </ul>
   </details>

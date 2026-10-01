@@ -52,3 +52,11 @@ describe('菜园姐台词（问题记录 176，设计 §5.2）', () => {
     for (let i = 0; i < 10; i++) expect(pickLine(lines, 'a', () => i / 10)).toBe('b');
   });
 });
+
+describe('菜园姐台词和代码一致（终审）', () => {
+  it('不提不存在的"答疑"版；竞猜说"这一轮"', () => {
+    expect(CHAT.some((c) => c.includes('答疑'))).toBe(false);
+    const g = { period: 'p', joined: null, last: null, cost: 0, maxPick: 3, pool: [] };
+    expect(texts(market({ guess: g })).some((t) => t.includes('这一轮的竞猜'))).toBe(true);
+  });
+});

@@ -7,13 +7,16 @@ import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
+import { useSessionStore } from './stores/session';
 import { useToastStore } from './stores/toast';
 import { eventsSummary } from './utils/events';
+import { isInGame } from './utils/inGame';
 
 const route = useRoute();
 const catalog = useCatalogStore();
 const toast = useToastStore();
-const inGame = computed(() => route.meta.needRestaurant === true);
+const session = useSessionStore();
+const inGame = computed(() => isInGame(route.meta, session.me?.restaurantId));
 /** 后台页面用宽布局 */
 const wide = computed(() => route.path.startsWith('/admin'));
 

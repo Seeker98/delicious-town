@@ -71,3 +71,25 @@ describe('GuideView（问题记录 150）', () => {
     expect(endpoints.guideCodes).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('GuideView 文案和代码一致（终审 I1）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('不说结算要橱柜食材；说清油用完会停业；不提不存在的版块和做不到的处罚', async () => {
+    useSessionStore().me = me(null);
+    const w = await mountView();
+    const text = w.text();
+    expect(text).not.toContain('食材不够就做不了');
+    expect(text).not.toContain('食材越全');
+    expect(text).toContain('油用完');
+    expect(text).not.toContain('答疑');
+    expect(text).not.toContain('"建议"版');
+    expect(text).not.toContain('违规所得会被收回');
+  });
+
+  it('没进区服时提示"进入区服、开店后可以领"', async () => {
+    useSessionStore().me = me(null);
+    const w = await mountView();
+    expect(w.text()).toContain('进入区服、开店后可以领');
+  });
+});

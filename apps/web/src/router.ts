@@ -35,7 +35,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { public: true },
   },
   { path: '/shards', name: 'shards', component: () => import('./views/ShardSelectView.vue') },
-  { path: '/account', name: 'account', component: () => import('./views/AccountView.vue') },
+  {
+    path: '/account',
+    name: 'account',
+    component: () => import('./views/AccountView.vue'),
+    meta: { gameChrome: true },
+  },
   {
     path: '/create-restaurant',
     name: 'create-restaurant',
@@ -137,7 +142,12 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
   },
-  { path: '/guide', name: 'guide', component: () => import('./views/GuideView.vue') },
+  {
+    path: '/guide',
+    name: 'guide',
+    component: () => import('./views/GuideView.vue'),
+    meta: { gameChrome: true },
+  },
   {
     path: '/redeem',
     name: 'redeem',
