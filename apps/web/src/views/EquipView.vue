@@ -8,6 +8,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { equipName } from '../utils/equipName';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
@@ -39,7 +40,7 @@ async function run(fn: () => Promise<unknown>, fallback: string): Promise<boolea
     busy.value = false;
   }
 }
-const name = (e: EquipDto) => `${catalog.goodsName(e.goodsId)}${e.stress > 0 ? ` +${e.stress}` : ''}`;
+const name = (e: EquipDto) => `${equipName(catalog, e)}${e.stress > 0 ? ` +${e.stress}` : ''}`;
 
 async function pick(p: number) {
   part.value = part.value === p ? null : p;

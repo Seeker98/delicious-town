@@ -7,6 +7,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { equipName } from '../utils/equipName';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 
 const route = useRoute();
@@ -106,7 +107,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
   <div v-if="d && e">
     <!-- 名字一行、部位和等级要求一行，不再挤在同一行里字号不一、底部对齐（问题记录 130） -->
     <h5 class="mb-1">
-      {{ catalog.goodsName(e.goodsId) }} <span v-if="e.stress > 0" class="text-success">+{{ e.stress }}</span>
+      {{ equipName(catalog, e) }} <span v-if="e.stress > 0" class="text-success">+{{ e.stress }}</span>
     </h5>
     <div class="dt-meta mb-1" data-testid="equip-meta">
       {{ PART_NAMES[e.part] }} · {{ e.minLevel }} 级可穿{{ e.worn ? ' · 穿戴中' : '' }}
