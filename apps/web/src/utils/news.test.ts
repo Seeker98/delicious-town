@@ -1,0 +1,67 @@
+import { describe, expect, it } from 'vitest';
+import { NEWS_TYPES, type NewsDto } from '@dt/shared';
+import { NEWS_RENDERED, newsText } from './news';
+import { rewardText } from './rewards';
+
+const names = {
+  goodsName: (id: number) => `道具${id}`,
+  foodName: (id: number) => `食材${id}`,
+  mcName: (id: number) => `特色菜${id}`,
+  weatherName: (id: number) => (id === 1 ? '晴' : id === 13 ? '暴雨' : `天气${id}`),
+  streetName: (id: number) => `街${id}`,
+  seedName: (id: number) => `种子${id}`,
+};
+const n = (
+  type: string,
+  params: Record<string, unknown> = {},
+  restName: string | null = '小王的店',
+): NewsDto => ({
+  id: 1,
+  type,
+  restId: restName ? 7 : null,
+  restName,
+  params,
+  createdAt: '2026-09-30T04:00:00.000Z',
+});
+
+describe('新闻文案', () => {
+  it('代码里每种新闻类型都有文案', () => {
+    expect(NEWS_TYPES.filter((x) => !NEWS_RENDERED.includes(x))).toEqual([]);
+  });
+
+  it('小镇新增的几种', () => {
+    expect(newsText(n('town.broadcast', { text: '大家好' }), names)).toBe('小王的店：大家好');
+    expect(newsText(n('town.bless', { blessId: 1, name: '五谷丰登' }), names)).toBe(
+      '小王的店许愿得到星愿：五谷丰登',
+    );
+    expect(newsText(n('town.shake.lucky', { goodsId: 180, num: 1 }), names)).toBe(
+      '恭喜小王的店伸进蟹老板裤兜里掏出：道具180×1',
+    );
+    expect(newsText(n('town.exchange', { exchangeId: 2, goodsId: 238, num: 1 }), names)).toBe(
+      '小王的店在镇长处兑换了 道具238×1',
+    );
+  });
+
+  it('换天气：雷神锤写明是谁；自动轮换没有店名', () => {
+    expect(newsText(n('weather.change', { from: 1, to: 13, by: 7 }), names)).toBe(
+      '小王的店使用雷神锤，晴转暴雨了',
+    );
+    expect(newsText(n('weather.change', { from: 1, to: 13 }, null), names)).toBe('天气变了：晴转暴雨');
+  });
+
+  it('店不存在时用新闻里记下的名字，都没有时写"某家餐厅"；未知类型不报错', () => {
+    expect(newsText(n('star.up', { star: 2, name: '旧名' }, null), names)).toBe('旧名升到了 2 星');
+    expect(newsText(n('star.up', { star: 2 }, null), names)).toBe('某家餐厅升到了 2 星');
+    expect(newsText(n('no.such.type'), names)).toBe('小镇发生了一件事');
+  });
+});
+
+describe('奖励文案', () => {
+  it('食材、道具、种子、银币、钻石', () => {
+    expect(rewardText({ kind: 'foods', id: 101, num: 2 }, names)).toBe('食材101×2');
+    expect(rewardText({ kind: 'goods', id: 20, num: 1 }, names)).toBe('道具20×1');
+    expect(rewardText({ kind: 'seed', id: 3, num: 1 }, names)).toBe('种子3×1');
+    expect(rewardText({ kind: 'coin', id: null, num: 200000 }, names)).toBe('银币 200,000');
+    expect(rewardText({ kind: 'diamond', id: null, num: 5 }, names)).toBe('钻石 5');
+  });
+});

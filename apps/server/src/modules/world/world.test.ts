@@ -5,7 +5,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { runDueJobs } from '../../worker/periodic';
-import { isNight, rollWeather, weatherPool } from './rules';
+import { hammerPool, isNight, rollWeather, weatherPool } from './rules';
 
 const config = testConfig();
 const w = config.tuning.world;
@@ -91,5 +91,26 @@ describe('接口', () => {
     expect(r.json.data.goods).toHaveLength(602);
     expect(r.json.data.foods).toHaveLength(313);
     expect(r.json.data.version).toBe(config.version);
+  });
+});
+
+describe('雷神锤天气池（4E-1 设计文档 裁定 15）', () => {
+  it('白天按类型筛，含该类型的特殊天气，排除当前天气', () => {
+    const ids = hammerPool(config, 12, w, { mode: 'coin', type: 1 }, 1).items.map((x) => x.id);
+    expect(ids).toEqual(expect.arrayContaining([2, 3, 6]));
+    expect(ids).not.toContain(1);
+    for (const id of ids) expect(config.weather.get(id)!.type).toBe(1);
+    for (const id of ids) expect([1, 3]).toContain(config.weather.get(id)!.daytime);
+  });
+  it('钻石只在特殊天气里抽；夜间只剩全天的特殊天气', () => {
+    const day = hammerPool(config, 12, w, { mode: 'diamond' }, 1).items.map((x) => x.id);
+    expect(day.sort((a, b) => a - b)).toEqual([6, 7, 18, 24, 27]);
+    const night = hammerPool(config, 23, w, { mode: 'diamond' }, 7).items.map((x) => x.id);
+    expect(night.sort((a, b) => a - b)).toEqual([18, 24, 27]);
+  });
+  it('夜间按类型筛时包括夜间专属天气', () => {
+    const ids = hammerPool(config, 23, w, { mode: 'coin', type: 1 }, 28).items.map((x) => x.id);
+    expect(ids).toEqual(expect.arrayContaining([2, 29, 31]));
+    expect(ids).not.toContain(1);
   });
 });

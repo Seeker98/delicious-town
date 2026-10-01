@@ -228,3 +228,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* 小镇兑换的数量输入框 */
+.dt-num-input {
+  width: 4.5rem;
+}

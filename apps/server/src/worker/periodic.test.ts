@@ -61,7 +61,7 @@ describe('runDueJobs', () => {
       .execute();
     const closed = await createShard(t.db, { status: 'closed' });
     const m = job('m', 'market', 'k');
-    const f = job('f', 'town', 'k');
+    const f = job('f', 'hiphop', 'k');
     await runDueJobs(deps(), [m, f], { shardIds: [off, closed] });
     expect(m.run).not.toHaveBeenCalled();
     expect(f.run).not.toHaveBeenCalled();

@@ -73,6 +73,7 @@ export function createWorldService(d: GameDeps) {
         .set({
           weather_id: w.id,
           weather_until: new Date(slot.start.getTime() + WEATHER_MS),
+          weather_changed_at: now,
           updated_at: now,
         })
         .where('shard_id', '=', shardId)

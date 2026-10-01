@@ -1,0 +1,35 @@
+/** 小镇广播的新闻类型 */
+export const BROADCAST_NEWS = 'town.broadcast';
+
+/** 代码里会写入的全部新闻类型；前端 utils/news.ts 必须为每一种写文案（types.test 钉住） */
+export const NEWS_TYPES: readonly string[] = [
+  'bar.cup',
+  'bar.fg',
+  'bar.num',
+  'bar.slot',
+  'equip.stress',
+  'friend.weekly',
+  'gem.broken',
+  'gem.levelUp',
+  'market.restock',
+  'mc.champion',
+  'mc.cook',
+  'oil.expand',
+  'plankton.appear',
+  'plankton.driven',
+  'rest.move',
+  'rest.rename',
+  'restaurant.open',
+  'shop.special',
+  'star.up',
+  'takeaway.customer',
+  'temple.explore.rare',
+  'temple.guardian.rare',
+  'tower.rank.week',
+  'tower.shop.rare',
+  'weather.change',
+  'town.broadcast',
+  'town.bless',
+  'town.shake.lucky',
+  'town.exchange',
+];

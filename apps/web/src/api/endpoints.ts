@@ -1,4 +1,15 @@
 import type {
+  FeastResultDto,
+  HammerResultDto,
+  NewsPageDto,
+  NpcKey,
+  ShakeResultDto,
+  TalkResultDto,
+  TicketResultDto,
+  TownDto,
+  TownExchangeDto,
+  TownExchangeResultDto,
+  WishResultDto,
   BarDto,
   BarExchangeResultDto,
   CupResultDto,
@@ -339,4 +350,22 @@ export const endpoints = {
   takeawayHire: (restId: number) => api.post<{ riderId: number }>('/api/v1/takeaway/hire', { restId }),
   takeawayDismiss: (riderId: number) =>
     api.post<{ coin: number; exp: number }>('/api/v1/takeaway/dismiss', { riderId }),
+  town: () => api.get<TownDto>('/api/v1/town'),
+  townNews: (before?: number) =>
+    api.get<NewsPageDto>(before === undefined ? '/api/v1/town/news' : `/api/v1/town/news?before=${before}`),
+  townExchange: () => api.get<TownExchangeDto>('/api/v1/town/exchange'),
+  townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
+  townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),
+  townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),
+  townHammer: (body: { mode: 'coin'; type: number } | { mode: 'diamond' }) =>
+    api.post<HammerResultDto>('/api/v1/town/hammer', body),
+  townExchangeDo: (id: number, num: number) =>
+    api.post<TownExchangeResultDto>('/api/v1/town/exchange', { id, num }),
+  townLevelTicket: (level: number, picks: Array<{ foodsId: number; num: number }>) =>
+    api.post<TicketResultDto>('/api/v1/town/level-ticket', { level, picks }),
+  townMysteryTicket: (foodsId: number) =>
+    api.post<TicketResultDto>('/api/v1/town/mystery-ticket', { foodsId }),
+  townWish: () => api.post<WishResultDto>('/api/v1/town/wish'),
+  townFeast: (foodsId?: number) =>
+    api.post<FeastResultDto>('/api/v1/town/feast', foodsId === undefined ? {} : { foodsId }),
 };

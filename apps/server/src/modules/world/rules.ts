@@ -26,3 +26,29 @@ export function rollWeather(config: GameConfig, hour: number, w: Tuning['world']
 export function rollKrabStreet(w: Tuning['world'], rng: Rng): number {
   return w.krabStreetMin + rng.int(w.krabStreetMax - w.krabStreetMin + 1);
 }
+
+export type HammerPick = { mode: 'coin'; type: number } | { mode: 'diamond' };
+
+/**
+ * 雷神锤天气池（4E-1 设计文档 裁定 15）：先按时段筛；银币方式按类型（包括该类型的特殊天气），
+ * 钻石方式只要特殊天气；排除当前天气。权重和自动轮换相同
+ */
+export function hammerPool(
+  config: GameConfig,
+  hour: number,
+  w: Tuning['world'],
+  pick: HammerPick,
+  currentId: number,
+): WeightedPool<Weather> {
+  const nightOdds = new Map(w.nightWeatherOdds);
+  const allowed = isNight(hour, w) ? [2, 3] : [1, 3];
+  const list = [...config.weather.values()]
+    .filter(
+      (x) =>
+        allowed.includes(x.daytime) &&
+        x.id !== currentId &&
+        (pick.mode === 'diamond' ? x.special : x.type === pick.type),
+    )
+    .sort((a, b) => a.id - b.id);
+  return buildPool(list, (x) => nightOdds.get(x.id) ?? (x.probability ?? 0) * w.dayWeightScale);
+}

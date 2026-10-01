@@ -225,6 +225,7 @@ export interface WorldStateTable {
   krab_street: number;
   plankton_rest_id: Nullable<number>;
   updated_at: TsDefault;
+  weather_changed_at: TsNullable;
 }
 
 export interface MarketItemTable {
@@ -671,6 +672,38 @@ export interface TowerRankTable {
 }
 
 /** 外卖（子项目 4D）：有这一行 = 已开通 */
+export interface TownBlessTable {
+  shard_id: number;
+  day: string;
+  bless_id: number;
+  rest_id: number;
+  created_at: Ts;
+}
+
+export interface TownRestTable {
+  rest_id: number;
+  hammer_at: TsNullable;
+  broadcast_at: TsNullable;
+  big_eater_gift: Default<boolean>;
+}
+
+export interface TownShakeTable {
+  id: Generated<number>;
+  shard_id: number;
+  day: string;
+  rest_id: number;
+  ip: Default<string>;
+  device: Default<string>;
+  coin: number;
+  created_at: Ts;
+}
+
+export interface TownExchangeUseTable {
+  rest_id: number;
+  exchange_id: number;
+  times: number;
+}
+
 export interface TakeawayStateTable {
   rest_id: number;
   /** 可雇骑手上限（含自己） */
@@ -791,6 +824,10 @@ export interface DB {
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
   takeaway_state: TakeawayStateTable;
+  town_bless: TownBlessTable;
+  town_rest: TownRestTable;
+  town_shake: TownShakeTable;
+  town_exchange_use: TownExchangeUseTable;
   takeaway_rider: TakeawayRiderTable;
   takeaway_order: TakeawayOrderTable;
   takeaway_delivery: TakeawayDeliveryTable;

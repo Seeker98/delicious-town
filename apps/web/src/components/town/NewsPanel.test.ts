@@ -1,0 +1,96 @@
+import { flushPromises, mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
+import type { NewsDto } from '@dt/shared';
+import { endpoints } from '../../api/endpoints';
+import NewsPanel from './NewsPanel.vue';
+import { townData } from './testData';
+
+vi.mock('../../api/endpoints', () => ({ endpoints: { townNews: vi.fn(), townBroadcast: vi.fn() } }));
+
+const item = (id: number, type = 'star.up', params: Record<string, unknown> = { star: 1 }): NewsDto => ({
+  id,
+  type,
+  restId: 7,
+  restName: '小王的店',
+  params,
+  createdAt: '2026-09-30T04:00:00.000Z',
+});
+
+describe('NewsPanel', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('列出新闻，广播醒目；"加载更多"带上最后一条的 id', async () => {
+    vi.mocked(endpoints.townNews)
+      .mockResolvedValueOnce({ items: [item(9, 'town.broadcast', { text: '你好' }), item(8)], hasMore: true })
+      .mockResolvedValueOnce({ items: [item(3)], hasMore: false });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    const rows = w.findAll('[data-testid="news-row"]');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]!.text()).toContain('小王的店：你好');
+    expect(rows[0]!.classes()).toContain('text-primary');
+    await w.find('[data-testid="news-more"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townNews).toHaveBeenLastCalledWith(8);
+    expect(w.findAll('[data-testid="news-row"]')).toHaveLength(3);
+    expect(w.find('[data-testid="news-more"]').exists()).toBe(false);
+  });
+
+  it('广播：发送后清空输入、通知刷新、重新读第一页', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+    vi.mocked(endpoints.townBroadcast).mockResolvedValue({ text: '大家好' });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    await w.find('[data-testid="bc-input"]').setValue('大家好');
+    await w.find('[data-testid="bc-send"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townBroadcast).toHaveBeenCalledWith('大家好');
+    expect((w.find('[data-testid="bc-input"]').element as HTMLInputElement).value).toBe('');
+    expect(w.emitted('reload')).toHaveLength(1);
+    expect(endpoints.townNews).toHaveBeenCalledTimes(2);
+  });
+
+  it('没有喇叭或星级不够时按钮灰掉并写明原因', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+    const w = mount(NewsPanel, {
+      props: { data: townData({ broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 } }) },
+    });
+    await flushPromises();
+    expect(w.find('[data-testid="bc-block"]').text()).toBe('没有喇叭（和 13 哥聊天可以拿到）');
+    expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
+    const low = mount(NewsPanel, { props: { data: townData({ star: 0 }) } });
+    await flushPromises();
+    expect(low.find('[data-testid="bc-block"]').text()).toBe('餐厅 1 星才能广播');
+  });
+
+  describe('冷却按服务器时间倒计时（终审 I1）', () => {
+    afterEach(() => vi.useRealTimers());
+    it('冷却结束后按钮自己恢复，不用刷新', async () => {
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+      // 本机时钟比服务器慢 1 小时：倒计时仍按服务器时间算
+      vi.setSystemTime(new Date('2026-09-30T03:00:00.000Z'));
+      vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+      const data = townData({
+        now: '2026-09-30T04:00:00.000Z',
+        broadcast: { horns: 2, readyAt: '2026-09-30T04:00:02.000Z', minStar: 1, maxLen: 64 },
+      });
+      const w = mount(NewsPanel, { props: { data } });
+      await flushPromises();
+      await w.find('[data-testid="bc-input"]').setValue('你好');
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 2 秒');
+      expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
+      vi.advanceTimersByTime(1000);
+      await nextTick();
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 1 秒');
+      vi.advanceTimersByTime(1000);
+      await nextTick();
+      expect(w.find('[data-testid="bc-block"]').exists()).toBe(false);
+      expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
+    });
+  });
+});

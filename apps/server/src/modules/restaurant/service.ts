@@ -1,8 +1,11 @@
 import type { Kysely } from 'kysely';
 import type { GameConfig } from '@dt/config';
 import {
+  addDays,
   checkRestaurantName,
   ErrorCode,
+  gameDay,
+  gameTime,
   type PageQuery,
   type RestaurantDto,
   type TableDto,
@@ -14,6 +17,8 @@ import { AppError } from '../../http/errors';
 import type { LoadedSession } from '../../security/session';
 import type { SessionStore } from '../../security/sessionStore';
 import { listActiveEffects } from '../effects/service';
+import { headlines } from '../news/news';
+import { todayBless } from '../town/bless';
 import { recordLedger } from '../ledger/ledger';
 import { postNews } from '../news/news';
 import type { ShardService } from '../shard/service';
@@ -58,14 +63,25 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const effects = await listActiveEffects(d.db, restId, now);
     const snap = await world.ensure(row.shard_id, now);
     const growth = (await shards.settings(row.shard_id)).tuning.growth;
-    return toRestaurantDto(row, tables.tables, effects, d.config, {
+    const dto = toRestaurantDto(row, tables.tables, effects, d.config, {
       devices: await deviceSlots(d.db, d.config, row, now),
       lastRound: await lastRound(d.db, restId),
       weather: { id: snap.weather.id, name: snap.weather.name },
       isPlanktonHost: snap.planktonRestId === restId,
       icons: await shownIcons(restId),
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
+      headlines: await headlines(d.db, row.shard_id),
     });
+    const today = await todayBless(d.db, d.config, row.shard_id, now);
+    if (today)
+      dto.effects.unshift({
+        sourceType: 'bless',
+        sourceId: today.bless.id,
+        name: `今日星愿：${today.bless.name}`,
+        effects: today.bless.buff,
+        expiresAt: gameTime(addDays(gameDay(now), 1), 0).toISOString(),
+      });
+    return dto;
   }
 
   /** 开店（不碰会话）：HTTP 的 create 和模拟器共用 */

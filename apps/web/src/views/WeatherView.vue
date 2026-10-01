@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
@@ -32,6 +33,9 @@ onMounted(async () => {
     </p>
     <p v-if="world.holidayMultiplier > 1" class="small text-success">
       今天是节日，美味券掉落概率 ×{{ world.holidayMultiplier }}
+    </p>
+    <p class="small">
+      持有雷神锤可以换天气：<RouterLink to="/town" data-testid="weather-hammer">去小镇</RouterLink>
     </p>
   </div>
 </template>

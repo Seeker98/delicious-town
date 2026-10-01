@@ -54,8 +54,8 @@
     "formula.": "yard",
     "equip.": "equip",
     "takeaway.": "takeaway",
-    "hiphop.": "town",
-    "post.": "town",
+    "hiphop.": "hiphop",
+    "post.": "forum",
     "broadcast": "town"
   }
 }

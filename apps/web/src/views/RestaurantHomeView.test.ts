@@ -54,6 +54,7 @@ const dto: RestaurantDto = {
   cookfoodsFlag: 0,
   plaque2Open: false,
   plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
+  headlines: { news: [], broadcast: null },
   mainTaskStep: 1,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
@@ -324,5 +325,55 @@ describe('RestaurantHomeView', () => {
     const slot = w.find('[data-testid="slot-1"]');
     expect(slot.classes()).toContain('h-100');
     expect(slot.find('.text-truncate').exists()).toBe(true);
+  });
+
+  it('小镇新闻：最新广播 + 3 条新闻，点"更多"去小镇页', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      headlines: {
+        broadcast: {
+          id: 9,
+          type: 'town.broadcast',
+          restId: 7,
+          restName: '小王的店',
+          params: { text: '大家好' },
+          createdAt: '2026-09-30T04:00:00.000Z',
+        },
+        news: [
+          {
+            id: 8,
+            type: 'star.up',
+            restId: 7,
+            restName: '小王的店',
+            params: { star: 2 },
+            createdAt: '2026-09-30T03:00:00.000Z',
+          },
+        ],
+      },
+    });
+    const w = await mountView();
+    expect(w.find('[data-testid="home-broadcast"]').text()).toContain('小王的店：大家好');
+    expect(w.findAll('[data-testid="home-news"]').map((x) => x.text())).toEqual([
+      expect.stringContaining('小王的店升到了 2 星'),
+    ]);
+    expect(w.find('[data-testid="home-news-more"]').attributes('href')).toBe('/town');
+  });
+
+  it('生效的加成：今日星愿排在最前', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      effects: [
+        ...dto.effects,
+        {
+          sourceType: 'bless',
+          sourceId: 4,
+          name: '今日星愿：招财进宝',
+          effects: { coinRate: 0.08 },
+          expiresAt: null,
+        },
+      ],
+    });
+    const w = await mountView();
+    expect(w.findAll('[data-testid="effect-group"]')[0]!.text()).toBe('今日星愿');
   });
 });

@@ -34,6 +34,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
       { to: '/bar', icon: 'bi-cup-straw', label: '酒吧' },
       { to: '/tower', icon: 'bi-building', label: '厨塔' },
       { to: '/takeaway', icon: 'bi-bicycle', label: '外卖' },
+      { to: '/town', icon: 'bi-house-heart', label: '小镇' },
       { to: '/classroom', icon: 'bi-easel', label: '教室' },
       { to: '/society', icon: 'bi-bank', label: '协会' },
     ],

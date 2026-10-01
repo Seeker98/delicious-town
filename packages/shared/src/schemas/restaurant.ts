@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { HeadlinesDto } from './town';
 
 export const createRestaurantBody = z.object({ name: z.string().max(32) });
 
@@ -72,6 +73,8 @@ export interface RestaurantDto {
   /** null = 没设置头像 */
   avatar: number | null;
   effects: EffectDto[];
+  /** 首页小镇新闻：最新 3 条 + 最新广播 */
+  headlines: HeadlinesDto;
   createdAt: string;
 }
 

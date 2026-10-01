@@ -213,3 +213,12 @@ export function registerNpcHandlers(bus: EventBus): void {
     await npcInvite(tx, { restId: e.restId });
   });
 }
+
+/** 蟹老板的钱袋补到 amount，比它多时不动（4E-1 终审 C1：摇钱包从这里扣） */
+export async function topUpNpcCoin(db: Kysely<DB>, restId: number, amount: number): Promise<void> {
+  await db
+    .updateTable('restaurant')
+    .set({ coin: sql<number>`greatest(coin, ${amount})` })
+    .where('id', '=', restId)
+    .execute();
+}

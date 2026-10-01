@@ -278,6 +278,8 @@ export interface ConfigBundle {
   seeds: Seed[];
   formulas: Formula[];
   seedExchange: SeedExchange[];
+  goodsExchange: GoodsExchange[];
+  bless: Bless[];
   incomeActions: IncomeAction[];
   slotAwards: SlotAward[];
   towerFloors: TowerFloor[];
@@ -396,6 +398,36 @@ export interface Formula {
 }
 
 /** 配方精华换种子（规格书 20 §20.8）：每次花 essence 个精华换 seedNum 颗 */
+/** 镇长兑换（设计数据 goods_exchange） */
+export interface GoodsExchange {
+  id: number;
+  /** bg 蟹黄堡 / dt 美味券 / chip 碎片 / so 其他 */
+  category: string;
+  goodsId: number;
+  num: number;
+  need: Array<{ goodsId: number; num: number }>;
+  /** 每人累计限兑次数；-1 不限 */
+  times: number;
+  /** 兑换后写新闻 */
+  news: boolean;
+}
+
+/** 星愿（设计数据 bless） */
+export interface Bless {
+  id: number;
+  name: string;
+  /** 0 自选食材 / 2 道具 / 3 银币 / 4 钻石 / 5 随机食材 */
+  type: 0 | 2 | 3 | 4 | 5;
+  num: number;
+  needAct: number;
+  /** 食材类的等级区间 [低, 高] */
+  levels: [number, number] | null;
+  goodsId: number | null;
+  /** 当天全镇的结算加成 */
+  buff: Record<string, number>;
+  odds: number;
+}
+
 export interface SeedExchange {
   seedId: number;
   seedNum: number;

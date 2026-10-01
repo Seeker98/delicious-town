@@ -2,7 +2,7 @@ import { gameParts, hashSeed, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { withRestaurant } from '../../db/tx';
-import { ensureNpc, npcIdOf, npcInvite, restockNpc } from './npc';
+import { ensureNpc, npcIdOf, npcInvite, restockNpc, topUpNpcCoin } from './npc';
 
 const HOUR = 3_600_000;
 
@@ -21,6 +21,7 @@ export function npcJobs(d: GameDeps): PeriodicJob[] {
           shardId,
           seededRng(hashSeed(shardId, 'npc-create', period)),
         );
+        if (npc.created) await topUpNpcCoin(d.db, npc.id, settings.tuning.town.shake.krabDailyCoin);
         const invited = await npcInvite(d.db, { shardId });
         return { npcId: npc.id, created: npc.created, invited };
       },
@@ -36,15 +37,16 @@ export function npcJobs(d: GameDeps): PeriodicJob[] {
       run: async ({ shardId, settings, period }) => {
         const id = await npcIdOf(d.db, shardId);
         if (id === null) return { skipped: true };
-        const kinds = await withRestaurant(d.db, id, (tx) =>
-          restockNpc(
+        const kinds = await withRestaurant(d.db, id, async (tx) => {
+          await topUpNpcCoin(tx, id, settings.tuning.town.shake.krabDailyCoin);
+          return restockNpc(
             tx,
             d.config,
             settings.tuning.friend.npc,
             id,
             seededRng(hashSeed(shardId, 'npc-restock', period)),
-          ),
-        );
+          );
+        });
         return { kinds };
       },
     },
