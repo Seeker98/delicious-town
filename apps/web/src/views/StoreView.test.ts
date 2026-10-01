@@ -59,9 +59,9 @@ describe('StoreView', () => {
     });
     const w = mount(StoreView);
     await flushPromises();
-    const rows = w.findAll('.dt-row');
+    const rows = w.findAll('.dt-item');
     expect(rows).toHaveLength(2);
-    for (const r of rows) expect(r.find('.dt-row-actions').exists()).toBe(true);
+    for (const r of rows) expect(r.find('.dt-item-actions').exists()).toBe(true);
   });
 
   it('名字太长时只截名字，数量总是显示，剩余时间放第二行（审查）', async () => {
@@ -70,5 +70,19 @@ describe('StoreView', () => {
     const num = w.find('.dt-store-num');
     expect(num.text()).toBe('×150');
     expect(num.element.closest('.text-truncate')).toBeNull();
+  });
+
+  it('卖按钮文字固定，单价写在信息行（视觉规范：操作区宽度不随价格变）', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        { goodsId: 18, num: 30, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: 2800 },
+      ],
+    });
+    const w = mount(StoreView);
+    await flushPromises();
+    const sell = w.findAll('button').find((b) => b.text().startsWith('卖'))!;
+    expect(sell.text()).toBe('卖');
+    expect(w.find('.dt-item .dt-meta').text()).toContain('单价 2,800');
   });
 });

@@ -228,9 +228,12 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
   <div class="dt-card small">
     <div class="mb-1">
       当前天气：<b>{{ data.weather.name }}</b>
-      <span class="dt-meta ms-1">选一类天气用银币换，或用钻石召唤特殊天气</span>
+      <div class="dt-meta">
+        换成某一类天气：每次 {{ formatNum(data.hammer.coin) }} 银币；召唤特殊天气：每次
+        {{ data.hammer.diamond }} 钻石
+      </div>
     </div>
-    <div class="d-flex flex-wrap gap-1">
+    <div class="dt-grid2">
       <button
         v-for="x in TYPES"
         :key="x.type"
@@ -239,15 +242,15 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         :data-testid="`hammer-${x.type}`"
         @click="hammer({ mode: 'coin', type: x.type })"
       >
-        {{ x.label }}（{{ formatNum(data.hammer.coin) }} 银币）
+        {{ x.label }}
       </button>
       <button
-        class="btn btn-sm btn-outline-warning"
+        class="btn btn-sm btn-outline-warning dt-span2"
         :disabled="busy || !!hammerBlock"
         data-testid="hammer-diamond"
         @click="hammer({ mode: 'diamond' })"
       >
-        召唤特殊天气（{{ data.hammer.diamond }} 钻石）
+        召唤特殊天气
       </button>
     </div>
     <div v-if="hammerBlock" class="text-danger mt-1" data-testid="hammer-block">{{ hammerBlock }}</div>

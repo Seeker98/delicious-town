@@ -391,3 +391,28 @@ body {
     background: var(--dt-primary-soft);
   }
 }
+/* 两列按钮网格（雷神锤的四个天气类型） */
+.dt-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+/* 选食材填数量的小格子（食材兑换券） */
+.dt-pick-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.dt-pick {
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.dt-pick input {
+  margin-top: 2px;
+}
+.dt-span2 {
+  grid-column: span 2;
+}

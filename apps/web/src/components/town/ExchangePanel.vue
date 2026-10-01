@@ -101,6 +101,7 @@ async function go(x: TownExchangeItemDto) {
           v-model.number="nums[x.id]"
           type="number"
           min="1"
+          placeholder="1"
           :max="data.maxNum"
           class="form-control form-control-sm dt-qty"
           :data-testid="`ex-num-${x.id}`"

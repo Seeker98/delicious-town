@@ -55,14 +55,15 @@ async function run(fn: () => Promise<TicketResultDto>) {
       <span data-testid="lt-have">持有 {{ have }} 张</span>
     </div>
     <div class="text-muted mb-1">一张换一个同等级的普通食材，可以一次选多种</div>
-    <div class="d-flex flex-wrap gap-1">
-      <label v-for="id in foods" :key="id" class="dt-tile">
-        {{ catalog.foodName(id) }}
+    <div class="dt-pick-grid">
+      <label v-for="id in foods" :key="id" class="dt-pick">
+        <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
         <input
           v-model.number="nums[id]"
           type="number"
           min="0"
-          class="form-control form-control-sm dt-qty"
+          placeholder="0"
+          class="form-control form-control-sm"
           :data-testid="`lt-num-${id}`"
         />
       </label>

@@ -250,7 +250,10 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="slot-7"]').text()).toContain('未开通');
     const btn = w.find('[data-testid="open-plaque2"]');
-    expect(btn.text()).toBe('开通第二块牌匾位（15,000,000 银币 + 188 钻石）');
+    // 视觉规范：按钮文字固定，花费写在信息行，按钮在右侧操作区
+    expect(btn.text()).toBe('开通');
+    expect(w.find('[data-testid="plaque2-cost"]').text()).toBe('15,000,000 银币 + 188 钻石');
+    expect(btn.element.closest('.dt-item-actions')).not.toBeNull();
     await btn.trigger('click');
     await flushPromises();
     expect(confirm).toHaveBeenCalled();
