@@ -18,6 +18,7 @@ const toast = useToastStore();
 const data = ref<TownExchangeDto | null>(null);
 const cat = ref('bg');
 const nums = reactive<Record<number, number>>({});
+const expanded = ref(new Set<number>());
 const busy = ref(false);
 
 async function load() {
@@ -40,6 +41,12 @@ function block(x: TownExchangeItemDto): string {
   if (x.need.some((m) => m.have < m.num * n)) return '材料不够';
   return '';
 }
+function toggleDesc(id: number) {
+  const s = new Set(expanded.value);
+  if (s.has(id)) s.delete(id);
+  else s.add(id);
+  expanded.value = s;
+}
 
 async function go(x: TownExchangeItemDto) {
   if (busy.value) return;
@@ -58,47 +65,55 @@ async function go(x: TownExchangeItemDto) {
 
 <template>
   <template v-if="data">
-    <ul class="nav nav-pills nav-fill small mb-2">
-      <li v-for="c in CATS" :key="c.key" class="nav-item">
-        <a
-          :class="['nav-link', 'py-1', { active: cat === c.key }]"
-          href="#"
-          :data-testid="`cat-${c.key}`"
-          @click.prevent="cat = c.key"
-          >{{ c.label }}</a
-        >
-      </li>
-    </ul>
-    <div v-for="x in shown" :key="x.id" class="dt-row small" :data-testid="`ex-row-${x.id}`">
-      <div class="flex-fill">
-        <b>{{ catalog.goodsName(x.goodsId) }}×{{ x.num }}</b>
-        <div class="text-muted">
-          需要
-          <span v-for="m in x.need" :key="m.goodsId" class="ms-1"
-            >{{ catalog.goodsName(m.goodsId) }}×{{ m.num }}（有 {{ m.have }}）</span
-          >
+    <div class="dt-pills">
+      <a
+        v-for="c in CATS"
+        :key="c.key"
+        :class="{ active: cat === c.key }"
+        href="#"
+        :data-testid="`cat-${c.key}`"
+        @click.prevent="cat = c.key"
+        >{{ c.label }}</a
+      >
+    </div>
+    <div v-for="x in shown" :key="x.id" class="dt-item" :data-testid="`ex-row-${x.id}`">
+      <div class="dt-item-main">
+        <div class="dt-item-title" role="button" @click="toggleDesc(x.id)">
+          {{ catalog.goodsName(x.goodsId) }}<span v-if="x.num > 1" class="ms-1">×{{ x.num }}</span>
         </div>
-        <div class="text-muted">
-          {{ x.times > 0 ? `限兑 ${x.times} 次，已兑 ${x.used} 次` : '不限次数' }}
+        <div class="dt-meta dt-clamp1">
+          <span v-for="(m, i) in x.need" :key="m.goodsId"
+            >{{ i > 0 ? '、' : '' }}{{ catalog.goodsName(m.goodsId) }}×{{ m.num }}（有 {{ m.have }}）</span
+          >
+          · {{ x.times > 0 ? `限兑 ${x.times} 次，已兑 ${x.used} 次` : '不限次数' }}
           <span v-if="block(x)" class="text-danger ms-1">{{ block(x) }}</span>
         </div>
+        <div
+          v-if="catalog.goods(x.goodsId)?.desc"
+          :class="['dt-meta', { 'dt-clamp1': !expanded.has(x.id) }]"
+          :data-testid="`ex-desc-${x.id}`"
+        >
+          {{ catalog.goods(x.goodsId)?.desc }}
+        </div>
       </div>
-      <input
-        v-model.number="nums[x.id]"
-        type="number"
-        min="1"
-        :max="data.maxNum"
-        class="form-control form-control-sm dt-num-input"
-        :data-testid="`ex-num-${x.id}`"
-      />
-      <button
-        class="btn btn-sm btn-outline-primary ms-1"
-        :disabled="busy || !!block(x)"
-        :data-testid="`ex-${x.id}`"
-        @click="go(x)"
-      >
-        兑换
-      </button>
+      <div class="dt-item-actions">
+        <input
+          v-model.number="nums[x.id]"
+          type="number"
+          min="1"
+          :max="data.maxNum"
+          class="form-control form-control-sm dt-qty"
+          :data-testid="`ex-num-${x.id}`"
+        />
+        <button
+          class="btn btn-sm btn-primary"
+          :disabled="busy || !!block(x)"
+          :data-testid="`ex-${x.id}`"
+          @click="go(x)"
+        >
+          兑换
+        </button>
+      </div>
     </div>
     <h6 class="dt-section">兑换券</h6>
     <TicketPanel :data="data" @reload="load" />

@@ -152,4 +152,10 @@ describe('TownPanel', () => {
       expect(w.find('[data-testid="hammer-1"]').attributes('disabled')).toBeUndefined();
     });
   });
+
+  it('NPC 和钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {
+    const w = mount(TownPanel, { props: { data: townData() } });
+    for (const id of ['talk-bigEater', 'talk-wenjie', 'talk-bro13', 'shake'])
+      expect(w.find('.dt-item-actions [data-testid="' + id + '"]').exists()).toBe(true);
+  });
 });

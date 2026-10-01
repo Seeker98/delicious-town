@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
@@ -11,7 +12,10 @@ import { useToastStore } from '../stores/toast';
 
 type Tab = 'news' | 'town' | 'exchange';
 const KEY = 'dt_town_tab';
-function savedTab(): Tab {
+const isTab = (v: unknown): v is Tab => v === 'news' || v === 'town' || v === 'exchange';
+/** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
+function initialTab(query: unknown): Tab {
+  if (isTab(query)) return query;
   try {
     const v = localStorage.getItem(KEY);
     return v === 'town' || v === 'exchange' ? v : 'news';
@@ -26,7 +30,8 @@ const TABS: Array<{ key: Tab; label: string }> = [
 ];
 const toast = useToastStore();
 const catalog = useCatalogStore();
-const tab = ref<Tab>(savedTab());
+const route = useRoute();
+const tab = ref<Tab>(initialTab(route.query.tab));
 const data = ref<TownDto | null>(null);
 
 /** 读取序号：几次读取同时进行时只采用最新一次的结果 */
@@ -55,7 +60,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <h5>小镇</h5>
+  <div class="dt-page-title"><h5>小镇</h5></div>
   <ul class="nav nav-tabs mb-2">
     <li v-for="x in TABS" :key="x.key" class="nav-item">
       <a

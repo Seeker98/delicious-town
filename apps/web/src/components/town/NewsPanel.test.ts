@@ -93,4 +93,11 @@ describe('NewsPanel', () => {
       expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
     });
   });
+
+  it('新闻用紧凑行（问题记录 104：垂直留空太大）', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({ items: [item(1)], hasMore: false });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    expect(w.find('[data-testid="news-row"]').classes()).toContain('dt-feed');
+  });
 });

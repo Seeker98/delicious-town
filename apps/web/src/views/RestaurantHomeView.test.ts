@@ -356,7 +356,7 @@ describe('RestaurantHomeView', () => {
     expect(w.findAll('[data-testid="home-news"]').map((x) => x.text())).toEqual([
       expect.stringContaining('小王的店升到了 2 星'),
     ]);
-    expect(w.find('[data-testid="home-news-more"]').attributes('href')).toBe('/town');
+    expect(w.find('[data-testid="home-news-more"]').attributes('href')).toBe('/town?tab=news');
   });
 
   it('生效的加成：今日星愿排在最前', async () => {

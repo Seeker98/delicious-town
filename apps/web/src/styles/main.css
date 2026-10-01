@@ -1,7 +1,19 @@
 :root {
   --dt-primary: #d9480f;
+  --dt-primary-rgb: 217, 72, 15;
+  --dt-primary-dark: #b33c0c;
+  --dt-primary-soft: #fff4e6;
   --dt-bg: #fff4e6;
   --dt-header-bg: #ffe8cc;
+  --dt-muted: #868e96;
+  --dt-line: #f1f3f5;
+  /* Bootstrap 的 primary 统一成品牌色（视觉规范 §2） */
+  --bs-primary: var(--dt-primary);
+  --bs-primary-rgb: var(--dt-primary-rgb);
+  --bs-link-color: var(--dt-primary);
+  --bs-link-color-rgb: var(--dt-primary-rgb);
+  --bs-link-hover-color: var(--dt-primary-dark);
+  --bs-link-hover-color-rgb: 179, 60, 12;
 }
 body {
   background: var(--dt-bg);
@@ -193,9 +205,10 @@ body {
 }
 /* 区块标题统一：加粗、左侧色条（问题记录：首页标题比内容小、不醒目） */
 .dt-section {
-  margin-top: 1rem;
+  margin-top: 16px;
   padding-left: 6px;
   border-left: 3px solid var(--dt-primary);
+  font-size: 15px;
   font-weight: 600;
 }
 /* 首页快捷入口 */
@@ -229,7 +242,152 @@ body {
   text-overflow: ellipsis;
 }
 
-/* 小镇兑换的数量输入框 */
-.dt-num-input {
-  width: 4.5rem;
+/* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
+.btn-primary {
+  --bs-btn-bg: var(--dt-primary);
+  --bs-btn-border-color: var(--dt-primary);
+  --bs-btn-hover-bg: var(--dt-primary-dark);
+  --bs-btn-hover-border-color: var(--dt-primary-dark);
+  --bs-btn-active-bg: var(--dt-primary-dark);
+  --bs-btn-active-border-color: var(--dt-primary-dark);
+  --bs-btn-disabled-bg: var(--dt-primary);
+  --bs-btn-disabled-border-color: var(--dt-primary);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--dt-primary);
+  --bs-btn-border-color: var(--dt-primary);
+  --bs-btn-hover-bg: var(--dt-primary);
+  --bs-btn-hover-border-color: var(--dt-primary);
+  --bs-btn-active-bg: var(--dt-primary-dark);
+  --bs-btn-active-border-color: var(--dt-primary-dark);
+  --bs-btn-disabled-color: var(--dt-primary);
+  --bs-btn-disabled-border-color: var(--dt-primary);
+}
+.nav-tabs .nav-link {
+  color: #495057;
+}
+.nav-tabs .nav-link.active {
+  color: var(--dt-primary);
+  font-weight: 600;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: rgba(var(--dt-primary-rgb), 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(var(--dt-primary-rgb), 0.15);
+}
+/* 页面标题：18px 粗体，右侧可放一行次要信息 */
+.dt-page-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+.dt-page-title h5 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.dt-meta {
+  font-size: 12px;
+  color: var(--dt-muted);
+}
+/* 可操作的列表行：左主体、右操作区 */
+.dt-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--dt-line);
+  font-size: 14px;
+}
+.dt-item-main {
+  flex: 1;
+  min-width: 0;
+}
+.dt-item-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dt-item-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.dt-qty {
+  width: 64px;
+}
+/* 只读的紧凑列表：新闻、流水 */
+.dt-feed {
+  display: flex;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  border-bottom: 1px dashed var(--dt-line);
+}
+.dt-feed-time {
+  color: var(--dt-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* 卡片 */
+.dt-card {
+  background: #fff;
+  border: 1px solid #f1e6da;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+.dt-card + .dt-card {
+  margin-top: 8px;
+}
+/* 标签页里的二级分类 */
+.dt-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.dt-pills a {
+  font-size: 13px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  color: #495057;
+  background: var(--dt-line);
+  text-decoration: none;
+}
+.dt-pills a.active {
+  color: #fff;
+  background: var(--dt-primary);
+}
+.dt-empty {
+  text-align: center;
+  color: var(--dt-muted);
+  font-size: 13px;
+  padding: 16px 0;
+}
+/* 微交互：按下时轻微缩小；系统要求减少动态效果时不做 */
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .dt-tap {
+    transition:
+      transform 80ms ease-out,
+      background-color 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+  }
+  .btn:not(:disabled):active,
+  .dt-tap:active {
+    transform: scale(0.97);
+  }
+}
+@media (hover: hover) {
+  .dt-tap:hover {
+    background: var(--dt-primary-soft);
+  }
 }

@@ -62,7 +62,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
           v-model.number="nums[id]"
           type="number"
           min="0"
-          class="form-control form-control-sm dt-num-input"
+          class="form-control form-control-sm dt-qty"
           :data-testid="`lt-num-${id}`"
         />
       </label>

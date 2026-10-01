@@ -133,37 +133,45 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
 
 <template>
   <h6 class="dt-section">NPC</h6>
-  <div v-for="n in NPCS" :key="n.key" class="dt-row small">
-    <b>{{ n.name }}</b>
-    <span class="text-muted ms-1 flex-fill">{{ n.desc }}</span>
-    <button
-      class="btn btn-sm btn-outline-primary"
-      :disabled="busy || data.talked[n.key]"
-      :data-testid="`talk-${n.key}`"
-      @click="talk(n.key, n.name)"
-    >
-      {{ data.talked[n.key] ? '今天聊过了' : '聊天' }}
-    </button>
+  <div v-for="n in NPCS" :key="n.key" class="dt-item">
+    <div class="dt-item-main">
+      <div class="dt-item-title">{{ n.name }}</div>
+      <div class="dt-meta">{{ n.desc }}</div>
+    </div>
+    <div class="dt-item-actions">
+      <button
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || data.talked[n.key]"
+        :data-testid="`talk-${n.key}`"
+        @click="talk(n.key, n.name)"
+      >
+        {{ data.talked[n.key] ? '今天聊过了' : '聊天' }}
+      </button>
+    </div>
   </div>
 
   <h6 class="dt-section">蟹老板的钱袋</h6>
-  <div class="dt-row small">
-    <span class="flex-fill">每天可以摇一次，摇到的银币和星级有关</span>
-    <button
-      class="btn btn-sm btn-outline-primary"
-      :disabled="busy || data.shaken"
-      data-testid="shake"
-      @click="shake"
-    >
-      {{ data.shaken ? '今天摇过了' : '摇一摇' }}
-    </button>
+  <div class="dt-item">
+    <div class="dt-item-main">
+      <div class="dt-meta">每天可以摇一次，摇到的银币和星级有关</div>
+    </div>
+    <div class="dt-item-actions">
+      <button
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || data.shaken"
+        data-testid="shake"
+        @click="shake"
+      >
+        {{ data.shaken ? '今天摇过了' : '摇一摇' }}
+      </button>
+    </div>
   </div>
 
   <h6 class="dt-section">星愿</h6>
-  <div v-if="bless" class="small">
+  <div v-if="bless" class="dt-card small">
     <div>
       <b data-testid="bless-name">{{ bless.name }}</b>
-      <span class="text-muted ms-1">{{ data.bless.restName }} 许的愿，今天全镇生效</span>
+      <span class="dt-meta ms-1">{{ data.bless.restName }} 许的愿，今天全镇生效</span>
     </div>
     <div class="d-flex flex-wrap gap-1 my-1">
       <span
@@ -176,7 +184,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
     <div>
       共飨奖励：<span data-testid="bless-reward">{{ blessReward }}</span>
     </div>
-    <div class="d-flex gap-1 align-items-center mt-1">
+    <div class="d-flex flex-wrap gap-1 align-items-center mt-1">
       <select
         v-if="bless.type === 0"
         v-model="pick"
@@ -187,7 +195,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         <option v-for="f in blessFoods" :key="f.id" :value="String(f.id)">{{ f.name }}</option>
       </select>
       <button
-        class="btn btn-sm btn-success"
+        class="btn btn-sm btn-primary"
         :disabled="busy || !!feastBlock || (bless.type === 0 && pick === '')"
         data-testid="feast"
         @click="feast"
@@ -197,44 +205,51 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       <span v-if="feastBlock" class="text-danger" data-testid="feast-block">{{ feastBlock }}</span>
     </div>
   </div>
-  <div v-else class="dt-row small">
-    <span class="flex-fill">今天还没有人许愿。第一个许愿的人决定今天全镇的星愿</span>
-    <button
-      class="btn btn-sm btn-outline-primary"
-      :disabled="busy || !data.bless.hasLamp"
-      data-testid="wish"
-      @click="wish"
-    >
-      许愿
-    </button>
-  </div>
-  <div v-if="!bless && !data.bless.hasLamp" class="small text-danger" data-testid="wish-block">
-    持有神灯才能许愿
+  <div v-else class="dt-item">
+    <div class="dt-item-main">
+      <div class="dt-meta">今天还没有人许愿。第一个许愿的人决定今天全镇的星愿</div>
+      <div v-if="!data.bless.hasLamp" class="dt-meta text-danger" data-testid="wish-block">
+        持有神灯才能许愿
+      </div>
+    </div>
+    <div class="dt-item-actions">
+      <button
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || !data.bless.hasLamp"
+        data-testid="wish"
+        @click="wish"
+      >
+        许愿
+      </button>
+    </div>
   </div>
 
   <h6 class="dt-section">雷神锤</h6>
-  <div class="small mb-1">
-    当前天气：<b>{{ data.weather.name }}</b>
+  <div class="dt-card small">
+    <div class="mb-1">
+      当前天气：<b>{{ data.weather.name }}</b>
+      <span class="dt-meta ms-1">选一类天气用银币换，或用钻石召唤特殊天气</span>
+    </div>
+    <div class="d-flex flex-wrap gap-1">
+      <button
+        v-for="x in TYPES"
+        :key="x.type"
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || !!hammerBlock"
+        :data-testid="`hammer-${x.type}`"
+        @click="hammer({ mode: 'coin', type: x.type })"
+      >
+        {{ x.label }}（{{ formatNum(data.hammer.coin) }} 银币）
+      </button>
+      <button
+        class="btn btn-sm btn-outline-warning"
+        :disabled="busy || !!hammerBlock"
+        data-testid="hammer-diamond"
+        @click="hammer({ mode: 'diamond' })"
+      >
+        召唤特殊天气（{{ data.hammer.diamond }} 钻石）
+      </button>
+    </div>
+    <div v-if="hammerBlock" class="text-danger mt-1" data-testid="hammer-block">{{ hammerBlock }}</div>
   </div>
-  <div class="d-flex flex-wrap gap-1">
-    <button
-      v-for="x in TYPES"
-      :key="x.type"
-      class="btn btn-sm btn-outline-primary"
-      :disabled="busy || !!hammerBlock"
-      :data-testid="`hammer-${x.type}`"
-      @click="hammer({ mode: 'coin', type: x.type })"
-    >
-      {{ x.label }}（{{ formatNum(data.hammer.coin) }} 银币）
-    </button>
-    <button
-      class="btn btn-sm btn-outline-warning"
-      :disabled="busy || !!hammerBlock"
-      data-testid="hammer-diamond"
-      @click="hammer({ mode: 'diamond' })"
-    >
-      召唤特殊天气（{{ data.hammer.diamond }} 钻石）
-    </button>
-  </div>
-  <div v-if="hammerBlock" class="small text-danger mt-1" data-testid="hammer-block">{{ hammerBlock }}</div>
 </template>

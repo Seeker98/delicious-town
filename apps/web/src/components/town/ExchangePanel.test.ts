@@ -43,4 +43,13 @@ describe('ExchangePanel', () => {
     expect(endpoints.townExchangeDo).toHaveBeenCalledWith(1, 2);
     expect(endpoints.townExchange).toHaveBeenCalledTimes(2);
   });
+
+  it('和商店一样：一行一项，数量框和按钮在右侧操作区，点名称展开说明（问题记录 104）', async () => {
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    const row = w.find('[data-testid="ex-row-1"]');
+    expect(row.classes()).toContain('dt-item');
+    expect(row.find('.dt-item-actions [data-testid="ex-num-1"]').exists()).toBe(true);
+    expect(row.find('.dt-item-actions [data-testid="ex-1"]').exists()).toBe(true);
+  });
 });
