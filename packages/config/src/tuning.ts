@@ -556,6 +556,7 @@ export const tuningSchema = z.object({
     newbie: rewardSchema,
     rewards: z.object({ lv10: rewardSchema, lv30: rewardSchema }),
   }),
+  report: z.object({ dailyMax: int.min(1) }),
   redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),
   forum: z.object({
     titleMax: int.min(1),

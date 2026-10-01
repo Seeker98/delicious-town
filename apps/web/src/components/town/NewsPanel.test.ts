@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import type { NewsDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useSessionStore } from '../../stores/session';
 import NewsPanel from './NewsPanel.vue';
 import { townData } from './testData';
 
@@ -158,5 +159,30 @@ describe('NewsPanel', () => {
     const rows = w.findAll('[data-testid="news-row"]');
     expect(rows).toHaveLength(2);
     expect(rows[0]!.text()).toContain('刚发的');
+  });
+
+  it('别人的喇叭旁有举报，其他新闻和自己的喇叭没有（子项目 6B-1）', async () => {
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player' as const,
+      shardId: 1,
+      restaurantId: 1,
+    };
+    vi.mocked(endpoints.townNews).mockResolvedValue({
+      items: [
+        item(9, 'town.broadcast', { text: '你好' }),
+        item(8),
+        { ...item(7, 'town.broadcast', { text: '我' }), restId: 1 },
+      ],
+      hasMore: false,
+    });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    expect(w.find('[data-testid="news-report-9-open"]').exists()).toBe(true);
+    expect(w.find('[data-testid="news-report-8-open"]').exists()).toBe(false);
+    expect(w.find('[data-testid="news-report-7-open"]').exists()).toBe(false);
   });
 });

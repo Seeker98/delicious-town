@@ -35,3 +35,4 @@ export * from './schemas/mail';
 export * from './schemas/announce';
 export * from './schemas/redeem';
 export * from './schemas/invite';
+export * from './schemas/report';

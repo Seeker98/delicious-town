@@ -6,6 +6,7 @@ import { restPower } from '../equip/power';
 import { mondayOf } from '../friend/weekly';
 import { tipTotals } from '../hiphop/weekly';
 import type { RankSource } from './ranking';
+import { notBannedSql } from '../admin/ban';
 
 export interface BoardCtx {
   db: Kysely<DB>;
@@ -24,7 +25,7 @@ interface Row {
 }
 
 /** 本区玩家店：不含 NPC 和封禁账号（r = restaurant，a = account） */
-const players = (shardId: number) => sql`r.shard_id = ${shardId} and not r.npc and a.banned_at is null`;
+const players = (shardId: number) => sql`r.shard_id = ${shardId} and not r.npc and ${notBannedSql()}`;
 const JOIN = sql`join restaurant r on r.id = x.rest_id join account a on a.id = r.account_id`;
 
 async function run(c: BoardCtx, q: RawBuilder<Row>): Promise<RankSource[]> {
@@ -127,7 +128,7 @@ const power: Source = async (c) => {
     .selectAll('r')
     .where('r.shard_id', '=', c.shardId)
     .where('r.npc', '=', false)
-    .where('a.banned_at', 'is', null)
+    .where(notBannedSql())
     .execute();
   const out: RankSource[] = [];
   for (const r of rows)

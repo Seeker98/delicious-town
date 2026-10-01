@@ -233,7 +233,7 @@ onBeforeUnmount(() => {
       </div>
       <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
       <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
-      <div class="col-6">声望 {{ rest.renown }}</div>
+      <div class="col-6" title="声望"><i class="bi bi-award"></i> {{ rest.renown }}</div>
     </div>
     <div
       class="progress my-2 position-relative"

@@ -5,6 +5,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
+import ReportButton from '../components/ReportButton.vue';
 import TableGrid from '../components/TableGrid.vue';
 import FriendDuel from '../components/tower/FriendDuel.vue';
 import { errorMessage } from '../i18n/zh-CN';
@@ -87,7 +88,15 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         class="me-2"
       />
       <div class="flex-fill">
-        <div class="fw-bold">{{ rest.name }}</div>
+        <div class="fw-bold">
+          {{ rest.name }}
+          <ReportButton
+            v-if="rest.id !== mine"
+            target-type="rest_name"
+            :target-id="rest.id"
+            testid="rest-name-report"
+          />
+        </div>
         <div class="small text-muted">
           {{ rest.level }} 级 · {{ rest.star }} 星 · 声望 {{ rest.renown
           }}<span v-if="rest.state !== 1"> · 停业中</span>
@@ -124,8 +133,11 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         {{ rest.special.eaten ? '已品尝' : '品尝' }}
       </button>
     </div>
-    <div v-if="rest.notice" class="border rounded p-2 mb-2 small" style="white-space: pre-wrap">
-      {{ rest.notice }}
+    <div v-if="rest.notice" class="border rounded p-2 mb-2 small">
+      <div style="white-space: pre-wrap">{{ rest.notice }}</div>
+      <div v-if="rest.id !== mine" class="text-end">
+        <ReportButton target-type="notice" :target-id="rest.id" testid="notice-report" />
+      </div>
     </div>
 
     <div v-if="rest.isFriend" class="d-flex flex-wrap gap-1 mb-2" data-testid="act-bar">

@@ -128,6 +128,7 @@ import type {
   MailClaimDto,
   MailListDto,
   RedeemResultDto,
+  ReportInput,
   InviteDto,
 } from '@dt/shared';
 import { api } from './client';
@@ -431,6 +432,7 @@ export const endpoints = {
   mail: () => api.get<MailListDto>('/api/v1/mail'),
   redeem: (code: string) => api.post<RedeemResultDto>('/api/v1/redeem', { code }),
   invite: () => api.get<InviteDto>('/api/v1/invite'),
+  report: (b: ReportInput) => api.post<{ ok: true }>('/api/v1/report', b),
   mailUnread: () => api.get<{ count: number }>('/api/v1/mail/unread'),
   mailRead: (id: number) => api.post<void>(`/api/v1/mail/${id}/read`, {}),
   mailClaim: (id: number) => api.post<MailClaimDto>(`/api/v1/mail/${id}/claim`, {}),

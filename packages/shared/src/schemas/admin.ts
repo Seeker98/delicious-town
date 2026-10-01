@@ -66,6 +66,8 @@ export interface PlayerBriefDto {
 export interface PlayerDetailDto extends PlayerBriefDto {
   emailVerified: boolean;
   bannedAt: string | null;
+  /** 封号到期时间；永久封号或没封为 null（子项目 6B-1） */
+  bannedUntil: string | null;
   banReason: string | null;
   createdAt: string;
 }

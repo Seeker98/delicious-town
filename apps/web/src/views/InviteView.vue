@@ -54,7 +54,7 @@ function stageText(level: number, s: InviteStatus | null): string | null {
     </div>
     <div class="dt-card small mb-2">
       <div class="mb-1">
-        好友开店得新手礼包；好友验证邮箱后到 10 级、30 级，你各得一份奖励；每月最多计
+        好友开店就能领新手礼包；好友验证邮箱后，店铺升到 10 级、再升到 30 级时，你各得一份奖励。每月最多计
         {{ data.monthlyCap }} 人。
       </div>
       <div class="fw-bold">本月已计 {{ data.monthCount }} / {{ data.monthlyCap }}</div>

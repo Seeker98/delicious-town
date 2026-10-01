@@ -124,4 +124,14 @@ describe('FriendsView', () => {
     expect(endpoints.friendFeed).toHaveBeenCalled();
     expect(w.text()).toContain('乙店 给你点了赞');
   });
+
+  it('好友行紧凑：店名、等级、状态在同一行（问题记录 168）', async () => {
+    const w = mountView();
+    await flushPromises();
+    const line = w.find('[data-testid^="friend-row-"] .dt-friend-line');
+    expect(line.exists()).toBe(true);
+    expect(line.text()).toContain('蟹老板');
+    expect(line.text()).toContain('级');
+    expect(line.text()).toContain('蟑螂 3');
+  });
 });

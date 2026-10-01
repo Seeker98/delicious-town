@@ -143,4 +143,11 @@ describe('FriendRestView', () => {
     const npc = await mountView();
     expect(npc.find('[data-testid="act-duel"]').exists()).toBe(false);
   });
+
+  it('别人店的店名、公告旁有举报（子项目 6B-1）', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
+    const w = await mountView();
+    expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(true);
+    expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(true);
+  });
 });

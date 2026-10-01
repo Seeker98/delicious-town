@@ -12,7 +12,7 @@ import { normalizeText, textOk } from './rules';
 const POST_NEWS = ['forum.pin', 'forum.feature'];
 
 /** 置顶、加精新闻里的帖子标题跟着帖子走：改标题时更新；删帖时（title = null）删掉这些新闻（PR31 遗留） */
-async function syncPostNews(o: Op, postId: number, title: string | null): Promise<void> {
+export async function syncPostNews(o: Op, postId: number, title: string | null): Promise<void> {
   if (title === null) {
     await o.tx
       .deleteFrom('news')

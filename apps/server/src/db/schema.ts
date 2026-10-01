@@ -50,6 +50,8 @@ export interface AccountTable {
   role: Default<'player' | 'mod' | 'admin'>;
   banned_at: TsNullable;
   ban_reason: Nullable<string>;
+  /** 封号到期时间；null 表示永久（子项目 6B-1） */
+  banned_until: TsNullable;
   is_system: Default<boolean>;
   invite_code: Nullable<string>;
   invited_by: Nullable<number>;
@@ -935,6 +937,36 @@ export interface InviteRewardTable {
   sent_at: TsNullable;
 }
 
+/** 举报（子项目 6B-1）：一个被举报的内容一个待处理的案子 */
+export interface ReportCaseTable {
+  id: Generated<number>;
+  shard_id: number;
+  target_type: 'post' | 'reply' | 'broadcast' | 'rest_name' | 'notice';
+  target_id: number;
+  target_rest_id: number;
+  target_account_id: number;
+  snapshot: string;
+  status: Default<'open' | 'resolved' | 'rejected'>;
+  reporter_count: Default<number>;
+  created_at: TsDefault;
+  updated_at: TsDefault;
+  handled_by: Nullable<number>;
+  handled_at: TsNullable;
+  action: Nullable<string>;
+  ban_days: Nullable<number>;
+  note: Nullable<string>;
+}
+
+export interface ReportEntryTable {
+  id: Generated<number>;
+  case_id: number;
+  reporter_account_id: number;
+  reporter_rest_id: number;
+  reason: 'abuse' | 'porn' | 'ad' | 'politics' | 'other';
+  detail: Default<string>;
+  created_at: TsDefault;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1007,6 +1039,8 @@ export interface DB {
   redeem_code: RedeemCodeTable;
   redeem_use: RedeemUseTable;
   invite_reward: InviteRewardTable;
+  report_case: ReportCaseTable;
+  report_entry: ReportEntryTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

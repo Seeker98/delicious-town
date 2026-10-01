@@ -6,6 +6,7 @@ import type { DB } from '../../db/schema';
 import type { RankSource } from '../rank/ranking';
 import { rankRows } from '../rank/ranking';
 import { grantGoodsOp } from '../store/goods';
+import { notBannedSql } from '../admin/ban';
 
 /**
  * [from, to) 内每家玩家店（不含 NPC、封禁账号）的打赏价值合计；周榜和排行共用。
@@ -29,7 +30,7 @@ export async function tipTotals(
     ])
     .where('h.shard_id', '=', shardId)
     .where('r.npc', '=', false)
-    .where('a.banned_at', 'is', null)
+    .where(notBannedSql())
     .where('h.created_at', '>=', from)
     .where('h.created_at', '<', to)
     .groupBy(['h.rest_id', 'r.name'])
@@ -91,7 +92,7 @@ export async function payWages(
     .select(['s.rest_id', 's.goods_id'])
     .where('r.shard_id', '=', shardId)
     .where('r.npc', '=', false)
-    .where('a.banned_at', 'is', null)
+    .where(notBannedSql())
     .where('s.goods_id', 'in', [...wages.keys()])
     .where('s.num', '>', 0)
     .where((eb) => eb.or([eb('s.expires_at', 'is', null), eb('s.expires_at', '>', now)]))

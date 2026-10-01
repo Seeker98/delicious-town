@@ -156,24 +156,22 @@ onMounted(() => show('friends'));
       v-for="f in list.items"
       :key="f.id"
       :to="`/friends/${f.id}`"
-      class="d-flex align-items-center border rounded p-2 mb-1 text-decoration-none"
+      class="d-flex align-items-center border-bottom px-1 py-1 text-decoration-none"
       :data-testid="`friend-row-${f.id}`"
     >
       <GameImg
         :path="`avatar/${f.avatar ?? 0}`"
         :alt="f.name"
         fallback-icon="bi-person-circle"
-        class="me-2"
+        class="me-2 dt-friend-avatar"
       />
-      <div class="flex-fill">
-        <div>
-          {{ f.name }} <span class="text-muted small">{{ f.level }} 级 · {{ f.star }} 星</span>
-        </div>
-        <div class="small text-muted">
-          <span v-if="f.roaches > 0" class="me-2">蟑螂 {{ f.roaches }}</span>
-          <span v-if="f.dineSeat" class="me-2">可白食</span>
-          <span v-if="f.flipReady > 0">可翻橱 {{ f.flipReady }}</span>
-        </div>
+      <!-- 问题记录 168：店名、等级、状态压到一行 -->
+      <div class="flex-fill dt-friend-line small">
+        <b>{{ f.name }}</b>
+        <span class="text-muted ms-1">{{ f.level }} 级 · {{ f.star }} 星</span>
+        <span v-if="f.roaches > 0" class="text-muted ms-2">蟑螂 {{ f.roaches }}</span>
+        <span v-if="f.dineSeat" class="text-muted ms-2">可白食</span>
+        <span v-if="f.flipReady > 0" class="text-muted ms-2">可翻橱 {{ f.flipReady }}</span>
       </div>
     </RouterLink>
   </template>
@@ -253,3 +251,11 @@ onMounted(() => show('friends'));
     </div>
   </template>
 </template>
+
+<style scoped>
+/* 问题记录 168：好友行头像缩小，行更紧凑 */
+.dt-friend-avatar {
+  width: 32px;
+  height: 32px;
+}
+</style>

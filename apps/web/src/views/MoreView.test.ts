@@ -37,7 +37,18 @@ describe('MoreView', () => {
   it('有特色菜、神殿、菜园、酒吧、厨塔、外卖、广场入口；教室并进广场，不再单列（问题记录 122）', () => {
     useSessionStore().me = me('player');
     const text = mountView().text();
-    for (const x of ['特色菜', '神殿', '广场', '菜园', '酒吧', '厨塔', '外卖', '厨具与加点', '邀请好友'])
+    for (const x of [
+      '特色菜',
+      '神殿',
+      '广场',
+      '菜园',
+      '酒吧',
+      '厨塔',
+      '外卖',
+      '厨具与加点',
+      '邀请好友',
+      '兑换码',
+    ])
       expect(text).toContain(x);
     expect(text).not.toContain('教室');
     expect(text).not.toContain('小镇');
