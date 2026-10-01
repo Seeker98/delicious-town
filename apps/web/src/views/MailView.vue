@@ -5,7 +5,6 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
-import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { rewardSummary } from '../utils/reward';
 
@@ -13,14 +12,14 @@ import { rewardSummary } from '../utils/reward';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const mailStore = useMailStore();
-const restStore = useRestaurantStore();
 const items = ref<MailDto[]>([]);
 const loaded = ref(false);
 const open = ref<number | null>(null);
 const busy = ref(false);
 /** 一键领取有没领成的，写在页面上（不用弹出提示，免得一闪而过） */
 const notice = ref('');
-const level = computed(() => restStore.rest?.level ?? 0);
+/** 当前等级用邮箱接口给的，刷新页面直接进邮箱、或者刚领了经验后都是准的（终审 I1） */
+const level = ref(0);
 
 let seq = 0;
 async function load() {
@@ -29,6 +28,7 @@ async function load() {
     const r = await endpoints.mail();
     if (mine !== seq) return;
     items.value = r.items;
+    level.value = r.level;
     loaded.value = true;
   } catch (e) {
     if (mine === seq) toast.push(errorMessage(e, '读取邮箱失败'), 'danger');

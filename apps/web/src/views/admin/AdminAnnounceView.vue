@@ -18,6 +18,8 @@ const local = (d: Date) => {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 };
 const editing = ref<number | null>(null);
+/** 正在编辑的公告原来的区服：保存时保持不变，不跟着后台当前区服走（终审 I2） */
+const editingShard = ref<number | null>(null);
 const scope = ref<'shard' | 'all'>('all');
 const title = ref('');
 const body = ref('');
@@ -27,6 +29,7 @@ const endsAt = ref(local(new Date(Date.now() + 7 * 86_400_000)));
 
 function reset() {
   editing.value = null;
+  editingShard.value = null;
   scope.value = 'all';
   title.value = '';
   body.value = '';
@@ -36,6 +39,7 @@ function reset() {
 }
 function edit(a: AdminAnnouncementDto) {
   editing.value = a.id;
+  editingShard.value = a.shardId;
   scope.value = a.shardId === null ? 'all' : 'shard';
   title.value = a.title;
   body.value = a.body;
@@ -56,7 +60,7 @@ onMounted(() => void load());
 async function save() {
   if (busy.value) return;
   const b: AnnouncementInput = {
-    shardId: scope.value === 'all' ? null : (admin.shardId ?? null),
+    shardId: scope.value === 'all' ? null : (editingShard.value ?? admin.shardId ?? null),
     title: title.value.trim(),
     body: body.value.trim(),
     important: important.value,
@@ -96,7 +100,9 @@ async function remove(a: AdminAnnouncementDto) {
     <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
       <select v-model="scope" class="form-select form-select-sm w-auto" data-testid="an-scope">
         <option value="all">全部区服（登录页也显示）</option>
-        <option value="shard">当前区服</option>
+        <option value="shard" :disabled="admin.shardId === null && editingShard === null">
+          {{ editingShard !== null ? `区服 ${editingShard}` : '当前区服' }}
+        </option>
       </select>
       <label
         ><input v-model="important" type="checkbox" data-testid="an-important" /> 重要（进游戏弹一次）</label
@@ -160,7 +166,14 @@ async function remove(a: AdminAnnouncementDto) {
         <td>{{ a.actor ?? '—' }}</td>
         <td class="text-nowrap">
           <template v-if="admin.isAdmin">
-            <button type="button" class="btn btn-sm btn-link py-0" @click="edit(a)">编辑</button>
+            <button
+              type="button"
+              class="btn btn-sm btn-link py-0"
+              :data-testid="`an-edit-${a.id}`"
+              @click="edit(a)"
+            >
+              编辑
+            </button>
             <button
               type="button"
               class="btn btn-sm btn-outline-danger py-0"

@@ -45,7 +45,7 @@ describe('MailView', () => {
       devices: [],
     } as never);
     useRestaurantStore().rest = { level: 5 } as never;
-    vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail()], unread: 1 });
+    vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail()], unread: 1, level: 5 });
     vi.mocked(endpoints.mailUnread).mockResolvedValue({ count: 0 });
     vi.mocked(endpoints.mailClaim).mockResolvedValue({ id: 1, items: { coin: 100 } });
     vi.mocked(endpoints.mailRead).mockResolvedValue(undefined as never);
@@ -65,7 +65,7 @@ describe('MailView', () => {
   });
 
   it('等级不够时领取按钮禁用并写明要几级；展开正文时标记已读，换行保留', async () => {
-    vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail({ minLevel: 10 })], unread: 1 });
+    vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail({ minLevel: 10 })], unread: 1, level: 5 });
     const w = mount(MailView);
     await flushPromises();
     const btn = w.find('[data-testid="mail-claim-1"]');
@@ -81,6 +81,7 @@ describe('MailView', () => {
     vi.mocked(endpoints.mail).mockResolvedValue({
       items: [mail({ id: 2, claimed: true }), mail({ id: 3 })],
       unread: 0,
+      level: 5,
     });
     vi.mocked(endpoints.mailClaimAll).mockResolvedValue({ claimed: 0, failed: 1, items: [] });
     const w = mount(MailView);
@@ -89,5 +90,14 @@ describe('MailView', () => {
     await w.find('[data-testid="mail-claim-all"]').trigger('click');
     await flushPromises();
     expect(w.text()).toContain('1 封没领成');
+  });
+
+  it('等级按邮箱接口返回的当前等级判断，不依赖餐厅 store 是否加载（终审 I1）', async () => {
+    useRestaurantStore().rest = null;
+    vi.mocked(endpoints.mail).mockResolvedValue({ items: [mail({ minLevel: 10 })], unread: 1, level: 12 });
+    const w = mount(MailView);
+    await flushPromises();
+    expect(w.find('[data-testid="mail-claim-1"]').attributes('disabled')).toBeUndefined();
+    expect(w.text()).not.toContain('需 10 级');
   });
 });

@@ -71,4 +71,23 @@ describe('AdminAnnounceView', () => {
     await flushPromises();
     expect(m.find('[data-testid="an-save"]').exists()).toBe(false);
   });
+
+  it('编辑别的区服的公告时保持原区服，不会被改成当前区服（终审 I2）', async () => {
+    vi.mocked(adminApi.announcements).mockResolvedValue([{ ...row, shardId: 2 }]);
+    vi.mocked(adminApi.updateAnnouncement).mockResolvedValue(row);
+    const w = mount(AdminAnnounceView);
+    await flushPromises();
+    await w.find('[data-testid="an-edit-4"]').trigger('click');
+    await w.find('[data-testid="an-save"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.updateAnnouncement).toHaveBeenCalledWith(4, expect.objectContaining({ shardId: 2 }));
+  });
+
+  it('没选区服时不能选"当前区服"，免得变成全部区服的公告（终审 I2）', async () => {
+    useAdminStore().shardId = null;
+    const w = mount(AdminAnnounceView);
+    await flushPromises();
+    const opt = w.find('[data-testid="an-scope"] option[value="shard"]');
+    expect(opt.attributes('disabled')).toBeDefined();
+  });
 });

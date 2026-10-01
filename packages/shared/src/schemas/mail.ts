@@ -63,6 +63,8 @@ export interface MailDto {
 export interface MailListDto {
   items: MailDto[];
   unread: number;
+  /** 餐厅当前等级：判断等级门槛用，前端不必另外读餐厅（终审 I1） */
+  level: number;
 }
 export interface MailClaimDto {
   id: number;

@@ -24,7 +24,7 @@ export function createMailService(d: GameDeps) {
         visibleMails(d.db, rest, { limit: s.tuning.mail.listMax }),
         unreadCount(d.db, rest),
       ]);
-      return { items, unread };
+      return { items, unread, level: rest.level };
     },
     async unread(ctx: RestCtx): Promise<{ count: number }> {
       await d.shards.ensureFeature(ctx.shardId, 'mail');

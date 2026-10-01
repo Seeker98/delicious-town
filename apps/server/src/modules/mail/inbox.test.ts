@@ -55,6 +55,8 @@ describe('邮箱（设计 §2 裁定 1~9）', () => {
     const r = await newRestaurant(t, { shardId, patch: { level: 5 } });
     const id = await shardMail(shardId, { minLevel: 10 });
     expect((await mailSvc().list(r)).items.find((m) => m.id === id)!.minLevel).toBe(10);
+    // 列表带上当前等级，前端不用另外读餐厅（终审 I1）
+    expect((await mailSvc().list(r)).level).toBe(5);
     await expect(mailSvc().claim(r, id)).rejects.toMatchObject({
       params: { reason: 'mail_level', level: 10 },
     });
