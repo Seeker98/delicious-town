@@ -90,6 +90,23 @@ body {
   font-size: 12px;
 }
 /* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
+/* 跟正文同字号、同行高的文字按钮（问题记录 196：举报按钮和新闻错开半格、撑高行） */
+.dt-inline-btn {
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+}
+/* 列表里的分类小标题（问题记录 194）：浅色小字加细线，不和加粗的条目名抢层级 */
+.dt-group-label {
+  margin: 12px 0 2px;
+  padding-bottom: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--dt-muted);
+  border-bottom: 1px solid var(--dt-line);
+}
 /* 区服数值页的功能开关（问题记录 184）：手机一列，宽屏两列，说明在名字下面 */
 .dt-feature-grid {
   display: grid;

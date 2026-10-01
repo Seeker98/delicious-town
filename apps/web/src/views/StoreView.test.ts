@@ -39,6 +39,9 @@ describe('StoreView', () => {
     const html = w.html();
     expect(w.find('[data-testid="store-group-0"]').text()).toBe('消耗品');
     expect(w.find('[data-testid="store-group-1"]').text()).toBe('道具');
+    // 分类标题用浅色小字，不和加粗的物品名抢层级（问题记录 194）
+    expect(w.find('[data-testid="store-group-0"]').classes()).toContain('dt-group-label');
+    expect(w.find('[data-testid="store-group-0"]').classes()).not.toContain('dt-section');
     expect(html.indexOf('体力卡')).toBeLessThan(html.indexOf('喇叭'));
   });
 
