@@ -318,3 +318,14 @@ export const equipLoreFile = z.object({
   add: z.array(rawGoods.extend({ value: z.record(z.union([z.number(), z.string()])) }).strict()),
   suits: z.array(rawSuit.strict()),
 });
+
+/** data/game/goods_fix.json：修正原数据里道具 value 的个别字段（数据集会被 sync-data 覆盖，所以放这里） */
+export const goodsFixFile = z
+  .object({
+    value: z.array(
+      z
+        .object({ id: int, set: z.record(z.union([z.number(), z.string()])), why: z.string().min(1) })
+        .strict(),
+    ),
+  })
+  .strict();

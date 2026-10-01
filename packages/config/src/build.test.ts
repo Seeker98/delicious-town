@@ -666,3 +666,27 @@ describe('配置校验补强（PR27、PR28 遗留）', () => {
     );
   });
 });
+
+describe('道具数据修正（data/game/goods_fix.json）', () => {
+  it('六阶蓝冥石、六阶绿玄石的阶数从 5 改成 6，和其他六阶宝石一致', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
+    for (const id of [341, 342, 343, 344, 345]) expect(goods.get(id)!.gem!.level).toBe(6);
+    expect(goods.get(344)!.gem!.attrs.cook).toBe(24);
+  });
+
+  it('修正引用了不存在的道具、写了多余的键时构建报错', () => {
+    const src = source();
+    const fix = structuredClone(src['game/goods_fix']) as { value: Array<Record<string, unknown>> };
+    fix.value[0]!.id = 999999;
+    expect(buildBundle({ ...src, 'game/goods_fix': fix }).errors).toContain(
+      'goods_fix references unknown goods 999999',
+    );
+    const typo = structuredClone(src['game/goods_fix']) as { value: Array<Record<string, unknown>> };
+    typo.value[0]!.sett = {};
+    expect(buildBundle({ ...src, 'game/goods_fix': typo }).errors).toContainEqual(
+      expect.stringMatching(/^game\/goods_fix: value\.0.*sett/),
+    );
+  });
+});

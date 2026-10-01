@@ -44,6 +44,7 @@ export const SOURCE_FILES = [
   'game/action_map',
   'game/looks',
   'game/equip_lore',
+  'game/goods_fix',
   'restaurant_defaults',
 ] as const;
 
