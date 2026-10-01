@@ -127,8 +127,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
   <template v-if="tab === 'special'">
     <div v-if="!special" class="small text-muted">今天中午 12 点上新</div>
     <div v-else class="dt-card small">
-      <b>{{ catalog.goodsName(special.goodsId) }}</b>
-      <span class="badge bg-danger ms-1">{{ special.tierName }}</span>
+      <!-- 折扣标签和名字垂直居中（问题记录 118） -->
+      <div class="d-flex align-items-center gap-1" data-testid="special-title">
+        <b>{{ catalog.goodsName(special.goodsId) }}</b>
+        <span class="badge bg-danger">{{ special.tierName }}</span>
+      </div>
       <div>
         {{ formatNum(special.price) }} 银币 · 剩 {{ special.stock - special.sold }}/{{ special.stock }}
       </div>

@@ -379,4 +379,18 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     expect(w.findAll('[data-testid="effect-group"]')[0]!.text()).toBe('今日星愿');
   });
+
+  it('主线任务的领奖按钮和文字垂直居中，不再用浮动（问题记录 118）', async () => {
+    const tasks = await endpoints.tasks();
+    vi.mocked(endpoints.tasks).mockResolvedValue({
+      ...tasks,
+      main: { ...tasks.main!, progress: 1, done: true },
+    });
+    const w = await mountView();
+    const card = w.find('[data-testid="main-task"]');
+    expect(card.classes()).toEqual(expect.arrayContaining(['d-flex', 'align-items-center']));
+    const btn = card.find('button');
+    expect(btn.text()).toBe('领奖');
+    expect(btn.classes()).not.toContain('float-end');
+  });
 });

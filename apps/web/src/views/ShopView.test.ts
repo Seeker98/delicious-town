@@ -95,4 +95,25 @@ describe('ShopView（问题记录：商店不显示最大可购买数量）', ()
     await name.trigger('keydown', { key: 'Enter' });
     expect(w.find('[data-testid="desc-99"]').classes()).not.toContain('dt-clamp1');
   });
+
+  it('特价：名字和折扣标签在同一行垂直居中（问题记录 118）', async () => {
+    vi.mocked(endpoints.shopSpecial).mockResolvedValue({
+      day: '2026-10-01',
+      goodsId: 13,
+      tierName: '五折',
+      discount: 0.5,
+      price: 100,
+      stock: 5,
+      sold: 0,
+    });
+    const w = mount(ShopView);
+    await flushPromises();
+    await w
+      .findAll('a.nav-link')
+      .find((a) => a.text().includes('特价'))!
+      .trigger('click');
+    const row = w.find('[data-testid="special-title"]');
+    expect(row.classes()).toEqual(expect.arrayContaining(['d-flex', 'align-items-center']));
+    expect(row.text()).toContain('五折');
+  });
 });
