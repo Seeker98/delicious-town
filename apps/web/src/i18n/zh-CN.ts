@@ -140,6 +140,9 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const STATE: Record<string, string> = {
+  mail_claimed: '这封邮件已经领过了',
+  mail_no_items: '这封邮件没有附件',
+  mail_unclaimed: '附件还没领，不能删除',
   locked: '厨具已锁定，先解锁',
   has_gems: '厨具上镶着宝石，先摘下来',
   in_preset: '厨具在预设里，先删掉那个预设',
@@ -349,6 +352,8 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return `${params.field === 'title' ? '标题' : '正文'}要 1~${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && params.reason === 'reply_text' && params.max !== undefined)
     return `回复要 1~${String(params.max)} 字`;
+  if (code === 'INVALID_STATE' && params.reason === 'mail_level' && params.level !== undefined)
+    return `等级不够，需 ${String(params.level)} 级`;
   if (code === 'INVALID_STATE' && params.reason === 'query_text' && params.max !== undefined)
     return `搜索词最多 ${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && typeof params.reason === 'string' && STATE[params.reason]) {

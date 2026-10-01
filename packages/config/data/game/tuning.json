@@ -322,6 +322,7 @@
     "wages": [[107, 233], [108, 234], [109, 235], [111, 236], [110, 237]]
   },
   "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 },
+  "mail": { "expiresDays": 30, "listMax": 100 },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,

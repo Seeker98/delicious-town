@@ -3,6 +3,7 @@ import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
 import type { Game } from '../game';
 import { processGrants } from '../modules/admin/grants';
+import { runOpsScan } from '../modules/ops/scan';
 import { runDueJobs } from './periodic';
 import { pullOffset } from '../infra/clock';
 import type { Job, JobLogger } from './scheduler';
@@ -54,6 +55,14 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       run: async () => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
         await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
+      },
+    },
+    {
+      // 运营扫描（子项目 6A）：六星换铉；6A-2 起还有邀请奖励
+      name: 'ops-scan',
+      intervalMs: 60_000,
+      run: async () => {
+        await runOpsScan(game, log);
       },
     },
     {

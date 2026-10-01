@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import type { AnnouncementDto } from '@dt/shared';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import AnnounceBanner from '../components/AnnounceBanner.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 
@@ -12,6 +14,15 @@ const busy = ref(false);
 const router = useRouter();
 const route = useRoute();
 const session = useSessionStore();
+/** 登录页显示全部区服的公告（停服维护通知，子项目 6A）；读失败就不显示 */
+const announcements = ref<AnnouncementDto[]>([]);
+onMounted(async () => {
+  try {
+    announcements.value = (await endpoints.publicAnnouncements()).items;
+  } catch {
+    announcements.value = [];
+  }
+});
 
 async function submit() {
   busy.value = true;
@@ -29,6 +40,7 @@ async function submit() {
 </script>
 
 <template>
+  <AnnounceBanner :items="announcements" />
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">登录美味小镇</h5>

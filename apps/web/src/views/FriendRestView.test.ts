@@ -106,7 +106,7 @@ describe('FriendRestView', () => {
 
   it('显示对方穿着的厨具', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(
-      detail({ equips: [{ part: 1, goodsId: 30, stress: 3 }] }),
+      detail({ equips: [{ part: 1, goodsId: 30, stress: 3, name: null }] }),
     );
     const w = await mountView();
     expect(w.find('[data-testid="friend-equips"]').text()).toContain('铲');

@@ -136,6 +136,12 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
   },
+  {
+    path: '/mail',
+    name: 'mail',
+    component: () => import('./views/MailView.vue'),
+    meta: { needRestaurant: true },
+  },
   // 教室并进广场（问题记录 122）：旧地址跳到广场的教室标签
   { path: '/classroom', redirect: { path: '/town', query: { tab: 'classroom' } } },
   {
@@ -274,6 +280,8 @@ export const routes: RouteRecordRaw[] = [
       { path: 'players', component: () => import('./views/admin/AdminPlayersView.vue') },
       { path: 'players/:id', component: () => import('./views/admin/AdminPlayerView.vue') },
       { path: 'grants', component: () => import('./views/admin/AdminGrantsView.vue') },
+      { path: 'mail', component: () => import('./views/admin/AdminMailView.vue') },
+      { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
       { path: '', component: () => import('./views/admin/AdminHomeView.vue') },
       { path: 'stats', component: () => import('./views/admin/AdminStatsView.vue') },
       { path: 'audit', component: () => import('./views/admin/AdminAuditView.vue') },

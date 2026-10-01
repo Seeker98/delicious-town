@@ -143,3 +143,13 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - worker 新任务：`takeaway-orders`（每个游戏整点补全服公共单，同时删过期超过 1 天的未接单和 7 天前完成的单）
 - 数值在 `tuning.takeaway`（开通费用、公共单数量、品级概率、私人刷新、数值系数、骑手成长、奖池、神秘顾客、清理天数）
 - 任务 34、35、122 的跳转地址改为 `/takeaway`
+
+## 邮箱、公告、赞助帽子（子项目 6A-1）
+
+- 迁移 0018 新建 `mail`（邮件，一封一行，全服邮件不按店复制）、`mail_state`（每家店的已读、已领、已删）、`announcement`（公告）、`announcement_seen`（重要公告按账号记已看），以及 6A-2 要用的 `redeem_code`、`redeem_use`（兑换码）、`invite_reward`（邀请奖励）；给 `equip` 加 `custom_name`（命名帽子的名字）、`xuan_sent_at`（这顶玉帽换铉的时间）
+- 邮件的发送时间、过期时间用数据库时钟；全服邮件只给发送时已存在的店，30 天过期
+- 新功能开关 `features.mail`（默认开）。关闭后邮箱接口返回"这个区服暂未开放该功能"，但邮件照样能发，打开后能看到
+- worker 新任务 `ops-scan`（每分钟）：餐厅到六星时，把店里的命名玉帽换成同名铉帽，发进邮箱；每顶只换一次。6A-2 起这个任务还负责邀请奖励
+- 公开接口 `GET /api/v1/public/announcements` 不用登录，登录页显示全部区服的有效公告（停服维护通知用）
+- 新道具 641「玉•赞助之帽」、642「铉•赞助之帽」，只能在后台邮件附件里按件命名发放，不掉落、不出售
+- 后台"补偿"页可以勾"改为发邮件"，玩家在邮箱里领取

@@ -3,6 +3,7 @@ import {
   ErrorCode,
   adminLedgerQuery,
   adminRenameBody,
+  announcementBody,
   auditQuery,
   createGrantBody,
   economyQuery,
@@ -16,6 +17,7 @@ import {
   roleBody,
   rollbackBody,
   saveOverrideBody,
+  sendMailBody,
   settlementQuery,
   shardQuery,
   type AdminMeDto,
@@ -30,6 +32,8 @@ import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
+import { createAdminMail } from '../mail/admin';
+import { createAdminAnnounce } from '../announce/admin';
 import { distribution, economy, settlementRounds } from './stats';
 
 /** 后台路由（/api/v1/admin）：每个处理函数第一步都是 requireRole */
@@ -115,6 +119,39 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/grants', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await grants.list(parse(grantListQuery, req.query).shardId));
+    });
+
+    const mails = createAdminMail(game);
+    r.get('/mails', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await mails.list({ shardId: parse(grantListQuery, req.query).shardId }));
+    });
+    r.post('/mails', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await mails.send(a, parse(sendMailBody, req.body)));
+    });
+    r.post('/mails/:id/revoke', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await mails.revoke(a, id(req)));
+    });
+
+    const announces = createAdminAnnounce(game);
+    r.get('/announcements', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await announces.list());
+    });
+    r.post('/announcements', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await announces.create(a, parse(announcementBody, req.body)));
+    });
+    r.post('/announcements/:id', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await announces.update(a, id(req), parse(announcementBody, req.body)));
+    });
+    r.post('/announcements/:id/delete', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await announces.remove(a, id(req));
+      return ok(null);
     });
 
     r.get('/stats/economy', async (req) => {

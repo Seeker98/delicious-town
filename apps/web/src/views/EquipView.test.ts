@@ -35,6 +35,7 @@ const attrs = (patch: Partial<AttrsDto> = {}): AttrsDto => ({
 const piece = (patch: Partial<EquipDto> = {}): EquipDto => ({
   id: 1,
   goodsId: 30,
+  name: null,
   part: 1,
   suitId: 0,
   minLevel: 0,

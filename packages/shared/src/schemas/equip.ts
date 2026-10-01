@@ -36,6 +36,8 @@ export interface EquipGemDto {
 export interface EquipDto {
   id: number;
   goodsId: number;
+  /** 命名帽子的完整显示名（如"玉•大橘之帽"）；普通厨具为 null，前端用道具名 */
+  name: string | null;
   /** 1 铲 2 刀 3 锅 4 瓶 5 帽 */
   part: number;
   suitId: number;

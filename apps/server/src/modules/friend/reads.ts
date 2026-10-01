@@ -18,6 +18,7 @@ import { AppError } from '../../http/errors';
 import { flipSlots } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
 import { logPage, restNames, tableDto } from '../restaurant/reads';
+import { equipDisplayName } from '../equip/hats';
 
 /** 好友动态：别人对我做的操作（设计文档 §4.10） */
 export const FEED_TYPES = [
@@ -274,7 +275,7 @@ export function createFriendReads(d: GameDeps) {
         .executeTakeFirst();
       const equips = await d.db
         .selectFrom('equip')
-        .select(['part', 'goods_id', 'stress'])
+        .select(['part', 'goods_id', 'stress', 'custom_name'])
         .where('rest_id', '=', restId)
         .where('worn', '=', true)
         .orderBy('part')
@@ -314,7 +315,12 @@ export function createFriendReads(d: GameDeps) {
         plaques,
         tables: tables.map((x) => tableDto(x, names)),
         thumbedToday: thumbed !== undefined,
-        equips: equips.map((e) => ({ part: e.part, goodsId: e.goods_id, stress: e.stress })),
+        equips: equips.map((e) => ({
+          part: e.part,
+          goodsId: e.goods_id,
+          stress: e.stress,
+          name: equipDisplayName(e.goods_id, e.custom_name),
+        })),
         special: cook
           ? {
               mcId: cook.mc_id,

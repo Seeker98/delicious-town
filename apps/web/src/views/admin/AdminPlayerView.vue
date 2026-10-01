@@ -16,6 +16,7 @@ import { useAdminStore } from '../../stores/admin';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { logText } from '../../utils/events';
+import { equipName } from '../../utils/equipName';
 
 const route = useRoute();
 const admin = useAdminStore();
@@ -223,7 +224,7 @@ const rename = () =>
           <h6>仓库</h6>
           <div v-for="g in rest.store" :key="g.goodsId">{{ catalog.goodsName(g.goodsId) }} ×{{ g.num }}</div>
           <div v-for="e in rest.equips" :key="`e${e.id}`">
-            {{ catalog.goodsName(e.goodsId) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}（厨具{{
+            {{ equipName(catalog, e) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}（厨具{{
               e.worn ? '，穿戴中' : ''
             }}{{ e.locked ? '，锁定' : '' }}{{ e.gems > 0 ? `，宝石 ${e.gems}` : '' }}）
           </div>

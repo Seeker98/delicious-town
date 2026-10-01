@@ -12,6 +12,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
+import { equipName } from '../utils/equipName';
 
 const route = useRoute();
 const router = useRouter();
@@ -101,7 +102,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <div v-if="rest.equips.length > 0" class="small mb-2" data-testid="friend-equips">
       厨具：
       <span v-for="e in rest.equips" :key="e.part" class="me-2">
-        {{ PART_NAMES[e.part] }} {{ catalog.goodsName(e.goodsId) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
+        {{ PART_NAMES[e.part] }} {{ equipName(catalog, e) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
       </span>
     </div>
     <div

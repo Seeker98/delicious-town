@@ -25,6 +25,7 @@ import { aggregateEffects } from '../effects/aggregate';
 import { listActiveEffects } from '../effects/service';
 import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { sellPrice } from '../store/rules';
+import { equipDisplayName } from './hats';
 import type { WorldService } from '../world/service';
 import { syncEquipEffects } from './effects';
 import { attrCols, baseAttrs, boostAttrs, gemAttrs, loadGems, pieceTotal } from './instances';
@@ -88,6 +89,7 @@ export function toEquipDto(
   return {
     id: e.id,
     goodsId: e.goods_id,
+    name: equipDisplayName(e.goods_id, e.custom_name),
     part: e.part,
     suitId: e.suit_id,
     minLevel: e.min_level,

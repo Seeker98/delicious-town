@@ -1,5 +1,8 @@
 import type {
   AccountRole,
+  AdminAnnouncementDto,
+  AdminMailDto,
+  AnnouncementInput,
   AdminLedgerPageDto,
   AdminIconDto,
   AdminMeDto,
@@ -16,6 +19,7 @@ import type {
   PlayerDetailDto,
   SettlementRoundDto,
   ShardHistoryDto,
+  SendMailInput,
   ShardSettingsDto,
 } from '@dt/shared';
 import { api } from './client';
@@ -56,6 +60,14 @@ export const adminApi = {
     api.get<{ count: number }>(`${A}/grants/preview${qs({ shardId, minLevel })}`),
   createGrant: (b: CreateGrantInput) => api.post<GrantDto>(`${A}/grants`, b),
   grants: (shardId?: number) => api.get<GrantDto[]>(`${A}/grants${qs({ shardId })}`),
+  mails: (shardId?: number) => api.get<AdminMailDto[]>(`${A}/mails${qs({ shardId })}`),
+  sendMail: (b: SendMailInput) => api.post<AdminMailDto>(`${A}/mails`, b),
+  revokeMail: (id: number) => api.post<AdminMailDto>(`${A}/mails/${id}/revoke`, {}),
+  announcements: () => api.get<AdminAnnouncementDto[]>(`${A}/announcements`),
+  createAnnouncement: (b: AnnouncementInput) => api.post<AdminAnnouncementDto>(`${A}/announcements`, b),
+  updateAnnouncement: (id: number, b: AnnouncementInput) =>
+    api.post<AdminAnnouncementDto>(`${A}/announcements/${id}`, b),
+  deleteAnnouncement: (id: number) => api.post<null>(`${A}/announcements/${id}/delete`, {}),
   economy: (shardId: number, from: string, to: string) =>
     api.get<EconomyRowDto[]>(`${A}/stats/economy${qs({ shardId, from, to })}`),
   distribution: (shardId: number) => api.get<DistributionDto>(`${A}/stats/distribution${qs({ shardId })}`),

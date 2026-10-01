@@ -2,8 +2,9 @@
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
+import type { AnnouncementDto, DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import AnnounceBanner from '../components/AnnounceBanner.vue';
 import GameImg from '../components/GameImg.vue';
 import HomeNews from '../components/town/HomeNews.vue';
 import { errorMessage } from '../i18n/zh-CN';
@@ -22,10 +23,21 @@ const error = ref('');
 const busy = ref(false);
 const mainTask = ref<TaskDto | null>(null);
 const dining = ref<DineCurrentDto | null>(null);
+const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
 const pickingSlot = ref<number | null>(null);
 
+/** 首页公告横幅（子项目 6A）：读失败就不显示 */
+async function loadAnnouncements() {
+  try {
+    announcements.value = (await endpoints.announcements()).items;
+  } catch {
+    announcements.value = [];
+  }
+}
+
 async function load() {
+  void loadAnnouncements();
   try {
     await store.refresh();
     mainTask.value = (await endpoints.tasks()).main;
@@ -183,6 +195,7 @@ onBeforeUnmount(() => {
         <RouterLink to="/shards" class="ms-2">切换区服</RouterLink>
       </span>
     </div>
+    <AnnounceBanner :items="announcements" />
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>

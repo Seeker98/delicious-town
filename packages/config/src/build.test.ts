@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
+import { SPONSOR_HATS } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
 
 const source = () => readSourceDir(defaultDataDir());
@@ -9,7 +10,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
-    expect(bundle!.goods).toHaveLength(615);
+    expect(bundle!.goods).toHaveLength(617);
     expect(bundle!.cookbooks).toHaveLength(2363);
     expect(bundle!.streets).toHaveLength(14);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -664,5 +665,30 @@ describe('配置校验补强（PR27、PR28 遗留）', () => {
     expect(tuningWith((t) => t.temple.missileAttack.push([17, 9, 3]))).toContain(
       'tuning.temple.missileAttack 17 min > max',
     );
+  });
+});
+
+describe('赞助帽子和邮件数值（子项目 6A-1）', () => {
+  it('玉级、铉级赞助帽子：冠，创意 22 / 40，不算套装，不掉落，不卖', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
+    const jade = goods.get(SPONSOR_HATS.jade)!;
+    const xuan = goods.get(SPONSOR_HATS.xuan)!;
+    expect(jade.name).toBe('玉•赞助之帽');
+    expect(xuan.name).toBe('铉•赞助之帽');
+    expect(jade.equip).toMatchObject({ part: 5, suitId: 90, minLevel: 13 });
+    expect(jade.equip!.ranges.creatives).toBe(22);
+    expect(xuan.equip).toMatchObject({ part: 5, suitId: 99 });
+    expect(xuan.equip!.ranges.creatives).toBe(40);
+    for (const g of [jade, xuan]) {
+      expect(g.awardFlag).toBeNull();
+      expect(g.onSale).toBe(false);
+    }
+  });
+
+  it('邮件 30 天过期，列表最多 100 封', () => {
+    const { bundle } = buildBundle(source());
+    expect(bundle!.tuning.mail).toEqual({ expiresDays: 30, listMax: 100 });
   });
 });

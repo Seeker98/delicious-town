@@ -35,6 +35,7 @@ const detail = (patch: Partial<EquipDetailDto['equip']> = {}): EquipDetailDto =>
   equip: {
     id: 7,
     goodsId: 56,
+    name: null,
     part: 3,
     suitId: 5,
     minLevel: 13,
@@ -204,5 +205,13 @@ describe('EquipDetailView', () => {
     await w.find('[data-testid="rollback-go"]').trigger('click');
     expect(ask.mock.calls[0]![0]).toContain('回退 2 级');
     expect(ask.mock.calls[0]![0]).toContain('多出的 1 级作废');
+  });
+
+  it('命名帽子的标题用显示名', async () => {
+    vi.mocked(endpoints.equipDetail).mockResolvedValue(
+      detail({ goodsId: 641, name: '玉•大橘之帽', stress: 0 }),
+    );
+    const { w } = await mountView();
+    expect(w.find('h5').text()).toBe('玉•大橘之帽');
   });
 });

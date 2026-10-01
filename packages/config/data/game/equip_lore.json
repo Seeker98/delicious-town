@@ -92,6 +92,18 @@
       "desc": "随机增加30点属性。瓶里是茵蔯在厨塔暗处调出的酱，香得让人忘了回头的路。",
       "value": { "part": 4, "essence": 22, "total": 30, "cook": "0,30", "cutting": "0,30", "fire": "0,30", "season": "0,30", "creatives": "0,30", "luck": "0,30", "hole": 1, "max_hole": 2, "min_level": 30, "suitid": 7 },
       "level": 4, "coin": 550000, "diamond": 0, "saleflag": 0, "subflag": 0, "awardflag": 5
+    },
+    {
+      "id": 641, "name": "玉•赞助之帽", "type": 4, "devicetype": 5, "maxNum": 99,
+      "desc": "感谢对小镇作出贡献的餐厅。增加22点创意。",
+      "value": { "part": 5, "essence": 15, "creatives": 22, "hole": 1, "max_hole": 5, "min_level": 13, "suitid": 90 },
+      "level": 5, "coin": 0, "diamond": 0, "saleflag": 0, "subflag": 0
+    },
+    {
+      "id": 642, "name": "铉•赞助之帽", "type": 4, "devicetype": 5, "maxNum": 99,
+      "desc": "感谢对小镇作出贡献的餐厅，六星时获得。增加40点创意。",
+      "value": { "part": 5, "essence": 33, "creatives": 40, "hole": 1, "max_hole": 5, "min_level": 13, "suitid": 99 },
+      "level": 6, "coin": 0, "diamond": 0, "saleflag": 0, "subflag": 0
     }
   ],
   "suits": [
