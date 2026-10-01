@@ -3,6 +3,7 @@ import { z } from 'zod';
 import * as raw from './raw';
 import type { SourceData } from './source';
 import { buildSuits, parseEquipDef, parseGemDef } from './equip';
+import { applyEquipLore } from './lore';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
@@ -119,6 +120,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const guessAwardRaw = parse('game/market_guess_award', raw.guessAwardFile);
   const actionMap = parse('game/action_map', raw.actionMapFile);
   const looks = parse('game/looks', raw.looksFile);
+  const equipLore = parse('game/equip_lore', raw.equipLoreFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -160,6 +162,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !guessAwardRaw ||
     !actionMap ||
     !looks ||
+    !equipLore ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -190,8 +193,9 @@ export function buildBundle(src: SourceData): BuildResult {
   const foodIds = new Set(foods.map((f) => f.id));
 
   // ---------- 道具 ----------
+  const lored = applyEquipLore(goodsRaw, suitsRaw, equipLore, errors);
   const awardFlags = new Map(awardFlagsRaw.map((a) => [a.id, a.awardflag]));
-  const goods: Goods[] = goodsRaw.map((g) => {
+  const goods: Goods[] = lored.goods.map((g) => {
     let value: unknown = null;
     if (g.value !== null && g.value !== undefined && g.value.trim() !== '') {
       try {
@@ -342,7 +346,7 @@ export function buildBundle(src: SourceData): BuildResult {
   }
 
   // ---------- 厨具套装、宝石升阶 ----------
-  const suits = buildSuits(suitsRaw);
+  const suits = buildSuits(lored.suits);
   unique(
     'equip_suits',
     suits.map((s) => s.id),

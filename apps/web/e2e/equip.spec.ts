@@ -50,7 +50,7 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   await expect(page.getByTestId('slot-1')).toContainText('见习之铲');
   await page.getByTestId('slot-3').click();
   await page.locator('[data-testid^="wear-"]').first().click();
-  await expect(page.getByTestId('slot-3')).toContainText('沉默静谧之镬');
+  await expect(page.getByTestId('slot-3')).toContainText('沉默之度玛的静谧之镬');
 
   // 铲：用强化石强化到 +1
   await page.getByTestId('slot-1').click();
@@ -66,7 +66,7 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   await page.goto('/rest/equip');
   await page.getByTestId('slot-3').click();
   await page
-    .getByRole('link', { name: /沉默静谧之镬/ })
+    .getByRole('link', { name: /沉默之度玛的静谧之镬/ })
     .first()
     .click();
   await page.getByTestId('drill-go').click();
@@ -84,5 +84,5 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   await expect(page.getByTestId('slot-1')).toContainText('空');
   await page.locator('[data-testid^="preset-apply-"]').first().click();
   await expect(page.getByTestId('slot-1')).toContainText('见习之铲 +1');
-  await expect(page.getByTestId('slot-3')).toContainText('沉默静谧之镬');
+  await expect(page.getByTestId('slot-3')).toContainText('沉默之度玛的静谧之镬');
 });
