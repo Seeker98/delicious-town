@@ -263,6 +263,12 @@ const CASES: Case[] = [
   { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/codes', url: () => '/api/v1/admin/codes', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/reports', url: () => '/api/v1/admin/reports', min: 'mod' },
+  ...(['bar', 'surge', 'multi', 'redeem'] as const).map((k) => ({
+    method: 'GET' as const,
+    route: `/api/v1/admin/suspicious/${k}`,
+    url: () => `/api/v1/admin/suspicious/${k}?shardId=${ids.shardId}`,
+    min: 'mod' as const,
+  })),
   {
     method: 'GET',
     route: '/api/v1/admin/reports/:id',

@@ -750,3 +750,14 @@ describe('举报数值（子项目 6B-1）', () => {
     expect(buildBundle(source()).bundle!.tuning.report).toEqual({ dailyMax: 10 });
   });
 });
+
+describe('可疑数据门槛（子项目 6B-2）', () => {
+  it('酒吧单日 3 次全过、20 镖 50 分；3 个账号共用；每类 50 行', () => {
+    expect(buildBundle(source()).bundle!.tuning.ops.suspicious).toEqual({
+      barPerfectDaily: 3,
+      dartsBullDaily: 20,
+      sharedAccounts: 3,
+      topN: 50,
+    });
+  });
+});
