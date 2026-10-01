@@ -19,10 +19,11 @@ export async function mailLink(request: APIRequestContext, to: string): Promise<
   throw new Error(`no mail for ${to}`);
 }
 
-/** 注册 → 验证邮箱 → 选一服 → 开店，返回用户名和店名 */
+/** 注册 → 验证邮箱 → 选一服 → 开店，返回用户名和店名；可带邀请码 */
 export async function registerAndOpen(
   page: Page,
   request: APIRequestContext,
+  opts: { inviteCode?: string } = {},
 ): Promise<{ username: string; name: string }> {
   const id = Date.now().toString(36).slice(-7);
   const username = `e${id}`;
@@ -32,6 +33,7 @@ export async function registerAndOpen(
   await page.getByPlaceholder('密码', { exact: true }).fill('secret123');
   await page.getByPlaceholder('确认密码').fill('secret123');
   await page.getByPlaceholder('邮箱').fill(email);
+  if (opts.inviteCode) await page.getByPlaceholder('邀请码（可不填）').fill(opts.inviteCode);
   await page.getByRole('button', { name: '注册' }).click();
   await expect(page).toHaveURL(/\/shards/);
   await page.goto(await mailLink(request, email));

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { mailLink } from './helpers';
 
 test('注册 → 验证邮箱 → 选区服 → 开店；同一账号在二服再开一家，互不影响', async ({ page, request }) => {

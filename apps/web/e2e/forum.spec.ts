@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import pg from 'pg';
 import { registerAndOpen } from './helpers';
 
