@@ -31,3 +31,5 @@ export * from './schemas/forum';
 export * from './rank';
 export * from './goodsIds';
 export * from './news';
+export * from './schemas/mail';
+export * from './schemas/announce';

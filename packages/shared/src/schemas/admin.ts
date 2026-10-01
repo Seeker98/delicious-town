@@ -123,19 +123,24 @@ const idNum = z.object({
 const uniqueIds = (rows?: Array<{ id: number }>) =>
   !rows || new Set(rows.map((r) => r.id)).size === rows.length;
 
+/** 补偿五项的字段；邮件、兑换码的附件在此基础上加命名帽子（子项目 6A） */
+export const grantItemsShape = {
+  coin: z.number().int().min(1).max(GRANT_LIMITS.coin).optional(),
+  diamond: z.number().int().min(1).max(GRANT_LIMITS.diamond).optional(),
+  exp: z.number().int().min(1).max(GRANT_LIMITS.exp).optional(),
+  goods: z.array(idNum).max(50).optional(),
+  foods: z.array(idNum).max(50).optional(),
+};
+type GrantShape = z.infer<z.ZodObject<typeof grantItemsShape>>;
+export const grantNonEmpty = (i: GrantShape) =>
+  Boolean(i.coin || i.diamond || i.exp || i.goods?.length || i.foods?.length);
+/** 同一种道具或食材只能列一次，否则可以绕过每种的数量上限 */
+export const grantUnique = (i: GrantShape) => uniqueIds(i.goods) && uniqueIds(i.foods);
+
 export const grantItems = z
-  .object({
-    coin: z.number().int().min(1).max(GRANT_LIMITS.coin).optional(),
-    diamond: z.number().int().min(1).max(GRANT_LIMITS.diamond).optional(),
-    exp: z.number().int().min(1).max(GRANT_LIMITS.exp).optional(),
-    goods: z.array(idNum).max(50).optional(),
-    foods: z.array(idNum).max(50).optional(),
-  })
-  .refine((i) => Boolean(i.coin || i.diamond || i.exp || i.goods?.length || i.foods?.length), {
-    message: 'empty',
-  })
-  // 同一种道具或食材只能列一次，否则可以绕过每种的数量上限
-  .refine((i) => uniqueIds(i.goods) && uniqueIds(i.foods), { message: 'duplicate' });
+  .object(grantItemsShape)
+  .refine(grantNonEmpty, { message: 'empty' })
+  .refine(grantUnique, { message: 'duplicate' });
 export type GrantItems = z.infer<typeof grantItems>;
 
 export const createGrantBody = z
@@ -146,6 +151,8 @@ export const createGrantBody = z
     minLevel: z.number().int().min(1).optional(),
     items: grantItems,
     reason: z.string().trim().min(1).max(200),
+    /** 改为发邮件，玩家在邮箱里领取（子项目 6A） */
+    asMail: z.boolean().optional(),
   })
   .refine((b) => b.target === 'shard' || b.restId !== undefined, { path: ['restId'], message: 'required' });
 export type CreateGrantInput = z.infer<typeof createGrantBody>;
