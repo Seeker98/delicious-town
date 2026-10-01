@@ -1,6 +1,7 @@
 import type { BarDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
+import { devilDrink, devilStart } from './devil';
 import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
 import { playSlot } from './slot';
 import { barView } from './view';
@@ -34,6 +35,12 @@ export function createBarService(d: GameDeps) {
     },
     slot(ctx: RestCtx, b: { times: number }) {
       return op(ctx, 'bar.slot', (o) => playSlot(o, b.times));
+    },
+    devilStart(ctx: RestCtx, b: { stake: number }) {
+      return op(ctx, 'bar.devil', (o) => devilStart(o, b.stake));
+    },
+    devilDrink(ctx: RestCtx, b: { cup: number }) {
+      return op(ctx, 'bar.devil', (o) => devilDrink(o, b.cup));
     },
   };
 }

@@ -9,6 +9,16 @@ export const barNumBody = z.object({ num: times });
 export const barSlotBody = z.object({ times });
 export const barExchangeBody = z.object({ num: times });
 
+// ---------- 酒吧扩展（子项目 4C-3） ----------
+/** 押注是否在可选范围由服务端按 tuning 再查 */
+export const barDevilStartBody = z.object({ stake: z.number().int().min(1).max(1000) });
+export const barDevilDrinkBody = z.object({ cup: z.number().int().min(0).max(99) });
+/** 配料编号 0~7；长度由服务端按本关配方再查 */
+export const barMemoryAnswerBody = z.object({
+  answer: z.array(z.number().int().min(0).max(99)).min(1).max(20),
+});
+export const barDartsThrowBody = z.object({ elapsedMs: z.number().int().min(0).max(600_000) });
+
 export type BarResultDto = 'win' | 'draw' | 'lose';
 
 /** 随机奖励（规格书 00 §0.8） */
@@ -56,6 +66,71 @@ export interface BarDto {
   };
   /** 多少张礼券换 1 个蟹币 */
   krabCoinTickets: number;
+  devil: { stakes: number[]; round: DevilDto | null };
+  memory: { cost: number; played: number; max: number; round: { level: number; passed: boolean } | null };
+  darts: { cost: number; played: number; max: number; round: DartsDto | null };
+}
+
+/** 魔鬼辣杯的局面；特辣酒位置只在结束时给出 */
+export interface DevilDto {
+  stake: number;
+  /** 每杯是谁喝的；null 还没人喝 */
+  cups: Array<'me' | 'bartender' | null>;
+  /** 玩家活过的杯数 */
+  survived: number;
+  /** 结束时的输赢；进行中为 null */
+  result: 'win' | 'lose' | null;
+  spiked: number | null;
+  /** 赢得的礼券 */
+  payout: number;
+  /** 输了时宿醉到什么时候 */
+  hangoverUntil: string | null;
+  /** 这一回合调酒师喝的杯 */
+  lastBartender: number | null;
+}
+
+export interface MemoryRoundDto {
+  level: number;
+  /** 配方：配料编号 */
+  seq: number[];
+  flashMs: number;
+  gapMs: number;
+  /** 展示结束后还有多少毫秒可以作答 */
+  answerMs: number;
+}
+
+export interface MemoryAnswerDto {
+  correct: boolean;
+  level: number;
+  award: BarAwardDto | null;
+  /** 答对且还有下一关 */
+  canNext: boolean;
+  /** 本局结束 */
+  finished: boolean;
+}
+
+export interface DartsDto {
+  /** 已投的每一镖得分 */
+  throws: number[];
+  /** 已瞄准、等待投掷 */
+  aiming: boolean;
+}
+
+export interface DartsAimDto {
+  period: number;
+  phase: number;
+}
+
+export interface DartsThrowDto {
+  /** 落点；超出时间窗为 null（记 0 分） */
+  x: number | null;
+  score: number;
+  throws: number[];
+  finished: boolean;
+  boss: number[] | null;
+  result: BarResultDto | null;
+  award: BarAwardDto | null;
+  refund: number;
 }
 
 export interface FgResultDto {
