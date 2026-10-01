@@ -46,4 +46,18 @@ describe('RegisterView', () => {
     expect(resetSpy).toHaveBeenCalledTimes(1);
     expect(w.find('button').attributes('disabled')).toBeDefined();
   });
+
+  it('注册链接带邀请码（?invite=）时自动填上', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/register', component: RegisterView }],
+    });
+    await router.push('/register?invite=ABCD2345');
+    const w = mount(RegisterView, {
+      global: { plugins: [createPinia(), router], stubs: { TurnstileBox: TurnstileStub } },
+    });
+    await flushPromises();
+    const invite = w.find('input[placeholder="邀请码（可不填）"]').element as HTMLInputElement;
+    expect(invite.value).toBe('ABCD2345');
+  });
 });

@@ -127,6 +127,8 @@ import type {
   MailClaimAllDto,
   MailClaimDto,
   MailListDto,
+  RedeemResultDto,
+  InviteDto,
 } from '@dt/shared';
 import { api } from './client';
 
@@ -427,6 +429,8 @@ export const endpoints = {
   announcementSeen: (id: number) => api.post<null>(`/api/v1/announcements/${id}/seen`, {}),
   publicAnnouncements: () => api.get<AnnouncementsDto>('/api/v1/public/announcements'),
   mail: () => api.get<MailListDto>('/api/v1/mail'),
+  redeem: (code: string) => api.post<RedeemResultDto>('/api/v1/redeem', { code }),
+  invite: () => api.get<InviteDto>('/api/v1/invite'),
   mailUnread: () => api.get<{ count: number }>('/api/v1/mail/unread'),
   mailRead: (id: number) => api.post<void>(`/api/v1/mail/${id}/read`, {}),
   mailClaim: (id: number) => api.post<MailClaimDto>(`/api/v1/mail/${id}/claim`, {}),

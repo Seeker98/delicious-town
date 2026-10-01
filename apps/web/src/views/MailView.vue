@@ -2,13 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import type { MailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import RedeemBox from '../components/RedeemBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
 import { useToastStore } from '../stores/toast';
 import { rewardSummary } from '../utils/reward';
 
-/** 邮箱（子项目 6A）：领取附件、一键全领、删除；兑换码输入框在 6A-2 放到 top 插槽 */
+/** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const mailStore = useMailStore();
@@ -97,7 +98,7 @@ const claimAll = () =>
       一键领取
     </button>
   </div>
-  <slot name="top" />
+  <RedeemBox @redeemed="load" />
   <div v-if="notice" class="alert alert-warning py-1 small" role="status">{{ notice }}</div>
   <div v-if="loaded && items.length === 0" class="dt-empty">没有邮件</div>
   <div v-for="m in items" :key="m.id" class="dt-card small mb-2" :data-testid="`mail-${m.id}`">
