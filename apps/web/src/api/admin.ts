@@ -2,6 +2,7 @@ import type {
   AccountRole,
   AdminAnnouncementDto,
   AdminCodeDto,
+  LaunchCheckDto,
   ReportCaseDto,
   ReportDetailDto,
   ReportStatus,
@@ -90,6 +91,9 @@ export const adminApi = {
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
+  launchCheck: () => api.get<LaunchCheckDto>(`${A}/launch-check`),
+  launchCheckFix: (b: { shardId: number; version: number }) =>
+    api.post<LaunchCheckDto>(`${A}/launch-check/fix`, b),
   codes: (shardId?: number) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId })}`),
   createCode: (b: CreateSharedCodeInput) => api.post<AdminCodeDto>(`${A}/codes`, b),
   createCodeBatch: (b: CreateBatchInput) => api.post<AdminCodeDto>(`${A}/codes/batch`, b),
