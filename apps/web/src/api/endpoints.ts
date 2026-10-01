@@ -126,6 +126,9 @@ import type {
   TakeawayDeliveryDto,
   TakeawayDto,
   AnnouncementsDto,
+  ActivitiesDto,
+  ActivityClaimDto,
+  ActivitySummaryDto,
   MailClaimAllDto,
   MailClaimDto,
   MailListDto,
@@ -443,5 +446,11 @@ export const endpoints = {
   mailRead: (id: number) => api.post<void>(`/api/v1/mail/${id}/read`, {}),
   mailClaim: (id: number) => api.post<MailClaimDto>(`/api/v1/mail/${id}/claim`, {}),
   mailClaimAll: () => api.post<MailClaimAllDto>('/api/v1/mail/claim-all', {}),
+  activities: () => api.get<ActivitiesDto>('/api/v1/activities'),
+  activitySummary: () => api.get<ActivitySummaryDto>('/api/v1/activities/summary'),
+  activityClaim: (id: number, key: string) =>
+    api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim`, { key }),
+  activityClaimAll: (id: number) => api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim-all`, {}),
+  activityUnlock: (id: number) => api.post<{ premium: true }>(`/api/v1/activities/${id}/unlock`, {}),
   mailDelete: (id: number) => api.post<void>(`/api/v1/mail/${id}/delete`, {}),
 };
