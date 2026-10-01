@@ -72,3 +72,32 @@ describe('可疑数据（设计 §5）', () => {
     expect(rows.find((x) => x.accountId === r.accountId)!.ttlSec).toBeGreaterThan(0);
   });
 });
+
+describe('可疑数据终审修复', () => {
+  it('资源暴涨把结算收入（income_round）算进净增（终审 I1）', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    const b = await newRestaurant(t, { shardId });
+    const day = addDays(gameDay(t.clock.now), -1);
+    const at = new Date(gameTime(day, 0).getTime() + 3_600_000);
+    await t.db
+      .insertInto('income_round')
+      .values({
+        rest_id: a.restaurantId,
+        round_no: 1,
+        coin: 2_000_000,
+        exp: 30_000,
+        oil: 0,
+        customers: JSON.stringify({}),
+        rates: JSON.stringify({}),
+        drops: JSON.stringify([]),
+        created_at: at,
+      })
+      .execute();
+    await ledger(b.restaurantId, 'coin', 500_000, 'shop.sell', at);
+    const r = await s.surge(shardId, day);
+    expect(r.coin[0]).toMatchObject({ restId: a.restaurantId, net: 2_000_000 });
+    expect(r.coin[0]!.topSources[0]).toEqual({ source: 'settlement', delta: 2_000_000 });
+    expect(r.exp[0]).toMatchObject({ restId: a.restaurantId, net: 30_000 });
+  });
+});

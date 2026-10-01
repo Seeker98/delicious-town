@@ -117,7 +117,11 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
           class="form-control form-control-sm d-inline-block w-auto"
           data-testid="sus-day"
       /></label>
-      <span class="text-muted">不选就是昨天{{ surge ? `（当前：${surge.day}）` : '' }}</span>
+      <span class="text-muted"
+        >含结算收入（结算明细只留 3 天，更早的日期只有流水部分）；不选就是昨天{{
+          surge ? `（当前：${surge.day}）` : ''
+        }}</span
+      >
     </div>
     <template v-if="surge">
       <div v-for="[k, label] in SURGE" :key="k" class="mb-3">

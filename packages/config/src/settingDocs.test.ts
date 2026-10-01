@@ -19,6 +19,8 @@ describe('区服数值说明（问题记录 126）', () => {
     expect(Object.keys(d.fields).length).toBeGreaterThan(500);
     expect(d.fields['tuning.settlement.expMultiplier']).toMatch(/经验/);
     expect(d.groups['restaurant']).toBeTruthy();
+    // 终审：神殿的 refreshCoin 是试炼换对象的费用，不是"刷新订单"
+    expect(d.fields['tuning.temple.refreshCoin']).toMatch(/试炼/);
   });
 
   it('漏写、多写、空说明都报错（Review Focus 5）', () => {

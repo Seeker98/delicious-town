@@ -74,6 +74,16 @@ export function createSuspicious(game: Game) {
       const to = gameTime(addDays(day, 1), 0);
       const out: SuspiciousSurgeDto = { day, coin: [], diamond: [], exp: [] };
       for (const kind of SURGE_KINDS) {
+        // 结算的银币、经验不进流水（ledger: false），在 income_round 里；按来源 settlement 一起算（终审 I1）
+        const ledgerPart = sql`select rest_id, delta, source from ledger
+          where kind = ${kind} and created_at >= ${from} and created_at < ${to}`;
+        const src =
+          kind === 'diamond'
+            ? ledgerPart
+            : sql`${ledgerPart}
+              union all
+              select rest_id, ${sql.ref(kind)} as delta, 'settlement' as source from income_round
+              where created_at >= ${from} and created_at < ${to}`;
         const top = await sql<{
           rest_id: number;
           name: string;
@@ -82,20 +92,18 @@ export function createSuspicious(game: Game) {
           net: string;
         }>`
           select r.id as rest_id, r.name, a.id as account_id, a.username, sum(l.delta) as net
-          from ledger l
+          from (${src}) l
           join restaurant r on r.id = l.rest_id
           join account a on a.id = r.account_id
-          where r.shard_id = ${shardId} and not r.npc and l.kind = ${kind}
-            and l.created_at >= ${from} and l.created_at < ${to}
+          where r.shard_id = ${shardId} and not r.npc
           group by r.id, r.name, a.id, a.username
           order by sum(l.delta) desc
           limit ${t.topN}`.execute(db);
         const ids = top.rows.map((r) => r.rest_id);
         const sources = ids.length
           ? await sql<{ rest_id: number; source: string; delta: string }>`
-              select rest_id, source, sum(delta) as delta from ledger
-              where rest_id in (${sql.join(ids)}) and kind = ${kind}
-                and created_at >= ${from} and created_at < ${to}
+              select rest_id, source, sum(delta) as delta from (${src}) l
+              where rest_id in (${sql.join(ids)})
               group by rest_id, source`.execute(db)
           : { rows: [] };
         const bySource = new Map<number, Array<{ source: string; delta: number }>>();

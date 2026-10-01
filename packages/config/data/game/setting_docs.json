@@ -314,7 +314,7 @@
     "tuning.temple.guardianFoodsBase": "打倒守护兽掉食材数 ≈ 这个值 ÷ 食材等级（个）",
     "tuning.temple.guardianFoodsSpread": "守护兽掉食材数的随机浮动范围（个）",
     "tuning.temple.injectCoin": "试炼用银币注入一次的费用（银币）",
-    "tuning.temple.refreshCoin": "刷新神殿订单的费用，当天第 n 次是 n 倍（银币）",
+    "tuning.temple.refreshCoin": "试炼不指定对象、花银币重抽试炼特色菜的费用（银币；用触手指定对象时不花银币）",
     "tuning.temple.trialCoin": "试炼一次的费用（银币）",
     "tuning.temple.trialWorthMax": "试炼价值加成上限（百分比）",
     "tuning.temple.trialExpMax": "试炼经验加成上限（百分比）",
