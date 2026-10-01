@@ -29,4 +29,9 @@ describe('RewardItemsEditor', () => {
     await w.find('[data-testid="ri-hat-name-0"]').setValue('大橘');
     expect(w.emitted('over')!.at(-1)![0]).toEqual([]);
   });
+
+  it('写明食材有单种上限：超出橱柜和冰箱的部分会丢弃（问题记录 204）', () => {
+    const w = mount(RewardItemsEditor, { props: { modelValue: {}, hats: false } });
+    expect(w.find('[data-testid="ri-limits"]').text()).toContain('多出的会丢弃');
+  });
 });
