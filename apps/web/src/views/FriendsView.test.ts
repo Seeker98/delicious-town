@@ -108,4 +108,20 @@ describe('FriendsView', () => {
     expect(endpoints.friendApply).toHaveBeenCalledWith(4);
     expect(w.find('[data-testid="apply-4"]').text()).toBe('已申请');
   });
+
+  it('好友列表还在读时点"动态"：动态照样读出来（好友 e2e 偶发失败的原因）', async () => {
+    let release!: (v: never) => void;
+    vi.mocked(endpoints.friendList).mockImplementationOnce(() => new Promise((r) => (release = r)));
+    vi.mocked(endpoints.friendFeed).mockResolvedValue({
+      items: [{ type: 'thumb', params: { byName: '乙店' }, at: '2026-10-01T04:00:00.000Z' }],
+    } as never);
+    vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
+    const w = mountView();
+    await w.find('[data-testid="tab-feed"]').trigger('click');
+    await flushPromises();
+    release({ friends: [], cap: 10 } as never);
+    await flushPromises();
+    expect(endpoints.friendFeed).toHaveBeenCalled();
+    expect(w.text()).toContain('乙店 给你点了赞');
+  });
 });
