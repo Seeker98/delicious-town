@@ -12,6 +12,9 @@ import {
   grantPreviewQuery,
   idParam,
   banBody,
+  reportListQuery,
+  resolveReportBody,
+  rejectReportBody,
   pageQuery,
   playerSearchQuery,
   roleBody,
@@ -36,6 +39,7 @@ import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
+import { createAdminReports } from '../report/admin';
 import { createAdminAnnounce } from '../announce/admin';
 import { distribution, economy, settlementRounds } from './stats';
 
@@ -137,6 +141,24 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/mails/:id/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await mails.revoke(a, id(req)));
+    });
+
+    const reports = createAdminReports(game);
+    r.get('/reports', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await reports.list(parse(reportListQuery, req.query)));
+    });
+    r.get('/reports/:id', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await reports.detail(id(req)));
+    });
+    r.post('/reports/:id/resolve', async (req) => {
+      const a = await requireRole(db, req, 'mod');
+      return ok(await reports.resolve(a, id(req), parse(resolveReportBody, req.body)));
+    });
+    r.post('/reports/:id/reject', async (req) => {
+      const a = await requireRole(db, req, 'mod');
+      return ok(await reports.reject(a, id(req), parse(rejectReportBody, req.body)));
     });
 
     const codes = createAdminCodes(game);

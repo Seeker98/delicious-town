@@ -13,6 +13,7 @@ let ids: {
   mailId: number;
   announcementId: number;
   codeId: number;
+  reportIds: number[];
   batchId: number;
 };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
@@ -80,6 +81,23 @@ beforeAll(async () => {
     .set({ batch_id: single.id })
     .where('id', '=', single.id)
     .execute();
+  // 举报：解析/驳回各需要一个待处理的案子（管理员那次会真的结案），列表、详情用第一个
+  const reportIds: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    const c = await ctx.deps.db
+      .insertInto('report_case')
+      .values({
+        shard_id: shardId,
+        target_type: 'notice',
+        target_id: restId + 1_000_000 * (i + 1),
+        target_rest_id: restId,
+        target_account_id: target.accountId,
+        snapshot: '权限测试',
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    reportIds.push(c.id);
+  }
   ids = {
     shardId,
     accountId: target.accountId,
@@ -88,6 +106,7 @@ beforeAll(async () => {
     mailId: mail.id,
     announcementId: announcement.id,
     codeId: code.id,
+    reportIds,
     batchId: single.id,
   };
   cookies = {
@@ -243,6 +262,27 @@ const CASES: Case[] = [
   { method: 'GET', route: '/api/v1/admin/grants', url: () => '/api/v1/admin/grants', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/codes', url: () => '/api/v1/admin/codes', min: 'mod' },
+  { method: 'GET', route: '/api/v1/admin/reports', url: () => '/api/v1/admin/reports', min: 'mod' },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/reports/:id',
+    url: () => `/api/v1/admin/reports/${ids.reportIds[0]}`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/reports/:id/resolve',
+    url: () => `/api/v1/admin/reports/${ids.reportIds[1]}/resolve`,
+    body: () => ({ note: '权限测试' }),
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/reports/:id/reject',
+    url: () => `/api/v1/admin/reports/${ids.reportIds[2]}/reject`,
+    body: () => ({ note: '权限测试' }),
+    min: 'mod',
+  },
   {
     method: 'POST',
     route: '/api/v1/admin/codes',

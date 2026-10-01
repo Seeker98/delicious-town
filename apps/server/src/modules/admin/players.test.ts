@@ -131,7 +131,9 @@ describe('封号', () => {
   });
 
   it('mod 不能封 admin；谁都不能封自己', async () => {
-    expect((await post(mod.cookie, `/players/${admin.accountId}/ban`, { reason: 'x', days: 1 })).status).toBe(403);
+    expect((await post(mod.cookie, `/players/${admin.accountId}/ban`, { reason: 'x', days: 1 })).status).toBe(
+      403,
+    );
     expect((await post(admin.cookie, `/players/${admin.accountId}/ban`, { reason: 'x' })).status).toBe(403);
   });
 });
