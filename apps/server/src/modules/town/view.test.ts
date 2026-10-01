@@ -22,6 +22,7 @@ describe('小镇概览（设计文档 §3.8）', () => {
       coin: 500,
       diamond: 7,
       talked: { bigEater: false, wenjie: false, bro13: false },
+      mayor: { answered: false },
       bigEaterGift: false,
       shaken: false,
       broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 },
@@ -59,11 +60,10 @@ describe('小镇概览（设计文档 §3.8）', () => {
     expect(v.bless.restName).toEqual(expect.any(String));
   });
 
-  it('支线任务：广播、摇钱包开放；嘻哈男孩打赏、发帖仍隐藏', async () => {
+  it('支线任务：广播、摇钱包、嘻哈男孩打赏开放（4E-2）；发帖仍隐藏', async () => {
     const a = await newRestaurant(t, { patch: { main_task_step: 50 } });
     const ids = (await t.game.task.tasks(a)).side.map((x) => x.id);
-    expect(ids).toEqual(expect.arrayContaining([102, 109]));
-    expect(ids).not.toContain(101);
+    expect(ids).toEqual(expect.arrayContaining([101, 102, 109]));
     expect(ids).not.toContain(107);
   });
 });

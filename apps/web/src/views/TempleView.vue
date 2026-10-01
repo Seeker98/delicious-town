@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { TempleDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -52,6 +53,7 @@ onMounted(load);
 
 <template>
   <h5>神殿</h5>
+  <HiphopCard :place="6" @changed="load" />
   <ul class="nav nav-tabs mb-2">
     <li v-for="x in TABS" :key="x.key" class="nav-item">
       <a

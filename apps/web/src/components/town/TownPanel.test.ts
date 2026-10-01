@@ -11,6 +11,7 @@ import { blessData, townData } from './testData';
 vi.mock('../../api/endpoints', () => ({
   endpoints: {
     townTalk: vi.fn(),
+    townMayor: vi.fn(),
     townShake: vi.fn(),
     townWish: vi.fn(),
     townFeast: vi.fn(),
@@ -151,6 +152,31 @@ describe('TownPanel', () => {
       expect(w.find('[data-testid="hammer-block"]').exists()).toBe(false);
       expect(w.find('[data-testid="hammer-1"]').attributes('disabled')).toBeUndefined();
     });
+  });
+
+  it('镇长问答：点开后选地点，提示回话和道具；答过就不能再答', async () => {
+    vi.mocked(endpoints.townMayor).mockResolvedValue({
+      npc: 'mayor',
+      talk: '谢谢你，我现在就去找他，好好弥补他！',
+      rewards: [{ kind: 'goods', id: 231, num: 1 }],
+    });
+    const w = mount(TownPanel, { props: { data: townData() } });
+    expect(w.find('[data-testid="mayor-3"]').exists()).toBe(false);
+    await w.find('[data-testid="mayor-open"]').trigger('click');
+    expect(
+      w.findAll('[data-testid^="mayor-"]').filter((b) => /mayor-\d/.test(b.attributes('data-testid')!)),
+    ).toHaveLength(7);
+    await w.find('[data-testid="mayor-3"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townMayor).toHaveBeenCalledWith(3);
+    expect(useToastStore().items.at(-1)!.text).toBe(
+      '镇长：谢谢你，我现在就去找他，好好弥补他！ 获得 道具231×1',
+    );
+    expect(w.emitted('reload')).toHaveLength(1);
+
+    const done = mount(TownPanel, { props: { data: townData({ mayor: { answered: true } }) } });
+    expect(done.find('[data-testid="mayor-open"]').exists()).toBe(false);
+    expect(done.text()).toContain('今天已经告诉过镇长了');
   });
 
   it('NPC 和钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {

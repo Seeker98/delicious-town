@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { HIPHOP_PLACE_NAMES, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
 import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -42,6 +43,16 @@ async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: st
   }
 }
 const rewards = (list: TownRewardDto[]) => list.map((r) => rewardText(r, catalog)).join('、');
+
+const mayorOpen = ref(false);
+const PLACES = HIPHOP_PLACES.map((p) => ({ id: p, name: HIPHOP_PLACE_NAMES[p] }));
+function askMayor(place: HiphopPlace) {
+  void act(
+    () => endpoints.townMayor(place),
+    (r) => `镇长：${r.talk} 获得 ${rewards(r.rewards)}`,
+    '回答失败',
+  );
+}
 
 function talk(key: NpcKey, name: string) {
   void act(
@@ -148,6 +159,38 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         {{ data.talked[n.key] ? '今天聊过了' : '聊天' }}
       </button>
     </div>
+  </div>
+  <div class="dt-item">
+    <div class="dt-item-main">
+      <div class="dt-item-title">镇长</div>
+      <div class="dt-meta">
+        {{
+          data.mayor.answered ? '今天已经告诉过镇长了' : '告诉镇长嘻哈男孩今天在哪：答对有加成，答错要挨批'
+        }}
+      </div>
+    </div>
+    <div v-if="!data.mayor.answered" class="dt-item-actions">
+      <button
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy"
+        data-testid="mayor-open"
+        @click="mayorOpen = !mayorOpen"
+      >
+        告诉镇长
+      </button>
+    </div>
+  </div>
+  <div v-if="mayorOpen && !data.mayor.answered" class="dt-pick-grid mb-2">
+    <button
+      v-for="p in PLACES"
+      :key="p.id"
+      class="btn btn-sm btn-outline-secondary"
+      :disabled="busy"
+      :data-testid="`mayor-${p.id}`"
+      @click="askMayor(p.id)"
+    >
+      {{ p.name }}
+    </button>
   </div>
 
   <h6 class="dt-section">蟹老板的钱袋</h6>

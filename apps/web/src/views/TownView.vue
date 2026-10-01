@@ -5,20 +5,21 @@ import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
+import RankPanel from '../components/town/RankPanel.vue';
 import TownPanel from '../components/town/TownPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 
-type Tab = 'news' | 'town' | 'exchange';
+type Tab = 'news' | 'town' | 'exchange' | 'rank';
 const KEY = 'dt_town_tab';
-const isTab = (v: unknown): v is Tab => v === 'news' || v === 'town' || v === 'exchange';
+const isTab = (v: unknown): v is Tab => v === 'news' || v === 'town' || v === 'exchange' || v === 'rank';
 /** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
 function initialTab(query: unknown): Tab {
   if (isTab(query)) return query;
   try {
     const v = localStorage.getItem(KEY);
-    return v === 'town' || v === 'exchange' ? v : 'news';
+    return isTab(v) ? v : 'news';
   } catch {
     return 'news';
   }
@@ -27,6 +28,7 @@ const TABS: Array<{ key: Tab; label: string }> = [
   { key: 'news', label: '新闻' },
   { key: 'town', label: '小镇' },
   { key: 'exchange', label: '兑换' },
+  { key: 'rank', label: '排行' },
 ];
 const toast = useToastStore();
 const catalog = useCatalogStore();
@@ -73,6 +75,7 @@ onMounted(() => {
     </li>
   </ul>
   <ExchangePanel v-if="tab === 'exchange'" />
+  <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
     <TownPanel v-else :data="data" @reload="load" />

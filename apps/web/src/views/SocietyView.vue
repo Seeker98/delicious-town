@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { RouterLink } from 'vue-router';
 
 const links = [
@@ -11,6 +12,7 @@ const links = [
 
 <template>
   <h5>协会</h5>
+  <HiphopCard :place="4" />
   <RouterLink
     v-for="l in links"
     :key="l.to"

@@ -14,6 +14,7 @@ import * as m0012 from './0012_tower';
 import * as m0013 from './0013_takeaway';
 import * as m0014 from './0014_town';
 import * as m0015 from './0015_bar_round';
+import * as m0016 from './0016_hiphop';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -32,4 +33,5 @@ export const migrations: Record<string, Migration> = {
   '0013_takeaway': m0013,
   '0014_town': m0014,
   '0015_bar_round': m0015,
+  '0016_hiphop': m0016,
 };

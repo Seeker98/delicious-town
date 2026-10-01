@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import type { MarketDto, MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const session = useSessionStore();
+const myRest = computed(() => session.me?.restaurantId ?? null);
 const data = ref<MarketDto | null>(null);
 const qty = reactive<Record<number, number>>({});
 const picks = ref<number[]>([]);
@@ -49,6 +53,12 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
     busy.value = false;
   }
 }
+/** 菜场工作证手动进货（4E-2）：挂 4 种自己的货到日常货架 */
+const manualStock = () =>
+  run(async () => {
+    const r = await endpoints.marketManualStock();
+    toast.push(`进货完成，声望 +${r.renown}`, 'success');
+  }, '进货失败');
 /** 买的数量不超过最多还能买几个 */
 const buy = (it: MarketItemDto) =>
   run(() => endpoints.marketBuy(it.id, Math.max(1, Math.min(qty[it.id] || 1, it.canBuy))), '购买失败');
@@ -84,6 +94,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
 </script>
 
 <template>
+  <HiphopCard :place="1" @changed="load" />
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">
       <div class="d-flex align-items-center">
@@ -93,6 +104,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         </h6>
         <span class="small text-muted ms-auto">下次进货 {{ time(data[s.next]) }}</span>
       </div>
+      <button
+        v-if="s.key === 'daily' && data.manual.hasCard"
+        class="btn btn-sm btn-outline-primary mb-1"
+        :disabled="busy"
+        data-testid="market-manual"
+        @click="manualStock"
+      >
+        手动进货（{{ formatNum(data.manual.cost) }} 银币）
+      </button>
       <div
         v-if="s.key === 'special' && specialWait > 0"
         class="small text-danger"
@@ -109,6 +129,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         <div class="flex-fill">
           <b>{{ catalog.foodName(it.foodsId) }}</b>
           <span v-if="it.hot" class="badge bg-danger ms-1">热门</span>
+          <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
+            {{ it.owner.restId === myRest ? '自己的货，免费' : `${it.owner.name} 进的货` }}
+          </div>
           <div class="text-muted">
             {{ formatNum(it.price) }} 银币 · 剩 {{ formatNum(it.left) }} · 限购 {{ it.bought }}/{{ it.limit }}
           </div>

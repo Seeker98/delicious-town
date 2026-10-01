@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, reactive, ref } from 'vue';
 import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -58,6 +59,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
 </script>
 
 <template>
+  <HiphopCard :place="2" @changed="load" />
   <ul class="nav nav-tabs mb-2">
     <li class="nav-item">
       <a :class="['nav-link', { active: tab === 'coin' }]" href="#" @click.prevent="tab = 'coin'">银币商店</a>

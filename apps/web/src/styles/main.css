@@ -531,3 +531,22 @@ body {
   background: #212529;
   border-radius: 2px;
 }
+
+/* ---------- 嘻哈男孩、排行（子项目 4E-2） ---------- */
+.dt-hiphop {
+  border-left: 4px solid var(--dt-primary);
+}
+.dt-hiphop-num {
+  width: 8rem;
+}
+.dt-item-me {
+  background: #fff4e6;
+  border-radius: 6px;
+}
+.dt-rank-no {
+  width: 2rem;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+  text-align: center;
+}

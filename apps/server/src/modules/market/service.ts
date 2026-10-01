@@ -6,6 +6,8 @@ import {
   hashSeed,
   nextSlot,
   seededRng,
+  gameDay,
+  type ManualStockDto,
   type MarketDto,
   type MarketItemDto,
   type Slot,
@@ -13,15 +15,19 @@ import {
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
-import { restLog, runOp, runSystemOp, type Op } from '../../core/op';
-import { spendCoin } from '../../core/resources';
+import { createOp, flushOp, restLog, runOp, runSystemOp, type Op, type OpResult } from '../../core/op';
+import { gainCoin, spendCoin } from '../../core/resources';
+import { withRestaurants } from '../../db/tx';
 import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
 import { addFoods, cupboardSlotsUsed, foodsMap } from '../cupboard/foods';
 import { postNews } from '../news/news';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
+import { validNum } from '../takeaway/common';
+import { getDaily } from '../counter/dailyCounter';
+import { manualStock } from './manual';
 import type { WorldService } from '../world/service';
-import { personLimit, rollShelf, unitPrice, type Shelf } from './rules';
+import { manualCost, personLimit, rollShelf, unitPrice, type Shelf } from './rules';
 
 const deviceSubject = (id: string) => `dev:${createHash('sha256').update(id).digest('hex').slice(0, 16)}`;
 
@@ -149,6 +155,9 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .where('shard_id', '=', o.shardId)
         .executeTakeFirst();
       if (!item) throw invalidState('item_gone');
+      // 手动货：进货人自己买免费、不限购；别人买走 buyManual（这里遇到说明进货人刚换了货）
+      const own = item.owner_rest_id === o.rest.id;
+      if (item.owner_rest_id !== null && !own) throw invalidState('item_gone');
       const shelf = item.shelf as Shelf;
       const t = o.tuning.market;
       const food = o.config.requireFood(item.foods_id);
@@ -166,10 +175,12 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       if (have === 0 && (await cupboardSlotsUsed(o.tx, o.rest.id)) >= o.rest.cupboard_num)
         throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
       if (have + b.num > o.rest.foods_max_num) throw limitReached('foods_max', { max: o.rest.foods_max_num });
-      const limit = personLimit(shelf, food, item.opened_at, o.now, t);
-      await claimLimit(o, item.id, `rest:${o.rest.id}`, b.num, limit);
-      if (ctx.deviceId) await claimLimit(o, item.id, deviceSubject(ctx.deviceId), b.num, limit);
-      await claimLimit(o, item.id, `ip:${ctx.ip}`, b.num, limit);
+      if (!own) {
+        const limit = personLimit(shelf, food, item.opened_at, o.now, t);
+        await claimLimit(o, item.id, `rest:${o.rest.id}`, b.num, limit);
+        if (ctx.deviceId) await claimLimit(o, item.id, deviceSubject(ctx.deviceId), b.num, limit);
+        await claimLimit(o, item.id, `ip:${ctx.ip}`, b.num, limit);
+      }
       const sold = await o.tx
         .updateTable('market_item')
         .set({ sold: sql<number>`sold + ${b.num}` })
@@ -179,7 +190,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .executeTakeFirst();
       if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
       const snap = await world.ensure(o.shardId, o.now, o.tx);
-      spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
+      if (!own) spendCoin(o, Math.ceil(unitPrice(shelf, food, t, snap.weather.effects) * b.num));
       if (shelf === 1) {
         const ok = await d.redis.eval(
           COOLDOWN_LUA,
@@ -203,7 +214,64 @@ export function createMarketService(d: GameDeps, world: WorldService) {
     });
   }
 
+  /**
+   * 别人买手动货（设计文档 §2.5）：买家和进货人两家店一起锁；每人每批最多 manualPersonMax 份（只按店计），
+   * 付日常价，进货人得 ⌊货款 × manualShare⌋
+   */
+  async function buyManual(
+    ctx: RestCtx,
+    b: { itemId: number; num: number },
+    ownerId: number,
+  ): Promise<OpResult<{ itemId: number; foodsId: number; num: number }>> {
+    const settings = await d.shards.ensureFeature(ctx.shardId, 'market');
+    return withRestaurants(d.db, [ctx.restaurantId, ownerId], async (tx, rests) => {
+      const me = createOp(d, tx, rests.get(ctx.restaurantId)!, settings, { source: 'market.buy', ctx });
+      const owner = createOp(d, tx, rests.get(ownerId)!, settings, {
+        source: 'market.share',
+        now: me.now,
+        rng: me.rng,
+      });
+      const item = await tx
+        .selectFrom('market_item')
+        .selectAll()
+        .where('id', '=', b.itemId)
+        .where('shard_id', '=', ctx.shardId)
+        .executeTakeFirst();
+      if (!item || item.owner_rest_id !== ownerId) throw invalidState('item_gone');
+      const t = me.tuning.market;
+      const food = me.config.requireFood(item.foods_id);
+      const have = (await foodsMap(tx, me.rest.id)).get(food.id)?.num ?? 0;
+      if (have === 0 && (await cupboardSlotsUsed(tx, me.rest.id)) >= me.rest.cupboard_num)
+        throw new AppError(ErrorCode.CUPBOARD_FULL, 400);
+      if (have + b.num > me.rest.foods_max_num)
+        throw limitReached('foods_max', { max: me.rest.foods_max_num });
+      await claimLimit(me, item.id, `rest:${me.rest.id}`, b.num, t.manualPersonMax);
+      const sold = await tx
+        .updateTable('market_item')
+        .set({ sold: sql<number>`sold + ${b.num}` })
+        .where('id', '=', item.id)
+        .where(sql<boolean>`sold + ${b.num} <= stock`)
+        .returning('sold')
+        .executeTakeFirst();
+      if (!sold) throw new AppError(ErrorCode.SOLD_OUT, 400);
+      const snap = await world.ensure(me.shardId, me.now, tx);
+      const paid = Math.ceil(unitPrice(0, food, t, snap.weather.effects) * b.num);
+      spendCoin(me, paid);
+      gainCoin(owner, Math.floor(paid * t.manualShare), { event: false });
+      await addFoods(me, food.id, b.num);
+      await emitAction(me, 'market.buy');
+      restLog(owner, 'market.share', { itemId: item.id, foodsId: food.id, num: b.num, buyer: me.rest.id });
+      await flushOp(me);
+      await flushOp(owner);
+      return { data: { itemId: item.id, foodsId: food.id, num: b.num }, events: me.events };
+    });
+  }
+
   return {
+    manualStock(ctx: RestCtx): Promise<OpResult<ManualStockDto>> {
+      return runOp(d, ctx, { feature: 'market', source: 'market.manual' }, (o) => manualStock(o));
+    },
+
     async view(ctx: RestCtx): Promise<MarketDto> {
       const now = d.now();
       const { tuning } = await d.shards.settings(ctx.shardId);
@@ -244,12 +312,27 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .executeTakeFirstOrThrow();
       const mine = await foodsMap(d.db, ctx.restaurantId);
       const cupboardFull = (await cupboardSlotsUsed(d.db, ctx.restaurantId)) >= rest.cupboard_num;
+      const ownerIds = [...new Set(rows.map((r) => r.owner_rest_id).filter((x): x is number => x !== null))];
+      const ownerNames = new Map(
+        ownerIds.length
+          ? (
+              await d.db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ownerIds).execute()
+            ).map((r) => [r.id, r.name] as const)
+          : [],
+      );
       const dto = (r: (typeof rows)[number]): MarketItemDto => {
         const food = d.config.requireFood(r.foods_id);
         const shelf = r.shelf as Shelf;
-        const limit = personLimit(shelf, food, r.opened_at, now, t);
-        const bought = boughtMap.get(r.id) ?? 0;
-        const sharedBought = sharedMap.get(r.id) ?? 0;
+        // 手动货：自己的不限购（以库存为限）；别人的每人 manualPersonMax 份、只按店计
+        const own = r.owner_rest_id === ctx.restaurantId;
+        const limit =
+          r.owner_rest_id === null
+            ? personLimit(shelf, food, r.opened_at, now, t)
+            : own
+              ? r.stock
+              : t.manualPersonMax;
+        const bought = own ? 0 : (boughtMap.get(r.id) ?? 0);
+        const sharedBought = r.owner_rest_id === null ? (sharedMap.get(r.id) ?? 0) : 0;
         const have = mine.get(r.foods_id)?.num ?? 0;
         // 橱柜单种上限（问题记录：显示能买 1000，已有 3 个时实际只能买 996）
         const room = have === 0 && cupboardFull ? 0 : rest.foods_max_num - have;
@@ -267,6 +350,10 @@ export function createMarketService(d: GameDeps, world: WorldService) {
           have,
           canBuy: Math.max(0, Math.min(limit - Math.max(bought, sharedBought), r.stock - r.sold, room)),
           openedAt: r.opened_at.toISOString(),
+          owner:
+            r.owner_rest_id === null
+              ? null
+              : { restId: r.owner_rest_id, name: ownerNames.get(r.owner_rest_id) ?? '' },
         };
       };
       // 特价同 IP 间隔（规格书 06：同 IP 两次购买间隔 10 分钟）；页面据此提示还要等多久
@@ -299,6 +386,10 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         specialCooldownMin: Math.round(t.specialIpCooldownSec / 60),
         foodsMaxNum: rest.foods_max_num,
         cupboardFull,
+        manual: {
+          hasCard: (await validNum(d.db, ctx.restaurantId, GOODS.marketJobHonor, now)) > 0,
+          cost: manualCost(await getDaily(d.db, ctx.restaurantId, 'market.manual', gameDay(now)), t),
+        },
         guess: {
           period,
           joined: joined?.foods_ids ?? null,
@@ -355,6 +446,14 @@ export function createMarketService(d: GameDeps, world: WorldService) {
     },
 
     async buy(ctx: RestCtx, b: { itemId: number; num: number }) {
+      const target = await d.db
+        .selectFrom('market_item')
+        .select('owner_rest_id')
+        .where('id', '=', b.itemId)
+        .where('shard_id', '=', ctx.shardId)
+        .executeTakeFirst();
+      if (target?.owner_rest_id != null && target.owner_rest_id !== ctx.restaurantId)
+        return buyManual(ctx, b, target.owner_rest_id);
       let cooldown: { key: string; stamp: string } | null = null;
       try {
         return await buyTx(ctx, b, (c) => (cooldown = c));

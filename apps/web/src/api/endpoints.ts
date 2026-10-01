@@ -1,4 +1,7 @@
 import type {
+  HiphopSpotDto,
+  HiphopTipBody,
+  HiphopTipDto,
   DartsAimDto,
   DartsDto,
   DartsThrowDto,
@@ -11,6 +14,8 @@ import type {
   NpcKey,
   ShakeResultDto,
   TalkResultDto,
+  LeaderboardDto,
+  ManualStockDto,
   TicketResultDto,
   TownDto,
   TownExchangeDto,
@@ -180,6 +185,7 @@ export const endpoints = {
 
   market: () => api.get<MarketDto>('/api/v1/market/view'),
   marketBuy: (itemId: number, num: number) => api.post<Anything>('/api/v1/market/buy', { itemId, num }),
+  marketManualStock: () => api.post<ManualStockDto>('/api/v1/market/manual-stock'),
   marketGuess: (foodsIds: number[]) => api.post<{ period: string }>('/api/v1/market/guess', { foodsIds }),
 
   shop: () => api.get<ShopDto>('/api/v1/shop/items'),
@@ -372,6 +378,10 @@ export const endpoints = {
   townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
   townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),
   townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),
+  townMayor: (place: number) => api.post<TalkResultDto>('/api/v1/town/mayor', { place }),
+  rank: (key: string) => api.get<LeaderboardDto>(`/api/v1/rank/${encodeURIComponent(key)}`),
+  hiphopSpot: (q: { place: number } | { restId: number }) => api.get<HiphopSpotDto>(`/api/v1/hiphop${qs(q)}`),
+  hiphopTip: (b: HiphopTipBody) => api.post<HiphopTipDto>('/api/v1/hiphop/tip', b),
   townHammer: (body: { mode: 'coin'; type: number } | { mode: 'diamond' }) =>
     api.post<HammerResultDto>('/api/v1/town/hammer', body),
   townExchangeDo: (id: number, num: number) =>

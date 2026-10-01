@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  mayorBody,
   townBroadcastBody,
   townExchangeBody,
   townFeastBody,
@@ -39,6 +40,9 @@ export function townRoutes(svc: TownService): FastifyPluginAsync {
       okOp(await svc.hammer(restCtxOf(req), parse(townHammerBody, req.body))),
     );
     r.post('/town/shake', async (req) => okOp(await svc.shake(restCtxOf(req))));
+    r.post('/town/mayor', async (req) =>
+      okOp(await svc.mayor(restCtxOf(req), parse(mayorBody, req.body).place)),
+    );
     r.post('/town/talk', async (req) => okOp(await svc.talk(restCtxOf(req), parse(townTalkBody, req.body))));
   };
 }

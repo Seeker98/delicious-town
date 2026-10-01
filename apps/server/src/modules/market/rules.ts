@@ -96,3 +96,29 @@ export function personLimit(shelf: Shelf, food: Food, openedAt: Date, now: Date,
   }
   return base;
 }
+
+/** 手动进货费用（规格书 06 §6.4）：today = 本次之前今天已进货次数 */
+export function manualCost(today: number, t: MarketTuning): number {
+  return t.manualCost * (1 + Math.max(today - 1, 0));
+}
+
+/** 手动进货声望：原版 count > 4 → 500；count < 2 → 花费 × 0.5 / 10000，否则 × 1 */
+export function manualRenown(today: number, cost: number): number {
+  if (today > 4) return 500;
+  return Math.floor(((today < 2 ? 0.5 : 1) * cost) / 10000);
+}
+
+/** 手动进货的食材：manualKinds 种，等级按日常货架的权重，同一批不重复 */
+export function rollManual(config: GameConfig, t: MarketTuning, rng: Rng): number[] {
+  const used = new Set<number>();
+  const out: number[] = [];
+  for (let i = 0; out.length < t.manualKinds && i < t.manualKinds * 20; i++) {
+    const pool = config.foodPools.get(pickLevel(t.dailyLevelWeights, rng));
+    if (!pool || pool.total <= 0) continue;
+    const f = pickWeighted(pool, rng);
+    if (used.has(f.id)) continue;
+    used.add(f.id);
+    out.push(f.id);
+  }
+  return out;
+}

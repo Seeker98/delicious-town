@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { personLimit, rollShelf, unitPrice } from './rules';
+import { manualCost, manualRenown, personLimit, rollShelf, unitPrice } from './rules';
 
 const config = testConfig();
 const t = config.tuning.market;
@@ -61,5 +61,17 @@ describe('价格与限购（规格书 06 §6.2）', () => {
     expect(personLimit(0, food, opened, new Date(opened.getTime() + 56 * 60_000), t)).toBe(1000);
     expect(personLimit(1, food, opened, opened, t)).toBe(1);
     expect(personLimit(2, food, opened, opened, t)).toBe(9);
+  });
+});
+
+describe('手动进货（4E-2）', () => {
+  const m = testConfig().tuning.market;
+  it('费用：第 1、2 次 100 万，第 3 次 200 万', () => {
+    expect([0, 1, 2, 3].map((n) => manualCost(n, m))).toEqual([1e6, 1e6, 2e6, 3e6]);
+  });
+  it('声望：前 2 次减半，第 5 次起 500', () => {
+    expect(manualRenown(0, 1e6)).toBe(50);
+    expect(manualRenown(2, 2e6)).toBe(200);
+    expect(manualRenown(5, 5e6)).toBe(500);
   });
 });

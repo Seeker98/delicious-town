@@ -51,7 +51,7 @@ export interface TownRewardDto {
 }
 
 export interface TalkResultDto {
-  npc: NpcKey;
+  npc: NpcKey | 'mayor';
   talk: string;
   rewards: TownRewardDto[];
 }
@@ -102,6 +102,8 @@ export interface TownDto {
   coin: number;
   diamond: number;
   talked: Record<NpcKey, boolean>;
+  /** 镇长问答（4E-2）：今天是否已经回答过 */
+  mayor: { answered: boolean };
   /** 大胃哥的首次礼物已经领过 */
   bigEaterGift: boolean;
   shaken: boolean;

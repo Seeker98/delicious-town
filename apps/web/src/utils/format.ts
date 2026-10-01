@@ -8,3 +8,10 @@ export function foodLevelLabel(level: number): string {
   if (level === 9) return '万能';
   return `${level} 级`;
 }
+
+/** 排行等大数：≥ 1 亿写 x.xx亿，≥ 1 万写 x.x万，否则千分位 */
+export function shortNum(n: number): string {
+  if (Math.abs(n) >= 1e8) return `${(n / 1e8).toFixed(2)}亿`;
+  if (Math.abs(n) >= 1e4) return `${(n / 1e4).toFixed(1)}万`;
+  return formatNum(n);
+}

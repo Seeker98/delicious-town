@@ -11,17 +11,22 @@ export async function krabFor(t: TestGame, shardId: number, coin: number): Promi
   return id;
 }
 
-/** 覆盖本区服的 town 数值（深合并），并清掉区服设置缓存 */
-export async function setTownTuning(
+/** 覆盖本区服的任意 tuning 段（深合并），并清掉区服设置缓存 */
+export async function setTuning(
   t: TestGame,
   shardId: number,
-  town: Record<string, unknown>,
+  tuning: Record<string, unknown>,
 ): Promise<void> {
-  const override = JSON.stringify({ tuning: { town } });
+  const override = JSON.stringify({ tuning });
   await t.db
     .insertInto('shard_config')
     .values({ shard_id: shardId, override })
     .onConflict((oc) => oc.column('shard_id').doUpdateSet({ override }))
     .execute();
   t.game.shards.invalidate(shardId);
+}
+
+/** 覆盖本区服的 town 数值（深合并），并清掉区服设置缓存 */
+export function setTownTuning(t: TestGame, shardId: number, town: Record<string, unknown>): Promise<void> {
+  return setTuning(t, shardId, { town });
 }

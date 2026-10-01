@@ -11,6 +11,11 @@ export const GOODS = {
   starPromoHonor: 87, // 升星促销勋章
   promoHonor: 106, // 八折促销
   moveJobHonor: 111, // 搬家处工作证
+  marketJobHonor: 107, // 菜场工作证（手动进货）
+  renameJobHonor: 109, // 改名处工作证
+  hiphopCulture: 230, // 嘻哈文化（嘻哈男孩所在餐厅）
+  mayorFavor: 231, // 镇长的推荐
+  mayorAgainst: 232, // 镇长的针对
   signInGift: 115, // 每日签到礼包
   krabHappy: 133, // 蟹老板（回味无穷）
   krabAngry: 134, // 蟹老板-生气

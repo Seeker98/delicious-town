@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
@@ -93,6 +94,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       </div>
       <GameImg :path="`door/${rest.door}`" alt="门" fallback-icon="bi-door-closed" />
     </div>
+    <HiphopCard :rest-id="restId" />
     <div v-if="rest.icons.length > 0" class="mb-2">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
     </div>

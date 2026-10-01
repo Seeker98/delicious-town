@@ -6,7 +6,7 @@ import { endpoints } from '../api/endpoints';
 import MarketView from './MarketView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { market: vi.fn(), marketBuy: vi.fn(), marketGuess: vi.fn() },
+  endpoints: { market: vi.fn(), marketBuy: vi.fn(), marketGuess: vi.fn(), marketManualStock: vi.fn() },
 }));
 
 const view: MarketDto = {
@@ -25,6 +25,7 @@ const view: MarketDto = {
       have: 0,
       canBuy: 1000,
       openedAt: '2026-09-30T00:00:00.000Z',
+      owner: null,
     },
   ],
   special: [],
@@ -36,6 +37,7 @@ const view: MarketDto = {
   specialCooldownMin: 10,
   foodsMaxNum: 999,
   cupboardFull: false,
+  manual: { hasCard: false, cost: 1_000_000 },
   guess: { period: '2026-09-30@12', joined: null, last: null, cost: 2, maxPick: 6, pool: [101, 102, 103] },
 };
 
@@ -110,5 +112,33 @@ describe('MarketView', () => {
     await flushPromises();
     expect(w.find('[data-testid="buy-11"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="cap-11"]').text()).toContain('同一网络或设备本轮已买 1000 份');
+  });
+
+  it('手动进货（4E-2）：有菜场工作证时显示按钮和费用；进货后刷新', async () => {
+    vi.mocked(endpoints.market).mockResolvedValue({ ...view, manual: { hasCard: true, cost: 2_000_000 } });
+    vi.mocked(endpoints.marketManualStock).mockResolvedValue({
+      foods: [101, 102, 103, 104],
+      cost: 2_000_000,
+      renown: 200,
+    });
+    const w = mount(MarketView);
+    await flushPromises();
+    const before = vi.mocked(endpoints.market).mock.calls.length;
+    const btn = w.find('[data-testid="market-manual"]');
+    expect(btn.text()).toBe('手动进货（2,000,000 银币）');
+    await btn.trigger('click');
+    await flushPromises();
+    expect(endpoints.marketManualStock).toHaveBeenCalled();
+    expect(vi.mocked(endpoints.market).mock.calls.length).toBe(before + 1);
+  });
+
+  it('没有工作证不显示按钮；手动货写明谁进的货，自己的货免费', async () => {
+    const own = { ...view.daily[0]!, id: 12, owner: { restId: 5, name: '小王的店' } };
+    vi.mocked(endpoints.market).mockResolvedValue({ ...view, daily: [view.daily[0]!, own] });
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="market-manual"]').exists()).toBe(false);
+    expect(w.find('[data-testid="owner-12"]').text()).toBe('小王的店 进的货');
+    expect(w.find('[data-testid="owner-11"]').exists()).toBe(false);
   });
 });

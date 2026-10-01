@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { BarDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -59,6 +60,7 @@ onMounted(load);
       >神秘礼券 {{ data.tickets }}；蟹币 {{ data.krabCoins }}</span
     >
   </div>
+  <HiphopCard :place="3" @changed="load" />
   <!-- 七个游戏放不下一排标签页，用可换行的胶囊（视觉规范 §5） -->
   <div class="dt-pills">
     <a
