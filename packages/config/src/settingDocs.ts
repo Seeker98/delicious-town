@@ -35,6 +35,10 @@ export function checkSettingDocs(
   for (const g of groups) if (!(g in docs.groups)) errors.push(`setting_docs missing ${g}`);
   for (const p of Object.keys(docs.fields)) if (!leafSet.has(p)) errors.push(`setting_docs unknown ${p}`);
   for (const g of Object.keys(docs.groups)) if (!groups.has(g)) errors.push(`setting_docs unknown ${g}`);
-  for (const [p, d] of [...Object.entries(docs.fields), ...Object.entries(docs.groups), ...Object.entries(docs.features)])
+  for (const [p, d] of [
+    ...Object.entries(docs.fields),
+    ...Object.entries(docs.groups),
+    ...Object.entries(docs.features),
+  ])
     if (!d.trim()) errors.push(`setting_docs empty ${p}`);
 }

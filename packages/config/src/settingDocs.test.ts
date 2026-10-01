@@ -7,7 +7,11 @@ const source = () => readSourceDir(defaultDataDir());
 
 describe('区服数值说明（问题记录 126）', () => {
   it('叶子：对象展开，数组算一个；分组规则', () => {
-    expect(settingLeaves({ a: { b: 1, c: [1, 2] }, d: 'x' }, 'tuning')).toEqual(['tuning.a.b', 'tuning.a.c', 'tuning.d']);
+    expect(settingLeaves({ a: { b: 1, c: [1, 2] }, d: 'x' }, 'tuning')).toEqual([
+      'tuning.a.b',
+      'tuning.a.c',
+      'tuning.d',
+    ]);
     expect(settingGroup('tuning.market.dailyStock')).toBe('tuning.market');
     expect(settingGroup('restaurant.giftFoods')).toBe('restaurant');
   });
@@ -26,7 +30,11 @@ describe('区服数值说明（问题记录 126）', () => {
   it('漏写、多写、空说明都报错（Review Focus 5）', () => {
     const errors: string[] = [];
     checkSettingDocs(
-      { features: {}, groups: { 'tuning.a': 'A 组', 'tuning.z': '多余的组' }, fields: { 'tuning.a.x': '', 'tuning.a.gone': '旧的' } },
+      {
+        features: {},
+        groups: { 'tuning.a': 'A 组', 'tuning.z': '多余的组' },
+        fields: { 'tuning.a.x': '', 'tuning.a.gone': '旧的' },
+      },
       { a: { x: 1, y: 2 } } as never,
       {} as never,
       errors,
