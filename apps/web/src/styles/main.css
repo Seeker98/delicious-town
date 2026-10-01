@@ -539,3 +539,14 @@ body {
 .dt-hiphop-num {
   width: 8rem;
 }
+.dt-item-me {
+  background: #fff4e6;
+  border-radius: 6px;
+}
+.dt-rank-no {
+  width: 2rem;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--dt-primary-ink);
+  text-align: center;
+}

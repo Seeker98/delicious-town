@@ -11,6 +11,7 @@ vi.mock('../api/endpoints', () => ({
     town: vi.fn(),
     townNews: vi.fn(),
     townExchange: vi.fn(),
+    rank: vi.fn(),
     catalog: vi.fn(),
   },
 }));
@@ -53,5 +54,17 @@ describe('TownView', () => {
     localStorage.setItem('dt_town_tab', 'exchange');
     const w = await mountAt('/town?tab=news');
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
+  });
+
+  it('?tab=rank 打开排行（4E-2）', async () => {
+    vi.mocked(endpoints.rank).mockResolvedValue({
+      key: 'income.coin.today',
+      rows: [],
+      me: null,
+      updatedAt: '2026-10-01T04:00:00.000Z',
+    });
+    const w = await mountAt('/town?tab=rank');
+    expect(w.find('[data-testid="rank-panel"]').exists()).toBe(true);
+    expect(endpoints.rank).toHaveBeenCalledWith('income.coin.today');
   });
 });
