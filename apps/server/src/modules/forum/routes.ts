@@ -1,13 +1,18 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { forumIdParam, forumPostBody } from '@dt/shared';
+import { forumIdParam, forumListQuery, forumPostBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
-import { okOp } from '../../http/reply';
+import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
 import type { ForumService } from './service';
 
 export function forumRoutes(svc: ForumService): FastifyPluginAsync {
   return async (r) => {
     const id = (p: unknown) => parse(forumIdParam, p).id;
+    r.get('/forum/posts', async (req) =>
+      ok(await svc.list(restCtxOf(req), parse(forumListQuery, req.query))),
+    );
+    r.get('/forum/posts/:id', async (req) => okOp(await svc.detail(restCtxOf(req), id(req.params))));
+    r.get('/forum/posts/:id/reads', async (req) => okOp(await svc.reads(restCtxOf(req), id(req.params))));
     r.post('/forum/posts', async (req) =>
       okOp(await svc.createPost(restCtxOf(req), parse(forumPostBody, req.body))),
     );

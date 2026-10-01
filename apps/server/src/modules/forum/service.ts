@@ -1,7 +1,8 @@
-import type { ForumPostBody } from '@dt/shared';
+import type { ForumListQuery, ForumPostBody } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { createPost, deletePost, editPost } from './posts';
+import { listPosts, postDetail, postReads } from './view';
 
 /** 论坛（子项目 4E-3） */
 export function createForumService(d: GameDeps) {
@@ -9,6 +10,15 @@ export function createForumService(d: GameDeps) {
     runOp(d, ctx, { feature: 'forum', source }, fn);
 
   return {
+    list(ctx: RestCtx, q: ForumListQuery) {
+      return listPosts(d, ctx, q);
+    },
+    detail(ctx: RestCtx, id: number) {
+      return op(ctx, 'forum.read', (o) => postDetail(o, ctx, id));
+    },
+    reads(ctx: RestCtx, id: number) {
+      return op(ctx, 'forum.reads', (o) => postReads(o, ctx, id));
+    },
     createPost(ctx: RestCtx, b: ForumPostBody) {
       return op(ctx, 'forum.post', (o) => createPost(o, ctx, b));
     },
