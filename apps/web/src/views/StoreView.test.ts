@@ -101,4 +101,46 @@ describe('StoreView', () => {
     await flushPromises();
     expect(w.find('.dt-item .dt-meta').text()).toBe('一次最多 5');
   });
+
+  it('卖出先确认，写明数量和能拿到的银币；取消就不卖（问题记录 128）', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        { goodsId: 18, num: 30, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: 2800 },
+      ],
+    });
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const w = mount(StoreView);
+    await flushPromises();
+    await w.find('input[type="number"]').setValue('3');
+    const sell = w.findAll('button').find((b) => b.text() === '卖')!;
+    await sell.trigger('click');
+    await flushPromises();
+    expect(ask.mock.calls[0]![0]).toContain('卖出 3 个');
+    expect(ask.mock.calls[0]![0]).toContain('8,400 银币');
+    expect(endpoints.sell).not.toHaveBeenCalled();
+    ask.mockReturnValue(true);
+    await sell.trigger('click');
+    await flushPromises();
+    expect(endpoints.sell).toHaveBeenCalledWith(18, 3);
+  });
+
+  it('丢弃先确认；取消就不丢（问题记录 128）', async () => {
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [
+        { goodsId: 87, num: 1, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: null },
+      ],
+    });
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const w = mount(StoreView);
+    await flushPromises();
+    await w
+      .findAll('button')
+      .find((b) => b.text().includes('丢弃'))!
+      .trigger('click');
+    await flushPromises();
+    expect(ask).toHaveBeenCalledTimes(1);
+    expect(endpoints.discard).not.toHaveBeenCalled();
+  });
 });
