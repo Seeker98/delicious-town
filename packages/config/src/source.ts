@@ -45,6 +45,7 @@ export const SOURCE_FILES = [
   'game/looks',
   'game/equip_lore',
   'game/tower_fix',
+  'game/setting_docs',
   'restaurant_defaults',
 ] as const;
 

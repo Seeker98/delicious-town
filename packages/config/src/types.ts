@@ -304,6 +304,8 @@ export interface ConfigBundle {
   holidays: Holidays;
   tuning: Tuning;
   restaurantDefaults: RestaurantDefaults;
+  /** 区服数值说明（问题记录 126）：功能开关、分组、每个数值各一句 */
+  settingDocs: { features: Record<string, string>; groups: Record<string, string>; fields: Record<string, string> };
   looks: Looks;
   suits: SuitDef[];
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */
