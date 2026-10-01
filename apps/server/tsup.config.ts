@@ -7,6 +7,7 @@ export default defineConfig({
     'cli/shard': 'src/cli/shard.ts',
     'cli/migrate': 'src/cli/migrate.ts',
     'cli/account': 'src/cli/account.ts',
+    'cli/equip-rescale': 'src/cli/equip-rescale.ts',
   },
   format: ['esm'],
   platform: 'node',

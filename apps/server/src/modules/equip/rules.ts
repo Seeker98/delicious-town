@@ -101,13 +101,16 @@ export function rollStress(
   };
 }
 
-/** 强化成功时加哪一项、加多少（原版 Tools.stressUpEquip） */
-export function stressGain(
-  part: number,
-  mainBase: number,
-  stone: boolean,
-  rng: Rng,
-): { attr: EquipAttr; val: number } {
+/** 数值表第 k 档；区服把强化上限调到 10 以上时，超出的等级按最后一档算（增量为 0，终审） */
+export function tableAt(table: readonly number[], k: number): number {
+  return table[Math.min(Math.max(k, 0), table.length - 1)] ?? 0;
+}
+
+/**
+ * 强化成功时加哪一项、加多少（问题记录 120）：增量固定为数值表两档之差（可以为 0）；
+ * 属性按原版 Tools.stressUpEquip 的规则选：按部位顺序每项 50%，都没选中取最后一项
+ */
+export function stressGain(part: number, delta: number, rng: Rng): { attr: EquipAttr; val: number } {
   const seq = attrSeq(part);
   let attr = seq[seq.length - 1]!;
   for (const a of seq) {
@@ -116,10 +119,7 @@ export function stressGain(
       break;
     }
   }
-  const cap = Math.max(1, mainBase);
-  let val = Math.max(1, rng.int(cap + 1));
-  if (stone && val < cap) val += 1;
-  return { attr, val };
+  return { attr, val: delta };
 }
 
 export function gemRate(level: number, weatherRate: number, t: EquipTuning): number {

@@ -26,7 +26,7 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
     expect(rows[0]).toMatchObject({
       goods_id: 30,
       part: 1,
-      base_cook: 3,
+      base_cook: 2,
       stress: 0,
       worn: false,
       max_hole: 0,
@@ -40,8 +40,8 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
     const [e] = await equips(ctx.restaurantId);
     const sum =
       e!.base_cook + e!.base_cutting + e!.base_fire + e!.base_season + e!.base_creatives + e!.base_luck;
-    expect(sum).toBe(25);
-    expect(e).toMatchObject({ part: 3, cur_hole: 1, max_hole: 3, min_level: 13, suit_id: 5 });
+    expect(sum).toBe(36);
+    expect(e).toMatchObject({ part: 3, cur_hole: 1, max_hole: 3, min_level: 65, suit_id: 5 });
   });
 
   it('仓库满了照发：一次 10 件都生成（Review Focus 4）', async () => {

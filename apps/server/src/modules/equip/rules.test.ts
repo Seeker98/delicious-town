@@ -35,6 +35,7 @@ describe('生成（规格书 07 §7.7）', () => {
       suitId: 0,
       total: null,
       ranges: { cook: 3, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 },
+      stressTable: [],
     };
     expect(rollEquipAttrs(def, sequenceRng([0.9]))).toEqual({
       cook: 3,
@@ -55,6 +56,7 @@ describe('生成（规格书 07 §7.7）', () => {
       minLevel: 13,
       suitId: 5,
       total: 25,
+      stressTable: [],
       ranges: {
         cook: range(0, 25),
         cutting: range(0, 25),
@@ -109,14 +111,13 @@ describe('强化（规格书 07 §7.7）', () => {
     });
   });
 
-  it('选属性：按顺序每项 50%，都没选中取最后一项；增量 rand[1, 主属性]，强化石 +1 不超过主属性', () => {
-    // 刀：刀工 火候 调味 厨艺 幸运 创意；0.7 跳过刀工，0.3 选中火候；增量 ⌊0.5×9⌋ = 4
-    expect(stressGain(2, 8, false, sequenceRng([0.7, 0.3, 0.5]))).toEqual({ attr: 'fire', val: 4 });
-    expect(stressGain(2, 8, true, sequenceRng([0.7, 0.3, 0.5]))).toEqual({ attr: 'fire', val: 5 });
-    // 都没选中 → 创意；增量 ⌊0.9×9⌋ = 8 已经等于主属性，强化石不再 +1
-    expect(stressGain(2, 8, true, sequenceRng([0.9]))).toEqual({ attr: 'creatives', val: 8 });
-    // 主属性为 0 时增量至少 1
-    expect(stressGain(1, 0, false, sequenceRng([0.1])).val).toBe(1);
+  it('选属性：按顺序每项 50%，都没选中取最后一项；增量固定为表里两档之差（问题记录 120）', () => {
+    // 刀：刀工 火候 调味 厨艺 幸运 创意；0.7 跳过刀工，0.3 选中火候
+    expect(stressGain(2, 4, sequenceRng([0.7, 0.3]))).toEqual({ attr: 'fire', val: 4 });
+    // 都没选中 → 创意
+    expect(stressGain(2, 7, sequenceRng([0.9]))).toEqual({ attr: 'creatives', val: 7 });
+    // 增量可以是 0
+    expect(stressGain(1, 0, sequenceRng([0.1])).val).toBe(0);
   });
 });
 

@@ -111,6 +111,8 @@ export interface EquipDetailDto {
   equip: EquipDto;
   /** 下一级成功率；已满级为 null */
   rate: StressRateDto | null;
+  /** 下一次强化成功后的增量和属性总和（不含宝石）；满级为 null（问题记录 120） */
+  next: { gain: number; total: number } | null;
   /** 强化一次的花费 */
   cost: { essence: number; coin: number };
   history: StressLogDto[];

@@ -68,7 +68,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle } = buildBundle(source());
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     expect(goods.get(30)!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
-    expect(goods.get(56)!.equip).toMatchObject({ part: 3, total: 25, suitId: 5 });
+    expect(goods.get(56)!.equip).toMatchObject({ part: 3, total: 36, suitId: 5 });
     expect(goods.get(41)!.gem).toMatchObject({ level: 1, nextId: 274 });
     expect(goods.get(341)!.gem).toMatchObject({ level: 6, nextId: null });
     expect(goods.get(13)!.equip).toBeNull();
@@ -297,12 +297,12 @@ describe('酒吧配置（子项目 4C-1）', () => {
 });
 
 describe('厨塔配置（子项目 4C-2）', () => {
-  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按原版厨力校准', () => {
+  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按 tower_fix 的厨力校准（问题记录 120）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(f.map((x) => x.power)).toEqual([29, 96, 211, 334, 508, 707, 961, 1225, 1720, 2603]);
+    expect(f.map((x) => x.power)).toEqual([13, 66, 169, 234, 421, 494, 640, 803, 1164, 1522]);
     expect(f[9]).toMatchObject({
       name: '彭祖',
       title: '食神',
@@ -310,7 +310,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
       maxTimes: 2,
       mc: true,
       note: '你会做蛋炒饭吗?',
-      attrs: { cook: 599, cutting: 599, fire: 599, season: 331, creatives: 331, luck: 288 },
+      attrs: { cook: 350, cutting: 350, fire: 350, season: 194, creatives: 194, luck: 169 },
     });
     expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
     expect(f.map((x) => x.maxTimes)).toEqual([10, 10, 10, 10, 5, 3, 2, 1, 1, 2]);
@@ -532,10 +532,10 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     expect(goods.get(352)!.name).toBe('神谕之阿卡玛的荣耀之铲');
     expect(goods.get(413)!.name).toBe('神谕之阿卡玛的荣耀之冠');
     // 说明保留原来的属性提示，再加故事
-    expect(goods.get(33)!.desc).toMatch(/^厨艺\+18。.+/);
-    expect(goods.get(352)!.desc).toMatch(/^厨艺\+38。.+/);
-    // 数值不变
-    expect(goods.get(59)!.equip).toMatchObject({ part: 1, total: 35, suitId: 6 });
+    expect(goods.get(33)!.desc).toMatch(/^厨艺\+21。.+/);
+    expect(goods.get(352)!.desc).toMatch(/^厨艺\+51。.+/);
+    // 数值按强化数值表（问题记录 120）
+    expect(goods.get(59)!.equip).toMatchObject({ part: 1, total: 31, suitId: 6 });
   });
 
   it('阿卡玛五件从厨塔第 8 层起掉落（原来没有获得途径）', () => {
@@ -547,22 +547,22 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     const { goods } = byId();
     const parts = (ids: number[]) => ids.map((id) => goods.get(id)!.equip!.part);
     expect(goods.get(628)).toMatchObject({ name: '灵魂之沙利叶的无情之镬', awardFlag: 4, type: 4 });
-    expect(goods.get(628)!.equip).toMatchObject({ part: 3, suitId: 4, minLevel: 20, total: null });
-    expect(goods.get(628)!.equip!.ranges.fire).toBe(18);
-    expect(goods.get(629)!.equip!.ranges.season).toBe(18);
+    expect(goods.get(628)!.equip).toMatchObject({ part: 3, suitId: 4, minLevel: 40, total: null });
+    expect(goods.get(628)!.equip!.ranges.fire).toBe(21);
+    expect(goods.get(629)!.equip!.ranges.season).toBe(21);
     expect(parts([630, 631])).toEqual([3, 4]);
-    expect(goods.get(630)!.equip).toMatchObject({ suitId: 6, total: 35 });
+    expect(goods.get(630)!.equip).toMatchObject({ suitId: 6, total: 31 });
     expect(goods.get(630)!.awardFlag).toBe(6);
     expect(goods.get(632)!.name).toBe('意志之古尔图格的精华之铲');
     expect(parts([632, 633, 634, 635, 636])).toEqual([1, 2, 3, 4, 5]);
     for (const id of [632, 636]) {
-      expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 37, minLevel: 60 });
+      expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 41, minLevel: 70 });
       expect(goods.get(id)!.awardFlag).toBe(7);
     }
     expect(goods.get(637)!.name).toBe('堕落之茵蔯的炙热之铲');
     expect(parts([637, 638, 639, 640])).toEqual([1, 2, 3, 4]);
     for (const id of [637, 640]) {
-      expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 30, minLevel: 30 });
+      expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 25, minLevel: 50 });
       expect(goods.get(id)!.awardFlag).toBe(5);
     }
     for (const id of [628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640])
@@ -678,9 +678,9 @@ describe('赞助帽子和邮件数值（子项目 6A-1）', () => {
     expect(jade.name).toBe('玉•赞助之帽');
     expect(xuan.name).toBe('铉•赞助之帽');
     expect(jade.equip).toMatchObject({ part: 5, suitId: 90, minLevel: 13 });
-    expect(jade.equip!.ranges.creatives).toBe(22);
+    expect(jade.equip!.ranges.creatives).toBe(25);
     expect(xuan.equip).toMatchObject({ part: 5, suitId: 99 });
-    expect(xuan.equip!.ranges.creatives).toBe(40);
+    expect(xuan.equip!.ranges.creatives).toBe(41);
     for (const g of [jade, xuan]) {
       expect(g.awardFlag).toBeNull();
       expect(g.onSale).toBe(false);
@@ -710,6 +710,37 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
     tuning.invite.rewards.lv10.goods = [{ id: 999999, num: 1 }];
     expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
       'invite.rewards.lv10 references unknown goods 999999',
+    );
+  });
+});
+
+describe('守塔人（问题记录 120）', () => {
+  it('第 5、6 层互换；厨力按参照玩家重算', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const f = bundle!.towerFloors;
+    expect(f[4]).toMatchObject({
+      floor: 5,
+      name: '裁决之巴贝雷特',
+      title: '裁决长老',
+      minLevel: 41,
+      maxTimes: 5,
+    });
+    expect(f[5]).toMatchObject({
+      floor: 6,
+      name: '沉默的度玛',
+      title: '育才长老',
+      minLevel: 51,
+      maxTimes: 3,
+    });
+    const want = [14, 66, 168, 236, 420, 494, 640, 802, 1162, 1522];
+    f.forEach((x, i) => expect(Math.abs(x.power - want[i]!)).toBeLessThanOrEqual(3));
+  });
+
+  it('覆盖文件写了不存在的层时报错', () => {
+    const src = source();
+    expect(buildBundle({ ...src, 'game/tower_fix': { floors: [{ floor: 11, power: 1 }] } }).errors).toContain(
+      'tower_fix references unknown floor 11',
     );
   });
 });

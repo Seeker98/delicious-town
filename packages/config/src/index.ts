@@ -13,3 +13,5 @@ export { resolveShardSettings, isFeatureEnabled, type ShardSettings } from './sh
 export * from './tuning';
 export * from './ids';
 export * from './goodsUse';
+export { PART_MAIN, rewriteStatDesc, scaleToTotal } from './stressTable';
+export type { StressTableEntry } from './raw';

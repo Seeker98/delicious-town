@@ -331,6 +331,8 @@ export interface EquipDef {
   /** 有 total 时按部位顺序在范围内随机分配；null = 固定属性 */
   total: number | null;
   ranges: Record<EquipAttr, number | [number, number]>;
+  /** 强化 +0~+10 时的属性总和（问题记录 120）；构建时由 equip_lore.stressTables 填 */
+  stressTable: readonly number[];
 }
 
 export interface GemDef {

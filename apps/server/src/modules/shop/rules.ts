@@ -18,7 +18,8 @@ export function buyCap(g: Goods, s: BuyState, maxBuy: number): { max: number; bl
   const honor = g.type === GOODS_TYPE.honor;
   const permanent = plaque || (honor && goodsEffectHours(g) === null);
   if (permanent && s.owned > 0) return { max: 0, blocked: 'owned' };
-  const cap = plaque || honor || !g.stackable ? 1 : Math.min(maxBuy, g.maxNum - s.owned);
+  // 不可叠放的道具一次只能买 1 个，也受持有上限限制（问题记录 136：教师证买完按钮不变灰）
+  const cap = plaque || honor ? 1 : Math.min(g.stackable ? maxBuy : 1, g.maxNum - s.owned);
   if (cap <= 0) return { max: 0, blocked: 'max' };
   const newKind = !honor && (g.type === GOODS_TYPE.equip || s.owned === 0);
   if (newKind && s.storeFull) return { max: 0, blocked: 'store' };

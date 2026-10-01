@@ -37,7 +37,7 @@ const wornIds = async (ctx: RestCtx) =>
 
 describe('预设（设计文档 §3.10、裁定 11）', () => {
   it('保存当前穿戴；全部卸下后一键套用恢复；列表里标出所在预设', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 20 } });
+    const ctx = await newRestaurant(t, { patch: { level: 70 } });
     const a = await piece(ctx, 30);
     const b = await piece(ctx, 56);
     await eq().wear(ctx, { id: a });
@@ -54,7 +54,7 @@ describe('预设（设计文档 §3.10、裁定 11）', () => {
   });
 
   it('套用时等级不够的部位留空并列出', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 20 } });
+    const ctx = await newRestaurant(t, { patch: { level: 70 } });
     const a = await piece(ctx, 30);
     const b = await piece(ctx, 56);
     await eq().wear(ctx, { id: a });

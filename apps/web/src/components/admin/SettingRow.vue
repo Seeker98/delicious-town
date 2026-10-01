@@ -12,6 +12,9 @@ defineProps<{
 // 事件不叫 input：和原生 input 事件同名会在打字时多触发一次
 const emit = defineEmits<{ edit: [e: Event]; reset: [] }>();
 const show = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v));
+/** JSON 值按格式化后的行数调高（问题记录 152），最少 2 行、最多 8 行 */
+const rowsOf = (v: unknown) =>
+  Math.min(8, Math.max(2, (typeof v === 'string' ? v : JSON.stringify(v, null, 1)).split('\n').length));
 </script>
 
 <template>
@@ -22,7 +25,8 @@ const show = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v));
     <div class="col-12 col-md-4 text-break">
       <code>{{ path }}</code>
     </div>
-    <div class="col-5 col-md-3">
+    <!-- JSON 值（数组、对象）的输入框占整行（问题记录 152） -->
+    <div :class="kind === 'json' ? 'col-12' : 'col-5 col-md-3'">
       <input
         v-if="kind === 'number'"
         type="number"
@@ -45,7 +49,7 @@ const show = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v));
       />
       <textarea
         v-else
-        rows="1"
+        :rows="rowsOf(value)"
         class="form-control form-control-sm font-monospace"
         :class="{ 'is-invalid': error }"
         :value="show(value)"
@@ -54,7 +58,7 @@ const show = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v));
         @change="emit('edit', $event)"
       ></textarea>
     </div>
-    <div class="col-5 col-md-4 text-muted text-break">
+    <div :class="[kind === 'json' ? 'col-10' : 'col-5 col-md-4', 'text-muted', 'text-break']">
       默认 {{ show(def) }} · 生效 <span :data-testid="`effective-${path}`">{{ show(effective) }}</span>
     </div>
     <div class="col-2 col-md-1 text-end">

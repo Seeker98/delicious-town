@@ -141,6 +141,12 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
     expect(item(l, 'coin', 30)).toMatchObject({ maxBuy: 1, blocked: null });
   });
 
+  it('教师证（不可叠放、持有上限 1）已有 1 张时不能再买（问题记录 136）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000_000 }, goods: { 177: 1 } });
+    const l = await shop().items(ctx);
+    expect(item(l, 'coin', 177)).toMatchObject({ maxBuy: 0, blocked: 'max' });
+  });
+
   it('仓库满了：新种类为 0（store），已有的种类照常能买', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, store_num: 1 }, goods: { 86: 1 } });
     const l = await shop().items(ctx);

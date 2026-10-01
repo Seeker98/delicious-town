@@ -151,4 +151,36 @@ describe('CupboardView', () => {
     // 名字太长时只截名字，数量总是显示
     expect(w.find('[data-testid="pick-101"] .dt-tile-num').text()).toBe('×9');
   });
+
+  it('食材名不截断：不再用 text-truncate（问题记录 138）', async () => {
+    const w = mount(CupboardView);
+    await flushPromises();
+    expect(w.find('[data-testid="pick-302"] .text-truncate').exists()).toBe(false);
+    expect(w.find('[data-testid="pick-302"] .dt-tile-name').text()).toBe('葡萄');
+  });
+
+  it('选中万能食材时写明能否兑换稀有食材（问题记录 140）', async () => {
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      slotsUsed: 2,
+      slots: 100,
+      lockUsed: 0,
+      lockSlots: 15,
+      foodsMaxNum: 999,
+      targetGrade: 5,
+      fridgeCount: 0,
+      fridgeUnread: false,
+      freeHandleLeft: 20,
+      handleMax: 100,
+      items: [
+        { foodsId: 467, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: 469, num: 4, locked: false, streetNeed: 0 },
+      ],
+    });
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.find('[data-testid="pick-467"]').trigger('click');
+    expect(w.find('[data-testid="master-rule"]').text()).toContain('2 个一级万能食材换 1 个随机二级稀有食材');
+    await w.find('[data-testid="pick-469"]').trigger('click');
+    expect(w.find('[data-testid="master-rule"]').text()).toContain('三级及以上的万能食材不能兑换稀有食材');
+  });
 });

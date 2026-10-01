@@ -139,6 +139,9 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, '读取厨具
             保底 {{ pct(d.rate.floor) }}）</span
           >
         </div>
+        <div v-if="d.next" data-testid="stress-next">
+          成功后属性总和 +{{ d.next.gain }}（到 {{ d.next.total }}，不含宝石）
+        </div>
         <div>
           消耗：精华 ×{{ d.cost.essence }}（有 {{ d.have.essence }}）、银币 {{ formatNum(d.cost.coin) }}
         </div>

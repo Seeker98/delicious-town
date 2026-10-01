@@ -55,6 +55,7 @@ const detail = (patch: Partial<EquipDetailDto['equip']> = {}): EquipDetailDto =>
     ...patch,
   },
   rate: { base: 0.64, luck: 0.01, weather: 0, floor: 0.02, total: 0.67 },
+  next: { gain: 2, total: 9 },
   cost: { essence: 12, coin: 120000 },
   history: [
     {
@@ -213,5 +214,13 @@ describe('EquipDetailView', () => {
     );
     const { w } = await mountView();
     expect(w.find('h5').text()).toBe('玉•大橘之帽');
+  });
+
+  it('写明强化成功后属性总和到多少；满级不显示（问题记录 120）', async () => {
+    const { w } = await mountView();
+    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2（到 9，不含宝石）');
+    vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), rate: null, next: null });
+    const { w: w2 } = await mountView();
+    expect(w2.find('[data-testid="stress-next"]').exists()).toBe(false);
   });
 });

@@ -9,6 +9,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
+import { applyStressTables } from './stressTable';
 import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
@@ -121,6 +122,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const actionMap = parse('game/action_map', raw.actionMapFile);
   const looks = parse('game/looks', raw.looksFile);
   const equipLore = parse('game/equip_lore', raw.equipLoreFile);
+  const towerFix = parse('game/tower_fix', raw.towerFixFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -163,6 +165,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !actionMap ||
     !looks ||
     !equipLore ||
+    !towerFix ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -195,7 +198,7 @@ export function buildBundle(src: SourceData): BuildResult {
   // ---------- 道具 ----------
   const lored = applyEquipLore(goodsRaw, suitsRaw, equipLore, errors);
   const awardFlags = new Map(awardFlagsRaw.map((a) => [a.id, a.awardflag]));
-  const goods: Goods[] = lored.goods.map((g) => {
+  const builtGoods: Goods[] = lored.goods.map((g) => {
     let value: unknown = null;
     if (g.value !== null && g.value !== undefined && g.value.trim() !== '') {
       try {
@@ -243,6 +246,8 @@ export function buildBundle(src: SourceData): BuildResult {
     }
     return item;
   });
+  // ---------- 强化数值表（问题记录 120） ----------
+  const goods = applyStressTables(builtGoods, equipLore.stressTables, errors);
   unique(
     'goods',
     goods.map((g) => g.id),
@@ -624,7 +629,24 @@ export function buildBundle(src: SourceData): BuildResult {
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
   for (const id of [1, 240, 389]) if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
   // ---------- 厨塔（子项目 4C-2） ----------
-  const towerFloors: TowerFloor[] = [...towerRaw]
+  // 守塔人覆盖（问题记录 120）：各层厨力、第 5/6 层互换
+  const fixByFloor = new Map(towerFix.floors.map((f) => [f.floor, f]));
+  for (const f of towerFix.floors)
+    if (!towerRaw.some((r) => r.floor === f.floor))
+      errors.push(`tower_fix references unknown floor ${f.floor}`);
+  const towerSrc = towerRaw.map((r) => {
+    const x = fixByFloor.get(r.floor);
+    return x
+      ? {
+          ...r,
+          attrSum: x.power,
+          watchmanRestName: x.watchmanRestName ?? r.watchmanRestName,
+          watchman: x.watchman ?? r.watchman,
+          note: x.note ?? r.note,
+        }
+      : r;
+  });
+  const towerFloors: TowerFloor[] = [...towerSrc]
     .sort((a, b) => a.floor - b.floor)
     .map((f) => ({
       floor: f.floor,
@@ -639,7 +661,7 @@ export function buildBundle(src: SourceData): BuildResult {
   towerFloors.forEach((f, i) => {
     if (f.floor !== i + 1) errors.push(`tower_floors: floor ${f.floor} out of order`);
   });
-  for (const f of towerRaw) {
+  for (const f of towerSrc) {
     if (f.attrSum <= 0 || f.challengemaxtimes <= 0)
       errors.push(`tower_floors ${f.floor} needs positive attrSum and challengemaxtimes`);
   }

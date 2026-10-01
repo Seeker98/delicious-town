@@ -41,7 +41,7 @@ describe('厨塔概览', () => {
       floor: 1,
       name: '见习模范餐厅',
       title: '见习守护者',
-      power: 29,
+      power: 13,
       left: 10,
       maxTimes: 10,
       unlocked: true,
@@ -71,9 +71,9 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(r.data.me).toMatchObject({ power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4], sum: 85 });
     expect(r.data.them).toEqual({
       name: '见习模范餐厅',
-      power: 29,
-      scores: [8.1, 8, 6.6, 8.8, 3.6],
-      sum: 35.1,
+      power: 13,
+      scores: [3.8, 3.9, 3.3, 4.1, 1.9],
+      sum: 17,
     });
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ strength: 95, renown: 7, coin: 600 });
     const v = await t.game.tower.overview(ctx);

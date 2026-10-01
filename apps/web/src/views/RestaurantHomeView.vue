@@ -36,8 +36,19 @@ async function loadAnnouncements() {
   }
 }
 
+/** 首页签到（问题记录 144）：读失败就不显示 */
+const signedIn = ref<boolean | null>(null);
+async function loadSignIn() {
+  try {
+    signedIn.value = (await endpoints.activation()).signedIn;
+  } catch {
+    signedIn.value = null;
+  }
+}
+
 async function load() {
   void loadAnnouncements();
+  void loadSignIn();
   try {
     await store.refresh();
     mainTask.value = (await endpoints.tasks()).main;
@@ -275,6 +286,23 @@ onBeforeUnmount(() => {
           结束白食
         </button>
       </div>
+    </div>
+    <div
+      v-if="signedIn !== null"
+      class="dt-card my-2 small d-flex align-items-center gap-2"
+      data-testid="home-signin-row"
+    >
+      <span class="flex-fill"><i class="bi bi-calendar-check me-1"></i>每日签到</span>
+      <span v-if="signedIn" class="text-muted">今天已签到</span>
+      <button
+        v-else
+        class="btn btn-sm btn-success"
+        :disabled="busy"
+        data-testid="home-signin"
+        @click="act(() => endpoints.signIn(), '签到失败')"
+      >
+        签到
+      </button>
     </div>
     <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
     <div v-if="mainTask" class="dt-card my-2 small d-flex align-items-center gap-2" data-testid="main-task">
