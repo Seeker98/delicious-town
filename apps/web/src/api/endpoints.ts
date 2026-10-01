@@ -123,6 +123,9 @@ import type {
   TakeawayClaimDto,
   TakeawayDeliveryDto,
   TakeawayDto,
+  MailClaimAllDto,
+  MailClaimDto,
+  MailListDto,
 } from '@dt/shared';
 import { api } from './client';
 
@@ -419,4 +422,10 @@ export const endpoints = {
   townWish: () => api.post<WishResultDto>('/api/v1/town/wish'),
   townFeast: (foodsId?: number) =>
     api.post<FeastResultDto>('/api/v1/town/feast', foodsId === undefined ? {} : { foodsId }),
+  mail: () => api.get<MailListDto>('/api/v1/mail'),
+  mailUnread: () => api.get<{ count: number }>('/api/v1/mail/unread'),
+  mailRead: (id: number) => api.post<void>(`/api/v1/mail/${id}/read`, {}),
+  mailClaim: (id: number) => api.post<MailClaimDto>(`/api/v1/mail/${id}/claim`, {}),
+  mailClaimAll: () => api.post<MailClaimAllDto>('/api/v1/mail/claim-all', {}),
+  mailDelete: (id: number) => api.post<void>(`/api/v1/mail/${id}/delete`, {}),
 };

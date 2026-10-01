@@ -1,7 +1,15 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
+import { endpoints } from '../api/endpoints';
 import AppHeader from './AppHeader.vue';
+
+vi.mock('../api/endpoints', () => ({ endpoints: { mailUnread: vi.fn() } }));
+beforeEach(() => {
+  setActivePinia(createPinia());
+  vi.mocked(endpoints.mailUnread).mockResolvedValue({ count: 0 });
+});
 
 const makeRouter = () =>
   createRouter({
@@ -50,5 +58,19 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
     const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
     expect(w.find('[data-testid="home"]').attributes('href')).toBe('/');
     expect(w.find('[data-testid="back"]').exists()).toBe(false);
+  });
+
+  it('游戏里显示信封和未读数，点开去邮箱；不在游戏里不显示', async () => {
+    vi.mocked(endpoints.mailUnread).mockResolvedValue({ count: 3 });
+    const router = makeRouter();
+    await router.push('/');
+    const w = mount(AppHeader, { props: { inGame: true }, global: { plugins: [router] } });
+    await flushPromises();
+    const link = w.find('[data-testid="mail-link"]');
+    expect(link.attributes('href')).toBe('/mail');
+    expect(link.text()).toContain('3');
+    expect(link.attributes('aria-label')).toBe('邮箱，3 封未读');
+    const out = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(out.find('[data-testid="mail-link"]').exists()).toBe(false);
   });
 });
