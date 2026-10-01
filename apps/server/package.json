@@ -14,6 +14,7 @@
     "build": "tsup",
     "sim": "tsx --env-file=.env.development src/sim/cli.ts run",
     "sim:explain": "tsx --env-file=.env.development src/sim/cli.ts explain",
+    "sim:fast": "tsx --env-file=.env.development src/sim/cli.ts fast",
     "sim:bench": "tsx --env-file=.env.development src/sim/cli.ts bench"
   },
   "dependencies": {

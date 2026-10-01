@@ -59,7 +59,12 @@ const sumCoin = (s: FastStats, pick: (k: string) => boolean) =>
  * 跑一套数值（快速模拟设计 §4）：每 4 分钟一轮，一天 360 轮。
  * 每个随机源都按"种子 + 用途 + 店 + 轮"派生，几套数值用同一组随机数（公共随机数，设计 §4.7）
  */
-export function runFast(name: string, o: FastOptions, config: GameConfig): FastResult {
+export function runFast(
+  name: string,
+  o: FastOptions,
+  config: GameConfig,
+  onDay?: (day: number) => void,
+): FastResult {
   const started = Date.now();
   const settings = { ...resolveShardSettings(config, {}), tuning: o.tuning };
   const tuning = o.tuning;
@@ -197,6 +202,7 @@ export function runFast(name: string, o: FastOptions, config: GameConfig): FastR
       lastDay = nd;
       dayIndex += 1;
       snapshot(dayIndex);
+      onDay?.(dayIndex);
     }
   }
 

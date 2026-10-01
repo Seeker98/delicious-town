@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { bench } from './bench';
@@ -7,6 +7,9 @@ import { explain } from './explain';
 import { fromInvocation } from './paths';
 import { loadResult, writeReport } from './report';
 import { runSim } from './run';
+import { loadSideTable } from './fast/side';
+import { buildVariants, runVariants } from './fast/variants';
+import { loadGameConfig } from '@dt/config';
 
 const [command, ...args] = process.argv.slice(2);
 const bundlePath = process.env.CONFIG_BUNDLE_PATH!;
@@ -19,7 +22,62 @@ const redisUrl =
     return u.toString();
   })();
 
+/** pnpm sim:fast（快速模拟设计 §6）：多套数值并排跑，写报告 */
+async function fast(): Promise<void> {
+  const { values } = parseArgs({
+    args,
+    options: {
+      days: { type: 'string', default: '30' },
+      bots: { type: 'string', default: '20' },
+      seed: { type: 'string', default: '1' },
+      personas: { type: 'string', default: 'diligent,normal,casual' },
+      variant: { type: 'string', multiple: true, default: [] },
+      set: { type: 'string' },
+      side: { type: 'string' },
+      out: { type: 'string' },
+      'stuck-days': { type: 'string', default: '5' },
+    },
+  });
+  const config = loadGameConfig(bundlePath);
+  const readJson = (f: string) => JSON.parse(readFileSync(fromInvocation(f), 'utf8')) as unknown;
+  const variants = buildVariants(config, { variants: values.variant ?? [], set: values.set }, readJson);
+  const sidePath =
+    values.side === 'none'
+      ? null
+      : values.side
+        ? fromInvocation(values.side)
+        : new URL('./fast/side-income.json', import.meta.url);
+  const side = sidePath ? loadSideTable(JSON.parse(readFileSync(sidePath, 'utf8')), config) : null;
+  const days = Number(values.days);
+  const results = await runVariants(
+    variants,
+    {
+      days,
+      botsPerPersona: Number(values.bots),
+      personas: values.personas.split(',') as Persona['key'][],
+      seed: Number(values.seed),
+      start: new Date(Date.UTC(2026, 9, 1, 16, 0, 0)),
+      side,
+      stuckDays: Number(values['stuck-days']),
+    },
+    config,
+    { bundlePath },
+    (msg) => console.log(msg),
+  );
+  const dir = fromInvocation(
+    values.out ?? join('sim-out', `fast-${new Date().toISOString().replace(/[:.]/g, '-')}`),
+  );
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'results.json'), JSON.stringify(results));
+  for (const r of results) console.log(`${r.name}：用时 ${Math.round(r.elapsedMs / 1000)} 秒`);
+  console.log(`输出：${dir}`);
+}
+
 async function main(): Promise<void> {
+  if (command === 'fast') {
+    await fast();
+    return;
+  }
   if (command === 'run') {
     const { values } = parseArgs({
       args,
