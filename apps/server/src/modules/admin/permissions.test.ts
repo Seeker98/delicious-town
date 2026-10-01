@@ -5,7 +5,14 @@ import { call, createTestApp, registerUser, type TestContext } from '../../../te
 
 let ctx: TestContext;
 const routes = new Set<string>();
-let ids: { shardId: number; accountId: number; restId: number; iconId: number; mailId: number };
+let ids: {
+  shardId: number;
+  accountId: number;
+  restId: number;
+  iconId: number;
+  mailId: number;
+  announcementId: number;
+};
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
 beforeAll(async () => {
@@ -31,7 +38,26 @@ beforeAll(async () => {
     .values({ scope: 'shard', shard_id: shardId, title: '权限测试', body: 'b', source: 'admin' })
     .returning('id')
     .executeTakeFirstOrThrow();
-  ids = { shardId, accountId: target.accountId, restId, iconId: icon.id, mailId: mail.id };
+  const announcement = await ctx.deps.db
+    .insertInto('announcement')
+    .values({
+      shard_id: null,
+      title: '权限测试',
+      body: 'b',
+      starts_at: new Date(),
+      ends_at: new Date(Date.now() + 3_600_000),
+      actor_account_id: target.accountId,
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  ids = {
+    shardId,
+    accountId: target.accountId,
+    restId,
+    iconId: icon.id,
+    mailId: mail.id,
+    announcementId: announcement.id,
+  };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
     mod: (await userWithRole(ctx, 'mod')).cookie,
@@ -39,6 +65,15 @@ beforeAll(async () => {
   };
 });
 afterAll(() => ctx.close());
+
+const announceBody = () => ({
+  shardId: null,
+  title: '权限测试',
+  body: 'b',
+  important: false,
+  startsAt: new Date().toISOString(),
+  endsAt: new Date(Date.now() + 3_600_000).toISOString(),
+});
 
 type Case = {
   method: 'GET' | 'POST';
@@ -175,6 +210,32 @@ const CASES: Case[] = [
   },
   { method: 'GET', route: '/api/v1/admin/grants', url: () => '/api/v1/admin/grants', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/announcements',
+    url: () => '/api/v1/admin/announcements',
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/announcements',
+    url: () => '/api/v1/admin/announcements',
+    body: () => announceBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/announcements/:id',
+    url: () => `/api/v1/admin/announcements/${ids.announcementId}`,
+    body: () => announceBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/announcements/:id/delete',
+    url: () => `/api/v1/admin/announcements/${ids.announcementId}/delete`,
+    min: 'admin',
+  },
   {
     method: 'POST',
     route: '/api/v1/admin/mails',
