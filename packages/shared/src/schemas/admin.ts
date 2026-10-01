@@ -44,6 +44,20 @@ export interface ShardHistoryDto {
   changed: string[];
   at: string;
 }
+/** 上线检查（子项目 6B-2，设计 §7） */
+export interface LaunchCheckDto {
+  shards: Array<{
+    shardId: number;
+    shardName: string;
+    version: number;
+    items: Array<{ path: string; want: boolean; current: unknown; ok: boolean; why: string }>;
+  }>;
+  allOk: boolean;
+}
+export const launchCheckFixBody = z.object({
+  shardId: z.number().int().positive(),
+  version: z.number().int().min(0),
+});
 export const playerSearchQuery = z.object({ q: z.string().trim().min(1).max(64) });
 
 export interface PlayerRestaurantBriefDto {

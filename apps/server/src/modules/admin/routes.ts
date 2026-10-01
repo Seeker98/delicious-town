@@ -12,6 +12,7 @@ import {
   grantPreviewQuery,
   idParam,
   banBody,
+  launchCheckFixBody,
   reportListQuery,
   suspiciousQuery,
   resolveReportBody,
@@ -36,6 +37,7 @@ import { requireRole } from './access';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
+import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
@@ -143,6 +145,16 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/mails/:id/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await mails.revoke(a, id(req)));
+    });
+
+    const launch = createLaunchCheck(game);
+    r.get('/launch-check', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await launch.check());
+    });
+    r.post('/launch-check/fix', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await launch.fix(a, parse(launchCheckFixBody, req.body)));
     });
 
     const suspicious = createSuspicious(game);
