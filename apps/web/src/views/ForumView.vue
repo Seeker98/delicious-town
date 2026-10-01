@@ -33,8 +33,11 @@ const when = (iso: string) =>
     minute: '2-digit',
   });
 
+/** 读取序号：新请求覆盖旧请求，过期的响应直接丢弃（不拒绝新请求，切标签不会停在旧列表） */
+let seq = 0;
 async function load(more = false) {
-  if (loading.value) return;
+  if (more && loading.value) return;
+  const mine = ++seq;
   loading.value = true;
   try {
     const query = {
@@ -43,14 +46,15 @@ async function load(more = false) {
       ...(more && cursor.value ? { cursor: cursor.value } : {}),
     };
     const r = await endpoints.forumList(query);
+    if (mine !== seq) return;
     if (!more) pinned.value = r.pinned;
     items.value = more ? [...items.value, ...r.items] : r.items;
     cursor.value = r.nextCursor;
     me.value = r.me;
   } catch (e) {
-    toast.push(errorMessage(e, '读取论坛失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, '读取论坛失败'), 'danger');
   } finally {
-    loading.value = false;
+    if (mine === seq) loading.value = false;
   }
 }
 function search() {

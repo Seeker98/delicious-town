@@ -2,6 +2,7 @@ import { sql, type Kysely } from 'kysely';
 import {
   ErrorCode,
   FORUM_CATEGORIES,
+  gameDay,
   type ForumCategory,
   type ForumListDto,
   type ForumListQuery,
@@ -141,7 +142,8 @@ export async function loadReplies(o: Op, postId: number, admin: boolean): Promis
 /** 详情（设计文档 §2.3）：先记阅读（作者不计；第一次读 read_num + 1），再返回全文和回复 */
 export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<ForumPostDetailDto> {
   const t = o.tuning.forum;
-  const post = await loadPost(o, id, { forUpdate: true });
+  // 不锁帖子行（终审 I2）：同一家店的读已被店锁串行，阅读记录靠主键 upsert，read_num 原子加一
+  const post = await loadPost(o, id);
   if (post.rest_id !== o.rest.id) {
     const r = await o.tx
       .insertInto('forum_read')
@@ -219,7 +221,7 @@ export async function postReads(o: Op, ctx: RestCtx, id: number): Promise<ForumR
       restId: r.rest_id,
       name: r.name,
       times: r.times,
-      lastAt: r.last_at.toISOString(),
+      lastDay: gameDay(r.last_at),
       reaction: (r.kind as ForumReaction | null) ?? null,
     })),
   };

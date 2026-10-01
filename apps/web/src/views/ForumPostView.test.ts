@@ -137,7 +137,7 @@ describe('ForumPostView', () => {
     );
     vi.mocked(endpoints.forumAdmin).mockResolvedValue({ pinned: true, featured: false, rewarded: false });
     vi.mocked(endpoints.forumReads).mockResolvedValue({
-      items: [{ restId: 8, name: '老李', times: 3, lastAt: '2026-10-01T04:00:00.000Z', reaction: 'up' }],
+      items: [{ restId: 8, name: '老李', times: 3, lastDay: '2026-10-01', reaction: 'up' }],
     });
     const { w } = await mountView();
     await w.find('[data-testid="post-pin"]').trigger('click');
@@ -146,5 +146,14 @@ describe('ForumPostView', () => {
     await w.find('[data-testid="post-reads"]').trigger('click');
     await flushPromises();
     expect(w.text()).toContain('老李 · 读了 3 次');
+  });
+  it('回复成功后直接追加到列表，不重新读详情（终审 I1：避免刷新阅读时间）', async () => {
+    vi.mocked(endpoints.forumReply).mockResolvedValue(reply(4, { content: '新回复' }));
+    const { w } = await mountView();
+    await w.find('[data-testid="reply-content"]').setValue('新回复');
+    await w.find('[data-testid="reply-submit"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.forumPost).toHaveBeenCalledTimes(1);
+    expect(w.find('[data-testid="reply-4"]').text()).toContain('新回复');
   });
 });

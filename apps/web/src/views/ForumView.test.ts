@@ -91,4 +91,24 @@ describe('ForumView', () => {
     expect(w.find('[data-testid="forum-new"]').attributes('disabled')).toBeDefined();
     expect(w.text()).toContain('验证邮箱后才能发帖');
   });
+  it('加载中切换标签：以最后一次为准，不会停在旧列表（终审）', async () => {
+    let first!: (v: ForumListDto) => void;
+    vi.mocked(endpoints.forumList).mockImplementationOnce(() => new Promise((r) => (first = r)));
+    vi.mocked(endpoints.forumList).mockResolvedValueOnce(
+      list({ pinned: [], items: [item(7, { category: 'guide' })] }),
+    );
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/forum', component: ForumView }],
+    });
+    await router.push('/forum');
+    const w = mount(ForumView, { global: { plugins: [router] } });
+    await w.find('[data-testid="forum-tab-guide"]').trigger('click');
+    await flushPromises();
+    first(list());
+    await flushPromises();
+    expect(endpoints.forumList).toHaveBeenLastCalledWith({ tab: 'guide' });
+    expect(w.find('[data-testid="forum-item-7"]').exists()).toBe(true);
+    expect(w.find('[data-testid="forum-item-2"]').exists()).toBe(false);
+  });
 });

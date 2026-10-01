@@ -99,7 +99,8 @@ export interface ForumReadsDto {
     restId: number;
     name: string;
     times: number;
-    lastAt: string;
+    /** 最后阅读的游戏日：只给到日，避免和匿名回复的时间对出真名（终审 I1） */
+    lastDay: string;
     reaction: ForumReaction | null;
   }>;
 }

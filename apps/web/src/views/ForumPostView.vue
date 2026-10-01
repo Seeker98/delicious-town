@@ -93,10 +93,12 @@ async function submit() {
     anonymous: anonymous.value,
   };
   const r = await run(() => endpoints.forumReply(id.value, body), '回复失败');
-  if (r) {
+  if (r && data.value) {
+    // 直接追加，不重新读详情：重新读会刷新阅读时间，作者能拿它和匿名回复的时间对上（终审 I1）
+    data.value.replies.push(r);
+    data.value.post.replyCount = r.floor;
     content.value = '';
     replyTo.value = null;
-    await load();
   }
 }
 </script>
@@ -182,7 +184,7 @@ async function submit() {
     <div v-if="reads" class="dt-card mb-3" data-testid="post-reads-list">
       <div v-if="reads.items.length === 0" class="dt-empty">还没有人读过</div>
       <div v-for="r in reads.items" :key="r.restId" class="dt-meta">
-        {{ r.name }} · 读了 {{ r.times }} 次 · {{ when(r.lastAt)
+        {{ r.name }} · 读了 {{ r.times }} 次 · 最后 {{ r.lastDay
         }}<span v-if="r.reaction"> · {{ REACTION[r.reaction] }}</span>
       </div>
     </div>
