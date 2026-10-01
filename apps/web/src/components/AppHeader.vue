@@ -57,7 +57,7 @@ function back() {
       data-testid="mail-link"
       :aria-label="mail.unread > 0 ? `邮箱，${mail.unread} 封未读` : '邮箱'"
     >
-      <i class="bi bi-envelope"></i>
+      <i class="bi bi-envelope dt-mail-icon"></i>
       <span v-if="mail.unread > 0" class="badge rounded-pill bg-danger dt-mail-badge">{{ mail.unread }}</span>
     </RouterLink>
   </header>

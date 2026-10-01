@@ -88,6 +88,8 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
     expect(link.attributes('href')).toBe('/mail');
     expect(link.text()).toContain('3');
     expect(link.attributes('aria-label')).toBe('邮箱，3 封未读');
+    // 图标放大、未读数缩小（问题记录 200）
+    expect(link.find('i').classes()).toContain('dt-mail-icon');
     const out = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
     expect(out.find('[data-testid="mail-link"]').exists()).toBe(false);
   });
