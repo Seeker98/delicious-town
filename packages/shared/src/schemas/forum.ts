@@ -88,6 +88,14 @@ export interface ForumPostDetailDto {
   replyReadyAt: string | null;
 }
 
+/** 编辑页要的正文（不记阅读、不带回复） */
+export interface ForumPostSourceDto {
+  id: number;
+  category: ForumCategory;
+  title: string;
+  content: string;
+}
+
 export interface ForumReactDto {
   mine: ForumReaction | null;
   up: number;

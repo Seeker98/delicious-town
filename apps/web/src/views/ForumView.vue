@@ -5,6 +5,7 @@ import { FORUM_CATEGORY_NAMES, type ForumListDto, type ForumPostItemDto, type Fo
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
+import { useCountdown } from '../utils/countdown';
 
 /** 论坛列表（子项目 4E-3 设计文档 §5） */
 const TABS: Array<{ key: ForumTab; label: string }> = [
@@ -24,6 +25,8 @@ const items = ref<ForumPostItemDto[]>([]);
 const cursor = ref<string | null>(null);
 const me = ref<ForumListDto['me'] | null>(null);
 const loading = ref(false);
+/** 发帖冷却还剩几秒（PR31 遗留：服务端给了时间，前端要显示） */
+const postWait = useCountdown(() => me.value?.postReadyAt);
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString('zh-CN', {
@@ -70,9 +73,12 @@ onMounted(() => void load());
     <h5>论坛</h5>
     <span class="d-flex align-items-center gap-2">
       <small v-if="me && !me.canPost" class="dt-meta">验证邮箱后才能发帖</small>
+      <small v-else-if="postWait > 0" class="dt-meta" data-testid="forum-wait"
+        >{{ postWait }} 秒后可以再发帖</small
+      >
       <button
         class="btn btn-sm btn-primary"
-        :disabled="!me?.canPost"
+        :disabled="!me?.canPost || postWait > 0"
         data-testid="forum-new"
         @click="router.push('/forum/new')"
       >

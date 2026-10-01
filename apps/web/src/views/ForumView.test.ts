@@ -111,4 +111,20 @@ describe('ForumView', () => {
     expect(w.find('[data-testid="forum-item-7"]').exists()).toBe(true);
     expect(w.find('[data-testid="forum-item-2"]').exists()).toBe(false);
   });
+
+  it('发帖冷却中：按钮灰掉并显示还要等几秒（PR31 遗留）', async () => {
+    vi.mocked(endpoints.forumList).mockResolvedValue(
+      list({
+        me: {
+          canPost: true,
+          isAdmin: false,
+          postReadyAt: new Date(Date.now() + 30_000).toISOString(),
+          replyReadyAt: null,
+        },
+      }),
+    );
+    const { w } = await mountView();
+    expect(w.find('[data-testid="forum-new"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="forum-wait"]').text()).toMatch(/^(29|30) 秒后可以再发帖$/);
+  });
 });

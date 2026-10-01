@@ -18,7 +18,7 @@ describe('终审修复（4E-3）', () => {
     const id = (await f().createPost(a, { category: 'chat', title: 't', content: 'c' })).data.id;
     await f().detail(b, id);
     await f().reply(b, id, { content: '悄悄话', anonymous: true });
-    const item = (await f().reads(a, id)).data.items[0]!;
+    const item = (await f().reads(a, id)).items[0]!;
     expect(item).toEqual({
       restId: b.restaurantId,
       name: expect.any(String),

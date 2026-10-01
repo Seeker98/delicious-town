@@ -156,4 +156,13 @@ describe('ForumPostView', () => {
     expect(endpoints.forumPost).toHaveBeenCalledTimes(1);
     expect(w.find('[data-testid="reply-4"]').text()).toContain('新回复');
   });
+
+  it('回复冷却中：回复按钮灰掉并显示还要等几秒（PR31 遗留）', async () => {
+    vi.mocked(endpoints.forumPost).mockResolvedValue(
+      detail({ replyReadyAt: new Date(Date.now() + 45_000).toISOString() }),
+    );
+    const { w } = await mountView();
+    expect(w.find('[data-testid="reply-submit"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="reply-wait"]').text()).toMatch(/^(44|45) 秒后可以再回复$/);
+  });
 });

@@ -130,4 +130,15 @@ describe('小镇错误文案（4E-1）', () => {
     expect(errorText('LIMIT_REACHED', { what: 'forum_post', max: 10 })).toBe('今天发帖已达上限（10 篇）');
     expect(errorText('INVALID_STATE', { reason: 'post_locked' })).toBe('置顶或加精的帖子不能删除');
   });
+
+  it('论坛长度提示用服务端给的上限（PR31 遗留）', () => {
+    expect(errorText('INVALID_STATE', { reason: 'post_text', field: 'title', max: 30 })).toBe(
+      '标题要 1~30 字',
+    );
+    expect(errorText('INVALID_STATE', { reason: 'post_text', field: 'content', max: 4000 })).toBe(
+      '正文要 1~4000 字',
+    );
+    expect(errorText('INVALID_STATE', { reason: 'reply_text', max: 300 })).toBe('回复要 1~300 字');
+    expect(errorText('INVALID_STATE', { reason: 'query_text', max: 10 })).toBe('搜索词最多 10 字');
+  });
 });
