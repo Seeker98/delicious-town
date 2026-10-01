@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { getEffectAgg } from '../effects/service';
 
@@ -235,5 +236,26 @@ describe('强化数值表（问题记录 120）', () => {
     } finally {
       table.splice(0, table.length, ...orig);
     }
+  });
+});
+
+describe('区服把强化上限调到 10 以上（终审）', () => {
+  it('超过数值表的等级增量为 0，不会变成负数', async () => {
+    seq = [0.01];
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { equip: { maxStress: 12 } } }) })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1_000_000 }, goods: { 52: 50, 40: 1 } });
+    const table = t.deps.config.requireGoods(30).equip!.stressTable;
+    const id = await piece(ctx, 30, { base_cook: table[0]!, st_cook: table[10]! - table[0]!, stress: 10 });
+    const d = await eq().detail(ctx, id);
+    expect(d.next).toEqual({ gain: 0, total: table[10] });
+    // +10 以上基础成功率接近 0，用强化石保证成功
+    const r = await eq().stress(ctx, { id, stone: true });
+    expect(r.data).toMatchObject({ success: true, val: 0, stress: 11 });
+    expect((await row(id)).st_cook).toBe(table[10]! - table[0]!);
   });
 });

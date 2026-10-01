@@ -38,6 +38,7 @@ import {
   gemRate,
   rollStress,
   stressGain,
+  tableAt,
   stressRate,
   suitPct,
   zeroAttrs,
@@ -325,8 +326,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           e.stress >= t.maxStress
             ? null
             : {
-                gain: (def.stressTable[e.stress + 1] ?? 0) - (def.stressTable[e.stress] ?? 0),
-                total: def.stressTable[e.stress + 1] ?? 0,
+                gain: tableAt(def.stressTable, e.stress + 1) - tableAt(def.stressTable, e.stress),
+                total: tableAt(def.stressTable, e.stress + 1),
               },
         cost: { essence: def.essence, coin: def.essence * t.coinPerEssence },
         history: history.map((h) => ({
@@ -384,7 +385,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         let gain: { attr: EquipAttr; val: number } | null = null;
         if (r.success) {
           const table = def.stressTable;
-          gain = stressGain(e.part, (table[to] ?? 0) - (table[e.stress] ?? 0), o.rng);
+          gain = stressGain(e.part, tableAt(table, to) - tableAt(table, e.stress), o.rng);
           const boost = boostAttrs(e);
           boost[gain.attr] += gain.val;
           await o.tx

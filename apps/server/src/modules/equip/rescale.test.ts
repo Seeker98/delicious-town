@@ -1,5 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { runSystemOp } from '../../core/op';
+import { getEffectAgg } from '../effects/service';
+import { syncEquipEffects } from './effects';
 import { rescaleEquips } from './rescale';
 
 let t: TestGame;
@@ -48,7 +51,7 @@ describe('重算已生成的厨具（设计 §6）', () => {
     await log(id, r.restaurantId, 1, 'cutting', 30);
     await log(id, r.restaurantId, 2, 'fire', 5);
     await log(id, r.restaurantId, 2, 'fire', 9);
-    const first = await rescaleEquips(t.db, t.deps.config);
+    const first = await rescaleEquips(t.game.deps);
     expect(first.changed).toBeGreaterThanOrEqual(1);
     const e = await t.db.selectFrom('equip').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
     expect(sum(e, 'base_')).toBe(table[0]);
@@ -57,9 +60,50 @@ describe('重算已生成的厨具（设计 §6）', () => {
     expect(e.st_fire).toBe(table[2]! - table[1]!);
     expect(e.st_cook).toBe(table[3]! - table[2]!);
     expect(e.min_level).toBe(60);
-    const again = await rescaleEquips(t.db, t.deps.config);
+    const again = await rescaleEquips(t.game.deps);
     const e2 = await t.db.selectFrom('equip').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
     expect(e2).toEqual(e);
     expect(again.total).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('重算的终审修复', () => {
+  it('穿着的厨具重算后，缓存的厨具幸运同步更新（终审 I2）', async () => {
+    const r = await newRestaurant(t);
+    // 巴贝雷特之铲旧数据：幸运 35（旧 total 35），穿着；先按旧值同步一次缓存
+    await oldPiece(r.restaurantId, 59, { base_luck: 35, worn: true });
+    await runSystemOp(t.game.deps, r.shardId, r.restaurantId, { source: 'test' }, (op) =>
+      syncEquipEffects(op),
+    );
+    const before = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    expect(before.luckValue).toBe(35);
+    await rescaleEquips(t.game.deps);
+    const after = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    expect(after.luckValue).toBe(t.deps.config.requireGoods(59).equip!.stressTable[0]);
+  });
+
+  it('和玩家操作串行：这家店正被锁着改强化等级时，重算等它改完，用改完后的等级（终审 I3）', async () => {
+    const r = await newRestaurant(t);
+    const table = t.deps.config.requireGoods(59).equip!.stressTable;
+    const id = await oldPiece(r.restaurantId, 59, { base_cook: 35, stress: 3 });
+    let release!: () => void;
+    const held = new Promise<void>((res) => (release = res));
+    let locked!: () => void;
+    const isLocked = new Promise<void>((res) => (locked = res));
+    const holder = t.db.transaction().execute(async (tx) => {
+      await tx.selectFrom('restaurant').select('id').where('id', '=', r.restaurantId).forUpdate().execute();
+      await tx.updateTable('equip').set({ stress: 4 }).where('id', '=', id).execute();
+      locked();
+      await held;
+    });
+    await isLocked;
+    const run = rescaleEquips(t.game.deps);
+    await new Promise((res) => setTimeout(res, 300));
+    release();
+    await holder;
+    await run;
+    const e = await t.db.selectFrom('equip').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
+    expect(e.stress).toBe(4);
+    expect(sum(e, 'st_')).toBe(table[4]! - table[0]!);
   });
 });

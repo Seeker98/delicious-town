@@ -5,6 +5,8 @@ export function describeFeed(item: RestLogDto, foodName: (id: number) => string)
   const p = item.params;
   const who = String(p.byName ?? '有人');
   switch (item.type) {
+    case 'takeaway.hired':
+      return `${who} 雇你当了外卖骑手`;
     case 'dine.start':
       return `${who} 在你店里第 ${String(p.table)} 桌白食`;
     case 'dine.expelled':
