@@ -1,0 +1,222 @@
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { gameTime, RANK_BOARDS } from '@dt/shared';
+import { createShard } from '../../../test/fixtures';
+import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import type { RestCtx } from '../../core/deps';
+
+const DAY = '2026-10-01'; // 周四；本周一 09-28
+let t: TestGame;
+beforeAll(async () => {
+  t = await createTestGame();
+});
+afterAll(() => t.close());
+beforeEach(() => {
+  t.clock.set(gameTime(DAY, 12));
+  t.game.rank.clearCache();
+});
+
+const board = (ctx: RestCtx, key: string) => t.game.rank.board(ctx, key);
+const ids = (rows: Array<{ restId: number }>) => rows.map((r) => r.restId);
+
+async function income(restId: number, round: number, coin: number, at: Date) {
+  await t.db
+    .insertInto('income_round')
+    .values({
+      rest_id: restId,
+      round_no: round,
+      coin,
+      exp: coin * 2,
+      oil: 0,
+      customers: JSON.stringify({}),
+      rates: JSON.stringify({}),
+      drops: JSON.stringify([]),
+      created_at: at,
+    })
+    .execute();
+}
+
+async function counter(restId: number, key: string, day: string, count: number) {
+  await t.db.insertInto('daily_counter').values({ rest_id: restId, key, day, count }).execute();
+}
+
+async function rests(n: number, shardId?: number): Promise<RestCtx[]> {
+  const sid = shardId ?? (await createShard(t.db));
+  const out: RestCtx[] = [];
+  for (let i = 0; i < n; i++) out.push(await newRestaurant(t, { shardId: sid }));
+  return out;
+}
+
+describe('排行榜（设计文档 §2.6）', () => {
+  it('收益今日：只算今天；NPC 和封禁账号不上榜', async () => {
+    const [a, b, c] = await rests(3);
+    const npc = await newRestaurant(t, { shardId: a!.shardId, patch: { npc: true } });
+    const banned = await newRestaurant(t, { shardId: a!.shardId });
+    await t.db
+      .updateTable('account')
+      .set({ banned_at: new Date() })
+      .where('id', '=', banned.accountId)
+      .execute();
+    await income(a!.restaurantId, 1, 100, gameTime(DAY, 10));
+    await income(a!.restaurantId, 2, 100, gameTime(DAY, 11));
+    await income(b!.restaurantId, 2, 500, gameTime(DAY, 11));
+    await income(c!.restaurantId, 1, 9999, gameTime('2026-09-30', 23));
+    await income(npc.restaurantId, 2, 99999, gameTime(DAY, 11));
+    await income(banned.restaurantId, 2, 99999, gameTime(DAY, 11));
+    const r = await board(a!, 'income.coin.today');
+    expect(r.rows.map((x) => [x.restId, x.rank, x.value])).toEqual([
+      [b!.restaurantId, 1, 500],
+      [a!.restaurantId, 2, 200],
+    ]);
+    expect(r.me).toEqual({ rank: 2, value: 200 });
+    expect((await board(a!, 'income.exp.yesterday')).rows.map((x) => x.value)).toEqual([19998]);
+  });
+
+  it('收益单轮：只算本区最近一轮', async () => {
+    const [a, b] = await rests(2);
+    await income(a!.restaurantId, 7, 900, gameTime(DAY, 10));
+    await income(b!.restaurantId, 8, 100, gameTime(DAY, 11));
+    expect(ids((await board(a!, 'income.coin.round')).rows)).toEqual([b!.restaurantId]);
+  });
+
+  it('等级：同级时经验高的在前，名次不并列', async () => {
+    const sid = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId: sid, patch: { level: 10, exp: 5 } });
+    const b = await newRestaurant(t, { shardId: sid, patch: { level: 10, exp: 50 } });
+    const r = await board(a, 'level');
+    expect(r.rows.map((x) => [x.restId, x.rank])).toEqual([
+      [b.restaurantId, 1],
+      [a.restaurantId, 2],
+    ]);
+  });
+
+  it('食谱：品级 ≥ N 的个数', async () => {
+    const [a] = await rests(1);
+    await t.db
+      .insertInto('restaurant_cookbooks')
+      .values({ rest_id: a!.restaurantId, levels: Buffer.from([0, 7, 8, 6, 7, 1]) })
+      .onConflict((oc) => oc.column('rest_id').doUpdateSet({ levels: Buffer.from([0, 7, 8, 6, 7, 1]) }))
+      .execute();
+    expect((await board(a!, 'cookbook.7')).me).toEqual({ rank: 1, value: 3 });
+    expect((await board(a!, 'cookbook.1')).me).toEqual({ rank: 1, value: 5 });
+  });
+
+  it('灭蟑螂本周、上周：按周一切分', async () => {
+    const [a, b] = await rests(2);
+    await counter(a!.restaurantId, 'roach.kill', '2026-09-28', 3);
+    await counter(a!.restaurantId, 'roach.kill', '2026-09-27', 10);
+    await counter(b!.restaurantId, 'roach.kill', '2026-09-21', 4);
+    await counter(b!.restaurantId, 'roach.kill', DAY, 1);
+    expect((await board(a!, 'roach.kill.thisWeek')).rows.map((x) => [x.restId, x.value])).toEqual([
+      [a!.restaurantId, 3],
+      [b!.restaurantId, 1],
+    ]);
+    expect((await board(a!, 'roach.kill.lastWeek')).rows.map((x) => [x.restId, x.value])).toEqual([
+      [a!.restaurantId, 10],
+      [b!.restaurantId, 4],
+    ]);
+    expect((await board(a!, 'roach.kill.today')).rows.map((x) => x.restId)).toEqual([b!.restaurantId]);
+  });
+
+  it('酒吧：当前连胜、连败分榜', async () => {
+    const [a, b] = await rests(2);
+    await t.db
+      .insertInto('bar_state')
+      .values({ rest_id: a!.restaurantId, fg_result: 1, fg_times: 4 })
+      .execute();
+    await t.db
+      .insertInto('bar_state')
+      .values({ rest_id: b!.restaurantId, fg_result: -1, fg_times: 9 })
+      .execute();
+    expect((await board(a!, 'bar.fg.win')).rows.map((x) => [x.restId, x.value])).toEqual([
+      [a!.restaurantId, 4],
+    ]);
+    expect((await board(a!, 'bar.fg.lose')).rows.map((x) => [x.restId, x.value])).toEqual([
+      [b!.restaurantId, 9],
+    ]);
+  });
+
+  it('特色菜昨日价值：单批最大值', async () => {
+    const [a] = await rests(1);
+    const cook = (total: number, price: number, at: Date) =>
+      t.db
+        .insertInto('mc_cook')
+        .values({
+          rest_id: a!.restaurantId,
+          shard_id: a!.shardId,
+          mc_id: 1,
+          level: 1,
+          grade: 1,
+          cook_num: total,
+          total_num: total,
+          left_num: total,
+          price,
+          created_at: at,
+        })
+        .execute();
+    await cook(10, 100, gameTime('2026-09-30', 10));
+    await cook(5, 300, gameTime('2026-09-30', 11));
+    await cook(100, 100, gameTime(DAY, 10));
+    expect((await board(a!, 'mc.yesterday')).me).toEqual({ rank: 1, value: 1500 });
+    expect((await board(a!, 'mc.best')).me).toEqual({ rank: 1, value: 10000 });
+    expect((await board(a!, 'mc.times')).me).toEqual({ rank: 1, value: 3 });
+  });
+
+  it('打赏本周：同值时先打赏的在前', async () => {
+    const [a, b] = await rests(2);
+    const tip = (restId: number, at: Date) =>
+      t.db
+        .insertInto('hiphop_tip')
+        .values({ shard_id: a!.shardId, rest_id: restId, kind: 'coin', num: 5, worth: 1, created_at: at })
+        .execute();
+    await tip(b!.restaurantId, gameTime('2026-09-29', 10));
+    await tip(a!.restaurantId, gameTime('2026-09-30', 10));
+    const r = await board(a!, 'hiphop.week');
+    expect(r.rows.map((x) => [x.restId, x.rank])).toEqual([
+      [b!.restaurantId, 1],
+      [a!.restaurantId, 2],
+    ]);
+  });
+
+  it('我在 50 名之外也给名次；值为 0 时 me 为 null', async () => {
+    const sid = await createShard(t.db);
+    const list: RestCtx[] = [];
+    for (let i = 0; i < 55; i++)
+      list.push(await newRestaurant(t, { shardId: sid, patch: { renown: 1000 - i } }));
+    const zero = await newRestaurant(t, { shardId: sid, patch: { renown: 0 } });
+    const r = await board(list[52]!, 'renown');
+    expect(r.rows).toHaveLength(50);
+    expect(r.me).toEqual({ rank: 53, value: 948 });
+    expect((await board(zero, 'renown')).me).toBeNull();
+  });
+
+  it('缓存：60 秒内不变，过期后更新；厨力榜 10 分钟', async () => {
+    const sid = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId: sid, patch: { renown: 10 } });
+    expect((await board(a, 'renown')).me?.value).toBe(10);
+    await t.db.updateTable('restaurant').set({ renown: 20 }).where('id', '=', a.restaurantId).execute();
+    expect((await board(a, 'renown')).me?.value).toBe(10);
+    t.clock.advance(61_000);
+    expect((await board(a, 'renown')).me?.value).toBe(20);
+
+    const p0 = (await board(a, 'power')).me?.value ?? 0;
+    await t.db.updateTable('restaurant').set({ attr_cook: 500 }).where('id', '=', a.restaurantId).execute();
+    t.clock.advance(61_000);
+    expect((await board(a, 'power')).me?.value ?? 0).toBe(p0);
+    t.clock.advance(600_000);
+    expect((await board(a, 'power')).me?.value).toBeGreaterThan(p0);
+  });
+
+  it('区服之间互不影响', async () => {
+    const [a] = await rests(1);
+    const [b] = await rests(1);
+    await t.db.updateTable('restaurant').set({ renown: 77 }).where('id', '=', a!.restaurantId).execute();
+    await board(a!, 'renown');
+    expect(ids((await board(b!, 'renown')).rows)).not.toContain(a!.restaurantId);
+  });
+
+  it('未知的榜报参数错误；其余每个榜都能查', async () => {
+    const [a] = await rests(1);
+    await expect(board(a!, 'nope')).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+    for (const b of RANK_BOARDS) await expect(board(a!, b.key)).resolves.toMatchObject({ key: b.key });
+  });
+});

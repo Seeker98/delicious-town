@@ -28,6 +28,7 @@ import { createTakeawayService, type TakeawayService } from './modules/takeaway/
 import { createTownService, type TownService } from './modules/town/service';
 import { hiphopJobs } from './modules/hiphop/jobs';
 import { createHiphopService, type HiphopService } from './modules/hiphop/service';
+import { createRankService, type RankService } from './modules/rank/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -64,6 +65,7 @@ export interface Game {
   takeaway: TakeawayService;
   town: TownService;
   hiphop: HiphopService;
+  rank: RankService;
   jobs: PeriodicJob[];
 }
 
@@ -117,6 +119,7 @@ export function createGame(app: AppDeps): Game {
     takeaway: createTakeawayService(deps, world),
     town: createTownService(deps, world),
     hiphop: createHiphopService(deps, world),
+    rank: createRankService(deps),
     shop,
     market,
     task: createTaskService(deps),
