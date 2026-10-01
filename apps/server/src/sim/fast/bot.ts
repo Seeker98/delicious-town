@@ -59,6 +59,17 @@ const needOf = (c: FastCtx) => (id: number, grade: number) =>
 const levelOfFood = (c: FastCtx) => (id: number) => c.config.foods.get(id)?.level ?? 0;
 const haveFood = (r: FastRest) => (id: number) => foodNum(r, id);
 
+/** 食谱某品级合并后的食材需求是静态数据，按配置缓存（性能） */
+const mergedCache = new WeakMap<object, Map<number, ReturnType<typeof mergeNeed>>>();
+function mergedNeed(c: FastCtx, id: number, grade: number): ReturnType<typeof mergeNeed> {
+  let m = mergedCache.get(c.config);
+  if (!m) mergedCache.set(c.config, (m = new Map()));
+  const key = id * 16 + grade;
+  let v = m.get(key);
+  if (!v) m.set(key, (v = mergeNeed(c.config.requireCookbook(id).needFoods[grade] ?? [])));
+  return v;
+}
+
 // ---------- 商店（shop/service.ts） ----------
 
 function storeKinds(c: FastCtx, r: FastRest): number {
@@ -187,22 +198,25 @@ function learn(c: FastCtx, r: FastRest, id: number): boolean {
   const from = r.levels[id] ?? 0;
   const to = from + 1;
   if (to > c.tuning.rest.cookbookMaxGrade) return false;
-  const plan = planLearn(cb.needFoods[to] ?? [], haveFood(r), levelOfFood(c));
+  const plan = planLearn(mergedNeed(c, id, to), haveFood(r), levelOfFood(c));
   if (plan.kind === 'none') return false;
   for (const x of plan.consume) subFoods(c, r, x.foodsId, x.num);
   r.levels[id] = to;
   r.counts = applyLearn(r.counts, cb.streetId, from, to);
+  r.levelsVersion += 1;
   action(c, r, 'cookbook.learn');
   return true;
 }
 
 function learnable(c: FastCtx, r: FastRest, street: number): number[] {
   const max = c.tuning.rest.cookbookMaxGrade;
+  const have = haveFood(r);
+  const lv = levelOfFood(c);
   const rows = (c.config.cookbookIndex.idsByStreet.get(street) ?? []).map((id) => {
     const grade = r.levels[id] ?? 0;
     if (grade >= max) return { id, grade, learn: 'max', next: 0 };
-    const need = mergeNeed(needOf(c)(id, grade + 1));
-    return { id, grade, learn: learnTypeOf(planLearn(need, haveFood(r), levelOfFood(c))), next: need.length };
+    const need = mergedNeed(c, id, grade + 1);
+    return { id, grade, learn: learnTypeOf(planLearn(need, have, lv)), next: need.length };
   });
   const sort = (xs: typeof rows) =>
     xs.sort(
@@ -215,13 +229,21 @@ function learnable(c: FastCtx, r: FastRest, street: number): number[] {
   return [...fresh, ...up].slice(0, 20).map((x) => x.id);
 }
 
-function foodsLack(c: FastCtx, r: FastRest): Map<number, number> {
+/** 把所有食谱学到 1 品级还需要的食材总量；只在学菜后变化，按 levelsVersion 缓存（性能） */
+function foodsNeed(c: FastCtx, r: FastRest): Map<number, number> {
+  if (r.needCache?.version === r.levelsVersion) return r.needCache.need;
   const need = foodsNeedFor(
     c.config.cookbookIndex.allIds,
     r.levels,
     Math.min(1, c.tuning.rest.cookbookMaxGrade),
     needOf(c),
   );
+  r.needCache = { version: r.levelsVersion, need };
+  return need;
+}
+
+function foodsLack(c: FastCtx, r: FastRest): Map<number, number> {
+  const need = foodsNeed(c, r);
   const lack = new Map<number, number>();
   for (const [id, n] of need) {
     const l = n - foodNum(r, id);
@@ -373,16 +395,16 @@ export function botTurn(
   }
 
   // 摆设施：空着的、已解锁的格子；仓库没有时钱够就买便宜货
+  const ownedDevices = [...r.store.keys()]
+    .sort((a, b) => a - b)
+    .filter((id) => cfg.requireGoods(id).type === GOODS_TYPE.device);
   for (const dev of [...cfg.devices.values()].sort((a, b) => a.id - b.id)) {
     if (r.star < dev.needStar || (dev.id === 7 && !r.plaque2Open)) continue;
     const cur = r.devices.get(dev.id);
     if (cur && (!cur.expiresAt || cur.expiresAt > c.now)) continue;
-    let goodsId = [...r.store.keys()]
-      .sort((a, b) => a - b)
-      .find((id) => {
-        const g = cfg.requireGoods(id);
-        return g.type === GOODS_TYPE.device && g.deviceType === dev.deviceType && countGoods(c, r, id) > 0;
-      });
+    let goodsId = ownedDevices.find(
+      (id) => cfg.requireGoods(id).deviceType === dev.deviceType && countGoods(c, r, id) > 0,
+    );
     const cheap = CHEAP_DEVICES[dev.deviceType];
     if (goodsId === undefined && cheap !== undefined && r.coin > 50_000 && shopBuy(c, r, cheap, 1))
       goodsId = cheap;
@@ -476,12 +498,19 @@ export function botTurn(
   }
 
   // 学食谱：每条街先学新的、再升级学过的，最多 20 个
-  for (let street = 0; street <= 13; street++) for (const id of learnable(c, r, street)) learn(c, r, id);
+  // 上次一道都没学到、橱柜和食谱都没变时，结果一样，跳过（性能）
+  const idleKey = `${r.foodsVersion}:${r.levelsVersion}`;
+  if (r.learnIdleKey !== idleKey) {
+    let learned = 0;
+    for (let street = 0; street <= 13; street++)
+      for (const id of learnable(c, r, street)) if (learn(c, r, id)) learned += 1;
+    r.learnIdleKey = learned === 0 ? `${r.foodsVersion}:${r.levelsVersion}` : '';
+  }
 
   // 合成多余食材：只用当天的免体力次数，把学菜用不到的 1~4 级食材合成上去
   const cup = c.tuning.cupboard;
   let free = cup.freeHandleBase + cup.freeHandlePerStar * r.star - (r.daily.get('handle') ?? 0);
-  const need = foodsNeedFor(cfg.cookbookIndex.allIds, r.levels, 1, needOf(c));
+  const need = foodsNeed(c, r);
   for (const [id, have] of [...r.foods].sort((a, b) => a[0] - b[0])) {
     if (free <= 0) break;
     const food = cfg.foods.get(id);

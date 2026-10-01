@@ -44,6 +44,12 @@ export interface FastRest {
   tables: TableState[];
   levels: Uint8Array;
   counts: CookbookCounts;
+  /** 每学一次菜 +1；用来缓存"学到 1 品级还要的食材"（只在学菜后变化） */
+  levelsVersion: number;
+  needCache: { version: number; need: Map<number, number> } | null;
+  /** 橱柜每变一次 +1；上次学菜什么都没学到、橱柜和食谱都没变时跳过学菜（性能） */
+  foodsVersion: number;
+  learnIdleKey: string;
   /** 道具 id → 数量和勋章有效期 */
   store: Map<number, { num: number; expiresAt: Date | null }>;
   foods: Map<number, number>;
@@ -117,6 +123,10 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     tables: initialTables(d.tableNum),
     levels: new Uint8Array(config.maxCookbookId + 1),
     counts: normalizeCounts({}),
+    levelsVersion: 0,
+    needCache: null,
+    foodsVersion: 0,
+    learnIdleKey: '',
     store: new Map(),
     foods: new Map(),
     fridge: new Map(),

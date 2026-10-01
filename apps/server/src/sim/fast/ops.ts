@@ -167,7 +167,10 @@ export function addFoods(_c: FastCtx, r: FastRest, foodsId: number, num: number)
     },
     num,
   );
-  if (p.toCupboard > 0) r.foods.set(foodsId, foodNum(r, foodsId) + p.toCupboard);
+  if (p.toCupboard > 0) {
+    r.foods.set(foodsId, foodNum(r, foodsId) + p.toCupboard);
+    r.foodsVersion += 1;
+  }
   if (p.toFridge > 0) r.fridge.set(foodsId, (r.fridge.get(foodsId) ?? 0) + p.toFridge);
 }
 
@@ -176,6 +179,7 @@ export function subFoods(_c: FastCtx, r: FastRest, foodsId: number, num: number)
   const have = foodNum(r, foodsId);
   if (have < num) return false;
   r.foods.set(foodsId, have - num);
+  r.foodsVersion += 1;
   return true;
 }
 

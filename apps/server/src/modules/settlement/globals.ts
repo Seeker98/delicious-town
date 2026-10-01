@@ -47,7 +47,8 @@ export function toSettleInput(s: SettleSource): SettleInput {
   return {
     rest: s.rest,
     tables: s.tables,
-    levels: new Uint8Array(s.levels),
+    // 只换成 Uint8Array 视图，不复制（结算不改它；每轮复制 2KB 在快速模拟里很费时）
+    levels: new Uint8Array(s.levels.buffer, s.levels.byteOffset, s.levels.byteLength),
     counts: normalizeCounts(s.counts),
     agg: s.agg,
     special: s.special,
