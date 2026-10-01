@@ -5,6 +5,7 @@ import { createRestaurantBody } from './restaurant';
 import { GRANT_LIMITS, createGrantBody } from './admin';
 import { rewardItems, sendMailBody } from './mail';
 import { announcementBody } from './announce';
+import { createBatchBody, createSharedCodeBody, redeemBody } from './redeem';
 
 describe('registerBody', () => {
   const base = { username: '厨神小王', password: 'secret123', email: 'A@B.com', captchaToken: 't' };
@@ -82,5 +83,32 @@ describe('附件、邮件、公告（子项目 6A-1）', () => {
   it('补偿可以改为发邮件', () => {
     const b = { shardId: 1, target: 'rest', restId: 2, items: { coin: 1 }, reason: 'r', asMail: true };
     expect(createGrantBody.parse(b).asMail).toBe(true);
+  });
+});
+
+describe('兑换码（子项目 6A-2）', () => {
+  it('兑换：去空格、转大写；字符只能是字母数字', () => {
+    expect(redeemBody.parse({ code: ' kaifu2026 ' }).code).toBe('KAIFU2026');
+    expect(redeemBody.safeParse({ code: 'ab' }).success).toBe(false);
+    expect(redeemBody.safeParse({ code: 'AB CD' }).success).toBe(false);
+  });
+
+  it('建通用码：自定码要合规；结束晚于开始；一批 1~1000 个', () => {
+    const base = { items: { coin: 1 }, note: '开服' };
+    expect(createSharedCodeBody.parse({ ...base, code: 'kaifu' }).code).toBe('KAIFU');
+    expect(createSharedCodeBody.safeParse({ ...base, code: '开服' }).success).toBe(false);
+    expect(
+      createSharedCodeBody.safeParse({
+        ...base,
+        startsAt: '2026-10-02T00:00:00Z',
+        endsAt: '2026-10-01T00:00:00Z',
+      }).success,
+    ).toBe(false);
+    expect(createBatchBody.safeParse({ ...base, count: 0 }).success).toBe(false);
+    expect(createBatchBody.safeParse({ ...base, count: 1001 }).success).toBe(false);
+    expect(
+      createBatchBody.safeParse({ ...base, count: 5, items: { hats: [{ tier: 'jade', name: '大橘' }] } })
+        .success,
+    ).toBe(true);
   });
 });

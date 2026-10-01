@@ -704,7 +704,9 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
 
   it('邀请奖励引用了不存在的道具时构建报错', () => {
     const src = source();
-    const tuning = structuredClone(src['game/tuning']) as { invite: { rewards: { lv10: { goods?: unknown } } } };
+    const tuning = structuredClone(src['game/tuning']) as {
+      invite: { rewards: { lv10: { goods?: unknown } } };
+    };
     tuning.invite.rewards.lv10.goods = [{ id: 999999, num: 1 }];
     expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
       'invite.rewards.lv10 references unknown goods 999999',
