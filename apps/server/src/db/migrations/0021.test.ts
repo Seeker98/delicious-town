@@ -28,7 +28,7 @@ beforeAll(async () => {
 
 describe('迁移 0021', () => {
   it('同一活动、店、奖励键只能领一次', async () => {
-    const row = { activity_id: activity, rest_id: rest, reward_key: 'g0', via: 'page' };
+    const row = { activity_id: activity, rest_id: rest, reward_key: 'g0', via: 'page' as const };
     await db.insertInto('activity_claim').values(row).execute();
     await expect(db.insertInto('activity_claim').values(row).execute()).rejects.toThrow();
   });
