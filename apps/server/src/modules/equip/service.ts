@@ -33,6 +33,7 @@ import {
   addAttrs,
   attrSeq,
   attrSummary,
+  compareGems,
   gemLevelUp,
   gemRate,
   rollStress,
@@ -341,6 +342,12 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           .sort((a, b) => a.back - b.back),
         gems: store
           .filter((x) => d.config.goods.get(x.goods_id)?.gem)
+          .sort((a, b) =>
+            compareGems(
+              { id: a.goods_id, gem: d.config.goods.get(a.goods_id)!.gem! },
+              { id: b.goods_id, gem: d.config.goods.get(b.goods_id)!.gem! },
+            ),
+          )
           .map((x) => ({
             goodsId: x.goods_id,
             num: x.num,
@@ -610,21 +617,21 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         .where('num', '>', 0)
         .orderBy('goods_id')
         .execute();
-      return {
-        items: rows.flatMap((r) => {
+      const gemRows = rows
+        .flatMap((r) => {
           const gem = d.config.goods.get(r.goods_id)?.gem;
-          if (!gem) return [];
-          return [
-            {
-              goodsId: r.goods_id,
-              num: r.num,
-              level: gem.level,
-              nextId: gem.nextId,
-              rate: gemRate(gem.level, weather.gemLevelUpRate ?? 0, s.tuning.equip),
-              attrs: gem.attrs,
-            },
-          ];
-        }),
+          return gem ? [{ ...r, gem }] : [];
+        })
+        .sort((a, b) => compareGems({ id: a.goods_id, gem: a.gem }, { id: b.goods_id, gem: b.gem }));
+      return {
+        items: gemRows.map(({ gem, ...r }) => ({
+          goodsId: r.goods_id,
+          num: r.num,
+          level: gem.level,
+          nextId: gem.nextId,
+          rate: gemRate(gem.level, weather.gemLevelUpRate ?? 0, s.tuning.equip),
+          attrs: gem.attrs,
+        })),
         luckRate: luckRate(rest.luck + luckValue),
         strength: rest.strength,
       };
