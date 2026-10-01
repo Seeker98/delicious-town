@@ -212,6 +212,10 @@ onBeforeUnmount(() => {
       {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
       <span v-if="rest.state === 2" class="badge bg-danger ms-1">停业</span>
     </div>
+    <!-- 新手提示（问题记录 150）：10 级以前显示 -->
+    <RouterLink v-if="rest.level < 10" to="/guide" class="d-block small mb-1" data-testid="guide-hint"
+      >新手看这里 → 游玩指引（有新手兑换码）</RouterLink
+    >
     <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
     <div
       class="progress my-2 position-relative"

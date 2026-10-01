@@ -7,6 +7,8 @@ export interface RouteFlags {
   guestOnly?: boolean;
   /** 需要当前区服已有餐厅 */
   needRestaurant?: boolean;
+  /** 不要求开店，但已开店时按游戏内显示（底部导航、返回） */
+  gameChrome?: boolean;
 }
 
 export type GuardResult = true | { name: string; query?: Record<string, string> };

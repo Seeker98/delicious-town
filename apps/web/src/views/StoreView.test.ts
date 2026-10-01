@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { StoreDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import StoreView from './StoreView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -22,6 +23,23 @@ describe('StoreView', () => {
     setActivePinia(createPinia());
     vi.mocked(endpoints.store).mockResolvedValue(structuredClone(data));
     vi.mocked(endpoints.useGoods).mockResolvedValue({} as never);
+  });
+
+  it('选"全部"时按类型分组，带小标题，消耗品在道具前面（问题记录 186）', async () => {
+    const goods = (id: number, name: string, type: number) =>
+      ({ id, name, type, deviceType: null, level: 1, desc: '', coin: 0, diamond: 0 }) as never;
+    useCatalogStore().goodsMap = new Map([
+      [315, goods(315, '喇叭', 1)],
+      [29, goods(29, '体力卡', 0)],
+    ]);
+    const row = (goodsId: number) => ({ ...data.items[0]!, goodsId });
+    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315), row(29)] });
+    const w = mount(StoreView);
+    await flushPromises();
+    const html = w.html();
+    expect(w.find('[data-testid="store-group-0"]').text()).toBe('消耗品');
+    expect(w.find('[data-testid="store-group-1"]').text()).toBe('道具');
+    expect(html.indexOf('体力卡')).toBeLessThan(html.indexOf('喇叭'));
   });
 
   it('批量使用显示单次上限；填的数超过上限时按上限使用（问题记录：批量使用不提示上限）', async () => {

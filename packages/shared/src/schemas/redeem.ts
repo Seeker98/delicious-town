@@ -54,3 +54,11 @@ export interface AdminCodeDto {
   actor: string | null;
   createdAt: string;
 }
+
+/** 指引页的新手码（问题记录 150）：off = 不存在、已停用或被手动码占用；领过的码停用后仍是 used */
+export interface GuideCodeDto {
+  code: string;
+  minLevel: number;
+  items: RewardItems;
+  state: 'ok' | 'level' | 'used' | 'off';
+}

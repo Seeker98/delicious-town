@@ -2,6 +2,8 @@ import { randomInt } from 'node:crypto';
 import type { Redis } from 'ioredis';
 import { sql, type Kysely } from 'kysely';
 import {
+  type AccountProfileDto,
+  type ChangePasswordInput,
   ErrorCode,
   type ForgotPasswordInput,
   type LoginInput,
@@ -20,6 +22,8 @@ import { newToken, sha256 } from '../../security/tokens';
 import { npcInvite } from '../npc/npc';
 import { hashPassword, verifyPassword } from './password';
 import { isBanned } from '../admin/ban';
+import { writeAudit } from '../admin/audit';
+import { invalidState } from '../../core/errors';
 
 export interface AccountDeps {
   db: Kysely<DB>;
@@ -159,6 +163,57 @@ export function createAccountService(d: AccountDeps) {
         shardId: sel.shardId,
         restaurantId: sel.restaurantId,
       };
+    },
+
+    /** 我的账号（问题记录 178）：账号信息和各区服的店 */
+    async profile(accountId: number): Promise<AccountProfileDto> {
+      const a = await d.db
+        .selectFrom('account')
+        .select(['username', 'email', 'email_verified_at', 'role', 'created_at', 'invite_code'])
+        .where('id', '=', accountId)
+        .executeTakeFirst();
+      if (!a) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
+      const rests = await d.db
+        .selectFrom('restaurant as r')
+        .innerJoin('shard as s', 's.id', 'r.shard_id')
+        .select(['r.id', 'r.name', 'r.level', 's.id as shard_id', 's.name as shard_name', 's.status'])
+        .where('r.account_id', '=', accountId)
+        .where('r.npc', '=', false)
+        .orderBy('s.id')
+        .execute();
+      return {
+        username: a.username,
+        email: a.email,
+        emailVerified: a.email_verified_at !== null,
+        role: a.role,
+        createdAt: new Date(a.created_at).toISOString(),
+        inviteCode: a.invite_code,
+        rests: rests.map((r) => ({
+          shardId: r.shard_id,
+          shardName: r.shard_name,
+          shardOpen: r.status === 'open',
+          restId: r.id,
+          name: r.name,
+          level: r.level,
+        })),
+      };
+    },
+
+    /** 改密码（设计 §6.1）：旧密码不对、新旧相同都报 INVALID_STATE（不用 401，免得前端当成已退出）；会话由路由处理 */
+    async changePassword(accountId: number, input: ChangePasswordInput): Promise<void> {
+      const a = await d.db
+        .selectFrom('account')
+        .select('password_hash')
+        .where('id', '=', accountId)
+        .executeTakeFirstOrThrow();
+      if (!(await verifyPassword(a.password_hash, input.oldPassword))) throw invalidState('wrong_password');
+      if (input.oldPassword === input.newPassword) throw invalidState('same_password');
+      await d.db
+        .updateTable('account')
+        .set({ password_hash: await hashPassword(input.newPassword) })
+        .where('id', '=', accountId)
+        .execute();
+      await writeAudit(d.db, { actor: null, action: 'account.password', target: `account:${accountId}` });
     },
 
     async sendVerifyEmail(accountId: number): Promise<void> {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
+import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import type { MarketDto, MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -104,6 +105,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
 </script>
 
 <template>
+  <GardenSis :data="data" />
   <HiphopCard :place="1" @changed="load" />
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">

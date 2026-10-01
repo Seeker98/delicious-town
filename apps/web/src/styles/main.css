@@ -90,6 +90,20 @@ body {
   font-size: 12px;
 }
 /* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
+/* 区服数值页的功能开关（问题记录 184）：手机一列，宽屏两列，说明在名字下面 */
+.dt-feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem 1rem;
+}
+@media (min-width: 576px) {
+  .dt-feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.dt-feature {
+  min-width: 0;
+}
 .dt-more-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

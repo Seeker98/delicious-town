@@ -183,3 +183,9 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 后台新页"可疑数据"（协管能看）：酒吧计数、资源暴涨、多号、兑换码被锁；门槛在 `tuning.ops.suspicious`。只作提醒，不能单凭这里处罚
 - 区服数值说明在 `packages/config/data/game/setting_docs.json`：**以后新加 tuning 字段、功能开关时必须同时写说明**，漏写或写了已删除的字段都会让配置构建失败
 - **上线前**：到后台概览页看"上线检查"，把每个区服都改成全部通过（管理员点"改成上线值"，会记一条修改历史）
+
+## 游玩指引、新手码、我的账号（问题记录 150、176、178）
+
+- 没有迁移。服务端每次启动会按 `packages/config/data/game/newbie_codes.json` 同步新手兑换码（目前 3 个：XINSHOU、XINSHOU10、XINSHOU20），所有区服通用、每家店领一次。
+- 改奖励：改 `newbie_codes.json`，`pnpm --filter @dt/config build`，重启服务端。停用：后台兑换码页停用，重启不会恢复。
+- 后台手动建过同名的码时不覆盖，日志里有 `newbie code taken by a manual code` 警告。

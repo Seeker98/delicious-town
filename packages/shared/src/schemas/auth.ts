@@ -43,3 +43,25 @@ export interface MeDto {
   shardId: number | null;
   restaurantId: number | null;
 }
+
+/** 登录后改密码（问题记录 178） */
+export const changePasswordBody = z.object({ oldPassword: z.string().min(1).max(64), newPassword: password });
+export type ChangePasswordInput = z.input<typeof changePasswordBody>;
+
+/** 我的账号（问题记录 178） */
+export interface AccountProfileDto {
+  username: string;
+  email: string;
+  emailVerified: boolean;
+  role: AccountRole;
+  createdAt: string;
+  inviteCode: string | null;
+  rests: Array<{
+    shardId: number;
+    shardName: string;
+    shardOpen: boolean;
+    restId: number;
+    name: string;
+    level: number;
+  }>;
+}

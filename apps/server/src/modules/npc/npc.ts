@@ -13,7 +13,7 @@ import { dineAccrual } from '../settlement/tables';
 export const NPC_USERNAME = '~krab';
 const NPC_EMAIL = 'krab@npc.invalid';
 
-async function npcAccountId(db: Kysely<DB>): Promise<number> {
+export async function npcAccountId(db: Kysely<DB>): Promise<number> {
   await sql`insert into account (username, password_hash, email, email_verified_at, is_system)
     values (${NPC_USERNAME}, '!', ${NPC_EMAIL}, now(), true) on conflict do nothing`.execute(db);
   const r = await db

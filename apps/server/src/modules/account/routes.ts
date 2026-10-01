@@ -1,5 +1,12 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { forgotPasswordBody, loginBody, registerBody, resetPasswordBody, verifyEmailBody } from '@dt/shared';
+import {
+  changePasswordBody,
+  forgotPasswordBody,
+  loginBody,
+  registerBody,
+  resetPasswordBody,
+  verifyEmailBody,
+} from '@dt/shared';
 import type { FastifyRequest } from 'fastify';
 import type { AppDeps } from '../../app';
 import { deviceIdOf } from '../../core/deps';
@@ -45,6 +52,19 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     r.get('/me', async (req) => {
       const s = requireAccount(req);
       return ok(await svc.me(s.data.accountId, s.data));
+    });
+
+    r.get('/profile', async (req) => ok(await svc.profile(requireAccount(req).data.accountId)));
+
+    /** 改密码：其他设备下线；本机换一个新会话，保留选的区服（设计 §6.1） */
+    r.post('/change-password', { config: { rateLimit: 'auth' } }, async (req, reply) => {
+      const s = requireAccount(req);
+      await svc.changePassword(s.data.accountId, parse(changePasswordBody, req.body));
+      await deps.sessions.destroyAll(s.data.accountId);
+      const token = await deps.sessions.create(s.data.accountId);
+      await deps.sessions.update(token, { shardId: s.data.shardId, restaurantId: s.data.restaurantId });
+      setSessionCookie(reply, token, deps.env);
+      return ok({});
     });
 
     r.post('/send-verify-email', { config: { rateLimit: 'email' } }, async (req) => {

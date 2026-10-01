@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { LedgerRecordDto, StoreDto, StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -8,6 +8,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
 import { formatNum } from '../utils/format';
+import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -26,6 +27,19 @@ const TYPES = [
   { v: 3, label: '设施' },
   { v: 9, label: '勋章' },
 ];
+const TYPE_LABEL: Record<number, string> = Object.fromEntries(
+  TYPES.filter((t) => t.v !== undefined).map((t) => [t.v, t.label]),
+);
+/** 仓库排序（问题记录 186）：按类型分组，组内先看剩余时间，再按拼音 */
+const groups = computed(() =>
+  data.value
+    ? groupStoreItems(
+        data.value.items,
+        (id) => catalog.goodsMap.get(id)?.type ?? -1,
+        (id) => catalog.goodsName(id),
+      )
+    : [],
+);
 const RANGES = [
   { v: '1h', label: '1 小时' },
   { v: '6h', label: '6 小时' },
@@ -109,56 +123,61 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
     <div v-if="data.equips > 0" class="small text-muted mb-2">
       另有 {{ data.equips }} 件厨具在 <RouterLink to="/rest/equip">厨具页</RouterLink>（每件占一格）
     </div>
-    <div v-for="it in data.items" :key="it.goodsId" class="dt-item">
-      <div class="dt-item-main">
-        <!-- 只截名字，数量总是显示；剩余时间、单价放第二行（审查、视觉规范） -->
-        <div class="d-flex gap-1">
-          <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
-          <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+    <template v-for="g in groups" :key="g.type">
+      <h6 v-if="type === undefined" class="dt-section mt-2" :data-testid="`store-group-${g.type}`">
+        {{ TYPE_LABEL[g.type] ?? '其他' }}
+      </h6>
+      <div v-for="it in g.items" :key="it.goodsId" class="dt-item">
+        <div class="dt-item-main">
+          <!-- 只截名字，数量总是显示；剩余时间、单价放第二行（审查、视觉规范） -->
+          <div class="d-flex gap-1">
+            <span class="dt-item-title">{{ catalog.goodsName(it.goodsId) }}</span>
+            <span class="dt-store-num text-nowrap">×{{ formatNum(it.num) }}</span>
+          </div>
+          <div v-if="metaParts(it).length > 0" class="dt-meta">
+            <template v-for="(p, i) in metaParts(it)" :key="i"
+              ><span v-if="i > 0"> · </span
+              ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+            >
+          </div>
         </div>
-        <div v-if="metaParts(it).length > 0" class="dt-meta">
-          <template v-for="(p, i) in metaParts(it)" :key="i"
-            ><span v-if="i > 0"> · </span
-            ><span :class="{ 'text-danger': p.danger }">{{ p.text }}</span></template
+        <div class="dt-item-actions">
+          <input
+            v-if="it.batch || it.sellPrice !== null"
+            v-model.number="qty[it.goodsId]"
+            type="number"
+            min="1"
+            :max="it.num"
+            class="form-control form-control-sm dt-qty"
+            @change="qty[it.goodsId] = it.batch && it.usable ? useN(it) : sellN(it)"
+          />
+          <button
+            v-if="it.usable"
+            class="btn btn-sm btn-primary"
+            :disabled="busy || it.maxUse === 0"
+            @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
           >
+            使用
+          </button>
+          <button
+            v-if="it.sellPrice !== null"
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="busy"
+            @click="sell(it)"
+          >
+            卖
+          </button>
+          <button
+            v-if="it.goodsId === 87"
+            class="btn btn-sm btn-outline-danger"
+            :disabled="busy"
+            @click="discard(it)"
+          >
+            <i class="bi bi-trash"></i> 丢弃
+          </button>
         </div>
       </div>
-      <div class="dt-item-actions">
-        <input
-          v-if="it.batch || it.sellPrice !== null"
-          v-model.number="qty[it.goodsId]"
-          type="number"
-          min="1"
-          :max="it.num"
-          class="form-control form-control-sm dt-qty"
-          @change="qty[it.goodsId] = it.batch && it.usable ? useN(it) : sellN(it)"
-        />
-        <button
-          v-if="it.usable"
-          class="btn btn-sm btn-primary"
-          :disabled="busy || it.maxUse === 0"
-          @click="run(() => endpoints.useGoods(it.goodsId, it.batch ? useN(it) : 1), '使用失败')"
-        >
-          使用
-        </button>
-        <button
-          v-if="it.sellPrice !== null"
-          class="btn btn-sm btn-outline-secondary"
-          :disabled="busy"
-          @click="sell(it)"
-        >
-          卖
-        </button>
-        <button
-          v-if="it.goodsId === 87"
-          class="btn btn-sm btn-outline-danger"
-          :disabled="busy"
-          @click="discard(it)"
-        >
-          <i class="bi bi-trash"></i> 丢弃
-        </button>
-      </div>
-    </div>
+    </template>
   </template>
   <template v-if="tab === 'records'">
     <select v-model="range" class="form-select form-select-sm w-auto mb-2">

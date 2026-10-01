@@ -7,4 +7,5 @@ export const ACTION_LABEL: Record<string, string> = {
   'player.role': '修改角色',
   'restaurant.rename': '强制改名',
   'grant.create': '发放补偿',
+  'account.password': '玩家改密码',
 };

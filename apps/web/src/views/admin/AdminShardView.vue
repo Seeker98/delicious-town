@@ -184,16 +184,19 @@ async function save() {
       @reset="reset(p)"
     />
     <h6 class="mt-3">功能开关</h6>
-    <div class="d-flex flex-wrap gap-3 small">
-      <label v-for="f in data.features" :key="f.name">
-        <input
-          type="checkbox"
-          class="form-check-input me-1"
-          :checked="featureOn(f.name)"
-          :disabled="readOnly"
-          :data-testid="`feature-${f.name}`"
-          @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
-        />{{ f.name }}
+    <!-- 功能开关（问题记录 184）：整齐的网格，名字一行、说明一行 -->
+    <div class="dt-feature-grid small">
+      <label v-for="f in data.features" :key="f.name" class="dt-feature" :title="docs.features[f.name] ?? ''">
+        <span class="d-flex align-items-center">
+          <input
+            type="checkbox"
+            class="form-check-input me-1 mt-0"
+            :checked="featureOn(f.name)"
+            :disabled="readOnly"
+            :data-testid="`feature-${f.name}`"
+            @change="setFeature(f.name, ($event.target as HTMLInputElement).checked)"
+          />{{ f.name }}
+        </span>
         <span
           v-if="docs.features[f.name]"
           class="d-block text-muted"
