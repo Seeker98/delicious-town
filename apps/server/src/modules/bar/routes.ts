@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
   barCupBody,
+  barDartsThrowBody,
   barDevilDrinkBody,
   barDevilStartBody,
   barExchangeBody,
@@ -39,5 +40,10 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
     );
     r.post('/bar/memory/next', async (req) => okOp(await svc.memoryNext(restCtxOf(req))));
     r.post('/bar/memory/stop', async (req) => okOp(await svc.memoryStop(restCtxOf(req))));
+    r.post('/bar/darts/start', async (req) => okOp(await svc.dartsStart(restCtxOf(req))));
+    r.post('/bar/darts/aim', async (req) => okOp(await svc.dartsAim(restCtxOf(req))));
+    r.post('/bar/darts/throw', async (req) =>
+      okOp(await svc.dartsThrow(restCtxOf(req), parse(barDartsThrowBody, req.body))),
+    );
   };
 }

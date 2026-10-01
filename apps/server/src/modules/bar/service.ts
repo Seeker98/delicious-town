@@ -1,6 +1,7 @@
 import type { BarDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
+import { dartsAim, dartsStart, dartsThrow } from './darts';
 import { devilDrink, devilStart } from './devil';
 import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
 import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
@@ -54,6 +55,15 @@ export function createBarService(d: GameDeps) {
     },
     memoryStop(ctx: RestCtx) {
       return op(ctx, 'bar.memory', (o) => memoryStop(o));
+    },
+    dartsStart(ctx: RestCtx) {
+      return op(ctx, 'bar.darts', (o) => dartsStart(o));
+    },
+    dartsAim(ctx: RestCtx) {
+      return op(ctx, 'bar.darts', (o) => dartsAim(o));
+    },
+    dartsThrow(ctx: RestCtx, b: { elapsedMs: number }) {
+      return op(ctx, 'bar.darts', (o) => dartsThrow(o, b.elapsedMs));
     },
   };
 }
