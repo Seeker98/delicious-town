@@ -25,6 +25,9 @@ describe('个人日志文案', () => {
     expect(logText({ type: 'admin.grant', params: { reason: '停服补偿' }, at: '' }, names)).toBe(
       '系统补偿：停服补偿',
     );
+    expect(logText({ type: 'mail.claim', params: { title: '开服礼' }, at: '' }, names)).toBe(
+      '领取了邮件「开服礼」的附件',
+    );
     expect(
       logText({ type: 'admin.rename', params: { from: 'A', to: 'B', reason: '违规' }, at: '' }, names),
     ).toBe('管理员把店名从「A」改为「B」：违规');

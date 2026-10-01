@@ -1,12 +1,10 @@
 import { sql } from 'kysely';
 import { ErrorCode, type CreateGrantInput, type GrantDto, type GrantItems } from '@dt/shared';
-import { restLog, runSystemOp, type Op } from '../../core/op';
-import { gainCoin, gainDiamond, gainExp } from '../../core/resources';
+import { runSystemOp, type Op } from '../../core/op';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { JobLogger } from '../../worker/scheduler';
-import { addFoods } from '../cupboard/foods';
-import { grantGoodsOp } from '../store/goods';
+import { checkRewardItems, grantRewardOp } from '../mail/reward';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 
@@ -14,12 +12,7 @@ const SOURCE = 'admin.grant';
 
 /** 发放一份补偿：走正常发放逻辑（橱柜满进冰箱、仓库满照发），写流水和个人日志 */
 export async function grantItemsOp(op: Op, items: GrantItems, reason: string): Promise<void> {
-  if (items.coin) gainCoin(op, items.coin, { source: SOURCE });
-  if (items.diamond) gainDiamond(op, items.diamond, { source: SOURCE });
-  if (items.exp) gainExp(op, items.exp, { source: SOURCE });
-  for (const g of items.goods ?? []) await grantGoodsOp(op, g.id, g.num, { source: SOURCE });
-  for (const f of items.foods ?? []) await addFoods(op, f.id, f.num, { source: SOURCE });
-  restLog(op, 'admin.grant', { reason, items });
+  await grantRewardOp(op, items, { source: SOURCE, logType: 'admin.grant', logParams: { reason } });
 }
 
 type GrantRow = {
@@ -59,17 +52,6 @@ const toDto = (r: GrantRow): GrantDto => ({
 export function createAdminGrants(game: Game) {
   const { db, config } = game.app;
 
-  function checkItems(items: GrantItems): void {
-    const bad: Array<{ path: string; message: string }> = [];
-    (items.goods ?? []).forEach((g, i) => {
-      if (!config.goods.has(g.id)) bad.push({ path: `items.goods.${i}.id`, message: 'unknown' });
-    });
-    (items.foods ?? []).forEach((f, i) => {
-      if (!config.foods.has(f.id)) bad.push({ path: `items.foods.${i}.id`, message: 'unknown' });
-    });
-    if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
-  }
-
   function targets(shardId: number, minLevel: number | null | undefined) {
     let q = db.selectFrom('restaurant').where('shard_id', '=', shardId).where('npc', '=', false);
     if (minLevel) q = q.where('level', '>=', minLevel);
@@ -96,7 +78,7 @@ export function createAdminGrants(game: Game) {
     },
 
     async create(actor: AdminActor, b: CreateGrantInput): Promise<GrantDto> {
-      checkItems(b.items);
+      checkRewardItems(config, b.items);
       const shard = await db.selectFrom('shard').select('id').where('id', '=', b.shardId).executeTakeFirst();
       if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
       if (b.target === 'rest') {
