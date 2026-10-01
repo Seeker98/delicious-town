@@ -248,7 +248,18 @@
     "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
     "krabCoinTickets": 100,
     "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,
-    "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 }
+    "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 },
+    "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "rate": 1.4, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
+    "memory": {
+      "cost": 1, "dailyMax": 20, "ingredients": 8, "lengths": [3, 5, 7], "awardLevels": [2, 4, 8],
+      "flashMs": 600, "gapMs": 200, "earlyMs": 300, "answerBaseMs": 3000, "answerPerItemMs": 1500
+    },
+    "darts": {
+      "cost": 2, "dailyMax": 20, "periodMs": [900, 1400], "futureMs": 100, "latencyMs": 1500,
+      "rings": [[0.05, 50], [0.15, 25], [0.3, 10], [0.5, 5]],
+      "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
+      "winLevel": 5, "perfectLevel": 10, "tieRefund": 1
+    }
   },
   "tower": {
     "dailyBase": 5, "nightFloor": 3, "openHour": 6,

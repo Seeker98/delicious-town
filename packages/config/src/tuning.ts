@@ -363,6 +363,41 @@ export const tuningSchema = z.object({
     slotFloorRate: num,
     slotFloorAwardId: int,
     awardRates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+    /** 魔鬼辣杯（子项目 4C-3） */
+    devil: z.object({
+      stakes: z.array(int.min(1)).min(1),
+      cups: int.min(2),
+      rate: num.min(1),
+      hangoverMinutes: int.min(0),
+      hangoverAtRate: num,
+      newsSurvived: int.min(1),
+    }),
+    /** 记忆调酒 */
+    memory: z.object({
+      cost: int.min(0),
+      dailyMax: int.min(1),
+      ingredients: int.min(2),
+      lengths: z.array(int.min(1)).min(1),
+      awardLevels: z.array(int.min(1)).min(1),
+      flashMs: int.min(1),
+      gapMs: int.min(0),
+      earlyMs: int.min(0),
+      answerBaseMs: int.min(0),
+      answerPerItemMs: int.min(0),
+    }),
+    /** 飞镖 */
+    darts: z.object({
+      cost: int.min(0),
+      dailyMax: int.min(1),
+      periodMs: z.tuple([int.min(100), int.min(100)]),
+      futureMs: int.min(0),
+      latencyMs: int.min(0),
+      rings: z.array(z.tuple([num, int])).min(1),
+      bossOdds: z.array(z.tuple([int, int.min(0)])).min(1),
+      winLevel: int.min(1),
+      perfectLevel: int.min(1),
+      tieRefund: int.min(0),
+    }),
   }),
   tower: z.object({
     dailyBase: int.min(0),

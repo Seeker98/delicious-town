@@ -74,3 +74,32 @@ export function slotFloorLeft(fail: number, t: BarTuning): number {
   const total = t.slotFloorSpins * t.slotCells;
   return Math.floor((total - Math.min(fail, total)) / t.slotCells) + 1;
 }
+
+// ---------- 酒吧扩展（子项目 4C-3） ----------
+
+/** 魔鬼辣杯赔付：押注 × rate^活过的杯数，四舍五入（终审：向下取整时押 1 张活过 1、2 杯都只拿回本金） */
+export function devilPayout(stake: number, survived: number, rate: number): number {
+  return Math.round(stake * rate ** survived);
+}
+
+/** 飞镖准星位置：三角波，周期 period（毫秒），起点相位 phase ∈ [0,1)；返回 [-1, 1] */
+export function dartX(elapsedMs: number, period: number, phase: number): number {
+  const p = (((elapsedMs / period + phase) % 1) + 1) % 1;
+  return p < 0.5 ? -1 + 4 * p : 3 - 4 * p;
+}
+
+/** 按离靶心的距离给分；rings 按半径从小到大 */
+export function dartScore(x: number, rings: ReadonlyArray<readonly [number, number]>): number {
+  const d = Math.abs(x);
+  for (const [r, s] of rings) if (d <= r + 1e-9) return s;
+  return 0;
+}
+
+/** 记忆调酒的展示总时长和作答窗口 [最早, 最晚]（相对发出配方的时刻，毫秒） */
+export function memoryWindow(
+  len: number,
+  m: BarTuning['memory'],
+): { showMs: number; earliest: number; latest: number } {
+  const showMs = len * m.flashMs + (len - 1) * m.gapMs;
+  return { showMs, earliest: showMs - m.earlyMs, latest: showMs + m.answerBaseMs + len * m.answerPerItemMs };
+}

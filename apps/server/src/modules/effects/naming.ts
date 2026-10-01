@@ -8,6 +8,8 @@ import type { GameConfig } from '@dt/config';
 export function effectSourceName(e: { sourceType: string; sourceId: number }, config: GameConfig): string {
   if (e.sourceType === 'device') return config.devices.get(e.sourceId)?.name ?? '设施';
   if (e.sourceType === 'equip') return '厨具';
+  // 酒吧魔鬼辣杯喝到特辣酒（子项目 4C-3）
+  if (e.sourceType === 'bar') return '宿醉';
   if (e.sourceType === 'suit') {
     const suit = config.suits.get(Math.floor(e.sourceId / 10));
     const tier = suit?.tiers[e.sourceId % 10];

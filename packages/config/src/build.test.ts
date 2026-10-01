@@ -429,3 +429,22 @@ describe('终审修复（4E-1）', () => {
     expect(buildBundle(src).errors).toContain('renown_shop references unknown goods 999999');
   });
 });
+
+describe('酒吧扩展（子项目 4C-3）', () => {
+  it('三个新游戏的数值', () => {
+    const { bundle } = buildBundle(source());
+    const bar = bundle!.tuning.bar;
+    expect(bar.devil).toEqual({
+      stakes: [1, 5, 10, 20],
+      cups: 6,
+      rate: 1.4,
+      hangoverMinutes: 60,
+      hangoverAtRate: -0.1,
+      newsSurvived: 3,
+    });
+    expect(bar.memory.lengths).toEqual([3, 5, 7]);
+    expect(bar.memory.dailyMax).toBe(20);
+    expect(bar.darts.cost).toBe(2);
+    expect(bar.darts.rings[0]).toEqual([0.05, 50]);
+  });
+});

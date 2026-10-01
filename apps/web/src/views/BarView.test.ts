@@ -12,6 +12,9 @@ const stubs = {
   CupPanel: { template: '<p>cup-panel</p>', props: ['data'] },
   NumPanel: { template: '<p>num-panel</p>', props: ['data'] },
   SlotPanel: { template: '<p>slot-panel</p>', props: ['data'] },
+  DevilPanel: { template: '<p>devil-panel</p>', props: ['data'] },
+  MemoryPanel: { template: '<p>memory-panel</p>', props: ['data'] },
+  DartsPanel: { template: '<p>darts-panel</p>', props: ['data'] },
 };
 
 describe('BarView', () => {
@@ -52,5 +55,38 @@ describe('BarView', () => {
     await w.find('[data-testid="again"]').trigger('click');
     await flushPromises();
     expect(endpoints.bar).toHaveBeenCalledTimes(2);
+  });
+
+  it('七个游戏用胶囊标签，选中的高亮；新游戏可以切过去（4C-3）', async () => {
+    const w = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    const pills = w.findAll('.dt-pills a');
+    expect(pills.map((p) => p.text())).toEqual([
+      '划拳',
+      '猜酒杯',
+      '转数字',
+      '老虎机',
+      '魔鬼辣杯',
+      '记忆调酒',
+      '飞镖',
+    ]);
+    await w.find('[data-testid="tab-devil"]').trigger('click');
+    expect(w.text()).toContain('devil-panel');
+    expect(w.find('[data-testid="tab-devil"]').classes()).toContain('active');
+  });
+
+  it('切到别的游戏再切回来，面板里进行中的状态还在（终审 I2）', async () => {
+    const Counter = {
+      props: ['data'],
+      data: () => ({ n: 0 }),
+      template: '<button data-testid="inc" @click="n++">{{ n }}</button>',
+    };
+    const w = mount(BarView, { global: { stubs: { ...stubs, MemoryPanel: Counter } } });
+    await flushPromises();
+    await w.find('[data-testid="tab-memory"]').trigger('click');
+    await w.find('[data-testid="inc"]').trigger('click');
+    await w.find('[data-testid="tab-fg"]').trigger('click');
+    await w.find('[data-testid="tab-memory"]').trigger('click');
+    expect(w.find('[data-testid="inc"]').text()).toBe('1');
   });
 });
