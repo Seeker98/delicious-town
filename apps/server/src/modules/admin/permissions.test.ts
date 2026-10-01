@@ -5,7 +5,7 @@ import { call, createTestApp, registerUser, type TestContext } from '../../../te
 
 let ctx: TestContext;
 const routes = new Set<string>();
-let ids: { shardId: number; accountId: number; restId: number; iconId: number };
+let ids: { shardId: number; accountId: number; restId: number; iconId: number; mailId: number };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
 beforeAll(async () => {
@@ -25,7 +25,13 @@ beforeAll(async () => {
     .values({ rest_id: restId, icon_key: 'tester' })
     .returning('id')
     .executeTakeFirstOrThrow();
-  ids = { shardId, accountId: target.accountId, restId, iconId: icon.id };
+  // 给"撤回邮件"用：管理员那一次调用会真的撤回它
+  const mail = await ctx.deps.db
+    .insertInto('mail')
+    .values({ scope: 'shard', shard_id: shardId, title: '权限测试', body: 'b', source: 'admin' })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  ids = { shardId, accountId: target.accountId, restId, iconId: icon.id, mailId: mail.id };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
     mod: (await userWithRole(ctx, 'mod')).cookie,
@@ -168,6 +174,20 @@ const CASES: Case[] = [
     min: 'admin',
   },
   { method: 'GET', route: '/api/v1/admin/grants', url: () => '/api/v1/admin/grants', min: 'mod' },
+  { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/mails',
+    url: () => '/api/v1/admin/mails',
+    body: () => ({ scope: 'shard', shardId: ids.shardId, title: '权限测试', body: 'b' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/mails/:id/revoke',
+    url: () => `/api/v1/admin/mails/${ids.mailId}/revoke`,
+    min: 'admin',
+  },
   {
     method: 'GET',
     route: '/api/v1/admin/stats/economy',
