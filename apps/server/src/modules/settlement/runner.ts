@@ -10,9 +10,9 @@ import { npcTableRound } from '../npc/npc';
 import { grantGoodsOp } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { blessBuff } from '../town/bless';
-import { buildGlobals, normalizeCounts } from './globals';
+import { buildGlobals, toSettleInput } from './globals';
 import { settleRestaurant } from './settle';
-import type { SettleGlobals, SettleInput } from './types';
+import type { SettleGlobals } from './types';
 
 export type RoundStats = {
   round: number;
@@ -89,7 +89,7 @@ export async function settleOne(
       .execute();
     cupboard = new Map(rows.map((r) => [r.foods_id, r.num]));
   }
-  const input: SettleInput = {
+  const input = toSettleInput({
     rest: {
       id: op.rest.id,
       level: op.rest.level,
@@ -104,14 +104,14 @@ export async function settleOne(
       cookfoodsFlag: op.rest.cookfoods_flag,
     },
     tables: tr.tables,
-    levels: new Uint8Array(cb.levels),
-    counts: normalizeCounts(op.rest.cookbook_counts),
+    levels: cb.levels,
+    counts: op.rest.cookbook_counts,
     agg,
     special:
       cook && cook.left_num > 0 ? { price: cook.price, level: cook.level, leftNum: cook.left_num } : null,
     cupboard,
     now: op.now,
-  };
+  });
   const r = settleRestaurant(input, g, op.rng);
   if (r.closed) {
     setRest(op, 'state', 2);

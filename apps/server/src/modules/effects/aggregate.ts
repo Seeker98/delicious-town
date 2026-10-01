@@ -1,3 +1,6 @@
+import { DEVICE_TYPE, GOODS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
+import { collectionEffects } from './collection';
+
 export interface EffectLike {
   effects: Record<string, number>;
   expiresAt: Date | null;
@@ -18,5 +21,56 @@ export function aggregateEffects(sources: EffectLike[], now: Date): EffectAggreg
     if (s.expiresAt && (!nextExpireAt || s.expiresAt < nextExpireAt)) nextExpireAt = s.expiresAt;
   }
   for (const k of Object.keys(agg)) agg[k] = Math.round(agg[k]! * 1e9) / 1e9;
+  return { agg, nextExpireAt };
+}
+
+export interface ActiveEffectLike extends EffectLike {
+  sourceType: string;
+  sourceId: number;
+}
+
+/**
+ * 加成汇总（真实服务和快速模型共用，快速模拟设计 §4.3）：
+ * 来源汇总 + 牌匾、勋章、盆栽、名画、纪念牌匾的收藏派生
+ */
+export function computeEffectAgg(
+  sources: ActiveEffectLike[],
+  owned: ReadonlySet<number>,
+  config: GameConfig,
+  tuning: Tuning,
+  now: Date,
+): EffectAggregate {
+  const live = sources.filter((s) => !s.expiresAt || s.expiresAt > now);
+  const { agg, nextExpireAt } = aggregateEffects(live, now);
+  let plaques = 0;
+  for (const id of owned) {
+    const g = config.goods.get(id);
+    if (g && g.type === GOODS_TYPE.device && g.deviceType === DEVICE_TYPE.plaque) plaques += 1;
+  }
+  let honors = 0;
+  let pots = 0;
+  let paintings = 0;
+  for (const s of live) {
+    if (s.sourceType !== 'honor') continue;
+    honors += 1;
+    const dt = config.goods.get(s.sourceId)?.deviceType;
+    if (dt === DEVICE_TYPE.pot) pots += 1;
+    if (dt === DEVICE_TYPE.painting) paintings += 1;
+  }
+  const derived = collectionEffects(
+    {
+      plaques,
+      honors,
+      pots,
+      paintings,
+      an2023: owned.has(GOODS.an2023Plaque),
+      an2025: owned.has(GOODS.an2025Plaque),
+      mdcg: owned.has(GOODS.mdcgPlaque),
+    },
+    tuning.collection,
+    config.bundle.potTiers,
+    config.bundle.paintingTiers,
+  );
+  for (const [k, v] of Object.entries(derived)) agg[k] = (agg[k] ?? 0) + v;
   return { agg, nextExpireAt };
 }
