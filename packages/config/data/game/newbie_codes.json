@@ -1,0 +1,7 @@
+{
+  "codes": [
+    { "code": "XINSHOU", "minLevel": 1, "items": { "coin": 50000, "goods": [{ "id": 28, "num": 3 }, { "id": 1, "num": 3 }] }, "note": "新手码 1 级" },
+    { "code": "XINSHOU10", "minLevel": 10, "items": { "coin": 100000, "diamond": 10, "goods": [{ "id": 29, "num": 2 }, { "id": 131, "num": 2 }] }, "note": "新手码 10 级" },
+    { "code": "XINSHOU20", "minLevel": 20, "items": { "coin": 200000, "diamond": 20, "goods": [{ "id": 29, "num": 3 }, { "id": 3, "num": 1 }] }, "note": "新手码 20 级" }
+  ]
+}

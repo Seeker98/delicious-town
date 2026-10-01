@@ -1,3 +1,4 @@
+import type { NewbieCode } from './newbieCodes';
 import type { GoodsUse } from './goodsUse';
 import type { EQUIP_ATTRS } from './ids';
 import type { Tuning } from './tuning';
@@ -310,6 +311,8 @@ export interface ConfigBundle {
     groups: Record<string, string>;
     fields: Record<string, string>;
   };
+  /** 新手兑换码（问题记录 150） */
+  newbieCodes: NewbieCode[];
   looks: Looks;
   suits: SuitDef[];
   /** 以后子项目才用到的表：已校验引用，结构暂不规范化 */

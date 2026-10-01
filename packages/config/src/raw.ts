@@ -313,6 +313,15 @@ export const settingDocsFile = z
   .object({ features: z.record(z.string()), groups: z.record(z.string()), fields: z.record(z.string()) })
   .strict();
 
+/** data/game/newbie_codes.json：新手兑换码（问题记录 150）；细校验在 checkNewbieCodes，错误信息能带上码 */
+export const newbieCodesFile = z
+  .object({
+    codes: z.array(
+      z.object({ code: z.string(), minLevel: int.min(1), items: z.unknown(), note: z.string() }).strict(),
+    ),
+  })
+  .strict();
+
 /** data/game/tower_fix.json：守塔人厨力和换层（问题记录 120）；数据集会被同步覆盖，所以单独放 */
 export const towerFixFile = z.object({
   floors: z.array(

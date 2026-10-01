@@ -9,6 +9,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
+import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { calibrateWatchman } from './towerFloor';
@@ -125,6 +126,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const equipLore = parse('game/equip_lore', raw.equipLoreFile);
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
+  const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -169,6 +171,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !equipLore ||
     !towerFix ||
     !settingDocs ||
+    !newbieCodesRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -784,6 +787,9 @@ export function buildBundle(src: SourceData): BuildResult {
       if (!foodIds.has(f.id)) errors.push(`invite.${where} references unknown foods ${f.id}`);
   }
 
+  // ---------- 新手兑换码（问题记录 150） ----------
+  const newbieCodes = checkNewbieCodes(newbieCodesRaw, goodsIds, foodIds, errors);
+
   // ---------- 区服数值说明（问题记录 126） ----------
   checkSettingDocs(
     settingDocs,
@@ -861,6 +867,7 @@ export function buildBundle(src: SourceData): BuildResult {
     tuning,
     restaurantDefaults: defaults,
     settingDocs,
+    newbieCodes,
     looks,
     suits,
     goodsExchange,
