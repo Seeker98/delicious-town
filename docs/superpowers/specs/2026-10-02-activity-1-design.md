@@ -140,7 +140,7 @@ rewardsOf(kind, def, counters, premium): Array<{ key, award, reached: boolean }>
 | `GET /activities/summary` | `{ running, claimable }`，首页横幅和红点用 |
 | `POST /activities/:id/claim` `{ key }` | 锁店事务里重新算达成，写 `activity_claim`（`via='page'`），用 `grantRewardOp` 发奖；主键冲突 → `ALREADY_DONE` |
 | `POST /activities/:id/claim-all` | 一个事务里领完全部可领的；没有可领的 → `invalidState('nothing')` |
-| `POST /activities/:id/unlock` | 战令解锁进阶：扣钻石和道具，写 `activity_pass`；已解锁 → `ALREADY_DONE`；不够 → `requirement` |
+| `POST /activities/:id/unlock` | 战令解锁进阶：扣钻石和道具，写 `activity_pass`；已解锁 → `ALREADY_DONE`；不够 → `NOT_ENOUGH`（沿用现有扣费函数） |
 
 错误：
 - 活动不存在、已删除、不是本区服 → `NOT_FOUND`；
@@ -166,7 +166,7 @@ rewardsOf(kind, def, counters, premium): Array<{ key, award, reached: boolean }>
 
 ## 6. 结束补发
 
-worker 加一个每分钟的任务 `activity-settle`（和 `ops-scan` 同一种间隔任务，只在 leader 上跑）：
+worker 加一个按区服的周期任务 `activity-settle`（PeriodicJob，周期键到分钟，功能挂在 `restaurant` 上，这样关掉 `activity` 也照常补发）：
 
 1. 找出 `ends_at <= now − 2 分钟`、没删的活动；对它覆盖的每个区服（全服活动 = 所有区服），没有 `activity_settle` 行的就处理；
 2. 找出这个区服里在这个活动有计数或解锁的店；每家店用 `runSystemOp` 锁店开一个事务：
@@ -177,7 +177,7 @@ worker 加一个每分钟的任务 `activity-settle`（和 `ops-scan` 同一种�
 
 可以重复跑；中途失败的店下一分钟会重做，已经写进领奖记录的键不会再发。
 
-合并后的系统邮件可能超过后台手发邮件的单项上限（例如帽子最多 5 个），系统邮件不走后台的输入校验，领取时也不重新校验上限（实现时确认邮件领取路径确实如此，否则要改成按上限拆成多封）。
+合并后的系统邮件可能超过后台手发邮件的单项上限（例如帽子最多 5 个），系统邮件不走后台的输入校验；邮件领取路径（`claimOne` → `grantRewardOp`）只检查附件是否失效、不重新校验上限（写计划时已确认），所以合并成一封没问题。
 
 结束到补发完成之间，玩家页显示"结算中，未领奖励会发到邮箱"，不能领、不能解锁。
 
@@ -196,7 +196,7 @@ worker 加一个每分钟的任务 `activity-settle`（和 `ops-scan` 同一种�
 ### 7.2 玩家 `/activities`
 
 - 入口：
-  - 餐厅首页功能区加"活动"，有可领奖励时带红点数字；
+  - "更多"面板（MoreLinks）的"经营"组加"限时活动"（首页没有功能区网格，入口放这里）；
   - 有进行中的活动时，首页顶部加一条细横幅"进行中的活动 N 个，可领 M 份"，点了进活动页。
   - 功能 `activity` 关掉时都不显示。
 - 列表：每个活动一张卡片，进行中的显示剩余时间（"还剩 2 天 5 小时"）；结束 7 天内的标"已结束，未领奖励已发到邮箱"；店等级不够时标"需要 N 级，达到后才开始计数"。
