@@ -1,6 +1,9 @@
 import type {
   AccountRole,
   AdminAnnouncementDto,
+  AdminCodeDto,
+  CreateBatchInput,
+  CreateSharedCodeInput,
   AdminMailDto,
   AnnouncementInput,
   AdminLedgerPageDto,
@@ -63,6 +66,11 @@ export const adminApi = {
   mails: (shardId?: number) => api.get<AdminMailDto[]>(`${A}/mails${qs({ shardId })}`),
   sendMail: (b: SendMailInput) => api.post<AdminMailDto>(`${A}/mails`, b),
   revokeMail: (id: number) => api.post<AdminMailDto>(`${A}/mails/${id}/revoke`, {}),
+  codes: (shardId?: number) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId })}`),
+  createCode: (b: CreateSharedCodeInput) => api.post<AdminCodeDto>(`${A}/codes`, b),
+  createCodeBatch: (b: CreateBatchInput) => api.post<AdminCodeDto>(`${A}/codes/batch`, b),
+  disableCode: (id: number) => api.post<null>(`${A}/codes/${id}/disable`, {}),
+  exportCodeBatch: (batchId: number) => api.get<{ codes: string[] }>(`${A}/codes/batches/${batchId}/export`),
   announcements: () => api.get<AdminAnnouncementDto[]>(`${A}/announcements`),
   createAnnouncement: (b: AnnouncementInput) => api.post<AdminAnnouncementDto>(`${A}/announcements`, b),
   updateAnnouncement: (id: number, b: AnnouncementInput) =>
