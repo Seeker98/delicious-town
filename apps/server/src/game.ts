@@ -40,6 +40,7 @@ import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
 import { createShopService, type ShopService } from './modules/shop/service';
 import { createStoreService, type StoreService } from './modules/store/service';
+import { registerActivityHandlers } from './modules/activity/handler';
 import { registerTaskHandlers } from './modules/task/handler';
 import { createTaskService, type TaskService } from './modules/task/service';
 import { settlementJobs } from './modules/settlement/jobs';
@@ -95,6 +96,7 @@ export function createGame(app: AppDeps): Game {
   const world = createWorldService(deps);
   registerTaskHandlers(app.bus, app.config);
   registerNpcHandlers(app.bus);
+  registerActivityHandlers(app.bus, deps);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
   jobs.push(...settlementJobs(deps, world));
