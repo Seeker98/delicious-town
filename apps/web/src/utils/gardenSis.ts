@@ -1,4 +1,7 @@
 import type { MarketDto } from '@dt/shared';
+import type { MascotLine } from './mascot';
+
+export { pickLine } from './mascot';
 
 /** 菜园姐的闲聊（问题记录 176，设计 §5.2）：和菜场状态无关；只写游戏里真有的规则 */
 export const CHAT: readonly string[] = [
@@ -27,8 +30,8 @@ export const CHAT: readonly string[] = [
 const hm = (iso: string) => new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 
 /** 当前能说的台词：看菜场状态说的权重 2，闲聊权重 1；还没读到菜场数据时只有闲聊 */
-export function gardenLines(data: MarketDto | null): Array<{ text: string; weight: number }> {
-  const out: Array<{ text: string; weight: number }> = [];
+export function gardenLines(data: MarketDto | null): MascotLine[] {
+  const out: MascotLine[] = [];
   if (data) {
     const say = (text: string) => out.push({ text, weight: 2 });
     if (data.special.length > 0) say(`特价菜还剩 ${data.special.length} 样，手快有手慢无！`);
@@ -40,20 +43,4 @@ export function gardenLines(data: MarketDto | null): Array<{ text: string; weigh
   }
   for (const text of CHAT) out.push({ text, weight: 1 });
   return out;
-}
-
-/** 按权重随机挑一句，跳过上一句 */
-export function pickLine(
-  lines: Array<{ text: string; weight: number }>,
-  last: string | null,
-  rnd: () => number = Math.random,
-): string {
-  const pool = lines.length > 1 ? lines.filter((l) => l.text !== last) : lines;
-  const total = pool.reduce((s, l) => s + l.weight, 0);
-  let r = rnd() * total;
-  for (const l of pool) {
-    r -= l.weight;
-    if (r < 0) return l.text;
-  }
-  return pool[pool.length - 1]!.text;
 }

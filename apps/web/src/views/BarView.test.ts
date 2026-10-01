@@ -41,6 +41,12 @@ describe('BarView', () => {
     expect(again.text()).toContain('slot-panel');
   });
 
+  it('酒吧顶部有吉祥物雯姐（问题记录 210）', async () => {
+    const w = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    expect(w.find('[data-testid="bar-wenjie"]').text()).toContain('雯姐');
+  });
+
   it('面板要求刷新时重新读取', async () => {
     const w = mount(BarView, {
       global: {
