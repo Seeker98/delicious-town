@@ -169,3 +169,10 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 守塔人各层厨力和第 5、6 层互换写在 `packages/config/data/game/tower_fix.json`
 - **部署后跑一次**重算已经生成的厨具（基础属性、强化加成、强化记录、穿戴等级）：生产环境 `docker compose -f compose.prod.yml run --rm api node dist/cli/equip-rescale.js`，开发环境 `pnpm --filter @dt/server equip:rescale`。每家店一个锁店的短事务，不用停服；穿着的厨具变了会同步缓存的幸运和套装加成。以后改了表也要再跑；重复跑结果不变
 - 已穿着、但等级低于新穿戴等级的厨具不会被强制卸下
+
+## 举报和封号期限（子项目 6B-1）
+
+- 迁移 0019：新表 `report_case`（一个被举报的内容一个待处理的案子）、`report_entry`（举报人）；`account` 加 `banned_until`（封号到期时间，null 为永久）
+- 新功能开关 `features.report`（默认开）；新数值 `tuning.report.dailyMax`（每账号每天最多举报次数，默认 10）
+- 后台新页"举报"（协管能处理）；封号改为可选期限：协管只能封 1 天或 7 天，**永久封号和解封改成只有管理员能做**
+- 规则见 `docs/rules/举报和处罚.md`
