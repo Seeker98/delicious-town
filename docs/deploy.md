@@ -176,3 +176,10 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 新功能开关 `features.report`（默认开）；新数值 `tuning.report.dailyMax`（每账号每天最多举报次数，默认 10）
 - 后台新页"举报"（协管能处理）；封号改为可选期限：协管只能封 1 天或 7 天，**永久封号和解封改成只有管理员能做**
 - 规则见 `docs/rules/举报和处罚.md`
+
+## 可疑数据、数值说明、上线检查（子项目 6B-2）
+
+- 迁移 0020：新表 `login_trace`（每账号、IP、设备一行，记首次和最近时间），注册、登录时写入；worker 任务 `login-trace-clean` 每 6 小时删掉 30 天没再出现的行
+- 后台新页"可疑数据"（协管能看）：酒吧计数、资源暴涨、多号、兑换码被锁；门槛在 `tuning.ops.suspicious`。只作提醒，不能单凭这里处罚
+- 区服数值说明在 `packages/config/data/game/setting_docs.json`：**以后新加 tuning 字段、功能开关时必须同时写说明**，漏写或写了已删除的字段都会让配置构建失败
+- **上线前**：到后台概览页看"上线检查"，把每个区服都改成全部通过（管理员点"改成上线值"，会记一条修改历史）
