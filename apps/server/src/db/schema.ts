@@ -639,6 +639,15 @@ export interface BarStateTable {
   slot_fail: Default<number>;
 }
 
+/** 酒吧进行中的局（子项目 4C-3）：一家店一种游戏一行，结束就删 */
+export interface BarRoundTable {
+  rest_id: number;
+  game: string;
+  state: Json<Record<string, unknown>>;
+  started_at: Ts;
+  updated_at: Ts;
+}
+
 /** 老虎机统计：每个奖项（含空格 0）累计格数 */
 export interface BarSlotStatTable {
   rest_id: number;
@@ -820,6 +829,7 @@ export interface DB {
   rest_formula: RestFormulaTable;
   bar_state: BarStateTable;
   bar_slot_stat: BarSlotStatTable;
+  bar_round: BarRoundTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
