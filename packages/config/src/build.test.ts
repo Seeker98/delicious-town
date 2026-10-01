@@ -744,3 +744,9 @@ describe('守塔人（问题记录 120）', () => {
     );
   });
 });
+
+describe('举报数值（子项目 6B-1）', () => {
+  it('每天最多举报 10 次', () => {
+    expect(buildBundle(source()).bundle!.tuning.report).toEqual({ dailyMax: 10 });
+  });
+});

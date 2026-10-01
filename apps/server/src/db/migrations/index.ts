@@ -17,6 +17,7 @@ import * as m0015 from './0015_bar_round';
 import * as m0016 from './0016_hiphop';
 import * as m0017 from './0017_forum';
 import * as m0018 from './0018_ops_mail';
+import * as m0019 from './0019_reports';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -38,4 +39,5 @@ export const migrations: Record<string, Migration> = {
   '0016_hiphop': m0016,
   '0017_forum': m0017,
   '0018_ops_mail': m0018,
+  '0019_reports': m0019,
 };

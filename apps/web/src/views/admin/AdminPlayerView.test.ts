@@ -31,6 +31,7 @@ const player: PlayerDetailDto = {
   restaurants: [{ id: 3, shardId: 1, shardName: '一服', name: '爱丽丝店', level: 12, star: 1, state: 1 }],
   emailVerified: true,
   bannedAt: null,
+  bannedUntil: null,
   banReason: null,
   createdAt: '2026-09-01T00:00:00.000Z',
 };

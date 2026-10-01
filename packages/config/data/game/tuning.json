@@ -329,6 +329,7 @@
     "newbie": { "coin": 50000, "goods": [{ "id": 1, "num": 5 }] },
     "rewards": { "lv10": { "diamond": 20 }, "lv30": { "diamond": 50, "coin": 200000 } }
   },
+  "report": { "dailyMax": 10 },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,

@@ -133,6 +133,7 @@ export function createAdminPlayers(game: Game) {
         restaurants: rests.get(a.id) ?? [],
         emailVerified: a.email_verified_at !== null,
         bannedAt: a.banned_at?.toISOString() ?? null,
+        bannedUntil: a.banned_until?.toISOString() ?? null,
         banReason: a.ban_reason,
         createdAt: a.created_at.toISOString(),
       };
