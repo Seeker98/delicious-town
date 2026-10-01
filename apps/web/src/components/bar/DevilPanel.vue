@@ -45,6 +45,13 @@ const resultText = computed(() => {
 const cupLabel = (c: DevilDto['cups'][number], i: number) =>
   c === 'me' ? '你喝了' : c === 'bartender' ? '调酒师喝了' : `${i + 1} 号杯`;
 
+/** 喝一杯：成功后才记下我喝的是哪杯，失败时状态行不会说错杯号（终审） */
+async function drink(i: number) {
+  const before = local.value;
+  await run(() => endpoints.barDevilDrink(i), '喝酒失败');
+  if (local.value !== before && local.value !== null) mineCup.value = i;
+}
+
 async function run(fn: () => Promise<DevilDto>, fallback: string) {
   if (busy.value) return;
   busy.value = true;
@@ -103,7 +110,7 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
           ]"
           :disabled="busy || finished || c !== null"
           :data-testid="`devil-cup-${i}`"
-          @click="((mineCup = i), run(() => endpoints.barDevilDrink(i), '喝酒失败'))"
+          @click="drink(i)"
         >
           <i class="bi bi-cup-straw"></i>
           <span>{{ round.spiked === i ? '特辣酒' : cupLabel(c, i) }}</span>

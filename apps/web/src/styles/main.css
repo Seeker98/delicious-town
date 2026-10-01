@@ -250,10 +250,31 @@ body {
   --bs-btn-hover-border-color: var(--dt-primary-dark);
   --bs-btn-active-bg: var(--dt-primary-dark);
   --bs-btn-active-border-color: var(--dt-primary-dark);
-  /* 禁用时变灰，一眼看出点不了（PR27 遗留） */
-  --bs-btn-disabled-bg: #ced4da;
-  --bs-btn-disabled-border-color: #ced4da;
-  --bs-btn-disabled-color: #fff;
+  /* 禁用时浅灰底深灰字：一眼看出点不了，字仍然读得清（PR27 遗留、终审） */
+  --bs-btn-disabled-bg: #f1f3f5;
+  --bs-btn-disabled-border-color: #dee2e6;
+  --bs-btn-disabled-color: #6c757d;
+}
+/* 禁用按钮不再叠加 Bootstrap 的 0.65 透明度，颜色已经表明不可点 */
+.btn {
+  --bs-btn-disabled-opacity: 1;
+}
+/* 实心危险、成功按钮也按视觉规范的颜色（终审） */
+.btn-danger {
+  --bs-btn-bg: #c92a2a;
+  --bs-btn-border-color: #c92a2a;
+  --bs-btn-hover-bg: #a51111;
+  --bs-btn-hover-border-color: #a51111;
+  --bs-btn-active-bg: #a51111;
+  --bs-btn-active-border-color: #a51111;
+}
+.btn-success {
+  --bs-btn-bg: #2b8a3e;
+  --bs-btn-border-color: #2b8a3e;
+  --bs-btn-hover-bg: #237032;
+  --bs-btn-hover-border-color: #237032;
+  --bs-btn-active-bg: #237032;
+  --bs-btn-active-border-color: #237032;
 }
 .btn-outline-primary {
   --bs-btn-color: var(--dt-primary-ink);

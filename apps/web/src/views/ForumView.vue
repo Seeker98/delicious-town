@@ -26,7 +26,11 @@ const cursor = ref<string | null>(null);
 const me = ref<ForumListDto['me'] | null>(null);
 const loading = ref(false);
 /** 发帖冷却还剩几秒（PR31 遗留：服务端给了时间，前端要显示） */
-const postWait = useCountdown(() => me.value?.postReadyAt);
+const serverNow = ref<string | null>(null);
+const postWait = useCountdown(
+  () => me.value?.postReadyAt,
+  () => serverNow.value,
+);
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString('zh-CN', {
@@ -54,6 +58,7 @@ async function load(more = false) {
     items.value = more ? [...items.value, ...r.items] : r.items;
     cursor.value = r.nextCursor;
     me.value = r.me;
+    serverNow.value = r.now;
   } catch (e) {
     if (mine === seq) toast.push(errorMessage(e, '读取论坛失败'), 'danger');
   } finally {

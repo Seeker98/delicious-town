@@ -30,6 +30,7 @@ const list = (patch: Partial<ForumListDto> = {}): ForumListDto => ({
   items: [item(2), item(3, { featured: true })],
   nextCursor: 'c1',
   me: { canPost: true, isAdmin: false, postReadyAt: null, replyReadyAt: null },
+  now: new Date().toISOString(),
   ...patch,
 });
 
@@ -118,9 +119,11 @@ describe('ForumView', () => {
         me: {
           canPost: true,
           isAdmin: false,
-          postReadyAt: new Date(Date.now() + 30_000).toISOString(),
+          postReadyAt: new Date(Date.now() + 600_000 + 30_000).toISOString(),
           replyReadyAt: null,
         },
+        // 服务器时间比本机快 10 分钟：倒计时要按服务器时间算（终审 I2）
+        now: new Date(Date.now() + 600_000).toISOString(),
       }),
     );
     const { w } = await mountView();

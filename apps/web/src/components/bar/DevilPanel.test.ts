@@ -119,4 +119,20 @@ describe('DevilPanel', () => {
     expect(w.emitted('reload')).toHaveLength(1);
     expect(w.find('[data-testid="devil-cup-2"]').exists()).toBe(false);
   });
+
+  it('喝失败时状态行不说"你喝了几号杯"（终审）', async () => {
+    const data = barData();
+    data.devil.round = round({
+      cups: ['me', 'bartender', null, null, null, null],
+      survived: 1,
+      lastBartender: 1,
+    });
+    vi.mocked(endpoints.barDevilDrink).mockRejectedValue(
+      new ApiError('INVALID_STATE', { reason: 'cup_taken' }),
+    );
+    const w = mount(DevilPanel, { props: { data } });
+    await w.find('[data-testid="devil-cup-3"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="devil-status"]').text()).not.toContain('你喝了 4 号杯');
+  });
 });

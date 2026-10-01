@@ -37,9 +37,6 @@ async function run(fn: () => Promise<void>, fallback: string) {
   }
 }
 
-async function loadFriends() {
-  list.value = await endpoints.friendList(sort.value);
-}
 async function loadRequests() {
   requests.value = await endpoints.friendRequests();
   friendsStore.pending = requests.value.length;

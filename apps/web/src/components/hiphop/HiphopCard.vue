@@ -30,6 +30,7 @@ const busy = ref(false);
 const result = ref('');
 
 const here = computed(() => (spot.value.here ? spot.value : null));
+const hasWant = computed(() => foods.value.some((f) => f.foodsId === here.value?.food.id));
 const wantHave = computed(() => foods.value.find((f) => f.foodsId === here.value?.food.id)?.num ?? 0);
 const KINDS = [
   { key: 'food', label: '食材' },
@@ -44,9 +45,9 @@ async function load() {
     );
     if (!spot.value.here) return;
     foods.value = (await endpoints.cupboard()).items.filter((f) => f.num > 0);
-    // 橱柜里没有他想要的那种时，默认选第一个有的（PR29 遗留）
+    // 有他想要的就默认选它；没有就不默认选别的：给别的食材不算价值、照样扣掉，要玩家自己选（终审 I1）
     const want = spot.value.food.id;
-    foodsId.value = foods.value.some((f) => f.foodsId === want) ? want : (foods.value[0]?.foodsId ?? null);
+    foodsId.value = foods.value.some((f) => f.foodsId === want) ? want : null;
   } catch {
     spot.value = { here: false };
   }
@@ -126,10 +127,17 @@ async function tip() {
         class="form-select form-select-sm w-auto"
         data-testid="hiphop-food"
       >
+        <option v-if="!hasWant" :value="null" disabled>请选择</option>
         <option v-for="f in foods" :key="f.foodsId" :value="f.foodsId">
           {{ catalog.foodName(f.foodsId) }}（{{ f.num }}）
         </option>
       </select>
+      <span
+        v-if="kind === 'food' && foods.length > 0 && !hasWant"
+        class="dt-meta w-100"
+        data-testid="hiphop-no-want"
+        >你没有他想要的食材，给别的食材不算打赏价值</span
+      >
       <input
         v-model.number="num"
         type="number"

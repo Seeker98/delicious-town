@@ -119,6 +119,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
           min="1"
           :max="it.num"
           class="form-control form-control-sm dt-qty"
+          @change="qty[it.goodsId] = it.batch && it.usable ? useN(it) : sellN(it)"
         />
         <button
           v-if="it.usable"

@@ -24,7 +24,10 @@ const content = ref('');
 const anonymous = ref(false);
 const replyTo = ref<number | null>(null);
 /** 回复冷却还剩几秒（PR31 遗留） */
-const replyWait = useCountdown(() => data.value?.replyReadyAt);
+const replyWait = useCountdown(
+  () => data.value?.replyReadyAt,
+  () => data.value?.now,
+);
 
 const when = (iso: string) =>
   new Date(iso).toLocaleString('zh-CN', {

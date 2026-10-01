@@ -40,7 +40,11 @@ describe('主题颜色（视觉规范 §2，终审 I3~I5）', () => {
 
 describe('PR27 遗留：禁用按钮、危险和成功色、没用的样式', () => {
   it('禁用的主按钮变灰，不再是淡橙色', () => {
-    expect(css).toMatch(/\.btn-primary\s*\{[^}]*--bs-btn-disabled-bg:\s*#ced4da/);
+    expect(css).toMatch(/\.btn-primary\s*\{[^}]*--bs-btn-disabled-bg:\s*#f1f3f5/);
+    // 禁用时文字仍可读：深灰字、不再叠加透明度（终审）
+    expect(css).toMatch(/\.btn-primary\s*\{[^}]*--bs-btn-disabled-color:\s*#6c757d/);
+    expect(css).toMatch(/--bs-btn-disabled-opacity:\s*1/);
+    expect(contrast('#6c757d', '#f1f3f5')).toBeGreaterThanOrEqual(4);
     expect(css).toMatch(/\.btn-outline-primary\s*\{[^}]*--bs-btn-disabled-color:\s*#adb5bd/);
   });
   it('危险红、成功绿按视觉规范覆盖 Bootstrap；危险红在白底上可读', () => {
@@ -48,6 +52,8 @@ describe('PR27 遗留：禁用按钮、危险和成功色、没用的样式', ()
     expect(varOf('--bs-success')).toBe('#2b8a3e');
     expect(contrast(varOf('--bs-danger'), '#ffffff')).toBeGreaterThanOrEqual(4.5);
     expect(css).toMatch(/\.btn-outline-danger\s*\{[^}]*--bs-btn-color:\s*#c92a2a/);
+    expect(css).toMatch(/\.btn-danger\s*\{[^}]*--bs-btn-bg:\s*#c92a2a/);
+    expect(css).toMatch(/\.btn-success\s*\{[^}]*--bs-btn-bg:\s*#2b8a3e/);
   });
   it('删掉已经没人用的 .dt-row', () => {
     expect(css).not.toMatch(/\.dt-row\s*\{/);

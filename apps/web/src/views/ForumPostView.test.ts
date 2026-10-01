@@ -54,6 +54,7 @@ const detail = (patch: Partial<ForumPostDetailDto> = {}): ForumPostDetailDto => 
   can: { edit: false, delete: false, admin: false, reads: false, reply: true },
   replies: [reply(1), reply(2, { replyTo: 1 }), reply(3, { deleted: true, content: '', canDelete: false })],
   replyReadyAt: null,
+  now: new Date().toISOString(),
   ...patch,
 });
 
@@ -159,7 +160,11 @@ describe('ForumPostView', () => {
 
   it('回复冷却中：回复按钮灰掉并显示还要等几秒（PR31 遗留）', async () => {
     vi.mocked(endpoints.forumPost).mockResolvedValue(
-      detail({ replyReadyAt: new Date(Date.now() + 45_000).toISOString() }),
+      // 服务器时间比本机快 10 分钟：倒计时要按服务器时间算（终审 I2）
+      detail({
+        replyReadyAt: new Date(Date.now() + 600_000 + 45_000).toISOString(),
+        now: new Date(Date.now() + 600_000).toISOString(),
+      }),
     );
     const { w } = await mountView();
     expect(w.find('[data-testid="reply-submit"]').attributes('disabled')).toBeDefined();

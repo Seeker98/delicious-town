@@ -103,6 +103,7 @@ export async function listPosts(d: GameDeps, ctx: RestCtx, q: ForumListQuery): P
     pinned: pinned.map((p) => toItem(p, p.rest_name, t.excerpt)),
     items: page.map((p) => toItem(p, p.rest_name, t.excerpt)),
     nextCursor,
+    now: now.toISOString(),
     me: {
       canPost: await isVerified(d.db, ctx.accountId),
       isAdmin: await isAdmin(d.db, ctx.accountId),
@@ -196,6 +197,7 @@ export async function postDetail(o: Op, ctx: RestCtx, id: number): Promise<Forum
       reply: await isVerified(o.tx, ctx.accountId),
     },
     replies: await loadReplies(o, id, admin),
+    now: o.now.toISOString(),
     replyReadyAt:
       (await readyAt(o.tx, 'forum_reply', o.rest.id, t.replyCooldownSec, o.now))?.toISOString() ?? null,
   };

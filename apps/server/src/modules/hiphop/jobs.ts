@@ -12,7 +12,7 @@ export function hiphopJobs(d: GameDeps): PeriodicJob[] {
       name: 'hiphop-daily',
       feature: 'hiphop',
       period: (now, s) => latestSlot(now, [s.tuning.hiphop.hour]).key,
-      run: ({ shardId, period, now }) => rollHiphopDay(d, shardId, parseSlotKey(period).day, now),
+      run: ({ shardId, period, now, log }) => rollHiphopDay(d, shardId, parseSlotKey(period).day, now, log),
     },
     {
       name: 'hiphop-weekly',
