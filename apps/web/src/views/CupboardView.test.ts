@@ -211,4 +211,30 @@ describe('CupboardView', () => {
     await w.find('input[type="number"]').setValue(7);
     expect(w.find('[data-testid="exchange"]').text()).toContain('×6');
   });
+
+  it('冰箱：解冻按钮写明个数和银币，确认后才解冻；放不下时按钮灰掉（问题记录 206）', async () => {
+    vi.mocked(endpoints.fridge).mockResolvedValue({
+      items: [
+        { foodsId: 302, num: 5, thawable: 3, thawCoin: 750 },
+        { foodsId: 303, num: 2, thawable: 0, thawCoin: 0 },
+      ],
+    });
+    vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    const w = mount(CupboardView);
+    await flushPromises();
+    await w.find('[data-testid="tab-fridge"]').trigger('click');
+    await flushPromises();
+    const btn = w.find('[data-testid="thaw-302"]');
+    expect(btn.text()).toContain('×3');
+    expect(btn.text()).toContain('750 银币');
+    await btn.trigger('click');
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(endpoints.thaw).not.toHaveBeenCalled();
+    await btn.trigger('click');
+    await flushPromises();
+    expect(endpoints.thaw).toHaveBeenCalledWith(302);
+    expect(w.find('[data-testid="thaw-303"]').attributes('disabled')).toBeDefined();
+    confirm.mockRestore();
+  });
 });

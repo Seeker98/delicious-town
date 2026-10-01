@@ -85,15 +85,33 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
       };
     },
 
+    /** 冰箱列表；每种先算好能解冻几个、要花多少银币，页面点之前就能看到（问题记录 206） */
     async fridge(ctx: RestCtx): Promise<FridgeDto> {
+      const { tuning } = await d.shards.settings(ctx.shardId);
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select(['foods_max_num', 'cupboard_num'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
       const rows = await d.db
         .selectFrom('cupboard_food')
-        .select(['foods_id', 'fridge_num'])
+        .select(['foods_id', 'num', 'fridge_num'])
         .where('rest_id', '=', ctx.restaurantId)
         .where('fridge_num', '>', 0)
         .orderBy('foods_id')
         .execute();
-      return { items: rows.map((r) => ({ foodsId: r.foods_id, num: r.fridge_num })) };
+      const slotsFull = (await cupboardSlotsUsed(d.db, ctx.restaurantId)) >= rest.cupboard_num;
+      return {
+        items: rows.map((r) => {
+          // 和 thaw 同一套规则：橱柜里没有这种又没空格时不能解冻；最多补到单种上限
+          const thawable =
+            r.num === 0 && slotsFull ? 0 : Math.max(0, Math.min(r.fridge_num, rest.foods_max_num - r.num));
+          const thawCoin = Math.ceil(
+            thawable * d.config.requireFood(r.foods_id).coin * tuning.cupboard.thawCoinRate,
+          );
+          return { foodsId: r.foods_id, num: r.fridge_num, thawable, thawCoin };
+        }),
+      };
     },
 
     readFridge(ctx: RestCtx) {

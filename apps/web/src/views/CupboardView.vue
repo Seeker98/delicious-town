@@ -5,7 +5,7 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
-import { foodLevelLabel } from '../utils/format';
+import { foodLevelLabel, formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -74,6 +74,11 @@ const composeN = computed(() =>
 async function load() {
   data.value = await endpoints.cupboard();
 }
+function thaw(f: FridgeDto['items'][number]) {
+  const name = catalog.foodName(f.foodsId);
+  if (!window.confirm(`解冻 ${f.thawable} 个${name}，花费 ${formatNum(f.thawCoin)} 银币？`)) return;
+  void run(() => endpoints.thaw(f.foodsId), '解冻失败');
+}
 async function openFridge() {
   tab.value = 'fridge';
   fridge.value = await endpoints.fridge();
@@ -114,7 +119,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
       >
     </li>
     <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'fridge' }]" href="#" @click.prevent="openFridge">
+      <a
+        :class="['nav-link', { active: tab === 'fridge' }]"
+        href="#"
+        data-testid="tab-fridge"
+        @click.prevent="openFridge"
+      >
         冰箱<span v-if="data?.fridgeUnread" class="badge bg-danger ms-1">新</span>
       </a>
     </li>
@@ -241,12 +251,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
       class="d-flex align-items-center border-bottom py-1 small"
     >
       {{ catalog.foodName(f.foodsId) }} ×{{ f.num }}
+      <span v-if="f.thawable === 0" class="text-muted ms-2">橱柜放不下</span>
+      <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
       <button
         class="btn btn-sm btn-outline-primary ms-auto"
-        :disabled="busy"
-        @click="run(() => endpoints.thaw(f.foodsId), '解冻失败')"
+        :disabled="busy || f.thawable === 0"
+        :data-testid="`thaw-${f.foodsId}`"
+        @click="thaw(f)"
       >
-        解冻
+        解冻 ×{{ f.thawable }}（{{ formatNum(f.thawCoin) }} 银币）
       </button>
     </div>
   </template>
