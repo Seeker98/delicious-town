@@ -108,4 +108,18 @@ describe('HiphopCard', () => {
       '这些食材看起来不怎么新鲜的样子。感谢您的支持和鼓励，你们是我进步的动力！',
     );
   });
+
+  it('橱柜里没有他想要的食材：默认选第一个有的；一样都没有就写明并禁用打赏（PR29 遗留）', async () => {
+    vi.mocked(endpoints.hiphopSpot).mockResolvedValue({ ...spot, food: { id: 555, level: 2 } });
+    const w = mount(HiphopCard, { props: { place: 1 } });
+    await flushPromises();
+    expect((w.find('[data-testid="hiphop-food"]').element as HTMLSelectElement).value).toBe('101');
+    vi.mocked(endpoints.cupboard).mockResolvedValue({ items: [] } as never);
+    const empty = mount(HiphopCard, { props: { place: 1 } });
+    await flushPromises();
+    expect(empty.find('[data-testid="hiphop-no-food"]').text()).toBe(
+      '橱柜里没有食材，可以改用银币或钻石打赏',
+    );
+    expect(empty.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeDefined();
+  });
 });

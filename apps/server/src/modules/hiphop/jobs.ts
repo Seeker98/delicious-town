@@ -18,13 +18,13 @@ export function hiphopJobs(d: GameDeps): PeriodicJob[] {
       name: 'hiphop-weekly',
       feature: 'hiphop',
       period: (now, s) => weekEndPeriod(now, s.tuning.hiphop.weeklyHour),
-      run: ({ shardId, period, now }) => awardWeekly(d, shardId, period, now),
+      run: ({ shardId, period, now, log }) => awardWeekly(d, shardId, period, now, log),
     },
     {
       name: 'hiphop-wage',
       feature: 'hiphop',
       period: (now) => weeklyPeriod(now),
-      run: ({ shardId, now }) => payWages(d, shardId, now),
+      run: ({ shardId, now, log }) => payWages(d, shardId, now, log),
     },
   ];
 }

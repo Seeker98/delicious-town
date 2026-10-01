@@ -2,7 +2,7 @@ import { sql, type Kysely, type Selectable } from 'kysely';
 import { GOODS, type Tuning } from '@dt/config';
 import { buildPool, gameDay, gameParts, pickWeighted, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import { opNews, runSystemOp } from '../../core/op';
+import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { grantGoodsOp } from '../store/goods';
 import { rollWorth } from './rules';
@@ -90,28 +90,36 @@ export async function rollHiphopDay(
     .map((f) => f.id)
     .sort((a, b) => a - b);
   const foodsId = foods[rng.int(foods.length)]!;
-  const inserted = await d.db
-    .insertInto('hiphop_day')
-    .values({
-      shard_id: shardId,
-      day,
-      place,
-      rest_id: restId,
-      foods_id: foodsId,
-      worth: rollWorth(rng.next(), t),
-      created_at: now,
-    })
-    .onConflict((oc) => oc.columns(['shard_id', 'day']).doNothing())
-    .returning('place')
-    .executeTakeFirst();
+  const row = {
+    shard_id: shardId,
+    day,
+    place,
+    rest_id: restId,
+    foods_id: foodsId,
+    worth: rollWorth(rng.next(), t),
+    created_at: now,
+  };
+  const insert = (db: Kysely<DB>) =>
+    db
+      .insertInto('hiphop_day')
+      .values(row)
+      .onConflict((oc) => oc.columns(['shard_id', 'day']).doNothing())
+      .returning('place')
+      .executeTakeFirst();
+  // 餐厅地点：写地点和给那家店发"嘻哈文化"放在同一个事务里，任一步失败都不留半截（PR29 遗留）
+  const inserted =
+    restId === null
+      ? await insert(d.db)
+      : await runSystemOp(d, shardId, restId, { source: 'hiphop.event', now }, async (o) => {
+          const r = await insert(o.tx);
+          if (!r) return r;
+          await grantGoodsOp(o, GOODS.hiphopCulture, 1);
+          opNews(o, 'hiphop.event', {});
+          restLog(o, 'hiphop.event', { day });
+          return r;
+        });
   // 并发时别人先写了：以已有记录为准
   if (!inserted) return rollHiphopDay(d, shardId, day, now);
-  if (restId !== null) {
-    await runSystemOp(d, shardId, restId, { source: 'hiphop.event', now }, async (o) => {
-      await grantGoodsOp(o, GOODS.hiphopCulture, 1);
-      opNews(o, 'hiphop.event', {});
-    });
-  }
   return { created: true, place, restId };
 }
 

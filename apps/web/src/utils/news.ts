@@ -1,4 +1,4 @@
-import type { NewsDto } from '@dt/shared';
+import { SHARED_GOODS, type NewsDto } from '@dt/shared';
 import { formatNum } from './format';
 
 export interface NewsNames {
@@ -36,7 +36,7 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
   'forum.pin': (w, p) => `${w}的帖子《${str(p.title)}》被置顶了`,
   'forum.feature': (w, p) => `${w}的帖子《${str(p.title)}》被加精了`,
   'hiphop.event': (w) => `${w}开启了嘻哈活动！`,
-  'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(240)}×${num(p.num)}`,
+  'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)}`,
   'hiphop.weekly': (w, p, x) =>
     `恭喜${w}在每周打赏中获得第 ${num(p.rank)} 名，奖励 ${x.goodsName(num(p.goodsId))}（160 小时）`,
   'market.manual': (w, p, x) =>

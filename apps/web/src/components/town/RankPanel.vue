@@ -8,7 +8,7 @@ import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
 import { shortNum } from '../../utils/format';
 
-/** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类按钮组；每分钟更新 */
+/** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类按钮组；厨力榜 10 分钟更新，其他每分钟 */
 const session = useSessionStore();
 const toast = useToastStore();
 const KEY = 'dt_rank_board';
@@ -82,8 +82,9 @@ onMounted(load);
         {{ b.label }}
       </button>
     </div>
-    <div class="dt-meta mb-1">
-      每分钟更新<span v-if="data"> · 更新于 {{ hhmm(data.updatedAt) }}</span>
+    <div class="dt-meta mb-1" data-testid="rank-meta">
+      {{ key === 'power' ? '每 10 分钟更新' : '每分钟更新'
+      }}<span v-if="data"> · 更新于 {{ hhmm(data.updatedAt) }}</span>
     </div>
     <div v-if="def.reward" class="dt-meta mb-2" data-testid="rank-reward">奖励：{{ def.reward }}</div>
     <template v-if="data">

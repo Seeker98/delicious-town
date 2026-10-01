@@ -54,11 +54,21 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 /** 菜场工作证手动进货（4E-2）：挂 4 种自己的货到日常货架 */
-const manualStock = () =>
-  run(async () => {
+const manualStock = () => {
+  const d = data.value;
+  if (!d) return;
+  // 每次至少 100 万、越进越贵，先确认；手动货在下次日常进货时一起下架（PR29 遗留）
+  if (
+    !window.confirm(
+      `花 ${formatNum(d.manual.cost)} 银币进 4 种日常菜？下次日常进货（${time(d.nextDaily)}）时会一起下架。`,
+    )
+  )
+    return;
+  return run(async () => {
     const r = await endpoints.marketManualStock();
     toast.push(`进货完成，声望 +${r.renown}`, 'success');
   }, '进货失败');
+};
 /** 买的数量不超过最多还能买几个 */
 const buy = (it: MarketItemDto) =>
   run(() => endpoints.marketBuy(it.id, Math.max(1, Math.min(qty[it.id] || 1, it.canBuy))), '购买失败');
@@ -125,6 +135,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         v-for="it in data[s.key]"
         :key="it.id"
         class="d-flex align-items-center gap-2 border-bottom py-1 small"
+        :data-testid="`item-${it.id}`"
       >
         <div class="flex-fill">
           <b>{{ catalog.foodName(it.foodsId) }}</b>
@@ -132,7 +143,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
           <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
             {{ it.owner.restId === myRest ? '自己的货，免费' : `${it.owner.name} 进的货` }}
           </div>
-          <div class="text-muted">
+          <div v-if="it.owner?.restId === myRest" class="text-muted">剩 {{ formatNum(it.left) }}</div>
+          <div v-else class="text-muted">
             {{ formatNum(it.price) }} 银币 · 剩 {{ formatNum(it.left) }} · 限购 {{ it.bought }}/{{ it.limit }}
           </div>
           <div v-if="capNote(it)" class="text-danger" :data-testid="`cap-${it.id}`">{{ capNote(it) }}</div>

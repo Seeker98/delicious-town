@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MarketDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useSessionStore } from '../stores/session';
 import MarketView from './MarketView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -123,6 +124,7 @@ describe('MarketView', () => {
     });
     const w = mount(MarketView);
     await flushPromises();
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const before = vi.mocked(endpoints.market).mock.calls.length;
     const btn = w.find('[data-testid="market-manual"]');
     expect(btn.text()).toBe('手动进货（2,000,000 银币）');
@@ -130,6 +132,7 @@ describe('MarketView', () => {
     await flushPromises();
     expect(endpoints.marketManualStock).toHaveBeenCalled();
     expect(vi.mocked(endpoints.market).mock.calls.length).toBe(before + 1);
+    confirm.mockRestore();
   });
 
   it('没有工作证不显示按钮；手动货写明谁进的货，自己的货免费', async () => {
@@ -140,5 +143,28 @@ describe('MarketView', () => {
     expect(w.find('[data-testid="market-manual"]').exists()).toBe(false);
     expect(w.find('[data-testid="owner-12"]').text()).toBe('小王的店 进的货');
     expect(w.find('[data-testid="owner-11"]').exists()).toBe(false);
+  });
+
+  it('自己的手动货不显示价格和限购；手动进货先确认并写明下次整点下架（PR29 遗留）', async () => {
+    useSessionStore().$patch({ me: { restaurantId: 5 } } as never);
+    const own = { ...view.daily[0]!, id: 12, owner: { restId: 5, name: '我的店' } };
+    vi.mocked(endpoints.market).mockResolvedValue({
+      ...view,
+      daily: [own],
+      manual: { hasCard: true, cost: 1_000_000 },
+    });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    vi.mocked(endpoints.marketManualStock).mockClear();
+    const w = mount(MarketView);
+    await flushPromises();
+    const row = w.find('[data-testid="item-12"]');
+    expect(row.text()).toContain('自己的货，免费');
+    expect(row.text()).not.toContain('银币');
+    expect(row.text()).not.toContain('限购');
+    await w.find('[data-testid="market-manual"]').trigger('click');
+    await flushPromises();
+    expect(confirm.mock.calls[0]![0]).toContain('下次日常进货');
+    expect(endpoints.marketManualStock).not.toHaveBeenCalled();
+    confirm.mockRestore();
   });
 });
