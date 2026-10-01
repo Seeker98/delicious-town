@@ -288,7 +288,7 @@
     "npc": { "bigEaterLevelWeights": [50, 25, 13, 9, 3], "bigEaterNum": [1, 3], "wenjieNum": [1, 20], "bro13Num": [1, 2] },
     "shake": {
       "base": 8000, "rand": 5000, "eggMod": 100, "eggTail": 88, "burgerEvery": 8, "burgerNum": 1, "krabCoinNum": 8,
-      "limitIp": false, "limitDevice": false
+      "limitIp": false, "limitDevice": false, "krabDailyCoin": 10000000
     },
     "hammer": { "cooldownHours": 6, "gapSec": 90, "coin": 100000, "diamond": 8 },
     "bless": { "lampCoinBonus": 0.1 },

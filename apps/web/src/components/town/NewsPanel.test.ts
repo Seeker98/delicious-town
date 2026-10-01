@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 import type { NewsDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import NewsPanel from './NewsPanel.vue';
@@ -65,5 +66,31 @@ describe('NewsPanel', () => {
     const low = mount(NewsPanel, { props: { data: townData({ star: 0 }) } });
     await flushPromises();
     expect(low.find('[data-testid="bc-block"]').text()).toBe('餐厅 1 星才能广播');
+  });
+
+  describe('冷却按服务器时间倒计时（终审 I1）', () => {
+    afterEach(() => vi.useRealTimers());
+    it('冷却结束后按钮自己恢复，不用刷新', async () => {
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+      // 本机时钟比服务器慢 1 小时：倒计时仍按服务器时间算
+      vi.setSystemTime(new Date('2026-09-30T03:00:00.000Z'));
+      vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+      const data = townData({
+        now: '2026-09-30T04:00:00.000Z',
+        broadcast: { horns: 2, readyAt: '2026-09-30T04:00:02.000Z', minStar: 1, maxLen: 64 },
+      });
+      const w = mount(NewsPanel, { props: { data } });
+      await flushPromises();
+      await w.find('[data-testid="bc-input"]').setValue('你好');
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 2 秒');
+      expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
+      vi.advanceTimersByTime(1000);
+      await nextTick();
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 1 秒');
+      vi.advanceTimersByTime(1000);
+      await nextTick();
+      expect(w.find('[data-testid="bc-block"]').exists()).toBe(false);
+      expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeUndefined();
+    });
   });
 });

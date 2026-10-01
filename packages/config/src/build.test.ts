@@ -419,3 +419,13 @@ describe('小镇（子项目 4E-1）', () => {
     expect(bundle!.tasks.find((t) => t.id === 109)!.href).toBe('/town');
   });
 });
+
+describe('终审修复（4E-1）', () => {
+  it('声望商店引用了不存在的道具时构建报错（M2：误删的校验）', () => {
+    const src = source();
+    const shop = structuredClone(src['designed/renown_shop']) as Array<{ goodsId: number }>;
+    shop[0]!.goodsId = 999_999;
+    src['designed/renown_shop'] = shop;
+    expect(buildBundle(src).errors).toContain('renown_shop references unknown goods 999999');
+  });
+});

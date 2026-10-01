@@ -6,6 +6,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { newsText, newsTime } from '../../utils/news';
+import { useServerClock } from '../../utils/serverClock';
 
 const props = defineProps<{ data: TownDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -15,6 +16,7 @@ const items = ref<NewsDto[]>([]);
 const hasMore = ref(false);
 const text = ref('');
 const busy = ref(false);
+const clock = useServerClock(() => props.data.now);
 
 async function load(more = false) {
   try {
@@ -32,7 +34,7 @@ const block = computed(() => {
   const b = props.data.broadcast;
   if (props.data.star < b.minStar) return `餐厅 ${b.minStar} 星才能广播`;
   if (b.horns === 0) return '没有喇叭（和 13 哥聊天可以拿到）';
-  if (b.readyAt) return '刚广播过，稍等一会儿';
+  if (clock.pending(b.readyAt)) return `广播冷却中，还要等 ${clock.secondsLeft(b.readyAt)} 秒`;
   return '';
 });
 

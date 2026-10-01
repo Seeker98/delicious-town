@@ -649,6 +649,8 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const id of [263, 108]) if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);
   if (Math.abs(tuning.takeaway.gradeRates.reduce((s, x) => s + x, 0) - 1) > 1e-9)
     errors.push('tuning.takeaway.gradeRates must sum to 1');
+  for (const r of renownRaw)
+    if (!goodsIds.has(r.goodsId)) errors.push(`renown_shop references unknown goods ${r.goodsId}`);
   // ---------- 小镇（子项目 4E-1） ----------
   const goodsExchange: GoodsExchange[] = goodsExRaw.map((e) => ({
     id: e.id,
@@ -666,7 +668,8 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const e of goodsExchange) {
     if (!goodsIds.has(e.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${e.goodsId}`);
     for (const n of e.need)
-      if (!goodsIds.has(n.goodsId)) errors.push(`goods_exchange ${e.id} references unknown goods ${n.goodsId}`);
+      if (!goodsIds.has(n.goodsId))
+        errors.push(`goods_exchange ${e.id} references unknown goods ${n.goodsId}`);
     if (e.times === 0 || e.times < -1) errors.push(`goods_exchange ${e.id} times must be -1 or positive`);
   }
   const bless: Bless[] = blessRaw.map((x) => ({

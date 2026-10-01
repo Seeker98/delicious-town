@@ -1,10 +1,13 @@
 import { sql } from 'kysely';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { krabFor, setTownTuning } from '../../../test/town';
 import type { RestCtx } from '../../core/deps';
+import { createShard } from '../../../test/fixtures';
+import { runDueJobs } from '../../worker/periodic';
 import { listNews } from '../news/news';
+import { npcIdOf } from '../npc/npc';
 
 const DAY = '2026-09-30';
 let t: TestGame;
@@ -89,5 +92,28 @@ describe('摇蟹老板钱包（设计文档 §3.4）', () => {
     expect(await goodsNum(t, a.restaurantId, 180)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.shake.lucky'] });
     expect(n).toMatchObject({ restId: a.restaurantId, params: { goodsId: 180, num: 1 } });
+  });
+
+  it('蟹老板的钱袋：新建时和每天补货时补到 1000 万，比它多时不动（终审 C1）', async () => {
+    const shardId = await createShard(t.db);
+    const run = (name: string) =>
+      runDueJobs(
+        { db: t.db, shards: t.game.shards, now: () => t.clock.now, log: { error: vi.fn() } },
+        t.game.jobs.filter((j) => j.name === name),
+        { shardIds: [shardId] },
+      );
+    t.clock.set(gameTime(DAY, 0, 10));
+    await run('npc-maintain');
+    const krab = (await npcIdOf(t.db, shardId))!;
+    expect((await restRow(t, krab)).coin).toBe(10_000_000);
+
+    await t.db.updateTable('restaurant').set({ coin: 5 }).where('id', '=', krab).execute();
+    await run('npc-restock');
+    expect((await restRow(t, krab)).coin).toBe(10_000_000);
+
+    await t.db.updateTable('restaurant').set({ coin: 20_000_000 }).where('id', '=', krab).execute();
+    t.clock.set(gameTime('2026-10-01', 0, 10));
+    await run('npc-restock');
+    expect((await restRow(t, krab)).coin).toBe(20_000_000);
   });
 });

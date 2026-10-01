@@ -8,12 +8,14 @@ import { useToastStore } from '../../stores/toast';
 import { effectChips } from '../../utils/effects';
 import { formatNum } from '../../utils/format';
 import { rewardText } from '../../utils/rewards';
+import { useServerClock } from '../../utils/serverClock';
 
 const props = defineProps<{ data: TownDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const busy = ref(false);
+const clock = useServerClock(() => props.data.now);
 
 const NPCS: Array<{ key: NpcKey; name: string; desc: string }> = [
   { key: 'bigEater', name: '大胃哥', desc: '每天送 1~5 级食材和一颗种子' },
@@ -114,9 +116,9 @@ function wish() {
 const hammerBlock = computed(() => {
   const h = props.data.hammer;
   if (!h.has) return '持有雷神锤才能使用';
-  if (h.readyAt)
+  if (clock.pending(h.readyAt))
     return `冷却到 ${new Date(h.readyAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`;
-  if (h.townReadyAt) return '刚换过天气，稍等一会儿';
+  if (clock.pending(h.townReadyAt)) return `刚换过天气，${clock.secondsLeft(h.townReadyAt)} 秒后才能再换`;
   return '';
 });
 function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {

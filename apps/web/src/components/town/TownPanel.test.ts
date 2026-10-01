@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -126,5 +127,29 @@ describe('TownPanel', () => {
     });
     expect(cool.find('[data-testid="hammer-1"]').attributes('disabled')).toBeDefined();
     expect(cool.find('[data-testid="hammer-diamond"]').attributes('disabled')).toBeDefined();
+  });
+
+  describe('冷却按服务器时间倒计时（终审 I1）', () => {
+    afterEach(() => vi.useRealTimers());
+    it('全镇 90 秒间隔结束后换天气按钮自己恢复', async () => {
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+      vi.setSystemTime(new Date('2026-09-30T04:00:00.000Z'));
+      const data = townData({
+        hammer: {
+          has: true,
+          readyAt: null,
+          townReadyAt: '2026-09-30T04:00:03.000Z',
+          coin: 100000,
+          diamond: 8,
+        },
+      });
+      const w = mount(TownPanel, { props: { data } });
+      expect(w.find('[data-testid="hammer-block"]').text()).toBe('刚换过天气，3 秒后才能再换');
+      expect(w.find('[data-testid="hammer-1"]').attributes('disabled')).toBeDefined();
+      vi.advanceTimersByTime(3000);
+      await nextTick();
+      expect(w.find('[data-testid="hammer-block"]').exists()).toBe(false);
+      expect(w.find('[data-testid="hammer-1"]').attributes('disabled')).toBeUndefined();
+    });
   });
 });
