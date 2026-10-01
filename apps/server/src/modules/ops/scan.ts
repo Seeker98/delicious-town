@@ -1,7 +1,9 @@
 import { SPONSOR_HATS } from '@dt/config';
+import { featureAvailable } from '../../core/features';
 import type { Game } from '../../game';
 import type { JobLogger } from '../../worker/scheduler';
 import { hatDisplayName } from '../equip/hats';
+import { scanInvites } from '../invite/scan';
 import { sendMail } from '../mail/send';
 
 /**
@@ -62,8 +64,11 @@ export async function scanHats(
   return { sent, failed };
 }
 
-/** worker 每分钟一次：遍历开放区服跑各项扫描（设计 §7）；6A-2 在这里加邀请扫描 */
+/** worker 每分钟一次：遍历开放区服跑各项扫描（设计 §7）：六星换铉；区服开着邀请时再跑邀请扫描 */
 export async function runOpsScan(game: Game, log: JobLogger): Promise<void> {
   const shards = await game.app.db.selectFrom('shard').select('id').where('status', '=', 'open').execute();
-  for (const { id } of shards) await scanHats(game, log, id);
+  for (const { id } of shards) {
+    await scanHats(game, log, id);
+    if (featureAvailable(await game.shards.settings(id), 'invite')) await scanInvites(game, log, id);
+  }
 }

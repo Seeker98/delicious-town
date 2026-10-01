@@ -19,6 +19,15 @@ export function checkRewardItems(config: GameConfig, items: RewardItems): void {
   if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
 }
 
+/** 附件里有配置中已不存在的道具或食材（发出后配置删了）：邮件标成失效、兑换码报 code_broken */
+export function brokenItems(config: GameConfig, items: RewardItems | null): boolean {
+  if (!items) return false;
+  return (
+    (items.goods ?? []).some((g) => !config.goods.has(g.id)) ||
+    (items.foods ?? []).some((f) => !config.foods.has(f.id))
+  );
+}
+
 /**
  * 发放附件（设计 §4）：橱柜满了进冰箱、仓库满了照发；流水来源、个人日志类型由调用方给。
  * 补偿、邮件领取、兑换码都走这里

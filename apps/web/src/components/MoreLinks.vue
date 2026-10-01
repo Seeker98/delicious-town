@@ -43,6 +43,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
     title: '其他',
     links: [
       { to: '/weather', icon: 'bi-cloud-sun', label: '天气' },
+      { to: '/invite', icon: 'bi-person-plus', label: '邀请好友' },
       { to: '/shards', icon: 'bi-arrow-left-right', label: '切换区服' },
     ],
   },

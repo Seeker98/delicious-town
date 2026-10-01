@@ -2,13 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import type { MailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import RedeemBox from '../components/RedeemBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
 import { useToastStore } from '../stores/toast';
 import { rewardSummary } from '../utils/reward';
 
-/** 邮箱（子项目 6A）：领取附件、一键全领、删除；兑换码输入框在 6A-2 放到 top 插槽 */
+/** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const mailStore = useMailStore();
@@ -37,7 +38,7 @@ async function load() {
 onMounted(() => void load());
 
 const hasItems = (m: MailDto) => m.items !== null && Object.keys(m.items).length > 0;
-const claimable = (m: MailDto) => hasItems(m) && !m.claimed;
+const claimable = (m: MailDto) => hasItems(m) && !m.claimed && !m.broken;
 const levelLow = (m: MailDto) => m.minLevel !== null && level.value < m.minLevel;
 const anyClaimable = computed(() => items.value.some((m) => claimable(m) && !levelLow(m)));
 const daysLeft = (m: MailDto) =>
@@ -97,7 +98,7 @@ const claimAll = () =>
       一键领取
     </button>
   </div>
-  <slot name="top" />
+  <RedeemBox @redeemed="load" />
   <div v-if="notice" class="alert alert-warning py-1 small" role="status">{{ notice }}</div>
   <div v-if="loaded && items.length === 0" class="dt-empty">没有邮件</div>
   <div v-for="m in items" :key="m.id" class="dt-card small mb-2" :data-testid="`mail-${m.id}`">
@@ -135,6 +136,7 @@ const claimAll = () =>
       {{ sentAt(m) }} · 还剩 {{ daysLeft(m) }} 天
       <span v-if="claimable(m) && levelLow(m)" class="text-danger">· 需 {{ m.minLevel }} 级</span>
       <span v-if="m.claimed">· 已领取</span>
+      <span v-else-if="m.broken" class="text-danger">· 附件已失效，请联系运营</span>
     </div>
     <div v-if="hasItems(m)" class="dt-meta">附件：{{ rewardSummary(m.items!, catalog) }}</div>
     <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">{{ m.body }}</div>

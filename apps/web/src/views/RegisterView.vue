@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { USERNAME_RE } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import TurnstileBox from '../components/TurnstileBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 
-const form = ref({ username: '', password: '', password2: '', email: '', inviteCode: '' });
+/** 邀请链接 /register?invite=XXXX 带来的码自动填上（子项目 6A-2） */
+const route = useRoute();
+const form = ref({
+  username: '',
+  password: '',
+  password2: '',
+  email: '',
+  inviteCode: typeof route.query.invite === 'string' ? route.query.invite : '',
+});
 const captchaToken = ref('');
 const turnstile = ref<InstanceType<typeof TurnstileBox> | null>(null);
 const error = ref('');

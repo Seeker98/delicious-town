@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { closeAnnouncements, expect, test } from './fixtures';
 import { registerAndOpen } from './helpers';
 
 test('两个玩家互加好友、放蟑螂、灭蟑螂、白食、点赞和回赞', async ({ browser, request }) => {
@@ -6,6 +6,8 @@ test('两个玩家互加好友、放蟑螂、灭蟑螂、白食、点赞和回�
   const ctxB = await browser.newContext();
   const a = await ctxA.newPage();
   const b = await ctxB.newPage();
+  await closeAnnouncements(a);
+  await closeAnnouncements(b);
   const A = await registerAndOpen(a, request);
   const B = await registerAndOpen(b, request);
 

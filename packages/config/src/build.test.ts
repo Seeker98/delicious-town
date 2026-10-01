@@ -692,3 +692,24 @@ describe('赞助帽子和邮件数值（子项目 6A-1）', () => {
     expect(bundle!.tuning.mail).toEqual({ expiresDays: 30, listMax: 100 });
   });
 });
+
+describe('邀请和兑换码数值（子项目 6A-2）', () => {
+  it('邀请：每月 20 人，10 级、30 级两档；兑换：每小时失败 10 次上限，一批最多 1000 个码', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    expect(bundle!.tuning.invite).toMatchObject({ monthlyCap: 20, levels: { lv10: 10, lv30: 30 } });
+    expect(bundle!.tuning.invite.newbie).toEqual({ coin: 50000, goods: [{ id: 1, num: 5 }] });
+    expect(bundle!.tuning.redeem).toEqual({ failLimit: 10, failWindowSec: 3600, batchMax: 1000 });
+  });
+
+  it('邀请奖励引用了不存在的道具时构建报错', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as {
+      invite: { rewards: { lv10: { goods?: unknown } } };
+    };
+    tuning.invite.rewards.lv10.goods = [{ id: 999999, num: 1 }];
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'invite.rewards.lv10 references unknown goods 999999',
+    );
+  });
+});

@@ -1,11 +1,14 @@
 import { sql, type Kysely } from 'kysely';
+import type { GameConfig } from '@dt/config';
 import type { MailClaimAllDto, MailClaimDto, MailDto, RewardItems } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { notFound } from '../equip/service';
-import { grantRewardOp } from './reward';
+import { brokenItems, grantRewardOp } from './reward';
+import { AppError } from '../../http/errors';
+import type { JobLogger } from '../../worker/scheduler';
 import { claimBlock, hasItems } from './rules';
 
 /** 判断可见性需要的餐厅字段；created_at 不读出来，在 SQL 里按店 id 取，避免毫秒截断 */
@@ -43,6 +46,7 @@ function visibleQuery(db: Kysely<DB>, rest: MailRest) {
 
 export async function visibleMails(
   db: Kysely<DB>,
+  config: GameConfig,
   rest: MailRest,
   opts: { id?: number; limit: number },
 ): Promise<MailDto[]> {
@@ -72,6 +76,7 @@ export async function visibleMails(
     read: r.read_at !== null,
     claimed: r.claimed_at !== null,
     minLevel: r.min_level,
+    broken: brokenItems(config, (r.items as RewardItems | null) ?? null),
   }));
 }
 
@@ -84,7 +89,7 @@ export async function unreadCount(db: Kysely<DB>, rest: MailRest): Promise<numbe
 }
 
 async function mustSee(o: Op, id: number): Promise<MailDto> {
-  const [m] = await visibleMails(o.tx, o.rest, { id, limit: 1 });
+  const [m] = await visibleMails(o.tx, o.config, o.rest, { id, limit: 1 });
   if (!m) throw notFound('mail', id);
   return m;
 }
@@ -122,26 +127,27 @@ export async function markRead(o: Op, id: number): Promise<void> {
     on conflict (mail_id, rest_id) do update set read_at = coalesce(mail_state.read_at, now())`.execute(o.tx);
 }
 
-/** 删除只影响自己；附件没领时不能删（设计 裁定 9） */
+/** 删除只影响自己；附件没领时不能删（设计 裁定 9），附件失效的除外 */
 export async function removeMail(o: Op, id: number): Promise<void> {
   const m = await mustSee(o, id);
-  if (hasItems(m.items) && !m.claimed) throw invalidState('mail_unclaimed');
+  if (hasItems(m.items) && !m.claimed && !m.broken) throw invalidState('mail_unclaimed');
   await sql`
     insert into mail_state (mail_id, rest_id, read_at, deleted_at) values (${id}, ${o.rest.id}, now(), now())
     on conflict (mail_id, rest_id) do update set deleted_at = now()`.execute(o.tx);
 }
 
 /**
- * 一键全领：每封各自一个事务，一封出错（比如道具已从配置删除）只计失败，
- * 其他照常领，出错的那封保持未领（Review Focus 2）
+ * 一键全领：每封各自一个事务，附件失效的不领；一封出错只计失败并记日志，
+ * 其他照常领，出错的那封保持未领。别的标签页抢先领了（mail_claimed）不算失败
  */
 export async function claimAll(
   d: GameDeps,
   ctx: RestCtx,
   rest: MailRest,
   limit: number,
+  log?: Pick<JobLogger, 'error'>,
 ): Promise<OpResult<MailClaimAllDto>> {
-  const ids = (await visibleMails(d.db, rest, { limit }))
+  const ids = (await visibleMails(d.db, d.config, rest, { limit }))
     .filter((m) => claimBlock(m, rest.level) === null)
     .map((m) => m.id);
   const out: MailClaimAllDto = { claimed: 0, failed: 0, items: [] };
@@ -152,8 +158,11 @@ export async function claimAll(
       out.claimed++;
       out.items.push(r.data.items);
       events.push(...r.events);
-    } catch {
+    } catch (err) {
+      if (err instanceof AppError && err.code === 'INVALID_STATE' && err.params?.reason === 'mail_claimed')
+        continue;
       out.failed++;
+      log?.error({ err, mailId: id }, 'mail claim failed');
     }
   }
   return { data: out, events };

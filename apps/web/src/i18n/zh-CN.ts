@@ -142,6 +142,16 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
 const STATE: Record<string, string> = {
   mail_claimed: '这封邮件已经领过了',
   mail_no_items: '这封邮件没有附件',
+  mail_broken: '这封邮件的附件已失效，请联系运营',
+  code_not_found: '兑换码不存在',
+  code_not_started: '兑换码还没到开始时间',
+  code_expired: '兑换码已过期',
+  code_used_up: '兑换码已被领完',
+  code_used: '这个兑换码你已经用过了',
+  code_wrong_shard: '这个兑换码不能在本区服使用',
+  code_disabled: '兑换码已停用',
+  code_broken: '这个兑换码的奖励已失效，请联系运营',
+  too_many_tries: '输错太多次了，请一小时后再试',
   mail_unclaimed: '附件还没领，不能删除',
   locked: '厨具已锁定，先解锁',
   has_gems: '厨具上镶着宝石，先摘下来',
@@ -354,6 +364,8 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return `回复要 1~${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && params.reason === 'mail_level' && params.level !== undefined)
     return `等级不够，需 ${String(params.level)} 级`;
+  if (code === 'INVALID_STATE' && params.reason === 'code_level' && params.level !== undefined)
+    return `兑换码要求 ${String(params.level)} 级`;
   if (code === 'INVALID_STATE' && params.reason === 'query_text' && params.max !== undefined)
     return `搜索词最多 ${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && typeof params.reason === 'string' && STATE[params.reason]) {

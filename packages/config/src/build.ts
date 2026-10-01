@@ -746,6 +746,19 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const [id] of tuning.forum.featureReward.goods)
     if (!goodsIds.has(id)) errors.push(`forum.featureReward references unknown goods ${id}`);
 
+  // ---------- 邀请（子项目 6A-2） ----------
+  const inviteRewards: Array<[string, (typeof tuning.invite)['newbie']]> = [
+    ['newbie', tuning.invite.newbie],
+    ['rewards.lv10', tuning.invite.rewards.lv10],
+    ['rewards.lv30', tuning.invite.rewards.lv30],
+  ];
+  for (const [where, r] of inviteRewards) {
+    for (const g of r.goods ?? [])
+      if (!goodsIds.has(g.id)) errors.push(`invite.${where} references unknown goods ${g.id}`);
+    for (const f of r.foods ?? [])
+      if (!foodIds.has(f.id)) errors.push(`invite.${where} references unknown foods ${f.id}`);
+  }
+
   // ---------- 开店默认值 ----------
   for (const g of defaults.giftGoods) {
     if (!goodsIds.has(g.id)) errors.push(`restaurant_defaults gift references unknown goods ${g.id}`);

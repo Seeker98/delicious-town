@@ -103,6 +103,7 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
   'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
   'admin.grant': (p) => `系统补偿：${String(p.reason ?? '')}`,
+  redeem: (p) => `使用了兑换码 ${String(p.code ?? '')}`,
   'mail.claim': (p) => `领取了邮件「${String(p.title ?? '')}」的附件`,
   'admin.rename': (p) =>
     `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」：${String(p.reason ?? '')}`,

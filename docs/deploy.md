@@ -153,3 +153,12 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 公开接口 `GET /api/v1/public/announcements` 不用登录，登录页显示全部区服的有效公告（停服维护通知用）
 - 新道具 641「玉•赞助之帽」、642「铉•赞助之帽」，只能在后台邮件附件里按件命名发放，不掉落、不出售
 - 后台"补偿"页可以勾"改为发邮件"，玩家在邮箱里领取
+
+## 兑换码、邀请（子项目 6A-2）
+
+- 不加迁移，用 0018 已建好的 `redeem_code`、`redeem_use`、`invite_reward`
+- 新功能开关 `features.redeem`、`features.invite`（默认开）。关掉 `invite` 时，worker 不给这个区服发邀请奖励，邀请好友页返回"这个区服暂未开放该功能"
+- 新数值 `tuning.invite`：每月上限 `monthlyCap`（20 人）、两档等级 `levels`（10、30）、新手礼包 `newbie`、两档奖励 `rewards`；`tuning.redeem`：失败上限 `failLimit`（10 次）、窗口 `failWindowSec`（3600 秒）、每批上限 `batchMax`（1000 个）。奖励里的道具、食材 id 在构建配置时校验
+- worker `ops-scan` 现在也发邀请奖励：新手礼包、被邀请人 10 级和 30 级时给邀请人的奖励、邀请人后来在该区开店时补发待发的奖励
+- Redis 键 `redeem:fail:{账号 id}` 记一小时内输错兑换码（码不存在）的次数，到上限后这个账号一小时内不能兑换
+- 后台新页"兑换码"：协管能看，只有管理员能建码、停用、导出一次性码；这些操作都记审计（`code.create`、`code.batch`、`code.disable`、`code.export`）

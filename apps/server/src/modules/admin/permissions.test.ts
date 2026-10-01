@@ -12,6 +12,8 @@ let ids: {
   iconId: number;
   mailId: number;
   announcementId: number;
+  codeId: number;
+  batchId: number;
 };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
@@ -50,6 +52,34 @@ beforeAll(async () => {
     })
     .returning('id')
     .executeTakeFirstOrThrow();
+  const code = await ctx.deps.db
+    .insertInto('redeem_code')
+    .values({
+      code: `PERM${Date.now()}`,
+      kind: 'shared',
+      items: JSON.stringify({ coin: 1 }),
+      note: '',
+      actor_account_id: target.accountId,
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  const single = await ctx.deps.db
+    .insertInto('redeem_code')
+    .values({
+      code: `PERMB${Date.now()}`,
+      kind: 'single',
+      items: JSON.stringify({ coin: 1 }),
+      note: '',
+      max_uses: 1,
+      actor_account_id: target.accountId,
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow();
+  await ctx.deps.db
+    .updateTable('redeem_code')
+    .set({ batch_id: single.id })
+    .where('id', '=', single.id)
+    .execute();
   ids = {
     shardId,
     accountId: target.accountId,
@@ -57,6 +87,8 @@ beforeAll(async () => {
     iconId: icon.id,
     mailId: mail.id,
     announcementId: announcement.id,
+    codeId: code.id,
+    batchId: single.id,
   };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
@@ -210,6 +242,33 @@ const CASES: Case[] = [
   },
   { method: 'GET', route: '/api/v1/admin/grants', url: () => '/api/v1/admin/grants', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
+  { method: 'GET', route: '/api/v1/admin/codes', url: () => '/api/v1/admin/codes', min: 'mod' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/codes',
+    url: () => '/api/v1/admin/codes',
+    body: () => ({ items: { coin: 1 }, note: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/codes/batch',
+    url: () => '/api/v1/admin/codes/batch',
+    body: () => ({ count: 1, items: { coin: 1 }, note: '权限测试' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/codes/:id/disable',
+    url: () => `/api/v1/admin/codes/${ids.codeId}/disable`,
+    min: 'admin',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/codes/batches/:id/export',
+    url: () => `/api/v1/admin/codes/batches/${ids.batchId}/export`,
+    min: 'admin',
+  },
   {
     method: 'GET',
     route: '/api/v1/admin/announcements',

@@ -29,6 +29,7 @@ const mail = (patch: Partial<MailDto> = {}): MailDto => ({
   read: false,
   claimed: false,
   minLevel: null,
+  broken: false,
   ...patch,
 });
 
@@ -99,5 +100,19 @@ describe('MailView', () => {
     await flushPromises();
     expect(w.find('[data-testid="mail-claim-1"]').attributes('disabled')).toBeUndefined();
     expect(w.text()).not.toContain('需 10 级');
+  });
+
+  it('附件失效的邮件不显示领取按钮，写明失效，可以删除；不计入一键领取', async () => {
+    vi.mocked(endpoints.mail).mockResolvedValue({
+      items: [mail({ id: 9, broken: true })],
+      unread: 0,
+      level: 5,
+    });
+    const w = mount(MailView);
+    await flushPromises();
+    expect(w.find('[data-testid="mail-claim-9"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mail-delete-9"]').exists()).toBe(true);
+    expect(w.text()).toContain('附件已失效');
+    expect(w.find('[data-testid="mail-claim-all"]').attributes('disabled')).toBeDefined();
   });
 });

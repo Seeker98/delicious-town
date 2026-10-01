@@ -183,7 +183,7 @@ describe('AdminGrantsView', () => {
     await w.find('[data-testid="grant-goods-num-0"]').setValue(10_000);
     await w.find('[data-testid="grant-reason"]').setValue('补偿');
     expect(w.find('[data-testid="grant-over"]').text()).toBe(
-      '超出上限：银币最多 100,000,000；道具1 最多 9,999',
+      '请检查：银币最多 100,000,000；道具1 最多 9,999',
     );
     expect(w.find('[data-testid="grant-submit"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="grant-coin"]').setValue(100);

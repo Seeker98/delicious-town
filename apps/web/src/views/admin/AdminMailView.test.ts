@@ -36,6 +36,7 @@ describe('AdminMailView', () => {
     await w.find('[data-testid="mail-send"]').trigger('click');
     await flushPromises();
     expect(ask.mock.calls[0]![0]).toContain('当前区服所有已开的店');
+    expect(ask.mock.calls[0]![0]).toContain('附件：银币 100');
     expect(adminApi.sendMail).toHaveBeenCalledWith({
       scope: 'shard',
       shardId: 1,
