@@ -30,6 +30,7 @@ import { hiphopJobs } from './modules/hiphop/jobs';
 import { createHiphopService, type HiphopService } from './modules/hiphop/service';
 import { createRankService, type RankService } from './modules/rank/service';
 import { createForumService, type ForumService } from './modules/forum/service';
+import { createMailService, type MailService } from './modules/mail/service';
 import { createRestaurantService, type RestaurantService } from './modules/restaurant/service';
 import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
@@ -68,6 +69,7 @@ export interface Game {
   hiphop: HiphopService;
   rank: RankService;
   forum: ForumService;
+  mail: MailService;
   jobs: PeriodicJob[];
 }
 
@@ -123,6 +125,7 @@ export function createGame(app: AppDeps): Game {
     hiphop: createHiphopService(deps, world),
     rank: createRankService(deps),
     forum: createForumService(deps),
+    mail: createMailService(deps),
     shop,
     market,
     task: createTaskService(deps),

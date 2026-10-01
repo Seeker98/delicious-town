@@ -15,6 +15,7 @@ import { townRoutes } from './town/routes';
 import { hiphopRoutes } from './hiphop/routes';
 import { rankRoutes } from './rank/routes';
 import { forumRoutes } from './forum/routes';
+import { mailRoutes } from './mail/routes';
 import { socialRoutes } from './friend/routes';
 import { growthRoutes } from './growth/routes';
 import { marketRoutes } from './market/routes';
@@ -51,4 +52,5 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(hiphopRoutes(game.hiphop), { prefix: '/api/v1' });
   app.register(rankRoutes(game.rank), { prefix: '/api/v1' });
   app.register(forumRoutes(game.forum), { prefix: '/api/v1' });
+  app.register(mailRoutes(game.mail), { prefix: '/api/v1' });
 }
