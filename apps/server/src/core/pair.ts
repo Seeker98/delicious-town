@@ -6,6 +6,7 @@ import { AppError } from '../http/errors';
 import type { GameDeps, RestCtx } from './deps';
 import { invalidState } from './errors';
 import { createOp, flushOp, restLog, type Op, type OpResult } from './op';
+import { isBanned } from '../modules/admin/ban';
 
 /** 双店操作：me 是发起人（会话里的店），them 是目标店 */
 export interface PairOp {
@@ -52,18 +53,18 @@ export async function runPairOp<T>(
       throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId: targetRestId });
     const accounts = await tx
       .selectFrom('account')
-      .select(['id', 'banned_at', 'email_verified_at'])
+      .select(['id', 'banned_at', 'banned_until', 'email_verified_at'])
       .where('id', 'in', [meRow.account_id, themRow.account_id])
       .execute();
     const byId = new Map(accounts.map((a) => [a.id, a]));
     const meAcc = byId.get(meRow.account_id)!;
     const themAcc = byId.get(themRow.account_id)!;
     const t = settings.tuning.friend;
-    if (meAcc.banned_at) throw new AppError(ErrorCode.ACCOUNT_BANNED, 403);
+    if (isBanned(meAcc, deps.now())) throw new AppError(ErrorCode.ACCOUNT_BANNED, 403);
     if (t.requireVerifiedEmail && meAcc.email_verified_at === null)
       throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 403, { who: 'me' });
     if (!opts.lenient) {
-      if (themAcc.banned_at) throw invalidState('target_banned');
+      if (isBanned(themAcc, deps.now())) throw invalidState('target_banned');
       if (t.requireVerifiedEmail && !themRow.npc && themAcc.email_verified_at === null)
         throw new AppError(ErrorCode.EMAIL_NOT_VERIFIED, 400, { who: 'target' });
     }

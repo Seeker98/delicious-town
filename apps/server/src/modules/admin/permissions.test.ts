@@ -178,7 +178,7 @@ const CASES: Case[] = [
     method: 'POST',
     route: '/api/v1/admin/players/:id/ban',
     url: () => `/api/v1/admin/players/${ids.accountId}/ban`,
-    body: () => ({ reason: '权限测试' }),
+    body: () => ({ reason: '权限测试', days: 1 }),
     min: 'mod',
   },
   {
@@ -186,7 +186,7 @@ const CASES: Case[] = [
     route: '/api/v1/admin/players/:id/unban',
     url: () => `/api/v1/admin/players/${ids.accountId}/unban`,
     body: () => ({}),
-    min: 'mod',
+    min: 'admin',
   },
   {
     method: 'POST',

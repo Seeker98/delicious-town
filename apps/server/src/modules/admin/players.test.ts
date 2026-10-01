@@ -100,9 +100,9 @@ describe('玩家查询', () => {
 });
 
 describe('封号', () => {
-  it('封号：会话失效、登录报原因；解封后能登录', async () => {
+  it('封号：会话失效、登录报原因；管理员解封后能登录', async () => {
     const p = await registerUser(ctx.app, { password: 'secret123' });
-    const r = await post(mod.cookie, `/players/${p.accountId}/ban`, { reason: '刷分' });
+    const r = await post(mod.cookie, `/players/${p.accountId}/ban`, { reason: '刷分', days: 7 });
     expect(r.status).toBe(200);
     expect((await call(ctx.app, 'GET', '/api/v1/account/me', { cookie: p.cookie })).status).toBe(401);
     const login = () =>
@@ -110,7 +110,7 @@ describe('封号', () => {
         body: { username: p.username, password: 'secret123' },
       });
     expect((await login()).json).toMatchObject({ code: 'ACCOUNT_BANNED', params: { reason: '刷分' } });
-    await post(mod.cookie, `/players/${p.accountId}/unban`, {});
+    await post(admin.cookie, `/players/${p.accountId}/unban`, {});
     expect((await login()).status).toBe(200);
     const audit = await ctx.deps.db
       .selectFrom('audit_log')
@@ -121,17 +121,17 @@ describe('封号', () => {
     expect(audit.map((x) => x.action)).toEqual(['player.ban', 'player.unban']);
   });
 
-  it('mod 不能解封被封的 admin（否则等于恢复了管理员权限）', async () => {
+  it('mod 不能解封（6B-1 起解封只有管理员，后台路由对 mod 返回 404）', async () => {
     const other = await userWithRole(ctx, 'admin');
     expect((await post(admin.cookie, `/players/${other.accountId}/ban`, { reason: '账号被盗' })).status).toBe(
       200,
     );
-    expect((await post(mod.cookie, `/players/${other.accountId}/unban`, {})).status).toBe(403);
+    expect((await post(mod.cookie, `/players/${other.accountId}/unban`, {})).status).toBe(404);
     expect((await post(admin.cookie, `/players/${other.accountId}/unban`, {})).status).toBe(200);
   });
 
   it('mod 不能封 admin；谁都不能封自己', async () => {
-    expect((await post(mod.cookie, `/players/${admin.accountId}/ban`, { reason: 'x' })).status).toBe(403);
+    expect((await post(mod.cookie, `/players/${admin.accountId}/ban`, { reason: 'x', days: 1 })).status).toBe(403);
     expect((await post(admin.cookie, `/players/${admin.accountId}/ban`, { reason: 'x' })).status).toBe(403);
   });
 });

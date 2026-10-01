@@ -5,6 +5,7 @@ import { invalidState, limitReached } from '../../core/errors';
 import { isFriend } from '../../core/pair';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
+import { bannedSql } from '../admin/ban';
 
 export async function writeLog(
   db: Kysely<DB>,
@@ -63,7 +64,8 @@ async function loadRest(db: Kysely<DB>, restId: number): Promise<Row | undefined
   const r = await db
     .selectFrom('restaurant as r')
     .innerJoin('account as a', 'a.id', 'r.account_id')
-    .select(['r.id', 'r.shard_id', 'r.name', 'r.npc', 'a.banned_at', 'a.email_verified_at'])
+    .select(['r.id', 'r.shard_id', 'r.name', 'r.npc', 'a.email_verified_at'])
+    .select(bannedSql().as('banned'))
     .where('r.id', '=', restId)
     .executeTakeFirst();
   return (
@@ -72,7 +74,7 @@ async function loadRest(db: Kysely<DB>, restId: number): Promise<Row | undefined
       shard_id: r.shard_id,
       name: r.name,
       npc: r.npc,
-      banned: r.banned_at !== null,
+      banned: r.banned,
       verified: r.email_verified_at !== null,
     }
   );

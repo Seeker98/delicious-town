@@ -6,6 +6,7 @@ import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { grantGoodsOp } from '../store/goods';
 import { rollWorth } from './rules';
+import { notBannedSql } from '../admin/ban';
 
 export type HiphopDayRow = Selectable<DB['hiphop_day']>;
 
@@ -46,7 +47,7 @@ async function activeRests(db: Kysely<DB>, shardId: number, since: Date): Promis
     .distinct()
     .where('r.shard_id', '=', shardId)
     .where('r.npc', '=', false)
-    .where('a.banned_at', 'is', null)
+    .where(notBannedSql())
     .where('i.created_at', '>=', since)
     .orderBy('i.rest_id')
     .execute();

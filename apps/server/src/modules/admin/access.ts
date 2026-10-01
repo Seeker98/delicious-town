@@ -4,6 +4,7 @@ import { ErrorCode, type AdminRole } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { requireAccount } from '../../security/session';
+import { isBanned } from './ban';
 
 export interface AdminActor {
   accountId: number;
@@ -22,9 +23,10 @@ export async function requireRole(db: Kysely<DB>, req: FastifyRequest, min: Admi
   const session = requireAccount(req);
   const a = await db
     .selectFrom('account')
-    .select(['id', 'username', 'role', 'banned_at'])
+    .select(['id', 'username', 'role', 'banned_at', 'banned_until'])
     .where('id', '=', session.data.accountId)
     .executeTakeFirst();
-  if (!a || a.banned_at || (RANK[a.role] ?? 0) < RANK[min]!) throw new AppError(ErrorCode.NOT_FOUND, 404);
+  if (!a || isBanned(a, new Date()) || (RANK[a.role] ?? 0) < RANK[min]!)
+    throw new AppError(ErrorCode.NOT_FOUND, 404);
   return { accountId: a.id, username: a.username, role: a.role as AdminRole, ip: req.ip };
 }

@@ -18,6 +18,7 @@ import { cursorOf, incomePage, logPage, parseCursor } from '../restaurant/reads'
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 import { equipDisplayName } from '../equip/hats';
+import { banUntil, isBanned } from './ban';
 
 /** LIKE 的通配符按字面匹配（Review Focus 1）；PostgreSQL 默认转义符是反斜杠 */
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
@@ -105,7 +106,7 @@ export function createAdminPlayers(game: Game) {
       if (ids.length === 0) return [];
       const accounts = await db
         .selectFrom('account')
-        .select(['id', 'username', 'email', 'role', 'banned_at'])
+        .select(['id', 'username', 'email', 'role', 'banned_at', 'banned_until'])
         .where('is_system', '=', false)
         .where('id', 'in', ids)
         .orderBy('id')
@@ -116,7 +117,7 @@ export function createAdminPlayers(game: Game) {
         username: a.username,
         email: a.email,
         role: a.role,
-        banned: a.banned_at !== null,
+        banned: isBanned(a, game.deps.now()),
         restaurants: rests.get(a.id) ?? [],
       }));
     },
@@ -129,7 +130,7 @@ export function createAdminPlayers(game: Game) {
         username: a.username,
         email: a.email,
         role: a.role,
-        banned: a.banned_at !== null,
+        banned: isBanned(a, game.deps.now()),
         restaurants: rests.get(a.id) ?? [],
         emailVerified: a.email_verified_at !== null,
         bannedAt: a.banned_at?.toISOString() ?? null,
@@ -254,22 +255,34 @@ export function createAdminPlayers(game: Game) {
     log: (restId: number, q: PageQuery) => logPage(db, restId, q),
     income: (restId: number, q: PageQuery) => incomePage(db, restId, q),
 
-    async ban(actor: AdminActor, accountId: number, reason: string): Promise<{ banned: boolean }> {
+    /** 封号（设计 §4）：协管只能 1 天或 7 天，0 或不填为永久，只有管理员能用 */
+    async ban(
+      actor: AdminActor,
+      accountId: number,
+      reason: string,
+      days?: number,
+    ): Promise<{ banned: boolean }> {
       if (accountId === actor.accountId) throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'self' });
+      if (actor.role !== 'admin' && days !== 1 && days !== 7)
+        throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'ban_days' });
       const target = await accountRow(accountId);
       if (target.role === 'admin' && actor.role !== 'admin')
         throw new AppError(ErrorCode.FORBIDDEN, 403, { reason: 'admin' });
       await db.transaction().execute(async (tx) => {
         await tx
           .updateTable('account')
-          .set({ banned_at: game.deps.now(), ban_reason: reason })
+          .set({
+            banned_at: game.deps.now(),
+            ban_reason: reason,
+            banned_until: banUntil(days, game.deps.now()),
+          })
           .where('id', '=', accountId)
           .execute();
         await writeAudit(tx, {
           actor,
           action: 'player.ban',
           target: `account:${accountId}`,
-          detail: { reason },
+          detail: { reason, days: days ?? 0 },
         });
       });
       await sessions.destroyAll(accountId);
@@ -284,7 +297,7 @@ export function createAdminPlayers(game: Game) {
       await db.transaction().execute(async (tx) => {
         await tx
           .updateTable('account')
-          .set({ banned_at: null, ban_reason: null })
+          .set({ banned_at: null, ban_reason: null, banned_until: null })
           .where('id', '=', accountId)
           .execute();
         await writeAudit(tx, { actor, action: 'player.unban', target: `account:${accountId}` });

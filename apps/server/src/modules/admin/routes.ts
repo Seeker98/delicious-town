@@ -11,9 +11,9 @@ import {
   grantListQuery,
   grantPreviewQuery,
   idParam,
+  banBody,
   pageQuery,
   playerSearchQuery,
-  reasonBody,
   roleBody,
   rollbackBody,
   saveOverrideBody,
@@ -77,10 +77,11 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     });
     r.post('/players/:id/ban', async (req) => {
       const a = await requireRole(db, req, 'mod');
-      return ok(await players.ban(a, id(req), parse(reasonBody, req.body).reason));
+      const b = parse(banBody, req.body);
+      return ok(await players.ban(a, id(req), b.reason, b.days));
     });
     r.post('/players/:id/unban', async (req) => {
-      const a = await requireRole(db, req, 'mod');
+      const a = await requireRole(db, req, 'admin');
       return ok(await players.unban(a, id(req)));
     });
     r.post('/restaurants/:id/rename', async (req) => {
