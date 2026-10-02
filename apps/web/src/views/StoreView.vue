@@ -33,7 +33,8 @@ const TYPE_LABEL: Record<number, string> = Object.fromEntries(
 );
 /** 纪念品的道具类型，和 @dt/config 的 GOODS_TYPE.souvenir 相同（148-2） */
 const GOODS_TYPE_SOUVENIR = 10;
-const isSouvenir = (id: number) => catalog.goodsMap.get(id)?.type === GOODS_TYPE_SOUVENIR;
+/** 按仓库接口给的类型判断（问题记录 276）：前端目录可能比服务器旧，不能靠它分类 */
+const isSouvenir = (it: StoreItemDto) => it.type === GOODS_TYPE_SOUVENIR;
 /** 纪念品标签页单独按类型读取：仓库页选了别的类型筛选时，已读的数据里没有纪念品 */
 const souvenirs = ref<StoreItemDto[]>([]);
 /** 仓库排序（问题记录 186）：按类型分组，组内先看剩余时间，再按拼音 */
@@ -41,8 +42,8 @@ const groups = computed(() =>
   data.value
     ? groupStoreItems(
         // 纪念品只在"纪念品"标签页显示（148-2 设计 §6.2）
-        data.value.items.filter((it) => !isSouvenir(it.goodsId)),
-        (id) => catalog.goodsMap.get(id)?.type ?? -1,
+        data.value.items.filter((it) => !isSouvenir(it)),
+        (id) => data.value?.items.find((it) => it.goodsId === id)?.type ?? -1,
         (id) => catalog.goodsName(id),
       )
     : [],
@@ -58,12 +59,12 @@ const RANGES = [
 
 async function load() {
   data.value = await endpoints.store(type.value);
+  void catalog.refreshIfMissing(data.value.items.map((it) => it.goodsId));
 }
 async function loadSouvenirs() {
   try {
-    souvenirs.value = (await endpoints.store(GOODS_TYPE_SOUVENIR)).items.filter((it) =>
-      isSouvenir(it.goodsId),
-    );
+    souvenirs.value = (await endpoints.store(GOODS_TYPE_SOUVENIR)).items.filter(isSouvenir);
+    await catalog.refreshIfMissing(souvenirs.value.map((it) => it.goodsId));
   } catch (e) {
     toast.push(errorMessage(e, '读取纪念品失败'), 'danger');
   }

@@ -4,6 +4,7 @@ import { groupStoreItems, sortStoreItems } from './storeSort';
 
 const item = (goodsId: number, expiresAt: string | null = null): StoreItemDto => ({
   goodsId,
+  type: 0,
   num: 1,
   expiresAt,
   usable: true,

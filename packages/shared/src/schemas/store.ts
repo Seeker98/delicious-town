@@ -12,6 +12,8 @@ export type RecordsRange = z.infer<typeof recordsQuery>['range'];
 
 export interface StoreItemDto {
   goodsId: number;
+  /** 道具类型（问题记录 276）：前端按它分纪念品，不依赖可能过期的道具目录 */
+  type: number;
   num: number;
   expiresAt: string | null;
   usable: boolean;

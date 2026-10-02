@@ -15,7 +15,12 @@ describe('纪念品（148-2 设计 §6.2）', () => {
     expect(await goodsNum(t, r.restaurantId, 90009)).toBe(2);
     const view = await t.game.store.list(r, {});
     expect(view.kinds).toBe(1);
-    expect(view.items.find((i) => i.goodsId === 90009)).toMatchObject({ usable: false, sellPrice: null });
+    // 仓库接口带上道具类型（问题记录 276）：前端按它分纪念品，不依赖可能过期的道具目录
+    expect(view.items.find((i) => i.goodsId === 90009)).toMatchObject({
+      usable: false,
+      sellPrice: null,
+      type: 10,
+    });
   });
   it('不能卖、不能丢', async () => {
     const r = await newRestaurant(t, { goods: { 90001: 1 } });

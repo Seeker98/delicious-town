@@ -7,14 +7,32 @@ import { useCatalogStore } from '../stores/catalog';
 import StoreView from './StoreView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { store: vi.fn(), storeRecords: vi.fn(), useGoods: vi.fn(), sell: vi.fn(), discard: vi.fn() },
+  endpoints: {
+    store: vi.fn(),
+    storeRecords: vi.fn(),
+    useGoods: vi.fn(),
+    sell: vi.fn(),
+    discard: vi.fn(),
+    catalog: vi.fn(),
+  },
 }));
 
 const data: StoreDto = {
   kinds: 1,
   storeNum: 20,
   equips: 0,
-  items: [{ goodsId: 85, num: 150, expiresAt: null, usable: true, batch: true, maxUse: 99, sellPrice: null }],
+  items: [
+    {
+      goodsId: 85,
+      type: 0,
+      num: 150,
+      expiresAt: null,
+      usable: true,
+      batch: true,
+      maxUse: 99,
+      sellPrice: null,
+    },
+  ],
 };
 
 describe('StoreView', () => {
@@ -32,8 +50,8 @@ describe('StoreView', () => {
       [315, goods(315, '喇叭', 1)],
       [29, goods(29, '体力卡', 0)],
     ]);
-    const row = (goodsId: number) => ({ ...data.items[0]!, goodsId });
-    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315), row(29)] });
+    const row = (goodsId: number, type: number) => ({ ...data.items[0]!, goodsId, type });
+    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315, 1), row(29, 0)] });
     const w = mount(StoreView);
     await flushPromises();
     const html = w.html();
@@ -65,7 +83,16 @@ describe('StoreView', () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),
       items: [
-        { goodsId: 82, num: 3, expiresAt: null, usable: true, batch: true, maxUse: 0, sellPrice: 3500 },
+        {
+          goodsId: 82,
+          type: 0,
+          num: 3,
+          expiresAt: null,
+          usable: true,
+          batch: true,
+          maxUse: 0,
+          sellPrice: 3500,
+        },
       ],
     });
     const w = mount(StoreView);
@@ -79,7 +106,16 @@ describe('StoreView', () => {
       ...structuredClone(data),
       items: [
         ...structuredClone(data.items),
-        { goodsId: 106, num: 1, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: null },
+        {
+          goodsId: 106,
+          type: 0,
+          num: 1,
+          expiresAt: null,
+          usable: false,
+          batch: false,
+          maxUse: 0,
+          sellPrice: null,
+        },
       ],
     });
     const w = mount(StoreView);
@@ -101,7 +137,16 @@ describe('StoreView', () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),
       items: [
-        { goodsId: 18, num: 30, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: 2800 },
+        {
+          goodsId: 18,
+          type: 0,
+          num: 30,
+          expiresAt: null,
+          usable: false,
+          batch: false,
+          maxUse: 0,
+          sellPrice: 2800,
+        },
       ],
     });
     const w = mount(StoreView);
@@ -115,7 +160,16 @@ describe('StoreView', () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),
       items: [
-        { goodsId: 85, num: 9, expiresAt: null, usable: true, batch: true, maxUse: 5, sellPrice: null },
+        {
+          goodsId: 85,
+          type: 0,
+          num: 9,
+          expiresAt: null,
+          usable: true,
+          batch: true,
+          maxUse: 5,
+          sellPrice: null,
+        },
       ],
     });
     const w = mount(StoreView);
@@ -127,7 +181,16 @@ describe('StoreView', () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),
       items: [
-        { goodsId: 18, num: 30, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: 2800 },
+        {
+          goodsId: 18,
+          type: 0,
+          num: 30,
+          expiresAt: null,
+          usable: false,
+          batch: false,
+          maxUse: 0,
+          sellPrice: 2800,
+        },
       ],
     });
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -151,7 +214,16 @@ describe('StoreView', () => {
     vi.mocked(endpoints.store).mockResolvedValue({
       ...structuredClone(data),
       items: [
-        { goodsId: 87, num: 1, expiresAt: null, usable: false, batch: false, maxUse: 0, sellPrice: null },
+        {
+          goodsId: 87,
+          type: 0,
+          num: 1,
+          expiresAt: null,
+          usable: false,
+          batch: false,
+          maxUse: 0,
+          sellPrice: null,
+        },
       ],
     });
     const ask = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -180,8 +252,14 @@ describe('StoreView 纪念品（148-2）', () => {
       [315, goods(315, '喇叭', 1)],
       [90009, goods(90009, '小红旗徽章', 10, '别在围裙上的小红旗。（国庆纪念品）')],
     ]);
-    const row = (goodsId: number) => ({ ...data.items[0]!, goodsId, usable: false, batch: false });
-    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315), row(90009)] });
+    const row = (goodsId: number, type: number) => ({
+      ...data.items[0]!,
+      goodsId,
+      type,
+      usable: false,
+      batch: false,
+    });
+    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315, 1), row(90009, 10)] });
     const w = mount(StoreView);
     await flushPromises();
     expect(w.text()).toContain('喇叭');
@@ -191,5 +269,44 @@ describe('StoreView 纪念品（148-2）', () => {
     expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('小红旗徽章');
     expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('国庆纪念品');
     expect(w.text()).not.toContain('喇叭');
+  });
+});
+
+describe('StoreView 新道具（问题记录 276：页面开着时服务器加了新道具）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('前端道具目录里还没有的手办：按接口给的类型进纪念品页，并自动重新读目录显示名字', async () => {
+    const goods = (id: number, name: string, type: number) =>
+      ({ id, name, type, deviceType: null, level: 1, desc: '', coin: 0, diamond: 0 }) as never;
+    const catalog = useCatalogStore();
+    catalog.loaded = true;
+    catalog.goodsMap = new Map([[315, goods(315, '喇叭', 1)]]);
+    vi.mocked(endpoints.catalog).mockResolvedValue({
+      version: 'new',
+      goods: [goods(315, '喇叭', 1), goods(91101, '南瓜大厨手办', 10)],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    const row = (goodsId: number, type: number) => ({
+      ...data.items[0]!,
+      goodsId,
+      type,
+      usable: false,
+      batch: false,
+    });
+    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315, 1), row(91101, 10)] });
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.text()).not.toContain('91101');
+    expect(w.text()).not.toContain('南瓜大厨手办');
+    await w.find('[data-testid="tab-souvenirs"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.catalog).toHaveBeenCalled();
+    expect(w.find('[data-testid="souvenir-91101"]').text()).toContain('南瓜大厨手办');
   });
 });
