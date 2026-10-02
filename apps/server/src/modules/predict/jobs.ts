@@ -1,7 +1,9 @@
+import { gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
+import { createAutoEvents, resolveAutoEvents } from './auto';
 import { payoutOf } from './service';
 
 const BATCH = 200;
@@ -97,6 +99,18 @@ export function predictJobs(d: GameDeps): PeriodicJob[] {
       feature: 'restaurant',
       period: minute,
       run: ({ shardId, now }) => settleEvents(d, shardId, now),
+    },
+    {
+      name: 'predict-auto-create',
+      feature: 'predict',
+      period: (now) => gameDay(now),
+      run: ({ shardId, now }) => createAutoEvents(d, shardId, now),
+    },
+    {
+      name: 'predict-auto-resolve',
+      feature: 'restaurant',
+      period: minute,
+      run: ({ shardId, now }) => resolveAutoEvents(d, shardId, now),
     },
   ];
 }
