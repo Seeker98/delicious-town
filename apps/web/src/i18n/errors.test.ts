@@ -1,0 +1,65 @@
+import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { LOCALES } from '@dt/shared';
+import { useLocaleStore } from '../stores/locale';
+import { errorText, setNameResolver } from './zh-CN';
+
+describe('报错文案按语言（问题记录 272）', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    setNameResolver({
+      goodsName: (id) => (id === 85 ? 'Stamina Card' : `#${id}`),
+      foodName: (id) => `food${id}`,
+      mcName: (id) => `mc${id}`,
+      seedName: (id) => `seed${id}`,
+    });
+  });
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('英语：错误码、上限、数量不够（用目录里的名字）', async () => {
+    await useLocaleStore().set('en');
+    expect(errorText('UNAUTHORIZED')).toBe('Please log in first');
+    expect(errorText('LIMIT_REACHED', { what: 'exchange_orders', max: 10 })).toContain('10');
+    expect(errorText('NOT_ENOUGH', { kind: 'goods', id: 85, need: 3, have: 1 })).toBe(
+      'Not enough Stamina Card (need 3, have 1)',
+    );
+    expect(errorText('NOT_ENOUGH', { kind: 'coin', need: 3, have: 1 })).toBe(
+      'Not enough Coins (need 3, have 1)',
+    );
+    expect(errorText('SOMETHING_NEW')).toBe('Something went wrong (SOMETHING_NEW)');
+  });
+
+  it('每种语言：所有带参数的文案都能调用，不抛错、不出现 undefined', async () => {
+    for (const l of LOCALES) {
+      await useLocaleStore().set(l);
+      const { activeMessages } = await import('.');
+      const e = activeMessages().errors;
+      const p = {
+        need: 1,
+        have: 0,
+        days: 7,
+        max: 3,
+        goodsId: 85,
+        progress: 1,
+        target: 2,
+        left: 1,
+        limit: 2,
+        used: 1,
+        cap: 4,
+        name: 'X',
+      };
+      const n = { goodsName: () => 'G', foodName: () => 'F', mcName: () => 'M', seedName: () => 'S' };
+      for (const f of [...Object.values(e.requirement), ...Object.values(e.limit)]) {
+        const s = f(p, n);
+        expect(s, l).not.toContain('undefined');
+        expect(s.length, l).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('非原型属性才算：constructor 之类不会被当成文案', () => {
+    expect(errorText('INVALID_STATE', { reason: 'constructor' })).toBe('当前状态下不能这样做');
+  });
+});
