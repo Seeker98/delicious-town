@@ -1,10 +1,21 @@
 import { sql, type Kysely } from 'kysely';
-import { gameDay, type ExchangeOrderDto, type ExchangePlaceDto } from '@dt/shared';
+import {
+  ErrorCode,
+  gameDay,
+  gameTime,
+  type ExchangeBookDto,
+  type ExchangeFoodDto,
+  type ExchangeMeDto,
+  type ExchangeOrderDto,
+  type ExchangePlaceDto,
+  type ExchangeWithdrawDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import type { DB } from '../../db/schema';
+import { AppError } from '../../http/errors';
 import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard/foods';
 import { refPrice } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
@@ -239,12 +250,234 @@ export function createExchangeService(d: GameDeps) {
     return { order: orderDto(done), fills };
   }
 
+  /** 退回挂单剩余部分（撤单退回店里；过期由任务退进账户，见 jobs.ts） */
+  async function refundToRest(o: Op, r: OrderRow): Promise<void> {
+    const left = r.qty - r.filled;
+    if (left <= 0) return;
+    if (r.side === 'buy') gainCoin(o, r.price * left, { source: 'exchange' });
+    else {
+      const plan = await addFoods(o, r.foods_id, left, { source: 'exchange' });
+      if (plan.dropped > 0) {
+        const c = newCredits();
+        addCredit(c, o.rest.id, 0, r.foods_id, plan.dropped);
+        await creditWallets(o.tx, c);
+      }
+    }
+  }
+
+  async function cancel(o: Op, id: number) {
+    const r = (await o.tx
+      .selectFrom('exchange_order')
+      .select(ORDER_COLS)
+      .where('id', '=', String(id))
+      .where('rest_id', '=', o.rest.id)
+      .executeTakeFirst()) as OrderRow | undefined;
+    if (!r) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'exchange_order', id });
+    await bookLock(o.tx, o.shardId, r.foods_id);
+    const cur = await o.tx
+      .updateTable('exchange_order')
+      .set({ status: 'cancelled', closed_at: o.now })
+      .where('id', '=', r.id)
+      .where('status', '=', 'open')
+      .returning(ORDER_COLS)
+      .executeTakeFirst();
+    if (!cur) throw invalidState('order_closed');
+    await refundToRest(o, cur as OrderRow);
+    restLog(o, 'exchange.cancel', {
+      side: r.side,
+      foodsId: r.foods_id,
+      price: r.price,
+      left: cur.qty - cur.filled,
+    });
+    return orderDto(cur as OrderRow);
+  }
+
+  async function withdraw(o: Op): Promise<ExchangeWithdrawDto> {
+    const w = await o.tx
+      .selectFrom('exchange_wallet')
+      .select('coin')
+      .where('rest_id', '=', o.rest.id)
+      .forUpdate()
+      .executeTakeFirst();
+    const coin = Number(w?.coin ?? 0);
+    if (coin > 0) {
+      await o.tx.updateTable('exchange_wallet').set({ coin: 0 }).where('rest_id', '=', o.rest.id).execute();
+      gainCoin(o, coin, { source: 'exchange' });
+    }
+    const foods = await o.tx
+      .selectFrom('exchange_wallet_food')
+      .select(['foods_id', 'num'])
+      .where('rest_id', '=', o.rest.id)
+      .where('num', '>', 0)
+      .orderBy('foods_id')
+      .forUpdate()
+      .execute();
+    const got: Array<{ foodsId: number; num: number }> = [];
+    const left: Array<{ foodsId: number; num: number }> = [];
+    for (const f of foods) {
+      const plan = await addFoods(o, f.foods_id, f.num, { source: 'exchange' });
+      const n = f.num - plan.dropped;
+      if (n > 0) got.push({ foodsId: f.foods_id, num: n });
+      if (plan.dropped > 0) left.push({ foodsId: f.foods_id, num: plan.dropped });
+      await o.tx
+        .updateTable('exchange_wallet_food')
+        .set({ num: plan.dropped })
+        .where('rest_id', '=', o.rest.id)
+        .where('foods_id', '=', f.foods_id)
+        .execute();
+    }
+    restLog(o, 'exchange.withdraw', { coin, foods: got });
+    return { coin, foods: got, left };
+  }
+
+  async function foods(ctx: RestCtx): Promise<ExchangeFoodDto[]> {
+    const s = await d.shards.ensureFeature(ctx.shardId, 'exchange');
+    const t = s.tuning.exchange;
+    const day = gameDay(d.now());
+    const list = [...d.config.foods.values()]
+      .filter((f) => isTradable(f))
+      .sort((a, b) => a.level - b.level || a.id - b.id);
+    const lasts = await d.db
+      .selectFrom('exchange_trade')
+      .select(['foods_id', 'price'])
+      .distinctOn('foods_id')
+      .where('shard_id', '=', ctx.shardId)
+      .orderBy('foods_id')
+      .orderBy('id', 'desc')
+      .execute();
+    const lastBy = new Map(lasts.map((x) => [x.foods_id, x.price]));
+    const out: ExchangeFoodDto[] = [];
+    for (const f of list) {
+      const ref = await refPrice(d.db, d.config, t, ctx.shardId, f.id, day);
+      const last = lastBy.get(f.id) ?? null;
+      out.push({
+        foodsId: f.id,
+        ref,
+        last,
+        changePct: last === null ? null : Math.round(((last - ref) / ref) * 1000) / 1000,
+      });
+    }
+    return out;
+  }
+
+  async function book(ctx: RestCtx, foodsId: number): Promise<ExchangeBookDto> {
+    const s = await d.shards.ensureFeature(ctx.shardId, 'exchange');
+    const t = s.tuning.exchange;
+    if (!isTradable(d.config.foods.get(foodsId))) throw invalidState('not_tradable');
+    const now = d.now();
+    const ref = await refPrice(d.db, d.config, t, ctx.shardId, foodsId, gameDay(now));
+    const side = async (sd: 'buy' | 'sell') =>
+      (
+        await d.db
+          .selectFrom('exchange_order')
+          .select(['price', sql<string>`sum(qty - filled)`.as('qty')])
+          .where('shard_id', '=', ctx.shardId)
+          .where('foods_id', '=', foodsId)
+          .where('side', '=', sd)
+          .where('status', '=', 'open')
+          .where('expires_at', '>', now)
+          .groupBy('price')
+          .orderBy('price', sd === 'buy' ? 'desc' : 'asc')
+          .limit(5)
+          .execute()
+      ).map((x) => ({ price: x.price, qty: Number(x.qty) }));
+    const last = await d.db
+      .selectFrom('exchange_trade')
+      .select('price')
+      .where('shard_id', '=', ctx.shardId)
+      .where('foods_id', '=', foodsId)
+      .orderBy('id', 'desc')
+      .executeTakeFirst();
+    const vol = await d.db
+      .selectFrom('exchange_trade')
+      .select(sql<string>`coalesce(sum(qty), 0)`.as('n'))
+      .where('shard_id', '=', ctx.shardId)
+      .where('foods_id', '=', foodsId)
+      .where('created_at', '>=', gameTime(gameDay(now), 0))
+      .executeTakeFirstOrThrow();
+    return {
+      foodsId,
+      ref,
+      ...priceBand(ref, t),
+      last: last?.price ?? null,
+      volume: Number(vol.n),
+      bids: await side('buy'),
+      asks: await side('sell'),
+    };
+  }
+
+  async function me(ctx: RestCtx): Promise<ExchangeMeDto> {
+    const s = await d.shards.settings(ctx.shardId);
+    const t = s.tuning.exchange;
+    const now = d.now();
+    const rest = await d.db
+      .selectFrom('restaurant')
+      .select('level')
+      .where('id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    const reason = await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t });
+    const orders = (await d.db
+      .selectFrom('exchange_order')
+      .select(ORDER_COLS)
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('status', '=', 'open')
+      .orderBy('id', 'desc')
+      .execute()) as OrderRow[];
+    const w = await d.db
+      .selectFrom('exchange_wallet')
+      .select('coin')
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirst();
+    const wf = await d.db
+      .selectFrom('exchange_wallet_food')
+      .select(['foods_id', 'num'])
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('num', '>', 0)
+      .orderBy('foods_id')
+      .execute();
+    const since = new Date(now.getTime() - 7 * 86_400_000);
+    const trades = await d.db
+      .selectFrom('exchange_trade')
+      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'created_at'])
+      .where((eb) =>
+        eb.or([eb('buyer_rest_id', '=', ctx.restaurantId), eb('seller_rest_id', '=', ctx.restaurantId)]),
+      )
+      .where('created_at', '>=', since)
+      .orderBy('id', 'desc')
+      .limit(100)
+      .execute();
+    return {
+      eligible: reason === null,
+      reason,
+      need: { level: t.minLevel, days: t.minAccountDays },
+      orders: orders.map(orderDto),
+      wallet: { coin: Number(w?.coin ?? 0), foods: wf.map((x) => ({ foodsId: x.foods_id, num: x.num })) },
+      trades: trades.map((x) => {
+        const side = x.buyer_rest_id === ctx.restaurantId ? ('buy' as const) : ('sell' as const);
+        return {
+          side,
+          foodsId: x.foods_id,
+          price: x.price,
+          qty: x.qty,
+          fee: side === 'sell' ? Number(x.fee) : 0,
+          createdAt: x.created_at.toISOString(),
+        };
+      }),
+      feeRate: t.feeRate,
+    };
+  }
+
   const op = <T>(ctx: RestCtx, feature: string, fn: (o: Op) => Promise<T>) =>
     runOp(d, ctx, { feature, source: 'exchange' }, fn);
 
   return {
     place: (ctx: RestCtx, b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) =>
       op(ctx, 'exchange', (o) => place(o, b)),
+    cancel: (ctx: RestCtx, id: number) => op(ctx, 'restaurant', (o) => cancel(o, id)),
+    withdraw: (ctx: RestCtx) => op(ctx, 'restaurant', (o) => withdraw(o)),
+    foods,
+    book,
+    me,
   };
 }
 export type ExchangeService = ReturnType<typeof createExchangeService>;

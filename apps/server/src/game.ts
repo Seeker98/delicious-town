@@ -44,6 +44,7 @@ import { createShopService, type ShopService } from './modules/shop/service';
 import { createStoreService, type StoreService } from './modules/store/service';
 import { registerActivityHandlers } from './modules/activity/handler';
 import { activityJobs } from './modules/activity/settle';
+import { exchangeJobs } from './modules/exchange/jobs';
 import { registerTaskHandlers } from './modules/task/handler';
 import { createTaskService, type TaskService } from './modules/task/service';
 import { settlementJobs } from './modules/settlement/jobs';
@@ -119,6 +120,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...takeawayJobs(deps));
   jobs.push(...hiphopJobs(deps));
   jobs.push(...activityJobs(deps));
+  jobs.push(...exchangeJobs(deps));
   return {
     app,
     deps,
