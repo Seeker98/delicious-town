@@ -572,6 +572,19 @@ export const tuningSchema = z.object({
     }),
   }),
   redeem: z.object({ failLimit: int.min(1), failWindowSec: int.min(1), batchMax: int.min(1).max(1000) }),
+  /** 自由交易市场（156-1） */
+  exchange: z.object({
+    minLevel: int.min(1),
+    minAccountDays: int.min(0),
+    feeRate: z.number().min(0).max(0.5),
+    bandLow: z.number().positive().max(1),
+    bandHigh: z.number().min(1),
+    refMinTrades: int.min(1),
+    maxOpenOrders: int.min(1),
+    orderHours: int.min(1),
+    maxQty: int.min(1).max(999),
+    refOverrides: z.record(z.string(), int.min(1)),
+  }),
   forum: z.object({
     titleMax: int.min(1),
     contentMax: int.min(1),

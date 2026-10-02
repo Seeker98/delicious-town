@@ -40,3 +40,4 @@ export * from './schemas/ops';
 export * from './boost';
 export * from './activity';
 export * from './schemas/activity';
+export * from './schemas/exchange';

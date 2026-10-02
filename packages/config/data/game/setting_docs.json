@@ -25,6 +25,7 @@
     "redeem": "兑换码：玩家在邮箱页或兑换码页兑换",
     "invite": "邀请：邀请好友页和 worker 发放邀请奖励",
     "report": "举报：玩家举报帖子、回复、喇叭、店名、公告",
+    "exchange": "交易所：玩家之间用限价单买卖稀有食材（关掉后不能下单；撤单、取出、过期退回照常）",
     "activity": "限时活动：活动页、进度计数、领奖、战令解锁（关掉后不计数、不显示；已结束活动的未领奖励照常补发）"
   },
   "groups": {
@@ -55,6 +56,7 @@
     "tuning.report": "举报：每天举报次数上限",
     "tuning.ops": "运营：可疑数据页的门槛",
     "tuning.redeem": "兑换码：输错锁定、每批数量上限",
+    "tuning.exchange": "交易所：开通门槛、手续费、涨跌幅、挂单数量和有效期；refOverrides 按食材 id 指定初始参考价（没有成交前用它，代替系统定价）",
     "tuning.forum": "论坛：标题正文长度、发帖回复冷却、加精奖励",
     "restaurant": "开店默认值：新店的等级、资源、容量和开店礼包"
   },
@@ -555,6 +557,15 @@
     "tuning.redeem.failLimit": "一小时内输错几次兑换码后锁定（次）",
     "tuning.redeem.failWindowSec": "输错次数的统计窗口和锁定时长（秒）",
     "tuning.redeem.batchMax": "批量一次性码每批最多几个（个，最多 1000）",
+    "tuning.exchange.minLevel": "交易所开通门槛：餐厅等级（级）",
+    "tuning.exchange.minAccountDays": "交易所开通门槛：账号注册满几天（天）",
+    "tuning.exchange.feeRate": "成交时从卖方所得里扣的手续费（比例）",
+    "tuning.exchange.bandLow": "挂单价下限 = 当天参考价 × 这个数（倍）",
+    "tuning.exchange.bandHigh": "挂单价上限 = 当天参考价 × 这个数（倍）",
+    "tuning.exchange.refMinTrades": "前一天成交不少于几笔才更新参考价（笔）",
+    "tuning.exchange.maxOpenOrders": "每人同时最多几张挂单（张）",
+    "tuning.exchange.orderHours": "挂单有效期（小时）",
+    "tuning.exchange.maxQty": "每张单最多几个（个）",
     "tuning.forum.titleMax": "帖子标题最多几个字（字）",
     "tuning.forum.contentMax": "帖子正文最多几个字（字）",
     "tuning.forum.replyMax": "回复最多几个字（字）",
