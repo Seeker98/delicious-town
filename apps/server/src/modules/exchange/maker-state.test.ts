@@ -4,6 +4,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addBought, addStock, makerQuote, makerState, TO_SYSTEM } from './maker';
+import { initialRef } from './rules';
 import { trader } from './test';
 
 let t: TestGame;
@@ -49,5 +50,23 @@ describe('系统库存和每日收购（156-3 设计 §5）', () => {
       exchange: { ...x.tuning.exchange, maker: { ...x.tuning.exchange.maker, enabled: false } },
     };
     expect(await makerQuote(t.db, { ...x, tuning: off })).toEqual({ bid: null, ask: null });
+  });
+  it('参考价被推高：1.3 倍时系统买价仍按初始参考价 × 0.7，1.8 倍时下限已高过它、不收（终审 C1）', async () => {
+    const shardId = await createShard(t.db);
+    const f = lv6();
+    const r = await trader(t, { shardId });
+    const base = initialRef(f, t.deps.config);
+    const quote = (k: number) =>
+      makerQuote(t.db, {
+        config: t.deps.config,
+        tuning: t.deps.config.tuning,
+        shardId,
+        foodsId: f.id,
+        day: gameDay(t.clock.now),
+        restId: r.restaurantId,
+        ref: Math.round(base * k),
+      });
+    expect((await quote(1.3)).bid!.price).toBe(Math.floor(base * 0.7));
+    expect((await quote(1.8)).bid).toBeNull();
   });
 });

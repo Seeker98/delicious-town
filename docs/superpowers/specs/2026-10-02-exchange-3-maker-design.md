@@ -29,6 +29,8 @@
 
 `tuning.exchange.maker`（`tuning.json`、zod、`setting_docs.json` 都要加）：
 
+校验：`bidRate < askRate`，`marketCapRate ≤ 1`（终审：否则买进再卖回、菜场买来卖给系统能赚钱）。
+
 ```jsonc
 {
   "enabled": true,
@@ -59,7 +61,7 @@
 
 参考价 `ref` 是当天参考价（156-1 §5），允许范围 `[min, max]`（156-1 §5）。
 
-- **买价**：`floor(ref × bidRate)`。菜场最低价不为空时，再取 `min(买价, floor(菜场最低价 × marketCapRate))`。高于 `max` 取 `max`；**低于 `min` 就没有买这一档**（不往上抬，否则封顶失效）。
+- **买价**：`floor(min(ref, 初始参考价) × bidRate)`，初始参考价是 `refOverrides` 或 `initialRef`（终审：防止小号对倒推高参考价再卖给系统；收购价只跟着参考价往下走，参考价推到 1.4 倍以上时下限已高过它，系统不收）。菜场最低价不为空时，再取 `min(买价, floor(菜场最低价 × marketCapRate))`。高于 `max` 取 `max`；**低于 `min` 就没有买这一档**（不往上抬，否则封顶失效）。
   - 现有数据下 3~5 级食材会上特价货架，封顶约 1,889，低于它们的挂单下限（参考价最低 3,800 × 0.5），所以系统不收 3~5 级（用户已确认：严格封顶）。系统做市实际只覆盖 1、2、6、7、9 级。
 - **卖价**：`ceil(ref × askRate)`，夹到 `[min, max]` 里。
 - **能收的数量**：`min(dailyBuy − 今天已收, stockMax − 库存, playerDaily − 这个玩家今天已卖给系统)`。小于等于 0 就没有买这一档。

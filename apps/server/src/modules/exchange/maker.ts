@@ -3,7 +3,7 @@ import type { Food, GameConfig, Tuning } from '@dt/config';
 import type { WeightedPool } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { getDaily } from '../counter/dailyCounter';
-import { priceBand, type ExchangeTuning } from './rules';
+import { initialRef, priceBand, type ExchangeTuning } from './rules';
 
 export type MakerTuning = ExchangeTuning['maker'];
 
@@ -44,14 +44,23 @@ export function marketFloor(food: Food, config: GameConfig, mt: Tuning['market']
   return Math.min(...prices) * cheapestWeather(config) * mt.priceFactor;
 }
 
-/** 系统的买价和卖价（156-3 设计 §4.2）：买价低于挂单下限时没有买这一档 */
+/**
+ * 系统收购价的锚：初始参考价（refOverrides 或 initialRef）。
+ * 参考价可以被小号对倒推高，收购价只跟着参考价往下走，不跟着往上涨（156-3 终审 C1）
+ */
+export function makerBase(food: Food, config: GameConfig, t: ExchangeTuning): number {
+  return t.refOverrides[String(food.id)] ?? initialRef(food, config);
+}
+
+/** 系统的买价和卖价（156-3 设计 §4.2）：买价不超过初始参考价那一档；低于挂单下限时没有买这一档 */
 export function makerPrices(
   ref: number,
   floor: number | null,
   band: { min: number; max: number },
   m: MakerTuning,
+  base: number,
 ): { bid: number | null; ask: number } {
-  let bid = down(ref * m.bidRate);
+  let bid = down(Math.min(ref, base) * m.bidRate);
   if (floor !== null) bid = Math.min(bid, down(floor * m.marketCapRate));
   bid = Math.min(bid, band.max);
   const ask = Math.min(Math.max(up(ref * m.askRate), band.min), band.max);
@@ -167,6 +176,7 @@ export async function makerQuote(
     marketFloor(food, x.config, x.tuning.market),
     priceBand(x.ref, x.tuning.exchange),
     m,
+    makerBase(food, x.config, x.tuning.exchange),
   );
   const st = await makerState(db, x.shardId, x.foodsId, x.day);
   const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);

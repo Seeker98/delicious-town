@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { Food } from '@dt/config';
+import { tuningSchema, type Food } from '@dt/config';
 import { testConfig } from '../../../test/config';
-import { makerBuyQty, makerPrices, marketFloor } from './maker';
-import { priceBand } from './rules';
+import { makerBase, makerBuyQty, makerPrices, marketFloor } from './maker';
+import { initialRef, priceBand } from './rules';
 
 const config = testConfig();
 const mt = config.tuning.market;
@@ -50,29 +50,32 @@ describe('系统买卖价（156-3 设计 §4.2）', () => {
   const band = priceBand(1000, ex);
 
   it('买价 = 参考价 × 0.7，卖价 = 参考价 × 1.3', () => {
-    expect(makerPrices(1000, null, band, m)).toEqual({ bid: 700, ask: 1300 });
-    expect(makerPrices(1001, null, priceBand(1001, ex), m)).toEqual({ bid: 700, ask: 1302 });
+    expect(makerPrices(1000, null, band, m, 1000)).toEqual({ bid: 700, ask: 1300 });
+    expect(makerPrices(1001, null, priceBand(1001, ex), m, 1001)).toEqual({ bid: 700, ask: 1302 });
   });
 
   it('被菜场价封顶', () => {
-    expect(makerPrices(1000, 1000, band, m).bid).toBe(700);
-    expect(makerPrices(1000, 700, band, m).bid).toBe(630);
+    expect(makerPrices(1000, 1000, band, m, 1000).bid).toBe(700);
+    expect(makerPrices(1000, 700, band, m, 1000).bid).toBe(630);
   });
 
   it('低于挂单下限没有买价，不往上抬；买价永远不高于卖价（Review Focus 3）', () => {
-    expect(makerPrices(1000, 550, band, m)).toEqual({ bid: null, ask: 1300 });
+    expect(makerPrices(1000, 550, band, m, 1000)).toEqual({ bid: null, ask: 1300 });
     // 特价货架封顶 2999 × 0.7 × 0.9 = 1889，3 级参考价最低 3800 时下限 1900
-    expect(makerPrices(3800, 2999 * CHEAPEST, priceBand(3800, ex), m).bid).toBeNull();
+    expect(makerPrices(3800, 2999 * CHEAPEST, priceBand(3800, ex), m, 3800).bid).toBeNull();
     for (const ref of [1, 7, 999, 3800, 62000])
       for (const floor of [null, ref * 0.3, ref * 2]) {
-        const p = makerPrices(ref, floor, priceBand(ref, ex), m);
+        const p = makerPrices(ref, floor, priceBand(ref, ex), m, ref);
         if (p.bid !== null) expect(p.bid).toBeLessThan(p.ask);
       }
   });
 
   it('夹在允许范围内', () => {
-    expect(makerPrices(1000, null, band, { ...m, bidRate: 3, askRate: 3 })).toEqual({ bid: 2000, ask: 2000 });
-    expect(makerPrices(1000, null, band, { ...m, askRate: 0.3 }).ask).toBe(500);
+    expect(makerPrices(1000, null, band, { ...m, bidRate: 3, askRate: 3 }, 1000)).toEqual({
+      bid: 2000,
+      ask: 2000,
+    });
+    expect(makerPrices(1000, null, band, { ...m, askRate: 0.3 }, 1000).ask).toBe(500);
   });
 });
 
@@ -83,5 +86,30 @@ describe('系统能收的数量', () => {
     expect(makerBuyQty(m, { bought: 0, stock: 497, playerToday: 0 })).toBe(3);
     expect(makerBuyQty(m, { bought: 0, stock: 0, playerToday: 18 })).toBe(2);
     expect(makerBuyQty(m, { bought: 120, stock: 0, playerToday: 0 })).toBe(0);
+  });
+});
+
+describe('收购价按初始参考价封顶（终审 C1：防止推高参考价后卖给系统）', () => {
+  it('参考价被推高时买价不超过 初始参考价 × 0.7（推到下限都高过它就不收）；卖价照常按参考价；参考价下跌时买价跟着降', () => {
+    expect(makerPrices(1300, null, priceBand(1300, ex), m, 1000)).toEqual({ bid: 700, ask: 1690 });
+    expect(makerPrices(1800, null, priceBand(1800, ex), m, 1000)).toEqual({ bid: null, ask: 2340 });
+    expect(makerPrices(800, null, priceBand(800, ex), m, 1000)).toEqual({ bid: 560, ask: 1040 });
+  });
+
+  it('初始参考价：refOverrides 优先，否则 initialRef', () => {
+    const f = rareAt(6);
+    expect(makerBase(f, config, ex)).toBe(initialRef(f, config));
+    expect(makerBase(f, config, { ...ex, refOverrides: { [String(f.id)]: 777 } })).toBe(777);
+  });
+});
+
+describe('系统做市数值校验（终审 I3）', () => {
+  const parse = (maker: Record<string, unknown>) =>
+    tuningSchema.safeParse({ ...config.tuning, exchange: { ...ex, maker: { ...m, ...maker } } }).success;
+  it('收购倍数要低于卖出倍数，菜场封顶倍数不超过 1', () => {
+    expect(parse({})).toBe(true);
+    expect(parse({ bidRate: 1.3, askRate: 1.3 })).toBe(false);
+    expect(parse({ bidRate: 1, askRate: 0.9 })).toBe(false);
+    expect(parse({ marketCapRate: 1.1 })).toBe(false);
   });
 });

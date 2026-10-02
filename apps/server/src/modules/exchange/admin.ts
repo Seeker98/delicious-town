@@ -11,7 +11,7 @@ import {
 import type { Game } from '../../game';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
-import { makerPrices, marketFloor } from './maker';
+import { makerBase, makerPrices, marketFloor } from './maker';
 import { refPrices } from './ref';
 import { priceBand } from './rules';
 import { bookLock } from './service';
@@ -243,11 +243,13 @@ export function createExchangeAdmin(game: Game) {
     const refs = await refPrices(db, game.deps.config, t, shardId, ids, day);
     const foods = ids.map((id) => {
       const ref = refs.get(id)!;
+      const food = game.deps.config.requireFood(id);
       const p = makerPrices(
         ref,
-        marketFloor(game.deps.config.requireFood(id), game.deps.config, s.tuning.market),
+        marketFloor(food, game.deps.config, s.tuning.market),
         priceBand(ref, t),
         t.maker,
+        makerBase(food, game.deps.config, t),
       );
       return {
         foodsId: id,

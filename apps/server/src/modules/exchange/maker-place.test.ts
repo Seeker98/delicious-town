@@ -37,7 +37,7 @@ async function setup(o: { maker?: Record<string, unknown>; suspicious?: Record<s
   const ref = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, day());
   const band = priceBand(ref, tune());
   // 期望值用同一个纯函数算（Task 1 已单独测过），避免浮点取整和实现不一致
-  const p = makerPrices(ref, null, band, tune().maker);
+  const p = makerPrices(ref, null, band, tune().maker, ref);
   return { shardId, f, ref, band, bid: p.bid!, ask: p.ask };
 }
 const trades = (shardId: number) =>

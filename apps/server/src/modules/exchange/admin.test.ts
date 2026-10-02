@@ -188,7 +188,7 @@ describe('后台系统做市汇总（156-3 设计 §7）', () => {
       gameDay(t.clock.now),
     );
     const band = priceBand(ref, t.deps.config.tuning.exchange);
-    const { bid: b0, ask } = makerPrices(ref, null, band, t.deps.config.tuning.exchange.maker);
+    const { bid: b0, ask } = makerPrices(ref, null, band, t.deps.config.tuning.exchange.maker, ref);
     const bid = b0!;
     expect(await admin().maker(shardId)).toEqual({
       foods: [],
