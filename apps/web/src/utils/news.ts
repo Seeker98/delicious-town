@@ -63,6 +63,12 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
       .map((f) => `${x.foodName(num((f as P).foodsId))}×${num((f as P).num)}`)
       .join('、')}`,
   'temple.guardian.rare': (w, p, x) => `${w}击败守护兽获得 ${x.foodName(num(p.foodsId))}`,
+  'activity.coopRank': (_w, p) =>
+    `《${str(p.title)}》贡献榜：${list(p.top)
+      .map(
+        (r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)}（${formatNum(num((r as P).points))} 分）`,
+      )
+      .join('、')}`,
   'tower.rank.week': (_w, p) =>
     `厨塔周榜：${list(p.top)
       .map((r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)}`)

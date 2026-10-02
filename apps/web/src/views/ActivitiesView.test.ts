@@ -26,6 +26,7 @@ const base = {
   today: {},
   premium: false,
   exchangeUntil: null,
+  coop: null,
 };
 const goals: ActivityDto = {
   ...base,
@@ -404,5 +405,130 @@ describe('问题记录 224：兑换卡片说明活动货币不进仓库', () => 
     const w = mount(ActivitiesView);
     await flushPromises();
     expect(w.find('[data-testid="activity-13"]').text()).toContain('活动货币不进仓库');
+  });
+});
+
+describe('ActivitiesView 全服合力（148-3）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  const co = (patch: Record<string, unknown> = {}) => ({
+    ...base,
+    id: 21,
+    kind: 'coop',
+    def: {
+      rules: [{ key: 'market.buy', points: 10, dailyCap: 50 }],
+      milestones: [
+        { target: 100, minContribution: 0, award: { coin: 1 } },
+        { target: 1000, minContribution: 0, award: { coin: 2 } },
+        { target: 2000, minContribution: 300, award: { coin: 3 } },
+      ],
+      ranks: [
+        { from: 1, to: 1, award: { diamond: 5 } },
+        { from: 2, to: 3, award: { diamond: 1 } },
+      ],
+    },
+    counters: { points: 200 },
+    today: { 'market.buy': 30 },
+    rewards: [
+      { key: 's0', award: { coin: 1 }, reached: true, claimed: null },
+      { key: 's1', award: { coin: 2 }, reached: false, claimed: null },
+      { key: 's2', award: { coin: 3 }, reached: false, claimed: null },
+    ],
+    claimable: 1,
+    coop: {
+      pool: 550,
+      top: [
+        { rank: 1, restId: 9, name: '甲餐厅', points: 300, mine: false },
+        { rank: 2, restId: 7, name: '我的店', points: 200, mine: true },
+      ],
+      myRank: 2,
+    },
+    ...patch,
+  });
+  const text = (w: ReturnType<typeof mount>, id: string) =>
+    w.find(`[data-testid="${id}"]`).text().replace(/\s+/g, ' ');
+
+  it('总分、贡献、名次、进度、还差多少、名次段奖励、前 10 名里自己加粗', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [co() as never], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(text(w, 'coop-head-21')).toBe('全服 550 分 · 我的贡献 200 分 · 第 2 名');
+    expect(w.find('[data-testid="coop-bar-21"]').attributes('style')).toContain('width: 50%');
+    expect(text(w, 'coop-hint-21-1')).toBe('全服还差 450 分');
+    expect(w.find('[data-testid="coop-hint-21-0"]').exists()).toBe(false);
+    expect(w.find('[data-testid="activity-21"]').text()).toContain('第 2~3 名：钻石 1');
+    expect(w.find('[data-testid="claim-21-s0"]').exists()).toBe(true);
+    const rows = w.findAll('[data-testid="coop-top-21"] tr');
+    expect(rows[1]!.classes()).toContain('fw-bold');
+    expect(rows[0]!.classes()).not.toContain('fw-bold');
+  });
+
+  it('全服已达成、个人贡献不够时提示个人还差；全部达成时满格', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [co({ coop: { pool: 2500, top: [], myRank: 3 } }) as never],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(text(w, 'coop-hint-21-2')).toBe('个人贡献还差 100 分');
+    expect(w.find('[data-testid="coop-bar-21"]').attributes('style')).toContain('width: 100%');
+    expect(w.text()).toContain('全部里程碑已达成');
+  });
+
+  it('结束后显示贡献榜已结算', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [co({ state: 'ended', claimable: 0 }) as never],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.text()).toContain('贡献榜已结算，奖励已发邮件');
+  });
+});
+
+describe('终审：没设名次奖励时不说奖励已发邮件', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  it('名次段为空、活动已结束：只写贡献榜已结算', async () => {
+    const a = {
+      ...base,
+      id: 22,
+      state: 'ended',
+      kind: 'coop',
+      def: {
+        rules: [{ key: 'market.buy', points: 10, dailyCap: 50 }],
+        milestones: [{ target: 100, minContribution: 0, award: { coin: 1 } }],
+        ranks: [],
+      },
+      counters: { points: 10 },
+      rewards: [{ key: 's0', award: { coin: 1 }, reached: false, claimed: null }],
+      claimable: 0,
+      coop: { pool: 50, top: [{ rank: 1, restId: 7, name: '我的店', points: 10, mine: true }], myRank: 1 },
+    };
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [a as never], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.text()).toContain('贡献榜已结算');
+    expect(w.text()).not.toContain('奖励已发邮件');
   });
 });

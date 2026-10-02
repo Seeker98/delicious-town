@@ -1,4 +1,12 @@
-import type { ActivityKind, BoostActivityDef, ExchangeDef, GoalsDef, GridDef, PassDef } from '@dt/shared';
+import type {
+  ActivityKind,
+  BoostActivityDef,
+  CoopDef,
+  ExchangeDef,
+  GoalsDef,
+  GridDef,
+  PassDef,
+} from '@dt/shared';
 import { ApiError } from '../api/client';
 
 type Goal = GoalsDef['goals'][number];
@@ -9,11 +17,20 @@ export function defaultDef(kind: 'grid'): GridDef;
 export function defaultDef(kind: 'pass'): PassDef;
 export function defaultDef(kind: 'boost'): BoostActivityDef;
 export function defaultDef(kind: 'exchange'): ExchangeDef;
-export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef | BoostActivityDef | ExchangeDef;
+export function defaultDef(kind: 'coop'): CoopDef;
 export function defaultDef(
   kind: ActivityKind,
-): GoalsDef | GridDef | PassDef | BoostActivityDef | ExchangeDef {
+): GoalsDef | GridDef | PassDef | BoostActivityDef | ExchangeDef | CoopDef;
+export function defaultDef(
+  kind: ActivityKind,
+): GoalsDef | GridDef | PassDef | BoostActivityDef | ExchangeDef | CoopDef {
   if (kind === 'boost') return { items: [{ key: 'exp', factor: 2 }] };
+  if (kind === 'coop')
+    return {
+      rules: [{ key: 'signin', points: 10, dailyCap: 10 }],
+      milestones: [{ target: 1000, minContribution: 0, award: {} as Goal['award'] }],
+      ranks: [{ from: 1, to: 1, award: {} as Goal['award'] }],
+    };
   if (kind === 'exchange')
     return {
       currencies: [{ name: '' }],
@@ -61,6 +78,8 @@ const TEXT: Record<string, string> = {
   no_currency: '请选择存在的货币',
   four_decimals: '概率最多两位小数（百分比）',
   duplicate_currency: '同一种货币只能列一次',
+  bad_range: '起始名次不能大于结束名次',
+  overlap: '名次段不能重叠，要按名次从小到大排',
 };
 
 /** 服务端 VALIDATION_FAILED 的 issues → 路径 → 中文 */

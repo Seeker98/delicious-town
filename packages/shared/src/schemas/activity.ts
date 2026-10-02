@@ -5,7 +5,7 @@ import { limitedText, rewardItems, type RewardItems } from './mail';
 
 export const ACTIVITY_TITLE_MAX = 40;
 export const ACTIVITY_BODY_MAX = 1000;
-export const ACTIVITY_KINDS = ['goals', 'grid', 'pass', 'boost', 'exchange'] as const;
+export const ACTIVITY_KINDS = ['goals', 'grid', 'pass', 'boost', 'exchange', 'coop'] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 
 const actionKey = z.string().refine((k) => Object.hasOwn(ACTIVITY_ACTIONS, k), { message: 'unknown_action' });
@@ -62,6 +62,42 @@ export const passDef = z.object({
     })
     .refine((u) => Boolean(u.diamond) || Boolean(u.goods?.length), { message: 'empty_price' }),
 });
+/** 全服合力（148-3 设计 §3）：规则同战令；里程碑看本区服总分和个人门槛；名次段结束后发邮件 */
+export const coopDef = z
+  .object({
+    rules: passDef.shape.rules,
+    milestones: z
+      .array(
+        z.object({
+          target: z.number().int().min(1).max(1_000_000_000),
+          minContribution: z.number().int().min(0).max(100_000_000),
+          award: rewardItems,
+        }),
+      )
+      .min(1)
+      .max(10),
+    ranks: z
+      .array(
+        z.object({
+          from: z.number().int().min(1).max(100),
+          to: z.number().int().min(1).max(100),
+          award: rewardItems,
+        }),
+      )
+      .max(10),
+  })
+  .superRefine((d, ctx) => {
+    d.milestones.forEach((m, i) => {
+      if (i > 0 && m.target <= d.milestones[i - 1]!.target)
+        ctx.addIssue({ code: 'custom', path: ['milestones', i, 'target'], message: 'not_increasing' });
+    });
+    d.ranks.forEach((r, i) => {
+      if (r.from > r.to) ctx.addIssue({ code: 'custom', path: ['ranks', i, 'to'], message: 'bad_range' });
+      if (i > 0 && r.from <= d.ranks[i - 1]!.to)
+        ctx.addIssue({ code: 'custom', path: ['ranks', i, 'from'], message: 'overlap' });
+    });
+  });
+export type CoopDef = z.infer<typeof coopDef>;
 export type GoalsDef = z.infer<typeof goalsDef>;
 export type GridDef = z.infer<typeof gridDef>;
 export type PassDef = z.infer<typeof passDef>;
@@ -70,7 +106,8 @@ export type ActivitySpec =
   | { kind: 'grid'; def: GridDef }
   | { kind: 'pass'; def: PassDef }
   | { kind: 'boost'; def: BoostActivityDef }
-  | { kind: 'exchange'; def: ExchangeDef };
+  | { kind: 'exchange'; def: ExchangeDef }
+  | { kind: 'coop'; def: CoopDef };
 
 const twoDecimals = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
 export const boostDef = z.object({
@@ -157,6 +194,7 @@ const DEF_SCHEMAS = {
   pass: passDef,
   boost: boostDef,
   exchange: exchangeDef,
+  coop: coopDef,
 } as const;
 
 const common = z.object({
@@ -210,6 +248,8 @@ export type ActivityDto = {
   claimable: number;
   /** 兑换活动：结束后还能兑换到什么时候（ends_at + graceHours）；其他类型为 null */
   exchangeUntil: string | null;
+  /** 全服合力：本区服总分、前 10 名、我的名次（148-3 设计 §8.1）；其他类型为 null */
+  coop: ActivityCoopDto | null;
 } & ActivitySpec;
 export interface ActivitiesDto {
   items: ActivityDto[];
@@ -243,4 +283,10 @@ export interface ActivityExchangeDto {
   index: number;
   times: number;
   items: RewardItems;
+}
+
+export interface ActivityCoopDto {
+  pool: number;
+  top: Array<{ rank: number; restId: number; name: string; points: number; mine: boolean }>;
+  myRank: number | null;
 }

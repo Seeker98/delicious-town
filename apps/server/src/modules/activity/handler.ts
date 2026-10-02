@@ -64,7 +64,8 @@ async function count(
     }
     return;
   }
-  if (spec.kind === 'pass') {
+  // 战令和全服合力：按规则计分，每条规则每天有上限（148-3 设计 §4）
+  if (spec.kind === 'pass' || spec.kind === 'coop') {
     const rule = spec.def.rules.find((r) => r.key === p.key);
     if (!rule) return;
     const day = gameDay(at);

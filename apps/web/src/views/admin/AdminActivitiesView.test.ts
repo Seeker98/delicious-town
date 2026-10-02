@@ -363,3 +363,83 @@ describe('终审：兑换活动编辑器的字段错误和货币删除', () => {
     expect(w.find('[data-testid="cur-name-1"]').exists()).toBe(false);
   });
 });
+
+describe('AdminActivitiesView 全服合力（148-3）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+    vi.mocked(adminApi.createActivity).mockResolvedValue(row);
+  });
+  const open = async (kind: string) => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue(kind);
+    await w.find('[data-testid="ac-title"]').setValue('合力');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    return w;
+  };
+
+  it('规则、里程碑、名次段都进提交内容；可以增删', async () => {
+    const w = await open('coop');
+    await w.find('[data-testid="ms-add"]').trigger('click');
+    await w.find('[data-testid="ms-target-1"]').setValue('5000');
+    await w.find('[data-testid="ms-min-1"]').setValue('100');
+    await w.find('[data-testid="rank-add"]').trigger('click');
+    await w.find('[data-testid="rank-to-1"]').setValue('10');
+    await w.find('[data-testid="rank-add"]').trigger('click');
+    await w.find('[data-testid="rank-del-2"]').trigger('click');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.createActivity).mock.calls[0]![0];
+    expect(b.kind).toBe('coop');
+    expect(b.def).toMatchObject({
+      rules: [{ key: 'signin', points: 10, dailyCap: 10 }],
+      milestones: [
+        { target: 1000, minContribution: 0 },
+        { target: 5000, minContribution: 100 },
+      ],
+      ranks: [
+        { from: 1, to: 1 },
+        { from: 2, to: 10 },
+      ],
+    });
+  });
+
+  it('服务端字段错误显示在对应行', async () => {
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', {
+        issues: [
+          { path: 'def.milestones.1.target', message: 'not_increasing' },
+          { path: 'def.ranks.0.to', message: 'bad_range' },
+        ],
+      }),
+    );
+    const w = await open('coop');
+    await w.find('[data-testid="ms-add"]').trigger('click');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.milestones.1.target"]').text()).toBe('积分要比上一档高');
+    expect(w.find('[data-testid="err-def.ranks.0.to"]').text()).toBe('起始名次不能大于结束名次');
+  });
+
+  it('战令的规则表改用共用组件后照常提交', async () => {
+    const w = await open('pass');
+    await w.find('[data-testid="rule-points-0"]').setValue('7');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.createActivity).mock.calls[0]![0];
+    expect(b.def).toMatchObject({ rules: [{ key: 'signin', points: 7, dailyCap: 10 }] });
+  });
+});

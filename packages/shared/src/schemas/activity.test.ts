@@ -205,3 +205,58 @@ describe('兑换活动定义（148-2 设计 §3）', () => {
     expect((r.def as { graceHours: number }).graceHours).toBe(24);
   });
 });
+
+describe('全服合力定义（148-3 设计 §3）', () => {
+  const award = { coin: 1 };
+  const def = (patch: Record<string, unknown> = {}) => ({
+    rules: [{ key: 'market.buy', points: 10, dailyCap: 100 }],
+    milestones: [
+      { target: 100, minContribution: 0, award },
+      { target: 500, minContribution: 20, award },
+    ],
+    ranks: [
+      { from: 1, to: 1, award },
+      { from: 2, to: 3, award },
+    ],
+    ...patch,
+  });
+  const co = (patch: Record<string, unknown> = {}) => ({ ...base, kind: 'coop', def: def(patch) });
+  it('合法的能过；名次段可以为空', () => {
+    expect(paths(co())).toEqual([]);
+    expect(paths(co({ ranks: [] }))).toEqual([]);
+  });
+  it('目标分不递增、名次段颠倒或重叠、超过 100 名、规则行为重复都报错', () => {
+    expect(
+      paths(
+        co({
+          milestones: [
+            { target: 100, minContribution: 0, award },
+            { target: 100, minContribution: 0, award },
+          ],
+        }),
+      ),
+    ).toContain('def.milestones.1.target:not_increasing');
+    expect(paths(co({ ranks: [{ from: 3, to: 2, award }] }))).toContain('def.ranks.0.to:bad_range');
+    expect(
+      paths(
+        co({
+          ranks: [
+            { from: 1, to: 3, award },
+            { from: 3, to: 5, award },
+          ],
+        }),
+      ),
+    ).toContain('def.ranks.1.from:overlap');
+    expect(paths(co({ ranks: [{ from: 1, to: 101, award }] }))[0]).toMatch(/^def\.ranks\.0\.to:/);
+    expect(
+      paths(
+        co({
+          rules: [
+            { key: 'signin', points: 1, dailyCap: 1 },
+            { key: 'signin', points: 2, dailyCap: 2 },
+          ],
+        }),
+      ),
+    ).toContain('def.rules:duplicate_key');
+  });
+});

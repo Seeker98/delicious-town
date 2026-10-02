@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ACTIVITY_ACTIONS, type PassDef, type RewardItems } from '@dt/shared';
+import type { PassDef, RewardItems } from '@dt/shared';
 import { rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
+import RuleRows from './RuleRows.vue';
 
 const props = defineProps<{ modelValue: PassDef; errors: Record<string, string> }>();
 const emit = defineEmits<{ 'update:modelValue': [PassDef] }>();
@@ -18,10 +19,7 @@ function addLevel() {
   const last = props.modelValue.levels.at(-1)?.points ?? 0;
   patch({ levels: [...props.modelValue.levels, { points: last + 10, free: null, premium: null }] });
 }
-type Rule = PassDef['rules'][number];
 type Level = PassDef['levels'][number];
-const setRule = (i: number, p: Partial<Rule>) =>
-  patch({ rules: props.modelValue.rules.map((r, j) => (j === i ? { ...r, ...p } : r)) });
 const setLevel = (i: number, p: Partial<Level>) =>
   patch({ levels: props.modelValue.levels.map((l, j) => (j === i ? { ...l, ...p } : l)) });
 const orNull = (r: RewardItems) => (Object.keys(r).length === 0 ? null : r);
@@ -31,52 +29,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
 
 <template>
   <div class="small fw-bold">积分规则</div>
-  <div v-if="err('def.rules')" class="text-danger small" data-testid="err-def.rules">
-    {{ err('def.rules') }}
-  </div>
-  <div v-for="(r, i) in modelValue.rules" :key="`r${i}`" class="d-flex gap-2 align-items-center py-1">
-    <select
-      class="form-select form-select-sm w-auto"
-      :value="r.key"
-      @change="setRule(i, { key: ($event.target as HTMLSelectElement).value })"
-    >
-      <option v-for="(name, k) in ACTIVITY_ACTIONS" :key="k" :value="k">{{ name }}</option>
-    </select>
-    每次
-    <input
-      type="number"
-      min="1"
-      class="form-control form-control-sm"
-      style="width: 5rem"
-      :value="r.points"
-      @input="setRule(i, { points: num($event) })"
-    />
-    分 每天最多
-    <input
-      type="number"
-      min="1"
-      class="form-control form-control-sm"
-      style="width: 6rem"
-      :value="r.dailyCap"
-      @input="setRule(i, { dailyCap: num($event) })"
-    />
-    分
-    <button
-      type="button"
-      class="btn btn-sm btn-link text-danger"
-      :disabled="modelValue.rules.length <= 1"
-      @click="patch({ rules: modelValue.rules.filter((_, j) => j !== i) })"
-    >
-      删除
-    </button>
-  </div>
-  <button
-    type="button"
-    class="btn btn-sm btn-outline-primary mb-3"
-    @click="patch({ rules: [...modelValue.rules, { key: 'signin', points: 10, dailyCap: 10 }] })"
-  >
-    加一条规则
-  </button>
+  <RuleRows :model-value="modelValue.rules" :errors="errors" @update:model-value="patch({ rules: $event })" />
 
   <div class="small fw-bold">档位（奖励可以留空，但普通和进阶不能都空）</div>
   <div
