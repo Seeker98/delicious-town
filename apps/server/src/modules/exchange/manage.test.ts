@@ -114,7 +114,20 @@ describe('查询（156-1 设计 §7）', () => {
     expect(me.orders.map((o) => o.price)).toEqual([p]);
     expect(me.trades).toEqual([expect.objectContaining({ side: 'buy', price: p + 1, qty: 1, fee: 0 })]);
     const foods = await svc().foods(b);
-    expect(foods.find((x) => x.foodsId === f.id)).toMatchObject({ ref: p, last: p + 1 });
+    // 列表标出正在卖、正在收的数量（问题记录 282）：卖单剩 1 + 1 + 3，买单剩 4；过期的单不算
+    expect(foods.find((x) => x.foodsId === f.id)).toMatchObject({
+      ref: p,
+      last: p + 1,
+      selling: 5,
+      buying: 4,
+      sysStock: 0,
+    });
+    await t.db
+      .updateTable('exchange_order')
+      .set({ expires_at: new Date(t.clock.now.getTime() - 1000) })
+      .where('rest_id', '=', s2.restaurantId)
+      .execute();
+    expect((await svc().foods(b)).find((x) => x.foodsId === f.id)).toMatchObject({ selling: 2, buying: 4 });
     expect(foods.every((x) => t.deps.config.requireFood(x.foodsId).odds < 100)).toBe(true);
   });
 });

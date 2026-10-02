@@ -67,14 +67,16 @@ describe('ExchangeView（156-1 设计 §8）', () => {
       foods: [
         { id: 11, name: '松露', level: 6 },
         { id: 12, name: '藏红花', level: 3 },
+        { id: 13, name: '鱼子酱', level: 3 },
       ],
       streets: [],
       weather: [],
       devices: [],
     } as never);
     vi.mocked(endpoints.tradeFoods).mockResolvedValue([
-      { foodsId: 12, ref: 4000, last: null, changePct: null },
-      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1 },
+      { foodsId: 12, ref: 4000, last: null, changePct: null, selling: 0, buying: 3, sysStock: 0 },
+      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1, selling: 4, buying: 0, sysStock: 2 },
+      { foodsId: 13, ref: 900, last: null, changePct: null, selling: 0, buying: 0, sysStock: 0 },
     ]);
     vi.mocked(endpoints.tradeBook).mockResolvedValue(book);
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
@@ -165,6 +167,34 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(endpoints.tradeBook).toHaveBeenCalledTimes(2);
   });
 
+  it('食材列表标出在售、在收（问题记录 282）：在售绿框写"卖 N"（含系统库存），在收写"收 N"；可筛选在售、在收', async () => {
+    try {
+      localStorage.removeItem('dt_exchange_filter');
+    } catch {
+      // 忽略
+    }
+    const w = mount(ExchangeView);
+    await flushPromises();
+    const sale = w.get('[data-testid="ex-food-11"]');
+    expect(sale.classes()).toContain('dt-on-sale');
+    expect(sale.text()).toContain('卖 6');
+    const buy = w.get('[data-testid="ex-food-12"]');
+    expect(buy.classes()).not.toContain('dt-on-sale');
+    expect(buy.text()).toContain('收 3');
+    expect(w.get('[data-testid="ex-food-13"]').text()).not.toMatch(/卖|收/);
+    expect(w.get('[data-testid="ex-legend"]').text()).toContain('卖');
+    await w.get('[data-testid="ex-filter-sale"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'ex-food-11',
+    ]);
+    await w.get('[data-testid="ex-filter-buy"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'ex-food-12',
+    ]);
+    await w.get('[data-testid="ex-filter-all"]').trigger('click');
+    expect(w.findAll('[data-testid^="ex-food-"]')).toHaveLength(3);
+  });
+
   it('交易所说明里写清楚系统报价怎么算（问题记录 250）', async () => {
     const w = mount(ExchangeView);
     await flushPromises();
@@ -241,8 +271,8 @@ describe('终审：交易所页的选食材和取出提示', () => {
       devices: [],
     } as never);
     vi.mocked(endpoints.tradeFoods).mockResolvedValue([
-      { foodsId: 12, ref: 4000, last: null, changePct: null },
-      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1 },
+      { foodsId: 12, ref: 4000, last: null, changePct: null, selling: 0, buying: 0, sysStock: 0 },
+      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1, selling: 0, buying: 0, sysStock: 0 },
     ]);
     vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
   });
@@ -303,7 +333,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
       devices: [],
     } as never);
     vi.mocked(endpoints.tradeFoods).mockResolvedValue([
-      { foodsId: 11, ref: 1000, last: null, changePct: null },
+      { foodsId: 11, ref: 1000, last: null, changePct: null, selling: 0, buying: 0, sysStock: 0 },
     ]);
     vi.mocked(endpoints.tradeBook).mockResolvedValue(book);
   });
@@ -370,7 +400,7 @@ describe('终审 I2：冷静期已过的所得能取出', () => {
       devices: [],
     } as never);
     vi.mocked(endpoints.tradeFoods).mockResolvedValue([
-      { foodsId: 11, ref: 1000, last: null, changePct: null },
+      { foodsId: 11, ref: 1000, last: null, changePct: null, selling: 0, buying: 0, sysStock: 0 },
     ]);
   });
   it('账户为空、冻结记录已到期：按钮可点，提示可以取出；没到期的照常显示剩余时间', async () => {

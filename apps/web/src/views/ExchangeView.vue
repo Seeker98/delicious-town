@@ -23,9 +23,39 @@ const qty = ref<number | ''>(1);
 const busy = ref(false);
 
 const levelOf = (id: number) => catalog.foodsMap.get(id)?.level ?? 0;
+/** 在售：玩家卖单或系统库存；在收：玩家买单（问题记录 282） */
+const saleNum = (f: ExchangeFoodDto) => f.selling + f.sysStock;
+type Filter = 'all' | 'sale' | 'buy';
+const FILTER_KEY = 'dt_exchange_filter';
+function savedFilter(): Filter {
+  try {
+    const v = localStorage.getItem(FILTER_KEY);
+    return v === 'sale' || v === 'buy' ? v : 'all';
+  } catch {
+    return 'all';
+  }
+}
+const filter = ref<Filter>(savedFilter());
+function setFilter(v: Filter) {
+  filter.value = v;
+  try {
+    localStorage.setItem(FILTER_KEY, v);
+  } catch {
+    // 存储不可用时忽略
+  }
+}
+const FILTERS: Array<{ key: Filter; label: string }> = [
+  { key: 'all', label: '全部' },
+  { key: 'sale', label: '在售' },
+  { key: 'buy', label: '在收' },
+];
 const groups = computed(() => {
   const q = search.value.trim();
-  const list = foods.value.filter((f) => !q || catalog.foodName(f.foodsId).includes(q));
+  const list = foods.value.filter(
+    (f) =>
+      (!q || catalog.foodName(f.foodsId).includes(q)) &&
+      (filter.value === 'all' || (filter.value === 'sale' ? saleNum(f) > 0 : f.buying > 0)),
+  );
   const by = new Map<number, ExchangeFoodDto[]>();
   for (const f of list) by.set(levelOf(f.foodsId), [...(by.get(levelOf(f.foodsId)) ?? []), f]);
   return [...by.entries()].sort((a, b) => a[0] - b[0]);
@@ -216,6 +246,26 @@ onMounted(async () => {
     </ul>
   </details>
   <input v-model="search" class="form-control form-control-sm mb-2" placeholder="搜索食材" />
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
+    <div class="btn-group btn-group-sm">
+      <button
+        v-for="x in FILTERS"
+        :key="x.key"
+        type="button"
+        :class="['btn', filter === x.key ? 'btn-secondary' : 'btn-outline-secondary']"
+        :data-testid="`ex-filter-${x.key}`"
+        @click="setFilter(x.key)"
+      >
+        {{ x.label }}
+      </button>
+    </div>
+    <span class="dt-meta" data-testid="ex-legend"
+      ><span class="dt-sale-tag">卖 N</span> 有人在卖（含系统库存），绿框；<span class="dt-buy-tag"
+        >收 N</span
+      >
+      有人在收</span
+    >
+  </div>
   <div class="dt-card mb-3" style="max-height: 14rem; overflow-y: auto">
     <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
       <div class="dt-group-label">{{ lv }} 级</div>
@@ -223,12 +273,18 @@ onMounted(async () => {
         v-for="f in list"
         :key="f.foodsId"
         type="button"
-        :class="['btn btn-sm me-1 mb-1', f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary']"
+        :class="[
+          'btn btn-sm me-1 mb-1',
+          f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary',
+          { 'dt-on-sale': saleNum(f) > 0 },
+        ]"
         :data-testid="`ex-food-${f.foodsId}`"
         @click="pick(f.foodsId)"
       >
         {{ catalog.foodName(f.foodsId) }}
         <span class="small opacity-75">{{ formatNum(f.last ?? f.ref) }} {{ pct(f.changePct) }}</span>
+        <span v-if="saleNum(f) > 0" class="dt-sale-tag ms-1">卖 {{ saleNum(f) }}</span>
+        <span v-if="f.buying > 0" class="dt-buy-tag ms-1">收 {{ f.buying }}</span>
       </button>
     </div>
   </div>

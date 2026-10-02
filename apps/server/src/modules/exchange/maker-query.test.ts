@@ -59,5 +59,7 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
     ]);
     const row = (await svc().foods(s)).find((x) => x.foodsId === f.id)!;
     expect(row).toMatchObject({ last: null, changePct: null });
+    // 卖给系统的 2 个进了系统库存：列表里标在售（问题记录 282）
+    expect(row).toMatchObject({ selling: 0, buying: 0, sysStock: 2 });
   });
 });
