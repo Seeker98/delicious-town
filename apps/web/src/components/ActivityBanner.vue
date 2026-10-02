@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router';
 import type { ActivitySummaryDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 
-/** 首页活动横幅（设计 §7.2）：没有进行中的活动、或功能关闭报错时不显示 */
+/** 首页待办卡里的限时活动一行（设计 §7.2、问题记录 280）：没有进行中的活动、或功能关闭报错时不显示 */
 const s = ref<ActivitySummaryDto | null>(null);
 onMounted(async () => {
   try {
@@ -19,11 +19,11 @@ onMounted(async () => {
   <RouterLink
     v-if="s && s.running > 0"
     to="/activities"
-    class="dt-card my-2 small d-flex align-items-center gap-1 text-reset text-decoration-none"
+    class="dt-todo-row text-reset text-decoration-none"
     data-testid="activity-banner"
   >
-    <i class="bi bi-calendar-event text-primary"></i>
-    <span class="flex-fill">进行中的活动 {{ s.running }} 个</span>
+    <span class="flex-fill"><i class="bi bi-calendar-event me-1"></i>限时活动 {{ s.running }} 个进行中</span>
     <span v-if="s.claimable > 0" class="badge text-bg-danger">可领 {{ s.claimable }} 份</span>
+    <span class="text-primary">查看 ›</span>
   </RouterLink>
 </template>

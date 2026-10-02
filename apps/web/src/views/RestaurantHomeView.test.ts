@@ -140,6 +140,14 @@ describe('RestaurantHomeView', () => {
     const hint = w.find('[data-testid="cookfoods-hint"]');
     expect(hint.text()).toContain('至少 40×N 个');
     expect(hint.text()).toContain('关闭');
+    // 和其他开关一样一行：名字在左、档位在右；说明收进"这是什么？"，默认不展开（首页排版 280 反馈）
+    const row = w.get('[data-testid="cookfoods-row"]');
+    expect(row.classes()).toContain('dt-todo-row');
+    expect(row.find('select').exists()).toBe(true);
+    const help = w.get('[data-testid="cookfoods-help"]');
+    expect(help.element.tagName).toBe('DETAILS');
+    expect((help.element as HTMLDetailsElement).open).toBe(false);
+    expect(help.find('[data-testid="cookfoods-hint"]').exists()).toBe(true);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 5 });
     expect((await mountView()).find('[data-testid="cookfoods-hint"]').exists()).toBe(false);
   });
@@ -328,17 +336,55 @@ describe('RestaurantHomeView', () => {
     const done = await mountView();
     expect(done.find('[data-testid="open-plaque2"]').exists()).toBe(false);
   });
-  it('首页排版：快捷入口一排，区块标题统一，设施一行 4 格（问题记录：首页展示效果不佳）', async () => {
+  it('首页排版（问题记录 280）：第一屏三张卡——餐厅、今日待办、小镇动态；设施、经营开关在下面', async () => {
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      total: 18,
+      signedIn: false,
+      star: 0,
+      items: [],
+      rewards: [],
+    });
     const w = await mountView();
-    expect(w.find('[data-testid="link-equip"]').exists()).toBe(false);
+    const status = w.get('[data-testid="home-status"]');
+    for (const id of ['rest-level', 'exp-text', 'rest-coin', 'refuel', 'quick-links'])
+      expect(status.find(`[data-testid="${id}"]`).exists(), id).toBe(true);
+    // 任务入口并进待办卡的"今日活跃"，快捷入口只剩厨具、仓库、商店
     expect(w.findAll('[data-testid="quick-links"] a').map((a) => a.attributes('href'))).toEqual([
-      '/rest/tasks',
       '/rest/equip',
       '/store',
       '/shop',
     ]);
-    expect(w.findAll('h6.dt-section').map((h) => h.text())).toEqual(['设施', '经营开关', '生效的加成']);
+    const todo = w.get('[data-testid="home-todo"]');
+    expect(todo.find('[data-testid="home-signin-row"]').exists()).toBe(true);
+    expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
+    const act = todo.get('[data-testid="home-activation"]');
+    expect(act.text()).toContain('今日活跃 18');
+    expect(act.attributes('href')).toBe('/rest/tasks');
+    // 顺序：餐厅 → 待办 → 小镇动态 → 设施
+    const pos = (sel: string) => w.html().indexOf(sel);
+    expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
+    expect(pos('data-testid="home-todo"')).toBeLessThan(pos('data-testid="home-news-more"'));
+    expect(pos('data-testid="home-news-more"')).toBeLessThan(pos('data-testid="slot-1"'));
+    // 设施、经营开关也是卡片，标题样式和上面三张卡一致（280 反馈）
+    expect(w.findAll('h6.dt-section')).toHaveLength(0);
+    expect(w.get('[data-testid="home-devices"] .dt-card-title').text()).toBe('设施');
+    expect(w.get('[data-testid="home-devices"]').find('[data-testid="slot-1"]').exists()).toBe(true);
+    const sw = w.get('[data-testid="home-switches"]');
+    expect(sw.get('.dt-card-title').text()).toBe('经营开关');
+    expect(sw.findAll('.dt-todo-row').length).toBeGreaterThanOrEqual(2);
+    // 油那一行和银币、钻石同在一个两列网格里，按钮用紧凑样式，行高不被撑大
+    const refuel = w.get('[data-testid="refuel"]');
+    expect(refuel.classes()).toContain('dt-compact-btn');
+    expect(refuel.element.closest('.row')).not.toBeNull();
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
+  });
+
+  it('生效的加成默认折叠成一行摘要，点开看全部（问题记录 280）', async () => {
+    const w = await mountView();
+    const box = w.get('[data-testid="effects"]');
+    expect(box.element.tagName).toBe('DETAILS');
+    expect((box.element as HTMLDetailsElement).open).toBe(false);
+    expect(box.get('summary').text()).toContain('生效的加成');
   });
 
   it('生效的加成：按来源分组，加成绿色、减益红色；超过 5 条先收起', async () => {
@@ -427,7 +473,8 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     const card = w.find('[data-testid="main-task"]');
-    expect(card.classes()).toEqual(expect.arrayContaining(['d-flex', 'align-items-center']));
+    // 待办卡里统一的一行样式：flex + 垂直居中（问题记录 280）
+    expect(card.classes()).toContain('dt-todo-row');
     const btn = card.find('button');
     expect(btn.text()).toBe('领奖');
     expect(btn.classes()).not.toContain('float-end');
