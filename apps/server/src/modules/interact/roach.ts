@@ -11,6 +11,7 @@ import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { grantGoodsOp } from '../store/goods';
 import { killReward, killStrength, layReward, type KillPlace } from './rules';
+import { roachCap } from '../settlement/tables';
 import { clearTable, findTable, isEmptyTable, readTables, writeTables } from './tables';
 
 /** 在 host 店灭 tableNo 桌的蟑螂；me 和 host 可以是同一个 Op（自己店） */
@@ -68,6 +69,10 @@ export function createRoach(d: GameDeps) {
             throw limitReached('roach_lay', { max });
           const tables = await readTables(them);
           if (!isEmptyTable(findTable(tables, b.tableNo))) throw invalidState('table_occupied');
+          // 好友放的也算进一家店的蟑螂上限；蟹老板的店不限（问题记录 228）
+          const roaches = tables.filter((tb) => tb.customer === 3).length;
+          if (!them.rest.npc && roaches >= roachCap(tables.length, them.tuning.settlement.roachMaxShare))
+            throw invalidState('roach_full');
           await writeTables(
             them,
             tables.map((tb) =>

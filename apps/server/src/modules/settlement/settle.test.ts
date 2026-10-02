@@ -239,3 +239,23 @@ describe('挑剔消耗食材（规格书 01 §1.8）', () => {
     expect(r.exp).toBe(15);
   });
 });
+
+describe('问题记录 228：一家店的蟑螂上限', () => {
+  const empty = (n: number) => Array.from({ length: n }, (_, i) => ({ no: i + 1, floor: 1, customer: 0 }));
+  const roaches = (r: { tables: Array<{ customer: number }> }) =>
+    r.tables.filter((x) => x.customer === 3).length;
+  it('同时最多 ⌈桌数 × 0.33⌉ 张蟑螂桌：6 桌每张都判定会长时也只长 2 只', () => {
+    const r = settle({ tables: empty(6) }, {}, Array(80).fill(0.0001) as number[]);
+    expect(roaches(r)).toBe(2);
+  });
+  it('原有的蟑螂算在上限里；被蟑螂药消灭的腾出名额', () => {
+    const tables = [
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      ...empty(6).slice(1),
+    ];
+    expect(roaches(settle({ tables }, {}, Array(80).fill(0.0001) as number[]))).toBe(2);
+    const cleared = settle({ tables, agg: { roachClearRate: 0.5 } }, {}, Array(80).fill(0.0001) as number[]);
+    expect(cleared.tables[0]!.customer).toBe(-3);
+    expect(roaches(cleared)).toBe(2);
+  });
+});

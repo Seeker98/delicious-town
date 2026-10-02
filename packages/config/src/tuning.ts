@@ -55,6 +55,8 @@ export const tuningSchema = z.object({
     coinMultiplier: z.number().positive(),
     roachRateBase: num,
     roachRatePerStar: num,
+    /** 一家店同时最多多少比例的桌子是蟑螂桌（向上取整，至少 1 张）；自然长的和好友放的合计（问题记录 228） */
+    roachMaxShare: z.number().min(0).max(1),
     squidwardRate: num,
     squidwardMinStar: int,
     squidwardOtherStreetFactor: num,

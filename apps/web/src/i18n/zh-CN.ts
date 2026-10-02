@@ -148,6 +148,7 @@ const STATE: Record<string, string> = {
   not_running: '活动不在进行中（结束后未领的奖励会发到邮箱）',
   no_reward: '没有这份奖励',
   not_pass: '这个活动没有进阶奖励',
+  roach_full: '这家店的蟑螂已经太多了，换一家吧',
   not_exchange: '这个活动不能兑换',
   exchange_closed: '兑换期已经结束，活动货币已作废',
   no_item: '没有这个兑换项',

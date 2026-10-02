@@ -36,6 +36,7 @@
     "coinMultiplier": 1,
     "roachRateBase": 0.0018,
     "roachRatePerStar": 0.0001,
+    "roachMaxShare": 0.33,
     "squidwardRate": 0.0015,
     "squidwardMinStar": 3,
     "squidwardOtherStreetFactor": 3,

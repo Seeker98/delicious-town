@@ -46,7 +46,8 @@ describe('settleShardRound', () => {
 
   it('自然蟑螂跟随 friend 功能：开启时产生，区服关闭 friend 时不产生', async () => {
     // 概率给到 100：乘上任何天气系数都必定出现
-    const tuning = { settlement: { roachRateBase: 100, roachRatePerStar: 0 } };
+    // 上限比例给到 1：这里测的是功能开关，不是蟑螂上限（问题记录 228）
+    const tuning = { settlement: { roachRateBase: 100, roachRatePerStar: 0, roachMaxShare: 1 } };
     const on = await createShard(t.db);
     const off = await createShard(t.db);
     await t.db
