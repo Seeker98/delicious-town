@@ -1,3 +1,4 @@
+import type { BundleI18n } from './i18n';
 import type { NewbieCode } from './newbieCodes';
 import type { GoodsUse } from './goodsUse';
 import type { EQUIP_ATTRS } from './ids';
@@ -270,6 +271,8 @@ export interface Holidays {
 
 export interface ConfigBundle {
   version: string;
+  /** 游戏数据翻译（问题记录 272）：繁中自动转换，英法西来自 data/i18n/ */
+  i18n: BundleI18n;
   foods: Food[];
   goods: Goods[];
   cookbooks: Cookbook[];

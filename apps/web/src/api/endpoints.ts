@@ -148,6 +148,7 @@ import type {
   RedeemResultDto,
   ReportInput,
   InviteDto,
+  Locale,
 } from '@dt/shared';
 import { api } from './client';
 
@@ -181,7 +182,8 @@ export const endpoints = {
   restLog: (before?: string) => api.get<LogPageDto>(`/api/v1/restaurant/log${qs({ before })}`),
 
   weather: () => api.get<WorldDto>('/api/v1/world/weather'),
-  catalog: () => api.get<CatalogDto>('/api/v1/world/catalog'),
+  /** 道具目录：按语言返回名字（问题记录 272） */
+  catalog: (lang: Locale) => api.get<CatalogDto>(`/api/v1/world/catalog?lang=${lang}`),
 
   starNeed: () => api.get<StarNeedDto>('/api/v1/growth/star'),
   oilNeed: () => api.get<OilNeedDto>('/api/v1/growth/oil'),

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { I18N_SOURCE_FILES } from './i18n';
 
 export type SourceData = Record<string, unknown>;
 
@@ -59,10 +60,14 @@ export function defaultDataDir(): string {
 /** 读取数据目录：数据集文件取其中的 data 数组，restaurant_defaults 取整个对象 */
 export function readSourceDir(dir: string): SourceData {
   const out: SourceData = {};
-  for (const name of SOURCE_FILES) {
+  for (const name of [...SOURCE_FILES, ...I18N_SOURCE_FILES]) {
     const json = JSON.parse(readFileSync(join(dir, `${name}.json`), 'utf8')) as { data?: unknown };
     // data/game/ 下的文件和 restaurant_defaults 是整个对象；数据集文件取 data 数组
-    out[name] = name === 'restaurant_defaults' || name.startsWith('game/') ? json : json.data;
+    // 翻译数据（data/i18n/，问题记录 272）也是整个对象
+    out[name] =
+      name === 'restaurant_defaults' || name.startsWith('game/') || name.startsWith('i18n/')
+        ? json
+        : json.data;
   }
   return out;
 }

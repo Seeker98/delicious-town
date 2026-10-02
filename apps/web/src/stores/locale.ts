@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { DEFAULT_LOCALE, detectLocale, isLocale, type Locale } from '@dt/shared';
 import { loadMessages, setActive, type Messages } from '../i18n';
 import zhCN from '../i18n/locales/zh-CN';
+import { useCatalogStore } from './catalog';
 
 const KEY = 'dt_locale';
 function saved(): Locale | null {
@@ -39,6 +40,9 @@ export const useLocaleStore = defineStore('locale', {
       } catch {
         // 存储不可用时忽略
       }
+      // 道具、食材、天气的名字跟着语言变（问题记录 272）：已经读过目录才重读
+      const catalog = useCatalogStore();
+      if (catalog.loaded) void catalog.reload(l).catch(() => undefined);
       return true;
     },
   },

@@ -1,4 +1,13 @@
 export * from './types';
+export {
+  I18N_FIELDS,
+  I18N_KINDS,
+  type BundleI18n,
+  type I18nEntry,
+  type I18nKind,
+  type I18nLocale,
+  type I18nTable,
+} from './i18n';
 export { buildBundle, featureOfKey, type BuildResult } from './build';
 export { defaultDataDir, readSourceDir, SOURCE_FILES, type SourceData } from './source';
 export {

@@ -139,6 +139,9 @@ importers:
       '@dt/shared':
         specifier: workspace:*
         version: link:../shared
+      opencc-js:
+        specifier: ^1.4.2
+        version: 1.4.2
       zod:
         specifier: ^3.25.76
         version: 3.25.76
