@@ -470,7 +470,7 @@ export const endpoints = {
   tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
   predictList: () => api.get<PredictListDto>('/api/v1/predict/events'),
   predictDetail: (id: number) => api.get<PredictDetailDto>(`/api/v1/predict/events/${id}`),
-  predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number }) =>
+  predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number; limit?: number }) =>
     api.post<PredictTradeDto>(`/api/v1/predict/events/${id}/trade`, b),
   activityUnlock: (id: number) => api.post<{ premium: true }>(`/api/v1/activities/${id}/unlock`, {}),
   activityExchange: (id: number, index: number, times: number) =>

@@ -127,6 +127,31 @@ describe('买卖（238-1 设计 §6.1）', () => {
     });
   });
 
+  it('带上预估金额：买入实际要付的超过它、卖出实际得到的低于它就拒绝（终审 I2：价格被别人推动）', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const r = await trader(t, { shardId, coin: 10_000_000 });
+    const other = await trader(t, { shardId, coin: 10_000_000 });
+    const seen = predictQuote({ y: 0, n: 0, b: 100 }, 'yes', 'buy', 10, T).total;
+    await svc().trade(other, id, { side: 'yes', dir: 'buy', qty: 50 });
+    const before = await coin(r.restaurantId);
+    await expect(svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 10, limit: seen })).rejects.toMatchObject(
+      {
+        params: { reason: 'predict_price_moved' },
+      },
+    );
+    expect(await coin(r.restaurantId)).toBe(before);
+    const now = predictQuote({ y: 50, n: 0, b: 100 }, 'yes', 'buy', 10, T).total;
+    await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 10, limit: now });
+    const sellSeen = predictQuote({ y: 60, n: 0, b: 100 }, 'yes', 'sell', 10, T).total;
+    await svc().trade(other, id, { side: 'yes', dir: 'sell', qty: 50 });
+    await expect(
+      svc().trade(r, id, { side: 'yes', dir: 'sell', qty: 10, limit: sellSeen }),
+    ).rejects.toMatchObject({
+      params: { reason: 'predict_price_moved' },
+    });
+  });
+
   it('事件按自己的 unit 报价，不看区服数值（Review Focus 4）', async () => {
     const shardId = await createShard(t.db);
     await setTuning(t, shardId, { predict: { unit: 5000 } });

@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { predictQuote, type PredictDetailDto, type PredictListDto } from '@dt/shared';
+import { ApiError } from '../api/client';
 import { endpoints } from '../api/endpoints';
 import { useToastStore } from '../stores/toast';
 import PredictView from './PredictView.vue';
@@ -102,9 +103,24 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await w.get('[data-testid="pd-qty"]').setValue('3');
     await w.get('[data-testid="pd-submit"]').trigger('click');
     await flushPromises();
-    expect(endpoints.predictTrade).toHaveBeenCalledWith(1, { side: 'no', dir: 'buy', qty: 3 });
+    const seen = predictQuote({ y: 55, n: 0, b: 100 }, 'no', 'buy', 3, { unit: 1000, feeRate: 0.02 }).total;
+    expect(endpoints.predictTrade).toHaveBeenCalledWith(1, { side: 'no', dir: 'buy', qty: 3, limit: seen });
     expect(useToastStore().items.at(-1)?.text).toContain('买入否 3 份，花费 1,224 银币');
     expect(endpoints.predictList).toHaveBeenCalledTimes(2);
+  });
+
+  it('价格被别人推动（predict_price_moved）：提示并重新读取报价（终审 I2）', async () => {
+    vi.mocked(endpoints.predictTrade).mockRejectedValue(
+      new ApiError('INVALID_STATE', { reason: 'predict_price_moved', total: 9999 }),
+    );
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    await w.get('[data-testid="pd-submit"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.at(-1)?.text).toContain('价格变了');
+    expect(endpoints.predictDetail).toHaveBeenCalledTimes(2);
   });
 
   it('门槛不满足：显示原因，提交禁用', async () => {

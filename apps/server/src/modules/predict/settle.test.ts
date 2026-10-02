@@ -57,23 +57,18 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
     expect(await coin(a.restaurantId)).toBe(ca + 7000);
   });
 
-  it('作废：退净投入，净投入为负的不退', async () => {
+  it('作废：没人卖出获利时每人退全部净投入', async () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId);
     const a = await trader(t, { shardId, coin: 1_000_000 });
     const b = await trader(t, { shardId, coin: 1_000_000 });
     const bought = (await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 10 })).data.total;
-    await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 1 });
-    await t.db
-      .updateTable('predict_position')
-      .set({ net_cost: -500 })
-      .where('rest_id', '=', b.restaurantId)
-      .execute();
+    const boughtB = (await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 1 })).data.total;
     const [ca, cb] = [await coin(a.restaurantId), await coin(b.restaurantId)];
     await admin().voidEvent(actor, id);
     await settleEvents(t.game.deps, shardId, t.clock.now);
     expect(await coin(a.restaurantId)).toBe(ca + bought);
-    expect(await coin(b.restaurantId)).toBe(cb);
+    expect(await coin(b.restaurantId)).toBe(cb + boughtB);
     const refund = await t.db
       .selectFrom('rest_log')
       .select('type')
@@ -81,6 +76,32 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
       .where('type', '=', 'predict.refund')
       .execute();
     expect(refund).toHaveLength(1);
+  });
+
+  it('作废：有人卖出获利时，亏的人按比例退，退款总额不超过系统净收入（终审 I1：小号对倒）', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const a = await trader(t, { shardId, coin: 10_000_000 });
+    const b = await trader(t, { shardId, coin: 10_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 100 });
+    await svc().trade(b, id, { side: 'yes', dir: 'buy', qty: 100 });
+    await svc().trade(b, id, { side: 'yes', dir: 'buy', qty: 100 });
+    await svc().trade(a, id, { side: 'yes', dir: 'sell', qty: 100 });
+    const pos = await t.db
+      .selectFrom('predict_position')
+      .select(['rest_id', 'net_cost'])
+      .where('event_id', '=', String(id))
+      .execute();
+    const net = (r: number) => Number(pos.find((p) => p.rest_id === r)!.net_cost);
+    expect(net(a.restaurantId)).toBeLessThan(0);
+    const collected = net(a.restaurantId) + net(b.restaurantId);
+    const [ca, cb] = [await coin(a.restaurantId), await coin(b.restaurantId)];
+    await admin().voidEvent(actor, id);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    const refundB = (await coin(b.restaurantId)) - cb;
+    expect(await coin(a.restaurantId)).toBe(ca);
+    expect(refundB).toBe(Math.floor(net(b.restaurantId) * (collected / net(b.restaurantId))));
+    expect(refundB).toBeLessThanOrEqual(collected);
   });
 
   it('并发跑两次结算，每人只发一次（Review Focus 2）', async () => {

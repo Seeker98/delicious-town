@@ -25,7 +25,7 @@ export async function closeEvents(d: GameDeps, shardId: number, now: Date): Prom
 export async function settleEvents(d: GameDeps, shardId: number, now: Date): Promise<{ settled: number }> {
   const events = await d.db
     .selectFrom('predict_event')
-    .select(['id', 'title', 'status', 'outcome', 'unit'])
+    .select(['id', 'title', 'status', 'outcome', 'unit', 'void_ratio'])
     .where('shard_id', '=', shardId)
     .where('status', 'in', ['resolved', 'void'])
     .where('settled_at', 'is', null)

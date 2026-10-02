@@ -6,6 +6,8 @@ export const predictTradeBody = z.object({
   side: z.enum(['yes', 'no']),
   dir: z.enum(['buy', 'sell']),
   qty: z.number().int().min(1).max(999),
+  /** 滑点保护：买入最多付多少、卖出至少得多少（含手续费）；不传不检查 */
+  limit: z.number().int().min(0).optional(),
 });
 
 /** 后台出题（238-1 设计 §7.3）；截止时间晚于现在在服务端检查 */

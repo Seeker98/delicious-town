@@ -103,7 +103,7 @@ predict_trade
 
 ### 6.1 买卖
 
-`POST /predict/events/:id/trade { side: 'yes'|'no', dir: 'buy'|'sell', qty }`（区服开关 `predict`）：
+`POST /predict/events/:id/trade { side: 'yes'|'no', dir: 'buy'|'sell', qty, limit? }`（区服开关 `predict`）：
 
 1. 锁店（`runOp`），再锁事件行（`select … for update`）。加锁顺序为店 → 事件。
 2. 检查：
@@ -127,6 +127,7 @@ predict_trade
 | 超持有上限 | `limitReached('predict_hold', { max })` |
 | 卖出超过持有 | `invalidState('predict_not_enough')` |
 | 银币不够 | 和其他扣银币的地方一样 |
+| 带了 `limit`，买入要付的超过它或卖出得到的低于它（价格被别人推动，终审） | `invalidState('predict_price_moved', { total })` |
 
 ### 6.2 截止
 
@@ -145,7 +146,7 @@ predict_trade
 每个未结算的持仓单独一个事务（`runSystemOp`，锁这家店），在事务里把持仓改为 `settled = true`。条件里带 `settled = false`，所以任务重跑或并发也不会重复发钱。
 
 - **判定为"是"**：发 `unit × yes` 银币；判定为"否"发 `unit × no`。发 0 的也标记已结算，但不写日志。
-- **作废**：退 `max(net_cost, 0)`。
+- **作废**：退 `floor(max(net_cost, 0) × 退款比例)`。退款比例在作废时算好存进事件（迁移 0030 `void_ratio`）：系统在这个事件的净收入（所有人 `net_cost` 之和，含手续费）÷ 亏损的人的 `net_cost` 之和，夹在 0~1。这样退款总额不超过系统收到的钱，防止小号一个卖出获利、一个等作废退款（终审，用户已确认：按比例退）。
 - 写个人日志：`predict.settle`（事件标题、结果、所得）或 `predict.refund`（事件标题、退款）。
 - 某个事件的持仓全部结算完后，写 `settled_at`。
 

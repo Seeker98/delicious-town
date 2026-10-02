@@ -167,6 +167,7 @@ const STATE: Record<string, string> = {
   predict_not_enough: '持有的份数不够',
   predict_final: '这个事件已经判定或作废了',
   predict_close_at: '截止时间要晚于现在',
+  predict_price_moved: '价格变了，已刷新报价，请确认后再提交',
   roach_full: '这家店的蟑螂已经太多了，换一家吧',
   not_exchange: '这个活动不能兑换',
   exchange_closed: '兑换期已经结束，活动货币已作废',

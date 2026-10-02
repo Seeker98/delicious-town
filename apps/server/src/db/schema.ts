@@ -1107,6 +1107,8 @@ export interface PredictEventTable {
   created_by: Nullable<number>;
   resolved_at: TsNullable;
   settled_at: TsNullable;
+  /** 作废时的退款比例（0~1）；没作废为空 */
+  void_ratio: Nullable<number>;
   created_at: TsDefault;
 }
 export interface PredictPositionTable {

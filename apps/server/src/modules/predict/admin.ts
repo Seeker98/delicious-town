@@ -117,16 +117,34 @@ export function createPredictAdmin(game: Game) {
         .executeTakeFirst();
       if (!e) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'predict_event', id });
       if (e.status !== 'open' && e.status !== 'closed') throw invalidState('predict_final');
+      // 作废的退款比例（终审 I1）：持仓在事件行锁下已经不会再变；
+      // 系统净收入（所有人净投入之和，含手续费）÷ 亏损的人的净投入之和，夹在 0~1
+      let voidRatio: number | null = null;
+      if (set.status === 'void') {
+        const agg = await tx
+          .selectFrom('predict_position')
+          .select([
+            sql<string>`coalesce(sum(net_cost), 0)`.as('net'),
+            sql<string>`coalesce(sum(greatest(net_cost, 0)), 0)`.as('owed'),
+          ])
+          .where('event_id', '=', String(id))
+          .executeTakeFirstOrThrow();
+        const owed = Number(agg.owed);
+        voidRatio = owed > 0 ? Math.min(1, Math.max(0, Number(agg.net) / owed)) : 1;
+      }
       await tx
         .updateTable('predict_event')
-        .set({ status: set.status, outcome: set.outcome, resolved_at: now })
+        .set({ status: set.status, outcome: set.outcome, resolved_at: now, void_ratio: voidRatio })
         .where('id', '=', String(id))
         .execute();
       await writeAudit(tx, {
         actor,
         action: set.status === 'resolved' ? 'predict.resolve' : 'predict.void',
         target: `predict_event:${id}`,
-        detail: { title: e.title, ...(set.status === 'resolved' ? { outcome: set.outcome } : {}) },
+        detail: {
+          title: e.title,
+          ...(set.status === 'resolved' ? { outcome: set.outcome } : { refundRatio: voidRatio }),
+        },
       });
     });
     return { ok: true as const };

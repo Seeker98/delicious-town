@@ -20,13 +20,16 @@ import { eligibility } from '../exchange/service';
 
 const KEEP_DAYS = 7;
 
-/** 结算所得：已判定按押对的份数，已作废退净投入（负数不退）；其他为 null */
+/**
+ * 结算所得：已判定按押对的份数；已作废退净投入（负数不退）× 作废时定下的比例，
+ * 退款总额不超过系统在这个事件的净收入（终审 I1：防止小号一个卖出获利、一个等作废退款）；其他为 null
+ */
 export function payoutOf(
-  e: { status: string; outcome: boolean | null; unit: number },
+  e: { status: string; outcome: boolean | null; unit: number; void_ratio: number | null },
   p: { yes: number; no: number; net_cost: number },
 ): number | null {
   if (e.status === 'resolved') return e.unit * (e.outcome ? p.yes : p.no);
-  if (e.status === 'void') return Math.max(Number(p.net_cost), 0);
+  if (e.status === 'void') return Math.floor(Math.max(Number(p.net_cost), 0) * (e.void_ratio ?? 1));
   return null;
 }
 
@@ -44,7 +47,7 @@ export function createPredictService(d: GameDeps) {
   async function trade(
     o: Op,
     id: number,
-    b: { side: PredictSide; dir: PredictDir; qty: number },
+    b: { side: PredictSide; dir: PredictDir; qty: number; limit?: number },
   ): Promise<PredictTradeDto> {
     const t = o.tuning.predict;
     const reason = await eligibility({
@@ -83,6 +86,9 @@ export function createPredictService(d: GameDeps) {
       unit: e.unit,
       feeRate: t.feeRate,
     });
+    // 滑点保护（终审 I2）：带了预估金额时，买入要付的超过它、卖出得到的低于它就不成交
+    if (b.limit !== undefined && (b.dir === 'buy' ? q.total > b.limit : q.total < b.limit))
+      throw invalidState('predict_price_moved', { total: q.total });
     if (b.dir === 'buy') spendCoin(o, q.total, { source: 'predict' });
     else gainCoin(o, q.total, { source: 'predict' });
     const next = { ...held, [b.side]: held[b.side] + (b.dir === 'buy' ? b.qty : -b.qty) };
@@ -151,6 +157,7 @@ export function createPredictService(d: GameDeps) {
     'e.close_at',
     'e.status',
     'e.outcome',
+    'e.void_ratio',
     'p.yes',
     'p.no',
     'p.net_cost',
@@ -166,6 +173,7 @@ export function createPredictService(d: GameDeps) {
     close_at: Date;
     status: PredictStatus;
     outcome: boolean | null;
+    void_ratio: number | null;
     yes: number | null;
     no: number | null;
     net_cost: number | null;
@@ -278,8 +286,11 @@ export function createPredictService(d: GameDeps) {
   return {
     list,
     detail,
-    trade: (ctx: RestCtx, id: number, b: { side: PredictSide; dir: PredictDir; qty: number }) =>
-      runOp(d, ctx, { feature: 'predict', source: 'predict' }, (o) => trade(o, id, b)),
+    trade: (
+      ctx: RestCtx,
+      id: number,
+      b: { side: PredictSide; dir: PredictDir; qty: number; limit?: number },
+    ) => runOp(d, ctx, { feature: 'predict', source: 'predict' }, (o) => trade(o, id, b)),
   };
 }
 export type PredictService = ReturnType<typeof createPredictService>;

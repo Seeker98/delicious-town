@@ -7,6 +7,7 @@ import {
   type PredictEventDto,
   type PredictListDto,
 } from '@dt/shared';
+import { ApiError } from '../api/client';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
@@ -98,10 +99,12 @@ async function submit() {
   if (selected.value === null || quote.value === null) return;
   busy.value = true;
   try {
+    // 带上预估金额：价格被别人推动后服务端拒绝，不会按意外的价格成交（终审 I2）
     const r = await endpoints.predictTrade(selected.value, {
       side: side.value,
       dir: dir.value,
       qty: Number(qty.value),
+      limit: quote.value.total,
     });
     toast.push(
       `${r.dir === 'buy' ? '买入' : '卖出'}${r.side === 'yes' ? '是' : '否'} ${r.qty} 份，${r.dir === 'buy' ? '花费' : '得到'} ${formatNum(r.total)} 银币`,
@@ -110,6 +113,7 @@ async function submit() {
     await pick(selected.value);
   } catch (e) {
     toast.push(errorMessage(e, '交易失败'), 'danger');
+    if (e instanceof ApiError && e.params.reason === 'predict_price_moved') await pick(selected.value);
   } finally {
     busy.value = false;
   }
