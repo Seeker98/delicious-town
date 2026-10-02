@@ -230,3 +230,35 @@ describe('AdminActivitiesView 全服加成', () => {
     });
   });
 });
+
+describe('终审 I1：后台全服加成不显示最低等级', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+    vi.mocked(adminApi.createActivity).mockResolvedValue(row);
+  });
+  it('选全服加成时隐藏最低等级输入框，提交时最低等级为 1', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-min-level"]').setValue(20);
+    await w.find('[data-testid="ac-kind"]').setValue('boost');
+    expect(w.find('[data-testid="ac-min-level"]').exists()).toBe(false);
+    await w.find('[data-testid="ac-title"]').setValue('双倍');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(vi.mocked(adminApi.createActivity).mock.calls[0]![0].minLevel).toBe(1);
+  });
+});

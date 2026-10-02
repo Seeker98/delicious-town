@@ -99,7 +99,8 @@ async function save() {
     body: body.value.trim(),
     startsAt: iso(startsAt.value, orig.value?.startsAt),
     endsAt: iso(endsAt.value, orig.value?.endsAt),
-    minLevel: minLevel.value,
+    // 全服加成对所有等级生效（148-4 终审 I1）
+    minLevel: kind.value === 'boost' ? 1 : minLevel.value,
     def: defs.value[kind.value],
   } as ActivityInput;
   busy.value = true;
@@ -206,10 +207,11 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
           <option value="boost">全服加成</option>
         </select>
       </div>
-      <div class="col-auto">
+      <div v-if="kind !== 'boost'" class="col-auto">
         最低等级
         <input
           v-model.number="minLevel"
+          data-testid="ac-min-level"
           type="number"
           min="1"
           class="form-control form-control-sm d-inline-block"

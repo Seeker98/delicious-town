@@ -195,3 +195,38 @@ describe('ActivitiesView 全服加成', () => {
     expect(card.find('table').exists()).toBe(false);
   });
 });
+
+describe('终审 I1：全服加成不显示等级门槛', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  it('旧数据里最低等级不是 1 的全服加成，也不提示"需要 N 级"', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [
+        {
+          ...base,
+          id: 9,
+          minLevel: 30,
+          kind: 'boost',
+          def: { items: [{ key: 'exp', factor: 2 }] },
+          counters: {},
+          rewards: [],
+          claimable: 0,
+        },
+      ],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.text()).not.toContain('需要 30 级');
+  });
+});

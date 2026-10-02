@@ -46,6 +46,7 @@ const TEXT: Record<string, string> = {
   unknown_boost: '请选择加成项目',
   two_decimals: '倍数最多两位小数',
   no_effect: '至少有一项倍数不等于 1',
+  boost_all_levels: '全服加成对所有等级生效，最低等级只能是 1',
 };
 
 /** 服务端 VALIDATION_FAILED 的 issues → 路径 → 中文 */

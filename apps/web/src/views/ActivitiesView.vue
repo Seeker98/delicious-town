@@ -65,7 +65,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
     <div v-if="a.state !== 'running'" class="alert alert-secondary py-1 small">
       {{ a.state === 'settling' ? '结算中，未领的奖励会发到邮箱' : '已结束，未领的奖励已发到邮箱' }}
     </div>
-    <div v-else-if="level < a.minLevel" class="alert alert-warning py-1 small">
+    <div v-else-if="a.kind !== 'boost' && level < a.minLevel" class="alert alert-warning py-1 small">
       需要 {{ a.minLevel }} 级，达到后才开始计数
     </div>
     <ActivityGoals v-if="a.kind === 'goals'" :a="a" :busy="busy" @claim="claim(a, $event)" />

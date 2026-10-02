@@ -129,3 +129,11 @@ describe('全服加成定义（148-4 设计 §5）', () => {
     ).toBe('经营经验 ×2、菜场价格 ×0.8');
   });
 });
+
+describe('终审 I1：全服加成对所有等级生效', () => {
+  it('全服加成的最低等级只能是 1', () => {
+    const b = { ...base, kind: 'boost', def: { items: [{ key: 'exp', factor: 2 }] } };
+    expect(paths({ ...b, minLevel: 30 })).toContain('minLevel:boost_all_levels');
+    expect(paths({ ...b, minLevel: 1 })).toEqual([]);
+  });
+});

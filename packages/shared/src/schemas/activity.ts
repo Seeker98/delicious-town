@@ -117,6 +117,9 @@ export const activityBody = common
   .superRefine((b, ctx) => {
     if (new Date(b.endsAt) <= new Date(b.startsAt))
       ctx.addIssue({ code: 'custom', path: ['endsAt'], message: 'before_start' });
+    // 全服加成作用在区服数值上，对所有等级都生效（148-4 终审 I1）
+    if (b.kind === 'boost' && b.minLevel !== 1)
+      ctx.addIssue({ code: 'custom', path: ['minLevel'], message: 'boost_all_levels' });
     const r = DEF_SCHEMAS[b.kind].safeParse(b.def);
     if (!r.success) for (const i of r.error.issues) ctx.addIssue({ ...i, path: ['def', ...i.path] });
   })

@@ -24,30 +24,35 @@ export function createShardService(d: {
   const cache = new Map<number, { expires: number; settings: ShardSettings }>();
   const gameNow = d.now ?? (() => new Date());
 
-  async function settings(shardId: number): Promise<ShardSettings> {
+  /** db：在事务里调用时传事务，缓存没命中时不另向连接池要连接（148-4 终审） */
+  async function settings(shardId: number, db: Kysely<DB> = d.db): Promise<ShardSettings> {
     const hit = cache.get(shardId);
     const nowMs = Date.now();
     if (hit && hit.expires > nowMs) return hit.settings;
-    const row = await d.db
+    const row = await db
       .selectFrom('shard_config')
       .select('override')
       .where('shard_id', '=', shardId)
       .executeTakeFirst();
-    // 正在生效的全服加成（148-4 设计 §6.2）
-    const t = gameNow();
-    const boosts = await d.db
-      .selectFrom('activity')
-      .select('def')
-      .where('kind', '=', 'boost')
-      .where('deleted_at', 'is', null)
-      .where('starts_at', '<=', t)
-      .where('ends_at', '>', t)
-      .where((eb) => eb.or([eb('shard_id', '=', shardId), eb('shard_id', 'is', null)]))
-      .execute();
-    const resolved = applyBoosts(
-      resolveShardSettings(d.config, row?.override ?? {}),
-      boosts.map((b) => (b.def as { items: BoostItem[] }).items),
-    );
+    const base = resolveShardSettings(d.config, row?.override ?? {});
+    // 正在生效的全服加成（148-4 设计 §6.2）；区服关掉"限时活动"时加成也不生效（终审裁定）
+    let resolved = base;
+    if (isFeatureEnabled(base, 'activity')) {
+      const t = gameNow();
+      const boosts = await db
+        .selectFrom('activity')
+        .select('def')
+        .where('kind', '=', 'boost')
+        .where('deleted_at', 'is', null)
+        .where('starts_at', '<=', t)
+        .where('ends_at', '>', t)
+        .where((eb) => eb.or([eb('shard_id', '=', shardId), eb('shard_id', 'is', null)]))
+        .execute();
+      resolved = applyBoosts(
+        base,
+        boosts.map((b) => (b.def as { items: BoostItem[] }).items),
+      );
+    }
     cache.set(shardId, { expires: nowMs + SETTINGS_CACHE_MS, settings: resolved });
     return resolved;
   }

@@ -114,4 +114,15 @@ describe('全服加成生效（148-4 设计 §6.2）', () => {
     );
     expect(await counters(t, id, r.restaurantId)).toEqual({});
   });
+
+  it('区服关掉限时活动功能时，全服加成也不生效（终审裁定）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { activity: false } }) })
+      .execute();
+    await insertActivity(t, { shardId, spec: boost(2) });
+    t.game.shards.invalidate(shardId);
+    expect(await exp(shardId)).toBe(base());
+  });
 });
