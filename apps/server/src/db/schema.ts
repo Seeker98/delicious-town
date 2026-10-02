@@ -1109,6 +1109,12 @@ export interface PredictEventTable {
   settled_at: TsNullable;
   /** 作废时的退款比例（0~1）；没作废为空 */
   void_ratio: Nullable<number>;
+  /** 自动题的唯一键，例如 krab:2026-10-03；手动题为空（238-2） */
+  auto_key: Nullable<string>;
+  /** 判定依据 */
+  result_note: Nullable<string>;
+  /** 自动题最早判定时间 */
+  resolve_at: TsNullable;
   created_at: TsDefault;
 }
 export interface PredictPositionTable {

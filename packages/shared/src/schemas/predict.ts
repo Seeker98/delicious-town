@@ -38,6 +38,10 @@ export interface PredictEventDto {
   netCost: number;
   /** 已判定：结算所得；已作废：退款；其他为 null */
   payout: number | null;
+  /** 系统自动出的题（238-2） */
+  auto: boolean;
+  /** 判定依据；没有为 null */
+  resultNote: string | null;
 }
 
 export interface PredictListDto {
@@ -108,4 +112,8 @@ export interface PredictAdminRow {
   ifYes: number;
   ifNo: number;
   creator: string | null;
+  /** 系统自动出的题（238-2） */
+  auto: boolean;
+  /** 判定依据；没有为 null */
+  resultNote: string | null;
 }

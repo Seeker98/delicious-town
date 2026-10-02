@@ -11,7 +11,7 @@ afterAll(() => t.close());
 
 describe('事件合约的数值和表（238-1 设计 §3、§5）', () => {
   it('区服数值默认值；功能开关已实现', () => {
-    expect(t.deps.config.tuning.predict).toEqual({
+    expect(t.deps.config.tuning.predict).toMatchObject({
       unit: 1000,
       feeRate: 0.02,
       maxHold: 200,

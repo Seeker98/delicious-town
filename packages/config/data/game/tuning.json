@@ -342,7 +342,7 @@
     "maker": { "enabled": true, "bidRate": 0.7, "askRate": 1.3, "marketCapRate": 0.9, "dailyBuy": 100, "stockMax": 500, "playerDaily": 20 },
     "refOverrides": {}
   },
-  "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7 },
+  "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "stats": true, "b": 100, "marketCloseMin": 5, "statsCloseHour": 18 } },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,

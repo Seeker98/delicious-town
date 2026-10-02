@@ -158,6 +158,8 @@ export function createPredictService(d: GameDeps) {
     'e.status',
     'e.outcome',
     'e.void_ratio',
+    'e.auto_key',
+    'e.result_note',
     'p.yes',
     'p.no',
     'p.net_cost',
@@ -174,6 +176,8 @@ export function createPredictService(d: GameDeps) {
     status: PredictStatus;
     outcome: boolean | null;
     void_ratio: number | null;
+    auto_key: string | null;
+    result_note: string | null;
     yes: number | null;
     no: number | null;
     net_cost: number | null;
@@ -192,6 +196,8 @@ export function createPredictService(d: GameDeps) {
       no: p.no,
       netCost: p.net_cost,
       payout: payoutOf(r, p),
+      auto: r.auto_key !== null,
+      resultNote: r.result_note,
     };
   };
 
