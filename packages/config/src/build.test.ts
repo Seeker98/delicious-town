@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
 import { SPONSOR_HATS } from './ids';
+import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 
 const source = () => readSourceDir(defaultDataDir());
 
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
     expect(bundle!.goods).toHaveLength(682); // 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
@@ -18,7 +19,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('特色菜：食材只留 id（"[4]海参"的 4 是等级，设计文档 裁定 1）；熟练度表 10 级', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.mysteriousCookbooks).toHaveLength(277);
     const m1 = bundle!.mysteriousCookbooks.find((m) => m.id === 1)!;
     expect(m1.foods).toEqual([390, 412, 261]);
@@ -30,7 +31,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('种子是正式字段（96 种）：食材、等级、各阶段分钟数、产量、权重', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.seeds).toHaveLength(96);
     expect(bundle!.seeds.find((s) => s.id === 1)).toEqual({
       id: 1,
@@ -49,7 +50,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('合并了新设计的售价和 awardflag', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const cb = bundle!.cookbooks.find((c) => c.id === 1)!;
     expect(cb.coin).toBeGreaterThan(0);
     expect(Object.keys(cb.needFoods)).toHaveLength(10);
@@ -57,7 +58,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('解析道具 value：效果、礼包、纯数字', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     expect(goods.get(81)!.effects).toEqual({ atRate: 0.25, coinRate: 1, expRate: 1 });
     expect(goods.get(115)!.gift!.length).toBeGreaterThan(0);
@@ -65,7 +66,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('厨具和宝石解析出定义，套装 9 套，引用都有效', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     expect(goods.get(30)!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
     expect(goods.get(56)!.equip).toMatchObject({ part: 3, total: 36, suitId: 5 });
@@ -78,10 +79,10 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('同样的输入生成同样的版本号', () => {
-    expect(buildBundle(source()).bundle!.version).toBe(buildBundle(source()).bundle!.version);
+    expect(realBuild().bundle!.version).toBe(buildBundle(source()).bundle!.version);
   });
   it('配方、种子兑换、动作收益是正式字段（子项目 4B-2）', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.formulas).toHaveLength(56);
     expect(bundle!.formulas.find((f) => f.id === 1)).toEqual({
       id: 1,
@@ -111,7 +112,7 @@ describe('buildBundle（真实数据）', () => {
   });
 
   it('任务 114（鉴定一次食材配方）链接到菜园', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.tasks.find((t) => t.id === 114)!.href).toBe('/yard');
   });
 });
@@ -162,7 +163,7 @@ describe('buildBundle（坏数据）', () => {
 });
 describe('2A 新增配置', () => {
   it('新表都已规范化', () => {
-    const b = buildBundle(source()).bundle!;
+    const b = realBuild().bundle!;
     expect(b.cookbookGrades.map((g) => g.grade)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(b.cookbookGrades[6]).toMatchObject({
       name: '佳肴',
@@ -187,7 +188,7 @@ describe('2A 新增配置', () => {
   });
 
   it('任务按事件键归属到功能', () => {
-    const b = buildBundle(source()).bundle!;
+    const b = realBuild().bundle!;
     const main = (step: number) => b.tasks.find((t) => t.main && t.step === step)!;
     expect(main(1).feature).toBe('growth'); // oil.fill
     expect(main(3).feature).toBe('cookbook'); // cookbooks.learned
@@ -243,7 +244,7 @@ describe('2A 新增配置', () => {
 
 describe('酒吧配置（子项目 4C-1）', () => {
   it('老虎机奖池 22 项：空格、食材、道具，稀有和新闻标记', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const s = bundle!.slotAwards;
     expect(s).toHaveLength(22);
@@ -272,7 +273,7 @@ describe('酒吧配置（子项目 4C-1）', () => {
   });
 
   it('任务 13、108 链接到 /bar', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     for (const id of [13, 108]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/bar');
   });
 
@@ -298,7 +299,7 @@ describe('酒吧配置（子项目 4C-1）', () => {
 
 describe('厨塔配置（子项目 4C-2）', () => {
   it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按 tower_fix 的厨力校准（问题记录 120）', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
@@ -317,7 +318,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
   });
 
   it('声望商店是正式字段', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.renownShop).toHaveLength(12);
     expect(bundle!.renownShop[0]).toEqual({
       goodsId: 310,
@@ -345,14 +346,14 @@ describe('厨塔配置（子项目 4C-2）', () => {
   });
 
   it('赛厨榜挑战计入活跃"与好友赛厨"', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.actionMap.activation['tower.rank']).toBe('与好友赛厨');
   });
 });
 
 describe('外卖配置（子项目 4D）', () => {
   it('任务 34、35、122 跳到外卖页', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     for (const id of [34, 35, 122]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/takeaway');
   });
 
@@ -379,7 +380,7 @@ describe('外卖配置（子项目 4D）', () => {
 
 describe('小镇（子项目 4E-1）', () => {
   it('镇长兑换和星愿类型化', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.goodsExchange).toHaveLength(73);
     expect(bundle!.goodsExchange[1]).toEqual({
@@ -410,7 +411,7 @@ describe('小镇（子项目 4E-1）', () => {
   });
 
   it('嘻哈男孩和论坛的事件键不再归到 town（裁定 22）', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const f = bundle!.actionMap.features;
     expect(featureOfKey('hiphop.reward', f)).toBe('hiphop');
     expect(featureOfKey('post.create', f)).toBe('forum');
@@ -433,7 +434,7 @@ describe('终审修复（4E-1）', () => {
 
 describe('酒吧扩展（子项目 4C-3）', () => {
   it('三个新游戏的数值', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const bar = bundle!.tuning.bar;
     expect(bar.devil).toEqual({
       stakes: [1, 5, 10, 20],
@@ -454,7 +455,7 @@ describe('酒吧扩展（子项目 4C-3）', () => {
 
 describe('嘻哈男孩、排行（子项目 4E-2）', () => {
   it('数值和工作证', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     const h = bundle!.tuning.hiphop;
     expect(h.weeklyCards).toEqual([108, 109, 107, 111, 110]);
     expect(new Set(h.wages.map(([card]) => card))).toEqual(new Set(h.weeklyCards));
@@ -484,7 +485,7 @@ describe('嘻哈男孩、排行（子项目 4E-2）', () => {
 
 describe('论坛（子项目 4E-3）', () => {
   it('数值和发帖支线的跳转', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.tuning.forum).toEqual({
       titleMax: 40,
       contentMax: 5000,
@@ -513,7 +514,7 @@ describe('论坛（子项目 4E-3）', () => {
 
 describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
   const byId = () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     return {
       goods: new Map(bundle!.goods.map((g) => [g.id, g])),
@@ -595,7 +596,7 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
   });
 
   it('每套的件数上限等于这套的厨具数', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     for (const s of bundle!.suits.filter((x) => [4, 5, 6, 7, 80, 82].includes(x.id)))
       expect(bundle!.goods.filter((g) => g.equip?.suitId === s.id)).toHaveLength(s.maxNum);
   });
@@ -670,7 +671,7 @@ describe('配置校验补强（PR27、PR28 遗留）', () => {
 
 describe('赞助帽子和邮件数值（子项目 6A-1）', () => {
   it('玉级、铉级赞助帽子：冠，创意 22 / 40，不算套装，不掉落，不卖', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     const jade = goods.get(SPONSOR_HATS.jade)!;
@@ -688,14 +689,14 @@ describe('赞助帽子和邮件数值（子项目 6A-1）', () => {
   });
 
   it('邮件 30 天过期，列表最多 100 封', () => {
-    const { bundle } = buildBundle(source());
+    const { bundle } = realBuild();
     expect(bundle!.tuning.mail).toEqual({ expiresDays: 30, listMax: 100 });
   });
 });
 
 describe('邀请和兑换码数值（子项目 6A-2）', () => {
   it('邀请：每月 20 人，10 级、30 级两档；兑换：每小时失败 10 次上限，一批最多 1000 个码', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.tuning.invite).toMatchObject({ monthlyCap: 20, levels: { lv10: 10, lv30: 30 } });
     expect(bundle!.tuning.invite.newbie).toEqual({ coin: 50000, goods: [{ id: 1, num: 5 }] });
@@ -716,7 +717,7 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
 
 describe('守塔人（问题记录 120）', () => {
   it('第 5、6 层互换；厨力按参照玩家重算', () => {
-    const { bundle, errors } = buildBundle(source());
+    const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f[4]).toMatchObject({
@@ -747,13 +748,13 @@ describe('守塔人（问题记录 120）', () => {
 
 describe('举报数值（子项目 6B-1）', () => {
   it('每天最多举报 10 次', () => {
-    expect(buildBundle(source()).bundle!.tuning.report).toEqual({ dailyMax: 10 });
+    expect(realBuild().bundle!.tuning.report).toEqual({ dailyMax: 10 });
   });
 });
 
 describe('可疑数据门槛（子项目 6B-2）', () => {
   it('酒吧单日 3 次全过、20 镖 50 分；3 个账号共用；每类 50 行', () => {
-    expect(buildBundle(source()).bundle!.tuning.ops.suspicious).toEqual({
+    expect(realBuild().bundle!.tuning.ops.suspicious).toEqual({
       barPerfectDaily: 3,
       dartsBullDaily: 20,
       sharedAccounts: 3,

@@ -16,7 +16,6 @@ const redisUrl = (() => {
   return u.toString();
 })();
 const base = { adminUrl, redisUrl, bundlePath, seed: 1 };
-const start = new Date('2026-10-01T00:00:00+08:00');
 
 describe('模拟器冒烟测试', () => {
   it('压测：20 家店 1 轮', async () => {
@@ -24,35 +23,25 @@ describe('模拟器冒烟测试', () => {
     expect(r.rounds[0]).toMatchObject({ settled: 20, failed: 0 });
   }, 120_000);
 
-  it('1 个勤快机器人跑 1 天，生成报告', async () => {
-    const r = await runSim({
-      ...base,
-      dbName: 'dt_sim_test',
-      days: 1,
-      botsPerPersona: 1,
-      personas: ['diligent'],
-      start,
-    });
-    expect(r.days.map((d) => d.day)).toEqual([0, 1]);
-    expect(r.days[1]!.level).toBeGreaterThan(1);
-    expect(r.economy.some((e) => e.source === 'settlement')).toBe(true);
-    const dir = mkdtempSync(join(tmpdir(), 'dt-sim-'));
-    writeReport(dir, r);
-    expect(existsSync(join(dir, 'report.html'))).toBe(true);
-  }, 600_000);
-
-  it('同样的参数跑两次，结果完全一样', async () => {
+  // 只跑傍晚到 0 点（勤快机器人 18~23 点在线），跨过一次 0 点：既有第 1 天的快照，测试也快（原来跑整天要 95 秒）
+  it('1 个勤快机器人从 18 点跑到 0 点：生成报告；同样的参数跑两次，结果完全一样', async () => {
     const o = {
       ...base,
       dbName: 'dt_sim_test',
       days: 0.25,
       botsPerPersona: 1,
       personas: ['diligent' as const],
-      start,
+      start: new Date('2026-10-01T18:00:00+08:00'),
     };
-    const a = await runSim(o);
-    const b = await runSim(o);
-    expect(b.economy).toEqual(a.economy);
+    const r = await runSim(o);
+    expect(r.days.map((d) => d.day)).toEqual([0, 1]);
+    expect(r.days[1]!.level).toBeGreaterThan(1);
+    expect(r.economy.some((e) => e.source === 'settlement')).toBe(true);
+    const dir = mkdtempSync(join(tmpdir(), 'dt-sim-'));
+    writeReport(dir, r);
+    expect(existsSync(join(dir, 'report.html'))).toBe(true);
+    const again = await runSim(o);
+    expect(again.economy).toEqual(r.economy);
   }, 600_000);
 
   it('单店分解：示例快照能跑', async () => {
