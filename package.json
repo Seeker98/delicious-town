@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run",
+    "test": "vitest run --project web --project config --project shared && pnpm --filter @dt/server test",
     "infra:test": "docker compose -f infra/compose.test.yml up -d --wait",
     "infra:dev": "docker compose -f infra/compose.dev.yml up -d --wait",
     "sim": "pnpm --filter @dt/server sim",
