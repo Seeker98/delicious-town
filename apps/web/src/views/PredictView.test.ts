@@ -22,6 +22,8 @@ const ev = (p: Partial<PredictListDto['events'][number]> = {}) => ({
   no: 0,
   netCost: 0,
   payout: null,
+  auto: false,
+  resultNote: null,
   ...p,
 });
 const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({
@@ -159,6 +161,44 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     const r = w.get('[data-testid="pd-result"]').text();
     expect(r).toContain('已作废：退回净投入的 85%，共 1,700');
     expect(r).toContain('本局盈亏 -300');
+  });
+
+  it('系统出题标记；已结束的事件显示判定依据（238-2）', async () => {
+    vi.mocked(endpoints.predictList).mockResolvedValue(
+      list({
+        events: [
+          ev({ auto: true }),
+          ev({
+            id: 2,
+            title: '15 点是雨类吗',
+            status: 'resolved',
+            outcome: false,
+            auto: true,
+            resultNote: '15 点自动轮换的天气是晴（晴类）',
+            payout: 0,
+          }),
+        ],
+      }),
+    );
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: {
+        ...detail.event,
+        id: 2,
+        status: 'resolved',
+        outcome: false,
+        auto: true,
+        resultNote: '15 点自动轮换的天气是晴（晴类）',
+        payout: 0,
+      },
+    });
+    const w = mount(PredictView);
+    await flushPromises();
+    expect(w.get('[data-testid="pd-auto-1"]').text()).toContain('系统出题');
+    expect(w.get('[data-testid="pd-ended-note-2"]').text()).toContain('判定依据：15 点自动轮换的天气是晴');
+    await w.get('[data-testid="pd-ended-2"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="pd-note"]').text()).toContain('判定依据：15 点自动轮换的天气是晴（晴类）');
   });
 
   it('提交：调用接口、提示、刷新', async () => {

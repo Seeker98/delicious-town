@@ -149,7 +149,12 @@ onMounted(() => void loadList());
     @click="pick(e.id)"
   >
     <div class="d-flex align-items-center gap-2">
-      <b class="flex-fill">{{ e.title }}</b>
+      <b class="flex-fill"
+        >{{ e.title
+        }}<span v-if="e.auto" class="badge text-bg-light ms-1" :data-testid="`pd-auto-${e.id}`"
+          >系统出题</span
+        ></b
+      >
       <span class="text-success">是 {{ predictPercent(e.price) }}%</span>
     </div>
     <div class="small text-muted">
@@ -160,7 +165,12 @@ onMounted(() => void loadList());
 
   <div v-if="detail && selected !== null" class="dt-card mb-3" data-testid="pd-detail">
     <b>{{ detail.event.title }}</b>
+    <span v-if="detail.event.auto" class="badge text-bg-light ms-1">系统出题</span>
     <div v-if="detail.event.description" class="small text-muted">{{ detail.event.description }}</div>
+    <!-- 判定依据（238-2）：比如天气题写明自动轮换出的天气、之后有没有人用雷神锤改 -->
+    <div v-if="detail.event.resultNote" class="small text-muted" data-testid="pd-note">
+      判定依据：{{ detail.event.resultNote }}
+    </div>
     <div class="d-flex gap-3 my-1">
       <span class="text-success">是 {{ predictPercent(detail.event.price) }}%</span>
       <span class="text-danger">否 {{ 100 - predictPercent(detail.event.price) }}%</span>
@@ -324,6 +334,9 @@ onMounted(() => void loadList());
       <span v-if="profit(e) !== null" :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'">
         · 盈亏 {{ signed(profit(e)!) }}</span
       >
+      <div v-if="e.resultNote" class="text-muted" :data-testid="`pd-ended-note-${e.id}`">
+        判定依据：{{ e.resultNote }}
+      </div>
     </div>
   </template>
 </template>

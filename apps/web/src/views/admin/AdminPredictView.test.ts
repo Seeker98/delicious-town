@@ -23,6 +23,8 @@ const row: PredictAdminRow = {
   ifYes: -15000,
   ifNo: 23000,
   creator: 'boss',
+  auto: false,
+  resultNote: null,
 };
 
 async function mountAs(role: 'mod' | 'admin') {
@@ -61,6 +63,23 @@ describe('后台预测页（238-1 设计 §7.3）', () => {
     await flushPromises();
     expect(adminApi.predictResolve).toHaveBeenCalledWith(7, true);
     expect(adminApi.predictList).toHaveBeenCalledTimes(3);
+  });
+
+  it('系统出的题出题人显示"系统"，显示判定依据', async () => {
+    vi.mocked(adminApi.predictList).mockResolvedValue([
+      {
+        ...row,
+        auto: true,
+        creator: null,
+        status: 'resolved',
+        outcome: true,
+        resultNote: '明天 9 点蟹老板刷新在 7 号街',
+      },
+    ]);
+    const w = await mountAs('mod');
+    const t = w.get('[data-testid="apd-row-7"]').text();
+    expect(t).toContain('系统');
+    expect(w.get('[data-testid="apd-note-7"]').text()).toContain('明天 9 点蟹老板刷新在 7 号街');
   });
 
   it('出题：提交区服、标题、截止时间、初始概率', async () => {
