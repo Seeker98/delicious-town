@@ -39,6 +39,10 @@ test('后台建签到活动 → 玩家签到后在活动页领奖，银币到账
     expect((await page.request.post('/api/v1/task/signin', { data: {} })).ok()).toBe(true);
 
     await page.goto('/activities');
+    // 同一区服还有别的活动时，活动页只显示选中的一个：先在活动条里点自己的（问题记录 226）
+    await page.locator('[data-testid^="activity-"]').first().waitFor();
+    const tab = page.getByTestId(`act-tab-${activityId}`);
+    if ((await tab.count()) > 0) await tab.click();
     const card = page.getByTestId(`activity-${activityId}`);
     await expect(card).toContainText('e2e 签到活动');
     await card.getByTestId(`claim-${activityId}-g0`).click();

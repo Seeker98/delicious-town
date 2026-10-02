@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityGoals from '../components/activity/ActivityGoals.vue';
@@ -8,9 +8,10 @@ import ActivityCoop from '../components/activity/ActivityCoop.vue';
 import ActivityExchange from '../components/activity/ActivityExchange.vue';
 import ActivityGrid from '../components/activity/ActivityGrid.vue';
 import ActivityPass from '../components/activity/ActivityPass.vue';
+import ActivityStrip from '../components/activity/ActivityStrip.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
-import { timeLeft } from '../utils/activity';
+import { defaultSelection, orderActivities, timeLeft } from '../utils/activity';
 
 /** 限时活动（问题记录 148，设计 §7.2） */
 const toast = useToastStore();
@@ -18,12 +19,18 @@ const items = ref<ActivityDto[]>([]);
 const level = ref(0);
 const loaded = ref(false);
 const busy = ref(false);
+/** 活动条 + 详情（问题记录 226）：只显示选中的那个活动 */
+const selected = ref<number | null>(null);
+const ordered = computed(() => orderActivities(items.value));
+const shown = computed(() => ordered.value.filter((a) => a.id === selected.value));
 
 async function load() {
   try {
     const r = await endpoints.activities();
     items.value = r.items;
     level.value = r.level;
+    // 领奖、兑换后重新读取时停在当前活动；它不在列表里了才按默认规则重选
+    if (!r.items.some((a) => a.id === selected.value)) selected.value = defaultSelection(ordered.value);
   } catch (e) {
     toast.push(errorMessage(e, '读取活动失败'), 'danger');
   } finally {
@@ -67,7 +74,13 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
 <template>
   <h5>限时活动</h5>
   <div v-if="loaded && items.length === 0" class="text-muted">现在没有进行中的活动。</div>
-  <div v-for="a in items" :key="a.id" class="dt-card mb-3" :data-testid="`activity-${a.id}`">
+  <ActivityStrip
+    v-if="ordered.length > 1"
+    :items="ordered"
+    :selected="selected"
+    @select="selected = $event"
+  />
+  <div v-for="a in shown" :key="a.id" class="dt-card mb-3" :data-testid="`activity-${a.id}`">
     <div class="d-flex align-items-center gap-2 mb-1">
       <span v-if="isSignin(a)" class="badge text-bg-success">签到</span>
       <b class="flex-fill">{{ a.title }}</b>
