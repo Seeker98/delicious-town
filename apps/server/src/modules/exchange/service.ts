@@ -88,9 +88,14 @@ export async function eligibility(o: {
 }
 
 export function createExchangeService(d: GameDeps) {
+  /**
+   * 下单并撮合。toSystem（问题记录 244）：只和系统收购那一档成交，可以低于挂单价格区间（兜底价），
+   * 不受未成交挂单数限制；系统收不下全部数量就整单拒绝，所以不会留下低于下限的挂单
+   */
   async function place(
     o: Op,
     b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number },
+    opts: { toSystem?: boolean } = {},
   ): Promise<ExchangePlaceDto> {
     const t = o.tuning.exchange;
     // 被冻结的店不能下单（156-2 设计 §6.1）
@@ -111,14 +116,15 @@ export function createExchangeService(d: GameDeps) {
     const day = gameDay(o.now);
     const ref = await refPrice(o.tx, o.config, t, o.shardId, b.foodsId, day);
     const band = priceBand(ref, t);
-    if (b.price < band.min || b.price > band.max) throw invalidState('price_band', band);
+    if (!opts.toSystem && (b.price < band.min || b.price > band.max)) throw invalidState('price_band', band);
     const open = await o.tx
       .selectFrom('exchange_order')
       .select((eb) => eb.fn.countAll<string>().as('n'))
       .where('rest_id', '=', o.rest.id)
       .where('status', '=', 'open')
       .executeTakeFirstOrThrow();
-    if (Number(open.n) >= t.maxOpenOrders) throw limitReached('exchange_orders', { max: t.maxOpenOrders });
+    if (!opts.toSystem && Number(open.n) >= t.maxOpenOrders)
+      throw limitReached('exchange_orders', { max: t.maxOpenOrders });
 
     if (b.side === 'sell') await subFoods(o, b.foodsId, b.qty, { source: 'exchange' });
     else {
@@ -183,7 +189,7 @@ export function createExchangeService(d: GameDeps) {
       b.side === 'buy'
         ? q.where('price', '<=', b.price).orderBy('price', 'asc')
         : q.where('price', '>=', b.price).orderBy('price', 'desc');
-    const book = (await q.orderBy('id', 'asc').execute()) as OrderRow[];
+    const book = opts.toSystem ? [] : ((await q.orderBy('id', 'asc').execute()) as OrderRow[]);
     // 系统做市（156-3 设计 §4.3）：系统报价是盘口里的一档，价格更好时排在玩家挂单前面，同价排在后面。
     // 已持有盘口锁，库存和今天已收不会被别人同时改；玩家今天已卖的在锁店事务里
     const quote = await makerQuote(o.tx, {
@@ -195,6 +201,11 @@ export function createExchangeService(d: GameDeps) {
       restId: o.rest.id,
       ref,
     });
+    if (opts.toSystem) {
+      if (!quote.bid) throw invalidState('exchange_no_system_bid');
+      if (quote.bid.price < b.price) throw invalidState('exchange_price_moved', { price: quote.bid.price });
+      if (quote.bid.qty < b.qty) throw limitReached('exchange_system_qty', { max: quote.bid.qty });
+    }
     const sys: MakerLevel | null =
       b.side === 'sell'
         ? quote.bid && quote.bid.price >= b.price
@@ -395,6 +406,7 @@ export function createExchangeService(d: GameDeps) {
       .returning(ORDER_COLS)
       .executeTakeFirstOrThrow()) as OrderRow;
     restLog(o, 'exchange.order', {
+      ...(opts.toSystem ? { toSystem: true } : {}),
       side: b.side,
       foodsId: b.foodsId,
       price: b.price,
@@ -685,6 +697,9 @@ export function createExchangeService(d: GameDeps) {
   return {
     place: (ctx: RestCtx, b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) =>
       op(ctx, 'exchange', (o) => place(o, b)),
+    /** 卖给系统（问题记录 244）：按系统收购价立即成交，可以是低于挂单下限的兜底价 */
+    sellToSystem: (ctx: RestCtx, b: { foodsId: number; price: number; qty: number }) =>
+      op(ctx, 'exchange', (o) => place(o, { ...b, side: 'sell' }, { toSystem: true })),
     cancel: (ctx: RestCtx, id: number) => op(ctx, 'restaurant', (o) => cancel(o, id)),
     withdraw: (ctx: RestCtx) => op(ctx, 'restaurant', (o) => withdraw(o)),
     foods,

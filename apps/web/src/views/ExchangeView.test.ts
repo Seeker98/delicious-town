@@ -15,6 +15,7 @@ vi.mock('../api/endpoints', () => ({
     tradePlace: vi.fn(),
     tradeCancel: vi.fn(),
     tradeWithdraw: vi.fn(),
+    tradeSellSystem: vi.fn(),
   },
 }));
 
@@ -134,6 +135,43 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     await w.get('[data-testid="ex-bid-sys-700"]').trigger('click');
     expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('700');
     expect(w.text()).toContain('（系统）');
+  });
+
+  it('卖给系统（问题记录 244）：兜底档写"系统兜底收"、点它不填进挂单单价；按钮弹出数量和到手金额；提交按系统价卖', async () => {
+    vi.mocked(endpoints.tradeBook).mockResolvedValue({
+      ...book,
+      bids: [{ price: 380, qty: 20, system: true, floor: true }],
+    });
+    vi.mocked(endpoints.tradeSellSystem).mockResolvedValue({
+      order: { id: 9, side: 'sell', foodsId: 11, price: 380, qty: 3, filled: 3, status: 'filled' },
+      fills: [{ price: 380, qty: 3, held: false }],
+    } as never);
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.get('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    const row = w.get('[data-testid="ex-bid-sys-380"]');
+    expect(row.text()).toContain('系统兜底收');
+    await row.trigger('click');
+    expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('');
+    await w.get('[data-testid="ex-sell-sys"]').trigger('click');
+    await w.get('[data-testid="ex-sys-qty"]').setValue('3');
+    // 380 × 3 = 1140，手续费 5% 向下取整 57，到手 1083
+    expect(w.get('[data-testid="ex-sys-estimate"]').text()).toContain('到手 1,083');
+    await w.get('[data-testid="ex-sys-submit"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.tradeSellSystem).toHaveBeenCalledWith({ foodsId: 11, price: 380, qty: 3 });
+    expect(useToastStore().items.at(-1)!.text).toContain('卖给系统 3 个');
+    expect(endpoints.tradeBook).toHaveBeenCalledTimes(2);
+  });
+
+  it('交易所说明里写清楚系统报价怎么算（问题记录 250）', async () => {
+    const w = mount(ExchangeView);
+    await flushPromises();
+    const help = w.get('[data-testid="ex-sys-help"]').text();
+    expect(help).toContain('参考价 × 0.7');
+    expect(help).toContain('一天内不变');
+    expect(help).toContain('兜底');
   });
 
   it('点盘口的价格填进表单；下单显示预计花费；提交后刷新并提示成交', async () => {
