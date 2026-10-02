@@ -9,6 +9,7 @@ import type {
   ReportDetailDto,
   ReportStatus,
   ExchangeFrozenRow,
+  ExchangeMakerDto,
   ExchangeSuspiciousRow,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
@@ -94,6 +95,7 @@ export const adminApi = {
   suspiciousExchange: (shardId: number, flag?: string) =>
     api.get<ExchangeSuspiciousRow[]>(`${A}/suspicious/exchange${qs({ shardId, flag })}`),
   exchangeFrozen: (shardId: number) => api.get<ExchangeFrozenRow[]>(`${A}/exchange/frozen${qs({ shardId })}`),
+  exchangeMaker: (shardId: number) => api.get<ExchangeMakerDto>(`${A}/exchange/maker${qs({ shardId })}`),
   exchangeFreeze: (b: { restId: number; reason: string }) =>
     api.post<{ ok: true }>(`${A}/exchange/freeze`, b),
   exchangeUnfreeze: (b: { restId: number }) => api.post<{ ok: true }>(`${A}/exchange/unfreeze`, b),

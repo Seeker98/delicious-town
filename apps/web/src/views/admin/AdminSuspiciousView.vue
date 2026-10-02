@@ -10,6 +10,7 @@ import type {
 } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import ExchangeGuardPanel from '../../components/admin/ExchangeGuardPanel.vue';
+import ExchangeMakerPanel from '../../components/admin/ExchangeMakerPanel.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -81,6 +82,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
   </ul>
 
   <ExchangeGuardPanel v-if="tab === 'exchange'" />
+  <ExchangeMakerPanel v-if="tab === 'exchange'" />
   <template v-if="tab === 'bar'">
     <p class="small text-muted">
       最近 7 个游戏日；单日超过门槛的标红（门槛在区服数值 tuning.ops.suspicious）。
