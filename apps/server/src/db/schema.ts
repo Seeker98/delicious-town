@@ -1044,6 +1044,9 @@ export interface ExchangeTradeTable {
   /** bigint：pg 读出为字符串 */
   fee: ColumnType<string, number | string, number | string>;
   created_at: TsDefault;
+  buyer_account_id: Nullable<number>;
+  seller_account_id: Nullable<number>;
+  flags: ColumnType<string[], string[] | undefined, string[]>;
 }
 export interface ExchangeRefTable {
   shard_id: number;
@@ -1059,6 +1062,24 @@ export interface ExchangeWalletFoodTable {
   rest_id: number;
   foods_id: number;
   num: number;
+}
+
+export interface ExchangeHoldTable {
+  id: Generated<string>;
+  rest_id: number;
+  trade_id: string | null;
+  coin: ColumnType<string, number | string | undefined, number | string>;
+  foods_id: number | null;
+  num: Default<number>;
+  release_at: Ts;
+  status: 'held' | 'released' | 'confiscated';
+  created_at: TsDefault;
+}
+export interface ExchangeFreezeTable {
+  rest_id: number;
+  reason: string;
+  actor_account_id: number | null;
+  created_at: TsDefault;
 }
 
 export interface DB {
@@ -1146,6 +1167,8 @@ export interface DB {
   exchange_ref: ExchangeRefTable;
   exchange_wallet: ExchangeWalletTable;
   exchange_wallet_food: ExchangeWalletFoodTable;
+  exchange_hold: ExchangeHoldTable;
+  exchange_freeze: ExchangeFreezeTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
