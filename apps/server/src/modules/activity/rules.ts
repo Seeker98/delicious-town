@@ -88,3 +88,15 @@ export function activityState(now: Date, endsAt: Date, settled: boolean): Activi
   if (now < endsAt) return 'running';
   return settled ? 'ended' : 'settling';
 }
+
+/** 兑换多次时的奖励：数量乘次数，帽子重复次数（148-2 设计 §5） */
+export function scaleRewards(r: RewardItems, times: number): RewardItems {
+  const out: RewardItems = {};
+  if (r.coin) out.coin = r.coin * times;
+  if (r.diamond) out.diamond = r.diamond * times;
+  if (r.exp) out.exp = r.exp * times;
+  if (r.goods?.length) out.goods = r.goods.map((g) => ({ id: g.id, num: g.num * times }));
+  if (r.foods?.length) out.foods = r.foods.map((f) => ({ id: f.id, num: f.num * times }));
+  if (r.hats?.length) out.hats = Array.from({ length: times }, () => r.hats!).flat();
+  return out;
+}

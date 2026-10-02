@@ -24,6 +24,7 @@ const base = {
   state: 'running' as const,
   today: {},
   premium: false,
+  exchangeUntil: null,
 };
 const goals: ActivityDto = {
   ...base,

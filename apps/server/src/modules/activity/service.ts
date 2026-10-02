@@ -1,15 +1,16 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import {
   ErrorCode,
   gameDay,
   type ActivitiesDto,
   type ActivityClaimDto,
   type ActivityDto,
+  type ActivityExchangeDto,
   type ActivitySpec,
   type ActivitySummaryDto,
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, requirement } from '../../core/errors';
+import { invalidState, limitReached, notEnough, requirement } from '../../core/errors';
 import { restLog, runOp, type Op } from '../../core/op';
 import { spendDiamond } from '../../core/resources';
 import type { DB } from '../../db/schema';
@@ -17,7 +18,16 @@ import { AppError } from '../../http/errors';
 import { grantRewardOp } from '../mail/reward';
 import { consumeGoods } from '../store/goods';
 import { passDailyKey } from './handler';
-import { activityState, rewardsOf, type RewardState } from './rules';
+import {
+  activityState,
+  currencyKey,
+  dropDailyKey,
+  exchangedKey,
+  exchangeUntil,
+  rewardsOf,
+  scaleRewards,
+  type RewardState,
+} from './rules';
 
 /** 结束多久以内还留在玩家的活动列表里（设计 §7.2） */
 const LIST_AFTER_END_MS = 7 * 86_400_000;
@@ -94,6 +104,21 @@ export function createActivityService(d: GameDeps) {
     now: Date,
   ): Promise<Record<string, number>> {
     const spec = specOf(row);
+    // 兑换活动：各掉落规则今天已掉的数量（148-2 设计 §7）
+    if (spec.kind === 'exchange') {
+      const keys = spec.def.drops.map((_, i) => dropDailyKey(row.id, i));
+      const rows = await db
+        .selectFrom('daily_counter')
+        .select(['key', 'count'])
+        .where('rest_id', '=', restId)
+        .where('day', '=', gameDay(now))
+        .where('key', 'in', keys)
+        .execute();
+      const by = new Map(rows.map((r) => [r.key, r.count]));
+      return Object.fromEntries(
+        spec.def.drops.map((_, i) => [`d${i}`, by.get(dropDailyKey(row.id, i)) ?? 0]),
+      );
+    }
     if (spec.kind !== 'pass') return {};
     const keys = spec.def.rules.map((r) => passDailyKey(row.id, r.key));
     const rows = await db
@@ -130,6 +155,7 @@ export function createActivityService(d: GameDeps) {
       premium: p.premium,
       rewards,
       claimable: state === 'running' ? rewards.filter((x) => x.reached && !x.claimed).length : 0,
+      exchangeUntil: exchangeUntil(specOf(row), row.ends_at)?.toISOString() ?? null,
     };
   }
 
@@ -242,6 +268,64 @@ export function createActivityService(d: GameDeps) {
           await consumeGoods(o, g.id, g.num, { source: 'activity' });
         restLog(o, 'activity.unlock', { activityId: row.id, title: row.title });
         return { premium: true as const };
+      });
+    },
+
+    /** 活动商店兑换：结束后兑换期内也能换（148-2 设计 §5） */
+    exchange(ctx: RestCtx, id: number, index: number, times: number) {
+      return op(ctx, async (o): Promise<ActivityExchangeDto> => {
+        const row = (await visible(o.tx, o.shardId)
+          .where('id', '=', id)
+          .where('starts_at', '<=', o.now)
+          .executeTakeFirst()) as Row | undefined;
+        if (!row) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'activity', id });
+        const spec = specOf(row);
+        if (spec.kind !== 'exchange') throw invalidState('not_exchange');
+        if (o.now >= exchangeUntil(spec, row.ends_at)!) throw invalidState('exchange_closed');
+        const item = spec.def.shop[index];
+        if (!item) throw invalidState('no_item', { index });
+        const p = await loadProgress(o.tx, row.id, o.rest.id);
+        const done = p.counters[exchangedKey(index)] ?? 0;
+        if (done + times > item.limit)
+          throw limitReached('activity_exchange', { limit: item.limit, left: item.limit - done });
+        for (const c of item.cost) {
+          const need = c.num * times;
+          const have = p.counters[currencyKey(c.currency)] ?? 0;
+          if (have < need) throw notEnough('activity_currency', need, have, c.currency);
+        }
+        for (const c of item.cost) {
+          const need = c.num * times;
+          const r = await o.tx
+            .updateTable('activity_counter')
+            .set({ count: sql<string>`count - ${need}` })
+            .where('activity_id', '=', row.id)
+            .where('rest_id', '=', o.rest.id)
+            .where('key', '=', currencyKey(c.currency))
+            .where('count', '>=', String(need))
+            .executeTakeFirst();
+          if (Number(r.numUpdatedRows) !== 1) throw notEnough('activity_currency', need, 0, c.currency);
+        }
+        await o.tx
+          .insertInto('activity_counter')
+          .values({ activity_id: row.id, rest_id: o.rest.id, key: exchangedKey(index), count: times })
+          .onConflict((oc) =>
+            oc
+              .columns(['activity_id', 'rest_id', 'key'])
+              .doUpdateSet({ count: sql<string>`activity_counter.count + ${times}` }),
+          )
+          .execute();
+        const items = scaleRewards(item.award, times);
+        await grantRewardOp(o, items, {
+          source: 'activity',
+          logType: 'activity.exchange',
+          logParams: {
+            activityId: row.id,
+            title: row.title,
+            times,
+            cost: item.cost.map((c) => ({ name: spec.def.currencies[c.currency]!.name, num: c.num * times })),
+          },
+        });
+        return { index, times, items };
       });
     },
   };
