@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
 import ReportButton from '../components/ReportButton.vue';
 import TableGrid from '../components/TableGrid.vue';
@@ -18,6 +19,7 @@ import { equipName } from '../utils/equipName';
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const t = useT();
 const catalog = useCatalogStore();
 const session = useSessionStore();
 const restId = computed(() => Number(route.params.restId));
@@ -32,7 +34,7 @@ async function load() {
     if (picked.value) picked.value = rest.value.tables.find((t) => t.no === picked.value!.no) ?? null;
     error.value = '';
   } catch (e) {
-    error.value = errorMessage(e, '读取餐厅失败');
+    error.value = errorMessage(e, t.value.friends.rest.loadFailed);
   }
 }
 
@@ -55,17 +57,21 @@ const isEmpty = (t: TableDto) => (t.customer === 0 || t.customer === -3) && !t.r
 const mine = computed(() => session.me?.restaurantId ?? null);
 
 function refuel(num: number) {
-  return act(() => endpoints.friendRefuel(restId.value, num), '加油成功', '加油失败');
+  return act(
+    () => endpoints.friendRefuel(restId.value, num),
+    t.value.friends.rest.refueled,
+    t.value.friends.rest.refuelFailed,
+  );
 }
 function remove() {
-  if (!rest.value || !window.confirm(`确定删除好友「${rest.value.name}」吗？`)) return;
+  if (!rest.value || !window.confirm(t.value.friends.rest.removeConfirm(rest.value.name))) return;
   return act(
     async () => {
       await endpoints.friendRemove(restId.value);
       await router.push('/friends');
     },
-    '已删除好友',
-    '删除失败',
+    t.value.friends.rest.removed,
+    t.value.friends.rest.removeFailed,
   );
 }
 
@@ -98,18 +104,18 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
           />
         </div>
         <div class="small text-muted">
-          {{ rest.level }} 级 · {{ rest.star }} 星 · 声望 {{ rest.renown
-          }}<span v-if="rest.state !== 1"> · 停业中</span>
+          {{ t.friends.rest.info(rest.level, rest.star, rest.renown)
+          }}<span v-if="rest.state !== 1">{{ t.friends.rest.closed }}</span>
         </div>
       </div>
-      <GameImg :path="`door/${rest.door}`" alt="门" fallback-icon="bi-door-closed" />
+      <GameImg :path="`door/${rest.door}`" :alt="t.friends.rest.door" fallback-icon="bi-door-closed" />
     </div>
     <HiphopCard :rest-id="restId" />
     <div v-if="rest.icons.length > 0" class="mb-2">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
     </div>
     <div v-if="rest.equips.length > 0" class="small mb-2" data-testid="friend-equips">
-      厨具：
+      {{ t.friends.rest.equips }}
       <span v-for="e in rest.equips" :key="e.part" class="me-2">
         {{ PART_NAMES[e.part] }} {{ equipName(catalog, e) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
       </span>
@@ -120,17 +126,23 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       data-testid="friend-special"
     >
       <div class="flex-fill">
-        特色菜：<b>{{ catalog.mcName(rest.special.mcId) }}</b> {{ GRADE_NAMES[rest.special.grade] }} · 剩
-        {{ rest.special.leftNum }} 份 · 每份 {{ rest.special.price }} 银币
+        {{ t.friends.rest.special }}<b>{{ catalog.mcName(rest.special.mcId) }}</b>
+        {{
+          t.friends.rest.specialLine(
+            GRADE_NAMES[rest.special.grade] ?? '',
+            rest.special.leftNum,
+            rest.special.price,
+          )
+        }}
       </div>
       <button
         v-if="rest.id !== mine"
         class="btn btn-sm btn-outline-success"
         data-testid="act-taste"
         :disabled="busy || rest.special.eaten || rest.state !== 1"
-        @click="act(() => endpoints.mcTaste(restId), '品尝成功，体力增加了', '品尝失败')"
+        @click="act(() => endpoints.mcTaste(restId), t.friends.rest.tasted, t.friends.rest.tasteFailed)"
       >
-        {{ rest.special.eaten ? '已品尝' : '品尝' }}
+        {{ rest.special.eaten ? t.friends.rest.tastedAlready : t.friends.rest.taste }}
       </button>
     </div>
     <div v-if="rest.notice" class="border rounded p-2 mb-2 small">
@@ -144,24 +156,28 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <button
         class="btn btn-sm btn-outline-primary"
         :disabled="busy || rest.thumbedToday"
-        @click="act(() => endpoints.thumbUp(restId), '点赞成功', '点赞失败')"
+        @click="act(() => endpoints.thumbUp(restId), t.friends.rest.thumbed, t.friends.rest.thumbFailed)"
       >
-        {{ rest.thumbedToday ? '已点赞' : '点赞' }}
+        {{ rest.thumbedToday ? t.friends.rest.thumbedAlready : t.friends.rest.thumb }}
       </button>
-      <button class="btn btn-sm btn-outline-primary" :disabled="busy" @click="refuel(-1)">帮它加满油</button>
-      <RouterLink class="btn btn-sm btn-outline-primary" :to="`/friends/${restId}/flip`">翻橱柜</RouterLink>
-      <RouterLink class="btn btn-sm btn-outline-primary" :to="`/friends/${restId}/exchange`"
-        >换食材</RouterLink
-      >
+      <button class="btn btn-sm btn-outline-primary" :disabled="busy" @click="refuel(-1)">
+        {{ t.friends.rest.refuel }}
+      </button>
+      <RouterLink class="btn btn-sm btn-outline-primary" :to="`/friends/${restId}/flip`">{{
+        t.friends.rest.flip
+      }}</RouterLink>
+      <RouterLink class="btn btn-sm btn-outline-primary" :to="`/friends/${restId}/exchange`">{{
+        t.friends.rest.exchange
+      }}</RouterLink>
       <RouterLink
         v-if="!rest.npc"
         class="btn btn-sm btn-outline-primary"
         :to="`/yard?friend=${restId}`"
         data-testid="to-yard"
-        >去它的菜园</RouterLink
+        >{{ t.friends.rest.yard }}</RouterLink
       >
       <button v-if="!rest.npc" class="btn btn-sm btn-outline-danger ms-auto" :disabled="busy" @click="remove">
-        删除好友
+        {{ t.friends.rest.remove }}
       </button>
     </div>
     <div v-else-if="rest.id !== mine" class="mb-2">
@@ -169,9 +185,9 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         class="btn btn-sm btn-primary"
         data-testid="add-friend"
         :disabled="busy || rest.requested"
-        @click="act(() => endpoints.friendApply(restId), '申请已发出', '申请失败')"
+        @click="act(() => endpoints.friendApply(restId), t.friends.applied, t.friends.applyFailed)"
       >
-        {{ rest.requested ? '已申请' : '加好友' }}
+        {{ rest.requested ? t.friends.requested : t.friends.addFriend }}
       </button>
     </div>
     <FriendDuel v-if="rest.isFriend && !rest.npc" :key="restId" :rest-id="restId" class="mb-2" />
@@ -179,23 +195,35 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <TableGrid :tables="rest.tables" :selected="picked?.no ?? null" @pick="(t) => (picked = t)" />
 
     <div v-if="picked && rest.isFriend" class="border rounded p-2 mt-2 small">
-      <div class="mb-1">第 {{ picked.no }} 桌</div>
+      <div class="mb-1">{{ t.friends.rest.table(picked.no) }}</div>
       <template v-if="isEmpty(picked)">
         <button
           class="btn btn-sm btn-primary me-1"
           data-testid="act-dine"
           :disabled="busy"
-          @click="act(() => endpoints.dineStart(restId, picked!.no), '开始白食', '白食失败')"
+          @click="
+            act(
+              () => endpoints.dineStart(restId, picked!.no),
+              t.friends.rest.dineStarted,
+              t.friends.rest.dineFailed,
+            )
+          "
         >
-          白食
+          {{ t.friends.rest.dine }}
         </button>
         <button
           class="btn btn-sm btn-outline-danger"
           data-testid="act-lay"
           :disabled="busy"
-          @click="act(() => endpoints.roachLay(restId, picked!.no), '放了一只蟑螂', '放蟑螂失败')"
+          @click="
+            act(
+              () => endpoints.roachLay(restId, picked!.no),
+              t.friends.rest.roachLaid,
+              t.friends.rest.layFailed,
+            )
+          "
         >
-          放蟑螂
+          {{ t.friends.rest.lay }}
         </button>
       </template>
       <button
@@ -203,11 +231,17 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         class="btn btn-sm btn-success"
         data-testid="act-kill"
         :disabled="busy"
-        @click="act(() => endpoints.roachKill(restId, picked!.no), '消灭了蟑螂', '灭蟑螂失败')"
+        @click="
+          act(
+            () => endpoints.roachKill(restId, picked!.no),
+            t.friends.rest.roachKilled,
+            t.friends.rest.killFailed,
+          )
+        "
       >
-        消灭蟑螂
+        {{ t.friends.rest.kill }}
       </button>
-      <span v-else class="text-muted">这张桌现在不能操作</span>
+      <span v-else class="text-muted">{{ t.friends.rest.tableLocked }}</span>
     </div>
   </template>
 </template>

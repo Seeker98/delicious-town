@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { FORUM_CATEGORIES, FORUM_CATEGORY_NAMES, type ForumCategory } from '@dt/shared';
+import { FORUM_CATEGORIES, type ForumCategory } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
@@ -10,6 +11,7 @@ import { useToastStore } from '../stores/toast';
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const t = useT();
 const editId = computed(() => (route.params.id ? Number(route.params.id) : null));
 const category = ref<ForumCategory>('chat');
 const title = ref('');
@@ -37,7 +39,7 @@ onMounted(async () => {
     title.value = d.title;
     content.value = d.content;
   } catch (e) {
-    toast.push(errorMessage(e, '读取帖子失败'), 'danger');
+    toast.push(errorMessage(e, t.value.forum.post.loadFailed), 'danger');
   }
 });
 
@@ -52,7 +54,7 @@ async function submit() {
         : await endpoints.forumEdit(editId.value, body);
     await router.push(`/forum/${r.id}`);
   } catch (e) {
-    toast.push(errorMessage(e, '发布失败'), 'danger');
+    toast.push(errorMessage(e, t.value.forum.edit.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -61,18 +63,18 @@ async function submit() {
 
 <template>
   <div class="dt-page-title">
-    <h5>{{ editId === null ? '发帖' : '编辑帖子' }}</h5>
+    <h5>{{ editId === null ? t.forum.edit.newTitle : t.forum.edit.editTitle }}</h5>
   </div>
   <div class="mb-2">
     <label v-for="c in FORUM_CATEGORIES" :key="c" class="me-3 small">
       <input v-model="category" type="radio" :value="c" :data-testid="`edit-cat-${c}`" />
-      {{ FORUM_CATEGORY_NAMES[c] }}
+      {{ t.forum.categories[c] }}
     </label>
   </div>
   <input
     v-model="title"
     class="form-control form-control-sm mb-1"
-    placeholder="标题（最多 40 字）"
+    :placeholder="t.forum.edit.titlePlaceholder"
     data-testid="edit-title"
   />
   <div :class="['dt-meta', 'mb-2', { 'text-danger': titleLen > TITLE_MAX }]" data-testid="edit-title-count">
@@ -82,7 +84,7 @@ async function submit() {
     v-model="content"
     class="form-control form-control-sm mb-1"
     rows="10"
-    placeholder="正文（纯文字，最多 5000 字）"
+    :placeholder="t.forum.edit.contentPlaceholder"
     data-testid="edit-content"
   ></textarea>
   <div class="d-flex align-items-center">
@@ -95,7 +97,7 @@ async function submit() {
       data-testid="edit-submit"
       @click="submit"
     >
-      发布
+      {{ t.forum.edit.publish }}
     </button>
   </div>
 </template>

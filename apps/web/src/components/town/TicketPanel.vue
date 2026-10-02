@@ -2,6 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue';
 import type { TicketResultDto, TownExchangeDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -10,6 +11,7 @@ const props = defineProps<{ data: TownExchangeDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 
 const level = ref(1);
@@ -34,12 +36,17 @@ async function run(fn: () => Promise<TicketResultDto>) {
   busy.value = true;
   try {
     const r = await fn();
-    toast.push(`换到 ${r.foods.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join('、')}`, 'success');
+    toast.push(
+      t.value.town.ticket.got(
+        r.foods.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join(t.value.events.sep),
+      ),
+      'success',
+    );
     clearNums();
     mystery.value = '';
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '兑换失败'), 'danger');
+    toast.push(errorMessage(e, t.value.town.ticket.failed), 'danger');
     emit('reload');
   } finally {
     busy.value = false;
@@ -51,11 +58,11 @@ async function run(fn: () => Promise<TicketResultDto>) {
   <div class="small">
     <div class="d-flex align-items-center gap-1 mb-1">
       <select v-model.number="level" class="form-select form-select-sm w-auto" data-testid="lt-level">
-        <option v-for="l in [1, 2, 3, 4, 5]" :key="l" :value="l">{{ l }} 级食材兑换券</option>
+        <option v-for="l in [1, 2, 3, 4, 5]" :key="l" :value="l">{{ t.town.ticket.level(l) }}</option>
       </select>
-      <span data-testid="lt-have">持有 {{ have }} 张</span>
+      <span data-testid="lt-have">{{ t.town.ticket.have(have) }}</span>
     </div>
-    <div class="text-muted mb-1">一张换一个同等级的普通食材，可以一次选多种</div>
+    <div class="text-muted mb-1">{{ t.town.ticket.rule }}</div>
     <div class="dt-pick-grid">
       <label v-for="id in foods" :key="id" class="dt-pick">
         <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
@@ -75,16 +82,16 @@ async function run(fn: () => Promise<TicketResultDto>) {
       data-testid="lt-go"
       @click="run(() => endpoints.townLevelTicket(level, picks))"
     >
-      兑换（用 {{ total }} 张）
+      {{ t.town.ticket.go(total) }}
     </button>
 
     <div class="d-flex align-items-center gap-1 mt-3">
-      <b>神秘食材兑换券</b>
-      <span>持有 {{ data.mysteryTickets }} 张</span>
+      <b>{{ t.town.ticket.mystery }}</b>
+      <span>{{ t.town.ticket.have(data.mysteryTickets) }}</span>
     </div>
     <div class="d-flex align-items-center gap-1 mt-1">
       <select v-model="mystery" class="form-select form-select-sm w-auto" data-testid="mt-food">
-        <option value="">选择神秘食材</option>
+        <option value="">{{ t.town.ticket.pickMystery }}</option>
         <option v-for="id in data.mysteryFoods" :key="id" :value="String(id)">
           {{ catalog.foodName(id) }}
         </option>
@@ -95,7 +102,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
         data-testid="mt-go"
         @click="run(() => endpoints.townMysteryTicket(Number(mystery)))"
       >
-        兑换
+        {{ t.town.ticket.btn }}
       </button>
     </div>
   </div>

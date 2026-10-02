@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { BROADCAST_NEWS, type NewsDto, type TownDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import ReportButton from '../ReportButton.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
@@ -15,6 +16,7 @@ const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const myRest = computed(() => useSessionStore().me?.restaurantId ?? null);
 const toast = useToastStore();
+const t = useT();
 const items = ref<NewsDto[]>([]);
 const hasMore = ref(false);
 const text = ref('');
@@ -36,7 +38,7 @@ async function load(more = false) {
     items.value = more ? [...items.value, ...page.items] : page.items;
     hasMore.value = page.hasMore;
   } catch (e) {
-    if (mine === seq) toast.push(errorMessage(e, '读取新闻失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.town.news.loadFailed), 'danger');
   } finally {
     if (mine === seq) loading.value = false;
   }
@@ -45,9 +47,10 @@ onMounted(() => void load());
 
 const block = computed(() => {
   const b = props.data.broadcast;
-  if (props.data.star < b.minStar) return `餐厅 ${b.minStar} 星才能广播`;
-  if (b.horns === 0) return '没有喇叭（和 13 哥聊天可以拿到）';
-  if (clock.pending(b.readyAt)) return `广播冷却中，还要等 ${clock.secondsLeft(b.readyAt)} 秒`;
+  const x = t.value.town.news;
+  if (props.data.star < b.minStar) return x.needStar(b.minStar);
+  if (b.horns === 0) return x.noHorn;
+  if (clock.pending(b.readyAt)) return x.cooling(clock.secondsLeft(b.readyAt));
   return '';
 });
 
@@ -57,11 +60,11 @@ async function send() {
   try {
     await endpoints.townBroadcast(text.value);
     text.value = '';
-    toast.push('广播已发出', 'success');
+    toast.push(t.value.town.news.sent, 'success');
     emit('reload');
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '广播失败'), 'danger');
+    toast.push(errorMessage(e, t.value.town.news.failed), 'danger');
     emit('reload');
   } finally {
     busy.value = false;
@@ -75,7 +78,7 @@ async function send() {
       v-model="text"
       class="form-control form-control-sm"
       :maxlength="data.broadcast.maxLen"
-      placeholder="对全镇说点什么"
+      :placeholder="t.town.news.placeholder"
       data-testid="bc-input"
     />
     <button
@@ -84,11 +87,11 @@ async function send() {
       data-testid="bc-send"
       @click="send"
     >
-      广播
+      {{ t.town.news.send }}
     </button>
   </div>
   <div class="dt-meta mb-2">
-    喇叭 {{ data.broadcast.horns }} 个，每次用 1 个
+    {{ t.town.news.horns(data.broadcast.horns) }}
     <span v-if="block" class="text-danger ms-1" data-testid="bc-block">{{ block }}</span>
   </div>
   <div
@@ -100,7 +103,7 @@ async function send() {
     <span class="dt-feed-time">{{ newsTime(n.createdAt) }}</span>
     <!-- 广播只加粗内容，时间保持普通（问题记录 196） -->
     <span :class="{ 'fw-bold': n.type === BROADCAST_NEWS }" data-testid="news-text"
-      >{{ n.type === BROADCAST_NEWS ? '【广播】' : '' }}{{ newsText(n, catalog) }}</span
+      >{{ n.type === BROADCAST_NEWS ? t.nav.news.broadcast : '' }}{{ newsText(n, catalog) }}</span
     >
     <!-- 别人的喇叭可以举报（子项目 6B-1） -->
     <ReportButton
@@ -111,7 +114,7 @@ async function send() {
       :testid="`news-report-${n.id}`"
     />
   </div>
-  <div v-if="items.length === 0" class="dt-empty">还没有新闻</div>
+  <div v-if="items.length === 0" class="dt-empty">{{ t.town.news.empty }}</div>
   <button
     v-if="hasMore"
     class="btn btn-sm btn-outline-secondary mt-2"
@@ -119,6 +122,6 @@ async function send() {
     data-testid="news-more"
     @click="load(true)"
   >
-    加载更多
+    {{ t.common.loadMore }}
   </button>
 </template>

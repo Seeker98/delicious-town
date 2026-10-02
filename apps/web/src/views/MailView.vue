@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue';
 import type { MailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
+import { activeLocale } from '../i18n';
 import RedeemBox from '../components/RedeemBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -12,6 +14,7 @@ import { rewardSummary } from '../utils/reward';
 /** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const mailStore = useMailStore();
 const items = ref<MailDto[]>([]);
 const loaded = ref(false);
@@ -32,7 +35,7 @@ async function load() {
     level.value = r.level;
     loaded.value = true;
   } catch (e) {
-    if (mine === seq) toast.push(errorMessage(e, '读取邮箱失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.mail.loadFailed), 'danger');
   }
 }
 onMounted(() => void load());
@@ -44,7 +47,7 @@ const anyClaimable = computed(() => items.value.some((m) => claimable(m) && !lev
 const daysLeft = (m: MailDto) =>
   Math.max(0, Math.ceil((new Date(m.expiresAt).getTime() - Date.now()) / 86_400_000));
 const sentAt = (m: MailDto) =>
-  new Date(m.createdAt).toLocaleString('zh-CN', {
+  new Date(m.createdAt).toLocaleString(activeLocale(), {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -77,30 +80,30 @@ async function toggle(m: MailDto) {
     }
   }
 }
-const claim = (m: MailDto) => run(() => endpoints.mailClaim(m.id), '领取失败');
-const remove = (m: MailDto) => run(() => endpoints.mailDelete(m.id), '删除失败');
+const claim = (m: MailDto) => run(() => endpoints.mailClaim(m.id), t.value.mail.claimFailed);
+const remove = (m: MailDto) => run(() => endpoints.mailDelete(m.id), t.value.mail.deleteFailed);
 const claimAll = () =>
   run(async () => {
     const r = await endpoints.mailClaimAll();
-    notice.value = r.failed > 0 ? `领了 ${r.claimed} 封，还有 ${r.failed} 封没领成，稍后再试` : '';
-  }, '领取失败');
+    notice.value = r.failed > 0 ? t.value.mail.claimAllPartial(r.claimed, r.failed) : '';
+  }, t.value.mail.claimFailed);
 </script>
 
 <template>
   <div class="dt-page-title">
-    <h5>邮箱</h5>
+    <h5>{{ t.mail.title }}</h5>
     <button
       class="btn btn-sm btn-primary"
       :disabled="busy || !anyClaimable"
       data-testid="mail-claim-all"
       @click="claimAll"
     >
-      一键领取
+      {{ t.mail.claimAll }}
     </button>
   </div>
   <RedeemBox @redeemed="load" />
   <div v-if="notice" class="alert alert-warning py-1 small" role="status">{{ notice }}</div>
-  <div v-if="loaded && items.length === 0" class="dt-empty">没有邮件</div>
+  <div v-if="loaded && items.length === 0" class="dt-empty">{{ t.mail.empty }}</div>
   <div v-for="m in items" :key="m.id" class="dt-card small mb-2" :data-testid="`mail-${m.id}`">
     <div class="d-flex align-items-center gap-2">
       <button
@@ -120,7 +123,7 @@ const claimAll = () =>
         :data-testid="`mail-claim-${m.id}`"
         @click="claim(m)"
       >
-        领取
+        {{ t.mail.claim }}
       </button>
       <button
         v-else
@@ -129,16 +132,18 @@ const claimAll = () =>
         :data-testid="`mail-delete-${m.id}`"
         @click="remove(m)"
       >
-        删除
+        {{ t.mail.delete }}
       </button>
     </div>
     <div class="dt-meta">
-      {{ sentAt(m) }} · 还剩 {{ daysLeft(m) }} 天
-      <span v-if="claimable(m) && levelLow(m)" class="text-danger">· 需 {{ m.minLevel }} 级</span>
-      <span v-if="m.claimed">· 已领取</span>
-      <span v-else-if="m.broken" class="text-danger">· 附件已失效，请联系运营</span>
+      {{ sentAt(m) }}{{ t.mail.daysLeft(daysLeft(m)) }}
+      <span v-if="claimable(m) && levelLow(m)" class="text-danger">{{
+        t.mail.needLevel(m.minLevel ?? 0)
+      }}</span>
+      <span v-if="m.claimed">{{ t.mail.claimed }}</span>
+      <span v-else-if="m.broken" class="text-danger">{{ t.mail.broken }}</span>
     </div>
-    <div v-if="hasItems(m)" class="dt-meta">附件：{{ rewardSummary(m.items!, catalog) }}</div>
+    <div v-if="hasItems(m)" class="dt-meta">{{ t.mail.items(rewardSummary(m.items!, catalog)) }}</div>
     <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">{{ m.body }}</div>
   </div>
 </template>

@@ -14,5 +14,6 @@ const common: Messages['common'] = {
   all: 'Todo',
   other: 'Otros',
   opFailed: 'No se pudo completar la acción',
+  loadMore: 'Cargar más',
 };
 export default common;

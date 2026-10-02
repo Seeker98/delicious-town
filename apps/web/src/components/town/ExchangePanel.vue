@@ -2,19 +2,16 @@
 import { computed, onMounted, reactive, ref } from 'vue';
 import type { TownExchangeDto, TownExchangeItemDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import TicketPanel from './TicketPanel.vue';
 
-const CATS = [
-  { key: 'bg', label: '蟹黄堡' },
-  { key: 'dt', label: '美味券' },
-  { key: 'chip', label: '碎片' },
-  { key: 'so', label: '其他' },
-];
+const CATS = ['bg', 'dt', 'chip', 'so'] as const;
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<TownExchangeDto | null>(null);
 const cat = ref('bg');
 const nums = reactive<Record<number, number>>({});
@@ -25,7 +22,7 @@ async function load() {
   try {
     data.value = await endpoints.townExchange();
   } catch (e) {
-    toast.push(errorMessage(e, '读取兑换失败'), 'danger');
+    toast.push(errorMessage(e, t.value.town.exchange.loadFailed), 'danger');
   }
 }
 onMounted(() => void load());
@@ -34,11 +31,12 @@ const shown = computed(() => (data.value?.items ?? []).filter((x) => x.category 
 const numOf = (x: TownExchangeItemDto) => Math.max(1, Math.floor(Number(nums[x.id] ?? 1)) || 1);
 const left = (x: TownExchangeItemDto) => (x.times > 0 ? x.times - x.used : Infinity);
 function block(x: TownExchangeItemDto): string {
-  if (left(x) <= 0) return '已兑完';
+  const e = t.value.town.exchange;
+  if (left(x) <= 0) return e.soldOut;
   const n = numOf(x);
-  if (n > left(x)) return `最多还能兑 ${left(x)} 次`;
-  if (n > (data.value?.maxNum ?? 99)) return `一次最多 ${data.value?.maxNum} 份`;
-  if (x.need.some((m) => m.have < m.num * n)) return '材料不够';
+  if (n > left(x)) return e.maxLeft(left(x));
+  if (n > (data.value?.maxNum ?? 99)) return e.maxOnce(data.value?.maxNum ?? 99);
+  if (x.need.some((m) => m.have < m.num * n)) return e.lack;
   return '';
 }
 function toggleDesc(id: number) {
@@ -53,10 +51,10 @@ async function go(x: TownExchangeItemDto) {
   busy.value = true;
   try {
     const r = await endpoints.townExchangeDo(x.id, numOf(x));
-    toast.push(`兑换成功：${catalog.goodsName(r.goodsId)}×${r.num}`, 'success');
+    toast.push(t.value.town.exchange.done(catalog.goodsName(r.goodsId), r.num), 'success');
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '兑换失败'), 'danger');
+    toast.push(errorMessage(e, t.value.town.exchange.failed), 'danger');
     await load();
   } finally {
     busy.value = false;
@@ -69,12 +67,12 @@ async function go(x: TownExchangeItemDto) {
     <div class="dt-pills">
       <a
         v-for="c in CATS"
-        :key="c.key"
-        :class="{ active: cat === c.key }"
+        :key="c"
+        :class="{ active: cat === c }"
         href="#"
-        :data-testid="`cat-${c.key}`"
-        @click.prevent="cat = c.key"
-        >{{ c.label }}</a
+        :data-testid="`cat-${c}`"
+        @click.prevent="cat = c"
+        >{{ t.town.exchange.cats[c] }}</a
       >
     </div>
     <div v-for="x in shown" :key="x.id" class="dt-item" :data-testid="`ex-row-${x.id}`">
@@ -91,9 +89,10 @@ async function go(x: TownExchangeItemDto) {
         </div>
         <div class="dt-meta dt-clamp1">
           <span v-for="(m, i) in x.need" :key="m.goodsId"
-            >{{ i > 0 ? '、' : '' }}{{ catalog.goodsName(m.goodsId) }}×{{ m.num }}（有 {{ m.have }}）</span
+            >{{ i > 0 ? t.events.sep : '' }}{{ catalog.goodsName(m.goodsId) }}×{{ m.num
+            }}{{ t.town.exchange.have(m.have) }}</span
           >
-          · {{ x.times > 0 ? `限兑 ${x.times} 次，已兑 ${x.used} 次` : '不限次数' }}
+          · {{ x.times > 0 ? t.town.exchange.times(x.times, x.used) : t.town.exchange.unlimited }}
         </div>
         <!-- 不能兑的原因单独一行，不被截断（终审 I1） -->
         <div v-if="block(x)" class="dt-meta text-danger" :data-testid="`ex-block-${x.id}`">
@@ -123,11 +122,11 @@ async function go(x: TownExchangeItemDto) {
           :data-testid="`ex-${x.id}`"
           @click="go(x)"
         >
-          兑换
+          {{ t.town.exchange.btn }}
         </button>
       </div>
     </div>
-    <h6 class="dt-section">兑换券</h6>
+    <h6 class="dt-section">{{ t.town.exchange.tickets }}</h6>
     <TicketPanel :data="data" @reload="load" />
   </template>
 </template>

@@ -13,4 +13,5 @@ export default {
   all: '全部',
   other: '其他',
   opFailed: '操作失败',
+  loadMore: '加载更多',
 };

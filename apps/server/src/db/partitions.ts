@@ -49,7 +49,8 @@ export async function dropPartitionsBefore(
   for (const { relname } of rows) {
     const m = pattern.exec(relname);
     if (m && m[1]! < cutoff) {
-      await sql`drop table ${sql.id(relname)}`.execute(db);
+      // if exists：两处同时清理（测试并行、或交接领导权的瞬间）时，先删的一方不让另一方报错
+      await sql`drop table if exists ${sql.id(relname)}`.execute(db);
       dropped.push(relname);
     }
   }

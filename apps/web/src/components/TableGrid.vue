@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import type { TableDto } from '@dt/shared';
+import { useT } from '../composables/useT';
 import { CUSTOMER_NAMES } from '../utils/labels';
 
 const props = defineProps<{ tables: TableDto[]; selected?: number | null }>();
 const emit = defineEmits<{ pick: [table: TableDto] }>();
 const floor = ref(1);
+const t = useT();
 const floors = computed(() => [...new Set(props.tables.map((t) => t.floor))].sort((a, b) => a - b));
 const shown = computed(() => props.tables.filter((t) => t.floor === floor.value));
 
-function label(t: TableDto): string {
-  if (t.customer === 9) return `白食：${t.freeloaderName ?? '好友'}`;
-  return CUSTOMER_NAMES[String(t.customer)] ?? '';
+function label(x: TableDto): string {
+  if (x.customer === 9) return t.value.friends.tables.freeloader(x.freeloaderName ?? null);
+  return CUSTOMER_NAMES[String(x.customer)] ?? '';
 }
 </script>
 
@@ -23,22 +25,22 @@ function label(t: TableDto): string {
       :class="['btn', f === floor ? 'btn-primary' : 'btn-outline-primary']"
       @click="floor = f"
     >
-      {{ f }} 楼
+      {{ t.friends.tables.floor(f) }}
     </button>
   </div>
   <div class="row g-1">
-    <div v-for="t in shown" :key="t.no" class="col-3">
+    <div v-for="x in shown" :key="x.no" class="col-3">
       <button
         type="button"
         :class="[
           'w-100 border rounded p-1 small text-center bg-transparent',
-          { 'border-primary border-2': selected === t.no, 'text-danger': t.customer === 3 },
+          { 'border-primary border-2': selected === x.no, 'text-danger': x.customer === 3 },
         ]"
-        :data-testid="`table-${t.no}`"
-        @click="emit('pick', t)"
+        :data-testid="`table-${x.no}`"
+        @click="emit('pick', x)"
       >
-        <div class="fw-bold">{{ t.no }}</div>
-        <div><i v-if="t.customer === 3" class="bi bi-bug me-1"></i>{{ label(t) }}</div>
+        <div class="fw-bold">{{ x.no }}</div>
+        <div><i v-if="x.customer === 3" class="bi bi-bug me-1"></i>{{ label(x) }}</div>
       </button>
     </div>
   </div>
