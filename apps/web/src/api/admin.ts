@@ -10,6 +10,7 @@ import type {
   ReportStatus,
   ExchangeFrozenRow,
   ExchangeMakerDto,
+  PredictAdminRow,
   ExchangeSuspiciousRow,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
@@ -96,6 +97,18 @@ export const adminApi = {
     api.get<ExchangeSuspiciousRow[]>(`${A}/suspicious/exchange${qs({ shardId, flag })}`),
   exchangeFrozen: (shardId: number) => api.get<ExchangeFrozenRow[]>(`${A}/exchange/frozen${qs({ shardId })}`),
   exchangeMaker: (shardId: number) => api.get<ExchangeMakerDto>(`${A}/exchange/maker${qs({ shardId })}`),
+  predictList: (shardId: number) => api.get<PredictAdminRow[]>(`${A}/predict${qs({ shardId })}`),
+  predictCreate: (b: {
+    shardId: number;
+    title: string;
+    description: string;
+    closeAt: string;
+    p0: number;
+    b?: number;
+  }) => api.post<{ id: number }>(`${A}/predict`, b),
+  predictResolve: (id: number, outcome: boolean) =>
+    api.post<{ ok: true }>(`${A}/predict/${id}/resolve`, { outcome }),
+  predictVoid: (id: number) => api.post<{ ok: true }>(`${A}/predict/${id}/void`, {}),
   exchangeFreeze: (b: { restId: number; reason: string }) =>
     api.post<{ ok: true }>(`${A}/exchange/freeze`, b),
   exchangeUnfreeze: (b: { restId: number }) => api.post<{ ok: true }>(`${A}/exchange/unfreeze`, b),

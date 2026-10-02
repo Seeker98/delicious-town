@@ -135,6 +135,9 @@ import type {
   ExchangeOrderDto,
   ExchangePlaceDto,
   ExchangeWithdrawDto,
+  PredictDetailDto,
+  PredictListDto,
+  PredictTradeDto,
   ActivitySummaryDto,
   MailClaimAllDto,
   MailClaimDto,
@@ -465,6 +468,10 @@ export const endpoints = {
     api.post<ExchangePlaceDto>('/api/v1/exchange/orders', b),
   tradeCancel: (id: number) => api.post<ExchangeOrderDto>(`/api/v1/exchange/orders/${id}/cancel`, {}),
   tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
+  predictList: () => api.get<PredictListDto>('/api/v1/predict/events'),
+  predictDetail: (id: number) => api.get<PredictDetailDto>(`/api/v1/predict/events/${id}`),
+  predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number; limit?: number }) =>
+    api.post<PredictTradeDto>(`/api/v1/predict/events/${id}/trade`, b),
   activityUnlock: (id: number) => api.post<{ premium: true }>(`/api/v1/activities/${id}/unlock`, {}),
   activityExchange: (id: number, index: number, times: number) =>
     api.post<ActivityExchangeDto>(`/api/v1/activities/${id}/exchange`, { index, times }),

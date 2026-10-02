@@ -205,6 +205,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/predict',
+    name: 'predict',
+    component: () => import('./views/PredictView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/shop',
     name: 'shop',
     component: () => import('./views/ShopView.vue'),
@@ -319,6 +325,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'mail', component: () => import('./views/admin/AdminMailView.vue') },
       { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
       { path: 'activities', component: () => import('./views/admin/AdminActivitiesView.vue') },
+      { path: 'predict', component: () => import('./views/admin/AdminPredictView.vue') },
       { path: 'codes', component: () => import('./views/admin/AdminCodesView.vue') },
       { path: 'reports', component: () => import('./views/admin/AdminReportsView.vue') },
       { path: 'suspicious', component: () => import('./views/admin/AdminSuspiciousView.vue') },

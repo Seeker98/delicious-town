@@ -20,6 +20,8 @@ import {
   exchangeFreezeBody,
   exchangeSuspiciousQuery,
   exchangeUnfreezeBody,
+  predictCreateBody,
+  predictResolveBody,
   resolveReportBody,
   rejectReportBody,
   pageQuery,
@@ -49,6 +51,7 @@ import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
 import { createSuspicious } from '../ops/suspicious';
 import { createExchangeAdmin } from '../exchange/admin';
+import { createPredictAdmin } from '../predict/admin';
 import { createAdminReports } from '../report/admin';
 import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
@@ -208,6 +211,25 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/exchange/confiscate', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await exchangeAdmin.confiscate(a, parse(exchangeConfiscateBody, req.body)));
+    });
+
+    // 事件合约（238-1 设计 §6.3、§7.3）：协管出题和查看，管理员判定和作废
+    const predictAdmin = createPredictAdmin(game);
+    r.get('/predict', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await predictAdmin.list(parse(suspiciousQuery, req.query).shardId));
+    });
+    r.post('/predict', async (req) => {
+      const a = await requireRole(db, req, 'mod');
+      return ok(await predictAdmin.create(a, parse(predictCreateBody, req.body)));
+    });
+    r.post('/predict/:id/resolve', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await predictAdmin.resolve(a, id(req), parse(predictResolveBody, req.body).outcome));
+    });
+    r.post('/predict/:id/void', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await predictAdmin.voidEvent(a, id(req)));
     });
 
     const reports = createAdminReports(game);
