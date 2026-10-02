@@ -67,6 +67,7 @@ export interface OverviewExtra {
   /** 挑剔消耗食材每档保留的数量（区服数值，问题记录 220） */
   cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
+  disabledFeatures: string[];
 }
 
 export function toRestaurantDto(
@@ -133,6 +134,7 @@ export function toRestaurantDto(
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),
     headlines: extra.headlines,
+    disabledFeatures: extra.disabledFeatures,
     createdAt: r.created_at.toISOString(),
   };
 }

@@ -5,7 +5,8 @@ import GameImg from './GameImg.vue';
 
 /**
  * 吉祥物 NPC 卡片（菜园姐、雯姐共用）：头像加一句台词，点一下换一句；只说话，不发奖励。
- * ready 第一次变成 true（页面数据到手）时换一句，好让看状态说的话有机会出现
+ * ready 第一次变成 true（页面数据到手）时换一句，好让看状态说的话有机会出现。
+ * 默认插槽放在卡片右侧（比如菜场的交易所入口，问题记录 246），点它不会换台词
  */
 const props = defineProps<{
   name: string;
@@ -40,6 +41,9 @@ watch(
     <GameImg :path="img" :alt="name" :fallback-icon="fallbackIcon" class="flex-shrink-0" />
     <div>
       <b>{{ name }}：</b><span :data-testid="`${testid}-line`">{{ line }}</span>
+    </div>
+    <div v-if="$slots.default" class="ms-auto flex-shrink-0" @click.stop @keydown.enter.stop>
+      <slot />
     </div>
   </div>
 </template>

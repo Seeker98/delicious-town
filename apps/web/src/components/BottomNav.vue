@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { useFriendsStore } from '../stores/friends';
+import { useRestaurantStore } from '../stores/restaurant';
 import MoreLinks from './MoreLinks.vue';
 
-const tabs = [
+const TABS = [
   { to: '/', icon: 'bi-shop', label: '餐厅' },
-  { to: '/cookbooks', icon: 'bi-journal-text', label: '食谱' },
-  { to: '/cupboard', icon: 'bi-box-seam', label: '橱柜' },
-  { to: '/market', icon: 'bi-basket', label: '菜场' },
-  { to: '/friends', icon: 'bi-people', label: '好友' },
+  { to: '/cookbooks', icon: 'bi-journal-text', label: '食谱', feature: 'cookbook' },
+  { to: '/cupboard', icon: 'bi-box-seam', label: '橱柜', feature: 'cupboard' },
+  { to: '/market', icon: 'bi-basket', label: '菜场', feature: 'market' },
+  { to: '/friends', icon: 'bi-people', label: '好友', feature: 'friend' },
 ];
+const restStore = useRestaurantStore();
+/** 区服关掉的功能不显示标签（问题记录 248） */
+const tabs = computed(() => TABS.filter((t) => !t.feature || restStore.featureOn(t.feature)));
 const friends = useFriendsStore();
 const route = useRoute();
 /** "更多"不跳页，从底部弹出面板（问题记录：更多里的功能放到全局） */

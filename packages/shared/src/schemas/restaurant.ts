@@ -77,6 +77,8 @@ export interface RestaurantDto {
   effects: EffectDto[];
   /** 首页小镇新闻：最新 3 条 + 最新广播 */
   headlines: HeadlinesDto;
+  /** 本区服后台关掉的功能，前端据此隐藏入口（问题记录 248） */
+  disabledFeatures: string[];
   createdAt: string;
 }
 
