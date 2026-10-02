@@ -92,7 +92,11 @@ describe('后台活动（设计 §5.2）', () => {
     const def = {
       goals: [
         { key: 'signin', target: 1, award: { goods: [{ id: 85, num: 1 }] } },
-        { key: 'signin', target: 2, award: { goods: [{ id: 999_999, num: 1 }], foods: [{ id: 888_888, num: 2 }] } },
+        {
+          key: 'signin',
+          target: 2,
+          award: { goods: [{ id: 999_999, num: 1 }], foods: [{ id: 888_888, num: 2 }] },
+        },
       ],
     };
     const err = {
@@ -104,7 +108,9 @@ describe('后台活动（设计 §5.2）', () => {
         ],
       },
     };
-    await expect(svc.create(actor, input(shardId, { def } as Partial<ActivityInput>))).rejects.toMatchObject(err);
+    await expect(svc.create(actor, input(shardId, { def } as Partial<ActivityInput>))).rejects.toMatchObject(
+      err,
+    );
     const a = await svc.create(actor, input(shardId));
     await expect(
       svc.update(actor, a.id, input(shardId, { def } as Partial<ActivityInput>)),

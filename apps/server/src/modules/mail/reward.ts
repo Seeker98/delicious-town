@@ -36,7 +36,8 @@ export function checkNestedItems(config: GameConfig, value: unknown, prefix: str
       if (set && Array.isArray(x)) {
         x.forEach((it: unknown, i) => {
           const id = (it as { id?: unknown } | null)?.id;
-          if (typeof id === 'number' && !set.has(id)) bad.push({ path: `${path}.${k}.${i}.id`, message: 'unknown' });
+          if (typeof id === 'number' && !set.has(id))
+            bad.push({ path: `${path}.${k}.${i}.id`, message: 'unknown' });
         });
       } else walk(x, `${path}.${k}`);
     }
