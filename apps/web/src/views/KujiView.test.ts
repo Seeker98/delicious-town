@@ -52,6 +52,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     await flushPromises();
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('第 2 池');
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 79 / 80');
+    expect(w.get('[data-testid="kj-pool"] .dt-card-title').text()).toContain('第 2 池');
     const a = w.get('[data-testid="kj-tier-A"]');
     expect(a.classes()).toContain('opacity-50');
     expect(a.text()).toContain('一番赏 A 赏手办');

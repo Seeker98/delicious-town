@@ -93,7 +93,11 @@ async function submit() {
       <span class="text-danger">否 {{ 100 - predictPercent(detail.event.price) }}%</span>
       <span class="small text-muted ms-auto">截止 {{ time(detail.event.closeAt) }}</span>
     </div>
-    <svg data-testid="pd-chart" viewBox="0 0 300 60" class="w-100 mb-2" style="height: 60px">
+    <!-- 不到两个点画出来是一大块空白（问题记录 278） -->
+    <div v-if="detail.points.length < 2" class="dt-meta mb-2" data-testid="pd-chart-empty">
+      还没有成交，有人买卖后显示价格走势
+    </div>
+    <svg v-else data-testid="pd-chart" viewBox="0 0 300 60" class="w-100 mb-2" style="height: 60px">
       <polyline :points="chart" fill="none" stroke="currentColor" stroke-width="1.5" class="text-success" />
     </svg>
     <div class="small mb-2" data-testid="pd-hold">
