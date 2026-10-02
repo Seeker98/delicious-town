@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { gameTime } from '@dt/shared';
+import { gameTime, hiphopTipBody, mayorBody } from '@dt/shared';
 import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
@@ -30,6 +30,45 @@ async function insertIncome(restId: number, at: Date): Promise<void> {
     })
     .execute();
 }
+
+describe('新地点和功能开关（问题记录 256）', () => {
+  it('交易所、事件预测、一番赏、广场、菜园、外卖都能抽到，嘻哈男孩只在那一页', async () => {
+    for (const p of [10, 11, 12, 13, 14, 15]) {
+      const a = await newRestaurant(t);
+      await setTuning(t, a.shardId, { hiphop: { placeWeights: [[p, 1]] } });
+      expect(await rollHiphopDay(t.game.deps, a.shardId, DAY, t.clock.now)).toMatchObject({ place: p });
+      expect(await t.game.hiphop.spot(a, { place: p })).toMatchObject({ here: true, place: p });
+      expect(await t.game.hiphop.spot(a, { place: 1 })).toEqual({ here: false });
+      // 打赏和镇长猜地点的参数也接受新地点
+      expect(hiphopTipBody.safeParse({ place: p, kind: 'coin', num: 1 }).success).toBe(true);
+      expect(mayorBody.safeParse({ place: p }).success).toBe(true);
+    }
+    expect(mayorBody.safeParse({ place: 8 }).success).toBe(false);
+  });
+
+  it('区服关掉的功能不去那里：神殿关了就不会抽到神殿', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({
+          features: { temple: false },
+          tuning: {
+            hiphop: {
+              placeWeights: [
+                [6, 1000],
+                [1, 1],
+              ],
+            },
+          },
+        }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    expect(await rollHiphopDay(t.game.deps, shardId, DAY, t.clock.now)).toMatchObject({ place: 1 });
+  });
+});
 
 describe('嘻哈男孩每日地点（设计文档 §2.1）', () => {
   it('公共地点：只出现在那一页，其余地点和店都是 here:false', async () => {

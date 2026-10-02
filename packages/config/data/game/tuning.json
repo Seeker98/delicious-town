@@ -314,7 +314,7 @@
   },
   "hiphop": {
     "hour": 9, "closeHour": 22, "weeklyHour": 23,
-    "placeWeights": [[1, 10], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [9, 7]],
+    "placeWeights": [[1, 10], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [9, 7], [10, 5], [11, 5], [12, 5], [13, 5], [14, 5], [15, 5]],
     "restActiveDays": 7,
     "worthBase": 35000, "worthMin": 1.25, "worthRand": 0.8,
     "krabRate": 0.1, "foodFactor": 1.5,

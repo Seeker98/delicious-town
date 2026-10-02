@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
-/** 嘻哈男孩出没地点：1 菜场、2 商店、3 酒吧、4 协会、5 厨塔、6 神殿、9 某家餐厅 */
-export const HIPHOP_PLACES = [1, 2, 3, 4, 5, 6, 9] as const;
+/**
+ * 嘻哈男孩出没地点：1 菜场、2 商店、3 酒吧、4 协会、5 厨塔、6 神殿、9 某家餐厅（原版）；
+ * 10 交易所、11 事件预测、12 一番赏、13 广场、14 菜园、15 外卖（问题记录 256，编号避开原版）
+ */
+export const HIPHOP_PLACES = [1, 2, 3, 4, 5, 6, 10, 11, 12, 13, 14, 15, 9] as const;
 export type HiphopPlace = (typeof HIPHOP_PLACES)[number];
 export const HIPHOP_PLACE_NAMES: Record<HiphopPlace, string> = {
   1: '菜场',
@@ -11,17 +14,34 @@ export const HIPHOP_PLACE_NAMES: Record<HiphopPlace, string> = {
   5: '厨塔',
   6: '神殿',
   9: '某家餐厅',
+  10: '交易所',
+  11: '事件预测',
+  12: '一番赏',
+  13: '广场',
+  14: '菜园',
+  15: '外卖',
+};
+/** 地点对应的功能开关：区服关掉这个功能时，嘻哈男孩不去那里（null 表示总是开着） */
+export const HIPHOP_PLACE_FEATURE: Record<HiphopPlace, string | null> = {
+  1: 'market',
+  2: 'shop',
+  3: 'bar',
+  4: null,
+  5: 'tower',
+  6: 'temple',
+  9: null,
+  10: 'exchange',
+  11: 'predict',
+  12: 'kuji',
+  13: 'town',
+  14: 'yard',
+  15: 'takeaway',
 };
 
-export const hiphopPlace = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-  z.literal(4),
-  z.literal(5),
-  z.literal(6),
-  z.literal(9),
-]);
+export const hiphopPlace = z
+  .number()
+  .int()
+  .refine((p): p is HiphopPlace => (HIPHOP_PLACES as readonly number[]).includes(p));
 
 export const hiphopQuery = z
   .object({

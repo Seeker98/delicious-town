@@ -6,6 +6,7 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价 */
 const toast = useToastStore();
@@ -72,6 +73,7 @@ onMounted(() => void loadList());
 
 <template>
   <h5>事件预测</h5>
+  <HiphopCard :place="11" />
   <div class="small text-muted mb-2">
     买"是"或"否"，结算时押对的一边每份得 1,000
     银币；价格就是大家认为发生的概率，随买卖涨跌。不必等开奖，截止前随时可以卖出止盈止损。点事件展开详情。

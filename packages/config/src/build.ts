@@ -824,7 +824,8 @@ export function buildBundle(src: SourceData): BuildResult {
   // ---------- 嘻哈男孩（子项目 4E-2） ----------
   const hh = tuning.hiphop;
   for (const [place] of hh.placeWeights)
-    if (![1, 2, 3, 4, 5, 6, 9].includes(place))
+    // 和 @dt/shared 的 HIPHOP_PLACES 一致（问题记录 256 加了 10~15）
+    if (![1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15].includes(place))
       errors.push(`tuning.hiphop.placeWeights has unknown place ${place}`);
   for (const id of [...hh.weeklyCards, ...hh.wages.flat(), 230, 231, 232])
     if (!goodsIds.has(id)) errors.push(`hiphop references unknown goods ${id}`);

@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
+import { useRestaurantStore } from '../../stores/restaurant';
 import { useToastStore } from '../../stores/toast';
 import TownPanel from './TownPanel.vue';
 import { blessData, townData } from './testData';
@@ -154,6 +155,16 @@ describe('TownPanel', () => {
     });
   });
 
+  it('镇长问答：区服关掉的功能对应的地点不列出来（问题记录 256：嘻哈男孩不会去那里）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['kuji', 'temple'] } as never;
+    const w = mount(TownPanel, { props: { data: townData() } });
+    await w.find('[data-testid="mayor-open"]').trigger('click');
+    expect(w.find('[data-testid="mayor-12"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mayor-6"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mayor-10"]').text()).toBe('交易所');
+    expect(w.find('[data-testid="mayor-9"]').exists()).toBe(true);
+  });
+
   it('镇长问答：点开后选地点，提示回话和道具；答过就不能再答', async () => {
     vi.mocked(endpoints.townMayor).mockResolvedValue({
       npc: 'mayor',
@@ -165,7 +176,7 @@ describe('TownPanel', () => {
     await w.find('[data-testid="mayor-open"]').trigger('click');
     expect(
       w.findAll('[data-testid^="mayor-"]').filter((b) => /mayor-\d/.test(b.attributes('data-testid')!)),
-    ).toHaveLength(7);
+    ).toHaveLength(13);
     await w.find('[data-testid="mayor-3"]').trigger('click');
     await flushPromises();
     expect(endpoints.townMayor).toHaveBeenCalledWith(3);

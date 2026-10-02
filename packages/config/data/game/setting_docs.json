@@ -522,7 +522,7 @@
     "tuning.hiphop.hour": "嘻哈男孩每天几点出现（点）",
     "tuning.hiphop.closeHour": "嘻哈男孩每天几点离开（点）",
     "tuning.hiphop.weeklyHour": "每周日几点结算嘻哈周榜（点）",
-    "tuning.hiphop.placeWeights": "嘻哈男孩出现地点的权重（[地点, 权重] 列表）",
+    "tuning.hiphop.placeWeights": "嘻哈男孩出现地点的权重（[地点, 权重] 列表）。地点：1 菜场、2 商店、3 酒吧、4 协会、5 厨塔、6 神殿、9 某家餐厅、10 交易所、11 事件预测、12 一番赏、13 广场、14 菜园、15 外卖；区服关掉的功能对应的地点不会被抽到",
     "tuning.hiphop.restActiveDays": "最近几天有活动的店才可能被嘻哈男孩光顾（天）",
     "tuning.hiphop.worthBase": "嘻哈活动价值基数（银币）",
     "tuning.hiphop.worthMin": "嘻哈活动价值 = 基数 × (这个值 + 随机 × 浮动)",

@@ -11,6 +11,7 @@ import TownPanel from '../components/town/TownPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 'town' 是"居民"标签，键名沿用旧的，免得已存的上次标签和旧链接失效 */
 type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom';
@@ -76,6 +77,7 @@ onMounted(() => {
       ><i class="bi bi-chat-square-text"></i> 论坛</RouterLink
     >
   </div>
+  <HiphopCard :place="13" />
   <ul class="nav nav-tabs mb-2">
     <li v-for="x in TABS" :key="x.key" class="nav-item">
       <a
