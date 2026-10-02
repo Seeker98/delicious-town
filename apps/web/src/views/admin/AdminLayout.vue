@@ -18,6 +18,7 @@ const links = computed(() => [
   { to: '/admin/mail', label: '邮件' },
   { to: '/admin/announce', label: '公告' },
   { to: '/admin/activities', label: '活动' },
+  { to: '/admin/predict', label: '预测' },
   { to: '/admin/codes', label: '兑换码' },
   { to: '/admin/stats', label: '统计' },
   { to: '/admin/audit', label: '审计' },
