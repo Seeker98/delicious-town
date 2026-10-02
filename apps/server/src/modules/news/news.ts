@@ -55,8 +55,9 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
 /** 首页头条（设计文档 裁定 21） */
 export async function headlines(db: Kysely<DB>, shardId: number): Promise<HeadlinesDto> {
   const [news, bc] = await Promise.all([
-    listNews(db, shardId, { limit: 3, not: [BROADCAST_NEWS] }),
-    listNews(db, shardId, { limit: 1, only: [BROADCAST_NEWS] }),
+    // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
+    listNews(db, shardId, { limit: 3, not: [BROADCAST_NEWS, 'kuji.big'] }),
+    listNews(db, shardId, { limit: 1, only: [BROADCAST_NEWS, 'kuji.big'] }),
   ]);
   return { news, broadcast: bc[0] ?? null };
 }
