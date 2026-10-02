@@ -60,3 +60,47 @@ describe('PR27 遗留：禁用按钮、危险和成功色、没用的样式', ()
     expect(css).not.toMatch(/\.dt-row-actions/);
   });
 });
+
+describe('浅底深字（问题记录 216）', () => {
+  const TONES = ['primary', 'success', 'danger', 'warning', 'info', 'secondary'] as const;
+  function hslOf(name: string): [number, number, number] {
+    const m = new RegExp(`${name}:\\s*hsl\\((\\d+),\\s*(\\d+)%,\\s*(\\d+)%\\)`).exec(css);
+    if (!m) throw new Error(`no ${name}`);
+    return [Number(m[1]), Number(m[2]), Number(m[3])];
+  }
+  function hex([h, s, l]: [number, number, number]): string {
+    const a = (s / 100) * Math.min(l / 100, 1 - l / 100);
+    const f = (n: number) => {
+      const k = (n + h / 30) % 12;
+      const v = l / 100 - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+      return Math.round(v * 255)
+        .toString(16)
+        .padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
+
+  it('每种语气色的浅底只拉高亮度（色相、饱和度不变），深字在浅底上对比度 ≥ 4.5', () => {
+    for (const t of TONES) {
+      const soft = hslOf(`--dt-soft-${t}`);
+      const ink = hslOf(`--dt-ink-${t}`);
+      expect(soft[0], t).toBe(ink[0]);
+      expect(soft[1], t).toBe(ink[1]);
+      expect(soft[2], t).toBeGreaterThanOrEqual(88);
+      expect(contrast(hex(ink), hex(soft)), t).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('徽章（不含未读数圆点）改成浅底深字；进度条填充用中等亮度', () => {
+    for (const t of TONES) {
+      expect(css).toMatch(
+        new RegExp(
+          `\\.badge\\.text-bg-${t},\\s*\\.badge:not\\(\\.rounded-pill\\)\\.bg-${t}\\s*\\{[^}]*background-color:\\s*var\\(--dt-soft-${t}\\)\\s*!important;[^}]*color:\\s*var\\(--dt-ink-${t}\\)\\s*!important`,
+        ),
+      );
+    }
+    expect(css).toMatch(/\.progress-bar\.bg-warning\s*\{[^}]*var\(--dt-fill-warning\)/);
+    expect(css).toMatch(/\.progress-bar\.bg-danger\s*\{[^}]*var\(--dt-fill-danger\)/);
+    expect(css).not.toMatch(/#fd7e14|#40c057/);
+  });
+});

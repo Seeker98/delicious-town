@@ -24,6 +24,29 @@
   --bs-focus-ring-color: rgba(var(--dt-primary-rgb), 0.25);
   --bs-link-hover-color: var(--dt-primary-dark);
   --bs-link-hover-color-rgb: 179, 60, 12;
+
+  /*
+   * 浅底深字（问题记录 216）：同一色相和饱和度，只拉高亮度 L 做底色、压低 L 做字色；
+   * 只用在徽章、标签、进度条这类不可点的展示元素上，按钮保持实心
+   */
+  --dt-soft-primary: hsl(17, 87%, 92%);
+  --dt-ink-primary: hsl(17, 87%, 37%);
+  --dt-fill-primary: hsl(17, 87%, 68%);
+  --dt-soft-success: hsl(132, 52%, 92%);
+  --dt-ink-success: hsl(132, 52%, 31%);
+  --dt-fill-success: hsl(132, 52%, 68%);
+  --dt-soft-danger: hsl(0, 65%, 92%);
+  --dt-ink-danger: hsl(0, 65%, 40%);
+  --dt-fill-danger: hsl(0, 65%, 68%);
+  --dt-soft-warning: hsl(39, 100%, 92%);
+  --dt-ink-warning: hsl(39, 100%, 28%);
+  --dt-fill-warning: hsl(39, 100%, 68%);
+  --dt-soft-info: hsl(188, 83%, 92%);
+  --dt-ink-info: hsl(188, 83%, 28%);
+  --dt-fill-info: hsl(188, 83%, 68%);
+  --dt-soft-secondary: hsl(208, 7%, 92%);
+  --dt-ink-secondary: hsl(208, 7%, 40%);
+  --dt-fill-secondary: hsl(208, 7%, 68%);
 }
 body {
   background: var(--dt-bg);
@@ -187,7 +210,7 @@ body {
 }
 .dt-act-bar > div {
   height: 100%;
-  background: #fd7e14;
+  background: var(--dt-fill-primary);
 }
 .dt-act-pts {
   font-size: 11px;
@@ -198,7 +221,7 @@ body {
   border-color: #b2f2bb;
 }
 .dt-act-done .dt-act-bar > div {
-  background: #40c057;
+  background: var(--dt-fill-success);
 }
 .dt-act-locked {
   background: #f1f3f5;
@@ -675,4 +698,55 @@ body {
 .dt-cell-done {
   background: var(--bs-success-bg-subtle);
   border-color: var(--bs-success-border-subtle);
+}
+
+/* 徽章、标签：浅底深字（问题记录 216）；未读数圆点（rounded-pill）保持实心醒目 */
+.badge.text-bg-primary,
+.badge:not(.rounded-pill).bg-primary {
+  background-color: var(--dt-soft-primary) !important;
+  color: var(--dt-ink-primary) !important;
+}
+.badge.text-bg-success,
+.badge:not(.rounded-pill).bg-success {
+  background-color: var(--dt-soft-success) !important;
+  color: var(--dt-ink-success) !important;
+}
+.badge.text-bg-danger,
+.badge:not(.rounded-pill).bg-danger {
+  background-color: var(--dt-soft-danger) !important;
+  color: var(--dt-ink-danger) !important;
+}
+.badge.text-bg-warning,
+.badge:not(.rounded-pill).bg-warning {
+  background-color: var(--dt-soft-warning) !important;
+  color: var(--dt-ink-warning) !important;
+}
+.badge.text-bg-info,
+.badge:not(.rounded-pill).bg-info {
+  background-color: var(--dt-soft-info) !important;
+  color: var(--dt-ink-info) !important;
+}
+.badge.text-bg-secondary,
+.badge:not(.rounded-pill).bg-secondary {
+  background-color: var(--dt-soft-secondary) !important;
+  color: var(--dt-ink-secondary) !important;
+}
+/* 进度条填充：中等亮度，不再是饱和色块 */
+.progress-bar.bg-primary {
+  background-color: var(--dt-fill-primary) !important;
+}
+.progress-bar.bg-success {
+  background-color: var(--dt-fill-success) !important;
+}
+.progress-bar.bg-danger {
+  background-color: var(--dt-fill-danger) !important;
+}
+.progress-bar.bg-warning {
+  background-color: var(--dt-fill-warning) !important;
+}
+.progress-bar.bg-info {
+  background-color: var(--dt-fill-info) !important;
+}
+.progress-bar.bg-secondary {
+  background-color: var(--dt-fill-secondary) !important;
 }
