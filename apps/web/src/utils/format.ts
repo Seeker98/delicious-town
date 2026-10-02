@@ -1,5 +1,12 @@
+import { activeLocale } from '../i18n';
+
+const formats = new Map<string, Intl.NumberFormat>();
+/** 千分位按当前语言（问题记录 272）：中文沿用逗号；英、法、西用各自的写法 */
 export function formatNum(n: number): string {
-  return n.toLocaleString('en-US');
+  const l = activeLocale();
+  let f = formats.get(l);
+  if (!f) formats.set(l, (f = new Intl.NumberFormat(l === 'zh-CN' || l === 'zh-TW' ? 'en-US' : l)));
+  return f.format(n);
 }
 
 /** 食材等级的显示名：7 级是神秘食材、9 级是万能食材（问题记录） */
