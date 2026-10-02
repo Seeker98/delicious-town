@@ -23,6 +23,10 @@ export interface KujiViewDto {
   pool: { id: number; day: string; seq: number; total: number; left: number };
   tiers: KujiTierDto[];
   last: { award: KujiAwardDto; icon: string | null };
+  /** 这一池的月度主题（问题记录 274） */
+  theme: { month: number; name: string; desc: string } | null;
+  /** 今天的池已经开满、全部抽完 */
+  closedToday: boolean;
   tickets: number;
   price: number;
   buyLeft: number;

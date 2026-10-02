@@ -32,6 +32,7 @@ import * as m0030 from './0030_predict_void_ratio';
 import * as m0031 from './0031_predict_auto';
 import * as m0032 from './0032_kuji';
 import * as m0033 from './0033_kuji_prizes';
+import * as m0034 from './0034_kuji_theme';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -68,4 +69,5 @@ export const migrations: Record<string, Migration> = {
   '0031_predict_auto': m0031,
   '0032_kuji': m0032,
   '0033_kuji_prizes': m0033,
+  '0034_kuji_theme': m0034,
 };

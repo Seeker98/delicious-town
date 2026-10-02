@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
+import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
@@ -234,6 +235,45 @@ describe('抽签（一番赏设计 §5.4）', () => {
     release();
     await locker;
     expect(v).not.toBeNull();
+  });
+
+  it('月度主题（问题记录 274）：开池时把当月的限定手办加进 A/B/C/最后赏；换月后下一池换主题', async () => {
+    const saved = t.clock.now;
+    try {
+      const shardId = await createShard(t.db);
+      const r = await player(shardId, { tickets: 0 });
+      t.clock.set(gameTime('2026-07-10', 12));
+      const v = await svc().view(r);
+      expect(v.theme).toEqual({ month: 7, name: '夏日冰饮', desc: expect.any(String) });
+      const tier = (key: string) => v.tiers.find((x) => x.key === key)!.award.goods;
+      expect(tier('A')).toEqual([{ id: 91071, num: 1 }]);
+      expect(tier('B')).toEqual([{ id: 91072, num: 1 }]);
+      expect(tier('C')).toEqual([{ id: 91073, num: 1 }]);
+      expect(tier('D')).toBeUndefined();
+      expect(v.last.award.goods).toEqual([{ id: 91074, num: 1 }]);
+      t.clock.set(gameTime('2026-08-01', 12));
+      const v2 = await svc().view(r);
+      expect(v2.theme?.name).toBe('海鲜大排档');
+      expect(v2.last.award.goods).toEqual([{ id: 91084, num: 1 }]);
+    } finally {
+      t.clock.set(saved);
+    }
+  });
+
+  it('每天最多开 maxPools 池：抽完后当天不再开池，看板显示今天抽完了，抽签报 kuji_closed', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: { maxPools: 1, tiers: [{ key: 'X', count: 1, award: { coin: 1 } }] },
+    });
+    const r = await player(shardId, { tickets: 3 });
+    const res = await svc().draw(r, 1);
+    expect(res.data.last).not.toBeNull();
+    expect(res.data.view).toMatchObject({ closedToday: true, pool: { seq: 1, left: 0 } });
+    expect((await svc().view(r)).closedToday).toBe(true);
+    await expect(svc().draw(r, 1)).rejects.toMatchObject({ params: { reason: 'kuji_closed' } });
+    expect(await goodsNum(t, r.restaurantId, T)).toBe(2);
+    const pools = await t.db.selectFrom('kuji_pool').select('id').where('shard_id', '=', shardId).execute();
+    expect(pools).toHaveLength(1);
   });
 
   it('分布：抽完一整池，各档抽到的张数正好等于张数', async () => {

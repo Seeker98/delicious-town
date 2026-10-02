@@ -645,6 +645,8 @@ export const tuningSchema = z.object({
     dailyBuy: int.min(1),
     maxDraw: int.min(1).max(100),
     activeTickets: int.min(0),
+    /** 每个区服每天最多开几池（问题记录 274） */
+    maxPools: int.min(1),
     tiers: z
       .array(
         z.object({

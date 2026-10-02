@@ -10,7 +10,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
-    expect(bundle!.goods).toHaveLength(634); // 617 + 纪念品 12 件（148-2）+ 一番赏手办 4 件和抽赏券 1 张
+    expect(bundle!.goods).toHaveLength(682); // 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
     expect(bundle!.cookbooks).toHaveLength(2363);
     expect(bundle!.streets).toHaveLength(14);
     expect(bundle!.starNeed).toHaveLength(12);

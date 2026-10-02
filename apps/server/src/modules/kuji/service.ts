@@ -8,7 +8,7 @@ import { spendCoin } from '../../core/resources';
 import { grantAward } from '../award/award';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
-import { currentPool, prizesOf, tierLeft, type PoolRow } from './pool';
+import { currentPool, latestToday, prizesOf, tierLeft, type PoolRow } from './pool';
 
 type K = Tuning['kuji'];
 const BUY_KEY = 'kuji.buy';
@@ -50,6 +50,7 @@ export function createKujiService(d: GameDeps) {
     pool: PoolRow,
     tickets: number,
     bought: number,
+    closedToday = false,
   ): Promise<KujiViewDto> {
     const left = await tierLeft(db, pool.id);
     // 奖品按这一池开池时的快照显示（一番赏终审 I1）
@@ -92,6 +93,8 @@ export function createKujiService(d: GameDeps) {
         left: [...left.values()].reduce((s, x) => s + x, 0),
       },
       tiers,
+      theme: themeOf(pool.theme),
+      closedToday,
       last: { award: awardDto(prizes.last.award), icon: prizes.last.icon ?? null },
       tickets,
       price: k.price,
@@ -105,9 +108,44 @@ export function createKujiService(d: GameDeps) {
     };
   }
 
+  /** 月度主题（问题记录 274）：把当月的限定手办加进 A/B/C 和最后赏的奖品 */
+  function themed(k: K, now: Date): { tiers: K['tiers']; last: K['last']; theme?: number } {
+    const month = Number(gameDay(now).slice(5, 7));
+    const th = d.config.bundle.kujiThemes.find((x) => x.month === month);
+    if (!th) return { tiers: k.tiers, last: k.last };
+    const fig = th.figures as Record<string, number | undefined>;
+    const add = (award: K['last']['award'], id: number | undefined) =>
+      id ? { ...award, goods: [...(award.goods ?? []), { id, num: 1 }] } : award;
+    return {
+      tiers: k.tiers.map((t) => ({ ...t, award: add(t.award, fig[t.key]) })),
+      last: { ...k.last, award: add(k.last.award, fig.last) },
+      theme: month,
+    };
+  }
+
+  function themeOf(month: number | null): KujiViewDto['theme'] {
+    const th = month === null ? undefined : d.config.bundle.kujiThemes.find((x) => x.month === month);
+    return th ? { month: th.month, name: th.name, desc: th.desc } : null;
+  }
+
+  /** 当前池（按当月主题开池、每天最多 maxPools 池）；今天开满了返回空 */
+  async function poolFor(tx: GameDeps['db'], shardId: number, k: K, now: Date): Promise<PoolRow | null> {
+    const p = themed(k, now);
+    return currentPool(tx, shardId, p.tiers, now, p.last, { maxPools: k.maxPools, theme: p.theme });
+  }
+
+  /** 看板显示的池：今天开满了就显示最后一池，并标明今天抽完了 */
+  async function shownPool(tx: GameDeps['db'], shardId: number, k: K, now: Date) {
+    const pool = await poolFor(tx, shardId, k, now);
+    if (pool) return { pool, closedToday: false };
+    const latest = await latestToday(tx, shardId, gameDay(now));
+    if (!latest) throw new Error('kuji: no pool for shard ' + shardId);
+    return { pool: latest, closedToday: true };
+  }
+
   async function opView(o: Op): Promise<KujiViewDto> {
     const k = o.tuning.kuji;
-    const pool = await currentPool(o.tx, o.shardId, k.tiers, o.now, k.last);
+    const { pool, closedToday } = await shownPool(o.tx, o.shardId, k, o.now);
     return viewOf(
       o.tx,
       o.shardId,
@@ -116,6 +154,7 @@ export function createKujiService(d: GameDeps) {
       pool,
       await countGoods(o, GOODS.kujiTicket),
       await getDaily(o.tx, o.rest.id, BUY_KEY, gameDay(o.now)),
+      closedToday,
     );
   }
 
@@ -140,10 +179,11 @@ export function createKujiService(d: GameDeps) {
     // 加锁顺序：店（runOp）→（要开池时）区服锁 → 池行。刚被别人抽完就换下一池，同样加锁后再看状态
     let pool: PoolRow | undefined;
     for (let attempt = 0; attempt < 5 && !pool; attempt++) {
-      const cur = await currentPool(o.tx, o.shardId, k.tiers, o.now, k.last);
+      const cur = await poolFor(o.tx, o.shardId, k, o.now);
+      if (!cur) throw invalidState('kuji_closed');
       const locked = (await o.tx
         .selectFrom('kuji_pool')
-        .select(['id', 'shard_id', 'day', 'seq', 'status', 'total', 'last_rest_id', 'tiers', 'last'])
+        .select(['id', 'shard_id', 'day', 'seq', 'status', 'total', 'last_rest_id', 'tiers', 'last', 'theme'])
         .where('id', '=', cur.id)
         .forUpdate()
         .executeTakeFirstOrThrow()) as PoolRow;
@@ -205,9 +245,9 @@ export function createKujiService(d: GameDeps) {
       const s = await d.shards.ensureFeature(ctx.shardId, 'kuji');
       const k = s.tuning.kuji;
       const now = d.now();
-      const pool = await d.db
+      const { pool, closedToday } = await d.db
         .transaction()
-        .execute((tx) => currentPool(tx, ctx.shardId, k.tiers, now, k.last));
+        .execute((tx) => shownPool(tx, ctx.shardId, k, now));
       const t = await d.db
         .selectFrom('store_item')
         .select('num')
@@ -215,7 +255,7 @@ export function createKujiService(d: GameDeps) {
         .where('goods_id', '=', GOODS.kujiTicket)
         .executeTakeFirst();
       const bought = await getDaily(d.db, ctx.restaurantId, BUY_KEY, gameDay(now));
-      return viewOf(d.db, ctx.shardId, ctx.restaurantId, k, pool, t?.num ?? 0, bought);
+      return viewOf(d.db, ctx.shardId, ctx.restaurantId, k, pool, t?.num ?? 0, bought, closedToday);
     },
     buy: (ctx: RestCtx, num: number) => op(ctx, (o) => buy(o, num)),
     draw: (ctx: RestCtx, num: number) => op(ctx, (o) => draw(o, num)),

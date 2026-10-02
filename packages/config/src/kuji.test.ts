@@ -20,6 +20,7 @@ describe('一番赏配置（设计 §3、§4）', () => {
     for (const id of [90101, 90102, 90103, 90104]) {
       const g = b.goods.find((x) => x.id === id)!;
       expect(g.type).toBe(GOODS_TYPE.souvenir);
+      // 初代手办（问题记录 274 之前）：不再产出，但道具还在
       expect(g.desc).toContain('（一番赏纪念品）');
     }
     expect(b.looks.icons.map((i) => i.key)).toEqual(expect.arrayContaining(['kuji_a', 'kuji_last']));
@@ -35,6 +36,38 @@ describe('一番赏配置（设计 §3、§4）', () => {
     ]);
     expect(k.tiers[0]).toMatchObject({ icon: 'kuji_a', news: 'broadcast' });
     expect(k.last).toMatchObject({ icon: 'kuji_last', news: 'broadcast' });
+  });
+
+  it('月度主题（问题记录 274）：12 个月齐全，每月 4 个限定手办是纪念品；默认奖品不再带初代手办；每天最多 3 池', () => {
+    const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    const b = bundle!;
+    expect(b.kujiThemes.map((t) => t.month)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    const ids = new Set<number>();
+    for (const t of b.kujiThemes) {
+      expect(t.name.length).toBeGreaterThan(0);
+      for (const key of ['A', 'B', 'C', 'last'] as const) {
+        const id = t.figures[key];
+        ids.add(id);
+        const g = b.goods.find((x) => x.id === id)!;
+        expect(g.type).toBe(GOODS_TYPE.souvenir);
+        expect(g.desc).toContain(`（一番赏·${t.name}）`);
+      }
+    }
+    expect(ids.size).toBe(48);
+    expect(b.kujiThemes[0]!.figures.A).toBe(91011);
+    const k = b.tuning.kuji;
+    expect(k.maxPools).toBe(3);
+    for (const tier of [...k.tiers, k.last]) expect(tier.award.goods ?? []).toEqual([]);
+  });
+
+  it('月度主题校验：缺月份、重复月份报错', () => {
+    const src = source();
+    const k = JSON.parse(JSON.stringify(src['game/kuji']));
+    k.themes[1].month = 1;
+    const { errors } = buildBundle({ ...src, 'game/kuji': k });
+    expect(errors.join(' ')).toMatch(/kuji themes duplicate month 1/);
+    expect(errors.join(' ')).toMatch(/kuji themes missing month 2/);
   });
 
   it('校验：档位不能叫 last，一池总张数不超过 1000（一番赏终审）', () => {

@@ -29,6 +29,7 @@ import type {
   RenownShopItem,
   SlotAward,
   TowerFloor,
+  KujiTheme,
 } from './types';
 
 export interface BuildResult {
@@ -302,10 +303,31 @@ export function buildBundle(src: SourceData): BuildResult {
     equip: null,
     gem: null,
   };
+  // 一番赏月度主题手办（问题记录 274）：纪念品，说明末尾注明主题
+  const kujiThemes: KujiTheme[] = [];
+  const kujiFigures: Goods[] = [];
+  {
+    const seenMonth = new Set<number>();
+    for (const t of kujiRaw.themes) {
+      if (seenMonth.has(t.month)) errors.push(`kuji themes duplicate month ${t.month}`);
+      seenMonth.add(t.month);
+      for (const f of Object.values(t.figures))
+        kujiFigures.push({ ...souvenirLike(f.id, f.name, `${f.desc}（一番赏·${t.name}）`) });
+      kujiThemes.push({
+        month: t.month,
+        name: t.name,
+        desc: t.desc,
+        figures: { A: t.figures.A.id, B: t.figures.B.id, C: t.figures.C.id, last: t.figures.last.id },
+      });
+    }
+    for (let m = 1; m <= 12; m++) if (!seenMonth.has(m)) errors.push(`kuji themes missing month ${m}`);
+    kujiThemes.sort((a, b) => a.month - b.month);
+  }
   const goods = [
     ...applyStressTables(builtGoods, equipLore.stressTables, errors),
     ...souvenirGoods,
     kujiTicket,
+    ...kujiFigures,
   ];
   unique(
     'goods',
@@ -909,6 +931,7 @@ export function buildBundle(src: SourceData): BuildResult {
     tasks,
     activationTasks,
     activationRewards,
+    kujiThemes,
     cookbookGrades,
     shopSpecialTiers,
     shopPools,
@@ -931,4 +954,29 @@ export function buildBundle(src: SourceData): BuildResult {
   };
   const version = createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 12);
   return { bundle: { version, ...body }, errors: [] };
+}
+
+/** 纪念品类型的道具：没有加成和用途，不出售，不占仓库格 */
+function souvenirLike(id: number, name: string, desc: string): Goods {
+  return {
+    id,
+    name,
+    type: GOODS_TYPE.souvenir,
+    deviceType: null,
+    invalidHours: null,
+    maxNum: 99,
+    stackable: true,
+    level: 1,
+    coin: 0,
+    diamond: 0,
+    onSale: false,
+    awardFlag: null,
+    desc,
+    value: null,
+    effects: {},
+    gift: null,
+    use: null,
+    equip: null,
+    gem: null,
+  };
 }
