@@ -45,13 +45,22 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
     expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 2 });
     expect(await coin(a.restaurantId)).toBe(ca + 7000);
     expect(await coin(b.restaurantId)).toBe(cb);
+    // 押错的人也写一条结算日志（所得 0），日志带净投入，能看出这一局的盈亏（问题记录 254）
     const logs = await t.db
       .selectFrom('rest_log')
-      .select(['rest_id', 'type'])
+      .select(['rest_id', 'params'])
       .where('type', '=', 'predict.settle')
       .where('rest_id', 'in', [a.restaurantId, b.restaurantId])
       .execute();
-    expect(logs).toEqual([{ rest_id: a.restaurantId, type: 'predict.settle' }]);
+    const pos = await t.db
+      .selectFrom('predict_position')
+      .select(['rest_id', 'net_cost'])
+      .where('event_id', '=', String(id))
+      .execute();
+    const net = (r: number) => Number(pos.find((p) => p.rest_id === r)!.net_cost);
+    const params = (r: number) => logs.find((l) => l.rest_id === r)!.params;
+    expect(params(a.restaurantId)).toMatchObject({ outcome: true, coin: 7000, net: net(a.restaurantId) });
+    expect(params(b.restaurantId)).toMatchObject({ outcome: true, coin: 0, net: net(b.restaurantId) });
     expect((await ev(id)).settled_at).not.toBeNull();
     expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 0 });
     expect(await coin(a.restaurantId)).toBe(ca + 7000);

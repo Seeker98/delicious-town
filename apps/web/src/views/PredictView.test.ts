@@ -49,6 +49,7 @@ const detail: PredictDetailDto = {
   },
   trades: [{ side: 'yes', dir: 'buy', qty: 2, amount: 1100, createdAt: '2026-10-02T01:00:00.000Z' }],
   points: [0.5, 0.55, 0.634],
+  mine: { bought: 0, sold: 0, fees: 0, voidRatio: null, trades: [] },
 };
 
 describe('PredictView（238-1 设计 §7.2）', () => {
@@ -101,6 +102,63 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(hold).toContain('结果为是：得 4,000 银币，盈亏 +1,500');
     expect(hold).toContain('结果为否：得 1,000 银币，盈亏 -1,500');
     expect(hold).toContain('净投入 2,500');
+  });
+
+  it('已结束的事件可以点开：显示本局盈亏分析和我的成交，不显示买卖表单（问题记录 254）', async () => {
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: {
+        ...detail.event,
+        id: 2,
+        status: 'resolved',
+        outcome: true,
+        yes: 3,
+        no: 1,
+        netCost: 2650,
+        payout: 3000,
+      },
+      mine: {
+        bought: 3700,
+        sold: 1050,
+        fees: 80,
+        voidRatio: null,
+        trades: [
+          { side: 'no', dir: 'sell', qty: 2, amount: 1071, fee: 22, createdAt: '2026-10-02T02:00:00.000Z' },
+          { side: 'yes', dir: 'buy', qty: 3, amount: 1640, fee: 33, createdAt: '2026-10-02T01:00:00.000Z' },
+        ],
+      },
+    });
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-ended-2"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.predictDetail).toHaveBeenCalledWith(2);
+    expect(w.find('[data-testid="pd-submit"]').exists()).toBe(false);
+    const r = w.get('[data-testid="pd-result"]').text();
+    expect(r).toContain('买入共花 3,700');
+    expect(r).toContain('卖出共得 1,050');
+    expect(r).toContain('手续费合计 80');
+    expect(r).toContain('净投入 2,650');
+    expect(r).toContain('结果为是：是 3 份 × 1,000 = 3,000');
+    expect(r).toContain('本局盈亏 +350');
+    const mine = w.get('[data-testid="pd-mine"]').text();
+    expect(mine).toContain('卖出否 2 份');
+    expect(mine).toContain('买入是 3 份');
+  });
+
+  it('作废的事件：写出退款比例', async () => {
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: { ...detail.event, id: 2, status: 'void', yes: 3, netCost: 2000, payout: 1700 },
+      mine: { bought: 2000, sold: 0, fees: 40, voidRatio: 0.85, trades: [] },
+    });
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-ended-2"]').trigger('click');
+    await flushPromises();
+    const r = w.get('[data-testid="pd-result"]').text();
+    expect(r).toContain('已作废：退回净投入的 85%，共 1,700');
+    expect(r).toContain('本局盈亏 -300');
   });
 
   it('提交：调用接口、提示、刷新', async () => {

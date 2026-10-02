@@ -64,6 +64,21 @@ export interface PredictDetailDto {
   trades: Array<{ side: PredictSide; dir: PredictDir; qty: number; amount: number; createdAt: string }>;
   /** 价格走势："是"的价格，最早在前；第一个是开题时的初始价格 */
   points: number[];
+  /** 我这一局的收支（问题记录 254）：买入共花（含手续费）、卖出共得（已扣手续费）、手续费合计、作废退款比例、最近 100 笔成交 */
+  mine: {
+    bought: number;
+    sold: number;
+    fees: number;
+    voidRatio: number | null;
+    trades: Array<{
+      side: PredictSide;
+      dir: PredictDir;
+      qty: number;
+      amount: number;
+      fee: number;
+      createdAt: string;
+    }>;
+  };
 }
 
 export interface PredictTradeDto {

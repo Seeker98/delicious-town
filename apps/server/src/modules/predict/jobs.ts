@@ -53,11 +53,13 @@ export async function settleEvents(d: GameDeps, shardId: number, now: Date): Pro
           .returning(['yes', 'no', 'net_cost'])
           .executeTakeFirst();
         if (!p) return false;
-        const got = payoutOf(e, { yes: p.yes, no: p.no, net_cost: Number(p.net_cost) }) ?? 0;
-        if (got > 0) {
-          gainCoin(o, got, { source: 'predict' });
-          if (e.status === 'void') restLog(o, 'predict.refund', { title: e.title, coin: got });
-          else restLog(o, 'predict.settle', { title: e.title, outcome: e.outcome, coin: got });
+        const net = Number(p.net_cost);
+        const got = payoutOf(e, { yes: p.yes, no: p.no, net_cost: net }) ?? 0;
+        if (got > 0) gainCoin(o, got, { source: 'predict' });
+        // 参与过的都写一条日志（押错的所得为 0），带净投入，能看出这一局的盈亏（问题记录 254）
+        if (got > 0 || p.yes > 0 || p.no > 0 || net !== 0) {
+          if (e.status === 'void') restLog(o, 'predict.refund', { title: e.title, coin: got, net });
+          else restLog(o, 'predict.settle', { title: e.title, outcome: e.outcome, coin: got, net });
         }
         return true;
       });
