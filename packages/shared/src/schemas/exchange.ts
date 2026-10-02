@@ -35,6 +35,10 @@ export interface ExchangeFoodDto {
   last: number | null;
   /** 最新成交价相对参考价的涨跌（小数，0.1 = 涨 10%）；没有成交为 null */
   changePct: number | null;
+  /** 玩家正在卖、正在收的数量（未成交、未过期的挂单剩余），系统库存（问题记录 282） */
+  selling: number;
+  buying: number;
+  sysStock: number;
 }
 
 export interface ExchangeLevelDto {
