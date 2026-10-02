@@ -1,13 +1,19 @@
 import { sql } from 'kysely';
-import type {
-  ExchangeFlag,
-  ExchangeFrozenRow,
-  ExchangeSuspiciousRow,
-  ExchangeSuspiciousSide,
+import {
+  gameDay,
+  gameTime,
+  type ExchangeMakerDto,
+  type ExchangeFlag,
+  type ExchangeFrozenRow,
+  type ExchangeSuspiciousRow,
+  type ExchangeSuspiciousSide,
 } from '@dt/shared';
 import type { Game } from '../../game';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
+import { makerPrices, marketFloor } from './maker';
+import { refPrices } from './ref';
+import { priceBand } from './rules';
 import { bookLock } from './service';
 import { addCredit, creditWallets, newCredits } from './wallet';
 
@@ -212,5 +218,65 @@ export function createExchangeAdmin(game: Game) {
     });
   }
 
-  return { suspicious, frozen, freeze, unfreeze, confiscate };
+  /** 系统做市汇总（只读）：有库存或今天有收购的食材，和今天的银币收支 */
+  async function maker(shardId: number): Promise<ExchangeMakerDto> {
+    const now = game.deps.now();
+    const day = gameDay(now);
+    const s = await game.deps.shards.settings(shardId);
+    const t = s.tuning.exchange;
+    const stock = await db
+      .selectFrom('exchange_stock')
+      .select(['foods_id', 'num'])
+      .where('shard_id', '=', shardId)
+      .where('num', '>', 0)
+      .execute();
+    const bought = await db
+      .selectFrom('exchange_maker_day')
+      .select(['foods_id', 'bought'])
+      .where('shard_id', '=', shardId)
+      .where('day', '=', day)
+      .where('bought', '>', 0)
+      .execute();
+    const stockBy = new Map(stock.map((x) => [x.foods_id, x.num]));
+    const boughtBy = new Map(bought.map((x) => [x.foods_id, x.bought]));
+    const ids = [...new Set([...stockBy.keys(), ...boughtBy.keys()])].sort((a, b) => a - b);
+    const refs = await refPrices(db, game.deps.config, t, shardId, ids, day);
+    const foods = ids.map((id) => {
+      const ref = refs.get(id)!;
+      const p = makerPrices(
+        ref,
+        marketFloor(game.deps.config.requireFood(id), game.deps.config, s.tuning.market),
+        priceBand(ref, t),
+        t.maker,
+      );
+      return {
+        foodsId: id,
+        stock: stockBy.get(id) ?? 0,
+        bought: boughtBy.get(id) ?? 0,
+        bid: p.bid,
+        ask: p.ask,
+      };
+    });
+    const agg = await db
+      .selectFrom('exchange_trade')
+      .select([
+        sql<string>`coalesce(sum(case when buyer_rest_id is null then price::bigint * qty else 0 end), 0)`.as(
+          'spent',
+        ),
+        sql<string>`coalesce(sum(case when seller_rest_id is null then price::bigint * qty else 0 end), 0)`.as(
+          'earned',
+        ),
+        sql<string>`coalesce(sum(case when buyer_rest_id is null then fee else 0 end), 0)`.as('fee'),
+      ])
+      .where('shard_id', '=', shardId)
+      .where('system', '=', true)
+      .where('created_at', '>=', gameTime(day, 0))
+      .executeTakeFirstOrThrow();
+    const spent = Number(agg.spent);
+    const earned = Number(agg.earned);
+    const fee = Number(agg.fee);
+    return { foods, today: { spent, earned, fee, net: earned - spent + fee } };
+  }
+
+  return { suspicious, frozen, freeze, unfreeze, confiscate, maker };
 }

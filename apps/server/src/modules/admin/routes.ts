@@ -193,6 +193,10 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       await requireRole(db, req, 'mod');
       return ok(await exchangeAdmin.frozen(parse(suspiciousQuery, req.query).shardId));
     });
+    r.get('/exchange/maker', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await exchangeAdmin.maker(parse(suspiciousQuery, req.query).shardId));
+    });
     r.post('/exchange/freeze', async (req) => {
       const a = await requireRole(db, req, 'mod');
       return ok(await exchangeAdmin.freeze(a, parse(exchangeFreezeBody, req.body)));

@@ -1,7 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, type TestGame } from '../../../test/game';
+import { gameDay } from '@dt/shared';
 import { createExchangeAdmin } from './admin';
+import { makerPrices } from './maker';
+import { refPrice } from './ref';
+import { priceBand } from './rules';
 import { trader, wallet } from './test';
 
 let t: TestGame;
@@ -168,5 +172,36 @@ describe('终审 I1：冻结先锁店，和这家店正在进行的下单、取�
     await freezing;
     expect((await svc().me(r)).orders).toEqual([]);
     expect(await wallet(t, r.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 2, [g.id]: 3 } });
+  });
+});
+
+describe('后台系统做市汇总（156-3 设计 §7）', () => {
+  it('有库存或今天有收购的食材；今天花出、收回、手续费、净回收', async () => {
+    const shardId = await createShard(t.db);
+    const f = [...t.deps.config.foods.values()].find((x) => x.level === 6 && x.odds < 100 && x.odds > 0)!;
+    const ref = await refPrice(
+      t.db,
+      t.deps.config,
+      t.deps.config.tuning.exchange,
+      shardId,
+      f.id,
+      gameDay(t.clock.now),
+    );
+    const band = priceBand(ref, t.deps.config.tuning.exchange);
+    const { bid: b0, ask } = makerPrices(ref, null, band, t.deps.config.tuning.exchange.maker);
+    const bid = b0!;
+    expect(await admin().maker(shardId)).toEqual({
+      foods: [],
+      today: { spent: 0, earned: 0, fee: 0, net: 0 },
+    });
+    const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 10 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: band.min, qty: 10 });
+    const b = await trader(t, { shardId, coin: 50_000_000 });
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: band.max, qty: 4 });
+    const fee = Math.floor(bid * 10 * 0.05);
+    expect(await admin().maker(shardId)).toEqual({
+      foods: [{ foodsId: f.id, stock: 6, bought: 10, bid, ask }],
+      today: { spent: bid * 10, earned: ask * 4, fee, net: ask * 4 - bid * 10 + fee },
+    });
   });
 });
