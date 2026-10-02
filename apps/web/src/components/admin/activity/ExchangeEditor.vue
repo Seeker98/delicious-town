@@ -28,11 +28,19 @@ function removeShop(i: number) {
   patch({ shop: props.modelValue.shop.filter((_, j) => j !== i) });
 }
 const err = (k: string) => props.errors[k];
+/** 某一行下的所有字段错误（终审：货币名、个数、上限等都要显示在对应行） */
+const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) => k.startsWith(prefix));
+/** 掉落规则或兑换消耗还引用着的货币不能删：删了下标会错位（终审） */
+const inUse = (i: number) =>
+  props.modelValue.drops.some((d) => d.currency === i) ||
+  props.modelValue.shop.some((s) => s.cost.some((c) => c.currency === i));
 </script>
 
 <template>
   <div class="small fw-bold">活动货币</div>
-  <div v-if="err('def.currencies')" class="text-danger small">{{ err('def.currencies') }}</div>
+  <div v-if="err('def.currencies')" class="text-danger small" data-testid="err-def.currencies">
+    {{ err('def.currencies') }}
+  </div>
   <div v-for="(c, i) in modelValue.currencies" :key="`c${i}`" class="d-flex gap-2 align-items-center py-1">
     <input
       class="form-control form-control-sm w-auto"
@@ -46,11 +54,20 @@ const err = (k: string) => props.errors[k];
     <button
       type="button"
       class="btn btn-sm btn-link text-danger"
-      :disabled="modelValue.currencies.length <= 1"
+      :disabled="modelValue.currencies.length <= 1 || inUse(i)"
+      :title="inUse(i) ? '掉落规则或兑换表还在用这种货币，先改掉再删' : undefined"
+      :data-testid="`cur-del-${i}`"
       @click="patch({ currencies: modelValue.currencies.filter((_, j) => j !== i) })"
     >
       删除
     </button>
+    <span
+      v-for="[k, m] in errsUnder(`def.currencies.${i}.`)"
+      :key="k"
+      class="text-danger small"
+      :data-testid="`err-${k}`"
+      >{{ m }}</span
+    >
   </div>
   <button
     type="button"
@@ -119,9 +136,13 @@ const err = (k: string) => props.errors[k];
     >
       删除
     </button>
-    <span v-if="err(`def.drops.${i}.chance`)" class="text-danger small">{{
-      err(`def.drops.${i}.chance`)
-    }}</span>
+    <span
+      v-for="[k, m] in errsUnder(`def.drops.${i}.`)"
+      :key="k"
+      class="text-danger small"
+      :data-testid="`err-${k}`"
+      >{{ m }}</span
+    >
   </div>
   <button
     type="button"
@@ -227,5 +248,8 @@ const err = (k: string) => props.errors[k];
       data-testid="ex-grace"
       @input="patch({ graceHours: num($event) })"
     />
+    <span v-if="err('def.graceHours')" class="text-danger small" data-testid="err-def.graceHours">{{
+      err('def.graceHours')
+    }}</span>
   </div>
 </template>

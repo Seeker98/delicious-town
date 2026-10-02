@@ -314,3 +314,52 @@ describe('AdminActivitiesView 兑换活动', () => {
     });
   });
 });
+
+describe('终审：兑换活动编辑器的字段错误和货币删除', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+  });
+  it('货币名、掉落规则、兑换期的服务端错误显示在对应位置', async () => {
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', {
+        issues: [
+          { path: 'def.currencies.0.name', message: 'too_small' },
+          { path: 'def.drops.0.dailyCap', message: 'too_big' },
+          { path: 'def.graceHours', message: 'too_big' },
+        ],
+      }),
+    );
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('exchange');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.currencies.0.name"]').text()).toBe('填写的内容不正确');
+    expect(w.find('[data-testid="err-def.drops.0.dailyCap"]').text()).toBe('填写的内容不正确');
+    expect(w.find('[data-testid="err-def.graceHours"]').text()).toBe('填写的内容不正确');
+  });
+  it('被掉落或兑换引用的货币不能删；没被引用的能删', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('exchange');
+    await w.find('[data-testid="cur-add"]').trigger('click');
+    expect(w.find('[data-testid="cur-del-0"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="cur-del-1"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="cur-del-1"]').trigger('click');
+    expect(w.find('[data-testid="cur-name-1"]').exists()).toBe(false);
+  });
+});

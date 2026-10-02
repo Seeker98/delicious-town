@@ -317,3 +317,55 @@ describe('ActivitiesView 兑换活动', () => {
     expect(w.text()).not.toContain('未领的奖励');
   });
 });
+
+describe('终审 I1：兑换次数输入无效时按钮禁用', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  const rich = {
+    ...base,
+    id: 12,
+    kind: 'exchange',
+    def: {
+      currencies: [{ name: '福' }],
+      drops: [{ key: 'market.buy', chance: 0.05, currency: 0, num: 1, dailyCap: 10 }],
+      shop: [{ cost: [{ currency: 0, num: 1 }], award: { coin: 10 }, limit: 5 }],
+      graceHours: 24,
+    },
+    counters: { m0: 100, x0: 0 },
+    today: {},
+    rewards: [],
+    claimable: 0,
+    exchangeUntil: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+  };
+  it('清空、0、小数、超过剩余次数都禁用；有效时按填的次数兑换', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [rich as never], level: 10 });
+    vi.mocked(endpoints.activityExchange).mockResolvedValue({
+      index: 0,
+      times: 2,
+      items: { coin: 20 },
+    } as never);
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    const input = w.find('[data-testid="times-12-0"]');
+    const btn = () => w.find('[data-testid="exchange-12-0"]');
+    for (const v of ['', '0', '1.5', '6']) {
+      await input.setValue(v);
+      expect(btn().attributes('disabled'), `times=${v}`).toBeDefined();
+    }
+    await input.setValue('2');
+    expect(btn().attributes('disabled')).toBeUndefined();
+    await btn().trigger('click');
+    await flushPromises();
+    expect(endpoints.activityExchange).toHaveBeenCalledWith(12, 0, 2);
+  });
+});
