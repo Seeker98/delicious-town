@@ -18,6 +18,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
       { to: '/rest/tasks', icon: 'bi-check2-square', label: '任务与活跃' },
       { to: '/activities', icon: 'bi-calendar-event', label: '限时活动' },
       { to: '/exchange', icon: 'bi-graph-up-arrow', label: '交易所' },
+      { to: '/predict', icon: 'bi-bar-chart-steps', label: '事件预测' },
       { to: '/store', icon: 'bi-archive', label: '仓库' },
       { to: '/shop', icon: 'bi-bag', label: '商店' },
       { to: '/rest/equip', icon: 'bi-tools', label: '厨具与加点' },

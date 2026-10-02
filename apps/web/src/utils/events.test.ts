@@ -217,4 +217,18 @@ describe('交易所日志（156-1）', () => {
       '交易所买单成交：食材3 ×2，单价 100（可疑成交，所得冻结 24 小时）',
     );
   });
+
+  it('事件合约日志（238-1）', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
+    expect(
+      log('predict.trade', { title: '会下雨吗', side: 'yes', dir: 'buy', qty: 3, amount: 1500, fee: 30 }),
+    ).toBe('预测「会下雨吗」买入是 3 份，成交额 1,500，手续费 30');
+    expect(log('predict.settle', { title: '会下雨吗', outcome: true, coin: 3000 })).toBe(
+      '预测「会下雨吗」结果为是，结算得到 3,000 银币',
+    );
+    expect(log('predict.refund', { title: '会下雨吗', coin: 1530 })).toBe(
+      '预测「会下雨吗」已作废，退回 1,530 银币',
+    );
+  });
 });

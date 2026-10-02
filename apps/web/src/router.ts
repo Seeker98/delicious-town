@@ -205,6 +205,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/predict',
+    name: 'predict',
+    component: () => import('./views/PredictView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/shop',
     name: 'shop',
     component: () => import('./views/ShopView.vue'),

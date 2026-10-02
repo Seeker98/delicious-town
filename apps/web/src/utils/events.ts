@@ -166,6 +166,11 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
         (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
       ),
     ].join('、')}`,
+  'predict.trade': (p) =>
+    `预测「${String(p.title ?? '')}」${p.dir === 'sell' ? '卖出' : '买入'}${p.side === 'no' ? '否' : '是'} ${n(p, 'qty')} 份，成交额 ${formatNum(n(p, 'amount'))}，手续费 ${formatNum(n(p, 'fee'))}`,
+  'predict.settle': (p) =>
+    `预测「${String(p.title ?? '')}」结果为${p.outcome ? '是' : '否'}，结算得到 ${formatNum(n(p, 'coin'))} 银币`,
+  'predict.refund': (p) => `预测「${String(p.title ?? '')}」已作废，退回 ${formatNum(n(p, 'coin'))} 银币`,
   'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
   'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
   'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,
