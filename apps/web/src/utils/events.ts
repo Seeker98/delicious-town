@@ -179,6 +179,13 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
     `预测「${String(p.title ?? '')}」结果为${p.outcome ? '是' : '否'}，结算得到 ${formatNum(n(p, 'coin'))} 银币${predictNet(p)}`,
   'predict.refund': (p) =>
     `预测「${String(p.title ?? '')}」已作废，退回 ${formatNum(n(p, 'coin'))} 银币${predictNet(p)}`,
+  'kuji.buy': (p) => `买了一番赏抽赏券 ×${n(p, 'num')}，花费 ${formatNum(n(p, 'coin'))} 银币`,
+  'kuji.draw': (p) => {
+    const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
+      .map(([k, v]) => `${k} 赏 ×${v}`)
+      .join('、');
+    return `一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张：${tiers}${p.last ? '，并拿下最后赏' : ''}`;
+  },
   'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
   'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
   'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,

@@ -40,6 +40,11 @@ describe('新闻文案', () => {
     expect(newsText(n('town.exchange', { exchangeId: 2, goodsId: 238, num: 1 }), names)).toBe(
       '小王的店在镇长处兑换了 道具238×1',
     );
+    expect(newsText(n('kuji.big', { tier: 'A' }), names)).toBe('小王的店在一番赏抽中了 A 赏！');
+    expect(newsText(n('kuji.big', { tier: 'last' }), names)).toBe(
+      '小王的店抽走了一番赏的最后一张签，拿下最后赏！',
+    );
+    expect(newsText(n('kuji.win', { tier: 'B' }), names)).toBe('小王的店在一番赏抽中了 B 赏');
   });
 
   it('嘻哈男孩和手动进货（4E-2）', () => {

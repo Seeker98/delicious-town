@@ -36,6 +36,7 @@ const GROUPS: Array<{ title: string; links: Link[] }> = [
     links: [
       { to: '/mc', icon: 'bi-stars', label: '特色菜', feature: 'mysterious' },
       { to: '/temple', icon: 'bi-bank2', label: '神殿', feature: 'temple' },
+      { to: '/kuji', icon: 'bi-gift', label: '一番赏', feature: 'kuji' },
       { to: '/yard', icon: 'bi-flower1', label: '菜园', feature: 'yard' },
       { to: '/bar', icon: 'bi-cup-straw', label: '酒吧', feature: 'bar' },
       { to: '/tower', icon: 'bi-building', label: '厨塔', feature: 'tower' },

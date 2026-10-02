@@ -136,6 +136,8 @@ import type {
   ExchangePlaceDto,
   ExchangeWithdrawDto,
   PredictDetailDto,
+  KujiDrawDto,
+  KujiViewDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -468,6 +470,9 @@ export const endpoints = {
     api.post<ExchangePlaceDto>('/api/v1/exchange/orders', b),
   tradeCancel: (id: number) => api.post<ExchangeOrderDto>(`/api/v1/exchange/orders/${id}/cancel`, {}),
   tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
+  kuji: () => api.get<KujiViewDto>('/api/v1/kuji'),
+  kujiBuy: (num: number) => api.post<KujiViewDto>('/api/v1/kuji/buy', { num }),
+  kujiDraw: (num: number) => api.post<KujiDrawDto>('/api/v1/kuji/draw', { num }),
   predictList: () => api.get<PredictListDto>('/api/v1/predict/events'),
   predictDetail: (id: number) => api.get<PredictDetailDto>(`/api/v1/predict/events/${id}`),
   predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number; limit?: number }) =>

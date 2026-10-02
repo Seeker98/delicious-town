@@ -82,6 +82,11 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
   'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.blessName) || str(p.name)}`,
   'town.shake.lucky': (w, p, x) =>
     `恭喜${w}伸进蟹老板裤兜里掏出：${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+  'kuji.big': (w, p) =>
+    p.tier === 'last'
+      ? `${w}抽走了一番赏的最后一张签，拿下最后赏！`
+      : `${w}在一番赏抽中了 ${str(p.tier)} 赏！`,
+  'kuji.win': (w, p) => `${w}在一番赏抽中了 ${str(p.tier)} 赏`,
   'town.exchange': (w, p, x) => `${w}在镇长处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
 };
 
