@@ -26,6 +26,7 @@ const base = {
   today: {},
   premium: false,
   exchangeUntil: null,
+  coop: null,
 };
 const goals: ActivityDto = {
   ...base,
