@@ -5,7 +5,7 @@ import { limitedText, rewardItems, type RewardItems } from './mail';
 
 export const ACTIVITY_TITLE_MAX = 40;
 export const ACTIVITY_BODY_MAX = 1000;
-export const ACTIVITY_KINDS = ['goals', 'grid', 'pass', 'boost'] as const;
+export const ACTIVITY_KINDS = ['goals', 'grid', 'pass', 'boost', 'exchange'] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 
 const actionKey = z.string().refine((k) => Object.hasOwn(ACTIVITY_ACTIONS, k), { message: 'unknown_action' });
@@ -69,7 +69,8 @@ export type ActivitySpec =
   | { kind: 'goals'; def: GoalsDef }
   | { kind: 'grid'; def: GridDef }
   | { kind: 'pass'; def: PassDef }
-  | { kind: 'boost'; def: BoostActivityDef };
+  | { kind: 'boost'; def: BoostActivityDef }
+  | { kind: 'exchange'; def: ExchangeDef };
 
 const twoDecimals = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
 export const boostDef = z.object({
@@ -97,7 +98,66 @@ export const boostDef = z.object({
 });
 export type BoostActivityDef = { items: BoostItem[] };
 
-const DEF_SCHEMAS = { goals: goalsDef, grid: gridDef, pass: passDef, boost: boostDef } as const;
+const fourDecimals = (n: number) => Math.abs(n * 10000 - Math.round(n * 10000)) < 1e-6;
+export const exchangeDef = z
+  .object({
+    currencies: z
+      .array(z.object({ name: z.string().trim().min(1).max(6) }))
+      .min(1)
+      .max(8)
+      .refine((cs) => new Set(cs.map((c) => c.name)).size === cs.length, { message: 'duplicate_name' }),
+    drops: z
+      .array(
+        z.object({
+          key: actionKey,
+          chance: z.number().gt(0).max(1).refine(fourDecimals, { message: 'four_decimals' }),
+          currency: z.number().int().min(0),
+          num: z.number().int().min(1).max(99),
+          dailyCap: z.number().int().min(1).max(9999),
+        }),
+      )
+      .min(1)
+      .max(20),
+    shop: z
+      .array(
+        z.object({
+          cost: z
+            .array(z.object({ currency: z.number().int().min(0), num: z.number().int().min(1).max(9999) }))
+            .min(1)
+            .max(4)
+            .refine((c) => new Set(c.map((x) => x.currency)).size === c.length, {
+              message: 'duplicate_currency',
+            }),
+          award: rewardItems,
+          limit: z.number().int().min(1).max(999),
+        }),
+      )
+      .min(1)
+      .max(30),
+    graceHours: z.number().int().min(0).max(168).default(24),
+  })
+  .superRefine((d, ctx) => {
+    const n = d.currencies.length;
+    d.drops.forEach((r, i) => {
+      if (r.currency >= n)
+        ctx.addIssue({ code: 'custom', path: ['drops', i, 'currency'], message: 'no_currency' });
+    });
+    d.shop.forEach((s, i) =>
+      s.cost.forEach((c, j) => {
+        if (c.currency >= n)
+          ctx.addIssue({ code: 'custom', path: ['shop', i, 'cost', j, 'currency'], message: 'no_currency' });
+      }),
+    );
+  });
+export type ExchangeDef = z.infer<typeof exchangeDef>;
+
+const DEF_SCHEMAS = {
+  goals: goalsDef,
+  grid: gridDef,
+  pass: passDef,
+  boost: boostDef,
+  exchange: exchangeDef,
+} as const;
 
 const common = z.object({
   shardId: z.number().int().positive().nullable(),
@@ -148,6 +208,8 @@ export type ActivityDto = {
   premium: boolean;
   rewards: ActivityRewardDto[];
   claimable: number;
+  /** 兑换活动：结束后还能兑换到什么时候（ends_at + graceHours）；其他类型为 null */
+  exchangeUntil: string | null;
 } & ActivitySpec;
 export interface ActivitiesDto {
   items: ActivityDto[];
@@ -176,3 +238,9 @@ export type AdminActivityDto = {
   updatedAt: string;
   actor: string | null;
 } & ActivitySpec;
+
+export interface ActivityExchangeDto {
+  index: number;
+  times: number;
+  items: RewardItems;
+}
