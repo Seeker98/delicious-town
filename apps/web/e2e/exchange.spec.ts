@@ -74,7 +74,8 @@ test('交易所：挂卖单、吃单、取出', async ({ browser, request }) => 
   } finally {
     if (restIds.length > 0) {
       await client.query(
-        'delete from exchange_trade where buyer_rest_id = any($1) or seller_rest_id = any($1)',
+        // 只删两边都是本用例的号的成交：和别人成交的记录不动（e2e 只动自己的数据）
+        'delete from exchange_trade where buyer_rest_id = any($1) and seller_rest_id = any($1)',
         [restIds],
       );
       await client.query('delete from exchange_order where rest_id = any($1)', [restIds]);

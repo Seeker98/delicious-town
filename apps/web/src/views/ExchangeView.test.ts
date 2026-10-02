@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ExchangeBookDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useToastStore } from '../stores/toast';
 import ExchangeView from './ExchangeView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -140,5 +141,70 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     await w.find('[data-testid="ex-withdraw"]').trigger('click');
     await flushPromises();
     expect(endpoints.tradeWithdraw).toHaveBeenCalled();
+  });
+});
+
+describe('终审：交易所页的选食材和取出提示', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 11, name: '松露', level: 6 },
+        { id: 12, name: '藏红花', level: 3 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.tradeFoods).mockResolvedValue([
+      { foodsId: 12, ref: 4000, last: null, changePct: null },
+      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1 },
+    ]);
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
+  });
+
+  it('快速连点两种食材：先点的盘口后回来也不会覆盖后点的；换食材时清空单价', async () => {
+    let resolveA!: (v: ExchangeBookDto) => void;
+    vi.mocked(endpoints.tradeBook)
+      .mockImplementationOnce(() => new Promise((r) => (resolveA = r)))
+      .mockResolvedValueOnce({ ...book, foodsId: 12, ref: 4000, min: 2000, max: 8000 });
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await w.find('[data-testid="ex-food-12"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="ex-price"]').setValue('3000');
+    resolveA(book);
+    await flushPromises();
+    expect(w.find('[data-testid="ex-band"]').text()).toContain('2,000 ~ 8,000');
+    vi.mocked(endpoints.tradeBook).mockResolvedValueOnce(book);
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    expect((w.find('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('');
+  });
+
+  it('读盘口失败时提示', async () => {
+    vi.mocked(endpoints.tradeBook).mockRejectedValue(new Error('x'));
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain('读取盘口失败');
+  });
+
+  it('取出时有放不下的：提示留在交易所账户', async () => {
+    vi.mocked(endpoints.tradeWithdraw).mockResolvedValue({
+      coin: 0,
+      foods: [{ foodsId: 11, num: 2 }],
+      left: [{ foodsId: 11, num: 3 }],
+    } as never);
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-withdraw"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain('已取出；还有 3 个食材放不下，留在交易所账户');
   });
 });

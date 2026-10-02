@@ -116,3 +116,57 @@ describe('查询（156-1 设计 §7）', () => {
     expect(foods.every((x) => t.deps.config.requireFood(x.foodsId).odds < 100)).toBe(true);
   });
 });
+
+describe('终审 I1：放不下的食材留在账户里，不写"丢掉了"', () => {
+  const logs = (restId: number, type: string) =>
+    t.db
+      .selectFrom('rest_log')
+      .select('params')
+      .where('rest_id', '=', restId)
+      .where('type', '=', type)
+      .execute();
+  it('取出时橱柜和冰箱都满：一个都不取，不写丢弃日志，也不写取出日志', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const r = await trader(t, { shardId, coin: 0 });
+    await t.db
+      .updateTable('restaurant')
+      .set({ foods_max_num: 10 })
+      .where('id', '=', r.restaurantId)
+      .execute();
+    await t.db
+      .insertInto('cupboard_food')
+      .values({ rest_id: r.restaurantId, foods_id: f.id, num: 10, fridge_num: 10 })
+      .onConflict((oc) => oc.columns(['rest_id', 'foods_id']).doUpdateSet({ num: 10, fridge_num: 10 }))
+      .execute();
+    await t.db
+      .insertInto('exchange_wallet_food')
+      .values({ rest_id: r.restaurantId, foods_id: f.id, num: 5 })
+      .execute();
+    const w = await svc().withdraw(r);
+    expect(w.data).toEqual({ coin: 0, foods: [], left: [{ foodsId: f.id, num: 5 }] });
+    expect(await logs(r.restaurantId, 'fridge.drop')).toEqual([]);
+    expect(await logs(r.restaurantId, 'exchange.withdraw')).toEqual([]);
+    expect(await wallet(t, r.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 5 } });
+  });
+  it('撤卖单时退回的食材放不下：进交易所账户，不写丢弃日志', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const r = await trader(t, { shardId, foods: { [f.id]: 3 } });
+    const o = await svc().place(r, { foodsId: f.id, side: 'sell', price: f.coin * 2, qty: 3 });
+    // 挂单后橱柜和冰箱被占满（比如又从菜场买了）
+    await t.db
+      .updateTable('restaurant')
+      .set({ foods_max_num: 10 })
+      .where('id', '=', r.restaurantId)
+      .execute();
+    await t.db
+      .insertInto('cupboard_food')
+      .values({ rest_id: r.restaurantId, foods_id: f.id, num: 10, fridge_num: 10 })
+      .onConflict((oc) => oc.columns(['rest_id', 'foods_id']).doUpdateSet({ num: 10, fridge_num: 10 }))
+      .execute();
+    await svc().cancel(r, o.data.order.id);
+    expect(await wallet(t, r.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 3 } });
+    expect(await logs(r.restaurantId, 'fridge.drop')).toEqual([]);
+  });
+});

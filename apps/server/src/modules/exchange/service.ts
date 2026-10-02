@@ -17,7 +17,7 @@ import { gainCoin, spendCoin } from '../../core/resources';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard/foods';
-import { refPrice } from './ref';
+import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
 import { addCredit, creditWallets, newCredits } from './wallet';
 
@@ -231,7 +231,7 @@ export function createExchangeService(d: GameDeps) {
         .execute();
       // 吃单方：当场到账
       if (b.side === 'buy') {
-        const plan = await addFoods(o, b.foodsId, n, { source: 'exchange' });
+        const plan = await addFoods(o, b.foodsId, n, { source: 'exchange', keepDropped: true });
         if (plan.dropped > 0) addCredit(credits, o.rest.id, 0, b.foodsId, plan.dropped);
         if (b.price > price) gainCoin(o, (b.price - price) * n, { source: 'exchange' });
       } else gainCoin(o, price * n - fee, { source: 'exchange' });
@@ -256,7 +256,7 @@ export function createExchangeService(d: GameDeps) {
     if (left <= 0) return;
     if (r.side === 'buy') gainCoin(o, r.price * left, { source: 'exchange' });
     else {
-      const plan = await addFoods(o, r.foods_id, left, { source: 'exchange' });
+      const plan = await addFoods(o, r.foods_id, left, { source: 'exchange', keepDropped: true });
       if (plan.dropped > 0) {
         const c = newCredits();
         addCredit(c, o.rest.id, 0, r.foods_id, plan.dropped);
@@ -315,7 +315,7 @@ export function createExchangeService(d: GameDeps) {
     const got: Array<{ foodsId: number; num: number }> = [];
     const left: Array<{ foodsId: number; num: number }> = [];
     for (const f of foods) {
-      const plan = await addFoods(o, f.foods_id, f.num, { source: 'exchange' });
+      const plan = await addFoods(o, f.foods_id, f.num, { source: 'exchange', keepDropped: true });
       const n = f.num - plan.dropped;
       if (n > 0) got.push({ foodsId: f.foods_id, num: n });
       if (plan.dropped > 0) left.push({ foodsId: f.foods_id, num: plan.dropped });
@@ -326,7 +326,8 @@ export function createExchangeService(d: GameDeps) {
         .where('foods_id', '=', f.foods_id)
         .execute();
     }
-    restLog(o, 'exchange.withdraw', { coin, foods: got });
+    // 什么都没取到（橱柜和冰箱都满）就不写日志
+    if (coin > 0 || got.length > 0) restLog(o, 'exchange.withdraw', { coin, foods: got });
     return { coin, foods: got, left };
   }
 
@@ -337,18 +338,21 @@ export function createExchangeService(d: GameDeps) {
     const list = [...d.config.foods.values()]
       .filter((f) => isTradable(f))
       .sort((a, b) => a.level - b.level || a.id - b.id);
-    const lasts = await d.db
-      .selectFrom('exchange_trade')
-      .select(['foods_id', 'price'])
-      .distinctOn('foods_id')
-      .where('shard_id', '=', ctx.shardId)
-      .orderBy('foods_id')
-      .orderBy('id', 'desc')
-      .execute();
-    const lastBy = new Map(lasts.map((x) => [x.foods_id, x.price]));
+    const ids = list.map((f) => f.id);
+    // 一次批量取参考价；最新成交价每种食材走索引取一条（156-1 终审 I2）
+    const refs = await refPrices(d.db, d.config, t, ctx.shardId, ids, day);
+    const lasts = await sql<{ foods_id: number; price: number }>`
+      select f.id as foods_id, x.price
+      from unnest(${ids}::int[]) as f(id)
+      cross join lateral (
+        select price from exchange_trade
+        where shard_id = ${ctx.shardId} and foods_id = f.id
+        order by id desc limit 1
+      ) x`.execute(d.db);
+    const lastBy = new Map(lasts.rows.map((x) => [x.foods_id, x.price]));
     const out: ExchangeFoodDto[] = [];
     for (const f of list) {
-      const ref = await refPrice(d.db, d.config, t, ctx.shardId, f.id, day);
+      const ref = refs.get(f.id)!;
       const last = lastBy.get(f.id) ?? null;
       out.push({
         foodsId: f.id,

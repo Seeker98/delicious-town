@@ -60,9 +60,17 @@ const estimate = computed(() => {
 async function loadMe() {
   me.value = await endpoints.tradeMe();
 }
+/** 选食材：清空单价；连点时只认最后一次点的那个（终审：先发的请求后回来会覆盖） */
 async function pick(id: number) {
   selected.value = id;
-  book.value = await endpoints.tradeBook(id);
+  book.value = null;
+  price.value = '';
+  try {
+    const b = await endpoints.tradeBook(id);
+    if (selected.value === id) book.value = b;
+  } catch (e) {
+    if (selected.value === id) toast.push(errorMessage(e, '读取盘口失败'), 'danger');
+  }
 }
 async function run(fn: () => Promise<unknown>, ok: (r: unknown) => string, fallback: string) {
   busy.value = true;
@@ -70,7 +78,11 @@ async function run(fn: () => Promise<unknown>, ok: (r: unknown) => string, fallb
     const r = await fn();
     toast.push(ok(r));
     await loadMe();
-    if (selected.value !== null) book.value = await endpoints.tradeBook(selected.value);
+    const id = selected.value;
+    if (id !== null) {
+      const b = await endpoints.tradeBook(id);
+      if (selected.value === id) book.value = b;
+    }
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
   } finally {
@@ -103,7 +115,10 @@ const cancel = (id: number) =>
 const withdraw = () =>
   run(
     () => endpoints.tradeWithdraw(),
-    () => '已取出',
+    (r) => {
+      const left = (r as { left: Array<{ num: number }> }).left.reduce((s, x) => s + x.num, 0);
+      return left > 0 ? `已取出；还有 ${left} 个食材放不下，留在交易所账户` : '已取出';
+    },
     '取出失败',
   );
 
