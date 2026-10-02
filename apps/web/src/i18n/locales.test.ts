@@ -4,8 +4,16 @@ import { convertZhTw } from '../../scripts/gen-zh-tw.mjs';
 import { loadMessages } from '.';
 import overrides from './zh-TW-overrides.json';
 
-const ZH_CN = import.meta.glob<string>('./locales/zh-CN/*.ts', { query: '?raw', import: 'default', eager: true });
-const ZH_TW = import.meta.glob<string>('./locales/zh-TW/*.ts', { query: '?raw', import: 'default', eager: true });
+const ZH_CN = import.meta.glob<string>('./locales/zh-CN/*.ts', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const ZH_TW = import.meta.glob<string>('./locales/zh-TW/*.ts', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
 /** 对象的键路径（值是函数时只看到这一层） */
 function keys(o: unknown, prefix = ''): string[] {
@@ -20,9 +28,15 @@ describe('各语言的翻译（问题记录 272）', () => {
   });
 
   it('繁中是由简中生成的最新结果：改了简中要跑 pnpm -F @dt/web i18n:tw', () => {
-    expect(Object.keys(ZH_TW).sort()).toEqual(Object.keys(ZH_CN).map((p) => p.replace('/zh-CN/', '/zh-TW/')).sort());
+    expect(Object.keys(ZH_TW).sort()).toEqual(
+      Object.keys(ZH_CN)
+        .map((p) => p.replace('/zh-CN/', '/zh-TW/'))
+        .sort(),
+    );
     for (const [path, src] of Object.entries(ZH_CN))
-      expect(ZH_TW[path.replace('/zh-CN/', '/zh-TW/')], path).toBe(convertZhTw(src, overrides as Array<[string, string]>));
+      expect(ZH_TW[path.replace('/zh-CN/', '/zh-TW/')], path).toBe(
+        convertZhTw(src, overrides as Array<[string, string]>),
+      );
   });
 
   it('转换示例：用台湾用词', () => {
