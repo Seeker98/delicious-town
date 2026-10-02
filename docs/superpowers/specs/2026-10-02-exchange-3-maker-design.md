@@ -1,7 +1,7 @@
 # 自由交易市场 156-3：系统做市 设计
 
 日期：2026-10-02
-状态：待用户审阅
+状态：用户已审阅
 
 ## 1. 范围
 
@@ -49,7 +49,7 @@
 
 - 这种食材可能出现在哪些货架，按菜场进货用的食材池判断（`config.foodPools`）：
   - 日常货架：等级在 `dailyLevelWeights` 里、并且在该等级的池子里，单价是系统定价。手动进货也上日常货架，按同样规则。
-  - 特价货架：等级在 `specialLevelWeights` 里、并且在池子里，单价是 `specialPrice`。
+  - 特价货架：等级在 `specialLevelWeights` 里、并且在池子里，或者在热门稀缺食材池（`config.hotFoodPool`）里，单价是 `specialPrice`。
   - 高级货架：等级等于 `premiumLevel`、并且在池子里，单价是系统定价 × `premiumPriceFactor`。
 - 取上面能出现的货架里最便宜的单价，再乘：
   - 最便宜天气的系数 `1 + min(marketCoin)`（现在的数据里是 1 − 0.3 = 0.7）；
@@ -59,7 +59,8 @@
 
 参考价 `ref` 是当天参考价（156-1 §5），允许范围 `[min, max]`（156-1 §5）。
 
-- **买价**：`floor(ref × bidRate)`。菜场最低价不为空时，再取 `min(买价, floor(菜场最低价 × marketCapRate))`。最后夹到 `[min, max]` 里。
+- **买价**：`floor(ref × bidRate)`。菜场最低价不为空时，再取 `min(买价, floor(菜场最低价 × marketCapRate))`。高于 `max` 取 `max`；**低于 `min` 就没有买这一档**（不往上抬，否则封顶失效）。
+  - 现有数据下 3~5 级食材会上特价货架，封顶约 1,889，低于它们的挂单下限（参考价最低 3,800 × 0.5），所以系统不收 3~5 级（用户已确认：严格封顶）。系统做市实际只覆盖 1、2、6、7、9 级。
 - **卖价**：`ceil(ref × askRate)`，夹到 `[min, max]` 里。
 - **能收的数量**：`min(dailyBuy − 今天已收, stockMax − 库存, playerDaily − 这个玩家今天已卖给系统)`。小于等于 0 就没有买这一档。
 - **能卖的数量**：库存。为 0 就没有卖这一档。
@@ -125,6 +126,7 @@ exchange_maker_day                             -- 系统每日收购
 ## 6. 盘口和查询
 
 - `GET /exchange/book/:foodsId`：系统那一档合并进 `bids` / `asks`。每档加 `system: boolean`；系统和玩家同价时分成两档，系统排在后面。
+- **最新成交价**（列表的 `last`、`changePct`，盘口的 `last`）只看玩家之间的成交；**今日成交量**（盘口的 `volume`）包括和系统的成交。
 - `GET /exchange/me` 的成交记录：和系统的成交照常显示，加 `system: true`，前端写"（系统）"。
 - **前端盘口**：系统那一档写"系统"，用不同的颜色。
 
