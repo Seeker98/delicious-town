@@ -533,6 +533,23 @@ export function createExchangeService(d: GameDeps) {
         order by id desc limit 1
       ) x`.execute(d.db);
     const lastBy = new Map(lasts.rows.map((x) => [x.foods_id, x.price]));
+    // 在售、在收（问题记录 282）：本区服未过期挂单的剩余数量按食材和方向合计；系统库存
+    const open = await d.db
+      .selectFrom('exchange_order')
+      .select(['foods_id', 'side', sql<string>`sum(qty - filled)`.as('n')])
+      .where('shard_id', '=', ctx.shardId)
+      .where('status', '=', 'open')
+      .where('expires_at', '>', d.now())
+      .groupBy(['foods_id', 'side'])
+      .execute();
+    const openBy = new Map(open.map((x) => [`${x.side}:${x.foods_id}`, Number(x.n)]));
+    const stock = await d.db
+      .selectFrom('exchange_stock')
+      .select(['foods_id', 'num'])
+      .where('shard_id', '=', ctx.shardId)
+      .where('num', '>', 0)
+      .execute();
+    const stockBy = new Map(stock.map((x) => [x.foods_id, x.num]));
     const out: ExchangeFoodDto[] = [];
     for (const f of list) {
       const ref = refs.get(f.id)!;
@@ -542,6 +559,9 @@ export function createExchangeService(d: GameDeps) {
         ref,
         last,
         changePct: last === null ? null : Math.round(((last - ref) / ref) * 1000) / 1000,
+        selling: openBy.get(`sell:${f.id}`) ?? 0,
+        buying: openBy.get(`buy:${f.id}`) ?? 0,
+        sysStock: stockBy.get(f.id) ?? 0,
       });
     }
     return out;
