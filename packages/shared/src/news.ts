@@ -42,4 +42,6 @@ export const NEWS_TYPES: readonly string[] = [
   'town.bless',
   'town.shake.lucky',
   'town.exchange',
+  'kuji.big',
+  'kuji.win',
 ];
