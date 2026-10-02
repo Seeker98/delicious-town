@@ -382,6 +382,19 @@ h5 {
   font-size: 18px;
   font-weight: 600;
 }
+/* 首页今日待办（问题记录 280）：一行一件事，右边是操作 */
+.dt-todo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 0;
+  border-top: 1px solid #f1e6da;
+}
+/* 首页折叠的"生效的加成" */
+details.dt-card > summary {
+  cursor: pointer;
+}
 /* 卡片标题：和正文同字号、粗 600（问题记录 278：卡片里的 <b> 继承 16px 显得粗大） */
 .dt-card-title {
   font-size: 14px;

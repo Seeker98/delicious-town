@@ -38,13 +38,17 @@ async function loadAnnouncements() {
   }
 }
 
-/** 首页签到（问题记录 144）：读失败就不显示 */
+/** 首页签到（问题记录 144）和今日活跃点数（问题记录 280）：读失败就不显示 */
 const signedIn = ref<boolean | null>(null);
+const activeTotal = ref<number | null>(null);
 async function loadSignIn() {
   try {
-    signedIn.value = (await endpoints.activation()).signedIn;
+    const a = await endpoints.activation();
+    signedIn.value = a.signedIn;
+    activeTotal.value = a.total;
   } catch {
     signedIn.value = null;
+    activeTotal.value = null;
   }
 }
 
@@ -142,8 +146,8 @@ function openPlaque2() {
 const expiresText = (at: string | null) => remainText(at);
 const effectExpires = (e: EffectDto) => expiresText(e.expiresAt);
 
+/** 餐厅卡底部的小链接（问题记录 280：任务入口并进待办卡的"今日活跃"） */
 const QUICK = [
-  { to: '/rest/tasks', icon: 'bi-check2-square', label: '任务' },
   { to: '/rest/equip', icon: 'bi-tools', label: '厨具与加点' },
   { to: '/store', icon: 'bi-archive', label: '仓库' },
   { to: '/shop', icon: 'bi-bag', label: '商店' },
@@ -160,6 +164,11 @@ const EFFECT_GROUPS: Array<{ type: string; label: string }> = [
   { type: 'suit', label: '套装' },
 ];
 const effectsAll = ref(false);
+/** 折叠时的一行摘要：来源名字，最多 3 个（问题记录 280） */
+const effectsSummary = computed(() => {
+  const names = (rest.value?.effects ?? []).map((e) => e.name);
+  return names.length === 0 ? '暂无' : names.slice(0, 3).join('、') + (names.length > 3 ? ' 等' : '');
+});
 const effectGroups = computed(() => {
   const all = rest.value?.effects ?? [];
   const known = new Set(EFFECT_GROUPS.map((g) => g.type));
@@ -205,129 +214,7 @@ onBeforeUnmount(() => {
       </span>
     </div>
     <AnnounceBanner :items="announcements" />
-    <ActivityBanner />
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
-    <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
-      <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{ i.title }}</span>
-    </div>
-    <div class="small text-muted mb-2">
-      {{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级 <b data-testid="rest-level">{{ rest.level }}</b>
-      <span v-if="rest.state === 2" class="badge bg-danger ms-1">停业</span>
-    </div>
-    <!-- 新手提示（问题记录 150）：10 级以前显示 -->
-    <RouterLink v-if="rest.level < 10" to="/guide" class="d-block small mb-1" data-testid="guide-hint"
-      >新手看这里 → 游玩指引（有新手兑换码）</RouterLink
-    >
-    <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
-    <div
-      class="progress my-2 position-relative"
-      role="progressbar"
-      :aria-valuenow="expPercent"
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      <div class="progress-bar dt-exp-bar" data-testid="exp-bar" :style="{ width: `${expPercent}%` }"></div>
-      <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
-      <span
-        data-testid="exp-text"
-        class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-        >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
-      >
-    </div>
-    <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
-    <div class="dt-quick mb-2" data-testid="quick-links">
-      <RouterLink
-        v-for="q in QUICK"
-        :key="q.to"
-        :to="q.to"
-        class="dt-more-link text-center text-decoration-none"
-      >
-        <i :class="['bi', q.icon, 'd-block']"></i>{{ q.label }}
-      </RouterLink>
-    </div>
-
-    <div class="row g-1 small">
-      <div class="col-6">
-        <i class="bi bi-coin"></i> <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
-      </div>
-      <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
-      <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
-      <div class="col-6" title="声望"><i class="bi bi-award"></i> {{ rest.renown }}</div>
-    </div>
-    <div class="d-flex align-items-center gap-2 small">
-      <span><i class="bi bi-droplet"></i> 油 {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
-      <button
-        class="btn btn-sm btn-outline-primary ms-auto"
-        data-testid="refuel"
-        :disabled="busy || refuelCost <= 0"
-        @click="act(() => endpoints.refuel(), '加油失败')"
-      >
-        {{ refuelCost < refuelNeed ? '加油' : '加满' }}（{{ formatNum(refuelCost) }} 银币）
-      </button>
-    </div>
-
-    <div v-if="rest.lastRound" class="border rounded p-2 my-2 small" data-testid="last-round">
-      <div class="fw-bold mb-1">上一轮收益</div>
-      银币 {{ formatNum(rest.lastRound.coin) }} · 经验 {{ formatNum(rest.lastRound.exp) }} · 耗油
-      {{ formatNum(rest.lastRound.oil) }}
-      <div class="text-muted">{{ customers || '没有客人' }}</div>
-      <RouterLink to="/rest/income">收益记录 ›</RouterLink>
-      <RouterLink to="/rest/floor" class="ms-3">楼层餐桌 ›</RouterLink>
-    </div>
-
-    <div v-if="dining" class="card mb-2" data-testid="dine-card">
-      <div class="card-body py-2 d-flex align-items-center small">
-        <div class="flex-fill">
-          正在 <RouterLink :to="`/friends/${dining.hostRestId}`">{{ dining.hostName }}</RouterLink> 第
-          {{ dining.tableNo }} 桌白食，已 {{ dining.minutes }} 分钟
-        </div>
-        <button
-          class="btn btn-sm btn-primary"
-          data-testid="dine-end"
-          :disabled="busy || !dining.canEnd"
-          @click="act(() => endpoints.dineEnd(), '结束白食失败')"
-        >
-          结束白食
-        </button>
-      </div>
-    </div>
-    <div
-      v-if="signedIn !== null"
-      class="dt-card my-2 small d-flex align-items-center gap-2"
-      data-testid="home-signin-row"
-    >
-      <span class="flex-fill"><i class="bi bi-calendar-check me-1"></i>每日签到</span>
-      <span v-if="signedIn" class="text-muted">今天已签到</span>
-      <button
-        v-else
-        class="btn btn-sm btn-success"
-        :disabled="busy"
-        data-testid="home-signin"
-        @click="act(() => endpoints.signIn(), '签到失败')"
-      >
-        签到
-      </button>
-    </div>
-    <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
-    <div v-if="mainTask" class="dt-card my-2 small d-flex align-items-center gap-2" data-testid="main-task">
-      <div class="flex-fill">
-        <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
-        <span class="text-muted"
-          >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
-        >
-      </div>
-      <button
-        v-if="mainTask.done"
-        class="btn btn-sm btn-success"
-        :disabled="busy"
-        @click="act(() => endpoints.claimTask(mainTask!.id), '领取失败')"
-      >
-        领奖
-      </button>
-    </div>
-
-    <HomeNews :headlines="rest.headlines" />
-
     <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
       <div>
         <b>痞老板赖在店里不走！</b>他带来的勋章在赶走前一直有效：上座率 +50%，但<b>挑剔率 -120%</b>
@@ -349,6 +236,132 @@ onBeforeUnmount(() => {
         用蟹黄堡秘方
       </button>
     </div>
+
+    <!-- 首页第一屏三张卡（问题记录 280）：餐厅、今日待办、小镇动态 -->
+    <div class="dt-card my-2 small" data-testid="home-status">
+      <div class="d-flex flex-wrap align-items-center gap-1">
+        <span class="text-muted"
+          >{{ rest.streetName }} · {{ rest.starLevel }} 星 · 等级
+          <b data-testid="rest-level">{{ rest.level }}</b></span
+        >
+        <span v-if="rest.state === 2" class="badge bg-danger">停业</span>
+        <span v-if="rest.icons.length > 0" data-testid="my-icons">
+          <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{ i.title }}</span>
+        </span>
+      </div>
+      <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
+      <div
+        class="progress my-2 position-relative"
+        role="progressbar"
+        :aria-valuenow="expPercent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div class="progress-bar dt-exp-bar" data-testid="exp-bar" :style="{ width: `${expPercent}%` }"></div>
+        <!-- 数字盖在整条进度条上居中，不跟着橙色部分的宽度走 -->
+        <span
+          data-testid="exp-text"
+          class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
+          >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
+        >
+      </div>
+      <div class="row g-1">
+        <div class="col-6">
+          <i class="bi bi-coin"></i> <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
+        </div>
+        <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
+        <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
+        <div class="col-6" title="声望"><i class="bi bi-award"></i> {{ rest.renown }}</div>
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-1">
+        <span><i class="bi bi-droplet"></i> 油 {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
+        <button
+          class="btn btn-sm btn-outline-primary ms-auto"
+          data-testid="refuel"
+          :disabled="busy || refuelCost <= 0"
+          @click="act(() => endpoints.refuel(), '加油失败')"
+        >
+          {{ refuelCost < refuelNeed ? '加油' : '加满' }}（{{ formatNum(refuelCost) }} 银币）
+        </button>
+      </div>
+      <div v-if="rest.lastRound" class="border-top mt-2 pt-1" data-testid="last-round">
+        上一轮：银币 {{ formatNum(rest.lastRound.coin) }} · 经验 {{ formatNum(rest.lastRound.exp) }} · 耗油
+        {{ formatNum(rest.lastRound.oil) }}
+        <div class="text-muted dt-clamp1">{{ customers || '没有客人' }}</div>
+        <RouterLink to="/rest/income">收益记录 ›</RouterLink>
+        <RouterLink to="/rest/floor" class="ms-3">楼层餐桌 ›</RouterLink>
+      </div>
+      <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
+      <div class="border-top mt-2 pt-1 d-flex gap-3" data-testid="quick-links">
+        <RouterLink v-for="q in QUICK" :key="q.to" :to="q.to" class="text-decoration-none">
+          <i :class="['bi', q.icon]"></i> {{ q.label }}
+        </RouterLink>
+      </div>
+    </div>
+
+    <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
+      <div class="dt-card-title mb-1">今日待办</div>
+      <div v-if="signedIn !== null" class="dt-todo-row" data-testid="home-signin-row">
+        <span class="flex-fill"><i class="bi bi-calendar-check me-1"></i>每日签到</span>
+        <span v-if="signedIn" class="text-muted">今天已签到</span>
+        <button
+          v-else
+          class="btn btn-sm btn-success"
+          :disabled="busy"
+          data-testid="home-signin"
+          @click="act(() => endpoints.signIn(), '签到失败')"
+        >
+          签到
+        </button>
+      </div>
+      <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
+      <div v-if="mainTask" class="dt-todo-row" data-testid="main-task">
+        <div class="flex-fill">
+          <span class="dt-tag me-1">主线</span>{{ mainTask.name }}
+          <span class="text-muted"
+            >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
+          >
+        </div>
+        <button
+          v-if="mainTask.done"
+          class="btn btn-sm btn-success"
+          :disabled="busy"
+          @click="act(() => endpoints.claimTask(mainTask!.id), '领取失败')"
+        >
+          领奖
+        </button>
+      </div>
+      <RouterLink
+        v-if="activeTotal !== null"
+        to="/rest/tasks"
+        class="dt-todo-row text-reset text-decoration-none"
+        data-testid="home-activation"
+      >
+        <span class="flex-fill"><i class="bi bi-check2-square me-1"></i>今日活跃 {{ activeTotal }}</span>
+        <span class="text-primary">任务 ›</span>
+      </RouterLink>
+      <ActivityBanner />
+      <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
+        <div class="flex-fill">
+          正在 <RouterLink :to="`/friends/${dining.hostRestId}`">{{ dining.hostName }}</RouterLink> 第
+          {{ dining.tableNo }} 桌白食，已 {{ dining.minutes }} 分钟
+        </div>
+        <button
+          class="btn btn-sm btn-primary"
+          data-testid="dine-end"
+          :disabled="busy || !dining.canEnd"
+          @click="act(() => endpoints.dineEnd(), '结束白食失败')"
+        >
+          结束白食
+        </button>
+      </div>
+      <!-- 新手提示（问题记录 150）：10 级以前显示 -->
+      <RouterLink v-if="rest.level < 10" to="/guide" class="dt-todo-row" data-testid="guide-hint"
+        >新手看这里 → 游玩指引（有新手兑换码）</RouterLink
+      >
+    </div>
+
+    <HomeNews :headlines="rest.headlines" />
 
     <h6 class="dt-section">设施</h6>
     <div class="row g-1">
@@ -457,8 +470,12 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <h6 class="dt-section">生效的加成</h6>
-    <div class="small">
+    <!-- 生效的加成默认折叠成一行摘要（问题记录 280） -->
+    <details class="dt-card my-2 small" data-testid="effects">
+      <summary>
+        <span class="dt-card-title">生效的加成</span>
+        <span class="text-muted ms-1">{{ rest.effects.length }} 项：{{ effectsSummary }}</span>
+      </summary>
       <template v-for="g in effectGroups" :key="g.type">
         <div class="text-muted mt-1" data-testid="effect-group">{{ g.label }}</div>
         <div
@@ -488,6 +505,6 @@ onBeforeUnmount(() => {
         @click.prevent="effectsAll = !effectsAll"
         >{{ effectsAll ? '收起' : `展开全部（共 ${rest.effects.length} 条）` }}</a
       >
-    </div>
+    </details>
   </div>
 </template>
