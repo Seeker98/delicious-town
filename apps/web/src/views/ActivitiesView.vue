@@ -4,6 +4,7 @@ import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityGoals from '../components/activity/ActivityGoals.vue';
 import ActivityBoost from '../components/activity/ActivityBoost.vue';
+import ActivityCoop from '../components/activity/ActivityCoop.vue';
 import ActivityExchange from '../components/activity/ActivityExchange.vue';
 import ActivityGrid from '../components/activity/ActivityGrid.vue';
 import ActivityPass from '../components/activity/ActivityPass.vue';
@@ -96,6 +97,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
       :open="exchangeOpen(a)"
       @exchange="(i, n) => exchange(a, i, n)"
     />
+    <ActivityCoop v-else-if="a.kind === 'coop'" :a="a" :busy="busy" @claim="claim(a, $event)" />
     <button
       v-if="a.claimable > 0"
       type="button"
