@@ -43,7 +43,10 @@ export async function openPool(
 
 /**
  * 当前池（一番赏设计 §5.2）：先把前几天没抽完的池改成过期；今天有进行中的就返回，
- * 没有就开下一池（seq = 今天最大 + 1）。并发开池靠唯一索引，冲突时重读
+ * 没有就开下一池（seq = 今天最大 + 1）。
+ * 同一区服的开池、过期串行处理（事务级咨询锁，事务结束释放）：不然别人的事务正好在"查进行中的池"
+ * 和"查最大池号"之间提交，会多开出一个池号 +1 的池，出现两个进行中的池（终审前压力测试发现）。
+ * 加锁顺序：店 → 这把锁 → 池行。唯一索引仍兜底
  */
 export async function currentPool(
   tx: Kysely<DB>,
@@ -52,6 +55,7 @@ export async function currentPool(
   now: Date,
 ): Promise<PoolRow> {
   const day = gameDay(now);
+  await sql`select pg_advisory_xact_lock(hashtext(${`kuji:${shardId}`}))`.execute(tx);
   await tx
     .updateTable('kuji_pool')
     .set({ status: 'expired', closed_at: now })

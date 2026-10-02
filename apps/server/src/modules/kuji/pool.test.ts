@@ -50,6 +50,24 @@ describe('奖池（一番赏设计 §5.2）', () => {
     expect(n).toHaveLength(1);
   });
 
+  it('并发开池压力测试：别人的事务在两次查询之间提交，也不会出现两个进行中的池（终审前发现的竞态）', async () => {
+    for (let round = 0; round < 40; round++) {
+      const shardId = await createShard(t.db);
+      await Promise.all(
+        Array.from({ length: 8 }, () =>
+          t.db.transaction().execute((tx) => currentPool(tx, shardId, tiers(), t.clock.now)),
+        ),
+      );
+      const open = await t.db
+        .selectFrom('kuji_pool')
+        .select('id')
+        .where('shard_id', '=', shardId)
+        .where('status', '=', 'open')
+        .execute();
+      expect(open).toHaveLength(1);
+    }
+  });
+
   it('开池时按当时的 tiers；之后改配置不影响这一池（Review Focus 5）', async () => {
     const shardId = await createShard(t.db);
     const p = await currentPool(t.db, shardId, [{ key: 'X', count: 3, award: { coin: 1 } }], t.clock.now);
