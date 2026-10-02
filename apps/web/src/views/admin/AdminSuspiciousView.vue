@@ -9,18 +9,20 @@ import type {
   SuspiciousSurgeRow,
 } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import ExchangeGuardPanel from '../../components/admin/ExchangeGuardPanel.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
-type Tab = 'bar' | 'surge' | 'multi' | 'redeem';
+type Tab = 'bar' | 'surge' | 'multi' | 'redeem' | 'exchange';
 const TABS: Array<[Tab, string]> = [
   ['bar', '酒吧'],
   ['surge', '资源暴涨'],
   ['multi', '多号'],
   ['redeem', '兑换码被锁'],
+  ['exchange', '交易所'],
 ];
 const SURGE: Array<['coin' | 'diamond' | 'exp', string]> = [
   ['coin', '银币'],
@@ -46,7 +48,8 @@ async function load() {
     else if (tab.value === 'surge')
       surge.value = await adminApi.suspiciousSurge(shardId, day.value || undefined);
     else if (tab.value === 'multi') multi.value = await adminApi.suspiciousMulti(shardId);
-    else redeem.value = await adminApi.suspiciousRedeem(shardId);
+    else if (tab.value === 'redeem') redeem.value = await adminApi.suspiciousRedeem(shardId);
+    // 交易所标签由 ExchangeGuardPanel 自己读取（156-2）
   } catch (e) {
     toast.push(errorMessage(e, '读取失败'), 'danger');
   } finally {
@@ -77,6 +80,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
     </li>
   </ul>
 
+  <ExchangeGuardPanel v-if="tab === 'exchange'" />
   <template v-if="tab === 'bar'">
     <p class="small text-muted">
       最近 7 个游戏日；单日超过门槛的标红（门槛在区服数值 tuning.ops.suspicious）。

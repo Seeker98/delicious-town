@@ -8,6 +8,8 @@ import type {
   ReportCaseDto,
   ReportDetailDto,
   ReportStatus,
+  ExchangeFrozenRow,
+  ExchangeSuspiciousRow,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
   SuspiciousRedeemRow,
@@ -89,6 +91,14 @@ export const adminApi = {
   suspiciousBar: (shardId: number) => api.get<SuspiciousBarRow[]>(`${A}/suspicious/bar${qs({ shardId })}`),
   suspiciousSurge: (shardId: number, day?: string) =>
     api.get<SuspiciousSurgeDto>(`${A}/suspicious/surge${qs({ shardId, day })}`),
+  suspiciousExchange: (shardId: number, flag?: string) =>
+    api.get<ExchangeSuspiciousRow[]>(`${A}/suspicious/exchange${qs({ shardId, flag })}`),
+  exchangeFrozen: (shardId: number) => api.get<ExchangeFrozenRow[]>(`${A}/exchange/frozen${qs({ shardId })}`),
+  exchangeFreeze: (b: { restId: number; reason: string }) =>
+    api.post<{ ok: true }>(`${A}/exchange/freeze`, b),
+  exchangeUnfreeze: (b: { restId: number }) => api.post<{ ok: true }>(`${A}/exchange/unfreeze`, b),
+  exchangeConfiscate: (b: { tradeId: number } | { restId: number }) =>
+    api.post<{ count: number; coin: number; foods: number }>(`${A}/exchange/confiscate`, b),
   suspiciousMulti: (shardId: number) =>
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
   suspiciousRedeem: (shardId: number) =>
