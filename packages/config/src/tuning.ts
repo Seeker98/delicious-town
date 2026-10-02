@@ -51,6 +51,8 @@ export const tuningSchema = z.object({
     planktonHostCooldownHours: num,
     /** 全服经营经验倍率：每桌经验和挑剔消耗食材经验都乘它（原作为 1） */
     expMultiplier: z.number().positive(),
+    /** 全服银币倍率：每桌付费顾客的银币乘它（148-4 全服加成用，默认 1） */
+    coinMultiplier: z.number().positive(),
     roachRateBase: num,
     roachRatePerStar: num,
     squidwardRate: num,
@@ -140,6 +142,8 @@ export const tuningSchema = z.object({
     premiumRareFactor: num,
     premiumLevel: int,
     premiumPriceFactor: num,
+    /** 菜场价格倍率：三个货架的单价在天气系数之后再乘它（148-4 全服加成用，默认 1） */
+    priceFactor: z.number().positive(),
     shelfLimits: z.tuple([int, int, int]),
     rareWindowMinutes: int,
     rareLimitOddsFactor: num,
