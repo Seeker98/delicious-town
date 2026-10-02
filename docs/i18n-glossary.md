@@ -35,6 +35,13 @@
 | 设施 | Facilities | Équipements | Instalaciones |
 | 厨具 | Cookware | Ustensiles | Utensilios |
 | 限时活动 | Events | Événements | Eventos |
+| 协会 | Guild | Guilde | Gremio |
+| 冰箱 | Fridge | Frigo | Nevera |
+| 万能食材 | Universal ingredient | Ingrédient universel | Ingrediente universal |
+| 神秘礼券 | Mystery Voucher | Bon mystère | Vale misterioso |
+| 菜园姐 | Garden Sis | Sœur du Potager | Hermana del Huerto |
+| 雯姐 | Sister Wen | Sœur Wen | Hermana Wen |
+| 品（食谱品级） | Grade | Qualité | Calidad |
 
 约定：
 

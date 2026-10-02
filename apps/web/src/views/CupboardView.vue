@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { CupboardDto, FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -9,6 +10,7 @@ import { foodLevelLabel, formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const tab = ref<'cupboard' | 'fridge'>('cupboard');
 const data = ref<CupboardDto | null>(null);
 const fridge = ref<FridgeDto | null>(null);
@@ -49,14 +51,10 @@ const pickedLevel = computed(() => (picked.value ? (catalog.food(picked.value)?.
 const canDecompose = computed(() => pickedLevel.value >= 2 && pickedLevel.value <= 6);
 const canCompose = computed(() => pickedLevel.value >= 1 && pickedLevel.value <= 4);
 /** 问题记录 140：万能食材能不能换稀有食材 */
-const MASTER_HIGH = '三级及以上的万能食材不能兑换稀有食材，只能在学食谱时顶替同级缺的那一种食材。';
-const MASTER_RULE: Record<number, string> = {
-  467: '2 个一级万能食材换 1 个随机二级稀有食材。',
-  468: '2 个二级万能食材换 1 个随机三级稀有食材。',
-  469: MASTER_HIGH,
-  470: MASTER_HIGH,
-  471: MASTER_HIGH,
-};
+const MASTER_RULE = computed((): Record<number, string> => {
+  const c = t.value.cupboard;
+  return { 467: c.master1, 468: c.master2, 469: c.masterHigh, 470: c.masterHigh, 471: c.masterHigh };
+});
 
 /** 一次最多分解几个；合成要偶数个（问题记录：合成不显示最大数） */
 const decomposeMax = computed(() => Math.min(data.value?.handleMax ?? 100, pickedItem.value?.num ?? 0));
@@ -76,8 +74,8 @@ async function load() {
 }
 function thaw(f: FridgeDto['items'][number]) {
   const name = catalog.foodName(f.foodsId);
-  if (!window.confirm(`解冻 ${f.thawable} 个${name}，花费 ${formatNum(f.thawCoin)} 银币？`)) return;
-  void run(() => endpoints.thaw(f.foodsId), '解冻失败');
+  if (!window.confirm(t.value.cupboard.thawConfirm(f.thawable, name, formatNum(f.thawCoin)))) return;
+  void run(() => endpoints.thaw(f.foodsId), t.value.cupboard.thawFailed);
 }
 async function openFridge() {
   tab.value = 'fridge';
@@ -105,18 +103,18 @@ function handle(way: 'compose' | 'decompose') {
   return run(async () => {
     const n = way === 'compose' ? composeN.value : decomposeN.value;
     const r = await endpoints.handleFoods({ foodsId, way, num: n });
-    toast.push(`成功 ${r.success}/${r.chances} 次${r.strengthUsed ? '，消耗 1 体力' : ''}`, 'info');
-  }, '处理失败');
+    toast.push(t.value.cupboard.handleResult(r.success, r.chances, !!r.strengthUsed), 'info');
+  }, t.value.cupboard.handleFailed);
 }
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.loadFailed), 'danger')));
 </script>
 
 <template>
   <ul class="nav nav-tabs mb-2">
     <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'cupboard' }]" href="#" @click.prevent="tab = 'cupboard'"
-        >橱柜</a
-      >
+      <a :class="['nav-link', { active: tab === 'cupboard' }]" href="#" @click.prevent="tab = 'cupboard'">{{
+        t.cupboard.tabs.cupboard
+      }}</a>
     </li>
     <li class="nav-item">
       <a
@@ -125,16 +123,25 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         data-testid="tab-fridge"
         @click.prevent="openFridge"
       >
-        冰箱<span v-if="data?.fridgeUnread" class="badge bg-danger ms-1">新</span>
+        {{ t.cupboard.tabs.fridge
+        }}<span v-if="data?.fridgeUnread" class="badge bg-danger ms-1">{{ t.cupboard.newBadge }}</span>
       </a>
     </li>
   </ul>
 
   <template v-if="tab === 'cupboard' && data">
     <div class="small text-muted mb-2">
-      格子 {{ data.slotsUsed }}/{{ data.slots }} · 锁定 {{ data.lockUsed }}/{{ data.lockSlots }} · 单种上限
-      {{ data.foodsMaxNum }} · 今天免体力处理还剩 {{ data.freeHandleLeft }} 次 · 本街目标
-      {{ data.targetGrade }} 品
+      {{
+        t.cupboard.summary({
+          used: data.slotsUsed,
+          slots: data.slots,
+          lockUsed: data.lockUsed,
+          lockSlots: data.lockSlots,
+          max: data.foodsMaxNum,
+          free: data.freeHandleLeft,
+          grade: data.targetGrade,
+        })
+      }}
     </div>
     <div class="d-flex flex-wrap gap-1 mb-2">
       <button
@@ -142,7 +149,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         data-testid="level-all"
         @click="level = 0"
       >
-        全部 ({{ data.items.length }})
+        {{ t.cupboard.levelCount(t.common.all, data.items.length) }}
       </button>
       <button
         v-for="x in levels"
@@ -151,10 +158,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         :data-testid="`level-${x.lv}`"
         @click="level = x.lv"
       >
-        {{ foodLevelLabel(x.lv) }} ({{ x.n }})
+        {{ t.cupboard.levelCount(foodLevelLabel(x.lv), x.n) }}
       </button>
     </div>
-    <div v-if="shown.length === 0" class="small text-muted">这一级没有食材</div>
+    <div v-if="shown.length === 0" class="small text-muted">{{ t.cupboard.levelEmpty }}</div>
     <div class="row g-1">
       <div v-for="f in shown" :key="f.foodsId" class="col-4">
         <button
@@ -175,7 +182,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
             <span class="dt-tile-num text-nowrap">×{{ f.num }}</span>
           </div>
           <!-- 第二行总是占位，方块一样高（问题记录） -->
-          <div class="dt-tile-sub text-muted">{{ f.streetNeed > 0 ? `本街还需 ${f.streetNeed}` : ' ' }}</div>
+          <div class="dt-tile-sub text-muted">
+            {{ f.streetNeed > 0 ? t.cupboard.streetNeed(f.streetNeed) : ' ' }}
+          </div>
         </button>
       </div>
     </div>
@@ -196,7 +205,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           :disabled="busy || !canDecompose || decomposeMax < 1"
           @click="handle('decompose')"
         >
-          分解 ×{{ decomposeN }}
+          {{ t.cupboard.decompose(decomposeN) }}
         </button>
         <button
           class="btn btn-sm btn-outline-primary"
@@ -204,7 +213,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           :disabled="busy || !canCompose || composeMax < 2"
           @click="handle('compose')"
         >
-          合成 ×{{ composeN }}
+          {{ t.cupboard.compose(composeN) }}
         </button>
         <button
           class="btn btn-sm btn-outline-secondary"
@@ -215,11 +224,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
                 pickedItem!.locked
                   ? endpoints.unlockFood(pickedItem!.foodsId)
                   : endpoints.lockFood(pickedItem!.foodsId),
-              '操作失败',
+              t.common.opFailed,
             )
           "
         >
-          {{ pickedItem.locked ? '解锁' : '锁定' }}
+          {{ pickedItem.locked ? t.cupboard.unlock : t.cupboard.lock }}
         </button>
         <button
           v-if="pickedItem.foodsId === 467 || pickedItem.foodsId === 468"
@@ -227,31 +236,33 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
           data-testid="exchange"
           :disabled="busy || exchangeMax < 2"
           @click="
-            run(() => endpoints.exchangeMaster(pickedItem!.foodsId as 467 | 468, exchangeN / 2), '兑换失败')
+            run(
+              () => endpoints.exchangeMaster(pickedItem!.foodsId as 467 | 468, exchangeN / 2),
+              t.cupboard.exchangeFailed,
+            )
           "
         >
-          兑换稀有食材 ×{{ exchangeN }}
+          {{ t.cupboard.exchange(exchangeN) }}
         </button>
       </div>
       <div v-if="MASTER_RULE[pickedItem.foodsId]" class="text-muted mt-1" data-testid="master-rule">
         {{ MASTER_RULE[pickedItem.foodsId] }}
       </div>
       <div class="text-muted mt-1">
-        一次最多分解 {{ decomposeMax }}，合成 {{ composeMax }}（合成要偶数个）。分解：1 个 → 2
-        次机会得到低一级食材；合成：2 个 → 1 次机会得到高一级食材。
+        {{ t.cupboard.handleHint(decomposeMax, composeMax) }}
       </div>
     </div>
   </template>
 
   <template v-if="tab === 'fridge' && fridge">
-    <div v-if="fridge.items.length === 0" class="small text-muted">冰箱是空的</div>
+    <div v-if="fridge.items.length === 0" class="small text-muted">{{ t.cupboard.fridgeEmpty }}</div>
     <div
       v-for="f in fridge.items"
       :key="f.foodsId"
       class="d-flex align-items-center border-bottom py-1 small"
     >
       {{ catalog.foodName(f.foodsId) }} ×{{ f.num }}
-      <span v-if="f.thawable === 0" class="text-muted ms-2">橱柜放不下</span>
+      <span v-if="f.thawable === 0" class="text-muted ms-2">{{ t.cupboard.noRoom }}</span>
       <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
       <button
         class="btn btn-sm btn-outline-primary ms-auto"
@@ -259,7 +270,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取橱柜失�
         :data-testid="`thaw-${f.foodsId}`"
         @click="thaw(f)"
       >
-        解冻 ×{{ f.thawable }}（{{ formatNum(f.thawCoin) }} 银币）
+        {{ t.cupboard.thaw(f.thawable, formatNum(f.thawCoin)) }}
       </button>
     </div>
   </template>

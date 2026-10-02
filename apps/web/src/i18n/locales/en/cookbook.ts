@@ -1,0 +1,24 @@
+import type { Messages } from '../..';
+
+const cookbook: Messages['cookbook'] = {
+  filters: {
+    all: 'All',
+    learnable: 'Learnable',
+    upgradable: 'Upgradable',
+    unlearned: 'Not learned',
+    learned: 'Learned',
+  },
+  loadFailed: "Couldn't load recipes",
+  learnFailed: 'Learning failed',
+  maxed: 'Maxed',
+  lackFoods: 'Missing ingredients',
+  learn: 'Learn',
+  upgrade: 'Upgrade',
+  useMaster: (level) => `Use level ${level} universal`,
+  counts: (streetLearned, streetTotal, learned, total) =>
+    `This street: ${streetLearned}/${streetTotal} learned · ${learned} / ${total} recipes in total`,
+  info: (street, level, taste, coin) => `${street} · Difficulty ${level} · Taste ${taste} · Price ${coin}`,
+  grade: 'Grade',
+  foodsNeeded: 'Ingredients needed',
+};
+export default cookbook;

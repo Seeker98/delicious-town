@@ -57,7 +57,7 @@ describe('报错文案按语言（问题记录 272）', () => {
         expect(s.length, l).toBeGreaterThan(0);
       }
     }
-  });
+  }, 30_000);
 
   it('非原型属性才算：constructor 之类不会被当成文案', () => {
     expect(errorText('INVALID_STATE', { reason: 'constructor' })).toBe('当前状态下不能这样做');

@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import type { CookbookDetailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -12,6 +13,7 @@ import { GRADE_NAMES, TASTE_NAMES } from '../utils/labels';
 const route = useRoute();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const d = ref<CookbookDetailDto | null>(null);
 const busy = ref(false);
 const id = Number(route.params.id);
@@ -25,12 +27,12 @@ async function learn() {
     await endpoints.learn(id);
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '学习失败'), 'danger');
+    toast.push(errorMessage(e, t.value.cookbook.learnFailed), 'danger');
   } finally {
     busy.value = false;
   }
 }
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取食谱失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger')));
 </script>
 
 <template>
@@ -39,27 +41,32 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取食谱失�
       {{ d.name }} <span class="dt-tag">{{ GRADE_NAMES[d.grade] }}</span>
     </h5>
     <div class="small text-muted mb-2">
-      {{ d.streetName }} · 难度 {{ d.level }} · 口味 {{ d.taste.map((x) => TASTE_NAMES[x]).join('、') }} ·
-      售价
-      {{ formatNum(d.coin) }}
+      {{
+        t.cookbook.info(
+          d.streetName,
+          d.level,
+          d.taste.map((x) => TASTE_NAMES[x]).join(t.events.sep),
+          formatNum(d.coin),
+        )
+      }}
     </div>
     <button
       class="btn btn-sm btn-primary mb-2"
       :disabled="busy || d.learn === 'z' || d.learn === 'max'"
       @click="learn"
     >
-      {{ d.grade === 0 ? '学习' : '升级' }}
+      {{ d.grade === 0 ? t.cookbook.learn : t.cookbook.upgrade }}
     </button>
     <table class="table table-sm small">
       <thead>
         <tr>
-          <th>品级</th>
-          <th>所需食材</th>
+          <th>{{ t.cookbook.grade }}</th>
+          <th>{{ t.cookbook.foodsNeeded }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="g in d.grades" :key="g.grade" :class="{ 'table-success': g.grade <= d.grade }">
-          <td>{{ g.name }}</td>
+          <td>{{ GRADE_NAMES[g.grade] ?? g.name }}</td>
           <td>
             <span
               v-for="f in g.foods"

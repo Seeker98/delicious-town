@@ -4,6 +4,7 @@ import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { activeLocale } from '../i18n';
 import { setNameResolver } from '../i18n/zh-CN';
+import { activeMessages } from '../i18n';
 
 /** 浏览器缓存按语言分开（问题记录 272） */
 const keyOf = (l: string) => `dt_catalog_${l}`;
@@ -74,21 +75,22 @@ export const useCatalogStore = defineStore('catalog', {
       try {
         await this.reload();
       } catch {
-        // 读不到就沿用旧目录，名字显示成"道具 id"
+        // 读不到就沿用旧目录，名字显示成"道具 id"（各语言的占位）
       }
     },
     goodsName(id: number): string {
-      return this.goodsMap.get(id)?.name ?? `道具${id}`;
+      return this.goodsMap.get(id)?.name ?? activeMessages().errors.fallbackName.goods(id);
     },
     foodName(id: number): string {
-      return this.foodsMap.get(id)?.name ?? `食材${id}`;
+      return this.foodsMap.get(id)?.name ?? activeMessages().errors.fallbackName.food(id);
     },
     mcName(id: number): string {
-      return this.mcMap.get(id)?.name ?? `特色菜${id}`;
+      return this.mcMap.get(id)?.name ?? activeMessages().errors.fallbackName.mc(id);
     },
     seedName(id: number): string {
       const s = this.seedsMap.get(id);
-      return s ? `${this.foodName(s.foodsId)}种子` : `种子${id}`;
+      const f = activeMessages().errors.fallbackName;
+      return s ? f.seedOf(this.foodName(s.foodsId)) : f.seed(id);
     },
     mc(id: number): CatalogMcDto | undefined {
       return this.mcMap.get(id);
@@ -100,7 +102,7 @@ export const useCatalogStore = defineStore('catalog', {
       return this.foodsMap.get(id);
     },
     weatherName(id: number): string {
-      return this.weatherMap.get(id) ?? `天气${id}`;
+      return this.weatherMap.get(id) ?? activeMessages().errors.fallbackName.weather(id);
     },
     streetName(id: number): string {
       return this.streets.find((s) => s.id === id)?.name ?? '';

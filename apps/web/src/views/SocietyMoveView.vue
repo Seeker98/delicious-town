@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
@@ -10,6 +11,7 @@ import { formatNum } from '../utils/format';
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
 const toast = useToastStore();
+const t = useT();
 const target = ref<number | null>(null);
 const busy = ref(false);
 const rest = computed(() => restaurant.rest);
@@ -23,10 +25,10 @@ async function move() {
   busy.value = true;
   try {
     await endpoints.move(target.value);
-    toast.push(`已经搬到 ${catalog.streetName(target.value)}`);
+    toast.push(t.value.society.move.done(catalog.streetName(target.value)));
     await restaurant.refresh();
   } catch (e) {
-    toast.push(errorMessage(e, '搬家失败'), 'danger');
+    toast.push(errorMessage(e, t.value.society.move.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -35,14 +37,17 @@ onMounted(() => restaurant.refresh().catch(() => undefined));
 </script>
 
 <template>
-  <h5>搬家</h5>
+  <h5>{{ t.society.move.title }}</h5>
   <p class="small text-muted">
-    现在在 {{ rest?.streetName }}。需要 1 张搬家卡（持有搬家处工作证时免），花费约
-    {{ formatNum(cost) }} 银币（幸运时半价）。
+    {{ t.society.move.hint(rest?.streetName ?? '', formatNum(cost)) }}
   </p>
   <select v-model="target" class="form-select mb-2">
-    <option :value="null" disabled>选择新街道</option>
-    <option v-for="s in streets" :key="s.id" :value="s.id">{{ s.name }}（{{ s.cookName }}）</option>
+    <option :value="null" disabled>{{ t.society.move.pick }}</option>
+    <option v-for="s in streets" :key="s.id" :value="s.id">
+      {{ t.society.move.option(s.name, s.cookName) }}
+    </option>
   </select>
-  <button class="btn btn-primary w-100" :disabled="busy || target === null" @click="move">搬家</button>
+  <button class="btn btn-primary w-100" :disabled="busy || target === null" @click="move">
+    {{ t.society.move.btn }}
+  </button>
 </template>

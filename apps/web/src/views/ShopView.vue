@@ -3,6 +3,7 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, reactive, ref } from 'vue';
 import type { BuyBlock, ShopDto, ShopItemDto, ShopSpecialDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -10,6 +11,7 @@ import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const tab = ref<'coin' | 'black' | 'special'>('coin');
 const shop = ref<ShopDto | null>(null);
 const special = ref<ShopSpecialDto | null>(null);
@@ -33,7 +35,7 @@ async function run(fn: () => Promise<unknown>) {
     await fn();
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '购买失败'), 'danger');
+    toast.push(errorMessage(e, t.value.store.shop.buyFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -46,31 +48,36 @@ const buy = (it: ShopItemDto) =>
     tab.value === 'coin' ? endpoints.shopBuy(it.goodsId, n(it)) : endpoints.shopBuyBlack(it.goodsId, n(it)),
   );
 const capText = (it: ShopItemDto) => {
-  if (it.maxBuy > 0) return `最多 ${formatNum(it.maxBuy)}`;
+  const s = t.value.store.shop;
+  if (it.maxBuy > 0) return s.max(formatNum(it.maxBuy));
   const why: Record<Exclude<BuyBlock, null>, string> = {
-    money: tab.value === 'coin' ? '银币不够' : '钻石不够',
-    max: '已达持有上限',
-    owned: '已经拥有',
-    store: '仓库满了',
+    money: tab.value === 'coin' ? s.why.coin : s.why.diamond,
+    max: s.why.max,
+    owned: s.why.owned,
+    store: s.why.store,
   };
-  return it.blocked ? why[it.blocked] : '买不了';
+  return it.blocked ? why[it.blocked] : s.why.other;
 };
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.shop.loadFailed), 'danger')));
 </script>
 
 <template>
   <HiphopCard :place="2" @changed="load" />
   <ul class="nav nav-tabs mb-2">
     <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'coin' }]" href="#" @click.prevent="tab = 'coin'">银币商店</a>
+      <a :class="['nav-link', { active: tab === 'coin' }]" href="#" @click.prevent="tab = 'coin'">{{
+        t.store.shop.tabs.coin
+      }}</a>
     </li>
     <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'black' }]" href="#" @click.prevent="tab = 'black'">黑市</a>
+      <a :class="['nav-link', { active: tab === 'black' }]" href="#" @click.prevent="tab = 'black'">{{
+        t.store.shop.tabs.black
+      }}</a>
     </li>
     <li class="nav-item">
-      <a :class="['nav-link', { active: tab === 'special' }]" href="#" @click.prevent="tab = 'special'"
-        >今日特价</a
-      >
+      <a :class="['nav-link', { active: tab === 'special' }]" href="#" @click.prevent="tab = 'special'">{{
+        t.store.shop.tabs.special
+      }}</a>
     </li>
   </ul>
   <template v-if="shop && tab !== 'special'">
@@ -92,7 +99,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
           <span :class="{ 'text-danger': it.maxBuy === 0 }" :data-testid="`cap-${it.goodsId}`">{{
             capText(it)
           }}</span>
-          · {{ formatNum(it.price) }} {{ tab === 'coin' ? '银币' : '钻石' }} · 已有 {{ it.owned }}
+          · {{ t.store.shop.price(formatNum(it.price), tab !== 'coin') }} · {{ t.store.shop.owned(it.owned) }}
         </div>
         <div
           v-if="catalog.goods(it.goodsId)?.desc"
@@ -112,20 +119,22 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
           :data-testid="`qty-${it.goodsId}`"
           class="form-control form-control-sm dt-qty"
         />
-        <span v-else class="dt-meta dt-qty text-center" :data-testid="`qty-hint-${it.goodsId}`">限 1 个</span>
+        <span v-else class="dt-meta dt-qty text-center" :data-testid="`qty-hint-${it.goodsId}`">{{
+          t.store.shop.limitOne
+        }}</span>
         <button
           class="btn btn-sm btn-primary"
           :disabled="busy || it.maxBuy === 0"
           :data-testid="`buy-${it.goodsId}`"
           @click="buy(it)"
         >
-          买
+          {{ t.store.shop.buy }}
         </button>
       </div>
     </div>
   </template>
   <template v-if="tab === 'special'">
-    <div v-if="!special" class="small text-muted">今天中午 12 点上新</div>
+    <div v-if="!special" class="small text-muted">{{ t.store.shop.specialSoon }}</div>
     <div v-else class="dt-card small">
       <!-- 折扣标签和名字垂直居中（问题记录 118） -->
       <div class="d-flex align-items-center gap-1" data-testid="special-title">
@@ -133,14 +142,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取商店失�
         <span class="badge bg-danger">{{ special.tierName }}</span>
       </div>
       <div>
-        {{ formatNum(special.price) }} 银币 · 剩 {{ special.stock - special.sold }}/{{ special.stock }}
+        {{ t.store.shop.specialLine(formatNum(special.price), special.stock - special.sold, special.stock) }}
       </div>
       <button
         class="btn btn-sm btn-primary mt-1"
         :disabled="busy || special.sold >= special.stock"
         @click="run(() => endpoints.shopBuySpecial(1))"
       >
-        抢购
+        {{ t.store.shop.grab }}
       </button>
     </div>
   </template>

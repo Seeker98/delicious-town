@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import GardenSis from './GardenSis.vue';
 
 describe('GardenSis（问题记录 176）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
   afterEach(() => vi.restoreAllMocks());
 
   it('点一下换一句不同的', async () => {

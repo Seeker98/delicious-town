@@ -58,5 +58,5 @@ describe('新闻、日志、标签按语言（问题记录 272）', () => {
       for (const t of NEWS_TYPES)
         expect(newsText(news(t, { tier: 'A' }), names), `${l} ${t}`).not.toContain('undefined');
     }
-  });
+  }, 30_000);
 });

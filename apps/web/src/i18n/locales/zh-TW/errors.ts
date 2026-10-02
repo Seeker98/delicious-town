@@ -385,5 +385,8 @@ export default {
     food: (id: number) => `食材${id}`,
     mc: (id: number) => `特色菜${id}`,
     seed: (id: number) => `種子${id}`,
+    /** 某種食材的種子 */
+    seedOf: (food: string) => `${food}種子`,
+    weather: (id: number) => `天氣${id}`,
   },
 };

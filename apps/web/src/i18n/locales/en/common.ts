@@ -7,5 +7,12 @@ const common: Messages['common'] = {
   language: 'Language',
   loadFailed: 'Failed to load',
   langLoadFailed: 'Could not switch language. Check your connection and try again.',
+  collapse: 'Show less',
+  expand: 'Show more',
+  prevPage: 'Previous',
+  nextPage: 'Next',
+  all: 'All',
+  other: 'Other',
+  opFailed: 'Action failed',
 };
 export default common;

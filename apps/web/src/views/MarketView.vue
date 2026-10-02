@@ -4,15 +4,17 @@ import GardenSis from '../components/market/GardenSis.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import type { MarketDto, MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { formatNum, timeHM } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const restStore = useRestaurantStore();
 const session = useSessionStore();
 const myRest = computed(() => session.me?.restaurantId ?? null);
@@ -22,12 +24,11 @@ const picks = ref<number[]>([]);
 const busy = ref(false);
 const guessOpen = ref(false);
 
-const time = (iso: string) =>
-  new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+const time = timeHM;
 const sections = [
-  { key: 'daily', title: '日常菜场', next: 'nextDaily' },
-  { key: 'special', title: '特价菜场', next: 'nextSpecial' },
-  { key: 'premium', title: '高级菜场（需爱心项链）', next: 'nextPremium' },
+  { key: 'daily', next: 'nextDaily' },
+  { key: 'special', next: 'nextSpecial' },
+  { key: 'premium', next: 'nextPremium' },
 ] as const;
 
 /** 特价同一网络的购买间隔（规格书 06；问题记录：买第二个只提示"操作太快"） */
@@ -37,9 +38,7 @@ const specialWait = computed(() => {
   return Math.max(0, Math.ceil((new Date(until).getTime() - Date.now()) / 60_000));
 });
 const sectionNote = (key: string) =>
-  key === 'special' && data.value
-    ? `需验证邮箱，每种每人 1 份；同一网络 ${data.value.specialCooldownMin} 分钟内只能抢一次`
-    : '';
+  key === 'special' && data.value ? t.value.market.specialNote(data.value.specialCooldownMin) : '';
 
 async function load() {
   data.value = await endpoints.market();
@@ -61,20 +60,18 @@ const manualStock = () => {
   const d = data.value;
   if (!d) return;
   // 每次至少 100 万、越进越贵，先确认；手动货在下次日常进货时一起下架（PR29 遗留）
-  if (
-    !window.confirm(
-      `花 ${formatNum(d.manual.cost)} 银币进 4 种日常菜？下次日常进货（${time(d.nextDaily)}）时会一起下架。`,
-    )
-  )
-    return;
+  if (!window.confirm(t.value.market.manualConfirm(formatNum(d.manual.cost), time(d.nextDaily)))) return;
   return run(async () => {
     const r = await endpoints.marketManualStock();
-    toast.push(`进货完成，声望 +${r.renown}`, 'success');
-  }, '进货失败');
+    toast.push(t.value.market.manualDone(r.renown), 'success');
+  }, t.value.market.manualFailed);
 };
 /** 买的数量不超过最多还能买几个 */
 const buy = (it: MarketItemDto) =>
-  run(() => endpoints.marketBuy(it.id, Math.max(1, Math.min(qty[it.id] || 1, it.canBuy))), '购买失败');
+  run(
+    () => endpoints.marketBuy(it.id, Math.max(1, Math.min(qty[it.id] || 1, it.canBuy))),
+    t.value.market.buyFailed,
+  );
 /**
  * 能买的数量被别的限制压低时写明原因（问题记录：显示能买 1000，实际只能买 996；显示 0/1000 却提示限购已满）。
  * 限购按店、设备、网络分别算；橱柜有单种上限和格子数
@@ -88,13 +85,13 @@ function capNote(it: MarketItemDto): string {
     limitLeft < Math.min(it.limit - it.bought, it.left) &&
     it.canBuy <= limitLeft
   )
-    return `同一网络或设备本轮已买 ${it.sharedBought} 份（限购按店、设备、网络分别算），最多再买 ${it.canBuy}`;
-  if (it.have === 0 && d.cupboardFull) return '橱柜格子满了，先腾出一格';
+    return t.value.market.capShared(it.sharedBought, it.canBuy);
+  if (it.have === 0 && d.cupboardFull) return t.value.market.capSlots;
   const room = d.foodsMaxNum - it.have;
   if (it.have > 0 && room < Math.min(limitLeft, it.left))
     return room <= 0
-      ? `橱柜里已经放满了（单种上限 ${d.foodsMaxNum}）`
-      : `橱柜单种上限 ${d.foodsMaxNum}，已有 ${it.have}，最多再买 ${room}`;
+      ? t.value.market.capFull(d.foodsMaxNum)
+      : t.value.market.capRoom(d.foodsMaxNum, it.have, room);
   return '';
 }
 function togglePick(id: number) {
@@ -102,8 +99,8 @@ function togglePick(id: number) {
   if (i >= 0) picks.value.splice(i, 1);
   else if (data.value && picks.value.length < data.value.guess.maxPick) picks.value.push(id);
 }
-const joinGuess = () => run(() => endpoints.marketGuess([...picks.value]), '竞猜失败');
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失败'), 'danger')));
+const joinGuess = () => run(() => endpoints.marketGuess([...picks.value]), t.value.market.guessFailed);
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.loadFailed), 'danger')));
 </script>
 
 <template>
@@ -115,7 +112,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
       class="btn btn-sm btn-outline-primary text-nowrap"
       data-testid="market-exchange"
     >
-      <i class="bi bi-graph-up-arrow"></i> 交易所
+      <i class="bi bi-graph-up-arrow"></i> {{ t.nav.links.exchange }}
     </RouterLink>
   </GardenSis>
   <HiphopCard :place="1" @changed="load" />
@@ -124,10 +121,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
       <!-- 间距放在外层：.dt-section 自带上边距，放在 flex 行里会把标题挤低半行（问题记录 192） -->
       <div class="d-flex align-items-center mt-3 mb-1" :data-testid="`section-head-${s.key}`">
         <h6 class="dt-section m-0">
-          {{ s.title
+          {{ t.market.sections[s.key]
           }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">（{{ sectionNote(s.key) }}）</small>
         </h6>
-        <span class="small text-muted ms-auto">下次进货 {{ time(data[s.next]) }}</span>
+        <span class="small text-muted ms-auto">{{ t.market.nextStock(time(data[s.next])) }}</span>
       </div>
       <button
         v-if="s.key === 'daily' && data.manual.hasCard"
@@ -136,16 +133,16 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
         data-testid="market-manual"
         @click="manualStock"
       >
-        手动进货（{{ formatNum(data.manual.cost) }} 银币）
+        {{ t.market.manualBtn(formatNum(data.manual.cost)) }}
       </button>
       <div
         v-if="s.key === 'special' && specialWait > 0"
         class="small text-danger"
         data-testid="special-cooldown"
       >
-        刚抢过特价，同一网络还要等 {{ specialWait }} 分钟才能再抢
+        {{ t.market.specialWait(specialWait) }}
       </div>
-      <div v-if="data[s.key].length === 0" class="small text-muted">还没有进货</div>
+      <div v-if="data[s.key].length === 0" class="small text-muted">{{ t.market.empty }}</div>
       <div
         v-for="it in data[s.key]"
         :key="it.id"
@@ -154,13 +151,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
       >
         <div class="flex-fill">
           <span>{{ catalog.foodName(it.foodsId) }}</span>
-          <span v-if="it.hot" class="badge bg-danger ms-1">热门</span>
+          <span v-if="it.hot" class="badge bg-danger ms-1">{{ t.market.hot }}</span>
           <div v-if="it.owner" class="dt-meta" :data-testid="`owner-${it.id}`">
-            {{ it.owner.restId === myRest ? '自己的货，免费' : `${it.owner.name} 进的货` }}
+            {{ it.owner.restId === myRest ? t.market.ownFree : t.market.stockedBy(it.owner.name) }}
           </div>
-          <div v-if="it.owner?.restId === myRest" class="text-muted">剩 {{ formatNum(it.left) }}</div>
+          <div v-if="it.owner?.restId === myRest" class="text-muted">
+            {{ t.market.left(formatNum(it.left)) }}
+          </div>
           <div v-else class="text-muted">
-            {{ formatNum(it.price) }} 银币 · 剩 {{ formatNum(it.left) }} · 限购 {{ it.bought }}/{{ it.limit }}
+            {{ t.market.priceLine(formatNum(it.price), formatNum(it.left), it.bought, it.limit) }}
           </div>
           <div v-if="capNote(it)" class="text-danger" :data-testid="`cap-${it.id}`">{{ capNote(it) }}</div>
         </div>
@@ -179,26 +178,28 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
           :disabled="busy || it.canBuy < 1 || (s.key === 'special' && specialWait > 0)"
           @click="buy(it)"
         >
-          买
+          {{ t.market.buy }}
         </button>
       </div>
     </section>
 
     <section class="border rounded p-2 small">
       <div class="d-flex align-items-center">
-        <b>菜场竞猜</b>
-        <span class="text-muted ms-2">猜下一轮日常菜场（{{ data.guess.period.slice(-2) }} 点）上什么菜</span>
+        <b>{{ t.market.guess.title }}</b>
+        <span class="text-muted ms-2">{{ t.market.guess.hint(data.guess.period.slice(-2)) }}</span>
         <a href="#" class="ms-auto" data-testid="guess-toggle" @click.prevent="guessOpen = !guessOpen">
-          {{ guessOpen ? '收起' : '展开' }}
+          {{ guessOpen ? t.common.collapse : t.common.expand }}
         </a>
       </div>
-      <div v-if="data.guess.last" class="text-muted">上次猜中 {{ data.guess.last.hits ?? 0 }} 种</div>
+      <div v-if="data.guess.last" class="text-muted">
+        {{ t.market.guess.last(data.guess.last.hits ?? 0) }}
+      </div>
       <div v-if="data.guess.joined" class="mt-1">
-        已报名：{{ data.guess.joined.map((id) => catalog.foodName(id)).join('、') }}
+        {{ t.market.guess.joined(data.guess.joined.map((id) => catalog.foodName(id)).join(t.events.sep)) }}
       </div>
       <div v-else-if="guessOpen" class="mt-1">
         <div class="text-muted mb-1">
-          最多选 {{ data.guess.maxPick }} 种，花 {{ data.guess.cost }} 张神秘礼券
+          {{ t.market.guess.rule(data.guess.maxPick, data.guess.cost) }}
         </div>
         <button
           v-for="id in data.guess.pool"
@@ -222,7 +223,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
             :disabled="busy || picks.length === 0"
             @click="joinGuess"
           >
-            报名（{{ picks.length }} 种）
+            {{ t.market.guess.join(picks.length) }}
           </button>
         </div>
       </div>
