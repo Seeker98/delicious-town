@@ -25,10 +25,10 @@ const book: ExchangeBookDto = {
   max: 2000,
   last: 1100,
   volume: 7,
-  bids: [{ price: 990, qty: 3 }],
+  bids: [{ price: 990, qty: 3, system: false }],
   asks: [
-    { price: 1010, qty: 2 },
-    { price: 1020, qty: 5 },
+    { price: 1010, qty: 2, system: false },
+    { price: 1020, qty: 5, system: false },
   ],
 };
 const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
@@ -93,6 +93,47 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(w.find('[data-testid="ex-book"]').text()).toContain('1,010');
     expect(w.find('[data-testid="ex-book"]').text()).toContain('参考价 1,000');
     expect(w.find('[data-testid="ex-band"]').text()).toContain('500 ~ 2,000');
+  });
+
+  it('盘口的系统档写"系统"、换颜色；成交记录标"（系统）"', async () => {
+    vi.mocked(endpoints.tradeBook).mockResolvedValue({
+      ...book,
+      bids: [
+        { price: 990, qty: 3, system: false },
+        { price: 700, qty: 20, system: true },
+      ],
+      asks: [
+        { price: 1010, qty: 2, system: false },
+        { price: 1300, qty: 6, system: true },
+      ],
+    });
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(
+      me({
+        trades: [
+          {
+            side: 'sell',
+            foodsId: 11,
+            price: 700,
+            qty: 2,
+            fee: 70,
+            system: true,
+            createdAt: '2026-10-02T00:00:00Z',
+          },
+        ],
+      }),
+    );
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.get('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    const sysAsk = w.get('[data-testid="ex-ask-sys-1300"]');
+    expect(sysAsk.text()).toContain('系统');
+    expect(sysAsk.classes()).toContain('text-primary');
+    expect(w.get('[data-testid="ex-bid-sys-700"]').text()).toContain('系统');
+    expect(w.get('[data-testid="ex-ask-1010"]').text()).not.toContain('系统');
+    await w.get('[data-testid="ex-bid-sys-700"]').trigger('click');
+    expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('700');
+    expect(w.text()).toContain('（系统）');
   });
 
   it('点盘口的价格填进表单；下单显示预计花费；提交后刷新并提示成交', async () => {

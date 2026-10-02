@@ -33,6 +33,8 @@ export interface ExchangeFoodDto {
 export interface ExchangeLevelDto {
   price: number;
   qty: number;
+  /** 系统做市的一档（156-3） */
+  system: boolean;
 }
 
 export interface ExchangeBookDto {
@@ -52,6 +54,8 @@ export interface ExchangeTradeDto {
   price: number;
   qty: number;
   fee: number;
+  /** 和系统成交（156-3） */
+  system: boolean;
   createdAt: string;
 }
 
@@ -143,4 +147,21 @@ export interface ExchangeFrozenRow {
   /** 冻结中的所得合计 */
   heldCoin: number;
   heldFoods: number;
+}
+
+/** 后台"系统做市"（156-3 设计 §7） */
+export interface ExchangeMakerRow {
+  foodsId: number;
+  stock: number;
+  /** 今天已收 */
+  bought: number;
+  /** 当前系统买价；低于挂单下限不收为 null */
+  bid: number | null;
+  ask: number;
+}
+
+export interface ExchangeMakerDto {
+  foods: ExchangeMakerRow[];
+  /** 今天：收购花出（成交额）、卖出收回、卖给系统那一侧的手续费、净回收 = 收回 − 花出 + 手续费 */
+  today: { spent: number; earned: number; fee: number; net: number };
 }

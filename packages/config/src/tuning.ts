@@ -593,6 +593,20 @@ export const tuningSchema = z.object({
       largeAmount: int.min(1),
       holdHours: int.min(0),
     }),
+    /** 系统做市（156-3） */
+    maker: z
+      .object({
+        enabled: z.boolean(),
+        bidRate: z.number().positive(),
+        askRate: z.number().positive(),
+        /** 不超过 1：否则从菜场买来卖给系统能赚钱（156-3 终审 I3） */
+        marketCapRate: z.number().positive().max(1),
+        dailyBuy: int.min(0),
+        stockMax: int.min(0),
+        playerDaily: int.min(0),
+      })
+      // 收购倍数要低于卖出倍数，否则从系统买进再卖回给系统能赚钱（156-3 终审 I3）
+      .refine((m) => m.bidRate < m.askRate, { message: 'bidRate 要小于 askRate' }),
     refOverrides: z.record(z.string(), int.min(1)),
   }),
   forum: z.object({

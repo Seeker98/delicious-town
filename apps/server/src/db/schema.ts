@@ -1039,14 +1039,16 @@ export interface ExchangeTradeTable {
   qty: number;
   buy_order_id: string | null;
   sell_order_id: string | null;
-  buyer_rest_id: number;
-  seller_rest_id: number;
+  /** 系统做市的成交里系统一方为空（156-3） */
+  buyer_rest_id: number | null;
+  seller_rest_id: number | null;
   /** bigint：pg 读出为字符串 */
   fee: ColumnType<string, number | string, number | string>;
   created_at: TsDefault;
   buyer_account_id: Nullable<number>;
   seller_account_id: Nullable<number>;
   flags: ColumnType<string[], string[] | undefined, string[]>;
+  system: Default<boolean>;
 }
 export interface ExchangeRefTable {
   shard_id: number;
@@ -1074,6 +1076,17 @@ export interface ExchangeHoldTable {
   release_at: Ts;
   status: 'held' | 'released' | 'confiscated';
   created_at: TsDefault;
+}
+export interface ExchangeStockTable {
+  shard_id: number;
+  foods_id: number;
+  num: Default<number>;
+}
+export interface ExchangeMakerDayTable {
+  shard_id: number;
+  foods_id: number;
+  day: string;
+  bought: Default<number>;
 }
 export interface ExchangeFreezeTable {
   rest_id: number;
@@ -1169,6 +1182,8 @@ export interface DB {
   exchange_wallet_food: ExchangeWalletFoodTable;
   exchange_hold: ExchangeHoldTable;
   exchange_freeze: ExchangeFreezeTable;
+  exchange_stock: ExchangeStockTable;
+  exchange_maker_day: ExchangeMakerDayTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

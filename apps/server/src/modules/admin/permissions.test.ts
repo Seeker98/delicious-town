@@ -305,6 +305,12 @@ const CASES: Case[] = [
     min: 'mod',
   },
   {
+    method: 'GET',
+    route: '/api/v1/admin/exchange/maker',
+    url: () => `/api/v1/admin/exchange/maker?shardId=${ids.shardId}`,
+    min: 'mod',
+  },
+  {
     method: 'POST',
     route: '/api/v1/admin/exchange/freeze',
     url: () => '/api/v1/admin/exchange/freeze',

@@ -5,6 +5,7 @@ import {
   gameTime,
   type ExchangeBookDto,
   type ExchangeFoodDto,
+  type ExchangeLevelDto,
   type ExchangeMeDto,
   type ExchangeOrderDto,
   type ExchangePlaceDto,
@@ -21,6 +22,8 @@ import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
 import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
 import { addCredit, creditWallets, newCredits } from './wallet';
+import { incrementDaily } from '../counter/dailyCounter';
+import { addBought, addStock, makerQuote, TO_SYSTEM, type MakerLevel } from './maker';
 
 type OrderRow = {
   id: string;
@@ -105,7 +108,8 @@ export function createExchangeService(d: GameDeps) {
     if (reason) throw requirement(reason);
     if (!isTradable(o.config.foods.get(b.foodsId))) throw invalidState('not_tradable');
     if (b.qty > t.maxQty) throw limitReached('exchange_qty', { max: t.maxQty });
-    const ref = await refPrice(o.tx, o.config, t, o.shardId, b.foodsId, gameDay(o.now));
+    const day = gameDay(o.now);
+    const ref = await refPrice(o.tx, o.config, t, o.shardId, b.foodsId, day);
     const band = priceBand(ref, t);
     if (b.price < band.min || b.price > band.max) throw invalidState('price_band', band);
     const open = await o.tx
@@ -180,6 +184,33 @@ export function createExchangeService(d: GameDeps) {
         ? q.where('price', '<=', b.price).orderBy('price', 'asc')
         : q.where('price', '>=', b.price).orderBy('price', 'desc');
     const book = (await q.orderBy('id', 'asc').execute()) as OrderRow[];
+    // 系统做市（156-3 设计 §4.3）：系统报价是盘口里的一档，价格更好时排在玩家挂单前面，同价排在后面。
+    // 已持有盘口锁，库存和今天已收不会被别人同时改；玩家今天已卖的在锁店事务里
+    const quote = await makerQuote(o.tx, {
+      config: o.config,
+      tuning: o.tuning,
+      shardId: o.shardId,
+      foodsId: b.foodsId,
+      day,
+      restId: o.rest.id,
+      ref,
+    });
+    const sys: MakerLevel | null =
+      b.side === 'sell'
+        ? quote.bid && quote.bid.price >= b.price
+          ? quote.bid
+          : null
+        : quote.ask && quote.ask.price <= b.price
+          ? quote.ask
+          : null;
+    type Level = { kind: 'player'; m: OrderRow } | { kind: 'system'; s: MakerLevel };
+    const queue: Level[] = book.map((m) => ({ kind: 'player' as const, m }));
+    if (sys) {
+      const at = queue.findIndex(
+        (x) => x.kind === 'player' && (b.side === 'sell' ? sys.price > x.m.price : sys.price < x.m.price),
+      );
+      queue.splice(at === -1 ? queue.length : at, 0, { kind: 'system', s: sys });
+    }
 
     // 关联账号（156-2 设计 §4.1）：挂单方的账号和我共用过设备就跳过，只共用 IP 就标记
     const s = t.suspicious;
@@ -205,8 +236,48 @@ export function createExchangeService(d: GameDeps) {
     const credits = newCredits();
     const fills: Array<{ price: number; qty: number; held: boolean }> = [];
     let left = b.qty;
-    for (const m of book) {
+    for (const lv of queue) {
       if (left === 0) break;
+      if (lv.kind === 'system') {
+        const n = Math.min(left, lv.s.qty);
+        const price = lv.s.price;
+        const fee = b.side === 'sell' ? feeOf(price, n, t) : 0;
+        const mine = b.side === 'buy';
+        await o.tx
+          .insertInto('exchange_trade')
+          .values({
+            shard_id: o.shardId,
+            foods_id: b.foodsId,
+            price,
+            qty: n,
+            buy_order_id: mine ? order.id : null,
+            sell_order_id: mine ? null : order.id,
+            buyer_rest_id: mine ? o.rest.id : null,
+            seller_rest_id: mine ? null : o.rest.id,
+            fee,
+            created_at: o.now,
+            buyer_account_id: mine ? o.rest.account_id : null,
+            seller_account_id: mine ? null : o.rest.account_id,
+            flags: [],
+            system: true,
+          })
+          .execute();
+        if (b.side === 'sell') {
+          gainCoin(o, price * n - fee, { source: 'exchange' });
+          await addStock(o.tx, o.shardId, b.foodsId, n);
+          await addBought(o.tx, o.shardId, b.foodsId, day, n);
+          await incrementDaily(o.tx, o.rest.id, TO_SYSTEM, n, day);
+        } else {
+          if (b.price > price) gainCoin(o, (b.price - price) * n, { source: 'exchange' });
+          await addStock(o.tx, o.shardId, b.foodsId, -n);
+          const plan = await addFoods(o, b.foodsId, n, { source: 'exchange', keepDropped: true });
+          if (plan.dropped > 0) addCredit(credits, o.rest.id, 0, b.foodsId, plan.dropped);
+        }
+        fills.push({ price, qty: n, held: false });
+        left -= n;
+        continue;
+      }
+      const m = lv.m;
       const makerAcc = accOf.get(m.rest_id)!;
       const link = links.get(makerAcc);
       if (link === 'device') continue;
@@ -446,7 +517,7 @@ export function createExchangeService(d: GameDeps) {
       from unnest(${ids}::int[]) as f(id)
       cross join lateral (
         select price from exchange_trade
-        where shard_id = ${ctx.shardId} and foods_id = f.id
+        where shard_id = ${ctx.shardId} and foods_id = f.id and not system
         order by id desc limit 1
       ) x`.execute(d.db);
     const lastBy = new Map(lasts.rows.map((x) => [x.foods_id, x.price]));
@@ -484,12 +555,13 @@ export function createExchangeService(d: GameDeps) {
           .orderBy('price', sd === 'buy' ? 'desc' : 'asc')
           .limit(5)
           .execute()
-      ).map((x) => ({ price: x.price, qty: Number(x.qty) }));
+      ).map((x): ExchangeLevelDto => ({ price: x.price, qty: Number(x.qty), system: false }));
     const last = await d.db
       .selectFrom('exchange_trade')
       .select('price')
       .where('shard_id', '=', ctx.shardId)
       .where('foods_id', '=', foodsId)
+      .where('system', '=', false)
       .orderBy('id', 'desc')
       .executeTakeFirst();
     const vol = await d.db
@@ -499,14 +571,31 @@ export function createExchangeService(d: GameDeps) {
       .where('foods_id', '=', foodsId)
       .where('created_at', '>=', gameTime(gameDay(now), 0))
       .executeTakeFirstOrThrow();
+    // 系统做市的一档（156-3 设计 §6）：同价排在玩家后面；买档数量按看的人自己的剩余额度
+    const quote = await makerQuote(d.db, {
+      config: d.config,
+      tuning: s.tuning,
+      shardId: ctx.shardId,
+      foodsId,
+      day: gameDay(now),
+      restId: ctx.restaurantId,
+      ref,
+    });
+    const merge = (levels: ExchangeLevelDto[], sys: MakerLevel | null, sd: 'buy' | 'sell') => {
+      if (!sys) return levels;
+      const at = levels.findIndex((l) => (sd === 'buy' ? l.price < sys.price : l.price > sys.price));
+      const out = [...levels];
+      out.splice(at === -1 ? out.length : at, 0, { ...sys, system: true });
+      return out;
+    };
     return {
       foodsId,
       ref,
       ...priceBand(ref, t),
       last: last?.price ?? null,
       volume: Number(vol.n),
-      bids: await side('buy'),
-      asks: await side('sell'),
+      bids: merge(await side('buy'), quote.bid, 'buy'),
+      asks: merge(await side('sell'), quote.ask, 'sell'),
     };
   }
 
@@ -542,7 +631,7 @@ export function createExchangeService(d: GameDeps) {
     const since = new Date(now.getTime() - 7 * 86_400_000);
     const trades = await d.db
       .selectFrom('exchange_trade')
-      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'created_at'])
+      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'system', 'created_at'])
       .where((eb) =>
         eb.or([eb('buyer_rest_id', '=', ctx.restaurantId), eb('seller_rest_id', '=', ctx.restaurantId)]),
       )
@@ -564,6 +653,7 @@ export function createExchangeService(d: GameDeps) {
           price: x.price,
           qty: x.qty,
           fee: side === 'sell' ? Number(x.fee) : 0,
+          system: x.system,
           createdAt: x.created_at.toISOString(),
         };
       }),

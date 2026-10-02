@@ -26,6 +26,7 @@ import * as m0024 from './0024_activity_coop';
 import * as m0025 from './0025_exchange';
 import * as m0026 from './0026_exchange_trade_last';
 import * as m0027 from './0027_exchange_guard';
+import * as m0028 from './0028_exchange_maker';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -56,4 +57,5 @@ export const migrations: Record<string, Migration> = {
   '0025_exchange': m0025,
   '0026_exchange_trade_last': m0026,
   '0027_exchange_guard': m0027,
+  '0028_exchange_maker': m0028,
 };

@@ -194,25 +194,25 @@ onMounted(async () => {
       <tbody>
         <tr
           v-for="a in [...book.asks].reverse()"
-          :key="`a${a.price}`"
-          class="text-danger"
+          :key="`a${a.system ? 's' : ''}${a.price}`"
+          :class="a.system ? 'text-primary' : 'text-danger'"
           role="button"
-          :data-testid="`ex-ask-${a.price}`"
+          :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
           @click="price = a.price"
         >
-          <td>卖</td>
+          <td>{{ a.system ? '系统卖' : '卖' }}</td>
           <td>{{ formatNum(a.price) }}</td>
           <td class="text-end">{{ formatNum(a.qty) }}</td>
         </tr>
         <tr
           v-for="b in book.bids"
-          :key="`b${b.price}`"
-          class="text-success"
+          :key="`b${b.system ? 's' : ''}${b.price}`"
+          :class="b.system ? 'text-primary' : 'text-success'"
           role="button"
-          :data-testid="`ex-bid-${b.price}`"
+          :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
           @click="price = b.price"
         >
-          <td>买</td>
+          <td>{{ b.system ? '系统收' : '买' }}</td>
           <td>{{ formatNum(b.price) }}</td>
           <td class="text-end">{{ formatNum(b.qty) }}</td>
         </tr>
@@ -323,6 +323,7 @@ onMounted(async () => {
     <div v-for="(x, i) in me.trades" :key="i" class="small border-bottom py-1">
       {{ x.side === 'buy' ? '买入' : '卖出' }} {{ catalog.foodName(x.foodsId) }} {{ formatNum(x.price) }} ×
       {{ x.qty }}
+      <span v-if="x.system" class="text-primary">（系统）</span>
       <span v-if="x.fee > 0" class="text-muted">（手续费 {{ formatNum(x.fee) }}）</span>
     </div>
   </template>

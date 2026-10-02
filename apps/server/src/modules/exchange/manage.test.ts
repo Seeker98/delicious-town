@@ -102,11 +102,13 @@ describe('查询（156-1 设计 §7）', () => {
     await svc().place(b, { foodsId: f.id, side: 'buy', price: p + 1, qty: 1 });
     const book = await svc().book(b, f.id);
     expect(book).toMatchObject({ ref: p, min: Math.ceil(p * 0.5), max: p * 2, last: p + 1, volume: 1 });
-    expect(book.asks).toEqual([
-      { price: p + 1, qty: 4 },
-      { price: p + 2, qty: 1 },
+    // 这里只看玩家挂单的合并；系统做市的一档见 maker-query.test.ts（156-3）
+    const players = (levels: typeof book.bids) => levels.filter((l) => !l.system);
+    expect(players(book.asks)).toEqual([
+      { price: p + 1, qty: 4, system: false },
+      { price: p + 2, qty: 1, system: false },
     ]);
-    expect(book.bids).toEqual([{ price: p, qty: 4 }]);
+    expect(players(book.bids)).toEqual([{ price: p, qty: 4, system: false }]);
     const me = await svc().me(b);
     expect(me.eligible).toBe(true);
     expect(me.orders.map((o) => o.price)).toEqual([p]);
