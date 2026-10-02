@@ -339,9 +339,28 @@ export const souvenirsFile = z
   .strict();
 
 /** data/game/kuji.json：一番赏抽赏券（一番赏设计 §4） */
+const kujiFigure = z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict();
 export const kujiFile = z
   .object({
     ticket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
+    /** 月度主题（问题记录 274）：每月 A/B/C/最后赏 4 个限定手办 */
+    themes: z.array(
+      z
+        .object({
+          month: int.min(1).max(12),
+          name: z.string().min(1),
+          desc: z.string().min(1),
+          figures: z
+            .object({
+              A: kujiFigure,
+              B: kujiFigure,
+              C: kujiFigure,
+              last: kujiFigure,
+            })
+            .strict(),
+        })
+        .strict(),
+    ),
   })
   .strict();
 

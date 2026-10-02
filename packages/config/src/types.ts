@@ -293,6 +293,8 @@ export interface ConfigBundle {
   tasks: Task[];
   activationTasks: ActivationTask[];
   activationRewards: ActivationReward[];
+  /** 一番赏月度主题（问题记录 274）：每月 A/B/C/最后赏的限定手办道具 id */
+  kujiThemes: KujiTheme[];
   cookbookGrades: CookbookGrade[];
   shopSpecialTiers: ShopSpecialTier[];
   shopPools: { special: number[]; black: number[] };
@@ -494,4 +496,12 @@ export interface RenownShopItem {
   weekGroup: number;
   /** 前置玩法（xz 仙珍、tz 天馔）；有前置的暂不上架 */
   require: string | null;
+}
+
+/** 一番赏月度主题（问题记录 274） */
+export interface KujiTheme {
+  month: number;
+  name: string;
+  desc: string;
+  figures: { A: number; B: number; C: number; last: number };
 }

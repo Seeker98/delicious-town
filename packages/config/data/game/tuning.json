@@ -344,16 +344,16 @@
   },
   "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "stats": true, "b": 100, "marketCloseMin": 5, "statsCloseHour": 18 } },
   "kuji": {
-    "price": 20000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1,
+    "price": 20000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "maxPools": 3,
     "tiers": [
-      { "key": "A", "count": 1, "award": { "diamond": 300, "goods": [{ "id": 90101, "num": 1 }] }, "icon": "kuji_a", "news": "broadcast" },
-      { "key": "B", "count": 2, "award": { "diamond": 100, "goods": [{ "id": 90102, "num": 1 }] }, "news": "news" },
-      { "key": "C", "count": 4, "award": { "diamond": 30, "goods": [{ "id": 90103, "num": 1 }] } },
+      { "key": "A", "count": 1, "award": { "diamond": 300 }, "icon": "kuji_a", "news": "broadcast" },
+      { "key": "B", "count": 2, "award": { "diamond": 100 }, "news": "news" },
+      { "key": "C", "count": 4, "award": { "diamond": 30 } },
       { "key": "D", "count": 8, "award": { "coin": 30000 } },
       { "key": "E", "count": 15, "award": { "coin": 15000 } },
       { "key": "F", "count": 50, "award": { "coin": 5000 } }
     ],
-    "last": { "award": { "diamond": 200, "goods": [{ "id": 90104, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" }
+    "last": { "award": { "diamond": 200 }, "icon": "kuji_last", "news": "broadcast" }
   },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
