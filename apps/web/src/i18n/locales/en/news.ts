@@ -4,8 +4,8 @@ import { formatNum } from '../../../utils/format';
 import { list, num, str, type P } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
-  'flip.caught': 'caught raiding cupboards',
-  'flip.flipped': 'cupboards raided',
+  'flip.caught': 'caught raiding pantries',
+  'flip.flipped': 'pantries raided',
   'roach.kill': 'roaches squashed',
 };
 const ordinal = (k: number) => {

@@ -31,10 +31,11 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'friend.refuel':
       return `${who} te puso ${String(p.oil)} de aceite`;
     case 'friend.flip':
-      if (p.outcome === 'food') return `${who} revolvió tu armario y se llevó ${foodName(Number(p.foodsId))}`;
+      if (p.outcome === 'food')
+        return `${who} revolvió tu despensa y se llevó ${foodName(Number(p.foodsId))}`;
       if (p.outcome === 'caught')
-        return `${who} cayó en una ratonera al revolver tu armario y te dejó ${String(p.coin)} monedas`;
-      return `${who} revolvió tu armario y no encontró nada`;
+        return `${who} cayó en una ratonera al revolver tu despensa y te dejó ${String(p.coin)} monedas`;
+      return `${who} revolvió tu despensa y no encontró nada`;
     case 'exchange':
       return p.result === 'caught'
         ? `${who} fue atrapado intentando cambiar tus ingredientes bloqueados`

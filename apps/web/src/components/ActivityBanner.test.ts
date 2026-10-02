@@ -1,4 +1,5 @@
 import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import ActivityBanner from './ActivityBanner.vue';
@@ -7,7 +8,10 @@ vi.mock('../api/endpoints', () => ({ endpoints: { activitySummary: vi.fn() } }))
 const opts = { global: { stubs: { RouterLink: RouterLinkStub } } };
 
 describe('ActivityBanner', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
   it('有进行中的活动时显示个数和可领份数', async () => {
     vi.mocked(endpoints.activitySummary).mockResolvedValue({ running: 2, claimable: 3 });
     const w = mount(ActivityBanner, opts);

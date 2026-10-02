@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import type { ShardDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 
@@ -12,12 +13,13 @@ const error = ref('');
 const notice = ref('');
 const session = useSessionStore();
 const router = useRouter();
+const t = useT();
 
 onMounted(async () => {
   try {
     shards.value = await endpoints.listShards();
   } catch (e) {
-    error.value = errorMessage(e, '获取区服失败');
+    error.value = errorMessage(e, t.value.account.shards.loadFailed);
   } finally {
     loaded.value = true;
   }
@@ -30,16 +32,16 @@ async function choose(s: ShardDto) {
     if (session.me) session.me = { ...session.me, shardId: r.shardId, restaurantId: r.restaurantId };
     await router.push({ name: r.restaurantId ? 'home' : 'create-restaurant' });
   } catch (e) {
-    error.value = errorMessage(e, '进入区服失败');
+    error.value = errorMessage(e, t.value.account.enterFailed);
   }
 }
 
 async function resend() {
   try {
     await endpoints.sendVerifyEmail();
-    notice.value = '验证邮件已发送，请查收';
+    notice.value = t.value.account.verifySent;
   } catch (e) {
-    error.value = errorMessage(e, '发送失败');
+    error.value = errorMessage(e, t.value.account.sendFailed);
   }
 }
 
@@ -52,14 +54,14 @@ async function logout() {
 <template>
   <div>
     <div v-if="session.me && !session.me.emailVerified" class="alert alert-warning py-1 small">
-      邮箱还没有验证，验证后才能和好友互动。
+      {{ t.account.shards.unverified }}
       <button type="button" class="btn btn-link btn-sm p-0 align-baseline" @click="resend">
-        重发验证邮件
+        {{ t.account.resend }}
       </button>
     </div>
     <div v-if="notice" class="alert alert-success py-1 small">{{ notice }}</div>
     <div v-if="error" class="alert alert-danger py-1 small">{{ error }}</div>
-    <h6 class="my-2">选择区服</h6>
+    <h6 class="my-2">{{ t.account.shards.title }}</h6>
     <div class="list-group">
       <button
         v-for="s in shards"
@@ -71,15 +73,23 @@ async function logout() {
       >
         <span>{{ s.name }}</span>
         <small class="text-muted">{{
-          s.status !== 'open' ? '已关闭' : s.hasRestaurant ? '已开店' : '新开'
+          s.status !== 'open'
+            ? t.account.shards.closed
+            : s.hasRestaurant
+              ? t.account.shards.hasRest
+              : t.account.shards.fresh
         }}</small>
       </button>
     </div>
-    <p v-if="loaded && shards.length === 0 && !error" class="text-muted small mt-2">暂时没有开放的区服</p>
+    <p v-if="loaded && shards.length === 0 && !error" class="text-muted small mt-2">
+      {{ t.account.shards.none }}
+    </p>
     <div class="d-flex gap-3 align-items-center mt-3 small">
-      <RouterLink to="/account">我的账号</RouterLink>
-      <RouterLink to="/guide">游玩指引</RouterLink>
-      <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" @click="logout">退出登录</button>
+      <RouterLink to="/account">{{ t.nav.links.account }}</RouterLink>
+      <RouterLink to="/guide">{{ t.nav.links.guide }}</RouterLink>
+      <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" @click="logout">
+        {{ t.account.logout }}
+      </button>
     </div>
   </div>
 </template>

@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
 import RestaurantHomeView from './RestaurantHomeView.vue';
 
@@ -535,5 +536,22 @@ describe('RestaurantHomeView', () => {
     const exp = w.find('[data-testid="exp-text"]').element;
     const quick = w.find('[data-testid="quick-links"]').element;
     expect(exp.compareDocumentPosition(quick) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it('切到英语后首页标题、按钮是英文，数字用逗号（问题记录 272）', async () => {
+    await useLocaleStore().set('en');
+    try {
+      const w = await mountView();
+      expect(w.find('[data-testid="home-todo"] .dt-card-title').text()).toBe("Today's to-do");
+      expect(w.find('[data-testid="home-switches"] .dt-card-title').text()).toBe('Business settings');
+      expect(w.find('[data-testid="home-devices"] .dt-card-title').text()).toBe('Facilities');
+      expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
+      expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
+      expect(w.find('[data-testid="refuel"]').text()).toBe('Fill up (600 coins)');
+      expect(w.find('[data-testid="last-round"]').text()).toContain('Last round: 12 coins');
+      expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
+      expect(w.text()).not.toMatch(/今日待办|经营开关|签到/);
+    } finally {
+      await useLocaleStore().set('zh-CN');
+    }
   });
 });

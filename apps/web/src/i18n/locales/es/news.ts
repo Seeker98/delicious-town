@@ -4,8 +4,8 @@ import { formatNum } from '../../../utils/format';
 import { list, num, str, type P } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
-  'flip.caught': 'atrapados revolviendo armarios',
-  'flip.flipped': 'armarios revueltos',
+  'flip.caught': 'atrapados revolviendo despensas',
+  'flip.flipped': 'despensas revueltas',
   'roach.kill': 'cucarachas eliminadas',
 };
 const rank = (k: number) => `${k}.º`;

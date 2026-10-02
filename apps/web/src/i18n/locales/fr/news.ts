@@ -4,8 +4,8 @@ import { formatNum } from '../../../utils/format';
 import { list, num, str, type P } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
-  'flip.caught': 'pris en fouillant les placards',
-  'flip.flipped': 'placards fouillés',
+  'flip.caught': 'pris en fouillant les garde-mangers',
+  'flip.flipped': 'garde-mangers fouillés',
   'roach.kill': 'cafards écrasés',
 };
 const rank = (k: number) => (k === 1 ? '1er' : `${k}e`);

@@ -32,10 +32,10 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       return `${who} vous a ajouté ${String(p.oil)} d'huile`;
     case 'friend.flip':
       if (p.outcome === 'food')
-        return `${who} a fouillé votre placard et pris ${foodName(Number(p.foodsId))}`;
+        return `${who} a fouillé votre garde-manger et pris ${foodName(Number(p.foodsId))}`;
       if (p.outcome === 'caught')
-        return `${who} s'est pris dans une tapette en fouillant votre placard et vous a laissé ${String(p.coin)} pièces`;
-      return `${who} a fouillé votre placard sans rien trouver`;
+        return `${who} s'est pris dans une tapette en fouillant votre garde-manger et vous a laissé ${String(p.coin)} pièces`;
+      return `${who} a fouillé votre garde-manger sans rien trouver`;
     case 'exchange':
       return p.result === 'caught'
         ? `${who} a été pris en voulant échanger vos ingrédients verrouillés`

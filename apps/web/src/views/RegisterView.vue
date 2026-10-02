@@ -5,6 +5,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { USERNAME_RE } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import TurnstileBox from '../components/TurnstileBox.vue';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 
@@ -24,13 +25,13 @@ const busy = ref(false);
 const router = useRouter();
 const session = useSessionStore();
 const locale = useLocaleStore();
+const t = useT();
 
 const localError = computed(() => {
   const f = form.value;
-  if (f.username && !USERNAME_RE.test(f.username))
-    return '用户名为 2~9 个字，只能用中文、字母、数字、下划线和减号';
-  if (f.password && f.password.length < 6) return '密码至少 6 位';
-  if (f.password2 && f.password !== f.password2) return '两次输入的密码不一致';
+  if (f.username && !USERNAME_RE.test(f.username)) return t.value.auth.usernameRule;
+  if (f.password && f.password.length < 6) return t.value.auth.passwordMin;
+  if (f.password2 && f.password !== f.password2) return t.value.auth.passwordMismatch;
   return '';
 });
 
@@ -51,7 +52,7 @@ async function submit() {
     await session.applyMe(me);
     await router.replace({ name: 'shards' });
   } catch (e) {
-    error.value = errorMessage(e, '注册失败');
+    error.value = errorMessage(e, t.value.auth.registerFailed);
     // 人机验证令牌只能用一次，失败后作废并重新出题
     captchaToken.value = '';
     turnstile.value?.reset();
@@ -64,12 +65,12 @@ async function submit() {
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">注册美味小镇</h5>
+      <h5 class="card-title">{{ t.auth.registerTitle }}</h5>
       <form @submit.prevent="submit">
         <input
           v-model.trim="form.username"
           class="form-control mb-2"
-          placeholder="用户名"
+          :placeholder="t.auth.username"
           autocomplete="username"
           required
         />
@@ -77,7 +78,7 @@ async function submit() {
           v-model="form.password"
           type="password"
           class="form-control mb-2"
-          placeholder="密码"
+          :placeholder="t.auth.password"
           autocomplete="new-password"
           required
         />
@@ -85,7 +86,7 @@ async function submit() {
           v-model="form.password2"
           type="password"
           class="form-control mb-2"
-          placeholder="确认密码"
+          :placeholder="t.auth.password2"
           autocomplete="new-password"
           required
         />
@@ -93,16 +94,18 @@ async function submit() {
           v-model.trim="form.email"
           type="email"
           class="form-control mb-2"
-          placeholder="邮箱"
+          :placeholder="t.auth.email"
           autocomplete="email"
           required
         />
-        <input v-model.trim="form.inviteCode" class="form-control mb-2" placeholder="邀请码（可不填）" />
+        <input v-model.trim="form.inviteCode" class="form-control mb-2" :placeholder="t.auth.inviteCode" />
         <TurnstileBox ref="turnstile" @token="captchaToken = $event" />
         <div v-if="localError || error" class="alert alert-danger py-1 my-2">{{ localError || error }}</div>
-        <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">注册</button>
+        <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">{{ t.auth.register }}</button>
       </form>
-      <div class="mt-2 small"><RouterLink to="/login">已有账号？去登录</RouterLink></div>
+      <div class="mt-2 small">
+        <RouterLink to="/login">{{ t.auth.toLogin }}</RouterLink>
+      </div>
     </div>
   </div>
 </template>
