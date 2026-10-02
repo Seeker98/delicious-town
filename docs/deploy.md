@@ -9,7 +9,7 @@
 
 ## 二、服务端（VPS）
 1. 把仓库放到 `/opt/dt`
-2. `cp infra/.env.example infra/.env`，按注释填写（`COOKIE_SECURE=true`、`TRUST_CF_HEADER=true` 必须开启）
+2. `cp infra/.env.example infra/.env`，按注释填写（`COOKIE_SECURE=true`、`TRUST_CF_HEADER=true` 必须开启；`RNG_SECRET` 填 `openssl rand -hex 32` 的结果，不填拒绝启动。仓库是公开的，这个密钥让别人没法按源码算出未来的天气、菜场货架、蟹老板位置）
 3. Cloudflare 控制台 → Zero Trust → Networks → Tunnels：创建隧道，把 token 填进 `TUNNEL_TOKEN`；
    在隧道的 Public Hostname 里添加 `api.<域名>` → `http://api:3000`
 4. 构建并启动：

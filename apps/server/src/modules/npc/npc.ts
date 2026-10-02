@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import type { GameConfig, Tuning } from '@dt/config';
-import { hashSeed, seededRng, type Rng } from '@dt/shared';
+import { seededRng, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -8,6 +8,7 @@ import type { EventBus } from '../../events/bus';
 import { isEmptyTable } from '../interact/tables';
 import { emptyCookbookLevels, initialTables } from '../restaurant/rules';
 import { dineAccrual } from '../settlement/tables';
+import { gameSeed } from '../../core/seed';
 
 /** 系统账号的用户名：注册规则不允许 "~"，玩家不会撞名 */
 export const NPC_USERNAME = '~krab';
@@ -162,7 +163,7 @@ export async function npcTableRound(
     d,
     shardId,
     npcId,
-    { source: 'settlement', now, rng: seededRng(hashSeed(shardId, round, npcId)) },
+    { source: 'settlement', now, rng: seededRng(gameSeed(shardId, round, npcId)) },
     async (op) => {
       const tr = await op.tx
         .selectFrom('restaurant_tables')

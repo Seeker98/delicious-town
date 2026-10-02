@@ -1,4 +1,4 @@
-import { hashSeed, seededRng } from '@dt/shared';
+import { seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg } from '../../core/luck';
 import { featureAvailable } from '../../core/features';
@@ -14,6 +14,7 @@ import { blessBuff } from '../town/bless';
 import { buildGlobals, toSettleInput, type SettleSource } from './globals';
 import { settleRestaurant } from './settle';
 import type { SettleGlobals, SpecialDish } from './types';
+import { gameSeed } from '../../core/seed';
 
 export type RoundStats = {
   round: number;
@@ -210,7 +211,7 @@ export async function settleShardRound(
       .orderBy('id')
       .execute();
     if (cands.length > 0) {
-      const pick = cands[seededRng(hashSeed(shardId, 'plankton', round)).int(cands.length)]!.id;
+      const pick = cands[seededRng(gameSeed(shardId, 'plankton', round)).int(cands.length)]!.id;
       await world.setPlankton(d.db, shardId, pick);
       snap = { ...snap, planktonRestId: pick };
     }
@@ -250,7 +251,7 @@ export async function settleShardRound(
           d,
           shardId,
           restId,
-          { source: 'settlement', now, rng: seededRng(hashSeed(shardId, round, restId)) },
+          { source: 'settlement', now, rng: seededRng(gameSeed(shardId, round, restId)) },
           (op) => settleOne(op, globals, round),
         );
         stats[result] += 1;

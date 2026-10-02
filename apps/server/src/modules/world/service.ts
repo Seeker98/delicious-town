@@ -1,10 +1,11 @@
 import type { Kysely } from 'kysely';
 import type { Weather } from '@dt/config';
-import { gameParts, hashSeed, seededRng, type CatalogDto, type Slot, type WorldDto } from '@dt/shared';
+import { gameParts, seededRng, type CatalogDto, type Slot, type WorldDto } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { DB } from '../../db/schema';
 import { postNews } from '../news/news';
 import { rollKrabStreet, rollWeather } from './rules';
+import { gameSeed } from '../../core/seed';
 
 export interface WorldSnapshot {
   weather: Weather;
@@ -33,7 +34,7 @@ export function createWorldService(d: GameDeps) {
     let row = await read(db, shardId);
     if (!row) {
       const { tuning } = await d.shards.settings(shardId);
-      const rng = seededRng(hashSeed(shardId, 'world-init'));
+      const rng = seededRng(gameSeed(shardId, 'world-init'));
       const w = rollWeather(d.config, gameParts(now).hour, tuning.world, rng);
       await db
         .insertInto('world_state')
@@ -66,7 +67,7 @@ export function createWorldService(d: GameDeps) {
         d.config,
         slot.hour,
         tuning.world,
-        seededRng(hashSeed(shardId, 'weather', slot.key)),
+        seededRng(gameSeed(shardId, 'weather', slot.key)),
       );
       await d.db
         .updateTable('world_state')
@@ -89,7 +90,7 @@ export function createWorldService(d: GameDeps) {
     async changeKrabStreet(shardId: number, slot: Slot, now: Date): Promise<{ street: number }> {
       await ensure(shardId, now);
       const { tuning } = await d.shards.settings(shardId);
-      const street = rollKrabStreet(tuning.world, seededRng(hashSeed(shardId, 'krab', slot.key)));
+      const street = rollKrabStreet(tuning.world, seededRng(gameSeed(shardId, 'krab', slot.key)));
       await d.db
         .updateTable('world_state')
         .set({ krab_street: street, updated_at: now })
