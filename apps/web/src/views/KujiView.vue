@@ -87,8 +87,8 @@ onMounted(() => void load());
       今天的奖池都抽完了，明天 0 点再来。
     </div>
     <div class="dt-card mb-2" data-testid="kj-pool">
-      <b>{{ data.pool.day }} 第 {{ data.pool.seq }} 池</b>
-      <span class="ms-2">剩 {{ data.pool.left }} / {{ data.pool.total }}</span>
+      <span class="dt-card-title">{{ data.pool.day }} 第 {{ data.pool.seq }} 池</span>
+      <span class="ms-2 small">剩 {{ data.pool.left }} / {{ data.pool.total }}</span>
     </div>
     <table class="table table-sm small mb-2">
       <tbody>

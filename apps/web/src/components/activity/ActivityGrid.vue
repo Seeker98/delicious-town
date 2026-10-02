@@ -39,7 +39,7 @@ const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c'
       />
     </div>
   </div>
-  <div v-for="r in lines" :key="r.key" class="d-flex align-items-center gap-2 border-bottom py-1">
+  <div v-for="r in lines" :key="r.key" class="d-flex align-items-center gap-2 border-bottom py-1 small">
     <span :class="['flex-fill', { 'fw-bold': r.reached }]">{{ LINE_NAME(r.key) }}</span>
     <RewardButton
       :activity-id="a.id"

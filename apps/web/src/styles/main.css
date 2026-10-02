@@ -377,6 +377,16 @@ body {
   font-weight: 600;
   margin: 0;
 }
+/* h5 只用作页面标题：没包在 .dt-page-title 里的也按页面标题的规格（问题记录 278） */
+h5 {
+  font-size: 18px;
+  font-weight: 600;
+}
+/* 卡片标题：和正文同字号、粗 600（问题记录 278：卡片里的 <b> 继承 16px 显得粗大） */
+.dt-card-title {
+  font-size: 14px;
+  font-weight: 600;
+}
 .dt-meta {
   font-size: 12px;
   color: var(--dt-muted);

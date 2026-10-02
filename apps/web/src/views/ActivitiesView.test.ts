@@ -102,6 +102,11 @@ describe('ActivitiesView', () => {
     expect(card.text()).toContain('签到');
     expect(card.text()).toContain('3/3');
     expect(card.text()).toContain('还剩 2 天');
+    // 卡片标题和正文同字号、粗 600，不比正文大一号（问题记录 278）
+    expect(card.find('.dt-card-title').exists()).toBe(true);
+    expect(card.find('b').exists()).toBe(false);
+    // 目标行和正文同字号（14px），不比卡片标题还大
+    for (const row of card.findAll('.border-bottom')) expect(row.classes()).toContain('small');
     await card.find('[data-testid="claim-1-g0"]').trigger('click');
     await flushPromises();
     expect(endpoints.activityClaim).toHaveBeenCalledWith(1, 'g0');
@@ -116,6 +121,10 @@ describe('ActivitiesView', () => {
     expect(cellsEl).toHaveLength(9);
     expect(cellsEl[0]!.classes()).toContain('dt-cell-done');
     expect(cellsEl[4]!.classes()).not.toContain('dt-cell-done');
+    // 连线奖励行 14px，不比上面格子里的字大（问题记录 278）
+    const lines = w.find('[data-testid="activity-2"]').findAll('.border-bottom');
+    expect(lines.length).toBeGreaterThan(0);
+    for (const row of lines) expect(row.classes()).toContain('small');
     expect(w.find('[data-testid="claim-2-r0"]').exists()).toBe(true);
   });
 
