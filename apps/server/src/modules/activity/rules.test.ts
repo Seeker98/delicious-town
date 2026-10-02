@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GridDef, PassDef } from '@dt/shared';
-import { activityState, mergeRewards, rewardsOf, scaleRewards } from './rules';
+import { activityState, mergeRewards, rankRows, rewardsOf, scaleRewards } from './rules';
 
 const a = (coin: number) => ({ coin });
 const reached = (xs: Array<{ key: string; reached: boolean }>) =>
@@ -132,5 +132,44 @@ describe('scaleRewards（148-2）', () => {
         { tier: 'jade', name: '甲' },
       ],
     });
+  });
+});
+
+describe('全服合力（148-3 设计 §5.2、§6）', () => {
+  const coop = {
+    kind: 'coop' as const,
+    def: {
+      rules: [{ key: 'signin', points: 1, dailyCap: 1 }],
+      milestones: [
+        { target: 100, minContribution: 0, award: { coin: 1 } },
+        { target: 200, minContribution: 50, award: { coin: 2 } },
+      ],
+      ranks: [],
+    },
+  };
+  it('里程碑要总分和个人门槛都够；不传总分按 0 算', () => {
+    const reached = (c: Record<string, number>, pool?: number) =>
+      rewardsOf(coop, c, false, { pool }).map((x) => x.reached);
+    expect(reached({ points: 10 }, 250)).toEqual([true, false]);
+    expect(reached({ points: 50 }, 250)).toEqual([true, true]);
+    expect(reached({ points: 50 }, 150)).toEqual([true, false]);
+    expect(reached({ points: 999 })).toEqual([false, false]);
+    expect(rewardsOf(coop, {}, false).map((x) => x.key)).toEqual(['s0', 's1']);
+  });
+  it('rankRows：同分同名次，积分 0 不上榜', () => {
+    expect(
+      rankRows([
+        { restId: 1, points: 5 },
+        { restId: 2, points: 9 },
+        { restId: 3, points: 9 },
+        { restId: 4, points: 0 },
+        { restId: 5, points: 1 },
+      ]),
+    ).toEqual([
+      { restId: 2, points: 9, rank: 1 },
+      { restId: 3, points: 9, rank: 1 },
+      { restId: 1, points: 5, rank: 3 },
+      { restId: 5, points: 1, rank: 4 },
+    ]);
   });
 });

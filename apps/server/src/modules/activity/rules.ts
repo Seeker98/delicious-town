@@ -34,9 +34,19 @@ export function rewardsOf(
   spec: ActivitySpec,
   counters: Record<string, number>,
   premium: boolean,
+  ctx: { pool?: number } = {},
 ): RewardState[] {
   if (spec.kind === 'boost' || spec.kind === 'exchange') return [];
   const count = (k: string) => counters[k] ?? 0;
+  // 全服合力：本区服总分到了、个人贡献到了门槛才算达成（148-3 设计 §6）
+  if (spec.kind === 'coop') {
+    const pool = ctx.pool ?? 0;
+    return spec.def.milestones.map((m, i) => ({
+      key: `s${i}`,
+      award: m.award,
+      reached: pool >= m.target && count('points') >= m.minContribution,
+    }));
+  }
   if (spec.kind === 'goals')
     return spec.def.goals.map((g, i) => ({
       key: `g${i}`,
@@ -60,6 +70,17 @@ export function rewardsOf(
   spec.def.levels.forEach((l, i) => {
     if (l.free) out.push({ key: `f${i}`, award: l.free, reached: points >= l.points });
     if (l.premium) out.push({ key: `p${i}`, award: l.premium, reached: premium && points >= l.points });
+  });
+  return out;
+}
+
+/** 贡献榜名次（148-3 设计 §5.2）：积分 0 不上榜；同分同名次（1、1、3）；同分时保持传入顺序 */
+export function rankRows<T extends { points: number }>(rows: T[]): Array<T & { rank: number }> {
+  const sorted = rows.filter((r) => r.points > 0).sort((x, y) => y.points - x.points);
+  const out: Array<T & { rank: number }> = [];
+  sorted.forEach((r, i) => {
+    const prev = out[i - 1];
+    out.push({ ...r, rank: prev && prev.points === r.points ? prev.rank : i + 1 });
   });
   return out;
 }
