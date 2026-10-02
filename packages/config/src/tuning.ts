@@ -593,6 +593,16 @@ export const tuningSchema = z.object({
       largeAmount: int.min(1),
       holdHours: int.min(0),
     }),
+    /** 系统做市（156-3） */
+    maker: z.object({
+      enabled: z.boolean(),
+      bidRate: z.number().positive(),
+      askRate: z.number().positive(),
+      marketCapRate: z.number().positive(),
+      dailyBuy: int.min(0),
+      stockMax: int.min(0),
+      playerDaily: int.min(0),
+    }),
     refOverrides: z.record(z.string(), int.min(1)),
   }),
   forum: z.object({
