@@ -178,3 +178,25 @@ describe('兑换（148-2 设计 §5）', () => {
     expect(log.params).toMatchObject({ title: '国庆集福', times: 1 });
   });
 });
+
+describe('问题记录 224：掉落时有提示', () => {
+  it('掉了活动货币时，这次操作的得失提示里有货币名和个数；没掉就没有', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    await insertActivity(t, { shardId, spec: spec() });
+    const events = (key: string) =>
+      runSystemOp(t.game.deps, shardId, r.restaurantId, { source: 'test' }, async (o) => {
+        await emitAction(o, key, 1);
+        return o.events;
+      });
+    rolls.push(0.1, 0.9);
+    expect(await events('market.buy')).toContainEqual({
+      type: 'gain',
+      kind: 'activityCurrency',
+      name: '福',
+      num: 2,
+    });
+    rolls.push(0.9, 0.9);
+    expect((await events('market.buy')).filter((e) => e.kind === 'activityCurrency')).toEqual([]);
+  });
+});

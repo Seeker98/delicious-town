@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely';
+import type { GameEvent } from '@dt/shared';
 import type { DB } from '../db/schema';
 
 export interface DomainEvent {
@@ -6,6 +7,8 @@ export interface DomainEvent {
   shardId: number;
   restId: number;
   payload?: Record<string, unknown>;
+  /** 发出事件的那次操作的得失提示；处理函数可以往里追加（问题记录 224） */
+  events?: GameEvent[];
 }
 
 export type EventHandler = (tx: Kysely<DB>, event: DomainEvent) => Promise<void>;

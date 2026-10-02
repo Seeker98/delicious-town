@@ -7,5 +7,6 @@ export async function emitAction(op: Op, key: string, n = 1): Promise<void> {
     shardId: op.shardId,
     restId: op.rest.id,
     payload: { key, n, star: op.rest.star_level, level: op.rest.level, at: op.now.toISOString() },
+    events: op.events,
   });
 }

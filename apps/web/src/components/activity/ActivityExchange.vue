@@ -42,6 +42,7 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
       >{{ c.name }} {{ bal(i) }}</span
     >
   </div>
+  <div class="small text-muted mb-2">活动货币不进仓库，只能在本活动里兑换；兑换期过后作废。</div>
   <div class="small text-muted mb-2">
     <div v-for="(r, i) in a.def.drops" :key="i">
       {{ actionName(r.key) }} {{ pct(r.chance) }} 掉 {{ a.def.currencies[r.currency]?.name }} ×{{

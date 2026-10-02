@@ -14,8 +14,11 @@ export interface GameEvent {
     | 'strength'
     | 'remnant'
     | 'seed'
-    | 'basket';
+    | 'basket'
+    | 'activityCurrency';
   id?: number;
+  /** 活动货币的名字（问题记录 224）：活动货币没有道具 id */
+  name?: string;
   num: number;
   lucky?: boolean;
 }

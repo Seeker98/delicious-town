@@ -1,5 +1,5 @@
 import { sql, type Kysely } from 'kysely';
-import { gameDay, type Rng } from '@dt/shared';
+import { gameDay, type GameEvent, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { featureAvailable } from '../../core/features';
 import type { DB } from '../../db/schema';
@@ -36,6 +36,7 @@ async function count(
   p: ActionPayload,
   at: Date,
   rng: () => Rng,
+  events: GameEvent[] | undefined,
 ) {
   const spec = a.spec;
   if (spec.kind === 'boost') return;
@@ -53,6 +54,13 @@ async function count(
       if (add <= 0) continue;
       await incrementDaily(tx, restId, dk, add, day);
       await bump(tx, a.id, restId, currencyKey(rule.currency), add);
+      // 掉落要让玩家看到：活动货币不进仓库，不提示就像什么都没发生（问题记录 224）
+      events?.push({
+        type: 'gain',
+        kind: 'activityCurrency',
+        name: spec.def.currencies[rule.currency]!.name,
+        num: add,
+      });
     }
     return;
   }
@@ -87,7 +95,7 @@ export function registerActivityHandlers(bus: EventBus, d: GameDeps): void {
     for (const a of await activityCacheFor(bus, d).forShard(e.shardId, tx)) {
       if (at < a.startsAt || at >= a.endsAt) continue;
       if ((p.level ?? 0) < a.minLevel) continue;
-      await count(tx, a, e.restId, p, at, lazyRng);
+      await count(tx, a, e.restId, p, at, lazyRng, e.events);
     }
   });
 }

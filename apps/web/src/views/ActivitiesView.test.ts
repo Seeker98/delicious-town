@@ -369,3 +369,40 @@ describe('终审 I1：兑换次数输入无效时按钮禁用', () => {
     expect(endpoints.activityExchange).toHaveBeenCalledWith(12, 0, 2);
   });
 });
+
+describe('问题记录 224：兑换卡片说明活动货币不进仓库', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  it('余额下面有说明', async () => {
+    const a = {
+      ...base,
+      id: 13,
+      kind: 'exchange',
+      def: {
+        currencies: [{ name: '马勋章' }],
+        drops: [{ key: 'market.buy', chance: 0.2, currency: 0, num: 1, dailyCap: 10 }],
+        shop: [{ cost: [{ currency: 0, num: 1 }], award: { coin: 1 }, limit: 10 }],
+        graceHours: 24,
+      },
+      counters: { m0: 10 },
+      today: {},
+      rewards: [],
+      claimable: 0,
+      exchangeUntil: new Date(Date.now() + 86_400_000).toISOString(),
+    };
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [a as never], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.find('[data-testid="activity-13"]').text()).toContain('活动货币不进仓库');
+  });
+});
