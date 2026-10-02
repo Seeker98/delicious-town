@@ -85,8 +85,12 @@ describe('厨塔的错误文案', () => {
     expect(errorText('LIMIT_REACHED', { what: 'tower', max: 5 })).toBe(
       '今天的厨塔挑战次数用完了（5 次），可以在仓库用厨塔挑战券加次数',
     );
+    // 用对手的名字，不用"他"（问题记录 230：宋嫂、沙利叶、茵陈、阿卡玛是女性）
+    expect(errorText('LIMIT_REACHED', { what: 'watchman', max: 1, name: '宋嫂饭店' })).toBe(
+      '宋嫂饭店今天已经很累了（每人每天 1 次），明天再来',
+    );
     expect(errorText('LIMIT_REACHED', { what: 'watchman', max: 1 })).toBe(
-      '他今天已经很累了（每人每天 1 次），明天再来',
+      '对手今天已经很累了（每人每天 1 次），明天再来',
     );
     expect(errorText('LIMIT_REACHED', { what: 'weekly', max: 10 })).toBe('本周兑换已达上限（10 个）');
     expect(errorText('REQUIREMENT_NOT_MET', { reason: 'renown', what: 'duel' })).toBe('声望为负时不能切磋');

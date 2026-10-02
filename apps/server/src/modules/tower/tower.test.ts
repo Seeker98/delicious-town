@@ -152,7 +152,7 @@ describe('挑战（设计文档 §3.2）', () => {
     await t.game.tower.challenge(ctx, { floor: 8, test: false });
     await expect(t.game.tower.challenge(ctx, { floor: 8, test: false })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
-      params: { what: 'watchman', max: 1 },
+      params: { what: 'watchman', max: 1, name: t.deps.config.towerFloors.get(8)!.name },
     });
     expect((await t.game.tower.overview(ctx)).floors[7]!.left).toBe(0);
   });

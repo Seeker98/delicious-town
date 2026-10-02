@@ -61,7 +61,7 @@ async function go(f: TowerFloorDto, test: boolean) {
         <span class="ms-auto text-muted">厨力 {{ f.power }}</span>
       </div>
       <div class="text-muted">
-        「{{ f.note }}」{{ f.minLevel }} 级起；今天还能挑战他 {{ f.left }}/{{ f.maxTimes }} 次<span
+        「{{ f.note }}」{{ f.minLevel }} 级起；今天还能挑战{{ f.name }} {{ f.left }}/{{ f.maxTimes }} 次<span
           v-if="f.mc"
           >；今日特色菜 {{ catalog.mcName(f.mc.mcId) }}（每份 {{ f.mc.price }}）</span
         >

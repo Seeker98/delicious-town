@@ -136,7 +136,9 @@ const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   rider_busy: (p) => `这个骑手同时送的单已经满了（${String(p.max)} 单）`,
   riders: (p) => `骑手已经满员了（${String(p.max)} 个）`,
   tower: (p) => `今天的厨塔挑战次数用完了（${String(p.max)} 次），可以在仓库用厨塔挑战券加次数`,
-  watchman: (p) => `他今天已经很累了（每人每天 ${String(p.max)} 次），明天再来`,
+  // 用对手的名字，不用"他"：有几位对手是女性（问题记录 230）
+  watchman: (p) =>
+    `${typeof p.name === 'string' && p.name ? p.name : '对手'}今天已经很累了（每人每天 ${String(p.max)} 次），明天再来`,
   rank: (p) => `今天的赛厨榜挑战次数用完了（${String(p.max)} 次）`,
   duel: (p) => `今天和它切磋的次数用完了（${String(p.max)} 次）`,
   weekly: (p) => `本周兑换已达上限（${String(p.max)} 个）`,
