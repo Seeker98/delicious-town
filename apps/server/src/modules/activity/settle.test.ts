@@ -114,3 +114,62 @@ describe('结束补发（设计 §6）', () => {
     expect((await mails(free.restaurantId))[0]!.items).toEqual({ coin: 1 });
   });
 });
+
+describe('全服合力结算（148-3 设计 §7）', () => {
+  const coop = {
+    kind: 'coop' as const,
+    def: {
+      rules: [{ key: 'market.buy', points: 10, dailyCap: 1000 }],
+      milestones: [{ target: 30, minContribution: 20, award: { coin: 7 } }],
+      ranks: [
+        { from: 1, to: 1, award: { diamond: 3 } },
+        { from: 2, to: 2, award: { diamond: 1 } },
+      ],
+    },
+  };
+  it('补发里程碑；名次段边界并列都发；积分 0 不发；每区服一条新闻；重跑不重复发邮件', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    const b = await newRestaurant(t, { shardId });
+    const c = await newRestaurant(t, { shardId });
+    const idle = await newRestaurant(t, { shardId });
+    const end = new Date(t.clock.now.getTime() + H);
+    const id = await insertActivity(t, { shardId, spec: coop, endsAt: end, title: '合力' });
+    await act(a, 'market.buy', 3);
+    await act(b, 'market.buy', 2);
+    await act(c, 'market.buy', 2);
+    await act(idle, 'shop.buy');
+    const after = new Date(end.getTime() + 3 * 60_000);
+    await settleActivities(t.game.deps, shardId, after, log);
+    await settleActivities(t.game.deps, shardId, after, log);
+    // 只看本活动的邮件：同文件前面的用例留下的全服目标清单活动也会给这些店补发（同样用 market.buy）
+    const own = async (restId: number) => (await mails(restId)).filter((m) => m.title.startsWith('《合力》'));
+    const titles = async (restId: number) => (await own(restId)).map((m) => m.title).sort();
+    expect(await titles(a.restaurantId)).toEqual(['《合力》未领取奖励', '《合力》贡献榜第 1 名奖励'].sort());
+    expect(await titles(b.restaurantId)).toEqual(['《合力》未领取奖励', '《合力》贡献榜第 2 名奖励'].sort());
+    expect(await titles(c.restaurantId)).toEqual(['《合力》未领取奖励', '《合力》贡献榜第 2 名奖励'].sort());
+    expect(await own(idle.restaurantId)).toHaveLength(0);
+    const rankMail = (await own(b.restaurantId)).find((m) => m.title.includes('贡献榜'))!;
+    expect(rankMail.items).toEqual({ diamond: 1 });
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'activity.coopRank')
+      .execute();
+    expect(news).toHaveLength(1);
+    expect(news[0]!.params).toMatchObject({
+      title: '合力',
+      top: [
+        { rank: 1, points: 30 },
+        { rank: 2, points: 20 },
+        { rank: 2, points: 20 },
+      ],
+    });
+    // 模拟上一轮有店失败没写结算完成：重跑时已发过的邮件不再发
+    await t.db.deleteFrom('activity_settle').where('activity_id', '=', id).execute();
+    await settleActivities(t.game.deps, shardId, after, log);
+    expect(await own(a.restaurantId)).toHaveLength(2);
+    expect(await own(b.restaurantId)).toHaveLength(2);
+  });
+});

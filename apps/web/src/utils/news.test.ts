@@ -92,3 +92,24 @@ describe('奖励文案', () => {
     expect(rewardText({ kind: 'diamond', id: null, num: 5 }, names)).toBe('钻石 5');
   });
 });
+
+describe('全服合力贡献榜新闻（148-3）', () => {
+  it('列出名次、店名和积分', () => {
+    expect(
+      newsText(
+        n(
+          'activity.coopRank',
+          {
+            title: '国庆合力',
+            top: [
+              { rank: 1, name: '甲餐厅', points: 1234 },
+              { rank: 2, name: '乙餐厅', points: 1100 },
+            ],
+          },
+          null,
+        ),
+        names,
+      ),
+    ).toBe('《国庆合力》贡献榜：第 1 名 甲餐厅（1,234 分）、第 2 名 乙餐厅（1,100 分）');
+  });
+});

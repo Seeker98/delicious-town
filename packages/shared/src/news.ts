@@ -3,6 +3,7 @@ export const BROADCAST_NEWS = 'town.broadcast';
 
 /** 代码里会写入的全部新闻类型；前端 utils/news.ts 必须为每一种写文案（types.test 钉住） */
 export const NEWS_TYPES: readonly string[] = [
+  'activity.coopRank',
   'bar.cup',
   'bar.fg',
   'bar.num',
