@@ -90,3 +90,48 @@ describe('全服合力计数和总分（148-3 设计 §4、§5）', () => {
     }
   });
 });
+
+describe('全服合力领取和列表（148-3 设计 §6、§8.1）', () => {
+  it('总分不够不能领；够了能领、领过再领报已领；个人门槛不够不能领', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    const b = await newRestaurant(t, { shardId });
+    const c = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: spec() });
+    await act(a, 'market.buy');
+    await expect(t.game.activity.claim(a, id, 's0')).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
+    await act(b, 'market.buy', 3);
+    expect((await t.game.activity.claim(a, id, 's0')).data.keys).toEqual(['s0']);
+    await expect(t.game.activity.claim(a, id, 's0')).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    await act(a, 'shop.buy', 20);
+    await act(c, 'shop.buy', 5);
+    await expect(t.game.activity.claim(c, id, 's1')).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
+    expect((await t.game.activity.claim(a, id, 's1')).data.keys).toEqual(['s1']);
+  });
+
+  it('列表带总分、前 10 名（标出自己）、我的名次、今天各规则得分；别的类型 coop 为 null', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    const b = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: spec() });
+    const goals = await insertActivity(t, {
+      shardId,
+      spec: { kind: 'goals', def: { goals: [{ key: 'signin', target: 1, award }] } },
+    });
+    await act(a, 'market.buy', 2);
+    await act(b, 'market.buy');
+    const items = (await t.game.activity.list(b)).items;
+    const x = items.find((i) => i.id === id)!;
+    expect(x.coop).toEqual({
+      pool: 30,
+      top: [
+        { rank: 1, restId: a.restaurantId, name: expect.any(String), points: 20, mine: false },
+        { rank: 2, restId: b.restaurantId, name: expect.any(String), points: 10, mine: true },
+      ],
+      myRank: 2,
+    });
+    expect(x.today).toEqual({ 'market.buy': 10, 'shop.buy': 0 });
+    expect(x.rewards.map((r) => r.reached)).toEqual([true, false]);
+    expect(items.find((i) => i.id === goals)!.coop).toBeNull();
+  });
+});

@@ -17,6 +17,7 @@ import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { grantRewardOp } from '../mail/reward';
 import { consumeGoods } from '../store/goods';
+import { myRankOf, poolOf, rankedOf, type RankedRow } from './coop';
 import { passDailyKey } from './handler';
 import {
   activityState,
@@ -31,6 +32,8 @@ import {
 
 /** 结束多久以内还留在玩家的活动列表里（设计 §7.2） */
 const LIST_AFTER_END_MS = 7 * 86_400_000;
+/** 全服合力的总分和前 10 名在本进程缓存多久（148-3 设计 §5.3） */
+const COOP_CACHE_MS = 30_000;
 
 export interface Progress {
   counters: Record<string, number>;
@@ -87,6 +90,22 @@ export function createActivityService(d: GameDeps) {
       .where('deleted_at', 'is', null)
       .where((eb) => eb.or([eb('shard_id', '=', shardId), eb('shard_id', 'is', null)]));
 
+  const coopCache = new Map<string, { expires: number; pool: number; top: RankedRow[] }>();
+  /** 玩家列表用的总分和前 10 名，按"活动 + 区服"缓存；领取、结算不走缓存 */
+  async function coopBoard(activityId: number, shardId: number) {
+    const k = `${activityId}:${shardId}`;
+    const nowMs = Date.now();
+    const hit = coopCache.get(k);
+    if (hit && hit.expires > nowMs) return hit;
+    const v = {
+      expires: nowMs + COOP_CACHE_MS,
+      pool: await poolOf(d.db, activityId, shardId),
+      top: await rankedOf(d.db, activityId, shardId, 10),
+    };
+    coopCache.set(k, v);
+    return v;
+  }
+
   async function settled(db: Kysely<DB>, activityId: number, shardId: number): Promise<boolean> {
     const r = await db
       .selectFrom('activity_settle')
@@ -119,7 +138,7 @@ export function createActivityService(d: GameDeps) {
         spec.def.drops.map((_, i) => [`d${i}`, by.get(dropDailyKey(row.id, i)) ?? 0]),
       );
     }
-    if (spec.kind !== 'pass') return {};
+    if (spec.kind !== 'pass' && spec.kind !== 'coop') return {};
     const keys = spec.def.rules.map((r) => passDailyKey(row.id, r.key));
     const rows = await db
       .selectFrom('daily_counter')
@@ -135,7 +154,9 @@ export function createActivityService(d: GameDeps) {
   async function dto(row: Row, shardId: number, restId: number, now: Date): Promise<ActivityDto> {
     const p = await loadProgress(d.db, row.id, restId);
     const state = activityState(now, row.ends_at, await settled(d.db, row.id, shardId));
-    const rewards = rewardsOf(specOf(row), p.counters, p.premium).map((x) => ({
+    const spec = specOf(row);
+    const board = spec.kind === 'coop' ? await coopBoard(row.id, shardId) : null;
+    const rewards = rewardsOf(spec, p.counters, p.premium, { pool: board?.pool }).map((x) => ({
       key: x.key,
       award: x.award,
       reached: x.reached,
@@ -156,6 +177,13 @@ export function createActivityService(d: GameDeps) {
       rewards,
       claimable: state === 'running' ? rewards.filter((x) => x.reached && !x.claimed).length : 0,
       exchangeUntil: exchangeUntil(specOf(row), row.ends_at)?.toISOString() ?? null,
+      coop: board
+        ? {
+            pool: board.pool,
+            top: board.top.map((r) => ({ ...r, mine: r.restId === restId })),
+            myRank: await myRankOf(d.db, row.id, shardId, p.counters.points ?? 0),
+          }
+        : null,
     };
   }
 
@@ -172,7 +200,10 @@ export function createActivityService(d: GameDeps) {
 
   async function claimKeys(o: Op, row: Row, pick: (x: RewardState, claimed: boolean) => boolean) {
     const p = await loadProgress(o.tx, row.id, o.rest.id);
-    const all = rewardsOf(specOf(row), p.counters, p.premium);
+    const spec = specOf(row);
+    // 全服合力：领取时在事务里实时求和，不用列表的缓存（148-3 设计 §6）
+    const pool = spec.kind === 'coop' ? await poolOf(o.tx, row.id, o.shardId) : undefined;
+    const all = rewardsOf(spec, p.counters, p.premium, { pool });
     const out: ActivityClaimDto = { keys: [], items: [] };
     for (const x of all) {
       if (!pick(x, p.claims.has(x.key))) continue;
