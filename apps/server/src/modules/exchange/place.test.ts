@@ -108,8 +108,8 @@ describe('撮合（156-1 设计 §6.2）', () => {
     const b = await trader(t, { shardId, coin: 1_000_000 });
     const res = await svc().place(b, { foodsId: f.id, side: 'buy', price: p + 20, qty: 3 });
     expect(res.data.fills).toEqual([
-      { price: p, qty: 2 },
-      { price: p + 10, qty: 1 },
+      { price: p, qty: 2, held: false },
+      { price: p + 10, qty: 1, held: false },
     ]);
     expect(res.data.order.status).toBe('filled');
     // 冻结 (p+20)×3，实际花 p×2 + (p+10)×1，差价退回
@@ -130,7 +130,7 @@ describe('撮合（156-1 设计 §6.2）', () => {
     await svc().place(b, { foodsId: f.id, side: 'buy', price: p + 50, qty: 2 });
     const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 5 } });
     const res = await svc().place(s, { foodsId: f.id, side: 'sell', price: p, qty: 3 });
-    expect(res.data.fills).toEqual([{ price: p + 50, qty: 2 }]);
+    expect(res.data.fills).toEqual([{ price: p + 50, qty: 2, held: false }]);
     expect(res.data.order).toMatchObject({ status: 'open', filled: 2 });
     expect((await restRow(t, s.restaurantId)).coin).toBe((p + 50) * 2 - Math.floor((p + 50) * 2 * 0.05));
     expect(await wallet(t, b.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 2 } });

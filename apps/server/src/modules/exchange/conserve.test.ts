@@ -13,7 +13,21 @@ afterAll(() => t.close());
 const svc = () => t.game.exchange;
 const rares = () => [...t.deps.config.foods.values()].filter((f) => f.odds < 100 && f.coin >= 1000);
 
-/** 店里 + 交易所账户 + 挂着的单冻结的：银币、某种食材的总数 */
+/** 冷静期里还冻结着的（156-2）：银币、某种食材 */
+async function held(restId: number, foodsId: number) {
+  const rows = await t.db
+    .selectFrom('exchange_hold')
+    .select(['coin', 'foods_id', 'num'])
+    .where('rest_id', '=', restId)
+    .where('status', '=', 'held')
+    .execute();
+  return {
+    coin: rows.reduce((s, r) => s + Number(r.coin), 0),
+    foods: rows.filter((r) => r.foods_id === foodsId).reduce((s, r) => s + r.num, 0),
+  };
+}
+
+/** 店里 + 交易所账户 + 挂着的单冻结的 + 冷静期冻结的：银币、某种食材的总数 */
 async function totals(restIds: number[], foodsId: number) {
   let coin = 0;
   let foods = 0;
@@ -30,8 +44,9 @@ async function totals(restIds: number[], foodsId: number) {
       .where('foods_id', '=', foodsId)
       .executeTakeFirst();
     const w = await wallet(t, id);
-    coin += Number(r.coin) + w.coin;
-    foods += (c?.num ?? 0) + (c?.fridge_num ?? 0) + (w.foods[foodsId] ?? 0);
+    const h = await held(id, foodsId);
+    coin += Number(r.coin) + w.coin + h.coin;
+    foods += (c?.num ?? 0) + (c?.fridge_num ?? 0) + (w.foods[foodsId] ?? 0) + h.foods;
   }
   const open = await t.db
     .selectFrom('exchange_order')
@@ -108,8 +123,9 @@ describe('终审 I3：两个盘口同时给同两家挂单方入账（Review Foc
       expect1 += net(f1.coin) + net(f2.coin);
       expect2 += net(f1.coin) + net(f2.coin);
     }
-    expect((await wallet(t, m1.restaurantId)).coin).toBe(expect1);
-    expect((await wallet(t, m2.restaurantId)).coin).toBe(expect2);
+    // 同一批账号反复成交会被标为反复对倒，所得进冷静期（156-2）：可用 + 冻结中合计
+    expect((await wallet(t, m1.restaurantId)).coin + (await held(m1.restaurantId, 0)).coin).toBe(expect1);
+    expect((await wallet(t, m2.restaurantId)).coin + (await held(m2.restaurantId, 0)).coin).toBe(expect2);
   });
 });
 

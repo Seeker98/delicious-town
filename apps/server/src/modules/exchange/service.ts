@@ -19,6 +19,7 @@ import { AppError } from '../../http/errors';
 import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard/foods';
 import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
+import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
 import { addCredit, creditWallets, newCredits } from './wallet';
 
 type OrderRow = {
@@ -89,6 +90,9 @@ export function createExchangeService(d: GameDeps) {
     b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number },
   ): Promise<ExchangePlaceDto> {
     const t = o.tuning.exchange;
+    // 被冻结的店不能下单（156-2 设计 §6.1）
+    const frozen = await frozenReason(o.tx, o.rest.id);
+    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
     const reason = await eligibility({
       db: o.tx,
       level: o.rest.level,
@@ -177,17 +181,54 @@ export function createExchangeService(d: GameDeps) {
         : q.where('price', '>=', b.price).orderBy('price', 'desc');
     const book = (await q.orderBy('id', 'asc').execute()) as OrderRow[];
 
+    // 关联账号（156-2 设计 §4.1）：挂单方的账号和我共用过设备就跳过，只共用 IP 就标记
+    const s = t.suspicious;
+    const accOf = new Map<number, number>();
+    if (book.length > 0) {
+      const rs = await o.tx
+        .selectFrom('restaurant')
+        .select(['id', 'account_id'])
+        .where('id', 'in', [...new Set(book.map((m) => m.rest_id))])
+        .execute();
+      for (const r of rs) accOf.set(r.id, r.account_id);
+    }
+    const links = await linkedAccounts(
+      o.tx,
+      { accountId: o.rest.account_id, ip: o.ctx?.ip ?? '', deviceId: o.ctx?.deviceId ?? null },
+      [...new Set(accOf.values())],
+      s.traceDays,
+      o.now,
+    );
+    const pairSince = new Date(o.now.getTime() - s.repeatDays * 86_400_000);
+    const releaseAt = new Date(o.now.getTime() + s.holdHours * 3_600_000);
+
     const credits = newCredits();
-    const fills: Array<{ price: number; qty: number }> = [];
+    const fills: Array<{ price: number; qty: number; held: boolean }> = [];
     let left = b.qty;
     for (const m of book) {
       if (left === 0) break;
+      const makerAcc = accOf.get(m.rest_id)!;
+      const link = links.get(makerAcc);
+      if (link === 'device') continue;
       const n = Math.min(left, m.qty - m.filled);
       const price = m.price;
       const fee = feeOf(price, n, t);
       const buy = b.side === 'buy' ? order : m;
       const sell = b.side === 'sell' ? order : m;
-      await o.tx
+      const pair = await o.tx
+        .selectFrom('exchange_trade')
+        .select((eb) => eb.fn.countAll<string>().as('n'))
+        .where('created_at', '>=', pairSince)
+        .where((eb) =>
+          eb.or([
+            eb.and([eb('buyer_account_id', '=', o.rest.account_id), eb('seller_account_id', '=', makerAcc)]),
+            eb.and([eb('buyer_account_id', '=', makerAcc), eb('seller_account_id', '=', o.rest.account_id)]),
+          ]),
+        )
+        .executeTakeFirstOrThrow();
+      const flags = tradeFlags({ link, price, qty: n, ref, pairCount: Number(pair.n) + 1 }, s);
+      const held = flags.length > 0;
+      const trade = await o.tx
         .insertInto('exchange_trade')
         .values({
           shard_id: o.shardId,
@@ -200,8 +241,12 @@ export function createExchangeService(d: GameDeps) {
           seller_rest_id: sell.rest_id,
           fee,
           created_at: o.now,
+          buyer_account_id: buy === order ? o.rest.account_id : makerAcc,
+          seller_account_id: sell === order ? o.rest.account_id : makerAcc,
+          flags,
         })
-        .execute();
+        .returning('id')
+        .executeTakeFirstOrThrow();
       const mFilled = m.filled + n;
       await o.tx
         .updateTable('exchange_order')
@@ -212,7 +257,18 @@ export function createExchangeService(d: GameDeps) {
         .where('id', '=', m.id)
         .execute();
       // 挂单方：所得进交易所账户，不锁他的店；被动成交写一条个人日志
-      if (m.side === 'sell') addCredit(credits, m.rest_id, price * n - fee);
+      const makerCoin = m.side === 'sell' ? price * n - fee : 0;
+      const makerFoods = m.side === 'buy' ? n : 0;
+      if (held)
+        await addHold(o.tx, {
+          restId: m.rest_id,
+          tradeId: trade.id,
+          coin: makerCoin,
+          foodsId: makerFoods > 0 ? b.foodsId : null,
+          num: makerFoods,
+          releaseAt,
+        });
+      else if (m.side === 'sell') addCredit(credits, m.rest_id, makerCoin);
       else addCredit(credits, m.rest_id, 0, b.foodsId, n);
       await o.tx
         .insertInto('rest_log')
@@ -225,17 +281,38 @@ export function createExchangeService(d: GameDeps) {
             price,
             qty: n,
             fee: m.side === 'sell' ? fee : 0,
+            held,
           }),
           created_at: o.now,
         })
         .execute();
-      // 吃单方：当场到账
+      // 吃单方：正常成交当场到账；可疑成交进冻结（差价是自己的钱，照常退）
       if (b.side === 'buy') {
-        const plan = await addFoods(o, b.foodsId, n, { source: 'exchange', keepDropped: true });
-        if (plan.dropped > 0) addCredit(credits, o.rest.id, 0, b.foodsId, plan.dropped);
         if (b.price > price) gainCoin(o, (b.price - price) * n, { source: 'exchange' });
-      } else gainCoin(o, price * n - fee, { source: 'exchange' });
-      fills.push({ price, qty: n });
+        if (held)
+          await addHold(o.tx, {
+            restId: o.rest.id,
+            tradeId: trade.id,
+            coin: 0,
+            foodsId: b.foodsId,
+            num: n,
+            releaseAt,
+          });
+        else {
+          const plan = await addFoods(o, b.foodsId, n, { source: 'exchange', keepDropped: true });
+          if (plan.dropped > 0) addCredit(credits, o.rest.id, 0, b.foodsId, plan.dropped);
+        }
+      } else if (held)
+        await addHold(o.tx, {
+          restId: o.rest.id,
+          tradeId: trade.id,
+          coin: price * n - fee,
+          foodsId: null,
+          num: 0,
+          releaseAt,
+        });
+      else gainCoin(o, price * n - fee, { source: 'exchange' });
+      fills.push({ price, qty: n, held });
       left -= n;
     }
     await creditWallets(o.tx, credits);
@@ -246,7 +323,14 @@ export function createExchangeService(d: GameDeps) {
       .where('id', '=', order.id)
       .returning(ORDER_COLS)
       .executeTakeFirstOrThrow()) as OrderRow;
-    restLog(o, 'exchange.order', { side: b.side, foodsId: b.foodsId, price: b.price, qty: b.qty, filled });
+    restLog(o, 'exchange.order', {
+      side: b.side,
+      foodsId: b.foodsId,
+      price: b.price,
+      qty: b.qty,
+      filled,
+      held: fills.some((x) => x.held),
+    });
     return { order: orderDto(done), fills };
   }
 

@@ -67,3 +67,22 @@ export async function frozenReason(db: Kysely<DB>, restId: number): Promise<stri
     .executeTakeFirst();
   return r?.reason ?? null;
 }
+
+/** 冷静期的冻结记录（156-2 设计 §5） */
+export async function addHold(
+  db: Kysely<DB>,
+  h: { restId: number; tradeId: string; coin: number; foodsId: number | null; num: number; releaseAt: Date },
+): Promise<void> {
+  await db
+    .insertInto('exchange_hold')
+    .values({
+      rest_id: h.restId,
+      trade_id: h.tradeId,
+      coin: h.coin,
+      foods_id: h.foodsId,
+      num: h.num,
+      release_at: h.releaseAt,
+      status: 'held',
+    })
+    .execute();
+}

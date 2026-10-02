@@ -18,7 +18,8 @@ export async function trader(
     .set({ created_at: sql`now() - interval '30 days'` })
     .where('id', '=', r.accountId)
     .execute();
-  return r;
+  // 每家测试店用不同的请求 IP：撮合会把"本次请求的 IP"算进关联判定（156-2）
+  return { ...r, ip: `10.99.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250) + 1}` };
 }
 
 export async function wallet(t: TestGame, restId: number) {
