@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityGoals from '../components/activity/ActivityGoals.vue';
+import ActivityBoost from '../components/activity/ActivityBoost.vue';
 import ActivityGrid from '../components/activity/ActivityGrid.vue';
 import ActivityPass from '../components/activity/ActivityPass.vue';
 import { errorMessage } from '../i18n/zh-CN';
@@ -69,7 +70,14 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
     </div>
     <ActivityGoals v-if="a.kind === 'goals'" :a="a" :busy="busy" @claim="claim(a, $event)" />
     <ActivityGrid v-else-if="a.kind === 'grid'" :a="a" :busy="busy" @claim="claim(a, $event)" />
-    <ActivityPass v-else :a="a" :busy="busy" @claim="claim(a, $event)" @unlock="unlock(a)" />
+    <ActivityPass
+      v-else-if="a.kind === 'pass'"
+      :a="a"
+      :busy="busy"
+      @claim="claim(a, $event)"
+      @unlock="unlock(a)"
+    />
+    <ActivityBoost v-else-if="a.kind === 'boost'" :a="a" />
     <button
       v-if="a.claimable > 0"
       type="button"

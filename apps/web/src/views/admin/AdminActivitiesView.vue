@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { ActivityInput, ActivityKind, AdminActivityDto, GoalsDef, GridDef, PassDef } from '@dt/shared';
+import type {
+  ActivityInput,
+  ActivityKind,
+  AdminActivityDto,
+  BoostActivityDef,
+  GoalsDef,
+  GridDef,
+  PassDef,
+} from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import GoalsEditor from '../../components/admin/activity/GoalsEditor.vue';
 import GridEditor from '../../components/admin/activity/GridEditor.vue';
+import BoostEditor from '../../components/admin/activity/BoostEditor.vue';
 import PassEditor from '../../components/admin/activity/PassEditor.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
@@ -31,14 +40,15 @@ const startsAt = ref('');
 const endsAt = ref('');
 const minLevel = ref(1);
 const kind = ref<ActivityKind>('goals');
-const defs = ref<{ goals: GoalsDef; grid: GridDef; pass: PassDef }>({
+const defs = ref<{ goals: GoalsDef; grid: GridDef; pass: PassDef; boost: BoostActivityDef }>({
   goals: defaultDef('goals'),
   grid: defaultDef('grid'),
   pass: defaultDef('pass'),
+  boost: defaultDef('boost'),
 });
 const started = computed(() => editing.value !== null && editing.value.state !== 'pending');
 const STATE = { pending: '未开始', running: '进行中', settling: '结算中', settled: '已补发' } as const;
-const KIND = { goals: '目标清单', grid: '九宫格', pass: '战令' } as const;
+const KIND = { goals: '目标清单', grid: '九宫格', pass: '战令', boost: '全服加成' } as const;
 
 /** 每次 fill 换一个 key，让奖励编辑器按新活动重新挂载（终审 I1） */
 const formKey = ref(0);
@@ -57,7 +67,12 @@ function fill(a: AdminActivityDto | null, copy = false) {
   body.value = a?.body ?? '';
   minLevel.value = a?.minLevel ?? 1;
   kind.value = a?.kind ?? 'goals';
-  defs.value = { goals: defaultDef('goals'), grid: defaultDef('grid'), pass: defaultDef('pass') };
+  defs.value = {
+    goals: defaultDef('goals'),
+    grid: defaultDef('grid'),
+    pass: defaultDef('pass'),
+    boost: defaultDef('boost'),
+  };
   // a 来自响应式列表，structuredClone 复制不了代理对象，用 JSON 深拷贝
   if (a) (defs.value as Record<ActivityKind, unknown>)[a.kind] = JSON.parse(JSON.stringify(a.def));
   const now = Date.now();
@@ -188,6 +203,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
           <option value="goals">目标清单</option>
           <option value="grid">九宫格</option>
           <option value="pass">战令</option>
+          <option value="boost">全服加成</option>
         </select>
       </div>
       <div class="col-auto">
@@ -239,7 +255,8 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
     <fieldset :key="formKey" :disabled="started" data-testid="ac-def">
       <GoalsEditor v-if="kind === 'goals'" v-model="defs.goals" :errors="errors" />
       <GridEditor v-else-if="kind === 'grid'" v-model="defs.grid" :errors="errors" />
-      <PassEditor v-else v-model="defs.pass" :errors="errors" />
+      <PassEditor v-else-if="kind === 'pass'" v-model="defs.pass" :errors="errors" />
+      <BoostEditor v-else-if="kind === 'boost'" v-model="defs.boost" :errors="errors" />
     </fieldset>
     <div class="mt-2">
       <button

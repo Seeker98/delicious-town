@@ -8,7 +8,9 @@ import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import AdminShardView from './AdminShardView.vue';
 
-vi.mock('../../api/admin', () => ({ adminApi: { settings: vi.fn(), saveOverride: vi.fn() } }));
+vi.mock('../../api/admin', () => ({
+  adminApi: { settings: vi.fn(), saveOverride: vi.fn(), activities: vi.fn() },
+}));
 
 const defaults = {
   features: {},
@@ -47,6 +49,7 @@ describe('AdminShardView', () => {
     setActivePinia(createPinia());
     vi.mocked(adminApi.settings).mockResolvedValue(structuredClone(dto));
     vi.mocked(adminApi.saveOverride).mockResolvedValue({ version: 3 });
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
   });
 
   it('常用项显示默认值；改完填备注保存，只提交覆盖', async () => {
@@ -159,5 +162,28 @@ describe('AdminShardView', () => {
     expect(w.find(field('tuning.settlement.expMultiplier')).exists()).toBe(false);
     await w.find('[data-testid="setting-search"]').setValue('');
     expect(w.find(field('tuning.rank.top')).exists()).toBe(true);
+  });
+
+  it('有生效的全服加成时，页面上方提示（显示的数值不含加成）', async () => {
+    vi.mocked(adminApi.activities).mockResolvedValue([
+      {
+        id: 3,
+        shardId: null,
+        kind: 'boost',
+        def: { items: [{ key: 'exp', factor: 2 }] },
+        title: '双倍经验',
+        body: '',
+        startsAt: '2026-10-01T00:00:00.000Z',
+        endsAt: '2099-10-08T00:00:00.000Z',
+        minLevel: 1,
+        state: 'running',
+        participants: 0,
+        createdAt: '',
+        updatedAt: '',
+        actor: null,
+      },
+    ] as never);
+    const w = await mountView('admin');
+    expect(w.find('[data-testid="boost-hint"]').text()).toContain('经营经验 ×2');
   });
 });

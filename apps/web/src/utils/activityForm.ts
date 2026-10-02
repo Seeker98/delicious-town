@@ -1,4 +1,4 @@
-import type { ActivityKind, GoalsDef, GridDef, PassDef } from '@dt/shared';
+import type { ActivityKind, BoostActivityDef, GoalsDef, GridDef, PassDef } from '@dt/shared';
 import { ApiError } from '../api/client';
 
 type Goal = GoalsDef['goals'][number];
@@ -7,8 +7,10 @@ export const newGoal = (key = 'signin', target = 1): Goal => ({ key, target, awa
 export function defaultDef(kind: 'goals'): GoalsDef;
 export function defaultDef(kind: 'grid'): GridDef;
 export function defaultDef(kind: 'pass'): PassDef;
-export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef;
-export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef {
+export function defaultDef(kind: 'boost'): BoostActivityDef;
+export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef | BoostActivityDef;
+export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef | BoostActivityDef {
+  if (kind === 'boost') return { items: [{ key: 'exp', factor: 2 }] };
   if (kind === 'goals') return { goals: [newGoal()] };
   if (kind === 'grid')
     return {
@@ -40,6 +42,10 @@ const TEXT: Record<string, string> = {
   empty_price: '至少填一项解锁价格',
   empty: '奖励不能为空',
   duplicate: '同一种道具或食材只能列一次',
+  out_of_range: '倍数超出范围',
+  unknown_boost: '请选择加成项目',
+  two_decimals: '倍数最多两位小数',
+  no_effect: '至少有一项倍数不等于 1',
 };
 
 /** 服务端 VALIDATION_FAILED 的 issues → 路径 → 中文 */

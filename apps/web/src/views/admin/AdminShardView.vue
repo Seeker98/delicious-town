@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
-import type { ShardSettingsDto } from '@dt/shared';
+import { boostText, type AdminActivityDto, type BoostActivityDef, type ShardSettingsDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { ApiError } from '../../api/client';
 import SettingRow from '../../components/admin/SettingRow.vue';
@@ -35,7 +35,22 @@ const rawText = ref<Record<string, string>>({});
 const badServer = ref(new Set<string>());
 const readOnly = computed(() => admin.me?.role !== 'admin');
 
+/** 正在生效的全服加成（148-4）：本页显示的是不含加成的数值，在上方提示 */
+const boosts = ref<AdminActivityDto[]>([]);
+async function loadBoosts() {
+  try {
+    boosts.value = (await adminApi.activities()).filter(
+      (a) =>
+        a.kind === 'boost' && a.state === 'running' && (a.shardId === null || a.shardId === shardId.value),
+    );
+  } catch {
+    boosts.value = [];
+  }
+}
+const boostItems = (a: AdminActivityDto) => (a.def as BoostActivityDef).items;
+
 async function load() {
+  void loadBoosts();
   try {
     // 从接口返回的普通对象复制：data.value 是响应式代理，structuredClone 复制代理会抛错
     const res = await adminApi.settings(shardId.value);
@@ -163,6 +178,12 @@ async function save() {
 
 <template>
   <div v-if="data">
+    <div v-if="boosts.length" class="alert alert-warning py-1 small" data-testid="boost-hint">
+      当前有全服加成生效（下面显示的是不含加成的数值）：
+      <span v-for="b in boosts" :key="b.id" class="me-2">
+        {{ boostText(boostItems(b)) }}（至 {{ new Date(b.endsAt).toLocaleString() }}）
+      </span>
+    </div>
     <div class="d-flex align-items-center gap-2 mb-2">
       <h5 class="mb-0">区服数值</h5>
       <span class="small text-muted">版本 {{ data.version }}</span>

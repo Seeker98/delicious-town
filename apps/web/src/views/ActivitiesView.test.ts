@@ -152,3 +152,46 @@ describe('ActivitiesView', () => {
     expect(w.text()).toContain('需要 20 级');
   });
 });
+
+describe('ActivitiesView 全服加成', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  it('列出加成项和剩余时间，没有领取按钮', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [
+        {
+          ...base,
+          id: 8,
+          kind: 'boost',
+          def: {
+            items: [
+              { key: 'exp', factor: 2 },
+              { key: 'marketPrice', factor: 0.8 },
+            ],
+          },
+          counters: {},
+          rewards: [],
+          claimable: 0,
+        },
+      ],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    const card = w.find('[data-testid="activity-8"]');
+    expect(card.find('[data-testid="boost-8"]').text()).toContain('经营经验 ×2、菜场价格 ×0.8');
+    expect(card.text()).toContain('还剩 2 天');
+    expect(card.find('button').exists()).toBe(false);
+    expect(card.find('table').exists()).toBe(false);
+  });
+});

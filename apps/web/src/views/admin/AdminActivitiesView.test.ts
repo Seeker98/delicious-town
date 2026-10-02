@@ -188,3 +188,45 @@ describe('AdminActivitiesView 终审修复', () => {
     expect(b.endsAt).toBe('2099-10-08T00:00:30.500Z');
   });
 });
+
+describe('AdminActivitiesView 全服加成', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+    vi.mocked(adminApi.createActivity).mockResolvedValue(row);
+  });
+  it('选全服加成：每行项目 + 倍数，提示范围；提交 items', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('boost');
+    expect(w.find('[data-testid="boost-range-0"]').text()).toBe('1~5');
+    await w.find('[data-testid="boost-add"]').trigger('click');
+    await w.find('[data-testid="boost-key-1"]').setValue('marketPrice');
+    expect(w.find('[data-testid="boost-range-1"]').text()).toBe('0.5~1');
+    await w.find('[data-testid="boost-factor-1"]').setValue('0.8');
+    await w.find('[data-testid="ac-title"]').setValue('国庆');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.createActivity).mock.calls[0]![0];
+    expect(b.kind).toBe('boost');
+    expect(b.def).toEqual({
+      items: [
+        { key: 'exp', factor: 2 },
+        { key: 'marketPrice', factor: 0.8 },
+      ],
+    });
+  });
+});
