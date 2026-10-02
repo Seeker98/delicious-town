@@ -25,7 +25,8 @@ describe('各语言的翻译（问题记录 272）', () => {
   it('每种语言的键和简中完全一致（防止用 as 绕过类型检查）', async () => {
     const base = keys(await loadMessages('zh-CN')).sort();
     for (const l of LOCALES) expect(keys(await loadMessages(l)).sort(), l).toEqual(base);
-  });
+    // 要动态加载全部语言包，全量并行跑时可能超过默认 5 秒
+  }, 30_000);
 
   it('繁中是由简中生成的最新结果：改了简中要跑 pnpm -F @dt/web i18n:tw', () => {
     expect(Object.keys(ZH_TW).sort()).toEqual(

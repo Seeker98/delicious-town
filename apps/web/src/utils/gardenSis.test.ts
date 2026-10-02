@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MarketDto } from '@dt/shared';
-import { CHAT, gardenLines, pickLine } from './gardenSis';
+import { chatLines, gardenLines, pickLine } from './gardenSis';
 
 const item = { id: 1 } as MarketDto['special'][number];
 const market = (patch: Partial<MarketDto> = {}): MarketDto =>
@@ -39,7 +39,7 @@ describe('菜园姐台词（问题记录 176，设计 §5.2）', () => {
 
   it('闲聊总在；状态台词权重 2；没有菜场数据时只有闲聊', () => {
     const lines = gardenLines(market());
-    for (const c of CHAT) expect(lines.some((l) => l.text === c && l.weight === 1)).toBe(true);
+    for (const c of chatLines()) expect(lines.some((l) => l.text === c && l.weight === 1)).toBe(true);
     expect(lines.filter((l) => l.weight === 2).length).toBeGreaterThan(0);
     expect(gardenLines(null).every((l) => l.weight === 1)).toBe(true);
   });
@@ -55,7 +55,7 @@ describe('菜园姐台词（问题记录 176，设计 §5.2）', () => {
 
 describe('菜园姐台词和代码一致（终审）', () => {
   it('不提不存在的"答疑"版；竞猜说"这一轮"', () => {
-    expect(CHAT.some((c) => c.includes('答疑'))).toBe(false);
+    expect(chatLines().some((c) => c.includes('答疑'))).toBe(false);
     const g = { period: 'p', joined: null, last: null, cost: 0, maxPick: 3, pool: [] };
     expect(texts(market({ guess: g })).some((t) => t.includes('这一轮的竞猜'))).toBe(true);
   });

@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useLocaleStore } from '../stores/locale';
 import CupboardView from './CupboardView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -236,5 +237,21 @@ describe('CupboardView', () => {
     expect(endpoints.thaw).toHaveBeenCalledWith(302);
     expect(w.find('[data-testid="thaw-303"]').attributes('disabled')).toBeDefined();
     confirm.mockRestore();
+  });
+  it('切到英语后橱柜页是英文（问题记录 272）', async () => {
+    await useLocaleStore().set('en');
+    try {
+      const w = mount(CupboardView);
+      await flushPromises();
+      expect(w.text()).toContain('Slots 1/100 · Locked 0/15 · Max 999 each');
+      expect(w.find('[data-testid="level-all"]').text()).toBe('All (1)');
+      expect(w.find('[data-testid="level-2"]').text()).toBe('Level 2 (1)');
+      expect(w.text()).toContain('Street needs 3');
+      await w.find('[data-testid="pick-302"]').trigger('click');
+      expect(w.find('[data-testid="decompose"]').text()).toBe('Break down ×1');
+      expect(w.text()).not.toMatch(/格子|分解|本街/);
+    } finally {
+      await useLocaleStore().set('zh-CN');
+    }
   });
 });

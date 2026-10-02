@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { CookbookListDto, CookbookRowDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
@@ -13,18 +14,13 @@ import { GRADE_NAMES } from '../utils/labels';
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
 const toast = useToastStore();
+const t = useT();
 const street = ref(0);
 const filter = ref<'all' | 'learnable' | 'upgradable' | 'unlearned' | 'learned'>('all');
 const page = ref(1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
-const FILTERS = [
-  { key: 'all', label: '全部' },
-  { key: 'learnable', label: '可学' },
-  { key: 'upgradable', label: '可升级' },
-  { key: 'unlearned', label: '未学' },
-  { key: 'learned', label: '已学' },
-] as const;
+const FILTERS = ['all', 'learnable', 'upgradable', 'unlearned', 'learned'] as const;
 
 async function load() {
   try {
@@ -34,15 +30,16 @@ async function load() {
       filter: filter.value,
     });
   } catch (e) {
-    toast.push(errorMessage(e, '读取食谱失败'), 'danger');
+    toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
   }
 }
 
 function learnLabel(r: CookbookRowDto): string {
-  if (r.learn === 'max') return '已满级';
-  if (r.learn === 'z') return '食材不够';
-  if (r.learn === '0') return r.grade === 0 ? '学习' : '升级';
-  return `用${r.learn}级万能食材`;
+  const c = t.value.cookbook;
+  if (r.learn === 'max') return c.maxed;
+  if (r.learn === 'z') return c.lackFoods;
+  if (r.learn === '0') return r.grade === 0 ? c.learn : c.upgrade;
+  return c.useMaster(r.learn);
 }
 
 async function learn(id: number) {
@@ -51,7 +48,7 @@ async function learn(id: number) {
     await endpoints.learn(id);
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '学习失败'), 'danger');
+    toast.push(errorMessage(e, t.value.cookbook.learnFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -77,18 +74,24 @@ onMounted(async () => {
     <div class="btn-group btn-group-sm">
       <button
         v-for="f in FILTERS"
-        :key="f.key"
-        :class="['btn', filter === f.key ? 'btn-primary' : 'btn-outline-primary']"
-        :data-testid="`filter-${f.key}`"
-        @click="filter = f.key"
+        :key="f"
+        :class="['btn', filter === f ? 'btn-primary' : 'btn-outline-primary']"
+        :data-testid="`filter-${f}`"
+        @click="filter = f"
       >
-        {{ f.label }}
+        {{ t.cookbook.filters[f] }}
       </button>
     </div>
   </div>
   <div v-if="list" class="small text-muted mb-2" data-testid="cookbook-counts">
-    本街已学 {{ list.streetLearned }}/{{ list.streetTotal }} · 共学会 {{ formatNum(list.learned) }} /
-    {{ formatNum(list.allTotal) }} 道
+    {{
+      t.cookbook.counts(
+        list.streetLearned,
+        list.streetTotal,
+        formatNum(list.learned),
+        formatNum(list.allTotal),
+      )
+    }}
   </div>
   <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
     <div class="flex-fill" style="min-width: 0">
@@ -116,14 +119,16 @@ onMounted(async () => {
     </button>
   </div>
   <div v-if="list && list.total > list.pageSize" class="d-flex justify-content-between mt-2">
-    <button class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="page -= 1">上一页</button>
+    <button class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="page -= 1">
+      {{ t.common.prevPage }}
+    </button>
     <span class="small">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
     <button
       class="btn btn-sm btn-outline-secondary"
       :disabled="page * list.pageSize >= list.total"
       @click="page += 1"
     >
-      下一页
+      {{ t.common.nextPage }}
     </button>
   </div>
 </template>

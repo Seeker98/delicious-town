@@ -1,4 +1,5 @@
 import type { StoreItemDto } from '@dt/shared';
+import { activeLocale } from '../i18n';
 
 /** 仓库分组顺序（问题记录 186）：消耗品、道具、礼包、设施、勋章；其他类型排最后 */
 export const STORE_TYPES: readonly number[] = [0, 1, 2, 3, 9];
@@ -6,7 +7,8 @@ const rank = (t: number) => {
   const i = STORE_TYPES.indexOf(t);
   return i < 0 ? STORE_TYPES.length : i;
 };
-const collator = new Intl.Collator('zh-Hans-CN');
+/** 名字排序按当前语言（简中、繁中按拼音） */
+const collatorOf = (l: string) => new Intl.Collator(l === 'zh-CN' || l === 'zh-TW' ? 'zh-Hans-CN' : l);
 
 /** 先按类型；组内有剩余时间的先排、短的在前；再按名字拼音；最后按道具 id */
 export function sortStoreItems(
@@ -14,6 +16,7 @@ export function sortStoreItems(
   typeOf: (goodsId: number) => number,
   nameOf: (goodsId: number) => string,
 ): StoreItemDto[] {
+  const collator = collatorOf(activeLocale());
   const exp = (x: StoreItemDto) => (x.expiresAt ? new Date(x.expiresAt).getTime() : Infinity);
   const byExp = (a: StoreItemDto, b: StoreItemDto) => {
     const [ea, eb] = [exp(a), exp(b)];

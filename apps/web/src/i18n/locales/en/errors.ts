@@ -379,6 +379,8 @@ const errors: Messages['errors'] = {
     food: (id) => `Ingredient ${id}`,
     mc: (id) => `Signature dish ${id}`,
     seed: (id) => `Seed ${id}`,
+    seedOf: (food) => `${food} seed`,
+    weather: (id) => `Weather ${id}`,
   },
 };
 export default errors;

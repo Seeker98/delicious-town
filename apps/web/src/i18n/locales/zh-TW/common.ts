@@ -7,4 +7,11 @@ export default {
   language: '語言',
   loadFailed: '讀取失敗',
   langLoadFailed: '切換語言失敗，請檢查網路後再試',
+  collapse: '收起',
+  expand: '展開',
+  prevPage: '上一頁',
+  nextPage: '下一頁',
+  all: '全部',
+  other: '其他',
+  opFailed: '操作失敗',
 };

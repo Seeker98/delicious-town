@@ -10,6 +10,10 @@ export function formatNum(n: number): string {
 }
 
 /** 食材等级的显示名：7 级是神秘食材、9 级是万能食材（问题记录） */
+/** 时:分（按当前语言） */
+export const timeHM = (iso: string) =>
+  new Date(iso).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' });
+
 export function foodLevelLabel(level: number): string {
   return activeMessages().labels.foodLevel(level);
 }

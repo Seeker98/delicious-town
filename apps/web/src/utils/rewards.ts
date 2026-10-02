@@ -1,4 +1,5 @@
 import type { TownRewardDto } from '@dt/shared';
+import { activeMessages } from '../i18n';
 import { formatNum } from './format';
 
 /** 小镇玩法获得的东西的文案 */
@@ -14,8 +15,8 @@ export function rewardText(
     case 'seed':
       return `${x.seedName(r.id!)}×${r.num}`;
     case 'coin':
-      return `银币 ${formatNum(r.num)}`;
+      return activeMessages().util.reward.coin(formatNum(r.num));
     default:
-      return `钻石 ${r.num}`;
+      return activeMessages().util.reward.diamond(formatNum(r.num));
   }
 }
