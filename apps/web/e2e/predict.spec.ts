@@ -55,8 +55,23 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
       data: { outcome: true },
     });
     expect(resolved.ok()).toBe(true);
+    // 推进 1 分钟跑结算任务；同一分钟可能碰上营业结算、或开发 worker 先抢到结算任务，
+    // 所以不比银币总数，轮询这家店的结算日志：这一局得到 10 份 × 1,000
     await page.request.post('/api/v1/test/tick', { data: { minutes: 1, shardIds: [me.shardId] } });
-    expect((await overview()).coin).toBe(afterBuy + 10_000);
+    await expect
+      .poll(
+        async () =>
+          (
+            await client.query<{ coin: number }>(
+              `select (params->>'coin')::int as coin from rest_log
+                 where type = 'predict.settle' and params->>'title' = 'e2e 预测'
+                   and rest_id = (select id from restaurant where account_id = (select id from account where lower(username) = lower($1)))`,
+              [username],
+            )
+          ).rows[0]?.coin,
+        { timeout: 15_000 },
+      )
+      .toBe(10_000);
   } finally {
     if (eventId !== null) await client.query('delete from predict_event where id = $1', [eventId]);
     await client.end();
