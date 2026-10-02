@@ -64,6 +64,8 @@ export interface OverviewExtra {
   /** 展示中的个性图标（问题记录：自己看不到称号） */
   icons: Array<{ key: string; title: string }>;
   plaque2Cost: { star: number; coin: number; diamond: number };
+  /** 挑剔消耗食材每档保留的数量（区服数值，问题记录 220） */
+  cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
 }
 
@@ -114,6 +116,7 @@ export function toRestaurantDto(
     cookfoodsFlag: r.cookfoods_flag,
     plaque2Open: r.plaque2_open,
     plaque2Cost: extra.plaque2Cost,
+    cookfoodsPerFlag: extra.cookfoodsPerFlag,
     mainTaskStep: r.main_task_step,
     devices: extra.devices,
     lastRound: extra.lastRound,
