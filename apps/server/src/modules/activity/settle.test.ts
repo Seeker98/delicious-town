@@ -4,6 +4,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { activityCacheFor } from './active';
 import { settleActivities } from './settle';
 
 let t: TestGame;
@@ -71,22 +72,31 @@ describe('结束补发（设计 §6）', () => {
     const s2 = await createShard(t.db);
     const a = await newRestaurant(t, { shardId: s1 });
     const b = await newRestaurant(t, { shardId: s2 });
+    // 全服活动放在远期（各测试文件用不同年份，避免互相看到）：测试库是共用的，此刻生效的全服活动会被并行跑的其他测试看到
+    const back = t.clock.now;
+    t.clock.set(new Date('2097-01-02T00:00:00Z'));
     const end = new Date(t.clock.now.getTime() + H);
     const id = await insertActivity(t, { shardId: null, spec, endsAt: end });
-    await act(a, 'market.buy');
-    await act(b, 'market.buy');
-    const after = new Date(end.getTime() + 3 * 60_000);
-    await settleActivities(t.game.deps, s1, after, log);
-    expect(await mails(a.restaurantId)).toHaveLength(1);
-    expect(await mails(b.restaurantId)).toHaveLength(0);
-    await settleActivities(t.game.deps, s2, after, log);
-    expect(await mails(b.restaurantId)).toHaveLength(1);
-    const rows = await t.db
-      .selectFrom('activity_settle')
-      .select('shard_id')
-      .where('activity_id', '=', id)
-      .execute();
-    expect(rows.map((x) => x.shard_id).sort()).toEqual([s1, s2].sort());
+    try {
+      await act(a, 'market.buy');
+      await act(b, 'market.buy');
+      const after = new Date(end.getTime() + 3 * 60_000);
+      await settleActivities(t.game.deps, s1, after, log);
+      expect(await mails(a.restaurantId)).toHaveLength(1);
+      expect(await mails(b.restaurantId)).toHaveLength(0);
+      await settleActivities(t.game.deps, s2, after, log);
+      expect(await mails(b.restaurantId)).toHaveLength(1);
+      const rows = await t.db
+        .selectFrom('activity_settle')
+        .select('shard_id')
+        .where('activity_id', '=', id)
+        .execute();
+      expect(rows.map((x) => x.shard_id).sort()).toEqual([s1, s2].sort());
+    } finally {
+      t.clock.set(back);
+      await t.db.deleteFrom('activity').where('id', '=', id).execute();
+      activityCacheFor(t.deps.bus, t.game.deps).invalidate();
+    }
   });
 
   it('战令：解锁了的店补发进阶档位，没解锁的不发', async () => {

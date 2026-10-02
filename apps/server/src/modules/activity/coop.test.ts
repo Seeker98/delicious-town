@@ -60,12 +60,12 @@ describe('全服合力计数和总分（148-3 设计 §4、§5）', () => {
     const x = await newRestaurant(t, { shardId: s1 });
     const c = await newRestaurant(t, { shardId: s2 });
     const back = t.clock.now;
-    t.clock.set(new Date('2099-01-02T00:00:00Z'));
+    t.clock.set(new Date('2096-01-02T00:00:00Z'));
     const id = await insertActivity(t, {
       shardId: null,
       spec: spec(),
-      startsAt: new Date('2099-01-01T00:00:00Z'),
-      endsAt: new Date('2099-01-10T00:00:00Z'),
+      startsAt: new Date('2096-01-01T00:00:00Z'),
+      endsAt: new Date('2096-01-10T00:00:00Z'),
     });
     try {
       await act(a, 'market.buy', 2);

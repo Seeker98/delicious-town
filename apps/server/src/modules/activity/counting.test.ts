@@ -4,6 +4,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { counters, insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { activityCacheFor } from './active';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -42,11 +43,21 @@ describe('活动计数（设计 §4.2）', () => {
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId });
     const other = await insertActivity(t, { shardId: await createShard(t.db), spec: goals() });
+    // 全服活动放在远期（各测试文件用不同年份，避免互相看到）：测试库是共用的，此刻生效的全服活动会被并行跑的其他测试看到
+    const back = t.clock.now;
+    t.clock.set(new Date('2095-01-02T00:00:00Z'));
     const all = await insertActivity(t, { shardId: null, spec: goals() });
+    try {
+      await act(r, 'market.buy');
+      await act(r, 'shop.buy');
+      expect(await counters(t, all, r.restaurantId)).toEqual({ 'market.buy': 1 });
+    } finally {
+      t.clock.set(back);
+      await t.db.deleteFrom('activity').where('id', '=', all).execute();
+      activityCacheFor(t.deps.bus, t.game.deps).invalidate();
+    }
     await act(r, 'market.buy');
-    await act(r, 'shop.buy');
     expect(await counters(t, other, r.restaurantId)).toEqual({});
-    expect(await counters(t, all, r.restaurantId)).toEqual({ 'market.buy': 1 });
   });
 
   it('等级不够不计；功能关掉不计', async () => {
