@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { TakeawayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import DeliveriesPanel from '../components/takeaway/DeliveriesPanel.vue';
 import OpenPanel from '../components/takeaway/OpenPanel.vue';
 import OrdersPanel from '../components/takeaway/OrdersPanel.vue';
@@ -21,6 +22,7 @@ function savedTab(): Tab {
   }
 }
 const toast = useToastStore();
+const t = useT();
 const tab = ref<Tab>(savedTab());
 const data = ref<TakeawayDto | null>(null);
 
@@ -32,7 +34,7 @@ async function load() {
     const v = await endpoints.takeaway();
     if (mine === seq) data.value = v;
   } catch (e) {
-    if (mine === seq) toast.push(errorMessage(e, '读取外卖失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.takeaway.loadFailed), 'danger');
   }
 }
 /** 停在页面上时每分钟重新读取，倒计时和"已送到"跟着更新（终审 I2） */
@@ -55,16 +57,16 @@ onMounted(() => {
 const tabs = computed(() =>
   data.value
     ? [
-        { key: 'orders' as Tab, label: `外卖单（${data.value.orders.length}）` },
-        { key: 'deliveries' as Tab, label: `配送中（${data.value.deliveries.length}）` },
-        { key: 'riders' as Tab, label: '骑手' },
+        { key: 'orders' as Tab, label: t.value.takeaway.tabs.orders(data.value.orders.length) },
+        { key: 'deliveries' as Tab, label: t.value.takeaway.tabs.deliveries(data.value.deliveries.length) },
+        { key: 'riders' as Tab, label: t.value.takeaway.tabs.riders },
       ]
     : [],
 );
 </script>
 
 <template>
-  <h5>外卖</h5>
+  <h5>{{ t.takeaway.title }}</h5>
   <HiphopCard :place="15" />
   <template v-if="data">
     <OpenPanel v-if="!data.opened" :data="data" @reload="load" />

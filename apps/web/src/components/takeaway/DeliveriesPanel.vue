@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import type { TakeawayClaimDto, TakeawayDeliveryDto, TakeawayDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -13,11 +14,12 @@ const props = defineProps<{ data: TakeawayDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 const results = ref<TakeawayClaimDto[]>([]);
 const anyArrived = computed(() => props.data.deliveries.some((d) => d.arrived));
 const droneBlock = (d: TakeawayDeliveryDto) =>
-  props.data.diamond < d.drone ? `钻石不够（要 ${d.drone}）` : '';
+  props.data.diamond < d.drone ? t.value.takeaway.noDiamond(d.drone) : '';
 
 async function run(fn: () => Promise<TakeawayClaimDto[]>) {
   if (busy.value) return;
@@ -26,7 +28,7 @@ async function run(fn: () => Promise<TakeawayClaimDto[]>) {
     results.value = await fn();
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '领取失败'), 'danger');
+    toast.push(errorMessage(e, t.value.takeaway.deliveries.claimFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -38,17 +40,19 @@ function claim(d: TakeawayDeliveryDto, drone: boolean) {
 const claimAll = () => run(() => endpoints.takeawayClaimAll());
 
 function headline(r: TakeawayClaimDto): string {
-  if (!r.success) return `配送失败：${r.reason ?? ''}`;
-  if (r.forced) return '配送成功（边牧帮了忙）';
-  return r.drone ? '无人机送到了' : '配送成功';
+  const x = t.value.takeaway.deliveries;
+  if (!r.success) return x.failedReason(r.reason ?? '');
+  if (r.forced) return x.forced;
+  return r.drone ? x.drone : x.success;
 }
 function gains(r: TakeawayClaimDto): string {
+  const x = t.value.takeaway.deliveries;
   const parts: string[] = [];
-  if (r.coin) parts.push(`银币 +${formatNum(r.coin)}`);
-  if (r.exp) parts.push(`经验 +${formatNum(r.exp)}`);
-  if (r.renown) parts.push(`声望 +${r.renown}`);
+  if (r.coin) parts.push(x.coin(formatNum(r.coin)));
+  if (r.exp) parts.push(x.exp(formatNum(r.exp)));
+  if (r.renown) parts.push(x.renown(r.renown));
   if (r.goods) parts.push(`${catalog.goodsName(r.goods.id)}×${r.goods.num}`);
-  return parts.join('、');
+  return parts.join(t.value.events.sep);
 }
 </script>
 
@@ -63,9 +67,11 @@ function gains(r: TakeawayClaimDto): string {
       <div :class="['fw-bold', r.success ? 'text-success' : 'text-danger']" data-testid="result-head">
         {{ headline(r) }}
       </div>
-      <div v-if="gains(r)">得到 {{ gains(r) }}</div>
-      <div class="text-muted">骑手经验 +{{ r.riderExp }}（{{ r.riderLevel }} 级）</div>
-      <div v-if="r.customer" class="text-primary">送外卖时偶遇{{ catalog.goodsName(r.customer) }}！</div>
+      <div v-if="gains(r)">{{ t.takeaway.deliveries.got(gains(r)) }}</div>
+      <div class="text-muted">{{ t.takeaway.deliveries.riderExp(r.riderExp, r.riderLevel) }}</div>
+      <div v-if="r.customer" class="text-primary">
+        {{ t.takeaway.deliveries.customer(catalog.goodsName(r.customer)) }}
+      </div>
     </div>
     <div class="mb-2">
       <button
@@ -74,10 +80,10 @@ function gains(r: TakeawayClaimDto): string {
         :disabled="busy || !anyArrived"
         @click="claimAll"
       >
-        全部领取
+        {{ t.takeaway.deliveries.claimAll }}
       </button>
     </div>
-    <div v-if="data.deliveries.length === 0" class="text-muted">没有在送的外卖</div>
+    <div v-if="data.deliveries.length === 0" class="text-muted">{{ t.takeaway.deliveries.empty }}</div>
     <div
       v-for="d in data.deliveries"
       :key="d.id"
@@ -87,13 +93,15 @@ function gains(r: TakeawayClaimDto): string {
       <div class="d-flex align-items-center gap-1">
         <span class="dt-tag">{{ TAKEAWAY_GRADES[d.grade] }}</span>
         <b>{{ d.cookbookName }}</b>
-        <span v-if="d.private" class="badge text-bg-info">私人</span>
-        <span v-if="d.double" class="badge text-bg-warning">加料</span>
+        <span v-if="d.private" class="badge text-bg-info">{{ t.takeaway.private }}</span>
+        <span v-if="d.double" class="badge text-bg-warning">{{ t.takeaway.deliveries.double }}</span>
         <span class="ms-auto">{{
-          d.arrived ? '已送到' : `还要 ${minutesLeft(d.arriveAt, data.now)} 分钟`
+          d.arrived
+            ? t.takeaway.deliveries.arrived
+            : t.takeaway.deliveries.left(minutesLeft(d.arriveAt, data.now))
         }}</span>
       </div>
-      <div class="text-muted">骑手 {{ d.riderName }}</div>
+      <div class="text-muted">{{ t.takeaway.deliveries.rider(d.riderName) }}</div>
       <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
         <button
           class="btn btn-sm btn-primary"
@@ -101,7 +109,7 @@ function gains(r: TakeawayClaimDto): string {
           :disabled="busy || !d.arrived"
           @click="claim(d, false)"
         >
-          领取
+          {{ t.takeaway.deliveries.claim }}
         </button>
         <template v-if="!d.arrived">
           <button
@@ -110,7 +118,7 @@ function gains(r: TakeawayClaimDto): string {
             :disabled="busy || !!droneBlock(d)"
             @click="claim(d, true)"
           >
-            无人机（{{ d.drone }} 钻石）
+            {{ t.takeaway.deliveries.droneBtn(d.drone) }}
           </button>
           <span v-if="droneBlock(d)" class="text-danger">{{ droneBlock(d) }}</span>
         </template>

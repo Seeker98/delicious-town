@@ -65,6 +65,12 @@
 | 赛厨榜 | Chef ranking | Classement des chefs | Clasificación de chefs |
 | 厨力 | Chef power | Puissance | Poder de chef |
 | 切磋 | Duel | Duel | Duelo |
+| 菜园 / 菜篮 | Garden / Basket | Potager / Panier | Huerto / Cesta |
+| 偷菜 | Steal | Voler | Robar |
+| 配方（菜园） | Formula | Formule | Fórmula |
+| 外卖 / 骑手 | Takeaway / Rider | À emporter / Livreur | A domicilio / Repartidor |
+| 熟练度 | Mastery | Maîtrise | Dominio |
+| 打赏 | Tip | Pourboire | Propina |
 
 约定：
 

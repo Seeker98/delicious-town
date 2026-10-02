@@ -13,13 +13,16 @@ import home from './home';
 import labels from './labels';
 import mail from './mail';
 import market from './market';
+import mc from './mc';
 import nav from './nav';
 import news from './news';
 import society from './society';
 import store from './store';
+import takeaway from './takeaway';
 import temple from './temple';
 import tower from './tower';
 import town from './town';
+import yard from './yard';
 import util from './util';
 
 /** 簡中翻譯：所有語言的結構以它為準（問題記錄 272） */
@@ -46,5 +49,8 @@ const zhCN = {
   bar,
   temple,
   tower,
+  yard,
+  takeaway,
+  mc,
 };
 export default zhCN;

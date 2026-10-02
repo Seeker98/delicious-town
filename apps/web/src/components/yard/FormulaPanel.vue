@@ -2,12 +2,14 @@
 import { computed, onMounted, ref } from 'vue';
 import type { FormulaAppraiseResultDto, FormulaDto, FormulasDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<FormulasDto | null>(null);
 const busy = ref(false);
 const toolId = ref<number>(0);
@@ -21,7 +23,7 @@ async function load() {
     if (!toolId.value)
       toolId.value = data.value.tools.find((x) => x.num > 0)?.goodsId ?? data.value.tools[0]?.goodsId ?? 0;
   } catch (e) {
-    toast.push(errorMessage(e, '读取配方失败'), 'danger');
+    toast.push(errorMessage(e, t.value.yard.formula.loadFailed), 'danger');
   }
 }
 onMounted(load);
@@ -31,28 +33,31 @@ const maxTimes = computed(() => Math.min(tool.value?.num ?? 0, data.value?.scrol
 const n = computed(() => Math.max(1, Math.min(times.value || 1, maxTimes.value)));
 const appraiseBlock = computed(() => {
   if (!data.value) return '';
-  if (data.value.scrolls < 1) return '没有玄奥配方：每次鉴定要 1 个玄奥配方和 1 个鉴定道具（厨神玉玺）';
-  if ((tool.value?.num ?? 0) < 1) return '没有这个鉴定道具';
+  if (data.value.scrolls < 1) return t.value.yard.formula.noScroll;
+  if ((tool.value?.num ?? 0) < 1) return t.value.yard.formula.noTool;
   return '';
 });
-const nameOf = (id: number) => data.value?.formulas.find((f) => f.id === id)?.name ?? `配方${id}`;
+const nameOf = (id: number) =>
+  data.value?.formulas.find((f) => f.id === id)?.name ?? t.value.yard.formula.nameFallback(id);
 const owned = computed(() =>
   (data.value?.formulas ?? []).filter((f) => f.learned || f.mainNum + f.subNum > 0),
 );
 const learned = computed(() => (data.value?.formulas ?? []).filter((f) => f.learned));
 
 function learnBlock(f: FormulaDto): string {
-  if (f.learned) return '已学会';
-  if (f.mainNum < 1) return '缺主碎片';
-  if (f.subNum < 1) return '缺辅碎片';
+  const x = t.value.yard.formula;
+  if (f.learned) return x.learned;
+  if (f.mainNum < 1) return x.noMain;
+  if (f.subNum < 1) return x.noSub;
   return '';
 }
 function composeBlock(f: FormulaDto): string {
   if (f.maxCompose >= 1) return '';
-  if (f.have.main < 1) return `菜篮里没有${catalog.foodName(f.mainFoodsId)}（主料）`;
-  if (f.have.sub < 1) return `橱柜里没有${catalog.foodName(f.subFoodsId)}（辅料）`;
-  if (f.have.add < 1) return `橱柜里没有${catalog.foodName(f.addFoodsId)}（添加料）`;
-  return `体力不够（每份 ${data.value?.composeStrength ?? 3}）`;
+  const x = t.value.yard.formula;
+  if (f.have.main < 1) return x.noMainFood(catalog.foodName(f.mainFoodsId));
+  if (f.have.sub < 1) return x.noSubFood(catalog.foodName(f.subFoodsId));
+  if (f.have.add < 1) return x.noAddFood(catalog.foodName(f.addFoodsId));
+  return x.noStrength(data.value?.composeStrength ?? 3);
 }
 const composeN = (f: FormulaDto) => Math.max(1, Math.min(composeNums.value[f.id] || 1, f.maxCompose));
 
@@ -74,20 +79,20 @@ const appraise = () =>
     async () => {
       const r = await endpoints.formulaAppraise(toolId.value, n.value);
       results.value = r.results;
-      toast.push(`鉴定 ${r.results.length} 次，成功 ${r.results.filter((x) => x.ok).length} 次`);
+      toast.push(t.value.yard.appraiseDone(r.results.length, r.results.filter((x) => x.ok).length));
     },
     null,
-    '鉴定失败',
+    t.value.yard.formula.appraiseFailed,
   );
 </script>
 
 <template>
   <div v-if="data" class="small">
-    <h6>鉴定配方</h6>
+    <h6>{{ t.yard.formula.appraiseTitle }}</h6>
     <div class="d-flex gap-1 align-items-center mb-1">
       <select v-model.number="toolId" class="form-select form-select-sm" data-testid="appraise-tool">
         <option v-for="x in data.tools" :key="x.goodsId" :value="x.goodsId">
-          {{ catalog.goodsName(x.goodsId) }}（{{ x.num }}，成功率 {{ Math.round(x.rate * 100) }}%）
+          {{ t.yard.formula.toolOption(catalog.goodsName(x.goodsId), x.num, Math.round(x.rate * 100)) }}
         </option>
       </select>
       <input
@@ -105,24 +110,22 @@ const appraise = () =>
         data-testid="appraise-go"
         @click="appraise"
       >
-        鉴定 ×{{ n }}
+        {{ t.yard.formula.appraise(n) }}
       </button>
     </div>
-    <div class="text-muted mb-1">玄奥配方 {{ data.scrolls }}；成功时 25% 得主碎片，其余得辅碎片</div>
+    <div class="text-muted mb-1">{{ t.yard.formula.scrolls(data.scrolls) }}</div>
     <div v-if="appraiseBlock" class="text-danger mb-1" data-testid="appraise-block">{{ appraiseBlock }}</div>
     <ul v-if="results.length > 0" class="mb-2" data-testid="appraise-results">
       <li v-for="(r, i) in results" :key="i">
         <template v-if="r.ok">
-          {{ nameOf(r.formulaId ?? 0) }} {{ r.part === 'main' ? '主' : '辅' }}碎片{{
-            r.upgraded ? '（星月密卷）' : ''
-          }}
+          {{ t.yard.formula.piece(nameOf(r.formulaId ?? 0), r.part === 'main', !!r.upgraded) }}
         </template>
-        <template v-else>失败</template>
+        <template v-else>{{ t.yard.formula.fail }}</template>
       </li>
     </ul>
 
-    <h6>我的配方</h6>
-    <div v-if="owned.length === 0" class="text-muted mb-2">还没有配方碎片，先鉴定</div>
+    <h6>{{ t.yard.formula.mine }}</h6>
+    <div v-if="owned.length === 0" class="text-muted mb-2">{{ t.yard.formula.none }}</div>
     <div
       v-for="f in owned"
       :key="f.id"
@@ -131,8 +134,8 @@ const appraise = () =>
     >
       <span class="me-auto">
         {{ f.name }}
-        <span v-if="f.learned" class="badge text-bg-success ms-1">已学会</span>
-        <span class="text-muted ms-1">主碎片 {{ f.mainNum }} / 辅碎片 {{ f.subNum }}</span>
+        <span v-if="f.learned" class="badge text-bg-success ms-1">{{ t.yard.formula.learned }}</span>
+        <span class="text-muted ms-1">{{ t.yard.formula.pieces(f.mainNum, f.subNum) }}</span>
       </span>
       <button
         v-if="!f.learned"
@@ -140,35 +143,62 @@ const appraise = () =>
         :disabled="busy || !!learnBlock(f)"
         :title="learnBlock(f)"
         :data-testid="`learn-${f.id}`"
-        @click="run(() => endpoints.formulaLearn(f.id), `学会了${f.name}`, '学习失败')"
+        @click="
+          run(
+            () => endpoints.formulaLearn(f.id),
+            t.yard.formula.learnedName(f.name),
+            t.yard.formula.learnFailed,
+          )
+        "
       >
-        学习{{ learnBlock(f) ? `（${learnBlock(f)}）` : '' }}
+        {{ t.yard.formula.learn(learnBlock(f)) }}
       </button>
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="busy || f.mainNum < 1"
         :data-testid="`decompose-main-${f.id}`"
-        @click="run(() => endpoints.formulaDecompose(f.id, 'main', 1), '分解了 1 个主碎片', '分解失败')"
+        @click="
+          run(
+            () => endpoints.formulaDecompose(f.id, 'main', 1),
+            t.yard.formula.decomposedMain,
+            t.yard.formula.decomposeFailed,
+          )
+        "
       >
-        分解主碎片
+        {{ t.yard.formula.decomposeMain }}
       </button>
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="busy || f.subNum < 1"
         :data-testid="`decompose-sub-${f.id}`"
-        @click="run(() => endpoints.formulaDecompose(f.id, 'sub', 1), '分解了 1 个辅碎片', '分解失败')"
+        @click="
+          run(
+            () => endpoints.formulaDecompose(f.id, 'sub', 1),
+            t.yard.formula.decomposedSub,
+            t.yard.formula.decomposeFailed,
+          )
+        "
       >
-        分解辅碎片
+        {{ t.yard.formula.decomposeSub }}
       </button>
     </div>
 
-    <h6 class="mt-2">合成</h6>
-    <div v-if="learned.length === 0" class="text-muted">学会配方后可以合成食材</div>
+    <h6 class="mt-2">{{ t.yard.formula.compose }}</h6>
+    <div v-if="learned.length === 0" class="text-muted">{{ t.yard.formula.composeEmpty }}</div>
     <div v-for="f in learned" :key="f.id" class="border rounded p-1 mb-1">
       <div>
-        {{ f.name }}：{{ catalog.foodName(f.mainFoodsId) }}（菜篮 {{ f.have.main }}）+
-        {{ catalog.foodName(f.subFoodsId) }}（橱柜 {{ f.have.sub }}）+
-        {{ catalog.foodName(f.addFoodsId) }}（橱柜 {{ f.have.add }}）→ {{ catalog.foodName(f.resFoodsId) }}
+        {{
+          t.yard.formula.recipe({
+            name: f.name,
+            main: catalog.foodName(f.mainFoodsId),
+            haveMain: f.have.main,
+            sub: catalog.foodName(f.subFoodsId),
+            haveSub: f.have.sub,
+            add: catalog.foodName(f.addFoodsId),
+            haveAdd: f.have.add,
+            res: catalog.foodName(f.resFoodsId),
+          })
+        }}
       </div>
       <div class="d-flex gap-1 align-items-center mt-1">
         <input
@@ -184,9 +214,15 @@ const appraise = () =>
           class="btn btn-sm btn-primary text-nowrap"
           :disabled="busy || !!composeBlock(f)"
           :data-testid="`compose-${f.id}`"
-          @click="run(() => endpoints.formulaCompose(f.id, composeN(f)), '合成成功', '合成失败')"
+          @click="
+            run(
+              () => endpoints.formulaCompose(f.id, composeN(f)),
+              t.yard.formula.composed,
+              t.yard.formula.composeFailed,
+            )
+          "
         >
-          合成 ×{{ composeN(f) }}（体力 {{ composeN(f) * data.composeStrength }}）
+          {{ t.yard.formula.composeBtn(composeN(f), composeN(f) * data.composeStrength) }}
         </button>
       </div>
       <div v-if="composeBlock(f)" class="text-danger" :data-testid="`compose-block-${f.id}`">
