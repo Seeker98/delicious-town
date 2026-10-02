@@ -17,5 +17,7 @@ const lines = computed(() => gardenLines(props.data));
     :lines="lines"
     :ready="data !== null"
     testid="garden-sis"
-  />
+  >
+    <slot />
+  </MascotCard>
 </template>

@@ -217,3 +217,20 @@ describe('开店', () => {
     });
   });
 });
+
+describe('餐厅概况带上本区服关掉的功能（问题记录 248）', () => {
+  it('后台关掉菜园、酒吧：概况里列出它们，前端据此隐藏入口', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ features: { yard: false, bar: false, town: true } }),
+      })
+      .execute();
+    const u = await playerIn(shardId);
+    await create(u.cookie, '关功能的店');
+    const r = await call(ctx.app, 'GET', `${R}/overview`, { cookie: u.cookie });
+    expect(r.json.data.disabledFeatures).toEqual(['bar', 'yard']);
+  });
+});

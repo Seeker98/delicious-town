@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import { useRestaurantStore } from '../stores/restaurant';
 import BottomNav from './BottomNav.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { friendRequests: vi.fn() } }));
@@ -74,5 +75,15 @@ describe('BottomNav', () => {
     await w.find('nav a[href="/cupboard"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="more-sheet"]').exists()).toBe(false);
+  });
+
+  it('区服关掉的功能不显示底部标签（问题记录 248）', async () => {
+    vi.mocked(endpoints.friendRequests).mockResolvedValue([]);
+    useRestaurantStore().rest = { disabledFeatures: ['market', 'friend'] } as never;
+    const w = mountNav();
+    await flushPromises();
+    expect(w.text()).toContain('食谱');
+    expect(w.text()).not.toContain('菜场');
+    expect(w.text()).not.toContain('好友');
   });
 });

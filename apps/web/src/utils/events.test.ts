@@ -230,5 +230,15 @@ describe('交易所日志（156-1）', () => {
     expect(log('predict.refund', { title: '会下雨吗', coin: 1530 })).toBe(
       '预测「会下雨吗」已作废，退回 1,530 银币',
     );
+    // 带净投入时写出本局盈亏（问题记录 254）
+    expect(log('predict.settle', { title: '会下雨吗', outcome: false, coin: 0, net: 2500 })).toBe(
+      '预测「会下雨吗」结果为否，结算得到 0 银币，本局盈亏 -2,500',
+    );
+    expect(log('predict.settle', { title: '会下雨吗', outcome: true, coin: 4000, net: 2500 })).toBe(
+      '预测「会下雨吗」结果为是，结算得到 4,000 银币，本局盈亏 +1,500',
+    );
+    expect(log('predict.refund', { title: '会下雨吗', coin: 900, net: 1000 })).toBe(
+      '预测「会下雨吗」已作废，退回 900 银币，本局盈亏 -100',
+    );
   });
 });

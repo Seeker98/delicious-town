@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MarketDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import MarketView from './MarketView.vue';
 
@@ -52,6 +53,19 @@ describe('MarketView', () => {
     vi.mocked(endpoints.market).mockResolvedValue(view);
     vi.mocked(endpoints.marketBuy).mockResolvedValue({});
     vi.mocked(endpoints.marketGuess).mockResolvedValue({ period: '2026-09-30@12' });
+  });
+
+  it('交易所入口放在菜园姐那一行，不单独占一行（问题记录 246）', async () => {
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.get('[data-testid="garden-sis"]').find('[data-testid="market-exchange"]').exists()).toBe(true);
+  });
+
+  it('区服关掉交易所时不显示入口（问题记录 248）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['exchange'] } as never;
+    const w = mount(MarketView);
+    await flushPromises();
+    expect(w.find('[data-testid="market-exchange"]').exists()).toBe(false);
   });
 
   it('分区标题和右边的进货时间在同一行对齐：标题不带上下外边距，间距放在外层（问题记录 192）', async () => {

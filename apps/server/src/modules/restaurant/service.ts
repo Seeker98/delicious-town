@@ -62,7 +62,8 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const now = d.now();
     const effects = await listActiveEffects(d.db, restId, now);
     const snap = await world.ensure(row.shard_id, now);
-    const tuning = (await shards.settings(row.shard_id)).tuning;
+    const settings = await shards.settings(row.shard_id);
+    const tuning = settings.tuning;
     const growth = tuning.growth;
     const dto = toRestaurantDto(row, tables.tables, effects, d.config, {
       devices: await deviceSlots(d.db, d.config, row, now),
@@ -73,6 +74,10 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: await headlines(d.db, row.shard_id),
+      disabledFeatures: Object.entries(settings.features)
+        .filter(([, on]) => on === false)
+        .map(([k]) => k)
+        .sort(),
     });
     const today = await todayBless(d.db, d.config, row.shard_id, now);
     if (today)

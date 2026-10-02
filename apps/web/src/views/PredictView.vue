@@ -201,70 +201,107 @@ onMounted(() => void loadList());
         <li>事件被作废时退回净投入；如果有人提前卖出赚了钱、系统收到的钱不够退，就按比例退。</li>
       </ul>
     </details>
-    <div class="d-flex flex-wrap gap-2 align-items-center small">
-      <div class="btn-group btn-group-sm">
+    <template v-if="detail.event.status === 'open'">
+      <div class="d-flex flex-wrap gap-2 align-items-center small">
+        <div class="btn-group btn-group-sm">
+          <button
+            type="button"
+            :class="['btn', side === 'yes' ? 'btn-success' : 'btn-outline-success']"
+            data-testid="pd-side-yes"
+            @click="side = 'yes'"
+          >
+            是
+          </button>
+          <button
+            type="button"
+            :class="['btn', side === 'no' ? 'btn-danger' : 'btn-outline-danger']"
+            data-testid="pd-side-no"
+            @click="side = 'no'"
+          >
+            否
+          </button>
+        </div>
+        <div class="btn-group btn-group-sm">
+          <button
+            type="button"
+            :class="['btn', dir === 'buy' ? 'btn-primary' : 'btn-outline-primary']"
+            data-testid="pd-dir-buy"
+            @click="dir = 'buy'"
+          >
+            买入
+          </button>
+          <button
+            type="button"
+            :class="['btn', dir === 'sell' ? 'btn-primary' : 'btn-outline-primary']"
+            data-testid="pd-dir-sell"
+            @click="dir = 'sell'"
+          >
+            卖出
+          </button>
+        </div>
+        <input
+          v-model.number="qty"
+          type="number"
+          min="1"
+          :max="list?.maxTrade"
+          class="form-control form-control-sm"
+          style="width: 6rem"
+          data-testid="pd-qty"
+        />
+        份
         <button
           type="button"
-          :class="['btn', side === 'yes' ? 'btn-success' : 'btn-outline-success']"
-          data-testid="pd-side-yes"
-          @click="side = 'yes'"
+          class="btn btn-sm btn-primary"
+          :disabled="busy || !list?.eligible || quote === null"
+          data-testid="pd-submit"
+          @click="submit"
         >
-          是
-        </button>
-        <button
-          type="button"
-          :class="['btn', side === 'no' ? 'btn-danger' : 'btn-outline-danger']"
-          data-testid="pd-side-no"
-          @click="side = 'no'"
-        >
-          否
+          确定
         </button>
       </div>
-      <div class="btn-group btn-group-sm">
-        <button
-          type="button"
-          :class="['btn', dir === 'buy' ? 'btn-primary' : 'btn-outline-primary']"
-          data-testid="pd-dir-buy"
-          @click="dir = 'buy'"
-        >
-          买入
-        </button>
-        <button
-          type="button"
-          :class="['btn', dir === 'sell' ? 'btn-primary' : 'btn-outline-primary']"
-          data-testid="pd-dir-sell"
-          @click="dir = 'sell'"
-        >
-          卖出
-        </button>
+      <div class="small text-muted mt-1" data-testid="pd-quote">
+        <template v-if="quote">
+          {{ dir === 'buy' ? '预计花费' : '预计得到' }} {{ formatNum(quote.total) }} 银币（含手续费
+          {{ formatNum(quote.fee) }}），成交后"是" {{ predictPercent(quote.priceAfter) }}%
+        </template>
+        <template v-else>输入份数（卖出不能超过持有）</template>
       </div>
-      <input
-        v-model.number="qty"
-        type="number"
-        min="1"
-        :max="list?.maxTrade"
-        class="form-control form-control-sm"
-        style="width: 6rem"
-        data-testid="pd-qty"
-      />
-      份
-      <button
-        type="button"
-        class="btn btn-sm btn-primary"
-        :disabled="busy || !list?.eligible || quote === null"
-        data-testid="pd-submit"
-        @click="submit"
-      >
-        确定
-      </button>
+    </template>
+    <div v-else class="dt-card small mb-2" data-testid="pd-result">
+      <b>本局盈亏</b>
+      <div>
+        买入共花 {{ formatNum(detail.mine.bought) }}，卖出共得 {{ formatNum(detail.mine.sold) }}（手续费合计
+        {{ formatNum(detail.mine.fees) }}），净投入 {{ formatNum(detail.event.netCost) }}
+      </div>
+      <div v-if="detail.event.status === 'resolved'">
+        结果为{{ detail.event.outcome ? '是' : '否' }}：{{ detail.event.outcome ? '是' : '否' }}
+        {{ detail.event.outcome ? detail.event.yes : detail.event.no }} 份 ×
+        {{ formatNum(detail.event.unit) }} =
+        {{ formatNum(detail.event.payout ?? 0) }}
+      </div>
+      <div v-else-if="detail.event.status === 'void'">
+        已作废：退回净投入的 {{ Math.round((detail.mine.voidRatio ?? 1) * 100) }}%，共
+        {{ formatNum(detail.event.payout ?? 0) }}
+      </div>
+      <div v-else class="text-muted">已截止，等待管理员判定</div>
+      <div v-if="detail.event.payout !== null">
+        本局盈亏
+        <b :class="detail.event.payout - detail.event.netCost >= 0 ? 'text-success' : 'text-danger'">{{
+          signed(detail.event.payout - detail.event.netCost)
+        }}</b>
+        （结算所得 − 净投入）
+      </div>
     </div>
-    <div class="small text-muted mt-1" data-testid="pd-quote">
-      <template v-if="quote">
-        {{ dir === 'buy' ? '预计花费' : '预计得到' }} {{ formatNum(quote.total) }} 银币（含手续费
-        {{ formatNum(quote.fee) }}），成交后"是" {{ predictPercent(quote.priceAfter) }}%
-      </template>
-      <template v-else>输入份数（卖出不能超过持有）</template>
-    </div>
+    <template v-if="detail.mine.trades.length > 0">
+      <h6 class="dt-section mt-2">我的成交</h6>
+      <div data-testid="pd-mine">
+        <div v-for="(x, i) in detail.mine.trades" :key="i" class="small border-bottom py-1">
+          {{ x.dir === 'buy' ? '买入' : '卖出' }}{{ x.side === 'yes' ? '是' : '否' }} {{ x.qty }} 份，成交额
+          {{ formatNum(x.amount) }}，手续费 {{ formatNum(x.fee) }}
+          <span class="text-muted">{{ new Date(x.createdAt).toLocaleString('zh-CN') }}</span>
+        </div>
+      </div>
+    </template>
     <h6 class="dt-section mt-2">最近成交</h6>
     <div v-if="detail.trades.length === 0" class="small text-muted">还没有成交</div>
     <div v-for="(x, i) in detail.trades" :key="i" class="small border-bottom py-1">
@@ -275,7 +312,14 @@ onMounted(() => void loadList());
 
   <template v-if="ended.length > 0">
     <h6 class="dt-section">已结束</h6>
-    <div v-for="e in ended" :key="e.id" class="small border-bottom py-1" :data-testid="`pd-ended-${e.id}`">
+    <div
+      v-for="e in ended"
+      :key="e.id"
+      role="button"
+      :class="['small border-bottom py-1', e.id === selected ? 'fw-bold' : '']"
+      :data-testid="`pd-ended-${e.id}`"
+      @click="pick(e.id)"
+    >
       <b>{{ e.title }}</b> · {{ resultText(e) }} · 持有 是 {{ e.yes }} / 否 {{ e.no }}
       <span v-if="profit(e) !== null" :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'">
         · 盈亏 {{ signed(profit(e)!) }}</span

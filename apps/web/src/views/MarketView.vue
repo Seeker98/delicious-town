@@ -6,12 +6,14 @@ import type { MarketDto, MarketItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const restStore = useRestaurantStore();
 const session = useSessionStore();
 const myRest = computed(() => session.me?.restaurantId ?? null);
 const data = ref<MarketDto | null>(null);
@@ -105,12 +107,17 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
 </script>
 
 <template>
-  <div class="d-flex justify-content-end mb-2">
-    <RouterLink to="/exchange" class="btn btn-sm btn-outline-primary" data-testid="market-exchange">
+  <!-- 交易所入口放在菜园姐那一行（问题记录 246）；区服关掉交易所时不显示（问题记录 248） -->
+  <GardenSis :data="data">
+    <RouterLink
+      v-if="restStore.featureOn('exchange')"
+      to="/exchange"
+      class="btn btn-sm btn-outline-primary text-nowrap"
+      data-testid="market-exchange"
+    >
       <i class="bi bi-graph-up-arrow"></i> 交易所
     </RouterLink>
-  </div>
-  <GardenSis :data="data" />
+  </GardenSis>
   <HiphopCard :place="1" @changed="load" />
   <template v-if="data">
     <section v-for="s in sections" :key="s.key" class="mb-3">

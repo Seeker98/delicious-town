@@ -255,6 +255,25 @@ export function createPredictService(d: GameDeps) {
       .orderBy('id', 'desc')
       .limit(20)
       .execute();
+    // 我这一局的成交和收支（问题记录 254）：汇总按全部成交算，明细最多列 100 笔
+    const myTrades = await d.db
+      .selectFrom('predict_trade')
+      .select(['side', 'dir', 'qty', 'amount', 'fee', 'created_at'])
+      .where('event_id', '=', r.id)
+      .where('rest_id', '=', ctx.restaurantId)
+      .orderBy('id', 'desc')
+      .limit(100)
+      .execute();
+    const sums = await d.db
+      .selectFrom('predict_trade')
+      .select([
+        sql<string>`coalesce(sum(case when dir = 'buy' then amount + fee else 0 end), 0)`.as('bought'),
+        sql<string>`coalesce(sum(case when dir = 'sell' then amount - fee else 0 end), 0)`.as('sold'),
+        sql<string>`coalesce(sum(fee), 0)`.as('fees'),
+      ])
+      .where('event_id', '=', r.id)
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
     const points = await d.db
       .selectFrom('predict_trade')
       .select('price_after')
@@ -280,6 +299,20 @@ export function createPredictService(d: GameDeps) {
         createdAt: x.created_at.toISOString(),
       })),
       points: [r.p0, ...points.map((x) => x.price_after).reverse()],
+      mine: {
+        bought: Number(sums.bought),
+        sold: Number(sums.sold),
+        fees: Number(sums.fees),
+        voidRatio: r.void_ratio,
+        trades: myTrades.map((x) => ({
+          side: x.side,
+          dir: x.dir,
+          qty: x.qty,
+          amount: Number(x.amount),
+          fee: Number(x.fee),
+          createdAt: x.created_at.toISOString(),
+        })),
+      },
     };
   }
 
