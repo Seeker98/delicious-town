@@ -256,7 +256,7 @@ export function createPredictService(d: GameDeps) {
     if (!r) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'predict_event', id });
     const trades = await d.db
       .selectFrom('predict_trade')
-      .select(['side', 'dir', 'qty', 'amount', 'created_at'])
+      .select(['side', 'dir', 'qty', 'amount', 'price_after', 'created_at'])
       .where('event_id', '=', r.id)
       .orderBy('id', 'desc')
       .limit(20)
@@ -264,7 +264,7 @@ export function createPredictService(d: GameDeps) {
     // 我这一局的成交和收支（问题记录 254）：汇总按全部成交算，明细最多列 100 笔
     const myTrades = await d.db
       .selectFrom('predict_trade')
-      .select(['side', 'dir', 'qty', 'amount', 'fee', 'created_at'])
+      .select(['side', 'dir', 'qty', 'amount', 'fee', 'price_after', 'created_at'])
       .where('event_id', '=', r.id)
       .where('rest_id', '=', ctx.restaurantId)
       .orderBy('id', 'desc')
@@ -302,6 +302,7 @@ export function createPredictService(d: GameDeps) {
         dir: x.dir,
         qty: x.qty,
         amount: Number(x.amount),
+        priceAfter: x.price_after,
         createdAt: x.created_at.toISOString(),
       })),
       points: [r.p0, ...points.map((x) => x.price_after).reverse()],
@@ -316,6 +317,7 @@ export function createPredictService(d: GameDeps) {
           qty: x.qty,
           amount: Number(x.amount),
           fee: Number(x.fee),
+          priceAfter: x.price_after,
           createdAt: x.created_at.toISOString(),
         })),
       },

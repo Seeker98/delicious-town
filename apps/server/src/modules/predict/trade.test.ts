@@ -210,13 +210,15 @@ describe('列表和详情（238-1 设计 §7.1）', () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId, { p0: 0.3 });
     const r = await trader(t, { shardId });
-    await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 5 });
-    await svc().trade(r, id, { side: 'no', dir: 'buy', qty: 2 });
+    const t1 = (await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 5 })).data;
+    const t2 = (await svc().trade(r, id, { side: 'no', dir: 'buy', qty: 2 })).data;
     const d = await svc().detail(r, id);
     expect(d.event).toMatchObject({ id, yes: 5, no: 2, unit: 1000, b: 100, status: 'open' });
     expect(d.points).toHaveLength(3);
     expect(d.points[0]).toBeCloseTo(0.3, 9);
     expect(d.trades.map((x) => x.side)).toEqual(['no', 'yes']);
+    // 每笔带成交后"是"的价格，页面用来说明这笔把价格推到了多少（问题记录 264）
+    expect(d.trades.map((x) => x.priceAfter)).toEqual([t2.price, t1.price]);
   });
 
   it('详情里有我这一局的成交和收支：买入共花、卖出共得、手续费合计（问题记录 254）', async () => {
@@ -234,8 +236,24 @@ describe('列表和详情（238-1 设计 §7.1）', () => {
       fees: b1.fee + s1.fee,
       voidRatio: null,
       trades: [
-        { side: 'yes', dir: 'sell', qty: 2, amount: s1.amount, fee: s1.fee, createdAt: expect.any(String) },
-        { side: 'yes', dir: 'buy', qty: 5, amount: b1.amount, fee: b1.fee, createdAt: expect.any(String) },
+        {
+          side: 'yes',
+          dir: 'sell',
+          qty: 2,
+          amount: s1.amount,
+          fee: s1.fee,
+          priceAfter: s1.price,
+          createdAt: expect.any(String),
+        },
+        {
+          side: 'yes',
+          dir: 'buy',
+          qty: 5,
+          amount: b1.amount,
+          fee: b1.fee,
+          priceAfter: b1.price,
+          createdAt: expect.any(String),
+        },
       ],
     });
     expect(d.event.netCost).toBe(b1.total - s1.total);

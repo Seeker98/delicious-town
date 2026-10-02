@@ -88,7 +88,23 @@ const RENDER: Record<string, (w: string, p: P, x: NewsNames) => string> = {
       : `${w}在一番赏抽中了 ${str(p.tier)} 赏！`,
   'kuji.win': (w, p) => `${w}在一番赏抽中了 ${str(p.tier)} 赏`,
   'town.exchange': (w, p, x) => `${w}在镇长处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+  'predict.result': (_w, p) => predictResultText(p),
 };
+
+/** 事件预测开奖（问题记录 268）：没有发起人，文案不带店名 */
+function predictResultText(p: P): string {
+  const head = `事件预测「${str(p.title)}」`;
+  if (p.outcome === null || p.outcome === undefined) {
+    return `${head}已作废，参与的店按净投入的 ${Math.round(num(p.voidRatio) * 100)}% 退款`;
+  }
+  const result = `${head}开奖：结果为${p.outcome ? '是' : '否'}`;
+  const players = num(p.players);
+  if (players === 0) return result;
+  const winners = num(p.winners);
+  return winners === 0
+    ? `${result}。${players} 家店参与，没有人押对`
+    : `${result}。${players} 家店参与，${winners} 家押对，共派出 ${formatNum(num(p.paid))} 银币`;
+}
 
 /** 有文案的新闻类型（测试用来对照 NEWS_TYPES） */
 export const NEWS_RENDERED: string[] = Object.keys(RENDER);
