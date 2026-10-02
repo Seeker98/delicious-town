@@ -68,49 +68,57 @@ describe('语言选择（问题记录 272）', () => {
 });
 
 describe('登录后用账号语言（问题记录 272）', () => {
+  /**
+   * 开头就取好 store：await 期间前面用例留下的提示计时器会在旧 Pinia 上跑 action、把活动 Pinia 换回旧的，
+   * 之后再调 useLocaleStore() 会拿到旧 store（全量并行跑、加载语言包慢时偶发）
+   */
+  let locale: ReturnType<typeof useLocaleStore>;
+  let session: ReturnType<typeof useSessionStore>;
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
+    locale = useLocaleStore();
+    session = useSessionStore();
     vi.mocked(endpoints.setLang).mockResolvedValue({ lang: 'zh-CN' } as never);
   });
   afterEach(async () => {
-    await useLocaleStore().set('zh-CN');
-    useLocaleStore().clearPick();
+    await locale.set('zh-CN');
+    locale.clearPick();
   });
 
   it('账号设过语言：切过去，不再存', async () => {
-    await useSessionStore().applyMe(me('es'));
-    expect(useLocaleStore().locale).toBe('es');
+    await session.applyMe(me('es'));
+    expect(locale.locale).toBe('es');
     expect(endpoints.setLang).not.toHaveBeenCalled();
   });
 
   it('账号没设过（多语言上线前的老账号，都是中文玩家）或值不合法：用简中并存到账号，不按浏览器语言', async () => {
-    await useLocaleStore().set('en');
-    await useSessionStore().applyMe(me(null));
-    expect(useLocaleStore().locale).toBe('zh-CN');
+    await locale.set('en');
+    await session.applyMe(me(null));
+    expect(locale.locale).toBe('zh-CN');
     expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
     vi.clearAllMocks();
-    await useSessionStore().applyMe(me('klingon'));
+    await session.applyMe(me('klingon'));
     expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
   });
 
   it('没登录时在登录页手动选的语言：登录后以它为准存到账号，只生效一次', async () => {
     const w = mount(LangSelect);
     await w.get('[data-testid="lang-select"]').setValue('fr');
-    await vi.waitFor(() => expect(useLocaleStore().locale).toBe('fr'), { timeout: 10_000 });
-    await useSessionStore().applyMe(me('es'));
-    expect(useLocaleStore().locale).toBe('fr');
+    await vi.waitFor(() => expect(locale.locale).toBe('fr'), { timeout: 10_000 });
+    await session.applyMe(me('es'));
+    expect(locale.locale).toBe('fr');
     expect(endpoints.setLang).toHaveBeenCalledWith('fr');
     // 手选已经存到账号，之后读到账号语言照常跟随（比如在别的设备改过）
     vi.clearAllMocks();
-    await useSessionStore().applyMe(me('es'));
-    expect(useLocaleStore().locale).toBe('es');
+    await session.applyMe(me('es'));
+    expect(locale.locale).toBe('es');
     expect(endpoints.setLang).not.toHaveBeenCalled();
   });
 
   it('load() 读到账号后同样处理', async () => {
     vi.mocked(endpoints.me).mockResolvedValue(me('fr'));
-    await useSessionStore().load();
-    expect(useLocaleStore().locale).toBe('fr');
+    await session.load();
+    expect(locale.locale).toBe('fr');
   });
 });

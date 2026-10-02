@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { rewardSummary } from '../utils/reward';
@@ -9,6 +10,7 @@ import { rewardSummary } from '../utils/reward';
 const emit = defineEmits<{ redeemed: [] }>();
 const catalog = useCatalogStore();
 const code = ref('');
+const t = useT();
 const busy = ref(false);
 const result = ref<{ ok: boolean; text: string } | null>(null);
 
@@ -18,11 +20,11 @@ async function go() {
   busy.value = true;
   try {
     const r = await endpoints.redeem(c);
-    result.value = { ok: true, text: `兑换成功：${rewardSummary(r.items, catalog)}` };
+    result.value = { ok: true, text: t.value.mail.redeem.done(rewardSummary(r.items, catalog)) };
     code.value = '';
     emit('redeemed');
   } catch (e) {
-    result.value = { ok: false, text: errorMessage(e, '兑换失败') };
+    result.value = { ok: false, text: errorMessage(e, t.value.mail.redeem.failed) };
   } finally {
     busy.value = false;
   }
@@ -35,10 +37,10 @@ async function go() {
       <input
         v-model="code"
         class="form-control form-control-sm"
-        placeholder="输入兑换码"
+        :placeholder="t.mail.redeem.placeholder"
         maxlength="40"
         autocomplete="off"
-        aria-label="兑换码"
+        :aria-label="t.mail.redeem.label"
         data-testid="redeem-input"
         @keydown.enter.prevent="go"
       />
@@ -49,7 +51,7 @@ async function go() {
         data-testid="redeem-go"
         @click="go"
       >
-        兑换
+        {{ t.mail.redeem.btn }}
       </button>
     </div>
     <div

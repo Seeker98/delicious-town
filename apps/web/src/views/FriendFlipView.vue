@@ -3,12 +3,14 @@ import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import type { FlipResultDto, FlipSlotsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 
 const route = useRoute();
 const toast = useToastStore();
+const t = useT();
 const catalog = useCatalogStore();
 const restId = computed(() => Number(route.params.restId));
 const data = ref<FlipSlotsDto | null>(null);
@@ -20,23 +22,24 @@ function left(until: string): string {
   const ms = Math.max(0, Date.parse(until) - Date.now());
   const h = Math.floor(ms / 3600_000);
   const m = Math.floor((ms % 3600_000) / 60_000);
-  return `${h} 小时 ${m} 分`;
+  return t.value.friends.flip.left(h, m);
 }
 
 function describe(r: FlipResultDto): string {
-  const head = r.strength > 0 ? `体力 -${r.strength}，` : '';
-  const tail = r.dtTickets > 0 ? `，还得到 ${r.dtTickets} 张美味券` : '';
+  const f = t.value.friends.flip;
+  const head = r.strength > 0 ? f.strength(r.strength) : '';
+  const tail = r.dtTickets > 0 ? f.tickets(r.dtTickets) : '';
   switch (r.outcome) {
     case 'food':
-      return `${head}翻到了 ${catalog.foodName(r.foodsId!)}${tail}`;
+      return `${head}${f.food(catalog.foodName(r.foodsId!))}${tail}`;
     case 'ticket':
-      return `${head}橱柜里有一张神秘礼券${tail}`;
+      return `${head}${f.ticket}${tail}`;
     case 'caught':
-      return `${head}手被老鼠夹夹住了，掉了 ${r.coin} 银币${tail}`;
+      return `${head}${f.caught(r.coin)}${tail}`;
     case 'escaped':
-      return `${head}差点被老鼠夹夹住，真是老天保佑${tail}`;
+      return `${head}${f.escaped}${tail}`;
     default:
-      return `${head}什么都没有${tail}`;
+      return `${head}${f.nothing}${tail}`;
   }
 }
 
@@ -44,7 +47,7 @@ async function load() {
   try {
     data.value = await endpoints.flipSlots(restId.value);
   } catch (e) {
-    toast.push(errorMessage(e, '读取橱柜失败'), 'danger');
+    toast.push(errorMessage(e, t.value.friends.flip.loadFailed), 'danger');
   }
 }
 
@@ -55,7 +58,7 @@ async function flip(slot: number) {
     result.value = describe(await endpoints.flip(restId.value, slot));
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '翻橱失败'), 'danger');
+    toast.push(errorMessage(e, t.value.friends.flip.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -65,11 +68,10 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>翻橱柜</h5>
+  <h5>{{ t.friends.flip.title }}</h5>
   <p class="small text-muted">
-    每个位置翻过后要冷却一段时间。每天前 100 次每次 1 体力，之后 2 体力<span v-if="data"
-      >（今天已翻 {{ data.todayTimes }} 次）</span
-    >。
+    {{ t.friends.flip.rule }}<span v-if="data">{{ t.friends.flip.today(data.todayTimes) }}</span
+    >{{ t.friends.flip.end }}
   </p>
   <div v-if="result" class="alert alert-info small py-2" data-testid="flip-result">{{ result }}</div>
   <div v-if="data" class="row g-1">

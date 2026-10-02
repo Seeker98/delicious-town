@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
-import {
-  FORUM_CATEGORY_NAMES,
-  type ForumAdminAction,
-  type ForumPostDetailDto,
-  type ForumReadsDto,
-} from '@dt/shared';
+import type { ForumAdminAction, ForumPostDetailDto, ForumReadsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
+import { activeLocale } from '../i18n';
 import ReportButton from '../components/ReportButton.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
@@ -18,6 +15,7 @@ import { useCountdown } from '../utils/countdown';
 const route = useRoute();
 const router = useRouter();
 const toast = useToastStore();
+const t = useT();
 /** 自己的店：别人的帖子、回复才显示举报（子项目 6B-1） */
 const myRest = computed(() => useSessionStore().me?.restaurantId ?? null);
 const id = computed(() => Number(route.params.id));
@@ -34,19 +32,18 @@ const replyWait = useCountdown(
 );
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString('zh-CN', {
+  new Date(iso).toLocaleString(activeLocale(), {
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   });
-const REACTION = { up: '赞', down: '踩' } as const;
 
 async function load() {
   try {
     data.value = await endpoints.forumPost(id.value);
   } catch (e) {
-    toast.push(errorMessage(e, '读取帖子失败'), 'danger');
+    toast.push(errorMessage(e, t.value.forum.post.loadFailed), 'danger');
   }
 }
 onMounted(load);
@@ -65,7 +62,7 @@ async function run<T>(fn: () => Promise<T>, fallback: string): Promise<T | null>
 }
 
 async function react(kind: 'up' | 'down') {
-  const r = await run(() => endpoints.forumReact(id.value, kind), '操作失败');
+  const r = await run(() => endpoints.forumReact(id.value, kind), t.value.forum.post.opFailed);
   if (r && data.value) {
     data.value.mine = r.mine;
     data.value.post.upNum = r.up;
@@ -73,18 +70,18 @@ async function react(kind: 'up' | 'down') {
   }
 }
 async function admin(action: ForumAdminAction) {
-  const r = await run(() => endpoints.forumAdmin(id.value, action), '操作失败');
-  if (r?.rewarded) toast.push('已加精，作者获得了加精奖励', 'success');
+  const r = await run(() => endpoints.forumAdmin(id.value, action), t.value.forum.post.opFailed);
+  if (r?.rewarded) toast.push(t.value.forum.post.featuredReward, 'success');
   if (r) await load();
 }
 async function removePost() {
-  if (!window.confirm('确定删除这篇帖子吗？')) return;
-  const r = await run(() => endpoints.forumDelete(id.value), '删除失败');
+  if (!window.confirm(t.value.forum.post.deleteConfirm)) return;
+  const r = await run(() => endpoints.forumDelete(id.value), t.value.forum.post.deleteFailed);
   if (r) await router.push('/forum');
 }
 async function removeReply(replyId: number) {
-  if (!window.confirm('确定删除这条回复吗？')) return;
-  const r = await run(() => endpoints.forumDeleteReply(replyId), '删除失败');
+  if (!window.confirm(t.value.forum.post.replyDeleteConfirm)) return;
+  const r = await run(() => endpoints.forumDeleteReply(replyId), t.value.forum.post.deleteFailed);
   if (r) await load();
 }
 async function toggleReads() {
@@ -92,7 +89,7 @@ async function toggleReads() {
     reads.value = null;
     return;
   }
-  reads.value = await run(() => endpoints.forumReads(id.value), '读取阅读明细失败');
+  reads.value = await run(() => endpoints.forumReads(id.value), t.value.forum.post.readsFailed);
 }
 async function submit() {
   const text = content.value.trim();
@@ -102,7 +99,7 @@ async function submit() {
     ...(replyTo.value !== null ? { replyTo: replyTo.value } : {}),
     anonymous: anonymous.value,
   };
-  const r = await run(() => endpoints.forumReply(id.value, body), '回复失败');
+  const r = await run(() => endpoints.forumReply(id.value, body), t.value.forum.post.replyFailed);
   if (r && data.value) {
     // 直接追加，不重新读详情：重新读会刷新阅读时间，作者能拿它和匿名回复的时间对上（终审 I1）
     data.value.replies.push(r);
@@ -117,16 +114,16 @@ async function submit() {
   <template v-if="data">
     <div class="dt-page-title">
       <h5 class="mb-0">{{ data.post.title }}</h5>
-      <RouterLink to="/forum" class="small">返回论坛</RouterLink>
+      <RouterLink to="/forum" class="small">{{ t.forum.post.back }}</RouterLink>
     </div>
     <div class="dt-meta mb-2">
-      <span class="badge bg-light text-dark border me-1">{{ FORUM_CATEGORY_NAMES[data.post.category] }}</span>
-      <span v-if="data.post.pinned" class="badge bg-danger me-1">置顶</span>
-      <span v-if="data.post.featured" class="badge bg-warning text-dark me-1">精</span>
+      <span class="badge bg-light text-dark border me-1">{{ t.forum.categories[data.post.category] }}</span>
+      <span v-if="data.post.pinned" class="badge bg-danger me-1">{{ t.forum.pinned }}</span>
+      <span v-if="data.post.featured" class="badge bg-warning text-dark me-1">{{ t.forum.featured }}</span>
       <RouterLink :to="`/friends/${data.post.restId}`">{{ data.post.restName }}</RouterLink>
       · {{ when(data.post.createdAt)
-      }}<span v-if="data.post.editedAt"> · 编辑于 {{ when(data.post.editedAt) }}</span> · 阅读
-      {{ data.post.readNum }}
+      }}<span v-if="data.post.editedAt">{{ t.forum.post.edited(when(data.post.editedAt)) }}</span
+      >{{ t.forum.post.read(data.post.readNum) }}
     </div>
     <div class="dt-card dt-post-body mb-2" data-testid="post-body">{{ data.post.content }}</div>
     <div class="d-flex flex-wrap gap-2 mb-3">
@@ -152,7 +149,7 @@ async function submit() {
         data-testid="post-edit"
         @click="router.push(`/forum/${id}/edit`)"
       >
-        编辑
+        {{ t.forum.post.edit }}
       </button>
       <button
         v-if="data.can.delete"
@@ -161,7 +158,7 @@ async function submit() {
         data-testid="post-delete"
         @click="removePost"
       >
-        删除
+        {{ t.forum.post.delete }}
       </button>
       <template v-if="data.can.admin">
         <button
@@ -170,7 +167,7 @@ async function submit() {
           data-testid="post-pin"
           @click="admin(data.post.pinned ? 'unpin' : 'pin')"
         >
-          {{ data.post.pinned ? '取消置顶' : '置顶' }}
+          {{ data.post.pinned ? t.forum.post.unpin : t.forum.post.pin }}
         </button>
         <button
           class="btn btn-sm btn-outline-secondary"
@@ -178,7 +175,7 @@ async function submit() {
           data-testid="post-feature"
           @click="admin(data.post.featured ? 'unfeature' : 'feature')"
         >
-          {{ data.post.featured ? '取消加精' : '加精' }}
+          {{ data.post.featured ? t.forum.post.unfeature : t.forum.post.feature }}
         </button>
       </template>
       <button
@@ -188,7 +185,7 @@ async function submit() {
         data-testid="post-reads"
         @click="toggleReads"
       >
-        阅读明细
+        {{ t.forum.post.reads }}
       </button>
       <ReportButton
         v-if="data.post.restId !== myRest"
@@ -198,14 +195,14 @@ async function submit() {
       />
     </div>
     <div v-if="reads" class="dt-card mb-3" data-testid="post-reads-list">
-      <div v-if="reads.items.length === 0" class="dt-empty">还没有人读过</div>
+      <div v-if="reads.items.length === 0" class="dt-empty">{{ t.forum.post.noReads }}</div>
       <div v-for="r in reads.items" :key="r.restId" class="dt-meta">
-        {{ r.name }} · 读了 {{ r.times }} 次 · 最后 {{ r.lastDay
-        }}<span v-if="r.reaction"> · {{ REACTION[r.reaction] }}</span>
+        {{ t.forum.post.readLine(r.name, r.times, r.lastDay)
+        }}<span v-if="r.reaction"> · {{ t.forum.post.reaction[r.reaction] }}</span>
       </div>
     </div>
 
-    <h6 class="dt-section">回复（{{ data.replies.length }}）</h6>
+    <h6 class="dt-section">{{ t.forum.post.replies(data.replies.length) }}</h6>
     <div
       v-for="r in data.replies"
       :id="`floor-${r.floor}`"
@@ -218,11 +215,11 @@ async function submit() {
           #{{ r.floor }}
           <RouterLink v-if="r.restId !== null" :to="`/friends/${r.restId}`">{{ r.restName }}</RouterLink>
           <span v-else>{{ r.restName }}</span>
-          <span v-if="r.anonymous && r.restId !== null">（匿名）</span>
+          <span v-if="r.anonymous && r.restId !== null">{{ t.forum.post.anonymousTag }}</span>
           · {{ when(r.createdAt) }}
-          <a v-if="r.replyTo !== null" :href="`#floor-${r.replyTo}`">回复 #{{ r.replyTo }}</a>
+          <a v-if="r.replyTo !== null" :href="`#floor-${r.replyTo}`">{{ t.forum.post.replyTo(r.replyTo) }}</a>
         </div>
-        <div v-if="r.deleted" class="dt-meta fst-italic">该回复已删除</div>
+        <div v-if="r.deleted" class="dt-meta fst-italic">{{ t.forum.post.replyDeleted }}</div>
         <div v-else class="dt-post-body">{{ r.content }}</div>
       </div>
       <div class="dt-item-actions">
@@ -232,7 +229,7 @@ async function submit() {
           :data-testid="`reply-to-${r.floor}`"
           @click="replyTo = r.floor"
         >
-          回复
+          {{ t.forum.post.reply }}
         </button>
         <button
           v-if="r.canDelete"
@@ -241,7 +238,7 @@ async function submit() {
           :data-testid="`reply-delete-${r.floor}`"
           @click="removeReply(r.id)"
         >
-          删除
+          {{ t.forum.post.delete }}
         </button>
         <ReportButton
           v-if="!r.deleted && !r.canDelete"
@@ -254,33 +251,37 @@ async function submit() {
 
     <div v-if="data.can.reply" class="mt-3">
       <div v-if="replyTo !== null" class="dt-meta mb-1" data-testid="reply-target">
-        回复 #{{ replyTo }}（<a href="#" @click.prevent="replyTo = null">取消</a>）
+        {{ t.forum.post.replyTo(replyTo) }}（<a href="#" @click.prevent="replyTo = null">{{
+          t.common.cancel
+        }}</a
+        >）
       </div>
       <textarea
         v-model="content"
         class="form-control form-control-sm mb-1"
         rows="3"
         maxlength="500"
-        placeholder="说点什么（最多 500 字）"
+        :placeholder="t.forum.post.replyPlaceholder"
         data-testid="reply-content"
       ></textarea>
       <div class="d-flex align-items-center gap-2">
         <label class="small"
-          ><input v-model="anonymous" type="checkbox" data-testid="reply-anon" /> 匿名</label
+          ><input v-model="anonymous" type="checkbox" data-testid="reply-anon" />
+          {{ t.forum.post.anonymous }}</label
         >
-        <small v-if="replyWait > 0" class="dt-meta" data-testid="reply-wait"
-          >{{ replyWait }} 秒后可以再回复</small
-        >
+        <small v-if="replyWait > 0" class="dt-meta" data-testid="reply-wait">{{
+          t.forum.post.replyWait(replyWait)
+        }}</small>
         <button
           class="btn btn-sm btn-primary ms-auto"
           :disabled="busy || replyWait > 0"
           data-testid="reply-submit"
           @click="submit"
         >
-          回复
+          {{ t.forum.post.reply }}
         </button>
       </div>
     </div>
-    <div v-else class="dt-meta mt-3">验证邮箱后才能回复</div>
+    <div v-else class="dt-meta mt-3">{{ t.forum.post.verifyToReply }}</div>
   </template>
 </template>

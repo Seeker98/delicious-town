@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it } from 'vitest';
 import TableGrid from './TableGrid.vue';
 
 describe('TableGrid', () => {
+  beforeEach(() => setActivePinia(createPinia()));
   it('按楼层显示，标出蟑螂和白食者；点桌子发出 pick', async () => {
     const w = mount(TableGrid, {
       props: {

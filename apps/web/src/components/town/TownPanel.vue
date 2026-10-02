@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { HIPHOP_PLACE_FEATURE, HIPHOP_PLACE_NAMES, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
+import { HIPHOP_PLACE_FEATURE, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
 import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
+import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useRestaurantStore } from '../../stores/restaurant';
@@ -16,20 +18,12 @@ const props = defineProps<{ data: TownDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 const clock = useServerClock(() => props.data.now);
 
-const NPCS: Array<{ key: NpcKey; name: string; desc: string }> = [
-  { key: 'bigEater', name: '大胃哥', desc: '每天送 1~5 级食材和一颗种子' },
-  { key: 'wenjie', name: '雯姐', desc: '每天送神秘礼券' },
-  { key: 'bro13', name: '13 哥', desc: '每天送喇叭' },
-];
-const TYPES = [
-  { type: 1, label: '晴类' },
-  { type: 2, label: '雨类' },
-  { type: 3, label: '雪冰类' },
-  { type: 4, label: '风沙雾类' },
-];
+const NPCS: readonly NpcKey[] = ['bigEater', 'wenjie', 'bro13'];
+const TYPES = [1, 2, 3, 4] as const;
 
 async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: string) {
   if (busy.value) return;
@@ -45,7 +39,7 @@ async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: st
     busy.value = false;
   }
 }
-const rewards = (list: TownRewardDto[]) => list.map((r) => rewardText(r, catalog)).join('、');
+const rewards = (list: TownRewardDto[]) => list.map((r) => rewardText(r, catalog)).join(t.value.events.sep);
 
 const mayorOpen = ref(false);
 /** 只列本区服开着的功能的地点：关掉的功能嘻哈男孩不会去（问题记录 256） */
@@ -54,30 +48,31 @@ const PLACES = computed(() =>
   HIPHOP_PLACES.filter((p) => {
     const f = HIPHOP_PLACE_FEATURE[p];
     return f === null || restaurant.featureOn(f);
-  }).map((p) => ({ id: p, name: HIPHOP_PLACE_NAMES[p] })),
+  }).map((p) => ({ id: p, name: t.value.town.places[String(p)] ?? String(p) })),
 );
 function askMayor(place: HiphopPlace) {
   void act(
     () => endpoints.townMayor(place),
-    (r) => `镇长：${r.talk} 获得 ${rewards(r.rewards)}`,
-    '回答失败',
+    (r) => t.value.town.said(t.value.town.mayorName, r.talk, rewards(r.rewards)),
+    t.value.town.mayorFailed,
   );
 }
 
-function talk(key: NpcKey, name: string) {
+function talk(key: NpcKey) {
+  const name = t.value.town.npcs[key].name;
   void act(
     () => endpoints.townTalk(key),
-    (r) => `${name}：${r.talk} 获得 ${rewards(r.rewards)}`,
-    '聊天失败',
+    (r) => t.value.town.said(name, r.talk, rewards(r.rewards)),
+    t.value.town.talkFailed,
   );
 }
 function shake() {
   void act(
     () => endpoints.townShake(),
     (r) =>
-      `摇到银币 ${formatNum(r.coin)}` +
-      (r.egg ? `，还从裤兜里掏出了 ${catalog.goodsName(r.egg.goodsId)}×${r.egg.num}` : ''),
-    '摇钱包失败',
+      t.value.town.shook(formatNum(r.coin)) +
+      (r.egg ? t.value.town.shookEgg(catalog.goodsName(r.egg.goodsId), r.egg.num) : ''),
+    t.value.town.shakeFailed,
   );
 }
 
@@ -97,86 +92,92 @@ const blessReward = computed(() => {
       ? `${b.levels[0]}`
       : `${b.levels[0]}~${b.levels[1]}`
     : '';
+  const x = t.value.town;
   const base =
     b.type === 5
-      ? `${lv} 级随机食材 ${b.num} 种`
+      ? x.blessRandom(lv, b.num)
       : b.type === 0
-        ? `自选 ${lv} 级食材 ×${b.num}`
+        ? x.blessPick(lv, b.num)
         : b.type === 2
           ? `${catalog.goodsName(b.goodsId!)}×${b.num}`
           : b.type === 3
-            ? `银币 ${formatNum(b.num)}`
-            : `钻石 ${b.num}`;
+            ? x.blessCoin(formatNum(b.num))
+            : x.blessDiamond(b.num);
   if (!props.data.bless.hasLamp) return base;
-  return base + (b.type === 3 ? '（持有神灯多领 10%）' : '（持有神灯多领一份）');
+  return base + (b.type === 3 ? x.lampCoin : x.lampOne);
 });
 const feastBlock = computed(() => {
   const b = bless.value;
   if (!b) return '';
-  if (props.data.bless.feasted) return '今天已经领过了';
+  if (props.data.bless.feasted) return t.value.town.feasted;
   if (props.data.bless.activation < b.needAct)
-    return `今天活跃度 ${props.data.bless.activation}，要 ${b.needAct} 才能领`;
+    return t.value.town.feastNeedAct(props.data.bless.activation, b.needAct);
   return '';
 });
 function feast() {
   const foodsId = bless.value?.type === 0 ? Number(pick.value) : undefined;
   void act(
     () => endpoints.townFeast(foodsId),
-    (r) => `共飨获得 ${rewards(r.rewards)}`,
-    '共飨失败',
+    (r) => t.value.town.feastDone(rewards(r.rewards)),
+    t.value.town.feastFailed,
   );
 }
 function wish() {
   void act(
     () => endpoints.townWish(),
-    (r) => `许愿得到星愿：${r.bless.name}`,
-    '许愿失败',
+    (r) => t.value.town.wished(r.bless.name),
+    t.value.town.wishFailed,
   );
 }
 
 const hammerBlock = computed(() => {
   const h = props.data.hammer;
-  if (!h.has) return '持有雷神锤才能使用';
+  if (!h.has) return t.value.town.hammerNeed;
   if (clock.pending(h.readyAt))
-    return `冷却到 ${new Date(h.readyAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}`;
-  if (clock.pending(h.townReadyAt)) return `刚换过天气，${clock.secondsLeft(h.townReadyAt)} 秒后才能再换`;
+    return t.value.town.hammerCool(
+      new Date(h.readyAt).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' }),
+    );
+  if (clock.pending(h.townReadyAt)) return t.value.town.hammerTown(clock.secondsLeft(h.townReadyAt));
   return '';
 });
 function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
   void act(
     () => endpoints.townHammer(body),
     (r) =>
-      `${catalog.weatherName(r.from)}转${catalog.weatherName(r.to)}了，获得 ${catalog.goodsName(r.gift.goodsId)}×${r.gift.num}`,
-    '换天气失败',
+      t.value.town.hammerDone(
+        catalog.weatherName(r.from),
+        catalog.weatherName(r.to),
+        catalog.goodsName(r.gift.goodsId),
+        r.gift.num,
+      ),
+    t.value.town.hammerFailed,
   );
 }
 </script>
 
 <template>
   <h6 class="dt-section">NPC</h6>
-  <div v-for="n in NPCS" :key="n.key" class="dt-item">
+  <div v-for="n in NPCS" :key="n" class="dt-item">
     <div class="dt-item-main">
-      <div class="dt-item-title">{{ n.name }}</div>
-      <div class="dt-meta">{{ n.desc }}</div>
+      <div class="dt-item-title">{{ t.town.npcs[n].name }}</div>
+      <div class="dt-meta">{{ t.town.npcs[n].desc }}</div>
     </div>
     <div class="dt-item-actions">
       <button
         class="btn btn-sm btn-outline-primary"
-        :disabled="busy || data.talked[n.key]"
-        :data-testid="`talk-${n.key}`"
-        @click="talk(n.key, n.name)"
+        :disabled="busy || data.talked[n]"
+        :data-testid="`talk-${n}`"
+        @click="talk(n)"
       >
-        {{ data.talked[n.key] ? '今天聊过了' : '聊天' }}
+        {{ data.talked[n] ? t.town.talkedToday : t.town.talk }}
       </button>
     </div>
   </div>
   <div class="dt-item">
     <div class="dt-item-main">
-      <div class="dt-item-title">镇长</div>
+      <div class="dt-item-title">{{ t.town.mayorName }}</div>
       <div class="dt-meta">
-        {{
-          data.mayor.answered ? '今天已经告诉过镇长了' : '告诉镇长嘻哈男孩今天在哪：答对有加成，答错要挨批'
-        }}
+        {{ data.mayor.answered ? t.town.mayorAnswered : t.town.mayorHint }}
       </div>
     </div>
     <div v-if="!data.mayor.answered" class="dt-item-actions">
@@ -186,7 +187,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         data-testid="mayor-open"
         @click="mayorOpen = !mayorOpen"
       >
-        告诉镇长
+        {{ t.town.mayorOpen }}
       </button>
     </div>
   </div>
@@ -203,10 +204,10 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
     </button>
   </div>
 
-  <h6 class="dt-section">蟹老板的钱袋</h6>
+  <h6 class="dt-section">{{ t.town.krab }}</h6>
   <div class="dt-item">
     <div class="dt-item-main">
-      <div class="dt-meta">每天可以摇一次，摇到的银币和星级有关</div>
+      <div class="dt-meta">{{ t.town.shakeHint }}</div>
     </div>
     <div class="dt-item-actions">
       <button
@@ -215,16 +216,16 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         data-testid="shake"
         @click="shake"
       >
-        {{ data.shaken ? '今天摇过了' : '摇一摇' }}
+        {{ data.shaken ? t.town.shakenToday : t.town.shake }}
       </button>
     </div>
   </div>
 
-  <h6 class="dt-section">星愿</h6>
+  <h6 class="dt-section">{{ t.town.bless }}</h6>
   <div v-if="bless" class="dt-card small">
     <div>
       <b data-testid="bless-name">{{ bless.name }}</b>
-      <span class="dt-meta ms-1">{{ data.bless.restName }} 许的愿，今天全镇生效</span>
+      <span class="dt-meta ms-1">{{ t.town.blessBy(data.bless.restName ?? '') }}</span>
     </div>
     <div class="d-flex flex-wrap gap-1 my-1">
       <span
@@ -235,7 +236,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       >
     </div>
     <div>
-      共飨奖励：<span data-testid="bless-reward">{{ blessReward }}</span>
+      {{ t.town.feastReward }}<span data-testid="bless-reward">{{ blessReward }}</span>
     </div>
     <div class="d-flex flex-wrap gap-1 align-items-center mt-1">
       <select
@@ -244,7 +245,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         class="form-select form-select-sm w-auto"
         data-testid="feast-food"
       >
-        <option value="">选择食材</option>
+        <option value="">{{ t.town.pickFood }}</option>
         <option v-for="f in blessFoods" :key="f.id" :value="String(f.id)">{{ f.name }}</option>
       </select>
       <button
@@ -253,16 +254,16 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         data-testid="feast"
         @click="feast"
       >
-        共飨
+        {{ t.town.feast }}
       </button>
       <span v-if="feastBlock" class="text-danger" data-testid="feast-block">{{ feastBlock }}</span>
     </div>
   </div>
   <div v-else class="dt-item">
     <div class="dt-item-main">
-      <div class="dt-meta">今天还没有人许愿。第一个许愿的人决定今天全镇的星愿</div>
+      <div class="dt-meta">{{ t.town.noWish }}</div>
       <div v-if="!data.bless.hasLamp" class="dt-meta text-danger" data-testid="wish-block">
-        持有神灯才能许愿
+        {{ t.town.needLamp }}
       </div>
     </div>
     <div class="dt-item-actions">
@@ -272,30 +273,29 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         data-testid="wish"
         @click="wish"
       >
-        许愿
+        {{ t.town.wish }}
       </button>
     </div>
   </div>
 
-  <h6 class="dt-section">雷神锤</h6>
+  <h6 class="dt-section">{{ t.town.hammer }}</h6>
   <div class="dt-card small">
     <div class="mb-1">
-      当前天气：<b>{{ data.weather.name }}</b>
+      {{ t.town.weatherNow }}<b>{{ data.weather.name }}</b>
       <div class="dt-meta">
-        换成某一类天气：每次 {{ formatNum(data.hammer.coin) }} 银币；召唤特殊天气：每次
-        {{ data.hammer.diamond }} 钻石
+        {{ t.town.hammerHint(formatNum(data.hammer.coin), data.hammer.diamond) }}
       </div>
     </div>
     <div class="dt-grid2">
       <button
         v-for="x in TYPES"
-        :key="x.type"
+        :key="x"
         class="btn btn-sm btn-outline-primary"
         :disabled="busy || !!hammerBlock"
-        :data-testid="`hammer-${x.type}`"
-        @click="hammer({ mode: 'coin', type: x.type })"
+        :data-testid="`hammer-${x}`"
+        @click="hammer({ mode: 'coin', type: x })"
       >
-        {{ x.label }}
+        {{ t.town.weatherTypes[x] }}
       </button>
       <button
         class="btn btn-sm btn-outline-warning dt-span2"
@@ -303,7 +303,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
         data-testid="hammer-diamond"
         @click="hammer({ mode: 'diamond' })"
       >
-        召唤特殊天气
+        {{ t.town.hammerSpecial }}
       </button>
     </div>
     <div v-if="hammerBlock" class="text-danger mt-1" data-testid="hammer-block">{{ hammerBlock }}</div>

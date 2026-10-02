@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import ClassroomPanel from '../components/town/ClassroomPanel.vue';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
@@ -17,14 +18,8 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom';
 const KEY = 'dt_town_tab';
 /** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室也在这里（问题记录 122） */
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'news', label: '新闻' },
-  { key: 'town', label: '居民' },
-  { key: 'exchange', label: '兑换' },
-  { key: 'rank', label: '排行' },
-  { key: 'classroom', label: '教室' },
-];
-const isTab = (v: unknown): v is Tab => TABS.some((t) => t.key === v);
+const TABS: readonly Tab[] = ['news', 'town', 'exchange', 'rank', 'classroom'];
+const isTab = (v: unknown): v is Tab => TABS.includes(v as Tab);
 /** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
 function initialTab(query: unknown): Tab {
   if (isTab(query)) return query;
@@ -36,6 +31,7 @@ function initialTab(query: unknown): Tab {
   }
 }
 const toast = useToastStore();
+const t = useT();
 const catalog = useCatalogStore();
 const route = useRoute();
 const router = useRouter();
@@ -50,7 +46,7 @@ async function load() {
     const v = await endpoints.town();
     if (mine === seq) data.value = v;
   } catch (e) {
-    if (mine === seq) toast.push(errorMessage(e, '读取广场失败'), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.town.loadFailed), 'danger');
   }
 }
 watch(tab, (v) => {
@@ -72,20 +68,20 @@ onMounted(() => {
 
 <template>
   <div class="dt-page-title">
-    <h5>广场</h5>
+    <h5>{{ t.town.title }}</h5>
     <RouterLink to="/forum" class="small" data-testid="town-forum"
-      ><i class="bi bi-chat-square-text"></i> 论坛</RouterLink
+      ><i class="bi bi-chat-square-text"></i> {{ t.town.forum }}</RouterLink
     >
   </div>
   <HiphopCard :place="13" />
   <ul class="nav nav-tabs mb-2">
-    <li v-for="x in TABS" :key="x.key" class="nav-item">
+    <li v-for="x in TABS" :key="x" class="nav-item">
       <a
-        :class="['nav-link', { active: tab === x.key }]"
+        :class="['nav-link', { active: tab === x }]"
         href="#"
-        :data-testid="`tab-${x.key}`"
-        @click.prevent="tab = x.key"
-        >{{ x.label }}</a
+        :data-testid="`tab-${x}`"
+        @click.prevent="tab = x"
+        >{{ t.town.tabs[x] }}</a
       >
     </li>
   </ul>

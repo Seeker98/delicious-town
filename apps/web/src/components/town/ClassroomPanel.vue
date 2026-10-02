@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { LessonDto, LessonsDto, McOverviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -9,6 +10,7 @@ import { formatNum } from '../../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<LessonsDto | null>(null);
 const mc = ref<McOverviewDto | null>(null);
 const pickMc = ref<number | null>(null);
@@ -38,27 +40,22 @@ const certsFor = computed(() => {
   return (data.value?.certs ?? []).filter((c) => c.num > 0 && lv !== undefined && c.levels.includes(lv));
 });
 const leftText = (at: string) =>
-  `${Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000))} 小时`;
+  t.value.town.classroom.hours(Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000)));
 
 function learn(l: LessonDto, type: 1 | 2) {
   const forget = l.level * (data.value?.forgetPerLevel ?? 3) + 1;
-  if (
-    type === 2 &&
-    !window.confirm(
-      `偷学不花学费，但失败会遗忘 ${forget} 道食谱${l.level >= 4 ? '，还可能遗忘一道特色菜' : ''}。确定偷学吗？`,
-    )
-  )
-    return;
+  if (type === 2 && !window.confirm(t.value.town.classroom.stealConfirm(forget, l.level >= 4))) return;
   return act(async () => {
     const r = await endpoints.lessonLearn(l.id, type);
-    if (r.success) toast.push(`学会了${catalog.mcName(l.mcId)}`);
+    const c = t.value.town.classroom;
+    if (r.success) toast.push(c.learned(catalog.mcName(l.mcId)));
     else if (type === 2)
       toast.push(
-        `偷学失败，遗忘了 ${r.forgot.cookbooks.length} 道食谱${r.forgot.mcId ? `和${catalog.mcName(r.forgot.mcId)}` : ''}`,
+        c.stealFailed(r.forgot.cookbooks.length, r.forgot.mcId ? catalog.mcName(r.forgot.mcId) : null),
         'danger',
       );
-    else toast.push('没学会，下次再来', 'danger');
-  }, '学习失败');
+    else toast.push(c.notLearned, 'danger');
+  }, t.value.town.classroom.learnFailed);
 }
 function open() {
   const m = pickMc.value;
@@ -66,32 +63,40 @@ function open() {
   if (m === null || c === null) return;
   return act(async () => {
     await endpoints.lessonOpen(m, c);
-    toast.push('开课了');
+    toast.push(t.value.town.classroom.opened);
     pickMc.value = null;
     pickCert.value = null;
-  }, '开课失败');
+  }, t.value.town.classroom.openFailed);
 }
 function close() {
   const mine = data.value?.mine;
   if (!mine || !data.value) return;
   const coin = mine.level * data.value.forceCloseCoinPerLevel;
-  if (!window.confirm(`花 ${formatNum(coin)} 银币强制结束这门课？`)) return;
+  if (!window.confirm(t.value.town.classroom.closeConfirm(formatNum(coin)))) return;
   return act(async () => {
     await endpoints.lessonClose();
-    toast.push('课程已结束');
-  }, '结束失败');
+    toast.push(t.value.town.classroom.closed);
+  }, t.value.town.classroom.closeFailed);
 }
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失败'), 'danger')));
+onMounted(() =>
+  load().catch((e) => toast.push(errorMessage(e, t.value.town.classroom.loadFailed), 'danger')),
+);
 </script>
 
 <template>
   <!-- 教室是广场的一个标签（问题记录 122），原来的独立页面 /classroom 跳到这里 -->
   <div v-if="data" data-testid="classroom-panel">
     <div v-if="data.mine" class="border rounded p-2 mb-2 small" data-testid="my-lesson">
-      我的课：<b>{{ catalog.mcName(data.mine.mcId) }}</b> {{ data.mine.level }} 级 ·
-      {{ data.mine.learned + data.mine.stolen }}/{{ data.mine.maxNum }} 人 · 还剩
-      {{ leftText(data.mine.endsAt) }}
+      {{ t.town.classroom.mine }}<b>{{ catalog.mcName(data.mine.mcId) }}</b
+      >{{
+        t.town.classroom.mineLine(
+          data.mine.level,
+          data.mine.learned + data.mine.stolen,
+          data.mine.maxNum,
+          leftText(data.mine.endsAt),
+        )
+      }}
       <button
         v-if="data.canForceClose"
         class="btn btn-sm btn-outline-danger ms-2"
@@ -99,24 +104,29 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
         :disabled="busy"
         @click="close"
       >
-        强制结束
+        {{ t.town.classroom.forceClose }}
       </button>
     </div>
     <div v-else class="border rounded p-2 mb-2 small" data-testid="open-panel">
-      开课（消耗 1 张残卷和 1 张教师证）：
+      {{ t.town.classroom.openTitle }}
       <select v-model.number="pickMc" class="form-select form-select-sm my-1" data-testid="open-mc">
-        <option :value="null" disabled>选择已学的特色菜</option>
+        <option :value="null" disabled>{{ t.town.classroom.pickMc }}</option>
         <option v-for="m in mc?.learned ?? []" :key="m.mcId" :value="m.mcId">
-          {{ catalog.mcName(m.mcId) }}（{{ catalog.mc(m.mcId)?.level }} 级）
+          {{ t.town.classroom.mcOption(catalog.mcName(m.mcId), catalog.mc(m.mcId)?.level) }}
         </option>
       </select>
       <select v-model.number="pickCert" class="form-select form-select-sm mb-1" data-testid="open-cert">
-        <option :value="null" disabled>选择教师证</option>
+        <option :value="null" disabled>{{ t.town.classroom.pickCert }}</option>
         <option v-for="c in certsFor" :key="c.goodsId" :value="c.goodsId">
-          {{ catalog.goodsName(c.goodsId) }}（体力 {{ c.needStrength }}，{{ c.lessonHour }} 小时，{{
-            c.maxNum
+          {{
+            t.town.classroom.certOption(
+              catalog.goodsName(c.goodsId),
+              c.needStrength,
+              c.lessonHour,
+              c.maxNum,
+              c.num,
+            )
           }}
-          人，持有 {{ c.num }}）
         </option>
       </select>
       <button
@@ -125,12 +135,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
         :disabled="busy || pickMc === null || pickCert === null"
         @click="open"
       >
-        开课
+        {{ t.town.classroom.open }}
       </button>
     </div>
 
-    <h6>正在上的课</h6>
-    <div v-if="others.length === 0" class="small text-muted">现在没有别人开的课</div>
+    <h6>{{ t.town.classroom.running }}</h6>
+    <div v-if="others.length === 0" class="small text-muted">{{ t.town.classroom.none }}</div>
     <div
       v-for="l in others"
       :key="l.id"
@@ -138,9 +148,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
       :data-testid="`lesson-${l.id}`"
     >
       <div class="flex-fill">
-        <b>{{ catalog.mcName(l.mcId) }}</b> {{ l.level }} 级 · 老师 {{ l.teacherName }}
+        <b>{{ catalog.mcName(l.mcId) }}</b
+        >{{ t.town.classroom.lessonLine(l.level, l.teacherName) }}
         <div class="text-muted">
-          {{ l.learned + l.stolen }}/{{ l.maxNum }} 人（偷学 {{ l.stolen }}）· 还剩 {{ leftText(l.endsAt) }}
+          {{ t.town.classroom.lessonMeta(l.learned + l.stolen, l.maxNum, l.stolen, leftText(l.endsAt)) }}
         </div>
       </div>
       <button
@@ -149,7 +160,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
         :disabled="busy || l.tried"
         @click="learn(l, 1)"
       >
-        学
+        {{ t.town.classroom.learn }}
       </button>
       <button
         class="btn btn-sm btn-outline-danger"
@@ -157,11 +168,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取教室失�
         :disabled="busy || l.tried || l.stolen > 1"
         @click="learn(l, 2)"
       >
-        偷学
+        {{ t.town.classroom.steal }}
       </button>
     </div>
     <p class="small text-muted mt-2">
-      学：花 售价×3 银币和 2 个同级残卷碎片，老师分到 售价×2 和 1 个碎片。每门课只能试一次。
+      {{ t.town.classroom.rule }}
     </p>
   </div>
 </template>

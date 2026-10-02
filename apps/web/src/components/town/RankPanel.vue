@@ -3,6 +3,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import { RANK_BOARDS, RANK_GROUPS, type LeaderboardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
+import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
@@ -11,6 +13,7 @@ import { shortNum } from '../../utils/format';
 /** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类按钮组；厨力榜 10 分钟更新，其他每分钟 */
 const session = useSessionStore();
 const toast = useToastStore();
+const t = useT();
 const KEY = 'dt_rank_board';
 
 function initialKey(): string {
@@ -34,7 +37,14 @@ function pickGroup(g: string) {
   key.value = RANK_BOARDS.find((b) => b.group === g)!.key;
 }
 const hhmm = (iso: string) =>
-  new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  new Date(iso).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' });
+const rk = computed(() => t.value.town.rank);
+/** 大类、小类、奖励的名字按语言；键对不上时退回共用定义里的简中 */
+const groupName = (g: string) => rk.value.groups[RANK_GROUPS.indexOf(g)] ?? g;
+const boardName = (b: { key: string; label: string }) =>
+  rk.value.boards[b.key] ?? rk.value.periods[b.key.split('.').at(-1) ?? ''] ?? b.label;
+const rewardOf = (b: { key: string; reward?: string }) =>
+  b.reward ? (rk.value.rewards[b.key] ?? b.reward) : '';
 
 let seq = 0;
 async function load() {
@@ -43,7 +53,7 @@ async function load() {
     const v = await endpoints.rank(key.value);
     if (n === seq) data.value = v;
   } catch (e) {
-    if (n === seq) toast.push(errorMessage(e, '读取排行失败'), 'danger');
+    if (n === seq) toast.push(errorMessage(e, t.value.town.rank.loadFailed), 'danger');
   }
 }
 watch(key, (v) => {
@@ -68,7 +78,7 @@ onMounted(load);
         :aria-current="group === g ? 'true' : undefined"
         :data-testid="`rank-group-${g}`"
         @click.prevent="pickGroup(g)"
-        >{{ g }}</a
+        >{{ groupName(g) }}</a
       >
     </div>
     <div v-if="subs.length > 1" class="btn-group btn-group-sm flex-wrap mb-2">
@@ -79,16 +89,18 @@ onMounted(load);
         :data-testid="`rank-board-${b.key}`"
         @click="key = b.key"
       >
-        {{ b.label }}
+        {{ boardName(b) }}
       </button>
     </div>
     <div class="dt-meta mb-1" data-testid="rank-meta">
-      {{ key === 'power' ? '每 10 分钟更新' : '每分钟更新'
-      }}<span v-if="data"> · 更新于 {{ hhmm(data.updatedAt) }}</span>
+      {{ key === 'power' ? rk.every10 : rk.every1
+      }}<span v-if="data">{{ rk.updatedAt(hhmm(data.updatedAt)) }}</span>
     </div>
-    <div v-if="def.reward" class="dt-meta mb-2" data-testid="rank-reward">奖励：{{ def.reward }}</div>
+    <div v-if="def.reward" class="dt-meta mb-2" data-testid="rank-reward">
+      {{ rk.reward(rewardOf(def)) }}
+    </div>
     <template v-if="data">
-      <div v-if="data.rows.length === 0" class="dt-empty">还没有人上榜</div>
+      <div v-if="data.rows.length === 0" class="dt-empty">{{ rk.empty }}</div>
       <div
         v-for="r in data.rows"
         :key="r.restId"
@@ -104,9 +116,9 @@ onMounted(load);
         <span class="fw-bold">{{ shortNum(r.value) }}</span>
       </div>
       <div v-if="data.me && !meInRows" class="dt-item dt-item-me mt-2" data-testid="rank-me">
-        我：第 {{ data.me.rank }} 名 · {{ shortNum(data.me.value) }}
+        {{ rk.me(data.me.rank, shortNum(data.me.value)) }}
       </div>
     </template>
-    <div class="dt-meta mt-2">赛厨榜在厨塔、克拉肯月榜在神殿查看</div>
+    <div class="dt-meta mt-2">{{ rk.elsewhere }}</div>
   </div>
 </template>
