@@ -123,7 +123,7 @@ where c.activity_id = $1 and c.key = 'points' and r.shard_id = $2
 ```ts
 coop: {
   pool: number;
-  top: Array<{ rank: number; restId: number; name: string; points: number }>; // 前 10 名
+  top: Array<{ rank: number; restId: number; name: string; points: number; mine: boolean }>; // 前 10 名；mine = 是不是我的店（前端没有店 id，加粗自己用）
   myRank: number | null;
 } | null;  // 其他类型为 null
 ```
