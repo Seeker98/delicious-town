@@ -1138,6 +1138,24 @@ export interface PredictTradeTable {
   price_after: number;
   created_at: Ts;
 }
+export interface KujiPoolTable {
+  id: Generated<string>;
+  shard_id: number;
+  day: string;
+  seq: number;
+  status: 'open' | 'sold_out' | 'expired';
+  total: number;
+  last_rest_id: Nullable<number>;
+  created_at: Ts;
+  closed_at: TsNullable;
+}
+export interface KujiTicketTable {
+  pool_id: string;
+  idx: number;
+  tier: string;
+  drawn_by: Nullable<number>;
+  drawn_at: TsNullable;
+}
 export interface ExchangeFreezeTable {
   rest_id: number;
   reason: string;
@@ -1237,6 +1255,8 @@ export interface DB {
   predict_event: PredictEventTable;
   predict_position: PredictPositionTable;
   predict_trade: PredictTradeTable;
+  kuji_pool: KujiPoolTable;
+  kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;
