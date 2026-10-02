@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useLocaleStore } from '../stores/locale';
 import { computed, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { USERNAME_RE } from '@dt/shared';
@@ -22,6 +23,7 @@ const error = ref('');
 const busy = ref(false);
 const router = useRouter();
 const session = useSessionStore();
+const locale = useLocaleStore();
 
 const localError = computed(() => {
   const f = form.value;
@@ -37,13 +39,16 @@ async function submit() {
   busy.value = true;
   error.value = '';
   try {
-    session.me = await endpoints.register({
+    const me = await endpoints.register({
       username: form.value.username,
       password: form.value.password,
       email: form.value.email,
       inviteCode: form.value.inviteCode || undefined,
       captchaToken: captchaToken.value,
+      // 注册时带上当前界面语言（问题记录 272）
+      lang: locale.locale,
     });
+    await session.applyMe(me);
     await router.replace({ name: 'shards' });
   } catch (e) {
     error.value = errorMessage(e, '注册失败');

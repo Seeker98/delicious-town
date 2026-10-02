@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LangSelect from '../components/LangSelect.vue';
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import type { AccountProfileDto } from '@dt/shared';
@@ -73,6 +74,10 @@ async function logout() {
   <template v-if="p">
     <h6 class="dt-section">账号</h6>
     <div class="small mb-3">
+      <div class="d-flex align-items-center gap-2 mb-1" data-testid="acc-lang">
+        语言
+        <LangSelect />
+      </div>
       <div>
         用户名 <b>{{ p.username }}</b
         ><span v-if="ROLE[p.role]" class="badge bg-secondary ms-1">{{ ROLE[p.role] }}</span>

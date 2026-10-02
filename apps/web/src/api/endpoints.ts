@@ -165,6 +165,8 @@ export const endpoints = {
   me: () => api.get<MeDto>('/api/v1/account/me'),
   register: (body: RegisterInput) => api.post<MeDto>('/api/v1/account/register', body),
   login: (body: LoginInput) => api.post<MeDto>('/api/v1/account/login', body),
+  /** 账号语言（问题记录 272） */
+  setLang: (lang: Locale) => api.post<{ lang: Locale }>('/api/v1/account/lang', { lang }),
   logout: () => api.post<Empty>('/api/v1/account/logout'),
   sendVerifyEmail: () => api.post<Empty>('/api/v1/account/send-verify-email'),
   verifyEmail: (token: string) => api.post<Empty>('/api/v1/account/verify-email', { token }),

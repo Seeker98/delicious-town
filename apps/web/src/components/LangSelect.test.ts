@@ -1,0 +1,96 @@
+import { flushPromises, mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { LOADERS } from '../i18n';
+import { endpoints } from '../api/endpoints';
+import { useLocaleStore } from '../stores/locale';
+import { useSessionStore } from '../stores/session';
+import { useToastStore } from '../stores/toast';
+import LangSelect from './LangSelect.vue';
+
+vi.mock('../api/endpoints', () => ({ endpoints: { setLang: vi.fn(), me: vi.fn(), logout: vi.fn() } }));
+
+const me = (lang: string | null) =>
+  ({
+    accountId: 1,
+    username: 'u',
+    email: 'u@x',
+    emailVerified: true,
+    role: 'player',
+    shardId: null,
+    restaurantId: null,
+    lang,
+  }) as never;
+
+describe('语言选择（问题记录 272）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.setLang).mockResolvedValue({ lang: 'fr' } as never);
+  });
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('列出五种语言；没登录时选了只在浏览器生效，不存账号', async () => {
+    const w = mount(LangSelect);
+    const opts = w.findAll('option').map((o) => o.text());
+    expect(opts).toEqual(['简体中文', '繁體中文', 'English', 'Français', 'Español']);
+    await w.get('[data-testid="lang-select"]').setValue('en');
+    // 第一次切到某种语言要动态加载翻译包
+    await vi.waitFor(() => expect(useLocaleStore().locale).toBe('en'));
+    await flushPromises();
+    expect(endpoints.setLang).not.toHaveBeenCalled();
+  });
+
+  it('登录后选了同时存到账号', async () => {
+    useSessionStore().me = me('zh-CN');
+    const w = mount(LangSelect);
+    await w.get('[data-testid="lang-select"]').setValue('fr');
+    await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'));
+    expect(useLocaleStore().locale).toBe('fr');
+  });
+
+  it('翻译包加载失败：提示，语言不变', async () => {
+    vi.spyOn(LOADERS, 'es').mockRejectedValueOnce(new Error('offline'));
+    const w = mount(LangSelect);
+    await w.get('[data-testid="lang-select"]').setValue('es');
+    await flushPromises();
+    expect(useLocaleStore().locale).toBe('zh-CN');
+    expect(useToastStore().items.at(-1)!.text).toBe('切换语言失败，请检查网络后再试');
+    expect((w.get('[data-testid="lang-select"]').element as HTMLSelectElement).value).toBe('zh-CN');
+  });
+});
+
+describe('登录后用账号语言（问题记录 272）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.setLang).mockResolvedValue({ lang: 'zh-CN' } as never);
+  });
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('账号设过语言：切过去，不再存', async () => {
+    await useSessionStore().applyMe(me('es'));
+    expect(useLocaleStore().locale).toBe('es');
+    expect(endpoints.setLang).not.toHaveBeenCalled();
+  });
+
+  it('账号没设过（老账号）或值不合法：保持当前语言，并存到账号', async () => {
+    await useSessionStore().applyMe(me(null));
+    expect(useLocaleStore().locale).toBe('zh-CN');
+    expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
+    vi.clearAllMocks();
+    await useSessionStore().applyMe(me('klingon'));
+    expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
+  });
+
+  it('load() 读到账号后同样处理', async () => {
+    vi.mocked(endpoints.me).mockResolvedValue(me('fr'));
+    await useSessionStore().load();
+    expect(useLocaleStore().locale).toBe('fr');
+  });
+});

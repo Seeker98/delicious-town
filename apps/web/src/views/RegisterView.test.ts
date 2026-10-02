@@ -43,6 +43,8 @@ describe('RegisterView', () => {
     await w.find('form').trigger('submit');
     await flushPromises();
     expect(w.text()).toContain('这个用户名已经被注册了');
+    // 注册时带上当前界面语言（问题记录 272）
+    expect(endpoints.register).toHaveBeenCalledWith(expect.objectContaining({ lang: 'zh-CN' }));
     expect(resetSpy).toHaveBeenCalledTimes(1);
     expect(w.find('button').attributes('disabled')).toBeDefined();
   });

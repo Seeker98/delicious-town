@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LangSelect from '../components/LangSelect.vue';
 import { onMounted, ref } from 'vue';
 import type { AnnouncementDto } from '@dt/shared';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -28,7 +29,7 @@ async function submit() {
   busy.value = true;
   error.value = '';
   try {
-    session.me = await endpoints.login({ username: username.value, password: password.value });
+    await session.applyMe(await endpoints.login({ username: username.value, password: password.value }));
     const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/shards';
     await router.replace(redirect);
   } catch (e) {
@@ -43,7 +44,10 @@ async function submit() {
   <AnnounceBanner :items="announcements" />
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">登录美味小镇</h5>
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h5 class="card-title mb-0">登录美味小镇</h5>
+        <LangSelect />
+      </div>
       <form @submit.prevent="submit">
         <input
           v-model.trim="username"
