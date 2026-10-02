@@ -43,6 +43,13 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.exp).toBe(16);
   });
 
+  it('银币倍率（148-4）：每桌银币乘倍率，挑剔满足的额外银币一起变', () => {
+    const tuning = { ...rules, settlement: { ...rules.settlement, coinMultiplier: 2 } };
+    const r = settle({}, { tuning }, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(r.tables[0]!.last).toMatchObject({ coin: 20 });
+    expect(r.coin).toBe(20);
+  });
+
   it('每桌银币加成只加一次（设计文档 裁定 1）', () => {
     const r = settle({ agg: { coinValue: 3 } }, {}, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
     expect(r.coin).toBe(13);
