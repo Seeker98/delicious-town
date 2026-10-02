@@ -44,4 +44,5 @@ export const NEWS_TYPES: readonly string[] = [
   'town.exchange',
   'kuji.big',
   'kuji.win',
+  'predict.result',
 ];

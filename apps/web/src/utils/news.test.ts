@@ -47,6 +47,22 @@ describe('新闻文案', () => {
     expect(newsText(n('kuji.win', { tier: 'B' }), names)).toBe('小王的店在一番赏抽中了 B 赏');
   });
 
+  it('事件预测开奖（问题记录 268）：结果、参与和押对的店数、派出银币；作废写退款比例；没人押对时不写派出', () => {
+    const r = (p: Record<string, unknown>) => newsText({ ...n('predict.result', p), restName: null }, names);
+    expect(r({ title: '明天会下雨吗', outcome: true, players: 12, winners: 7, paid: 85000 })).toBe(
+      '事件预测「明天会下雨吗」开奖：结果为是。12 家店参与，7 家押对，共派出 85,000 银币',
+    );
+    expect(r({ title: '蟹老板去三街吗', outcome: false, players: 3, winners: 0, paid: 0 })).toBe(
+      '事件预测「蟹老板去三街吗」开奖：结果为否。3 家店参与，没有人押对',
+    );
+    expect(r({ title: '没人玩', outcome: true, players: 0, winners: 0, paid: 0 })).toBe(
+      '事件预测「没人玩」开奖：结果为是',
+    );
+    expect(r({ title: '题目写错了', outcome: null, voidRatio: 0.85, players: 4 })).toBe(
+      '事件预测「题目写错了」已作废，参与的店按净投入的 85% 退款',
+    );
+  });
+
   it('嘻哈男孩和手动进货（4E-2）', () => {
     expect(newsText(n('hiphop.event'), names)).toBe('小王的店开启了嘻哈活动！');
     expect(newsText(n('hiphop.krab', { num: 4 }), names)).toBe('小王的店通过打赏获得 道具240×4');

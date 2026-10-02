@@ -32,6 +32,60 @@ describe('截止（238-1 设计 §6.2）', () => {
   });
 });
 
+const resultNews = async (shardId: number) =>
+  (
+    await t.db
+      .selectFrom('news')
+      .select(['type', 'rest_id', 'params'])
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'predict.result')
+      .execute()
+  ).map((n) => ({ ...n, params: typeof n.params === 'string' ? JSON.parse(n.params) : n.params }));
+
+describe('开奖上小镇新闻（问题记录 268）', () => {
+  it('判定：写一条新闻，带题目、结果、参与和押对的店数、派出的银币', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId, { title: '明天会下雨吗' });
+    const a = await trader(t, { shardId, coin: 1_000_000 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    const c = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 7 });
+    await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 4 });
+    // c 买了又全部卖掉：算参与，不算押对
+    await svc().trade(c, id, { side: 'yes', dir: 'buy', qty: 3 });
+    await svc().trade(c, id, { side: 'yes', dir: 'sell', qty: 3 });
+    await admin().resolve(actor, id, true);
+    expect(await resultNews(shardId)).toEqual([
+      {
+        type: 'predict.result',
+        rest_id: null,
+        params: { eventId: id, title: '明天会下雨吗', outcome: true, players: 3, winners: 1, paid: 7000 },
+      },
+    ]);
+  });
+
+  it('作废：新闻写退款比例；没人参与也照样发', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId, { title: '题目写错了' });
+    await admin().voidEvent(actor, id);
+    expect(await resultNews(shardId)).toEqual([
+      {
+        type: 'predict.result',
+        rest_id: null,
+        params: { eventId: id, title: '题目写错了', outcome: null, voidRatio: 1, players: 0 },
+      },
+    ]);
+  });
+
+  it('已经是终态时再判定被拒，不重复发新闻', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    await admin().resolve(actor, id, false);
+    await expect(admin().voidEvent(actor, id)).rejects.toThrow();
+    expect(await resultNews(shardId)).toHaveLength(1);
+  });
+});
+
 describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
   it('判定为是：押"是"的按 unit × 份数到账，押"否"的没有；写日志；全部结算完写 settled_at', async () => {
     const shardId = await createShard(t.db);

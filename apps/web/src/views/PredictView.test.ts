@@ -49,7 +49,16 @@ const detail: PredictDetailDto = {
     qNo: 0,
     openAt: '2026-10-02T00:00:00.000Z',
   },
-  trades: [{ side: 'yes', dir: 'buy', qty: 2, amount: 1100, createdAt: '2026-10-02T01:00:00.000Z' }],
+  trades: [
+    {
+      side: 'yes',
+      dir: 'buy',
+      qty: 2,
+      amount: 1100,
+      priceAfter: 0.634,
+      createdAt: '2026-10-02T01:00:00.000Z',
+    },
+  ],
   points: [0.5, 0.55, 0.634],
   mine: { bought: 0, sold: 0, fees: 0, voidRatio: null, trades: [] },
 };
@@ -125,8 +134,24 @@ describe('PredictView（238-1 设计 §7.2）', () => {
         fees: 80,
         voidRatio: null,
         trades: [
-          { side: 'no', dir: 'sell', qty: 2, amount: 1071, fee: 22, createdAt: '2026-10-02T02:00:00.000Z' },
-          { side: 'yes', dir: 'buy', qty: 3, amount: 1640, fee: 33, createdAt: '2026-10-02T01:00:00.000Z' },
+          {
+            side: 'no',
+            dir: 'sell',
+            qty: 2,
+            amount: 1071,
+            fee: 22,
+            priceAfter: 0.7,
+            createdAt: '2026-10-02T02:00:00.000Z',
+          },
+          {
+            side: 'yes',
+            dir: 'buy',
+            qty: 3,
+            amount: 1640,
+            fee: 33,
+            priceAfter: 0.66,
+            createdAt: '2026-10-02T01:00:00.000Z',
+          },
         ],
       },
     });
@@ -146,6 +171,62 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     const mine = w.get('[data-testid="pd-mine"]').text();
     expect(mine).toContain('卖出否 2 份');
     expect(mine).toContain('买入是 3 份');
+    // 每笔写每份均价和实际花费 / 得到（含手续费）（问题记录 264）
+    expect(mine).toContain('每份约 536，得到 1,049');
+    expect(mine).toContain('每份约 547，花费 1,673');
+  });
+
+  it('点开的事件详情就展开在这一行下面，再点一次收起（问题记录 264）', async () => {
+    vi.mocked(endpoints.predictList).mockResolvedValue(
+      list({
+        events: [
+          ev(),
+          ev({ id: 3, title: '第二个' }),
+          ev({
+            id: 2,
+            title: '已结束的',
+            status: 'resolved',
+            outcome: true,
+            yes: 3,
+            netCost: 1600,
+            payout: 3000,
+          }),
+        ],
+      }),
+    );
+    const w = mount(PredictView);
+    await flushPromises();
+    const pos = (sel: string) => w.html().indexOf(sel);
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    expect(pos('data-testid="pd-detail"')).toBeGreaterThan(pos('data-testid="pd-event-1"'));
+    expect(pos('data-testid="pd-detail"')).toBeLessThan(pos('data-testid="pd-event-3"'));
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="pd-detail"]').exists()).toBe(false);
+
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: { ...detail.event, id: 2, status: 'resolved', outcome: true, payout: 3000 },
+    });
+    await w.get('[data-testid="pd-ended-2"]').trigger('click');
+    await flushPromises();
+    expect(pos('data-testid="pd-detail"')).toBeGreaterThan(pos('data-testid="pd-ended-2"'));
+  });
+
+  it('止盈止损写进说明；成交记录说明是什么，全服成交写每份均价和成交后的价格（问题记录 260、264）', async () => {
+    const w = mount(PredictView);
+    await flushPromises();
+    expect(w.text()).toContain('止盈');
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    const help = w.get('[data-testid="pd-help"]').text();
+    expect(help).toContain('止损');
+    expect(help).toContain('止盈');
+    const trades = w.get('[data-testid="pd-trades"]').text();
+    expect(trades).toContain('全服最近成交');
+    expect(trades).toContain('买入是 2 份，每份约 550');
+    expect(trades).toContain('成交后"是" 63%');
   });
 
   it('作废的事件：写出退款比例', async () => {

@@ -44,6 +44,15 @@ describe('GuideView（问题记录 150）', () => {
       expect(w.find(`[data-testid="guide-${k}"]`).exists()).toBe(true);
   });
 
+  it('常见问题里写事件预测可以开奖前卖出止盈止损（问题记录 260）', async () => {
+    useSessionStore().me = me(1);
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    const w = await mountView();
+    const faq = w.get('[data-testid="guide-faq"]').text();
+    expect(faq).toContain('事件预测');
+    expect(faq).toContain('止损');
+  });
+
   it('没开店：不请求新手码，提示开店后可以领（Review Focus 3）', async () => {
     useSessionStore().me = me(null);
     const w = await mountView();

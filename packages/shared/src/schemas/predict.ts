@@ -64,8 +64,15 @@ export interface PredictDetailDto {
     qNo: number;
     openAt: string;
   };
-  /** 最近 20 笔成交，最新在前，不显示是谁 */
-  trades: Array<{ side: PredictSide; dir: PredictDir; qty: number; amount: number; createdAt: string }>;
+  /** 最近 20 笔成交，最新在前，不显示是谁；priceAfter 是成交后"是"的价格（问题记录 264） */
+  trades: Array<{
+    side: PredictSide;
+    dir: PredictDir;
+    qty: number;
+    amount: number;
+    priceAfter: number;
+    createdAt: string;
+  }>;
   /** 价格走势："是"的价格，最早在前；第一个是开题时的初始价格 */
   points: number[];
   /** 我这一局的收支（问题记录 254）：买入共花（含手续费）、卖出共得（已扣手续费）、手续费合计、作废退款比例、最近 100 笔成交 */
@@ -80,6 +87,7 @@ export interface PredictDetailDto {
       qty: number;
       amount: number;
       fee: number;
+      priceAfter: number;
       createdAt: string;
     }>;
   };
