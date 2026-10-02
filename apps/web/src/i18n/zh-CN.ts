@@ -168,6 +168,7 @@ const STATE: Record<string, string> = {
   predict_closed: '这个事件已经停止交易',
   kuji_ticket: '抽赏券不够',
   kuji_left: '这一池剩下的签不够了',
+  kuji_closed: '今天的奖池都抽完了，明天 0 点再来',
   store_full: '放不下了，先清理一下仓库',
   predict_not_enough: '持有的份数不够',
   predict_final: '这个事件已经判定或作废了',

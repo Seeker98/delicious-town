@@ -1151,6 +1151,8 @@ export interface KujiPoolTable {
   /** 开池时的奖品配置快照（一番赏终审 I1）；jsonb，读出为对象，写入传 JSON 字符串 */
   tiers: ColumnType<unknown, string | null | undefined, string | null>;
   last: ColumnType<unknown, string | null | undefined, string | null>;
+  /** 开池时的月度主题（问题记录 274）：1~12；之前开的池为空 */
+  theme: Nullable<number>;
 }
 export interface KujiTicketTable {
   pool_id: string;

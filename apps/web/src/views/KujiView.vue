@@ -28,6 +28,7 @@ const tierName = (k: string) => (k === 'last' ? '最后赏' : `${k} 赏`);
 const canDraw = (n: number) =>
   !!data.value &&
   !busy.value &&
+  !data.value.closedToday &&
   data.value.tickets >= n &&
   data.value.pool.left >= n &&
   n <= data.value.maxDraw;
@@ -75,6 +76,14 @@ onMounted(() => void load());
     点开新池，没抽完的当天作废。
   </div>
   <template v-if="data">
+    <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
+    <div v-if="data.theme" class="alert alert-info py-1 small mb-2" data-testid="kj-theme">
+      <b>{{ data.theme.month }} 月主题：{{ data.theme.name }}</b>
+      <span class="ms-1">{{ data.theme.desc }}本月的限定手办只在这个月抽得到。</span>
+    </div>
+    <div v-if="data.closedToday" class="alert alert-warning py-1 small mb-2" data-testid="kj-closed">
+      今天的奖池都抽完了，明天 0 点再来。
+    </div>
     <div class="dt-card mb-2" data-testid="kj-pool">
       <b>{{ data.pool.day }} 第 {{ data.pool.seq }} 池</b>
       <span class="ms-2">剩 {{ data.pool.left }} / {{ data.pool.total }}</span>

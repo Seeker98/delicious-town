@@ -23,6 +23,8 @@ export interface PoolRow {
   /** 开池时的奖品快照；终审前开的池没有（为空），按当前配置 */
   tiers: unknown;
   last: unknown;
+  /** 月度主题（问题记录 274） */
+  theme: number | null;
 }
 
 /** 这一池的奖品：有快照用快照，没有用当前配置（一番赏终审 I1：改区服数值只影响下一池） */
@@ -30,7 +32,18 @@ export function prizesOf(pool: PoolRow, current: Prizes): Prizes {
   return pool.tiers && pool.last ? { tiers: pool.tiers as Tiers, last: pool.last as Last } : current;
 }
 
-const COLS = ['id', 'shard_id', 'day', 'seq', 'status', 'total', 'last_rest_id', 'tiers', 'last'] as const;
+const COLS = [
+  'id',
+  'shard_id',
+  'day',
+  'seq',
+  'status',
+  'total',
+  'last_rest_id',
+  'tiers',
+  'last',
+  'theme',
+] as const;
 
 /** 开一池：按 tiers 生成签（各档连续编号，抽签时随机取，所以顺序无所谓）；唯一冲突（别人同时开了）返回 null */
 export async function openPool(
@@ -41,6 +54,7 @@ export async function openPool(
   tiers: Tiers,
   now: Date,
   last?: Last,
+  theme?: number,
 ): Promise<PoolRow | null> {
   const total = tiers.reduce((s, x) => s + x.count, 0);
   const p = (await tx
@@ -54,6 +68,7 @@ export async function openPool(
       created_at: now,
       tiers: last ? JSON.stringify(tiers) : null,
       last: last ? JSON.stringify(last) : null,
+      theme: theme ?? null,
     })
     .onConflict((oc) => oc.columns(['shard_id', 'day', 'seq']).doNothing())
     .returning(COLS)
@@ -79,7 +94,8 @@ export async function currentPool(
   tiers: Tiers,
   now: Date,
   last?: Last,
-): Promise<PoolRow> {
+  opts: { maxPools?: number; theme?: number } = {},
+): Promise<PoolRow | null> {
   const day = gameDay(now);
   // 快速路径（一番赏终审 I2）：今天已有进行中的池就直接用，不拿区服锁；昨天的池按 day 过滤拿不到，开新池时再标过期
   const ready = await findOpen(tx, shardId, day);
@@ -101,7 +117,9 @@ export async function currentPool(
       .where('shard_id', '=', shardId)
       .where('day', '=', day)
       .executeTakeFirstOrThrow();
-    const p = await openPool(tx, shardId, day, Number(max.m) + 1, tiers, now, last);
+    // 每天最多开 maxPools 池（问题记录 274）：今天已经开满就不再开，返回空
+    if (opts.maxPools !== undefined && Number(max.m) >= opts.maxPools) return null;
+    const p = await openPool(tx, shardId, day, Number(max.m) + 1, tiers, now, last, opts.theme);
     if (p) return p;
   }
   throw new Error(`kuji: cannot open pool for shard ${shardId}`);
@@ -114,6 +132,21 @@ async function findOpen(tx: Kysely<DB>, shardId: number, day: string): Promise<P
     .where('shard_id', '=', shardId)
     .where('day', '=', day)
     .where('status', '=', 'open')
+    .orderBy('seq', 'desc')
+    .executeTakeFirst()) as PoolRow | undefined;
+}
+
+/** 今天最后开的一池（不管状态），今天开满了以后看板显示它 */
+export async function latestToday(
+  tx: Kysely<DB>,
+  shardId: number,
+  day: string,
+): Promise<PoolRow | undefined> {
+  return (await tx
+    .selectFrom('kuji_pool')
+    .select(COLS)
+    .where('shard_id', '=', shardId)
+    .where('day', '=', day)
     .orderBy('seq', 'desc')
     .executeTakeFirst()) as PoolRow | undefined;
 }

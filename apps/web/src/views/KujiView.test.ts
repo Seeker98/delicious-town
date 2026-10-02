@@ -22,6 +22,8 @@ const view = (p: Partial<KujiViewDto> = {}): KujiViewDto => ({
     { key: 'F', count: 50, left: 50, award: { coin: 5000 }, icon: null, big: false },
   ],
   last: { award: { diamond: 200 }, icon: 'kuji_last' },
+  theme: { month: 7, name: '夏日冰饮', desc: '蝉鸣声里，刨冰和汽水最受欢迎。' },
+  closedToday: false,
   tickets: 3,
   price: 20000,
   buyLeft: 10,
@@ -83,5 +85,28 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     expect(r).toContain('银币 5,000');
     expect(r).toContain('最后赏');
     expect(w.get('[data-testid="kj-tickets"]').text()).toContain('2');
+  });
+
+  it('看板显示本月主题（问题记录 274）', async () => {
+    const w = mount(KujiView);
+    await flushPromises();
+    const th = w.get('[data-testid="kj-theme"]').text();
+    expect(th).toContain('7 月主题：夏日冰饮');
+    expect(th).toContain('刨冰');
+  });
+
+  it('今天的池都抽完了：提示明天再来，抽签按钮全部禁用', async () => {
+    vi.mocked(endpoints.kuji).mockResolvedValue(
+      view({
+        closedToday: true,
+        tickets: 10,
+        pool: { id: 1, day: '2026-10-02', seq: 3, total: 80, left: 0 },
+      }),
+    );
+    const w = mount(KujiView);
+    await flushPromises();
+    expect(w.get('[data-testid="kj-closed"]').text()).toContain('明天 0 点再来');
+    for (const n of [1, 5, 10])
+      expect(w.get(`[data-testid="kj-draw-${n}"]`).attributes('disabled')).toBeDefined();
   });
 });
