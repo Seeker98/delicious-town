@@ -20,13 +20,22 @@ export function gridLines(size: number): Array<{ key: string; cells: number[] }>
   ];
 }
 
+export const currencyKey = (i: number) => `m${i}`;
+export const exchangedKey = (i: number) => `x${i}`;
+export const dropDailyKey = (activityId: number, i: number) => `act${activityId}:d${i}`;
+
+/** 兑换活动结束后还能兑换到什么时候（148-2 设计 §5）；其他类型为 null */
+export function exchangeUntil(spec: ActivitySpec, endsAt: Date): Date | null {
+  return spec.kind === 'exchange' ? new Date(endsAt.getTime() + spec.def.graceHours * 3_600_000) : null;
+}
+
 /** 每份奖励是否达成（设计 §4.3）；顺序就是玩家页的显示顺序 */
 export function rewardsOf(
   spec: ActivitySpec,
   counters: Record<string, number>,
   premium: boolean,
 ): RewardState[] {
-  if (spec.kind === 'boost') return [];
+  if (spec.kind === 'boost' || spec.kind === 'exchange') return [];
   const count = (k: string) => counters[k] ?? 0;
   if (spec.kind === 'goals')
     return spec.def.goals.map((g, i) => ({
@@ -78,4 +87,16 @@ export function mergeRewards(list: RewardItems[]): RewardItems {
 export function activityState(now: Date, endsAt: Date, settled: boolean): ActivityState {
   if (now < endsAt) return 'running';
   return settled ? 'ended' : 'settling';
+}
+
+/** 兑换多次时的奖励：数量乘次数，帽子重复次数（148-2 设计 §5） */
+export function scaleRewards(r: RewardItems, times: number): RewardItems {
+  const out: RewardItems = {};
+  if (r.coin) out.coin = r.coin * times;
+  if (r.diamond) out.diamond = r.diamond * times;
+  if (r.exp) out.exp = r.exp * times;
+  if (r.goods?.length) out.goods = r.goods.map((g) => ({ id: g.id, num: g.num * times }));
+  if (r.foods?.length) out.foods = r.foods.map((f) => ({ id: f.id, num: f.num * times }));
+  if (r.hats?.length) out.hats = Array.from({ length: times }, () => r.hats!).flat();
+  return out;
 }

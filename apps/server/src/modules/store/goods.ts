@@ -1,5 +1,5 @@
 import { sql, type Kysely } from 'kysely';
-import { DEVICE_TYPE, GOODS_TYPE } from '@dt/config';
+import { DEVICE_TYPE, GOODS_TYPE, takesStoreSlot } from '@dt/config';
 import { ErrorCode } from '@dt/shared';
 import { notEnough } from '../../core/errors';
 import { invalidateAgg } from '../../core/luck';
@@ -106,7 +106,7 @@ export async function removeHonor(op: Op, goodsId: number): Promise<boolean> {
   return Number(del.numDeletedRows) > 0;
 }
 
-/** 仓库占用 = 持有的不同非勋章道具种数 + 未穿戴的厨具件数（2A 裁定 6，2B 裁定 7） */
+/** 仓库占用 = 持有的不同占格道具种数（勋章、纪念品不占格） + 未穿戴的厨具件数（2A 裁定 6，2B 裁定 7） */
 export async function storeKinds(op: Op): Promise<number> {
   const rows = await op.tx
     .selectFrom('store_item')
@@ -114,7 +114,7 @@ export async function storeKinds(op: Op): Promise<number> {
     .where('rest_id', '=', op.rest.id)
     .where('num', '>', 0)
     .execute();
-  const kinds = rows.filter((r) => op.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length;
+  const kinds = rows.filter((r) => takesStoreSlot(op.config.goods.get(r.goods_id))).length;
   return kinds + (await looseEquipCount(op.tx, op.rest.id));
 }
 
@@ -132,7 +132,7 @@ export async function looseEquipCount(db: Kysely<DB>, restId: number): Promise<n
 /** 购买新种类的道具前检查仓库容量；奖励类发放不调用它 */
 export async function assertStoreRoom(op: Op, goodsId: number): Promise<void> {
   const g = op.config.requireGoods(goodsId);
-  if (g.type === GOODS_TYPE.honor) return;
+  if (!takesStoreSlot(g)) return;
   if (g.type !== GOODS_TYPE.equip && (await countGoods(op, goodsId)) > 0) return;
   if ((await storeKinds(op)) >= op.rest.store_num)
     throw new AppError(ErrorCode.STORE_FULL, 400, { storeNum: op.rest.store_num });

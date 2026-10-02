@@ -1,4 +1,4 @@
-import { GOODS_TYPE } from '@dt/config';
+import { takesStoreSlot } from '@dt/config';
 import {
   addDays,
   gameParts,
@@ -77,8 +77,7 @@ export function createStoreService(d: GameDeps) {
           };
         });
       const equips = await looseEquipCount(d.db, ctx.restaurantId);
-      const kinds =
-        rows.filter((r) => d.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length + equips;
+      const kinds = rows.filter((r) => takesStoreSlot(d.config.goods.get(r.goods_id))).length + equips;
       return { kinds, storeNum: rest.store_num, equips, items };
     },
 

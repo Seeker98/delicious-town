@@ -7,6 +7,10 @@ import type { ActivityService } from './service';
 
 const idParam = z.object({ id: z.coerce.number().int().positive() });
 const keyBody = z.object({ key: z.string().min(1).max(16) });
+const exchangeBody = z.object({
+  index: z.number().int().min(0).max(29),
+  times: z.number().int().min(1).max(99),
+});
 
 export function activityRoutes(svc: ActivityService): FastifyPluginAsync {
   return async (r) => {
@@ -20,5 +24,9 @@ export function activityRoutes(svc: ActivityService): FastifyPluginAsync {
       okOp(await svc.claimAll(restCtxOf(req), id(req.params))),
     );
     r.post('/activities/:id/unlock', async (req) => okOp(await svc.unlock(restCtxOf(req), id(req.params))));
+    r.post('/activities/:id/exchange', async (req) => {
+      const b = parse(exchangeBody, req.body);
+      return okOp(await svc.exchange(restCtxOf(req), id(req.params), b.index, b.times));
+    });
   };
 }

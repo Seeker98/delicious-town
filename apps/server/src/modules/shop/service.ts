@@ -1,4 +1,4 @@
-import { goodsEffectHours, GOODS_TYPE, type Goods } from '@dt/config';
+import { goodsEffectHours, GOODS_TYPE, takesStoreSlot, type Goods } from '@dt/config';
 import {
   ErrorCode,
   hashSeed,
@@ -72,9 +72,9 @@ export function createShopService(d: GameDeps) {
       const owned = new Map(
         rows.map((r) => [r.goods_id, r.expires_at !== null && r.expires_at <= now ? 0 : r.num]),
       );
-      // 仓库占用：与 storeKinds 同一口径（非勋章种数 + 未穿戴厨具件数）
+      // 仓库占用：与 storeKinds 同一口径（占格道具种数 + 未穿戴厨具件数）
       const kinds =
-        rows.filter((r) => r.num > 0 && d.config.goods.get(r.goods_id)?.type !== GOODS_TYPE.honor).length +
+        rows.filter((r) => r.num > 0 && takesStoreSlot(d.config.goods.get(r.goods_id))).length +
         (await looseEquipCount(d.db, ctx.restaurantId));
       const storeFull = kinds >= rest.store_num;
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);

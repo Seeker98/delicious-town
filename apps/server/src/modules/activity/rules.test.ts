@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GridDef, PassDef } from '@dt/shared';
-import { activityState, mergeRewards, rewardsOf } from './rules';
+import { activityState, mergeRewards, rewardsOf, scaleRewards } from './rules';
 
 const a = (coin: number) => ({ coin });
 const reached = (xs: Array<{ key: string; reached: boolean }>) =>
@@ -117,5 +117,20 @@ describe('活动状态', () => {
     expect(activityState(new Date(end.getTime() - 1), end, false)).toBe('running');
     expect(activityState(end, end, false)).toBe('settling');
     expect(activityState(end, end, true)).toBe('ended');
+  });
+});
+
+describe('scaleRewards（148-2）', () => {
+  it('数量乘次数，帽子重复次数', () => {
+    expect(
+      scaleRewards({ coin: 2, goods: [{ id: 5, num: 3 }], hats: [{ tier: 'jade', name: '甲' }] }, 2),
+    ).toEqual({
+      coin: 4,
+      goods: [{ id: 5, num: 6 }],
+      hats: [
+        { tier: 'jade', name: '甲' },
+        { tier: 'jade', name: '甲' },
+      ],
+    });
   });
 });

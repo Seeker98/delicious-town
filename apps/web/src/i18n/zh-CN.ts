@@ -73,6 +73,7 @@ const KIND: Record<string, string> = {
   attrPoint: '属性点',
   portions: '份数',
   renown: '声望',
+  activity_currency: '活动货币',
 };
 
 const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
@@ -105,6 +106,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
+  activity_exchange: (p) => `这一项每人最多换 ${String(p.limit)} 次，还能换 ${String(p.left)} 次`,
   forum_post: (p) => `今天发帖已达上限（${String(p.max)} 篇）`,
   presets: (p) => `预设最多 ${String(p.max)} 套`,
   market: (p) => `这批货每人限购 ${String(p.limit)} 份`,
@@ -144,6 +146,9 @@ const STATE: Record<string, string> = {
   not_running: '活动不在进行中（结束后未领的奖励会发到邮箱）',
   no_reward: '没有这份奖励',
   not_pass: '这个活动没有进阶奖励',
+  not_exchange: '这个活动不能兑换',
+  exchange_closed: '兑换期已经结束，活动货币已作废',
+  no_item: '没有这个兑换项',
   nothing: '没有可以领的奖励',
   locked_after_start: '活动已开始，只能改标题、说明和延长结束时间',
   started: '活动已开始，不能删除',

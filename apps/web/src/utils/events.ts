@@ -147,6 +147,7 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'town.wish': () => '在广场许了愿',
   'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
   'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
+  'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,
   'mail.claim': (p) => `领取了邮件「${String(p.title ?? '')}」的附件`,
   'admin.rename': (p) =>
     `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」：${String(p.reason ?? '')}`,

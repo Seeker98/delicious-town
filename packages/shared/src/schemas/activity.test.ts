@@ -137,3 +137,71 @@ describe('终审 I1：全服加成对所有等级生效', () => {
     expect(paths({ ...b, minLevel: 1 })).toEqual([]);
   });
 });
+
+describe('兑换活动定义（148-2 设计 §3）', () => {
+  const award = { coin: 1 };
+  const def = (patch: Record<string, unknown> = {}) => ({
+    currencies: [{ name: '福' }, { name: '禄' }],
+    drops: [{ key: 'market.buy', chance: 0.05, currency: 0, num: 1, dailyCap: 10 }],
+    shop: [
+      {
+        cost: [
+          { currency: 0, num: 1 },
+          { currency: 1, num: 1 },
+        ],
+        award,
+        limit: 3,
+      },
+    ],
+    graceHours: 24,
+    ...patch,
+  });
+  const ex = (patch: Record<string, unknown> = {}) => ({ ...base, kind: 'exchange', def: def(patch) });
+  it('合法的能过', () => {
+    expect(paths(ex())).toEqual([]);
+  });
+  it('货币名为空、超长、重名都报错', () => {
+    expect(paths(ex({ currencies: [{ name: '' }] }))[0]).toMatch(/^def\.currencies\.0\.name:/);
+    expect(paths(ex({ currencies: [{ name: '一二三四五六七' }] }))[0]).toMatch(/^def\.currencies\.0\.name:/);
+    expect(paths(ex({ currencies: [{ name: '福' }, { name: '福' }] }))).toContain(
+      'def.currencies:duplicate_name',
+    );
+  });
+  it('引用不存在的货币、概率越界或超过 4 位小数、消耗为空或重复都报错', () => {
+    expect(
+      paths(ex({ drops: [{ key: 'market.buy', chance: 0.05, currency: 5, num: 1, dailyCap: 1 }] })),
+    ).toContain('def.drops.0.currency:no_currency');
+    expect(
+      paths(ex({ drops: [{ key: 'market.buy', chance: 0, currency: 0, num: 1, dailyCap: 1 }] }))[0],
+    ).toMatch(/^def\.drops\.0\.chance:/);
+    expect(
+      paths(ex({ drops: [{ key: 'market.buy', chance: 0.00001, currency: 0, num: 1, dailyCap: 1 }] })),
+    ).toContain('def.drops.0.chance:four_decimals');
+    expect(paths(ex({ shop: [{ cost: [], award, limit: 1 }] }))[0]).toMatch(/^def\.shop\.0\.cost:/);
+    expect(
+      paths(
+        ex({
+          shop: [
+            {
+              cost: [
+                { currency: 0, num: 1 },
+                { currency: 0, num: 2 },
+              ],
+              award,
+              limit: 1,
+            },
+          ],
+        }),
+      ),
+    ).toContain('def.shop.0.cost:duplicate_currency');
+    expect(paths(ex({ shop: [{ cost: [{ currency: 9, num: 1 }], award, limit: 1 }] }))).toContain(
+      'def.shop.0.cost.0.currency:no_currency',
+    );
+  });
+  it('兑换期默认 24 小时', () => {
+    const { graceHours, ...rest } = def();
+    void graceHours;
+    const r = activityBody.parse({ ...base, kind: 'exchange', def: rest });
+    expect((r.def as { graceHours: number }).graceHours).toBe(24);
+  });
+});
