@@ -183,3 +183,13 @@ describe('问题记录 154：酒吧、外卖的日志有中文文案', () => {
     );
   });
 });
+
+describe('问题记录 224：活动货币', () => {
+  it('提示里写货币名和个数，注明是活动货币；同名的合并', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const e = { type: 'gain' as const, kind: 'activityCurrency' as const, name: '马勋章', num: 1 };
+    expect(eventsSummary([e, e, { ...e, name: '猫勋章' }], names)).toBe(
+      '获得 马勋章×2（活动货币）、猫勋章×1（活动货币）',
+    );
+  });
+});

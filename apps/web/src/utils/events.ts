@@ -25,7 +25,7 @@ const KIND_NAMES: Record<string, string> = {
 export function mergeEvents(events: GameEvent[]): GameEvent[] {
   const out = new Map<string, GameEvent>();
   for (const e of events) {
-    const key = `${e.type}:${e.kind}:${e.id ?? ''}:${e.lucky ? 1 : 0}`;
+    const key = `${e.type}:${e.kind}:${e.id ?? ''}:${e.name ?? ''}:${e.lucky ? 1 : 0}`;
     const cur = out.get(key);
     if (cur) cur.num += e.num;
     else out.set(key, { ...e });
@@ -58,6 +58,7 @@ function eventItem(e: GameEvent, names: Names): string {
   else if (e.kind === 'remnant') what = `${mcNameOf(names, e.id ?? 0)}残卷×${formatNum(e.num)}`;
   else if (e.kind === 'seed') what = `${seedNameOf(names, e.id ?? 0)}×${formatNum(e.num)}`;
   else if (e.kind === 'basket') what = `菜篮·${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
+  else if (e.kind === 'activityCurrency') what = `${e.name ?? '活动货币'}×${formatNum(e.num)}（活动货币）`;
   else what = `${KIND_NAMES[e.kind] ?? e.kind} ${formatNum(e.num)}`;
   return `${what}${e.lucky ? '（幸运）' : ''}`;
 }
