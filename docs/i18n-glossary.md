@@ -71,6 +71,14 @@
 | 外卖 / 骑手 | Takeaway / Rider | À emporter / Livreur | A domicilio / Repartidor |
 | 熟练度 | Mastery | Maîtrise | Dominio |
 | 打赏 | Tip | Pourboire | Propina |
+| 挂单 / 撤单 | Order / Cancel | Ordre / Annuler | Orden / Cancelar |
+| 参考价 | Reference price | Prix de référence | Precio de referencia |
+| 兜底价 | Floor price | Prix plancher | Precio suelo |
+| 份（预测） | Share | Part | Participación |
+| 净投入 / 盈亏 | Net cost / P/L | Mise nette / Gain/perte | Inversión neta / Balance |
+| 最后赏 | Last Prize | Dernier Prix | Último Premio |
+| 战令 | Battle pass | Passe de combat | Pase de batalla |
+| 合力 | Team-up | Effort commun | Esfuerzo común |
 
 约定：
 

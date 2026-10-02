@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { PlantDto } from '@dt/shared';
 import PlantCard from '../components/yard/PlantCard.vue';
@@ -30,7 +30,10 @@ describe('第 4b 批菜园按语言（问题记录 272）', () => {
   });
 
   it('英语：作物阶段、状态、按钮', async () => {
+    const pinia = getActivePinia()!;
     await useLocaleStore().set('en');
+    // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSelect.test），挂载前换回来
+    setActivePinia(pinia);
     expect(stageName(2)).toBe('Seedling');
     expect(statusText(plant())).toBe('12 min until you can water');
     expect(waterBlock(plant({ worm: 1 }), 5)).toBe('Remove the bugs first');

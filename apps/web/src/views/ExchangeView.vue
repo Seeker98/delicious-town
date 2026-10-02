@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue';
 import type { ExchangeBookDto, ExchangeFoodDto, ExchangeMeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -12,6 +13,7 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const foods = ref<ExchangeFoodDto[]>([]);
 const me = ref<ExchangeMeDto | null>(null);
 const book = ref<ExchangeBookDto | null>(null);
@@ -44,11 +46,7 @@ function setFilter(v: Filter) {
     // 存储不可用时忽略
   }
 }
-const FILTERS: Array<{ key: Filter; label: string }> = [
-  { key: 'all', label: '全部' },
-  { key: 'sale', label: '在售' },
-  { key: 'buy', label: '在收' },
-];
+const FILTERS: readonly Filter[] = ['all', 'sale', 'buy'];
 const groups = computed(() => {
   const q = search.value.trim();
   const list = foods.value.filter(
@@ -61,17 +59,15 @@ const groups = computed(() => {
   return [...by.entries()].sort((a, b) => a[0] - b[0]);
 });
 const pct = (x: number | null) => (x === null ? '' : `${x >= 0 ? '+' : ''}${Math.round(x * 1000) / 10}%`);
-const REASON: Record<string, (m: ExchangeMeDto) => string> = {
-  exchange_level: (m) => `餐厅 ${m.need.level} 级才能交易`,
-  exchange_age: (m) => `账号注册满 ${m.need.days} 天才能交易`,
-  exchange_email: () => '验证邮箱后才能交易',
-};
+function reasonOf(m: ExchangeMeDto): string {
+  const r = t.value.exchange.reasons;
+  if (m.reason === 'exchange_level') return r.exchange_level(m.need.level);
+  if (m.reason === 'exchange_age') return r.exchange_age(m.need.days);
+  if (m.reason === 'exchange_email') return r.exchange_email;
+  return t.value.exchange.cannotTrade;
+}
 const blocked = computed(() =>
-  me.value?.frozen
-    ? '交易所已被冻结'
-    : me.value && !me.value.eligible
-      ? (REASON[me.value.reason ?? '']?.(me.value) ?? '暂时不能交易')
-      : '',
+  me.value?.frozen ? t.value.exchange.frozen : me.value && !me.value.eligible ? reasonOf(me.value) : '',
 );
 /** 冷静期的所得（156-2 设计 §8）：到期的转进账户要靠"全部取出"，所以分开显示（终审 I2） */
 const isReady = (at: string) => new Date(at).getTime() <= Date.now();
@@ -83,9 +79,9 @@ function holdText(list: ExchangeMeDto['holds']): string {
   for (const h of list)
     if (h.foodsId !== null && h.num > 0) foods.set(h.foodsId, (foods.get(h.foodsId) ?? 0) + h.num);
   return [
-    ...(coin > 0 ? [`银币 ${formatNum(coin)}`] : []),
+    ...(coin > 0 ? [t.value.exchange.coin(formatNum(coin))] : []),
     ...[...foods].map(([id, n]) => `${catalog.foodName(id)}×${n}`),
-  ].join('、');
+  ].join(t.value.events.sep);
 }
 const valid = computed(
   () =>
@@ -103,8 +99,8 @@ const estimate = computed(() => {
   if (!valid.value || !me.value) return '';
   const total = (price.value as number) * (qty.value as number);
   return side.value === 'buy'
-    ? `预计最多花费 ${formatNum(total)} 银币`
-    : `全部成交后约得 ${formatNum(total - Math.floor(total * me.value.feeRate))} 银币（已扣手续费）`;
+    ? t.value.exchange.estimateBuy(formatNum(total))
+    : t.value.exchange.estimateSell(formatNum(total - Math.floor(total * me.value.feeRate)));
 });
 
 /** 卖给系统（问题记录 244）：盘口里系统收购那一档；兜底价低于挂单下限，只能这样卖 */
@@ -123,7 +119,13 @@ const sysEstimate = computed(() => {
   if (!sysValid.value || !me.value) return '';
   const total = sysBid.value!.price * (sysQty.value as number);
   const fee = Math.floor(total * me.value.feeRate);
-  return `${formatNum(sysBid.value!.price)} × ${sysQty.value} = ${formatNum(total)}，手续费 ${formatNum(fee)}，到手 ${formatNum(total - fee)} 银币`;
+  return t.value.exchange.sysEstimate(
+    formatNum(sysBid.value!.price),
+    sysQty.value as number,
+    formatNum(total),
+    formatNum(fee),
+    formatNum(total - fee),
+  );
 });
 async function sellToSystem() {
   const id = selected.value;
@@ -133,11 +135,11 @@ async function sellToSystem() {
   busy.value = true;
   try {
     await endpoints.tradeSellSystem({ foodsId: id, price: b.price, qty: n });
-    toast.push(`卖给系统 ${n} 个，单价 ${formatNum(b.price)}`);
+    toast.push(t.value.exchange.soldToSystem(n, formatNum(b.price)));
     sysOpen.value = false;
     await loadMe();
   } catch (e) {
-    toast.push(errorMessage(e, '卖给系统失败'), 'danger');
+    toast.push(errorMessage(e, t.value.exchange.sellSystemFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -158,7 +160,7 @@ async function pick(id: number) {
     const b = await endpoints.tradeBook(id);
     if (selected.value === id) book.value = b;
   } catch (e) {
-    if (selected.value === id) toast.push(errorMessage(e, '读取盘口失败'), 'danger');
+    if (selected.value === id) toast.push(errorMessage(e, t.value.exchange.bookFailed), 'danger');
   }
 }
 async function run(fn: () => Promise<unknown>, ok: (r: unknown) => string, fallback: string) {
@@ -191,84 +193,78 @@ function submit() {
     (r) => {
       const fills = (r as { fills: Array<{ qty: number; held: boolean }> }).fills;
       const n = fills.reduce((s, x) => s + x.qty, 0);
-      if (n === 0) return '已挂单';
+      const x = t.value.exchange;
+      if (n === 0) return x.placed;
       // 可疑成交的所得进冷静期（156-2 设计 §8）
-      const held = fills.some((x) => x.held) ? '，其中有可疑成交，所得冻结 24 小时' : '';
-      return `已成交 ${n} 个${n < b.qty ? '，其余挂单中' : ''}${held}`;
+      const held = fills.some((f) => f.held) ? x.heldNote : '';
+      return x.filled(n, n < b.qty, held);
     },
-    '下单失败',
+    t.value.exchange.placeFailed,
   );
 }
 const cancel = (id: number) =>
   run(
     () => endpoints.tradeCancel(id),
-    () => '已撤单',
-    '撤单失败',
+    () => t.value.exchange.cancelled,
+    t.value.exchange.cancelFailed,
   );
 const withdraw = () =>
   run(
     () => endpoints.tradeWithdraw(),
     (r) => {
       const left = (r as { left: Array<{ num: number }> }).left.reduce((s, x) => s + x.num, 0);
-      return left > 0 ? `已取出；还有 ${left} 个食材放不下，留在交易所账户` : '已取出';
+      return left > 0 ? t.value.exchange.withdrawnLeft(left) : t.value.exchange.withdrawn;
     },
-    '取出失败',
+    t.value.exchange.withdrawFailed,
   );
 
 onMounted(async () => {
   try {
     [foods.value] = await Promise.all([endpoints.tradeFoods(), loadMe()]);
   } catch (e) {
-    toast.push(errorMessage(e, '读取交易所失败'), 'danger');
+    toast.push(errorMessage(e, t.value.exchange.loadFailed), 'danger');
   }
 });
 </script>
 
 <template>
-  <h5>交易所</h5>
+  <h5>{{ t.exchange.title }}</h5>
   <HiphopCard :place="10" />
   <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
-    你的交易所已被冻结：{{ me.frozen.reason }}。有疑问请联系管理员。
+    {{ t.exchange.frozenNotice(me.frozen.reason) }}
   </div>
   <div class="small text-muted mb-2">
-    玩家之间买卖稀有食材。挂单价要在当天参考价的一半到两倍之间；卖方成交时扣手续费。
+    {{ t.exchange.intro }}
   </div>
   <details class="small text-muted mb-2" data-testid="ex-sys-help">
-    <summary>系统报价怎么算</summary>
+    <summary>{{ t.exchange.sysHelp }}</summary>
     <ul class="mb-0 ps-3">
-      <li>系统收购价 = 参考价 × 0.7，系统卖出价 = 参考价 × 1.3；系统只卖从玩家手里收进来的货。</li>
-      <li>参考价每天按前一天玩家之间的成交算（和系统的成交不算），所以系统报价一天内不变。</li>
-      <li>菜场也卖的食材，收购价不超过菜场最低价 × 0.9，免得从菜场买来卖给系统。</li>
-      <li>
-        收购价低于挂单下限时是"兜底价"（多见于 3~5 级），只能用「卖给系统」按钮卖，保证手里的货总能卖掉。
-      </li>
-      <li>系统每天每种食材最多收 100 个，每人每天最多卖给系统 20 个。</li>
+      <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
     </ul>
   </details>
-  <input v-model="search" class="form-control form-control-sm mb-2" placeholder="搜索食材" />
+  <input v-model="search" class="form-control form-control-sm mb-2" :placeholder="t.exchange.search" />
   <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
     <div class="btn-group btn-group-sm">
       <button
         v-for="x in FILTERS"
-        :key="x.key"
+        :key="x"
         type="button"
-        :class="['btn', filter === x.key ? 'btn-secondary' : 'btn-outline-secondary']"
-        :data-testid="`ex-filter-${x.key}`"
-        @click="setFilter(x.key)"
+        :class="['btn', filter === x ? 'btn-secondary' : 'btn-outline-secondary']"
+        :data-testid="`ex-filter-${x}`"
+        @click="setFilter(x)"
       >
-        {{ x.label }}
+        {{ t.exchange.filters[x] }}
       </button>
     </div>
     <span class="dt-meta" data-testid="ex-legend"
-      ><span class="dt-sale-tag">卖 N</span> 有人在卖（含系统库存），绿框；<span class="dt-buy-tag"
-        >收 N</span
-      >
-      有人在收</span
+      ><span class="dt-sale-tag">{{ t.exchange.legendSale }}</span
+      >{{ t.exchange.legendSaleText }}<span class="dt-buy-tag">{{ t.exchange.legendBuy }}</span
+      >{{ t.exchange.legendBuyText }}</span
     >
   </div>
   <div class="dt-card mb-3" style="max-height: 14rem; overflow-y: auto">
     <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
-      <div class="dt-group-label">{{ lv }} 级</div>
+      <div class="dt-group-label">{{ t.exchange.level(lv) }}</div>
       <button
         v-for="f in list"
         :key="f.foodsId"
@@ -283,8 +279,8 @@ onMounted(async () => {
       >
         {{ catalog.foodName(f.foodsId) }}
         <span class="small opacity-75">{{ formatNum(f.last ?? f.ref) }} {{ pct(f.changePct) }}</span>
-        <span v-if="saleNum(f) > 0" class="dt-sale-tag ms-1">卖 {{ saleNum(f) }}</span>
-        <span v-if="f.buying > 0" class="dt-buy-tag ms-1">收 {{ f.buying }}</span>
+        <span v-if="saleNum(f) > 0" class="dt-sale-tag ms-1">{{ t.exchange.saleTag(saleNum(f)) }}</span>
+        <span v-if="f.buying > 0" class="dt-buy-tag ms-1">{{ t.exchange.buyTag(f.buying) }}</span>
       </button>
     </div>
   </div>
@@ -292,12 +288,12 @@ onMounted(async () => {
   <div v-if="book" class="dt-card mb-3" data-testid="ex-book">
     <div class="d-flex flex-wrap gap-2 small mb-1">
       <b>{{ catalog.foodName(book.foodsId) }}</b>
-      <span>参考价 {{ formatNum(book.ref) }}</span>
-      <span v-if="book.last !== null">最新 {{ formatNum(book.last) }}</span>
-      <span>今日成交 {{ formatNum(book.volume) }}</span>
-      <span class="text-muted" data-testid="ex-band"
-        >可挂 {{ formatNum(book.min) }} ~ {{ formatNum(book.max) }}</span
-      >
+      <span>{{ t.exchange.ref(formatNum(book.ref)) }}</span>
+      <span v-if="book.last !== null">{{ t.exchange.last(formatNum(book.last)) }}</span>
+      <span>{{ t.exchange.volume(formatNum(book.volume)) }}</span>
+      <span class="text-muted" data-testid="ex-band">{{
+        t.exchange.band(formatNum(book.min), formatNum(book.max))
+      }}</span>
     </div>
     <table class="table table-sm small mb-2">
       <tbody>
@@ -309,7 +305,7 @@ onMounted(async () => {
           :data-testid="`ex-ask-${a.system ? 'sys-' : ''}${a.price}`"
           @click="price = a.price"
         >
-          <td>{{ a.system ? '系统卖' : '卖' }}</td>
+          <td>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</td>
           <td>{{ formatNum(a.price) }}</td>
           <td class="text-end">{{ formatNum(a.qty) }}</td>
         </tr>
@@ -321,7 +317,7 @@ onMounted(async () => {
           :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
           @click="if (!b.floor) price = b.price;"
         >
-          <td>{{ b.system ? (b.floor ? '系统兜底收' : '系统收') : '买' }}</td>
+          <td>{{ b.system ? (b.floor ? t.exchange.bidFloor : t.exchange.bidSys) : t.exchange.bid }}</td>
           <td>{{ formatNum(b.price) }}</td>
           <td class="text-end">{{ formatNum(b.qty) }}</td>
         </tr>
@@ -335,10 +331,10 @@ onMounted(async () => {
         data-testid="ex-sell-sys"
         @click="sysOpen = !sysOpen"
       >
-        卖给系统（{{ formatNum(sysBid.price) }}{{ sysBid.floor ? '，兜底价' : '' }}）
+        {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}
       </button>
       <div v-if="sysOpen" class="d-flex flex-wrap gap-2 align-items-center mt-1">
-        数量
+        {{ t.exchange.qty }}
         <input
           v-model.number="sysQty"
           type="number"
@@ -348,7 +344,7 @@ onMounted(async () => {
           style="width: 5rem"
           data-testid="ex-sys-qty"
         />
-        <span class="text-muted">最多 {{ sysBid.qty }}</span>
+        <span class="text-muted">{{ t.exchange.max(sysBid.qty) }}</span>
         <button
           type="button"
           class="btn btn-sm btn-primary"
@@ -356,7 +352,7 @@ onMounted(async () => {
           data-testid="ex-sys-submit"
           @click="sellToSystem"
         >
-          确定卖出
+          {{ t.exchange.confirmSell }}
         </button>
         <div class="w-100 text-muted" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
       </div>
@@ -368,7 +364,7 @@ onMounted(async () => {
         data-testid="ex-side-buy"
         @click="side = 'buy'"
       >
-        买入
+        {{ t.exchange.buy }}
       </button>
       <button
         type="button"
@@ -376,11 +372,11 @@ onMounted(async () => {
         data-testid="ex-side-sell"
         @click="side = 'sell'"
       >
-        卖出
+        {{ t.exchange.sell }}
       </button>
     </div>
     <div class="d-flex flex-wrap gap-2 align-items-center small">
-      单价
+      {{ t.exchange.price }}
       <input
         v-model.number="price"
         type="number"
@@ -390,7 +386,7 @@ onMounted(async () => {
         style="width: 7rem"
         data-testid="ex-price"
       />
-      数量
+      {{ t.exchange.qty }}
       <input
         v-model.number="qty"
         type="number"
@@ -407,7 +403,7 @@ onMounted(async () => {
         data-testid="ex-submit"
         @click="submit"
       >
-        {{ side === 'buy' ? '挂买单' : '挂卖单' }}
+        {{ side === 'buy' ? t.exchange.placeBuy : t.exchange.placeSell }}
       </button>
     </div>
     <div class="small text-muted mt-1" data-testid="ex-estimate">{{ estimate }}</div>
@@ -415,9 +411,9 @@ onMounted(async () => {
   </div>
 
   <template v-if="me">
-    <h6 class="dt-section">交易所账户</h6>
+    <h6 class="dt-section">{{ t.exchange.account }}</h6>
     <div class="dt-card mb-3 d-flex flex-wrap align-items-center gap-2 small" data-testid="ex-wallet">
-      <span>银币 {{ formatNum(me.wallet.coin) }}</span>
+      <span>{{ t.exchange.coin(formatNum(me.wallet.coin)) }}</span>
       <span v-for="f in me.wallet.foods" :key="f.foodsId">{{ catalog.foodName(f.foodsId) }}×{{ f.num }}</span>
       <button
         type="button"
@@ -430,27 +426,24 @@ onMounted(async () => {
         data-testid="ex-withdraw"
         @click="withdraw"
       >
-        全部取出
+        {{ t.exchange.withdraw }}
       </button>
     </div>
     <div v-if="readyHolds.length > 0" class="small text-success mb-1" data-testid="ex-holds-ready">
-      冷静期已过，可以取出：{{ holdText(readyHolds) }}
+      {{ t.exchange.holdsReady(holdText(readyHolds)) }}
     </div>
     <div v-if="pendingHolds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
-      冻结中（可疑成交的冷静期）：{{ holdText(pendingHolds) }}，{{
-        timeLeft(pendingHolds[0]!.releaseAt)
-      }}，到时可取
+      {{ t.exchange.holdsPending(holdText(pendingHolds), timeLeft(pendingHolds[0]!.releaseAt)) }}
     </div>
-    <h6 class="dt-section">我的挂单</h6>
-    <div v-if="me.orders.length === 0" class="small text-muted mb-3">没有挂单</div>
+    <h6 class="dt-section">{{ t.exchange.myOrders }}</h6>
+    <div v-if="me.orders.length === 0" class="small text-muted mb-3">{{ t.exchange.noOrders }}</div>
     <div v-for="o in me.orders" :key="o.id" class="d-flex align-items-center gap-2 small border-bottom py-1">
       <span :class="o.side === 'buy' ? 'text-success' : 'text-danger'">{{
-        o.side === 'buy' ? '买' : '卖'
+        o.side === 'buy' ? t.exchange.bid : t.exchange.ask
       }}</span>
-      <span class="flex-fill"
-        >{{ catalog.foodName(o.foodsId) }} {{ formatNum(o.price) }} × {{ o.qty }}（已成交
-        {{ o.filled }}）</span
-      >
+      <span class="flex-fill">{{
+        t.exchange.orderLine(catalog.foodName(o.foodsId), formatNum(o.price), o.qty, o.filled)
+      }}</span>
       <button
         type="button"
         class="btn btn-sm btn-link text-danger"
@@ -458,16 +451,15 @@ onMounted(async () => {
         :data-testid="`ex-cancel-${o.id}`"
         @click="cancel(o.id)"
       >
-        撤单
+        {{ t.exchange.cancel }}
       </button>
     </div>
-    <h6 class="dt-section mt-3">近 7 天成交</h6>
-    <div v-if="me.trades.length === 0" class="small text-muted">没有成交</div>
+    <h6 class="dt-section mt-3">{{ t.exchange.trades }}</h6>
+    <div v-if="me.trades.length === 0" class="small text-muted">{{ t.exchange.noTrades }}</div>
     <div v-for="(x, i) in me.trades" :key="i" class="small border-bottom py-1">
-      {{ x.side === 'buy' ? '买入' : '卖出' }} {{ catalog.foodName(x.foodsId) }} {{ formatNum(x.price) }} ×
-      {{ x.qty }}
-      <span v-if="x.system" class="text-primary">（系统）</span>
-      <span v-if="x.fee > 0" class="text-muted">（手续费 {{ formatNum(x.fee) }}）</span>
+      {{ t.exchange.tradeLine(x.side === 'buy', catalog.foodName(x.foodsId), formatNum(x.price), x.qty) }}
+      <span v-if="x.system" class="text-primary">{{ t.exchange.system }}</span>
+      <span v-if="x.fee > 0" class="text-muted">{{ t.exchange.fee(formatNum(x.fee)) }}</span>
     </div>
   </template>
 </template>

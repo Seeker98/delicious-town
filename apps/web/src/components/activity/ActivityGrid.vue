@@ -2,21 +2,20 @@
 import { computed } from 'vue';
 import type { ActivityDto, GridDef } from '@dt/shared';
 import { actionName } from '../../utils/activity';
+import { useT } from '../../composables/useT';
 import RewardButton from './RewardButton.vue';
 
 const props = defineProps<{ a: ActivityDto & { kind: 'grid'; def: GridDef }; busy: boolean }>();
 defineEmits<{ claim: [key: string] }>();
+const t = useT();
 const byKey = computed(() => new Map(props.a.rewards.map((r) => [r.key, r])));
-const LINE_NAME = (k: string) =>
-  k === 'full'
-    ? '全部完成'
-    : k === 'd0'
-      ? '对角线 ↘'
-      : k === 'd1'
-        ? '对角线 ↙'
-        : k[0] === 'r'
-          ? `第 ${Number(k.slice(1)) + 1} 行`
-          : `第 ${Number(k.slice(1)) + 1} 列`;
+const LINE_NAME = (k: string) => {
+  const g = t.value.activity.grid;
+  if (k === 'full') return g.full;
+  if (k === 'd0') return g.d0;
+  if (k === 'd1') return g.d1;
+  return k[0] === 'r' ? g.row(Number(k.slice(1)) + 1) : g.col(Number(k.slice(1)) + 1);
+};
 const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c')));
 </script>
 

@@ -1,0 +1,72 @@
+/** 事件预测（问题记录 272） */
+export default {
+  title: '事件预测',
+  reasons: {
+    predict_level: (level: number) => `餐厅 ${level} 级才能参与预测`,
+    predict_age: (days: number) => `账号注册满 ${days} 天才能参与预测`,
+    predict_email: '验证邮箱后才能参与预测',
+  },
+  status: { open: '进行中', closed: '等待判定', resolved: '已判定', void: '已作废' },
+  yes: '是',
+  no: '否',
+  result: (yes: boolean) => `结果：${yes ? '是' : '否'}`,
+  closedAt: '已截止',
+  leftHm: (h: number, m: number) => `还剩 ${h} 小时 ${m} 分`,
+  leftM: (m: number) => `还剩 ${m} 分`,
+  intro:
+    '买"是"或"否"，结算时押对的一边每份得 1,000 银币；价格就是大家认为发生的概率，随买卖涨跌。不必等开奖，截止前随时可以卖出止盈止损。点事件展开详情。',
+  running: '进行中',
+  noRunning: '现在没有进行中的事件',
+  auto: '系统出题',
+  yesPct: (n: number) => `是 ${n}%`,
+  noPct: (n: number) => `否 ${n}%`,
+  holding: (yes: number, no: number) => ` · 我持有 是 ${yes} / 否 ${no}`,
+  ended: '已结束',
+  endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
+  profit: (n: string) => ` · 盈亏 ${n}`,
+  note: (text: string) => `判定依据：${text}`,
+  detail: {
+    action: (buy: boolean, yes: boolean) => `${buy ? '买入' : '卖出'}${yes ? '是' : '否'}`,
+    traded: (action: string, qty: number, buy: boolean, total: string) =>
+      `${action} ${qty} 份，${buy ? '花费' : '得到'} ${total} 银币`,
+    failed: '交易失败',
+    closeAt: (time: string) => `截止 ${time}`,
+    noChart: '还没有成交，有人买卖后显示价格走势',
+    hold: (yes: number, no: number, net: string) => `我持有：是 ${yes} 份、否 ${no} 份，净投入 ${net} 银币`,
+    sellAll: (n: string) => `（按当前价全部卖出约 ${n} 银币）`,
+    outcome: (label: string, got: string) => `结果为${label}：得 ${got} 银币，盈亏`,
+    help: '怎么算盈亏',
+    helpItems: (unit: string, example: string, feePct: number) => [
+      `结算时押对的一边每份得 ${unit} 银币，押错的一边作废。比如"是"的价格是 63%，买 1 份约花 ${example} 银币；结果为"是"就拿回 ${unit}，为"否"就亏掉买入的钱。`,
+      '价格就是大家认为发生的概率：买"是"的人越多，"是"越贵、"否"越便宜；一次买得越多，后面每份越贵。',
+      '不必等开奖：截止前随时可以按当前价卖出。觉得押错了就卖掉止损，价格涨到满意就卖掉止盈，赚到或亏掉的是卖出所得和买入花费的差。',
+      `买入和卖出都收手续费 ${feePct}%（按成交额算，向上取整）。`,
+      '净投入 = 买入花的（含手续费）− 卖出拿回的；盈亏 = 结算所得 − 净投入。',
+      '事件被作废时退回净投入；如果有人提前卖出赚了钱、系统收到的钱不够退，就按比例退。',
+    ],
+    buy: '买入',
+    sell: '卖出',
+    shares: '份',
+    submit: '确定',
+    estimate: (buy: boolean, total: string, fee: string, pct: number) =>
+      `${buy ? '预计花费' : '预计得到'} ${total} 银币（含手续费 ${fee}），成交后"是" ${pct}%`,
+    enterQty: '输入份数（卖出不能超过持有）',
+    summary: '本局盈亏',
+    summaryLine: (bought: string, sold: string, fees: string, net: string) =>
+      `买入共花 ${bought}，卖出共得 ${sold}（手续费合计 ${fees}），净投入 ${net}`,
+    resolved: (label: string, held: number, unit: string, payout: string) =>
+      `结果为${label}：${label} ${held} 份 × ${unit} = ${payout}`,
+    voided: (pct: number, payout: string) => `已作废：退回净投入的 ${pct}%，共 ${payout}`,
+    waiting: '已截止，等待判定',
+    summaryHint: '（结算所得 − 净投入）',
+    mine: '我的买卖记录',
+    mineHint: '我在这个事件里的每一笔买卖，花费和得到都含手续费',
+    mineLine: (action: string, qty: number, per: string, buy: boolean, total: string) =>
+      `${action} ${qty} 份，每份约 ${per}，${buy ? '花费' : '得到'} ${total}`,
+    trades: '全服最近成交',
+    tradesHint: '所有人最近 20 笔买卖（不显示是谁），能看出价格是被哪些买卖推上去或拉下来的',
+    noTrades: '还没有成交',
+    tradeLine: (action: string, qty: number, per: string, pct: number) =>
+      `${action} ${qty} 份，每份约 ${per}，成交后"是" ${pct}%`,
+  },
+};

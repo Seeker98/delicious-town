@@ -2,6 +2,8 @@
 import { onMounted, ref } from 'vue';
 import type { KujiAwardDto, KujiDrawDto, KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
+import { activeLocale } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -11,6 +13,7 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 /** 一番赏（一番赏设计 §7.2）：奖池看板、买券、抽签 */
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<KujiViewDto | null>(null);
 const result = ref<KujiDrawDto | null>(null);
 const buyNum = ref<number | ''>(1);
@@ -20,12 +23,13 @@ const awardText = (a: KujiAwardDto) =>
   [
     ...(a.goods ?? []).map((g) => `${catalog.goodsName(g.id)}${g.num > 1 ? ` ×${g.num}` : ''}`),
     ...(a.foods ?? []).map((f) => `${catalog.foodName(f.id)} ×${f.num}`),
-    ...(a.diamond ? [`钻石 ${formatNum(a.diamond)}`] : []),
-    ...(a.coin ? [`银币 ${formatNum(a.coin)}`] : []),
-    ...(a.exp ? [`经验 ${formatNum(a.exp)}`] : []),
-    ...(a.renown ? [`声望 ${formatNum(a.renown)}`] : []),
-  ].join('、');
-const tierName = (k: string) => (k === 'last' ? '最后赏' : `${k} 赏`);
+    ...(a.diamond ? [t.value.kuji.diamond(formatNum(a.diamond))] : []),
+    ...(a.coin ? [t.value.kuji.coin(formatNum(a.coin))] : []),
+    ...(a.exp ? [t.value.kuji.exp(formatNum(a.exp))] : []),
+    ...(a.renown ? [t.value.kuji.renown(formatNum(a.renown))] : []),
+  ].join(t.value.events.sep);
+const tierName = (k: string) => (k === 'last' ? t.value.kuji.lastTier : t.value.kuji.tier(k));
+const recentTime = (iso: string) => new Date(iso).toLocaleString(activeLocale());
 const canDraw = (n: number) =>
   !!data.value &&
   !busy.value &&
@@ -38,7 +42,7 @@ async function load() {
   try {
     data.value = await endpoints.kuji();
   } catch (e) {
-    toast.push(errorMessage(e, '读取失败'), 'danger');
+    toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
 }
 async function buy() {
@@ -47,9 +51,9 @@ async function buy() {
   busy.value = true;
   try {
     data.value = await endpoints.kujiBuy(n);
-    toast.push(`买了 ${n} 张抽赏券`);
+    toast.push(t.value.kuji.bought(n));
   } catch (e) {
-    toast.push(errorMessage(e, '购买失败'), 'danger');
+    toast.push(errorMessage(e, t.value.kuji.buyFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -61,7 +65,7 @@ async function draw(n: number) {
     result.value = r;
     data.value = r.view;
   } catch (e) {
-    toast.push(errorMessage(e, '抽签失败'), 'danger');
+    toast.push(errorMessage(e, t.value.kuji.drawFailed), 'danger');
     await load();
   } finally {
     busy.value = false;
@@ -71,54 +75,57 @@ onMounted(() => void load());
 </script>
 
 <template>
-  <h5>一番赏</h5>
+  <h5>{{ t.kuji.title }}</h5>
   <HiphopCard :place="12" />
   <div class="small text-muted mb-2">
-    一池共 {{ data?.pool.total ?? 80 }} 张签，抽一张少一张；抽走最后一张的人另得最后赏。每天 0
-    点开新池，没抽完的当天作废。
+    {{ t.kuji.rule(data?.pool.total ?? 80) }}
   </div>
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
     <div v-if="data.theme" class="alert alert-info py-1 small mb-2" data-testid="kj-theme">
-      <b>{{ data.theme.month }} 月主题：{{ data.theme.name }}</b>
-      <span class="ms-1">{{ data.theme.desc }}本月的限定手办只在这个月抽得到。</span>
+      <b>{{ t.kuji.theme(data.theme.month, data.theme.name) }}</b>
+      <span class="ms-1">{{ data.theme.desc }}{{ t.kuji.themeLimited }}</span>
     </div>
     <div v-if="data.closedToday" class="alert alert-warning py-1 small mb-2" data-testid="kj-closed">
-      今天的奖池都抽完了，明天 0 点再来。
+      {{ t.kuji.closed }}
     </div>
     <div class="dt-card mb-2" data-testid="kj-pool">
-      <span class="dt-card-title">{{ data.pool.day }} 第 {{ data.pool.seq }} 池</span>
-      <span class="ms-2 small">剩 {{ data.pool.left }} / {{ data.pool.total }}</span>
+      <span class="dt-card-title">{{ t.kuji.pool(data.pool.day, data.pool.seq) }}</span>
+      <span class="ms-2 small">{{ t.kuji.left(data.pool.left, data.pool.total) }}</span>
     </div>
     <table class="table table-sm small mb-2">
       <tbody>
         <tr
-          v-for="t in data.tiers"
-          :key="t.key"
-          :class="t.left === 0 ? 'opacity-50' : ''"
-          :data-testid="`kj-tier-${t.key}`"
+          v-for="x in data.tiers"
+          :key="x.key"
+          :class="x.left === 0 ? 'opacity-50' : ''"
+          :data-testid="`kj-tier-${x.key}`"
         >
           <td class="text-nowrap">
-            <b>{{ tierName(t.key) }}</b
-            ><span v-if="t.big" class="badge text-bg-warning ms-1">大赏</span>
+            <b>{{ tierName(x.key) }}</b
+            ><span v-if="x.big" class="badge text-bg-warning ms-1">{{ t.kuji.big }}</span>
           </td>
-          <td>{{ awardText(t.award) }}<span v-if="t.icon" class="text-muted">（附限定图标）</span></td>
-          <td class="text-end text-nowrap">{{ t.left }} / {{ t.count }}</td>
+          <td>
+            {{ awardText(x.award) }}<span v-if="x.icon" class="text-muted">{{ t.kuji.icon }}</span>
+          </td>
+          <td class="text-end text-nowrap">{{ x.left }} / {{ x.count }}</td>
         </tr>
         <tr data-testid="kj-last">
-          <td><b>最后赏</b></td>
+          <td>
+            <b>{{ t.kuji.lastTier }}</b>
+          </td>
           <td>
             {{ awardText(data.last.award)
-            }}<span v-if="data.last.icon" class="text-muted">（附限定图标）</span>
+            }}<span v-if="data.last.icon" class="text-muted">{{ t.kuji.icon }}</span>
           </td>
-          <td class="text-end text-muted">抽走最后一张的人</td>
+          <td class="text-end text-muted">{{ t.kuji.lastWho }}</td>
         </tr>
       </tbody>
     </table>
     <div class="dt-card mb-2 small">
-      <div class="mb-1" data-testid="kj-tickets">我的抽赏券：{{ data.tickets }} 张</div>
+      <div class="mb-1" data-testid="kj-tickets">{{ t.kuji.tickets(data.tickets) }}</div>
       <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
-        买
+        {{ t.kuji.buyPrefix }}
         <input
           v-model.number="buyNum"
           type="number"
@@ -128,7 +135,7 @@ onMounted(() => void load());
           style="width: 5rem"
           data-testid="kj-buy-num"
         />
-        张，共 {{ formatNum(Number(buyNum || 0) * data.price) }} 银币
+        {{ t.kuji.buyTotal(formatNum(Number(buyNum || 0) * data.price)) }}
         <button
           type="button"
           class="btn btn-sm btn-outline-primary"
@@ -136,9 +143,9 @@ onMounted(() => void load());
           data-testid="kj-buy"
           @click="buy"
         >
-          买券
+          {{ t.kuji.buy }}
         </button>
-        <span class="text-muted">今天还能买 {{ data.buyLeft }} 张</span>
+        <span class="text-muted">{{ t.kuji.buyLeft(data.buyLeft) }}</span>
       </div>
       <div class="d-flex gap-2">
         <button
@@ -150,23 +157,25 @@ onMounted(() => void load());
           :data-testid="`kj-draw-${n}`"
           @click="draw(n)"
         >
-          抽 {{ n }} 张
+          {{ t.kuji.draw(n) }}
         </button>
       </div>
     </div>
     <div v-if="result" class="dt-card mb-2 small" data-testid="kj-result">
-      <b>抽签结果</b>
-      <div v-for="(x, i) in result.draws" :key="i">{{ tierName(x.tier) }}：{{ awardText(x.award) }}</div>
+      <b>{{ t.kuji.result }}</b>
+      <div v-for="(x, i) in result.draws" :key="i">
+        {{ t.kuji.drawLine(tierName(x.tier), awardText(x.award)) }}
+      </div>
       <div v-if="result.last" class="text-success fw-bold">
-        恭喜抽走最后一张签，拿下最后赏：{{ awardText(result.last) }}
+        {{ t.kuji.lastWon(awardText(result.last)) }}
       </div>
     </div>
-    <h6 class="dt-section">最近的大赏</h6>
+    <h6 class="dt-section">{{ t.kuji.recent }}</h6>
     <div data-testid="kj-recent" class="small">
-      <div v-if="data.recent.length === 0" class="text-muted">还没有人抽中大赏</div>
+      <div v-if="data.recent.length === 0" class="text-muted">{{ t.kuji.noRecent }}</div>
       <div v-for="(x, i) in data.recent" :key="i" class="border-bottom py-1">
-        {{ x.restName }} 抽中了 {{ tierName(x.tier) }}
-        <span class="text-muted">{{ new Date(x.at).toLocaleString('zh-CN') }}</span>
+        {{ t.kuji.recentLine(x.restName, tierName(x.tier)) }}
+        <span class="text-muted">{{ recentTime(x.at) }}</span>
       </div>
     </div>
   </template>

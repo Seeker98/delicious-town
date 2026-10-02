@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { RestaurantDto } from '@dt/shared';
@@ -538,7 +538,10 @@ describe('RestaurantHomeView', () => {
     expect(exp.compareDocumentPosition(quick) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
   it('切到英语后首页标题、按钮是英文，数字用逗号（问题记录 272）', async () => {
+    const pinia = getActivePinia()!;
     await useLocaleStore().set('en');
+    // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSelect.test），挂载前换回来
+    setActivePinia(pinia);
     try {
       const w = await mountView();
       expect(w.find('[data-testid="home-todo"] .dt-card-title').text()).toBe("Today's to-do");

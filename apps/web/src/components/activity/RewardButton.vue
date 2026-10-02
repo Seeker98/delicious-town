@@ -3,6 +3,7 @@ import type { ActivityRewardDto, ActivityState } from '@dt/shared';
 import { useCatalogStore } from '../../stores/catalog';
 import { rewardStatus } from '../../utils/activity';
 import { rewardSummary } from '../../utils/reward';
+import { useT } from '../../composables/useT';
 
 /** 一份奖励：摘要 + 状态按钮 */
 const props = defineProps<{
@@ -13,7 +14,7 @@ const props = defineProps<{
 }>();
 defineEmits<{ claim: [key: string] }>();
 const catalog = useCatalogStore();
-const LABEL = { locked: '未达成', page: '已领', mail: '已邮寄', missed: '未达成' } as const;
+const t = useT();
 const status = () => rewardStatus(props.reward, props.state);
 </script>
 
@@ -28,8 +29,10 @@ const status = () => rewardStatus(props.reward, props.state);
       :data-testid="`claim-${activityId}-${reward.key}`"
       @click="$emit('claim', reward.key)"
     >
-      领取
+      {{ t.activity.rewards.claim }}
     </button>
-    <span v-else class="badge text-bg-light">{{ LABEL[status() as keyof typeof LABEL] }}</span>
+    <span v-else class="badge text-bg-light">{{
+      t.activity.rewards[status() as 'locked' | 'page' | 'mail' | 'missed']
+    }}</span>
   </span>
 </template>
