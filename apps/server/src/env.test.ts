@@ -40,9 +40,9 @@ describe('loadEnv', () => {
     );
   });
 
-  it('生产环境必须配置至少 16 位的随机种子密钥 RNG_SECRET', () => {
+  it('生产环境可以不配 RNG_SECRET（启动时从数据库读或生成，问题记录 262）；配了就至少 16 位', () => {
     const prod = { ...base, NODE_ENV: 'production', TURNSTILE_SECRET: 's', COOKIE_SECURE: 'true' };
-    expect(() => loadEnv(prod)).toThrow('RNG_SECRET');
+    expect(loadEnv(prod).RNG_SECRET).toBe('');
     expect(() => loadEnv({ ...prod, RNG_SECRET: 'short' })).toThrow('RNG_SECRET');
     expect(loadEnv({ ...prod, RNG_SECRET: 'a-long-enough-secret' }).RNG_SECRET).toBe('a-long-enough-secret');
     expect(loadEnv(base).RNG_SECRET).toBe('');
