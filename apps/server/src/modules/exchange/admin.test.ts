@@ -132,3 +132,41 @@ describe('冻结和没收（156-2 设计 §6）', () => {
     expect(frozen[0]!.heldCoin).toBeGreaterThan(0);
   });
 });
+
+describe('终审 I1：冻结先锁店，和这家店正在进行的下单、取出串行', () => {
+  it('店被别的事务锁着时，冻结要等它结束；两种食材上的挂单都撤掉', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const g = [...t.deps.config.foods.values()].filter((x) => x.odds < 100 && x.coin >= 1000)[1]!;
+    const r = await trader(t, { shardId, coin: 1_000_000, foods: { [f.id]: 5, [g.id]: 5 } });
+    await svc().place(r, { foodsId: f.id, side: 'sell', price: f.coin * 2, qty: 2 });
+    await svc().place(r, { foodsId: g.id, side: 'sell', price: g.coin * 2, qty: 3 });
+    let release!: () => void;
+    const held = new Promise<void>((ok) => (release = ok));
+    let locked!: () => void;
+    const isLocked = new Promise<void>((ok) => (locked = ok));
+    // 模拟这家店正在进行的一次操作（下单、取出都会先锁店）
+    const other = t.db.transaction().execute(async (tx) => {
+      await tx
+        .selectFrom('restaurant')
+        .select('id')
+        .where('id', '=', r.restaurantId)
+        .forNoKeyUpdate()
+        .execute();
+      locked();
+      await held;
+    });
+    await isLocked;
+    let done = false;
+    const freezing = admin()
+      .freeze(actor, { restId: r.restaurantId, reason: '对倒' })
+      .then(() => (done = true));
+    await new Promise((ok) => setTimeout(ok, 300));
+    expect(done).toBe(false);
+    release();
+    await other;
+    await freezing;
+    expect((await svc().me(r)).orders).toEqual([]);
+    expect(await wallet(t, r.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 2, [g.id]: 3 } });
+  });
+});

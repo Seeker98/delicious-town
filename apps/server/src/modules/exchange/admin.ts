@@ -133,10 +133,13 @@ export function createExchangeAdmin(game: Game) {
   async function freeze(actor: AdminActor, b: { restId: number; reason: string }) {
     const now = game.deps.now();
     await db.transaction().execute(async (tx) => {
+      // 先锁店（和 withRestaurant 同一种锁）：正在进行的下单、取出做完才冻结，冻结之后它们会读到冻结名单；
+      // 加锁顺序是 店 → 盘口 → 账户，和下单一致（156-2 终审 I1）
       const rest = await tx
         .selectFrom('restaurant')
         .select('shard_id')
         .where('id', '=', b.restId)
+        .forNoKeyUpdate()
         .executeTakeFirstOrThrow();
       await tx
         .insertInto('exchange_freeze')

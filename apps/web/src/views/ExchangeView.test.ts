@@ -277,3 +277,42 @@ describe('交易所页的防作弊提示（156-2）', () => {
     );
   });
 });
+
+describe('终审 I2：冷静期已过的所得能取出', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [{ id: 11, name: '松露', level: 6 }],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.tradeFoods).mockResolvedValue([
+      { foodsId: 11, ref: 1000, last: null, changePct: null },
+    ]);
+  });
+  it('账户为空、冻结记录已到期：按钮可点，提示可以取出；没到期的照常显示剩余时间', async () => {
+    const past = new Date(Date.now() - 60_000).toISOString();
+    const later = new Date(Date.now() + 2 * 3_600_000 + 60_000).toISOString();
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(
+      me({
+        wallet: { coin: 0, foods: [] },
+        holds: [
+          { coin: 0, foodsId: 11, num: 2, releaseAt: past },
+          { coin: 500, foodsId: null, num: 0, releaseAt: later },
+        ],
+      }),
+    );
+    const w = mount(ExchangeView);
+    await flushPromises();
+    expect(w.find('[data-testid="ex-withdraw"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="ex-holds-ready"]').text()).toContain('松露×2');
+    expect(w.find('[data-testid="ex-holds-ready"]').text()).toContain('可以取出');
+    expect(w.find('[data-testid="ex-holds"]').text()).toContain('银币 500');
+    expect(w.find('[data-testid="ex-holds"]').text()).toContain('还剩 2 小时');
+    expect(w.find('[data-testid="ex-holds"]').text()).not.toContain('松露');
+  });
+});

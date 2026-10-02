@@ -42,18 +42,20 @@ const blocked = computed(() =>
       ? (REASON[me.value.reason ?? '']?.(me.value) ?? '暂时不能交易')
       : '',
 );
-/** 冷静期冻结中的所得合计（156-2 设计 §8） */
-const holdText = computed(() => {
-  if (!me.value) return '';
-  const coin = me.value.holds.reduce((n, h) => n + h.coin, 0);
+/** 冷静期的所得（156-2 设计 §8）：到期的转进账户要靠"全部取出"，所以分开显示（终审 I2） */
+const isReady = (at: string) => new Date(at).getTime() <= Date.now();
+const readyHolds = computed(() => me.value?.holds.filter((h) => isReady(h.releaseAt)) ?? []);
+const pendingHolds = computed(() => me.value?.holds.filter((h) => !isReady(h.releaseAt)) ?? []);
+function holdText(list: ExchangeMeDto['holds']): string {
+  const coin = list.reduce((n, h) => n + h.coin, 0);
   const foods = new Map<number, number>();
-  for (const h of me.value.holds)
+  for (const h of list)
     if (h.foodsId !== null && h.num > 0) foods.set(h.foodsId, (foods.get(h.foodsId) ?? 0) + h.num);
   return [
     ...(coin > 0 ? [`银币 ${formatNum(coin)}`] : []),
     ...[...foods].map(([id, n]) => `${catalog.foodName(id)}×${n}`),
   ].join('、');
-});
+}
 const valid = computed(
   () =>
     book.value !== null &&
@@ -277,15 +279,24 @@ onMounted(async () => {
       <button
         type="button"
         class="btn btn-sm btn-outline-primary ms-auto"
-        :disabled="busy || !!me.frozen || (me.wallet.coin === 0 && me.wallet.foods.length === 0)"
+        :disabled="
+          busy ||
+          !!me.frozen ||
+          (me.wallet.coin === 0 && me.wallet.foods.length === 0 && readyHolds.length === 0)
+        "
         data-testid="ex-withdraw"
         @click="withdraw"
       >
         全部取出
       </button>
     </div>
-    <div v-if="me.holds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
-      冻结中（可疑成交的冷静期）：{{ holdText }}，{{ timeLeft(me.holds[0]!.releaseAt) }}，到时可取
+    <div v-if="readyHolds.length > 0" class="small text-success mb-1" data-testid="ex-holds-ready">
+      冷静期已过，可以取出：{{ holdText(readyHolds) }}
+    </div>
+    <div v-if="pendingHolds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
+      冻结中（可疑成交的冷静期）：{{ holdText(pendingHolds) }}，{{
+        timeLeft(pendingHolds[0]!.releaseAt)
+      }}，到时可取
     </div>
     <h6 class="dt-section">我的挂单</h6>
     <div v-if="me.orders.length === 0" class="small text-muted mb-3">没有挂单</div>
