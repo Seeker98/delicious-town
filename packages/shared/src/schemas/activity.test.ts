@@ -93,3 +93,39 @@ describe('活动定义校验（设计 §3.2）', () => {
     expect(paths(pass({ unlock: {} }))).toContain('def.unlock:empty_price');
   });
 });
+
+describe('全服加成定义（148-4 设计 §5）', () => {
+  const boost = (items: Array<{ key: string; factor: number }>) => ({
+    ...base,
+    kind: 'boost',
+    def: { items },
+  });
+  it('合法的能过；边界值能过', () => {
+    expect(paths(boost([{ key: 'exp', factor: 5 }]))).toEqual([]);
+    expect(paths(boost([{ key: 'marketPrice', factor: 0.5 }]))).toEqual([]);
+  });
+  it('超出范围、未知键、重复键、多于两位小数、全部为 1 都报错并带路径', () => {
+    expect(paths(boost([{ key: 'exp', factor: 5.01 }]))).toContain('def.items.0.factor:out_of_range');
+    expect(paths(boost([{ key: 'marketPrice', factor: 0.49 }]))).toContain('def.items.0.factor:out_of_range');
+    expect(paths(boost([{ key: 'nope', factor: 2 }]))).toContain('def.items.0.key:unknown_boost');
+    expect(
+      paths(
+        boost([
+          { key: 'exp', factor: 2 },
+          { key: 'exp', factor: 3 },
+        ]),
+      ),
+    ).toContain('def.items:duplicate_key');
+    expect(paths(boost([{ key: 'exp', factor: 1.234 }]))).toContain('def.items.0.factor:two_decimals');
+    expect(paths(boost([{ key: 'exp', factor: 1 }]))).toContain('def.items:no_effect');
+  });
+  it('boostText 用中文名和倍数', async () => {
+    const { boostText } = await import('../boost');
+    expect(
+      boostText([
+        { key: 'exp', factor: 2 },
+        { key: 'marketPrice', factor: 0.8 },
+      ]),
+    ).toBe('经营经验 ×2、菜场价格 ×0.8');
+  });
+});
