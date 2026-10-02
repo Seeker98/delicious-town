@@ -127,6 +127,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
+  const souvenirsRaw = parse('game/souvenirs', raw.souvenirsFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -172,6 +173,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !towerFix ||
     !settingDocs ||
     !newbieCodesRaw ||
+    !souvenirsRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -253,7 +255,29 @@ export function buildBundle(src: SourceData): BuildResult {
     return item;
   });
   // ---------- 强化数值表（问题记录 120） ----------
-  const goods = applyStressTables(builtGoods, equipLore.stressTables, errors);
+  // 纪念品（148-2 设计 §6）：配置里定义的永久道具，没有加成和用途；描述末尾注明节日
+  const souvenirGoods: Goods[] = souvenirsRaw.souvenirs.map((s) => ({
+    id: s.id,
+    name: s.name,
+    type: GOODS_TYPE.souvenir,
+    deviceType: null,
+    invalidHours: null,
+    maxNum: 99,
+    stackable: true,
+    level: 1,
+    coin: 0,
+    diamond: 0,
+    onSale: false,
+    awardFlag: null,
+    desc: `${s.desc}（${s.holiday}纪念品）`,
+    value: null,
+    effects: {},
+    gift: null,
+    use: null,
+    equip: null,
+    gem: null,
+  }));
+  const goods = [...applyStressTables(builtGoods, equipLore.stressTables, errors), ...souvenirGoods];
   unique(
     'goods',
     goods.map((g) => g.id),

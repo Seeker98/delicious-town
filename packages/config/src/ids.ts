@@ -106,6 +106,7 @@ export const GOODS_TYPE = {
   gem: 5,
   remnant: 8,
   honor: 9,
+  souvenir: 10,
 } as const;
 
 /** 牌匾的 devicetype；盆栽、名画勋章的 devicetype */
