@@ -74,6 +74,9 @@ describe('PredictView（238-1 设计 §7.2）', () => {
   it('列表：进行中显示概率；已结束显示结果和盈亏', async () => {
     const w = mount(PredictView);
     await flushPromises();
+    // 事件名用卡片标题样式（14px、粗 600），不用继承按钮字号的 <b>（问题记录 278）
+    expect(w.get('[data-testid="pd-event-1"] .dt-card-title').text()).toContain('明天会下雨吗');
+    expect(w.find('[data-testid="pd-event-1"] b').exists()).toBe(false);
     expect(w.get('[data-testid="pd-event-1"]').text()).toContain('明天会下雨吗');
     expect(w.get('[data-testid="pd-event-1"]').text()).toContain('63%');
     const ended = w.get('[data-testid="pd-ended-2"]').text();
@@ -174,6 +177,16 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     // 每笔写每份均价和实际花费 / 得到（含手续费）（问题记录 264）
     expect(mine).toContain('每份约 536，得到 1,049');
     expect(mine).toContain('每份约 547，花费 1,673');
+  });
+
+  it('价格走势不到两个点时不画空图，写一行提示（问题记录 278）', async () => {
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({ ...detail, points: [0.5] });
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="pd-chart"]').exists()).toBe(false);
+    expect(w.get('[data-testid="pd-chart-empty"]').text()).toContain('还没有成交');
   });
 
   it('点开的事件详情就展开在这一行下面，再点一次收起（问题记录 264）', async () => {

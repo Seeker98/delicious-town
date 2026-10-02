@@ -56,7 +56,7 @@ const rankLabel = (r: { from: number; to: number }) =>
   <div
     v-for="(m, i) in a.def.milestones"
     :key="`s${i}`"
-    class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1"
+    class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1 small"
   >
     <span class="flex-fill"
       >全服 {{ formatNum(m.target) }} 分<span v-if="m.minContribution > 0" class="small text-muted"

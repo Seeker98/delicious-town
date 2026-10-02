@@ -90,13 +90,13 @@ onMounted(() => void loadList());
       @click="pick(e.id)"
     >
       <div class="d-flex align-items-center gap-2">
-        <b class="flex-fill"
+        <span class="flex-fill dt-card-title"
           >{{ e.title
-          }}<span v-if="e.auto" class="badge text-bg-light ms-1" :data-testid="`pd-auto-${e.id}`"
+          }}<span v-if="e.auto" class="dt-tag ms-1 fw-normal" :data-testid="`pd-auto-${e.id}`"
             >系统出题</span
-          ></b
+          ></span
         >
-        <span class="text-success">是 {{ predictPercent(e.price) }}%</span>
+        <span class="text-success small text-nowrap">是 {{ predictPercent(e.price) }}%</span>
         <i :class="['bi', e.id === selected ? 'bi-chevron-up' : 'bi-chevron-down', 'text-muted']" />
       </div>
       <div class="small text-muted">

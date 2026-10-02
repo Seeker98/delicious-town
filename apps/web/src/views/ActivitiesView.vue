@@ -83,7 +83,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
   <div v-for="a in shown" :key="a.id" class="dt-card mb-3" :data-testid="`activity-${a.id}`">
     <div class="d-flex align-items-center gap-2 mb-1">
       <span v-if="isSignin(a)" class="badge text-bg-success">签到</span>
-      <b class="flex-fill">{{ a.title }}</b>
+      <span class="flex-fill dt-card-title">{{ a.title }}</span>
       <span class="small text-muted">{{ a.state === 'running' ? timeLeft(a.endsAt) : '已结束' }}</span>
     </div>
     <div class="small dt-announce-body mb-2">{{ a.body }}</div>
