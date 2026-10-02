@@ -101,3 +101,38 @@ describe('问题记录 242：初始参考价用 initialRef', () => {
     expect((await refPrices(t.db, t.deps.config, tune(), s2, [snow.id, 470], day)).get(470)).toBe(8100);
   });
 });
+describe('系统成交不算参考价（156-3 设计 §2.4）', () => {
+  it('前一天只有系统成交时，单个算和批量算都沿用原来的参考价', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const d0 = gameDay(t.clock.now);
+    const d1 = addDays(d0, 1);
+    const base = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d0);
+    for (let i = 0; i < 5; i++)
+      await t.db
+        .insertInto('exchange_trade')
+        .values({
+          shard_id: shardId,
+          foods_id: f.id,
+          price: 1,
+          qty: 10,
+          buy_order_id: null,
+          sell_order_id: null,
+          buyer_rest_id: null,
+          seller_rest_id: 0,
+          fee: 0,
+          created_at: t.clock.now,
+          system: true,
+        })
+        .execute();
+    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d1)).toBe(base);
+    const other = await createShard(t.db);
+    await refPrice(t.db, t.deps.config, tune(), other, f.id, d0);
+    await t.db
+      .updateTable('exchange_trade')
+      .set({ shard_id: other })
+      .where('shard_id', '=', shardId)
+      .execute();
+    expect((await refPrices(t.db, t.deps.config, tune(), other, [f.id], d1)).get(f.id)).toBe(base);
+  });
+});

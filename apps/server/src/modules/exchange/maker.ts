@@ -1,6 +1,9 @@
+import { sql, type Kysely } from 'kysely';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 import type { WeightedPool } from '@dt/shared';
-import type { ExchangeTuning } from './rules';
+import type { DB } from '../../db/schema';
+import { getDaily } from '../counter/dailyCounter';
+import { priceBand, type ExchangeTuning } from './rules';
 
 export type MakerTuning = ExchangeTuning['maker'];
 
@@ -56,6 +59,120 @@ export function makerPrices(
 }
 
 /** 系统这次最多能收几个 */
-export function makerBuyQty(m: MakerTuning, s: { bought: number; stock: number; playerToday: number }): number {
+export function makerBuyQty(
+  m: MakerTuning,
+  s: { bought: number; stock: number; playerToday: number },
+): number {
   return Math.max(0, Math.min(m.dailyBuy - s.bought, m.stockMax - s.stock, m.playerDaily - s.playerToday));
+}
+
+/** 玩家每天卖给系统的数量（daily_counter 的键） */
+export const TO_SYSTEM = 'exchange.toSystem';
+
+export async function makerState(
+  db: Kysely<DB>,
+  shardId: number,
+  foodsId: number,
+  day: string,
+): Promise<{ stock: number; bought: number }> {
+  const s = await db
+    .selectFrom('exchange_stock')
+    .select('num')
+    .where('shard_id', '=', shardId)
+    .where('foods_id', '=', foodsId)
+    .executeTakeFirst();
+  const b = await db
+    .selectFrom('exchange_maker_day')
+    .select('bought')
+    .where('shard_id', '=', shardId)
+    .where('foods_id', '=', foodsId)
+    .where('day', '=', day)
+    .executeTakeFirst();
+  return { stock: s?.num ?? 0, bought: b?.bought ?? 0 };
+}
+
+/**
+ * 系统库存加减（调用方已持有这个盘口的锁）；减成负数时违反约束报错。
+ * 减少用 update：insert … on conflict 会先拿要插入的负数行检查约束
+ */
+export async function addStock(
+  db: Kysely<DB>,
+  shardId: number,
+  foodsId: number,
+  delta: number,
+): Promise<void> {
+  if (delta < 0) {
+    const r = await db
+      .updateTable('exchange_stock')
+      .set({ num: sql<number>`num + ${delta}` })
+      .where('shard_id', '=', shardId)
+      .where('foods_id', '=', foodsId)
+      .executeTakeFirst();
+    if (r.numUpdatedRows === 0n) throw new Error(`exchange_stock missing: ${shardId}/${foodsId}`);
+    return;
+  }
+  await db
+    .insertInto('exchange_stock')
+    .values({ shard_id: shardId, foods_id: foodsId, num: delta })
+    .onConflict((oc) =>
+      oc.columns(['shard_id', 'foods_id']).doUpdateSet({ num: sql<number>`exchange_stock.num + ${delta}` }),
+    )
+    .execute();
+}
+
+export async function addBought(
+  db: Kysely<DB>,
+  shardId: number,
+  foodsId: number,
+  day: string,
+  n: number,
+): Promise<void> {
+  await db
+    .insertInto('exchange_maker_day')
+    .values({ shard_id: shardId, foods_id: foodsId, day, bought: n })
+    .onConflict((oc) =>
+      oc
+        .columns(['shard_id', 'foods_id', 'day'])
+        .doUpdateSet({ bought: sql<number>`exchange_maker_day.bought + ${n}` }),
+    )
+    .execute();
+}
+
+export interface MakerLevel {
+  price: number;
+  qty: number;
+}
+
+/**
+ * 系统在这个盘口的报价（156-3 设计 §4.2）：买档数量按 restId 这家店今天的剩余额度。
+ * 下单时在盘口锁里调用；看盘口时不加锁，只用于显示
+ */
+export async function makerQuote(
+  db: Kysely<DB>,
+  x: {
+    config: GameConfig;
+    tuning: Tuning;
+    shardId: number;
+    foodsId: number;
+    day: string;
+    restId: number;
+    ref: number;
+  },
+): Promise<{ bid: MakerLevel | null; ask: MakerLevel | null }> {
+  const m = x.tuning.exchange.maker;
+  if (!m.enabled) return { bid: null, ask: null };
+  const food = x.config.requireFood(x.foodsId);
+  const p = makerPrices(
+    x.ref,
+    marketFloor(food, x.config, x.tuning.market),
+    priceBand(x.ref, x.tuning.exchange),
+    m,
+  );
+  const st = await makerState(db, x.shardId, x.foodsId, x.day);
+  const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);
+  const n = makerBuyQty(m, { ...st, playerToday: mine });
+  return {
+    bid: p.bid !== null && n > 0 ? { price: p.bid, qty: n } : null,
+    ask: st.stock > 0 ? { price: p.ask, qty: st.stock } : null,
+  };
 }

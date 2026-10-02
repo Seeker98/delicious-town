@@ -51,6 +51,8 @@ export function createExchangeAdmin(game: Game) {
       ])
       .where('t.shard_id', '=', shardId)
       .where('t.created_at', '>=', since)
+      // 系统成交没有标记，也不进这个列表（156-3）
+      .where('t.system', '=', false)
       .where(sql<boolean>`t.flags <> '{}'`);
     if (flag) q = q.where(sql<boolean>`${flag} = any(t.flags)`);
     const rows = await q.orderBy('t.id', 'desc').limit(LIMIT).execute();
@@ -89,8 +91,8 @@ export function createExchangeAdmin(game: Game) {
       qty: r.qty,
       amount: r.price * r.qty,
       flags: r.flags as ExchangeFlag[],
-      buyer: side(r.buyer_rest_id, r.buyer_name, r.buyer_account_id, r.buyer_user, r.id),
-      seller: side(r.seller_rest_id, r.seller_name, r.seller_account_id, r.seller_user, r.id),
+      buyer: side(r.buyer_rest_id!, r.buyer_name, r.buyer_account_id, r.buyer_user, r.id),
+      seller: side(r.seller_rest_id!, r.seller_name, r.seller_account_id, r.seller_user, r.id),
     }));
   }
 

@@ -5,7 +5,7 @@ import type { DB } from '../../db/schema';
 import { initialRef, weightedPrice, type ExchangeTuning } from './rules';
 
 /**
- * 某区服某食材某游戏日的参考价（156-1 设计 §5）：第一次用到时计算并保存，之后不变。
+ * 某区服某食材某游戏日的参考价（156-1 设计 §5）：第一次用到时计算并保存，之后不变（和系统的成交不算，156-3）。
  * 前一天成交不少于 refMinTrades 笔用加权均价，否则沿用最近一天的；都没有用 refOverrides 或 initialRef（问题记录 242）。
  */
 export async function refPrice(
@@ -30,6 +30,7 @@ export async function refPrice(
     .select(['price', 'qty'])
     .where('shard_id', '=', shardId)
     .where('foods_id', '=', foodsId)
+    .where('system', '=', false)
     .where('created_at', '>=', gameTime(prev, 0))
     .where('created_at', '<', gameTime(day, 0))
     .execute();
@@ -99,6 +100,7 @@ export async function refPrices(
     ])
     .where('shard_id', '=', shardId)
     .where('foods_id', 'in', missing)
+    .where('system', '=', false)
     .where('created_at', '>=', gameTime(prev, 0))
     .where('created_at', '<', gameTime(day, 0))
     .groupBy('foods_id')
