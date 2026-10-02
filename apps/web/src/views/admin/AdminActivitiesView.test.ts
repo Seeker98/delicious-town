@@ -93,6 +93,31 @@ describe('AdminActivitiesView', () => {
     expect(w.find('[data-testid="err-def.cells.4.target"]').text()).toBe('填写的内容不正确');
   });
 
+  it('道具不存在（保存时校验）：错误显示在那份奖励或解锁价格下面（问题记录 270）', async () => {
+    const unknown = (path: string) => ({ path, message: 'unknown' });
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', { issues: [unknown('def.goals.0.award.goods.0.id')] }),
+    );
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('goals');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.goals.0.award"]').text()).toBe('道具或食材不存在');
+
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', {
+        issues: [unknown('def.levels.0.premium.foods.0.id'), unknown('def.unlock.goods.0.id')],
+      }),
+    );
+    await w.find('[data-testid="ac-kind"]').setValue('pass');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.levels.0.premium"]').text()).toBe('道具或食材不存在');
+    expect(w.find('[data-testid="err-def.unlock"]').text()).toBe('道具或食材不存在');
+  });
+
   it('已开始的活动编辑时类型、时间、定义只读，只能改标题说明和结束时间', async () => {
     const w = mount(AdminActivitiesView);
     await flushPromises();

@@ -2,15 +2,17 @@
 import { computed, ref, watch } from 'vue';
 import { GRANT_LIMITS, HAT_NAME_MAX, MAIL_HATS_MAX, type RewardItems } from '@dt/shared';
 import { useCatalogStore } from '../../stores/catalog';
+import CatalogPicker from './CatalogPicker.vue';
 
 /**
  * 附件编辑器（补偿、后台邮件共用；子项目 6A）：银币、钻石、经验、道具、食材，可选命名帽子。
- * 输出只含填了的项；超出单项上限时通过 over 事件给出提示。父组件要清空时换一个 key 重新挂载
+ * 输出只含填了的项；超出单项上限时通过 over 事件给出提示。父组件要清空时换一个 key 重新挂载。
+ * 道具、食材用搜索下拉选（问题记录 270）；goodsOnly 只留道具行（战令解锁价格，backlog 148-1）
  */
-const props = withDefaults(defineProps<{ modelValue: RewardItems; hats?: boolean; idPrefix?: string }>(), {
-  hats: false,
-  idPrefix: 'ri',
-});
+const props = withDefaults(
+  defineProps<{ modelValue: RewardItems; hats?: boolean; idPrefix?: string; goodsOnly?: boolean }>(),
+  { hats: false, idPrefix: 'ri', goodsOnly: false },
+);
 const emit = defineEmits<{ 'update:modelValue': [RewardItems]; over: [string[]] }>();
 const catalog = useCatalogStore();
 const tid = (s: string) => `${props.idPrefix}-${s}`;
@@ -72,7 +74,7 @@ watch(
 
 <template>
   <div>
-    <div class="d-flex flex-wrap gap-2 mb-2">
+    <div v-if="!goodsOnly" class="d-flex flex-wrap gap-2 mb-2">
       <input
         v-model.number="coin"
         type="number"
@@ -99,13 +101,7 @@ watch(
       />
     </div>
     <div v-for="(g, i) in goods" :key="`g${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <input
-        v-model.number="g.id"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        placeholder="道具 id"
-        :data-testid="tid(`goods-id-${i}`)"
-      />
+      <CatalogPicker v-model="g.id" kind="goods" class="flex-fill" :testid="tid(`goods-id-${i}`)" />
       <input
         v-model.number="g.num"
         type="number"
@@ -114,16 +110,9 @@ watch(
         :max="GRANT_LIMITS.item"
         :data-testid="tid(`goods-num-${i}`)"
       />
-      <span class="text-muted">{{ g.id ? catalog.goodsName(Number(g.id)) : '' }}</span>
     </div>
     <div v-for="(f, i) in foods" :key="`f${i}`" class="d-flex gap-2 mb-1 align-items-center">
-      <input
-        v-model.number="f.id"
-        type="number"
-        class="form-control form-control-sm w-auto"
-        placeholder="食材 id"
-        :data-testid="tid(`foods-id-${i}`)"
-      />
+      <CatalogPicker v-model="f.id" kind="foods" class="flex-fill" :testid="tid(`foods-id-${i}`)" />
       <input
         v-model.number="f.num"
         type="number"
@@ -132,7 +121,6 @@ watch(
         :max="GRANT_LIMITS.item"
         :data-testid="tid(`foods-num-${i}`)"
       />
-      <span class="text-muted">{{ f.id ? catalog.foodName(Number(f.id)) : '' }}</span>
     </div>
     <div v-for="(h, i) in hatRows" :key="`h${i}`" class="d-flex gap-2 mb-1 align-items-center">
       <select v-model="h.tier" class="form-select form-select-sm w-auto" :data-testid="tid(`hat-tier-${i}`)">
@@ -150,7 +138,7 @@ watch(
         h.name.trim() ? `${h.tier === 'jade' ? '玉' : '铉'}•${h.name.trim()}之帽` : ''
       }}</span>
     </div>
-    <div class="dt-meta mb-1" :data-testid="tid('limits')">
+    <div v-if="!goodsOnly" class="dt-meta mb-1" :data-testid="tid('limits')">
       单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
       {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤ {{ fmt(GRANT_LIMITS.item) }}。
       <!-- 问题记录 204：发 9999 个只到账 5998，是橱柜、冰箱各有单种上限 -->
@@ -169,6 +157,7 @@ watch(
         + 道具
       </button>
       <button
+        v-if="!goodsOnly"
         type="button"
         class="btn btn-link btn-sm p-0"
         :data-testid="tid('add-foods')"
@@ -177,7 +166,7 @@ watch(
         + 食材
       </button>
       <button
-        v-if="hats"
+        v-if="hats && !goodsOnly"
         type="button"
         class="btn btn-link btn-sm p-0"
         :disabled="hatRows.length >= MAIL_HATS_MAX"

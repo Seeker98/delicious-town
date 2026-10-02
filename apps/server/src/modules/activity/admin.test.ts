@@ -85,6 +85,43 @@ describe('后台活动（设计 §5.2）', () => {
     const svc = createAdminActivity(t.game);
     await expect(svc.create(actor, input(2_147_000_000))).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
+
+  it('定义里的道具、食材 id 必须存在：新建、修改都检查，报带路径的字段错误（backlog 148-2）', async () => {
+    const svc = createAdminActivity(t.game);
+    const shardId = await createShard(t.db);
+    const def = {
+      goals: [
+        { key: 'signin', target: 1, award: { goods: [{ id: 85, num: 1 }] } },
+        { key: 'signin', target: 2, award: { goods: [{ id: 999_999, num: 1 }], foods: [{ id: 888_888, num: 2 }] } },
+      ],
+    };
+    const err = {
+      code: 'VALIDATION_FAILED',
+      params: {
+        issues: [
+          { path: 'def.goals.1.award.goods.0.id', message: 'unknown' },
+          { path: 'def.goals.1.award.foods.0.id', message: 'unknown' },
+        ],
+      },
+    };
+    await expect(svc.create(actor, input(shardId, { def } as Partial<ActivityInput>))).rejects.toMatchObject(err);
+    const a = await svc.create(actor, input(shardId));
+    await expect(
+      svc.update(actor, a.id, input(shardId, { def } as Partial<ActivityInput>)),
+    ).rejects.toMatchObject(err);
+    // 战令的解锁价格里的道具也查
+    const pass = {
+      kind: 'pass',
+      def: {
+        rules: [{ key: 'signin', points: 1, dailyCap: 1 }],
+        levels: [{ points: 10, free: { coin: 1 }, premium: null }],
+        unlock: { goods: [{ id: 777_777, num: 1 }] },
+      },
+    } as Partial<ActivityInput>;
+    await expect(svc.create(actor, input(shardId, pass))).rejects.toMatchObject({
+      params: { issues: [{ path: 'def.unlock.goods.0.id', message: 'unknown' }] },
+    });
+  });
 });
 
 describe('后台活动（HTTP）', () => {
