@@ -23,6 +23,7 @@ import * as m0021 from './0021_activity';
 import * as m0022 from './0022_activity_boost';
 import * as m0023 from './0023_activity_exchange';
 import * as m0024 from './0024_activity_coop';
+import * as m0025 from './0025_exchange';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -50,4 +51,5 @@ export const migrations: Record<string, Migration> = {
   '0022_activity_boost': m0022,
   '0023_activity_exchange': m0023,
   '0024_activity_coop': m0024,
+  '0025_exchange': m0025,
 };
