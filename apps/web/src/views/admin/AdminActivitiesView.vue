@@ -23,6 +23,7 @@ const local = (d: Date) => {
   const p = (n: number) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
 };
+const localOf = (isoString: string) => local(new Date(isoString));
 const scope = ref<'shard' | 'all'>('shard');
 const title = ref('');
 const body = ref('');
@@ -39,7 +40,16 @@ const started = computed(() => editing.value !== null && editing.value.state !==
 const STATE = { pending: '未开始', running: '进行中', settling: '结算中', settled: '已补发' } as const;
 const KIND = { goals: '目标清单', grid: '九宫格', pass: '战令' } as const;
 
+/** 每次 fill 换一个 key，让奖励编辑器按新活动重新挂载（终审 I1） */
+const formKey = ref(0);
+/** 服务端给的原始时间：本地输入框只精确到分钟，没改时原样发回（终审 I2） */
+const orig = ref<{ startsAt: string; endsAt: string } | null>(null);
+const iso = (local: string, original: string | undefined) =>
+  original !== undefined && local === localOf(original) ? original : new Date(local).toISOString();
+
 function fill(a: AdminActivityDto | null, copy = false) {
+  formKey.value++;
+  orig.value = a && !copy ? { startsAt: a.startsAt, endsAt: a.endsAt } : null;
   editing.value = copy ? null : a;
   errors.value = {};
   scope.value = a && a.shardId === null ? 'all' : 'shard';
@@ -72,8 +82,8 @@ async function save() {
     kind: kind.value,
     title: title.value.trim(),
     body: body.value.trim(),
-    startsAt: new Date(startsAt.value).toISOString(),
-    endsAt: new Date(endsAt.value).toISOString(),
+    startsAt: iso(startsAt.value, orig.value?.startsAt),
+    endsAt: iso(endsAt.value, orig.value?.endsAt),
     minLevel: minLevel.value,
     def: defs.value[kind.value],
   } as ActivityInput;
@@ -226,7 +236,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
       />
     </div>
     <div v-if="errors.endsAt" class="text-danger small" data-testid="err-endsAt">{{ errors.endsAt }}</div>
-    <fieldset :disabled="started" data-testid="ac-def">
+    <fieldset :key="formKey" :disabled="started" data-testid="ac-def">
       <GoalsEditor v-if="kind === 'goals'" v-model="defs.goals" :errors="errors" />
       <GridEditor v-else-if="kind === 'grid'" v-model="defs.grid" :errors="errors" />
       <PassEditor v-else v-model="defs.pass" :errors="errors" />

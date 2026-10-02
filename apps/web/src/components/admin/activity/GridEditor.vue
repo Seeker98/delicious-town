@@ -44,6 +44,7 @@ const cellErr = (i: number) => Object.keys(props.errors).some((k) => k.startsWit
   </div>
   <div class="small text-muted">第 {{ picked + 1 }} 格</div>
   <GoalRow
+    :key="picked"
     :goal="modelValue.cells[picked]!"
     :path="`def.cells.${picked}`"
     :errors="errors"

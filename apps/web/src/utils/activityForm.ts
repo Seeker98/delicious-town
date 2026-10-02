@@ -24,6 +24,10 @@ export function defaultDef(kind: ActivityKind): GoalsDef | GridDef | PassDef {
   };
 }
 
+let rowSeq = 0;
+/** 给 n 行各发一个本地唯一的 key：删除中间一行时，下面的行不会复用上一行的编辑器（终审 I1） */
+export const rowKeys = (n: number): number[] => Array.from({ length: n }, () => rowSeq++);
+
 export const signinTemplate = (): GoalsDef => ({ goals: [1, 3, 5, 7].map((d) => newGoal('signin', d)) });
 
 const TEXT: Record<string, string> = {

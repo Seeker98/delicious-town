@@ -1,10 +1,23 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { ACTIVITY_ACTIONS, type PassDef, type RewardItems } from '@dt/shared';
+import { rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 
 const props = defineProps<{ modelValue: PassDef; errors: Record<string, string> }>();
 const emit = defineEmits<{ 'update:modelValue': [PassDef] }>();
 const patch = (p: Partial<PassDef>) => emit('update:modelValue', { ...props.modelValue, ...p });
+/** 档位的稳定 key（终审 I1）：删掉中间一档时，下面的奖励编辑器不错位 */
+const levelKeys = ref(rowKeys(props.modelValue.levels.length));
+function removeLevel(i: number) {
+  levelKeys.value = levelKeys.value.filter((_, j) => j !== i);
+  patch({ levels: props.modelValue.levels.filter((_, j) => j !== i) });
+}
+function addLevel() {
+  levelKeys.value = [...levelKeys.value, ...rowKeys(1)];
+  const last = props.modelValue.levels.at(-1)?.points ?? 0;
+  patch({ levels: [...props.modelValue.levels, { points: last + 10, free: null, premium: null }] });
+}
 type Rule = PassDef['rules'][number];
 type Level = PassDef['levels'][number];
 const setRule = (i: number, p: Partial<Rule>) =>
@@ -68,7 +81,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
   <div class="small fw-bold">档位（奖励可以留空，但普通和进阶不能都空）</div>
   <div
     v-for="(l, i) in modelValue.levels"
-    :key="`l${i}`"
+    :key="levelKeys[i]"
     class="border-bottom py-2"
     :data-testid="`level-row-${i}`"
   >
@@ -86,7 +99,8 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
         type="button"
         class="btn btn-sm btn-link text-danger"
         :disabled="modelValue.levels.length <= 1"
-        @click="patch({ levels: modelValue.levels.filter((_, j) => j !== i) })"
+        :data-testid="`level-del-${i}`"
+        @click="removeLevel(i)"
       >
         删除这档
       </button>
@@ -120,14 +134,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     type="button"
     class="btn btn-sm btn-outline-primary my-2"
     :disabled="modelValue.levels.length >= 50"
-    @click="
-      patch({
-        levels: [
-          ...modelValue.levels,
-          { points: (modelValue.levels.at(-1)?.points ?? 0) + 10, free: null, premium: null },
-        ],
-      })
-    "
+    @click="addLevel"
   >
     加一档
   </button>

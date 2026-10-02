@@ -104,3 +104,87 @@ describe('AdminActivitiesView', () => {
     expect(w.find('[data-testid="ac-title"]').attributes('disabled')).toBeUndefined();
   });
 });
+
+describe('AdminActivitiesView 终审修复', () => {
+  const goalsRow = (id: number, coins: number[]): AdminActivityDto => ({
+    ...row,
+    id,
+    state: 'pending',
+    def: { goals: coins.map((c, i) => ({ key: 'signin', target: i + 1, award: { coin: c } })) },
+  });
+  const gridRow: AdminActivityDto = {
+    ...row,
+    id: 9,
+    state: 'pending',
+    kind: 'grid',
+    def: {
+      size: 3,
+      cells: Array.from({ length: 9 }, (_, i) => ({ key: 'signin', target: 1, award: { coin: i + 1 } })),
+      lineAward: { coin: 100 },
+      fullAward: { coin: 1000 },
+    },
+  };
+  const coinOf = (w: ReturnType<typeof mount>, prefix: string) =>
+    (w.find(`[data-testid="${prefix}-coin"]`).element as HTMLInputElement).value;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+
+  it('I1 九宫格：点另一格时奖励编辑器显示那一格的奖励', async () => {
+    vi.mocked(adminApi.activities).mockResolvedValue([gridRow]);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-edit-9"]').trigger('click');
+    expect(coinOf(w, 'cell0')).toBe('1');
+    await w.find('[data-testid="grid-cell-4"]').trigger('click');
+    expect(coinOf(w, 'cell4')).toBe('5');
+  });
+
+  it('I1 目标清单：删掉中间一行后，下面的行显示自己的奖励', async () => {
+    vi.mocked(adminApi.activities).mockResolvedValue([goalsRow(5, [1, 3, 5])]);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-edit-5"]').trigger('click');
+    await w.find('[data-testid="goal-del-1"]').trigger('click');
+    expect(w.findAll('[data-testid^="goal-row-"]')).toHaveLength(2);
+    expect(coinOf(w, 'goal1')).toBe('5');
+  });
+
+  it('I1 表单开着时编辑另一个活动，编辑器换成新活动的奖励', async () => {
+    vi.mocked(adminApi.activities).mockResolvedValue([goalsRow(5, [1]), goalsRow(6, [9])]);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-edit-5"]').trigger('click');
+    expect(coinOf(w, 'goal0')).toBe('1');
+    await w.find('[data-testid="ac-edit-6"]').trigger('click');
+    expect(coinOf(w, 'goal0')).toBe('9');
+  });
+
+  it('I2 已开始的活动只改标题：开始和结束时间按服务端原值发回（不截断到分钟）', async () => {
+    const running = { ...row, startsAt: '2026-10-01T00:00:30.500Z', endsAt: '2099-10-08T00:00:30.500Z' };
+    vi.mocked(adminApi.activities).mockResolvedValue([running]);
+    vi.mocked(adminApi.updateActivity).mockResolvedValue(running);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-edit-7"]').trigger('click');
+    await w.find('[data-testid="ac-title"]').setValue('新标题');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.updateActivity).mock.calls[0]![1];
+    expect(b.title).toBe('新标题');
+    expect(b.startsAt).toBe('2026-10-01T00:00:30.500Z');
+    expect(b.endsAt).toBe('2099-10-08T00:00:30.500Z');
+  });
+});
