@@ -73,6 +73,8 @@ describe('开店', () => {
       plaque2Open: false,
       // 第二块牌匾位的开通条件（问题记录：页面上没有开通按钮）
       plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
+      // 挑剔消耗食材每档保留的数量，首页说明用（问题记录 220）
+      cookfoodsPerFlag: 50,
     });
     expect(d.tables).toHaveLength(4);
     expect(d.effects.map((e: { sourceId: number }) => e.sourceId).sort()).toEqual([100, 140, 81]);

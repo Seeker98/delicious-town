@@ -451,6 +451,10 @@ onBeforeUnmount(() => {
           </option>
         </select>
       </div>
+      <div v-if="rest.starLevel >= 6" class="dt-meta small mt-1" data-testid="cookfoods-hint">
+        挑剔顾客点菜时，如果橱柜里这道菜的每种食材都还有至少 {{ rest.cookfoodsPerFlag }}×N 个（N 是档位），
+        就直接消耗这些食材，额外得到经验、名气和掉落；档位越高，留给自己用的食材越多。选“关闭”则不消耗。
+      </div>
     </div>
 
     <h6 class="dt-section">生效的加成</h6>

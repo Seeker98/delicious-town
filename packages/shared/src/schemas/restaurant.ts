@@ -59,6 +59,8 @@ export interface RestaurantDto {
   promoOn: boolean;
   cteOn: boolean;
   cookfoodsFlag: number;
+  /** 挑剔消耗食材每档保留的数量：N 档表示每种食材至少留 N × 这个数（问题记录 220） */
+  cookfoodsPerFlag: number;
   plaque2Open: boolean;
   /** 第二块牌匾位的开通条件（区服数值） */
   plaque2Cost: { star: number; coin: number; diamond: number };

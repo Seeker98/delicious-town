@@ -55,6 +55,7 @@ const dto: RestaurantDto = {
   promoOn: false,
   cteOn: false,
   cookfoodsFlag: 0,
+  cookfoodsPerFlag: 50,
   plaque2Open: false,
   plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
   headlines: { news: [], broadcast: null },
@@ -130,6 +131,16 @@ describe('RestaurantHomeView', () => {
       },
       side: [],
     });
+  });
+
+  it('6 星起显示挑剔消耗食材档位，并说明每档保留多少（问题记录 220）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 6, cookfoodsPerFlag: 40 });
+    const w = await mountView();
+    const hint = w.find('[data-testid="cookfoods-hint"]');
+    expect(hint.text()).toContain('至少 40×N 个');
+    expect(hint.text()).toContain('关闭');
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 5 });
+    expect((await mountView()).find('[data-testid="cookfoods-hint"]').exists()).toBe(false);
   });
 
   it('等级 < 10 显示新手提示，链到游玩指引；10 级起不显示（问题记录 150）', async () => {
