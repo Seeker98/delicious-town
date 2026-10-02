@@ -199,6 +199,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/exchange',
+    name: 'exchange',
+    component: () => import('./views/ExchangeView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/shop',
     name: 'shop',
     component: () => import('./views/ShopView.vue'),

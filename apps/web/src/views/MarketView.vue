@@ -105,6 +105,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取菜场失�
 </script>
 
 <template>
+  <div class="d-flex justify-content-end mb-2">
+    <RouterLink to="/exchange" class="btn btn-sm btn-outline-primary" data-testid="market-exchange">
+      <i class="bi bi-graph-up-arrow"></i> 交易所
+    </RouterLink>
+  </div>
   <GardenSis :data="data" />
   <HiphopCard :place="1" @changed="load" />
   <template v-if="data">

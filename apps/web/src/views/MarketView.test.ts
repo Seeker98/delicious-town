@@ -1,10 +1,13 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { config, flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MarketDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useSessionStore } from '../stores/session';
 import MarketView from './MarketView.vue';
+
+// 菜场页顶部有"交易所"入口（156-1）：测试不挂路由，用桩代替
+config.global.stubs.RouterLink = RouterLinkStub;
 
 vi.mock('../api/endpoints', () => ({
   endpoints: { market: vi.fn(), marketBuy: vi.fn(), marketGuess: vi.fn(), marketManualStock: vi.fn() },

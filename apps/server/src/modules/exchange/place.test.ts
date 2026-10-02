@@ -1,0 +1,190 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createShard } from '../../../test/fixtures';
+import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
+import { trader, wallet } from './test';
+
+let t: TestGame;
+beforeAll(async () => {
+  t = await createTestGame();
+});
+afterAll(() => t.close());
+
+const svc = () => t.game.exchange;
+/** 橱柜 + 冰箱里这种食材的总数（foodNum 分开返回两者） */
+const have = async (restId: number, foodsId: number) => {
+  const x = await foodNum(t, restId, foodsId);
+  return x.num + x.fridge;
+};
+/** 系统定价为 coin 的稀有食材：参考价就是 coin，允许 0.5~2 倍 */
+const rare = () => [...t.deps.config.foods.values()].find((f) => f.odds < 100 && f.coin >= 1000)!;
+
+describe('交易所下单（156-1 设计 §6.1）', () => {
+  it('门槛：等级、注册天数、邮箱分别报错', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const r = await trader(t, { shardId });
+    await t.db.updateTable('restaurant').set({ level: 5 }).where('id', '=', r.restaurantId).execute();
+    await expect(svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 })).rejects.toMatchObject(
+      {
+        params: { reason: 'exchange_level' },
+      },
+    );
+    await t.db.updateTable('restaurant').set({ level: 30 }).where('id', '=', r.restaurantId).execute();
+    await t.db.updateTable('account').set({ created_at: new Date() }).where('id', '=', r.accountId).execute();
+    await expect(svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 })).rejects.toMatchObject(
+      {
+        params: { reason: 'exchange_age' },
+      },
+    );
+    await t.db
+      .updateTable('account')
+      .set({ created_at: new Date('2020-01-01'), email_verified_at: null })
+      .where('id', '=', r.accountId)
+      .execute();
+    await expect(svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 })).rejects.toMatchObject(
+      {
+        params: { reason: 'exchange_email' },
+      },
+    );
+  });
+
+  it('非稀有食材、价格越界、挂单数满都拒绝，什么都不扣', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const common = [...t.deps.config.foods.values()].find((x) => x.odds >= 100)!;
+    const r = await trader(t, { shardId, coin: 1_000_000 });
+    await expect(
+      svc().place(r, { foodsId: common.id, side: 'buy', price: 10, qty: 1 }),
+    ).rejects.toMatchObject({
+      params: { reason: 'not_tradable' },
+    });
+    await expect(
+      svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin * 2 + 1, qty: 1 }),
+    ).rejects.toMatchObject({ params: { reason: 'price_band', max: f.coin * 2 } });
+    expect((await restRow(t, r.restaurantId)).coin).toBe(1_000_000);
+    for (let i = 0; i < t.deps.config.tuning.exchange.maxOpenOrders; i++)
+      await svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 });
+    await expect(svc().place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 })).rejects.toMatchObject(
+      {
+        params: { what: 'exchange_orders' },
+      },
+    );
+  });
+
+  it('挂卖单扣食材、挂买单扣银币；买单超过橱柜单种上限不让挂', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const s = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: f.coin, qty: 3 });
+    expect(await have(s.restaurantId, f.id)).toBe(2);
+    // 单种上限 10：橱柜 10 + 冰箱 10 = 20；未成交的买单也算进去
+    const b = await trader(t, { shardId, coin: 10_000_000 });
+    await t.db
+      .updateTable('restaurant')
+      .set({ foods_max_num: 10 })
+      .where('id', '=', b.restaurantId)
+      .execute();
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 15 });
+    await expect(svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 6 })).rejects.toMatchObject(
+      {
+        params: { reason: 'cupboard_full' },
+      },
+    );
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 5 });
+  });
+});
+
+describe('撮合（156-1 设计 §6.2）', () => {
+  it('价格优先、时间优先、部分成交；成交价取挂单方价格；买方退差价；卖方扣 5% 进账户', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const p = f.coin;
+    const s1 = await trader(t, { shardId, foods: { [f.id]: 10 } });
+    const s2 = await trader(t, { shardId, foods: { [f.id]: 10 } });
+    const s3 = await trader(t, { shardId, foods: { [f.id]: 10 } });
+    await svc().place(s1, { foodsId: f.id, side: 'sell', price: p + 10, qty: 2 });
+    await svc().place(s2, { foodsId: f.id, side: 'sell', price: p, qty: 2 });
+    await svc().place(s3, { foodsId: f.id, side: 'sell', price: p + 10, qty: 2 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    const res = await svc().place(b, { foodsId: f.id, side: 'buy', price: p + 20, qty: 3 });
+    expect(res.data.fills).toEqual([
+      { price: p, qty: 2 },
+      { price: p + 10, qty: 1 },
+    ]);
+    expect(res.data.order.status).toBe('filled');
+    // 冻结 (p+20)×3，实际花 p×2 + (p+10)×1，差价退回
+    expect((await restRow(t, b.restaurantId)).coin).toBe(1_000_000 - (p * 2 + (p + 10)));
+    expect(await have(b.restaurantId, f.id)).toBe(3);
+    const fee2 = Math.floor(p * 2 * 0.05);
+    expect(await wallet(t, s2.restaurantId)).toEqual({ coin: p * 2 - fee2, foods: {} });
+    const fee1 = Math.floor((p + 10) * 0.05);
+    expect(await wallet(t, s1.restaurantId)).toEqual({ coin: p + 10 - fee1, foods: {} });
+    expect(await wallet(t, s3.restaurantId)).toEqual({ coin: 0, foods: {} });
+  });
+
+  it('卖单吃买单：卖方当场到账（扣手续费），买方挂单的食材进账户、不退差价', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const p = f.coin;
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: p + 50, qty: 2 });
+    const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 5 } });
+    const res = await svc().place(s, { foodsId: f.id, side: 'sell', price: p, qty: 3 });
+    expect(res.data.fills).toEqual([{ price: p + 50, qty: 2 }]);
+    expect(res.data.order).toMatchObject({ status: 'open', filled: 2 });
+    expect((await restRow(t, s.restaurantId)).coin).toBe((p + 50) * 2 - Math.floor((p + 50) * 2 * 0.05));
+    expect(await wallet(t, b.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 2 } });
+    expect((await restRow(t, b.restaurantId)).coin).toBe(1_000_000 - (p + 50) * 2);
+  });
+
+  it('不和自己的单成交；不吃过期的单；不吃别的区服的单', async () => {
+    const shardId = await createShard(t.db);
+    const other = await createShard(t.db);
+    const f = rare();
+    const p = f.coin;
+    const me = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    await svc().place(me, { foodsId: f.id, side: 'sell', price: p, qty: 1 });
+    const old = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    const o = await svc().place(old, { foodsId: f.id, side: 'sell', price: p, qty: 1 });
+    await t.db
+      .updateTable('exchange_order')
+      .set({ expires_at: new Date(t.clock.now.getTime() - 1000) })
+      .where('id', '=', String(o.data.order.id))
+      .execute();
+    const far = await trader(t, { shardId: other, foods: { [f.id]: 5 } });
+    await svc().place(far, { foodsId: f.id, side: 'sell', price: p, qty: 1 });
+    const res = await svc().place(me, { foodsId: f.id, side: 'buy', price: p, qty: 1 });
+    expect(res.data.fills).toEqual([]);
+    expect(res.data.order.status).toBe('open');
+  });
+
+  it('并发：两个买单同时吃同一张卖单，总成交不超过卖单数量，银币和食材守恒', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const p = f.coin;
+    const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 3 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: p, qty: 3 });
+    const b1 = await trader(t, { shardId, coin: 1_000_000 });
+    const b2 = await trader(t, { shardId, coin: 1_000_000 });
+    const rs = await Promise.all([
+      svc().place(b1, { foodsId: f.id, side: 'buy', price: p, qty: 2 }),
+      svc().place(b2, { foodsId: f.id, side: 'buy', price: p, qty: 2 }),
+    ]);
+    const filled = rs.reduce((n, r) => n + r.data.fills.reduce((m, x) => m + x.qty, 0), 0);
+    expect(filled).toBe(3);
+    const got = (await have(b1.restaurantId, f.id)) + (await have(b2.restaurantId, f.id));
+    expect(got).toBe(3);
+    const spent =
+      2_000_000 - (await restRow(t, b1.restaurantId)).coin - (await restRow(t, b2.restaurantId)).coin;
+    // 已成交 3 个 + 还挂着的 1 个买单的冻结
+    expect(spent).toBe(p * 4);
+    const trades = await t.db
+      .selectFrom('exchange_trade')
+      .select(['qty', 'fee'])
+      .where('seller_rest_id', '=', s.restaurantId)
+      .execute();
+    expect(trades.reduce((n, x) => n + x.qty, 0)).toBe(3);
+    const fees = trades.reduce((n, x) => n + Number(x.fee), 0);
+    expect((await wallet(t, s.restaurantId)).coin + fees).toBe(p * 3);
+  });
+});

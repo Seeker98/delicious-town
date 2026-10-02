@@ -129,6 +129,12 @@ import type {
   ActivitiesDto,
   ActivityClaimDto,
   ActivityExchangeDto,
+  ExchangeBookDto,
+  ExchangeFoodDto,
+  ExchangeMeDto,
+  ExchangeOrderDto,
+  ExchangePlaceDto,
+  ExchangeWithdrawDto,
   ActivitySummaryDto,
   MailClaimAllDto,
   MailClaimDto,
@@ -452,6 +458,13 @@ export const endpoints = {
   activityClaim: (id: number, key: string) =>
     api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim`, { key }),
   activityClaimAll: (id: number) => api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim-all`, {}),
+  tradeFoods: () => api.get<ExchangeFoodDto[]>('/api/v1/exchange/foods'),
+  tradeBook: (foodsId: number) => api.get<ExchangeBookDto>(`/api/v1/exchange/book/${foodsId}`),
+  tradeMe: () => api.get<ExchangeMeDto>('/api/v1/exchange/me'),
+  tradePlace: (b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) =>
+    api.post<ExchangePlaceDto>('/api/v1/exchange/orders', b),
+  tradeCancel: (id: number) => api.post<ExchangeOrderDto>(`/api/v1/exchange/orders/${id}/cancel`, {}),
+  tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
   activityUnlock: (id: number) => api.post<{ premium: true }>(`/api/v1/activities/${id}/unlock`, {}),
   activityExchange: (id: number, index: number, times: number) =>
     api.post<ActivityExchangeDto>(`/api/v1/activities/${id}/exchange`, { index, times }),

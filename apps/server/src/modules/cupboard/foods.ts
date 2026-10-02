@@ -57,7 +57,8 @@ export async function addFoods(
   op: Op,
   foodsId: number,
   num: number,
-  opts: { source?: string; lucky?: boolean; event?: boolean } = {},
+  /** keepDropped：放不下的部分由调用方保管（例如交易所账户），不算丢弃、不写"冰箱满了"日志 */
+  opts: { source?: string; lucky?: boolean; event?: boolean; keepDropped?: boolean } = {},
 ): Promise<AddPlan> {
   if (num <= 0) return { toCupboard: 0, toFridge: 0, dropped: 0 };
   op.config.requireFood(foodsId);
@@ -98,7 +99,7 @@ export async function addFoods(
       .execute();
     recordChange(op, 'foods', plan.toCupboard + plan.toFridge, opts, foodsId);
   }
-  if (plan.dropped > 0) restLog(op, 'fridge.drop', { foodsId, num: plan.dropped });
+  if (plan.dropped > 0 && !opts.keepDropped) restLog(op, 'fridge.drop', { foodsId, num: plan.dropped });
   return plan;
 }
 

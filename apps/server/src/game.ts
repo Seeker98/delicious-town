@@ -31,6 +31,7 @@ import { createHiphopService, type HiphopService } from './modules/hiphop/servic
 import { createRankService, type RankService } from './modules/rank/service';
 import { createForumService, type ForumService } from './modules/forum/service';
 import { createActivityService, type ActivityService } from './modules/activity/service';
+import { createExchangeService, type ExchangeService } from './modules/exchange/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -43,6 +44,7 @@ import { createShopService, type ShopService } from './modules/shop/service';
 import { createStoreService, type StoreService } from './modules/store/service';
 import { registerActivityHandlers } from './modules/activity/handler';
 import { activityJobs } from './modules/activity/settle';
+import { exchangeJobs } from './modules/exchange/jobs';
 import { registerTaskHandlers } from './modules/task/handler';
 import { createTaskService, type TaskService } from './modules/task/service';
 import { settlementJobs } from './modules/settlement/jobs';
@@ -82,6 +84,7 @@ export interface Game {
   report: ReportService;
   announce: AnnounceService;
   activity: ActivityService;
+  exchange: ExchangeService;
   jobs: PeriodicJob[];
 }
 
@@ -117,6 +120,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...takeawayJobs(deps));
   jobs.push(...hiphopJobs(deps));
   jobs.push(...activityJobs(deps));
+  jobs.push(...exchangeJobs(deps));
   return {
     app,
     deps,
@@ -145,6 +149,7 @@ export function createGame(app: AppDeps): Game {
     report: createReportService(deps),
     announce: createAnnounceService(deps),
     activity: createActivityService(deps),
+    exchange: createExchangeService(deps),
     shop,
     market,
     task: createTaskService(deps),

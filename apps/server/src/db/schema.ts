@@ -1017,6 +1017,50 @@ export interface ActivitySettleTable {
   settled_at: TsDefault;
 }
 
+export interface ExchangeOrderTable {
+  id: Generated<string>;
+  shard_id: number;
+  rest_id: number;
+  side: 'buy' | 'sell';
+  foods_id: number;
+  price: number;
+  qty: number;
+  filled: Default<number>;
+  status: 'open' | 'filled' | 'cancelled' | 'expired';
+  created_at: TsDefault;
+  expires_at: Ts;
+  closed_at: TsNullable;
+}
+export interface ExchangeTradeTable {
+  id: Generated<string>;
+  shard_id: number;
+  foods_id: number;
+  price: number;
+  qty: number;
+  buy_order_id: string | null;
+  sell_order_id: string | null;
+  buyer_rest_id: number;
+  seller_rest_id: number;
+  /** bigint：pg 读出为字符串 */
+  fee: ColumnType<string, number | string, number | string>;
+  created_at: TsDefault;
+}
+export interface ExchangeRefTable {
+  shard_id: number;
+  foods_id: number;
+  day: string;
+  price: number;
+}
+export interface ExchangeWalletTable {
+  rest_id: number;
+  coin: ColumnType<string, number | string | undefined, number | string>;
+}
+export interface ExchangeWalletFoodTable {
+  rest_id: number;
+  foods_id: number;
+  num: number;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1097,6 +1141,11 @@ export interface DB {
   activity_claim: ActivityClaimTable;
   activity_pass: ActivityPassTable;
   activity_settle: ActivitySettleTable;
+  exchange_order: ExchangeOrderTable;
+  exchange_trade: ExchangeTradeTable;
+  exchange_ref: ExchangeRefTable;
+  exchange_wallet: ExchangeWalletTable;
+  exchange_wallet_food: ExchangeWalletFoodTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

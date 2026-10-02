@@ -335,6 +335,10 @@
   "report": { "dailyMax": 10 },
   "ops": { "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 } },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
+  "exchange": {
+    "minLevel": 20, "minAccountDays": 7, "feeRate": 0.05, "bandLow": 0.5, "bandHigh": 2,
+    "refMinTrades": 3, "maxOpenOrders": 10, "orderHours": 24, "maxQty": 999, "refOverrides": {}
+  },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,
