@@ -66,6 +66,9 @@ function eventItem(e: GameEvent, names: Names): string {
 type P = Record<string, unknown>;
 const n = (p: P, k: string) => Number(p[k] ?? 0);
 
+/** 可疑成交的所得进冷静期（156-2） */
+const heldNote = (p: P) => (p.held ? '（可疑成交，所得冻结 24 小时）' : '');
+
 const LOGS: Record<string, (p: P, names: Names) => string> = {
   'mc.learn': (p, names) => `学会了特色菜「${mcNameOf(names, n(p, 'mcId'))}」`,
   'mc.levelUp': (p, names) => `「${mcNameOf(names, n(p, 'mcId'))}」熟练度升到 ${n(p, 'curlevel')} 级`,
@@ -147,11 +150,11 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'town.talk': () => '和广场上的居民聊了天',
   'town.wish': () => '在广场许了愿',
   'exchange.order': (p, names) =>
-    `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（当场成交 ${n(p, 'filled')} 个）` : ''}`,
+    `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（当场成交 ${n(p, 'filled')} 个）` : ''}${heldNote(p)}`,
   'exchange.fill': (p, names) =>
     p.side === 'sell'
-      ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}（所得在交易所账户）`
-      : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}（食材在交易所账户）`,
+      ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : '（所得在交易所账户）'}`
+      : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : '（食材在交易所账户）'}`,
   'exchange.cancel': (p, names) =>
     `撤销交易所${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
   'exchange.expire': (p, names) =>

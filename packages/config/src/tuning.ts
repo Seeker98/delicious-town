@@ -583,6 +583,16 @@ export const tuningSchema = z.object({
     maxOpenOrders: int.min(1),
     orderHours: int.min(1),
     maxQty: int.min(1).max(999),
+    /** 进阶防作弊（156-2） */
+    suspicious: z.object({
+      traceDays: int.min(1),
+      edgeHigh: z.number().min(1),
+      edgeLow: z.number().positive().max(1),
+      repeatDays: int.min(1),
+      repeatCount: int.min(2),
+      largeAmount: int.min(1),
+      holdHours: int.min(0),
+    }),
     refOverrides: z.record(z.string(), int.min(1)),
   }),
   forum: z.object({

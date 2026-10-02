@@ -51,6 +51,8 @@ const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
   wallet: { coin: 950, foods: [{ foodsId: 11, num: 2 }] },
   trades: [],
   feeRate: 0.05,
+  holds: [],
+  frozen: null,
   ...p,
 });
 
@@ -206,5 +208,111 @@ describe('终审：交易所页的选食材和取出提示', () => {
     await w.find('[data-testid="ex-withdraw"]').trigger('click');
     await flushPromises();
     expect(useToastStore().items.map((x) => x.text)).toContain('已取出；还有 3 个食材放不下，留在交易所账户');
+  });
+});
+
+describe('交易所页的防作弊提示（156-2）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [{ id: 11, name: '松露', level: 6 }],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.tradeFoods).mockResolvedValue([
+      { foodsId: 11, ref: 1000, last: null, changePct: null },
+    ]);
+    vi.mocked(endpoints.tradeBook).mockResolvedValue(book);
+  });
+
+  it('被冻结：顶部提示原因，下单和取出禁用', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ frozen: { reason: '对倒' } }));
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="ex-frozen"]').text()).toContain('对倒');
+    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeDefined();
+    expect(w.find('[data-testid="ex-withdraw"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('冻结中的所得：显示金额和最早解冻时间', async () => {
+    const at = new Date(Date.now() + 5 * 3_600_000 + 60_000).toISOString();
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(
+      me({
+        holds: [
+          { coin: 1200, foodsId: null, num: 0, releaseAt: at },
+          { coin: 0, foodsId: 11, num: 2, releaseAt: at },
+        ],
+      }),
+    );
+    const w = mount(ExchangeView);
+    await flushPromises();
+    const text = w.find('[data-testid="ex-holds"]').text();
+    expect(text).toContain('1,200');
+    expect(text).toContain('松露×2');
+    expect(text).toContain('还剩 5 小时');
+  });
+
+  it('下单有可疑成交时提示所得冻结', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
+    vi.mocked(endpoints.tradePlace).mockResolvedValue({
+      order: me().orders[0]!,
+      fills: [{ price: 1010, qty: 2, held: true }],
+    } as never);
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="ex-price"]').setValue('1010');
+    await w.find('[data-testid="ex-qty"]').setValue('2');
+    await w.find('[data-testid="ex-submit"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain(
+      '已成交 2 个，其中有可疑成交，所得冻结 24 小时',
+    );
+  });
+});
+
+describe('终审 I2：冷静期已过的所得能取出', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [{ id: 11, name: '松露', level: 6 }],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.tradeFoods).mockResolvedValue([
+      { foodsId: 11, ref: 1000, last: null, changePct: null },
+    ]);
+  });
+  it('账户为空、冻结记录已到期：按钮可点，提示可以取出；没到期的照常显示剩余时间', async () => {
+    const past = new Date(Date.now() - 60_000).toISOString();
+    const later = new Date(Date.now() + 2 * 3_600_000 + 60_000).toISOString();
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(
+      me({
+        wallet: { coin: 0, foods: [] },
+        holds: [
+          { coin: 0, foodsId: 11, num: 2, releaseAt: past },
+          { coin: 500, foodsId: null, num: 0, releaseAt: later },
+        ],
+      }),
+    );
+    const w = mount(ExchangeView);
+    await flushPromises();
+    expect(w.find('[data-testid="ex-withdraw"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="ex-holds-ready"]').text()).toContain('松露×2');
+    expect(w.find('[data-testid="ex-holds-ready"]').text()).toContain('可以取出');
+    expect(w.find('[data-testid="ex-holds"]').text()).toContain('银币 500');
+    expect(w.find('[data-testid="ex-holds"]').text()).toContain('还剩 2 小时');
+    expect(w.find('[data-testid="ex-holds"]').text()).not.toContain('松露');
   });
 });

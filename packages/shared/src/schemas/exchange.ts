@@ -64,15 +64,83 @@ export interface ExchangeMeDto {
   wallet: { coin: number; foods: Array<{ foodsId: number; num: number }> };
   trades: ExchangeTradeDto[];
   feeRate: number;
+  /** 冻结中（冷静期）的所得 */
+  holds: ExchangeHoldDto[];
+  /** 交易所被冻结时的原因 */
+  frozen: { reason: string } | null;
 }
 
 export interface ExchangePlaceDto {
   order: ExchangeOrderDto;
-  fills: Array<{ price: number; qty: number }>;
+  fills: Array<{ price: number; qty: number; held: boolean }>;
 }
 
 export interface ExchangeWithdrawDto {
   coin: number;
   foods: Array<{ foodsId: number; num: number }>;
   left: Array<{ foodsId: number; num: number }>;
+}
+
+/** 可疑成交的标记（156-2 设计 §4） */
+export const EXCHANGE_FLAGS = {
+  same_ip: '同 IP',
+  edge_price: '价格贴边',
+  repeat_pair: '反复对倒',
+  large: '大额',
+} as const;
+export type ExchangeFlag = keyof typeof EXCHANGE_FLAGS;
+
+export const exchangeFreezeBody = z.object({
+  restId: z.number().int().positive(),
+  reason: z.string().trim().min(1).max(200),
+});
+export const exchangeUnfreezeBody = z.object({ restId: z.number().int().positive() });
+export const exchangeConfiscateBody = z.union([
+  z.object({ tradeId: z.number().int().positive() }).strict(),
+  z.object({ restId: z.number().int().positive() }).strict(),
+]);
+export const exchangeSuspiciousQuery = z.object({
+  shardId: z.coerce.number().int().positive(),
+  flag: z.enum(['same_ip', 'edge_price', 'repeat_pair', 'large']).optional(),
+});
+
+export interface ExchangeHoldDto {
+  coin: number;
+  foodsId: number | null;
+  num: number;
+  releaseAt: string;
+}
+
+export interface ExchangeSuspiciousSide {
+  restId: number;
+  restName: string | null;
+  accountId: number | null;
+  username: string | null;
+  /** 这笔成交在这一方名下的冻结记录状态；没有冻结记录为 null */
+  hold: 'held' | 'released' | 'confiscated' | null;
+}
+
+export interface ExchangeSuspiciousRow {
+  tradeId: number;
+  at: string;
+  foodsId: number;
+  price: number;
+  ref: number | null;
+  qty: number;
+  amount: number;
+  flags: ExchangeFlag[];
+  buyer: ExchangeSuspiciousSide;
+  seller: ExchangeSuspiciousSide;
+}
+
+export interface ExchangeFrozenRow {
+  restId: number;
+  restName: string;
+  username: string;
+  reason: string;
+  actor: string | null;
+  at: string;
+  /** 冻结中的所得合计 */
+  heldCoin: number;
+  heldFoods: number;
 }

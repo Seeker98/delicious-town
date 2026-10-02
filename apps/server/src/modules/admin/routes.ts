@@ -16,6 +16,10 @@ import {
   launchCheckFixBody,
   reportListQuery,
   suspiciousQuery,
+  exchangeConfiscateBody,
+  exchangeFreezeBody,
+  exchangeSuspiciousQuery,
+  exchangeUnfreezeBody,
   resolveReportBody,
   rejectReportBody,
   pageQuery,
@@ -44,6 +48,7 @@ import { createAdminShards } from './shards';
 import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
 import { createSuspicious } from '../ops/suspicious';
+import { createExchangeAdmin } from '../exchange/admin';
 import { createAdminReports } from '../report/admin';
 import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
@@ -176,6 +181,29 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.get('/suspicious/redeem', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await suspicious.redeemLocked(parse(suspiciousQuery, req.query).shardId));
+    });
+
+    const exchangeAdmin = createExchangeAdmin(game);
+    r.get('/suspicious/exchange', async (req) => {
+      await requireRole(db, req, 'mod');
+      const q = parse(exchangeSuspiciousQuery, req.query);
+      return ok(await exchangeAdmin.suspicious(q.shardId, q.flag));
+    });
+    r.get('/exchange/frozen', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await exchangeAdmin.frozen(parse(suspiciousQuery, req.query).shardId));
+    });
+    r.post('/exchange/freeze', async (req) => {
+      const a = await requireRole(db, req, 'mod');
+      return ok(await exchangeAdmin.freeze(a, parse(exchangeFreezeBody, req.body)));
+    });
+    r.post('/exchange/unfreeze', async (req) => {
+      const a = await requireRole(db, req, 'mod');
+      return ok(await exchangeAdmin.unfreeze(a, parse(exchangeUnfreezeBody, req.body)));
+    });
+    r.post('/exchange/confiscate', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await exchangeAdmin.confiscate(a, parse(exchangeConfiscateBody, req.body)));
     });
 
     const reports = createAdminReports(game);

@@ -213,5 +213,8 @@ describe('交易所日志（156-1）', () => {
     expect(log('exchange.withdraw', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
       '从交易所账户取出：银币 950、食材3×2',
     );
+    expect(log('exchange.fill', { side: 'buy', foodsId: 3, price: 100, qty: 2, fee: 0, held: true })).toBe(
+      '交易所买单成交：食材3 ×2，单价 100（可疑成交，所得冻结 24 小时）',
+    );
   });
 });
