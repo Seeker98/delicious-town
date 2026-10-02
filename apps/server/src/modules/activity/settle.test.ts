@@ -74,7 +74,7 @@ describe('结束补发（设计 §6）', () => {
     const b = await newRestaurant(t, { shardId: s2 });
     // 全服活动放在远期（各测试文件用不同年份，避免互相看到）：测试库是共用的，此刻生效的全服活动会被并行跑的其他测试看到
     const back = t.clock.now;
-    t.clock.set(new Date('2097-01-02T00:00:00Z'));
+    t.clock.set(new Date('2094-01-02T00:00:00Z'));
     const end = new Date(t.clock.now.getTime() + H);
     const id = await insertActivity(t, { shardId: null, spec, endsAt: end });
     try {

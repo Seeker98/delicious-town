@@ -44,7 +44,8 @@ export function rewardsOf(
     return spec.def.milestones.map((m, i) => ({
       key: `s${i}`,
       award: m.award,
-      reached: pool >= m.target && count('points') >= m.minContribution,
+      // 门槛填 0 也要至少有 1 分：等级不够、没参与的店不计分，不能白拿（终审 I1）
+      reached: pool >= m.target && count('points') >= Math.max(1, m.minContribution),
     }));
   }
   if (spec.kind === 'goals')

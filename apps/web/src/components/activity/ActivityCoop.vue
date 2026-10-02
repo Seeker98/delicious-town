@@ -26,7 +26,9 @@ const progress = computed(() => {
 function hint(i: number): string {
   const m = ms.value[i]!;
   if (board.value.pool < m.target) return `全服还差 ${formatNum(m.target - board.value.pool)} 分`;
-  if (mine.value < m.minContribution) return `个人贡献还差 ${formatNum(m.minContribution - mine.value)} 分`;
+  // 门槛为 0 时也要至少有 1 分（终审 I1）
+  const need = Math.max(1, m.minContribution);
+  if (mine.value < need) return `个人贡献还差 ${formatNum(need - mine.value)} 分`;
   return '';
 }
 const rankLabel = (r: { from: number; to: number }) =>
@@ -72,7 +74,9 @@ const rankLabel = (r: { from: number; to: number }) =>
   </div>
   <template v-if="a.def.ranks.length > 0 || board.top.length > 0">
     <div class="small fw-bold mt-2">贡献榜</div>
-    <div v-if="a.state === 'ended'" class="small text-muted">贡献榜已结算，奖励已发邮件</div>
+    <div v-if="a.state === 'ended'" class="small text-muted">
+      贡献榜已结算{{ a.def.ranks.length > 0 ? '，奖励已发邮件' : '' }}
+    </div>
     <div v-else-if="a.state === 'settling'" class="small text-muted">贡献榜结算中</div>
     <div v-for="(r, i) in a.def.ranks" :key="`r${i}`" class="small">
       {{ rankLabel(r) }}：{{ rewardSummary(r.award, catalog) }}

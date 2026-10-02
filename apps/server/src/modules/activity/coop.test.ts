@@ -135,3 +135,19 @@ describe('全服合力领取和列表（148-3 设计 §6、§8.1）', () => {
     expect(items.find((i) => i.id === goals)!.coop).toBeNull();
   });
 });
+
+describe('终审 I1：等级不够、没有贡献的店领不到门槛为 0 的里程碑', () => {
+  it('列表里不算达成，领取报未达成', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId, patch: { level: 20 } });
+    const low = await newRestaurant(t, { shardId, patch: { level: 1 } });
+    const id = await insertActivity(t, { shardId, spec: spec(), minLevel: 10 });
+    await act(a, 'market.buy', 3);
+    await act(low, 'market.buy', 3);
+    const x = (await t.game.activity.list(low)).items.find((i) => i.id === id)!;
+    expect(x.coop!.pool).toBe(30);
+    expect(x.rewards[0]!.reached).toBe(false);
+    expect(x.claimable).toBe(0);
+    await expect(t.game.activity.claim(low, id, 's0')).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
+  });
+});

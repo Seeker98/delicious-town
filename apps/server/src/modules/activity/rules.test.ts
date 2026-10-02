@@ -173,3 +173,18 @@ describe('全服合力（148-3 设计 §5.2、§6）', () => {
     ]);
   });
 });
+
+describe('终审 I1：门槛为 0 的里程碑也要有贡献', () => {
+  it('个人贡献为 0 时不达成，哪怕门槛是 0、总分已经够了', () => {
+    const coop = {
+      kind: 'coop' as const,
+      def: {
+        rules: [{ key: 'signin', points: 1, dailyCap: 1 }],
+        milestones: [{ target: 100, minContribution: 0, award: { coin: 1 } }],
+        ranks: [],
+      },
+    };
+    expect(rewardsOf(coop, {}, false, { pool: 500 })[0]!.reached).toBe(false);
+    expect(rewardsOf(coop, { points: 1 }, false, { pool: 500 })[0]!.reached).toBe(true);
+  });
+});

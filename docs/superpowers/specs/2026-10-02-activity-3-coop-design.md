@@ -11,7 +11,7 @@
 
 - 玩家照常玩，行为按分计入个人贡献；
 - 本区服所有店的贡献加起来就是全服总分；
-- 全服总分到达里程碑后，个人贡献达到门槛的店可以领里程碑礼包；
+- 全服总分到达里程碑后，个人贡献达到门槛（至少 1 分）的店可以领里程碑礼包；
 - 活动结束后，按个人贡献排名，给各名次段发奖励。
 
 ## 2. 用户已确认的裁定
@@ -31,7 +31,7 @@ CoopDef = {
   rules: { key: ActionKey; points: int 1..1000; dailyCap: int 1..100000 }[1..20],  // 同战令，行为不重复
   milestones: {
     target: int 1..1_000_000_000,     // 全服目标分，逐个严格递增
-    minContribution: int 0..100_000_000, // 个人最低贡献，0 = 不设门槛
+    minContribution: int 0..100_000_000, // 个人最低贡献，0 = 有贡献（至少 1 分）就行（终审 I1）
     award: rewardItems,
   }[1..10],
   ranks: {
@@ -94,7 +94,7 @@ where c.activity_id = $1 and c.key = 'points' and r.shard_id = $2
 
 - `rewardsOf(spec, counters, premium, ctx?: { pool?: number })` 多一个可选参数，其他类型忽略它。
 - 合力类型返回每个里程碑一份奖励，键 `s<下标>`：
-  - `reached = pool ≥ target && 个人贡献 ≥ minContribution`；
+  - `reached = pool ≥ target && 个人贡献 ≥ max(1, minContribution)`（终审 I1：门槛为 0 也要有贡献）；
   - 个人贡献就是 `counters.points`，没有则为 0。
 - 名次段奖励**不**放进 `rewardsOf`：它们只在结算时发，不在页面领取（§7）。
 - 领取沿用现有的 `claim` / `claimAll`。合力活动在锁店事务里先 `poolOf(o.tx, …)`，再用它算 `rewardsOf`。

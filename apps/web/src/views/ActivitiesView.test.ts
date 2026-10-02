@@ -495,3 +495,40 @@ describe('ActivitiesView 全服合力（148-3）', () => {
     expect(w.text()).toContain('贡献榜已结算，奖励已发邮件');
   });
 });
+
+describe('终审：没设名次奖励时不说奖励已发邮件', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  it('名次段为空、活动已结束：只写贡献榜已结算', async () => {
+    const a = {
+      ...base,
+      id: 22,
+      state: 'ended',
+      kind: 'coop',
+      def: {
+        rules: [{ key: 'market.buy', points: 10, dailyCap: 50 }],
+        milestones: [{ target: 100, minContribution: 0, award: { coin: 1 } }],
+        ranks: [],
+      },
+      counters: { points: 10 },
+      rewards: [{ key: 's0', award: { coin: 1 }, reached: false, claimed: null }],
+      claimable: 0,
+      coop: { pool: 50, top: [{ rank: 1, restId: 7, name: '我的店', points: 10, mine: true }], myRank: 1 },
+    };
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [a as never], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.text()).toContain('贡献榜已结算');
+    expect(w.text()).not.toContain('奖励已发邮件');
+  });
+});
