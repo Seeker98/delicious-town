@@ -157,6 +157,7 @@ const STATE: Record<string, string> = {
   price_band: '价格超出今天允许的范围',
   cupboard_full: '橱柜放不下这么多，先腾出位置再挂买单',
   order_closed: '这张单已经成交、撤销或过期了',
+  exchange_frozen: '交易所已被冻结，有疑问请联系管理员',
   roach_full: '这家店的蟑螂已经太多了，换一家吧',
   not_exchange: '这个活动不能兑换',
   exchange_closed: '兑换期已经结束，活动货币已作废',
@@ -392,6 +393,8 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return LIMIT[params.what]!(params);
   }
   // 论坛长度：用服务端给的上限，改 tuning 后提示也跟着变（PR31 遗留）
+  if (code === 'INVALID_STATE' && params.reason === 'exchange_frozen' && typeof params.why === 'string')
+    return `交易所已被冻结：${params.why}。有疑问请联系管理员`;
   if (code === 'INVALID_STATE' && params.reason === 'price_band' && params.min !== undefined)
     return `价格要在 ${String(params.min)} ~ ${String(params.max)} 之间`;
   if (code === 'INVALID_STATE' && params.reason === 'post_text' && params.max !== undefined)

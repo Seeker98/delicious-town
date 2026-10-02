@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { timeLeft } from '../utils/activity';
 import { formatNum } from '../utils/format';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
@@ -35,8 +36,24 @@ const REASON: Record<string, (m: ExchangeMeDto) => string> = {
   exchange_email: () => '验证邮箱后才能交易',
 };
 const blocked = computed(() =>
-  me.value && !me.value.eligible ? (REASON[me.value.reason ?? '']?.(me.value) ?? '暂时不能交易') : '',
+  me.value?.frozen
+    ? '交易所已被冻结'
+    : me.value && !me.value.eligible
+      ? (REASON[me.value.reason ?? '']?.(me.value) ?? '暂时不能交易')
+      : '',
 );
+/** 冷静期冻结中的所得合计（156-2 设计 §8） */
+const holdText = computed(() => {
+  if (!me.value) return '';
+  const coin = me.value.holds.reduce((n, h) => n + h.coin, 0);
+  const foods = new Map<number, number>();
+  for (const h of me.value.holds)
+    if (h.foodsId !== null && h.num > 0) foods.set(h.foodsId, (foods.get(h.foodsId) ?? 0) + h.num);
+  return [
+    ...(coin > 0 ? [`银币 ${formatNum(coin)}`] : []),
+    ...[...foods].map(([id, n]) => `${catalog.foodName(id)}×${n}`),
+  ].join('、');
+});
 const valid = computed(
   () =>
     book.value !== null &&
@@ -100,8 +117,12 @@ function submit() {
   void run(
     () => endpoints.tradePlace(b),
     (r) => {
-      const n = (r as { fills: Array<{ qty: number }> }).fills.reduce((s, x) => s + x.qty, 0);
-      return n > 0 ? `已成交 ${n} 个${n < b.qty ? '，其余挂单中' : ''}` : '已挂单';
+      const fills = (r as { fills: Array<{ qty: number; held: boolean }> }).fills;
+      const n = fills.reduce((s, x) => s + x.qty, 0);
+      if (n === 0) return '已挂单';
+      // 可疑成交的所得进冷静期（156-2 设计 §8）
+      const held = fills.some((x) => x.held) ? '，其中有可疑成交，所得冻结 24 小时' : '';
+      return `已成交 ${n} 个${n < b.qty ? '，其余挂单中' : ''}${held}`;
     },
     '下单失败',
   );
@@ -133,6 +154,9 @@ onMounted(async () => {
 
 <template>
   <h5>交易所</h5>
+  <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
+    你的交易所已被冻结：{{ me.frozen.reason }}。有疑问请联系管理员。
+  </div>
   <div class="small text-muted mb-2">
     玩家之间买卖稀有食材。挂单价要在当天参考价的一半到两倍之间；卖方成交时扣手续费。
   </div>
@@ -253,12 +277,15 @@ onMounted(async () => {
       <button
         type="button"
         class="btn btn-sm btn-outline-primary ms-auto"
-        :disabled="busy || (me.wallet.coin === 0 && me.wallet.foods.length === 0)"
+        :disabled="busy || !!me.frozen || (me.wallet.coin === 0 && me.wallet.foods.length === 0)"
         data-testid="ex-withdraw"
         @click="withdraw"
       >
         全部取出
       </button>
+    </div>
+    <div v-if="me.holds.length > 0" class="small text-muted mb-3" data-testid="ex-holds">
+      冻结中（可疑成交的冷静期）：{{ holdText }}，{{ timeLeft(me.holds[0]!.releaseAt) }}，到时可取
     </div>
     <h6 class="dt-section">我的挂单</h6>
     <div v-if="me.orders.length === 0" class="small text-muted mb-3">没有挂单</div>
