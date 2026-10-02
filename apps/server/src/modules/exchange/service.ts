@@ -5,6 +5,7 @@ import {
   gameTime,
   type ExchangeBookDto,
   type ExchangeFoodDto,
+  type ExchangeLevelDto,
   type ExchangeMeDto,
   type ExchangeOrderDto,
   type ExchangePlaceDto,
@@ -516,7 +517,7 @@ export function createExchangeService(d: GameDeps) {
       from unnest(${ids}::int[]) as f(id)
       cross join lateral (
         select price from exchange_trade
-        where shard_id = ${ctx.shardId} and foods_id = f.id
+        where shard_id = ${ctx.shardId} and foods_id = f.id and not system
         order by id desc limit 1
       ) x`.execute(d.db);
     const lastBy = new Map(lasts.rows.map((x) => [x.foods_id, x.price]));
@@ -554,12 +555,13 @@ export function createExchangeService(d: GameDeps) {
           .orderBy('price', sd === 'buy' ? 'desc' : 'asc')
           .limit(5)
           .execute()
-      ).map((x) => ({ price: x.price, qty: Number(x.qty) }));
+      ).map((x): ExchangeLevelDto => ({ price: x.price, qty: Number(x.qty), system: false }));
     const last = await d.db
       .selectFrom('exchange_trade')
       .select('price')
       .where('shard_id', '=', ctx.shardId)
       .where('foods_id', '=', foodsId)
+      .where('system', '=', false)
       .orderBy('id', 'desc')
       .executeTakeFirst();
     const vol = await d.db
@@ -569,14 +571,31 @@ export function createExchangeService(d: GameDeps) {
       .where('foods_id', '=', foodsId)
       .where('created_at', '>=', gameTime(gameDay(now), 0))
       .executeTakeFirstOrThrow();
+    // 系统做市的一档（156-3 设计 §6）：同价排在玩家后面；买档数量按看的人自己的剩余额度
+    const quote = await makerQuote(d.db, {
+      config: d.config,
+      tuning: s.tuning,
+      shardId: ctx.shardId,
+      foodsId,
+      day: gameDay(now),
+      restId: ctx.restaurantId,
+      ref,
+    });
+    const merge = (levels: ExchangeLevelDto[], sys: MakerLevel | null, sd: 'buy' | 'sell') => {
+      if (!sys) return levels;
+      const at = levels.findIndex((l) => (sd === 'buy' ? l.price < sys.price : l.price > sys.price));
+      const out = [...levels];
+      out.splice(at === -1 ? out.length : at, 0, { ...sys, system: true });
+      return out;
+    };
     return {
       foodsId,
       ref,
       ...priceBand(ref, t),
       last: last?.price ?? null,
       volume: Number(vol.n),
-      bids: await side('buy'),
-      asks: await side('sell'),
+      bids: merge(await side('buy'), quote.bid, 'buy'),
+      asks: merge(await side('sell'), quote.ask, 'sell'),
     };
   }
 
@@ -612,7 +631,7 @@ export function createExchangeService(d: GameDeps) {
     const since = new Date(now.getTime() - 7 * 86_400_000);
     const trades = await d.db
       .selectFrom('exchange_trade')
-      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'created_at'])
+      .select(['buyer_rest_id', 'foods_id', 'price', 'qty', 'fee', 'system', 'created_at'])
       .where((eb) =>
         eb.or([eb('buyer_rest_id', '=', ctx.restaurantId), eb('seller_rest_id', '=', ctx.restaurantId)]),
       )
@@ -634,6 +653,7 @@ export function createExchangeService(d: GameDeps) {
           price: x.price,
           qty: x.qty,
           fee: side === 'sell' ? Number(x.fee) : 0,
+          system: x.system,
           createdAt: x.created_at.toISOString(),
         };
       }),

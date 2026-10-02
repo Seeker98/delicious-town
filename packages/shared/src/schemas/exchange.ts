@@ -33,6 +33,8 @@ export interface ExchangeFoodDto {
 export interface ExchangeLevelDto {
   price: number;
   qty: number;
+  /** 系统做市的一档（156-3） */
+  system: boolean;
 }
 
 export interface ExchangeBookDto {
@@ -52,6 +54,8 @@ export interface ExchangeTradeDto {
   price: number;
   qty: number;
   fee: number;
+  /** 和系统成交（156-3） */
+  system: boolean;
   createdAt: string;
 }
 
