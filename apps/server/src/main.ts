@@ -1,5 +1,6 @@
 import { buildApp } from './app';
 import { migrateToLatest } from './db/migrate';
+import { initSeedSecret } from './core/seedSecret';
 import { createDeps } from './deps';
 import { loadEnv } from './env';
 import { pullOffset } from './infra/clock';
@@ -12,6 +13,7 @@ if (env.MIGRATE_ON_START) {
   await migrateToLatest(deps.db);
   await maintainPartitions(deps.db, new Date());
 }
+await initSeedSecret(deps);
 // 开发环境：沿用之前 test/tick 推进过的时间，重启不回退
 if (deps.clock) await pullOffset(deps.clock, deps.redis);
 // 新手兑换码（问题记录 150）：每次启动按配置同步；失败只记日志，不挡启动

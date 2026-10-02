@@ -25,7 +25,10 @@ const envSchema = z.object({
   ENABLE_TEST_API: bool.default('false'),
   /** 限流倍数：开发环境调大（e2e 的多个玩家共用 localhost 一个 IP），生产保持 1 */
   RATE_LIMIT_SCALE: z.coerce.number().positive().default(1),
-  /** 随机种子密钥：混进天气、菜场、蟹老板等确定性随机种子，源码公开也算不出未来的结果；生产必须配置 */
+  /**
+   * 随机种子密钥：混进天气、菜场、蟹老板等确定性随机种子，源码公开也算不出未来的结果。
+   * 生产环境可以不配：启动时从数据库读，没有就生成一个存进去（问题记录 262，见 core/seedSecret.ts）
+   */
   RNG_SECRET: z.string().default(''),
 });
 
@@ -37,8 +40,10 @@ export function loadEnv(source: Record<string, string | undefined> = process.env
     if (!env.TURNSTILE_SECRET) throw new Error('TURNSTILE_SECRET is required in production');
     if (!env.COOKIE_SECURE) throw new Error('COOKIE_SECURE must be true in production');
     if (env.ENABLE_TEST_API) throw new Error('ENABLE_TEST_API must be false in production');
-    if (env.RNG_SECRET.length < 16)
-      throw new Error('RNG_SECRET (at least 16 chars) is required in production');
+    if (env.RNG_SECRET && env.RNG_SECRET.length < 16)
+      throw new Error(
+        'RNG_SECRET must be at least 16 chars (or leave it empty to use the one stored in the database)',
+      );
   }
   return env;
 }

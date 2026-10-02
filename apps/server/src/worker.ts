@@ -1,4 +1,5 @@
 import pino from 'pino';
+import { initSeedSecret } from './core/seedSecret';
 import { createDeps } from './deps';
 import { loadEnv } from './env';
 import { createGame } from './game';
@@ -10,6 +11,7 @@ import { workerJobs } from './worker/jobs';
 const env = loadEnv();
 const log = pino({ level: env.LOG_LEVEL });
 const deps = createDeps(env);
+await initSeedSecret(deps);
 const game = createGame(deps);
 const settingsSub = subscribeSettings(env.REDIS_URL, (id) => game.shards.invalidate(id));
 const ac = new AbortController();

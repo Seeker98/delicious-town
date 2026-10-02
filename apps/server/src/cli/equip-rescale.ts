@@ -1,3 +1,4 @@
+import { initSeedSecret } from '../core/seedSecret';
 import { createDeps } from '../deps';
 import { loadEnv } from '../env';
 import { createGame } from '../game';
@@ -9,6 +10,7 @@ import { rescaleEquips } from '../modules/equip/rescale';
  */
 const deps = createDeps(loadEnv());
 try {
+  await initSeedSecret(deps);
   const r = await rescaleEquips(createGame(deps).deps);
   console.log(`equip rescaled: ${r.changed} / ${r.total}`);
 } finally {

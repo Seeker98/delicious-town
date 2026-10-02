@@ -1168,6 +1168,12 @@ export interface ExchangeFreezeTable {
   created_at: TsDefault;
 }
 
+export interface ServerSecretTable {
+  key: string;
+  value: string;
+  created_at: TsDefault;
+}
+
 export interface DB {
   account: AccountTable;
   email_token: EmailTokenTable;
@@ -1273,6 +1279,7 @@ export interface DB {
   takeaway_rider: TakeawayRiderTable;
   takeaway_order: TakeawayOrderTable;
   takeaway_delivery: TakeawayDeliveryTable;
+  server_secret: ServerSecretTable;
 }
 
 export type RestaurantRow = Selectable<RestaurantTable>;
