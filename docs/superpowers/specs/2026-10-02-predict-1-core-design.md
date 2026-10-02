@@ -47,6 +47,7 @@
 - **手续费**：`ceil(成交额 × feeRate)`。买入付 `成交额 + 手续费`，卖出得 `成交额 − 手续费`。
 - **初始概率** `p0`（5%~95%）：开题时令 `y − n = b × ln(p0 / (1 − p0))`，较小的一边为 0。
 - **系统最大亏损**：结果为"是"时不超过 `unit × b × ln(1 / p0)`，为"否"时不超过 `unit × b × ln(1 / (1 − p0))`。50% 开局约 6.9 万银币，5% 的冷门真发生约 30 万银币；手续费另算收入。
+- 公式里的 `unit` 用事件自己保存的值（出题时从区服数值复制），之后改区服数值不影响已开的事件。
 - 报价函数放在 `@dt/shared`，前后端共用，前端用它预估花费和所得。
 
 ## 5. 数据（迁移 0029）
@@ -60,6 +61,7 @@ predict_event
   description   text not null default ''               -- 0~500 字
   params        jsonb not null default '{}'           -- 238-2 用
   b             double precision not null check (b > 0)
+  unit          int not null                           -- 出题时的 tuning.predict.unit；报价和结算都用它，改区服数值不影响已开的事件
   q_yes         double precision not null default 0
   q_no          double precision not null default 0
   p0            double precision not null              -- 初始概率，后台算盈亏用
