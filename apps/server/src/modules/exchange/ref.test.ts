@@ -89,3 +89,15 @@ describe('终审 I2：批量参考价和逐个算的结果一致', () => {
     expect(await refPrices(t.db, t.deps.config, tn, s2, [a, b, c, e], d1)).toEqual(one);
   });
 });
+
+describe('问题记录 242：初始参考价用 initialRef', () => {
+  it('雪蛤没有成交时参考价 6300（不是系统定价 9300），批量和逐个一致', async () => {
+    const shardId = await createShard(t.db);
+    const snow = [...t.deps.config.foods.values()].find((f) => f.name === '雪蛤')!;
+    const day = gameDay(t.clock.now);
+    expect(await refPrice(t.db, t.deps.config, tune(), shardId, snow.id, day)).toBe(6300);
+    const s2 = await createShard(t.db);
+    expect((await refPrices(t.db, t.deps.config, tune(), s2, [snow.id, 470], day)).get(snow.id)).toBe(6300);
+    expect((await refPrices(t.db, t.deps.config, tune(), s2, [snow.id, 470], day)).get(470)).toBe(8100);
+  });
+});
