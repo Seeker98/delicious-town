@@ -980,7 +980,7 @@ export interface LoginTraceTable {
 export interface ActivityTable {
   id: Generated<number>;
   shard_id: Nullable<number>;
-  kind: 'goals' | 'grid' | 'pass' | 'boost';
+  kind: 'goals' | 'grid' | 'pass' | 'boost' | 'exchange';
   title: string;
   body: string;
   starts_at: Ts;

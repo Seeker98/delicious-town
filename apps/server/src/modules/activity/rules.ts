@@ -20,13 +20,22 @@ export function gridLines(size: number): Array<{ key: string; cells: number[] }>
   ];
 }
 
+export const currencyKey = (i: number) => `m${i}`;
+export const exchangedKey = (i: number) => `x${i}`;
+export const dropDailyKey = (activityId: number, i: number) => `act${activityId}:d${i}`;
+
+/** 兑换活动结束后还能兑换到什么时候（148-2 设计 §5）；其他类型为 null */
+export function exchangeUntil(spec: ActivitySpec, endsAt: Date): Date | null {
+  return spec.kind === 'exchange' ? new Date(endsAt.getTime() + spec.def.graceHours * 3_600_000) : null;
+}
+
 /** 每份奖励是否达成（设计 §4.3）；顺序就是玩家页的显示顺序 */
 export function rewardsOf(
   spec: ActivitySpec,
   counters: Record<string, number>,
   premium: boolean,
 ): RewardState[] {
-  if (spec.kind === 'boost') return [];
+  if (spec.kind === 'boost' || spec.kind === 'exchange') return [];
   const count = (k: string) => counters[k] ?? 0;
   if (spec.kind === 'goals')
     return spec.def.goals.map((g, i) => ({
