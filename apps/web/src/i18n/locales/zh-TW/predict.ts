@@ -1,0 +1,73 @@
+// 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+/** 事件預測（問題記錄 272） */
+export default {
+  title: '事件預測',
+  reasons: {
+    predict_level: (level: number) => `餐廳 ${level} 級才能參與預測`,
+    predict_age: (days: number) => `賬號註冊滿 ${days} 天才能參與預測`,
+    predict_email: '驗證郵箱後才能參與預測',
+  },
+  status: { open: '進行中', closed: '等待判定', resolved: '已判定', void: '已作廢' },
+  yes: '是',
+  no: '否',
+  result: (yes: boolean) => `結果：${yes ? '是' : '否'}`,
+  closedAt: '已截止',
+  leftHm: (h: number, m: number) => `還剩 ${h} 小時 ${m} 分`,
+  leftM: (m: number) => `還剩 ${m} 分`,
+  intro:
+    '買"是"或"否"，結算時押對的一邊每份得 1,000 銀幣；價格就是大家認為發生的機率，隨買賣漲跌。不必等開獎，截止前隨時可以賣出止盈止損。點事件展開詳情。',
+  running: '進行中',
+  noRunning: '現在沒有進行中的事件',
+  auto: '系統出題',
+  yesPct: (n: number) => `是 ${n}%`,
+  noPct: (n: number) => `否 ${n}%`,
+  holding: (yes: number, no: number) => ` · 我持有 是 ${yes} / 否 ${no}`,
+  ended: '已結束',
+  endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
+  profit: (n: string) => ` · 盈虧 ${n}`,
+  note: (text: string) => `判定依據：${text}`,
+  detail: {
+    action: (buy: boolean, yes: boolean) => `${buy ? '買入' : '賣出'}${yes ? '是' : '否'}`,
+    traded: (action: string, qty: number, buy: boolean, total: string) =>
+      `${action} ${qty} 份，${buy ? '花費' : '得到'} ${total} 銀幣`,
+    failed: '交易失敗',
+    closeAt: (time: string) => `截止 ${time}`,
+    noChart: '還沒有成交，有人買賣後顯示價格走勢',
+    hold: (yes: number, no: number, net: string) => `我持有：是 ${yes} 份、否 ${no} 份，淨投入 ${net} 銀幣`,
+    sellAll: (n: string) => `（按當前價全部賣出約 ${n} 銀幣）`,
+    outcome: (label: string, got: string) => `結果為${label}：得 ${got} 銀幣，盈虧`,
+    help: '怎麼算盈虧',
+    helpItems: (unit: string, example: string, feePct: number) => [
+      `結算時押對的一邊每份得 ${unit} 銀幣，押錯的一邊作廢。比如"是"的價格是 63%，買 1 份約花 ${example} 銀幣；結果為"是"就拿回 ${unit}，為"否"就虧掉買入的錢。`,
+      '價格就是大家認為發生的機率：買"是"的人越多，"是"越貴、"否"越便宜；一次買得越多，後面每份越貴。',
+      '不必等開獎：截止前隨時可以按當前價賣出。覺得押錯了就賣掉止損，價格漲到滿意就賣掉止盈，賺到或虧掉的是賣出所得和買入花費的差。',
+      `買入和賣出都收手續費 ${feePct}%（按成交額算，向上取整）。`,
+      '淨投入 = 買入花的（含手續費）− 賣出拿回的；盈虧 = 結算所得 − 淨投入。',
+      '事件被作廢時退回淨投入；如果有人提前賣出賺了錢、系統收到的錢不夠退，就按比例退。',
+    ],
+    buy: '買入',
+    sell: '賣出',
+    shares: '份',
+    submit: '確定',
+    estimate: (buy: boolean, total: string, fee: string, pct: number) =>
+      `${buy ? '預計花費' : '預計得到'} ${total} 銀幣（含手續費 ${fee}），成交後"是" ${pct}%`,
+    enterQty: '輸入份數（賣出不能超過持有）',
+    summary: '本局盈虧',
+    summaryLine: (bought: string, sold: string, fees: string, net: string) =>
+      `買入共花 ${bought}，賣出共得 ${sold}（手續費合計 ${fees}），淨投入 ${net}`,
+    resolved: (label: string, held: number, unit: string, payout: string) =>
+      `結果為${label}：${label} ${held} 份 × ${unit} = ${payout}`,
+    voided: (pct: number, payout: string) => `已作廢：退回淨投入的 ${pct}%，共 ${payout}`,
+    waiting: '已截止，等待判定',
+    summaryHint: '（結算所得 − 淨投入）',
+    mine: '我的買賣記錄',
+    mineHint: '我在這個事件裡的每一筆買賣，花費和得到都含手續費',
+    mineLine: (action: string, qty: number, per: string, buy: boolean, total: string) =>
+      `${action} ${qty} 份，每份約 ${per}，${buy ? '花費' : '得到'} ${total}`,
+    trades: '全服最近成交',
+    tradesHint: '所有人最近 20 筆買賣（不顯示是誰），能看出價格是被哪些買賣推上去或拉下來的',
+    noTrades: '還沒有成交',
+    tradeLine: (action: string, qty: number, per: string, pct: number) =>
+      `${action} ${qty} 份，每份約 ${per}，成交後"是" ${pct}%`,
+  },
+};

@@ -1,0 +1,37 @@
+import type { Messages } from '../..';
+
+const kuji: Messages['kuji'] = {
+  title: 'Ichiban Kuji',
+  diamond: (n) => `${n} diamantes`,
+  coin: (n) => `${n} monedas`,
+  exp: (n) => `${n} EXP`,
+  renown: (n) => `${n} de renombre`,
+  lastTier: 'Último Premio',
+  tier: (k) => `Premio ${k}`,
+  bought: (n) => `Compraste ${n} boletos kuji`,
+  buyFailed: 'No se pudo comprar',
+  drawFailed: 'No se pudo sacar',
+  rule: (total) =>
+    `Cada sorteo tiene ${total} boletos y cada tirada quita uno; quien saca el último gana además el Último Premio. Cada día a las 0:00 se abre un sorteo nuevo y los boletos sin sacar caducan.`,
+  theme: (month, name) => `Tema del mes ${month}: ${name}`,
+  themeLimited: ' Las figuras limitadas de este mes solo se pueden conseguir este mes.',
+  closed: 'Hoy ya se sacaron todos los sorteos. Vuelve mañana a las 0:00.',
+  pool: (day, seq) => `${day} sorteo n.º ${seq}`,
+  left: (left, total) => `Quedan ${left} / ${total}`,
+  big: 'Gran premio',
+  icon: ' (con icono limitado)',
+  lastWho: 'Quien saque el último boleto',
+  tickets: (n) => `Mis boletos kuji: ${n}`,
+  buyPrefix: 'Comprar',
+  buyTotal: (coin) => `boletos por ${coin} monedas`,
+  buy: 'Comprar boletos',
+  buyLeft: (n) => `Hoy puedes comprar ${n} más`,
+  draw: (n) => `Sacar ${n}`,
+  result: 'Resultado',
+  drawLine: (tier, award) => `${tier}: ${award}`,
+  lastWon: (award) => `¡Enhorabuena! Sacaste el último boleto y ganas el Último Premio: ${award}`,
+  recent: 'Grandes premios recientes',
+  noRecent: 'Nadie ha ganado aún un gran premio',
+  recentLine: (name, tier) => `${name} ganó el ${tier}`,
+};
+export default kuji;

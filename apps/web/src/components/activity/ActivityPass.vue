@@ -4,11 +4,13 @@ import type { ActivityDto, PassDef } from '@dt/shared';
 import { useCatalogStore } from '../../stores/catalog';
 import { actionName } from '../../utils/activity';
 import { rewardSummary } from '../../utils/reward';
+import { useT } from '../../composables/useT';
 import RewardButton from './RewardButton.vue';
 
 const props = defineProps<{ a: ActivityDto & { kind: 'pass'; def: PassDef }; busy: boolean }>();
 defineEmits<{ claim: [key: string]; unlock: [] }>();
 const catalog = useCatalogStore();
+const t = useT();
 const points = computed(() => props.a.counters.points ?? 0);
 const byKey = computed(() => new Map(props.a.rewards.map((r) => [r.key, r])));
 const next = computed(() => props.a.def.levels.find((l) => l.points > points.value));
@@ -19,11 +21,11 @@ const price = computed(() =>
 
 <template>
   <div class="mb-1">
-    <b>积分 {{ points }}</b>
-    <span v-if="next" class="small text-muted ms-2">下一档还差 {{ next.points - points }}</span>
+    <b>{{ t.activity.pass.points(points) }}</b>
+    <span v-if="next" class="small text-muted ms-2">{{ t.activity.pass.next(next.points - points) }}</span>
   </div>
   <div class="small text-muted mb-2">
-    今天：
+    {{ t.activity.pass.today }}
     <span v-for="r in a.def.rules" :key="r.key" class="me-2"
       >{{ actionName(r.key) }} {{ a.today[r.key] ?? 0 }}/{{ r.dailyCap }}</span
     >
@@ -31,10 +33,10 @@ const price = computed(() =>
   <table class="table table-sm align-middle">
     <thead>
       <tr>
-        <th>积分</th>
-        <th>普通</th>
+        <th>{{ t.activity.pass.pointsCol }}</th>
+        <th>{{ t.activity.pass.free }}</th>
         <th>
-          进阶
+          {{ t.activity.pass.premium }}
           <button
             v-if="!a.premium && a.state === 'running'"
             type="button"
@@ -43,7 +45,7 @@ const price = computed(() =>
             :data-testid="`unlock-${a.id}`"
             @click="$emit('unlock')"
           >
-            <i class="bi bi-lock"></i> 解锁（{{ price }}）
+            <i class="bi bi-lock"></i> {{ t.activity.pass.unlock(price) }}
           </button>
         </th>
       </tr>

@@ -1,0 +1,37 @@
+import type { Messages } from '../..';
+
+const kuji: Messages['kuji'] = {
+  title: 'Ichiban Kuji',
+  diamond: (n) => `${n} diamonds`,
+  coin: (n) => `${n} coins`,
+  exp: (n) => `${n} EXP`,
+  renown: (n) => `${n} Renown`,
+  lastTier: 'Last Prize',
+  tier: (k) => `Prize ${k}`,
+  bought: (n) => `Bought ${n} kuji tickets`,
+  buyFailed: 'Purchase failed',
+  drawFailed: 'Draw failed',
+  rule: (total) =>
+    `Each pool has ${total} tickets and every draw removes one; whoever draws the last ticket also wins the Last Prize. A new pool opens at 0:00 every day, and undrawn tickets expire.`,
+  theme: (month, name) => `Theme for month ${month}: ${name}`,
+  themeLimited: " This month's limited figures can only be drawn this month.",
+  closed: "Today's pools are all drawn. Come back at 0:00 tomorrow.",
+  pool: (day, seq) => `${day} pool #${seq}`,
+  left: (left, total) => `${left} / ${total} left`,
+  big: 'Big prize',
+  icon: ' (with a limited icon)',
+  lastWho: 'Whoever draws the last ticket',
+  tickets: (n) => `My kuji tickets: ${n}`,
+  buyPrefix: 'Buy',
+  buyTotal: (coin) => `tickets for ${coin} coins`,
+  buy: 'Buy tickets',
+  buyLeft: (n) => `${n} more today`,
+  draw: (n) => `Draw ${n}`,
+  result: 'Draw results',
+  drawLine: (tier, award) => `${tier}: ${award}`,
+  lastWon: (award) => `Congratulations! You drew the last ticket and won the Last Prize: ${award}`,
+  recent: 'Recent big prizes',
+  noRecent: 'Nobody has won a big prize yet',
+  recentLine: (name, tier) => `${name} won ${tier}`,
+};
+export default kuji;

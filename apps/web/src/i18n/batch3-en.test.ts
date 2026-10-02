@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TableDto } from '@dt/shared';
 import ReportButton from '../components/ReportButton.vue';
@@ -18,7 +18,10 @@ describe('第 3 批社交页面按语言（问题记录 272）', () => {
   });
 
   it('英语：餐桌（楼层、白食、顾客类型）、举报卡片', async () => {
+    const pinia = getActivePinia()!;
     await useLocaleStore().set('en');
+    // 加载语言包期间别的计时器可能把活动 Pinia 换成旧的（见 LangSelect.test），挂载前换回来
+    setActivePinia(pinia);
     const grid = mount(TableGrid, {
       props: { tables: [table(1, 1, 9, { freeloaderName: 'Bob' }), table(2, 2, 2)] },
     });

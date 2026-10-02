@@ -1,16 +1,21 @@
-import { ACTIVITY_ACTIONS, type ActivityDto, type ActivityRewardDto, type ActivityState } from '@dt/shared';
+import type { ActivityDto, ActivityRewardDto, ActivityState } from '@dt/shared';
+import { activeMessages } from '../i18n';
+
+/** 活动文案按语言（问题记录 272） */
+const m = () => activeMessages().activity;
 
 export function timeLeft(endsAt: string, now = new Date()): string {
   const ms = new Date(endsAt).getTime() - now.getTime();
-  if (ms <= 0) return '已结束';
+  const x = m().left;
+  if (ms <= 0) return x.ended;
   const min = Math.floor(ms / 60_000);
-  if (min < 60) return `还剩 ${min} 分钟`;
+  if (min < 60) return x.minutes(min);
   const h = Math.floor(min / 60);
   const d = Math.floor(h / 24);
-  return d > 0 ? `还剩 ${d} 天 ${h % 24} 小时` : `还剩 ${h} 小时`;
+  return d > 0 ? x.days(d, h % 24) : x.hours(h);
 }
 
-export const actionName = (key: string) => ACTIVITY_ACTIONS[key] ?? key;
+export const actionName = (key: string) => m().actions[key] ?? key;
 
 /** locked 未达成；claim 可领；page 已领；mail 已（或将）邮寄；missed 活动结束时没达成 */
 export function rewardStatus(r: ActivityRewardDto, state: ActivityState) {
@@ -19,19 +24,10 @@ export function rewardStatus(r: ActivityRewardDto, state: ActivityState) {
   return r.reached ? 'mail' : 'missed';
 }
 
-const KIND_LABEL: Record<string, string> = {
-  goals: '目标',
-  grid: '九宫格',
-  pass: '战令',
-  boost: '加成',
-  exchange: '兑换',
-  coop: '合力',
-};
-
 /** 活动条上的类型名（问题记录 226）：全是签到的目标清单叫"签到" */
 export function kindLabel(a: ActivityDto): string {
-  if (a.kind === 'goals' && a.def.goals.every((g) => g.key === 'signin')) return '签到';
-  return KIND_LABEL[a.kind] ?? a.kind;
+  if (a.kind === 'goals' && a.def.goals.every((g) => g.key === 'signin')) return m().kinds.signin!;
+  return m().kinds[a.kind] ?? a.kind;
 }
 
 const exchangeOpen = (a: ActivityDto, now: Date) =>
@@ -40,8 +36,8 @@ const exchangeOpen = (a: ActivityDto, now: Date) =>
 /** 活动条上的状态：进行中写剩余时间；结束后兑换期内写兑换期 */
 export function activityStatus(a: ActivityDto, now = new Date()): string {
   if (a.state === 'running') return timeLeft(a.endsAt, now);
-  if (exchangeOpen(a, now)) return `兑换期 ${timeLeft(a.exchangeUntil!, now)}`;
-  return a.state === 'settling' ? '结算中' : '已结束';
+  if (exchangeOpen(a, now)) return m().stripExchange(timeLeft(a.exchangeUntil!, now));
+  return a.state === 'settling' ? m().stripSettling : m().endedShort;
 }
 
 /** 活动条的顺序：进行中 → 兑换期 → 结算中和已结束；同组保持服务端的顺序（按结束时间） */

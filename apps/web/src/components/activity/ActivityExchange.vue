@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
 import type { ActivityDto, ExchangeDef } from '@dt/shared';
+import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { actionName } from '../../utils/activity';
 import { rewardSummary } from '../../utils/reward';
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ exchange: [index: number, times: number] }>();
 const catalog = useCatalogStore();
+const t = useT();
 /** 一次最多兑换几次：和服务端接口的上限相同 */
 const MAX_TIMES = 99;
 // 输入框清空时 v-model.number 给的是空字符串
@@ -42,13 +44,19 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
       >{{ c.name }} {{ bal(i) }}</span
     >
   </div>
-  <div class="small text-muted mb-2">活动货币不进仓库，只能在本活动里兑换；兑换期过后作废。</div>
+  <div class="small text-muted mb-2">{{ t.activity.exchange.rule }}</div>
   <div class="small text-muted mb-2">
     <div v-for="(r, i) in a.def.drops" :key="i">
-      {{ actionName(r.key) }} {{ pct(r.chance) }} 掉 {{ a.def.currencies[r.currency]?.name }} ×{{
-        r.num
+      {{
+        t.activity.exchange.drop(
+          actionName(r.key),
+          pct(r.chance),
+          a.def.currencies[r.currency]?.name ?? '',
+          r.num,
+          a.today[`d${i}`] ?? 0,
+          r.dailyCap,
+        )
       }}
-      （今天 {{ a.today[`d${i}`] ?? 0 }}/{{ r.dailyCap }}）
     </div>
   </div>
   <div
@@ -78,7 +86,7 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
       :data-testid="`exchange-${a.id}-${i}`"
       @click="emit('exchange', i, timesOf(i)!)"
     >
-      兑换
+      {{ t.activity.exchange.btn }}
     </button>
   </div>
 </template>
