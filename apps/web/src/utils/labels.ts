@@ -1,61 +1,32 @@
+import { activeMessages, type Messages } from '../i18n';
+
+/**
+ * 各处用的名称表（问题记录 272 起按语言）：导出的是代理，每次读取都取当前语言的表，
+ * 调用的地方不用改；切换语言时页面会重新挂载
+ */
+function localized<T extends object>(pick: (m: Messages['labels']) => object): T {
+  const cur = () => pick(activeMessages().labels);
+  return new Proxy({} as T, {
+    get: (_t, k) => {
+      const target = cur();
+      const v: unknown = Reflect.get(target, k);
+      return typeof v === 'function' ? (v as (...a: unknown[]) => unknown).bind(target) : v;
+    },
+    has: (_t, k) => Reflect.has(cur(), k),
+    ownKeys: () => Reflect.ownKeys(cur()),
+    getOwnPropertyDescriptor: (_t, k) => {
+      const d = Reflect.getOwnPropertyDescriptor(cur(), k);
+      return d ? { ...d, configurable: true } : undefined;
+    },
+  });
+}
+
 /** 顾客类型（规格书 01 §1.4） */
-export const CUSTOMER_NAMES: Record<string, string> = {
-  '0': '空桌',
-  '1': '普通顾客',
-  '2': '挑剔顾客',
-  '3': '蟑螂',
-  '-3': '蟑螂（已消灭）',
-  '6': '章鱼哥',
-  '7': '痞老板',
-  '8': '蟹老板',
-  '9': '白食',
-};
-
-export const GRADE_NAMES = [
-  '未学',
-  '普通',
-  '中品',
-  '上品',
-  '极品',
-  '金牌',
-  '珍品',
-  '佳肴',
-  '仙珍',
-  '圣宴',
-  '天馔',
-];
-
-export const RATE_LABELS: Record<string, { label: string; percent: boolean }> = {
-  atRate: { label: '上座率', percent: true },
-  spRate: { label: '挑剔率', percent: true },
-  coinRate: { label: '银币加成', percent: true },
-  expRate: { label: '经验加成', percent: true },
-  coinValue: { label: '每桌银币', percent: false },
-  expValue: { label: '每桌经验', percent: false },
-  oilRate: { label: '耗油加成', percent: true },
-  oilValue: { label: '每桌耗油', percent: false },
-  luck: { label: '幸运', percent: false },
-};
-
-export const PART_LABELS: Record<string, string> = {
-  base: '基本',
-  cookbook: '食谱',
-  effects: '道具与荣誉',
-  weather: '天气',
-  bless: '祝福',
-  renown: '负声望',
-  float: '浮动',
-  plaque: '集牌匾',
-  honor: '集荣誉',
-  pot: '集盆栽',
-  painting: '集名画',
-  spOverflow: '挑剔溢出',
-  atOverflow: '上座溢出',
-  starPotential: '星潜力',
-  cte: '银币转经验',
-};
-
-export const TASTE_NAMES = ['', '酸', '甘', '苦', '辛', '咸', '鲜'];
+export const CUSTOMER_NAMES = localized<Record<string, string>>((l) => l.customer);
+export const GRADE_NAMES = localized<readonly string[]>((l) => l.grade);
+export const RATE_LABELS = localized<Record<string, { label: string; percent: boolean }>>((l) => l.rate);
+export const PART_LABELS = localized<Record<string, string>>((l) => l.part);
+export const TASTE_NAMES = localized<readonly string[]>((l) => l.taste);
 
 export function pct(x: number): string {
   const v = Math.round(x * 1000) / 10;
@@ -63,21 +34,14 @@ export function pct(x: number): string {
 }
 
 /** 厨具部位（下标 = part） */
-export const PART_NAMES = ['', '铲', '刀', '锅', '瓶', '帽'];
+export const PART_NAMES = localized<readonly string[]>((l) => l.equipPart);
 
 export const ATTR_KEYS = ['cook', 'cutting', 'fire', 'season', 'creatives', 'luck'] as const;
 
-export const ATTR_NAMES: Record<string, string> = {
-  cook: '厨艺',
-  cutting: '刀工',
-  fire: '火候',
-  season: '调味',
-  creatives: '创意',
-  luck: '幸运',
-};
+export const ATTR_NAMES = localized<Record<string, string>>((l) => l.attr);
 
 /** 特色菜的道（规格书 04 §4.1） */
-export const ROAD_NAMES = ['', '一道', '二道', '三道', '四道', '五道', '六道', '兽'];
+export const ROAD_NAMES = localized<readonly string[]>((l) => l.road);
 
 /** 外卖单品级（下标 = 品级，规格书 14.2） */
-export const TAKEAWAY_GRADES = ['', '普通', '中品', '上品', '极品', '金牌', '珍品', '佳肴'];
+export const TAKEAWAY_GRADES = localized<readonly string[]>((l) => l.takeawayGrade);

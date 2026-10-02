@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { NEWS_TYPES, type NewsDto } from '@dt/shared';
-import { NEWS_RENDERED, newsText } from './news';
+import { newsRendered, newsText } from './news';
 import { rewardText } from './rewards';
 
 const names = {
@@ -26,7 +26,7 @@ const n = (
 
 describe('新闻文案', () => {
   it('代码里每种新闻类型都有文案', () => {
-    expect(NEWS_TYPES.filter((x) => !NEWS_RENDERED.includes(x))).toEqual([]);
+    expect(NEWS_TYPES.filter((x) => !newsRendered().includes(x))).toEqual([]);
   });
 
   it('小镇新增的几种', () => {
