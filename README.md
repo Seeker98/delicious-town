@@ -1,5 +1,7 @@
 # 美味小镇（重写版）
 
+> 感谢原作者提供了部分核心功能的代码。原作者正在运营的在线美食小镇：<http://antchensw.cn/town>
+
 TypeScript 全栈：`packages/shared`（公共公式与接口）、`packages/config`（游戏配置）、`apps/server`（Fastify）、`apps/web`（Vue 3）。
 
 ## 开发
@@ -45,3 +47,7 @@ pnpm infra:dev && pnpm --filter @dt/web e2e      # 端到端验收
 - 设计：`docs/superpowers/specs/`
 - 部署：`docs/deploy.md`
 - 游戏规则：`../analysis/spec/`
+
+## 致谢
+
+本项目参考了原作者的美味小镇，部分核心功能（结算、菜场、厨具等玩法的规则与数值）来自原作者提供的代码。原作者正在运营的在线版本：<http://antchensw.cn/town>，欢迎去玩。
