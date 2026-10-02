@@ -35,7 +35,7 @@ async function count(
   restId: number,
   p: ActionPayload,
   at: Date,
-  rng: Rng,
+  rng: () => Rng,
 ) {
   const spec = a.spec;
   if (spec.kind === 'boost') return;
@@ -44,8 +44,9 @@ async function count(
     const day = gameDay(at);
     for (const [i, rule] of spec.def.drops.entries()) {
       if (rule.key !== p.key) continue;
+      const r = rng();
       let hits = 0;
-      for (let k = 0; k < p.n; k++) if (rng.next() < rule.chance) hits++;
+      for (let k = 0; k < p.n; k++) if (r.next() < rule.chance) hits++;
       if (hits === 0) continue;
       const dk = dropDailyKey(a.id, i);
       const add = Math.min(hits * rule.num, rule.dailyCap - (await getDaily(tx, restId, dk, day)));
@@ -80,11 +81,13 @@ export function registerActivityHandlers(bus: EventBus, d: GameDeps): void {
     const p = e.payload as unknown as ActionPayload;
     if (!featureAvailable(await d.shards.settings(e.shardId, tx), 'activity')) return;
     const at = new Date(p.at);
-    const rng = d.rng();
+    // 只在真要掷骰时才取随机源：每次 d.rng() 都会从测试注入的序列里取一段
+    let rng: Rng | undefined;
+    const lazyRng = () => (rng ??= d.rng());
     for (const a of await activityCacheFor(bus, d).forShard(e.shardId, tx)) {
       if (at < a.startsAt || at >= a.endsAt) continue;
       if ((p.level ?? 0) < a.minLevel) continue;
-      await count(tx, a, e.restId, p, at, rng);
+      await count(tx, a, e.restId, p, at, lazyRng);
     }
   });
 }

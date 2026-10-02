@@ -1,4 +1,4 @@
-import { GOODS_TYPE, takesStoreSlot } from '@dt/config';
+import { takesStoreSlot } from '@dt/config';
 import {
   addDays,
   gameParts,
