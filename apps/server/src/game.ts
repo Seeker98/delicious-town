@@ -30,6 +30,7 @@ import { hiphopJobs } from './modules/hiphop/jobs';
 import { createHiphopService, type HiphopService } from './modules/hiphop/service';
 import { createRankService, type RankService } from './modules/rank/service';
 import { createForumService, type ForumService } from './modules/forum/service';
+import { createActivityService, type ActivityService } from './modules/activity/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -40,6 +41,8 @@ import { createShardService, type ShardService } from './modules/shard/service';
 import { shopJobs } from './modules/shop/jobs';
 import { createShopService, type ShopService } from './modules/shop/service';
 import { createStoreService, type StoreService } from './modules/store/service';
+import { registerActivityHandlers } from './modules/activity/handler';
+import { activityJobs } from './modules/activity/settle';
 import { registerTaskHandlers } from './modules/task/handler';
 import { createTaskService, type TaskService } from './modules/task/service';
 import { settlementJobs } from './modules/settlement/jobs';
@@ -78,6 +81,7 @@ export interface Game {
   invite: InviteService;
   report: ReportService;
   announce: AnnounceService;
+  activity: ActivityService;
   jobs: PeriodicJob[];
 }
 
@@ -95,6 +99,7 @@ export function createGame(app: AppDeps): Game {
   const world = createWorldService(deps);
   registerTaskHandlers(app.bus, app.config);
   registerNpcHandlers(app.bus);
+  registerActivityHandlers(app.bus, deps);
   const jobs: PeriodicJob[] = [];
   jobs.push(...worldJobs(world));
   jobs.push(...settlementJobs(deps, world));
@@ -111,6 +116,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...towerJobs(deps));
   jobs.push(...takeawayJobs(deps));
   jobs.push(...hiphopJobs(deps));
+  jobs.push(...activityJobs(deps));
   return {
     app,
     deps,
@@ -138,6 +144,7 @@ export function createGame(app: AppDeps): Game {
     invite: createInviteService(deps),
     report: createReportService(deps),
     announce: createAnnounceService(deps),
+    activity: createActivityService(deps),
     shop,
     market,
     task: createTaskService(deps),

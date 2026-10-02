@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { AnnouncementDto, DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
 import GameImg from '../components/GameImg.vue';
 import HomeNews from '../components/town/HomeNews.vue';
@@ -204,6 +205,7 @@ onBeforeUnmount(() => {
       </span>
     </div>
     <AnnounceBanner :items="announcements" />
+    <ActivityBanner />
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.icons.length > 0" class="mb-1" data-testid="my-icons">
       <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{ i.title }}</span>

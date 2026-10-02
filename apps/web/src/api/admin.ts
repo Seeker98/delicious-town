@@ -1,5 +1,7 @@
 import type {
   AccountRole,
+  ActivityInput,
+  AdminActivityDto,
   AdminAnnouncementDto,
   AdminCodeDto,
   LaunchCheckDto,
@@ -104,6 +106,12 @@ export const adminApi = {
   updateAnnouncement: (id: number, b: AnnouncementInput) =>
     api.post<AdminAnnouncementDto>(`${A}/announcements/${id}`, b),
   deleteAnnouncement: (id: number) => api.post<null>(`${A}/announcements/${id}/delete`, {}),
+  activities: () => api.get<AdminActivityDto[]>(`${A}/activities`),
+  activity: (id: number) => api.get<AdminActivityDto>(`${A}/activities/${id}`),
+  createActivity: (b: ActivityInput) => api.post<AdminActivityDto>(`${A}/activities`, b),
+  updateActivity: (id: number, b: ActivityInput) => api.post<AdminActivityDto>(`${A}/activities/${id}`, b),
+  endActivity: (id: number) => api.post<AdminActivityDto>(`${A}/activities/${id}/end`, {}),
+  deleteActivity: (id: number) => api.post<null>(`${A}/activities/${id}/delete`, {}),
   economy: (shardId: number, from: string, to: string) =>
     api.get<EconomyRowDto[]>(`${A}/stats/economy${qs({ shardId, from, to })}`),
   distribution: (shardId: number) => api.get<DistributionDto>(`${A}/stats/distribution${qs({ shardId })}`),

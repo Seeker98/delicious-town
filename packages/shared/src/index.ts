@@ -37,3 +37,5 @@ export * from './schemas/redeem';
 export * from './schemas/invite';
 export * from './schemas/report';
 export * from './schemas/ops';
+export * from './activity';
+export * from './schemas/activity';

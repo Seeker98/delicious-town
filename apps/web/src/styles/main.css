@@ -659,3 +659,20 @@ body {
   border: 1px solid #ffd8a8;
   border-radius: 999px;
 }
+
+/* 限时活动九宫格（148-1） */
+.dt-grid-board {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.dt-grid-cell {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 6px;
+  padding: 4px;
+  text-align: center;
+}
+.dt-cell-done {
+  background: var(--bs-success-bg-subtle);
+  border-color: var(--bs-success-border-subtle);
+}

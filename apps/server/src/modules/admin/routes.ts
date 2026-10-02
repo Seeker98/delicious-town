@@ -3,6 +3,7 @@ import {
   ErrorCode,
   adminLedgerQuery,
   adminRenameBody,
+  activityBody,
   announcementBody,
   auditQuery,
   createGrantBody,
@@ -44,6 +45,7 @@ import { createAdminMail } from '../mail/admin';
 import { createAdminCodes } from '../redeem/admin';
 import { createSuspicious } from '../ops/suspicious';
 import { createAdminReports } from '../report/admin';
+import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
 import { distribution, economy, settlementRounds } from './stats';
 
@@ -217,6 +219,32 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       return ok(await codes.exportBatch(a, id(req)));
     });
 
+    const activities = createAdminActivity(game);
+    r.get('/activities', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await activities.list());
+    });
+    r.get('/activities/:id', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await activities.one(id(req)));
+    });
+    r.post('/activities', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await activities.create(a, parse(activityBody, req.body)));
+    });
+    r.post('/activities/:id', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await activities.update(a, id(req), parse(activityBody, req.body)));
+    });
+    r.post('/activities/:id/end', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await activities.end(a, id(req)));
+    });
+    r.post('/activities/:id/delete', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await activities.remove(a, id(req));
+      return ok(null);
+    });
     const announces = createAdminAnnounce(game);
     r.get('/announcements', async (req) => {
       await requireRole(db, req, 'mod');
