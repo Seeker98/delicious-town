@@ -5,7 +5,9 @@ import {
   type AccountProfileDto,
   type ChangePasswordInput,
   ErrorCode,
+  isLocale,
   type ForgotPasswordInput,
+  type Locale,
   type LoginInput,
   type MeDto,
   type RegisterInput,
@@ -121,6 +123,7 @@ export function createAccountService(d: AccountDeps) {
             password_hash: passwordHash,
             email: input.email,
             invited_by: invitedBy,
+            lang: input.lang ?? null,
           })
           .returning('id')
           .executeTakeFirstOrThrow();
@@ -150,11 +153,12 @@ export function createAccountService(d: AccountDeps) {
     async me(accountId: number, sel: Pick<SessionData, 'shardId' | 'restaurantId'>): Promise<MeDto> {
       const a = await d.db
         .selectFrom('account')
-        .select(['id', 'username', 'email', 'email_verified_at', 'role'])
+        .select(['id', 'username', 'email', 'email_verified_at', 'role', 'lang'])
         .where('id', '=', accountId)
         .executeTakeFirst();
       if (!a) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
       return {
+        lang: isLocale(a.lang) ? a.lang : null,
         accountId: a.id,
         username: a.username,
         email: a.email,
@@ -163,6 +167,12 @@ export function createAccountService(d: AccountDeps) {
         shardId: sel.shardId,
         restaurantId: sel.restaurantId,
       };
+    },
+
+    /** 设置账号语言（问题记录 272） */
+    async setLang(accountId: number, lang: Locale): Promise<{ lang: Locale }> {
+      await d.db.updateTable('account').set({ lang }).where('id', '=', accountId).execute();
+      return { lang };
     },
 
     /** 我的账号（问题记录 178）：账号信息和各区服的店 */

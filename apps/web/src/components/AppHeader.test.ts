@@ -62,6 +62,7 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
       role: 'player',
       shardId: null,
       restaurantId: null,
+      lang: null,
     };
     const router = makeRouter();
     await router.push('/shards');

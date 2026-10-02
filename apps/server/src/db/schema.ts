@@ -55,6 +55,8 @@ export interface AccountTable {
   is_system: Default<boolean>;
   invite_code: Nullable<string>;
   invited_by: Nullable<number>;
+  /** 语言（问题记录 272）；null 表示还没选过 */
+  lang: Nullable<string>;
   created_at: TsDefault;
 }
 

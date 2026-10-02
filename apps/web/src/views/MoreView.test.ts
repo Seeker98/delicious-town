@@ -13,6 +13,7 @@ const me = (role: 'player' | 'mod' | 'admin') => ({
   role,
   shardId: 1,
   restaurantId: 1,
+  lang: null,
 });
 
 const mountView = () =>

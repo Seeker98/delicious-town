@@ -170,6 +170,7 @@ describe('NewsPanel', () => {
       role: 'player' as const,
       shardId: 1,
       restaurantId: 1,
+      lang: null,
     };
     vi.mocked(endpoints.townNews).mockResolvedValue({
       items: [
@@ -195,6 +196,7 @@ describe('NewsPanel', () => {
       role: 'player' as const,
       shardId: 1,
       restaurantId: 1,
+      lang: null,
     };
     vi.mocked(endpoints.townNews).mockResolvedValue({
       items: [item(9, 'town.broadcast', { text: '你好' })],

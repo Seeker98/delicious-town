@@ -5,6 +5,7 @@ import {
   loginBody,
   registerBody,
   resetPasswordBody,
+  setLangBody,
   verifyEmailBody,
 } from '@dt/shared';
 import type { FastifyRequest } from 'fastify';
@@ -55,6 +56,11 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     });
 
     r.get('/profile', async (req) => ok(await svc.profile(requireAccount(req).data.accountId)));
+
+    /** 设置账号语言（问题记录 272） */
+    r.post('/lang', async (req) =>
+      ok(await svc.setLang(requireAccount(req).data.accountId, parse(setLangBody, req.body).lang)),
+    );
 
     /** 改密码：其他设备下线；本机换一个新会话，保留选的区服（设计 §6.1） */
     r.post('/change-password', { config: { rateLimit: 'auth' } }, async (req, reply) => {
