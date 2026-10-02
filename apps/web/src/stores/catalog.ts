@@ -15,6 +15,8 @@ export const useCatalogStore = defineStore('catalog', {
     looks: null as LooksDto | null,
     weatherMap: new Map<number, string>(),
     loaded: false,
+    /** 上次从服务器读目录的时间（毫秒）：refreshIfMissing 限频用 */
+    fetchedAt: 0,
   }),
   actions: {
     apply(c: CatalogDto) {
@@ -44,10 +46,31 @@ export const useCatalogStore = defineStore('catalog', {
       }
       const fresh = await endpoints.catalog();
       this.apply(fresh);
+      this.fetchedAt = Date.now();
       try {
         localStorage.setItem(KEY, JSON.stringify(fresh));
       } catch {
         // 忽略
+      }
+    },
+    /**
+     * 有目录里没有的道具 id 时重新读一次目录（问题记录 276）：页面开着时服务器发版加了新道具，
+     * 不刷新页面也能显示名字和类型。一分钟最多重读一次
+     */
+    async refreshIfMissing(goodsIds: number[]): Promise<void> {
+      if (goodsIds.every((id) => this.goodsMap.has(id))) return;
+      if (Date.now() - this.fetchedAt < 60_000) return;
+      this.fetchedAt = Date.now();
+      try {
+        const fresh = await endpoints.catalog();
+        this.apply(fresh);
+        try {
+          localStorage.setItem(KEY, JSON.stringify(fresh));
+        } catch {
+          // 忽略
+        }
+      } catch {
+        // 读不到就沿用旧目录，名字显示成"道具 id"
       }
     },
     goodsName(id: number): string {

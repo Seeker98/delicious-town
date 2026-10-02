@@ -68,6 +68,7 @@ export function createStoreService(d: GameDeps) {
           const batch = usable && !NO_BATCH_KINDS.has(use!.kind);
           return {
             goodsId: r.goods_id,
+            type: g!.type,
             num: r.num,
             expiresAt: r.expires_at ? r.expires_at.toISOString() : null,
             usable,
