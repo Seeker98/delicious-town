@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import type { BarDto, DartsAimDto, DartsThrowDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -18,6 +19,7 @@ const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 
 /** 本局已投的分数；null 表示没有进行中的局 */
@@ -69,7 +71,7 @@ async function call<T>(fn: () => Promise<T>, fallback: string): Promise<T | null
 }
 
 async function start() {
-  const r = await call(() => endpoints.barDartsStart(), '开局失败');
+  const r = await call(() => endpoints.barDartsStart(), t.value.bar.startFailed);
   if (r) {
     last.value = null;
     throws.value = r.throws;
@@ -77,7 +79,7 @@ async function start() {
   }
 }
 async function doAim() {
-  const r = await call(() => endpoints.barDartsAim(), '瞄准失败');
+  const r = await call(() => endpoints.barDartsAim(), t.value.bar.darts.aimFailed);
   if (!r) return;
   aim.value = r;
   invalid.value = false;
@@ -90,7 +92,7 @@ async function doThrow() {
   if (!aim.value) return;
   const elapsed = Math.round(performance.now() - t0.value);
   stopAnim();
-  const r = await call(() => endpoints.barDartsThrow(elapsed), '投掷失败');
+  const r = await call(() => endpoints.barDartsThrow(elapsed), t.value.bar.darts.throwFailed);
   aim.value = null;
   if (!r) return;
   last.value = r;
@@ -111,23 +113,24 @@ const sum = (a: number[]) => a.reduce((s, v) => s + v, 0);
 const resultText = computed(() => {
   const r = last.value;
   if (!r?.finished || !r.boss) return '';
-  const head = `你 ${sum(r.throws)} : ${sum(r.boss)} 老板，`;
-  if (r.result === 'win') return `${head}赢了！${r.award ? `得到 ${awardText(r.award, catalog)}` : ''}`;
-  if (r.result === 'draw') return `${head}平局，退还 ${r.refund} 张神秘礼券`;
-  return `${head}输了`;
+  const d = t.value.bar.darts;
+  const head = d.head(sum(r.throws), sum(r.boss));
+  if (r.result === 'win') return `${head}${d.win(r.award ? d.got(awardText(r.award, catalog)) : '')}`;
+  if (r.result === 'draw') return `${head}${d.draw(r.refund ?? 0)}`;
+  return `${head}${d.lose}`;
 });
 </script>
 
 <template>
   <div class="small">
     <div class="dt-meta mb-2">
-      准星在靶上左右摆动，点"投掷"出手；离靶心越近分越高（50/25/10/5）。三镖总分超过酒吧老板就赢。
+      {{ t.bar.darts.rule }}
     </div>
     <div class="dt-meta mb-2" data-testid="darts-played">
-      今天 {{ data.darts.played }}/{{ data.darts.max }} 局，每局 {{ data.darts.cost }} 张神秘礼券
+      {{ t.bar.todayPlayed(data.darts.played, data.darts.max, data.darts.cost) }}
     </div>
 
-    <div class="dt-board mb-2" role="img" aria-label="靶条：正中 50 分，向外依次 25、10、5 分，边缘 0 分">
+    <div class="dt-board mb-2" role="img" :aria-label="t.bar.darts.board">
       <div class="dt-board-ring dt-board-r5"></div>
       <div class="dt-board-ring dt-board-r10"></div>
       <div class="dt-board-ring dt-board-r25"></div>
@@ -140,11 +143,11 @@ const resultText = computed(() => {
       ></div>
     </div>
     <div v-if="invalid && !aim" class="text-danger mb-2" aria-live="polite" data-testid="darts-invalid">
-      这一镖出手时间对不上，判为脱靶，记 0 分
+      {{ t.bar.darts.invalid }}
     </div>
 
     <div v-if="throws && throws.length > 0" class="mb-2" data-testid="darts-throws">
-      <span v-for="(s, i) in throws" :key="i" class="me-2">第 {{ i + 1 }} 镖：{{ s }} 分</span>
+      <span v-for="(s, i) in throws" :key="i" class="me-2">{{ t.bar.darts.throwLine(i + 1, s) }}</span>
     </div>
 
     <template v-if="last?.finished">
@@ -158,9 +161,9 @@ const resultText = computed(() => {
       >
         {{ resultText }}
       </div>
-      <div class="dt-meta">老板三镖：{{ last.boss?.join(' / ') }}</div>
+      <div class="dt-meta">{{ t.bar.darts.bossThrows(last.boss?.join(' / ') ?? '') }}</div>
       <button class="btn btn-sm btn-outline-primary mt-2" data-testid="darts-again" @click="again">
-        再来一局
+        {{ t.bar.again }}
       </button>
     </template>
     <template v-else-if="throws">
@@ -171,10 +174,10 @@ const resultText = computed(() => {
         data-testid="darts-aim"
         @click="doAim"
       >
-        瞄准第 {{ throws.length + 1 }} 镖
+        {{ t.bar.darts.aim(throws.length + 1) }}
       </button>
       <button v-else class="btn btn-primary" :disabled="busy" data-testid="darts-throw" @click="doThrow">
-        投掷！
+        {{ t.bar.darts.throw }}
       </button>
     </template>
     <template v-else>
@@ -184,9 +187,9 @@ const resultText = computed(() => {
         data-testid="darts-start"
         @click="start"
       >
-        开一局
+        {{ t.bar.darts.start }}
       </button>
-      <span v-if="limited" class="text-danger ms-1">今天的局数用完了</span>
+      <span v-if="limited" class="text-danger ms-1">{{ t.bar.noMoreToday }}</span>
     </template>
   </div>
 </template>

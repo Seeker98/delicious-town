@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { RenownShopDto, RenownShopItemDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -9,6 +10,7 @@ import { formatNum } from '../../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<RenownShopDto | null>(null);
 const nums = reactive<Record<number, number>>({});
 const busy = ref(false);
@@ -17,7 +19,7 @@ async function load() {
   try {
     data.value = await endpoints.renownShop();
   } catch (e) {
-    toast.push(errorMessage(e, '读取声望商店失败'), 'danger');
+    toast.push(errorMessage(e, t.value.tower.shop.loadFailed), 'danger');
   }
 }
 onMounted(load);
@@ -28,9 +30,10 @@ function maxOf(x: RenownShopItemDto): number {
   return Math.max(0, Math.min(x.weeklyLimit - x.bought, Math.floor(data.value!.renown / x.renown)));
 }
 function blockOf(x: RenownShopItemDto): string {
-  if (x.rare && x.owned) return '已拥有';
-  if (x.bought >= x.weeklyLimit) return '本周已兑完';
-  if (data.value!.renown < x.renown) return '声望不够';
+  const s = t.value.tower.shop;
+  if (x.rare && x.owned) return s.owned;
+  if (x.bought >= x.weeklyLimit) return s.soldOut;
+  if (data.value!.renown < x.renown) return s.noRenown;
   return '';
 }
 async function buy(x: RenownShopItemDto) {
@@ -39,10 +42,10 @@ async function buy(x: RenownShopItemDto) {
   busy.value = true;
   try {
     await endpoints.renownBuy(x.goodsId, n);
-    toast.push(`换到了 ${catalog.goodsName(x.goodsId)}×${n}`);
+    toast.push(t.value.tower.shop.got(catalog.goodsName(x.goodsId), n));
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '兑换失败'), 'danger');
+    toast.push(errorMessage(e, t.value.tower.shop.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -51,8 +54,8 @@ async function buy(x: RenownShopItemDto) {
 
 <template>
   <div v-if="data" class="small">
-    <div class="mb-2" data-testid="shop-renown">我的声望 {{ formatNum(data.renown) }}</div>
-    <div class="text-muted mb-2">美味券常驻；雕像每周轮换，每人限拥有 1 个</div>
+    <div class="mb-2" data-testid="shop-renown">{{ t.tower.shop.renown(formatNum(data.renown)) }}</div>
+    <div class="text-muted mb-2">{{ t.tower.shop.rule }}</div>
     <div
       v-for="x in data.items"
       :key="x.goodsId"
@@ -61,10 +64,10 @@ async function buy(x: RenownShopItemDto) {
     >
       <span class="flex-fill">
         {{ catalog.goodsName(x.goodsId) }}
-        <span v-if="x.rare" class="badge text-bg-warning ms-1">限拥有 1 个</span>
-        <span class="text-muted ms-1"
-          >{{ formatNum(x.renown) }} 声望 · 本周 {{ x.bought }}/{{ x.weeklyLimit }}</span
-        >
+        <span v-if="x.rare" class="badge text-bg-warning ms-1">{{ t.tower.shop.limitOne }}</span>
+        <span class="text-muted ms-1">{{
+          t.tower.shop.meta(formatNum(x.renown), x.bought, x.weeklyLimit)
+        }}</span>
       </span>
       <input
         v-if="!x.rare"
@@ -82,7 +85,7 @@ async function buy(x: RenownShopItemDto) {
         :disabled="busy || !!blockOf(x)"
         @click="buy(x)"
       >
-        兑换
+        {{ t.tower.shop.btn }}
       </button>
       <span v-if="blockOf(x)" class="text-danger">{{ blockOf(x) }}</span>
     </div>

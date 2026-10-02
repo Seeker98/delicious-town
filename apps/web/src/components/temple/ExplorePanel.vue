@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import type { ExploreResultDto, TempleDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -10,6 +11,7 @@ const props = defineProps<{ data: TempleDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const goodsId = ref<number>(
   props.data.maps.find((m) => m.num > 0)?.goodsId ?? props.data.maps[0]?.goodsId ?? 0,
 );
@@ -22,13 +24,13 @@ const byStrength = computed(() => (map.value ? Math.floor(props.data.strength / 
 const max = computed(() => Math.min(map.value?.num ?? 0, byStrength.value, 99));
 const n = computed(() => Math.max(1, Math.min(times.value || 1, max.value)));
 const block = computed(() => {
-  if ((map.value?.num ?? 0) < 1) return '没有这种探险图';
-  if (byStrength.value < 1)
-    return `体力不够（每次要 ${map.value!.needStrength}，现有 ${props.data.strength}）`;
+  const x = t.value.temple.explore;
+  if ((map.value?.num ?? 0) < 1) return x.noMap;
+  if (byStrength.value < 1) return x.noStrength(map.value!.needStrength, props.data.strength);
   return '';
 });
 const list = (xs: Array<{ foodsId: number; num: number }>) =>
-  xs.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join('、');
+  xs.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join(t.value.events.sep);
 
 async function go() {
   if (busy.value || block.value) return;
@@ -37,7 +39,7 @@ async function go() {
     result.value = await endpoints.templeExplore(goodsId.value, n.value);
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '探险失败'), 'danger');
+    toast.push(errorMessage(e, t.value.temple.explore.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -49,7 +51,7 @@ async function go() {
     <div class="d-flex gap-1 align-items-center mb-1">
       <select v-model.number="goodsId" class="form-select form-select-sm" data-testid="map">
         <option v-for="m in data.maps" :key="m.goodsId" :value="m.goodsId">
-          {{ catalog.goodsName(m.goodsId) }}（{{ m.num }}，每次体力 {{ m.needStrength }}）
+          {{ t.temple.explore.mapOption(catalog.goodsName(m.goodsId), m.num, m.needStrength) }}
         </option>
       </select>
       <input
@@ -67,16 +69,18 @@ async function go() {
         :disabled="busy || !!block"
         @click="go"
       >
-        探险 ×{{ n }}
+        {{ t.temple.explore.btn(n) }}
       </button>
     </div>
-    <div class="text-muted mb-1">体力 {{ data.strength }}</div>
+    <div class="text-muted mb-1">{{ t.temple.explore.strength(data.strength) }}</div>
     <div v-if="block" class="text-danger mb-1" data-testid="block">{{ block }}</div>
     <div v-if="result" data-testid="explore-result">
-      成功 {{ result.success }} 次，迷路 {{ result.fail }} 次
-      <div v-if="result.rare.length > 0" class="text-success">神秘食材：{{ list(result.rare) }}</div>
-      <div v-if="result.foods.length > 0">食材：{{ list(result.foods) }}</div>
-      <div v-if="result.exp > 0">煤油灯带来经验 {{ result.exp }}</div>
+      {{ t.temple.explore.result(result.success, result.fail) }}
+      <div v-if="result.rare.length > 0" class="text-success">
+        {{ t.temple.explore.rare(list(result.rare)) }}
+      </div>
+      <div v-if="result.foods.length > 0">{{ t.temple.explore.foods(list(result.foods)) }}</div>
+      <div v-if="result.exp > 0">{{ t.temple.explore.exp(result.exp) }}</div>
     </div>
   </div>
 </template>

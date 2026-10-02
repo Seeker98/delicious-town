@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { BarDto } from '@dt/shared';
-import { WENJIE_CHAT, wenjieLines } from './wenjie';
+import { wenjieChat, wenjieLines } from './wenjie';
 
 const bar = (patch: Partial<BarDto> = {}): BarDto =>
   ({
@@ -42,7 +42,7 @@ describe('雯姐台词（问题记录 210）', () => {
 
   it('闲聊总在；状态台词权重 2；没有数据时只有闲聊', () => {
     const lines = wenjieLines(bar({ tickets: 0 }));
-    for (const c of WENJIE_CHAT) expect(lines.some((l) => l.text === c && l.weight === 1)).toBe(true);
+    for (const c of wenjieChat()) expect(lines.some((l) => l.text === c && l.weight === 1)).toBe(true);
     expect(lines.some((l) => l.weight === 2)).toBe(true);
     expect(wenjieLines(null).every((l) => l.weight === 1)).toBe(true);
   });

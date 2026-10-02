@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import type { BarDto, SlotResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -10,6 +11,7 @@ const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 const last = ref<SlotResultDto | null>(null);
 const exNum = ref(1);
@@ -17,32 +19,35 @@ const exNum = ref(1);
 const slot = computed(() => props.data.slot);
 function awardName(id: number): string {
   const a = slot.value.pool.find((x) => x.id === id);
-  if (!a || a.kind === 'empty' || a.itemId === null) return '空';
+  if (!a || a.kind === 'empty' || a.itemId === null) return t.value.bar.slot.empty;
   return a.kind === 'foods' ? catalog.foodName(a.itemId) : catalog.goodsName(a.itemId);
 }
 /** 抽 times 次的限制原因；空串表示能抽 */
 function blockOf(times: number): string {
-  if (!slot.value.emailVerified) return '老虎机要先验证邮箱';
-  if (props.data.krabCoins < times) return `蟹币不够（每次 1 个，持有 ${props.data.krabCoins} 个）`;
+  if (!slot.value.emailVerified) return t.value.bar.slot.needEmail;
+  if (props.data.krabCoins < times) return t.value.bar.slot.noKrab(props.data.krabCoins);
   return '';
 }
 const block1 = computed(() => blockOf(1));
 const block10 = computed(() => blockOf(10));
-const blockText = computed(() => block1.value || (block10.value ? `抽 10 次：${block10.value}` : ''));
+const blockText = computed(() => block1.value || (block10.value ? t.value.bar.slot.ten(block10.value) : ''));
 const spinsText = computed(() =>
-  (last.value?.spins ?? []).map((s, i) => `第 ${i + 1} 次：${s.map((id) => awardName(id)).join(' / ')}`),
+  (last.value?.spins ?? []).map((s, i) =>
+    t.value.bar.slot.spinLine(i + 1, s.map((id) => awardName(id)).join(' / ')),
+  ),
 );
 const rewardText = computed(() => {
   const rs = last.value?.rewards ?? [];
+  const s = t.value.bar.slot;
   return rs.length === 0
-    ? '什么也没抽到'
-    : `得到 ${rs.map((r) => `${awardName(r.awardId)}×${r.num}`).join('、')}`;
+    ? s.nothing
+    : s.got(rs.map((r) => `${awardName(r.awardId)}×${r.num}`).join(t.value.events.sep));
 });
 const statTotal = computed(() => slot.value.stats.reduce((s, x) => s + x.num, 0));
 const exMax = computed(() => Math.min(99, Math.floor(props.data.tickets / props.data.krabCoinTickets)));
 const exN = computed(() => Math.max(1, Math.min(exNum.value || 1, exMax.value)));
 const exBlock = computed(() =>
-  exMax.value < 1 ? `神秘礼券不够（${props.data.krabCoinTickets} 张换 1 个蟹币）` : '',
+  exMax.value < 1 ? t.value.bar.slot.noTickets(props.data.krabCoinTickets) : '',
 );
 
 async function spin(times: number) {
@@ -52,7 +57,7 @@ async function spin(times: number) {
     last.value = await endpoints.barSlot(times);
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '老虎机失败'), 'danger');
+    toast.push(errorMessage(e, t.value.bar.slot.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -64,7 +69,7 @@ async function exchange() {
     await endpoints.barExchange(exN.value);
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '兑换失败'), 'danger');
+    toast.push(errorMessage(e, t.value.bar.slot.exFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -74,14 +79,12 @@ async function exchange() {
 <template>
   <div class="small">
     <div class="text-muted mb-2">
-      每次 1 个蟹币，开 3 格。最多再抽 <b data-testid="floor-left">{{ slot.floorLeft }}</b> 次必出稀有<span
-        v-if="slot.lamp"
-        >（有神灯：提前出保底的机会翻倍）</span
-      >
+      {{ t.bar.slot.rule1 }}<b data-testid="floor-left">{{ slot.floorLeft }}</b
+      >{{ t.bar.slot.rule2 }}<span v-if="slot.lamp">{{ t.bar.slot.lamp }}</span>
     </div>
     <div class="d-flex gap-2 mb-1">
       <button class="btn btn-primary" data-testid="slot-1" :disabled="busy || !!block1" @click="spin(1)">
-        抽 1 次
+        {{ t.bar.slot.spin1 }}
       </button>
       <button
         class="btn btn-outline-primary"
@@ -90,7 +93,7 @@ async function exchange() {
         :title="block10"
         @click="spin(10)"
       >
-        抽 10 次
+        {{ t.bar.slot.spin10 }}
       </button>
     </div>
     <div v-if="blockText" class="text-danger mb-1" data-testid="slot-block">{{ blockText }}</div>
@@ -99,7 +102,7 @@ async function exchange() {
       <div>{{ rewardText }}</div>
     </div>
 
-    <h6 class="mt-3">礼券换蟹币</h6>
+    <h6 class="mt-3">{{ t.bar.slot.exchange }}</h6>
     <div class="d-flex gap-1 align-items-center mb-1">
       <input
         v-model.number="exNum"
@@ -116,28 +119,32 @@ async function exchange() {
         :disabled="busy || !!exBlock"
         @click="exchange"
       >
-        换 {{ exN }} 个（{{ exN * data.krabCoinTickets }} 张礼券）
+        {{ t.bar.slot.exBtn(exN, exN * data.krabCoinTickets) }}
       </button>
     </div>
     <div v-if="exBlock" class="text-danger mb-1" data-testid="ex-block">{{ exBlock }}</div>
 
-    <h6 class="mt-3">奖池</h6>
+    <h6 class="mt-3">{{ t.bar.slot.pool }}</h6>
     <table class="table table-sm mb-2" data-testid="slot-pool">
       <tbody>
         <tr v-for="a in slot.pool" :key="a.id">
-          <td>{{ awardName(a.id) }}<span v-if="a.rare" class="badge text-bg-warning ms-1">稀有</span></td>
+          <td>
+            {{ awardName(a.id)
+            }}<span v-if="a.rare" class="badge text-bg-warning ms-1">{{ t.bar.slot.rare }}</span>
+          </td>
           <td class="text-end">{{ (a.rate * 100).toFixed(2) }}%</td>
         </tr>
       </tbody>
     </table>
 
-    <h6>我的统计</h6>
+    <h6>{{ t.bar.slot.stats }}</h6>
     <div data-testid="slot-stats">
-      <span v-if="slot.stats.length === 0" class="text-muted">还没抽过</span>
+      <span v-if="slot.stats.length === 0" class="text-muted">{{ t.bar.slot.noStats }}</span>
       <template v-else>
-        共 {{ statTotal }} 格：<span v-for="s in slot.stats" :key="s.awardId" class="me-2"
-          >{{ awardName(s.awardId) }} {{ s.num }} 格</span
-        >
+        {{ t.bar.slot.statTotal(statTotal)
+        }}<span v-for="s in slot.stats" :key="s.awardId" class="me-2">{{
+          t.bar.slot.statLine(awardName(s.awardId), s.num)
+        }}</span>
       </template>
     </div>
   </div>

@@ -4,6 +4,7 @@ import BarWenjie from '../components/bar/BarWenjie.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { BarDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import CupPanel from '../components/bar/CupPanel.vue';
 import DartsPanel from '../components/bar/DartsPanel.vue';
 import DevilPanel from '../components/bar/DevilPanel.vue';
@@ -15,25 +16,18 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
 type Tab = 'fg' | 'cup' | 'num' | 'slot' | 'devil' | 'memory' | 'darts';
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'fg', label: '划拳' },
-  { key: 'cup', label: '猜酒杯' },
-  { key: 'num', label: '转数字' },
-  { key: 'slot', label: '老虎机' },
-  { key: 'devil', label: '魔鬼辣杯' },
-  { key: 'memory', label: '记忆调酒' },
-  { key: 'darts', label: '飞镖' },
-];
+const TABS: readonly Tab[] = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts'];
 const KEY = 'dt_bar_tab';
 function savedTab(): Tab {
   try {
     const v = localStorage.getItem(KEY);
-    return TABS.some((x) => x.key === v) ? (v as Tab) : 'fg';
+    return TABS.includes(v as Tab) ? (v as Tab) : 'fg';
   } catch {
     return 'fg';
   }
 }
 const toast = useToastStore();
+const t = useT();
 const tab = ref<Tab>(savedTab());
 const data = ref<BarDto | null>(null);
 
@@ -41,7 +35,7 @@ async function load() {
   try {
     data.value = await endpoints.bar();
   } catch (e) {
-    toast.push(errorMessage(e, '读取酒吧失败'), 'danger');
+    toast.push(errorMessage(e, t.value.bar.loadFailed), 'danger');
   }
 }
 watch(tab, (v) => {
@@ -56,10 +50,10 @@ onMounted(load);
 
 <template>
   <div class="dt-page-title">
-    <h5>酒吧</h5>
-    <span v-if="data" class="dt-meta" data-testid="bar-wallet"
-      >神秘礼券 {{ data.tickets }}；蟹币 {{ data.krabCoins }}</span
-    >
+    <h5>{{ t.bar.title }}</h5>
+    <span v-if="data" class="dt-meta" data-testid="bar-wallet">{{
+      t.bar.wallet(data.tickets, data.krabCoins)
+    }}</span>
   </div>
   <BarWenjie :data="data" />
   <HiphopCard :place="3" @changed="load" />
@@ -67,13 +61,13 @@ onMounted(load);
   <div class="dt-pills">
     <a
       v-for="x in TABS"
-      :key="x.key"
-      :class="{ active: tab === x.key }"
-      :aria-current="tab === x.key ? 'page' : undefined"
+      :key="x"
+      :class="{ active: tab === x }"
+      :aria-current="tab === x ? 'page' : undefined"
       href="#"
-      :data-testid="`tab-${x.key}`"
-      @click.prevent="tab = x.key"
-      >{{ x.label }}</a
+      :data-testid="`tab-${x}`"
+      @click.prevent="tab = x"
+      >{{ t.bar.tabs[x] }}</a
     >
   </div>
   <!-- 切游戏时保留面板状态：记忆调酒、飞镖进行中的局不会因为切标签丢掉（终审 I2） -->
