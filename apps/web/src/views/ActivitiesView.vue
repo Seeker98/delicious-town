@@ -4,6 +4,7 @@ import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityGoals from '../components/activity/ActivityGoals.vue';
 import ActivityBoost from '../components/activity/ActivityBoost.vue';
+import ActivityExchange from '../components/activity/ActivityExchange.vue';
 import ActivityGrid from '../components/activity/ActivityGrid.vue';
 import ActivityPass from '../components/activity/ActivityPass.vue';
 import { errorMessage } from '../i18n/zh-CN';
@@ -49,6 +50,16 @@ function unlock(a: ActivityDto) {
   if (!window.confirm('确定解锁进阶奖励吗？解锁后之前达到的进阶档位也可以领取。')) return;
   void run(() => endpoints.activityUnlock(a.id), '已解锁');
 }
+/** 兑换活动：结束后兑换期内还能换（148-2 设计 §7） */
+const exchangeOpen = (a: ActivityDto) =>
+  a.exchangeUntil !== null && new Date(a.exchangeUntil).getTime() > Date.now();
+const exchange = (a: ActivityDto, i: number, n: number) =>
+  run(() => endpoints.activityExchange(a.id, i, n), '已兑换');
+function endNote(a: ActivityDto): string {
+  if (a.kind === 'exchange')
+    return exchangeOpen(a) ? `兑换期，${timeLeft(a.exchangeUntil!)}` : '已结束，活动货币已作废';
+  return a.state === 'settling' ? '结算中，未领的奖励会发到邮箱' : '已结束，未领的奖励已发到邮箱';
+}
 const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g) => g.key === 'signin');
 </script>
 
@@ -63,7 +74,7 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
     </div>
     <div class="small dt-announce-body mb-2">{{ a.body }}</div>
     <div v-if="a.state !== 'running'" class="alert alert-secondary py-1 small">
-      {{ a.state === 'settling' ? '结算中，未领的奖励会发到邮箱' : '已结束，未领的奖励已发到邮箱' }}
+      {{ endNote(a) }}
     </div>
     <div v-else-if="a.kind !== 'boost' && level < a.minLevel" class="alert alert-warning py-1 small">
       需要 {{ a.minLevel }} 级，达到后才开始计数
@@ -78,6 +89,13 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
       @unlock="unlock(a)"
     />
     <ActivityBoost v-else-if="a.kind === 'boost'" :a="a" />
+    <ActivityExchange
+      v-else-if="a.kind === 'exchange'"
+      :a="a"
+      :busy="busy"
+      :open="exchangeOpen(a)"
+      @exchange="(i, n) => exchange(a, i, n)"
+    />
     <button
       v-if="a.claimable > 0"
       type="button"

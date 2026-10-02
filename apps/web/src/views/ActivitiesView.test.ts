@@ -12,6 +12,7 @@ vi.mock('../api/endpoints', () => ({
     activityClaim: vi.fn(),
     activityClaimAll: vi.fn(),
     activityUnlock: vi.fn(),
+    activityExchange: vi.fn(),
   },
 }));
 
@@ -229,5 +230,90 @@ describe('终审 I1：全服加成不显示等级门槛', () => {
     const w = mount(ActivitiesView);
     await flushPromises();
     expect(w.text()).not.toContain('需要 30 级');
+  });
+});
+
+describe('ActivitiesView 兑换活动', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  const ex = (patch: Record<string, unknown> = {}) => ({
+    ...base,
+    id: 11,
+    kind: 'exchange',
+    def: {
+      currencies: [{ name: '福' }, { name: '禄' }],
+      drops: [{ key: 'market.buy', chance: 0.05, currency: 0, num: 1, dailyCap: 10 }],
+      shop: [
+        {
+          cost: [
+            { currency: 0, num: 2 },
+            { currency: 1, num: 1 },
+          ],
+          award: { coin: 10 },
+          limit: 3,
+        },
+      ],
+      graceHours: 24,
+    },
+    counters: { m0: 5, m1: 0, x0: 1 },
+    today: { d0: 3 },
+    rewards: [],
+    claimable: 0,
+    exchangeUntil: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+    ...patch,
+  });
+  it('显示余额、掉落规则和兑换表；余额不够时按钮禁用', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [ex() as never], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    const card = w.find('[data-testid="activity-11"]');
+    expect(card.find('[data-testid="balance-11"]').text()).toContain('福 5');
+    expect(card.find('[data-testid="balance-11"]').text()).toContain('禄 0');
+    expect(card.text()).toContain('菜场买菜');
+    expect(card.text()).toContain('5%');
+    expect(card.text()).toContain('1/3');
+    expect(card.find('[data-testid="exchange-11-0"]').attributes('disabled')).toBeDefined();
+  });
+  it('余额够时可以兑换，兑换后重新读取', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [ex({ counters: { m0: 5, m1: 2, x0: 1 } }) as never],
+      level: 10,
+    });
+    vi.mocked(endpoints.activityExchange).mockResolvedValue({
+      index: 0,
+      times: 1,
+      items: { coin: 10 },
+    } as never);
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="exchange-11-0"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.activityExchange).toHaveBeenCalledWith(11, 0, 1);
+    expect(endpoints.activities).toHaveBeenCalledTimes(2);
+  });
+  it('结束后在兑换期内显示剩余时间', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [
+        ex({
+          state: 'ended',
+          exchangeUntil: new Date(Date.now() + 5 * 3_600_000 + 60_000).toISOString(),
+        }) as never,
+      ],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.text()).toContain('兑换期，还剩 5 小时');
+    expect(w.text()).not.toContain('未领的奖励');
   });
 });

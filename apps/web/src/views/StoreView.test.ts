@@ -166,3 +166,30 @@ describe('StoreView', () => {
     expect(endpoints.discard).not.toHaveBeenCalled();
   });
 });
+
+describe('StoreView 纪念品（148-2）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('纪念品单独一个标签页，仓库页不显示纪念品', async () => {
+    const goods = (id: number, name: string, type: number, desc = '') =>
+      ({ id, name, type, deviceType: null, level: 1, desc, coin: 0, diamond: 0 }) as never;
+    useCatalogStore().goodsMap = new Map([
+      [315, goods(315, '喇叭', 1)],
+      [90009, goods(90009, '小红旗徽章', 10, '别在围裙上的小红旗。（国庆纪念品）')],
+    ]);
+    const row = (goodsId: number) => ({ ...data.items[0]!, goodsId, usable: false, batch: false });
+    vi.mocked(endpoints.store).mockResolvedValue({ ...data, items: [row(315), row(90009)] });
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.text()).toContain('喇叭');
+    expect(w.text()).not.toContain('小红旗徽章');
+    await w.find('[data-testid="tab-souvenirs"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('小红旗徽章');
+    expect(w.find('[data-testid="souvenir-90009"]').text()).toContain('国庆纪念品');
+    expect(w.text()).not.toContain('喇叭');
+  });
+});

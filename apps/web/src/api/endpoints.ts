@@ -128,6 +128,7 @@ import type {
   AnnouncementsDto,
   ActivitiesDto,
   ActivityClaimDto,
+  ActivityExchangeDto,
   ActivitySummaryDto,
   MailClaimAllDto,
   MailClaimDto,
@@ -452,5 +453,7 @@ export const endpoints = {
     api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim`, { key }),
   activityClaimAll: (id: number) => api.post<ActivityClaimDto>(`/api/v1/activities/${id}/claim-all`, {}),
   activityUnlock: (id: number) => api.post<{ premium: true }>(`/api/v1/activities/${id}/unlock`, {}),
+  activityExchange: (id: number, index: number, times: number) =>
+    api.post<ActivityExchangeDto>(`/api/v1/activities/${id}/exchange`, { index, times }),
   mailDelete: (id: number) => api.post<void>(`/api/v1/mail/${id}/delete`, {}),
 };

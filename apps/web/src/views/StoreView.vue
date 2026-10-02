@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { LedgerRecordDto, StoreDto, StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -12,7 +13,7 @@ import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
-const tab = ref<'items' | 'records'>('items');
+const tab = ref<'items' | 'souvenirs' | 'records'>('items');
 const type = ref<number | undefined>(undefined);
 const data = ref<StoreDto | null>(null);
 const records = ref<LedgerRecordDto[]>([]);
@@ -30,11 +31,17 @@ const TYPES = [
 const TYPE_LABEL: Record<number, string> = Object.fromEntries(
   TYPES.filter((t) => t.v !== undefined).map((t) => [t.v, t.label]),
 );
+/** 纪念品的道具类型，和 @dt/config 的 GOODS_TYPE.souvenir 相同（148-2） */
+const GOODS_TYPE_SOUVENIR = 10;
+const isSouvenir = (id: number) => catalog.goodsMap.get(id)?.type === GOODS_TYPE_SOUVENIR;
+/** 纪念品标签页单独按类型读取：仓库页选了别的类型筛选时，已读的数据里没有纪念品 */
+const souvenirs = ref<StoreItemDto[]>([]);
 /** 仓库排序（问题记录 186）：按类型分组，组内先看剩余时间，再按拼音 */
 const groups = computed(() =>
   data.value
     ? groupStoreItems(
-        data.value.items,
+        // 纪念品只在"纪念品"标签页显示（148-2 设计 §6.2）
+        data.value.items.filter((it) => !isSouvenir(it.goodsId)),
         (id) => catalog.goodsMap.get(id)?.type ?? -1,
         (id) => catalog.goodsName(id),
       )
@@ -51,6 +58,15 @@ const RANGES = [
 
 async function load() {
   data.value = await endpoints.store(type.value);
+}
+async function loadSouvenirs() {
+  try {
+    souvenirs.value = (await endpoints.store(GOODS_TYPE_SOUVENIR)).items.filter((it) =>
+      isSouvenir(it.goodsId),
+    );
+  } catch (e) {
+    toast.push(errorMessage(e, '读取纪念品失败'), 'danger');
+  }
 }
 async function loadRecords() {
   records.value = await endpoints.storeRecords(range.value);
@@ -103,6 +119,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
   <ul class="nav nav-tabs mb-2">
     <li class="nav-item">
       <a :class="['nav-link', { active: tab === 'items' }]" href="#" @click.prevent="tab = 'items'">仓库</a>
+    </li>
+    <li class="nav-item">
+      <a
+        :class="['nav-link', { active: tab === 'souvenirs' }]"
+        href="#"
+        data-testid="tab-souvenirs"
+        @click.prevent="((tab = 'souvenirs'), loadSouvenirs())"
+        >纪念品</a
+      >
     </li>
     <li class="nav-item">
       <a
@@ -191,5 +216,26 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取仓库失�
       >
     </div>
     <div v-if="records.length === 0" class="dt-empty">这段时间没有变动</div>
+  </template>
+  <template v-if="tab === 'souvenirs'">
+    <div v-if="souvenirs.length === 0" class="text-muted small">还没有纪念品。参加节日限时活动可以兑换。</div>
+    <div
+      v-for="it in souvenirs"
+      :key="it.goodsId"
+      class="d-flex gap-2 border-bottom py-2"
+      :data-testid="`souvenir-${it.goodsId}`"
+    >
+      <GameImg
+        :path="`goods/${catalog.goodsName(it.goodsId)}`"
+        :alt="catalog.goodsName(it.goodsId)"
+        fallback-icon="bi-gift"
+      />
+      <div class="flex-fill">
+        <div>
+          <b>{{ catalog.goodsName(it.goodsId) }}</b> <span class="small text-muted">×{{ it.num }}</span>
+        </div>
+        <div class="small text-muted">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</div>
+      </div>
+    </div>
   </template>
 </template>

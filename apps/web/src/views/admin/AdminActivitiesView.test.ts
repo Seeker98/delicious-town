@@ -262,3 +262,55 @@ describe('终审 I1：后台全服加成不显示最低等级', () => {
     expect(vi.mocked(adminApi.createActivity).mock.calls[0]![0].minLevel).toBe(1);
   });
 });
+
+describe('AdminActivitiesView 兑换活动', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+    vi.mocked(adminApi.createActivity).mockResolvedValue(row);
+  });
+  it('货币、掉落（百分比换算）、兑换表、兑换期都进提交内容', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('exchange');
+    await w.find('[data-testid="cur-name-0"]').setValue('福');
+    await w.find('[data-testid="cur-add"]').trigger('click');
+    await w.find('[data-testid="cur-name-1"]').setValue('禄');
+    await w.find('[data-testid="drop-chance-0"]').setValue('5');
+    await w.find('[data-testid="shop-cost-add-0"]').trigger('click');
+    await w.find('[data-testid="shop-cost-cur-0-1"]').setValue('1');
+    await w.find('[data-testid="ex-grace"]').setValue('48');
+    await w.find('[data-testid="ac-title"]').setValue('集福');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.createActivity).mock.calls[0]![0];
+    expect(b.kind).toBe('exchange');
+    expect(b.def).toMatchObject({
+      currencies: [{ name: '福' }, { name: '禄' }],
+      drops: [{ key: 'signin', chance: 0.05, currency: 0, num: 1, dailyCap: 10 }],
+      shop: [
+        {
+          cost: [
+            { currency: 0, num: 1 },
+            { currency: 1, num: 1 },
+          ],
+          limit: 1,
+        },
+      ],
+      graceHours: 48,
+    });
+  });
+});
