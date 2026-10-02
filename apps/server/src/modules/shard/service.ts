@@ -1,6 +1,12 @@
 import type { Kysely } from 'kysely';
-import { isFeatureEnabled, resolveShardSettings, type GameConfig, type ShardSettings } from '@dt/config';
-import { ErrorCode, type SelectShardResult, type ShardDto } from '@dt/shared';
+import {
+  applyBoosts,
+  isFeatureEnabled,
+  resolveShardSettings,
+  type GameConfig,
+  type ShardSettings,
+} from '@dt/config';
+import { ErrorCode, type BoostItem, type SelectShardResult, type ShardDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import type { LoadedSession } from '../../security/session';
@@ -8,8 +14,15 @@ import type { SessionStore } from '../../security/sessionStore';
 
 const SETTINGS_CACHE_MS = 30_000;
 
-export function createShardService(d: { db: Kysely<DB>; sessions: SessionStore; config: GameConfig }) {
+export function createShardService(d: {
+  db: Kysely<DB>;
+  sessions: SessionStore;
+  config: GameConfig;
+  /** 游戏时钟：判断全服加成是否生效（dev 的测试时钟也要生效） */
+  now?: () => Date;
+}) {
   const cache = new Map<number, { expires: number; settings: ShardSettings }>();
+  const gameNow = d.now ?? (() => new Date());
 
   async function settings(shardId: number): Promise<ShardSettings> {
     const hit = cache.get(shardId);
@@ -20,7 +33,21 @@ export function createShardService(d: { db: Kysely<DB>; sessions: SessionStore; 
       .select('override')
       .where('shard_id', '=', shardId)
       .executeTakeFirst();
-    const resolved = resolveShardSettings(d.config, row?.override ?? {});
+    // 正在生效的全服加成（148-4 设计 §6.2）
+    const t = gameNow();
+    const boosts = await d.db
+      .selectFrom('activity')
+      .select('def')
+      .where('kind', '=', 'boost')
+      .where('deleted_at', 'is', null)
+      .where('starts_at', '<=', t)
+      .where('ends_at', '>', t)
+      .where((eb) => eb.or([eb('shard_id', '=', shardId), eb('shard_id', 'is', null)]))
+      .execute();
+    const resolved = applyBoosts(
+      resolveShardSettings(d.config, row?.override ?? {}),
+      boosts.map((b) => (b.def as { items: BoostItem[] }).items),
+    );
     cache.set(shardId, { expires: nowMs + SETTINGS_CACHE_MS, settings: resolved });
     return resolved;
   }
@@ -42,6 +69,11 @@ export function createShardService(d: { db: Kysely<DB>; sessions: SessionStore; 
     /** 区服配置被后台修改后清掉缓存；下一次读取从库里重新解析 */
     invalidate(shardId: number): void {
       cache.delete(shardId);
+    },
+
+    /** 全服加成（不分区服）改动后清掉全部区服的缓存 */
+    invalidateAll(): void {
+      cache.clear();
     },
 
     async list(accountId: number): Promise<ShardDto[]> {

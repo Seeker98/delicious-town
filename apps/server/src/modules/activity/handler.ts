@@ -30,6 +30,7 @@ async function bump(tx: Kysely<DB>, activityId: number, restId: number, key: str
 
 async function count(tx: Kysely<DB>, a: ActiveActivity, restId: number, p: ActionPayload, at: Date) {
   const spec = a.spec;
+  if (spec.kind === 'boost') return;
   if (spec.kind === 'pass') {
     const rule = spec.def.rules.find((r) => r.key === p.key);
     if (!rule) return;

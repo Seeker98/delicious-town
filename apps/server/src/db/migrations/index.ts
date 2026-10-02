@@ -20,6 +20,7 @@ import * as m0018 from './0018_ops_mail';
 import * as m0019 from './0019_reports';
 import * as m0020 from './0020_login_trace';
 import * as m0021 from './0021_activity';
+import * as m0022 from './0022_activity_boost';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -44,4 +45,5 @@ export const migrations: Record<string, Migration> = {
   '0019_reports': m0019,
   '0020_login_trace': m0020,
   '0021_activity': m0021,
+  '0022_activity_boost': m0022,
 };

@@ -7,6 +7,7 @@ import {
   type AdminActivityState,
 } from '@dt/shared';
 import { invalidState } from '../../core/errors';
+import { publishSettingsChanged } from '../../infra/settingsBus';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
@@ -117,6 +118,20 @@ export function createAdminActivity(game: Game) {
         : x,
     );
 
+  /** 全服加成改动后：本进程立即清区服设置缓存，其他进程通过 settings-bus 清（148-4 设计 §6.2） */
+  async function boostChanged(shardIds: Array<number | null>) {
+    if (shardIds.includes(null)) {
+      game.shards.invalidateAll();
+      const shards = await db.selectFrom('shard').select('id').execute();
+      for (const s of shards) await publishSettingsChanged(game.app.redis, s.id);
+      return;
+    }
+    for (const id of new Set(shardIds as number[])) {
+      game.shards.invalidate(id);
+      await publishSettingsChanged(game.app.redis, id);
+    }
+  }
+
   async function audit(actor: AdminActor, action: string, id: number, detail?: Record<string, unknown>) {
     await writeAudit(db, { actor, action, target: `activity:${id}`, detail });
   }
@@ -138,6 +153,7 @@ export function createAdminActivity(game: Game) {
         .executeTakeFirstOrThrow();
       await audit(actor, 'activity.create', r.id, { ...b });
       cache().invalidate();
+      if (b.kind === 'boost') await boostChanged([b.shardId]);
       return toDto(await row(r.id));
     },
     async update(actor: AdminActor, id: number, b: ActivityInput): Promise<AdminActivityDto> {
@@ -163,6 +179,7 @@ export function createAdminActivity(game: Game) {
         .execute();
       await audit(actor, 'activity.update', id, { ...b });
       cache().invalidate();
+      if (b.kind === 'boost' || cur.kind === 'boost') await boostChanged([b.shardId, cur.shard_id]);
       return toDto(await row(id));
     },
     async end(actor: AdminActor, id: number): Promise<AdminActivityDto> {
@@ -176,6 +193,7 @@ export function createAdminActivity(game: Game) {
         .execute();
       await audit(actor, 'activity.end', id);
       cache().invalidate();
+      if (cur.kind === 'boost') await boostChanged([cur.shard_id]);
       return toDto(await row(id));
     },
     async remove(actor: AdminActor, id: number): Promise<void> {
@@ -188,6 +206,7 @@ export function createAdminActivity(game: Game) {
         .execute();
       await audit(actor, 'activity.delete', id);
       cache().invalidate();
+      if (cur.kind === 'boost') await boostChanged([cur.shard_id]);
     },
   };
 }
