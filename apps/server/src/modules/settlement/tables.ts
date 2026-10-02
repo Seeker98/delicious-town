@@ -3,6 +3,11 @@ import type { Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
 import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog } from './types';
 
+/** 一家店同时最多几张蟑螂桌（问题记录 228）：桌数 × 比例向上取整，至少 1 张 */
+export function roachCap(tableCount: number, share: number): number {
+  return Math.max(1, Math.ceil(tableCount * share - 1e-9));
+}
+
 export interface Learned {
   all: number[];
   local: number[];
@@ -126,6 +131,9 @@ export function allocateTables(
   // 店里已经坐着痞老板时，本轮不会再出现第二个
   let planktonShown = input.tables.some((x) => x.customer === 7);
   const sorted = [...input.tables].sort((a, b) => a.no - b.no);
+  // 蟑螂上限：原有的算在内；本轮被蟑螂药消灭的腾出名额（问题记录 228）
+  const roachMax = roachCap(input.tables.length, t.roachMaxShare);
+  let roaches = input.tables.filter((x) => x.customer === 3).length;
 
   for (const table of sorted) {
     let oil = oilBase;
@@ -163,6 +171,7 @@ export function allocateTables(
     // C. 蟑螂桌
     if (table.customer === 3) {
       const killed = rng.chance(flags.roachClear);
+      if (killed) roaches -= 1;
       type = killed ? -3 : 3;
       next = killed
         ? { ...next, customer: -3 }
@@ -196,8 +205,13 @@ export function allocateTables(
       out.drops.push({ goodsId: GOODS.plankton, num: 1 });
       out.logs.push({ type: 'plankton.appear', params: { table: table.no } });
       out.planktonAppeared = true;
-    } else if (g.naturalRoach && rng.chance((t.roachRateBase - t.roachRatePerStar * s) * flags.roachMul)) {
-      // A2. 蟑螂
+    } else if (
+      g.naturalRoach &&
+      roaches < roachMax &&
+      rng.chance((t.roachRateBase - t.roachRatePerStar * s) * flags.roachMul)
+    ) {
+      // A2. 蟑螂（到上限就不再长）
+      roaches += 1;
       type = 3;
       next = { ...next, customer: 3, roach: { by: null, at: input.now.toISOString() } };
     } else if (table.no > seatedLimit) {

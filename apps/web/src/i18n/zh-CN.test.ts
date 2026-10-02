@@ -146,3 +146,9 @@ describe('小镇错误文案（4E-1）', () => {
     expect(errorText('INVALID_STATE', { reason: 'query_text', max: 10 })).toBe('搜索词最多 10 字');
   });
 });
+
+describe('问题记录 228：蟑螂上限', () => {
+  it('好友店蟑螂太多时的提示', () => {
+    expect(errorText('INVALID_STATE', { reason: 'roach_full' })).toBe('这家店的蟑螂已经太多了，换一家吧');
+  });
+});

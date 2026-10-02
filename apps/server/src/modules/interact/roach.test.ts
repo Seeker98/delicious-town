@@ -111,3 +111,31 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     expect(await goodsNum(t, c.restaurantId, GOODS.dtTicket)).toBe(1);
   });
 });
+
+describe('问题记录 228：好友放的蟑螂也算进上限', () => {
+  const six = (roaches: number) =>
+    Array.from({ length: 6 }, (_, i) =>
+      i < roaches
+        ? { no: i + 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } }
+        : { no: i + 1, floor: 1, customer: 0 },
+    );
+  it('6 桌已有 2 只时不能再放，提示太多、不扣次数；只有 1 只时能放', async () => {
+    const [a, b] = await friends();
+    await setTables(t, b.restaurantId, six(2));
+    await expect(roach().lay(a, { restId: b.restaurantId, tableNo: 3 })).rejects.toMatchObject({
+      params: { reason: 'roach_full' },
+    });
+    expect(await getDaily(t.db, a.restaurantId, 'roach.lay', gameDay(t.clock.now))).toBe(0);
+    await setTables(t, b.restaurantId, six(1));
+    await roach().lay(a, { restId: b.restaurantId, tableNo: 3 });
+    expect((await tablesOf(t, b.restaurantId))[2]!.customer).toBe(3);
+  });
+  it('蟹老板的店不受上限', async () => {
+    const [a] = await friends();
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    await befriend(t, a.restaurantId, npc);
+    await setTables(t, npc, six(5));
+    await roach().lay(a, { restId: npc, tableNo: 6 });
+    expect((await tablesOf(t, npc))[5]!.customer).toBe(3);
+  });
+});
