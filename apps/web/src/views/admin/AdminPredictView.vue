@@ -143,9 +143,14 @@ onMounted(() => void load());
     <tbody>
       <tr v-for="r in rows" :key="r.id" :data-testid="`apd-row-${r.id}`">
         <td>
-          {{ r.title }}<span class="text-muted">（{{ r.creator ?? '?' }}）</span>
+          {{ r.title }}<span class="text-muted">（{{ r.auto ? '系统' : (r.creator ?? '?') }}）</span>
         </td>
-        <td>{{ r.status === 'resolved' ? `结果：${r.outcome ? '是' : '否'}` : STATUS[r.status] }}</td>
+        <td>
+          {{ r.status === 'resolved' ? `结果：${r.outcome ? '是' : '否'}` : STATUS[r.status] }}
+          <div v-if="r.resultNote" class="text-muted" :data-testid="`apd-note-${r.id}`">
+            {{ r.resultNote }}
+          </div>
+        </td>
         <td>{{ new Date(r.closeAt).toLocaleString('zh-CN') }}</td>
         <td class="text-end">{{ predictPercent(r.price) }}%</td>
         <td class="text-end">{{ r.trades }} / {{ r.holders }}</td>

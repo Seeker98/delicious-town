@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { createHmac } from 'node:crypto';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { hashSeed } from '@dt/shared';
@@ -18,6 +19,12 @@ describe('随机种子混入服务器密钥（RNG_SECRET）', () => {
     expect(gameSeed(3, 'weather', '2026-10-02@13')).toBe(a);
     setSeedSecret('another-secret-value');
     expect(gameSeed(3, 'weather', '2026-10-02@13')).not.toBe(a);
+  });
+
+  it('配了密钥时用 HMAC-SHA256（终审 C1：拼进 32 位 FNV 的密钥能被离线穷举 2^32 种内部状态还原）', () => {
+    setSeedSecret('s3cret-for-test-only');
+    const mac = createHmac('sha256', 's3cret-for-test-only').update('3|weather|2026-10-02@13').digest();
+    expect(gameSeed(3, 'weather', '2026-10-02@13')).toBe(mac.readUInt32LE(0));
   });
 
   it('业务模块都用 gameSeed，不直接用公开的 hashSeed（源码公开时算得出未来的天气、菜场、蟹老板）', () => {

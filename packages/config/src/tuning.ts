@@ -618,6 +618,16 @@ export const tuningSchema = z.object({
     defaultB: int.min(10).max(10000),
     minLevel: int.min(1),
     minAccountDays: int.min(0),
+    /** 系统自动出题（238-2） */
+    auto: z.object({
+      krab: z.boolean(),
+      market: z.boolean(),
+      weather: z.boolean(),
+      stats: z.boolean(),
+      b: int.min(10).max(10000),
+      marketCloseMin: int.min(1).max(60),
+      statsCloseHour: int.min(1).max(23),
+    }),
   }),
   forum: z.object({
     titleMax: int.min(1),
