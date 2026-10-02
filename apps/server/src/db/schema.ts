@@ -1138,6 +1138,27 @@ export interface PredictTradeTable {
   price_after: number;
   created_at: Ts;
 }
+export interface KujiPoolTable {
+  id: Generated<string>;
+  shard_id: number;
+  day: string;
+  seq: number;
+  status: 'open' | 'sold_out' | 'expired';
+  total: number;
+  last_rest_id: Nullable<number>;
+  created_at: Ts;
+  closed_at: TsNullable;
+  /** 开池时的奖品配置快照（一番赏终审 I1）；jsonb，读出为对象，写入传 JSON 字符串 */
+  tiers: ColumnType<unknown, string | null | undefined, string | null>;
+  last: ColumnType<unknown, string | null | undefined, string | null>;
+}
+export interface KujiTicketTable {
+  pool_id: string;
+  idx: number;
+  tier: string;
+  drawn_by: Nullable<number>;
+  drawn_at: TsNullable;
+}
 export interface ExchangeFreezeTable {
   rest_id: number;
   reason: string;
@@ -1237,6 +1258,8 @@ export interface DB {
   predict_event: PredictEventTable;
   predict_position: PredictPositionTable;
   predict_trade: PredictTradeTable;
+  kuji_pool: KujiPoolTable;
+  kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

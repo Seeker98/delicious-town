@@ -18,6 +18,7 @@ import { forumRoutes } from './forum/routes';
 import { activityRoutes } from './activity/routes';
 import { exchangeRoutes } from './exchange/routes';
 import { predictRoutes } from './predict/routes';
+import { kujiRoutes } from './kuji/routes';
 import { mailRoutes } from './mail/routes';
 import { redeemRoutes } from './redeem/routes';
 import { inviteRoutes } from './invite/routes';
@@ -63,6 +64,7 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(activityRoutes(game.activity), { prefix: '/api/v1' });
   app.register(exchangeRoutes(game.exchange), { prefix: '/api/v1' });
   app.register(predictRoutes(game.predict), { prefix: '/api/v1' });
+  app.register(kujiRoutes(game.kuji), { prefix: '/api/v1' });
   app.register(redeemRoutes(game.redeem), { prefix: '/api/v1' });
   app.register(inviteRoutes(game.invite), { prefix: '/api/v1' });
   app.register(reportRoutes(game.report), { prefix: '/api/v1' });

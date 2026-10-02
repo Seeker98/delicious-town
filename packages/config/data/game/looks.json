@@ -29,6 +29,8 @@
     { "key": "tester", "title": "测试先锋", "desc": "参加了内测" },
     { "key": "champion", "title": "比赛冠军", "desc": "小镇活动的冠军" },
     { "key": "artist", "title": "小镇画家", "desc": "为小镇画了图" },
-    { "key": "chef", "title": "金牌大厨", "desc": "厨艺出众" }
+    { "key": "chef", "title": "金牌大厨", "desc": "厨艺出众" },
+    { "key": "kuji_a", "title": "一番赏 A 赏得主", "desc": "在一番赏里抽中了 A 赏" },
+    { "key": "kuji_last", "title": "一番赏最后赏得主", "desc": "抽走了一番赏奖池的最后一张签" }
   ]
 }

@@ -218,6 +218,15 @@ describe('交易所日志（156-1）', () => {
     );
   });
 
+  it('一番赏日志', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
+    expect(log('kuji.buy', { num: 3, coin: 60000 })).toBe('买了一番赏抽赏券 ×3，花费 60,000 银币');
+    expect(log('kuji.draw', { seq: 2, num: 3, tiers: { A: 1, F: 2 }, last: true })).toBe(
+      '一番赏第 2 池抽了 3 张：A 赏 ×1、F 赏 ×2，并拿下最后赏',
+    );
+  });
+
   it('事件合约日志（238-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);

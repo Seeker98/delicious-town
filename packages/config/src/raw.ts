@@ -338,6 +338,13 @@ export const souvenirsFile = z
   })
   .strict();
 
+/** data/game/kuji.json：一番赏抽赏券（一番赏设计 §4） */
+export const kujiFile = z
+  .object({
+    ticket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
+  })
+  .strict();
+
 /** data/game/tower_fix.json：守塔人厨力和换层（问题记录 120）；数据集会被同步覆盖，所以单独放 */
 export const towerFixFile = z.object({
   floors: z.array(

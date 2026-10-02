@@ -84,6 +84,7 @@ export const GOODS = {
   takeawayTicket: 263, // 外卖券
   shopJobHonor: 108, // 商店工作证（外卖私人刷新）
   horn: 315, // 喇叭（小镇广播）
+  kujiTicket: 90201, // 一番赏抽赏券（game/kuji.json）
   thorHammer: 256, // 雷神锤
   krabBurger: 180, // 蟹黄堡（注意：fragmentBase 也是 180，碎片是 181~186）
   levelTicketBase: 240, // N 级食材兑换券 = 240 + N（241~245）

@@ -7,6 +7,7 @@ import { applyEquipLore } from './lore';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
+import { kujiErrors } from './kuji';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
@@ -128,6 +129,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
   const souvenirsRaw = parse('game/souvenirs', raw.souvenirsFile);
+  const kujiRaw = parse('game/kuji', raw.kujiFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -174,6 +176,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !settingDocs ||
     !newbieCodesRaw ||
     !souvenirsRaw ||
+    !kujiRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -277,7 +280,33 @@ export function buildBundle(src: SourceData): BuildResult {
     equip: null,
     gem: null,
   }));
-  const goods = [...applyStressTables(builtGoods, equipLore.stressTables, errors), ...souvenirGoods];
+  // 一番赏抽赏券（一番赏设计 §4）：消耗品，不出售，可堆叠
+  const kujiTicket: Goods = {
+    id: kujiRaw.ticket.id,
+    name: kujiRaw.ticket.name,
+    type: GOODS_TYPE.consumable,
+    deviceType: null,
+    invalidHours: null,
+    maxNum: 9999,
+    stackable: true,
+    level: 1,
+    coin: 0,
+    diamond: 0,
+    onSale: false,
+    awardFlag: null,
+    desc: kujiRaw.ticket.desc,
+    value: null,
+    effects: {},
+    gift: null,
+    use: null,
+    equip: null,
+    gem: null,
+  };
+  const goods = [
+    ...applyStressTables(builtGoods, equipLore.stressTables, errors),
+    ...souvenirGoods,
+    kujiTicket,
+  ];
   unique(
     'goods',
     goods.map((g) => g.id),
@@ -853,6 +882,8 @@ export function buildBundle(src: SourceData): BuildResult {
     errors.push(`tuning.friend.npc.avatar ${tuning.friend.npc.avatar} not in looks`);
   if (!doorIds.has(tuning.friend.npc.door))
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
+  // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
+  errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
 
   if (errors.length > 0) return { bundle: null, errors };
 

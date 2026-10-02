@@ -11,6 +11,16 @@ const rewardSchema = z.object({
   goods: z.array(idNum).optional(),
   foods: z.array(idNum).optional(),
 });
+/** 一番赏的奖品（和活动奖励同样的六项） */
+const kujiAward = z.object({
+  coin: int.min(1).optional(),
+  exp: int.min(1).optional(),
+  diamond: int.min(1).optional(),
+  renown: int.min(1).optional(),
+  goods: z.array(idNum).optional(),
+  foods: z.array(idNum).optional(),
+});
+const kujiNews = z.enum(['broadcast', 'news']).optional();
 const levelWeights = z.array(z.tuple([int, num])).min(1);
 
 /** 数值常量（data/game/tuning.json）。区服可以通过 shard_config.override.tuning 覆盖任意字段 */
@@ -628,6 +638,25 @@ export const tuningSchema = z.object({
       marketCloseMin: int.min(1).max(60),
       statsCloseHour: int.min(1).max(23),
     }),
+  }),
+  /** 一番赏 */
+  kuji: z.object({
+    price: int.min(1),
+    dailyBuy: int.min(1),
+    maxDraw: int.min(1).max(100),
+    activeTickets: int.min(0),
+    tiers: z
+      .array(
+        z.object({
+          key: z.string().min(1).max(4),
+          count: int.min(1),
+          award: kujiAward,
+          icon: z.string().min(1).optional(),
+          news: kujiNews,
+        }),
+      )
+      .min(1),
+    last: z.object({ award: kujiAward, icon: z.string().min(1).optional(), news: kujiNews }),
   }),
   forum: z.object({
     titleMax: int.min(1),

@@ -33,6 +33,7 @@ import { createForumService, type ForumService } from './modules/forum/service';
 import { createActivityService, type ActivityService } from './modules/activity/service';
 import { createExchangeService, type ExchangeService } from './modules/exchange/service';
 import { createPredictService, type PredictService } from './modules/predict/service';
+import { createKujiService, type KujiService } from './modules/kuji/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -88,6 +89,7 @@ export interface Game {
   activity: ActivityService;
   exchange: ExchangeService;
   predict: PredictService;
+  kuji: KujiService;
   jobs: PeriodicJob[];
 }
 
@@ -155,6 +157,7 @@ export function createGame(app: AppDeps): Game {
     activity: createActivityService(deps),
     exchange: createExchangeService(deps),
     predict: createPredictService(deps),
+    kuji: createKujiService(deps),
     shop,
     market,
     task: createTaskService(deps),
