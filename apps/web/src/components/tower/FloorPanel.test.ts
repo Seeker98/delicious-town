@@ -53,3 +53,16 @@ describe('FloorPanel', () => {
     expect(tired.find('[data-testid="block-1"]').text()).toBe('体力不够（要 5）');
   });
 });
+
+describe('问题记录 230：次数提示用对手的名字', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  it('写"今天还能挑战某某"，不写"他"', () => {
+    const data = towerData();
+    const w = mount(FloorPanel, { props: { data } });
+    const f = data.floors[0]!;
+    expect(w.find(`[data-testid="floor-${f.floor}"]`).text()).toContain(`今天还能挑战${f.name}`);
+    expect(w.text()).not.toContain('挑战他');
+  });
+});

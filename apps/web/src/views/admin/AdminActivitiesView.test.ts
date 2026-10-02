@@ -443,3 +443,76 @@ describe('AdminActivitiesView 全服合力（148-3）', () => {
     expect(b.def).toMatchObject({ rules: [{ key: 'signin', points: 7, dailyCap: 10 }] });
   });
 });
+
+describe('问题记录 232：保存失败时定位到第一处错误', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+  });
+  it('说明没填：滚到说明的错误、说明框标红并获得焦点', async () => {
+    const scroll = vi.fn();
+    Element.prototype.scrollIntoView = scroll;
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', { issues: [{ path: 'body', message: 'too_small' }] }),
+    );
+    const w = mount(AdminActivitiesView, { attachTo: document.body });
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-title"]').setValue('合力');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const body = w.find('[data-testid="ac-body"]');
+    expect(body.classes()).toContain('is-invalid');
+    expect(w.find('[data-testid="ac-title"]').classes()).not.toContain('is-invalid');
+    expect(scroll).toHaveBeenCalledTimes(1);
+    expect(scroll.mock.contexts[0]).toBe(w.find('[data-testid="err-body"]').element);
+    expect(document.activeElement).toBe(body.element);
+    w.unmount();
+  });
+});
+
+describe('问题记录 232：错误在编辑器的行里', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+  });
+  it('滚到那一行的错误，不会停在前面带红字的删除按钮上', async () => {
+    const scroll = vi.fn();
+    Element.prototype.scrollIntoView = scroll;
+    vi.mocked(adminApi.createActivity).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', { issues: [{ path: 'def.goals.2.target', message: 'too_small' }] }),
+    );
+    const w = mount(AdminActivitiesView, { attachTo: document.body });
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-signin-template"]').trigger('click');
+    await w.find('[data-testid="ac-title"]').setValue('签到');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(scroll.mock.contexts[0]).toBe(w.find('[data-testid="err-def.goals.2.target"]').element);
+    w.unmount();
+  });
+});

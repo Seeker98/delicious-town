@@ -110,7 +110,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     if ((await getDaily(o.tx, o.rest.id, KEY.done, day)) >= total)
       throw limitReached('tower', { max: total });
     if ((await getDaily(o.tx, o.rest.id, KEY.floor(floorNo), day)) >= f.maxTimes)
-      throw limitReached('watchman', { max: f.maxTimes });
+      throw limitReached('watchman', { max: f.maxTimes, name: f.name });
   }
   spendStrength(o, towerStrength(floorNo, test, t));
   const mc = await o.tx

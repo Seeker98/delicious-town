@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import type {
   ActivityInput,
   ActivityKind,
@@ -31,6 +31,19 @@ const busy = ref(false);
 const open = ref(false);
 const editing = ref<AdminActivityDto | null>(null);
 const errors = ref<Record<string, string>>({});
+const formEl = ref<HTMLElement | null>(null);
+/** 保存失败时滚到第一处错误并聚焦对应的输入框（问题记录 232）：表单很长，错误常在视野外 */
+function focusFirstError() {
+  // 错误提示都是 text-danger small；删除按钮也是红字（btn text-danger），要排除
+  const el = formEl.value?.querySelector<HTMLElement>('.text-danger.small:not(.btn)');
+  if (!el) return;
+  el.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+  const prev = el.previousElementSibling;
+  const input = prev?.matches('input, textarea, select')
+    ? prev
+    : el.parentElement?.querySelector('input, textarea, select');
+  (input as HTMLElement | null | undefined)?.focus({ preventScroll: true });
+}
 
 const local = (d: Date) => {
   const p = (n: number) => String(n).padStart(2, '0');
@@ -136,6 +149,8 @@ async function save() {
   } catch (e) {
     errors.value = issueMap(e);
     toast.push(errorMessage(e, '保存失败'), 'danger');
+    await nextTick();
+    focusFirstError();
   } finally {
     busy.value = false;
   }
@@ -210,7 +225,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
     </tbody>
   </table>
 
-  <div v-if="open" class="dt-card">
+  <div v-if="open" ref="formEl" class="dt-card">
     <div v-if="started" class="alert alert-warning py-1 small">
       活动已开始，只能改标题、说明和延长结束时间
     </div>
@@ -246,20 +261,20 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
     </div>
     <input
       v-model="title"
-      class="form-control form-control-sm mb-1"
+      :class="['form-control form-control-sm mb-1', { 'is-invalid': errors.title }]"
       placeholder="标题"
       maxlength="40"
       data-testid="ac-title"
     />
-    <div v-if="errors.title" class="text-danger small">{{ errors.title }}</div>
+    <div v-if="errors.title" class="text-danger small" data-testid="err-title">{{ errors.title }}</div>
     <textarea
       v-model="body"
-      class="form-control form-control-sm mb-1"
+      :class="['form-control form-control-sm mb-1', { 'is-invalid': errors.body }]"
       placeholder="说明"
       maxlength="1000"
       data-testid="ac-body"
     ></textarea>
-    <div v-if="errors.body" class="text-danger small">{{ errors.body }}</div>
+    <div v-if="errors.body" class="text-danger small" data-testid="err-body">{{ errors.body }}</div>
     <div class="d-flex gap-2 align-items-center mb-2 small">
       开始
       <input
