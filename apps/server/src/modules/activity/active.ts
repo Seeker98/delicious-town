@@ -1,6 +1,7 @@
-import { sql } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import type { ActivitySpec } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+import type { DB } from '../../db/schema';
 import type { EventBus } from '../../events/bus';
 
 export interface ActiveActivity {
@@ -18,7 +19,8 @@ const TTL_MS = 30_000;
 const KEEP_AFTER_END_MS = 10 * 60_000;
 
 export interface ActivityCache {
-  forShard(shardId: number): Promise<ActiveActivity[]>;
+  /** db：在玩家事务里调用时传事务，缓存未命中时不另向连接池要连接 */
+  forShard(shardId: number, db?: Kysely<DB>): Promise<ActiveActivity[]>;
   invalidate(): void;
 }
 
@@ -30,10 +32,10 @@ export function activityCacheFor(bus: EventBus, d: Pick<GameDeps, 'db' | 'now'>)
   if (hit) return hit;
   const byShard = new Map<number, { expires: number; list: ActiveActivity[] }>();
   const cache: ActivityCache = {
-    async forShard(shardId) {
+    async forShard(shardId, db = d.db) {
       const c = byShard.get(shardId);
       if (c && c.expires > Date.now()) return c.list;
-      const rows = await d.db
+      const rows = await db
         .selectFrom('activity')
         .select(['id', 'shard_id', 'kind', 'title', 'min_level', 'starts_at', 'ends_at', 'def'])
         .where('deleted_at', 'is', null)

@@ -55,7 +55,7 @@ export function registerActivityHandlers(bus: EventBus, d: GameDeps): void {
     const p = e.payload as unknown as ActionPayload;
     if (!featureAvailable(await d.shards.settings(e.shardId), 'activity')) return;
     const at = new Date(p.at);
-    for (const a of await activityCacheFor(bus, d).forShard(e.shardId)) {
+    for (const a of await activityCacheFor(bus, d).forShard(e.shardId, tx)) {
       if (at < a.startsAt || at >= a.endsAt) continue;
       if ((p.level ?? 0) < a.minLevel) continue;
       await count(tx, a, e.restId, p, at);
