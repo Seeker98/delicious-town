@@ -750,3 +750,27 @@ body {
 .progress-bar.bg-secondary {
   background-color: var(--dt-fill-secondary) !important;
 }
+
+/* 活动条（问题记录 226）：手机上横向滑动，宽屏自动换行 */
+.dt-act-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+.dt-act-tab {
+  flex: 0 0 auto;
+  max-width: 15rem;
+}
+.dt-act-tab-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .dt-act-strip {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}

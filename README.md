@@ -51,3 +51,7 @@ pnpm infra:dev && pnpm --filter @dt/web e2e      # 端到端验收
 ## 致谢
 
 本项目参考了原作者的美味小镇，部分核心功能（结算、菜场、厨具等玩法的规则与数值）来自原作者提供的代码。原作者正在运营的在线版本：<http://antchensw.cn/town>，欢迎去玩。
+
+## 许可
+
+本项目以 [GNU Affero 通用公共许可证第 3 版或更新版本](LICENSE)（`AGPL-3.0-or-later`）发布。

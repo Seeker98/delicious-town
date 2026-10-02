@@ -111,6 +111,7 @@ describe('ActivitiesView', () => {
   it('九宫格：画成 3×3，完成的格子和线有标记', async () => {
     const w = mount(ActivitiesView);
     await flushPromises();
+    await w.find('[data-testid="act-tab-2"]').trigger('click');
     const cellsEl = w.findAll('[data-testid^="cell-2-"]');
     expect(cellsEl).toHaveLength(9);
     expect(cellsEl[0]!.classes()).toContain('dt-cell-done');
@@ -122,6 +123,7 @@ describe('ActivitiesView', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = mount(ActivitiesView);
     await flushPromises();
+    await w.find('[data-testid="act-tab-3"]').trigger('click');
     const card = w.find('[data-testid="activity-3"]');
     expect(card.text()).toContain('积分 12');
     expect(card.text()).toContain('8/20');
@@ -530,5 +532,68 @@ describe('终审：没设名次奖励时不说奖励已发邮件', () => {
     await flushPromises();
     expect(w.text()).toContain('贡献榜已结算');
     expect(w.text()).not.toContain('奖励已发邮件');
+  });
+});
+
+describe('问题记录 226：活动条 + 详情', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.activityClaim).mockResolvedValue({ keys: ['r0'], items: [{ coin: 100 }] } as never);
+  });
+  const cards = (w: ReturnType<typeof mount>) =>
+    w.findAll('[data-testid^="activity-"]').map((c) => c.attributes('data-testid'));
+
+  it('活动条列出全部活动（类型、状态、可领数），详情只显示选中的一个；点击切换', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [pass, goals, grid], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    const tab = w.find('[data-testid="act-tab-2"]');
+    expect(tab.text()).toContain('九宫格');
+    expect(tab.text()).toContain('还剩 2 天');
+    expect(tab.text()).toContain('可领 4');
+    expect(w.find('[data-testid="act-tab-1"]').text()).toContain('签到');
+    // 默认选中第一个有奖可领的：战令排在最前，也有 1 份可领
+    expect(cards(w)).toEqual(['activity-3']);
+    await w.find('[data-testid="act-tab-2"]').trigger('click');
+    expect(cards(w)).toEqual(['activity-2']);
+    expect(w.find('[data-testid="act-tab-2"]').attributes('aria-selected')).toBe('true');
+  });
+
+  it('默认选中有奖可领的那个，不管排在第几', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({
+      items: [{ ...pass, claimable: 0 }, goals],
+      level: 10,
+    });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(cards(w)).toEqual(['activity-1']);
+  });
+
+  it('领奖后重新读取，仍然停在当前活动', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [goals, grid], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="act-tab-2"]').trigger('click');
+    await w.find('[data-testid="claim-2-r0"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.activities).toHaveBeenCalledTimes(2);
+    expect(cards(w)).toEqual(['activity-2']);
+  });
+
+  it('只有一个活动时不显示活动条', async () => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [goals], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    expect(w.find('[data-testid^="act-tab-"]').exists()).toBe(false);
+    expect(cards(w)).toEqual(['activity-1']);
   });
 });
