@@ -59,6 +59,15 @@ const quote = computed(() => {
   });
 });
 /** 按当前价把持仓全部卖出约能拿回多少（两边分别按当前状态算） */
+/** 结果为是 / 否时这份持仓结算能得多少（问题记录 252） */
+const outcomes = computed(() => {
+  const d = detail.value;
+  if (!d) return [];
+  return [
+    { label: '是', got: d.event.unit * d.event.yes },
+    { label: '否', got: d.event.unit * d.event.no },
+  ];
+});
 const sellAll = computed(() => {
   const d = detail.value;
   const l = list.value;
@@ -163,9 +172,35 @@ onMounted(() => void loadList());
       <polyline :points="chart" fill="none" stroke="currentColor" stroke-width="1.5" class="text-success" />
     </svg>
     <div class="small mb-2" data-testid="pd-hold">
-      我持有：是 {{ detail.event.yes }} 份、否 {{ detail.event.no }} 份
+      我持有：是 {{ detail.event.yes }} 份、否 {{ detail.event.no }} 份，净投入
+      {{ formatNum(detail.event.netCost) }} 银币
       <span v-if="sellAll > 0" class="text-muted">（按当前价全部卖出约 {{ formatNum(sellAll) }} 银币）</span>
+      <div v-if="detail.event.yes > 0 || detail.event.no > 0">
+        <div v-for="o in outcomes" :key="o.label">
+          结果为{{ o.label }}：得 {{ formatNum(o.got) }} 银币，盈亏
+          <span :class="o.got - detail.event.netCost >= 0 ? 'text-success' : 'text-danger'">{{
+            signed(o.got - detail.event.netCost)
+          }}</span>
+        </div>
+      </div>
     </div>
+    <details class="small mb-2" data-testid="pd-help">
+      <summary>怎么算盈亏</summary>
+      <ul class="mb-0 ps-3">
+        <li>
+          结算时押对的一边每份得 {{ formatNum(detail.event.unit) }} 银币，押错的一边作废。比如"是"的价格是
+          63%，买 1 份约花 {{ formatNum(Math.round(detail.event.unit * 0.63)) }} 银币；结果为"是"就拿回
+          {{ formatNum(detail.event.unit) }}，为"否"就亏掉买入的钱。
+        </li>
+        <li>
+          价格就是大家认为发生的概率：买"是"的人越多，"是"越贵、"否"越便宜；一次买得越多，后面每份越贵。
+        </li>
+        <li>截止前随时可以按当前价卖出，赚到或亏掉的是卖出所得和买入花费的差。</li>
+        <li>买入和卖出都收手续费 {{ Math.round((list?.feeRate ?? 0) * 100) }}%（按成交额算，向上取整）。</li>
+        <li>净投入 = 买入花的（含手续费）− 卖出拿回的；盈亏 = 结算所得 − 净投入。</li>
+        <li>事件被作废时退回净投入；如果有人提前卖出赚了钱、系统收到的钱不够退，就按比例退。</li>
+      </ul>
+    </details>
     <div class="d-flex flex-wrap gap-2 align-items-center small">
       <div class="btn-group btn-group-sm">
         <button

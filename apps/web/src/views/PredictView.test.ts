@@ -83,6 +83,26 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(w.get('[data-testid="pd-quote"]').text()).toContain(q.total.toLocaleString('en-US'));
   });
 
+  it('盈亏说明：可展开的算法说明；持仓里写出结果为是/否各得多少、对应盈亏（问题记录 252）', async () => {
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: { ...detail.event, yes: 4, no: 1, netCost: 2500 },
+    });
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    const help = w.get('[data-testid="pd-help"]').text();
+    expect(help).toContain('怎么算盈亏');
+    expect(help).toContain('每份得 1,000 银币');
+    expect(help).toContain('手续费 2%');
+    expect(help).toContain('作废');
+    const hold = w.get('[data-testid="pd-hold"]').text();
+    expect(hold).toContain('结果为是：得 4,000 银币，盈亏 +1,500');
+    expect(hold).toContain('结果为否：得 1,000 银币，盈亏 -1,500');
+    expect(hold).toContain('净投入 2,500');
+  });
+
   it('提交：调用接口、提示、刷新', async () => {
     vi.mocked(endpoints.predictTrade).mockResolvedValue({
       side: 'no',
