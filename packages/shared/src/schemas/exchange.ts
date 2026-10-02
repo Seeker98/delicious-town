@@ -10,6 +10,13 @@ export const exchangeOrderBody = z.object({
   qty: z.number().int().min(1).max(999),
 });
 
+/** 卖给系统（问题记录 244）：price 是玩家看到的系统收购价，系统价低于它就拒绝 */
+export const exchangeSellSystemBody = z.object({
+  foodsId: z.number().int().positive(),
+  price: z.number().int().min(1).max(100_000_000),
+  qty: z.number().int().min(1).max(999),
+});
+
 export interface ExchangeOrderDto {
   id: number;
   side: ExchangeSide;
@@ -35,6 +42,8 @@ export interface ExchangeLevelDto {
   qty: number;
   /** 系统做市的一档（156-3） */
   system: boolean;
+  /** 系统兜底收购价：低于挂单下限，只能用「卖给系统」成交（问题记录 244） */
+  floor?: boolean;
 }
 
 export interface ExchangeBookDto {

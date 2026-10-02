@@ -77,6 +77,45 @@ const estimate = computed(() => {
     : `全部成交后约得 ${formatNum(total - Math.floor(total * me.value.feeRate))} 银币（已扣手续费）`;
 });
 
+/** 卖给系统（问题记录 244）：盘口里系统收购那一档；兜底价低于挂单下限，只能这样卖 */
+const sysBid = computed(() => book.value?.bids.find((b) => b.system) ?? null);
+const sysOpen = ref(false);
+const sysQty = ref<number | ''>(1);
+const sysValid = computed(
+  () =>
+    sysBid.value !== null &&
+    typeof sysQty.value === 'number' &&
+    Number.isInteger(sysQty.value) &&
+    sysQty.value >= 1 &&
+    sysQty.value <= sysBid.value.qty,
+);
+const sysEstimate = computed(() => {
+  if (!sysValid.value || !me.value) return '';
+  const total = sysBid.value!.price * (sysQty.value as number);
+  const fee = Math.floor(total * me.value.feeRate);
+  return `${formatNum(sysBid.value!.price)} × ${sysQty.value} = ${formatNum(total)}，手续费 ${formatNum(fee)}，到手 ${formatNum(total - fee)} 银币`;
+});
+async function sellToSystem() {
+  const id = selected.value;
+  const b = sysBid.value;
+  if (!sysValid.value || id === null || !b) return;
+  const n = sysQty.value as number;
+  busy.value = true;
+  try {
+    await endpoints.tradeSellSystem({ foodsId: id, price: b.price, qty: n });
+    toast.push(`卖给系统 ${n} 个，单价 ${formatNum(b.price)}`);
+    sysOpen.value = false;
+    await loadMe();
+  } catch (e) {
+    toast.push(errorMessage(e, '卖给系统失败'), 'danger');
+  } finally {
+    busy.value = false;
+  }
+  // 成功或价格变了都重新读盘口
+  const fresh = await endpoints.tradeBook(id).catch(() => null);
+  if (fresh && selected.value === id) book.value = fresh;
+}
+
 async function loadMe() {
   me.value = await endpoints.tradeMe();
 }
@@ -164,6 +203,18 @@ onMounted(async () => {
   <div class="small text-muted mb-2">
     玩家之间买卖稀有食材。挂单价要在当天参考价的一半到两倍之间；卖方成交时扣手续费。
   </div>
+  <details class="small text-muted mb-2" data-testid="ex-sys-help">
+    <summary>系统报价怎么算</summary>
+    <ul class="mb-0 ps-3">
+      <li>系统收购价 = 参考价 × 0.7，系统卖出价 = 参考价 × 1.3；系统只卖从玩家手里收进来的货。</li>
+      <li>参考价每天按前一天玩家之间的成交算（和系统的成交不算），所以系统报价一天内不变。</li>
+      <li>菜场也卖的食材，收购价不超过菜场最低价 × 0.9，免得从菜场买来卖给系统。</li>
+      <li>
+        收购价低于挂单下限时是"兜底价"（多见于 3~5 级），只能用「卖给系统」按钮卖，保证手里的货总能卖掉。
+      </li>
+      <li>系统每天每种食材最多收 100 个，每人每天最多卖给系统 20 个。</li>
+    </ul>
+  </details>
   <input v-model="search" class="form-control form-control-sm mb-2" placeholder="搜索食材" />
   <div class="dt-card mb-3" style="max-height: 14rem; overflow-y: auto">
     <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
@@ -212,14 +263,48 @@ onMounted(async () => {
           :class="b.system ? 'text-primary' : 'text-success'"
           role="button"
           :data-testid="`ex-bid-${b.system ? 'sys-' : ''}${b.price}`"
-          @click="price = b.price"
+          @click="if (!b.floor) price = b.price;"
         >
-          <td>{{ b.system ? '系统收' : '买' }}</td>
+          <td>{{ b.system ? (b.floor ? '系统兜底收' : '系统收') : '买' }}</td>
           <td>{{ formatNum(b.price) }}</td>
           <td class="text-end">{{ formatNum(b.qty) }}</td>
         </tr>
       </tbody>
     </table>
+    <div v-if="sysBid" class="mb-2 small">
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-primary"
+        :disabled="busy || !!blocked"
+        data-testid="ex-sell-sys"
+        @click="sysOpen = !sysOpen"
+      >
+        卖给系统（{{ formatNum(sysBid.price) }}{{ sysBid.floor ? '，兜底价' : '' }}）
+      </button>
+      <div v-if="sysOpen" class="d-flex flex-wrap gap-2 align-items-center mt-1">
+        数量
+        <input
+          v-model.number="sysQty"
+          type="number"
+          min="1"
+          :max="sysBid.qty"
+          class="form-control form-control-sm"
+          style="width: 5rem"
+          data-testid="ex-sys-qty"
+        />
+        <span class="text-muted">最多 {{ sysBid.qty }}</span>
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          :disabled="busy || !sysValid || !!blocked"
+          data-testid="ex-sys-submit"
+          @click="sellToSystem"
+        >
+          确定卖出
+        </button>
+        <div class="w-100 text-muted" data-testid="ex-sys-estimate">{{ sysEstimate }}</div>
+      </div>
+    </div>
     <div class="btn-group btn-group-sm mb-2">
       <button
         type="button"

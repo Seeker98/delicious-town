@@ -59,12 +59,14 @@ export function makerPrices(
   band: { min: number; max: number },
   m: MakerTuning,
   base: number,
-): { bid: number | null; ask: number } {
+): { bid: number | null; ask: number; floor: boolean } {
   let bid = down(Math.min(ref, base) * m.bidRate);
   if (floor !== null) bid = Math.min(bid, down(floor * m.marketCapRate));
   bid = Math.min(bid, band.max);
   const ask = Math.min(Math.max(up(ref * m.askRate), band.min), band.max);
-  return { bid: bid >= band.min ? bid : null, ask };
+  // 低于挂单下限也照样收（问题记录 244）：标成兜底价，只能用「卖给系统」成交；不往上抬，否则菜场封顶失效
+  if (bid < 1) return { bid: null, ask, floor: false };
+  return { bid, ask, floor: bid < band.min };
 }
 
 /** 系统这次最多能收几个 */
@@ -150,6 +152,8 @@ export async function addBought(
 export interface MakerLevel {
   price: number;
   qty: number;
+  /** 兜底价：低于挂单下限，只能用「卖给系统」成交（问题记录 244） */
+  floor?: boolean;
 }
 
 /**
@@ -182,7 +186,7 @@ export async function makerQuote(
   const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);
   const n = makerBuyQty(m, { ...st, playerToday: mine });
   return {
-    bid: p.bid !== null && n > 0 ? { price: p.bid, qty: n } : null,
+    bid: p.bid !== null && n > 0 ? { price: p.bid, qty: n, floor: p.floor } : null,
     ask: st.stock > 0 ? { price: p.ask, qty: st.stock } : null,
   };
 }

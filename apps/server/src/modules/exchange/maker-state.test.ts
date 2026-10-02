@@ -41,17 +41,20 @@ describe('系统库存和每日收购（156-3 设计 §5）', () => {
       restId: r.restaurantId,
       ref: 1000,
     };
-    expect(await makerQuote(t.db, x)).toEqual({ bid: { price: 700, qty: 20 }, ask: null });
+    expect(await makerQuote(t.db, x)).toEqual({ bid: { price: 700, qty: 20, floor: false }, ask: null });
     await incrementDaily(t.db, r.restaurantId, TO_SYSTEM, 15, day);
     await addStock(t.db, shardId, f.id, 4);
-    expect(await makerQuote(t.db, x)).toEqual({ bid: { price: 700, qty: 5 }, ask: { price: 1300, qty: 4 } });
+    expect(await makerQuote(t.db, x)).toEqual({
+      bid: { price: 700, qty: 5, floor: false },
+      ask: { price: 1300, qty: 4 },
+    });
     const off = {
       ...x.tuning,
       exchange: { ...x.tuning.exchange, maker: { ...x.tuning.exchange.maker, enabled: false } },
     };
     expect(await makerQuote(t.db, { ...x, tuning: off })).toEqual({ bid: null, ask: null });
   });
-  it('参考价被推高：1.3 倍时系统买价仍按初始参考价 × 0.7，1.8 倍时下限已高过它、不收（终审 C1）', async () => {
+  it('参考价被推高：1.3 倍时系统买价仍按初始参考价 × 0.7；1.8 倍时下限已高过它，变成兜底价、价格不变（终审 C1、问题记录 244）', async () => {
     const shardId = await createShard(t.db);
     const f = lv6();
     const r = await trader(t, { shardId });
@@ -67,6 +70,7 @@ describe('系统库存和每日收购（156-3 设计 §5）', () => {
         ref: Math.round(base * k),
       });
     expect((await quote(1.3)).bid!.price).toBe(Math.floor(base * 0.7));
-    expect((await quote(1.8)).bid).toBeNull();
+    expect((await quote(1.3)).bid!.floor).toBe(false);
+    expect((await quote(1.8)).bid).toMatchObject({ price: Math.floor(base * 0.7), floor: true });
   });
 });

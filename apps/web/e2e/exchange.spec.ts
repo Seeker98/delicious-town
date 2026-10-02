@@ -99,3 +99,79 @@ test('交易所：挂卖单、吃单、取出', async ({ browser, request }) => 
     await ctxB.close();
   }
 });
+
+/**
+ * 卖给系统（问题记录 244）：3~5 级是兜底价，只能用「卖给系统」卖。
+ * 只动本用例新注册的号；系统库存和当天已收是区服共用的，结束时按本用例卖出的数量减回去
+ */
+test('交易所：3 级食材按兜底价卖给系统', async ({ page, request }) => {
+  await closeAnnouncements(page);
+  const { username } = await registerAndOpen(page, request);
+  const client = new pg.Client({ connectionString: DB_URL });
+  await client.connect();
+  let restId = 0;
+  let shardId = 0;
+  let foodsId = 0;
+  let sold = 0;
+  try {
+    const r = await client.query<{ id: number; shard_id: number }>(
+      `update restaurant set level = 30
+         where account_id = (select id from account where lower(username) = lower($1))
+       returning id, shard_id`,
+      [username],
+    );
+    restId = r.rows[0]!.id;
+    shardId = r.rows[0]!.shard_id;
+    await client.query(
+      `update account set created_at = now() - interval '30 days' where lower(username) = lower($1)`,
+      [username],
+    );
+    // 找一种有兜底收购档的食材
+    const foods = (await (await page.request.get('/api/v1/exchange/foods')).json()) as {
+      data: Array<{ foodsId: number }>;
+    };
+    let price = 0;
+    for (const f of foods.data) {
+      const bk = (await (await page.request.get(`/api/v1/exchange/book/${f.foodsId}`)).json()) as {
+        data: { bids: Array<{ price: number; system: boolean; floor?: boolean }> };
+      };
+      const sys = bk.data.bids.find((b) => b.system && b.floor);
+      if (sys) {
+        foodsId = f.foodsId;
+        price = sys.price;
+        break;
+      }
+    }
+    expect(foodsId).toBeGreaterThan(0);
+    await client.query(
+      `insert into cupboard_food (rest_id, foods_id, num) values ($1, $2, 5)
+         on conflict (rest_id, foods_id) do update set num = cupboard_food.num + 5`,
+      [restId, foodsId],
+    );
+    await page.goto('/exchange');
+    await page.getByTestId(`ex-food-${foodsId}`).click();
+    await expect(page.getByTestId(`ex-bid-sys-${price}`)).toContainText('系统兜底收');
+    await page.getByTestId('ex-sell-sys').click();
+    await page.getByTestId('ex-sys-qty').fill('2');
+    await page.getByTestId('ex-sys-submit').click();
+    await expect(page.getByText('卖给系统 2 个')).toBeVisible();
+    sold = 2;
+  } finally {
+    if (restId) {
+      await client.query('delete from exchange_trade where seller_rest_id = $1 and system', [restId]);
+      await client.query('delete from exchange_order where rest_id = $1', [restId]);
+      if (sold > 0) {
+        await client.query(
+          'update exchange_stock set num = greatest(num - $3, 0) where shard_id = $1 and foods_id = $2',
+          [shardId, foodsId, sold],
+        );
+        await client.query(
+          `update exchange_maker_day set bought = greatest(bought - $3, 0)
+             where shard_id = $1 and foods_id = $2 and day = (select max(day) from exchange_maker_day where shard_id = $1 and foods_id = $2)`,
+          [shardId, foodsId, sold],
+        );
+      }
+    }
+    await client.end();
+  }
+});

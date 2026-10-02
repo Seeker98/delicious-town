@@ -114,6 +114,7 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
   exchange_orders: (p) => `最多同时挂 ${String(p.max)} 张单`,
   exchange_qty: (p) => `每张单最多 ${String(p.max)} 个`,
+  exchange_system_qty: (p) => `系统今天最多还能收你 ${String(p.max)} 个`,
   predict_trade: (p) => `每笔最多 ${String(p.max)} 份`,
   kuji_buy: (p) => `今天最多再买 ${String(p.left)} 张（每天限购 ${String(p.max)} 张）`,
   kuji_draw: (p) => `一次最多抽 ${String(p.max)} 张`,
@@ -165,6 +166,8 @@ const STATE: Record<string, string> = {
   cupboard_full: '橱柜放不下这么多，先腾出位置再挂买单',
   order_closed: '这张单已经成交、撤销或过期了',
   exchange_frozen: '交易所已被冻结，有疑问请联系管理员',
+  exchange_no_system_bid: '系统现在不收这种食材',
+  exchange_price_moved: '系统收购价变了，已刷新盘口，请确认后再卖',
   predict_closed: '这个事件已经停止交易',
   kuji_ticket: '抽赏券不够',
   kuji_left: '这一池剩下的签不够了',

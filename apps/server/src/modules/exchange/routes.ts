@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
-import { exchangeOrderBody } from '@dt/shared';
+import { exchangeOrderBody, exchangeSellSystemBody } from '@dt/shared';
 import { restCtxOf } from '../../core/deps';
 import { ok, okOp } from '../../http/reply';
 import { parse } from '../../http/validate';
@@ -18,6 +18,9 @@ export function exchangeRoutes(svc: ExchangeService): FastifyPluginAsync {
     r.get('/exchange/me', async (req) => ok(await svc.me(restCtxOf(req))));
     r.post('/exchange/orders', async (req) =>
       okOp(await svc.place(restCtxOf(req), parse(exchangeOrderBody, req.body))),
+    );
+    r.post('/exchange/sell-system', async (req) =>
+      okOp(await svc.sellToSystem(restCtxOf(req), parse(exchangeSellSystemBody, req.body))),
     );
     r.post('/exchange/orders/:id/cancel', async (req) =>
       okOp(await svc.cancel(restCtxOf(req), parse(idParam, req.params).id)),

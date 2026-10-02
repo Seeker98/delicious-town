@@ -468,6 +468,9 @@ export const endpoints = {
   tradeMe: () => api.get<ExchangeMeDto>('/api/v1/exchange/me'),
   tradePlace: (b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) =>
     api.post<ExchangePlaceDto>('/api/v1/exchange/orders', b),
+  /** 卖给系统（问题记录 244）：price 是看到的系统收购价 */
+  tradeSellSystem: (b: { foodsId: number; price: number; qty: number }) =>
+    api.post<ExchangePlaceDto>('/api/v1/exchange/sell-system', b),
   tradeCancel: (id: number) => api.post<ExchangeOrderDto>(`/api/v1/exchange/orders/${id}/cancel`, {}),
   tradeWithdraw: () => api.post<ExchangeWithdrawDto>('/api/v1/exchange/withdraw', {}),
   kuji: () => api.get<KujiViewDto>('/api/v1/kuji'),

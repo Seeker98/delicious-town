@@ -27,12 +27,12 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
     const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 30 } });
     const viewer = await trader(t, { shardId });
     let bk = await svc().book(viewer, f.id);
-    expect(bk.bids).toEqual([{ price: bid, qty: 20, system: true }]);
+    expect(bk.bids).toEqual([{ price: bid, qty: 20, system: true, floor: false }]);
     expect(bk.asks).toEqual([]);
     await svc().place(s, { foodsId: f.id, side: 'sell', price: band.min, qty: 20 });
     expect((await svc().book(s, f.id)).bids).toEqual([]);
     bk = await svc().book(viewer, f.id);
-    expect(bk.bids).toEqual([{ price: bid, qty: 20, system: true }]);
+    expect(bk.bids).toEqual([{ price: bid, qty: 20, system: true, floor: false }]);
     expect(bk.asks).toEqual([{ price: ask, qty: 20, system: true }]);
     expect(bk.volume).toBe(20);
     expect(bk.last).toBeNull();
@@ -43,7 +43,7 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
     expect((await svc().book(viewer, f.id)).bids).toEqual([
       { price: bid + 5, qty: 1, system: false },
       { price: bid, qty: 2, system: false },
-      { price: bid, qty: 20, system: true },
+      { price: bid, qty: 20, system: true, floor: false },
     ]);
   });
 
