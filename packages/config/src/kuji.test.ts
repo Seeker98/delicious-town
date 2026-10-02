@@ -37,6 +37,17 @@ describe('一番赏配置（设计 §3、§4）', () => {
     expect(k.last).toMatchObject({ icon: 'kuji_last', news: 'broadcast' });
   });
 
+  it('校验：档位不能叫 last，一池总张数不超过 1000（一番赏终审）', () => {
+    const src = source();
+    const t = JSON.parse(JSON.stringify(src['game/tuning']));
+    t.kuji.tiers[0].key = 'last';
+    t.kuji.tiers[5].count = 1000;
+    const { errors } = buildBundle({ ...src, 'game/tuning': t });
+    const all = errors.join(' ');
+    expect(all).toMatch(/kuji.*reserved.*last/);
+    expect(all).toMatch(/kuji.*total 1030 > 1000/);
+  });
+
   it('校验：档位重复、图标不存在、奖品道具不存在都报错', () => {
     const src = source();
     const t = JSON.parse(JSON.stringify(src['game/tuning']));

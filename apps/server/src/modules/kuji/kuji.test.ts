@@ -184,6 +184,58 @@ describe('抽签（一番赏设计 §5.4）', () => {
     expect(await coin(loser.restaurantId)).toBe(1 + 1000);
   });
 
+  it('奖品跟着池走：开池后改奖品、改档名，当前池照旧，下一池才按新配置（一番赏终审 I1）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: {
+        tiers: [{ key: 'X', count: 2, award: { coin: 100 } }],
+        last: { award: { coin: 7, goods: [] } },
+      },
+    });
+    const r = await player(shardId, { coin: 0, tickets: 3 });
+    await svc().view(r); // 开池
+    await setTuning(t, shardId, {
+      kuji: {
+        tiers: [{ key: 'Y', count: 1, award: { coin: 999 } }],
+        last: { award: { coin: 1, goods: [] } },
+      },
+    });
+    const v = await svc().view(r);
+    expect(v.tiers).toEqual([expect.objectContaining({ key: 'X', count: 2, left: 2, award: { coin: 100 } })]);
+    expect(v.last.award).toMatchObject({ coin: 7 });
+    const res = await svc().draw(r, 2);
+    expect(res.data.draws).toEqual([
+      { tier: 'X', award: { coin: 100 } },
+      { tier: 'X', award: { coin: 100 } },
+    ]);
+    expect(res.data.last).toMatchObject({ coin: 7 });
+    expect(await coin(r.restaurantId)).toBe(207);
+    expect(res.data.view.tiers.map((x) => x.key)).toEqual(['Y']);
+  });
+
+  it('看板只读：不锁店，别人锁着这家店时也能看（一番赏终审 I2）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await player(shardId);
+    await svc().view(r); // 先开池
+    let release!: () => void;
+    let locked!: () => void;
+    const gotLock = new Promise<void>((res) => (locked = res));
+    const held = new Promise<void>((res) => (release = res));
+    const locker = t.db.transaction().execute(async (tx) => {
+      await tx.selectFrom('restaurant').select('id').where('id', '=', r.restaurantId).forUpdate().execute();
+      locked();
+      await held;
+    });
+    await gotLock;
+    const v = await Promise.race([
+      svc().view(r),
+      new Promise<null>((res) => setTimeout(() => res(null), 3000)),
+    ]);
+    release();
+    await locker;
+    expect(v).not.toBeNull();
+  });
+
   it('分布：抽完一整池，各档抽到的张数正好等于张数', async () => {
     const shardId = await createShard(t.db);
     const r = await player(shardId, { tickets: 80 });

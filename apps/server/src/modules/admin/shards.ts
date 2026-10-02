@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { isFeatureEnabled, resolveShardSettings } from '@dt/config';
+import { isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
 import { ErrorCode, type AdminShardDto, type ShardHistoryDto, type ShardSettingsDto } from '@dt/shared';
 import { IMPLEMENTED_FEATURES } from '../../core/features';
 import type { Game } from '../../game';
@@ -45,8 +45,9 @@ export function createAdminShards(game: Game) {
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: bad.map((path) => ({ path, message: 'unknown' })),
       });
+    let resolved;
     try {
-      resolveShardSettings(config, override);
+      resolved = resolveShardSettings(config, override);
     } catch (e) {
       if (e instanceof ZodError)
         throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
@@ -54,6 +55,16 @@ export function createAdminShards(game: Game) {
         });
       throw e;
     }
+    // 一番赏的奖品引用、图标、档位（一番赏终审 I3）：和配置构建同一套检查，填错的道具 id 会让那一档的签永远抽不出去
+    const kuji = kujiErrors(resolved.tuning.kuji, {
+      goodsIds: new Set(config.goods.keys()),
+      foodIds: new Set(config.foods.keys()),
+      iconKeys: new Set(config.bundle.looks.icons.map((i) => i.key)),
+    });
+    if (kuji.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: kuji.map((message) => ({ path: 'tuning.kuji', message })),
+      });
   }
 
   async function assertShard(shardId: number): Promise<void> {

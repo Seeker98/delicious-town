@@ -106,6 +106,26 @@ describe('区服数值（HTTP）', () => {
     ).toBe(200);
   });
 
+  it('一番赏的奖品引用不存在的道具、图标，或档位叫 last、总张数过多：400（一番赏终审 I3）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const save = (kuji: unknown) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: { tuning: { kuji } }, note: 'x', version: 0 },
+      });
+    const bad = await save({
+      tiers: [{ key: 'A', count: 1, award: { goods: [{ id: 9011, num: 1 }] }, icon: 'nope' }],
+    });
+    expect(bad.status).toBe(400);
+    expect(bad.json.code).toBe('INVALID_CONFIG');
+    const msg = JSON.stringify(bad.json.params.issues);
+    expect(msg).toContain('unknown goods 9011');
+    expect(msg).toContain('icon nope');
+    expect((await save({ tiers: [{ key: 'last', count: 1, award: { coin: 1 } }] })).status).toBe(400);
+    expect((await save({ tiers: [{ key: 'X', count: 1001, award: { coin: 1 } }] })).status).toBe(400);
+    expect((await save({ tiers: [{ key: 'X', count: 3, award: { coin: 1 } }] })).status).toBe(200);
+  });
+
   it('mod 不能保存（404）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const r = await call(ctx.app, 'POST', `${S}/${shardId}/override`, {

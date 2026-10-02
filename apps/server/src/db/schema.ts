@@ -1148,6 +1148,9 @@ export interface KujiPoolTable {
   last_rest_id: Nullable<number>;
   created_at: Ts;
   closed_at: TsNullable;
+  /** 开池时的奖品配置快照（一番赏终审 I1）；jsonb，读出为对象，写入传 JSON 字符串 */
+  tiers: ColumnType<unknown, string | null | undefined, string | null>;
+  last: ColumnType<unknown, string | null | undefined, string | null>;
 }
 export interface KujiTicketTable {
   pool_id: string;

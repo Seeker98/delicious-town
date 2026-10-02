@@ -7,6 +7,7 @@ import { applyEquipLore } from './lore';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
+import { kujiErrors } from './kuji';
 import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
@@ -881,20 +882,8 @@ export function buildBundle(src: SourceData): BuildResult {
     errors.push(`tuning.friend.npc.avatar ${tuning.friend.npc.avatar} not in looks`);
   if (!doorIds.has(tuning.friend.npc.door))
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
-  // 一番赏（一番赏设计 §3）：档位不重复、图标存在、奖品引用存在
-  {
-    const seen = new Set<string>();
-    for (const tier of tuning.kuji.tiers) {
-      if (seen.has(tier.key)) errors.push(`tuning.kuji.tiers duplicate key ${tier.key}`);
-      seen.add(tier.key);
-      if (tier.icon && !iconKeys.has(tier.icon))
-        errors.push(`tuning.kuji.tiers ${tier.key} icon ${tier.icon} not in looks.icons`);
-      checkAward(`tuning.kuji.tiers ${tier.key}`, tier.award);
-    }
-    if (tuning.kuji.last.icon && !iconKeys.has(tuning.kuji.last.icon))
-      errors.push(`tuning.kuji.last icon ${tuning.kuji.last.icon} not in looks.icons`);
-    checkAward('tuning.kuji.last', tuning.kuji.last.award);
-  }
+  // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
+  errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
 
   if (errors.length > 0) return { bundle: null, errors };
 

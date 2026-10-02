@@ -19,3 +19,4 @@ export type { NewbieCode } from './newbieCodes';
 export type { StressTableEntry } from './raw';
 export { applyBoosts } from './boost';
 export { takesStoreSlot } from './souvenir';
+export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
