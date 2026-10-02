@@ -2,12 +2,14 @@
 import { onMounted, ref } from 'vue';
 import type { BasketDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const data = ref<BasketDto | null>(null);
 const nums = ref<Record<number, number>>({});
 const busy = ref(false);
@@ -17,7 +19,7 @@ async function load() {
     data.value = await endpoints.basket();
     nums.value = Object.fromEntries(data.value.items.map((i) => [i.foodsId, i.num]));
   } catch (e) {
-    toast.push(errorMessage(e, '读取菜篮失败'), 'danger');
+    toast.push(errorMessage(e, t.value.yard.basket.loadFailed), 'danger');
   }
 }
 onMounted(load);
@@ -29,11 +31,13 @@ async function store(foodsId: number, max: number) {
   try {
     const r = await endpoints.basketStore(foodsId, n);
     toast.push(
-      r.dropped > 0 ? `存进了 ${r.stored} 个，冰箱满了丢掉 ${r.dropped} 个` : `存进了 ${r.stored} 个`,
+      r.dropped > 0
+        ? t.value.yard.basket.storedDropped(r.stored, r.dropped)
+        : t.value.yard.basket.stored(r.stored),
     );
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '存进橱柜失败'), 'danger');
+    toast.push(errorMessage(e, t.value.yard.basket.storeFailed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -43,9 +47,11 @@ async function store(foodsId: number, max: number) {
 <template>
   <div class="small">
     <div class="text-muted mb-1">
-      收获和偷来的作物先放在菜篮里。配方合成直接用菜篮里的主料；做菜要先存进橱柜（格子满了进冰箱）。
+      {{ t.yard.basket.rule }}
     </div>
-    <div v-if="data && data.items.length === 0" class="text-muted" data-testid="basket-empty">菜篮是空的</div>
+    <div v-if="data && data.items.length === 0" class="text-muted" data-testid="basket-empty">
+      {{ t.yard.basket.empty }}
+    </div>
     <div
       v-for="i in data?.items ?? []"
       :key="i.foodsId"
@@ -68,7 +74,7 @@ async function store(foodsId: number, max: number) {
         :data-testid="`basket-store-${i.foodsId}`"
         @click="store(i.foodsId, i.num)"
       >
-        存进橱柜
+        {{ t.yard.basket.store }}
       </button>
     </div>
   </div>

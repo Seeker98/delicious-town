@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import type { TakeawayDto, TakeawayOrderDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -13,6 +14,7 @@ const props = defineProps<{ data: TakeawayDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 const double = ref(false);
 /** 还有空位的骑手 */
@@ -29,16 +31,17 @@ const mult = computed(() => (double.value ? 2 : 1));
 
 /** 不能接的原因；空串表示可以 */
 function blockOf(o: TakeawayOrderDto): string {
-  if (o.block === 'not_learned') return '还没学会这道菜';
-  if (o.block === 'renown') return `声望不够（要 ${o.needRenown}）`;
-  if (o.foods.some((f) => f.have < f.need * mult.value)) return '食材不够';
-  if (riderId.value === null) return '没有空闲的骑手';
+  const x = t.value.takeaway.orders;
+  if (o.block === 'not_learned') return x.notLearned;
+  if (o.block === 'renown') return x.noRenown(o.needRenown);
+  if (o.foods.some((f) => f.have < f.need * mult.value)) return x.noFoods;
+  if (riderId.value === null) return x.noRider;
   return '';
 }
 const refreshBlock = computed(() => {
   const r = props.data.refresh;
-  if (!r.hasJob) return '要持有有效的商店工作证';
-  if (props.data.coin < r.cost) return `银币不够（要 ${formatNum(r.cost)}）`;
+  if (!r.hasJob) return t.value.takeaway.orders.needJob;
+  if (props.data.coin < r.cost) return t.value.takeaway.noCoin(formatNum(r.cost));
   return '';
 });
 
@@ -58,22 +61,22 @@ function take(o: TakeawayOrderDto) {
   if (blockOf(o)) return;
   return run(async () => {
     const d = await endpoints.takeawayDeliver(o.id, riderId.value!, double.value);
-    toast.push(`${d.cookbookName}出发了，${minutesLeft(d.arriveAt, props.data.now)} 分钟后送到`);
-  }, '接单失败');
+    toast.push(t.value.takeaway.orders.taken(d.cookbookName, minutesLeft(d.arriveAt, props.data.now)));
+  }, t.value.takeaway.orders.takeFailed);
 }
 function refresh() {
   if (refreshBlock.value) return;
   return run(async () => {
     const r = await endpoints.takeawayRefresh();
-    toast.push(`刷出了 ${r.created} 张私人单`);
-  }, '刷新失败');
+    toast.push(t.value.takeaway.orders.refreshed(r.created));
+  }, t.value.takeaway.orders.refreshFailed);
 }
 </script>
 
 <template>
   <div class="small">
     <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
-      <span>声望 {{ formatNum(data.renown) }}</span>
+      <span>{{ t.takeaway.orders.renown(formatNum(data.renown)) }}</span>
       <select
         v-if="free.length"
         v-model.number="riderId"
@@ -81,15 +84,15 @@ function refresh() {
         data-testid="rider-select"
       >
         <option v-for="r in free" :key="r.id" :value="r.id">
-          {{ r.name }}（在送 {{ r.busy }}/{{ r.maxNum }}）
+          {{ t.takeaway.orders.riderOption(r.name, r.busy, r.maxNum) }}
         </option>
       </select>
-      <span v-else class="text-muted">骑手都在送单</span>
+      <span v-else class="text-muted">{{ t.takeaway.orders.allBusy }}</span>
       <label class="d-flex align-items-center gap-1">
         <input v-model="double" type="checkbox" :disabled="!data.canDouble" data-testid="double" />
-        加料（食材 ×2，经验 ×2）
+        {{ t.takeaway.orders.double }}
       </label>
-      <span v-if="!data.canDouble" class="text-muted">持有"使命必达"才能加料</span>
+      <span v-if="!data.canDouble" class="text-muted">{{ t.takeaway.orders.needDouble }}</span>
     </div>
     <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
       <button
@@ -98,19 +101,21 @@ function refresh() {
         :disabled="busy || !!refreshBlock"
         @click="refresh"
       >
-        私人刷新（{{ formatNum(data.refresh.cost) }} 银币）
+        {{ t.takeaway.orders.refresh(formatNum(data.refresh.cost)) }}
       </button>
       <span v-if="refreshBlock" class="text-danger" data-testid="refresh-block">{{ refreshBlock }}</span>
     </div>
-    <div v-if="data.orders.length === 0" class="text-muted">现在没有外卖单，每个整点会补一批</div>
+    <div v-if="data.orders.length === 0" class="text-muted">{{ t.takeaway.orders.empty }}</div>
     <div v-for="o in data.orders" :key="o.id" class="border rounded p-2 mb-1" :data-testid="`order-${o.id}`">
       <div class="d-flex align-items-center gap-1">
         <span class="dt-tag">{{ TAKEAWAY_GRADES[o.grade] }}</span>
         <b>{{ o.cookbookName }}</b>
-        <span v-if="o.private" class="badge text-bg-info">私人</span>
-        <span class="ms-auto text-muted">还剩 {{ minutesLeft(o.expiresAt, data.now) }} 分钟有效</span>
+        <span v-if="o.private" class="badge text-bg-info">{{ t.takeaway.private }}</span>
+        <span class="ms-auto text-muted">{{
+          t.takeaway.orders.expires(minutesLeft(o.expiresAt, data.now))
+        }}</span>
       </div>
-      <div class="text-muted">配送 {{ o.needMinutes }} 分钟 · 要 {{ o.needRenown }} 声望</div>
+      <div class="text-muted">{{ t.takeaway.orders.meta(o.needMinutes, o.needRenown) }}</div>
       <div>
         <span
           v-for="f in o.foods"
@@ -126,7 +131,7 @@ function refresh() {
           :disabled="busy || !!blockOf(o)"
           @click="take(o)"
         >
-          接单
+          {{ t.takeaway.orders.take }}
         </button>
         <span v-if="blockOf(o)" class="text-danger" :data-testid="`why-${o.id}`">{{ blockOf(o) }}</span>
       </div>

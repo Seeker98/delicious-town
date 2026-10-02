@@ -7,19 +7,16 @@ import FriendYard from '../components/yard/FriendYard.vue';
 import LandPanel from '../components/yard/LandPanel.vue';
 import SeedPanel from '../components/yard/SeedPanel.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
+import { useT } from '../composables/useT';
 
 type Tab = 'land' | 'basket' | 'formula' | 'seed';
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'land', label: '菜园' },
-  { key: 'basket', label: '菜篮' },
-  { key: 'formula', label: '配方' },
-  { key: 'seed', label: '种子' },
-];
+const TABS: readonly Tab[] = ['land', 'basket', 'formula', 'seed'];
+const t = useT();
 const KEY = 'dt_yard_tab';
 function savedTab(): Tab {
   try {
     const v = localStorage.getItem(KEY);
-    return TABS.some((x) => x.key === v) ? (v as Tab) : 'land';
+    return TABS.includes(v as Tab) ? (v as Tab) : 'land';
   } catch {
     return 'land';
   }
@@ -43,16 +40,16 @@ watch(tab, (v) => {
 <template>
   <FriendYard v-if="friendId !== null" :key="friendId" :rest-id="friendId" />
   <template v-else>
-    <h5>菜园</h5>
+    <h5>{{ t.yard.title }}</h5>
     <HiphopCard :place="14" />
     <ul class="nav nav-tabs mb-2">
-      <li v-for="x in TABS" :key="x.key" class="nav-item">
+      <li v-for="x in TABS" :key="x" class="nav-item">
         <a
-          :class="['nav-link', { active: tab === x.key }]"
+          :class="['nav-link', { active: tab === x }]"
           href="#"
-          :data-testid="`tab-${x.key}`"
-          @click.prevent="tab = x.key"
-          >{{ x.label }}</a
+          :data-testid="`tab-${x}`"
+          @click.prevent="tab = x"
+          >{{ t.yard.tabs[x] }}</a
         >
       </li>
     </ul>
