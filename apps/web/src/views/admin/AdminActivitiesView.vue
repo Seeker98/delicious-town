@@ -5,6 +5,7 @@ import type {
   ActivityKind,
   AdminActivityDto,
   BoostActivityDef,
+  CoopDef,
   ExchangeDef,
   GoalsDef,
   GridDef,
@@ -14,6 +15,7 @@ import { adminApi } from '../../api/admin';
 import GoalsEditor from '../../components/admin/activity/GoalsEditor.vue';
 import GridEditor from '../../components/admin/activity/GridEditor.vue';
 import BoostEditor from '../../components/admin/activity/BoostEditor.vue';
+import CoopEditor from '../../components/admin/activity/CoopEditor.vue';
 import ExchangeEditor from '../../components/admin/activity/ExchangeEditor.vue';
 import PassEditor from '../../components/admin/activity/PassEditor.vue';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -48,12 +50,14 @@ const defs = ref<{
   pass: PassDef;
   boost: BoostActivityDef;
   exchange: ExchangeDef;
+  coop: CoopDef;
 }>({
   goals: defaultDef('goals'),
   grid: defaultDef('grid'),
   pass: defaultDef('pass'),
   boost: defaultDef('boost'),
   exchange: defaultDef('exchange'),
+  coop: defaultDef('coop'),
 });
 const started = computed(() => editing.value !== null && editing.value.state !== 'pending');
 const STATE = { pending: '未开始', running: '进行中', settling: '结算中', settled: '已补发' } as const;
@@ -63,6 +67,7 @@ const KIND = {
   pass: '战令',
   boost: '全服加成',
   exchange: '兑换活动',
+  coop: '全服合力',
 } as const;
 
 /** 每次 fill 换一个 key，让奖励编辑器按新活动重新挂载（终审 I1） */
@@ -88,6 +93,7 @@ function fill(a: AdminActivityDto | null, copy = false) {
     pass: defaultDef('pass'),
     boost: defaultDef('boost'),
     exchange: defaultDef('exchange'),
+    coop: defaultDef('coop'),
   };
   // a 来自响应式列表，structuredClone 复制不了代理对象，用 JSON 深拷贝
   if (a) (defs.value as Record<ActivityKind, unknown>)[a.kind] = JSON.parse(JSON.stringify(a.def));
@@ -222,6 +228,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
           <option value="pass">战令</option>
           <option value="boost">全服加成</option>
           <option value="exchange">兑换活动</option>
+          <option value="coop">全服合力</option>
         </select>
       </div>
       <div v-if="kind !== 'boost'" class="col-auto">
@@ -277,6 +284,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
       <PassEditor v-else-if="kind === 'pass'" v-model="defs.pass" :errors="errors" />
       <BoostEditor v-else-if="kind === 'boost'" v-model="defs.boost" :errors="errors" />
       <ExchangeEditor v-else-if="kind === 'exchange'" v-model="defs.exchange" :errors="errors" />
+      <CoopEditor v-else-if="kind === 'coop'" v-model="defs.coop" :errors="errors" />
     </fieldset>
     <div class="mt-2">
       <button
