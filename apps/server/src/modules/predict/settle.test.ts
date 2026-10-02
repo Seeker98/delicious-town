@@ -1,0 +1,168 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { seededRng } from '@dt/shared';
+import { createShard } from '../../../test/fixtures';
+import { createTestGame, restRow, type TestGame } from '../../../test/game';
+import { setTuning } from '../../../test/town';
+import { trader } from '../exchange/test';
+import { createPredictAdmin } from './admin';
+import { closeEvents, settleEvents } from './jobs';
+import { newEvent } from './test';
+
+let t: TestGame;
+beforeAll(async () => {
+  t = await createTestGame();
+});
+afterAll(() => t.close());
+const svc = () => t.game.predict;
+const admin = () => createPredictAdmin(t.game);
+const actor = { accountId: 1, username: 'boss', role: 'admin' as const, ip: '127.0.0.1' };
+const coin = async (restId: number) => Number((await restRow(t, restId)).coin);
+const ev = (id: number) =>
+  t.db.selectFrom('predict_event').selectAll().where('id', '=', String(id)).executeTakeFirstOrThrow();
+
+describe('截止（238-1 设计 §6.2）', () => {
+  it('到时间的 open 事件改为 closed，没到的不动', async () => {
+    const shardId = await createShard(t.db);
+    const due = await newEvent(t, shardId, { closeInMs: 1_000 });
+    const later = await newEvent(t, shardId, { closeInMs: 3_600_000 });
+    t.clock.advance(2_000);
+    expect(await closeEvents(t.game.deps, shardId, t.clock.now)).toEqual({ closed: 1 });
+    expect((await ev(due)).status).toBe('closed');
+    expect((await ev(later)).status).toBe('open');
+  });
+});
+
+describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
+  it('判定为是：押"是"的按 unit × 份数到账，押"否"的没有；写日志；全部结算完写 settled_at', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const a = await trader(t, { shardId, coin: 1_000_000 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 7 });
+    await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 4 });
+    const [ca, cb] = [await coin(a.restaurantId), await coin(b.restaurantId)];
+    await admin().resolve(actor, id, true);
+    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 2 });
+    expect(await coin(a.restaurantId)).toBe(ca + 7000);
+    expect(await coin(b.restaurantId)).toBe(cb);
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select(['rest_id', 'type'])
+      .where('type', '=', 'predict.settle')
+      .where('rest_id', 'in', [a.restaurantId, b.restaurantId])
+      .execute();
+    expect(logs).toEqual([{ rest_id: a.restaurantId, type: 'predict.settle' }]);
+    expect((await ev(id)).settled_at).not.toBeNull();
+    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 0 });
+    expect(await coin(a.restaurantId)).toBe(ca + 7000);
+  });
+
+  it('作废：退净投入，净投入为负的不退', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const a = await trader(t, { shardId, coin: 1_000_000 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    const bought = (await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 10 })).data.total;
+    await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 1 });
+    await t.db
+      .updateTable('predict_position')
+      .set({ net_cost: -500 })
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    const [ca, cb] = [await coin(a.restaurantId), await coin(b.restaurantId)];
+    await admin().voidEvent(actor, id);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    expect(await coin(a.restaurantId)).toBe(ca + bought);
+    expect(await coin(b.restaurantId)).toBe(cb);
+    const refund = await t.db
+      .selectFrom('rest_log')
+      .select('type')
+      .where('rest_id', '=', a.restaurantId)
+      .where('type', '=', 'predict.refund')
+      .execute();
+    expect(refund).toHaveLength(1);
+  });
+
+  it('并发跑两次结算，每人只发一次（Review Focus 2）', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const ts = [];
+    for (let i = 0; i < 4; i++) ts.push(await trader(t, { shardId, coin: 1_000_000 }));
+    for (const x of ts) await svc().trade(x, id, { side: 'no', dir: 'buy', qty: 2 });
+    const before = await Promise.all(ts.map((x) => coin(x.restaurantId)));
+    await admin().resolve(actor, id, false);
+    await Promise.all([
+      settleEvents(t.game.deps, shardId, t.clock.now),
+      settleEvents(t.game.deps, shardId, t.clock.now),
+    ]);
+    const after = await Promise.all(ts.map((x) => coin(x.restaurantId)));
+    expect(after.map((c, i) => c - before[i]!)).toEqual([2000, 2000, 2000, 2000]);
+  });
+
+  it('改区服 unit 后结算仍按事件的 unit（Review Focus 4）', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId, { unit: 1000 });
+    const a = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 3 });
+    await setTuning(t, shardId, { predict: { unit: 9999 } });
+    const c = await coin(a.restaurantId);
+    await admin().resolve(actor, id, true);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    expect(await coin(a.restaurantId)).toBe(c + 3000);
+  });
+
+  it('判定后再判定、作废都报 predict_final；判定可以在截止前做', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    await admin().resolve(actor, id, true);
+    await expect(admin().resolve(actor, id, false)).rejects.toMatchObject({
+      params: { reason: 'predict_final' },
+    });
+    await expect(admin().voidEvent(actor, id)).rejects.toMatchObject({ params: { reason: 'predict_final' } });
+    const audit = await t.db
+      .selectFrom('audit_log')
+      .select('action')
+      .where('target', '=', `predict_event:${id}`)
+      .execute();
+    expect(audit.map((x) => x.action)).toEqual(['predict.resolve']);
+  });
+
+  it('守恒：随机买卖后判定结算，玩家银币变化合计 = −(净成交额 + 手续费 − 结算支出)', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId, { p0: 0.4 });
+    const ts = [];
+    for (let i = 0; i < 3; i++) ts.push(await trader(t, { shardId, coin: 20_000_000 }));
+    const before = (await Promise.all(ts.map((x) => coin(x.restaurantId)))).reduce((s, c) => s + c, 0);
+    const rng = seededRng(7);
+    for (let i = 0; i < 30; i++) {
+      const who = ts[Math.floor(rng.next() * ts.length)]!;
+      const side = rng.next() < 0.5 ? 'yes' : 'no';
+      const dir = rng.next() < 0.7 ? 'buy' : 'sell';
+      const qty = 1 + Math.floor(rng.next() * 20);
+      try {
+        await svc().trade(who, id, { side, dir, qty });
+      } catch (e) {
+        // 卖出超过持有、买到持有上限都算正常的随机失败
+        const x = (e as { params?: { reason?: string; what?: string } }).params;
+        if (x?.reason !== 'predict_not_enough' && x?.what !== 'predict_hold') throw e;
+      }
+    }
+    const tr = await t.db
+      .selectFrom('predict_trade')
+      .select(['dir', 'amount', 'fee'])
+      .where('event_id', '=', String(id))
+      .execute();
+    const net = tr.reduce((s, x) => s + (x.dir === 'buy' ? 1 : -1) * Number(x.amount), 0);
+    const fees = tr.reduce((s, x) => s + Number(x.fee), 0);
+    const pos = await t.db
+      .selectFrom('predict_position')
+      .select('yes')
+      .where('event_id', '=', String(id))
+      .execute();
+    const payout = 1000 * pos.reduce((s, x) => s + x.yes, 0);
+    await admin().resolve(actor, id, true);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    const after = (await Promise.all(ts.map((x) => coin(x.restaurantId)))).reduce((s, c) => s + c, 0);
+    expect(after - before).toBe(-(net + fees - payout));
+  });
+});

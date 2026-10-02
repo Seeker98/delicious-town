@@ -16,6 +16,7 @@ let ids: {
   codeId: number;
   reportIds: number[];
   batchId: number;
+  predictId: number;
 };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
@@ -113,6 +114,21 @@ beforeAll(async () => {
       .executeTakeFirstOrThrow();
     reportIds.push(c.id);
   }
+  // 事件合约：判定、作废都能走到业务逻辑（管理员判定后，作废报 predict_final，也不是 404）
+  const predict = await ctx.deps.db
+    .insertInto('predict_event')
+    .values({
+      shard_id: shardId,
+      title: '权限测试',
+      b: 100,
+      unit: 1000,
+      p0: 0.5,
+      open_at: new Date(),
+      close_at: new Date(Date.now() + 3_600_000),
+      status: 'open',
+    })
+    .returning('id')
+    .executeTakeFirstOrThrow();
   ids = {
     shardId,
     accountId: target.accountId,
@@ -124,6 +140,7 @@ beforeAll(async () => {
     codeId: code.id,
     reportIds,
     batchId: single.id,
+    predictId: Number(predict.id),
   };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
@@ -309,6 +326,38 @@ const CASES: Case[] = [
     route: '/api/v1/admin/exchange/maker',
     url: () => `/api/v1/admin/exchange/maker?shardId=${ids.shardId}`,
     min: 'mod',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/predict',
+    url: () => `/api/v1/admin/predict?shardId=${ids.shardId}`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/predict',
+    url: () => '/api/v1/admin/predict',
+    body: () => ({
+      shardId: ids.shardId,
+      title: '权限测试出题',
+      closeAt: new Date(Date.now() + 3_600_000).toISOString(),
+      p0: 50,
+    }),
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/predict/:id/resolve',
+    url: () => `/api/v1/admin/predict/${ids.predictId}/resolve`,
+    body: () => ({ outcome: true }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/predict/:id/void',
+    url: () => `/api/v1/admin/predict/${ids.predictId}/void`,
+    body: () => ({}),
+    min: 'admin',
   },
   {
     method: 'POST',
