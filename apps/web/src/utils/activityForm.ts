@@ -80,6 +80,7 @@ const TEXT: Record<string, string> = {
   duplicate_currency: '同一种货币只能列一次',
   bad_range: '起始名次不能大于结束名次',
   overlap: '名次段不能重叠，要按名次从小到大排',
+  unknown: '道具或食材不存在',
 };
 
 /** 服务端 VALIDATION_FAILED 的 issues → 路径 → 中文 */
@@ -87,4 +88,10 @@ export function issueMap(e: unknown): Record<string, string> {
   if (!(e instanceof ApiError) || e.code !== 'VALIDATION_FAILED') return {};
   const issues = (e.params.issues ?? []) as Array<{ path: string; message: string }>;
   return Object.fromEntries(issues.map((i) => [i.path, TEXT[i.message] ?? '填写的内容不正确']));
+}
+
+/** 这一层或更深一层的第一条错误：奖励里某个道具 id 不存在时，错误路径是 …award.goods.0.id，在奖励下面显示 */
+export function errUnder(errors: Record<string, string>, path: string): string | undefined {
+  const k = Object.keys(errors).find((x) => x === path || x.startsWith(`${path}.`));
+  return k === undefined ? undefined : errors[k];
 }

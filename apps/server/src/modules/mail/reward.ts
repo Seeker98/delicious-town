@@ -19,6 +19,33 @@ export function checkRewardItems(config: GameConfig, items: RewardItems): void {
   if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
 }
 
+/**
+ * 活动定义等嵌套结构里所有 goods / foods 列表的 id 都必须存在（backlog 148-2：手填错了的话
+ * 每次兑换、领奖都会报错回滚，活动开始后又改不了定义）。路径带前缀，前端按路径标出错的格子
+ */
+export function checkNestedItems(config: GameConfig, value: unknown, prefix: string): void {
+  const bad: Array<{ path: string; message: string }> = [];
+  const walk = (v: unknown, path: string) => {
+    if (Array.isArray(v)) {
+      v.forEach((x, i) => walk(x, `${path}.${i}`));
+      return;
+    }
+    if (!v || typeof v !== 'object') return;
+    for (const [k, x] of Object.entries(v)) {
+      const set = k === 'goods' ? config.goods : k === 'foods' ? config.foods : null;
+      if (set && Array.isArray(x)) {
+        x.forEach((it: unknown, i) => {
+          const id = (it as { id?: unknown } | null)?.id;
+          if (typeof id === 'number' && !set.has(id))
+            bad.push({ path: `${path}.${k}.${i}.id`, message: 'unknown' });
+        });
+      } else walk(x, `${path}.${k}`);
+    }
+  };
+  walk(value, prefix);
+  if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
+}
+
 /** 附件里有配置中已不存在的道具或食材（发出后配置删了）：邮件标成失效、兑换码报 code_broken */
 export function brokenItems(config: GameConfig, items: RewardItems | null): boolean {
   if (!items) return false;

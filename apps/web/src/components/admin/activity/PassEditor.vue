@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { PassDef, RewardItems } from '@dt/shared';
-import { rowKeys } from '../../../utils/activityForm';
+import { errUnder, rowKeys } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 import RuleRows from './RuleRows.vue';
 
@@ -75,6 +75,13 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       :id-prefix="`free${i}`"
       @update:model-value="setLevel(i, { free: orNull($event) })"
     />
+    <div
+      v-if="errUnder(errors, `def.levels.${i}.free`)"
+      class="text-danger small"
+      :data-testid="`err-def.levels.${i}.free`"
+    >
+      {{ errUnder(errors, `def.levels.${i}.free`) }}
+    </div>
     <div class="small mt-1">进阶</div>
     <RewardItemsEditor
       :model-value="l.premium ?? {}"
@@ -82,6 +89,13 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
       :id-prefix="`prem${i}`"
       @update:model-value="setLevel(i, { premium: orNull($event) })"
     />
+    <div
+      v-if="errUnder(errors, `def.levels.${i}.premium`)"
+      class="text-danger small"
+      :data-testid="`err-def.levels.${i}.premium`"
+    >
+      {{ errUnder(errors, `def.levels.${i}.premium`) }}
+    </div>
   </div>
   <button
     type="button"
@@ -107,11 +121,12 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
   <RewardItemsEditor
     :model-value="{ goods: modelValue.unlock.goods }"
     id-prefix="unlock"
+    goods-only
     @update:model-value="
       patch({ unlock: { ...modelValue.unlock, goods: $event.goods?.length ? $event.goods : undefined } })
     "
   />
-  <div v-if="err('def.unlock')" class="text-danger small" data-testid="err-def.unlock">
-    {{ err('def.unlock') }}
+  <div v-if="errUnder(errors, 'def.unlock')" class="text-danger small" data-testid="err-def.unlock">
+    {{ errUnder(errors, 'def.unlock') }}
   </div>
 </template>

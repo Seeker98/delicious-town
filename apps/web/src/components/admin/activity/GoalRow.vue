@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ACTIVITY_ACTIONS, type GoalsDef } from '@dt/shared';
+import { errUnder } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 
 type Goal = GoalsDef['goals'][number];
@@ -7,6 +8,8 @@ const props = defineProps<{ goal: Goal; path: string; errors: Record<string, str
 const emit = defineEmits<{ 'update:goal': [Goal] }>();
 const set = (patch: Partial<Goal>) => emit('update:goal', { ...props.goal, ...patch });
 const err = (k: string) => props.errors[`${props.path}.${k}`];
+/** 奖励里的道具 id 不存在时错误在更深的路径上（问题记录 270） */
+const awardErr = () => errUnder(props.errors, `${props.path}.award`);
 </script>
 
 <template>
@@ -41,8 +44,8 @@ const err = (k: string) => props.errors[`${props.path}.${k}`];
         :id-prefix="idPrefix"
         @update:model-value="set({ award: $event })"
       />
-      <div v-if="err('award')" class="text-danger small" :data-testid="`err-${path}.award`">
-        {{ err('award') }}
+      <div v-if="awardErr()" class="text-danger small" :data-testid="`err-${path}.award`">
+        {{ awardErr() }}
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ACTIVITY_ACTIONS, type GridDef } from '@dt/shared';
-import { newGoal } from '../../../utils/activityForm';
+import { errUnder, newGoal } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
 import GoalRow from './GoalRow.vue';
 
@@ -58,8 +58,8 @@ const cellErr = (i: number) => Object.keys(props.errors).some((k) => k.startsWit
     id-prefix="line"
     @update:model-value="patch({ lineAward: $event })"
   />
-  <div v-if="errors['def.lineAward']" class="text-danger small" data-testid="err-def.lineAward">
-    {{ errors['def.lineAward'] }}
+  <div v-if="errUnder(errors, 'def.lineAward')" class="text-danger small" data-testid="err-def.lineAward">
+    {{ errUnder(errors, 'def.lineAward') }}
   </div>
   <div class="mt-2 small">全部完成的奖励</div>
   <RewardItemsEditor
@@ -68,7 +68,7 @@ const cellErr = (i: number) => Object.keys(props.errors).some((k) => k.startsWit
     id-prefix="full"
     @update:model-value="patch({ fullAward: $event })"
   />
-  <div v-if="errors['def.fullAward']" class="text-danger small" data-testid="err-def.fullAward">
-    {{ errors['def.fullAward'] }}
+  <div v-if="errUnder(errors, 'def.fullAward')" class="text-danger small" data-testid="err-def.fullAward">
+    {{ errUnder(errors, 'def.fullAward') }}
   </div>
 </template>

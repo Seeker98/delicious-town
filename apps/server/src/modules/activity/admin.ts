@@ -12,6 +12,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
+import { checkNestedItems } from '../mail/reward';
 import { activityCacheFor } from './active';
 
 /** 后台限时活动（设计 §5.2）：开始后只能改标题、说明、延长结束时间；写操作都记审计 */
@@ -146,6 +147,7 @@ export function createAdminActivity(game: Game) {
     },
     async create(actor: AdminActor, b: ActivityInput): Promise<AdminActivityDto> {
       await checkShard(b.shardId);
+      checkNestedItems(game.deps.config, b.def, 'def');
       const r = await db
         .insertInto('activity')
         .values({ ...values(b), actor_account_id: actor.accountId })
@@ -159,6 +161,7 @@ export function createAdminActivity(game: Game) {
     async update(actor: AdminActor, id: number, b: ActivityInput): Promise<AdminActivityDto> {
       const cur = await row(id);
       await checkShard(b.shardId);
+      checkNestedItems(game.deps.config, b.def, 'def');
       const t = now();
       if (t >= cur.starts_at) {
         if (t >= cur.ends_at && new Date(b.endsAt).getTime() !== cur.ends_at.getTime())
