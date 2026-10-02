@@ -391,6 +391,12 @@ h5 {
   padding: 4px 0;
   border-top: 1px solid #f1e6da;
 }
+/* 有边框的紧凑按钮：放在信息行里不撑高行（首页加满油，280 反馈） */
+.dt-compact-btn {
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 20px;
+}
 /* 首页折叠的"生效的加成" */
 details.dt-card > summary {
   cursor: pointer;

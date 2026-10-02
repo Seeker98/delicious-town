@@ -272,17 +272,20 @@ onBeforeUnmount(() => {
         <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
         <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
         <div class="col-6" title="声望"><i class="bi bi-award"></i> {{ rest.renown }}</div>
-      </div>
-      <div class="d-flex align-items-center gap-2 mt-1">
-        <span><i class="bi bi-droplet"></i> 油 {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}</span>
-        <button
-          class="btn btn-sm btn-outline-primary ms-auto"
-          data-testid="refuel"
-          :disabled="busy || refuelCost <= 0"
-          @click="act(() => endpoints.refuel(), '加油失败')"
-        >
-          {{ refuelCost < refuelNeed ? '加油' : '加满' }}（{{ formatNum(refuelCost) }} 银币）
-        </button>
+        <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
+        <div class="col-6">
+          <i class="bi bi-droplet"></i> {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
+        </div>
+        <div class="col-6">
+          <button
+            class="btn btn-outline-primary dt-compact-btn"
+            data-testid="refuel"
+            :disabled="busy || refuelCost <= 0"
+            @click="act(() => endpoints.refuel(), '加油失败')"
+          >
+            {{ refuelCost < refuelNeed ? '加油' : '加满' }}（{{ formatNum(refuelCost) }} 银币）
+          </button>
+        </div>
       </div>
       <div v-if="rest.lastRound" class="border-top mt-2 pt-1" data-testid="last-round">
         上一轮：银币 {{ formatNum(rest.lastRound.coin) }} · 经验 {{ formatNum(rest.lastRound.exp) }} · 耗油
@@ -363,111 +366,129 @@ onBeforeUnmount(() => {
 
     <HomeNews :headlines="rest.headlines" />
 
-    <h6 class="dt-section">设施</h6>
-    <div class="row g-1">
-      <div v-for="d in rest.devices" :key="d.slot" class="col-3">
-        <button
-          class="btn btn-light border w-100 h-100 p-1 dt-slot"
-          :data-testid="`slot-${d.slot}`"
-          :disabled="!d.unlocked || busy"
-          @click="openSlot(d.slot)"
-        >
-          <div class="text-muted text-truncate">{{ d.name }}</div>
-          <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
-            <i class="bi bi-lock"></i> 未开通
-          </div>
-          <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ needStarOf(d) }} 星开放</div>
-          <div v-else-if="d.goodsId">
-            {{ catalog.goodsName(d.goodsId) }}<br /><span class="text-muted">{{
-              expiresText(d.expiresAt)
-            }}</span>
-          </div>
-          <div v-else>空</div>
-        </button>
-      </div>
-    </div>
-    <div v-if="plaque2Offer" class="dt-item">
-      <div class="dt-item-main">
-        <div class="dt-item-title">开通第二块牌匾位</div>
-        <div class="dt-meta">
-          <span data-testid="plaque2-cost"
-            >{{ formatNum(rest.plaque2Cost.coin) }} 银币 + {{ rest.plaque2Cost.diamond }} 钻石</span
+    <div class="dt-card my-2 small" data-testid="home-devices">
+      <div class="dt-card-title mb-1">设施</div>
+      <div class="row g-1">
+        <div v-for="d in rest.devices" :key="d.slot" class="col-3">
+          <button
+            class="btn btn-light border w-100 h-100 p-1 dt-slot"
+            :data-testid="`slot-${d.slot}`"
+            :disabled="!d.unlocked || busy"
+            @click="openSlot(d.slot)"
           >
-          <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{
-            plaque2Block
-          }}</span>
+            <div class="text-muted text-truncate">{{ d.name }}</div>
+            <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
+              <i class="bi bi-lock"></i> 未开通
+            </div>
+            <div v-else-if="!d.unlocked"><i class="bi bi-lock"></i> {{ needStarOf(d) }} 星开放</div>
+            <div v-else-if="d.goodsId">
+              {{ catalog.goodsName(d.goodsId) }}<br /><span class="text-muted">{{
+                expiresText(d.expiresAt)
+              }}</span>
+            </div>
+            <div v-else>空</div>
+          </button>
         </div>
       </div>
-      <div class="dt-item-actions">
+      <div v-if="plaque2Offer" class="dt-item">
+        <div class="dt-item-main">
+          <div class="dt-item-title">开通第二块牌匾位</div>
+          <div class="dt-meta">
+            <span data-testid="plaque2-cost"
+              >{{ formatNum(rest.plaque2Cost.coin) }} 银币 + {{ rest.plaque2Cost.diamond }} 钻石</span
+            >
+            <span v-if="plaque2Block" class="text-danger ms-1" data-testid="plaque2-block">{{
+              plaque2Block
+            }}</span>
+          </div>
+        </div>
+        <div class="dt-item-actions">
+          <button
+            class="btn btn-sm btn-outline-primary"
+            data-testid="open-plaque2"
+            :disabled="busy || !!plaque2Block"
+            @click="openPlaque2"
+          >
+            开通
+          </button>
+        </div>
+      </div>
+      <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
+        <div class="d-flex justify-content-between">
+          <b>选择要摆放的设施</b>
+          <a href="#" @click.prevent="pickingSlot = null">取消</a>
+        </div>
+        <div v-if="choices.length === 0" class="text-muted">仓库里没有能放在这里的设施，可以去商店买。</div>
         <button
-          class="btn btn-sm btn-outline-primary"
-          data-testid="open-plaque2"
-          :disabled="busy || !!plaque2Block"
-          @click="openPlaque2"
+          v-for="c in choices"
+          :key="c.goodsId"
+          class="btn btn-sm btn-outline-primary me-1 mt-1"
+          @click="place(c.goodsId)"
         >
-          开通
+          {{ catalog.goodsName(c.goodsId) }}×{{ c.num }}
         </button>
       </div>
     </div>
-    <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
-      <div class="d-flex justify-content-between">
-        <b>选择要摆放的设施</b>
-        <a href="#" @click.prevent="pickingSlot = null">取消</a>
-      </div>
-      <div v-if="choices.length === 0" class="text-muted">仓库里没有能放在这里的设施，可以去商店买。</div>
-      <button
-        v-for="c in choices"
-        :key="c.goodsId"
-        class="btn btn-sm btn-outline-primary me-1 mt-1"
-        @click="place(c.goodsId)"
-      >
-        {{ catalog.goodsName(c.goodsId) }}×{{ c.num }}
-      </button>
-    </div>
 
-    <h6 class="dt-section">经营开关</h6>
-    <div class="small">
-      <div class="form-check form-switch">
-        <input
-          id="promo"
-          class="form-check-input"
-          type="checkbox"
-          :checked="rest.promoOn"
-          :disabled="busy"
-          @change="act(() => endpoints.setPromo(!rest!.promoOn), '设置失败')"
-        />
-        <label class="form-check-label" for="promo">大促活动（八折促销：上座率大增，收益略降）</label>
-      </div>
-      <div class="form-check form-switch">
-        <input
-          id="cte"
-          class="form-check-input"
-          type="checkbox"
-          :checked="rest.cteOn"
-          :disabled="busy"
-          @change="act(() => endpoints.setCte(!rest!.cteOn), '设置失败')"
-        />
-        <label class="form-check-label" for="cte">银币转经验（需要阿波罗雕像）</label>
-      </div>
-      <div v-if="rest.starLevel >= 6" class="d-flex align-items-center gap-2 mt-1">
-        挑剔消耗食材档位
-        <select
-          class="form-select form-select-sm w-auto"
-          :value="rest.cookfoodsFlag"
-          :disabled="busy"
-          @change="
-            act(() => endpoints.setCookfoods(Number(($event.target as HTMLSelectElement).value)), '设置失败')
-          "
+    <!-- 经营开关（280 反馈）：每项一行，名字在左、开关或档位在右 -->
+    <div class="dt-card my-2 small" data-testid="home-switches">
+      <div class="dt-card-title mb-1">经营开关</div>
+      <label class="dt-todo-row mb-0" for="promo">
+        <span class="flex-fill"
+          >大促活动<span class="dt-meta ms-1">八折促销：上座率大增，收益略降</span></span
         >
-          <option v-for="f in [0, 1, 2, 3, 4, 5]" :key="f" :value="f">
-            {{ f === 0 ? '关闭' : `${f} 档` }}
-          </option>
-        </select>
-      </div>
-      <div v-if="rest.starLevel >= 6" class="dt-meta small mt-1" data-testid="cookfoods-hint">
-        挑剔顾客点菜时，如果橱柜里这道菜的每种食材都还有至少 {{ rest.cookfoodsPerFlag }}×N 个（N 是档位），
-        就直接消耗这些食材，额外得到经验、名气和掉落；档位越高，留给自己用的食材越多。选“关闭”则不消耗。
-      </div>
+        <span class="form-check form-switch m-0">
+          <input
+            id="promo"
+            class="form-check-input"
+            type="checkbox"
+            :checked="rest.promoOn"
+            :disabled="busy"
+            @change="act(() => endpoints.setPromo(!rest!.promoOn), '设置失败')"
+          />
+        </span>
+      </label>
+      <label class="dt-todo-row mb-0" for="cte">
+        <span class="flex-fill">银币转经验<span class="dt-meta ms-1">需要阿波罗雕像</span></span>
+        <span class="form-check form-switch m-0">
+          <input
+            id="cte"
+            class="form-check-input"
+            type="checkbox"
+            :checked="rest.cteOn"
+            :disabled="busy"
+            @change="act(() => endpoints.setCte(!rest!.cteOn), '设置失败')"
+          />
+        </span>
+      </label>
+      <template v-if="rest.starLevel >= 6">
+        <div class="dt-todo-row" data-testid="cookfoods-row">
+          <span class="flex-fill">挑剔消耗食材档位</span>
+          <select
+            class="form-select form-select-sm w-auto"
+            :value="rest.cookfoodsFlag"
+            :disabled="busy"
+            @change="
+              act(
+                () => endpoints.setCookfoods(Number(($event.target as HTMLSelectElement).value)),
+                '设置失败',
+              )
+            "
+          >
+            <option v-for="f in [0, 1, 2, 3, 4, 5]" :key="f" :value="f">
+              {{ f === 0 ? '关闭' : `${f} 档` }}
+            </option>
+          </select>
+        </div>
+        <details class="dt-meta" data-testid="cookfoods-help">
+          <summary>这是什么？</summary>
+          <div data-testid="cookfoods-hint">
+            挑剔顾客点菜时，如果橱柜里这道菜的每种食材都还有至少 {{ rest.cookfoodsPerFlag }}×N 个（N
+            是档位），
+            就直接消耗这些食材，额外得到经验、名气和掉落；档位越高，留给自己用的食材越多。选“关闭”则不消耗。
+          </div>
+        </details>
+      </template>
     </div>
 
     <!-- 生效的加成默认折叠成一行摘要（问题记录 280） -->

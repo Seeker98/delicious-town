@@ -140,6 +140,14 @@ describe('RestaurantHomeView', () => {
     const hint = w.find('[data-testid="cookfoods-hint"]');
     expect(hint.text()).toContain('至少 40×N 个');
     expect(hint.text()).toContain('关闭');
+    // 和其他开关一样一行：名字在左、档位在右；说明收进"这是什么？"，默认不展开（首页排版 280 反馈）
+    const row = w.get('[data-testid="cookfoods-row"]');
+    expect(row.classes()).toContain('dt-todo-row');
+    expect(row.find('select').exists()).toBe(true);
+    const help = w.get('[data-testid="cookfoods-help"]');
+    expect(help.element.tagName).toBe('DETAILS');
+    expect((help.element as HTMLDetailsElement).open).toBe(false);
+    expect(help.find('[data-testid="cookfoods-hint"]').exists()).toBe(true);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 5 });
     expect((await mountView()).find('[data-testid="cookfoods-hint"]').exists()).toBe(false);
   });
@@ -357,7 +365,17 @@ describe('RestaurantHomeView', () => {
     expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
     expect(pos('data-testid="home-todo"')).toBeLessThan(pos('data-testid="home-news-more"'));
     expect(pos('data-testid="home-news-more"')).toBeLessThan(pos('data-testid="slot-1"'));
-    expect(w.findAll('h6.dt-section').map((h) => h.text())).toEqual(['设施', '经营开关']);
+    // 设施、经营开关也是卡片，标题样式和上面三张卡一致（280 反馈）
+    expect(w.findAll('h6.dt-section')).toHaveLength(0);
+    expect(w.get('[data-testid="home-devices"] .dt-card-title').text()).toBe('设施');
+    expect(w.get('[data-testid="home-devices"]').find('[data-testid="slot-1"]').exists()).toBe(true);
+    const sw = w.get('[data-testid="home-switches"]');
+    expect(sw.get('.dt-card-title').text()).toBe('经营开关');
+    expect(sw.findAll('.dt-todo-row').length).toBeGreaterThanOrEqual(2);
+    // 油那一行和银币、钻石同在一个两列网格里，按钮用紧凑样式，行高不被撑大
+    const refuel = w.get('[data-testid="refuel"]');
+    expect(refuel.classes()).toContain('dt-compact-btn');
+    expect(refuel.element.closest('.row')).not.toBeNull();
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
   });
 
