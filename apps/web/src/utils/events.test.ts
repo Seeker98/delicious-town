@@ -193,3 +193,25 @@ describe('问题记录 224：活动货币', () => {
     );
   });
 });
+
+describe('交易所日志（156-1）', () => {
+  it('挂单、被动成交、撤单、过期、取出都有文案', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
+    expect(log('exchange.order', { side: 'buy', foodsId: 3, price: 100, qty: 5, filled: 2 })).toBe(
+      '在交易所挂买单：食材3 ×5，单价 100（当场成交 2 个）',
+    );
+    expect(log('exchange.fill', { side: 'sell', foodsId: 3, price: 100, qty: 2, fee: 10 })).toBe(
+      '交易所卖单成交：食材3 ×2，单价 100，手续费 10（所得在交易所账户）',
+    );
+    expect(log('exchange.cancel', { side: 'sell', foodsId: 3, price: 100, left: 1 })).toBe(
+      '撤销交易所卖单：食材3，退回 1 个',
+    );
+    expect(log('exchange.expire', { side: 'buy', foodsId: 3, price: 100, left: 1 })).toBe(
+      '交易所买单过期：食材3，剩余 1 个的冻结退回交易所账户',
+    );
+    expect(log('exchange.withdraw', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
+      '从交易所账户取出：银币 950、食材3×2',
+    );
+  });
+});

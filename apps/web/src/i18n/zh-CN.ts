@@ -78,6 +78,9 @@ const KIND: Record<string, string> = {
 
 const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
   activity: () => '还没有达成',
+  exchange_level: (p) => `餐厅 ${String(p.need)} 级才能交易`,
+  exchange_age: (p) => `账号注册满 ${String(p.days)} 天才能交易`,
+  exchange_email: () => '验证邮箱后才能交易',
   level: (p) => `餐厅等级不够（需要 ${String(p.need)} 级）`,
   star: (p) => `星级不够（需要 ${String(p.need)} 星）`,
   cookbooks: (p) => `学会的食谱不够（需要 ${String(p.need)} 道）`,
@@ -106,6 +109,8 @@ const REQUIREMENT: Record<string, (p: Record<string, unknown>) => string> = {
 };
 
 const LIMIT: Record<string, (p: Record<string, unknown>) => string> = {
+  exchange_orders: (p) => `最多同时挂 ${String(p.max)} 张单`,
+  exchange_qty: (p) => `每张单最多 ${String(p.max)} 个`,
   activity_exchange: (p) => `这一项每人最多换 ${String(p.limit)} 次，还能换 ${String(p.left)} 次`,
   forum_post: (p) => `今天发帖已达上限（${String(p.max)} 篇）`,
   presets: (p) => `预设最多 ${String(p.max)} 套`,
@@ -148,6 +153,10 @@ const STATE: Record<string, string> = {
   not_running: '活动不在进行中（结束后未领的奖励会发到邮箱）',
   no_reward: '没有这份奖励',
   not_pass: '这个活动没有进阶奖励',
+  not_tradable: '这种食材不能在交易所交易',
+  price_band: '价格超出今天允许的范围',
+  cupboard_full: '橱柜放不下这么多，先腾出位置再挂买单',
+  order_closed: '这张单已经成交、撤销或过期了',
   roach_full: '这家店的蟑螂已经太多了，换一家吧',
   not_exchange: '这个活动不能兑换',
   exchange_closed: '兑换期已经结束，活动货币已作废',
@@ -383,6 +392,8 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return LIMIT[params.what]!(params);
   }
   // 论坛长度：用服务端给的上限，改 tuning 后提示也跟着变（PR31 遗留）
+  if (code === 'INVALID_STATE' && params.reason === 'price_band' && params.min !== undefined)
+    return `价格要在 ${String(params.min)} ~ ${String(params.max)} 之间`;
   if (code === 'INVALID_STATE' && params.reason === 'post_text' && params.max !== undefined)
     return `${params.field === 'title' ? '标题' : '正文'}要 1~${String(params.max)} 字`;
   if (code === 'INVALID_STATE' && params.reason === 'reply_text' && params.max !== undefined)

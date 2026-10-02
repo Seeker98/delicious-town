@@ -146,6 +146,23 @@ const LOGS: Record<string, (p: P, names: Names) => string> = {
   'town.shake': (p) => `摇钱树摇到银币 ${formatNum(n(p, 'coin'))}`,
   'town.talk': () => '和广场上的居民聊了天',
   'town.wish': () => '在广场许了愿',
+  'exchange.order': (p, names) =>
+    `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（当场成交 ${n(p, 'filled')} 个）` : ''}`,
+  'exchange.fill': (p, names) =>
+    p.side === 'sell'
+      ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}（所得在交易所账户）`
+      : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}（食材在交易所账户）`,
+  'exchange.cancel': (p, names) =>
+    `撤销交易所${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
+  'exchange.expire': (p, names) =>
+    `交易所${p.side === 'buy' ? '买' : '卖'}单过期：${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个的冻结退回交易所账户`,
+  'exchange.withdraw': (p, names) =>
+    `从交易所账户取出：${[
+      ...(n(p, 'coin') > 0 ? [`银币 ${formatNum(n(p, 'coin'))}`] : []),
+      ...(Array.isArray(p.foods) ? p.foods : []).map(
+        (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
+      ),
+    ].join('、')}`,
   'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
   'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
   'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,
