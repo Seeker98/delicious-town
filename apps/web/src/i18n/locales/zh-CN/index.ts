@@ -1,5 +1,6 @@
 import account from './account';
 import auth from './auth';
+import bar from './bar';
 import common from './common';
 import cookbook from './cookbook';
 import cupboard from './cupboard';
@@ -15,6 +16,8 @@ import nav from './nav';
 import news from './news';
 import society from './society';
 import store from './store';
+import temple from './temple';
+import tower from './tower';
 import town from './town';
 import util from './util';
 
@@ -39,5 +42,8 @@ const zhCN = {
   forum,
   mail,
   town,
+  bar,
+  temple,
+  tower,
 };
 export default zhCN;

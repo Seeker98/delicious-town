@@ -2,31 +2,32 @@
 import { computed, ref } from 'vue';
 import type { BarDto, NumResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import { awardText, NUM_HINTS } from './award';
+import { awardText } from './award';
 
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const busy = ref(false);
 const pick = ref(13);
 const last = ref<NumResultDto | null>(null);
 
 const nums = computed(() => Array.from({ length: props.data.num.max }, (_, i) => i + 1));
 const cost = computed(() => props.data.num.cost);
-const block = computed(() =>
-  props.data.tickets < cost.value ? `神秘礼券不够（每次 ${cost.value} 张）` : '',
-);
+const block = computed(() => (props.data.tickets < cost.value ? t.value.bar.noTicketsEach(cost.value) : ''));
 const resultText = computed(() => {
   const r = last.value;
   if (!r) return '';
-  if (!r.win) return `转到了 ${r.barNum}，${NUM_HINTS[r.hint ?? 'hard']}`;
-  const times = r.times > 1 ? `连续中奖 ${r.times} 次，` : '';
-  const award = r.award ? `得到 ${awardText(r.award, catalog)}` : '';
-  return `${r.lucky ? '幸运地' : ''}中了！${times}${award}`;
+  const b = t.value.bar;
+  if (!r.win) return b.num.miss(r.barNum, b.numHints[r.hint ?? 'hard']);
+  const times = r.times > 1 ? b.num.times(r.times) : '';
+  const award = r.award ? b.num.got(awardText(r.award, catalog)) : '';
+  return b.num.win(r.lucky ? b.luckily : '', times, award);
 });
 
 async function spin() {
@@ -36,7 +37,7 @@ async function spin() {
     last.value = await endpoints.barNum(pick.value);
     emit('reload');
   } catch (e) {
-    toast.push(errorMessage(e, '转数字失败'), 'danger');
+    toast.push(errorMessage(e, t.value.bar.num.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -46,7 +47,7 @@ async function spin() {
 <template>
   <div class="small">
     <div class="text-muted mb-2">
-      猜 1~{{ data.num.max }} 里的一个数字，转中了得一件物品。每次 {{ cost }} 张神秘礼券。
+      {{ t.bar.num.rule(data.num.max, cost) }}
     </div>
     <div class="d-flex gap-1 align-items-center mb-2">
       <select
@@ -63,7 +64,7 @@ async function spin() {
         :disabled="busy || !!block"
         @click="spin"
       >
-        转（{{ cost }} 张礼券）
+        {{ t.bar.num.spin(cost) }}
       </button>
     </div>
     <div v-if="block" class="text-danger mb-1" data-testid="block">{{ block }}</div>

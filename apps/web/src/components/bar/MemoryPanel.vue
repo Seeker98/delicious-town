@@ -2,19 +2,20 @@
 import { computed, onBeforeUnmount, ref } from 'vue';
 import type { BarDto, MemoryAnswerDto, MemoryRoundDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { awardText } from './award';
 import { roundGone } from './gone';
 
-/** 8 种配料，下标就是服务端的配料编号 */
-const MIXES = ['朗姆', '伏特加', '金酒', '柠檬', '薄荷', '糖浆', '冰块', '苏打'];
-
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
+/** 8 种配料，下标就是服务端的配料编号 */
+const MIXES = computed(() => t.value.bar.memory.mixes);
 const busy = ref(false);
 
 type Phase = 'idle' | 'showing' | 'input' | 'result';
@@ -65,18 +66,18 @@ async function call<T>(fn: () => Promise<T>, fallback: string): Promise<T | null
 }
 
 async function start() {
-  const r = await call(() => endpoints.barMemoryStart(), '开局失败');
+  const r = await call(() => endpoints.barMemoryStart(), t.value.bar.startFailed);
   if (r) {
     emit('reload');
     show(r);
   }
 }
 async function next() {
-  const r = await call(() => endpoints.barMemoryNext(), '继续失败');
+  const r = await call(() => endpoints.barMemoryNext(), t.value.bar.memory.nextFailed);
   if (r) show(r);
 }
 async function stop() {
-  if (await call(() => endpoints.barMemoryStop(), '操作失败')) {
+  if (await call(() => endpoints.barMemoryStop(), t.value.bar.memory.opFailed)) {
     phase.value = 'idle';
     current.value = null;
     last.value = null;
@@ -88,7 +89,7 @@ async function pick(i: number) {
   if (phase.value !== 'input' || !current.value) return;
   picks.value = [...picks.value, i];
   if (picks.value.length < current.value.seq.length) return;
-  const r = await call(() => endpoints.barMemoryAnswer(picks.value), '提交失败');
+  const r = await call(() => endpoints.barMemoryAnswer(picks.value), t.value.bar.memory.submitFailed);
   // 提交失败：清掉已点的配料重新点，免得下一次以多一个的长度提交（PR28 遗留）
   if (!r) picks.value = [];
   if (r) {
@@ -117,24 +118,23 @@ const limited = computed(() => props.data.memory.played >= props.data.memory.max
 const resultText = computed(() => {
   const r = last.value;
   if (!r) return '';
-  const recipe = (current.value?.seq ?? []).map((m) => MIXES[m]).join('、');
-  if (r.reason === 'late')
-    return `超时了，要在 ${(current.value?.answerMs ?? 0) / 1000} 秒内答完。配方是：${recipe}`;
-  if (r.reason === 'early') return `配方还没放完就交了。配方是：${recipe}`;
-  if (!r.correct) return `记错了。正确的配方是：${recipe}`;
-  const award = r.award ? `得到 ${awardText(r.award, catalog)}` : '';
-  return r.finished ? `三关全过！${award}` : `答对了！${award}`;
+  const m = t.value.bar.memory;
+  const recipe = (current.value?.seq ?? []).map((x) => MIXES.value[x]).join(t.value.events.sep);
+  if (r.reason === 'late') return m.late((current.value?.answerMs ?? 0) / 1000, recipe);
+  if (r.reason === 'early') return m.early(recipe);
+  if (!r.correct) return m.wrong(recipe);
+  const award = r.award ? m.got(awardText(r.award, catalog)) : '';
+  return r.finished ? m.allPassed(award) : m.passed(award);
 });
 </script>
 
 <template>
   <div class="small">
     <div class="dt-meta mb-2">
-      调酒师依次闪出配方里的配料，记住顺序后依次点出来。第 1/2/3 关分别是 3/5/7 种配料，每过一关都有奖励；
-      答对后可以继续挑战更长的配方，也可以收手。
+      {{ t.bar.memory.rule }}
     </div>
     <div class="dt-meta mb-2" data-testid="mem-played">
-      今天 {{ data.memory.played }}/{{ data.memory.max }} 局，每局 {{ data.memory.cost }} 张神秘礼券
+      {{ t.bar.todayPlayed(data.memory.played, data.memory.max, data.memory.cost) }}
     </div>
 
     <div class="dt-mixes mb-2">
@@ -152,9 +152,9 @@ const resultText = computed(() => {
 
     <template v-if="phase === 'idle'">
       <template v-if="resumed && resumed.passed">
-        <div class="mb-1">第 {{ resumed.level }} 关已经答对了，要继续吗？</div>
+        <div class="mb-1">{{ t.bar.memory.resumePassed(resumed.level) }}</div>
         <button class="btn btn-sm btn-primary" :disabled="busy" data-testid="mem-next" @click="next">
-          继续
+          {{ t.bar.memory.next }}
         </button>
         <button
           class="btn btn-sm btn-outline-secondary ms-1"
@@ -162,22 +162,24 @@ const resultText = computed(() => {
           data-testid="mem-stop"
           @click="stop"
         >
-          收手
+          {{ t.bar.memory.stop }}
         </button>
       </template>
       <template v-else-if="resumed && resumed.seq">
-        <div class="mb-1">第 {{ resumed.level }} 关还没答完，配方会再放一遍</div>
-        <button class="btn btn-sm btn-primary" data-testid="mem-resume" @click="resume">接着这一局</button>
+        <div class="mb-1">{{ t.bar.memory.resumeSeq(resumed.level) }}</div>
+        <button class="btn btn-sm btn-primary" data-testid="mem-resume" @click="resume">
+          {{ t.bar.memory.resume }}
+        </button>
       </template>
       <template v-else-if="resumed">
-        <div class="mb-1">上次的配方没看完，这一局只能放弃了</div>
+        <div class="mb-1">{{ t.bar.memory.resumeLost }}</div>
         <button
           class="btn btn-sm btn-outline-secondary"
           :disabled="busy"
           data-testid="mem-abandon"
           @click="stop"
         >
-          放弃这一局
+          {{ t.bar.memory.abandon }}
         </button>
       </template>
       <template v-else>
@@ -187,25 +189,29 @@ const resultText = computed(() => {
           data-testid="mem-start"
           @click="start"
         >
-          开始调酒
+          {{ t.bar.memory.start }}
         </button>
-        <span v-if="limited" class="text-danger ms-1">今天的局数用完了</span>
+        <span v-if="limited" class="text-danger ms-1">{{ t.bar.noMoreToday }}</span>
       </template>
     </template>
 
-    <div v-else-if="phase === 'showing'" class="text-muted">看好了……</div>
+    <div v-else-if="phase === 'showing'" class="text-muted">{{ t.bar.memory.watch }}</div>
 
     <div v-else-if="phase === 'input'" class="d-flex align-items-center gap-2">
-      <span
-        >已选 {{ picks.length }}/{{ current?.seq.length }}：{{ picks.map((m) => MIXES[m]).join('、') }}</span
-      >
+      <span>{{
+        t.bar.memory.picked(
+          picks.length,
+          current?.seq.length ?? 0,
+          picks.map((x) => MIXES[x]).join(t.events.sep),
+        )
+      }}</span>
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="picks.length === 0"
         data-testid="mem-undo"
         @click="picks = picks.slice(0, -1)"
       >
-        撤回
+        {{ t.bar.memory.undo }}
       </button>
     </div>
 
@@ -220,7 +226,7 @@ const resultText = computed(() => {
       <div class="mt-2">
         <template v-if="last?.canNext">
           <button class="btn btn-sm btn-primary" :disabled="busy" data-testid="mem-next" @click="next">
-            继续第 {{ (current?.level ?? 0) + 1 }} 关
+            {{ t.bar.memory.nextLevel((current?.level ?? 0) + 1) }}
           </button>
           <button
             class="btn btn-sm btn-outline-secondary ms-1"
@@ -228,11 +234,11 @@ const resultText = computed(() => {
             data-testid="mem-stop"
             @click="stop"
           >
-            收手
+            {{ t.bar.memory.stop }}
           </button>
         </template>
         <button v-else class="btn btn-sm btn-outline-primary" data-testid="mem-again" @click="phase = 'idle'">
-          再来一局
+          {{ t.bar.again }}
         </button>
       </div>
     </template>

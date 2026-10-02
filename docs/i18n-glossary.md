@@ -54,6 +54,17 @@
 | 大胃哥 | Big Belly | Gros Mangeur | El Glotón |
 | 13 哥 | Brother 13 | Frère 13 | Hermano 13 |
 | 镇长 | Mayor | Maire | Alcalde |
+| 蟹币 | Krab Coin | Pièce Krab | Moneda Krab |
+| 魔鬼辣杯 | Devil's Chili | Piment du Diable | Chile del Diablo |
+| 记忆调酒 | Memory Mixing | Cocktail Mémoire | Cóctel Memoria |
+| 美味券 | Delicious Ticket | Ticket Délice | Vale Delicioso |
+| 守护兽 | Guardian | Gardien | Guardián |
+| 克拉肯 / 触手 | Kraken / Tentacle | Kraken / Tentacule | Kraken / Tentáculo |
+| 试炼 | Trial | Épreuve | Prueba |
+| 鉴定 | Appraise | Expertise | Tasación |
+| 赛厨榜 | Chef ranking | Classement des chefs | Clasificación de chefs |
+| 厨力 | Chef power | Puissance | Poder de chef |
+| 切磋 | Duel | Duel | Duelo |
 
 约定：
 

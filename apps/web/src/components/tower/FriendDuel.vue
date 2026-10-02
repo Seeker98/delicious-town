@@ -3,12 +3,14 @@ import { computed, onMounted, ref } from 'vue';
 import type { DuelInfoDto, DuelResultDto } from '@dt/shared';
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
 import DuelResult from './DuelResult.vue';
 
 const props = defineProps<{ restId: number }>();
 const toast = useToastStore();
+const t = useT();
 const info = ref<DuelInfoDto | null>(null);
 const last = ref<DuelResultDto | null>(null);
 const busy = ref(false);
@@ -23,14 +25,14 @@ async function load() {
       disabled.value = true;
       return;
     }
-    toast.push(errorMessage(e, '读取切磋次数失败'), 'danger');
+    toast.push(errorMessage(e, t.value.tower.friend.loadFailed), 'danger');
   }
 }
 const block = computed(() => {
   const i = info.value;
   if (!i) return '';
-  if (i.left <= 0) return '今天和它切磋的次数用完了';
-  if (i.strength < i.duelStrength) return `体力不够（要 ${i.duelStrength}）`;
+  if (i.left <= 0) return t.value.tower.friend.noMore;
+  if (i.strength < i.duelStrength) return t.value.tower.noStrength(i.duelStrength);
   return '';
 });
 async function duel() {
@@ -40,7 +42,7 @@ async function duel() {
     last.value = await endpoints.friendDuel(props.restId);
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '切磋失败'), 'danger');
+    toast.push(errorMessage(e, t.value.tower.friend.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -56,7 +58,7 @@ onMounted(load);
       :disabled="busy || !info || !!block"
       @click="duel"
     >
-      切磋{{ info ? `（今天还能 ${info.left} 次）` : '' }}
+      {{ t.tower.friend.btn }}{{ info ? t.tower.friend.left(info.left) : '' }}
     </button>
     <span v-if="block" class="small text-danger ms-1" data-testid="duel-block">{{ block }}</span>
     <DuelResult v-if="last" :result="last" />

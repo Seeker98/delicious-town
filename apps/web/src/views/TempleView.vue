@@ -3,6 +3,7 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { TempleDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import AppraisePanel from '../components/temple/AppraisePanel.vue';
 import ExplorePanel from '../components/temple/ExplorePanel.vue';
 import GuardianPanel from '../components/temple/GuardianPanel.vue';
@@ -12,23 +13,18 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
 type Tab = 'appraise' | 'guardian' | 'explore' | 'trial' | 'kraken';
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'appraise', label: '鉴定' },
-  { key: 'guardian', label: '守护兽' },
-  { key: 'explore', label: '探险' },
-  { key: 'trial', label: '试炼' },
-  { key: 'kraken', label: '克拉肯' },
-];
+const TABS: readonly Tab[] = ['appraise', 'guardian', 'explore', 'trial', 'kraken'];
 const KEY = 'dt_temple_tab';
 function savedTab(): Tab {
   try {
     const v = localStorage.getItem(KEY);
-    return TABS.some((x) => x.key === v) ? (v as Tab) : 'appraise';
+    return TABS.includes(v as Tab) ? (v as Tab) : 'appraise';
   } catch {
     return 'appraise';
   }
 }
 const toast = useToastStore();
+const t = useT();
 const tab = ref<Tab>(savedTab());
 const data = ref<TempleDto | null>(null);
 
@@ -37,7 +33,7 @@ async function load() {
   try {
     data.value = await endpoints.temple();
   } catch (e) {
-    toast.push(errorMessage(e, '读取神殿失败'), 'danger');
+    toast.push(errorMessage(e, t.value.temple.loadFailed), 'danger');
   }
 }
 watch(tab, (v) => {
@@ -52,16 +48,16 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>神殿</h5>
+  <h5>{{ t.temple.title }}</h5>
   <HiphopCard :place="6" @changed="load" />
   <ul class="nav nav-tabs mb-2">
-    <li v-for="x in TABS" :key="x.key" class="nav-item">
+    <li v-for="x in TABS" :key="x" class="nav-item">
       <a
-        :class="['nav-link', { active: tab === x.key }]"
+        :class="['nav-link', { active: tab === x }]"
         href="#"
-        :data-testid="`tab-${x.key}`"
-        @click.prevent="tab = x.key"
-        >{{ x.label }}</a
+        :data-testid="`tab-${x}`"
+        @click.prevent="tab = x"
+        >{{ t.temple.tabs[x] }}</a
       >
     </li>
   </ul>

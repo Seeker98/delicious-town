@@ -3,6 +3,7 @@ import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { TowerDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import FloorPanel from '../components/tower/FloorPanel.vue';
 import RankPanel from '../components/tower/RankPanel.vue';
 import ShopPanel from '../components/tower/ShopPanel.vue';
@@ -10,21 +11,18 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
 type Tab = 'tower' | 'rank' | 'shop';
-const TABS: Array<{ key: Tab; label: string }> = [
-  { key: 'tower', label: '厨塔' },
-  { key: 'rank', label: '赛厨榜' },
-  { key: 'shop', label: '声望商店' },
-];
+const TABS: readonly Tab[] = ['tower', 'rank', 'shop'];
 const KEY = 'dt_tower_tab';
 function savedTab(): Tab {
   try {
     const v = localStorage.getItem(KEY);
-    return TABS.some((x) => x.key === v) ? (v as Tab) : 'tower';
+    return TABS.includes(v as Tab) ? (v as Tab) : 'tower';
   } catch {
     return 'tower';
   }
 }
 const toast = useToastStore();
+const t = useT();
 const tab = ref<Tab>(savedTab());
 const data = ref<TowerDto | null>(null);
 
@@ -33,7 +31,7 @@ async function load() {
   try {
     data.value = await endpoints.tower();
   } catch (e) {
-    toast.push(errorMessage(e, '读取厨塔失败'), 'danger');
+    toast.push(errorMessage(e, t.value.tower.loadFailed), 'danger');
   }
 }
 watch(tab, (v) => {
@@ -48,16 +46,16 @@ onMounted(load);
 </script>
 
 <template>
-  <h5>厨塔</h5>
+  <h5>{{ t.tower.title }}</h5>
   <HiphopCard :place="5" @changed="load" />
   <ul class="nav nav-tabs mb-2">
-    <li v-for="x in TABS" :key="x.key" class="nav-item">
+    <li v-for="x in TABS" :key="x" class="nav-item">
       <a
-        :class="['nav-link', { active: tab === x.key }]"
+        :class="['nav-link', { active: tab === x }]"
         href="#"
-        :data-testid="`tab-${x.key}`"
-        @click.prevent="tab = x.key"
-        >{{ x.label }}</a
+        :data-testid="`tab-${x}`"
+        @click.prevent="tab = x"
+        >{{ t.tower.tabs[x] }}</a
       >
     </li>
   </ul>
