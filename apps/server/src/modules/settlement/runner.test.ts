@@ -1,9 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { Kysely, PostgresDialect } from 'kysely';
+import pg from 'pg';
 import { roundOf } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
+import type { DB } from '../../db/schema';
 import { spendCoin } from '../../core/resources';
+import { upsertEffectSource } from '../effects/service';
 import { grantGoods } from '../store/grant';
 import { runDueJobs } from '../../worker/periodic';
 import { settleShardRound } from './runner';
@@ -216,5 +220,65 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
     expect(c).toMatchObject({ left_num: 0, end_reason: 'sold' });
     expect(c.ended_at).not.toBeNull();
     expect((await restRow(t, ctx.restaurantId)).mc_cook_id).toBeNull();
+  });
+});
+
+describe('结算的数据库往返（问题记录 258：结算余量）', () => {
+  it('一家普通店一轮 6 条语句（原来 9 条）：开始事务、锁店读行、读餐桌和食谱、写餐桌和收益记录、写回店铺、提交', async () => {
+    let queries = 0;
+    const db = new Kysely<DB>({
+      dialect: new PostgresDialect({
+        pool: new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 }),
+      }),
+      log: (e) => {
+        if (e.level === 'query') queries += 1;
+      },
+    });
+    const g = await createTestGame({ db });
+    try {
+      // 同样的区服各结算一轮，相差一家店：差值就是一家店的语句数，区服级的查询抵消掉
+      const count = async (n: number) => {
+        const shardId = await createShard(g.db);
+        for (let i = 0; i < n; i++) await newRestaurant(g, { shardId, patch: { coin: 1000, oil: 100000 } });
+        // 第一轮会顺带算出加成汇总（新店的 effect_dirty 默认为 true），从第二轮开始计数
+        await settleShardRound(g.game.deps, g.game.world, shardId, round, new Date());
+        queries = 0;
+        const s = await settleShardRound(g.game.deps, g.game.world, shardId, round + 1, new Date());
+        expect(s).toMatchObject({ settled: n, failed: 0 });
+        return queries;
+      };
+      const one = await count(1);
+      const two = await count(2);
+      expect(two - one).toBe(6);
+    } finally {
+      await db.destroy();
+      await g.close();
+    }
+  });
+});
+
+describe('结算取加成汇总（问题记录 258：改用锁行时读到的加成列）', () => {
+  it('两轮之间加成来源变了（标脏）、或有来源到期：下一轮照样重算并写回', async () => {
+    const shardId = await createShard(t.db);
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1000, oil: 100000 } });
+    const agg = async () =>
+      await t.db
+        .selectFrom('restaurant')
+        .select(['effect_agg', 'effect_dirty'])
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
+    await settle(shardId, round);
+    await upsertEffectSource(t.db, ctx.restaurantId, {
+      sourceType: 'test',
+      sourceId: 1,
+      effects: { luckValue: 123 },
+      expiresAt: new Date(Date.now() + 300),
+    });
+    expect((await agg()).effect_dirty).toBe(true);
+    await settle(shardId, round + 1);
+    expect(await agg()).toMatchObject({ effect_dirty: false, effect_agg: { luckValue: 123 } });
+    await new Promise((r) => setTimeout(r, 400));
+    await settle(shardId, round + 2);
+    expect((await agg()).effect_agg.luckValue ?? 0).toBe(0);
   });
 });

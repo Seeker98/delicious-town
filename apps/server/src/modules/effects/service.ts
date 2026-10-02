@@ -1,6 +1,6 @@
 import type { Kysely } from 'kysely';
 import type { GameConfig, Tuning } from '@dt/config';
-import type { DB } from '../../db/schema';
+import type { DB, RestaurantRow } from '../../db/schema';
 import { computeEffectAgg } from './aggregate';
 
 export interface EffectSourceInput {
@@ -72,6 +72,7 @@ export async function listActiveEffects(db: Kysely<DB>, restId: number, now: Dat
 /**
  * 取加成汇总：缓存有效直接返回；来源有变动或有来源到期时重算并写回。
  * 汇总里包含收集类派生键（设计文档 §3.1）。调用方应已持有该店的行锁。
+ * pre：调用方刚在同一事务里锁行读到、之后没改过加成的三列时传入，省一次查询（结算用，问题记录 258）
  */
 export async function getEffectAgg(
   db: Kysely<DB>,
@@ -79,12 +80,15 @@ export async function getEffectAgg(
   now: Date,
   config: GameConfig,
   tuning: Tuning,
+  pre?: Pick<RestaurantRow, 'effect_agg' | 'effect_dirty' | 'effect_next_expire_at'>,
 ): Promise<Record<string, number>> {
-  const r = await db
-    .selectFrom('restaurant')
-    .select(['effect_agg', 'effect_dirty', 'effect_next_expire_at'])
-    .where('id', '=', restId)
-    .executeTakeFirstOrThrow();
+  const r =
+    pre ??
+    (await db
+      .selectFrom('restaurant')
+      .select(['effect_agg', 'effect_dirty', 'effect_next_expire_at'])
+      .where('id', '=', restId)
+      .executeTakeFirstOrThrow());
   const stale = r.effect_dirty || (r.effect_next_expire_at !== null && r.effect_next_expire_at <= now);
   if (!stale) return r.effect_agg;
 
