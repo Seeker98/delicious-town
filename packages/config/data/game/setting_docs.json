@@ -27,6 +27,7 @@
     "report": "举报：玩家举报帖子、回复、喇叭、店名、公告",
     "exchange": "交易所：玩家之间用限价单买卖稀有食材（关掉后不能下单；撤单、取出、过期退回照常）",
     "predict": "事件合约：玩家用银币买卖“是/否”份额（关掉后不能买卖；已有事件照常截止、判定、结算）",
+    "kuji": "一番赏：玩家买券抽签（关掉后不能买、不能抽，入口隐藏，活跃度不送券；已有的券保留）",
     "activity": "限时活动：活动页、进度计数、领奖、战令解锁（关掉后不计数、不显示；已结束活动的未领奖励照常补发）"
   },
   "groups": {
@@ -59,6 +60,7 @@
     "tuning.redeem": "兑换码：输错锁定、每批数量上限",
     "tuning.exchange": "交易所：开通门槛、手续费、涨跌幅、挂单数量和有效期；refOverrides 按食材 id 指定初始参考价（没有成交前用它，代替系统定价）；maker 是系统做市（低价收、高价卖，差价回收银币）",
     "tuning.predict": "事件合约：每份结算银币、手续费、持有和单笔上限、默认流动性、开通门槛；auto 是系统每天自动出的题",
+    "tuning.kuji": "一番赏：券价、限购、单次抽签上限、活跃度送券、各档张数和奖品、最后赏；改了下一池生效",
     "tuning.forum": "论坛：标题正文长度、发帖回复冷却、加精奖励",
     "restaurant": "开店默认值：新店的等级、资源、容量和开店礼包"
   },
@@ -596,6 +598,15 @@
     "tuning.predict.auto.b": "自动题的流动性 b（份）",
     "tuning.predict.auto.marketCloseMin": "菜场题在开货前几分钟截止（分钟）",
     "tuning.predict.auto.statsCloseHour": "全服数据题当天几点截止（点）",
+    "tuning.kuji.price": "每张抽赏券多少银币（银币）",
+    "tuning.kuji.dailyBuy": "每人每天最多买几张券（张）",
+    "tuning.kuji.maxDraw": "一次最多抽几张签（张）",
+    "tuning.kuji.activeTickets": "领取活跃度最高一档时额外送几张券（张）",
+    "tuning.kuji.tiers": "各档：key 档位名、count 张数、award 奖品、icon 限定图标（looks.icons 的 key）、news 播报（broadcast 全服广播 / news 新闻 / 不填不播）",
+    "tuning.kuji.last.award.diamond": "最后赏：钻石",
+    "tuning.kuji.last.award.goods": "最后赏：道具（[{ id, num }]，默认是最后赏手办）",
+    "tuning.kuji.last.icon": "最后赏：限定个性图标（looks.icons 的 key）",
+    "tuning.kuji.last.news": "最后赏的播报：broadcast 全服广播 / news 新闻 / 不填不播",
     "tuning.forum.titleMax": "帖子标题最多几个字（字）",
     "tuning.forum.contentMax": "帖子正文最多几个字（字）",
     "tuning.forum.replyMax": "回复最多几个字（字）",

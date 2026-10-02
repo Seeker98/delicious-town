@@ -48,6 +48,7 @@ export const SOURCE_FILES = [
   'game/setting_docs',
   'game/newbie_codes',
   'game/souvenirs',
+  'game/kuji',
   'restaurant_defaults',
 ] as const;
 

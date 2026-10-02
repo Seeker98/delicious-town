@@ -9,7 +9,8 @@ const config = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bun
 
 describe('纪念品（148-2 设计 §6）', () => {
   it('第一批 12 件进了道具表，类型是纪念品，不能卖也不能用', () => {
-    const list = [...config.goods.values()].filter((g) => g.type === GOODS_TYPE.souvenir);
+    // 节日纪念品是 90001~90012；一番赏手办 90101~90104 也是纪念品类型
+    const list = [...config.goods.values()].filter((g) => g.type === GOODS_TYPE.souvenir && g.id < 90100);
     expect(list.map((g) => g.id).sort()).toEqual(Array.from({ length: 12 }, (_, i) => 90001 + i));
     const g = config.requireGoods(90009);
     expect(g.name).toBe('小红旗徽章');
