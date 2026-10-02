@@ -11,6 +11,18 @@ export async function opAgg(op: Op): Promise<Record<string, number>> {
   return agg;
 }
 
+/**
+ * 操作一开始、还没有任何写入时取加成汇总：直接用锁行时读到的加成列，省一次查询（结算用，问题记录 258）。
+ * 中途发过勋章、改过加成来源的地方不能用它，要用 opAgg
+ */
+export async function opAggAtStart(op: Op): Promise<Record<string, number>> {
+  const hit = op.cache.get('agg') as Record<string, number> | undefined;
+  if (hit) return hit;
+  const agg = await getEffectAgg(op.tx, op.rest.id, op.now, op.config, op.tuning, op.rest);
+  op.cache.set('agg', agg);
+  return agg;
+}
+
 export function invalidateAgg(op: Op): void {
   op.cache.delete('agg');
 }

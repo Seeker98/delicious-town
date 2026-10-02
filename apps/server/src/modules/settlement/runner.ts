@@ -1,6 +1,6 @@
 import { seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import { opAgg } from '../../core/luck';
+import { opAggAtStart } from '../../core/luck';
 import { featureAvailable } from '../../core/features';
 import { opNews, restLog, runSystemOp, setRest, type Op } from '../../core/op';
 import { gainCoin, gainExp, gainOil, gainRenown, spendCoin } from '../../core/resources';
@@ -87,7 +87,10 @@ export function rowSettleSource(
   };
 }
 
-/** 一家店的一轮：锁内读三行 + 加成汇总 → 纯函数 → 写回（设计文档 §4.1） */
+/**
+ * 一家店的一轮：锁内读三行 + 加成汇总 → 纯函数 → 写回（设计文档 §4.1）。
+ * 数据库往返尽量少（问题记录 258）：餐桌和食谱一条查询；加成汇总用锁行时读到的列；写餐桌和收益记录一条语句
+ */
 export async function settleOne(
   op: Op,
   g: SettleGlobals,
@@ -95,17 +98,14 @@ export async function settleOne(
 ): Promise<'settled' | 'skipped' | 'closed'> {
   if (op.rest.state !== 1) return 'skipped';
   const tr = await op.tx
-    .selectFrom('restaurant_tables')
-    .selectAll()
-    .where('rest_id', '=', op.rest.id)
+    .selectFrom('restaurant_tables as t')
+    .innerJoin('restaurant_cookbooks as c', 'c.rest_id', 't.rest_id')
+    .select(['t.round_no', 't.tables', 'c.levels'])
+    .where('t.rest_id', '=', op.rest.id)
     .executeTakeFirstOrThrow();
   if (tr.round_no >= round) return 'skipped';
-  const cb = await op.tx
-    .selectFrom('restaurant_cookbooks')
-    .select('levels')
-    .where('rest_id', '=', op.rest.id)
-    .executeTakeFirstOrThrow();
-  const agg = await opAgg(op);
+  // 到这里还没有任何写入，锁行时读到的加成列就是最新的
+  const agg = await opAggAtStart(op);
   // 当前在售的特色菜（规格书 01 §1.7）；没有在售的店不多查
   const cook =
     op.rest.mc_cook_id === null
@@ -129,7 +129,7 @@ export async function settleOne(
     rowSettleSource(
       op.rest,
       tr.tables,
-      cb.levels,
+      tr.levels,
       agg,
       cook && cook.left_num > 0 ? { price: cook.price, level: cook.level, leftNum: cook.left_num } : null,
       cupboard,
@@ -162,12 +162,14 @@ export async function settleOne(
   for (const l of r.logs) restLog(op, l.type, l.params);
   if (r.planktonAppeared) opNews(op, 'plankton.appear');
   autoRefuel(op, agg);
+  // 写餐桌放在 WITH 里和插收益记录合成一条语句（Postgres 的数据修改 CTE 不被引用也会执行）
   await op.tx
-    .updateTable('restaurant_tables')
-    .set({ round_no: round, tables: JSON.stringify(r.tables) })
-    .where('rest_id', '=', op.rest.id)
-    .execute();
-  await op.tx
+    .with('t', (db) =>
+      db
+        .updateTable('restaurant_tables')
+        .set({ round_no: round, tables: JSON.stringify(r.tables) })
+        .where('rest_id', '=', op.rest.id),
+    )
     .insertInto('income_round')
     .values({
       rest_id: op.rest.id,
