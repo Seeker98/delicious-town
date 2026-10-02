@@ -37,6 +37,12 @@ test('交易所：挂卖单、吃单、取出', async ({ browser, request }) => 
         [u],
       );
     }
+    // 两个号来自同一台机器会共用 IP，被标成可疑成交、所得冻结（156-2）：把卖方号自己的登录记录改成另一个 IP
+    await client.query(
+      `update login_trace set ip = '10.123.0.1'
+         where account_id = (select id from account where lower(username) = lower($1))`,
+      [A.username],
+    );
     const foods = (await (await a.request.get('/api/v1/exchange/foods')).json()) as {
       data: Array<{ foodsId: number; ref: number }>;
     };
