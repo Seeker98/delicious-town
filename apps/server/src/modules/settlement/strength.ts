@@ -1,7 +1,8 @@
 import { sql } from 'kysely';
 import type { Tuning } from '@dt/config';
-import { hashSeed, luckRate, seededRng, type Rng } from '@dt/shared';
+import { luckRate, seededRng, type Rng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+import { gameSeed } from '../../core/seed';
 
 /** 一次体力恢复（真实定时任务和快速模型共用）：已满返回 null */
 export function strengthGain(
@@ -43,7 +44,7 @@ export async function regenStrength(
       r,
       r.effect_agg ?? {},
       tuning,
-      seededRng(hashSeed(shardId, 'strength', period, r.id)),
+      seededRng(gameSeed(shardId, 'strength', period, r.id)),
     );
     if (!g) continue;
     ids.push(r.id);

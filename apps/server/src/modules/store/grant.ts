@@ -1,9 +1,10 @@
 import type { Kysely } from 'kysely';
 import { DEVICE_TYPE, goodsEffectHours, GOODS_TYPE, type GameConfig, type Goods } from '@dt/config';
-import { hashSeed, seededRng, type Rng } from '@dt/shared';
+import { seededRng, type Rng } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { createEquips } from '../equip/instances';
 import { markEffectsDirty, upsertEffectSource } from '../effects/service';
+import { gameSeed } from '../../core/seed';
 
 /** 街道勋章：type 9 且 devicetype 是街道号（江西街起 id 不连续，不能按 140 + 街道号判断） */
 export function sourceTypeForGoods(g: Goods, config: GameConfig): 'street' | 'honor' {
@@ -32,7 +33,7 @@ export async function grantGoods(
   const g = config.requireGoods(goodsId);
   if (g.type === GOODS_TYPE.equip) {
     // 厨具每件是一个实例，不进仓库表（设计文档 §4.2）；仓库满了也照发
-    const rng = opts.rng ?? seededRng(hashSeed(restId, goodsId, now.getTime(), 'equip'));
+    const rng = opts.rng ?? seededRng(gameSeed(restId, goodsId, now.getTime(), 'equip'));
     await createEquips(db, config, restId, goodsId, num, now, rng);
     return { granted: num, dropped: 0, expiresAt: null };
   }

@@ -1,9 +1,10 @@
 import type { Kysely } from 'kysely';
 import { EQUIP_ATTRS, GOODS_TYPE, type EquipAttr, type EquipAttrs, type GameConfig } from '@dt/config';
-import { hashSeed, seededRng, type Rng } from '@dt/shared';
+import { seededRng, type Rng } from '@dt/shared';
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { withRestaurant } from '../../db/tx';
 import { addAttrs, rollEquipAttrs, zeroAttrs } from './rules';
+import { gameSeed } from '../../core/seed';
 
 type Prefix = 'base_' | 'st_';
 
@@ -109,7 +110,7 @@ export async function convertLegacyEquips(
           .returning('num')
           .executeTakeFirst();
         if (!del || del.num <= 0) continue;
-        const rng = seededRng(hashSeed(restId, goodsId, 'legacy-equip'));
+        const rng = seededRng(gameSeed(restId, goodsId, 'legacy-equip'));
         await createEquips(tx, config, restId, goodsId, del.num, new Date(), rng);
         n += del.num;
       }

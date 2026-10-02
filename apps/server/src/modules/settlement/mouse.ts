@@ -1,11 +1,12 @@
 import { GOODS } from '@dt/config';
-import { hashSeed, seededRng } from '@dt/shared';
+import { seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg, opLuck } from '../../core/luck';
 import { restLog, runSystemOp, type Op } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
+import { gameSeed } from '../../core/seed';
 
 export type MouseStats = {
   triggered: number;
@@ -82,7 +83,7 @@ export async function mouseRound(
     .execute();
   const stats: MouseStats = { triggered: 0, escaped: 0, trapped: 0, stolen: 0, nothing: 0, maps: 0 };
   for (const r of rows) {
-    const rng = seededRng(hashSeed(shardId, 'mouse', period, r.id));
+    const rng = seededRng(gameSeed(shardId, 'mouse', period, r.id));
     const rate = (mt.rateBase - mt.ratePerStar * r.star_level) * (r.street_id === 0 ? mt.newbieFactor : 1);
     if (!rng.chance(rate)) continue;
     stats.triggered += 1;

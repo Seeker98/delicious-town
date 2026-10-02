@@ -7,9 +7,11 @@ import { disabledCaptcha, turnstileCaptcha } from './infra/captcha';
 import { createShiftClock } from './infra/clock';
 import { smtpMailer } from './infra/mailer';
 import { createRedis } from './infra/redis';
+import { setSeedSecret } from './core/seed';
 import { createSessionStore } from './security/sessionStore';
 
 export function createDeps(env: Env): AppDeps {
+  setSeedSecret(env.RNG_SECRET);
   const redis = createRedis(env.REDIS_URL);
   const clock = env.ENABLE_TEST_API ? createShiftClock() : undefined;
   return {

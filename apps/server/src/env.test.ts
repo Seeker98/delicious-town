@@ -39,4 +39,12 @@ describe('loadEnv', () => {
       'COOKIE_SECURE',
     );
   });
+
+  it('生产环境必须配置至少 16 位的随机种子密钥 RNG_SECRET', () => {
+    const prod = { ...base, NODE_ENV: 'production', TURNSTILE_SECRET: 's', COOKIE_SECURE: 'true' };
+    expect(() => loadEnv(prod)).toThrow('RNG_SECRET');
+    expect(() => loadEnv({ ...prod, RNG_SECRET: 'short' })).toThrow('RNG_SECRET');
+    expect(loadEnv({ ...prod, RNG_SECRET: 'a-long-enough-secret' }).RNG_SECRET).toBe('a-long-enough-secret');
+    expect(loadEnv(base).RNG_SECRET).toBe('');
+  });
 });

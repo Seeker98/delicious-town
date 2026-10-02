@@ -1,7 +1,6 @@
 import { goodsEffectHours, GOODS_TYPE, takesStoreSlot, type Goods } from '@dt/config';
 import {
   ErrorCode,
-  hashSeed,
   latestSlot,
   seededRng,
   type ShopDto,
@@ -27,6 +26,7 @@ import {
 } from '../store/goods';
 import { isPlaque, sellPrice } from '../store/rules';
 import { buyCap } from './rules';
+import { gameSeed } from '../../core/seed';
 
 /** 勋章、牌匾只能一个一个买；永久的已拥有就不能再买；其他道具受持有上限和仓库容量限制 */
 async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
@@ -118,7 +118,7 @@ export function createShopService(d: GameDeps) {
     /** 每日特价（规格书 06 §6.5）：从特价池均匀抽一个，按 [0,1) 随机数落在哪个区间定折扣档 */
     async rollSpecial(shardId: number, slot: Slot, now: Date): Promise<{ goodsId: number; tier: string }> {
       const { tuning } = await d.shards.settings(shardId);
-      const rng = seededRng(hashSeed(shardId, 'shop-special', slot.day));
+      const rng = seededRng(gameSeed(shardId, 'shop-special', slot.day));
       const pool = d.config.bundle.shopPools.special;
       const goodsId = pool.length > 0 ? pool[rng.int(pool.length)]! : tuning.shop.specialFallbackGoods;
       const roll = rng.next();

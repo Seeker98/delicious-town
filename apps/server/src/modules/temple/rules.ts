@@ -1,5 +1,6 @@
 import type { MapDef, MissileDef, MysteriousCookbook, Seed, Tuning } from '@dt/config';
-import { hashSeed, pickWeighted, seededRng, type Rng, type WeightedPool } from '@dt/shared';
+import { pickWeighted, seededRng, type Rng, type WeightedPool } from '@dt/shared';
+import { gameSeed } from '../../core/seed';
 
 export type TempleTuning = Tuning['temple'];
 
@@ -112,7 +113,7 @@ export function krakenTarget(
   shardId: number,
   day: string,
 ): MysteriousCookbook {
-  return pickWeighted(pool, seededRng(hashSeed(shardId, 'kraken', day)));
+  return pickWeighted(pool, seededRng(gameSeed(shardId, 'kraken', day)));
 }
 
 export function inFeedHours(hour: number, hours: ReadonlyArray<readonly [number, number]>): boolean {

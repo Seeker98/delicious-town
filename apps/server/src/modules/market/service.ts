@@ -3,7 +3,6 @@ import { sql } from 'kysely';
 import { GOODS } from '@dt/config';
 import {
   ErrorCode,
-  hashSeed,
   nextSlot,
   seededRng,
   gameDay,
@@ -28,6 +27,7 @@ import { getDaily } from '../counter/dailyCounter';
 import { manualStock } from './manual';
 import type { WorldService } from '../world/service';
 import { manualCost, personLimit, rollShelf, unitPrice, type Shelf } from './rules';
+import { gameSeed } from '../../core/seed';
 
 const deviceSubject = (id: string) => `dev:${createHash('sha256').update(id).digest('hex').slice(0, 16)}`;
 
@@ -410,7 +410,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       log?: Log,
     ): Promise<{ foods: number[]; guesses: number }> {
       const { tuning } = await d.shards.settings(shardId);
-      const rng = seededRng(hashSeed(shardId, 'market', shelf, slot.key));
+      const rng = seededRng(gameSeed(shardId, 'market', shelf, slot.key));
       const items = rollShelf(shelf, slot.hour, d.config, tuning.market, rng);
       await d.db.transaction().execute(async (tx) => {
         await tx

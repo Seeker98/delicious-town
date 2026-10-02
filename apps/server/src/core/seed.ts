@@ -1,0 +1,16 @@
+import { hashSeed } from '@dt/shared';
+
+let secret = '';
+
+/** 启动时设置服务器私有的种子密钥（环境变量 RNG_SECRET）；没配置时为空，结果和公开的 hashSeed 相同（开发、测试） */
+export function setSeedSecret(s: string): void {
+  secret = s;
+}
+
+/**
+ * 业务用的确定性随机种子：混入服务器密钥。仓库是公开的，不混密钥时任何人都能按源码算出
+ * 未来的天气、蟹老板的街、菜场上什么货、营业结算的随机数（菜场竞猜、事件合约会被白拿）
+ */
+export function gameSeed(...parts: Array<string | number>): number {
+  return secret ? hashSeed(secret, ...parts) : hashSeed(...parts);
+}
