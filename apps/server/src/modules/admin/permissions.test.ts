@@ -298,7 +298,34 @@ const CASES: Case[] = [
     body: () => ({ shardId: ids.shardId, version: 0 }),
     min: 'admin',
   },
-  ...(['bar', 'surge', 'multi', 'redeem'] as const).map((k) => ({
+  {
+    method: 'GET',
+    route: '/api/v1/admin/exchange/frozen',
+    url: () => `/api/v1/admin/exchange/frozen?shardId=${ids.shardId}`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/exchange/freeze',
+    url: () => '/api/v1/admin/exchange/freeze',
+    body: () => ({ restId: ids.restId, reason: '权限测试' }),
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/exchange/unfreeze',
+    url: () => '/api/v1/admin/exchange/unfreeze',
+    body: () => ({ restId: ids.restId }),
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/exchange/confiscate',
+    url: () => '/api/v1/admin/exchange/confiscate',
+    body: () => ({ restId: ids.restId }),
+    min: 'admin',
+  },
+  ...(['bar', 'surge', 'multi', 'redeem', 'exchange'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,
     url: () => `/api/v1/admin/suspicious/${k}?shardId=${ids.shardId}`,

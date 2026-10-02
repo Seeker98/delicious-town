@@ -377,6 +377,22 @@ export function createExchangeService(d: GameDeps) {
   }
 
   async function withdraw(o: Op): Promise<ExchangeWithdrawDto> {
+    const frozen = await frozenReason(o.tx, o.rest.id);
+    if (frozen !== null) throw invalidState('exchange_frozen', { why: frozen });
+    // 冷静期到了的冻结记录先转进可用余额（156-2 设计 §5）
+    const due = await o.tx
+      .updateTable('exchange_hold')
+      .set({ status: 'released' })
+      .where('rest_id', '=', o.rest.id)
+      .where('status', '=', 'held')
+      .where('release_at', '<=', o.now)
+      .returning(['coin', 'foods_id', 'num'])
+      .execute();
+    if (due.length > 0) {
+      const c = newCredits();
+      for (const h of due) addCredit(c, o.rest.id, Number(h.coin), h.foods_id ?? undefined, h.num);
+      await creditWallets(o.tx, c);
+    }
     const w = await o.tx
       .selectFrom('exchange_wallet')
       .select('coin')
@@ -552,6 +568,24 @@ export function createExchangeService(d: GameDeps) {
         };
       }),
       feeRate: t.feeRate,
+      holds: (
+        await d.db
+          .selectFrom('exchange_hold')
+          .select(['coin', 'foods_id', 'num', 'release_at'])
+          .where('rest_id', '=', ctx.restaurantId)
+          .where('status', '=', 'held')
+          .orderBy('release_at')
+          .execute()
+      ).map((h) => ({
+        coin: Number(h.coin),
+        foodsId: h.foods_id,
+        num: h.num,
+        releaseAt: h.release_at.toISOString(),
+      })),
+      frozen: await (async () => {
+        const r = await frozenReason(d.db, ctx.restaurantId);
+        return r === null ? null : { reason: r };
+      })(),
     };
   }
 
