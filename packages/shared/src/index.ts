@@ -41,3 +41,5 @@ export * from './boost';
 export * from './activity';
 export * from './schemas/activity';
 export * from './schemas/exchange';
+export * from './predict';
+export * from './schemas/predict';
