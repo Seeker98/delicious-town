@@ -2,6 +2,7 @@ import { addDays, gameTime, seededRng, slotKey } from '@dt/shared';
 import { gameSeed } from '../../../core/seed';
 import { featureAvailable } from '../../../core/features';
 import { rollKrabStreet } from '../../world/rules';
+import { dayLabel } from './odds';
 import type { AutoKind } from './types';
 
 const SPAN = 6;
@@ -32,7 +33,7 @@ export const krab: AutoKind = {
     const street = rollKrabStreet(w, seededRng(gameSeed(c.shardId, 'krab', slotKey(day, w.krabHour))));
     return {
       outcome: street >= Number(p.from) && street <= Number(p.to),
-      note: `明天 ${w.krabHour} 点蟹老板刷新在 ${street} 号街`,
+      note: `${dayLabel(day)} ${w.krabHour} 点蟹老板刷新在 ${street} 号街`,
     };
   },
 };

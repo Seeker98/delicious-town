@@ -3,7 +3,7 @@ import { gameTime, seededRng, slotKey } from '@dt/shared';
 import { gameSeed } from '../../../core/seed';
 import { featureAvailable } from '../../../core/features';
 import { rollWeather } from '../../world/rules';
-import { WEATHER_TYPE_NAMES, weatherTypeShares } from './odds';
+import { dayLabel, WEATHER_TYPE_NAMES, weatherTypeShares } from './odds';
 import type { AutoKind } from './types';
 
 const SLOT_MS = 2 * 3_600_000;
@@ -45,8 +45,8 @@ export const weather: AutoKind = {
       seededRng(gameSeed(c.shardId, 'weather', period)),
     );
     const typeName = WEATHER_TYPE_NAMES[auto.type] ?? String(auto.type);
-    let note = `${hour} 点自动轮换的天气是${auto.name}（${typeName}类）`;
     const day = period.split('@')[0]!;
+    let note = `${dayLabel(day)} ${hour} 点自动轮换的天气是${auto.name}（${typeName}类）`;
     const start = gameTime(day, hour);
     const hammer = await c.d.db
       .selectFrom('news')

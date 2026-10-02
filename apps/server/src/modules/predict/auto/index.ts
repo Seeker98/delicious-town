@@ -12,12 +12,16 @@ import { weather } from './weather';
 const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, hiphop, market, weather, stats };
 const GIVE_UP_MS = 24 * 3_600_000;
 
+type Log = { error(obj: object, msg: string): void };
+const noLog: Log = { error: () => undefined };
+
 /** 出当天的自动题（238-2 设计 §5.2）：每类一题，auto_key 唯一，重跑不重复 */
 export async function createAutoEvents(
   d: GameDeps,
   shardId: number,
   now: Date,
   rng: Rng = d.rng(),
+  log: Log = noLog,
 ): Promise<{ created: string[] }> {
   const settings = await d.shards.settings(shardId);
   const t = settings.tuning.predict;
@@ -40,7 +44,14 @@ export async function createAutoEvents(
       .where('auto_key', '=', autoKey)
       .executeTakeFirst();
     if (exists) continue;
-    const dr = await k.create({ d, shardId, settings, now, day, rng });
+    // 一类出错不影响其他类（终审 I2）：周期任务认领后不重跑，出错的这一类当天就不出了
+    let dr: Awaited<ReturnType<AutoKind['create']>>;
+    try {
+      dr = await k.create({ d, shardId, settings, now, day, rng });
+    } catch (err) {
+      log.error({ err, shardId, kind: k.kind }, 'predict auto create failed');
+      continue;
+    }
     if (!dr || dr.closeAt <= now) continue;
     const s = initialShares(dr.p0, t.auto.b);
     const r = await d.db
@@ -75,6 +86,7 @@ export async function resolveAutoEvents(
   d: GameDeps,
   shardId: number,
   now: Date,
+  log: Log = noLog,
 ): Promise<{ resolved: number; voided: number }> {
   const due = await d.db
     .selectFrom('predict_event')
@@ -92,7 +104,13 @@ export async function resolveAutoEvents(
   for (const e of due) {
     const k = KINDS[e.kind as AutoKind['kind']];
     if (!k) continue;
-    const r = await k.resolve({ d, shardId, settings }, e.params);
+    // 判定出错按"还判不了"处理（终审 I2）：不挡住后面的事件，过了 24 小时照样作废
+    let r: Awaited<ReturnType<AutoKind['resolve']>> = null;
+    try {
+      r = await k.resolve({ d, shardId, settings }, e.params);
+    } catch (err) {
+      log.error({ err, shardId, eventId: e.id, kind: e.kind }, 'predict auto resolve failed');
+    }
     if (r) {
       const done = await d.db
         .transaction()

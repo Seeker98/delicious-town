@@ -104,13 +104,13 @@ export function predictJobs(d: GameDeps): PeriodicJob[] {
       name: 'predict-auto-create',
       feature: 'predict',
       period: (now) => gameDay(now),
-      run: ({ shardId, now }) => createAutoEvents(d, shardId, now),
+      run: ({ shardId, now, log }) => createAutoEvents(d, shardId, now, d.rng(), log),
     },
     {
       name: 'predict-auto-resolve',
       feature: 'restaurant',
       period: minute,
-      run: ({ shardId, now }) => resolveAutoEvents(d, shardId, now),
+      run: ({ shardId, now, log }) => resolveAutoEvents(d, shardId, now, log),
     },
   ];
 }

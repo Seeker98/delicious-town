@@ -1,8 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { gameTime, seededRng } from '@dt/shared';
 import { createShard } from '../../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../../test/game';
 import { createAutoEvents, resolveAutoEvents } from './index';
+import { market } from './market';
+
+afterEach(() => vi.restoreAllMocks());
+const log = { error: vi.fn() };
 
 let t: TestGame;
 beforeAll(async () => {
@@ -67,7 +71,7 @@ describe('判定任务（238-2 设计 §5.3）', () => {
     expect(res.resolved).toBeGreaterThanOrEqual(1);
     const after = (await events(shardId)).find((r) => r.id === stats.id)!;
     expect(after).toMatchObject({ status: 'resolved', outcome: false });
-    expect(after.result_note).toBe('今天 0，昨天 0');
+    expect(after.result_note).toBe('11月3日 0，11月2日 0');
   });
 
   it('已手动判定或作废的不覆盖（Review Focus 2）', async () => {
@@ -93,5 +97,36 @@ describe('判定任务（238-2 设计 §5.3）', () => {
     expect(res.voided).toBeGreaterThanOrEqual(1);
     const after = (await events(shardId)).find((r) => r.id === m.id)!;
     expect(after).toMatchObject({ status: 'void', result_note: '数据缺失，自动作废', void_ratio: 1 });
+  });
+});
+
+describe('出错隔离（终审 I2）', () => {
+  it('某一类出题报错：记日志，其他类照常出', async () => {
+    const shardId = await createShard(t.db);
+    vi.spyOn(market, 'create').mockRejectedValue(new Error('boom'));
+    const r = await createAutoEvents(t.game.deps, shardId, at0, seededRng(1), log);
+    expect(r.created.sort()).toEqual(['krab', 'stats', 'weather']);
+    expect(log.error).toHaveBeenCalled();
+  });
+
+  it('某个事件判定一直报错：不挡住后面的事件；过了 24 小时照样自动作废', async () => {
+    const shardId = await createShard(t.db);
+    await createAutoEvents(t.game.deps, shardId, at0, seededRng(1));
+    const all = await events(shardId);
+    const m = all.find((r) => r.kind === 'market')!;
+    const s = all.find((r) => r.kind === 'stats')!;
+    vi.spyOn(market, 'resolve').mockRejectedValue(new Error('boom'));
+    const later = new Date(Math.max(m.resolve_at!.getTime(), s.resolve_at!.getTime()));
+    const r1 = await resolveAutoEvents(t.game.deps, shardId, later, log);
+    expect(r1.resolved).toBeGreaterThanOrEqual(1);
+    expect((await events(shardId)).find((r) => r.id === s.id)!.status).toBe('resolved');
+    const r2 = await resolveAutoEvents(
+      t.game.deps,
+      shardId,
+      new Date(m.resolve_at!.getTime() + 24 * 3_600_000),
+      log,
+    );
+    expect(r2.voided).toBeGreaterThanOrEqual(1);
+    expect((await events(shardId)).find((r) => r.id === m.id)!.status).toBe('void');
   });
 });

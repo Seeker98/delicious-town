@@ -56,7 +56,8 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
     for (const from of [1, 5, 8]) {
       const r = (await krab.resolve(await rctx(shardId), { day: tomorrow, from, to: from + 5 }))!;
       expect(r.outcome).toBe(street >= from && street <= from + 5);
-      expect(r.note).toBe(`明天 9 点蟹老板刷新在 ${street} 号街`);
+      // 判定依据写具体日期：事后看"明天"会让人糊涂（终审 M4）
+      expect(r.note).toBe(`11月4日 9 点蟹老板刷新在 ${street} 号街`);
     }
   });
 });
@@ -85,7 +86,7 @@ describe('嘻哈男孩（238-2 设计 §4.2）', () => {
       .execute();
     const r = (await hiphop.resolve(await rctx(shardId), dr.params))!;
     expect(r.outcome).toBe(false);
-    expect(r.note).toMatch(/^明天嘻哈男孩出现在/);
+    expect(r.note).toMatch(/^11月4日嘻哈男孩出现在/);
   });
 });
 
@@ -126,10 +127,10 @@ describe('菜场（238-2 设计 §4.3）', () => {
       .values([row(common1.id, null), row(rare2.id, owner.restaurantId)])
       .execute();
     const no = (await market.resolve(await rctx(shardId), params))!;
-    expect(no).toEqual({ outcome: false, note: '12 点日常货架没有 2 级稀有食材' });
+    expect(no).toEqual({ outcome: false, note: '11月3日 12 点日常货架没有 2 级稀有食材' });
     await t.db.insertInto('market_item').values(row(rare2.id, null)).execute();
     const yes = (await market.resolve(await rctx(shardId), params))!;
-    expect(yes).toEqual({ outcome: true, note: `12 点日常货架上了 2 级稀有食材：${rare2.name}` });
+    expect(yes).toEqual({ outcome: true, note: `11月3日 12 点日常货架上了 2 级稀有食材：${rare2.name}` });
   });
 });
 
@@ -155,7 +156,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     const r = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r.outcome).toBe(true);
     expect(r.note).toBe(
-      `${hour} 点自动轮换的天气是${auto.name}（${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类）`,
+      `11月3日 ${hour} 点自动轮换的天气是${auto.name}（${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类）`,
     );
     const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== auto.type)!;
     await t.db
@@ -174,14 +175,22 @@ describe('天气（238-2 设计 §4.4）', () => {
 });
 
 describe('全服数据（238-2 设计 §4.5）', () => {
-  it('出题：营业银币和活跃店数隔天轮换，概率 50%，当天 18 点截止，明天 0:10 判定', async () => {
+  it('出题：只问营业银币（活跃店数太容易被小号刷，终审 I1），概率 50%，当天 18 点截止，明天 0:10 判定', async () => {
     const shardId = await createShard(t.db);
-    const dr = (await stats.create(await ctx(shardId)))!;
-    expect(dr.p0).toBe(0.5);
-    expect(dr.closeAt).toEqual(gameTime(DAY, 18));
-    expect(dr.resolveAt).toEqual(gameTime(addDays(DAY, 1), 0, 10));
-    const odd = Number(DAY.slice(8)) % 2 === 1;
-    expect(dr.title).toBe(odd ? '今天全服营业银币会超过昨天吗' : '今天全服活跃店数会超过昨天吗');
+    for (const day of [DAY, addDays(DAY, 1)]) {
+      const dr = (await stats.create({ ...(await ctx(shardId)), day, now: gameTime(day, 0, 5) }))!;
+      expect(dr.title).toBe('今天全服营业银币会超过昨天吗');
+      expect(dr.params).toEqual({ day, metric: 'coin' });
+      expect(dr.p0).toBe(0.5);
+      expect(dr.closeAt).toEqual(gameTime(day, 18));
+      expect(dr.resolveAt).toEqual(gameTime(addDays(day, 1), 0, 10));
+    }
+  });
+
+  it('出题任务过了早上 6 点才跑的那天不出这题（大半天的数据已经能看出趋势，终审 I1）', async () => {
+    const shardId = await createShard(t.db);
+    expect(await stats.create({ ...(await ctx(shardId)), now: gameTime(DAY, 6, 1) })).toBeNull();
+    expect(await stats.create({ ...(await ctx(shardId)), now: gameTime(DAY, 5, 59) })).not.toBeNull();
   });
 
   it('判定：今天严格大于昨天才算"是"', async () => {
@@ -205,7 +214,7 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     await income(addDays(DAY, -1), 1000);
     await income(DAY, 1000);
     const tie = (await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!;
-    expect(tie).toEqual({ outcome: false, note: '今天 1,000，昨天 1,000' });
+    expect(tie).toEqual({ outcome: false, note: '11月3日 1,000，11月2日 1,000' });
     await income(DAY, 1);
     expect((await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!.outcome).toBe(true);
   });

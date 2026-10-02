@@ -1,6 +1,6 @@
 import { addDays, gameTime, HIPHOP_PLACE_NAMES, type HiphopPlace } from '@dt/shared';
 import { featureAvailable } from '../../../core/features';
-import { clampP } from './odds';
+import { clampP, dayLabel } from './odds';
 import type { AutoKind } from './types';
 
 const placeName = (p: number) => HIPHOP_PLACE_NAMES[p as HiphopPlace] ?? `地点 ${p}`;
@@ -41,6 +41,9 @@ export const hiphop: AutoKind = {
       .where('day', '=', String(p.day))
       .executeTakeFirst();
     if (!row) return null;
-    return { outcome: row.place === Number(p.place), note: `明天嘻哈男孩出现在${placeName(row.place)}` };
+    return {
+      outcome: row.place === Number(p.place),
+      note: `${dayLabel(String(p.day))}嘻哈男孩出现在${placeName(row.place)}`,
+    };
   },
 };

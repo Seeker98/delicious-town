@@ -41,3 +41,8 @@ export function weatherTypeShares(config: GameConfig, w: Tuning['world'], hour: 
   });
   return out;
 }
+
+/** 判定依据里的日期：写成"11月4日"，事后看不会和"明天"混淆（238-2 终审 M4） */
+export function dayLabel(day: string): string {
+  return `${Number(day.slice(5, 7))}月${Number(day.slice(8, 10))}日`;
+}

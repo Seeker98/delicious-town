@@ -1,6 +1,6 @@
 import { gameTime, seededRng, slotKey } from '@dt/shared';
 import { featureAvailable } from '../../../core/features';
-import { clampP, marketRareChance } from './odds';
+import { clampP, dayLabel, marketRareChance } from './odds';
 import type { AutoKind } from './types';
 
 const SIMS = 2000;
@@ -47,11 +47,12 @@ export const market: AutoKind = {
       .map((r) => c.d.config.requireFood(r.foods_id))
       .filter((f) => f.level === level && f.odds < 100);
     const hour = Number(p.hour);
+    const when = `${dayLabel(String(p.period).split('@')[0]!)} ${hour} 点`;
     return rare.length > 0
       ? {
           outcome: true,
-          note: `${hour} 点日常货架上了 ${level} 级稀有食材：${rare.map((f) => f.name).join('、')}`,
+          note: `${when}日常货架上了 ${level} 级稀有食材：${rare.map((f) => f.name).join('、')}`,
         }
-      : { outcome: false, note: `${hour} 点日常货架没有 ${level} 级稀有食材` };
+      : { outcome: false, note: `${when}日常货架没有 ${level} 级稀有食材` };
   },
 };
