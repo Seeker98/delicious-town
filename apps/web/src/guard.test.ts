@@ -10,6 +10,7 @@ const me = (patch: Partial<MeDto> = {}): MeDto => ({
   role: 'player',
   shardId: null,
   restaurantId: null,
+  lang: null,
   ...patch,
 });
 

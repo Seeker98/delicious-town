@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia';
 import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto, CatalogMcDto, LooksDto } from '@dt/shared';
+import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { activeLocale } from '../i18n';
 import { setNameResolver } from '../i18n/zh-CN';
 
-const KEY = 'dt_catalog';
+/** 浏览器缓存按语言分开（问题记录 272） */
+const keyOf = (l: string) => `dt_catalog_${l}`;
 
 export const useCatalogStore = defineStore('catalog', {
   state: () => ({
@@ -38,17 +41,24 @@ export const useCatalogStore = defineStore('catalog', {
     /** 目录按配置版本缓存在浏览器里（只是加速；读不到时直接请求） */
     async load() {
       if (this.loaded) return;
+      const l = activeLocale();
       try {
-        const cached = localStorage.getItem(KEY);
+        const cached = localStorage.getItem(keyOf(l));
         if (cached) this.apply(JSON.parse(cached) as CatalogDto);
       } catch {
         // 存储不可用时忽略
       }
-      const fresh = await endpoints.catalog();
+      await this.reload(l);
+    },
+    /** 按语言重新读目录（切换语言时调用，问题记录 272） */
+    async reload(l: Locale = activeLocale()): Promise<void> {
+      const fresh = await endpoints.catalog(l);
+      // 读的过程中又切了语言：丢掉过时的结果，按新语言重读（首次读目录时 set() 不会替我们重读）
+      if (l !== activeLocale()) return this.reload(activeLocale());
       this.apply(fresh);
       this.fetchedAt = Date.now();
       try {
-        localStorage.setItem(KEY, JSON.stringify(fresh));
+        localStorage.setItem(keyOf(l), JSON.stringify(fresh));
       } catch {
         // 忽略
       }
@@ -62,13 +72,7 @@ export const useCatalogStore = defineStore('catalog', {
       if (Date.now() - this.fetchedAt < 60_000) return;
       this.fetchedAt = Date.now();
       try {
-        const fresh = await endpoints.catalog();
-        this.apply(fresh);
-        try {
-          localStorage.setItem(KEY, JSON.stringify(fresh));
-        } catch {
-          // 忽略
-        }
+        await this.reload();
       } catch {
         // 读不到就沿用旧目录，名字显示成"道具 id"
       }

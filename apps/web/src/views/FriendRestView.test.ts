@@ -72,6 +72,7 @@ describe('FriendRestView', () => {
       role: 'player',
       shardId: 1,
       restaurantId: 1,
+      lang: null,
     };
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
     vi.mocked(endpoints.dineStart).mockResolvedValue({});

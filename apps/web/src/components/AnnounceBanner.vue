@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { AnnouncementDto } from '@dt/shared';
+import { useT } from '../composables/useT';
 
 /** 公告横幅（子项目 6A）：显示最新一条的标题，点开看全部；没有公告时不渲染 */
 defineProps<{ items: AnnouncementDto[] }>();
 const open = ref(false);
+const t = useT();
 </script>
 
 <template>
@@ -18,7 +20,7 @@ const open = ref(false);
     >
       <i class="bi bi-megaphone text-primary"></i>
       <span class="flex-fill">{{ items[0]!.title }}</span>
-      <span v-if="items.length > 1" class="dt-meta">等 {{ items.length }} 条</span>
+      <span v-if="items.length > 1" class="dt-meta">{{ t.nav.announceMore(items.length) }}</span>
       <i :class="['bi', open ? 'bi-chevron-up' : 'bi-chevron-down']"></i>
     </button>
     <div v-if="open" class="mt-2">

@@ -44,3 +44,4 @@ export * from './schemas/exchange';
 export * from './predict';
 export * from './schemas/predict';
 export * from './schemas/kuji';
+export * from './locale';

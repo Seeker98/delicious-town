@@ -30,6 +30,7 @@ describe('RankPanel', () => {
       role: 'player',
       shardId: 1,
       restaurantId: 1,
+      lang: null,
     };
     vi.mocked(endpoints.rankOccupy).mockResolvedValue({ rank: 15 });
     vi.mocked(endpoints.rankChallenge).mockResolvedValue(duelResult({ renown: 2, rank: 10 }));

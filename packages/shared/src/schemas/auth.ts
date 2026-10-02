@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { localeSchema, type Locale } from '../locale';
 
 export const USERNAME_RE = /^[A-Za-z0-9_\-一-龥]{2,9}$/;
 
@@ -18,6 +19,8 @@ export const registerBody = z.object({
   email,
   inviteCode: z.string().trim().max(16).optional(),
   captchaToken,
+  /** 注册时的界面语言（问题记录 272） */
+  lang: localeSchema.optional(),
 });
 export const loginBody = z.object({
   username: z.string().min(1).max(32),
@@ -42,7 +45,12 @@ export interface MeDto {
   role: AccountRole;
   shardId: number | null;
   restaurantId: number | null;
+  /** 账号语言（问题记录 272）；null 表示还没选过 */
+  lang: Locale | null;
 }
+
+/** 设置账号语言（问题记录 272） */
+export const setLangBody = z.object({ lang: localeSchema });
 
 /** 登录后改密码（问题记录 178） */
 export const changePasswordBody = z.object({ oldPassword: z.string().min(1).max(64), newPassword: password });

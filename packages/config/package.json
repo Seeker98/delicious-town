@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@dt/shared": "workspace:*",
+    "opencc-js": "^1.4.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {

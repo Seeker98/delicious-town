@@ -1,3 +1,4 @@
+import { buildI18n } from './i18n';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
@@ -910,7 +911,15 @@ export function buildBundle(src: SourceData): BuildResult {
 
   if (errors.length > 0) return { bundle: null, errors };
 
+  const i18n = buildI18n(
+    { goods, foods, weather, streets, devices, suits, mysterious: mysteriousCookbooks },
+    src,
+    errors,
+  );
+  if (errors.length > 0) return { bundle: null, errors };
+
   const body: Omit<ConfigBundle, 'version'> = {
+    i18n,
     foods,
     goods,
     cookbooks,

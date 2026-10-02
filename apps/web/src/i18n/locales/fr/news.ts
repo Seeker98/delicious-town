@@ -1,0 +1,110 @@
+import { SHARED_GOODS } from '@dt/shared';
+import type { Messages } from '../..';
+import { formatNum } from '../../../utils/format';
+import { list, num, str, type P } from '../../helpers';
+
+const WEEKLY: Record<string, string> = {
+  'flip.caught': 'pris en fouillant les garde-mangers',
+  'flip.flipped': 'garde-mangers fouillés',
+  'roach.kill': 'cafards écrasés',
+};
+const rank = (k: number) => (k === 1 ? '1er' : `${k}e`);
+
+function predictResult(p: P): string {
+  const head = `Prédiction « ${str(p.title)} »`;
+  if (p.outcome === null || p.outcome === undefined) {
+    return `${head} annulée. Les participants ont été remboursés à ${Math.round(num(p.voidRatio) * 100)} % de leur mise nette`;
+  }
+  const result = `${head} : résultat ${p.outcome ? 'Oui' : 'Non'}`;
+  const players = num(p.players);
+  if (players === 0) return result;
+  const winners = num(p.winners);
+  return winners === 0
+    ? `${result}. ${players} restaurants ont participé, personne n'a deviné juste`
+    : `${result}. ${players} restaurants ont participé, ${winners} ont deviné juste, ${formatNum(num(p.paid))} pièces versées`;
+}
+
+const news: Messages['news'] = {
+  render: {
+    'bar.cup': (w, p) => `${w} a trouvé le bon gobelet ${num(p.times)} fois de suite au bar`,
+    'bar.fg': (w, p) => `${w} a gagné ${num(p.times)} manches de pierre-feuille-ciseaux d'affilée au bar`,
+    'bar.num': (w) => `${w} a touché le bon numéro à la roue du bar`,
+    'bar.slot': (w, p, x) =>
+      `${w} a gagné ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)} à la machine à sous du bar`,
+    'bar.devil': (w, p) =>
+      `${w} a bu trois Piments du Diable sans broncher et a gagné ${num(p.payout)} bons mystère`,
+    'bar.memory': (w) => `${w} a retenu les 7 ingrédients du Cocktail Mémoire`,
+    'bar.darts': (w) => `${w} a mis trois fléchettes dans le mille et a bluffé le patron du bar`,
+    'equip.stress': (w, p, x) => `${w} a renforcé ${x.goodsName(num(p.goodsId))} à +${num(p.stress)}`,
+    'friend.weekly': (w, p, x) =>
+      `${w} a fini ${rank(num(p.rank))} la semaine dernière (${WEEKLY[str(p.key)] ?? 'classement'}) et gagne ${x.goodsName(num(p.goodsId))}`,
+    'gem.broken': (w, p, x) =>
+      `${w} a raté l'amélioration d'une gemme et a brisé ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+    'gem.levelUp': (w, p, x) =>
+      `${w} a obtenu ${x.goodsName(num(p.goodsId))}×${num(p.num)} en améliorant une gemme`,
+    'forum.pin': (w, p) => `Le message « ${str(p.title)} » de ${w} a été épinglé`,
+    'forum.feature': (w, p) => `Le message « ${str(p.title)} » de ${w} a été mis en avant`,
+    'hiphop.event': (w) => `${w} a lancé un événement hip-hop !`,
+    'hiphop.krab': (w, p, x) =>
+      `${w} a obtenu ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)} en donnant des pourboires`,
+    'hiphop.weekly': (w, p, x) =>
+      `Bravo à ${w}, ${rank(num(p.rank))} du classement hebdomadaire des pourboires, qui gagne ${x.goodsName(num(p.goodsId))} (160 heures)`,
+    'market.manual': (w, p, x) =>
+      `${w} s'est réapprovisionné en plats du jour : ${list(p.foods)
+        .map((id) => x.foodName(num(id)))
+        .join(', ')}`,
+    'market.restock': (_w, p, x) =>
+      `Le marché s'est réapprovisionné : ${list(p.foods)
+        .map((id) => x.foodName(num(id)))
+        .join(', ')}`,
+    'mc.champion': (w, p) =>
+      `${w} avait hier le plat signature le plus précieux (${formatNum(num(p.value))})`,
+    'mc.cook': (w, p, x) => `${w} a cuisiné ${x.mcName(num(p.mcId))}×${num(p.num)}`,
+    'oil.expand': (w, p) => `${w} a agrandi son bidon d'huile au niveau ${num(p.level)}`,
+    'plankton.appear': (w) => `Plancton s'est installé chez ${w} et refuse de partir`,
+    'plankton.driven': (w) => `${w} a chassé Plancton`,
+    'rest.move': (w, p, x) => `${w} a déménagé à ${x.streetName(num(p.to))}`,
+    'rest.rename': (_w, p) => `${str(p.from)} s'appelle désormais ${str(p.to)}`,
+    'restaurant.open': (w) => `${w} a ouvert ses portes`,
+    'shop.special': (_w, p, x) => `Promotion du jour à la boutique : ${x.goodsName(num(p.goodsId))}`,
+    'star.up': (w, p) => `${w} a atteint ${num(p.star)} étoiles`,
+    'takeaway.customer': (w, p, x) => `${w} a croisé ${x.goodsName(num(p.goodsId))} en livrant à emporter`,
+    'temple.explore.rare': (w, p, x) =>
+      `${w} a trouvé ${list(p.foods)
+        .map((f) => `${x.foodName(num((f as P).foodsId))}×${num((f as P).num)}`)
+        .join(', ')} en explorant le temple`,
+    'temple.guardian.rare': (w, p, x) =>
+      `${w} a vaincu la bête gardienne et obtenu ${x.foodName(num(p.foodsId))}`,
+    'activity.coopRank': (_w, p) =>
+      `Classement des contributions de « ${str(p.title)} » : ${list(p.top)
+        .map(
+          (r) => `${rank(num((r as P).rank))} ${str((r as P).name)} (${formatNum(num((r as P).points))} pts)`,
+        )
+        .join(', ')}`,
+    'tower.rank.week': (_w, p) =>
+      `Classement hebdomadaire de la Tour des chefs : ${list(p.top)
+        .map((r) => `${rank(num((r as P).rank))} ${str((r as P).name)}`)
+        .join(', ')}`,
+    'tower.shop.rare': (w, p, x) =>
+      `${w} a échangé ${x.goodsName(num(p.goodsId))} à la boutique de la Tour des chefs`,
+    'weather.change': (w, p, x) =>
+      p.by !== undefined
+        ? `${w} a utilisé le marteau de Thor : ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`
+        : `Le temps change : ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`,
+    'town.broadcast': (w, p) => `${w} : ${str(p.text)}`,
+    'town.bless': (w, p) => `${w} a fait un vœu et reçu : ${str(p.blessName) || str(p.name)}`,
+    'town.shake.lucky': (w, p, x) =>
+      `Bravo ! ${w} a plongé la main dans la poche de M. Krab et en a sorti ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+    'kuji.big': (w, p) =>
+      p.tier === 'last'
+        ? `${w} a tiré le dernier ticket de l'Ichiban Kuji et remporte le Dernier Prix !`
+        : `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji !`,
+    'kuji.win': (w, p) => `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji`,
+    'town.exchange': (w, p, x) =>
+      `${w} a échangé ${x.goodsName(num(p.goodsId))}×${num(p.num)} auprès du maire`,
+    'predict.result': (_w, p) => predictResult(p),
+  },
+  unknown: "Il s'est passé quelque chose en ville",
+  someone: 'Un restaurant',
+};
+export default news;

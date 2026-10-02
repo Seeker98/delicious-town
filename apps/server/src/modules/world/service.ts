@@ -1,6 +1,6 @@
 import type { Kysely } from 'kysely';
-import type { Weather } from '@dt/config';
-import { gameParts, seededRng, type CatalogDto, type Slot, type WorldDto } from '@dt/shared';
+import type { I18nEntry, I18nTable, Weather } from '@dt/config';
+import { gameParts, seededRng, type CatalogDto, type Locale, type Slot, type WorldDto } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { DB } from '../../db/schema';
 import { postNews } from '../news/news';
@@ -18,6 +18,7 @@ const WEATHER_MS = 2 * 3600_000;
 
 export function createWorldService(d: GameDeps) {
   let catalog: CatalogDto | null = null;
+  const localized = new Map<Locale, CatalogDto>();
 
   function weatherOf(id: number): Weather {
     const w = d.config.weather.get(id);
@@ -131,68 +132,99 @@ export function createWorldService(d: GameDeps) {
       };
     },
 
-    catalog(): CatalogDto {
-      catalog ??= {
-        version: d.config.version,
-        goods: d.config.bundle.goods.map((g) => ({
-          id: g.id,
-          name: g.name,
-          type: g.type,
-          deviceType: g.deviceType,
-          level: g.level,
-          desc: g.desc,
-          coin: g.coin,
-          diamond: g.diamond,
-          stackable: g.stackable,
-          ...(g.equip
-            ? {
-                equip: {
-                  part: g.equip.part,
-                  minLevel: g.equip.minLevel,
-                  suitId: g.equip.suitId,
-                  essence: g.equip.essence,
-                  maxHole: g.equip.maxHole,
-                },
-              }
-            : {}),
-          ...(g.gem ? { gem: { level: g.gem.level, nextId: g.gem.nextId } } : {}),
-        })),
-        foods: d.config.bundle.foods.map((f) => ({
-          id: f.id,
-          name: f.name,
-          level: f.level,
-          odds: f.odds,
-          coin: f.coin,
-          type: f.type,
-        })),
-        streets: d.config.bundle.streets.map((s) => ({ id: s.id, name: s.name, cookName: s.cookName })),
-        weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name })),
-        devices: d.config.bundle.devices.map((x) => ({
-          id: x.id,
-          name: x.name,
-          deviceType: x.deviceType,
-          needStar: x.needStar,
-        })),
-        looks: d.config.bundle.looks,
-        suits: d.config.bundle.suits.map((s) => ({
-          id: s.id,
-          name: s.name,
-          maxNum: s.maxNum,
-          tiers: s.tiers.map((x) => ({ need: x.need, desc: x.desc })),
-        })),
-        mysterious: d.config.bundle.mysteriousCookbooks.map((m) => ({
-          id: m.id,
-          name: m.name,
-          level: m.level,
-          road: m.road,
-          nutritive: m.nutritive,
-          coin: m.coin,
-          foods: m.foods,
-        })),
-        seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
-      };
-      return catalog;
+    /** 道具目录：按语言缓存（问题记录 272）；没翻译的回退到简中 */
+    catalog(lang: Locale = 'zh-CN'): CatalogDto {
+      const base = baseCatalog();
+      if (lang === 'zh-CN') return base;
+      let c = localized.get(lang);
+      if (!c) localized.set(lang, (c = localizeCatalog(base, d.config.bundle.i18n[lang], lang)));
+      return c;
     },
+  };
+
+  function baseCatalog(): CatalogDto {
+    catalog ??= {
+      version: d.config.version,
+      goods: d.config.bundle.goods.map((g) => ({
+        id: g.id,
+        name: g.name,
+        type: g.type,
+        deviceType: g.deviceType,
+        level: g.level,
+        desc: g.desc,
+        coin: g.coin,
+        diamond: g.diamond,
+        stackable: g.stackable,
+        ...(g.equip
+          ? {
+              equip: {
+                part: g.equip.part,
+                minLevel: g.equip.minLevel,
+                suitId: g.equip.suitId,
+                essence: g.equip.essence,
+                maxHole: g.equip.maxHole,
+              },
+            }
+          : {}),
+        ...(g.gem ? { gem: { level: g.gem.level, nextId: g.gem.nextId } } : {}),
+      })),
+      foods: d.config.bundle.foods.map((f) => ({
+        id: f.id,
+        name: f.name,
+        level: f.level,
+        odds: f.odds,
+        coin: f.coin,
+        type: f.type,
+      })),
+      streets: d.config.bundle.streets.map((s) => ({ id: s.id, name: s.name, cookName: s.cookName })),
+      weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name })),
+      devices: d.config.bundle.devices.map((x) => ({
+        id: x.id,
+        name: x.name,
+        deviceType: x.deviceType,
+        needStar: x.needStar,
+      })),
+      looks: d.config.bundle.looks,
+      suits: d.config.bundle.suits.map((s) => ({
+        id: s.id,
+        name: s.name,
+        maxNum: s.maxNum,
+        tiers: s.tiers.map((x) => ({ need: x.need, desc: x.desc })),
+      })),
+      mysterious: d.config.bundle.mysteriousCookbooks.map((m) => ({
+        id: m.id,
+        name: m.name,
+        level: m.level,
+        road: m.road,
+        nutritive: m.nutritive,
+        coin: m.coin,
+        foods: m.foods,
+      })),
+      seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
+    };
+    return catalog;
+  }
+}
+
+/** 按翻译表替换名字和说明（问题记录 272）：只换有翻译的字段，不改原对象；版本带语言后缀，前端缓存分开 */
+export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang: Locale): CatalogDto {
+  if (lang === 'zh-CN' || !t)
+    return lang === 'zh-CN' ? base : { ...base, version: `${base.version}:${lang}` };
+  const pick = <T extends { id: number }>(list: T[], table: Record<string, I18nEntry>): T[] =>
+    list.map((x) => {
+      const e = table[String(x.id)];
+      return e ? { ...x, ...e } : x;
+    });
+  return {
+    ...base,
+    version: `${base.version}:${lang}`,
+    goods: pick(base.goods, t.goods),
+    foods: pick(base.foods, t.foods),
+    weather: pick(base.weather, t.weather),
+    streets: pick(base.streets, t.streets),
+    devices: pick(base.devices, t.devices),
+    ...(base.suits ? { suits: pick(base.suits, t.suits) } : {}),
+    ...(base.mysterious ? { mysterious: pick(base.mysterious, t.mysterious) } : {}),
   };
 }
 

@@ -7,6 +7,7 @@ import AppHeader from './components/AppHeader.vue';
 import BottomNav from './components/BottomNav.vue';
 import EventToast from './components/EventToast.vue';
 import { useCatalogStore } from './stores/catalog';
+import { useLocaleStore } from './stores/locale';
 import { useSessionStore } from './stores/session';
 import { useToastStore } from './stores/toast';
 import { eventsSummary } from './utils/events';
@@ -16,6 +17,8 @@ const route = useRoute();
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const session = useSessionStore();
+/** 切换语言后整页重新挂载：新闻、日志、标签这些非响应式的文案也跟着换（问题记录 272） */
+const locale = useLocaleStore();
 const inGame = computed(() => isInGame(route.meta, session.me?.restaurantId));
 /** 后台页面用宽布局 */
 const wide = computed(() => route.path.startsWith('/admin'));
@@ -39,7 +42,7 @@ onMounted(() => {
   <div :class="['dt-app', { 'dt-app-wide': wide }]">
     <AppHeader :in-game="inGame" />
     <main :class="['dt-main', { 'dt-main-nav': inGame }]">
-      <RouterView />
+      <RouterView :key="locale.locale" />
     </main>
     <AnnouncePopup v-if="inGame" />
     <EventToast />

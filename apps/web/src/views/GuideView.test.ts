@@ -18,6 +18,7 @@ const me = (restaurantId: number | null) => ({
   role: 'player' as const,
   shardId: 1,
   restaurantId,
+  lang: null,
 });
 const mountView = async () => {
   const router = createRouter({

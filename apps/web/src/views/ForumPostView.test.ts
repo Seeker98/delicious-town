@@ -181,6 +181,7 @@ describe('ForumPostView', () => {
       role: 'player' as const,
       shardId: 1,
       restaurantId: 8,
+      lang: null,
     };
     vi.mocked(endpoints.forumPost).mockResolvedValue(
       detail({ replies: [reply(1, { restId: 9, canDelete: false }), reply(2)] }),
@@ -197,6 +198,7 @@ describe('ForumPostView', () => {
       role: 'player' as const,
       shardId: 1,
       restaurantId: 7,
+      lang: null,
     };
     const { w: w2 } = await mountView();
     expect(w2.find('[data-testid="post-report-open"]').exists()).toBe(false);
