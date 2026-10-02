@@ -8,6 +8,9 @@ import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import LangSelect from './LangSelect.vue';
 
+/** 第一次切到某种语言要动态加载翻译包；全量并行跑时可能超过 1 秒 */
+const LOAD = { timeout: 10_000 };
+
 vi.mock('../api/endpoints', () => ({ endpoints: { setLang: vi.fn(), me: vi.fn(), logout: vi.fn() } }));
 
 const me = (lang: string | null) =>
@@ -39,7 +42,7 @@ describe('语言选择（问题记录 272）', () => {
     expect(opts).toEqual(['简体中文', '繁體中文', 'English', 'Français', 'Español']);
     await w.get('[data-testid="lang-select"]').setValue('en');
     // 第一次切到某种语言要动态加载翻译包
-    await vi.waitFor(() => expect(useLocaleStore().locale).toBe('en'));
+    await vi.waitFor(() => expect(useLocaleStore().locale).toBe('en'), LOAD);
     await flushPromises();
     expect(endpoints.setLang).not.toHaveBeenCalled();
   });
@@ -48,7 +51,7 @@ describe('语言选择（问题记录 272）', () => {
     useSessionStore().me = me('zh-CN');
     const w = mount(LangSelect);
     await w.get('[data-testid="lang-select"]').setValue('fr');
-    await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'));
+    await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
     expect(useLocaleStore().locale).toBe('fr');
   });
 
