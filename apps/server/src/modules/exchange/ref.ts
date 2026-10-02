@@ -2,11 +2,11 @@ import { sql, type Kysely } from 'kysely';
 import { addDays, gameTime } from '@dt/shared';
 import type { GameConfig } from '@dt/config';
 import type { DB } from '../../db/schema';
-import { weightedPrice, type ExchangeTuning } from './rules';
+import { initialRef, weightedPrice, type ExchangeTuning } from './rules';
 
 /**
  * 某区服某食材某游戏日的参考价（156-1 设计 §5）：第一次用到时计算并保存，之后不变。
- * 前一天成交不少于 refMinTrades 笔用加权均价，否则沿用最近一天的；都没有用 refOverrides 或系统定价。
+ * 前一天成交不少于 refMinTrades 笔用加权均价，否则沿用最近一天的；都没有用 refOverrides 或 initialRef（问题记录 242）。
  */
 export async function refPrice(
   db: Kysely<DB>,
@@ -44,7 +44,7 @@ export async function refPrice(
       .where('day', '<', day)
       .orderBy('day', 'desc')
       .executeTakeFirst();
-    price = last?.price ?? t.refOverrides[String(foodsId)] ?? config.requireFood(foodsId).coin;
+    price = last?.price ?? t.refOverrides[String(foodsId)] ?? initialRef(config.requireFood(foodsId), config);
   }
   await db
     .insertInto('exchange_ref')
@@ -120,7 +120,7 @@ export async function refPrices(
     const price =
       a && Number(a.n) >= t.refMinTrades
         ? Math.round(Number(a.amount) / Number(a.qty))
-        : (lastBy.get(id) ?? t.refOverrides[String(id)] ?? config.requireFood(id).coin);
+        : (lastBy.get(id) ?? t.refOverrides[String(id)] ?? initialRef(config.requireFood(id), config));
     return { shard_id: shardId, foods_id: id, day, price };
   });
   await db
