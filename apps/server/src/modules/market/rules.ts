@@ -82,7 +82,8 @@ export function unitPrice(
   t: MarketTuning,
   weather: Record<string, number>,
 ): number {
-  const w = 1 + (weather.marketCoin ?? 0);
+  // 天气系数之后再乘菜场价格倍率（148-4 全服加成，默认 1）
+  const w = (1 + (weather.marketCoin ?? 0)) * t.priceFactor;
   if (shelf === 1) return t.specialPrice * w;
   if (shelf === 2) return food.coin * t.premiumPriceFactor * w;
   return food.coin * w;

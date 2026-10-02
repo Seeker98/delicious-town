@@ -26,6 +26,7 @@ export function rewardsOf(
   counters: Record<string, number>,
   premium: boolean,
 ): RewardState[] {
+  if (spec.kind === 'boost') return [];
   const count = (k: string) => counters[k] ?? 0;
   if (spec.kind === 'goals')
     return spec.def.goals.map((g, i) => ({

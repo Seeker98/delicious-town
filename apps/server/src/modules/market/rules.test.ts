@@ -75,3 +75,14 @@ describe('手动进货（4E-2）', () => {
     expect(manualRenown(5, 5e6)).toBe(500);
   });
 });
+
+describe('菜场价格倍率（148-4）', () => {
+  it('三个货架的单价都乘 priceFactor（在天气系数之后）', () => {
+    const food = [...config.foods.values()][0]!;
+    const t = config.tuning.market;
+    const half = { ...t, priceFactor: 0.5 };
+    const w = { marketCoin: 0.2 };
+    for (const shelf of [0, 1, 2] as const)
+      expect(unitPrice(shelf, food, half, w)).toBeCloseTo(unitPrice(shelf, food, t, w) * 0.5);
+  });
+});

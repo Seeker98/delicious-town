@@ -312,7 +312,8 @@ export function allocateTables(
     let expT = 0;
     if (PAYING.has(type)) {
       oilT = realValue(oil, rates.oilValue.total);
-      coinT = coin + rates.coinValue.total + mcCoin;
+      // 全服银币倍率（148-4 全服加成，默认 1）
+      coinT = (coin + rates.coinValue.total + mcCoin) * t.coinMultiplier;
       expT = realValue(exp + mcExp, rates.expValue.total) * t.expMultiplier;
     }
     const cond = satisfied ? coinT * flags.spCoinRate : 0;

@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { ACTIVITY_ACTIONS } from '../activity';
+import { boostDefOf, type BoostItem } from '../boost';
 import { limitedText, rewardItems, type RewardItems } from './mail';
 
 export const ACTIVITY_TITLE_MAX = 40;
 export const ACTIVITY_BODY_MAX = 1000;
-export const ACTIVITY_KINDS = ['goals', 'grid', 'pass'] as const;
+export const ACTIVITY_KINDS = ['goals', 'grid', 'pass', 'boost'] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 
 const actionKey = z.string().refine((k) => Object.hasOwn(ACTIVITY_ACTIONS, k), { message: 'unknown_action' });
@@ -65,9 +66,38 @@ export type GoalsDef = z.infer<typeof goalsDef>;
 export type GridDef = z.infer<typeof gridDef>;
 export type PassDef = z.infer<typeof passDef>;
 export type ActivitySpec =
-  { kind: 'goals'; def: GoalsDef } | { kind: 'grid'; def: GridDef } | { kind: 'pass'; def: PassDef };
+  | { kind: 'goals'; def: GoalsDef }
+  | { kind: 'grid'; def: GridDef }
+  | { kind: 'pass'; def: PassDef }
+  | { kind: 'boost'; def: BoostActivityDef };
 
-const DEF_SCHEMAS = { goals: goalsDef, grid: gridDef, pass: passDef } as const;
+const twoDecimals = (n: number) => Math.abs(n * 100 - Math.round(n * 100)) < 1e-9;
+export const boostDef = z.object({
+  items: z
+    .array(
+      z.object({
+        key: z.string().refine((k) => boostDefOf(k) !== undefined, { message: 'unknown_boost' }),
+        factor: z.number().positive(),
+      }),
+    )
+    .min(1)
+    .max(10)
+    .superRefine((items, ctx) => {
+      if (new Set(items.map((i) => i.key)).size !== items.length)
+        ctx.addIssue({ code: 'custom', message: 'duplicate_key' });
+      items.forEach((it, i) => {
+        const d = boostDefOf(it.key);
+        if (!twoDecimals(it.factor))
+          ctx.addIssue({ code: 'custom', path: [i, 'factor'], message: 'two_decimals' });
+        else if (d && (it.factor < d.min || it.factor > d.max))
+          ctx.addIssue({ code: 'custom', path: [i, 'factor'], message: 'out_of_range' });
+      });
+      if (items.every((i) => i.factor === 1)) ctx.addIssue({ code: 'custom', message: 'no_effect' });
+    }),
+});
+export type BoostActivityDef = { items: BoostItem[] };
+
+const DEF_SCHEMAS = { goals: goalsDef, grid: gridDef, pass: passDef, boost: boostDef } as const;
 
 const common = z.object({
   shardId: z.number().int().positive().nullable(),
@@ -87,6 +117,9 @@ export const activityBody = common
   .superRefine((b, ctx) => {
     if (new Date(b.endsAt) <= new Date(b.startsAt))
       ctx.addIssue({ code: 'custom', path: ['endsAt'], message: 'before_start' });
+    // 全服加成作用在区服数值上，对所有等级都生效（148-4 终审 I1）
+    if (b.kind === 'boost' && b.minLevel !== 1)
+      ctx.addIssue({ code: 'custom', path: ['minLevel'], message: 'boost_all_levels' });
     const r = DEF_SCHEMAS[b.kind].safeParse(b.def);
     if (!r.success) for (const i of r.error.issues) ctx.addIssue({ ...i, path: ['def', ...i.path] });
   })

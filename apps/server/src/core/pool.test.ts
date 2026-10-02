@@ -60,3 +60,20 @@ describe('单连接连接池', () => {
     await finishes(t.game.growth.drivePlankton(ctx, 'strength'));
   }, 20_000);
 });
+
+describe('单连接连接池：区服设置缓存没命中（148-4 终审）', () => {
+  it('事务里发行为事件时，活动处理器读区服设置不另要连接', async () => {
+    const ctx = await newRestaurant(t);
+    // 模拟"操作开始时命中缓存、事务里却没命中"（后台改加成清了全部缓存）
+    const emit = t.deps.db.transaction().execute(async (tx) => {
+      t.game.shards.invalidateAll();
+      await t.deps.bus.emit(tx, {
+        name: 'action',
+        shardId: ctx.shardId,
+        restId: ctx.restaurantId,
+        payload: { key: 'signin', n: 1, star: 0, level: 1, at: t.clock.now.toISOString() },
+      });
+    });
+    await finishes(emit);
+  }, 20_000);
+});

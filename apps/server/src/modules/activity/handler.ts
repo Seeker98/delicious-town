@@ -30,6 +30,7 @@ async function bump(tx: Kysely<DB>, activityId: number, restId: number, key: str
 
 async function count(tx: Kysely<DB>, a: ActiveActivity, restId: number, p: ActionPayload, at: Date) {
   const spec = a.spec;
+  if (spec.kind === 'boost') return;
   if (spec.kind === 'pass') {
     const rule = spec.def.rules.find((r) => r.key === p.key);
     if (!rule) return;
@@ -53,7 +54,7 @@ export function registerActivityHandlers(bus: EventBus, d: GameDeps): void {
   registered.add(bus);
   bus.on('action', async (tx, e) => {
     const p = e.payload as unknown as ActionPayload;
-    if (!featureAvailable(await d.shards.settings(e.shardId), 'activity')) return;
+    if (!featureAvailable(await d.shards.settings(e.shardId, tx), 'activity')) return;
     const at = new Date(p.at);
     for (const a of await activityCacheFor(bus, d).forShard(e.shardId, tx)) {
       if (at < a.startsAt || at >= a.endsAt) continue;
