@@ -26,6 +26,7 @@
     "invite": "邀请：邀请好友页和 worker 发放邀请奖励",
     "report": "举报：玩家举报帖子、回复、喇叭、店名、公告",
     "exchange": "交易所：玩家之间用限价单买卖稀有食材（关掉后不能下单；撤单、取出、过期退回照常）",
+    "predict": "事件合约：玩家用银币买卖“是/否”份额（关掉后不能买卖；已有事件照常截止、判定、结算）",
     "activity": "限时活动：活动页、进度计数、领奖、战令解锁（关掉后不计数、不显示；已结束活动的未领奖励照常补发）"
   },
   "groups": {
@@ -57,6 +58,7 @@
     "tuning.ops": "运营：可疑数据页的门槛",
     "tuning.redeem": "兑换码：输错锁定、每批数量上限",
     "tuning.exchange": "交易所：开通门槛、手续费、涨跌幅、挂单数量和有效期；refOverrides 按食材 id 指定初始参考价（没有成交前用它，代替系统定价）；maker 是系统做市（低价收、高价卖，差价回收银币）",
+    "tuning.predict": "事件合约：每份结算银币、手续费、持有和单笔上限、默认流动性、开通门槛",
     "tuning.forum": "论坛：标题正文长度、发帖回复冷却、加精奖励",
     "restaurant": "开店默认值：新店的等级、资源、容量和开店礼包"
   },
@@ -580,6 +582,13 @@
     "tuning.exchange.maker.dailyBuy": "每个区服每种食材每天系统最多收几个（个）",
     "tuning.exchange.maker.stockMax": "每个区服每种食材系统库存上限（个）",
     "tuning.exchange.maker.playerDaily": "每个玩家每天最多卖给系统几个，所有食材合计（个）",
+    "tuning.predict.unit": "每份结算多少银币；出题时复制到事件里，之后改这里不影响已开的事件（银币）",
+    "tuning.predict.feeRate": "买卖手续费 = 成交额 × 这个数，向上取整（比例）",
+    "tuning.predict.maxHold": "每人每个事件每一边最多持有几份（份）",
+    "tuning.predict.maxTrade": "单笔最多买卖几份（份）",
+    "tuning.predict.defaultB": "出题时流动性 b 的默认值，越大价格越难被推动、系统最大亏损越大（份）",
+    "tuning.predict.minLevel": "事件合约开通门槛：餐厅等级（级）",
+    "tuning.predict.minAccountDays": "事件合约开通门槛：账号注册满几天（天）",
     "tuning.forum.titleMax": "帖子标题最多几个字（字）",
     "tuning.forum.contentMax": "帖子正文最多几个字（字）",
     "tuning.forum.replyMax": "回复最多几个字（字）",

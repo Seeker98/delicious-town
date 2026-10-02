@@ -1088,6 +1088,48 @@ export interface ExchangeMakerDayTable {
   day: string;
   bought: Default<number>;
 }
+export interface PredictEventTable {
+  id: Generated<string>;
+  shard_id: number;
+  kind: Default<string>;
+  title: string;
+  description: Default<string>;
+  params: JsonDefault<Record<string, unknown>>;
+  b: number;
+  unit: number;
+  q_yes: Default<number>;
+  q_no: Default<number>;
+  p0: number;
+  open_at: Ts;
+  close_at: Ts;
+  status: 'open' | 'closed' | 'resolved' | 'void';
+  outcome: Nullable<boolean>;
+  created_by: Nullable<number>;
+  resolved_at: TsNullable;
+  settled_at: TsNullable;
+  created_at: TsDefault;
+}
+export interface PredictPositionTable {
+  event_id: string;
+  rest_id: number;
+  yes: Default<number>;
+  no: Default<number>;
+  /** bigint：pg 读出为 number（INT8 解析器） */
+  net_cost: Default<number>;
+  settled: Default<boolean>;
+}
+export interface PredictTradeTable {
+  id: Generated<string>;
+  event_id: string;
+  rest_id: number;
+  side: 'yes' | 'no';
+  dir: 'buy' | 'sell';
+  qty: number;
+  amount: number;
+  fee: number;
+  price_after: number;
+  created_at: Ts;
+}
 export interface ExchangeFreezeTable {
   rest_id: number;
   reason: string;
@@ -1184,6 +1226,9 @@ export interface DB {
   exchange_freeze: ExchangeFreezeTable;
   exchange_stock: ExchangeStockTable;
   exchange_maker_day: ExchangeMakerDayTable;
+  predict_event: PredictEventTable;
+  predict_position: PredictPositionTable;
+  predict_trade: PredictTradeTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
   tower_rank: TowerRankTable;

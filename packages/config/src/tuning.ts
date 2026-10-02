@@ -609,6 +609,16 @@ export const tuningSchema = z.object({
       .refine((m) => m.bidRate < m.askRate, { message: 'bidRate 要小于 askRate' }),
     refOverrides: z.record(z.string(), int.min(1)),
   }),
+  /** 事件合约（238-1） */
+  predict: z.object({
+    unit: int.min(1),
+    feeRate: z.number().min(0).max(0.5),
+    maxHold: int.min(1),
+    maxTrade: int.min(1).max(999),
+    defaultB: int.min(10).max(10000),
+    minLevel: int.min(1),
+    minAccountDays: int.min(0),
+  }),
   forum: z.object({
     titleMax: int.min(1),
     contentMax: int.min(1),
