@@ -38,6 +38,8 @@ test('登录页选 English 后注册开店，首页英文，刷新后不变，�
   await expect(page.getByTestId('home-todo')).toContainText("Today's to-do");
   await expect(page.getByTestId('home-todo')).not.toContainText('今日待办');
 
-  const me = (await (await page.request.get('/api/v1/account/me')).json()) as { data: { lang: string | null } };
+  const me = (await (await page.request.get('/api/v1/account/me')).json()) as {
+    data: { lang: string | null };
+  };
   expect(me.data.lang).toBe('en');
 });

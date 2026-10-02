@@ -21,6 +21,7 @@ async function pick(e: Event) {
     return;
   }
   if (session.me) await endpoints.setLang(l).catch(() => undefined);
+  else locale.markPick();
 }
 </script>
 

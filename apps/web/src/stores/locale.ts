@@ -5,6 +5,8 @@ import zhCN from '../i18n/locales/zh-CN';
 import { useCatalogStore } from './catalog';
 
 const KEY = 'dt_locale';
+/** 没登录时手动选过语言、还没存到账号（登录后以它为准） */
+const PICK_KEY = 'dt_locale_pick';
 function saved(): Locale | null {
   try {
     const v = localStorage.getItem(KEY);
@@ -14,9 +16,17 @@ function saved(): Locale | null {
   }
 }
 
+function savedPick(): boolean {
+  try {
+    return localStorage.getItem(PICK_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 /** 当前语言（问题记录 272）：切换时先加载翻译包，成功了才生效 */
 export const useLocaleStore = defineStore('locale', {
-  state: () => ({ locale: DEFAULT_LOCALE as Locale, messages: zhCN as Messages }),
+  state: () => ({ locale: DEFAULT_LOCALE as Locale, messages: zhCN as Messages, pendingPick: savedPick() }),
   actions: {
     /** 启动时：浏览器里存的 → 按浏览器语言判断 */
     async init() {
@@ -44,6 +54,23 @@ export const useLocaleStore = defineStore('locale', {
       const catalog = useCatalogStore();
       if (catalog.loaded) void catalog.reload(l).catch(() => undefined);
       return true;
+    },
+    /** 没登录时手动选了语言：记下来，登录后存到账号而不是被账号语言覆盖 */
+    markPick() {
+      this.pendingPick = true;
+      try {
+        localStorage.setItem(PICK_KEY, '1');
+      } catch {
+        // 存储不可用时只在本页有效
+      }
+    },
+    clearPick() {
+      this.pendingPick = false;
+      try {
+        localStorage.removeItem(PICK_KEY);
+      } catch {
+        // 忽略
+      }
     },
   },
 });

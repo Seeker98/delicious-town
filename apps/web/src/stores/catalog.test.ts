@@ -54,4 +54,18 @@ describe('道具目录按语言（问题记录 272）', () => {
     await useLocaleStore().set('fr');
     expect(endpoints.catalog).not.toHaveBeenCalled();
   });
+  it('首次读目录途中切了语言（登录后跟账号语言）：按新语言重读，目录不会一直空着', async () => {
+    let resolveFirst!: (c: CatalogDto) => void;
+    vi.mocked(endpoints.catalog)
+      .mockReturnValueOnce(new Promise((r) => (resolveFirst = r)) as never)
+      .mockResolvedValueOnce(cat('Stamina Card', 'v1:en'));
+    const c = useCatalogStore();
+    const loading = c.load();
+    await useLocaleStore().set('en');
+    resolveFirst(cat('体力卡'));
+    await loading;
+    expect(endpoints.catalog).toHaveBeenLastCalledWith('en');
+    expect(c.loaded).toBe(true);
+    expect(c.goodsName(85)).toBe('Stamina Card');
+  });
 });

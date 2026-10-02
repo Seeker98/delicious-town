@@ -51,10 +51,10 @@ export const useCatalogStore = defineStore('catalog', {
       await this.reload(l);
     },
     /** 按语言重新读目录（切换语言时调用，问题记录 272） */
-    async reload(l: Locale = activeLocale()) {
+    async reload(l: Locale = activeLocale()): Promise<void> {
       const fresh = await endpoints.catalog(l);
-      // 读的过程中又切了语言：丢掉过时的结果
-      if (l !== activeLocale()) return;
+      // 读的过程中又切了语言：丢掉过时的结果，按新语言重读（首次读目录时 set() 不会替我们重读）
+      if (l !== activeLocale()) return this.reload(activeLocale());
       this.apply(fresh);
       this.fetchedAt = Date.now();
       try {

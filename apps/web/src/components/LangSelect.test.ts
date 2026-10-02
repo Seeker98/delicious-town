@@ -34,6 +34,7 @@ describe('语言选择（问题记录 272）', () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await useLocaleStore().set('zh-CN');
+    useLocaleStore().clearPick();
   });
 
   it('列出五种语言；没登录时选了只在浏览器生效，不存账号', async () => {
@@ -74,6 +75,7 @@ describe('登录后用账号语言（问题记录 272）', () => {
   });
   afterEach(async () => {
     await useLocaleStore().set('zh-CN');
+    useLocaleStore().clearPick();
   });
 
   it('账号设过语言：切过去，不再存', async () => {
@@ -82,13 +84,28 @@ describe('登录后用账号语言（问题记录 272）', () => {
     expect(endpoints.setLang).not.toHaveBeenCalled();
   });
 
-  it('账号没设过（老账号）或值不合法：保持当前语言，并存到账号', async () => {
+  it('账号没设过（多语言上线前的老账号，都是中文玩家）或值不合法：用简中并存到账号，不按浏览器语言', async () => {
+    await useLocaleStore().set('en');
     await useSessionStore().applyMe(me(null));
     expect(useLocaleStore().locale).toBe('zh-CN');
     expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
     vi.clearAllMocks();
     await useSessionStore().applyMe(me('klingon'));
     expect(endpoints.setLang).toHaveBeenCalledWith('zh-CN');
+  });
+
+  it('没登录时在登录页手动选的语言：登录后以它为准存到账号，只生效一次', async () => {
+    const w = mount(LangSelect);
+    await w.get('[data-testid="lang-select"]').setValue('fr');
+    await vi.waitFor(() => expect(useLocaleStore().locale).toBe('fr'), { timeout: 10_000 });
+    await useSessionStore().applyMe(me('es'));
+    expect(useLocaleStore().locale).toBe('fr');
+    expect(endpoints.setLang).toHaveBeenCalledWith('fr');
+    // 手选已经存到账号，之后读到账号语言照常跟随（比如在别的设备改过）
+    vi.clearAllMocks();
+    await useSessionStore().applyMe(me('es'));
+    expect(useLocaleStore().locale).toBe('es');
+    expect(endpoints.setLang).not.toHaveBeenCalled();
   });
 
   it('load() 读到账号后同样处理', async () => {
