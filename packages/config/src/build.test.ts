@@ -464,7 +464,25 @@ describe('嘻哈男孩、排行（子项目 4E-2）', () => {
     expect(bundle!.tuning.rank.top).toBe(50);
   });
 
-  it('地点只能是 1~6 和 9', () => {
+  it('默认权重：原版地点各 10、某家餐厅 7、新地点各 5（问题记录 256）', () => {
+    expect(realBuild().bundle!.tuning.hiphop.placeWeights).toEqual([
+      [1, 10],
+      [2, 10],
+      [3, 10],
+      [4, 10],
+      [5, 10],
+      [6, 10],
+      [9, 7],
+      [10, 5],
+      [11, 5],
+      [12, 5],
+      [13, 5],
+      [14, 5],
+      [15, 5],
+    ]);
+  });
+
+  it('地点只能是 1~6、9 和 10~15', () => {
     const src = source();
     const tuning = structuredClone(src['game/tuning']) as { hiphop: { placeWeights: number[][] } };
     tuning.hiphop.placeWeights.push([8, 1]);

@@ -63,6 +63,33 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
 });
 
 describe('嘻哈男孩（238-2 设计 §4.2）', () => {
+  it('出题只考虑本区服开着的功能的地点（问题记录 256）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({
+          features: { kuji: false },
+          tuning: {
+            hiphop: {
+              placeWeights: [
+                [12, 1000],
+                [2, 1],
+              ],
+            },
+          },
+        }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const dr = (await hiphop.create(await ctx(shardId, 3)))!;
+    expect(dr.params.place).toBe(2);
+    // 1000 : 1 只剩商店一个地点，概率夹到上限 0.95
+    expect(dr.p0).toBe(0.95);
+    expect(dr.title).toBe('明天嘻哈男孩会出现在商店吗');
+  });
+
   it('出题：按地点权重，明天 hiphop.hour 判定；判定读地点记录，没生成返回 null', async () => {
     const shardId = await createShard(t.db);
     const dr = (await hiphop.create(await ctx(shardId, 3)))!;

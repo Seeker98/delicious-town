@@ -1,6 +1,15 @@
 import { sql, type Kysely, type Selectable } from 'kysely';
-import { GOODS, type Tuning } from '@dt/config';
-import { buildPool, gameDay, gameParts, pickWeighted, type Rng } from '@dt/shared';
+import { GOODS, type ShardSettings, type Tuning } from '@dt/config';
+import {
+  buildPool,
+  gameDay,
+  gameParts,
+  HIPHOP_PLACE_FEATURE,
+  pickWeighted,
+  type HiphopPlace,
+  type Rng,
+} from '@dt/shared';
+import { featureAvailable } from '../../core/features';
 import type { GameDeps } from '../../core/deps';
 import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -28,6 +37,17 @@ export async function hiphopDay(db: Kysely<DB>, shardId: number, now: Date): Pro
 export function hiphopOut(now: Date, t: Tuning['hiphop']): boolean {
   const { hour } = gameParts(now);
   return hour >= t.hour && hour < t.closeHour;
+}
+
+/**
+ * 本区服能去的地点和权重（问题记录 256）：区服关掉的功能对应的地点去掉；全被去掉时去协会（协会没有开关）
+ */
+export function placeWeightsFor(settings: ShardSettings): Array<readonly [number, number]> {
+  const out = settings.tuning.hiphop.placeWeights.filter(([p]) => {
+    const f = HIPHOP_PLACE_FEATURE[p as HiphopPlace];
+    return f === null || f === undefined || featureAvailable(settings, f);
+  });
+  return out.length > 0 ? out : [[4, 1]];
 }
 
 function pickPlace(weights: ReadonlyArray<readonly [number, number]>, rng: Rng): number {
@@ -72,16 +92,14 @@ export async function rollHiphopDay(
     .where('day', '=', day)
     .executeTakeFirst();
   if (exist) return { created: false, place: exist.place, restId: exist.rest_id };
-  const { tuning } = await d.shards.settings(shardId);
-  const t = tuning.hiphop;
+  const settings = await d.shards.settings(shardId);
+  const t = settings.tuning.hiphop;
+  const weights = placeWeightsFor(settings);
   // 用服务端随机源，不用区服号 + 日期做种子：那样有源码就能提前算出地点（终审 I1）；幂等靠主键
   const rng = d.rng();
-  const publicPlace = () =>
-    pickPlace(
-      t.placeWeights.filter(([p]) => p !== HIPHOP_RESTAURANT),
-      rng,
-    );
-  let place = pickPlace(t.placeWeights, rng);
+  const publicWeights = weights.filter(([p]) => p !== HIPHOP_RESTAURANT);
+  const publicPlace = () => pickPlace(publicWeights.length > 0 ? publicWeights : [[4, 1]], rng);
+  let place = pickPlace(weights, rng);
   let restId: number | null = null;
   if (place === HIPHOP_RESTAURANT) {
     const rests = await activeRests(d.db, shardId, new Date(now.getTime() - t.restActiveDays * 86_400_000));

@@ -8,6 +8,7 @@ import OrdersPanel from '../components/takeaway/OrdersPanel.vue';
 import RidersPanel from '../components/takeaway/RidersPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 type Tab = 'orders' | 'deliveries' | 'riders';
 const KEY = 'dt_takeaway_tab';
@@ -64,6 +65,7 @@ const tabs = computed(() =>
 
 <template>
   <h5>外卖</h5>
+  <HiphopCard :place="15" />
   <template v-if="data">
     <OpenPanel v-if="!data.opened" :data="data" @reload="load" />
     <template v-else>

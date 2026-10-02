@@ -6,6 +6,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 一番赏（一番赏设计 §7.2）：奖池看板、买券、抽签 */
 const catalog = useCatalogStore();
@@ -71,6 +72,7 @@ onMounted(() => void load());
 
 <template>
   <h5>一番赏</h5>
+  <HiphopCard :place="12" />
   <div class="small text-muted mb-2">
     一池共 {{ data?.pool.total ?? 80 }} 张签，抽一张少一张；抽走最后一张的人另得最后赏。每天 0
     点开新池，没抽完的当天作废。

@@ -7,6 +7,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
 import { formatNum } from '../utils/format';
+import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
 const catalog = useCatalogStore();
@@ -156,6 +157,7 @@ onMounted(async () => {
 
 <template>
   <h5>交易所</h5>
+  <HiphopCard :place="10" />
   <div v-if="me?.frozen" class="alert alert-danger py-1 small" data-testid="ex-frozen">
     你的交易所已被冻结：{{ me.frozen.reason }}。有疑问请联系管理员。
   </div>

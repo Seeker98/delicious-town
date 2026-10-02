@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { HIPHOP_PLACE_NAMES, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
+import { HIPHOP_PLACE_FEATURE, HIPHOP_PLACE_NAMES, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
 import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
+import { useRestaurantStore } from '../../stores/restaurant';
 import { useToastStore } from '../../stores/toast';
 import { effectChips } from '../../utils/effects';
 import { formatNum } from '../../utils/format';
@@ -47,7 +48,14 @@ async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: st
 const rewards = (list: TownRewardDto[]) => list.map((r) => rewardText(r, catalog)).join('、');
 
 const mayorOpen = ref(false);
-const PLACES = HIPHOP_PLACES.map((p) => ({ id: p, name: HIPHOP_PLACE_NAMES[p] }));
+/** 只列本区服开着的功能的地点：关掉的功能嘻哈男孩不会去（问题记录 256） */
+const restaurant = useRestaurantStore();
+const PLACES = computed(() =>
+  HIPHOP_PLACES.filter((p) => {
+    const f = HIPHOP_PLACE_FEATURE[p];
+    return f === null || restaurant.featureOn(f);
+  }).map((p) => ({ id: p, name: HIPHOP_PLACE_NAMES[p] })),
+);
 function askMayor(place: HiphopPlace) {
   void act(
     () => endpoints.townMayor(place),

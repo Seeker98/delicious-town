@@ -1,5 +1,6 @@
 import { addDays, gameTime, HIPHOP_PLACE_NAMES, type HiphopPlace } from '@dt/shared';
 import { featureAvailable } from '../../../core/features';
+import { placeWeightsFor } from '../../hiphop/day';
 import { clampP, dayLabel } from './odds';
 import type { AutoKind } from './types';
 
@@ -11,11 +12,13 @@ export const hiphop: AutoKind = {
   async create(c) {
     if (!featureAvailable(c.settings, 'hiphop')) return null;
     const t = c.settings.tuning.hiphop;
-    const total = t.placeWeights.reduce((s, [, x]) => s + x, 0);
+    // 只考虑本区服开着的功能的地点（问题记录 256），和每天抽地点时一致
+    const weights = placeWeightsFor(c.settings);
+    const total = weights.reduce((s, [, x]) => s + x, 0);
     if (total <= 0) return null;
     let r = c.rng.next() * total;
-    let pick = t.placeWeights[0]!;
-    for (const pw of t.placeWeights) {
+    let pick = weights[0]!;
+    for (const pw of weights) {
       if (r < pw[1]) {
         pick = pw;
         break;
