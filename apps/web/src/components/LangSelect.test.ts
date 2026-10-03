@@ -8,8 +8,12 @@ import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import LangSelect from './LangSelect.vue';
 
-/** 第一次切到某种语言要动态加载翻译包；全量并行跑时可能超过 1 秒 */
-const LOAD = { timeout: 10_000 };
+/**
+ * 第一次切到某种语言要动态加载翻译包：全量并行跑时 Vite 要现场编译大量文件，可能超过 10 秒（backlog 测试不稳定）。
+ * 等待放宽到 40 秒，用例超时放宽到 60 秒
+ */
+const LOAD = { timeout: 40_000 };
+vi.setConfig({ testTimeout: 60_000 });
 
 vi.mock('../api/endpoints', () => ({ endpoints: { setLang: vi.fn(), me: vi.fn(), logout: vi.fn() } }));
 
@@ -49,7 +53,7 @@ describe('语言选择（问题记录 272）', () => {
   });
 
   it('登录后选了同时存到账号', async () => {
-    // 组件和断言都用这个用例自己的 Pinia（"当前 Pinia"可能被前面用例的计时器切走，组件会以为没登录）
+    // 组件和断言都用这个用例自己的 Pinia，不依赖"当前 Pinia"（前面用例的计时器可能把它切走）
     const pinia = createPinia();
     setActivePinia(pinia);
     useSessionStore(pinia).me = me('zh-CN');
@@ -138,8 +142,7 @@ describe('backlog 多语言：存到账号、跟随账号失败时提示', () =>
 
   it('登录状态下切了语言、存到账号失败：提示下次刷新会回到原来的语言', async () => {
     vi.mocked(endpoints.setLang).mockRejectedValue(new Error('500'));
-    // 组件和断言都用这个用例自己的 Pinia：前面用例留下的提示计时器到点会把"当前 Pinia"切回旧的，
-    // 组件再取 store 就拿到旧的那个，这里读不到提示（全量并行跑时偶发）
+    // 组件和断言都用这个用例自己的 Pinia，不依赖"当前 Pinia"（前面用例的计时器可能把它切走）
     const pinia = createPinia();
     setActivePinia(pinia);
     useSessionStore(pinia).me = me('zh-CN');
