@@ -227,6 +227,18 @@ describe('RestaurantHomeView', () => {
     confirm.mockRestore();
   });
 
+  it('体力、声望也按千分位显示，和银币、油一致（问题记录 296）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      strength: 9848,
+      strengthMax: 1000,
+      renown: 12345,
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="rest-strength"]').text()).toBe('9,848/1,000');
+    expect(w.get('[data-testid="rest-renown"]').text()).toBe('12,345');
+  });
+
   it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {
     const w = await mountView();
     const text = w.find('[data-testid="exp-text"]');

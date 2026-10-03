@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNum } from '../../utils/format';
 import { ref } from 'vue';
 import type { DuelResultDto, TowerDto, TowerFloorDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -51,7 +52,7 @@ async function go(f: TowerFloorDto, test: boolean) {
 <template>
   <div class="small">
     <div class="mb-2" data-testid="tower-head">
-      {{ t.tower.floor.head(data.power, data.left, data.dailyTotal, data.tickets, data.strength) }}
+      {{ t.tower.floor.head(data.power, data.left, data.dailyTotal, data.tickets, formatNum(data.strength)) }}
     </div>
     <DuelResult v-if="last" :result="last" />
     <div

@@ -294,8 +294,16 @@ onBeforeUnmount(() => {
           <i class="bi bi-coin"></i> <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
         </div>
         <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
-        <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
-        <div class="col-6" :title="t.home.renown"><i class="bi bi-award"></i> {{ rest.renown }}</div>
+        <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
+        <div class="col-6">
+          <i class="bi bi-lightning"></i>
+          <span data-testid="rest-strength"
+            >{{ formatNum(rest.strength) }}/{{ formatNum(rest.strengthMax) }}</span
+          >
+        </div>
+        <div class="col-6" :title="t.home.renown">
+          <i class="bi bi-award"></i> <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
+        </div>
         <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
         <div class="col-6">
           <i class="bi bi-droplet"></i> {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
