@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
 import { endpoints } from '../../api/endpoints';
+import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useRestaurantStore } from '../../stores/restaurant';
 import { useToastStore } from '../../stores/toast';
+import { ATTR_NAMES } from '../../utils/labels';
 
 /** 加点（问题记录：从餐厅信息挪到厨具页）；加完通知父页面刷新属性表 */
 const emit = defineEmits<{ done: [] }>();
 const store = useRestaurantStore();
 const toast = useToastStore();
+const t = useT();
 /** 输入框默认留空（问题记录：显示 0 时看不出是哪一项） */
 const add = reactive<Record<'cook' | 'cutting' | 'fire', number | ''>>({ cook: '', cutting: '', fire: '' });
 const busy = ref(false);
@@ -20,14 +23,10 @@ const sum = computed(() => {
   const p = points();
   return p.cook + p.cutting + p.fire;
 });
-const FIELDS = [
-  { key: 'cook', label: '厨艺' },
-  { key: 'cutting', label: '刀工' },
-  { key: 'fire', label: '火候' },
-] as const;
+const FIELDS = ['cook', 'cutting', 'fire'] as const;
 /** 加点前的数值，和加完后的预览 */
-const base = (k: (typeof FIELDS)[number]['key']) => store.rest?.attrs[k] ?? 0;
-const preview = (k: (typeof FIELDS)[number]['key']) => {
+const base = (k: (typeof FIELDS)[number]) => store.rest?.attrs[k] ?? 0;
+const preview = (k: (typeof FIELDS)[number]) => {
   const n = num(add[k]);
   return n > 0 ? `${base(k)} → ${base(k) + n}` : String(base(k));
 };
@@ -40,7 +39,7 @@ async function allocate() {
     await store.refresh();
     emit('done');
   } catch (e) {
-    toast.push(errorMessage(e, '加点失败'), 'danger');
+    toast.push(errorMessage(e, t.value.equip.points.failed), 'danger');
   } finally {
     busy.value = false;
   }
@@ -50,20 +49,20 @@ onMounted(() => store.refresh().catch(() => undefined));
 
 <template>
   <div v-if="left > 0" class="border rounded p-2 mb-2 small">
-    <b data-testid="attr-left">剩余点数 {{ left }}</b>
+    <b data-testid="attr-left">{{ t.equip.points.left(left) }}</b>
     <div class="row g-1 mt-1">
-      <div v-for="f in FIELDS" :key="f.key" class="col-4">
-        <div class="fw-bold" :data-testid="`label-${f.key}`">{{ f.label }}</div>
+      <div v-for="f in FIELDS" :key="f" class="col-4">
+        <div class="fw-bold" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</div>
         <input
-          v-model.number="add[f.key]"
+          v-model.number="add[f]"
           type="number"
           min="0"
           class="form-control form-control-sm"
           placeholder="0"
-          :data-testid="`add-${f.key}`"
+          :data-testid="`add-${f}`"
         />
-        <div class="text-muted" style="font-size: 11px" :data-testid="`preview-${f.key}`">
-          {{ preview(f.key) }}
+        <div class="text-muted" style="font-size: 11px" :data-testid="`preview-${f}`">
+          {{ preview(f) }}
         </div>
       </div>
       <div class="col-12">
@@ -73,7 +72,7 @@ onMounted(() => store.refresh().catch(() => undefined));
           :disabled="busy || sum <= 0 || sum > left"
           @click="allocate"
         >
-          加点（{{ sum }}）
+          {{ t.equip.points.allocate(sum) }}
         </button>
       </div>
     </div>

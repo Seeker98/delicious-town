@@ -13,6 +13,10 @@ import forum from './forum';
 import friends from './friends';
 import home from './home';
 import kuji from './kuji';
+import equip from './equip';
+import guide from './guide';
+import misc from './misc';
+import rest from './rest';
 import labels from './labels';
 import mail from './mail';
 import market from './market';
@@ -59,5 +63,9 @@ const messages: Messages = {
   exchange,
   predict,
   kuji,
+  equip,
+  rest,
+  guide,
+  misc,
 };
 export default messages;

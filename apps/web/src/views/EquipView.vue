@@ -4,6 +4,8 @@ import { RouterLink } from 'vue-router';
 import type { EquipDto, EquipOverviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import AttrPoints from '../components/equip/AttrPoints.vue';
+import { useT } from '../composables/useT';
+import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -13,6 +15,7 @@ import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const o = ref<EquipOverviewDto | null>(null);
 const part = ref<number | null>(null);
 const pieces = ref<EquipDto[]>([]);
@@ -50,18 +53,22 @@ async function pick(p: number) {
 async function savePreset() {
   const n = presetName.value.trim();
   if (!n) return;
-  if (await run(() => endpoints.equipPresetSave(n), '保存失败')) presetName.value = '';
+  if (await run(() => endpoints.equipPresetSave(n), t.value.equip.saveFailed)) presetName.value = '';
 }
 async function applyPreset(id: number) {
   let skipped: number[] = [];
   const ok = await run(async () => {
     skipped = (await endpoints.equipPresetApply(id)).skipped;
-  }, '套用失败');
+  }, t.value.equip.applyFailed);
   if (ok && skipped.length > 0)
-    toast.push(`等级不够，这些部位留空：${skipped.map((p) => PART_NAMES[p]).join('、')}`, 'info');
+    toast.push(
+      t.value.equip.skipped(skipped.map((p) => PART_NAMES[p]).join(activeMessages().events.sep)),
+      'info',
+    );
 }
 async function deletePreset(id: number) {
-  if (window.confirm('确定删除这个预设吗？')) await run(() => endpoints.equipPresetDelete(id), '删除失败');
+  if (window.confirm(t.value.equip.confirmDelete))
+    await run(() => endpoints.equipPresetDelete(id), t.value.equip.deleteFailed);
 }
 
 /** 一键处理只能选"未锁定、未穿戴、没强化、没宝石、不在预设"的；出售还要有价格 */
@@ -96,23 +103,21 @@ function toggle(id: number) {
 async function doBatch() {
   const ids = candidates.value.filter((e) => picked.value.has(e.id)).map((e) => e.id);
   if (ids.length === 0) return;
-  const what =
-    way.value === 'salvage'
-      ? `分解得到 ${batchTotal.value} 精华`
-      : `出售得到 ${formatNum(batchTotal.value)} 银币`;
-  if (!window.confirm(`处理 ${ids.length} 件厨具，${what}？`)) return;
-  await run(() => endpoints.equipBatch(ids, way.value), '处理失败');
+  const salvage = way.value === 'salvage';
+  const total = salvage ? String(batchTotal.value) : formatNum(batchTotal.value);
+  if (!window.confirm(t.value.equip.batchConfirm(ids.length, salvage, total))) return;
+  await run(() => endpoints.equipBatch(ids, way.value), t.value.equip.processFailed);
   all.value = await endpoints.equipList();
   picked.value = new Set(candidates.value.map((e) => e.id));
 }
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loadFailed), 'danger')));
 </script>
 
 <template>
   <div v-if="o">
     <h5>
-      厨具与加点 <small class="text-muted">共 {{ o.count }} 件厨具</small>
+      {{ t.equip.title }} <small class="text-muted">{{ t.equip.count(o.count) }}</small>
     </h5>
     <table class="table table-sm small mb-2">
       <thead>
@@ -123,23 +128,23 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
       </thead>
       <tbody>
         <tr>
-          <td>加点</td>
+          <td>{{ t.equip.rows.points }}</td>
           <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.points[k] }}</td>
         </tr>
         <tr>
-          <td>厨具</td>
+          <td>{{ t.equip.rows.gear }}</td>
           <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.gear[k] }}</td>
         </tr>
         <tr class="fw-bold">
-          <td>合计</td>
+          <td>{{ t.equip.rows.total }}</td>
           <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.total[k] }}</td>
         </tr>
       </tbody>
     </table>
     <AttrPoints @done="load" />
     <div class="small mb-2">
-      厨力 <b data-testid="power">{{ o.attrs.power }}</b>
-      <span class="text-muted">（五项之和 + 幸运/2；厨塔、赛厨榜、好友切磋按它比拼）</span>
+      {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
+      <span class="text-muted">{{ t.equip.powerNote }}</span>
     </div>
 
     <div class="row g-1 mb-2">
@@ -153,13 +158,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
         >
           <div class="text-muted">{{ PART_NAMES[p] }}</div>
           <div v-if="o.worn[p - 1]">{{ name(o.worn[p - 1]!) }}</div>
-          <div v-else class="text-muted">空</div>
+          <div v-else class="text-muted">{{ t.equip.empty }}</div>
         </div>
       </div>
     </div>
 
     <div v-if="part !== null" class="border rounded p-2 mb-2 small">
-      <div v-if="pieces.length === 0" class="text-muted">没有这个部位的厨具</div>
+      <div v-if="pieces.length === 0" class="text-muted">{{ t.equip.noPieces }}</div>
       <div v-for="e in pieces" :key="e.id" class="d-flex align-items-center gap-1 border-bottom py-1">
         <RouterLink :to="`/rest/equip/${e.id}`" class="flex-fill">
           {{ name(e) }}
@@ -167,57 +172,57 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
           <span class="text-muted ms-1">
             {{
               ATTR_KEYS.filter((k) => e.total[k] > 0)
-                .map((k) => `${ATTR_NAMES[k]}${e.total[k]}`)
+                .map((k) => t.equip.attrValue(ATTR_NAMES[k] ?? k, e.total[k]))
                 .join(' ')
             }}
           </span>
         </RouterLink>
-        <span v-if="o.level < e.minLevel" class="text-danger">需要 {{ e.minLevel }} 级</span>
+        <span v-if="o.level < e.minLevel" class="text-danger">{{ t.equip.needLevel(e.minLevel) }}</span>
         <button
           v-if="!e.worn"
           class="btn btn-sm btn-primary"
           :disabled="busy || o.level < e.minLevel"
           :data-testid="`wear-${e.id}`"
-          @click="run(() => endpoints.equipWear(e.id), '穿戴失败')"
+          @click="run(() => endpoints.equipWear(e.id), t.equip.wearFailed)"
         >
-          穿戴
+          {{ t.equip.wear }}
         </button>
         <button
           v-else
           class="btn btn-sm btn-outline-secondary"
           :disabled="busy"
-          @click="run(() => endpoints.equipUnwear(e.id), '卸下失败')"
+          @click="run(() => endpoints.equipUnwear(e.id), t.equip.unwearFailed)"
         >
-          卸下
+          {{ t.equip.unwear }}
         </button>
       </div>
     </div>
 
     <div v-for="s in o.suits" :key="s.suitId" class="small mb-1">
-      <b>{{ s.name }}（{{ s.count }}/{{ s.maxNum }}）</b>
-      <span v-for="t in s.tiers" :key="t.need" :class="['ms-2', t.active ? 'text-success' : 'text-muted']">
-        {{ t.need }} 件：{{ t.desc }}
+      <b>{{ t.equip.suitName(s.name, s.count, s.maxNum) }}</b>
+      <span v-for="x in s.tiers" :key="x.need" :class="['ms-2', x.active ? 'text-success' : 'text-muted']">
+        {{ t.equip.suitTier(x.need, x.desc) }}
       </span>
     </div>
 
     <div class="d-flex flex-wrap gap-1 my-2">
-      <RouterLink to="/rest/gem" class="btn btn-sm btn-outline-primary">宝石</RouterLink>
+      <RouterLink to="/rest/gem" class="btn btn-sm btn-outline-primary">{{ t.equip.gem }}</RouterLink>
       <button
         class="btn btn-sm btn-outline-primary"
         data-testid="open-presets"
         @click="panel = panel === 'presets' ? 'none' : 'presets'"
       >
-        预设
+        {{ t.equip.presets }}
       </button>
       <button class="btn btn-sm btn-outline-primary" data-testid="open-batch" @click="openBatch">
-        一键处理
+        {{ t.equip.batch }}
       </button>
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="busy"
-        @click="run(() => endpoints.equipUnwearAll(), '卸下失败')"
+        @click="run(() => endpoints.equipUnwearAll(), t.equip.unwearFailed)"
       >
-        全部卸下
+        {{ t.equip.unwearAll }}
       </button>
     </div>
 
@@ -230,10 +235,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
           :data-testid="`preset-apply-${p.id}`"
           @click="applyPreset(p.id)"
         >
-          套用
+          {{ t.equip.apply }}
         </button>
         <button class="btn btn-sm btn-outline-danger" :disabled="busy" @click="deletePreset(p.id)">
-          删除
+          {{ t.equip.delete }}
         </button>
       </div>
       <div class="d-flex gap-1 mt-2">
@@ -241,7 +246,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
           v-model="presetName"
           maxlength="12"
           class="form-control form-control-sm"
-          placeholder="预设名称"
+          :placeholder="t.equip.presetName"
           data-testid="preset-name"
         />
         <button
@@ -250,33 +255,37 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取厨具失�
           data-testid="preset-save"
           @click="savePreset"
         >
-          保存当前
+          {{ t.equip.saveCurrent }}
         </button>
       </div>
     </div>
 
     <div v-if="panel === 'batch'" class="border rounded p-2 small mb-2">
       <div class="mb-1">
-        <label class="me-2"><input v-model="way" type="radio" value="salvage" /> 分解成精华</label>
-        <label><input v-model="way" type="radio" value="sell" /> 出售</label>
+        <label class="me-2"
+          ><input v-model="way" type="radio" value="salvage" /> {{ t.equip.salvageWay }}</label
+        >
+        <label><input v-model="way" type="radio" value="sell" /> {{ t.equip.sellWay }}</label>
       </div>
-      <div class="text-muted mb-1">只列出未锁定、未穿戴、没强化、没宝石、不在预设里的厨具</div>
+      <div class="text-muted mb-1">{{ t.equip.batchNote }}</div>
       <div v-for="e in candidates" :key="e.id" :data-testid="`batch-item-${e.id}`">
         <label
           ><input type="checkbox" :checked="picked.has(e.id)" @change="toggle(e.id)" /> {{ name(e) }}</label
         >
       </div>
       <div class="d-flex align-items-center mt-2">
-        <span data-testid="batch-total"
-          >合计 {{ way === 'salvage' ? `${batchTotal} 精华` : `${formatNum(batchTotal)} 银币` }}</span
-        >
+        <span data-testid="batch-total">{{
+          t.equip.batchTotal(
+            way === 'salvage' ? t.equip.essence(batchTotal) : t.equip.coins(formatNum(batchTotal)),
+          )
+        }}</span>
         <button
           class="btn btn-sm btn-danger ms-auto"
           :disabled="busy"
           data-testid="batch-go"
           @click="doBatch"
         >
-          处理
+          {{ t.equip.process }}
         </button>
       </div>
     </div>

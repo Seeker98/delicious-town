@@ -24,6 +24,7 @@ export default {
     coin: (n: string) => `银币 ${n}`,
     diamond: (n: string) => `钻石 ${n}`,
     exp: (n: string) => `经验 ${n}`,
+    renown: (n: string) => `声望 ${n}`,
     hat: (prefix: string, name: string) => `${prefix}•${name}之帽`,
   },
 };

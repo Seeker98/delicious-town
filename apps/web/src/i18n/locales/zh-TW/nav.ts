@@ -33,6 +33,13 @@ export default {
     shards: '切換區服',
     admin: '管理後臺',
   },
+  /** 頂欄 */
+  appName: '美味小鎮',
+  back: '返回',
+  mail: '郵箱',
+  mailUnread: (n: number) => `郵箱，${n} 封未讀`,
+  /** 重要公告彈窗的關閉按鈕 */
+  announceClose: '知道了',
   announceMore: (n: number) => `等 ${n} 條`,
   activity: {
     running: (n: number) => `限時活動 ${n} 個進行中`,
