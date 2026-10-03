@@ -110,3 +110,15 @@ describe('活动计数（设计 §4.2）', () => {
     expect(await counters(t, id, r.restaurantId)).toEqual({ points: 17 });
   });
 });
+
+describe('活动行被直接删掉、缓存里还有（e2e 清理和签到并发时出现）', () => {
+  it('计数跳过已不存在的活动，不报外键错误，玩家的操作照常成功', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: goals() });
+    await act(r, 'market.buy');
+    expect(await counters(t, id, r.restaurantId)).toMatchObject({ 'market.buy': 1 });
+    await t.db.deleteFrom('activity').where('id', '=', id).execute();
+    await expect(act(r, 'market.buy')).resolves.toBeUndefined();
+  });
+});

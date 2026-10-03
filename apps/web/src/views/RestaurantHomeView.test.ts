@@ -47,6 +47,7 @@ vi.mock('../api/endpoints', () => ({
     tasks: vi.fn(),
     refuel: vi.fn(),
     claimTask: vi.fn(),
+    claimChapter: vi.fn(),
     devices: vi.fn(),
     placeDevice: vi.fn(),
     openPlaque2: vi.fn(),
@@ -596,6 +597,25 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     w = await mountView();
     expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+  });
+
+  it('主线行：本章任务都领了显示章末奖励和领奖按钮；章锁定时写解锁条件（问题记录 318 PR 2）', async () => {
+    const all = quests([quest({ progress: 1, done: true, claimed: true })]);
+    vi.mocked(endpoints.tasks).mockResolvedValue({ ...all, chapter: { ...all.chapter!, claimable: true } });
+    let w = await mountView();
+    const row = w.get('[data-testid="main-task"]');
+    expect(row.text()).toContain('主线：第 1 章 开张大吉 章末奖励');
+    await row.get('button').trigger('click');
+    await flushPromises();
+    expect(endpoints.claimChapter).toHaveBeenCalledWith(1);
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([], { chapter: { ...all.chapter!, id: 2, name: '小店经营', needLevel: 5, locked: true } }),
+    );
+    w = await mountView();
+    // 冒号后不多空格（终审小项）
+    expect(w.get('[data-testid="main-task"]').text()).toContain('主线：第 2 章 小店经营');
+    expect(w.get('[data-testid="main-task"]').text()).toContain('🔒 5 级解锁');
+    expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
   });
 
   it('有公告时首页显示公告横幅（子项目 6A）', async () => {

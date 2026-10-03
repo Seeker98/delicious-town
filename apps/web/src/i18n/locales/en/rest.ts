@@ -80,12 +80,17 @@ const rest: Messages['rest'] = {
     chapter: (n, name, done, total) => `Chapter ${n}: ${name} (${done}/${total})`,
     chapterLocked: (n, name) => `Chapter ${n}: ${name}`,
     chapterAward: (text) => `Chapter reward: ${text}`,
-    claimChapter: 'Claim chapter reward',
+    claimChapter: 'Claim',
     chapterLeft: (n) => `${n} ${n === 1 ? 'quest' : 'quests'} left`,
     lockedLevel: (n) => `🔒 Unlocks at level ${n}`,
     lockedStar: (n) => `🔒 Unlocks at ${n} ${n === 1 ? 'star' : 'stars'}`,
     claimedTask: '✓ Claimed',
     lineDone: 'All done',
+    chapterAwardRow: (n, name) => `Chapter ${n} (${name}) reward`,
+    weekly: (group) => `Weekly quests · Group ${group}`,
+    weeklyFull: (text) => `Completion bonus: ${text}`,
+    claimWeeklyFull: 'Claim',
+    weeklyFullClaimed: '✓ Claimed',
   },
 };
 export default rest;

@@ -57,6 +57,7 @@ describe('第 6 批其他页面按语言（问题记录 272）', () => {
       'Cookware & points',
       'Recipes',
       'Guild',
+      'Quests',
     ]);
     w.unmount();
   });

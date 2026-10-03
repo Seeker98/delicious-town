@@ -88,5 +88,10 @@ export default {
     lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
     claimedTask: '✓ 已領',
     lineDone: '已全部完成',
+    chapterAwardRow: (n: number, name: string) => `第 ${n} 章 ${name} 章末獎勵`,
+    weekly: (group: string) => `每週任務 · ${group} 組`,
+    weeklyFull: (text: string) => `全完成獎勵：${text}`,
+    claimWeeklyFull: '領取',
+    weeklyFullClaimed: '✓ 已領取',
   },
 };

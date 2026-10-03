@@ -8,6 +8,7 @@ import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { timeLeft } from '../utils/activity';
 import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
@@ -59,13 +60,128 @@ const pct = (count: number, limit: number) => Math.min(100, Math.round((count / 
 /** 本章任务：可领的在前，没完成的其次，已领的最后（问题记录 318） */
 const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
 const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
+const weeklyList = computed(() => [...(tasks.value?.weekly?.quests ?? [])].sort((a, b) => rank(a) - rank(b)));
 const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
 
 <template>
-  <div v-if="act">
+  <!-- 四块：主线、支线、每周、活跃度（问题记录 318 设计 §10） -->
+  <template v-if="tasks">
+    <!-- 主线：当前章 -->
+    <section class="dt-card mb-3" data-testid="card-main">
+      <div class="dt-card-title mb-1">{{ t.rest.tasks.main }}</div>
+      <div v-if="tasks.allMainDone" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
+      <template v-else-if="tasks.chapter">
+        <div class="d-flex align-items-center small mb-1" data-testid="chapter">
+          <b v-if="tasks.chapter.locked">{{
+            t.rest.tasks.chapterLocked(
+              tasks.chapter.id,
+              catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
+            )
+          }}</b>
+          <b v-else>{{
+            t.rest.tasks.chapter(
+              tasks.chapter.id,
+              catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
+              tasks.chapter.claimedCount,
+              tasks.chapter.total,
+            )
+          }}</b>
+          <span v-if="tasks.chapter.locked" class="ms-auto text-nowrap">{{
+            tasks.chapter.needStar > 0
+              ? t.rest.tasks.lockedStar(tasks.chapter.needStar)
+              : t.rest.tasks.lockedLevel(tasks.chapter.needLevel)
+          }}</span>
+        </div>
+        <QuestCard
+          v-for="x in mainList"
+          :key="x.id"
+          :quest="x"
+          :name="questName(x)"
+          :award="awardText(x.award)"
+          :busy="busy"
+          @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+        />
+        <div v-if="!tasks.chapter.locked" class="d-flex align-items-center gap-2 small mt-1">
+          <span class="text-muted flex-fill">{{
+            t.rest.tasks.chapterAward(awardText(tasks.chapter.award))
+          }}</span>
+          <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈） -->
+          <button
+            :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
+            data-testid="claim-chapter"
+            :disabled="busy || !tasks.chapter.claimable"
+            @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
+          >
+            {{
+              tasks.chapter.claimable
+                ? t.rest.tasks.claimChapter
+                : t.rest.tasks.chapterLeft(tasks.chapter.total - tasks.chapter.claimedCount)
+            }}
+          </button>
+        </div>
+      </template>
+    </section>
+    <!-- 支线：每条一次显示一档 -->
+    <section class="dt-card mb-3" data-testid="card-lines">
+      <div class="dt-card-title mb-1">{{ t.rest.tasks.side }}</div>
+      <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
+      <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">
+        <div class="d-flex small text-muted">
+          <span>{{ catalog.data('questLines', l.id)?.name ?? l.name }}</span>
+          <span class="ms-auto">{{ l.doneCount }}/{{ l.total }}</span>
+        </div>
+        <QuestCard
+          v-if="l.quest"
+          :quest="l.quest"
+          :name="questName(l.quest)"
+          :award="awardText(l.quest.award)"
+          :busy="busy"
+          :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
+          @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
+        />
+        <div v-else class="small text-success">{{ t.rest.tasks.lineDone }}</div>
+      </div>
+    </section>
+    <!-- 每周：按当前星级分组，周一 0 点刷新 -->
+    <section v-if="tasks.weekly" class="dt-card mb-3" data-testid="card-weekly">
+      <div class="d-flex align-items-center mb-1">
+        <span class="dt-card-title flex-fill">{{ t.rest.tasks.weekly(tasks.weekly.group) }}</span>
+        <span class="small text-muted text-nowrap">{{ timeLeft(tasks.weekly.endsAt) }}</span>
+      </div>
+      <QuestCard
+        v-for="x in weeklyList"
+        :key="x.id"
+        :quest="x"
+        :name="questName(x)"
+        :award="awardText(x.award)"
+        :busy="busy"
+        @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+      />
+      <div class="d-flex align-items-center gap-2 small mt-1">
+        <span class="text-muted flex-fill">{{
+          t.rest.tasks.weeklyFull(awardText(tasks.weekly.full.award))
+        }}</span>
+        <button
+          :class="['btn btn-sm', tasks.weekly.full.claimable ? 'btn-success' : 'btn-outline-secondary']"
+          data-testid="claim-weekly-full"
+          :disabled="busy || !tasks.weekly.full.claimable"
+          @click="run(() => endpoints.claimTask(tasks!.weekly!.full.id), t.rest.tasks.claimFailed)"
+        >
+          {{
+            tasks.weekly.full.claimed
+              ? t.rest.tasks.weeklyFullClaimed
+              : tasks.weekly.full.claimable
+                ? t.rest.tasks.claimWeeklyFull
+                : t.rest.tasks.chapterLeft(tasks.weekly.quests.filter((q) => !q.claimed).length)
+          }}
+        </button>
+      </div>
+    </section>
+  </template>
+  <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
     <div class="d-flex align-items-center mb-2">
       <h6 class="mb-0">{{ t.rest.tasks.today(act.total) }}</h6>
       <button
@@ -124,79 +240,5 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
       </div>
     </div>
-  </div>
-  <div v-if="tasks">
-    <!-- 主线：当前章（问题记录 318） -->
-    <h6 class="mt-3">{{ t.rest.tasks.main }}</h6>
-    <div v-if="tasks.allMainDone" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
-    <template v-else-if="tasks.chapter">
-      <div class="d-flex align-items-center small mb-1" data-testid="chapter">
-        <b v-if="tasks.chapter.locked">{{
-          t.rest.tasks.chapterLocked(
-            tasks.chapter.id,
-            catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
-          )
-        }}</b>
-        <b v-else>{{
-          t.rest.tasks.chapter(
-            tasks.chapter.id,
-            catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
-            tasks.chapter.claimedCount,
-            tasks.chapter.total,
-          )
-        }}</b>
-        <span v-if="tasks.chapter.locked" class="ms-auto text-nowrap">{{
-          tasks.chapter.needStar > 0
-            ? t.rest.tasks.lockedStar(tasks.chapter.needStar)
-            : t.rest.tasks.lockedLevel(tasks.chapter.needLevel)
-        }}</span>
-      </div>
-      <QuestCard
-        v-for="x in mainList"
-        :key="x.id"
-        :quest="x"
-        :name="questName(x)"
-        :award="awardText(x.award)"
-        :busy="busy"
-        @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
-      />
-      <div v-if="!tasks.chapter.locked" class="d-flex align-items-center gap-2 small mt-1">
-        <span class="text-muted flex-fill">{{
-          t.rest.tasks.chapterAward(awardText(tasks.chapter.award))
-        }}</span>
-        <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈） -->
-        <button
-          :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
-          data-testid="claim-chapter"
-          :disabled="busy || !tasks.chapter.claimable"
-          @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
-        >
-          {{
-            tasks.chapter.claimable
-              ? t.rest.tasks.claimChapter
-              : t.rest.tasks.chapterLeft(tasks.chapter.total - tasks.chapter.claimedCount)
-          }}
-        </button>
-      </div>
-    </template>
-    <!-- 支线：每条一次显示一档 -->
-    <h6 class="mt-3">{{ t.rest.tasks.side }}</h6>
-    <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
-    <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">
-      <div class="d-flex small text-muted">
-        <span>{{ catalog.data('questLines', l.id)?.name ?? l.name }}</span>
-        <span class="ms-auto">{{ l.doneCount }}/{{ l.total }}</span>
-      </div>
-      <QuestCard
-        v-if="l.quest"
-        :quest="l.quest"
-        :name="questName(l.quest)"
-        :award="awardText(l.quest.award)"
-        :busy="busy"
-        :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
-        @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
-      />
-      <div v-else class="small text-success">{{ t.rest.tasks.lineDone }}</div>
-    </div>
-  </div>
+  </section>
 </template>

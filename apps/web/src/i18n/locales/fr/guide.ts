@@ -42,13 +42,18 @@ const guide: Messages['guide'] = {
       { to: '/society', text: 'Guilde' },
       '.',
     ],
+    [
+      'Suivez les ',
+      { to: '/rest/tasks', text: 'Quêtes' },
+      " : la quête principale compte 12 chapitres, chacun avec quelques quêtes à faire dans n'importe quel ordre. Récupérez-les toutes, puis la récompense du chapitre ; le chapitre suivant se débloque à un certain niveau ou nombre d'étoiles. Chaque nouvelle fonctionnalité ouvre ses quêtes secondaires, et il y a des quêtes hebdomadaires selon vos étoiles.",
+    ],
   ],
   daily: 'Chaque jour',
   dailyItems: [
     { to: '/', text: "Pointer sur la page d'accueil : une fois par jour, pour un pack de pointage" },
     {
       to: '/rest/tasks',
-      text: "Tâches et activité : faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses",
+      text: "Tâches et activité : faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses ; les quêtes hebdomadaires repartent le lundi à 0 h",
     },
     {
       to: '/town',

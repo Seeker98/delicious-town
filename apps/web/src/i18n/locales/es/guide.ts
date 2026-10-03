@@ -42,13 +42,18 @@ const guide: Messages['guide'] = {
       { to: '/society', text: 'Gremio' },
       '.',
     ],
+    [
+      'Sigue las ',
+      { to: '/rest/tasks', text: 'Misiones' },
+      ': la misión principal tiene 12 capítulos, cada uno con unas misiones que puedes hacer en cualquier orden. Recógelas todas y luego la recompensa del capítulo; el siguiente capítulo se desbloquea con cierto nivel o estrellas. Cada función nueva abre sus misiones secundarias, y hay misiones semanales según tus estrellas.',
+    ],
   ],
   daily: 'Rutina diaria',
   dailyItems: [
     { to: '/', text: 'Regístrate en la página de inicio: una vez al día, por un pack de registro' },
     {
       to: '/rest/tasks',
-      text: 'Tareas y actividad: haz las tareas diarias para sumar puntos de actividad y recoger sus premios',
+      text: 'Tareas y actividad: haz las tareas diarias para sumar puntos de actividad y recoger sus premios; las misiones semanales se reinician el lunes a las 0:00',
     },
     {
       to: '/town',
