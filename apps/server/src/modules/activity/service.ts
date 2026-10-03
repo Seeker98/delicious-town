@@ -359,6 +359,8 @@ export function createActivityService(d: GameDeps) {
             cost: item.cost.map((c) => ({ name: spec.def.currencies[c.currency]!.name, num: c.num * times })),
           },
         });
+        // 兑换型活动只能靠兑换拿奖励：兑换一次也算"领取限时活动奖励"（问题记录 318）
+        await emitAction(o, 'activity.claim');
         return { index, times, items };
       });
     },
