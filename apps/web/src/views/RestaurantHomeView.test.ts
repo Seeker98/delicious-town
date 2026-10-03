@@ -456,7 +456,8 @@ describe('RestaurantHomeView', () => {
         {
           sourceType: 'bless',
           sourceId: 4,
-          name: '今日星愿：招财进宝',
+          // 服务端只给星愿名，前缀由前端按语言加（问题记录 272）
+          name: '招财进宝',
           effects: { coinRate: 0.08 },
           expiresAt: null,
         },
@@ -464,6 +465,7 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     expect(w.findAll('[data-testid="effect-group"]')[0]!.text()).toBe('今日星愿');
+    expect(w.findAll('[data-testid="effect-row"]')[0]!.text()).toContain('今日星愿：招财进宝');
   });
 
   it('主线任务的领奖按钮和文字垂直居中，不再用浮动（问题记录 118）', async () => {

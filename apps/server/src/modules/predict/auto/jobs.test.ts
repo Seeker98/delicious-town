@@ -72,6 +72,15 @@ describe('判定任务（238-2 设计 §5.3）', () => {
     const after = (await events(shardId)).find((r) => r.id === stats.id)!;
     expect(after).toMatchObject({ status: 'resolved', outcome: false });
     expect(after.result_note).toBe('11月3日 0，11月2日 0');
+    // 判定依据的参数存下来，前端按语言渲染（问题记录 272）
+    expect(after.result_params).toMatchObject({ today: 0, yesterday: 0 });
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'predict.result')
+      .executeTakeFirstOrThrow();
+    expect(news.params).toMatchObject({ kind: 'stats', eventParams: { metric: 'coin' } });
   });
 
   it('已手动判定或作废的不覆盖（Review Focus 2）', async () => {
@@ -96,7 +105,12 @@ describe('判定任务（238-2 设计 §5.3）', () => {
     const res = await resolveAutoEvents(t.game.deps, shardId, late);
     expect(res.voided).toBeGreaterThanOrEqual(1);
     const after = (await events(shardId)).find((r) => r.id === m.id)!;
-    expect(after).toMatchObject({ status: 'void', result_note: '数据缺失，自动作废', void_ratio: 1 });
+    expect(after).toMatchObject({
+      status: 'void',
+      result_note: '数据缺失，自动作废',
+      result_params: { void: 'missing' },
+      void_ratio: 1,
+    });
   });
 });
 

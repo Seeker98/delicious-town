@@ -184,6 +184,7 @@ export function createAdminGrants(game: Game) {
           minLevel: b.target === 'shard' ? (b.minLevel ?? null) : null,
           title: '系统补偿',
           body: b.reason,
+          tpl: { key: 'grant', params: {} },
           items: b.items,
           source: 'grant',
           actorAccountId: actor.accountId,

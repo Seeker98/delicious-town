@@ -111,13 +111,16 @@ export async function settleDelivery(
     await grantGoodsOp(o, customer, 1);
     opNews(o, 'takeaway.customer', { goodsId: customer });
   }
-  const reason = success ? null : FAIL_REASONS[o.rng.int(FAIL_REASONS.length)]!;
+  // 原因存序号和中文原文：前端按序号显示各语言（问题记录 272），旧记录只有原文
+  const reasonId = success ? null : o.rng.int(FAIL_REASONS.length);
+  const reason = reasonId === null ? null : FAIL_REASONS[reasonId]!;
   const result: TakeawayClaimDto = {
     deliveryId: v.id,
     success,
     forced,
     drone,
     reason,
+    reasonId,
     coin,
     exp,
     renown,

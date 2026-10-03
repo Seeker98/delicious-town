@@ -176,7 +176,9 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const got = new Map<number, number>();
         for (let i = 0; i < b.times; i++) {
           if (!o.rng.chance(rate)) {
-            results.push({ ok: false, text: FAIL_TEXTS[o.rng.int(FAIL_TEXTS.length)]! });
+            // 序号给前端按语言显示（问题记录 272）
+            const textId = o.rng.int(FAIL_TEXTS.length);
+            results.push({ ok: false, text: FAIL_TEXTS[textId]!, textId });
             continue;
           }
           const { mc, blessed } = appraisePick(pool, retry, o.tuning.mysterious, o.rng);

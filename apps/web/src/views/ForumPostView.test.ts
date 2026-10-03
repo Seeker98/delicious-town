@@ -120,6 +120,16 @@ describe('ForumPostView', () => {
     expect(endpoints.forumReply).toHaveBeenLastCalledWith(5, { content: '悄悄说', anonymous: true });
   });
 
+  it('别人的匿名回复按当前语言显示"匿名"，不用服务端给的名字（问题记录 272）', async () => {
+    vi.mocked(endpoints.forumPost).mockResolvedValue(
+      detail({ replies: [reply(1, { restId: null, restName: '服务端原文', anonymous: true })] }),
+    );
+    const { w } = await mountView();
+    const text = w.find('[data-testid="reply-1"]').text();
+    expect(text).toContain('匿名');
+    expect(text).not.toContain('服务端原文');
+  });
+
   it('删除回复前要确认；取消就不删', async () => {
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     vi.mocked(endpoints.forumDeleteReply).mockResolvedValue({});

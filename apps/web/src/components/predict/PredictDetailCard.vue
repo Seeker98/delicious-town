@@ -8,6 +8,8 @@ import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import { predictDesc, predictNote } from '../../utils/serverText';
+import { useCatalogStore } from '../../stores/catalog';
 
 /** 事件预测的详情卡片：展开在被点的那一行下面（问题记录 264）；买卖后通知父组件刷新 */
 const props = defineProps<{ detail: PredictDetailDto; list: PredictListDto }>();
@@ -15,6 +17,7 @@ const emit = defineEmits<{ refresh: [] }>();
 
 const toast = useToastStore();
 const t = useT();
+const catalog = useCatalogStore();
 const side = ref<'yes' | 'no'>('yes');
 const dir = ref<'buy' | 'sell'>('buy');
 const qty = ref<number | ''>(1);
@@ -93,10 +96,10 @@ async function submit() {
 
 <template>
   <div class="dt-card mb-2" data-testid="pd-detail">
-    <div v-if="detail.event.description" class="small text-muted">{{ detail.event.description }}</div>
+    <div v-if="predictDesc(detail.event)" class="small text-muted">{{ predictDesc(detail.event) }}</div>
     <!-- 判定依据（238-2）：比如天气题写明自动轮换出的天气、之后有没有人用雷神锤改 -->
-    <div v-if="detail.event.resultNote" class="small text-muted" data-testid="pd-note">
-      {{ t.predict.note(detail.event.resultNote) }}
+    <div v-if="predictNote(detail.event, catalog)" class="small text-muted" data-testid="pd-note">
+      {{ t.predict.note(predictNote(detail.event, catalog)!) }}
     </div>
     <div class="d-flex gap-3 my-1">
       <span class="text-success">{{ t.predict.yesPct(predictPercent(detail.event.price)) }}</span>

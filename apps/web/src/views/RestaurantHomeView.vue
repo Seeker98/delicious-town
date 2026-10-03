@@ -17,6 +17,7 @@ import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
 import { remainText } from '../utils/remain';
+import { effectName } from '../utils/serverText';
 import { CUSTOMER_NAMES } from '../utils/labels';
 
 const store = useRestaurantStore();
@@ -163,7 +164,7 @@ const EFFECT_GROUPS: GroupKey[] = ['bless', 'street', 'honor', 'device', 'equip'
 const effectsAll = ref(false);
 /** 折叠时的一行摘要：来源名字，最多 3 个（问题记录 280） */
 const effectsSummary = computed(() => {
-  const names = (rest.value?.effects ?? []).map((e) => e.name);
+  const names = (rest.value?.effects ?? []).map((e) => effectName(e, catalog));
   const h = t.value.home;
   return names.length === 0
     ? h.none
@@ -514,8 +515,8 @@ onBeforeUnmount(() => {
           class="d-flex align-items-center gap-1 border-bottom py-1"
           data-testid="effect-row"
         >
-          <GameImg :path="`goods/${e.name}`" :alt="e.name" fallback-icon="bi-award" />
-          <b class="text-nowrap">{{ e.name }}</b>
+          <GameImg :path="`goods/${e.name}`" :alt="effectName(e, catalog)" fallback-icon="bi-award" />
+          <b class="text-nowrap">{{ effectName(e, catalog) }}</b>
           <span class="flex-fill d-flex flex-wrap gap-1">
             <span
               v-for="c in effectChips(e.effects)"

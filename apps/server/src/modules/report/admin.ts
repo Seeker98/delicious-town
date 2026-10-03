@@ -112,7 +112,7 @@ export function createAdminReports(game: Game) {
     }
   }
 
-  async function mailReporters(o: Op, c: Row, body: string) {
+  async function mailReporters(o: Op, c: Row, body: string, key: 'report.handled' | 'report.rejected') {
     for (const r of await reporters(c.id))
       await sendMail(o.tx, {
         scope: 'rest',
@@ -121,6 +121,7 @@ export function createAdminReports(game: Game) {
         minLevel: null,
         title: '举报结果',
         body,
+        tpl: { key, params: { target: c.target_type } },
         items: null,
         source: 'report',
         actorAccountId: null,
@@ -211,7 +212,7 @@ export function createAdminReports(game: Game) {
             note: b.note,
           },
         });
-        await mailReporters(o, c, `你举报的${typeName}已处理，感谢你维护小镇。`);
+        await mailReporters(o, c, `你举报的${typeName}已处理，感谢你维护小镇。`, 'report.handled');
         const ban =
           b.banDays === undefined ? '' : b.banDays === 0 ? '账号永久封禁。' : `账号封禁 ${b.banDays} 天。`;
         const what = action === 'none' ? '已记录违规' : `已被${ACTION_TEXT[action]}`;
@@ -222,6 +223,10 @@ export function createAdminReports(game: Game) {
           minLevel: null,
           title: '违规处理通知',
           body: `你的${typeName}因违规${what}。${ban}\n说明：${b.note}`,
+          tpl: {
+            key: 'report.penalty',
+            params: { target: c.target_type, action, banDays: b.banDays ?? null, note: b.note },
+          },
           items: null,
           source: 'report',
           actorAccountId: null,
@@ -256,7 +261,7 @@ export function createAdminReports(game: Game) {
           target: `report:${id}`,
           detail: { note: b.note },
         });
-        await mailReporters(o, c, `你举报的${typeName}经核实未违规。`);
+        await mailReporters(o, c, `你举报的${typeName}经核实未违规。`, 'report.rejected');
       });
       return toDto(await row(id));
     },

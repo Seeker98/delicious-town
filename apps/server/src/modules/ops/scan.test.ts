@@ -46,6 +46,16 @@ describe('六星换铉（设计 裁定 25）', () => {
       '小丽',
     ]);
     expect(await xuanMails(five.restaurantId)).toEqual([]);
+    // 系统邮件存模板键，前端按语言显示（问题记录 272）
+    const tpls = await t.db
+      .selectFrom('mail')
+      .select(['tpl', 'tpl_params'])
+      .where('rest_id', '=', six.restaurantId)
+      .where('source', '=', 'hat')
+      .execute();
+    expect(tpls.map((m) => `${m.tpl}:${String(m.tpl_params?.name)}`).sort()).toEqual(
+      ['hat.upgrade:大橘', 'hat.upgrade:小丽'].sort(),
+    );
     const jade = await t.db
       .selectFrom('equip')
       .select('xuan_sent_at')

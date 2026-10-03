@@ -46,10 +46,31 @@ export const sendMailBody = z
   .refine((b) => b.scope === 'all' || b.shardId !== undefined, { path: ['shardId'], message: 'required' });
 export type SendMailInput = z.infer<typeof sendMailBody>;
 
+/**
+ * 系统邮件模板（问题记录 272）：前端按语言渲染标题和正文。
+ * 模板里没有正文的（系统补偿）显示原文正文；违规通知里管理员写的说明在参数里原样显示
+ */
+export type MailTplKey =
+  | 'activity.unclaimed'
+  | 'activity.rank'
+  | 'grant'
+  | 'invite.welcome'
+  | 'invite.reward'
+  | 'hat.upgrade'
+  | 'report.handled'
+  | 'report.rejected'
+  | 'report.penalty';
+export interface MailTpl {
+  key: MailTplKey;
+  params: Record<string, unknown>;
+}
+
 export interface MailDto {
   id: number;
   title: string;
   body: string;
+  /** 系统邮件的模板；管理员写的邮件和旧邮件为 null，显示 title、body 原文 */
+  tpl: MailTpl | null;
   items: RewardItems | null;
   /** admin / grant / hat / invite */
   source: string;

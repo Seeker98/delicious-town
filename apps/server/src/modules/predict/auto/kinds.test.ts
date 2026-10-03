@@ -43,6 +43,8 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
     expect(from).toBeGreaterThanOrEqual(1);
     expect(to).toBeLessThanOrEqual(13);
     expect(dr.title).toBe(`明天蟹老板会在 ${from}~${to} 号街出现吗`);
+    // 前端按参数渲染各语言的题目（问题记录 272）
+    expect(dr.params).toMatchObject({ hour: 9 });
     expect(dr.p0).toBeCloseTo(6 / 13, 9);
     expect(dr.closeAt).toEqual(gameTime(DAY, 23, 50));
     expect(dr.resolveAt).toEqual(gameTime(addDays(DAY, 1), 9));
@@ -58,6 +60,7 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
       expect(r.outcome).toBe(street >= from && street <= from + 5);
       // 判定依据写具体日期：事后看"明天"会让人糊涂（终审 M4）
       expect(r.note).toBe(`11月4日 9 点蟹老板刷新在 ${street} 号街`);
+      expect(r.noteParams).toEqual({ day: tomorrow, hour: 9, street });
     }
   });
 });
@@ -114,6 +117,8 @@ describe('嘻哈男孩（238-2 设计 §4.2）', () => {
     const r = (await hiphop.resolve(await rctx(shardId), dr.params))!;
     expect(r.outcome).toBe(false);
     expect(r.note).toMatch(/^11月4日嘻哈男孩出现在/);
+    expect(r.noteParams).toEqual({ day: addDays(DAY, 1), place: other });
+    expect(dr.params).toMatchObject({ hour: expect.any(Number) });
   });
 });
 
@@ -154,10 +159,18 @@ describe('菜场（238-2 设计 §4.3）', () => {
       .values([row(common1.id, null), row(rare2.id, owner.restaurantId)])
       .execute();
     const no = (await market.resolve(await rctx(shardId), params))!;
-    expect(no).toEqual({ outcome: false, note: '11月3日 12 点日常货架没有 2 级稀有食材' });
+    expect(no).toEqual({
+      outcome: false,
+      note: '11月3日 12 点日常货架没有 2 级稀有食材',
+      noteParams: { day: DAY, hour: 12, level: 2, foods: [] },
+    });
     await t.db.insertInto('market_item').values(row(rare2.id, null)).execute();
     const yes = (await market.resolve(await rctx(shardId), params))!;
-    expect(yes).toEqual({ outcome: true, note: `11月3日 12 点日常货架上了 2 级稀有食材：${rare2.name}` });
+    expect(yes).toEqual({
+      outcome: true,
+      note: `11月3日 12 点日常货架上了 2 级稀有食材：${rare2.name}`,
+      noteParams: { day: DAY, hour: 12, level: 2, foods: [rare2.id] },
+    });
   });
 });
 
@@ -185,6 +198,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     expect(r.note).toBe(
       `11月3日 ${hour} 点自动轮换的天气是${auto.name}（${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类）`,
     );
+    expect(r.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type });
     const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== auto.type)!;
     await t.db
       .insertInto('news')
@@ -198,6 +212,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     const r2 = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r2.outcome).toBe(true);
     expect(r2.note).toBe(`${r.note}；之后有人用雷神锤改成了${other.name}，按题目规则不算`);
+    expect(r2.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type, hammerTo: other.id });
   });
 });
 
@@ -207,7 +222,7 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     for (const day of [DAY, addDays(DAY, 1)]) {
       const dr = (await stats.create({ ...(await ctx(shardId)), day, now: gameTime(day, 0, 5) }))!;
       expect(dr.title).toBe('今天全服营业银币会超过昨天吗');
-      expect(dr.params).toEqual({ day, metric: 'coin' });
+      expect(dr.params).toEqual({ day, metric: 'coin', close: 18 });
       expect(dr.p0).toBe(0.5);
       expect(dr.closeAt).toEqual(gameTime(day, 18));
       expect(dr.resolveAt).toEqual(gameTime(addDays(day, 1), 0, 10));
@@ -241,7 +256,11 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     await income(addDays(DAY, -1), 1000);
     await income(DAY, 1000);
     const tie = (await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!;
-    expect(tie).toEqual({ outcome: false, note: '11月3日 1,000，11月2日 1,000' });
+    expect(tie).toEqual({
+      outcome: false,
+      note: '11月3日 1,000，11月2日 1,000',
+      noteParams: { day: DAY, today: 1000, prevDay: addDays(DAY, -1), yesterday: 1000 },
+    });
     await income(DAY, 1);
     expect((await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!.outcome).toBe(true);
   });

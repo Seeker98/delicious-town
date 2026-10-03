@@ -4,6 +4,7 @@ import {
   gameDay,
   pickWeighted,
   type NpcKey,
+  type TalkLine,
   type TalkResultDto,
   type TownRewardDto,
 } from '@dt/shared';
@@ -15,7 +16,7 @@ import { addFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
 import { addSeeds } from '../temple/common';
 import { setTownRest, townRest } from './common';
-import { BIG_EATER_FIRST_TALK, NPC_TALK, pickBigEaterLevel, rollRange } from './rules';
+import { pickBigEaterLevel, rollRange } from './rules';
 
 /** NPC 对话（设计文档 §3.3、裁定 6）：每个 NPC 每天一次 */
 export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
@@ -23,7 +24,8 @@ export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
   if ((await incrementDaily(o.tx, o.rest.id, `town.talk.${npc}`, 1, gameDay(o.now))) > 1)
     throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'talk' });
   const rewards: TownRewardDto[] = [];
-  let line = NPC_TALK[npc];
+  // 台词照原版 NPCTools，只返回代码，前端按语言显示（问题记录 272）
+  let line: TalkLine = npc;
   if (npc === 'bigEater') {
     const pool = o.config.foodPools.get(pickBigEaterLevel(t.bigEaterLevelWeights, o.rng));
     if (!pool || pool.total <= 0) throw invalidState('no_foods');
@@ -39,7 +41,7 @@ export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
       const gift = await grantGoodsOp(o, GOODS.mysteryFoodExchange, 1);
       await setTownRest(o, { big_eater_gift: true });
       rewards.push({ kind: 'goods', id: GOODS.mysteryFoodExchange, num: gift });
-      line = BIG_EATER_FIRST_TALK;
+      line = 'bigEaterFirst';
     }
   } else {
     const goodsId = npc === 'wenjie' ? GOODS.mysteryTicket : GOODS.horn;

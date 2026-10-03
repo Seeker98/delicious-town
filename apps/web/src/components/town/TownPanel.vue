@@ -12,6 +12,7 @@ import { useToastStore } from '../../stores/toast';
 import { effectChips } from '../../utils/effects';
 import { formatNum } from '../../utils/format';
 import { rewardText } from '../../utils/rewards';
+import { talkText } from '../../utils/serverText';
 import { useServerClock } from '../../utils/serverClock';
 
 const props = defineProps<{ data: TownDto }>();
@@ -53,7 +54,7 @@ const PLACES = computed(() =>
 function askMayor(place: HiphopPlace) {
   void act(
     () => endpoints.townMayor(place),
-    (r) => t.value.town.said(t.value.town.mayorName, r.talk, rewards(r.rewards)),
+    (r) => t.value.town.said(t.value.town.mayorName, talkText(r.talk), rewards(r.rewards)),
     t.value.town.mayorFailed,
   );
 }
@@ -62,7 +63,7 @@ function talk(key: NpcKey) {
   const name = t.value.town.npcs[key].name;
   void act(
     () => endpoints.townTalk(key),
-    (r) => t.value.town.said(name, r.talk, rewards(r.rewards)),
+    (r) => t.value.town.said(name, talkText(r.talk), rewards(r.rewards)),
     t.value.town.talkFailed,
   );
 }

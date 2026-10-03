@@ -24,6 +24,9 @@ const ev = (p: Partial<PredictListDto['events'][number]> = {}) => ({
   payout: null,
   auto: false,
   resultNote: null,
+  kind: 'manual',
+  params: {},
+  resultParams: null,
   ...p,
 });
 const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({

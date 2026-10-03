@@ -26,7 +26,7 @@ export const stats: AutoKind = {
       p0: 0.5,
       closeAt: gameTime(c.day, close),
       resolveAt: gameTime(addDays(c.day, 1), 0, 10),
-      params: { day: c.day, metric: 'coin' },
+      params: { day: c.day, metric: 'coin', close },
     };
   },
   async resolve(c, p) {
@@ -37,6 +37,7 @@ export const stats: AutoKind = {
     return {
       outcome: today > yesterday,
       note: `${dayLabel(day)} ${f(today)}，${dayLabel(addDays(day, -1))} ${f(yesterday)}`,
+      noteParams: { day, today, prevDay: addDays(day, -1), yesterday },
     };
   },
 };

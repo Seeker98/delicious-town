@@ -11,12 +11,18 @@ import { postNews } from '../news/news';
 export async function finalizeEvent(
   tx: Kysely<DB>,
   id: string,
-  set: { status: 'resolved' | 'void'; outcome: boolean | null; note?: string | null },
+  set: {
+    status: 'resolved' | 'void';
+    outcome: boolean | null;
+    note?: string | null;
+    /** 判定依据的参数，前端按语言渲染（问题记录 272） */
+    noteParams?: Record<string, unknown>;
+  },
   now: Date,
 ): Promise<{ title: string; voidRatio: number | null } | null> {
   const e = await tx
     .selectFrom('predict_event')
-    .select(['status', 'title', 'shard_id', 'unit'])
+    .select(['status', 'title', 'shard_id', 'unit', 'kind', 'params'])
     .where('id', '=', id)
     .forUpdate()
     .executeTakeFirst();
@@ -42,6 +48,7 @@ export async function finalizeEvent(
       resolved_at: now,
       void_ratio: voidRatio,
       ...(set.note !== undefined ? { result_note: set.note } : {}),
+      ...(set.noteParams ? { result_params: JSON.stringify(set.noteParams) } : {}),
     })
     .where('id', '=', id)
     .execute();
@@ -56,7 +63,12 @@ export async function finalizeEvent(
     ])
     .where('event_id', '=', id)
     .executeTakeFirstOrThrow();
-  const base = { eventId: Number(id), title: e.title };
+  // 自动题带题型和出题参数，新闻按语言渲染题目（问题记录 272）
+  const base = {
+    eventId: Number(id),
+    title: e.title,
+    ...(e.kind !== 'manual' ? { kind: e.kind, eventParams: e.params } : {}),
+  };
   await postNews(tx, {
     shardId: e.shard_id,
     type: 'predict.result',

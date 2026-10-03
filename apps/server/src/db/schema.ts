@@ -864,6 +864,9 @@ export interface MailTable {
   title: string;
   body: string;
   items: ColumnType<unknown | null, string | null | undefined, string | null>;
+  /** 系统邮件的模板键和参数（问题记录 272）：前端按语言渲染；管理员写的邮件为空 */
+  tpl: Nullable<string>;
+  tpl_params: ColumnType<Record<string, unknown> | null, string | null | undefined, string | null>;
   source: string;
   actor_account_id: Nullable<number>;
   created_at: TsDefault;
@@ -1115,6 +1118,8 @@ export interface PredictEventTable {
   auto_key: Nullable<string>;
   /** 判定依据 */
   result_note: Nullable<string>;
+  /** 自动题判定依据的参数（问题记录 272）：前端按语言渲染；旧数据为空 */
+  result_params: ColumnType<Record<string, unknown> | null, string | null | undefined, string | null>;
   /** 自动题最早判定时间 */
   resolve_at: TsNullable;
   created_at: TsDefault;

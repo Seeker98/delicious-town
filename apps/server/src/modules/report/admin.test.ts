@@ -61,7 +61,7 @@ describe('后台举报处理（HTTP，设计 §3.3）', () => {
   const mails = (restId: number) =>
     db()
       .selectFrom('mail')
-      .select(['title', 'body'])
+      .select(['title', 'body', 'tpl', 'tpl_params'])
       .where('rest_id', '=', restId)
       .where('source', '=', 'report')
       .orderBy('id')
@@ -106,6 +106,16 @@ describe('后台举报处理（HTTP，设计 §3.3）', () => {
     expect(notice[0]!.title).toBe('违规处理通知');
     expect(notice[0]!.body).toContain('发广告');
     expect(notice[0]!.body).toContain('7 天');
+    // 系统邮件存模板键，前端按语言显示（问题记录 272）
+    expect((await mails(a.restId))[0]).toMatchObject({
+      tpl: 'report.handled',
+      tpl_params: { target: 'notice' },
+    });
+    expect(notice[0]).toMatchObject({
+      tpl: 'report.penalty',
+      tpl_params: { target: 'notice', action: 'clear', banDays: 7 },
+    });
+    expect(String(notice[0]!.tpl_params!.note)).toContain('发广告');
     expect(await caseRow(caseId)).toMatchObject({
       status: 'resolved',
       action: 'clear',

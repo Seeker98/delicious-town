@@ -8,6 +8,7 @@ import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { TAKEAWAY_GRADES } from '../../utils/labels';
+import { takeawayFailText } from '../../utils/serverText';
 import { minutesLeft } from './format';
 
 const props = defineProps<{ data: TakeawayDto }>();
@@ -41,7 +42,7 @@ const claimAll = () => run(() => endpoints.takeawayClaimAll());
 
 function headline(r: TakeawayClaimDto): string {
   const x = t.value.takeaway.deliveries;
-  if (!r.success) return x.failedReason(r.reason ?? '');
+  if (!r.success) return x.failedReason(takeawayFailText(r));
   if (r.forced) return x.forced;
   return r.drone ? x.drone : x.success;
 }

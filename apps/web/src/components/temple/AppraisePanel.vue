@@ -6,6 +6,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import { appraiseFailText } from '../../utils/serverText';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -101,7 +102,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
     </label>
     <ul class="small mt-2" data-testid="results">
       <li v-for="(r, i) in results" :key="i">
-        {{ r.ok ? t.temple.appraise.got(catalog.mcName(r.mcId ?? 0), r.num ?? 0, !!r.blessed) : r.text }}
+        {{
+          r.ok
+            ? t.temple.appraise.got(catalog.mcName(r.mcId ?? 0), r.num ?? 0, !!r.blessed)
+            : appraiseFailText(r)
+        }}
       </li>
     </ul>
   </div>

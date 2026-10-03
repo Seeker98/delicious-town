@@ -68,6 +68,7 @@ describe('领取（设计文档 §3.4）', () => {
       forced: false,
       drone: false,
       reason: null,
+      reasonId: null,
       coin: 198,
       exp: 13,
       renown: 1,
@@ -123,6 +124,7 @@ describe('领取（设计文档 §3.4）', () => {
       goods: null,
       riderExp: 12,
       reason: '顾客退单了!',
+      reasonId: 7,
     });
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ coin: 0, renown: 7 });
     expect(await deliveryState(a)).toBe(3);
