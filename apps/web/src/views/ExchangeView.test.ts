@@ -170,7 +170,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(endpoints.tradeBook).toHaveBeenCalledTimes(2);
   });
 
-  it('食材列表标出在售、在收（问题记录 282）：在售绿框写"卖 N"（含系统库存），在收写"收 N"；可筛选在售、在收', async () => {
+  it('食材列表标出在售、在收（问题记录 282）：在售写"卖 N"（含系统库存），在收写"收 N"；可筛选在售、在收', async () => {
     try {
       localStorage.removeItem('dt_exchange_filter');
     } catch {
@@ -186,6 +186,8 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(buy.text()).toContain('收 3');
     expect(w.get('[data-testid="ex-food-13"]').text()).not.toMatch(/卖|收/);
     expect(w.get('[data-testid="ex-legend"]').text()).toContain('卖');
+    // 不再写"绿框"（问题记录 306：太突兀）
+    expect(w.get('[data-testid="ex-legend"]').text()).toBe('卖 N 有人在卖（含系统库存）；收 N 有人在收');
     await w.get('[data-testid="ex-filter-sale"]').trigger('click');
     expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'ex-food-11',

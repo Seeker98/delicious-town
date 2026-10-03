@@ -45,7 +45,7 @@ export default {
   saleTag: (n: number) => `賣 ${n}`,
   buyTag: (n: number) => `收 ${n}`,
   legendSale: '賣 N',
-  legendSaleText: ' 有人在賣（含系統庫存），綠框；',
+  legendSaleText: ' 有人在賣（含系統庫存）；',
   legendBuy: '收 N',
   legendBuyText: ' 有人在收',
   level: (lv: number) => `${lv} 級`,
