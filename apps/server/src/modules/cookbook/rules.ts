@@ -113,3 +113,14 @@ export function foodsNeedFor(
   }
   return out;
 }
+
+/**
+ * 已学食谱字节串补齐到 maxCookbookId + 1（问题记录 284）：新街道上线前开的店长度不够，
+ * 往类型化数组越界写会被静默丢掉，学了新菜也存不下
+ */
+export function padLevels(levels: Uint8Array, maxCookbookId: number): Uint8Array {
+  if (levels.length > maxCookbookId) return levels;
+  const out = new Uint8Array(maxCookbookId + 1);
+  out.set(levels);
+  return out;
+}

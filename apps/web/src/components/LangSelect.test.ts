@@ -139,10 +139,13 @@ describe('backlog 多语言：存到账号、跟随账号失败时提示', () =>
     const w = mount(LangSelect);
     await w.get('[data-testid="lang-select"]').setValue('fr');
     await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
-    await flushPromises();
-    // 提示按刚切过去的语言显示
-    expect(useToastStore().items.map((x) => x.text)).toContain(
-      "Langue changée, mais elle n'a pas pu être enregistrée sur votre compte. Elle reviendra après actualisation.",
+    // 提示按刚切过去的语言显示；存账号失败后才推提示，全量并行跑时一次 flush 可能还没到（偶发）
+    await vi.waitFor(
+      () =>
+        expect(useToastStore().items.map((x) => x.text)).toContain(
+          "Langue changée, mais elle n'a pas pu être enregistrée sur votre compte. Elle reviendra après actualisation.",
+        ),
+      LOAD,
     );
   });
 

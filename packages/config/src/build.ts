@@ -89,15 +89,33 @@ export function buildBundle(src: SourceData): BuildResult {
     return null;
   }
 
-  const foodsRaw = parse('dataset/foods', z.array(raw.rawFood));
-  const goodsRaw = parse('dataset/goods', z.array(raw.rawGoods));
-  const cookbooksRaw = parse('dataset/cookbooks', z.array(raw.rawCookbook));
-  const streetsRaw = parse('dataset/streets', z.array(raw.rawStreet));
+  /** 原始数据 + 新设计的同类数据（新街道，问题记录 284）；任一份解析失败就是 null */
+  const both = <T>(a: T[] | null, b: T[] | null): T[] | null => (a && b ? [...a, ...b] : null);
+  const foodsRaw = both(
+    parse('dataset/foods', z.array(raw.rawFood)),
+    parse('designed/foods_new', z.array(raw.rawFood)),
+  );
+  const goodsRaw = both(
+    parse('dataset/goods', z.array(raw.rawGoods)),
+    parse('designed/street_medals_new', z.array(raw.rawGoods)),
+  );
+  const cookbooksRaw = both(
+    parse('dataset/cookbooks', z.array(raw.rawCookbook)),
+    parse('designed/cookbooks_new', z.array(raw.rawCookbook)),
+  );
+  const streetsRaw = both(
+    parse('dataset/streets', z.array(raw.rawStreet)),
+    parse('designed/streets_new', z.array(raw.rawStreet)),
+  );
+  const medalMapRaw = parse('designed/street_medal_map', z.array(raw.rawStreetMedal));
   const mysteriousRaw = parse('dataset/mysterious_cookbooks', z.array(raw.rawMysterious));
   const devicesRaw = parse('dataset/devices', z.array(raw.rawDevice));
   const actTasksRaw = parse('dataset/activation_tasks', z.array(raw.rawActivationTask));
   const actRewardsRaw = parse('dataset/activation_rewards', z.array(raw.rawActivationReward));
-  const pricesRaw = parse('designed/cookbooks_price', z.array(raw.rawCookbookPrice));
+  const pricesRaw = both(
+    parse('designed/cookbooks_price', z.array(raw.rawCookbookPrice)),
+    parse('designed/cookbooks_price_new', z.array(raw.rawCookbookPrice)),
+  );
   const awardFlagsRaw = parse('designed/goods_awardflag', z.array(raw.rawAwardFlag));
   const weatherRaw = parse('designed/weather', z.array(raw.rawWeather));
   const starNeedRaw = parse('designed/star_need', z.array(raw.rawStarNeed));
@@ -140,6 +158,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !goodsRaw ||
     !cookbooksRaw ||
     !streetsRaw ||
+    !medalMapRaw ||
     !mysteriousRaw ||
     !mcProfRaw ||
     !devicesRaw ||
@@ -346,12 +365,26 @@ export function buildBundle(src: SourceData): BuildResult {
   }
 
   // ---------- 街道 ----------
-  const streets = streetsRaw.map((s) => ({
-    id: s.id,
-    name: s.name,
-    cookName: s.cookname ?? '',
-    desc: s.desc ?? '',
-  }));
+  // 街道勋章用显式对应表（问题记录 284）：以前按 devicetype<=13 识别，雕像 devicetype 20 会和印度街冲突
+  const medalOf = new Map<number, number>();
+  for (const m of medalMapRaw) {
+    const g = goods.find((x) => x.id === m.goodsId);
+    if (!g || g.type !== GOODS_TYPE.honor)
+      errors.push(`street_medal_map street ${m.streetId} goods ${m.goodsId} is not a medal`);
+    if (medalOf.has(m.streetId)) errors.push(`street_medal_map street ${m.streetId} listed twice`);
+    medalOf.set(m.streetId, m.goodsId);
+  }
+  unique(
+    'street_medal_map goods',
+    medalMapRaw.map((m) => m.goodsId),
+  );
+  const streets = streetsRaw.map((s) => {
+    const medalId = medalOf.get(s.id);
+    if (medalId === undefined) errors.push(`street ${s.id} has no medal`);
+    return { id: s.id, name: s.name, cookName: s.cookname ?? '', desc: s.desc ?? '', medalId: medalId ?? -1 };
+  });
+  for (const id of medalOf.keys())
+    if (!streets.some((s) => s.id === id)) errors.push(`street_medal_map references unknown street ${id}`);
   unique(
     'streets',
     streets.map((s) => s.id),
@@ -599,6 +632,10 @@ export function buildBundle(src: SourceData): BuildResult {
     );
 
   const marketGuessFoods = guessFoodsRaw.map((f) => f.i);
+  // 竞猜清单原本就是日常菜场能出的全部 1、2 级食材；新加的同等级食材（新街道，问题记录 284）也上日常菜场，一并能猜
+  const guessIds = new Set(marketGuessFoods);
+  const dailyLevels = new Set(tuning.market.dailyLevelWeights.map(([l]) => l));
+  for (const f of foods) if (dailyLevels.has(f.level) && !guessIds.has(f.id)) marketGuessFoods.push(f.id);
   for (const id of marketGuessFoods)
     if (!foodIds.has(id)) errors.push(`market_guess_foods references unknown food ${id}`);
 

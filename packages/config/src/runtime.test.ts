@@ -26,10 +26,10 @@ describe('2A 运行时索引', () => {
 
   it('食材按等级分组，稀有池只含 odds<100', () => {
     expect(cfg.foodsByLevel.get(1)!.length).toBe(27);
-    expect(cfg.foodPools.get(2)!.items.length).toBe(81);
+    expect(cfg.foodPools.get(2)!.items.length).toBe(89); // 81 + 新街道 8 种 2 级食材（问题记录 284）
     expect(cfg.rareFoodPools.get(2)!.items.every((f) => f.odds < 100)).toBe(true);
     expect(cfg.masterFoodPool.items.map((f) => f.id)).toEqual([467, 468, 469, 470, 471]);
-    expect(cfg.hotFoodPool.items.length).toBe(18);
+    expect(cfg.hotFoodPool.items.length).toBe(25); // 18 + 新街道 7 种用量多的稀有食材（问题记录 284）
   });
 
   it('食谱索引', () => {
@@ -37,7 +37,7 @@ describe('2A 运行时索引', () => {
     expect(idx.street[1]).toBe(6);
     expect(idx.coin[1]).toBe(cfg.cookbooks.get(1)!.coin);
     expect(idx.idsByStreet.get(0)!.length).toBe(69);
-    expect(idx.allIds.length).toBe(2331);
+    expect(idx.allIds.length).toBe(3810);
   });
 
   it('街道勋章：新手街 140，江西街 187', () => {
@@ -45,6 +45,11 @@ describe('2A 运行时索引', () => {
     expect(cfg.streetMedalId(11)).toBe(187);
     expect(cfg.isStreetMedal(cfg.requireGoods(189))).toBe(true);
     expect(cfg.isStreetMedal(cfg.requireGoods(100))).toBe(false);
+    expect(cfg.streetMedalId(20)).toBe(92020);
+    expect(cfg.streetMedalId(29)).toBe(92029);
+    // 雕像的 devicetype 也是 20，不是印度街勋章（问题记录 284）
+    expect(cfg.isStreetMedal(cfg.requireGoods(397))).toBe(false);
+    expect(cfg.isStreetMedal(cfg.requireGoods(92020))).toBe(true);
   });
 
   it('设施位、星级、油壶、品级、活跃项', () => {

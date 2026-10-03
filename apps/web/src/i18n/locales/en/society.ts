@@ -13,6 +13,7 @@ const society: Messages['society'] = {
     hint: (street, cost) =>
       `You're on ${street}. Moving takes 1 Moving Card (free with a Moving Office permit) and about ${cost} coins (half price when lucky).`,
     pick: 'Choose a new street',
+    bonus: (desc) => `Street bonus: ${desc}`,
     option: (name, cook) => `${name} (${cook})`,
     btn: 'Move',
     done: (street) => `Moved to ${street}`,

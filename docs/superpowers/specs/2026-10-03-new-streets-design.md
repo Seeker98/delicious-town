@@ -10,7 +10,7 @@
   - 16 条异国街（id 14~29）；
   - 1479 道新菜谱（id 18747~20225）；
   - 23 种新食材（id 584~606，13 种基础 + 10 种高级版）；
-  - 16 枚街道勋章（goods id 628~643）。
+  - 16 枚街道勋章（数据里是 goods id 628~643，但这段 id 已被装备设定新增的厨具占用，导入时改成 92000 + 街道 id，即 92014~92029）。
 - **菜名译名**（`data/i18n/`）：共 3810 道，英、法、西三种语言。
 
 接入后共 30 条街、3810 道菜谱。
@@ -104,7 +104,7 @@
 | `designed/street_medals_new.json` | 16 枚勋章，字段同 goods；丢掉 `_src` | `street_medals_new.json` |
 | `designed/cookbooks_new.json` | 1479 道菜，1~10 品级；不含 coin/level/desc | `cookbooks_new.json` + §5.3 生成 |
 | `designed/cookbooks_price_new.json` | 新菜的 coin、level、desc（单独一个文件，重跑导入时整份替换，不用去老文件里挑出来删） | `cookbooks_new.json` 拆出来 |
-| `designed/street_medal_map.json` | 30 条街各对应一枚勋章：`{ streetId, goodsId }` | 老街 140~150、187~189；新街 628~643 |
+| `designed/street_medal_map.json` | 30 条街各对应一枚勋章：`{ streetId, goodsId }` | 老街 140~150、187~189；新街 92014~92029 |
 
 - `source.ts` 加上这些文件。
 - `build.ts` 把它们和 dataset 里对应的列表拼起来，再走原有校验。拼接时 id 冲突报错。

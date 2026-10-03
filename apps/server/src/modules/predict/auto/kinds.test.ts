@@ -35,17 +35,17 @@ const rctx = async (shardId: number) => ({
 });
 
 describe('蟹老板（238-2 设计 §4.1）', () => {
-  it('出题：明天 a~a+5 号街，概率 6/13，当天 23:50 截止，明天 9 点判定', async () => {
+  it('出题：明天 a~a+5 号街，概率 6/29（蟹老板 1~29 号街，问题记录 284），当天 23:50 截止，明天 9 点判定', async () => {
     const shardId = await createShard(t.db);
     const dr = (await krab.create(await ctx(shardId)))!;
     const { from, to } = dr.params as { from: number; to: number };
     expect(to - from).toBe(5);
     expect(from).toBeGreaterThanOrEqual(1);
-    expect(to).toBeLessThanOrEqual(13);
+    expect(to).toBeLessThanOrEqual(29);
     expect(dr.title).toBe(`明天蟹老板会在 ${from}~${to} 号街出现吗`);
     // 前端按参数渲染各语言的题目（问题记录 272）
     expect(dr.params).toMatchObject({ hour: 9 });
-    expect(dr.p0).toBeCloseTo(6 / 13, 9);
+    expect(dr.p0).toBeCloseTo(6 / 29, 9);
     expect(dr.closeAt).toEqual(gameTime(DAY, 23, 50));
     expect(dr.resolveAt).toEqual(gameTime(addDays(DAY, 1), 9));
   });

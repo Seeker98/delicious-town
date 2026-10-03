@@ -38,7 +38,7 @@
 
 - **标题**："明天蟹老板会在 a~(a+5) 号街出现吗"。a 在 `[krabStreetMin, krabStreetMax − 5]` 里随机。
 - **说明**："以明天 9 点（krabHour）系统刷新的位置为准，之后被驱赶改变的不算。"
-- **初始概率**：`6 / (krabStreetMax − krabStreetMin + 1)`，现在是 6/13。
+- **初始概率**：`6 / (krabStreetMax − krabStreetMin + 1)`，现在是 6/29（新街道上线后蟹老板在 1~29 号街，问题记录 284）。
 - **截止**：D 当天 23:50。
 - **判定时间**：D+1 的 krabHour 之后。
 - **判定**：按 `rollKrabStreet(tuning.world, seededRng(gameSeed(shardId, 'krab', slotKey(D+1, krabHour))))` 重算那一刻刷新出的街，和世界服务的刷新完全一致。

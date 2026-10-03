@@ -16,6 +16,7 @@ const society: Messages['society'] = {
     hint: (street, cost) =>
       `Vous êtes à ${street}. Il faut 1 carte de déménagement (gratuit avec un permis du bureau des déménagements) et environ ${cost} pièces (moitié prix avec de la chance).`,
     pick: 'Choisir une nouvelle rue',
+    bonus: (desc) => `Bonus de la rue : ${desc}`,
     option: (name, cook) => `${name} (${cook})`,
     btn: 'Déménager',
     done: (street) => `Déménagé : ${street}`,

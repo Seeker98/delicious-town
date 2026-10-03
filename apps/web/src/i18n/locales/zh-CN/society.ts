@@ -12,6 +12,7 @@ export default {
     hint: (street: string, cost: string) =>
       `现在在 ${street}。需要 1 张搬家卡（持有搬家处工作证时免），花费约 ${cost} 银币（幸运时半价）。`,
     pick: '选择新街道',
+    bonus: (desc: string) => `街道加成：${desc}`,
     option: (name: string, cook: string) => `${name}（${cook}）`,
     btn: '搬家',
     done: (street: string) => `已经搬到 ${street}`,
