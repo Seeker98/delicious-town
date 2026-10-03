@@ -364,6 +364,8 @@ export function createExchangeService(d: GameDeps) {
             qty: n,
             fee: m.side === 'sell' ? fee : 0,
             held,
+            // 冻结几小时按区服设置写进日志，前端不再写死 24（backlog 156-2）
+            ...(held ? { holdHours: t.suspicious.holdHours } : {}),
           }),
           created_at: o.now,
         })
@@ -413,6 +415,7 @@ export function createExchangeService(d: GameDeps) {
       qty: b.qty,
       filled,
       held: fills.some((x) => x.held),
+      ...(fills.some((x) => x.held) ? { holdHours: o.tuning.exchange.suspicious.holdHours } : {}),
     });
     return { order: orderDto(done), fills };
   }
@@ -603,7 +606,16 @@ export function createExchangeService(d: GameDeps) {
       .where('foods_id', '=', foodsId)
       .where('created_at', '>=', gameTime(gameDay(now), 0))
       .executeTakeFirstOrThrow();
-    // 系统做市的一档（156-3 设计 §6）：同价排在玩家后面；买档数量按看的人自己的剩余额度
+    // 系统做市的一档（156-3 设计 §6）：同价排在玩家后面；买档数量按看的人自己的剩余额度。
+    // 被冻结或还没开通的人卖不了，不给他们显示收购档（backlog 156-3）
+    const viewer = await d.db
+      .selectFrom('restaurant')
+      .select('level')
+      .where('id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    const canSell =
+      (await eligibility({ db: d.db, level: viewer.level, accountId: ctx.accountId, now, t })) === null &&
+      (await frozenReason(d.db, ctx.restaurantId)) === null;
     const quote = await makerQuote(d.db, {
       config: d.config,
       tuning: s.tuning,
@@ -626,7 +638,7 @@ export function createExchangeService(d: GameDeps) {
       ...priceBand(ref, t),
       last: last?.price ?? null,
       volume: Number(vol.n),
-      bids: merge(await side('buy'), quote.bid, 'buy'),
+      bids: merge(await side('buy'), canSell ? quote.bid : null, 'buy'),
       asks: merge(await side('sell'), quote.ask, 'sell'),
     };
   }
@@ -675,6 +687,9 @@ export function createExchangeService(d: GameDeps) {
       eligible: reason === null,
       reason,
       need: { level: t.minLevel, days: t.minAccountDays },
+      level: rest.level,
+      maxQty: t.maxQty,
+      holdHours: t.suspicious.holdHours,
       orders: orders.map(orderDto),
       wallet: { coin: Number(w?.coin ?? 0), foods: wf.map((x) => ({ foodsId: x.foods_id, num: x.num })) },
       trades: trades.map((x) => {

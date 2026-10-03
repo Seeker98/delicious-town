@@ -77,6 +77,11 @@ export interface ExchangeMeDto {
   /** 不满足的那一项：exchange_level / exchange_age / exchange_email；满足为 null */
   reason: string | null;
   need: { level: number; days: number };
+  /** 店的当前等级：门槛提示写"你现在 N 级"（backlog 156-1） */
+  level: number;
+  /** 区服设置：单笔数量上限、可疑成交所得冻结几小时（backlog 156-1、156-2：页面不再写死 999 和 24） */
+  maxQty: number;
+  holdHours: number;
   orders: ExchangeOrderDto[];
   wallet: { coin: number; foods: Array<{ foodsId: number; num: number }> };
   trades: ExchangeTradeDto[];

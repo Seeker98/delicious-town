@@ -225,6 +225,28 @@ describe('交易所日志（156-1）', () => {
     );
   });
 
+  it('交易所冻结撤单、没收、按区服设置的冻结小时数（backlog 156-2）', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
+    expect(
+      log('exchange.fill', {
+        side: 'buy',
+        foodsId: 3,
+        price: 100,
+        qty: 2,
+        fee: 0,
+        held: true,
+        holdHours: 48,
+      }),
+    ).toBe('交易所买单成交：食材3 ×2，单价 100（可疑成交，所得冻结 48 小时）');
+    expect(log('exchange.freezeCancel', { side: 'sell', foodsId: 3, price: 100, left: 2 })).toBe(
+      '交易所被冻结，卖单撤销：食材3，剩余 2 个退回交易所账户',
+    );
+    expect(log('exchange.confiscate', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
+      '交易所冻结中的所得被没收：银币 950、食材3×2',
+    );
+  });
+
   it('一番赏日志', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);

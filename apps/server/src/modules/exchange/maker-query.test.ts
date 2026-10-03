@@ -5,6 +5,7 @@ import { createTestGame, type TestGame } from '../../../test/game';
 import { makerPrices } from './maker';
 import { refPrice } from './ref';
 import { priceBand } from './rules';
+import { createExchangeAdmin } from './admin';
 import { trader } from './test';
 
 let t: TestGame;
@@ -61,5 +62,34 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
     expect(row).toMatchObject({ last: null, changePct: null });
     // 卖给系统的 2 个进了系统库存：列表里标在售（问题记录 282）
     expect(row).toMatchObject({ selling: 0, buying: 0, sysStock: 2 });
+  });
+});
+
+describe('backlog 156-3：被冻结、没开通的人看不到系统收购档', () => {
+  it('冻结中或不满足门槛时盘口不显示系统买档；满足门槛照常显示', async () => {
+    const shardId = await createShard(t.db);
+    const f = lv6();
+    const ok = await trader(t, { shardId });
+    expect((await svc().book(ok, f.id)).bids.some((l) => l.system)).toBe(true);
+    const frozen = await trader(t, { shardId });
+    await createExchangeAdmin(t.game).freeze(
+      { accountId: 1, username: 'boss', role: 'admin', ip: '127.0.0.1' },
+      { restId: frozen.restaurantId, reason: '测试' },
+    );
+    expect((await svc().book(frozen, f.id)).bids.some((l) => l.system)).toBe(false);
+    const low = await trader(t, { shardId });
+    await t.db.updateTable('restaurant').set({ level: 1 }).where('id', '=', low.restaurantId).execute();
+    expect((await svc().book(low, f.id)).bids.some((l) => l.system)).toBe(false);
+  });
+});
+
+describe('backlog 156-1/156-2：me 带上当前等级和区服的上限', () => {
+  it('level、maxQty、holdHours 来自店和区服设置', async () => {
+    const shardId = await createShard(t.db);
+    const r = await trader(t, { shardId });
+    const me = await svc().me(r);
+    expect(me.level).toBe(30);
+    expect(me.maxQty).toBe(tune().maxQty);
+    expect(me.holdHours).toBe(tune().suspicious.holdHours);
   });
 });

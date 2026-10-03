@@ -4,7 +4,8 @@ const exchange: Messages['exchange'] = {
   title: 'Bolsa',
   filters: { all: 'Todo', sale: 'En venta', buy: 'Se buscan' },
   reasons: {
-    exchange_level: (level) => `Tu restaurante debe ser de nivel ${level} para operar`,
+    exchange_level: (level, now) =>
+      `Tu restaurante debe ser de nivel ${level} para operar (ahora es nivel ${now})`,
     exchange_age: (days) => `Tu cuenta debe tener al menos ${days} días para operar`,
     exchange_email: 'Verifica tu correo para operar',
   },
@@ -19,7 +20,10 @@ const exchange: Messages['exchange'] = {
   sellSystemFailed: 'No se pudo vender al sistema',
   bookFailed: 'No se pudo cargar el libro de órdenes',
   placed: 'Orden colocada',
-  heldNote: '; algunas operaciones parecen sospechosas y sus ganancias quedan congeladas 24 horas',
+  heldNote: (hours) =>
+    `; algunas operaciones parecen sospechosas y sus ganancias quedan congeladas ${hours} horas`,
+  overSystem: (n) =>
+    `El sistema solo te compra ${n} más; el resto queda a la venta a tu precio y otros pueden comprarlo barato`,
   filled: (n, partial, held) => `${n} ejecutados${partial ? ', el resto sigue en el libro' : ''}${held}`,
   placeFailed: 'No se pudo colocar la orden',
   cancelled: 'Orden cancelada',

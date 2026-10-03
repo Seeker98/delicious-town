@@ -4,7 +4,8 @@ const exchange: Messages['exchange'] = {
   title: 'Bourse',
   filters: { all: 'Tout', sale: 'En vente', buy: 'Demandés' },
   reasons: {
-    exchange_level: (level) => `Votre restaurant doit être niveau ${level} pour échanger`,
+    exchange_level: (level, now) =>
+      `Votre restaurant doit être niveau ${level} pour échanger (il est niveau ${now} actuellement)`,
     exchange_age: (days) => `Votre compte doit avoir au moins ${days} jours pour échanger`,
     exchange_email: 'Vérifiez votre e-mail pour échanger',
   },
@@ -19,7 +20,10 @@ const exchange: Messages['exchange'] = {
   sellSystemFailed: 'Échec de la vente au système',
   bookFailed: "Impossible de charger le carnet d'ordres",
   placed: 'Ordre passé',
-  heldNote: ' ; certaines exécutions semblent suspectes et leurs gains sont gelés pendant 24 heures',
+  heldNote: (hours) =>
+    ` ; certaines exécutions semblent suspectes et leurs gains sont gelés pendant ${hours} heures`,
+  overSystem: (n) =>
+    `Le système ne vous rachète plus que ${n} unités ; le reste reste en vente à votre prix et d'autres peuvent l'acheter à bas prix`,
   filled: (n, partial, held) => `${n} exécuté(s)${partial ? ', le reste reste en carnet' : ''}${held}`,
   placeFailed: "Échec de l'ordre",
   cancelled: 'Ordre annulé',
