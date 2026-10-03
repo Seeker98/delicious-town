@@ -126,7 +126,7 @@ function feast() {
 function wish() {
   void act(
     () => endpoints.townWish(),
-    (r) => t.value.town.wished(r.bless.name),
+    (r) => t.value.town.wished(catalog.data('bless', r.bless.id)?.name ?? r.bless.name),
     t.value.town.wishFailed,
   );
 }
@@ -225,7 +225,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
   <h6 class="dt-section">{{ t.town.bless }}</h6>
   <div v-if="bless" class="dt-card small">
     <div>
-      <b data-testid="bless-name">{{ bless.name }}</b>
+      <b data-testid="bless-name">{{ catalog.data('bless', bless.id)?.name ?? bless.name }}</b>
       <span class="dt-meta ms-1">{{ t.town.blessBy(data.bless.restName ?? '') }}</span>
     </div>
     <div class="d-flex flex-wrap gap-1 my-1">

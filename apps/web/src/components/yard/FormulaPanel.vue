@@ -133,7 +133,7 @@ const appraise = () =>
       :data-testid="`formula-${f.id}`"
     >
       <span class="me-auto">
-        {{ f.name }}
+        {{ catalog.data('formulas', f.id)?.name ?? f.name }}
         <span v-if="f.learned" class="badge text-bg-success ms-1">{{ t.yard.formula.learned }}</span>
         <span class="text-muted ms-1">{{ t.yard.formula.pieces(f.mainNum, f.subNum) }}</span>
       </span>
@@ -189,7 +189,7 @@ const appraise = () =>
       <div>
         {{
           t.yard.formula.recipe({
-            name: f.name,
+            name: catalog.data('formulas', f.id)?.name ?? f.name,
             main: catalog.foodName(f.mainFoodsId),
             haveMain: f.have.main,
             sub: catalog.foodName(f.subFoodsId),

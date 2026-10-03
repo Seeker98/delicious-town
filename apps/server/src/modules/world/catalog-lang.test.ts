@@ -32,6 +32,13 @@ const empty = (): I18nTable => ({
   doors: {},
   avatars: {},
   icons: {},
+  tasks: {},
+  activation: {},
+  bless: {},
+  tower: {},
+  formulas: {},
+  kujiThemes: {},
+  proficiency: {},
 });
 
 describe('道具目录按语言（问题记录 272）', () => {
@@ -85,6 +92,40 @@ describe('道具目录按语言（问题记录 272）', () => {
       title: 'Founding Member',
       desc: 'Joined town in the first week',
     });
+  });
+
+  it('第 8c 批：任务、厨塔各层、一番赏主题等按语言；没翻译的保留原文（问题记录 272）', () => {
+    const b = {
+      ...base,
+      data: {
+        tasks: [{ id: 1, name: '填一次油' }],
+        activation: [{ id: 3, name: '打蟑螂' }],
+        bless: [],
+        tower: [{ id: 1, name: '见习模范餐厅', title: '见习守护者', note: '来吧' }],
+        formulas: [],
+        kujiThemes: [{ id: 1, name: '新春年味', desc: '锣鼓一响' }],
+        proficiency: [{ id: 1, name: '初学' }],
+      },
+    } as unknown as CatalogDto;
+    const t = empty();
+    t.tasks['1'] = { name: 'Refill oil once' };
+    t.tower['1'] = { name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Come on' };
+    t.kujiThemes['1'] = { name: 'Spring Festival Flavors', desc: 'The drums sound' };
+    const c = localizeCatalog(b, t, 'en');
+    expect(c.data!.tasks[0]).toEqual({ id: 1, name: 'Refill oil once' });
+    expect(c.data!.activation[0]!.name).toBe('打蟑螂');
+    expect(c.data!.tower[0]).toEqual({
+      id: 1,
+      name: 'Apprentice Model Restaurant',
+      title: 'Apprentice Guardian',
+      note: 'Come on',
+    });
+    expect(c.data!.kujiThemes[0]).toEqual({
+      id: 1,
+      name: 'Spring Festival Flavors',
+      desc: 'The drums sound',
+    });
+    expect(c.data!.proficiency[0]!.name).toBe('初学');
   });
 
   it('简中原样返回', () => {

@@ -95,3 +95,38 @@ describe('第 8 批：目录里的天气说明、个性图标，查不到时用�
     expect(c.icon('nope')).toBeUndefined();
   });
 });
+
+describe('第 8c 批：任务、厨塔各层等按 id 取名字（问题记录 272）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('目录里有就返回当前语言的条目；没有返回 undefined', () => {
+    const c = useCatalogStore();
+    c.apply({
+      ...cat('x'),
+      data: {
+        tasks: [{ id: 1, name: 'Refill oil once' }],
+        activation: [],
+        bless: [],
+        tower: [{ id: 2, name: 'Junior Model Restaurant', title: 'Junior Guardian', note: 'Hi' }],
+        formulas: [],
+        kujiThemes: [],
+        proficiency: [],
+      },
+    } as never);
+    expect(c.data('tasks', 1)?.name).toBe('Refill oil once');
+    expect(c.data('tower', 2)).toEqual({
+      id: 2,
+      name: 'Junior Model Restaurant',
+      title: 'Junior Guardian',
+      note: 'Hi',
+    });
+    expect(c.data('tasks', 9)).toBeUndefined();
+    expect(c.data('bless', 1)).toBeUndefined();
+  });
+
+  it('旧缓存里没有 data 时也不报错', () => {
+    const c = useCatalogStore();
+    c.apply(cat('x'));
+    expect(c.data('tasks', 1)).toBeUndefined();
+  });
+});

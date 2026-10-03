@@ -1,6 +1,16 @@
 import type { Kysely } from 'kysely';
 import type { I18nEntry, I18nTable, Weather } from '@dt/config';
-import { gameParts, seededRng, type CatalogDto, type Locale, type Slot, type WorldDto } from '@dt/shared';
+import {
+  CATALOG_DATA_KINDS,
+  gameParts,
+  seededRng,
+  type CatalogDataEntry,
+  type CatalogDataKind,
+  type CatalogDto,
+  type Locale,
+  type Slot,
+  type WorldDto,
+} from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { DB } from '../../db/schema';
 import { postNews } from '../news/news';
@@ -201,6 +211,20 @@ export function createWorldService(d: GameDeps) {
         foods: m.foods,
       })),
       seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
+      data: {
+        tasks: d.config.bundle.tasks.map((x) => ({ id: x.id, name: x.name })),
+        activation: d.config.bundle.activationTasks.map((x) => ({ id: x.id, name: x.name })),
+        bless: d.config.bundle.bless.map((x) => ({ id: x.id, name: x.name })),
+        tower: [...d.config.towerFloors.values()].map((f) => ({
+          id: f.floor,
+          name: f.name,
+          title: f.title,
+          note: f.note,
+        })),
+        formulas: [...d.config.formulas.values()].map((x) => ({ id: x.id, name: x.name })),
+        kujiThemes: d.config.bundle.kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
+        proficiency: d.config.mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
+      },
     };
     return catalog;
   }
@@ -253,6 +277,13 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
     ...(suits ? { suits } : {}),
     ...(looks ? { looks } : {}),
     ...(base.mysterious ? { mysterious: pick(base.mysterious, t.mysterious, ['name']) } : {}),
+    ...(base.data
+      ? {
+          data: Object.fromEntries(
+            CATALOG_DATA_KINDS.map((k) => [k, pick(base.data![k], t[k], ['name', 'title', 'note', 'desc'])]),
+          ) as Record<CatalogDataKind, CatalogDataEntry[]>,
+        }
+      : {}),
   };
 }
 

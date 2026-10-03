@@ -57,6 +57,27 @@ export interface CatalogDto {
   mysterious?: CatalogMcDto[];
   /** 种子；旧缓存里没有 */
   seeds?: Array<{ id: number; foodsId: number; level: number }>;
+  /** 服务端接口直接给名字的数据，前端按 id 取当前语言的名字（问题记录 272）；旧缓存里没有 */
+  data?: Record<CatalogDataKind, CatalogDataEntry[]>;
+}
+
+/** 任务、活跃项、星愿、厨塔各层（id = 层）、菜园配方、一番赏主题（id = 月）、特色菜熟练度（id = 等级） */
+export const CATALOG_DATA_KINDS = [
+  'tasks',
+  'activation',
+  'bless',
+  'tower',
+  'formulas',
+  'kujiThemes',
+  'proficiency',
+] as const;
+export type CatalogDataKind = (typeof CATALOG_DATA_KINDS)[number];
+export interface CatalogDataEntry {
+  id: number;
+  name: string;
+  title?: string;
+  note?: string;
+  desc?: string;
 }
 
 export interface CatalogMcDto {

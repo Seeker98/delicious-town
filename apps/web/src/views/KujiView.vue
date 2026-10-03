@@ -83,8 +83,13 @@ onMounted(() => void load());
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
     <div v-if="data.theme" class="alert alert-info py-1 small mb-2" data-testid="kj-theme">
-      <b>{{ t.kuji.theme(data.theme.month, data.theme.name) }}</b>
-      <span class="ms-1">{{ data.theme.desc }}{{ t.kuji.themeLimited }}</span>
+      <b>{{
+        t.kuji.theme(data.theme.month, catalog.data('kujiThemes', data.theme.month)?.name ?? data.theme.name)
+      }}</b>
+      <span class="ms-1"
+        >{{ catalog.data('kujiThemes', data.theme.month)?.desc ?? data.theme.desc
+        }}{{ t.kuji.themeLimited }}</span
+      >
     </div>
     <div v-if="data.closedToday" class="alert alert-warning py-1 small mb-2" data-testid="kj-closed">
       {{ t.kuji.closed }}

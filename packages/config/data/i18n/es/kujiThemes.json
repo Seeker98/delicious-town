@@ -1,0 +1,50 @@
+{
+  "1": {
+    "name": "Sabores de Año Nuevo",
+    "desc": "Suenan los tambores y el olor de la cena de Nochevieja llena el pueblo."
+  },
+  "2": {
+    "name": "Postres de San Valentín",
+    "desc": "La temporada del chocolate y las rosas; hay cola en el mostrador de postres."
+  },
+  "3": {
+    "name": "Té bajo los cerezos",
+    "desc": "Los cerezos en flor llenan las calles y la merienda se sirve bajo los árboles."
+  },
+  "4": {
+    "name": "Pícnic de primavera",
+    "desc": "Un mantel de cuadros sobre la hierba, con sándwiches y limonada listos."
+  },
+  "5": {
+    "name": "Frutas de principios de verano",
+    "desc": "Los huertos empiezan la cosecha y los postres de fruta llegan a la carta."
+  },
+  "6": {
+    "name": "Fiesta del Barco Dragón",
+    "desc": "Los barcos dragón compiten en el río y las hojas de zongzi perfuman la cocina."
+  },
+  "7": {
+    "name": "Bebidas heladas de verano",
+    "desc": "Entre el canto de las cigarras, el hielo raspado y los refrescos son los favoritos."
+  },
+  "8": {
+    "name": "Mercado nocturno de marisco",
+    "desc": "Llegan los barcos de pesca y los puestos nocturnos brillan con mil luces."
+  },
+  "9": {
+    "name": "Pasteles de luna del Medio Otoño",
+    "desc": "Cuando la luna está más redonda, los moldes de pastel de luna no paran."
+  },
+  "10": {
+    "name": "Banquete de la cosecha",
+    "desc": "El arroz se vuelve dorado y la cosecha se amontona en la cocina."
+  },
+  "11": {
+    "name": "Guisos junto al fuego",
+    "desc": "Cuando refresca, la sopa se cuece en el fogón todo el día."
+  },
+  "12": {
+    "name": "Olla caliente de invierno",
+    "desc": "En una noche de nieve, lo único que apetece es una olla caliente bien picante."
+  }
+}

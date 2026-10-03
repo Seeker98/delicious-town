@@ -160,7 +160,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         <div class="flex-fill">
           <b>{{ nameOf(m.mcId) }}</b>
           <span class="text-muted ms-1">
-            {{ t.mc.dishMeta(dish(m.mcId)?.level, ROAD_NAMES[dish(m.mcId)?.road ?? 0] ?? '', m.levelName) }}
+            {{
+              t.mc.dishMeta(
+                dish(m.mcId)?.level,
+                ROAD_NAMES[dish(m.mcId)?.road ?? 0] ?? '',
+                catalog.data('proficiency', m.curlevel)?.name ?? m.levelName,
+              )
+            }}
           </span>
           <div class="progress mt-1" style="height: 6px">
             <div

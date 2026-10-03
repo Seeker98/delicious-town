@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
+import { useCatalogStore } from '../../stores/catalog';
 import FloorPanel from './FloorPanel.vue';
 import { duelResult, towerData, towerFloor } from './testData';
 
@@ -12,6 +13,35 @@ describe('FloorPanel', () => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
     vi.mocked(endpoints.towerChallenge).mockResolvedValue(duelResult());
+  });
+
+  it('守塔人店名、称号、台词按目录取当前语言（问题记录 272）', async () => {
+    useCatalogStore().apply({
+      version: 'v:en',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      data: {
+        tasks: [],
+        activation: [],
+        bless: [],
+        tower: [
+          { id: 1, name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Bring it on' },
+        ],
+        formulas: [],
+        kujiThemes: [],
+        proficiency: [],
+      },
+    });
+    const text = mount(FloorPanel, { props: { data: towerData() } })
+      .get('[data-testid="floor-1"]')
+      .text();
+    expect(text).toContain('Apprentice Model Restaurant');
+    expect(text).toContain('Apprentice Guardian');
+    expect(text).toContain('Bring it on');
+    expect(text).not.toContain('守塔人1');
   });
 
   it('挑战后显示对决结果并通知刷新；试打按 test = true 调用', async () => {

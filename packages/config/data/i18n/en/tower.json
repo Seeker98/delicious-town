@@ -1,0 +1,52 @@
+{
+  "1": {
+    "name": "Apprentice Model Restaurant",
+    "title": "Apprentice Guardian",
+    "note": "Can't wait to challenge me, can you?"
+  },
+  "2": {
+    "name": "Junior Model Restaurant",
+    "title": "Junior Guardian",
+    "note": "Looks like you've become a proper cook, but I'm no pushover!"
+  },
+  "3": {
+    "name": "Song Sao's Restaurant",
+    "title": "Intermediate Guardian",
+    "note": "Challengers just keep coming. Can you beat me?"
+  },
+  "4": {
+    "name": "Sariel's Soul",
+    "title": "Senior Guardian",
+    "note": "I haven't seen a cook come to challenge me in years. I'm bored to death!"
+  },
+  "5": {
+    "name": "Barbelet's Judgment",
+    "title": "Elder Judge",
+    "note": "A cooking duel with me is something many never reach in ten lifetimes!"
+  },
+  "6": {
+    "name": "Duma the Silent",
+    "title": "Elder Mentor",
+    "note": "You look like a born cook. Nothing pleases this old man more than a duel with someone skilled!"
+  },
+  "7": {
+    "name": "Gurtug's Will",
+    "title": "Tower Elder",
+    "note": "If there is a next life, I will never set foot in this tower again!"
+  },
+  "8": {
+    "name": "Akatma's Oracle",
+    "title": "Tower Master",
+    "note": "I gave my whole life to get here and now care for nothing. My only wish is that someone takes my place while I still live!"
+  },
+  "9": {
+    "name": "Anima",
+    "title": "Former God of Cookery",
+    "note": "All things in this world are but passing smoke! A life of passion ends as a pile of dust!"
+  },
+  "10": {
+    "name": "Peng Zu",
+    "title": "God of Cookery",
+    "note": "Can you make egg fried rice?"
+  }
+}

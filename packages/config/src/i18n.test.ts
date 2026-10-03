@@ -56,6 +56,13 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     'doors',
     'avatars',
     'icons',
+    'tasks',
+    'activation',
+    'bless',
+    'tower',
+    'formulas',
+    'kujiThemes',
+    'proficiency',
   ] as const;
 
   it('繁中也转换街道菜系名、天气说明、套装各档说明和装扮', () => {
@@ -82,6 +89,16 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       doors: b.looks.doors.map((x) => ({ id: String(x.id), fields: ['name'] })),
       avatars: b.looks.avatars.map((x) => ({ id: String(x.id), fields: ['name'] })),
       icons: b.looks.icons.map((x) => ({ id: x.key, fields: ['title', 'desc'] })),
+      tasks: b.tasks.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      activation: b.activationTasks.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      bless: b.bless.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      tower: [...b.towerFloors.values()].map((x) => ({
+        id: String(x.floor),
+        fields: ['name', 'title', 'note'],
+      })),
+      formulas: [...b.formulas.values()].map((x) => ({ id: String(x.id), fields: ['name'] })),
+      kujiThemes: b.kujiThemes.map((x) => ({ id: String(x.month), fields: ['name', 'desc'] })),
+      proficiency: b.mcProficiency.map((x) => ({ id: String(x.curlevel), fields: ['name'] })),
     };
     for (const l of ['en', 'fr', 'es'] as const)
       for (const k of FULL)
