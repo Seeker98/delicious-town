@@ -16,11 +16,16 @@ export interface ReportTargetInfo {
 
 const cut = (s: string) => [...s].slice(0, SNAPSHOT_MAX).join('');
 
-/** 被举报的内容（设计 §3.2）：不存在、已删除时返回 null；区服由调用方比较 */
+/**
+ * 被举报的内容（设计 §3.2）：不存在、已删除时返回 null；区服由调用方比较。
+ * lock：举报时给内容行加共享锁。后台正在处理（删除、清空）这条内容时先等它提交，
+ * 再按处理后的状态判断，免得对刚删掉的内容开空案（backlog 6B-1）
+ */
 export async function loadTarget(
   db: Kysely<DB>,
   type: ReportTarget,
   id: number,
+  opts: { lock?: boolean } = {},
 ): Promise<ReportTargetInfo | null> {
   if (type === 'post') {
     const r = await db
@@ -29,6 +34,7 @@ export async function loadTarget(
       .select(['p.shard_id', 'p.rest_id', 'r.account_id', 'p.title', 'p.content'])
       .where('p.id', '=', id)
       .where('p.deleted_at', 'is', null)
+      .$if(opts.lock === true, (q) => q.forShare('p'))
       .executeTakeFirst();
     if (!r) return null;
     return {
@@ -47,6 +53,7 @@ export async function loadTarget(
       .where('x.id', '=', id)
       .where('x.deleted_at', 'is', null)
       .where('p.deleted_at', 'is', null)
+      .$if(opts.lock === true, (q) => q.forShare(['x', 'p']))
       .executeTakeFirst();
     if (!r) return null;
     return { shardId: r.shard_id, restId: r.rest_id, accountId: r.account_id, text: cut(r.content) };
@@ -58,6 +65,7 @@ export async function loadTarget(
       .select(['n.shard_id', 'r.id as rest_id', 'r.account_id', 'n.params'])
       .where('n.id', '=', id)
       .where('n.type', '=', 'town.broadcast')
+      .$if(opts.lock === true, (q) => q.forShare('n'))
       .executeTakeFirst();
     if (!r) return null;
     const text = (r.params as { text?: unknown }).text;
@@ -68,6 +76,7 @@ export async function loadTarget(
     .select(['shard_id', 'id', 'account_id', 'name', 'notice'])
     .where('id', '=', id)
     .where('npc', '=', false)
+    .$if(opts.lock === true, (q) => q.forShare())
     .executeTakeFirst();
   if (!r) return null;
   return {

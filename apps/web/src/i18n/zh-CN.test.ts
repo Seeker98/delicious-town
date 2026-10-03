@@ -152,3 +152,9 @@ describe('问题记录 228：蟑螂上限', () => {
     expect(errorText('INVALID_STATE', { reason: 'roach_full' })).toBe('这家店的蟑螂已经太多了，换一家吧');
   });
 });
+
+describe('backlog 6B-1：举报重试', () => {
+  it('report_retry 有中文，不显示原始错误码', () => {
+    expect(errorText('INVALID_STATE', { reason: 'report_retry' })).toBe('举报没提交成功，请再试一次');
+  });
+});

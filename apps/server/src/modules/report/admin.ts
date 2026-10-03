@@ -61,8 +61,9 @@ export function createAdminReports(game: Game) {
     if (!r) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'report', id });
     return r;
   }
-  const reporters = (caseId: number) =>
-    db.selectFrom('report_entry').select('reporter_rest_id').where('case_id', '=', caseId).execute();
+  /** 举报人列表：用调用方的事务读，不另占一个连接（backlog 6B-1） */
+  const reporters = (k: Op['tx'], caseId: number) =>
+    k.selectFrom('report_entry').select('reporter_rest_id').where('case_id', '=', caseId).execute();
 
   /** 按类型处理内容；内容已经不在（或已不是这家店的）时不做操作，返回 none */
   async function act(o: Op, c: Row, note: string, newName: string | undefined): Promise<string> {
@@ -114,7 +115,7 @@ export function createAdminReports(game: Game) {
   }
 
   async function mailReporters(o: Op, c: Row, body: string, key: 'report.handled' | 'report.rejected') {
-    for (const r of await reporters(c.id))
+    for (const r of await reporters(o.tx, c.id))
       await sendMail(o.tx, {
         scope: 'rest',
         shardId: c.shard_id,
@@ -216,14 +217,15 @@ export function createAdminReports(game: Game) {
         await mailReporters(o, c, `你举报的${typeName}已处理，感谢你维护小镇。`, 'report.handled');
         const ban =
           b.banDays === undefined ? '' : b.banDays === 0 ? '账号永久封禁。' : `账号封禁 ${b.banDays} 天。`;
-        const what = action === 'none' ? '已记录违规' : `已被${ACTION_TEXT[action]}`;
+        // 内容已经不在（action = none）时不说"因违规已记录违规"（backlog 6B-1）
+        const what = action === 'none' ? '被认定违规，已记录在案' : `因违规已被${ACTION_TEXT[action]}`;
         await sendMail(o.tx, {
           scope: 'rest',
           shardId: c.shard_id,
           restId: c.target_rest_id,
           minLevel: null,
           title: '违规处理通知',
-          body: `你的${typeName}因违规${what}。${ban}\n说明：${b.note}`,
+          body: `你的${typeName}${what}。${ban}\n说明：${b.note}`,
           tpl: {
             key: 'report.penalty',
             params: { target: c.target_type, action, banDays: b.banDays ?? null, note: b.note },

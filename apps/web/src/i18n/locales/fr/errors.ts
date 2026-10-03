@@ -191,6 +191,7 @@ const errors: Messages['errors'] = {
     too_many_tries: "Trop d'essais incorrects. Réessayez dans une heure.",
     report_self: 'Vous ne pouvez pas vous signaler vous-même',
     report_dup: 'Vous avez déjà signalé ce contenu',
+    report_retry: "Le signalement n'a pas pu être envoyé. Réessayez",
     report_daily: 'Vous avez utilisé tous vos signalements du jour',
     report_empty: "Ce restaurant n'a pas d'annonce",
     report_closed: 'Ce signalement a déjà été traité',

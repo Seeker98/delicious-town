@@ -151,4 +151,11 @@ describe('FriendRestView', () => {
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(true);
     expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(true);
   });
+
+  it('蟹老板（NPC 店）的店名、公告旁没有举报（backlog 6B-1：点了会被拒）', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
+    const w = await mountView();
+    expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(false);
+    expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(false);
+  });
 });

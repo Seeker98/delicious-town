@@ -50,7 +50,8 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
       mailBody(mail('report.penalty', { target: 'notice', action: 'clear', banDays: 7, note: '发广告' })),
     ).toBe('你的店铺公告因违规已被清空。账号封禁 7 天。\n说明：发广告');
     expect(mailBody(mail('report.penalty', { target: 'post', action: 'none', banDays: 0, note: 'x' }))).toBe(
-      '你的帖子因违规已记录违规。账号永久封禁。\n说明：x',
+      // 内容已经不在（action = none）：以前读作"因违规已记录违规"（backlog 6B-1）
+      '你的帖子被认定违规，已记录在案。账号永久封禁。\n说明：x',
     );
     // 系统补偿的说明是管理员写的：正文用原文
     expect(mailTitle(mail('grant'))).toBe('系统补偿');

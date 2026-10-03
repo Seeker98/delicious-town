@@ -194,6 +194,7 @@ export default {
     too_many_tries: '輸錯太多次了，請一小時後再試',
     report_self: '不能舉報自己',
     report_dup: '你已經舉報過這條內容了',
+    report_retry: '舉報沒提交成功，請再試一次',
     report_daily: '今天的舉報次數用完了',
     report_empty: '這家店沒有公告',
     report_closed: '這條舉報已經處理過了',

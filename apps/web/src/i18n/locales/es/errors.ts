@@ -188,6 +188,7 @@ const errors: Messages['errors'] = {
     too_many_tries: 'Demasiados intentos fallidos. Inténtalo de nuevo en una hora.',
     report_self: 'No puedes denunciarte a ti mismo',
     report_dup: 'Ya has denunciado esto',
+    report_retry: 'No se pudo enviar la denuncia. Inténtalo de nuevo',
     report_daily: 'Has usado todas tus denuncias de hoy',
     report_empty: 'Este restaurante no tiene aviso',
     report_closed: 'Esta denuncia ya se ha tramitado',
