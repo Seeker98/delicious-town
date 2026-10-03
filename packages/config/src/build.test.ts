@@ -18,14 +18,15 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.version).toMatch(/^[0-9a-f]{12}$/);
   });
 
-  it('老街道修订（问题记录 284）：删 32 道、移街 7 道，176 先留在湖南街', () => {
+  it('老街道修订（问题记录 284）：删 32 道、移街 8 道（176 随杂碎街移过去）', () => {
     const b = realBuild().bundle!;
     const ids = new Set(b.cookbooks.map((c) => c.id));
     for (const id of [51, 446, 17204, 18441, 18622]) expect(ids.has(id), String(id)).toBe(false);
     const street = (id: number) => b.cookbooks.find((c) => c.id === id)!.streetId;
     expect([344, 345, 346, 350, 392, 401, 403].map(street)).toEqual([12, 12, 13, 12, 11, 11, 6]);
-    expect(street(176)).toBe(1);
-    expect(b.cookbooks.find((c) => c.id === 176)!.name).toBe('左宗棠鸡');
+    expect(street(176)).toBe(29);
+    expect(b.cookbooks.find((c) => c.id === 176)!.name).toBe('左宗棠鸡（美国/加拿大）');
+    expect(b.cookbooks.filter((c) => c.streetId === 29)).toHaveLength(117);
     expect(b.cookbooks.find((c) => c.id === 344)!.desc).toBe('楚菜，口味辛、咸、鲜');
   });
 

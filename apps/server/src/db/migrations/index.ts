@@ -38,6 +38,7 @@ import * as m0036 from './0036_account_lang';
 import * as m0037 from './0037_i18n_server_text';
 import * as m0038 from './0038_activity_settle_fail';
 import * as m0039 from './0039_old_street_revision';
+import * as m0040 from './0040_move_176';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -80,4 +81,5 @@ export const migrations: Record<string, Migration> = {
   '0037_i18n_server_text': m0037,
   '0038_activity_settle_fail': m0038,
   '0039_old_street_revision': m0039,
+  '0040_move_176': m0040,
 };
