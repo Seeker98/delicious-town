@@ -212,11 +212,20 @@ describe('账号邮件按语言（问题记录 272）', () => {
 });
 
 describe('邀请码', () => {
-  it('生成 8 位邀请码，被邀请人注册时记录邀请关系；无效邀请码被忽略', async () => {
+  it('旧的生成邀请码接口已删除（backlog：它会覆盖已有的邀请码）', async () => {
     const inviter = await registerUser(ctx.app);
-    const r = await call(ctx.app, 'POST', `${A}/invite-code`, { cookie: inviter.cookie });
-    const code = r.json.data.inviteCode as string;
-    expect(code).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
+    expect((await call(ctx.app, 'POST', `${A}/invite-code`, { cookie: inviter.cookie })).status).toBe(404);
+  });
+
+  it('被邀请人注册时记录邀请关系（邀请码不分大小写）；无效邀请码被忽略', async () => {
+    const inviter = await registerUser(ctx.app);
+    // 邀请码由邀请页第一次打开时生成（invite/service），这里直接写
+    const code = 'ABCD2345';
+    await ctx.deps.db
+      .updateTable('account')
+      .set({ invite_code: code })
+      .where('id', '=', inviter.accountId)
+      .execute();
 
     const invitee = await call(ctx.app, 'POST', `${A}/register`, {
       body: {

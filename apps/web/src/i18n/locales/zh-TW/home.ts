@@ -39,6 +39,7 @@ export default {
     endFailed: '結束白食失敗',
   },
   guideHint: '新手看這裡 → 遊玩指引（有新手兌換碼）',
+  guideCodes: '有可以領的新手兌換碼 → 遊玩指引',
   devices: '設施',
   notOpened: '未開通',
   starOpen: (n: number) => `${n} 星開放`,

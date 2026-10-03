@@ -10,6 +10,7 @@ const guide: Messages['guide'] = {
   take: 'Récupérer',
   taken: 'Récupéré',
   ended: 'Terminé',
+  unavailable: 'Indisponible pour le moment',
   took: (text) => `Récupéré : ${text}`,
   takeFailed: 'Impossible de récupérer',
   loadFailed: 'Impossible de charger les codes de bienvenue',

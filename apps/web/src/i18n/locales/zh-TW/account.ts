@@ -23,6 +23,8 @@ export default {
   newPw2: '再輸一次新密碼',
   pwMismatch: '兩次輸入的新密碼不一樣',
   pwChanged: '密碼已修改，其他裝置已下線',
+  /** 密碼已改但本機換會話失敗（backlog 賬號） */
+  pwRelogin: '密碼已修改，請用新密碼重新登入',
   changeFailed: '修改失敗',
   switchShard: '切換區服',
   logout: '退出登入',

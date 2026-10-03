@@ -10,6 +10,7 @@ const guide: Messages['guide'] = {
   take: 'Claim',
   taken: 'Claimed',
   ended: 'Ended',
+  unavailable: 'Unavailable for now',
   took: (text) => `Claimed: ${text}`,
   takeFailed: 'Could not claim',
   loadFailed: 'Could not load starter codes',

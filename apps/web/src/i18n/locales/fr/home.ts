@@ -39,6 +39,7 @@ const home: Messages['home'] = {
     endFailed: "Impossible d'arrêter",
   },
   guideHint: 'Nouveau ? → Guide (avec un code de bienvenue)',
+  guideCodes: 'Un code de bienvenue vous attend → Guide',
   devices: 'Équipements',
   notOpened: 'Non débloqué',
   starOpen: (n) => `Ouvre à ${n}★`,

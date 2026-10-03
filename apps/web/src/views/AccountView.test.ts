@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { AccountProfileDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useSessionStore } from '../stores/session';
+import { useToastStore } from '../stores/toast';
 import AccountView from './AccountView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -77,5 +79,21 @@ describe('AccountView（问题记录 178）', () => {
     });
     expect(w.text()).toContain('其他设备已下线');
     expect((w.find('[data-testid="acc-old"]').element as HTMLInputElement).value).toBe('');
+  });
+});
+
+describe('backlog 账号：改密码后要重新登录', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.changePassword).mockReset();
+  });
+  it('服务端返回 relogin：提示密码已改、请用新密码重新登录，并跳到登录页', async () => {
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
+    vi.mocked(endpoints.changePassword).mockResolvedValue({ relogin: true } as never);
+    const w = await mountView();
+    await fill(w, 'secret123', 'newpass123', 'newpass123');
+    await flushPromises();
+    expect(useToastStore().items.at(-1)?.text).toBe('密码已修改，请用新密码重新登录');
+    expect(useSessionStore().me).toBeNull();
   });
 });

@@ -74,6 +74,9 @@ onMounted(() => {
             t.guide.minLevel(c.minLevel)
           }}</span>
           <span v-else-if="c.state === 'used'" class="small text-success">{{ t.guide.taken }}</span>
+          <span v-else-if="c.state === 'unavailable'" class="small text-muted">{{
+            t.guide.unavailable
+          }}</span>
           <span v-else class="small text-muted">{{ t.guide.ended }}</span>
         </div>
       </div>

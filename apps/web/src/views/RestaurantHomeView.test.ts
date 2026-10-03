@@ -11,6 +11,7 @@ import RestaurantHomeView from './RestaurantHomeView.vue';
 vi.mock('../api/endpoints', () => ({
   endpoints: {
     overview: vi.fn(),
+    guideCodes: vi.fn(),
     tasks: vi.fn(),
     refuel: vi.fn(),
     claimTask: vi.fn(),
@@ -153,7 +154,18 @@ describe('RestaurantHomeView', () => {
     expect((await mountView()).find('[data-testid="cookfoods-hint"]').exists()).toBe(false);
   });
 
+  it('有能领的新手码时提示去领（backlog：以前 10 级就不提示，20 级的码没人提醒）', async () => {
+    const code = (state: 'ok' | 'used') => ({ code: 'XINSHOU20', minLevel: 20, items: {}, state });
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 20 });
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([code('ok')]);
+    const can = await mountView();
+    expect(can.get('[data-testid="guide-hint"]').text()).toContain('有可以领的新手兑换码');
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([code('used')]);
+    expect((await mountView()).find('[data-testid="guide-hint"]').exists()).toBe(false);
+  });
+
   it('等级 < 10 显示新手提示，链到游玩指引；10 级起不显示（问题记录 150）', async () => {
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, level: 9 });
     const low = await mountView();
     expect(low.find('[data-testid="guide-hint"]').attributes('href')).toBe('/guide');

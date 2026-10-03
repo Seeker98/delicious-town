@@ -65,12 +65,22 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     /** 改密码：其他设备下线；本机换一个新会话，保留选的区服（设计 §6.1） */
     r.post('/change-password', { config: { rateLimit: 'auth' } }, async (req, reply) => {
       const s = requireAccount(req);
-      await svc.changePassword(s.data.accountId, parse(changePasswordBody, req.body));
-      await deps.sessions.destroyAll(s.data.accountId);
-      const token = await deps.sessions.create(s.data.accountId);
-      await deps.sessions.update(token, { shardId: s.data.shardId, restaurantId: s.data.restaurantId });
-      setSessionCookie(reply, token, deps.env);
-      return ok({});
+      await svc.changePassword(s.data.accountId, parse(changePasswordBody, req.body), {
+        ip: req.clientIp,
+        deviceId: deviceIdOf(req),
+      });
+      // 密码已经改好：换会话失败时不能报"修改失败"，让前端提示用新密码重新登录（backlog 账号）
+      try {
+        await deps.sessions.destroyAll(s.data.accountId);
+        const token = await deps.sessions.create(s.data.accountId);
+        await deps.sessions.update(token, { shardId: s.data.shardId, restaurantId: s.data.restaurantId });
+        setSessionCookie(reply, token, deps.env);
+        return ok({});
+      } catch (err) {
+        req.log.warn({ err }, 'password changed but session rotation failed');
+        clearSessionCookie(reply, deps.env);
+        return ok({ relogin: true });
+      }
     });
 
     r.post('/send-verify-email', { config: { rateLimit: 'email' } }, async (req) => {
@@ -91,10 +101,6 @@ export function accountRoutes(svc: AccountService, deps: AppDeps): FastifyPlugin
     r.post('/reset-password', { config: { rateLimit: 'auth' } }, async (req) => {
       await svc.resetPassword(parse(resetPasswordBody, req.body));
       return ok({});
-    });
-
-    r.post('/invite-code', async (req) => {
-      return ok({ inviteCode: await svc.createInviteCode(requireAccount(req).data.accountId) });
     });
   };
 }

@@ -67,9 +67,19 @@ export async function scanHats(
 
 /** worker 每分钟一次：遍历开放区服跑各项扫描（设计 §7）：六星换铉；区服开着邀请时再跑邀请扫描 */
 export async function runOpsScan(game: Game, log: JobLogger): Promise<void> {
-  const shards = await game.app.db.selectFrom('shard').select('id').where('status', '=', 'open').execute();
+  const shards = await game.app.db
+    .selectFrom('shard')
+    .select('id')
+    .where('status', '=', 'open')
+    .orderBy('id')
+    .execute();
   for (const { id } of shards) {
-    await scanHats(game, log, id);
-    if (featureAvailable(await game.shards.settings(id), 'invite')) await scanInvites(game, log, id);
+    // 一个区服出错只跳过它，不影响同一轮后面的区服（backlog 邀请）
+    try {
+      await scanHats(game, log, id);
+      if (featureAvailable(await game.shards.settings(id), 'invite')) await scanInvites(game, log, id);
+    } catch (err) {
+      log.error({ err, shardId: id }, 'ops-scan shard failed');
+    }
   }
 }

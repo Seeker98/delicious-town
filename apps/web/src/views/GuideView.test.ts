@@ -68,12 +68,15 @@ describe('GuideView（问题记录 150）', () => {
       { code: 'XINSHOU10', minLevel: 10, items: { coin: 1 }, state: 'level' },
       { code: 'OLD', minLevel: 1, items: { coin: 1 }, state: 'used' },
       { code: 'GONE', minLevel: 1, items: { coin: 1 }, state: 'off' },
+      { code: 'WAIT', minLevel: 1, items: { coin: 1 }, state: 'unavailable' },
     ]);
     vi.mocked(endpoints.redeem).mockResolvedValue({ code: 'XINSHOU', items: { coin: 50000 } });
     const w = await mountView();
     expect(w.text()).toContain('10 级可领');
     expect(w.text()).toContain('已领');
     expect(w.text()).toContain('已结束');
+    // 没同步进库或区服关了兑换码（backlog 新手码）
+    expect(w.text()).toContain('暂时不可用');
     expect(w.find('[data-testid="guide-redeem-XINSHOU10"]').exists()).toBe(false);
     await w.find('[data-testid="guide-redeem-XINSHOU"]').trigger('click');
     await flushPromises();

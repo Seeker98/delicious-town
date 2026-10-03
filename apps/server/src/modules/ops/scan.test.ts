@@ -4,7 +4,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { grantHatOp } from '../equip/hats';
-import { scanHats } from './scan';
+import { runOpsScan, scanHats } from './scan';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -80,5 +80,26 @@ describe('六星换铉（设计 裁定 25）', () => {
       .where('goods_id', '=', SPONSOR_HATS.xuan)
       .executeTakeFirstOrThrow();
     expect(xuan.custom_name).toBe('大橘');
+  });
+});
+
+describe('backlog 邀请：某个区服扫描出错不影响后面的区服', () => {
+  it('前一个区服读设置报错，后一个区服照常换铉，并记一条错误日志', async () => {
+    const bad = await createShard(t.db);
+    const good = await createShard(t.db);
+    const six = await newRestaurant(t, { shardId: good, patch: { star_level: 6 } });
+    await hat(six, '阿黄');
+    const real = t.game.shards.settings.bind(t.game.shards);
+    const spy = vi
+      .spyOn(t.game.shards, 'settings')
+      .mockImplementation((id: number) => (id === bad ? Promise.reject(new Error('boom')) : real(id)));
+    const errLog = { info: vi.fn(), error: vi.fn(), warn: vi.fn() };
+    try {
+      await runOpsScan(t.game, errLog);
+    } finally {
+      spy.mockRestore();
+    }
+    expect(await xuanMails(six.restaurantId)).toHaveLength(1);
+    expect(errLog.error.mock.calls.some(([o]) => (o as { shardId?: number }).shardId === bad)).toBe(true);
   });
 });

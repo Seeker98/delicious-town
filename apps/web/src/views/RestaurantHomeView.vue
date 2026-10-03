@@ -56,11 +56,27 @@ async function loadSignIn() {
   }
 }
 
+/**
+ * 有能领的新手码（backlog：以前 10 级就不提示，20 级的码没人提醒）：30 级以下每次进首页查一次；读失败就不提示
+ */
+const codesClaimable = ref(false);
+let codesChecked = false;
+async function loadGuideCodes() {
+  if (codesChecked || !rest.value || rest.value.level >= 30) return;
+  codesChecked = true;
+  try {
+    codesClaimable.value = (await endpoints.guideCodes()).some((c) => c.state === 'ok');
+  } catch {
+    codesClaimable.value = false;
+  }
+}
+
 async function load() {
   void loadAnnouncements();
   void loadSignIn();
   try {
     await store.refresh();
+    void loadGuideCodes();
     mainTask.value = (await endpoints.tasks()).main;
     dining.value = await endpoints.dineCurrent();
     error.value = '';
@@ -373,10 +389,14 @@ onBeforeUnmount(() => {
           {{ t.home.dining.end }}
         </button>
       </div>
-      <!-- 新手提示（问题记录 150）：10 级以前显示 -->
-      <RouterLink v-if="rest.level < 10" to="/guide" class="dt-todo-row" data-testid="guide-hint">{{
-        t.home.guideHint
-      }}</RouterLink>
+      <!-- 新手提示（问题记录 150）：有能领的新手码时提示去领；没有时 10 级以前照旧提示看指引 -->
+      <RouterLink
+        v-if="codesClaimable || rest.level < 10"
+        to="/guide"
+        class="dt-todo-row"
+        data-testid="guide-hint"
+        >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</RouterLink
+      >
     </div>
 
     <HomeNews :headlines="rest.headlines" />

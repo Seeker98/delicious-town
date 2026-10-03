@@ -8,6 +8,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useLocaleStore } from '../stores/locale';
 import { useSessionStore } from '../stores/session';
+import { useToastStore } from '../stores/toast';
 
 /** 我的账号（问题记录 178）：只要求登录，不要求选区服 */
 const session = useSessionStore();
@@ -54,8 +55,15 @@ async function change() {
   if (busy.value) return;
   busy.value = true;
   try {
-    await endpoints.changePassword({ oldPassword: oldPw.value, newPassword: newPw.value });
+    const r = await endpoints.changePassword({ oldPassword: oldPw.value, newPassword: newPw.value });
     oldPw.value = newPw.value = newPw2.value = '';
+    if (r.relogin) {
+      // 密码已改，但本机没换上新会话（backlog 账号）：提示后去登录页
+      useToastStore().push(t.value.account.pwRelogin, 'info');
+      session.me = null;
+      await router.replace('/login');
+      return;
+    }
     msg.value = { ok: true, text: t.value.account.pwChanged };
   } catch (e) {
     msg.value = { ok: false, text: errorMessage(e, t.value.account.changeFailed) };

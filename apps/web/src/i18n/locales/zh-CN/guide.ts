@@ -11,6 +11,8 @@ export default {
   take: '领取',
   taken: '已领',
   ended: '已结束',
+  /** 没同步进库或区服关了兑换码（backlog 新手码） */
+  unavailable: '暂时不可用',
   took: (text: string) => `领取成功：${text}`,
   takeFailed: '领取失败',
   loadFailed: '读取新手码失败',

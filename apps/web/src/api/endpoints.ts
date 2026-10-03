@@ -173,7 +173,9 @@ export const endpoints = {
   forgotPassword: (body: ForgotPasswordInput) => api.post<Empty>('/api/v1/account/forgot-password', body),
   resetPassword: (body: ResetPasswordInput) => api.post<Empty>('/api/v1/account/reset-password', body),
   accountProfile: () => api.get<AccountProfileDto>('/api/v1/account/profile'),
-  changePassword: (body: ChangePasswordInput) => api.post<Empty>('/api/v1/account/change-password', body),
+  /** relogin：密码已改但本机没换上新会话，要用新密码重新登录 */
+  changePassword: (body: ChangePasswordInput) =>
+    api.post<{ relogin?: boolean }>('/api/v1/account/change-password', body),
   listShards: () => api.get<ShardDto[]>('/api/v1/shard/list'),
   selectShard: (shardId: number) => api.post<SelectShardResult>('/api/v1/shard/select', { shardId }),
   createRestaurant: (name: string) => api.post<RestaurantDto>('/api/v1/restaurant/create', { name }),

@@ -39,6 +39,7 @@ const home: Messages['home'] = {
     endFailed: 'No se pudo dejar de comer',
   },
   guideHint: '¿Eres nuevo? → Guía (incluye un código de bienvenida)',
+  guideCodes: 'Tienes un código de bienvenida por canjear → Guía',
   devices: 'Instalaciones',
   notOpened: 'Sin desbloquear',
   starOpen: (n) => `Se abre con ${n}★`,
