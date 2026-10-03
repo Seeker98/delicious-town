@@ -44,11 +44,13 @@ async function loadAnnouncements() {
 
 /** 首页签到（问题记录 144）和今日活跃点数（问题记录 280）：读失败就不显示 */
 const signedIn = ref<boolean | null>(null);
+const signInGift = ref<number | null>(null);
 const activeTotal = ref<number | null>(null);
 async function loadSignIn() {
   try {
     const a = await endpoints.activation();
     signedIn.value = a.signedIn;
+    signInGift.value = a.signInGift;
     activeTotal.value = a.total;
   } catch {
     signedIn.value = null;
@@ -333,7 +335,9 @@ onBeforeUnmount(() => {
       <div class="dt-card-title mb-1">{{ t.home.todo }}</div>
       <div v-if="signedIn !== null" class="dt-todo-row" data-testid="home-signin-row">
         <span class="flex-fill"><i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}</span>
-        <span v-if="signedIn" class="text-muted">{{ t.home.signedIn }}</span>
+        <span v-if="signedIn" class="text-muted">{{
+          signInGift === null ? t.home.signedIn : t.home.signedInGift(catalog.goodsName(signInGift))
+        }}</span>
         <button
           v-else
           class="btn btn-sm btn-success"

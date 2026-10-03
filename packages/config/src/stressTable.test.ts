@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { defaultDataDir, readSourceDir } from './source';
-import { rewriteStatDesc, scaleToTotal } from './stressTable';
+import { rewriteStatDesc, scaleToTotal, statDescIssues } from './stressTable';
 
 const zero = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
 const source = () => readSourceDir(defaultDataDir());
@@ -76,5 +76,25 @@ describe('数值表（问题记录 120）', () => {
     expect(buildBundle({ ...src, 'game/equip_lore': lore }).errors).toContain(
       `stressTables ${lore.stressTables[0]!.name} must not decrease`,
     );
+  });
+});
+
+describe('backlog 厨具小修：说明里的数字没改成功时构建报错', () => {
+  const zero = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
+  it('改好的说明没有问题', () => {
+    const base = { ...zero, cook: 51 };
+    expect(statDescIssues(rewriteStatDesc('厨艺+38。阿卡玛……', base, 51), base, 51)).toEqual([]);
+    expect(statDescIssues('没有数字的说明', base, 51)).toEqual([]);
+  });
+  it('同一项写了两次只改掉第一处、或写了数值里没有的属性：列出对不上的片段', () => {
+    const base = { ...zero, cook: 51 };
+    const desc = rewriteStatDesc('厨艺+38，满级厨艺+38。', base, 51);
+    expect(statDescIssues(desc, base, 51)).toEqual(['厨艺+38']);
+    expect(statDescIssues('刀工+9', base, 51)).toEqual(['刀工+9']);
+    expect(statDescIssues('随机增加35点属性', zero, 31)).toEqual(['增加35点属性']);
+  });
+  it('现有配置构建时没有这类错误', () => {
+    const { errors } = buildBundle(readSourceDir(defaultDataDir()));
+    expect(errors.filter((e) => e.includes('desc'))).toEqual([]);
   });
 });

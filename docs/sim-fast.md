@@ -10,19 +10,24 @@
 pnpm sim:fast                                    # 默认 30 天，每种画像 20 个机器人，只跑当前数值
 pnpm sim:fast --set settlement.expMultiplier=4,6 # 当前数值加上两种经验倍率，一共 3 套并排对比
 pnpm sim:fast --variant 慢=slow.json --variant 快=fast.json
+pnpm sim:fast --set settlement.expMultiplier=4 --set market.dailyKinds=6  # --set 可以写多次
 ```
 
 | 参数 | 说明 |
 |---|---|
 | `--days 30` | 模拟天数 |
 | `--bots 20` | 每种画像几个机器人。越多分布越准，也越慢 |
-| `--seed 1` | 随机种子。同样的参数和种子，结果完全一样 |
+| `--seed 1` | 随机种子。同样的参数和种子，结果完全一样。它只决定机器人自己的运气（比如开礼包开到了什么），**不改变**天气、菜场上货、老鼠、痞老板和体力恢复：这些按区服和时间算，换种子也一样 |
 | `--personas diligent,normal,casual` | 跑哪几种画像 |
 | `--set 路径=值1,值2` | 对一个数值扫几个取值，每个取值算一套。路径相对 tuning，比如 `market.dailyStock` |
 | `--variant 名字=文件` | 可以写多个。文件格式和区服覆盖一样，比如 `{ "tuning": { "settlement": { "expMultiplier": 6 } } }` |
 | `--side 文件` | 换一张旁支产出表；写 `none` 就不算旁支 |
 | `--out 目录` | 报告放哪。默认 `sim-out/fast-<时间>/` |
 | `--stuck-days 5` | 等级够了，但超过几天升不了星，就算"卡住" |
+| `--start 2026-10-01T00:00:00+08:00` | 模拟从哪个时间开始。天气、菜场、月度主题按这个时间算 |
+| `--calibrate` | 跑核对，见"什么时候跑核对"。这时 `--days`、`--bots` 不写默认是 5，写了就按写的 |
+
+天数、机器人数、`--stuck-days` 要是正整数，`--seed` 要是整数，画像只能是 `diligent`、`normal`、`casual`，`--start` 要能解析成时间；写错时直接报错退出。
 
 当前数值总是作为"基准"一起跑，基准加其他套一共最多 8 套。每套在一个线程里跑，所以几套一起跑的总时间和只跑一套差不多。在开发机上，30 天、每种画像 20 个机器人，一套大约 40~50 秒。
 
@@ -40,7 +45,6 @@ pnpm sim:fast --variant 慢=slow.json --variant 快=fast.json
 3. **曲线**：每种画像画等级、星级、银币、学会的食谱数四张图。每套数值一条中位线，阴影是基准 10%~90% 的人所在的范围，用来看运气差的玩家会不会被甩开。
 4. **收入来源**：银币和经验来自结算、旁支（按来源细分）、任务、活跃、其他的比例。旁支占比很高时，结论要打折扣，因为旁支是估出来的。
 5. **卡点**：卡住的机器人和原因：
-   - `level`：等级不够；
    - `cookbooks`：会做的菜不够；
    - `certs`：缺升星凭证；
    - `coin`：没钱买凭证；
@@ -65,6 +69,8 @@ pnpm sim:fast --variant 慢=slow.json --variant 快=fast.json
 ```
 pnpm sim:fast --calibrate --days 3 --bots 5
 ```
+
+不写 `--days`、`--bots` 时默认 5 天、每种画像 5 个。只有核对要连 Redis（全真模拟器用），平时跑 `sim:fast` 不需要 `REDIS_URL`。
 
 快速模型的成长动作（学菜、买菜、升星等）是照着游戏规则在内存里重写的。改了结算、成长、菜场、任务的规则以后，这两边可能对不上。核对命令会：
 

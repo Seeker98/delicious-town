@@ -101,4 +101,15 @@ describe('ClassroomPanel', () => {
     await flushPromises();
     expect(endpoints.lessonOpen).toHaveBeenCalledWith(1, 178);
   });
+
+  it('剩余时间显示到分钟（backlog 6B-2：以前只到小时）', async () => {
+    const soon = new Date(Date.now() + 90 * 60_000 + 30_000).toISOString();
+    vi.mocked(endpoints.lessons).mockResolvedValue({
+      ...structuredClone(lessons),
+      items: [{ ...lessons.items[0]!, endsAt: soon }],
+    });
+    const w = mount(ClassroomPanel);
+    await flushPromises();
+    expect(w.text()).toContain('剩余 1 小时 31 分');
+  });
 });

@@ -24,6 +24,7 @@ export default {
   todo: '今日待办',
   signIn: '每日签到',
   signedIn: '今天已签到',
+  signedInGift: (gift: string) => `今天已签到 · 领到 ${gift}×1（在仓库）`,
   signInBtn: '签到',
   signInFailed: '签到失败',
   mainTag: '主线',

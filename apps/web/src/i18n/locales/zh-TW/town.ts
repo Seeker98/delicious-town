@@ -157,7 +157,6 @@ export default {
   },
   classroom: {
     loadFailed: '讀取教室失敗',
-    hours: (h: number) => `${h} 小時`,
     stealConfirm: (n: number, mc: boolean) =>
       `偷學不花學費，但失敗會遺忘 ${n} 道食譜${mc ? '，還可能遺忘一道特色菜' : ''}。確定偷學嗎？`,
     learned: (name: string) => `學會了${name}`,
@@ -171,7 +170,7 @@ export default {
     closeFailed: '結束失敗',
     mine: '我的課：',
     mineLine: (level: number, n: number, max: number, left: string) =>
-      ` ${level} 級 · ${n}/${max} 人 · 還剩 ${left}`,
+      ` ${level} 級 · ${n}/${max} 人 · ${left}`,
     forceClose: '強制結束',
     openTitle: '開課（消耗 1 張殘卷和 1 張教師證）：',
     pickMc: '選擇已學的特色菜',
@@ -184,7 +183,7 @@ export default {
     none: '現在沒有別人開的課',
     lessonLine: (level: number, teacher: string) => ` ${level} 級 · 老師 ${teacher}`,
     lessonMeta: (n: number, max: number, stolen: number, left: string) =>
-      `${n}/${max} 人（偷學 ${stolen}）· 還剩 ${left}`,
+      `${n}/${max} 人（偷學 ${stolen}）· ${left}`,
     learn: '學',
     steal: '偷學',
     rule: '學：花 售價×3 銀幣和 2 個同級殘卷碎片，老師分到 售價×2 和 1 個碎片。每門課只能試一次。',

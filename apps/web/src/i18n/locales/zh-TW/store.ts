@@ -21,7 +21,6 @@ export default {
   sellFailed: '出售失敗',
   discardConfirm: (name: string) => `丟棄${name}後加成立即消失，確定嗎？`,
   discardFailed: '丟棄失敗',
-  hoursLeft: (h: number) => `剩餘 ${h} 小時`,
   used: (kinds: number, max: number) => `已用 ${kinds}/${max} 種`,
   equipsBefore: (n: number) => `另有 ${n} 件廚具在`,
   equipsLink: '廚具頁',

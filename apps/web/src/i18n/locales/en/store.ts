@@ -20,7 +20,6 @@ const store: Messages['store'] = {
   sellFailed: 'Selling failed',
   discardConfirm: (name) => `The bonus from ${name} disappears as soon as you discard it. Discard it?`,
   discardFailed: 'Discarding failed',
-  hoursLeft: (h) => `${h} h left`,
   used: (kinds, max) => `${kinds}/${max} kinds used`,
   equipsBefore: (n) => `${n} more cookware ${n === 1 ? 'item is' : 'items are'} on the`,
   equipsLink: 'cookware page',

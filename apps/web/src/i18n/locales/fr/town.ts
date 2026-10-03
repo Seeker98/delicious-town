@@ -163,7 +163,6 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: 'Impossible de charger la classe',
-    hours: (h) => `${h} h`,
     stealConfirm: (n, mc) =>
       `Espionner un cours est gratuit, mais en cas d'échec vous oubliez ${n} recette(s)${mc ? ' et peut-être un plat signature' : ''}. Espionner ?`,
     learned: (name) => `Vous avez appris ${name}`,
@@ -176,7 +175,7 @@ const town: Messages['town'] = {
     closed: 'Cours terminé',
     closeFailed: "Impossible d'arrêter le cours",
     mine: 'Mon cours : ',
-    mineLine: (level, n, max, left) => ` Niv. ${level} · ${n}/${max} élèves · encore ${left}`,
+    mineLine: (level, n, max, left) => ` Niv. ${level} · ${n}/${max} élèves · ${left}`,
     forceClose: 'Arrêter',
     openTitle: "Ouvrir un cours (1 fragment et 1 certificat d'enseignant) :",
     pickMc: 'Choisir un plat signature appris',
@@ -188,7 +187,7 @@ const town: Messages['town'] = {
     running: 'Cours en cours',
     none: "Aucun cours d'un autre joueur pour le moment",
     lessonLine: (level, teacher) => ` Niv. ${level} · prof ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} élèves (${stolen} espion(s)) · encore ${left}`,
+    lessonMeta: (n, max, stolen, left) => `${n}/${max} élèves (${stolen} espion(s)) · ${left}`,
     learn: 'Apprendre',
     steal: 'Espionner',
     rule: 'Apprendre coûte prix×3 pièces et 2 fragments du même niveau ; le prof reçoit prix×2 et 1 fragment. Un seul essai par cours.',

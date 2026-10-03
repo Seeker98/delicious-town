@@ -25,6 +25,7 @@ const home: Messages['home'] = {
   todo: "Today's to-do",
   signIn: 'Daily check-in',
   signedIn: 'Checked in today',
+  signedInGift: (gift) => `Checked in today · got ${gift}×1 (in your storage)`,
   signInBtn: 'Check in',
   signInFailed: 'Check-in failed',
   mainTag: 'Main',

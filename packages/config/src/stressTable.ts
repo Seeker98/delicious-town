@@ -60,6 +60,21 @@ export function rewriteStatDesc(desc: string, base: EquipAttrs, total: number): 
 }
 
 /**
+ * 改写后的说明里还和数值对不上的片段（backlog 厨具小修：以前没改成功也不报错）：
+ * "厨艺+N""增加N点厨艺"要等于该项的 +0 数值，"增加N点属性"要等于 +0 总和
+ */
+export function statDescIssues(desc: string, base: EquipAttrs, total: number): string[] {
+  const out: string[] = [];
+  for (const m of desc.matchAll(/增加(\d+)点属性/g)) if (Number(m[1]) !== total) out.push(m[0]);
+  for (const a of EQUIP_ATTRS) {
+    const cn = ATTR_CN[a];
+    for (const re of [new RegExp(`${cn}\\+(\\d+)`, 'g'), new RegExp(`增加(\\d+)点${cn}`, 'g')])
+      for (const m of desc.matchAll(re)) if (Number(m[1]) !== base[a]) out.push(m[0]);
+  }
+  return out;
+}
+
+/**
  * 套用强化数值表（问题记录 120）：每件厨具恰好一张表；
  * 固定属性的按比例缩放到 +0，随机分配的总和改为 +0、各项上限等比缩放；说明里的数字跟着改
  */
@@ -107,6 +122,9 @@ export function applyStressTables(goods: Goods[], tables: StressTableEntry[], er
       equip = { ...e, total: v0, ranges };
     }
     equip = { ...equip, stressTable: t.values, minLevel: t.minLevel ?? e.minLevel };
-    return { ...g, equip, desc: rewriteStatDesc(g.desc, base, v0) };
+    const desc = rewriteStatDesc(g.desc, base, v0);
+    for (const bad of statDescIssues(desc, base, v0))
+      errors.push(`goods ${g.id} desc still says "${bad}" after applying stress table ${t.name}`);
+    return { ...g, equip, desc };
   });
 }

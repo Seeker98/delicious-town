@@ -12,6 +12,8 @@ import {
 import type { Game } from '../../game';
 
 const KEEP_MS = 30 * 86_400_000;
+/** 多号每组最多列出几个账号（最近登录的在前）；总数另给（backlog 6B-2） */
+export const MULTI_ACCOUNTS_MAX = 50;
 const SURGE_KINDS = ['coin', 'diamond', 'exp'] as const;
 
 /** 可疑数据（设计 §5）：只读查询，按区服；门槛在 tuning.ops.suspicious */
@@ -130,11 +132,13 @@ export function createSuspicious(game: Game) {
     async multi(shardId: number): Promise<SuspiciousMultiGroup[]> {
       const t = (await tuningOf(shardId)).ops.suspicious;
       const since = new Date(game.deps.now().getTime() - KEEP_MS);
-      const groups: SuspiciousMultiGroup[] = [];
+      // IP 和设备两种分组先各取前 N 个，合在一起按人数排、再取前 N 个：
+      // 以前先填满 IP 分组，设备分组可能被挤掉（backlog 6B-2）
+      const found: Array<{ kind: 'ip' | 'device'; key: string; n: number }> = [];
       for (const kind of ['ip', 'device'] as const) {
         const col = kind === 'ip' ? sql.ref('lt.ip') : sql.ref('lt.device_id');
-        const keys = await sql<{ key: string }>`
-          select ${col} as key from login_trace lt
+        const keys = await sql<{ key: string; n: string }>`
+          select ${col} as key, count(distinct lt.account_id) as n from login_trace lt
           where lt.last_seen >= ${since} and ${col} is not null
           group by ${col}
           having count(distinct lt.account_id) >= ${t.sharedAccounts}
@@ -143,35 +147,42 @@ export function createSuspicious(game: Game) {
             ))
           order by count(distinct lt.account_id) desc
           limit ${t.topN}`.execute(db);
-        for (const { key } of keys.rows) {
-          const accounts = await sql<{
-            account_id: number;
-            username: string;
-            rest_id: number | null;
-            rest_name: string | null;
-            last_seen: Date;
-          }>`
+        for (const r of keys.rows) found.push({ kind, key: r.key, n: Number(r.n) });
+      }
+      found.sort((a, b) => b.n - a.n);
+      const groups: SuspiciousMultiGroup[] = [];
+      for (const { kind, key, n } of found.slice(0, t.topN)) {
+        const col = kind === 'ip' ? sql.ref('lt.ip') : sql.ref('lt.device_id');
+        // 每组只列最近登录的 MULTI_ACCOUNTS_MAX 个账号，total 给出总数（backlog 6B-2）
+        const accounts = await sql<{
+          account_id: number;
+          username: string;
+          rest_id: number | null;
+          rest_name: string | null;
+          last_seen: Date;
+        }>`
             select a.id as account_id, a.username, r.id as rest_id, r.name as rest_name, max(lt.last_seen) as last_seen
             from login_trace lt
             join account a on a.id = lt.account_id
             left join restaurant r on r.account_id = a.id and r.shard_id = ${shardId} and not r.npc
             where ${col} = ${key} and lt.last_seen >= ${since}
             group by a.id, a.username, r.id, r.name
-            order by max(lt.last_seen) desc`.execute(db);
-          groups.push({
-            kind,
-            key,
-            accounts: accounts.rows.map((x) => ({
-              accountId: x.account_id,
-              username: x.username,
-              restId: x.rest_id,
-              restName: x.rest_name,
-              lastSeen: new Date(x.last_seen).toISOString(),
-            })),
-          });
-        }
+            order by max(lt.last_seen) desc
+            limit ${MULTI_ACCOUNTS_MAX}`.execute(db);
+        groups.push({
+          kind,
+          key,
+          total: n,
+          accounts: accounts.rows.map((x) => ({
+            accountId: x.account_id,
+            username: x.username,
+            restId: x.rest_id,
+            restName: x.rest_name,
+            lastSeen: new Date(x.last_seen).toISOString(),
+          })),
+        });
       }
-      return groups.slice(0, t.topN);
+      return groups;
     },
 
     /** 兑换码输错被锁的账号（按账号计，不分区服；门槛用这个区服的 failLimit） */
