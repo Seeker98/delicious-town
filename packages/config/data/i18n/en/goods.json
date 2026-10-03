@@ -1,1 +1,2730 @@
-{}
+{
+  "1": {
+    "name": "Mystery Voucher",
+    "desc": "Mystery Voucher, what you need to \"date\" Sister Wen (that is, play finger-guessing with her)"
+  },
+  "2": {
+    "name": "Moving Card",
+    "desc": "Use it to move your restaurant to a street of your choice"
+  },
+  "3": {
+    "name": "Small Pantry Expansion Card",
+    "desc": "Adds 1 pantry slot"
+  },
+  "4": {
+    "name": "Medium Pantry Expansion Card",
+    "desc": "Adds 5 pantry slots"
+  },
+  "5": {
+    "name": "Large Pantry Expansion Card",
+    "desc": "Adds 10 pantry slots"
+  },
+  "6": {
+    "name": "Small Storage Expansion Card",
+    "desc": "Adds 1 storage slot"
+  },
+  "7": {
+    "name": "Medium Storage Expansion Card",
+    "desc": "Adds 5 storage slots"
+  },
+  "8": {
+    "name": "Large Storage Expansion Card",
+    "desc": "Adds 10 storage slots"
+  },
+  "9": {
+    "name": "Safe Card",
+    "desc": "Adds a safe slot"
+  },
+  "10": {
+    "name": "Town God of Cookery Trophy (Bronze)",
+    "desc": "A bronze trophy made by Delicious Town; EXP per table +2 for 24 hours"
+  },
+  "11": {
+    "name": "Town God of Cookery Trophy (Silver)",
+    "desc": "A silver trophy made by Delicious Town; EXP per table +3 for 12 hours"
+  },
+  "12": {
+    "name": "Town God of Cookery Trophy (Gold)",
+    "desc": "A gold trophy made by Delicious Town; EXP per table +3 for 24 hours"
+  },
+  "13": {
+    "name": "Regular Promo Poster",
+    "desc": "A regular promo poster; coins per table +2 for 24 hours"
+  },
+  "14": {
+    "name": "Garden Sis Promo Poster",
+    "desc": "A Garden Sis promo poster; coins per table +3 for 12 hours"
+  },
+  "15": {
+    "name": "Sister Wen Promo Poster",
+    "desc": "A Sister Wen promo poster; coins per table +3 for 24 hours"
+  },
+  "16": {
+    "name": "Mousetrap",
+    "desc": "A mousetrap; friends raiding your pantry may get their fingers caught"
+  },
+  "17": {
+    "name": "Rapid Missile",
+    "desc": "Rapid Missile, used to challenge the temple guardian. Very high hit rate and massive damage!"
+  },
+  "18": {
+    "name": "Standard Missile",
+    "desc": "Standard Missile, used to challenge the temple guardian (can also be exchanged for Rapid Missiles). High hit rate, small damage!"
+  },
+  "19": {
+    "name": "Burst Missile",
+    "desc": "Burst Missile, used to challenge the temple guardian. Sometimes misses; small damage with a high critical chance!"
+  },
+  "20": {
+    "name": "Mystery Ingredient Voucher",
+    "desc": "Needed to exchange for mystery ingredients"
+  },
+  "21": {
+    "name": "Short-acting Oil Saver",
+    "desc": "Oil use per table -4 for 8 hours after placing"
+  },
+  "22": {
+    "name": "Medium-acting Oil Saver",
+    "desc": "Oil use per table -3 for 15 hours after placing"
+  },
+  "23": {
+    "name": "Long-acting Oil Saver",
+    "desc": "Oil use per table -2 for 28 hours after placing"
+  },
+  "24": {
+    "name": "Basic Oil Tank Upgrade Voucher",
+    "desc": "An important voucher for upgrading your oil tank"
+  },
+  "25": {
+    "name": "Intermediate Oil Tank Upgrade Voucher",
+    "desc": "An important voucher for upgrading your oil tank"
+  },
+  "26": {
+    "name": "Advanced Oil Tank Upgrade Voucher",
+    "desc": "An important voucher for upgrading your oil tank"
+  },
+  "27": {
+    "name": "Guild Oil Tank Upgrade Voucher",
+    "desc": "An important voucher for upgrading your oil tank; from special events"
+  },
+  "28": {
+    "name": "Small Stamina Card",
+    "desc": "Restores 20 stamina"
+  },
+  "29": {
+    "name": "Stamina Card",
+    "desc": "Restores 100 stamina"
+  },
+  "30": {
+    "name": "Apprentice's Spatula",
+    "desc": "A spatula for apprentice cooks; cooking +2"
+  },
+  "31": {
+    "name": "Apprentice's Knife",
+    "desc": "A kitchen knife for apprentice cooks; knife skills +2"
+  },
+  "32": {
+    "name": "Apprentice's Wok",
+    "desc": "A wok for apprentice cooks; heat control +2"
+  },
+  "33": {
+    "name": "Ruthless Spatula of Sariel's Soul",
+    "desc": "Cooking +21. Sariel, guardian of the Chef Tower's fourth floor, waited years for a challenger who never came, so she stir-fries over an empty stove day and night, and her spatula shows no mercy."
+  },
+  "34": {
+    "name": "Ruthless Blade of Sariel's Soul",
+    "desc": "Knife skills +21. Sariel never looks at the chopping board. She says a knife is more honest than people: once it falls, it never turns back."
+  },
+  "40": {
+    "name": "Enhancement Stone",
+    "desc": "This enhancement is guaranteed to succeed, and the stat gained is +1 more (but never above the cap)"
+  },
+  "41": {
+    "name": "[Tier 1]•Wisdom Stone",
+    "desc": "Creativity +1"
+  },
+  "42": {
+    "name": "[Tier 1]•Red Crystal",
+    "desc": "Heat control +1"
+  },
+  "43": {
+    "name": "[Tier 1]•Topaz",
+    "desc": "Knife skills +1"
+  },
+  "44": {
+    "name": "[Tier 1]•Blue Nether Stone",
+    "desc": "Cooking +1"
+  },
+  "45": {
+    "name": "[Tier 1]•Green Mystic Stone",
+    "desc": "Seasoning +1"
+  },
+  "46": {
+    "name": "Drill Stone",
+    "desc": "Needed to drill a socket in cookware"
+  },
+  "47": {
+    "name": "Sous Chef's Spatula",
+    "desc": "A spatula for intermediate cooks; cooking +4"
+  },
+  "48": {
+    "name": "Sous Chef's Knife",
+    "desc": "A kitchen knife for intermediate cooks; knife skills +4"
+  },
+  "49": {
+    "name": "Sous Chef's Wok",
+    "desc": "A wok for intermediate cooks; heat control +4"
+  },
+  "50": {
+    "name": "Sous Chef's Bottle",
+    "desc": "A seasoning bottle for intermediate cooks; seasoning +4"
+  },
+  "51": {
+    "name": "Dev Test Pack",
+    "desc": "Adds 5 random stat points"
+  },
+  "52": {
+    "name": "Cookware Essence",
+    "desc": "Material for enhancing cookware"
+  },
+  "53": {
+    "name": "Rename Card",
+    "desc": "Lets you rename your restaurant"
+  },
+  "54": {
+    "name": "Starter Pack",
+    "desc": "A starter pack. Have fun!"
+  },
+  "55": {
+    "name": "Respec Card",
+    "desc": "Resets your chef stat points"
+  },
+  "56": {
+    "name": "Serene Wok of Duma's Silence",
+    "desc": "36 random stat points. Elder Duma, who trains new cooks, never says a word to his pupils; he just has them watch this wok and lets the fire do the talking."
+  },
+  "57": {
+    "name": "Serene Bottle of Duma's Silence",
+    "desc": "36 random stat points. Duma's seasoning bottle is always full. He says you can only taste flavor once your mind is still."
+  },
+  "58": {
+    "name": "Serene Crown of Duma's Silence",
+    "desc": "36 random stat points. Of all the pupils Duma has taken in, only one never came back to the sixth floor to wear this crown."
+  },
+  "59": {
+    "name": "Wailing Spatula of Barbelet's Judgment",
+    "desc": "31 random stat points. Elder Barbelet, the judge, rules on dishes with this spatula alone; wherever it lands, the loser's dish wails in the wok."
+  },
+  "60": {
+    "name": "Wailing Blade of Barbelet's Judgment",
+    "desc": "31 random stat points. Barbelet says the sound of the knife is the verdict: anyone who can't cut cleanly doesn't even deserve a seat at the table."
+  },
+  "61": {
+    "name": "Wailing Crown of Barbelet's Judgment",
+    "desc": "31 random stat points. The Chef Tower gave this crown to its elder judge as a token. No contest Barbelet judged while wearing it has ever been overturned."
+  },
+  "62": {
+    "name": "True Love Spatula",
+    "desc": "Exclusive cookware for closed beta players; 6 random stat points"
+  },
+  "63": {
+    "name": "True Love Hat",
+    "desc": "Exclusive cookware for closed beta players; 6 random stat points"
+  },
+  "64": {
+    "name": "True Love Wok",
+    "desc": "Exclusive cookware for closed beta players; 6 random stat points"
+  },
+  "70": {
+    "name": "Closed Beta Medal (Silver)",
+    "desc": "Exclusive medal for 2023 closed beta players; occupancy +4%, final coin income +4%"
+  },
+  "71": {
+    "name": "Closed Beta Medal (Gold)",
+    "desc": "Exclusive medal for 2023 closed beta players; occupancy +5%, final coin income +5%"
+  },
+  "72": {
+    "name": "True Love Medal",
+    "desc": "Awarded to the devoted players who waited for the first 2023 closed beta; final EXP and coin income +5%, final oil use -10%"
+  },
+  "73": {
+    "name": "Song Sao's Spatula",
+    "desc": "6 random stat points"
+  },
+  "74": {
+    "name": "Song Sao's Blade",
+    "desc": "6 random stat points"
+  },
+  "75": {
+    "name": "Song Sao's Wok",
+    "desc": "6 random stat points"
+  },
+  "76": {
+    "name": "[Closed Beta Star]",
+    "desc": "Exclusive closed beta plaque; restaurant occupancy +10%"
+  },
+  "77": {
+    "name": "Closed Beta Promo Poster",
+    "desc": "Closed beta promo poster; coins per table +6 for 8 hours"
+  },
+  "78": {
+    "name": "Closed Beta Medal (Bronze)",
+    "desc": "Exclusive medal for 2023 closed beta players; occupancy +3%, final coin income +3%"
+  },
+  "79": {
+    "name": "Delicious Medal: Gourmet",
+    "desc": "An honor for restaurants that have learned every recipe; final coin income +5%"
+  },
+  "80": {
+    "name": "Delicious Medal: God of Cookery",
+    "desc": "An honor for restaurants with every recipe at Gold grade; final coin income +8%"
+  },
+  "81": {
+    "name": "Grand Opening",
+    "desc": "Exclusive to newly opened restaurants (lasts 15 days); final EXP and coin income +100%, occupancy +25%"
+  },
+  "82": {
+    "name": "Table A",
+    "desc": "Adds one table"
+  },
+  "83": {
+    "name": "Test Medal",
+    "desc": "A test medal for testing stats. For Mr. Krab only!"
+  },
+  "84": {
+    "name": "Silver Coin",
+    "desc": "A rusty silver coin that looks like the town's currency. Use it to get 1 coin"
+  },
+  "85": {
+    "name": "Gold Coin",
+    "desc": "A shiny gold coin that looks quite valuable. Use it to get 100,000 coins"
+  },
+  "86": {
+    "name": "Star-up Voucher",
+    "desc": "Needed to raise your restaurant's star level"
+  },
+  "87": {
+    "name": "Star-up Promotion Medal",
+    "desc": "For three days after gaining a star (can be discarded early), drinks are on the house and customers flock in! Oil per table +1, occupancy +20%, final coin income -10%, final EXP income +10%"
+  },
+  "88": {
+    "name": "[1-Star Plaque]",
+    "desc": "1-star plaque; final EXP income +10%, EXP per table +1"
+  },
+  "89": {
+    "name": "[2-Star Plaque]",
+    "desc": "2-star plaque; final EXP income +15%, EXP per table +2"
+  },
+  "90": {
+    "name": "[3-Star Plaque]",
+    "desc": "3-star plaque; final EXP income +20%, EXP per table +3"
+  },
+  "91": {
+    "name": "[4-Star Plaque]",
+    "desc": "4-star plaque; final EXP income +30%, EXP per table +4"
+  },
+  "92": {
+    "name": "[5-Star Plaque]",
+    "desc": "5-star plaque; final EXP income +40%, EXP per table +5"
+  },
+  "93": {
+    "name": "Advanced Oil Saver",
+    "desc": "Final oil use rate -45% for 18 hours after placing"
+  },
+  "94": {
+    "name": "Super Oil Saver",
+    "desc": "Final oil use rate -60% for 36 hours after placing"
+  },
+  "95": {
+    "name": "Basic Oil Saver",
+    "desc": "Final oil use rate -30% for 12 hours after placing"
+  },
+  "96": {
+    "name": "Chinese Knot",
+    "desc": "They say whoever gets this is blessed by the heavens!!! Luck +120"
+  },
+  "97": {
+    "name": "Four-leaf Clover",
+    "desc": "Getting a four-leaf clover gives your luck a big boost!!! Luck +88"
+  },
+  "98": {
+    "name": "Koi",
+    "desc": "Since ancient times, koi have stood for hope and good luck; occupancy +5%, luck +50"
+  },
+  "99": {
+    "name": "Bianbian",
+    "desc": "Officially certified, currently selling vegetables at the market! Her restaurant: final EXP and coin income +10%, occupancy +10%, final oil use -10%"
+  },
+  "100": {
+    "name": "Red Underpants",
+    "desc": "A fine pair of red underpants, a must in your zodiac year. When a restaurant with more stars swaps ingredients with you, they pay one extra random ingredient of the same level; luck +20"
+  },
+  "101": {
+    "name": "Song Sao's Bottle",
+    "desc": "6 random stat points"
+  },
+  "103": {
+    "name": "True Love Knife",
+    "desc": "Exclusive cookware for closed beta players; 6 random stat points"
+  },
+  "105": {
+    "name": "True Love Bottle",
+    "desc": "Exclusive cookware for closed beta players; 6 random stat points"
+  },
+  "106": {
+    "name": "20% Off Sale",
+    "desc": "Your restaurant runs a big sale: 20% off the bill! Occupancy +50%, picky rate -20%, final EXP income -10%, final coin income -20%"
+  },
+  "107": {
+    "name": "Market Work Permit",
+    "desc": "Proof of working at the market: earn a cut when wholesaling ingredients. Final EXP income +20%, final oil use -20% (weekly wage: 8 Mystery Ingredient Pick Vouchers, 10 Universal Ingredient Packs)"
+  },
+  "108": {
+    "name": "Shop Work Permit",
+    "desc": "Proof of working at the shop: refresh extra takeaway orders and earn a big EXP cut. Final EXP and coin income +15%, occupancy +5%, final oil use -10% (weekly wage: 5 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+  },
+  "109": {
+    "name": "Rename Office Work Permit",
+    "desc": "Proof of working at the rename office: Delicious Seal appraisal success +5%, final coin income +15%, picky rate +35% (weekly wage: 3 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+  },
+  "110": {
+    "name": "Security Badge",
+    "desc": "Proof of working as bar or guild security: chance of mystery ingredients while exploring +2.5%, luck +56 (weekly wage: 3 Random Mystery Ingredient Vouchers, 10 Random Universal Ingredient Packs)"
+  },
+  "111": {
+    "name": "Moving Office Work Permit",
+    "desc": "Proof of working at the moving office: moving doesn't use a Moving Card; final EXP income +50% (weekly wage: 3 Mystery Ingredient Pick Vouchers, 10 Random Universal Ingredient Packs)"
+  },
+  "112": {
+    "name": "Jiang Xue",
+    "desc": "A weather-beaten fishing rod. Its owner loves the town and has an unspeakable connection with Mr. Krab! His restaurant: final EXP income +21%, final coin income +26%, picky rate +4%, luck +10"
+  },
+  "113": {
+    "name": "Lucky Emperor",
+    "desc": "He said: \"Anything that's down to chance, I've never won! I'm the unluckiest guy in town!\" Then he decided to defy fate, and in the end he had an OOXX story with Mr. Krab (closed beta rewards: 2)! His restaurant: picky rate +1%, luck +9"
+  },
+  "114": {
+    "name": "Special Oil Saver",
+    "desc": "Oil use per table -5 for 12 hours after placing"
+  },
+  "115": {
+    "name": "Daily Check-in Pack",
+    "desc": "The daily check-in gift pack. Open it for 20 Mystery Vouchers, with a chance of coins, diamonds, EXP, universal ingredients and items"
+  },
+  "116": {
+    "name": "XXX",
+    "desc": "A mysterious man. Ever since that night of XXX with Mr. Krab, he has lived under a false name (closed beta rewards: 1)! His restaurant: picky rate +3%, luck +5"
+  },
+  "117": {
+    "name": "Star-up Pack (1 Star)",
+    "desc": "Reward pack for reaching 1 star: 100 Mystery Vouchers, 1-Star Plaque x1, Star-up Promotion Medal x1, Table A x1"
+  },
+  "118": {
+    "name": "Star-up Pack (2 Stars)",
+    "desc": "Reward pack for reaching 2 stars: 200 Mystery Vouchers, 2-Star Plaque x1, Star-up Promotion Medal x1, Table A x2"
+  },
+  "119": {
+    "name": "Star-up Pack (3 Stars)",
+    "desc": "Reward pack for reaching 3 stars: 300 Mystery Vouchers, 3-Star Plaque x1, Star-up Promotion Medal x1, Table A x3"
+  },
+  "120": {
+    "name": "Star-up Pack (4 Stars)",
+    "desc": "Reward pack for reaching 4 stars: 400 Mystery Vouchers, 4-Star Plaque x1, Star-up Promotion Medal x1, Table A x4"
+  },
+  "121": {
+    "name": "Star-up Pack (5 Stars)",
+    "desc": "Reward pack for reaching 5 stars: 500 Mystery Vouchers, 5-Star Plaque x1, Star-up Promotion Medal x1, Table A x5"
+  },
+  "122": {
+    "name": "Star-up Pack (6 Stars)",
+    "desc": "Reward pack for reaching 6 stars: 600 Mystery Vouchers, [Honor] Star God's Cup, 6-Star Plaque x1, Star-up Promotion Medal x1, Table A x6"
+  },
+  "123": {
+    "name": "[6-Star Plaque]",
+    "desc": "6-star plaque; final EXP income +50%, EXP per table +6"
+  },
+  "124": {
+    "name": "Star-up Promotion Medal Pack (Test)",
+    "desc": "Open it to get a Star-up Promotion Medal"
+  },
+  "125": {
+    "name": "Oil Saver Pack (Tier 2)",
+    "desc": "A high-end oil saver pack! Contains Super Oil Saver x1, Advanced Oil Saver x1, Basic Oil Saver x1"
+  },
+  "126": {
+    "name": "Oil Saver Pack (Tier 1)",
+    "desc": "A regular oil saver pack! Contains Long-acting Oil Saver x1, Medium-acting Oil Saver x1, Short-acting Oil Saver x1"
+  },
+  "127": {
+    "name": "Gold Mousetrap",
+    "desc": "Gold mousetrap; for 24 hours, friends raiding your pantry have a 50% chance of getting caught"
+  },
+  "128": {
+    "name": "Long-lasting Mousetrap",
+    "desc": "Long-lasting mousetrap; for 36 hours, friends raiding your pantry have a 30% chance of getting caught"
+  },
+  "129": {
+    "name": "100% Mousetrap",
+    "desc": "100% mousetrap; for 10 days, friends raiding your pantry are sure to get caught"
+  },
+  "130": {
+    "name": "Broccoli",
+    "desc": "A cute head of broccoli, owned by a player specially invited by Mr. Krab. They say whoever gets it can do whatever they like in town!!! Her restaurant: final EXP and coin income +15%, occupancy +5%, final oil use -10%"
+  },
+  "131": {
+    "name": "Random Universal Ingredient Pack",
+    "desc": "A random universal ingredient pack; open it for 1 random universal ingredient"
+  },
+  "132": {
+    "name": "Unlucky Chief",
+    "desc": "Couldn't even keep his own name. Truly the unluckiest! (closed beta rewards: 1) His restaurant: final coin income +4%, luck +3"
+  },
+  "133": {
+    "name": "Mr. Krab",
+    "desc": "Mr. Krab visited your restaurant incognito and had the feast of his dreams. He's delighted, and your restaurant's popularity soars! Occupancy +10%, final coin and EXP income +50%"
+  },
+  "134": {
+    "name": "Mr. Krab (Angry)",
+    "desc": "Mr. Krab visited your restaurant incognito and got nothing to eat. He's furious, and your restaurant's popularity plummets! Occupancy -10%, final coin and EXP income -50%"
+  },
+  "135": {
+    "name": "Mr. Krab's Oil Saver",
+    "desc": "Oil use per table -7 for 200 hours after placing"
+  },
+  "136": {
+    "name": "Chef Tower Ticket",
+    "desc": "Adds one Chef Tower challenge for today"
+  },
+  "137": {
+    "name": "Diamond",
+    "desc": "A precious diamond, the town's special currency. Use it to get 1 diamond"
+  },
+  "139": {
+    "name": "Random Mystery Ingredient Voucher",
+    "desc": "Gives a random mystery ingredient"
+  },
+  "140": {
+    "name": "Newbie Street",
+    "desc": "Occupancy +35%, coins per table +1, luck +36, picky rate -35%"
+  },
+  "141": {
+    "name": "Hunan Street",
+    "desc": "Final EXP and coin income +15%, luck +10"
+  },
+  "142": {
+    "name": "Guangdong Street",
+    "desc": "Occupancy +10%, picky rate +8%, oil per table -2"
+  },
+  "143": {
+    "name": "Sichuan Street",
+    "desc": "EXP per table +4, final oil use +2"
+  },
+  "144": {
+    "name": "Fujian Street",
+    "desc": "Coins per table +2, EXP per table +3"
+  },
+  "145": {
+    "name": "Anhui Street",
+    "desc": "Coins per table +3, oil use -15%"
+  },
+  "146": {
+    "name": "Shandong Street",
+    "desc": "EXP per table +6, oil use -10%, occupancy -20%"
+  },
+  "147": {
+    "name": "Zhejiang Street",
+    "desc": "Picky rate +10%, oil per table -3"
+  },
+  "148": {
+    "name": "Jiangsu Street",
+    "desc": "Picky rate +5%, oil use -50%, final coin income -20%"
+  },
+  "149": {
+    "name": "Fusion Street I",
+    "desc": "Picky rate +25%, final coin income -20%"
+  },
+  "150": {
+    "name": "Fusion Street II",
+    "desc": "Picky rate +25%, final EXP income -20%"
+  },
+  "151": {
+    "name": "Xingdao",
+    "desc": "An unknown man who seems pretty laid-back; even Mr. Krab doesn't know how to describe him! (closed beta rewards: 1) His restaurant: final coin income +3%, luck +6"
+  },
+  "153": {
+    "name": "Top-tier Oil Saver",
+    "desc": "Oil use per table -6 for 32 hours after placing"
+  },
+  "154": {
+    "name": "Imported Oil Saver",
+    "desc": "Final oil use rate -80% for 36 hours after placing"
+  },
+  "155": {
+    "name": "Oil Saver Pack (Tier 3)",
+    "desc": "A top-of-the-line oil saver pack! Contains Imported Oil Saver x1, Top-tier Oil Saver x1"
+  },
+  "156": {
+    "name": "Midnight Roach Slayer",
+    "desc": "Nobody knows where he came from; all we know is roaches flee wherever he goes... Effect: squashing a roach costs at most 2 stamina between 23:00 and 7:00 and at most 3 at other times, and rewards for squashing friends' roaches +50%"
+  },
+  "157": {
+    "name": "Firecrackers",
+    "desc": "A string of firecrackers, the best thing for chasing away bad luck; final EXP income +20%, luck +44"
+  },
+  "158": {
+    "name": "Lantern",
+    "desc": "A lantern that chases away bad luck; hang it in your restaurant for good fortune. Final EXP income +16%, luck +33"
+  },
+  "159": {
+    "name": "Fortune",
+    "desc": "When fortune comes, bad luck goes; stick it up in your restaurant. Final EXP income +12%, luck +22"
+  },
+  "160": {
+    "name": "DT 1.3.4 Update Pack",
+    "desc": "The 1.3.4 update pack: one Random Mystery Ingredient Voucher and 99 Mystery Vouchers"
+  },
+  "161": {
+    "name": "Big Guts",
+    "desc": "This guy is outrageously bold, so Mr. Krab decided to give him the Big Guts medal! Final EXP and coin income +3%, luck +3"
+  },
+  "162": {
+    "name": "Mystery Recipe",
+    "desc": "Appraise it with a [Delicious Seal] or [God of Cookery Jade Seal]; success gives a fragment, failure destroys it"
+  },
+  "163": {
+    "name": "Delicious Seal",
+    "desc": "The basic item for appraising mystery recipes; gives level 1–6 fragments, with a fairly low success rate"
+  },
+  "164": {
+    "name": "God of Cookery Jade Seal",
+    "desc": "The advanced item for appraising mystery recipes; gives level 2–5 fragments with a high success rate, and a small chance of appraising an ingredient formula!"
+  },
+  "165": {
+    "name": "Krabby Patty Secret Formula",
+    "desc": "Mr. Krab's most precious possession. They say appraising a mystery recipe with it gives level 3–5 fragments, sometimes two at once"
+  },
+  "166": {
+    "name": "[2023 Commemorative Plaque]",
+    "desc": "2023 commemorative plaque for the town's first year; plaque collection bonus doubled (*)"
+  },
+  "167": {
+    "name": "Love Necklace",
+    "desc": "Proof of sponsoring the town. Restaurants with this necklace can claim double daily activity rewards and shop at the premium market; coins per table +1, luck +36"
+  },
+  "168": {
+    "name": "[Time-honored Brand]",
+    "desc": "A century-old brand plaque, its ink steeped in the years! Coins from picky dishes of satisfied picky customers go up (more stars, bigger boost) [0.3 + stars × 0.1] (*)!"
+  },
+  "169": {
+    "name": "Shoelace",
+    "desc": "Ties 36 Standard Missiles into 1 Rapid Missile"
+  },
+  "170": {
+    "name": "Exploration Map",
+    "desc": "A blurry map (easy to get lost) for exploring behind the temple for a few level 4–5 ingredients, with a 6% chance of a mystery ingredient!"
+  },
+  "171": {
+    "name": "Advanced Exploration Map",
+    "desc": "A clearer map (harder to get lost) for exploring the woods behind the temple for more level 4–5 ingredients, with a 12% chance of a mystery ingredient!"
+  },
+  "172": {
+    "name": "Top Exploration Map",
+    "desc": "A perfect map (you can't get lost) for exploring deep in the woods behind the temple for lots of level 4–5 ingredients, with a 32% chance of a mystery ingredient!"
+  },
+  "173": {
+    "name": "Eco Ambassador",
+    "desc": "Eco Ambassador (lasts 30 days). The town cares more and more about living in harmony with nature; this honor makes facilities placed in your restaurant last 50% longer"
+  },
+  "174": {
+    "name": "[Spring Festival Plaque]",
+    "desc": "Spring Festival plaque. As the new year begins, may your business thrive, your family be happy and everything go your way! Oil use -30%, final coin income +3%"
+  },
+  "175": {
+    "name": "Qingjing",
+    "desc": "\"Heaven is clear and earth is murky; heaven moves and earth is still.\" (closed beta rewards: 1) His restaurant: final EXP income +12%, final coin income +24%, luck +9"
+  },
+  "176": {
+    "name": "Chum Bucket Secret Formula",
+    "desc": "Plankton's most precious possession. They say appraising a mystery recipe with it gives level 1–3 fragments, sometimes two at once"
+  },
+  "177": {
+    "name": "Basic Teaching License",
+    "desc": "Entry-level license for teaching mystery recipes: lets you teach classes with fragments of mystery recipes you've learned (levels 1–2)!"
+  },
+  "178": {
+    "name": "Intermediate Teaching License",
+    "desc": "Intermediate license for teaching mystery recipes: lets you teach classes with fragments of mystery recipes you've learned (levels 3–4)!"
+  },
+  "179": {
+    "name": "Advanced Teaching License",
+    "desc": "Advanced license for teaching mystery recipes: lets you teach classes with fragments of mystery recipes you've learned (level 5)!"
+  },
+  "180": {
+    "name": "Krabby Patty",
+    "desc": "A Krabby Patty from the slot machine; trade it with the Mayor for rare items!"
+  },
+  "181": {
+    "name": "[Level 1]•Fragment Shard",
+    "desc": "What's left after breaking down a level-1 fragment; used to learn signature dishes of that level"
+  },
+  "182": {
+    "name": "[Level 2]•Fragment Shard",
+    "desc": "What's left after breaking down a level-2 fragment; used to learn signature dishes of that level"
+  },
+  "183": {
+    "name": "[Level 3]•Fragment Shard",
+    "desc": "What's left after breaking down a level-3 fragment; used to learn signature dishes of that level"
+  },
+  "184": {
+    "name": "[Level 4]•Fragment Shard",
+    "desc": "What's left after breaking down a level-4 fragment; used to learn signature dishes of that level"
+  },
+  "185": {
+    "name": "[Level 5]•Fragment Shard",
+    "desc": "What's left after breaking down a level-5 fragment; used to learn signature dishes of that level"
+  },
+  "186": {
+    "name": "[Level 6]•Fragment Shard",
+    "desc": "What's left after breaking down a level-6 fragment; used to learn signature dishes of that level"
+  },
+  "187": {
+    "name": "Jiangxi Street",
+    "desc": "Occupancy +15%, coins per table +3"
+  },
+  "188": {
+    "name": "Hubei Street",
+    "desc": "Final EXP income +40%, luck +10"
+  },
+  "189": {
+    "name": "Beijing Street",
+    "desc": "Final coin income +25%, EXP per table +2, oil use +30%"
+  },
+  "190": {
+    "name": "Delicious Medal: Culinary Grand Master",
+    "desc": "An honor for restaurants with every recipe at Exquisite grade or above; final coin income +6%"
+  },
+  "191": {
+    "name": "[Good Fortune]",
+    "desc": "Good Fortune plaque: final coin income +2% per restaurant star (purple stars included) (*)! Occupancy +20%"
+  },
+  "192": {
+    "name": "Roach Killer",
+    "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 20% chance of being killed"
+  },
+  "193": {
+    "name": "Gold Roach Killer",
+    "desc": "For 1 day roaches have nowhere to hide: each roach that appears in your restaurant has a 50% chance of being killed"
+  },
+  "194": {
+    "name": "Extra-strength Roach Killer",
+    "desc": "For 10 days roaches have nowhere to hide: any roach that appears in your restaurant is killed at once"
+  },
+  "195": {
+    "name": "[Bright Future]",
+    "desc": "Bright Future plaque. May your road ahead be smooth and ever wider, your business thrive and your life be happy! Final EXP income +4% per restaurant star (purple stars included) (*), final EXP income +20%"
+  },
+  "196": {
+    "name": "[Eternal Flavor]",
+    "desc": "Eternal Flavor plaque: the flavors in your food never fade, giving diners endless delight. Occupancy +10%, picky rate +15%, final coin income +10%, final EXP income +10%"
+  },
+  "197": {
+    "name": "[Grand Ambitions]",
+    "desc": "Grand Ambitions plaque: your restaurant has a bright future ahead. Picky rate +32%"
+  },
+  "198": {
+    "name": "[Building the Future Together]",
+    "desc": "Building the Future Together plaque: your staff join hands to serve better! 16% chance that regular customers and satisfied picky customers eat an extra signature dish, but that extra dish gives no EXP (*)!"
+  },
+  "199": {
+    "name": "Chef God",
+    "desc": "Title for first place in the chef ranking (lasts 150 hours); coins per table +2, final EXP income +25%"
+  },
+  "200": {
+    "name": "Chef Saint",
+    "desc": "Title for second place in the chef ranking (lasts 150 hours); coins per table +2, final EXP income +20%"
+  },
+  "201": {
+    "name": "Chef King",
+    "desc": "Title for third place in the chef ranking (lasts 150 hours); coins per table +1, final EXP income +20%"
+  },
+  "202": {
+    "name": "Chef Ranking #1 Pack",
+    "desc": "Chef ranking #1 pack: [Chef God], 500 renown, Random Mystery Ingredient Voucher x2, Mystery Recipe x15, 150 diamonds"
+  },
+  "203": {
+    "name": "Chef Ranking #2 Pack",
+    "desc": "Chef ranking #2 pack: [Chef Saint], 400 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x12, 120 diamonds"
+  },
+  "204": {
+    "name": "Chef Ranking #3 Pack",
+    "desc": "Chef ranking #3 pack: [Chef King], 300 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x10, 100 diamonds"
+  },
+  "205": {
+    "name": "Chef Ranking #4–8 Pack",
+    "desc": "Chef ranking #4–8 pack: 150 renown, Random Mystery Ingredient Voucher x1, Mystery Recipe x8, 75 diamonds"
+  },
+  "206": {
+    "name": "Chef Ranking #9–15 Pack",
+    "desc": "Chef ranking #9–15 pack: 100 renown, Mystery Recipe x5, 50 diamonds"
+  },
+  "207": {
+    "name": "Master Teacher",
+    "desc": "For outstanding contributions to the town's signature dishes; EXP per table +2, signature dish portions +5%"
+  },
+  "208": {
+    "name": "China Golden Chef Award",
+    "desc": "China Golden Chef Award (lasts 30 days), the highest honor in the chef world!!! Occupancy +15%, picky rate +20%"
+  },
+  "209": {
+    "name": "[Students Everywhere]",
+    "desc": "Students Everywhere plaque: their pupils are all over town!!! The picky rate from stars, honors and cookware turns into final coin income, and signature dishes eaten by regular customers are worth 1.2× (*)!"
+  },
+  "210": {
+    "name": "Possessed by the Chef God",
+    "desc": "Possessed by the Chef God (lasts 3 days): guided by the legendary Chef God, your income soars! Chance of higher grades when cooking signature dishes +25%, coins per table +3, final EXP and coin income +25%, luck +50"
+  },
+  "211": {
+    "name": "Warmth",
+    "desc": "A little candle with a faint glow! Their restaurant: picky rate +1%, luck +2"
+  },
+  "212": {
+    "name": "Strawberry",
+    "desc": "A little strawberry, red as fire, glistening and sweetly fragrant! Their restaurant: final EXP income +6%, picky rate +1%, luck +2"
+  },
+  "213": {
+    "name": "Salted Fish",
+    "desc": "A salted fish. \"Past shabby days are not worth boasting of; today I roam free with endless thoughts...\" Their restaurant: final EXP income +3%, picky rate +1%, luck +2"
+  },
+  "214": {
+    "name": "Legacy",
+    "desc": "Pass on wisdom, pass on faith! Their restaurant: picky rate +1%, final EXP income +3%, luck +2"
+  },
+  "215": {
+    "name": "Lychee",
+    "desc": "Taste every lychee and you've tasted the whole world! Their restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "216": {
+    "name": "Teacher for the Ages",
+    "desc": "Devoted heart and soul to teaching signature dishes: can pay coins to end a full class early (sneak-lessons included); final EXP income +10%, signature dish portions +20%"
+  },
+  "217": {
+    "name": "Schoolteacher",
+    "desc": "Has made a name in the town's teaching circles; final EXP income +2%, signature dish portions +3%"
+  },
+  "218": {
+    "name": "Angel",
+    "desc": "Qingqing! Their restaurant: occupancy +999%, final EXP and coin income +999%, luck +999"
+  },
+  "219": {
+    "name": "Secret Seasoning",
+    "desc": "A special secret recipe whose flavor lingers long after; coins from satisfied picky customers +32%"
+  },
+  "221": {
+    "name": "Big Tangerine",
+    "desc": "\"Unless you peel me, you'll never know if I'm sour or sweet!\" Their restaurant: final EXP income +145%, final coin income +50%, picky rate +5%, luck +49"
+  },
+  "222": {
+    "name": "Melody Meow",
+    "desc": "Pink memories; summer slips quietly away, leaving a little secret behind! Their restaurant: picky rate +1%, luck +2"
+  },
+  "223": {
+    "name": "God of Wealth Descends",
+    "desc": "God of Wealth Descends (lasts 10 days): no matter who they are, everyone empties their wallet! Customers who eat signature dishes pay 30% more coins and give 100% more EXP"
+  },
+  "224": {
+    "name": "Mystery Crystal",
+    "desc": "Needed to reset enhanced cookware to its original state"
+  },
+  "225": {
+    "name": "Origin Stone",
+    "desc": "Undoes one enhancement level on enhanced cookware"
+  },
+  "226": {
+    "name": "Diamond Pack",
+    "desc": "Open it for 150 diamonds"
+  },
+  "227": {
+    "name": "Jade•Da Ju's Hat",
+    "desc": "Exclusive cookware for the restaurant Da Ju; 25 stat points"
+  },
+  "228": {
+    "name": "Silver Bracelets",
+    "desc": "Silver bracelets: caught doing something bad in town! Utterly shameful, hence this punishment! Occupancy -99%, final EXP and coin income -99%"
+  },
+  "229": {
+    "name": "Da Ju",
+    "desc": "To thank Da Ju for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "230": {
+    "name": "Hip-hop Culture",
+    "desc": "Focused on people's real joys and sorrows, it's a belief that gives individuals freedom and passion, peace and love. Effect: occupancy +50%, oil use rate -50%, luck +28"
+  },
+  "231": {
+    "name": "Mayor's Recommendation",
+    "desc": "The Mayor's recommendation. Effect: occupancy +30%, coins per table +1, EXP per table +2"
+  },
+  "232": {
+    "name": "Mayor's Grudge",
+    "desc": "The Mayor has it in for you. Effect: occupancy -60%, coins per table -5, EXP per table -1"
+  },
+  "233": {
+    "name": "Market Work Pack",
+    "desc": "Wage for working at the market: 8 Mystery Ingredient Pick Vouchers, Krab Coin x6, 10 Random Universal Ingredient Packs"
+  },
+  "234": {
+    "name": "Shop Work Pack",
+    "desc": "Wage for working at the shop: 5 Random Mystery Ingredient Vouchers, Krab Coin x8, 10 Random Universal Ingredient Packs"
+  },
+  "235": {
+    "name": "Rename Office Work Pack",
+    "desc": "Wage for working at the rename office: 3 Random Mystery Ingredient Vouchers, Krab Coin x7, 10 Random Universal Ingredient Packs"
+  },
+  "236": {
+    "name": "Moving Office Work Pack",
+    "desc": "Wage for working at the moving office: 3 Mystery Ingredient Pick Vouchers, Krab Coin x5, 10 Random Universal Ingredient Packs"
+  },
+  "237": {
+    "name": "Security Work Pack",
+    "desc": "Wage for working as security: 3 Random Mystery Ingredient Vouchers, Krab Coin x4, 10 Random Universal Ingredient Packs"
+  },
+  "238": {
+    "name": "Dragon (Zodiac)",
+    "desc": "Chinese zodiac commemorative badge, full of vigor. Chance of higher grades when cooking signature dishes +5%, luck +12"
+  },
+  "239": {
+    "name": "Derpy Husky",
+    "desc": "Derpy Husky, restaurant pet. Dogs are humans' most loyal friends, and huskies are the doggiest friends of all. It makes unsatisfied picky customers pay full price, and has a 30% chance of satisfying mystery customers; final EXP income +10%, luck +8"
+  },
+  "240": {
+    "name": "Krab Coin",
+    "desc": "Needed to play the slot machine at the bar"
+  },
+  "241": {
+    "name": "Level-1 Ingredient Voucher",
+    "desc": "Needed to exchange for level-1 ingredients"
+  },
+  "242": {
+    "name": "Level-2 Ingredient Voucher",
+    "desc": "Needed to exchange for level-2 ingredients"
+  },
+  "243": {
+    "name": "Level-3 Ingredient Voucher",
+    "desc": "Needed to exchange for level-3 ingredients"
+  },
+  "244": {
+    "name": "Level-4 Ingredient Voucher",
+    "desc": "Needed to exchange for level-4 ingredients"
+  },
+  "245": {
+    "name": "Level-5 Ingredient Voucher",
+    "desc": "Needed to exchange for level-5 ingredients"
+  },
+  "246": {
+    "name": "Lucky Cat",
+    "desc": "Lucky cat, restaurant pet. They say a lucky cat brings wealth and good fortune! Coins per table +3, luck +45"
+  },
+  "247": {
+    "name": "Greeting Parrot",
+    "desc": "Greeting parrot, restaurant pet. A marvelous bird with the gift of the gab! Occupancy +11%, picky rate +5%"
+  },
+  "248": {
+    "name": "Cactus",
+    "desc": "Cactus, restaurant potted plant; final EXP income +3%"
+  },
+  "249": {
+    "name": "Money Tree",
+    "desc": "Money tree, restaurant potted plant; final coin income +2%"
+  },
+  "250": {
+    "name": "Heartbroken to the Bone",
+    "desc": "Sorrow flows like a river! Final EXP income +15%, final coin income +10%, luck +50"
+  },
+  "251": {
+    "name": "Hand of God",
+    "desc": "Put your hand right in there! Wiggle it around! Your first 25 pantry raids each day are 100% sure to find ingredients! Final EXP income +20%, luck +8"
+  },
+  "252": {
+    "name": "Jasmine",
+    "desc": "What a lovely jasmine flower, so fragrant it fills the garden! Their restaurant: picky rate +1%, luck +2"
+  },
+  "253": {
+    "name": "Town Data Master",
+    "desc": "Town data master: how do you prove 1 + 1 = 2? If you don't prove it, how can you be sure? Appointed by Mr. Krab himself as the town's data master; restaurants with this honor receive the town's blessing! Luck +1"
+  },
+  "254": {
+    "name": "Welcoming Pine",
+    "desc": "Welcoming pine, restaurant potted plant; occupancy +5%"
+  },
+  "255": {
+    "name": "Treasure Bowl",
+    "desc": "Treasure bowl: own me and you own the world! Restaurant decoration; final coin income +12%"
+  },
+  "256": {
+    "name": "Thor's Hammer",
+    "desc": "I am Thor, god of thunder!!! With the thunder god's power you can change the town's weather! (cooldown: 6 hours) Final EXP income +5%"
+  },
+  "257": {
+    "name": "Rice",
+    "desc": "A bowl of fragrant steamed rice! Their restaurant: picky rate +1%, luck +2"
+  },
+  "258": {
+    "name": "Gramophone",
+    "desc": "A gramophone that sets the mood, as if you were back in the 1950s! EXP from Squidward +100%, final EXP income +8%"
+  },
+  "259": {
+    "name": "Big Airplane",
+    "desc": "Brushing clouds with your fingertips, the plane soars across the sky and leaves a dreamlike trail! Their restaurant: picky rate +10%, final coin income +5%, luck +10"
+  },
+  "260": {
+    "name": "Golden Spatula",
+    "desc": "I love the Golden Spatula, and the Golden Spatula loves me! Their restaurant: picky rate +1%, final EXP income +3%, luck +2"
+  },
+  "261": {
+    "name": "Jigsaw Heart",
+    "desc": "A heart pieced together with everything I had! Their restaurant: picky rate +2%, final EXP income +45%, luck +3"
+  },
+  "262": {
+    "name": "All Bugs",
+    "desc": "What junk! It's all BUGS! Their restaurant: luck +18"
+  },
+  "263": {
+    "name": "Takeaway Pass",
+    "desc": "A pass for opening the takeaway system (the restaurant needs 2 stars to use it). Very rare!"
+  },
+  "264": {
+    "name": "Foodie Spirit",
+    "desc": "Eating isn't just about filling your belly; it's an attitude to life, a pleasure! Their restaurant: picky rate +4%, final coin income +12%, oil use -6%, luck +17"
+  },
+  "265": {
+    "name": "Sandy",
+    "desc": "Sandy's energy and positivity rub off on you. Your restaurant: final coin and EXP income +15%, takeaway coins and EXP +50%, courier EXP ×3. Lasts 4 hours"
+  },
+  "266": {
+    "name": "Patrick",
+    "desc": "Patrick's innocence rubs off on you. Your restaurant: takeaway coins and EXP +20%, courier EXP +300%. Lasts 2 hours"
+  },
+  "267": {
+    "name": "God of Cookery's Wok",
+    "desc": "A wok once used by the God of Cookery; 61 random stat points"
+  },
+  "274": {
+    "name": "[Tier 2]•Wisdom Stone",
+    "desc": "Creativity +2"
+  },
+  "275": {
+    "name": "[Tier 3]•Wisdom Stone",
+    "desc": "Creativity +4"
+  },
+  "276": {
+    "name": "[Tier 4]•Wisdom Stone",
+    "desc": "Creativity +8"
+  },
+  "277": {
+    "name": "[Tier 5]•Wisdom Stone",
+    "desc": "Creativity +16"
+  },
+  "278": {
+    "name": "[Tier 2]•Red Crystal",
+    "desc": "Heat control +2"
+  },
+  "279": {
+    "name": "[Tier 3]•Red Crystal",
+    "desc": "Heat control +4"
+  },
+  "280": {
+    "name": "[Tier 4]•Red Crystal",
+    "desc": "Heat control +8"
+  },
+  "281": {
+    "name": "[Tier 5]•Red Crystal",
+    "desc": "Heat control +16"
+  },
+  "282": {
+    "name": "[Tier 2]•Topaz",
+    "desc": "Knife skills +2"
+  },
+  "283": {
+    "name": "[Tier 3]•Topaz",
+    "desc": "Knife skills +4"
+  },
+  "284": {
+    "name": "[Tier 4]•Topaz",
+    "desc": "Knife skills +8"
+  },
+  "285": {
+    "name": "[Tier 5]•Topaz",
+    "desc": "Knife skills +16"
+  },
+  "286": {
+    "name": "[Tier 2]•Blue Nether Stone",
+    "desc": "Cooking +2"
+  },
+  "287": {
+    "name": "[Tier 3]•Blue Nether Stone",
+    "desc": "Cooking +4"
+  },
+  "288": {
+    "name": "[Tier 4]•Blue Nether Stone",
+    "desc": "Cooking +8"
+  },
+  "289": {
+    "name": "[Tier 5]•Blue Nether Stone",
+    "desc": "Cooking +16"
+  },
+  "290": {
+    "name": "[Tier 2]•Green Mystic Stone",
+    "desc": "Seasoning +2"
+  },
+  "291": {
+    "name": "[Tier 3]•Green Mystic Stone",
+    "desc": "Seasoning +4"
+  },
+  "292": {
+    "name": "[Tier 4]•Green Mystic Stone",
+    "desc": "Seasoning +8"
+  },
+  "293": {
+    "name": "[Tier 5]•Green Mystic Stone",
+    "desc": "Seasoning +16"
+  },
+  "294": {
+    "name": "Overlord Spear",
+    "desc": "\"Sweep the spear and petals scatter; pine winds chase the moon at my side!\" Their restaurant: occupancy +3%, final EXP income +9%, final coin income +20%, picky rate +1%, luck +2"
+  },
+  "295": {
+    "name": "Sunflower",
+    "desc": "May you be that unbending sunflower, always facing the sun with your brightest smile! Their restaurant: picky rate +1%, luck +2"
+  },
+  "296": {
+    "name": "Scarecrow",
+    "desc": "Use the scarecrow on deliveries to give customers a feint: takeaway coins and EXP +3%, courier EXP +20%"
+  },
+  "297": {
+    "name": "Snowman",
+    "desc": "A snowman that never melts. Do you want to build a snowman? Courier EXP +45%, luck +18"
+  },
+  "298": {
+    "name": "Cat Bed",
+    "desc": "The cat bed may be humble, but the love runs deep! It holds a cat's comfort and dreams, oh so cozy! Their restaurant: picky rate +1%, luck +2"
+  },
+  "299": {
+    "name": "Alone",
+    "desc": "Being alone isn't loneliness; it's a fine time to talk with yourself. A world of one can bloom too! Their restaurant: picky rate +1%, luck +5"
+  },
+  "300": {
+    "name": "Jade•Awesome's Hat",
+    "desc": "Exclusive cookware for the restaurant Awesome; 25 stat points"
+  },
+  "301": {
+    "name": "Broken Heart",
+    "desc": "To thank Awesome for a huge contribution to the town, Mr. Krab gave it as a restaurant decoration. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "302": {
+    "name": "Small Stack Card",
+    "desc": "Raises the stack limit for ingredients (pantry and fridge) by 5"
+  },
+  "303": {
+    "name": "Stack Card",
+    "desc": "Raises the stack limit for ingredients (pantry and fridge) by 20"
+  },
+  "304": {
+    "name": "SpongeBob",
+    "desc": "SpongeBob (lasts 3 hours): watching you cook signature dishes reminds him of his own days at the Krusty Krab, so every customer who eats a signature dish gives +200% EXP"
+  },
+  "305": {
+    "name": "A Glass of Beer",
+    "desc": "Those tender years, like dewdrops at dawn, sparkle with first love; every drop holds a sweet memory! Their restaurant: picky rate +5%, occupancy +10%, final coin income +78%, luck +18"
+  },
+  "306": {
+    "name": "Snake (Zodiac)",
+    "desc": "Chinese zodiac commemorative badge: the golden snake brings good fortune. Small chance (16%) of getting an Exploration Map when mice cause trouble; luck +12"
+  },
+  "307": {
+    "name": "Nü'er Hong Wine",
+    "desc": "To thank Xiao Li for a huge contribution to the town, Mr. Krab gave it as a restaurant ornament. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "308": {
+    "name": "Jade•Xiao Li's Hat",
+    "desc": "Exclusive cookware for the restaurant Xiao Li; 25 stat points"
+  },
+  "309": {
+    "name": "Number 1 Jersey",
+    "desc": "A jersey with special meaning! Their restaurant: picky rate +1%, luck +2"
+  },
+  "310": {
+    "name": "Delicious Ticket",
+    "desc": "Delicious Ticket, very rare and easier to get on holidays; trade it with the Mayor for special items"
+  },
+  "311": {
+    "name": "[Dragon and Tiger Leap]",
+    "desc": "Dragon and Tiger Leap plaque, for the Year of the Dragon! Final EXP income of [square root of final occupancy × stars] (*)!"
+  },
+  "312": {
+    "name": "The Scream (Masterpiece)",
+    "desc": "An expressionist painting by Norwegian artist Edvard Munch, 1893. Deeply symbolic, it reflects modern people's anxiety and their inner loneliness and fear. Final EXP income +32%"
+  },
+  "313": {
+    "name": "Tongfu Stove",
+    "desc": "Century-old braising stock holds the richness of time, handmade cake molds carry the craftsman's care, and secret sauces keep the wisdom of the ancestors! Their restaurant: picky rate +1%, luck +2"
+  },
+  "314": {
+    "name": "Fake Chef God",
+    "desc": "The man who dreamed of becoming the Chef God; sadly reality was harsh! Their restaurant: final EXP income +3%, picky rate +1%, luck +2"
+  },
+  "315": {
+    "name": "Horn",
+    "desc": "Needed to make announcements to the whole town"
+  },
+  "316": {
+    "name": "[Highly Praised]",
+    "desc": "Highly Praised plaque, much praised by friends!!! Each table gets a coin and EXP bonus of [square root of final occupancy, as a percentage] (*)!"
+  },
+  "317": {
+    "name": "Universally Acclaimed",
+    "desc": "You've become the most popular person in town (though still not as popular as Mr. Krab, of course); final EXP income +25%"
+  },
+  "318": {
+    "name": "Pinocchio",
+    "desc": "A talking puppet; they say its nose grows whenever it lies! Their restaurant: picky rate +1%, final coin income +48%, luck +5"
+  },
+  "319": {
+    "name": "Jingming",
+    "desc": "If you fly up into the sky, can you see farther? Their restaurant: picky rate +1%, luck +2"
+  },
+  "320": {
+    "name": "Baby Bottle",
+    "desc": "They say the owner just became a father and runs the restaurant with the baby in tow! Their restaurant: picky rate +8%, luck +20"
+  },
+  "321": {
+    "name": "Star-up Pack (7 Stars)",
+    "desc": "Reward pack for reaching 7 stars: 700 Mystery Vouchers, Delicious Ticket x136, 7-Star Plaque, Star-up Promotion Medal x1"
+  },
+  "322": {
+    "name": "Star God's Cup",
+    "desc": "A trophy Mr. Krab awards to 6-star restaurants that greatly boosts EXP! Final EXP income +20%"
+  },
+  "323": {
+    "name": "Star God's Book",
+    "desc": "They say the Star God left this book in town, recording a special way to appraise recipes! Its owner is favored by the Star God: mystery recipe appraisal success +20%, and if the resulting signature dish recipe is below level 5, it is appraised again (if both results have the same level, the first counts; otherwise the higher one)!"
+  },
+  "324": {
+    "name": "A Black Stocking",
+    "desc": "A black stocking left behind by a customer, now on display in the dining room! Their restaurant: picky rate +1%, luck +2"
+  },
+  "325": {
+    "name": "[2024 Commemorative Plaque]",
+    "desc": "2024 commemorative plaque for the town's second year: picky rate equal to your restaurant's stars as a percentage (purple stars included) (*), picky rate +8%"
+  },
+  "326": {
+    "name": "Creativity Potion",
+    "desc": "Creativity potion (lasts 1 hour), brewed by Mr. Krab and Old Fan together! Creativity +25"
+  },
+  "327": {
+    "name": "Meditation",
+    "desc": "Meditation (lasts 1 hour): enter a meditative state at the Trial Grounds! Creativity +5"
+  },
+  "328": {
+    "name": "Brainstorm",
+    "desc": "Wild ideas keep pouring out of your head! Missile critical rate +8%, creativity +5"
+  },
+  "329": {
+    "name": "Small Standard Missile Pack",
+    "desc": "Open it for 15 Standard Missiles"
+  },
+  "330": {
+    "name": "Small Burst Missile Pack",
+    "desc": "Open it for 15 Burst Missiles"
+  },
+  "331": {
+    "name": "Large Burst Missile Pack",
+    "desc": "Open it for 30 Burst Missiles"
+  },
+  "332": {
+    "name": "Lucky Coin",
+    "desc": "Special item (compensation of 2025-04-02); they say owning it brings good luck. Coins per table +1, luck +16"
+  },
+  "333": {
+    "name": "Big White Radish",
+    "desc": "A happy big white radish, fragrant and crunchy! Its owner has an unspeakable relationship with Mr. Krab! Their restaurant: picky rate +1%, final EXP income +10%, luck +24"
+  },
+  "334": {
+    "name": "Aztec Gold Coin",
+    "desc": "A commemorative coin carrying an undying curse beneath the blood-red moon. Trial success rate +3%, final coin income +3%, luck +8"
+  },
+  "335": {
+    "name": "VV",
+    "desc": "Junk, junk! Junk detected! Their restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "336": {
+    "name": "Mona Lisa (Masterpiece)",
+    "desc": "An oil painting by Italian Renaissance painter Leonardo da Vinci, portraying the grace and serenity of a woman of the rising urban middle class. EXP per table +2, final EXP income +5%"
+  },
+  "337": {
+    "name": "The Starry Night (Masterpiece)",
+    "desc": "Vincent van Gogh vividly depicts a sky full of movement and change. The whole canvas is swept up in a turbulent blue-green torrent; swirling, restless nebulae bring the night to life, and the dreamlike scene reflects van Gogh's restless emotions and feverish imagination! EXP per table +4"
+  },
+  "338": {
+    "name": "Angel's Tears",
+    "desc": "Angel's tears, restaurant potted plant; takeaway EXP +8%"
+  },
+  "339": {
+    "name": "Border Collie",
+    "desc": "Border collie, restaurant pet: a smart, well-behaved border collie. It has a 25% chance of making garden thieves drop a random level 1–5 ingredient, and a failed delivery has a 30% chance of being forced through anyway! Takeaway EXP +5%"
+  },
+  "341": {
+    "name": "[Tier 6]•Wisdom Stone",
+    "desc": "Creativity +24"
+  },
+  "342": {
+    "name": "[Tier 6]•Red Crystal",
+    "desc": "Heat control +24"
+  },
+  "343": {
+    "name": "[Tier 6]•Topaz",
+    "desc": "Knife skills +24"
+  },
+  "344": {
+    "name": "[Tier 6]•Blue Nether Stone",
+    "desc": "Cooking +24"
+  },
+  "345": {
+    "name": "[Tier 6]•Green Mystic Stone",
+    "desc": "Seasoning +24"
+  },
+  "346": {
+    "name": "Magic Cookbook",
+    "desc": "A cookbook with special magic: when cooking signature dishes, 50% chance of using one fewer kind of non-mystery ingredient!"
+  },
+  "347": {
+    "name": "Xiao Qi",
+    "desc": "A sweet, gentle Selkirk Rex shorthair cat! Its owner's restaurant: picky rate +1%, final EXP income +3%, final coin income +4%, luck +24"
+  },
+  "348": {
+    "name": "Like King",
+    "desc": "Generous and kind, making friends through likes and sharing a love of cooking! Final EXP income +5%; your first 10 likes for friends each day have a 30% chance of giving 1–3 stamina!"
+  },
+  "349": {
+    "name": "The Son of Man (Masterpiece)",
+    "desc": "A floating apple hides a man's face, symbolizing the conflict between the hidden and the real! The final value of signature dishes you cook rises by an extra 1 to [4 − current stars / 2]! Takeaway EXP +12%"
+  },
+  "350": {
+    "name": "Old Grandfather Clock",
+    "desc": "An old Western-style clock that seems to be broken; facilities placed in your restaurant last 15% longer"
+  },
+  "351": {
+    "name": "Grind Emperor",
+    "desc": "This guy is pure grind, a man Mr. Krab recognizes! Final EXP and coin income +5%, luck +6"
+  },
+  "352": {
+    "name": "Glorious Spatula of Akatma's Oracle",
+    "desc": "Cooking +51. Akatma, master of the Chef Tower, tests all comers with oracles; this spatula witnessed a lifetime of her glory."
+  },
+  "353": {
+    "name": "Glorious Blade of Akatma's Oracle",
+    "desc": "Knife skills +51. Akatma never shows her knife work; she draws her blade only before challengers chosen by the oracle."
+  },
+  "354": {
+    "name": "Glorious Wok of Akatma's Oracle",
+    "desc": "Heat control +51. Akatma says glory is a wok fired for a whole lifetime, its heat kept for whoever succeeds her."
+  },
+  "355": {
+    "name": "God of Cookery's Bottle",
+    "desc": "A seasoning bottle once used by the God of Cookery; 61 random stat points"
+  },
+  "356": {
+    "name": "Glorious Bottle of Akatma's Oracle",
+    "desc": "Seasoning +51. The flavor in this bottle is said to come from the last God of Cookery; Akatma has kept it for years, waiting for someone worthy of it."
+  },
+  "357": {
+    "name": "God of Cookery's Knife",
+    "desc": "A kitchen knife once used by the God of Cookery; 61 random stat points"
+  },
+  "358": {
+    "name": "God of Cookery's Spatula",
+    "desc": "A spatula once used by the God of Cookery; 61 random stat points"
+  },
+  "359": {
+    "name": "Composition with Red, Yellow and Blue (Masterpiece)",
+    "desc": "There's a kind of grid called \"Mondrian\"! Occupancy +6%"
+  },
+  "360": {
+    "name": "The Awakening of the Constellations at Dawn (Masterpiece)",
+    "desc": "The surrealism in Joan Miró's mind! Picky rate +3%"
+  },
+  "361": {
+    "name": "Black Square and Red Square (Masterpiece)",
+    "desc": "An abstract masterpiece by Kazimir Malevich! Facilities placed in your restaurant last 10% longer"
+  },
+  "362": {
+    "name": "Starry Sky",
+    "desc": "Endless hope! The restaurant that owns it: picky rate +1%, final EXP income +53%, final coin income +180%, luck +2"
+  },
+  "363": {
+    "name": "Plankton",
+    "desc": "Plankton came to dine at your restaurant. He's surely not here for the Krabby Patties, but for...! Occupancy +50%, picky rate -120%, oil per table +5"
+  },
+  "364": {
+    "name": "Star God's Favor",
+    "desc": "Your restaurant is favored by the Star God. Chance of higher grades when cooking signature dishes +25%, and final EXP income +150%"
+  },
+  "365": {
+    "name": "Mr. Krab (Emo)",
+    "desc": "Mr. Krab is having a terrible time at home and is miserable, and the town has lost its joy! Occupancy -30%, final coin and EXP income -20%"
+  },
+  "366": {
+    "name": "Happy Together",
+    "desc": "A forever-happy today, with good things always on the way! Their restaurant: picky rate +1%, luck +2"
+  },
+  "367": {
+    "name": "Starlight",
+    "desc": "An achievement for restaurants with every recipe at Rare grade or above; picky rate +5%, final EXP income +20%"
+  },
+  "368": {
+    "name": "Takeaway Star",
+    "desc": "Takeaway star! Takeaway EXP +30%"
+  },
+  "369": {
+    "name": "Keep Delivering",
+    "desc": "So what if it failed! Never give up! Takeaway coins +30%"
+  },
+  "370": {
+    "name": "Mission Accomplished",
+    "desc": "Fearless in hardship! Always delivers! Takeaway deliveries with doubled ingredients always succeed!"
+  },
+  "371": {
+    "name": "Peak of Perfection",
+    "desc": "Reach the peak and unfold grand plans!\nReach the peak and unfold grand plans, pluck the moon and stars to paint a new chapter! An achievement for restaurants with every recipe at Delicacy grade; picky rate +8%, final coin income +20%"
+  },
+  "372": {
+    "name": "Little Samoyed",
+    "desc": "A cute Samoyed! Its owner's restaurant: picky rate +1%, luck +2"
+  },
+  "373": {
+    "name": "Xuan•Da Ju's Hat",
+    "desc": "Exclusive cookware for the restaurant Da Ju, obtained at 6 stars; creativity +41"
+  },
+  "374": {
+    "name": "[Boundless Fortune]",
+    "desc": "Boundless Fortune plaque: full of confidence, your fortune knows no bounds! Occupancy +36%, final coin income +28%"
+  },
+  "375": {
+    "name": "Black-and-White TV",
+    "desc": "A 1990s black-and-white TV that no longer seems to work; occupancy +5%, final coin income +4%"
+  },
+  "376": {
+    "name": "Small Diamond Pack",
+    "desc": "Open it for 50 diamonds"
+  },
+  "377": {
+    "name": "Kerosene Lamp",
+    "desc": "A kerosene lamp with a flickering flame! It raises the chance of mystery ingredients while exploring by 2% and gives some restaurant EXP when exploring!!"
+  },
+  "378": {
+    "name": "Needle of Desire",
+    "desc": "Captain Jack's compass. Its special power isn't pointing in a simple direction, but leading its holder to what they want most! It raises the chance of mystery ingredients while exploring by 6.2% and halves the chance of getting lost!"
+  },
+  "379": {
+    "name": "Mystery Ingredient Voucher Pack",
+    "desc": "Open it for Mystery Ingredient Pick Voucher x8"
+  },
+  "380": {
+    "name": "Fawn",
+    "desc": "To thank 012 for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "381": {
+    "name": "Jade•012's Hat",
+    "desc": "Exclusive cookware for the restaurant 012; creativity +25"
+  },
+  "382": {
+    "name": "Xuan•012's Hat",
+    "desc": "Exclusive cookware for the restaurant 012, obtained at 6 stars; creativity +41"
+  },
+  "383": {
+    "name": "Jade•Star Restaurant's Hat",
+    "desc": "Exclusive cookware for Star Restaurant; creativity +25"
+  },
+  "384": {
+    "name": "Xuan•Star Restaurant's Hat",
+    "desc": "Exclusive cookware for Star Restaurant, obtained at 6 stars; creativity +41"
+  },
+  "385": {
+    "name": "Mochi",
+    "desc": "To thank Star Restaurant for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "386": {
+    "name": "Large Diamond Pack",
+    "desc": "Open it for 999 diamonds"
+  },
+  "387": {
+    "name": "Sun Coin Tree",
+    "desc": "Sun coin: a sunflower-coin tree, restaurant potted plant; picky rate +3%, final coin income +4%"
+  },
+  "388": {
+    "name": "Coo Coo",
+    "desc": "Coo Coo, restaurant pet: a cute owl. Even when a takeaway delivery fails, you still get all the takeaway EXP"
+  },
+  "389": {
+    "name": "Magic Lamp",
+    "desc": "A magic lamp. They say whoever owns it can make wishes to Mr. Krab and enjoy his protection!"
+  },
+  "390": {
+    "name": "Little Golden Pot",
+    "desc": "To thank the restaurant Aoligei for a huge contribution to the town, Mr. Krab gave it as a family heirloom. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "391": {
+    "name": "Jade•Aoligei's Hat",
+    "desc": "Exclusive cookware for the restaurant Aoligei; creativity +25"
+  },
+  "392": {
+    "name": "Xuan•Aoligei's Hat",
+    "desc": "Exclusive cookware for the restaurant Aoligei, obtained at 6 stars; creativity +41"
+  },
+  "393": {
+    "name": "Gold Pocket Watch",
+    "desc": "A gold pocket watch, only for restaurants that have made outstanding contributions to the town! Effect: facilities placed in your restaurant last 35% longer, chance of higher grades when cooking signature dishes +15%, final EXP and coin income +15%"
+  },
+  "394": {
+    "name": "Top Teaching License",
+    "desc": "Top-level license for teaching mystery recipes: lets you teach classes with fragments of mystery recipes you've learned (level 6)!"
+  },
+  "395": {
+    "name": "Little Grey",
+    "desc": "Little Grey! Sexy is worth nothing next to cute!!! Its owner's restaurant: picky rate +1%, final coin income +40%, luck +2"
+  },
+  "396": {
+    "name": "Supreme Exploration Map",
+    "desc": "A clearly marked map for exploring the caves behind the temple for a few level 3–4 ingredients, with a 64% chance of a mystery ingredient!"
+  },
+  "397": {
+    "name": "The Thinker (Statue)",
+    "desc": "Quiet contemplation is fleeting; the motion of a strong body full of boundless energy is absolute! Learning signature dishes in the classroom always succeeds, and sneaking a lesson is 5% more likely to succeed! Courier EXP +35%"
+  },
+  "398": {
+    "name": "Jade•That Guy's Hat",
+    "desc": "Exclusive cookware for That Guy's restaurant; creativity +25"
+  },
+  "399": {
+    "name": "Xuan•That Guy's Hat",
+    "desc": "Exclusive cookware for That Guy's restaurant, obtained at 6 stars; creativity +41"
+  },
+  "400": {
+    "name": "Kun",
+    "desc": "A Kun-Kun who loves playing basketball. To thank That Guy's restaurant for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "401": {
+    "name": "Ahri the Fox",
+    "desc": "Ahri, restaurant pet. Its eyes shine like brilliant stars, full of wisdom and spirit. Customers whose picky dish wasn't satisfied (learned: full price; not learned: half price) also eat an extra signature dish"
+  },
+  "402": {
+    "name": "Chac Mool (Statue)",
+    "desc": "Their souls ride their heartbeats, carried to the heavens by divine messengers! Occupancy +18%, picky rate +8%"
+  },
+  "403": {
+    "name": "Panda",
+    "desc": "To thank Crazy Thursday for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "404": {
+    "name": "Jade•Crazy Thursday's Hat",
+    "desc": "Exclusive cookware for the restaurant Crazy Thursday; creativity +25"
+  },
+  "405": {
+    "name": "Xuan•Crazy Thursday's Hat",
+    "desc": "Exclusive cookware for the restaurant Crazy Thursday, obtained at 6 stars; creativity +41"
+  },
+  "406": {
+    "name": "Racing Heart",
+    "desc": "Forever young and passionate! EXP from eating for free is tripled at settlement (even if you're asked to leave)! And leaving on your own gives 50% more stamina!"
+  },
+  "407": {
+    "name": "Golden Key",
+    "desc": "A shining golden key! Final coin income +12%, luck +32"
+  },
+  "408": {
+    "name": "Starlight Key",
+    "desc": "A key that holds starlight: exploring gives 2 more regular ingredients, and when you find a mystery ingredient there's a 50% chance of 1 more!"
+  },
+  "409": {
+    "name": "Spark of Fire",
+    "desc": "A fire in town! Though fire is, in principle, banned in town! Its restaurant: picky rate +1%, final coin income +10%, luck +2"
+  },
+  "410": {
+    "name": "Face (Masterpiece)",
+    "desc": "An abstract painting by an unknown artist! Occupancy +5%, picky rate +2%"
+  },
+  "411": {
+    "name": "Eagle",
+    "desc": "Eagle, restaurant pet: eyes like torches that pierce clouds and mist, soaring free across the sky! Turns 50% of overflowing picky rate into final coin income bonus!"
+  },
+  "412": {
+    "name": "God of Cookery's Hat",
+    "desc": "A hat once worn by the God of Cookery; 61 random stat points"
+  },
+  "413": {
+    "name": "Glorious Crown of Akatma's Oracle",
+    "desc": "Creativity +51. The crown of the tower's master. Akatma cares for nothing anymore; her only wish is to pass it on while she still lives."
+  },
+  "414": {
+    "name": "Red Motorbike",
+    "desc": "Red stands for passion! Its restaurant: picky rate +3%, final coin income +110%, final EXP income +50%, luck +6"
+  },
+  "415": {
+    "name": "Magic Recorder",
+    "desc": "A magical recorder that plays beautiful music by itself! Signature dishes eaten by Squidward in your restaurant turn into EXP at their full value! Final EXP income +3%"
+  },
+  "416": {
+    "name": "Explorer's Handbook",
+    "desc": "Measure the unknown with courage and conquer danger with wisdom! A successful Advanced Exploration Map trip gives 2 extra level-3 ingredients!"
+  },
+  "417": {
+    "name": "Daji",
+    "desc": "To thank Eye-catcher for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "418": {
+    "name": "Jade•Eye-catcher's Hat",
+    "desc": "Exclusive cookware for the restaurant Eye-catcher; creativity +25"
+  },
+  "419": {
+    "name": "Xuan•Eye-catcher's Hat",
+    "desc": "Exclusive cookware for the restaurant Eye-catcher, obtained at 6 stars; creativity +41"
+  },
+  "420": {
+    "name": "Heartfelt Guitar",
+    "desc": "Music played on it goes straight to the heart! Its restaurant: occupancy +3%, picky rate +3%, final EXP bonus +3%, final coin income +74%, luck +5"
+  },
+  "421": {
+    "name": "Little Lucky Star",
+    "desc": "How lucky to have met you! Its restaurant: picky rate +1%, luck +2"
+  },
+  "422": {
+    "name": "Violet Hourglass",
+    "desc": "A magical violet hourglass that can turn back time! Natural stamina recovery is doubled! Facilities placed in your restaurant last 15% longer!"
+  },
+  "423": {
+    "name": "Voodoo Doll",
+    "desc": "A cursed rag doll! Squashing roaches and raiding pantries have a 25% chance of using no stamina! And when a mousetrap catches you while raiding, there's a 50% chance you drop no coins!"
+  },
+  "424": {
+    "name": "Silence",
+    "desc": "No noise allowed in this restaurant! Troublemakers get dragged out back for some OOXX! Its restaurant: picky rate +1%, luck +2"
+  },
+  "425": {
+    "name": "Crystal Ball",
+    "desc": "A crystal ball glowing with purple light! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "427": {
+    "name": "Basic Fertilizer",
+    "desc": "Basic fertilizer to speed up crop growth! Fertilizing cuts 20 minutes off growing time!"
+  },
+  "428": {
+    "name": "Advanced Fertilizer",
+    "desc": "Advanced fertilizer to speed up crop growth! Fertilizing cuts 60 minutes off growing time and raises yield by 20%"
+  },
+  "429": {
+    "name": "Pirate Sail",
+    "desc": "Never fear, for I am here! Its restaurant: picky rate +1%, final coin income +24%, luck +2"
+  },
+  "430": {
+    "name": "Blackie",
+    "desc": "I'm a black pigeon! Its restaurant: picky rate +1%, final coin income +110%, final EXP income +50%, luck +2"
+  },
+  "431": {
+    "name": "Snowflake",
+    "desc": "To thank Jiang Xue's Cottage for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "432": {
+    "name": "Jade•Jiang Xue's Cottage's Hat",
+    "desc": "Exclusive cookware for the restaurant Jiang Xue's Cottage; creativity +25"
+  },
+  "433": {
+    "name": "Xuan•Jiang Xue's Cottage's Hat",
+    "desc": "Exclusive cookware for the restaurant Jiang Xue's Cottage, obtained at 6 stars; creativity +41"
+  },
+  "434": {
+    "name": "Kraken's Severed Tentacle",
+    "desc": "Something like an octopus tentacle dropped by the Kraken when you feed it. What it's for is unknown"
+  },
+  "435": {
+    "name": "Jade•Hearth & Home's Hat",
+    "desc": "Exclusive cookware for the restaurant Hearth & Home; creativity +25"
+  },
+  "436": {
+    "name": "Xuan•Hearth & Home's Hat",
+    "desc": "Exclusive cookware for the restaurant Hearth & Home, obtained at 6 stars; creativity +41"
+  },
+  "437": {
+    "name": "Big Head",
+    "desc": "To thank Hearth & Home for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "438": {
+    "name": "Apollo (Statue)",
+    "desc": "God of light, hailed in ancient Greek art as the ideal of male beauty! Converts your final coin income bonus into final EXP bonus (ratio 2:3, can be switched on or off manually)"
+  },
+  "439": {
+    "name": "African Renaissance Monument (Statue)",
+    "desc": "A statue modeled on the African Renaissance Monument, symbolizing the African people moving from darkness to light and their firm commitment to Africa's renaissance and progress! Lets you chase away an angry Mr. Krab by hand!"
+  },
+  "440": {
+    "name": "Xiao Hong",
+    "desc": "To thank Peace Hotel for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "441": {
+    "name": "Jade•Peace Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Peace Hotel; creativity +25"
+  },
+  "442": {
+    "name": "Xuan•Peace Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Peace Hotel, obtained at 6 stars; creativity +41"
+  },
+  "443": {
+    "name": "Sharky",
+    "desc": "Smart, brave and strong! Its restaurant: picky rate +1%, final EXP income +6%, final coin income +40%, luck +2"
+  },
+  "444": {
+    "name": "Big Yellow",
+    "desc": "A country dog with a heart as big as the world! Its restaurant: picky rate +1%, luck +2"
+  },
+  "445": {
+    "name": "DT Virus",
+    "desc": "To thank Sexy Cat Online for a huge contribution to the town, Mr. Krab sprayed it around their restaurant for atmosphere (they say once you breathe it in, you can't resist cats). Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "446": {
+    "name": "Jade•Sexy Cat's Hat",
+    "desc": "Exclusive cookware for the restaurant Sexy Cat Online; creativity +25"
+  },
+  "447": {
+    "name": "Xuan•Sexy Cat's Hat",
+    "desc": "Exclusive cookware for the restaurant Sexy Cat Online, obtained at 6 stars; creativity +41"
+  },
+  "448": {
+    "name": "Eye (Masterpiece)",
+    "desc": "Said to be a copy of a Picasso! Final coin income +4%"
+  },
+  "449": {
+    "name": "Hot Soup",
+    "desc": "Brother! Down this bowl! Its restaurant: picky rate +1%, luck +2"
+  },
+  "450": {
+    "name": "Kraken Monthly Favor #1 Pack",
+    "desc": "Pack for #1 in monthly Kraken feeding: Kraken's Severed Tentacle x10, 500 diamonds"
+  },
+  "451": {
+    "name": "Kraken Monthly Favor #2 Pack",
+    "desc": "Pack for #2 in monthly Kraken feeding: Kraken's Severed Tentacle x9, 450 diamonds"
+  },
+  "452": {
+    "name": "Kraken Monthly Favor #3 Pack",
+    "desc": "Pack for #3 in monthly Kraken feeding: Kraken's Severed Tentacle x8, 400 diamonds"
+  },
+  "453": {
+    "name": "Kraken Monthly Favor #4–8 Pack",
+    "desc": "Pack for #4–8 in monthly Kraken feeding: Kraken's Severed Tentacle x7, 300 diamonds"
+  },
+  "454": {
+    "name": "Kraken Monthly Favor #9–15 Pack",
+    "desc": "Pack for #9–15 in monthly Kraken feeding: Kraken's Severed Tentacle x6, 200 diamonds"
+  },
+  "455": {
+    "name": "Kraken Monthly Favor #16–30 Pack",
+    "desc": "Pack for #16–30 in monthly Kraken feeding: Kraken's Severed Tentacle x5, 100 diamonds"
+  },
+  "456": {
+    "name": "Big Grey",
+    "desc": "To thank the restaurant Xiao Mao Cat for a huge contribution to the town, Mr. Krab made it a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "457": {
+    "name": "Jade•Xiao Mao Cat's Hat",
+    "desc": "Exclusive cookware for the restaurant Xiao Mao Cat; creativity +25"
+  },
+  "458": {
+    "name": "Xuan•Xiao Mao Cat's Hat",
+    "desc": "Exclusive cookware for the restaurant Xiao Mao Cat, obtained at 6 stars; creativity +41"
+  },
+  "459": {
+    "name": "Mayor's Care",
+    "desc": "The Mayor's care. Effect: occupancy +50%, coins per table +1"
+  },
+  "460": {
+    "name": "Prehistoric Rock (Statue)",
+    "desc": "The experience of those before us is a lighthouse for those after; let us humbly learn from our elders! Raises the ratio for converting overflowing occupancy into final EXP bonus to 1:1"
+  },
+  "461": {
+    "name": "Rosy Scroll",
+    "desc": "A strange book recording romances of old! Tables that finish an eat-and-run are sure to give renown, and their EXP rises by 50%!"
+  },
+  "462": {
+    "name": "Holy Light Blessing",
+    "desc": "Blessed by the Star God's holy light: max stamina +100!"
+  },
+  "463": {
+    "name": "Pamela Hat",
+    "desc": "A stunning hat! Its restaurant: picky rate +1%, luck +2"
+  },
+  "464": {
+    "name": "Arcane Formula",
+    "desc": "Appraise it with a [God of Cookery Jade Seal]; success gives an ingredient formula shard [main or sub], failure destroys it!"
+  },
+  "465": {
+    "name": "Star and Moon Scroll",
+    "desc": "They say the Star God left this secret scroll in town, recording a special way to appraise ingredient formulas! Mystery formula appraisal success +10%; after appraising, if you already hold the formula's sub shard, there's a 20% chance it turns into a main shard!"
+  },
+  "466": {
+    "name": "Big White",
+    "desc": "Ahhh! Inspector White Cat~~~ Its restaurant: picky rate +1%, luck +2"
+  },
+  "468": {
+    "name": "Dreamcatcher",
+    "desc": "Legend says it catches things in dreams! Doubles the chance of Delicious Tickets dropping when attacking the guardian! Critical hits have a 3% chance of dropping a God of Cookery Jade Seal (32% with Rapid Missiles)! Chance of level-6 ingredients when killing the guardian +20%!"
+  },
+  "469": {
+    "name": "Star God's Tear",
+    "desc": "Tears the Star God shed missing a former love; owning it lets go of every regret! Each ingredient combination has a 2% chance of making one extra! Combining ingredients with a formula has a 25% chance of an extra ingredient!"
+  },
+  "470": {
+    "name": "Formula Essence",
+    "desc": "Essence obtained by breaking down formula shards!"
+  },
+  "471": {
+    "name": "Xiao Lin",
+    "desc": "A domineering CEO who gave away his fortune just to experience real life! His restaurant: picky rate +1%, final coin income +4%, luck +5"
+  },
+  "472": {
+    "name": "African Violet",
+    "desc": "African violet, restaurant potted plant; EXP per table +3"
+  },
+  "473": {
+    "name": "An",
+    "desc": "Wishing you: good morning! Good afternoon! Good night! Its restaurant: picky rate +1%, final coin income +110%, final EXP income +50%, luck +2"
+  },
+  "474": {
+    "name": "Purple Dancing Oxalis",
+    "desc": "Purple dancing oxalis, restaurant potted plant; picky rate +2%"
+  },
+  "475": {
+    "name": "Watermelon",
+    "desc": "Summer isn't complete without me! Its restaurant: picky rate +1%, luck +2"
+  },
+  "476": {
+    "name": "Break (Statue)",
+    "desc": "Exploring freedom and dignity: its value lies not in nudity itself, but in how it reflects the power structures and liberation of thought of different eras! Chance of higher grades when cooking signature dishes +6%! Final EXP income +24%"
+  },
+  "477": {
+    "name": "Fame and Fortune (Masterpiece)",
+    "desc": "Flowing water doesn't race to be first; it strives to flow on without end! Final coin income +3%, final EXP income +15%"
+  },
+  "478": {
+    "name": "City (Masterpiece)",
+    "desc": "Green hills and clear waters painted the color of concrete! Picky rate +2%, EXP per table +2"
+  },
+  "479": {
+    "name": "Little Spike",
+    "desc": "To thank Qingliang International Hotel for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "480": {
+    "name": "Jade•Qingliang's Hat",
+    "desc": "Exclusive cookware for the restaurant Qingliang International Hotel; creativity +25"
+  },
+  "481": {
+    "name": "Xuan•Qingliang's Hat",
+    "desc": "Exclusive cookware for the restaurant Qingliang International Hotel, obtained at 6 stars; creativity +41"
+  },
+  "482": {
+    "name": "Chaos (Masterpiece)",
+    "desc": "It is both a utopia for escaping reality and the courage to face the void! Facilities placed in your restaurant last 15% longer, final EXP income +8%"
+  },
+  "483": {
+    "name": "Memory (Masterpiece)",
+    "desc": "It is both a ritual against forgetting and an attempt to make peace with time! Chance of higher grades when cooking signature dishes +8%! Picky rate +5%, final EXP income +6%"
+  },
+  "484": {
+    "name": "Vulgar (Statue)",
+    "desc": "Wealth is the source of luxury and idleness; poverty is the mother of shamelessness and sin! When Plankton is in your restaurant, there's a 30% chance each round that he leaves on his own! When Squidward is in your restaurant, final EXP income rises by [number of Squidwards] × 3%"
+  },
+  "485": {
+    "name": "Jade•A-You's Kitchen's Hat",
+    "desc": "Exclusive cookware for the restaurant A-You's Kitchen; creativity +25"
+  },
+  "486": {
+    "name": "Xuan•A-You's Kitchen's Hat",
+    "desc": "Exclusive cookware for the restaurant A-You's Kitchen, obtained at 6 stars; creativity +41"
+  },
+  "487": {
+    "name": "Lucky",
+    "desc": "To thank A-You's Kitchen for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "488": {
+    "name": "Little Baa",
+    "desc": "To thank Youthful Days for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "489": {
+    "name": "Jade•Youthful Days's Hat",
+    "desc": "Exclusive cookware for the restaurant Youthful Days; creativity +25"
+  },
+  "490": {
+    "name": "Xuan•Youthful Days's Hat",
+    "desc": "Exclusive cookware for the restaurant Youthful Days, obtained at 6 stars; creativity +41"
+  },
+  "491": {
+    "name": "Fortune Cookie",
+    "desc": "A cookie from the market guessing game; raises the final value of signature dishes you cook (random, [6 − restaurant stars / 2])"
+  },
+  "492": {
+    "name": "Curly",
+    "desc": "A chubby American Curl cat! Its restaurant: picky rate +1%, final coin income +140%, final EXP income +50%, luck +2"
+  },
+  "493": {
+    "name": "Jade•Tokyo Grand Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Tokyo Grand Hotel; creativity +25"
+  },
+  "494": {
+    "name": "Xuan•Tokyo Grand Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Tokyo Grand Hotel, obtained at 6 stars; creativity +41"
+  },
+  "495": {
+    "name": "Huahua",
+    "desc": "To thank Tokyo Grand Hotel for a huge contribution to the town, Mr. Krab gave it as a restaurant lucky charm. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "496": {
+    "name": "[7-Star Plaque]",
+    "desc": "7-star plaque; final EXP income +60%, EXP per table +7"
+  },
+  "497": {
+    "name": "A Single Thought",
+    "desc": "Not tasty?! Tasty?! Its restaurant: picky rate +1%, luck +2"
+  },
+  "498": {
+    "name": "Laifu",
+    "desc": "Woof! Woof! Woof! Its restaurant: picky rate +1%, final coin income +60%, luck +2"
+  },
+  "499": {
+    "name": "Xuan•Xiao Li's Hat",
+    "desc": "Exclusive cookware for the restaurant Xiao Li, obtained at 6 stars; creativity +41"
+  },
+  "500": {
+    "name": "Big Sword",
+    "desc": "Fancy a \"big massage\"? Its restaurant: picky rate +1%, final EXP income +50%, final coin income +100%, luck +2"
+  },
+  "501": {
+    "name": "Froggy",
+    "desc": "Aba, aba! Ababa! Its restaurant: picky rate +1%, final coin income +40%, luck +2"
+  },
+  "502": {
+    "name": "Greek Helmet",
+    "desc": "Cyprus is Greek! Its restaurant: picky rate +1%, final EXP income +3%, final coin income +16%, luck +2"
+  },
+  "503": {
+    "name": "Mimi",
+    "desc": "Meow meow meow, I'm Mimi! Its restaurant: picky rate +1%, luck +2"
+  },
+  "504": {
+    "name": "Autumn Leaf",
+    "desc": "Fallen leaves ride the autumn wind, lingering by the branch as they fall! Its restaurant: picky rate +1%, luck +2"
+  },
+  "505": {
+    "name": "Lucky Horseshoe",
+    "desc": "A lucky horseshoe, only for the town's tycoons! Effect: facilities placed in your restaurant last 50% longer, chance of higher grades when cooking signature dishes +5%, chance of mystery ingredients while exploring +2%, luck +88!"
+  },
+  "506": {
+    "name": "Red Senbei",
+    "desc": "A red senbei, needed to raise a recipe from Delicacy to Ambrosia grade (nuts and seasonings)"
+  },
+  "507": {
+    "name": "Yellow Senbei",
+    "desc": "A yellow senbei, needed to raise a recipe from Delicacy to Ambrosia grade (meat, eggs and dairy)"
+  },
+  "508": {
+    "name": "Blue Senbei",
+    "desc": "A blue senbei, needed to raise a recipe from Delicacy to Ambrosia grade (fruits and vegetables)"
+  },
+  "509": {
+    "name": "Xiaomi",
+    "desc": "Hachimi, hachimi! Its restaurant: picky rate +1%, luck +2"
+  },
+  "510": {
+    "name": "Xiaohua",
+    "desc": "Do you understand the world of a calico cat? Spend, spend, spend! Its restaurant: picky rate +1%, luck +2"
+  },
+  "511": {
+    "name": "Zero Additives",
+    "desc": "All natural! Zero additives! Its restaurant: picky rate +1%, final coin income +100%, final EXP income +50%, luck +2"
+  },
+  "512": {
+    "name": "Xiao Yi",
+    "desc": "To thank 221 for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "513": {
+    "name": "Jade•221's Hat",
+    "desc": "Exclusive cookware for the restaurant 221; creativity +25"
+  },
+  "514": {
+    "name": "Xuan•221's Hat",
+    "desc": "Exclusive cookware for the restaurant 221, obtained at 6 stars; creativity +41"
+  },
+  "515": {
+    "name": "Fallen Leaves",
+    "desc": "When spring quietly returns, where fallen leaves turn to dust, new green begins to sprout! Its restaurant: picky rate +1%, luck +2"
+  },
+  "516": {
+    "name": "Not-Top-Ten Youth",
+    "desc": "Shao An's good-citizen certificate, a rising star of dark cuisine! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "517": {
+    "name": "Purification Voucher",
+    "desc": "Purifies your pond's water once (purity to 100)"
+  },
+  "518": {
+    "name": "Algaecide",
+    "desc": "Removes algae from your pond once (algae -50)"
+  },
+  "519": {
+    "name": "Xiao Pi",
+    "desc": "To thank Pure Additive Zero Natural for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "520": {
+    "name": "Jade•Pure Additive Zero Natural's Hat",
+    "desc": "Exclusive cookware for the restaurant Pure Additive Zero Natural; creativity +25"
+  },
+  "521": {
+    "name": "Xuan•Pure Additive Zero Natural's Hat",
+    "desc": "Exclusive cookware for the restaurant Pure Additive Zero Natural, obtained at 6 stars; creativity +41"
+  },
+  "522": {
+    "name": "Capybara",
+    "desc": "To thank Hikarizaka Little Chef for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "523": {
+    "name": "Jade•Hikarizaka Little Chef's Hat",
+    "desc": "Exclusive cookware for the restaurant Hikarizaka Little Chef; creativity +25"
+  },
+  "524": {
+    "name": "Xuan•Hikarizaka Little Chef's Hat",
+    "desc": "Exclusive cookware for the restaurant Hikarizaka Little Chef, obtained at 6 stars; creativity +41"
+  },
+  "525": {
+    "name": "Starlight",
+    "desc": "Starlight, blast them all! Its restaurant: picky rate +1%, luck +2"
+  },
+  "526": {
+    "name": "[2025 Commemorative Plaque]",
+    "desc": "2025 commemorative plaque for the town's third year; raises the final coin income bonus from honors by 16% (*)"
+  },
+  "527": {
+    "name": "Dream Car",
+    "desc": "A vintage car from the owner's collection! Its restaurant: picky rate +1%, final coin income +26%, luck +2"
+  },
+  "528": {
+    "name": "Horse (Zodiac)",
+    "desc": "Chinese zodiac commemorative badge: success comes at a gallop. Missile critical rate +12%, luck +12"
+  },
+  "529": {
+    "name": "Bicycle",
+    "desc": "Imagining a goddess sitting sideways on the back seat! Its restaurant: picky rate +1%, final coin income +146%, final EXP income +50%, luck +2"
+  },
+  "530": {
+    "name": "Dragon Fruit",
+    "desc": "A fire dragon is still a dragon! I just come with an extra \"fruit\"! Its restaurant: picky rate +1%, final coin income +108%, final EXP income +50%, luck +2"
+  },
+  "531": {
+    "name": "The Birth of Venus (Masterpiece)",
+    "desc": "Beauty seen as eternal and self-perfecting, not something formed bit by bit! When cooking signature dishes, raises your current trial effect by 20%!"
+  },
+  "532": {
+    "name": "Heavenly Feast Complete",
+    "desc": "Stars light up the sky and the road of fine food stretches wide; heavenly delicacies overflow every dish! An achievement for restaurants with every recipe at Ambrosia grade: chance of higher grades when cooking signature dishes +36%, final coin income +20%, final EXP income +20%, luck +99"
+  },
+  "533": {
+    "name": "Violet Feast Dew",
+    "desc": "A potion that is quiet, deep and mysterious, as pure and precious as morning dew, made to raise the value of signature dishes! Base value of signature dishes you cook +10%!"
+  },
+  "534": {
+    "name": "Ingredient Sense Elixir",
+    "desc": "Drink it to sharpen your sense for ingredients while exploring! Chance of mystery ingredients while exploring +1.4%, and 1 more regular ingredient"
+  },
+  "535": {
+    "name": "Food Business License",
+    "desc": "A forged food business license, obtained through \"special channels\"! Its restaurant: picky rate +1%, final coin income +12%, luck +2"
+  },
+  "536": {
+    "name": "Jade•Carefree Villa's Hat",
+    "desc": "Exclusive cookware for the restaurant Carefree Villa; creativity +25"
+  },
+  "537": {
+    "name": "Xuan•Carefree Villa's Hat",
+    "desc": "Exclusive cookware for the restaurant Carefree Villa, obtained at 6 stars; creativity +41"
+  },
+  "538": {
+    "name": "Unicorn",
+    "desc": "To thank Carefree Villa for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "540": {
+    "name": "Big Sausage",
+    "desc": "A big sausage that got squeezed! Its restaurant: picky rate +1%, luck +2"
+  },
+  "541": {
+    "name": "True Love Cookies",
+    "desc": "A bag of true love cookies! Its restaurant: picky rate +1%, final coin income +60%, luck +2"
+  },
+  "542": {
+    "name": "Fake Ghost",
+    "desc": "A fake ghost for driving away bad luck! Its restaurant: picky rate +1%, final coin income +40%, luck +2"
+  },
+  "543": {
+    "name": "Old Wine Barrel",
+    "desc": "Rich with oak, this barrel offers a unique taste and a moment of pleasure and harmony! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "544": {
+    "name": "Little Purple",
+    "desc": "To thank chuchu Corner Shop for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "545": {
+    "name": "Jade•chuchu Corner Shop's Hat",
+    "desc": "Exclusive cookware for the restaurant chuchu Corner Shop; creativity +25"
+  },
+  "546": {
+    "name": "Xuan•chuchu Corner Shop's Hat",
+    "desc": "Exclusive cookware for the restaurant chuchu Corner Shop, obtained at 6 stars; creativity +41"
+  },
+  "547": {
+    "name": "Dundun",
+    "desc": "To thank Imperial Kitchen for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "548": {
+    "name": "Jade•Imperial Kitchen's Hat",
+    "desc": "Exclusive cookware for the restaurant Imperial Kitchen; creativity +25"
+  },
+  "549": {
+    "name": "Xuan•Imperial Kitchen's Hat",
+    "desc": "Exclusive cookware for the restaurant Imperial Kitchen, obtained at 6 stars; creativity +41"
+  },
+  "550": {
+    "name": "A-Huang",
+    "desc": "A-Huang, whose rosy ears make him the star of dogdom! Its restaurant: picky rate +1%, final coin income +20%, luck +2"
+  },
+  "551": {
+    "name": "Crystal Dragon Blade",
+    "desc": "A kitchen knife made of crystal; they say it lets out a dragon's roar with every cut! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "552": {
+    "name": "Jade•Wok-Fried Flavors Shake the World's Hat",
+    "desc": "Exclusive cookware for the restaurant Wok-Fried Flavors Shake the World; creativity +25"
+  },
+  "553": {
+    "name": "Xuan•Wok-Fried Flavors Shake the World's Hat",
+    "desc": "Exclusive cookware for the restaurant Wok-Fried Flavors Shake the World, obtained at 6 stars; creativity +41"
+  },
+  "554": {
+    "name": "Drogon",
+    "desc": "To thank Wok-Fried Flavors Shake the World for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "555": {
+    "name": "Little White",
+    "desc": "I'm actually a white cat! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "556": {
+    "name": "Paper Pinwheel",
+    "desc": "A must for chasing the wind as a kid! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "557": {
+    "name": "Jade•Chetou Grand Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Chetou Grand Hotel; creativity +25"
+  },
+  "558": {
+    "name": "Xuan•Chetou Grand Hotel's Hat",
+    "desc": "Exclusive cookware for the restaurant Chetou Grand Hotel, obtained at 6 stars; creativity +41"
+  },
+  "559": {
+    "name": "Vintage Car",
+    "desc": "To thank Chetou Grand Hotel for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian item. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "560": {
+    "name": "Supernova",
+    "desc": "A shining supernova! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "561": {
+    "name": "Star God's Seal",
+    "desc": "A badge of ancient bronze engraved with starbursts and hearth flames, the token of the Lord of the Stove who senses every flavor. Carry it into the kitchen and starlike sweetness will rise from the smoke! Doubles the base effects of plaques placed in your restaurant (oil use and special properties not affected)!"
+  },
+  "562": {
+    "name": "Candlelight",
+    "desc": "A jar of candlelight! Its restaurant: picky rate +1%, final coin income +16%, luck +2"
+  },
+  "563": {
+    "name": "Huahua's Melody",
+    "desc": "Huahua's melody! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "564": {
+    "name": "Teddy Bear",
+    "desc": "A birthday present, though you can't remember who gave it! Its restaurant: picky rate +1%, final coin income +80%, luck +2"
+  },
+  "565": {
+    "name": "Not-So-Delicious Burger",
+    "desc": "A burger full of strange flavors! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "566": {
+    "name": "Iced Lemon Tea",
+    "desc": "Secret-recipe iced lemon tea! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "567": {
+    "name": "Doro",
+    "desc": "Can't pull it! I just can't pull it! Its restaurant: picky rate +1%, final EXP income +50%, final coin income +110%, luck +2"
+  },
+  "568": {
+    "name": "Big Starfish",
+    "desc": "A big starfish, slimy all over! Its restaurant: picky rate +1%, final coin income +22%, luck +2"
+  },
+  "569": {
+    "name": "White Flower Shorts",
+    "desc": "Keep your shorts dry! Its restaurant: picky rate +1%, luck +2"
+  },
+  "570": {
+    "name": "Sandcastle",
+    "desc": "A castle built of sand! Its restaurant: picky rate +1%, luck +2"
+  },
+  "571": {
+    "name": "Ahoge",
+    "desc": "To thank Gensokyo for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "572": {
+    "name": "Jade•Gensokyo's Hat",
+    "desc": "Exclusive cookware for the restaurant Gensokyo; creativity +25"
+  },
+  "573": {
+    "name": "Xuan•Gensokyo's Hat",
+    "desc": "Exclusive cookware for the restaurant Gensokyo, obtained at 6 stars; creativity +41"
+  },
+  "574": {
+    "name": "Dino Plushie",
+    "desc": "Do you remember what you slept with as a kid? Its restaurant: picky rate +1%, luck +2"
+  },
+  "575": {
+    "name": "White Porcelain",
+    "desc": "A treasured family heirloom, said to be Song dynasty white porcelain! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "576": {
+    "name": "Tiger Claw",
+    "desc": "A tiger claw made by Native Americans! Its restaurant: picky rate +1%, luck +2"
+  },
+  "577": {
+    "name": "Brown Bear Pelt",
+    "desc": "A perfect brown bear pelt!!! Coins per table +1, EXP per table +1"
+  },
+  "578": {
+    "name": "Sabertooth Pelt",
+    "desc": "A perfect prehistoric sabertooth tiger pelt!!! Final coin income +3%, final EXP income +8%"
+  },
+  "579": {
+    "name": "Chicken Leg Rice",
+    "desc": "Golden rice! A delicious big drumstick! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "580": {
+    "name": "A Bucket of Water",
+    "desc": "Come on in: all the tap water you can drink! Its restaurant: picky rate +1%, luck +2"
+  },
+  "581": {
+    "name": "Gold Ingot",
+    "desc": "A gleaming gold ingot! Its restaurant: picky rate +1%, luck +2"
+  },
+  "582": {
+    "name": "Jade•Veterans' Diner's Hat",
+    "desc": "Exclusive cookware for the restaurant Veterans' Diner; creativity +25"
+  },
+  "583": {
+    "name": "Xuan•Veterans' Diner's Hat",
+    "desc": "Exclusive cookware for the restaurant Veterans' Diner, obtained at 6 stars; creativity +41"
+  },
+  "584": {
+    "name": "DD",
+    "desc": "To thank Veterans' Diner for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "585": {
+    "name": "Rose Strings, Blue Notes",
+    "desc": "This guitar hasn't been touched for 30 years, and a blue rose has grown out of it! Its restaurant: picky rate +1%, final coin income +2%, luck +2"
+  },
+  "586": {
+    "name": "Tomato Scrambled Eggs",
+    "desc": "Do you like tomato scrambled eggs? Its restaurant: picky rate +1%, luck +2"
+  },
+  "587": {
+    "name": "An Ear of Rice",
+    "desc": "An ear of rice bent low under the weight of its grain! Its restaurant: picky rate +1%, luck +2"
+  },
+  "588": {
+    "name": "Wanted Poster",
+    "desc": "A wanted poster from the early 19th century! Its restaurant: picky rate +1%, luck +2"
+  },
+  "589": {
+    "name": "Replica Larry O'Brien Trophy",
+    "desc": "A replica of the Larry O'Brien Trophy! Its restaurant: picky rate +1%, luck +2"
+  },
+  "590": {
+    "name": "Little Black Kitty",
+    "desc": "To thank White Robe for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "591": {
+    "name": "Jade•White Robe's Hat",
+    "desc": "Exclusive cookware for the restaurant White Robe; creativity +25"
+  },
+  "592": {
+    "name": "Xuan•White Robe's Hat",
+    "desc": "Exclusive cookware for the restaurant White Robe, obtained at 6 stars; creativity +41"
+  },
+  "593": {
+    "name": "Little C",
+    "desc": "To thank Childhood for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "594": {
+    "name": "Jade•Childhood's Hat",
+    "desc": "Exclusive cookware for the restaurant Childhood; creativity +25"
+  },
+  "595": {
+    "name": "Xuan•Childhood's Hat",
+    "desc": "Exclusive cookware for the restaurant Childhood, obtained at 6 stars; creativity +41"
+  },
+  "596": {
+    "name": "Baby Demon",
+    "desc": "To thank Styx Tower for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "597": {
+    "name": "Jade•Styx Tower's Hat",
+    "desc": "Exclusive cookware for the restaurant Styx Tower; creativity +25"
+  },
+  "598": {
+    "name": "Xuan•Styx Tower's Hat",
+    "desc": "Exclusive cookware for the restaurant Styx Tower, obtained at 6 stars; creativity +41"
+  },
+  "599": {
+    "name": "Jade•Qi Pot Dishes's Hat",
+    "desc": "Exclusive cookware for the restaurant Qi Pot Dishes; creativity +25"
+  },
+  "600": {
+    "name": "Xuan•Qi Pot Dishes's Hat",
+    "desc": "Exclusive cookware for the restaurant Qi Pot Dishes, obtained at 6 stars; creativity +41"
+  },
+  "601": {
+    "name": "Daidai",
+    "desc": "To thank Qi Pot Dishes for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "602": {
+    "name": "Scottish Bagpipes",
+    "desc": "True love means not only enjoying beauty but creating it! Its restaurant: picky rate +1%, final EXP income +50%, final coin income +173%, luck +2"
+  },
+  "603": {
+    "name": "UU",
+    "desc": "To thank Scottish Flirt for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "604": {
+    "name": "Jade•Scottish Flirt's Hat",
+    "desc": "Exclusive cookware for the restaurant Scottish Flirt; creativity +25"
+  },
+  "605": {
+    "name": "Xuan•Scottish Flirt's Hat",
+    "desc": "Exclusive cookware for the restaurant Scottish Flirt, obtained at 6 stars; creativity +41"
+  },
+  "606": {
+    "name": "Pikachu",
+    "desc": "To thank White Roast Goose Inn for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian beast. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "607": {
+    "name": "Jade•White Roast Goose Inn's Hat",
+    "desc": "Exclusive cookware for the restaurant White Roast Goose Inn; creativity +25"
+  },
+  "608": {
+    "name": "Xuan•White Roast Goose Inn's Hat",
+    "desc": "Exclusive cookware for the restaurant White Roast Goose Inn, obtained at 6 stars; creativity +41"
+  },
+  "609": {
+    "name": "Vintage Wristwatch",
+    "desc": "A 1980s wristwatch full of history! Its restaurant: picky rate +1%, final coin income +10%, luck +2"
+  },
+  "610": {
+    "name": "Purple Conch",
+    "desc": "A purple conch with a special use at purple star levels!"
+  },
+  "611": {
+    "name": "Revolver",
+    "desc": "A broken old-fashioned revolver! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "612": {
+    "name": "Holy Feast Stone",
+    "desc": "A stone cauldron cooks up a holy feast; starlight falls into the cups to grace the banquet! An honor for restaurants with every recipe at Holy Feast grade: coins from picky dishes of satisfied picky customers +20%, final coin income +20%, final EXP income +40%"
+  },
+  "613": {
+    "name": "Star of Divine Fare",
+    "desc": "How many seasons spent seeking at the stove, with fine dishes for company! Today I pluck the star of Divine Fare, all thanks to everyone along the way! An achievement for restaurants with every recipe at Divine grade! No special effect!"
+  },
+  "614": {
+    "name": "Qian-Dao-Jia Coins",
+    "desc": "Three copper coins named after the first characters of the Qianlong, Daoguang and Jiaqing emperors' reign titles! Its restaurant: picky rate +1%, luck +2"
+  },
+  "615": {
+    "name": "Mist-catching Bottle",
+    "desc": "Mist-catching bottle (lasts 2 hours), a magical item that gathers the town's mist! Chance of higher grades when cooking signature dishes [+20% (fog) or +25% (night fog); doesn't stack with foggy weather]!"
+  },
+  "616": {
+    "name": "Gerbera",
+    "desc": "Gerbera, restaurant potted plant; coins from picky dishes of satisfied picky customers +5%"
+  },
+  "617": {
+    "name": "Shopfront Sticker",
+    "desc": "As long as the oil keeps flowing, we're open forever! Its restaurant: picky rate +1%, luck +2"
+  },
+  "618": {
+    "name": "Potato Chips",
+    "desc": "Potato chips are my favorite snack! Its restaurant: picky rate +1%, luck +2"
+  },
+  "619": {
+    "name": "[Instant Success]",
+    "desc": "Instant Success plaque, for the Year of the Horse! Honor collection bonus +50% (*)!"
+  },
+  "620": {
+    "name": "Fasting Fine Sword",
+    "desc": "Most cooks don't carry a sword! Its restaurant: picky rate +1%, luck +2"
+  },
+  "621": {
+    "name": "Old K",
+    "desc": "Wise and brave Old K! Its restaurant: picky rate +1%, occupancy +3%, final coin income +20%, luck +2"
+  },
+  "622": {
+    "name": "Joker",
+    "desc": "To thank This Dish Is Poison for a huge contribution to the town, Mr. Krab gave it as a restaurant guardian item. Effect: chance of higher grades when cooking signature dishes +10%, luck +33"
+  },
+  "623": {
+    "name": "Jade•This Dish Is Poison's Hat",
+    "desc": "Exclusive cookware for the restaurant This Dish Is Poison; creativity +25"
+  },
+  "624": {
+    "name": "Xuan•This Dish Is Poison's Hat",
+    "desc": "Exclusive cookware for the restaurant This Dish Is Poison, obtained at 6 stars; creativity +41"
+  },
+  "625": {
+    "name": "Apple Pie",
+    "desc": "There's a cherry on top! Its restaurant: picky rate +1%, final coin income +4%, luck +2"
+  },
+  "626": {
+    "name": "Salted Fish Tank",
+    "desc": "One tank, one fish! Its restaurant: picky rate +1%, luck +2"
+  },
+  "627": {
+    "name": "PSP",
+    "desc": "A PSP kept in the collection for ages! Its restaurant: picky rate +1%, luck +2"
+  },
+  "628": {
+    "name": "Ruthless Wok of Sariel's Soul",
+    "desc": "Heat control +21. Sariel simmered her waiting into heat control; even she can't remember how many years this wok has burned."
+  },
+  "629": {
+    "name": "Ruthless Bottle of Sariel's Soul",
+    "desc": "Seasoning +21. In the bottle is a flavor Sariel spent half her life blending; sadly no one has reached the fourth floor in years, so no one has ever tasted it."
+  },
+  "630": {
+    "name": "Wailing Wok of Barbelet's Judgment",
+    "desc": "31 random stat points. Barbelet uses this wok only for reviews: any dish he has remade himself, its original cook never dares to make again."
+  },
+  "631": {
+    "name": "Wailing Bottle of Barbelet's Judgment",
+    "desc": "31 random stat points. The bottle is covered with the names of those he has judged; Barbelet says he remembers every one of their flavors."
+  },
+  "632": {
+    "name": "Essence Spatula of Gurtug's Will",
+    "desc": "41 random stat points. Gurtug, enshrined by the Chef Tower, guarded the seventh floor all his life; this spatula is the essence he honed with all his will."
+  },
+  "633": {
+    "name": "Essence Blade of Gurtug's Will",
+    "desc": "41 random stat points. Gurtug once said he'd never set foot in this tower in his next life; yet his knife never left the chopping board for a single day."
+  },
+  "634": {
+    "name": "Essence Wok of Gurtug's Will",
+    "desc": "41 random stat points. This wok bore Gurtug's fiercest fire, and his deepest regret."
+  },
+  "635": {
+    "name": "Essence Bottle of Gurtug's Will",
+    "desc": "41 random stat points. Gurtug boiled a lifetime of craft down to a few drops of essence and sealed them in this bottle for whoever reaches the seventh floor."
+  },
+  "636": {
+    "name": "Essence Crown of Gurtug's Will",
+    "desc": "41 random stat points. The enshrined crown goes only to the longest-serving guardian of the tower. Gurtug wore it, yet always gazed beyond the tower."
+  },
+  "637": {
+    "name": "Searing Spatula of Yinchen's Fall",
+    "desc": "25 random stat points. Yinchen was once Duma's proudest pupil, but she found her master's fire too quiet and insisted on burning the stove hotter."
+  },
+  "638": {
+    "name": "Searing Blade of Yinchen's Fall",
+    "desc": "25 random stat points. The day she left the sixth floor, Yinchen took only this knife; its edge still bears scorch marks."
+  },
+  "639": {
+    "name": "Searing Wok of Yinchen's Fall",
+    "desc": "25 random stat points. This wok always glows red-hot. Yinchen says only searing heat can draw out every flavor of an ingredient."
+  },
+  "640": {
+    "name": "Searing Bottle of Yinchen's Fall",
+    "desc": "25 random stat points. Inside is a sauce Yinchen blended in the tower's shadows, so fragrant you forget the way back."
+  },
+  "641": {
+    "name": "Jade•Sponsor Hat",
+    "desc": "A thank-you to restaurants that have contributed to the town. Creativity +25."
+  },
+  "642": {
+    "name": "Xuan•Sponsor Hat",
+    "desc": "A thank-you to restaurants that have contributed to the town, obtained at 6 stars. Creativity +41."
+  },
+  "90001": {
+    "name": "New Year Bell",
+    "desc": "A little brass bell hung by the door on New Year's Day that jingles in the wind, reminding you to run your restaurant well this year too. (New Year souvenir)"
+  },
+  "90002": {
+    "name": "Fortune Paper-cut",
+    "desc": "An upside-down \"fortune\" cut from red paper, stuck on the kitchen window; the smell of the New Year's Eve dinner drifts out through it. (Spring Festival souvenir)"
+  },
+  "90003": {
+    "name": "Revolving Lantern",
+    "desc": "Little figures holding sweet rice balls spin endlessly inside the lantern; one turn is a whole year of fun in town. (Lantern Festival souvenir)"
+  },
+  "90004": {
+    "name": "Chocolate Gift Box",
+    "desc": "Handmade chocolates tied with a ribbon; they say the dessert shop next door sent them secretly. (Valentine's Day souvenir)"
+  },
+  "90005": {
+    "name": "Zongzi Sachet",
+    "desc": "A little sachet stitched with mugwort and spices, with a faint scent of bamboo leaves. (Dragon Boat Festival souvenir)"
+  },
+  "90006": {
+    "name": "Sugar-painting Pinwheel",
+    "desc": "A little pinwheel drawn in malt sugar; too pretty to eat, so it sits on the counter. (Children's Day souvenir)"
+  },
+  "90007": {
+    "name": "Magpie Bridge Sachet",
+    "desc": "A sachet embroidered with magpies; on Qixi the couples' tables always fill up first. (Qixi Festival souvenir)"
+  },
+  "90008": {
+    "name": "Jade Rabbit Lantern",
+    "desc": "A rabbit lantern of white paper whose light falls just on the mooncakes on the table. (Mid-Autumn souvenir)"
+  },
+  "90009": {
+    "name": "Little Red Flag Pin",
+    "desc": "A little red flag pinned to your apron; every table takes a second look during the long holiday. (National Day souvenir)"
+  },
+  "90010": {
+    "name": "Jack-o'-Lantern",
+    "desc": "A pumpkin carved with a smiling face; the scooped-out flesh became pumpkin soup the next day. (Halloween souvenir)"
+  },
+  "90011": {
+    "name": "Gingerbread House",
+    "desc": "A gingerbread cottage with a sugar-dusted roof that looks cozier than the real restaurant. (Christmas souvenir)"
+  },
+  "90012": {
+    "name": "Golden Soup Ladle",
+    "desc": "A commemorative ladle handed out the year the town opened, with the first customer's name engraved on the handle. (Server launch anniversary souvenir)"
+  },
+  "90101": {
+    "name": "Ichiban Kuji Prize A Figure",
+    "desc": "A large figure of a chef holding a golden soup pot, with \"Prize A\" carved on the base. (Ichiban Kuji souvenir)"
+  },
+  "90102": {
+    "name": "Ichiban Kuji Prize B Figure",
+    "desc": "A figure of a waiter carrying a steaming signature dish. (Ichiban Kuji souvenir)"
+  },
+  "90103": {
+    "name": "Ichiban Kuji Prize C Figure",
+    "desc": "A chibi little-chef charm, very cute hanging by the counter. (Ichiban Kuji souvenir)"
+  },
+  "90104": {
+    "name": "Ichiban Kuji Last Prize Figure",
+    "desc": "Only for whoever draws the last ticket: a limited gold edition chef figure. (Ichiban Kuji souvenir)"
+  },
+  "90201": {
+    "name": "Ichiban Kuji Ticket",
+    "desc": "A ticket for drawing the Ichiban Kuji; use it on the Ichiban Kuji page."
+  },
+  "91011": {
+    "name": "Lion Dance Chef Figure",
+    "desc": "A chef wearing a lion's head serves a whole fish for \"abundance every year\", red silk still hanging from his whiskers. (Ichiban Kuji · Spring Festival Flavors)"
+  },
+  "91012": {
+    "name": "Dumpling Grandma Figure",
+    "desc": "Every dumpling Grandma makes looks like a gold ingot, and her apron pocket hides a coin. (Ichiban Kuji · Spring Festival Flavors)"
+  },
+  "91013": {
+    "name": "Red Lantern Little Chef Charm",
+    "desc": "A chibi little chef holding a red lantern, most festive hung by the door. (Ichiban Kuji · Spring Festival Flavors)"
+  },
+  "91014": {
+    "name": "Gold Ingot Chef Figure",
+    "desc": "A chef hugging a gold ingot, \"abundance every year\" carved on the base; only for whoever draws the last ticket. (Ichiban Kuji · Spring Festival Flavors)"
+  },
+  "91021": {
+    "name": "Chocolate Fountain Head Chef Figure",
+    "desc": "The head chef watches over a three-tier chocolate fountain, a strawberry freshly dipped in hand. (Ichiban Kuji · Valentine's Desserts)"
+  },
+  "91022": {
+    "name": "Rose Macaron Waiter Figure",
+    "desc": "A waiter with a tray full of pink macarons and a rose pinned to his lapel. (Ichiban Kuji · Valentine's Desserts)"
+  },
+  "91023": {
+    "name": "Heart Cookie Charm",
+    "desc": "A heart-shaped cookie with \"sweet\" written in icing; too pretty to eat. (Ichiban Kuji · Valentine's Desserts)"
+  },
+  "91024": {
+    "name": "Candlelit Dinner Ornament",
+    "desc": "A small round table, two candles and a shared dessert; the limited Last Prize. (Ichiban Kuji · Valentine's Desserts)"
+  },
+  "91031": {
+    "name": "Sakura Dango Master Figure",
+    "desc": "A master skewers tri-color dango, a few petals resting on his shoulder. (Ichiban Kuji · Cherry Blossom Tea Party)"
+  },
+  "91032": {
+    "name": "Hanami Bento Girl Figure",
+    "desc": "A girl hugging a two-tier bento box, looking for the best spot to view the blossoms. (Ichiban Kuji · Cherry Blossom Tea Party)"
+  },
+  "91033": {
+    "name": "Sakura Spoon Charm",
+    "desc": "A little spoon whose handle is a cherry blossom, for the first bowl of soup of spring. (Ichiban Kuji · Cherry Blossom Tea Party)"
+  },
+  "91034": {
+    "name": "Tea Mat Under the Blossoms Ornament",
+    "desc": "A tea mat spread with a red carpet and a pot of cherry blossom tea; the limited Last Prize. (Ichiban Kuji · Cherry Blossom Tea Party)"
+  },
+  "91041": {
+    "name": "Picnic Basket Chef Figure",
+    "desc": "A chef carrying a packed picnic basket with a baguette poking out. (Ichiban Kuji · Spring Picnic)"
+  },
+  "91042": {
+    "name": "Sandwich Bear Figure",
+    "desc": "A little bear hugging a giant sandwich, ketchup on the corner of its mouth. (Ichiban Kuji · Spring Picnic)"
+  },
+  "91043": {
+    "name": "Lemonade Charm",
+    "desc": "A little cup of lemonade with a straw; refreshing just to look at. (Ichiban Kuji · Spring Picnic)"
+  },
+  "91044": {
+    "name": "Meadow Picnic Panorama Ornament",
+    "desc": "A checkered cloth, kites and a whole spread of snacks; the limited Last Prize. (Ichiban Kuji · Spring Picnic)"
+  },
+  "91051": {
+    "name": "Fruit Carver Figure",
+    "desc": "A carver who has turned a watermelon into a blooming peony. (Ichiban Kuji · Early Summer Fruits)"
+  },
+  "91052": {
+    "name": "Strawberry Cake Chef Figure",
+    "desc": "A pastry chef placing the last strawberry on a cake. (Ichiban Kuji · Early Summer Fruits)"
+  },
+  "91053": {
+    "name": "Cherry Charm",
+    "desc": "Two red cherries joined at the stem that jingle when they swing. (Ichiban Kuji · Early Summer Fruits)"
+  },
+  "91054": {
+    "name": "Orchard Harvest Stand",
+    "desc": "A wooden stand piled with seasonal fruit and a little \"Early Summer\" sign in the middle; the limited Last Prize. (Ichiban Kuji · Early Summer Fruits)"
+  },
+  "91061": {
+    "name": "Zongzi Master Figure",
+    "desc": "With one hand holding the leaves and the other tying the cotton string, the master can wrap a hundred zongzi in one go. (Ichiban Kuji · Dragon Boat Festival)"
+  },
+  "91062": {
+    "name": "Dragon Boat Drummer Figure",
+    "desc": "A drummer pounding the drum at the prow, a string of zongzi at his waist. (Ichiban Kuji · Dragon Boat Festival)"
+  },
+  "91063": {
+    "name": "Baby Zongzi Charm",
+    "desc": "A chubby triangular zongzi tied with a five-colored cord. (Ichiban Kuji · Dragon Boat Festival)"
+  },
+  "91064": {
+    "name": "Dragon Boat Champion Golden Statue",
+    "desc": "A golden dragon boat crossing the finish line; the limited Last Prize. (Ichiban Kuji · Dragon Boat Festival)"
+  },
+  "91071": {
+    "name": "Shaved Ice Mountain Chef Figure",
+    "desc": "In front of the chef stands a mountain of shaved ice drenched in jam, a spoon stuck in the top. (Ichiban Kuji · Summer Iced Drinks)"
+  },
+  "91072": {
+    "name": "Watermelon Soda Waiter Figure",
+    "desc": "A waiter serving fizzy watermelon soda, a slice of watermelon on the rim. (Ichiban Kuji · Summer Iced Drinks)"
+  },
+  "91073": {
+    "name": "Popsicle Charm",
+    "desc": "A mung bean popsicle with a bite taken out that still seems to be dripping. (Ichiban Kuji · Summer Iced Drinks)"
+  },
+  "91074": {
+    "name": "Seaside Iced Drink Stall Ornament",
+    "desc": "An iced drink stall on the beach with seven flavors under the umbrella; the limited Last Prize. (Ichiban Kuji · Summer Iced Drinks)"
+  },
+  "91081": {
+    "name": "King Crab Head Chef Figure",
+    "desc": "The head chef holds up a king crab bigger than himself, grinning from ear to ear. (Ichiban Kuji · Seafood Night Market)"
+  },
+  "91082": {
+    "name": "Grilled Oyster Master Figure",
+    "desc": "A master sprinkling garlic over sizzling oysters in front of the charcoal. (Ichiban Kuji · Seafood Night Market)"
+  },
+  "91083": {
+    "name": "Crayfish Charm",
+    "desc": "A bright red crayfish with its claws still raised. (Ichiban Kuji · Seafood Night Market)"
+  },
+  "91084": {
+    "name": "Fishing Harbor Night Snack Panorama Ornament",
+    "desc": "A whole row of seafood stalls and lit lanterns along the fishing harbor; the limited Last Prize. (Ichiban Kuji · Seafood Night Market)"
+  },
+  "91091": {
+    "name": "Mooncake Carver Figure",
+    "desc": "A carver cutting a mooncake mold with Chang'e flying to the moon. (Ichiban Kuji · Mid-Autumn Mooncakes)"
+  },
+  "91092": {
+    "name": "Jade Rabbit Pastry Chef Figure",
+    "desc": "A jade rabbit in a chef's hat rolling lotus paste filling. (Ichiban Kuji · Mid-Autumn Mooncakes)"
+  },
+  "91093": {
+    "name": "Lotus Paste Mooncake Charm",
+    "desc": "A double-yolk lotus paste mooncake cut in half, generously filled. (Ichiban Kuji · Mid-Autumn Mooncakes)"
+  },
+  "91094": {
+    "name": "Reunion Feast Under the Moon Ornament",
+    "desc": "A family reunion dinner under the full moon, everyone holding a mooncake; the limited Last Prize. (Ichiban Kuji · Mid-Autumn Mooncakes)"
+  },
+  "91101": {
+    "name": "Pumpkin Chef Figure",
+    "desc": "A chef sitting on a pumpkin bigger than himself, ladle in hand. (Ichiban Kuji · Harvest Feast)"
+  },
+  "91102": {
+    "name": "Candied Chestnut Master Figure",
+    "desc": "A master stir-frying chestnuts in a big iron wok; the smell reaches half the street. (Ichiban Kuji · Harvest Feast)"
+  },
+  "91103": {
+    "name": "Rice Ear Charm",
+    "desc": "A small bunch of golden rice ears tied with red string. (Ichiban Kuji · Harvest Feast)"
+  },
+  "91104": {
+    "name": "Harvest Barn Feast Ornament",
+    "desc": "A long-table feast laid out in a barn, covered with the season's harvest; the limited Last Prize. (Ichiban Kuji · Harvest Feast)"
+  },
+  "91111": {
+    "name": "Old Stew Master Figure",
+    "desc": "An old master watching over a clay pot, steam billowing the moment he lifts the lid. (Ichiban Kuji · Hearthside Stews)"
+  },
+  "91112": {
+    "name": "Roasted Sweet Potato Vendor Figure",
+    "desc": "A vendor pushing a roaster, handing out a sweet potato oozing with syrup. (Ichiban Kuji · Hearthside Stews)"
+  },
+  "91113": {
+    "name": "Little Clay Pot Charm",
+    "desc": "A mini clay pot whose lid opens, with a bowl of soup painted inside. (Ichiban Kuji · Hearthside Stews)"
+  },
+  "91114": {
+    "name": "Fireside Chat Ornament",
+    "desc": "A circle of people drinking soup and chatting around the stove; the limited Last Prize. (Ichiban Kuji · Hearthside Stews)"
+  },
+  "91121": {
+    "name": "Yin-Yang Hot Pot Head Chef Figure",
+    "desc": "The head chef carries a yin-yang hot pot, both the spicy and the clear broth bubbling. (Ichiban Kuji · Winter Hot Pot)"
+  },
+  "91122": {
+    "name": "Lamb Hot Pot Master Figure",
+    "desc": "A master who slices lamb paper-thin, with first-class knife skills. (Ichiban Kuji · Winter Hot Pot)"
+  },
+  "91123": {
+    "name": "Little Hot Pot Charm",
+    "desc": "A steaming little copper pot that feels warm just hanging there in winter. (Ichiban Kuji · Winter Hot Pot)"
+  },
+  "91124": {
+    "name": "Snowy Night Hot Pot Feast Ornament",
+    "desc": "Snow falling outside while a hot pot bubbles at the table inside; the limited Last Prize. (Ichiban Kuji · Winter Hot Pot)"
+  }
+}

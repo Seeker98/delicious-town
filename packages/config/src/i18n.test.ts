@@ -18,7 +18,7 @@ describe('游戏数据翻译（问题记录 272）', () => {
   });
 
   it('英法西：数据文件里有的才有；id 不存在、字段不对时构建报错', () => {
-    expect(realBuild().bundle!.i18n.en.goods).toEqual({});
+    expect(realBuild().bundle!.i18n.en.mysterious).toEqual({});
     const s = src();
     const foodId = String(realBuild().bundle!.foods[0]!.id);
     const { errors } = buildBundle({
@@ -46,7 +46,17 @@ describe('游戏数据翻译（问题记录 272）', () => {
 
 describe('第 8 批常见数据翻译（问题记录 272）', () => {
   /** 这些种类英法西要全部翻完：每个 id、每个能翻的字段都有 */
-  const FULL = ['foods', 'weather', 'streets', 'devices', 'suits', 'doors', 'avatars', 'icons'] as const;
+  const FULL = [
+    'goods',
+    'foods',
+    'weather',
+    'streets',
+    'devices',
+    'suits',
+    'doors',
+    'avatars',
+    'icons',
+  ] as const;
 
   it('繁中也转换街道菜系名、天气说明、套装各档说明和装扮', () => {
     const b = realBuild().bundle!;
@@ -63,6 +73,7 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
   it('英法西：这几类每个 id、每个字段都翻了；套装各档说明条数对得上', () => {
     const b = realBuild().bundle!;
     const lists: Record<(typeof FULL)[number], Array<{ id: string; fields: string[]; tiers?: number }>> = {
+      goods: b.goods.map((x) => ({ id: String(x.id), fields: ['name', 'desc'] })),
       foods: b.foods.map((x) => ({ id: String(x.id), fields: ['name'] })),
       weather: b.weather.map((x) => ({ id: String(x.id), fields: ['name', 'note'] })),
       streets: b.streets.map((x) => ({ id: String(x.id), fields: ['name', 'desc', 'cookName'] })),

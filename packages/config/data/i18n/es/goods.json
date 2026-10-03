@@ -1,1 +1,2730 @@
-{}
+{
+  "1": {
+    "name": "Vale misterioso",
+    "desc": "Vale misterioso, lo que necesitas para tener una «cita» con la Hermana Wen (o sea, jugar a la morra)"
+  },
+  "2": {
+    "name": "Tarjeta de mudanza",
+    "desc": "Úsala para mudarte a la calle que elijas"
+  },
+  "3": {
+    "name": "Tarjeta de ampliación de despensa pequeña",
+    "desc": "Añade 1 hueco a la despensa"
+  },
+  "4": {
+    "name": "Tarjeta de ampliación de despensa mediana",
+    "desc": "Añade 5 huecos a la despensa"
+  },
+  "5": {
+    "name": "Tarjeta de ampliación de despensa grande",
+    "desc": "Añade 10 huecos a la despensa"
+  },
+  "6": {
+    "name": "Tarjeta de ampliación de almacén pequeña",
+    "desc": "Añade 1 hueco al almacén"
+  },
+  "7": {
+    "name": "Tarjeta de ampliación de almacén mediana",
+    "desc": "Añade 5 huecos al almacén"
+  },
+  "8": {
+    "name": "Tarjeta de ampliación de almacén grande",
+    "desc": "Añade 10 huecos al almacén"
+  },
+  "9": {
+    "name": "Tarjeta de caja fuerte",
+    "desc": "Añade un hueco de caja fuerte"
+  },
+  "10": {
+    "name": "Trofeo del Dios de la Cocina (bronce)",
+    "desc": "Trofeo de bronce hecho por Delicious Town; EXP por mesa +2 durante 24 horas"
+  },
+  "11": {
+    "name": "Trofeo del Dios de la Cocina (plata)",
+    "desc": "Trofeo de plata hecho por Delicious Town; EXP por mesa +3 durante 12 horas"
+  },
+  "12": {
+    "name": "Trofeo del Dios de la Cocina (oro)",
+    "desc": "Trofeo de oro hecho por Delicious Town; EXP por mesa +3 durante 24 horas"
+  },
+  "13": {
+    "name": "Cartel promocional normal",
+    "desc": "Cartel promocional normal; monedas por mesa +2 durante 24 horas"
+  },
+  "14": {
+    "name": "Cartel de la Hermana del Huerto",
+    "desc": "Cartel de la Hermana del Huerto; monedas por mesa +3 durante 12 horas"
+  },
+  "15": {
+    "name": "Cartel de la Hermana Wen",
+    "desc": "Cartel de la Hermana Wen; monedas por mesa +3 durante 24 horas"
+  },
+  "16": {
+    "name": "Ratonera",
+    "desc": "Ratonera; los amigos que revuelvan tu despensa pueden pillarse los dedos"
+  },
+  "17": {
+    "name": "Misil rápido",
+    "desc": "Misil rápido, para desafiar al guardián del templo. ¡Altísima precisión y daño enorme!"
+  },
+  "18": {
+    "name": "Misil estándar",
+    "desc": "Misil estándar, para desafiar al guardián del templo (también se cambia por misiles rápidos). ¡Alta precisión, poco daño!"
+  },
+  "19": {
+    "name": "Misil explosivo",
+    "desc": "Misil explosivo, para desafiar al guardián del templo. A veces falla; poco daño pero mucha probabilidad de crítico"
+  },
+  "20": {
+    "name": "Vale de ingrediente misterioso",
+    "desc": "Necesario para canjear ingredientes misteriosos"
+  },
+  "21": {
+    "name": "Ahorrador de aceite corto",
+    "desc": "Aceite por mesa -4 durante 8 horas tras colocarlo"
+  },
+  "22": {
+    "name": "Ahorrador de aceite medio",
+    "desc": "Aceite por mesa -3 durante 15 horas tras colocarlo"
+  },
+  "23": {
+    "name": "Ahorrador de aceite largo",
+    "desc": "Aceite por mesa -2 durante 28 horas tras colocarlo"
+  },
+  "24": {
+    "name": "Vale de mejora del bidón (básico)",
+    "desc": "Vale importante para mejorar el bidón de aceite"
+  },
+  "25": {
+    "name": "Vale de mejora del bidón (intermedio)",
+    "desc": "Vale importante para mejorar el bidón de aceite"
+  },
+  "26": {
+    "name": "Vale de mejora del bidón (avanzado)",
+    "desc": "Vale importante para mejorar el bidón de aceite"
+  },
+  "27": {
+    "name": "Vale de mejora del bidón (gremio)",
+    "desc": "Vale importante para mejorar el bidón de aceite; se consigue en eventos especiales"
+  },
+  "28": {
+    "name": "Tarjeta de energía pequeña",
+    "desc": "Recupera 20 de energía"
+  },
+  "29": {
+    "name": "Tarjeta de energía",
+    "desc": "Recupera 100 de energía"
+  },
+  "30": {
+    "name": "Espátula de aprendiz",
+    "desc": "Espátula para cocineros aprendices; cocina +2"
+  },
+  "31": {
+    "name": "Cuchillo de aprendiz",
+    "desc": "Cuchillo para cocineros aprendices; corte +2"
+  },
+  "32": {
+    "name": "Wok de aprendiz",
+    "desc": "Wok para cocineros aprendices; control del fuego +2"
+  },
+  "33": {
+    "name": "Espátula despiadada del Alma de Sariel",
+    "desc": "Cocina +21. Sariel, guardiana del cuarto piso de la Torre de chefs, lleva años esperando a un rival que nunca llega; así que saltea sobre un fogón vacío día y noche, y su espátula no tiene piedad."
+  },
+  "34": {
+    "name": "Hoja despiadada del Alma de Sariel",
+    "desc": "Corte +21. Sariel nunca mira la tabla. Dice que un cuchillo es más honrado que la gente: cuando cae, ya no se echa atrás."
+  },
+  "40": {
+    "name": "Piedra de mejora",
+    "desc": "Esta mejora sale bien seguro y el atributo ganado tiene +1 extra (sin pasar del máximo)"
+  },
+  "41": {
+    "name": "[Rango 1]•Piedra de sabiduría",
+    "desc": "Creatividad +1"
+  },
+  "42": {
+    "name": "[Rango 1]•Cristal rojo",
+    "desc": "Control del fuego +1"
+  },
+  "43": {
+    "name": "[Rango 1]•Topacio",
+    "desc": "Corte +1"
+  },
+  "44": {
+    "name": "[Rango 1]•Piedra azul abisal",
+    "desc": "Cocina +1"
+  },
+  "45": {
+    "name": "[Rango 1]•Piedra verde mística",
+    "desc": "Sazón +1"
+  },
+  "46": {
+    "name": "Piedra de perforar",
+    "desc": "Necesaria para abrir un engarce en un utensilio"
+  },
+  "47": {
+    "name": "Espátula de ayudante",
+    "desc": "Espátula para cocineros intermedios; cocina +4"
+  },
+  "48": {
+    "name": "Cuchillo de ayudante",
+    "desc": "Cuchillo para cocineros intermedios; corte +4"
+  },
+  "49": {
+    "name": "Wok de ayudante",
+    "desc": "Wok para cocineros intermedios; control del fuego +4"
+  },
+  "50": {
+    "name": "Botella de ayudante",
+    "desc": "Botella de condimento para cocineros intermedios; sazón +4"
+  },
+  "51": {
+    "name": "Pack de pruebas",
+    "desc": "Añade 5 puntos de atributo al azar"
+  },
+  "52": {
+    "name": "Esencia de utensilio",
+    "desc": "Material para mejorar utensilios"
+  },
+  "53": {
+    "name": "Tarjeta de cambio de nombre",
+    "desc": "Permite cambiar el nombre de tu restaurante"
+  },
+  "54": {
+    "name": "Pack de inicio",
+    "desc": "Un pack de inicio. ¡Que te diviertas!"
+  },
+  "55": {
+    "name": "Tarjeta de reinicio",
+    "desc": "Reinicia tus puntos de atributo de chef"
+  },
+  "56": {
+    "name": "Wok sereno del Silencio de Duma",
+    "desc": "36 puntos de atributo al azar. El anciano Duma, que forma a los cocineros jóvenes, nunca dice una palabra a sus aprendices: les hace vigilar este wok y deja que hable el fuego."
+  },
+  "57": {
+    "name": "Botella serena del Silencio de Duma",
+    "desc": "36 puntos de atributo al azar. La botella de Duma siempre está llena. Dice que el sabor solo se aprecia con la mente en calma."
+  },
+  "58": {
+    "name": "Corona serena del Silencio de Duma",
+    "desc": "36 puntos de atributo al azar. De todos los aprendices de Duma, solo uno nunca volvió al sexto piso a llevar esta corona."
+  },
+  "59": {
+    "name": "Espátula plañidera del Juicio de Barbelet",
+    "desc": "31 puntos de atributo al azar. El anciano Barbelet, el juez, solo dicta sentencia con esta espátula; donde cae, el plato del perdedor gime en el wok."
+  },
+  "60": {
+    "name": "Hoja plañidera del Juicio de Barbelet",
+    "desc": "31 puntos de atributo al azar. Barbelet dice que el sonido del cuchillo es el veredicto: quien no corta limpio ni siquiera merece sentarse a la mesa."
+  },
+  "61": {
+    "name": "Corona plañidera del Juicio de Barbelet",
+    "desc": "31 puntos de atributo al azar. La Torre de chefs dio esta corona a su anciano juez como emblema. Ningún duelo que Barbelet juzgó con ella se ha revocado jamás."
+  },
+  "62": {
+    "name": "Espátula Amor Verdadero",
+    "desc": "Utensilio exclusivo para jugadores de la beta cerrada; 6 puntos de atributo al azar"
+  },
+  "63": {
+    "name": "Gorro Amor Verdadero",
+    "desc": "Utensilio exclusivo para jugadores de la beta cerrada; 6 puntos de atributo al azar"
+  },
+  "64": {
+    "name": "Wok Amor Verdadero",
+    "desc": "Utensilio exclusivo para jugadores de la beta cerrada; 6 puntos de atributo al azar"
+  },
+  "70": {
+    "name": "Medalla de la beta cerrada (plata)",
+    "desc": "Medalla exclusiva para jugadores de la beta cerrada de 2023; ocupación +4%, ingresos finales de monedas +4%"
+  },
+  "71": {
+    "name": "Medalla de la beta cerrada (oro)",
+    "desc": "Medalla exclusiva para jugadores de la beta cerrada de 2023; ocupación +5%, ingresos finales de monedas +5%"
+  },
+  "72": {
+    "name": "Medalla Amor Verdadero",
+    "desc": "Otorgada a los jugadores fieles que esperaron la primera beta cerrada de 2023; EXP e ingresos finales de monedas +5%, consumo final de aceite -10%"
+  },
+  "73": {
+    "name": "Espátula de Song Sao",
+    "desc": "6 puntos de atributo al azar"
+  },
+  "74": {
+    "name": "Hoja de Song Sao",
+    "desc": "6 puntos de atributo al azar"
+  },
+  "75": {
+    "name": "Wok de Song Sao",
+    "desc": "6 puntos de atributo al azar"
+  },
+  "76": {
+    "name": "[Estrella de la beta]",
+    "desc": "Placa exclusiva de la beta cerrada; ocupación del restaurante +10%"
+  },
+  "77": {
+    "name": "Cartel de la beta cerrada",
+    "desc": "Cartel de la beta cerrada; monedas por mesa +6 durante 8 horas"
+  },
+  "78": {
+    "name": "Medalla de la beta cerrada (bronce)",
+    "desc": "Medalla exclusiva para jugadores de la beta cerrada de 2023; ocupación +3%, ingresos finales de monedas +3%"
+  },
+  "79": {
+    "name": "Medalla Delicia: gourmet",
+    "desc": "Honor para los restaurantes que han aprendido todas las recetas; ingresos finales de monedas +5%"
+  },
+  "80": {
+    "name": "Medalla Delicia: Dios de la Cocina",
+    "desc": "Honor para los restaurantes con todas las recetas en calidad Medalla de oro; ingresos finales de monedas +8%"
+  },
+  "81": {
+    "name": "Gran inauguración",
+    "desc": "Exclusivo para restaurantes recién abiertos (dura 15 días); EXP e ingresos finales de monedas +100%, ocupación +25%"
+  },
+  "82": {
+    "name": "Mesa A",
+    "desc": "Añade una mesa"
+  },
+  "83": {
+    "name": "Medalla de prueba",
+    "desc": "Medalla de prueba para probar atributos. ¡Solo para Don Krab!"
+  },
+  "84": {
+    "name": "Moneda de plata",
+    "desc": "Una moneda de plata oxidada que parece la moneda del pueblo. Al usarla obtienes 1 moneda"
+  },
+  "85": {
+    "name": "Moneda de oro",
+    "desc": "Una moneda de oro reluciente que parece valiosa. Al usarla obtienes 100.000 monedas"
+  },
+  "86": {
+    "name": "Vale de subida de estrella",
+    "desc": "Necesario para subir de estrellas tu restaurante"
+  },
+  "87": {
+    "name": "Medalla de promoción de estrella",
+    "desc": "Durante tres días tras subir de estrella (se puede tirar antes), ¡bebidas gratis y la clientela se dispara! Aceite por mesa +1, ocupación +20%, ingresos finales de monedas -10%, EXP final +10%"
+  },
+  "88": {
+    "name": "[Placa de 1 estrella]",
+    "desc": "Placa de 1 estrella; EXP final +10%, EXP por mesa +1"
+  },
+  "89": {
+    "name": "[Placa de 2 estrellas]",
+    "desc": "Placa de 2 estrellas; EXP final +15%, EXP por mesa +2"
+  },
+  "90": {
+    "name": "[Placa de 3 estrellas]",
+    "desc": "Placa de 3 estrellas; EXP final +20%, EXP por mesa +3"
+  },
+  "91": {
+    "name": "[Placa de 4 estrellas]",
+    "desc": "Placa de 4 estrellas; EXP final +30%, EXP por mesa +4"
+  },
+  "92": {
+    "name": "[Placa de 5 estrellas]",
+    "desc": "Placa de 5 estrellas; EXP final +40%, EXP por mesa +5"
+  },
+  "93": {
+    "name": "Ahorrador de aceite avanzado",
+    "desc": "Consumo final de aceite -45% durante 18 horas tras colocarlo"
+  },
+  "94": {
+    "name": "Superahorrador de aceite",
+    "desc": "Consumo final de aceite -60% durante 36 horas tras colocarlo"
+  },
+  "95": {
+    "name": "Ahorrador de aceite básico",
+    "desc": "Consumo final de aceite -30% durante 12 horas tras colocarlo"
+  },
+  "96": {
+    "name": "Nudo chino",
+    "desc": "¡¡¡Dicen que quien lo consigue tiene la bendición del cielo!!! Suerte +120"
+  },
+  "97": {
+    "name": "Trébol de cuatro hojas",
+    "desc": "¡¡¡Un trébol de cuatro hojas aumenta mucho tu suerte!!! Suerte +88"
+  },
+  "98": {
+    "name": "Carpa koi",
+    "desc": "Desde siempre, la carpa koi simboliza la esperanza y la suerte; ocupación +5%, suerte +50"
+  },
+  "99": {
+    "name": "Bianbian",
+    "desc": "¡Certificada oficialmente, ahora vende verduras en el mercado! Su restaurante: EXP e ingresos finales de monedas +10%, ocupación +10%, consumo final de aceite -10%"
+  },
+  "100": {
+    "name": "Calzoncillos rojos",
+    "desc": "Unos calzoncillos rojos de calidad, imprescindibles en tu año del zodiaco. Cuando un restaurante con más estrellas te cambia ingredientes, paga uno extra del mismo nivel (al azar); suerte +20"
+  },
+  "101": {
+    "name": "Botella de Song Sao",
+    "desc": "6 puntos de atributo al azar"
+  },
+  "103": {
+    "name": "Cuchillo Amor Verdadero",
+    "desc": "Utensilio exclusivo para jugadores de la beta cerrada; 6 puntos de atributo al azar"
+  },
+  "105": {
+    "name": "Botella Amor Verdadero",
+    "desc": "Utensilio exclusivo para jugadores de la beta cerrada; 6 puntos de atributo al azar"
+  },
+  "106": {
+    "name": "Rebajas del 20 %",
+    "desc": "Tu restaurante hace grandes rebajas: ¡20 % de descuento en la cuenta! Ocupación +50%, clientes exigentes -20%, EXP final -10%, ingresos finales de monedas -20%"
+  },
+  "107": {
+    "name": "Permiso de trabajo del mercado",
+    "desc": "Prueba de empleo en el mercado: llévate comisión al vender ingredientes al por mayor. EXP final +20%, consumo final de aceite -20% (sueldo semanal: 8 vales de ingrediente misterioso a elegir, 10 packs de ingredientes universales)"
+  },
+  "108": {
+    "name": "Permiso de trabajo de la tienda",
+    "desc": "Prueba de empleo en la tienda: renueva más pedidos a domicilio y llévate mucha EXP de comisión. EXP e ingresos finales de monedas +15%, ocupación +5%, consumo final de aceite -10% (sueldo semanal: 5 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+  },
+  "109": {
+    "name": "Permiso de trabajo de la oficina de nombres",
+    "desc": "Prueba de empleo en la oficina de nombres: éxito al tasar con el Sello Delicia +5%, ingresos finales de monedas +15%, clientes exigentes +35% (sueldo semanal: 3 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+  },
+  "110": {
+    "name": "Placa de seguridad",
+    "desc": "Prueba de empleo como vigilante del bar o del gremio: probabilidad de ingredientes misteriosos al explorar +2,5%, suerte +56 (sueldo semanal: 3 vales de ingrediente misterioso al azar, 10 packs de ingrediente universal al azar)"
+  },
+  "111": {
+    "name": "Permiso de trabajo de la oficina de mudanzas",
+    "desc": "Prueba de empleo en la oficina de mudanzas: mudarte no gasta tarjeta de mudanza; EXP final +50% (sueldo semanal: 3 vales de ingrediente misterioso a elegir, 10 packs de ingrediente universal al azar)"
+  },
+  "112": {
+    "name": "Jiang Xue",
+    "desc": "Una caña de pescar curtida por el tiempo. ¡Su dueño ama el pueblo y tiene una relación inconfesable con Don Krab! Su restaurante: EXP final +21%, ingresos finales de monedas +26%, clientes exigentes +4%, suerte +10"
+  },
+  "113": {
+    "name": "Emperador de la suerte",
+    "desc": "Decía: «¡Nunca he ganado nada que dependa del azar! ¡Soy el tipo con peor suerte del pueblo!». Luego decidió desafiar al destino y acabó viviendo una historia OOXX con Don Krab (premios de la beta: 2). Su restaurante: clientes exigentes +1%, suerte +9"
+  },
+  "114": {
+    "name": "Ahorrador de aceite especial",
+    "desc": "Aceite por mesa -5 durante 12 horas tras colocarlo"
+  },
+  "115": {
+    "name": "Pack de registro diario",
+    "desc": "El pack del registro diario. Contiene 20 vales misteriosos y puede traer monedas, diamantes, EXP, ingredientes universales y objetos"
+  },
+  "116": {
+    "name": "XXX",
+    "desc": "Un hombre misterioso. ¡Desde aquella noche de XXX con Don Krab vive con un nombre falso (premios de la beta: 1)! Su restaurante: clientes exigentes +3%, suerte +5"
+  },
+  "117": {
+    "name": "Pack de subida de estrella (1 estrella)",
+    "desc": "Pack de premio al llegar a 1 estrella: 100 vales misteriosos, placa de 1 estrella x1, medalla de promoción de estrella x1, mesa A x1"
+  },
+  "118": {
+    "name": "Pack de subida de estrella (2 estrellas)",
+    "desc": "Pack de premio al llegar a 2 estrellas: 200 vales misteriosos, placa de 2 estrellas x1, medalla de promoción de estrella x1, mesa A x2"
+  },
+  "119": {
+    "name": "Pack de subida de estrella (3 estrellas)",
+    "desc": "Pack de premio al llegar a 3 estrellas: 300 vales misteriosos, placa de 3 estrellas x1, medalla de promoción de estrella x1, mesa A x3"
+  },
+  "120": {
+    "name": "Pack de subida de estrella (4 estrellas)",
+    "desc": "Pack de premio al llegar a 4 estrellas: 400 vales misteriosos, placa de 4 estrellas x1, medalla de promoción de estrella x1, mesa A x4"
+  },
+  "121": {
+    "name": "Pack de subida de estrella (5 estrellas)",
+    "desc": "Pack de premio al llegar a 5 estrellas: 500 vales misteriosos, placa de 5 estrellas x1, medalla de promoción de estrella x1, mesa A x5"
+  },
+  "122": {
+    "name": "Pack de subida de estrella (6 estrellas)",
+    "desc": "Pack de premio al llegar a 6 estrellas: 600 vales misteriosos, [Honor] Copa del Dios de las Estrellas, placa de 6 estrellas x1, medalla de promoción de estrella x1, mesa A x6"
+  },
+  "123": {
+    "name": "[Placa de 6 estrellas]",
+    "desc": "Placa de 6 estrellas; EXP final +50%, EXP por mesa +6"
+  },
+  "124": {
+    "name": "Pack de medalla de promoción de estrella (prueba)",
+    "desc": "Contiene una medalla de promoción de estrella"
+  },
+  "125": {
+    "name": "Pack de ahorradores de aceite (rango 2)",
+    "desc": "¡Un pack de ahorradores de gama alta! Contiene superahorrador x1, ahorrador avanzado x1, ahorrador básico x1"
+  },
+  "126": {
+    "name": "Pack de ahorradores de aceite (rango 1)",
+    "desc": "¡Un pack de ahorradores normal! Contiene ahorrador largo x1, ahorrador medio x1, ahorrador corto x1"
+  },
+  "127": {
+    "name": "Ratonera de oro",
+    "desc": "Ratonera de oro; durante 24 horas, los amigos que revuelvan tu despensa tienen un 50 % de probabilidad de pillarse"
+  },
+  "128": {
+    "name": "Ratonera duradera",
+    "desc": "Ratonera duradera; durante 36 horas, los amigos que revuelvan tu despensa tienen un 30 % de probabilidad de pillarse"
+  },
+  "129": {
+    "name": "Ratonera 100 %",
+    "desc": "Ratonera 100 %; durante 10 días, los amigos que revuelvan tu despensa se pillan seguro"
+  },
+  "130": {
+    "name": "Brócoli",
+    "desc": "Un brócoli adorable, de una jugadora invitada especialmente por Don Krab. ¡¡¡Dicen que quien lo tiene puede hacer lo que quiera en el pueblo!!! Su restaurante: EXP e ingresos finales de monedas +15%, ocupación +5%, consumo final de aceite -10%"
+  },
+  "131": {
+    "name": "Pack de ingrediente universal al azar",
+    "desc": "Pack de ingrediente universal al azar; contiene 1 ingrediente universal al azar"
+  },
+  "132": {
+    "name": "Jefe de la mala suerte",
+    "desc": "¡Ni siquiera pudo conservar su nombre, qué mala suerte! (premios de la beta: 1) Su restaurante: ingresos finales de monedas +4%, suerte +3"
+  },
+  "133": {
+    "name": "Don Krab",
+    "desc": "Don Krab visitó tu restaurante de incógnito y se dio el festín de sus sueños. ¡Encantado, dispara tu popularidad! Ocupación +10%, ingresos finales de monedas y EXP +50%"
+  },
+  "134": {
+    "name": "Don Krab (enfadado)",
+    "desc": "Don Krab visitó tu restaurante de incógnito y no comió nada. ¡Furioso, hunde tu popularidad! Ocupación -10%, ingresos finales de monedas y EXP -50%"
+  },
+  "135": {
+    "name": "Ahorrador de aceite de Don Krab",
+    "desc": "Aceite por mesa -7 durante 200 horas tras colocarlo"
+  },
+  "136": {
+    "name": "Entrada de la Torre de chefs",
+    "desc": "Añade un desafío a la Torre de chefs para hoy"
+  },
+  "137": {
+    "name": "Diamante",
+    "desc": "Un diamante valioso, la moneda especial del pueblo. Al usarlo obtienes 1 diamante"
+  },
+  "139": {
+    "name": "Vale de ingrediente misterioso al azar",
+    "desc": "Da un ingrediente misterioso al azar"
+  },
+  "140": {
+    "name": "Calle de los novatos",
+    "desc": "Ocupación +35%, monedas por mesa +1, suerte +36, clientes exigentes -35%"
+  },
+  "141": {
+    "name": "Calle Hunan",
+    "desc": "EXP e ingresos finales de monedas +15%, suerte +10"
+  },
+  "142": {
+    "name": "Calle Guangdong",
+    "desc": "Ocupación +10%, clientes exigentes +8%, aceite por mesa -2"
+  },
+  "143": {
+    "name": "Calle Sichuan",
+    "desc": "EXP por mesa +4, consumo final de aceite +2"
+  },
+  "144": {
+    "name": "Calle Fujian",
+    "desc": "Monedas por mesa +2, EXP por mesa +3"
+  },
+  "145": {
+    "name": "Calle Anhui",
+    "desc": "Monedas por mesa +3, consumo de aceite -15%"
+  },
+  "146": {
+    "name": "Calle Shandong",
+    "desc": "EXP por mesa +6, consumo de aceite -10%, ocupación -20%"
+  },
+  "147": {
+    "name": "Calle Zhejiang",
+    "desc": "Clientes exigentes +10%, aceite por mesa -3"
+  },
+  "148": {
+    "name": "Calle Jiangsu",
+    "desc": "Clientes exigentes +5%, consumo de aceite -50%, ingresos finales de monedas -20%"
+  },
+  "149": {
+    "name": "Calle Fusión I",
+    "desc": "Clientes exigentes +25%, ingresos finales de monedas -20%"
+  },
+  "150": {
+    "name": "Calle Fusión II",
+    "desc": "Clientes exigentes +25%, EXP final -20%"
+  },
+  "151": {
+    "name": "Xingdao",
+    "desc": "Un desconocido que parece muy relajado; ¡ni Don Krab sabe cómo describirlo! (premios de la beta: 1) Su restaurante: ingresos finales de monedas +3%, suerte +6"
+  },
+  "153": {
+    "name": "Ahorrador de aceite de primera",
+    "desc": "Aceite por mesa -6 durante 32 horas tras colocarlo"
+  },
+  "154": {
+    "name": "Ahorrador de aceite importado",
+    "desc": "Consumo final de aceite -80% durante 36 horas tras colocarlo"
+  },
+  "155": {
+    "name": "Pack de ahorradores de aceite (rango 3)",
+    "desc": "¡El mejor pack de ahorradores! Contiene ahorrador importado x1, ahorrador de primera x1"
+  },
+  "156": {
+    "name": "Matacucarachas de medianoche",
+    "desc": "Nadie sabe de dónde viene; solo que las cucarachas huyen allí donde está... Efecto: aplastar una cucaracha cuesta como mucho 2 de energía entre las 23:00 y las 7:00 y como mucho 3 el resto del tiempo, y lo que ganas aplastando cucarachas de amigos +50%"
+  },
+  "157": {
+    "name": "Petardos",
+    "desc": "Una ristra de petardos, lo mejor para espantar la mala suerte; EXP final +20%, suerte +44"
+  },
+  "158": {
+    "name": "Farolillo",
+    "desc": "Un farolillo que ahuyenta la mala suerte; cuélgalo en tu restaurante para atraer la fortuna. EXP final +16%, suerte +33"
+  },
+  "159": {
+    "name": "Fortuna",
+    "desc": "Cuando llega la fortuna, se va la mala suerte; pégalo en tu restaurante. EXP final +12%, suerte +22"
+  },
+  "160": {
+    "name": "Pack de actualización DT 1.3.4",
+    "desc": "Pack de la actualización 1.3.4: un vale de ingrediente misterioso al azar y 99 vales misteriosos"
+  },
+  "161": {
+    "name": "Gran valor",
+    "desc": "Este tipo es un descarado, así que Don Krab decidió darle la medalla al Gran valor. EXP e ingresos finales de monedas +3%, suerte +3"
+  },
+  "162": {
+    "name": "Receta misteriosa",
+    "desc": "Se tasa con un [Sello Delicia] o un [Sello de jade del Dios de la Cocina]; si sale bien da un fragmento, si falla desaparece"
+  },
+  "163": {
+    "name": "Sello Delicia",
+    "desc": "El objeto básico para tasar recetas misteriosas; da fragmentos de nivel 1 a 6, con poca probabilidad de éxito"
+  },
+  "164": {
+    "name": "Sello de jade del Dios de la Cocina",
+    "desc": "El objeto avanzado para tasar recetas misteriosas; da fragmentos de nivel 2 a 5 con mucha probabilidad de éxito, ¡y una pequeña probabilidad de tasar una fórmula de ingrediente!"
+  },
+  "165": {
+    "name": "Fórmula secreta de la Cangreburger",
+    "desc": "Lo más valioso de Don Krab. Dicen que al tasar una receta misteriosa con ella se obtienen fragmentos de nivel 3 a 5, a veces dos a la vez"
+  },
+  "166": {
+    "name": "[Placa conmemorativa 2023]",
+    "desc": "Placa conmemorativa de 2023, el primer año del pueblo; bonificación de colección de placas duplicada (*)"
+  },
+  "167": {
+    "name": "Collar del amor",
+    "desc": "Prueba de patrocinio del pueblo. Los restaurantes con este collar reciben premios de actividad dobles y pueden comprar en el mercado premium; monedas por mesa +1, suerte +36"
+  },
+  "168": {
+    "name": "[Casa centenaria]",
+    "desc": "¡Placa de una casa centenaria, con la tinta impregnada de años! Las monedas de los platos de clientes exigentes satisfechos suben (más estrellas, más subida) [0,3 + estrellas × 0,1] (*)"
+  },
+  "169": {
+    "name": "Cordón",
+    "desc": "Ata 36 misiles estándar en 1 misil rápido"
+  },
+  "170": {
+    "name": "Mapa de exploración",
+    "desc": "Un mapa borroso (es fácil perderse) para explorar detrás del templo en busca de algunos ingredientes de nivel 4–5, ¡con un 6 % de probabilidad de ingrediente misterioso!"
+  },
+  "171": {
+    "name": "Mapa de exploración avanzado",
+    "desc": "Un mapa más claro (cuesta más perderse) para explorar el bosque detrás del templo en busca de más ingredientes de nivel 4–5, ¡con un 12 % de probabilidad de ingrediente misterioso!"
+  },
+  "172": {
+    "name": "Mapa de exploración perfecto",
+    "desc": "Un mapa perfecto (no hay forma de perderse) para explorar lo más hondo del bosque detrás del templo en busca de muchos ingredientes de nivel 4–5, ¡con un 32 % de probabilidad de ingrediente misterioso!"
+  },
+  "173": {
+    "name": "Embajador ecológico",
+    "desc": "Embajador ecológico (dura 30 días). Al pueblo le importa cada vez más vivir en armonía con la naturaleza; este honor alarga un 50 % la duración de las instalaciones que coloques"
+  },
+  "174": {
+    "name": "[Placa de Año Nuevo]",
+    "desc": "Placa del Año Nuevo chino. ¡Que el nuevo año traiga prosperidad a tu negocio y felicidad a tu familia! Consumo de aceite -30%, ingresos finales de monedas +3%"
+  },
+  "175": {
+    "name": "Qingjing",
+    "desc": "«El cielo es claro y la tierra turbia; el cielo se mueve y la tierra está quieta». (premios de la beta: 1) Su restaurante: EXP final +12%, ingresos finales de monedas +24%, suerte +9"
+  },
+  "176": {
+    "name": "Fórmula secreta del Balde de Carnada",
+    "desc": "Lo más valioso de Plancton. Dicen que al tasar una receta misteriosa con ella se obtienen fragmentos de nivel 1 a 3, a veces dos a la vez"
+  },
+  "177": {
+    "name": "Licencia de enseñanza básica",
+    "desc": "Licencia básica para enseñar recetas misteriosas: ¡puedes dar clases con fragmentos de recetas misteriosas aprendidas (niveles 1–2)!"
+  },
+  "178": {
+    "name": "Licencia de enseñanza intermedia",
+    "desc": "Licencia intermedia para enseñar recetas misteriosas: ¡puedes dar clases con fragmentos de recetas misteriosas aprendidas (niveles 3–4)!"
+  },
+  "179": {
+    "name": "Licencia de enseñanza avanzada",
+    "desc": "Licencia avanzada para enseñar recetas misteriosas: ¡puedes dar clases con fragmentos de recetas misteriosas aprendidas (nivel 5)!"
+  },
+  "180": {
+    "name": "Cangreburger",
+    "desc": "Una Cangreburger de la tragaperras; ¡cámbiala con el Alcalde por objetos raros!"
+  },
+  "181": {
+    "name": "[Nivel 1]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 1; sirve para aprender platos estrella de ese nivel"
+  },
+  "182": {
+    "name": "[Nivel 2]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 2; sirve para aprender platos estrella de ese nivel"
+  },
+  "183": {
+    "name": "[Nivel 3]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 3; sirve para aprender platos estrella de ese nivel"
+  },
+  "184": {
+    "name": "[Nivel 4]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 4; sirve para aprender platos estrella de ese nivel"
+  },
+  "185": {
+    "name": "[Nivel 5]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 5; sirve para aprender platos estrella de ese nivel"
+  },
+  "186": {
+    "name": "[Nivel 6]•Trozo de fragmento",
+    "desc": "Lo que queda al descomponer un fragmento de nivel 6; sirve para aprender platos estrella de ese nivel"
+  },
+  "187": {
+    "name": "Calle Jiangxi",
+    "desc": "Ocupación +15%, monedas por mesa +3"
+  },
+  "188": {
+    "name": "Calle Hubei",
+    "desc": "EXP final +40%, suerte +10"
+  },
+  "189": {
+    "name": "Calle Pekín",
+    "desc": "Ingresos finales de monedas +25%, EXP por mesa +2, consumo de aceite +30%"
+  },
+  "190": {
+    "name": "Medalla Delicia: gran maestro culinario",
+    "desc": "Honor para los restaurantes con todas las recetas en calidad Excelente o superior; ingresos finales de monedas +6%"
+  },
+  "191": {
+    "name": "[Buena fortuna]",
+    "desc": "Placa Buena fortuna: ingresos finales de monedas +2 % por estrella del restaurante (estrellas moradas incluidas) (*). Ocupación +20%"
+  },
+  "192": {
+    "name": "Insecticida para cucarachas",
+    "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 20 % de probabilidad de morir"
+  },
+  "193": {
+    "name": "Insecticida de oro",
+    "desc": "Durante 1 día las cucarachas no tienen dónde esconderse: cada una que aparezca tiene un 50 % de probabilidad de morir"
+  },
+  "194": {
+    "name": "Insecticida extrafuerte",
+    "desc": "Durante 10 días las cucarachas no tienen dónde esconderse: cualquiera que aparezca muere al instante"
+  },
+  "195": {
+    "name": "[Futuro brillante]",
+    "desc": "Placa Futuro brillante. ¡Que tu camino sea fácil y cada vez más ancho, tu negocio prospere y tu vida sea feliz! EXP final +4 % por estrella del restaurante (estrellas moradas incluidas) (*), EXP final +20%"
+  },
+  "196": {
+    "name": "[Sabor eterno]",
+    "desc": "Placa Sabor eterno: los sabores de tu comida nunca se apagan y deleitan sin fin. Ocupación +10%, clientes exigentes +15%, ingresos finales de monedas +10%, EXP final +10%"
+  },
+  "197": {
+    "name": "[Grandes ambiciones]",
+    "desc": "Placa Grandes ambiciones: a tu restaurante le espera un gran futuro. Clientes exigentes +32%"
+  },
+  "198": {
+    "name": "[Construir el futuro juntos]",
+    "desc": "Placa Construir el futuro juntos: ¡tu equipo se une para servir mejor! 16 % de probabilidad de que los clientes normales y los exigentes satisfechos tomen un plato estrella extra, aunque ese plato no da EXP (*)"
+  },
+  "199": {
+    "name": "Dios de los chefs",
+    "desc": "Título del 1.er puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +2, EXP final +25%"
+  },
+  "200": {
+    "name": "Santo de los chefs",
+    "desc": "Título del 2.º puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +2, EXP final +20%"
+  },
+  "201": {
+    "name": "Rey de los chefs",
+    "desc": "Título del 3.er puesto de la clasificación de chefs (dura 150 horas); monedas por mesa +1, EXP final +20%"
+  },
+  "202": {
+    "name": "Pack 1.er puesto de la clasificación",
+    "desc": "Pack del 1.er puesto: [Dios de los chefs], 500 de renombre, vale de ingrediente misterioso al azar x2, receta misteriosa x15, 150 diamantes"
+  },
+  "203": {
+    "name": "Pack 2.º puesto de la clasificación",
+    "desc": "Pack del 2.º puesto: [Santo de los chefs], 400 de renombre, vale de ingrediente misterioso al azar x1, receta misteriosa x12, 120 diamantes"
+  },
+  "204": {
+    "name": "Pack 3.er puesto de la clasificación",
+    "desc": "Pack del 3.er puesto: [Rey de los chefs], 300 de renombre, vale de ingrediente misterioso al azar x1, receta misteriosa x10, 100 diamantes"
+  },
+  "205": {
+    "name": "Pack puestos 4–8 de la clasificación",
+    "desc": "Pack de los puestos 4 a 8: 150 de renombre, vale de ingrediente misterioso al azar x1, receta misteriosa x8, 75 diamantes"
+  },
+  "206": {
+    "name": "Pack puestos 9–15 de la clasificación",
+    "desc": "Pack de los puestos 9 a 15: 100 de renombre, receta misteriosa x5, 50 diamantes"
+  },
+  "207": {
+    "name": "Gran maestro",
+    "desc": "Por su gran aportación a los platos estrella del pueblo; EXP por mesa +2, raciones de platos estrella +5%"
+  },
+  "208": {
+    "name": "Premio Chef de Oro de China",
+    "desc": "Premio Chef de Oro de China (dura 30 días), ¡¡¡el mayor honor del mundo de la cocina!!! Ocupación +15%, clientes exigentes +20%"
+  },
+  "209": {
+    "name": "[Alumnos por todas partes]",
+    "desc": "Placa Alumnos por todas partes: ¡¡¡sus aprendices están por todo el pueblo!!! Los clientes exigentes que aportan estrellas, honores y utensilios se convierten en ingresos finales de monedas, y los platos estrella que toman los clientes normales valen 1,2× (*)"
+  },
+  "210": {
+    "name": "Poseído por el Dios de los chefs",
+    "desc": "Poseído por el Dios de los chefs (dura 3 días): ¡guiado por el legendario Dios de los chefs, tus ingresos se disparan! Probabilidad de mejor calidad al cocinar platos estrella +25%, monedas por mesa +3, EXP e ingresos finales de monedas +25%, suerte +50"
+  },
+  "211": {
+    "name": "Calidez",
+    "desc": "¡Una velita con una llama débil! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "212": {
+    "name": "Fresa",
+    "desc": "Una fresita, roja como el fuego, brillante y con un aroma tentador. Su restaurante: EXP final +6%, clientes exigentes +1%, suerte +2"
+  },
+  "213": {
+    "name": "Pescado salado",
+    "desc": "Un pescado salado. «Mis días miserables no merecen alarde; hoy vago libre, con la mente sin límites...». Su restaurante: EXP final +3%, clientes exigentes +1%, suerte +2"
+  },
+  "214": {
+    "name": "Legado",
+    "desc": "¡Transmitir la sabiduría, transmitir la fe! Su restaurante: clientes exigentes +1%, EXP final +3%, suerte +2"
+  },
+  "215": {
+    "name": "Lichi",
+    "desc": "¡Probar todos los lichis es probar el mundo entero! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "216": {
+    "name": "Maestro para la posteridad",
+    "desc": "Entregado en cuerpo y alma a enseñar platos estrella: puede pagar monedas para terminar antes una clase llena (incluidas las clases espiadas); EXP final +10%, raciones de platos estrella +20%"
+  },
+  "217": {
+    "name": "Maestro de escuela",
+    "desc": "Se ha hecho un nombre entre los maestros del pueblo; EXP final +2%, raciones de platos estrella +3%"
+  },
+  "218": {
+    "name": "Ángel",
+    "desc": "¡Qingqing! Su restaurante: ocupación +999%, EXP e ingresos finales de monedas +999%, suerte +999"
+  },
+  "219": {
+    "name": "Condimento secreto",
+    "desc": "Una receta secreta de sabor inolvidable; monedas de los clientes exigentes satisfechos +32%"
+  },
+  "221": {
+    "name": "Mandarina grande",
+    "desc": "«¡Si no me pelas, nunca sabrás si soy ácida o dulce!». Su restaurante: EXP final +145%, ingresos finales de monedas +50%, clientes exigentes +5%, suerte +49"
+  },
+  "222": {
+    "name": "Melodía Miau",
+    "desc": "Recuerdos rosas; el verano se va en silencio y deja un pequeño secreto. Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "223": {
+    "name": "Llega el Dios de la Riqueza",
+    "desc": "Llega el Dios de la Riqueza (dura 10 días): ¡sea quien sea, todo el mundo vacía la cartera! Los clientes que toman platos estrella pagan un 30 % más de monedas y dan un 100 % más de EXP"
+  },
+  "224": {
+    "name": "Cristal misterioso",
+    "desc": "Necesario para devolver un utensilio mejorado a su estado original"
+  },
+  "225": {
+    "name": "Piedra del origen",
+    "desc": "Deshace un nivel de mejora de un utensilio mejorado"
+  },
+  "226": {
+    "name": "Pack de diamantes",
+    "desc": "Contiene 150 diamantes"
+  },
+  "227": {
+    "name": "Jade•Gorro de Da Ju",
+    "desc": "Utensilio exclusivo del restaurante Da Ju; 25 puntos de atributo"
+  },
+  "228": {
+    "name": "Esposas de plata",
+    "desc": "Esposas de plata: ¡pillado haciendo algo malo en el pueblo! Qué vergüenza, de ahí este castigo. Ocupación -99%, EXP e ingresos finales de monedas -99%"
+  },
+  "229": {
+    "name": "Da Ju",
+    "desc": "Para agradecer a Da Ju su gran aportación al pueblo, Don Krab se lo regaló como guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "230": {
+    "name": "Cultura hip-hop",
+    "desc": "Atenta a las alegrías y penas reales de la gente, es una creencia que da libertad y pasión, paz y amor. Efecto: ocupación +50%, consumo de aceite -50%, suerte +28"
+  },
+  "231": {
+    "name": "Recomendación del Alcalde",
+    "desc": "La recomendación del Alcalde. Efecto: ocupación +30%, monedas por mesa +1, EXP por mesa +2"
+  },
+  "232": {
+    "name": "Rencor del Alcalde",
+    "desc": "El Alcalde la tiene tomada contigo. Efecto: ocupación -60%, monedas por mesa -5, EXP por mesa -1"
+  },
+  "233": {
+    "name": "Pack de sueldo del mercado",
+    "desc": "Sueldo por trabajar en el mercado: 8 vales de ingrediente misterioso a elegir, moneda Krab x6, 10 packs de ingrediente universal al azar"
+  },
+  "234": {
+    "name": "Pack de sueldo de la tienda",
+    "desc": "Sueldo por trabajar en la tienda: 5 vales de ingrediente misterioso al azar, moneda Krab x8, 10 packs de ingrediente universal al azar"
+  },
+  "235": {
+    "name": "Pack de sueldo de la oficina de nombres",
+    "desc": "Sueldo por trabajar en la oficina de nombres: 3 vales de ingrediente misterioso al azar, moneda Krab x7, 10 packs de ingrediente universal al azar"
+  },
+  "236": {
+    "name": "Pack de sueldo de la oficina de mudanzas",
+    "desc": "Sueldo por trabajar en la oficina de mudanzas: 3 vales de ingrediente misterioso a elegir, moneda Krab x5, 10 packs de ingrediente universal al azar"
+  },
+  "237": {
+    "name": "Pack de sueldo de seguridad",
+    "desc": "Sueldo por trabajar de vigilante: 3 vales de ingrediente misterioso al azar, moneda Krab x4, 10 packs de ingrediente universal al azar"
+  },
+  "238": {
+    "name": "Dragón (zodiaco)",
+    "desc": "Insignia conmemorativa del zodiaco chino, llena de vigor. Probabilidad de mejor calidad al cocinar platos estrella +5%, suerte +12"
+  },
+  "239": {
+    "name": "Husky bobalicón",
+    "desc": "Husky bobalicón, mascota del restaurante. El perro es el mejor amigo del hombre, y el husky es el más perro de todos. Hace que los clientes exigentes insatisfechos paguen el precio completo y tiene un 30 % de probabilidad de satisfacer a los clientes misteriosos; EXP final +10%, suerte +8"
+  },
+  "240": {
+    "name": "Moneda Krab",
+    "desc": "Necesaria para jugar a la tragaperras del bar"
+  },
+  "241": {
+    "name": "Vale de ingrediente nivel 1",
+    "desc": "Necesario para canjear ingredientes de nivel 1"
+  },
+  "242": {
+    "name": "Vale de ingrediente nivel 2",
+    "desc": "Necesario para canjear ingredientes de nivel 2"
+  },
+  "243": {
+    "name": "Vale de ingrediente nivel 3",
+    "desc": "Necesario para canjear ingredientes de nivel 3"
+  },
+  "244": {
+    "name": "Vale de ingrediente nivel 4",
+    "desc": "Necesario para canjear ingredientes de nivel 4"
+  },
+  "245": {
+    "name": "Vale de ingrediente nivel 5",
+    "desc": "Necesario para canjear ingredientes de nivel 5"
+  },
+  "246": {
+    "name": "Gato de la suerte",
+    "desc": "Gato de la suerte, mascota del restaurante. ¡Dicen que atrae riqueza y buena suerte! Monedas por mesa +3, suerte +45"
+  },
+  "247": {
+    "name": "Loro recepcionista",
+    "desc": "Loro recepcionista, mascota del restaurante. ¡Un pájaro prodigioso con mucha labia! Ocupación +11%, clientes exigentes +5%"
+  },
+  "248": {
+    "name": "Cactus",
+    "desc": "Cactus, planta del restaurante; EXP final +3%"
+  },
+  "249": {
+    "name": "Árbol del dinero",
+    "desc": "Árbol del dinero, planta del restaurante; ingresos finales de monedas +2%"
+  },
+  "250": {
+    "name": "Dolor hasta los huesos",
+    "desc": "¡La pena corre como un río! EXP final +15%, ingresos finales de monedas +10%, suerte +50"
+  },
+  "251": {
+    "name": "Mano de Dios",
+    "desc": "¡Mete la mano ahí! ¡Muévela! Tus 25 primeras revueltas de despensa del día encuentran ingredientes seguro. EXP final +20%, suerte +8"
+  },
+  "252": {
+    "name": "Jazmín",
+    "desc": "¡Qué flor de jazmín tan bonita, tan fragante que llena el jardín! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "253": {
+    "name": "Maestro de datos del pueblo",
+    "desc": "Maestro de datos del pueblo: ¿cómo demuestras que 1 + 1 = 2? Si no lo demuestras, ¿cómo lo sabes? Nombrado por el propio Don Krab; ¡los restaurantes con este honor reciben la bendición del pueblo! Suerte +1"
+  },
+  "254": {
+    "name": "Pino de bienvenida",
+    "desc": "Pino de bienvenida, planta del restaurante; ocupación +5%"
+  },
+  "255": {
+    "name": "Cuenco del tesoro",
+    "desc": "Cuenco del tesoro: ¡quien me tiene, tiene el mundo! Decoración del restaurante; ingresos finales de monedas +12%"
+  },
+  "256": {
+    "name": "Martillo de Thor",
+    "desc": "¡¡¡Soy Thor, dios del trueno!!! ¡Con su poder puedes cambiar el clima del pueblo! (recarga: 6 horas) EXP final +5%"
+  },
+  "257": {
+    "name": "Arroz",
+    "desc": "¡Un cuenco de arroz humeante y fragante! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "258": {
+    "name": "Gramófono",
+    "desc": "Un gramófono que crea ambiente, ¡como volver a los años 50! EXP de Calamardo +100%, EXP final +8%"
+  },
+  "259": {
+    "name": "Avión grande",
+    "desc": "Rozando las nubes con la punta de los dedos, el avión surca el cielo y deja una estela de ensueño. Su restaurante: clientes exigentes +10%, ingresos finales de monedas +5%, suerte +10"
+  },
+  "260": {
+    "name": "Espátula de oro",
+    "desc": "¡Quiero a la Espátula de oro y la Espátula de oro me quiere! Su restaurante: clientes exigentes +1%, EXP final +3%, suerte +2"
+  },
+  "261": {
+    "name": "Corazón de puzle",
+    "desc": "¡Un corazón recompuesto dándolo todo! Su restaurante: clientes exigentes +2%, EXP final +45%, suerte +3"
+  },
+  "262": {
+    "name": "Todo son bugs",
+    "desc": "¡Qué basura! ¡Todo son BUGS! Su restaurante: suerte +18"
+  },
+  "263": {
+    "name": "Pase a domicilio",
+    "desc": "Pase para abrir el servicio a domicilio (el restaurante necesita 2 estrellas). ¡Muy raro!"
+  },
+  "264": {
+    "name": "Alma comilona",
+    "desc": "¡Comer no es solo llenar la barriga, es una actitud ante la vida, un placer! Su restaurante: clientes exigentes +4%, ingresos finales de monedas +12%, consumo de aceite -6%, suerte +17"
+  },
+  "265": {
+    "name": "Arenita",
+    "desc": "La energía y el optimismo de Arenita se contagian. Tu restaurante: ingresos finales de monedas y EXP +15%, monedas y EXP a domicilio +50%, EXP del repartidor ×3. Dura 4 horas"
+  },
+  "266": {
+    "name": "Patricio",
+    "desc": "La inocencia de Patricio se contagia. Tu restaurante: monedas y EXP a domicilio +20%, EXP del repartidor +300%. Dura 2 horas"
+  },
+  "267": {
+    "name": "Wok del Dios de la Cocina",
+    "desc": "Un wok que usó el Dios de la Cocina; 61 puntos de atributo al azar"
+  },
+  "274": {
+    "name": "[Rango 2]•Piedra de sabiduría",
+    "desc": "Creatividad +2"
+  },
+  "275": {
+    "name": "[Rango 3]•Piedra de sabiduría",
+    "desc": "Creatividad +4"
+  },
+  "276": {
+    "name": "[Rango 4]•Piedra de sabiduría",
+    "desc": "Creatividad +8"
+  },
+  "277": {
+    "name": "[Rango 5]•Piedra de sabiduría",
+    "desc": "Creatividad +16"
+  },
+  "278": {
+    "name": "[Rango 2]•Cristal rojo",
+    "desc": "Control del fuego +2"
+  },
+  "279": {
+    "name": "[Rango 3]•Cristal rojo",
+    "desc": "Control del fuego +4"
+  },
+  "280": {
+    "name": "[Rango 4]•Cristal rojo",
+    "desc": "Control del fuego +8"
+  },
+  "281": {
+    "name": "[Rango 5]•Cristal rojo",
+    "desc": "Control del fuego +16"
+  },
+  "282": {
+    "name": "[Rango 2]•Topacio",
+    "desc": "Corte +2"
+  },
+  "283": {
+    "name": "[Rango 3]•Topacio",
+    "desc": "Corte +4"
+  },
+  "284": {
+    "name": "[Rango 4]•Topacio",
+    "desc": "Corte +8"
+  },
+  "285": {
+    "name": "[Rango 5]•Topacio",
+    "desc": "Corte +16"
+  },
+  "286": {
+    "name": "[Rango 2]•Piedra azul abisal",
+    "desc": "Cocina +2"
+  },
+  "287": {
+    "name": "[Rango 3]•Piedra azul abisal",
+    "desc": "Cocina +4"
+  },
+  "288": {
+    "name": "[Rango 4]•Piedra azul abisal",
+    "desc": "Cocina +8"
+  },
+  "289": {
+    "name": "[Rango 5]•Piedra azul abisal",
+    "desc": "Cocina +16"
+  },
+  "290": {
+    "name": "[Rango 2]•Piedra verde mística",
+    "desc": "Sazón +2"
+  },
+  "291": {
+    "name": "[Rango 3]•Piedra verde mística",
+    "desc": "Sazón +4"
+  },
+  "292": {
+    "name": "[Rango 4]•Piedra verde mística",
+    "desc": "Sazón +8"
+  },
+  "293": {
+    "name": "[Rango 5]•Piedra verde mística",
+    "desc": "Sazón +16"
+  },
+  "294": {
+    "name": "Lanza del Señor",
+    "desc": "«Un barrido de lanza y vuelan los pétalos; el viento de los pinos persigue la luna a mi lado». Su restaurante: ocupación +3%, EXP final +9%, ingresos finales de monedas +20%, clientes exigentes +1%, suerte +2"
+  },
+  "295": {
+    "name": "Girasol",
+    "desc": "¡Sé ese girasol que no se doblega y mira siempre al sol con su mejor sonrisa! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "296": {
+    "name": "Espantapájaros",
+    "desc": "Usa el espantapájaros en los repartos para hacer un amago a los clientes: monedas y EXP a domicilio +3%, EXP del repartidor +20%"
+  },
+  "297": {
+    "name": "Muñeco de nieve",
+    "desc": "Un muñeco de nieve que nunca se derrite. Do you want to build a snowman? EXP del repartidor +45%, suerte +18"
+  },
+  "298": {
+    "name": "Cama de gato",
+    "desc": "¡La cama es humilde, pero el cariño es enorme! Guarda la comodidad y los sueños del gato, qué acogedora. Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "299": {
+    "name": "Alone",
+    "desc": "Estar solo no es soledad, es un buen rato para hablar contigo mismo. ¡Un mundo de uno también florece! Su restaurante: clientes exigentes +1%, suerte +5"
+  },
+  "300": {
+    "name": "Jade•Gorro de Awesome",
+    "desc": "Utensilio exclusivo del restaurante Awesome; 25 puntos de atributo"
+  },
+  "301": {
+    "name": "Corazón roto",
+    "desc": "Para agradecer a Awesome su gran aportación al pueblo, Don Krab se lo regaló como decoración del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "302": {
+    "name": "Tarjeta de apilado pequeña",
+    "desc": "Sube en 5 el límite de apilado de ingredientes (despensa y nevera)"
+  },
+  "303": {
+    "name": "Tarjeta de apilado",
+    "desc": "Sube en 20 el límite de apilado de ingredientes (despensa y nevera)"
+  },
+  "304": {
+    "name": "Bob Esponja",
+    "desc": "Bob Esponja (dura 3 horas): verte cocinar platos estrella le recuerda a sus días en el Crustáceo Cascarudo, así que cada cliente que toma un plato estrella da +200 % de EXP"
+  },
+  "305": {
+    "name": "Una caña",
+    "desc": "Aquellos años tiernos, como el rocío del alba, brillan con el primer amor; cada gota guarda un dulce recuerdo. Su restaurante: clientes exigentes +5%, ocupación +10%, ingresos finales de monedas +78%, suerte +18"
+  },
+  "306": {
+    "name": "Serpiente (zodiaco)",
+    "desc": "Insignia conmemorativa del zodiaco chino: la serpiente dorada trae fortuna. Pequeña probabilidad (16 %) de conseguir un mapa de exploración cuando los ratones hacen de las suyas; suerte +12"
+  },
+  "307": {
+    "name": "Vino Nü'er Hong",
+    "desc": "Para agradecer a Xiao Li su gran aportación al pueblo, Don Krab se lo regaló como adorno del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "308": {
+    "name": "Jade•Gorro de Xiao Li",
+    "desc": "Utensilio exclusivo del restaurante Xiao Li; 25 puntos de atributo"
+  },
+  "309": {
+    "name": "Camiseta número 1",
+    "desc": "¡Una camiseta con un significado especial! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "310": {
+    "name": "Vale Delicioso",
+    "desc": "Vale Delicioso, muy raro y más fácil de conseguir en festivos; cámbialo con el Alcalde por objetos especiales"
+  },
+  "311": {
+    "name": "[Salto del dragón y el tigre]",
+    "desc": "Placa Salto del dragón y el tigre, ¡por el año del Dragón! EXP final de [raíz cuadrada de la ocupación final × estrellas] (*)"
+  },
+  "312": {
+    "name": "El grito (obra maestra)",
+    "desc": "Pintura expresionista del noruego Edvard Munch, de 1893. Muy simbólica, refleja la angustia del ser humano moderno y su soledad y miedo interiores. EXP final +32%"
+  },
+  "313": {
+    "name": "Fogón Tongfu",
+    "desc": "Un caldo centenario guarda la riqueza del tiempo, moldes tallados a mano llevan el esmero del artesano y salsas secretas guardan la sabiduría de los ancestros. Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "314": {
+    "name": "Falso Dios de los chefs",
+    "desc": "El hombre que soñaba con ser Dios de los chefs; ¡por desgracia la realidad es dura! Su restaurante: EXP final +3%, clientes exigentes +1%, suerte +2"
+  },
+  "315": {
+    "name": "Bocina",
+    "desc": "Necesaria para hacer anuncios a todo el pueblo"
+  },
+  "316": {
+    "name": "[Muy elogiado]",
+    "desc": "Placa Muy elogiado, ¡¡¡llena de elogios de los amigos!!! Cada mesa gana una bonificación de monedas y EXP de [raíz cuadrada de la ocupación final, en porcentaje] (*)"
+  },
+  "317": {
+    "name": "Aclamado por todos",
+    "desc": "Te has convertido en la persona más popular del pueblo (aunque claro, no tanto como Don Krab); EXP final +25%"
+  },
+  "318": {
+    "name": "Pinocho",
+    "desc": "Una marioneta que habla; ¡dicen que le crece la nariz cada vez que miente! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +48%, suerte +5"
+  },
+  "319": {
+    "name": "Jingming",
+    "desc": "¿Si vuelas al cielo, verás más lejos? Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "320": {
+    "name": "Biberón",
+    "desc": "¡Dicen que el dueño acaba de ser padre y lleva el restaurante con el bebé a cuestas! Su restaurante: clientes exigentes +8%, suerte +20"
+  },
+  "321": {
+    "name": "Pack de subida de estrella (7 estrellas)",
+    "desc": "Pack de premio al llegar a 7 estrellas: 700 vales misteriosos, vale Delicioso x136, placa de 7 estrellas, medalla de promoción de estrella x1"
+  },
+  "322": {
+    "name": "Copa del Dios de las Estrellas",
+    "desc": "¡Un trofeo que Don Krab entrega a los restaurantes de 6 estrellas y que dispara la EXP! EXP final +20%"
+  },
+  "323": {
+    "name": "Libro del Dios de las Estrellas",
+    "desc": "¡Dicen que el Dios de las Estrellas dejó este libro en el pueblo, con un método especial para tasar recetas! Su dueño goza de su favor: éxito al tasar recetas misteriosas +20%, y si la receta de plato estrella obtenida es de nivel inferior a 5, se vuelve a tasar (si los dos resultados tienen el mismo nivel cuenta el primero; si no, el más alto)"
+  },
+  "324": {
+    "name": "Una media negra",
+    "desc": "¡Una media negra que dejó un cliente, ahora expuesta en el comedor! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "325": {
+    "name": "[Placa conmemorativa 2024]",
+    "desc": "Placa conmemorativa de 2024, el segundo año del pueblo: clientes exigentes en porcentaje igual a las estrellas del restaurante (estrellas moradas incluidas) (*), clientes exigentes +8%"
+  },
+  "326": {
+    "name": "Poción de creatividad",
+    "desc": "Poción de creatividad (dura 1 hora), creada por Don Krab y el viejo Fan. Creatividad +25"
+  },
+  "327": {
+    "name": "Meditación",
+    "desc": "Meditación (dura 1 hora): entra en estado meditativo en el campo de pruebas. Creatividad +5"
+  },
+  "328": {
+    "name": "Lluvia de ideas",
+    "desc": "¡Las ideas más locas no paran de salir de tu cabeza! Críticos de los misiles +8%, creatividad +5"
+  },
+  "329": {
+    "name": "Pack pequeño de misiles estándar",
+    "desc": "Contiene 15 misiles estándar"
+  },
+  "330": {
+    "name": "Pack pequeño de misiles explosivos",
+    "desc": "Contiene 15 misiles explosivos"
+  },
+  "331": {
+    "name": "Pack grande de misiles explosivos",
+    "desc": "Contiene 30 misiles explosivos"
+  },
+  "332": {
+    "name": "Moneda de la suerte",
+    "desc": "Objeto especial (compensación del 02/04/2025); dicen que trae buena suerte. Monedas por mesa +1, suerte +16"
+  },
+  "333": {
+    "name": "Rábano blanco grande",
+    "desc": "¡Un rábano blanco grande y feliz, fragante y crujiente! ¡Su dueño tiene una relación inconfesable con Don Krab! Su restaurante: clientes exigentes +1%, EXP final +10%, suerte +24"
+  },
+  "334": {
+    "name": "Moneda de oro azteca",
+    "desc": "Una moneda conmemorativa con una maldición eterna bajo la luna de sangre. Éxito en las pruebas +3%, ingresos finales de monedas +3%, suerte +8"
+  },
+  "335": {
+    "name": "VV",
+    "desc": "¡Basura, basura! ¡Basura detectada! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "336": {
+    "name": "La Gioconda (obra maestra)",
+    "desc": "Óleo del pintor renacentista italiano Leonardo da Vinci, que retrata la elegancia y serenidad de una mujer de la burguesía urbana en ascenso. EXP por mesa +2, EXP final +5%"
+  },
+  "337": {
+    "name": "La noche estrellada (obra maestra)",
+    "desc": "Vincent van Gogh pinta con fuerza un cielo lleno de movimiento. Todo el lienzo lo arrastra un torrente azul verdoso turbulento; nebulosas en remolino dan vida a la noche, y la escena irreal refleja las emociones inquietas y la imaginación febril de van Gogh. EXP por mesa +4"
+  },
+  "338": {
+    "name": "Lágrimas de ángel",
+    "desc": "Lágrimas de ángel, planta del restaurante; EXP a domicilio +8%"
+  },
+  "339": {
+    "name": "Border collie",
+    "desc": "Border collie, mascota del restaurante: un perro listo y obediente. Tiene un 25 % de probabilidad de que quien robe en tu huerto suelte un ingrediente de nivel 1–5 al azar, ¡y un reparto fallido tiene un 30 % de probabilidad de salir bien igualmente! EXP a domicilio +5%"
+  },
+  "341": {
+    "name": "[Rango 6]•Piedra de sabiduría",
+    "desc": "Creatividad +24"
+  },
+  "342": {
+    "name": "[Rango 6]•Cristal rojo",
+    "desc": "Control del fuego +24"
+  },
+  "343": {
+    "name": "[Rango 6]•Topacio",
+    "desc": "Corte +24"
+  },
+  "344": {
+    "name": "[Rango 6]•Piedra azul abisal",
+    "desc": "Cocina +24"
+  },
+  "345": {
+    "name": "[Rango 6]•Piedra verde mística",
+    "desc": "Sazón +24"
+  },
+  "346": {
+    "name": "Libro de cocina mágico",
+    "desc": "Un libro de cocina con una magia especial: al cocinar platos estrella, ¡50 % de probabilidad de gastar un tipo de ingrediente no misterioso menos!"
+  },
+  "347": {
+    "name": "Xiao Qi",
+    "desc": "¡Un gato Selkirk rex de pelo corto, adorable y dócil! El restaurante de su dueño: clientes exigentes +1%, EXP final +3%, ingresos finales de monedas +4%, suerte +24"
+  },
+  "348": {
+    "name": "Rey de los me gusta",
+    "desc": "Generoso y amable, hace amigos a base de me gusta y comparte el amor por la cocina. EXP final +5%; tus 10 primeros me gusta a amigos cada día tienen un 30 % de probabilidad de dar 1–3 de energía"
+  },
+  "349": {
+    "name": "El hijo del hombre (obra maestra)",
+    "desc": "Una manzana flotante tapa la cara de un hombre, símbolo del choque entre lo oculto y lo real. El valor final de los platos estrella que cocinas sube de 1 a [4 − estrellas actuales / 2] extra. EXP a domicilio +12%"
+  },
+  "350": {
+    "name": "Viejo reloj de pie",
+    "desc": "Un viejo reloj de estilo occidental que parece roto; las instalaciones que coloques duran un 15 % más"
+  },
+  "351": {
+    "name": "Emperador del farmeo",
+    "desc": "¡Este tipo vive para farmear, un hombre reconocido por Don Krab! EXP e ingresos finales de monedas +5%, suerte +6"
+  },
+  "352": {
+    "name": "Espátula gloriosa del Oráculo de Akatma",
+    "desc": "Cocina +51. Akatma, señora de la Torre de chefs, pone a prueba a todos con sus oráculos; esta espátula fue testigo de toda una vida de gloria."
+  },
+  "353": {
+    "name": "Hoja gloriosa del Oráculo de Akatma",
+    "desc": "Corte +51. Akatma nunca enseña cómo maneja el cuchillo; solo lo desenvaina ante los rivales que elige el oráculo."
+  },
+  "354": {
+    "name": "Wok glorioso del Oráculo de Akatma",
+    "desc": "Control del fuego +51. Akatma dice que la gloria es un wok encendido toda una vida, y su calor es para quien la suceda."
+  },
+  "355": {
+    "name": "Botella del Dios de la Cocina",
+    "desc": "Una botella de condimento que usó el Dios de la Cocina; 61 puntos de atributo al azar"
+  },
+  "356": {
+    "name": "Botella gloriosa del Oráculo de Akatma",
+    "desc": "Sazón +51. Dicen que el sabor de esta botella viene del último Dios de la Cocina; Akatma la guarda desde hace años, esperando a alguien digno de ella."
+  },
+  "357": {
+    "name": "Cuchillo del Dios de la Cocina",
+    "desc": "Un cuchillo que usó el Dios de la Cocina; 61 puntos de atributo al azar"
+  },
+  "358": {
+    "name": "Espátula del Dios de la Cocina",
+    "desc": "Una espátula que usó el Dios de la Cocina; 61 puntos de atributo al azar"
+  },
+  "359": {
+    "name": "Composición con rojo, amarillo y azul (obra maestra)",
+    "desc": "¡Hay una cuadrícula que se llama «Mondrian»! Ocupación +6%"
+  },
+  "360": {
+    "name": "El despertar de las constelaciones al alba (obra maestra)",
+    "desc": "¡El surrealismo en la mente de Joan Miró! Clientes exigentes +3%"
+  },
+  "361": {
+    "name": "Cuadrado negro y cuadrado rojo (obra maestra)",
+    "desc": "¡Una obra maestra abstracta de Kazimir Malévich! Las instalaciones que coloques duran un 10 % más"
+  },
+  "362": {
+    "name": "Cielo estrellado",
+    "desc": "¡Esperanza sin fin! El restaurante que lo tiene: clientes exigentes +1%, EXP final +53%, ingresos finales de monedas +180%, suerte +2"
+  },
+  "363": {
+    "name": "Plancton",
+    "desc": "Plancton vino a comer a tu restaurante. Seguro que no viene por las Cangreburgers, sino para...! Ocupación +50%, clientes exigentes -120%, aceite por mesa +5"
+  },
+  "364": {
+    "name": "Favor del Dios de las Estrellas",
+    "desc": "Tu restaurante goza del favor del Dios de las Estrellas. Probabilidad de mejor calidad al cocinar platos estrella +25% y EXP final +150%"
+  },
+  "365": {
+    "name": "Don Krab (de bajón)",
+    "desc": "Don Krab lo está pasando fatal en casa, está hundido y el pueblo ha perdido la alegría. Ocupación -30%, ingresos finales de monedas y EXP -20%"
+  },
+  "366": {
+    "name": "Felicidad compartida",
+    "desc": "¡Un hoy siempre feliz, con cosas buenas que no paran de llegar! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "367": {
+    "name": "Brillo estelar",
+    "desc": "Logro para restaurantes con todas las recetas en calidad Raro o superior; clientes exigentes +5%, EXP final +20%"
+  },
+  "368": {
+    "name": "Estrella del reparto",
+    "desc": "¡Estrella del reparto! EXP a domicilio +30%"
+  },
+  "369": {
+    "name": "Seguir repartiendo",
+    "desc": "¿Y qué si falló? ¡Nunca te rindas! Monedas a domicilio +30%"
+  },
+  "370": {
+    "name": "Misión cumplida",
+    "desc": "¡Sin miedo a las dificultades! ¡Siempre entrega! Los repartos con ingredientes duplicados salen bien seguro"
+  },
+  "371": {
+    "name": "Cima de la perfección",
+    "desc": "¡Llegar a la cima y soñar a lo grande!\n¡Llegar a la cima y soñar a lo grande, alcanzar la luna y las estrellas para escribir un nuevo capítulo! Logro para restaurantes con todas las recetas en calidad Manjar; clientes exigentes +8%, ingresos finales de monedas +20%"
+  },
+  "372": {
+    "name": "Pequeño samoyedo",
+    "desc": "¡Un samoyedo adorable! El restaurante de su dueño: clientes exigentes +1%, suerte +2"
+  },
+  "373": {
+    "name": "Xuan•Gorro de Da Ju",
+    "desc": "Utensilio exclusivo del restaurante Da Ju, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "374": {
+    "name": "[Fortuna sin límites]",
+    "desc": "Placa Fortuna sin límites: con confianza, ¡tu fortuna no tendrá límites! Ocupación +36%, ingresos finales de monedas +28%"
+  },
+  "375": {
+    "name": "Tele en blanco y negro",
+    "desc": "Una tele en blanco y negro de los 90 que ya no parece funcionar; ocupación +5%, ingresos finales de monedas +4%"
+  },
+  "376": {
+    "name": "Pack pequeño de diamantes",
+    "desc": "Contiene 50 diamantes"
+  },
+  "377": {
+    "name": "Lámpara de queroseno",
+    "desc": "¡Una lámpara de queroseno de llama temblorosa! Sube un 2 % la probabilidad de ingredientes misteriosos al explorar y da algo de EXP de restaurante al explorar"
+  },
+  "378": {
+    "name": "Aguja del deseo",
+    "desc": "La brújula del capitán Jack. Su poder no es señalar una dirección, ¡sino guiar a quien la lleva hacia lo que más desea! Sube un 6,2 % la probabilidad de ingredientes misteriosos al explorar y reduce a la mitad la probabilidad de perderse"
+  },
+  "379": {
+    "name": "Pack de vales de ingrediente misterioso",
+    "desc": "Contiene vale de ingrediente misterioso a elegir x8"
+  },
+  "380": {
+    "name": "Cervatillo",
+    "desc": "Para agradecer a 012 su gran aportación al pueblo, Don Krab se lo regaló como guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "381": {
+    "name": "Jade•Gorro de 012",
+    "desc": "Utensilio exclusivo del restaurante 012; creatividad +25"
+  },
+  "382": {
+    "name": "Xuan•Gorro de 012",
+    "desc": "Utensilio exclusivo del restaurante 012, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "383": {
+    "name": "Jade•Gorro de Star Restaurant",
+    "desc": "Utensilio exclusivo de Star Restaurant; creatividad +25"
+  },
+  "384": {
+    "name": "Xuan•Gorro de Star Restaurant",
+    "desc": "Utensilio exclusivo de Star Restaurant, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "385": {
+    "name": "Mochi",
+    "desc": "Para agradecer a Star Restaurant su gran aportación al pueblo, Don Krab se lo regaló como guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "386": {
+    "name": "Pack grande de diamantes",
+    "desc": "Contiene 999 diamantes"
+  },
+  "387": {
+    "name": "Árbol de monedas de sol",
+    "desc": "Monedas de sol: un árbol de monedas de girasol, planta del restaurante; clientes exigentes +3%, ingresos finales de monedas +4%"
+  },
+  "388": {
+    "name": "Ulu Ulu",
+    "desc": "Ulu Ulu, mascota del restaurante: un búho adorable. Aunque falle un reparto, consigues toda la EXP del pedido"
+  },
+  "389": {
+    "name": "Lámpara mágica",
+    "desc": "Una lámpara mágica. ¡Dicen que quien la tiene puede pedir deseos a Don Krab y goza de su protección!"
+  },
+  "390": {
+    "name": "Pequeña olla de oro",
+    "desc": "Para agradecer al restaurante Aoligei su gran aportación al pueblo, Don Krab se la regaló como reliquia familiar. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "391": {
+    "name": "Jade•Gorro de Aoligei",
+    "desc": "Utensilio exclusivo del restaurante Aoligei; creatividad +25"
+  },
+  "392": {
+    "name": "Xuan•Gorro de Aoligei",
+    "desc": "Utensilio exclusivo del restaurante Aoligei, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "393": {
+    "name": "Reloj de bolsillo de oro",
+    "desc": "Un reloj de bolsillo de oro, solo para restaurantes que han aportado mucho al pueblo. Efecto: las instalaciones que coloques duran un 35 % más, probabilidad de mejor calidad al cocinar platos estrella +15%, EXP e ingresos finales de monedas +15%"
+  },
+  "394": {
+    "name": "Licencia de enseñanza suprema",
+    "desc": "Licencia suprema para enseñar recetas misteriosas: ¡puedes dar clases con fragmentos de recetas misteriosas aprendidas (nivel 6)!"
+  },
+  "395": {
+    "name": "Grisito",
+    "desc": "¡Grisito! ¡¡¡Lo sexy no vale nada al lado de lo mono!!! El restaurante de su dueño: clientes exigentes +1%, ingresos finales de monedas +40%, suerte +2"
+  },
+  "396": {
+    "name": "Mapa de exploración supremo",
+    "desc": "Un mapa bien señalado para explorar las cuevas detrás del templo en busca de algunos ingredientes de nivel 3–4, ¡con un 64 % de probabilidad de ingrediente misterioso!"
+  },
+  "397": {
+    "name": "El pensador (estatua)",
+    "desc": "La contemplación serena es pasajera; ¡el movimiento de un cuerpo fuerte lleno de energía es absoluto! Aprender platos estrella en el aula siempre sale bien, y espiar una clase tiene un 5 % más de probabilidad de éxito. EXP del repartidor +35%"
+  },
+  "398": {
+    "name": "Jade•Gorro de That Guy",
+    "desc": "Utensilio exclusivo del restaurante de That Guy; creatividad +25"
+  },
+  "399": {
+    "name": "Xuan•Gorro de That Guy",
+    "desc": "Utensilio exclusivo del restaurante de That Guy, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "400": {
+    "name": "Kun",
+    "desc": "Un Kun-Kun al que le encanta el baloncesto. Para agradecer al restaurante de That Guy su gran aportación al pueblo, Don Krab se lo regaló como guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "401": {
+    "name": "Ahri el zorro",
+    "desc": "Ahri, mascota del restaurante. Sus ojos brillan como estrellas, llenos de sabiduría y viveza. Los clientes cuyo plato exigente no se satisfizo (aprendido: precio completo; no aprendido: mitad) también toman un plato estrella extra"
+  },
+  "402": {
+    "name": "Chac Mool (estatua)",
+    "desc": "¡Sus almas siguen el latido del corazón y los mensajeros divinos las llevan al cielo! Ocupación +18%, clientes exigentes +8%"
+  },
+  "403": {
+    "name": "Panda",
+    "desc": "Para agradecer a Crazy Thursday su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "404": {
+    "name": "Jade•Gorro de Crazy Thursday",
+    "desc": "Utensilio exclusivo del restaurante Crazy Thursday; creatividad +25"
+  },
+  "405": {
+    "name": "Xuan•Gorro de Crazy Thursday",
+    "desc": "Utensilio exclusivo del restaurante Crazy Thursday, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "406": {
+    "name": "Corazón acelerado",
+    "desc": "¡Siempre joven y apasionado! La EXP de comer gratis se triplica al liquidar (aunque te echen). ¡Y si te vas por tu cuenta ganas un 50 % más de energía!"
+  },
+  "407": {
+    "name": "Llave de oro",
+    "desc": "¡Una llave de oro reluciente! Ingresos finales de monedas +12%, suerte +32"
+  },
+  "408": {
+    "name": "Llave de luz estelar",
+    "desc": "Una llave que guarda la luz de las estrellas: explorar da 2 ingredientes normales más y, al encontrar un ingrediente misterioso, ¡50 % de probabilidad de uno más!"
+  },
+  "409": {
+    "name": "Fuego en el pueblo",
+    "desc": "¡Un fuego en el pueblo! ¡Aunque en principio el fuego está prohibido! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +10%, suerte +2"
+  },
+  "410": {
+    "name": "Rostro (obra maestra)",
+    "desc": "¡Una pintura abstracta de un artista desconocido! Ocupación +5%, clientes exigentes +2%"
+  },
+  "411": {
+    "name": "Águila",
+    "desc": "Águila, mascota del restaurante: ojos que atraviesan nubes y niebla, ¡vuela libre por el cielo! Convierte el 50 % de los clientes exigentes sobrantes en bonificación de ingresos finales de monedas"
+  },
+  "412": {
+    "name": "Gorro del Dios de la Cocina",
+    "desc": "Un gorro que llevó el Dios de la Cocina; 61 puntos de atributo al azar"
+  },
+  "413": {
+    "name": "Corona gloriosa del Oráculo de Akatma",
+    "desc": "Creatividad +51. La corona de la señora de la torre. A Akatma ya nada le importa; su único deseo es entregarla mientras viva."
+  },
+  "414": {
+    "name": "Moto roja",
+    "desc": "¡El rojo es pasión! Su restaurante: clientes exigentes +3%, ingresos finales de monedas +110%, EXP final +50%, suerte +6"
+  },
+  "415": {
+    "name": "Flauta dulce mágica",
+    "desc": "¡Una flauta dulce mágica que toca sola una música preciosa! Los platos estrella que toma Calamardo en tu restaurante se convierten en EXP a su valor completo. EXP final +3%"
+  },
+  "416": {
+    "name": "Manual del explorador",
+    "desc": "¡Mide lo desconocido con valor y vence el peligro con sabiduría! Una exploración con éxito con el mapa de exploración avanzado da 2 ingredientes de nivel 3 extra"
+  },
+  "417": {
+    "name": "Daji",
+    "desc": "Para agradecer a Eye-catcher su gran aportación al pueblo, Don Krab se lo regaló como guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "418": {
+    "name": "Jade•Gorro de Eye-catcher",
+    "desc": "Utensilio exclusivo del restaurante Eye-catcher; creatividad +25"
+  },
+  "419": {
+    "name": "Xuan•Gorro de Eye-catcher",
+    "desc": "Utensilio exclusivo del restaurante Eye-catcher, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "420": {
+    "name": "Guitarra sincera",
+    "desc": "¡La música que toca llega directa al corazón! Su restaurante: ocupación +3%, clientes exigentes +3%, bonificación de EXP final +3%, ingresos finales de monedas +74%, suerte +5"
+  },
+  "421": {
+    "name": "Pequeña estrella de la suerte",
+    "desc": "¡Qué suerte haberte conocido! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "422": {
+    "name": "Reloj de arena violeta",
+    "desc": "¡Un reloj de arena violeta mágico que puede invertir el tiempo! La recuperación natural de energía se duplica. ¡Las instalaciones que coloques duran un 15 % más!"
+  },
+  "423": {
+    "name": "Muñeco vudú",
+    "desc": "¡Un muñeco de trapo maldito! Aplastar cucarachas y revolver despensas tienen un 25 % de probabilidad de no gastar energía. ¡Y si te pilla una ratonera al revolver, 50 % de probabilidad de no perder monedas!"
+  },
+  "424": {
+    "name": "Silencio",
+    "desc": "¡Prohibido hacer ruido en este restaurante! ¡A los alborotadores se los llevan detrás para un poco de OOXX! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "425": {
+    "name": "Bola de cristal",
+    "desc": "¡Una bola de cristal que brilla con luz morada! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "427": {
+    "name": "Abono básico",
+    "desc": "¡Abono básico para acelerar el crecimiento de los cultivos! Abonar quita 20 minutos al tiempo de crecimiento"
+  },
+  "428": {
+    "name": "Abono avanzado",
+    "desc": "¡Abono avanzado para acelerar el crecimiento de los cultivos! Abonar quita 60 minutos al tiempo de crecimiento y sube la cosecha un 20 %"
+  },
+  "429": {
+    "name": "Vela pirata",
+    "desc": "Never fear, for I am here! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +24%, suerte +2"
+  },
+  "430": {
+    "name": "Negrito",
+    "desc": "¡Soy una paloma negra! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +110%, EXP final +50%, suerte +2"
+  },
+  "431": {
+    "name": "Copo de nieve",
+    "desc": "Para agradecer a Jiang Xue's Cottage su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "432": {
+    "name": "Jade•Gorro de Jiang Xue's Cottage",
+    "desc": "Utensilio exclusivo del restaurante Jiang Xue's Cottage; creatividad +25"
+  },
+  "433": {
+    "name": "Xuan•Gorro de Jiang Xue's Cottage",
+    "desc": "Utensilio exclusivo del restaurante Jiang Xue's Cottage, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "434": {
+    "name": "Tentáculo cortado del Kraken",
+    "desc": "Algo parecido a un tentáculo de pulpo que suelta el Kraken al alimentarlo. Nadie sabe para qué sirve"
+  },
+  "435": {
+    "name": "Jade•Gorro de Hearth & Home",
+    "desc": "Utensilio exclusivo del restaurante Hearth & Home; creatividad +25"
+  },
+  "436": {
+    "name": "Xuan•Gorro de Hearth & Home",
+    "desc": "Utensilio exclusivo del restaurante Hearth & Home, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "437": {
+    "name": "Cabezón",
+    "desc": "Para agradecer a Hearth & Home su gran aportación al pueblo, Don Krab se lo regaló como bestia de la suerte del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "438": {
+    "name": "Apolo (estatua)",
+    "desc": "¡Dios de la luz, ideal de belleza masculina en el arte griego antiguo! Convierte la bonificación de ingresos finales de monedas en bonificación de EXP final (proporción 2:3, se activa a mano)"
+  },
+  "439": {
+    "name": "Monumento al Renacimiento Africano (estatua)",
+    "desc": "Una estatua inspirada en el Monumento al Renacimiento Africano, símbolo del paso de los pueblos africanos de la oscuridad a la luz y de su firme compromiso con el renacer y el progreso de África. ¡Permite echar a mano a un Don Krab enfadado!"
+  },
+  "440": {
+    "name": "Xiao Hong",
+    "desc": "Para agradecer a Peace Hotel su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "441": {
+    "name": "Jade•Gorro de Peace Hotel",
+    "desc": "Utensilio exclusivo del restaurante Peace Hotel; creatividad +25"
+  },
+  "442": {
+    "name": "Xuan•Gorro de Peace Hotel",
+    "desc": "Utensilio exclusivo del restaurante Peace Hotel, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "443": {
+    "name": "Tiburoncín",
+    "desc": "¡Listo, valiente y fuerte! Su restaurante: clientes exigentes +1%, EXP final +6%, ingresos finales de monedas +40%, suerte +2"
+  },
+  "444": {
+    "name": "Amarillo",
+    "desc": "¡Un perro de pueblo con un corazón tan grande como el mundo! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "445": {
+    "name": "Virus DT",
+    "desc": "Para agradecer a Sexy Cat Online su gran aportación al pueblo, Don Krab lo roció en su restaurante para dar ambiente (dicen que, tras respirarlo, no puedes resistirte a los gatos). Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "446": {
+    "name": "Jade•Gorro de Sexy Cat",
+    "desc": "Utensilio exclusivo del restaurante Sexy Cat Online; creatividad +25"
+  },
+  "447": {
+    "name": "Xuan•Gorro de Sexy Cat",
+    "desc": "Utensilio exclusivo del restaurante Sexy Cat Online, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "448": {
+    "name": "Ojo (obra maestra)",
+    "desc": "¡Dicen que es una copia de un Picasso! Ingresos finales de monedas +4%"
+  },
+  "449": {
+    "name": "Sopa caliente",
+    "desc": "¡Hermano! ¡Bébete este cuenco de un trago! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "450": {
+    "name": "Pack 1.er puesto de afecto mensual del Kraken",
+    "desc": "Pack del 1.er puesto en alimentar al Kraken este mes: tentáculo cortado del Kraken x10, 500 diamantes"
+  },
+  "451": {
+    "name": "Pack 2.º puesto de afecto mensual del Kraken",
+    "desc": "Pack del 2.º puesto en alimentar al Kraken este mes: tentáculo cortado del Kraken x9, 450 diamantes"
+  },
+  "452": {
+    "name": "Pack 3.er puesto de afecto mensual del Kraken",
+    "desc": "Pack del 3.er puesto en alimentar al Kraken este mes: tentáculo cortado del Kraken x8, 400 diamantes"
+  },
+  "453": {
+    "name": "Pack puestos 4–8 de afecto mensual del Kraken",
+    "desc": "Pack de los puestos 4 a 8 en alimentar al Kraken este mes: tentáculo cortado del Kraken x7, 300 diamantes"
+  },
+  "454": {
+    "name": "Pack puestos 9–15 de afecto mensual del Kraken",
+    "desc": "Pack de los puestos 9 a 15 en alimentar al Kraken este mes: tentáculo cortado del Kraken x6, 200 diamantes"
+  },
+  "455": {
+    "name": "Pack puestos 16–30 de afecto mensual del Kraken",
+    "desc": "Pack de los puestos 16 a 30 en alimentar al Kraken este mes: tentáculo cortado del Kraken x5, 100 diamantes"
+  },
+  "456": {
+    "name": "Gran Gris",
+    "desc": "Para agradecer al restaurante Xiao Mao Cat su gran aportación al pueblo, Don Krab lo convirtió en bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "457": {
+    "name": "Jade•Gorro de Xiao Mao Cat",
+    "desc": "Utensilio exclusivo del restaurante Xiao Mao Cat; creatividad +25"
+  },
+  "458": {
+    "name": "Xuan•Gorro de Xiao Mao Cat",
+    "desc": "Utensilio exclusivo del restaurante Xiao Mao Cat, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "459": {
+    "name": "Cariño del Alcalde",
+    "desc": "El cariño del Alcalde. Efecto: ocupación +50%, monedas por mesa +1"
+  },
+  "460": {
+    "name": "Roca prehistórica (estatua)",
+    "desc": "La experiencia de los antepasados es un faro para los que vienen; ¡aprendamos con humildad de los mayores! Sube a 1:1 la proporción para convertir la ocupación sobrante en bonificación de EXP final"
+  },
+  "461": {
+    "name": "Pergamino rosa",
+    "desc": "¡Un libro extraño que narra amoríos de antaño! Las mesas que terminan un sinpa dan renombre seguro y su EXP sube un 50 %"
+  },
+  "462": {
+    "name": "Bendición de la luz sagrada",
+    "desc": "Bendecido por la luz sagrada del Dios de las Estrellas: energía máxima +100"
+  },
+  "463": {
+    "name": "Pamela",
+    "desc": "¡Un sombrero precioso! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "464": {
+    "name": "Fórmula arcana",
+    "desc": "Se tasa con un [Sello de jade del Dios de la Cocina]; si sale bien da un trozo de fórmula de ingrediente [principal o secundario], si falla desaparece"
+  },
+  "465": {
+    "name": "Pergamino de la estrella y la luna",
+    "desc": "¡Dicen que el Dios de las Estrellas dejó este pergamino secreto en el pueblo, con un método especial para tasar fórmulas de ingredientes! Éxito al tasar fórmulas misteriosas +10%; tras tasar, si ya tienes el trozo secundario de la fórmula, 20 % de probabilidad de que se convierta en principal"
+  },
+  "466": {
+    "name": "Blancote",
+    "desc": "¡Ahhh! Inspector Gato Blanco~~~ Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "468": {
+    "name": "Atrapasueños",
+    "desc": "¡La leyenda dice que atrapa lo que se ve en sueños! Duplica la probabilidad de vales Deliciosos al atacar al guardián. Los críticos tienen un 3 % de probabilidad de soltar un sello de jade del Dios de la Cocina (32 % con misiles rápidos). Probabilidad de ingredientes de nivel 6 al matar al guardián +20%"
+  },
+  "469": {
+    "name": "Lágrima del Dios de las Estrellas",
+    "desc": "Lágrimas que derramó el Dios de las Estrellas añorando a un antiguo amor; ¡quien la tiene suelta todos sus pesares! Cada combinación de ingredientes tiene un 2 % de probabilidad de dar uno extra. ¡Combinar con una fórmula tiene un 25 % de probabilidad de dar un ingrediente extra!"
+  },
+  "470": {
+    "name": "Esencia de fórmula",
+    "desc": "¡Esencia que se obtiene al descomponer trozos de fórmula!"
+  },
+  "471": {
+    "name": "Xiao Lin",
+    "desc": "¡Un presidente dominante que regaló su fortuna solo para vivir la vida real! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +5"
+  },
+  "472": {
+    "name": "Violeta africana",
+    "desc": "Violeta africana, planta del restaurante; EXP por mesa +3"
+  },
+  "473": {
+    "name": "An",
+    "desc": "Te deseo: ¡buenos días! ¡Buenas tardes! ¡Buenas noches! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +110%, EXP final +50%, suerte +2"
+  },
+  "474": {
+    "name": "Oxalis morado danzante",
+    "desc": "Oxalis morado danzante, planta del restaurante; clientes exigentes +2%"
+  },
+  "475": {
+    "name": "Sandía",
+    "desc": "¡El verano no está completo sin mí! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "476": {
+    "name": "Ruptura (estatua)",
+    "desc": "Explorar la libertad y la dignidad: su valor no está en el desnudo en sí, sino en cómo refleja las estructuras de poder y la liberación del pensamiento de cada época. Probabilidad de mejor calidad al cocinar platos estrella +6%. EXP final +24%"
+  },
+  "477": {
+    "name": "Fama y fortuna (obra maestra)",
+    "desc": "El agua que corre no compite por llegar primero, sino por no dejar de fluir. Ingresos finales de monedas +3%, EXP final +15%"
+  },
+  "478": {
+    "name": "Ciudad (obra maestra)",
+    "desc": "¡Montes verdes y aguas claras pintados del color del hormigón! Clientes exigentes +2%, EXP por mesa +2"
+  },
+  "479": {
+    "name": "Puntita",
+    "desc": "Para agradecer a Qingliang International Hotel su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "480": {
+    "name": "Jade•Gorro de Qingliang",
+    "desc": "Utensilio exclusivo del restaurante Qingliang International Hotel; creatividad +25"
+  },
+  "481": {
+    "name": "Xuan•Gorro de Qingliang",
+    "desc": "Utensilio exclusivo del restaurante Qingliang International Hotel, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "482": {
+    "name": "Caos (obra maestra)",
+    "desc": "¡Es a la vez una utopía para huir de la realidad y el valor de enfrentarse a la nada! Las instalaciones que coloques duran un 15 % más, EXP final +8%"
+  },
+  "483": {
+    "name": "Recuerdo (obra maestra)",
+    "desc": "¡Es a la vez un ritual contra el olvido y un intento de hacer las paces con el tiempo! Probabilidad de mejor calidad al cocinar platos estrella +8%. Clientes exigentes +5%, EXP final +6%"
+  },
+  "484": {
+    "name": "Vulgar (estatua)",
+    "desc": "¡La riqueza es fuente de lujo y pereza; la pobreza es madre de la desvergüenza y el pecado! Cuando Plancton está en tu restaurante, cada ronda hay un 30 % de probabilidad de que se vaya solo. Cuando Calamardo está en tu restaurante, la EXP final sube [número de Calamardos] × 3%"
+  },
+  "485": {
+    "name": "Jade•Gorro de A-You's Kitchen",
+    "desc": "Utensilio exclusivo del restaurante A-You's Kitchen; creatividad +25"
+  },
+  "486": {
+    "name": "Xuan•Gorro de A-You's Kitchen",
+    "desc": "Utensilio exclusivo del restaurante A-You's Kitchen, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "487": {
+    "name": "Suertudo",
+    "desc": "Para agradecer a A-You's Kitchen su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "488": {
+    "name": "Beeecito",
+    "desc": "Para agradecer a Youthful Days su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "489": {
+    "name": "Jade•Gorro de Youthful Days",
+    "desc": "Utensilio exclusivo del restaurante Youthful Days; creatividad +25"
+  },
+  "490": {
+    "name": "Xuan•Gorro de Youthful Days",
+    "desc": "Utensilio exclusivo del restaurante Youthful Days, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "491": {
+    "name": "Galleta de la suerte",
+    "desc": "Una galleta del juego de adivinar del mercado; sube el valor final de los platos estrella que cocinas (al azar, [6 − estrellas del restaurante / 2])"
+  },
+  "492": {
+    "name": "Rizos",
+    "desc": "¡Un gato American Curl regordete! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +140%, EXP final +50%, suerte +2"
+  },
+  "493": {
+    "name": "Jade•Gorro de Tokyo Grand Hotel",
+    "desc": "Utensilio exclusivo del restaurante Tokyo Grand Hotel; creatividad +25"
+  },
+  "494": {
+    "name": "Xuan•Gorro de Tokyo Grand Hotel",
+    "desc": "Utensilio exclusivo del restaurante Tokyo Grand Hotel, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "495": {
+    "name": "Huahua",
+    "desc": "Para agradecer a Tokyo Grand Hotel su gran aportación al pueblo, Don Krab se lo regaló como amuleto del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "496": {
+    "name": "[Placa de 7 estrellas]",
+    "desc": "Placa de 7 estrellas; EXP final +60%, EXP por mesa +7"
+  },
+  "497": {
+    "name": "Un pensamiento",
+    "desc": "¿¡No está rico!? ¿¡Está rico!? Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "498": {
+    "name": "Laifu",
+    "desc": "¡Guau! ¡Guau! ¡Guau! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +60%, suerte +2"
+  },
+  "499": {
+    "name": "Xuan•Gorro de Xiao Li",
+    "desc": "Utensilio exclusivo del restaurante Xiao Li, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "500": {
+    "name": "Gran espada",
+    "desc": "¿Te apetece un «gran masaje»? Su restaurante: clientes exigentes +1%, EXP final +50%, ingresos finales de monedas +100%, suerte +2"
+  },
+  "501": {
+    "name": "Ranita",
+    "desc": "¡Aba, aba! ¡Ababa! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +40%, suerte +2"
+  },
+  "502": {
+    "name": "Casco griego",
+    "desc": "¡Chipre es griega! Su restaurante: clientes exigentes +1%, EXP final +3%, ingresos finales de monedas +16%, suerte +2"
+  },
+  "503": {
+    "name": "Mimi",
+    "desc": "¡Miau miau miau, soy Mimi! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "504": {
+    "name": "Hoja de otoño",
+    "desc": "¡Las hojas caídas viajan con el viento de otoño y se despiden de la rama al caer! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "505": {
+    "name": "Herradura de la suerte",
+    "desc": "¡Una herradura de la suerte, solo para los magnates del pueblo! Efecto: las instalaciones que coloques duran un 50 % más, probabilidad de mejor calidad al cocinar platos estrella +5%, probabilidad de ingredientes misteriosos al explorar +2%, suerte +88"
+  },
+  "506": {
+    "name": "Senbei rojo",
+    "desc": "Un senbei rojo, necesario para subir una receta de Manjar a Ambrosía (frutos secos y condimentos)"
+  },
+  "507": {
+    "name": "Senbei amarillo",
+    "desc": "Un senbei amarillo, necesario para subir una receta de Manjar a Ambrosía (carne, huevos y lácteos)"
+  },
+  "508": {
+    "name": "Senbei azul",
+    "desc": "Un senbei azul, necesario para subir una receta de Manjar a Ambrosía (frutas y verduras)"
+  },
+  "509": {
+    "name": "Xiaomi",
+    "desc": "¡Hachimi, hachimi! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "510": {
+    "name": "Xiaohua",
+    "desc": "¿Entiendes el mundo de una gata tricolor? ¡Gastar, gastar, gastar! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "511": {
+    "name": "Cero aditivos",
+    "desc": "¡Todo natural! ¡Cero aditivos! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +100%, EXP final +50%, suerte +2"
+  },
+  "512": {
+    "name": "Xiao Yi",
+    "desc": "Para agradecer a 221 su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "513": {
+    "name": "Jade•Gorro de 221",
+    "desc": "Utensilio exclusivo del restaurante 221; creatividad +25"
+  },
+  "514": {
+    "name": "Xuan•Gorro de 221",
+    "desc": "Utensilio exclusivo del restaurante 221, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "515": {
+    "name": "Hojas caídas",
+    "desc": "Cuando la primavera vuelve en silencio, allí donde las hojas se hacen polvo, ¡el verde nuevo empieza a brotar! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "516": {
+    "name": "Joven antimodelo",
+    "desc": "¡El certificado de buen ciudadano de Shao An, estrella emergente de la cocina desastrosa! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "517": {
+    "name": "Vale de purificación",
+    "desc": "Purifica una vez el agua del estanque (pureza a 100)"
+  },
+  "518": {
+    "name": "Alguicida",
+    "desc": "Quita las algas del estanque una vez (algas -50)"
+  },
+  "519": {
+    "name": "Xiao Pi",
+    "desc": "Para agradecer a Pure Additive Zero Natural su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "520": {
+    "name": "Jade•Gorro de Pure Additive Zero Natural",
+    "desc": "Utensilio exclusivo del restaurante Pure Additive Zero Natural; creatividad +25"
+  },
+  "521": {
+    "name": "Xuan•Gorro de Pure Additive Zero Natural",
+    "desc": "Utensilio exclusivo del restaurante Pure Additive Zero Natural, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "522": {
+    "name": "Capibara",
+    "desc": "Para agradecer a Hikarizaka Little Chef su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "523": {
+    "name": "Jade•Gorro de Hikarizaka Little Chef",
+    "desc": "Utensilio exclusivo del restaurante Hikarizaka Little Chef; creatividad +25"
+  },
+  "524": {
+    "name": "Xuan•Gorro de Hikarizaka Little Chef",
+    "desc": "Utensilio exclusivo del restaurante Hikarizaka Little Chef, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "525": {
+    "name": "Luz estelar",
+    "desc": "¡Luz estelar, deslúmbralos a todos! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "526": {
+    "name": "[Placa conmemorativa 2025]",
+    "desc": "Placa conmemorativa de 2025, el tercer año del pueblo; sube un 16 % la bonificación de ingresos finales de monedas que dan los honores (*)"
+  },
+  "527": {
+    "name": "Coche de ensueño",
+    "desc": "¡Un coche antiguo de la colección del dueño! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +26%, suerte +2"
+  },
+  "528": {
+    "name": "Caballo (zodiaco)",
+    "desc": "Insignia conmemorativa del zodiaco chino: el éxito llega al galope. Críticos de los misiles +12%, suerte +12"
+  },
+  "529": {
+    "name": "Bicicleta",
+    "desc": "¡Imaginando a una diosa sentada de lado en el asiento de atrás! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +146%, EXP final +50%, suerte +2"
+  },
+  "530": {
+    "name": "Pitahaya",
+    "desc": "¡Un dragón de fuego sigue siendo un dragón! ¡Yo solo llevo una «fruta» de más! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +108%, EXP final +50%, suerte +2"
+  },
+  "531": {
+    "name": "El nacimiento de Venus (obra maestra)",
+    "desc": "¡La belleza vista como eterna y perfecta en sí misma, no algo que se forma poco a poco! Al cocinar platos estrella, sube un 20 % el efecto actual de la prueba"
+  },
+  "532": {
+    "name": "Banquete celestial completo",
+    "desc": "¡Las estrellas iluminan el cielo, el camino de la buena mesa se ensancha y los manjares celestiales rebosan en cada plato! Logro para restaurantes con todas las recetas en calidad Ambrosía: probabilidad de mejor calidad al cocinar platos estrella +36%, ingresos finales de monedas +20%, EXP final +20%, suerte +99"
+  },
+  "533": {
+    "name": "Rocío violeta del banquete",
+    "desc": "¡Una poción serena, profunda y misteriosa, tan pura y valiosa como el rocío de la mañana, hecha para subir el valor de los platos estrella! Valor base de los platos estrella que cocinas +10%"
+  },
+  "534": {
+    "name": "Elixir del olfato culinario",
+    "desc": "¡Bébelo para afinar tu olfato para los ingredientes al explorar! Probabilidad de ingredientes misteriosos al explorar +1,4% y 1 ingrediente normal más"
+  },
+  "535": {
+    "name": "Licencia de restauración",
+    "desc": "¡Una licencia de restauración falsificada, conseguida por «vías especiales»! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +12%, suerte +2"
+  },
+  "536": {
+    "name": "Jade•Gorro de Carefree Villa",
+    "desc": "Utensilio exclusivo del restaurante Carefree Villa; creatividad +25"
+  },
+  "537": {
+    "name": "Xuan•Gorro de Carefree Villa",
+    "desc": "Utensilio exclusivo del restaurante Carefree Villa, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "538": {
+    "name": "Unicornio",
+    "desc": "Para agradecer a Carefree Villa su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "540": {
+    "name": "Salchicha grande",
+    "desc": "¡Una salchicha grande que se quedó atrapada! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "541": {
+    "name": "Galletas Amor Verdadero",
+    "desc": "¡Una bolsa de galletas Amor Verdadero! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +60%, suerte +2"
+  },
+  "542": {
+    "name": "Falso fantasma",
+    "desc": "¡Un falso fantasma para espantar la mala suerte! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +40%, suerte +2"
+  },
+  "543": {
+    "name": "Barril viejo",
+    "desc": "¡Con su intenso aroma a roble, este barril ofrece un sabor único y un momento de placer y armonía! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "544": {
+    "name": "Moradito",
+    "desc": "Para agradecer a chuchu Corner Shop su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "545": {
+    "name": "Jade•Gorro de chuchu Corner Shop",
+    "desc": "Utensilio exclusivo del restaurante chuchu Corner Shop; creatividad +25"
+  },
+  "546": {
+    "name": "Xuan•Gorro de chuchu Corner Shop",
+    "desc": "Utensilio exclusivo del restaurante chuchu Corner Shop, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "547": {
+    "name": "Dundun",
+    "desc": "Para agradecer a Imperial Kitchen su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "548": {
+    "name": "Jade•Gorro de Imperial Kitchen",
+    "desc": "Utensilio exclusivo del restaurante Imperial Kitchen; creatividad +25"
+  },
+  "549": {
+    "name": "Xuan•Gorro de Imperial Kitchen",
+    "desc": "Utensilio exclusivo del restaurante Imperial Kitchen, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "550": {
+    "name": "A-Huang",
+    "desc": "¡A-Huang, cuyas orejas rosadas lo hacen la estrella del mundo perruno! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +20%, suerte +2"
+  },
+  "551": {
+    "name": "Hoja del dragón de cristal",
+    "desc": "¡Un cuchillo de cristal; dicen que suelta un rugido de dragón con cada corte! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "552": {
+    "name": "Jade•Gorro de Wok-Fried Flavors Shake the World",
+    "desc": "Utensilio exclusivo del restaurante Wok-Fried Flavors Shake the World; creatividad +25"
+  },
+  "553": {
+    "name": "Xuan•Gorro de Wok-Fried Flavors Shake the World",
+    "desc": "Utensilio exclusivo del restaurante Wok-Fried Flavors Shake the World, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "554": {
+    "name": "Drogon",
+    "desc": "Para agradecer a Wok-Fried Flavors Shake the World su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "555": {
+    "name": "Blanquito",
+    "desc": "¡En realidad soy un gato blanco! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "556": {
+    "name": "Molinillo de papel",
+    "desc": "¡Imprescindible para perseguir el viento de pequeño! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "557": {
+    "name": "Jade•Gorro de Chetou Grand Hotel",
+    "desc": "Utensilio exclusivo del restaurante Chetou Grand Hotel; creatividad +25"
+  },
+  "558": {
+    "name": "Xuan•Gorro de Chetou Grand Hotel",
+    "desc": "Utensilio exclusivo del restaurante Chetou Grand Hotel, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "559": {
+    "name": "Coche antiguo",
+    "desc": "Para agradecer a Chetou Grand Hotel su gran aportación al pueblo, Don Krab se lo regaló como objeto guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "560": {
+    "name": "Supernova",
+    "desc": "¡Una supernova resplandeciente! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "561": {
+    "name": "Sello del Dios de las Estrellas",
+    "desc": "Una insignia de bronce antiguo grabada con destellos de estrellas y llamas de fogón, emblema del señor del fogón que percibe todos los sabores. ¡Llévala a la cocina y del humo saldrá un dulzor de estrellas! Duplica el efecto base de las placas que coloques (el consumo de aceite y las propiedades especiales no cambian)"
+  },
+  "562": {
+    "name": "Luz de vela",
+    "desc": "¡Un tarro de luz de vela! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +16%, suerte +2"
+  },
+  "563": {
+    "name": "Melodía de Huahua",
+    "desc": "¡La melodía de Huahua! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "564": {
+    "name": "Osito de peluche",
+    "desc": "¡Un regalo de cumpleaños, aunque no recuerdas quién te lo dio! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +80%, suerte +2"
+  },
+  "565": {
+    "name": "Hamburguesa no tan deliciosa",
+    "desc": "¡Una hamburguesa llena de sabores raros! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "566": {
+    "name": "Té helado de limón",
+    "desc": "¡Té helado de limón con receta secreta! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "567": {
+    "name": "Doro",
+    "desc": "¡No me sale! ¡No hay manera de que me salga! Su restaurante: clientes exigentes +1%, EXP final +50%, ingresos finales de monedas +110%, suerte +2"
+  },
+  "568": {
+    "name": "Estrella de mar grande",
+    "desc": "¡Una estrella de mar grande, toda pegajosa! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +22%, suerte +2"
+  },
+  "569": {
+    "name": "Pantalón corto de flores blancas",
+    "desc": "¡Mantén seco tu pantalón corto! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "570": {
+    "name": "Castillo de arena",
+    "desc": "¡Un castillo hecho de arena! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "571": {
+    "name": "Ahoge",
+    "desc": "Para agradecer a Gensokyo su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "572": {
+    "name": "Jade•Gorro de Gensokyo",
+    "desc": "Utensilio exclusivo del restaurante Gensokyo; creatividad +25"
+  },
+  "573": {
+    "name": "Xuan•Gorro de Gensokyo",
+    "desc": "Utensilio exclusivo del restaurante Gensokyo, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "574": {
+    "name": "Dinosaurio de peluche",
+    "desc": "¿Te acuerdas de con qué dormías de pequeño? Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "575": {
+    "name": "Porcelana blanca",
+    "desc": "¡Un valioso tesoro familiar; dicen que es porcelana blanca de la dinastía Song! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "576": {
+    "name": "Garra de tigre",
+    "desc": "¡Una garra de tigre hecha por nativos americanos! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "577": {
+    "name": "Piel de oso pardo",
+    "desc": "¡¡¡Una piel de oso pardo perfecta!!! Monedas por mesa +1, EXP por mesa +1"
+  },
+  "578": {
+    "name": "Piel de tigre dientes de sable",
+    "desc": "¡¡¡Una piel perfecta de tigre dientes de sable prehistórico!!! Ingresos finales de monedas +3%, EXP final +8%"
+  },
+  "579": {
+    "name": "Arroz con muslo de pollo",
+    "desc": "¡Arroz dorado! ¡Un muslo enorme y delicioso! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "580": {
+    "name": "Un cubo de agua",
+    "desc": "¡Pasa: agua del grifo a voluntad! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "581": {
+    "name": "Lingote de oro",
+    "desc": "¡Un lingote de oro reluciente! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "582": {
+    "name": "Jade•Gorro de Veterans' Diner",
+    "desc": "Utensilio exclusivo del restaurante Veterans' Diner; creatividad +25"
+  },
+  "583": {
+    "name": "Xuan•Gorro de Veterans' Diner",
+    "desc": "Utensilio exclusivo del restaurante Veterans' Diner, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "584": {
+    "name": "DD",
+    "desc": "Para agradecer a Veterans' Diner su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "585": {
+    "name": "Cuerdas de rosa, notas azules",
+    "desc": "¡Esta guitarra lleva 30 años sin tocarse y le ha crecido una rosa azul! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +2%, suerte +2"
+  },
+  "586": {
+    "name": "Huevos revueltos con tomate",
+    "desc": "¿Te gustan los huevos revueltos con tomate? Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "587": {
+    "name": "Una espiga de arroz",
+    "desc": "¡Una espiga de arroz doblada por el peso de sus granos! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "588": {
+    "name": "Cartel de se busca",
+    "desc": "¡Un cartel de «se busca» de principios del siglo XIX! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "589": {
+    "name": "Réplica del trofeo Larry O'Brien",
+    "desc": "¡Una réplica del trofeo Larry O'Brien! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "590": {
+    "name": "Gatito Negro",
+    "desc": "Para agradecer a White Robe su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "591": {
+    "name": "Jade•Gorro de White Robe",
+    "desc": "Utensilio exclusivo del restaurante White Robe; creatividad +25"
+  },
+  "592": {
+    "name": "Xuan•Gorro de White Robe",
+    "desc": "Utensilio exclusivo del restaurante White Robe, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "593": {
+    "name": "Pequeño C",
+    "desc": "Para agradecer a Childhood su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "594": {
+    "name": "Jade•Gorro de Childhood",
+    "desc": "Utensilio exclusivo del restaurante Childhood; creatividad +25"
+  },
+  "595": {
+    "name": "Xuan•Gorro de Childhood",
+    "desc": "Utensilio exclusivo del restaurante Childhood, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "596": {
+    "name": "Bebé demonio",
+    "desc": "Para agradecer a Styx Tower su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "597": {
+    "name": "Jade•Gorro de Styx Tower",
+    "desc": "Utensilio exclusivo del restaurante Styx Tower; creatividad +25"
+  },
+  "598": {
+    "name": "Xuan•Gorro de Styx Tower",
+    "desc": "Utensilio exclusivo del restaurante Styx Tower, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "599": {
+    "name": "Jade•Gorro de Qi Pot Dishes",
+    "desc": "Utensilio exclusivo del restaurante Qi Pot Dishes; creatividad +25"
+  },
+  "600": {
+    "name": "Xuan•Gorro de Qi Pot Dishes",
+    "desc": "Utensilio exclusivo del restaurante Qi Pot Dishes, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "601": {
+    "name": "Daidai",
+    "desc": "Para agradecer a Qi Pot Dishes su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "602": {
+    "name": "Gaita escocesa",
+    "desc": "¡El verdadero amor no es solo disfrutar de la belleza, sino crearla! Su restaurante: clientes exigentes +1%, EXP final +50%, ingresos finales de monedas +173%, suerte +2"
+  },
+  "603": {
+    "name": "UU",
+    "desc": "Para agradecer a Scottish Flirt su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "604": {
+    "name": "Jade•Gorro de Scottish Flirt",
+    "desc": "Utensilio exclusivo del restaurante Scottish Flirt; creatividad +25"
+  },
+  "605": {
+    "name": "Xuan•Gorro de Scottish Flirt",
+    "desc": "Utensilio exclusivo del restaurante Scottish Flirt, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "606": {
+    "name": "Pikachu",
+    "desc": "Para agradecer a White Roast Goose Inn su gran aportación al pueblo, Don Krab se lo regaló como bestia guardiana del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "607": {
+    "name": "Jade•Gorro de White Roast Goose Inn",
+    "desc": "Utensilio exclusivo del restaurante White Roast Goose Inn; creatividad +25"
+  },
+  "608": {
+    "name": "Xuan•Gorro de White Roast Goose Inn",
+    "desc": "Utensilio exclusivo del restaurante White Roast Goose Inn, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "609": {
+    "name": "Reloj de pulsera antiguo",
+    "desc": "¡Un reloj de los años 80 lleno de historia! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +10%, suerte +2"
+  },
+  "610": {
+    "name": "Caracola morada",
+    "desc": "¡Una caracola morada con un uso especial en los niveles de estrellas moradas!"
+  },
+  "611": {
+    "name": "Revólver",
+    "desc": "¡Un viejo revólver roto! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "612": {
+    "name": "Piedra del Festín sagrado",
+    "desc": "¡Un caldero de piedra prepara el Festín sagrado y la luz de las estrellas cae en las copas para honrar el banquete! Honor para restaurantes con todas las recetas en calidad Festín sagrado: monedas de los platos de clientes exigentes satisfechos +20%, ingresos finales de monedas +20%, EXP final +40%"
+  },
+  "613": {
+    "name": "Estrella de los Manjares divinos",
+    "desc": "¡Cuántas estaciones buscando junto al fogón, con buenos platos por compañía! Hoy alcanzo la estrella de los Manjares divinos, gracias a todos los que hicieron el camino conmigo. Logro para restaurantes con todas las recetas en calidad Manjar divino. ¡Sin efecto especial!"
+  },
+  "614": {
+    "name": "Monedas Qian-Dao-Jia",
+    "desc": "¡Tres monedas de cobre con el primer carácter de las eras de los emperadores Qianlong, Daoguang y Jiaqing! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "615": {
+    "name": "Botella atrapanieblas",
+    "desc": "Botella atrapanieblas (dura 2 horas), ¡un objeto mágico que recoge la niebla del pueblo! Probabilidad de mejor calidad al cocinar platos estrella [+20% (niebla) o +25% (niebla nocturna); no se acumula con el clima de niebla]"
+  },
+  "616": {
+    "name": "Gerbera",
+    "desc": "Gerbera, planta del restaurante; monedas de los platos de clientes exigentes satisfechos +5%"
+  },
+  "617": {
+    "name": "Pegatina de fachada",
+    "desc": "¡Mientras no falte aceite, abierto para siempre! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "618": {
+    "name": "Patatas fritas",
+    "desc": "¡Las patatas fritas son mi picoteo favorito! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "619": {
+    "name": "[Éxito inmediato]",
+    "desc": "Placa Éxito inmediato, ¡por el año del Caballo! Bonificación de colección de honores +50% (*)"
+  },
+  "620": {
+    "name": "Buena espada del ayuno",
+    "desc": "¡La mayoría de los cocineros no llevan espada! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "621": {
+    "name": "Viejo K",
+    "desc": "¡El sabio y valiente Viejo K! Su restaurante: clientes exigentes +1%, ocupación +3%, ingresos finales de monedas +20%, suerte +2"
+  },
+  "622": {
+    "name": "Joker",
+    "desc": "Para agradecer a This Dish Is Poison su gran aportación al pueblo, Don Krab se lo regaló como objeto guardián del restaurante. Efecto: probabilidad de mejor calidad al cocinar platos estrella +10%, suerte +33"
+  },
+  "623": {
+    "name": "Jade•Gorro de This Dish Is Poison",
+    "desc": "Utensilio exclusivo del restaurante This Dish Is Poison; creatividad +25"
+  },
+  "624": {
+    "name": "Xuan•Gorro de This Dish Is Poison",
+    "desc": "Utensilio exclusivo del restaurante This Dish Is Poison, se obtiene con 6 estrellas; creatividad +41"
+  },
+  "625": {
+    "name": "Tarta de manzana",
+    "desc": "¡Lleva una cereza encima! Su restaurante: clientes exigentes +1%, ingresos finales de monedas +4%, suerte +2"
+  },
+  "626": {
+    "name": "Pecera de pescado salado",
+    "desc": "¡Una pecera, un pez! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "627": {
+    "name": "PSP",
+    "desc": "¡Una PSP guardada en la colección desde hace siglos! Su restaurante: clientes exigentes +1%, suerte +2"
+  },
+  "628": {
+    "name": "Wok despiadado del Alma de Sariel",
+    "desc": "Control del fuego +21. Sariel convirtió su espera en control del fuego; ni ella recuerda cuántos años lleva ardiendo este wok."
+  },
+  "629": {
+    "name": "Botella despiadada del Alma de Sariel",
+    "desc": "Sazón +21. Dentro hay un sabor que Sariel tardó media vida en crear; por desgracia, hace años que nadie llega al cuarto piso y nadie lo ha probado."
+  },
+  "630": {
+    "name": "Wok plañidero del Juicio de Barbelet",
+    "desc": "31 puntos de atributo al azar. Barbelet solo usa este wok para revisar: cualquier plato que él rehaga, su cocinero original no se atreve a volver a cocinarlo."
+  },
+  "631": {
+    "name": "Botella plañidera del Juicio de Barbelet",
+    "desc": "31 puntos de atributo al azar. La botella está llena de los nombres de quienes juzgó; Barbelet dice que recuerda todos sus sabores."
+  },
+  "632": {
+    "name": "Espátula de esencia de la Voluntad de Gurtug",
+    "desc": "41 puntos de atributo al azar. Gurtug, venerado por la Torre de chefs, guardó el séptimo piso toda su vida; esta espátula es la esencia que pulió con toda su voluntad."
+  },
+  "633": {
+    "name": "Hoja de esencia de la Voluntad de Gurtug",
+    "desc": "41 puntos de atributo al azar. Gurtug dijo una vez que en su próxima vida no volvería a pisar esta torre; aun así, su cuchillo no dejó la tabla ni un solo día."
+  },
+  "634": {
+    "name": "Wok de esencia de la Voluntad de Gurtug",
+    "desc": "41 puntos de atributo al azar. Este wok soportó el fuego más intenso de Gurtug, y su arrepentimiento más hondo."
+  },
+  "635": {
+    "name": "Botella de esencia de la Voluntad de Gurtug",
+    "desc": "41 puntos de atributo al azar. Gurtug redujo toda una vida de oficio a unas gotas de esencia y las selló en esta botella para quien llegue al séptimo piso."
+  },
+  "636": {
+    "name": "Corona de esencia de la Voluntad de Gurtug",
+    "desc": "41 puntos de atributo al azar. La corona sagrada solo se concede al guardián más veterano de la torre. Gurtug la llevaba, pero siempre miraba más allá de la torre."
+  },
+  "637": {
+    "name": "Espátula ardiente de la Caída de Yinchen",
+    "desc": "25 puntos de atributo al azar. Yinchen fue la alumna predilecta de Duma, pero el fuego de su maestro le parecía demasiado tranquilo y se empeñó en avivar más el fogón."
+  },
+  "638": {
+    "name": "Hoja ardiente de la Caída de Yinchen",
+    "desc": "25 puntos de atributo al azar. El día que dejó el sexto piso, Yinchen solo se llevó este cuchillo; su filo aún tiene marcas de quemaduras."
+  },
+  "639": {
+    "name": "Wok ardiente de la Caída de Yinchen",
+    "desc": "25 puntos de atributo al azar. Este wok siempre está al rojo vivo. Yinchen dice que solo el calor intenso saca todo el sabor de un ingrediente."
+  },
+  "640": {
+    "name": "Botella ardiente de la Caída de Yinchen",
+    "desc": "25 puntos de atributo al azar. Dentro hay una salsa que Yinchen preparó en las sombras de la torre, tan fragante que olvidas el camino de vuelta."
+  },
+  "641": {
+    "name": "Jade•Gorro de patrocinador",
+    "desc": "Un agradecimiento a los restaurantes que han aportado al pueblo. Creatividad +25."
+  },
+  "642": {
+    "name": "Xuan•Gorro de patrocinador",
+    "desc": "Un agradecimiento a los restaurantes que han aportado al pueblo, se obtiene con 6 estrellas. Creatividad +41."
+  },
+  "90001": {
+    "name": "Campanilla de Año Nuevo",
+    "desc": "Una campanilla de latón colgada en la puerta el día de Año Nuevo que tintinea con el viento y te recuerda llevar bien tu restaurante también este año. (Recuerdo de Año Nuevo)"
+  },
+  "90002": {
+    "name": "Recortable de la fortuna",
+    "desc": "El carácter «fortuna» recortado al revés en papel rojo y pegado en la ventana de la cocina; el olor de la cena de Nochevieja sale por él. (Recuerdo de la Fiesta de la Primavera)"
+  },
+  "90003": {
+    "name": "Farol giratorio",
+    "desc": "Figuritas con bolitas de arroz giran sin parar dentro del farol; una vuelta es todo un año de fiesta en el pueblo. (Recuerdo de la Fiesta de los Faroles)"
+  },
+  "90004": {
+    "name": "Caja de bombones",
+    "desc": "Bombones artesanos atados con un lazo; dicen que la pastelería de al lado los envió en secreto. (Recuerdo de San Valentín)"
+  },
+  "90005": {
+    "name": "Bolsita de zongzi",
+    "desc": "Una bolsita cosida con artemisa y especias, con un leve aroma a hojas de bambú. (Recuerdo de la Fiesta del Barco Dragón)"
+  },
+  "90006": {
+    "name": "Molinillo de azúcar",
+    "desc": "Un molinillo dibujado con azúcar de malta; demasiado bonito para comérselo, se queda en el mostrador. (Recuerdo del Día del Niño)"
+  },
+  "90007": {
+    "name": "Bolsita del puente de urracas",
+    "desc": "Una bolsita bordada con urracas; en Qixi las mesas de las parejas siempre son las primeras en llenarse. (Recuerdo de Qixi)"
+  },
+  "90008": {
+    "name": "Farol del conejo de jade",
+    "desc": "Un farol de conejo de papel blanco cuya luz cae justo sobre los pasteles de luna de la mesa. (Recuerdo del Medio Otoño)"
+  },
+  "90009": {
+    "name": "Insignia de banderita roja",
+    "desc": "Una banderita roja prendida en el delantal; en las vacaciones largas todas las mesas la miran dos veces. (Recuerdo del Día Nacional)"
+  },
+  "90010": {
+    "name": "Calabaza de Halloween",
+    "desc": "Una calabaza tallada con una sonrisa; la pulpa que le sacaron se convirtió en sopa al día siguiente. (Recuerdo de Halloween)"
+  },
+  "90011": {
+    "name": "Casita de jengibre",
+    "desc": "Una casita de jengibre con el tejado espolvoreado de azúcar, más acogedora que el restaurante de verdad. (Recuerdo de Navidad)"
+  },
+  "90012": {
+    "name": "Cucharón dorado",
+    "desc": "Un cucharón conmemorativo que se repartió el año que abrió el pueblo, con el nombre del primer cliente grabado en el mango. (Recuerdo del aniversario de apertura)"
+  },
+  "90101": {
+    "name": "Figura Premio A del Ichiban Kuji",
+    "desc": "Una figura grande de un chef con una olla dorada, con «Premio A» grabado en la base. (Recuerdo del Ichiban Kuji)"
+  },
+  "90102": {
+    "name": "Figura Premio B del Ichiban Kuji",
+    "desc": "Una figura de un camarero con un plato estrella humeante. (Recuerdo del Ichiban Kuji)"
+  },
+  "90103": {
+    "name": "Figura Premio C del Ichiban Kuji",
+    "desc": "Un colgante de cocinerito chibi, muy mono colgado junto al mostrador. (Recuerdo del Ichiban Kuji)"
+  },
+  "90104": {
+    "name": "Figura Último Premio del Ichiban Kuji",
+    "desc": "Solo para quien saca el último boleto: una figura de chef en edición limitada dorada. (Recuerdo del Ichiban Kuji)"
+  },
+  "90201": {
+    "name": "Boleto Ichiban Kuji",
+    "desc": "Un boleto para sortear el Ichiban Kuji; úsalo en la página del Ichiban Kuji."
+  },
+  "91011": {
+    "name": "Figura del chef de la danza del león",
+    "desc": "Un chef con cabeza de león sirve un pescado entero para «abundancia cada año», con cintas rojas colgando de los bigotes. (Ichiban Kuji · Sabores de Año Nuevo)"
+  },
+  "91012": {
+    "name": "Figura de la abuela de las empanadillas",
+    "desc": "Cada empanadilla de la abuela parece un lingote de oro, y en el bolsillo del delantal esconde una moneda. (Ichiban Kuji · Sabores de Año Nuevo)"
+  },
+  "91013": {
+    "name": "Colgante de cocinerito con farolillo rojo",
+    "desc": "Un cocinerito chibi con un farolillo rojo, lo más festivo colgado en la puerta. (Ichiban Kuji · Sabores de Año Nuevo)"
+  },
+  "91014": {
+    "name": "Figura del chef del lingote de oro",
+    "desc": "Un chef abrazando un lingote de oro, con «abundancia cada año» grabado en la base; solo para quien saca el último boleto. (Ichiban Kuji · Sabores de Año Nuevo)"
+  },
+  "91021": {
+    "name": "Figura del chef de la fuente de chocolate",
+    "desc": "El jefe de cocina vigila una fuente de chocolate de tres pisos, con una fresa recién bañada en la mano. (Ichiban Kuji · Postres de San Valentín)"
+  },
+  "91022": {
+    "name": "Figura del camarero de macarons de rosa",
+    "desc": "Un camarero con una bandeja llena de macarons rosas y una rosa en la solapa. (Ichiban Kuji · Postres de San Valentín)"
+  },
+  "91023": {
+    "name": "Colgante de galleta de corazón",
+    "desc": "Una galleta en forma de corazón con «dulce» escrito con glaseado; demasiado bonita para comérsela. (Ichiban Kuji · Postres de San Valentín)"
+  },
+  "91024": {
+    "name": "Adorno de cena a la luz de las velas",
+    "desc": "Una mesita redonda, dos velas y un postre para compartir; el Último Premio limitado. (Ichiban Kuji · Postres de San Valentín)"
+  },
+  "91031": {
+    "name": "Figura del maestro de dango de sakura",
+    "desc": "Un maestro ensarta dango de tres colores, con unos pétalos sobre el hombro. (Ichiban Kuji · Té bajo los cerezos)"
+  },
+  "91032": {
+    "name": "Figura de la chica del bento hanami",
+    "desc": "Una chica abrazando una caja de bento de dos pisos, buscando el mejor sitio para ver las flores. (Ichiban Kuji · Té bajo los cerezos)"
+  },
+  "91033": {
+    "name": "Colgante de cuchara de sakura",
+    "desc": "Una cucharita con el mango en forma de flor de cerezo, para el primer cuenco de sopa de la primavera. (Ichiban Kuji · Té bajo los cerezos)"
+  },
+  "91034": {
+    "name": "Adorno de esterilla de té bajo las flores",
+    "desc": "Una esterilla de té sobre alfombra roja y una tetera de té de flor de cerezo; el Último Premio limitado. (Ichiban Kuji · Té bajo los cerezos)"
+  },
+  "91041": {
+    "name": "Figura del chef de la cesta de pícnic",
+    "desc": "Un chef con una cesta de pícnic bien llena de la que asoma una baguette. (Ichiban Kuji · Pícnic de primavera)"
+  },
+  "91042": {
+    "name": "Figura del osito del sándwich",
+    "desc": "Un osito abrazando un sándwich gigante, con kétchup en la comisura de la boca. (Ichiban Kuji · Pícnic de primavera)"
+  },
+  "91043": {
+    "name": "Colgante de limonada",
+    "desc": "Un vasito de limonada con pajita; refresca solo con mirarlo. (Ichiban Kuji · Pícnic de primavera)"
+  },
+  "91044": {
+    "name": "Adorno panorámico de pícnic en el prado",
+    "desc": "Un mantel de cuadros, cometas y toda una mesa de aperitivos; el Último Premio limitado. (Ichiban Kuji · Pícnic de primavera)"
+  },
+  "91051": {
+    "name": "Figura del tallador de frutas",
+    "desc": "Un tallador que ha convertido una sandía en una peonía en flor. (Ichiban Kuji · Frutas de principios de verano)"
+  },
+  "91052": {
+    "name": "Figura del repostero de la tarta de fresas",
+    "desc": "Un repostero colocando la última fresa en una tarta. (Ichiban Kuji · Frutas de principios de verano)"
+  },
+  "91053": {
+    "name": "Colgante de cerezas",
+    "desc": "Dos cerezas rojas unidas por el rabito que tintinean al balancearse. (Ichiban Kuji · Frutas de principios de verano)"
+  },
+  "91054": {
+    "name": "Puesto de cosecha del huerto",
+    "desc": "Un puesto de madera lleno de fruta de temporada con un cartelito de «Principios de verano» en medio; el Último Premio limitado. (Ichiban Kuji · Frutas de principios de verano)"
+  },
+  "91061": {
+    "name": "Figura del maestro de zongzi",
+    "desc": "Con una mano sujeta las hojas y con la otra ata el cordel: el maestro envuelve cien zongzi de una tirada. (Ichiban Kuji · Fiesta del Barco Dragón)"
+  },
+  "91062": {
+    "name": "Figura del tamborilero del barco dragón",
+    "desc": "Un tamborilero golpeando el tambor en la proa, con una ristra de zongzi a la cintura. (Ichiban Kuji · Fiesta del Barco Dragón)"
+  },
+  "91063": {
+    "name": "Colgante de zongzi bebé",
+    "desc": "Un zongzi triangular regordete atado con un cordón de cinco colores. (Ichiban Kuji · Fiesta del Barco Dragón)"
+  },
+  "91064": {
+    "name": "Estatua dorada del barco dragón campeón",
+    "desc": "Un barco dragón dorado cruzando la meta; el Último Premio limitado. (Ichiban Kuji · Fiesta del Barco Dragón)"
+  },
+  "91071": {
+    "name": "Figura del chef de la montaña de hielo raspado",
+    "desc": "Ante el chef, una montaña de hielo raspado cubierta de mermelada, con una cuchara clavada en la cima. (Ichiban Kuji · Bebidas heladas de verano)"
+  },
+  "91072": {
+    "name": "Figura del camarero del refresco de sandía",
+    "desc": "Un camarero con un refresco burbujeante de sandía, con una tajada de sandía en el borde. (Ichiban Kuji · Bebidas heladas de verano)"
+  },
+  "91073": {
+    "name": "Colgante de polo",
+    "desc": "Un polo de judía mungo mordido que parece que aún gotea. (Ichiban Kuji · Bebidas heladas de verano)"
+  },
+  "91074": {
+    "name": "Adorno del puesto de bebidas heladas en la playa",
+    "desc": "Un puesto de bebidas heladas en la playa con siete sabores bajo la sombrilla; el Último Premio limitado. (Ichiban Kuji · Bebidas heladas de verano)"
+  },
+  "91081": {
+    "name": "Figura del chef de la centolla real",
+    "desc": "El jefe de cocina levanta una centolla real más grande que él, con una sonrisa de oreja a oreja. (Ichiban Kuji · Mercado nocturno de marisco)"
+  },
+  "91082": {
+    "name": "Figura del maestro de ostras a la brasa",
+    "desc": "Un maestro echando ajo sobre ostras que chisporrotean junto a las brasas. (Ichiban Kuji · Mercado nocturno de marisco)"
+  },
+  "91083": {
+    "name": "Colgante de cangrejo de río",
+    "desc": "Un cangrejo de río rojo intenso, con las pinzas todavía en alto. (Ichiban Kuji · Mercado nocturno de marisco)"
+  },
+  "91084": {
+    "name": "Adorno panorámico de cena en el puerto pesquero",
+    "desc": "Toda una fila de puestos de marisco y farolillos encendidos junto al puerto pesquero; el Último Premio limitado. (Ichiban Kuji · Mercado nocturno de marisco)"
+  },
+  "91091": {
+    "name": "Figura del tallador de pasteles de luna",
+    "desc": "Un tallador grabando un molde de pastel de luna con Chang'e volando a la luna. (Ichiban Kuji · Pasteles de luna del Medio Otoño)"
+  },
+  "91092": {
+    "name": "Figura del conejo de jade repostero",
+    "desc": "Un conejo de jade con gorro de chef amasando relleno de pasta de loto. (Ichiban Kuji · Pasteles de luna del Medio Otoño)"
+  },
+  "91093": {
+    "name": "Colgante de pastel de luna de loto",
+    "desc": "Un pastel de luna de pasta de loto con doble yema partido por la mitad, bien relleno. (Ichiban Kuji · Pasteles de luna del Medio Otoño)"
+  },
+  "91094": {
+    "name": "Adorno del banquete de reunión bajo la luna",
+    "desc": "Una cena familiar bajo la luna llena, cada uno con un pastel de luna en la mano; el Último Premio limitado. (Ichiban Kuji · Pasteles de luna del Medio Otoño)"
+  },
+  "91101": {
+    "name": "Figura del chef de la calabaza",
+    "desc": "Un chef sentado sobre una calabaza más grande que él, con el cucharón en la mano. (Ichiban Kuji · Banquete de la cosecha)"
+  },
+  "91102": {
+    "name": "Figura del maestro de castañas confitadas",
+    "desc": "Un maestro salteando castañas en un gran wok de hierro; el olor llega a media calle. (Ichiban Kuji · Banquete de la cosecha)"
+  },
+  "91103": {
+    "name": "Colgante de espigas de arroz",
+    "desc": "Un ramito de espigas de arroz doradas atado con un cordel rojo. (Ichiban Kuji · Banquete de la cosecha)"
+  },
+  "91104": {
+    "name": "Adorno del banquete en el granero",
+    "desc": "Un banquete de mesa larga en un granero, lleno de la cosecha de la temporada; el Último Premio limitado. (Ichiban Kuji · Banquete de la cosecha)"
+  },
+  "91111": {
+    "name": "Figura del viejo maestro de los guisos",
+    "desc": "Un viejo maestro vigilando una olla de barro; el vapor sale a borbotones en cuanto levanta la tapa. (Ichiban Kuji · Guisos junto al fuego)"
+  },
+  "91112": {
+    "name": "Figura del vendedor de boniatos asados",
+    "desc": "Un vendedor empujando su horno que entrega un boniato con el corazón caramelizado. (Ichiban Kuji · Guisos junto al fuego)"
+  },
+  "91113": {
+    "name": "Colgante de ollita de barro",
+    "desc": "Una mini olla de barro con tapa que se abre y un cuenco de sopa pintado dentro. (Ichiban Kuji · Guisos junto al fuego)"
+  },
+  "91114": {
+    "name": "Adorno de la tertulia junto al fuego",
+    "desc": "Un corro de gente tomando sopa y charlando alrededor de la estufa; el Último Premio limitado. (Ichiban Kuji · Guisos junto al fuego)"
+  },
+  "91121": {
+    "name": "Figura del chef de la olla caliente yin-yang",
+    "desc": "El jefe de cocina lleva una olla caliente yin-yang, con el caldo picante y el claro hirviendo. (Ichiban Kuji · Olla caliente de invierno)"
+  },
+  "91122": {
+    "name": "Figura del maestro de cordero para olla caliente",
+    "desc": "Un maestro que corta el cordero fino como el papel, con un corte de primera. (Ichiban Kuji · Olla caliente de invierno)"
+  },
+  "91123": {
+    "name": "Colgante de ollita caliente",
+    "desc": "Una ollita de cobre humeante que da calor solo con verla colgada en invierno. (Ichiban Kuji · Olla caliente de invierno)"
+  },
+  "91124": {
+    "name": "Adorno del banquete de olla caliente en noche nevada",
+    "desc": "Nieva fuera mientras dentro hierve una olla caliente en la mesa; el Último Premio limitado. (Ichiban Kuji · Olla caliente de invierno)"
+  }
+}
