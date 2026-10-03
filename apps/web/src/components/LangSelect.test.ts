@@ -49,11 +49,14 @@ describe('语言选择（问题记录 272）', () => {
   });
 
   it('登录后选了同时存到账号', async () => {
-    useSessionStore().me = me('zh-CN');
-    const w = mount(LangSelect);
+    // 组件和断言都用这个用例自己的 Pinia（"当前 Pinia"可能被前面用例的计时器切走，组件会以为没登录）
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    useSessionStore(pinia).me = me('zh-CN');
+    const w = mount(LangSelect, { global: { plugins: [pinia] } });
     await w.get('[data-testid="lang-select"]').setValue('fr');
     await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
-    expect(useLocaleStore().locale).toBe('fr');
+    expect(useLocaleStore(pinia).locale).toBe('fr');
   });
 
   it('翻译包加载失败：提示，语言不变', async () => {
@@ -135,14 +138,18 @@ describe('backlog 多语言：存到账号、跟随账号失败时提示', () =>
 
   it('登录状态下切了语言、存到账号失败：提示下次刷新会回到原来的语言', async () => {
     vi.mocked(endpoints.setLang).mockRejectedValue(new Error('500'));
-    useSessionStore().me = me('zh-CN');
-    const w = mount(LangSelect);
+    // 组件和断言都用这个用例自己的 Pinia：前面用例留下的提示计时器到点会把"当前 Pinia"切回旧的，
+    // 组件再取 store 就拿到旧的那个，这里读不到提示（全量并行跑时偶发）
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    useSessionStore(pinia).me = me('zh-CN');
+    const w = mount(LangSelect, { global: { plugins: [pinia] } });
     await w.get('[data-testid="lang-select"]').setValue('fr');
     await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
     // 提示按刚切过去的语言显示；存账号失败后才推提示，全量并行跑时一次 flush 可能还没到（偶发）
     await vi.waitFor(
       () =>
-        expect(useToastStore().items.map((x) => x.text)).toContain(
+        expect(useToastStore(pinia).items.map((x) => x.text)).toContain(
           "Langue changée, mais elle n'a pas pu être enregistrée sur votre compte. Elle reviendra après actualisation.",
         ),
       LOAD,

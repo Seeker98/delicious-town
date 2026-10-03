@@ -18,7 +18,8 @@ describe('backlog 多语言：英、法、西文案修正', () => {
       await useLocaleStore().set(l as keyof typeof want);
       expect(activeMessages().home.plankton.body2, l).toContain(phrase);
     }
-  });
+    // 连续加载三个语言包，全量并行跑时可能超过默认的 15 秒（backlog 测试不稳定）
+  }, 60_000);
 
   it('英语"除虫"不再译成双关的 debugged', async () => {
     await useLocaleStore().set('en');
