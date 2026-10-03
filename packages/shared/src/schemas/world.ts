@@ -45,7 +45,8 @@ export interface CatalogDto {
   version: string;
   goods: CatalogGoodsDto[];
   foods: CatalogFoodDto[];
-  streets: Array<{ id: number; name: string; cookName: string }>;
+  /** desc = 街道加成说明（搬家页显示，问题记录 284） */
+  streets: Array<{ id: number; name: string; cookName: string; desc: string }>;
   /** note 是天气效果说明（问题记录 272 起按语言；旧缓存里没有） */
   weather: Array<{ id: number; name: string; note?: string }>;
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;

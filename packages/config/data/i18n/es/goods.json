@@ -2726,5 +2726,69 @@
   "91124": {
     "name": "Adorno del banquete de olla caliente en noche nevada",
     "desc": "Nieva fuera mientras dentro hierve una olla caliente en la mesa; el Último Premio limitado. (Ichiban Kuji · Olla caliente de invierno)"
+  },
+  "92014": {
+    "name": "Calle Japón",
+    "desc": "Clientes exigentes +12%, monedas de los clientes exigentes satisfechos +15%, ocupación -8%"
+  },
+  "92015": {
+    "name": "Calle Italia",
+    "desc": "Ocupación +15%, monedas por mesa +1, monedas a domicilio +30%, consumo de aceite +15%"
+  },
+  "92016": {
+    "name": "Calle Francia",
+    "desc": "Monedas finales +30%, clientes exigentes +8%, ocupación -12%"
+  },
+  "92017": {
+    "name": "Calle España",
+    "desc": "Ocupación +8%, monedas de clientes que comen platos estrella +20%, suerte +16, aceite por mesa +1"
+  },
+  "92018": {
+    "name": "Calle México",
+    "desc": "Ocupación +20%, EXP por mesa +2, aceite por mesa +2"
+  },
+  "92019": {
+    "name": "Calle Tailandia",
+    "desc": "Ocupación +12%, aceite por mesa -2, EXP a domicilio +30%, monedas finales -8%"
+  },
+  "92020": {
+    "name": "Calle India",
+    "desc": "Raciones de platos estrella +5%, EXP por mesa +3, suerte +10, clientes exigentes -8%"
+  },
+  "92021": {
+    "name": "Calle Turquía",
+    "desc": "Monedas por mesa +3, EXP por mesa +1, suerte +20, consumo de aceite +20%"
+  },
+  "92022": {
+    "name": "Calle Vietnam",
+    "desc": "Consumo de aceite -30%, EXP por mesa +3, monedas finales -8%"
+  },
+  "92023": {
+    "name": "Calle América",
+    "desc": "Monedas y EXP a domicilio +20%, ocupación +25%, clientes exigentes -10%, consumo de aceite +20%"
+  },
+  "92024": {
+    "name": "Calle Marruecos",
+    "desc": "Probabilidad de ingredientes misteriosos al explorar +2%, suerte +25, EXP final +8%"
+  },
+  "92025": {
+    "name": "Calle Argentina",
+    "desc": "Monedas por mesa +4, ocupación +5%, consumo de aceite +25%"
+  },
+  "92026": {
+    "name": "Calle Grecia",
+    "desc": "EXP final +30%, consumo de aceite -10%, clientes exigentes -5%"
+  },
+  "92027": {
+    "name": "Calle Perú",
+    "desc": "Probabilidad de mejor calidad al cocinar platos estrella +8%, clientes exigentes +8%, monedas finales +5%"
+  },
+  "92028": {
+    "name": "Calle Rusia",
+    "desc": "EXP por mesa +5, monedas finales +10%, ocupación -10%, cada cucaracha que aparezca tiene un 20 % de probabilidad de morir"
+  },
+  "92029": {
+    "name": "Calle Chop Suey",
+    "desc": "Monedas y EXP a domicilio +30%, ocupación +10%, monedas por mesa +1, clientes exigentes -10%"
   }
 }

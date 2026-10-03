@@ -145,7 +145,7 @@
     "nightTo": 5,
     "krabHour": 9,
     "krabStreetMin": 1,
-    "krabStreetMax": 13,
+    "krabStreetMax": 29,
     "nightWeatherOdds": [
       [28, 14.35],
       [29, 9.56],

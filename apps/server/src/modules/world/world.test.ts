@@ -41,7 +41,7 @@ describe('WorldService', () => {
     const b = await t.game.world.ensure(shardId);
     expect(b).toEqual(a);
     expect(a.krabStreet).toBeGreaterThanOrEqual(1);
-    expect(a.krabStreet).toBeLessThanOrEqual(13);
+    expect(a.krabStreet).toBeLessThanOrEqual(29);
   });
 
   it('换天气：同一区服同一时点结果固定，并发新闻', async () => {
@@ -88,9 +88,24 @@ describe('接口', () => {
 
   it('目录接口不需要登录', async () => {
     const r = await call(http.app, 'GET', '/api/v1/world/catalog');
-    expect(r.json.data.goods).toHaveLength(682); // 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
-    expect(r.json.data.foods).toHaveLength(313);
+    expect(r.json.data.goods).toHaveLength(698); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
+    expect(r.json.data.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
     expect(r.json.data.version).toBe(config.version);
+  });
+
+  it('目录的街道带加成说明，按语言翻译（问题记录 284：搬家页要显示）', async () => {
+    const zh = await call(http.app, 'GET', '/api/v1/world/catalog');
+    expect(zh.json.data.streets.find((s: { id: number }) => s.id === 24)).toMatchObject({
+      name: '摩洛哥街',
+      desc: '探险时获得神秘食材概率+2%,幸运值+25,最终经验收益+8%',
+    });
+    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
+    expect(en.json.data.streets.find((s: { id: number }) => s.id === 14)).toEqual({
+      id: 14,
+      name: 'Japan Street',
+      cookName: 'Japanese cuisine',
+      desc: 'Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%',
+    });
   });
 });
 

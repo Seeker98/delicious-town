@@ -86,6 +86,8 @@ export interface Street {
   name: string;
   cookName: string;
   desc: string;
+  /** 街道勋章 goods id（designed/street_medal_map，问题记录 284） */
+  medalId: number;
 }
 
 export interface MysteriousCookbook {

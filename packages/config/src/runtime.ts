@@ -211,10 +211,10 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
       (needCount.get(f.id) ?? 0) > tuning.market.hotMinNeedCount,
   );
 
-  const streetMedals = new Map<number, number>();
-  const isStreetMedal = (g: Goods) =>
-    g.type === GOODS_TYPE.honor && g.deviceType !== null && streets.has(g.deviceType) && g.deviceType <= 13;
-  for (const g of bundle.goods) if (isStreetMedal(g)) streetMedals.set(g.deviceType!, g.id);
+  // 街道勋章按构建时的对应表（问题记录 284）
+  const streetMedals = new Map(bundle.streets.map((s) => [s.id, s.medalId]));
+  const medalIds = new Set(streetMedals.values());
+  const isStreetMedal = (g: Goods) => medalIds.has(g.id);
 
   const randomPools = new Map<number, number[]>();
   const grades = new Map(bundle.cookbookGrades.map((g) => [g.grade, g]));

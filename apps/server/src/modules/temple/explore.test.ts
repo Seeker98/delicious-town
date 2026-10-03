@@ -3,6 +3,7 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { grantGoods } from '../store/grant';
+import { streetMysteriousRate } from './explore';
 
 const config = testConfig();
 let t: TestGame;
@@ -97,5 +98,12 @@ describe('探险（规格书 09 §9.2）', () => {
     });
     await t.game.temple.explore(ctx, { goodsId: 170, times: 1 });
     expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 26, done: true });
+  });
+});
+
+describe('街道勋章的神秘食材概率（问题记录 284）', () => {
+  it('摩洛哥街 +2%，别的街 0', () => {
+    expect(streetMysteriousRate(config, 24)).toBeCloseTo(0.02);
+    expect(streetMysteriousRate(config, 1)).toBe(0);
   });
 });

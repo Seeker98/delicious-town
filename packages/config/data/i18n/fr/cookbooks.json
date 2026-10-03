@@ -510,7 +510,7 @@
     "name": "Petites perches mandarin en marmite sèche"
   },
   "176": {
-    "name": "Poulet du Général Tso"
+    "name": "General Tso's Chicken (États-Unis/Canada)"
   },
   "177": {
     "name": "Écrevisses épicées (Kouwei Xia)"
@@ -6991,5 +6991,4442 @@
   },
   "18746": {
     "name": "Aileron de requin torche"
+  },
+  "18747": {
+    "name": "Nigiri de tai"
+  },
+  "18748": {
+    "name": "Nigiri d'amaebi"
+  },
+  "18749": {
+    "name": "Nigiri d'unagi"
+  },
+  "18750": {
+    "name": "Nigiri d'ika"
+  },
+  "18751": {
+    "name": "Nigiri de tamago"
+  },
+  "18752": {
+    "name": "Nigiri de hotate"
+  },
+  "18753": {
+    "name": "Gunkan de kaibashira"
+  },
+  "18754": {
+    "name": "Nigiri de kani"
+  },
+  "18755": {
+    "name": "Nigiri de tarabagani (crabe royal)"
+  },
+  "18756": {
+    "name": "Inari sushi"
+  },
+  "18757": {
+    "name": "Chirashi sushi"
+  },
+  "18758": {
+    "name": "Sashimi de suzuki"
+  },
+  "18759": {
+    "name": "Sashimi de tai"
+  },
+  "18760": {
+    "name": "Sashimi d'ika"
+  },
+  "18761": {
+    "name": "Sashimi de hotate"
+  },
+  "18762": {
+    "name": "Nama gaki (huîtres crues au ponzu)"
+  },
+  "18763": {
+    "name": "Unadon"
+  },
+  "18764": {
+    "name": "Oyakodon"
+  },
+  "18765": {
+    "name": "Gyudon"
+  },
+  "18766": {
+    "name": "Katsudon"
+  },
+  "18767": {
+    "name": "Tendon"
+  },
+  "18768": {
+    "name": "Kaisendon"
+  },
+  "18769": {
+    "name": "Wagyu don"
+  },
+  "18770": {
+    "name": "Shirasu don"
+  },
+  "18771": {
+    "name": "Katsu curry"
+  },
+  "18772": {
+    "name": "Curry de bœuf japonais (bīfu karē)"
+  },
+  "18773": {
+    "name": "Curry de poulet japonais (chikin karē)"
+  },
+  "18774": {
+    "name": "Curry aux fruits de mer japonais"
+  },
+  "18775": {
+    "name": "Kare udon"
+  },
+  "18776": {
+    "name": "Kare pan"
+  },
+  "18777": {
+    "name": "Soupe miso (miso shiru)"
+  },
+  "18778": {
+    "name": "Soupe miso aux palourdes (asari)"
+  },
+  "18779": {
+    "name": "Tonjiru"
+  },
+  "18780": {
+    "name": "Ramen au miso"
+  },
+  "18781": {
+    "name": "Ramen tonkotsu"
+  },
+  "18782": {
+    "name": "Ramen tori paitan"
+  },
+  "18783": {
+    "name": "Ramen au chashu"
+  },
+  "18784": {
+    "name": "Kitsune Udon"
+  },
+  "18785": {
+    "name": "Udon tempura"
+  },
+  "18786": {
+    "name": "Tsukimi Udon"
+  },
+  "18787": {
+    "name": "Tempura d'ebi (crevettes)"
+  },
+  "18788": {
+    "name": "Tempura de légumes (yasai)"
+  },
+  "18789": {
+    "name": "Tempura de shiitake"
+  },
+  "18790": {
+    "name": "Ikayaki"
+  },
+  "18791": {
+    "name": "Okonomiyaki (façon Osaka)"
+  },
+  "18792": {
+    "name": "Hiroshimayaki"
+  },
+  "18793": {
+    "name": "Monjayaki"
+  },
+  "18794": {
+    "name": "Yakisoba"
+  },
+  "18795": {
+    "name": "Poulet teriyaki"
+  },
+  "18796": {
+    "name": "Yakitori negima"
+  },
+  "18797": {
+    "name": "Tebasaki de Nagoya"
+  },
+  "18798": {
+    "name": "Tsukune"
+  },
+  "18799": {
+    "name": "Karaage"
+  },
+  "18800": {
+    "name": "Poulet nanban"
+  },
+  "18801": {
+    "name": "Tonkatsu"
+  },
+  "18802": {
+    "name": "Gyukatsu"
+  },
+  "18803": {
+    "name": "Ebi Furai"
+  },
+  "18804": {
+    "name": "Kaki Furai"
+  },
+  "18805": {
+    "name": "Korokke"
+  },
+  "18806": {
+    "name": "Korokke à la crème de crabe"
+  },
+  "18807": {
+    "name": "Nikujaga"
+  },
+  "18808": {
+    "name": "Chikuzenni"
+  },
+  "18809": {
+    "name": "Oden"
+  },
+  "18810": {
+    "name": "Sukiyaki"
+  },
+  "18811": {
+    "name": "Shabu-shabu de wagyu"
+  },
+  "18812": {
+    "name": "Chanko Nabe"
+  },
+  "18813": {
+    "name": "Kaki no Dotenabe"
+  },
+  "18814": {
+    "name": "Kani nabe (crabe royal)"
+  },
+  "18815": {
+    "name": "Yudofu"
+  },
+  "18816": {
+    "name": "Hiyayakko"
+  },
+  "18817": {
+    "name": "Agedashi tofu"
+  },
+  "18818": {
+    "name": "Hiryōzu (ganmodoki)"
+  },
+  "18819": {
+    "name": "Chawanmushi"
+  },
+  "18820": {
+    "name": "Tamagoyaki"
+  },
+  "18821": {
+    "name": "Umaki"
+  },
+  "18822": {
+    "name": "Omuraisu"
+  },
+  "18823": {
+    "name": "Yaki onigiri au miso"
+  },
+  "18824": {
+    "name": "Tai chazuke"
+  },
+  "18825": {
+    "name": "Taimeshi"
+  },
+  "18826": {
+    "name": "Zosui au crabe"
+  },
+  "18827": {
+    "name": "Zosui au poulet"
+  },
+  "18828": {
+    "name": "Dobinmushi au matsutake"
+  },
+  "18829": {
+    "name": "Matsutake Gohan"
+  },
+  "18830": {
+    "name": "Kuri Gohan"
+  },
+  "18831": {
+    "name": "Sekihan"
+  },
+  "18832": {
+    "name": "Imoni de Yamagata"
+  },
+  "18833": {
+    "name": "Kabocha no Nimono"
+  },
+  "18834": {
+    "name": "Kinpira de renkon"
+  },
+  "18835": {
+    "name": "Gomaae d'épinards"
+  },
+  "18836": {
+    "name": "Sunomono (concombre et wakamé)"
+  },
+  "18837": {
+    "name": "Asazuke"
+  },
+  "18838": {
+    "name": "Nattō gohan"
+  },
+  "18839": {
+    "name": "Tororo Gohan"
+  },
+  "18840": {
+    "name": "Gyoza"
+  },
+  "18841": {
+    "name": "Teppanyaki de wagyu"
+  },
+  "18842": {
+    "name": "Teppanyaki de gambas"
+  },
+  "18843": {
+    "name": "Hanbāgu"
+  },
+  "18844": {
+    "name": "Shōgayaki"
+  },
+  "18845": {
+    "name": "Ajitsuke Tamago"
+  },
+  "18846": {
+    "name": "Saikyōyaki de morue noire"
+  },
+  "18847": {
+    "name": "Nasu Dengaku"
+  },
+  "18848": {
+    "name": "Tai no Shioyaki"
+  },
+  "18849": {
+    "name": "Furofuki Daikon"
+  },
+  "18850": {
+    "name": "Salade de pommes de terre japonaise (poteto sarada)"
+  },
+  "18851": {
+    "name": "Salade wafu au tofu"
+  },
+  "18852": {
+    "name": "Asari no Sakamushi"
+  },
+  "18853": {
+    "name": "Hotate bata-yaki (Saint-Jacques au beurre)"
+  },
+  "18854": {
+    "name": "Awabi bata-yaki (ormeau au beurre)"
+  },
+  "18855": {
+    "name": "Edamame d'izakaya"
+  },
+  "18856": {
+    "name": "Isobeyaki Mochi"
+  },
+  "18857": {
+    "name": "Oshiruko"
+  },
+  "18858": {
+    "name": "Ozōni"
+  },
+  "18859": {
+    "name": "Anpan"
+  },
+  "18860": {
+    "name": "Dorayaki"
+  },
+  "18861": {
+    "name": "Taiyaki"
+  },
+  "18862": {
+    "name": "Mame Daifuku"
+  },
+  "18863": {
+    "name": "Mitarashi Dango"
+  },
+  "18864": {
+    "name": "Glace au matcha"
+  },
+  "18865": {
+    "name": "Roulé au matcha"
+  },
+  "18866": {
+    "name": "Castella de Nagasaki"
+  },
+  "18867": {
+    "name": "Kuri yōkan"
+  },
+  "18868": {
+    "name": "Mizu shingen mochi (gâteau goutte de pluie)"
+  },
+  "18869": {
+    "name": "Kuri Kinton"
+  },
+  "18870": {
+    "name": "Purin"
+  },
+  "18871": {
+    "name": "Goma dōfu"
+  },
+  "18872": {
+    "name": "Nigiri d'awabi (ormeau)"
+  },
+  "18873": {
+    "name": "Tempura de matsutake"
+  },
+  "18874": {
+    "name": "Namako su (concombre de mer vinaigré)"
+  },
+  "18875": {
+    "name": "Matcha latte"
+  },
+  "18876": {
+    "name": "Kakigōri Uji kintoki"
+  },
+  "18877": {
+    "name": "Thé au yuzu et miel"
+  },
+  "18878": {
+    "name": "Amazake"
+  },
+  "18879": {
+    "name": "Purin au hōjicha"
+  },
+  "18880": {
+    "name": "Warabi mochi au kuromitsu"
+  },
+  "18881": {
+    "name": "Daifuku à la cerise (sakuranbo)"
+  },
+  "18882": {
+    "name": "Purin au potiron (kabocha)"
+  },
+  "18883": {
+    "name": "Cheesecake soufflé japonais"
+  },
+  "18884": {
+    "name": "Zaru Soba"
+  },
+  "18885": {
+    "name": "Kamo Nanban Soba"
+  },
+  "18886": {
+    "name": "Tororo Soba"
+  },
+  "18887": {
+    "name": "Soba tempura"
+  },
+  "18888": {
+    "name": "Pizza Margherita"
+  },
+  "18889": {
+    "name": "Pizza Marinara"
+  },
+  "18890": {
+    "name": "Pizza al Prosciutto di Parma"
+  },
+  "18891": {
+    "name": "Pizza Salsiccia e Funghi"
+  },
+  "18892": {
+    "name": "Pizza Diavola"
+  },
+  "18893": {
+    "name": "Pizza ai Frutti di Mare"
+  },
+  "18894": {
+    "name": "Pizza Quattro Formaggi"
+  },
+  "18895": {
+    "name": "Pizza Ortolana"
+  },
+  "18896": {
+    "name": "Calzone"
+  },
+  "18897": {
+    "name": "Pizza Fritta Napoletana"
+  },
+  "18898": {
+    "name": "Focaccia"
+  },
+  "18899": {
+    "name": "Bruschetta"
+  },
+  "18900": {
+    "name": "Tagliatelle al Ragù Bolognese"
+  },
+  "18901": {
+    "name": "Spaghetti alla Carbonara"
+  },
+  "18902": {
+    "name": "Bucatini all'Amatriciana"
+  },
+  "18903": {
+    "name": "Spaghetti Aglio, Olio e Peperoncino"
+  },
+  "18904": {
+    "name": "Penne all'Arrabbiata"
+  },
+  "18905": {
+    "name": "Cacio e Pepe"
+  },
+  "18906": {
+    "name": "Pasta alla Norma"
+  },
+  "18907": {
+    "name": "Pasta ai Funghi e Panna"
+  },
+  "18908": {
+    "name": "Spaghetti alle Vongole"
+  },
+  "18909": {
+    "name": "Spaghetti allo Scoglio"
+  },
+  "18910": {
+    "name": "Spaghetti al Nero di Seppia"
+  },
+  "18911": {
+    "name": "Lasagne alla Bolognese"
+  },
+  "18912": {
+    "name": "Ravioli Ricotta e Spinaci"
+  },
+  "18913": {
+    "name": "Ravioli di Zucca"
+  },
+  "18914": {
+    "name": "Gnocchi di Patate"
+  },
+  "18915": {
+    "name": "Pasta e Fagioli"
+  },
+  "18916": {
+    "name": "Risotto ai Funghi"
+  },
+  "18917": {
+    "name": "Risotto alla Milanese"
+  },
+  "18918": {
+    "name": "Risotto alla Pescatora"
+  },
+  "18919": {
+    "name": "Risotto al Nero di Seppia"
+  },
+  "18920": {
+    "name": "Risotto alla Zucca"
+  },
+  "18921": {
+    "name": "Risotto al Barolo"
+  },
+  "18922": {
+    "name": "Arancini Siciliani"
+  },
+  "18923": {
+    "name": "Minestrone"
+  },
+  "18924": {
+    "name": "Ribollita Toscana"
+  },
+  "18925": {
+    "name": "Stracciatella alla Romana"
+  },
+  "18926": {
+    "name": "Trippa alla Romana"
+  },
+  "18927": {
+    "name": "Cotoletta alla Milanese"
+  },
+  "18928": {
+    "name": "Ossobuco alla Milanese"
+  },
+  "18929": {
+    "name": "Brasato al Barolo"
+  },
+  "18930": {
+    "name": "Saltimbocca alla Romana"
+  },
+  "18931": {
+    "name": "Bistecca alla Fiorentina"
+  },
+  "18932": {
+    "name": "Carpaccio di Manzo"
+  },
+  "18933": {
+    "name": "Ragù Napoletano"
+  },
+  "18934": {
+    "name": "Polpette al Sugo"
+  },
+  "18935": {
+    "name": "Pollo alla Cacciatora"
+  },
+  "18936": {
+    "name": "Pollo alla Diavola"
+  },
+  "18937": {
+    "name": "Piccata di Pollo al Limone"
+  },
+  "18938": {
+    "name": "Pollo al Vino Bianco"
+  },
+  "18939": {
+    "name": "Pollo alla Parmigiana"
+  },
+  "18940": {
+    "name": "Agnello a Scottadito"
+  },
+  "18941": {
+    "name": "Porceddu Sardo"
+  },
+  "18942": {
+    "name": "Porchetta"
+  },
+  "18943": {
+    "name": "Salsiccia e Lenticchie"
+  },
+  "18944": {
+    "name": "Fegato alla Veneziana"
+  },
+  "18945": {
+    "name": "Coniglio alla Ligure"
+  },
+  "18946": {
+    "name": "Branzino al Limone"
+  },
+  "18947": {
+    "name": "Orata all'Acqua Pazza"
+  },
+  "18948": {
+    "name": "Fritto Misto di Mare"
+  },
+  "18949": {
+    "name": "Impepata di Cozze"
+  },
+  "18950": {
+    "name": "Cacciucco alla Livornese"
+  },
+  "18951": {
+    "name": "Baccalà Mantecato"
+  },
+  "18952": {
+    "name": "Insalata di Mare"
+  },
+  "18953": {
+    "name": "Ostriche Gratinate"
+  },
+  "18954": {
+    "name": "Capesante Gratinate"
+  },
+  "18955": {
+    "name": "Insalata Caprese"
+  },
+  "18956": {
+    "name": "Caponata Siciliana"
+  },
+  "18957": {
+    "name": "Parmigiana di Melanzane"
+  },
+  "18958": {
+    "name": "Frittata agli Spinaci"
+  },
+  "18959": {
+    "name": "Polenta ai Funghi"
+  },
+  "18960": {
+    "name": "Peperonata"
+  },
+  "18961": {
+    "name": "Fagioli all'Uccelletto"
+  },
+  "18962": {
+    "name": "Prosciutto e Pere al Miele"
+  },
+  "18963": {
+    "name": "Tiramisù"
+  },
+  "18964": {
+    "name": "Panna Cotta"
+  },
+  "18965": {
+    "name": "Gelato Fior di Latte"
+  },
+  "18966": {
+    "name": "Gelato al Gianduja"
+  },
+  "18967": {
+    "name": "Cannoli Siciliani"
+  },
+  "18968": {
+    "name": "Amaretti"
+  },
+  "18969": {
+    "name": "Cantucci (Biscotti)"
+  },
+  "18970": {
+    "name": "Panettone"
+  },
+  "18971": {
+    "name": "Zabaione"
+  },
+  "18972": {
+    "name": "Granita Siciliana agli Agrumi"
+  },
+  "18973": {
+    "name": "Struffoli Napoletani"
+  },
+  "18974": {
+    "name": "Panforte di Siena"
+  },
+  "18975": {
+    "name": "Castagnaccio"
+  },
+  "18976": {
+    "name": "Linguine al Granchio Reale"
+  },
+  "18977": {
+    "name": "Cernia alla Siciliana"
+  },
+  "18978": {
+    "name": "Limoncello"
+  },
+  "18979": {
+    "name": "Cioccolata Calda"
+  },
+  "18980": {
+    "name": "Latte di Mandorla"
+  },
+  "18981": {
+    "name": "Zeppole di San Giuseppe"
+  },
+  "18982": {
+    "name": "Sfogliatella Napoletana"
+  },
+  "18983": {
+    "name": "Cassata Siciliana"
+  },
+  "18984": {
+    "name": "Babà al Rum"
+  },
+  "18985": {
+    "name": "Bonet Piemontese"
+  },
+  "18986": {
+    "name": "Semifreddo alle Mandorle"
+  },
+  "18987": {
+    "name": "Soupe à l'Oignon Gratinée"
+  },
+  "18988": {
+    "name": "Foie Gras Poêlé aux Raisins"
+  },
+  "18989": {
+    "name": "Terrine de Foie Gras"
+  },
+  "18990": {
+    "name": "Escargots de Bourgogne"
+  },
+  "18991": {
+    "name": "Bœuf Bourguignon"
+  },
+  "18992": {
+    "name": "Coq au Vin"
+  },
+  "18993": {
+    "name": "Bouillabaisse"
+  },
+  "18994": {
+    "name": "Ratatouille"
+  },
+  "18995": {
+    "name": "Confit de Canard"
+  },
+  "18996": {
+    "name": "Magret de Canard à l'Orange"
+  },
+  "18997": {
+    "name": "Magret de Canard aux Cerises"
+  },
+  "18998": {
+    "name": "Cassoulet"
+  },
+  "18999": {
+    "name": "Gratin Dauphinois"
+  },
+  "19000": {
+    "name": "Omelette aux Fines Herbes"
+  },
+  "19001": {
+    "name": "Quiche Lorraine"
+  },
+  "19002": {
+    "name": "Quiche aux Épinards et Fromage"
+  },
+  "19003": {
+    "name": "Pain Perdu"
+  },
+  "19004": {
+    "name": "Crêpes"
+  },
+  "19005": {
+    "name": "Galette Complète"
+  },
+  "19006": {
+    "name": "Crêpes Suzette"
+  },
+  "19007": {
+    "name": "Croissant"
+  },
+  "19008": {
+    "name": "Pain au Chocolat"
+  },
+  "19009": {
+    "name": "Macarons au Chocolat"
+  },
+  "19010": {
+    "name": "Madeleines"
+  },
+  "19011": {
+    "name": "Financiers"
+  },
+  "19012": {
+    "name": "Crème Brûlée"
+  },
+  "19013": {
+    "name": "Soufflé au Chocolat"
+  },
+  "19014": {
+    "name": "Fondant au Chocolat"
+  },
+  "19015": {
+    "name": "Mousse au Chocolat"
+  },
+  "19016": {
+    "name": "Tarte Bourdaloue"
+  },
+  "19017": {
+    "name": "Tarte au Citron"
+  },
+  "19018": {
+    "name": "Tarte aux Myrtilles"
+  },
+  "19019": {
+    "name": "Clafoutis aux Cerises"
+  },
+  "19020": {
+    "name": "Mille-feuille"
+  },
+  "19021": {
+    "name": "Gâteau Opéra"
+  },
+  "19022": {
+    "name": "Galette des Rois"
+  },
+  "19023": {
+    "name": "Chocolat Chaud"
+  },
+  "19024": {
+    "name": "Riz au Lait"
+  },
+  "19025": {
+    "name": "Île Flottante"
+  },
+  "19026": {
+    "name": "Poires au Vin Rouge"
+  },
+  "19027": {
+    "name": "Steak-frites"
+  },
+  "19028": {
+    "name": "Steak au Poivre"
+  },
+  "19029": {
+    "name": "Steak Tartare"
+  },
+  "19030": {
+    "name": "Pot-au-feu"
+  },
+  "19031": {
+    "name": "Blanquette de Veau"
+  },
+  "19032": {
+    "name": "Poulet Vallée d'Auge"
+  },
+  "19033": {
+    "name": "Poulet Rôti"
+  },
+  "19034": {
+    "name": "Poule au Pot Henri IV"
+  },
+  "19035": {
+    "name": "Escalope Cordon Bleu"
+  },
+  "19036": {
+    "name": "Poulet Basquaise"
+  },
+  "19037": {
+    "name": "Vol-au-vent au Poulet"
+  },
+  "19038": {
+    "name": "Moules Marinières"
+  },
+  "19039": {
+    "name": "Huîtres Sauce Mignonnette"
+  },
+  "19040": {
+    "name": "Saint-Jacques Poêlées"
+  },
+  "19041": {
+    "name": "Coquilles Saint-Jacques Gratinées"
+  },
+  "19042": {
+    "name": "Bar Meunière"
+  },
+  "19043": {
+    "name": "Quenelles de Brochet à la Lyonnaise"
+  },
+  "19044": {
+    "name": "Brandade de Morue"
+  },
+  "19045": {
+    "name": "Bisque de Crevettes"
+  },
+  "19046": {
+    "name": "Vichyssoise"
+  },
+  "19047": {
+    "name": "Velouté de Potiron"
+  },
+  "19048": {
+    "name": "Velouté de Champignons"
+  },
+  "19049": {
+    "name": "Salade Niçoise"
+  },
+  "19050": {
+    "name": "Salade Lyonnaise"
+  },
+  "19051": {
+    "name": "Salade de Chèvre Chaud"
+  },
+  "19052": {
+    "name": "Croque-monsieur"
+  },
+  "19053": {
+    "name": "Jambon-beurre"
+  },
+  "19054": {
+    "name": "Pâté de Campagne"
+  },
+  "19055": {
+    "name": "Gigot de Sept Heures"
+  },
+  "19056": {
+    "name": "Carré d'Agneau à la Provençale"
+  },
+  "19057": {
+    "name": "Navarin d'Agneau Printanier"
+  },
+  "19058": {
+    "name": "Lapin à la Provençale"
+  },
+  "19059": {
+    "name": "Choucroute Garnie"
+  },
+  "19060": {
+    "name": "Tarte Flambée (Flammekueche)"
+  },
+  "19061": {
+    "name": "Fondue Savoyarde"
+  },
+  "19062": {
+    "name": "Tartiflette"
+  },
+  "19063": {
+    "name": "Raclette"
+  },
+  "19064": {
+    "name": "Gratin de Chou-fleur"
+  },
+  "19065": {
+    "name": "Lentilles au Lard"
+  },
+  "19066": {
+    "name": "Beignets"
+  },
+  "19067": {
+    "name": "Ormeaux au Beurre à la Bretonne"
+  },
+  "19068": {
+    "name": "Billy Bi (Soupe de Moules au Safran)"
+  },
+  "19069": {
+    "name": "Tournedos Rossini"
+  },
+  "19070": {
+    "name": "Tourteau Gratiné à la Bretonne"
+  },
+  "19071": {
+    "name": "Noisettes de Chevreuil aux Myrtilles"
+  },
+  "19072": {
+    "name": "Pigeonneau Rôti aux Champignons"
+  },
+  "19073": {
+    "name": "Gélinotte Rôtie aux Raisins"
+  },
+  "19074": {
+    "name": "Vin Chaud"
+  },
+  "19075": {
+    "name": "Citron Pressé"
+  },
+  "19076": {
+    "name": "Saint-Honoré"
+  },
+  "19077": {
+    "name": "Paris-Brest"
+  },
+  "19078": {
+    "name": "Canelés de Bordeaux"
+  },
+  "19079": {
+    "name": "Nougat de Montélimar aux Cerises"
+  },
+  "19080": {
+    "name": "Éclair au Chocolat"
+  },
+  "19081": {
+    "name": "Poire Belle-Hélène"
+  },
+  "19082": {
+    "name": "Paella de Marisco"
+  },
+  "19083": {
+    "name": "Arroz Negro"
+  },
+  "19084": {
+    "name": "Paella Valenciana"
+  },
+  "19085": {
+    "name": "Arroz Caldoso de Gambas"
+  },
+  "19086": {
+    "name": "Arroz a Banda"
+  },
+  "19087": {
+    "name": "Paella de Verduras"
+  },
+  "19088": {
+    "name": "Tortilla de Patatas"
+  },
+  "19089": {
+    "name": "Pan con Tomate y Jamón"
+  },
+  "19090": {
+    "name": "Gazpacho Andaluz"
+  },
+  "19091": {
+    "name": "Ajoblanco"
+  },
+  "19092": {
+    "name": "Salmorejo Cordobés"
+  },
+  "19093": {
+    "name": "Gambas al Ajillo"
+  },
+  "19094": {
+    "name": "Calamares a la Romana"
+  },
+  "19095": {
+    "name": "Calamares a la Plancha"
+  },
+  "19096": {
+    "name": "Sepia a la Gallega"
+  },
+  "19097": {
+    "name": "Chorizo al Vino Tinto"
+  },
+  "19098": {
+    "name": "Lentejas con Chorizo"
+  },
+  "19099": {
+    "name": "Cocido Madrileño"
+  },
+  "19100": {
+    "name": "Fabada Asturiana"
+  },
+  "19101": {
+    "name": "Albóndigas en Salsa de Tomate"
+  },
+  "19102": {
+    "name": "Patatas a la Riojana"
+  },
+  "19103": {
+    "name": "Patatas Bravas"
+  },
+  "19104": {
+    "name": "Patatas Alioli"
+  },
+  "19105": {
+    "name": "Papas Arrugadas con Mojo"
+  },
+  "19106": {
+    "name": "Croquetas de Jamón"
+  },
+  "19107": {
+    "name": "Croquetas de Bacalao"
+  },
+  "19108": {
+    "name": "Pimientos de Padrón"
+  },
+  "19109": {
+    "name": "Samfaina"
+  },
+  "19110": {
+    "name": "Crema Catalana"
+  },
+  "19111": {
+    "name": "Flan de Huevo"
+  },
+  "19112": {
+    "name": "Churros con Chocolate"
+  },
+  "19113": {
+    "name": "Arroz con Leche Asturiano"
+  },
+  "19114": {
+    "name": "Turrón de Jijona"
+  },
+  "19115": {
+    "name": "Tarta de Santiago"
+  },
+  "19116": {
+    "name": "Leche Frita"
+  },
+  "19117": {
+    "name": "Rabo de Toro a la Cordobesa"
+  },
+  "19118": {
+    "name": "Cochinillo Asado de Segovia"
+  },
+  "19119": {
+    "name": "Secreto Ibérico a la Plancha"
+  },
+  "19120": {
+    "name": "Cordero Asado Castellano"
+  },
+  "19121": {
+    "name": "Suquet de Peix"
+  },
+  "19122": {
+    "name": "Bacalao al Pil Pil"
+  },
+  "19123": {
+    "name": "Champiñones al Ajillo"
+  },
+  "19124": {
+    "name": "Vieiras a la Gallega"
+  },
+  "19125": {
+    "name": "Almejas a la Marinera"
+  },
+  "19126": {
+    "name": "Mejillones a la Marinera"
+  },
+  "19127": {
+    "name": "Empanada Gallega"
+  },
+  "19128": {
+    "name": "Queso Manchego con Miel"
+  },
+  "19129": {
+    "name": "Bocadillo de Calamares"
+  },
+  "19130": {
+    "name": "Espinacas a la Catalana"
+  },
+  "19131": {
+    "name": "Garbanzos con Espinacas"
+  },
+  "19132": {
+    "name": "Sopa Castellana de Ajo"
+  },
+  "19133": {
+    "name": "Callos a la Madrileña"
+  },
+  "19134": {
+    "name": "Botifarra amb Mongetes"
+  },
+  "19135": {
+    "name": "Pollo al Ajillo"
+  },
+  "19136": {
+    "name": "Riñones al Jerez"
+  },
+  "19137": {
+    "name": "Huevos Rotos con Chorizo"
+  },
+  "19138": {
+    "name": "Pescaíto Frito Malagueño"
+  },
+  "19139": {
+    "name": "Besugo a la Donostiarra"
+  },
+  "19140": {
+    "name": "Chipirones a la Vizcaína"
+  },
+  "19141": {
+    "name": "Gambas a la Plancha"
+  },
+  "19142": {
+    "name": "Espetos de Sardinas"
+  },
+  "19143": {
+    "name": "Ostras a la Gallega"
+  },
+  "19144": {
+    "name": "Berenjenas con Miel de Caña"
+  },
+  "19145": {
+    "name": "Revuelto de Setas y Jamón"
+  },
+  "19146": {
+    "name": "Remojón de Naranja"
+  },
+  "19147": {
+    "name": "Escalivada"
+  },
+  "19148": {
+    "name": "Tarta de Queso Vasca"
+  },
+  "19149": {
+    "name": "Torrijas"
+  },
+  "19150": {
+    "name": "Carrillada al Vino Tinto"
+  },
+  "19151": {
+    "name": "Codornices Estofadas"
+  },
+  "19152": {
+    "name": "Arroz con Liebre"
+  },
+  "19153": {
+    "name": "Paella de Centollo"
+  },
+  "19154": {
+    "name": "Pollo en Pepitoria"
+  },
+  "19155": {
+    "name": "Costillas Ibéricas a la Miel"
+  },
+  "19156": {
+    "name": "Pichón Estofado Castellano"
+  },
+  "19157": {
+    "name": "Venado con Castañas"
+  },
+  "19158": {
+    "name": "Sangría"
+  },
+  "19159": {
+    "name": "Tinto de Verano"
+  },
+  "19160": {
+    "name": "Agua de Valencia"
+  },
+  "19161": {
+    "name": "Leche Merengada"
+  },
+  "19162": {
+    "name": "Yemas de Santa Teresa"
+  },
+  "19163": {
+    "name": "Natillas con Galleta"
+  },
+  "19164": {
+    "name": "Mazapán de Toledo"
+  },
+  "19165": {
+    "name": "Flores Fritas"
+  },
+  "19166": {
+    "name": "Tocino de Cielo"
+  },
+  "19167": {
+    "name": "Granizado de Limón"
+  },
+  "19168": {
+    "name": "Tacos de Res"
+  },
+  "19169": {
+    "name": "Tacos al Pastor"
+  },
+  "19170": {
+    "name": "Tacos de Pollo"
+  },
+  "19171": {
+    "name": "Tacos de Pescado (Baja)"
+  },
+  "19172": {
+    "name": "Tacos de Camarón"
+  },
+  "19173": {
+    "name": "Tacos de Carnitas"
+  },
+  "19174": {
+    "name": "Tacos de Barbacoa de Borrego"
+  },
+  "19175": {
+    "name": "Tacos de Birria"
+  },
+  "19176": {
+    "name": "Burrito de Res"
+  },
+  "19177": {
+    "name": "Burrito de Pollo"
+  },
+  "19178": {
+    "name": "Burrito de Frijoles"
+  },
+  "19179": {
+    "name": "Quesadilla de Pollo"
+  },
+  "19180": {
+    "name": "Quesadilla de Hongos"
+  },
+  "19181": {
+    "name": "Fajitas de Res"
+  },
+  "19182": {
+    "name": "Fajitas de Pollo"
+  },
+  "19183": {
+    "name": "Enchiladas Rojas"
+  },
+  "19184": {
+    "name": "Enchiladas Verdes"
+  },
+  "19185": {
+    "name": "Nachos"
+  },
+  "19186": {
+    "name": "Guacamole"
+  },
+  "19187": {
+    "name": "Totopos con Salsa"
+  },
+  "19188": {
+    "name": "Mole Poblano"
+  },
+  "19189": {
+    "name": "Ceviche Mexicano"
+  },
+  "19190": {
+    "name": "Cóctel de Camarón"
+  },
+  "19191": {
+    "name": "Tamales de Puerco"
+  },
+  "19192": {
+    "name": "Tamales Dulces"
+  },
+  "19193": {
+    "name": "Pozole Rojo"
+  },
+  "19194": {
+    "name": "Pozole Verde"
+  },
+  "19195": {
+    "name": "Sopa de Tortilla"
+  },
+  "19196": {
+    "name": "Menudo"
+  },
+  "19197": {
+    "name": "Elote"
+  },
+  "19198": {
+    "name": "Esquites"
+  },
+  "19199": {
+    "name": "Chiles Rellenos"
+  },
+  "19200": {
+    "name": "Chiles en Nogada"
+  },
+  "19201": {
+    "name": "Pollo Asado"
+  },
+  "19202": {
+    "name": "Cochinita Pibil"
+  },
+  "19203": {
+    "name": "Huevos a la Mexicana"
+  },
+  "19204": {
+    "name": "Huevos Rancheros"
+  },
+  "19205": {
+    "name": "Huevos Divorciados"
+  },
+  "19206": {
+    "name": "Chilaquiles"
+  },
+  "19207": {
+    "name": "Frijoles Refritos"
+  },
+  "19208": {
+    "name": "Arroz Rojo"
+  },
+  "19209": {
+    "name": "Sopa de Frijol"
+  },
+  "19210": {
+    "name": "Carne Asada"
+  },
+  "19211": {
+    "name": "Huachinango a la Veracruzana"
+  },
+  "19212": {
+    "name": "Camarones al Mojo de Ajo"
+  },
+  "19213": {
+    "name": "Camarones a la Diabla"
+  },
+  "19214": {
+    "name": "Champurrado"
+  },
+  "19215": {
+    "name": "Pastel de Tres Leches"
+  },
+  "19216": {
+    "name": "Flan Napolitano"
+  },
+  "19217": {
+    "name": "Conchas"
+  },
+  "19218": {
+    "name": "Arroz con Leche Mexicano"
+  },
+  "19219": {
+    "name": "Calabaza en Tacha"
+  },
+  "19220": {
+    "name": "Flautas de Pollo"
+  },
+  "19221": {
+    "name": "Sopes"
+  },
+  "19222": {
+    "name": "Papaya con Chile y Limón"
+  },
+  "19223": {
+    "name": "Caldo de Res"
+  },
+  "19224": {
+    "name": "Caldo de Pollo"
+  },
+  "19225": {
+    "name": "Tinga de Pollo"
+  },
+  "19226": {
+    "name": "Queso Fundido"
+  },
+  "19227": {
+    "name": "Chile con Queso"
+  },
+  "19228": {
+    "name": "Pescado Zarandeado"
+  },
+  "19229": {
+    "name": "Tostadas de Pollo"
+  },
+  "19230": {
+    "name": "Cacahuates Enchilados"
+  },
+  "19231": {
+    "name": "Molcajete Mixto"
+  },
+  "19232": {
+    "name": "Chorizo con Huevo"
+  },
+  "19233": {
+    "name": "Papas con Chorizo"
+  },
+  "19234": {
+    "name": "Pan de Elote"
+  },
+  "19235": {
+    "name": "Polvorones"
+  },
+  "19236": {
+    "name": "Plátanos Fritos"
+  },
+  "19237": {
+    "name": "Chimichanga de Pollo"
+  },
+  "19238": {
+    "name": "Frijoles Charros"
+  },
+  "19239": {
+    "name": "Sopa de Albóndigas"
+  },
+  "19240": {
+    "name": "Torta de Milanesa"
+  },
+  "19241": {
+    "name": "Caldo de Pescado"
+  },
+  "19242": {
+    "name": "Tacos de Arrachera Wagyu"
+  },
+  "19243": {
+    "name": "Aguachile de Callo de Hacha"
+  },
+  "19244": {
+    "name": "Ostiones en su Concha"
+  },
+  "19245": {
+    "name": "Glorias de Nuez"
+  },
+  "19246": {
+    "name": "Jaibas Enchiladas"
+  },
+  "19247": {
+    "name": "Horchata"
+  },
+  "19248": {
+    "name": "Tepache"
+  },
+  "19249": {
+    "name": "Michelada"
+  },
+  "19250": {
+    "name": "Margarita"
+  },
+  "19251": {
+    "name": "Atole de Vainilla"
+  },
+  "19252": {
+    "name": "Raspado"
+  },
+  "19253": {
+    "name": "Capirotada"
+  },
+  "19254": {
+    "name": "Palanqueta de Cacahuate"
+  },
+  "19255": {
+    "name": "Buñuelos"
+  },
+  "19256": {
+    "name": "Cocadas"
+  },
+  "19257": {
+    "name": "Gelatina de Mosaico"
+  },
+  "19258": {
+    "name": "Ensalada de Nochebuena"
+  },
+  "19259": {
+    "name": "Gaeng Keow Wan Gai"
+  },
+  "19260": {
+    "name": "Gaeng Phed Nua"
+  },
+  "19261": {
+    "name": "Poo Pad Pong Karee"
+  },
+  "19262": {
+    "name": "Massaman Curry Gae"
+  },
+  "19263": {
+    "name": "Panang Moo"
+  },
+  "19264": {
+    "name": "Gaeng Keow Wan Look Chin Pla"
+  },
+  "19265": {
+    "name": "Gaeng Kua Sapparod Goong"
+  },
+  "19266": {
+    "name": "Gaeng Phed Ped Yang"
+  },
+  "19267": {
+    "name": "Tom Yum Goong"
+  },
+  "19268": {
+    "name": "Tom Kha Gai"
+  },
+  "19269": {
+    "name": "Tom Yum Talay"
+  },
+  "19270": {
+    "name": "Gaeng Som Malakor"
+  },
+  "19271": {
+    "name": "Pad Thai"
+  },
+  "19272": {
+    "name": "Pad Kee Mao"
+  },
+  "19273": {
+    "name": "Pad See Ew"
+  },
+  "19274": {
+    "name": "Kuay teow reua (nouilles des bateaux)"
+  },
+  "19275": {
+    "name": "Kuay Teow Ped"
+  },
+  "19276": {
+    "name": "Khao Soi"
+  },
+  "19277": {
+    "name": "Khao Pad Sapparod"
+  },
+  "19278": {
+    "name": "Khao Pad Poo"
+  },
+  "19279": {
+    "name": "Pad Kra Pao Moo Kai Dao"
+  },
+  "19280": {
+    "name": "Pad Kra Pao Gai"
+  },
+  "19281": {
+    "name": "Khao Man Gai"
+  },
+  "19282": {
+    "name": "Khao Kha Moo"
+  },
+  "19283": {
+    "name": "Khao Niao Mun"
+  },
+  "19284": {
+    "name": "Som Tam"
+  },
+  "19285": {
+    "name": "Yum Woon Sen"
+  },
+  "19286": {
+    "name": "Yum Nua"
+  },
+  "19287": {
+    "name": "Larb Moo"
+  },
+  "19288": {
+    "name": "Kor Moo Yang"
+  },
+  "19289": {
+    "name": "Gai Yang Isan"
+  },
+  "19290": {
+    "name": "Satay Gai"
+  },
+  "19291": {
+    "name": "Satay Moo"
+  },
+  "19292": {
+    "name": "Moo Ping"
+  },
+  "19293": {
+    "name": "Pla Kapong Neung Manao"
+  },
+  "19294": {
+    "name": "Pla Sam Rod"
+  },
+  "19295": {
+    "name": "Tod Mun Pla"
+  },
+  "19296": {
+    "name": "Tod Mun Goong"
+  },
+  "19297": {
+    "name": "Por Pia Tod"
+  },
+  "19298": {
+    "name": "Pad Pak Boong Fai Daeng"
+  },
+  "19299": {
+    "name": "Pad Kra Pao Talay"
+  },
+  "19300": {
+    "name": "Peek Gai Tod Nam Pla"
+  },
+  "19301": {
+    "name": "Pla Muek Yang"
+  },
+  "19302": {
+    "name": "Goong Chae Nam Pla"
+  },
+  "19303": {
+    "name": "Hoi Lai Pad Nam Prik Pao"
+  },
+  "19304": {
+    "name": "Tao Hu Tod"
+  },
+  "19305": {
+    "name": "Sai Ua"
+  },
+  "19306": {
+    "name": "Sai Krok Isan"
+  },
+  "19307": {
+    "name": "Hor Mok Pla"
+  },
+  "19308": {
+    "name": "Poo Ob Woon Sen"
+  },
+  "19309": {
+    "name": "Jok Moo"
+  },
+  "19310": {
+    "name": "Goong Pao"
+  },
+  "19311": {
+    "name": "Pla Tod Nam Pla"
+  },
+  "19312": {
+    "name": "I-Tim Kati"
+  },
+  "19313": {
+    "name": "Roti Gluay"
+  },
+  "19314": {
+    "name": "Fak Thong Gaeng Buat"
+  },
+  "19315": {
+    "name": "Kluay Buat Chee"
+  },
+  "19316": {
+    "name": "Cha Yen"
+  },
+  "19317": {
+    "name": "Woon Kati"
+  },
+  "19318": {
+    "name": "Foi Thong"
+  },
+  "19319": {
+    "name": "Khanom Krok"
+  },
+  "19320": {
+    "name": "Kluay Tod"
+  },
+  "19321": {
+    "name": "Sangkaya Fak Thong"
+  },
+  "19322": {
+    "name": "Tam Teen Gai"
+  },
+  "19323": {
+    "name": "Gaeng Jued Look Moo"
+  },
+  "19324": {
+    "name": "Khai Palo"
+  },
+  "19325": {
+    "name": "Seua rong hai (tigre qui pleure)"
+  },
+  "19326": {
+    "name": "Gaeng Karee Gai"
+  },
+  "19327": {
+    "name": "Yum Talay"
+  },
+  "19328": {
+    "name": "Pla Duk Yang"
+  },
+  "19329": {
+    "name": "Pla Muek Pad Nam Prik Pao"
+  },
+  "19330": {
+    "name": "Poo Pad Prik Thai Dam"
+  },
+  "19331": {
+    "name": "Rang nok nam kati (nid d'hirondelle au coco)"
+  },
+  "19332": {
+    "name": "Pla Jaramet Tod Nam Pla"
+  },
+  "19333": {
+    "name": "Hoi Nang Rom Song Kreuang"
+  },
+  "19334": {
+    "name": "Cha Manao"
+  },
+  "19335": {
+    "name": "Nam Maprao Pun"
+  },
+  "19336": {
+    "name": "Nam Lam Yai"
+  },
+  "19337": {
+    "name": "Khanom Chan"
+  },
+  "19338": {
+    "name": "Khao Lam"
+  },
+  "19339": {
+    "name": "Thong Yip"
+  },
+  "19340": {
+    "name": "Nam Tao Hu"
+  },
+  "19341": {
+    "name": "Ruam Mit"
+  },
+  "19342": {
+    "name": "Khao Tom Mat"
+  },
+  "19343": {
+    "name": "Khanom Mor Gaeng Puak"
+  },
+  "19344": {
+    "name": "Murgh makhani (poulet au beurre)"
+  },
+  "19345": {
+    "name": "Poulet tikka masala"
+  },
+  "19346": {
+    "name": "Poulet tandoori"
+  },
+  "19347": {
+    "name": "Poulet tikka"
+  },
+  "19348": {
+    "name": "Rogan Josh"
+  },
+  "19349": {
+    "name": "Biryani d'agneau"
+  },
+  "19350": {
+    "name": "Biryani de poulet"
+  },
+  "19351": {
+    "name": "Biryani de légumes"
+  },
+  "19352": {
+    "name": "Korma d'agneau"
+  },
+  "19353": {
+    "name": "Korma de poulet"
+  },
+  "19354": {
+    "name": "Keema Matar"
+  },
+  "19355": {
+    "name": "Vindaloo de porc de Goa"
+  },
+  "19356": {
+    "name": "Beef fry du Kerala"
+  },
+  "19357": {
+    "name": "Curry de pomfret de Goa"
+  },
+  "19358": {
+    "name": "Curry de crevettes du Kerala (chemmeen)"
+  },
+  "19359": {
+    "name": "Macher Jhol"
+  },
+  "19360": {
+    "name": "Poisson amritsari"
+  },
+  "19361": {
+    "name": "Palak Paneer"
+  },
+  "19362": {
+    "name": "Matar Paneer"
+  },
+  "19363": {
+    "name": "Paneer Tikka"
+  },
+  "19364": {
+    "name": "Paneer Butter Masala"
+  },
+  "19365": {
+    "name": "Aloo Gobi"
+  },
+  "19366": {
+    "name": "Saag Aloo"
+  },
+  "19367": {
+    "name": "Jeera Aloo"
+  },
+  "19368": {
+    "name": "Aloo Matar"
+  },
+  "19369": {
+    "name": "Baingan Bharta"
+  },
+  "19370": {
+    "name": "Dal Tadka"
+  },
+  "19371": {
+    "name": "Moong Dal"
+  },
+  "19372": {
+    "name": "Dal Makhani"
+  },
+  "19373": {
+    "name": "Chole (curry de pois chiches du Pendjab)"
+  },
+  "19374": {
+    "name": "Rajma"
+  },
+  "19375": {
+    "name": "Naan au beurre"
+  },
+  "19376": {
+    "name": "Naan à l'ail"
+  },
+  "19377": {
+    "name": "Aloo Paratha"
+  },
+  "19378": {
+    "name": "Puri Bhaji"
+  },
+  "19379": {
+    "name": "Masala Dosa"
+  },
+  "19380": {
+    "name": "Idli"
+  },
+  "19381": {
+    "name": "Samosa"
+  },
+  "19382": {
+    "name": "Pakora à l'oignon"
+  },
+  "19383": {
+    "name": "Masala Chai"
+  },
+  "19384": {
+    "name": "Lassi sucré"
+  },
+  "19385": {
+    "name": "Lassi à la banane"
+  },
+  "19386": {
+    "name": "Raïta au concombre"
+  },
+  "19387": {
+    "name": "Gulab Jamun"
+  },
+  "19388": {
+    "name": "Gajar Halwa"
+  },
+  "19389": {
+    "name": "Kheer"
+  },
+  "19390": {
+    "name": "Kulfi"
+  },
+  "19391": {
+    "name": "Besan Ladoo"
+  },
+  "19392": {
+    "name": "Jalebi"
+  },
+  "19393": {
+    "name": "Seekh Kebab"
+  },
+  "19394": {
+    "name": "Poulet 65"
+  },
+  "19395": {
+    "name": "Raan"
+  },
+  "19396": {
+    "name": "Curry aux œufs (anda curry)"
+  },
+  "19397": {
+    "name": "Anda Bhurji"
+  },
+  "19398": {
+    "name": "Kaddu ki Sabzi"
+  },
+  "19399": {
+    "name": "Rasam"
+  },
+  "19400": {
+    "name": "Sambar"
+  },
+  "19401": {
+    "name": "Riz au citron (chitranna)"
+  },
+  "19402": {
+    "name": "Riz à la noix de coco (thengai sadam)"
+  },
+  "19403": {
+    "name": "Jeera Rice"
+  },
+  "19404": {
+    "name": "Riz au yaourt (thayir sadam)"
+  },
+  "19405": {
+    "name": "Curry de crabe"
+  },
+  "19406": {
+    "name": "Crevettes tandoori"
+  },
+  "19407": {
+    "name": "Nihari"
+  },
+  "19408": {
+    "name": "Haleem"
+  },
+  "19409": {
+    "name": "Sarson ka saag et makki di roti"
+  },
+  "19410": {
+    "name": "Pani Puri"
+  },
+  "19411": {
+    "name": "Poulet saag"
+  },
+  "19412": {
+    "name": "Mushroom Matar"
+  },
+  "19413": {
+    "name": "Beans Poriyal"
+  },
+  "19414": {
+    "name": "Aloo Baingan"
+  },
+  "19415": {
+    "name": "Barfi à la noix de coco"
+  },
+  "19416": {
+    "name": "Mirchi Bajji"
+  },
+  "19417": {
+    "name": "Poulet au poivre de Chettinad"
+  },
+  "19418": {
+    "name": "Curry de crabe de Mangalore"
+  },
+  "19419": {
+    "name": "Meen Pollichathu"
+  },
+  "19420": {
+    "name": "Chaas (babeurre épicé)"
+  },
+  "19421": {
+    "name": "Pudina Nimbu Pani"
+  },
+  "19422": {
+    "name": "Thandai"
+  },
+  "19423": {
+    "name": "Adrak doodh (lait au gingembre)"
+  },
+  "19424": {
+    "name": "Kashmiri Kahwa"
+  },
+  "19425": {
+    "name": "Rasmalai"
+  },
+  "19426": {
+    "name": "Rasgulla"
+  },
+  "19427": {
+    "name": "Sooji Halwa"
+  },
+  "19428": {
+    "name": "Seviyan Kheer"
+  },
+  "19429": {
+    "name": "Kesar Peda"
+  },
+  "19430": {
+    "name": "Chikki"
+  },
+  "19431": {
+    "name": "Pudina Paratha"
+  },
+  "19432": {
+    "name": "Döner Kebap"
+  },
+  "19433": {
+    "name": "Adana Kebap"
+  },
+  "19434": {
+    "name": "Şiş Kebap"
+  },
+  "19435": {
+    "name": "Tavuk Şiş"
+  },
+  "19436": {
+    "name": "İskender Kebap"
+  },
+  "19437": {
+    "name": "Testi Kebabı"
+  },
+  "19438": {
+    "name": "Patlıcan Kebabı"
+  },
+  "19439": {
+    "name": "Köfte"
+  },
+  "19440": {
+    "name": "Hünkâr Beğendi"
+  },
+  "19441": {
+    "name": "Karnıyarık"
+  },
+  "19442": {
+    "name": "İmam Bayıldı"
+  },
+  "19443": {
+    "name": "Biber Dolması"
+  },
+  "19444": {
+    "name": "Lahana Sarması"
+  },
+  "19445": {
+    "name": "Mantı"
+  },
+  "19446": {
+    "name": "Lahmacun"
+  },
+  "19447": {
+    "name": "Peynirli Pide"
+  },
+  "19448": {
+    "name": "Kıymalı Pide"
+  },
+  "19449": {
+    "name": "Ispanaklı Börek"
+  },
+  "19450": {
+    "name": "Simit"
+  },
+  "19451": {
+    "name": "Mercimek Çorbası"
+  },
+  "19452": {
+    "name": "Yayla Çorbası"
+  },
+  "19453": {
+    "name": "İşkembe Çorbası"
+  },
+  "19454": {
+    "name": "Ezogelin Çorbası"
+  },
+  "19455": {
+    "name": "Şehriyeli Pilav"
+  },
+  "19456": {
+    "name": "Cacık"
+  },
+  "19457": {
+    "name": "Çoban Salatası"
+  },
+  "19458": {
+    "name": "Acılı Ezme"
+  },
+  "19459": {
+    "name": "Baba Gannuş"
+  },
+  "19460": {
+    "name": "Humus"
+  },
+  "19461": {
+    "name": "Kalamar Tava Tarator Soslu"
+  },
+  "19462": {
+    "name": "Midye Dolma"
+  },
+  "19463": {
+    "name": "Midye Tava"
+  },
+  "19464": {
+    "name": "Tuzda Levrek"
+  },
+  "19465": {
+    "name": "Balık Ekmek"
+  },
+  "19466": {
+    "name": "Kuzu Pirzola"
+  },
+  "19467": {
+    "name": "Kuzu Tandır"
+  },
+  "19468": {
+    "name": "Çerkez Tavuğu"
+  },
+  "19469": {
+    "name": "Menemen"
+  },
+  "19470": {
+    "name": "Çılbır"
+  },
+  "19471": {
+    "name": "Sucuklu Yumurta"
+  },
+  "19472": {
+    "name": "Lokum"
+  },
+  "19473": {
+    "name": "Cevizli Baklava"
+  },
+  "19474": {
+    "name": "Künefe"
+  },
+  "19475": {
+    "name": "Fırın Sütlaç"
+  },
+  "19476": {
+    "name": "Maraş Dondurması"
+  },
+  "19477": {
+    "name": "Tavuk Göğsü"
+  },
+  "19478": {
+    "name": "Aşure"
+  },
+  "19479": {
+    "name": "Kabak Tatlısı"
+  },
+  "19480": {
+    "name": "Yoğurtlu Patlıcan Kızartması"
+  },
+  "19481": {
+    "name": "Etli Kuru Fasulye"
+  },
+  "19482": {
+    "name": "Zeytinyağlı Taze Fasulye"
+  },
+  "19483": {
+    "name": "Kumpir"
+  },
+  "19484": {
+    "name": "Mısır Ekmeği"
+  },
+  "19485": {
+    "name": "Kuymak (Muhlama)"
+  },
+  "19486": {
+    "name": "Kuzu Etli Osmanlı Pilavı"
+  },
+  "19487": {
+    "name": "Domates Çorbası"
+  },
+  "19488": {
+    "name": "Tavuk Şehriye Çorbası"
+  },
+  "19489": {
+    "name": "Pilav Üstü Döner"
+  },
+  "19490": {
+    "name": "Muhallebi"
+  },
+  "19491": {
+    "name": "Hamsi Tava"
+  },
+  "19492": {
+    "name": "Tavuk Dürüm"
+  },
+  "19493": {
+    "name": "Gözleme"
+  },
+  "19494": {
+    "name": "Patates Oturtma"
+  },
+  "19495": {
+    "name": "Yuvarlama"
+  },
+  "19496": {
+    "name": "İç Pilav"
+  },
+  "19497": {
+    "name": "Etli Taze Fasulye"
+  },
+  "19498": {
+    "name": "Susamlı Pasteli"
+  },
+  "19499": {
+    "name": "Cevizli Armut Tatlısı"
+  },
+  "19500": {
+    "name": "Keşkül"
+  },
+  "19501": {
+    "name": "Tavuklu Pilav"
+  },
+  "19502": {
+    "name": "Ege Usulü Izgara Lahos"
+  },
+  "19503": {
+    "name": "Osmanlı Güvercin Dolması"
+  },
+  "19504": {
+    "name": "Zerde"
+  },
+  "19505": {
+    "name": "Limonlu Çay"
+  },
+  "19506": {
+    "name": "Ayran"
+  },
+  "19507": {
+    "name": "Salep"
+  },
+  "19508": {
+    "name": "Boza"
+  },
+  "19509": {
+    "name": "Revani"
+  },
+  "19510": {
+    "name": "Tahin Helvası"
+  },
+  "19511": {
+    "name": "Un Helvası"
+  },
+  "19512": {
+    "name": "Kazandibi"
+  },
+  "19513": {
+    "name": "Tulumba Tatlısı"
+  },
+  "19514": {
+    "name": "Tahin Pekmez"
+  },
+  "19515": {
+    "name": "Ekmek Kadayıfı"
+  },
+  "19516": {
+    "name": "Vişne Şerbeti"
+  },
+  "19517": {
+    "name": "Yoğurt Tatlısı"
+  },
+  "19518": {
+    "name": "Şekerpare"
+  },
+  "19519": {
+    "name": "Phở Bò"
+  },
+  "19520": {
+    "name": "Phở Gà"
+  },
+  "19521": {
+    "name": "Bún Bò Huế"
+  },
+  "19522": {
+    "name": "Bún Chả Hà Nội"
+  },
+  "19523": {
+    "name": "Gỏi Cuốn Tôm"
+  },
+  "19524": {
+    "name": "Chả Giò"
+  },
+  "19525": {
+    "name": "Bánh Mì Thịt"
+  },
+  "19526": {
+    "name": "Bánh Mì Trứng"
+  },
+  "19527": {
+    "name": "Bánh Xèo"
+  },
+  "19528": {
+    "name": "Bánh Cuốn"
+  },
+  "19529": {
+    "name": "Cơm Tấm Sườn"
+  },
+  "19530": {
+    "name": "Cơm Gà Hội An"
+  },
+  "19531": {
+    "name": "Phở Xào Bò"
+  },
+  "19532": {
+    "name": "Bún Riêu Cua"
+  },
+  "19533": {
+    "name": "Chả Cá Lã Vọng"
+  },
+  "19534": {
+    "name": "Cơm Hến Huế"
+  },
+  "19535": {
+    "name": "Mì Quảng"
+  },
+  "19536": {
+    "name": "Cao Lầu Hội An"
+  },
+  "19537": {
+    "name": "Thịt Kho Trứng"
+  },
+  "19538": {
+    "name": "Cá Kho Tộ"
+  },
+  "19539": {
+    "name": "Gà Nướng Mật Ong"
+  },
+  "19540": {
+    "name": "Bò Lúc Lắc"
+  },
+  "19541": {
+    "name": "Gỏi Đu Đủ Bò Khô"
+  },
+  "19542": {
+    "name": "Gỏi Ngó Sen Tôm"
+  },
+  "19543": {
+    "name": "Gỏi Gà Bắp Cải"
+  },
+  "19544": {
+    "name": "Bánh Tôm Hồ Tây"
+  },
+  "19545": {
+    "name": "Xôi Xéo"
+  },
+  "19546": {
+    "name": "Bánh Chưng"
+  },
+  "19547": {
+    "name": "Bánh Bèo"
+  },
+  "19548": {
+    "name": "Bánh Đậu Xanh"
+  },
+  "19549": {
+    "name": "Chè Ba Màu"
+  },
+  "19550": {
+    "name": "Chuối Nếp Nướng"
+  },
+  "19551": {
+    "name": "Bánh Flan Nước Cốt Dừa"
+  },
+  "19552": {
+    "name": "Canh Chua Cá"
+  },
+  "19553": {
+    "name": "Canh Khổ Qua Nhồi Thịt"
+  },
+  "19554": {
+    "name": "Canh Bí Đao Tôm Khô"
+  },
+  "19555": {
+    "name": "Canh Bí Đỏ"
+  },
+  "19556": {
+    "name": "Rau Muống Xào Tỏi"
+  },
+  "19557": {
+    "name": "Nem Nướng"
+  },
+  "19558": {
+    "name": "Nem Chua"
+  },
+  "19559": {
+    "name": "Chả Trứng Hấp"
+  },
+  "19560": {
+    "name": "Ếch Xào Sả Ớt"
+  },
+  "19561": {
+    "name": "Cà Ri Gà"
+  },
+  "19562": {
+    "name": "Bún Măng Vịt"
+  },
+  "19563": {
+    "name": "Ốc Xào Cay"
+  },
+  "19564": {
+    "name": "Bò Lá Lốt"
+  },
+  "19565": {
+    "name": "Bò Nhúng Giấm"
+  },
+  "19566": {
+    "name": "Lẩu Hải Sản Chua Cay"
+  },
+  "19567": {
+    "name": "Hàu Nướng Mỡ Hành"
+  },
+  "19568": {
+    "name": "Sò Điệp Nướng Mỡ Hành"
+  },
+  "19569": {
+    "name": "Tôm Rim Nước Dừa"
+  },
+  "19570": {
+    "name": "Đậu Phụ Sốt Cà Chua"
+  },
+  "19571": {
+    "name": "Bún Đậu Mắm Tôm"
+  },
+  "19572": {
+    "name": "Bò Xào Thơm"
+  },
+  "19573": {
+    "name": "Cánh Gà Chiên Nước Mắm"
+  },
+  "19574": {
+    "name": "Gà Kho Gừng"
+  },
+  "19575": {
+    "name": "Bắp Xào Tôm Khô"
+  },
+  "19576": {
+    "name": "Rau Lang Xào Tỏi"
+  },
+  "19577": {
+    "name": "Cơm Rượu Nếp"
+  },
+  "19578": {
+    "name": "Bánh Chuối Nướng"
+  },
+  "19579": {
+    "name": "Chè Khoai Môn"
+  },
+  "19580": {
+    "name": "Bò Tái Chanh"
+  },
+  "19581": {
+    "name": "Cháo Lươn"
+  },
+  "19582": {
+    "name": "Cháo Cua"
+  },
+  "19583": {
+    "name": "Bún Ốc"
+  },
+  "19584": {
+    "name": "Bún Mọc"
+  },
+  "19585": {
+    "name": "Thạch Dừa"
+  },
+  "19586": {
+    "name": "Kẹo Lạc"
+  },
+  "19587": {
+    "name": "Cua Rang Me"
+  },
+  "19588": {
+    "name": "Ba Ba Om Chuối Đậu"
+  },
+  "19589": {
+    "name": "Bồ Câu Quay"
+  },
+  "19590": {
+    "name": "Trà Chanh"
+  },
+  "19591": {
+    "name": "Tào Phớ"
+  },
+  "19592": {
+    "name": "Sinh Tố Bơ"
+  },
+  "19593": {
+    "name": "Sữa Chua"
+  },
+  "19594": {
+    "name": "Bánh Da Lợn"
+  },
+  "19595": {
+    "name": "Chè Chuối"
+  },
+  "19596": {
+    "name": "Chè Bắp"
+  },
+  "19597": {
+    "name": "Chè Đậu Đỏ"
+  },
+  "19598": {
+    "name": "Chè Trôi Nước"
+  },
+  "19599": {
+    "name": "Kẹo Dừa Bến Tre"
+  },
+  "19600": {
+    "name": "Kẹo Mè Xửng"
+  },
+  "19601": {
+    "name": "Sinh Tố Đu Đủ"
+  },
+  "19602": {
+    "name": "Chanh Muối"
+  },
+  "19603": {
+    "name": "Chè Hạt Sen Long Nhãn"
+  },
+  "19604": {
+    "name": "Hamburger classique"
+  },
+  "19605": {
+    "name": "Cheeseburger"
+  },
+  "19606": {
+    "name": "Burger au poulet frit"
+  },
+  "19607": {
+    "name": "Hot-dog"
+  },
+  "19608": {
+    "name": "Frites"
+  },
+  "19609": {
+    "name": "Frites au cheddar et bacon"
+  },
+  "19610": {
+    "name": "Ailes de poulet Buffalo"
+  },
+  "19611": {
+    "name": "Poulet frit du Sud"
+  },
+  "19612": {
+    "name": "Poulet piquant de Nashville"
+  },
+  "19613": {
+    "name": "Brisket fumé du Texas"
+  },
+  "19614": {
+    "name": "Travers de porc BBQ"
+  },
+  "19615": {
+    "name": "Pulled Pork"
+  },
+  "19616": {
+    "name": "Steak T-bone"
+  },
+  "19617": {
+    "name": "Contre-filet New York Strip"
+  },
+  "19618": {
+    "name": "Philly Cheesesteak"
+  },
+  "19619": {
+    "name": "Chili con carne texan"
+  },
+  "19620": {
+    "name": "Clam chowder de Nouvelle-Angleterre"
+  },
+  "19621": {
+    "name": "Clam chowder de Manhattan"
+  },
+  "19622": {
+    "name": "Pattes de crabe royal d'Alaska"
+  },
+  "19623": {
+    "name": "Écrevisses bouillies de Louisiane"
+  },
+  "19624": {
+    "name": "Jambalaya cajun"
+  },
+  "19625": {
+    "name": "Gumbo au poulet et saucisse"
+  },
+  "19626": {
+    "name": "Poisson-chat frit du Sud"
+  },
+  "19627": {
+    "name": "Crevettes et gruau de maïs (shrimp & grits)"
+  },
+  "19628": {
+    "name": "Galettes de crabe du Maryland"
+  },
+  "19629": {
+    "name": "Salade Cobb"
+  },
+  "19630": {
+    "name": "Salade César"
+  },
+  "19631": {
+    "name": "Salade Waldorf"
+  },
+  "19632": {
+    "name": "Salade de pommes de terre américaine"
+  },
+  "19633": {
+    "name": "Salade de chou (coleslaw)"
+  },
+  "19634": {
+    "name": "Œufs mimosa (deviled eggs)"
+  },
+  "19635": {
+    "name": "Pain de maïs (cornbread)"
+  },
+  "19636": {
+    "name": "Mac and Cheese"
+  },
+  "19637": {
+    "name": "Pain de viande (meatloaf)"
+  },
+  "19638": {
+    "name": "Rôti braisé (pot roast)"
+  },
+  "19639": {
+    "name": "Tourte au poulet (pot pie)"
+  },
+  "19640": {
+    "name": "Soupe de poulet aux nouilles"
+  },
+  "19641": {
+    "name": "Poulet et gaufres"
+  },
+  "19642": {
+    "name": "Œufs Bénédicte"
+  },
+  "19643": {
+    "name": "Pancakes au miel"
+  },
+  "19644": {
+    "name": "Gaufres belges"
+  },
+  "19645": {
+    "name": "Petit-déjeuner américain"
+  },
+  "19646": {
+    "name": "Hash Browns"
+  },
+  "19647": {
+    "name": "Sandwich beurre de cacahuète et confiture"
+  },
+  "19648": {
+    "name": "Cookies au beurre de cacahuète"
+  },
+  "19649": {
+    "name": "Cookies aux pépites de chocolat"
+  },
+  "19650": {
+    "name": "Brownies"
+  },
+  "19651": {
+    "name": "Tarte à la citrouille"
+  },
+  "19652": {
+    "name": "Tarte aux cerises"
+  },
+  "19653": {
+    "name": "Muffins aux myrtilles"
+  },
+  "19654": {
+    "name": "Tarte aux noix de pécan"
+  },
+  "19655": {
+    "name": "Cheesecake new-yorkais"
+  },
+  "19656": {
+    "name": "Gâteau Red Velvet"
+  },
+  "19657": {
+    "name": "Donuts"
+  },
+  "19658": {
+    "name": "Banana Split"
+  },
+  "19659": {
+    "name": "Banana bread aux noix"
+  },
+  "19660": {
+    "name": "Milk-shake au chocolat"
+  },
+  "19661": {
+    "name": "Pop-corn au beurre"
+  },
+  "19662": {
+    "name": "Avocado toast"
+  },
+  "19663": {
+    "name": "California Roll"
+  },
+  "19664": {
+    "name": "Poke bowl hawaïen"
+  },
+  "19665": {
+    "name": "Pizza hawaïenne"
+  },
+  "19666": {
+    "name": "Pizza deep-dish de Chicago"
+  },
+  "19667": {
+    "name": "Épi de maïs au beurre"
+  },
+  "19668": {
+    "name": "Haricots au four de Boston"
+  },
+  "19669": {
+    "name": "Maïs à la crème"
+  },
+  "19670": {
+    "name": "Purée de pommes de terre sauce gravy"
+  },
+  "19671": {
+    "name": "Rondelles d'oignon en pâte à la bière"
+  },
+  "19672": {
+    "name": "Saucisses à la bière (beer brats)"
+  },
+  "19673": {
+    "name": "Huîtres Rockefeller"
+  },
+  "19674": {
+    "name": "Beignets de La Nouvelle-Orléans"
+  },
+  "19675": {
+    "name": "Po' boy aux crevettes"
+  },
+  "19676": {
+    "name": "Sandwich cubain"
+  },
+  "19677": {
+    "name": "Tomates vertes frites"
+  },
+  "19678": {
+    "name": "Jambon glacé au miel"
+  },
+  "19679": {
+    "name": "Nuggets de poulet"
+  },
+  "19680": {
+    "name": "Sandwich au rosbif"
+  },
+  "19681": {
+    "name": "Épinards à la crème"
+  },
+  "19682": {
+    "name": "Crab roll (sandwich au crabe)"
+  },
+  "19683": {
+    "name": "S'mores"
+  },
+  "19684": {
+    "name": "Ormeau de Californie au beurre"
+  },
+  "19685": {
+    "name": "Cabillaud au four de Cape Cod"
+  },
+  "19686": {
+    "name": "Saint-Jacques au bacon"
+  },
+  "19687": {
+    "name": "Poulet rôti de Thanksgiving sauce aux baies"
+  },
+  "19688": {
+    "name": "Limonade au miel"
+  },
+  "19689": {
+    "name": "Thé sucré du Sud"
+  },
+  "19690": {
+    "name": "Lait de poule (eggnog)"
+  },
+  "19691": {
+    "name": "Sundae chocolat-cacahuète"
+  },
+  "19692": {
+    "name": "Tarte à la crème de banane"
+  },
+  "19693": {
+    "name": "Key Lime Pie"
+  },
+  "19694": {
+    "name": "Gâteau aux carottes"
+  },
+  "19695": {
+    "name": "Salade de betterave au chèvre"
+  },
+  "19696": {
+    "name": "Salade de quinoa californienne"
+  },
+  "19697": {
+    "name": "Tajine de poulet citron-olives (djaj mqualli)"
+  },
+  "19698": {
+    "name": "Tajine mrouzia"
+  },
+  "19699": {
+    "name": "Tajine d'agneau aux dattes"
+  },
+  "19700": {
+    "name": "Tajine de kefta aux œufs"
+  },
+  "19701": {
+    "name": "Tajine de poisson à la chermoula"
+  },
+  "19702": {
+    "name": "Tajine de légumes"
+  },
+  "19703": {
+    "name": "Tajine de potiron et pois chiches"
+  },
+  "19704": {
+    "name": "Tajine de poulet au safran"
+  },
+  "19705": {
+    "name": "Couscous aux sept légumes"
+  },
+  "19706": {
+    "name": "Couscous à l'agneau"
+  },
+  "19707": {
+    "name": "Seffa"
+  },
+  "19708": {
+    "name": "Couscous Tfaya"
+  },
+  "19709": {
+    "name": "Harira"
+  },
+  "19710": {
+    "name": "Bissara"
+  },
+  "19711": {
+    "name": "Pastilla au pigeon"
+  },
+  "19712": {
+    "name": "Pastilla au poulet"
+  },
+  "19713": {
+    "name": "Pastilla aux fruits de mer"
+  },
+  "19714": {
+    "name": "Méchoui"
+  },
+  "19715": {
+    "name": "Brochettes de kefta"
+  },
+  "19716": {
+    "name": "Brochettes d'agneau"
+  },
+  "19717": {
+    "name": "Tanjia Marrakchia"
+  },
+  "19718": {
+    "name": "Msemen"
+  },
+  "19719": {
+    "name": "Baghrir"
+  },
+  "19720": {
+    "name": "Chebakia"
+  },
+  "19721": {
+    "name": "Cornes de gazelle (kaab el ghazal)"
+  },
+  "19722": {
+    "name": "Amlou"
+  },
+  "19723": {
+    "name": "Lait aux dattes et amandes"
+  },
+  "19724": {
+    "name": "Salade d'oranges marocaine"
+  },
+  "19725": {
+    "name": "Salade de carottes au cumin"
+  },
+  "19726": {
+    "name": "Zaalouk"
+  },
+  "19727": {
+    "name": "Taktouka"
+  },
+  "19728": {
+    "name": "Sardines à la chermoula"
+  },
+  "19729": {
+    "name": "Crevettes pil-pil"
+  },
+  "19730": {
+    "name": "Babbouche"
+  },
+  "19731": {
+    "name": "Tajine de chameau"
+  },
+  "19732": {
+    "name": "Khobz"
+  },
+  "19733": {
+    "name": "Madfouna (pizza berbère)"
+  },
+  "19734": {
+    "name": "Shakshuka"
+  },
+  "19735": {
+    "name": "Omelette berbère"
+  },
+  "19736": {
+    "name": "Raïb"
+  },
+  "19737": {
+    "name": "Roz bel Hlib"
+  },
+  "19738": {
+    "name": "Seffa Medfouna"
+  },
+  "19739": {
+    "name": "Tajine sfarjel (bœuf aux coings)"
+  },
+  "19740": {
+    "name": "Agneau fassi au safran"
+  },
+  "19741": {
+    "name": "Gambas grillées d'Essaouira"
+  },
+  "19742": {
+    "name": "Kefta de poisson"
+  },
+  "19743": {
+    "name": "Rghaif Mehcha"
+  },
+  "19744": {
+    "name": "Maakouda"
+  },
+  "19745": {
+    "name": "Jus d'avocat aux dattes"
+  },
+  "19746": {
+    "name": "Sellou"
+  },
+  "19747": {
+    "name": "Loubia"
+  },
+  "19748": {
+    "name": "Agneau à la confiture de tomates"
+  },
+  "19749": {
+    "name": "Atay bi na'na (thé à la menthe marocain)"
+  },
+  "19750": {
+    "name": "Briouats aux Amandes"
+  },
+  "19751": {
+    "name": "Makrout"
+  },
+  "19752": {
+    "name": "Rfissa"
+  },
+  "19753": {
+    "name": "Karantika"
+  },
+  "19754": {
+    "name": "Kefta de sardines à la tomate"
+  },
+  "19755": {
+    "name": "Adess (lentilles marocaines)"
+  },
+  "19756": {
+    "name": "Bakoula"
+  },
+  "19757": {
+    "name": "Berkoukes"
+  },
+  "19758": {
+    "name": "Batbout Kefta"
+  },
+  "19759": {
+    "name": "Tajine de poisson aux pommes de terre"
+  },
+  "19760": {
+    "name": "Douara"
+  },
+  "19761": {
+    "name": "Tajine d'agneau aux petits pois"
+  },
+  "19762": {
+    "name": "Sharbat bil luz (lait d'amande)"
+  },
+  "19763": {
+    "name": "Jus d'orange de Marrakech"
+  },
+  "19764": {
+    "name": "Lait banane marocain"
+  },
+  "19765": {
+    "name": "Panaché"
+  },
+  "19766": {
+    "name": "Jus carotte-orange"
+  },
+  "19767": {
+    "name": "Belboula au lben"
+  },
+  "19768": {
+    "name": "Ghriba Coco"
+  },
+  "19769": {
+    "name": "Ghriba Jeljlane"
+  },
+  "19770": {
+    "name": "Fekkas"
+  },
+  "19771": {
+    "name": "Sfenj"
+  },
+  "19772": {
+    "name": "Harcha"
+  },
+  "19773": {
+    "name": "M'hancha"
+  },
+  "19774": {
+    "name": "Dattes farcies à la pâte d'amande"
+  },
+  "19775": {
+    "name": "Salade de fruits à la fleur d'oranger"
+  },
+  "19776": {
+    "name": "Meskouta (gâteau à l'orange)"
+  },
+  "19777": {
+    "name": "Salade de betteraves marocaine"
+  },
+  "19778": {
+    "name": "Asado Argentino"
+  },
+  "19779": {
+    "name": "Bife con Chimichurri"
+  },
+  "19780": {
+    "name": "Ojo de Bife Wagyu con Chimichurri"
+  },
+  "19781": {
+    "name": "Asado de Tira"
+  },
+  "19782": {
+    "name": "Vacío a la Parrilla"
+  },
+  "19783": {
+    "name": "Choripán"
+  },
+  "19784": {
+    "name": "Riñones a la Parrilla"
+  },
+  "19785": {
+    "name": "Chinchulines"
+  },
+  "19786": {
+    "name": "Mondongo a la Parrilla"
+  },
+  "19787": {
+    "name": "Provoleta"
+  },
+  "19788": {
+    "name": "Milanesa con Papas Fritas"
+  },
+  "19789": {
+    "name": "Milanesa a la Napolitana"
+  },
+  "19790": {
+    "name": "Empanadas Mendocinas"
+  },
+  "19791": {
+    "name": "Empanadas de Pollo"
+  },
+  "19792": {
+    "name": "Empanadas de Humita"
+  },
+  "19793": {
+    "name": "Humita en Olla"
+  },
+  "19794": {
+    "name": "Locro"
+  },
+  "19795": {
+    "name": "Carbonada Criolla"
+  },
+  "19796": {
+    "name": "Puchero"
+  },
+  "19797": {
+    "name": "Fugazzeta"
+  },
+  "19798": {
+    "name": "Fainá"
+  },
+  "19799": {
+    "name": "Sorrentinos de Calabaza"
+  },
+  "19800": {
+    "name": "Ñoquis del 29"
+  },
+  "19801": {
+    "name": "Dulce de Leche"
+  },
+  "19802": {
+    "name": "Alfajor de Chocolate"
+  },
+  "19803": {
+    "name": "Alfajor de Maicena"
+  },
+  "19804": {
+    "name": "Panqueques con Dulce de Leche"
+  },
+  "19805": {
+    "name": "Postre Vigilante"
+  },
+  "19806": {
+    "name": "Dulce de Batata"
+  },
+  "19807": {
+    "name": "Estofado al Malbec"
+  },
+  "19808": {
+    "name": "Cordero Patagónico"
+  },
+  "19809": {
+    "name": "Centolla Fueguina"
+  },
+  "19810": {
+    "name": "Surubí a la Parrilla"
+  },
+  "19811": {
+    "name": "Rabas"
+  },
+  "19812": {
+    "name": "Lomito Completo"
+  },
+  "19813": {
+    "name": "Verduras a la Parrilla"
+  },
+  "19814": {
+    "name": "Ensalada Criolla"
+  },
+  "19815": {
+    "name": "Matambre Arrollado"
+  },
+  "19816": {
+    "name": "Matambre de Cerdo a la Leche"
+  },
+  "19817": {
+    "name": "Guiso de Lentejas"
+  },
+  "19818": {
+    "name": "Mondongo a la Española"
+  },
+  "19819": {
+    "name": "Pollo al Disco"
+  },
+  "19820": {
+    "name": "Tortas Fritas"
+  },
+  "19821": {
+    "name": "Budín de Pan"
+  },
+  "19822": {
+    "name": "Helado de Dulce de Leche y Chocolate"
+  },
+  "19823": {
+    "name": "Chocotorta"
+  },
+  "19824": {
+    "name": "Pastafrola"
+  },
+  "19825": {
+    "name": "Medialunas"
+  },
+  "19826": {
+    "name": "Milanesa de Berenjena"
+  },
+  "19827": {
+    "name": "Berenjenas en Escabeche"
+  },
+  "19828": {
+    "name": "Codornices en Escabeche"
+  },
+  "19829": {
+    "name": "Cazuela de Mariscos"
+  },
+  "19830": {
+    "name": "Merluza Frita Marplatense"
+  },
+  "19831": {
+    "name": "Ciervo al Malbec"
+  },
+  "19832": {
+    "name": "Empanadas de Jamón y Queso"
+  },
+  "19833": {
+    "name": "Bife a Caballo"
+  },
+  "19834": {
+    "name": "Banana con Dulce de Leche"
+  },
+  "19835": {
+    "name": "Pastel de Papa"
+  },
+  "19836": {
+    "name": "Revuelto Gramajo"
+  },
+  "19837": {
+    "name": "Tarta Pascualina"
+  },
+  "19838": {
+    "name": "Canelones a la Rossini"
+  },
+  "19839": {
+    "name": "Tarta de Choclo"
+  },
+  "19840": {
+    "name": "Chipá"
+  },
+  "19841": {
+    "name": "Salpicón de Ave"
+  },
+  "19842": {
+    "name": "Vitel Toné"
+  },
+  "19843": {
+    "name": "Pionono Salado"
+  },
+  "19844": {
+    "name": "Mate Cocido con Leche"
+  },
+  "19845": {
+    "name": "Clericó"
+  },
+  "19846": {
+    "name": "Submarino"
+  },
+  "19847": {
+    "name": "Licuado de Banana"
+  },
+  "19848": {
+    "name": "Torta Rogel"
+  },
+  "19849": {
+    "name": "Bolas de Fraile"
+  },
+  "19850": {
+    "name": "Flan con Dulce de Leche"
+  },
+  "19851": {
+    "name": "Torta Galesa"
+  },
+  "19852": {
+    "name": "Peras al Malbec"
+  },
+  "19853": {
+    "name": "Coquitos"
+  },
+  "19854": {
+    "name": "Turrón de Maní"
+  },
+  "19855": {
+    "name": "Zapallo en Almíbar"
+  },
+  "19856": {
+    "name": "Lemon Pie Argentino"
+  },
+  "19857": {
+    "name": "Ensalada de Frutas"
+  },
+  "19858": {
+    "name": "Moussaka"
+  },
+  "19859": {
+    "name": "Horiatiki (salade grecque)"
+  },
+  "19860": {
+    "name": "Tzatziki"
+  },
+  "19861": {
+    "name": "Souvlaki"
+  },
+  "19862": {
+    "name": "Gyros en pita"
+  },
+  "19863": {
+    "name": "Gyros au poulet en pita"
+  },
+  "19864": {
+    "name": "Keftedes"
+  },
+  "19865": {
+    "name": "Spanakopita"
+  },
+  "19866": {
+    "name": "Tiropita"
+  },
+  "19867": {
+    "name": "Saganaki"
+  },
+  "19868": {
+    "name": "Bougiourdi"
+  },
+  "19869": {
+    "name": "Feta me Meli"
+  },
+  "19870": {
+    "name": "Dolmadakia"
+  },
+  "19871": {
+    "name": "Gemista"
+  },
+  "19872": {
+    "name": "Pastitsio"
+  },
+  "19873": {
+    "name": "Avgolemono"
+  },
+  "19874": {
+    "name": "Kotopoulo Lemonato me Patates"
+  },
+  "19875": {
+    "name": "Kleftiko"
+  },
+  "19876": {
+    "name": "Giouvetsi"
+  },
+  "19877": {
+    "name": "Kouneli Stifado"
+  },
+  "19878": {
+    "name": "Moschari Kokkinisto"
+  },
+  "19879": {
+    "name": "Sofrito de Corfou"
+  },
+  "19880": {
+    "name": "Soupia sta Karvouna"
+  },
+  "19881": {
+    "name": "Soupies me Spanaki"
+  },
+  "19882": {
+    "name": "Kalamarakia Psita"
+  },
+  "19883": {
+    "name": "Kalamaria Gemista"
+  },
+  "19884": {
+    "name": "Garides Saganaki"
+  },
+  "19885": {
+    "name": "Tsipoura sta Karvouna"
+  },
+  "19886": {
+    "name": "Lavraki Plaki"
+  },
+  "19887": {
+    "name": "Bakaliaros Skordalia"
+  },
+  "19888": {
+    "name": "Fava Santorinis"
+  },
+  "19889": {
+    "name": "Fakes"
+  },
+  "19890": {
+    "name": "Fasolada"
+  },
+  "19891": {
+    "name": "Revithia"
+  },
+  "19892": {
+    "name": "Spanakorizo"
+  },
+  "19893": {
+    "name": "Fasolakia Ladera"
+  },
+  "19894": {
+    "name": "Briam"
+  },
+  "19895": {
+    "name": "Patates Lemonates"
+  },
+  "19896": {
+    "name": "Yiaourti me Meli"
+  },
+  "19897": {
+    "name": "Baklavas me Amygdala"
+  },
+  "19898": {
+    "name": "Loukoumades"
+  },
+  "19899": {
+    "name": "Galaktoboureko"
+  },
+  "19900": {
+    "name": "Portokalopita"
+  },
+  "19901": {
+    "name": "Karydopita"
+  },
+  "19902": {
+    "name": "Kourabiedes"
+  },
+  "19903": {
+    "name": "Melomakarona"
+  },
+  "19904": {
+    "name": "Tsoureki"
+  },
+  "19905": {
+    "name": "Hirino me Selino"
+  },
+  "19906": {
+    "name": "Afelia"
+  },
+  "19907": {
+    "name": "Garidomakaronada"
+  },
+  "19908": {
+    "name": "Sardeles Psites"
+  },
+  "19909": {
+    "name": "Mydopilafo"
+  },
+  "19910": {
+    "name": "Mydia Saganaki"
+  },
+  "19911": {
+    "name": "Pita"
+  },
+  "19912": {
+    "name": "Kolokythopita"
+  },
+  "19913": {
+    "name": "Domatokeftedes"
+  },
+  "19914": {
+    "name": "Giouvarlakia Avgolemono"
+  },
+  "19915": {
+    "name": "Makaronia me Kima"
+  },
+  "19916": {
+    "name": "Kokoras Krasatos"
+  },
+  "19917": {
+    "name": "Paidakia"
+  },
+  "19918": {
+    "name": "Pasteli"
+  },
+  "19919": {
+    "name": "Kakavia"
+  },
+  "19920": {
+    "name": "Glyko tou koutaliou (confiture à la cuillère)"
+  },
+  "19921": {
+    "name": "Arakas Laderos"
+  },
+  "19922": {
+    "name": "Skordalia"
+  },
+  "19923": {
+    "name": "Dakos"
+  },
+  "19924": {
+    "name": "Prasopita"
+  },
+  "19925": {
+    "name": "Magiritsa"
+  },
+  "19926": {
+    "name": "Chochlioi Boubouristi"
+  },
+  "19927": {
+    "name": "Melitzanosalata"
+  },
+  "19928": {
+    "name": "Loukaniko"
+  },
+  "19929": {
+    "name": "Ouzo"
+  },
+  "19930": {
+    "name": "Rakomelo"
+  },
+  "19931": {
+    "name": "Tsai tou vounou (thé de montagne grec)"
+  },
+  "19932": {
+    "name": "Kataifi"
+  },
+  "19933": {
+    "name": "Halvas Simigdalenios"
+  },
+  "19934": {
+    "name": "Kalitsounia"
+  },
+  "19935": {
+    "name": "Rizogalo"
+  },
+  "19936": {
+    "name": "Vasilopita"
+  },
+  "19937": {
+    "name": "Amygdalota"
+  },
+  "19938": {
+    "name": "Pantzarosalata"
+  },
+  "19939": {
+    "name": "Ceviche Clásico"
+  },
+  "19940": {
+    "name": "Ceviche Mixto"
+  },
+  "19941": {
+    "name": "Leche de Tigre"
+  },
+  "19942": {
+    "name": "Tiradito Nikkei"
+  },
+  "19943": {
+    "name": "Lomo Saltado"
+  },
+  "19944": {
+    "name": "Pollo a la Brasa"
+  },
+  "19945": {
+    "name": "Ají de Gallina"
+  },
+  "19946": {
+    "name": "Papa a la Huancaína"
+  },
+  "19947": {
+    "name": "Causa Limeña de Pollo"
+  },
+  "19948": {
+    "name": "Causa de Cangrejo"
+  },
+  "19949": {
+    "name": "Anticuchos"
+  },
+  "19950": {
+    "name": "Pan con Chicharrón"
+  },
+  "19951": {
+    "name": "Arroz con Mariscos"
+  },
+  "19952": {
+    "name": "Arroz con Pato"
+  },
+  "19953": {
+    "name": "Arroz con Pollo"
+  },
+  "19954": {
+    "name": "Seco de Cordero"
+  },
+  "19955": {
+    "name": "Seco de Res con Frejoles"
+  },
+  "19956": {
+    "name": "Adobo Arequipeño"
+  },
+  "19957": {
+    "name": "Parihuela"
+  },
+  "19958": {
+    "name": "Chupe de Camarones"
+  },
+  "19959": {
+    "name": "Aguadito de Pollo"
+  },
+  "19960": {
+    "name": "Mazamorra Morada"
+  },
+  "19961": {
+    "name": "Suspiro a la Limeña"
+  },
+  "19962": {
+    "name": "Picarones"
+  },
+  "19963": {
+    "name": "Alfajores de Manjar Blanco"
+  },
+  "19964": {
+    "name": "Queso Helado Arequipeño"
+  },
+  "19965": {
+    "name": "Jalea Mixta"
+  },
+  "19966": {
+    "name": "Conchitas a la Parmesana"
+  },
+  "19967": {
+    "name": "Pulpo al Olivo"
+  },
+  "19968": {
+    "name": "Cangrejo Reventado"
+  },
+  "19969": {
+    "name": "Rocoto Relleno"
+  },
+  "19970": {
+    "name": "Papa Rellena"
+  },
+  "19971": {
+    "name": "Butifarra"
+  },
+  "19972": {
+    "name": "Chairo"
+  },
+  "19973": {
+    "name": "Tallarines Verdes"
+  },
+  "19974": {
+    "name": "Tallarines Rojos"
+  },
+  "19975": {
+    "name": "Palta Rellena"
+  },
+  "19976": {
+    "name": "Solterito"
+  },
+  "19977": {
+    "name": "Turrón de Doña Pepa"
+  },
+  "19978": {
+    "name": "Bistec a lo Pobre"
+  },
+  "19979": {
+    "name": "Tacu Tacu"
+  },
+  "19980": {
+    "name": "Sudado de Pescado"
+  },
+  "19981": {
+    "name": "Pescado a lo Macho"
+  },
+  "19982": {
+    "name": "Patita con Maní"
+  },
+  "19983": {
+    "name": "Cau Cau"
+  },
+  "19984": {
+    "name": "Carapulcra"
+  },
+  "19985": {
+    "name": "Ceviche de Conchas"
+  },
+  "19986": {
+    "name": "Pastel de Choclo"
+  },
+  "19987": {
+    "name": "Chicha Morada"
+  },
+  "19988": {
+    "name": "Arroz con Leche Peruano"
+  },
+  "19989": {
+    "name": "Flan de Leche"
+  },
+  "19990": {
+    "name": "Torta Tres Leches"
+  },
+  "19991": {
+    "name": "Ceviche de Abalón"
+  },
+  "19992": {
+    "name": "Salchipapa"
+  },
+  "19993": {
+    "name": "Pachamanca"
+  },
+  "19994": {
+    "name": "Juane"
+  },
+  "19995": {
+    "name": "Tamal Peruano"
+  },
+  "19996": {
+    "name": "Choros a la Chalaca"
+  },
+  "19997": {
+    "name": "Sopa Criolla"
+  },
+  "19998": {
+    "name": "Ocopa Arequipeña"
+  },
+  "19999": {
+    "name": "Escabeche de Pescado"
+  },
+  "20000": {
+    "name": "Pan con Pejerrey"
+  },
+  "20001": {
+    "name": "Pisco Sour"
+  },
+  "20002": {
+    "name": "Chilcano"
+  },
+  "20003": {
+    "name": "Emoliente"
+  },
+  "20004": {
+    "name": "Chicha de Jora"
+  },
+  "20005": {
+    "name": "Jugo Surtido"
+  },
+  "20006": {
+    "name": "Algarrobina"
+  },
+  "20007": {
+    "name": "Chocolatada Navideña"
+  },
+  "20008": {
+    "name": "Arroz Zambito"
+  },
+  "20009": {
+    "name": "King Kong de Manjar"
+  },
+  "20010": {
+    "name": "Champús"
+  },
+  "20011": {
+    "name": "Ranfañote"
+  },
+  "20012": {
+    "name": "Frejol Colado"
+  },
+  "20013": {
+    "name": "Chocotejas de Ica"
+  },
+  "20014": {
+    "name": "Leche Asada"
+  },
+  "20015": {
+    "name": "Camotillo"
+  },
+  "20016": {
+    "name": "Huevo Chimbo"
+  },
+  "20017": {
+    "name": "Sopa de Quinua"
+  },
+  "20018": {
+    "name": "Chaufa de Quinua"
+  },
+  "20019": {
+    "name": "Mazamorra de Quinua"
+  },
+  "20020": {
+    "name": "Quinua con Pera"
+  },
+  "20021": {
+    "name": "Ensalada Andina de Quinua"
+  },
+  "20022": {
+    "name": "Croquetas de Quinua"
+  },
+  "20023": {
+    "name": "Bortsch"
+  },
+  "20024": {
+    "name": "Chtchi"
+  },
+  "20025": {
+    "name": "Oukha"
+  },
+  "20026": {
+    "name": "Rassolnik"
+  },
+  "20027": {
+    "name": "Solianka"
+  },
+  "20028": {
+    "name": "Okrochka"
+  },
+  "20029": {
+    "name": "Pelmeni sibériens"
+  },
+  "20030": {
+    "name": "Vareniki aux pommes de terre"
+  },
+  "20031": {
+    "name": "Vareniki aux cerises"
+  },
+  "20032": {
+    "name": "Blinis"
+  },
+  "20033": {
+    "name": "Medovik"
+  },
+  "20034": {
+    "name": "Smetannik"
+  },
+  "20035": {
+    "name": "Syrniki"
+  },
+  "20036": {
+    "name": "Pirojki pommes de terre et champignons"
+  },
+  "20037": {
+    "name": "Pirojki à la viande"
+  },
+  "20038": {
+    "name": "Koulibiac"
+  },
+  "20039": {
+    "name": "Kournik"
+  },
+  "20040": {
+    "name": "Bœuf Stroganov"
+  },
+  "20041": {
+    "name": "Poulet à la Kiev"
+  },
+  "20042": {
+    "name": "Kotlety"
+  },
+  "20043": {
+    "name": "Côtelettes Pojarski"
+  },
+  "20044": {
+    "name": "Chachlik d'agneau"
+  },
+  "20045": {
+    "name": "Goloubtsy"
+  },
+  "20046": {
+    "name": "Jarkoïe"
+  },
+  "20047": {
+    "name": "Lapin à la smetana"
+  },
+  "20048": {
+    "name": "Oie rôtie aux poires"
+  },
+  "20049": {
+    "name": "Hareng mariné (seliodka)"
+  },
+  "20050": {
+    "name": "Chouba (hareng sous manteau de fourrure)"
+  },
+  "20051": {
+    "name": "Salade Olivier"
+  },
+  "20052": {
+    "name": "Carottes à la coréenne (morkovtcha)"
+  },
+  "20053": {
+    "name": "Choucroute russe (kvachenaïa kapousta)"
+  },
+  "20054": {
+    "name": "Cornichons russes (malossolnye)"
+  },
+  "20055": {
+    "name": "Champignons marinés russes"
+  },
+  "20056": {
+    "name": "Julienne de champignons à la smetana"
+  },
+  "20057": {
+    "name": "Draniki (galettes de pommes de terre)"
+  },
+  "20058": {
+    "name": "Lapcha (soupe de poulet aux nouilles)"
+  },
+  "20059": {
+    "name": "Crabe royal du Kamtchatka"
+  },
+  "20060": {
+    "name": "Brochet au four à la smetana"
+  },
+  "20061": {
+    "name": "Poisson en gelée (zalivnaïa)"
+  },
+  "20062": {
+    "name": "Croquettes de poisson russes"
+  },
+  "20063": {
+    "name": "Salo"
+  },
+  "20064": {
+    "name": "Prianiki"
+  },
+  "20065": {
+    "name": "Pirog aux myrtilles"
+  },
+  "20066": {
+    "name": "Zapekanka"
+  },
+  "20067": {
+    "name": "Ptitchie moloko"
+  },
+  "20068": {
+    "name": "Kartochka"
+  },
+  "20069": {
+    "name": "Paskha"
+  },
+  "20070": {
+    "name": "Koulitch"
+  },
+  "20071": {
+    "name": "Kholodets"
+  },
+  "20072": {
+    "name": "Plov"
+  },
+  "20073": {
+    "name": "Caviar d'aubergine (baklajannaïa ikra)"
+  },
+  "20074": {
+    "name": "Kacha au potiron"
+  },
+  "20075": {
+    "name": "Gretchka aux champignons"
+  },
+  "20076": {
+    "name": "Tcheboureki"
+  },
+  "20077": {
+    "name": "Soupe aux champignons russe (gribnoï soup)"
+  },
+  "20078": {
+    "name": "Omoul fumé du Baïkal"
+  },
+  "20079": {
+    "name": "Viande à la française russe (miasso po-frantsouzski)"
+  },
+  "20080": {
+    "name": "Kozinaki"
+  },
+  "20081": {
+    "name": "Plombir"
+  },
+  "20082": {
+    "name": "Varenié aux cerises"
+  },
+  "20083": {
+    "name": "Hareng aux pommes de terre"
+  },
+  "20084": {
+    "name": "Macaronis à la marine (po-flotski)"
+  },
+  "20085": {
+    "name": "Salade concombre-tomate à la smetana"
+  },
+  "20086": {
+    "name": "Rastegaï"
+  },
+  "20087": {
+    "name": "Kvas"
+  },
+  "20088": {
+    "name": "Mors"
+  },
+  "20089": {
+    "name": "Sbiten"
+  },
+  "20090": {
+    "name": "Thé russe au varenié"
+  },
+  "20091": {
+    "name": "Glintveïn"
+  },
+  "20092": {
+    "name": "Kissel aux myrtilles"
+  },
+  "20093": {
+    "name": "Kéfir"
+  },
+  "20094": {
+    "name": "Pertsovka (vodka au miel et poivre)"
+  },
+  "20095": {
+    "name": "Vatrouchka"
+  },
+  "20096": {
+    "name": "Charlotka aux poires"
+  },
+  "20097": {
+    "name": "Prianik de Toula"
+  },
+  "20098": {
+    "name": "Zéfir"
+  },
+  "20099": {
+    "name": "Blintchiki au tvorog"
+  },
+  "20100": {
+    "name": "Kacha de Gouriev"
+  },
+  "20101": {
+    "name": "Pychki"
+  },
+  "20102": {
+    "name": "Tvorog au miel"
+  },
+  "20103": {
+    "name": "Vinegret"
+  },
+  "20104": {
+    "name": "Svekolnik"
+  },
+  "20105": {
+    "name": "Salade de betterave à l'ail et aux noix"
+  },
+  "20106": {
+    "name": "Blinis au sarrasin"
+  },
+  "20107": {
+    "name": "Gretchka à la marchande (po-koupetcheski)"
+  },
+  "20108": {
+    "name": "Gretchka au lait"
+  },
+  "20109": {
+    "name": "Prianiki à la menthe"
+  },
+  "20110": {
+    "name": "Crab Rangoon (États-Unis)"
+  },
+  "20111": {
+    "name": "Chop Suey (États-Unis)"
+  },
+  "20112": {
+    "name": "Orange Chicken (États-Unis/Canada)"
+  },
+  "20113": {
+    "name": "Beef with Broccoli (États-Unis/Canada)"
+  },
+  "20114": {
+    "name": "Fortune Cookie (États-Unis/Canada/Allemagne)"
+  },
+  "20115": {
+    "name": "Egg Foo Young (États-Unis/Canada)"
+  },
+  "20116": {
+    "name": "Sesame Chicken (États-Unis/Canada)"
+  },
+  "20117": {
+    "name": "Mongolian Beef (États-Unis)"
+  },
+  "20118": {
+    "name": "Honey Walnut Shrimp (États-Unis)"
+  },
+  "20119": {
+    "name": "Sweet and Sour Pork Balls (États-Unis)"
+  },
+  "20120": {
+    "name": "Moo Shu Pork et crêpes (États-Unis)"
+  },
+  "20121": {
+    "name": "Springfield Cashew Chicken (États-Unis)"
+  },
+  "20122": {
+    "name": "Dragon and Phoenix (États-Unis)"
+  },
+  "20123": {
+    "name": "Bourbon Chicken (États-Unis)"
+  },
+  "20124": {
+    "name": "Pu Pu Platter (États-Unis)"
+  },
+  "20125": {
+    "name": "Chinese Chicken Salad (États-Unis)"
+  },
+  "20126": {
+    "name": "Pepper Steak (États-Unis)"
+  },
+  "20127": {
+    "name": "Ginger Beef (Canada)"
+  },
+  "20128": {
+    "name": "Chow Mein Sandwich (États-Unis)"
+  },
+  "20129": {
+    "name": "St. Paul Sandwich (États-Unis)"
+  },
+  "20130": {
+    "name": "Egg Roll (États-Unis)"
+  },
+  "20131": {
+    "name": "Lo Mein (États-Unis)"
+  },
+  "20132": {
+    "name": "Almond Boneless Chicken (États-Unis)"
+  },
+  "20133": {
+    "name": "Spice Bag (Irlande)"
+  },
+  "20134": {
+    "name": "3-in-1 (Irlande/Royaume-Uni)"
+  },
+  "20135": {
+    "name": "Crispy Chilli Beef (Royaume-Uni/Irlande)"
+  },
+  "20136": {
+    "name": "Sesame Prawn Toast (Royaume-Uni/Irlande)"
+  },
+  "20137": {
+    "name": "Chinese Curry with Chips (Royaume-Uni/Irlande)"
+  },
+  "20138": {
+    "name": "Salt and Chilli Chips (Royaume-Uni/Irlande)"
+  },
+  "20139": {
+    "name": "Chicken Balls with Sweet and Sour Sauce (Royaume-Uni/Irlande)"
+  },
+  "20140": {
+    "name": "Duck in Plum Sauce (Royaume-Uni/Irlande)"
+  },
+  "20141": {
+    "name": "Special Fried Rice (Royaume-Uni)"
+  },
+  "20142": {
+    "name": "Prawn Crackers (Royaume-Uni/Irlande)"
+  },
+  "20143": {
+    "name": "Beef in Black Bean Sauce (Royaume-Uni/Irlande)"
+  },
+  "20144": {
+    "name": "Char Siu with Chips and Curry Sauce (Royaume-Uni)"
+  },
+  "20145": {
+    "name": "Crispy Aromatic Duck with Pancakes (Royaume-Uni)"
+  },
+  "20146": {
+    "name": "Tenshinhan (Japon)"
+  },
+  "20147": {
+    "name": "Hiyashi chūka (Japon)"
+  },
+  "20148": {
+    "name": "Ebi chiri (Japon)"
+  },
+  "20149": {
+    "name": "Chūkadon (Japon)"
+  },
+  "20150": {
+    "name": "Subuta (Japon)"
+  },
+  "20151": {
+    "name": "Banbanjī (Japon)"
+  },
+  "20152": {
+    "name": "Nagasaki chanpon (Japon)"
+  },
+  "20153": {
+    "name": "Sara udon (Japon)"
+  },
+  "20154": {
+    "name": "Tantanmen (Japon)"
+  },
+  "20155": {
+    "name": "Taiwan ramen de Nagoya (Japon)"
+  },
+  "20156": {
+    "name": "Taiwan mazesoba (Japon)"
+  },
+  "20157": {
+    "name": "Tenshin chāhan (Japon)"
+  },
+  "20158": {
+    "name": "Mābō nasu (Japon)"
+  },
+  "20159": {
+    "name": "Jajangmyeon (Corée du Sud)"
+  },
+  "20160": {
+    "name": "Tangsuyuk (Corée du Sud)"
+  },
+  "20161": {
+    "name": "Jjamppong (Corée du Sud)"
+  },
+  "20162": {
+    "name": "Kkanpunggi (Corée du Sud)"
+  },
+  "20163": {
+    "name": "Yusanseul (Corée du Sud)"
+  },
+  "20164": {
+    "name": "Rajogi (Corée du Sud)"
+  },
+  "20165": {
+    "name": "Ulmyeon (Corée du Sud)"
+  },
+  "20166": {
+    "name": "Kkansyo saeu (Corée du Sud)"
+  },
+  "20167": {
+    "name": "Jajangbap (Corée du Sud)"
+  },
+  "20168": {
+    "name": "Japchaebap (Corée du Sud)"
+  },
+  "20169": {
+    "name": "Gisimyeon (Corée du Sud)"
+  },
+  "20170": {
+    "name": "Gochujapchae et kkotppang (Corée du Sud)"
+  },
+  "20171": {
+    "name": "Chicken Manchurian (Inde)"
+  },
+  "20172": {
+    "name": "Gobi Manchurian (Inde)"
+  },
+  "20173": {
+    "name": "Chilli Chicken (Inde)"
+  },
+  "20174": {
+    "name": "Hakka Noodles (Inde)"
+  },
+  "20175": {
+    "name": "Schezwan Fried Rice (Inde)"
+  },
+  "20176": {
+    "name": "Manchow Soup (Inde)"
+  },
+  "20177": {
+    "name": "Chilli Paneer (Inde)"
+  },
+  "20178": {
+    "name": "American Chopsuey (Inde)"
+  },
+  "20179": {
+    "name": "Honey Chilli Potatoes (Inde)"
+  },
+  "20180": {
+    "name": "Arroz chaufa (Pérou)"
+  },
+  "20181": {
+    "name": "Tallarín saltado (Pérou)"
+  },
+  "20182": {
+    "name": "Sopa wantán (Pérou)"
+  },
+  "20183": {
+    "name": "Wantán frito con salsa de tamarindo (Pérou)"
+  },
+  "20184": {
+    "name": "Pollo chi jau kay (Pérou)"
+  },
+  "20185": {
+    "name": "Pollo ti pa kay (Pérou)"
+  },
+  "20186": {
+    "name": "Aeropuerto (Pérou)"
+  },
+  "20187": {
+    "name": "Kam lu wantán (Pérou)"
+  },
+  "20188": {
+    "name": "Chancho con piña (Pérou)"
+  },
+  "20189": {
+    "name": "Riz cantonais (France/Belgique)"
+  },
+  "20190": {
+    "name": "Pâté impérial (France/Belgique)"
+  },
+  "20191": {
+    "name": "Bœuf aux oignons (France/Belgique)"
+  },
+  "20192": {
+    "name": "Porc sauce aigre-douce (France/Belgique)"
+  },
+  "20193": {
+    "name": "Canard laqué (France/Belgique)"
+  },
+  "20194": {
+    "name": "Beignets de crevettes (France/Belgique)"
+  },
+  "20195": {
+    "name": "Nouilles sautées nature (France/Belgique)"
+  },
+  "20196": {
+    "name": "Bratnudeln mit Hühnerfleisch (Allemagne/Autriche)"
+  },
+  "20197": {
+    "name": "Gebackene Ente süß-sauer (Allemagne/Autriche)"
+  },
+  "20198": {
+    "name": "Wan-Tan frittiert (Allemagne/Autriche)"
+  },
+  "20199": {
+    "name": "Frühlingsrolle mit Süß-Sauer-Sauce (Allemagne/Autriche)"
+  },
+  "20200": {
+    "name": "Hühnerfleisch Chop Suey (Allemagne/Autriche)"
+  },
+  "20201": {
+    "name": "Babi pangang (Pays-Bas)"
+  },
+  "20202": {
+    "name": "Foe yong hai (Pays-Bas)"
+  },
+  "20203": {
+    "name": "Tjap tjoy (Pays-Bas)"
+  },
+  "20204": {
+    "name": "Loempia (Pays-Bas)"
+  },
+  "20205": {
+    "name": "Bami speciaal (Pays-Bas)"
+  },
+  "20206": {
+    "name": "Dim sim (Australie)"
+  },
+  "20207": {
+    "name": "Sweet and Sour Pork in Batter (Australie/Nouvelle-Zélande)"
+  },
+  "20208": {
+    "name": "Lemon Chicken (Australie)"
+  },
+  "20209": {
+    "name": "Sizzling Mongolian Lamb (Australie)"
+  },
+  "20210": {
+    "name": "Combination Short Soup (Australie)"
+  },
+  "20211": {
+    "name": "Combination Long Soup (Australie)"
+  },
+  "20212": {
+    "name": "Honey Prawns (Australie)"
+  },
+  "20213": {
+    "name": "Pancit canton (Philippines)"
+  },
+  "20214": {
+    "name": "Lumpiang Shanghai (Philippines)"
+  },
+  "20215": {
+    "name": "Chop suey guisado (Philippines)"
+  },
+  "20216": {
+    "name": "Sweet and Sour Pork Filipiniana (Philippines)"
+  },
+  "20217": {
+    "name": "Pancit bihon (Philippines)"
+  },
+  "20218": {
+    "name": "Siopao asado (Philippines)"
+  },
+  "20219": {
+    "name": "Siomai na may calamansi (Philippines)"
+  },
+  "20220": {
+    "name": "Beef chao fan (Philippines)"
+  },
+  "20221": {
+    "name": "Friterad kyckling med sötsur sås (Suède)"
+  },
+  "20222": {
+    "name": "Fyra små rätter (Suède/Norvège/Danemark)"
+  },
+  "20223": {
+    "name": "Stekta nudlar med kyckling (Suède)"
+  },
+  "20224": {
+    "name": "Friterade räkor med currysås (Suède/Norvège/Danemark)"
+  },
+  "20225": {
+    "name": "Arroz frito cubano (Cuba)"
   }
 }

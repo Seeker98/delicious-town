@@ -502,7 +502,7 @@ export function botTurn(
   const idleKey = `${r.foodsVersion}:${r.levelsVersion}`;
   if (r.learnIdleKey !== idleKey) {
     let learned = 0;
-    for (let street = 0; street <= 13; street++)
+    for (const street of c.config.streets.keys())
       for (const id of learnable(c, r, street)) if (learn(c, r, id)) learned += 1;
     r.learnIdleKey = learned === 0 ? `${r.foodsVersion}:${r.levelsVersion}` : '';
   }

@@ -1,4 +1,4 @@
-import { GOODS } from '@dt/config';
+import { GOODS, type GameConfig } from '@dt/config';
 import type { ExploreResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { opLuck } from '../../core/luck';
@@ -8,6 +8,11 @@ import { restGear, suitEffect } from '../equip/power';
 import { consumeGoods, hasValidHonor } from '../store/goods';
 import { addFoodsMerged, badInput, bump, pickFood, toList } from './common';
 import { exploreAwardNum, exploreRate, exploreSplit } from './rules';
+
+/** 本街勋章上的神秘食材概率（摩洛哥街 +2%，问题记录 284）；店一直持有所在街道的勋章 */
+export function streetMysteriousRate(config: GameConfig, streetId: number): number {
+  return config.requireGoods(config.streetMedalId(streetId)).effects.mysteriousRate ?? 0;
+}
 
 /** 探险（规格书 09 §9.2，设计文档 §3.2） */
 export async function exploreMaps(
@@ -37,6 +42,7 @@ export async function exploreMaps(
     (lamp ? eff(GOODS.lamp, 'mysteriousRate') : 0) +
     (needle ? eff(GOODS.needle, 'mysteriousRate') : 0) +
     (card ? eff(GOODS.securityCard, 'mysteriousRate') : 0) +
+    streetMysteriousRate(o.config, o.rest.street_id) +
     (weather.mysteriousRate ?? 0);
   const level3 = book ? eff(GOODS.exploreBook, 'mapL3FoodsNumAdd') : 0;
 

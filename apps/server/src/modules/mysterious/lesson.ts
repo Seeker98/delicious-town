@@ -8,7 +8,7 @@ import { restLog, runOp, setRest, type Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { applyForget } from '../cookbook/rules';
+import { applyForget, padLevels } from '../cookbook/rules';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import { subRemnant } from './remnant';
@@ -32,7 +32,7 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
     .select('levels')
     .where('rest_id', '=', o.rest.id)
     .executeTakeFirstOrThrow();
-  const levels = new Uint8Array(cb.levels);
+  const levels = padLevels(new Uint8Array(cb.levels), o.config.maxCookbookId);
   const learned: number[] = [];
   for (let id = 0; id < levels.length; id++)
     if (levels[id]! > 0 && o.config.cookbooks.has(id)) learned.push(id);

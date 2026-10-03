@@ -71,6 +71,9 @@ export const rawCookbook = z.object({
 export const rawCookbookPrice = z.object({ id: int, coin: z.number(), level: int, desc: z.string() });
 export const rawAwardFlag = z.object({ id: int, awardflag: int });
 
+/** 街道 → 街道勋章（问题记录 284） */
+export const rawStreetMedal = z.object({ streetId: int, goodsId: int });
+
 export const rawStreet = z.object({
   id: int,
   name: z.string(),

@@ -75,6 +75,20 @@ describe('机器人（设计 §4.5）', () => {
     expect(b.rest.counts.learned).toBeGreaterThan(0);
   });
 
+  it('学菜也学新街道的菜（问题记录 284：以前只遍历 0~13 号街）', () => {
+    const c = ctx();
+    const b = bot(c);
+    b.rest.foods.clear();
+    // 18747 鲷鱼握寿司（日本街 14）：鲷鱼、大米、醋
+    for (const f of config.requireCookbook(18747).needFoods[1]!)
+      b.rest.foods.set(f.foodsId, (b.rest.foods.get(f.foodsId) ?? 0) + f.num);
+    botTurn(c, b, newMarket(), world(), null);
+    const learnedNew = [...config.cookbooks.values()].filter(
+      (x) => x.streetId >= 14 && b.rest.levels[x.id]! > 0,
+    );
+    expect(learnedNew.length).toBeGreaterThan(0);
+  });
+
   it('凭证不够又没钱时，卡点原因有 certs 和 coin', () => {
     const c = ctx();
     const b = bot(c);
