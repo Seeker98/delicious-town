@@ -364,8 +364,9 @@ onBeforeUnmount(() => {
       <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
       <div v-if="mainTask" class="dt-todo-row" data-testid="main-task">
         <div class="flex-fill">
-          <span class="dt-tag me-1">{{ t.home.mainTag }}</span
-          >{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
+          <!-- 和其他行一样用图标开头（问题记录 302），"主线："写成文字 -->
+          <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
+          }}{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
           <span class="text-muted">{{
             t.common.paren(`${Math.min(mainTask.progress, mainTask.target)}/${mainTask.target}`)
           }}</span>
@@ -393,7 +394,7 @@ onBeforeUnmount(() => {
       <ActivityBanner />
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
         <div class="flex-fill">
-          {{ t.home.dining.before }}
+          <i class="bi bi-cup-hot me-1"></i>{{ t.home.dining.before }}
           <RouterLink :to="`/friends/${dining.hostRestId}`">{{ dining.hostName }}</RouterLink>
           {{ t.home.dining.after(dining.tableNo, dining.minutes) }}
         </div>
@@ -412,6 +413,7 @@ onBeforeUnmount(() => {
         to="/guide"
         class="dt-todo-row"
         data-testid="guide-hint"
+        ><i class="bi bi-lightbulb me-1"></i
         >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</RouterLink
       >
     </div>

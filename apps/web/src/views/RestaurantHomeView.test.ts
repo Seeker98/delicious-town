@@ -297,6 +297,26 @@ describe('RestaurantHomeView', () => {
     expect(btn.attributes('disabled')).toBeUndefined();
   });
 
+  it('今日待办每一行都用图标开头，主线不再用文字小标签（问题记录 302）', async () => {
+    vi.mocked(endpoints.dineCurrent).mockResolvedValue({
+      hostRestId: 2,
+      hostName: '乙店',
+      tableNo: 3,
+      startedAt: '2026-09-30T00:00:00Z',
+      minutes: 45,
+      canEnd: true,
+    });
+    const w = await mountView();
+    const main = w.get('[data-testid="main-task"]');
+    expect(main.find('.dt-tag').exists()).toBe(false);
+    expect(main.find('i.bi-flag').exists()).toBe(true);
+    expect(main.text()).toContain('主线：填一次油');
+    expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
+    expect(w.get('[data-testid="guide-hint"]').find('i.bi-lightbulb').exists()).toBe(true);
+    for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-todo-row'))
+      expect(row.find('i.bi').exists(), row.text()).toBe(true);
+  });
+
   it('正在白食时显示卡片，满 30 分钟可以结束', async () => {
     vi.mocked(endpoints.dineCurrent).mockResolvedValue({
       hostRestId: 2,
