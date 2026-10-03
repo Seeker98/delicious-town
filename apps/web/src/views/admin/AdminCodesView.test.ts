@@ -3,7 +3,9 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AdminCodeDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
 import { useAdminStore } from '../../stores/admin';
+import { useToastStore } from '../../stores/toast';
 import AdminCodesView from './AdminCodesView.vue';
 
 vi.mock('../../api/admin', () => ({
@@ -12,6 +14,7 @@ vi.mock('../../api/admin', () => ({
     createCode: vi.fn(),
     createCodeBatch: vi.fn(),
     disableCode: vi.fn(),
+    enableCode: vi.fn(),
     exportCodeBatch: vi.fn(),
   },
 }));
@@ -86,5 +89,62 @@ describe('AdminCodesView', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false);
     await w.find('[data-testid="code-disable-7"]').trigger('click');
     expect(adminApi.disableCode).not.toHaveBeenCalled();
+  });
+});
+
+describe('backlog 后台 1a：兑换码页', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    vi.mocked(adminApi.codes).mockResolvedValue([batch]);
+  });
+  const fill = async (w: ReturnType<typeof mount>) => {
+    await w.find('[data-testid="code-kind"]').setValue('shared');
+    await w.find('[data-testid="code-text"]').setValue('kaifu');
+    await w.find('[data-testid="ri-coin"]').setValue('100');
+  };
+
+  it('自定码已存在：提示"这个码已经存在"', async () => {
+    vi.mocked(adminApi.createCode).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', { issues: [{ path: 'code', message: 'taken' }] }),
+    );
+    const w = mount(AdminCodesView);
+    await flushPromises();
+    await fill(w);
+    await w.find('[data-testid="code-create"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.at(-1)?.text).toBe('兑换码 KAIFU 已经存在，换一个');
+  });
+
+  it('没选区服时选"当前区服"：提示先选区服，建码按钮不可点', async () => {
+    useAdminStore().shardId = null;
+    const w = mount(AdminCodesView);
+    await flushPromises();
+    await fill(w);
+    await w.find('[data-testid="code-scope"]').setValue('shard');
+    expect(w.find('[data-testid="code-scope-hint"]').text()).toContain('请先在顶部选择区服');
+    expect(w.find('[data-testid="code-create"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('按码搜索：带上搜索词重新读列表', async () => {
+    const w = mount(AdminCodesView);
+    await flushPromises();
+    await w.find('[data-testid="code-search"]').setValue('xinshou');
+    await w.find('[data-testid="code-search-form"]').trigger('submit');
+    await flushPromises();
+    expect(adminApi.codes).toHaveBeenLastCalledWith(1, 'xinshou');
+  });
+
+  it('已停用的码可以重新启用（要确认）', async () => {
+    vi.mocked(adminApi.codes).mockResolvedValue([{ ...batch, disabled: true }]);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = mount(AdminCodesView);
+    await flushPromises();
+    expect(w.find('[data-testid="code-disable-7"]').exists()).toBe(false);
+    await w.find('[data-testid="code-enable-7"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.enableCode).toHaveBeenCalledWith(7);
   });
 });

@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import type { LaunchCheckDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -12,13 +13,14 @@ const toast = useToastStore();
 const data = ref<LaunchCheckDto | null>(null);
 const busy = ref(false);
 
-onMounted(async () => {
+async function load() {
   try {
     data.value = await adminApi.launchCheck();
   } catch (e) {
     toast.push(errorMessage(e, '读取上线检查失败'), 'danger');
   }
-});
+}
+onMounted(load);
 
 const failing = (s: LaunchCheckDto['shards'][number]) => s.items.filter((i) => !i.ok);
 
@@ -30,7 +32,11 @@ async function fix(s: LaunchCheckDto['shards'][number]) {
     data.value = await adminApi.launchCheckFix({ shardId: s.shardId, version: s.version });
     toast.push('已改成上线值');
   } catch (e) {
-    toast.push(errorMessage(e, '修复失败'), 'danger');
+    // 别人刚改过这个区服的数值：重读拿新版本号，确认后再点（backlog 6B-2，以前要刷新整页）
+    if (e instanceof ApiError && e.code === 'VERSION_CONFLICT') {
+      toast.push('这个区服的数值刚被改过，已刷新，请确认后再点', 'danger');
+      await load();
+    } else toast.push(errorMessage(e, '修复失败'), 'danger');
   } finally {
     busy.value = false;
   }

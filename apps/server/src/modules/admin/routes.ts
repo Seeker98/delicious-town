@@ -10,6 +10,7 @@ import {
   economyQuery,
   grantIconBody,
   grantListQuery,
+  codeListQuery,
   grantPreviewQuery,
   idParam,
   banBody,
@@ -253,7 +254,7 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     const codes = createAdminCodes(game);
     r.get('/codes', async (req) => {
       await requireRole(db, req, 'mod');
-      return ok(await codes.list({ shardId: parse(grantListQuery, req.query).shardId }));
+      return ok(await codes.list(parse(codeListQuery, req.query)));
     });
     r.post('/codes', async (req) => {
       const a = await requireRole(db, req, 'admin');
@@ -266,6 +267,11 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/codes/:id/disable', async (req) => {
       const a = await requireRole(db, req, 'admin');
       await codes.disable(a, id(req));
+      return ok(null);
+    });
+    r.post('/codes/:id/enable', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await codes.enable(a, id(req));
       return ok(null);
     });
     r.get('/codes/batches/:id/export', async (req) => {

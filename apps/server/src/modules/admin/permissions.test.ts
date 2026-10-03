@@ -427,6 +427,12 @@ const CASES: Case[] = [
     min: 'admin',
   },
   {
+    method: 'POST',
+    route: '/api/v1/admin/codes/:id/enable',
+    url: () => `/api/v1/admin/codes/${ids.codeId}/enable`,
+    min: 'admin',
+  },
+  {
     method: 'GET',
     route: '/api/v1/admin/codes/batches/:id/export',
     url: () => `/api/v1/admin/codes/batches/${ids.batchId}/export`,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
-import { boostText, type AdminActivityDto, type BoostActivityDef, type ShardSettingsDto } from '@dt/shared';
+import { boostText, type ShardSettingsDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import { ApiError } from '../../api/client';
 import SettingRow from '../../components/admin/SettingRow.vue';
@@ -35,22 +35,10 @@ const rawText = ref<Record<string, string>>({});
 const badServer = ref(new Set<string>());
 const readOnly = computed(() => admin.me?.role !== 'admin');
 
-/** 正在生效的全服加成（148-4）：本页显示的是不含加成的数值，在上方提示 */
-const boosts = ref<AdminActivityDto[]>([]);
-async function loadBoosts() {
-  try {
-    boosts.value = (await adminApi.activities()).filter(
-      (a) =>
-        a.kind === 'boost' && a.state === 'running' && (a.shardId === null || a.shardId === shardId.value),
-    );
-  } catch {
-    boosts.value = [];
-  }
-}
-const boostItems = (a: AdminActivityDto) => (a.def as BoostActivityDef).items;
+/** 正在生效的全服加成（148-4）：本页显示的是不含加成的数值，在上方提示；由接口直接给出，不会漏掉早建的 */
+const boosts = computed(() => data.value?.boosts ?? []);
 
 async function load() {
-  void loadBoosts();
   try {
     // 从接口返回的普通对象复制：data.value 是响应式代理，structuredClone 复制代理会抛错
     const res = await adminApi.settings(shardId.value);
@@ -68,13 +56,28 @@ const defaults = computed<Tree>(() =>
   data.value ? { restaurant: data.value.defaults.restaurant, tuning: data.value.defaults.tuning } : {},
 );
 const paths = computed(() => leafPaths(defaults.value));
-/** 搜索（问题记录 126）：按字段名或说明过滤；有搜索词时匹配的组自动展开 */
+/**
+ * 搜索（问题记录 126）：按字段名、说明或分组说明过滤，不分大小写；有搜索词时匹配的组自动展开。
+ * 功能开关也按名字和说明过滤（backlog 6B-2）
+ */
 const search = ref('');
 const docs = computed(() => data.value?.docs ?? { features: {}, groups: {}, fields: {} });
-const match = (p: string) => {
-  const q = search.value.trim();
-  return !q || p.includes(q) || (docs.value.fields[p] ?? '').includes(q);
-};
+const q = computed(() => search.value.trim().toLowerCase());
+const hit = (...texts: Array<string | undefined>) =>
+  !q.value || texts.some((t) => (t ?? '').toLowerCase().includes(q.value));
+const match = (p: string) => hit(p, docs.value.fields[p], docs.value.groups[groupOf(p)]);
+const features = computed(() =>
+  (data.value?.features ?? []).filter((f) => hit(f.name, docs.value.features[f.name])),
+);
+/** 手动展开的分组：清空搜索后保持展开（backlog 6B-2），搜索时的自动展开不记 */
+const opened = ref(new Set<string>());
+function onToggle(g: string, e: Event) {
+  if (q.value) return;
+  const s = new Set(opened.value);
+  if ((e.target as HTMLDetailsElement).open) s.add(g);
+  else s.delete(g);
+  opened.value = s;
+}
 const pinned = computed(() => PINNED.filter((p) => paths.value.includes(p) && match(p)));
 const groups = computed(() => {
   const m = new Map<string, string[]>();
@@ -181,7 +184,7 @@ async function save() {
     <div v-if="boosts.length" class="alert alert-warning py-1 small" data-testid="boost-hint">
       当前有全服加成生效（下面显示的是不含加成的数值）：
       <span v-for="b in boosts" :key="b.id" class="me-2">
-        {{ boostText(boostItems(b)) }}（至 {{ new Date(b.endsAt).toLocaleString() }}）
+        {{ boostText(b.items) }}（至 {{ new Date(b.endsAt).toLocaleString() }}）
       </span>
     </div>
     <div class="d-flex align-items-center gap-2 mb-2">
@@ -204,10 +207,10 @@ async function save() {
       @edit="onInput(p, $event)"
       @reset="reset(p)"
     />
-    <h6 class="mt-3">功能开关</h6>
+    <h6 v-if="features.length > 0" class="mt-3">功能开关</h6>
     <!-- 功能开关（问题记录 184）：整齐的网格，名字一行、说明一行 -->
     <div class="dt-feature-grid small">
-      <label v-for="f in data.features" :key="f.name" class="dt-feature" :title="docs.features[f.name] ?? ''">
+      <label v-for="f in features" :key="f.name" class="dt-feature" :title="docs.features[f.name] ?? ''">
         <span class="d-flex align-items-center">
           <input
             type="checkbox"
@@ -230,8 +233,9 @@ async function save() {
       v-for="[g, ps] in groups"
       :key="g"
       class="mt-2"
-      :open="search.trim() !== '' || undefined"
+      :open="q !== '' || opened.has(g) || undefined"
       :data-testid="`group-${g}`"
+      @toggle="onToggle(g, $event)"
     >
       <summary>
         {{ g }}（{{ ps.length }}）<span v-if="docs.groups[g]" class="small text-muted ms-1">{{

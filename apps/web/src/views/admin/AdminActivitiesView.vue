@@ -73,7 +73,29 @@ const defs = ref<{
   coop: defaultDef('coop'),
 });
 const started = computed(() => editing.value !== null && editing.value.state !== 'pending');
+/** 已结束（结算中或已补发）：服务端连结束时间也不让改了 */
+const ended = computed(
+  () => editing.value !== null && (editing.value.state === 'settling' || editing.value.state === 'settled'),
+);
 const STATE = { pending: '未开始', running: '进行中', settling: '结算中', settled: '已补发' } as const;
+/** 兑换活动结束后还有兑换期，玩家仍能兑换，列表不显示"结算中/已补发"（backlog 148-2） */
+function stateText(a: AdminActivityDto): string {
+  if (a.kind === 'exchange' && (a.state === 'settling' || a.state === 'settled')) {
+    const grace = (a.def as ExchangeDef).graceHours * 3_600_000;
+    if (Date.now() < new Date(a.endsAt).getTime() + grace) return '兑换中';
+  }
+  return STATE[a.state];
+}
+/** 编辑器里没有对应位置的字段错误，显示在表单顶部（backlog 148-1） */
+const FIELD = { shardId: '区服', kind: '类型', startsAt: '开始时间', minLevel: '最低等级' } as Record<
+  string,
+  string
+>;
+const topErrors = computed(() =>
+  Object.entries(errors.value).filter(
+    ([k]) => !k.startsWith('def') && !['title', 'body', 'endsAt'].includes(k),
+  ),
+);
 const KIND = {
   goals: '目标清单',
   grid: '九宫格',
@@ -127,6 +149,13 @@ onMounted(() => void load());
 
 async function save() {
   if (busy.value) return;
+  // 没选区服时"当前区服"会变成 null，被当成全服活动建出来（backlog 148-1）
+  if (scope.value === 'shard' && !editing.value && admin.shardId === null) {
+    errors.value = { shardId: '请先在顶部选择区服，或改成"全服"' };
+    await nextTick();
+    focusFirstError();
+    return;
+  }
   const b = {
     shardId: scope.value === 'all' ? null : (editing.value?.shardId ?? admin.shardId ?? null),
     kind: kind.value,
@@ -192,7 +221,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
         <td>{{ a.shardId ?? '全服' }}</td>
         <td>{{ KIND[a.kind] }}</td>
         <td>{{ new Date(a.startsAt).toLocaleString() }} ~ {{ new Date(a.endsAt).toLocaleString() }}</td>
-        <td>{{ STATE[a.state] }}</td>
+        <td>{{ stateText(a) }}</td>
         <td>{{ a.participants }}</td>
         <td class="text-nowrap">
           <button
@@ -226,8 +255,12 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
   </table>
 
   <div v-if="open" ref="formEl" class="dt-card">
-    <div v-if="started" class="alert alert-warning py-1 small">
+    <div v-if="ended" class="alert alert-warning py-1 small">活动已结束，只能改标题和说明</div>
+    <div v-else-if="started" class="alert alert-warning py-1 small">
       活动已开始，只能改标题、说明和延长结束时间
+    </div>
+    <div v-for="[k, m] in topErrors" :key="k" class="text-danger small" :data-testid="`err-${k}`">
+      {{ FIELD[k] ?? k }}：{{ m }}
     </div>
     <div class="row g-2 mb-2">
       <div class="col-auto">
@@ -290,6 +323,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
         type="datetime-local"
         class="form-control form-control-sm w-auto"
         data-testid="ac-ends"
+        :disabled="ended"
       />
     </div>
     <div v-if="errors.endsAt" class="text-danger small" data-testid="err-endsAt">{{ errors.endsAt }}</div>

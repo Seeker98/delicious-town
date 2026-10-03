@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { AccountRole } from './auth';
+import type { BoostActivityDef } from './activity';
 import { pageQuery, type RestaurantDto } from './restaurant';
 
 export type AdminRole = 'mod' | 'admin';
@@ -26,6 +27,8 @@ export interface ShardSettingsDto {
   features: Array<{ name: string; enabled: boolean }>;
   /** 数值说明（问题记录 126）：功能开关、分组、每个数值各一句 */
   docs: { features: Record<string, string>; groups: Record<string, string>; fields: Record<string, string> };
+  /** 正在生效的全服加成（本区服和全服的）；页面上的数值不含加成，在上方提示 */
+  boosts: Array<{ id: number; items: BoostActivityDef['items']; endsAt: string }>;
 }
 
 const note = z.string().trim().min(1).max(200);

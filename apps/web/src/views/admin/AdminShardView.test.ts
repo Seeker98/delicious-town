@@ -24,6 +24,7 @@ const dto: ShardSettingsDto = {
   effective: { ...defaults },
   features: [{ name: 'market', enabled: true }],
   docs: { features: {}, groups: {}, fields: {} },
+  boosts: [],
 };
 
 async function mountView(role: 'mod' | 'admin') {
@@ -164,26 +165,65 @@ describe('AdminShardView', () => {
     expect(w.find(field('tuning.rank.top')).exists()).toBe(true);
   });
 
-  it('有生效的全服加成时，页面上方提示（显示的数值不含加成）', async () => {
-    vi.mocked(adminApi.activities).mockResolvedValue([
-      {
-        id: 3,
-        shardId: null,
-        kind: 'boost',
-        def: { items: [{ key: 'exp', factor: 2 }] },
-        title: '双倍经验',
-        body: '',
-        startsAt: '2026-10-01T00:00:00.000Z',
-        endsAt: '2099-10-08T00:00:00.000Z',
-        minLevel: 1,
-        state: 'running',
-        participants: 0,
-        createdAt: '',
-        updatedAt: '',
-        actor: null,
-      },
-    ] as never);
+  it('有生效的全服加成时，页面上方提示（显示的数值不含加成）；加成由区服数值接口直接给出', async () => {
+    vi.mocked(adminApi.settings).mockResolvedValue({
+      ...structuredClone(dto),
+      boosts: [{ id: 3, items: [{ key: 'exp', factor: 2 }], endsAt: '2099-10-08T00:00:00.000Z' }],
+    });
     const w = await mountView('admin');
     expect(w.find('[data-testid="boost-hint"]').text()).toContain('经营经验 ×2');
+    expect(adminApi.activities).not.toHaveBeenCalled();
+  });
+});
+
+describe('backlog 后台 1a：区服数值页搜索', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    const d = structuredClone(dto);
+    const more = { ...defaults, tuning: { ...defaults.tuning, mail: { listMax: 100 }, rank: { top: 50 } } };
+    d.defaults = more;
+    d.effective = structuredClone(more);
+    d.docs = {
+      features: { market: '菜场开关说明' },
+      groups: { 'tuning.mail': '邮箱组', 'tuning.rank': '排行组' },
+      fields: { 'tuning.mail.listMax': '邮箱最多列出几封' },
+    };
+    vi.mocked(adminApi.settings).mockResolvedValue(d);
+  });
+  const search = async (w: Awaited<ReturnType<typeof mountView>>, q: string) =>
+    w.find('[data-testid="setting-search"]').setValue(q);
+
+  it('不区分大小写', async () => {
+    const w = await mountView('admin');
+    await search(w, 'LISTMAX');
+    expect(w.find(field('tuning.mail.listMax')).exists()).toBe(true);
+    expect(w.find(field('tuning.rank.top')).exists()).toBe(false);
+  });
+
+  it('也搜分组说明：命中分组说明时整组列出', async () => {
+    const w = await mountView('admin');
+    await search(w, '排行组');
+    expect(w.find(field('tuning.rank.top')).exists()).toBe(true);
+    expect(w.find(field('tuning.mail.listMax')).exists()).toBe(false);
+  });
+
+  it('功能开关也按名字或说明过滤', async () => {
+    const w = await mountView('admin');
+    await search(w, '邮箱');
+    expect(w.find('[data-testid="feature-market"]').exists()).toBe(false);
+    await search(w, '菜场');
+    expect(w.find('[data-testid="feature-market"]').exists()).toBe(true);
+  });
+
+  it('清空搜索后，之前手动展开的分组仍然展开', async () => {
+    const w = await mountView('admin');
+    const g = w.find('[data-testid="group-tuning.rank"]');
+    (g.element as HTMLDetailsElement).open = true;
+    await g.trigger('toggle');
+    await search(w, '排行');
+    await search(w, '');
+    expect(w.find('[data-testid="group-tuning.rank"]').attributes('open')).toBeDefined();
+    expect(w.find('[data-testid="group-tuning.mail"]').attributes('open')).toBeUndefined();
   });
 });

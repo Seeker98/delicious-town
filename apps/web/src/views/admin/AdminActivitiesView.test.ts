@@ -541,3 +541,106 @@ describe('问题记录 232：错误在编辑器的行里', () => {
     w.unmount();
   });
 });
+
+describe('backlog 后台 1a：活动编辑器', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useAdminStore().shardId = 1;
+    useAdminStore().me = { accountId: 1, username: 'boss', role: 'admin' };
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(adminApi.activities).mockResolvedValue([]);
+  });
+  const openNew = async (kind: string) => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue(kind);
+    await w.find('[data-testid="ac-title"]').setValue('标题');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    return w;
+  };
+  const fail = (path: string, message: string) =>
+    vi
+      .mocked(adminApi.createActivity)
+      .mockRejectedValue(new ApiError('VALIDATION_FAILED', { issues: [{ path, message }] }));
+
+  it('积分规则某一行的分数出错时，错误显示在那一行', async () => {
+    fail('def.rules.0.dailyCap', 'too_small');
+    const w = await openNew('pass');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.rules.0.dailyCap"]').text()).toBe('填写的内容不正确');
+  });
+
+  it('全服加成某一行的项目出错时，错误显示在那一行', async () => {
+    fail('def.items.0.key', 'unknown_boost');
+    const w = await openNew('boost');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-def.items.0.key"]').text()).toBe('请选择加成项目');
+  });
+
+  it('九宫格出错时自动选中第一个出错的格子', async () => {
+    fail('def.cells.5.target', 'too_small');
+    const w = await openNew('grid');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.text()).toContain('第 6 格');
+    expect(w.find('[data-testid="err-def.cells.5.target"]').exists()).toBe(true);
+  });
+
+  it('表单顶部的字段（如开始时间）出错时也显示出来', async () => {
+    fail('startsAt', 'too_small');
+    const w = await openNew('goals');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="err-startsAt"]').text()).toContain('填写的内容不正确');
+  });
+
+  it('没选区服又选了"当前区服"：不提交，提示先选区服', async () => {
+    useAdminStore().shardId = null;
+    const w = await openNew('goals');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.createActivity).not.toHaveBeenCalled();
+    expect(w.find('[data-testid="err-shardId"]').text()).toContain('先在顶部选择区服');
+  });
+
+  it('兑换活动在兑换期内，列表状态显示"兑换中"', async () => {
+    const ended = new Date(Date.now() - 3_600_000).toISOString();
+    vi.mocked(adminApi.activities).mockResolvedValue([
+      {
+        ...row,
+        kind: 'exchange',
+        endsAt: ended,
+        state: 'settled',
+        def: { currencies: [{ name: '月饼' }], drops: [], shop: [], graceHours: 24 },
+      } as never,
+      { ...row, id: 8, title: '旧活动', endsAt: ended, state: 'settled' },
+    ]);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    const rows = w.findAll('tbody tr');
+    expect(rows[0]!.text()).toContain('兑换中');
+    expect(rows[1]!.text()).toContain('已补发');
+  });
+
+  it('已结束的活动：提示只能改标题和说明，结束时间不能改', async () => {
+    vi.mocked(adminApi.activities).mockResolvedValue([
+      { ...row, endsAt: '2026-10-02T00:00:00.000Z', state: 'settled' },
+    ]);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-edit-7"]').trigger('click');
+    expect(w.text()).toContain('活动已结束，只能改标题和说明');
+    expect(w.find('[data-testid="ac-ends"]').attributes('disabled')).toBeDefined();
+  });
+});

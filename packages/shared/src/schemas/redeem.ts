@@ -35,6 +35,12 @@ export const createBatchBody = z
   .refine(windowOk, { path: ['endsAt'], message: 'before_start' });
 export type CreateBatchInput = z.infer<typeof createBatchBody>;
 
+/** 后台兑换码列表：按区服过滤；q 按码搜索（不分大小写，空格、连字符忽略） */
+export const codeListQuery = z.object({
+  shardId: z.coerce.number().int().positive().optional(),
+  q: z.string().trim().max(40).optional(),
+});
+
 export interface AdminCodeDto {
   id: number;
   kind: 'shared' | 'single';

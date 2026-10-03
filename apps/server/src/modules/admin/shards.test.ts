@@ -164,6 +164,67 @@ describe('区服数值（HTTP）', () => {
   });
 });
 
+describe('区服数值：正在生效的全服加成（backlog 148-4）', () => {
+  // 时钟放在 2090 年：插入的全服加成不会落在其他测试的当前时间里
+  const FUTURE = new Date('2090-01-01T00:00:00.000Z');
+  let fx: TestContext;
+  let fxMod: { cookie: string };
+  beforeAll(async () => {
+    fx = await createTestApp({ now: () => FUTURE });
+    fxMod = await userWithRole(fx, 'mod');
+  });
+  afterAll(() => fx.close());
+
+  it('带上正在生效的全服加成（本区服和全服的，不论建得多早）；不含已结束、别的区服和其他类型', async () => {
+    const shardId = await createShard(fx.deps.db);
+    const other = await createShard(fx.deps.db);
+    const H = 3_600_000;
+    const now = FUTURE.getTime();
+    const add = async (
+      shard: number | null,
+      kind: 'boost' | 'goals',
+      def: unknown,
+      from: number,
+      to: number,
+    ) =>
+      (
+        await fx.deps.db
+          .insertInto('activity')
+          .values({
+            shard_id: shard,
+            kind,
+            title: 't',
+            body: 'b',
+            starts_at: new Date(now + from * H),
+            ends_at: new Date(now + to * H),
+            min_level: 1,
+            def: JSON.stringify(def),
+          })
+          .returning('id')
+          .executeTakeFirstOrThrow()
+      ).id;
+    const exp = { items: [{ key: 'exp', factor: 2 }] };
+    const mine = await add(shardId, 'boost', exp, -1, 5);
+    const all = await add(null, 'boost', { items: [{ key: 'coin', factor: 1.5 }] }, -1, 5);
+    const excluded = [
+      await add(other, 'boost', exp, -1, 5),
+      await add(shardId, 'boost', exp, -5, -1),
+      await add(shardId, 'boost', exp, 1, 5),
+      await add(shardId, 'goals', { goals: [] }, -1, 5),
+    ];
+    const r = await call(fx.app, 'GET', `${S}/${shardId}/settings`, { cookie: fxMod.cookie });
+    const ids = (r.json.data.boosts as Array<{ id: number; items: unknown; endsAt: string }>).map(
+      (b) => b.id,
+    );
+    expect(ids.sort()).toEqual([mine, all].sort());
+    expect(excluded.some((i) => ids.includes(i))).toBe(false);
+    expect(r.json.data.boosts.find((b: { id: number }) => b.id === mine)).toMatchObject({
+      items: exp.items,
+      endsAt: new Date(now + 5 * H).toISOString(),
+    });
+  });
+});
+
 describe('区服数值（即时生效）', () => {
   let t: TestGame;
   let t2: TestGame;

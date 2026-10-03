@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LaunchCheckDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
+import { useToastStore } from '../../stores/toast';
 import { useAdminStore } from '../../stores/admin';
 import LaunchCheck from './LaunchCheck.vue';
 
@@ -67,5 +69,23 @@ describe('LaunchCheck（子项目 6B-2）', () => {
     expect(ask.mock.calls[0]![0]).toContain('1 项');
     expect(adminApi.launchCheckFix).toHaveBeenCalledWith({ shardId: 3, version: 4 });
     expect(w.find('[data-testid="launch-ok"]').exists()).toBe(true);
+  });
+
+  it('版本冲突（别人刚改过）：自动重读，拿到新版本号后再点就能修复', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.mocked(adminApi.launchCheckFix).mockRejectedValueOnce(
+      new ApiError('VERSION_CONFLICT', { version: 5 }),
+    );
+    const w = await mountAs('admin');
+    vi.mocked(adminApi.launchCheck).mockResolvedValue({
+      ...failing,
+      shards: [{ ...failing.shards[0]!, version: 5 }],
+    });
+    await w.find('[data-testid="launch-fix-3"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.at(-1)?.text).toContain('已刷新');
+    await w.find('[data-testid="launch-fix-3"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.launchCheckFix).toHaveBeenLastCalledWith({ shardId: 3, version: 5 });
   });
 });

@@ -121,10 +121,11 @@ export const adminApi = {
   launchCheck: () => api.get<LaunchCheckDto>(`${A}/launch-check`),
   launchCheckFix: (b: { shardId: number; version: number }) =>
     api.post<LaunchCheckDto>(`${A}/launch-check/fix`, b),
-  codes: (shardId?: number) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId })}`),
+  codes: (shardId?: number, q?: string) => api.get<AdminCodeDto[]>(`${A}/codes${qs({ shardId, q })}`),
   createCode: (b: CreateSharedCodeInput) => api.post<AdminCodeDto>(`${A}/codes`, b),
   createCodeBatch: (b: CreateBatchInput) => api.post<AdminCodeDto>(`${A}/codes/batch`, b),
   disableCode: (id: number) => api.post<null>(`${A}/codes/${id}/disable`, {}),
+  enableCode: (id: number) => api.post<null>(`${A}/codes/${id}/enable`, {}),
   exportCodeBatch: (batchId: number) => api.get<{ codes: string[] }>(`${A}/codes/batches/${batchId}/export`),
   announcements: () => api.get<AdminAnnouncementDto[]>(`${A}/announcements`),
   createAnnouncement: (b: AnnouncementInput) => api.post<AdminAnnouncementDto>(`${A}/announcements`, b),
