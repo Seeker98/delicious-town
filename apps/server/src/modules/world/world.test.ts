@@ -92,6 +92,21 @@ describe('接口', () => {
     expect(r.json.data.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
     expect(r.json.data.version).toBe(config.version);
   });
+
+  it('目录的街道带加成说明，按语言翻译（问题记录 284：搬家页要显示）', async () => {
+    const zh = await call(http.app, 'GET', '/api/v1/world/catalog');
+    expect(zh.json.data.streets.find((s: { id: number }) => s.id === 24)).toMatchObject({
+      name: '摩洛哥街',
+      desc: '探险时获得神秘食材概率+2%,幸运值+25,最终经验收益+8%',
+    });
+    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
+    expect(en.json.data.streets.find((s: { id: number }) => s.id === 14)).toEqual({
+      id: 14,
+      name: 'Japan Street',
+      cookName: 'Japanese cuisine',
+      desc: 'Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%',
+    });
+  });
 });
 
 describe('雷神锤天气池（4E-1 设计文档 裁定 15）', () => {

@@ -16,6 +16,8 @@ const target = ref<number | null>(null);
 const busy = ref(false);
 const rest = computed(() => restaurant.rest);
 const streets = computed(() => catalog.streets.filter((s) => s.id !== rest.value?.streetId));
+/** 30 条街只看名字不好选，选中后显示加成（问题记录 284） */
+const picked = computed(() => catalog.streets.find((s) => s.id === target.value) ?? null);
 const cost = computed(() =>
   rest.value ? rest.value.tables.length * Math.floor((catalog.goods(82)?.coin ?? 5000) / 2) : 0,
 );
@@ -47,6 +49,7 @@ onMounted(() => restaurant.refresh().catch(() => undefined));
       {{ t.society.move.option(s.name, s.cookName) }}
     </option>
   </select>
+  <p v-if="picked" class="small mb-2" data-testid="move-bonus">{{ t.society.move.bonus(picked.desc) }}</p>
   <button class="btn btn-primary w-100" :disabled="busy || target === null" @click="move">
     {{ t.society.move.btn }}
   </button>

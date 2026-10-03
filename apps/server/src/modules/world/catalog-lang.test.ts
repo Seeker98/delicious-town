@@ -15,7 +15,7 @@ const base = {
   version: 'v1',
   goods: [{ id: 85, name: '体力卡', desc: '恢复体力', type: 0 }],
   foods: [{ id: 7, name: '雪蛤', level: 3 }],
-  streets: [{ id: 1, name: '新手街', cookName: '新手菜' }],
+  streets: [{ id: 1, name: '新手街', cookName: '新手菜', desc: '上座率+35%' }],
   weather: [{ id: 1, name: '晴' }],
   devices: [{ id: 3, name: '奖杯', deviceType: 2, needStar: 0 }],
   suits: [{ id: 9, name: '阿卡玛的神谕', maxNum: 5, tiers: [] }],
@@ -79,7 +79,7 @@ describe('道具目录按语言（问题记录 272）', () => {
     t.icons.founder = { title: 'Founding Member', desc: 'Joined town in the first week' };
     const c = localizeCatalog(b, t, 'en');
     expect(c.weather[0]).toEqual({ id: 1, name: 'Sunny', note: 'Business: occupancy +3%' });
-    expect(c.streets[0]).toEqual({ id: 1, name: 'Newbie Street', cookName: 'Home cooking' });
+    expect(c.streets[0]).toEqual({ id: 1, name: 'Newbie Street', cookName: 'Home cooking', desc: 'x' });
     expect(c.suits![0]).toEqual({
       id: 9,
       name: "Akatma's Oracle",
