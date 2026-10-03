@@ -81,6 +81,7 @@ const rest: Messages['rest'] = {
     chapterLocked: (n, name) => `Capítulo ${n}: ${name}`,
     chapterAward: (text) => `Recompensa del capítulo: ${text}`,
     claimChapter: 'Recoger la recompensa del capítulo',
+    chapterLeft: (n) => `Faltan ${n} ${n === 1 ? 'misión' : 'misiones'}`,
     lockedLevel: (n) => `🔒 Se desbloquea en el nivel ${n}`,
     lockedStar: (n) => `🔒 Se desbloquea con ${n} ${n === 1 ? 'estrella' : 'estrellas'}`,
     claimedTask: '✓ Recogido',

@@ -177,12 +177,17 @@ describe('RestTasksView', () => {
     ]);
     expect(w.get('[data-testid="task-2021"]').text()).toContain('✓ 已领');
     expect(w.find('[data-testid="claim-chapter"]').attributes('disabled')).toBeDefined();
+    // 没领完时不是绿色，写明还差几个（问题记录 318 试玩反馈：绿色按钮点不了像坏了）
+    expect(w.get('[data-testid="claim-chapter"]').classes()).not.toContain('btn-success');
+    expect(w.get('[data-testid="claim-chapter"]').text()).toBe('还差 2 个任务');
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task({ progress: 1, done: true, claimed: true })], {
         chapter: { ...quests([]).chapter!, claimable: true, total: 1, claimedCount: 1 },
       }),
     );
     const ready = await mountView();
+    expect(ready.get('[data-testid="claim-chapter"]').classes()).toContain('btn-success');
+    expect(ready.get('[data-testid="claim-chapter"]').text()).toBe('领章末奖励');
     await ready.get('[data-testid="claim-chapter"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimChapter).toHaveBeenCalledWith(1);

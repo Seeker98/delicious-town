@@ -164,13 +164,18 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         <span class="text-muted flex-fill">{{
           t.rest.tasks.chapterAward(awardText(tasks.chapter.award))
         }}</span>
+        <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈） -->
         <button
-          class="btn btn-sm btn-success"
+          :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
           data-testid="claim-chapter"
           :disabled="busy || !tasks.chapter.claimable"
           @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
         >
-          {{ t.rest.tasks.claimChapter }}
+          {{
+            tasks.chapter.claimable
+              ? t.rest.tasks.claimChapter
+              : t.rest.tasks.chapterLeft(tasks.chapter.total - tasks.chapter.claimedCount)
+          }}
         </button>
       </div>
     </template>

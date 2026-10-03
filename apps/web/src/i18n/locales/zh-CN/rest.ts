@@ -82,6 +82,7 @@ export default {
     chapterLocked: (n: number, name: string) => `第 ${n} 章 ${name}`,
     chapterAward: (text: string) => `章末奖励：${text}`,
     claimChapter: '领章末奖励',
+    chapterLeft: (n: number) => `还差 ${n} 个任务`,
     lockedLevel: (n: number) => `🔒 ${n} 级解锁`,
     lockedStar: (n: number) => `🔒 ${n} 星解锁`,
     claimedTask: '✓ 已领',
