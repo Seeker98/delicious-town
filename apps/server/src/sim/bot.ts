@@ -137,10 +137,17 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
   }
 
   for (let i = 0; i < 5; i++) {
+    // 问题记录 318：主线、支线当前档、每周任务里达成没领的都领；本章领完领章末
     const t = await game.task.tasks(ctx);
-    const done = [t.main, ...t.side].filter((x) => x?.done);
-    if (done.length === 0) break;
-    for (const x of done) await attempt(() => game.task.claimTask(ctx, x!.id));
+    const ready = [...t.main, ...t.lines.map((l) => l.quest), ...(t.weekly?.quests ?? [])].filter(
+      (x) => x && x.done && !x.claimed,
+    );
+    const chapter = t.chapter?.claimable ? t.chapter.id : null;
+    const full = t.weekly?.full.claimable ? t.weekly.full.id : null;
+    if (ready.length === 0 && chapter === null && full === null) break;
+    for (const x of ready) await attempt(() => game.task.claimTask(ctx, x!.id));
+    if (chapter !== null) await attempt(() => game.task.claimChapter(ctx, chapter));
+    if (full !== null) await attempt(() => game.task.claimTask(ctx, full));
   }
   const act = await game.task.activation(ctx);
   for (const rw of act.rewards) {

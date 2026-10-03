@@ -2,6 +2,7 @@ import { sql } from 'kysely';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { krabFor, setTownTuning } from '../../../test/town';
 import type { RestCtx } from '../../core/deps';
 import { createShard } from '../../../test/fixtures';
@@ -23,7 +24,7 @@ const shakes = (restId: number) =>
 
 describe('摇蟹老板钱包（设计文档 §3.4）', () => {
   it('从蟹老板店扣银币给我；计入活跃"摇蟹老板的钱袋"和支线 102', async () => {
-    const a = await newRestaurant(t, { patch: { star_level: 2, coin: 100, main_task_step: 50 } });
+    const a = await newRestaurant(t, { patch: { star_level: 2, coin: 100 } });
     const krab = await krabFor(t, a.shardId, 1_000_000);
     const { coin } = (await shake(a)).data;
     expect(coin).toBeGreaterThanOrEqual(6002);
@@ -31,7 +32,8 @@ describe('摇蟹老板钱包（设计文档 §3.4）', () => {
     expect((await restRow(t, a.restaurantId)).coin).toBe(100 + coin);
     expect((await restRow(t, krab)).coin).toBe(1_000_000 - coin);
     expect((await t.game.task.activation(a)).items.find((i) => i.id === 9)!.count).toBe(1);
-    expect((await t.game.task.tasks(a)).side.find((x) => x.id === 102)).toMatchObject({ done: true });
+    await showQuest(t, a.restaurantId, 3042);
+    expect(questIn(await t.game.task.tasks(a), 3042)).toMatchObject({ done: true });
   });
 
   it('蟹老板钱不够时给剩下的；没钱或没有蟹老板店时报错，不写记录，之后还能摇', async () => {

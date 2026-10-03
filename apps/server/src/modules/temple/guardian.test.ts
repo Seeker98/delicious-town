@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 
 const config = testConfig();
@@ -74,15 +75,15 @@ describe('守护兽（规格书 09 §9.1）', () => {
     });
   });
 
-  it('主线第 25 步「攻击一次守护兽」不再跳过', async () => {
-    const ctx = await newRestaurant(t, { patch: { star_level: 1, main_task_step: 25 }, goods: { 18: 1 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({
-      step: 25,
+  it('主线「攻击一次守护兽」', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 1 }, goods: { 18: 1 } });
+    await showQuest(t, ctx.restaurantId, 2084);
+    expect(questIn(await t.game.task.tasks(ctx), 2084)).toMatchObject({
       key: 'temple.missile',
       done: false,
     });
     await t.game.temple.missile(ctx, { goodsId: 18, num: 1 });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 25, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2084)).toMatchObject({ done: true });
   });
 
   it('区服覆盖 temple.missileAttack 后，飞弹伤害跟着变（终审 I2）', async () => {

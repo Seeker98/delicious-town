@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, seededRng, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { befriend, createTestGame, newPair, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 import { ensureNpc } from '../npc/npc';
 
@@ -31,7 +32,7 @@ const setDaily = (restId: number, key: string, count: number) =>
 
 describe('好友切磋（设计文档 §3.4）', () => {
   it('普通档胜：声望 +5，切磋奖励 2 次；扣 5 体力；计入支线 110 和活跃；对方不受影响', async () => {
-    const [a, b] = await pair({ ...STRONG, main_task_step: 23 }, MID);
+    const [a, b] = await pair(STRONG, MID);
     expect(await t.game.tower.duelInfo(a, b.restaurantId)).toEqual({
       left: 10,
       spar: 0,
@@ -46,7 +47,8 @@ describe('好友切磋（设计文档 §3.4）', () => {
     expect(await restRow(t, a.restaurantId)).toMatchObject({ strength: 95, renown: 5, coin: 3200 });
     expect(await restRow(t, b.restaurantId)).toMatchObject({ strength: 100, renown: 0, coin: 0 });
     expect(await t.game.tower.duelInfo(a, b.restaurantId)).toMatchObject({ left: 9, spar: 1 });
-    const side = (await t.game.task.tasks(a)).side.find((x) => x.id === 110)!;
+    await showQuest(t, a.restaurantId, 3182);
+    const side = questIn(await t.game.task.tasks(a), 3182)!;
     expect(side).toMatchObject({ key: 'tower.friendDuel', progress: 1 });
     const act = await t.game.task.activation(a);
     expect(act.items.find((i) => i.name === '与好友赛厨')!.count).toBe(1);

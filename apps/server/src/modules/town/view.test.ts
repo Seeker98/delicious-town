@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { showQuest } from '../../../test/quests';
 import { setWeather } from '../../../test/takeaway';
 import { krabFor } from '../../../test/town';
 
@@ -61,8 +62,12 @@ describe('小镇概览（设计文档 §3.8）', () => {
   });
 
   it('支线任务：广播、摇钱包、嘻哈男孩打赏（4E-2）、发帖（4E-3）都开放', async () => {
-    const a = await newRestaurant(t, { patch: { main_task_step: 50 } });
-    const ids = (await t.game.task.tasks(a)).side.map((x) => x.id);
-    expect(ids).toEqual(expect.arrayContaining([101, 102, 107, 109]));
+    const a = await newRestaurant(t);
+    await showQuest(t, a.restaurantId, 2121);
+    const list = await t.game.task.tasks(a);
+    expect(list.main.map((x) => x.key)).toEqual(
+      expect.arrayContaining(['broadcast', 'post.create|post.reply']),
+    );
+    expect(list.lines.map((l) => l.id)).toContain(2);
   });
 });

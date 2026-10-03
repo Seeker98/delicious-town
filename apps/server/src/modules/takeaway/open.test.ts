@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 
 const DAY = '2026-09-30';
@@ -30,10 +31,10 @@ describe('开通（设计文档 §3.1）', () => {
     });
   });
 
-  it('用外卖券开通：扣 888 声望和 1 张券，自己成为 1 号骑手；主线第 34 步完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { ...READY, main_task_step: 34 }, goods: { 263: 1 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({
-      step: 34,
+  it('用外卖券开通：扣 888 声望和 1 张券，自己成为 1 号骑手；主线「开通外卖」完成', async () => {
+    const ctx = await newRestaurant(t, { patch: READY, goods: { 263: 1 } });
+    await showQuest(t, ctx.restaurantId, 2141);
+    expect(questIn(await t.game.task.tasks(ctx), 2141)).toMatchObject({
       key: 'takeaway.open',
       done: false,
     });
@@ -67,7 +68,7 @@ describe('开通（设计文档 §3.1）', () => {
         dismissExp: 0,
       },
     ]);
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 34, progress: 1, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2141)).toMatchObject({ progress: 1, done: true });
   });
 
   it('用银币和钻石开通', async () => {

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 
 const config = testConfig();
@@ -172,19 +173,20 @@ describe('概览、目录、任务、功能开关', () => {
     expect(m).toMatchObject({ name: '秘·仿膳饽饽', level: 4, road: 1, foods: [390, 412, 261] });
   });
 
-  it('主线第 22 步「鉴定一次神秘食谱」、第 23 步「学会一道特色菜」不再跳过', async () => {
+  it('主线「鉴定一次神秘食谱」「学会一道特色菜」', async () => {
     const ctx = await newRestaurant(t, {
-      patch: { star_level: 1, main_task_step: 22 },
+      patch: { star_level: 1 },
       goods: { 162: 1, 165: 1 },
     });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 22, key: 'mc.appraise', done: false });
+    await showQuest(t, ctx.restaurantId, 2081);
+    expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ key: 'mc.appraise', done: false });
     await s().appraise(ctx, { toolId: 165, times: 1, noRetry: false });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 22, done: true });
-    const ctx2 = await newRestaurant(t, { patch: { main_task_step: 23 } });
+    expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ done: true });
+    const ctx2 = await newRestaurant(t);
     await giveRemnant(ctx2, 1, 3);
     await s().learn(ctx2, { mcId: 1 });
-    expect((await t.game.task.tasks(ctx2)).main).toMatchObject({
-      step: 23,
+    await showQuest(t, ctx2.restaurantId, 2082);
+    expect(questIn(await t.game.task.tasks(ctx2), 2082)).toMatchObject({
       key: 'mc.learned',
       progress: 1,
       done: true,

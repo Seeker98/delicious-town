@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 
 const DAY = '2026-09-30';
 const STRONG = { attr_cook: 20, attr_cutting: 20, attr_fire: 20, attr_season: 10 };
@@ -54,9 +55,9 @@ describe('厨塔概览', () => {
 
 describe('挑战（设计文档 §3.2）', () => {
   it('胜：扣 层+4 体力；声望 +(层+6)；随机奖励"层"次；最高层更新；主线第 27 步、活跃"厨塔挑战"', async () => {
-    const ctx = await newRestaurant(t, { patch: { ...STRONG, level: 5, main_task_step: 27 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({
-      step: 27,
+    const ctx = await newRestaurant(t, { patch: { ...STRONG, level: 5 } });
+    await showQuest(t, ctx.restaurantId, 2105);
+    expect(questIn(await t.game.task.tasks(ctx), 2105)).toMatchObject({
       key: 'tower.challenge',
       done: false,
     });
@@ -79,7 +80,7 @@ describe('挑战（设计文档 §3.2）', () => {
     const v = await t.game.tower.overview(ctx);
     expect(v).toMatchObject({ bestFloor: 1, left: 4 });
     expect(v.floors[0]!.left).toBe(9);
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 27, progress: 1, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2105)).toMatchObject({ progress: 1, done: true });
     const act = await t.game.task.activation(ctx);
     expect(act.items.find((i) => i.name === '厨塔挑战')!.count).toBe(1);
   });

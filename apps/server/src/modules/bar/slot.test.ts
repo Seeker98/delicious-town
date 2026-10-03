@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { createTestGame, foodNum, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 
 let t: TestGame;
 let rngValues: number[] = [0.5];
@@ -24,7 +25,7 @@ const newsOf = (restId: number) =>
 
 describe('老虎机（设计文档 §3.5）', () => {
   it('抽 2 次：每次 3 格，相同奖项合并发放；扣蟹币；统计累计；最多再抽几次必出；支线「玩一次老虎机」完成', async () => {
-    const ctx = await newRestaurant(t, { verified: true, goods: { 240: 5 }, patch: { main_task_step: 16 } });
+    const ctx = await newRestaurant(t, { verified: true, goods: { 240: 5 } });
     rngValues = [0.5, 0.77]; // 每格：不提前保底；抽到十三香
     expect((await t.game.bar.slot(ctx, { times: 2 })).data).toEqual({
       spins: [
@@ -51,7 +52,8 @@ describe('老虎机（设计文档 §3.5）', () => {
         { awardId: 1, num: 6 },
       ],
     });
-    const side = (await t.game.task.tasks(ctx)).side.find((x) => x.id === 108)!;
+    await showQuest(t, ctx.restaurantId, 3081);
+    const side = questIn(await t.game.task.tasks(ctx), 3081)!;
     expect(side).toMatchObject({ key: 'bar.slot', progress: 3, done: true });
   });
 
