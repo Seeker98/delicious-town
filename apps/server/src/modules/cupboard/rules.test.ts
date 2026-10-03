@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { handleTargetLevel, runHandle } from './rules';
+import { composePool, handleTargetLevel, runHandle } from './rules';
 
 const config = testConfig();
 const base = {
@@ -50,5 +50,21 @@ describe('合成分解（规格书 05 §5.4）', () => {
       sequenceRng([0.1, 0.9, 0, 0, 0, 0, 0, 0, 0, 0]),
     );
     expect(o.chances).toBe(5);
+  });
+});
+
+describe('合成不抽已经堆满的食材（问题记录 290）', () => {
+  const pool = config.foodPools.get(2)!;
+  it('排除已满的；其余照原掉率', () => {
+    const keep = pool.items[3]!.id;
+    const p = composePool(pool, (id) => id !== keep);
+    expect(p.items.map((f) => f.id)).toEqual([keep]);
+    expect(p.total).toBe(pool.items[3]!.odds);
+  });
+  it('全都满了时照常从整个池子抽', () => {
+    expect(composePool(pool, () => true)).toBe(pool);
+  });
+  it('都没满时用原来的池子', () => {
+    expect(composePool(pool, () => false)).toBe(pool);
   });
 });

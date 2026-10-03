@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { gameDay } from '@dt/shared';
+import { gameDay, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
@@ -8,7 +8,15 @@ let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
 });
-afterAll(() => t.close());
+/** 随机数固定 0：合成必成功，按池子顺序抽第一个 */
+let win: TestGame;
+beforeAll(async () => {
+  win = await createTestGame({ rng: () => sequenceRng([0]) });
+});
+afterAll(async () => {
+  await t.close();
+  await win.close();
+});
 const c = () => t.game.cupboard;
 
 describe('橱柜列表', () => {
@@ -137,5 +145,18 @@ describe('万能食材兑换（规格书 05 §5.5）', () => {
       expect(f.level).toBe(2);
       expect(f.odds).toBeLessThan(100);
     }
+  });
+});
+
+describe('合成不抽已经堆满的食材（问题记录 290）', () => {
+  it('同等级其他食材都堆满时，合成只出没满的那一种', async () => {
+    const level2 = config.foodPools.get(2)!.items.map((f) => f.id);
+    const want = level2.at(-1)!;
+    const foods: Record<number, number> = { 101: 4 };
+    for (const id of level2) if (id !== want) foods[id] = 5;
+    const ctx = await newRestaurant(win, { patch: { coin: 1000, foods_max_num: 5 }, foods });
+    const r = await win.game.cupboard.handle(ctx, { foodsId: 101, way: 'compose', num: 4 });
+    expect(r.data.success).toBeGreaterThan(0);
+    expect(r.data.gained).toEqual([{ foodsId: want, num: r.data.success }]);
   });
 });

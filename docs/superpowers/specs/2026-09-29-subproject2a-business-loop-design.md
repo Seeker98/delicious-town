@@ -266,7 +266,7 @@ autoRefuel(rest, effectAgg): { oilAdded; coinSpent }
 - 列表：橱柜 / 冰箱，带每种食材"本街食谱升到目标品级还需要多少"
 - 锁定 / 解锁：占用 foods_lock_num 格；可解除"已没有该食材的锁"
 - 解冻：规格书 05 §5.2
-- 合成 / 分解：规格书 05 §5.4；每次最多 100；免体力次数 `20 + 25×星级`（daily_counter），超出每次 1 体力；天气 foodsOperRate 从 world_state 取
+- 合成 / 分解：规格书 05 §5.4；每次最多 100；免体力次数 `20 + 25×星级`（daily_counter），超出每次 1 体力；天气 foodsOperRate 从 world_state 取；合成不抽橱柜里已经堆到上限的食材，全都满了时照常抽（问题记录 290）
 - 万能食材兑换：2 个 467 → 1 个 2 级稀有；2 个 468 → 1 个 3 级稀有
 
 ### 5.5 菜场 market

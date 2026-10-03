@@ -1,5 +1,5 @@
 import type { Food, Tuning } from '@dt/config';
-import { pickWeighted, type Rng, type WeightedPool } from '@dt/shared';
+import { buildPool, pickWeighted, type Rng, type WeightedPool } from '@dt/shared';
 
 export type HandleWay = 'compose' | 'decompose';
 
@@ -53,4 +53,17 @@ export function runHandle(input: HandleInput, pool: WeightedPool<Food>, rng: Rng
     }
   }
   return out;
+}
+
+/**
+ * 合成的抽取池：去掉橱柜里已经堆到上限的食材，免得合出来只能进冰箱（问题记录 290）。
+ * 想靠它定向合成，要把同等级其他食材全都堆满，基本做不到，不影响稀缺平衡；全都满了时照常从整个池子抽
+ */
+export function composePool(
+  pool: WeightedPool<Food>,
+  full: (foodsId: number) => boolean,
+): WeightedPool<Food> {
+  const left = pool.items.filter((f) => !full(f.id));
+  if (left.length === 0 || left.length === pool.items.length) return pool;
+  return buildPool(left, (f) => f.odds);
 }

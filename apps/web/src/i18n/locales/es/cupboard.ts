@@ -18,7 +18,7 @@ const cupboard: Messages['cupboard'] = {
   masterHigh:
     'Los ingredientes universales de nivel 3 o más no se cambian por raros. Solo sirven para sustituir un ingrediente que falte del mismo nivel al aprender una receta.',
   handleHint: (decomposeMax, composeMax) =>
-    `Hasta ${decomposeMax} por descomposición y ${composeMax} por combinación (número par). Descomponer: 1 → 2 oportunidades de un ingrediente de nivel inferior. Combinar: 2 → 1 oportunidad de un ingrediente de nivel superior.`,
+    `Hasta ${decomposeMax} por descomposición y ${composeMax} por combinación (número par). Descomponer: 1 → 2 oportunidades de un ingrediente de nivel inferior. Combinar: 2 → 1 oportunidad de un ingrediente de nivel superior, nunca uno que ya esté lleno en la despensa.`,
   handleResult: (success, chances, strengthUsed) =>
     `${success}/${chances} con éxito${strengthUsed ? ', gastaste 1 de energía' : ''}`,
   handleFailed: 'No se pudo procesar',

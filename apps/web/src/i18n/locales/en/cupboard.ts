@@ -18,7 +18,7 @@ const cupboard: Messages['cupboard'] = {
   masterHigh:
     "Level 3+ universal ingredients can't be traded for rare ones. They can only stand in for a missing ingredient of the same level when learning a recipe.",
   handleHint: (decomposeMax, composeMax) =>
-    `Up to ${decomposeMax} per break-down, ${composeMax} per combine (even numbers only). Break down: 1 → 2 chances at a lower-level ingredient. Combine: 2 → 1 chance at a higher-level ingredient.`,
+    `Up to ${decomposeMax} per break-down, ${composeMax} per combine (even numbers only). Break down: 1 → 2 chances at a lower-level ingredient. Combine: 2 → 1 chance at a higher-level ingredient, never one that is already full in your pantry.`,
   handleResult: (success, chances, strengthUsed) =>
     `${success}/${chances} succeeded${strengthUsed ? ', used 1 Stamina' : ''}`,
   handleFailed: 'Failed',
