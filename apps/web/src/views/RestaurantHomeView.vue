@@ -210,7 +210,10 @@ onBeforeUnmount(() => {
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="mb-0" data-testid="rest-name">{{ rest.name }}</h5>
       <span class="small">
-        <RouterLink to="/weather"><i class="bi bi-cloud-sun"></i> {{ rest.weather?.name ?? '' }}</RouterLink>
+        <RouterLink to="/weather"
+          ><i class="bi bi-cloud-sun"></i>
+          {{ rest.weather ? catalog.weatherName(rest.weather.id, rest.weather.name) : '' }}</RouterLink
+        >
         <RouterLink to="/shards" class="ms-2">{{ t.nav.links.shards }}</RouterLink>
       </span>
     </div>
@@ -242,12 +245,14 @@ onBeforeUnmount(() => {
     <div class="dt-card my-2 small" data-testid="home-status">
       <div class="d-flex flex-wrap align-items-center gap-1">
         <span class="text-muted"
-          >{{ rest.streetName }} · {{ t.home.stars(rest.starLevel) }} · {{ t.home.level }}
-          <b data-testid="rest-level">{{ rest.level }}</b></span
+          >{{ catalog.streetName(rest.streetId, rest.streetName) }} · {{ t.home.stars(rest.starLevel) }} ·
+          {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b></span
         >
         <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
         <span v-if="rest.icons.length > 0" data-testid="my-icons">
-          <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{ i.title }}</span>
+          <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{
+            catalog.icon(i.key)?.title ?? i.title
+          }}</span>
         </span>
       </div>
       <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->

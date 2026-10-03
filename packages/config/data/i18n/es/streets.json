@@ -1,1 +1,72 @@
-{}
+{
+  "0": {
+    "name": "Calle de los novatos",
+    "desc": "Ocupación +35%, monedas por mesa +1, suerte +36, clientes exigentes -35%",
+    "cookName": "Cocina casera"
+  },
+  "1": {
+    "name": "Calle Hunan",
+    "desc": "EXP y monedas finales +15%, suerte +10",
+    "cookName": "Cocina de Hunan"
+  },
+  "2": {
+    "name": "Calle Guangdong",
+    "desc": "Ocupación +10%, clientes exigentes +8%, aceite por mesa -2",
+    "cookName": "Cocina cantonesa"
+  },
+  "3": {
+    "name": "Calle Sichuan",
+    "desc": "EXP por mesa +4, consumo final de aceite +2",
+    "cookName": "Cocina de Sichuan"
+  },
+  "4": {
+    "name": "Calle Fujian",
+    "desc": "Monedas por mesa +2, EXP por mesa +3",
+    "cookName": "Cocina de Fujian"
+  },
+  "5": {
+    "name": "Calle Anhui",
+    "desc": "Monedas por mesa +3, consumo de aceite -15%",
+    "cookName": "Cocina de Anhui"
+  },
+  "6": {
+    "name": "Calle Shandong",
+    "desc": "EXP por mesa +6, consumo de aceite -10%, ocupación -20%",
+    "cookName": "Cocina de Shandong"
+  },
+  "7": {
+    "name": "Calle Zhejiang",
+    "desc": "Clientes exigentes +10%, aceite por mesa -3",
+    "cookName": "Cocina de Zhejiang"
+  },
+  "8": {
+    "name": "Calle Jiangsu",
+    "desc": "Clientes exigentes +5%, consumo de aceite -50%, monedas finales -20%",
+    "cookName": "Cocina de Jiangsu"
+  },
+  "9": {
+    "name": "Calle Fusión I",
+    "desc": "Clientes exigentes +25%, monedas finales -20%",
+    "cookName": "Cocina de la Calle Fusión I"
+  },
+  "10": {
+    "name": "Calle Fusión II",
+    "desc": "Clientes exigentes +25%, EXP final -20%",
+    "cookName": "Cocina de la Calle Fusión II"
+  },
+  "11": {
+    "name": "Calle Jiangxi",
+    "desc": "Ocupación +15%, monedas por mesa +3",
+    "cookName": "Cocina de Jiangxi"
+  },
+  "12": {
+    "name": "Calle Hubei",
+    "desc": "EXP final +40%, suerte +10",
+    "cookName": "Cocina de Hubei"
+  },
+  "13": {
+    "name": "Calle Pekín",
+    "desc": "Monedas finales +25%, EXP por mesa +2, consumo de aceite +30%",
+    "cookName": "Cocina de Pekín"
+  }
+}

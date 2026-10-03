@@ -112,7 +112,9 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     </div>
     <HiphopCard :rest-id="restId" />
     <div v-if="rest.icons.length > 0" class="mb-2">
-      <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{ i.title }}</span>
+      <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{
+        catalog.icon(i.key)?.title ?? i.title
+      }}</span>
     </div>
     <div v-if="rest.equips.length > 0" class="small mb-2" data-testid="friend-equips">
       {{ t.friends.rest.equips }}

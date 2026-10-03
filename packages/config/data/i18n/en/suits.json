@@ -1,1 +1,67 @@
-{}
+{
+  "3": {
+    "name": "Song Sao Set",
+    "tiers": [
+      "Occupancy +5%, knife skills +3%",
+      "Heat control +5%"
+    ]
+  },
+  "4": {
+    "name": "Sariel's Soul",
+    "tiers": [
+      "Occupancy +3%; when challenged, extra: knife skills +4%, heat control +4%",
+      "Cooking +4%, seasoning +4%, luck +8"
+    ]
+  },
+  "5": {
+    "name": "Duma's Silence",
+    "tiers": [
+      "Knife skills +4%, heat control +4%",
+      "Occupancy +4%; 2% less chance of getting lost while exploring"
+    ]
+  },
+  "6": {
+    "name": "Barbelet's Judgment",
+    "tiers": [
+      "Cooking +5%, seasoning +6%",
+      "Occupancy +8%; 5% chance of an extra lower-level ingredient when breaking down ingredients",
+      "Knife skills +5%, heat control +5%, luck +16"
+    ]
+  },
+  "7": {
+    "name": "Yinchen's Fall",
+    "tiers": [
+      "Heat control +5%, occupancy +3%",
+      "Cooking +4%, knife skills +4%, luck +12"
+    ]
+  },
+  "80": {
+    "name": "Akatma's Oracle",
+    "tiers": [
+      "Cooking +8%, seasoning +8%",
+      "Luck +32; when challenged, extra: knife skills +6%, heat control +6%"
+    ]
+  },
+  "81": {
+    "name": "God of Cookery Set",
+    "tiers": [
+      "Cooking +10%",
+      "Seasoning +10%; when challenging, extra: knife skills +8%, heat control +8%",
+      "Picky rate +3%, luck +36"
+    ]
+  },
+  "82": {
+    "name": "Gurtug's Will",
+    "tiers": [
+      "Knife skills +6%, heat control +6%",
+      "Occupancy +6%, luck +24; when challenging, extra: cooking +5%"
+    ]
+  },
+  "100": {
+    "name": "True Love Set",
+    "tiers": [
+      "Occupancy +5%, picky rate +3%",
+      "Final coins +5%, luck +52"
+    ]
+  }
+}

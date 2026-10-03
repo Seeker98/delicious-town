@@ -114,7 +114,8 @@ onMounted(async () => {
         "
       />
       <label class="form-check-label" :for="`icon-${i.id}`"
-        >{{ i.title }} <span class="small text-muted">{{ i.desc }}</span></label
+        >{{ catalog.icon(i.key)?.title ?? i.title }}
+        <span class="small text-muted">{{ catalog.icon(i.key)?.desc ?? i.desc }}</span></label
       >
     </div>
   </template>

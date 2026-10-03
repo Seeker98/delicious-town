@@ -1,1 +1,29 @@
-{}
+{
+  "1": {
+    "name": "Affiche publicitaire"
+  },
+  "2": {
+    "name": "Trophée"
+  },
+  "3": {
+    "name": "Économiseur d'huile"
+  },
+  "4": {
+    "name": "Tapette à souris"
+  },
+  "5": {
+    "name": "Insecticide anti-cafards"
+  },
+  "6": {
+    "name": "Plaque"
+  },
+  "7": {
+    "name": "Plaque*"
+  },
+  "8": {
+    "name": "Plaque**"
+  },
+  "9": {
+    "name": "Plaque***"
+  }
+}

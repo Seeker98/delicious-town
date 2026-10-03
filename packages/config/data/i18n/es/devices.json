@@ -1,1 +1,29 @@
-{}
+{
+  "1": {
+    "name": "Cartel promocional"
+  },
+  "2": {
+    "name": "Trofeo"
+  },
+  "3": {
+    "name": "Ahorrador de aceite"
+  },
+  "4": {
+    "name": "Ratonera"
+  },
+  "5": {
+    "name": "Insecticida para cucarachas"
+  },
+  "6": {
+    "name": "Placa"
+  },
+  "7": {
+    "name": "Placa*"
+  },
+  "8": {
+    "name": "Placa**"
+  },
+  "9": {
+    "name": "Placa***"
+  }
+}

@@ -1,1 +1,72 @@
-{}
+{
+  "0": {
+    "name": "Rue des débutants",
+    "desc": "Fréquentation +35 %, pièces par table +1, chance +36, clients difficiles -35 %",
+    "cookName": "Cuisine familiale"
+  },
+  "1": {
+    "name": "Rue du Hunan",
+    "desc": "EXP et pièces finales +15 %, chance +10",
+    "cookName": "Cuisine du Hunan"
+  },
+  "2": {
+    "name": "Rue du Guangdong",
+    "desc": "Fréquentation +10 %, clients difficiles +8 %, huile par table -2",
+    "cookName": "Cuisine cantonaise"
+  },
+  "3": {
+    "name": "Rue du Sichuan",
+    "desc": "EXP par table +4, consommation d'huile finale +2",
+    "cookName": "Cuisine du Sichuan"
+  },
+  "4": {
+    "name": "Rue du Fujian",
+    "desc": "Pièces par table +2, EXP par table +3",
+    "cookName": "Cuisine du Fujian"
+  },
+  "5": {
+    "name": "Rue de l'Anhui",
+    "desc": "Pièces par table +3, consommation d'huile -15 %",
+    "cookName": "Cuisine de l'Anhui"
+  },
+  "6": {
+    "name": "Rue du Shandong",
+    "desc": "EXP par table +6, consommation d'huile -10 %, fréquentation -20 %",
+    "cookName": "Cuisine du Shandong"
+  },
+  "7": {
+    "name": "Rue du Zhejiang",
+    "desc": "Clients difficiles +10 %, huile par table -3",
+    "cookName": "Cuisine du Zhejiang"
+  },
+  "8": {
+    "name": "Rue du Jiangsu",
+    "desc": "Clients difficiles +5 %, consommation d'huile -50 %, pièces finales -20 %",
+    "cookName": "Cuisine du Jiangsu"
+  },
+  "9": {
+    "name": "Rue Fusion I",
+    "desc": "Clients difficiles +25 %, pièces finales -20 %",
+    "cookName": "Cuisine de la rue Fusion I"
+  },
+  "10": {
+    "name": "Rue Fusion II",
+    "desc": "Clients difficiles +25 %, EXP finale -20 %",
+    "cookName": "Cuisine de la rue Fusion II"
+  },
+  "11": {
+    "name": "Rue du Jiangxi",
+    "desc": "Fréquentation +15 %, pièces par table +3",
+    "cookName": "Cuisine du Jiangxi"
+  },
+  "12": {
+    "name": "Rue du Hubei",
+    "desc": "EXP finale +40 %, chance +10",
+    "cookName": "Cuisine du Hubei"
+  },
+  "13": {
+    "name": "Rue de Pékin",
+    "desc": "Pièces finales +25 %, EXP par table +2, consommation d'huile +30 %",
+    "cookName": "Cuisine de Pékin"
+  }
+}

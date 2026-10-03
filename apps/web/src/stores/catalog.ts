@@ -18,6 +18,8 @@ export const useCatalogStore = defineStore('catalog', {
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
     weatherMap: new Map<number, string>(),
+    /** 天气效果说明（问题记录 272 起按语言） */
+    weatherNotes: new Map<number, string>(),
     /** 设施、套装的名字：加成来源用（问题记录 272） */
     devicesMap: new Map<number, string>(),
     suitsMap: new Map<number, NonNullable<CatalogDto['suits']>[number]>(),
@@ -31,6 +33,7 @@ export const useCatalogStore = defineStore('catalog', {
       this.foodsMap = new Map(c.foods.map((f) => [f.id, f]));
       this.streets = c.streets;
       this.weatherMap = new Map(c.weather.map((w) => [w.id, w.name]));
+      this.weatherNotes = new Map(c.weather.flatMap((w) => (w.note ? [[w.id, w.note] as const] : [])));
       this.devicesMap = new Map(c.devices.map((d) => [d.id, d.name]));
       this.suitsMap = new Map((c.suits ?? []).map((s) => [s.id, s]));
       this.looks = c.looks ?? null;
@@ -106,8 +109,16 @@ export const useCatalogStore = defineStore('catalog', {
     food(id: number): CatalogFoodDto | undefined {
       return this.foodsMap.get(id);
     },
-    weatherName(id: number): string {
-      return this.weatherMap.get(id) ?? activeMessages().errors.fallbackName.weather(id);
+    /** fallback：目录里没有时用的名字（通常是服务端给的），不传时写"天气 id" */
+    weatherName(id: number, fallback?: string): string {
+      return this.weatherMap.get(id) ?? fallback ?? activeMessages().errors.fallbackName.weather(id);
+    },
+    weatherNote(id: number): string | undefined {
+      return this.weatherNotes.get(id);
+    },
+    /** 个性图标的名字和说明 */
+    icon(key: string): LooksDto['icons'][number] | undefined {
+      return this.looks?.icons.find((x) => x.key === key);
     },
     deviceName(id: number): string | undefined {
       return this.devicesMap.get(id);
@@ -115,8 +126,8 @@ export const useCatalogStore = defineStore('catalog', {
     suit(id: number): NonNullable<CatalogDto['suits']>[number] | undefined {
       return this.suitsMap.get(id);
     },
-    streetName(id: number): string {
-      return this.streets.find((s) => s.id === id)?.name ?? '';
+    streetName(id: number, fallback = ''): string {
+      return this.streets.find((s) => s.id === id)?.name ?? fallback;
     },
   },
 });

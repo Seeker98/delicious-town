@@ -177,7 +177,7 @@ export function createWorldService(d: GameDeps) {
         type: f.type,
       })),
       streets: d.config.bundle.streets.map((s) => ({ id: s.id, name: s.name, cookName: s.cookName })),
-      weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name })),
+      weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name, note: w.note })),
       devices: d.config.bundle.devices.map((x) => ({
         id: x.id,
         name: x.name,
@@ -210,21 +210,49 @@ export function createWorldService(d: GameDeps) {
 export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang: Locale): CatalogDto {
   if (lang === 'zh-CN' || !t)
     return lang === 'zh-CN' ? base : { ...base, version: `${base.version}:${lang}` };
-  const pick = <T extends { id: number }>(list: T[], table: Record<string, I18nEntry>): T[] =>
+  /** 只换这一类目录里有的字段（街道的说明不在目录里，不带出去） */
+  const pick = <T extends { id: number | string }>(
+    list: T[],
+    table: Record<string, I18nEntry>,
+    fields: readonly (keyof I18nEntry & keyof T)[],
+    key: (x: T) => string = (x) => String(x.id),
+  ): T[] =>
     list.map((x) => {
-      const e = table[String(x.id)];
-      return e ? { ...x, ...e } : x;
+      const e = table[key(x)];
+      if (!e) return x;
+      const out = { ...x };
+      for (const f of fields) if (e[f] !== undefined) (out as Record<string, unknown>)[f] = e[f];
+      return out;
     });
+  const suits = base.suits?.map((s) => {
+    const e = t.suits[String(s.id)];
+    return e
+      ? {
+          ...s,
+          ...(e.name ? { name: e.name } : {}),
+          tiers: s.tiers.map((x, i) => ({ ...x, desc: e.tiers?.[i] ?? x.desc })),
+        }
+      : s;
+  });
+  const looks = base.looks && {
+    doors: pick(base.looks.doors, t.doors, ['name']),
+    avatars: pick(base.looks.avatars, t.avatars, ['name']),
+    icons: base.looks.icons.map((x) => {
+      const e = t.icons[x.key];
+      return e ? { ...x, ...(e.title ? { title: e.title } : {}), ...(e.desc ? { desc: e.desc } : {}) } : x;
+    }),
+  };
   return {
     ...base,
     version: `${base.version}:${lang}`,
-    goods: pick(base.goods, t.goods),
-    foods: pick(base.foods, t.foods),
-    weather: pick(base.weather, t.weather),
-    streets: pick(base.streets, t.streets),
-    devices: pick(base.devices, t.devices),
-    ...(base.suits ? { suits: pick(base.suits, t.suits) } : {}),
-    ...(base.mysterious ? { mysterious: pick(base.mysterious, t.mysterious) } : {}),
+    goods: pick(base.goods, t.goods, ['name', 'desc']),
+    foods: pick(base.foods, t.foods, ['name']),
+    weather: pick(base.weather, t.weather, ['name', 'note']),
+    streets: pick(base.streets, t.streets, ['name', 'cookName']),
+    devices: pick(base.devices, t.devices, ['name']),
+    ...(suits ? { suits } : {}),
+    ...(looks ? { looks } : {}),
+    ...(base.mysterious ? { mysterious: pick(base.mysterious, t.mysterious, ['name']) } : {}),
   };
 }
 

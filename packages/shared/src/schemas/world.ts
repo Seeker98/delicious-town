@@ -46,7 +46,8 @@ export interface CatalogDto {
   goods: CatalogGoodsDto[];
   foods: CatalogFoodDto[];
   streets: Array<{ id: number; name: string; cookName: string }>;
-  weather: Array<{ id: number; name: string }>;
+  /** note 是天气效果说明（问题记录 272 起按语言；旧缓存里没有） */
+  weather: Array<{ id: number; name: string; note?: string }>;
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;
   /** 门、头像、个性图标；旧缓存里没有 */
   looks?: LooksDto;

@@ -1,1 +1,126 @@
-{}
+{
+  "1": {
+    "name": "Sunny",
+    "note": "Business: occupancy +3%"
+  },
+  "2": {
+    "name": "Overcast",
+    "note": "Business: occupancy +5%, final EXP +10%\nTakeaway: coins +10%"
+  },
+  "3": {
+    "name": "Cloudy",
+    "note": "Market ingredient prices -20%!\nBusiness: occupancy +5%, final coins +5%\nTakeaway: coins +5%"
+  },
+  "4": {
+    "name": "Sandstorm",
+    "note": "Ingredient combining and breaking down success -50%!\nMarket ingredient prices +50%!\nMissile hit rate -25%!\nChance of getting lost while exploring +25%!\nBusiness: occupancy +3%, final coins +5%, final EXP -50%\nTakeaway: delivery time +60%, success rate -40%"
+  },
+  "5": {
+    "name": "Strong Wind",
+    "note": "Ingredient combining and breaking down always succeed!\nChance of mystery ingredients while exploring +0.8%!\nMissile hit rate -20%!\nBusiness: picky rate -70%\nTakeaway: delivery time +50%, success rate -10%"
+  },
+  "6": {
+    "name": "Rainbow",
+    "note": "Chance of Krab Coins when tipping the busker +10%!\nTrial success rate +8%!\nBusiness: final EXP +120%\nTakeaway: delivery time -20%, EXP +120%, renown +100%, success rate +20%"
+  },
+  "7": {
+    "name": "Hurricane",
+    "note": "Ingredient combining and breaking down always succeed!\nYou can swap friends' locked ingredients (double fee)!\nChance of mystery ingredients while exploring +1.2%!\nMissile hit rate -35%!\nBusiness: picky rate -120%\nTakeaway: delivery time +80%, success rate -80%"
+  },
+  "8": {
+    "name": "Fog",
+    "note": "Chance of higher grades when cooking signature dishes +20%!\nMissile hit rate -40%!\nChance of getting lost while exploring +40%!\nBusiness: picky rate +20%, occupancy +3%, final coins +5%\nTakeaway: delivery time +20%, coins +20%, success rate -60%"
+  },
+  "9": {
+    "name": "Smog",
+    "note": "Missile hit rate -10%!\nChance of getting lost while exploring +10%!\nBusiness: picky rate +36%, occupancy -80%, final coins +100%, final EXP +100%\nTakeaway: delivery time +40%, coins +30%, success rate -30%"
+  },
+  "10": {
+    "name": "Light Rain",
+    "note": "Market ingredient prices +20%!\nBusiness: occupancy -5%, EXP per table +1\nTakeaway: delivery time -5%, coins -10%, EXP +20%"
+  },
+  "11": {
+    "name": "Moderate Rain",
+    "note": "Market ingredient prices +30%!\nBusiness: occupancy -8%, EXP per table +1\nTakeaway: delivery time -10%, coins -20%, EXP +40%"
+  },
+  "12": {
+    "name": "Heavy Rain",
+    "note": "Market ingredient prices +45%!\nBusiness: occupancy -12%, EXP per table +2\nTakeaway: delivery time -15%, coins -30%, EXP +60%"
+  },
+  "13": {
+    "name": "Rainstorm",
+    "note": "Market ingredient prices +60%!\nKraken favor when feeding +25%!\nBusiness: occupancy -20%, EXP per table +3\nTakeaway: delivery time -20%, coins -40%, EXP +80%, success rate -30%"
+  },
+  "14": {
+    "name": "Sleet",
+    "note": "Signature dish portions +8%!\nMarket ingredient prices +35%!\nBusiness: occupancy -25%, picky rate -10%, EXP per table +2\nTakeaway: delivery time +15%, coins +30%"
+  },
+  "15": {
+    "name": "Light Snow",
+    "note": "Signature dish portions +2%!\nMarket ingredient prices +65%!\nBusiness: occupancy -30%, picky rate -20%, EXP per table +3\nTakeaway: delivery time +25%, coins +50%, EXP -20%"
+  },
+  "16": {
+    "name": "Thunderstorm",
+    "note": "Cookware enhancement success +10%!\nMarket ingredient prices +50%!\nMissile critical rate +5%!\nBusiness: occupancy -10%, EXP per table +2\nTakeaway: delivery time -15%, coins -15%, EXP +50%"
+  },
+  "17": {
+    "name": "Showers",
+    "note": "Cookware enhancement success +3%!\nMarket ingredient prices +10%!\nBusiness: occupancy -5%, EXP per table +1\nTakeaway: delivery time -5%, coins -10%, EXP +20%"
+  },
+  "18": {
+    "name": "Acid Rain",
+    "note": "Gem upgrade success +5%!\nRemoving gems is free!\nMarket ingredient prices +300%!\nBusiness: occupancy -90%, EXP per table +2\nTakeaway: delivery time +100%, coins +200%, EXP +400%"
+  },
+  "19": {
+    "name": "Hail",
+    "note": "Trial success rate +1%!\nMarket ingredient prices +40%!\nBusiness: occupancy -20%, picky rate -10%, EXP per table +1\nTakeaway: delivery time +15%, coins +150%, EXP +250%, success rate -60%"
+  },
+  "20": {
+    "name": "Moderate Snow",
+    "note": "Signature dish portions +3%!\nMarket ingredient prices +100%!\nBusiness: occupancy -40%, picky rate -30%, EXP per table +3\nTakeaway: delivery time +35%, coins +70%, EXP -30%"
+  },
+  "21": {
+    "name": "Heavy Snow",
+    "note": "Signature dish portions +4%!\nMarket ingredient prices +150%!\nBusiness: occupancy -50%, picky rate -40%, EXP per table +4, coins per table +1\nTakeaway: delivery time +45%, coins +90%, EXP -40%"
+  },
+  "22": {
+    "name": "Torrential Rain",
+    "note": "Trial success rate +2%!\nMarket ingredient prices +100%!\nBusiness: occupancy -30%, EXP per table +5\nTakeaway: delivery time -30%, coins -60%, EXP +120%, success rate -50%"
+  },
+  "23": {
+    "name": "Blizzard",
+    "note": "Signature dish portions +5%!\nTrial success rate +3%!\nMarket ingredient prices +200%!\nBusiness: occupancy -60%, picky rate -50%, EXP per table +4, coins per table +1\nTakeaway: delivery time +55%, coins +110%, EXP -50%, success rate -50%"
+  },
+  "24": {
+    "name": "Severe Thunderstorm",
+    "note": "Cookware enhancement success +12%!\nMissile critical rate +8%!\nBusiness: picky rate -80%, occupancy -30%, EXP per table +3\nTakeaway: delivery time -15%, coins -80%, EXP +80%"
+  },
+  "25": {
+    "name": "Thundersnow",
+    "note": "Signature dish portions +15%!\nCookware enhancement success +5%!\nMarket ingredient prices +100%!\nMissile critical rate +8%!\nBusiness: occupancy -55%, picky rate -30%, EXP per table +5\nTakeaway: delivery time +25%, coins +50%"
+  },
+  "27": {
+    "name": "Deep Freeze",
+    "note": "Trial success rate +3%!\nMarket ingredient prices +250%!\nBusiness: occupancy -70%, picky rate -100%, EXP per table +5, coins per table +10\nTakeaway: delivery time +150%, coins +200%, EXP +100%, success rate -50%"
+  },
+  "28": {
+    "name": "Clear Night",
+    "note": "Business: occupancy +10%, picky rate -5%"
+  },
+  "29": {
+    "name": "Cloudy Night",
+    "note": "Market ingredient prices -30%!\nBusiness: occupancy +5%"
+  },
+  "30": {
+    "name": "Foggy Night",
+    "note": "Chance of higher grades when cooking signature dishes +25%!\nMissile hit rate -50%!\nBusiness: occupancy +5%, picky rate +10%"
+  },
+  "31": {
+    "name": "Starry Night",
+    "note": "Mystery recipe appraisal success +5%!\nMissile critical rate +15%!\nBusiness: picky rate +20%"
+  },
+  "32": {
+    "name": "Blood Moon",
+    "note": "Chance of a roach at each table doubled!\nChance of mystery ingredients while exploring +1.5%!\nMarket ingredient prices +100%!\nBusiness: occupancy -50%, picky rate -99%!"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "founder": {
+    "title": "Founding Member",
+    "desc": "Joined town in the first week"
+  },
+  "helper": {
+    "title": "Helping Hand",
+    "desc": "Helped the town find a problem"
+  },
+  "tester": {
+    "title": "Pioneer Tester",
+    "desc": "Took part in the closed beta"
+  },
+  "champion": {
+    "title": "Champion",
+    "desc": "Won a town event"
+  },
+  "artist": {
+    "title": "Town Artist",
+    "desc": "Drew art for the town"
+  },
+  "chef": {
+    "title": "Gold Chef",
+    "desc": "An outstanding cook"
+  },
+  "kuji_a": {
+    "title": "Ichiban Kuji Prize A Winner",
+    "desc": "Won Prize A in the Ichiban Kuji"
+  },
+  "kuji_last": {
+    "title": "Ichiban Kuji Last Prize Winner",
+    "desc": "Drew the last ticket of an Ichiban Kuji draw"
+  }
+}

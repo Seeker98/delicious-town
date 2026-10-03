@@ -1,1 +1,72 @@
-{}
+{
+  "0": {
+    "name": "Newbie Street",
+    "desc": "Occupancy +35%, coins per table +1, luck +36, picky rate -35%",
+    "cookName": "Home cooking"
+  },
+  "1": {
+    "name": "Hunan Street",
+    "desc": "Final EXP and coins +15%, luck +10",
+    "cookName": "Hunan cuisine"
+  },
+  "2": {
+    "name": "Guangdong Street",
+    "desc": "Occupancy +10%, picky rate +8%, oil per table -2",
+    "cookName": "Cantonese cuisine"
+  },
+  "3": {
+    "name": "Sichuan Street",
+    "desc": "EXP per table +4, final oil use +2",
+    "cookName": "Sichuan cuisine"
+  },
+  "4": {
+    "name": "Fujian Street",
+    "desc": "Coins per table +2, EXP per table +3",
+    "cookName": "Fujian cuisine"
+  },
+  "5": {
+    "name": "Anhui Street",
+    "desc": "Coins per table +3, oil use -15%",
+    "cookName": "Anhui cuisine"
+  },
+  "6": {
+    "name": "Shandong Street",
+    "desc": "EXP per table +6, oil use -10%, occupancy -20%",
+    "cookName": "Shandong cuisine"
+  },
+  "7": {
+    "name": "Zhejiang Street",
+    "desc": "Picky rate +10%, oil per table -3",
+    "cookName": "Zhejiang cuisine"
+  },
+  "8": {
+    "name": "Jiangsu Street",
+    "desc": "Picky rate +5%, oil use -50%, final coins -20%",
+    "cookName": "Jiangsu cuisine"
+  },
+  "9": {
+    "name": "Fusion Street I",
+    "desc": "Picky rate +25%, final coins -20%",
+    "cookName": "Fusion Street I cuisine"
+  },
+  "10": {
+    "name": "Fusion Street II",
+    "desc": "Picky rate +25%, final EXP -20%",
+    "cookName": "Fusion Street II cuisine"
+  },
+  "11": {
+    "name": "Jiangxi Street",
+    "desc": "Occupancy +15%, coins per table +3",
+    "cookName": "Jiangxi cuisine"
+  },
+  "12": {
+    "name": "Hubei Street",
+    "desc": "Final EXP +40%, luck +10",
+    "cookName": "Hubei cuisine"
+  },
+  "13": {
+    "name": "Beijing Street",
+    "desc": "Final coins +25%, EXP per table +2, oil use +30%",
+    "cookName": "Beijing cuisine"
+  }
+}

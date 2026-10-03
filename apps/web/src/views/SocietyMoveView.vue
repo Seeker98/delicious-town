@@ -39,7 +39,7 @@ onMounted(() => restaurant.refresh().catch(() => undefined));
 <template>
   <h5>{{ t.society.move.title }}</h5>
   <p class="small text-muted">
-    {{ t.society.move.hint(rest?.streetName ?? '', formatNum(cost)) }}
+    {{ t.society.move.hint(rest ? catalog.streetName(rest.streetId, rest.streetName) : '', formatNum(cost)) }}
   </p>
   <select v-model="target" class="form-select mb-2">
     <option :value="null" disabled>{{ t.society.move.pick }}</option>

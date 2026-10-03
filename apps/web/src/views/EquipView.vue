@@ -199,9 +199,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     </div>
 
     <div v-for="s in o.suits" :key="s.suitId" class="small mb-1">
-      <b>{{ t.equip.suitName(s.name, s.count, s.maxNum) }}</b>
-      <span v-for="x in s.tiers" :key="x.need" :class="['ms-2', x.active ? 'text-success' : 'text-muted']">
-        {{ t.equip.suitTier(x.need, x.desc) }}
+      <b>{{ t.equip.suitName(catalog.suit(s.suitId)?.name ?? s.name, s.count, s.maxNum) }}</b>
+      <span
+        v-for="(x, i) in s.tiers"
+        :key="x.need"
+        :class="['ms-2', x.active ? 'text-success' : 'text-muted']"
+      >
+        {{ t.equip.suitTier(x.need, catalog.suit(s.suitId)?.tiers[i]?.desc ?? x.desc) }}
       </span>
     </div>
 
