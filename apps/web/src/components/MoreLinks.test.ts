@@ -21,8 +21,12 @@ describe('"更多"入口（问题记录 248）', () => {
     const to = targets();
     expect(to).not.toContain('/yard');
     expect(to).not.toContain('/exchange');
-    expect(to).not.toContain('/predict');
     expect(to).toContain('/bar');
     expect(to).toContain('/account');
+  });
+
+  it('事件预测关掉后入口保留：玩家还要看持仓和结算结果（backlog 238-1）', () => {
+    useRestaurantStore().rest = { disabledFeatures: ['predict'] } as never;
+    expect(targets()).toContain('/predict');
   });
 });

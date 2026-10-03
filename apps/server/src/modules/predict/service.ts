@@ -16,6 +16,8 @@ import { invalidState, limitReached, requirement } from '../../core/errors';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
+import { isFeatureEnabled } from '@dt/config';
+import { frozenReason } from '../exchange/guard';
 import { eligibility } from '../exchange/service';
 
 const KEEP_DAYS = 7;
@@ -60,6 +62,8 @@ export function createPredictService(d: GameDeps) {
     if (reason === 'exchange_level') throw requirement('predict_level', { need: t.minLevel });
     if (reason === 'exchange_age') throw requirement('predict_age', { days: t.minAccountDays });
     if (reason) throw requirement('predict_email');
+    // 交易所被冻结的店也不能用事件合约（backlog 238-1）：两个号配合靠买卖能借做市转钱，买卖都要堵上
+    if ((await frozenReason(o.tx, o.rest.id)) !== null) throw invalidState('predict_frozen');
     // 加锁顺序：店（runOp）→ 事件行
     const e = await o.tx
       .selectFrom('predict_event')
@@ -198,6 +202,7 @@ export function createPredictService(d: GameDeps) {
       closeAt: r.close_at.toISOString(),
       status: shownStatus(r.status, r.close_at, now),
       outcome: r.outcome,
+      unit: r.unit,
       yes: p.yes,
       no: p.no,
       netCost: p.net_cost,
@@ -218,7 +223,8 @@ export function createPredictService(d: GameDeps) {
       );
 
   async function list(ctx: RestCtx): Promise<PredictListDto> {
-    const s = await d.shards.ensureFeature(ctx.shardId, 'predict');
+    // 关掉事件合约时只禁买卖，持仓和结算结果照常能看（backlog 238-1）
+    const s = await d.shards.settings(ctx.shardId);
     const t = s.tuning.predict;
     const now = d.now();
     const rest = await d.db
@@ -226,7 +232,9 @@ export function createPredictService(d: GameDeps) {
       .select('level')
       .where('id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
-    const r = await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t });
+    const r =
+      (await eligibility({ db: d.db, level: rest.level, accountId: ctx.accountId, now, t })) ??
+      ((await frozenReason(d.db, ctx.restaurantId)) !== null ? 'predict_frozen' : null);
     const since = new Date(now.getTime() - KEEP_DAYS * 86_400_000);
     const rows = (await withPosition(ctx.restaurantId)
       .select(EVENT_COLS)
@@ -245,7 +253,8 @@ export function createPredictService(d: GameDeps) {
       .execute()) as Row[];
     return {
       eligible: r === null,
-      reason: r === null ? null : REASON[r]!,
+      reason: r === null ? null : (REASON[r] ?? r),
+      enabled: isFeatureEnabled(s, 'predict'),
       need: { level: t.minLevel, days: t.minAccountDays },
       feeRate: t.feeRate,
       maxHold: t.maxHold,
@@ -255,7 +264,6 @@ export function createPredictService(d: GameDeps) {
   }
 
   async function detail(ctx: RestCtx, id: number): Promise<PredictDetailDto> {
-    await d.shards.ensureFeature(ctx.shardId, 'predict');
     const now = d.now();
     const r = (await withPosition(ctx.restaurantId)
       .select(EVENT_COLS)

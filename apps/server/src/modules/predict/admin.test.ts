@@ -3,6 +3,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { trader } from '../exchange/test';
 import { createPredictAdmin } from './admin';
+import { newEvent } from './test';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -91,5 +92,27 @@ describe('后台出题和列表（238-1 设计 §7.3）', () => {
       ifYes: r1.amount + r2.amount - 5000,
       ifNo: r1.amount + r2.amount - 2000,
     });
+  });
+});
+
+describe('backlog 238-1：判定、作废的审计日志带备注', () => {
+  it('填了备注写进审计；不填也能判定', async () => {
+    const shardId = await createShard(t.db);
+    const boss = { ...actor, role: 'admin' as const };
+    const a = await newEvent(t, shardId);
+    const b = await newEvent(t, shardId);
+    await admin().resolve(boss, a, true, '官方公告已发布');
+    await admin().voidEvent(boss, b, '题目有歧义');
+    const notes = await t.db
+      .selectFrom('audit_log')
+      .select(['action', 'detail'])
+      .where('target', 'in', [`predict_event:${a}`, `predict_event:${b}`])
+      .where('action', 'in', ['predict.resolve', 'predict.void'])
+      .orderBy('id')
+      .execute();
+    expect(notes.map((x) => [x.action, (x.detail as { note?: string }).note])).toEqual([
+      ['predict.resolve', '官方公告已发布'],
+      ['predict.void', '题目有歧义'],
+    ]);
   });
 });

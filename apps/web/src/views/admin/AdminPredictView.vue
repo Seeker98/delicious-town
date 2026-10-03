@@ -56,13 +56,24 @@ function create() {
     '已出题',
   );
 }
+/** 用输入框确认，顺便填备注写进审计（backlog 238-1）；点取消就不提交 */
+const askNote = (q: string) =>
+  window
+    .prompt(
+      `${q}
+
+备注（可空，写进审计日志）：`,
+    )
+    ?.trim() ?? null;
 function resolve(r: PredictAdminRow, outcome: boolean) {
-  if (!window.confirm(`判定「${r.title}」结果为${outcome ? '是' : '否'}？判定后不能修改。`)) return;
-  void run(() => adminApi.predictResolve(r.id, outcome), '已判定');
+  const note = askNote(`判定「${r.title}」结果为${outcome ? '是' : '否'}？判定后不能修改。`);
+  if (note === null) return;
+  void run(() => adminApi.predictResolve(r.id, outcome, note), '已判定');
 }
 function voidEvent(r: PredictAdminRow) {
-  if (!window.confirm(`作废「${r.title}」？会按净投入退款，不能恢复。`)) return;
-  void run(() => adminApi.predictVoid(r.id), '已作废');
+  const note = askNote(`作废「${r.title}」？会按净投入退款，不能恢复。`);
+  if (note === null) return;
+  void run(() => adminApi.predictVoid(r.id, note), '已作废');
 }
 watch(
   () => admin.shardId,

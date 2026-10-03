@@ -41,6 +41,17 @@ const quote = computed(() => {
     feeRate: props.list.feeRate,
   });
 });
+/** 单笔、持有上限（backlog 238-1）：服务端也会拒，这里先提示，免得点了才报错 */
+const limitText = computed(() => {
+  const k = Number(qty.value);
+  if (!Number.isInteger(k) || k < 1) return '';
+  const x = t.value.predict.detail;
+  if (k > props.list.maxTrade) return x.overTrade(props.list.maxTrade);
+  const held = side.value === 'yes' ? props.detail.event.yes : props.detail.event.no;
+  if (dir.value === 'buy' && held + k > props.list.maxHold)
+    return x.overHold(props.list.maxHold, Math.max(0, props.list.maxHold - held));
+  return '';
+});
 /** 结果为是 / 否时这份持仓结算能得多少（问题记录 252） */
 const outcomes = computed(() => [
   { label: t.value.predict.yes, got: props.detail.event.unit * props.detail.event.yes },
@@ -182,13 +193,14 @@ async function submit() {
         <button
           type="button"
           class="btn btn-sm btn-primary"
-          :disabled="busy || !list.eligible || quote === null"
+          :disabled="busy || !list.eligible || !list.enabled || quote === null || limitText !== ''"
           data-testid="pd-submit"
           @click="submit"
         >
           {{ t.predict.detail.submit }}
         </button>
       </div>
+      <div v-if="limitText" class="small text-danger mt-1" data-testid="pd-limit">{{ limitText }}</div>
       <div class="small text-muted mt-1" data-testid="pd-quote">
         <template v-if="quote">
           {{

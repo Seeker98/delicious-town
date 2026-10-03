@@ -156,6 +156,8 @@ const errors: Messages['errors'] = {
     exchange_price_moved:
       "Le prix du système a changé. Le carnet d'ordres a été actualisé ; confirmez avant de vendre.",
     predict_closed: 'Les transactions sur cet événement sont terminées',
+    predict_frozen:
+      'Votre bourse est gelée, les prédictions sont donc suspendues aussi. Contactez un administrateur en cas de question',
     kuji_ticket: 'Pas assez de tickets kuji',
     kuji_left: 'Il ne reste pas assez de tickets dans ce tirage',
     kuji_closed: 'Tous les tirages du jour sont terminés. Revenez après minuit.',

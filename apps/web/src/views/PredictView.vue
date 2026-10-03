@@ -30,6 +30,7 @@ const reasonText = computed(() => {
   if (l.reason === 'predict_level') return r.predict_level(l.need.level);
   if (l.reason === 'predict_age') return r.predict_age(l.need.days);
   if (l.reason === 'predict_email') return r.predict_email;
+  if (l.reason === 'predict_frozen') return r.predict_frozen;
   return l.reason;
 });
 const resultText = (e: PredictEventDto) =>
@@ -81,6 +82,9 @@ onMounted(() => void loadList());
   <HiphopCard :place="11" />
   <div class="small text-muted mb-2">
     {{ t.predict.intro }}
+  </div>
+  <div v-if="list && !list.enabled" class="alert alert-secondary py-1 small" data-testid="pd-off">
+    {{ t.predict.off }}
   </div>
   <div v-if="reasonText" class="alert alert-warning py-1 small" data-testid="pd-reason">{{ reasonText }}</div>
 

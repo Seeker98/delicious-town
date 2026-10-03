@@ -20,7 +20,10 @@ export const predictCreateBody = z.object({
   b: z.number().int().min(10).max(10000).optional(),
 });
 
-export const predictResolveBody = z.object({ outcome: z.boolean() });
+/** 判定、作废可以带备注，写进审计（backlog 238-1） */
+const finishNote = z.string().trim().max(200).optional();
+export const predictResolveBody = z.object({ outcome: z.boolean(), note: finishNote });
+export const predictVoidBody = z.object({ note: finishNote });
 
 export type PredictStatus = 'open' | 'closed' | 'resolved' | 'void';
 
@@ -33,6 +36,8 @@ export interface PredictEventDto {
   /** 截止时间已过但任务还没跑时也显示为 closed */
   status: PredictStatus;
   outcome: boolean | null;
+  /** 每份到期兑付多少银币（backlog 238-1：页首不再写死 1,000） */
+  unit: number;
   yes: number;
   no: number;
   netCost: number;
@@ -51,8 +56,10 @@ export interface PredictEventDto {
 
 export interface PredictListDto {
   eligible: boolean;
-  /** predict_level / predict_age / predict_email；满足为 null */
+  /** predict_level / predict_age / predict_email / predict_frozen；满足为 null */
   reason: string | null;
+  /** 区服是否开着事件合约：关掉时只能看，不能买卖（backlog 238-1） */
+  enabled: boolean;
   need: { level: number; days: number };
   feeRate: number;
   maxHold: number;

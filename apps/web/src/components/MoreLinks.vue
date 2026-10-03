@@ -25,7 +25,8 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
       { to: '/rest/tasks', icon: 'bi-check2-square', key: 'tasks', feature: 'task' },
       { to: '/activities', icon: 'bi-calendar-event', key: 'activities', feature: 'activity' },
       { to: '/exchange', icon: 'bi-graph-up-arrow', key: 'exchange', feature: 'exchange' },
-      { to: '/predict', icon: 'bi-bar-chart-steps', key: 'predict', feature: 'predict' },
+      // 事件预测关掉后入口保留：页面只能查看持仓和结算结果，不能买卖（backlog 238-1）
+      { to: '/predict', icon: 'bi-bar-chart-steps', key: 'predict' },
       { to: '/store', icon: 'bi-archive', key: 'store', feature: 'store' },
       { to: '/shop', icon: 'bi-bag', key: 'shop', feature: 'shop' },
       { to: '/rest/equip', icon: 'bi-tools', key: 'equip', feature: 'equip' },

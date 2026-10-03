@@ -259,3 +259,46 @@ describe('列表和详情（238-1 设计 §7.1）', () => {
     expect(d.event.netCost).toBe(b1.total - s1.total);
   });
 });
+
+describe('backlog 238-1：交易所被冻结的店不能用事件合约', () => {
+  it('冻结中买卖报 predict_frozen，列表写明不能参与；解冻后照常', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const r = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 2 });
+    await t.db.insertInto('exchange_freeze').values({ rest_id: r.restaurantId, reason: '对倒' }).execute();
+    await expect(svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 1 })).rejects.toMatchObject({
+      params: { reason: 'predict_frozen' },
+    });
+    // 卖出也不行：两个号配合靠买卖转钱，冻结要把两头都堵上
+    await expect(svc().trade(r, id, { side: 'yes', dir: 'sell', qty: 1 })).rejects.toMatchObject({
+      params: { reason: 'predict_frozen' },
+    });
+    expect(await svc().list(r)).toMatchObject({ eligible: false, reason: 'predict_frozen' });
+    await t.db.deleteFrom('exchange_freeze').where('rest_id', '=', r.restaurantId).execute();
+    await svc().trade(r, id, { side: 'yes', dir: 'sell', qty: 1 });
+  });
+});
+
+describe('backlog 238-1：关掉事件合约开关时只禁买卖', () => {
+  it('列表和详情照常能看（带 enabled = false），买卖报 FEATURE_DISABLED', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const r = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 2 });
+    const override = JSON.stringify({ features: { predict: false } });
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override })
+      .onConflict((oc) => oc.column('shard_id').doUpdateSet({ override }))
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const list = await svc().list(r);
+    expect(list.enabled).toBe(false);
+    expect(list.events.find((e) => e.id === id)).toMatchObject({ yes: 2 });
+    expect((await svc().detail(r, id)).event.id).toBe(id);
+    await expect(svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 1 })).rejects.toMatchObject({
+      code: 'FEATURE_DISABLED',
+    });
+  });
+});

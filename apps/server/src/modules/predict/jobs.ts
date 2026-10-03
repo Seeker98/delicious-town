@@ -24,7 +24,12 @@ export async function closeEvents(d: GameDeps, shardId: number, now: Date): Prom
  * 结算（238-1 设计 §6.4）：已判定、已作废的事件，每个持仓单独一个事务（锁这家店），
  * 条件带 settled = false，重跑或并发也只发一次；不锁事件行（已是终态）。每次最多 200 个持仓
  */
-export async function settleEvents(d: GameDeps, shardId: number, now: Date): Promise<{ settled: number }> {
+export async function settleEvents(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  log: { error(o: object, m: string): void } = { error: () => {} },
+): Promise<{ settled: number; failed: number }> {
   const events = await d.db
     .selectFrom('predict_event')
     .select(['id', 'title', 'status', 'outcome', 'unit', 'void_ratio'])
@@ -34,6 +39,7 @@ export async function settleEvents(d: GameDeps, shardId: number, now: Date): Pro
     .orderBy('id')
     .execute();
   let settled = 0;
+  let failed = 0;
   for (const e of events) {
     if (settled >= BATCH) break;
     const todo = await d.db
@@ -45,27 +51,33 @@ export async function settleEvents(d: GameDeps, shardId: number, now: Date): Pro
       .limit(BATCH - settled)
       .execute();
     for (const { rest_id } of todo) {
-      const done = await runSystemOp(d, shardId, rest_id, { source: 'predict.settle', now }, async (o) => {
-        const p = await o.tx
-          .updateTable('predict_position')
-          .set({ settled: true })
-          .where('event_id', '=', e.id)
-          .where('rest_id', '=', rest_id)
-          .where('settled', '=', false)
-          .returning(['yes', 'no', 'net_cost'])
-          .executeTakeFirst();
-        if (!p) return false;
-        const net = Number(p.net_cost);
-        const got = payoutOf(e, { yes: p.yes, no: p.no, net_cost: net }) ?? 0;
-        if (got > 0) gainCoin(o, got, { source: 'predict' });
-        // 参与过的都写一条日志（押错的所得为 0），带净投入，能看出这一局的盈亏（问题记录 254）
-        if (got > 0 || p.yes > 0 || p.no > 0 || net !== 0) {
-          if (e.status === 'void') restLog(o, 'predict.refund', { title: e.title, coin: got, net });
-          else restLog(o, 'predict.settle', { title: e.title, outcome: e.outcome, coin: got, net });
-        }
-        return true;
-      });
-      if (done) settled++;
+      // 一个持仓出错只跳过它（留到下一轮重试），不卡住后面的（backlog 238-1）
+      try {
+        const done = await runSystemOp(d, shardId, rest_id, { source: 'predict.settle', now }, async (o) => {
+          const p = await o.tx
+            .updateTable('predict_position')
+            .set({ settled: true })
+            .where('event_id', '=', e.id)
+            .where('rest_id', '=', rest_id)
+            .where('settled', '=', false)
+            .returning(['yes', 'no', 'net_cost'])
+            .executeTakeFirst();
+          if (!p) return false;
+          const net = Number(p.net_cost);
+          const got = payoutOf(e, { yes: p.yes, no: p.no, net_cost: net }) ?? 0;
+          if (got > 0) gainCoin(o, got, { source: 'predict' });
+          // 参与过的都写一条日志（押错的所得为 0），带净投入，能看出这一局的盈亏（问题记录 254）
+          if (got > 0 || p.yes > 0 || p.no > 0 || net !== 0) {
+            if (e.status === 'void') restLog(o, 'predict.refund', { title: e.title, coin: got, net });
+            else restLog(o, 'predict.settle', { title: e.title, outcome: e.outcome, coin: got, net });
+          }
+          return true;
+        });
+        if (done) settled++;
+      } catch (err) {
+        failed++;
+        log.error({ err, eventId: e.id, restId: rest_id }, 'predict settle failed');
+      }
     }
     const left = await d.db
       .selectFrom('predict_position')
@@ -81,7 +93,7 @@ export async function settleEvents(d: GameDeps, shardId: number, now: Date): Pro
         .where('settled_at', 'is', null)
         .execute();
   }
-  return { settled };
+  return { settled, failed };
 }
 
 /** 每分钟一次；挂在 restaurant 上，区服关掉事件合约时也照常截止、结算 */
@@ -98,7 +110,7 @@ export function predictJobs(d: GameDeps): PeriodicJob[] {
       name: 'predict-settle',
       feature: 'restaurant',
       period: minute,
-      run: ({ shardId, now }) => settleEvents(d, shardId, now),
+      run: ({ shardId, now, log }) => settleEvents(d, shardId, now, log),
     },
     {
       name: 'predict-auto-create',
