@@ -145,6 +145,18 @@ describe('搬家（规格书 02 §2.8）', () => {
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
     expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([140]);
   });
+  it('搬到新街道印度街（id 20）：换上印度街勋章，devicetype 也是 20 的雕像不受影响（问题记录 284）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { 2: 1 } });
+    await grant(ctx.restaurantId, 140);
+    await grant(ctx.restaurantId, 397);
+    await g().move(ctx, 20);
+    expect((await restRow(t, ctx.restaurantId)).street_id).toBe(20);
+    expect(await goodsNum(t, ctx.restaurantId, 140)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, 92020)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, 397)).toBe(1);
+    const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
+    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([92020]);
+  });
   it('不能搬到原街道或不存在的街道', async () => {
     const ctx = await newRestaurant(t, { goods: { 2: 1 } });
     await expect(g().move(ctx, 0)).rejects.toMatchObject({ code: 'INVALID_STATE' });

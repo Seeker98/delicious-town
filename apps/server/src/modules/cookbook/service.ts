@@ -18,7 +18,7 @@ import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
 import { normalizeCounts } from '../settlement/globals';
-import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from './rules';
+import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, padLevels, planLearn } from './rules';
 
 const PAGE_SIZE = 40;
 /** 排序：可学 → 需要万能食材 → 不能学 → 已满级（规格书 03 §3.7 的 t → l → m → n） */
@@ -34,7 +34,7 @@ export function createCookbookService(d: GameDeps) {
       .select('levels')
       .where('rest_id', '=', restId)
       .executeTakeFirstOrThrow();
-    return new Uint8Array(r.levels);
+    return padLevels(new Uint8Array(r.levels), d.config.maxCookbookId);
   }
   async function haveOf(db: Kysely<DB>, restId: number): Promise<(id: number) => number> {
     const m = await foodsMap(db, restId);

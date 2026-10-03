@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyForget, applyLearn, foodsNeedFor, planLearn, streetTargetGrade } from './rules';
+import { applyForget, applyLearn, foodsNeedFor, padLevels, planLearn, streetTargetGrade } from './rules';
 
 const level = (id: number) => ({ 1: 1, 2: 2, 3: 3, 7: 7 })[id] ?? 1;
 const stock = (m: Record<number, number>) => (id: number) => m[id] ?? 0;
@@ -76,5 +76,14 @@ describe('applyForget（设计文档 裁定 9）', () => {
   it('学会数 -1、原品级计数 -1、街道计数 -1', () => {
     const c = applyForget({ learned: 3, grade: [0, 1, 2, 0], street: { '5': 2, '6': 1 } }, 5, 2);
     expect(c).toEqual({ learned: 2, grade: [0, 1, 1, 0], street: { '5': 1, '6': 1 } });
+  });
+});
+
+describe('padLevels（问题记录 284）', () => {
+  it('比 maxCookbookId + 1 短时补 0，原内容不变；够长时原样返回', () => {
+    const r = padLevels(new Uint8Array([0, 3, 0]), 5);
+    expect([...r]).toEqual([0, 3, 0, 0, 0, 0]);
+    const long = new Uint8Array(6);
+    expect(padLevels(long, 5)).toBe(long);
   });
 });

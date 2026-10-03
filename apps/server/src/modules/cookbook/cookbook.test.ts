@@ -44,6 +44,26 @@ describe('学习食谱', () => {
     });
   });
 
+  it('新街道上线前开的店（已学记录只到老的最大 id）也能学新街道的菜（问题记录 284）', async () => {
+    const ctx = await newRestaurant(t, { foods: { 133: 1, 101: 1, 237: 1 } });
+    await t.db
+      .updateTable('restaurant_cookbooks')
+      .set({ levels: Buffer.alloc(18747) })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    await cb().learn(ctx, 18747);
+    const levels = (
+      await t.db
+        .selectFrom('restaurant_cookbooks')
+        .select('levels')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow()
+    ).levels;
+    expect(levels.length).toBe(t.deps.config.maxCookbookId + 1);
+    expect(levels[18747]).toBe(1);
+    expect((await restRow(t, ctx.restaurantId)).cookbook_counts.street['14']).toBe(1);
+  });
+
   it('已经是最高品级（7）时报错', async () => {
     const ctx = await newRestaurant(t, { cookbooks: { 194: 7 } });
     await expect(cb().learn(ctx, 194)).rejects.toMatchObject({ code: 'COOKBOOK_MAX_GRADE' });

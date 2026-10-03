@@ -44,6 +44,8 @@ export async function seedRestaurants(env: SimEnv, n: number, seed: number): Pro
   const config = env.deps.config;
   const rng = seededRng(hashSeed(seed, 'bench'));
   const allIds = config.cookbookIndex.allIds;
+  /** 除新手街外的街道（新街道上线后不再写死 13 条，问题记录 284） */
+  const movable = [...config.streets.keys()].filter((id) => id !== 0);
   for (let start = 0; start < n; start += 500) {
     const size = Math.min(500, n - start);
     const accounts = await db
@@ -60,7 +62,7 @@ export async function seedRestaurants(env: SimEnv, n: number, seed: number): Pro
     const plans = accounts.map((a, i) => {
       const level = 1 + rng.int(99);
       const star = Math.min(7, Math.floor(level / 14));
-      const street = 1 + rng.int(13);
+      const street = movable[rng.int(movable.length)]!;
       const levels = Buffer.alloc(config.maxCookbookId + 1);
       const counts: CookbookCounts = { learned: 0, grade: Array(11).fill(0) as number[], street: {} };
       const learned = Math.min(allIds.length, level * 20);

@@ -41,7 +41,7 @@ describe('WorldService', () => {
     const b = await t.game.world.ensure(shardId);
     expect(b).toEqual(a);
     expect(a.krabStreet).toBeGreaterThanOrEqual(1);
-    expect(a.krabStreet).toBeLessThanOrEqual(13);
+    expect(a.krabStreet).toBeLessThanOrEqual(29);
   });
 
   it('换天气：同一区服同一时点结果固定，并发新闻', async () => {

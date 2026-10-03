@@ -15,7 +15,7 @@ import { opAgg, opLuck } from '../../core/luck';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { foodsNeedFor, streetTargetGrade } from '../cookbook/rules';
+import { foodsNeedFor, padLevels, streetTargetGrade } from '../cookbook/rules';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { WorldService } from '../world/service';
 import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from './foods';
@@ -44,7 +44,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         .select('levels')
         .where('rest_id', '=', rest.id)
         .executeTakeFirstOrThrow();
-      const levels = new Uint8Array(cb.levels);
+      const levels = padLevels(new Uint8Array(cb.levels), d.config.maxCookbookId);
       const streetIds = d.config.cookbookIndex.idsByStreet.get(rest.street_id) ?? [];
       const targetGrade = streetTargetGrade(levels, streetIds, tuning.rest.cookbookMaxGrade);
       const needMap = foodsNeedFor(streetIds, levels, targetGrade, needOf);
