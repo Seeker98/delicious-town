@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue';
 import type { ActivationDto, AwardDto, TaskDto, TasksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
+import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -9,19 +11,22 @@ import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const tasks = ref<TasksDto | null>(null);
 const act = ref<ActivationDto | null>(null);
 const busy = ref(false);
 
 function awardText(a: AwardDto): string {
+  const m = activeMessages();
+  const r = m.util.reward;
   const parts: string[] = [];
-  if (a.coin) parts.push(`银币 ${formatNum(a.coin)}`);
-  if (a.exp) parts.push(`经验 ${formatNum(a.exp)}`);
-  if (a.diamond) parts.push(`钻石 ${a.diamond}`);
-  if (a.renown) parts.push(`声望 ${a.renown}`);
+  if (a.coin) parts.push(r.coin(formatNum(a.coin)));
+  if (a.exp) parts.push(r.exp(formatNum(a.exp)));
+  if (a.diamond) parts.push(r.diamond(formatNum(a.diamond)));
+  if (a.renown) parts.push(r.renown(formatNum(a.renown)));
   for (const g of a.goods ?? []) parts.push(`${catalog.goodsName(g.id)}×${g.num}`);
   for (const f of a.foods ?? []) parts.push(`${catalog.foodName(f.id)}×${f.num}`);
-  return parts.join('、');
+  return parts.join(m.events.sep);
 }
 
 async function load() {
@@ -52,20 +57,20 @@ const items = computed(() =>
 const pct = (count: number, limit: number) => Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
 const taskList = computed<TaskDto[]>(() => (tasks.value?.main ? [tasks.value.main] : []));
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取任务失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
 
 <template>
   <div v-if="act">
     <div class="d-flex align-items-center mb-2">
-      <h6 class="mb-0">今日活跃 {{ act.total }}</h6>
+      <h6 class="mb-0">{{ t.rest.tasks.today(act.total) }}</h6>
       <button
         class="btn btn-sm btn-primary ms-auto"
         data-testid="signin"
         :disabled="busy || act.signedIn"
-        @click="run(() => endpoints.signIn(), '签到失败')"
+        @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
       >
-        {{ act.signedIn ? '今天已签到' : '签到' }}
+        {{ act.signedIn ? t.rest.tasks.signedIn : t.rest.tasks.signIn }}
       </button>
     </div>
     <div class="d-flex flex-wrap gap-1 mb-2">
@@ -82,13 +87,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取任务失�
         ]"
         :data-testid="`claim-${r.points}`"
         :disabled="busy || r.claimed || act.total < r.points"
-        @click="run(() => endpoints.claimActivation(r.points), '领取失败')"
+        @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
       >
-        <template v-if="r.claimed">✓ 已领 {{ r.points }} 点</template>
-        <template v-else-if="act.total >= r.points"
-          >领 {{ r.points }} 点奖励{{ r.multiplier > 1 ? ' ×2' : '' }}</template
-        >
-        <template v-else>{{ r.points }} 点（还差 {{ r.points - act.total }}）</template>
+        <template v-if="r.claimed">{{ t.rest.tasks.claimed(r.points) }}</template>
+        <template v-else-if="act.total >= r.points">{{
+          t.rest.tasks.claim(r.points, r.multiplier > 1)
+        }}</template>
+        <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
       </button>
     </div>
     <div class="dt-act-grid small">
@@ -103,47 +108,49 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取任务失�
       >
         <div class="d-flex align-items-center gap-1">
           <span class="text-truncate">{{ i.name }}</span>
-          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">✓ 已满</span>
-          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap"
-            >🔒 {{ i.needStar }} 星开放</span
-          >
+          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
+            t.rest.tasks.full
+          }}</span>
+          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{
+            t.rest.tasks.locked(i.needStar)
+          }}</span>
           <span v-else class="ms-auto text-nowrap">{{ i.count }}/{{ i.limit }}</span>
         </div>
         <div class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
-        <div class="dt-act-pts">每次 {{ i.points }} 点</div>
+        <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
       </div>
     </div>
   </div>
   <div v-if="tasks">
-    <h6 class="mt-3">主线</h6>
-    <div v-if="!tasks.main" class="small text-muted">主线已全部完成</div>
+    <h6 class="mt-3">{{ t.rest.tasks.main }}</h6>
+    <div v-if="!tasks.main" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
     <template v-for="(group, gi) in [taskList, tasks.side]" :key="gi">
-      <h6 v-if="gi === 1" class="mt-3">支线</h6>
+      <h6 v-if="gi === 1" class="mt-3">{{ t.rest.tasks.side }}</h6>
       <div
-        v-for="t in group"
-        :key="t.id"
-        :class="['border rounded p-2 small mb-1', { 'border-success dt-task-done': t.done }]"
-        :data-testid="`task-${t.id}`"
+        v-for="x in group"
+        :key="x.id"
+        :class="['border rounded p-2 small mb-1', { 'border-success dt-task-done': x.done }]"
+        :data-testid="`task-${x.id}`"
       >
         <div class="d-flex align-items-center">
-          <b>{{ t.name }}</b>
-          <span class="ms-auto">{{ Math.min(t.progress, t.target) }}/{{ t.target }}</span>
+          <b>{{ x.name }}</b>
+          <span class="ms-auto">{{ Math.min(x.progress, x.target) }}/{{ x.target }}</span>
         </div>
-        <div class="text-muted">奖励：{{ awardText(t.award) }}</div>
+        <div class="text-muted">{{ t.rest.tasks.award(awardText(x.award)) }}</div>
         <button
-          v-if="t.done"
+          v-if="x.done"
           class="btn btn-sm btn-success mt-1"
-          :data-testid="`claim-task-${t.id}`"
+          :data-testid="`claim-task-${x.id}`"
           :disabled="busy"
-          @click="run(() => endpoints.claimTask(t.id), '领取失败')"
+          @click="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
         >
-          领奖
+          {{ t.rest.tasks.claimTask }}
         </button>
         <div v-else class="progress mt-1" style="height: 6px">
-          <div class="progress-bar bg-warning" :style="{ width: `${pct(t.progress, t.target)}%` }"></div>
+          <div class="progress-bar bg-warning" :style="{ width: `${pct(x.progress, x.target)}%` }"></div>
         </div>
       </div>
     </template>
-    <div v-if="tasks.side.length === 0" class="small text-muted">暂时没有支线任务</div>
+    <div v-if="tasks.side.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
   </div>
 </template>

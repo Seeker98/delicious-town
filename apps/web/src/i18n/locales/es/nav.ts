@@ -40,6 +40,11 @@ const nav: Messages['nav'] = {
     shards: 'Cambiar de servidor',
     admin: 'Administración',
   },
+  appName: 'Delicious Town',
+  back: 'Volver',
+  mail: 'Buzón',
+  mailUnread: (n) => `Buzón, ${n} sin leer`,
+  announceClose: 'Entendido',
   announceMore: (n) => `${n} en total`,
   activity: {
     running: (n) => `${n} ${n === 1 ? 'evento en curso' : 'eventos en curso'}`,

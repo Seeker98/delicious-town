@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import type { GemItemDto, GemsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -10,6 +11,7 @@ import { ATTR_KEYS, ATTR_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const g = ref<GemsDto | null>(null);
 const nums = reactive<Record<number, number>>({});
 const busy = ref(false);
@@ -27,28 +29,25 @@ async function levelUp(x: GemItemDto) {
   busy.value = true;
   try {
     const r = await endpoints.gemLevelUp(x.goodsId, numOf(x));
-    const lucky = r.lucky > 0 ? `（含幸运补救 ${r.lucky}）` : '';
-    const exp = r.exp > 0 ? `，得到经验 ${formatNum(r.exp)}` : '';
-    toast.push(`升阶完成：成功 ${r.success}${lucky}，失败 ${r.fail}${exp}`);
+    toast.push(t.value.equip.gemPage.done(r.success, r.lucky, r.fail, r.exp > 0 ? formatNum(r.exp) : null));
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, '升阶失败'), 'danger');
+    toast.push(errorMessage(e, t.value.equip.gemPage.failed), 'danger');
   } finally {
     busy.value = false;
   }
 }
 
-onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取宝石失败'), 'danger')));
+onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.gemPage.loadFailed), 'danger')));
 </script>
 
 <template>
   <div v-if="g">
-    <h5>宝石</h5>
+    <h5>{{ t.equip.gemPage.title }}</h5>
     <p class="small text-muted">
-      两颗同阶合成一颗下一阶，每组耗体力 = 阶数；失败时还有 {{ pct(g.luckRate) }} 的幸运补救，失败的每组得
-      阶数×1000 经验。体力 {{ g.strength }}。
+      {{ t.equip.gemPage.intro(pct(g.luckRate), g.strength) }}
     </p>
-    <div v-if="g.items.length === 0" class="text-muted small">还没有宝石</div>
+    <div v-if="g.items.length === 0" class="text-muted small">{{ t.equip.gemPage.empty }}</div>
     <div
       v-for="x in g.items"
       :key="x.goodsId"
@@ -64,7 +63,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取宝石失�
           }}
         </span>
         <div class="text-muted">
-          {{ x.nextId === null ? '已是最高阶' : `→ ${catalog.goodsName(x.nextId)}，成功率 ${pct(x.rate)}` }}
+          {{
+            x.nextId === null
+              ? t.equip.gemPage.maxed
+              : t.equip.gemPage.next(catalog.goodsName(x.nextId), pct(x.rate))
+          }}
         </div>
       </div>
       <input
@@ -82,7 +85,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, '读取宝石失�
         :data-testid="`levelup-${x.goodsId}`"
         @click="levelUp(x)"
       >
-        升阶 ×{{ numOf(x) }}
+        {{ t.equip.gemPage.levelUp(numOf(x)) }}
       </button>
     </div>
   </div>

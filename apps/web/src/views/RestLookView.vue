@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import type { MyLooksDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import GameImg from '../components/GameImg.vue';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
@@ -10,6 +11,7 @@ import { formatNum } from '../utils/format';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
+const t = useT();
 const looks = computed(() => catalog.looks);
 const mine = ref<MyLooksDto | null>(null);
 const notice = ref('');
@@ -20,7 +22,7 @@ async function load() {
     mine.value = await endpoints.myLooks();
     notice.value = mine.value.notice;
   } catch (e) {
-    toast.push(errorMessage(e, '读取装扮失败'), 'danger');
+    toast.push(errorMessage(e, t.value.rest.look.loadFailed), 'danger');
   }
 }
 
@@ -45,10 +47,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h5>装扮</h5>
+  <h5>{{ t.rest.look.title }}</h5>
   <template v-if="mine">
-    <h6>头像</h6>
-    <p v-if="mine.avatar === null" class="small text-danger">还没有设置头像（去好友店里白食需要头像）</p>
+    <h6>{{ t.rest.look.avatar }}</h6>
+    <p v-if="mine.avatar === null" class="small text-danger">{{ t.rest.look.noAvatar }}</p>
     <div class="d-flex flex-wrap gap-1 mb-3">
       <button
         v-for="a in looks?.avatars ?? []"
@@ -56,13 +58,13 @@ onMounted(async () => {
         :class="['btn btn-sm', mine.avatar === a.id ? 'btn-primary' : 'btn-outline-secondary']"
         :data-testid="`avatar-${a.id}`"
         :disabled="busy"
-        @click="act(() => endpoints.setAvatar(a.id), '头像已更换', '更换头像失败')"
+        @click="act(() => endpoints.setAvatar(a.id), t.rest.look.avatarSet, t.rest.look.avatarFailed)"
       >
         <GameImg :path="`avatar/${a.id}`" :alt="a.name" fallback-icon="bi-person-circle" /> {{ a.name }}
       </button>
     </div>
 
-    <h6>门</h6>
+    <h6>{{ t.rest.look.door }}</h6>
     <div class="d-flex flex-wrap gap-1 mb-3">
       <button
         v-for="d in looks?.doors ?? []"
@@ -70,13 +72,14 @@ onMounted(async () => {
         :class="['btn btn-sm', mine.door === d.id ? 'btn-primary' : 'btn-outline-secondary']"
         :data-testid="`door-${d.id}`"
         :disabled="busy || mine.door === d.id"
-        @click="act(() => endpoints.setDoor(d.id), '换门成功', '换门失败')"
+        @click="act(() => endpoints.setDoor(d.id), t.rest.look.doorSet, t.rest.look.doorFailed)"
       >
-        {{ d.name }}<span v-if="d.coin > 0" class="ms-1 small">{{ formatNum(d.coin) }} 银</span>
+        {{ d.name
+        }}<span v-if="d.coin > 0" class="ms-1 small">{{ t.rest.look.doorCoin(formatNum(d.coin)) }}</span>
       </button>
     </div>
 
-    <h6>公告栏</h6>
+    <h6>{{ t.rest.look.notice }}</h6>
     <textarea
       v-model="notice"
       class="form-control mb-1"
@@ -90,14 +93,14 @@ onMounted(async () => {
         class="btn btn-sm btn-primary"
         data-testid="save-notice"
         :disabled="busy"
-        @click="act(() => endpoints.setNotice(notice), '公告已保存', '保存公告失败')"
+        @click="act(() => endpoints.setNotice(notice), t.rest.look.noticeSaved, t.rest.look.noticeFailed)"
       >
-        保存
+        {{ t.rest.look.save }}
       </button>
     </div>
 
-    <h6>个性图标（最多展示 5 个）</h6>
-    <p v-if="mine.icons.length === 0" class="small text-muted">还没有个性图标。</p>
+    <h6>{{ t.rest.look.icons }}</h6>
+    <p v-if="mine.icons.length === 0" class="small text-muted">{{ t.rest.look.noIcons }}</p>
     <div v-for="i in mine.icons" :key="i.id" class="form-check">
       <input
         :id="`icon-${i.id}`"
@@ -106,7 +109,9 @@ onMounted(async () => {
         :checked="i.shown"
         :data-testid="`icon-${i.id}`"
         :disabled="busy"
-        @change="act(() => endpoints.iconShow(i.id, !i.shown), '已更新', '更新图标失败')"
+        @change="
+          act(() => endpoints.iconShow(i.id, !i.shown), t.rest.look.iconUpdated, t.rest.look.iconFailed)
+        "
       />
       <label class="form-check-label" :for="`icon-${i.id}`"
         >{{ i.title }} <span class="small text-muted">{{ i.desc }}</span></label

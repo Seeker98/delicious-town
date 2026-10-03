@@ -7,19 +7,23 @@ import common from './common';
 import cookbook from './cookbook';
 import cupboard from './cupboard';
 import errors from './errors';
+import equip from './equip';
 import events from './events';
 import exchange from './exchange';
 import forum from './forum';
 import friends from './friends';
+import guide from './guide';
 import home from './home';
 import kuji from './kuji';
 import labels from './labels';
 import mail from './mail';
 import market from './market';
 import mc from './mc';
+import misc from './misc';
 import nav from './nav';
 import news from './news';
 import predict from './predict';
+import rest from './rest';
 import society from './society';
 import store from './store';
 import takeaway from './takeaway';
@@ -60,5 +64,9 @@ const zhCN = {
   exchange,
   predict,
   kuji,
+  equip,
+  rest,
+  guide,
+  misc,
 };
 export default zhCN;

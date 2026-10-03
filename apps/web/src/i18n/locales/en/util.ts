@@ -23,6 +23,7 @@ const util: Messages['util'] = {
     coin: (n) => `${n} coins`,
     diamond: (n) => `${n} diamonds`,
     exp: (n) => `${n} EXP`,
+    renown: (n) => `${n} renown`,
     hat: (prefix, name) => `${prefix}•${name} Hat`,
   },
 };

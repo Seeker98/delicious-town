@@ -2,8 +2,10 @@
 import { computed, onMounted, ref } from 'vue';
 import type { AnnouncementDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 
 /** 重要公告弹窗（子项目 6A）：进游戏时逐条弹出没看过的重要公告，关一条记一条已看 */
+const t = useT();
 const queue = ref<AnnouncementDto[]>([]);
 const current = computed(() => queue.value[0] ?? null);
 
@@ -39,7 +41,7 @@ async function close() {
           <div class="modal-body small dt-announce-body">{{ current.body }}</div>
           <div class="modal-footer py-2">
             <button type="button" class="btn btn-sm btn-primary" data-testid="announce-close" @click="close">
-              知道了
+              {{ t.nav.announceClose }}
             </button>
           </div>
         </div>

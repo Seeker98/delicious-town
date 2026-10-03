@@ -25,6 +25,7 @@ export default {
     coin: (n: string) => `銀幣 ${n}`,
     diamond: (n: string) => `鑽石 ${n}`,
     exp: (n: string) => `經驗 ${n}`,
+    renown: (n: string) => `聲望 ${n}`,
     hat: (prefix: string, name: string) => `${prefix}•${name}之帽`,
   },
 };

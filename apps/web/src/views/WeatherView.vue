@@ -3,16 +3,19 @@ import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { WorldDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { describeEffects } from '../utils/effects';
+import { timeHM } from '../utils/format';
 
+const t = useT();
 const world = ref<WorldDto | null>(null);
 const error = ref('');
 onMounted(async () => {
   try {
     world.value = await endpoints.weather();
   } catch (e) {
-    error.value = errorMessage(e, '读取天气失败');
+    error.value = errorMessage(e, t.value.misc.weather.loadFailed);
   }
 });
 </script>
@@ -23,19 +26,22 @@ onMounted(async () => {
     <h5><i class="bi bi-cloud-sun"></i> {{ world.weather.name }}</h5>
     <p class="small">{{ world.weather.note }}</p>
     <p class="small text-muted">
-      {{ describeEffects(world.weather.effects) || '对经营没有影响' }}（0 星餐厅不受天气影响）<br />
-      持续到
-      {{ new Date(world.weather.until).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) }}
+      {{ describeEffects(world.weather.effects) || t.misc.weather.noEffect }}{{ t.misc.weather.zeroStar
+      }}<br />
+      {{ t.misc.weather.until(timeHM(world.weather.until)) }}
     </p>
     <p class="small">
-      蟹老板今天在 <b>{{ world.krabStreetName }}</b
-      >：在这条街营业，遇到神秘顾客的机会更大。
+      {{ t.misc.weather.krabPre }}<b>{{ world.krabStreetName }}</b
+      >{{ t.misc.weather.krabPost }}
     </p>
     <p v-if="world.holidayMultiplier > 1" class="small text-success">
-      今天是节日，美味券掉落概率 ×{{ world.holidayMultiplier }}
+      {{ t.misc.weather.holiday(world.holidayMultiplier) }}
     </p>
     <p class="small">
-      持有雷神锤可以换天气：<RouterLink to="/town?tab=town" data-testid="weather-hammer">去广场</RouterLink>
+      {{ t.misc.weather.hammer
+      }}<RouterLink to="/town?tab=town" data-testid="weather-hammer">{{
+        t.misc.weather.toSquare
+      }}</RouterLink>
     </p>
   </div>
 </template>

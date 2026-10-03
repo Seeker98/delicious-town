@@ -79,6 +79,15 @@
 | 最后赏 | Last Prize | Dernier Prix | Último Premio |
 | 战令 | Battle pass | Passe de combat | Pase de batalla |
 | 合力 | Team-up | Effort commun | Esfuerzo común |
+| 强化 / 回退 | Enhance / Undo | Renforcer / Annuler | Mejorar / Deshacer |
+| 精华（厨具） | Essence | Essence | Esencia |
+| 宝石 / 镶嵌 / 打孔 | Gem / Socket / Drill | Gemme / Sertir / Percer | Gema / Engarzar / Abrir engarce |
+| 预设（厨具） | Preset | Préréglage | Preajuste |
+| 分解 | Salvage | Démonter | Desmontar |
+| 装扮 | Appearance | Apparence | Apariencia |
+| 个性图标 | Badge | Badge | Insignia |
+| 主线 / 支线 | Main quest / Side quests | Quête principale / Quêtes secondaires | Misión principal / Misiones secundarias |
+| 兑换码 | Redeem code | Code cadeau | Canjear código |
 
 约定：
 
