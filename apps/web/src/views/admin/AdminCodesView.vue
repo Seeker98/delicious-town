@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import type { AdminCodeDto, RewardItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
 import RewardItemsEditor from '../../components/admin/RewardItemsEditor.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
@@ -30,14 +31,17 @@ const busy = ref(false);
 const list = ref<AdminCodeDto[]>([]);
 const exported = ref<{ batchId: number; text: string } | null>(null);
 
+const search = ref('');
 const hasRewards = computed(() => Object.keys(rewards.value).length > 0);
+/** 选了"当前区服"却没在顶部选区服：以前点了没反应（backlog 兑换码） */
+const noShard = computed(() => scope.value === 'shard' && !admin.shardId);
 const countOk = computed(
   () => kind.value === 'shared' || (Number(count.value) >= 1 && Number(count.value) <= 1000),
 );
 
 async function loadList() {
   try {
-    list.value = await adminApi.codes(admin.shardId ?? undefined);
+    list.value = await adminApi.codes(admin.shardId ?? undefined, search.value.trim() || undefined);
   } catch (e) {
     toast.push(errorMessage(e, '读取兑换码失败'), 'danger');
   }
@@ -50,8 +54,7 @@ const iso = (v: string) => (v ? { value: new Date(v).toISOString() } : null);
 
 async function create() {
   const shardId = admin.shardId;
-  if (busy.value || !hasRewards.value || over.value.length > 0 || !countOk.value) return;
-  if (scope.value === 'shard' && !shardId) return;
+  if (busy.value || !hasRewards.value || over.value.length > 0 || !countOk.value || noShard.value) return;
   const s = iso(startsAt.value);
   const e = iso(endsAt.value);
   const common = {
@@ -83,10 +86,22 @@ async function create() {
     formKey.value++;
     await loadList();
   } catch (err) {
-    toast.push(errorMessage(err, '建码失败'), 'danger');
+    toast.push(
+      taken(err)
+        ? `兑换码 ${code.value.trim().toUpperCase()} 已经存在，换一个`
+        : errorMessage(err, '建码失败'),
+      'danger',
+    );
   } finally {
     busy.value = false;
   }
+}
+
+/** 自定码重复时服务端报 VALIDATION_FAILED，路径 code、原因 taken */
+function taken(e: unknown): boolean {
+  if (!(e instanceof ApiError) || e.code !== 'VALIDATION_FAILED') return false;
+  const issues = (e.params.issues ?? []) as Array<{ path: string; message: string }>;
+  return issues.some((i) => i.path === 'code' && i.message === 'taken');
 }
 
 async function showExport(batchId: number) {
@@ -126,6 +141,17 @@ async function disable(c: AdminCodeDto) {
     await loadList();
   } catch (e) {
     toast.push(errorMessage(e, '停用失败'), 'danger');
+  }
+}
+
+async function enable(c: AdminCodeDto) {
+  const what = c.code ? `兑换码 ${c.code}` : `这一批 ${c.count} 个一次性码`;
+  if (!window.confirm(`重新启用${what}？启用后可以继续兑换。`)) return;
+  try {
+    await adminApi.enableCode(c.id);
+    await loadList();
+  } catch (e) {
+    toast.push(errorMessage(e, '启用失败'), 'danger');
   }
 }
 
@@ -174,6 +200,7 @@ const period = (c: AdminCodeDto) =>
         <option value="all">全部区服</option>
         <option value="shard">当前区服</option>
       </select>
+      <span v-if="noShard" class="text-danger" data-testid="code-scope-hint">请先在顶部选择区服</span>
       <input
         v-model.number="minLevel"
         type="number"
@@ -212,7 +239,7 @@ const period = (c: AdminCodeDto) =>
     <button
       type="button"
       class="btn btn-primary btn-sm"
-      :disabled="busy || !hasRewards || over.length > 0 || !countOk"
+      :disabled="busy || !hasRewards || over.length > 0 || !countOk || noShard"
       data-testid="code-create"
       @click="create"
     >
@@ -240,6 +267,16 @@ const period = (c: AdminCodeDto) =>
     ></textarea>
   </div>
 
+  <form class="d-flex gap-2 mb-2 small" data-testid="code-search-form" @submit.prevent="loadList">
+    <input
+      v-model="search"
+      class="form-control form-control-sm w-auto"
+      maxlength="40"
+      placeholder="按码搜索（一次性码会列出整批）"
+      data-testid="code-search"
+    />
+    <button type="submit" class="btn btn-sm btn-outline-primary">搜索</button>
+  </form>
   <table class="table table-sm small">
     <thead>
       <tr>
@@ -277,7 +314,16 @@ const period = (c: AdminCodeDto) =>
               导出
             </button>
             <button
-              v-if="!c.disabled"
+              v-if="c.disabled"
+              type="button"
+              class="btn btn-sm btn-outline-success py-0"
+              :data-testid="`code-enable-${c.id}`"
+              @click="enable(c)"
+            >
+              启用
+            </button>
+            <button
+              v-else
               type="button"
               class="btn btn-sm btn-outline-danger py-0"
               :data-testid="`code-disable-${c.id}`"

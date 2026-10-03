@@ -68,6 +68,68 @@ describe('后台兑换码（HTTP）', () => {
   });
 });
 
+describe('后台兑换码：按码搜索、重新启用（backlog 新手码）', () => {
+  let ctx: TestContext;
+  let admin: { cookie: string };
+  let mod: { cookie: string };
+  beforeAll(async () => {
+    ctx = await createTestApp();
+    admin = await userWithRole(ctx, 'admin');
+    mod = await userWithRole(ctx, 'mod');
+  });
+  afterAll(() => ctx.close());
+  const post = (cookie: string, path: string, body: unknown) =>
+    call(ctx.app, 'POST', `/api/v1/admin${path}`, { cookie, body });
+  const list = async (q: string) =>
+    (await call(ctx.app, 'GET', `/api/v1/admin/codes?q=${encodeURIComponent(q)}`, { cookie: mod.cookie }))
+      .json.data as Array<{ id: number; code: string | null; batchId: number | null; disabled: boolean }>;
+
+  it('按码搜索：不分大小写、去掉空格和连字符；一次性码搜到时列出它那一批', async () => {
+    const mine = `S${Date.now().toString(36).toUpperCase()}`.slice(0, 12);
+    await post(admin.cookie, '/codes', { code: mine, items: { coin: 1 }, note: '' });
+    const found = await list(` ${mine.slice(0, 4).toLowerCase()}-${mine.slice(4)} `);
+    expect(found.map((c) => c.code)).toEqual([mine]);
+
+    const b = await post(admin.cookie, '/codes/batch', { count: 2, items: { coin: 1 }, note: '' });
+    const batchId = b.json.data.batchId as number;
+    const codes = (
+      await call(ctx.app, 'GET', `/api/v1/admin/codes/batches/${batchId}/export`, { cookie: admin.cookie })
+    ).json.data.codes as string[];
+    const hit = await list(codes[1]!);
+    expect(hit).toHaveLength(1);
+    expect(hit[0]).toMatchObject({ code: null, batchId });
+  });
+
+  it('停用后可以重新启用（整批一起）；mod 不能启用；写审计', async () => {
+    const mine = `E${Date.now().toString(36).toUpperCase()}`.slice(0, 12);
+    const r = await post(admin.cookie, '/codes', { code: mine, items: { coin: 1 }, note: '' });
+    const id = r.json.data.id as number;
+    await post(admin.cookie, `/codes/${id}/disable`, {});
+    expect((await list(mine))[0]!.disabled).toBe(true);
+    expect((await post(mod.cookie, `/codes/${id}/enable`, {})).status).toBe(404);
+    expect((await post(admin.cookie, `/codes/${id}/enable`, {})).status).toBe(200);
+    expect((await list(mine))[0]!.disabled).toBe(false);
+    const audit = await ctx.deps.db
+      .selectFrom('audit_log')
+      .select('action')
+      .where('target', '=', `code:${id}`)
+      .orderBy('id')
+      .execute();
+    expect(audit.map((a) => a.action)).toEqual(['code.create', 'code.disable', 'code.enable']);
+
+    const b = await post(admin.cookie, '/codes/batch', { count: 2, items: { coin: 1 }, note: '' });
+    await post(admin.cookie, `/codes/${b.json.data.id}/disable`, {});
+    await post(admin.cookie, `/codes/${b.json.data.id}/enable`, {});
+    const rows = await ctx.deps.db
+      .selectFrom('redeem_code')
+      .select('disabled_at')
+      .where('batch_id', '=', b.json.data.batchId)
+      .execute();
+    expect(rows.every((x) => x.disabled_at === null)).toBe(true);
+    expect((await post(admin.cookie, '/codes/99999999/enable', {})).status).toBe(404);
+  });
+});
+
 describe('后台兑换码：每批上限按 tuning.redeem.batchMax（终审修复）', () => {
   let ctx: TestContext;
   let admin: { cookie: string };

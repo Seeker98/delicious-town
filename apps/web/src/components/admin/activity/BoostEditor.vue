@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { BOOSTS, boostDefOf, type BoostActivityDef } from '@dt/shared';
+import { errsUnder } from '../../../utils/activityForm';
 
 const props = defineProps<{ modelValue: BoostActivityDef; errors: Record<string, string> }>();
 const emit = defineEmits<{ 'update:modelValue': [BoostActivityDef] }>();
@@ -45,9 +46,13 @@ const unused = () =>
     >
       删除
     </button>
-    <span v-if="errors[`def.items.${i}.factor`]" class="text-danger small">{{
-      errors[`def.items.${i}.factor`]
-    }}</span>
+    <span
+      v-for="[k, m] in errsUnder(errors, `def.items.${i}.`)"
+      :key="k"
+      class="text-danger small"
+      :data-testid="`err-${k}`"
+      >{{ m }}</span
+    >
   </div>
   <button
     type="button"

@@ -1,6 +1,12 @@
 import { ZodError } from 'zod';
 import { isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
-import { ErrorCode, type AdminShardDto, type ShardHistoryDto, type ShardSettingsDto } from '@dt/shared';
+import {
+  ErrorCode,
+  type AdminShardDto,
+  type BoostActivityDef,
+  type ShardHistoryDto,
+  type ShardSettingsDto,
+} from '@dt/shared';
 import { IMPLEMENTED_FEATURES } from '../../core/features';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
@@ -167,6 +173,17 @@ export function createAdminShards(game: Game) {
         .executeTakeFirst();
       const override = asObject(row?.override);
       const effective = resolveShardSettings(config, override);
+      // 正在生效的全服加成（backlog 148-4）：以前前端从"最近 100 条活动"里筛，更早建的会漏
+      const now = game.deps.now();
+      const boosts = await db
+        .selectFrom('activity')
+        .select(['id', 'def', 'ends_at'])
+        .where('kind', '=', 'boost')
+        .where('starts_at', '<=', now)
+        .where('ends_at', '>', now)
+        .where((eb) => eb.or([eb('shard_id', 'is', null), eb('shard_id', '=', shardId)]))
+        .orderBy('id')
+        .execute();
       return {
         version: row?.version ?? 0,
         defaults: { features: {}, restaurant: config.bundle.restaurantDefaults, tuning: config.tuning },
@@ -176,6 +193,11 @@ export function createAdminShards(game: Game) {
           .sort()
           .map((name) => ({ name, enabled: isFeatureEnabled(effective, name) })),
         docs: config.settingDocs,
+        boosts: boosts.map((b) => ({
+          id: b.id,
+          items: (b.def as BoostActivityDef).items,
+          endsAt: b.ends_at.toISOString(),
+        })),
       };
     },
 

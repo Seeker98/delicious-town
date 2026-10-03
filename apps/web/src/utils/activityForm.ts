@@ -95,3 +95,7 @@ export function errUnder(errors: Record<string, string>, path: string): string |
   const k = Object.keys(errors).find((x) => x === path || x.startsWith(`${path}.`));
   return k === undefined ? undefined : errors[k];
 }
+
+/** 某一行下面的全部错误（如 def.rules.0. 开头的分数、上限），逐条显示在那一行（backlog 148-1） */
+export const errsUnder = (errors: Record<string, string>, prefix: string): Array<[string, string]> =>
+  Object.entries(errors).filter(([k]) => k.startsWith(prefix));

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { ACTIVITY_ACTIONS, type GridDef } from '@dt/shared';
 import { errUnder, newGoal } from '../../../utils/activityForm';
 import RewardItemsEditor from '../RewardItemsEditor.vue';
@@ -17,6 +17,15 @@ function resize(size: 3 | 4) {
   patch({ size, cells });
 }
 const cellErr = (i: number) => Object.keys(props.errors).some((k) => k.startsWith(`def.cells.${i}.`));
+/** 保存出错时，当前格子没错就跳到第一个出错的格子（backlog 148-1），否则错误藏在没选中的格子里 */
+watch(
+  () => props.errors,
+  () => {
+    if (cellErr(picked.value)) return;
+    const first = props.modelValue.cells.findIndex((_, i) => cellErr(i));
+    if (first >= 0) picked.value = first;
+  },
+);
 </script>
 
 <template>

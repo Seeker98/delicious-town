@@ -114,10 +114,25 @@ export function createAdminCodes(game: Game) {
   });
 
   return {
-    /** 最近 100 行：通用码逐行，一次性码按批合成一行；指定区服时也列出不限区服的 */
-    async list(q: { shardId?: number }): Promise<AdminCodeDto[]> {
+    /**
+     * 最近 100 行：通用码逐行，一次性码按批合成一行；指定区服时也列出不限区服的。
+     * q 按码搜索（backlog：以后找不到新手码来停用）：通用码按包含匹配，一次性码命中时列出它那一批
+     */
+    async list(q: { shardId?: number; q?: string }): Promise<AdminCodeDto[]> {
       let shared = rows(db).where('c.kind', '=', 'shared');
       let firsts = rows(db).where('c.kind', '=', 'single').whereRef('c.id', '=', 'c.batch_id');
+      // 码只有大写字母和数字，去掉其它字符后不用再转义 like 的通配符
+      const text = (q.q ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      if (text) {
+        shared = shared.where('c.code', 'like', `%${text}%`);
+        firsts = firsts.where('c.batch_id', 'in', (eb) =>
+          eb
+            .selectFrom('redeem_code')
+            .select('batch_id')
+            .where('kind', '=', 'single')
+            .where('code', 'like', `%${text}%`),
+        );
+      }
       if (q.shardId) {
         shared = shared.where((eb) =>
           eb.or([eb('c.shard_id', '=', q.shardId!), eb('c.shard_id', 'is', null)]),
@@ -253,6 +268,29 @@ export function createAdminCodes(game: Game) {
         await writeAudit(tx, {
           actor,
           action: 'code.disable',
+          target: row.batch_id === null ? `code:${id}` : `code_batch:${row.batch_id}`,
+        });
+      });
+    },
+
+    /** 重新启用（backlog：停用后没有办法恢复）；属于某批时整批启用 */
+    async enable(actor: AdminActor, id: number): Promise<void> {
+      const row = await db
+        .selectFrom('redeem_code')
+        .select(['id', 'batch_id'])
+        .where('id', '=', id)
+        .executeTakeFirst();
+      if (!row) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'code', id });
+      await db.transaction().execute(async (tx) => {
+        await tx
+          .updateTable('redeem_code')
+          .set({ disabled_at: null })
+          .where((eb) => (row.batch_id === null ? eb('id', '=', id) : eb('batch_id', '=', row.batch_id)))
+          .where('disabled_at', 'is not', null)
+          .execute();
+        await writeAudit(tx, {
+          actor,
+          action: 'code.enable',
           target: row.batch_id === null ? `code:${id}` : `code_batch:${row.batch_id}`,
         });
       });

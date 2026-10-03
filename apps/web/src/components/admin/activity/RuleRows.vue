@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ACTIVITY_ACTIONS, type PassDef } from '@dt/shared';
+import { errsUnder } from '../../../utils/activityForm';
 
 type Rule = PassDef['rules'][number];
 /** 积分规则表（战令和全服合力共用，148-3）：行为、每次几分、每天上限 */
@@ -17,48 +18,58 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
   <div v-if="errors['def.rules']" class="text-danger small" data-testid="err-def.rules">
     {{ errors['def.rules'] }}
   </div>
-  <div v-for="(r, i) in modelValue" :key="`r${i}`" class="d-flex gap-2 align-items-center py-1">
-    <select
-      class="form-select form-select-sm w-auto"
-      :value="r.key"
-      @change="setRule(i, { key: ($event.target as HTMLSelectElement).value })"
+  <template v-for="(r, i) in modelValue" :key="`r${i}`">
+    <div class="d-flex gap-2 align-items-center py-1">
+      <select
+        class="form-select form-select-sm w-auto"
+        :value="r.key"
+        @change="setRule(i, { key: ($event.target as HTMLSelectElement).value })"
+      >
+        <option v-for="(name, k) in ACTIVITY_ACTIONS" :key="k" :value="k">{{ name }}</option>
+      </select>
+      每次
+      <input
+        type="number"
+        min="1"
+        class="form-control form-control-sm"
+        style="width: 5rem"
+        :value="r.points"
+        :data-testid="`rule-points-${i}`"
+        @input="setRule(i, { points: num($event) })"
+      />
+      分 每天最多
+      <input
+        type="number"
+        min="1"
+        class="form-control form-control-sm"
+        style="width: 6rem"
+        :value="r.dailyCap"
+        @input="setRule(i, { dailyCap: num($event) })"
+      />
+      分
+      <button
+        type="button"
+        class="btn btn-sm btn-link text-danger"
+        :disabled="modelValue.length <= 1"
+        @click="
+          emit(
+            'update:modelValue',
+            modelValue.filter((_, j) => j !== i),
+          )
+        "
+      >
+        删除
+      </button>
+    </div>
+    <div
+      v-for="[k, m] in errsUnder(errors, `def.rules.${i}.`)"
+      :key="k"
+      class="text-danger small"
+      :data-testid="`err-${k}`"
     >
-      <option v-for="(name, k) in ACTIVITY_ACTIONS" :key="k" :value="k">{{ name }}</option>
-    </select>
-    每次
-    <input
-      type="number"
-      min="1"
-      class="form-control form-control-sm"
-      style="width: 5rem"
-      :value="r.points"
-      :data-testid="`rule-points-${i}`"
-      @input="setRule(i, { points: num($event) })"
-    />
-    分 每天最多
-    <input
-      type="number"
-      min="1"
-      class="form-control form-control-sm"
-      style="width: 6rem"
-      :value="r.dailyCap"
-      @input="setRule(i, { dailyCap: num($event) })"
-    />
-    分
-    <button
-      type="button"
-      class="btn btn-sm btn-link text-danger"
-      :disabled="modelValue.length <= 1"
-      @click="
-        emit(
-          'update:modelValue',
-          modelValue.filter((_, j) => j !== i),
-        )
-      "
-    >
-      删除
-    </button>
-  </div>
+      {{ m }}
+    </div>
+  </template>
   <button
     type="button"
     class="btn btn-sm btn-outline-primary mb-3"
