@@ -25,6 +25,8 @@ const predict: Messages['predict'] = {
   noPct: (n) => `No ${n} %`,
   holding: (yes, no) => ` · Tengo Sí ${yes} / No ${no}`,
   ended: 'Terminadas',
+  endedMore: (n) => `Ver todas (${n})`,
+  endedLess: 'Ver menos',
   endedHold: (yes, no) => `Tenía Sí ${yes} / No ${no}`,
   profit: (n) => ` · Balance ${n}`,
   note: (text) => `Base del resultado: ${text}`,
@@ -43,6 +45,8 @@ const predict: Messages['predict'] = {
     sellAll: (n) => ` (vender todo ahora daría unas ${n} monedas)`,
     outcome: (label, got) => `Si sale ${label}: recibes ${got} monedas, balance`,
     help: 'Cómo se calcula el balance',
+    sections: { market: 'Mercado', hold: 'Mi posición', trade: 'Operar', records: 'Historial' },
+    unitLine: (unit) => `Cada participación paga ${unit} monedas`,
     helpItems: (unit, example, feePct) => [
       `Al cerrar, cada participación del lado ganador paga ${unit} monedas y el lado perdedor no vale nada. Por ejemplo, si «Sí» está al 63 %, 1 participación cuesta unas ${example} monedas; si sale «Sí» recuperas ${unit}, y si sale «No» pierdes lo que pagaste.`,
       'El precio es la probabilidad que todos creen que tiene: cuanta más gente compra «Sí», más caro está «Sí» y más barato «No»; cuanto más compras de una vez, más cara sale cada participación siguiente.',

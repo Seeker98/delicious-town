@@ -24,6 +24,8 @@ export default {
   noPct: (n: number) => `否 ${n}%`,
   holding: (yes: number, no: number) => ` · 我持有 是 ${yes} / 否 ${no}`,
   ended: '已結束',
+  endedMore: (n: number) => `展開全部（${n}）`,
+  endedLess: '收起',
   endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
   profit: (n: string) => ` · 盈虧 ${n}`,
   note: (text: string) => `判定依據：${text}`,
@@ -42,6 +44,8 @@ export default {
     sellAll: (n: string) => `（按當前價全部賣出約 ${n} 銀幣）`,
     outcome: (label: string, got: string) => `結果為${label}：得 ${got} 銀幣，盈虧`,
     help: '怎麼算盈虧',
+    sections: { market: '行情', hold: '我的持倉', trade: '交易', records: '記錄' },
+    unitLine: (unit: string) => `每份結算 ${unit} 銀幣`,
     helpItems: (unit: string, example: string, feePct: number) => [
       `結算時押對的一邊每份得 ${unit} 銀幣，押錯的一邊作廢。比如"是"的價格是 63%，買 1 份約花 ${example} 銀幣；結果為"是"就拿回 ${unit}，為"否"就虧掉買入的錢。`,
       '價格就是大家認為發生的機率：買"是"的人越多，"是"越貴、"否"越便宜；一次買得越多，後面每份越貴。',

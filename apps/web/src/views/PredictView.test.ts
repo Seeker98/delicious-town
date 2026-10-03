@@ -38,6 +38,7 @@ const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({
   feeRate: 0.02,
   maxHold: 200,
   maxTrade: 100,
+  unit: 1000,
   events: [
     ev(),
     ev({ id: 2, title: '已结束的', status: 'resolved', outcome: true, yes: 3, netCost: 1600, payout: 3000 }),
@@ -85,7 +86,8 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(w.get('[data-testid="pd-event-1"]').text()).toContain('明天会下雨吗');
     expect(w.get('[data-testid="pd-event-1"]').text()).toContain('63%');
     const ended = w.get('[data-testid="pd-ended-2"]').text();
-    expect(ended).toContain('结果：是');
+    // 结果用标签显示（问题记录 288）
+    expect(w.get('[data-testid="pd-ended-2"] [data-testid="pd-ended-tag"]').text()).toBe('是');
     expect(ended).toContain('+1,400');
   });
 
@@ -383,11 +385,12 @@ describe('backlog 238-1：事件合约页', () => {
     expect(w.find('[data-testid="pd-limit"]').exists()).toBe(false);
   });
 
-  it('说明不再写死每份 1,000 银币', async () => {
-    vi.mocked(endpoints.predictList).mockResolvedValue(list());
+  it('说明不再写死每份 1,000 银币：按区服的每份金额', async () => {
+    vi.mocked(endpoints.predictList).mockResolvedValue(list({ unit: 2000 }));
     const w = mount(PredictView);
     await flushPromises();
     expect(w.text()).not.toContain('每份得 1,000 银币');
+    expect(w.get('[data-testid="pd-help"]').text()).toContain('每份得 2,000 银币');
   });
 
   it('交易所被冻结：显示原因', async () => {
@@ -400,5 +403,82 @@ describe('backlog 238-1：事件合约页', () => {
     const w = await open(list({ enabled: false }));
     expect(w.find('[data-testid="pd-off"]').text()).toContain('暂停');
     expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+
+  describe('页面层级（问题记录 288，方案 A）', () => {
+    it('「怎么玩」只在页面顶部放一份，默认收起；展开事件后不再重复', async () => {
+      const w = mount(PredictView);
+      await flushPromises();
+      const help = w.get('[data-testid="pd-help"]');
+      expect(help.element.tagName).toBe('DETAILS');
+      expect((help.element as HTMLDetailsElement).open).toBe(false);
+      await w.get('[data-testid="pd-event-1"]').trigger('click');
+      await flushPromises();
+      expect(w.findAll('[data-testid="pd-help"]')).toHaveLength(1);
+      expect(w.html().indexOf('pd-help')).toBeLessThan(w.html().indexOf('pd-event-1'));
+    });
+
+    it('列表卡有一条是/否概率条', async () => {
+      const w = mount(PredictView);
+      await flushPromises();
+      const bar = w.get('[data-testid="pd-bar-1"] [data-testid="pd-bar-yes"]');
+      expect(bar.attributes('style')).toContain('width: 63%');
+    });
+
+    it('详情分成行情、我的持仓、交易、记录四块；行情写每份结算金额；记录默认收起并带条数', async () => {
+      const w = mount(PredictView);
+      await flushPromises();
+      await w.get('[data-testid="pd-event-1"]').trigger('click');
+      await flushPromises();
+      const d = w.get('[data-testid="pd-detail"]');
+      const order = ['pd-sec-market', 'pd-sec-hold', 'pd-sec-trade', 'pd-sec-records'].map((id) =>
+        d.html().indexOf(`data-testid="${id}"`),
+      );
+      expect(order.every((x) => x >= 0)).toBe(true);
+      expect([...order].sort((a, b) => a - b)).toEqual(order);
+      expect(d.get('[data-testid="pd-sec-market"]').text()).toContain('每份结算 1,000 银币');
+      const trades = d.get('[data-testid="pd-trades"]');
+      expect(trades.element.tagName).toBe('DETAILS');
+      expect((trades.element as HTMLDetailsElement).open).toBe(false);
+      expect(trades.get('summary').text()).toContain('(1)');
+    });
+
+    it('没有持仓时不显示「我的持仓」', async () => {
+      vi.mocked(endpoints.predictDetail).mockResolvedValue({
+        ...detail,
+        event: { ...detail.event, yes: 0, no: 0 },
+      });
+      const w = mount(PredictView);
+      await flushPromises();
+      await w.get('[data-testid="pd-event-1"]').trigger('click');
+      await flushPromises();
+      expect(w.find('[data-testid="pd-sec-hold"]').exists()).toBe(false);
+      expect(w.find('[data-testid="pd-sec-trade"]').exists()).toBe(true);
+    });
+
+    it('已结束的事件：结果标签和我的盈亏；超过 5 个先收起', async () => {
+      const ended = [2, 3, 4, 5, 6, 7].map((id) =>
+        ev({
+          id,
+          title: `结束${id}`,
+          status: 'resolved',
+          outcome: id % 2 === 0,
+          yes: 1,
+          netCost: 500,
+          payout: id % 2 === 0 ? 1000 : 0,
+        }),
+      );
+      vi.mocked(endpoints.predictList).mockResolvedValue(list({ events: [ev(), ...ended] }));
+      const w = mount(PredictView);
+      await flushPromises();
+      expect(w.get('[data-testid="pd-ended-2"] [data-testid="pd-ended-tag"]').text()).toBe('是');
+      expect(w.get('[data-testid="pd-ended-3"] [data-testid="pd-ended-tag"]').text()).toBe('否');
+      expect(w.get('[data-testid="pd-ended-2"]').get('[data-testid="pd-ended-profit"]').text()).toContain(
+        '+500',
+      );
+      expect(w.find('[data-testid="pd-ended-7"]').exists()).toBe(false);
+      await w.get('[data-testid="pd-ended-more"]').trigger('click');
+      expect(w.find('[data-testid="pd-ended-7"]').exists()).toBe(true);
+    });
   });
 });

@@ -25,6 +25,8 @@ const predict: Messages['predict'] = {
   noPct: (n) => `No ${n}%`,
   holding: (yes, no) => ` · I hold Yes ${yes} / No ${no}`,
   ended: 'Ended',
+  endedMore: (n) => `Show all (${n})`,
+  endedLess: 'Show less',
   endedHold: (yes, no) => `Held Yes ${yes} / No ${no}`,
   profit: (n) => ` · P/L ${n}`,
   note: (text) => `Basis for the result: ${text}`,
@@ -43,6 +45,8 @@ const predict: Messages['predict'] = {
     sellAll: (n) => ` (selling everything now would get about ${n} coins)`,
     outcome: (label, got) => `If ${label}: you get ${got} coins, P/L`,
     help: 'How profit and loss work',
+    sections: { market: 'Market', hold: 'My position', trade: 'Trade', records: 'History' },
+    unitLine: (unit) => `Each share pays ${unit} coins`,
     helpItems: (unit, example, feePct) => [
       `At settlement, each share on the winning side pays ${unit} coins and the losing side is worthless. For example, if "Yes" is at 63%, 1 share costs about ${example} coins; if the result is "Yes" you get ${unit} back, if "No" you lose what you paid.`,
       'The price is what everyone thinks the probability is: the more people buy "Yes", the pricier "Yes" gets and the cheaper "No" gets; the more you buy at once, the more each later share costs.',

@@ -25,6 +25,8 @@ const predict: Messages['predict'] = {
   noPct: (n) => `Non ${n} %`,
   holding: (yes, no) => ` · Je détiens Oui ${yes} / Non ${no}`,
   ended: 'Terminés',
+  endedMore: (n) => `Tout afficher (${n})`,
+  endedLess: 'Réduire',
   endedHold: (yes, no) => `Détenu Oui ${yes} / Non ${no}`,
   profit: (n) => ` · Gain/perte ${n}`,
   note: (text) => `Justification du résultat : ${text}`,
@@ -43,6 +45,8 @@ const predict: Messages['predict'] = {
     sellAll: (n) => ` (tout vendre maintenant rapporterait environ ${n} pièces)`,
     outcome: (label, got) => `Si ${label} : vous recevez ${got} pièces, gain/perte`,
     help: 'Comment se calculent les gains et pertes',
+    sections: { market: 'Marché', hold: 'Ma position', trade: 'Échanger', records: 'Historique' },
+    unitLine: (unit) => `Chaque part rapporte ${unit} pièces`,
     helpItems: (unit, example, feePct) => [
       `À la clôture, chaque part du bon côté rapporte ${unit} pièces et l'autre côté ne vaut rien. Par exemple, si « Oui » est à 63 %, 1 part coûte environ ${example} pièces ; si le résultat est « Oui » vous récupérez ${unit}, si c'est « Non » vous perdez ce que vous avez payé.`,
       "Le prix reflète la probabilité estimée par tous : plus on achète « Oui », plus « Oui » est cher et « Non » bon marché ; plus vous achetez d'un coup, plus chaque part suivante coûte cher.",

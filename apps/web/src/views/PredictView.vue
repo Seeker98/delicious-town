@@ -33,9 +33,30 @@ const reasonText = computed(() => {
   if (l.reason === 'predict_frozen') return r.predict_frozen;
   return l.reason;
 });
-const resultText = (e: PredictEventDto) =>
-  e.status === 'resolved' ? t.value.predict.result(!!e.outcome) : t.value.predict.status[e.status];
 const profit = (e: PredictEventDto) => (e.payout === null ? null : e.payout - e.netCost);
+/** 已结束的结果标签：是 / 否，没判定的写状态（等待判定、已作废）（问题记录 288） */
+const endedTag = (e: PredictEventDto) =>
+  e.status === 'resolved'
+    ? e.outcome
+      ? t.value.predict.yes
+      : t.value.predict.no
+    : t.value.predict.status[e.status];
+const endedTagClass = (e: PredictEventDto) =>
+  e.status === 'resolved' ? (e.outcome ? 'text-success' : 'text-danger') : 'text-muted';
+/** 已结束的超过 5 个先收起（问题记录 288） */
+const ENDED_SHOWN = 5;
+const endedAll = ref(false);
+const endedShown = computed(() => (endedAll.value ? ended.value : ended.value.slice(0, ENDED_SHOWN)));
+/** "怎么玩"整页只放一份（以前每张详情卡里各一份，问题记录 288）；金额按区服默认的每份结算 */
+const helpItems = computed(() => {
+  const l = list.value;
+  if (!l) return [];
+  return t.value.predict.detail.helpItems(
+    formatNum(l.unit),
+    formatNum(Math.round(l.unit * 0.63)),
+    Math.round(l.feeRate * 100),
+  );
+});
 const signed = (n: number) => `${n > 0 ? '+' : ''}${formatNum(n)}`;
 const leftText = (closeAt: string) => {
   const ms = new Date(closeAt).getTime() - Date.now();
@@ -83,6 +104,13 @@ onMounted(() => void loadList());
   <div class="small text-muted mb-2">
     {{ t.predict.intro }}
   </div>
+  <!-- 玩法说明整页一份，默认收起（问题记录 288：以前每张详情卡里各一份） -->
+  <details v-if="list" class="small mb-2" data-testid="pd-help">
+    <summary>{{ t.predict.detail.help }}</summary>
+    <ul class="mb-0 ps-3">
+      <li v-for="(x, i) in helpItems" :key="i">{{ x }}</li>
+    </ul>
+  </details>
   <div v-if="list && !list.enabled" class="alert alert-secondary py-1 small" data-testid="pd-off">
     {{ t.predict.off }}
   </div>
@@ -107,6 +135,15 @@ onMounted(() => void loadList());
         <span class="text-success small text-nowrap">{{ t.predict.yesPct(predictPercent(e.price)) }}</span>
         <i :class="['bi', e.id === selected ? 'bi-chevron-up' : 'bi-chevron-down', 'text-muted']" />
       </div>
+      <!-- 是/否概率条（问题记录 288） -->
+      <div class="progress my-1" style="height: 4px" :data-testid="`pd-bar-${e.id}`">
+        <div
+          class="progress-bar bg-success"
+          data-testid="pd-bar-yes"
+          :style="{ width: `${predictPercent(e.price)}%` }"
+        ></div>
+        <div class="progress-bar bg-danger" :style="{ width: `${100 - predictPercent(e.price)}%` }"></div>
+      </div>
       <div class="small text-muted">
         {{ leftText(e.closeAt) }}
         <span v-if="e.yes > 0 || e.no > 0">{{ t.predict.holding(e.yes, e.no) }}</span>
@@ -117,17 +154,25 @@ onMounted(() => void loadList());
 
   <template v-if="ended.length > 0">
     <h6 class="dt-section">{{ t.predict.ended }}</h6>
-    <template v-for="e in ended" :key="e.id">
+    <!-- 已结束：小卡片，标出结果和我的盈亏；超过 5 个先收起（问题记录 288） -->
+    <template v-for="e in endedShown" :key="e.id">
       <div
         role="button"
-        :class="['small border-bottom py-1', e.id === selected ? 'fw-bold' : '']"
+        :class="['dt-card small mb-2', e.id === selected ? 'border-primary' : '']"
         :data-testid="`pd-ended-${e.id}`"
         @click="pick(e.id)"
       >
-        <b>{{ predictTitle(e) }}</b> · {{ resultText(e) }} · {{ t.predict.endedHold(e.yes, e.no) }}
-        <span v-if="profit(e) !== null" :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'">{{
-          t.predict.profit(signed(profit(e)!))
-        }}</span>
+        <div class="d-flex align-items-center gap-2">
+          <span class="flex-fill dt-card-title">{{ predictTitle(e) }}</span>
+          <span :class="['dt-tag', endedTagClass(e)]" data-testid="pd-ended-tag">{{ endedTag(e) }}</span>
+        </div>
+        <span class="text-muted">{{ t.predict.endedHold(e.yes, e.no) }}</span>
+        <span
+          v-if="profit(e) !== null"
+          data-testid="pd-ended-profit"
+          :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'"
+          >{{ t.predict.profit(signed(profit(e)!)) }}</span
+        >
         <div v-if="predictNote(e, catalog)" class="text-muted" :data-testid="`pd-ended-note-${e.id}`">
           {{ t.predict.note(predictNote(e, catalog)!) }}
         </div>
@@ -140,5 +185,13 @@ onMounted(() => void loadList());
         @refresh="refresh"
       />
     </template>
+    <a
+      v-if="ended.length > ENDED_SHOWN"
+      href="#"
+      class="small"
+      data-testid="pd-ended-more"
+      @click.prevent="endedAll = !endedAll"
+      >{{ endedAll ? t.predict.endedLess : t.predict.endedMore(ended.length) }}</a
+    >
   </template>
 </template>

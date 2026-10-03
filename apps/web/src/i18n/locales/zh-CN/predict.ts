@@ -23,6 +23,8 @@ export default {
   noPct: (n: number) => `否 ${n}%`,
   holding: (yes: number, no: number) => ` · 我持有 是 ${yes} / 否 ${no}`,
   ended: '已结束',
+  endedMore: (n: number) => `展开全部（${n}）`,
+  endedLess: '收起',
   endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
   profit: (n: string) => ` · 盈亏 ${n}`,
   note: (text: string) => `判定依据：${text}`,
@@ -41,6 +43,8 @@ export default {
     sellAll: (n: string) => `（按当前价全部卖出约 ${n} 银币）`,
     outcome: (label: string, got: string) => `结果为${label}：得 ${got} 银币，盈亏`,
     help: '怎么算盈亏',
+    sections: { market: '行情', hold: '我的持仓', trade: '交易', records: '记录' },
+    unitLine: (unit: string) => `每份结算 ${unit} 银币`,
     helpItems: (unit: string, example: string, feePct: number) => [
       `结算时押对的一边每份得 ${unit} 银币，押错的一边作废。比如"是"的价格是 63%，买 1 份约花 ${example} 银币；结果为"是"就拿回 ${unit}，为"否"就亏掉买入的钱。`,
       '价格就是大家认为发生的概率：买"是"的人越多，"是"越贵、"否"越便宜；一次买得越多，后面每份越贵。',

@@ -64,6 +64,8 @@ export interface PredictListDto {
   feeRate: number;
   maxHold: number;
   maxTrade: number;
+  /** 区服默认的每份结算金额，页面顶部"怎么玩"用；各事件自己的金额见 PredictEventDto.unit（问题记录 288） */
+  unit: number;
   events: PredictEventDto[];
 }
 

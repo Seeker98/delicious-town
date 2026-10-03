@@ -67,13 +67,6 @@ const sellAll = computed(() => {
     (e.no > 0 ? predictQuote(s, 'no', 'sell', e.no, t).total : 0)
   );
 });
-const helpItems = computed(() =>
-  t.value.predict.detail.helpItems(
-    formatNum(props.detail.event.unit),
-    formatNum(Math.round(props.detail.event.unit * 0.63)),
-    Math.round(props.list.feeRate * 100),
-  ),
-);
 const chart = computed(() => {
   const pts = props.detail.points;
   if (pts.length === 0) return '';
@@ -106,28 +99,51 @@ async function submit() {
 </script>
 
 <template>
+  <!-- 详情分成 行情、我的持仓、交易、记录 四块（问题记录 288，方案 A） -->
   <div class="dt-card mb-2" data-testid="pd-detail">
-    <div v-if="predictDesc(detail.event)" class="small text-muted">{{ predictDesc(detail.event) }}</div>
-    <!-- 判定依据（238-2）：比如天气题写明自动轮换出的天气、之后有没有人用雷神锤改 -->
-    <div v-if="predictNote(detail.event, catalog)" class="small text-muted" data-testid="pd-note">
-      {{ t.predict.note(predictNote(detail.event, catalog)!) }}
-    </div>
-    <div class="d-flex gap-3 my-1">
-      <span class="text-success">{{ t.predict.yesPct(predictPercent(detail.event.price)) }}</span>
-      <span class="text-danger">{{ t.predict.noPct(100 - predictPercent(detail.event.price)) }}</span>
-      <span class="small text-muted ms-auto">{{ t.predict.detail.closeAt(time(detail.event.closeAt)) }}</span>
-    </div>
-    <!-- 不到两个点画出来是一大块空白（问题记录 278） -->
-    <div v-if="detail.points.length < 2" class="dt-meta mb-2" data-testid="pd-chart-empty">
-      {{ t.predict.detail.noChart }}
-    </div>
-    <svg v-else data-testid="pd-chart" viewBox="0 0 300 60" class="w-100 mb-2" style="height: 60px">
-      <polyline :points="chart" fill="none" stroke="currentColor" stroke-width="1.5" class="text-success" />
-    </svg>
-    <div class="small mb-2" data-testid="pd-hold">
-      {{ t.predict.detail.hold(detail.event.yes, detail.event.no, formatNum(detail.event.netCost)) }}
-      <span v-if="sellAll > 0" class="text-muted">{{ t.predict.detail.sellAll(formatNum(sellAll)) }}</span>
-      <div v-if="detail.event.yes > 0 || detail.event.no > 0">
+    <section data-testid="pd-sec-market">
+      <h6 class="dt-section mt-0">{{ t.predict.detail.sections.market }}</h6>
+      <div class="d-flex gap-3 my-1">
+        <span class="text-success">{{ t.predict.yesPct(predictPercent(detail.event.price)) }}</span>
+        <span class="text-danger">{{ t.predict.noPct(100 - predictPercent(detail.event.price)) }}</span>
+        <span class="small text-muted ms-auto">{{
+          t.predict.detail.closeAt(time(detail.event.closeAt))
+        }}</span>
+      </div>
+      <div class="progress mb-1" style="height: 8px">
+        <div
+          class="progress-bar bg-success"
+          :style="{ width: `${predictPercent(detail.event.price)}%` }"
+        ></div>
+        <div
+          class="progress-bar bg-danger"
+          :style="{ width: `${100 - predictPercent(detail.event.price)}%` }"
+        ></div>
+      </div>
+      <!-- 不到两个点画出来是一大块空白（问题记录 278） -->
+      <div v-if="detail.points.length < 2" class="dt-meta mb-1" data-testid="pd-chart-empty">
+        {{ t.predict.detail.noChart }}
+      </div>
+      <svg v-else data-testid="pd-chart" viewBox="0 0 300 60" class="w-100 mb-1" style="height: 60px">
+        <polyline :points="chart" fill="none" stroke="currentColor" stroke-width="1.5" class="text-success" />
+      </svg>
+      <div class="small text-muted">{{ t.predict.detail.unitLine(formatNum(detail.event.unit)) }}</div>
+      <div v-if="predictDesc(detail.event)" class="small text-muted">{{ predictDesc(detail.event) }}</div>
+      <!-- 判定依据（238-2）：比如天气题写明自动轮换出的天气、之后有没有人用雷神锤改 -->
+      <div v-if="predictNote(detail.event, catalog)" class="small text-muted" data-testid="pd-note">
+        {{ t.predict.note(predictNote(detail.event, catalog)!) }}
+      </div>
+    </section>
+
+    <!-- 我的持仓：进行中有持仓才显示；已结束显示本局盈亏 -->
+    <section
+      v-if="detail.event.status !== 'open' || detail.event.yes > 0 || detail.event.no > 0"
+      data-testid="pd-sec-hold"
+    >
+      <h6 class="dt-section">{{ t.predict.detail.sections.hold }}</h6>
+      <div v-if="detail.event.status === 'open'" class="small" data-testid="pd-hold">
+        {{ t.predict.detail.hold(detail.event.yes, detail.event.no, formatNum(detail.event.netCost)) }}
+        <span v-if="sellAll > 0" class="text-muted">{{ t.predict.detail.sellAll(formatNum(sellAll)) }}</span>
         <div v-for="o in outcomes" :key="o.label">
           {{ t.predict.detail.outcome(o.label, formatNum(o.got)) }}
           <span :class="o.got - detail.event.netCost >= 0 ? 'text-success' : 'text-danger'">{{
@@ -135,14 +151,49 @@ async function submit() {
           }}</span>
         </div>
       </div>
-    </div>
-    <details class="small mb-2" data-testid="pd-help">
-      <summary>{{ t.predict.detail.help }}</summary>
-      <ul class="mb-0 ps-3">
-        <li v-for="(x, i) in helpItems" :key="i">{{ x }}</li>
-      </ul>
-    </details>
-    <template v-if="detail.event.status === 'open'">
+      <div v-else class="small" data-testid="pd-result">
+        <b>{{ t.predict.detail.summary }}</b>
+        <div>
+          {{
+            t.predict.detail.summaryLine(
+              formatNum(detail.mine.bought),
+              formatNum(detail.mine.sold),
+              formatNum(detail.mine.fees),
+              formatNum(detail.event.netCost),
+            )
+          }}
+        </div>
+        <div v-if="detail.event.status === 'resolved'">
+          {{
+            t.predict.detail.resolved(
+              detail.event.outcome ? t.predict.yes : t.predict.no,
+              detail.event.outcome ? detail.event.yes : detail.event.no,
+              formatNum(detail.event.unit),
+              formatNum(detail.event.payout ?? 0),
+            )
+          }}
+        </div>
+        <div v-else-if="detail.event.status === 'void'">
+          {{
+            t.predict.detail.voided(
+              Math.round((detail.mine.voidRatio ?? 1) * 100),
+              formatNum(detail.event.payout ?? 0),
+            )
+          }}
+        </div>
+        <div v-else class="text-muted">{{ t.predict.detail.waiting }}</div>
+        <div v-if="detail.event.payout !== null">
+          {{ t.predict.detail.summary }}
+          <b :class="detail.event.payout - detail.event.netCost >= 0 ? 'text-success' : 'text-danger'">{{
+            signed(detail.event.payout - detail.event.netCost)
+          }}</b>
+          {{ t.predict.detail.summaryHint }}
+        </div>
+      </div>
+    </section>
+
+    <section v-if="detail.event.status === 'open'" data-testid="pd-sec-trade">
+      <h6 class="dt-section">{{ t.predict.detail.sections.trade }}</h6>
       <div class="d-flex flex-wrap gap-2 align-items-center small">
         <div class="btn-group btn-group-sm">
           <button
@@ -214,51 +265,15 @@ async function submit() {
         </template>
         <template v-else>{{ t.predict.detail.enterQty }}</template>
       </div>
-    </template>
-    <div v-else class="dt-card small mb-2" data-testid="pd-result">
-      <b>{{ t.predict.detail.summary }}</b>
-      <div>
-        {{
-          t.predict.detail.summaryLine(
-            formatNum(detail.mine.bought),
-            formatNum(detail.mine.sold),
-            formatNum(detail.mine.fees),
-            formatNum(detail.event.netCost),
-          )
-        }}
-      </div>
-      <div v-if="detail.event.status === 'resolved'">
-        {{
-          t.predict.detail.resolved(
-            detail.event.outcome ? t.predict.yes : t.predict.no,
-            detail.event.outcome ? detail.event.yes : detail.event.no,
-            formatNum(detail.event.unit),
-            formatNum(detail.event.payout ?? 0),
-          )
-        }}
-      </div>
-      <div v-else-if="detail.event.status === 'void'">
-        {{
-          t.predict.detail.voided(
-            Math.round((detail.mine.voidRatio ?? 1) * 100),
-            formatNum(detail.event.payout ?? 0),
-          )
-        }}
-      </div>
-      <div v-else class="text-muted">{{ t.predict.detail.waiting }}</div>
-      <div v-if="detail.event.payout !== null">
-        {{ t.predict.detail.summary }}
-        <b :class="detail.event.payout - detail.event.netCost >= 0 ? 'text-success' : 'text-danger'">{{
-          signed(detail.event.payout - detail.event.netCost)
-        }}</b>
-        {{ t.predict.detail.summaryHint }}
-      </div>
-    </div>
-    <template v-if="detail.mine.trades.length > 0">
-      <h6 class="dt-section mt-2">{{ t.predict.detail.mine }}</h6>
-      <div class="small text-muted">{{ t.predict.detail.mineHint }}</div>
-      <div data-testid="pd-mine">
-        <div v-for="(x, i) in detail.mine.trades" :key="i" class="small border-bottom py-1">
+    </section>
+
+    <!-- 记录默认收起，标题带条数，不把下面的事件推得很远 -->
+    <section data-testid="pd-sec-records">
+      <h6 class="dt-section">{{ t.predict.detail.sections.records }}</h6>
+      <details v-if="detail.mine.trades.length > 0" class="small mb-1" data-testid="pd-mine">
+        <summary>{{ t.predict.detail.mine }} ({{ detail.mine.trades.length }})</summary>
+        <div class="text-muted">{{ t.predict.detail.mineHint }}</div>
+        <div v-for="(x, i) in detail.mine.trades" :key="i" class="border-bottom py-1">
           {{
             t.predict.detail.mineLine(
               action(x),
@@ -270,16 +285,16 @@ async function submit() {
           }}
           <span class="text-muted">{{ time(x.createdAt) }}</span>
         </div>
-      </div>
-    </template>
-    <div data-testid="pd-trades">
-      <h6 class="dt-section mt-2">{{ t.predict.detail.trades }}</h6>
-      <div class="small text-muted">{{ t.predict.detail.tradesHint }}</div>
-      <div v-if="detail.trades.length === 0" class="small text-muted">{{ t.predict.detail.noTrades }}</div>
-      <div v-for="(x, i) in detail.trades" :key="i" class="small border-bottom py-1">
-        {{ t.predict.detail.tradeLine(action(x), x.qty, perShare(x), predictPercent(x.priceAfter)) }}
-        <span class="text-muted">{{ time(x.createdAt) }}</span>
-      </div>
-    </div>
+      </details>
+      <details class="small" data-testid="pd-trades">
+        <summary>{{ t.predict.detail.trades }} ({{ detail.trades.length }})</summary>
+        <div class="text-muted">{{ t.predict.detail.tradesHint }}</div>
+        <div v-if="detail.trades.length === 0" class="text-muted">{{ t.predict.detail.noTrades }}</div>
+        <div v-for="(x, i) in detail.trades" :key="i" class="border-bottom py-1">
+          {{ t.predict.detail.tradeLine(action(x), x.qty, perShare(x), predictPercent(x.priceAfter)) }}
+          <span class="text-muted">{{ time(x.createdAt) }}</span>
+        </div>
+      </details>
+    </section>
   </div>
 </template>
