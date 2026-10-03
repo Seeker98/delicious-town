@@ -63,11 +63,12 @@
 
 - 用 `data/老数据修订/cookbooks.json` 覆盖 `packages/config/data/dataset/cookbooks.json`。
 - 用 `data/老数据修订/cookbooks_price.json` 覆盖 `packages/config/data/designed/cookbooks_price.json`。
-- 菜名译名（`packages/config/data/i18n/{en,fr,es}/cookbooks.json`）：
-  - 删掉 32 道被删菜谱的条目；
-  - 176 改用 `data/i18n` 里的新译名（General Tso's Chicken (USA/Canada) 等）；
-  - 只取 `name`。
+- **176 左宗棠鸡先不动**：它要移到 29 号杂碎街，这条街 PR 1 里还没有。
+  - PR 1 保留它原来的街道（湖南街）、名字和售价描述；
+  - PR 2 再随杂碎街一起移街、改名（§5.8）。
+- 菜名译名（`packages/config/data/i18n/{en,fr,es}/cookbooks.json`）：删掉 32 道被删菜谱的条目。其余菜名和 `data/i18n` 一致，不用改。
 - 其他配置不按 id 引用这 40 道菜（数据方案 §二.5 已查过；构建时也会校验引用）。
+- **防止被同步脚本覆盖**：`scripts/sync-data.ts` 会从 `analysis/dataset` 复制原始数据，要从复制清单里去掉 `cookbooks`，否则一同步，修订就被原版覆盖了。
 
 ### 4.2 "全部"门槛
 
@@ -77,7 +78,7 @@
 
 ### 4.3 迁移 0039（开发库随 dev 启动自动执行）
 
-迁移里写死被删的 32 个 id（连同原街道）和移街的 8 个 id（原街→新街），不依赖配置包。对每家店：
+迁移里写死被删的 32 个 id（连同原街道）和移街的 7 个 id（原街→新街；176 在 PR 2），不依赖配置包。对每家店：
 
 - **被删菜谱**：品级 > 0 的，已学数 −1，`grade[品级]` −1，`street[原街]` −1，再把该字节清 0。
 - **移街菜谱**：品级 > 0 的，`street[原街]` −1，`street[新街]` +1。
@@ -87,8 +88,8 @@
 
 ### 4.4 容错
 
-- 营业记录里的 `cookbookId`、配送记录可能指向已删菜谱。
-- 界面取名时找不到就显示空名或"未知食谱"，不能报错。实现时逐处检查。
+- 已查过：前端只有外卖的两个面板按 `cookbookId` 取菜名，取不到时已经回退到服务端给的名字；营业日志和新闻在写入时就存好了菜名，不受影响。
+- 服务端只有外卖页的配送记录需要改（§4.3）。
 
 ## 5. PR 2：新街道接入
 
@@ -102,7 +103,7 @@
 | `designed/foods_new.json` | 23 种食材；只保留 foods 已有字段，丢掉 recommendLevel、levelRef、reason、premiumOf、usedBy* 这些说明字段 | `foods_new.json` |
 | `designed/street_medals_new.json` | 16 枚勋章，字段同 goods；丢掉 `_src` | `street_medals_new.json` |
 | `designed/cookbooks_new.json` | 1479 道菜，1~10 品级；不含 coin/level/desc | `cookbooks_new.json` + §5.3 生成 |
-| `designed/cookbooks_price.json`（追加） | 新菜的 coin、level、desc | `cookbooks_new.json` 拆出来 |
+| `designed/cookbooks_price_new.json` | 新菜的 coin、level、desc（单独一个文件，重跑导入时整份替换，不用去老文件里挑出来删） | `cookbooks_new.json` 拆出来 |
 | `designed/street_medal_map.json` | 30 条街各对应一枚勋章：`{ streetId, goodsId }` | 老街 140~150、187~189；新街 628~643 |
 
 - `source.ts` 加上这些文件。
@@ -138,12 +139,13 @@
 
 ### 5.5 服务端代码
 
-- **已学食谱补齐长度**：新增 `loadLevels(buf, maxCookbookId): Uint8Array`，长度不足时补 0 到 `maxCookbookId + 1`。下面这些读写处统一用它：
+- **已学食谱补齐长度**：新增 `padLevels(levels, maxCookbookId): Uint8Array`，长度不足时补 0 到 `maxCookbookId + 1`。会写入或按全部菜谱计算的地方用它：
   - 学菜（`cookbook/service.ts`）；
   - 橱柜（`cupboard/service.ts`）；
-  - 特色菜课程（`mysterious/lesson.ts`）；
-  - 外卖（`takeaway/common.ts`）；
-  - 结算（`settlement/globals.ts`）。
+  - 特色菜课程（`mysterious/lesson.ts`）。
+- 结算和外卖不补：
+  - 结算只读，按字节串实际长度遍历；外卖读品级时都带 `?? 0`。
+  - 结算补了反而每轮要多复制一次。
 - **探险**（`temple/explore.ts`）：神秘食材概率加上本街勋章的 `mysteriousRate`。
   - 不改成读加成汇总：灯、针、保安证本身也是勋章，读汇总会重复计算。
 - **蟹老板**：`tuning.json` 的 `krabStreetMax` 改为 29。
@@ -167,7 +169,13 @@
 - **术语表**：`docs/i18n-glossary.md` 补上街名和新食材。
 - **翻译完整性**：现有翻译完整性检查会覆盖这些新条目，缺翻译时构建失败。
 
-### 5.8 文档
+### 5.8 176 左宗棠鸡移到杂碎街
+
+- **数据**：`dataset/cookbooks.json` 和 `designed/cookbooks_price.json` 里的 176，改成 `data/老数据修订` 的版本：街道 29，名字"左宗棠鸡（美国/加拿大）"，描述"海外中餐，口味酸、辛、咸"。
+- **译名**：英法西的菜名改成 `data/i18n` 里的新名字。
+- **迁移 0040**：学过 176 的店，`street["1"]` −1，`street["29"]` +1（不低于 0）。
+
+### 5.9 文档
 
 - `docs/roadmap.md` 第 12 项改为已完成。
 - `docs/backlog.md` 记下以后再调的事：
