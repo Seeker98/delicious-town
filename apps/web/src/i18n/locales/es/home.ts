@@ -85,6 +85,7 @@ const home: Messages['home'] = {
     equip: 'Utensilios',
     suit: 'Conjunto',
     other: 'Otros',
+    activity: 'Eventos del servidor',
   },
   collapse: 'Mostrar menos',
   expandAll: (n) => `Mostrar todo (${n})`,

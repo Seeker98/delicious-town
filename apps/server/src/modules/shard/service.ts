@@ -6,9 +6,10 @@ import {
   type GameConfig,
   type ShardSettings,
 } from '@dt/config';
-import { ErrorCode, type BoostItem, type SelectShardResult, type ShardDto } from '@dt/shared';
+import { ErrorCode, type SelectShardResult, type ShardDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
+import { activeBoosts } from '../activity/boosts';
 import type { LoadedSession } from '../../security/session';
 import type { SessionStore } from '../../security/sessionStore';
 
@@ -38,19 +39,10 @@ export function createShardService(d: {
     // 正在生效的全服加成（148-4 设计 §6.2）；区服关掉"限时活动"时加成也不生效（终审裁定）
     let resolved = base;
     if (isFeatureEnabled(base, 'activity')) {
-      const t = gameNow();
-      const boosts = await db
-        .selectFrom('activity')
-        .select('def')
-        .where('kind', '=', 'boost')
-        .where('deleted_at', 'is', null)
-        .where('starts_at', '<=', t)
-        .where('ends_at', '>', t)
-        .where((eb) => eb.or([eb('shard_id', '=', shardId), eb('shard_id', 'is', null)]))
-        .execute();
+      const boosts = await activeBoosts(db, shardId, gameNow());
       resolved = applyBoosts(
         base,
-        boosts.map((b) => (b.def as { items: BoostItem[] }).items),
+        boosts.map((b) => b.items),
       );
     }
     cache.set(shardId, { expires: nowMs + SETTINGS_CACHE_MS, settings: resolved });

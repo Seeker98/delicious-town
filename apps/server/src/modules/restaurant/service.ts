@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import type { GameConfig } from '@dt/config';
+import { isFeatureEnabled, type GameConfig } from '@dt/config';
 import {
   addDays,
   checkRestaurantName,
@@ -16,6 +16,7 @@ import type { EventBus } from '../../events/bus';
 import { AppError } from '../../http/errors';
 import type { LoadedSession } from '../../security/session';
 import type { SessionStore } from '../../security/sessionStore';
+import { activeBoosts } from '../activity/boosts';
 import { listActiveEffects } from '../effects/service';
 import { headlines } from '../news/news';
 import { todayBless } from '../town/bless';
@@ -74,6 +75,15 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: await headlines(d.db, row.shard_id),
+      // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
+      boosts: isFeatureEnabled(settings, 'activity')
+        ? (await activeBoosts(d.db, row.shard_id, now)).map((b) => ({
+            id: b.id,
+            title: b.title,
+            items: b.items,
+            endsAt: b.endsAt.toISOString(),
+          }))
+        : [],
       disabledFeatures: Object.entries(settings.features)
         .filter(([, on]) => on === false)
         .map(([k]) => k)

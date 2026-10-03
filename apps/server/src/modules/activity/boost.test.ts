@@ -176,3 +176,37 @@ describe('backlog 148-4：首页横幅计数', () => {
     expect(after.claimable).toBe(before.claimable);
   });
 });
+
+describe('首页"生效的加成"列出正在生效的全服加成（问题记录 294）', () => {
+  it('窗口内的本区服加成列出来（活动名、各项倍数、结束时间）；还没开始的不列', async () => {
+    const ctx = await newRestaurant(t);
+    const now = t.clock.now.getTime();
+    const on = await insertActivity(t, {
+      shardId: ctx.shardId,
+      spec: boost(2, 'exp'),
+      title: '双倍经验周',
+      startsAt: new Date(now - H),
+      endsAt: new Date(now + 5 * H),
+    });
+    await insertActivity(t, {
+      shardId: ctx.shardId,
+      spec: boost(1.5, 'coin'),
+      startsAt: new Date(now + H),
+      endsAt: new Date(now + 2 * H),
+    });
+    const o = await t.game.restaurant.overview(ctx.restaurantId);
+    expect(o.boosts).toEqual([
+      {
+        id: on,
+        title: '双倍经验周',
+        items: [{ key: 'exp', factor: 2 }],
+        endsAt: new Date(now + 5 * H).toISOString(),
+      },
+    ]);
+  });
+
+  it('没有加成时是空列表', async () => {
+    const ctx = await newRestaurant(t);
+    expect((await t.game.restaurant.overview(ctx.restaurantId)).boosts).toEqual([]);
+  });
+});
