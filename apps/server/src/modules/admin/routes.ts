@@ -23,6 +23,7 @@ import {
   exchangeUnfreezeBody,
   predictCreateBody,
   predictResolveBody,
+  predictVoidBody,
   resolveReportBody,
   rejectReportBody,
   pageQuery,
@@ -226,11 +227,12 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     });
     r.post('/predict/:id/resolve', async (req) => {
       const a = await requireRole(db, req, 'admin');
-      return ok(await predictAdmin.resolve(a, id(req), parse(predictResolveBody, req.body).outcome));
+      const b = parse(predictResolveBody, req.body);
+      return ok(await predictAdmin.resolve(a, id(req), b.outcome, b.note));
     });
     r.post('/predict/:id/void', async (req) => {
       const a = await requireRole(db, req, 'admin');
-      return ok(await predictAdmin.voidEvent(a, id(req)));
+      return ok(await predictAdmin.voidEvent(a, id(req), parse(predictVoidBody, req.body ?? {}).note));
     });
 
     const reports = createAdminReports(game);

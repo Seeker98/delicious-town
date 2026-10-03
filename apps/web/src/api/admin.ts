@@ -106,9 +106,10 @@ export const adminApi = {
     p0: number;
     b?: number;
   }) => api.post<{ id: number }>(`${A}/predict`, b),
-  predictResolve: (id: number, outcome: boolean) =>
-    api.post<{ ok: true }>(`${A}/predict/${id}/resolve`, { outcome }),
-  predictVoid: (id: number) => api.post<{ ok: true }>(`${A}/predict/${id}/void`, {}),
+  predictResolve: (id: number, outcome: boolean, note = '') =>
+    api.post<{ ok: true }>(`${A}/predict/${id}/resolve`, { outcome, ...(note ? { note } : {}) }),
+  predictVoid: (id: number, note = '') =>
+    api.post<{ ok: true }>(`${A}/predict/${id}/void`, note ? { note } : {}),
   exchangeFreeze: (b: { restId: number; reason: string }) =>
     api.post<{ ok: true }>(`${A}/exchange/freeze`, b),
   exchangeUnfreeze: (b: { restId: number }) => api.post<{ ok: true }>(`${A}/exchange/unfreeze`, b),

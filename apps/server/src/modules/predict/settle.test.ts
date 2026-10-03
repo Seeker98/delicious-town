@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { seededRng } from '@dt/shared';
-import { createShard } from '../../../test/fixtures';
+import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, restRow, type TestGame } from '../../../test/game';
 import { setTuning } from '../../../test/town';
 import { trader } from '../exchange/test';
@@ -96,7 +96,7 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
     await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 4 });
     const [ca, cb] = [await coin(a.restaurantId), await coin(b.restaurantId)];
     await admin().resolve(actor, id, true);
-    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 2 });
+    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 2, failed: 0 });
     expect(await coin(a.restaurantId)).toBe(ca + 7000);
     expect(await coin(b.restaurantId)).toBe(cb);
     // 押错的人也写一条结算日志（所得 0），日志带净投入，能看出这一局的盈亏（问题记录 254）
@@ -116,7 +116,7 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
     expect(params(a.restaurantId)).toMatchObject({ outcome: true, coin: 7000, net: net(a.restaurantId) });
     expect(params(b.restaurantId)).toMatchObject({ outcome: true, coin: 0, net: net(b.restaurantId) });
     expect((await ev(id)).settled_at).not.toBeNull();
-    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 0 });
+    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 0, failed: 0 });
     expect(await coin(a.restaurantId)).toBe(ca + 7000);
   });
 
@@ -248,5 +248,33 @@ describe('判定和结算（238-1 设计 §6.3、§6.4）', () => {
     await settleEvents(t.game.deps, shardId, t.clock.now);
     const after = (await Promise.all(ts.map((x) => coin(x.restaurantId)))).reduce((s, c) => s + c, 0);
     expect(after - before).toBe(-(net + fees - payout));
+  });
+});
+
+describe('backlog 238-1：结算时一个持仓出错不卡住后面的', () => {
+  it('出错的持仓跳过（留到下一轮重试）、记日志，其他持仓照常结算', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const bad = await trader(t, { shardId, coin: 1_000_000 });
+    const good = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(bad, id, { side: 'yes', dir: 'buy', qty: 3 });
+    await svc().trade(good, id, { side: 'yes', dir: 'buy', qty: 3 });
+    await admin().resolve(actor, id, true);
+    const errors: string[] = [];
+    const restore = await failRestLog(t.db, bad.restaurantId);
+    try {
+      const before = await coin(good.restaurantId);
+      const r = await settleEvents(t.game.deps, shardId, t.clock.now, {
+        error: (_o, m) => void errors.push(m),
+      });
+      expect(r).toEqual({ settled: 1, failed: 1 });
+      expect(await coin(good.restaurantId)).toBe(before + 3000);
+      expect(errors).toHaveLength(1);
+      expect((await ev(id)).settled_at).toBeNull();
+    } finally {
+      await restore();
+    }
+    expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 1, failed: 0 });
+    expect((await ev(id)).settled_at).not.toBeNull();
   });
 });

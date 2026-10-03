@@ -5,6 +5,7 @@ export default {
     predict_level: (level: number) => `餐厅 ${level} 级才能参与预测`,
     predict_age: (days: number) => `账号注册满 ${days} 天才能参与预测`,
     predict_email: '验证邮箱后才能参与预测',
+    predict_frozen: '交易所已被冻结，事件预测也暂停使用，有疑问请联系管理员',
   },
   status: { open: '进行中', closed: '等待判定', resolved: '已判定', void: '已作废' },
   yes: '是',
@@ -14,7 +15,7 @@ export default {
   leftHm: (h: number, m: number) => `还剩 ${h} 小时 ${m} 分`,
   leftM: (m: number) => `还剩 ${m} 分`,
   intro:
-    '买"是"或"否"，结算时押对的一边每份得 1,000 银币；价格就是大家认为发生的概率，随买卖涨跌。不必等开奖，截止前随时可以卖出止盈止损。点事件展开详情。',
+    '买"是"或"否"，结算时押对的一边每份兑付固定银币（多少写在详情里）；价格就是大家认为发生的概率，随买卖涨跌。不必等开奖，截止前随时可以卖出止盈止损。点事件展开详情。',
   running: '进行中',
   noRunning: '现在没有进行中的事件',
   auto: '系统出题',
@@ -25,7 +26,11 @@ export default {
   endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
   profit: (n: string) => ` · 盈亏 ${n}`,
   note: (text: string) => `判定依据：${text}`,
+  off: '区服暂停了事件预测：现在只能查看持仓和结果，不能买卖',
   detail: {
+    /** 前端也检查单笔和持有上限（backlog 238-1） */
+    overTrade: (max: number) => `一次最多 ${max} 份`,
+    overHold: (max: number, left: number) => `每边最多持有 ${max} 份，还能买 ${left} 份`,
     action: (buy: boolean, yes: boolean) => `${buy ? '买入' : '卖出'}${yes ? '是' : '否'}`,
     traded: (action: string, qty: number, buy: boolean, total: string) =>
       `${action} ${qty} 份，${buy ? '花费' : '得到'} ${total} 银币`,

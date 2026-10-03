@@ -6,6 +6,7 @@ export default {
     predict_level: (level: number) => `餐廳 ${level} 級才能參與預測`,
     predict_age: (days: number) => `賬號註冊滿 ${days} 天才能參與預測`,
     predict_email: '驗證郵箱後才能參與預測',
+    predict_frozen: '交易所已被凍結，事件預測也暫停使用，有疑問請聯絡管理員',
   },
   status: { open: '進行中', closed: '等待判定', resolved: '已判定', void: '已作廢' },
   yes: '是',
@@ -15,7 +16,7 @@ export default {
   leftHm: (h: number, m: number) => `還剩 ${h} 小時 ${m} 分`,
   leftM: (m: number) => `還剩 ${m} 分`,
   intro:
-    '買"是"或"否"，結算時押對的一邊每份得 1,000 銀幣；價格就是大家認為發生的機率，隨買賣漲跌。不必等開獎，截止前隨時可以賣出止盈止損。點事件展開詳情。',
+    '買"是"或"否"，結算時押對的一邊每份兌付固定銀幣（多少寫在詳情裡）；價格就是大家認為發生的機率，隨買賣漲跌。不必等開獎，截止前隨時可以賣出止盈止損。點事件展開詳情。',
   running: '進行中',
   noRunning: '現在沒有進行中的事件',
   auto: '系統出題',
@@ -26,7 +27,11 @@ export default {
   endedHold: (yes: number, no: number) => `持有 是 ${yes} / 否 ${no}`,
   profit: (n: string) => ` · 盈虧 ${n}`,
   note: (text: string) => `判定依據：${text}`,
+  off: '區服暫停了事件預測：現在只能檢視持倉和結果，不能買賣',
   detail: {
+    /** 前端也檢查單筆和持有上限（backlog 238-1） */
+    overTrade: (max: number) => `一次最多 ${max} 份`,
+    overHold: (max: number, left: number) => `每邊最多持有 ${max} 份，還能買 ${left} 份`,
     action: (buy: boolean, yes: boolean) => `${buy ? '買入' : '賣出'}${yes ? '是' : '否'}`,
     traded: (action: string, qty: number, buy: boolean, total: string) =>
       `${action} ${qty} 份，${buy ? '花費' : '得到'} ${total} 銀幣`,

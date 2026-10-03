@@ -18,6 +18,7 @@ const ev = (p: Partial<PredictListDto['events'][number]> = {}) => ({
   closeAt: '2026-10-03T12:00:00.000Z',
   status: 'open' as const,
   outcome: null,
+  unit: 1000,
   yes: 0,
   no: 0,
   netCost: 0,
@@ -32,6 +33,7 @@ const ev = (p: Partial<PredictListDto['events'][number]> = {}) => ({
 const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({
   eligible: true,
   reason: null,
+  enabled: true,
   need: { level: 20, days: 7 },
   feeRate: 0.02,
   maxHold: 200,
@@ -346,5 +348,57 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await w.get('[data-testid="pd-event-1"]').trigger('click');
     await flushPromises();
     expect(w.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+});
+
+describe('backlog 238-1：事件合约页', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.predictDetail).mockResolvedValue(detail);
+  });
+  const open = async (l: PredictListDto) => {
+    vi.mocked(endpoints.predictList).mockResolvedValue(l);
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.find('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    return w;
+  };
+
+  it('单笔超过上限：提示并禁止提交', async () => {
+    const w = await open(list({ maxTrade: 10 }));
+    await w.find('[data-testid="pd-qty"]').setValue('11');
+    expect(w.find('[data-testid="pd-limit"]').text()).toContain('一次最多 10 份');
+    expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('买入后持有超过上限：提示还能买几份', async () => {
+    // 详情里已持有"是" 4 份
+    const w = await open(list({ maxHold: 10 }));
+    await w.find('[data-testid="pd-qty"]').setValue('7');
+    expect(w.find('[data-testid="pd-limit"]').text()).toContain('每边最多持有 10 份，还能买 6 份');
+    expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="pd-qty"]').setValue('6');
+    expect(w.find('[data-testid="pd-limit"]').exists()).toBe(false);
+  });
+
+  it('说明不再写死每份 1,000 银币', async () => {
+    vi.mocked(endpoints.predictList).mockResolvedValue(list());
+    const w = mount(PredictView);
+    await flushPromises();
+    expect(w.text()).not.toContain('每份得 1,000 银币');
+  });
+
+  it('交易所被冻结：显示原因', async () => {
+    const w = await open(list({ eligible: false, reason: 'predict_frozen' }));
+    expect(w.find('[data-testid="pd-reason"]').text()).toContain('交易所已被冻结');
+    expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('区服关掉事件合约：写明只能查看，提交禁用', async () => {
+    const w = await open(list({ enabled: false }));
+    expect(w.find('[data-testid="pd-off"]').text()).toContain('暂停');
+    expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
   });
 });

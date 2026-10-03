@@ -111,6 +111,7 @@ export function createPredictAdmin(game: Game) {
     actor: AdminActor,
     id: number,
     set: { status: 'resolved' | 'void'; outcome: boolean | null },
+    note?: string,
   ) {
     const now = game.deps.now();
     await db.transaction().execute(async (tx) => {
@@ -129,6 +130,7 @@ export function createPredictAdmin(game: Game) {
         detail: {
           title: r.title,
           ...(set.status === 'resolved' ? { outcome: set.outcome } : { refundRatio: r.voidRatio }),
+          ...(note ? { note } : {}),
         },
       });
     });
@@ -138,8 +140,9 @@ export function createPredictAdmin(game: Game) {
   return {
     create,
     list,
-    resolve: (actor: AdminActor, id: number, outcome: boolean) =>
-      finish(actor, id, { status: 'resolved', outcome }),
-    voidEvent: (actor: AdminActor, id: number) => finish(actor, id, { status: 'void', outcome: null }),
+    resolve: (actor: AdminActor, id: number, outcome: boolean, note?: string) =>
+      finish(actor, id, { status: 'resolved', outcome }, note),
+    voidEvent: (actor: AdminActor, id: number, note?: string) =>
+      finish(actor, id, { status: 'void', outcome: null }, note),
   };
 }

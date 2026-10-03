@@ -161,6 +161,7 @@ export default {
     exchange_no_system_bid: '系統現在不收這種食材',
     exchange_price_moved: '系統收購價變了，已重新整理盤口，請確認後再賣',
     predict_closed: '這個事件已經停止交易',
+    predict_frozen: '交易所已被凍結，事件預測也暫停使用，有疑問請聯絡管理員',
     kuji_ticket: '抽賞券不夠',
     kuji_left: '這一池剩下的籤不夠了',
     kuji_closed: '今天的獎池都抽完了，明天 0 點再來',

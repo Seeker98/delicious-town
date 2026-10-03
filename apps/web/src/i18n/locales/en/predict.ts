@@ -6,6 +6,8 @@ const predict: Messages['predict'] = {
     predict_level: (level) => `Your restaurant must be level ${level} to make predictions`,
     predict_age: (days) => `Your account must be at least ${days} days old to make predictions`,
     predict_email: 'Verify your email to make predictions',
+    predict_frozen:
+      'Your exchange is frozen, so predictions are paused too. Contact an admin if you have questions',
   },
   status: { open: 'Open', closed: 'Awaiting result', resolved: 'Resolved', void: 'Voided' },
   yes: 'Yes',
@@ -15,7 +17,7 @@ const predict: Messages['predict'] = {
   leftHm: (h, m) => `${h} h ${m} min left`,
   leftM: (m) => `${m} min left`,
   intro:
-    'Buy "Yes" or "No". At settlement each share on the winning side pays 1,000 coins. The price is what everyone thinks the probability is, and it moves as people trade. No need to wait for the result: you can sell any time before the deadline to lock in a profit or cut a loss. Tap an event to see details.',
+    'Buy "Yes" or "No". At settlement each share on the winning side pays a fixed number of coins (shown in the details). The price is what everyone thinks the probability is, and it moves as people trade. No need to wait for the result: you can sell any time before the deadline to lock in a profit or cut a loss. Tap an event to see details.',
   running: 'Open',
   noRunning: 'No open events right now',
   auto: 'System question',
@@ -26,7 +28,11 @@ const predict: Messages['predict'] = {
   endedHold: (yes, no) => `Held Yes ${yes} / No ${no}`,
   profit: (n) => ` · P/L ${n}`,
   note: (text) => `Basis for the result: ${text}`,
+  off: 'Predictions are paused on this server: you can view your holdings and results but cannot trade',
   detail: {
+    /** 前端也检查单笔和持有上限（backlog 238-1） */
+    overTrade: (max) => `At most ${max} shares per trade`,
+    overHold: (max, left) => `You can hold at most ${max} shares per side; you can buy ${left} more`,
     action: (buy, yes) => `${buy ? 'Buy' : 'Sell'} ${yes ? 'Yes' : 'No'}`,
     traded: (action, qty, buy, total) =>
       `${action} ${qty} shares, ${buy ? 'spent' : 'received'} ${total} coins`,

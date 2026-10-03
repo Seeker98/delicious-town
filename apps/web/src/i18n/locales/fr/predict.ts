@@ -6,6 +6,8 @@ const predict: Messages['predict'] = {
     predict_level: (level) => `Votre restaurant doit être niveau ${level} pour faire des prédictions`,
     predict_age: (days) => `Votre compte doit avoir au moins ${days} jours pour faire des prédictions`,
     predict_email: 'Vérifiez votre e-mail pour faire des prédictions',
+    predict_frozen:
+      'Votre bourse est gelée, les prédictions sont donc suspendues aussi. Contactez un administrateur en cas de question',
   },
   status: { open: 'En cours', closed: 'En attente du résultat', resolved: 'Tranché', void: 'Annulé' },
   yes: 'Oui',
@@ -15,7 +17,7 @@ const predict: Messages['predict'] = {
   leftHm: (h, m) => `Encore ${h} h ${m} min`,
   leftM: (m) => `Encore ${m} min`,
   intro:
-    "Achetez « Oui » ou « Non ». À la clôture, chaque part du bon côté rapporte 1 000 pièces. Le prix reflète la probabilité estimée par tous et bouge avec les échanges. Pas besoin d'attendre le résultat : vous pouvez vendre à tout moment avant l'échéance pour prendre vos gains ou limiter vos pertes. Touchez un événement pour voir le détail.",
+    "Achetez « Oui » ou « Non ». À la clôture, chaque part du bon côté rapporte un nombre fixe de pièces (indiqué dans le détail). Le prix reflète la probabilité estimée par tous et bouge avec les échanges. Pas besoin d'attendre le résultat : vous pouvez vendre à tout moment avant l'échéance pour prendre vos gains ou limiter vos pertes. Touchez un événement pour voir le détail.",
   running: 'En cours',
   noRunning: 'Aucun événement en cours',
   auto: 'Question du système',
@@ -26,7 +28,11 @@ const predict: Messages['predict'] = {
   endedHold: (yes, no) => `Détenu Oui ${yes} / Non ${no}`,
   profit: (n) => ` · Gain/perte ${n}`,
   note: (text) => `Justification du résultat : ${text}`,
+  off: 'Les prédictions sont suspendues sur ce serveur : vous pouvez voir vos positions et les résultats, mais pas échanger',
   detail: {
+    /** 前端也检查单笔和持有上限（backlog 238-1） */
+    overTrade: (max) => `Au plus ${max} parts par transaction`,
+    overHold: (max, left) => `Au plus ${max} parts par côté ; vous pouvez encore en acheter ${left}`,
     action: (buy, yes) => `${buy ? 'Acheter' : 'Vendre'} ${yes ? 'Oui' : 'Non'}`,
     traded: (action, qty, buy, total) =>
       `${action} ${qty} part(s), ${buy ? 'dépensé' : 'reçu'} ${total} pièces`,
