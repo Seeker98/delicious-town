@@ -97,10 +97,13 @@
 | 手办 / 挂件 / 摆件 | Figure / Charm / Ornament | Figurine / Porte-clés / Décor | Figura / Colgante / Adorno |
 | 特色菜前缀 秘· / 新· / 兽· | Secret· / New· / Beast· | Secret· / Nouveau· / Bête· | Secreto· / Nuevo· / Bestia· |
 | 熟练度（特色菜） | Mastery: Beginner … Transcendent | Maîtrise : Débutant … Transcendant | Dominio: Principiante … Trascendente |
+| X 街（新街道，按国名，如日本街） | Japan Street | Rue du Japon | Calle Japón |
+| 杂碎街（海外中餐） | Chop Suey Street (Overseas Chinese cuisine) | Rue Chop Suey (Cuisine chinoise d'outre-mer) | Calle Chop Suey (Cocina china de ultramar) |
+| 神秘食材 | Mystery ingredient | Ingrédient mystère | Ingrediente misterioso |
 
 约定：
 
 - 繁中由简中自动转换（`pnpm -F @dt/web i18n:tw`），个别词转换不对时写进 `apps/web/src/i18n/zh-TW-overrides.json`。
 - 数字一律用 `formatNum`（千分位按语言）；大数缩写用 `shortNum`。
 - 物品、食材、街道等游戏数据的名字来自目录（`packages/config/data/i18n/<语言>/`），界面文案里不要写死。
-- 菜名（食谱）的英法西译名来自另一个 agent 整理的 `data/i18n`（含新街道的菜，新街道进游戏后一起导入）。
+- 菜名（食谱）的英法西译名来自另一个 agent 整理的 `data/i18n`（含新街道的菜，已随新街道导入，问题记录 284）。

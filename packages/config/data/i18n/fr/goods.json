@@ -2726,5 +2726,69 @@
   "91124": {
     "name": "Décor du festin de fondue par une nuit de neige",
     "desc": "La neige tombe dehors pendant qu'une fondue bouillonne sur la table ; le Dernier Prix limité. (Ichiban Kuji · Fondue chinoise d'hiver)"
+  },
+  "92014": {
+    "name": "Rue du Japon",
+    "desc": "Clients difficiles +12 %, pièces des clients difficiles satisfaits +15 %, fréquentation -8 %"
+  },
+  "92015": {
+    "name": "Rue d'Italie",
+    "desc": "Fréquentation +15 %, pièces par table +1, pièces des commandes à emporter +30 %, consommation d'huile +15 %"
+  },
+  "92016": {
+    "name": "Rue de France",
+    "desc": "Pièces finales +30 %, clients difficiles +8 %, fréquentation -12 %"
+  },
+  "92017": {
+    "name": "Rue d'Espagne",
+    "desc": "Fréquentation +8 %, pièces des clients qui mangent un plat signature +20 %, chance +16, huile par table +1"
+  },
+  "92018": {
+    "name": "Rue du Mexique",
+    "desc": "Fréquentation +20 %, EXP par table +2, huile par table +2"
+  },
+  "92019": {
+    "name": "Rue de Thaïlande",
+    "desc": "Fréquentation +12 %, huile par table -2, EXP des commandes à emporter +30 %, pièces finales -8 %"
+  },
+  "92020": {
+    "name": "Rue de l'Inde",
+    "desc": "Portions de plats signature +5 %, EXP par table +3, chance +10, clients difficiles -8 %"
+  },
+  "92021": {
+    "name": "Rue de Turquie",
+    "desc": "Pièces par table +3, EXP par table +1, chance +20, consommation d'huile +20 %"
+  },
+  "92022": {
+    "name": "Rue du Vietnam",
+    "desc": "Consommation d'huile -30 %, EXP par table +3, pièces finales -8 %"
+  },
+  "92023": {
+    "name": "Rue d'Amérique",
+    "desc": "Pièces et EXP des commandes à emporter +20 %, fréquentation +25 %, clients difficiles -10 %, consommation d'huile +20 %"
+  },
+  "92024": {
+    "name": "Rue du Maroc",
+    "desc": "Chance de trouver des ingrédients mystères en exploration +2 %, chance +25, EXP finale +8 %"
+  },
+  "92025": {
+    "name": "Rue d'Argentine",
+    "desc": "Pièces par table +4, fréquentation +5 %, consommation d'huile +25 %"
+  },
+  "92026": {
+    "name": "Rue de Grèce",
+    "desc": "EXP finale +30 %, consommation d'huile -10 %, clients difficiles -5 %"
+  },
+  "92027": {
+    "name": "Rue du Pérou",
+    "desc": "Chance de meilleure qualité en cuisinant un plat signature +8 %, clients difficiles +8 %, pièces finales +5 %"
+  },
+  "92028": {
+    "name": "Rue de Russie",
+    "desc": "EXP par table +5, pièces finales +10 %, fréquentation -10 %, chaque cafard qui apparaît a 20 % de risque d'être tué"
+  },
+  "92029": {
+    "name": "Rue Chop Suey",
+    "desc": "Pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %"
   }
 }

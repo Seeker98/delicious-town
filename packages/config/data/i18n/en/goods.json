@@ -2726,5 +2726,69 @@
   "91124": {
     "name": "Snowy Night Hot Pot Feast Ornament",
     "desc": "Snow falling outside while a hot pot bubbles at the table inside; the limited Last Prize. (Ichiban Kuji · Winter Hot Pot)"
+  },
+  "92014": {
+    "name": "Japan Street",
+    "desc": "Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%"
+  },
+  "92015": {
+    "name": "Italy Street",
+    "desc": "Occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%"
+  },
+  "92016": {
+    "name": "France Street",
+    "desc": "Final coins +30%, picky rate +8%, occupancy -12%"
+  },
+  "92017": {
+    "name": "Spain Street",
+    "desc": "Occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1"
+  },
+  "92018": {
+    "name": "Mexico Street",
+    "desc": "Occupancy +20%, EXP per table +2, oil per table +2"
+  },
+  "92019": {
+    "name": "Thailand Street",
+    "desc": "Occupancy +12%, oil per table -2, takeaway EXP +30%, final coins -8%"
+  },
+  "92020": {
+    "name": "India Street",
+    "desc": "Signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%"
+  },
+  "92021": {
+    "name": "Turkey Street",
+    "desc": "Coins per table +3, EXP per table +1, luck +20, oil use +20%"
+  },
+  "92022": {
+    "name": "Vietnam Street",
+    "desc": "Oil use -30%, EXP per table +3, final coins -8%"
+  },
+  "92023": {
+    "name": "America Street",
+    "desc": "Takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%"
+  },
+  "92024": {
+    "name": "Morocco Street",
+    "desc": "Chance of mystery ingredients when exploring +2%, luck +25, final EXP +8%"
+  },
+  "92025": {
+    "name": "Argentina Street",
+    "desc": "Coins per table +4, occupancy +5%, oil use +25%"
+  },
+  "92026": {
+    "name": "Greece Street",
+    "desc": "Final EXP +30%, oil use -10%, picky rate -5%"
+  },
+  "92027": {
+    "name": "Peru Street",
+    "desc": "Chance of higher grades when cooking signature dishes +8%, picky rate +8%, final coins +5%"
+  },
+  "92028": {
+    "name": "Russia Street",
+    "desc": "EXP per table +5, final coins +10%, occupancy -10%, each roach that appears has a 20% chance of being killed"
+  },
+  "92029": {
+    "name": "Chop Suey Street",
+    "desc": "Takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%"
   }
 }
