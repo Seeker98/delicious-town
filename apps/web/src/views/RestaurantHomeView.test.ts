@@ -240,6 +240,12 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="rest-renown"]').text()).toBe('12,345');
   });
 
+  it('体力、声望的图标和数字之间有空格，和银币、油一致（问题记录 298）', async () => {
+    const w = await mountView();
+    for (const id of ['rest-coin', 'rest-strength', 'rest-renown'])
+      expect(w.get(`[data-testid="${id}"]`).element.previousSibling?.textContent, id).toBe(' ');
+  });
+
   it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {
     const w = await mountView();
     const text = w.find('[data-testid="exp-text"]');

@@ -167,6 +167,9 @@ function openPlaque2() {
 
 const expiresText = (at: string | null) => remainText(at);
 const effectExpires = (e: EffectDto) => expiresText(e.expiresAt);
+const strengthText = computed(() =>
+  rest.value ? `${formatNum(rest.value.strength)}/${formatNum(rest.value.strengthMax)}` : '',
+);
 
 /** 餐厅卡底部的小链接（问题记录 280：任务入口并进待办卡的"今日活跃"） */
 const QUICK = [
@@ -299,11 +302,9 @@ onBeforeUnmount(() => {
         </div>
         <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
         <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
+        <!-- 图标和数字之间留一个空格，和银币、油一致（问题记录 298：这行太长被格式化折成两行时，空格被模板吞掉） -->
         <div class="col-6">
-          <i class="bi bi-lightning"></i>
-          <span data-testid="rest-strength"
-            >{{ formatNum(rest.strength) }}/{{ formatNum(rest.strengthMax) }}</span
-          >
+          <i class="bi bi-lightning"></i> <span data-testid="rest-strength">{{ strengthText }}</span>
         </div>
         <div class="col-6" :title="t.home.renown">
           <i class="bi bi-award"></i> <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
