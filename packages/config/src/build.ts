@@ -497,11 +497,13 @@ export function buildBundle(src: SourceData): BuildResult {
     note: d.devicenote ?? '',
   }));
 
+  /** "all" = 菜谱总数（"把全部食谱升到珍品"、泛紫 5 星，问题记录 284） */
+  const allOr = (n: number | 'all') => (n === 'all' ? cookbooks.length : n);
   const starNeed = starNeedRaw.map((s) => ({
     star: s.starlevel,
     name: s.name,
     needLevel: s.needRestlevel,
-    needCookbooks: s.needCookbooksnum,
+    needCookbooks: allOr(s.needCookbooksnum),
     cookbooksKind: s.cookbooksKind,
     needCerts: s.needCertnum,
     needPurpleShells: s.needPurpleshell,
@@ -537,7 +539,7 @@ export function buildBundle(src: SourceData): BuildResult {
       main: t.mainflag === 1,
       step: t.step,
       name: t.taskname,
-      cond: t.cond,
+      cond: { ...t.cond, target: allOr(t.cond.target) },
       award: t.award,
       href: t.href,
       feature: feature ?? '',

@@ -182,4 +182,14 @@ describe('接单（设计文档 §3.3）', () => {
     expect(await foods(loser.restaurantId)).toEqual([5, 5, 5]);
     expect((await restRow(t, loser.restaurantId)).renown).toBe(10);
   });
+
+  it('配送中的单对应的食谱被删了（老街道修订，问题记录 284）：外卖页照常打开，菜名为空', async () => {
+    const { ctx, rider } = await cook();
+    const order = await addOrder(t, ctx.shardId);
+    await deliver(ctx, order, rider);
+    await t.db.updateTable('takeaway_order').set({ cookbook_id: 999_999 }).where('id', '=', order).execute();
+    const v = await t.game.takeaway.overview(ctx);
+    expect(v.deliveries).toHaveLength(1);
+    expect(v.deliveries[0]).toMatchObject({ cookbookId: 999_999, cookbookName: '' });
+  });
 });

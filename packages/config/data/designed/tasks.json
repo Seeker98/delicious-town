@@ -1259,7 +1259,7 @@
    "cond": {
     "kind": "state",
     "key": "cookbooks.grade6",
-    "target": 2363
+    "target": "all"
    },
    "award": {
     "goods": [

@@ -54,7 +54,7 @@ describe('食谱列表、详情、需求', () => {
   it('列表：可以学的排在前面，带下一级所需食材和持有数', async () => {
     const ctx = await newRestaurant(t, { foods: { 302: 1, 253: 1, 366: 1 } });
     const list = await cb().list(ctx, { street: 0, page: 1, filter: 'all' });
-    expect(list.streetTotal).toBe(72);
+    expect(list.streetTotal).toBe(69);
     expect(list.items[0]).toMatchObject({ id: 194, grade: 0, learn: '0' });
     expect(list.items[0]!.next).toEqual(expect.arrayContaining([{ foodsId: 366, num: 1, have: 1 }]));
     const learnable = await cb().list(ctx, { street: 0, page: 1, filter: 'learnable' });
@@ -77,7 +77,7 @@ describe('食谱列表、详情、需求', () => {
     expect(learnable.items.every((x) => x.grade === 0 && x.learn !== 'z')).toBe(true);
     const upgradable = await cb().list(ctx, { street: 0, page: 1, filter: 'upgradable' });
     expect(upgradable.items.map((x) => [x.id, x.grade])).toEqual([[194, 1]]);
-    expect(upgradable.allTotal).toBe(2363);
+    expect(upgradable.allTotal).toBe(2331);
   });
 
   it('详情：各品级所需食材', async () => {

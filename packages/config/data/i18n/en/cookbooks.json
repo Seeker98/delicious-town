@@ -149,14 +149,8 @@
   "50": {
     "name": "White-braised Whole Shark Fin"
   },
-  "51": {
-    "name": "Abalone in Its Shell"
-  },
   "52": {
     "name": "Steamed Eight-treasure Turtle"
-  },
-  "53": {
-    "name": "Bird's Nest in Clear Broth"
   },
   "54": {
     "name": "Shark Fin with Cordyceps"
@@ -166,9 +160,6 @@
   },
   "56": {
     "name": "Zhejiang Bamboo Shoots with Shrimp Roe"
-  },
-  "57": {
-    "name": "Ningbo Tangtuan"
   },
   "58": {
     "name": "Beef with Three Shreds"
@@ -235,9 +226,6 @@
   },
   "79": {
     "name": "Sister Song's Fish Soup"
-  },
-  "80": {
-    "name": "Qilin Mandarin Fish"
   },
   "81": {
     "name": "Longing for Water Shield & Perch"
@@ -328,9 +316,6 @@
   },
   "110": {
     "name": "Mouthwatering Chicken (Kou Shui Ji)"
-  },
-  "111": {
-    "name": "Flash-fried Salted Pork"
   },
   "112": {
     "name": "Tai'an Fish"
@@ -737,9 +722,6 @@
   "246": {
     "name": "Hibiscus Stuffed Crab"
   },
-  "247": {
-    "name": "Fang La Fish"
-  },
   "248": {
     "name": "Jade Plate Crab"
   },
@@ -868,9 +850,6 @@
   },
   "290": {
     "name": "Qingong Pork Balls"
-  },
-  "291": {
-    "name": "Duck Blood & Glass Noodle Soup"
   },
   "292": {
     "name": "Phoenix Tail Shrimp"
@@ -1009,9 +988,6 @@
   },
   "337": {
     "name": "Chrysanthemum Eggplant"
-  },
-  "338": {
-    "name": "San Bu Zhan (Three Non-stick)"
   },
   "339": {
     "name": "Pork & Sauerkraut Stew with Glass Noodles"
@@ -1160,9 +1136,6 @@
   "387": {
     "name": "Shark Fin with Chicken Purée"
   },
-  "388": {
-    "name": "Polo (Uyghur Pilaf)"
-  },
   "389": {
     "name": "Oat Noodle \"Little Fish\""
   },
@@ -1177,9 +1150,6 @@
   },
   "393": {
     "name": "Xinzhou Steamed Meat"
-  },
-  "394": {
-    "name": "Taiwanese-style Three-cup Chicken"
   },
   "395": {
     "name": "Golden Coin Yunnan Ham"
@@ -1286,9 +1256,6 @@
   "429": {
     "name": "Sky-reaching Shark Fin"
   },
-  "430": {
-    "name": "Phoenix Swallowing Shark Fin"
-  },
   "431": {
     "name": "Five-thread Bear's Paw"
   },
@@ -1316,9 +1283,6 @@
   "439": {
     "name": "Home-style Tofu"
   },
-  "440": {
-    "name": "Liu Rou Duan (Glazed Pork Strips)"
-  },
   "441": {
     "name": "Guo Bao Rou"
   },
@@ -1333,12 +1297,6 @@
   },
   "445": {
     "name": "Soft-fried Pork Tenderloin"
-  },
-  "446": {
-    "name": "Tomato Scrambled Eggs"
-  },
-  "447": {
-    "name": "Vinegar-glazed Napa Cabbage"
   },
   "448": {
     "name": "Pan-fried Cucumber with Perilla"
@@ -1373,9 +1331,6 @@
   "458": {
     "name": "Lychee Pork"
   },
-  "459": {
-    "name": "Three-cup Chicken (San Bei Ji)"
-  },
   "460": {
     "name": "Ten-fragrance Drunken Ribs"
   },
@@ -1399,9 +1354,6 @@
   },
   "467": {
     "name": "Auspicious Fried Shrimp"
-  },
-  "468": {
-    "name": "Quanzhou Meat Zongzi"
   },
   "469": {
     "name": "Putian Stir-fried Ribs"
@@ -1453,9 +1405,6 @@
   },
   "485": {
     "name": "Lotus-leaf Steamed Bullfrog"
-  },
-  "486": {
-    "name": "Squirrel Mandarin Fish"
   },
   "487": {
     "name": "Eight-treasure Red Crab Rice"
@@ -2459,9 +2408,6 @@
   "17203": {
     "name": "Ten-treasure Silkie Chicken Soup"
   },
-  "17204": {
-    "name": "Sweet & Sour Pork (Gu Lou Yuk)"
-  },
   "17205": {
     "name": "Century Egg & Pork Congee"
   },
@@ -2573,9 +2519,6 @@
   "17241": {
     "name": "Dragon King's Night Banquet"
   },
-  "17242": {
-    "name": "Meizhou Salt-baked Chicken"
-  },
   "17243": {
     "name": "Chicken in Pork Maw"
   },
@@ -2587,9 +2530,6 @@
   },
   "17246": {
     "name": "Buddha's Delight (Lo Hon Jai)"
-  },
-  "17247": {
-    "name": "Guangzhou Wenchang Chicken"
   },
   "17248": {
     "name": "Clay Pot Rice (Bo Zai Fan)"
@@ -2741,9 +2681,6 @@
   "17297": {
     "name": "Chaozhou Stir-fry King"
   },
-  "17298": {
-    "name": "Stir-fried Turtle Strips"
-  },
   "17299": {
     "name": "Jellyfish with Bean Sprouts"
   },
@@ -2768,14 +2705,8 @@
   "17306": {
     "name": "Red-braised Abalone"
   },
-  "17307": {
-    "name": "Cantonese Sea Cucumber with Shrimp Roe"
-  },
   "17308": {
     "name": "Roast Pork Zongzi"
-  },
-  "17309": {
-    "name": "Chive Pockets"
   },
   "17310": {
     "name": "Crab Shell Imperial Bird's Nest"
@@ -2902,9 +2833,6 @@
   },
   "17351": {
     "name": "Xiamen Satay Noodles"
-  },
-  "17352": {
-    "name": "Quanzhou Mee Sua Porridge"
   },
   "17353": {
     "name": "Southern Fujian Savory Rice"
@@ -3082,9 +3010,6 @@
   },
   "17411": {
     "name": "Snow Fungus Duck Soup"
-  },
-  "17412": {
-    "name": "Salted Duck"
   },
   "17413": {
     "name": "Nanjing Pressed Duck"
@@ -3524,9 +3449,6 @@
   "17558": {
     "name": "Jinyun Baked Flatbread"
   },
-  "17559": {
-    "name": "Hangzhou Dongpo Pork"
-  },
   "17560": {
     "name": "Jinhua Hometown Salted Pork"
   },
@@ -3547,9 +3469,6 @@
   },
   "17566": {
     "name": "Clam & Yellow Croaker Soup"
-  },
-  "17567": {
-    "name": "Beggar's Spring Chicken"
   },
   "17568": {
     "name": "Fragrant Crispy Braised Pork"
@@ -3625,9 +3544,6 @@
   },
   "17592": {
     "name": "Three-delicacy Banquet Noodles"
-  },
-  "17593": {
-    "name": "Zhejiang Water Chestnut Cake (Di Li Gao)"
   },
   "17594": {
     "name": "Bamboo Whip Shoots in Wine Lees"
@@ -4504,9 +4420,6 @@
   },
   "17885": {
     "name": "Hasma with Red Lotus Seeds"
-  },
-  "17886": {
-    "name": "Snow Fungus with Hasma"
   },
   "17887": {
     "name": "Hasma Stewed in Snow Pear"
@@ -5438,9 +5351,6 @@
   "18196": {
     "name": "Cured Duck Braised with Lotus Root"
   },
-  "18197": {
-    "name": "Hubei Sea Cucumber with Shrimp Eggs"
-  },
   "18198": {
     "name": "Luotian Hanging Pot"
   },
@@ -6170,9 +6080,6 @@
   "18440": {
     "name": "Wuwei Pressed Duck"
   },
-  "18441": {
-    "name": "Li Hongzhang Chop Suey"
-  },
   "18442": {
     "name": "Sanhe Crispy Duck"
   },
@@ -6712,9 +6619,6 @@
   },
   "18621": {
     "name": "Eggplant Braised with Shredded Pork"
-  },
-  "18622": {
-    "name": "Hulutou (Braised Pork Intestine)"
   },
   "18623": {
     "name": "Fragrant Fish Slices"

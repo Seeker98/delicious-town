@@ -106,7 +106,7 @@
    "starlevel": 12,
    "name": "泛紫5星",
    "needRestlevel": 114,
-   "needCookbooksnum": 2363,
+   "needCookbooksnum": "all",
    "cookbooksKind": "tianzhuan",
    "needCertnum": 12,
    "needPurpleshell": 250

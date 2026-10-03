@@ -12,10 +12,21 @@ describe('buildBundle（真实数据）', () => {
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(313);
     expect(bundle!.goods).toHaveLength(682); // 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
-    expect(bundle!.cookbooks).toHaveLength(2363);
+    expect(bundle!.cookbooks).toHaveLength(2331);
     expect(bundle!.streets).toHaveLength(14);
     expect(bundle!.starNeed).toHaveLength(12);
     expect(bundle!.version).toMatch(/^[0-9a-f]{12}$/);
+  });
+
+  it('老街道修订（问题记录 284）：删 32 道、移街 7 道，176 先留在湖南街', () => {
+    const b = realBuild().bundle!;
+    const ids = new Set(b.cookbooks.map((c) => c.id));
+    for (const id of [51, 446, 17204, 18441, 18622]) expect(ids.has(id), String(id)).toBe(false);
+    const street = (id: number) => b.cookbooks.find((c) => c.id === id)!.streetId;
+    expect([344, 345, 346, 350, 392, 401, 403].map(street)).toEqual([12, 12, 13, 12, 11, 11, 6]);
+    expect(street(176)).toBe(1);
+    expect(b.cookbooks.find((c) => c.id === 176)!.name).toBe('左宗棠鸡');
+    expect(b.cookbooks.find((c) => c.id === 344)!.desc).toBe('楚菜，口味辛、咸、鲜');
   });
 
   it('特色菜：食材只留 id（"[4]海参"的 4 是等级，设计文档 裁定 1）；熟练度表 10 级', () => {
@@ -196,6 +207,22 @@ describe('2A 新增配置', () => {
     expect(main(8).feature).toBe('friend'); // roach.kill
     expect(main(10).feature).toBe('restaurant'); // rest.level
     expect(b.tasks.find((t) => t.cond.key === 'rest.thumbs')!.feature).toBe('friend');
+  });
+
+  it('"全部食谱"的门槛 = 菜谱总数（问题记录 284）', () => {
+    const b = realBuild().bundle!;
+    expect(b.tasks.find((t) => t.id === 121)!.cond.target).toBe(b.cookbooks.length);
+    expect(b.starNeed.find((s) => s.star === 12)!.needCookbooks).toBe(b.cookbooks.length);
+  });
+
+  it('门槛写 "all" 时换成菜谱总数；写别的字符串报错', () => {
+    const src = source();
+    const tasks = structuredClone(src['designed/tasks']) as Array<{ id: number; cond: { target: unknown } }>;
+    tasks.find((t) => t.id === 121)!.cond.target = 'all';
+    const { bundle } = buildBundle({ ...src, 'designed/tasks': tasks });
+    expect(bundle!.tasks.find((t) => t.id === 121)!.cond.target).toBe(bundle!.cookbooks.length);
+    tasks.find((t) => t.id === 121)!.cond.target = 'most';
+    expect(buildBundle({ ...src, 'designed/tasks': tasks }).errors.join()).toMatch(/designed\/tasks/);
   });
 
   it('featureOfKey 取最长前缀；找不到返回 null', () => {

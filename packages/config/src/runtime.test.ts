@@ -36,8 +36,8 @@ describe('2A 运行时索引', () => {
     const idx = cfg.cookbookIndex;
     expect(idx.street[1]).toBe(6);
     expect(idx.coin[1]).toBe(cfg.cookbooks.get(1)!.coin);
-    expect(idx.idsByStreet.get(0)!.length).toBe(72);
-    expect(idx.allIds.length).toBe(2363);
+    expect(idx.idsByStreet.get(0)!.length).toBe(69);
+    expect(idx.allIds.length).toBe(2331);
   });
 
   it('街道勋章：新手街 140，江西街 187', () => {

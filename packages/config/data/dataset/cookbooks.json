@@ -1,6 +1,6 @@
 {
- "source": "HAR Cookbooks/getListCookbooks(名称/街道/口味) + 食谱所需Excel(1~10品级食材); coin/level/desc 缺失",
- "count": 2363,
+ "source": "HAR Cookbooks/getListCookbooks(名称/街道/口味) + 食谱所需Excel(1~10品级食材); coin/level/desc 缺失；按 老街道重合调整方案 修订（revise_old_data.py）",
+ "count": 2331,
  "data": [
   {
    "id": 1,
@@ -10731,220 +10731,6 @@
    }
   },
   {
-   "id": 51,
-   "name": "原壳鲍鱼",
-   "streetId": 6,
-   "taste": [
-    1,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 419,
-      "foodsName": "鲍鱼",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 419,
-      "foodsName": "鲍鱼",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 419,
-      "foodsName": "鲍鱼",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 419,
-      "foodsName": "鲍鱼",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 458,
-      "foodsName": "神秘九孔鲍",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
    "id": 52,
    "name": "清蒸八宝甲鱼",
    "streetId": 6,
@@ -11154,220 +10940,6 @@
       "foodsId": 423,
       "foodsName": "辽参",
       "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 53,
-   "name": "清汤燕窝",
-   "streetId": 6,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 421,
-      "foodsName": "燕窝",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 421,
-      "foodsName": "燕窝",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 421,
-      "foodsName": "燕窝",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 421,
-      "foodsName": "燕窝",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 461,
-      "foodsName": "神秘金丝盏",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
       "num": 100
      }
     ]
@@ -12006,220 +11578,6 @@
       "foodsName": "伍氏皮皮虾",
       "foodsLevel": 6,
       "num": 25
-     },
-     {
-      "foodsId": 456,
-      "foodsName": "马沙拉白葡萄酒",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
-   "id": 57,
-   "name": "宁波汤团",
-   "streetId": 7,
-   "taste": [
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 375,
-      "foodsName": "花雕酒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 448,
-      "foodsName": "三文鱼",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
      },
      {
       "foodsId": 456,
@@ -16944,221 +16302,6 @@
       "foodsName": "金华火腿",
       "foodsLevel": 4,
       "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 80,
-   "name": "麒麟桂鱼",
-   "streetId": 7,
-   "taste": [
-    2,
-    3,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 322,
-      "foodsName": "胡萝卜",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 508,
-      "foodsName": "红薯",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 576,
-      "foodsName": "佩里戈尔黑松露",
-      "foodsLevel": 6,
-      "num": 25
      }
     ]
    }
@@ -23587,220 +22730,6 @@
       "foodsName": "竹荪",
       "foodsLevel": 5,
       "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 111,
-   "name": "生爆盐煎肉",
-   "streetId": 3,
-   "taste": [
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 320,
-      "foodsName": "豆瓣酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 320,
-      "foodsName": "豆瓣酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 320,
-      "foodsName": "豆瓣酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 320,
-      "foodsName": "豆瓣酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 385,
-      "foodsName": "郫县豆瓣",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 385,
-      "foodsName": "郫县豆瓣",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 385,
-      "foodsName": "郫县豆瓣",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 385,
-      "foodsName": "郫县豆瓣",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 385,
-      "foodsName": "郫县豆瓣",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 453,
-      "foodsName": "奎宁牛小排",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 575,
-      "foodsName": "阿尔马斯鱼子酱",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
      }
     ]
    }
@@ -52761,221 +51690,6 @@
    }
   },
   {
-   "id": 247,
-   "name": "方腊鱼",
-   "streetId": 5,
-   "taste": [
-    1,
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 577,
-      "foodsName": "伍氏皮皮虾",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 248,
    "name": "玉板蟹",
    "streetId": 5,
@@ -62193,221 +60907,6 @@
       "foodsId": 400,
       "foodsName": "草鸡蛋",
       "foodsLevel": 4,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 291,
-   "name": "鸭血粉丝汤",
-   "streetId": 8,
-   "taste": [
-    4,
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 296,
-      "foodsName": "鸭血",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 429,
-      "foodsName": "鹿冲",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 448,
-      "foodsName": "三文鱼",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 429,
-      "foodsName": "鹿冲",
-      "foodsLevel": 5,
       "num": 100
      }
     ]
@@ -72277,219 +70776,6 @@
    }
   },
   {
-   "id": 338,
-   "name": "炒三不沾",
-   "streetId": 9,
-   "taste": [
-    2
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 310,
-      "foodsName": "金糕",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 310,
-      "foodsName": "金糕",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 310,
-      "foodsName": "金糕",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 310,
-      "foodsName": "金糕",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 386,
-      "foodsName": "戚风蛋糕",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 386,
-      "foodsName": "戚风蛋糕",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 386,
-      "foodsName": "戚风蛋糕",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 386,
-      "foodsName": "戚风蛋糕",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 386,
-      "foodsName": "戚风蛋糕",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 375,
-      "foodsName": "花雕酒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 452,
-      "foodsName": "手指饼干",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 456,
-      "foodsName": "马沙拉白葡萄酒",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
    "id": 339,
    "name": "酸菜猪肉炖粉条",
    "streetId": 9,
@@ -73567,7 +71853,7 @@
   {
    "id": 344,
    "name": "开屏武昌鱼",
-   "streetId": 9,
+   "streetId": 12,
    "taste": [
     4,
     5,
@@ -73782,7 +72068,7 @@
   {
    "id": 345,
    "name": "糍粑鱼",
-   "streetId": 9,
+   "streetId": 12,
    "taste": [
     1,
     4,
@@ -73997,7 +72283,7 @@
   {
    "id": 346,
    "name": "北京烤鸭",
-   "streetId": 9,
+   "streetId": 13,
    "taste": [
     2
    ],
@@ -74853,7 +73139,7 @@
   {
    "id": 350,
    "name": "沔阳三蒸",
-   "streetId": 9,
+   "streetId": 12,
    "taste": [
     2,
     5,
@@ -82997,219 +81283,6 @@
    }
   },
   {
-   "id": 388,
-   "name": "手抓饭",
-   "streetId": 10,
-   "taste": [
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 254,
-      "foodsName": "糙米",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 255,
-      "foodsName": "土豆",
-      "foodsLevel": 1,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 438,
-      "foodsName": "槟榔芋",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 438,
-      "foodsName": "槟榔芋",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 389,
    "name": "莜面鱼鱼",
    "streetId": 10,
@@ -83856,7 +81929,7 @@
   {
    "id": 392,
    "name": "兴国米粉鱼",
-   "streetId": 10,
+   "streetId": 11,
    "taste": [
     4,
     5,
@@ -84277,220 +82350,6 @@
       "foodsId": 438,
       "foodsName": "槟榔芋",
       "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 394,
-   "name": "台式三杯鸡",
-   "streetId": 10,
-   "taste": [
-    4,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
       "num": 100
      }
     ]
@@ -85785,7 +83644,7 @@
   {
    "id": 401,
    "name": "信丰鸡",
-   "streetId": 10,
+   "streetId": 11,
    "taste": [
     5,
     6
@@ -86212,7 +84071,7 @@
   {
    "id": 403,
    "name": "诸候鹅(二)",
-   "streetId": 10,
+   "streetId": 6,
    "taste": [
     2,
     5,
@@ -91996,220 +89855,6 @@
    }
   },
   {
-   "id": 430,
-   "name": "凤吞翅",
-   "streetId": 10,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 346,
-      "foodsName": "蘑菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
    "id": 431,
    "name": "五丝熊掌",
    "streetId": 10,
@@ -94139,221 +91784,6 @@
    }
   },
   {
-   "id": 440,
-   "name": "溜肉段",
-   "streetId": 0,
-   "taste": [
-    1,
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 240,
-      "foodsName": "黄瓜",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 440,
-      "foodsName": "碧根果",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 453,
-      "foodsName": "奎宁牛小排",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 454,
-      "foodsName": "意大利蕃茄",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 441,
    "name": "锅包肉",
    "streetId": 0,
@@ -95414,435 +92844,6 @@
       "foodsName": "草鸡蛋",
       "foodsLevel": 4,
       "num": 100
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
-   "id": 446,
-   "name": "蕃茄炒蛋",
-   "streetId": 0,
-   "taste": [
-    1,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 243,
-      "foodsName": "番茄",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 151,
-      "foodsName": "银杏果",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 454,
-      "foodsName": "意大利蕃茄",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
-   "id": 447,
-   "name": "醋溜白菜",
-   "streetId": 0,
-   "taste": [
-    1,
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 237,
-      "foodsName": "醋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 237,
-      "foodsName": "醋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 237,
-      "foodsName": "醋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 237,
-      "foodsName": "醋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 416,
-      "foodsName": "山西老陈醋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 416,
-      "foodsName": "山西老陈醋",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 416,
-      "foodsName": "山西老陈醋",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 238,
-      "foodsName": "白菜",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 416,
-      "foodsName": "山西老陈醋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 340,
-      "foodsName": "莼菜",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 416,
-      "foodsName": "山西老陈醋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 576,
-      "foodsName": "佩里戈尔黑松露",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 455,
-      "foodsName": "马斯卡彭芝士",
-      "foodsLevel": 6,
-      "num": 25
      },
      {
       "foodsId": 449,
@@ -98210,220 +95211,6 @@
    }
   },
   {
-   "id": 459,
-   "name": "三杯鸡",
-   "streetId": 4,
-   "taste": [
-    2,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 258,
-      "foodsName": "干辣椒",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 247,
-      "foodsName": "大蒜",
-      "foodsLevel": 1,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 530,
-      "foodsName": "陈皮",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 405,
-      "foodsName": "三黄鸡肉",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 455,
-      "foodsName": "马斯卡彭芝士",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
    "id": 460,
    "name": "十香醉排骨",
    "streetId": 4,
@@ -100138,220 +96925,6 @@
       "foodsName": "佩里戈尔黑松露",
       "foodsLevel": 6,
       "num": 25
-     }
-    ]
-   }
-  },
-  {
-   "id": 468,
-   "name": "泉州肉棕",
-   "streetId": 4,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 286,
-      "foodsName": "芋头",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 281,
-      "foodsName": "板栗",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 438,
-      "foodsName": "槟榔芋",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 567,
-      "foodsName": "竹蛏",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 438,
-      "foodsName": "槟榔芋",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 439,
-      "foodsName": "碧梗米",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 567,
-      "foodsName": "竹蛏",
-      "foodsLevel": 4,
-      "num": 100
      }
     ]
    }
@@ -104004,221 +100577,6 @@
    }
   },
   {
-   "id": 486,
-   "name": "松鼠桂鱼",
-   "streetId": 4,
-   "taste": [
-    2,
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 329,
-      "foodsName": "对虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 330,
-      "foodsName": "桂鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 412,
-      "foodsName": "渤海对虾",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 577,
-      "foodsName": "伍氏皮皮虾",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 465,
-      "foodsName": "神秘金钱鳘",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 487,
    "name": "八宝红鲟饭",
    "streetId": 4,
@@ -107232,26 +103590,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 352,
-      "foodsName": "木耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 237,
-      "foodsName": "醋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 352,
@@ -107329,6 +103667,26 @@
       "foodsId": 140,
       "foodsName": "橄榄油",
       "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 352,
+      "foodsName": "木耳",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 237,
+      "foodsName": "醋",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 150,
+      "foodsName": "长胡椒",
+      "foodsLevel": 5,
       "num": 1
      }
     ],
@@ -124778,46 +121136,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 503,
-      "foodsName": "牡蛎",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 352,
-      "foodsName": "木耳",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 503,
-      "foodsName": "牡蛎",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 352,
-      "foodsName": "木耳",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 503,
@@ -124859,6 +121177,46 @@
      }
     ],
     "3": [
+     {
+      "foodsId": 503,
+      "foodsName": "牡蛎",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 352,
+      "foodsName": "木耳",
+      "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 503,
+      "foodsName": "牡蛎",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 352,
+      "foodsName": "木耳",
+      "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 503,
       "foodsName": "牡蛎",
@@ -138893,6 +135251,26 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 152,
+      "foodsName": "墨鱼",
+      "foodsLevel": 5,
+      "num": 1
+     },
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 263,
+      "foodsName": "香菜",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
     "2": [
      {
       "foodsId": 152,
@@ -138954,26 +135332,6 @@
      }
     ],
     "5": [
-     {
-      "foodsId": 152,
-      "foodsName": "墨鱼",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "1": [
      {
       "foodsId": 152,
       "foodsName": "墨鱼",
@@ -145962,46 +142320,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 143,
-      "foodsName": "八角",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 143,
-      "foodsName": "八角",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 239,
@@ -146059,6 +142377,46 @@
       "foodsId": 252,
       "foodsName": "面粉",
       "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 404,
+      "foodsName": "山黑猪肉",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 143,
+      "foodsName": "八角",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 437,
+      "foodsName": "全麦粉",
+      "foodsLevel": 5,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 573,
+      "foodsName": "神秘宁乡猪",
+      "foodsLevel": 7,
+      "num": 1
+     },
+     {
+      "foodsId": 143,
+      "foodsName": "八角",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 437,
+      "foodsName": "全麦粉",
+      "foodsLevel": 5,
       "num": 1
      }
     ],
@@ -147886,46 +144244,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 262,
@@ -147983,6 +144301,46 @@
       "foodsId": 377,
       "foodsName": "五香料",
       "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 262,
+      "foodsName": "鸭肉",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 301,
+      "foodsName": "花椒",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 140,
+      "foodsName": "橄榄油",
+      "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 262,
+      "foodsName": "鸭肉",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 301,
+      "foodsName": "花椒",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 150,
+      "foodsName": "长胡椒",
+      "foodsLevel": 5,
       "num": 1
      }
     ],
@@ -172295,6 +168653,46 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 242,
+      "foodsName": "鸡蛋",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 252,
+      "foodsName": "面粉",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "2": [
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 242,
+      "foodsName": "鸡蛋",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 252,
+      "foodsName": "面粉",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
     "3": [
      {
       "foodsId": 507,
@@ -172352,46 +168750,6 @@
       "foodsId": 437,
       "foodsName": "全麦粉",
       "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "1": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
       "num": 1
      }
     ],
@@ -175704,220 +172062,6 @@
       "foodsName": "神秘高山虫",
       "foodsLevel": 7,
       "num": 32
-     }
-    ]
-   }
-  },
-  {
-   "id": 17204,
-   "name": "咕咾肉",
-   "streetId": 2,
-   "taste": [
-    4,
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 102,
-      "foodsName": "青椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 102,
-      "foodsName": "青椒",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 297,
-      "foodsName": "菠萝",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 387,
-      "foodsName": "宝庆朝天椒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 132,
-      "foodsName": "里脊肉",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 408,
-      "foodsName": "西湖龙井",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 449,
-      "foodsName": "黑胡椒",
-      "foodsLevel": 6,
-      "num": 25
      }
     ]
    }
@@ -179570,46 +175714,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 268,
-      "foodsName": "黄鱼",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 268,
-      "foodsName": "黄鱼",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 268,
@@ -179667,6 +175771,46 @@
       "foodsId": 377,
       "foodsName": "五香料",
       "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 268,
+      "foodsName": "黄鱼",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 400,
+      "foodsName": "草鸡蛋",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 140,
+      "foodsName": "橄榄油",
+      "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 268,
+      "foodsName": "黄鱼",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 400,
+      "foodsName": "草鸡蛋",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 150,
+      "foodsName": "长胡椒",
+      "foodsLevel": 5,
       "num": 1
      }
     ],
@@ -183835,219 +179979,6 @@
    }
   },
   {
-   "id": 17242,
-   "name": "梅州盐焗鸡",
-   "streetId": 2,
-   "taste": [
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 377,
-      "foodsName": "五香料",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 263,
-      "foodsName": "香菜",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 444,
-      "foodsName": "铁棍山药",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 444,
-      "foodsName": "铁棍山药",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 17243,
    "name": "猪肚包鸡",
    "streetId": 2,
@@ -184898,220 +180829,6 @@
       "foodsName": "荷兰豆",
       "foodsLevel": 3,
       "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 17247,
-   "name": "广州文昌鸡",
-   "streetId": 2,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 331,
-      "foodsName": "高汤",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 574,
-      "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 32
      }
     ]
    }
@@ -195806,220 +191523,6 @@
    }
   },
   {
-   "id": 17298,
-   "name": "炒水鱼丝",
-   "streetId": 2,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 521,
-      "foodsName": "甲鱼",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 575,
-      "foodsName": "阿尔马斯鱼子酱",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
    "id": 17299,
    "name": "豆芽炒海蜇",
    "streetId": 2,
@@ -197733,220 +193236,6 @@
    }
   },
   {
-   "id": 17307,
-   "name": "虾子海参",
-   "streetId": 2,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 445,
-      "foodsName": "连城白鸭",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 577,
-      "foodsName": "伍氏皮皮虾",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 445,
-      "foodsName": "连城白鸭",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 17308,
    "name": "烧肉粽",
    "streetId": 4,
@@ -197958,26 +193247,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 136,
-      "foodsName": "五花肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 245,
-      "foodsName": "糯米",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 284,
-      "foodsName": "洋葱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 136,
@@ -198039,6 +193308,26 @@
      }
     ],
     "4": [
+     {
+      "foodsId": 136,
+      "foodsName": "五花肉",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 245,
+      "foodsName": "糯米",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 284,
+      "foodsName": "洋葱",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 136,
       "foodsName": "五花肉",
@@ -198149,219 +193438,6 @@
       "foodsId": 439,
       "foodsName": "碧梗米",
       "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 17309,
-   "name": "韭菜盒",
-   "streetId": 4,
-   "taste": [
-    5
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 242,
-      "foodsName": "鸡蛋",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 377,
-      "foodsName": "五香料",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 10
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 25
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 100
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 362,
-      "foodsName": "蒲菜",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 576,
-      "foodsName": "佩里戈尔黑松露",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
       "num": 100
      },
      {
@@ -207358,220 +202434,6 @@
    }
   },
   {
-   "id": 17352,
-   "name": "泉州面线糊",
-   "streetId": 4,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 377,
-      "foodsName": "五香料",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 10
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 25
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 577,
-      "foodsName": "伍氏皮皮虾",
-      "foodsLevel": 6,
-      "num": 25
-     },
-     {
-      "foodsId": 437,
-      "foodsName": "全麦粉",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 17353,
    "name": "闽南咸饭",
    "streetId": 4,
@@ -209506,26 +204368,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 550,
-      "foodsName": "海蚌",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 400,
-      "foodsName": "草鸡蛋",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 550,
@@ -209583,6 +204425,26 @@
       "foodsId": 377,
       "foodsName": "五香料",
       "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 550,
+      "foodsName": "海蚌",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 400,
+      "foodsName": "草鸡蛋",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 140,
+      "foodsName": "橄榄油",
+      "foodsLevel": 4,
       "num": 1
      }
     ],
@@ -220195,220 +215057,6 @@
    }
   },
   {
-   "id": 17412,
-   "name": "盐水鸭",
-   "streetId": 8,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 377,
-      "foodsName": "五香料",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 140,
-      "foodsName": "橄榄油",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 301,
-      "foodsName": "花椒",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 445,
-      "foodsName": "连城白鸭",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 443,
-      "foodsName": "番红花粉",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 445,
-      "foodsName": "连城白鸭",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 443,
-      "foodsName": "番红花粉",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 17413,
    "name": "南京板鸭",
    "streetId": 8,
@@ -221062,26 +215710,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 348,
-      "foodsName": "鳝鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 137,
-      "foodsName": "黄酒",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 348,
@@ -221143,6 +215771,26 @@
      }
     ],
     "4": [
+     {
+      "foodsId": 348,
+      "foodsName": "鳝鱼",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 137,
+      "foodsName": "黄酒",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 348,
       "foodsName": "鳝鱼",
@@ -239460,46 +234108,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 121,
-      "foodsName": "番茄酱",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 507,
@@ -239551,6 +234159,46 @@
       "foodsId": 345,
       "foodsName": "香菇",
       "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 121,
+      "foodsName": "番茄酱",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 345,
+      "foodsName": "香菇",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 121,
+      "foodsName": "番茄酱",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 463,
+      "foodsName": "神秘金蟾菇",
+      "foodsLevel": 7,
       "num": 1
      },
      {
@@ -240318,46 +234966,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 534,
-      "foodsName": "枸杞子",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 345,
-      "foodsName": "香菇",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 460,
-      "foodsName": "神秘高山虫",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 463,
-      "foodsName": "神秘金蟾菇",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 534,
@@ -240415,6 +235023,46 @@
       "foodsId": 345,
       "foodsName": "香菇",
       "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 534,
+      "foodsName": "枸杞子",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 260,
+      "foodsName": "鸡肉",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 345,
+      "foodsName": "香菇",
+      "foodsLevel": 3,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 460,
+      "foodsName": "神秘高山虫",
+      "foodsLevel": 7,
+      "num": 1
+     },
+     {
+      "foodsId": 464,
+      "foodsName": "神秘雪川雏",
+      "foodsLevel": 7,
+      "num": 1
+     },
+     {
+      "foodsId": 463,
+      "foodsName": "神秘金蟾菇",
+      "foodsLevel": 7,
       "num": 1
      }
     ],
@@ -248447,6 +243095,26 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 280,
+      "foodsName": "茶叶",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 355,
+      "foodsName": "牛肉",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 326,
+      "foodsName": "十三香",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
     "2": [
      {
       "foodsId": 280,
@@ -248524,26 +243192,6 @@
       "foodsId": 150,
       "foodsName": "长胡椒",
       "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "1": [
-     {
-      "foodsId": 280,
-      "foodsName": "茶叶",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 355,
-      "foodsName": "牛肉",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 326,
-      "foodsName": "十三香",
-      "foodsLevel": 2,
       "num": 1
      }
     ],
@@ -251649,221 +246297,6 @@
    }
   },
   {
-   "id": 17559,
-   "name": "杭州东坡肉",
-   "streetId": 7,
-   "taste": [
-    2,
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 249,
-      "foodsName": "大葱",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 415,
-      "foodsName": "章丘大葱",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 283,
-      "foodsName": "菠菜",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 382,
-      "foodsName": "龙须菜",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 382,
-      "foodsName": "龙须菜",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
    "id": 17560,
    "name": "金华家乡南肉",
    "streetId": 7,
@@ -253355,220 +247788,6 @@
      {
       "foodsId": 574,
       "foodsName": "蟹黄堡密料",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
-   "id": 17567,
-   "name": "叫化童鸡",
-   "streetId": 7,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 404,
-      "foodsName": "山黑猪肉",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 344,
-      "foodsName": "火腿",
-      "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 401,
-      "foodsName": "金华火腿",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 573,
-      "foodsName": "神秘宁乡猪",
       "foodsLevel": 7,
       "num": 32
      }
@@ -258921,219 +253140,6 @@
       "foodsName": "全麦粉",
       "foodsLevel": 5,
       "num": 100
-     }
-    ]
-   }
-  },
-  {
-   "id": 17593,
-   "name": "地栗糕",
-   "streetId": 7,
-   "taste": [
-    2
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 319,
-      "foodsName": "桂花",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 443,
-      "foodsName": "番红花粉",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 375,
-      "foodsName": "花雕酒",
-      "foodsLevel": 3,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 443,
-      "foodsName": "番红花粉",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 519,
-      "foodsName": "马蹄",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 456,
-      "foodsName": "马沙拉白葡萄酒",
-      "foodsLevel": 6,
-      "num": 25
      }
     ]
    }
@@ -273487,6 +267493,46 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 288,
+      "foodsName": "牛奶",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 252,
+      "foodsName": "面粉",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "2": [
+     {
+      "foodsId": 288,
+      "foodsName": "牛奶",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 252,
+      "foodsName": "面粉",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
     "3": [
      {
       "foodsId": 288,
@@ -273538,46 +267584,6 @@
       "foodsId": 437,
       "foodsName": "全麦粉",
       "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "1": [
-     {
-      "foodsId": 288,
-      "foodsName": "牛奶",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 288,
-      "foodsName": "牛奶",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 252,
-      "foodsName": "面粉",
-      "foodsLevel": 1,
       "num": 1
      },
      {
@@ -275197,6 +269203,26 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 239,
+      "foodsName": "猪肉",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 248,
+      "foodsName": "辣椒",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
     "2": [
      {
       "foodsId": 261,
@@ -275274,26 +269300,6 @@
       "foodsId": 387,
       "foodsName": "宝庆朝天椒",
       "foodsLevel": 3,
-      "num": 1
-     }
-    ],
-    "1": [
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 239,
-      "foodsName": "猪肉",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 248,
-      "foodsName": "辣椒",
-      "foodsLevel": 1,
       "num": 1
      }
     ],
@@ -276481,46 +270487,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 104,
-      "foodsName": "韭菜",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 390,
@@ -276562,6 +270528,46 @@
      }
     ],
     "3": [
+     {
+      "foodsId": 390,
+      "foodsName": "海参",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 104,
+      "foodsName": "韭菜",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 390,
+      "foodsName": "海参",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 104,
+      "foodsName": "韭菜",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 390,
       "foodsName": "海参",
@@ -285897,26 +279903,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 507,
-      "foodsName": "虾",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 418,
@@ -285994,6 +279980,26 @@
       "foodsId": 260,
       "foodsName": "鸡肉",
       "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 457,
+      "foodsName": "神秘九天翅",
+      "foodsLevel": 7,
+      "num": 1
+     },
+     {
+      "foodsId": 507,
+      "foodsName": "虾",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 464,
+      "foodsName": "神秘雪川雏",
+      "foodsLevel": 7,
       "num": 1
      }
     ],
@@ -321603,219 +315609,6 @@
    }
   },
   {
-   "id": 17886,
-   "name": "银耳雪蛤",
-   "streetId": 10,
-   "taste": [
-    2
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 10
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 25
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 274,
-      "foodsName": "冰糖",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 432,
-      "foodsName": "竹荪",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 549,
-      "foodsName": "雪蛤",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 370,
-      "foodsName": "银耳",
-      "foodsLevel": 3,
-      "num": 100
-     },
-     {
-      "foodsId": 432,
-      "foodsName": "竹荪",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ]
-   }
-  },
-  {
    "id": 17887,
    "name": "雪梨炖雪蛤膏",
    "streetId": 10,
@@ -348999,46 +342792,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 145,
-      "foodsName": "海螺",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 352,
-      "foodsName": "木耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 145,
-      "foodsName": "海螺",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 352,
-      "foodsName": "木耳",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 145,
@@ -349080,6 +342833,46 @@
      }
     ],
     "3": [
+     {
+      "foodsId": 145,
+      "foodsName": "海螺",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 352,
+      "foodsName": "木耳",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 145,
+      "foodsName": "海螺",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 352,
+      "foodsName": "木耳",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 261,
+      "foodsName": "冬笋",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 145,
       "foodsName": "海螺",
@@ -366544,26 +360337,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 522,
-      "foodsName": "螃蟹",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 320,
-      "foodsName": "豆瓣酱",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 150,
-      "foodsName": "长胡椒",
-      "foodsLevel": 5,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 522,
@@ -366641,6 +360414,26 @@
       "foodsId": 140,
       "foodsName": "橄榄油",
       "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 522,
+      "foodsName": "螃蟹",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 320,
+      "foodsName": "豆瓣酱",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 150,
+      "foodsName": "长胡椒",
+      "foodsLevel": 5,
       "num": 1
      }
     ],
@@ -369755,6 +363548,26 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
+    "1": [
+     {
+      "foodsId": 420,
+      "foodsName": "鱼肚",
+      "foodsLevel": 5,
+      "num": 1
+     },
+     {
+      "foodsId": 262,
+      "foodsName": "鸭肉",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 101,
+      "foodsName": "大米",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
     "2": [
      {
       "foodsId": 420,
@@ -369832,26 +363645,6 @@
       "foodsId": 439,
       "foodsName": "碧梗米",
       "foodsLevel": 5,
-      "num": 1
-     }
-    ],
-    "1": [
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 262,
-      "foodsName": "鸭肉",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 101,
-      "foodsName": "大米",
-      "foodsLevel": 1,
       "num": 1
      }
     ],
@@ -372324,26 +366117,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 393,
-      "foodsName": "石斑",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     },
-     {
-      "foodsId": 462,
-      "foodsName": "神秘龙涎香",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 393,
@@ -372421,6 +366194,26 @@
       "foodsId": 415,
       "foodsName": "章丘大葱",
       "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 393,
+      "foodsName": "石斑",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     },
+     {
+      "foodsId": 462,
+      "foodsName": "神秘龙涎香",
+      "foodsLevel": 7,
       "num": 1
      }
     ],
@@ -379175,46 +372968,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "4": [
-     {
-      "foodsId": 337,
-      "foodsName": "银鱼",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 120,
-      "foodsName": "四季豆",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 457,
-      "foodsName": "神秘九天翅",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 120,
-      "foodsName": "四季豆",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 246,
-      "foodsName": "白糖",
-      "foodsLevel": 1,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 337,
@@ -379260,6 +373013,46 @@
       "foodsId": 337,
       "foodsName": "银鱼",
       "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 120,
+      "foodsName": "四季豆",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "4": [
+     {
+      "foodsId": 337,
+      "foodsName": "银鱼",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 120,
+      "foodsName": "四季豆",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 246,
+      "foodsName": "白糖",
+      "foodsLevel": 1,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 457,
+      "foodsName": "神秘九天翅",
+      "foodsLevel": 7,
       "num": 1
      },
      {
@@ -388141,220 +381934,6 @@
       "foodsName": "神秘龙涎香",
       "foodsLevel": 7,
       "num": 32
-     }
-    ]
-   }
-  },
-  {
-   "id": 18197,
-   "name": "虾蛋海参",
-   "streetId": 12,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 10
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 25
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 517,
-      "foodsName": "虾米",
-      "foodsLevel": 2,
-      "num": 100
-     },
-     {
-      "foodsId": 261,
-      "foodsName": "冬笋",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 435,
-      "foodsName": "帝王蟹",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 435,
-      "foodsName": "帝王蟹",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 427,
-      "foodsName": "人参",
-      "foodsLevel": 5,
-      "num": 100
      }
     ]
    }
@@ -440354,220 +433933,6 @@
    }
   },
   {
-   "id": 18441,
-   "name": "李鸿章杂烩",
-   "streetId": 5,
-   "taste": [
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 260,
-      "foodsName": "鸡肉",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 1
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 10
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 3
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 25
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 8
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 20
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 25
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 390,
-      "foodsName": "海参",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 420,
-      "foodsName": "鱼肚",
-      "foodsLevel": 5,
-      "num": 100
-     },
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 32
-     }
-    ]
-   }
-  },
-  {
    "id": 18442,
    "name": "三河酥鸭",
    "streetId": 5,
@@ -456650,6 +450015,26 @@
       "num": 1
      }
     ],
+    "2": [
+     {
+      "foodsId": 530,
+      "foodsName": "陈皮",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 259,
+      "foodsName": "梨",
+      "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 303,
+      "foodsName": "红枣",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
     "3": [
      {
       "foodsId": 530,
@@ -456691,26 +450076,6 @@
      }
     ],
     "5": [
-     {
-      "foodsId": 530,
-      "foodsName": "陈皮",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 259,
-      "foodsName": "梨",
-      "foodsLevel": 2,
-      "num": 1
-     },
-     {
-      "foodsId": 303,
-      "foodsName": "红枣",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
      {
       "foodsId": 530,
       "foodsName": "陈皮",
@@ -457699,26 +451064,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 464,
-      "foodsName": "神秘雪川雏",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 137,
-      "foodsName": "黄酒",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 143,
-      "foodsName": "八角",
-      "foodsLevel": 4,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 260,
@@ -457784,6 +451129,26 @@
       "foodsId": 260,
       "foodsName": "鸡肉",
       "foodsLevel": 2,
+      "num": 1
+     },
+     {
+      "foodsId": 137,
+      "foodsName": "黄酒",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 143,
+      "foodsName": "八角",
+      "foodsLevel": 4,
+      "num": 1
+     }
+    ],
+    "5": [
+     {
+      "foodsId": 464,
+      "foodsName": "神秘雪川雏",
+      "foodsLevel": 7,
       "num": 1
      },
      {
@@ -459199,26 +452564,6 @@
    "level": null,
    "desc": null,
    "needFoodsByLevel": {
-    "5": [
-     {
-      "foodsId": 503,
-      "foodsName": "牡蛎",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 532,
-      "foodsName": "鸡爪",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 290,
-      "foodsName": "芝麻",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
     "1": [
      {
       "foodsId": 503,
@@ -459280,6 +452625,26 @@
      }
     ],
     "4": [
+     {
+      "foodsId": 503,
+      "foodsName": "牡蛎",
+      "foodsLevel": 4,
+      "num": 1
+     },
+     {
+      "foodsId": 532,
+      "foodsName": "鸡爪",
+      "foodsLevel": 3,
+      "num": 1
+     },
+     {
+      "foodsId": 290,
+      "foodsName": "芝麻",
+      "foodsLevel": 2,
+      "num": 1
+     }
+    ],
+    "5": [
      {
       "foodsId": 503,
       "foodsName": "牡蛎",
@@ -479083,221 +472448,6 @@
      {
       "foodsId": 455,
       "foodsName": "马斯卡彭芝士",
-      "foodsLevel": 6,
-      "num": 25
-     }
-    ]
-   }
-  },
-  {
-   "id": 18622,
-   "name": "葫芦头",
-   "streetId": 10,
-   "taste": [
-    4,
-    5,
-    6
-   ],
-   "coin": null,
-   "level": null,
-   "desc": null,
-   "needFoodsByLevel": {
-    "1": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 354,
-      "foodsName": "猪肚",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "2": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 354,
-      "foodsName": "猪肚",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "3": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 354,
-      "foodsName": "猪肚",
-      "foodsLevel": 3,
-      "num": 1
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "4": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 538,
-      "foodsName": "牛肚",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "5": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 1
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 1
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 1
-     }
-    ],
-    "6": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 10
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 3
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 10
-     }
-    ],
-    "7": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 25
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 8
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 25
-     }
-    ],
-    "8": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 20
-     },
-     {
-      "foodsId": 278,
-      "foodsName": "粉丝",
-      "foodsLevel": 2,
-      "num": 100
-     }
-    ],
-    "9": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 25
-     },
-     {
-      "foodsId": 418,
-      "foodsName": "鱼翅",
-      "foodsLevel": 5,
-      "num": 100
-     }
-    ],
-    "10": [
-     {
-      "foodsId": 142,
-      "foodsName": "肥肠",
-      "foodsLevel": 4,
-      "num": 100
-     },
-     {
-      "foodsId": 459,
-      "foodsName": "神秘黄金肚",
-      "foodsLevel": 7,
-      "num": 32
-     },
-     {
-      "foodsId": 448,
-      "foodsName": "三文鱼",
       "foodsLevel": 6,
       "num": 25
      }
