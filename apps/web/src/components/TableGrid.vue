@@ -18,11 +18,12 @@ function label(x: TableDto): string {
 </script>
 
 <template>
-  <div v-if="floors.length > 1" class="btn-group btn-group-sm mb-2">
+  <!-- 一排独立按钮，楼层多时换行（问题记录 314：按钮组超出手机屏幕） -->
+  <div v-if="floors.length > 1" class="d-flex flex-wrap gap-1 mb-2" data-testid="floor-tabs">
     <button
       v-for="f in floors"
       :key="f"
-      :class="['btn', f === floor ? 'btn-primary' : 'btn-outline-primary']"
+      :class="['btn btn-sm', f === floor ? 'btn-primary' : 'btn-outline-primary']"
       @click="floor = f"
     >
       {{ t.friends.tables.floor(f) }}
