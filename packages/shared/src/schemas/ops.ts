@@ -48,8 +48,13 @@ export interface SuspiciousRedeemRow {
 }
 export const suspiciousQuery = z.object({
   shardId: z.coerce.number().int().positive(),
+  // 不存在的日期（如 2026-02-30）在这里拦下报 400，不再进到查询里报 500（backlog 6B-2）
   day: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .refine((s) => {
+      const d = new Date(`${s}T00:00:00Z`);
+      return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+    }, 'invalid_date')
     .optional(),
 });

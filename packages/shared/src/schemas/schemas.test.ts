@@ -7,6 +7,7 @@ import { rewardItems, sendMailBody } from './mail';
 import { announcementBody } from './announce';
 import { createBatchBody, createSharedCodeBody, redeemBody } from './redeem';
 import { banBody, reportBody, resolveReportBody } from './report';
+import { suspiciousQuery } from './ops';
 
 describe('registerBody', () => {
   const base = { username: '厨神小王', password: 'secret123', email: 'A@B.com', captchaToken: 't' };
@@ -132,5 +133,14 @@ describe('举报（子项目 6B-1）', () => {
     expect(resolveReportBody.safeParse({ note: '辱骂', banDays: 3 }).success).toBe(false);
     expect(resolveReportBody.parse({ note: '辱骂', banDays: 7 }).banDays).toBe(7);
     expect(banBody.parse({ reason: '刷号' }).days).toBeUndefined();
+  });
+});
+
+describe('可疑数据查询（backlog 6B-2）', () => {
+  it('日期必须真实存在：2026-02-30 被拒，2028-02-29 可以', () => {
+    expect(suspiciousQuery.safeParse({ shardId: 1, day: '2026-02-30' }).success).toBe(false);
+    expect(suspiciousQuery.safeParse({ shardId: 1, day: '2026-13-01' }).success).toBe(false);
+    expect(suspiciousQuery.safeParse({ shardId: 1, day: '2028-02-29' }).success).toBe(true);
+    expect(suspiciousQuery.safeParse({ shardId: 1 }).success).toBe(true);
   });
 });

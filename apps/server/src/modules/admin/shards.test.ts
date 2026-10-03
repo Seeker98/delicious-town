@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { seededRng, sequenceRng } from '@dt/shared';
 import { userWithRole } from '../../../test/admin';
 import { testConfig } from '../../../test/config';
@@ -73,6 +73,21 @@ describe('区服数值（HTTP）', () => {
       .where('target', '=', `shard:${shardId}`)
       .executeTakeFirstOrThrow();
     expect(audit).toMatchObject({ actor_account_id: admin.accountId, action: 'shard.override' });
+  });
+
+  it('Redis 广播失败时照常保存成功（backlog 148-4：以前返回 500，管理员重试会再存一版）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const pub = vi.spyOn(ctx.deps.redis, 'publish').mockRejectedValue(new Error('redis down'));
+    try {
+      const r = await call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: mult(10), note: '广播失败', version: 0 },
+      });
+      expect(r.status).toBe(200);
+      expect(r.json.data).toEqual({ version: 1 });
+    } finally {
+      pub.mockRestore();
+    }
   });
 
   it('非法值 400 INVALID_CONFIG 并指出路径；经验倍率 ≤ 0 被拒（Review Focus 4）', async () => {

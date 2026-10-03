@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createAccountRow, createShard } from '../../../test/fixtures';
 import { counters, insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
@@ -124,5 +124,38 @@ describe('全服加成生效（148-4 设计 §6.2）', () => {
     await insertActivity(t, { shardId, spec: boost(2) });
     t.game.shards.invalidate(shardId);
     expect(await exp(shardId)).toBe(base());
+  });
+});
+
+describe('backlog 148-4：广播失败不影响保存', () => {
+  it('Redis 广播失败：照常建成、只建一条、本进程立即生效，记一条警告日志', async () => {
+    const log = { warn: vi.fn() };
+    const svc = createAdminActivity(t.game, log);
+    const shardId = await createShard(t.db);
+    const pub = vi.spyOn(t.game.app.redis, 'publish').mockRejectedValue(new Error('redis down'));
+    try {
+      const now = t.clock.now.getTime();
+      const a = await svc.create(actor, {
+        shardId,
+        kind: 'boost',
+        title: '双倍经验',
+        body: '周末',
+        startsAt: new Date(now - H).toISOString(),
+        endsAt: new Date(now + H).toISOString(),
+        minLevel: 1,
+        def: { items: [{ key: 'exp', factor: 2 }] },
+      });
+      expect(a.id).toBeGreaterThan(0);
+      expect(await exp(shardId)).toBe(base() * 2);
+      expect(log.warn).toHaveBeenCalledTimes(1);
+      const n = await t.db
+        .selectFrom('activity')
+        .select((eb) => eb.fn.countAll<string>().as('n'))
+        .where('shard_id', '=', shardId)
+        .executeTakeFirstOrThrow();
+      expect(Number(n.n)).toBe(1);
+    } finally {
+      pub.mockRestore();
+    }
   });
 });

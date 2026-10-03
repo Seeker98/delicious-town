@@ -174,6 +174,8 @@ export interface ExchangeMakerRow {
 }
 
 export interface ExchangeMakerDto {
+  /** 区服的 tuning.exchange.maker.enabled：关闭时系统不报价，后台不显示买卖价（backlog 156-3） */
+  enabled: boolean;
   foods: ExchangeMakerRow[];
   /** 今天：收购花出（成交额）、卖出收回、卖给系统那一侧的手续费、净回收 = 收回 − 花出 + 手续费 */
   today: { spent: number; earned: number; fee: number; net: number };

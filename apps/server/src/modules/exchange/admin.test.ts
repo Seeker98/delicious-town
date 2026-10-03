@@ -7,6 +7,7 @@ import { makerPrices } from './maker';
 import { refPrice } from './ref';
 import { priceBand } from './rules';
 import { trader, wallet } from './test';
+import { setTuning } from '../../../test/town';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -191,6 +192,7 @@ describe('后台系统做市汇总（156-3 设计 §7）', () => {
     const { bid: b0, ask } = makerPrices(ref, null, band, t.deps.config.tuning.exchange.maker, ref);
     const bid = b0!;
     expect(await admin().maker(shardId)).toEqual({
+      enabled: true,
       foods: [],
       today: { spent: 0, earned: 0, fee: 0, net: 0 },
     });
@@ -200,8 +202,43 @@ describe('后台系统做市汇总（156-3 设计 §7）', () => {
     await svc().place(b, { foodsId: f.id, side: 'buy', price: band.max, qty: 4 });
     const fee = Math.floor(bid * 10 * 0.05);
     expect(await admin().maker(shardId)).toEqual({
+      enabled: true,
       foods: [{ foodsId: f.id, stock: 6, bought: 10, bid, ask }],
       today: { spent: bid * 10, earned: ask * 4, fee, net: ask * 4 - bid * 10 + fee },
     });
+  });
+});
+
+describe('backlog 156-3：系统做市关闭', () => {
+  it('maker.enabled = false 时汇总里写明已关闭', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { exchange: { maker: { enabled: false } } });
+    expect((await admin().maker(shardId)).enabled).toBe(false);
+  });
+});
+
+describe('backlog 156-2：冻结、解冻的边界', () => {
+  it('冻结不存在的店报 404 NOT_FOUND，不报 500', async () => {
+    await expect(admin().freeze(actor, { restId: 99_999_999, reason: '测试' })).rejects.toMatchObject({
+      status: 404,
+      code: 'NOT_FOUND',
+    });
+  });
+
+  it('解冻没冻结的店不写审计；解冻冻结中的店写审计', async () => {
+    const shardId = await createShard(t.db);
+    const s = await trader(t, { shardId, coin: 0 });
+    const audits = () =>
+      t.db
+        .selectFrom('audit_log')
+        .select('action')
+        .where('target', '=', `rest:${s.restaurantId}`)
+        .where('action', '=', 'exchange.unfreeze')
+        .execute();
+    await admin().unfreeze(actor, { restId: s.restaurantId });
+    expect(await audits()).toHaveLength(0);
+    await admin().freeze(actor, { restId: s.restaurantId, reason: '测试' });
+    await admin().unfreeze(actor, { restId: s.restaurantId });
+    expect(await audits()).toHaveLength(1);
   });
 });

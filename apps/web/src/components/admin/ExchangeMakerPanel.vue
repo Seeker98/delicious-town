@@ -32,6 +32,9 @@ onMounted(() => void load());
 <template>
   <h6 class="dt-section mt-3">系统做市</h6>
   <template v-if="data">
+    <div v-if="!data.enabled" class="alert alert-secondary py-1 small" data-testid="exm-off">
+      本区服的系统做市已关闭（区服数值 tuning.exchange.maker.enabled），系统不收购也不卖出
+    </div>
     <div class="small mb-2" data-testid="exm-today">
       今天：收购花出 {{ formatNum(data.today.spent) }}，卖出收回 {{ formatNum(data.today.earned) }}，手续费
       {{ formatNum(data.today.fee) }}，净回收 {{ formatNum(data.today.net) }}
@@ -43,8 +46,10 @@ onMounted(() => void load());
           <th>食材</th>
           <th class="text-end">库存</th>
           <th class="text-end">今天已收</th>
-          <th class="text-end">系统买价</th>
-          <th class="text-end">系统卖价</th>
+          <template v-if="data.enabled">
+            <th class="text-end">系统买价</th>
+            <th class="text-end">系统卖价</th>
+          </template>
         </tr>
       </thead>
       <tbody>
@@ -52,8 +57,10 @@ onMounted(() => void load());
           <td>{{ catalog.foodName(r.foodsId) }}</td>
           <td class="text-end">{{ formatNum(r.stock) }}</td>
           <td class="text-end">{{ formatNum(r.bought) }}</td>
-          <td class="text-end">{{ r.bid === null ? '不收' : formatNum(r.bid) }}</td>
-          <td class="text-end">{{ formatNum(r.ask) }}</td>
+          <template v-if="data.enabled">
+            <td class="text-end">{{ r.bid === null ? '不收' : formatNum(r.bid) }}</td>
+            <td class="text-end">{{ formatNum(r.ask) }}</td>
+          </template>
         </tr>
       </tbody>
     </table>

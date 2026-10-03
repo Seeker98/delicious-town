@@ -8,6 +8,7 @@ import {
   type ReportStatus,
 } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
@@ -71,7 +72,12 @@ const currentText = computed(() => {
   return d.current === d.snapshot ? d.current : `（已改）${d.current}`;
 });
 
-async function done(fn: () => Promise<unknown>, ok: string, fail: string) {
+async function done(
+  fn: () => Promise<unknown>,
+  ok: string,
+  fail: string,
+  explain?: (e: unknown) => string | null,
+) {
   if (busy.value) return;
   busy.value = true;
   try {
@@ -80,10 +86,18 @@ async function done(fn: () => Promise<unknown>, ok: string, fail: string) {
     open.value = null;
     await load();
   } catch (e) {
-    toast.push(errorMessage(e, fail), 'danger');
+    toast.push(explain?.(e) ?? errorMessage(e, fail), 'danger');
   } finally {
     busy.value = false;
   }
+}
+/** 改名撞名（backlog 6B-1）：没填新名时用的是默认名"餐厅{id}"，要告诉管理员是哪个名字、该怎么办 */
+function nameTaken(e: unknown, typed: boolean): string | null {
+  if (!(e instanceof ApiError) || e.code !== 'RESTAURANT_NAME_TAKEN' || typeof e.params.name !== 'string')
+    return null;
+  return typed
+    ? `店名「${e.params.name}」已被别的餐厅占用，换一个`
+    : `店名「${e.params.name}」已被别的餐厅占用，请在"新店名"里填一个`;
 }
 
 function resolve() {
@@ -102,6 +116,7 @@ function resolve() {
       }),
     '已处理',
     '处理失败',
+    (e) => nameTaken(e, name !== ''),
   );
 }
 
@@ -134,7 +149,7 @@ function reject() {
         <th>内容</th>
         <th>被举报</th>
         <th>人数</th>
-        <th>{{ status === 'open' ? '最近举报' : '处理' }}</th>
+        <th>{{ status === 'open' ? '举报时间（最早 ~ 最近）' : '处理' }}</th>
       </tr>
     </thead>
     <tbody>
@@ -145,7 +160,9 @@ function reject() {
           <td>{{ c.targetRestName }}（{{ c.targetUsername }}）</td>
           <td>{{ c.reporterCount }}</td>
           <td>
-            <template v-if="status === 'open'">{{ when(c.updatedAt) }}</template>
+            <template v-if="status === 'open'">{{
+              c.createdAt === c.updatedAt ? when(c.updatedAt) : `${when(c.createdAt)} ~ ${when(c.updatedAt)}`
+            }}</template>
             <template v-else>
               {{ c.handledBy }} · {{ ACTION[c.action ?? 'none']
               }}{{ c.banDays === null ? '' : c.banDays === 0 ? ' · 永久封号' : ` · 封 ${c.banDays} 天` }}

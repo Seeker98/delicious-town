@@ -158,7 +158,7 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       return ok(await mails.revoke(a, id(req)));
     });
 
-    const launch = createLaunchCheck(game);
+    const launch = createLaunchCheck(game, r.log);
     r.get('/launch-check', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await launch.check());
@@ -279,7 +279,7 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       return ok(await codes.exportBatch(a, id(req)));
     });
 
-    const activities = createAdminActivity(game);
+    const activities = createAdminActivity(game, r.log);
     r.get('/activities', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await activities.list());
@@ -344,7 +344,7 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       return ok(await auditPage(db, parse(auditQuery, req.query)));
     });
 
-    const shards = createAdminShards(game);
+    const shards = createAdminShards(game, r.log);
     r.get('/shards', async (req) => {
       await requireRole(db, req, 'mod');
       return ok(await shards.list());
