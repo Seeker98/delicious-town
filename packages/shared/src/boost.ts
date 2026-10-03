@@ -16,7 +16,8 @@ export const BOOSTS = {
   exp: { label: '经营经验', paths: ['settlement.expMultiplier'], min: 1, max: 5 },
   coin: { label: '经营银币', paths: ['settlement.coinMultiplier'], min: 1, max: 3 },
   marketPrice: { label: '菜场价格', paths: ['market.priceFactor'], min: 0.5, max: 1 },
-  strength: { label: '体力恢复', paths: ['strength.regen', 'strength.luckyRegen'], min: 1, max: 3 },
+  // 最小 1.5：普通恢复量是 1，更小的倍数四舍五入后不变，卡片却写着加成（backlog 148-4）
+  strength: { label: '体力恢复', paths: ['strength.regen', 'strength.luckyRegen'], min: 1.5, max: 3 },
   dtTicket: { label: '德拓券掉率', paths: ['settlement.dtTicketBaseRate'], min: 1, max: 5 },
   equipStress: { label: '强化成功率', paths: ['equip.baseRate'], min: 1, max: 1.25, cap: 1 },
   gemLevel: { label: '宝石升级成功率', paths: ['equip.gemBaseRate'], min: 1, max: 1.05, cap: 1 },

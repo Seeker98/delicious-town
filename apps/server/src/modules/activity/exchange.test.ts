@@ -4,7 +4,7 @@ import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { counters, insertActivity } from '../../../test/activity';
-import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 
 /** 可控随机数：rolls 里有值就按顺序取，取完一律 0.99（不命中） */
 const rolls: number[] = [];
@@ -198,5 +198,24 @@ describe('问题记录 224：掉落时有提示', () => {
     });
     rolls.push(0.9, 0.9);
     expect((await events('market.buy')).filter((e) => e.kind === 'activityCurrency')).toEqual([]);
+  });
+});
+
+describe('backlog 148-2：仓库满了也能兑换纪念品（走兑换流程）', () => {
+  it('仓库格子已满时兑换纪念品照常到账', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, patch: { store_num: 1 }, goods: { 85: 1 } });
+    const id = await insertActivity(t, {
+      shardId,
+      spec: spec({
+        shop: [{ cost: [{ currency: 0, num: 1 }], award: { goods: [{ id: 90009, num: 1 }] }, limit: 1 }],
+      }),
+    });
+    await t.db
+      .insertInto('activity_counter')
+      .values({ activity_id: id, rest_id: r.restaurantId, key: 'm0', count: 1 })
+      .execute();
+    await t.game.activity.exchange(r, id, 0, 1);
+    expect(await goodsNum(t, r.restaurantId, 90009)).toBe(1);
   });
 });

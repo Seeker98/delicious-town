@@ -70,6 +70,8 @@ function endNote(a: ActivityDto): string {
   const x = t.value.activity;
   if (a.kind === 'exchange')
     return exchangeOpen(a) ? x.exchangePeriod(timeLeft(a.exchangeUntil!)) : x.exchangeOver;
+  // 全服加成没有奖励，不提邮箱（backlog 148-4）
+  if (a.kind === 'boost') return x.endedShort;
   return a.state === 'settling' ? x.settling : x.ended;
 }
 const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g) => g.key === 'signin');

@@ -97,7 +97,16 @@ export default {
     guardianRare: '守护兽稀有掉落',
     sellRate: '商店卖出价',
   } as Record<string, string>,
-  rewards: { locked: '未达成', page: '已领', mail: '已邮寄', missed: '未达成', claim: '领取' },
+  /** pending 结算中、还没寄出；premiumLocked 积分已够但战令没解锁（backlog 148-1） */
+  rewards: {
+    locked: '未达成',
+    page: '已领',
+    mail: '已邮寄',
+    pending: '待邮寄',
+    missed: '未达成',
+    claim: '领取',
+    premiumLocked: '解锁后可领',
+  },
   goalLine: (action: string, n: number) => `${action} ${n} 次`,
   grid: {
     full: '全部完成',

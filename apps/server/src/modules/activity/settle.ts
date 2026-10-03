@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import type { ActivitySpec } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
@@ -11,9 +12,14 @@ import { loadProgress } from './service';
 const MAIL_BODY = '活动结束时你还有这些奖励没有领取，现在通过邮件补发给你。';
 const RANK_BODY = '感谢你为全服合力做出的贡献，这是你的名次奖励。';
 
+/** 一家店补发出错的次数上限（每分钟一次，约半小时）：到了就放弃这家，不再挡住整个区服（backlog 148-1） */
+export const SETTLE_MAX_FAILS = 30;
+
 /**
  * 补发一个区服里已经结束的活动（设计 §6）：每家店一个锁店事务，领奖记录 via='mail' 防重复；
- * 有店出错就不写 activity_settle，下一分钟重试
+ * 有店出错就不写 activity_settle，下一分钟重试；同一家店出错满 SETTLE_MAX_FAILS 次就放弃它，
+ * 记在 activity_settle_fail 里（要补救时删掉这一行和 activity_settle 那一行，下一分钟会重跑，领奖记录防重复）。
+ * 兑换活动和全服加成没有要补发的奖励，直接写完成记录；一个活动出错不影响同区服的其他活动
  */
 export async function settleActivities(
   d: GameDeps,
@@ -39,28 +45,72 @@ export async function settleActivities(
       ),
     )
     .execute();
-  let mails = 0;
-  let failed = 0;
-  for (const a of due) {
+  /** 记一次出错，返回这家店累计出错次数 */
+  async function recordFail(activityId: number, restId: number, err: unknown): Promise<number> {
+    const msg = (err instanceof Error ? err.message : String(err)).slice(0, 500);
+    const r = await d.db
+      .insertInto('activity_settle_fail')
+      .values({ activity_id: activityId, rest_id: restId, fails: 1, last_error: msg, updated_at: now })
+      .onConflict((oc) =>
+        oc.columns(['activity_id', 'rest_id']).doUpdateSet({
+          fails: sql<number>`activity_settle_fail.fails + 1`,
+          last_error: msg,
+          updated_at: now,
+        }),
+      )
+      .returning('fails')
+      .executeTakeFirstOrThrow();
+    return r.fails;
+  }
+
+  async function settleOne(a: (typeof due)[number]): Promise<{ mails: number; failed: number }> {
+    let mails = 0;
+    let failed = 0;
     const spec = { kind: a.kind, def: a.def } as ActivitySpec;
+    // 放弃了的店：出错满上限，不再重试，也不挡住完成记录
+    const gaveUp = new Set(
+      (
+        await d.db
+          .selectFrom('activity_settle_fail')
+          .select('rest_id')
+          .where('activity_id', '=', a.id)
+          .where('fails', '>=', SETTLE_MAX_FAILS)
+          .execute()
+      ).map((x) => x.rest_id),
+    );
+    /** 处理一家店出错：没到上限就让这一轮不写完成记录（下一分钟重试）；到上限就放弃 */
+    let ok = true;
+    const onFail = async (restId: number, err: unknown, what: string) => {
+      failed++;
+      log.error({ err, activityId: a.id, restId }, what);
+      const n = await recordFail(a.id, restId, err);
+      if (n >= SETTLE_MAX_FAILS) {
+        gaveUp.add(restId);
+        log.error({ activityId: a.id, restId, fails: n }, 'activity settle gave up on restaurant');
+      } else ok = false;
+    };
     // 全服合力：本区服总分在结束后不会再变，先算一次（148-3 设计 §7）
     const pool = spec.kind === 'coop' ? await poolOf(d.db, a.id, shardId) : undefined;
-    const rests = await d.db
-      .selectFrom('activity_counter as c')
-      .innerJoin('restaurant as r', 'r.id', 'c.rest_id')
-      .select('c.rest_id')
-      .where('c.activity_id', '=', a.id)
-      .where('r.shard_id', '=', shardId)
-      .union(
-        d.db
-          .selectFrom('activity_pass as p')
-          .innerJoin('restaurant as r', 'r.id', 'p.rest_id')
-          .select('p.rest_id')
-          .where('p.activity_id', '=', a.id)
-          .where('r.shard_id', '=', shardId),
-      )
-      .execute();
-    let ok = true;
+    // 兑换活动和全服加成没有要补发的奖励，不逐店空跑（backlog 148-2）
+    const noRewards = spec.kind === 'exchange' || spec.kind === 'boost';
+    const all = noRewards
+      ? []
+      : await d.db
+          .selectFrom('activity_counter as c')
+          .innerJoin('restaurant as r', 'r.id', 'c.rest_id')
+          .select('c.rest_id')
+          .where('c.activity_id', '=', a.id)
+          .where('r.shard_id', '=', shardId)
+          .union(
+            d.db
+              .selectFrom('activity_pass as p')
+              .innerJoin('restaurant as r', 'r.id', 'p.rest_id')
+              .select('p.rest_id')
+              .where('p.activity_id', '=', a.id)
+              .where('r.shard_id', '=', shardId),
+          )
+          .execute();
+    const rests = all.filter((x) => !gaveUp.has(x.rest_id));
     for (const { rest_id } of rests) {
       try {
         const sent = await runSystemOp(d, shardId, rest_id, { source: 'activity', now }, async (o) => {
@@ -96,18 +146,19 @@ export async function settleActivities(
         });
         if (sent) mails++;
       } catch (err) {
-        ok = false;
-        failed++;
-        log.error({ err, activityId: a.id, restId: rest_id }, 'activity settle failed');
+        await onFail(rest_id, err, 'activity settle failed');
       }
     }
     // 贡献榜：名次段内的店逐个发邮件，领奖记录 r<段> 防重复；段边界并列的全部发
     let top: RankedRow[] = [];
     if (ok && spec.kind === 'coop') {
       const ranked = await rankedOf(d.db, a.id, shardId);
-      top = ranked.slice(0, 3);
+      // 新闻按名次列前 3 名，并列的一起列出（backlog 148-3）；并列太多时最多 10 家，免得新闻过长
+      top = ranked.filter((x) => x.rank <= 3).slice(0, 10);
       for (const [s, seg] of spec.def.ranks.entries()) {
-        for (const row of ranked.filter((x) => x.rank >= seg.from && x.rank <= seg.to)) {
+        for (const row of ranked.filter(
+          (x) => x.rank >= seg.from && x.rank <= seg.to && !gaveUp.has(x.restId),
+        )) {
           try {
             const sent = await runSystemOp(d, shardId, row.restId, { source: 'activity', now }, async (o) => {
               const w = await o.tx
@@ -133,14 +184,13 @@ export async function settleActivities(
             });
             if (sent) mails++;
           } catch (err) {
-            ok = false;
-            failed++;
-            log.error({ err, activityId: a.id, restId: row.restId }, 'activity rank settle failed');
+            await onFail(row.restId, err, 'activity rank settle failed');
           }
         }
       }
     }
-    // 结算完成和贡献榜新闻同一个事务：只有这一轮真的写进了结算记录才发新闻，重跑不重复
+    // 结算完成和贡献榜新闻同一个事务：只有这一轮真的写进了结算记录才发新闻；
+    // 手动删掉结算记录重跑时，按新闻里的活动 id 查过已经发过就不再发（backlog 148-3）
     if (ok)
       await d.db.transaction().execute(async (trx) => {
         const ins = await trx
@@ -149,13 +199,24 @@ export async function settleActivities(
           .onConflict((oc) => oc.doNothing())
           .returning('activity_id')
           .executeTakeFirst();
-        if (ins && top.length > 0)
+        const posted =
+          ins &&
+          top.length > 0 &&
+          (await trx
+            .selectFrom('news')
+            .select('id')
+            .where('shard_id', '=', shardId)
+            .where('type', '=', 'activity.coopRank')
+            .where(sql<string>`params->>'activityId'`, '=', String(a.id))
+            .executeTakeFirst());
+        if (ins && top.length > 0 && !posted)
           await postNews(
             trx,
             {
               shardId,
               type: 'activity.coopRank',
               params: {
+                activityId: a.id,
                 title: a.title,
                 top: top.map((r) => ({ rank: r.rank, name: r.name, points: r.points })),
               },
@@ -163,6 +224,20 @@ export async function settleActivities(
             now,
           );
       });
+    return { mails, failed };
+  }
+
+  let mails = 0;
+  let failed = 0;
+  for (const a of due) {
+    try {
+      const r = await settleOne(a);
+      mails += r.mails;
+      failed += r.failed;
+    } catch (err) {
+      failed++;
+      log.error({ err, activityId: a.id, shardId }, 'activity settle failed');
+    }
   }
   return { activities: due.length, mails, failed };
 }

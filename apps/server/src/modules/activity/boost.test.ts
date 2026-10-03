@@ -35,13 +35,17 @@ describe('全服加成生效（148-4 设计 §6.2）', () => {
     });
     t.game.shards.invalidate(shardId);
     expect(await exp(shardId)).toBe(base());
-    t.clock.set(new Date(now + H));
-    t.game.shards.invalidate(shardId);
-    expect(await exp(shardId)).toBe(base() * 2);
-    t.clock.set(new Date(now + 2 * H));
-    t.game.shards.invalidate(shardId);
-    expect(await exp(shardId)).toBe(base());
-    t.clock.set(new Date(now));
+    // 断言失败时也要把时钟拨回去，否则后面的用例都在错的时间上跑（backlog 148-4）
+    try {
+      t.clock.set(new Date(now + H));
+      t.game.shards.invalidate(shardId);
+      expect(await exp(shardId)).toBe(base() * 2);
+      t.clock.set(new Date(now + 2 * H));
+      t.game.shards.invalidate(shardId);
+      expect(await exp(shardId)).toBe(base());
+    } finally {
+      t.clock.set(new Date(now));
+    }
   });
 
   it('区服 A 的加成不影响区服 B；全服加成两边都生效', async () => {
@@ -157,5 +161,18 @@ describe('backlog 148-4：广播失败不影响保存', () => {
     } finally {
       pub.mockRestore();
     }
+  });
+});
+
+describe('backlog 148-4：首页横幅计数', () => {
+  it('进行中的全服加成算进首页横幅的"进行中"数，但没有可领的奖励', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    // 比较前后差值：共用测试库里别的文件可能有此刻生效的全服活动
+    const before = await t.game.activity.summary(r);
+    await insertActivity(t, { shardId, spec: boost() });
+    const after = await t.game.activity.summary(r);
+    expect(after.running - before.running).toBe(1);
+    expect(after.claimable).toBe(before.claimable);
   });
 });

@@ -36,6 +36,7 @@ import * as m0034 from './0034_kuji_theme';
 import * as m0035 from './0035_server_secret';
 import * as m0036 from './0036_account_lang';
 import * as m0037 from './0037_i18n_server_text';
+import * as m0038 from './0038_activity_settle_fail';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -76,4 +77,5 @@ export const migrations: Record<string, Migration> = {
   '0035_server_secret': m0035,
   '0036_account_lang': m0036,
   '0037_i18n_server_text': m0037,
+  '0038_activity_settle_fail': m0038,
 };

@@ -11,6 +11,8 @@ const props = defineProps<{
   reward: ActivityRewardDto;
   state: ActivityState;
   busy: boolean;
+  /** 战令进阶档：积分已够但没解锁，显示锁（backlog 148-1） */
+  premiumLocked?: boolean;
 }>();
 defineEmits<{ claim: [key: string] }>();
 const catalog = useCatalogStore();
@@ -31,8 +33,14 @@ const status = () => rewardStatus(props.reward, props.state);
     >
       {{ t.activity.rewards.claim }}
     </button>
+    <span
+      v-else-if="premiumLocked && !reward.claimed"
+      class="badge text-bg-light"
+      :data-testid="`premium-lock-${activityId}-${reward.key.slice(1)}`"
+      ><i class="bi bi-lock"></i> {{ t.activity.rewards.premiumLocked }}</span
+    >
     <span v-else class="badge text-bg-light">{{
-      t.activity.rewards[status() as 'locked' | 'page' | 'mail' | 'missed']
+      t.activity.rewards[status() as 'locked' | 'page' | 'mail' | 'pending' | 'missed']
     }}</span>
   </span>
 </template>

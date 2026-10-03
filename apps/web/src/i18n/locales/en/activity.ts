@@ -94,7 +94,15 @@ const activity: Messages['activity'] = {
     guardianRare: 'Guardian rare drops',
     sellRate: 'Shop sell price',
   },
-  rewards: { locked: 'Not reached', page: 'Claimed', mail: 'Mailed', missed: 'Not reached', claim: 'Claim' },
+  rewards: {
+    locked: 'Not reached',
+    page: 'Claimed',
+    mail: 'Mailed',
+    pending: 'To be mailed',
+    missed: 'Not reached',
+    claim: 'Claim',
+    premiumLocked: 'Unlock to claim',
+  },
   goalLine: (action, n) => `${action} ×${n}`,
   grid: {
     full: 'All complete',
