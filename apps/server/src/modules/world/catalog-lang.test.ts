@@ -29,6 +29,9 @@ const empty = (): I18nTable => ({
   devices: {},
   suits: {},
   mysterious: {},
+  doors: {},
+  avatars: {},
+  icons: {},
 });
 
 describe('道具目录按语言（问题记录 272）', () => {
@@ -46,6 +49,42 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(c.mysterious![0]!.name).toBe('Buddha Jumps Over the Wall');
     // 不改原对象
     expect(base.goods[0]!.name).toBe('体力卡');
+  });
+
+  it('第 8 批：天气说明、菜系名、套装各档说明、门、头像、个性图标也按语言（问题记录 272）', () => {
+    const b = {
+      ...base,
+      weather: [{ id: 1, name: '晴', note: '经营: 上座率+3%' }],
+      suits: [{ id: 9, name: '阿卡玛的神谕', maxNum: 5, tiers: [{ need: 4, desc: '厨艺+8%' }] }],
+      looks: {
+        doors: [{ id: 1, name: '红漆门', coin: 20000 }],
+        avatars: [{ id: 2, name: '大厨' }],
+        icons: [{ key: 'founder', title: '开服元老', desc: '开服第一周加入小镇' }],
+      },
+    } as unknown as CatalogDto;
+    const t = empty();
+    t.weather['1'] = { name: 'Sunny', note: 'Business: occupancy +3%' };
+    t.streets['1'] = { name: 'Newbie Street', desc: 'x', cookName: 'Home cooking' };
+    t.suits['9'] = { name: "Akatma's Oracle", tiers: ['Cooking +8%'] };
+    t.doors['1'] = { name: 'Red Lacquer Door' };
+    t.avatars['2'] = { name: 'Head Chef' };
+    t.icons.founder = { title: 'Founding Member', desc: 'Joined town in the first week' };
+    const c = localizeCatalog(b, t, 'en');
+    expect(c.weather[0]).toEqual({ id: 1, name: 'Sunny', note: 'Business: occupancy +3%' });
+    expect(c.streets[0]).toEqual({ id: 1, name: 'Newbie Street', cookName: 'Home cooking' });
+    expect(c.suits![0]).toEqual({
+      id: 9,
+      name: "Akatma's Oracle",
+      maxNum: 5,
+      tiers: [{ need: 4, desc: 'Cooking +8%' }],
+    });
+    expect(c.looks!.doors[0]).toEqual({ id: 1, name: 'Red Lacquer Door', coin: 20000 });
+    expect(c.looks!.avatars[0]!.name).toBe('Head Chef');
+    expect(c.looks!.icons[0]).toEqual({
+      key: 'founder',
+      title: 'Founding Member',
+      desc: 'Joined town in the first week',
+    });
   });
 
   it('简中原样返回', () => {

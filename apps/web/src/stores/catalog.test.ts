@@ -69,3 +69,29 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(c.goodsName(85)).toBe('Stamina Card');
   });
 });
+
+describe('第 8 批：目录里的天气说明、个性图标，查不到时用服务端给的名字（问题记录 272）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('天气名和说明、个性图标、街道名按目录取；目录里没有时用给定的名字', () => {
+    const c = useCatalogStore();
+    c.apply({
+      ...cat('x'),
+      weather: [{ id: 1, name: 'Sunny', note: 'Business: occupancy +3%' }],
+      streets: [{ id: 2, name: 'Guangdong Street', cookName: 'Cantonese cuisine' }],
+      looks: {
+        doors: [],
+        avatars: [],
+        icons: [{ key: 'founder', title: 'Founding Member', desc: 'First week' }],
+      },
+    } as never);
+    expect(c.weatherName(1)).toBe('Sunny');
+    expect(c.weatherName(9, '暴雨')).toBe('暴雨');
+    expect(c.weatherNote(1)).toBe('Business: occupancy +3%');
+    expect(c.weatherNote(9)).toBeUndefined();
+    expect(c.streetName(2)).toBe('Guangdong Street');
+    expect(c.streetName(5, '湖南街')).toBe('湖南街');
+    expect(c.icon('founder')).toEqual({ key: 'founder', title: 'Founding Member', desc: 'First week' });
+    expect(c.icon('nope')).toBeUndefined();
+  });
+});

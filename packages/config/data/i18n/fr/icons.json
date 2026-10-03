@@ -1,0 +1,34 @@
+{
+  "founder": {
+    "title": "Membre fondateur",
+    "desc": "A rejoint la ville la première semaine"
+  },
+  "helper": {
+    "title": "Main secourable",
+    "desc": "A aidé la ville à trouver un problème"
+  },
+  "tester": {
+    "title": "Testeur pionnier",
+    "desc": "A participé à la bêta fermée"
+  },
+  "champion": {
+    "title": "Champion",
+    "desc": "A remporté un événement de la ville"
+  },
+  "artist": {
+    "title": "Artiste de la ville",
+    "desc": "A dessiné pour la ville"
+  },
+  "chef": {
+    "title": "Chef d'or",
+    "desc": "Un talent culinaire hors pair"
+  },
+  "kuji_a": {
+    "title": "Gagnant du Prix A de l'Ichiban Kuji",
+    "desc": "A gagné le Prix A à l'Ichiban Kuji"
+  },
+  "kuji_last": {
+    "title": "Gagnant du Dernier Prix de l'Ichiban Kuji",
+    "desc": "A tiré le dernier ticket d'un tirage Ichiban Kuji"
+  }
+}

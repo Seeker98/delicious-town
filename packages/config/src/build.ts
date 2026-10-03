@@ -912,7 +912,18 @@ export function buildBundle(src: SourceData): BuildResult {
   if (errors.length > 0) return { bundle: null, errors };
 
   const i18n = buildI18n(
-    { goods, foods, weather, streets, devices, suits, mysterious: mysteriousCookbooks },
+    {
+      goods,
+      foods,
+      weather,
+      streets,
+      devices,
+      suits: suits.map((s) => ({ id: s.id, name: s.name, tiers: s.tiers.map((x) => x.desc) })),
+      mysterious: mysteriousCookbooks,
+      doors: looks.doors,
+      avatars: looks.avatars,
+      icons: looks.icons.map((x) => ({ id: x.key, title: x.title, desc: x.desc })),
+    },
     src,
     errors,
   );

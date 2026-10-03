@@ -1,1 +1,29 @@
-{}
+{
+  "1": {
+    "name": "Promo Poster"
+  },
+  "2": {
+    "name": "Trophy"
+  },
+  "3": {
+    "name": "Oil Saver"
+  },
+  "4": {
+    "name": "Mousetrap"
+  },
+  "5": {
+    "name": "Roach Killer"
+  },
+  "6": {
+    "name": "Plaque"
+  },
+  "7": {
+    "name": "Plaque*"
+  },
+  "8": {
+    "name": "Plaque**"
+  },
+  "9": {
+    "name": "Plaque***"
+  }
+}

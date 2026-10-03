@@ -1,0 +1,38 @@
+{
+  "1": {
+    "name": "Petit cuisinier"
+  },
+  "2": {
+    "name": "Chef"
+  },
+  "3": {
+    "name": "Serveur"
+  },
+  "4": {
+    "name": "Acheteur"
+  },
+  "5": {
+    "name": "Gourmet"
+  },
+  "6": {
+    "name": "Pâtissier"
+  },
+  "7": {
+    "name": "Boulanger"
+  },
+  "8": {
+    "name": "Maître du grill"
+  },
+  "9": {
+    "name": "Barman"
+  },
+  "10": {
+    "name": "Pêcheur"
+  },
+  "11": {
+    "name": "Jardinier"
+  },
+  "12": {
+    "name": "M. Krab"
+  }
+}

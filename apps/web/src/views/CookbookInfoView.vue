@@ -43,7 +43,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.
     <div class="small text-muted mb-2">
       {{
         t.cookbook.info(
-          d.streetName,
+          catalog.streetName(d.streetId, d.streetName),
           d.level,
           d.taste.map((x) => TASTE_NAMES[x]).join(t.events.sep),
           formatNum(d.coin),

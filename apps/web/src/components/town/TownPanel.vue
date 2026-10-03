@@ -282,7 +282,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
   <h6 class="dt-section">{{ t.town.hammer }}</h6>
   <div class="dt-card small">
     <div class="mb-1">
-      {{ t.town.weatherNow }}<b>{{ data.weather.name }}</b>
+      {{ t.town.weatherNow }}<b>{{ catalog.weatherName(data.weather.id, data.weather.name) }}</b>
       <div class="dt-meta">
         {{ t.town.hammerHint(formatNum(data.hammer.coin), data.hammer.diamond) }}
       </div>

@@ -1,1 +1,941 @@
-{}
+{
+  "101": {
+    "name": "Arroz"
+  },
+  "102": {
+    "name": "Pimiento verde"
+  },
+  "103": {
+    "name": "Melón amargo"
+  },
+  "104": {
+    "name": "Cebollino chino"
+  },
+  "120": {
+    "name": "Judías verdes"
+  },
+  "121": {
+    "name": "Kétchup"
+  },
+  "122": {
+    "name": "Maíz"
+  },
+  "131": {
+    "name": "Alitas de pollo"
+  },
+  "132": {
+    "name": "Solomillo de cerdo"
+  },
+  "133": {
+    "name": "Dorada"
+  },
+  "134": {
+    "name": "Boniato"
+  },
+  "135": {
+    "name": "Carpín"
+  },
+  "136": {
+    "name": "Panceta"
+  },
+  "137": {
+    "name": "Vino amarillo"
+  },
+  "138": {
+    "name": "Ñame chino"
+  },
+  "139": {
+    "name": "Huevo centenario"
+  },
+  "140": {
+    "name": "Aceite de oliva"
+  },
+  "142": {
+    "name": "Tripas de cerdo"
+  },
+  "143": {
+    "name": "Anís estrellado"
+  },
+  "144": {
+    "name": "Riñón de cerdo"
+  },
+  "145": {
+    "name": "Caracol de mar"
+  },
+  "150": {
+    "name": "Pimienta larga"
+  },
+  "151": {
+    "name": "Nueces de ginkgo"
+  },
+  "152": {
+    "name": "Sepia"
+  },
+  "237": {
+    "name": "Vinagre"
+  },
+  "238": {
+    "name": "Col china"
+  },
+  "239": {
+    "name": "Cerdo"
+  },
+  "240": {
+    "name": "Pepino"
+  },
+  "241": {
+    "name": "Perilla"
+  },
+  "242": {
+    "name": "Huevo"
+  },
+  "243": {
+    "name": "Tomate"
+  },
+  "244": {
+    "name": "Berenjena"
+  },
+  "245": {
+    "name": "Arroz glutinoso"
+  },
+  "246": {
+    "name": "Azúcar blanco"
+  },
+  "247": {
+    "name": "Ajo"
+  },
+  "248": {
+    "name": "Chile"
+  },
+  "249": {
+    "name": "Cebolleta china"
+  },
+  "250": {
+    "name": "Cebolleta"
+  },
+  "251": {
+    "name": "Jengibre"
+  },
+  "252": {
+    "name": "Harina"
+  },
+  "253": {
+    "name": "Lágrimas de Job"
+  },
+  "254": {
+    "name": "Arroz integral"
+  },
+  "255": {
+    "name": "Patata"
+  },
+  "256": {
+    "name": "Lechuga"
+  },
+  "257": {
+    "name": "Judía jacinto"
+  },
+  "258": {
+    "name": "Chile seco"
+  },
+  "259": {
+    "name": "Pera"
+  },
+  "260": {
+    "name": "Pollo"
+  },
+  "261": {
+    "name": "Brotes de bambú de invierno"
+  },
+  "262": {
+    "name": "Pato"
+  },
+  "263": {
+    "name": "Cilantro"
+  },
+  "264": {
+    "name": "Tofu"
+  },
+  "265": {
+    "name": "Carpa herbívora"
+  },
+  "267": {
+    "name": "Choy sum"
+  },
+  "268": {
+    "name": "Corvina amarilla"
+  },
+  "269": {
+    "name": "Guisantes"
+  },
+  "270": {
+    "name": "Vino de arroz"
+  },
+  "271": {
+    "name": "Frijoles negros fermentados"
+  },
+  "272": {
+    "name": "Tofu fermentado"
+  },
+  "273": {
+    "name": "Carpa"
+  },
+  "274": {
+    "name": "Azúcar cande"
+  },
+  "275": {
+    "name": "Lías de arroz fermentado"
+  },
+  "276": {
+    "name": "Brotes de ajo"
+  },
+  "277": {
+    "name": "Brotes de soja"
+  },
+  "278": {
+    "name": "Fideos de cristal"
+  },
+  "279": {
+    "name": "Apio"
+  },
+  "280": {
+    "name": "Hojas de té"
+  },
+  "281": {
+    "name": "Castañas"
+  },
+  "282": {
+    "name": "Raíz de loto"
+  },
+  "283": {
+    "name": "Espinacas"
+  },
+  "284": {
+    "name": "Cebolla"
+  },
+  "285": {
+    "name": "Calabaza china"
+  },
+  "286": {
+    "name": "Taro"
+  },
+  "287": {
+    "name": "Longan"
+  },
+  "288": {
+    "name": "Leche"
+  },
+  "289": {
+    "name": "Carpa plateada"
+  },
+  "290": {
+    "name": "Sésamo"
+  },
+  "291": {
+    "name": "Calabaza"
+  },
+  "292": {
+    "name": "Coliflor"
+  },
+  "293": {
+    "name": "Cacahuetes"
+  },
+  "294": {
+    "name": "Alga kombu"
+  },
+  "295": {
+    "name": "Espinaca de agua"
+  },
+  "296": {
+    "name": "Sangre de pato"
+  },
+  "297": {
+    "name": "Piña"
+  },
+  "298": {
+    "name": "Tofu seco"
+  },
+  "299": {
+    "name": "Pimienta"
+  },
+  "300": {
+    "name": "Lechuga espárrago"
+  },
+  "301": {
+    "name": "Pimienta de Sichuan"
+  },
+  "302": {
+    "name": "Uvas"
+  },
+  "303": {
+    "name": "Azufaifas"
+  },
+  "304": {
+    "name": "Nata"
+  },
+  "305": {
+    "name": "Arándanos"
+  },
+  "306": {
+    "name": "Fideos de avena"
+  },
+  "307": {
+    "name": "Comino"
+  },
+  "308": {
+    "name": "Pastel de arroz"
+  },
+  "309": {
+    "name": "Goji"
+  },
+  "310": {
+    "name": "Gelatina de espino"
+  },
+  "311": {
+    "name": "Col encurtida"
+  },
+  "312": {
+    "name": "Fideos de boniato"
+  },
+  "313": {
+    "name": "Pasta de judía roja"
+  },
+  "314": {
+    "name": "Huevos de paloma"
+  },
+  "315": {
+    "name": "Agar-agar"
+  },
+  "316": {
+    "name": "Brotes de bambú de primavera"
+  },
+  "317": {
+    "name": "Plátano"
+  },
+  "318": {
+    "name": "Semillas de loto"
+  },
+  "319": {
+    "name": "Osmanto"
+  },
+  "320": {
+    "name": "Pasta de judías picante"
+  },
+  "322": {
+    "name": "Zanahoria"
+  },
+  "323": {
+    "name": "Salsa de soja dulce"
+  },
+  "324": {
+    "name": "Rábano blanco"
+  },
+  "325": {
+    "name": "Salsa sacha"
+  },
+  "326": {
+    "name": "Trece especias"
+  },
+  "327": {
+    "name": "Huevos de codorniz"
+  },
+  "328": {
+    "name": "Granos de cacao"
+  },
+  "329": {
+    "name": "Langostinos"
+  },
+  "330": {
+    "name": "Perca mandarina"
+  },
+  "331": {
+    "name": "Caldo"
+  },
+  "332": {
+    "name": "Vieiras secas"
+  },
+  "333": {
+    "name": "Conejo"
+  },
+  "334": {
+    "name": "Carne de caracol"
+  },
+  "335": {
+    "name": "Anguila"
+  },
+  "336": {
+    "name": "Oca"
+  },
+  "337": {
+    "name": "Pez hielo"
+  },
+  "338": {
+    "name": "Rana toro"
+  },
+  "339": {
+    "name": "Sábalo de Reeves"
+  },
+  "340": {
+    "name": "Brasenia"
+  },
+  "341": {
+    "name": "Mejillones"
+  },
+  "342": {
+    "name": "Siluro"
+  },
+  "343": {
+    "name": "Carpa negra"
+  },
+  "344": {
+    "name": "Jamón"
+  },
+  "345": {
+    "name": "Shiitake"
+  },
+  "346": {
+    "name": "Champiñones"
+  },
+  "347": {
+    "name": "Costillas"
+  },
+  "348": {
+    "name": "Anguila de arrozal"
+  },
+  "349": {
+    "name": "Calamar"
+  },
+  "350": {
+    "name": "Gambas de río"
+  },
+  "351": {
+    "name": "Cordero"
+  },
+  "352": {
+    "name": "Oreja de Judas"
+  },
+  "353": {
+    "name": "Brotes de guisante"
+  },
+  "354": {
+    "name": "Callos de cerdo"
+  },
+  "355": {
+    "name": "Ternera"
+  },
+  "356": {
+    "name": "Lubina"
+  },
+  "358": {
+    "name": "Panceta curada"
+  },
+  "359": {
+    "name": "Bulbos de lirio"
+  },
+  "360": {
+    "name": "Brócoli chino"
+  },
+  "361": {
+    "name": "Ñame de Huaishan"
+  },
+  "362": {
+    "name": "Brotes de enea"
+  },
+  "363": {
+    "name": "Flores de cebollino"
+  },
+  "364": {
+    "name": "Pescado salado"
+  },
+  "365": {
+    "name": "Carpa cabezona"
+  },
+  "366": {
+    "name": "Moras"
+  },
+  "367": {
+    "name": "Almendras"
+  },
+  "368": {
+    "name": "Cerezas"
+  },
+  "369": {
+    "name": "Caldo agrio"
+  },
+  "370": {
+    "name": "Hongo blanco"
+  },
+  "371": {
+    "name": "Nueces"
+  },
+  "372": {
+    "name": "Salchicha"
+  },
+  "373": {
+    "name": "Codorniz"
+  },
+  "374": {
+    "name": "Bagre amarillo"
+  },
+  "375": {
+    "name": "Vino Huadiao"
+  },
+  "376": {
+    "name": "Cangrejos de río"
+  },
+  "377": {
+    "name": "Cinco especias"
+  },
+  "378": {
+    "name": "Brócoli"
+  },
+  "379": {
+    "name": "Pescado secado al fuego"
+  },
+  "380": {
+    "name": "Setas enoki"
+  },
+  "381": {
+    "name": "Brema de Wuchang"
+  },
+  "382": {
+    "name": "Puntas de espárrago"
+  },
+  "383": {
+    "name": "Nueces peladas"
+  },
+  "384": {
+    "name": "Pimienta de Hancheng"
+  },
+  "385": {
+    "name": "Pasta de judías de Pixian"
+  },
+  "386": {
+    "name": "Bizcocho chiffon"
+  },
+  "387": {
+    "name": "Chile Baoqing"
+  },
+  "388": {
+    "name": "Mandarina"
+  },
+  "389": {
+    "name": "Cangrejo de manglar"
+  },
+  "390": {
+    "name": "Pepino de mar"
+  },
+  "392": {
+    "name": "Carne de serpiente"
+  },
+  "393": {
+    "name": "Mero"
+  },
+  "394": {
+    "name": "Bagre de hocico largo"
+  },
+  "395": {
+    "name": "Pez Ya"
+  },
+  "396": {
+    "name": "Pez cabeza de serpiente"
+  },
+  "397": {
+    "name": "Grévol"
+  },
+  "398": {
+    "name": "Lengua de pato"
+  },
+  "399": {
+    "name": "Venado"
+  },
+  "400": {
+    "name": "Huevo de corral"
+  },
+  "401": {
+    "name": "Jamón de Jinhua"
+  },
+  "402": {
+    "name": "Carpa del río Amarillo"
+  },
+  "403": {
+    "name": "Perca de Songjiang"
+  },
+  "404": {
+    "name": "Cerdo negro de montaña"
+  },
+  "405": {
+    "name": "Pollo Sanhuang"
+  },
+  "406": {
+    "name": "Té Huangshan Maofeng"
+  },
+  "407": {
+    "name": "Ternera marmolada"
+  },
+  "408": {
+    "name": "Té Longjing del Lago del Oeste"
+  },
+  "409": {
+    "name": "Pez blanco del lago Tai"
+  },
+  "410": {
+    "name": "Gambas blancas del lago Tai"
+  },
+  "411": {
+    "name": "Pez hielo del lago Tai"
+  },
+  "412": {
+    "name": "Langostinos de Bohai"
+  },
+  "413": {
+    "name": "Medusa"
+  },
+  "414": {
+    "name": "Paloma"
+  },
+  "415": {
+    "name": "Cebolleta de Zhangqiu"
+  },
+  "416": {
+    "name": "Vinagre añejo de Shanxi"
+  },
+  "417": {
+    "name": "Melena de león"
+  },
+  "418": {
+    "name": "Aleta de tiburón"
+  },
+  "419": {
+    "name": "Abulón"
+  },
+  "420": {
+    "name": "Buche de pescado"
+  },
+  "421": {
+    "name": "Nido de golondrina"
+  },
+  "422": {
+    "name": "Cordyceps"
+  },
+  "423": {
+    "name": "Pepino de mar de Liaoning"
+  },
+  "424": {
+    "name": "Matsutake"
+  },
+  "425": {
+    "name": "Terciopelo de asta de ciervo"
+  },
+  "426": {
+    "name": "Joroba de camello"
+  },
+  "427": {
+    "name": "Ginseng"
+  },
+  "428": {
+    "name": "Pata de oso"
+  },
+  "429": {
+    "name": "Verga de ciervo"
+  },
+  "430": {
+    "name": "Verga de toro"
+  },
+  "431": {
+    "name": "Labios de pescado"
+  },
+  "432": {
+    "name": "Hongo de bambú"
+  },
+  "433": {
+    "name": "Cola de ciervo"
+  },
+  "434": {
+    "name": "Tendón de ciervo"
+  },
+  "435": {
+    "name": "Centolla real"
+  },
+  "436": {
+    "name": "Hashima"
+  },
+  "437": {
+    "name": "Harina integral"
+  },
+  "438": {
+    "name": "Taro de Lipu"
+  },
+  "439": {
+    "name": "Arroz Bijing"
+  },
+  "440": {
+    "name": "Nueces pecanas"
+  },
+  "441": {
+    "name": "Víbora de Yongzhou"
+  },
+  "442": {
+    "name": "Pez cuchillo del Yangtsé"
+  },
+  "443": {
+    "name": "Azafrán en polvo"
+  },
+  "444": {
+    "name": "Ñame barra de hierro"
+  },
+  "445": {
+    "name": "Pato blanco de Liancheng"
+  },
+  "446": {
+    "name": "Pata de camello"
+  },
+  "447": {
+    "name": "Aceite de semilla de peonía"
+  },
+  "448": {
+    "name": "Salmón"
+  },
+  "449": {
+    "name": "Pimienta negra"
+  },
+  "450": {
+    "name": "Romero"
+  },
+  "451": {
+    "name": "Pasta"
+  },
+  "452": {
+    "name": "Bizcochos de soletilla"
+  },
+  "453": {
+    "name": "Costillar Quinine"
+  },
+  "454": {
+    "name": "Tomates italianos"
+  },
+  "455": {
+    "name": "Mascarpone"
+  },
+  "456": {
+    "name": "Vino de Marsala"
+  },
+  "457": {
+    "name": "Aleta misteriosa de los nueve cielos"
+  },
+  "458": {
+    "name": "Abulón misterioso de nueve agujeros"
+  },
+  "459": {
+    "name": "Buche misteriosa dorada"
+  },
+  "460": {
+    "name": "Gusano misterioso de montaña"
+  },
+  "461": {
+    "name": "Nido misterioso dorado"
+  },
+  "462": {
+    "name": "Ámbar gris misterioso"
+  },
+  "463": {
+    "name": "Seta misteriosa sapo dorado"
+  },
+  "464": {
+    "name": "Polluelo misterioso del río nevado"
+  },
+  "465": {
+    "name": "Corvina misteriosa dorada"
+  },
+  "466": {
+    "name": "Ternero misterioso de Baotian"
+  },
+  "467": {
+    "name": "Ingrediente universal niv. 1"
+  },
+  "468": {
+    "name": "Ingrediente universal niv. 2"
+  },
+  "469": {
+    "name": "Ingrediente universal niv. 3"
+  },
+  "470": {
+    "name": "Ingrediente universal niv. 4"
+  },
+  "471": {
+    "name": "Ingrediente universal niv. 5"
+  },
+  "500": {
+    "name": "Carne picada"
+  },
+  "501": {
+    "name": "Láminas de tofu"
+  },
+  "502": {
+    "name": "Salchicha china"
+  },
+  "503": {
+    "name": "Ostras"
+  },
+  "504": {
+    "name": "Vieira seca"
+  },
+  "505": {
+    "name": "Bacalao"
+  },
+  "506": {
+    "name": "Hígado de cerdo"
+  },
+  "507": {
+    "name": "Gambas"
+  },
+  "508": {
+    "name": "Boniato rojo"
+  },
+  "509": {
+    "name": "Palometa"
+  },
+  "510": {
+    "name": "Tendón de ternera"
+  },
+  "511": {
+    "name": "Codillo de cerdo"
+  },
+  "516": {
+    "name": "Shiitake seco"
+  },
+  "517": {
+    "name": "Gambas secas"
+  },
+  "518": {
+    "name": "Miel"
+  },
+  "519": {
+    "name": "Castañas de agua"
+  },
+  "520": {
+    "name": "Rodajas de loto"
+  },
+  "521": {
+    "name": "Tortuga de caparazón blando"
+  },
+  "522": {
+    "name": "Cangrejo"
+  },
+  "529": {
+    "name": "Soja"
+  },
+  "530": {
+    "name": "Piel de mandarina seca"
+  },
+  "531": {
+    "name": "Manitas de cerdo"
+  },
+  "532": {
+    "name": "Patas de pollo"
+  },
+  "533": {
+    "name": "Callos de ternera"
+  },
+  "534": {
+    "name": "Bayas de goji"
+  },
+  "535": {
+    "name": "Láminas de judía mungo"
+  },
+  "536": {
+    "name": "Carne de tortuga"
+  },
+  "537": {
+    "name": "Tirabeques"
+  },
+  "538": {
+    "name": "Mondongo"
+  },
+  "539": {
+    "name": "Vieiras"
+  },
+  "548": {
+    "name": "Papaya"
+  },
+  "549": {
+    "name": "Rana de las nieves"
+  },
+  "550": {
+    "name": "Almeja"
+  },
+  "551": {
+    "name": "Gallina sedosa"
+  },
+  "552": {
+    "name": "Col de flor"
+  },
+  "559": {
+    "name": "Caracoles de río"
+  },
+  "560": {
+    "name": "Foie gras"
+  },
+  "563": {
+    "name": "Hojas de boniato"
+  },
+  "564": {
+    "name": "Judías rojas"
+  },
+  "565": {
+    "name": "Cerveza"
+  },
+  "566": {
+    "name": "Locha"
+  },
+  "567": {
+    "name": "Navajas"
+  },
+  "568": {
+    "name": "Huevos de pato"
+  },
+  "569": {
+    "name": "Piel de tofu"
+  },
+  "570": {
+    "name": "Judías mungo"
+  },
+  "571": {
+    "name": "Crisantemo comestible"
+  },
+  "572": {
+    "name": "Baijiu"
+  },
+  "573": {
+    "name": "Cerdo misterioso de Ningxiang"
+  },
+  "574": {
+    "name": "Salsa secreta de la Cangreburger"
+  },
+  "575": {
+    "name": "Caviar Almas"
+  },
+  "576": {
+    "name": "Trufa negra del Périgord"
+  },
+  "577": {
+    "name": "Galera de Wu"
+  },
+  "578": {
+    "name": "Filete de atún rojo"
+  },
+  "579": {
+    "name": "Jamón ibérico"
+  },
+  "580": {
+    "name": "Azafrán"
+  },
+  "581": {
+    "name": "Col rizada"
+  },
+  "582": {
+    "name": "Pez globo tigre"
+  },
+  "583": {
+    "name": "Perdiz nival de Tianshan"
+  }
+}

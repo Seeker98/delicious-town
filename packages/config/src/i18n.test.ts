@@ -43,3 +43,53 @@ describe('游戏数据翻译（问题记录 272）', () => {
     expect(bundle!.i18n.es.foods[String(food.id)]).toEqual({ name: 'Arroz' });
   });
 });
+
+describe('第 8 批常见数据翻译（问题记录 272）', () => {
+  /** 这些种类英法西要全部翻完：每个 id、每个能翻的字段都有 */
+  const FULL = ['foods', 'weather', 'streets', 'devices', 'suits', 'doors', 'avatars', 'icons'] as const;
+
+  it('繁中也转换街道菜系名、天气说明、套装各档说明和装扮', () => {
+    const b = realBuild().bundle!;
+    const tw = b.i18n['zh-TW'];
+    expect(tw.streets['1']!.cookName).toBe('湘菜');
+    expect(tw.weather['4']!.note).toContain('合成與分解');
+    expect(tw.suits['3']!.tiers).toEqual(
+      b.suits.find((s) => s.id === 3)!.tiers.map(() => expect.any(String)),
+    );
+    expect(tw.doors['1']!.name).toBe('紅漆門');
+    expect(tw.icons.founder!.title).toBe('開服元老');
+  });
+
+  it('英法西：这几类每个 id、每个字段都翻了；套装各档说明条数对得上', () => {
+    const b = realBuild().bundle!;
+    const lists: Record<(typeof FULL)[number], Array<{ id: string; fields: string[]; tiers?: number }>> = {
+      foods: b.foods.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      weather: b.weather.map((x) => ({ id: String(x.id), fields: ['name', 'note'] })),
+      streets: b.streets.map((x) => ({ id: String(x.id), fields: ['name', 'desc', 'cookName'] })),
+      devices: b.devices.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      suits: b.suits.map((x) => ({ id: String(x.id), fields: ['name'], tiers: x.tiers.length })),
+      doors: b.looks.doors.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      avatars: b.looks.avatars.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      icons: b.looks.icons.map((x) => ({ id: x.key, fields: ['title', 'desc'] })),
+    };
+    for (const l of ['en', 'fr', 'es'] as const)
+      for (const k of FULL)
+        for (const x of lists[k]) {
+          const e = b.i18n[l][k][x.id] as Record<string, unknown> | undefined;
+          for (const f of x.fields) expect(e?.[f], `${l} ${k} ${x.id} ${f}`).toEqual(expect.any(String));
+          if (x.tiers !== undefined)
+            expect((e?.tiers as unknown[]).length, `${l} suits ${x.id} tiers`).toBe(x.tiers);
+        }
+  });
+
+  it('套装各档说明要是字符串数组；装扮 key 不存在时构建报错', () => {
+    const { errors } = buildBundle({
+      ...src(),
+      'i18n/en/suits': { '3': { name: 'S', tiers: 'x' } },
+      'i18n/en/icons': { nope: { title: 'X' } },
+    });
+    const all = errors.join('\n');
+    expect(all).toMatch(/i18n en suits 3 tiers must be an array of strings/);
+    expect(all).toMatch(/i18n en icons unknown id nope/);
+  });
+});

@@ -1,0 +1,34 @@
+{
+  "founder": {
+    "title": "Miembro fundador",
+    "desc": "Llegó al pueblo en la primera semana"
+  },
+  "helper": {
+    "title": "Mano amiga",
+    "desc": "Ayudó al pueblo a encontrar un problema"
+  },
+  "tester": {
+    "title": "Probador pionero",
+    "desc": "Participó en la beta cerrada"
+  },
+  "champion": {
+    "title": "Campeón",
+    "desc": "Ganó un evento del pueblo"
+  },
+  "artist": {
+    "title": "Artista del pueblo",
+    "desc": "Dibujó para el pueblo"
+  },
+  "chef": {
+    "title": "Chef de oro",
+    "desc": "Un cocinero excepcional"
+  },
+  "kuji_a": {
+    "title": "Ganador del Premio A del Ichiban Kuji",
+    "desc": "Ganó el Premio A en el Ichiban Kuji"
+  },
+  "kuji_last": {
+    "title": "Ganador del Último Premio del Ichiban Kuji",
+    "desc": "Sacó el último boleto de un sorteo del Ichiban Kuji"
+  }
+}
