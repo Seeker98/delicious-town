@@ -162,7 +162,7 @@ export async function takeawayView(
       id: v.id,
       orderId: v.order_id,
       cookbookId: v.cookbook_id,
-      cookbookName: config.requireCookbook(v.cookbook_id).name,
+      cookbookName: config.cookbooks.get(v.cookbook_id)?.name ?? '',
       grade: v.grade,
       private: v.private,
       double: v.double,
