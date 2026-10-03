@@ -69,15 +69,19 @@ describe('机器人（设计 §4.5）', () => {
     const b = bot(c);
     // 只放这道菜的食材；按街道顺序可能先学到用同样食材的别的菜，所以只要求学会了菜
     b.rest.foods.clear();
-    const cb = [...config.cookbooks.values()].find((x) => (x.needFoods[1] ?? []).length > 0)!;
+    // 只能学本街的菜（问题记录 312）
+    const cb = [...config.cookbooks.values()].find(
+      (x) => x.streetId === b.rest.streetId && (x.needFoods[1] ?? []).length > 0,
+    )!;
     for (const f of cb.needFoods[1]!) b.rest.foods.set(f.foodsId, (b.rest.foods.get(f.foodsId) ?? 0) + f.num);
     botTurn(c, b, newMarket(), world(), null);
     expect(b.rest.counts.learned).toBeGreaterThan(0);
   });
 
-  it('学菜也学新街道的菜（问题记录 284：以前只遍历 0~13 号街）', () => {
+  it('在新街道上时学新街道的菜（问题记录 284）；只学本街的（问题记录 312）', () => {
     const c = ctx();
     const b = bot(c);
+    b.rest.streetId = 14;
     b.rest.foods.clear();
     // 18747 鲷鱼握寿司（日本街 14）：鲷鱼、大米、醋
     for (const f of config.requireCookbook(18747).needFoods[1]!)
@@ -123,7 +127,20 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     const b = bot(c);
     b.rest.daily.set('signin', 1);
     b.rest.foods.clear();
-    const cb = [...config.cookbooks.values()].find((x) => (x.needFoods[1] ?? []).length > 0)!;
+    // 缺口只算本街的菜（问题记录 312）：挑一个本街 1 品级合计至少要 2 个的食材
+    const ids = config.cookbookIndex.idsByStreet.get(b.rest.streetId)!;
+    const needOf = (fid: number) =>
+      ids.reduce(
+        (s, id) =>
+          s +
+          (config.requireCookbook(id).needFoods[1] ?? [])
+            .filter((f) => f.foodsId === fid)
+            .reduce((a, f) => a + f.num, 0),
+        0,
+      );
+    const cb = ids
+      .map((id) => config.requireCookbook(id))
+      .find((x) => (x.needFoods[1] ?? []).length > 0 && needOf(x.needFoods[1]![0]!.foodsId) >= 2)!;
     const food = config.requireFood(cb.needFoods[1]![0]!.foodsId);
     const price = unitPrice(0, food, settings.tuning.market, {});
     const m = newMarket();

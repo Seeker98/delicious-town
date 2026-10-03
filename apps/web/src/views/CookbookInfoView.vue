@@ -53,10 +53,16 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.
     </div>
     <button
       class="btn btn-sm btn-primary mb-2"
-      :disabled="busy || d.learn === 'z' || d.learn === 'max'"
+      :disabled="busy || d.learn === 'z' || d.learn === 'max' || d.learn === 'street'"
       @click="learn"
     >
-      {{ d.grade === 0 ? t.cookbook.learn : t.cookbook.upgrade }}
+      {{
+        d.learn === 'street'
+          ? t.cookbook.otherStreet(catalog.streetName(d.streetId, d.streetName))
+          : d.grade === 0
+            ? t.cookbook.learn
+            : t.cookbook.upgrade
+      }}
     </button>
     <table class="table table-sm small">
       <thead>

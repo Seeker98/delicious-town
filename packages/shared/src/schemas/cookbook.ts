@@ -18,7 +18,8 @@ export const foodsNeedQuery = z.object({
 export type FoodsNeedQuery = z.infer<typeof foodsNeedQuery>;
 
 /** 学习类型（规格书 03 §3.7）：'0' 可以直接学；'1'~'5' 需要该级万能食材补一种；'z' 不能学；'max' 已是最高品级 */
-export type LearnType = 'max' | 'z' | '0' | '1' | '2' | '3' | '4' | '5';
+/** street：不在这道菜的街道上，不能学也不能升级（问题记录 312） */
+export type LearnType = 'max' | 'street' | 'z' | '0' | '1' | '2' | '3' | '4' | '5';
 
 export interface NeedFoodDto {
   foodsId: number;

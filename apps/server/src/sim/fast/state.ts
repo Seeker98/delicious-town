@@ -46,7 +46,8 @@ export interface FastRest {
   counts: CookbookCounts;
   /** 每学一次菜 +1；用来缓存"学到 1 品级还要的食材"（只在学菜后变化） */
   levelsVersion: number;
-  needCache: { version: number; need: Map<number, number> } | null;
+  /** version = "已学版本:街道"（问题记录 312：需求只算本街） */
+  needCache: { version: string; need: Map<number, number> } | null;
   /** 橱柜每变一次 +1；上次学菜什么都没学到、橱柜和食谱都没变时跳过学菜（性能） */
   foodsVersion: number;
   learnIdleKey: string;

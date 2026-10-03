@@ -12,6 +12,7 @@ const cookbook: Messages['cookbook'] = {
   learnFailed: "Échec de l'apprentissage",
   maxed: 'Niveau max',
   lackFoods: 'Ingrédients manquants',
+  otherStreet: (street) => `Déménagez dans ${street} pour l'apprendre`,
   learn: 'Apprendre',
   upgrade: 'Améliorer',
   useMaster: (level) => `Avec un universel niv. ${level}`,

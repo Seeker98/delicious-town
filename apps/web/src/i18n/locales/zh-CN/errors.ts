@@ -230,6 +230,7 @@ export default {
     fridge_empty: '冰箱里没有这种食材',
     cannot_handle: '这个等级的食材不能这样处理',
     odd_num: '合成需要成对的食材',
+    other_street: '只能学、升级所在街道的菜，先搬到那条街',
     no_batch: '这个道具不能批量使用',
     no_points_to_reset: '还没有加过属性点',
     not_on_sale: '没有在售',

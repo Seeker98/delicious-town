@@ -5,6 +5,7 @@ export default {
   learnFailed: '学习失败',
   maxed: '已满级',
   lackFoods: '食材不够',
+  otherStreet: (street: string) => `搬到${street}才能学`,
   learn: '学习',
   upgrade: '升级',
   useMaster: (level: string) => `用${level}级万能食材`,

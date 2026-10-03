@@ -45,7 +45,8 @@ describe('学习食谱', () => {
   });
 
   it('新街道上线前开的店（已学记录只到老的最大 id）也能学新街道的菜（问题记录 284）', async () => {
-    const ctx = await newRestaurant(t, { foods: { 133: 1, 101: 1, 237: 1 } });
+    // 店在日本街（14）：只能学本街的菜（问题记录 312）
+    const ctx = await newRestaurant(t, { patch: { street_id: 14 }, foods: { 133: 1, 101: 1, 237: 1 } });
     await t.db
       .updateTable('restaurant_cookbooks')
       .set({ levels: Buffer.alloc(18747) })
@@ -67,6 +68,35 @@ describe('学习食谱', () => {
   it('已经是最高品级（7）时报错', async () => {
     const ctx = await newRestaurant(t, { cookbooks: { 194: 7 } });
     await expect(cb().learn(ctx, 194)).rejects.toMatchObject({ code: 'COOKBOOK_MAX_GRADE' });
+  });
+});
+
+describe('只能学、升级所在街道的菜（问题记录 312）', () => {
+  it('不在这条街：学新菜、升级学过的都拒绝，食材不扣', async () => {
+    // 194 是新手街的菜；店在湖南街（1）
+    const ctx = await newRestaurant(t, {
+      patch: { street_id: 1 },
+      foods: { 302: 2, 253: 2, 366: 4 },
+      cookbooks: { 195: 1 },
+    });
+    await expect(cb().learn(ctx, 194)).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'other_street', streetId: 0 },
+    });
+    await expect(cb().learn(ctx, 195)).rejects.toMatchObject({ params: { reason: 'other_street' } });
+    expect((await foodNum(t, ctx.restaurantId, 302)).num).toBe(2);
+    expect(await levelOf(ctx.restaurantId, 195)).toBe(1);
+  });
+
+  it('列表：别的街的菜标成不能学（street），可学、可升级筛选里没有；本街照常', async () => {
+    const ctx = await newRestaurant(t, { patch: { street_id: 1 }, foods: { 302: 1, 253: 1, 366: 2 } });
+    const other = await cb().list(ctx, { street: 0, page: 1, filter: 'all' });
+    expect(other.items.every((r) => r.learn === 'street')).toBe(true);
+    expect((await cb().list(ctx, { street: 0, page: 1, filter: 'learnable' })).items).toEqual([]);
+    expect((await cb().list(ctx, { street: 0, page: 1, filter: 'upgradable' })).items).toEqual([]);
+    expect((await cb().detail(ctx, 194)).learn).toBe('street');
+    const mine = await cb().list(ctx, { street: 1, page: 1, filter: 'all' });
+    expect(mine.items.some((r) => r.learn === 'street')).toBe(false);
   });
 });
 
