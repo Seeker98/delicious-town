@@ -209,9 +209,9 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
 
   await shopForFoods(game, bot, attempt, saving);
 
-  for (const street of config.streets.keys()) {
-    // 可学（没学过的）和可升级（已学的）分开查，先学新的
-    const q = { street, page: 1 } as const;
+  {
+    // 只能学本街的菜（问题记录 312）；可学（没学过的）和可升级（已学的）分开查，先学新的
+    const q = { street: (await rest()).streetId, page: 1 } as const;
     const learnable = await game.cookbook.list(ctx, { ...q, filter: 'learnable' });
     const upgradable = await game.cookbook.list(ctx, { ...q, filter: 'upgradable' });
     for (const row of [...learnable.items, ...upgradable.items].slice(0, 20))

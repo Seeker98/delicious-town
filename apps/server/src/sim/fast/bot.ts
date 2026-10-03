@@ -195,6 +195,8 @@ export function placeDevice(c: FastCtx, r: FastRest, slot: number, goodsId: numb
 
 function learn(c: FastCtx, r: FastRest, id: number): boolean {
   const cb = c.config.requireCookbook(id);
+  // 和真实接口一样只能学、升级本街的菜（问题记录 312）
+  if (cb.streetId !== r.streetId) return false;
   const from = r.levels[id] ?? 0;
   const to = from + 1;
   if (to > c.tuning.rest.cookbookMaxGrade) return false;
@@ -231,14 +233,16 @@ export function learnable(c: FastCtx, r: FastRest, street: number): number[] {
 
 /** 把所有食谱学到 1 品级还需要的食材总量；只在学菜后变化，按 levelsVersion 缓存（性能） */
 function foodsNeed(c: FastCtx, r: FastRest): Map<number, number> {
-  if (r.needCache?.version === r.levelsVersion) return r.needCache.need;
+  // 只算本街的菜（问题记录 312：别的街学不了）
+  const version = `${r.levelsVersion}:${r.streetId}`;
+  if (r.needCache?.version === version) return r.needCache.need;
   const need = foodsNeedFor(
-    c.config.cookbookIndex.allIds,
+    c.config.cookbookIndex.idsByStreet.get(r.streetId) ?? [],
     r.levels,
     Math.min(1, c.tuning.rest.cookbookMaxGrade),
     needOf(c),
   );
-  r.needCache = { version: r.levelsVersion, need };
+  r.needCache = { version, need };
   return need;
 }
 
@@ -502,8 +506,7 @@ export function botTurn(
   const idleKey = `${r.foodsVersion}:${r.levelsVersion}`;
   if (r.learnIdleKey !== idleKey) {
     let learned = 0;
-    for (const street of c.config.streets.keys())
-      for (const id of learnable(c, r, street)) if (learn(c, r, id)) learned += 1;
+    for (const id of learnable(c, r, r.streetId)) if (learn(c, r, id)) learned += 1;
     r.learnIdleKey = learned === 0 ? `${r.foodsVersion}:${r.levelsVersion}` : '';
   }
 

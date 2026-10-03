@@ -77,6 +77,29 @@ describe('CookbooksView', () => {
     expect(box.findAll('button')).toHaveLength(5);
   });
 
+  it('别的街的菜：按钮写"搬到 X 才能学"并禁用（问题记录 312）', async () => {
+    useCatalogStore().streets = [
+      { id: 0, name: '新手街', cookName: '家常菜', desc: '' },
+      { id: 1, name: '湖南街', cookName: '湘菜', desc: '' },
+    ];
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 1,
+      items: [
+        { id: 176, name: '剁椒鱼头', grade: 1, learn: 'street', next: [{ foodsId: 302, num: 1, have: 9 }] },
+      ],
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    const btn = w.get('[data-testid="cb-176"] button');
+    expect(btn.text()).toBe('搬到湖南街才能学');
+    expect(btn.attributes('disabled')).toBeDefined();
+  });
+
   it('紧凑卡片：菜名、品级、食材在左两行，按钮在右（问题记录：信息密度低）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),

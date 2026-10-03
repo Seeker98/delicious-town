@@ -22,7 +22,17 @@ import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, padLevels, planLearn 
 
 const PAGE_SIZE = 40;
 /** 排序：可学 → 需要万能食材 → 不能学 → 已满级（规格书 03 §3.7 的 t → l → m → n） */
-const ORDER: Record<LearnType, number> = { '0': 0, '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, z: 2, max: 3 };
+const ORDER: Record<LearnType, number> = {
+  '0': 0,
+  '1': 1,
+  '2': 1,
+  '3': 1,
+  '4': 1,
+  '5': 1,
+  z: 2,
+  street: 3,
+  max: 4,
+};
 
 export function createCookbookService(d: GameDeps) {
   const levelOfFood = (id: number) => d.config.foods.get(id)?.level ?? 0;
@@ -42,7 +52,14 @@ export function createCookbookService(d: GameDeps) {
   }
   const maxGrade = async (shardId: number) => (await d.shards.settings(shardId)).tuning.rest.cookbookMaxGrade;
 
-  function rowOf(id: number, levels: Uint8Array, have: (id: number) => number, max: number): CookbookRowDto {
+  /** street：店所在的街道；别的街的菜只能看，不能学也不能升级（问题记录 312） */
+  function rowOf(
+    id: number,
+    levels: Uint8Array,
+    have: (id: number) => number,
+    max: number,
+    street: number,
+  ): CookbookRowDto {
     const c = d.config.requireCookbook(id);
     const grade = levels[id] ?? 0;
     if (grade >= max) return { id, name: c.name, grade, next: null, learn: 'max' };
@@ -52,7 +69,7 @@ export function createCookbookService(d: GameDeps) {
       name: c.name,
       grade,
       next: need.map((n) => ({ foodsId: n.foodsId, num: n.num, have: have(n.foodsId) })),
-      learn: learnTypeOf(planLearn(need, have, levelOfFood)),
+      learn: c.streetId !== street ? 'street' : learnTypeOf(planLearn(need, have, levelOfFood)),
     };
   }
 
@@ -64,15 +81,15 @@ export function createCookbookService(d: GameDeps) {
         maxGrade(ctx.shardId),
         d.db
           .selectFrom('restaurant')
-          .select('cookbook_counts')
+          .select(['cookbook_counts', 'street_id'])
           .where('id', '=', ctx.restaurantId)
           .executeTakeFirstOrThrow(),
       ]);
       const ids = d.config.cookbookIndex.idsByStreet.get(q.street) ?? [];
       const rows = ids
-        .map((id) => rowOf(id, levels, have, max))
+        .map((id) => rowOf(id, levels, have, max, rest.street_id))
         .filter((r) => {
-          const can = r.learn !== 'z' && r.learn !== 'max';
+          const can = r.learn !== 'z' && r.learn !== 'max' && r.learn !== 'street';
           // 可学：没学过的；可升级：已学的（问题记录）
           if (q.filter === 'learnable') return can && r.grade === 0;
           if (q.filter === 'upgradable') return can && r.grade > 0;
@@ -105,12 +122,17 @@ export function createCookbookService(d: GameDeps) {
     async detail(ctx: RestCtx, id: number): Promise<CookbookDetailDto> {
       const c = d.config.cookbooks.get(id);
       if (!c) throw invalidState('no_cookbook', { id });
-      const [levels, have, max] = await Promise.all([
+      const [levels, have, max, rest] = await Promise.all([
         levelsOf(d.db, ctx.restaurantId),
         haveOf(d.db, ctx.restaurantId),
         maxGrade(ctx.shardId),
+        d.db
+          .selectFrom('restaurant')
+          .select('street_id')
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
       ]);
-      const row = rowOf(id, levels, have, max);
+      const row = rowOf(id, levels, have, max, rest.street_id);
       return {
         id,
         name: c.name,
@@ -165,6 +187,9 @@ export function createCookbookService(d: GameDeps) {
         async (op): Promise<LearnResultDto> => {
           const c = op.config.cookbooks.get(cookbookId);
           if (!c) throw invalidState('no_cookbook', { id: cookbookId });
+          // 只能学、升级所在街道的菜（问题记录 312）；要学别的街的菜先搬过去
+          if (c.streetId !== op.rest.street_id)
+            throw invalidState('other_street', { id: cookbookId, streetId: c.streetId });
           const levels = await levelsOf(op.tx, op.rest.id);
           const from = levels[cookbookId] ?? 0;
           const to = from + 1;

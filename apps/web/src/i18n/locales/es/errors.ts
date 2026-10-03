@@ -226,6 +226,7 @@ const errors: Messages['errors'] = {
     fridge_empty: 'Tu nevera no tiene este ingrediente',
     cannot_handle: 'Los ingredientes de este nivel no se pueden tratar así',
     odd_num: 'Para combinar se necesitan ingredientes por pares',
+    other_street: 'Solo puedes aprender o mejorar platos de tu calle; múdate allí primero',
     no_batch: 'Este objeto no se puede usar en lote',
     no_points_to_reset: 'Todavía no has gastado puntos de atributo',
     not_on_sale: 'No está a la venta',

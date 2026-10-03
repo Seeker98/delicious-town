@@ -38,6 +38,8 @@ function learnLabel(r: CookbookRowDto): string {
   const c = t.value.cookbook;
   if (r.learn === 'max') return c.maxed;
   if (r.learn === 'z') return c.lackFoods;
+  // 别的街的菜只能看（问题记录 312）
+  if (r.learn === 'street') return c.otherStreet(catalog.streetName(list.value?.street ?? -1));
   if (r.learn === '0') return r.grade === 0 ? c.learn : c.upgrade;
   return c.useMaster(r.learn);
 }
@@ -115,7 +117,7 @@ onMounted(async () => {
     <button
       class="btn btn-primary dt-btn-xs"
       :data-testid="`learn-${r.id}`"
-      :disabled="busy || r.learn === 'z' || r.learn === 'max'"
+      :disabled="busy || r.learn === 'z' || r.learn === 'max' || r.learn === 'street'"
       @click="learn(r.id)"
     >
       {{ learnLabel(r) }}

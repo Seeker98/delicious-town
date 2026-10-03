@@ -228,6 +228,7 @@ const errors: Messages['errors'] = {
     fridge_empty: "Your fridge doesn't have this ingredient",
     cannot_handle: "Ingredients of this level can't be handled this way",
     odd_num: 'Combining needs ingredients in pairs',
+    other_street: 'You can only learn or upgrade dishes of the street you are on; move there first',
     no_batch: "This item can't be used in bulk",
     no_points_to_reset: "You haven't spent any attribute points yet",
     not_on_sale: 'Not on sale',

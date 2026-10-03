@@ -229,6 +229,7 @@ const errors: Messages['errors'] = {
     fridge_empty: "Votre frigo n'a pas cet ingrédient",
     cannot_handle: 'Les ingrédients de ce niveau ne peuvent pas être traités ainsi',
     odd_num: 'La combinaison nécessite des ingrédients par paires',
+    other_street: "Seuls les plats de votre rue peuvent être appris ou améliorés ; déménagez d'abord",
     no_batch: 'Cet objet ne peut pas être utilisé en lot',
     no_points_to_reset: "Vous n'avez encore dépensé aucun point d'attribut",
     not_on_sale: 'Pas en vente',
