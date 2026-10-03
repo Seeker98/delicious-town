@@ -91,3 +91,12 @@ export function convertOld(chapters: readonly Chapter[], quests: readonly Quest[
   }
   return out;
 }
+
+/** 异国街道从 14 号街起 */
+export const FOREIGN_STREET_FROM = 14;
+/** 异国街道已学食谱数之和（问题记录 318："在异国街道学会 N 道菜"） */
+export function foreignLearned(street: Readonly<Record<string, number>>): number {
+  return Object.entries(street)
+    .filter(([s]) => Number(s) >= FOREIGN_STREET_FROM)
+    .reduce((s, [, n]) => s + n, 0);
+}

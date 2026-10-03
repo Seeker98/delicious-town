@@ -175,17 +175,6 @@ export interface OilNeed {
   oilMax: number;
 }
 
-export interface Task {
-  id: number;
-  main: boolean;
-  step: number;
-  name: string;
-  cond: { kind: 'counter' | 'state'; key: string; target: number };
-  award: Award;
-  href: string;
-  feature: string;
-}
-
 /** 任务条件（问题记录 318）：计数键可以用 | 连接多个，进度取和 */
 export interface QuestCond {
   kind: 'counter' | 'state';
@@ -349,7 +338,6 @@ export interface ConfigBundle {
   starNeed: StarNeed[];
   starAward: StarAward[];
   oilNeed: OilNeed[];
-  tasks: Task[];
   chapters: Chapter[];
   quests: Quest[];
   questLines: QuestLine[];

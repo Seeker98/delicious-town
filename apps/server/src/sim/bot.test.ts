@@ -26,7 +26,9 @@ describe('机器人策略', () => {
     const ctx = await newRestaurant(t, { patch: { coin: 200_000, table_num: 8 }, tables });
     await botTurn(t.game, { name: 'b', persona: PERSONAS[0]!, ctx });
     const r = await t.game.restaurant.overview(ctx.restaurantId);
-    expect(r.tables).toHaveLength(8);
+    // 任务奖励可能当场升级、提高上限（问题记录 318 第 1 章任务一次能领好几个）：补满到领奖后的上限
+    expect(r.tableNum).toBeGreaterThanOrEqual(8);
+    expect(r.tables).toHaveLength(r.tableNum);
   }, 60_000);
 
   it('升星只差凭证时先攒凭证的钱，不再花在餐桌、油壶和菜场上', async () => {

@@ -27,6 +27,7 @@ import {
   CHAPTER_MARK,
   convertOld,
   counterOf,
+  foreignLearned,
   lineViews,
   mainView,
   reachedChapter,
@@ -37,8 +38,6 @@ import { activationTotal, stateValue } from './rules';
 
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
-/** 异国街道：14 号街起（问题记录 318："在异国街道学会 N 道菜"） */
-const FOREIGN_STREET_FROM = 14;
 
 export function createTaskService(d: GameDeps) {
   const { chapters, quests, questLines, weeklyGroups } = d.config.bundle;
@@ -96,9 +95,7 @@ export function createTaskService(d: GameDeps) {
       'yard.lands': Number(lands.n),
       'honor.potCount': pots,
       'takeaway.open': takeaway ? 1 : 0,
-      'cookbooks.foreignLearned': Object.entries(counts.street)
-        .filter(([s]) => Number(s) >= FOREIGN_STREET_FROM)
-        .reduce((s, [, n]) => s + n, 0),
+      'cookbooks.foreignLearned': foreignLearned(counts.street),
     };
     const progress = (c: QuestCond) =>
       c.kind === 'counter' ? counterOf(c.key, counters) : (stateValue(c.key, rest, counts, extra) ?? 0);

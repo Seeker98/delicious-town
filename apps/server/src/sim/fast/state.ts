@@ -61,8 +61,8 @@ export interface FastRest {
   aggCache: Record<string, number> | null;
   aggDirty: boolean;
   aggNextExpire: Date | null;
-  mainTaskStep: number;
-  tasksDone: Set<number>;
+  /** 已领的主线、支线任务和章末标记，对应 quest_done（问题记录 318） */
+  questDone: Set<number>;
   /** 全历史行为计数（任务用），对应 event_counter */
   counters: Map<string, number>;
   /** 当日计数（签到、活跃、领奖、合成次数），对应 daily_counter；跨天时整体清空 */
@@ -136,8 +136,7 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     aggCache: null,
     aggDirty: true,
     aggNextExpire: null,
-    mainTaskStep: 1,
-    tasksDone: new Set(),
+    questDone: new Set(),
     counters: new Map(),
     daily: new Map(),
     day: '',

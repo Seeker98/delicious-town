@@ -134,16 +134,6 @@ export const rawOilNeed = z.object({
   oilnummax: int,
 });
 
-export const rawTask = z.object({
-  id: int,
-  mainflag: z.union([z.literal(0), z.literal(1)]),
-  step: int,
-  taskname: z.string(),
-  cond: z.object({ kind: z.enum(['counter', 'state']), key: z.string(), target: countOrAll }),
-  award: awardSchema,
-  href: z.string(),
-});
-
 // 问题记录 318：章节主线、玩法支线、每周任务
 const questCond = z.object({ kind: z.enum(['counter', 'state']), key: z.string(), target: countOrAll });
 export const rawChapter = z.object({

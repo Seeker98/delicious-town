@@ -127,7 +127,6 @@ export function buildBundle(src: SourceData): BuildResult {
   const starNeedRaw = parse('designed/star_need', z.array(raw.rawStarNeed));
   const starAwardRaw = parse('designed/star_award', z.array(raw.rawStarAward));
   const oilRaw = parse('designed/oil_need', z.array(raw.rawOilNeed));
-  const tasksRaw = parse('designed/tasks', z.array(raw.rawTask));
   const chaptersRaw = parse('designed/quest_chapters', z.array(raw.rawChapter));
   const questMainRaw = parse('designed/quest_main', z.array(raw.rawQuestMain));
   const questLinesRaw = parse('designed/quest_lines', z.array(raw.rawQuestLine));
@@ -181,7 +180,6 @@ export function buildBundle(src: SourceData): BuildResult {
     !starNeedRaw ||
     !starAwardRaw ||
     !oilRaw ||
-    !tasksRaw ||
     !chaptersRaw ||
     !questMainRaw ||
     !questLinesRaw ||
@@ -578,26 +576,6 @@ export function buildBundle(src: SourceData): BuildResult {
     oilNeed.map((o) => o.level),
   );
   for (const o of oilNeed) checkGoodsList(`oil_need ${o.level}`, o.needGoods);
-
-  const tasks = tasksRaw.map((t) => {
-    const feature = featureOfKey(t.cond.key, actionMap.features);
-    if (feature === null) errors.push(`task ${t.id} key ${t.cond.key} has no feature`);
-    return {
-      id: t.id,
-      main: t.mainflag === 1,
-      step: t.step,
-      name: t.taskname,
-      cond: { ...t.cond, target: allOr(t.cond.target) },
-      award: t.award,
-      href: t.href,
-      feature: feature ?? '',
-    };
-  });
-  unique(
-    'tasks',
-    tasks.map((t) => t.id),
-  );
-  for (const t of tasks) checkAward(`task ${t.id}`, t.award);
 
   // ---------- 任务（问题记录 318）：章节主线、玩法支线、每周任务 ----------
   const chapters: Chapter[] = chaptersRaw.map((c) => ({ ...c }));
@@ -1124,7 +1102,6 @@ export function buildBundle(src: SourceData): BuildResult {
     starNeed,
     starAward,
     oilNeed,
-    tasks,
     chapters,
     quests,
     questLines,

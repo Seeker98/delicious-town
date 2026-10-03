@@ -4,6 +4,7 @@ import {
   CHAPTER_MARK,
   convertOld,
   counterOf,
+  foreignLearned,
   lineViews,
   mainView,
   reachedChapter,
@@ -92,6 +93,13 @@ describe('支线', () => {
   it('全部领完的支线 quest 为 null', () => {
     const v = lineViews(lines, steps, ctx({ done: new Set([3021, 3022]), star: 2 }), 1);
     expect(v[0]!.quest).toBeNull();
+  });
+});
+
+describe('异国街道已学数', () => {
+  it('只算 14 号街起', () => {
+    expect(foreignLearned({ '1': 5, '13': 2, '14': 3, '29': 4 })).toBe(7);
+    expect(foreignLearned({})).toBe(0);
   });
 });
 

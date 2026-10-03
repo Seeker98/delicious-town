@@ -34,7 +34,6 @@ export const SOURCE_FILES = [
   'designed/star_need',
   'designed/star_award',
   'designed/oil_need',
-  'designed/tasks',
   'designed/activation_extra',
   'designed/quest_chapters',
   'designed/quest_main',

@@ -6,7 +6,16 @@ import { oilChecks, starChecks } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
 import { personLimit, unitPrice } from '../../modules/market/rules';
-import { activationTotal, effectiveMainStep, stateValue, visibleSide } from '../../modules/task/rules';
+import {
+  CHAPTER_MARK,
+  counterOf,
+  foreignLearned,
+  lineViews,
+  mainView,
+  reachedChapter,
+  type QuestCtx,
+} from '../../modules/task/quests';
+import { activationTotal, stateValue } from '../../modules/task/rules';
 import { CHEAP_DEVICES, USE_ALL, type Persona } from '../bot';
 import { joinGuess, marketBuy, type FastMarket } from './market';
 import {
@@ -361,29 +370,43 @@ export function botTurn(
     action(c, r, 'roach.kill');
   }
 
-  // 任务（task/service.ts）：功能都按开着算；快速模型没有的状态（好友数等）按 0
-  const tasks = cfg.bundle.tasks;
-  const mains = tasks.filter((t) => t.main).sort((a, b) => a.step - b.step);
-  const all = () => true;
-  for (let i = 0; i < 5; i++) {
-    const mainStep = effectiveMainStep(r.mainTaskStep, mains, all);
-    const main = mains.find((t) => t.step === mainStep);
-    const sides = visibleSide(tasks, mainStep, r.tasksDone, all);
-    const progressOf = (t: (typeof tasks)[number]) =>
-      t.cond.kind === 'counter'
-        ? (r.counters.get(t.cond.key) ?? 0)
+  // 任务（task/service.ts，问题记录 318）：主线、支线当前档、章末能领就领；功能都按开着算；
+  // 快速模型没有的状态（好友数等）按 0。每周任务不模拟：快速模型按天跑，周常收益小，先不算
+  const { chapters, quests, questLines } = cfg.bundle;
+  const counters = Object.fromEntries(r.counters);
+  const extra = { ...TASK_EXTRA, 'cookbooks.foreignLearned': foreignLearned(r.counts.street) };
+  const qctx: QuestCtx = {
+    level: r.level,
+    star: r.star,
+    done: r.questDone,
+    available: () => true,
+    progress: (q) =>
+      q.kind === 'counter'
+        ? counterOf(q.key, counters)
         : (stateValue(
-            t.cond.key,
+            q.key,
             { level: r.level, star_level: r.star, oil_level: r.oilLevel },
             r.counts,
-            TASK_EXTRA,
-          ) ?? 0);
-    const done = [...(main ? [main] : []), ...sides].filter((t) => progressOf(t) >= t.cond.target);
-    if (done.length === 0) break;
-    for (const t of done) {
-      grantAward(c, r, t.award, 'task');
-      if (t.main) r.mainTaskStep = t.step + 1;
-      else r.tasksDone.add(t.id);
+            extra,
+          ) ?? 0),
+  };
+  for (let i = 0; i < 5; i++) {
+    qctx.level = r.level;
+    qctx.star = r.star;
+    const v = mainView(chapters, quests, qctx);
+    const lines = lineViews(questLines, quests, qctx, reachedChapter(v, chapters));
+    const ready = [
+      ...v.quests,
+      ...lines.flatMap((l) => (l.quest && l.lockedStar === null ? [l.quest] : [])),
+    ].filter((q) => !r.questDone.has(q.id) && qctx.progress(q.cond) >= q.cond.target);
+    if (ready.length === 0 && !v.chapterClaimable) break;
+    for (const q of ready) {
+      grantAward(c, r, q.award, 'task');
+      r.questDone.add(q.id);
+    }
+    if (v.chapterClaimable && v.chapter && ready.length === 0) {
+      grantAward(c, r, v.chapter.award, 'task');
+      r.questDone.add(CHAPTER_MARK + v.chapter.id);
     }
   }
 
