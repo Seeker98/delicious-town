@@ -1,0 +1,52 @@
+{
+  "1": {
+    "name": "Restaurante modelo aprendiz",
+    "title": "Guardián aprendiz",
+    "note": "¿Ya estás deseando desafiarme, verdad?"
+  },
+  "2": {
+    "name": "Restaurante modelo principiante",
+    "title": "Guardián principiante",
+    "note": "Parece que ya eres un cocinero de verdad, ¡pero yo no me dejo ganar fácilmente!"
+  },
+  "3": {
+    "name": "Restaurante de Song Sao",
+    "title": "Guardiana intermedia",
+    "note": "No paran de llegar retadores. ¿Puedes vencerme?"
+  },
+  "4": {
+    "name": "El Alma de Sariel",
+    "title": "Guardiana superior",
+    "note": "Hace años que no viene ningún cocinero a desafiarme. ¡Me muero de aburrimiento!"
+  },
+  "5": {
+    "name": "El Juicio de Barbelet",
+    "title": "Anciano juez",
+    "note": "¡Batirse en duelo conmigo es algo que muchos no logran ni en diez vidas!"
+  },
+  "6": {
+    "name": "Duma el Silencioso",
+    "title": "Anciano mentor",
+    "note": "Pareces un cocinero nato. ¡Nada le gusta más a este viejo que un duelo con alguien de talento!"
+  },
+  "7": {
+    "name": "La Voluntad de Gurtug",
+    "title": "Venerable de la torre",
+    "note": "¡Si hay otra vida, no volveré a pisar esta torre jamás!"
+  },
+  "8": {
+    "name": "El Oráculo de Akatma",
+    "title": "Señora de la torre",
+    "note": "Di toda mi vida para llegar aquí y ya nada me importa. ¡Mi único deseo es que alguien ocupe mi lugar mientras viva!"
+  },
+  "9": {
+    "name": "Anima",
+    "title": "Antiguo Dios de la Cocina",
+    "note": "¡Todo en este mundo no es más que humo pasajero! ¡Una vida de pasión acaba en un montón de polvo!"
+  },
+  "10": {
+    "name": "Peng Zu",
+    "title": "Dios de la Cocina",
+    "note": "¿Sabes hacer arroz frito con huevo?"
+  }
+}

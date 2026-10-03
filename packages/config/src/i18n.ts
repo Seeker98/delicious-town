@@ -16,6 +16,14 @@ export const I18N_FIELDS = {
   doors: ['name'],
   avatars: ['name'],
   icons: ['title', 'desc'],
+  // 第 8c 批：服务端接口直接给名字的数据，前端按 id 从目录取（任务、活跃项、星愿、厨塔各层、菜园配方、一番赏主题、特色菜熟练度）
+  tasks: ['name'],
+  activation: ['name'],
+  bless: ['name'],
+  tower: ['name', 'title', 'note'],
+  formulas: ['name'],
+  kujiThemes: ['name', 'desc'],
+  proficiency: ['name'],
 } as const;
 export type I18nKind = keyof typeof I18N_FIELDS;
 export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];

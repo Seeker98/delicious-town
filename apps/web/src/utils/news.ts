@@ -8,6 +8,8 @@ export interface NewsNames {
   mcName(id: number): string;
   weatherName(id: number): string;
   streetName(id: number): string;
+  /** 星愿名按目录取（第 8c 批）；测试里可以不传 */
+  data?(kind: 'bless', id: number): { name: string } | undefined;
 }
 
 /** 有文案的新闻类型（测试用来对照 NEWS_TYPES） */
@@ -23,16 +25,18 @@ export function newsText(n: NewsDto, x: NewsNames): string {
   // 自动预测题的题目按题型和参数、当前语言渲染（问题记录 272）
   const p = n.params;
   const params =
-    n.type === 'predict.result' && typeof p.kind === 'string'
-      ? {
-          ...p,
-          title: predictTitle({
-            kind: p.kind,
-            title: String(p.title ?? ''),
-            params: (p.eventParams ?? {}) as Record<string, unknown>,
-          }),
-        }
-      : p;
+    n.type === 'town.bless' && typeof p.blessId === 'number' && x.data?.('bless', p.blessId)
+      ? { ...p, blessName: x.data('bless', p.blessId)!.name }
+      : n.type === 'predict.result' && typeof p.kind === 'string'
+        ? {
+            ...p,
+            title: predictTitle({
+              kind: p.kind,
+              title: String(p.title ?? ''),
+              params: (p.eventParams ?? {}) as Record<string, unknown>,
+            }),
+          }
+        : p;
   return r(who, params, x);
 }
 

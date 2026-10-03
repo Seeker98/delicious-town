@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ActivationDto, TaskDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import RestTasksView from './RestTasksView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -64,6 +65,30 @@ describe('RestTasksView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue({ mainStep: 1, main: task(), side: [] });
     vi.mocked(endpoints.activation).mockResolvedValue(act());
     vi.mocked(endpoints.signIn).mockResolvedValue({});
+  });
+
+  it('任务名、活跃项名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
+    useCatalogStore().apply({
+      version: 'v:en',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      data: {
+        tasks: [{ id: 1, name: 'Refill oil once' }],
+        activation: [{ id: 1, name: 'Check in' }],
+        bless: [],
+        tower: [],
+        formulas: [],
+        kujiThemes: [],
+        proficiency: [],
+      },
+    });
+    const w = await mountView();
+    expect(w.text()).toContain('Refill oil once');
+    expect(w.get('[data-testid="act-1"]').text()).toContain('Check in');
+    expect(w.get('[data-testid="act-2"]').text()).toContain('打蟑螂');
   });
 
   it('签到按钮', async () => {

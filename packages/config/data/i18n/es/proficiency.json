@@ -1,0 +1,32 @@
+{
+  "1": {
+    "name": "Principiante"
+  },
+  "2": {
+    "name": "Novato"
+  },
+  "3": {
+    "name": "Hábil"
+  },
+  "4": {
+    "name": "Competente"
+  },
+  "5": {
+    "name": "Experto"
+  },
+  "6": {
+    "name": "Chef renombrado"
+  },
+  "7": {
+    "name": "Jefe de cocina"
+  },
+  "8": {
+    "name": "Gran maestro"
+  },
+  "9": {
+    "name": "Dios de la Cocina"
+  },
+  "10": {
+    "name": "Trascendente"
+  }
+}

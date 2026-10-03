@@ -1,0 +1,50 @@
+{
+  "1": {
+    "name": "Spring Festival Flavors",
+    "desc": "The drums sound, and the smell of the New Year's Eve dinner fills the town."
+  },
+  "2": {
+    "name": "Valentine's Desserts",
+    "desc": "The season of chocolate and roses; the dessert counter has a long queue."
+  },
+  "3": {
+    "name": "Cherry Blossom Tea Party",
+    "desc": "Cherry blossoms fill the streets, and the tea party is set beneath the trees."
+  },
+  "4": {
+    "name": "Spring Picnic",
+    "desc": "A checkered cloth spread on the grass, sandwiches and lemonade ready."
+  },
+  "5": {
+    "name": "Early Summer Fruits",
+    "desc": "The orchards start their harvest, and fruit desserts join the menu."
+  },
+  "6": {
+    "name": "Dragon Boat Festival",
+    "desc": "Dragon boats race on the river while zongzi leaves perfume the kitchen."
+  },
+  "7": {
+    "name": "Summer Iced Drinks",
+    "desc": "Amid the cicadas, shaved ice and soda are the favorites."
+  },
+  "8": {
+    "name": "Seafood Night Market",
+    "desc": "The fishing boats come in, and the late-night seafood stalls are ablaze with light."
+  },
+  "9": {
+    "name": "Mid-Autumn Mooncakes",
+    "desc": "When the moon is roundest, the mooncake molds never stop."
+  },
+  "10": {
+    "name": "Harvest Feast",
+    "desc": "The rice turns golden, and the harvest piles up in the kitchen."
+  },
+  "11": {
+    "name": "Hearthside Stews",
+    "desc": "As the weather cools, soup simmers on the stove all day long."
+  },
+  "12": {
+    "name": "Winter Hot Pot",
+    "desc": "On a snowy night, all you want is a pot of fiery hot pot."
+  }
+}

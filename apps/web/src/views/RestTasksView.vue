@@ -107,7 +107,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         :data-testid="`act-${i.id}`"
       >
         <div class="d-flex align-items-center gap-1">
-          <span class="text-truncate">{{ i.name }}</span>
+          <span class="text-truncate">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
           <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
             t.rest.tasks.full
           }}</span>
@@ -133,7 +133,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         :data-testid="`task-${x.id}`"
       >
         <div class="d-flex align-items-center">
-          <b>{{ x.name }}</b>
+          <b>{{ catalog.data('tasks', x.id)?.name ?? x.name }}</b>
           <span class="ms-auto">{{ Math.min(x.progress, x.target) }}/{{ x.target }}</span>
         </div>
         <div class="text-muted">{{ t.rest.tasks.award(awardText(x.award)) }}</div>

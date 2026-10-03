@@ -332,7 +332,7 @@ onBeforeUnmount(() => {
       <div v-if="mainTask" class="dt-todo-row" data-testid="main-task">
         <div class="flex-fill">
           <span class="dt-tag me-1">{{ t.home.mainTag }}</span
-          >{{ mainTask.name }}
+          >{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
           <span class="text-muted"
             >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
           >
@@ -391,7 +391,7 @@ onBeforeUnmount(() => {
             :disabled="!d.unlocked || busy"
             @click="openSlot(d.slot)"
           >
-            <div class="text-muted text-truncate">{{ d.name }}</div>
+            <div class="text-muted text-truncate">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
             <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
               <i class="bi bi-lock"></i> {{ t.home.notOpened }}
             </div>

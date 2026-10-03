@@ -1,0 +1,50 @@
+{
+  "1": {
+    "name": "Saveurs du Nouvel An",
+    "desc": "Les tambours résonnent et l'odeur du réveillon envahit la ville."
+  },
+  "2": {
+    "name": "Desserts de la Saint-Valentin",
+    "desc": "La saison du chocolat et des roses ; la queue s'allonge devant le comptoir des desserts."
+  },
+  "3": {
+    "name": "Thé sous les cerisiers",
+    "desc": "Les cerisiers en fleur remplissent les rues, et le thé est servi sous les arbres."
+  },
+  "4": {
+    "name": "Pique-nique de printemps",
+    "desc": "Une nappe à carreaux étalée sur l'herbe, sandwichs et limonade prêts."
+  },
+  "5": {
+    "name": "Fruits du début d'été",
+    "desc": "Les vergers commencent la récolte et les desserts aux fruits arrivent au menu."
+  },
+  "6": {
+    "name": "Fête des Bateaux-dragons",
+    "desc": "Les bateaux-dragons font la course sur le fleuve et les feuilles de zongzi parfument la cuisine."
+  },
+  "7": {
+    "name": "Boissons glacées d'été",
+    "desc": "Au chant des cigales, la glace pilée et les sodas ont la cote."
+  },
+  "8": {
+    "name": "Marché de nuit aux fruits de mer",
+    "desc": "Les bateaux de pêche rentrent et les étals de nuit brillent de mille feux."
+  },
+  "9": {
+    "name": "Gâteaux de lune de la mi-automne",
+    "desc": "Quand la lune est la plus ronde, les moules à gâteaux de lune ne s'arrêtent pas."
+  },
+  "10": {
+    "name": "Festin des récoltes",
+    "desc": "Le riz se dore et les récoltes s'entassent en cuisine."
+  },
+  "11": {
+    "name": "Ragoûts au coin du feu",
+    "desc": "Quand le temps fraîchit, la soupe mijote sur le feu toute la journée."
+  },
+  "12": {
+    "name": "Fondue chinoise d'hiver",
+    "desc": "Par une nuit de neige, on ne rêve que d'une fondue bien relevée."
+  }
+}

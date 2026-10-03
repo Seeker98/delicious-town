@@ -1,0 +1,32 @@
+{
+  "1": {
+    "name": "Beginner"
+  },
+  "2": {
+    "name": "Novice"
+  },
+  "3": {
+    "name": "Skilled"
+  },
+  "4": {
+    "name": "Proficient"
+  },
+  "5": {
+    "name": "Expert"
+  },
+  "6": {
+    "name": "Renowned Chef"
+  },
+  "7": {
+    "name": "Head Chef"
+  },
+  "8": {
+    "name": "Grand Master"
+  },
+  "9": {
+    "name": "God of Cookery"
+  },
+  "10": {
+    "name": "Transcendent"
+  }
+}

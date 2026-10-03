@@ -139,7 +139,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.sho
       <!-- 折扣标签和名字垂直居中（问题记录 118） -->
       <div class="d-flex align-items-center gap-1" data-testid="special-title">
         <b>{{ catalog.goodsName(special.goodsId) }}</b>
-        <span class="badge bg-danger">{{ special.tierName }}</span>
+        <span class="badge bg-danger">{{
+          t.store.shop.tier(Math.round((1 - special.discount) * 100), special.tierName)
+        }}</span>
       </div>
       <div>
         {{ t.store.shop.specialLine(formatNum(special.price), special.stock - special.sold, special.stock) }}

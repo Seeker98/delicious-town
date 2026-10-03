@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia';
-import type { CatalogDto, CatalogFoodDto, CatalogGoodsDto, CatalogMcDto, LooksDto } from '@dt/shared';
+import type {
+  CatalogDataEntry,
+  CatalogDataKind,
+  CatalogDto,
+  CatalogFoodDto,
+  CatalogGoodsDto,
+  CatalogMcDto,
+  LooksDto,
+} from '@dt/shared';
 import type { Locale } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { activeLocale } from '../i18n';
@@ -23,6 +31,8 @@ export const useCatalogStore = defineStore('catalog', {
     /** 设施、套装的名字：加成来源用（问题记录 272） */
     devicesMap: new Map<number, string>(),
     suitsMap: new Map<number, NonNullable<CatalogDto['suits']>[number]>(),
+    /** 任务、厨塔各层等服务端直接给名字的数据（问题记录 272） */
+    dataMap: new Map<string, CatalogDataEntry>(),
     loaded: false,
     /** 上次从服务器读目录的时间（毫秒）：refreshIfMissing 限频用 */
     fetchedAt: 0,
@@ -36,6 +46,9 @@ export const useCatalogStore = defineStore('catalog', {
       this.weatherNotes = new Map(c.weather.flatMap((w) => (w.note ? [[w.id, w.note] as const] : [])));
       this.devicesMap = new Map(c.devices.map((d) => [d.id, d.name]));
       this.suitsMap = new Map((c.suits ?? []).map((s) => [s.id, s]));
+      this.dataMap = new Map(
+        Object.entries(c.data ?? {}).flatMap(([k, list]) => list.map((x) => [`${k}:${x.id}`, x] as const)),
+      );
       this.looks = c.looks ?? null;
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
@@ -112,6 +125,10 @@ export const useCatalogStore = defineStore('catalog', {
     /** fallback：目录里没有时用的名字（通常是服务端给的），不传时写"天气 id" */
     weatherName(id: number, fallback?: string): string {
       return this.weatherMap.get(id) ?? fallback ?? activeMessages().errors.fallbackName.weather(id);
+    },
+    /** 按 id 取当前语言的数据名字；目录里没有（旧缓存）时返回 undefined，调用处用服务端给的原文 */
+    data(kind: CatalogDataKind, id: number): CatalogDataEntry | undefined {
+      return this.dataMap.get(`${kind}:${id}`);
     },
     weatherNote(id: number): string | undefined {
       return this.weatherNotes.get(id);
