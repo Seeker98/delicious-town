@@ -64,6 +64,19 @@ describe('CookbooksView', () => {
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'upgradable' });
   });
+  it('筛选按钮是一排能换行的独立按钮，不是按钮组（问题记录 304：英法西文下超出手机屏幕）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    const box = w.get('[data-testid="cookbook-filters"]');
+    expect(box.classes()).toContain('flex-wrap');
+    expect(w.find('.btn-group').exists()).toBe(false);
+    expect(box.findAll('button')).toHaveLength(5);
+  });
+
   it('紧凑卡片：菜名、品级、食材在左两行，按钮在右（问题记录：信息密度低）', async () => {
     const router = createRouter({
       history: createMemoryHistory(),

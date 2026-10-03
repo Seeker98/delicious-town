@@ -767,11 +767,14 @@ details.dt-card > summary {
   gap: 4px;
   margin-bottom: 8px;
 }
+/* 列宽用 minmax(0, 1fr)，格子里的长单词可以断开，不把宫格撑出屏幕（问题记录 304） */
 .dt-grid-cell {
   border: 1px solid var(--bs-border-color);
   border-radius: 6px;
   padding: 4px;
   text-align: center;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .dt-cell-done {
   background: var(--bs-success-bg-subtle);

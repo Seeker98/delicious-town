@@ -71,11 +71,12 @@ onMounted(async () => {
     <select v-model.number="street" class="form-select form-select-sm w-auto">
       <option v-for="s in catalog.streets" :key="s.id" :value="s.id">{{ s.name }}</option>
     </select>
-    <div class="btn-group btn-group-sm">
+    <!-- 一排独立按钮，放不下时换行（问题记录 304：英法西文下按钮组超出手机屏幕） -->
+    <div class="d-flex flex-wrap gap-1" data-testid="cookbook-filters">
       <button
         v-for="f in FILTERS"
         :key="f"
-        :class="['btn', filter === f ? 'btn-primary' : 'btn-outline-primary']"
+        :class="['btn btn-sm', filter === f ? 'btn-primary' : 'btn-outline-primary']"
         :data-testid="`filter-${f}`"
         @click="filter = f"
       >

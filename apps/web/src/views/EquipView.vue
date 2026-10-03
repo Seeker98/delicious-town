@@ -119,28 +119,31 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     <h5>
       {{ t.equip.title }} <small class="text-muted">{{ t.equip.count(o.count) }}</small>
     </h5>
-    <table class="table table-sm small mb-2">
-      <thead>
-        <tr>
-          <th></th>
-          <th v-for="k in ATTR_KEYS" :key="k">{{ ATTR_NAMES[k] }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ t.equip.rows.points }}</td>
-          <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.points[k] }}</td>
-        </tr>
-        <tr>
-          <td>{{ t.equip.rows.gear }}</td>
-          <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.gear[k] }}</td>
-        </tr>
-        <tr class="fw-bold">
-          <td>{{ t.equip.rows.total }}</td>
-          <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.total[k] }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- 七列在英法西文下放不进手机宽度：表格自己左右滑，不撑宽整页（问题记录 304） -->
+    <div class="table-responsive mb-2" data-testid="attr-table">
+      <table class="table table-sm small mb-0">
+        <thead>
+          <tr>
+            <th></th>
+            <th v-for="k in ATTR_KEYS" :key="k">{{ ATTR_NAMES[k] }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ t.equip.rows.points }}</td>
+            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.points[k] }}</td>
+          </tr>
+          <tr>
+            <td>{{ t.equip.rows.gear }}</td>
+            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.gear[k] }}</td>
+          </tr>
+          <tr class="fw-bold">
+            <td>{{ t.equip.rows.total }}</td>
+            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.total[k] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <AttrPoints @done="load" />
     <div class="small mb-2">
       {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>

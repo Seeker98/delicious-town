@@ -100,6 +100,12 @@ describe('EquipView', () => {
     vi.mocked(endpoints.equipPresetApply).mockResolvedValue({ skipped: [3] });
   });
 
+  it('属性表放在能左右滑的容器里，不撑宽整页（问题记录 304）', async () => {
+    const w = await mountView();
+    expect(w.get('[data-testid="attr-table"]').classes()).toContain('table-responsive');
+    expect(w.get('[data-testid="attr-table"]').find('table').exists()).toBe(true);
+  });
+
   it('显示属性、厨力、5 个部位和套装档位', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="power"]').text()).toBe('7');

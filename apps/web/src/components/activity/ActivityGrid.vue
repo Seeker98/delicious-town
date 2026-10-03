@@ -20,7 +20,7 @@ const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c'
 </script>
 
 <template>
-  <div class="dt-grid-board" :style="{ gridTemplateColumns: `repeat(${a.def.size}, 1fr)` }">
+  <div class="dt-grid-board" :style="{ gridTemplateColumns: `repeat(${a.def.size}, minmax(0, 1fr))` }">
     <div
       v-for="(c, i) in a.def.cells"
       :key="i"
