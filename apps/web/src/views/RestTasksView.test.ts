@@ -230,3 +230,88 @@ describe('RestTasksView', () => {
     expect(done.text()).toContain('主线已全部完成');
   });
 });
+
+describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () => {
+  const weekly = (claimed: boolean[], fullClaimed = false): QuestsDto['weekly'] => {
+    const qs = [4011, 4012, 4013, 4014].map((id, i) =>
+      task({
+        id,
+        name: `每周${i + 1}`,
+        key: 'market.buy',
+        target: 10,
+        progress: 10,
+        done: true,
+        claimed: claimed[i]!,
+      }),
+    );
+    return {
+      group: 'A',
+      week: '2026-09-28',
+      endsAt: new Date(Date.now() + 2 * 86_400_000 + 3.5 * 3_600_000).toISOString(),
+      quests: qs,
+      full: {
+        id: 4019,
+        award: { goods: [] },
+        claimable: qs.every((q) => q.claimed) && !fullClaimed,
+        claimed: fullClaimed,
+      },
+    };
+  };
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.activation).mockResolvedValue(act());
+  });
+
+  it('四块依次是主线、支线、每周、活跃度', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], { weekly: weekly([false, false, false, false]) }),
+    );
+    const w = await mountView();
+    expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'card-main',
+      'card-lines',
+      'card-weekly',
+      'card-activation',
+    ]);
+    expect(w.get('[data-testid="card-main"]').text()).toContain('主线');
+    expect(w.get('[data-testid="card-activation"]').text()).toContain('今日活跃 120');
+  });
+
+  it('每周：写组别和剩余时间；单个任务能领；没领完时全完成奖励灰色写还差几个', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], { weekly: weekly([true, false, false, false]) }),
+    );
+    const w = await mountView();
+    const card = w.get('[data-testid="card-weekly"]');
+    expect(card.text()).toContain('每周任务 · A 组');
+    expect(card.text()).toContain('2 天 3 小时');
+    await card.get('[data-testid="claim-task-4012"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.claimTask).toHaveBeenCalledWith(4012);
+    const full = card.get('[data-testid="claim-weekly-full"]');
+    expect(full.attributes('disabled')).toBeDefined();
+    expect(full.classes()).not.toContain('btn-success');
+    expect(full.text()).toBe('还差 3 个任务');
+  });
+
+  it('每周：4 个都领了能领全完成奖励；领过写已领；没有每周任务时不显示这一块', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], { weekly: weekly([true, true, true, true]) }),
+    );
+    const w = await mountView();
+    const full = w.get('[data-testid="claim-weekly-full"]');
+    expect(full.classes()).toContain('btn-success');
+    await full.trigger('click');
+    await flushPromises();
+    expect(endpoints.claimTask).toHaveBeenCalledWith(4019);
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], { weekly: weekly([true, true, true, true], true) }),
+    );
+    const done = await mountView();
+    expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('✓ 已领全完成奖励');
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
+    const none = await mountView();
+    expect(none.find('[data-testid="card-weekly"]').exists()).toBe(false);
+  });
+});

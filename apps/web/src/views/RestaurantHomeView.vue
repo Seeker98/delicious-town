@@ -2,7 +2,14 @@
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { AnnouncementDto, DeviceOptionsDto, DineCurrentDto, EffectDto, QuestDto } from '@dt/shared';
+import type {
+  AnnouncementDto,
+  DeviceOptionsDto,
+  DineCurrentDto,
+  EffectDto,
+  QuestDto,
+  QuestsDto,
+} from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
@@ -28,6 +35,9 @@ const rest = computed(() => store.rest);
 const error = ref('');
 const busy = ref(false);
 const mainTask = ref<QuestDto | null>(null);
+/** 没有可领的任务时：本章任务都领了 → 章末奖励；当前章锁定 → 解锁条件（问题记录 318） */
+const mainChapter = ref<QuestsDto['chapter']>(null);
+const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 const dining = ref<DineCurrentDto | null>(null);
 const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
@@ -80,8 +90,12 @@ async function load() {
     await store.refresh();
     void loadGuideCodes();
     // 本章第一个可领的；没有可领的显示第一个没完成的（问题记录 318）
-    const main = (await endpoints.tasks()).main;
-    mainTask.value = main.find((x) => x.done && !x.claimed) ?? main.find((x) => !x.done) ?? null;
+    // 本章任务都领完时显示章末奖励，章锁定时写解锁条件
+    const q = await endpoints.tasks();
+    const ready = q.main.find((x) => x.done && !x.claimed);
+    const chapterRow = q.chapter && (q.chapter.claimable || q.chapter.locked);
+    mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
+    mainChapter.value = !ready && chapterRow ? q.chapter : null;
     dining.value = await endpoints.dineCurrent();
     error.value = '';
   } catch (e) {
@@ -387,6 +401,30 @@ onBeforeUnmount(() => {
           class="btn btn-sm btn-success"
           :disabled="busy"
           @click="act(() => endpoints.claimTask(mainTask!.id), t.home.claimFailed)"
+        >
+          {{ t.home.claim }}
+        </button>
+      </div>
+      <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
+        <div class="flex-fill">
+          <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag) }}
+          <template v-if="mainChapter.locked"
+            >{{ t.rest.tasks.chapterLocked(mainChapter.id, chapterName(mainChapter)) }}
+            <span class="text-muted">{{
+              mainChapter.needStar > 0
+                ? t.rest.tasks.lockedStar(mainChapter.needStar)
+                : t.rest.tasks.lockedLevel(mainChapter.needLevel)
+            }}</span></template
+          >
+          <template v-else>{{
+            t.rest.tasks.chapterAwardRow(mainChapter.id, chapterName(mainChapter))
+          }}</template>
+        </div>
+        <button
+          v-if="!mainChapter.locked"
+          class="btn btn-sm btn-success"
+          :disabled="busy"
+          @click="act(() => endpoints.claimChapter(mainChapter!.id), t.home.claimFailed)"
         >
           {{ t.home.claim }}
         </button>

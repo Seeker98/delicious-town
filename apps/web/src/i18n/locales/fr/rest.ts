@@ -86,6 +86,11 @@ const rest: Messages['rest'] = {
     lockedStar: (n) => `🔒 Débloqué à ${n} ${n === 1 ? 'étoile' : 'étoiles'}`,
     claimedTask: '✓ Récupéré',
     lineDone: 'Tout est terminé',
+    chapterAwardRow: (n, name) => `Récompense du chapitre ${n} : ${name}`,
+    weekly: (group) => `Quêtes hebdomadaires · Groupe ${group}`,
+    weeklyFull: (text) => `Récompense pour tout terminer : ${text}`,
+    claimWeeklyFull: 'Récupérer la récompense finale',
+    weeklyFullClaimed: '✓ Récompense finale récupérée',
   },
 };
 export default rest;

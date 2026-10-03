@@ -86,6 +86,11 @@ const rest: Messages['rest'] = {
     lockedStar: (n) => `🔒 Unlocks at ${n} ${n === 1 ? 'star' : 'stars'}`,
     claimedTask: '✓ Claimed',
     lineDone: 'All done',
+    chapterAwardRow: (n, name) => `Chapter ${n}: ${name} reward`,
+    weekly: (group) => `Weekly quests · Group ${group}`,
+    weeklyFull: (text) => `All-complete reward: ${text}`,
+    claimWeeklyFull: 'Claim all-complete reward',
+    weeklyFullClaimed: '✓ All-complete reward claimed',
   },
 };
 export default rest;

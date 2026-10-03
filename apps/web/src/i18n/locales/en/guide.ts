@@ -38,13 +38,18 @@ const guide: Messages['guide'] = {
       ', and check in on the home page.',
     ],
     ['Star upgrades, moving and renaming are all done at the ', { to: '/society', text: 'Guild' }, '.'],
+    [
+      'Follow the ',
+      { to: '/rest/tasks', text: 'Quests' },
+      ': the main quest has 12 chapters, each with a few quests you can do in any order. Claim them all, then claim the chapter reward; the next chapter unlocks at a set level or star rating. New features open their own side quests, and there is a set of weekly quests based on your stars.',
+    ],
   ],
   daily: 'Daily routine',
   dailyItems: [
     { to: '/', text: 'Check in on the home page: once a day, for a check-in gift pack' },
     {
       to: '/rest/tasks',
-      text: 'Tasks & activity: do daily tasks to earn activity points and claim activity rewards',
+      text: 'Tasks & activity: do daily tasks to earn activity points and claim activity rewards; weekly quests reset on Monday at 00:00',
     },
     {
       to: '/town',
