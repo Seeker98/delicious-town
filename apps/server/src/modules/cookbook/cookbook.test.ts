@@ -77,7 +77,7 @@ describe('食谱列表、详情、需求', () => {
     expect(learnable.items.every((x) => x.grade === 0 && x.learn !== 'z')).toBe(true);
     const upgradable = await cb().list(ctx, { street: 0, page: 1, filter: 'upgradable' });
     expect(upgradable.items.map((x) => [x.id, x.grade])).toEqual([[194, 1]]);
-    expect(upgradable.allTotal).toBe(2331);
+    expect(upgradable.allTotal).toBe(3810);
   });
 
   it('详情：各品级所需食材', async () => {

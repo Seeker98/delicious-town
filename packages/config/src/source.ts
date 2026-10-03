@@ -21,6 +21,13 @@ export const SOURCE_FILES = [
   'dataset/bar_slot_machine_award',
   'dataset/tower_floors',
   'designed/cookbooks_price',
+  // 新街道（问题记录 284）：构建时和 dataset 里的同类数据拼在一起
+  'designed/cookbooks_price_new',
+  'designed/cookbooks_new',
+  'designed/foods_new',
+  'designed/streets_new',
+  'designed/street_medals_new',
+  'designed/street_medal_map',
   'designed/cookbook_grades',
   'designed/goods_awardflag',
   'designed/weather',

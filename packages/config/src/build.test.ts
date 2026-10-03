@@ -10,10 +10,10 @@ describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
-    expect(bundle!.foods).toHaveLength(313);
-    expect(bundle!.goods).toHaveLength(682); // 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
-    expect(bundle!.cookbooks).toHaveLength(2331);
-    expect(bundle!.streets).toHaveLength(14);
+    expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
+    expect(bundle!.goods).toHaveLength(698); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
+    expect(bundle!.cookbooks).toHaveLength(3810);
+    expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
     expect(bundle!.version).toMatch(/^[0-9a-f]{12}$/);
   });
@@ -27,6 +27,43 @@ describe('buildBundle（真实数据）', () => {
     expect(street(176)).toBe(1);
     expect(b.cookbooks.find((c) => c.id === 176)!.name).toBe('左宗棠鸡');
     expect(b.cookbooks.find((c) => c.id === 344)!.desc).toBe('楚菜，口味辛、咸、鲜');
+  });
+
+  it('新街道（问题记录 284）：每道菜 10 个品级、同一品级食材不重复、每条街一枚勋章', () => {
+    const b = realBuild().bundle!;
+    for (const c of b.cookbooks.filter((x) => x.id >= 18747))
+      for (let g = 1; g <= 10; g++) {
+        const ids = c.needFoods[g]!.map((f) => f.foodsId);
+        expect(new Set(ids).size, `${c.id} grade ${g}`).toBe(ids.length);
+      }
+    expect(b.streets.map((s) => s.medalId)).toEqual([
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      187,
+      188,
+      189,
+      ...Array.from({ length: 16 }, (_, i) => 92014 + i),
+    ]);
+    // 竞猜清单原本就是日常菜场能出的全部 1、2 级食材：新街道的 1、2 级食材也要能猜
+    const guess = new Set(b.marketGuessFoods);
+    const daily = new Set(b.tuning.market.dailyLevelWeights.map(([l]) => l));
+    expect(b.foods.filter((f) => daily.has(f.level) && !guess.has(f.id)).map((f) => f.id)).toEqual([]);
+    expect(guess.has(586)).toBe(true);
+    expect(b.cookbooks.find((c) => c.id === 18747)).toMatchObject({
+      name: '鲷鱼握寿司',
+      streetId: 14,
+      coin: 910,
+      level: 3,
+    });
   });
 
   it('特色菜：食材只留 id（"[4]海参"的 4 是等级，设计文档 裁定 1）；熟练度表 10 级', () => {
@@ -164,6 +201,17 @@ describe('buildBundle（坏数据）', () => {
     expect(errors).toContain('restaurant_defaults gift references unknown goods 777777');
   });
 
+  it('街道勋章对应表：街道缺勋章、对应的不是勋章时报错', () => {
+    const src = source();
+    const map = (src['designed/street_medal_map'] as Array<{ streetId: number; goodsId: number }>).filter(
+      (m) => m.streetId !== 20,
+    );
+    map.push({ streetId: 21, goodsId: 1 });
+    const { errors } = buildBundle({ ...src, 'designed/street_medal_map': map });
+    expect(errors).toContain('street 20 has no medal');
+    expect(errors).toContain('street_medal_map street 21 goods 1 is not a medal');
+  });
+
   it('字段类型错误时指出表名和路径', () => {
     const src = source();
     const foods = structuredClone(src['dataset/foods']) as Array<Record<string, unknown>>;
@@ -189,7 +237,7 @@ describe('2A 新增配置', () => {
     expect(b.potTiers[0]!.effects).toEqual({ coinRate: 0.08 });
     expect(b.paintingTiers.map((t) => t.count)).toEqual([7, 10, 13]);
     expect(b.paintingTiers[0]!.effects).toEqual({ autoAddOil: 1, mcCoinAdd: 1 });
-    expect(b.marketGuessFoods).toHaveLength(108);
+    expect(b.marketGuessFoods).toHaveLength(116); // 108 + 新街道 8 种 2 级食材（问题记录 284）
     expect(b.guessAwards.map((a) => a.hits)).toEqual([1, 2, 3, 4, 5, 6]);
     expect(b.guessBonus.map((a) => a.minHits)).toEqual([5, 4]);
     expect(b.tuning.settlement.autoRefuelThreshold).toBe(2000);

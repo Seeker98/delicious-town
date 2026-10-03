@@ -1,0 +1,127 @@
+{
+ "source": "新设计（问题记录 284）",
+ "rule": "每条街对应的街道勋章；搬家时按这张表换勋章（以前按 devicetype<=13 识别，雕像 devicetype 20 会和印度街冲突）",
+ "count": 30,
+ "data": [
+  {
+   "streetId": 0,
+   "goodsId": 140
+  },
+  {
+   "streetId": 1,
+   "goodsId": 141
+  },
+  {
+   "streetId": 2,
+   "goodsId": 142
+  },
+  {
+   "streetId": 3,
+   "goodsId": 143
+  },
+  {
+   "streetId": 4,
+   "goodsId": 144
+  },
+  {
+   "streetId": 5,
+   "goodsId": 145
+  },
+  {
+   "streetId": 6,
+   "goodsId": 146
+  },
+  {
+   "streetId": 7,
+   "goodsId": 147
+  },
+  {
+   "streetId": 8,
+   "goodsId": 148
+  },
+  {
+   "streetId": 9,
+   "goodsId": 149
+  },
+  {
+   "streetId": 10,
+   "goodsId": 150
+  },
+  {
+   "streetId": 11,
+   "goodsId": 187
+  },
+  {
+   "streetId": 12,
+   "goodsId": 188
+  },
+  {
+   "streetId": 13,
+   "goodsId": 189
+  },
+  {
+   "streetId": 14,
+   "goodsId": 92014
+  },
+  {
+   "streetId": 15,
+   "goodsId": 92015
+  },
+  {
+   "streetId": 16,
+   "goodsId": 92016
+  },
+  {
+   "streetId": 17,
+   "goodsId": 92017
+  },
+  {
+   "streetId": 18,
+   "goodsId": 92018
+  },
+  {
+   "streetId": 19,
+   "goodsId": 92019
+  },
+  {
+   "streetId": 20,
+   "goodsId": 92020
+  },
+  {
+   "streetId": 21,
+   "goodsId": 92021
+  },
+  {
+   "streetId": 22,
+   "goodsId": 92022
+  },
+  {
+   "streetId": 23,
+   "goodsId": 92023
+  },
+  {
+   "streetId": 24,
+   "goodsId": 92024
+  },
+  {
+   "streetId": 25,
+   "goodsId": 92025
+  },
+  {
+   "streetId": 26,
+   "goodsId": 92026
+  },
+  {
+   "streetId": 27,
+   "goodsId": 92027
+  },
+  {
+   "streetId": 28,
+   "goodsId": 92028
+  },
+  {
+   "streetId": 29,
+   "goodsId": 92029
+  }
+ ]
+}
