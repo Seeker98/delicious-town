@@ -30,6 +30,7 @@ setEventsListener((events) => {
     eventsSummary(events, catalog),
     events.some((e) => e.type === 'gain') ? 'success' : 'info',
     4000,
+    () => eventsSummary(events, catalog),
   );
 });
 

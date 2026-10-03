@@ -353,9 +353,9 @@ onBeforeUnmount(() => {
         <div class="flex-fill">
           <span class="dt-tag me-1">{{ t.home.mainTag }}</span
           >{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
-          <span class="text-muted"
-            >（{{ Math.min(mainTask.progress, mainTask.target) }}/{{ mainTask.target }}）</span
-          >
+          <span class="text-muted">{{
+            t.common.paren(`${Math.min(mainTask.progress, mainTask.target)}/${mainTask.target}`)
+          }}</span>
         </div>
         <button
           v-if="mainTask.done"

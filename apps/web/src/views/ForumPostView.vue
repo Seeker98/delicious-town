@@ -251,10 +251,9 @@ async function submit() {
 
     <div v-if="data.can.reply" class="mt-3">
       <div v-if="replyTo !== null" class="dt-meta mb-1" data-testid="reply-target">
-        {{ t.forum.post.replyTo(replyTo) }}（<a href="#" @click.prevent="replyTo = null">{{
-          t.common.cancel
-        }}</a
-        >）
+        {{ t.forum.post.replyTo(replyTo) }}{{ t.common.parenOpen
+        }}<a href="#" @click.prevent="replyTo = null">{{ t.common.cancel }}</a
+        >{{ t.common.parenClose }}
       </div>
       <textarea
         v-model="content"

@@ -66,11 +66,17 @@ export async function scanHats(
 }
 
 /** worker 每分钟一次：遍历开放区服跑各项扫描（设计 §7）：六星换铉；区服开着邀请时再跑邀请扫描 */
-export async function runOpsScan(game: Game, log: JobLogger): Promise<void> {
+export async function runOpsScan(
+  game: Game,
+  log: JobLogger,
+  /** 只扫这些区服；不传就是全部开放的区服（测试里用，免得扫到别的测试正在用的区服） */
+  opts: { shardIds?: number[] } = {},
+): Promise<void> {
   const shards = await game.app.db
     .selectFrom('shard')
     .select('id')
     .where('status', '=', 'open')
+    .$if(opts.shardIds !== undefined, (q) => q.where('id', 'in', opts.shardIds!))
     .orderBy('id')
     .execute();
   for (const { id } of shards) {

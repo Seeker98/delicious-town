@@ -22,6 +22,7 @@
   "dependencies": {
     "@dt/config": "workspace:*",
     "@dt/shared": "workspace:*",
+    "@fastify/compress": "^8.3.1",
     "@fastify/cookie": "^11.1.2",
     "@fastify/cors": "^11.3.0",
     "@node-rs/argon2": "^2.2.1",

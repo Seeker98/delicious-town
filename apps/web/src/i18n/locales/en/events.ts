@@ -58,7 +58,8 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'friend.apply':
       return `${who} sent you a friend request`;
     case 'yard.helped': {
-      const what = p.what === 'weed' ? 'weeded' : p.what === 'deworm' ? 'debugged' : 'watered';
+      // 除虫不用 debugged：那是程序员的双关（backlog 多语言）
+      const what = p.what === 'weed' ? 'weeded' : p.what === 'deworm' ? 'got rid of the bugs on' : 'watered';
       return `${who} ${what} your ${foodName(Number(p.foodsId))}`;
     }
     case 'yard.stolen': {

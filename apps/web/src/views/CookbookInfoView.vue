@@ -74,7 +74,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.
               :key="f.foodsId"
               :class="['me-2', f.have >= f.num ? '' : 'text-danger']"
             >
-              {{ catalog.foodName(f.foodsId) }}×{{ f.num }}（{{ f.have }}）
+              {{ catalog.foodName(f.foodsId) }}×{{ f.num }}{{ t.common.paren(String(f.have)) }}
             </span>
           </td>
         </tr>

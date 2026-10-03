@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { DEFAULT_LOCALE, isLocale, type MeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { activeMessages } from '../i18n';
 import { useLocaleStore } from './locale';
+import { useToastStore } from './toast';
 
 export const useSessionStore = defineStore('session', {
   state: () => ({ me: null as MeDto | null, loaded: false }),
@@ -36,7 +38,9 @@ export const useSessionStore = defineStore('session', {
             () => undefined,
           );
       } else if (isLocale(me.lang)) {
-        if (me.lang !== locale.locale) await locale.set(me.lang);
+        // 跟随账号语言加载失败：提示，先用当前语言（backlog 多语言：以前静默用简中）
+        if (me.lang !== locale.locale && (await locale.set(me.lang)) === 'failed')
+          useToastStore().push(activeMessages().common.langLoadFailed, 'danger');
       } else {
         if (locale.locale !== DEFAULT_LOCALE) await locale.set(DEFAULT_LOCALE);
         await endpoints.setLang(DEFAULT_LOCALE).catch(() => undefined);

@@ -7,7 +7,7 @@ const home: Messages['home'] = {
     body1: 'His badge stays in effect until you drive him away: occupancy +50%, but ',
     bold: 'picky rate -120%',
     body2:
-      " (picky customers stay away, nobody orders dishes, you only earn base coins), and oil per table +5. When he sits down to eat himself, that table earns ×5. After you drive him away he won't pick your restaurant for a while.",
+      " (picky customers stay away, nobody orders dishes, you only earn base coins), and oil per table +5. Now and then he sits down to eat himself, and that table earns ×5. After you drive him away he won't pick your restaurant for a while.",
     byStrength: 'Drive away with Stamina',
     byBook: 'Use the Krabby Patty recipe',
     failed: "Couldn't drive him away",

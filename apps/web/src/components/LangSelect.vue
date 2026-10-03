@@ -15,12 +15,17 @@ const t = useT();
 async function pick(e: Event) {
   const el = e.target as HTMLSelectElement;
   const l = el.value as Locale;
-  if (!(await locale.set(l))) {
+  const r = await locale.set(l);
+  // stale：加载期间又选了别的语言，以那次为准
+  if (r === 'stale') return;
+  if (r === 'failed') {
     toast.push(t.value.common.langLoadFailed, 'danger');
     el.value = locale.locale;
     return;
   }
-  if (session.me) await endpoints.setLang(l).catch(() => undefined);
+  if (session.me)
+    // 存到账号失败要说一声：不然下次刷新会回到账号原来的语言（backlog 多语言）
+    await endpoints.setLang(l).catch(() => toast.push(t.value.common.langSaveFailed, 'danger'));
   else locale.markPick();
 }
 </script>

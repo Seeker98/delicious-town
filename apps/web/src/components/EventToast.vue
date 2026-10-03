@@ -13,7 +13,7 @@ const toast = useToastStore();
       data-testid="toast"
       @click="toast.remove(t.id)"
     >
-      {{ t.text }}
+      {{ t.render ? t.render() : t.text }}
     </div>
   </div>
 </template>

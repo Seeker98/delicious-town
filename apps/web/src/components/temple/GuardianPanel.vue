@@ -60,7 +60,7 @@ async function fire() {
     <div class="d-flex gap-1 align-items-center mb-1">
       <select v-model.number="goodsId" class="form-select form-select-sm" data-testid="missile">
         <option v-for="m in data.missiles" :key="m.goodsId" :value="m.goodsId">
-          {{ catalog.goodsName(m.goodsId) }}（{{ m.num }}）
+          {{ catalog.goodsName(m.goodsId) }}{{ t.common.paren(String(m.num)) }}
         </option>
       </select>
       <input

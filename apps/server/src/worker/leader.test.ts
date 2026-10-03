@@ -1,5 +1,5 @@
 import pg from 'pg';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { tryLead, waitForLeadership } from './leader';
 
 const url = () => process.env.DATABASE_URL!;
@@ -18,7 +18,9 @@ describe('leader election', () => {
     expect(await tryLead(a, key)).toBe(true);
     expect(await tryLead(b, key)).toBe(false);
     await a.end();
-    expect(await tryLead(b, key)).toBe(true);
+    // a.end() 返回时数据库那边的会话不一定已经退出、锁不一定已经释放：允许 b 重试一会儿
+    // （backlog：以前紧接着只试一次，偶尔失败；线上 worker 每 5 秒重试，不受影响）
+    await vi.waitFor(async () => expect(await tryLead(b, key)).toBe(true), { timeout: 2000, interval: 20 });
     await b.end();
   });
 
