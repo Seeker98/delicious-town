@@ -105,7 +105,9 @@ function resolve() {
   if (!d || !note.value.trim()) return;
   const ban =
     banDays.value === '' ? '' : banDays.value === 0 ? '，并永久封号' : `，并封号 ${banDays.value} 天`;
-  if (!window.confirm(`${DO[d.targetType]}${ban}。确定吗？`)) return;
+  // 内容已经不在：不会清空或删除，只记录违规（backlog 6B-1）
+  const doText = d.current === null ? '内容已不在，只记录违规' : DO[d.targetType];
+  if (!window.confirm(`${doText}${ban}。确定吗？`)) return;
   const name = newName.value.trim();
   void done(
     () =>

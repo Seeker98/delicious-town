@@ -11,7 +11,7 @@ import { loadTarget } from './targets';
  * 驳回过、内容没改的只记数不开新案。时间都用游戏时钟
  */
 export async function reportOp(o: Op, ctx: RestCtx, b: ReportInput): Promise<{ ok: true }> {
-  const target = await loadTarget(o.tx, b.targetType, b.targetId);
+  const target = await loadTarget(o.tx, b.targetType, b.targetId, { lock: true });
   if (!target || target.shardId !== o.shardId) throw notFound('report_target', b.targetId);
   if (b.targetType === 'notice' && target.text === '') throw invalidState('report_empty');
   if (target.restId === o.rest.id || target.accountId === ctx.accountId) throw invalidState('report_self');
@@ -36,16 +36,17 @@ export async function reportOp(o: Op, ctx: RestCtx, b: ReportInput): Promise<{ o
 
   let caseId = (await openCase())?.id;
   if (caseId === undefined) {
-    const rejected = await o.tx
+    // 只看最近一个结了的案子：它是驳回、且内容和当时一样才只记数。
+    // 中间被处理过又改回原样的，要开新案（backlog 6B-1）
+    const last = await o.tx
       .selectFrom('report_case')
-      .select(['id', 'snapshot'])
+      .select(['id', 'snapshot', 'status'])
       .where('target_type', '=', b.targetType)
       .where('target_id', '=', b.targetId)
-      .where('status', '=', 'rejected')
       .orderBy('id', 'desc')
       .executeTakeFirst();
-    if (rejected && rejected.snapshot === target.text) {
-      caseId = rejected.id;
+    if (last && last.status === 'rejected' && last.snapshot === target.text) {
+      caseId = last.id;
     } else {
       const inserted = await sql<{ id: number }>`
         insert into report_case

@@ -40,14 +40,17 @@ export default {
       title: () => '违规处理通知',
       body: (p) => {
         const actions: Record<string, string> = { delete: '删除', clear: '清空', rename: '强制改名' };
-        const what = actions[str(p.action)] ? `已被${actions[str(p.action)]}` : '已记录违规';
+        // 内容已经不在（action = none）时不说"因违规已记录违规"（backlog 6B-1）
+        const what = actions[str(p.action)]
+          ? `因违规已被${actions[str(p.action)]}`
+          : '被认定违规，已记录在案';
         const ban =
           p.banDays === null || p.banDays === undefined
             ? ''
             : num(p.banDays) === 0
               ? '账号永久封禁。'
               : `账号封禁 ${num(p.banDays)} 天。`;
-        return `你的${str(p.targetName)}因违规${what}。${ban}\n说明：${str(p.note)}`;
+        return `你的${str(p.targetName)}${what}。${ban}\n说明：${str(p.note)}`;
       },
     },
   }),

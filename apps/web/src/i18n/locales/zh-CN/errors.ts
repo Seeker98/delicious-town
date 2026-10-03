@@ -193,6 +193,7 @@ export default {
     too_many_tries: '输错太多次了，请一小时后再试',
     report_self: '不能举报自己',
     report_dup: '你已经举报过这条内容了',
+    report_retry: '举报没提交成功，请再试一次',
     report_daily: '今天的举报次数用完了',
     report_empty: '这家店没有公告',
     report_closed: '这条举报已经处理过了',

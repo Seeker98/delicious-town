@@ -41,14 +41,17 @@ export default {
       title: () => '違規處理通知',
       body: (p) => {
         const actions: Record<string, string> = { delete: '刪除', clear: '清空', rename: '強制改名' };
-        const what = actions[str(p.action)] ? `已被${actions[str(p.action)]}` : '已記錄違規';
+        // 內容已經不在（action = none）時不說"因違規已記錄違規"（backlog 6B-1）
+        const what = actions[str(p.action)]
+          ? `因違規已被${actions[str(p.action)]}`
+          : '被認定違規，已記錄在案';
         const ban =
           p.banDays === null || p.banDays === undefined
             ? ''
             : num(p.banDays) === 0
               ? '賬號永久封禁。'
               : `賬號封禁 ${num(p.banDays)} 天。`;
-        return `你的${str(p.targetName)}因違規${what}。${ban}\n說明：${str(p.note)}`;
+        return `你的${str(p.targetName)}${what}。${ban}\n說明：${str(p.note)}`;
       },
     },
   }),

@@ -190,6 +190,7 @@ const errors: Messages['errors'] = {
     too_many_tries: 'Too many wrong attempts. Try again in an hour.',
     report_self: "You can't report yourself",
     report_dup: "You've already reported this",
+    report_retry: 'Your report could not be submitted. Please try again',
     report_daily: "You've used all of today's reports",
     report_empty: "This restaurant doesn't have a notice",
     report_closed: 'This report has already been handled',

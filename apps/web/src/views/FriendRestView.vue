@@ -96,8 +96,9 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <div class="flex-fill">
         <div class="fw-bold">
           {{ rest.name }}
+          <!-- 蟹老板（NPC 店）不能举报，点了会被拒（backlog 6B-1） -->
           <ReportButton
-            v-if="rest.id !== mine"
+            v-if="rest.id !== mine && !rest.npc"
             target-type="rest_name"
             :target-id="rest.id"
             testid="rest-name-report"
@@ -149,7 +150,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     </div>
     <div v-if="rest.notice" class="border rounded p-2 mb-2 small">
       <div style="white-space: pre-wrap">{{ rest.notice }}</div>
-      <div v-if="rest.id !== mine" class="text-end">
+      <div v-if="rest.id !== mine && !rest.npc" class="text-end">
         <ReportButton target-type="notice" :target-id="rest.id" testid="notice-report" />
       </div>
     </div>

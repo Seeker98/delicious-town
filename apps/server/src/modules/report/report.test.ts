@@ -106,6 +106,63 @@ describe('玩家举报（设计 §3.2）', () => {
     expect(cases[0]).toMatchObject({ status: 'open', snapshot: '改成广告了', reporter_count: 1 });
   });
 
+  it('驳回 → 改过并被处理 → 又改回原样：再被举报开新案，不挂到最早那个驳回的案子上（backlog 6B-1）', async () => {
+    const bad = await newRestaurant(t, { patch: { notice: '原样内容' } });
+    const [a, b, c] = [
+      await newRestaurant(t, { shardId: bad.shardId }),
+      await newRestaurant(t, { shardId: bad.shardId }),
+      await newRestaurant(t, { shardId: bad.shardId }),
+    ];
+    const setNotice = (notice: string) =>
+      t.db.updateTable('restaurant').set({ notice }).where('id', '=', bad.restaurantId).execute();
+    const close = (status: 'rejected' | 'resolved') =>
+      t.db
+        .updateTable('report_case')
+        .set({ status })
+        .where('target_id', '=', bad.restaurantId)
+        .where('status', '=', 'open')
+        .execute();
+    await report(a, { targetType: 'notice', targetId: bad.restaurantId });
+    await close('rejected');
+    await setNotice('改成广告');
+    await report(b, { targetType: 'notice', targetId: bad.restaurantId });
+    await close('resolved');
+    await setNotice('原样内容');
+    await report(c, { targetType: 'notice', targetId: bad.restaurantId });
+    const cases = await caseOf('notice', bad.restaurantId);
+    expect(cases).toHaveLength(3);
+    expect(cases[0]).toMatchObject({ status: 'open', snapshot: '原样内容', reporter_count: 1 });
+  });
+
+  it('举报和处理同时发生：处理提交后举报看到内容已删除，报 NOT_FOUND，不开空案（backlog 6B-1）', async () => {
+    const bad = await newRestaurant(t);
+    const a = await newRestaurant(t, { shardId: bad.shardId });
+    const b = await newRestaurant(t, { shardId: bad.shardId });
+    const news = await t.db
+      .insertInto('news')
+      .values({
+        shard_id: bad.shardId,
+        type: 'town.broadcast',
+        rest_id: bad.restaurantId,
+        params: JSON.stringify({ text: '刷屏' }),
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    const id = Number(news.id);
+    await report(a, { targetType: 'broadcast', targetId: id });
+    let late: Promise<unknown> | null = null;
+    // 模拟后台处理：结案、撤下喇叭，提交前另一个人正好来举报
+    await t.db.transaction().execute(async (tx) => {
+      await tx.updateTable('report_case').set({ status: 'resolved' }).where('target_id', '=', id).execute();
+      await tx.deleteFrom('news').where('id', '=', id).execute();
+      late = report(b, { targetType: 'broadcast', targetId: id }).catch((e: unknown) => e);
+      await new Promise((r) => setTimeout(r, 300));
+    });
+    expect(await late).toMatchObject({ code: 'NOT_FOUND' });
+    const cases = await caseOf('broadcast', id);
+    expect(cases.map((c) => c.status)).toEqual(['resolved']);
+  });
+
   it('关掉 report 开关时 FEATURE_DISABLED', async () => {
     const bad = await newRestaurant(t, { patch: { notice: 'x' } });
     await t.db

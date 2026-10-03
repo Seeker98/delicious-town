@@ -142,3 +142,22 @@ describe('backlog 6B-1：举报列表和改名', () => {
     expect(useToastStore().items.at(-1)?.text).toBe('店名「餐厅5」已被别的餐厅占用，请在"新店名"里填一个');
   });
 });
+
+describe('backlog 6B-1：内容已不在时的确认框', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(adminApi.reports).mockResolvedValue([caseDto]);
+    vi.mocked(adminApi.resolveReport).mockResolvedValue({ ...caseDto, status: 'resolved' });
+  });
+  it('现在的内容已经没有：确认框写"内容已不在，只记录违规"，不说会清空', async () => {
+    vi.mocked(adminApi.report).mockResolvedValue({ ...detailDto, current: null });
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = await mountView('mod');
+    await w.find('[data-testid="report-note"]').setValue('发广告');
+    await w.find('[data-testid="report-resolve"]').trigger('click');
+    await flushPromises();
+    expect(ask.mock.calls[0]![0]).toContain('内容已不在，只记录违规');
+    expect(ask.mock.calls[0]![0]).not.toContain('清空');
+  });
+});
