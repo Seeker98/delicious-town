@@ -84,6 +84,7 @@ export default {
     equip: '廚具',
     suit: '套裝',
     other: '其他',
+    activity: '全服活動',
   },
   collapse: '收起',
   expandAll: (n: number) => `展開全部（共 ${n} 條）`,

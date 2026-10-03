@@ -182,7 +182,11 @@ const EFFECT_GROUPS: GroupKey[] = ['bless', 'street', 'honor', 'device', 'equip'
 const effectsAll = ref(false);
 /** 折叠时的一行摘要：来源名字，最多 3 个（问题记录 280） */
 const effectsSummary = computed(() => {
-  const names = (rest.value?.effects ?? []).map((e) => effectName(e, catalog));
+  // 全服加成活动排在前面（问题记录 294）
+  const names = [
+    ...(rest.value?.boosts ?? []).map((b) => b.title),
+    ...(rest.value?.effects ?? []).map((e) => effectName(e, catalog)),
+  ];
   const h = t.value.home;
   return names.length === 0
     ? h.none
@@ -294,8 +298,16 @@ onBeforeUnmount(() => {
           <i class="bi bi-coin"></i> <b data-testid="rest-coin">{{ formatNum(rest.coin) }}</b>
         </div>
         <div class="col-6"><i class="bi bi-gem"></i> {{ formatNum(rest.diamond) }}</div>
-        <div class="col-6"><i class="bi bi-lightning"></i> {{ rest.strength }}/{{ rest.strengthMax }}</div>
-        <div class="col-6" :title="t.home.renown"><i class="bi bi-award"></i> {{ rest.renown }}</div>
+        <!-- 体力、声望也按千分位（问题记录 296：体力很多时只有它没分隔） -->
+        <div class="col-6">
+          <i class="bi bi-lightning"></i>
+          <span data-testid="rest-strength"
+            >{{ formatNum(rest.strength) }}/{{ formatNum(rest.strengthMax) }}</span
+          >
+        </div>
+        <div class="col-6" :title="t.home.renown">
+          <i class="bi bi-award"></i> <span data-testid="rest-renown">{{ formatNum(rest.renown) }}</span>
+        </div>
         <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
         <div class="col-6">
           <i class="bi bi-droplet"></i> {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
@@ -534,8 +546,29 @@ onBeforeUnmount(() => {
     <details class="dt-card my-2 small" data-testid="effects">
       <summary>
         <span class="dt-card-title">{{ t.home.effects }}</span>
-        <span class="text-muted ms-1">{{ t.home.effectsCount(rest.effects.length, effectsSummary) }}</span>
+        <span class="text-muted ms-1">{{
+          t.home.effectsCount(rest.effects.length + rest.boosts.length, effectsSummary)
+        }}</span>
       </summary>
+      <!-- 正在生效的全服加成活动（问题记录 294）：直接改区服数值，不是加成来源，单独一组 -->
+      <template v-if="rest.boosts.length > 0">
+        <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups.activity }}</div>
+        <div
+          v-for="b in rest.boosts"
+          :key="`boost-${b.id}`"
+          class="d-flex align-items-center gap-1 border-bottom py-1"
+          data-testid="boost-row"
+        >
+          <i class="bi bi-megaphone"></i>
+          <b class="text-nowrap">{{ b.title }}</b>
+          <span class="flex-fill d-flex flex-wrap gap-1">
+            <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
+              >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
+            >
+          </span>
+          <span class="text-muted text-nowrap">{{ expiresText(b.endsAt) }}</span>
+        </div>
+      </template>
       <template v-for="g in effectGroups" :key="g.type">
         <div class="text-muted mt-1" data-testid="effect-group">{{ t.home.groups[g.type] }}</div>
         <div

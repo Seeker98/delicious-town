@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNum } from '../../utils/format';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { YardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -97,7 +98,7 @@ function onAct(a: PlantAction, plantId: number) {
 <template>
   <div v-if="data" class="small">
     <div class="d-flex flex-wrap gap-2 align-items-center mb-1">
-      <span>{{ t.yard.land.strength(data.strength) }}</span>
+      <span>{{ t.yard.land.strength(formatNum(data.strength)) }}</span>
       <span>{{ t.yard.land.coin(data.coin) }}</span>
       <span class="ms-auto">{{ t.yard.land.fertilizer }}</span>
       <select v-model.number="fertId" class="form-select form-select-sm w-auto" data-testid="fert">

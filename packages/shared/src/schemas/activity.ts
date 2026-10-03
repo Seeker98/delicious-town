@@ -139,7 +139,7 @@ const fourDecimals = (n: number) => Math.abs(n * 10000 - Math.round(n * 10000)) 
 export const exchangeDef = z
   .object({
     currencies: z
-      .array(z.object({ name: z.string().trim().min(1).max(6) }))
+      .array(z.object({ name: z.string().trim().min(1).max(12) }))
       .min(1)
       .max(8)
       .refine((cs) => new Set(cs.map((c) => c.name)).size === cs.length, { message: 'duplicate_name' }),

@@ -44,7 +44,7 @@ const inUse = (i: number) =>
   <div v-for="(c, i) in modelValue.currencies" :key="`c${i}`" class="d-flex gap-2 align-items-center py-1">
     <input
       class="form-control form-control-sm w-auto"
-      maxlength="6"
+      maxlength="12"
       :value="c.name"
       :data-testid="`cur-name-${i}`"
       @input="

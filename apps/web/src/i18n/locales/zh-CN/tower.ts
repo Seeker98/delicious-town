@@ -24,7 +24,7 @@ export default {
     needPrev: (n: number) => `先打赢第 ${n} 层`,
     night: (floor: number, hour: number) => `${floor} 层以上 ${hour} 点以后才能挑战`,
     tired: '他今天已经累了',
-    head: (power: number, left: number, total: number, tickets: number, strength: number) =>
+    head: (power: number, left: number, total: number, tickets: number, strength: string) =>
       `我的厨力 ${power} · 今日还能挑战 ${left}/${total} 次 · 挑战券 ${tickets}（在仓库使用，当天多一次）· 体力 ${strength}`,
     name: (floor: number, name: string) => `${floor} 层 · ${name}`,
     power: (n: number) => `厨力 ${n}`,

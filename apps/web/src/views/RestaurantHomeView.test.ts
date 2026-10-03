@@ -61,6 +61,7 @@ const dto: RestaurantDto = {
   plaque2Open: false,
   plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
   headlines: { news: [], broadcast: null },
+  boosts: [],
   disabledFeatures: [],
   mainTaskStep: 1,
   devices: [
@@ -225,6 +226,18 @@ describe('RestaurantHomeView', () => {
     await flushPromises();
     expect(endpoints.placeDevice).toHaveBeenCalledWith(1, 14);
     confirm.mockRestore();
+  });
+
+  it('体力、声望也按千分位显示，和银币、油一致（问题记录 296）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      strength: 9848,
+      strengthMax: 1000,
+      renown: 12345,
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="rest-strength"]').text()).toBe('9,848/1,000');
+    expect(w.get('[data-testid="rest-renown"]').text()).toBe('12,345');
   });
 
   it('经验数字显示在整条进度条上，不在橙色部分里（刚升级时橙色很短也看得见）', async () => {
@@ -400,6 +413,31 @@ describe('RestaurantHomeView', () => {
     expect(box.element.tagName).toBe('DETAILS');
     expect((box.element as HTMLDetailsElement).open).toBe(false);
     expect(box.get('summary').text()).toContain('生效的加成');
+  });
+
+  it('正在生效的全服加成活动单独成一组，算进摘要（问题记录 294）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      boosts: [
+        {
+          id: 7,
+          title: '双倍经验周',
+          items: [
+            { key: 'exp', factor: 2 },
+            { key: 'marketPrice', factor: 0.8 },
+          ],
+          endsAt: new Date(Date.now() + 5 * 3_600_000).toISOString(),
+        },
+      ],
+    });
+    const w = await mountView();
+    const box = w.get('[data-testid="effects"]');
+    expect(box.get('summary').text()).toContain('2 项');
+    expect(box.get('summary').text()).toContain('双倍经验周');
+    const row = box.get('[data-testid="boost-row"]');
+    expect(row.text()).toContain('双倍经验周');
+    expect(row.findAll('.dt-chip-good').map((c) => c.text())).toEqual(['经营经验 ×2', '菜场价格 ×0.8']);
+    expect(box.findAll('[data-testid="effect-group"]').map((g) => g.text())).toContain('全服活动');
   });
 
   it('生效的加成：按来源分组，加成绿色、减益红色；超过 5 条先收起', async () => {

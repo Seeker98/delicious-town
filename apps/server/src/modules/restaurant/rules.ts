@@ -2,6 +2,7 @@ import type { Insertable } from 'kysely';
 import type { GameConfig, RestaurantDefaults } from '@dt/config';
 import {
   levelUpExp,
+  type ActiveBoostDto,
   type DeviceSlotDto,
   type HeadlinesDto,
   type RestaurantDto,
@@ -68,6 +69,7 @@ export interface OverviewExtra {
   cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
   disabledFeatures: string[];
+  boosts: ActiveBoostDto[];
 }
 
 export function toRestaurantDto(
@@ -133,6 +135,7 @@ export function toRestaurantDto(
       effects: e.effects,
       expiresAt: e.expiresAt ? e.expiresAt.toISOString() : null,
     })),
+    boosts: extra.boosts,
     headlines: extra.headlines,
     disabledFeatures: extra.disabledFeatures,
     createdAt: r.created_at.toISOString(),

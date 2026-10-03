@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNum } from '../../utils/format';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { FriendYardDto } from '@dt/shared';
@@ -83,7 +84,7 @@ function onAct(a: PlantAction, plantId: number) {
       <RouterLink :to="`/friends/${restId}`">{{ t.yard.friend.back }}</RouterLink>
     </div>
     <div class="text-muted mb-1">
-      {{ t.yard.friend.meta(data.strength, data.renown) }}
+      {{ t.yard.friend.meta(formatNum(data.strength), formatNum(data.renown)) }}
     </div>
     <div v-if="data.lands.length === 0" class="text-muted" data-testid="friend-empty">
       {{ t.yard.friend.empty }}

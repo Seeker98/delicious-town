@@ -11,7 +11,7 @@ export default {
     failed: '探險失敗',
     mapOption: (name: string, num: number, strength: number) => `${name}（${num}，每次體力 ${strength}）`,
     btn: (n: number) => `探險 ×${n}`,
-    strength: (n: number) => `體力 ${n}`,
+    strength: (n: string) => `體力 ${n}`,
     result: (ok: number, fail: number) => `成功 ${ok} 次，迷路 ${fail} 次`,
     rare: (list: string) => `神秘食材：${list}`,
     foods: (list: string) => `食材：${list}`,

@@ -36,6 +36,8 @@ describe('一番赏配置（设计 §3、§4）', () => {
     ]);
     expect(k.tiers[0]).toMatchObject({ icon: 'kuji_a', news: 'broadcast' });
     expect(k.last).toMatchObject({ icon: 'kuji_last', news: 'broadcast' });
+    // 只有 A 赏和最后赏上新闻（都是广播）；B 赏不再发新闻（问题记录 286）
+    expect(k.tiers.filter((x) => x.news).map((x) => x.key)).toEqual(['A']);
   });
 
   it('月度主题（问题记录 274）：12 个月齐全，每月 4 个限定手办是纪念品；默认奖品不再带初代手办；每天最多 3 池', () => {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNum } from '../../utils/format';
 import { computed, ref } from 'vue';
 import type { ExploreResultDto, TempleDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -72,7 +73,7 @@ async function go() {
         {{ t.temple.explore.btn(n) }}
       </button>
     </div>
-    <div class="text-muted mb-1">{{ t.temple.explore.strength(data.strength) }}</div>
+    <div class="text-muted mb-1">{{ t.temple.explore.strength(formatNum(data.strength)) }}</div>
     <div v-if="block" class="text-danger mb-1" data-testid="block">{{ block }}</div>
     <div v-if="result" data-testid="explore-result">
       {{ t.temple.explore.result(result.success, result.fail) }}

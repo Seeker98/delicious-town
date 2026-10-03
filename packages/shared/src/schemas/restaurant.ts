@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { BoostItem } from '../boost';
 import type { HeadlinesDto } from './town';
 
 export const createRestaurantBody = z.object({ name: z.string().max(32) });
@@ -24,6 +25,14 @@ export interface EffectDto {
   name: string;
   effects: Record<string, number>;
   expiresAt: string | null;
+}
+
+/** 正在生效的全服加成活动（问题记录 294）：它直接改区服数值，不是加成来源，单独列 */
+export interface ActiveBoostDto {
+  id: number;
+  title: string;
+  items: BoostItem[];
+  endsAt: string;
 }
 
 export interface RestaurantDto {
@@ -75,6 +84,7 @@ export interface RestaurantDto {
   /** null = 没设置头像 */
   avatar: number | null;
   effects: EffectDto[];
+  boosts: ActiveBoostDto[];
   /** 首页小镇新闻：最新 3 条 + 最新广播 */
   headlines: HeadlinesDto;
   /** 本区服后台关掉的功能，前端据此隐藏入口（问题记录 248） */

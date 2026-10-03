@@ -20,6 +20,11 @@ describe('ExplorePanel', () => {
     });
   });
 
+  it('体力按千分位显示（问题记录 296）', () => {
+    const w = mount(ExplorePanel, { props: { data: templeData({ strength: 9848 }) } });
+    expect(w.text()).toContain('体力 9,848');
+  });
+
   it('次数不超过 持有 / 体力÷每次体力 / 99', async () => {
     const w = mount(ExplorePanel, { props: { data: templeData({ strength: 5 }) } });
     await w.find('[data-testid="times"]').setValue('9');
