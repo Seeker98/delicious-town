@@ -302,6 +302,8 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     const w = await mountView();
     const full = w.get('[data-testid="claim-weekly-full"]');
     expect(full.classes()).toContain('btn-success');
+    expect(full.text()).toBe('领取');
+    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励：');
     await full.trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(4019);
@@ -309,7 +311,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
       quests([task()], { weekly: weekly([true, true, true, true], true) }),
     );
     const done = await mountView();
-    expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('✓ 已领全完成奖励');
+    expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('✓ 已领取');
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
     const none = await mountView();
     expect(none.find('[data-testid="card-weekly"]').exists()).toBe(false);

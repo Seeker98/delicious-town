@@ -38,6 +38,14 @@ const mainTask = ref<QuestDto | null>(null);
 /** 没有可领的任务时：本章任务都领了 → 章末奖励；当前章锁定 → 解锁条件（问题记录 318） */
 const mainChapter = ref<QuestsDto['chapter']>(null);
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
+/** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */
+const mainChapterText = computed(() => {
+  const c = mainChapter.value;
+  if (!c) return '';
+  const x = t.value.rest.tasks;
+  const body = c.locked ? x.chapterLocked(c.id, chapterName(c)) : x.chapterAwardRow(c.id, chapterName(c));
+  return t.value.common.colon(t.value.home.mainTag) + body;
+});
 const dining = ref<DineCurrentDto | null>(null);
 const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
@@ -407,18 +415,12 @@ onBeforeUnmount(() => {
       </div>
       <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
         <div class="flex-fill">
-          <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag) }}
-          <template v-if="mainChapter.locked"
-            >{{ t.rest.tasks.chapterLocked(mainChapter.id, chapterName(mainChapter)) }}
-            <span class="text-muted">{{
-              mainChapter.needStar > 0
-                ? t.rest.tasks.lockedStar(mainChapter.needStar)
-                : t.rest.tasks.lockedLevel(mainChapter.needLevel)
-            }}</span></template
-          >
-          <template v-else>{{
-            t.rest.tasks.chapterAwardRow(mainChapter.id, chapterName(mainChapter))
-          }}</template>
+          <i class="bi bi-flag me-1"></i>{{ mainChapterText }}
+          <span v-if="mainChapter.locked" class="text-muted">{{
+            mainChapter.needStar > 0
+              ? t.rest.tasks.lockedStar(mainChapter.needStar)
+              : t.rest.tasks.lockedLevel(mainChapter.needLevel)
+          }}</span>
         </div>
         <button
           v-if="!mainChapter.locked"

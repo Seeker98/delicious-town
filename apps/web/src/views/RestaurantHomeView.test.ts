@@ -604,7 +604,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue({ ...all, chapter: { ...all.chapter!, claimable: true } });
     let w = await mountView();
     const row = w.get('[data-testid="main-task"]');
-    expect(row.text()).toContain('第 1 章 开张大吉 章末奖励');
+    expect(row.text()).toContain('主线：第 1 章 开张大吉 章末奖励');
     await row.get('button').trigger('click');
     await flushPromises();
     expect(endpoints.claimChapter).toHaveBeenCalledWith(1);
@@ -612,7 +612,8 @@ describe('RestaurantHomeView', () => {
       quests([], { chapter: { ...all.chapter!, id: 2, name: '小店经营', needLevel: 5, locked: true } }),
     );
     w = await mountView();
-    expect(w.get('[data-testid="main-task"]').text()).toContain('第 2 章 小店经营');
+    // 冒号后不多空格（终审小项）
+    expect(w.get('[data-testid="main-task"]').text()).toContain('主线：第 2 章 小店经营');
     expect(w.get('[data-testid="main-task"]').text()).toContain('🔒 5 级解锁');
     expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
   });
