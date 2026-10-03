@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { boostDefOf } from '@dt/shared';
 import { applyBoosts } from './boost';
 import { buildBundle } from './build';
 import { createGameConfig } from './runtime';
@@ -48,5 +49,25 @@ describe('applyBoosts（148-4 设计 §6.1）', () => {
   it('新数值默认 1', () => {
     expect(base.tuning.settlement.coinMultiplier).toBe(1);
     expect(base.tuning.market.priceFactor).toBe(1);
+  });
+});
+
+describe('backlog 148-4：上限和取整不把区服调过的数值压低', () => {
+  const withTuning = (patch: Record<string, Record<string, number>>) => {
+    const s = structuredClone(base);
+    for (const [sec, kv] of Object.entries(patch))
+      Object.assign((s.tuning as unknown as Record<string, Record<string, number>>)[sec]!, kv);
+    return s;
+  };
+  it('区服把概率调到 1 以上时，加成不会把它压回 1', () => {
+    const s = applyBoosts(withTuning({ equip: { baseRate: 1.2 } }), [[{ key: 'equipStress', factor: 1.1 }]]);
+    expect(s.tuning.equip.baseRate).toBe(1.2);
+  });
+  it('整数项原值是 0（关掉加产）时保持 0，不会变成 1', () => {
+    const s = applyBoosts(withTuning({ yard: { yieldPerLevel: 0 } }), [[{ key: 'yardYield', factor: 2 }]]);
+    expect(s.tuning.yard.yieldPerLevel).toBe(0);
+  });
+  it('体力恢复的最小倍数是 1.5：更小的倍数四舍五入后恢复量不变', () => {
+    expect(boostDefOf('strength')?.min).toBe(1.5);
   });
 });

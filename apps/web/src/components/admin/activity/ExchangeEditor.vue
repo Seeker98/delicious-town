@@ -211,6 +211,7 @@ const inUse = (i: number) =>
         class="form-control form-control-sm"
         style="width: 5rem"
         :value="s.limit"
+        :data-testid="`shop-limit-${i}`"
         @input="setShop(i, { limit: num($event) })"
       />
       次
@@ -218,6 +219,7 @@ const inUse = (i: number) =>
         type="button"
         class="btn btn-sm btn-link text-danger"
         :disabled="modelValue.shop.length <= 1"
+        :data-testid="`shop-del-${i}`"
         @click="removeShop(i)"
       >
         删除这项
@@ -231,6 +233,7 @@ const inUse = (i: number) =>
     type="button"
     class="btn btn-sm btn-outline-primary my-2"
     :disabled="modelValue.shop.length >= 30"
+    data-testid="shop-add"
     @click="addShop"
   >
     加一项兑换

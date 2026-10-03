@@ -31,7 +31,9 @@ describe('活动页工具', () => {
     expect(rewardStatus(r(true, null), 'running')).toBe('claim');
     expect(rewardStatus(r(true, 'page'), 'ended')).toBe('page');
     expect(rewardStatus(r(true, 'mail'), 'ended')).toBe('mail');
-    expect(rewardStatus(r(true, null), 'settling')).toBe('mail');
+    // 结算中还没寄出：待邮寄（backlog 148-1）；结束后没领的已经寄出
+    expect(rewardStatus(r(true, null), 'settling')).toBe('pending');
+    expect(rewardStatus(r(true, null), 'ended')).toBe('mail');
     expect(rewardStatus(r(false, null), 'ended')).toBe('missed');
   });
 });

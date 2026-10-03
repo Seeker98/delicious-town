@@ -387,6 +387,23 @@ describe('终审：兑换活动编辑器的字段错误和货币删除', () => {
     await w.find('[data-testid="cur-del-1"]').trigger('click');
     expect(w.find('[data-testid="cur-name-1"]').exists()).toBe(false);
   });
+  it('删掉中间一项兑换后，下面的项保留自己的内容一起提交（backlog 148-2）', async () => {
+    vi.mocked(adminApi.createActivity).mockResolvedValue({} as never);
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-kind"]').setValue('exchange');
+    await w.find('[data-testid="ac-title"]').setValue('兑换');
+    await w.find('[data-testid="ac-body"]').setValue('说明');
+    await w.find('[data-testid="shop-add"]').trigger('click');
+    await w.find('[data-testid="shop-limit-1"]').setValue('7');
+    await w.find('[data-testid="shop-del-0"]').trigger('click');
+    expect((w.find('[data-testid="shop-limit-0"]').element as HTMLInputElement).value).toBe('7');
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    const b = vi.mocked(adminApi.createActivity).mock.calls[0]![0];
+    expect((b.def as { shop: Array<{ limit: number }> }).shop.map((x) => x.limit)).toEqual([7]);
+  });
 });
 
 describe('AdminActivitiesView 全服合力（148-3）', () => {

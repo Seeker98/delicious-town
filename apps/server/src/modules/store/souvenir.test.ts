@@ -33,3 +33,24 @@ describe('纪念品（148-2 设计 §6.2）', () => {
     expect(await goodsNum(t, r.restaurantId, 90001)).toBe(1);
   });
 });
+
+describe('backlog 148-2：持有纪念品时不算仓库格', () => {
+  it('商店买新种类：只算占格道具，纪念品不挡；格子真满了才报 STORE_FULL', async () => {
+    // 仓库 2 格：一种普通道具 + 一种纪念品，还能再买一种新道具
+    const r = await newRestaurant(t, {
+      patch: { coin: 1_000_000, store_num: 2 },
+      goods: { 85: 1, 90009: 1 },
+    });
+    await t.game.shop.buy(r, { goodsId: 30, num: 1 });
+    await expect(t.game.shop.buy(r, { goodsId: 31, num: 1 })).rejects.toMatchObject({ code: 'STORE_FULL' });
+  });
+
+  it('商店列表的"仓库满了"也不算纪念品', async () => {
+    const r = await newRestaurant(t, {
+      patch: { coin: 1_000_000, store_num: 2 },
+      goods: { 85: 1, 90009: 1 },
+    });
+    const all = await t.game.shop.items(r);
+    expect([...all.coin, ...all.black].some((i) => i.blocked === 'store')).toBe(false);
+  });
+});

@@ -1022,6 +1022,15 @@ export interface ActivitySettleTable {
   settled_at: TsDefault;
 }
 
+/** 补发出错的店（backlog 148-1）：出错次数到上限就放弃这家 */
+export interface ActivitySettleFailTable {
+  activity_id: number;
+  rest_id: number;
+  fails: Default<number>;
+  last_error: Default<string>;
+  updated_at: TsDefault;
+}
+
 export interface ExchangeOrderTable {
   id: Generated<string>;
   shard_id: number;
@@ -1261,6 +1270,7 @@ export interface DB {
   activity_claim: ActivityClaimTable;
   activity_pass: ActivityPassTable;
   activity_settle: ActivitySettleTable;
+  activity_settle_fail: ActivitySettleFailTable;
   exchange_order: ExchangeOrderTable;
   exchange_trade: ExchangeTradeTable;
   exchange_ref: ExchangeRefTable;

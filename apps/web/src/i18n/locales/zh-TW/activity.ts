@@ -98,7 +98,16 @@ export default {
     guardianRare: '守護獸稀有掉落',
     sellRate: '商店賣出價',
   } as Record<string, string>,
-  rewards: { locked: '未達成', page: '已領', mail: '已郵寄', missed: '未達成', claim: '領取' },
+  /** pending 結算中、還沒寄出；premiumLocked 積分已夠但戰令沒解鎖（backlog 148-1） */
+  rewards: {
+    locked: '未達成',
+    page: '已領',
+    mail: '已郵寄',
+    pending: '待郵寄',
+    missed: '未達成',
+    claim: '領取',
+    premiumLocked: '解鎖後可領',
+  },
   goalLine: (action: string, n: number) => `${action} ${n} 次`,
   grid: {
     full: '全部完成',

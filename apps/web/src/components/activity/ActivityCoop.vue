@@ -26,6 +26,8 @@ const progress = computed(() => {
   return Math.floor(((board.value.pool - lo) / (hi - lo)) * 100);
 });
 function hint(i: number): string {
+  // 结束后差多少已经没有意义，奖励那里会写"未达成"（backlog 148-3）
+  if (props.a.state !== 'running') return '';
   const m = ms.value[i]!;
   if (board.value.pool < m.target)
     return t.value.activity.coop.remain(formatNum(m.target - board.value.pool));

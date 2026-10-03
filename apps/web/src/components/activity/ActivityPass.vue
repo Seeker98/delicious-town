@@ -69,6 +69,7 @@ const price = computed(() =>
             :activity-id="a.id"
             :reward="byKey.get(`p${i}`)!"
             :state="a.state"
+            :premium-locked="!a.premium && points >= l.points"
             :busy="busy"
             @claim="$emit('claim', $event)"
           />

@@ -606,3 +606,116 @@ describe('问题记录 226：活动条 + 详情', () => {
     expect(cards(w)).toEqual(['activity-1']);
   });
 });
+
+describe('backlog 长尾第 2 批：活动卡片的状态文案', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  const show = async (a: unknown) => {
+    vi.mocked(endpoints.activities).mockResolvedValue({ items: [a as ActivityDto], level: 10 });
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    return w;
+  };
+
+  it('结算中：达成未领的显示"待邮寄"；结束后显示"已邮寄"', async () => {
+    const settling = await show({ ...goals, state: 'settling', claimable: 0 });
+    expect(settling.find('[data-testid="activity-1"]').text()).toContain('待邮寄');
+    expect(settling.find('[data-testid="activity-1"]').text()).not.toContain('已邮寄');
+    const ended = await show({ ...goals, state: 'ended', claimable: 0 });
+    expect(ended.find('[data-testid="activity-1"]').text()).toContain('已邮寄');
+  });
+
+  it('战令没解锁、积分已够的进阶档显示锁', async () => {
+    const w = await show(pass);
+    const row = w.findAll('[data-testid="activity-3"] tbody tr')[0]!;
+    expect(row.find('[data-testid="premium-lock-3-0"]').exists()).toBe(true);
+    expect(row.text()).not.toContain('未达成');
+  });
+
+  it('已结束的全服加成只写"已结束"，不提奖励和邮箱', async () => {
+    const w = await show({
+      ...base,
+      id: 8,
+      kind: 'boost',
+      state: 'ended',
+      def: { items: [{ key: 'exp', factor: 2 }] },
+      counters: {},
+      rewards: [],
+      claimable: 0,
+    });
+    const card = w.find('[data-testid="activity-8"]').text();
+    expect(card).toContain('已结束');
+    expect(card).not.toContain('邮箱');
+  });
+
+  it('兑换次数用完时按钮禁用（backlog 148-2）', async () => {
+    const w = await show({
+      ...base,
+      id: 12,
+      kind: 'exchange',
+      def: {
+        currencies: [{ name: '福' }],
+        drops: [],
+        shop: [{ cost: [{ currency: 0, num: 1 }], award: { coin: 10 }, limit: 2 }],
+        graceHours: 24,
+      },
+      counters: { m0: 99, x0: 2 },
+      today: {},
+      rewards: [],
+      claimable: 0,
+      exchangeUntil: new Date(Date.now() + 3 * 86_400_000).toISOString(),
+    });
+    expect(w.find('[data-testid="exchange-12-0"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('兑换活动结束后（兑换期内）不再显示今天的掉落计数', async () => {
+    const w = await show({
+      ...base,
+      id: 11,
+      kind: 'exchange',
+      state: 'ended',
+      def: {
+        currencies: [{ name: '福' }],
+        drops: [{ key: 'market.buy', chance: 0.05, currency: 0, num: 1, dailyCap: 10 }],
+        shop: [{ cost: [{ currency: 0, num: 1 }], award: { coin: 10 }, limit: 3 }],
+        graceHours: 24,
+      },
+      counters: { m0: 5 },
+      today: { d0: 3 },
+      rewards: [],
+      claimable: 0,
+      exchangeUntil: new Date(Date.now() + 3_600_000).toISOString(),
+    });
+    expect(w.find('[data-testid="activity-11"]').text()).not.toContain('3/10');
+  });
+
+  it('全服合力结束后，没达成的里程碑不再写"全服还差"', async () => {
+    const w = await show({
+      ...base,
+      id: 21,
+      kind: 'coop',
+      state: 'ended',
+      def: {
+        rules: [{ key: 'market.buy', points: 10, dailyCap: 50 }],
+        milestones: [{ target: 1000, minContribution: 0, award: { coin: 2 } }],
+        ranks: [],
+      },
+      counters: { points: 200 },
+      rewards: [{ key: 's0', award: { coin: 2 }, reached: false, claimed: null }],
+      claimable: 0,
+      coop: { pool: 550, top: [], myRank: 2 },
+    });
+    expect(w.find('[data-testid="coop-hint-21-0"]').exists()).toBe(false);
+    expect(w.find('[data-testid="activity-21"]').text()).not.toContain('全服还差');
+  });
+});

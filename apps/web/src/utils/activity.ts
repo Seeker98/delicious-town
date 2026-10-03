@@ -17,11 +17,15 @@ export function timeLeft(endsAt: string, now = new Date()): string {
 
 export const actionName = (key: string) => m().actions[key] ?? key;
 
-/** locked 未达成；claim 可领；page 已领；mail 已（或将）邮寄；missed 活动结束时没达成 */
+/**
+ * locked 未达成；claim 可领；page 已领；mail 已邮寄；missed 活动结束时没达成；
+ * pending 结算中、达成了但还没寄出（backlog 148-1：以前也写"已邮寄"）
+ */
 export function rewardStatus(r: ActivityRewardDto, state: ActivityState) {
   if (r.claimed) return r.claimed;
   if (state === 'running') return r.reached ? 'claim' : 'locked';
-  return r.reached ? 'mail' : 'missed';
+  if (!r.reached) return 'missed';
+  return state === 'settling' ? 'pending' : 'mail';
 }
 
 /** 活动条上的类型名（问题记录 226）：全是签到的目标清单叫"签到" */

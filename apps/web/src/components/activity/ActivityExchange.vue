@@ -45,7 +45,8 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
     >
   </div>
   <div class="small text-muted mb-2">{{ t.activity.exchange.rule }}</div>
-  <div class="small text-muted mb-2">
+  <!-- 结束后（兑换期内）不再掉落，不显示今天的掉落计数（backlog 148-2） -->
+  <div v-if="a.state === 'running'" class="small text-muted mb-2">
     <div v-for="(r, i) in a.def.drops" :key="i">
       {{
         t.activity.exchange.drop(

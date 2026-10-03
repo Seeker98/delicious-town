@@ -1,11 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { InsertQueryNode, ValuesNode, type KyselyPlugin } from 'kysely';
 import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { activityCacheFor } from './active';
-import { settleActivities } from './settle';
+import { SETTLE_MAX_FAILS, settleActivities } from './settle';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -188,5 +189,175 @@ describe('全服合力结算（148-3 设计 §7）', () => {
     await settleActivities(t.game.deps, shardId, after, log);
     expect(await own(a.restaurantId)).toHaveLength(2);
     expect(await own(b.restaurantId)).toHaveLength(2);
+    // 新闻也不重复（backlog 148-3：以前只验证了邮件）
+    const again = await t.db
+      .selectFrom('news')
+      .select('id')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'activity.coopRank')
+      .execute();
+    expect(again).toHaveLength(1);
+  });
+});
+
+describe('backlog 148-3：全服合力不限区服', () => {
+  it('两个区服各自结算、各发一条新闻，名次只在本区服内排', async () => {
+    const s1 = await createShard(t.db);
+    const s2 = await createShard(t.db);
+    const a1 = await newRestaurant(t, { shardId: s1 });
+    const a2 = await newRestaurant(t, { shardId: s2 });
+    // 全服活动放在远期（各测试文件用不同年份）：测试库是共用的，此刻生效的全服活动会被并行跑的其他测试看到
+    const back = t.clock.now;
+    t.clock.set(new Date('2097-01-02T00:00:00Z'));
+    const end = new Date(t.clock.now.getTime() + H);
+    const id = await insertActivity(t, {
+      shardId: null,
+      spec: {
+        kind: 'coop',
+        def: {
+          rules: [{ key: 'shop.buy', points: 10, dailyCap: 1000 }],
+          milestones: [{ target: 1_000_000, minContribution: 0, award: { coin: 1 } }],
+          ranks: [{ from: 1, to: 1, award: { diamond: 1 } }],
+        },
+      },
+      endsAt: end,
+      title: '全服合力两区',
+    });
+    try {
+      await act(a1, 'shop.buy', 2);
+      await act(a2, 'shop.buy', 1);
+      const after = new Date(end.getTime() + 3 * 60_000);
+      await settleActivities(t.game.deps, s1, after, log);
+      await settleActivities(t.game.deps, s2, after, log);
+      for (const [shardId, restId] of [
+        [s1, a1.restaurantId],
+        [s2, a2.restaurantId],
+      ] as const) {
+        const news = await t.db
+          .selectFrom('news')
+          .select('params')
+          .where('shard_id', '=', shardId)
+          .where('type', '=', 'activity.coopRank')
+          .execute();
+        expect(news).toHaveLength(1);
+        expect((news[0]!.params as { top: Array<{ rank: number }> }).top).toHaveLength(1);
+        const titles = (await mails(restId)).map((m) => m.title);
+        expect(titles).toContain('《全服合力两区》贡献榜第 1 名奖励');
+      }
+    } finally {
+      t.clock.set(back);
+      await t.db.deleteFrom('activity').where('id', '=', id).execute();
+      activityCacheFor(t.deps.bus, t.game.deps).invalidate();
+    }
+  });
+});
+
+describe('backlog 148-3：贡献榜新闻按名次列', () => {
+  it('第 1 名 4 家并列时，新闻里 4 家都列出', async () => {
+    const shardId = await createShard(t.db);
+    const shops = [];
+    for (let i = 0; i < 5; i++) shops.push(await newRestaurant(t, { shardId }));
+    const end = new Date(t.clock.now.getTime() + H);
+    await insertActivity(t, {
+      shardId,
+      spec: {
+        kind: 'coop',
+        def: {
+          rules: [{ key: 'shop.buy', points: 10, dailyCap: 1000 }],
+          milestones: [{ target: 10_000, minContribution: 0, award: { coin: 1 } }],
+          ranks: [{ from: 1, to: 1, award: { diamond: 1 } }],
+        },
+      },
+      endsAt: end,
+      title: '并列',
+    });
+    for (const r of shops.slice(0, 4)) await act(r, 'shop.buy', 2);
+    await act(shops[4]!, 'shop.buy', 1);
+    await settleActivities(t.game.deps, shardId, new Date(end.getTime() + 3 * 60_000), log);
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'activity.coopRank')
+      .executeTakeFirstOrThrow();
+    const top = (news.params as { top: Array<{ rank: number }> }).top;
+    expect(top.map((x) => x.rank)).toEqual([1, 1, 1, 1]);
+  });
+});
+
+/**
+ * 模拟"某家店永远处理失败"：给数据库包一层插件，往 mail 表插这家店的邮件时报错。
+ * 只用在传给 settleActivities 的 deps 上，不影响别的测试
+ */
+function failMailFor(restId: number) {
+  const plugin: KyselyPlugin = {
+    transformQuery(args) {
+      const n = args.node;
+      if (InsertQueryNode.is(n) && n.into?.table.identifier.name === 'mail') {
+        const cols = (n.columns ?? []).map((c) => c.column.name);
+        const i = cols.indexOf('rest_id');
+        const rows = n.values && ValuesNode.is(n.values) ? n.values.values : [];
+        for (const row of rows) {
+          const v = row.kind === 'PrimitiveValueListNode' ? row.values[i] : undefined;
+          if (v === restId) throw new Error(`test: mail for ${restId} fails`);
+        }
+      }
+      return n;
+    },
+    transformResult: async (args) => args.result,
+  };
+  return { ...t.game.deps, db: t.db.withPlugin(plugin) };
+}
+
+describe('backlog 148-1：补发出错的店有次数上限', () => {
+  it('一家店一直出错：别的店照常补发；出错到上限后放弃这家、写下补发完成记录，之后不再重试', async () => {
+    const shardId = await createShard(t.db);
+    const bad = await newRestaurant(t, { shardId });
+    const good = await newRestaurant(t, { shardId });
+    const end = new Date(t.clock.now.getTime() + H);
+    const id = await insertActivity(t, { shardId, spec, endsAt: end, title: '上限' });
+    await act(bad, 'market.buy', 1);
+    await act(good, 'market.buy', 1);
+    const deps = failMailFor(bad.restaurantId);
+    const after = new Date(end.getTime() + 3 * 60_000);
+    const errors: string[] = [];
+    const spy = { error: (_o: object, m: string) => void errors.push(m) };
+
+    const first = await settleActivities(deps, shardId, after, spy);
+    expect(first).toMatchObject({ mails: 1, failed: 1 });
+    expect(await mails(good.restaurantId)).toHaveLength(1);
+    const settled = () =>
+      t.db.selectFrom('activity_settle').select('activity_id').where('activity_id', '=', id).execute();
+    expect(await settled()).toHaveLength(0);
+
+    for (let i = 1; i < SETTLE_MAX_FAILS; i++) await settleActivities(deps, shardId, after, spy);
+    expect(await settled()).toHaveLength(1);
+    const fail = await t.db
+      .selectFrom('activity_settle_fail')
+      .select(['fails', 'last_error'])
+      .where('activity_id', '=', id)
+      .where('rest_id', '=', bad.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(fail.fails).toBe(SETTLE_MAX_FAILS);
+    expect(fail.last_error).toContain('fails');
+    expect(errors.filter((m) => m.includes('gave up'))).toHaveLength(1);
+    expect(await mails(good.restaurantId)).toHaveLength(1);
+  });
+
+  it('一个活动处理时出错，不影响同区服的其他活动', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const end = new Date(t.clock.now.getTime() + H);
+    // 定义坏掉的全服合力（没有名次段），按 id 排在前面
+    await insertActivity(t, {
+      shardId,
+      spec: { kind: 'coop', def: { rules: [], milestones: [] } } as never,
+      endsAt: end,
+      title: '坏活动',
+    });
+    await insertActivity(t, { shardId, spec, endsAt: end, title: '好活动' });
+    await act(r, 'market.buy', 1);
+    await settleActivities(t.game.deps, shardId, new Date(end.getTime() + 3 * 60_000), log);
+    expect((await mails(r.restaurantId)).map((m) => m.title)).toEqual(['《好活动》未领取奖励']);
   });
 });

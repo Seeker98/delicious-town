@@ -99,8 +99,10 @@ const activity: Messages['activity'] = {
     locked: 'Sin alcanzar',
     page: 'Reclamado',
     mail: 'Enviado',
+    pending: 'Pendiente de envío',
     missed: 'Sin alcanzar',
     claim: 'Reclamar',
+    premiumLocked: 'Desbloquea para reclamar',
   },
   goalLine: (action, n) => `${action} ×${n}`,
   grid: {
