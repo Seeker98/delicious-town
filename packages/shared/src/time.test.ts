@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addDays,
+  weekStart,
   gameDay,
   gameParts,
   gameTime,
@@ -45,5 +46,14 @@ describe('时间槽', () => {
   it('roundOf：每 4 分钟一轮', () => {
     expect(roundOf(new Date(240_000 * 10))).toBe(10);
     expect(roundOf(new Date(240_000 * 10 + 239_999))).toBe(10);
+  });
+});
+
+describe('weekStart（问题记录 318：每周任务周一 0 点刷新）', () => {
+  it('返回这一天所在周的周一', () => {
+    expect(weekStart('2026-10-04')).toBe('2026-09-28'); // 周日
+    expect(weekStart('2026-10-05')).toBe('2026-10-05'); // 周一
+    expect(weekStart('2026-10-07')).toBe('2026-10-05');
+    expect(weekStart('2027-01-01')).toBe('2026-12-28'); // 跨年
   });
 });

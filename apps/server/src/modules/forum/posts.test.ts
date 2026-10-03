@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 
 const DAY = '2026-10-01';
@@ -27,7 +28,7 @@ const row = (id: number) =>
 
 describe('发帖、编辑、删帖（设计文档 §2.1）', () => {
   it('发帖成功：规整文字，支线 107 完成', async () => {
-    const a = await newRestaurant(t, { verified: true, patch: { main_task_step: 50 } });
+    const a = await newRestaurant(t, { verified: true });
     const { data } = await f().createPost(a, body({ title: '  标题  ', content: 'a\r\n\n\n\nb' }));
     expect(await row(data.id)).toMatchObject({
       title: '标题',
@@ -35,7 +36,8 @@ describe('发帖、编辑、删帖（设计文档 §2.1）', () => {
       category: 'chat',
       rest_id: a.restaurantId,
     });
-    expect((await t.game.task.tasks(a)).side.find((x) => x.id === 107)?.progress).toBe(1);
+    await showQuest(t, a.restaurantId, 2124);
+    expect(questIn(await t.game.task.tasks(a), 2124)?.progress).toBe(1);
   });
 
   it('未验证邮箱、长度不对被拒；标题 40 个 emoji 可以', async () => {

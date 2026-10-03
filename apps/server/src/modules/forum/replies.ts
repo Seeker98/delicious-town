@@ -1,6 +1,7 @@
 import { ErrorCode, type ForumReplyBody, type ForumReplyDto } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { restLog, type Op } from '../../core/op';
 import { AppError } from '../../http/errors';
 import { assertReady, assertVerified, isAdmin, loadPost } from './common';
@@ -51,6 +52,8 @@ export async function createReply(
     .where('id', '=', postId)
     .execute();
   restLog(o, 'forum.reply', { postId, floor, anonymous: b.anonymous });
+  // 任务和活跃"论坛发帖或回复"（问题记录 318）
+  await emitAction(o, 'post.reply');
   return {
     id: r.id,
     floor,

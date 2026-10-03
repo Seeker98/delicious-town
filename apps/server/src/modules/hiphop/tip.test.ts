@@ -3,6 +3,7 @@ import { GOODS } from '@dt/config';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { setWeather } from '../../../test/takeaway';
 import { setTuning } from '../../../test/town';
 import { forceHiphopDay } from './day';
@@ -35,7 +36,7 @@ async function setup(patch: Parameters<typeof newRestaurant>[1] = {}, worth = 50
 describe('打赏（设计文档 §2.2）', () => {
   it('银币打赏：价值 num/5、经验浮动、写记录、完成支线', async () => {
     script = [0.5, 0.99];
-    const a = await setup({ patch: { coin: 10_000_000, main_task_step: 50 } });
+    const a = await setup({ patch: { coin: 10_000_000 } });
     const r = await t.game.hiphop.tip(a, { place: 1, kind: 'coin', num: 1_000_000 });
     expect(r.data).toEqual({
       worth: 200_000,
@@ -60,7 +61,8 @@ describe('打赏（设计文档 §2.2）', () => {
       krab_coin: 0,
       foods_id: null,
     });
-    const side = (await t.game.task.tasks(a)).side.find((x) => x.key === 'hiphop.reward');
+    await showQuest(t, a.restaurantId, 3041);
+    const side = questIn(await t.game.task.tasks(a), 3041);
     expect(side?.progress).toBe(1);
   });
 

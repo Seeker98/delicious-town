@@ -231,7 +231,11 @@ describe('结算的数据库往返（问题记录 258：结算余量）', () => 
         pool: new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 }),
       }),
       log: (e) => {
-        if (e.level === 'query') queries += 1;
+        // 只数固定路径：随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，
+        // 种子按区服、店 id 取，每次跑都不一样，数进来就会偶尔多一条（CI 上 7 ≠ 6）
+        if (e.level !== 'query') return;
+        if (/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(e.query.sql)) return;
+        queries += 1;
       },
     });
     const g = await createTestGame({ db });

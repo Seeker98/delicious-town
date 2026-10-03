@@ -62,9 +62,11 @@ export interface CatalogDto {
   data?: Record<CatalogDataKind, CatalogDataEntry[]>;
 }
 
-/** 任务、活跃项、星愿、厨塔各层（id = 层）、菜园配方、一番赏主题（id = 月）、特色菜熟练度（id = 等级）、菜名 */
+/** 任务（主线、支线、每周）、主线章节、玩法支线、活跃项、星愿、厨塔各层（id = 层）、菜园配方、一番赏主题（id = 月）、特色菜熟练度（id = 等级）、菜名 */
 export const CATALOG_DATA_KINDS = [
   'tasks',
+  'chapters',
+  'questLines',
   'activation',
   'bless',
   'tower',

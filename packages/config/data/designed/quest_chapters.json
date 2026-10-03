@@ -1,0 +1,179 @@
+{
+ "source": "新设计（问题记录 318）",
+ "rule": "主线章节：解锁等级/星级、章末奖励（只发道具）",
+ "count": 12,
+ "data": [
+  {
+   "id": 1,
+   "name": "开张大吉",
+   "needLevel": 1,
+   "needStar": 0,
+   "award": {
+    "goods": [
+     {
+      "id": 1,
+      "num": 20
+     }
+    ]
+   }
+  },
+  {
+   "id": 2,
+   "name": "小店经营",
+   "needLevel": 5,
+   "needStar": 0,
+   "award": {
+    "goods": [
+     {
+      "id": 3,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": 3,
+   "name": "街坊邻居",
+   "needLevel": 10,
+   "needStar": 0,
+   "award": {
+    "goods": [
+     {
+      "id": 30,
+      "num": 1
+     },
+     {
+      "id": 31,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": 4,
+   "name": "名厨之路",
+   "needLevel": 1,
+   "needStar": 1,
+   "award": {
+    "goods": [
+     {
+      "id": 32,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": 5,
+   "name": "后院与厨具",
+   "needLevel": 1,
+   "needStar": 1,
+   "award": {
+    "goods": [
+     {
+      "id": 20,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": 6,
+   "name": "市井百态",
+   "needLevel": 20,
+   "needStar": 0,
+   "award": {
+    "goods": [
+     {
+      "id": 310,
+      "num": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": 7,
+   "name": "外卖江湖",
+   "needLevel": 1,
+   "needStar": 2,
+   "award": {
+    "goods": [
+     {
+      "id": 240,
+      "num": 3
+     }
+    ]
+   }
+  },
+  {
+   "id": 8,
+   "name": "四海为家",
+   "needLevel": 1,
+   "needStar": 3,
+   "award": {
+    "goods": [
+     {
+      "id": 139,
+      "num": 1
+     }
+    ]
+   }
+  },
+  {
+   "id": 9,
+   "name": "名扬小镇",
+   "needLevel": 1,
+   "needStar": 4,
+   "award": {
+    "goods": [
+     {
+      "id": 310,
+      "num": 5
+     }
+    ]
+   }
+  },
+  {
+   "id": 10,
+   "name": "厨艺巅峰",
+   "needLevel": 1,
+   "needStar": 5,
+   "award": {
+    "goods": [
+     {
+      "id": 240,
+      "num": 5
+     }
+    ]
+   }
+  },
+  {
+   "id": 11,
+   "name": "天下第一",
+   "needLevel": 1,
+   "needStar": 6,
+   "award": {
+    "goods": [
+     {
+      "id": 310,
+      "num": 10
+     }
+    ]
+   }
+  },
+  {
+   "id": 12,
+   "name": "仙馔之路",
+   "needLevel": 1,
+   "needStar": 7,
+   "award": {
+    "goods": [
+     {
+      "id": 532,
+      "num": 1
+     }
+    ]
+   }
+  }
+ ]
+}

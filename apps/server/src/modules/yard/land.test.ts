@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -62,10 +63,11 @@ describe('菜园概览和开垦（规格书 08 §8.1）', () => {
   });
 
   it('主线第 28 步「开垦一块菜园」不再跳过，开垦后完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 100_000, main_task_step: 28 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 28, key: 'yard.lands', done: false });
+    const ctx = await newRestaurant(t, { patch: { coin: 100_000 } });
+    await showQuest(t, ctx.restaurantId, 2101);
+    expect(questIn(await t.game.task.tasks(ctx), 2101)).toMatchObject({ key: 'yard.lands', done: false });
     await t.game.yard.expand(ctx);
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 28, progress: 1, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2101)).toMatchObject({ progress: 1, done: true });
   });
 
   it('区服关闭 yard：接口报 FEATURE_DISABLED', async () => {

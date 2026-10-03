@@ -28,7 +28,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   await page.goto('/');
   await expect(page.getByTestId('last-round')).toBeVisible();
 
-  // 结算耗了油，加油后领主线第 1 步
+  // 结算耗了油，加油后领主线（问题记录 318：第 1 章任务同时列出，首页显示第一个可领的——签到或加油）
   await page.getByTestId('refuel').click();
   await expect(page.getByText('消耗 银币')).toBeVisible();
   // 加油后页面会刷新并重新渲染任务卡片，等进度显示 1/1 再点，并等领奖请求返回
@@ -36,7 +36,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   const claimed = page.waitForResponse((r) => r.url().includes('/api/v1/task/claim'));
   await page.getByRole('button', { name: '领奖' }).click();
   expect((await claimed).ok()).toBe(true);
-  await expect(page.getByText('获得 银币 2,000')).toBeVisible();
+  await expect(page.getByText(/获得 银币 (2,000|3,000)/)).toBeVisible();
 
   // 菜场买 1 份日常菜
   await page.goto('/market');

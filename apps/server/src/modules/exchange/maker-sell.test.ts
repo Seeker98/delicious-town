@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameDay } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { getDaily } from '../counter/dailyCounter';
 import { makerState, marketFloor, TO_SYSTEM } from './maker';
@@ -141,5 +142,13 @@ describe('backlog 156-3：规格书 §8 系统成交不算反复对倒', () => {
       .execute();
     expect(trades).toHaveLength(times);
     expect(trades.every((x) => x.flags.length === 0)).toBe(true);
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('卖给系统也计 exchange.fill', async () => {
+    const { f, seller, sys } = await setup();
+    await svc().sellToSystem(seller, { foodsId: f.id, qty: 1, price: sys!.price });
+    expect(await eventCount(t, seller.restaurantId, 'exchange.fill')).toBe(1);
   });
 });

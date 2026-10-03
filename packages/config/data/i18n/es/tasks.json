@@ -1,206 +1,389 @@
 {
-  "1": {
+  "2021": {
     "name": "Rellenar aceite una vez"
   },
-  "2": {
+  "2022": {
     "name": "Asignar puntos de atributo"
   },
-  "3": {
+  "2023": {
     "name": "Aprender tu primera receta"
   },
-  "4": {
-    "name": "Comprar en el Mercado una vez"
+  "2024": {
+    "name": "Comprar una vez en el Mercado"
   },
-  "5": {
-    "name": "Comprar un objeto en la tienda una vez"
-  },
-  "6": {
-    "name": "Colocar una instalación"
-  },
-  "7": {
+  "2025": {
     "name": "Registrarse una vez"
   },
-  "8": {
-    "name": "Aplastar una cucaracha"
+  "2026": {
+    "name": "Restaurante a nivel 5"
   },
-  "9": {
-    "name": "Añadir un amigo"
+  "2041": {
+    "name": "Colocar una instalación"
   },
-  "10": {
-    "name": "Llegar al nivel 5"
+  "2042": {
+    "name": "Comprar un objeto en la tienda"
   },
-  "11": {
-    "name": "Aprender 5 recetas"
-  },
-  "12": {
+  "2043": {
     "name": "Combinar o descomponer ingredientes una vez"
   },
-  "13": {
-    "name": "Jugar a la morra en el bar una vez"
+  "2044": {
+    "name": "Aplastar una cucaracha"
   },
-  "14": {
-    "name": "Revolver la despensa de un amigo una vez"
+  "2045": {
+    "name": "Aprender 5 recetas"
   },
-  "15": {
+  "2046": {
+    "name": "Restaurante a nivel 10"
+  },
+  "2061": {
+    "name": "Añadir un amigo"
+  },
+  "2062": {
+    "name": "Revolver la despensa de un amigo"
+  },
+  "2063": {
+    "name": "Intercambiar ingredientes con un amigo"
+  },
+  "2064": {
+    "name": "Jugar una vez en el bar"
+  },
+  "2065": {
     "name": "Ampliar el bidón de aceite una vez"
   },
-  "16": {
-    "name": "Llegar al nivel 10"
-  },
-  "17": {
+  "2066": {
     "name": "Aprender 15 recetas"
   },
-  "18": {
-    "name": "Subir una receta a calidad Superior"
+  "2067": {
+    "name": "Subir una receta a Superior"
   },
-  "19": {
-    "name": "Intercambiar ingredientes con un amigo una vez"
-  },
-  "20": {
-    "name": "Llegar al nivel 13"
-  },
-  "21": {
+  "2068": {
     "name": "Llegar a 1 estrella"
   },
-  "22": {
-    "name": "Tasar una receta misteriosa una vez"
+  "2081": {
+    "name": "Tasar una Receta misteriosa"
   },
-  "23": {
+  "2082": {
     "name": "Aprender un plato estrella"
   },
-  "24": {
-    "name": "Cocinar un plato estrella una vez"
+  "2083": {
+    "name": "Cocinar un plato estrella"
   },
-  "25": {
-    "name": "Atacar al guardián una vez"
+  "2084": {
+    "name": "Atacar al Guardián una vez"
   },
-  "26": {
-    "name": "Explorar una vez"
+  "2085": {
+    "name": "Ir de expedición"
   },
-  "27": {
-    "name": "Desafiar la Torre de chefs una vez"
+  "2101": {
+    "name": "Despejar una parcela del huerto"
   },
-  "28": {
-    "name": "Roturar una parcela del huerto"
+  "2102": {
+    "name": "Cosechar un cultivo"
   },
-  "29": {
-    "name": "Cosechar una vez"
-  },
-  "30": {
+  "2103": {
     "name": "Equipar un utensilio"
   },
-  "31": {
+  "2104": {
     "name": "Mejorar un utensilio una vez"
   },
-  "32": {
+  "2105": {
+    "name": "Desafiar la Torre de chefs"
+  },
+  "2106": {
+    "name": "Restaurante a nivel 20"
+  },
+  "2121": {
+    "name": "Tirar una vez en el Ichiban Kuji"
+  },
+  "2122": {
+    "name": "Reclamar una recompensa de evento"
+  },
+  "2123": {
+    "name": "Hacer un anuncio en el pueblo"
+  },
+  "2124": {
+    "name": "Publicar o responder en el foro"
+  },
+  "2125": {
     "name": "Aprender 100 recetas"
   },
-  "33": {
+  "2126": {
     "name": "Llegar a 2 estrellas"
   },
-  "34": {
+  "2141": {
     "name": "Abrir el servicio a domicilio"
   },
-  "35": {
+  "2142": {
     "name": "Completar 3 repartos"
   },
-  "36": {
+  "2143": {
     "name": "Alimentar al Kraken una vez"
   },
-  "37": {
+  "2144": {
     "name": "Aprender 300 recetas"
   },
-  "38": {
+  "2145": {
     "name": "Llegar a 3 estrellas"
   },
-  "39": {
-    "name": "Subir 50 recetas a calidad Medalla de oro"
+  "2161": {
+    "name": "Mudarse una vez"
   },
-  "40": {
+  "2162": {
+    "name": "Aprender 10 platos en calles extranjeras"
+  },
+  "2163": {
+    "name": "Subir 50 recetas a Medalla de oro"
+  },
+  "2164": {
     "name": "Aprender 600 recetas"
   },
-  "41": {
+  "2165": {
     "name": "Llegar a 4 estrellas"
   },
-  "42": {
+  "2181": {
     "name": "Aprender 10 platos estrella"
   },
-  "43": {
+  "2182": {
+    "name": "Aprender 1.000 recetas"
+  },
+  "2183": {
+    "name": "Subir 300 recetas a Raro"
+  },
+  "2184": {
     "name": "Llegar a 5 estrellas"
   },
-  "44": {
-    "name": "Subir 300 recetas a calidad Raro"
+  "2201": {
+    "name": "Aprender 2.000 recetas"
   },
-  "45": {
+  "2202": {
+    "name": "Subir 1.000 recetas a Raro"
+  },
+  "2203": {
     "name": "Llegar a 6 estrellas"
   },
-  "46": {
+  "2221": {
+    "name": "Aprender todas las recetas"
+  },
+  "2222": {
     "name": "Llegar a 7 estrellas"
   },
-  "101": {
-    "name": "Dar propina al Chico hip-hop una vez"
+  "2241": {
+    "name": "Llegar a 1 estrella morada"
   },
-  "102": {
-    "name": "Sacudir la bolsa de dinero de Don Krab una vez"
+  "2242": {
+    "name": "Subir 100 recetas a Manjar divino"
   },
-  "103": {
-    "name": "Colocar 5 cucarachas"
+  "2243": {
+    "name": "Llegar a 5 estrellas moradas"
   },
-  "104": {
-    "name": "Comer gratis una vez"
+  "3021": {
+    "name": "Subir 10 recetas a Superior"
   },
-  "105": {
-    "name": "Participar una vez en el juego de adivinar del mercado"
+  "3022": {
+    "name": "Subir 10 recetas a Medalla de oro"
   },
-  "106": {
+  "3023": {
+    "name": "Subir 100 recetas a Medalla de oro"
+  },
+  "3024": {
+    "name": "Subir 50 recetas a Raro"
+  },
+  "3025": {
+    "name": "Subir 10 recetas a Manjar"
+  },
+  "3026": {
+    "name": "Subir una receta a Manjar divino"
+  },
+  "3041": {
+    "name": "Dar propina al Chico hip-hop"
+  },
+  "3042": {
+    "name": "Sacudir la bolsa de Don Krab"
+  },
+  "3043": {
+    "name": "Participar en el juego de adivinanzas del Mercado"
+  },
+  "3061": {
     "name": "Dar 10 me gusta"
   },
-  "107": {
-    "name": "Publicar un mensaje en el foro"
+  "3062": {
+    "name": "Comer gratis una vez"
   },
-  "108": {
-    "name": "Jugar a la tragaperras una vez"
+  "3063": {
+    "name": "Poner 5 cucarachas"
   },
-  "109": {
-    "name": "Hacer un anuncio en el pueblo una vez"
+  "3064": {
+    "name": "Rellenar aceite a amigos 5 veces"
   },
-  "110": {
-    "name": "Batirte en duelo con amigos 10 veces"
-  },
-  "111": {
-    "name": "Dar una clase de plato estrella una vez"
-  },
-  "112": {
-    "name": "Aprender un plato estrella en el aula"
-  },
-  "113": {
-    "name": "Completar una prueba"
-  },
-  "114": {
-    "name": "Tasar una fórmula de ingrediente una vez"
-  },
-  "115": {
-    "name": "Combinar un ingrediente con una fórmula una vez"
-  },
-  "116": {
-    "name": "Abrir un engarce en un utensilio una vez"
-  },
-  "117": {
-    "name": "Engarzar una gema"
-  },
-  "118": {
-    "name": "Mejorar un utensilio hasta +5"
-  },
-  "119": {
+  "3065": {
     "name": "Recibir 100 me gusta"
   },
-  "120": {
+  "3081": {
+    "name": "Jugar a la tragaperras"
+  },
+  "3082": {
+    "name": "Jugar a los dardos"
+  },
+  "3083": {
+    "name": "Jugar al Cóctel Memoria"
+  },
+  "3084": {
+    "name": "Jugar 50 veces en el bar"
+  },
+  "3085": {
     "name": "Reunir 4 plantas en maceta"
   },
-  "121": {
-    "name": "Subir todas las recetas a calidad Raro"
+  "3101": {
+    "name": "Cocinar platos estrella 10 veces"
   },
-  "122": {
-    "name": "Completar 100 repartos"
+  "3102": {
+    "name": "Dar una clase de plato estrella"
+  },
+  "3103": {
+    "name": "Aprender un plato estrella en clase"
+  },
+  "3104": {
+    "name": "Aprender 5 platos estrella"
+  },
+  "3105": {
+    "name": "Aprender 20 platos estrella"
+  },
+  "3121": {
+    "name": "Completar una Prueba"
+  },
+  "3122": {
+    "name": "Ir de expedición 50 veces"
+  },
+  "3123": {
+    "name": "Atacar al Guardián 20 veces"
+  },
+  "3124": {
+    "name": "Alimentar al Kraken 10 veces"
+  },
+  "3141": {
+    "name": "Cosechar 10 veces"
+  },
+  "3142": {
+    "name": "Tasar una Fórmula"
+  },
+  "3143": {
+    "name": "Crear un ingrediente con una Fórmula"
+  },
+  "3144": {
+    "name": "Despejar 6 parcelas"
+  },
+  "3145": {
+    "name": "Crear con Fórmulas 20 veces"
+  },
+  "3161": {
+    "name": "Abrir un engarce en un utensilio"
+  },
+  "3162": {
+    "name": "Engarzar una gema"
+  },
+  "3163": {
+    "name": "Mejorar un utensilio a +5"
+  },
+  "3164": {
+    "name": "Mejorar un utensilio a +8"
+  },
+  "3165": {
+    "name": "Mejorar un utensilio a +10"
+  },
+  "3181": {
+    "name": "Desafiar la Torre de chefs 10 veces"
+  },
+  "3182": {
+    "name": "Hacer 10 duelos con amigos"
+  },
+  "3183": {
+    "name": "Participar en una partida clasificatoria de la Torre de chefs"
+  },
+  "3184": {
+    "name": "Desafiar la Torre de chefs 100 veces"
+  },
+  "3201": {
+    "name": "Cerrar una operación en la Bolsa"
+  },
+  "3202": {
+    "name": "Cerrar 10 operaciones en la Bolsa"
+  },
+  "3203": {
+    "name": "Cerrar 50 operaciones en la Bolsa"
+  },
+  "3221": {
+    "name": "Hacer una operación de predicción"
+  },
+  "3222": {
+    "name": "Hacer 10 operaciones de predicción"
+  },
+  "3223": {
+    "name": "Ganar una liquidación de predicción"
+  },
+  "3241": {
+    "name": "Tirar 10 veces en el Ichiban Kuji"
+  },
+  "3242": {
+    "name": "Tirar 50 veces en el Ichiban Kuji"
+  },
+  "3243": {
+    "name": "Ganar el Último Premio"
+  },
+  "3261": {
+    "name": "Hacer 10 repartos"
+  },
+  "3262": {
+    "name": "Hacer 50 repartos"
+  },
+  "3263": {
+    "name": "Hacer 100 repartos"
+  },
+  "3281": {
+    "name": "Aprender 50 platos en calles extranjeras"
+  },
+  "3282": {
+    "name": "Aprender 200 platos en calles extranjeras"
+  },
+  "3283": {
+    "name": "Aprender 500 platos en calles extranjeras"
+  },
+  "3301": {
+    "name": "Subir todas las recetas a Raro"
+  },
+  "4011": {
+    "name": "Registrarse 5 días"
+  },
+  "4012": {
+    "name": "Comprar 10 veces en el Mercado"
+  },
+  "4013": {
+    "name": "Aprender o mejorar recetas 10 veces"
+  },
+  "4014": {
+    "name": "Combinar o descomponer ingredientes 5 veces"
+  },
+  "4021": {
+    "name": "Ir de expedición 10 veces"
+  },
+  "4022": {
+    "name": "Cocinar platos estrella 5 veces"
+  },
+  "4023": {
+    "name": "Desafiar la Torre de chefs 20 veces"
+  },
+  "4024": {
+    "name": "Aprender o mejorar recetas 20 veces"
+  },
+  "4031": {
+    "name": "Hacer 10 repartos"
+  },
+  "4032": {
+    "name": "Cerrar 3 operaciones en la Bolsa"
+  },
+  "4033": {
+    "name": "Ir de expedición 20 veces"
+  },
+  "4034": {
+    "name": "Aprender o mejorar recetas 30 veces"
   }
 }

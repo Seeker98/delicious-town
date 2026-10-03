@@ -9,6 +9,7 @@ import {
   type NewRestaurantOptions,
   type TestGame,
 } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 
 let t: TestGame;
 /** 随机数固定 0：铲除必返还种子 */
@@ -63,7 +64,7 @@ async function basketNum(g: TestGame, restId: number, foodsId: number) {
 describe('作物（规格书 08 §8.3）', () => {
   it('播种 → 浇水三次 → 收获进菜篮 → 存进橱柜；土地经验、收益、2 级地产量 +8%；主线第 29 步', async () => {
     t.clock.set(noon());
-    const ctx = await withLand(t, { patch: { main_task_step: 29 } }, 2);
+    const ctx = await withLand(t, {}, 2);
     const { data } = await t.game.yard.plant(ctx, { landNo: 1, seedId: 1 });
     expect(await seedNum(t, ctx.restaurantId, 1)).toBe(1);
     expect(await plantOf(t, data.plantId)).toMatchObject({
@@ -90,7 +91,8 @@ describe('作物（规格书 08 §8.3）', () => {
     expect(await landOf(t, ctx.restaurantId)).toMatchObject({ level: 2, exp: 45 });
     // 等级 1、自己的地：系数 5。播种 5 银币 10 经验；浇水各 5 / 5；收获 10 银币、15 + 食材等级 1 经验
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ strength: 95, coin: 30, exp: 41 });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 29, done: true });
+    await showQuest(t, ctx.restaurantId, 2102);
+    expect(questIn(await t.game.task.tasks(ctx), 2102)).toMatchObject({ done: true });
 
     const s = await t.game.yard.storeBasket(ctx, { foodsId: 101, num: 21 });
     expect(s.data).toEqual({ stored: 21, dropped: 0 });

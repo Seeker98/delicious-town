@@ -160,9 +160,9 @@ describe('buildBundle（真实数据）', () => {
     expect('seedExchange' in bundle!.extra).toBe(false);
   });
 
-  it('任务 114（鉴定一次食材配方）链接到菜园', () => {
+  it('支线「鉴定一次食材配方」链接到菜园', () => {
     const { bundle } = realBuild();
-    expect(bundle!.tasks.find((t) => t.id === 114)!.href).toBe('/yard');
+    expect(bundle!.quests.find((q) => q.id === 3142)!.href).toBe('/yard');
   });
 });
 
@@ -249,29 +249,34 @@ describe('2A 新增配置', () => {
 
   it('任务按事件键归属到功能', () => {
     const b = realBuild().bundle!;
-    const main = (step: number) => b.tasks.find((t) => t.main && t.step === step)!;
-    expect(main(1).feature).toBe('growth'); // oil.fill
-    expect(main(3).feature).toBe('cookbook'); // cookbooks.learned
-    expect(main(7).feature).toBe('task'); // signin
-    expect(main(8).feature).toBe('friend'); // roach.kill
-    expect(main(10).feature).toBe('restaurant'); // rest.level
-    expect(b.tasks.find((t) => t.cond.key === 'rest.thumbs')!.feature).toBe('friend');
+    const quest = (id: number) => b.quests.find((q) => q.id === id)!;
+    expect(quest(2021).feature).toBe('growth'); // oil.fill
+    expect(quest(2023).feature).toBe('cookbook'); // cookbooks.learned
+    expect(quest(2025).feature).toBe('task'); // signin
+    expect(quest(2044).feature).toBe('friend'); // roach.kill
+    expect(quest(2026).feature).toBe('restaurant'); // rest.level
+    expect(b.quests.find((q) => q.cond.key === 'rest.thumbs')!.feature).toBe('friend');
   });
 
   it('"全部食谱"的门槛 = 菜谱总数（问题记录 284）', () => {
     const b = realBuild().bundle!;
-    expect(b.tasks.find((t) => t.id === 121)!.cond.target).toBe(b.cookbooks.length);
+    expect(b.quests.find((q) => q.id === 3301)!.cond.target).toBe(b.cookbooks.length);
     expect(b.starNeed.find((s) => s.star === 12)!.needCookbooks).toBe(b.cookbooks.length);
   });
 
   it('门槛写 "all" 时换成菜谱总数；写别的字符串报错', () => {
     const src = source();
-    const tasks = structuredClone(src['designed/tasks']) as Array<{ id: number; cond: { target: unknown } }>;
-    tasks.find((t) => t.id === 121)!.cond.target = 'all';
-    const { bundle } = buildBundle({ ...src, 'designed/tasks': tasks });
-    expect(bundle!.tasks.find((t) => t.id === 121)!.cond.target).toBe(bundle!.cookbooks.length);
-    tasks.find((t) => t.id === 121)!.cond.target = 'most';
-    expect(buildBundle({ ...src, 'designed/tasks': tasks }).errors.join()).toMatch(/designed\/tasks/);
+    const mains = structuredClone(src['designed/quest_main']) as Array<{
+      id: number;
+      cond: { target: unknown };
+    }>;
+    mains.find((x) => x.id === 2023)!.cond.target = 'all';
+    const { bundle } = buildBundle({ ...src, 'designed/quest_main': mains });
+    expect(bundle!.quests.find((q) => q.id === 2023)!.cond.target).toBe(bundle!.cookbooks.length);
+    mains.find((x) => x.id === 2023)!.cond.target = 'most';
+    expect(buildBundle({ ...src, 'designed/quest_main': mains }).errors.join()).toMatch(
+      /designed\/quest_main/,
+    );
   });
 
   it('featureOfKey 取最长前缀；找不到返回 null', () => {
@@ -295,7 +300,7 @@ describe('2A 新增配置', () => {
     const map = structuredClone(src['game/action_map']) as { features: Record<string, string> };
     delete map.features['oil.'];
     const { errors } = buildBundle({ ...src, 'game/action_map': map });
-    expect(errors).toContain('task 1 key oil.fill has no feature');
+    expect(errors).toContain('quest 2021 key oil.fill has no feature');
   });
 
   it('tuning 缺字段时报错', () => {
@@ -348,9 +353,9 @@ describe('酒吧配置（子项目 4C-1）', () => {
     expect(s.filter((a) => a.news).map((a) => a.id)).toEqual([11, 19, 21, 99, 100]);
   });
 
-  it('任务 13、108 链接到 /bar', () => {
+  it('酒吧任务链接到 /bar', () => {
     const { bundle } = realBuild();
-    for (const id of [13, 108]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/bar');
+    for (const id of [2064, 3081]) expect(bundle!.quests.find((q) => q.id === id)!.href).toBe('/bar');
   });
 
   it('老虎机奖项引用了不存在的食材', () => {
@@ -428,9 +433,10 @@ describe('厨塔配置（子项目 4C-2）', () => {
 });
 
 describe('外卖配置（子项目 4D）', () => {
-  it('任务 34、35、122 跳到外卖页', () => {
+  it('外卖任务跳到外卖页', () => {
     const { bundle } = realBuild();
-    for (const id of [34, 35, 122]) expect(bundle!.tasks.find((t) => t.id === id)!.href).toBe('/takeaway');
+    for (const id of [2141, 2142, 3261])
+      expect(bundle!.quests.find((q) => q.id === id)!.href).toBe('/takeaway');
   });
 
   it('奖池、神秘顾客引用了不存在的道具', () => {
@@ -493,8 +499,8 @@ describe('小镇（子项目 4E-1）', () => {
     expect(featureOfKey('post.create', f)).toBe('forum');
     expect(featureOfKey('broadcast', f)).toBe('town');
     expect(featureOfKey('krab.shake', f)).toBe('town');
-    expect(bundle!.tasks.find((t) => t.id === 102)!.href).toBe('/town');
-    expect(bundle!.tasks.find((t) => t.id === 109)!.href).toBe('/town');
+    expect(bundle!.quests.find((q) => q.id === 3042)!.href).toBe('/town');
+    expect(bundle!.quests.find((q) => q.id === 2123)!.href).toBe('/town');
   });
 });
 
@@ -593,7 +599,7 @@ describe('论坛（子项目 4E-3）', () => {
       readsMax: 200,
       featureReward: { goods: [[1, 20]], diamond: 50 },
     });
-    expect(bundle!.tasks.find((t) => t.id === 107)!.href).toBe('/forum');
+    expect(bundle!.quests.find((q) => q.id === 2124)!.href).toBe('/forum');
   });
 
   it('加精奖励引用了不存在的道具时构建报错', () => {
@@ -865,5 +871,83 @@ describe('可疑数据门槛（子项目 6B-2）', () => {
       sharedAccounts: 3,
       topN: 50,
     });
+  });
+});
+
+describe('活跃度新增项目（问题记录 318）', () => {
+  it('新增 5 项和 180 档；新动作键映射到活跃度和功能', () => {
+    const b = realBuild().bundle!;
+    const byName = new Map(b.activationTasks.map((a) => [a.name, a]));
+    for (const n of ['交易所成交', '事件合约交易', '一番赏抽赏', '领取限时活动奖励', '论坛发帖或回复'])
+      expect(byName.has(n), n).toBe(true);
+    const max = b.activationTasks.reduce((s, a) => s + a.points * a.limitTimes, 0);
+    expect(max).toBe(193);
+    expect(b.activationRewards.map((r) => r.points)).toEqual([50, 100, 120, 150, 180]);
+    expect(b.actionMap.activation['exchange.fill']).toBe('交易所成交');
+    expect(b.actionMap.activation['post.create']).toBe('论坛发帖或回复');
+    expect(b.actionMap.activation['post.reply']).toBe('论坛发帖或回复');
+    expect(featureOfKey('kuji.draw', b.actionMap.features)).toBe('kuji');
+    expect(featureOfKey('exchange.fill', b.actionMap.features)).toBe('exchange');
+    expect(featureOfKey('predict.win', b.actionMap.features)).toBe('predict');
+    expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
+  });
+});
+
+describe('任务配置（问题记录 318）', () => {
+  it('12 章；主线按章排；支线 15 条；每周 3 组各 4 个；id 不重复', () => {
+    const b = realBuild().bundle!;
+    expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    const mains = b.quests.filter((q) => q.line === null);
+    expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
+    expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
+    expect(b.questLines).toHaveLength(15);
+    const sides = b.quests.filter((q) => q.line !== null);
+    expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
+    expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
+      ['A', 0, 0, 4],
+      ['B', 1, 2, 4],
+      ['C', 3, 99, 4],
+    ]);
+    const ids = [
+      ...b.quests.map((q) => q.id),
+      ...b.weeklyGroups.flatMap((g) => [g.fullId, ...g.quests.map((q) => q.id)]),
+    ];
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('奖励总量和设计一致：主线 1,192 万、支线 381 万银币；经验 = 银币 ÷ 10', () => {
+    const b = realBuild().bundle!;
+    const coin = (main: boolean) =>
+      b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
+    expect(coin(true)).toBe(11_920_000);
+    expect(coin(false)).toBe(3_808_000);
+    for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
+  });
+
+  it('条件键都有来源；"all" 换成菜谱总数；支线功能取自档位', () => {
+    const b = realBuild().bundle!;
+    const all = b.quests.find((q) => q.name === '学会全部食谱')!;
+    expect(all.cond.target).toBe(b.cookbooks.length);
+    for (const q of b.quests) expect(q.feature, `${q.id} ${q.cond.key}`).not.toBe('');
+    for (const g of b.weeklyGroups) for (const q of g.quests) expect(q.feature, String(q.id)).not.toBe('');
+    expect(b.questLines.find((l) => l.key === 'kuji')!.feature).toBe('kuji');
+    const forum = b.quests.find((q) => q.cond.key === 'post.create|post.reply')!;
+    expect(forum.feature).toBe('forum');
+  });
+
+  it('引用不存在的章、道具或状态键时报错', () => {
+    const src = source();
+    const mains = structuredClone(src['designed/quest_main']) as Array<{
+      chapter: number;
+      cond: { kind: string; key: string };
+      award: { goods?: Array<{ id: number; num: number }> };
+    }>;
+    mains[0]!.chapter = 99;
+    mains[1]!.cond = { ...mains[1]!.cond, kind: 'state', key: 'rest.nope' };
+    mains[2]!.award = { goods: [{ id: 999999, num: 1 }] };
+    const errs = buildBundle({ ...src, 'designed/quest_main': mains }).errors.join();
+    expect(errs).toMatch(/unknown chapter 99/);
+    expect(errs).toMatch(/unknown state key rest\.nope/);
+    expect(errs).toMatch(/999999/);
   });
 });

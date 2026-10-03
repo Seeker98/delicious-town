@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { seededRng } from '@dt/shared';
 import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { trader } from '../exchange/test';
 import { createPredictAdmin } from './admin';
@@ -276,5 +277,26 @@ describe('backlog 238-1：结算时一个持仓出错不卡住后面的', () => 
     }
     expect(await settleEvents(t.game.deps, shardId, t.clock.now)).toEqual({ settled: 1, failed: 0 });
     expect((await ev(id)).settled_at).not.toBeNull();
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('判定后押中一方到账的计一次 predict.win；押错的、作废退款的不计', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const a = await trader(t, { shardId, coin: 1_000_000 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 3 });
+    await svc().trade(b, id, { side: 'no', dir: 'buy', qty: 3 });
+    await admin().resolve(actor, id, true);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    expect(await eventCount(t, a.restaurantId, 'predict.win')).toBe(1);
+    expect(await eventCount(t, b.restaurantId, 'predict.win')).toBe(0);
+    const v = await newEvent(t, shardId);
+    const c = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(c, v, { side: 'yes', dir: 'buy', qty: 3 });
+    await admin().voidEvent(actor, v);
+    await settleEvents(t.game.deps, shardId, t.clock.now);
+    expect(await eventCount(t, c.restaurantId, 'predict.win')).toBe(0);
   });
 });

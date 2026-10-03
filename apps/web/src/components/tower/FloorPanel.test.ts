@@ -25,6 +25,8 @@ describe('FloorPanel', () => {
       devices: [],
       data: {
         tasks: [],
+        chapters: [],
+        questLines: [],
         activation: [],
         bless: [],
         tower: [

@@ -32,6 +32,12 @@ export function addDays(day: string, n: number): string {
   return new Date(Date.parse(`${day}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
 }
 
+/** 游戏日 day 所在周的周一（问题记录 318：每周任务周一 0 点刷新） */
+export function weekStart(day: string): string {
+  const dow = new Date(Date.parse(`${day}T00:00:00Z`)).getUTCDay();
+  return addDays(day, -((dow + 6) % 7));
+}
+
 /** 北京时间 day 的 hour:minute 对应的时刻 */
 export function gameTime(day: string, hour: number, minute = 0): Date {
   return new Date(Date.parse(`${day}T00:00:00Z`) + hour * 3600_000 + minute * 60_000 - OFFSET_MS);

@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 import { streetMysteriousRate } from './explore';
 
@@ -89,15 +90,15 @@ describe('探险（规格书 09 §9.2）', () => {
     });
   });
 
-  it('主线第 26 步「探险一次」不再跳过', async () => {
-    const ctx = await newRestaurant(t, { patch: { strength: 100, main_task_step: 26 }, goods: { 170: 1 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({
-      step: 26,
+  it('主线「探险一次」', async () => {
+    const ctx = await newRestaurant(t, { patch: { strength: 100 }, goods: { 170: 1 } });
+    await showQuest(t, ctx.restaurantId, 2085);
+    expect(questIn(await t.game.task.tasks(ctx), 2085)).toMatchObject({
       key: 'temple.explore',
       done: false,
     });
     await t.game.temple.explore(ctx, { goodsId: 170, times: 1 });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 26, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2085)).toMatchObject({ done: true });
   });
 });
 

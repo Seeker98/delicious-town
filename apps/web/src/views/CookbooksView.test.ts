@@ -126,6 +126,8 @@ describe('CookbooksView', () => {
   it('菜名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
     const data = {
       tasks: [],
+      chapters: [],
+      questLines: [],
       activation: [],
       bless: [],
       tower: [],

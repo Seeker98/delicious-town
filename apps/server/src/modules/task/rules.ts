@@ -1,4 +1,4 @@
-import type { ActivationTask, Task } from '@dt/config';
+import type { ActivationTask } from '@dt/config';
 import type { CookbookCounts } from '../../db/schema';
 
 /** 状态型条件的当前值；不认识的键返回 null（对应的功能尚未实现） */
@@ -19,31 +19,6 @@ export function stateValue(
     return counts.grade.slice(g).reduce((s, x) => s + (x ?? 0), 0);
   }
   return null;
-}
-
-/** 从 step 开始，跳过功能不可用的主线步骤；全部完成时返回最后一步 +1 */
-export function effectiveMainStep(
-  step: number,
-  mains: readonly Task[],
-  available: (feature: string) => boolean,
-): number {
-  const byStep = new Map(mains.map((t) => [t.step, t]));
-  let s = step;
-  for (;;) {
-    const t = byStep.get(s);
-    if (!t || available(t.feature)) return s;
-    s += 1;
-  }
-}
-
-/** 可见的支线：step < 主线进度、没完成过、功能可用 */
-export function visibleSide(
-  tasks: readonly Task[],
-  mainStep: number,
-  done: ReadonlySet<number>,
-  available: (feature: string) => boolean,
-): Task[] {
-  return tasks.filter((t) => !t.main && t.step < mainStep && !done.has(t.id) && available(t.feature));
 }
 
 /** 当日活跃总分 = Σ min(次数, 上限) × 分值 */

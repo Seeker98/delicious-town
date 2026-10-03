@@ -2,7 +2,7 @@
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { AnnouncementDto, DeviceOptionsDto, DineCurrentDto, EffectDto, TaskDto } from '@dt/shared';
+import type { AnnouncementDto, DeviceOptionsDto, DineCurrentDto, EffectDto, QuestDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
@@ -27,7 +27,7 @@ const t = useT();
 const rest = computed(() => store.rest);
 const error = ref('');
 const busy = ref(false);
-const mainTask = ref<TaskDto | null>(null);
+const mainTask = ref<QuestDto | null>(null);
 const dining = ref<DineCurrentDto | null>(null);
 const announcements = ref<AnnouncementDto[]>([]);
 const options = ref<DeviceOptionsDto | null>(null);
@@ -79,7 +79,9 @@ async function load() {
   try {
     await store.refresh();
     void loadGuideCodes();
-    mainTask.value = (await endpoints.tasks()).main;
+    // 本章第一个可领的；没有可领的显示第一个没完成的（问题记录 318）
+    const main = (await endpoints.tasks()).main;
+    mainTask.value = main.find((x) => x.done && !x.claimed) ?? main.find((x) => !x.done) ?? null;
     dining.value = await endpoints.dineCurrent();
     error.value = '';
   } catch (e) {

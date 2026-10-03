@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { ActivationDto, AwardDto, TaskDto, TasksDto } from '@dt/shared';
+import type { ActivationDto, AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import QuestCard from '../components/QuestCard.vue';
 import { useT } from '../composables/useT';
 import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
@@ -12,7 +13,7 @@ import { formatNum } from '../utils/format';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-const tasks = ref<TasksDto | null>(null);
+const tasks = ref<QuestsDto | null>(null);
 const act = ref<ActivationDto | null>(null);
 const busy = ref(false);
 
@@ -55,7 +56,10 @@ const items = computed(() =>
   [...(act.value?.items ?? [])].sort((a, b) => ORDER[stateOf(a)] - ORDER[stateOf(b)]),
 );
 const pct = (count: number, limit: number) => Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
-const taskList = computed<TaskDto[]>(() => (tasks.value?.main ? [tasks.value.main] : []));
+/** 本章任务：可领的在前，没完成的其次，已领的最后（问题记录 318） */
+const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
+const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
+const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
@@ -122,35 +126,77 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </div>
   </div>
   <div v-if="tasks">
+    <!-- 主线：当前章（问题记录 318） -->
     <h6 class="mt-3">{{ t.rest.tasks.main }}</h6>
-    <div v-if="!tasks.main" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
-    <template v-for="(group, gi) in [taskList, tasks.side]" :key="gi">
-      <h6 v-if="gi === 1" class="mt-3">{{ t.rest.tasks.side }}</h6>
-      <div
-        v-for="x in group"
+    <div v-if="tasks.allMainDone" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
+    <template v-else-if="tasks.chapter">
+      <div class="d-flex align-items-center small mb-1" data-testid="chapter">
+        <b v-if="tasks.chapter.locked">{{
+          t.rest.tasks.chapterLocked(
+            tasks.chapter.id,
+            catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
+          )
+        }}</b>
+        <b v-else>{{
+          t.rest.tasks.chapter(
+            tasks.chapter.id,
+            catalog.data('chapters', tasks.chapter.id)?.name ?? tasks.chapter.name,
+            tasks.chapter.claimedCount,
+            tasks.chapter.total,
+          )
+        }}</b>
+        <span v-if="tasks.chapter.locked" class="ms-auto text-nowrap">{{
+          tasks.chapter.needStar > 0
+            ? t.rest.tasks.lockedStar(tasks.chapter.needStar)
+            : t.rest.tasks.lockedLevel(tasks.chapter.needLevel)
+        }}</span>
+      </div>
+      <QuestCard
+        v-for="x in mainList"
         :key="x.id"
-        :class="['border rounded p-2 small mb-1', { 'border-success dt-task-done': x.done }]"
-        :data-testid="`task-${x.id}`"
-      >
-        <div class="d-flex align-items-center">
-          <b>{{ catalog.data('tasks', x.id)?.name ?? x.name }}</b>
-          <span class="ms-auto">{{ Math.min(x.progress, x.target) }}/{{ x.target }}</span>
-        </div>
-        <div class="text-muted">{{ t.rest.tasks.award(awardText(x.award)) }}</div>
+        :quest="x"
+        :name="questName(x)"
+        :award="awardText(x.award)"
+        :busy="busy"
+        @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+      />
+      <div v-if="!tasks.chapter.locked" class="d-flex align-items-center gap-2 small mt-1">
+        <span class="text-muted flex-fill">{{
+          t.rest.tasks.chapterAward(awardText(tasks.chapter.award))
+        }}</span>
+        <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈） -->
         <button
-          v-if="x.done"
-          class="btn btn-sm btn-success mt-1"
-          :data-testid="`claim-task-${x.id}`"
-          :disabled="busy"
-          @click="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+          :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
+          data-testid="claim-chapter"
+          :disabled="busy || !tasks.chapter.claimable"
+          @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
         >
-          {{ t.rest.tasks.claimTask }}
+          {{
+            tasks.chapter.claimable
+              ? t.rest.tasks.claimChapter
+              : t.rest.tasks.chapterLeft(tasks.chapter.total - tasks.chapter.claimedCount)
+          }}
         </button>
-        <div v-else class="progress mt-1" style="height: 6px">
-          <div class="progress-bar bg-warning" :style="{ width: `${pct(x.progress, x.target)}%` }"></div>
-        </div>
       </div>
     </template>
-    <div v-if="tasks.side.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
+    <!-- 支线：每条一次显示一档 -->
+    <h6 class="mt-3">{{ t.rest.tasks.side }}</h6>
+    <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
+    <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">
+      <div class="d-flex small text-muted">
+        <span>{{ catalog.data('questLines', l.id)?.name ?? l.name }}</span>
+        <span class="ms-auto">{{ l.doneCount }}/{{ l.total }}</span>
+      </div>
+      <QuestCard
+        v-if="l.quest"
+        :quest="l.quest"
+        :name="questName(l.quest)"
+        :award="awardText(l.quest.award)"
+        :busy="busy"
+        :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
+        @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
+      />
+      <div v-else class="small text-success">{{ t.rest.tasks.lineDone }}</div>
+    </div>
   </div>
 </template>

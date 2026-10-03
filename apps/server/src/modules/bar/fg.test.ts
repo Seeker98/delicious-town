@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 
 let t: TestGame;
 let rngValues: number[] = [0.5];
@@ -107,12 +108,13 @@ describe('划拳（设计文档 §3.2）', () => {
     ).toEqual([]);
   });
 
-  it('计活跃"酒吧娱乐"；主线第 13 步「去酒吧玩一次划拳」不再跳过，玩一次完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 13, level: 5 }, goods: { 1: 1 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 13, key: 'bar.fg', done: false });
+  it('计活跃"酒吧娱乐"；主线「去酒吧玩一次」玩一次划拳就完成', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 5 }, goods: { 1: 1 } });
+    await showQuest(t, ctx.restaurantId, 2064);
+    expect(questIn(await t.game.task.tasks(ctx), 2064)).toMatchObject({ key: 'bar.play', done: false });
     rngValues = [0.9];
     await t.game.bar.fg(ctx, { hand: 0 });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 13, progress: 1, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2064)).toMatchObject({ progress: 1, done: true });
     const act = await t.game.task.activation(ctx);
     expect(act.items.find((i) => i.name === '酒吧娱乐')!.count).toBe(1);
   });

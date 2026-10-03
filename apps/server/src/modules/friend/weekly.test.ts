@@ -10,6 +10,7 @@ import {
   restRow,
   type TestGame,
 } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { runDueJobs } from '../../worker/periodic';
 import { incrementDaily } from '../counter/dailyCounter';
 import { friendWeeklyJob, lastWeekCount, mondayOf, weeklyPeriod } from './weekly';
@@ -80,20 +81,17 @@ describe('改名费（规格书 02 §2.8）', () => {
 
 describe('任务状态', () => {
   it('第 9 步"添加一位好友"看好友数（含蟹老板）；支线"被点赞 100 次"看被赞数', async () => {
-    const [a, b] = await newPair(t, { patch: { main_task_step: 9 } });
-    expect((await t.game.task.tasks(a)).main).toMatchObject({ step: 9, done: false });
+    const [a, b] = await newPair(t);
+    await showQuest(t, a.restaurantId, 2061);
+    expect(questIn(await t.game.task.tasks(a), 2061)).toMatchObject({ done: false });
     await befriend(t, a.restaurantId, b.restaurantId);
-    expect((await t.game.task.tasks(a)).main).toMatchObject({ step: 9, progress: 1, done: true });
+    expect(questIn(await t.game.task.tasks(a), 2061)).toMatchObject({ progress: 1, done: true });
     await t.db
       .insertInto('event_counter')
       .values({ rest_id: a.restaurantId, key: 'thumbs.received', count: 100 })
       .execute();
-    await t.db
-      .updateTable('restaurant')
-      .set({ main_task_step: 40 })
-      .where('id', '=', a.restaurantId)
-      .execute();
-    const side = (await t.game.task.tasks(a)).side.find((x) => x.key === 'rest.thumbs');
+    await showQuest(t, a.restaurantId, 3065);
+    const side = questIn(await t.game.task.tasks(a), 3065);
     expect(side).toMatchObject({ progress: 100, done: true });
   });
 });

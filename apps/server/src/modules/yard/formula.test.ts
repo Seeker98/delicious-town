@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 
 const config = testConfig();
@@ -46,8 +47,9 @@ async function counter(g: TestGame, restId: number, key: string) {
 
 describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
   it('扣厨神玉玺和玄奥配方各 times 个；成功时按 odds 抽配方，rand < 0.25 得主碎片；活跃按次数；支线 114 完成', async () => {
-    const ctx = await newRestaurant(win, { patch: { main_task_step: 30 }, goods: { 164: 3, 464: 3 } });
-    expect((await win.game.task.tasks(ctx)).side.find((x) => x.id === 114)).toMatchObject({
+    const ctx = await newRestaurant(win, { goods: { 164: 3, 464: 3 } });
+    await showQuest(win, ctx.restaurantId, 3142);
+    expect(questIn(await win.game.task.tasks(ctx), 3142)).toMatchObject({
       href: '/yard',
       done: false,
     });
@@ -60,7 +62,7 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
     expect(await goodsNum(win, ctx.restaurantId, 164)).toBe(1);
     expect(await goodsNum(win, ctx.restaurantId, 464)).toBe(1);
     expect(await counter(win, ctx.restaurantId, 'formula.appraise')).toBe(2);
-    expect((await win.game.task.tasks(ctx)).side.find((x) => x.id === 114)).toMatchObject({ done: true });
+    expect(questIn(await win.game.task.tasks(ctx), 3142)).toMatchObject({ done: true });
   });
 
   it('失败时什么碎片也不得，道具照扣', async () => {

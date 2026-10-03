@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import { GOODS } from '@dt/config';
-import { addDays, gameDay, gameParts, gameTime } from '@dt/shared';
+import { addDays, gameDay, gameParts, gameTime, weekStart } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { opNews, restLog, runSystemOp } from '../../core/op';
@@ -8,10 +8,7 @@ import type { DB } from '../../db/schema';
 import { grantGoodsOp } from '../store/goods';
 
 /** 游戏日 day 所在周的周一 */
-export function mondayOf(day: string): string {
-  const dow = new Date(`${day}T00:00:00Z`).getUTCDay();
-  return addDays(day, -((dow + 6) % 7));
-}
+export const mondayOf = weekStart;
 
 /** 周奖励的周期：每周一 07:59 结算上一周；返回被结算那一周的周一 */
 export function weeklyPeriod(now: Date): string {

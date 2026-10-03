@@ -1,0 +1,47 @@
+{
+  "1": {
+    "name": "Recettes"
+  },
+  "2": {
+    "name": "Ville"
+  },
+  "3": {
+    "name": "Amis"
+  },
+  "4": {
+    "name": "Bar"
+  },
+  "5": {
+    "name": "Plats signature"
+  },
+  "6": {
+    "name": "Temple"
+  },
+  "7": {
+    "name": "Potager"
+  },
+  "8": {
+    "name": "Ustensiles"
+  },
+  "9": {
+    "name": "Tour des chefs"
+  },
+  "10": {
+    "name": "Bourse"
+  },
+  "11": {
+    "name": "Prédictions"
+  },
+  "12": {
+    "name": "Ichiban Kuji"
+  },
+  "13": {
+    "name": "À emporter"
+  },
+  "14": {
+    "name": "Chez soi partout"
+  },
+  "15": {
+    "name": "Prestige"
+  }
+}

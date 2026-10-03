@@ -5,6 +5,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { counters, insertActivity } from '../../../test/activity';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 
 /** 可控随机数：rolls 里有值就按顺序取，取完一律 0.99（不命中） */
 const rolls: number[] = [];
@@ -217,5 +218,21 @@ describe('backlog 148-2：仓库满了也能兑换纪念品（走兑换流程）
       .execute();
     await t.game.activity.exchange(r, id, 0, 1);
     expect(await goodsNum(t, r.restaurantId, 90009)).toBe(1);
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('兑换一次也算"领取限时活动奖励"：计 activity.claim，活跃计入（兑换型活动只能靠兑换拿奖励）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: spec() });
+    await t.db
+      .insertInto('activity_counter')
+      .values({ activity_id: id, rest_id: r.restaurantId, key: 'm0', count: 10 })
+      .execute();
+    await t.game.activity.exchange(r, id, 0, 2);
+    expect(await eventCount(t, r.restaurantId, 'activity.claim')).toBe(1);
+    const act = await t.game.task.activation(r);
+    expect(act.items.find((i) => i.name === '领取限时活动奖励')!.count).toBe(1);
   });
 });

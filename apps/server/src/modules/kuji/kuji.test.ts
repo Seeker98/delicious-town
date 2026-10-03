@@ -3,6 +3,7 @@ import { GOODS } from '@dt/config';
 import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 
 let t: TestGame;
@@ -305,5 +306,24 @@ describe('backlog 一番赏：抽签结果和看板', () => {
     const r = await player(shardId, { coin: 100_000 });
     expect((await svc().view(r)).coin).toBe(100_000);
     expect((await svc().buy(r, 2)).data.coin).toBe(60_000);
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('抽几张 kuji.draw 计几次；抽到最后一张的计 kuji.last；活跃"一番赏抽赏"计入', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: { tiers: [{ key: 'X', count: 3, award: { coin: 1 } }], last: { award: { coin: 1 } } },
+    });
+    const r = await player(shardId, { tickets: 3 });
+    await svc().draw(r, 2);
+    expect(await eventCount(t, r.restaurantId, 'kuji.draw')).toBe(2);
+    expect(await eventCount(t, r.restaurantId, 'kuji.last')).toBe(0);
+    await svc().draw(r, 1);
+    expect(await eventCount(t, r.restaurantId, 'kuji.draw')).toBe(3);
+    expect(await eventCount(t, r.restaurantId, 'kuji.last')).toBe(1);
+    expect(
+      (await t.game.task.activation(r)).items.find((i) => i.name === '一番赏抽赏')!.count,
+    ).toBeGreaterThan(0);
   });
 });

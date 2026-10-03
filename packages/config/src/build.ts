@@ -1,4 +1,5 @@
 import { buildI18n } from './i18n';
+import { isQuestStateKey } from './quests';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import * as raw from './raw';
@@ -17,6 +18,10 @@ import { applyStressTables } from './stressTable';
 import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
+  Chapter,
+  Quest,
+  QuestLine,
+  WeeklyGroup,
   Award,
   Bless,
   CollectionTier,
@@ -112,6 +117,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const devicesRaw = parse('dataset/devices', z.array(raw.rawDevice));
   const actTasksRaw = parse('dataset/activation_tasks', z.array(raw.rawActivationTask));
   const actRewardsRaw = parse('dataset/activation_rewards', z.array(raw.rawActivationReward));
+  const actExtra = parse('designed/activation_extra', raw.rawActivationExtra);
   const pricesRaw = both(
     parse('designed/cookbooks_price', z.array(raw.rawCookbookPrice)),
     parse('designed/cookbooks_price_new', z.array(raw.rawCookbookPrice)),
@@ -121,7 +127,10 @@ export function buildBundle(src: SourceData): BuildResult {
   const starNeedRaw = parse('designed/star_need', z.array(raw.rawStarNeed));
   const starAwardRaw = parse('designed/star_award', z.array(raw.rawStarAward));
   const oilRaw = parse('designed/oil_need', z.array(raw.rawOilNeed));
-  const tasksRaw = parse('designed/tasks', z.array(raw.rawTask));
+  const chaptersRaw = parse('designed/quest_chapters', z.array(raw.rawChapter));
+  const questMainRaw = parse('designed/quest_main', z.array(raw.rawQuestMain));
+  const questLinesRaw = parse('designed/quest_lines', z.array(raw.rawQuestLine));
+  const weeklyRaw = parse('designed/quest_weekly', z.array(raw.rawWeeklyGroup));
   const seedsRaw = parse('designed/seeds', z.array(raw.rawSeed));
   const seedExRaw = parse('designed/seed_exchange', z.array(raw.rawSeedExchange));
   const formulasRaw = parse('designed/foods_formula', z.array(raw.rawFormula));
@@ -164,13 +173,17 @@ export function buildBundle(src: SourceData): BuildResult {
     !devicesRaw ||
     !actTasksRaw ||
     !actRewardsRaw ||
+    !actExtra ||
     !pricesRaw ||
     !awardFlagsRaw ||
     !weatherRaw ||
     !starNeedRaw ||
     !starAwardRaw ||
     !oilRaw ||
-    !tasksRaw ||
+    !chaptersRaw ||
+    !questMainRaw ||
+    !questLinesRaw ||
+    !weeklyRaw ||
     !seedsRaw ||
     !seedExRaw ||
     !formulasRaw ||
@@ -564,33 +577,110 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   for (const o of oilNeed) checkGoodsList(`oil_need ${o.level}`, o.needGoods);
 
-  const tasks = tasksRaw.map((t) => {
-    const feature = featureOfKey(t.cond.key, actionMap.features);
-    if (feature === null) errors.push(`task ${t.id} key ${t.cond.key} has no feature`);
+  // ---------- 任务（问题记录 318）：章节主线、玩法支线、每周任务 ----------
+  const chapters: Chapter[] = chaptersRaw.map((c) => ({ ...c }));
+  unique(
+    'quest_chapters',
+    chapters.map((c) => c.id),
+  );
+  for (const c of chapters) checkAward(`chapter ${c.id}`, c.award);
+  const chapterIds = new Set(chapters.map((c) => c.id));
+  /** 条件键归到功能（| 连接的取第一个）；状态键必须能算出来 */
+  const questFeature = (id: number, cond: { kind: string; key: string }) => {
+    if (cond.kind === 'state' && !isQuestStateKey(cond.key))
+      errors.push(`quest ${id} unknown state key ${cond.key}`);
+    const f = featureOfKey(cond.key.split('|')[0]!, actionMap.features);
+    if (f === null) errors.push(`quest ${id} key ${cond.key} has no feature`);
+    return f ?? '';
+  };
+  const quests: Quest[] = [];
+  for (const q of questMainRaw) {
+    if (!chapterIds.has(q.chapter)) errors.push(`quest ${q.id} references unknown chapter ${q.chapter}`);
+    if (q.id !== 2000 + q.chapter * 20 + q.order)
+      errors.push(`quest ${q.id} id must be 2000 + chapter×20 + order`);
+    quests.push({
+      id: q.id,
+      line: null,
+      chapter: q.chapter,
+      order: q.order,
+      needStar: 0,
+      name: q.name,
+      cond: { ...q.cond, target: allOr(q.cond.target) },
+      award: q.award,
+      href: q.href,
+      feature: questFeature(q.id, q.cond),
+    });
+  }
+  const questLines: QuestLine[] = [];
+  for (const l of questLinesRaw) {
+    if (!chapterIds.has(l.chapter)) errors.push(`quest line ${l.id} references unknown chapter ${l.chapter}`);
+    for (const st of l.steps) {
+      if (st.id !== 3000 + l.id * 20 + st.order)
+        errors.push(`quest ${st.id} id must be 3000 + line×20 + order`);
+      quests.push({
+        id: st.id,
+        line: l.id,
+        chapter: l.chapter,
+        order: st.order,
+        needStar: st.needStar,
+        name: st.name,
+        cond: { ...st.cond, target: allOr(st.cond.target) },
+        award: st.award,
+        href: st.href,
+        feature: questFeature(st.id, st.cond),
+      });
+    }
+    questLines.push({
+      id: l.id,
+      key: l.key,
+      name: l.name,
+      chapter: l.chapter,
+      feature: quests.find((q) => q.line === l.id)?.feature ?? '',
+    });
+  }
+  unique(
+    'quest_lines',
+    questLines.map((l) => l.id),
+  );
+  const weeklyGroups: WeeklyGroup[] = weeklyRaw.map((g) => {
+    checkAward(`weekly ${g.key} full`, g.fullAward);
     return {
-      id: t.id,
-      main: t.mainflag === 1,
-      step: t.step,
-      name: t.taskname,
-      cond: { ...t.cond, target: allOr(t.cond.target) },
-      award: t.award,
-      href: t.href,
-      feature: feature ?? '',
+      key: g.key,
+      minStar: g.minStar,
+      maxStar: g.maxStar,
+      fullId: g.fullId,
+      fullAward: g.fullAward,
+      quests: g.quests.map((q) => ({ ...q, feature: questFeature(q.id, { kind: 'counter', key: q.key }) })),
     };
   });
-  unique(
-    'tasks',
-    tasks.map((t) => t.id),
-  );
-  for (const t of tasks) checkAward(`task ${t.id}`, t.award);
+  unique('quests', [
+    ...quests.map((q) => q.id),
+    ...weeklyGroups.flatMap((g) => [g.fullId, ...g.quests.map((q) => q.id)]),
+  ]);
+  for (const q of quests) checkAward(`quest ${q.id}`, q.award);
+  for (const g of weeklyGroups) for (const q of g.quests) checkAward(`quest ${q.id}`, q.award);
 
-  const activationTasks = actTasksRaw.map((a) => ({
-    id: a.id,
-    name: a.activationname,
-    points: a.activationvalue,
-    limitTimes: a.limittimes,
-    needStar: a.starlevel ?? 0,
-  }));
+  const activationTasks = [
+    ...actTasksRaw.map((a) => ({
+      id: a.id,
+      name: a.activationname,
+      points: a.activationvalue,
+      limitTimes: a.limittimes,
+      needStar: a.starlevel ?? 0,
+    })),
+    // 问题记录 318：新玩法的活跃项
+    ...actExtra.tasks.map((a) => ({
+      id: a.id,
+      name: a.name,
+      points: a.points,
+      limitTimes: a.limit,
+      needStar: a.needStar,
+    })),
+  ];
+  unique(
+    'activation_tasks',
+    activationTasks.map((a) => a.id),
+  );
   const activationRewards: ActivationReward[] = [];
   for (const r of actRewardsRaw) {
     try {
@@ -599,6 +689,9 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`activation_reward ${r.dictval} note is not a valid award`);
     }
   }
+  activationRewards.push(...actExtra.rewards);
+  activationRewards.sort((a, b) => a.points - b.points);
+  for (const r of actExtra.rewards) checkAward(`activation_reward ${r.points}`, r.award);
 
   const activationNames = new Set(activationTasks.map((a) => a.name));
   for (const [key, name] of Object.entries(actionMap.activation)) {
@@ -968,7 +1061,9 @@ export function buildBundle(src: SourceData): BuildResult {
       doors: looks.doors,
       avatars: looks.avatars,
       icons: looks.icons.map((x) => ({ id: x.key, title: x.title, desc: x.desc })),
-      tasks,
+      tasks: [...quests, ...weeklyGroups.flatMap((g) => g.quests)].map((q) => ({ id: q.id, name: q.name })),
+      chapters: chapters.map((c) => ({ id: c.id, name: c.name })),
+      questLines: questLines.map((l) => ({ id: l.id, name: l.name })),
       activation: activationTasks,
       bless,
       tower: [...towerFloors.values()].map((f) => ({
@@ -1007,7 +1102,10 @@ export function buildBundle(src: SourceData): BuildResult {
     starNeed,
     starAward,
     oilNeed,
-    tasks,
+    chapters,
+    quests,
+    questLines,
+    weeklyGroups,
     activationTasks,
     activationRewards,
     kujiThemes,

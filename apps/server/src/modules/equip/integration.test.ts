@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RestCtx } from '../../core/deps';
 import { createTestGame, newPair, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { getEffectAgg } from '../effects/service';
 
 let t: TestGame;
@@ -21,17 +22,19 @@ async function piece(ctx: RestCtx, goodsId: number, patch: Record<string, number
 
 describe('任务（设计文档 §4.2）', () => {
   it('主线第 30 步「穿戴一件厨具」不再跳过，穿一件就完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 30 } });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 30, key: 'equip.wear', done: false });
+    const ctx = await newRestaurant(t);
+    await showQuest(t, ctx.restaurantId, 2103);
+    expect(questIn(await t.game.task.tasks(ctx), 2103)).toMatchObject({ key: 'equip.wear', done: false });
     await t.game.equip.wear(ctx, { id: await piece(ctx, 30) });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({ step: 30, done: true });
+    expect(questIn(await t.game.task.tasks(ctx), 2103)).toMatchObject({ done: true });
   });
 
   it('支线「把厨具强化到 +5」按最高强化等级算', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 40 } });
+    const ctx = await newRestaurant(t);
     await piece(ctx, 30, { stress: 5 });
     await piece(ctx, 31, { stress: 2 });
-    const side = (await t.game.task.tasks(ctx)).side.find((x) => x.key === 'equip.maxStress');
+    await showQuest(t, ctx.restaurantId, 3163);
+    const side = questIn(await t.game.task.tasks(ctx), 3163);
     expect(side).toMatchObject({ progress: 5, done: true });
   });
 });
@@ -49,8 +52,9 @@ describe('好友餐厅页显示对方穿戴（子项目 3 留给 2B）', () => {
 
 describe('功能关闭（设计文档 裁定 10）', () => {
   it('接口拒绝，已穿戴的幸运和套装加成照常生效', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 13, main_task_step: 40 } });
-    expect((await t.game.task.tasks(ctx)).side.some((x) => x.key.startsWith('equip.'))).toBe(true);
+    const ctx = await newRestaurant(t, { patch: { level: 13 } });
+    await showQuest(t, ctx.restaurantId, 3161);
+    expect((await t.game.task.tasks(ctx)).lines.some((l) => l.id === 8)).toBe(true);
     for (const g of [62, 103, 64])
       await t.game.equip.wear(ctx, { id: await piece(ctx, g, { base_luck: 4 }) });
     await t.db
@@ -63,6 +67,6 @@ describe('功能关闭（设计文档 裁定 10）', () => {
     expect(agg.luckValue).toBeGreaterThanOrEqual(12);
     expect(agg.atRate).toBeGreaterThanOrEqual(0.05);
     const off = await t.game.task.tasks(ctx);
-    expect(off.side.some((x) => x.key.startsWith('equip.'))).toBe(false);
+    expect(off.lines.some((l) => l.id === 8)).toBe(false);
   });
 });

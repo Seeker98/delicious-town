@@ -2,11 +2,43 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import type { RestaurantDto } from '@dt/shared';
+import type { QuestDto, QuestsDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
 import RestaurantHomeView from './RestaurantHomeView.vue';
+
+/** 问题记录 318：主线任务、任务列表 */
+const quest = (patch: Partial<QuestDto> = {}): QuestDto => ({
+  id: 2021,
+  name: '填一次油',
+  href: '/',
+  key: 'oil.fill',
+  target: 1,
+  progress: 0,
+  done: false,
+  claimed: false,
+  award: { coin: 2000 },
+  ...patch,
+});
+const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => ({
+  chapter: {
+    id: 1,
+    name: '开张大吉',
+    needLevel: 1,
+    needStar: 0,
+    locked: false,
+    award: {},
+    claimable: false,
+    total: main.length,
+    claimedCount: main.filter((x) => x.claimed).length,
+  },
+  main,
+  allMainDone: false,
+  lines: [],
+  weekly: null,
+  ...patch,
+});
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -119,23 +151,7 @@ describe('RestaurantHomeView', () => {
       items: [],
       rewards: [],
     });
-    vi.mocked(endpoints.tasks).mockResolvedValue({
-      mainStep: 1,
-      main: {
-        id: 1,
-        main: true,
-        step: 1,
-        name: '填一次油',
-        href: '/',
-        kind: 'counter',
-        key: 'oil.fill',
-        target: 1,
-        progress: 0,
-        done: false,
-        award: { coin: 2000 },
-      },
-      side: [],
-    });
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest()]));
   });
 
   it('6 星起显示挑剔消耗食材档位，并说明每档保留多少（问题记录 220）', async () => {
@@ -547,11 +563,7 @@ describe('RestaurantHomeView', () => {
   });
 
   it('主线任务的领奖按钮和文字垂直居中，不再用浮动（问题记录 118）', async () => {
-    const tasks = await endpoints.tasks();
-    vi.mocked(endpoints.tasks).mockResolvedValue({
-      ...tasks,
-      main: { ...tasks.main!, progress: 1, done: true },
-    });
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest({ progress: 1, done: true })]));
     const w = await mountView();
     const card = w.find('[data-testid="main-task"]');
     // 待办卡里统一的一行样式：flex + 垂直居中（问题记录 280）
@@ -559,6 +571,31 @@ describe('RestaurantHomeView', () => {
     const btn = card.find('button');
     expect(btn.text()).toBe('领奖');
     expect(btn.classes()).not.toContain('float-end');
+  });
+
+  it('主线行：本章第一个可领的；没有可领的显示第一个没完成的；主线全做完不显示（问题记录 318）', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([
+        quest({ id: 2021, name: '填一次油', progress: 1, done: true, claimed: true }),
+        quest({ id: 2022, name: '分配属性点' }),
+        quest({ id: 2023, name: '学会第一道食谱', progress: 1, done: true }),
+      ]),
+    );
+    let w = await mountView();
+    expect(w.get('[data-testid="main-task"]').text()).toContain('学会第一道食谱');
+    expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(true);
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([
+        quest({ id: 2021, progress: 1, done: true, claimed: true }),
+        quest({ id: 2022, name: '分配属性点' }),
+      ]),
+    );
+    w = await mountView();
+    expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
+    expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
+    w = await mountView();
+    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
   });
 
   it('有公告时首页显示公告横幅（子项目 6A）', async () => {

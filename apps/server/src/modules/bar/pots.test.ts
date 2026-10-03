@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 
 const config = testConfig();
@@ -12,8 +13,9 @@ afterAll(() => t.close());
 
 describe('支线「集齐 4 株盆栽」（设计文档裁定 10）', () => {
   it('按有效盆栽勋章的种数计；过期的不算；集齐 4 株完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { main_task_step: 40 } });
-    const side = async () => (await t.game.task.tasks(ctx)).side.find((x) => x.id === 120)!;
+    const ctx = await newRestaurant(t);
+    await showQuest(t, ctx.restaurantId, 3085);
+    const side = async () => questIn(await t.game.task.tasks(ctx), 3085)!;
     expect(await side()).toMatchObject({ key: 'honor.potCount', progress: 0, done: false });
     const now = new Date();
     for (const id of [248, 249, 254]) await grantGoods(t.db, config, ctx.restaurantId, id, 1, now);

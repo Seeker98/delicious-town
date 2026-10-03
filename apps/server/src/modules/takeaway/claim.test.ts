@@ -11,6 +11,7 @@ import {
   type NewRestaurantOptions,
   type TestGame,
 } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import { addOrder, addRider, openFor, setWeather, type OrderInit } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
@@ -57,9 +58,9 @@ const deliveryState = async (id: number) =>
     .state;
 
 describe('领取（设计文档 §3.4）', () => {
-  it('成功：银币、经验、声望、奖池一件；骑手经验；单完成；主线第 35 步和活跃"配送外卖"', async () => {
+  it('成功：银币、经验、声望、奖池一件；骑手经验；单完成；主线「完成 3 次外卖配送」和活跃"配送外卖"', async () => {
     // 活跃"配送外卖"要 2 星
-    const { ctx, rider } = await cook({ patch: { main_task_step: 35, star_level: 2 } });
+    const { ctx, rider } = await cook({ patch: { star_level: 2 } });
     const id = await take(ctx, rider);
     later();
     expect((await claim(ctx, id)).data).toEqual({
@@ -83,8 +84,8 @@ describe('领取（设计文档 §3.4）', () => {
     const v = await t.game.takeaway.overview(ctx);
     expect(v.deliveries).toEqual([]);
     expect(v.riders[0]).toMatchObject({ exp: 6, busy: 0 });
-    expect((await t.game.task.tasks(ctx)).main).toMatchObject({
-      step: 35,
+    await showQuest(t, ctx.restaurantId, 2142);
+    expect(questIn(await t.game.task.tasks(ctx), 2142)).toMatchObject({
       key: 'takeaway.deliver',
       progress: 1,
     });

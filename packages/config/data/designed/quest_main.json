@@ -1,0 +1,1059 @@
+{
+ "source": "新设计（问题记录 318）",
+ "rule": "主线任务：id = 2000 + 章×20 + 顺序；经验 = 银币 ÷ 10；同章不分先后",
+ "count": 59,
+ "data": [
+  {
+   "id": 2021,
+   "chapter": 1,
+   "order": 1,
+   "name": "填一次油",
+   "cond": {
+    "kind": "counter",
+    "key": "oil.fill",
+    "target": 1
+   },
+   "award": {
+    "coin": 2000,
+    "exp": 200
+   },
+   "href": "/"
+  },
+  {
+   "id": 2022,
+   "chapter": 1,
+   "order": 2,
+   "name": "分配属性点",
+   "cond": {
+    "kind": "counter",
+    "key": "attr.allocate",
+    "target": 1
+   },
+   "award": {
+    "coin": 2000,
+    "exp": 200
+   },
+   "href": "/rest/info"
+  },
+  {
+   "id": 2023,
+   "chapter": 1,
+   "order": 3,
+   "name": "学会第一道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2024,
+   "chapter": 1,
+   "order": 4,
+   "name": "去菜场买一次菜",
+   "cond": {
+    "kind": "counter",
+    "key": "market.buy",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300
+   },
+   "href": "/market"
+  },
+  {
+   "id": 2025,
+   "chapter": 1,
+   "order": 5,
+   "name": "签到一次",
+   "cond": {
+    "kind": "counter",
+    "key": "signin",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300
+   },
+   "href": "/"
+  },
+  {
+   "id": 2026,
+   "chapter": 1,
+   "order": 6,
+   "name": "餐厅达到 5 级",
+   "cond": {
+    "kind": "state",
+    "key": "rest.level",
+    "target": 5
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500
+   },
+   "href": "/"
+  },
+  {
+   "id": 2041,
+   "chapter": 2,
+   "order": 1,
+   "name": "摆放一件设施",
+   "cond": {
+    "kind": "counter",
+    "key": "device.place",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300,
+    "goods": [
+     {
+      "id": 28,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/rest/floor"
+  },
+  {
+   "id": 2042,
+   "chapter": 2,
+   "order": 2,
+   "name": "在商店买一次道具",
+   "cond": {
+    "kind": "counter",
+    "key": "shop.buy",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300
+   },
+   "href": "/shop"
+  },
+  {
+   "id": 2043,
+   "chapter": 2,
+   "order": 3,
+   "name": "合成或分解一次食材",
+   "cond": {
+    "kind": "counter",
+    "key": "foods.handle",
+    "target": 1
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500
+   },
+   "href": "/cupboard"
+  },
+  {
+   "id": 2044,
+   "chapter": 2,
+   "order": 4,
+   "name": "消灭一只蟑螂",
+   "cond": {
+    "kind": "counter",
+    "key": "roach.kill",
+    "target": 1
+   },
+   "award": {
+    "coin": 3000,
+    "exp": 300
+   },
+   "href": "/"
+  },
+  {
+   "id": 2045,
+   "chapter": 2,
+   "order": 5,
+   "name": "学会 5 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 5
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2046,
+   "chapter": 2,
+   "order": 6,
+   "name": "餐厅达到 10 级",
+   "cond": {
+    "kind": "state",
+    "key": "rest.level",
+    "target": 10
+   },
+   "award": {
+    "coin": 10000,
+    "exp": 1000
+   },
+   "href": "/"
+  },
+  {
+   "id": 2061,
+   "chapter": 3,
+   "order": 1,
+   "name": "添加一位好友",
+   "cond": {
+    "kind": "state",
+    "key": "friends.count",
+    "target": 1
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500
+   },
+   "href": "/friends"
+  },
+  {
+   "id": 2062,
+   "chapter": 3,
+   "order": 2,
+   "name": "翻一次好友的橱柜",
+   "cond": {
+    "kind": "counter",
+    "key": "cupboard.flip",
+    "target": 1
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500
+   },
+   "href": "/friends"
+  },
+  {
+   "id": 2063,
+   "chapter": 3,
+   "order": 3,
+   "name": "与好友交换一次食材",
+   "cond": {
+    "kind": "counter",
+    "key": "foods.exchange",
+    "target": 1
+   },
+   "award": {
+    "coin": 10000,
+    "exp": 1000
+   },
+   "href": "/friends"
+  },
+  {
+   "id": 2064,
+   "chapter": 3,
+   "order": 4,
+   "name": "去酒吧玩一次",
+   "cond": {
+    "kind": "counter",
+    "key": "bar.play",
+    "target": 1
+   },
+   "award": {
+    "coin": 5000,
+    "exp": 500,
+    "goods": [
+     {
+      "id": 1,
+      "num": 10
+     }
+    ]
+   },
+   "href": "/bar"
+  },
+  {
+   "id": 2065,
+   "chapter": 3,
+   "order": 5,
+   "name": "扩容一次油壶",
+   "cond": {
+    "kind": "state",
+    "key": "oil.level",
+    "target": 1
+   },
+   "award": {
+    "coin": 8000,
+    "exp": 800,
+    "goods": [
+     {
+      "id": 24,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/oil"
+  },
+  {
+   "id": 2066,
+   "chapter": 3,
+   "order": 6,
+   "name": "学会 15 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 15
+   },
+   "award": {
+    "coin": 10000,
+    "exp": 1000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2067,
+   "chapter": 3,
+   "order": 7,
+   "name": "把一道食谱升到上品",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.grade3",
+    "target": 1
+   },
+   "award": {
+    "coin": 10000,
+    "exp": 1000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2068,
+   "chapter": 3,
+   "order": 8,
+   "name": "餐厅升到一星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2081,
+   "chapter": 4,
+   "order": 1,
+   "name": "鉴定一次神秘食谱",
+   "cond": {
+    "kind": "counter",
+    "key": "mc.appraise",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000,
+    "goods": [
+     {
+      "id": 162,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/mc"
+  },
+  {
+   "id": 2082,
+   "chapter": 4,
+   "order": 2,
+   "name": "学会一道特色菜",
+   "cond": {
+    "kind": "state",
+    "key": "mc.learned",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/mc"
+  },
+  {
+   "id": 2083,
+   "chapter": 4,
+   "order": 3,
+   "name": "烹制一次特色菜",
+   "cond": {
+    "kind": "counter",
+    "key": "mc.cook",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/mc"
+  },
+  {
+   "id": 2084,
+   "chapter": 4,
+   "order": 4,
+   "name": "攻击一次守护兽",
+   "cond": {
+    "kind": "counter",
+    "key": "temple.missile",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000,
+    "goods": [
+     {
+      "id": 17,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/temple"
+  },
+  {
+   "id": 2085,
+   "chapter": 4,
+   "order": 5,
+   "name": "探险一次",
+   "cond": {
+    "kind": "counter",
+    "key": "temple.explore",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000,
+    "goods": [
+     {
+      "id": 170,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/temple"
+  },
+  {
+   "id": 2101,
+   "chapter": 5,
+   "order": 1,
+   "name": "开垦一块菜园",
+   "cond": {
+    "kind": "state",
+    "key": "yard.lands",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/yard"
+  },
+  {
+   "id": 2102,
+   "chapter": 5,
+   "order": 2,
+   "name": "收获一次作物",
+   "cond": {
+    "kind": "counter",
+    "key": "yard.harvest",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/yard"
+  },
+  {
+   "id": 2103,
+   "chapter": 5,
+   "order": 3,
+   "name": "穿戴一件厨具",
+   "cond": {
+    "kind": "counter",
+    "key": "equip.wear",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000,
+    "goods": [
+     {
+      "id": 44,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/rest/equip"
+  },
+  {
+   "id": 2104,
+   "chapter": 5,
+   "order": 4,
+   "name": "强化一次厨具",
+   "cond": {
+    "kind": "counter",
+    "key": "equip.stress",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/rest/equip"
+  },
+  {
+   "id": 2105,
+   "chapter": 5,
+   "order": 5,
+   "name": "挑战一次厨塔",
+   "cond": {
+    "kind": "counter",
+    "key": "tower.challenge",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/tower"
+  },
+  {
+   "id": 2106,
+   "chapter": 5,
+   "order": 6,
+   "name": "餐厅达到 20 级",
+   "cond": {
+    "kind": "state",
+    "key": "rest.level",
+    "target": 20
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/"
+  },
+  {
+   "id": 2121,
+   "chapter": 6,
+   "order": 1,
+   "name": "抽一次一番赏",
+   "cond": {
+    "kind": "counter",
+    "key": "kuji.draw",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/kuji"
+  },
+  {
+   "id": 2122,
+   "chapter": 6,
+   "order": 2,
+   "name": "领一次限时活动奖励",
+   "cond": {
+    "kind": "counter",
+    "key": "activity.claim",
+    "target": 1
+   },
+   "award": {
+    "coin": 30000,
+    "exp": 3000
+   },
+   "href": "/activities"
+  },
+  {
+   "id": 2123,
+   "chapter": 6,
+   "order": 3,
+   "name": "在小镇广播一次",
+   "cond": {
+    "kind": "counter",
+    "key": "broadcast",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/town"
+  },
+  {
+   "id": 2124,
+   "chapter": 6,
+   "order": 4,
+   "name": "在论坛发帖或回复一次",
+   "cond": {
+    "kind": "counter",
+    "key": "post.create|post.reply",
+    "target": 1
+   },
+   "award": {
+    "coin": 20000,
+    "exp": 2000
+   },
+   "href": "/forum"
+  },
+  {
+   "id": 2125,
+   "chapter": 6,
+   "order": 5,
+   "name": "学会 100 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 100
+   },
+   "award": {
+    "coin": 50000,
+    "exp": 5000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2126,
+   "chapter": 6,
+   "order": 6,
+   "name": "餐厅升到二星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 2
+   },
+   "award": {
+    "coin": 80000,
+    "exp": 8000,
+    "goods": [
+     {
+      "id": 62,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2141,
+   "chapter": 7,
+   "order": 1,
+   "name": "开通外卖",
+   "cond": {
+    "kind": "state",
+    "key": "takeaway.open",
+    "target": 1
+   },
+   "award": {
+    "coin": 50000,
+    "exp": 5000
+   },
+   "href": "/takeaway"
+  },
+  {
+   "id": 2142,
+   "chapter": 7,
+   "order": 2,
+   "name": "完成 3 次外卖配送",
+   "cond": {
+    "kind": "counter",
+    "key": "takeaway.deliver",
+    "target": 3
+   },
+   "award": {
+    "coin": 50000,
+    "exp": 5000,
+    "goods": [
+     {
+      "id": 103,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/takeaway"
+  },
+  {
+   "id": 2143,
+   "chapter": 7,
+   "order": 3,
+   "name": "投喂一次克拉肯",
+   "cond": {
+    "kind": "counter",
+    "key": "kraken.feed",
+    "target": 1
+   },
+   "award": {
+    "coin": 50000,
+    "exp": 5000,
+    "goods": [
+     {
+      "id": 434,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/temple"
+  },
+  {
+   "id": 2144,
+   "chapter": 7,
+   "order": 4,
+   "name": "学会 300 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 300
+   },
+   "award": {
+    "coin": 80000,
+    "exp": 8000,
+    "goods": [
+     {
+      "id": 64,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2145,
+   "chapter": 7,
+   "order": 5,
+   "name": "餐厅升到三星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 3
+   },
+   "award": {
+    "coin": 120000,
+    "exp": 12000,
+    "goods": [
+     {
+      "id": 105,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2161,
+   "chapter": 8,
+   "order": 1,
+   "name": "搬一次家",
+   "cond": {
+    "kind": "counter",
+    "key": "rest.move",
+    "target": 1
+   },
+   "award": {
+    "coin": 50000,
+    "exp": 5000
+   },
+   "href": "/society/move"
+  },
+  {
+   "id": 2162,
+   "chapter": 8,
+   "order": 2,
+   "name": "在异国街道学会 10 道菜",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.foreignLearned",
+    "target": 10
+   },
+   "award": {
+    "coin": 100000,
+    "exp": 10000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2163,
+   "chapter": 8,
+   "order": 3,
+   "name": "把 50 道食谱升到金牌",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.grade5",
+    "target": 50
+   },
+   "award": {
+    "coin": 150000,
+    "exp": 15000,
+    "goods": [
+     {
+      "id": 63,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2164,
+   "chapter": 8,
+   "order": 4,
+   "name": "学会 600 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 600
+   },
+   "award": {
+    "coin": 200000,
+    "exp": 20000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2165,
+   "chapter": 8,
+   "order": 5,
+   "name": "餐厅升到四星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 4
+   },
+   "award": {
+    "coin": 350000,
+    "exp": 35000,
+    "goods": [
+     {
+      "id": 310,
+      "num": 5
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2181,
+   "chapter": 9,
+   "order": 1,
+   "name": "学会 10 道特色菜",
+   "cond": {
+    "kind": "state",
+    "key": "mc.learned",
+    "target": 10
+   },
+   "award": {
+    "coin": 300000,
+    "exp": 30000
+   },
+   "href": "/mc"
+  },
+  {
+   "id": 2182,
+   "chapter": 9,
+   "order": 2,
+   "name": "学会 1,000 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 1000
+   },
+   "award": {
+    "coin": 300000,
+    "exp": 30000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2183,
+   "chapter": 9,
+   "order": 3,
+   "name": "把 300 道食谱升到珍品",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.grade6",
+    "target": 300
+   },
+   "award": {
+    "coin": 600000,
+    "exp": 60000,
+    "goods": [
+     {
+      "id": 79,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2184,
+   "chapter": 9,
+   "order": 4,
+   "name": "餐厅升到五星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 5
+   },
+   "award": {
+    "coin": 700000,
+    "exp": 70000,
+    "goods": [
+     {
+      "id": 72,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2201,
+   "chapter": 10,
+   "order": 1,
+   "name": "学会 2,000 道食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": 2000
+   },
+   "award": {
+    "coin": 700000,
+    "exp": 70000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2202,
+   "chapter": 10,
+   "order": 2,
+   "name": "把 1,000 道食谱升到珍品",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.grade6",
+    "target": 1000
+   },
+   "award": {
+    "coin": 800000,
+    "exp": 80000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2203,
+   "chapter": 10,
+   "order": 3,
+   "name": "餐厅升到六星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 6
+   },
+   "award": {
+    "coin": 1500000,
+    "exp": 150000,
+    "goods": [
+     {
+      "id": 80,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2221,
+   "chapter": 11,
+   "order": 1,
+   "name": "学会全部食谱",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.learned",
+    "target": "all"
+   },
+   "award": {
+    "coin": 1500000,
+    "exp": 150000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2222,
+   "chapter": 11,
+   "order": 2,
+   "name": "餐厅升到七星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 7
+   },
+   "award": {
+    "coin": 2500000,
+    "exp": 250000,
+    "goods": [
+     {
+      "id": 190,
+      "num": 1
+     }
+    ]
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2241,
+   "chapter": 12,
+   "order": 1,
+   "name": "升到泛紫一星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 8
+   },
+   "award": {
+    "coin": 300000,
+    "exp": 30000
+   },
+   "href": "/society/star"
+  },
+  {
+   "id": 2242,
+   "chapter": 12,
+   "order": 2,
+   "name": "把 100 道食谱升到天馔",
+   "cond": {
+    "kind": "state",
+    "key": "cookbooks.grade10",
+    "target": 100
+   },
+   "award": {
+    "coin": 400000,
+    "exp": 40000
+   },
+   "href": "/cookbooks"
+  },
+  {
+   "id": 2243,
+   "chapter": 12,
+   "order": 3,
+   "name": "升到泛紫五星",
+   "cond": {
+    "kind": "state",
+    "key": "rest.star",
+    "target": 12
+   },
+   "award": {
+    "coin": 500000,
+    "exp": 50000
+   },
+   "href": "/society/star"
+  }
+ ]
+}

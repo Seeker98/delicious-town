@@ -3,6 +3,7 @@ import { GOODS, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { PERSONAS } from '../bot';
+import { CHAPTER_MARK } from '../../modules/task/quests';
 import { botTurn, starBlockers, type FastBot } from './bot';
 import { newMarket } from './market';
 import { openFastRest } from './ops';
@@ -26,11 +27,17 @@ const bot = (c: FastCtx): FastBot => ({
   rng: seededRng(9),
   lastSideDay: '',
 });
+/** 任务都记为已领：只测别的决策时，免得任务奖励（经验升级、银币）干扰（问题记录 318） */
+const noQuests = (b: FastBot) => {
+  for (const q of config.bundle.quests) b.rest.questDone.add(q.id);
+  for (const ch of config.bundle.chapters) b.rest.questDone.add(CHAPTER_MARK + ch.id);
+};
 
 describe('机器人（设计 §4.5）', () => {
   it('签到一次、加点用完、停业时加油复业；同一天第二次不再签到', () => {
     const c = ctx();
     const b = bot(c);
+    noQuests(b);
     b.rest.attrLeft = 6;
     b.rest.oil = 0;
     b.rest.state = 2;
@@ -125,6 +132,7 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     const { unitPrice } = await import('../../modules/market/rules');
     const c = ctx();
     const b = bot(c);
+    noQuests(b);
     b.rest.daily.set('signin', 1);
     b.rest.foods.clear();
     // 缺口只算本街的菜（问题记录 312）：挑一个本街 1 品级合计至少要 2 个的食材
@@ -175,5 +183,17 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     const list = learnable(c, b.rest, street);
     expect(list.indexOf(n!)).toBeGreaterThanOrEqual(0);
     expect(list.indexOf(a!)).toBeGreaterThan(list.indexOf(n!));
+  });
+});
+
+describe('任务（问题记录 318）', () => {
+  it('签到、加点、加油后领第 1 章对应的主线任务，记进 questDone', () => {
+    const c = ctx();
+    const b = bot(c);
+    b.rest.attrLeft = 6;
+    b.rest.oil = 0;
+    b.rest.state = 2;
+    botTurn(c, b, newMarket(), world(), null);
+    for (const id of [2021, 2022, 2025]) expect(b.rest.questDone.has(id), String(id)).toBe(true);
   });
 });

@@ -121,6 +121,8 @@ export interface RestaurantTable {
   cookfoods_flag: Default<number>;
   plaque2_open: Default<boolean>;
   main_task_step: Default<number>;
+  /** 问题记录 318：0 = 还没按新任务换算过老号进度；1 = 已换算 */
+  quest_version: Default<number>;
   state_reason: Nullable<string>;
   npc: Default<boolean>;
   door: Default<number>;
@@ -276,6 +278,29 @@ export interface EventCounterTable {
   rest_id: number;
   key: string;
   count: Default<number>;
+}
+
+/** 问题记录 318：主线、支线任务完成（已领奖）；章末奖励记 100000 + 章 id */
+export interface QuestDoneTable {
+  rest_id: number;
+  quest_id: number;
+  done_at: TsDefault;
+}
+
+/** 每周任务计数；week 是本周一 */
+export interface WeeklyCounterTable {
+  rest_id: number;
+  week: string;
+  key: string;
+  count: Default<number>;
+}
+
+/** 每周任务和全完成奖励的领取 */
+export interface WeeklyClaimTable {
+  rest_id: number;
+  week: string;
+  quest_id: number;
+  claimed_at: TsDefault;
 }
 
 export interface TaskDoneTable {
@@ -1213,6 +1238,9 @@ export interface DB {
   shop_special: ShopSpecialTable;
   event_counter: EventCounterTable;
   task_done: TaskDoneTable;
+  quest_done: QuestDoneTable;
+  weekly_counter: WeeklyCounterTable;
+  weekly_claim: WeeklyClaimTable;
   income_round: IncomeRoundTable;
   rest_log: RestLogTable;
   job_run: JobRunTable;

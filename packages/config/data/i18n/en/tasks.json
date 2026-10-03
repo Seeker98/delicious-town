@@ -1,206 +1,389 @@
 {
-  "1": {
+  "2021": {
     "name": "Refill oil once"
   },
-  "2": {
-    "name": "Assign stat points"
+  "2022": {
+    "name": "Assign attribute points"
   },
-  "3": {
+  "2023": {
     "name": "Learn your first recipe"
   },
-  "4": {
-    "name": "Buy ingredients at the Market once"
+  "2024": {
+    "name": "Buy at the Market once"
   },
-  "5": {
-    "name": "Buy an item at the shop once"
-  },
-  "6": {
-    "name": "Place a facility"
-  },
-  "7": {
+  "2025": {
     "name": "Check in once"
   },
-  "8": {
-    "name": "Squash a roach"
-  },
-  "9": {
-    "name": "Add a friend"
-  },
-  "10": {
+  "2026": {
     "name": "Reach restaurant level 5"
   },
-  "11": {
-    "name": "Learn 5 recipes"
+  "2041": {
+    "name": "Place a facility"
   },
-  "12": {
+  "2042": {
+    "name": "Buy an item at the shop"
+  },
+  "2043": {
     "name": "Combine or break down ingredients once"
   },
-  "13": {
-    "name": "Play finger-guessing at the bar once"
+  "2044": {
+    "name": "Squash a roach"
   },
-  "14": {
-    "name": "Raid a friend's pantry once"
+  "2045": {
+    "name": "Learn 5 recipes"
   },
-  "15": {
-    "name": "Upgrade your oil tank once"
-  },
-  "16": {
+  "2046": {
     "name": "Reach restaurant level 10"
   },
-  "17": {
+  "2061": {
+    "name": "Add a friend"
+  },
+  "2062": {
+    "name": "Raid a friend's pantry"
+  },
+  "2063": {
+    "name": "Swap ingredients with a friend"
+  },
+  "2064": {
+    "name": "Play once at the bar"
+  },
+  "2065": {
+    "name": "Expand the oil tank once"
+  },
+  "2066": {
     "name": "Learn 15 recipes"
   },
-  "18": {
+  "2067": {
     "name": "Raise a recipe to Superior"
   },
-  "19": {
-    "name": "Swap ingredients with a friend once"
-  },
-  "20": {
-    "name": "Reach restaurant level 13"
-  },
-  "21": {
+  "2068": {
     "name": "Reach 1 star"
   },
-  "22": {
-    "name": "Appraise a mystery recipe once"
+  "2081": {
+    "name": "Appraise a Mystery Recipe"
   },
-  "23": {
+  "2082": {
     "name": "Learn a signature dish"
   },
-  "24": {
-    "name": "Cook a signature dish once"
+  "2083": {
+    "name": "Cook a signature dish"
   },
-  "25": {
-    "name": "Attack the guardian once"
+  "2084": {
+    "name": "Attack the Guardian once"
   },
-  "26": {
-    "name": "Explore once"
+  "2085": {
+    "name": "Go on an expedition"
   },
-  "27": {
-    "name": "Challenge the Chef Tower once"
-  },
-  "28": {
+  "2101": {
     "name": "Clear a garden plot"
   },
-  "29": {
-    "name": "Harvest a crop once"
+  "2102": {
+    "name": "Harvest a crop"
   },
-  "30": {
+  "2103": {
     "name": "Equip a piece of cookware"
   },
-  "31": {
+  "2104": {
     "name": "Enhance cookware once"
   },
-  "32": {
+  "2105": {
+    "name": "Challenge the Chef Tower"
+  },
+  "2106": {
+    "name": "Reach restaurant level 20"
+  },
+  "2121": {
+    "name": "Draw Ichiban Kuji once"
+  },
+  "2122": {
+    "name": "Claim an event reward"
+  },
+  "2123": {
+    "name": "Broadcast in town once"
+  },
+  "2124": {
+    "name": "Post or reply on the forum"
+  },
+  "2125": {
     "name": "Learn 100 recipes"
   },
-  "33": {
+  "2126": {
     "name": "Reach 2 stars"
   },
-  "34": {
+  "2141": {
     "name": "Open takeaway"
   },
-  "35": {
+  "2142": {
     "name": "Complete 3 takeaway deliveries"
   },
-  "36": {
+  "2143": {
     "name": "Feed the Kraken once"
   },
-  "37": {
+  "2144": {
     "name": "Learn 300 recipes"
   },
-  "38": {
+  "2145": {
     "name": "Reach 3 stars"
   },
-  "39": {
+  "2161": {
+    "name": "Move your restaurant once"
+  },
+  "2162": {
+    "name": "Learn 10 dishes on foreign streets"
+  },
+  "2163": {
     "name": "Raise 50 recipes to Gold"
   },
-  "40": {
+  "2164": {
     "name": "Learn 600 recipes"
   },
-  "41": {
+  "2165": {
     "name": "Reach 4 stars"
   },
-  "42": {
+  "2181": {
     "name": "Learn 10 signature dishes"
   },
-  "43": {
-    "name": "Reach 5 stars"
+  "2182": {
+    "name": "Learn 1,000 recipes"
   },
-  "44": {
+  "2183": {
     "name": "Raise 300 recipes to Rare"
   },
-  "45": {
+  "2184": {
+    "name": "Reach 5 stars"
+  },
+  "2201": {
+    "name": "Learn 2,000 recipes"
+  },
+  "2202": {
+    "name": "Raise 1,000 recipes to Rare"
+  },
+  "2203": {
     "name": "Reach 6 stars"
   },
-  "46": {
+  "2221": {
+    "name": "Learn every recipe"
+  },
+  "2222": {
     "name": "Reach 7 stars"
   },
-  "101": {
-    "name": "Tip the Hip-hop Boy once"
+  "2241": {
+    "name": "Reach Purple 1 star"
   },
-  "102": {
-    "name": "Shake Mr. Krab's money bag once"
+  "2242": {
+    "name": "Raise 100 recipes to Divine"
   },
-  "103": {
-    "name": "Plant 5 roaches"
+  "2243": {
+    "name": "Reach Purple 5 stars"
   },
-  "104": {
-    "name": "Eat for free once"
+  "3021": {
+    "name": "Raise 10 recipes to Superior"
   },
-  "105": {
-    "name": "Join the market guessing game once"
+  "3022": {
+    "name": "Raise 10 recipes to Gold"
   },
-  "106": {
+  "3023": {
+    "name": "Raise 100 recipes to Gold"
+  },
+  "3024": {
+    "name": "Raise 50 recipes to Rare"
+  },
+  "3025": {
+    "name": "Raise 10 recipes to Delicacy"
+  },
+  "3026": {
+    "name": "Raise a recipe to Divine"
+  },
+  "3041": {
+    "name": "Tip the Hip-hop Boy"
+  },
+  "3042": {
+    "name": "Shake Mr. Krab's money bag"
+  },
+  "3043": {
+    "name": "Join a Market guessing game"
+  },
+  "3061": {
     "name": "Give 10 likes"
   },
-  "107": {
-    "name": "Write a forum post"
+  "3062": {
+    "name": "Eat for free once"
   },
-  "108": {
-    "name": "Play the slot machine once"
+  "3063": {
+    "name": "Plant 5 roaches"
   },
-  "109": {
-    "name": "Make a town broadcast once"
+  "3064": {
+    "name": "Refill friends' oil 5 times"
   },
-  "110": {
-    "name": "Duel friends 10 times"
+  "3065": {
+    "name": "Receive 100 likes"
   },
-  "111": {
-    "name": "Teach a signature dish class once"
+  "3081": {
+    "name": "Play the slot machine"
   },
-  "112": {
-    "name": "Learn a signature dish in the classroom"
+  "3082": {
+    "name": "Play darts"
   },
-  "113": {
-    "name": "Complete a trial once"
+  "3083": {
+    "name": "Play Memory Mixing"
   },
-  "114": {
-    "name": "Appraise an ingredient formula once"
+  "3084": {
+    "name": "Play 50 times at the bar"
   },
-  "115": {
-    "name": "Combine an ingredient with a formula once"
-  },
-  "116": {
-    "name": "Drill a socket in cookware once"
-  },
-  "117": {
-    "name": "Socket a gem"
-  },
-  "118": {
-    "name": "Enhance cookware to +5"
-  },
-  "119": {
-    "name": "Get liked 100 times"
-  },
-  "120": {
+  "3085": {
     "name": "Collect 4 potted plants"
   },
-  "121": {
+  "3101": {
+    "name": "Cook signature dishes 10 times"
+  },
+  "3102": {
+    "name": "Teach a signature dish class"
+  },
+  "3103": {
+    "name": "Learn a signature dish in class"
+  },
+  "3104": {
+    "name": "Learn 5 signature dishes"
+  },
+  "3105": {
+    "name": "Learn 20 signature dishes"
+  },
+  "3121": {
+    "name": "Complete a Trial"
+  },
+  "3122": {
+    "name": "Go on 50 expeditions"
+  },
+  "3123": {
+    "name": "Attack the Guardian 20 times"
+  },
+  "3124": {
+    "name": "Feed the Kraken 10 times"
+  },
+  "3141": {
+    "name": "Harvest 10 times"
+  },
+  "3142": {
+    "name": "Appraise a Formula"
+  },
+  "3143": {
+    "name": "Craft an ingredient with a Formula"
+  },
+  "3144": {
+    "name": "Clear 6 garden plots"
+  },
+  "3145": {
+    "name": "Craft with Formulas 20 times"
+  },
+  "3161": {
+    "name": "Drill a socket in cookware"
+  },
+  "3162": {
+    "name": "Socket a gem"
+  },
+  "3163": {
+    "name": "Enhance cookware to +5"
+  },
+  "3164": {
+    "name": "Enhance cookware to +8"
+  },
+  "3165": {
+    "name": "Enhance cookware to +10"
+  },
+  "3181": {
+    "name": "Challenge the Chef Tower 10 times"
+  },
+  "3182": {
+    "name": "Duel friends 10 times"
+  },
+  "3183": {
+    "name": "Join a Chef Tower ranking match"
+  },
+  "3184": {
+    "name": "Challenge the Chef Tower 100 times"
+  },
+  "3201": {
+    "name": "Complete an Exchange trade"
+  },
+  "3202": {
+    "name": "Complete 10 Exchange trades"
+  },
+  "3203": {
+    "name": "Complete 50 Exchange trades"
+  },
+  "3221": {
+    "name": "Make a prediction trade"
+  },
+  "3222": {
+    "name": "Make 10 prediction trades"
+  },
+  "3223": {
+    "name": "Win a prediction settlement"
+  },
+  "3241": {
+    "name": "Draw Ichiban Kuji 10 times"
+  },
+  "3242": {
+    "name": "Draw Ichiban Kuji 50 times"
+  },
+  "3243": {
+    "name": "Win the Last Prize"
+  },
+  "3261": {
+    "name": "Make 10 takeaway deliveries"
+  },
+  "3262": {
+    "name": "Make 50 takeaway deliveries"
+  },
+  "3263": {
+    "name": "Make 100 takeaway deliveries"
+  },
+  "3281": {
+    "name": "Learn 50 dishes on foreign streets"
+  },
+  "3282": {
+    "name": "Learn 200 dishes on foreign streets"
+  },
+  "3283": {
+    "name": "Learn 500 dishes on foreign streets"
+  },
+  "3301": {
     "name": "Raise every recipe to Rare"
   },
-  "122": {
-    "name": "Complete 100 takeaway deliveries"
+  "4011": {
+    "name": "Check in 5 days"
+  },
+  "4012": {
+    "name": "Buy at the Market 10 times"
+  },
+  "4013": {
+    "name": "Learn or upgrade recipes 10 times"
+  },
+  "4014": {
+    "name": "Combine or break down ingredients 5 times"
+  },
+  "4021": {
+    "name": "Go on 10 expeditions"
+  },
+  "4022": {
+    "name": "Cook signature dishes 5 times"
+  },
+  "4023": {
+    "name": "Challenge the Chef Tower 20 times"
+  },
+  "4024": {
+    "name": "Learn or upgrade recipes 20 times"
+  },
+  "4031": {
+    "name": "Make 10 takeaway deliveries"
+  },
+  "4032": {
+    "name": "Complete 3 Exchange trades"
+  },
+  "4033": {
+    "name": "Go on 20 expeditions"
+  },
+  "4034": {
+    "name": "Learn or upgrade recipes 30 times"
   }
 }

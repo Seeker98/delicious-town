@@ -3,6 +3,7 @@ import { GOODS, type Tuning } from '@dt/config';
 import { gameDay, type KujiAwardDto, type KujiDrawDto, type KujiViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import { grantAward } from '../award/award';
@@ -241,6 +242,9 @@ export function createKujiService(d: GameDeps) {
     const tally: Record<string, number> = {};
     for (const p of picked) tally[p.tier] = (tally[p.tier] ?? 0) + 1;
     restLog(o, 'kuji.draw', { seq: pool.seq, num, tiers: tally, last: last !== null });
+    // 任务和活跃（问题记录 318）：抽几张计几次；拿到最后赏另计
+    await emitAction(o, 'kuji.draw', num);
+    if (last !== null) await emitAction(o, 'kuji.last');
     // 新闻要等这次操作提交时才写库：把自己刚中的大赏先放进"最近的大赏"，不用刷新就能看到（backlog 一番赏）
     const view = await opView(o);
     const won = [

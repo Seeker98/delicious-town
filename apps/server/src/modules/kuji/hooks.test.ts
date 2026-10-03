@@ -22,8 +22,11 @@ async function fillActivation(restId: number, _need: number) {
 }
 
 describe('活跃度送券（一番赏设计 §5.5）', () => {
-  it('领取最高一档送 activeTickets 张；其他档不送；区服关掉一番赏不送', async () => {
+  it('领取 activeTicketPoints 这一档送 activeTickets 张；其他档（含更高的 180 档）不送；区服关掉一番赏不送', async () => {
     const top = Math.max(...t.deps.config.bundle.activationRewards.map((r) => r.points));
+    // 问题记录 318：新增 180 档后，送券仍在 150 档
+    const at = 150;
+    expect(top).toBeGreaterThan(at);
     const low = Math.min(...t.deps.config.bundle.activationRewards.map((r) => r.points));
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId });
@@ -31,8 +34,10 @@ describe('活跃度送券（一番赏设计 §5.5）', () => {
     await fillActivation(r.restaurantId, top);
     await t.game.task.claimActivation(r, low);
     expect(await goodsNum(t, r.restaurantId, GOODS.kujiTicket)).toBe(0);
-    const res = await t.game.task.claimActivation(r, top);
-    expect(res.data).toMatchObject({ points: top, kujiTickets: 1 });
+    const res = await t.game.task.claimActivation(r, at);
+    expect(res.data).toMatchObject({ points: at, kujiTickets: 1 });
+    expect(await goodsNum(t, r.restaurantId, GOODS.kujiTicket)).toBe(1);
+    expect((await t.game.task.claimActivation(r, top)).data).toMatchObject({ points: top, kujiTickets: 0 });
     expect(await goodsNum(t, r.restaurantId, GOODS.kujiTicket)).toBe(1);
     const off = await createShard(t.db);
     await t.db
@@ -42,7 +47,7 @@ describe('活跃度送券（一番赏设计 §5.5）', () => {
     t.game.shards.invalidate(off);
     const r2 = await newRestaurant(t, { shardId: off });
     await fillActivation(r2.restaurantId, top);
-    expect((await t.game.task.claimActivation(r2, top)).data).toMatchObject({ kujiTickets: 0 });
+    expect((await t.game.task.claimActivation(r2, at)).data).toMatchObject({ kujiTickets: 0 });
     expect(await goodsNum(t, r2.restaurantId, GOODS.kujiTicket)).toBe(0);
   });
 });

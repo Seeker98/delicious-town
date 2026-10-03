@@ -1,0 +1,1141 @@
+{
+ "source": "新设计（问题记录 318）",
+ "rule": "玩法支线：在开启章开始时出现，一次显示一档；档位 id = 3000 + 支线×20 + 顺序",
+ "count": 15,
+ "data": [
+  {
+   "id": 1,
+   "key": "cookbook",
+   "name": "食谱",
+   "chapter": 1,
+   "steps": [
+    {
+     "id": 3021,
+     "order": 1,
+     "needStar": 0,
+     "name": "把 10 道食谱升到上品",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade3",
+      "target": 10
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3022,
+     "order": 2,
+     "needStar": 0,
+     "name": "把 10 道食谱升到金牌",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade5",
+      "target": 10
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3023,
+     "order": 3,
+     "needStar": 0,
+     "name": "把 100 道食谱升到金牌",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade5",
+      "target": 100
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3024,
+     "order": 4,
+     "needStar": 0,
+     "name": "把 50 道食谱升到珍品",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade6",
+      "target": 50
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3025,
+     "order": 5,
+     "needStar": 0,
+     "name": "把 10 道食谱升到佳肴",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade7",
+      "target": 10
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3026,
+     "order": 6,
+     "needStar": 0,
+     "name": "把一道食谱升到天馔",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade10",
+      "target": 1
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000
+     },
+     "href": "/cookbooks"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "key": "town",
+   "name": "小镇",
+   "chapter": 2,
+   "steps": [
+    {
+     "id": 3041,
+     "order": 1,
+     "needStar": 0,
+     "name": "打赏一次卖艺男孩",
+     "cond": {
+      "kind": "counter",
+      "key": "hiphop.reward",
+      "target": 1
+     },
+     "award": {
+      "coin": 5000,
+      "exp": 500,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/town"
+    },
+    {
+     "id": 3042,
+     "order": 2,
+     "needStar": 0,
+     "name": "摇一次蟹老板的钱袋",
+     "cond": {
+      "kind": "counter",
+      "key": "krab.shake",
+      "target": 1
+     },
+     "award": {
+      "coin": 3000,
+      "exp": 300
+     },
+     "href": "/town"
+    },
+    {
+     "id": 3043,
+     "order": 3,
+     "needStar": 0,
+     "name": "参加一次菜场竞猜",
+     "cond": {
+      "kind": "counter",
+      "key": "market.guess",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 491,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/market"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "key": "friend",
+   "name": "好友",
+   "chapter": 3,
+   "steps": [
+    {
+     "id": 3061,
+     "order": 1,
+     "needStar": 0,
+     "name": "点赞 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "thumbs.up",
+      "target": 10
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 348,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/friends"
+    },
+    {
+     "id": 3062,
+     "order": 2,
+     "needStar": 0,
+     "name": "白食一次",
+     "cond": {
+      "kind": "counter",
+      "key": "friend.dineAndDash",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000
+     },
+     "href": "/friends"
+    },
+    {
+     "id": 3063,
+     "order": 3,
+     "needStar": 0,
+     "name": "放置 5 只蟑螂",
+     "cond": {
+      "kind": "counter",
+      "key": "roach.lay",
+      "target": 5
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000
+     },
+     "href": "/friends"
+    },
+    {
+     "id": 3064,
+     "order": 4,
+     "needStar": 0,
+     "name": "帮好友添油 5 次",
+     "cond": {
+      "kind": "counter",
+      "key": "friend.refuel",
+      "target": 5
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000
+     },
+     "href": "/friends"
+    },
+    {
+     "id": 3065,
+     "order": 5,
+     "needStar": 0,
+     "name": "被点赞 100 次",
+     "cond": {
+      "kind": "state",
+      "key": "rest.thumbs",
+      "target": 100
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 317,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/friends"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "key": "bar",
+   "name": "酒吧",
+   "chapter": 3,
+   "steps": [
+    {
+     "id": 3081,
+     "order": 1,
+     "needStar": 0,
+     "name": "玩一次老虎机",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.slot",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 1,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3082,
+     "order": 2,
+     "needStar": 0,
+     "name": "玩一次飞镖",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.darts",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3083,
+     "order": 3,
+     "needStar": 0,
+     "name": "玩一次记忆游戏",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.memory",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3084,
+     "order": 4,
+     "needStar": 0,
+     "name": "在酒吧玩 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.play",
+      "target": 50
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3085,
+     "order": 5,
+     "needStar": 0,
+     "name": "集齐 4 株盆栽",
+     "cond": {
+      "kind": "state",
+      "key": "honor.potCount",
+      "target": 4
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 316,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/bar"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "key": "mc",
+   "name": "特色菜",
+   "chapter": 4,
+   "steps": [
+    {
+     "id": 3101,
+     "order": 1,
+     "needStar": 0,
+     "name": "烹制 10 次特色菜",
+     "cond": {
+      "kind": "counter",
+      "key": "mc.cook",
+      "target": 10
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/mc"
+    },
+    {
+     "id": 3102,
+     "order": 2,
+     "needStar": 0,
+     "name": "开一次特色菜课程",
+     "cond": {
+      "kind": "counter",
+      "key": "lesson.start",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/classroom"
+    },
+    {
+     "id": 3103,
+     "order": 3,
+     "needStar": 0,
+     "name": "在教室学会一道特色菜",
+     "cond": {
+      "kind": "counter",
+      "key": "lesson.learn",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/classroom"
+    },
+    {
+     "id": 3104,
+     "order": 4,
+     "needStar": 0,
+     "name": "学会 5 道特色菜",
+     "cond": {
+      "kind": "state",
+      "key": "mc.learned",
+      "target": 5
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/mc"
+    },
+    {
+     "id": 3105,
+     "order": 5,
+     "needStar": 0,
+     "name": "学会 20 道特色菜",
+     "cond": {
+      "kind": "state",
+      "key": "mc.learned",
+      "target": 20
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000
+     },
+     "href": "/mc"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "key": "temple",
+   "name": "神殿",
+   "chapter": 4,
+   "steps": [
+    {
+     "id": 3121,
+     "order": 1,
+     "needStar": 0,
+     "name": "完成一次试炼",
+     "cond": {
+      "kind": "counter",
+      "key": "temple.trial",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 180,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 3122,
+     "order": 2,
+     "needStar": 0,
+     "name": "探险 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "temple.explore",
+      "target": 50
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 171,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 3123,
+     "order": 3,
+     "needStar": 0,
+     "name": "攻击守护兽 20 次",
+     "cond": {
+      "kind": "counter",
+      "key": "temple.missile",
+      "target": 20
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 17,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 3124,
+     "order": 4,
+     "needStar": 0,
+     "name": "投喂克拉肯 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "kraken.feed",
+      "target": 10
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/temple"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "key": "yard",
+   "name": "菜园",
+   "chapter": 5,
+   "steps": [
+    {
+     "id": 3141,
+     "order": 1,
+     "needStar": 0,
+     "name": "收获 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "yard.harvest",
+      "target": 10
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/yard"
+    },
+    {
+     "id": 3142,
+     "order": 2,
+     "needStar": 0,
+     "name": "鉴定一次食材配方",
+     "cond": {
+      "kind": "counter",
+      "key": "formula.appraise",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 464,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/yard"
+    },
+    {
+     "id": 3143,
+     "order": 3,
+     "needStar": 0,
+     "name": "用配方合成一次食材",
+     "cond": {
+      "kind": "counter",
+      "key": "formula.compose",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/yard"
+    },
+    {
+     "id": 3144,
+     "order": 4,
+     "needStar": 0,
+     "name": "开垦 6 块地",
+     "cond": {
+      "kind": "state",
+      "key": "yard.lands",
+      "target": 6
+     },
+     "award": {
+      "coin": 80000,
+      "exp": 8000
+     },
+     "href": "/yard"
+    },
+    {
+     "id": 3145,
+     "order": 5,
+     "needStar": 0,
+     "name": "用配方合成 20 次",
+     "cond": {
+      "kind": "counter",
+      "key": "formula.compose",
+      "target": 20
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/yard"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "key": "equip",
+   "name": "厨具",
+   "chapter": 5,
+   "steps": [
+    {
+     "id": 3161,
+     "order": 1,
+     "needStar": 0,
+     "name": "给厨具打一次孔",
+     "cond": {
+      "kind": "counter",
+      "key": "equip.drill",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/rest/equip"
+    },
+    {
+     "id": 3162,
+     "order": 2,
+     "needStar": 0,
+     "name": "镶嵌一颗宝石",
+     "cond": {
+      "kind": "counter",
+      "key": "equip.gemIn",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 44,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/rest/equip"
+    },
+    {
+     "id": 3163,
+     "order": 3,
+     "needStar": 0,
+     "name": "把厨具强化到 +5",
+     "cond": {
+      "kind": "state",
+      "key": "equip.maxStress",
+      "target": 5
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 52,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/rest/equip"
+    },
+    {
+     "id": 3164,
+     "order": 4,
+     "needStar": 0,
+     "name": "把厨具强化到 +8",
+     "cond": {
+      "kind": "state",
+      "key": "equip.maxStress",
+      "target": 8
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 52,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/rest/equip"
+    },
+    {
+     "id": 3165,
+     "order": 5,
+     "needStar": 0,
+     "name": "把厨具强化到 +10",
+     "cond": {
+      "kind": "state",
+      "key": "equip.maxStress",
+      "target": 10
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000
+     },
+     "href": "/rest/equip"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "key": "tower",
+   "name": "厨塔",
+   "chapter": 5,
+   "steps": [
+    {
+     "id": 3181,
+     "order": 1,
+     "needStar": 0,
+     "name": "挑战厨塔 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "tower.challenge",
+      "target": 10
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 136,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/tower"
+    },
+    {
+     "id": 3182,
+     "order": 2,
+     "needStar": 0,
+     "name": "和好友切磋 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "tower.friendDuel",
+      "target": 10
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 17,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/tower"
+    },
+    {
+     "id": 3183,
+     "order": 3,
+     "needStar": 0,
+     "name": "参加一次厨塔排行赛",
+     "cond": {
+      "kind": "counter",
+      "key": "tower.rank",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/tower"
+    },
+    {
+     "id": 3184,
+     "order": 4,
+     "needStar": 0,
+     "name": "挑战厨塔 100 次",
+     "cond": {
+      "kind": "counter",
+      "key": "tower.challenge",
+      "target": 100
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 136,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/tower"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "key": "exchange",
+   "name": "交易所",
+   "chapter": 6,
+   "steps": [
+    {
+     "id": 3201,
+     "order": 1,
+     "needStar": 0,
+     "name": "在交易所成交 1 次",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.fill",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3202,
+     "order": 2,
+     "needStar": 0,
+     "name": "在交易所成交 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.fill",
+      "target": 10
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3203,
+     "order": 3,
+     "needStar": 0,
+     "name": "在交易所成交 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.fill",
+      "target": 50
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/exchange"
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "key": "predict",
+   "name": "事件合约",
+   "chapter": 6,
+   "steps": [
+    {
+     "id": 3221,
+     "order": 1,
+     "needStar": 0,
+     "name": "事件合约交易 1 次",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.trade",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3222,
+     "order": 2,
+     "needStar": 0,
+     "name": "事件合约交易 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.trade",
+      "target": 10
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3223,
+     "order": 3,
+     "needStar": 0,
+     "name": "押中一次事件合约结算",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.win",
+      "target": 1
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/predict"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "key": "kuji",
+   "name": "一番赏",
+   "chapter": 6,
+   "steps": [
+    {
+     "id": 3241,
+     "order": 1,
+     "needStar": 0,
+     "name": "抽一番赏 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.draw",
+      "target": 10
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3242,
+     "order": 2,
+     "needStar": 0,
+     "name": "抽一番赏 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.draw",
+      "target": 50
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3243,
+     "order": 3,
+     "needStar": 0,
+     "name": "拿到一次最后赏",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.last",
+      "target": 1
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 90201,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/kuji"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "key": "takeaway",
+   "name": "外卖",
+   "chapter": 7,
+   "steps": [
+    {
+     "id": 3261,
+     "order": 1,
+     "needStar": 0,
+     "name": "配送外卖 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "takeaway.deliver",
+      "target": 10
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/takeaway"
+    },
+    {
+     "id": 3262,
+     "order": 2,
+     "needStar": 0,
+     "name": "配送外卖 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "takeaway.deliver",
+      "target": 50
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/takeaway"
+    },
+    {
+     "id": 3263,
+     "order": 3,
+     "needStar": 0,
+     "name": "配送外卖 100 次",
+     "cond": {
+      "kind": "counter",
+      "key": "takeaway.deliver",
+      "target": 100
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 368,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/takeaway"
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "key": "world",
+   "name": "四海为家",
+   "chapter": 8,
+   "steps": [
+    {
+     "id": 3281,
+     "order": 1,
+     "needStar": 0,
+     "name": "在异国街道学会 50 道菜",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.foreignLearned",
+      "target": 50
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3282,
+     "order": 2,
+     "needStar": 0,
+     "name": "在异国街道学会 200 道菜",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.foreignLearned",
+      "target": 200
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3283,
+     "order": 3,
+     "needStar": 0,
+     "name": "在异国街道学会 500 道菜",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.foreignLearned",
+      "target": 500
+     },
+     "award": {
+      "coin": 400000,
+      "exp": 40000
+     },
+     "href": "/cookbooks"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "key": "fame",
+   "name": "名望",
+   "chapter": 9,
+   "steps": [
+    {
+     "id": 3301,
+     "order": 1,
+     "needStar": 0,
+     "name": "把全部食谱升到珍品",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.grade6",
+      "target": "all"
+     },
+     "award": {
+      "goods": [
+       {
+        "id": 367,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/cookbooks"
+    }
+   ]
+  }
+ ]
+}

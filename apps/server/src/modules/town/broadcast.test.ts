@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 import { listNews } from '../news/news';
 
@@ -18,12 +19,13 @@ const send = (ctx: RestCtx, text: string) => t.game.town.broadcast(ctx, { text }
 
 describe('广播（设计文档 §3.2）', () => {
   it('成功：去掉首尾空白，扣 1 个喇叭，写广播新闻，计入支线"在小镇广播一次"', async () => {
-    const a = await ready({ main_task_step: 50 });
+    const a = await ready();
     expect((await send(a, '  大家好  ')).data).toEqual({ text: '大家好' });
     expect(await goodsNum(t, a.restaurantId, 315)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1 });
     expect(n).toMatchObject({ type: 'town.broadcast', restId: a.restaurantId, params: { text: '大家好' } });
-    const side = (await t.game.task.tasks(a)).side.find((x) => x.id === 109);
+    await showQuest(t, a.restaurantId, 2123);
+    const side = questIn(await t.game.task.tasks(a), 2123);
     expect(side).toMatchObject({ progress: 1, done: true });
   });
 

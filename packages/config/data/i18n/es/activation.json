@@ -70,5 +70,20 @@
   },
   "99": {
     "name": "Bonificación del Collar del amor"
+  },
+  "901": {
+    "name": "Operación en la Bolsa"
+  },
+  "902": {
+    "name": "Operación de predicción"
+  },
+  "903": {
+    "name": "Tirada de Ichiban Kuji"
+  },
+  "904": {
+    "name": "Recompensa de evento"
+  },
+  "905": {
+    "name": "Mensaje o respuesta en el foro"
   }
 }

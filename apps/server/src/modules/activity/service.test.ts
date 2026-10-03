@@ -4,6 +4,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { insertActivity } from '../../../test/activity';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -130,5 +131,17 @@ describe('玩家接口（设计 §5.1）', () => {
       .values({ shard_id: shardId, override: JSON.stringify({ features: { activity: false } }) })
       .execute();
     await expect(svc().list(r)).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('领一次（不管领几个奖励）计一次 activity.claim；活跃"领取限时活动奖励"计入', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: goals });
+    await act(r, 'market.buy', 3);
+    await svc().claimAll(r, id);
+    expect(await eventCount(t, r.restaurantId, 'activity.claim')).toBe(1);
+    expect((await t.game.task.activation(r)).items.find((i) => i.name === '领取限时活动奖励')!.count).toBe(1);
   });
 });
