@@ -1,3 +1,4 @@
+import { getActivePinia } from 'pinia';
 import { DEFAULT_LOCALE, type Locale } from '@dt/shared';
 import zhCN from './locales/zh-CN';
 
@@ -22,9 +23,17 @@ export async function loadMessages(l: Locale): Promise<Messages> {
 }
 
 let current: { locale: Locale; messages: Messages } = { locale: DEFAULT_LOCALE, messages: zhCN };
+/**
+ * 语言 store 的响应式状态（不 import store，免得循环引用）。读它的 computed 会跟着语言变：
+ * 以前只读普通变量，组件里用它算好的文字（剩余时间、顾客类型、食材等级等）切换语言后不重算，
+ * 要刷新页面才变（问题记录 314）
+ */
+function storeState(): { locale: Locale; messages: Messages } | undefined {
+  return getActivePinia()?.state.value.locale as { locale: Locale; messages: Messages } | undefined;
+}
 /** 普通函数（报错、新闻、日志文案，数字格式）用：当前语言的翻译 */
-export const activeMessages = (): Messages => current.messages;
-export const activeLocale = (): Locale => current.locale;
+export const activeMessages = (): Messages => storeState()?.messages ?? current.messages;
+export const activeLocale = (): Locale => storeState()?.locale ?? current.locale;
 export function setActive(locale: Locale, messages: Messages): void {
   current = { locale, messages };
 }
