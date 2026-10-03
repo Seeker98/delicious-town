@@ -123,7 +123,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
       }}
       <span v-if="result.krabCoin > 0">{{ t.temple.kraken.krabCoin(result.krabCoin) }}</span>
       <span v-if="result.tentacle">{{ t.temple.kraken.tentacle }}</span>
-      <span v-if="result.punish" class="text-danger">；{{ punishText(result.punish) }}</span>
+      <span v-if="result.punish" class="text-danger">{{ t.common.semi }}{{ punishText(result.punish) }}</span>
     </div>
 
     <h6 class="mt-3">{{ t.temple.kraken.shop }}</h6>

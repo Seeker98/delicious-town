@@ -7,7 +7,7 @@ const home: Messages['home'] = {
     body1: "Son badge reste actif tant que vous ne l'avez pas chassé : fréquentation +50 %, mais ",
     bold: 'taux de clients difficiles -120 %',
     body2:
-      " (les clients difficiles ne viennent plus, personne ne commande de plat, vous ne touchez que les pièces de base), et huile par table +5. Quand il s'attable lui-même, cette table rapporte ×5. Une fois chassé, il ne choisira plus votre restaurant pendant un moment.",
+      " (les clients difficiles ne viennent plus, personne ne commande de plat, vous ne touchez que les pièces de base), et huile par table +5. De temps en temps, il s'attable lui-même et cette table rapporte ×5. Une fois chassé, il ne choisira plus votre restaurant pendant un moment.",
     byStrength: "Chasser avec de l'Énergie",
     byBook: 'Utiliser la recette du Pâté de crabe',
     failed: 'Impossible de le chasser',

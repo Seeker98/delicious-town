@@ -122,7 +122,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
       <div class="d-flex align-items-center mt-3 mb-1" :data-testid="`section-head-${s.key}`">
         <h6 class="dt-section m-0">
           {{ t.market.sections[s.key]
-          }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">（{{ sectionNote(s.key) }}）</small>
+          }}<small v-if="sectionNote(s.key)" class="text-muted fw-normal">{{
+            t.common.paren(sectionNote(s.key))
+          }}</small>
         </h6>
         <span class="small text-muted ms-auto">{{ t.market.nextStock(time(data[s.next])) }}</span>
       </div>

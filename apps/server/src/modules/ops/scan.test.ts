@@ -95,7 +95,8 @@ describe('backlog 邀请：某个区服扫描出错不影响后面的区服', ()
       .mockImplementation((id: number) => (id === bad ? Promise.reject(new Error('boom')) : real(id)));
     const errLog = { info: vi.fn(), error: vi.fn(), warn: vi.fn() };
     try {
-      await runOpsScan(t.game, errLog);
+      // 只扫本用例的两个区服：全扫会把别的测试文件正在用的区服的邀请奖励提前发掉
+      await runOpsScan(t.game, errLog, { shardIds: [bad, good] });
     } finally {
       spy.mockRestore();
     }

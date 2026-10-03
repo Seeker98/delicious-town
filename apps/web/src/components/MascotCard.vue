@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { pickLine, type MascotLine } from '../utils/mascot';
+import { useT } from '../composables/useT';
 import GameImg from './GameImg.vue';
 
 /**
@@ -16,6 +17,7 @@ const props = defineProps<{
   ready: boolean;
   testid: string;
 }>();
+const t = useT();
 const line = ref('');
 const next = () => {
   line.value = pickLine(props.lines, line.value || null);
@@ -40,7 +42,8 @@ watch(
   >
     <GameImg :path="img" :alt="name" :fallback-icon="fallbackIcon" class="flex-shrink-0" />
     <div>
-      <b>{{ name }}：</b><span :data-testid="`${testid}-line`">{{ line }}</span>
+      <b>{{ t.common.colon(name) }}</b
+      ><span :data-testid="`${testid}-line`">{{ line }}</span>
     </div>
     <div v-if="$slots.default" class="ms-auto flex-shrink-0" @click.stop @keydown.enter.stop>
       <slot />

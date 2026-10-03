@@ -1,3 +1,4 @@
+import compress from '@fastify/compress';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import Fastify, { type FastifyInstance } from 'fastify';
@@ -56,6 +57,8 @@ export async function buildApp(
     logger: deps.env.NODE_ENV === 'test' ? false : { level: deps.env.LOG_LEVEL },
     bodyLimit: 64 * 1024,
   });
+  // 响应压缩（backlog 多语言）：道具目录加了菜名后英文约 355KB，gzip 后约 78KB；小于 1KB 的不压
+  await app.register(compress, { global: true, threshold: 1024, encodings: ['br', 'gzip', 'deflate'] });
   await app.register(cookie);
   await app.register(cors, { origin: deps.env.WEB_ORIGIN, credentials: true, methods: ['GET', 'POST'] });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);

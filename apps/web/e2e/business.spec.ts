@@ -47,7 +47,13 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   const buyable = daily.locator('[data-testid^="buy-"]:not([disabled])');
   if ((await buyable.count()) > 0) {
     await buyable.first().click();
-    await expect(page.getByText(/^获得 .+×1(；消耗 .+)?$/)).toBeVisible();
+    // 只认提示里有"获得 …×1"：同一次还可能掉别的（比如活动货币×2），以前要求整句以 ×1 结尾，偶尔对不上（backlog）
+    await expect(
+      page
+        .getByTestId('toast')
+        .filter({ hasText: /获得 .*×1/ })
+        .first(),
+    ).toBeVisible();
   } else {
     await expect(daily.getByText(/同一网络或设备本轮已买/).first()).toBeVisible();
   }

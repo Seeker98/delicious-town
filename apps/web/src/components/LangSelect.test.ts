@@ -122,3 +122,34 @@ describe('登录后用账号语言（问题记录 272）', () => {
     expect(locale.locale).toBe('fr');
   });
 });
+
+describe('backlog 多语言：存到账号、跟随账号失败时提示', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('登录状态下切了语言、存到账号失败：提示下次刷新会回到原来的语言', async () => {
+    vi.mocked(endpoints.setLang).mockRejectedValue(new Error('500'));
+    useSessionStore().me = me('zh-CN');
+    const w = mount(LangSelect);
+    await w.get('[data-testid="lang-select"]').setValue('fr');
+    await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
+    await flushPromises();
+    // 提示按刚切过去的语言显示
+    expect(useToastStore().items.map((x) => x.text)).toContain(
+      "Langue changée, mais elle n'a pas pu être enregistrée sur votre compte. Elle reviendra après actualisation.",
+    );
+  });
+
+  it('登录后跟随账号语言、翻译包加载失败：提示，先用当前语言', async () => {
+    vi.spyOn(LOADERS, 'zh-TW').mockRejectedValueOnce(new Error('offline'));
+    await useSessionStore().applyMe(me('zh-TW'));
+    expect(useLocaleStore().locale).toBe('zh-CN');
+    expect(useToastStore().items.map((x) => x.text)).toContain('切换语言失败，请检查网络后再试');
+  });
+});

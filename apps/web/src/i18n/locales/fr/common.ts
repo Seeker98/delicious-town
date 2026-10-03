@@ -7,6 +7,8 @@ const common: Messages['common'] = {
   language: 'Langue',
   loadFailed: 'Échec du chargement',
   langLoadFailed: 'Impossible de changer de langue. Vérifiez votre connexion et réessayez.',
+  langSaveFailed:
+    "Langue changée, mais elle n'a pas pu être enregistrée sur votre compte. Elle reviendra après actualisation.",
   collapse: 'Réduire',
   expand: 'Afficher',
   prevPage: 'Précédent',
@@ -15,5 +17,10 @@ const common: Messages['common'] = {
   other: 'Autres',
   opFailed: "L'action a échoué",
   loadMore: 'Charger plus',
+  paren: (s) => ` (${s})`,
+  parenOpen: ' (',
+  parenClose: ')',
+  colon: (s) => `${s} : `,
+  semi: ' ; ',
 };
 export default common;

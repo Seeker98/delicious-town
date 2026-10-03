@@ -26,7 +26,7 @@ describe('翻译核心（问题记录 272）', () => {
 
   it('切换到英语：加载翻译、生效、存进浏览器、设置 <html lang>；数字格式跟着变（法语用空格分千位）', async () => {
     const s = useLocaleStore();
-    expect(await s.set('en')).toBe(true);
+    expect(await s.set('en')).toBe('ok');
     expect(s.locale).toBe('en');
     expect(activeMessages().common.loading).toBe('Loading…');
     expect(document.documentElement.lang).toBe('en');
@@ -50,11 +50,11 @@ describe('翻译核心（问题记录 272）', () => {
     expect(s2.locale).toBe('fr');
   });
 
-  it('加载翻译失败（离线、部署中）：保持原语言，返回 false', async () => {
+  it('加载翻译失败（离线、部署中）：保持原语言，返回 failed', async () => {
     const s = useLocaleStore();
     // 用前面用例没加载过的语言：加载过的有缓存，不会再请求
     vi.spyOn(LOADERS, 'zh-TW').mockRejectedValueOnce(new Error('offline'));
-    expect(await s.set('zh-TW')).toBe(false);
+    expect(await s.set('zh-TW')).toBe('failed');
     expect(s.locale).toBe('zh-CN');
     expect(activeLocale()).toBe('zh-CN');
   });

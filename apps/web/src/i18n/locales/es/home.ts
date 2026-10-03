@@ -7,7 +7,7 @@ const home: Messages['home'] = {
     body1: 'Su insignia sigue activa hasta que lo eches: ocupación +50 %, pero ',
     bold: 'tasa de exigentes -120 %',
     body2:
-      ' (los clientes exigentes no vienen, nadie pide platos y solo cobras las monedas base), y aceite por mesa +5. Cuando él mismo se sienta a comer, esa mesa rinde ×5. Después de echarlo, tardará un tiempo en volver a elegir tu restaurante.',
+      ' (los clientes exigentes no vienen, nadie pide platos y solo cobras las monedas base), y aceite por mesa +5. De vez en cuando él mismo se sienta a comer y esa mesa rinde ×5. Después de echarlo, tardará un tiempo en volver a elegir tu restaurante.',
     byStrength: 'Echarlo con Energía',
     byBook: 'Usar la receta de la Cangreburger',
     failed: 'No se pudo echarlo',
