@@ -17,16 +17,15 @@ interface ActionPayload {
 
 export const passDailyKey = (activityId: number, key: string) => `act${activityId}:${key}`;
 
+/**
+ * 活动进行中的列表有缓存：活动行被直接删掉（e2e 清理）后缓存里还可能有它。
+ * 只在活动行还在时写计数，否则外键报错会让玩家这次操作整个失败
+ */
 async function bump(tx: Kysely<DB>, activityId: number, restId: number, key: string, by: number) {
-  await tx
-    .insertInto('activity_counter')
-    .values({ activity_id: activityId, rest_id: restId, key, count: by })
-    .onConflict((oc) =>
-      oc
-        .columns(['activity_id', 'rest_id', 'key'])
-        .doUpdateSet({ count: sql<string>`activity_counter.count + ${by}` }),
-    )
-    .execute();
+  await sql`insert into activity_counter (activity_id, rest_id, key, count)
+    select ${activityId}, ${restId}, ${key}, ${by}
+    where exists (select 1 from activity where id = ${activityId})
+    on conflict (activity_id, rest_id, key) do update set count = activity_counter.count + ${by}`.execute(tx);
 }
 
 async function count(
