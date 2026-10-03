@@ -217,7 +217,15 @@ export function createWorldService(d: GameDeps) {
       })),
       seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
       data: {
-        tasks: d.config.bundle.tasks.map((x) => ({ id: x.id, name: x.name })),
+        // 问题记录 318：主线、支线、每周任务的名字；章名、支线名
+        tasks: [...d.config.bundle.quests, ...d.config.bundle.weeklyGroups.flatMap((g) => g.quests)].map(
+          (x) => ({
+            id: x.id,
+            name: x.name,
+          }),
+        ),
+        chapters: d.config.bundle.chapters.map((x) => ({ id: x.id, name: x.name })),
+        questLines: d.config.bundle.questLines.map((x) => ({ id: x.id, name: x.name })),
         activation: d.config.bundle.activationTasks.map((x) => ({ id: x.id, name: x.name })),
         bless: d.config.bundle.bless.map((x) => ({ id: x.id, name: x.name })),
         tower: [...d.config.towerFloors.values()].map((f) => ({

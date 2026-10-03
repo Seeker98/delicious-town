@@ -186,6 +186,60 @@ export interface Task {
   feature: string;
 }
 
+/** 任务条件（问题记录 318）：计数键可以用 | 连接多个，进度取和 */
+export interface QuestCond {
+  kind: 'counter' | 'state';
+  key: string;
+  target: number;
+}
+/** 主线章节：解锁等级/星级，章末奖励 */
+export interface Chapter {
+  id: number;
+  name: string;
+  needLevel: number;
+  needStar: number;
+  award: Award;
+}
+/** 主线任务（line = null，chapter = 所在章）或支线档位（line = 支线 id，chapter = 支线开启的章） */
+export interface Quest {
+  id: number;
+  line: number | null;
+  chapter: number;
+  order: number;
+  needStar: number;
+  name: string;
+  cond: QuestCond;
+  award: Award;
+  href: string;
+  feature: string;
+}
+/** 玩法支线 */
+export interface QuestLine {
+  id: number;
+  key: string;
+  name: string;
+  chapter: number;
+  feature: string;
+}
+export interface WeeklyQuest {
+  id: number;
+  name: string;
+  key: string;
+  target: number;
+  award: Award;
+  href: string;
+  feature: string;
+}
+/** 每周任务的一组（按星级分）；fullId 是 4 个都领了之后的全完成奖励 */
+export interface WeeklyGroup {
+  key: string;
+  minStar: number;
+  maxStar: number;
+  quests: WeeklyQuest[];
+  fullId: number;
+  fullAward: Award;
+}
+
 export interface ActivationTask {
   id: number;
   name: string;
@@ -296,6 +350,10 @@ export interface ConfigBundle {
   starAward: StarAward[];
   oilNeed: OilNeed[];
   tasks: Task[];
+  chapters: Chapter[];
+  quests: Quest[];
+  questLines: QuestLine[];
+  weeklyGroups: WeeklyGroup[];
   activationTasks: ActivationTask[];
   activationRewards: ActivationReward[];
   /** 一番赏月度主题（问题记录 274）：每月 A/B/C/最后赏的限定手办道具 id */

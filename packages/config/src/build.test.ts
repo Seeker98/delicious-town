@@ -886,3 +886,62 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
   });
 });
+
+describe('任务配置（问题记录 318）', () => {
+  it('12 章；主线按章排；支线 15 条；每周 3 组各 4 个；id 不重复', () => {
+    const b = realBuild().bundle!;
+    expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    const mains = b.quests.filter((q) => q.line === null);
+    expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
+    expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
+    expect(b.questLines).toHaveLength(15);
+    const sides = b.quests.filter((q) => q.line !== null);
+    expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
+    expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
+      ['A', 0, 0, 4],
+      ['B', 1, 2, 4],
+      ['C', 3, 99, 4],
+    ]);
+    const ids = [
+      ...b.quests.map((q) => q.id),
+      ...b.weeklyGroups.flatMap((g) => [g.fullId, ...g.quests.map((q) => q.id)]),
+    ];
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('奖励总量和设计一致：主线 1,192 万、支线 381 万银币；经验 = 银币 ÷ 10', () => {
+    const b = realBuild().bundle!;
+    const coin = (main: boolean) =>
+      b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
+    expect(coin(true)).toBe(11_920_000);
+    expect(coin(false)).toBe(3_808_000);
+    for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
+  });
+
+  it('条件键都有来源；"all" 换成菜谱总数；支线功能取自档位', () => {
+    const b = realBuild().bundle!;
+    const all = b.quests.find((q) => q.name === '学会全部食谱')!;
+    expect(all.cond.target).toBe(b.cookbooks.length);
+    for (const q of b.quests) expect(q.feature, `${q.id} ${q.cond.key}`).not.toBe('');
+    for (const g of b.weeklyGroups) for (const q of g.quests) expect(q.feature, String(q.id)).not.toBe('');
+    expect(b.questLines.find((l) => l.key === 'kuji')!.feature).toBe('kuji');
+    const forum = b.quests.find((q) => q.cond.key === 'post.create|post.reply')!;
+    expect(forum.feature).toBe('forum');
+  });
+
+  it('引用不存在的章、道具或状态键时报错', () => {
+    const src = source();
+    const mains = structuredClone(src['designed/quest_main']) as Array<{
+      chapter: number;
+      cond: { kind: string; key: string };
+      award: { goods?: Array<{ id: number; num: number }> };
+    }>;
+    mains[0]!.chapter = 99;
+    mains[1]!.cond = { ...mains[1]!.cond, kind: 'state', key: 'rest.nope' };
+    mains[2]!.award = { goods: [{ id: 999999, num: 1 }] };
+    const errs = buildBundle({ ...src, 'designed/quest_main': mains }).errors.join();
+    expect(errs).toMatch(/unknown chapter 99/);
+    expect(errs).toMatch(/unknown state key rest\.nope/);
+    expect(errs).toMatch(/999999/);
+  });
+});

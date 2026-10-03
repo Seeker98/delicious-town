@@ -1,0 +1,247 @@
+{
+ "source": "新设计（问题记录 318）",
+ "rule": "每周任务：按领取时的星级分组，每周一 0 点刷新；任务 id = 4000 + 组×10 + 顺序，全完成奖励 = 4000 + 组×10 + 9",
+ "count": 3,
+ "data": [
+  {
+   "key": "A",
+   "minStar": 0,
+   "maxStar": 0,
+   "fullId": 4019,
+   "fullAward": {
+    "goods": [
+     {
+      "id": 170,
+      "num": 1
+     }
+    ]
+   },
+   "quests": [
+    {
+     "id": 4011,
+     "name": "签到 5 天",
+     "key": "signin",
+     "target": 5,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/"
+    },
+    {
+     "id": 4012,
+     "name": "菜场买菜 10 次",
+     "key": "market.buy",
+     "target": 10,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/market"
+    },
+    {
+     "id": 4013,
+     "name": "学习或升级食谱 10 次",
+     "key": "cookbook.learn",
+     "target": 10,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 4014,
+     "name": "合成或分解食材 5 次",
+     "key": "foods.handle",
+     "target": 5,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/cupboard"
+    }
+   ]
+  },
+  {
+   "key": "B",
+   "minStar": 1,
+   "maxStar": 2,
+   "fullId": 4029,
+   "fullAward": {
+    "goods": [
+     {
+      "id": 136,
+      "num": 2
+     }
+    ]
+   },
+   "quests": [
+    {
+     "id": 4021,
+     "name": "探险 10 次",
+     "key": "temple.explore",
+     "target": 10,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 4022,
+     "name": "烹制特色菜 5 次",
+     "key": "mc.cook",
+     "target": 5,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/mc"
+    },
+    {
+     "id": 4023,
+     "name": "挑战厨塔 20 次",
+     "key": "tower.challenge",
+     "target": 20,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/tower"
+    },
+    {
+     "id": 4024,
+     "name": "学习或升级食谱 20 次",
+     "key": "cookbook.learn",
+     "target": 20,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/cookbooks"
+    }
+   ]
+  },
+  {
+   "key": "C",
+   "minStar": 3,
+   "maxStar": 99,
+   "fullId": 4039,
+   "fullAward": {
+    "goods": [
+     {
+      "id": 90201,
+      "num": 1
+     }
+    ]
+   },
+   "quests": [
+    {
+     "id": 4031,
+     "name": "配送外卖 10 次",
+     "key": "takeaway.deliver",
+     "target": 10,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/takeaway"
+    },
+    {
+     "id": 4032,
+     "name": "在交易所成交 3 次",
+     "key": "exchange.fill",
+     "target": 3,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 4033,
+     "name": "探险 20 次",
+     "key": "temple.explore",
+     "target": 20,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 4034,
+     "name": "学习或升级食谱 30 次",
+     "key": "cookbook.learn",
+     "target": 30,
+     "award": {
+      "diamond": 5,
+      "goods": [
+       {
+        "id": 1,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/cookbooks"
+    }
+   ]
+  }
+ ]
+}

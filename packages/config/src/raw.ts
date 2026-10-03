@@ -144,6 +144,63 @@ export const rawTask = z.object({
   href: z.string(),
 });
 
+// 问题记录 318：章节主线、玩法支线、每周任务
+const questCond = z.object({ kind: z.enum(['counter', 'state']), key: z.string(), target: countOrAll });
+export const rawChapter = z.object({
+  id: int,
+  name: z.string(),
+  needLevel: int,
+  needStar: int,
+  award: awardSchema,
+});
+export const rawQuestMain = z.object({
+  id: int,
+  chapter: int,
+  order: int,
+  name: z.string(),
+  cond: questCond,
+  award: awardSchema,
+  href: z.string(),
+});
+export const rawQuestLine = z.object({
+  id: int,
+  key: z.string(),
+  name: z.string(),
+  chapter: int,
+  steps: z
+    .array(
+      z.object({
+        id: int,
+        order: int,
+        needStar: int.default(0),
+        name: z.string(),
+        cond: questCond,
+        award: awardSchema,
+        href: z.string(),
+      }),
+    )
+    .min(1),
+});
+export const rawWeeklyGroup = z.object({
+  key: z.string(),
+  minStar: int,
+  maxStar: int,
+  fullId: int,
+  fullAward: awardSchema,
+  quests: z
+    .array(
+      z.object({
+        id: int,
+        name: z.string(),
+        key: z.string(),
+        target: int,
+        award: awardSchema,
+        href: z.string(),
+      }),
+    )
+    .min(1),
+});
+
 export const rawActivationTask = z.object({
   id: int,
   activationname: z.string(),

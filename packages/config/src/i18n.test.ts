@@ -56,6 +56,8 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     'avatars',
     'icons',
     'tasks',
+    'chapters',
+    'questLines',
     'activation',
     'bless',
     'tower',
@@ -90,7 +92,13 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       doors: b.looks.doors.map((x) => ({ id: String(x.id), fields: ['name'] })),
       avatars: b.looks.avatars.map((x) => ({ id: String(x.id), fields: ['name'] })),
       icons: b.looks.icons.map((x) => ({ id: x.key, fields: ['title', 'desc'] })),
-      tasks: b.tasks.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      // 问题记录 318：任务名是主线、支线、每周任务
+      tasks: [...b.quests, ...b.weeklyGroups.flatMap((g) => g.quests)].map((x) => ({
+        id: String(x.id),
+        fields: ['name'],
+      })),
+      chapters: b.chapters.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      questLines: b.questLines.map((x) => ({ id: String(x.id), fields: ['name'] })),
       activation: b.activationTasks.map((x) => ({ id: String(x.id), fields: ['name'] })),
       bless: b.bless.map((x) => ({ id: String(x.id), fields: ['name'] })),
       tower: [...b.towerFloors.values()].map((x) => ({

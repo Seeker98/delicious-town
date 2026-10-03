@@ -10,6 +10,8 @@ import RestTasksView from './RestTasksView.vue';
 vi.mock('../api/endpoints', () => ({
   endpoints: {
     tasks: vi.fn(),
+    chapters: [],
+    questLines: [],
     activation: vi.fn(),
     signIn: vi.fn(),
     claimTask: vi.fn(),
@@ -78,6 +80,8 @@ describe('RestTasksView', () => {
       devices: [],
       data: {
         tasks: [{ id: 1, name: 'Refill oil once' }],
+        chapters: [],
+        questLines: [],
         activation: [{ id: 1, name: 'Check in' }],
         bless: [],
         tower: [],

@@ -21,6 +21,7 @@ export {
 export { resolveShardSettings, isFeatureEnabled, type ShardSettings } from './shard';
 export * from './tuning';
 export * from './ids';
+export { QUEST_STATE_KEYS, isQuestStateKey } from './quests';
 export * from './goodsUse';
 export { PART_MAIN, rewriteStatDesc, scaleToTotal } from './stressTable';
 export { settingGroup, settingLeaves } from './settingDocs';

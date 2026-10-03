@@ -33,6 +33,8 @@ const empty = (): I18nTable => ({
   avatars: {},
   icons: {},
   tasks: {},
+  chapters: {},
+  questLines: {},
   activation: {},
   bless: {},
   tower: {},
@@ -100,6 +102,8 @@ describe('道具目录按语言（问题记录 272）', () => {
       ...base,
       data: {
         tasks: [{ id: 1, name: '填一次油' }],
+        chapters: [],
+        questLines: [],
         activation: [{ id: 3, name: '打蟑螂' }],
         bless: [],
         tower: [{ id: 1, name: '见习模范餐厅', title: '见习守护者', note: '来吧' }],
@@ -130,6 +134,15 @@ describe('道具目录按语言（问题记录 272）', () => {
     });
     expect(c.data!.proficiency[0]!.name).toBe('初学');
     expect(c.data!.cookbooks[0]!.name).toBe('Southern Pan-fried Meatballs');
+  });
+
+  it('接口：任务名是新的主线、支线、每周任务，带章名和支线名，英文有翻译（问题记录 318）', async () => {
+    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
+    const data = en.json.data.data;
+    expect(data.tasks.find((x: { id: number }) => x.id === 2021).name).toBe('Refill oil once');
+    expect(data.tasks.find((x: { id: number }) => x.id === 4011).name).toBe('Check in 5 days');
+    expect(data.chapters.find((x: { id: number }) => x.id === 1).name).toBe('Grand Opening');
+    expect(data.questLines.find((x: { id: number }) => x.id === 12).name).toBe('Ichiban Kuji');
   });
 
   it('简中原样返回', () => {
