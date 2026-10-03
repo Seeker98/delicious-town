@@ -5,7 +5,7 @@ export default {
   section: '賬號',
   username: '使用者名稱',
   role: { mod: '協管', admin: '管理員' } as Record<string, string>,
-  registeredAt: (date: string) => `註冊於 ${date}`,
+  registered: '註冊時間',
   email: '郵箱',
   verified: '已驗證',
   unverified: '未驗證',

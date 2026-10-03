@@ -60,6 +60,16 @@ describe('AccountView（问题记录 178）', () => {
     expect(w.text()).not.toContain('管理员');
   });
 
+  it('账号信息排成整齐的两列：左边标签、右边内容，语言下拉框也在右列（问题记录 300）', async () => {
+    const w = await mountView();
+    const info = w.get('[data-testid="acc-info"]');
+    expect(info.classes()).toContain('dt-kv');
+    expect(info.findAll('dt').map((x) => x.text())).toEqual(['语言', '用户名', '注册时间', '邮箱', '邀请码']);
+    expect(info.findAll('dd')).toHaveLength(5);
+    expect(info.findAll('dd')[0]!.find('select').exists()).toBe(true);
+    expect(info.findAll('dd')[1]!.text()).toContain('u1');
+  });
+
   it('两次新密码不一致：不发请求', async () => {
     vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
     const w = await mountView();
