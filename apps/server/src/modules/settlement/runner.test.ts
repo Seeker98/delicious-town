@@ -225,35 +225,31 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
 
 describe('结算的数据库往返（问题记录 258：结算余量）', () => {
   it('一家普通店一轮 6 条语句（原来 9 条）：开始事务、锁店读行、读餐桌和食谱、写餐桌和收益记录、写回店铺、提交', async () => {
-    let queries = 0;
+    // 只数这家店的结算事务（begin 到 commit）：区服级的查询（世界状态、区服设置缓存等）在事务外，
+    // 跟时间和缓存过期有关，全量并行跑时偶尔多一条，不能靠两个区服相减抵消（CI 上 7 ≠ 6）
+    let sqls: string[] = [];
     const db = new Kysely<DB>({
       dialect: new PostgresDialect({
         pool: new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 }),
       }),
       log: (e) => {
-        // 只数固定路径：随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，
-        // 种子按区服、店 id 取，每次跑都不一样，数进来就会偶尔多一条（CI 上 7 ≠ 6）
-        if (e.level !== 'query') return;
-        if (/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(e.query.sql)) return;
-        queries += 1;
+        if (e.level === 'query') sqls.push(e.query.sql);
       },
     });
     const g = await createTestGame({ db });
     try {
-      // 同样的区服各结算一轮，相差一家店：差值就是一家店的语句数，区服级的查询抵消掉
-      const count = async (n: number) => {
-        const shardId = await createShard(g.db);
-        for (let i = 0; i < n; i++) await newRestaurant(g, { shardId, patch: { coin: 1000, oil: 100000 } });
-        // 第一轮会顺带算出加成汇总（新店的 effect_dirty 默认为 true），从第二轮开始计数
-        await settleShardRound(g.game.deps, g.game.world, shardId, round, new Date());
-        queries = 0;
-        const s = await settleShardRound(g.game.deps, g.game.world, shardId, round + 1, new Date());
-        expect(s).toMatchObject({ settled: n, failed: 0 });
-        return queries;
-      };
-      const one = await count(1);
-      const two = await count(2);
-      expect(two - one).toBe(6);
+      const shardId = await createShard(g.db);
+      await newRestaurant(g, { shardId, patch: { coin: 1000, oil: 100000 } });
+      // 第一轮会顺带算出加成汇总（新店的 effect_dirty 默认为 true），从第二轮开始计数
+      await settleShardRound(g.game.deps, g.game.world, shardId, round, new Date());
+      sqls = [];
+      const s = await settleShardRound(g.game.deps, g.game.world, shardId, round + 1, new Date());
+      expect(s).toMatchObject({ settled: 1, failed: 0 });
+      const from = sqls.indexOf('begin');
+      const tx = sqls.slice(from, sqls.indexOf('commit', from) + 1);
+      // 随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，种子按区服、店 id 取，不数
+      const fixed = tx.filter((q) => !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q));
+      expect(fixed).toHaveLength(6);
     } finally {
       await db.destroy();
       await g.close();
