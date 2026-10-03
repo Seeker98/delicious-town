@@ -200,6 +200,26 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(w.findAll('[data-testid^="ex-food-"]')).toHaveLength(3);
   });
 
+  it('搜索食材不区分大小写、忽略重音（问题记录 316）', async () => {
+    useCatalogStore().apply({
+      version: 'y',
+      goods: [],
+      foods: [
+        { id: 11, name: 'Truffe', level: 6 },
+        { id: 12, name: 'Crème', level: 3 },
+        { id: 13, name: 'Caviar', level: 3 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.get('[data-testid="ex-search"]').setValue('CREME');
+    expect(w.find('[data-testid="ex-food-12"]').exists()).toBe(true);
+    expect(w.find('[data-testid="ex-food-11"]').exists()).toBe(false);
+  });
+
   it('交易所说明里写清楚系统报价怎么算（问题记录 250）', async () => {
     const w = mount(ExchangeView);
     await flushPromises();
