@@ -209,6 +209,22 @@ describe('2A 新增配置', () => {
     expect(b.tasks.find((t) => t.cond.key === 'rest.thumbs')!.feature).toBe('friend');
   });
 
+  it('"全部食谱"的门槛 = 菜谱总数（问题记录 284）', () => {
+    const b = realBuild().bundle!;
+    expect(b.tasks.find((t) => t.id === 121)!.cond.target).toBe(b.cookbooks.length);
+    expect(b.starNeed.find((s) => s.star === 12)!.needCookbooks).toBe(b.cookbooks.length);
+  });
+
+  it('门槛写 "all" 时换成菜谱总数；写别的字符串报错', () => {
+    const src = source();
+    const tasks = structuredClone(src['designed/tasks']) as Array<{ id: number; cond: { target: unknown } }>;
+    tasks.find((t) => t.id === 121)!.cond.target = 'all';
+    const { bundle } = buildBundle({ ...src, 'designed/tasks': tasks });
+    expect(bundle!.tasks.find((t) => t.id === 121)!.cond.target).toBe(bundle!.cookbooks.length);
+    tasks.find((t) => t.id === 121)!.cond.target = 'most';
+    expect(buildBundle({ ...src, 'designed/tasks': tasks }).errors.join()).toMatch(/designed\/tasks/);
+  });
+
   it('featureOfKey 取最长前缀；找不到返回 null', () => {
     const f = { 'rest.': 'restaurant', 'rest.thumbs': 'friend', signin: 'task' };
     expect(featureOfKey('rest.level', f)).toBe('restaurant');

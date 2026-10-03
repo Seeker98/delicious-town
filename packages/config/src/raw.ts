@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 const int = z.number().int();
+/** 数量门槛：数字，或 "all" = 菜谱总数（构建时换算，问题记录 284） */
+const countOrAll = z.union([z.number().int(), z.literal('all')]);
 const idNum = z.object({ id: int, num: int });
 
 export const awardSchema = z.object({
@@ -112,7 +114,7 @@ export const rawStarNeed = z.object({
   starlevel: int,
   name: z.string(),
   needRestlevel: int,
-  needCookbooksnum: int,
+  needCookbooksnum: countOrAll,
   cookbooksKind: z.enum(['learned', 'tianzhuan']),
   needCertnum: int,
   needPurpleshell: int,
@@ -134,7 +136,7 @@ export const rawTask = z.object({
   mainflag: z.union([z.literal(0), z.literal(1)]),
   step: int,
   taskname: z.string(),
-  cond: z.object({ kind: z.enum(['counter', 'state']), key: z.string(), target: int }),
+  cond: z.object({ kind: z.enum(['counter', 'state']), key: z.string(), target: countOrAll }),
   award: awardSchema,
   href: z.string(),
 });
