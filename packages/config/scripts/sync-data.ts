@@ -6,10 +6,10 @@ import { fileURLToPath } from 'node:url';
 const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const analysis = process.env.DT_ANALYSIS_DIR ?? resolve(pkgDir, '../../../analysis/dataset');
 
+// cookbooks 不再同步：仓库里的是老街道修订后的版本（问题记录 284），原版在 analysis/dataset
 const DATASET = [
   'foods',
   'goods',
-  'cookbooks',
   'streets',
   'mysterious_cookbooks',
   'roads',

@@ -19,7 +19,7 @@ const list: CookbookListDto = {
   learned: 0,
   streetLearned: 0,
   streetTotal: 72,
-  allTotal: 2363,
+  allTotal: 2331,
   gradeCounts: Array(11).fill(0),
   items: [
     { id: 194, name: '葡萄薏仁羹', grade: 0, learn: '0', next: [{ foodsId: 302, num: 1, have: 1 }] },
@@ -59,7 +59,7 @@ describe('CookbooksView', () => {
     });
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(w.find('[data-testid="cookbook-counts"]').text()).toContain('共学会 0 / 2,363 道');
+    expect(w.find('[data-testid="cookbook-counts"]').text()).toContain('共学会 0 / 2,331 道');
     await w.find('[data-testid="filter-upgradable"]').trigger('click');
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'upgradable' });

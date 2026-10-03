@@ -25,7 +25,8 @@ describe('开店', () => {
     const u = await playerIn(shardId);
     const r = await create(u.cookie, '开局食材店');
     expect(r.status).toBe(200);
-    for (const cookbookId of [441, 442, 446]) {
+    // 446 番茄炒蛋随老街道修订删了，保留同街的 16951 番茄炒鸡蛋（问题记录 284）
+    for (const cookbookId of [441, 442, 16951]) {
       const learn = await call(ctx.app, 'POST', '/api/v1/cookbook/learn', {
         cookie: u.cookie,
         body: { cookbookId },
@@ -108,7 +109,7 @@ describe('开店', () => {
     expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual([81, 100, 140]);
     const ledger = await db.selectFrom('ledger').selectAll().where('rest_id', '=', restId).execute();
     expect(ledger.filter((l) => l.kind === 'goods')).toHaveLength(3);
-    expect(ledger.filter((l) => l.kind === 'foods')).toHaveLength(10);
+    expect(ledger.filter((l) => l.kind === 'foods')).toHaveLength(11); // 开局 11 种食材（问题记录 284 加了十三香）
     expect(ledger.every((l) => l.source === 'restaurant.create')).toBe(true);
     const news = await db
       .selectFrom('news')

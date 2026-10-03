@@ -42,7 +42,7 @@ describe('全服公共单（设计文档 §3.2）', () => {
     expect(rows).toHaveLength(14);
     const ids = [...config.cookbooks.keys()].sort((a, b) => a - b);
     expect(rows[0]).toMatchObject({
-      cookbook_id: ids[945],
+      cookbook_id: ids[Math.floor(ids.length * 0.4)], // 随机数 0.4 落在全部食谱里的位置（食谱总数会变，问题记录 284）
       grade: 2,
       need_minutes: 28,
       need_renown: 5,

@@ -149,14 +149,8 @@
   "50": {
     "name": "Aleta de tiburón entera en blanco"
   },
-  "51": {
-    "name": "Abulón en su concha"
-  },
   "52": {
     "name": "Tortuga al vapor a los ocho tesoros"
-  },
-  "53": {
-    "name": "Nido de golondrina en caldo claro"
   },
   "54": {
     "name": "Aleta de tiburón con cordyceps"
@@ -166,9 +160,6 @@
   },
   "56": {
     "name": "Brotes de bambú con huevas de gamba de Zhejiang"
-  },
-  "57": {
-    "name": "Tangtuan de Ningbo"
   },
   "58": {
     "name": "Ternera con tres hilos"
@@ -235,9 +226,6 @@
   },
   "79": {
     "name": "Sopa de pescado de la cuñada Song"
-  },
-  "80": {
-    "name": "Perca mandarina qilin"
   },
   "81": {
     "name": "Añoranza de brasenia y perca"
@@ -328,9 +316,6 @@
   },
   "110": {
     "name": "Pollo que hace la boca agua (Kou Shui Ji)"
-  },
-  "111": {
-    "name": "Cerdo salado salteado a fuego vivo"
   },
   "112": {
     "name": "Pescado de Tai'an"
@@ -737,9 +722,6 @@
   "246": {
     "name": "Cangrejo relleno \"hibisco\""
   },
-  "247": {
-    "name": "Pescado Fang La"
-  },
   "248": {
     "name": "Cangrejo \"placa de jade\""
   },
@@ -868,9 +850,6 @@
   },
   "290": {
     "name": "Albóndigas de cerdo de Qingong"
-  },
-  "291": {
-    "name": "Sopa de sangre de pato con fideos de cristal"
   },
   "292": {
     "name": "Gambas cola de fénix"
@@ -1009,9 +988,6 @@
   },
   "337": {
     "name": "Berenjena crisantemo"
-  },
-  "338": {
-    "name": "San Bu Zhan (tres que no se pegan)"
   },
   "339": {
     "name": "Guiso de cerdo y col fermentada con fideos"
@@ -1160,9 +1136,6 @@
   "387": {
     "name": "Aleta de tiburón con puré de pollo"
   },
-  "388": {
-    "name": "Polo (pilaf uigur)"
-  },
   "389": {
     "name": "Fideos de avena \"pececitos\""
   },
@@ -1177,9 +1150,6 @@
   },
   "393": {
     "name": "Carne al vapor de Xinzhou"
-  },
-  "394": {
-    "name": "Pollo tres tazas al estilo taiwanés"
   },
   "395": {
     "name": "Jamón de Yunnan \"moneda de oro\""
@@ -1286,9 +1256,6 @@
   "429": {
     "name": "Aleta de tiburón \"hasta el cielo\""
   },
-  "430": {
-    "name": "Fénix que traga aleta de tiburón"
-  },
   "431": {
     "name": "Pata de oso a los cinco hilos"
   },
@@ -1316,9 +1283,6 @@
   "439": {
     "name": "Tofu casero"
   },
-  "440": {
-    "name": "Liu Rou Duan (tiras de cerdo glaseadas)"
-  },
   "441": {
     "name": "Guo Bao Rou"
   },
@@ -1333,12 +1297,6 @@
   },
   "445": {
     "name": "Solomillo de cerdo frito"
-  },
-  "446": {
-    "name": "Huevos revueltos con tomate"
-  },
-  "447": {
-    "name": "Col china al vinagre"
   },
   "448": {
     "name": "Pepino salteado con perilla"
@@ -1373,9 +1331,6 @@
   "458": {
     "name": "Cerdo lichi"
   },
-  "459": {
-    "name": "Pollo tres tazas (San Bei Ji)"
-  },
   "460": {
     "name": "Costillas borrachas de las diez fragancias"
   },
@@ -1399,9 +1354,6 @@
   },
   "467": {
     "name": "Gambas fritas de la suerte"
-  },
-  "468": {
-    "name": "Zongzi de carne de Quanzhou"
   },
   "469": {
     "name": "Costillas salteadas de Putian"
@@ -1453,9 +1405,6 @@
   },
   "485": {
     "name": "Rana toro al vapor en hoja de loto"
-  },
-  "486": {
-    "name": "Perca mandarina ardilla"
   },
   "487": {
     "name": "Arroz con cangrejo rojo a los ocho tesoros"
@@ -2459,9 +2408,6 @@
   "17203": {
     "name": "Sopa de pollo sedoso a los diez tesoros"
   },
-  "17204": {
-    "name": "Cerdo agridulce (Gu Lou Yuk)"
-  },
   "17205": {
     "name": "Congee de huevo centenario y cerdo"
   },
@@ -2573,9 +2519,6 @@
   "17241": {
     "name": "Banquete nocturno del Rey Dragón"
   },
-  "17242": {
-    "name": "Pollo a la sal de Meizhou"
-  },
   "17243": {
     "name": "Pollo dentro de buche de cerdo"
   },
@@ -2587,9 +2530,6 @@
   },
   "17246": {
     "name": "Delicia de Buda (Lo Hon Jai)"
-  },
-  "17247": {
-    "name": "Pollo Wenchang de Cantón"
   },
   "17248": {
     "name": "Arroz en cazuela (Bo Zai Fan)"
@@ -2741,9 +2681,6 @@
   "17297": {
     "name": "Rey del salteado de Chaozhou"
   },
-  "17298": {
-    "name": "Tiras de tortuga salteadas"
-  },
   "17299": {
     "name": "Medusa con brotes de soja"
   },
@@ -2768,14 +2705,8 @@
   "17306": {
     "name": "Abulón estofado"
   },
-  "17307": {
-    "name": "Pepino de mar cantonés con huevas de gamba"
-  },
   "17308": {
     "name": "Zongzi de cerdo asado"
-  },
-  "17309": {
-    "name": "Empanadillas de cebollino"
   },
   "17310": {
     "name": "Nido imperial en caparazón de cangrejo"
@@ -2902,9 +2833,6 @@
   },
   "17351": {
     "name": "Fideos satay de Xiamen"
-  },
-  "17352": {
-    "name": "Gachas de mee sua de Quanzhou"
   },
   "17353": {
     "name": "Arroz salado del sur de Fujian"
@@ -3082,9 +3010,6 @@
   },
   "17411": {
     "name": "Sopa de pato con hongo blanco"
-  },
-  "17412": {
-    "name": "Pato en salmuera"
   },
   "17413": {
     "name": "Pato prensado de Nankín"
@@ -3524,9 +3449,6 @@
   "17558": {
     "name": "Pan horneado de Jinyun"
   },
-  "17559": {
-    "name": "Cerdo Dongpo de Hangzhou"
-  },
   "17560": {
     "name": "Cerdo salado casero de Jinhua"
   },
@@ -3547,9 +3469,6 @@
   },
   "17566": {
     "name": "Sopa espesa de almeja y corvina"
-  },
-  "17567": {
-    "name": "Pollito del mendigo"
   },
   "17568": {
     "name": "Cerdo estofado crujiente"
@@ -3625,9 +3544,6 @@
   },
   "17592": {
     "name": "Fideos de banquete a las tres delicias"
-  },
-  "17593": {
-    "name": "Pastel de castaña de agua de Zhejiang (Di Li Gao)"
   },
   "17594": {
     "name": "Brotes de bambú en lías de vino"
@@ -4504,9 +4420,6 @@
   },
   "17885": {
     "name": "Hasma con semillas de loto rojo"
-  },
-  "17886": {
-    "name": "Hongo blanco con hasma"
   },
   "17887": {
     "name": "Hasma guisado en pera nevada"
@@ -5438,9 +5351,6 @@
   "18196": {
     "name": "Pato curado guisado con raíz de loto"
   },
-  "18197": {
-    "name": "Pepino de mar de Hubei con huevas de gamba"
-  },
   "18198": {
     "name": "Olla colgante de Luotian"
   },
@@ -6170,9 +6080,6 @@
   "18440": {
     "name": "Pato prensado de Wuwei"
   },
-  "18441": {
-    "name": "Chop suey de Li Hongzhang"
-  },
   "18442": {
     "name": "Pato crujiente de Sanhe"
   },
@@ -6712,9 +6619,6 @@
   },
   "18621": {
     "name": "Berenjena guisada con cerdo en tiras"
-  },
-  "18622": {
-    "name": "Hulutou (tripa de cerdo estofada)"
   },
   "18623": {
     "name": "Pescado en láminas fragante"
