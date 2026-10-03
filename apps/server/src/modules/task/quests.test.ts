@@ -1,16 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import type { Chapter, Quest, QuestLine, WeeklyGroup } from '@dt/config';
+import type { Chapter, Quest, QuestCond, QuestLine, WeeklyGroup } from '@dt/config';
+import { testConfig } from '../../../test/config';
 import {
   CHAPTER_MARK,
   convertOld,
   counterOf,
   foreignLearned,
+  isNewContent,
   lineViews,
   mainView,
   reachedChapter,
   weeklyGroupFor,
   type QuestCtx,
 } from './quests';
+
+const config = testConfig();
 
 const ch = (id: number, needLevel = 1, needStar = 0): Chapter => ({
   id,
@@ -107,6 +111,40 @@ describe('计数条件', () => {
   it('| 连接的键取和', () => {
     expect(counterOf('post.create|post.reply', { 'post.create': 1, 'post.reply': 2 })).toBe(3);
     expect(counterOf('oil.fill', {})).toBe(0);
+  });
+});
+
+describe('支线逐档按功能过滤（终审 Important 4）', () => {
+  const lines: QuestLine[] = [{ id: 2, key: 'town', name: '小镇', chapter: 1, feature: 'hiphop' }];
+  const steps = [
+    q(3041, 1, 'hiphop.reward', 1, { line: 2, order: 1, feature: 'hiphop' }),
+    q(3042, 1, 'krab.shake', 1, { line: 2, order: 2, feature: 'town' }),
+  ];
+  it('第一档的功能关了：支线照样显示，跳到能做的档', () => {
+    const v = lineViews(lines, steps, ctx({ available: (f) => f !== 'hiphop' }), 1);
+    expect(v.map((x) => [x.quest?.id, x.total])).toEqual([[3042, 1]]);
+  });
+  it('中间档的功能关了：跳过它，不卡住', () => {
+    const v = lineViews(lines, steps, ctx({ done: new Set([3041]), available: (f) => f !== 'town' }), 1);
+    expect(v.map((x) => [x.quest, x.doneCount, x.total])).toEqual([[null, 1, 1]]);
+  });
+  it('所有档的功能都关了：支线不显示', () => {
+    expect(lineViews(lines, steps, ctx({ available: () => false }), 1)).toEqual([]);
+  });
+});
+
+describe('换算：318 才有的内容按已达成算（终审 Important 1）', () => {
+  it('新动作键、异国街道的任务没有历史计数，不挡老号换算', () => {
+    const b = config.bundle;
+    const progress = (c: QuestCond) => (c.kind === 'state' ? 1_000_000 : isNewContent(c) ? 0 : 1_000_000);
+    const base = ctx({ level: 120, star: 12, progress });
+    const old = convertOld(b.chapters, b.quests, base);
+    expect(Math.max(...old.map((id) => b.quests.find((x) => x.id === id)!.chapter))).toBe(5);
+    const all = convertOld(b.chapters, b.quests, base, isNewContent);
+    expect(all).toHaveLength(b.quests.filter((x) => x.line === null).length);
+    expect(isNewContent({ kind: 'counter', key: 'post.create|post.reply', target: 1 })).toBe(true);
+    expect(isNewContent({ kind: 'state', key: 'cookbooks.foreignLearned', target: 10 })).toBe(true);
+    expect(isNewContent({ kind: 'counter', key: 'oil.fill', target: 1 })).toBe(false);
   });
 });
 

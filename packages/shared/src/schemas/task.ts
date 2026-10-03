@@ -5,27 +5,6 @@ export const claimTaskBody = z.object({ taskId: z.number().int().positive() });
 export const claimChapterBody = z.object({ chapterId: z.number().int().positive() });
 export const claimActivationBody = z.object({ points: z.number().int().positive() });
 
-export interface TaskDto {
-  id: number;
-  main: boolean;
-  step: number;
-  name: string;
-  href: string;
-  kind: 'counter' | 'state';
-  key: string;
-  target: number;
-  progress: number;
-  done: boolean;
-  award: AwardDto;
-}
-
-export interface TasksDto {
-  /** 实际所在的主线步骤（跳过了未开放的功能） */
-  mainStep: number;
-  main: TaskDto | null;
-  side: TaskDto[];
-}
-
 /** 主线、支线、每周任务（问题记录 318） */
 export interface QuestDto {
   id: number;

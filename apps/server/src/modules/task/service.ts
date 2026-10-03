@@ -28,6 +28,7 @@ import {
   convertOld,
   counterOf,
   foreignLearned,
+  isNewContent,
   lineViews,
   mainView,
   reachedChapter,
@@ -45,8 +46,22 @@ export function createTaskService(d: GameDeps) {
 
   /** 玩家事务里调用时传 o.tx 和 o.settings，不能另向连接池要连接 */
   async function snapshot(db: Kysely<DB>, rest: RestaurantRow, known?: ShardSettings) {
-    const settings = known ?? (await d.shards.settings(rest.shard_id));
-    const available = (f: string) => featureAvailable(settings, f);
+    // 在调用方的事务里读区服设置：换算时持有行锁，不能另向连接池要连接（终审 Important 3）
+    const settings = known ?? (await d.shards.settings(rest.shard_id, db));
+    // "领一次限时活动奖励"：区服当前没有本店能参加的进行中活动时按做不了算，不挡主线（终审 Important 2）
+    const now = d.now();
+    const running = await db
+      .selectFrom('activity')
+      .select('id')
+      .where('deleted_at', 'is', null)
+      .where((eb) => eb.or([eb('shard_id', '=', rest.shard_id), eb('shard_id', 'is', null)]))
+      .where('starts_at', '<=', now)
+      .where('ends_at', '>', now)
+      .where('min_level', '<=', rest.level)
+      .limit(1)
+      .executeTakeFirst();
+    const available = (f: string) =>
+      featureAvailable(settings, f) && (f !== 'activity' || running !== undefined);
     const done = new Set(
       (await db.selectFrom('quest_done').select('quest_id').where('rest_id', '=', rest.id).execute()).map(
         (r) => r.quest_id,
@@ -112,7 +127,7 @@ export function createTaskService(d: GameDeps) {
   async function convert(db: Kysely<DB>, rest: RestaurantRow, settings?: ShardSettings): Promise<boolean> {
     if (rest.quest_version !== 0) return false;
     const s = await snapshot(db, rest, settings);
-    const ids = convertOld(chapters, quests, s.ctx);
+    const ids = convertOld(chapters, quests, s.ctx, isNewContent);
     if (ids.length > 0)
       await db
         .insertInto('quest_done')

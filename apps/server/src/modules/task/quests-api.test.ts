@@ -1,6 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addDays, gameDay, gameTime, weekStart } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { createDb } from '../../db';
+import { insertActivity } from '../../../test/activity';
+import { testEnvWith } from '../../../test/helpers';
+import { showQuest } from '../../../test/quests';
 import { CHAPTER_MARK } from './quests';
 
 let t: TestGame;
@@ -115,6 +119,43 @@ describe('主线章节（问题记录 318）', () => {
     expect(list.lines.map((l) => l.id)).not.toContain(4);
     expect(list.lines.map((l) => l.id)).toContain(3);
   });
+});
+
+describe('终审修复', () => {
+  it('区服没有进行中的限时活动时，第 6 章不列"领一次限时活动奖励"，也不挡章末（Important 2）', async () => {
+    const ctx = await fresh();
+    await showQuest(t, ctx.restaurantId, 2122);
+    const now = t.clock.now;
+    try {
+      t.clock.set(new Date('2099-01-01T04:00:00Z'));
+      const none = await task().tasks(ctx);
+      expect(none.chapter!.id).toBe(6);
+      expect(none.main.map((x) => x.key)).not.toContain('activity.claim');
+    } finally {
+      t.clock.set(now);
+    }
+    await insertActivity(t, {
+      shardId: ctx.shardId,
+      spec: { kind: 'goals', def: { goals: [{ key: 'market.buy', target: 1, award: { coin: 1 } }] } },
+    });
+    expect((await task().tasks(ctx)).main.map((x) => x.key)).toContain('activity.claim');
+  });
+
+  it('换算在锁店事务里读区服设置，不另向连接池要连接（池里只有 1 条连接也不卡住，Important 3）', async () => {
+    const one = createDb(testEnvWith().DATABASE_URL, 1);
+    const g = await createTestGame({ db: one });
+    try {
+      const ctx = await newRestaurant(g);
+      const list = await Promise.race([
+        g.game.task.tasks(ctx),
+        new Promise<null>((r) => setTimeout(() => r(null), 8000)),
+      ]);
+      expect(list?.chapter?.id).toBe(1);
+    } finally {
+      await g.close();
+      await one.destroy();
+    }
+  }, 20_000);
 });
 
 describe('支线', () => {
