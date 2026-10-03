@@ -18,6 +18,9 @@ export const useCatalogStore = defineStore('catalog', {
     streets: [] as CatalogDto['streets'],
     looks: null as LooksDto | null,
     weatherMap: new Map<number, string>(),
+    /** 设施、套装的名字：加成来源用（问题记录 272） */
+    devicesMap: new Map<number, string>(),
+    suitsMap: new Map<number, NonNullable<CatalogDto['suits']>[number]>(),
     loaded: false,
     /** 上次从服务器读目录的时间（毫秒）：refreshIfMissing 限频用 */
     fetchedAt: 0,
@@ -28,6 +31,8 @@ export const useCatalogStore = defineStore('catalog', {
       this.foodsMap = new Map(c.foods.map((f) => [f.id, f]));
       this.streets = c.streets;
       this.weatherMap = new Map(c.weather.map((w) => [w.id, w.name]));
+      this.devicesMap = new Map(c.devices.map((d) => [d.id, d.name]));
+      this.suitsMap = new Map((c.suits ?? []).map((s) => [s.id, s]));
       this.looks = c.looks ?? null;
       this.loaded = true;
       this.mcMap = new Map((c.mysterious ?? []).map((m) => [m.id, m]));
@@ -103,6 +108,12 @@ export const useCatalogStore = defineStore('catalog', {
     },
     weatherName(id: number): string {
       return this.weatherMap.get(id) ?? activeMessages().errors.fallbackName.weather(id);
+    },
+    deviceName(id: number): string | undefined {
+      return this.devicesMap.get(id);
+    },
+    suit(id: number): NonNullable<CatalogDto['suits']>[number] | undefined {
+      return this.suitsMap.get(id);
     },
     streetName(id: number): string {
       return this.streets.find((s) => s.id === id)?.name ?? '';

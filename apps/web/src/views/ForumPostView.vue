@@ -214,7 +214,7 @@ async function submit() {
         <div class="dt-meta">
           #{{ r.floor }}
           <RouterLink v-if="r.restId !== null" :to="`/friends/${r.restId}`">{{ r.restName }}</RouterLink>
-          <span v-else>{{ r.restName }}</span>
+          <span v-else>{{ r.anonymous ? t.forum.post.anonymous : r.restName }}</span>
           <span v-if="r.anonymous && r.restId !== null">{{ t.forum.post.anonymousTag }}</span>
           · {{ when(r.createdAt) }}
           <a v-if="r.replyTo !== null" :href="`#floor-${r.replyTo}`">{{ t.forum.post.replyTo(r.replyTo) }}</a>

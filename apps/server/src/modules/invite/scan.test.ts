@@ -18,7 +18,7 @@ const verify = (accountId: number) =>
 const mails = (restId: number) =>
   t.db
     .selectFrom('mail')
-    .select(['title', 'items'])
+    .select(['title', 'items', 'tpl', 'tpl_params'])
     .where('rest_id', '=', restId)
     .where('source', '=', 'invite')
     .execute();
@@ -39,6 +39,8 @@ describe('邀请扫描（设计 §7）', () => {
     expect((await scanInvites(t.game, log, shardId)).newbie).toBe(1);
     expect((await scanInvites(t.game, log, shardId)).newbie).toBe(0);
     expect((await mails(b.restaurantId)).map((m) => m.title)).toEqual(['欢迎来到小镇']);
+    // 系统邮件存模板键，前端按语言显示（问题记录 272）
+    expect((await mails(b.restaurantId))[0]).toMatchObject({ tpl: 'invite.welcome' });
   });
 
   it('10 级、30 级：要验证邮箱；先升级后验证时补发；奖励发到邀请人同区服的店', async () => {
@@ -52,6 +54,10 @@ describe('邀请扫描（设计 §7）', () => {
     const r = await scanInvites(t.game, log, shardId);
     expect(r.sent).toBe(2);
     expect((await mails(inviter.restaurantId)).map((m) => m.title)).toEqual(['邀请奖励', '邀请奖励']);
+    expect((await mails(inviter.restaurantId)).map((m) => [m.tpl, m.tpl_params])).toEqual([
+      ['invite.reward', { rest: expect.any(String), level: 10 }],
+      ['invite.reward', { rest: expect.any(String), level: 30 }],
+    ]);
     expect(await reward(b.accountId, 'lv30')).toMatchObject({
       status: 'sent',
       month: gameDay(t.clock.now).slice(0, 7),

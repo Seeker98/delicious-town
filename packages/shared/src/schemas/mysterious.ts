@@ -63,7 +63,15 @@ export interface McOverviewDto {
 }
 
 export interface AppraiseResultDto {
-  results: Array<{ ok: boolean; mcId?: number; num?: number; blessed?: boolean; text?: string }>;
+  /** 失败时 text 是中文原文，textId 是序号（问题记录 272），前端按语言显示 */
+  results: Array<{
+    ok: boolean;
+    mcId?: number;
+    num?: number;
+    blessed?: boolean;
+    text?: string;
+    textId?: number;
+  }>;
 }
 export const mcCookBody = z.object({
   mcId: id,

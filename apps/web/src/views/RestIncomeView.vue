@@ -5,10 +5,13 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { describeEffects } from '../utils/effects';
+import { effectName } from '../utils/serverText';
+import { useCatalogStore } from '../stores/catalog';
 import { formatNum, timeHM } from '../utils/format';
 import { PART_LABELS, pct, RATE_LABELS } from '../utils/labels';
 
 const t = useT();
+const catalog = useCatalogStore();
 const items = ref<RoundSummaryDto[]>([]);
 const next = ref<string | null>(null);
 const buffs = ref<BuffsDto | null>(null);
@@ -50,7 +53,7 @@ onMounted(async () => {
   <h6>{{ t.rest.income.sources }}</h6>
   <ul class="list-unstyled small">
     <li v-for="s in buffs?.sources ?? []" :key="`${s.sourceType}-${s.sourceId}`">
-      <b>{{ s.name }}</b> {{ describeEffects(s.effects) }}
+      <b>{{ effectName(s, catalog) }}</b> {{ describeEffects(s.effects) }}
     </li>
   </ul>
   <h6>{{ t.rest.income.records }}</h6>

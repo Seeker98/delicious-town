@@ -115,14 +115,24 @@ export async function resolveAutoEvents(
       const done = await d.db
         .transaction()
         .execute((tx) =>
-          finalizeEvent(tx, e.id, { status: 'resolved', outcome: r.outcome, note: r.note }, now),
+          finalizeEvent(
+            tx,
+            e.id,
+            { status: 'resolved', outcome: r.outcome, note: r.note, noteParams: r.noteParams },
+            now,
+          ),
         );
       if (done) resolved++;
     } else if (now.getTime() - e.resolve_at!.getTime() >= GIVE_UP_MS) {
       const done = await d.db
         .transaction()
         .execute((tx) =>
-          finalizeEvent(tx, e.id, { status: 'void', outcome: null, note: '数据缺失，自动作废' }, now),
+          finalizeEvent(
+            tx,
+            e.id,
+            { status: 'void', outcome: null, note: '数据缺失，自动作废', noteParams: { void: 'missing' } },
+            now,
+          ),
         );
       if (done) voided++;
     }

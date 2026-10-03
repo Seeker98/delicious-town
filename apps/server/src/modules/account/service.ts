@@ -2,6 +2,7 @@ import { randomInt } from 'node:crypto';
 import type { Redis } from 'ioredis';
 import { sql, type Kysely } from 'kysely';
 import {
+  accountMail,
   type AccountProfileDto,
   type ChangePasswordInput,
   ErrorCode,
@@ -69,19 +70,13 @@ export function createAccountService(d: AccountDeps) {
       })
       .execute();
     const link = `${d.env.WEB_ORIGIN}/${purpose === 'verify' ? 'verify-email' : 'reset-password'}?token=${token}`;
-    await d.mailer.send(
-      purpose === 'verify'
-        ? {
-            to: email,
-            subject: '美味小镇：验证你的邮箱',
-            text: `欢迎来到美味小镇！请在 24 小时内打开下面的链接完成邮箱验证：\n${link}`,
-          }
-        : {
-            to: email,
-            subject: '美味小镇：重置密码',
-            text: `请在 1 小时内打开下面的链接重置密码（如果不是你本人操作，请忽略这封邮件）：\n${link}`,
-          },
-    );
+    // 按账号语言（问题记录 272）
+    const acc = await d.db
+      .selectFrom('account')
+      .select('lang')
+      .where('id', '=', accountId)
+      .executeTakeFirst();
+    await d.mailer.send({ to: email, ...accountMail(acc?.lang, purpose, link) });
   }
 
   /** 一次性令牌：未使用、未过期才有效，使用后立即作废 */

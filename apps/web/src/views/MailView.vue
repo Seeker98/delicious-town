@@ -10,6 +10,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useMailStore } from '../stores/mail';
 import { useToastStore } from '../stores/toast';
 import { rewardSummary } from '../utils/reward';
+import { mailBody, mailTitle } from '../utils/serverText';
 
 /** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
 const catalog = useCatalogStore();
@@ -114,7 +115,7 @@ const claimAll = () =>
         :data-testid="`mail-title-${m.id}`"
         @click="toggle(m)"
       >
-        {{ m.title }}
+        {{ mailTitle(m) }}
       </button>
       <button
         v-if="claimable(m)"
@@ -144,7 +145,9 @@ const claimAll = () =>
       <span v-else-if="m.broken" class="text-danger">{{ t.mail.broken }}</span>
     </div>
     <div v-if="hasItems(m)" class="dt-meta">{{ t.mail.items(rewardSummary(m.items!, catalog)) }}</div>
-    <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">{{ m.body }}</div>
+    <div v-if="open === m.id" class="mt-1 dt-mail-body" :data-testid="`mail-body-${m.id}`">
+      {{ mailBody(m) }}
+    </div>
   </div>
 </template>
 

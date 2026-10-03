@@ -153,7 +153,7 @@ describe('全镇加成（设计文档 §3.7）', () => {
     expect(o.effects[0]).toEqual({
       sourceType: 'bless',
       sourceId: 4,
-      name: '今日星愿：招财进宝',
+      name: '招财进宝',
       effects: { coinRate: 0.08 },
       expiresAt: gameTime('2026-10-01', 0).toISOString(),
     });

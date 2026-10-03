@@ -111,6 +111,11 @@ describe('后台邮件（HTTP）', () => {
       ).coin,
     ).toBe(0);
     const mail = (await t.game.mail.list(r)).items.find((m) => m.source === 'grant')!;
-    expect(mail).toMatchObject({ title: '系统补偿', body: '停服补偿', items: { coin: 500 } });
+    expect(mail).toMatchObject({
+      title: '系统补偿',
+      body: '停服补偿',
+      items: { coin: 500 },
+      tpl: { key: 'grant', params: {} },
+    });
   });
 });

@@ -22,6 +22,7 @@ const mail = (patch: Partial<MailDto> = {}): MailDto => ({
   id: 1,
   title: '开服礼',
   body: '欢迎\n来到小镇',
+  tpl: null,
   items: { coin: 100, hats: [{ tier: 'jade', name: '大橘' }] },
   source: 'admin',
   createdAt: '2026-10-01T00:00:00.000Z',

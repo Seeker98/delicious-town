@@ -50,9 +50,12 @@ export interface TownRewardDto {
   num: number;
 }
 
+/** NPC 台词（问题记录 272）：前端按语言显示 */
+export type TalkLine = NpcKey | 'bigEaterFirst' | 'mayorRight' | 'mayorWrong';
+
 export interface TalkResultDto {
   npc: NpcKey | 'mayor';
-  talk: string;
+  talk: TalkLine;
   rewards: TownRewardDto[];
 }
 

@@ -192,6 +192,25 @@ describe('找回密码', () => {
   });
 });
 
+describe('账号邮件按语言（问题记录 272）', () => {
+  it('注册时选了英语，验证邮件是英文；改成法语后找回密码邮件是法文；没选过语言是简中', async () => {
+    const email = `${uniqueName('e')}@test.local`;
+    const r = await call(ctx.app, 'POST', `${A}/register`, {
+      body: { username: uniqueName('l'), password: 'secret123', email, captchaToken: 't', lang: 'en' },
+    });
+    expect(r.status).toBe(200);
+    expect(ctx.mailer.lastTo(email)!.subject).toBe('Delicious Town: verify your email');
+    const cookie = cookieOf(r.res);
+    await call(ctx.app, 'POST', `${A}/lang`, { cookie, body: { lang: 'fr' } });
+    await call(ctx.app, 'POST', `${A}/forgot-password`, { body: { email, captchaToken: 't' } });
+    const reset = ctx.mailer.lastTo(email)!;
+    expect(reset.subject).toBe('Delicious Town : réinitialiser votre mot de passe');
+    expect(reset.text).toContain('/reset-password?token=');
+    const u = await registerUser(ctx.app);
+    expect(ctx.mailer.lastTo(u.email)!.subject).toBe('美味小镇：验证你的邮箱');
+  });
+});
+
 describe('邀请码', () => {
   it('生成 8 位邀请码，被邀请人注册时记录邀请关系；无效邀请码被忽略', async () => {
     const inviter = await registerUser(ctx.app);

@@ -47,6 +47,7 @@ export const weather: AutoKind = {
     const typeName = WEATHER_TYPE_NAMES[auto.type] ?? String(auto.type);
     const day = period.split('@')[0]!;
     let note = `${dayLabel(day)} ${hour} 点自动轮换的天气是${auto.name}（${typeName}类）`;
+    const noteParams: Record<string, unknown> = { day, hour, weather: auto.id, type: auto.type };
     const start = gameTime(day, hour);
     const hammer = await c.d.db
       .selectFrom('news')
@@ -60,8 +61,11 @@ export const weather: AutoKind = {
       .executeTakeFirst();
     if (hammer) {
       const to = c.d.config.weather.get(Number((hammer.params as { to?: number }).to));
-      if (to) note += `；之后有人用雷神锤改成了${to.name}，按题目规则不算`;
+      if (to) {
+        note += `；之后有人用雷神锤改成了${to.name}，按题目规则不算`;
+        noteParams.hammerTo = to.id;
+      }
     }
-    return { outcome: auto.type === Number(p.type), note };
+    return { outcome: auto.type === Number(p.type), note, noteParams };
   },
 };

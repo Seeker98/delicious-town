@@ -61,6 +61,10 @@ describe('鉴定（规格书 04 §4.3）', () => {
     const ctx = await newRestaurant(unlucky, { patch: { star_level: 1 }, goods: { 162: 2, 163: 2 } });
     const r = await unlucky.game.mysterious.appraise(ctx, { toolId: 163, times: 2, noRetry: false });
     expect(r.data.results.every((x) => !x.ok && typeof x.text === 'string')).toBe(true);
+    // 失败文案带序号，前端按语言显示（问题记录 272）
+    expect(r.data.results.every((x) => typeof x.textId === 'number' && x.textId >= 0 && x.textId < 4)).toBe(
+      true,
+    );
     expect(await goodsNum(unlucky, ctx.restaurantId, 163)).toBe(0);
   });
 

@@ -3,7 +3,6 @@ import { GOODS } from '@dt/config';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { forceHiphopDay } from '../hiphop/day';
-import { MAYOR_RIGHT, MAYOR_WRONG } from './mayor';
 
 const DAY = '2026-10-01';
 let t: TestGame;
@@ -22,7 +21,7 @@ describe('镇长问答（设计文档 §2.3）', () => {
       params: { reason: 'hiphop_not_out' },
     });
     await forceHiphopDay(t.db, a.shardId, t.clock.now, { place: 3 });
-    expect((await t.game.town.mayor(a, 3)).data.talk).toBe(MAYOR_RIGHT);
+    expect((await t.game.town.mayor(a, 3)).data.talk).toBe('mayorRight');
   });
 
   it('答对得镇长的推荐；一天只能答一次', async () => {
@@ -31,7 +30,7 @@ describe('镇长问答（设计文档 §2.3）', () => {
     const r = await t.game.town.mayor(a, 3);
     expect(r.data).toEqual({
       npc: 'mayor',
-      talk: MAYOR_RIGHT,
+      talk: 'mayorRight',
       rewards: [{ kind: 'goods', id: GOODS.mayorFavor, num: 1 }],
     });
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
@@ -43,7 +42,7 @@ describe('镇长问答（设计文档 §2.3）', () => {
     const a = await newRestaurant(t);
     await forceHiphopDay(t.db, a.shardId, t.clock.now, { place: 3 });
     const r = await t.game.town.mayor(a, 5);
-    expect(r.data.talk).toBe(MAYOR_WRONG);
+    expect(r.data.talk).toBe('mayorWrong');
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorAgainst)).toBe(1);
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(0);
   });
@@ -52,6 +51,6 @@ describe('镇长问答（设计文档 §2.3）', () => {
     const a = await newRestaurant(t);
     const other = await newRestaurant(t, { shardId: a.shardId });
     await forceHiphopDay(t.db, a.shardId, t.clock.now, { place: 9, restId: other.restaurantId });
-    expect((await t.game.town.mayor(a, 9)).data.talk).toBe(MAYOR_RIGHT);
+    expect((await t.game.town.mayor(a, 9)).data.talk).toBe('mayorRight');
   });
 });

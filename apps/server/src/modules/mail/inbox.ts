@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import type { GameConfig } from '@dt/config';
-import type { MailClaimAllDto, MailClaimDto, MailDto, RewardItems } from '@dt/shared';
+import type { MailClaimAllDto, MailClaimDto, MailDto, MailTplKey, RewardItems } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
@@ -54,6 +54,8 @@ export async function visibleMails(
     'm.id',
     'm.title',
     'm.body',
+    'm.tpl',
+    'm.tpl_params',
     'm.items',
     'm.source',
     'm.min_level',
@@ -68,6 +70,7 @@ export async function visibleMails(
     id: r.id,
     title: r.title,
     body: r.body,
+    tpl: r.tpl ? { key: r.tpl as MailTplKey, params: r.tpl_params ?? {} } : null,
     // 发送时已经校验过格式
     items: (r.items as RewardItems | null) ?? null,
     source: r.source,
@@ -115,7 +118,7 @@ export async function claimOne(o: Op, id: number): Promise<MailClaimDto> {
   await grantRewardOp(o, items, {
     source: 'mail.claim',
     logType: 'mail.claim',
-    logParams: { mailId: id, title: m.title },
+    logParams: { mailId: id, title: m.title, ...(m.tpl ? { tpl: m.tpl } : {}) },
   });
   return { id, items };
 }

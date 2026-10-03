@@ -28,7 +28,11 @@ const spec = {
   },
 };
 const mails = (restId: number) =>
-  t.db.selectFrom('mail').select(['title', 'items', 'source']).where('rest_id', '=', restId).execute();
+  t.db
+    .selectFrom('mail')
+    .select(['title', 'items', 'source', 'tpl', 'tpl_params'])
+    .where('rest_id', '=', restId)
+    .execute();
 
 describe('结束补发（设计 §6）', () => {
   it('只补发达成没领的，合并成一封；结束 2 分钟内不补发；跑两次只一封', async () => {
@@ -51,6 +55,8 @@ describe('结束补发（设计 §6）', () => {
     const ms = await mails(r.restaurantId);
     expect(ms).toHaveLength(1);
     expect(ms[0]!.title).toBe('《国庆》未领取奖励');
+    // 系统邮件存模板键，前端按语言显示（问题记录 272）
+    expect(ms[0]).toMatchObject({ tpl: 'activity.unclaimed', tpl_params: { activity: '国庆' } });
     expect(ms[0]!.source).toBe('activity');
     expect(ms[0]!.items).toEqual({ coin: 20, goods: [{ id: 5, num: 2 }] });
     expect(await mails(idle.restaurantId)).toHaveLength(0);
@@ -160,6 +166,7 @@ describe('全服合力结算（148-3 设计 §7）', () => {
     expect(await titles(c.restaurantId)).toEqual(['《合力》未领取奖励', '《合力》贡献榜第 2 名奖励'].sort());
     expect(await own(idle.restaurantId)).toHaveLength(0);
     const rankMail = (await own(b.restaurantId)).find((m) => m.title.includes('贡献榜'))!;
+    expect(rankMail).toMatchObject({ tpl: 'activity.rank', tpl_params: { activity: '合力', rank: 2 } });
     expect(rankMail.items).toEqual({ diamond: 1 });
     const news = await t.db
       .selectFrom('news')

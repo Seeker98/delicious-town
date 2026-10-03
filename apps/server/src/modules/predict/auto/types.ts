@@ -18,15 +18,16 @@ export interface AutoDraft {
   p0: number;
   closeAt: Date;
   resolveAt: Date;
+  /** 判定用的参数，也是前端按语言渲染题目和说明的参数（问题记录 272） */
   params: Record<string, unknown>;
 }
 
 export interface AutoKind {
   kind: 'krab' | 'hiphop' | 'market' | 'weather' | 'stats';
   create(c: AutoCtx): Promise<AutoDraft | null>;
-  /** 判出来返回结果和判定依据；数据还没生成返回 null */
+  /** 判出来返回结果和判定依据（中文原文 + 给前端按语言渲染的参数，问题记录 272）；数据还没生成返回 null */
   resolve(
     c: { d: GameDeps; shardId: number; settings: ShardSettings },
     params: Record<string, unknown>,
-  ): Promise<{ outcome: boolean; note: string } | null>;
+  ): Promise<{ outcome: boolean; note: string; noteParams: Record<string, unknown> } | null>;
 }

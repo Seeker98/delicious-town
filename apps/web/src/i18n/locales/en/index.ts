@@ -17,6 +17,7 @@ import equip from './equip';
 import guide from './guide';
 import misc from './misc';
 import rest from './rest';
+import server from './server';
 import labels from './labels';
 import mail from './mail';
 import market from './market';
@@ -67,5 +68,6 @@ const messages: Messages = {
   rest,
   guide,
   misc,
+  server,
 };
 export default messages;

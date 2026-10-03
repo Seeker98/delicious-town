@@ -84,7 +84,8 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       dto.effects.unshift({
         sourceType: 'bless',
         sourceId: today.bless.id,
-        name: `今日星愿：${today.bless.name}`,
+        // 只给星愿名，"今日星愿："前缀由前端按语言加（问题记录 272）
+        name: today.bless.name,
         effects: today.bless.buff,
         expiresAt: gameTime(addDays(gameDay(now), 1), 0).toISOString(),
       });

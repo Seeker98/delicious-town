@@ -29,7 +29,7 @@ describe('TownPanel', () => {
   it('NPC：聊过的变灰；聊天后提示台词和奖励并通知刷新', async () => {
     vi.mocked(endpoints.townTalk).mockResolvedValue({
       npc: 'wenjie',
-      talk: '用了飘柔就明显气质上来了!',
+      talk: 'wenjie',
       rewards: [{ kind: 'goods', id: 1, num: 5 }],
     });
     const w = mount(TownPanel, {
@@ -168,7 +168,7 @@ describe('TownPanel', () => {
   it('镇长问答：点开后选地点，提示回话和道具；答过就不能再答', async () => {
     vi.mocked(endpoints.townMayor).mockResolvedValue({
       npc: 'mayor',
-      talk: '谢谢你，我现在就去找他，好好弥补他！',
+      talk: 'mayorRight',
       rewards: [{ kind: 'goods', id: 231, num: 1 }],
     });
     const w = mount(TownPanel, { props: { data: townData() } });

@@ -33,7 +33,7 @@ export const hiphop: AutoKind = {
       p0: clampP(weight / total),
       closeAt: gameTime(c.day, 23, 50),
       resolveAt: gameTime(tomorrow, t.hour),
-      params: { day: tomorrow, place },
+      params: { day: tomorrow, place, hour: t.hour },
     };
   },
   async resolve(c, p) {
@@ -47,6 +47,7 @@ export const hiphop: AutoKind = {
     return {
       outcome: row.place === Number(p.place),
       note: `${dayLabel(String(p.day))}嘻哈男孩出现在${placeName(row.place)}`,
+      noteParams: { day: String(p.day), place: row.place },
     };
   },
 };

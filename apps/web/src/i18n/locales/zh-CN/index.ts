@@ -23,6 +23,7 @@ import nav from './nav';
 import news from './news';
 import predict from './predict';
 import rest from './rest';
+import server from './server';
 import society from './society';
 import store from './store';
 import takeaway from './takeaway';
@@ -67,5 +68,6 @@ const zhCN = {
   rest,
   guide,
   misc,
+  server,
 };
 export default zhCN;

@@ -97,8 +97,10 @@ export interface TakeawayClaimDto {
   /** 边牧把失败改判成功 */
   forced: boolean;
   drone: boolean;
-  /** 失败原因 */
+  /** 失败原因（中文原文，旧记录只有这个） */
   reason: string | null;
+  /** 失败原因的序号（问题记录 272）：前端按语言显示 */
+  reasonId?: number | null;
   coin: number;
   exp: number;
   renown: number;

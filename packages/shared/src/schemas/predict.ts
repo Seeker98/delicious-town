@@ -42,6 +42,11 @@ export interface PredictEventDto {
   auto: boolean;
   /** 判定依据；没有为 null */
   resultNote: string | null;
+  /** 题型（krab / hiphop / market / weather / stats；手动题为 manual）和出题参数：前端按语言渲染自动题（问题记录 272） */
+  kind: string;
+  params: Record<string, unknown>;
+  /** 自动题判定依据的参数；旧数据和手动题为 null，显示 resultNote 原文 */
+  resultParams: Record<string, unknown> | null;
 }
 
 export interface PredictListDto {

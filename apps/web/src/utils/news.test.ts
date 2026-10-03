@@ -61,6 +61,18 @@ describe('新闻文案', () => {
     expect(r({ title: '题目写错了', outcome: null, voidRatio: 0.85, players: 4 })).toBe(
       '事件预测「题目写错了」已作废，参与的店按净投入的 85% 退款',
     );
+    // 自动题按题型和参数渲染题目（问题记录 272）
+    expect(
+      r({
+        title: '旧题目',
+        kind: 'krab',
+        eventParams: { from: 3, to: 8 },
+        outcome: true,
+        players: 0,
+        winners: 0,
+        paid: 0,
+      }),
+    ).toBe('事件预测「明天蟹老板会在 3~8 号街出现吗」开奖：结果为是');
   });
 
   it('嘻哈男孩和手动进货（4E-2）', () => {

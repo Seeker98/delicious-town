@@ -24,7 +24,7 @@ export const krab: AutoKind = {
       p0: SPAN / total,
       closeAt: gameTime(c.day, 23, 50),
       resolveAt: gameTime(tomorrow, w.krabHour),
-      params: { day: tomorrow, from, to },
+      params: { day: tomorrow, from, to, hour: w.krabHour },
     };
   },
   async resolve(c, p) {
@@ -34,6 +34,7 @@ export const krab: AutoKind = {
     return {
       outcome: street >= Number(p.from) && street <= Number(p.to),
       note: `${dayLabel(day)} ${w.krabHour} 点蟹老板刷新在 ${street} 号街`,
+      noteParams: { day, hour: w.krabHour, street },
     };
   },
 };

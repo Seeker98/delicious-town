@@ -7,11 +7,14 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { predictNote, predictTitle } from '../utils/serverText';
+import { useCatalogStore } from '../stores/catalog';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价 */
 const toast = useToastStore();
 const t = useT();
+const catalog = useCatalogStore();
 const list = ref<PredictListDto | null>(null);
 const detail = ref<PredictDetailDto | null>(null);
 const selected = ref<number | null>(null);
@@ -92,7 +95,7 @@ onMounted(() => void loadList());
     >
       <div class="d-flex align-items-center gap-2">
         <span class="flex-fill dt-card-title"
-          >{{ e.title
+          >{{ predictTitle(e)
           }}<span v-if="e.auto" class="dt-tag ms-1 fw-normal" :data-testid="`pd-auto-${e.id}`">{{
             t.predict.auto
           }}</span></span
@@ -117,12 +120,12 @@ onMounted(() => void loadList());
         :data-testid="`pd-ended-${e.id}`"
         @click="pick(e.id)"
       >
-        <b>{{ e.title }}</b> · {{ resultText(e) }} · {{ t.predict.endedHold(e.yes, e.no) }}
+        <b>{{ predictTitle(e) }}</b> · {{ resultText(e) }} · {{ t.predict.endedHold(e.yes, e.no) }}
         <span v-if="profit(e) !== null" :class="profit(e)! >= 0 ? 'text-success' : 'text-danger'">{{
           t.predict.profit(signed(profit(e)!))
         }}</span>
-        <div v-if="e.resultNote" class="text-muted" :data-testid="`pd-ended-note-${e.id}`">
-          {{ t.predict.note(e.resultNote) }}
+        <div v-if="predictNote(e, catalog)" class="text-muted" :data-testid="`pd-ended-note-${e.id}`">
+          {{ t.predict.note(predictNote(e, catalog)!) }}
         </div>
       </div>
       <PredictDetailCard

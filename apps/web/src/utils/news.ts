@@ -1,5 +1,6 @@
 import type { NewsDto } from '@dt/shared';
 import { activeLocale, activeMessages } from '../i18n';
+import { predictTitle } from './serverText';
 
 export interface NewsNames {
   goodsName(id: number): string;
@@ -19,7 +20,20 @@ export function newsText(n: NewsDto, x: NewsNames): string {
   if (!r) return m.unknown;
   const name = typeof n.params.name === 'string' ? n.params.name : '';
   const who = n.restName ?? (name || m.someone);
-  return r(who, n.params, x);
+  // 自动预测题的题目按题型和参数、当前语言渲染（问题记录 272）
+  const p = n.params;
+  const params =
+    n.type === 'predict.result' && typeof p.kind === 'string'
+      ? {
+          ...p,
+          title: predictTitle({
+            kind: p.kind,
+            title: String(p.title ?? ''),
+            params: (p.eventParams ?? {}) as Record<string, unknown>,
+          }),
+        }
+      : p;
+  return r(who, params, x);
 }
 
 export function newsTime(iso: string): string {

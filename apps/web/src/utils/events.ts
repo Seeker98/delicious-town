@@ -1,6 +1,7 @@
-import type { GameEvent, RestLogDto } from '@dt/shared';
+import type { GameEvent, MailTpl, RestLogDto } from '@dt/shared';
 import { activeMessages } from '../i18n';
 import { formatNum } from './format';
+import { mailTitle } from './serverText';
 
 export interface Names {
   goodsName(id: number): string;
@@ -63,7 +64,15 @@ function kindName(kind: string): string {
 export function logText(l: RestLogDto, names: Names): string {
   const m = activeMessages().events;
   const f = Object.hasOwn(m.logs, l.type) ? m.logs[l.type as keyof typeof m.logs] : undefined;
-  return f ? f(l.params, names) : m.feed(l, (id) => names.foodName(id));
+  // 系统邮件的标题按模板和当前语言（问题记录 272）
+  const params =
+    l.type === 'mail.claim' && l.params.tpl
+      ? {
+          ...l.params,
+          title: mailTitle({ title: String(l.params.title ?? ''), body: '', tpl: l.params.tpl as MailTpl }),
+        }
+      : l.params;
+  return f ? f(params, names) : m.feed(l, (id) => names.foodName(id));
 }
 
 /** 流水（道具流水页）的名称 */
