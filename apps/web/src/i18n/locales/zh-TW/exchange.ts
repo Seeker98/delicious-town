@@ -4,7 +4,7 @@ export default {
   title: '交易所',
   filters: { all: '全部', sale: '在售', buy: '在收' },
   reasons: {
-    exchange_level: (level: number) => `餐廳 ${level} 級才能交易`,
+    exchange_level: (level: number, now: number) => `餐廳 ${level} 級才能交易（你現在 ${now} 級）`,
     exchange_age: (days: number) => `賬號註冊滿 ${days} 天才能交易`,
     exchange_email: '驗證郵箱後才能交易',
   },
@@ -19,7 +19,9 @@ export default {
   sellSystemFailed: '賣給系統失敗',
   bookFailed: '讀取盤口失敗',
   placed: '已掛單',
-  heldNote: '，其中有可疑成交，所得凍結 24 小時',
+  heldNote: (hours: number) => `，其中有可疑成交，所得凍結 ${hours} 小時`,
+  /** 賣出數量超過系統還能收的（backlog 156-3） */
+  overSystem: (n: number) => `系統最多再收你 ${n} 個，超出的部分按你填的價格掛著，可能被別人低價買走`,
   filled: (n: number, partial: boolean, held: string) =>
     `已成交 ${n} 個${partial ? '，其餘掛單中' : ''}${held}`,
   placeFailed: '下單失敗',

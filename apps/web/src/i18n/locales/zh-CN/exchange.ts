@@ -3,7 +3,7 @@ export default {
   title: '交易所',
   filters: { all: '全部', sale: '在售', buy: '在收' },
   reasons: {
-    exchange_level: (level: number) => `餐厅 ${level} 级才能交易`,
+    exchange_level: (level: number, now: number) => `餐厅 ${level} 级才能交易（你现在 ${now} 级）`,
     exchange_age: (days: number) => `账号注册满 ${days} 天才能交易`,
     exchange_email: '验证邮箱后才能交易',
   },
@@ -18,7 +18,9 @@ export default {
   sellSystemFailed: '卖给系统失败',
   bookFailed: '读取盘口失败',
   placed: '已挂单',
-  heldNote: '，其中有可疑成交，所得冻结 24 小时',
+  heldNote: (hours: number) => `，其中有可疑成交，所得冻结 ${hours} 小时`,
+  /** 卖出数量超过系统还能收的（backlog 156-3） */
+  overSystem: (n: number) => `系统最多再收你 ${n} 个，超出的部分按你填的价格挂着，可能被别人低价买走`,
   filled: (n: number, partial: boolean, held: string) =>
     `已成交 ${n} 个${partial ? '，其余挂单中' : ''}${held}`,
   placeFailed: '下单失败',

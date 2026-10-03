@@ -38,3 +38,15 @@ describe('区服 tuning 覆盖', () => {
     expect(() => resolveShardSettings(config, { tuning: { rest: { tablesPerFloor: 0 } } })).toThrow();
   });
 });
+
+describe('backlog 156-1：交易所参考价覆盖值上限', () => {
+  it('不能超过单价上限 1 亿：再大价格下限就超过单价上限，任何挂单都过不了校验', () => {
+    expect(() =>
+      resolveShardSettings(config, { tuning: { exchange: { refOverrides: { '1': 100_000_001 } } } }),
+    ).toThrow();
+    expect(
+      resolveShardSettings(config, { tuning: { exchange: { refOverrides: { '1': 100_000_000 } } } }).tuning
+        .exchange.refOverrides,
+    ).toEqual({ '1': 100_000_000 });
+  });
+});

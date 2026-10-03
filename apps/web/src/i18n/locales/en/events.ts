@@ -6,7 +6,15 @@ import { n, type P } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Signature dish ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Seed ${id}`;
-const heldNote = (p: P) => (p.held ? ' (suspicious trade: proceeds frozen for 24 hours)' : '');
+const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
+const heldNote = (p: P) => (p.held ? ` (suspicious trade: proceeds frozen for ${holdHours(p)} hours)` : '');
+const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
+  [
+    ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
+    ...(Array.isArray(p.foods) ? p.foods : []).map(
+      (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
+    ),
+  ].join(', ');
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -187,12 +195,11 @@ const events: Messages['events'] = {
     'exchange.expire': (p, names) =>
       `A ${side(p)} order expired: ${names.foodName(n(p, 'foodsId'))}, the remaining ${n(p, 'left')} went back to your exchange account`,
     'exchange.withdraw': (p, names) =>
-      `Withdrew from your exchange account: ${[
-        ...(n(p, 'coin') > 0 ? [`${formatNum(n(p, 'coin'))} coins`] : []),
-        ...(Array.isArray(p.foods) ? p.foods : []).map(
-          (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
-        ),
-      ].join(', ')}`,
+      `Withdrew from your exchange account: ${coinFoods(p, names, (c) => `${c} coins`)}`,
+    'exchange.freezeCancel': (p, names) =>
+      `Your exchange was frozen and a ${side(p)} order was cancelled: ${names.foodName(n(p, 'foodsId'))}, the remaining ${n(p, 'left')} went back to your exchange account`,
+    'exchange.confiscate': (p, names) =>
+      `Frozen exchange proceeds were confiscated: ${coinFoods(p, names, (c) => `${c} coins`)}`,
     'predict.trade': (p) =>
       `Prediction "${String(p.title ?? '')}": ${p.dir === 'sell' ? 'sold' : 'bought'} ${n(p, 'qty')} ${p.side === 'no' ? 'No' : 'Yes'} shares for ${formatNum(n(p, 'amount'))}, fee ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>

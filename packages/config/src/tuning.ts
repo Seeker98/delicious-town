@@ -617,7 +617,8 @@ export const tuningSchema = z.object({
       })
       // 收购倍数要低于卖出倍数，否则从系统买进再卖回给系统能赚钱（156-3 终审 I3）
       .refine((m) => m.bidRate < m.askRate, { message: 'bidRate 要小于 askRate' }),
-    refOverrides: z.record(z.string(), int.min(1)),
+    // 不超过单价上限 1 亿：再大价格下限就超过单价上限，任何挂单都过不了校验（backlog 156-1）
+    refOverrides: z.record(z.string(), int.min(1).max(100_000_000)),
   }),
   /** 事件合约（238-1） */
   predict: z.object({

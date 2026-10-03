@@ -6,7 +6,16 @@ import { n, type P } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plato estrella ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Semilla ${id}`;
-const heldNote = (p: P) => (p.held ? ' (operación sospechosa: ganancias congeladas 24 horas)' : '');
+const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
+const heldNote = (p: P) =>
+  p.held ? ` (operación sospechosa: ganancias congeladas ${holdHours(p)} horas)` : '';
+const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
+  [
+    ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
+    ...(Array.isArray(p.foods) ? p.foods : []).map(
+      (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
+    ),
+  ].join(', ');
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -190,12 +199,11 @@ const events: Messages['events'] = {
     'exchange.expire': (p, names) =>
       `Venció una orden ${side(p)}: ${names.foodName(n(p, 'foodsId'))}, los ${n(p, 'left')} restantes volvieron a tu cuenta de la bolsa`,
     'exchange.withdraw': (p, names) =>
-      `Retiraste de tu cuenta de la bolsa: ${[
-        ...(n(p, 'coin') > 0 ? [`${formatNum(n(p, 'coin'))} monedas`] : []),
-        ...(Array.isArray(p.foods) ? p.foods : []).map(
-          (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
-        ),
-      ].join(', ')}`,
+      `Retiraste de tu cuenta de la bolsa: ${coinFoods(p, names, (c) => `${c} monedas`)}`,
+    'exchange.freezeCancel': (p, names) =>
+      `Tu bolsa fue congelada y se canceló una orden ${side(p)}: ${names.foodName(n(p, 'foodsId'))}, los ${n(p, 'left')} restantes volvieron a tu cuenta de la bolsa`,
+    'exchange.confiscate': (p, names) =>
+      `Se confiscaron las ganancias congeladas de la bolsa: ${coinFoods(p, names, (c) => `${c} monedas`)}`,
     'predict.trade': (p) =>
       `Predicción «${String(p.title ?? '')}»: ${p.dir === 'sell' ? 'vendiste' : 'compraste'} ${n(p, 'qty')} participaciones ${p.side === 'no' ? 'No' : 'Sí'} por ${formatNum(n(p, 'amount'))}, comisión ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>

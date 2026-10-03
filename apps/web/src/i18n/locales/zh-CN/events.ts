@@ -9,7 +9,17 @@ const logs = table<LogFn>();
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `特色菜${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `种子${id}`;
 /** 可疑成交的所得进冷静期（156-2） */
-const heldNote = (p: P) => (p.held ? '（可疑成交，所得冻结 24 小时）' : '');
+/** 冻结几小时：日志里带 holdHours（backlog 156-2），旧日志没有时是 24 */
+const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
+const heldNote = (p: P) => (p.held ? `（可疑成交，所得冻结 ${holdHours(p)} 小时）` : '');
+/** 银币和食材清单：交易所取出、没收共用 */
+const coinFoods = (p: P, names: Names, coin: (s: string) => string, sep: string) =>
+  [
+    ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
+    ...(Array.isArray(p.foods) ? p.foods : []).map(
+      (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
+    ),
+  ].join(sep);
 /** 事件合约结算日志带净投入时写出本局盈亏（问题记录 254） */
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
@@ -175,13 +185,11 @@ export default {
       `撤销交易所${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
     'exchange.expire': (p, names) =>
       `交易所${p.side === 'buy' ? '买' : '卖'}单过期：${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个的冻结退回交易所账户`,
-    'exchange.withdraw': (p, names) =>
-      `从交易所账户取出：${[
-        ...(n(p, 'coin') > 0 ? [`银币 ${formatNum(n(p, 'coin'))}`] : []),
-        ...(Array.isArray(p.foods) ? p.foods : []).map(
-          (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
-        ),
-      ].join('、')}`,
+    'exchange.withdraw': (p, names) => `从交易所账户取出：${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
+    'exchange.freezeCancel': (p, names) =>
+      `交易所被冻结，${p.side === 'buy' ? '买' : '卖'}单撤销：${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个退回交易所账户`,
+    'exchange.confiscate': (p, names) =>
+      `交易所冻结中的所得被没收：${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
     'predict.trade': (p) =>
       `预测「${String(p.title ?? '')}」${p.dir === 'sell' ? '卖出' : '买入'}${p.side === 'no' ? '否' : '是'} ${n(p, 'qty')} 份，成交额 ${formatNum(n(p, 'amount'))}，手续费 ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>

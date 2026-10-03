@@ -242,3 +242,47 @@ describe('backlog 156-2：冻结、解冻的边界', () => {
     expect(await audits()).toHaveLength(1);
   });
 });
+
+describe('backlog 156-2：冻结撤单、没收、可疑成交都写进个人日志', () => {
+  const logs = (restId: number, type: string) =>
+    t.db
+      .selectFrom('rest_log')
+      .select('params')
+      .where('rest_id', '=', restId)
+      .where('type', '=', type)
+      .execute();
+
+  it('冻结撤掉的每张挂单记一条 exchange.freezeCancel', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const r = await trader(t, { shardId, coin: 1_000_000, foods: { [f.id]: 10 } });
+    await svc().place(r, { foodsId: f.id, side: 'sell', price: f.coin * 2, qty: 3 });
+    await admin().freeze(actor, { restId: r.restaurantId, reason: '对倒' });
+    expect((await logs(r.restaurantId, 'exchange.freezeCancel')).map((x) => x.params)).toEqual([
+      { side: 'sell', foodsId: f.id, price: f.coin * 2, left: 3 },
+    ]);
+  });
+
+  it('没收：被没收的每家店记一条 exchange.confiscate，写明银币和食材', async () => {
+    const shardId = await createShard(t.db);
+    const { f, s, b, qty, tradeId } = await flaggedTrade(shardId);
+    await admin().confiscate(actor, { tradeId });
+    const net = f.coin * qty - Math.floor(f.coin * qty * 0.05);
+    expect((await logs(s.restaurantId, 'exchange.confiscate')).map((x) => x.params)).toEqual([
+      { coin: net, foods: [] },
+    ]);
+    expect((await logs(b.restaurantId, 'exchange.confiscate')).map((x) => x.params)).toEqual([
+      { coin: 0, foods: [{ foodsId: f.id, num: qty }] },
+    ]);
+  });
+
+  it('可疑成交的日志带上冻结小时数（按区服设置）', async () => {
+    const shardId = await createShard(t.db);
+    const { s } = await flaggedTrade(shardId);
+    const fill = await logs(s.restaurantId, 'exchange.fill');
+    expect(fill[0]!.params).toMatchObject({
+      held: true,
+      holdHours: t.deps.config.tuning.exchange.suspicious.holdHours,
+    });
+  });
+});

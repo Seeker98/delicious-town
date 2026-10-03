@@ -4,7 +4,8 @@ const exchange: Messages['exchange'] = {
   title: 'Exchange',
   filters: { all: 'All', sale: 'For sale', buy: 'Wanted' },
   reasons: {
-    exchange_level: (level) => `Your restaurant must be level ${level} to trade`,
+    exchange_level: (level, now) =>
+      `Your restaurant must be level ${level} to trade (it is level ${now} now)`,
     exchange_age: (days) => `Your account must be at least ${days} days old to trade`,
     exchange_email: 'Verify your email to trade',
   },
@@ -19,7 +20,9 @@ const exchange: Messages['exchange'] = {
   sellSystemFailed: "Couldn't sell to the system",
   bookFailed: "Couldn't load the order book",
   placed: 'Order placed',
-  heldNote: '; some fills look suspicious and their proceeds are frozen for 24 hours',
+  heldNote: (hours) => `; some fills look suspicious and their proceeds are frozen for ${hours} hours`,
+  overSystem: (n) =>
+    `The system will only buy ${n} more from you; the rest stays listed at your price and others may buy it cheaply`,
   filled: (n, partial, held) => `${n} filled${partial ? ', the rest is on the book' : ''}${held}`,
   placeFailed: 'Order failed',
   cancelled: 'Order cancelled',

@@ -125,3 +125,21 @@ describe('卖给系统（问题记录 244）', () => {
     expect(await makerState(t.db, shardId, f.id, day())).toMatchObject({ stock: 0, bought: 0 });
   });
 });
+
+describe('backlog 156-3：规格书 §8 系统成交不算反复对倒', () => {
+  it('同一家店反复卖给系统，超过反复对倒的次数也不标记、所得不冻结', async () => {
+    const { shardId, f, seller, sys } = await setup();
+    const times = tune().suspicious.repeatCount + 2;
+    for (let i = 0; i < times; i++) {
+      const r = await svc().sellToSystem(seller, { foodsId: f.id, qty: 1, price: sys!.price });
+      expect(r.data.fills.every((x) => !x.held)).toBe(true);
+    }
+    const trades = await t.db
+      .selectFrom('exchange_trade')
+      .select('flags')
+      .where('shard_id', '=', shardId)
+      .execute();
+    expect(trades).toHaveLength(times);
+    expect(trades.every((x) => x.flags.length === 0)).toBe(true);
+  });
+});

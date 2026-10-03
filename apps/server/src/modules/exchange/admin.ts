@@ -183,6 +183,16 @@ export function createExchangeAdmin(game: Game) {
           const left = r.qty - r.filled;
           if (r.side === 'buy') addCredit(c, b.restId, r.price * left);
           else addCredit(c, b.restId, 0, foods_id, left);
+          // 玩家能在个人日志里看到挂单为什么没了（backlog 156-2）
+          await tx
+            .insertInto('rest_log')
+            .values({
+              rest_id: b.restId,
+              type: 'exchange.freezeCancel',
+              params: JSON.stringify({ side: r.side, foodsId: foods_id, price: r.price, left }),
+              created_at: now,
+            })
+            .execute();
         }
       }
       await creditWallets(tx, c);
@@ -215,9 +225,31 @@ export function createExchangeAdmin(game: Game) {
     return db.transaction().execute(async (tx) => {
       let q = tx.updateTable('exchange_hold').set({ status: 'confiscated' }).where('status', '=', 'held');
       q = 'tradeId' in b ? q.where('trade_id', '=', String(b.tradeId)) : q.where('rest_id', '=', b.restId);
-      const rows = await q.returning(['coin', 'num']).execute();
+      const rows = await q.returning(['rest_id', 'coin', 'foods_id', 'num']).execute();
       const coin = rows.reduce((s, r) => s + Number(r.coin), 0);
       const foods = rows.reduce((s, r) => s + r.num, 0);
+      // 每家被没收的店记一条个人日志：银币合计、食材按种类合计（backlog 156-2）
+      const now = game.deps.now();
+      const byRest = new Map<number, { coin: number; foods: Map<number, number> }>();
+      for (const r of rows) {
+        const x = byRest.get(r.rest_id) ?? { coin: 0, foods: new Map<number, number>() };
+        x.coin += Number(r.coin);
+        if (r.foods_id !== null && r.num > 0) x.foods.set(r.foods_id, (x.foods.get(r.foods_id) ?? 0) + r.num);
+        byRest.set(r.rest_id, x);
+      }
+      for (const [restId, x] of byRest)
+        await tx
+          .insertInto('rest_log')
+          .values({
+            rest_id: restId,
+            type: 'exchange.confiscate',
+            params: JSON.stringify({
+              coin: x.coin,
+              foods: [...x.foods].map(([foodsId, num]) => ({ foodsId, num })),
+            }),
+            created_at: now,
+          })
+          .execute();
       await writeAudit(tx, {
         actor,
         action: 'exchange.confiscate',

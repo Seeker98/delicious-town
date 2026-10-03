@@ -6,7 +6,16 @@ import { n, type P } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plat signature ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Graine ${id}`;
-const heldNote = (p: P) => (p.held ? ' (transaction suspecte : gains gelés pendant 24 heures)' : '');
+const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
+const heldNote = (p: P) =>
+  p.held ? ` (transaction suspecte : gains gelés pendant ${holdHours(p)} heures)` : '';
+const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
+  [
+    ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
+    ...(Array.isArray(p.foods) ? p.foods : []).map(
+      (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
+    ),
+  ].join(', ');
 function predictNet(p: P): string {
   if (p.net === undefined) return '';
   const d = n(p, 'coin') - n(p, 'net');
@@ -188,12 +197,11 @@ const events: Messages['events'] = {
     'exchange.expire': (p, names) =>
       `Ordre ${side(p)} expiré : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.withdraw': (p, names) =>
-      `Retrait du compte de bourse : ${[
-        ...(n(p, 'coin') > 0 ? [`${formatNum(n(p, 'coin'))} pièces`] : []),
-        ...(Array.isArray(p.foods) ? p.foods : []).map(
-          (f) => `${names.foodName(Number((f as P).foodsId))}×${Number((f as P).num)}`,
-        ),
-      ].join(', ')}`,
+      `Retrait du compte de bourse : ${coinFoods(p, names, (c) => `${c} pièces`)}`,
+    'exchange.freezeCancel': (p, names) =>
+      `Bourse gelée, ordre ${side(p)} annulé : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
+    'exchange.confiscate': (p, names) =>
+      `Gains gelés de la bourse confisqués : ${coinFoods(p, names, (c) => `${c} pièces`)}`,
     'predict.trade': (p) =>
       `Prédiction « ${String(p.title ?? '')} » : ${p.dir === 'sell' ? 'vendu' : 'acheté'} ${n(p, 'qty')} parts ${p.side === 'no' ? 'Non' : 'Oui'} pour ${formatNum(n(p, 'amount'))}, frais ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>

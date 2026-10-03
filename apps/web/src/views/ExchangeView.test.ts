@@ -54,6 +54,9 @@ const me = (p: Partial<ExchangeMeDto> = {}): ExchangeMeDto => ({
   feeRate: 0.05,
   holds: [],
   frozen: null,
+  level: 30,
+  maxQty: 999,
+  holdHours: 24,
   ...p,
 });
 
@@ -384,6 +387,82 @@ describe('交易所页的防作弊提示（156-2）', () => {
     expect(useToastStore().items.map((x) => x.text)).toContain(
       '已成交 2 个，其中有可疑成交，所得冻结 24 小时',
     );
+  });
+});
+
+describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [{ id: 11, name: '松露', level: 6 }],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+    vi.mocked(endpoints.tradeFoods).mockResolvedValue([
+      { foodsId: 11, ref: 1000, last: 1100, changePct: 0.1, selling: 4, buying: 0, sysStock: 0 },
+    ]);
+    vi.mocked(endpoints.tradeBook).mockResolvedValue(book);
+  });
+  const open = async () => {
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    return w;
+  };
+
+  it('数量上限按区服设置', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ maxQty: 50 }));
+    const w = await open();
+    await w.find('[data-testid="ex-price"]').setValue('1000');
+    await w.find('[data-testid="ex-qty"]').setValue('60');
+    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="ex-qty"]').setValue('50');
+    expect(w.find('[data-testid="ex-submit"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="ex-qty"]').attributes('max')).toBe('50');
+  });
+
+  it('等级不够时写明现在几级', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(
+      me({ eligible: false, reason: 'exchange_level', level: 12 }),
+    );
+    const w = await open();
+    expect(w.text()).toContain('餐厅 20 级才能交易（你现在 12 级）');
+  });
+
+  it('可疑成交提示的冻结小时数按区服设置', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me({ holdHours: 48 }));
+    vi.mocked(endpoints.tradePlace).mockResolvedValue({
+      order: me().orders[0]!,
+      fills: [{ price: 1010, qty: 2, held: true }],
+    } as never);
+    const w = await open();
+    await w.find('[data-testid="ex-price"]').setValue('1010');
+    await w.find('[data-testid="ex-qty"]').setValue('2');
+    await w.find('[data-testid="ex-submit"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain(
+      '已成交 2 个，其中有可疑成交，所得冻结 48 小时',
+    );
+  });
+
+  it('卖出数量超过系统还能收的，下单前提示超出部分会按自己的价格挂着', async () => {
+    vi.mocked(endpoints.tradeMe).mockResolvedValue(me());
+    vi.mocked(endpoints.tradeBook).mockResolvedValue({
+      ...book,
+      bids: [{ price: 990, qty: 3, system: true, floor: false }],
+    } as never);
+    const w = await open();
+    await w.find('[data-testid="ex-side-sell"]').trigger('click');
+    await w.find('[data-testid="ex-price"]').setValue('900');
+    await w.find('[data-testid="ex-qty"]').setValue('5');
+    expect(w.find('[data-testid="ex-over-sys"]').text()).toContain('系统最多再收你 3 个');
+    await w.find('[data-testid="ex-qty"]').setValue('3');
+    expect(w.find('[data-testid="ex-over-sys"]').exists()).toBe(false);
   });
 });
 

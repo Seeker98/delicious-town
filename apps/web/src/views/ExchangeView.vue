@@ -61,7 +61,7 @@ const groups = computed(() => {
 const pct = (x: number | null) => (x === null ? '' : `${x >= 0 ? '+' : ''}${Math.round(x * 1000) / 10}%`);
 function reasonOf(m: ExchangeMeDto): string {
   const r = t.value.exchange.reasons;
-  if (m.reason === 'exchange_level') return r.exchange_level(m.need.level);
+  if (m.reason === 'exchange_level') return r.exchange_level(m.need.level, m.level);
   if (m.reason === 'exchange_age') return r.exchange_age(m.need.days);
   if (m.reason === 'exchange_email') return r.exchange_email;
   return t.value.exchange.cannotTrade;
@@ -93,7 +93,8 @@ const valid = computed(
     price.value >= book.value.min &&
     price.value <= book.value.max &&
     qty.value >= 1 &&
-    qty.value <= 999,
+    // 单笔上限按区服设置（backlog 156-1，以前写死 999）
+    qty.value <= (me.value?.maxQty ?? 999),
 );
 const estimate = computed(() => {
   if (!valid.value || !me.value) return '';
@@ -105,6 +106,22 @@ const estimate = computed(() => {
 
 /** 卖给系统（问题记录 244）：盘口里系统收购那一档；兜底价低于挂单下限，只能这样卖 */
 const sysBid = computed(() => book.value?.bids.find((b) => b.system) ?? null);
+/**
+ * 挂卖单会和系统收购档成交，但数量超过系统还能收的（backlog 156-3）：超出部分按自己的价格挂着，
+ * 可能低于系统收购价、被别人低价买走再卖给系统，下单前提示
+ */
+const overSystem = computed(() => {
+  const b = sysBid.value;
+  if (
+    side.value !== 'sell' ||
+    !b ||
+    b.floor ||
+    typeof price.value !== 'number' ||
+    typeof qty.value !== 'number'
+  )
+    return null;
+  return price.value <= b.price && qty.value > b.qty ? b.qty : null;
+});
 const sysOpen = ref(false);
 const sysQty = ref<number | ''>(1);
 const sysValid = computed(
@@ -196,7 +213,7 @@ function submit() {
       const x = t.value.exchange;
       if (n === 0) return x.placed;
       // 可疑成交的所得进冷静期（156-2 设计 §8）
-      const held = fills.some((f) => f.held) ? x.heldNote : '';
+      const held = fills.some((f) => f.held) ? x.heldNote(me.value?.holdHours ?? 24) : '';
       return x.filled(n, n < b.qty, held);
     },
     t.value.exchange.placeFailed,
@@ -391,7 +408,7 @@ onMounted(async () => {
         v-model.number="qty"
         type="number"
         min="1"
-        max="999"
+        :max="me?.maxQty ?? 999"
         class="form-control form-control-sm"
         style="width: 5rem"
         data-testid="ex-qty"
@@ -407,6 +424,9 @@ onMounted(async () => {
       </button>
     </div>
     <div class="small text-muted mt-1" data-testid="ex-estimate">{{ estimate }}</div>
+    <div v-if="overSystem !== null" class="small text-warning mt-1" data-testid="ex-over-sys">
+      {{ t.exchange.overSystem(overSystem) }}
+    </div>
     <div v-if="blocked" class="small text-danger mt-1">{{ blocked }}</div>
   </div>
 
