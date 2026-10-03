@@ -18,7 +18,6 @@ describe('游戏数据翻译（问题记录 272）', () => {
   });
 
   it('英法西：数据文件里有的才有；id 不存在、字段不对时构建报错', () => {
-    expect(realBuild().bundle!.i18n.en.mysterious).toEqual({});
     const s = src();
     const foodId = String(realBuild().bundle!.foods[0]!.id);
     const { errors } = buildBundle({
@@ -63,6 +62,8 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     'formulas',
     'kujiThemes',
     'proficiency',
+    'cookbooks',
+    'mysterious',
   ] as const;
 
   it('繁中也转换街道菜系名、天气说明、套装各档说明和装扮', () => {
@@ -99,6 +100,8 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
       formulas: [...b.formulas.values()].map((x) => ({ id: String(x.id), fields: ['name'] })),
       kujiThemes: b.kujiThemes.map((x) => ({ id: String(x.month), fields: ['name', 'desc'] })),
       proficiency: b.mcProficiency.map((x) => ({ id: String(x.curlevel), fields: ['name'] })),
+      cookbooks: b.cookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
+      mysterious: b.mysteriousCookbooks.map((x) => ({ id: String(x.id), fields: ['name'] })),
     };
     for (const l of ['en', 'fr', 'es'] as const)
       for (const k of FULL)

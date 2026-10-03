@@ -61,7 +61,12 @@ function take(o: TakeawayOrderDto) {
   if (blockOf(o)) return;
   return run(async () => {
     const d = await endpoints.takeawayDeliver(o.id, riderId.value!, double.value);
-    toast.push(t.value.takeaway.orders.taken(d.cookbookName, minutesLeft(d.arriveAt, props.data.now)));
+    toast.push(
+      t.value.takeaway.orders.taken(
+        catalog.data('cookbooks', d.cookbookId)?.name ?? d.cookbookName,
+        minutesLeft(d.arriveAt, props.data.now),
+      ),
+    );
   }, t.value.takeaway.orders.takeFailed);
 }
 function refresh() {
@@ -109,7 +114,7 @@ function refresh() {
     <div v-for="o in data.orders" :key="o.id" class="border rounded p-2 mb-1" :data-testid="`order-${o.id}`">
       <div class="d-flex align-items-center gap-1">
         <span class="dt-tag">{{ TAKEAWAY_GRADES[o.grade] }}</span>
-        <b>{{ o.cookbookName }}</b>
+        <b>{{ catalog.data('cookbooks', o.cookbookId)?.name ?? o.cookbookName }}</b>
         <span v-if="o.private" class="badge text-bg-info">{{ t.takeaway.private }}</span>
         <span class="ms-auto text-muted">{{
           t.takeaway.orders.expires(minutesLeft(o.expiresAt, data.now))

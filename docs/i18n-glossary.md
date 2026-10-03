@@ -95,9 +95,12 @@
 | 牌匾 / 勋章 / 荣誉 | Plaque / Medal / Honor | Plaque / Médaille / Honneur | Placa / Medalla / Honor |
 | 赞助帽（玉 / 铉） | Sponsor Hat (Jade / Xuan) | Chapeau de parrain (Jade / Xuan) | Gorro de patrocinador (Jade / Xuan) |
 | 手办 / 挂件 / 摆件 | Figure / Charm / Ornament | Figurine / Porte-clés / Décor | Figura / Colgante / Adorno |
+| 特色菜前缀 秘· / 新· / 兽· | Secret· / New· / Beast· | Secret· / Nouveau· / Bête· | Secreto· / Nuevo· / Bestia· |
+| 熟练度（特色菜） | Mastery: Beginner … Transcendent | Maîtrise : Débutant … Transcendant | Dominio: Principiante … Trascendente |
 
 约定：
 
 - 繁中由简中自动转换（`pnpm -F @dt/web i18n:tw`），个别词转换不对时写进 `apps/web/src/i18n/zh-TW-overrides.json`。
 - 数字一律用 `formatNum`（千分位按语言）；大数缩写用 `shortNum`。
 - 物品、食材、街道等游戏数据的名字来自目录（`packages/config/data/i18n/<语言>/`），界面文案里不要写死。
+- 菜名（食谱）的英法西译名来自另一个 agent 整理的 `data/i18n`（含新街道的菜，新街道进游戏后一起导入）。

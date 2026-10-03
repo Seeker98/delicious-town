@@ -93,7 +93,7 @@ function gains(r: TakeawayClaimDto): string {
     >
       <div class="d-flex align-items-center gap-1">
         <span class="dt-tag">{{ TAKEAWAY_GRADES[d.grade] }}</span>
-        <b>{{ d.cookbookName }}</b>
+        <b>{{ catalog.data('cookbooks', d.cookbookId)?.name ?? d.cookbookName }}</b>
         <span v-if="d.private" class="badge text-bg-info">{{ t.takeaway.private }}</span>
         <span v-if="d.double" class="badge text-bg-warning">{{ t.takeaway.deliveries.double }}</span>
         <span class="ms-auto">{{

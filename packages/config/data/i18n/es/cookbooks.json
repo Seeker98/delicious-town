@@ -1,0 +1,7091 @@
+{
+  "1": {
+    "name": "Albóndigas a la sartén"
+  },
+  "2": {
+    "name": "Tofu de las tres bellezas"
+  },
+  "3": {
+    "name": "Pollo ahumado de Liaocheng"
+  },
+  "4": {
+    "name": "Costillas de cristal"
+  },
+  "5": {
+    "name": "Rollitos de pescado con oreja de judas y tofu"
+  },
+  "6": {
+    "name": "Anguila en láminas al ajo"
+  },
+  "7": {
+    "name": "Cerdo en tiras con algas"
+  },
+  "8": {
+    "name": "Cuadrados de pato glaseados"
+  },
+  "9": {
+    "name": "Pescado con apio de Jiang Taigong"
+  },
+  "10": {
+    "name": "Galeras \"hojas caídas\""
+  },
+  "11": {
+    "name": "Albóndigas de las cuatro alegrías (Si Xi Wanzi)"
+  },
+  "12": {
+    "name": "Cazuela de ternera con lichi"
+  },
+  "13": {
+    "name": "Ginkgo, bulbo de lirio y longan"
+  },
+  "14": {
+    "name": "Callos en láminas picantes"
+  },
+  "15": {
+    "name": "Brotes de anea en caldo lechoso"
+  },
+  "16": {
+    "name": "Lubina en láminas salteada"
+  },
+  "17": {
+    "name": "Setas y bambú de invierno salteados"
+  },
+  "18": {
+    "name": "Gambas \"cinturón de jade\""
+  },
+  "19": {
+    "name": "Pollo estofado de Dezhou"
+  },
+  "20": {
+    "name": "Langostinos asados"
+  },
+  "21": {
+    "name": "Buena fortuna a tu gusto"
+  },
+  "22": {
+    "name": "Dragón de primavera en la nieve"
+  },
+  "23": {
+    "name": "Rollitos de calamar salteados con cilantro"
+  },
+  "24": {
+    "name": "Conejo asado del inmortal Li"
+  },
+  "25": {
+    "name": "Pescadito glaseado a la sartén"
+  },
+  "26": {
+    "name": "Ternera con ginkgo"
+  },
+  "27": {
+    "name": "Pescado rey del sauce"
+  },
+  "28": {
+    "name": "Berenjena barca de la cuñada Xu"
+  },
+  "29": {
+    "name": "Espinacas a los ocho tesoros"
+  },
+  "30": {
+    "name": "Gambas cola de fénix con dos frutas"
+  },
+  "31": {
+    "name": "Pato de los inmortales"
+  },
+  "32": {
+    "name": "Carpa abrazada"
+  },
+  "33": {
+    "name": "Perca mandarina en cesta de flores"
+  },
+  "34": {
+    "name": "Su Guo (olla crujiente de Boshan)"
+  },
+  "35": {
+    "name": "Olla de marisco de Jiaodong"
+  },
+  "36": {
+    "name": "Pez dorado cola de fénix"
+  },
+  "37": {
+    "name": "Perca mandarina y costillas sabrosas"
+  },
+  "38": {
+    "name": "Caracol en láminas con bulbo de lirio"
+  },
+  "39": {
+    "name": "Carpa negra con aceite caliente"
+  },
+  "40": {
+    "name": "Cordero escondido en vientre de pescado"
+  },
+  "41": {
+    "name": "Callos del arhat"
+  },
+  "42": {
+    "name": "Pepino de mar guisado con cebolleta"
+  },
+  "43": {
+    "name": "Sopa de coral de cangrejo a los tres tesoros"
+  },
+  "44": {
+    "name": "Dragón negro que rivaliza con la pata de oso"
+  },
+  "45": {
+    "name": "Adiós a mi concubina (tortuga y pollo)"
+  },
+  "46": {
+    "name": "Oca del señor feudal (I)"
+  },
+  "47": {
+    "name": "Ocho inmortales cruzan el mar"
+  },
+  "48": {
+    "name": "Olla de primera de la mansión de Confucio"
+  },
+  "49": {
+    "name": "Aleta de tiburón estofada"
+  },
+  "50": {
+    "name": "Aleta de tiburón entera en blanco"
+  },
+  "51": {
+    "name": "Abulón en su concha"
+  },
+  "52": {
+    "name": "Tortuga al vapor a los ocho tesoros"
+  },
+  "53": {
+    "name": "Nido de golondrina en caldo claro"
+  },
+  "54": {
+    "name": "Aleta de tiburón con cordyceps"
+  },
+  "55": {
+    "name": "Zongzi de Jiaxing"
+  },
+  "56": {
+    "name": "Brotes de bambú con huevas de gamba de Zhejiang"
+  },
+  "57": {
+    "name": "Tangtuan de Ningbo"
+  },
+  "58": {
+    "name": "Ternera con tres hilos"
+  },
+  "59": {
+    "name": "Pollo borracho de Wufu"
+  },
+  "60": {
+    "name": "Rollitos de calabaza blanca de cristal"
+  },
+  "61": {
+    "name": "Cerdo con ciruela"
+  },
+  "62": {
+    "name": "Perlas de pescado jade"
+  },
+  "63": {
+    "name": "Pez dragón en salsa de tomate"
+  },
+  "64": {
+    "name": "Pescado del lago Jian"
+  },
+  "65": {
+    "name": "Sopa de brasenia del Lago del Oeste"
+  },
+  "66": {
+    "name": "Cerdo \"hibisco\""
+  },
+  "67": {
+    "name": "Bolas de gamba de Shaoxing"
+  },
+  "68": {
+    "name": "Hilos de oro y plata guisados"
+  },
+  "69": {
+    "name": "Pollo deshuesado con aroma de loto"
+  },
+  "70": {
+    "name": "Bolas de pescado picado"
+  },
+  "71": {
+    "name": "Tofu a los ocho tesoros"
+  },
+  "72": {
+    "name": "Cerdo Dongpo"
+  },
+  "73": {
+    "name": "Pollo del mendigo"
+  },
+  "74": {
+    "name": "Cerdo con tofu fermentado rojo"
+  },
+  "75": {
+    "name": "Caracoles al vino"
+  },
+  "76": {
+    "name": "Anguila en tiras salteada de Changxing"
+  },
+  "77": {
+    "name": "Lubina glaseada suave"
+  },
+  "78": {
+    "name": "Morena estofada"
+  },
+  "79": {
+    "name": "Sopa de pescado de la cuñada Song"
+  },
+  "80": {
+    "name": "Perca mandarina qilin"
+  },
+  "81": {
+    "name": "Añoranza de brasenia y perca"
+  },
+  "82": {
+    "name": "Corvina rebozada con algas"
+  },
+  "83": {
+    "name": "Pescado al vinagre del Lago del Oeste"
+  },
+  "84": {
+    "name": "Oca asada de Ningbo"
+  },
+  "85": {
+    "name": "Pescado en láminas a la sartén"
+  },
+  "86": {
+    "name": "Rollitos de cangrejo fritos"
+  },
+  "87": {
+    "name": "Carne de cangrejo de Nanhu"
+  },
+  "88": {
+    "name": "Pepino de mar a las tres delicias"
+  },
+  "89": {
+    "name": "Cangrejo de fango con coral fundido"
+  },
+  "90": {
+    "name": "Langostinos gratinados Mil Islas"
+  },
+  "91": {
+    "name": "Gambas al té Longjing"
+  },
+  "92": {
+    "name": "Tortuga con azúcar cande"
+  },
+  "93": {
+    "name": "Cangrejo de piel crujiente"
+  },
+  "94": {
+    "name": "Pato entero con cordyceps"
+  },
+  "95": {
+    "name": "Abulón con puré aterciopelado"
+  },
+  "96": {
+    "name": "Surtido de Shaoxing"
+  },
+  "97": {
+    "name": "Langostinos guisados con cordyceps"
+  },
+  "98": {
+    "name": "Aleta de tiburón con codillo de jamón"
+  },
+  "99": {
+    "name": "Nido de golondrina en caldo de pollo"
+  },
+  "100": {
+    "name": "Aleta de tiburón con cangrejo"
+  },
+  "101": {
+    "name": "Aleta de tiburón con osmanto"
+  },
+  "102": {
+    "name": "Buche de pescado con crema de pollo"
+  },
+  "103": {
+    "name": "Cerdo yu xiang (cerdo con aroma de pescado)"
+  },
+  "104": {
+    "name": "Mapo Tofu"
+  },
+  "105": {
+    "name": "Cerdo dos veces cocinado (Hui Guo Rou)"
+  },
+  "106": {
+    "name": "La Zi Ji (pollo con chiles de Chongqing)"
+  },
+  "107": {
+    "name": "Hormigas trepando al árbol"
+  },
+  "108": {
+    "name": "Conejo en dados de la segunda hermana"
+  },
+  "109": {
+    "name": "Pollo con taro tierno"
+  },
+  "110": {
+    "name": "Pollo que hace la boca agua (Kou Shui Ji)"
+  },
+  "111": {
+    "name": "Cerdo salado salteado a fuego vivo"
+  },
+  "112": {
+    "name": "Pescado de Tai'an"
+  },
+  "113": {
+    "name": "Cordero hirviente"
+  },
+  "114": {
+    "name": "Pollo Kung Pao"
+  },
+  "115": {
+    "name": "Costillas agridulces"
+  },
+  "116": {
+    "name": "Shui Zhu de cerdo (cerdo en aceite de chile)"
+  },
+  "117": {
+    "name": "Mao Xue Wang (olla de sangre de pato)"
+  },
+  "118": {
+    "name": "Pollo farolillo"
+  },
+  "119": {
+    "name": "Pescado asado de Wanzhou"
+  },
+  "120": {
+    "name": "Shui Zhu Yu (pescado en caldo picante)"
+  },
+  "121": {
+    "name": "Pollo guisado con ginkgo"
+  },
+  "122": {
+    "name": "Anguila en tiras de Emei"
+  },
+  "123": {
+    "name": "Gambas verde jade"
+  },
+  "124": {
+    "name": "Siluro de Xipu"
+  },
+  "125": {
+    "name": "Gambas picantes en palangana"
+  },
+  "126": {
+    "name": "Torre de pollo \"oreja de cordero\""
+  },
+  "127": {
+    "name": "Perca mandarina con soja negra y chile"
+  },
+  "128": {
+    "name": "Carpa en salsa de doubanjiang"
+  },
+  "129": {
+    "name": "Pescado asado mala de Chongqing"
+  },
+  "130": {
+    "name": "Lubina en salsa de pimienta de Sichuan"
+  },
+  "131": {
+    "name": "Olla Chaotian"
+  },
+  "132": {
+    "name": "Carpa negra en lías de vino"
+  },
+  "133": {
+    "name": "Perca mandarina cara a cara"
+  },
+  "134": {
+    "name": "Conejo en cuenco del reino Ba"
+  },
+  "135": {
+    "name": "Corvina amarilla a la sal y pimienta"
+  },
+  "136": {
+    "name": "Anguila crujiente a la sal y pimienta"
+  },
+  "137": {
+    "name": "Calamar de cristal"
+  },
+  "138": {
+    "name": "Pepino de mar agripicante"
+  },
+  "139": {
+    "name": "Bagre de hocico largo al vapor"
+  },
+  "140": {
+    "name": "Sopa agripicante"
+  },
+  "141": {
+    "name": "Pepino de mar con longan"
+  },
+  "142": {
+    "name": "Cangrejo picante"
+  },
+  "143": {
+    "name": "Cazuela de pescado de Ya'an"
+  },
+  "144": {
+    "name": "Sopa de serpiente con col encurtida"
+  },
+  "145": {
+    "name": "Sopa de nido y aleta del reino Ba"
+  },
+  "146": {
+    "name": "Cangrejo de fango \"hibisco\""
+  },
+  "147": {
+    "name": "Lenguas de pato con cordyceps"
+  },
+  "148": {
+    "name": "Abulón en láminas con puré de pollo"
+  },
+  "149": {
+    "name": "Bolitas de las hermanas (Zimei Tuanzi)"
+  },
+  "150": {
+    "name": "Costillas al vapor con arroz glutinoso"
+  },
+  "151": {
+    "name": "Huevos moneda de oro"
+  },
+  "152": {
+    "name": "Falda de ternera guisada con coliflor"
+  },
+  "153": {
+    "name": "Costillas al vapor con tofu ahumado"
+  },
+  "154": {
+    "name": "Cerdo curado con brotes de bambú"
+  },
+  "155": {
+    "name": "Pato de Zhijiang"
+  },
+  "156": {
+    "name": "Ternera salteada al estilo Hunan"
+  },
+  "157": {
+    "name": "Pollo con té Junshan Yinzhen"
+  },
+  "158": {
+    "name": "Cerdo salteado de granja con chile"
+  },
+  "159": {
+    "name": "Tofu ahumado de Youxian"
+  },
+  "160": {
+    "name": "Col china con ajo y fideos de cristal"
+  },
+  "161": {
+    "name": "Calabaza al vapor con bulbo de lirio"
+  },
+  "162": {
+    "name": "Coliflor en olla seca"
+  },
+  "163": {
+    "name": "Cuenco fragante de granja (cerdo y huevo)"
+  },
+  "164": {
+    "name": "Gambas de río salteadas"
+  },
+  "165": {
+    "name": "Cordero a la sartén"
+  },
+  "166": {
+    "name": "Pollo de Dong'an"
+  },
+  "167": {
+    "name": "Costillas al vapor con soja negra de Liuyang"
+  },
+  "168": {
+    "name": "Bolas de pescado crujientes"
+  },
+  "169": {
+    "name": "Filetes de pescado con tomate"
+  },
+  "170": {
+    "name": "Perca mandarina \"pareja de patos\""
+  },
+  "171": {
+    "name": "Bagre amarillo en olla seca"
+  },
+  "172": {
+    "name": "Pescado ahumado al fuego de la familia Mao"
+  },
+  "173": {
+    "name": "Zilong se quita la túnica (anguila)"
+  },
+  "174": {
+    "name": "Rana toro picante"
+  },
+  "175": {
+    "name": "Perca mandarina en olla seca"
+  },
+  "176": {
+    "name": "Pollo del General Tso"
+  },
+  "177": {
+    "name": "Cangrejos de río picantes (Kouwei Xia)"
+  },
+  "178": {
+    "name": "Cabra negra salteada"
+  },
+  "179": {
+    "name": "Cordero guisado con dientes de ajo"
+  },
+  "180": {
+    "name": "Pato en haces en caldo claro"
+  },
+  "181": {
+    "name": "Pato con pastel de arroz con sangre de Hongjiang"
+  },
+  "182": {
+    "name": "Ternera curada de Changsha"
+  },
+  "183": {
+    "name": "Cabeza de pescado con chile picado"
+  },
+  "184": {
+    "name": "Callos de cerdo con flores de cebollino"
+  },
+  "185": {
+    "name": "Pepino de mar \"hibisco\""
+  },
+  "186": {
+    "name": "Tortuga de caparazón blando a los cinco tesoros"
+  },
+  "187": {
+    "name": "Calipash de tortuga estofado"
+  },
+  "188": {
+    "name": "Serpiente picante"
+  },
+  "189": {
+    "name": "Tortuga de Wuling en su caldo"
+  },
+  "190": {
+    "name": "Aleta de tiburón Zu'an"
+  },
+  "191": {
+    "name": "Abulón \"lichi rojo\""
+  },
+  "192": {
+    "name": "Buche de pescado \"flor de loto\""
+  },
+  "193": {
+    "name": "Pato en haces con cordyceps"
+  },
+  "194": {
+    "name": "Congee de mora y uva"
+  },
+  "195": {
+    "name": "Pollo blanco cortado (Bak Chit Gai)"
+  },
+  "196": {
+    "name": "Cazuela de berenjena con pescado salado"
+  },
+  "197": {
+    "name": "Costillas fritas al ajo"
+  },
+  "198": {
+    "name": "Solomillo de ternera a la pimienta negra"
+  },
+  "199": {
+    "name": "Pollo a la sal"
+  },
+  "200": {
+    "name": "Tofu relleno hakka (Yong Tau Foo)"
+  },
+  "201": {
+    "name": "Char siu a la miel"
+  },
+  "202": {
+    "name": "Verduras a los ocho tesoros"
+  },
+  "203": {
+    "name": "Olla de buche de cerdo con pollo"
+  },
+  "204": {
+    "name": "Carpa herbívora al vapor con salsa zhuhou"
+  },
+  "205": {
+    "name": "Costillas \"mano de Buda\""
+  },
+  "206": {
+    "name": "Cazuela variada de siete colores"
+  },
+  "207": {
+    "name": "Pato entero de Dongjiang"
+  },
+  "208": {
+    "name": "Sopa espesa de pescado desmenuzado de Shunde"
+  },
+  "209": {
+    "name": "Cerdo agridulce con piña (Gu Lou Yuk)"
+  },
+  "210": {
+    "name": "Anguila enroscada en salsa de soja negra"
+  },
+  "211": {
+    "name": "Rollitos de perca mandarina verde jade"
+  },
+  "212": {
+    "name": "Oca a los cinco sabores"
+  },
+  "213": {
+    "name": "Gambas jade"
+  },
+  "214": {
+    "name": "Pollo de Wenchang"
+  },
+  "215": {
+    "name": "Pollo de los tesoros en hoja de loto"
+  },
+  "216": {
+    "name": "Conejo con jengibre tierno a la miel"
+  },
+  "217": {
+    "name": "Falso cangrejo (Sai Pangxie)"
+  },
+  "218": {
+    "name": "Rana toro guisada con vieiras secas"
+  },
+  "219": {
+    "name": "Pollo al vino Huadiao"
+  },
+  "220": {
+    "name": "Albóndigas cabeza de león con coral de cangrejo"
+  },
+  "221": {
+    "name": "Oca asada de Chaozhou"
+  },
+  "222": {
+    "name": "Rollitos de cristal con cangrejo"
+  },
+  "223": {
+    "name": "Oca asada de Shenjing"
+  },
+  "224": {
+    "name": "Viento en popa"
+  },
+  "225": {
+    "name": "Llegan las cinco bendiciones"
+  },
+  "226": {
+    "name": "Rey del salteado de Shunde"
+  },
+  "227": {
+    "name": "Cangrejo al estilo refugio de tifones"
+  },
+  "228": {
+    "name": "Dragón y fénix de la prosperidad"
+  },
+  "229": {
+    "name": "Tortuga en tiras salteada"
+  },
+  "230": {
+    "name": "Arroz frito con calamar y abulón"
+  },
+  "231": {
+    "name": "Fénix que traga aleta de tiburón cantonés"
+  },
+  "232": {
+    "name": "Dragón que escupe perlas"
+  },
+  "233": {
+    "name": "Copa de calabaza blanca variada"
+  },
+  "234": {
+    "name": "Pepino de mar y abulón qilin"
+  },
+  "235": {
+    "name": "Garra de tigre con nido de golondrina imperial"
+  },
+  "236": {
+    "name": "Serpiente guisada con dos setas"
+  },
+  "237": {
+    "name": "Rollitos de vieira dorada y jade blanco"
+  },
+  "238": {
+    "name": "Olla de sopa del primer erudito"
+  },
+  "239": {
+    "name": "Buche de pescado estofado"
+  },
+  "240": {
+    "name": "Pepino de mar guisado con cangrejo"
+  },
+  "241": {
+    "name": "Aleta de tiburón de tributo"
+  },
+  "242": {
+    "name": "Mezcla de Li Hongzhang"
+  },
+  "243": {
+    "name": "Abulón crujiente \"perla brillante\""
+  },
+  "244": {
+    "name": "Anguila enrollada"
+  },
+  "245": {
+    "name": "Copas de gamba con coral de cangrejo"
+  },
+  "246": {
+    "name": "Cangrejo relleno \"hibisco\""
+  },
+  "247": {
+    "name": "Pescado Fang La"
+  },
+  "248": {
+    "name": "Cangrejo \"placa de jade\""
+  },
+  "249": {
+    "name": "Tortuga \"perla brillante\""
+  },
+  "250": {
+    "name": "Mero con té Maofeng"
+  },
+  "251": {
+    "name": "Rana toro con setas flor"
+  },
+  "252": {
+    "name": "Salteado de hilos de pino"
+  },
+  "253": {
+    "name": "Bollos de calabaza envueltos"
+  },
+  "254": {
+    "name": "Mejillones con riñón crujiente"
+  },
+  "255": {
+    "name": "Pollo con arroz a la sal y pimienta"
+  },
+  "256": {
+    "name": "Pato bobo"
+  },
+  "257": {
+    "name": "Anguila \"silla de montar\""
+  },
+  "258": {
+    "name": "Gambas pipa fritas"
+  },
+  "259": {
+    "name": "Sábalo ahumado con té Maofeng"
+  },
+  "260": {
+    "name": "Cerdo \"pulgada de oro\""
+  },
+  "261": {
+    "name": "Pato jade"
+  },
+  "262": {
+    "name": "Lechas de pescado estofadas"
+  },
+  "263": {
+    "name": "Cecina de conejo a las cinco especias"
+  },
+  "264": {
+    "name": "Sopa de puré de pescado \"flor de ciruelo\""
+  },
+  "265": {
+    "name": "Alitas de pollo guisadas con anguila"
+  },
+  "266": {
+    "name": "Pescado crisantemo"
+  },
+  "267": {
+    "name": "Pescado \"vaina de loto\""
+  },
+  "268": {
+    "name": "Tarro fragante de Huizhou"
+  },
+  "269": {
+    "name": "Flores de calamar escaldadas"
+  },
+  "270": {
+    "name": "El pez muerde al cordero"
+  },
+  "271": {
+    "name": "Perca mandarina \"flor de melocotón\""
+  },
+  "272": {
+    "name": "Pollo con tofu fermentado"
+  },
+  "273": {
+    "name": "\"Costillas\" vegetarianas glaseadas"
+  },
+  "274": {
+    "name": "Chuletas de cerdo fritas"
+  },
+  "275": {
+    "name": "Pescado secado al fuego"
+  },
+  "276": {
+    "name": "Cerdo secado al aire"
+  },
+  "277": {
+    "name": "Rollos de cerdo al vapor con harina de arroz"
+  },
+  "278": {
+    "name": "Cerdo salteado con tofu fermentado rojo"
+  },
+  "279": {
+    "name": "Tofu de castaña"
+  },
+  "280": {
+    "name": "Carpa plateada con aceite de cebolleta"
+  },
+  "281": {
+    "name": "Pescado en dados con pimiento rojo \"orquídea\""
+  },
+  "282": {
+    "name": "Pato con wontons"
+  },
+  "283": {
+    "name": "Raíz de loto en forma de murciélago"
+  },
+  "284": {
+    "name": "Pollo estofado de Fuliji"
+  },
+  "285": {
+    "name": "Pollo borracho Gujing"
+  },
+  "286": {
+    "name": "Bolas de pescado con corazones de col"
+  },
+  "287": {
+    "name": "\"Dátiles\" de cerdo de Wuhu"
+  },
+  "288": {
+    "name": "Cerdo cereza"
+  },
+  "289": {
+    "name": "Panceta estofada con lías de vino"
+  },
+  "290": {
+    "name": "Albóndigas de cerdo de Qingong"
+  },
+  "291": {
+    "name": "Sopa de sangre de pato con fideos de cristal"
+  },
+  "292": {
+    "name": "Gambas cola de fénix"
+  },
+  "293": {
+    "name": "Pescado ahumado de Suzhou"
+  },
+  "294": {
+    "name": "Tortilla esponjosa de Wenlou"
+  },
+  "295": {
+    "name": "Anguila \"bolsillo suave\""
+  },
+  "296": {
+    "name": "Pato en salmuera de Nankín"
+  },
+  "297": {
+    "name": "Vieiras secas \"jade blanco\""
+  },
+  "298": {
+    "name": "Pescadito y choy sum con ajo dorado"
+  },
+  "299": {
+    "name": "Tiras de tofu cocidas de Yangzhou"
+  },
+  "300": {
+    "name": "Conejo en caldo claro"
+  },
+  "301": {
+    "name": "Bolas de pescado de Pengcheng"
+  },
+  "302": {
+    "name": "Albóndigas de Jinling"
+  },
+  "303": {
+    "name": "Pollo Fu en caldo claro"
+  },
+  "304": {
+    "name": "Embutido fragante de Nankín"
+  },
+  "305": {
+    "name": "Tofu con cidra"
+  },
+  "306": {
+    "name": "Cordero guisado con castañas"
+  },
+  "307": {
+    "name": "Pato civil y militar guisado"
+  },
+  "308": {
+    "name": "Fénix entre peonías"
+  },
+  "309": {
+    "name": "Brotes de anea con gambas secas"
+  },
+  "310": {
+    "name": "Pez blanco del lago Tai"
+  },
+  "311": {
+    "name": "Gamba blanca del lago Tai"
+  },
+  "312": {
+    "name": "Pez hielo del lago Tai"
+  },
+  "313": {
+    "name": "Pollo al barro"
+  },
+  "314": {
+    "name": "Cuadrado de cerdo asado (Kao Fang)"
+  },
+  "315": {
+    "name": "Hígado de pescado en caldo claro"
+  },
+  "316": {
+    "name": "Panceta de cristal"
+  },
+  "317": {
+    "name": "Anguila golpeada guisada"
+  },
+  "318": {
+    "name": "Anguila con aceite chisporroteante"
+  },
+  "319": {
+    "name": "Anguila estofada en amarillo"
+  },
+  "320": {
+    "name": "Caparazones de cangrejo \"copo de nieve\""
+  },
+  "321": {
+    "name": "Albóndigas cabeza de león con cangrejo"
+  },
+  "322": {
+    "name": "Piel de pescado fresca con cangrejo"
+  },
+  "323": {
+    "name": "El viejo dragón entra al mar"
+  },
+  "324": {
+    "name": "Tofu de Pingqiao"
+  },
+  "325": {
+    "name": "Tortuga en salsa blanca"
+  },
+  "326": {
+    "name": "Calabaza blanca de los cuatro espíritus"
+  },
+  "327": {
+    "name": "Pepino de mar \"jade brillante\" con huevas de gamba"
+  },
+  "328": {
+    "name": "Aleta de tiburón estofada al natural"
+  },
+  "329": {
+    "name": "Aleta de tiburón guisada con coral de cangrejo"
+  },
+  "330": {
+    "name": "Aleta de tiburón envuelta en pollo"
+  },
+  "331": {
+    "name": "Abulón jade"
+  },
+  "332": {
+    "name": "Nido de golondrina a los tres hilos"
+  },
+  "333": {
+    "name": "Pescado en dados con cordyceps"
+  },
+  "334": {
+    "name": "Aleta de tiburón en caldo de pollo"
+  },
+  "335": {
+    "name": "Buche de pescado guisado al natural"
+  },
+  "336": {
+    "name": "Tortuga guisada de Zhuqiao"
+  },
+  "337": {
+    "name": "Berenjena crisantemo"
+  },
+  "338": {
+    "name": "San Bu Zhan (tres que no se pegan)"
+  },
+  "339": {
+    "name": "Guiso de cerdo y col fermentada con fideos"
+  },
+  "340": {
+    "name": "Guiso de la matanza (Sha Zhu Cai)"
+  },
+  "341": {
+    "name": "Cerdo ahumado de Changchun"
+  },
+  "342": {
+    "name": "Cerdo escaldado con col fermentada"
+  },
+  "343": {
+    "name": "Láminas de frijol mungo del noreste"
+  },
+  "344": {
+    "name": "Brema de Wuchang en abanico de pavo real"
+  },
+  "345": {
+    "name": "Pescado ciba (pescado salado frito)"
+  },
+  "346": {
+    "name": "Pato laqueado de Pekín"
+  },
+  "347": {
+    "name": "Cordero estofado de Jingyuan"
+  },
+  "348": {
+    "name": "Guiso mixto del noreste (Luan Dun)"
+  },
+  "349": {
+    "name": "Pollo guisado con setas de avellano"
+  },
+  "350": {
+    "name": "Tres platos al vapor de Mianyang"
+  },
+  "351": {
+    "name": "Pollo estofado de Daokou"
+  },
+  "352": {
+    "name": "Hu La Tang (sopa picante de Henan)"
+  },
+  "353": {
+    "name": "Pescado ahumado de Shishou"
+  },
+  "354": {
+    "name": "Cordero ahumado de Huaidian"
+  },
+  "355": {
+    "name": "Fideos estofados de Henan (Hui Mian)"
+  },
+  "356": {
+    "name": "Codillo de oro y plata"
+  },
+  "357": {
+    "name": "Cabeza de león con choy sum"
+  },
+  "358": {
+    "name": "Delicia de Buda de primavera"
+  },
+  "359": {
+    "name": "Cordero hervido"
+  },
+  "360": {
+    "name": "Vieiras secas con leche fresca"
+  },
+  "361": {
+    "name": "Costillas Jingdu"
+  },
+  "362": {
+    "name": "Bolitas de vieira seca"
+  },
+  "363": {
+    "name": "Bolitas de pepino de mar"
+  },
+  "364": {
+    "name": "Bolitas a las tres delicias"
+  },
+  "365": {
+    "name": "Tortuga al vapor al estilo Shanghái"
+  },
+  "366": {
+    "name": "Xiaolongbao de cangrejo"
+  },
+  "367": {
+    "name": "Cangrejo flor con pasteles de arroz"
+  },
+  "368": {
+    "name": "Pepino de mar con puré de pollo"
+  },
+  "369": {
+    "name": "Perlas escondidas en el cangrejo"
+  },
+  "370": {
+    "name": "Pata de oso de primera"
+  },
+  "371": {
+    "name": "Buche de pescado bagua"
+  },
+  "372": {
+    "name": "Aleta de tiburón \"mano de Buda\""
+  },
+  "373": {
+    "name": "Abulón \"cintura de fénix\""
+  },
+  "374": {
+    "name": "Pata de oso en blanco"
+  },
+  "375": {
+    "name": "Joroba de camello salteada en aceite"
+  },
+  "376": {
+    "name": "Matsutake \"copo de nieve\""
+  },
+  "377": {
+    "name": "Abulón entero fresco"
+  },
+  "378": {
+    "name": "Aleta de tiburón sobre tres hilos"
+  },
+  "379": {
+    "name": "Buche de pescado \"portapinceles\" con puré de pollo"
+  },
+  "380": {
+    "name": "Nido de golondrina con azúcar cande"
+  },
+  "381": {
+    "name": "Buche de las cien flores con coral de cangrejo"
+  },
+  "382": {
+    "name": "Abulón con huevo al vapor"
+  },
+  "383": {
+    "name": "Pato entero guisado con cordyceps"
+  },
+  "384": {
+    "name": "Peine de aleta de tiburón en caldo de pollo"
+  },
+  "385": {
+    "name": "Abulón al té Longjing"
+  },
+  "386": {
+    "name": "Tortuga estofada con asta de ciervo"
+  },
+  "387": {
+    "name": "Aleta de tiburón con puré de pollo"
+  },
+  "388": {
+    "name": "Polo (pilaf uigur)"
+  },
+  "389": {
+    "name": "Fideos de avena \"pececitos\""
+  },
+  "390": {
+    "name": "Yibangxue (bastón de nieve)"
+  },
+  "391": {
+    "name": "Pato salteado con sangre"
+  },
+  "392": {
+    "name": "Pescado con harina de arroz de Xingguo"
+  },
+  "393": {
+    "name": "Carne al vapor de Xinzhou"
+  },
+  "394": {
+    "name": "Pollo tres tazas al estilo taiwanés"
+  },
+  "395": {
+    "name": "Jamón de Yunnan \"moneda de oro\""
+  },
+  "396": {
+    "name": "Fideos de arroz fríos de Luxi (Yunnan)"
+  },
+  "397": {
+    "name": "Buche de cerdo guisado con lágrimas de Job"
+  },
+  "398": {
+    "name": "Pescado en sopa ácida (Guizhou)"
+  },
+  "399": {
+    "name": "Fideos de arroz \"cruzando el puente\""
+  },
+  "400": {
+    "name": "Carpa roja \"bolsita\" al vapor"
+  },
+  "401": {
+    "name": "Pollo de Xinfeng"
+  },
+  "402": {
+    "name": "Conejo en dados con nueces"
+  },
+  "403": {
+    "name": "Oca del señor feudal (II)"
+  },
+  "404": {
+    "name": "Pato de Yunnan en salsa de mandarina"
+  },
+  "405": {
+    "name": "Guo You Rou (cerdo pasado por aceite de Shanxi)"
+  },
+  "406": {
+    "name": "Pollo del plato grande de Xinjiang (Dapanji)"
+  },
+  "407": {
+    "name": "Cordero al comino"
+  },
+  "408": {
+    "name": "Sopa espesa de anguila"
+  },
+  "409": {
+    "name": "Ternera curada a las cinco especias de Shaanxi"
+  },
+  "410": {
+    "name": "Pescado de la cesta"
+  },
+  "411": {
+    "name": "Carne \"cañón\" de Xinjiang"
+  },
+  "412": {
+    "name": "Cordero para comer con la mano"
+  },
+  "413": {
+    "name": "Gambas al vino Huadiao"
+  },
+  "414": {
+    "name": "Tortuga con siete capas"
+  },
+  "415": {
+    "name": "Cangrejo peludo marinado"
+  },
+  "416": {
+    "name": "Gambas del lago Dian"
+  },
+  "417": {
+    "name": "Tofu a la sartén con vieira seca"
+  },
+  "418": {
+    "name": "Tortuga en olla de vapor"
+  },
+  "419": {
+    "name": "Pepino de mar \"bolsita\" en caldo claro"
+  },
+  "420": {
+    "name": "Pepino de mar en pastel de teja"
+  },
+  "421": {
+    "name": "Copa de abulón con cordyceps"
+  },
+  "422": {
+    "name": "Sopa de serpiente con goji, longan y cordyceps"
+  },
+  "423": {
+    "name": "Tortuga en caldo superior con cordyceps"
+  },
+  "424": {
+    "name": "Nido de golondrina con pera nevada"
+  },
+  "425": {
+    "name": "Sopa de nido con puré de judía"
+  },
+  "426": {
+    "name": "Sopa de kombu, nori y nido de golondrina"
+  },
+  "427": {
+    "name": "Sopa de nido con almendra \"flor de hielo\""
+  },
+  "428": {
+    "name": "Aleta de tiburón \"bola bordada\""
+  },
+  "429": {
+    "name": "Aleta de tiburón \"hasta el cielo\""
+  },
+  "430": {
+    "name": "Fénix que traga aleta de tiburón"
+  },
+  "431": {
+    "name": "Pata de oso a los cinco hilos"
+  },
+  "432": {
+    "name": "Joroba de camello de tres colores"
+  },
+  "433": {
+    "name": "Rollitos de aleta de tiburón \"sirena\""
+  },
+  "434": {
+    "name": "Olla de aleta de tiburón y gallina vieja"
+  },
+  "435": {
+    "name": "Tortuga con cordyceps y azufaifa"
+  },
+  "436": {
+    "name": "Buche de pescado con coral de cangrejo"
+  },
+  "437": {
+    "name": "Abulón mariposa"
+  },
+  "438": {
+    "name": "Matsutake salteado a fuego vivo"
+  },
+  "439": {
+    "name": "Tofu casero"
+  },
+  "440": {
+    "name": "Liu Rou Duan (tiras de cerdo glaseadas)"
+  },
+  "441": {
+    "name": "Guo Bao Rou"
+  },
+  "442": {
+    "name": "Cazuela de berenjena"
+  },
+  "443": {
+    "name": "Cerdo al vapor con harina de arroz"
+  },
+  "444": {
+    "name": "Jing Jiang Rou Si (cerdo en salsa de soja dulce)"
+  },
+  "445": {
+    "name": "Solomillo de cerdo frito"
+  },
+  "446": {
+    "name": "Huevos revueltos con tomate"
+  },
+  "447": {
+    "name": "Col china al vinagre"
+  },
+  "448": {
+    "name": "Pepino salteado con perilla"
+  },
+  "449": {
+    "name": "Pescado al vapor"
+  },
+  "450": {
+    "name": "Carpa al vapor con leche"
+  },
+  "451": {
+    "name": "Gachas de mora y lágrimas de Job"
+  },
+  "452": {
+    "name": "Gachas de lágrimas de Job y ñame"
+  },
+  "453": {
+    "name": "Gachas de mee sua (Mianxian Hu)"
+  },
+  "454": {
+    "name": "Tiras de pescado a la sal y pimienta"
+  },
+  "455": {
+    "name": "Carpa frita con lías de vino rojo"
+  },
+  "456": {
+    "name": "Cerdo frito al vinagre de Quanzhou"
+  },
+  "457": {
+    "name": "Pato relleno de Zhangzhou"
+  },
+  "458": {
+    "name": "Cerdo lichi"
+  },
+  "459": {
+    "name": "Pollo tres tazas (San Bei Ji)"
+  },
+  "460": {
+    "name": "Costillas borrachas de las diez fragancias"
+  },
+  "461": {
+    "name": "Anguila frita con lías de vino rojo"
+  },
+  "462": {
+    "name": "Caracol amarillo aliñado"
+  },
+  "463": {
+    "name": "Vieiras secas \"anillo de pulgar\""
+  },
+  "464": {
+    "name": "Caracola escaldada"
+  },
+  "465": {
+    "name": "Tofu relleno de Fujian"
+  },
+  "466": {
+    "name": "Puntas de bambú rellenas a los cuatro tesoros"
+  },
+  "467": {
+    "name": "Gambas fritas de la suerte"
+  },
+  "468": {
+    "name": "Zongzi de carne de Quanzhou"
+  },
+  "469": {
+    "name": "Costillas salteadas de Putian"
+  },
+  "470": {
+    "name": "Cerdo moneda de oro"
+  },
+  "471": {
+    "name": "Rollitos de pescado crujientes"
+  },
+  "472": {
+    "name": "Pollo sellado hakka"
+  },
+  "473": {
+    "name": "Pato Bu de Youxi"
+  },
+  "474": {
+    "name": "Cordero estofado de Shishan"
+  },
+  "475": {
+    "name": "Col china guisada con calabaza"
+  },
+  "476": {
+    "name": "Pescado piña"
+  },
+  "477": {
+    "name": "Pollo calabaza a los ocho tesoros"
+  },
+  "478": {
+    "name": "Vieiras secas de cristal"
+  },
+  "479": {
+    "name": "Arroz frito de Fujian"
+  },
+  "480": {
+    "name": "Brotes de guisante con ajo y vieira seca"
+  },
+  "481": {
+    "name": "Caracol en láminas con lías suaves"
+  },
+  "482": {
+    "name": "Pato guisado con satay"
+  },
+  "483": {
+    "name": "Carrilleras de lubina de cinco colores"
+  },
+  "484": {
+    "name": "Cazuela de calamar"
+  },
+  "485": {
+    "name": "Rana toro al vapor en hoja de loto"
+  },
+  "486": {
+    "name": "Perca mandarina ardilla"
+  },
+  "487": {
+    "name": "Arroz con cangrejo rojo a los ocho tesoros"
+  },
+  "488": {
+    "name": "Bolas de pescado rellenas"
+  },
+  "489": {
+    "name": "Pastelitos de gamba \"isla verde\""
+  },
+  "490": {
+    "name": "Cangrejo foo young"
+  },
+  "491": {
+    "name": "Tortuga a los ocho tesoros"
+  },
+  "492": {
+    "name": "Calipash de tortuga con goji"
+  },
+  "493": {
+    "name": "Pepino de mar espinoso con cebolleta"
+  },
+  "494": {
+    "name": "Olla de pescado \"pareja de patos\""
+  },
+  "495": {
+    "name": "Nido de golondrina con pollo"
+  },
+  "496": {
+    "name": "Buda salta el muro (Fo Tiao Qiang)"
+  },
+  "497": {
+    "name": "Buche de pescado en caldo aterciopelado"
+  },
+  "498": {
+    "name": "Aleta de tiburón \"bolsita\""
+  },
+  "499": {
+    "name": "Abulón moneda estofado"
+  },
+  "500": {
+    "name": "Guiso de marisco con cordyceps"
+  },
+  "16884": {
+    "name": "Ensalada de oreja de judas"
+  },
+  "16885": {
+    "name": "Huevos al té"
+  },
+  "16886": {
+    "name": "Col china picante"
+  },
+  "16887": {
+    "name": "Arroz frito con huevo"
+  },
+  "16888": {
+    "name": "Sopa dulce de hongo blanco y loto"
+  },
+  "16889": {
+    "name": "Costillas guisadas con patatas"
+  },
+  "16890": {
+    "name": "Ternera guisada con patatas"
+  },
+  "16891": {
+    "name": "Cerdo guisado con judías verdes"
+  },
+  "16892": {
+    "name": "Alitas de pollo estofadas"
+  },
+  "16893": {
+    "name": "Caldo de gallina"
+  },
+  "16894": {
+    "name": "Alitas de pollo a la cola"
+  },
+  "16895": {
+    "name": "Carpa agridulce"
+  },
+  "16896": {
+    "name": "Cerdo moo shu"
+  },
+  "16897": {
+    "name": "Solomillo de cerdo agridulce"
+  },
+  "16898": {
+    "name": "Col salteada al vinagre"
+  },
+  "16899": {
+    "name": "Patata en juliana al vinagre"
+  },
+  "16900": {
+    "name": "Boniato caramelizado en hilos (Ba Si)"
+  },
+  "16901": {
+    "name": "Pescado guisado al estilo Kua"
+  },
+  "16902": {
+    "name": "Tofu con marisco de primera"
+  },
+  "16903": {
+    "name": "Aleta de tiburón a los tres hilos"
+  },
+  "16904": {
+    "name": "Cuatro tesoros en blanco"
+  },
+  "16905": {
+    "name": "Tripa de las nueve vueltas (Jiu Zhuan Da Chang)"
+  },
+  "16906": {
+    "name": "Doble crujiente salteado en aceite"
+  },
+  "16907": {
+    "name": "Pescado al vinagre y pimienta"
+  },
+  "16908": {
+    "name": "Perca mandarina en láminas aliñada templada"
+  },
+  "16909": {
+    "name": "Cuatro grandes ensaladas de Jiaodong"
+  },
+  "16910": {
+    "name": "Albóndigas al vapor de Zhaoyuan"
+  },
+  "16911": {
+    "name": "Pollo con chile de Zaozhuang"
+  },
+  "16912": {
+    "name": "Pargo rojo al vapor"
+  },
+  "16913": {
+    "name": "Bazi Rou (cerdo atado estofado)"
+  },
+  "16914": {
+    "name": "Pescado en láminas con cebolleta y pimienta"
+  },
+  "16915": {
+    "name": "Trozos de pollo glaseados"
+  },
+  "16916": {
+    "name": "Brotes de soja con aceite caliente"
+  },
+  "16917": {
+    "name": "Ginkgo Shili (ginkgo confitado confuciano)"
+  },
+  "16918": {
+    "name": "Sopa de huevas de sepia"
+  },
+  "16919": {
+    "name": "Sopa de cabeza de pescado y tofu"
+  },
+  "16920": {
+    "name": "Sopa de costillas con ñame"
+  },
+  "16921": {
+    "name": "Sopa de maíz y calabaza blanca"
+  },
+  "16922": {
+    "name": "Sopa dulce de hongo blanco y azufaifa"
+  },
+  "16923": {
+    "name": "Falda de ternera guisada con tomate"
+  },
+  "16924": {
+    "name": "Jamón salteado con pepino"
+  },
+  "16925": {
+    "name": "Pato guisado con patatas"
+  },
+  "16926": {
+    "name": "Tofu con huevo centenario"
+  },
+  "16927": {
+    "name": "Melón amargo con huevo"
+  },
+  "16928": {
+    "name": "Patatas al comino"
+  },
+  "16929": {
+    "name": "Guiso de tomate y berenjena"
+  },
+  "16930": {
+    "name": "Arroz caldoso de tomate"
+  },
+  "16931": {
+    "name": "Tofu con cebollino chino"
+  },
+  "16932": {
+    "name": "Fideos de cristal con cebollino"
+  },
+  "16933": {
+    "name": "Huevos agridulces"
+  },
+  "16934": {
+    "name": "Sopa de rábano y fideos de cristal"
+  },
+  "16935": {
+    "name": "Ensalada de pepino y oreja de judas"
+  },
+  "16936": {
+    "name": "Sopa de costillas con calabaza blanca"
+  },
+  "16937": {
+    "name": "Pescado con salsa"
+  },
+  "16938": {
+    "name": "Ensalada de pepino"
+  },
+  "16939": {
+    "name": "Patatas al vapor con harina de arroz"
+  },
+  "16940": {
+    "name": "Tripa de cerdo al vapor con harina de arroz"
+  },
+  "16941": {
+    "name": "Cerdo con dos chiles"
+  },
+  "16942": {
+    "name": "Cerdo a las cinco especias"
+  },
+  "16943": {
+    "name": "Tiras de cerdo salteadas"
+  },
+  "16944": {
+    "name": "Costillas estofadas en seco"
+  },
+  "16945": {
+    "name": "Sopa de costillas con zanahoria y maíz"
+  },
+  "16946": {
+    "name": "Cerdo de mil capas"
+  },
+  "16947": {
+    "name": "Sopa agripicante de calamar"
+  },
+  "16948": {
+    "name": "Láminas de tofu en caldo picante"
+  },
+  "16949": {
+    "name": "Brotes de bambú estofados en seco"
+  },
+  "16950": {
+    "name": "Patata en juliana agripicante"
+  },
+  "16951": {
+    "name": "Tomate salteado con huevo"
+  },
+  "16952": {
+    "name": "Huevos con cebollino chino"
+  },
+  "16953": {
+    "name": "Brócoli salteado"
+  },
+  "16954": {
+    "name": "Berenjena estofada"
+  },
+  "16955": {
+    "name": "Salchicha china con pepino"
+  },
+  "16956": {
+    "name": "Flan salado de huevo al vapor"
+  },
+  "16957": {
+    "name": "Zanahoria rallada con huevo"
+  },
+  "16958": {
+    "name": "Col china del viejo cocinero"
+  },
+  "16959": {
+    "name": "Cazuela de fideos de cristal con cerdo"
+  },
+  "16960": {
+    "name": "Ensalada de huevo centenario"
+  },
+  "16961": {
+    "name": "Pimiento verde con huevo"
+  },
+  "16962": {
+    "name": "Pescado estofado"
+  },
+  "16963": {
+    "name": "Huevo al vapor con tofu"
+  },
+  "16964": {
+    "name": "Hong Shao Rou (panceta estofada)"
+  },
+  "16965": {
+    "name": "Costillas estofadas"
+  },
+  "16966": {
+    "name": "Ostras escaldadas en caldo claro"
+  },
+  "16967": {
+    "name": "Flores de riñón aliñadas"
+  },
+  "16968": {
+    "name": "Aleta de tiburón en caldo lechoso"
+  },
+  "16969": {
+    "name": "Pulmón de cerdo en caldo lechoso"
+  },
+  "16970": {
+    "name": "Pechuga de pollo en caldo lechoso"
+  },
+  "16971": {
+    "name": "Carpa de dos maneras"
+  },
+  "16972": {
+    "name": "Ñame glaseado con miel"
+  },
+  "16973": {
+    "name": "Tripa rellena en salmuera"
+  },
+  "16974": {
+    "name": "Vieiras secas de dos maneras"
+  },
+  "16975": {
+    "name": "Tofu con puré de pollo \"orquídea\""
+  },
+  "16976": {
+    "name": "Pescado girasol"
+  },
+  "16977": {
+    "name": "Ostras envueltas en oro y plata"
+  },
+  "16978": {
+    "name": "Solomillo de cerdo crujiente glaseado"
+  },
+  "16979": {
+    "name": "Caracol en láminas \"ojo de fénix\""
+  },
+  "16980": {
+    "name": "Vieiras acudiendo a la corte"
+  },
+  "16981": {
+    "name": "Trío salteado a fuego vivo"
+  },
+  "16982": {
+    "name": "Tiras de ternera estofadas"
+  },
+  "16983": {
+    "name": "Azufaifas doradas caramelizadas"
+  },
+  "16984": {
+    "name": "Labios de pescado en salsa roja"
+  },
+  "16985": {
+    "name": "Gambas fritas con sésamo"
+  },
+  "16986": {
+    "name": "Bolas de boniato caramelizadas"
+  },
+  "16987": {
+    "name": "Abulón con panceta estofada"
+  },
+  "16988": {
+    "name": "Palometa estofada en seco"
+  },
+  "16989": {
+    "name": "Tendón estofado con cebolleta amarilla"
+  },
+  "16990": {
+    "name": "Codillo asado en olla"
+  },
+  "16991": {
+    "name": "Pepino de mar mariposa"
+  },
+  "16992": {
+    "name": "Ginkgo escarchado"
+  },
+  "16993": {
+    "name": "Codillo con pepino de mar"
+  },
+  "16994": {
+    "name": "Cerdo en hoja de loto"
+  },
+  "16995": {
+    "name": "Cofre de tofu (doufu xiang)"
+  },
+  "16996": {
+    "name": "Bolas de pescado \"hibisco\" a las tres delicias"
+  },
+  "16997": {
+    "name": "Pollo en láminas \"aceite flotante\""
+  },
+  "16998": {
+    "name": "Pollo asado en olla"
+  },
+  "16999": {
+    "name": "Pollo crujiente fragante"
+  },
+  "17000": {
+    "name": "Sopa espesa de corvina y tofu"
+  },
+  "17001": {
+    "name": "Ñame caramelizado en hilos (Ba Si)"
+  },
+  "17002": {
+    "name": "Bolas de pera glaseadas con miel"
+  },
+  "17003": {
+    "name": "Cazuela de callos de ternera"
+  },
+  "17004": {
+    "name": "Pollo en bolsa de tela"
+  },
+  "17005": {
+    "name": "Pollo en láminas \"hibisco\""
+  },
+  "17006": {
+    "name": "Tres capas de Yangguan"
+  },
+  "17007": {
+    "name": "Gambas con té de antes de las lluvias"
+  },
+  "17008": {
+    "name": "Nubes oscuras sostienen la luna"
+  },
+  "17009": {
+    "name": "Trozos de pollo estofados en amarillo"
+  },
+  "17010": {
+    "name": "Corvina a la sartén guota"
+  },
+  "17011": {
+    "name": "Carpín en caldo lechoso"
+  },
+  "17012": {
+    "name": "Dos tesoros de invierno estofados"
+  },
+  "17013": {
+    "name": "Sopa de las tres bellezas del monte Tai"
+  },
+  "17014": {
+    "name": "Dos tipos de pollo en tiras guisados"
+  },
+  "17015": {
+    "name": "Huevos de paloma \"ojo de elefante\""
+  },
+  "17016": {
+    "name": "Melena de león en láminas \"nube\""
+  },
+  "17017": {
+    "name": "Pescado con apio salteado en aceite"
+  },
+  "17018": {
+    "name": "Perca mandarina glaseada suave"
+  },
+  "17019": {
+    "name": "Riñones en tiras borrachos"
+  },
+  "17020": {
+    "name": "Tapas de grasa de cerdo fritas"
+  },
+  "17021": {
+    "name": "Pollo bañado en aceite"
+  },
+  "17022": {
+    "name": "Vieiras secas \"hortensia\""
+  },
+  "17023": {
+    "name": "Sopa de dragón y fénix con patos jugando"
+  },
+  "17024": {
+    "name": "Alas de fénix con pera nevada"
+  },
+  "17025": {
+    "name": "Cerdo Zhan estofado"
+  },
+  "17026": {
+    "name": "Kombu crujiente"
+  },
+  "17027": {
+    "name": "Semillas de Annan estofadas"
+  },
+  "17028": {
+    "name": "Rollitos de col \"coral\""
+  },
+  "17029": {
+    "name": "Pepino de mar ruyi"
+  },
+  "17030": {
+    "name": "Carpín relleno \"bolsita\""
+  },
+  "17031": {
+    "name": "Pollo de cinco colores en cesta \"nido\""
+  },
+  "17032": {
+    "name": "Sepia salteada con cilantro"
+  },
+  "17033": {
+    "name": "Cerdo en tiras con pimiento verde"
+  },
+  "17034": {
+    "name": "Pollo estofado"
+  },
+  "17035": {
+    "name": "Costillas al vapor con harina de arroz"
+  },
+  "17036": {
+    "name": "Vino de osmanto"
+  },
+  "17037": {
+    "name": "Suan Cai Yu (pescado con col encurtida)"
+  },
+  "17038": {
+    "name": "Berenjena yu xiang"
+  },
+  "17039": {
+    "name": "Gambas picantes"
+  },
+  "17040": {
+    "name": "Ternera en tiras salteada en seco"
+  },
+  "17041": {
+    "name": "Cabezas de conejo estofadas"
+  },
+  "17042": {
+    "name": "Bollos fritos al agua (Shui Jian Bao)"
+  },
+  "17043": {
+    "name": "Crujientes de sésamo de Zhoucun"
+  },
+  "17044": {
+    "name": "Olla crujiente de Jinan"
+  },
+  "17045": {
+    "name": "Salteado de ginkgo, lirio y longan"
+  },
+  "17046": {
+    "name": "Gambas cola de fénix con ginkgo"
+  },
+  "17047": {
+    "name": "Ocho inmortales y arhats cruzan el mar"
+  },
+  "17048": {
+    "name": "Abulón en concha estofado"
+  },
+  "17049": {
+    "name": "Nido de golondrina de primera en caldo claro"
+  },
+  "17050": {
+    "name": "Aleta de tiburón con hongo cordyceps"
+  },
+  "17051": {
+    "name": "Ostras fritas"
+  },
+  "17052": {
+    "name": "Cerdo en tiras con láminas de frijol mungo"
+  },
+  "17053": {
+    "name": "Callos salteados con cilantro"
+  },
+  "17054": {
+    "name": "Flores de riñón salteadas"
+  },
+  "17055": {
+    "name": "Pepino de mar estofado"
+  },
+  "17056": {
+    "name": "Fragancia de perla de ciruelo rojo"
+  },
+  "17057": {
+    "name": "Corvina frita y al vapor"
+  },
+  "17058": {
+    "name": "Huangmen Ji (arroz con pollo estofado)"
+  },
+  "17059": {
+    "name": "Caracol de mar salteado en aceite"
+  },
+  "17060": {
+    "name": "Abulón estofado en salsa de soja"
+  },
+  "17061": {
+    "name": "Tortuga guisada con ajo"
+  },
+  "17062": {
+    "name": "Pepino de mar con coral de cangrejo"
+  },
+  "17063": {
+    "name": "Melena de león \"pincel imperial\""
+  },
+  "17064": {
+    "name": "Melena de león crujiente"
+  },
+  "17065": {
+    "name": "Guokui con cerdo en salmuera"
+  },
+  "17066": {
+    "name": "Douhua con agua de manantial de Longjing"
+  },
+  "17067": {
+    "name": "Douhua agripicante"
+  },
+  "17068": {
+    "name": "Douhua con sanzi"
+  },
+  "17069": {
+    "name": "Fideos secos de Leshan"
+  },
+  "17070": {
+    "name": "Salchicha de Sichuan"
+  },
+  "17071": {
+    "name": "Dan Hong Gao (tortita de huevo)"
+  },
+  "17072": {
+    "name": "Tortilla de pescadito"
+  },
+  "17073": {
+    "name": "Ye'er Ba (pasteles de arroz en hoja)"
+  },
+  "17074": {
+    "name": "Pato ahumado con té y alcanfor"
+  },
+  "17075": {
+    "name": "Cabezas de conejo mala"
+  },
+  "17076": {
+    "name": "Conejo en dados con piel de mandarina"
+  },
+  "17077": {
+    "name": "Empanadillas Zhong"
+  },
+  "17078": {
+    "name": "Arroz en sopa de guisantes"
+  },
+  "17079": {
+    "name": "Sopa de manitas de mamá"
+  },
+  "17080": {
+    "name": "Conejo atado de Guanghan"
+  },
+  "17081": {
+    "name": "Olla caliente de cabeza de pescado"
+  },
+  "17082": {
+    "name": "Pollo con ginkgo del monte Qingcheng"
+  },
+  "17083": {
+    "name": "Pasteles amarillos de arroz de Luzhou"
+  },
+  "17084": {
+    "name": "Tres grandes cañones (bolas de arroz)"
+  },
+  "17085": {
+    "name": "Ternera de Yanbian"
+  },
+  "17086": {
+    "name": "Pollo bang bang"
+  },
+  "17087": {
+    "name": "Pollo de los cien sabores"
+  },
+  "17088": {
+    "name": "Tofu seco relleno"
+  },
+  "17089": {
+    "name": "Douhua de Leshan"
+  },
+  "17090": {
+    "name": "Pollo bobo"
+  },
+  "17091": {
+    "name": "Fuqi Feipian (ternera del matrimonio)"
+  },
+  "17092": {
+    "name": "Patas de pollo con chile encurtido"
+  },
+  "17093": {
+    "name": "Ternera \"sombra de lámpara\""
+  },
+  "17094": {
+    "name": "Trozos de pollo mala"
+  },
+  "17095": {
+    "name": "Olla caliente de callos"
+  },
+  "17096": {
+    "name": "Douhua de pollo"
+  },
+  "17097": {
+    "name": "Olla caliente de Sichuan"
+  },
+  "17098": {
+    "name": "Pato de piel dulce"
+  },
+  "17099": {
+    "name": "Codillo Dongpo"
+  },
+  "17100": {
+    "name": "Pescado en olla fría"
+  },
+  "17101": {
+    "name": "Douhua molido en piedra de Dianjiang"
+  },
+  "17102": {
+    "name": "Pato estofado con especias"
+  },
+  "17103": {
+    "name": "Col en \"agua hirviendo\" (Kai Shui Bai Cai)"
+  },
+  "17104": {
+    "name": "Costillas \"cruzando el puente\""
+  },
+  "17105": {
+    "name": "Ternera al vapor con harina de arroz"
+  },
+  "17106": {
+    "name": "Pollo al vapor con harina de arroz"
+  },
+  "17107": {
+    "name": "Carpa de roca estofada en seco"
+  },
+  "17108": {
+    "name": "Perca mandarina estofada en seco"
+  },
+  "17109": {
+    "name": "Pepino de mar de Liao estofado en seco"
+  },
+  "17110": {
+    "name": "Carpa estofada en seco"
+  },
+  "17111": {
+    "name": "Pollo de sabor extraño (Guai Wei Ji)"
+  },
+  "17112": {
+    "name": "Costillas en salmuera a las cinco especias"
+  },
+  "17113": {
+    "name": "Fideos dan dan de Sichuan"
+  },
+  "17114": {
+    "name": "Tangyuan de Lai"
+  },
+  "17115": {
+    "name": "Long Chao Shou (wontons del dragón)"
+  },
+  "17116": {
+    "name": "Pescado en dados mala"
+  },
+  "17117": {
+    "name": "Pescado en dados con chile"
+  },
+  "17118": {
+    "name": "Ternera con piel de mandarina"
+  },
+  "17119": {
+    "name": "Pollo con piel de mandarina"
+  },
+  "17120": {
+    "name": "Pichón picado con piel de mandarina"
+  },
+  "17121": {
+    "name": "Riñones en salsa de pimienta de Sichuan"
+  },
+  "17122": {
+    "name": "Callos en tiras con pimienta de Sichuan"
+  },
+  "17123": {
+    "name": "Fideos fríos de gelatina \"corazón roto\""
+  },
+  "17124": {
+    "name": "Fideos de arroz de Mianyang"
+  },
+  "17125": {
+    "name": "Fideos con tripa de cerdo"
+  },
+  "17126": {
+    "name": "Tortuga estofada"
+  },
+  "17127": {
+    "name": "Hojaldre de pasta de loto"
+  },
+  "17128": {
+    "name": "Fideos ardientes de Yibin"
+  },
+  "17129": {
+    "name": "Fideos de arroz de Nanchong"
+  },
+  "17130": {
+    "name": "Panceta estofada con osmanto"
+  },
+  "17131": {
+    "name": "Melena de león con puré de pollo"
+  },
+  "17132": {
+    "name": "Melena de león con choy sum"
+  },
+  "17133": {
+    "name": "Codorniz con cordyceps"
+  },
+  "17134": {
+    "name": "Caracol de mar a las cinco especias"
+  },
+  "17135": {
+    "name": "Brema de Wuchang con chile picado"
+  },
+  "17136": {
+    "name": "Pescado guisado en olla de hierro"
+  },
+  "17137": {
+    "name": "Labios de pescado estofados"
+  },
+  "17138": {
+    "name": "Serpiente guisada con tres setas"
+  },
+  "17139": {
+    "name": "Serpiente crujiente"
+  },
+  "17140": {
+    "name": "Olla caliente de serpiente"
+  },
+  "17141": {
+    "name": "Filetes de bacalao fritos"
+  },
+  "17142": {
+    "name": "Bacalao en dados al estilo Sichuan"
+  },
+  "17143": {
+    "name": "Olla de pollo entero con ginseng"
+  },
+  "17144": {
+    "name": "Nido de golondrina \"hibisco\""
+  },
+  "17145": {
+    "name": "Nido de golondrina en caldo superior"
+  },
+  "17146": {
+    "name": "Aleta de tiburón estofada en seco"
+  },
+  "17147": {
+    "name": "Aleta de tiburón \"hortensia\""
+  },
+  "17148": {
+    "name": "Pepino de mar casero"
+  },
+  "17149": {
+    "name": "Lubina al ajo"
+  },
+  "17150": {
+    "name": "\"Nido\" de calabaza blanca"
+  },
+  "17151": {
+    "name": "Cerdo en láminas con salsa de ajo"
+  },
+  "17152": {
+    "name": "Cerdo sobre arroz crujiente"
+  },
+  "17153": {
+    "name": "Tofu en aceite blanco"
+  },
+  "17154": {
+    "name": "Panceta dulce al vapor (Tian Shao Bai)"
+  },
+  "17155": {
+    "name": "Cerdo frito con sal"
+  },
+  "17156": {
+    "name": "Anguila en láminas salteada en seco"
+  },
+  "17157": {
+    "name": "Anguila con fideos de cristal"
+  },
+  "17158": {
+    "name": "Sangre de pato agripicante"
+  },
+  "17159": {
+    "name": "Sopa de ternera Qiaojiao"
+  },
+  "17160": {
+    "name": "Sopa de cordero de Jianyang"
+  },
+  "17161": {
+    "name": "Codillo horneado de Niufo"
+  },
+  "17162": {
+    "name": "Sopa de manitas con rábano seco"
+  },
+  "17163": {
+    "name": "Conejo para comer frío"
+  },
+  "17164": {
+    "name": "Conejo en olla fresca de Zigong"
+  },
+  "17165": {
+    "name": "Siluro del río Qiuxi"
+  },
+  "17166": {
+    "name": "Cerdo blanco de Lizhuang"
+  },
+  "17167": {
+    "name": "Pescado asado de Hejiang"
+  },
+  "17168": {
+    "name": "Sepia pequeña con chile encurtido"
+  },
+  "17169": {
+    "name": "Gallo estofado (Shao Ji Gong)"
+  },
+  "17170": {
+    "name": "Pescado al vapor \"escalón de piedra\""
+  },
+  "17171": {
+    "name": "Rollitos de jamón y pollo"
+  },
+  "17172": {
+    "name": "Ternera Zhang Fei"
+  },
+  "17173": {
+    "name": "Empanadillas hojaldradas de pollo"
+  },
+  "17174": {
+    "name": "Pasteles de fideos de arroz perla"
+  },
+  "17175": {
+    "name": "Cerdo Tuozi (trozos grandes)"
+  },
+  "17176": {
+    "name": "Puré de melocotón \"copo de nieve\""
+  },
+  "17177": {
+    "name": "Pato prensado de Jianchang"
+  },
+  "17178": {
+    "name": "Oca blanca en salmuera de Rongchang"
+  },
+  "17179": {
+    "name": "Pastel de castaña de agua"
+  },
+  "17180": {
+    "name": "Fun guo de Xiaolan"
+  },
+  "17181": {
+    "name": "Cheung fun al vapor"
+  },
+  "17182": {
+    "name": "Albóndigas de ternera de Shantou"
+  },
+  "17183": {
+    "name": "Vieiras al vapor con ajo y fideos de cristal"
+  },
+  "17184": {
+    "name": "Lechuga con salsa de ostras"
+  },
+  "17185": {
+    "name": "Gambas escaldadas"
+  },
+  "17186": {
+    "name": "Salteado del estanque de loto"
+  },
+  "17187": {
+    "name": "Costillas al vapor con soja negra"
+  },
+  "17188": {
+    "name": "Fideos con langosta en caldo superior"
+  },
+  "17189": {
+    "name": "Mero coral al vapor"
+  },
+  "17190": {
+    "name": "Abulón Ah Yat"
+  },
+  "17191": {
+    "name": "Pepino de mar de Liao en salsa de abulón"
+  },
+  "17192": {
+    "name": "Panopea escaldada"
+  },
+  "17193": {
+    "name": "Fideos salteados con soja"
+  },
+  "17194": {
+    "name": "Galera a la sal y pimienta"
+  },
+  "17195": {
+    "name": "Nido de golondrina con coco y azúcar cande"
+  },
+  "17196": {
+    "name": "Papaya con hasma"
+  },
+  "17197": {
+    "name": "Choy sum escaldado"
+  },
+  "17198": {
+    "name": "Verduras con gambas secas"
+  },
+  "17199": {
+    "name": "Cochinillo asado"
+  },
+  "17200": {
+    "name": "Pichón estofado"
+  },
+  "17201": {
+    "name": "Cerdo asado crujiente (Siu Yuk)"
+  },
+  "17202": {
+    "name": "Pescado en salsa picante de soja"
+  },
+  "17203": {
+    "name": "Sopa de pollo sedoso a los diez tesoros"
+  },
+  "17204": {
+    "name": "Cerdo agridulce (Gu Lou Yuk)"
+  },
+  "17205": {
+    "name": "Congee de huevo centenario y cerdo"
+  },
+  "17206": {
+    "name": "Panceta con mostaza encurtida"
+  },
+  "17207": {
+    "name": "Sopa de carpín y tofu"
+  },
+  "17208": {
+    "name": "Sopa de pollo sedoso"
+  },
+  "17209": {
+    "name": "Lubina al vapor"
+  },
+  "17210": {
+    "name": "Hongo blanco en caldo claro"
+  },
+  "17211": {
+    "name": "Siu mai"
+  },
+  "17212": {
+    "name": "Arroz en hoja de loto"
+  },
+  "17213": {
+    "name": "Casquería de ternera con rábano"
+  },
+  "17214": {
+    "name": "Empanadillas con caldo y coral de cangrejo"
+  },
+  "17215": {
+    "name": "Bollos hojaldrados de pasta de loto"
+  },
+  "17216": {
+    "name": "Congee de sampán"
+  },
+  "17217": {
+    "name": "Caracoles salteados"
+  },
+  "17218": {
+    "name": "Congee del primer erudito"
+  },
+  "17219": {
+    "name": "Zongzi de Zhaoqing"
+  },
+  "17220": {
+    "name": "Pastel Lun Gaau"
+  },
+  "17221": {
+    "name": "Galletas Gai Zai Beng"
+  },
+  "17222": {
+    "name": "Bolas de pescado de Chaoshan"
+  },
+  "17223": {
+    "name": "Pollo con pasta de soja de Puning"
+  },
+  "17224": {
+    "name": "Pato en gelatina de siete colores"
+  },
+  "17225": {
+    "name": "Taro garrapiñado"
+  },
+  "17226": {
+    "name": "Pesca del día al vapor"
+  },
+  "17227": {
+    "name": "Sopa de kway teow con ternera"
+  },
+  "17228": {
+    "name": "Tripa de cerdo rellena de arroz glutinoso"
+  },
+  "17229": {
+    "name": "Puré dulce de taro con ginkgo"
+  },
+  "17230": {
+    "name": "Bolas de arroz Ah Bu Nian"
+  },
+  "17231": {
+    "name": "Ginkgo confitado"
+  },
+  "17232": {
+    "name": "Serpiente rellena frita \"peonía\""
+  },
+  "17233": {
+    "name": "Sopa de dragón y fénix"
+  },
+  "17234": {
+    "name": "Hu Guo Cai (sopa verde imperial)"
+  },
+  "17235": {
+    "name": "Surtido en salmuera de Chaozhou"
+  },
+  "17236": {
+    "name": "Cangrejo con huevas \"pareja de patos\""
+  },
+  "17237": {
+    "name": "Bolas de cangrejo en caldo claro"
+  },
+  "17238": {
+    "name": "Langosta con lechuga"
+  },
+  "17239": {
+    "name": "Aleta de tiburón guisada en rojo"
+  },
+  "17240": {
+    "name": "Atados de pata de pato"
+  },
+  "17241": {
+    "name": "Banquete nocturno del Rey Dragón"
+  },
+  "17242": {
+    "name": "Pollo a la sal de Meizhou"
+  },
+  "17243": {
+    "name": "Pollo dentro de buche de cerdo"
+  },
+  "17244": {
+    "name": "Melón amargo relleno hakka"
+  },
+  "17245": {
+    "name": "Chow fun de ternera"
+  },
+  "17246": {
+    "name": "Delicia de Buda (Lo Hon Jai)"
+  },
+  "17247": {
+    "name": "Pollo Wenchang de Cantón"
+  },
+  "17248": {
+    "name": "Arroz en cazuela (Bo Zai Fan)"
+  },
+  "17249": {
+    "name": "Olla de falda de cordero con piel de tofu"
+  },
+  "17250": {
+    "name": "Olla de falda de ternera con rábano"
+  },
+  "17251": {
+    "name": "Pato asado cantonés"
+  },
+  "17252": {
+    "name": "Choy sum en agua salada"
+  },
+  "17253": {
+    "name": "Egg foo young a la sartén"
+  },
+  "17254": {
+    "name": "Verduras supremas de Dinghu"
+  },
+  "17255": {
+    "name": "Col china \"chimenea\""
+  },
+  "17256": {
+    "name": "Pollo ahumado del abuelo (Tai Ye Gai)"
+  },
+  "17257": {
+    "name": "Panceta con taro"
+  },
+  "17258": {
+    "name": "Olla vegetal con tofu fermentado rojo"
+  },
+  "17259": {
+    "name": "Aleta de tiburón con corazones de col"
+  },
+  "17260": {
+    "name": "Lubina qilin"
+  },
+  "17261": {
+    "name": "Cangrejo al horno con jengibre y cebolleta"
+  },
+  "17262": {
+    "name": "Pollo a la soja con vino de rosa"
+  },
+  "17263": {
+    "name": "Tres estrellas de ternera"
+  },
+  "17264": {
+    "name": "Cheung fun al paño"
+  },
+  "17265": {
+    "name": "Cheung fun sencillo"
+  },
+  "17266": {
+    "name": "Fideos con wontons"
+  },
+  "17267": {
+    "name": "Buche de cerdo frío"
+  },
+  "17268": {
+    "name": "Bollos de crema fundida (Lau Sa Bao)"
+  },
+  "17269": {
+    "name": "Manitas de cerdo en vinagre de jengibre"
+  },
+  "17270": {
+    "name": "Lo mai gai (pollo con arroz glutinoso)"
+  },
+  "17271": {
+    "name": "Put chai ko (pudin en cuenco)"
+  },
+  "17272": {
+    "name": "Patas de pollo en salsa de ostras"
+  },
+  "17273": {
+    "name": "Sombrero de calabaza blanca variado"
+  },
+  "17274": {
+    "name": "Brisa refrescante"
+  },
+  "17275": {
+    "name": "Águila desplegando las alas"
+  },
+  "17276": {
+    "name": "Gambas tai chi al vapor"
+  },
+  "17277": {
+    "name": "Buche de pescado de las cien flores"
+  },
+  "17278": {
+    "name": "Shiitake \"begonia\""
+  },
+  "17279": {
+    "name": "Olla de pato con lágrimas de Job y calabaza blanca"
+  },
+  "17280": {
+    "name": "Loto en el estanque"
+  },
+  "17281": {
+    "name": "Hígado de oca en salmuera"
+  },
+  "17282": {
+    "name": "Tortilla de ostras de Chaoshan"
+  },
+  "17283": {
+    "name": "Gambas foo young"
+  },
+  "17284": {
+    "name": "Ternera con salsa satay"
+  },
+  "17285": {
+    "name": "Albóndigas de ternera de Chaozhou"
+  },
+  "17286": {
+    "name": "Arroz con pollo de Anpu"
+  },
+  "17287": {
+    "name": "Pepino de mar negro variado"
+  },
+  "17288": {
+    "name": "Dátiles de gamba fritos"
+  },
+  "17289": {
+    "name": "Calabaza rellena de puré de taro"
+  },
+  "17290": {
+    "name": "Zongzi de cerdo de Quanzhou"
+  },
+  "17291": {
+    "name": "Pato tres tazas"
+  },
+  "17292": {
+    "name": "Cerdo frito al vinagre del sur de Fujian"
+  },
+  "17293": {
+    "name": "Berenjena rellena hakka"
+  },
+  "17294": {
+    "name": "Fideos aliñados de Meizhou"
+  },
+  "17295": {
+    "name": "Tripa de cerdo salteada"
+  },
+  "17296": {
+    "name": "Sopa clara de cerdo hakka"
+  },
+  "17297": {
+    "name": "Rey del salteado de Chaozhou"
+  },
+  "17298": {
+    "name": "Tiras de tortuga salteadas"
+  },
+  "17299": {
+    "name": "Medusa con brotes de soja"
+  },
+  "17300": {
+    "name": "Sopa espesa de serpiente"
+  },
+  "17301": {
+    "name": "Sopa de pollo con ginseng"
+  },
+  "17302": {
+    "name": "Olla de buche de cerdo con ñame"
+  },
+  "17303": {
+    "name": "Serpiente a la sal y pimienta"
+  },
+  "17304": {
+    "name": "Melena de león con shiitake"
+  },
+  "17305": {
+    "name": "Abulón sobre arroz"
+  },
+  "17306": {
+    "name": "Abulón estofado"
+  },
+  "17307": {
+    "name": "Pepino de mar cantonés con huevas de gamba"
+  },
+  "17308": {
+    "name": "Zongzi de cerdo asado"
+  },
+  "17309": {
+    "name": "Empanadillas de cebollino"
+  },
+  "17310": {
+    "name": "Nido imperial en caparazón de cangrejo"
+  },
+  "17311": {
+    "name": "Lluvia de seda y nubes de setas"
+  },
+  "17312": {
+    "name": "Loto dorado del mar del Sur"
+  },
+  "17313": {
+    "name": "Empanadillas de taro hakka"
+  },
+  "17314": {
+    "name": "Bollos de taro de Yongding"
+  },
+  "17315": {
+    "name": "Plato de Wengong"
+  },
+  "17316": {
+    "name": "Setas con huevo \"doble moneda\""
+  },
+  "17317": {
+    "name": "Pollo en salsa de tomate"
+  },
+  "17318": {
+    "name": "Pato prensado de Jian'ou"
+  },
+  "17319": {
+    "name": "Qiang Rou (sopa de cerdo)"
+  },
+  "17320": {
+    "name": "Fideos de arroz de montaña de Puxian"
+  },
+  "17321": {
+    "name": "Pato en láminas con lías de vino"
+  },
+  "17322": {
+    "name": "Sopa de fideos de arroz de Putian"
+  },
+  "17323": {
+    "name": "Tofu guisado"
+  },
+  "17324": {
+    "name": "Wontons de Xitianwei (Bian Shi)"
+  },
+  "17325": {
+    "name": "Bollos a la plancha de Putian"
+  },
+  "17326": {
+    "name": "Hilo de cerdo Dingriyou"
+  },
+  "17327": {
+    "name": "Anguila de río \"rocío fragante\""
+  },
+  "17328": {
+    "name": "Almejas borrachas"
+  },
+  "17329": {
+    "name": "Aleta de tiburón en blanco"
+  },
+  "17330": {
+    "name": "Pollo borracho con lías de vino"
+  },
+  "17331": {
+    "name": "Vieiras secas foo young"
+  },
+  "17332": {
+    "name": "Pollo entero \"rocío fragante\""
+  },
+  "17333": {
+    "name": "Lubina crisantemo"
+  },
+  "17334": {
+    "name": "Calamar en flor"
+  },
+  "17335": {
+    "name": "Boniato seco de Liancheng"
+  },
+  "17336": {
+    "name": "Almejas escaldadas en caldo de pollo"
+  },
+  "17337": {
+    "name": "Navajas salteadas"
+  },
+  "17338": {
+    "name": "Puré de taro tai chi"
+  },
+  "17339": {
+    "name": "Doble crujiente salteado (callos y riñón)"
+  },
+  "17340": {
+    "name": "Hígado frito al estilo sureño"
+  },
+  "17341": {
+    "name": "Gambas cuerpo de dragón y cola de fénix"
+  },
+  "17342": {
+    "name": "Abulón de jade y perlas"
+  },
+  "17343": {
+    "name": "Bambú en hilos dorados con puré de pollo"
+  },
+  "17344": {
+    "name": "Labios de pescado con cerdo picado"
+  },
+  "17345": {
+    "name": "Bolas de pescado de Fuzhou"
+  },
+  "17346": {
+    "name": "Rou Yan de Fuzhou (wontons de carne)"
+  },
+  "17347": {
+    "name": "Lor mee de Zhangzhou"
+  },
+  "17348": {
+    "name": "Lor mee de Putian"
+  },
+  "17349": {
+    "name": "Tortilla de ostras (O-a-jian)"
+  },
+  "17350": {
+    "name": "Fideos con cacahuete de Shaxian"
+  },
+  "17351": {
+    "name": "Fideos satay de Xiamen"
+  },
+  "17352": {
+    "name": "Gachas de mee sua de Quanzhou"
+  },
+  "17353": {
+    "name": "Arroz salado del sur de Fujian"
+  },
+  "17354": {
+    "name": "Fideos de arroz de Xinghua"
+  },
+  "17355": {
+    "name": "Pescado con lías de vino rojo"
+  },
+  "17356": {
+    "name": "Pescado de los cinco sauces"
+  },
+  "17357": {
+    "name": "Pollo blanco nieve"
+  },
+  "17358": {
+    "name": "Tofu seco de Changting"
+  },
+  "17359": {
+    "name": "Bian Rou de Fujian (wontons de cerdo)"
+  },
+  "17360": {
+    "name": "Char kway teow"
+  },
+  "17361": {
+    "name": "Rollitos de piel de tofu del sur de Fujian"
+  },
+  "17362": {
+    "name": "Almejas \"lengua de Xi Shi\" con huevo"
+  },
+  "17363": {
+    "name": "Fideos de pescado con marisco"
+  },
+  "17364": {
+    "name": "Media luna hundida en el río"
+  },
+  "17365": {
+    "name": "Albóndigas cabeza de león estofadas"
+  },
+  "17366": {
+    "name": "Anguila de río estofada"
+  },
+  "17367": {
+    "name": "Sopa de bolas de pescado siete estrellas"
+  },
+  "17368": {
+    "name": "Lingzhi y cigarra de jade"
+  },
+  "17369": {
+    "name": "Navajas secas con patata"
+  },
+  "17370": {
+    "name": "Almejas de mar salteadas"
+  },
+  "17371": {
+    "name": "Torta de cerdo y cebolleta"
+  },
+  "17372": {
+    "name": "Guang Bing (rosquilla de Fuzhou)"
+  },
+  "17373": {
+    "name": "Buñuelos de ostra"
+  },
+  "17374": {
+    "name": "Bollos de cristal"
+  },
+  "17375": {
+    "name": "Pastel de azufaifa y ñame"
+  },
+  "17376": {
+    "name": "Carne de cangrejo con osmanto"
+  },
+  "17377": {
+    "name": "Pastel de osmanto de Xiayang"
+  },
+  "17378": {
+    "name": "Caracol de mar con ajo tierno"
+  },
+  "17379": {
+    "name": "Caracol en láminas en cesta \"nido\""
+  },
+  "17380": {
+    "name": "Brema con brotes de bambú"
+  },
+  "17381": {
+    "name": "Labios de pescado con puré de pollo"
+  },
+  "17382": {
+    "name": "Labios de pescado \"jade precioso\""
+  },
+  "17383": {
+    "name": "Almejas \"hibisco\""
+  },
+  "17384": {
+    "name": "Abulón y hasma en caldo de pollo"
+  },
+  "17385": {
+    "name": "Mero en láminas salteado"
+  },
+  "17386": {
+    "name": "Sopa espesa de bacalao jade"
+  },
+  "17387": {
+    "name": "Abulón con dos tesoros de invierno"
+  },
+  "17388": {
+    "name": "Abulón con rollitos de pescado"
+  },
+  "17389": {
+    "name": "Abulón pequeño bañado en aceite"
+  },
+  "17390": {
+    "name": "Abulón de primera"
+  },
+  "17391": {
+    "name": "Huevo al vapor con almejas"
+  },
+  "17392": {
+    "name": "Almejas en caldo de lías de vino"
+  },
+  "17393": {
+    "name": "Mero al vapor"
+  },
+  "17394": {
+    "name": "Pasteles de tortuga roja"
+  },
+  "17395": {
+    "name": "Copa de aleta de tiburón en calabaza"
+  },
+  "17396": {
+    "name": "Aleta de tiburón guisada con hilos de carne"
+  },
+  "17397": {
+    "name": "Sopa espesa de pepino de mar"
+  },
+  "17398": {
+    "name": "Pepino de mar guisado a las tres delicias"
+  },
+  "17399": {
+    "name": "Rollitos de sepia salteados en blanco"
+  },
+  "17400": {
+    "name": "Buche de pescado relleno \"crisantemo\""
+  },
+  "17401": {
+    "name": "Puntas de callos a la sal y pimienta"
+  },
+  "17402": {
+    "name": "Medusa salteada"
+  },
+  "17403": {
+    "name": "Tendón guisado con cebolleta"
+  },
+  "17404": {
+    "name": "Arroz frito con gambas secas y mostaza"
+  },
+  "17405": {
+    "name": "Palometa de primera"
+  },
+  "17406": {
+    "name": "Lubina de Jiangdong con jengibre"
+  },
+  "17407": {
+    "name": "Sopa de tortuga de caparazón blando"
+  },
+  "17408": {
+    "name": "Tortuga de caparazón blando estofada"
+  },
+  "17409": {
+    "name": "Caracoles con cerdo picado"
+  },
+  "17410": {
+    "name": "Oca ahumada de Langu"
+  },
+  "17411": {
+    "name": "Sopa de pato con hongo blanco"
+  },
+  "17412": {
+    "name": "Pato en salmuera"
+  },
+  "17413": {
+    "name": "Pato prensado de Nankín"
+  },
+  "17414": {
+    "name": "Tiras de tofu cocidas"
+  },
+  "17415": {
+    "name": "Gluten relleno de cerdo"
+  },
+  "17416": {
+    "name": "Anguila crujiente de Liangxi"
+  },
+  "17417": {
+    "name": "Pato relleno triple"
+  },
+  "17418": {
+    "name": "Pollito frito y glaseado"
+  },
+  "17419": {
+    "name": "Sopa de tofu Wensi"
+  },
+  "17420": {
+    "name": "Albóndigas cabeza de león en caldo claro"
+  },
+  "17421": {
+    "name": "Cecina de cerdo de Jingjiang"
+  },
+  "17422": {
+    "name": "Pollo a los cinco sabores de Yi Ya"
+  },
+  "17423": {
+    "name": "Pollo \"pareja de patos\""
+  },
+  "17424": {
+    "name": "Pato Letian"
+  },
+  "17425": {
+    "name": "La consorte Ji acompaña al emperador"
+  },
+  "17426": {
+    "name": "Pollo de corral en olla de tierra"
+  },
+  "17427": {
+    "name": "Carpa de cuatro agallas"
+  },
+  "17428": {
+    "name": "Pescado Yu Jiu"
+  },
+  "17429": {
+    "name": "Sapo dorado jugando con una perla"
+  },
+  "17430": {
+    "name": "Costillas glaseadas de Wuxi"
+  },
+  "17431": {
+    "name": "Cabeza de cerdo en salsa Lugaojian"
+  },
+  "17432": {
+    "name": "Arroz frito Yangzhou"
+  },
+  "17433": {
+    "name": "Paquetitos de piel de tofu con bambú y cerdo salado"
+  },
+  "17434": {
+    "name": "Gambas en salmuera"
+  },
+  "17435": {
+    "name": "Aleta de tiburón envuelta en pato"
+  },
+  "17436": {
+    "name": "Corazones de col guisados"
+  },
+  "17437": {
+    "name": "Siu mai de huevo"
+  },
+  "17438": {
+    "name": "Pechuga de oca colorete"
+  },
+  "17439": {
+    "name": "Pato barca con salsa madre"
+  },
+  "17440": {
+    "name": "Langostinos salteados en aceite"
+  },
+  "17441": {
+    "name": "Tofu \"caja espejo\""
+  },
+  "17442": {
+    "name": "Huevos piel de tigre"
+  },
+  "17443": {
+    "name": "Cerdo en salsa a las cinco especias"
+  },
+  "17444": {
+    "name": "Pato calabaza a los ocho tesoros"
+  },
+  "17445": {
+    "name": "Tortilla con cerdo en tiras"
+  },
+  "17446": {
+    "name": "Perca mandarina con costillas"
+  },
+  "17447": {
+    "name": "Perca mandarina ardilla (Songshu Guiyu)"
+  },
+  "17448": {
+    "name": "Lubina ardilla"
+  },
+  "17449": {
+    "name": "Perca mandarina coral"
+  },
+  "17450": {
+    "name": "Pato asado de Nankín"
+  },
+  "17451": {
+    "name": "Pato char siu"
+  },
+  "17452": {
+    "name": "Perca mandarina char siu"
+  },
+  "17453": {
+    "name": "Pescado escondido en cordero"
+  },
+  "17454": {
+    "name": "Terrina de cerdo de cristal (Yao Rou)"
+  },
+  "17455": {
+    "name": "Cabeza de león con cangrejo en caldo claro"
+  },
+  "17456": {
+    "name": "Lubina de Wujiang al vapor"
+  },
+  "17457": {
+    "name": "Codillo de cerdo estofado"
+  },
+  "17458": {
+    "name": "Costillas en salsa de soja"
+  },
+  "17459": {
+    "name": "Huevos revueltos con pescadito"
+  },
+  "17460": {
+    "name": "Cerdo en salsa de tofu fermentado"
+  },
+  "17461": {
+    "name": "Tangyuan de cinco colores"
+  },
+  "17462": {
+    "name": "Pescadito crujiente"
+  },
+  "17463": {
+    "name": "Maíz con tangyuan"
+  },
+  "17464": {
+    "name": "Codorniz escaldada"
+  },
+  "17465": {
+    "name": "Huevo con puré de pollo"
+  },
+  "17466": {
+    "name": "Pastel de osmanto de Nankín"
+  },
+  "17467": {
+    "name": "Taro con osmanto"
+  },
+  "17468": {
+    "name": "Nian gao con osmanto"
+  },
+  "17469": {
+    "name": "Yuanxiao de judía roja con osmanto"
+  },
+  "17470": {
+    "name": "Ginkgo con osmanto"
+  },
+  "17471": {
+    "name": "Cerdo de regalo de Dongpo"
+  },
+  "17472": {
+    "name": "Codillo fragante atado"
+  },
+  "17473": {
+    "name": "Albóndigas Taixu"
+  },
+  "17474": {
+    "name": "Sanzi mariposa"
+  },
+  "17475": {
+    "name": "Dulce crujiente infantil"
+  },
+  "17476": {
+    "name": "Mi San Dao (pasta de miel de tres cortes)"
+  },
+  "17477": {
+    "name": "Sopa de faisán (Zhi Geng)"
+  },
+  "17478": {
+    "name": "Sopa picante de Xuzhou (La Tang)"
+  },
+  "17479": {
+    "name": "Fideos fríos de Peixian"
+  },
+  "17480": {
+    "name": "Hígado de la belleza (páncreas de pato)"
+  },
+  "17481": {
+    "name": "Sopa de gambas, calabaza blanca y fideos"
+  },
+  "17482": {
+    "name": "Xiaolongbao"
+  },
+  "17483": {
+    "name": "Pastel flor de ciruelo"
+  },
+  "17484": {
+    "name": "Guotie de ternera"
+  },
+  "17485": {
+    "name": "Taro tierno azucarado con osmanto"
+  },
+  "17486": {
+    "name": "Raíz de loto en congee dulce"
+  },
+  "17487": {
+    "name": "Raíz de loto rellena de arroz glutinoso con osmanto"
+  },
+  "17488": {
+    "name": "Pan de sésamo de Huangqiao"
+  },
+  "17489": {
+    "name": "Pan hojaldrado con grasa de pato"
+  },
+  "17490": {
+    "name": "Fideos hilos de plata de Changzhou"
+  },
+  "17491": {
+    "name": "Habas a las cinco especias"
+  },
+  "17492": {
+    "name": "Huevos a las cinco especias"
+  },
+  "17493": {
+    "name": "Tofu Ruyi en salmuera"
+  },
+  "17494": {
+    "name": "Sopa de sangre de pato con fideos de Nankín"
+  },
+  "17495": {
+    "name": "Douhua variado"
+  },
+  "17496": {
+    "name": "Habas del primer erudito"
+  },
+  "17497": {
+    "name": "Wontons pequeños"
+  },
+  "17498": {
+    "name": "Fideos cocidos pequeños"
+  },
+  "17499": {
+    "name": "Bollos con caldo de pollo de la familia Yin"
+  },
+  "17500": {
+    "name": "Sopa espesa de tofu de Pingqiao"
+  },
+  "17501": {
+    "name": "Maíz con piñones"
+  },
+  "17502": {
+    "name": "El mejor plato bajo el cielo"
+  },
+  "17503": {
+    "name": "Grulla mirando el puente dorado"
+  },
+  "17504": {
+    "name": "Pollo guisado con shiitake"
+  },
+  "17505": {
+    "name": "Codillo atado de Gaogou"
+  },
+  "17506": {
+    "name": "Pollo entero en caldo claro"
+  },
+  "17507": {
+    "name": "Hilos de cinco colores \"conejo de jade\""
+  },
+  "17508": {
+    "name": "Calipash de tortuga jade"
+  },
+  "17509": {
+    "name": "Pastitas crujientes de pollito"
+  },
+  "17510": {
+    "name": "Cerdo con piñones"
+  },
+  "17511": {
+    "name": "Tofu con tres gambas"
+  },
+  "17512": {
+    "name": "Pescado entero en salsa blanca"
+  },
+  "17513": {
+    "name": "Cerdo con osmanto"
+  },
+  "17514": {
+    "name": "Brotes de bambú estofados en aceite"
+  },
+  "17515": {
+    "name": "Sopa de semillas de loto con azúcar cande"
+  },
+  "17516": {
+    "name": "Pastel Song Gao"
+  },
+  "17517": {
+    "name": "Pastel del primer erudito"
+  },
+  "17518": {
+    "name": "Zongzi de cerdo fresco"
+  },
+  "17519": {
+    "name": "Xiaolongbao Zhiwei"
+  },
+  "17520": {
+    "name": "Torta hojaldrada de mantequilla"
+  },
+  "17521": {
+    "name": "Fideos con gamba y anguila"
+  },
+  "17522": {
+    "name": "Cangrejo peludo al vapor"
+  },
+  "17523": {
+    "name": "Yi mein estofado en seco"
+  },
+  "17524": {
+    "name": "Semillas de euryale con osmanto"
+  },
+  "17525": {
+    "name": "Tortas de arroz fermentado con osmanto"
+  },
+  "17526": {
+    "name": "Sopa de ñame, loto y osmanto"
+  },
+  "17527": {
+    "name": "Castañas confitadas con osmanto"
+  },
+  "17528": {
+    "name": "Tortuga guisada con cordyceps"
+  },
+  "17529": {
+    "name": "Abulón y aleta gratinados con cordyceps"
+  },
+  "17530": {
+    "name": "Labios de pescado en salsa blanca"
+  },
+  "17531": {
+    "name": "Labios de pescado con huevos en lías"
+  },
+  "17532": {
+    "name": "Labios de pescado en blanco"
+  },
+  "17533": {
+    "name": "Pescadito frito crujiente"
+  },
+  "17534": {
+    "name": "Pez hielo especial del lago Tai"
+  },
+  "17535": {
+    "name": "Bacalao frito fragante"
+  },
+  "17536": {
+    "name": "Pintada con ginseng"
+  },
+  "17537": {
+    "name": "Nido de golondrina en coco"
+  },
+  "17538": {
+    "name": "Abulón en salsa ligera"
+  },
+  "17539": {
+    "name": "Abulón en caparazón de cangrejo"
+  },
+  "17540": {
+    "name": "Tofu de pescado en salsa de abulón"
+  },
+  "17541": {
+    "name": "Abulón infusionado en caldo de pollo"
+  },
+  "17542": {
+    "name": "Pepino de mar en caldo dorado"
+  },
+  "17543": {
+    "name": "Pepino de mar de Jiangsu con huevas de gamba"
+  },
+  "17544": {
+    "name": "Ternera aromatizada al té"
+  },
+  "17545": {
+    "name": "Patas de pollo al ajo"
+  },
+  "17546": {
+    "name": "Ternera crujiente a la sartén"
+  },
+  "17547": {
+    "name": "Costillitas agridulces"
+  },
+  "17548": {
+    "name": "Cerdo en tiras de Qianjiang"
+  },
+  "17549": {
+    "name": "Solomillo de cerdo con shiitake"
+  },
+  "17550": {
+    "name": "Sopa de costillas con kombu"
+  },
+  "17551": {
+    "name": "Pescado en láminas con tomate"
+  },
+  "17552": {
+    "name": "Pescado ahumado al vino Huadiao"
+  },
+  "17553": {
+    "name": "Ensalada de medusa"
+  },
+  "17554": {
+    "name": "Gambas golpeadas en tres láminas"
+  },
+  "17555": {
+    "name": "Tortilla de gambas"
+  },
+  "17556": {
+    "name": "Cong Bao Hui'er (churros envueltos con cebolleta)"
+  },
+  "17557": {
+    "name": "Calabaza blanca estofada"
+  },
+  "17558": {
+    "name": "Pan horneado de Jinyun"
+  },
+  "17559": {
+    "name": "Cerdo Dongpo de Hangzhou"
+  },
+  "17560": {
+    "name": "Cerdo salado casero de Jinhua"
+  },
+  "17561": {
+    "name": "Campanitas fritas (Xiang Ling)"
+  },
+  "17562": {
+    "name": "Cerdo al vapor con harina de arroz en hoja de loto"
+  },
+  "17563": {
+    "name": "Pollo guisado de Hangzhou"
+  },
+  "17564": {
+    "name": "Jamón vegetariano de Hupao"
+  },
+  "17565": {
+    "name": "Cerdo guisado con mostaza seca"
+  },
+  "17566": {
+    "name": "Sopa espesa de almeja y corvina"
+  },
+  "17567": {
+    "name": "Pollito del mendigo"
+  },
+  "17568": {
+    "name": "Cerdo estofado crujiente"
+  },
+  "17569": {
+    "name": "Corvina al vapor con calabaza esponja"
+  },
+  "17570": {
+    "name": "Navajas con tres hilos"
+  },
+  "17571": {
+    "name": "Bizcocho al vapor con osmanto"
+  },
+  "17572": {
+    "name": "Sopa de corvina con mostaza de nieve"
+  },
+  "17573": {
+    "name": "Raíz de loto con miel"
+  },
+  "17574": {
+    "name": "Tangyuan de Ningbo"
+  },
+  "17575": {
+    "name": "Paquetitos de piel de tofu de Huzhou"
+  },
+  "17576": {
+    "name": "Painan (costillas saladas de Ningbo)"
+  },
+  "17577": {
+    "name": "Pollo Yue en caldo claro"
+  },
+  "17578": {
+    "name": "Cazuela de cabeza de pescado y tofu"
+  },
+  "17579": {
+    "name": "Sopa espesa de cabeza de pescado"
+  },
+  "17580": {
+    "name": "Rollitos de sepia salteados"
+  },
+  "17581": {
+    "name": "Pato de los inmortales con codillo de jamón"
+  },
+  "17582": {
+    "name": "Taco de jamón glaseado con miel"
+  },
+  "17583": {
+    "name": "Muslos de pollo con taro"
+  },
+  "17584": {
+    "name": "Anguila estofada en olla"
+  },
+  "17585": {
+    "name": "Gambas glaseadas con lías de vino"
+  },
+  "17586": {
+    "name": "Cabeza y vientre de pescado al vinagre"
+  },
+  "17587": {
+    "name": "Perca mandarina al vapor"
+  },
+  "17588": {
+    "name": "Pescado golpeado con tres hilos"
+  },
+  "17589": {
+    "name": "Cangrejo nadador de dos maneras"
+  },
+  "17590": {
+    "name": "Piel de pescado al ajo"
+  },
+  "17591": {
+    "name": "Solomillo de ternera con pimientos de Hangzhou"
+  },
+  "17592": {
+    "name": "Fideos de banquete a las tres delicias"
+  },
+  "17593": {
+    "name": "Pastel de castaña de agua de Zhejiang (Di Li Gao)"
+  },
+  "17594": {
+    "name": "Brotes de bambú en lías de vino"
+  },
+  "17595": {
+    "name": "Pollo en tiras con crisantemo de Hangzhou"
+  },
+  "17596": {
+    "name": "Cerdo en láminas con oreja de judas y apio"
+  },
+  "17597": {
+    "name": "Pollito con castañas"
+  },
+  "17598": {
+    "name": "Langostinos con cordyceps y eucommia"
+  },
+  "17599": {
+    "name": "Tomates guisados con cordyceps"
+  },
+  "17600": {
+    "name": "Caracol de mar borracho de Ningbo"
+  },
+  "17601": {
+    "name": "Labios de pescado en caldo de pollo"
+  },
+  "17602": {
+    "name": "Cazuela de labios de pescado"
+  },
+  "17603": {
+    "name": "Hígado de oca con castañas"
+  },
+  "17604": {
+    "name": "Hasma con semillas de loto y azufaifa"
+  },
+  "17605": {
+    "name": "Tofu con hasma y coral de cangrejo"
+  },
+  "17606": {
+    "name": "Pescadito medio frito medio hervido"
+  },
+  "17607": {
+    "name": "Sopa espesa de pescadito del Lago del Oeste"
+  },
+  "17608": {
+    "name": "Albóndigas cabeza de león de bacalao"
+  },
+  "17609": {
+    "name": "Bacalao a la sartén con aroma de té"
+  },
+  "17610": {
+    "name": "Bacalao en caldo de pollo"
+  },
+  "17611": {
+    "name": "Pollo sedoso con ginseng"
+  },
+  "17612": {
+    "name": "Sopa de abulón y buche en láminas"
+  },
+  "17613": {
+    "name": "Tres delicias de Hangzhou"
+  },
+  "17614": {
+    "name": "Pato en salsa de soja de Hangzhou"
+  },
+  "17615": {
+    "name": "Tofu Xi Shi"
+  },
+  "17616": {
+    "name": "Corvina borracha al vino Huadiao"
+  },
+  "17617": {
+    "name": "Pollo borracho de Shaoxing"
+  },
+  "17618": {
+    "name": "Pollo en lías de vino"
+  },
+  "17619": {
+    "name": "Cangrejo borracho"
+  },
+  "17620": {
+    "name": "Carpa negra seca en lías de vino"
+  },
+  "17621": {
+    "name": "Pescado con castañas y osmanto"
+  },
+  "17622": {
+    "name": "Huevos escalfados en vino de arroz con osmanto"
+  },
+  "17623": {
+    "name": "Ostras empanadas"
+  },
+  "17624": {
+    "name": "Tiras de pescado con osmanto"
+  },
+  "17625": {
+    "name": "Cangrejo frito a los cinco sabores"
+  },
+  "17626": {
+    "name": "Melena de león estofada"
+  },
+  "17627": {
+    "name": "Melena de león con cuatro tesoros"
+  },
+  "17628": {
+    "name": "Sopa de pollo con melena de león"
+  },
+  "17629": {
+    "name": "Sopa espesa de ternera del Lago del Oeste"
+  },
+  "17630": {
+    "name": "Berenjena Dongpo"
+  },
+  "17631": {
+    "name": "Raíz de loto azucarada con osmanto"
+  },
+  "17632": {
+    "name": "Calabaza con yema salada"
+  },
+  "17633": {
+    "name": "Huevos amarillos glaseados"
+  },
+  "17634": {
+    "name": "Castañas con shiitake"
+  },
+  "17635": {
+    "name": "Kombu guisado con cerdo picado"
+  },
+  "17636": {
+    "name": "Cangrejo crudo marinado de Ningbo"
+  },
+  "17637": {
+    "name": "Fideos de arroz salteados de Wenzhou"
+  },
+  "17638": {
+    "name": "Congee de cangrejo"
+  },
+  "17639": {
+    "name": "Pastelitos lámpara (Deng Zhan Gao)"
+  },
+  "17640": {
+    "name": "Abulón pequeño con aceite de cebolleta"
+  },
+  "17641": {
+    "name": "Gambas borrachas"
+  },
+  "17642": {
+    "name": "Corvina frita y glaseada"
+  },
+  "17643": {
+    "name": "Tortilla de navajas"
+  },
+  "17644": {
+    "name": "Bolas de pescado de Wenzhou"
+  },
+  "17645": {
+    "name": "Corvina envuelta en piel de tofu"
+  },
+  "17646": {
+    "name": "Tangtuan de manteca"
+  },
+  "17647": {
+    "name": "Hígado de oca envuelto en redaño"
+  },
+  "17648": {
+    "name": "Buche de corvina"
+  },
+  "17649": {
+    "name": "Bolas doradas de dragón y fénix"
+  },
+  "17650": {
+    "name": "Arroz de los ocho tesoros con judía roja"
+  },
+  "17651": {
+    "name": "Bollos de cristal con manteca"
+  },
+  "17652": {
+    "name": "Wontons de cerdo al vapor"
+  },
+  "17653": {
+    "name": "Bolitas de judía roja"
+  },
+  "17654": {
+    "name": "Pan grande con cerdo ahumado de Li Liangui"
+  },
+  "17655": {
+    "name": "Huitou de Shenyang (empanadillas a la sartén)"
+  },
+  "17656": {
+    "name": "Calamar a la plancha de Dalian"
+  },
+  "17657": {
+    "name": "Pescado salado con tortas de maíz"
+  },
+  "17658": {
+    "name": "Menzi de marisco (gelatina de almidón)"
+  },
+  "17659": {
+    "name": "Vieiras \"copo de nieve\" de cinco colores"
+  },
+  "17660": {
+    "name": "Cecina \"hoja de arce\""
+  },
+  "17661": {
+    "name": "Tsampa con mantequilla"
+  },
+  "17662": {
+    "name": "Solomillo de cerdo con miel"
+  },
+  "17663": {
+    "name": "Pollo con cordyceps y clara de huevo"
+  },
+  "17664": {
+    "name": "Rollitos de carne \"balsa\""
+  },
+  "17665": {
+    "name": "Perdigallo guisado con cordyceps"
+  },
+  "17666": {
+    "name": "Ternera rellena de pasta de judía"
+  },
+  "17667": {
+    "name": "Pescado seco en tabla"
+  },
+  "17668": {
+    "name": "Tendón de ternera al vapor"
+  },
+  "17669": {
+    "name": "Brotes de bambú ahumados de Jinggang"
+  },
+  "17670": {
+    "name": "Perca mandarina con fideos de arroz"
+  },
+  "17671": {
+    "name": "Tortuga con láminas de almidón"
+  },
+  "17672": {
+    "name": "Pollo sedoso reconstituyente"
+  },
+  "17673": {
+    "name": "Dragón verde refinando oro"
+  },
+  "17674": {
+    "name": "Tabla de oro y puente de plata"
+  },
+  "17675": {
+    "name": "Rollitos a las tres delicias"
+  },
+  "17676": {
+    "name": "Aleta vegetariana a los tres hilos"
+  },
+  "17677": {
+    "name": "Aleta de tiburón en salsa blanca"
+  },
+  "17678": {
+    "name": "Piel de pescado con osmanto"
+  },
+  "17679": {
+    "name": "Abulón con chile"
+  },
+  "17680": {
+    "name": "Pollo estofado en seco con abulón"
+  },
+  "17681": {
+    "name": "Xia geng guo (pastel de arroz de verano)"
+  },
+  "17682": {
+    "name": "Cerdo ahumado con chile"
+  },
+  "17683": {
+    "name": "Carne de yak de Qinghai"
+  },
+  "17684": {
+    "name": "Mashi (conchitas de pasta)"
+  },
+  "17685": {
+    "name": "Fideos petardo"
+  },
+  "17686": {
+    "name": "Fideos jiangshui (caldo fermentado)"
+  },
+  "17687": {
+    "name": "Pepino de mar ágata"
+  },
+  "17688": {
+    "name": "Té hervido (Ao Cha)"
+  },
+  "17689": {
+    "name": "Pastel de goji"
+  },
+  "17690": {
+    "name": "Fat choy \"pez dorado\""
+  },
+  "17691": {
+    "name": "Rollitos de rábano de Guangchang"
+  },
+  "17692": {
+    "name": "Pasteles de arroz Dahe"
+  },
+  "17693": {
+    "name": "Pescado salteado del sur de Jiangxi"
+  },
+  "17694": {
+    "name": "Olla de cabeza de pescado con láminas de almidón"
+  },
+  "17695": {
+    "name": "Panceta con calabaza blanca"
+  },
+  "17696": {
+    "name": "Cerdo guisado con palitos de tofu"
+  },
+  "17697": {
+    "name": "Sopa de carpín y raíz de loto"
+  },
+  "17698": {
+    "name": "Pollo guisado con liquen de roca"
+  },
+  "17699": {
+    "name": "Sopa de conejo con bulbo de lirio y ñame"
+  },
+  "17700": {
+    "name": "Mero del monte Wugong"
+  },
+  "17701": {
+    "name": "Panceta estofada de Guifeng"
+  },
+  "17702": {
+    "name": "Sopa de paloma con cordyceps"
+  },
+  "17703": {
+    "name": "Pastelitos de té con osmanto de Jiujiang"
+  },
+  "17704": {
+    "name": "Pastel de gamba relleno"
+  },
+  "17705": {
+    "name": "Dendrobium, ginseng y nido de golondrina"
+  },
+  "17706": {
+    "name": "Dos golondrinas vuelven al nido"
+  },
+  "17707": {
+    "name": "Perla en la palma"
+  },
+  "17708": {
+    "name": "Hasma con cereza y mandarina"
+  },
+  "17709": {
+    "name": "Tortuga \"herradura\" en caldo claro"
+  },
+  "17710": {
+    "name": "Tofu relleno"
+  },
+  "17711": {
+    "name": "Flores de calamar salteadas"
+  },
+  "17712": {
+    "name": "Dalian huoshao (empanadillas a la plancha)"
+  },
+  "17713": {
+    "name": "Rollitos de judía blanca"
+  },
+  "17714": {
+    "name": "Empanada de carne de Jingdong"
+  },
+  "17715": {
+    "name": "Buñuelos de crema"
+  },
+  "17716": {
+    "name": "Pastel amarillo de Pekín"
+  },
+  "17717": {
+    "name": "Té de aceite (harina de mijo)"
+  },
+  "17718": {
+    "name": "Chao gan'r (hígado y tripa de cerdo)"
+  },
+  "17719": {
+    "name": "Aleta de tiburón perla"
+  },
+  "17720": {
+    "name": "Mollejas de pato picantes crujientes"
+  },
+  "17721": {
+    "name": "Pollo en dados de Wenshan"
+  },
+  "17722": {
+    "name": "Sopa de pollo de corral Laobiao"
+  },
+  "17723": {
+    "name": "Cerdo Dongpo con col encurtida"
+  },
+  "17724": {
+    "name": "Cabeza de pescado del lago Poyang"
+  },
+  "17725": {
+    "name": "Bolitas \"ceja\" con pepino de mar"
+  },
+  "17726": {
+    "name": "Cuatro tesoros Xinya"
+  },
+  "17727": {
+    "name": "Empanadas de Haicheng"
+  },
+  "17728": {
+    "name": "Suan Tang Zi (fideos de maíz fermentado)"
+  },
+  "17729": {
+    "name": "Pastita blanca hojaldrada"
+  },
+  "17730": {
+    "name": "Bao'er fan (arroz envuelto en lechuga)"
+  },
+  "17731": {
+    "name": "Ensalada mala (Mala Ban)"
+  },
+  "17732": {
+    "name": "Bollos de harina de soja"
+  },
+  "17733": {
+    "name": "Tortitas de ñame"
+  },
+  "17734": {
+    "name": "Huoshao de azúcar"
+  },
+  "17735": {
+    "name": "Panecillos de hilos de plata"
+  },
+  "17736": {
+    "name": "Pastel de luna Zilaibai"
+  },
+  "17737": {
+    "name": "Wandou huang (pastel de guisante)"
+  },
+  "17738": {
+    "name": "Guanchang de Pekín (salchicha de almidón frita)"
+  },
+  "17739": {
+    "name": "Bao du (callos escaldados)"
+  },
+  "17740": {
+    "name": "Cangrejo peludo del lago Junshan al vapor"
+  },
+  "17741": {
+    "name": "Brotes de bambú ruyi"
+  },
+  "17742": {
+    "name": "Cerdo del patriota"
+  },
+  "17743": {
+    "name": "Cerdo salteado de Pingxiang"
+  },
+  "17744": {
+    "name": "Cerdo \"avispón de jade blanco\""
+  },
+  "17745": {
+    "name": "La túnica amarilla saluda al rey"
+  },
+  "17746": {
+    "name": "Trozos de cerdo glaseados"
+  },
+  "17747": {
+    "name": "Espinazo de cerdo en salsa de soja"
+  },
+  "17748": {
+    "name": "Tofu de cangrejo de río"
+  },
+  "17749": {
+    "name": "Piel de tofu asada"
+  },
+  "17750": {
+    "name": "Cerdo dorado"
+  },
+  "17751": {
+    "name": "Hasma con azúcar cande"
+  },
+  "17752": {
+    "name": "Carpa en tiras del lago Jingpo"
+  },
+  "17753": {
+    "name": "Dragón jugando con el fénix"
+  },
+  "17754": {
+    "name": "Melena de león borracha con pepino"
+  },
+  "17755": {
+    "name": "Pastel de arroz machacado (tteok)"
+  },
+  "17756": {
+    "name": "Tofu con coral de cangrejo"
+  },
+  "17757": {
+    "name": "Pastel en cuenco de Pekín"
+  },
+  "17758": {
+    "name": "Pato asado vegetariano"
+  },
+  "17759": {
+    "name": "Hojaldre \"flor de hielo\""
+  },
+  "17760": {
+    "name": "Cerdo hervido"
+  },
+  "17761": {
+    "name": "Pepino encurtido en soja de Pekín"
+  },
+  "17762": {
+    "name": "Pescado ofrecido en la puerta del palacio"
+  },
+  "17763": {
+    "name": "Pato estofado del Ejército Rojo"
+  },
+  "17764": {
+    "name": "Pescado de carretera de Yiyang"
+  },
+  "17765": {
+    "name": "Casquería de ternera de Linchuan"
+  },
+  "17766": {
+    "name": "Bolitas de loto al vapor de Poyang"
+  },
+  "17767": {
+    "name": "Pasteles de arroz glutinoso de Wuyuan"
+  },
+  "17768": {
+    "name": "Pescadito en caldo dorado"
+  },
+  "17769": {
+    "name": "Callos de ternera de Linchuan"
+  },
+  "17770": {
+    "name": "Beso de hada"
+  },
+  "17771": {
+    "name": "Di San Xian (tres tesoros de la tierra)"
+  },
+  "17772": {
+    "name": "Cerdo blanco con morcilla"
+  },
+  "17773": {
+    "name": "Buñuelos de judía roja \"abrigo de nieve\""
+  },
+  "17774": {
+    "name": "Cerdo guisado con fideos de cristal"
+  },
+  "17775": {
+    "name": "Pollo guisado con setas"
+  },
+  "17776": {
+    "name": "Col fermentada con cerdo blanco"
+  },
+  "17777": {
+    "name": "Tres blancos estofados"
+  },
+  "17778": {
+    "name": "Láminas de pescado \"virutas\""
+  },
+  "17779": {
+    "name": "Cigarra dorada jugando con la peonía"
+  },
+  "17780": {
+    "name": "Pan hui musulmán"
+  },
+  "17781": {
+    "name": "Baozi de relleno jugoso"
+  },
+  "17782": {
+    "name": "Judías verdes con pan al vapor"
+  },
+  "17783": {
+    "name": "Cerdo curado en soja"
+  },
+  "17784": {
+    "name": "Guo lao (empanadillas a la plancha)"
+  },
+  "17785": {
+    "name": "Pan de horno de tinaja con cebolleta"
+  },
+  "17786": {
+    "name": "Pato de Dawa"
+  },
+  "17787": {
+    "name": "Huo shao de ternera"
+  },
+  "17788": {
+    "name": "Galletas de nuez"
+  },
+  "17789": {
+    "name": "Kai kou xiao (bolas de sésamo sonrientes)"
+  },
+  "17790": {
+    "name": "Arroz de los ocho tesoros de Pekín"
+  },
+  "17791": {
+    "name": "Douzhir (bebida de frijol mungo fermentado)"
+  },
+  "17792": {
+    "name": "Dulce en losa de arena de Pekín"
+  },
+  "17793": {
+    "name": "Bollos \"hoja de loto\" de azufaifa"
+  },
+  "17794": {
+    "name": "Cestitas de espinacas"
+  },
+  "17795": {
+    "name": "Raíz de loto en tiras de Linchuan"
+  },
+  "17796": {
+    "name": "Bajie bromea con el fénix"
+  },
+  "17797": {
+    "name": "Cerdo cocido en arcilla de caolín"
+  },
+  "17798": {
+    "name": "Mahua de la calle de piedra"
+  },
+  "17799": {
+    "name": "Calabaza colgada de un hilo dorado"
+  },
+  "17800": {
+    "name": "Tofu Diaochan"
+  },
+  "17801": {
+    "name": "Fideos de arroz salteados con ternera"
+  },
+  "17802": {
+    "name": "Pollo de Yiyang"
+  },
+  "17803": {
+    "name": "Hu geng (sopa espesa)"
+  },
+  "17804": {
+    "name": "Pescado guisado de Demoli"
+  },
+  "17805": {
+    "name": "Tiras de rábano seco encurtidas"
+  },
+  "17806": {
+    "name": "Plato blanco y negro"
+  },
+  "17807": {
+    "name": "Gran ensalada mixta del noreste"
+  },
+  "17808": {
+    "name": "Tortilla enrollada del noreste"
+  },
+  "17809": {
+    "name": "Plato frío del noreste"
+  },
+  "17810": {
+    "name": "Costillas guisadas con judías verdes del noreste"
+  },
+  "17811": {
+    "name": "Salchicha roja de Harbin"
+  },
+  "17812": {
+    "name": "Gelatina de piel de cerdo del noreste"
+  },
+  "17813": {
+    "name": "Col china guisada con tofu"
+  },
+  "17814": {
+    "name": "Brochetas de tofu en caldo de pollo"
+  },
+  "17815": {
+    "name": "Manitas de cerdo en tiras de Changchun"
+  },
+  "17816": {
+    "name": "Gelatina de almidón a la sartén"
+  },
+  "17817": {
+    "name": "Paloma asada de Yitong"
+  },
+  "17818": {
+    "name": "Rollitos de col fermentada con panceta al vapor"
+  },
+  "17819": {
+    "name": "Manitas de cerdo hong ba del noreste"
+  },
+  "17820": {
+    "name": "Sopa de ginseng, goji y hasma"
+  },
+  "17821": {
+    "name": "Tofu fermentado de Kedong"
+  },
+  "17822": {
+    "name": "Callos de cristal"
+  },
+  "17823": {
+    "name": "Shaomai del viejo Pekín"
+  },
+  "17824": {
+    "name": "Baozi \"ojo de cordero\""
+  },
+  "17825": {
+    "name": "Gorro de monje invertido"
+  },
+  "17826": {
+    "name": "Bollos de pasta de guisante"
+  },
+  "17827": {
+    "name": "Ruyi de plata"
+  },
+  "17828": {
+    "name": "Pececitos de fideo de avena"
+  },
+  "17829": {
+    "name": "Azufaifas pequeñas con osmanto"
+  },
+  "17830": {
+    "name": "Buñuelos de masa escaldada"
+  },
+  "17831": {
+    "name": "Jiao quan (aros fritos crujientes)"
+  },
+  "17832": {
+    "name": "Gelatina de higo trepador"
+  },
+  "17833": {
+    "name": "Cerdo crujiente del pabellón Tengwang"
+  },
+  "17834": {
+    "name": "Pato crujiente de Yuzhang"
+  },
+  "17835": {
+    "name": "Tripa al vapor en tubo de bambú"
+  },
+  "17836": {
+    "name": "Tortuga tres tazas"
+  },
+  "17837": {
+    "name": "Pollo del vagabundo"
+  },
+  "17838": {
+    "name": "Tripa de cerdo glaseada"
+  },
+  "17839": {
+    "name": "Col fermentada con costillas"
+  },
+  "17840": {
+    "name": "Carpa guisada con cebolleta"
+  },
+  "17841": {
+    "name": "Pollo borracho tierno con pimienta de Sichuan"
+  },
+  "17842": {
+    "name": "Carpa dorada a fuego vivo"
+  },
+  "17843": {
+    "name": "Tofu en tiras con cebollino"
+  },
+  "17844": {
+    "name": "Abulón morado con pasta de sésamo"
+  },
+  "17845": {
+    "name": "Patos jugando con el grévol"
+  },
+  "17846": {
+    "name": "Sopa de grévol (Feilong Tang)"
+  },
+  "17847": {
+    "name": "Tortitas \"sombrero de paja\""
+  },
+  "17848": {
+    "name": "Pastel cortado de mijo"
+  },
+  "17849": {
+    "name": "Pastel de azufaifa con hilos dorados"
+  },
+  "17850": {
+    "name": "Sopa de pepino de mar y calabaza blanca"
+  },
+  "17851": {
+    "name": "Pepino de mar relleno"
+  },
+  "17852": {
+    "name": "Pepino de mar y cerdo picado en calabaza"
+  },
+  "17853": {
+    "name": "Ensalada del tigre (Laohu Cai)"
+  },
+  "17854": {
+    "name": "Abulón guisado con patatas"
+  },
+  "17855": {
+    "name": "Abulón al vapor"
+  },
+  "17856": {
+    "name": "Bacalao mala"
+  },
+  "17857": {
+    "name": "Orejas de azúcar (Tang Erduo)"
+  },
+  "17858": {
+    "name": "Empanadas \"clavo de puerta\""
+  },
+  "17859": {
+    "name": "Sanzi mahua (trenzas fritas)"
+  },
+  "17860": {
+    "name": "Rollitos juanguo fritos"
+  },
+  "17861": {
+    "name": "Triángulos fritos"
+  },
+  "17862": {
+    "name": "Campanitas de boniato"
+  },
+  "17863": {
+    "name": "Bolsitas fritas"
+  },
+  "17864": {
+    "name": "Pastitas al vapor y fritas"
+  },
+  "17865": {
+    "name": "Cerdo \"bolsita\""
+  },
+  "17866": {
+    "name": "Cabeza de carpa con tofu"
+  },
+  "17867": {
+    "name": "Ternera con taro de Xinzhou"
+  },
+  "17868": {
+    "name": "Muslos de pollo de Shangrao"
+  },
+  "17869": {
+    "name": "Fideos de arroz escaldados de Yanshan"
+  },
+  "17870": {
+    "name": "Olla de setas frescas y calabaza esponja"
+  },
+  "17871": {
+    "name": "Carpín con guisantes de Guangfeng"
+  },
+  "17872": {
+    "name": "Oca del puerto de Hengfeng"
+  },
+  "17873": {
+    "name": "Pescado de tres colores de Poyang"
+  },
+  "17874": {
+    "name": "Pescadito en espuma de huevo"
+  },
+  "17875": {
+    "name": "Carpa herbívora en salsa de tomate"
+  },
+  "17876": {
+    "name": "Pescado en tiras con apio"
+  },
+  "17877": {
+    "name": "Ternera a las cinco especias"
+  },
+  "17878": {
+    "name": "Mollejas glaseadas"
+  },
+  "17879": {
+    "name": "Riñones de pato con setas de Mongolia"
+  },
+  "17880": {
+    "name": "Ternera con apio"
+  },
+  "17881": {
+    "name": "Carpín cruzando el río"
+  },
+  "17882": {
+    "name": "Cerdo salteado con cebolleta"
+  },
+  "17883": {
+    "name": "Pescado frito tierno"
+  },
+  "17884": {
+    "name": "Pudin de doble piel con hasma en hojaldre"
+  },
+  "17885": {
+    "name": "Hasma con semillas de loto rojo"
+  },
+  "17886": {
+    "name": "Hongo blanco con hasma"
+  },
+  "17887": {
+    "name": "Hasma guisado en pera nevada"
+  },
+  "17888": {
+    "name": "Labios de pescado en aceite de chile"
+  },
+  "17889": {
+    "name": "Caracol de mar aliñado templado"
+  },
+  "17890": {
+    "name": "Bandeja de la gran cosecha"
+  },
+  "17891": {
+    "name": "Codillo civil y militar"
+  },
+  "17892": {
+    "name": "Cajitas de cebollino"
+  },
+  "17893": {
+    "name": "Huitou fritos"
+  },
+  "17894": {
+    "name": "Pulseras de masa dura"
+  },
+  "17895": {
+    "name": "Crema de nuez"
+  },
+  "17896": {
+    "name": "Sachima"
+  },
+  "17897": {
+    "name": "Wontons lingote"
+  },
+  "17898": {
+    "name": "Chatang (pasta de mijo)"
+  },
+  "17899": {
+    "name": "Mian cha (gachas de mijo con sésamo)"
+  },
+  "17900": {
+    "name": "Lou yu (pececitos de almidón)"
+  },
+  "17901": {
+    "name": "Loto auspicioso del estanque del fénix"
+  },
+  "17902": {
+    "name": "El primero de la lista"
+  },
+  "17903": {
+    "name": "Pescado curado desmenuzado a mano"
+  },
+  "17904": {
+    "name": "Pastelitos inflados en sopa clara"
+  },
+  "17905": {
+    "name": "Pato blanco guisado de Xiao Qiao"
+  },
+  "17906": {
+    "name": "Pastel de azúcar blanco de Nanchang"
+  },
+  "17907": {
+    "name": "Buñuelos \"raíz de orquídea\""
+  },
+  "17908": {
+    "name": "Tofu en tiras guisado agripicante"
+  },
+  "17909": {
+    "name": "Sopa de cordero y calabaza blanca"
+  },
+  "17910": {
+    "name": "Sopa de huevo \"manga al viento\""
+  },
+  "17911": {
+    "name": "Melena de león en blanco"
+  },
+  "17912": {
+    "name": "Carámbanos fritos"
+  },
+  "17913": {
+    "name": "Conejo guisado con cebolleta"
+  },
+  "17914": {
+    "name": "Pollo con ginseng y Moutai jade"
+  },
+  "17915": {
+    "name": "Fideos de arroz salteados de Xinjiang"
+  },
+  "17916": {
+    "name": "Kordak (guiso kazajo de cordero)"
+  },
+  "17917": {
+    "name": "Guozi gan (compota de frutas secas)"
+  },
+  "17918": {
+    "name": "Ensalada de pepino de mar"
+  },
+  "17919": {
+    "name": "Cazuela de aleta de tiburón"
+  },
+  "17920": {
+    "name": "Tres tesoros con asta de ciervo"
+  },
+  "17921": {
+    "name": "Pescado en dados saltarín"
+  },
+  "17922": {
+    "name": "Abulón en salsa de ostras"
+  },
+  "17923": {
+    "name": "Guotie de bacalao \"hibisco\""
+  },
+  "17924": {
+    "name": "Bacalao guisado a la cerveza"
+  },
+  "17925": {
+    "name": "Bacalao plateado con mostaza y nata"
+  },
+  "17926": {
+    "name": "Dulce de arroz inflado de Fengcheng"
+  },
+  "17927": {
+    "name": "Pastel \"mecha de lámpara\""
+  },
+  "17928": {
+    "name": "Aros de calabaza blanca rellenos"
+  },
+  "17929": {
+    "name": "Kueh lámpara (Deng Zhan Guo)"
+  },
+  "17930": {
+    "name": "Empanadillas shaozi de Xiushui"
+  },
+  "17931": {
+    "name": "Manitas de cerdo en tinaja de barro"
+  },
+  "17932": {
+    "name": "Sopa de pato viejo con semillas de loto"
+  },
+  "17933": {
+    "name": "Cerdo salteado en cucharón"
+  },
+  "17934": {
+    "name": "Buñuelos de gamba (Jian Xia Zha)"
+  },
+  "17935": {
+    "name": "Pan grande de Harbin (khleb)"
+  },
+  "17936": {
+    "name": "Cerdo en tinaja de barro"
+  },
+  "17937": {
+    "name": "Kao leng mian (fideos fríos a la plancha)"
+  },
+  "17938": {
+    "name": "Embutido de cerdo con piñones"
+  },
+  "17939": {
+    "name": "Salchicha seca de Harbin"
+  },
+  "17940": {
+    "name": "Ensalada de láminas de frijol mungo de cinco colores"
+  },
+  "17941": {
+    "name": "Sándwiches de berenjena rellena fritos"
+  },
+  "17942": {
+    "name": "Bollos pegajosos de judía (Nian Dou Bao)"
+  },
+  "17943": {
+    "name": "Naan uigur (nang)"
+  },
+  "17944": {
+    "name": "Laghman"
+  },
+  "17945": {
+    "name": "Brochetas de cordero de Xinjiang"
+  },
+  "17946": {
+    "name": "Samsa (bollos horneados uigures)"
+  },
+  "17947": {
+    "name": "Yogur de Xinjiang"
+  },
+  "17948": {
+    "name": "Parmuda (pastel de carne uigur)"
+  },
+  "17949": {
+    "name": "Cordero asado en parrilla (Jiazi Rou)"
+  },
+  "17950": {
+    "name": "Manitas de cordero con pimienta"
+  },
+  "17951": {
+    "name": "Bacalao guisado con tofu"
+  },
+  "17952": {
+    "name": "Pescadito envuelto en nieve"
+  },
+  "17953": {
+    "name": "Pescadito salteado"
+  },
+  "17954": {
+    "name": "Pescadito con osmanto"
+  },
+  "17955": {
+    "name": "Sopa de hongo blanco y hasma"
+  },
+  "17956": {
+    "name": "Sopa de goji y hasma"
+  },
+  "17957": {
+    "name": "Labios de pescado rojo de mar"
+  },
+  "17958": {
+    "name": "Pato asado con osmanto"
+  },
+  "17959": {
+    "name": "Tofu de almendra con osmanto"
+  },
+  "17960": {
+    "name": "Perca mandarina con chile local"
+  },
+  "17961": {
+    "name": "Pollo cocido en arcilla de porcelana"
+  },
+  "17962": {
+    "name": "Cerdo \"tabla de barco\""
+  },
+  "17963": {
+    "name": "Sopa de bolitas de pollo y castaña de agua"
+  },
+  "17964": {
+    "name": "Empanadillas de pescado mariposa"
+  },
+  "17965": {
+    "name": "Pasteles de pescado del sur de Jiangxi"
+  },
+  "17966": {
+    "name": "Olla de palitos de tofu en caldo superior"
+  },
+  "17967": {
+    "name": "Gambas en tarro"
+  },
+  "17968": {
+    "name": "Perca mandarina gratinada"
+  },
+  "17969": {
+    "name": "Lengua secada al aire de Harbin"
+  },
+  "17970": {
+    "name": "Siluro guisado con berenjena"
+  },
+  "17971": {
+    "name": "Pollo ahumado de Goubangzi"
+  },
+  "17972": {
+    "name": "Sopa de fideos de almidón (Fen Tang)"
+  },
+  "17973": {
+    "name": "Cerdo con cebollino y piel de chile seco"
+  },
+  "17974": {
+    "name": "Pollo con pimienta de Sichuan de Xinjiang"
+  },
+  "17975": {
+    "name": "Pi La Hong (ensalada de cebolla, chile y tomate)"
+  },
+  "17976": {
+    "name": "Polo de Xinjiang (pilaf)"
+  },
+  "17977": {
+    "name": "Pescado asado del Gobi"
+  },
+  "17978": {
+    "name": "Niangpi (láminas de fideo frío)"
+  },
+  "17979": {
+    "name": "Vieiras vegetarianas con osmanto"
+  },
+  "17980": {
+    "name": "Pepino de mar de Liao relleno de las cien flores"
+  },
+  "17981": {
+    "name": "Sepia Kung Pao"
+  },
+  "17982": {
+    "name": "Langostinos ahumados"
+  },
+  "17983": {
+    "name": "Trozos de langostino glaseados"
+  },
+  "17984": {
+    "name": "Langostinos del arhat"
+  },
+  "17985": {
+    "name": "Sopa de dragón y fénix a los cinco tesoros"
+  },
+  "17986": {
+    "name": "Gelatina rodante"
+  },
+  "17987": {
+    "name": "Tortuga dorada guisada con ñame"
+  },
+  "17988": {
+    "name": "Huevos esponjosos con pescadito"
+  },
+  "17989": {
+    "name": "Albóndigas de cristal"
+  },
+  "17990": {
+    "name": "Fideos de pescado de Nanfeng"
+  },
+  "17991": {
+    "name": "Setas de huevo bicolores"
+  },
+  "17992": {
+    "name": "Semillas de loto \"girasol\""
+  },
+  "17993": {
+    "name": "Anguila en láminas con hojas de lechuga"
+  },
+  "17994": {
+    "name": "Olla caliente manchú de Ula"
+  },
+  "17995": {
+    "name": "Pez blanco del río Songhua al vapor"
+  },
+  "17996": {
+    "name": "Ginkgo caramelizado en hilos (Ba Si)"
+  },
+  "17997": {
+    "name": "Cerdo en salsa de soja de Changchun"
+  },
+  "17998": {
+    "name": "Hasma variado"
+  },
+  "17999": {
+    "name": "Fideos fríos de Yanbian (naengmyeon)"
+  },
+  "18000": {
+    "name": "Dolsot bibimbap"
+  },
+  "18001": {
+    "name": "Pollo estofado de Jingning"
+  },
+  "18002": {
+    "name": "Pastel de luna de horno de barro de Hotan"
+  },
+  "18003": {
+    "name": "Umach (gachas de maíz uigures)"
+  },
+  "18004": {
+    "name": "Naryn (carne y fideos kazajos)"
+  },
+  "18005": {
+    "name": "Malosh (postre lácteo uigur)"
+  },
+  "18006": {
+    "name": "Huevos de paloma ahumados"
+  },
+  "18007": {
+    "name": "Perca mandarina guota"
+  },
+  "18008": {
+    "name": "Ostras de oro y plata"
+  },
+  "18009": {
+    "name": "Vieiras al estilo de Pekín"
+  },
+  "18010": {
+    "name": "Tendón en salsa de pimienta de Sichuan"
+  },
+  "18011": {
+    "name": "Huevos de codorniz con hilos dorados"
+  },
+  "18012": {
+    "name": "Sopa espesa de maíz con pollo y goji"
+  },
+  "18013": {
+    "name": "Salteado vegetal con hongo blanco"
+  },
+  "18014": {
+    "name": "Caracol de mar estofado"
+  },
+  "18015": {
+    "name": "Abulón con coral de cangrejo"
+  },
+  "18016": {
+    "name": "Abulón con coco tierno y loto"
+  },
+  "18017": {
+    "name": "Pastelitos de salvado de arroz"
+  },
+  "18018": {
+    "name": "Ternera salteada de Tiandun"
+  },
+  "18019": {
+    "name": "Kueh mochi (Maci Guo)"
+  },
+  "18020": {
+    "name": "Fideos de arroz con cordero de Guangfeng"
+  },
+  "18021": {
+    "name": "Abadejo estofado"
+  },
+  "18022": {
+    "name": "Abadejo guisado con tofu"
+  },
+  "18023": {
+    "name": "Sopa de abadejo"
+  },
+  "18024": {
+    "name": "Pescado crudo hezhen de Tongjiang"
+  },
+  "18025": {
+    "name": "Gambas enteras asadas"
+  },
+  "18026": {
+    "name": "Hígado de cerdo glaseado"
+  },
+  "18027": {
+    "name": "Buche de pescado \"ciruelo rojo\""
+  },
+  "18028": {
+    "name": "Gambas fritas tiernas"
+  },
+  "18029": {
+    "name": "Pierna de cordero asada"
+  },
+  "18030": {
+    "name": "Té con leche de Xinjiang"
+  },
+  "18031": {
+    "name": "Empanadas torgut"
+  },
+  "18032": {
+    "name": "Pan asado con paloma"
+  },
+  "18033": {
+    "name": "Qie gao (pastel de frutos secos de Xinjiang)"
+  },
+  "18034": {
+    "name": "Huevos asados de Xinjiang"
+  },
+  "18035": {
+    "name": "Congee de pera de Korla y hongo blanco"
+  },
+  "18036": {
+    "name": "Cordero lechal al vapor"
+  },
+  "18037": {
+    "name": "Pasteles de arroz Wulao"
+  },
+  "18038": {
+    "name": "Pato prensado de Nan'an"
+  },
+  "18039": {
+    "name": "Fragancia de huevo"
+  },
+  "18040": {
+    "name": "Asado y salmuera sabrosos"
+  },
+  "18041": {
+    "name": "Pasteles de pepino de mar de Yangkou"
+  },
+  "18042": {
+    "name": "Marisco variado aliñado"
+  },
+  "18043": {
+    "name": "Pollo, jamón, manitas y nido de golondrina"
+  },
+  "18044": {
+    "name": "Sopa de huesos con taro y ginseng"
+  },
+  "18045": {
+    "name": "Buuz buriato"
+  },
+  "18046": {
+    "name": "Carne en cubo de leche"
+  },
+  "18047": {
+    "name": "Empanadas mongolas (khuushuur)"
+  },
+  "18048": {
+    "name": "Ternera secada al aire (borts)"
+  },
+  "18049": {
+    "name": "Cordero entero asado mongol"
+  },
+  "18050": {
+    "name": "Sopa de grumos de masa del noreste"
+  },
+  "18051": {
+    "name": "Casquería de cordero guisada"
+  },
+  "18052": {
+    "name": "Codillo con clavo"
+  },
+  "18053": {
+    "name": "Riñón y vieira guisados"
+  },
+  "18054": {
+    "name": "Nianzhuan'er (trigo verde molido)"
+  },
+  "18055": {
+    "name": "Hubo salteado (tiras de torta)"
+  },
+  "18056": {
+    "name": "Cuatro estrellas mirando la luna"
+  },
+  "18057": {
+    "name": "Pollo tres tazas hakka"
+  },
+  "18058": {
+    "name": "Tortuga de tierra guisada con pollo"
+  },
+  "18059": {
+    "name": "Pescadito con tres hilos"
+  },
+  "18060": {
+    "name": "Langostinos envueltos en hilos dorados de Xi Shi"
+  },
+  "18061": {
+    "name": "Setas flor en salsa de abulón"
+  },
+  "18062": {
+    "name": "Pescadito con cerdo en tiras"
+  },
+  "18063": {
+    "name": "Sopa de pollo sedoso con flor de cordyceps"
+  },
+  "18064": {
+    "name": "Pechuga de paloma con piñones"
+  },
+  "18065": {
+    "name": "Huevos de paloma con puré de pollo"
+  },
+  "18066": {
+    "name": "Duijia de Chifeng (bocadillo de carne)"
+  },
+  "18067": {
+    "name": "Bollos de judía de harina de mijo"
+  },
+  "18068": {
+    "name": "Torta hada"
+  },
+  "18069": {
+    "name": "Bo mian de Aohan (fideos raspados)"
+  },
+  "18070": {
+    "name": "Jiaozi Laobian"
+  },
+  "18071": {
+    "name": "Shaomai de la familia Ma"
+  },
+  "18072": {
+    "name": "Torta de horno colgante de la familia Yang"
+  },
+  "18073": {
+    "name": "Rourou de harina de avena"
+  },
+  "18074": {
+    "name": "Pollo hervido de Wuzhong"
+  },
+  "18075": {
+    "name": "Cabeza grande de pescado del lago Sha"
+  },
+  "18076": {
+    "name": "Té de los ocho tesoros"
+  },
+  "18077": {
+    "name": "Ensalada de cebolla de arena"
+  },
+  "18078": {
+    "name": "Huevos revueltos con cebolla de arena"
+  },
+  "18079": {
+    "name": "Pastel de luna de Qinghai"
+  },
+  "18080": {
+    "name": "Pescado con lías de vino"
+  },
+  "18081": {
+    "name": "Fideos de arroz salteados de Jiangxi"
+  },
+  "18082": {
+    "name": "Tofu de almidón"
+  },
+  "18083": {
+    "name": "Fideos de arroz aliñados de Nanchang"
+  },
+  "18084": {
+    "name": "Bollos de taro"
+  },
+  "18085": {
+    "name": "Pato con sangre de Lianhua"
+  },
+  "18086": {
+    "name": "Cerdo salteado con chile de Yugan"
+  },
+  "18087": {
+    "name": "Brema de Wuchang con pepino de mar"
+  },
+  "18088": {
+    "name": "Riñón con nueces"
+  },
+  "18089": {
+    "name": "Cordero con azufaifas confitadas"
+  },
+  "18090": {
+    "name": "Liebre a las cinco especias"
+  },
+  "18091": {
+    "name": "Pollo de Taihe"
+  },
+  "18092": {
+    "name": "Rollitos de piel de tofu con setas"
+  },
+  "18093": {
+    "name": "Sopa dulce de hongo blanco y mandarina"
+  },
+  "18094": {
+    "name": "Liang Gan Rou (cerdo estofado brillante)"
+  },
+  "18095": {
+    "name": "Bolitas de tofu"
+  },
+  "18096": {
+    "name": "Carne de cangrejo en cesta de flores"
+  },
+  "18097": {
+    "name": "Carpines pequeños crujientes"
+  },
+  "18098": {
+    "name": "Pescado Pan"
+  },
+  "18099": {
+    "name": "Perca mandarina con maíz"
+  },
+  "18100": {
+    "name": "Ma doufu salteado (residuo de frijol mungo)"
+  },
+  "18101": {
+    "name": "Semillas de loto caramelizadas (Ba Si)"
+  },
+  "18102": {
+    "name": "Apio con camaroncitos secos (qianzi mi)"
+  },
+  "18103": {
+    "name": "Tomates fritos crujientes"
+  },
+  "18104": {
+    "name": "San Bu Zhan (crema de huevo de Pekín)"
+  },
+  "18105": {
+    "name": "Pollo relleno de tres capas"
+  },
+  "18106": {
+    "name": "Huevos sin yema con setas"
+  },
+  "18107": {
+    "name": "Bolitas de tofu con sangre de cerdo"
+  },
+  "18108": {
+    "name": "Pato crujiente con sésamo"
+  },
+  "18109": {
+    "name": "Tofu de arroz del oeste de Hunan"
+  },
+  "18110": {
+    "name": "Sopa de pollo sedoso con gastrodia"
+  },
+  "18111": {
+    "name": "Doble crujiente sobre arroz crujiente"
+  },
+  "18112": {
+    "name": "Albóndigas de Huizhou"
+  },
+  "18113": {
+    "name": "Cerdo guisado con navajas secas"
+  },
+  "18114": {
+    "name": "Tortuga águila al vapor"
+  },
+  "18115": {
+    "name": "Pescado Fang La de Huangshan"
+  },
+  "18116": {
+    "name": "Cerdo \"nubes y niebla\""
+  },
+  "18117": {
+    "name": "Berenjena en salsa de soja clara"
+  },
+  "18118": {
+    "name": "Rollos de col con mostaza (Jiemo Dun)"
+  },
+  "18119": {
+    "name": "Wotou pequeños (bollos de maíz)"
+  },
+  "18120": {
+    "name": "Crujientes fritos con jengibre"
+  },
+  "18121": {
+    "name": "Ai wowo (bolas de arroz glutinoso)"
+  },
+  "18122": {
+    "name": "Lü da gun (burro que rueda)"
+  },
+  "18123": {
+    "name": "Mero guisado con cebolleta"
+  },
+  "18124": {
+    "name": "Almejas al curry"
+  },
+  "18125": {
+    "name": "Caracol en láminas con aceite de cebolleta"
+  },
+  "18126": {
+    "name": "Tortuga \"herradura\" de tierra arenosa"
+  },
+  "18127": {
+    "name": "Pato viejo guisado con cordyceps"
+  },
+  "18128": {
+    "name": "Sopa de pollo con melena de león y soja"
+  },
+  "18129": {
+    "name": "Canto del gallo feliz"
+  },
+  "18130": {
+    "name": "Sopa dulce de ginkgo y osmanto"
+  },
+  "18131": {
+    "name": "Tres en la olla al estilo Tujia"
+  },
+  "18132": {
+    "name": "Pollo reconstituyente"
+  },
+  "18133": {
+    "name": "Pescadito de Yuanjiang agridulce"
+  },
+  "18134": {
+    "name": "Codillo de cerdo en salsa"
+  },
+  "18135": {
+    "name": "Callos en caldo de setas"
+  },
+  "18136": {
+    "name": "Callos de ternera en hilos finos"
+  },
+  "18137": {
+    "name": "Sesos de ternera guisados"
+  },
+  "18138": {
+    "name": "Tendón de ternera estofado"
+  },
+  "18139": {
+    "name": "Faisán de invierno nevado"
+  },
+  "18140": {
+    "name": "Alas de fénix fritas crujientes"
+  },
+  "18141": {
+    "name": "Perca mandarina en salsa de soja negra"
+  },
+  "18142": {
+    "name": "Perca mandarina pequeña a la brasa"
+  },
+  "18143": {
+    "name": "Bolas de gamba con hilos dorados"
+  },
+  "18144": {
+    "name": "Cabeza de pescado del lago Wanfo"
+  },
+  "18145": {
+    "name": "Cerdo guisado con bolitas de almidón de boniato"
+  },
+  "18146": {
+    "name": "Pato asado de Luzhou"
+  },
+  "18147": {
+    "name": "Rana de roca del sur de Hubei"
+  },
+  "18148": {
+    "name": "Pescadito y vieiras secas salteados"
+  },
+  "18149": {
+    "name": "Buche de pescado con huevos de paloma"
+  },
+  "18150": {
+    "name": "Er Hui Tou (cerdo cocinado dos veces)"
+  },
+  "18151": {
+    "name": "Rollitos de anguila crujiente"
+  },
+  "18152": {
+    "name": "Pollo pipa"
+  },
+  "18153": {
+    "name": "Arroz suelto a los ocho tesoros"
+  },
+  "18154": {
+    "name": "Fideos de pescado de Yunmeng"
+  },
+  "18155": {
+    "name": "Pescadito con judías largas y zha cai"
+  },
+  "18156": {
+    "name": "Torta de huevo con pescadito a la sartén"
+  },
+  "18157": {
+    "name": "Pescadito jade"
+  },
+  "18158": {
+    "name": "Manitas de cerdo con bayas de goji"
+  },
+  "18159": {
+    "name": "Pollo al vapor con pastel de mijo"
+  },
+  "18160": {
+    "name": "Ternera en palillos"
+  },
+  "18161": {
+    "name": "Costillas guisadas con castañas de agua"
+  },
+  "18162": {
+    "name": "Pepino de mar variado"
+  },
+  "18163": {
+    "name": "Apio con gambas secas"
+  },
+  "18164": {
+    "name": "Callos de ternera en tiras finas"
+  },
+  "18165": {
+    "name": "Oca en salmuera de Wugang"
+  },
+  "18166": {
+    "name": "Pato prensado guisado con anguila"
+  },
+  "18167": {
+    "name": "Pollo Cao Cao"
+  },
+  "18168": {
+    "name": "Empanadillas de arroz de Sanhe"
+  },
+  "18169": {
+    "name": "Caldo de gallina vieja de Feixi"
+  },
+  "18170": {
+    "name": "Tortas de sésamo"
+  },
+  "18171": {
+    "name": "Cunjin (crujientes \"pulgada de oro\")"
+  },
+  "18172": {
+    "name": "Torta Dongpo"
+  },
+  "18173": {
+    "name": "Pollo con castañas en olla seca"
+  },
+  "18174": {
+    "name": "Huanxi tuo (bolas de sésamo de la alegría)"
+  },
+  "18175": {
+    "name": "Piel de tofu con panceta"
+  },
+  "18176": {
+    "name": "Pez cabeza de serpiente de Jingsha"
+  },
+  "18177": {
+    "name": "Bolitas de raíz de loto fritas"
+  },
+  "18178": {
+    "name": "Sándwiches de raíz de loto rellenos"
+  },
+  "18179": {
+    "name": "Sopa de cerdo al vapor"
+  },
+  "18180": {
+    "name": "Galletas de arroz inflado de Wugang"
+  },
+  "18181": {
+    "name": "Riñones \"unicornio de jade\""
+  },
+  "18182": {
+    "name": "Caracoles para sorber (Suo Luo)"
+  },
+  "18183": {
+    "name": "Pan horneado de Maoshi"
+  },
+  "18184": {
+    "name": "Pastel de luna hojaldrado"
+  },
+  "18185": {
+    "name": "Cerdo al salvado de Yangqiao"
+  },
+  "18186": {
+    "name": "Callos crujientes de Shiwan"
+  },
+  "18187": {
+    "name": "Caracoles con perilla"
+  },
+  "18188": {
+    "name": "Buche guisado con ginseng"
+  },
+  "18189": {
+    "name": "Sopa espesa picante de Hefei"
+  },
+  "18190": {
+    "name": "Fideos de cuchillo pequeño"
+  },
+  "18191": {
+    "name": "Bollos con caldo de Luyang"
+  },
+  "18192": {
+    "name": "Dulce crujiente de osmanto"
+  },
+  "18193": {
+    "name": "Tortitas de calabaza"
+  },
+  "18194": {
+    "name": "Arroz del primer erudito de Huizhou"
+  },
+  "18195": {
+    "name": "Fideos de judía de Huangpi"
+  },
+  "18196": {
+    "name": "Pato curado guisado con raíz de loto"
+  },
+  "18197": {
+    "name": "Pepino de mar de Hubei con huevas de gamba"
+  },
+  "18198": {
+    "name": "Olla colgante de Luotian"
+  },
+  "18199": {
+    "name": "Hezha tujia (sopa de pulpa de soja)"
+  },
+  "18200": {
+    "name": "Sopa tres en uno de Yunyang"
+  },
+  "18201": {
+    "name": "Pastelitos en cuenco de Zhuxi"
+  },
+  "18202": {
+    "name": "Fideos de almidón ácido"
+  },
+  "18203": {
+    "name": "Sopa de costillas con raíz de loto"
+  },
+  "18204": {
+    "name": "Cangrejos de río estofados de Qianjiang"
+  },
+  "18205": {
+    "name": "Huevos \"pareja de patos\""
+  },
+  "18206": {
+    "name": "Locha en olla de piedra"
+  },
+  "18207": {
+    "name": "Cordero cortado en blanco"
+  },
+  "18208": {
+    "name": "Brema de Wuchang al vapor"
+  },
+  "18209": {
+    "name": "Brotes de soja con cebollino"
+  },
+  "18210": {
+    "name": "Hojas de boniato salteadas"
+  },
+  "18211": {
+    "name": "Cangrejo frito con caparazón"
+  },
+  "18212": {
+    "name": "Conejo a la sal y pimienta"
+  },
+  "18213": {
+    "name": "Pescado con arroz de levadura roja de Qiyang"
+  },
+  "18214": {
+    "name": "Wontons de piel fina"
+  },
+  "18215": {
+    "name": "Panecillos dulces en espiral"
+  },
+  "18216": {
+    "name": "Albóndigas cabeza de león de Gonghetang"
+  },
+  "18217": {
+    "name": "Tortuga pequeña de Liangyuan"
+  },
+  "18218": {
+    "name": "Ágata y jade blanco"
+  },
+  "18219": {
+    "name": "Salteado de Sanhe"
+  },
+  "18220": {
+    "name": "Pasta de gamba de Sanhe"
+  },
+  "18221": {
+    "name": "Pato en plato de Fangxian"
+  },
+  "18222": {
+    "name": "Sopa de té con aceite tujia"
+  },
+  "18223": {
+    "name": "Empanadillas de rábano"
+  },
+  "18224": {
+    "name": "Pastel Dingding"
+  },
+  "18225": {
+    "name": "Pollo de los inmortales Sanyou de Yichang"
+  },
+  "18226": {
+    "name": "Torre de vaporeras tujia"
+  },
+  "18227": {
+    "name": "Anguila enroscada"
+  },
+  "18228": {
+    "name": "Vino de arroz de Xiaogan"
+  },
+  "18229": {
+    "name": "Pato salvaje estofado de Honghu"
+  },
+  "18230": {
+    "name": "Tortuga de Jingsha"
+  },
+  "18231": {
+    "name": "Cerdo Dongpo de Huangzhou"
+  },
+  "18232": {
+    "name": "Choy sum morado con cerdo curado"
+  },
+  "18233": {
+    "name": "Re gan mian (fideos secos calientes)"
+  },
+  "18234": {
+    "name": "Bollos con caldo Sijimei"
+  },
+  "18235": {
+    "name": "Dulce crujiente de sésamo de Yuanling"
+  },
+  "18236": {
+    "name": "Sanzi a la sal y pimienta"
+  },
+  "18237": {
+    "name": "Gelatina de frijol mungo raspada"
+  },
+  "18238": {
+    "name": "Rollitos de primavera Xiangbin"
+  },
+  "18239": {
+    "name": "Pastel fragante de sésamo"
+  },
+  "18240": {
+    "name": "Caracol de mar \"hibisco\""
+  },
+  "18241": {
+    "name": "Cazuela de labios de pescado al estilo Hunan"
+  },
+  "18242": {
+    "name": "Taco de jamón con pescadito de Yuanjiang"
+  },
+  "18243": {
+    "name": "Pescadito \"copo de nieve\""
+  },
+  "18244": {
+    "name": "Guotie de huevo"
+  },
+  "18245": {
+    "name": "Empanadillas de pollo y shiitake"
+  },
+  "18246": {
+    "name": "Ternera \"barandilla\""
+  },
+  "18247": {
+    "name": "Pollo con pan sumergido"
+  },
+  "18248": {
+    "name": "Láminas de fideo frío de Xiaoxian"
+  },
+  "18249": {
+    "name": "Ban mian de ternera"
+  },
+  "18250": {
+    "name": "Pollo con setas de Huangcangyu"
+  },
+  "18251": {
+    "name": "Pastas de miel \"cuerno de carnero\""
+  },
+  "18252": {
+    "name": "Pollo secado al aire"
+  },
+  "18253": {
+    "name": "Pastel Xiangfei"
+  },
+  "18254": {
+    "name": "Tomar flechas con barcos de paja"
+  },
+  "18255": {
+    "name": "Pescado con douhua de Songzi"
+  },
+  "18256": {
+    "name": "Fideos del desayuno"
+  },
+  "18257": {
+    "name": "Pan fino (Zhimian Guokuai)"
+  },
+  "18258": {
+    "name": "Arroz guaizi (con codillo estofado)"
+  },
+  "18259": {
+    "name": "Bollos al vapor de agua"
+  },
+  "18260": {
+    "name": "Bolitas de arroz en arroz fermentado"
+  },
+  "18261": {
+    "name": "San xian dou pi (piel de tofu a las tres delicias)"
+  },
+  "18262": {
+    "name": "Fideos de ternera de Xiangyang"
+  },
+  "18263": {
+    "name": "Patatas asadas de Enshi"
+  },
+  "18264": {
+    "name": "Guokui de Gong'an"
+  },
+  "18265": {
+    "name": "Hu tang fen (fideos en sopa de pescado)"
+  },
+  "18266": {
+    "name": "Shaomai envuelto en torta frita"
+  },
+  "18267": {
+    "name": "Brema de Wuchang seca mala"
+  },
+  "18268": {
+    "name": "Pastel de pescado de Jingzhou"
+  },
+  "18269": {
+    "name": "Albóndigas perla"
+  },
+  "18270": {
+    "name": "Bacalao estofado"
+  },
+  "18271": {
+    "name": "Bacalao al vapor con semillas de cordia"
+  },
+  "18272": {
+    "name": "Pollo con ginseng"
+  },
+  "18273": {
+    "name": "Torre de tofu ahumado y ginseng"
+  },
+  "18274": {
+    "name": "Fideos salteados con pepino de mar"
+  },
+  "18275": {
+    "name": "Sopa de aleta de tiburón"
+  },
+  "18276": {
+    "name": "Tendón con osmanto"
+  },
+  "18277": {
+    "name": "Pasteles de arroz con osmanto"
+  },
+  "18278": {
+    "name": "Melena de león con jamón de Yunnan"
+  },
+  "18279": {
+    "name": "Pollo en olla de tierra"
+  },
+  "18280": {
+    "name": "Sopa de cordero de Xiaoxian"
+  },
+  "18281": {
+    "name": "Pollo sedoso"
+  },
+  "18282": {
+    "name": "Guiso variado (Zahui)"
+  },
+  "18283": {
+    "name": "Fideos con pollo en tiras"
+  },
+  "18284": {
+    "name": "Dulce de sésamo de Xiaogan"
+  },
+  "18285": {
+    "name": "Cerdo pagoda"
+  },
+  "18286": {
+    "name": "Pasta de Huangshigang"
+  },
+  "18287": {
+    "name": "Cazuela de sopa de tortuga"
+  },
+  "18288": {
+    "name": "Peine de aleta de tiburón estofado"
+  },
+  "18289": {
+    "name": "Serpiente rey de dos maneras"
+  },
+  "18290": {
+    "name": "Brema de Wuchang Jingchu"
+  },
+  "18291": {
+    "name": "Brema de Wuchang estofada"
+  },
+  "18292": {
+    "name": "Tortuga de tierra al vapor"
+  },
+  "18293": {
+    "name": "Aleta de tiburón cola de dragón a los ocho tesoros"
+  },
+  "18294": {
+    "name": "Aleta de tiburón en caldo claro"
+  },
+  "18295": {
+    "name": "Pepino de mar con carnes variadas"
+  },
+  "18296": {
+    "name": "Sopa espesa de corvina y pepino de mar"
+  },
+  "18297": {
+    "name": "Melena de león rellena de gambas"
+  },
+  "18298": {
+    "name": "Caracol de mar sobre arroz crujiente"
+  },
+  "18299": {
+    "name": "Caracol de mar con ñame en láminas"
+  },
+  "18300": {
+    "name": "Sopa de tortuga y cordero"
+  },
+  "18301": {
+    "name": "Tortuga guisada con pollo"
+  },
+  "18302": {
+    "name": "Tortuga guisada con soja"
+  },
+  "18303": {
+    "name": "Brema de Wuchang secada al viento"
+  },
+  "18304": {
+    "name": "Brema de Wuchang al ajo"
+  },
+  "18305": {
+    "name": "Brema a la sartén"
+  },
+  "18306": {
+    "name": "Labios de pescado a fuego lento"
+  },
+  "18307": {
+    "name": "Cordero \"hortensia\""
+  },
+  "18308": {
+    "name": "Callos con osmanto"
+  },
+  "18309": {
+    "name": "Fideos de arroz de Xiaoxian"
+  },
+  "18310": {
+    "name": "Perca mandarina qilin de Anhui"
+  },
+  "18311": {
+    "name": "Pollo fragante horneado en arena"
+  },
+  "18312": {
+    "name": "Pollito ahumado"
+  },
+  "18313": {
+    "name": "Callos crujientes de Nanping"
+  },
+  "18314": {
+    "name": "Sopa bagua de pichón"
+  },
+  "18315": {
+    "name": "Caracol de mar hervido"
+  },
+  "18316": {
+    "name": "Ensalada de caracol de mar"
+  },
+  "18317": {
+    "name": "Melena de león en salsa de abulón"
+  },
+  "18318": {
+    "name": "Pollo guisado con melena de león"
+  },
+  "18319": {
+    "name": "Gachas dulces de osmanto"
+  },
+  "18320": {
+    "name": "Pastel horneado de sésamo de Qingshan"
+  },
+  "18321": {
+    "name": "Pastel de osmanto de Xianning"
+  },
+  "18322": {
+    "name": "Hasma con ginseng americano y regaliz"
+  },
+  "18323": {
+    "name": "Sopa de espino, hasma y abulón"
+  },
+  "18324": {
+    "name": "Serpiente guisada con pimiento verde"
+  },
+  "18325": {
+    "name": "Pescadito \"hibisco\""
+  },
+  "18326": {
+    "name": "Bacalao entre raíz de loto"
+  },
+  "18327": {
+    "name": "Abulón con patas de pato \"crisantemo\""
+  },
+  "18328": {
+    "name": "Abulón y bolas de gamba en caldo claro"
+  },
+  "18329": {
+    "name": "Pepino de mar \"hortensia\""
+  },
+  "18330": {
+    "name": "Mo de ternera (pan relleno)"
+  },
+  "18331": {
+    "name": "Fideos secos de Guoyang"
+  },
+  "18332": {
+    "name": "Láminas de almidón de Tongguan"
+  },
+  "18333": {
+    "name": "Pan de sésamo de Hugou"
+  },
+  "18334": {
+    "name": "Pan relleno de solomillo de cerdo"
+  },
+  "18335": {
+    "name": "Pepino de mar \"pistilo\""
+  },
+  "18336": {
+    "name": "Manitas de cerdo estofadas"
+  },
+  "18337": {
+    "name": "Col troceada a mano"
+  },
+  "18338": {
+    "name": "Cangrejos de río mala"
+  },
+  "18339": {
+    "name": "Pato a la cerveza"
+  },
+  "18340": {
+    "name": "Tofu apestoso (Chou Doufu)"
+  },
+  "18341": {
+    "name": "Cerdo en tiras salteado"
+  },
+  "18342": {
+    "name": "Pez saltarín (carpa escalfada)"
+  },
+  "18343": {
+    "name": "Pepino de mar \"conejo de jade\""
+  },
+  "18344": {
+    "name": "Aleta de tiburón \"embrión de fénix\""
+  },
+  "18345": {
+    "name": "Hongo de bambú relleno de aleta de tiburón"
+  },
+  "18346": {
+    "name": "Pescado con ginseng"
+  },
+  "18347": {
+    "name": "Bacalao plateado en papillote"
+  },
+  "18348": {
+    "name": "Bolas de pescadito del lago Chao"
+  },
+  "18349": {
+    "name": "Pollo ahumado con té"
+  },
+  "18350": {
+    "name": "Nido de golondrina de gamba con colas de fénix"
+  },
+  "18351": {
+    "name": "Ternera en salsa de soja"
+  },
+  "18352": {
+    "name": "Tofu \"girasol\""
+  },
+  "18353": {
+    "name": "Rollitos de pez cabeza de serpiente \"cinturón de jade\""
+  },
+  "18354": {
+    "name": "Peces dorados jugando con el loto"
+  },
+  "18355": {
+    "name": "Pastelitos de arroz al azúcar (Tangyou Baba)"
+  },
+  "18356": {
+    "name": "Rábano seco encurtido"
+  },
+  "18357": {
+    "name": "Tortuga a los cinco tesoros"
+  },
+  "18358": {
+    "name": "Tortitas de patata"
+  },
+  "18359": {
+    "name": "Hasma con puré de pollo"
+  },
+  "18360": {
+    "name": "Filete de bacalao picante"
+  },
+  "18361": {
+    "name": "Pescadito a la sartén"
+  },
+  "18362": {
+    "name": "Verduras al vapor con harina de arroz"
+  },
+  "18363": {
+    "name": "Siluro al vapor con harina de arroz"
+  },
+  "18364": {
+    "name": "Anguila al vapor con harina de arroz"
+  },
+  "18365": {
+    "name": "Raíz de loto al vapor con harina de arroz"
+  },
+  "18366": {
+    "name": "Tortuga al vapor"
+  },
+  "18367": {
+    "name": "Anguila al vapor"
+  },
+  "18368": {
+    "name": "Tortuga al vapor con harina de arroz"
+  },
+  "18369": {
+    "name": "Tres combinados de Huangpi"
+  },
+  "18370": {
+    "name": "Tofu en salsa de tomate"
+  },
+  "18371": {
+    "name": "Ternera estofada"
+  },
+  "18372": {
+    "name": "Pescado en láminas glaseado con lías"
+  },
+  "18373": {
+    "name": "Cerdo pagoda dorada con castañas"
+  },
+  "18374": {
+    "name": "Cerdo curado en soja clara de Pekín"
+  },
+  "18375": {
+    "name": "Pepino de mar glaseado al vinagre"
+  },
+  "18376": {
+    "name": "Codillo de la fortuna y longevidad"
+  },
+  "18377": {
+    "name": "Pastel de arroz con sangre de pato de Hongjiang"
+  },
+  "18378": {
+    "name": "Setas del árbol del té en olla seca"
+  },
+  "18379": {
+    "name": "Fideos de arroz de Loudi"
+  },
+  "18380": {
+    "name": "Fideos de arroz con ternera de Jinshi"
+  },
+  "18381": {
+    "name": "Fideos de arroz de Changsha"
+  },
+  "18382": {
+    "name": "Fideos de arroz del oeste de Hunan"
+  },
+  "18383": {
+    "name": "Fideos de arroz de Xiangtan"
+  },
+  "18384": {
+    "name": "Tortuga dorada de Dongting"
+  },
+  "18385": {
+    "name": "Pescado uva"
+  },
+  "18386": {
+    "name": "Bollos de cristal con ostra"
+  },
+  "18387": {
+    "name": "Felicidad de toda la familia (Quan Jia Fu)"
+  },
+  "18388": {
+    "name": "Perca mandarina fermentada (Chou Guiyu)"
+  },
+  "18389": {
+    "name": "Plato del dragón enroscado (Panlong Cai)"
+  },
+  "18390": {
+    "name": "Brotes de loto agripicantes"
+  },
+  "18391": {
+    "name": "Anguila al vapor \"cañón\""
+  },
+  "18392": {
+    "name": "Tiras de anguila crujientes (Pitiao Shanyu)"
+  },
+  "18393": {
+    "name": "Tortitas de gamba a la sartén"
+  },
+  "18394": {
+    "name": "Cerdo con piel de tofu"
+  },
+  "18395": {
+    "name": "Cerdo sedoso de Yingshan"
+  },
+  "18396": {
+    "name": "Bolas de pescado \"gajo de mandarina\""
+  },
+  "18397": {
+    "name": "Solomillo de cerdo zhua chao"
+  },
+  "18398": {
+    "name": "Verduras mixtas salteadas (He Cai)"
+  },
+  "18399": {
+    "name": "Cerdo estofado con verduras"
+  },
+  "18400": {
+    "name": "Cerdo en tiras con brotes de soja"
+  },
+  "18401": {
+    "name": "Cebollino con hilos dorados"
+  },
+  "18402": {
+    "name": "Pasta de soja salteada con pepino"
+  },
+  "18403": {
+    "name": "Carpín tierno y crujiente"
+  },
+  "18404": {
+    "name": "Huevos de paloma con sésamo"
+  },
+  "18405": {
+    "name": "Tofu Zu'an"
+  },
+  "18406": {
+    "name": "Ñame con azúcar cande"
+  },
+  "18407": {
+    "name": "Huevo al vapor con gambas"
+  },
+  "18408": {
+    "name": "Cerdo fermentado de Jishou"
+  },
+  "18409": {
+    "name": "Fideos de arroz con pescado de Hengyang"
+  },
+  "18410": {
+    "name": "Yan Du Xian (sopa de bambú y cerdo)"
+  },
+  "18411": {
+    "name": "Sopa de pato viejo"
+  },
+  "18412": {
+    "name": "Panceta estofada al estilo Hui"
+  },
+  "18413": {
+    "name": "Pastelitos de harina de soja de Huizhou"
+  },
+  "18414": {
+    "name": "Brotes de bambú de la montaña Wenzheng"
+  },
+  "18415": {
+    "name": "Tofu peludo de Huizhou"
+  },
+  "18416": {
+    "name": "Pollo al vapor de Huizhou"
+  },
+  "18417": {
+    "name": "Cerdo guisado con resina de melocotón"
+  },
+  "18418": {
+    "name": "Gobio de bronce estofado en seco"
+  },
+  "18419": {
+    "name": "Sopa de la longevidad"
+  },
+  "18420": {
+    "name": "Fideos con sebo de ternera de Xiangyang"
+  },
+  "18421": {
+    "name": "Fideos con casquería de ternera de Xiangyang"
+  },
+  "18422": {
+    "name": "Fideos con tofu"
+  },
+  "18423": {
+    "name": "Aleta de tiburón con coral de cangrejo"
+  },
+  "18424": {
+    "name": "Cerdo al vapor con azúcar de Huangpi"
+  },
+  "18425": {
+    "name": "Pepino de mar a los ocho tesoros"
+  },
+  "18426": {
+    "name": "Sopa de calabaza blanca y calipash"
+  },
+  "18427": {
+    "name": "Empanadillas de huevo de oro y plata"
+  },
+  "18428": {
+    "name": "Shuan yang rou (olla de cordero)"
+  },
+  "18429": {
+    "name": "Trío de cordero salteado"
+  },
+  "18430": {
+    "name": "Barbacoa de Pekín"
+  },
+  "18431": {
+    "name": "Cordero estofado en amarillo"
+  },
+  "18432": {
+    "name": "Ta si mi (cordero dulce como miel)"
+  },
+  "18433": {
+    "name": "Moo shu al vinagre"
+  },
+  "18434": {
+    "name": "Cordero crisantemo"
+  },
+  "18435": {
+    "name": "Cordero salteado con cebolleta"
+  },
+  "18436": {
+    "name": "Fideos de arroz con pescado de Qifengdu"
+  },
+  "18437": {
+    "name": "Pato con sangre de Yongzhou"
+  },
+  "18438": {
+    "name": "Tofu relleno de Ningyuan"
+  },
+  "18439": {
+    "name": "Embutidos curados al vapor"
+  },
+  "18440": {
+    "name": "Pato prensado de Wuwei"
+  },
+  "18441": {
+    "name": "Chop suey de Li Hongzhang"
+  },
+  "18442": {
+    "name": "Pato crujiente de Sanhe"
+  },
+  "18443": {
+    "name": "Pescado Bao Gong"
+  },
+  "18444": {
+    "name": "Oca de tributo de Wushan"
+  },
+  "18445": {
+    "name": "Cerdo lingote"
+  },
+  "18446": {
+    "name": "Rollitos de piel de tofu a las tres delicias"
+  },
+  "18447": {
+    "name": "Cajitas de tofu (doufu he)"
+  },
+  "18448": {
+    "name": "Codillo piel de tigre"
+  },
+  "18449": {
+    "name": "Sopa de pollo en tinaja de barro"
+  },
+  "18450": {
+    "name": "Pata de ternera \"flor de ciruelo\""
+  },
+  "18451": {
+    "name": "Melena de león de Wudang"
+  },
+  "18452": {
+    "name": "Cordero con col encurtida"
+  },
+  "18453": {
+    "name": "Ternera frita crujiente"
+  },
+  "18454": {
+    "name": "Pollo de la consorte imperial"
+  },
+  "18455": {
+    "name": "Sopa de pollo con crisantemo"
+  },
+  "18456": {
+    "name": "Tiras de pollo marfil"
+  },
+  "18457": {
+    "name": "Cajitas de pollo caramelizadas"
+  },
+  "18458": {
+    "name": "Serpiente con jengibre y chile"
+  },
+  "18459": {
+    "name": "Rábano con chile picado"
+  },
+  "18460": {
+    "name": "Manitas de cerdo Xiaoxiang"
+  },
+  "18461": {
+    "name": "Ancas de rana mala"
+  },
+  "18462": {
+    "name": "Pepino de mar al vapor en fuente"
+  },
+  "18463": {
+    "name": "Panceta frita y al vapor con soja negra"
+  },
+  "18464": {
+    "name": "Pollito mala"
+  },
+  "18465": {
+    "name": "Perca mandarina de Dongting envuelta en redaño"
+  },
+  "18466": {
+    "name": "Mariposas sobre el mar (olla de pescado)"
+  },
+  "18467": {
+    "name": "Tofu del monte Bagong"
+  },
+  "18468": {
+    "name": "Empanadillas de jade blanco en caldo claro"
+  },
+  "18469": {
+    "name": "Albóndigas \"arrayán\""
+  },
+  "18470": {
+    "name": "Cola de pescado estofada"
+  },
+  "18471": {
+    "name": "Olla de primera de la familia Hu"
+  },
+  "18472": {
+    "name": "Daoban Xiang (cerdo curado en tabla)"
+  },
+  "18473": {
+    "name": "Perca mandarina \"flor de melocotón\" estofada"
+  },
+  "18474": {
+    "name": "Serpiente con ñame y goji"
+  },
+  "18475": {
+    "name": "Mero asado en tubo de bambú"
+  },
+  "18476": {
+    "name": "Codillo atado de Xiangyang"
+  },
+  "18477": {
+    "name": "Bandeja de tres incrustaciones"
+  },
+  "18478": {
+    "name": "Cerdo de Año Nuevo con mijo"
+  },
+  "18479": {
+    "name": "Pollo de Songzi"
+  },
+  "18480": {
+    "name": "Pareja de dragón y fénix"
+  },
+  "18481": {
+    "name": "Pollo en salmuera de Maozui"
+  },
+  "18482": {
+    "name": "Pato en tiras con brotes de soja"
+  },
+  "18483": {
+    "name": "Pato de los ocho inmortales"
+  },
+  "18484": {
+    "name": "Aleta de tiburón estofada en amarillo"
+  },
+  "18485": {
+    "name": "Abulón perla"
+  },
+  "18486": {
+    "name": "Abulón Kung Pao"
+  },
+  "18487": {
+    "name": "Dragón negro que escupe perlas"
+  },
+  "18488": {
+    "name": "Trozos de langostino fritos con salsa"
+  },
+  "18489": {
+    "name": "La casamentera se empareja"
+  },
+  "18490": {
+    "name": "Cangrejo de mar con hilos dorados"
+  },
+  "18491": {
+    "name": "Semillas de loto de Hunan con azúcar cande"
+  },
+  "18492": {
+    "name": "Cerdo curado ahumado"
+  },
+  "18493": {
+    "name": "Setas de invierno estofadas"
+  },
+  "18494": {
+    "name": "Choy sum con castañas"
+  },
+  "18495": {
+    "name": "Puntas de bambú en aceite de chile"
+  },
+  "18496": {
+    "name": "Pollo de los inmortales a los cinco tesoros"
+  },
+  "18497": {
+    "name": "Cien aves rinden homenaje al fénix"
+  },
+  "18498": {
+    "name": "Tortuga guisada con jamón"
+  },
+  "18499": {
+    "name": "Rana de roca al vapor"
+  },
+  "18500": {
+    "name": "Fénix guisado con peonía"
+  },
+  "18501": {
+    "name": "Pato guisado con caracoles verdes"
+  },
+  "18502": {
+    "name": "Sopa Zhonghe"
+  },
+  "18503": {
+    "name": "Paloma guisada de Huangshan"
+  },
+  "18504": {
+    "name": "Cajitas de shiitake rellenas"
+  },
+  "18505": {
+    "name": "Brochetas doblemente salteadas"
+  },
+  "18506": {
+    "name": "Shiitake con castañas"
+  },
+  "18507": {
+    "name": "Perca mandarina \"perla brillante\""
+  },
+  "18508": {
+    "name": "Pescado en láminas doble yema"
+  },
+  "18509": {
+    "name": "Pescado en cuenco con pepino de mar"
+  },
+  "18510": {
+    "name": "Caracoles al vapor con crisantemo comestible"
+  },
+  "18511": {
+    "name": "Crisantemo comestible al vapor con harina de arroz"
+  },
+  "18512": {
+    "name": "Pollo al vapor con vino de arroz"
+  },
+  "18513": {
+    "name": "Pollo del erudito Hanlin"
+  },
+  "18514": {
+    "name": "Reunión de madre e hijo"
+  },
+  "18515": {
+    "name": "Albóndigas de pato salvaje estofadas"
+  },
+  "18516": {
+    "name": "Sopa bagua con cordyceps"
+  },
+  "18517": {
+    "name": "Pera de invierno caliente"
+  },
+  "18518": {
+    "name": "Sopa dulce de guisante gris (Hui Dou)"
+  },
+  "18519": {
+    "name": "Fideos de ternera de Lanzhou"
+  },
+  "18520": {
+    "name": "Tian Pei Zi (avena fermentada dulce)"
+  },
+  "18521": {
+    "name": "Jiaotuan de patata"
+  },
+  "18522": {
+    "name": "Pollo calabaza (Hulu Ji)"
+  },
+  "18523": {
+    "name": "Pepino de mar con pollo en dados"
+  },
+  "18524": {
+    "name": "Riñones en tiras aliñados templados"
+  },
+  "18525": {
+    "name": "Doble crujiente con setas y nueces"
+  },
+  "18526": {
+    "name": "Fat choy relleno \"moneda de oro\""
+  },
+  "18527": {
+    "name": "Pollo \"vaina de loto\""
+  },
+  "18528": {
+    "name": "Ensalada de tres pieles"
+  },
+  "18529": {
+    "name": "Patas de pollo al vapor en salsa mixta de Hong Kong"
+  },
+  "18530": {
+    "name": "Bolas de pescado picantes"
+  },
+  "18531": {
+    "name": "Siu mai rey de pescado"
+  },
+  "18532": {
+    "name": "Siu mai de gamba"
+  },
+  "18533": {
+    "name": "Fideos con bolas de pescado de Hong Kong"
+  },
+  "18534": {
+    "name": "Fideos de arroz con bolas de pescado (Yu Daan Fun)"
+  },
+  "18535": {
+    "name": "Callos en aceite de chile"
+  },
+  "18536": {
+    "name": "Delicia de pescado y cordero"
+  },
+  "18537": {
+    "name": "Fideos de seda molidos al agua"
+  },
+  "18538": {
+    "name": "Cordero con tofu congelado"
+  },
+  "18539": {
+    "name": "Cerdo Shangzhi (con helecho)"
+  },
+  "18540": {
+    "name": "Cerdo en láminas con raíz de loto"
+  },
+  "18541": {
+    "name": "Tortuga guisada con ginseng y astrágalo"
+  },
+  "18542": {
+    "name": "Espaguetis salteados con char siu"
+  },
+  "18543": {
+    "name": "Mochi de Hong Kong"
+  },
+  "18544": {
+    "name": "Costillitas al vapor con soja negra de Hong Kong"
+  },
+  "18545": {
+    "name": "Fideos con Spam y huevo de Hong Kong"
+  },
+  "18546": {
+    "name": "Abulón en salmuera de Hong Kong"
+  },
+  "18547": {
+    "name": "Langostinos fritos al estilo occidental"
+  },
+  "18548": {
+    "name": "Nido imperial de siete colores"
+  },
+  "18549": {
+    "name": "Sopa de pollo con ginseng, abulón y buche"
+  },
+  "18550": {
+    "name": "Anguila salteada en seco"
+  },
+  "18551": {
+    "name": "Solomillo de cerdo en hoja de loto"
+  },
+  "18552": {
+    "name": "Callos en caldo lechoso"
+  },
+  "18553": {
+    "name": "Chile a los ocho tesoros"
+  },
+  "18554": {
+    "name": "Pollo reconstituyente Yiyuan"
+  },
+  "18555": {
+    "name": "Pollo sedoso con gastrodia"
+  },
+  "18556": {
+    "name": "Col china de borde dorado"
+  },
+  "18557": {
+    "name": "Mero coral fragante"
+  },
+  "18558": {
+    "name": "Mero con soja negra de Hong Kong"
+  },
+  "18559": {
+    "name": "Mero con salsa de maíz"
+  },
+  "18560": {
+    "name": "Hígado de oca en salmuera de Chaozhou"
+  },
+  "18561": {
+    "name": "Aleta de tiburón \"osmanto\" de Hong Kong"
+  },
+  "18562": {
+    "name": "Casquería en salmuera de Hong Kong"
+  },
+  "18563": {
+    "name": "Salsa XO de Hong Kong"
+  },
+  "18564": {
+    "name": "Bacalhau (bacalao de Macao)"
+  },
+  "18565": {
+    "name": "Tortitas de raíz de loto"
+  },
+  "18566": {
+    "name": "Yangrou paomo (sopa de cordero con pan)"
+  },
+  "18567": {
+    "name": "Hulutou paomo (sopa de tripa con pan)"
+  },
+  "18568": {
+    "name": "Fuente al vapor de Ziyang"
+  },
+  "18569": {
+    "name": "Cerdo con azufaifa y lías de vino"
+  },
+  "18570": {
+    "name": "Pepino de mar guisado con manitas"
+  },
+  "18571": {
+    "name": "Zongzi frío con miel"
+  },
+  "18572": {
+    "name": "Cangrejo virgen con jengibre y cebolleta"
+  },
+  "18573": {
+    "name": "Galinha à Portuguesa"
+  },
+  "18574": {
+    "name": "Trozos de langostino a la sartén"
+  },
+  "18575": {
+    "name": "Cerdo asado crujiente de Macao"
+  },
+  "18576": {
+    "name": "Cajitas de cangrejo crujientes \"moneda\""
+  },
+  "18577": {
+    "name": "Sopa de pollo en tinaja con aleta"
+  },
+  "18578": {
+    "name": "Douhua de Fengxiang"
+  },
+  "18579": {
+    "name": "Fideos saozi"
+  },
+  "18580": {
+    "name": "Fideos biangbiang"
+  },
+  "18581": {
+    "name": "Fideos youpo (aceite caliente)"
+  },
+  "18582": {
+    "name": "Jiaotuan (pastel de harina removida)"
+  },
+  "18583": {
+    "name": "Zeng gao (pastel de arroz con azufaifa)"
+  },
+  "18584": {
+    "name": "Guokui de Shaanxi (pan grande)"
+  },
+  "18585": {
+    "name": "Bolas de palometa fragantes"
+  },
+  "18586": {
+    "name": "Pato estofado del señor a los ocho tesoros"
+  },
+  "18587": {
+    "name": "Casquería de ternera al curry"
+  },
+  "18588": {
+    "name": "Galinha à Africana (pollo africano)"
+  },
+  "18589": {
+    "name": "Pastel de nata"
+  },
+  "18590": {
+    "name": "Olla caliente de Macao (Dou Lao)"
+  },
+  "18591": {
+    "name": "Roujiamo (hamburguesa china)"
+  },
+  "18592": {
+    "name": "Bolitas de verdura (Cai Geda)"
+  },
+  "18593": {
+    "name": "Vino de arroz espeso con osmanto"
+  },
+  "18594": {
+    "name": "Pastelitos de la consorte imperial"
+  },
+  "18595": {
+    "name": "Cerdo sellado en blanco"
+  },
+  "18596": {
+    "name": "Tortuga cubierta de brocado"
+  },
+  "18597": {
+    "name": "Lan fan (arroz abrazado)"
+  },
+  "18598": {
+    "name": "Rollitos de fénix"
+  },
+  "18599": {
+    "name": "Congee de cangrejo de Macao"
+  },
+  "18600": {
+    "name": "Bocadillo de chuleta de cerdo (Jyu Pa Bao)"
+  },
+  "18601": {
+    "name": "Pato con pomelo verde"
+  },
+  "18602": {
+    "name": "Turrón de Macao"
+  },
+  "18603": {
+    "name": "Olla de huesos de Macao"
+  },
+  "18604": {
+    "name": "Pastelitos salados \"del marido\""
+  },
+  "18605": {
+    "name": "Banquete de las trece flores de Hancheng"
+  },
+  "18606": {
+    "name": "Pescado mala con doubanjiang de Shimen"
+  },
+  "18607": {
+    "name": "Codillo con mango"
+  },
+  "18608": {
+    "name": "Zhutouchun (codorniz en la punta del palillo)"
+  },
+  "18609": {
+    "name": "Cuatro alegrías Ming"
+  },
+  "18610": {
+    "name": "Minchi"
+  },
+  "18611": {
+    "name": "Arroz de marisco (de Macao)"
+  },
+  "18612": {
+    "name": "Caldo Verde"
+  },
+  "18613": {
+    "name": "Pato de Cabidela"
+  },
+  "18614": {
+    "name": "Porco balichão (cerdo con pasta de gamba)"
+  },
+  "18615": {
+    "name": "Arroz de galinha à moura"
+  },
+  "18616": {
+    "name": "Tortilla de rábano en conserva (Chai Po)"
+  },
+  "18617": {
+    "name": "Olla de pescado en caldo lechoso"
+  },
+  "18618": {
+    "name": "Calamar en tiras guisado"
+  },
+  "18619": {
+    "name": "Carne guisada a las tres delicias"
+  },
+  "18620": {
+    "name": "Cerdo en láminas \"cabeza calva\""
+  },
+  "18621": {
+    "name": "Berenjena guisada con cerdo en tiras"
+  },
+  "18622": {
+    "name": "Hulutou (tripa de cerdo estofada)"
+  },
+  "18623": {
+    "name": "Pescado en láminas fragante"
+  },
+  "18624": {
+    "name": "Bollos de pimienta taiwaneses (Hu Jiao Bing)"
+  },
+  "18625": {
+    "name": "Pollo crujiente taiwanés (Yan Su Ji)"
+  },
+  "18626": {
+    "name": "A-gei de Tamsui"
+  },
+  "18627": {
+    "name": "Codillo de Wanluan"
+  },
+  "18628": {
+    "name": "Té de burbujas"
+  },
+  "18629": {
+    "name": "Tofu \"vaina de loto\""
+  },
+  "18630": {
+    "name": "Tortuga en caldo claro"
+  },
+  "18631": {
+    "name": "Fideos hele (prensados)"
+  },
+  "18632": {
+    "name": "Pastelito de piña"
+  },
+  "18633": {
+    "name": "Gua Bao"
+  },
+  "18634": {
+    "name": "Salchicha grande envuelve salchicha pequeña"
+  },
+  "18635": {
+    "name": "Pato Shang de Yilan (ahumado)"
+  },
+  "18636": {
+    "name": "Run bing (popiah)"
+  },
+  "18637": {
+    "name": "Galletas cuadradas crujientes"
+  },
+  "18638": {
+    "name": "Galletas \"lengua de buey\" de Yilan"
+  },
+  "18639": {
+    "name": "Ban tiao (fideos planos hakka)"
+  },
+  "18640": {
+    "name": "La rana pone huevos (bebida de semillas)"
+  },
+  "18641": {
+    "name": "Fideos de cristal a los ocho tesoros"
+  },
+  "18642": {
+    "name": "Sopa de fideos con ternera de Taipéi"
+  },
+  "18643": {
+    "name": "Ding Bian Cuo (sopa de láminas de arroz)"
+  },
+  "18644": {
+    "name": "Pollo salado hakka"
+  },
+  "18645": {
+    "name": "Pichón asado medalla de oro"
+  },
+  "18646": {
+    "name": "Cochinillo asado de la buena suerte"
+  },
+  "18647": {
+    "name": "Poon choi (festín en fuente)"
+  },
+  "18648": {
+    "name": "Olla de aleta de tiburón de la casa"
+  },
+  "18649": {
+    "name": "Langosta gratinada con salsa medalla de oro"
+  },
+  "18650": {
+    "name": "Pollo tres tazas taiwanés"
+  },
+  "18651": {
+    "name": "Sopa espesa de cerdo (Bah-kenn)"
+  },
+  "18652": {
+    "name": "Pastel del primer erudito del tío Ajia"
+  },
+  "18653": {
+    "name": "Mee sua Ay-Chung"
+  },
+  "18654": {
+    "name": "Lu rou fan (arroz con cerdo estofado)"
+  },
+  "18655": {
+    "name": "Sopa espesa de fideos de judía"
+  },
+  "18656": {
+    "name": "Abulón de centro tierno asado"
+  },
+  "18657": {
+    "name": "Oca asada real"
+  },
+  "18658": {
+    "name": "Bolas de pescado al curry"
+  },
+  "18659": {
+    "name": "Bollo piña (Bo Lo Bao)"
+  },
+  "18660": {
+    "name": "Sopa de imitación de aleta (Wun Jai Chi)"
+  },
+  "18661": {
+    "name": "Gofre de Hong Kong (Gaak Zai Beng)"
+  },
+  "18662": {
+    "name": "Tofu de Shenkeng"
+  },
+  "18663": {
+    "name": "Boniato frito con polvo de ciruela"
+  },
+  "18664": {
+    "name": "Té de calamansi"
+  },
+  "18665": {
+    "name": "Pan ataúd (Guan Cai Ban)"
+  },
+  "18666": {
+    "name": "Qi Li Xiang (brochetas de rabadilla de pollo)"
+  },
+  "18667": {
+    "name": "Tianbula taiwanés (pastel de pescado)"
+  },
+  "18668": {
+    "name": "Guagua de Tianshui (gelatina de alforfón)"
+  },
+  "18669": {
+    "name": "Carro de tres caballos (fideos, cerdo y té)"
+  },
+  "18670": {
+    "name": "Arrocitos de ternera (trocitos de fideo)"
+  },
+  "18671": {
+    "name": "Mezcla de Tianshui"
+  },
+  "18672": {
+    "name": "Cerdo en salsa Gao San"
+  },
+  "18673": {
+    "name": "Fideos con casquería de cerdo"
+  },
+  "18674": {
+    "name": "Gofres de huevo (Gai Daan Zai)"
+  },
+  "18675": {
+    "name": "Fideos del carrito (Che Zai Min)"
+  },
+  "18676": {
+    "name": "Té con leche de Hong Kong"
+  },
+  "18677": {
+    "name": "Zha leung (rollo de arroz con churro)"
+  },
+  "18678": {
+    "name": "Pastel de gamba de Hong Kong"
+  },
+  "18679": {
+    "name": "Sepia salteada"
+  },
+  "18680": {
+    "name": "Ba-wan de Changhua"
+  },
+  "18681": {
+    "name": "Sopa espesa de sepia"
+  },
+  "18682": {
+    "name": "Oca de A-Guo"
+  },
+  "18683": {
+    "name": "Gelatina de hierba (Shao Xian Cao)"
+  },
+  "18684": {
+    "name": "Fideos danzai"
+  },
+  "18685": {
+    "name": "Pastel de aceite con burbujas"
+  },
+  "18686": {
+    "name": "Momos tibetanos de Gannan"
+  },
+  "18687": {
+    "name": "Fideos fríos de Lanzhou"
+  },
+  "18688": {
+    "name": "Arroz fermentado con leche y huevo"
+  },
+  "18689": {
+    "name": "Cordero con rollos de masa"
+  },
+  "18690": {
+    "name": "Hu guo (sopa espesa con pimienta)"
+  },
+  "18691": {
+    "name": "Albóndigas de ternera jugosas"
+  },
+  "18692": {
+    "name": "Alitas en salsa \"suiza\""
+  },
+  "18693": {
+    "name": "Kueh de té hakka"
+  },
+  "18694": {
+    "name": "Tres setas en pasta de gamba"
+  },
+  "18695": {
+    "name": "Gau zai fun (fideos de arroz cortos)"
+  },
+  "18696": {
+    "name": "Pudin de leche de doble piel"
+  },
+  "18697": {
+    "name": "Falda de ternera estofada de Hong Kong"
+  },
+  "18698": {
+    "name": "Shou zhua bing (torta hojaldrada)"
+  },
+  "18699": {
+    "name": "Pollo al aceite de sésamo taiwanés"
+  },
+  "18700": {
+    "name": "Calamar gigante bombardeado"
+  },
+  "18701": {
+    "name": "Bolitas de taro"
+  },
+  "18702": {
+    "name": "Huevos de hierro taiwaneses"
+  },
+  "18703": {
+    "name": "Tofu de mil hojas a la sartén"
+  },
+  "18704": {
+    "name": "Mee sua con pollo al aceite de sésamo"
+  },
+  "18705": {
+    "name": "Fideos de arroz salteados taiwaneses"
+  },
+  "18706": {
+    "name": "Té en jarrita (Guanguan Cha)"
+  },
+  "18707": {
+    "name": "Caramelo de malta de Hezhou"
+  },
+  "18708": {
+    "name": "Gachas de arroz con azúcar cande"
+  },
+  "18709": {
+    "name": "Rollitos fragantes de la prosperidad"
+  },
+  "18710": {
+    "name": "Tendón de Xiahe"
+  },
+  "18711": {
+    "name": "Jiaotuan de ñame"
+  },
+  "18712": {
+    "name": "Salchicha de harina Fazi"
+  },
+  "18713": {
+    "name": "Har gow (empanadillas de gamba)"
+  },
+  "18714": {
+    "name": "Arroz con char siu de Hong Kong"
+  },
+  "18715": {
+    "name": "Olla de casquería de la calle Temple"
+  },
+  "18716": {
+    "name": "Cabezas de pato de Dongshan"
+  },
+  "18717": {
+    "name": "Alas de pato asadas"
+  },
+  "18718": {
+    "name": "Mee sua con ostras"
+  },
+  "18719": {
+    "name": "Siu mei de Hong Kong"
+  },
+  "18720": {
+    "name": "Tripa de cerdo crujiente"
+  },
+  "18721": {
+    "name": "Fideos con costilla crujiente"
+  },
+  "18722": {
+    "name": "Arroz con setas estofadas taiwanés"
+  },
+  "18723": {
+    "name": "Sepia a los cinco sabores"
+  },
+  "18724": {
+    "name": "Ayu en hoja de loto"
+  },
+  "18725": {
+    "name": "Almejas salteadas al estilo occidental"
+  },
+  "18726": {
+    "name": "Pastel de arroz en tubo"
+  },
+  "18727": {
+    "name": "Melena de león tres tazas"
+  },
+  "18728": {
+    "name": "Shen fan de Huating (arroz de maíz)"
+  },
+  "18729": {
+    "name": "Arroz fermentado a los ocho tesoros"
+  },
+  "18730": {
+    "name": "Cerdo juema asado al fuego"
+  },
+  "18731": {
+    "name": "Hatillos de pepino de mar en caldo claro"
+  },
+  "18732": {
+    "name": "Pepino de mar guisado con cebolleta amarilla"
+  },
+  "18733": {
+    "name": "Pollo en láminas glaseado Hangui"
+  },
+  "18734": {
+    "name": "Arroz con manteca"
+  },
+  "18735": {
+    "name": "Aleta de tiburón sobre arroz"
+  },
+  "18736": {
+    "name": "Col china estofada taiwanesa"
+  },
+  "18737": {
+    "name": "Costillas agridulces de Hong Kong"
+  },
+  "18738": {
+    "name": "Patas de pollo de Hong Kong"
+  },
+  "18739": {
+    "name": "Patas de pollo al vapor con soja negra"
+  },
+  "18740": {
+    "name": "Sopa de calamar, caracol y puerro"
+  },
+  "18741": {
+    "name": "Pastel de arroz con gambas sakura"
+  },
+  "18742": {
+    "name": "Brema de Wuchang taiwanesa"
+  },
+  "18743": {
+    "name": "Labios de pescado en caldo espeso"
+  },
+  "18744": {
+    "name": "Oca al té Dongding"
+  },
+  "18745": {
+    "name": "Hasma con coco"
+  },
+  "18746": {
+    "name": "Aleta de tiburón antorcha"
+  }
+}

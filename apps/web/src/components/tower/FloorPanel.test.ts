@@ -33,6 +33,7 @@ describe('FloorPanel', () => {
         formulas: [],
         kujiThemes: [],
         proficiency: [],
+        cookbooks: [],
       },
     });
     const text = mount(FloorPanel, { props: { data: towerData() } })

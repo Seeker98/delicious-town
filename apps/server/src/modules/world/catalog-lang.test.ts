@@ -39,6 +39,7 @@ const empty = (): I18nTable => ({
   formulas: {},
   kujiThemes: {},
   proficiency: {},
+  cookbooks: {},
 });
 
 describe('道具目录按语言（问题记录 272）', () => {
@@ -105,12 +106,14 @@ describe('道具目录按语言（问题记录 272）', () => {
         formulas: [],
         kujiThemes: [{ id: 1, name: '新春年味', desc: '锣鼓一响' }],
         proficiency: [{ id: 1, name: '初学' }],
+        cookbooks: [{ id: 1, name: '南煎丸子' }],
       },
     } as unknown as CatalogDto;
     const t = empty();
     t.tasks['1'] = { name: 'Refill oil once' };
     t.tower['1'] = { name: 'Apprentice Model Restaurant', title: 'Apprentice Guardian', note: 'Come on' };
     t.kujiThemes['1'] = { name: 'Spring Festival Flavors', desc: 'The drums sound' };
+    t.cookbooks['1'] = { name: 'Southern Pan-fried Meatballs' };
     const c = localizeCatalog(b, t, 'en');
     expect(c.data!.tasks[0]).toEqual({ id: 1, name: 'Refill oil once' });
     expect(c.data!.activation[0]!.name).toBe('打蟑螂');
@@ -126,6 +129,7 @@ describe('道具目录按语言（问题记录 272）', () => {
       desc: 'The drums sound',
     });
     expect(c.data!.proficiency[0]!.name).toBe('初学');
+    expect(c.data!.cookbooks[0]!.name).toBe('Southern Pan-fried Meatballs');
   });
 
   it('简中原样返回', () => {

@@ -1,1 +1,833 @@
-{}
+{
+  "1": {
+    "name": "Secreto·Pastelitos imperiales de Fangshan"
+  },
+  "2": {
+    "name": "Secreto·Fénix en el nido"
+  },
+  "3": {
+    "name": "Secreto·Fénix con las alas abiertas"
+  },
+  "4": {
+    "name": "Secreto·Langostinos Furong"
+  },
+  "5": {
+    "name": "Secreto·Conejo Kung Pao"
+  },
+  "6": {
+    "name": "Secreto·Vieiras al osmanto"
+  },
+  "7": {
+    "name": "Secreto·Conejo piel de tigre"
+  },
+  "8": {
+    "name": "Secreto·Setas al jugo de pollo"
+  },
+  "9": {
+    "name": "Secreto·Monedas de oro hiladas"
+  },
+  "10": {
+    "name": "Secreto·Shaomai de hilos de oro"
+  },
+  "11": {
+    "name": "Secreto·Patas de pato pez dorado"
+  },
+  "12": {
+    "name": "Secreto·Perlas glaseadas"
+  },
+  "13": {
+    "name": "Secreto·Ternura del dragón y el fénix"
+  },
+  "14": {
+    "name": "Secreto·Bollos de sésamo con carne picada"
+  },
+  "15": {
+    "name": "Secreto·Tres delicias con vieiras secas"
+  },
+  "16": {
+    "name": "Secreto·Rollitos crujientes mano de Buda"
+  },
+  "17": {
+    "name": "Secreto·Rollitos de pescado agridulce"
+  },
+  "18": {
+    "name": "Secreto·Dados de pollo con nueces"
+  },
+  "19": {
+    "name": "Secreto·Rollitos de pescado en redaño"
+  },
+  "20": {
+    "name": "Secreto·Huevos de paloma en melocotón"
+  },
+  "21": {
+    "name": "Secreto·Panda probando bambú"
+  },
+  "22": {
+    "name": "Secreto·Pato desmenuzado con brotes de soja"
+  },
+  "23": {
+    "name": "Secreto·Nido de golondrina de los cuatro caracteres"
+  },
+  "24": {
+    "name": "Secreto·Setas frescas estofadas"
+  },
+  "25": {
+    "name": "Secreto·Calabacitas de pollo frito"
+  },
+  "26": {
+    "name": "Secreto·Rollitos de sésamo"
+  },
+  "27": {
+    "name": "Secreto·Láminas de pescado salteadas a la imperial"
+  },
+  "28": {
+    "name": "Secreto·Pastel de guisante en abanico imperial"
+  },
+  "29": {
+    "name": "Secreto·Congee imperial de los ocho tesoros"
+  },
+  "30": {
+    "name": "Secreto·Salsa de pepino salteada"
+  },
+  "31": {
+    "name": "Secreto·Salsa de avellana salteada"
+  },
+  "32": {
+    "name": "Secreto·Pastel de judías verde jade"
+  },
+  "33": {
+    "name": "Secreto·Dos dragones jugando con una perla"
+  },
+  "34": {
+    "name": "Secreto·Crema de nueces"
+  },
+  "35": {
+    "name": "Secreto·Huevos de paloma ámbar"
+  },
+  "36": {
+    "name": "Secreto·Solomillo en crisantemo"
+  },
+  "37": {
+    "name": "Secreto·Pierna de cordero asada"
+  },
+  "38": {
+    "name": "Secreto·Cordero estofado rústico"
+  },
+  "39": {
+    "name": "Secreto·Tofu seco en orquídea"
+  },
+  "40": {
+    "name": "Secreto·Carpa saltando la puerta del dragón"
+  },
+  "41": {
+    "name": "Secreto·Pez dorado al Longjing"
+  },
+  "42": {
+    "name": "Secreto·Dragón con begonias"
+  },
+  "43": {
+    "name": "Secreto·Perca mandarina con rábano"
+  },
+  "44": {
+    "name": "Secreto·Piel de pepino picante"
+  },
+  "45": {
+    "name": "Secreto·Pollo anidado de tres capas"
+  },
+  "46": {
+    "name": "Secreto·Crisantemo de otoño desafiando la escarcha"
+  },
+  "47": {
+    "name": "Secreto·Rollitos Ruyi"
+  },
+  "48": {
+    "name": "Secreto·Empanadillas de las cuatro felicidades"
+  },
+  "49": {
+    "name": "Secreto·Carne de cangrejo panda"
+  },
+  "50": {
+    "name": "Secreto·Pescado entero en bola bordada"
+  },
+  "51": {
+    "name": "Secreto·Cordero de nieve y luna"
+  },
+  "52": {
+    "name": "Secreto·Brotes de bambú tras la lluvia"
+  },
+  "53": {
+    "name": "Secreto·Palmas de jade ofreciendo longevidad"
+  },
+  "54": {
+    "name": "Secreto·Noche en el río de nubes"
+  },
+  "55": {
+    "name": "Secreto·Pera y pechuga de fénix"
+  },
+  "56": {
+    "name": "Secreto·Ruyi de plata"
+  },
+  "57": {
+    "name": "Secreto·Calabaza china de las cien semillas"
+  },
+  "58": {
+    "name": "Secreto·Loto de nieve en flor de hielo"
+  },
+  "59": {
+    "name": "Secreto·Ginseng de las mil semillas"
+  },
+  "60": {
+    "name": "Secreto·Fénix desmenuzado con sauces verdes"
+  },
+  "61": {
+    "name": "Secreto·Abanico de jade"
+  },
+  "62": {
+    "name": "Secreto·Buche de pescado al fénix"
+  },
+  "63": {
+    "name": "Secreto·Buche de pescado mano de Buda"
+  },
+  "64": {
+    "name": "Secreto·Rollitos dorados mano de Buda"
+  },
+  "65": {
+    "name": "Secreto·Espinas de pescado Furong"
+  },
+  "66": {
+    "name": "Secreto·Aleta de tiburón imperial"
+  },
+  "67": {
+    "name": "Secreto·Aleta de tiburón del mar rojo"
+  },
+  "68": {
+    "name": "Secreto·Bolsitas de carne de cangrejo"
+  },
+  "69": {
+    "name": "Secreto·Hojaldre flor de loto"
+  },
+  "70": {
+    "name": "Secreto·Labios de pescado estofados"
+  },
+  "71": {
+    "name": "Secreto·Vestido con la túnica imperial"
+  },
+  "72": {
+    "name": "Secreto·Judías jacinto al jengibre"
+  },
+  "73": {
+    "name": "Secreto·Buche de pescado en monedas de oro"
+  },
+  "74": {
+    "name": "Secreto·Empanadillas pez dorado"
+  },
+  "75": {
+    "name": "Secreto·Pescado al sésamo en girasol"
+  },
+  "76": {
+    "name": "Secreto·Pastel de semillas de loto"
+  },
+  "77": {
+    "name": "Secreto·Tofu de perlas"
+  },
+  "78": {
+    "name": "Secreto·Pastel de mil capas"
+  },
+  "79": {
+    "name": "Secreto·Sol y luna resplandecientes"
+  },
+  "80": {
+    "name": "Secreto·Longevidad del pino y la grulla"
+  },
+  "81": {
+    "name": "Secreto·Pastel de guisantes"
+  },
+  "82": {
+    "name": "Secreto·Rollitos de cinco verduras"
+  },
+  "83": {
+    "name": "Secreto·Abulón de la grulla"
+  },
+  "84": {
+    "name": "Secreto·Manzanas al rocío fragante"
+  },
+  "85": {
+    "name": "Secreto·Sombras de golondrina sobre verduras doradas"
+  },
+  "86": {
+    "name": "Secreto·Pastel de pasta de azufaifa"
+  },
+  "87": {
+    "name": "Secreto·Melocotones de las cien longevidades"
+  },
+  "88": {
+    "name": "Secreto·Sopa de la primavera eterna"
+  },
+  "89": {
+    "name": "Secreto·Hongo blanco al jade"
+  },
+  "90": {
+    "name": "Secreto·Cola de ciervo Furong"
+  },
+  "91": {
+    "name": "Secreto·Ternera salteada en seco"
+  },
+  "92": {
+    "name": "Secreto·Venado con setas"
+  },
+  "93": {
+    "name": "Secreto·Tendón de ciervo estofado"
+  },
+  "94": {
+    "name": "Secreto·Pepino de mar mariposa"
+  },
+  "95": {
+    "name": "Secreto·Shiitake en grasa de pollo"
+  },
+  "96": {
+    "name": "Secreto·La belleza en la casa de oro"
+  },
+  "97": {
+    "name": "Secreto·Rollitos flor de loto"
+  },
+  "98": {
+    "name": "Secreto·Langostinos de los arhats"
+  },
+  "99": {
+    "name": "Secreto·Rollitos de gambas espiga de trigo"
+  },
+  "100": {
+    "name": "Secreto·Langostinos pipa"
+  },
+  "101": {
+    "name": "Secreto·Pollitos esperando comida"
+  },
+  "102": {
+    "name": "Secreto·Pastel tricolor"
+  },
+  "103": {
+    "name": "Secreto·Lengua de pato con tres delicias"
+  },
+  "104": {
+    "name": "Secreto·Castaña de agua bicolor (cocina desastrosa)"
+  },
+  "105": {
+    "name": "Secreto·Dragón volador deslizante"
+  },
+  "106": {
+    "name": "Secreto·Raíz de loto agridulce"
+  },
+  "107": {
+    "name": "Secreto·Vieiras salteadas al cilantro"
+  },
+  "108": {
+    "name": "Secreto·Urracas en la rama"
+  },
+  "109": {
+    "name": "Secreto·Tofu de almendras"
+  },
+  "110": {
+    "name": "Secreto·Flores de melocotonero cola de golondrina"
+  },
+  "111": {
+    "name": "Secreto·Lechuga espárrago loro"
+  },
+  "112": {
+    "name": "Secreto·Langostinos dorados en ramillete"
+  },
+  "113": {
+    "name": "Secreto·Olla caliente imperial del dragón"
+  },
+  "114": {
+    "name": "Secreto·Cajitas de hojaldre de patos mandarines"
+  },
+  "115": {
+    "name": "Secreto·Crema frita con sésamo"
+  },
+  "116": {
+    "name": "Secreto·Langostinos salteados a la imperial"
+  },
+  "117": {
+    "name": "Secreto·Cien pájaros volviendo al nido"
+  },
+  "118": {
+    "name": "Secreto·Ensalada de buche de pescado"
+  },
+  "119": {
+    "name": "Secreto·Pastel frío de judía roja"
+  },
+  "120": {
+    "name": "Secreto·Pechuga de fénix con perlas"
+  },
+  "121": {
+    "name": "Secreto·Nacimiento del fénix"
+  },
+  "122": {
+    "name": "Secreto·Fénix jugando con peonías"
+  },
+  "123": {
+    "name": "Secreto·Brotes de bambú de invierno estofados en seco"
+  },
+  "124": {
+    "name": "Secreto·Medusa al osmanto"
+  },
+  "125": {
+    "name": "Secreto·Fragancia del estanque de lotos"
+  },
+  "126": {
+    "name": "Secreto·Espinas de pescado estofadas"
+  },
+  "127": {
+    "name": "Secreto·Col en cesta de flores"
+  },
+  "128": {
+    "name": "Secreto·Langostinos con mariposas"
+  },
+  "129": {
+    "name": "Secreto·Cangrejo dorado"
+  },
+  "130": {
+    "name": "Secreto·Sopa de fideos con pollo desmenuzado"
+  },
+  "131": {
+    "name": "Secreto·Sapo dorado adorando la luna"
+  },
+  "132": {
+    "name": "Secreto·Gallo dorado sobre una pata"
+  },
+  "133": {
+    "name": "Secreto·León dorado y bola bordada"
+  },
+  "134": {
+    "name": "Secreto·Mazos del dragón y el fénix"
+  },
+  "135": {
+    "name": "Secreto·Piña con nata"
+  },
+  "136": {
+    "name": "Secreto·Anguila desmenuzada salteada"
+  },
+  "137": {
+    "name": "Secreto·Oolong Ruyi"
+  },
+  "138": {
+    "name": "Secreto·Coliflor rellena estofada"
+  },
+  "139": {
+    "name": "Secreto·Hojaldre de capas y capas"
+  },
+  "140": {
+    "name": "Secreto·Siempre verde por diez mil años"
+  },
+  "141": {
+    "name": "Secreto·Dragón dormido jugando con una perla"
+  },
+  "142": {
+    "name": "Secreto·Pastel de bola bordada"
+  },
+  "143": {
+    "name": "Secreto·Nido de golondrina imperial de primer rango"
+  },
+  "144": {
+    "name": "Secreto·Tabla de jade con cintas verdes"
+  },
+  "145": {
+    "name": "Secreto·Patos mandarines amamantando"
+  },
+  "146": {
+    "name": "Secreto·Huevos de paloma en láminas de nube"
+  },
+  "147": {
+    "name": "Secreto·Pez dorado de alubias"
+  },
+  "149": {
+    "name": "Secreto·Pastel bicolor de castaña de agua"
+  },
+  "150": {
+    "name": "Secreto·Gelatina de piña con nata"
+  },
+  "151": {
+    "name": "Secreto·Pastel Furong"
+  },
+  "152": {
+    "name": "Secreto·Longan en copa de jade"
+  },
+  "153": {
+    "name": "Secreto·Ensalada de hongo blanco"
+  },
+  "154": {
+    "name": "Secreto·Copas de naranja"
+  },
+  "155": {
+    "name": "Secreto·Ñame chino glaseado con miel"
+  },
+  "156": {
+    "name": "Secreto·Sopa de raíz de loto en tiras"
+  },
+  "157": {
+    "name": "Secreto·Copas de caracol de mar salteadas"
+  },
+  "158": {
+    "name": "Secreto·Cerdo char siu"
+  },
+  "159": {
+    "name": "Secreto·Salsa de guisantes salteada"
+  },
+  "160": {
+    "name": "Secreto·Codorniz Kung Pao"
+  },
+  "161": {
+    "name": "Secreto·Salsa de zanahoria"
+  },
+  "162": {
+    "name": "Secreto·Tablas de jade con incrustaciones de oro"
+  },
+  "163": {
+    "name": "Secreto·Dragón y fénix en armonía"
+  },
+  "164": {
+    "name": "Secreto·Codorniz al vapor"
+  },
+  "165": {
+    "name": "Secreto·Flores de manzano silvestre abriéndose"
+  },
+  "166": {
+    "name": "Secreto·Huevos de paloma en ojo de elefante"
+  },
+  "167": {
+    "name": "Secreto·Hongo blanco con perlas"
+  },
+  "168": {
+    "name": "Secreto·Dados de pescado al jade"
+  },
+  "169": {
+    "name": "Secreto·Cuernos de pescado Furong"
+  },
+  "170": {
+    "name": "Secreto·Tiras de pescado al osmanto"
+  },
+  "171": {
+    "name": "Secreto·Shiitake en monedas de oro"
+  },
+  "172": {
+    "name": "Secreto·Ciruelo, bambú y roca"
+  },
+  "173": {
+    "name": "Secreto·Dátiles de pescado de los patos mandarines"
+  },
+  "174": {
+    "name": "Secreto·Aleta de tiburón cola de fénix"
+  },
+  "175": {
+    "name": "Secreto·Begonias de jade cristalino"
+  },
+  "176": {
+    "name": "Secreto·Melena de león en pino"
+  },
+  "177": {
+    "name": "Secreto·Perca mandarina rellena"
+  },
+  "178": {
+    "name": "Secreto·Plato de nido de golondrina de los cuatro caracteres"
+  },
+  "179": {
+    "name": "Secreto·El rey del abulón revoluciona el palacio"
+  },
+  "180": {
+    "name": "Secreto·Joroba de camello con tres tiras"
+  },
+  "181": {
+    "name": "Secreto·Barca de arena sobre olas verdes"
+  },
+  "182": {
+    "name": "Secreto·Tesoro escondido en la nieve"
+  },
+  "183": {
+    "name": "Secreto·Cuatro tesoros estofados en salsa blanca"
+  },
+  "184": {
+    "name": "Secreto·Cerdo en tiras a las cinco especias"
+  },
+  "185": {
+    "name": "Secreto·Cuerpo dorado forjado en el fuego"
+  },
+  "186": {
+    "name": "Secreto·Pastel de espino"
+  },
+  "187": {
+    "name": "Secreto·Coliflor al curry"
+  },
+  "188": {
+    "name": "Secreto·Pastel de castañas"
+  },
+  "189": {
+    "name": "Secreto·Congee imperial de semillas de loto"
+  },
+  "190": {
+    "name": "Secreto·Hongo de bambú al Longjing"
+  },
+  "191": {
+    "name": "Secreto·Ternera picante y adormecedora"
+  },
+  "192": {
+    "name": "Secreto·Láminas de dragón de jade picantes"
+  },
+  "193": {
+    "name": "Secreto·Ensalada de agar con cinco tiras"
+  },
+  "194": {
+    "name": "Secreto·Congee imperial de judía roja"
+  },
+  "195": {
+    "name": "Secreto·Rollitos de pasta de judía roja"
+  },
+  "196": {
+    "name": "Secreto·Musgo negro con lirios de día"
+  },
+  "197": {
+    "name": "Secreto·Fénix con abrigo dorado"
+  },
+  "198": {
+    "name": "Secreto·Codorniz salteada sedosa"
+  },
+  "199": {
+    "name": "Secreto·Rollitos de pastel de espino"
+  },
+  "200": {
+    "name": "Secreto·Codorniz frita sencilla"
+  },
+  "201": {
+    "name": "Secreto·Codorniz estofada con cordyceps"
+  },
+  "202": {
+    "name": "Secreto·Hongo de bambú Ruyi"
+  },
+  "203": {
+    "name": "Secreto·Pastel de judías bicolor"
+  },
+  "204": {
+    "name": "Secreto·Nido de golondrina Taiji de la fortuna"
+  },
+  "205": {
+    "name": "Secreto·Patas de pato en abanico de sándalo"
+  },
+  "206": {
+    "name": "Secreto·Rollitos de primavera fritos"
+  },
+  "207": {
+    "name": "Secreto·Reencuentro de madre e hijo"
+  },
+  "208": {
+    "name": "Secreto·Pastelito de judías"
+  },
+  "209": {
+    "name": "Secreto·Congee imperial de lágrimas de Job"
+  },
+  "210": {
+    "name": "Secreto·Col del conejo de jade"
+  },
+  "211": {
+    "name": "Secreto·Ternera en tiras salteada en seco"
+  },
+  "212": {
+    "name": "Secreto·Láminas de pollo de sabor extraño"
+  },
+  "213": {
+    "name": "Secreto·Congee imperial de arroz negro"
+  },
+  "214": {
+    "name": "Secreto·Paloma oro y plata"
+  },
+  "215": {
+    "name": "Secreto·Faisán salteado al cilantro"
+  },
+  "216": {
+    "name": "Secreto·Ojos de fénix y miradas de otoño"
+  },
+  "217": {
+    "name": "Secreto·Solomillo salteado a la imperial"
+  },
+  "218": {
+    "name": "Secreto·Congee imperial de sémola de maíz"
+  },
+  "219": {
+    "name": "Secreto·Tartaleta de huevo"
+  },
+  "220": {
+    "name": "Secreto·Alitas de pato a la mostaza"
+  },
+  "221": {
+    "name": "Secreto·Shiitake rellenos en monedas de oro"
+  },
+  "222": {
+    "name": "Secreto·Copas de leche fresca a la naranja"
+  },
+  "223": {
+    "name": "Secreto·Gambas jugando entre lotos"
+  },
+  "224": {
+    "name": "Secreto·Rollitos de alubias"
+  },
+  "225": {
+    "name": "Nuevo·Sopa de grumos de masa con tomate"
+  },
+  "226": {
+    "name": "Nuevo·Tarta de arándanos"
+  },
+  "227": {
+    "name": "Nuevo·Aleta de tiburón en antorcha"
+  },
+  "228": {
+    "name": "Nuevo·Cochinillo asado de la buena suerte"
+  },
+  "229": {
+    "name": "Nuevo·Tres setas en pasta de gambas"
+  },
+  "230": {
+    "name": "Nuevo·Cangrejo falso"
+  },
+  "231": {
+    "name": "Bestia·Ceviche"
+  },
+  "232": {
+    "name": "Bestia·Galeras con sal y pimienta"
+  },
+  "233": {
+    "name": "Bestia·Beso de la tierra"
+  },
+  "234": {
+    "name": "Bestia·Raíz de loto con azúcar cande y caviar"
+  },
+  "235": {
+    "name": "Bestia·Salteado dorado de dos delicias"
+  },
+  "236": {
+    "name": "Bestia·Ensalada arcoíris de salmón"
+  },
+  "237": {
+    "name": "Bestia·Langostinos al ajillo"
+  },
+  "238": {
+    "name": "Bestia·Sopa italiana de tomate y setas"
+  },
+  "239": {
+    "name": "Bestia·Copa de frutas con mascarpone"
+  },
+  "240": {
+    "name": "Bestia·Arroz con salmón teriyaki"
+  },
+  "241": {
+    "name": "Bestia·Pasta cremosa con setas"
+  },
+  "242": {
+    "name": "Bestia·Filete de pollo a la plancha con romero"
+  },
+  "243": {
+    "name": "Bestia·Dados de ternera a la pimienta negra"
+  },
+  "244": {
+    "name": "Bestia·Pasta brisa de la tarde siciliana"
+  },
+  "245": {
+    "name": "Bestia·Tomates asados con aceite de peonía"
+  },
+  "246": {
+    "name": "Bestia·Bizcochos de soletilla con queso italiano"
+  },
+  "247": {
+    "name": "Bestia·Risotto al vino tinto con costillar Quinine"
+  },
+  "248": {
+    "name": "Bestia·Filete de pescado dorado envuelto en hilos fragantes"
+  },
+  "249": {
+    "name": "Bestia·Celebración de carne de bestia"
+  },
+  "251": {
+    "name": "Nuevo·Cerdo salteado con chile"
+  },
+  "252": {
+    "name": "Nuevo·Ternera amarilla salteada"
+  },
+  "253": {
+    "name": "Nuevo·Conejo con jengibre tierno y dos chiles"
+  },
+  "254": {
+    "name": "Nuevo·Ternera sacha"
+  },
+  "255": {
+    "name": "Nuevo·Paloma ahumada de Taigu"
+  },
+  "256": {
+    "name": "Nuevo·Luosifen de Guangxi"
+  },
+  "257": {
+    "name": "Nuevo·Pata de oso estofada"
+  },
+  "258": {
+    "name": "Nuevo·Cangreburger de receta secreta"
+  },
+  "259": {
+    "name": "Nuevo·Gambas blancas en salmuera"
+  },
+  "260": {
+    "name": "Nuevo·Huevos revueltos con pez hielo"
+  },
+  "261": {
+    "name": "Nuevo·Pollo del mendigo"
+  },
+  "262": {
+    "name": "Nuevo·Rollitos de pescado con nueces y aceite de cebolleta"
+  },
+  "263": {
+    "name": "Nuevo·Centolla real al vapor"
+  },
+  "264": {
+    "name": "Nuevo·Cazuela de berenjena y pescado salado"
+  },
+  "265": {
+    "name": "Nuevo·Puré de taro de los ocho tesoros"
+  },
+  "266": {
+    "name": "Nuevo·Bagre de hocico largo en salsa blanca"
+  },
+  "267": {
+    "name": "Nuevo·Sopa de huevo batido con caldo de jade"
+  },
+  "268": {
+    "name": "Nuevo·Cabezas de medusa al vinagre añejo"
+  },
+  "269": {
+    "name": "Nuevo·Pez cuchillo de doble piel"
+  },
+  "270": {
+    "name": "Nuevo·Ensalada de verduras con nueces pecanas"
+  },
+  "271": {
+    "name": "Nuevo·Arroz de sepia rellena con azafrán"
+  },
+  "272": {
+    "name": "Nuevo·Lechuga escaldada"
+  },
+  "273": {
+    "name": "Nuevo·Callos de cerdo salteados con ginkgo"
+  },
+  "274": {
+    "name": "Nuevo·Sopa espesa de lubina"
+  },
+  "331": {
+    "name": "Bestia·Arroz frito con gambas y azafrán"
+  },
+  "332": {
+    "name": "Bestia·Tabla fría de jamón español"
+  },
+  "333": {
+    "name": "Bestia·Ensalada de col rizada"
+  },
+  "334": {
+    "name": "Bestia·Hígado de cerdo al vapor con leche"
+  },
+  "335": {
+    "name": "Bestia·Perdiz nival con uvas de Xinjiang"
+  }
+}

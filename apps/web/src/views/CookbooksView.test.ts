@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { CookbookListDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import CookbooksView from './CookbooksView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -84,5 +85,39 @@ describe('CookbooksView', () => {
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(w.find('[data-testid="cb-194"] .dt-cb-foods').classes()).not.toContain('text-truncate');
+  });
+
+  it('菜名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
+    const data = {
+      tasks: [],
+      activation: [],
+      bless: [],
+      tower: [],
+      formulas: [],
+      kujiThemes: [],
+      proficiency: [],
+    };
+    useCatalogStore().apply({
+      version: 'v:en',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      data: { ...data, cookbooks: [{ id: 194, name: "Grape and Job's Tears Soup" }] },
+    });
+    const w = mount(CookbooksView, {
+      global: {
+        plugins: [
+          createRouter({
+            history: createMemoryHistory(),
+            routes: [{ path: '/:p(.*)*', component: CookbooksView }],
+          }),
+        ],
+      },
+    });
+    await flushPromises();
+    expect(w.text()).toContain("Grape and Job's Tears Soup");
+    expect(w.text()).toContain('另一道菜');
   });
 });

@@ -935,6 +935,7 @@ export function buildBundle(src: SourceData): BuildResult {
       formulas: [...formulas.values()],
       kujiThemes: kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
       proficiency: mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
+      cookbooks,
     },
     src,
     errors,
