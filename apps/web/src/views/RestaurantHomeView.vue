@@ -347,10 +347,19 @@ onBeforeUnmount(() => {
     <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
       <div class="dt-card-title mb-1">{{ t.home.todo }}</div>
       <div v-if="signedIn !== null" class="dt-todo-row" data-testid="home-signin-row">
-        <span class="flex-fill"><i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}</span>
-        <span v-if="signedIn" class="text-muted">{{
-          signInGift === null ? t.home.signedIn : t.home.signedInGift(catalog.goodsName(signInGift))
-        }}</span>
+        <!-- 右边只放短短的「已签到」，领到什么写在标题下面（问题记录 310：一长串挤得换行） -->
+        <span class="flex-fill">
+          <i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}
+          <span
+            v-if="signedIn && signInGift !== null"
+            class="d-block dt-meta"
+            data-testid="home-signin-gift"
+            >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
+          >
+        </span>
+        <span v-if="signedIn" class="text-success text-nowrap" data-testid="home-signed"
+          ><i class="bi bi-check-circle-fill me-1"></i>{{ t.home.signedShort }}</span
+        >
         <button
           v-else
           class="btn btn-sm btn-success"
