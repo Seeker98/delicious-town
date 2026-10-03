@@ -192,7 +192,14 @@ describe('列表和详情（238-1 设计 §7.1）', () => {
       .where('id', '=', String(done))
       .execute();
     const l = await svc().list(r);
-    expect(l).toMatchObject({ eligible: true, reason: null, feeRate: 0.02, maxHold: 200, maxTrade: 100 });
+    expect(l).toMatchObject({
+      eligible: true,
+      reason: null,
+      feeRate: 0.02,
+      maxHold: 200,
+      maxTrade: 100,
+      unit: 1000,
+    });
     const ids = l.events.map((e) => e.id);
     expect(ids).toContain(open);
     expect(ids).toContain(done);

@@ -259,6 +259,7 @@ export function createPredictService(d: GameDeps) {
       feeRate: t.feeRate,
       maxHold: t.maxHold,
       maxTrade: t.maxTrade,
+      unit: t.unit,
       events: rows.map((x) => toDto(x, now)),
     };
   }
