@@ -162,7 +162,11 @@ describe('兑换活动定义（148-2 设计 §3）', () => {
   });
   it('货币名为空、超长、重名都报错', () => {
     expect(paths(ex({ currencies: [{ name: '' }] }))[0]).toMatch(/^def\.currencies\.0\.name:/);
-    expect(paths(ex({ currencies: [{ name: '一二三四五六七' }] }))[0]).toMatch(/^def\.currencies\.0\.name:/);
+    // 最多 12 个字（问题记录 292：6 个字放不下花哨的名字）
+    expect(paths(ex({ currencies: [{ name: '一二三四五六七八九十一二' }, { name: '禄' }] }))).toEqual([]);
+    expect(paths(ex({ currencies: [{ name: '一二三四五六七八九十一二三' }] }))[0]).toMatch(
+      /^def\.currencies\.0\.name:/,
+    );
     expect(paths(ex({ currencies: [{ name: '福' }, { name: '福' }] }))).toContain(
       'def.currencies:duplicate_name',
     );
