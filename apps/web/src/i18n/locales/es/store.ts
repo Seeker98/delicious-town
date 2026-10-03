@@ -26,7 +26,6 @@ const store: Messages['store'] = {
   sellFailed: 'No se pudo vender',
   discardConfirm: (name) => `La bonificación de ${name} desaparece en cuanto lo tiras. ¿Tirarlo?`,
   discardFailed: 'No se pudo tirar',
-  hoursLeft: (h) => `Quedan ${h} h`,
   used: (kinds, max) => `${kinds}/${max} tipos usados`,
   equipsBefore: (n) => `Hay ${n} utensilio(s) más en la`,
   equipsLink: 'página de utensilios',

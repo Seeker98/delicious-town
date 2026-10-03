@@ -762,6 +762,17 @@ describe('守塔人（问题记录 120）', () => {
       'tower_fix references unknown floor 11',
     );
   });
+
+  it('同一层写了两次时报错（backlog 厨具小修：以前不报错，后一条生效）', () => {
+    const src = source();
+    const floors = [
+      { floor: 3, power: 100 },
+      { floor: 3, power: 200 },
+    ];
+    expect(buildBundle({ ...src, 'game/tower_fix': { floors } }).errors).toContain(
+      'tower_fix lists floor 3 twice',
+    );
+  });
 });
 
 describe('举报数值（子项目 6B-1）', () => {

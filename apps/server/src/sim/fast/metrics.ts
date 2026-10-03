@@ -88,7 +88,9 @@ export function compareCalibration(
     Math.abs(a - b) <= Math.max(tol * Math.max(Math.abs(a), Math.abs(b)), abs);
   const rows: CalibrationRow[] = [];
   const keys = new Set(fast.map((d) => `${d.persona}|${d.day}`));
-  for (const key of [...keys].sort()) {
+  // 按天数的数值排，同一天再按画像（backlog：以前按字符串排，第 10 天排在第 2 天前面）
+  const byDay = (k: string) => Number(k.split('|')[1]);
+  for (const key of [...keys].sort((a, b) => byDay(a) - byDay(b) || a.localeCompare(b))) {
     const [persona, dayStr] = key.split('|') as [string, string];
     const day = Number(dayStr);
     const a = fast.filter((d) => d.persona === persona && d.day === day);

@@ -20,7 +20,6 @@ const store: Messages['store'] = {
   sellFailed: 'Échec de la vente',
   discardConfirm: (name) => `Le bonus de ${name} disparaît dès que vous le jetez. Le jeter ?`,
   discardFailed: 'Impossible de jeter',
-  hoursLeft: (h) => `Encore ${h} h`,
   used: (kinds, max) => `${kinds}/${max} types utilisés`,
   equipsBefore: (n) => `${n} ustensile(s) de plus sur la`,
   equipsLink: 'page des ustensiles',

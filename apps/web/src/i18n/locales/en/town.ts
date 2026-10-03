@@ -150,7 +150,6 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: "Couldn't load the classroom",
-    hours: (h) => `${h} h`,
     stealConfirm: (n, mc) =>
       `Sneaking a lesson is free, but if it fails you forget ${n} recipes${mc ? ' and maybe a signature dish' : ''}. Sneak a lesson?`,
     learned: (name) => `You learned ${name}`,
@@ -163,7 +162,7 @@ const town: Messages['town'] = {
     closed: 'Class ended',
     closeFailed: "Couldn't end the class",
     mine: 'My class: ',
-    mineLine: (level, n, max, left) => ` Lv. ${level} · ${n}/${max} students · ${left} left`,
+    mineLine: (level, n, max, left) => ` Lv. ${level} · ${n}/${max} students · ${left}`,
     forceClose: 'End now',
     openTitle: 'Open a class (uses 1 fragment and 1 Teacher Certificate):',
     pickMc: 'Choose a signature dish you know',
@@ -175,7 +174,7 @@ const town: Messages['town'] = {
     running: 'Classes in session',
     none: "Nobody else's class is running",
     lessonLine: (level, teacher) => ` Lv. ${level} · teacher ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} students (${stolen} sneaked) · ${left} left`,
+    lessonMeta: (n, max, stolen, left) => `${n}/${max} students (${stolen} sneaked) · ${left}`,
     learn: 'Learn',
     steal: 'Sneak',
     rule: 'Learning costs price×3 coins and 2 fragments of the same level; the teacher gets price×2 and 1 fragment. One try per class.',

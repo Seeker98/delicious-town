@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addDays, gameDay, gameTime } from '@dt/shared';
-import { createShard } from '../../../test/fixtures';
+import { createAccountRow, createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { recordLogin } from '../account/loginTrace';
-import { createSuspicious } from './suspicious';
+import { createSuspicious, MULTI_ACCOUNTS_MAX } from './suspicious';
 
 let t: TestGame;
 let s: ReturnType<typeof createSuspicious>;
@@ -99,5 +100,32 @@ describe('可疑数据终审修复', () => {
     expect(r.coin[0]).toMatchObject({ restId: a.restaurantId, net: 2_000_000 });
     expect(r.coin[0]!.topSources[0]).toEqual({ source: 'settlement', delta: 2_000_000 });
     expect(r.exp[0]).toMatchObject({ restId: a.restaurantId, net: 30_000 });
+  });
+});
+
+describe('backlog 6B-2：多号分组', () => {
+  it('IP 和设备分组一起按人数排、再取前 N 个，设备分组不会被 IP 分组挤掉', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { ops: { suspicious: { topN: 1 } } });
+    const tag = Date.now() % 250;
+    const byIp = await Promise.all([1, 2, 3].map(() => newRestaurant(t, { shardId })));
+    for (const r of byIp) await recordLogin(t.db, r.accountId, `10.68.${tag}.1`, null);
+    const byDev = await Promise.all([1, 2, 3, 4].map(() => newRestaurant(t, { shardId })));
+    const dev = `dev-multi-${Date.now()}`;
+    for (const [i, r] of byDev.entries()) await recordLogin(t.db, r.accountId, `10.69.${tag}.${i + 1}`, dev);
+    const groups = await s.multi(shardId);
+    expect(groups.map((g) => [g.kind, g.key, g.total])).toEqual([['device', dev, 4]]);
+  });
+
+  it('一组账号太多时只列最近 50 个，并给出总数', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const ip = `10.70.${Date.now() % 250}.9`;
+    await recordLogin(t.db, r.accountId, ip, null);
+    for (let i = 0; i < MULTI_ACCOUNTS_MAX + 1; i++)
+      await recordLogin(t.db, await createAccountRow(t.db), ip, null);
+    const g = (await s.multi(shardId)).find((x) => x.key === ip)!;
+    expect(g.total).toBe(MULTI_ACCOUNTS_MAX + 2);
+    expect(g.accounts).toHaveLength(MULTI_ACCOUNTS_MAX);
   });
 });

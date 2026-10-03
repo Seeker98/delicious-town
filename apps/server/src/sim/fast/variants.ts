@@ -1,4 +1,5 @@
 import { cpus } from 'node:os';
+import type { EventEmitter } from 'node:events';
 import { Worker } from 'node:worker_threads';
 import { resolveShardSettings, type GameConfig, type Tuning } from '@dt/config';
 import { runFast, type FastOptions, type FastResult } from './run';
@@ -51,11 +52,11 @@ function resolveTuning(config: GameConfig, name: string, override: unknown): Tun
 
 /**
  * 组出各套数值（设计 §6）：第一个总是"基准"；--variant 名字=覆盖文件（格式 { tuning: {...} }）；
- * --set 路径=值1,值2（路径可以带 tuning. 前缀）。深合并后用 tuning 的 schema 校验；最多 8 套
+ * --set 路径=值1,值2（路径可以带 tuning. 前缀，可以写多次）。深合并后用 tuning 的 schema 校验；最多 8 套
  */
 export function buildVariants(
   config: GameConfig,
-  opts: { variants: string[]; set?: string },
+  opts: { variants: string[]; set?: string | string[] },
   readJson: (path: string) => unknown,
 ): Variant[] {
   const out: Variant[] = [{ name: '基准', tuning: resolveTuning(config, '基准', {}) }];
@@ -65,12 +66,12 @@ export function buildVariants(
     const name = v.slice(0, i);
     out.push({ name, tuning: resolveTuning(config, name, readJson(v.slice(i + 1))) });
   }
-  if (opts.set) {
-    const i = opts.set.indexOf('=');
-    if (i <= 0) throw new Error(`--set 要写成 路径=值1,值2：${opts.set}`);
-    const raw = opts.set.slice(0, i);
+  for (const set of typeof opts.set === 'string' ? [opts.set] : (opts.set ?? [])) {
+    const i = set.indexOf('=');
+    if (i <= 0) throw new Error(`--set 要写成 路径=值1,值2：${set}`);
+    const raw = set.slice(0, i);
     const path = raw.replace(/^tuning\./, '').split('.');
-    for (const s of opts.set.slice(i + 1).split(',')) {
+    for (const s of set.slice(i + 1).split(',')) {
       const value: unknown = s.trim() !== '' && !Number.isNaN(Number(s)) ? Number(s) : s;
       const name = `${raw.replace(/^tuning\./, '')}=${s}`;
       out.push({ name, tuning: resolveTuning(config, name, { tuning: nest(path, value) }) });
@@ -91,6 +92,32 @@ export interface WorkerInput {
 }
 export type WorkerMessage =
   { kind: 'progress'; name: string; day: number } | { kind: 'done'; result: FastResult };
+
+/**
+ * 等一个数值套线程的结果：发回 done 就拿到结果；出错、非 0 退出、或正常退出却没发回结果都报错
+ * （backlog 快速模拟：以前最后一种情况会一直卡住）
+ */
+export function watchWorker(
+  w: Pick<EventEmitter, 'on'>,
+  name: string,
+  onProgress: (name: string, day: number) => void,
+): Promise<FastResult> {
+  return new Promise<FastResult>((resolve, reject) => {
+    let done = false;
+    w.on('message', (m: WorkerMessage) => {
+      if (m.kind === 'progress') onProgress(m.name, m.day);
+      else {
+        done = true;
+        resolve(m.result);
+      }
+    });
+    w.on('error', reject);
+    w.on('exit', (code: number) => {
+      if (code !== 0) reject(new Error(`数值套「${name}」的线程异常退出：${code}`));
+      else if (!done) reject(new Error(`数值套「${name}」的线程退出了，但没有发回结果`));
+    });
+  });
+}
 
 /**
  * 跑多套数值：parallel 为 false 时在本线程逐套跑（测试用）；
@@ -118,20 +145,11 @@ export async function runVariants(
         name: v.name,
         options: { ...o, tuning: v.tuning, start: o.start.toISOString() },
       };
-      results[i] = await new Promise<FastResult>((resolve, reject) => {
-        const w = new Worker(new URL('./worker.ts', import.meta.url), {
-          workerData: input,
-          execArgv: ['--import', 'tsx'],
-        });
-        w.on('message', (m: WorkerMessage) => {
-          if (m.kind === 'progress') onDay(m.name)(m.day);
-          else resolve(m.result);
-        });
-        w.on('error', reject);
-        w.on('exit', (code) => {
-          if (code !== 0) reject(new Error(`数值套「${v.name}」的线程异常退出：${code}`));
-        });
+      const w = new Worker(new URL('./worker.ts', import.meta.url), {
+        workerData: input,
+        execArgv: ['--import', 'tsx'],
       });
+      results[i] = await watchWorker(w, v.name, (name, day) => onDay(name)(day));
     }
   };
   await Promise.all(Array.from({ length: Math.min(cpus().length, vs.length) }, one));

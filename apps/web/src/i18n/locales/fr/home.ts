@@ -25,6 +25,7 @@ const home: Messages['home'] = {
   todo: 'À faire aujourd’hui',
   signIn: 'Pointage quotidien',
   signedIn: "Déjà pointé aujourd'hui",
+  signedInGift: (gift) => `Déjà pointé aujourd'hui · reçu ${gift}×1 (dans l'entrepôt)`,
   signInBtn: 'Pointer',
   signInFailed: 'Échec du pointage',
   mainTag: 'Principale',

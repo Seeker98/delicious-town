@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { remainText } from '../../utils/remain';
 import { computed, onMounted, ref } from 'vue';
 import type { LessonDto, LessonsDto, McOverviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -39,8 +40,8 @@ const certsFor = computed(() => {
   const lv = pickMc.value === null ? undefined : catalog.mc(pickMc.value)?.level;
   return (data.value?.certs ?? []).filter((c) => c.num > 0 && lv !== undefined && c.levels.includes(lv));
 });
-const leftText = (at: string) =>
-  t.value.town.classroom.hours(Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000)));
+/** 剩余时间显示到分钟（backlog 6B-2，和设施、效果一致） */
+const leftText = (at: string) => remainText(at);
 
 function learn(l: LessonDto, type: 1 | 2) {
   const forget = l.level * (data.value?.forgetPerLevel ?? 3) + 1;

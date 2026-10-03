@@ -113,6 +113,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: false,
+      signInGift: 27,
       star: 0,
       items: [],
       rewards: [],
@@ -353,6 +354,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 18,
       signedIn: false,
+      signInGift: 27,
       star: 0,
       items: [],
       rewards: [],
@@ -521,6 +523,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: true,
+      signInGift: 27,
       star: 0,
       items: [],
       rewards: [],
@@ -570,5 +573,20 @@ describe('RestaurantHomeView', () => {
     } finally {
       await useLocaleStore().set('zh-CN');
     }
+  });
+
+  it('签到后写明领到了什么（backlog：以前只写"今天已签到"）', async () => {
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      total: 10,
+      signedIn: true,
+      signInGift: 27,
+      star: 0,
+      items: [],
+      rewards: [],
+    });
+    const w = await mountView();
+    const row = w.get('[data-testid="home-signin-row"]').text();
+    expect(row).toContain('今天已签到');
+    expect(row).toContain('×1（在仓库）');
   });
 });

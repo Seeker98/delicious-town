@@ -46,6 +46,7 @@ describe('AdminSuspiciousView（子项目 6B-2）', () => {
       {
         kind: 'ip',
         key: '10.0.0.1',
+        total: 3,
         accounts: [1, 2, 3].map((i) => ({
           accountId: i,
           username: `u${i}`,
@@ -121,5 +122,33 @@ describe('backlog 6B-2：可疑数据页切换区服和加载中', () => {
     const w = await mountView();
     expect(w.text()).toContain('加载中');
     expect(w.text()).not.toContain('没有数据');
+  });
+});
+
+describe('backlog 6B-2：多号分组只列一部分账号时写明总数', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+  it('一共 80 个账号、只列了 2 个：写"共 80 个账号，只列最近 2 个"', async () => {
+    vi.mocked(adminApi.suspiciousBar).mockResolvedValue([]);
+    vi.mocked(adminApi.suspiciousMulti).mockResolvedValue([
+      {
+        kind: 'device',
+        key: 'dev-x',
+        total: 80,
+        accounts: [1, 2].map((i) => ({
+          accountId: i,
+          username: `u${i}`,
+          restId: null,
+          restName: null,
+          lastSeen: '2026-10-01T00:00:00.000Z',
+        })),
+      },
+    ]);
+    const w = await mountView();
+    await w.find('[data-testid="sus-tab-multi"]').trigger('click');
+    await flushPromises();
+    expect(w.text()).toContain('共 80 个账号，只列最近 2 个');
   });
 });

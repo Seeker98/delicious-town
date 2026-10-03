@@ -30,6 +30,8 @@ export interface SuspiciousSurgeDto {
 export interface SuspiciousMultiGroup {
   kind: 'ip' | 'device';
   key: string;
+  /** 这一组一共几个账号；accounts 最多列 50 个（backlog 6B-2） */
+  total: number;
   accounts: Array<{
     accountId: number;
     username: string;

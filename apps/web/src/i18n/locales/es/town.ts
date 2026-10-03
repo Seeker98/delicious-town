@@ -151,7 +151,6 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: 'No se pudo cargar el aula',
-    hours: (h) => `${h} h`,
     stealConfirm: (n, mc) =>
       `Espiar una clase es gratis, pero si fallas olvidas ${n} receta(s)${mc ? ' y quizá un plato estrella' : ''}. ¿Espiar?`,
     learned: (name) => `Aprendiste ${name}`,
@@ -164,7 +163,7 @@ const town: Messages['town'] = {
     closed: 'Clase terminada',
     closeFailed: 'No se pudo terminar la clase',
     mine: 'Mi clase: ',
-    mineLine: (level, n, max, left) => ` Nv. ${level} · ${n}/${max} alumnos · quedan ${left}`,
+    mineLine: (level, n, max, left) => ` Nv. ${level} · ${n}/${max} alumnos · ${left}`,
     forceClose: 'Terminar ya',
     openTitle: 'Abrir una clase (gasta 1 fragmento y 1 certificado de profesor):',
     pickMc: 'Elige un plato estrella que sepas',
@@ -176,7 +175,7 @@ const town: Messages['town'] = {
     running: 'Clases en curso',
     none: 'Ahora no hay clases de otros jugadores',
     lessonLine: (level, teacher) => ` Nv. ${level} · profe ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} alumnos (${stolen} espiando) · quedan ${left}`,
+    lessonMeta: (n, max, stolen, left) => `${n}/${max} alumnos (${stolen} espiando) · ${left}`,
     learn: 'Aprender',
     steal: 'Espiar',
     rule: 'Aprender cuesta precio×3 monedas y 2 fragmentos del mismo nivel; el profe recibe precio×2 y 1 fragmento. Un intento por clase.',

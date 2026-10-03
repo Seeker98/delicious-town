@@ -7,6 +7,7 @@ import { explain } from './explain';
 import { fromInvocation } from './paths';
 import { loadResult, writeReport } from './report';
 import { runSim } from './run';
+import { parseFastArgs } from './fast/args';
 import { calibrate } from './fast/calibrate';
 import { writeFastReport } from './fast/report';
 import { loadSideTable } from './fast/side';
@@ -16,45 +17,29 @@ import { loadGameConfig } from '@dt/config';
 const [command, ...args] = process.argv.slice(2);
 const bundlePath = process.env.CONFIG_BUNDLE_PATH!;
 const adminUrl = process.env.SIM_ADMIN_URL ?? process.env.DATABASE_URL!;
-const redisUrl =
-  process.env.SIM_REDIS_URL ??
-  (() => {
-    const u = new URL(process.env.REDIS_URL!);
-    u.pathname = '/15';
-    return u.toString();
-  })();
+/** 用到时才读：sim fast（不核对时）不连 Redis，不要求环境里有 REDIS_URL（backlog 快速模拟） */
+const redisUrl = (): string => {
+  if (process.env.SIM_REDIS_URL) return process.env.SIM_REDIS_URL;
+  if (!process.env.REDIS_URL) throw new Error('需要 REDIS_URL（或 SIM_REDIS_URL）');
+  const u = new URL(process.env.REDIS_URL);
+  u.pathname = '/15';
+  return u.toString();
+};
 
 /** pnpm sim:fast（快速模拟设计 §6）：多套数值并排跑，写报告 */
 async function fast(): Promise<void> {
-  const { values } = parseArgs({
-    args,
-    options: {
-      days: { type: 'string', default: '30' },
-      bots: { type: 'string', default: '20' },
-      seed: { type: 'string', default: '1' },
-      personas: { type: 'string', default: 'diligent,normal,casual' },
-      variant: { type: 'string', multiple: true, default: [] },
-      set: { type: 'string' },
-      side: { type: 'string' },
-      out: { type: 'string' },
-      'stuck-days': { type: 'string', default: '5' },
-      start: { type: 'string', default: '2026-10-01T00:00:00+08:00' },
-      calibrate: { type: 'boolean', default: false },
-    },
-  });
+  const o = parseFastArgs(args);
   const config = loadGameConfig(bundlePath);
-  const start = new Date(values.start);
-  if (values.calibrate) {
-    const days = values.days === '30' ? 5 : Number(values.days);
+  if (o.calibrate) {
     const ok = await calibrate(
       {
         adminUrl,
-        redisUrl,
+        redisUrl: redisUrl(),
         bundlePath,
-        days,
-        seed: Number(values.seed),
-        start,
-        bots: values.bots === '20' ? 5 : Number(values.bots),
+        days: o.days,
+        seed: o.seed,
+        start: o.start,
+        bots: o.bots,
       },
       config,
       (m) => console.log(m),
@@ -63,38 +48,37 @@ async function fast(): Promise<void> {
     return;
   }
   const readJson = (f: string) => JSON.parse(readFileSync(fromInvocation(f), 'utf8')) as unknown;
-  const variants = buildVariants(config, { variants: values.variant ?? [], set: values.set }, readJson);
+  const variants = buildVariants(config, { variants: o.variants, set: o.sets }, readJson);
   const sidePath =
-    values.side === 'none'
+    o.side === 'none'
       ? null
-      : values.side
-        ? fromInvocation(values.side)
+      : o.side
+        ? fromInvocation(o.side)
         : new URL('./fast/side-income.json', import.meta.url);
   const side = sidePath ? loadSideTable(JSON.parse(readFileSync(sidePath, 'utf8')), config) : null;
-  const days = Number(values.days);
   const results = await runVariants(
     variants,
     {
-      days,
-      botsPerPersona: Number(values.bots),
-      personas: values.personas.split(',') as Persona['key'][],
-      seed: Number(values.seed),
-      start,
+      days: o.days,
+      botsPerPersona: o.bots,
+      personas: o.personas,
+      seed: o.seed,
+      start: o.start,
       side,
-      stuckDays: Number(values['stuck-days']),
+      stuckDays: o.stuckDays,
     },
     config,
     { bundlePath },
     (msg) => console.log(msg),
   );
   const dir = fromInvocation(
-    values.out ?? join('sim-out', `fast-${new Date().toISOString().replace(/[:.]/g, '-')}`),
+    o.out ?? join('sim-out', `fast-${new Date().toISOString().replace(/[:.]/g, '-')}`),
   );
   mkdirSync(dir, { recursive: true });
   const files = writeFastReport(dir, results, {
-    days,
-    bots: Number(values.bots),
-    seed: Number(values.seed),
+    days: o.days,
+    bots: o.bots,
+    seed: o.seed,
     side: sidePath ? String(sidePath) : null,
   });
   for (const r of results) console.log(`${r.name}：用时 ${Math.round(r.elapsedMs / 1000)} 秒`);
@@ -125,7 +109,7 @@ async function main(): Promise<void> {
       {
         adminUrl,
         dbName: 'dt_sim',
-        redisUrl,
+        redisUrl: redisUrl(),
         bundlePath,
         days: Number(values.days),
         botsPerPersona: Number(values.bots),
@@ -183,7 +167,7 @@ async function main(): Promise<void> {
     const r = await bench({
       adminUrl,
       dbName: 'dt_sim_bench',
-      redisUrl,
+      redisUrl: redisUrl(),
       bundlePath,
       restaurants: Number(values.restaurants),
       rounds: Number(values.rounds),
@@ -199,7 +183,7 @@ async function main(): Promise<void> {
     return;
   }
   console.log(
-    '用法：sim run [--days 30 --bots 3 --seed 1 --tuning 覆盖.json --compare 目录] | sim explain --state 快照.json | --rest id | sim bench [--restaurants 5000 --rounds 3]',
+    '用法：sim fast [--days 30 --bots 20 --set 路径=值1,值2 --variant 名字=覆盖.json --calibrate] | sim run [--days 30 --bots 3 --seed 1 --tuning 覆盖.json --compare 目录] | sim explain --state 快照.json | --rest id | sim bench [--restaurants 5000 --rounds 3]',
   );
   process.exitCode = 1;
 }

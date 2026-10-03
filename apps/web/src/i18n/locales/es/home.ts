@@ -25,6 +25,7 @@ const home: Messages['home'] = {
   todo: 'Pendientes de hoy',
   signIn: 'Registro diario',
   signedIn: 'Ya te registraste hoy',
+  signedInGift: (gift) => `Ya te registraste hoy · recibiste ${gift}×1 (en el almacén)`,
   signInBtn: 'Registrarse',
   signInFailed: 'No se pudo registrar',
   mainTag: 'Principal',

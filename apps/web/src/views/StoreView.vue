@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { remainText } from '../utils/remain';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { LedgerRecordDto, StoreDto, StoreItemDto } from '@dt/shared';
@@ -96,10 +97,8 @@ function discard(it: StoreItemDto) {
   if (!window.confirm(t.value.store.discardConfirm(catalog.goodsName(it.goodsId)))) return;
   void run(() => endpoints.discard(it.goodsId), t.value.store.discardFailed);
 }
-const expires = (at: string | null) =>
-  at
-    ? t.value.store.hoursLeft(Math.max(0, Math.ceil((new Date(at).getTime() - Date.now()) / 3_600_000)))
-    : '';
+/** 剩余时间显示到分钟（backlog 6B-2，和设施、效果一致） */
+const expires = (at: string | null) => (at ? remainText(at) : '');
 const recordName = (r: LedgerRecordDto) => recordLabel(r, catalog);
 
 watch(type, () => void load());

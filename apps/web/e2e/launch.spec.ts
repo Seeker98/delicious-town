@@ -17,12 +17,20 @@ async function query<T>(text: string, params: unknown[]): Promise<T[]> {
 /** 只改本用例新建的区服（id ≥ 9000）和注册的账号；一服、二服的数值不碰 */
 test('上线检查：管理员一键改自己新建区服的开关；可疑数据页四个标签都能打开', async ({ page, request }) => {
   test.setTimeout(120_000);
-  const shardId = 9000 + (Date.now() % 900);
+  // 以前中途被杀留下的测试区服先关掉，免得出现在上线检查里（backlog 6B-2）；只动本用例建的
+  await query(
+    `update shard set status = 'closed' where id >= 9000 and name like 'e2e上线%' and status = 'open'`,
+    [],
+  );
+  // 编号取已有测试区服的最大编号 + 1：以前按时间取余，可能和以前关掉的撞车（on conflict 后用的是旧区服）
+  const [row] = await query<{ id: number }>(
+    `insert into shard (id, name)
+       select coalesce(max(id), 8999) + 1, 'e2e上线' || (coalesce(max(id), 8999) + 1) from shard where id >= 9000
+       returning id`,
+    [],
+  );
+  const shardId = row!.id;
   const shardName = `e2e上线${shardId}`;
-  await query(`insert into shard (id, name) values ($1, $2) on conflict (id) do nothing`, [
-    shardId,
-    shardName,
-  ]);
   try {
     const me = await registerAndOpen(page, request);
     await query(`update account set role = 'admin' where lower(username) = lower($1)`, [me.username]);

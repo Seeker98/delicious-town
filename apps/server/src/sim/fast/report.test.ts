@@ -72,3 +72,24 @@ describe('报告（设计 §7）', () => {
     expect(compareCalibration([row(5, 1, 5_000)], [row(5, 1, 12_000)]).pass).toBe(true);
   });
 });
+
+describe('backlog 快速模拟：核对表按天数排序', () => {
+  it('第 10 天排在第 2 天后面（以前按字符串排）', () => {
+    const d = (day: number): BotDay => ({
+      day,
+      bot: 'x',
+      persona: 'diligent',
+      level: 1,
+      star: 0,
+      coin: 0,
+      diamond: 0,
+      learned: 0,
+      certs: 0,
+      oilLevel: 0,
+      renown: 0,
+    });
+    const days = [d(10), d(2), d(1)];
+    const order = [...new Set(compareCalibration(days, days).rows.map((r) => r.day))];
+    expect(order).toEqual([1, 2, 10]);
+  });
+});

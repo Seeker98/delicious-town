@@ -167,7 +167,13 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
     <div v-if="loading" class="dt-empty">加载中…</div>
     <div v-else-if="multi.length === 0" class="dt-empty">没有数据</div>
     <div v-for="g in loading ? [] : multi" :key="`${g.kind}-${g.key}`" class="dt-card small mb-2">
-      <div class="fw-bold mb-1">{{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：{{ g.key }}</div>
+      <div class="fw-bold mb-1">
+        {{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：{{ g.key }}
+        <!-- 账号太多时服务端只列最近的一部分（backlog 6B-2） -->
+        <span v-if="g.total > g.accounts.length" class="fw-normal text-muted ms-1"
+          >共 {{ g.total }} 个账号，只列最近 {{ g.accounts.length }} 个</span
+        >
+      </div>
       <div v-for="a in g.accounts" :key="a.accountId" data-testid="sus-multi-account">
         <RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink>
         <span class="text-muted">

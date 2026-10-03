@@ -309,4 +309,15 @@ describe('StoreView 新道具（问题记录 276：页面开着时服务器加�
     expect(endpoints.catalog).toHaveBeenCalled();
     expect(w.find('[data-testid="souvenir-91101"]').text()).toContain('南瓜大厨手办');
   });
+
+  it('有期限的道具，剩余时间显示到分钟（backlog 6B-2：以前只到小时）', async () => {
+    const soon = new Date(Date.now() + 90 * 60_000 + 30_000).toISOString();
+    vi.mocked(endpoints.store).mockResolvedValue({
+      ...structuredClone(data),
+      items: [{ ...data.items[0]!, expiresAt: soon }],
+    });
+    const w = mount(StoreView);
+    await flushPromises();
+    expect(w.text()).toContain('剩余 1 小时 31 分');
+  });
 });

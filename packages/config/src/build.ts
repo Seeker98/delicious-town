@@ -713,6 +713,12 @@ export function buildBundle(src: SourceData): BuildResult {
   // ---------- 厨塔（子项目 4C-2） ----------
   // 守塔人覆盖（问题记录 120）：各层厨力、第 5/6 层互换
   const fixByFloor = new Map(towerFix.floors.map((f) => [f.floor, f]));
+  // 同一层写两次时以前不报错、后一条生效，容易改错一条却看不出来（backlog 厨具小修）
+  const seenFloors = new Set<number>();
+  for (const f of towerFix.floors) {
+    if (seenFloors.has(f.floor)) errors.push(`tower_fix lists floor ${f.floor} twice`);
+    seenFloors.add(f.floor);
+  }
   for (const f of towerFix.floors)
     if (!towerRaw.some((r) => r.floor === f.floor))
       errors.push(`tower_fix references unknown floor ${f.floor}`);

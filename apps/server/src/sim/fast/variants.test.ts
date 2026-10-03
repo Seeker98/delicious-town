@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
-import { buildVariants, runVariants } from './variants';
+import { EventEmitter } from 'node:events';
+import { buildVariants, runVariants, watchWorker } from './variants';
 
 const config = testConfig();
 const base = config.tuning;
@@ -90,5 +91,31 @@ describe('写错的覆盖要报错，不能悄悄当成"没影响"（终审 I-2�
         none,
       ),
     ).not.toThrow();
+  });
+});
+
+describe('backlog 快速模拟：--set 可以写多次、线程没发回结果', () => {
+  it('写两次 --set：两组都加进来', () => {
+    const vs = buildVariants(
+      config,
+      { variants: [], set: ['settlement.expMultiplier=4', 'market.dailyKinds=6'] },
+      none,
+    );
+    expect(vs.map((v) => v.name)).toEqual(['基准', 'settlement.expMultiplier=4', 'market.dailyKinds=6']);
+  });
+
+  it('线程正常退出却没发回结果：报错，不会一直卡住', async () => {
+    const w = new EventEmitter();
+    const p = watchWorker(w, '基准', () => {});
+    w.emit('exit', 0);
+    await expect(p).rejects.toThrow('没有发回结果');
+  });
+
+  it('线程发回结果后退出：拿到结果', async () => {
+    const w = new EventEmitter();
+    const p = watchWorker(w, '基准', () => {});
+    w.emit('message', { kind: 'done', result: { name: '基准' } });
+    w.emit('exit', 0);
+    await expect(p).resolves.toMatchObject({ name: '基准' });
   });
 });

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { gameDay } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
@@ -72,6 +73,8 @@ describe('活跃度（规格书 15 §15.2）', () => {
     }
     const a = await task().activation(ctx);
     expect(a.signedIn).toBe(true);
+    // 首页写明签到领到了什么（backlog 厨具小修）
+    expect(a.signInGift).toBe(GOODS.signInGift);
     expect(a.star).toBe(1);
     expect(a.total).toBe(10 + 10);
     expect(a.items.find((x) => x.name === '给自己添油')).toMatchObject({ count: 3, limit: 2 });
