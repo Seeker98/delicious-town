@@ -10,6 +10,7 @@ const guide: Messages['guide'] = {
   take: 'Recoger',
   taken: 'Recogido',
   ended: 'Terminado',
+  unavailable: 'No disponible por ahora',
   took: (text) => `Recogido: ${text}`,
   takeFailed: 'No se pudo recoger',
   loadFailed: 'No se pudieron cargar los códigos de bienvenida',

@@ -92,7 +92,12 @@ describe('兑换码（子项目 6A-2）', () => {
   it('兑换：去空格、转大写；字符只能是字母数字', () => {
     expect(redeemBody.parse({ code: ' kaifu2026 ' }).code).toBe('KAIFU2026');
     expect(redeemBody.safeParse({ code: 'ab' }).success).toBe(false);
-    expect(redeemBody.safeParse({ code: 'AB CD' }).success).toBe(false);
+    expect(redeemBody.safeParse({ code: 'AB_CD' }).success).toBe(false);
+  });
+
+  it('兑换时去掉码中间的空格和连字符（backlog：从别处复制来的码常带分隔）', () => {
+    expect(redeemBody.parse({ code: 'abcd-efgh 2345' }).code).toBe('ABCDEFGH2345');
+    expect(redeemBody.parse({ code: 'AB CD' }).code).toBe('ABCD');
   });
 
   it('建通用码：自定码要合规；结束晚于开始；一批 1~1000 个', () => {

@@ -38,6 +38,7 @@ export default {
     endFailed: '结束白食失败',
   },
   guideHint: '新手看这里 → 游玩指引（有新手兑换码）',
+  guideCodes: '有可以领的新手兑换码 → 游玩指引',
   devices: '设施',
   notOpened: '未开通',
   starOpen: (n: number) => `${n} 星开放`,

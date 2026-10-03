@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { gameDay } from '@dt/shared';
 import { createRestaurantFull, createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { setTuning } from '../../../test/town';
 import { scanInvites } from './scan';
 
 let t: TestGame;
@@ -97,6 +98,39 @@ describe('邀请扫描（设计 §7）', () => {
     expect(new Set(statuses.filter((s) => s.status === 'capped').map((s) => s.invitee_account_id)).size).toBe(
       1,
     );
+  });
+});
+
+describe('backlog 邀请：跨月重新计数', () => {
+  it('上个月已经计满，下个月的新被邀请人照常发奖', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { invite: { monthlyCap: 1 } });
+    const inviter = await newRestaurant(t, { shardId });
+    const friend = async () => {
+      const f = await newRestaurant(t, { shardId, patch: { level: 10 }, verified: true });
+      await invite(f.accountId, inviter.accountId);
+      return f;
+    };
+    const back = t.clock.now;
+    try {
+      const a = await friend();
+      const b = await friend();
+      await scanInvites(t.game, log, shardId);
+      const statusOf = async (f: { accountId: number }) => (await reward(f.accountId, 'lv10'))?.status;
+      // 本月上限 1：先扫到的发，另一个记 capped（哪一个先扫到不固定）
+      expect([await statusOf(a), await statusOf(b)].sort()).toEqual(['capped', 'sent']);
+      const month = gameDay(t.clock.now).slice(0, 7);
+      t.clock.set(new Date(t.clock.now.getTime() + 32 * 86_400_000));
+      expect(gameDay(t.clock.now).slice(0, 7)).not.toBe(month);
+      const c = await friend();
+      await scanInvites(t.game, log, shardId);
+      expect(await reward(c.accountId, 'lv10')).toMatchObject({
+        status: 'sent',
+        month: gameDay(t.clock.now).slice(0, 7),
+      });
+    } finally {
+      t.clock.set(back);
+    }
   });
 });
 

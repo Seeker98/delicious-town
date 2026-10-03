@@ -23,6 +23,7 @@ const account: Messages['account'] = {
   newPw2: 'Nouveau mot de passe, encore',
   pwMismatch: 'Les nouveaux mots de passe ne correspondent pas',
   pwChanged: 'Mot de passe changé. Les autres appareils ont été déconnectés.',
+  pwRelogin: 'Mot de passe changé. Reconnectez-vous avec votre nouveau mot de passe.',
   changeFailed: 'Échec du changement',
   switchShard: 'Changer de serveur',
   logout: 'Se déconnecter',

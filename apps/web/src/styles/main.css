@@ -112,7 +112,6 @@ body {
   background: #f1f3f5;
   font-size: 12px;
 }
-/* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
 /* 跟正文同字号、同行高的文字按钮（问题记录 196：举报按钮和新闻错开半格、撑高行） */
 .dt-inline-btn {
   padding: 0;
@@ -144,6 +143,7 @@ body {
 .dt-feature {
   min-width: 0;
 }
+/* "更多"的分组小图标（底部弹出面板和 /more 页共用） */
 .dt-more-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

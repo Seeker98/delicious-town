@@ -7,7 +7,14 @@ import type { AdminActor } from './access';
 /** 写审计日志；调用方传入业务事务，保证两者一起成功或一起失败 */
 export async function writeAudit(
   db: Kysely<DB>,
-  a: { actor: AdminActor | null; action: string; target: string | null; detail?: Record<string, unknown> },
+  a: {
+    actor: AdminActor | null;
+    action: string;
+    target: string | null;
+    detail?: Record<string, unknown>;
+    /** 玩家自己的操作（没有后台操作人）时记请求 IP */
+    ip?: string | null;
+  },
 ): Promise<void> {
   await db
     .insertInto('audit_log')
@@ -16,7 +23,7 @@ export async function writeAudit(
       action: a.action,
       target: a.target,
       detail: JSON.stringify(a.detail ?? {}),
-      ip: a.actor?.ip ?? null,
+      ip: a.actor?.ip ?? a.ip ?? null,
     })
     .execute();
 }

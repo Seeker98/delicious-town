@@ -4,7 +4,18 @@ import type { GuideCodeDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
 import { npcAccountId } from '../npc/npc';
 
-const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+/** 按键排序后再比：jsonb 存进去后键的顺序和配置里不同（backlog 新手码） */
+const canon = (x: unknown): unknown =>
+  Array.isArray(x)
+    ? x.map(canon)
+    : x !== null && typeof x === 'object'
+      ? Object.fromEntries(
+          Object.keys(x)
+            .sort()
+            .map((k) => [k, canon((x as Record<string, unknown>)[k])]),
+        )
+      : x;
+const same = (a: unknown, b: unknown) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));
 
 /**
  * 新手码同步（问题记录 150，设计 §4.2）：没有就插入；系统账号建的按配置更新奖励、等级、说明；
@@ -61,6 +72,7 @@ export async function guideCodes(
   db: Kysely<DB>,
   codes: readonly NewbieCode[],
   restId: number,
+  opts: { redeemOn?: boolean } = {},
 ): Promise<GuideCodeDto[]> {
   if (codes.length === 0) return [];
   const actor = await npcAccountId(db);
@@ -82,17 +94,20 @@ export async function guideCodes(
   const byCode = new Map(rows.map((r) => [r.code, r]));
   return codes.map((c) => {
     const r = byCode.get(c.code);
-    // 领过的码即使后来停用也显示"已领"
-    const state: GuideCodeDto['state'] =
-      !r || r.actor_account_id !== actor
+    // 领过的码即使后来停用也显示"已领"；没同步进库（启动时同步失败）或区服关了兑换码：暂时不可用（backlog 新手码）
+    const state: GuideCodeDto['state'] = !r
+      ? 'unavailable'
+      : r.actor_account_id !== actor
         ? 'off'
         : r.used !== null
           ? 'used'
-          : r.disabled_at
-            ? 'off'
-            : rest.level < c.minLevel
-              ? 'level'
-              : 'ok';
+          : opts.redeemOn === false
+            ? 'unavailable'
+            : r.disabled_at
+              ? 'off'
+              : rest.level < c.minLevel
+                ? 'level'
+                : 'ok';
     return { code: c.code, minLevel: c.minLevel, items: c.items, state };
   });
 }

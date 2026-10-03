@@ -22,6 +22,8 @@ export default {
   newPw2: '再输一次新密码',
   pwMismatch: '两次输入的新密码不一样',
   pwChanged: '密码已修改，其他设备已下线',
+  /** 密码已改但本机换会话失败（backlog 账号） */
+  pwRelogin: '密码已修改，请用新密码重新登录',
   changeFailed: '修改失败',
   switchShard: '切换区服',
   logout: '退出登录',

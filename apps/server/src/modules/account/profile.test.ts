@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createShard } from '../../../test/fixtures';
-import { call, cookieOf, createTestApp, type TestContext } from '../../../test/helpers';
+import { call, cookieOf, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { playerIn } from '../../../test/players';
 
 let ctx: TestContext;
@@ -54,5 +54,85 @@ describe('我的账号（问题记录 178，设计 §6.1）', () => {
     expect((await call(ctx.app, 'GET', `${A}/me`, { cookie: p.cookie })).status).toBe(401);
     expect((await login(username, 'secret123')).status).toBe(401);
     expect((await login(username, 'newpass123')).status).toBe(200);
+  });
+});
+
+describe('backlog 账号：改密码', () => {
+  const accountOf = async (cookie: string) =>
+    (await call(ctx.app, 'GET', `${A}/me`, { cookie })).json.data.accountId as number;
+
+  it('审计记下 IP 和设备号', async () => {
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const id = await accountOf(p.cookie);
+    const r = await call(ctx.app, 'POST', `${A}/change-password`, {
+      cookie: p.cookie,
+      body: { oldPassword: 'secret123', newPassword: 'newpass123' },
+      headers: { 'x-device-id': 'dev-abcdef0123456789' },
+      ip: '10.1.2.3',
+    });
+    expect(r.status).toBe(200);
+    const a = await ctx.deps.db
+      .selectFrom('audit_log')
+      .select(['ip', 'detail'])
+      .where('action', '=', 'account.password')
+      .where('target', '=', `account:${id}`)
+      .executeTakeFirstOrThrow();
+    expect(a.ip).toBe('10.1.2.3');
+    expect(a.detail).toMatchObject({ deviceId: 'dev-abcdef0123456789' });
+  });
+
+  it('改密码后，之前发出的重置密码链接作废', async () => {
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const id = await accountOf(p.cookie);
+    const { email } = await ctx.deps.db
+      .selectFrom('account')
+      .select('email')
+      .where('id', '=', id)
+      .executeTakeFirstOrThrow();
+    await call(ctx.app, 'POST', `${A}/forgot-password`, { body: { email, captchaToken: 't' } });
+    const token = /token=([\w-]+)/.exec(ctx.mailer.lastTo(email)!.text)![1]!;
+    expect((await change(p.cookie, 'secret123', 'newpass123')).status).toBe(200);
+    const reset = await call(ctx.app, 'POST', `${A}/reset-password`, {
+      body: { token, password: 'hijack123' },
+    });
+    expect(reset.json.code).toBe('TOKEN_INVALID');
+  });
+
+  it('密码已改、换新会话失败：不报"修改失败"，返回 relogin 让前端提示重新登录', async () => {
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const username = await usernameOf(p.cookie);
+    const spy = vi.spyOn(ctx.deps.sessions, 'create').mockRejectedValueOnce(new Error('redis down'));
+    try {
+      const r = await change(p.cookie, 'secret123', 'newpass123');
+      expect(r.status).toBe(200);
+      expect(r.json.data).toEqual({ relogin: true });
+    } finally {
+      spy.mockRestore();
+    }
+    expect((await login(username, 'newpass123')).status).toBe(200);
+  });
+});
+
+describe('backlog 指引、我的账号：接口层的未登录、未开店', () => {
+  it('未登录：/guide/codes 和 /account/profile 都是 401', async () => {
+    expect((await call(ctx.app, 'GET', '/api/v1/guide/codes')).status).toBe(401);
+    expect((await call(ctx.app, 'GET', `${A}/profile`)).status).toBe(401);
+  });
+
+  it('登录了但没选区服：新手码报 NO_SHARD_SELECTED；我的账号照常，店列表为空', async () => {
+    const u = await registerUser(ctx.app);
+    const codes = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
+    expect(codes.json.code).toBe('NO_SHARD_SELECTED');
+    const prof = await call(ctx.app, 'GET', `${A}/profile`, { cookie: u.cookie });
+    expect(prof.status).toBe(200);
+    expect(prof.json.data.rests).toEqual([]);
+  });
+
+  it('选了区服但还没开店：新手码报 RESTAURANT_NOT_FOUND', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const u = await registerUser(ctx.app);
+    await call(ctx.app, 'POST', '/api/v1/shard/select', { cookie: u.cookie, body: { shardId } });
+    const codes = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
+    expect(codes.json.code).toBe('RESTAURANT_NOT_FOUND');
   });
 });

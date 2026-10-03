@@ -39,6 +39,7 @@ const home: Messages['home'] = {
     endFailed: "Couldn't stop eating",
   },
   guideHint: 'New here? → Guide (includes a starter code)',
+  guideCodes: 'You have a starter code to claim → Guide',
   devices: 'Facilities',
   notOpened: 'Not unlocked',
   starOpen: (n) => `Opens at ${n}★`,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { StoreItemDto } from '@dt/shared';
-import { groupStoreItems, sortStoreItems } from './storeSort';
+import { groupStoreItems, sortStoreItems, STORE_OTHER } from './storeSort';
 
 const item = (goodsId: number, expiresAt: string | null = null): StoreItemDto => ({
   goodsId,
@@ -12,7 +12,7 @@ const item = (goodsId: number, expiresAt: string | null = null): StoreItemDto =>
   maxUse: 1,
   sellPrice: null,
 });
-const TYPE: Record<number, number> = { 1: 1, 2: 0, 3: 0, 4: 0, 5: 9, 6: 7 };
+const TYPE: Record<number, number> = { 1: 1, 2: 0, 3: 0, 4: 0, 5: 9, 6: 7, 7: 8, 8: 7 };
 const NAME: Record<number, string> = {
   1: '喇叭',
   2: '体力卡',
@@ -20,6 +20,8 @@ const NAME: Record<number, string> = {
   4: '保险卡',
   5: '新手街勋章',
   6: '怪东西',
+  7: '另一种怪东西',
+  8: '阿怪',
 };
 const typeOf = (id: number) => TYPE[id]!;
 const nameOf = (id: number) => NAME[id]!;
@@ -27,7 +29,12 @@ const nameOf = (id: number) => NAME[id]!;
 describe('仓库排序（问题记录 186）', () => {
   it('按类型分组：消耗品、道具、礼包、设施、勋章，其他最后', () => {
     const g = groupStoreItems([item(6), item(5), item(1), item(2)], typeOf, nameOf);
-    expect(g.map((x) => x.type)).toEqual([0, 1, 9, 7]);
+    expect(g.map((x) => x.type)).toEqual([0, 1, 9, STORE_OTHER]);
+  });
+
+  it('几种不认识的类型合成一组"其他"，不会交错出好几个"其他"标题（backlog）', () => {
+    const g = groupStoreItems([item(6), item(7), item(8)], typeOf, nameOf);
+    expect(g.map((x) => [x.type, x.items.map((i) => i.goodsId)])).toEqual([[STORE_OTHER, [8, 6, 7]]]);
   });
 
   it('组内：有剩余时间的在前、短的在前，再按拼音（Review Focus 5）', () => {

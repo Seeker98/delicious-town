@@ -8,7 +8,13 @@ const codeText = z
   .transform((s) => s.toUpperCase())
   .pipe(z.string().regex(REDEEM_CODE_RE));
 
-export const redeemBody = z.object({ code: codeText });
+/** 玩家兑换：去掉码中间的空格和连字符（从别处复制来的码常带分隔，backlog 兑换码） */
+const redeemText = z
+  .string()
+  .transform((s) => s.replace(/[\s-]/g, '').toUpperCase())
+  .pipe(z.string().regex(REDEEM_CODE_RE));
+
+export const redeemBody = z.object({ code: redeemText });
 export interface RedeemResultDto {
   code: string;
   items: RewardItems;
@@ -61,10 +67,11 @@ export interface AdminCodeDto {
   createdAt: string;
 }
 
-/** 指引页的新手码（问题记录 150）：off = 不存在、已停用或被手动码占用；领过的码停用后仍是 used */
+/** 指引页的新手码（问题记录 150）：off = 已停用或被手动码占用；领过的码停用后仍是 used */
 export interface GuideCodeDto {
   code: string;
   minLevel: number;
   items: RewardItems;
-  state: 'ok' | 'level' | 'used' | 'off';
+  /** unavailable：没同步进库或区服关了兑换码，暂时领不了（backlog 新手码） */
+  state: 'ok' | 'level' | 'used' | 'off' | 'unavailable';
 }

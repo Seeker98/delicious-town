@@ -1,4 +1,3 @@
-import { randomInt } from 'node:crypto';
 import type { Redis } from 'ioredis';
 import { sql, type Kysely } from 'kysely';
 import {
@@ -38,7 +37,6 @@ export interface AccountDeps {
   now: () => Date;
 }
 
-const INVITE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const VERIFY_TTL_MS = 24 * 3600_000;
 const RESET_TTL_MS = 3600_000;
 const MAIL_COOLDOWN_SECONDS = 60;
@@ -205,7 +203,11 @@ export function createAccountService(d: AccountDeps) {
     },
 
     /** 改密码（设计 §6.1）：旧密码不对、新旧相同都报 INVALID_STATE（不用 401，免得前端当成已退出）；会话由路由处理 */
-    async changePassword(accountId: number, input: ChangePasswordInput): Promise<void> {
+    async changePassword(
+      accountId: number,
+      input: ChangePasswordInput,
+      meta: { ip: string; deviceId: string | null },
+    ): Promise<void> {
       const a = await d.db
         .selectFrom('account')
         .select('password_hash')
@@ -213,12 +215,26 @@ export function createAccountService(d: AccountDeps) {
         .executeTakeFirstOrThrow();
       if (!(await verifyPassword(a.password_hash, input.oldPassword))) throw invalidState('wrong_password');
       if (input.oldPassword === input.newPassword) throw invalidState('same_password');
-      await d.db
-        .updateTable('account')
-        .set({ password_hash: await hashPassword(input.newPassword) })
-        .where('id', '=', accountId)
-        .execute();
-      await writeAudit(d.db, { actor: null, action: 'account.password', target: `account:${accountId}` });
+      const hash = await hashPassword(input.newPassword);
+      // 改密码、作废旧的重置链接、审计在同一个事务里（backlog 账号）
+      await d.db.transaction().execute(async (tx) => {
+        await tx.updateTable('account').set({ password_hash: hash }).where('id', '=', accountId).execute();
+        // 改密码之前发出的重置密码链接作废：否则拿到旧邮件的人一小时内还能改回去
+        await tx
+          .updateTable('email_token')
+          .set({ used_at: d.now() })
+          .where('account_id', '=', accountId)
+          .where('purpose', '=', 'reset')
+          .where('used_at', 'is', null)
+          .execute();
+        await writeAudit(tx, {
+          actor: null,
+          action: 'account.password',
+          target: `account:${accountId}`,
+          detail: { deviceId: meta.deviceId },
+          ip: meta.ip,
+        });
+      });
     },
 
     async sendVerifyEmail(accountId: number): Promise<void> {
@@ -262,21 +278,6 @@ export function createAccountService(d: AccountDeps) {
         .where('id', '=', accountId)
         .execute();
       await d.sessions.destroyAll(accountId);
-    },
-
-    async createInviteCode(accountId: number): Promise<string> {
-      for (let attempt = 0; attempt < 5; attempt++) {
-        const code = Array.from({ length: 8 }, () => INVITE_ALPHABET[randomInt(INVITE_ALPHABET.length)]).join(
-          '',
-        );
-        try {
-          await d.db.updateTable('account').set({ invite_code: code }).where('id', '=', accountId).execute();
-          return code;
-        } catch (e) {
-          if (uniqueViolation(e) === null) throw e;
-        }
-      }
-      throw new Error('failed to generate a unique invite code');
     },
   };
 }

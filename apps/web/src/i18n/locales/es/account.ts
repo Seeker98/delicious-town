@@ -23,6 +23,7 @@ const account: Messages['account'] = {
   newPw2: 'Repite la nueva contraseña',
   pwMismatch: 'Las nuevas contraseñas no coinciden',
   pwChanged: 'Contraseña cambiada. Se cerró la sesión en los demás dispositivos.',
+  pwRelogin: 'Contraseña cambiada. Vuelve a iniciar sesión con tu nueva contraseña.',
   changeFailed: 'No se pudo cambiar',
   switchShard: 'Cambiar de servidor',
   logout: 'Cerrar sesión',

@@ -12,6 +12,8 @@ export default {
   take: '領取',
   taken: '已領',
   ended: '已結束',
+  /** 沒同步進庫或區服關了兌換碼（backlog 新手碼） */
+  unavailable: '暫時不可用',
   took: (text: string) => `領取成功：${text}`,
   takeFailed: '領取失敗',
   loadFailed: '讀取新手碼失敗',

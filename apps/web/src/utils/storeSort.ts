@@ -3,6 +3,8 @@ import { activeLocale } from '../i18n';
 
 /** 仓库分组顺序（问题记录 186）：消耗品、道具、礼包、设施、勋章；其他类型排最后 */
 export const STORE_TYPES: readonly number[] = [0, 1, 2, 3, 9];
+/** 不在上面的类型都归进这一组"其他" */
+export const STORE_OTHER = -1;
 const rank = (t: number) => {
   const i = STORE_TYPES.indexOf(t);
   return i < 0 ? STORE_TYPES.length : i;
@@ -31,7 +33,7 @@ export function sortStoreItems(
   );
 }
 
-/** 排好序再按类型切组（同一种未知类型归在一组） */
+/** 排好序再按类型切组；不认识的类型合成一组"其他"，以前几种未知类型交错时会出现好几个"其他"标题（backlog） */
 export function groupStoreItems(
   items: StoreItemDto[],
   typeOf: (goodsId: number) => number,
@@ -39,7 +41,8 @@ export function groupStoreItems(
 ): Array<{ type: number; items: StoreItemDto[] }> {
   const out: Array<{ type: number; items: StoreItemDto[] }> = [];
   for (const it of sortStoreItems(items, typeOf, nameOf)) {
-    const t = typeOf(it.goodsId);
+    const raw = typeOf(it.goodsId);
+    const t = STORE_TYPES.includes(raw) ? raw : STORE_OTHER;
     const last = out[out.length - 1];
     if (last && last.type === t) last.items.push(it);
     else out.push({ type: t, items: [it] });

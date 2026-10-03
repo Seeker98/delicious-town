@@ -15,6 +15,13 @@ export const NPC_USERNAME = '~krab';
 const NPC_EMAIL = 'krab@npc.invalid';
 
 export async function npcAccountId(db: Kysely<DB>): Promise<number> {
+  // 已经有了就直接返回：insert … on conflict 即使没插入也会消耗一个账号自增 id（backlog 新手码）
+  const found = await db
+    .selectFrom('account')
+    .select('id')
+    .where('username', '=', NPC_USERNAME)
+    .executeTakeFirst();
+  if (found) return found.id;
   await sql`insert into account (username, password_hash, email, email_verified_at, is_system)
     values (${NPC_USERNAME}, '!', ${NPC_EMAIL}, now(), true) on conflict do nothing`.execute(db);
   const r = await db
