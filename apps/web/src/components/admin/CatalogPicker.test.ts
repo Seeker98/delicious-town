@@ -37,6 +37,13 @@ describe('CatalogPicker（问题记录 270：后台选道具不用手填 id）',
     expect(w.find('[data-testid^="p-opt-"]').exists()).toBe(false);
   });
 
+  it('按名字搜不区分大小写（问题记录 316）', async () => {
+    useCatalogStore().goodsMap.set(500, goods(500, 'XO酱礼盒', 0));
+    const w = picker();
+    await w.get('[data-testid="p"]').setValue('xo');
+    expect(w.findAll('[data-testid^="p-opt-"]').map((o) => o.text())).toEqual(['XO酱礼盒 · 消耗品 · #500']);
+  });
+
   it('键盘：↓ 移到下一项，回车选中', async () => {
     const w = picker();
     const input = w.get('[data-testid="p"]');

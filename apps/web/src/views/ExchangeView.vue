@@ -8,6 +8,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
 import { formatNum } from '../utils/format';
+import { matchText } from '../utils/match';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
@@ -51,7 +52,8 @@ const groups = computed(() => {
   const q = search.value.trim();
   const list = foods.value.filter(
     (f) =>
-      (!q || catalog.foodName(f.foodsId).includes(q)) &&
+      // 不区分大小写、忽略重音（问题记录 316）
+      matchText(catalog.foodName(f.foodsId), q) &&
       (filter.value === 'all' || (filter.value === 'sale' ? saleNum(f) > 0 : f.buying > 0)),
   );
   const by = new Map<number, ExchangeFoodDto[]>();
@@ -259,7 +261,12 @@ onMounted(async () => {
       <li v-for="(x, i) in t.exchange.sysHelpItems" :key="i">{{ x }}</li>
     </ul>
   </details>
-  <input v-model="search" class="form-control form-control-sm mb-2" :placeholder="t.exchange.search" />
+  <input
+    v-model="search"
+    class="form-control form-control-sm mb-2"
+    :placeholder="t.exchange.search"
+    data-testid="ex-search"
+  />
   <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
     <div class="btn-group btn-group-sm">
       <button

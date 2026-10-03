@@ -9,6 +9,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import { getAt, groupOf, leafPaths, removeAt, setAt, type Tree } from '../../utils/settingsTree';
+import { matchText } from '../../utils/match';
 
 /** 常用项置顶（设计文档第 5 节） */
 const PINNED = [
@@ -62,9 +63,9 @@ const paths = computed(() => leafPaths(defaults.value));
  */
 const search = ref('');
 const docs = computed(() => data.value?.docs ?? { features: {}, groups: {}, fields: {} });
-const q = computed(() => search.value.trim().toLowerCase());
+const q = computed(() => search.value.trim());
 const hit = (...texts: Array<string | undefined>) =>
-  !q.value || texts.some((t) => (t ?? '').toLowerCase().includes(q.value));
+  !q.value || texts.some((t) => matchText(t ?? '', q.value));
 const match = (p: string) => hit(p, docs.value.fields[p], docs.value.groups[groupOf(p)]);
 const features = computed(() =>
   (data.value?.features ?? []).filter((f) => hit(f.name, docs.value.features[f.name])),

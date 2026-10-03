@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useCatalogStore } from '../../stores/catalog';
+import { matchText } from '../../utils/match';
 
 /**
  * 后台选道具 / 食材（问题记录 270）：打字按名字或 id 开头搜，下拉里显示名字、类型（食材显示等级）和 id，
@@ -51,7 +52,8 @@ const options = computed<Opt[]>(() => {
         }))
       : [...catalog.foodsMap.values()].map((f) => ({ id: f.id, name: f.name, extra: `${f.level} 级` }));
   for (const x of all) {
-    if (x.name.includes(q) || String(x.id).startsWith(q))
+    // 不区分大小写（问题记录 316）
+    if (matchText(x.name, q) || String(x.id).startsWith(q))
       out.push({ id: x.id, label: `${x.name} · ${x.extra} · #${x.id}` });
     if (out.length >= MAX) break;
   }
