@@ -38,7 +38,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cookbook.
 <template>
   <div v-if="d">
     <h5>
-      {{ d.name }} <span class="dt-tag">{{ GRADE_NAMES[d.grade] }}</span>
+      {{ catalog.data('cookbooks', d.id)?.name ?? d.name }}
+      <span class="dt-tag">{{ GRADE_NAMES[d.grade] }}</span>
     </h5>
     <div class="small text-muted mb-2">
       {{

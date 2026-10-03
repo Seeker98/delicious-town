@@ -224,6 +224,7 @@ export function createWorldService(d: GameDeps) {
         formulas: [...d.config.formulas.values()].map((x) => ({ id: x.id, name: x.name })),
         kujiThemes: d.config.bundle.kujiThemes.map((x) => ({ id: x.month, name: x.name, desc: x.desc })),
         proficiency: d.config.mcProficiency.map((x) => ({ id: x.curlevel, name: x.name })),
+        cookbooks: d.config.bundle.cookbooks.map((x) => ({ id: x.id, name: x.name })),
       },
     };
     return catalog;

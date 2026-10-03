@@ -24,6 +24,8 @@ export const I18N_FIELDS = {
   formulas: ['name'],
   kujiThemes: ['name', 'desc'],
   proficiency: ['name'],
+  // 第 9 批：菜名（食谱）
+  cookbooks: ['name'],
 } as const;
 export type I18nKind = keyof typeof I18N_FIELDS;
 export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];

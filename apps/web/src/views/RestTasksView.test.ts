@@ -83,6 +83,7 @@ describe('RestTasksView', () => {
         formulas: [],
         kujiThemes: [],
         proficiency: [],
+        cookbooks: [],
       },
     });
     const w = await mountView();

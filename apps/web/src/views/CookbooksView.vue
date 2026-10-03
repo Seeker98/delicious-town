@@ -96,7 +96,9 @@ onMounted(async () => {
   <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
     <div class="flex-fill" style="min-width: 0">
       <div class="text-truncate">
-        <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{ r.name }}</RouterLink>
+        <RouterLink :to="`/cookbooks/${r.id}`" class="fw-bold">{{
+          catalog.data('cookbooks', r.id)?.name ?? r.name
+        }}</RouterLink>
         <span class="dt-tag ms-1">{{ GRADE_NAMES[r.grade] }}</span>
       </div>
       <div v-if="r.next" class="dt-cb-foods">
