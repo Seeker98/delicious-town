@@ -596,7 +596,7 @@ describe('RestaurantHomeView', () => {
     await flushPromises();
     expect(endpoints.signIn).toHaveBeenCalled();
     expect(w.find('[data-testid="home-signin"]').exists()).toBe(false);
-    expect(w.text()).toContain('今天已签到');
+    expect(w.get('[data-testid="home-signed"]').text()).toBe('已签到');
   });
 
   it('读签到状态失败时不显示这一行', async () => {
@@ -639,7 +639,7 @@ describe('RestaurantHomeView', () => {
     }
   });
 
-  it('签到后写明领到了什么（backlog：以前只写"今天已签到"）', async () => {
+  it('签到后右边只写短短的「已签到」，领到什么写在下面一行（问题记录 310：以前一长串挤得换行）', async () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 10,
       signedIn: true,
@@ -649,8 +649,9 @@ describe('RestaurantHomeView', () => {
       rewards: [],
     });
     const w = await mountView();
-    const row = w.get('[data-testid="home-signin-row"]').text();
-    expect(row).toContain('今天已签到');
-    expect(row).toContain('×1（在仓库）');
+    const row = w.get('[data-testid="home-signin-row"]');
+    expect(row.get('[data-testid="home-signed"]').text()).toBe('已签到');
+    expect(row.get('[data-testid="home-signed"]').find('i.bi-check-circle-fill').exists()).toBe(true);
+    expect(row.get('[data-testid="home-signin-gift"]').text()).toContain('×1（在仓库）');
   });
 });
