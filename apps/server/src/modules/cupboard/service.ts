@@ -19,7 +19,7 @@ import { foodsNeedFor, padLevels, streetTargetGrade } from '../cookbook/rules';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { WorldService } from '../world/service';
 import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from './foods';
-import { handleTargetLevel, runHandle, type HandleWay } from './rules';
+import { composePool, handleTargetLevel, runHandle, type HandleWay } from './rules';
 
 const HANDLE_KEY = 'foods.handle';
 
@@ -200,6 +200,10 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         const snap = await world.ensure(o.shardId, o.now, o.tx);
         const agg = await opAgg(o);
         const { rate } = await opLuck(o);
+        const pool = o.config.foodPools.get(target)!;
+        // 合成不抽已经堆满的食材（问题记录 290）；按合成前的数量算，同一次合成中途才满的不排除
+        const have =
+          b.way === 'compose' ? await foodsMap(o.tx, o.rest.id) : new Map<number, { num: number }>();
         const outcome = runHandle(
           {
             way: b.way,
@@ -211,7 +215,9 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             extraRate: (b.way === 'decompose' ? agg.operFoodsAddRate : agg.composeFoodsRate) ?? 0,
             tuning: o.tuning,
           },
-          o.config.foodPools.get(target)!,
+          b.way === 'compose'
+            ? composePool(pool, (id) => (have.get(id)?.num ?? 0) >= o.rest.foods_max_num)
+            : pool,
           o.rng,
         );
         const gained = new Map<number, number>();

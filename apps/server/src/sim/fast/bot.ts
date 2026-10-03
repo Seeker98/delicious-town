@@ -1,7 +1,7 @@
 import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } from '@dt/config';
 import { gameDay, gameParts, nextSlot, type Rng } from '@dt/shared';
 import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from '../../modules/cookbook/rules';
-import { handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
+import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
 import { oilChecks, starChecks } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
@@ -534,7 +534,8 @@ export function botTurn(
         extraRate: agg.composeFoodsRate ?? 0,
         tuning: c.tuning,
       },
-      cfg.foodPools.get(target)!,
+      // 和真实合成一样不抽已经堆满的食材（问题记录 290）
+      composePool(cfg.foodPools.get(target)!, (fid) => (r.foods.get(fid) ?? 0) >= r.foodsMaxNum),
       c.rng,
     );
     for (const p of out.picks) addFoods(c, r, p, 1);
