@@ -285,3 +285,25 @@ describe('抽签（一番赏设计 §5.4）', () => {
     expect(Object.fromEntries(got)).toEqual({ A: 1, B: 2, C: 4, D: 8, E: 15, F: 50 });
   });
 });
+
+describe('backlog 一番赏：抽签结果和看板', () => {
+  it('刚抽中的大赏，抽签结果里的"最近的大赏"马上就有自己（不用刷新）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: { tiers: [{ key: 'A', count: 3, award: { diamond: 1 }, news: 'broadcast' }] },
+    });
+    const r = await player(shardId, { tickets: 2 });
+    const res = await svc().draw(r, 2);
+    expect(res.data.view.recent.map((x) => x.tier)).toEqual(['A', 'A']);
+    expect(res.data.view.recent[0]!.restName).toBe((await restRow(t, r.restaurantId)).name);
+    // 刷新后读到的是真正写进库的新闻，同样两条，不会重复
+    expect((await svc().view(r)).recent.map((x) => x.tier)).toEqual(['A', 'A']);
+  });
+
+  it('看板带银币余额；买券后返回扣过的余额', async () => {
+    const shardId = await createShard(t.db);
+    const r = await player(shardId, { coin: 100_000 });
+    expect((await svc().view(r)).coin).toBe(100_000);
+    expect((await svc().buy(r, 2)).data.coin).toBe(60_000);
+  });
+});

@@ -26,6 +26,10 @@ export default {
   buyTotal: (coin: string) => `張，共 ${coin} 銀幣`,
   buy: '買券',
   buyLeft: (n: number) => `今天還能買 ${n} 張`,
+  /** 買券數量不對時的提示、銀幣餘額（backlog 一番賞） */
+  buyMax: (n: number) => `今天最多還能買 ${n} 張`,
+  buyInt: '請填整數',
+  balance: (n: string) => `我的銀幣：${n}`,
   draw: (n: number) => `抽 ${n} 張`,
   result: '抽籤結果',
   drawLine: (tier: string, award: string) => `${tier}：${award}`,

@@ -28,6 +28,8 @@ export interface KujiViewDto {
   /** 今天的池已经开满、全部抽完 */
   closedToday: boolean;
   tickets: number;
+  /** 银币余额（backlog 一番赏：页面上显示，买券前能看到够不够） */
+  coin: number;
   price: number;
   buyLeft: number;
   maxDraw: number;

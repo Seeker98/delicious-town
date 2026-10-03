@@ -25,6 +25,10 @@ export default {
   buyTotal: (coin: string) => `张，共 ${coin} 银币`,
   buy: '买券',
   buyLeft: (n: number) => `今天还能买 ${n} 张`,
+  /** 买券数量不对时的提示、银币余额（backlog 一番赏） */
+  buyMax: (n: number) => `今天最多还能买 ${n} 张`,
+  buyInt: '请填整数',
+  balance: (n: string) => `我的银币：${n}`,
   draw: (n: number) => `抽 ${n} 张`,
   result: '抽签结果',
   drawLine: (tier: string, award: string) => `${tier}：${award}`,

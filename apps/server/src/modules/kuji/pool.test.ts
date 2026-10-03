@@ -80,3 +80,13 @@ describe('奖池（一番赏设计 §5.2）', () => {
     expect(Object.fromEntries(await tierLeft(t.db, p.id))).toEqual({ X: 3 });
   });
 });
+
+describe('backlog 一番赏：跨 0 点', () => {
+  it('请求开始时还是昨天、拿到区服锁时已经是今天：按今天开池，不给昨天再开一池', async () => {
+    const shardId = await createShard(t.db);
+    const today = gameDay(t.clock.now);
+    const lateYesterday = gameTime(addDays(today, -1), 23, 59);
+    const p = await cur(t.db, shardId, tiers(), lateYesterday, undefined, { clock: () => t.clock.now });
+    expect(p.day).toBe(today);
+  });
+});

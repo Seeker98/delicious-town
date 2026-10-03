@@ -210,4 +210,17 @@ describe('NewsPanel', () => {
     expect(row.find('[data-testid="news-text"]').classes()).toContain('fw-bold');
     expect(w.find('[data-testid="news-report-9-open"]').classes()).toContain('dt-inline-btn');
   });
+
+  it('一番赏大赏和喇叭一样醒目显示（和首页一致），但没有举报按钮（backlog 一番赏）', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValueOnce({
+      items: [item(9, 'kuji.big', { tier: 'A', pool: 1, seq: 1 })],
+      hasMore: false,
+    });
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    const row = w.get('[data-testid="news-row"]');
+    expect(row.classes()).toContain('text-primary');
+    expect(row.get('[data-testid="news-text"]').text()).toContain('【广播】');
+    expect(row.find('[data-testid="news-report-9"]').exists()).toBe(false);
+  });
 });
