@@ -445,8 +445,7 @@ details.dt-card > summary {
   font-weight: normal;
   color: var(--dt-muted);
 }
-.dt-kv > dt,
-.dt-kv > dd {
+.dt-kv > * {
   min-height: 32px;
   display: flex;
   align-items: center;
@@ -455,8 +454,7 @@ details.dt-card > summary {
   margin: 0;
   border-bottom: 1px solid var(--dt-line);
 }
-.dt-kv > dt:last-of-type,
-.dt-kv > dd:last-of-type {
+.dt-kv > :nth-last-child(-n + 2) {
   border-bottom: 0;
 }
 
