@@ -94,16 +94,20 @@ export async function currentPool(
   tiers: Tiers,
   now: Date,
   last?: Last,
-  opts: { maxPools?: number; theme?: number } = {},
+  opts: { maxPools?: number; theme?: number; clock?: () => Date } = {},
 ): Promise<PoolRow | null> {
-  const day = gameDay(now);
+  // clock：现在的时间。请求在店锁、区服锁上排队时可能跨过 0 点，拿到锁后要重新取时间（backlog 一番赏）
+  const at = opts.clock?.() ?? now;
+  const day = gameDay(at);
   // 快速路径（一番赏终审 I2）：今天已有进行中的池就直接用，不拿区服锁；昨天的池按 day 过滤拿不到，开新池时再标过期
   const ready = await findOpen(tx, shardId, day);
   if (ready) return ready;
   await sql`select pg_advisory_xact_lock(hashtext(${`kuji:${shardId}`}))`.execute(tx);
+  const locked = opts.clock?.() ?? at;
+  if (gameDay(locked) !== day) return currentPool(tx, shardId, tiers, locked, last, opts);
   await tx
     .updateTable('kuji_pool')
-    .set({ status: 'expired', closed_at: now })
+    .set({ status: 'expired', closed_at: locked })
     .where('shard_id', '=', shardId)
     .where('status', '=', 'open')
     .where('day', '<', day)
@@ -119,7 +123,7 @@ export async function currentPool(
       .executeTakeFirstOrThrow();
     // 每天最多开 maxPools 池（问题记录 274）：今天已经开满就不再开，返回空
     if (opts.maxPools !== undefined && Number(max.m) >= opts.maxPools) return null;
-    const p = await openPool(tx, shardId, day, Number(max.m) + 1, tiers, now, last, opts.theme);
+    const p = await openPool(tx, shardId, day, Number(max.m) + 1, tiers, locked, last, opts.theme);
     if (p) return p;
   }
   throw new Error(`kuji: cannot open pool for shard ${shardId}`);

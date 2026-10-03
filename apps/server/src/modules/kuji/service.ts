@@ -50,6 +50,7 @@ export function createKujiService(d: GameDeps) {
     pool: PoolRow,
     tickets: number,
     bought: number,
+    coin: number,
     closedToday = false,
   ): Promise<KujiViewDto> {
     const left = await tierLeft(db, pool.id);
@@ -97,6 +98,7 @@ export function createKujiService(d: GameDeps) {
       closedToday,
       last: { award: awardDto(prizes.last.award), icon: prizes.last.icon ?? null },
       tickets,
+      coin,
       price: k.price,
       buyLeft: Math.max(0, k.dailyBuy - bought),
       maxDraw: k.maxDraw,
@@ -130,8 +132,13 @@ export function createKujiService(d: GameDeps) {
 
   /** 当前池（按当月主题开池、每天最多 maxPools 池）；今天开满了返回空 */
   async function poolFor(tx: GameDeps['db'], shardId: number, k: K, now: Date): Promise<PoolRow | null> {
-    const p = themed(k, now);
-    return currentPool(tx, shardId, p.tiers, now, p.last, { maxPools: k.maxPools, theme: p.theme });
+    // 按现在的时间取主题和开池：请求排队时可能跨过 0 点（backlog 一番赏）
+    const p = themed(k, d.now());
+    return currentPool(tx, shardId, p.tiers, now, p.last, {
+      maxPools: k.maxPools,
+      theme: p.theme,
+      clock: () => d.now(),
+    });
   }
 
   /** 看板显示的池：今天开满了就显示最后一池，并标明今天抽完了 */
@@ -154,6 +161,7 @@ export function createKujiService(d: GameDeps) {
       pool,
       await countGoods(o, GOODS.kujiTicket),
       await getDaily(o.tx, o.rest.id, BUY_KEY, gameDay(o.now)),
+      Number(o.rest.coin),
       closedToday,
     );
   }
@@ -233,7 +241,14 @@ export function createKujiService(d: GameDeps) {
     const tally: Record<string, number> = {};
     for (const p of picked) tally[p.tier] = (tally[p.tier] ?? 0) + 1;
     restLog(o, 'kuji.draw', { seq: pool.seq, num, tiers: tally, last: last !== null });
-    return { draws, last, view: await opView(o) };
+    // 新闻要等这次操作提交时才写库：把自己刚中的大赏先放进"最近的大赏"，不用刷新就能看到（backlog 一番赏）
+    const view = await opView(o);
+    const won = [
+      ...picked.filter((p) => prizes.tiers.find((x) => x.key === p.tier)?.news).map((p) => p.tier),
+      ...(last !== null && prizes.last.news ? ['last'] : []),
+    ];
+    const mine = won.reverse().map((tier) => ({ at: o.now.toISOString(), restName: o.rest.name, tier }));
+    return { draws, last, view: { ...view, recent: [...mine, ...view.recent].slice(0, RECENT) } };
   }
 
   const op = <T>(ctx: RestCtx, fn: (o: Op) => Promise<T>) =>
@@ -255,7 +270,22 @@ export function createKujiService(d: GameDeps) {
         .where('goods_id', '=', GOODS.kujiTicket)
         .executeTakeFirst();
       const bought = await getDaily(d.db, ctx.restaurantId, BUY_KEY, gameDay(now));
-      return viewOf(d.db, ctx.shardId, ctx.restaurantId, k, pool, t?.num ?? 0, bought, closedToday);
+      const rest = await d.db
+        .selectFrom('restaurant')
+        .select('coin')
+        .where('id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow();
+      return viewOf(
+        d.db,
+        ctx.shardId,
+        ctx.restaurantId,
+        k,
+        pool,
+        t?.num ?? 0,
+        bought,
+        Number(rest.coin),
+        closedToday,
+      );
     },
     buy: (ctx: RestCtx, num: number) => op(ctx, (o) => buy(o, num)),
     draw: (ctx: RestCtx, num: number) => op(ctx, (o) => draw(o, num)),

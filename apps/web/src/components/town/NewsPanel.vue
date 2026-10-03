@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { BROADCAST_NEWS, type NewsDto, type TownDto } from '@dt/shared';
+import { BROADCAST_NEWS, isBroadcastStyle, type NewsDto, type TownDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import ReportButton from '../ReportButton.vue';
@@ -97,13 +97,14 @@ async function send() {
   <div
     v-for="n in items"
     :key="n.id"
-    :class="['dt-feed', { 'text-primary': n.type === BROADCAST_NEWS }]"
+    :class="['dt-feed', { 'text-primary': isBroadcastStyle(n.type) }]"
     data-testid="news-row"
   >
     <span class="dt-feed-time">{{ newsTime(n.createdAt) }}</span>
     <!-- 广播只加粗内容，时间保持普通（问题记录 196） -->
-    <span :class="{ 'fw-bold': n.type === BROADCAST_NEWS }" data-testid="news-text"
-      >{{ n.type === BROADCAST_NEWS ? t.nav.news.broadcast : '' }}{{ newsText(n, catalog) }}</span
+    <!-- 一番赏大赏和喇叭一样按广播显示，和首页一致（backlog 一番赏） -->
+    <span :class="{ 'fw-bold': isBroadcastStyle(n.type) }" data-testid="news-text"
+      >{{ isBroadcastStyle(n.type) ? t.nav.news.broadcast : '' }}{{ newsText(n, catalog) }}</span
     >
     <!-- 别人的喇叭可以举报（子项目 6B-1） -->
     <ReportButton

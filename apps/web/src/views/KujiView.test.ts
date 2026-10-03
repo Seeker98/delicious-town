@@ -25,6 +25,7 @@ const view = (p: Partial<KujiViewDto> = {}): KujiViewDto => ({
   theme: { month: 7, name: '夏日冰饮', desc: '蝉鸣声里，刨冰和汽水最受欢迎。' },
   closedToday: false,
   tickets: 3,
+  coin: 1_234_567,
   price: 20000,
   buyLeft: 10,
   maxDraw: 10,
@@ -109,5 +110,65 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     expect(w.get('[data-testid="kj-closed"]').text()).toContain('明天 0 点再来');
     for (const n of [1, 5, 10])
       expect(w.get(`[data-testid="kj-draw-${n}"]`).attributes('disabled')).toBeDefined();
+  });
+});
+
+describe('backlog 一番赏：页面', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+    } as never);
+  });
+  const show = async (p: Partial<KujiViewDto>) => {
+    vi.mocked(endpoints.kuji).mockResolvedValue(view(p));
+    const w = mount(KujiView);
+    await flushPromises();
+    return w;
+  };
+  const drawButtons = (w: Awaited<ReturnType<typeof show>>) =>
+    w.findAll('[data-testid^="kj-draw-"]').map((b) => b.attributes('data-testid'));
+
+  it('单次上限大于 10 时多一个按上限抽的按钮', async () => {
+    const w = await show({ maxDraw: 20, tickets: 30 });
+    expect(drawButtons(w)).toEqual(['kj-draw-1', 'kj-draw-5', 'kj-draw-10', 'kj-draw-20']);
+  });
+
+  it('上限小于 10 时不显示抽不了的按钮', async () => {
+    const w = await show({ maxDraw: 5 });
+    expect(drawButtons(w)).toEqual(['kj-draw-1', 'kj-draw-5']);
+  });
+
+  it('池里只剩 2~4 张时，可以一次抽完剩下的', async () => {
+    const w = await show({ pool: { id: 1, day: '2026-10-02', seq: 2, total: 80, left: 3 }, tickets: 5 });
+    const b = w.get('[data-testid="kj-draw-3"]');
+    expect(b.attributes('disabled')).toBeUndefined();
+    expect(b.text()).toContain('3');
+  });
+
+  it('买券数量超过今天还能买的：不显示总价，按钮禁用，提示还能买几张', async () => {
+    const w = await show({ buyLeft: 4 });
+    await w.get('[data-testid="kj-buy-num"]').setValue('5');
+    expect(w.get('[data-testid="kj-buy"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="kj-buy-hint"]').text()).toContain('今天最多还能买 4 张');
+    expect(w.text()).not.toContain('100,000');
+  });
+
+  it('买券数量填小数：提示要填整数，按钮禁用', async () => {
+    const w = await show({});
+    await w.get('[data-testid="kj-buy-num"]').setValue('1.5');
+    expect(w.get('[data-testid="kj-buy"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="kj-buy-hint"]').text()).toContain('整数');
+  });
+
+  it('显示银币余额', async () => {
+    const w = await show({});
+    expect(w.get('[data-testid="kj-coin"]').text()).toContain('1,234,567');
   });
 });

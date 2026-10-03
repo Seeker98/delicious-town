@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { BROADCAST_NEWS, type HeadlinesDto, type NewsDto } from '@dt/shared';
+import { BROADCAST_STYLE_NEWS, type HeadlinesDto, type NewsDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
 
 export interface NewsInput {
@@ -56,8 +56,8 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
 export async function headlines(db: Kysely<DB>, shardId: number): Promise<HeadlinesDto> {
   const [news, bc] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
-    listNews(db, shardId, { limit: 3, not: [BROADCAST_NEWS, 'kuji.big'] }),
-    listNews(db, shardId, { limit: 1, only: [BROADCAST_NEWS, 'kuji.big'] }),
+    listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
+    listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS] }),
   ]);
   return { news, broadcast: bc[0] ?? null };
 }
