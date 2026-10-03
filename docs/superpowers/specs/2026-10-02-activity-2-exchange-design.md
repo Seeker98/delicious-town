@@ -24,7 +24,7 @@ shared 的 `ACTIVITY_KINDS` 加 `'exchange'`，`ActivitySpec` 加 `{ kind: 'exch
 
 ```ts
 ExchangeDef = {
-  currencies: { name: string }[1..8],            // 名字 1~6 字，互不相同；键为 m<下标>
+  currencies: { name: string }[1..8],            // 名字 1~12 字（问题记录 292 从 6 放宽），互不相同；键为 m<下标>
   drops: {
     key: ActionKey,                               // 和 148-1 共用 ACTIVITY_ACTIONS
     chance: number,                               // 每次行为的掉落概率，0 < p ≤ 1，最多 4 位小数
