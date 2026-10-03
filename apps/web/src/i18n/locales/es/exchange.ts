@@ -48,7 +48,7 @@ const exchange: Messages['exchange'] = {
   saleTag: (n) => `Venta ${n}`,
   buyTag: (n) => `Compra ${n}`,
   legendSale: 'Venta N',
-  legendSaleText: ' alguien vende (incluido el sistema), borde verde; ',
+  legendSaleText: ' alguien vende (incluido el sistema); ',
   legendBuy: 'Compra N',
   legendBuyText: ' alguien compra',
   level: (lv) => `Nivel ${lv}`,

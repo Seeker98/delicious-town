@@ -4,7 +4,7 @@ export default {
   section: '账号',
   username: '用户名',
   role: { mod: '协管', admin: '管理员' } as Record<string, string>,
-  registeredAt: (date: string) => `注册于 ${date}`,
+  registered: '注册时间',
   email: '邮箱',
   verified: '已验证',
   unverified: '未验证',

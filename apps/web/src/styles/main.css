@@ -433,6 +433,31 @@ details.dt-card > summary {
   color: var(--dt-muted);
 }
 /* 可操作的列表行：左主体、右操作区 */
+/* 标签 | 内容 两列（问题记录 300）：标签灰色、按最长的对齐；每行至少 32px 高，有下拉框的行也不突兀 */
+.dt-kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 12px;
+  align-items: center;
+  margin: 0;
+}
+.dt-kv > dt {
+  font-weight: normal;
+  color: var(--dt-muted);
+}
+.dt-kv > * {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  border-bottom: 1px solid var(--dt-line);
+}
+.dt-kv > :nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
 .dt-item {
   display: flex;
   align-items: center;
@@ -740,11 +765,14 @@ details.dt-card > summary {
   gap: 4px;
   margin-bottom: 8px;
 }
+/* 列宽用 minmax(0, 1fr)，格子里的长单词可以断开，不把宫格撑出屏幕（问题记录 304） */
 .dt-grid-cell {
   border: 1px solid var(--bs-border-color);
   border-radius: 6px;
   padding: 4px;
   text-align: center;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .dt-cell-done {
   background: var(--bs-success-bg-subtle);

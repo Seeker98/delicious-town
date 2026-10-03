@@ -86,20 +86,22 @@ async function logout() {
   </div>
   <template v-if="p">
     <h6 class="dt-section">{{ t.account.section }}</h6>
-    <div class="small mb-3">
-      <div class="d-flex align-items-center gap-2 mb-1" data-testid="acc-lang">
-        {{ t.common.language }}
-        <LangSelect />
-      </div>
-      <div>
-        {{ t.account.username }} <b>{{ p.username }}</b
+    <!-- 两列：左边标签、右边内容，每行等高、垂直居中（问题记录 300：以前各行高度、对齐不一） -->
+    <dl class="dt-kv small mb-3" data-testid="acc-info">
+      <dt>{{ t.common.language }}</dt>
+      <dd data-testid="acc-lang"><LangSelect /></dd>
+      <dt>{{ t.account.username }}</dt>
+      <dd>
+        <b>{{ p.username }}</b
         ><span v-if="t.account.role[p.role]" class="badge bg-secondary ms-1">{{
           t.account.role[p.role]
         }}</span>
-      </div>
-      <div>{{ t.account.registeredAt(new Date(p.createdAt).toLocaleDateString(locale.locale)) }}</div>
-      <div>
-        {{ t.account.email }} {{ p.email }}
+      </dd>
+      <dt>{{ t.account.registered }}</dt>
+      <dd>{{ new Date(p.createdAt).toLocaleDateString(locale.locale) }}</dd>
+      <dt>{{ t.account.email }}</dt>
+      <dd>
+        {{ p.email }}
         <span v-if="p.emailVerified" class="text-success">{{ t.account.verified }}</span>
         <template v-else>
           <span class="text-danger">{{ t.account.unverified }}</span>
@@ -112,12 +114,12 @@ async function logout() {
             {{ t.account.resend }}
           </button>
         </template>
-      </div>
-      <div>
-        {{ t.account.inviteCode }}
+      </dd>
+      <dt>{{ t.account.inviteCode }}</dt>
+      <dd>
         <RouterLink to="/invite">{{ p.inviteCode ?? t.account.makeInvite }}</RouterLink>
-      </div>
-    </div>
+      </dd>
+    </dl>
 
     <h6 class="dt-section">{{ t.account.myRests }}</h6>
     <div v-if="p.rests.length === 0" class="small text-muted mb-3">{{ t.account.noRest }}</div>

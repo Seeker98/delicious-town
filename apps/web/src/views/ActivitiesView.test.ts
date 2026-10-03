@@ -128,6 +128,14 @@ describe('ActivitiesView', () => {
     expect(w.find('[data-testid="claim-2-r0"]').exists()).toBe(true);
   });
 
+  it('九宫格的列宽可以压缩，格子里的长单词能断开，不撑出手机屏幕（问题记录 304）', async () => {
+    const w = mount(ActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="act-tab-2"]').trigger('click');
+    const board = w.get('[data-testid="cell-2-0"]').element.parentElement!;
+    expect(board.style.gridTemplateColumns).toBe('repeat(3, minmax(0, 1fr))');
+  });
+
   it('战令：显示积分和今日积分；解锁先确认', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = mount(ActivitiesView);

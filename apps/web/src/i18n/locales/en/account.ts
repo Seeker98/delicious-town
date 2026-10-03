@@ -5,7 +5,7 @@ const account: Messages['account'] = {
   section: 'Account',
   username: 'Username',
   role: { mod: 'Moderator', admin: 'Admin' },
-  registeredAt: (date) => `Joined ${date}`,
+  registered: 'Joined',
   email: 'Email',
   verified: 'Verified',
   unverified: 'Not verified',
