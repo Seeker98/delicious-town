@@ -867,3 +867,22 @@ describe('可疑数据门槛（子项目 6B-2）', () => {
     });
   });
 });
+
+describe('活跃度新增项目（问题记录 318）', () => {
+  it('新增 5 项和 180 档；新动作键映射到活跃度和功能', () => {
+    const b = realBuild().bundle!;
+    const byName = new Map(b.activationTasks.map((a) => [a.name, a]));
+    for (const n of ['交易所成交', '事件合约交易', '一番赏抽赏', '领取限时活动奖励', '论坛发帖或回复'])
+      expect(byName.has(n), n).toBe(true);
+    const max = b.activationTasks.reduce((s, a) => s + a.points * a.limitTimes, 0);
+    expect(max).toBe(193);
+    expect(b.activationRewards.map((r) => r.points)).toEqual([50, 100, 120, 150, 180]);
+    expect(b.actionMap.activation['exchange.fill']).toBe('交易所成交');
+    expect(b.actionMap.activation['post.create']).toBe('论坛发帖或回复');
+    expect(b.actionMap.activation['post.reply']).toBe('论坛发帖或回复');
+    expect(featureOfKey('kuji.draw', b.actionMap.features)).toBe('kuji');
+    expect(featureOfKey('exchange.fill', b.actionMap.features)).toBe('exchange');
+    expect(featureOfKey('predict.win', b.actionMap.features)).toBe('predict');
+    expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
+  });
+});

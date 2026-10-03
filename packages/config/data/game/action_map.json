@@ -22,7 +22,13 @@
     "kraken.feed": "投喂克拉肯",
     "tower.friendDuel": "与好友赛厨",
     "tower.rank": "与好友赛厨",
-    "takeaway.deliver": "配送外卖"
+    "takeaway.deliver": "配送外卖",
+    "exchange.fill": "交易所成交",
+    "predict.trade": "事件合约交易",
+    "kuji.draw": "一番赏抽赏",
+    "activity.claim": "领取限时活动奖励",
+    "post.create": "论坛发帖或回复",
+    "post.reply": "论坛发帖或回复"
   },
   "features": {
     "rest.": "restaurant",
@@ -56,6 +62,10 @@
     "takeaway.": "takeaway",
     "hiphop.": "hiphop",
     "post.": "forum",
-    "broadcast": "town"
+    "broadcast": "town",
+    "exchange.": "exchange",
+    "predict.": "predict",
+    "kuji.": "kuji",
+    "activity.": "activity"
   }
 }

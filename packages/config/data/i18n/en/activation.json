@@ -70,5 +70,20 @@
   },
   "99": {
     "name": "Love Necklace bonus"
+  },
+  "901": {
+    "name": "Exchange trade"
+  },
+  "902": {
+    "name": "Prediction trade"
+  },
+  "903": {
+    "name": "Ichiban Kuji draw"
+  },
+  "904": {
+    "name": "Claim an event reward"
+  },
+  "905": {
+    "name": "Forum post or reply"
   }
 }

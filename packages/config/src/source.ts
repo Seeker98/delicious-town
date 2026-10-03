@@ -35,6 +35,7 @@ export const SOURCE_FILES = [
   'designed/star_award',
   'designed/oil_need',
   'designed/tasks',
+  'designed/activation_extra',
   'designed/seeds',
   'designed/seed_exchange',
   'designed/foods_formula',

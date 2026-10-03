@@ -193,10 +193,10 @@ export function createTaskService(d: GameDeps) {
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
         const multiplier = (await hasValidHonor(o, GOODS.loveNecklace)) ? 2 : 1;
         await grantAward(o, scaled(reward.award, o.rest.level), { multiplier });
-        // 一番赏（一番赏设计 §5.5）：领最高一档额外送券；区服关掉一番赏不送
-        const top = Math.max(...o.config.bundle.activationRewards.map((r) => r.points));
+        // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（问题记录 318：新增 180 档后仍在 150 档）；
+        // 区服关掉一番赏不送
         let kujiTickets = 0;
-        if (points === top && featureAvailable(o.settings, 'kuji') && o.tuning.kuji.activeTickets > 0)
+        if (points === o.tuning.kuji.activeTicketPoints && featureAvailable(o.settings, 'kuji') && o.tuning.kuji.activeTickets > 0)
           kujiTickets = await grantGoodsOp(o, GOODS.kujiTicket, o.tuning.kuji.activeTickets, {
             source: 'activation',
           });

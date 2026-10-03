@@ -70,5 +70,20 @@
   },
   "99": {
     "name": "Bonus du Collier d'amour"
+  },
+  "901": {
+    "name": "Échange à la Bourse"
+  },
+  "902": {
+    "name": "Échange de prédiction"
+  },
+  "903": {
+    "name": "Tirage Ichiban Kuji"
+  },
+  "904": {
+    "name": "Récompense d'événement"
+  },
+  "905": {
+    "name": "Message ou réponse au forum"
   }
 }

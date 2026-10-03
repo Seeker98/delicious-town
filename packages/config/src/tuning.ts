@@ -646,6 +646,8 @@ export const tuningSchema = z.object({
     dailyBuy: int.min(1),
     maxDraw: int.min(1).max(100),
     activeTickets: int.min(0),
+    /** 领活跃度这一档时送券（问题记录 318：新增 180 档后仍在 150 档送） */
+    activeTicketPoints: int.min(1),
     /** 每个区服每天最多开几池（问题记录 274） */
     maxPools: int.min(1),
     tiers: z

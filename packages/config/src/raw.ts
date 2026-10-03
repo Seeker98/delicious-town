@@ -152,6 +152,11 @@ export const rawActivationTask = z.object({
   starlevel: int.nullish(),
 });
 export const rawActivationReward = z.object({ dictval: int, note: z.string() });
+/** 原游戏活跃度之外新增的项目和档位（问题记录 318） */
+export const rawActivationExtra = z.object({
+  tasks: z.array(z.object({ id: int, name: z.string(), points: int, limit: int, needStar: int })),
+  rewards: z.array(z.object({ points: int, award: awardSchema })),
+});
 
 export const restaurantDefaultsSchema = z.object({
   level: int.min(1),

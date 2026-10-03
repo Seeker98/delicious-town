@@ -112,6 +112,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const devicesRaw = parse('dataset/devices', z.array(raw.rawDevice));
   const actTasksRaw = parse('dataset/activation_tasks', z.array(raw.rawActivationTask));
   const actRewardsRaw = parse('dataset/activation_rewards', z.array(raw.rawActivationReward));
+  const actExtra = parse('designed/activation_extra', raw.rawActivationExtra);
   const pricesRaw = both(
     parse('designed/cookbooks_price', z.array(raw.rawCookbookPrice)),
     parse('designed/cookbooks_price_new', z.array(raw.rawCookbookPrice)),
@@ -164,6 +165,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !devicesRaw ||
     !actTasksRaw ||
     !actRewardsRaw ||
+    !actExtra ||
     !pricesRaw ||
     !awardFlagsRaw ||
     !weatherRaw ||
@@ -584,13 +586,27 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   for (const t of tasks) checkAward(`task ${t.id}`, t.award);
 
-  const activationTasks = actTasksRaw.map((a) => ({
-    id: a.id,
-    name: a.activationname,
-    points: a.activationvalue,
-    limitTimes: a.limittimes,
-    needStar: a.starlevel ?? 0,
-  }));
+  const activationTasks = [
+    ...actTasksRaw.map((a) => ({
+      id: a.id,
+      name: a.activationname,
+      points: a.activationvalue,
+      limitTimes: a.limittimes,
+      needStar: a.starlevel ?? 0,
+    })),
+    // 问题记录 318：新玩法的活跃项
+    ...actExtra.tasks.map((a) => ({
+      id: a.id,
+      name: a.name,
+      points: a.points,
+      limitTimes: a.limit,
+      needStar: a.needStar,
+    })),
+  ];
+  unique(
+    'activation_tasks',
+    activationTasks.map((a) => a.id),
+  );
   const activationRewards: ActivationReward[] = [];
   for (const r of actRewardsRaw) {
     try {
@@ -599,6 +615,9 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`activation_reward ${r.dictval} note is not a valid award`);
     }
   }
+  activationRewards.push(...actExtra.rewards);
+  activationRewards.sort((a, b) => a.points - b.points);
+  for (const r of actExtra.rewards) checkAward(`activation_reward ${r.points}`, r.award);
 
   const activationNames = new Set(activationTasks.map((a) => a.name));
   for (const [key, name] of Object.entries(actionMap.activation)) {
