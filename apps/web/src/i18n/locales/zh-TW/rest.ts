@@ -77,5 +77,15 @@ export default {
     award: (text: string) => `獎勵：${text}`,
     claimTask: '領獎',
     claimFailed: '領取失敗',
+    // 問題記錄 318：章節主線、支線
+    chapter: (n: number, name: string, done: number, total: number) =>
+      `第 ${n} 章 ${name}（${done}/${total}）`,
+    chapterLocked: (n: number, name: string) => `第 ${n} 章 ${name}`,
+    chapterAward: (text: string) => `章末獎勵：${text}`,
+    claimChapter: '領章末獎勵',
+    lockedLevel: (n: number) => `🔒 ${n} 級解鎖`,
+    lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
+    claimedTask: '✓ 已領',
+    lineDone: '已全部完成',
   },
 };

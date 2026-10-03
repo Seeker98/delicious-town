@@ -111,7 +111,7 @@ import type {
   StoreDto,
   StressResultDto,
   TableDto,
-  TasksDto,
+  QuestsDto,
   ThawResultDto,
   ThumbResultDto,
   ThumbTodayDto,
@@ -245,9 +245,11 @@ export const endpoints = {
   storeRecords: (range: string) => api.get<LedgerRecordDto[]>(`/api/v1/store/records${qs({ range })}`),
   useGoods: (goodsId: number, num: number) => api.post<Anything>('/api/v1/store/use', { goodsId, num }),
 
-  tasks: () => api.get<TasksDto>('/api/v1/task/list'),
+  tasks: () => api.get<QuestsDto>('/api/v1/task/list'),
   activation: () => api.get<ActivationDto>('/api/v1/task/activation'),
   claimTask: (taskId: number) => api.post<Anything>('/api/v1/task/claim', { taskId }),
+  /** 章末奖励（问题记录 318） */
+  claimChapter: (chapterId: number) => api.post<Anything>('/api/v1/task/chapter', { chapterId }),
   claimActivation: (points: number) => api.post<Anything>('/api/v1/task/activation/claim', { points }),
   signIn: () => api.post<Anything>('/api/v1/task/signin'),
   friendList: (sort: 'level' | 'star' | 'recent' = 'level') =>

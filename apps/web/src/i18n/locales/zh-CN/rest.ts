@@ -76,5 +76,15 @@ export default {
     award: (text: string) => `奖励：${text}`,
     claimTask: '领奖',
     claimFailed: '领取失败',
+    // 问题记录 318：章节主线、支线
+    chapter: (n: number, name: string, done: number, total: number) =>
+      `第 ${n} 章 ${name}（${done}/${total}）`,
+    chapterLocked: (n: number, name: string) => `第 ${n} 章 ${name}`,
+    chapterAward: (text: string) => `章末奖励：${text}`,
+    claimChapter: '领章末奖励',
+    lockedLevel: (n: number) => `🔒 ${n} 级解锁`,
+    lockedStar: (n: number) => `🔒 ${n} 星解锁`,
+    claimedTask: '✓ 已领',
+    lineDone: '已全部完成',
   },
 };

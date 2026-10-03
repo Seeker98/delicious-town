@@ -77,6 +77,14 @@ const rest: Messages['rest'] = {
     award: (text) => `Premio: ${text}`,
     claimTask: 'Recoger',
     claimFailed: 'No se pudo recoger',
+    chapter: (n, name, done, total) => `Capítulo ${n}: ${name} (${done}/${total})`,
+    chapterLocked: (n, name) => `Capítulo ${n}: ${name}`,
+    chapterAward: (text) => `Recompensa del capítulo: ${text}`,
+    claimChapter: 'Recoger la recompensa del capítulo',
+    lockedLevel: (n) => `🔒 Se desbloquea en el nivel ${n}`,
+    lockedStar: (n) => `🔒 Se desbloquea con ${n} ${n === 1 ? 'estrella' : 'estrellas'}`,
+    claimedTask: '✓ Recogido',
+    lineDone: 'Todo completado',
   },
 };
 export default rest;
