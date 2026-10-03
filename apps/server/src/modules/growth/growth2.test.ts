@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { listActiveEffects } from '../effects/service';
 import { grantGoods } from '../store/grant';
 
@@ -228,5 +229,14 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
     await g().driveKrab(ctx);
     expect(await goodsNum(t, ctx.restaurantId, 134)).toBe(0);
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(10);
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('搬一次家计 rest.move', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { 2: 1 } });
+    await grant(ctx.restaurantId, 140);
+    await g().move(ctx, 11);
+    expect(await eventCount(t, ctx.restaurantId, 'rest.move')).toBe(1);
   });
 });

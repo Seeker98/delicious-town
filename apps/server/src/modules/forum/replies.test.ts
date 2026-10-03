@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 
 const DAY = '2026-10-01';
@@ -98,5 +99,14 @@ describe('回复（设计文档 §2.2）', () => {
     ]);
     const other = await newRestaurant(t, { verified: true });
     await expect(f().deleteReply(other, r1.id)).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('回复计 post.reply；活跃"论坛发帖或回复"计入', async () => {
+    const { b, id } = await setup();
+    await reply(b, id, '好');
+    expect(await eventCount(t, b.restaurantId, 'post.reply')).toBe(1);
+    expect((await t.game.task.activation(b)).items.find((i) => i.name === '论坛发帖或回复')!.count).toBe(1);
   });
 });

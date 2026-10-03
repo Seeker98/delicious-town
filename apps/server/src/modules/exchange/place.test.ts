@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { trader, wallet } from './test';
 
 let t: TestGame;
@@ -186,5 +187,40 @@ describe('撮合（156-1 设计 §6.2）', () => {
     expect(trades.reduce((n, x) => n + x.qty, 0)).toBe(3);
     const fees = trades.reduce((n, x) => n + Number(x.fee), 0);
     expect((await wallet(t, s.restaurantId)).coin + fees).toBe(p * 3);
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('成交时买卖双方各计一次 exchange.fill；一次吃掉同一个人的两张挂单只计一次；只挂单不计', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const p = f.coin;
+    const s = await trader(t, { shardId, foods: { [f.id]: 10 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: p, qty: 1 });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: p, qty: 1 });
+    expect(await eventCount(t, s.restaurantId, 'exchange.fill')).toBe(0);
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    const res = await svc().place(b, { foodsId: f.id, side: 'buy', price: p, qty: 2 });
+    expect(res.data.fills).toHaveLength(2);
+    expect(await eventCount(t, s.restaurantId, 'exchange.fill')).toBe(1);
+    expect(await eventCount(t, b.restaurantId, 'exchange.fill')).toBe(1);
+    expect((await t.game.task.activation(b)).items.find((i) => i.name === '交易所成交')!.count).toBe(1);
+  });
+
+  it('两家互为挂单方同时成交：计数不死锁，各计一次', async () => {
+    const shardId = await createShard(t.db);
+    const [f1, f2] = [...t.deps.config.foods.values()].filter((f) => f.odds < 100 && f.coin >= 1000);
+    const x = await trader(t, { shardId, foods: { [f1!.id]: 20 } });
+    const y = await trader(t, { shardId, foods: { [f2!.id]: 20 } });
+    for (let round = 0; round < 5; round++) {
+      await svc().place(x, { foodsId: f1!.id, side: 'sell', price: f1!.coin, qty: 1 });
+      await svc().place(y, { foodsId: f2!.id, side: 'sell', price: f2!.coin, qty: 1 });
+      await Promise.all([
+        svc().place(x, { foodsId: f2!.id, side: 'buy', price: f2!.coin, qty: 1 }),
+        svc().place(y, { foodsId: f1!.id, side: 'buy', price: f1!.coin, qty: 1 }),
+      ]);
+    }
+    expect(await eventCount(t, x.restaurantId, 'exchange.fill')).toBe(10);
+    expect(await eventCount(t, y.restaurantId, 'exchange.fill')).toBe(10);
   });
 });

@@ -11,6 +11,7 @@ import {
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, notEnough, requirement } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import { spendDiamond } from '../../core/resources';
 import type { DB } from '../../db/schema';
@@ -225,6 +226,8 @@ export function createActivityService(d: GameDeps) {
       out.keys.push(x.key);
       out.items.push(x.award);
     }
+    // 任务和活跃"领取限时活动奖励"（问题记录 318）：领一次计一次，不管这次领了几个奖励
+    if (out.keys.length > 0) await emitAction(o, 'activity.claim');
     return { all, p, out };
   }
 

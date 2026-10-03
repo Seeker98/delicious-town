@@ -13,6 +13,7 @@ import {
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
@@ -127,6 +128,7 @@ export function createPredictService(d: GameDeps) {
         created_at: o.now,
       })
       .execute();
+    await emitAction(o, 'predict.trade');
     restLog(o, 'predict.trade', {
       title: e.title,
       side: b.side,

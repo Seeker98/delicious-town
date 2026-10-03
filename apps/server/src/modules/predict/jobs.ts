@@ -1,6 +1,7 @@
 import { gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
+import { emitAction } from '../../core/action';
 import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { createAutoEvents, resolveAutoEvents } from './auto';
@@ -71,6 +72,8 @@ export async function settleEvents(
             if (e.status === 'void') restLog(o, 'predict.refund', { title: e.title, coin: got, net });
             else restLog(o, 'predict.settle', { title: e.title, outcome: e.outcome, coin: got, net });
           }
+          // 押中一方的结算到账（问题记录 318 支线"押中一次结算"）；作废退款不算
+          if (e.status === 'resolved' && got > 0) await emitAction(o, 'predict.win');
           return true;
         });
         if (done) settled++;

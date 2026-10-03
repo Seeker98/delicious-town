@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { predictQuote } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { trader } from '../exchange/test';
 import { newEvent } from './test';
@@ -307,5 +308,19 @@ describe('backlog 238-1：关掉事件合约开关时只禁买卖', () => {
     await expect(svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 1 })).rejects.toMatchObject({
       code: 'FEATURE_DISABLED',
     });
+  });
+});
+
+describe('任务计数（问题记录 318）', () => {
+  it('买入、卖出各计一次 predict.trade；活跃"事件合约交易"计入', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    const r = await trader(t, { shardId, coin: 1_000_000 });
+    await svc().trade(r, id, { side: 'yes', dir: 'buy', qty: 5 });
+    await svc().trade(r, id, { side: 'yes', dir: 'sell', qty: 2 });
+    expect(await eventCount(t, r.restaurantId, 'predict.trade')).toBe(2);
+    expect(
+      (await t.game.task.activation(r)).items.find((i) => i.name === '事件合约交易')!.count,
+    ).toBeGreaterThan(0);
   });
 });

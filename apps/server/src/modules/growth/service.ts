@@ -248,6 +248,7 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         const from = o.rest.street_id;
         setRest(o, 'street_id', streetId);
         restLog(o, 'rest.move', { from, to: streetId });
+        await emitAction(o, 'rest.move');
         opNews(o, 'rest.move', { from, to: streetId, name: o.rest.name });
         return { streetId };
       });

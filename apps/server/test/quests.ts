@@ -42,3 +42,14 @@ export async function showQuest(t: TestGame, restId: number, questId: number): P
 export function questIn(list: QuestsDto, id: number): QuestDto | undefined {
   return list.main.find((x) => x.id === id) ?? list.lines.find((l) => l.quest?.id === id)?.quest ?? undefined;
 }
+
+/** 某个动作键的全历史计数（event_counter） */
+export async function eventCount(t: TestGame, restId: number, key: string): Promise<number> {
+  const r = await t.db
+    .selectFrom('event_counter')
+    .select('count')
+    .where('rest_id', '=', restId)
+    .where('key', '=', key)
+    .executeTakeFirst();
+  return r?.count ?? 0;
+}
