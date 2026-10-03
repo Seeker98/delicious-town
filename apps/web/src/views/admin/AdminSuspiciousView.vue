@@ -39,22 +39,34 @@ const surge = ref<SuspiciousSurgeDto | null>(null);
 const multi = ref<SuspiciousMultiGroup[]>([]);
 const redeem = ref<SuspiciousRedeemRow[]>([]);
 const loading = ref(false);
+/** 请求序号：快速切换区服或标签时，丢弃先发出、后回来的旧响应（backlog 6B-2） */
+let seq = 0;
 
 async function load() {
   const shardId = admin.shardId;
   if (!shardId) return;
+  const my = ++seq;
+  const fresh = () => my === seq;
   loading.value = true;
   try {
-    if (tab.value === 'bar') bar.value = await adminApi.suspiciousBar(shardId);
-    else if (tab.value === 'surge')
-      surge.value = await adminApi.suspiciousSurge(shardId, day.value || undefined);
-    else if (tab.value === 'multi') multi.value = await adminApi.suspiciousMulti(shardId);
-    else if (tab.value === 'redeem') redeem.value = await adminApi.suspiciousRedeem(shardId);
+    if (tab.value === 'bar') {
+      const r = await adminApi.suspiciousBar(shardId);
+      if (fresh()) bar.value = r;
+    } else if (tab.value === 'surge') {
+      const r = await adminApi.suspiciousSurge(shardId, day.value || undefined);
+      if (fresh()) surge.value = r;
+    } else if (tab.value === 'multi') {
+      const r = await adminApi.suspiciousMulti(shardId);
+      if (fresh()) multi.value = r;
+    } else if (tab.value === 'redeem') {
+      const r = await adminApi.suspiciousRedeem(shardId);
+      if (fresh()) redeem.value = r;
+    }
     // 交易所标签由 ExchangeGuardPanel 自己读取（156-2）
   } catch (e) {
-    toast.push(errorMessage(e, '读取失败'), 'danger');
+    if (fresh()) toast.push(errorMessage(e, '读取失败'), 'danger');
   } finally {
-    loading.value = false;
+    if (fresh()) loading.value = false;
   }
 }
 onMounted(() => void load());
@@ -87,7 +99,8 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
     <p class="small text-muted">
       最近 7 个游戏日；单日超过门槛的标红（门槛在区服数值 tuning.ops.suspicious）。
     </p>
-    <div v-if="bar.length === 0" class="dt-empty">没有数据</div>
+    <div v-if="loading" class="dt-empty">加载中…</div>
+    <div v-else-if="bar.length === 0" class="dt-empty">没有数据</div>
     <table v-else class="table table-sm small">
       <thead>
         <tr>
@@ -129,7 +142,8 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
         }}</span
       >
     </div>
-    <template v-if="surge">
+    <div v-if="loading" class="dt-empty">加载中…</div>
+    <template v-else-if="surge">
       <div v-for="[k, label] in SURGE" :key="k" class="mb-3">
         <h6>{{ label }}净增</h6>
         <div v-if="surge[k].length === 0" class="dt-empty">没有数据</div>
@@ -150,8 +164,9 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
 
   <template v-else-if="tab === 'multi'">
     <p class="small text-muted">最近 30 天同一 IP 或同一设备登录过多个账号（至少一个在本区服有店）。</p>
-    <div v-if="multi.length === 0" class="dt-empty">没有数据</div>
-    <div v-for="g in multi" :key="`${g.kind}-${g.key}`" class="dt-card small mb-2">
+    <div v-if="loading" class="dt-empty">加载中…</div>
+    <div v-else-if="multi.length === 0" class="dt-empty">没有数据</div>
+    <div v-for="g in loading ? [] : multi" :key="`${g.kind}-${g.key}`" class="dt-card small mb-2">
       <div class="fw-bold mb-1">{{ g.kind === 'ip' ? '同一 IP' : '同一设备' }}：{{ g.key }}</div>
       <div v-for="a in g.accounts" :key="a.accountId" data-testid="sus-multi-account">
         <RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink>
@@ -164,7 +179,8 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
 
   <template v-else>
     <p class="small text-muted">兑换码输错次数按账号计，不分区服。</p>
-    <div v-if="redeem.length === 0" class="dt-empty">没有被锁的账号</div>
+    <div v-if="loading" class="dt-empty">加载中…</div>
+    <div v-else-if="redeem.length === 0" class="dt-empty">没有被锁的账号</div>
     <table v-else class="table table-sm small">
       <thead>
         <tr>

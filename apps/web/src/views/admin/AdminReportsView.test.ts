@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReportCaseDto, ReportDetailDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
+import { ApiError } from '../../api/client';
+import { useToastStore } from '../../stores/toast';
 import { useAdminStore } from '../../stores/admin';
 import AdminReportsView from './AdminReportsView.vue';
 
@@ -108,5 +110,35 @@ describe('AdminReportsView（子项目 6B-1）', () => {
     await w.find('[data-testid="report-reject"]').trigger('click');
     await flushPromises();
     expect(adminApi.rejectReport).toHaveBeenCalledWith(caseDto.id, { note: '没问题' });
+  });
+});
+
+describe('backlog 6B-1：举报列表和改名', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(adminApi.reports).mockResolvedValue([caseDto]);
+    vi.mocked(adminApi.report).mockResolvedValue(detailDto);
+  });
+
+  it('待处理列表同时显示最早和最近一次举报时间', async () => {
+    const w = await mountView();
+    const row = w.get(`[data-testid="report-row-${caseDto.id}"]`).text();
+    expect(row).toContain(new Date(caseDto.createdAt).toLocaleString('zh-CN'));
+    expect(row).toContain(new Date(caseDto.updatedAt).toLocaleString('zh-CN'));
+  });
+
+  it('默认店名被占用时，说明是哪个名字，提示填一个新店名', async () => {
+    vi.mocked(adminApi.reports).mockResolvedValue([{ ...caseDto, targetType: 'rest_name' }]);
+    vi.mocked(adminApi.report).mockResolvedValue({ ...detailDto, targetType: 'rest_name' });
+    vi.mocked(adminApi.resolveReport).mockRejectedValue(
+      new ApiError('RESTAURANT_NAME_TAKEN', { name: '餐厅5' }),
+    );
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = await mountView('admin');
+    await w.find('[data-testid="report-note"]').setValue('不雅');
+    await w.find('[data-testid="report-resolve"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.at(-1)?.text).toBe('店名「餐厅5」已被别的餐厅占用，请在"新店名"里填一个');
   });
 });

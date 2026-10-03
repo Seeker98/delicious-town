@@ -2,6 +2,7 @@ import { ErrorCode, type LaunchCheckDto } from '@dt/shared';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from './access';
+import type { WarnLog } from '../../infra/settingsBus';
 import { createAdminShards } from './shards';
 
 /** 上线检查项（设计 §7）：开发期为方便测试关掉、上线前必须打开的开关 */
@@ -29,9 +30,9 @@ function setAt(tree: Tree, path: string, value: unknown): Tree {
 }
 
 /** 上线检查（设计 §7）：列出每个开着的区服没通过的项；管理员一键改成上线值，走区服数值保存（记历史和审计） */
-export function createLaunchCheck(game: Game) {
+export function createLaunchCheck(game: Game, log?: WarnLog) {
   const db = game.app.db;
-  const shards = createAdminShards(game);
+  const shards = createAdminShards(game, log);
 
   async function check(): Promise<LaunchCheckDto> {
     const open = await db

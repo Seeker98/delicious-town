@@ -28,6 +28,7 @@ describe('后台系统做市（156-3 设计 §7）', () => {
 
   it('按区服读取，显示今天的收支和每种食材', async () => {
     vi.mocked(adminApi.exchangeMaker).mockResolvedValue({
+      enabled: true,
       foods: [
         { foodsId: 11, stock: 6, bought: 10, bid: 35000, ask: 65000 },
         { foodsId: 12, stock: 0, bought: 3, bid: null, ask: 2340 },
@@ -45,11 +46,25 @@ describe('后台系统做市（156-3 设计 §7）', () => {
 
   it('没有数据时提示', async () => {
     vi.mocked(adminApi.exchangeMaker).mockResolvedValue({
+      enabled: true,
       foods: [],
       today: { spent: 0, earned: 0, fee: 0, net: 0 },
     });
     const w = mount(ExchangeMakerPanel);
     await flushPromises();
     expect(w.text()).toContain('系统还没有库存，今天也没有收购');
+  });
+
+  it('系统做市关闭时写明已关闭，不显示买卖价（backlog 156-3）', async () => {
+    vi.mocked(adminApi.exchangeMaker).mockResolvedValue({
+      enabled: false,
+      foods: [{ foodsId: 11, stock: 6, bought: 0, bid: 35000, ask: 65000 }],
+      today: { spent: 0, earned: 0, fee: 0, net: 0 },
+    });
+    const w = mount(ExchangeMakerPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="exm-off"]').text()).toContain('已关闭');
+    expect(w.get('[data-testid="exm-row-11"]').text()).not.toContain('35,000');
+    expect(w.get('[data-testid="exm-row-11"]').text()).not.toContain('65,000');
   });
 });

@@ -101,8 +101,9 @@ export function createAdminReports(game: Game) {
         try {
           await o.tx.updateTable('restaurant').set({ name }).where('id', '=', c.target_rest_id).execute();
         } catch (e) {
+          // 带上被占用的名字：没填新名时用的是默认名，后台据此提示"填一个新店名"（backlog 6B-1）
           if (uniqueViolation(e) === 'restaurant_shard_name')
-            throw new AppError(ErrorCode.RESTAURANT_NAME_TAKEN, 409);
+            throw new AppError(ErrorCode.RESTAURANT_NAME_TAKEN, 409, { name });
           throw e;
         }
         o.rest.name = name;

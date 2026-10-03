@@ -7,7 +7,7 @@ import {
   type AdminActivityState,
 } from '@dt/shared';
 import { invalidState } from '../../core/errors';
-import { publishSettingsChanged } from '../../infra/settingsBus';
+import { notifySettingsChanged, type WarnLog } from '../../infra/settingsBus';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
@@ -16,7 +16,7 @@ import { checkNestedItems } from '../mail/reward';
 import { activityCacheFor } from './active';
 
 /** 后台限时活动（设计 §5.2）：开始后只能改标题、说明、延长结束时间；写操作都记审计 */
-export function createAdminActivity(game: Game) {
+export function createAdminActivity(game: Game, log?: WarnLog) {
   const { db } = game.app;
   const now = () => game.deps.now();
   const cache = () => activityCacheFor(game.app.bus, game.deps);
@@ -124,12 +124,12 @@ export function createAdminActivity(game: Game) {
     if (shardIds.includes(null)) {
       game.shards.invalidateAll();
       const shards = await db.selectFrom('shard').select('id').execute();
-      for (const s of shards) await publishSettingsChanged(game.app.redis, s.id);
+      for (const s of shards) await notifySettingsChanged(game.app.redis, s.id, log);
       return;
     }
     for (const id of new Set(shardIds as number[])) {
       game.shards.invalidate(id);
-      await publishSettingsChanged(game.app.redis, id);
+      await notifySettingsChanged(game.app.redis, id, log);
     }
   }
 

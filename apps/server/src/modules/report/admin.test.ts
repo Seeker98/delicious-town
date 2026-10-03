@@ -249,6 +249,29 @@ describe('后台举报处理（HTTP，设计 §3.3）', () => {
     expect((await caseRow(r4.caseId)).action).toBe('rename');
   });
 
+  it('默认改名"餐厅{id}"已被别的店占用：409 并带上那个名字，案子不结（backlog 6B-1）', async () => {
+    const bad = await shop();
+    const other = await shop();
+    await db()
+      .updateTable('restaurant')
+      .set({ name: `餐厅${bad.restId}` })
+      .where('id', '=', other.restId)
+      .execute();
+    const cur = await db()
+      .selectFrom('restaurant')
+      .select('name')
+      .where('id', '=', bad.restId)
+      .executeTakeFirstOrThrow();
+    const { caseId } = await seed('rest_name', bad.restId, bad, cur.name);
+    const r = await post(mod.cookie, `/reports/${caseId}/resolve`, { note: '店名不雅' });
+    expect(r.status).toBe(409);
+    expect(r.json).toMatchObject({
+      code: 'RESTAURANT_NAME_TAKEN',
+      params: { name: `餐厅${bad.restId}` },
+    });
+    expect((await caseRow(caseId)).status).toBe('open');
+  });
+
   it('作者已经改了内容（改成别的、不是清空）：照样结案，内容不动（终审 I3）', async () => {
     const { caseId, bad } = await noticeCase();
     await db().updateTable('restaurant').set({ notice: '欢迎光临' }).where('id', '=', bad.restId).execute();

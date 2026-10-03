@@ -72,6 +72,15 @@ describe('后台交易所标签（156-2 设计 §7）', () => {
     expect(adminApi.suspiciousExchange).toHaveBeenLastCalledWith(1, 'large');
   });
 
+  it('冻结名单显示冻结时间（backlog 156-2）', async () => {
+    useAdminStore().me = { accountId: 1, username: 'm', role: 'mod' };
+    const w = mount(ExchangeGuardPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="exg-frozen-5"]').text()).toContain(
+      new Date('2026-10-02T00:00:00Z').toLocaleString('zh-CN'),
+    );
+  });
+
   it('协管：能冻结、能解冻，看不到没收按钮', async () => {
     useAdminStore().me = { accountId: 1, username: 'm', role: 'mod' };
     vi.spyOn(window, 'prompt').mockReturnValue('对倒');

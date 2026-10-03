@@ -1,5 +1,6 @@
 import { sql } from 'kysely';
 import {
+  ErrorCode,
   gameDay,
   gameTime,
   type ExchangeMakerDto,
@@ -9,6 +10,7 @@ import {
   type ExchangeSuspiciousSide,
 } from '@dt/shared';
 import type { Game } from '../../game';
+import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
 import { makerBase, makerPrices, marketFloor } from './maker';
@@ -148,7 +150,9 @@ export function createExchangeAdmin(game: Game) {
         .select('shard_id')
         .where('id', '=', b.restId)
         .forNoKeyUpdate()
-        .executeTakeFirstOrThrow();
+        .executeTakeFirst();
+      // 店不存在报 404（backlog 156-2，以前 executeTakeFirstOrThrow 报 500）
+      if (!rest) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'restaurant', id: b.restId });
       await tx
         .insertInto('exchange_freeze')
         .values({ rest_id: b.restId, reason: b.reason, actor_account_id: actor.accountId })
@@ -194,8 +198,14 @@ export function createExchangeAdmin(game: Game) {
 
   async function unfreeze(actor: AdminActor, b: { restId: number }) {
     await db.transaction().execute(async (tx) => {
-      await tx.deleteFrom('exchange_freeze').where('rest_id', '=', b.restId).execute();
-      await writeAudit(tx, { actor, action: 'exchange.unfreeze', target: `rest:${b.restId}` });
+      const gone = await tx
+        .deleteFrom('exchange_freeze')
+        .where('rest_id', '=', b.restId)
+        .returning('rest_id')
+        .execute();
+      // 本来就没冻结时不写审计（backlog 156-2）
+      if (gone.length > 0)
+        await writeAudit(tx, { actor, action: 'exchange.unfreeze', target: `rest:${b.restId}` });
     });
     return { ok: true as const };
   }
@@ -277,7 +287,7 @@ export function createExchangeAdmin(game: Game) {
     const spent = Number(agg.spent);
     const earned = Number(agg.earned);
     const fee = Number(agg.fee);
-    return { foods, today: { spent, earned, fee, net: earned - spent + fee } };
+    return { enabled: t.maker.enabled, foods, today: { spent, earned, fee, net: earned - spent + fee } };
   }
 
   return { suspicious, frozen, freeze, unfreeze, confiscate, maker };

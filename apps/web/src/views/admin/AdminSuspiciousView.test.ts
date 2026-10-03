@@ -86,3 +86,40 @@ describe('AdminSuspiciousView（子项目 6B-2）', () => {
     expect(w.findAll('[data-testid="sus-multi-account"]')).toHaveLength(3);
   });
 });
+
+describe('backlog 6B-2：可疑数据页切换区服和加载中', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+  const rowOf = (restId: number) => ({
+    ...who,
+    restId,
+    perfectSum: 1,
+    perfectMax: 1,
+    bullSum: 0,
+    bullMax: 0,
+    flagged: false,
+  });
+
+  it('快速切换区服：先发出的慢请求后回来，不会覆盖新区服的数据', async () => {
+    let slow: (v: ReturnType<typeof rowOf>[]) => void = () => {};
+    vi.mocked(adminApi.suspiciousBar)
+      .mockImplementationOnce(() => new Promise((r) => (slow = r)))
+      .mockResolvedValueOnce([rowOf(2)]);
+    const w = await mountView();
+    useAdminStore().shardId = 2;
+    await flushPromises();
+    slow([rowOf(1)]);
+    await flushPromises();
+    expect(w.find('[data-testid="sus-bar-2"]').exists()).toBe(true);
+    expect(w.find('[data-testid="sus-bar-1"]').exists()).toBe(false);
+  });
+
+  it('加载中显示"加载中"，不显示"没有数据"', async () => {
+    vi.mocked(adminApi.suspiciousBar).mockImplementation(() => new Promise(() => {}));
+    const w = await mountView();
+    expect(w.text()).toContain('加载中');
+    expect(w.text()).not.toContain('没有数据');
+  });
+});

@@ -143,11 +143,13 @@ onMounted(() => void load());
     v-for="f in frozen"
     :key="f.restId"
     class="d-flex flex-wrap align-items-center gap-2 small border-bottom py-1"
+    :data-testid="`exg-frozen-${f.restId}`"
   >
     <span class="flex-fill"
       >{{ f.restName }}（{{ f.username }}）：{{ f.reason
       }}<span class="text-muted">
-        · {{ f.actor ?? '?' }} · 冻结中所得 银币 {{ formatNum(f.heldCoin) }}、食材 {{ f.heldFoods }} 个</span
+        · {{ f.actor ?? '?' }} · {{ new Date(f.at).toLocaleString('zh-CN') }} · 冻结中所得 银币
+        {{ formatNum(f.heldCoin) }}、食材 {{ f.heldFoods }} 个</span
       ></span
     >
     <button

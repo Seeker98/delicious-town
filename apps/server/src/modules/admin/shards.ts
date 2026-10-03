@@ -10,7 +10,7 @@ import {
 import { IMPLEMENTED_FEATURES } from '../../core/features';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
-import { publishSettingsChanged } from '../../infra/settingsBus';
+import { notifySettingsChanged, type WarnLog } from '../../infra/settingsBus';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 import { diffPaths } from './diff';
@@ -20,7 +20,7 @@ const isPlain = (v: unknown): v is Record<string, unknown> =>
 const asObject = (v: unknown): Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {};
 
-export function createAdminShards(game: Game) {
+export function createAdminShards(game: Game, log?: WarnLog) {
   const { db, redis, config } = game.app;
 
   /** 配置结构以外的路径（拼错的键、不存在的功能）：zod 会静默剥掉，必须显式拒绝，否则保存"成功"却没生效 */
@@ -136,7 +136,7 @@ export function createAdminShards(game: Game) {
       return next;
     });
     game.shards.invalidate(shardId);
-    await publishSettingsChanged(redis, shardId);
+    await notifySettingsChanged(redis, shardId, log);
     return { version };
   }
 
