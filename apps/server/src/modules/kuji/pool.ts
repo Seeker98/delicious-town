@@ -99,7 +99,17 @@ export async function currentPool(
   tiers: Tiers,
   now: Date,
   last?: Last,
-  opts: { maxPools?: number; theme?: number; clock?: () => Date; line?: KujiLine } = {},
+  opts: {
+    maxPools?: number;
+    theme?: number;
+    clock?: () => Date;
+    line?: KujiLine;
+    /**
+     * 按日期算这一池的奖品（月度主题、豪华池的月度称号）。拿到区服锁、重新取时间之后才调用：
+     * 请求在锁上排队跨过月初 0 点时，新一天的第 1 池不按上个月存快照（质量期 ②）。给了就不用 tiers、last、theme
+     */
+    prizesAt?: (at: Date) => Prizes & { theme?: number };
+  } = {},
 ): Promise<PoolRow | null> {
   // 奖池线（240-2）：开池、编号、作废、每日上限都按线分开
   const line = opts.line ?? 'normal';
@@ -122,6 +132,7 @@ export async function currentPool(
     .where('status', '=', 'open')
     .where('day', '<', day)
     .execute();
+  const prizes = opts.prizesAt?.(locked) ?? { tiers, last, theme: opts.theme };
   for (let attempt = 0; attempt < 5; attempt++) {
     const open = await findOpen(tx, shardId, day, line);
     if (open) return open;
@@ -134,7 +145,17 @@ export async function currentPool(
       .executeTakeFirstOrThrow();
     // 每天最多开 maxPools 池（问题记录 274）：今天已经开满就不再开，返回空
     if (opts.maxPools !== undefined && Number(max.m) >= opts.maxPools) return null;
-    const p = await openPool(tx, shardId, day, Number(max.m) + 1, tiers, locked, last, opts.theme, line);
+    const p = await openPool(
+      tx,
+      shardId,
+      day,
+      Number(max.m) + 1,
+      prizes.tiers,
+      locked,
+      prizes.last,
+      prizes.theme,
+      line,
+    );
     if (p) return p;
   }
   throw new Error(`kuji: cannot open pool for shard ${shardId}`);

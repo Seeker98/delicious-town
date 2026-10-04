@@ -1092,4 +1092,23 @@ describe('豪华一番赏（240-2）', () => {
     expect(errors).toContain('kuji deluxeMonths 2026-12 icon nope not in looks.icons');
     expect(errors).toContain('kuji deluxeMonths 2027-01 key Z is not a deluxe tier');
   });
+
+  it('deluxeMonths：不存在的月份（13 月、0 月）写不进去（质量期 ②）', () => {
+    for (const month of ['2026-13', '2026-00']) {
+      const src = source();
+      const kuji = structuredClone(src['game/kuji']) as { deluxeMonths: Array<Record<string, unknown>> };
+      kuji.deluxeMonths.push({ month, icons: { A: 'kuji_dx_a' } });
+      const { bundle, errors } = buildBundle({ ...src, 'game/kuji': kuji });
+      expect(bundle).toBeNull();
+      expect(errors.join('\n')).toContain('deluxeMonths');
+    }
+  });
+
+  it('送一番赏券的活跃度档不在活跃奖励里时报错（质量期 ②）', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { kuji: { activeTicketPoints: number } };
+    tuning.kuji.activeTicketPoints = 123;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.kuji.activeTicketPoints 123 is not an activation reward');
+  });
 });

@@ -141,6 +141,26 @@ describe('区服数值（HTTP）', () => {
     expect((await save({ tiers: [{ key: 'X', count: 3, award: { coin: 1 } }] })).status).toBe(200);
   });
 
+  it('豪华档位改名后月度称号对不上、送券的活跃档不存在：400（质量期 ②）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const save = (kuji: unknown) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: { tuning: { kuji } }, note: 'x', version: 0 },
+      });
+    // 豪华 A 改叫 S：deluxeMonths 里写的 A 不再是豪华档位，这一档会一直发固定称号
+    const renamed = await save({
+      deluxe: { tiers: [{ key: 'S', count: 1, award: { diamond: 50 }, icon: 'kuji_dx_a' }] },
+    });
+    expect(renamed.status).toBe(400);
+    expect(JSON.stringify(renamed.json.params.issues)).toContain('deluxeMonths 2026-10 key A is not a deluxe tier');
+    // 活跃奖励没有 123 这一档：提示会写一个领不到的档，券也永远送不出去
+    const points = await save({ activeTicketPoints: 123 });
+    expect(points.status).toBe(400);
+    expect(JSON.stringify(points.json.params.issues)).toContain('activeTicketPoints 123');
+    expect((await save({ activeTicketPoints: 180 })).status).toBe(200);
+  });
+
   it('小镇发展基金：提前比例大于到期比例、勋章不是荣誉类：400（240-2）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const save = (fund: unknown) =>

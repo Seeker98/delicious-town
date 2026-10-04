@@ -66,6 +66,8 @@ export function createAdminShards(game: Game, log?: WarnLog) {
       goodsIds: new Set(config.goods.keys()),
       foodIds: new Set(config.foods.keys()),
       iconKeys: new Set(config.bundle.looks.icons.map((i) => i.key)),
+      deluxeMonths: config.bundle.kujiDeluxeMonths,
+      activationPoints: new Set(config.bundle.activationRewards.map((r) => r.points)),
     });
     if (kuji.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {

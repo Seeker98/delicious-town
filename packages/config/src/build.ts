@@ -1122,25 +1122,20 @@ export function buildBundle(src: SourceData): BuildResult {
   if (!doorIds.has(tuning.friend.npc.door))
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
   // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
-  errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
+  errors.push(
+    ...kujiErrors(tuning.kuji, {
+      goodsIds,
+      foodIds,
+      iconKeys,
+      deluxeMonths: kujiRaw.deluxeMonths,
+      activationPoints: new Set(activationRewards.map((r) => r.points)),
+    }),
+  );
   // 小镇发展基金（240-2）：同一套检查后台保存区服数值时也跑
   const honorIds = new Set(goods.filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id));
   errors.push(...fundErrors(tuning.fund, { honorIds }));
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
-  // 豪华池按月轮换的称号（240-2）
-  {
-    const deluxeKeys = new Set([...tuning.kuji.deluxe.tiers.map((x) => x.key), 'last']);
-    const seenMonth = new Set<string>();
-    for (const m of kujiRaw.deluxeMonths) {
-      if (seenMonth.has(m.month)) errors.push(`kuji deluxeMonths duplicate month ${m.month}`);
-      seenMonth.add(m.month);
-      for (const [key, icon] of Object.entries(m.icons)) {
-        if (!deluxeKeys.has(key)) errors.push(`kuji deluxeMonths ${m.month} key ${key} is not a deluxe tier`);
-        if (!iconKeys.has(icon)) errors.push(`kuji deluxeMonths ${m.month} icon ${icon} not in looks.icons`);
-      }
-    }
-  }
 
   if (errors.length > 0) return { bundle: null, errors };
 

@@ -435,7 +435,10 @@ export const kujiFile = z
     deluxeTicket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
     /** 豪华池按月轮换的称号（240-2）：年月 → 档位 key（或 last）→ 称号 */
     deluxeMonths: z.array(
-      z.object({ month: z.string().regex(/^\d{4}-\d{2}$/), icons: z.record(z.string().min(1)) }).strict(),
+      // 月份只能 01~12：写成 2026-13 那一项永远对不上（质量期 ②）
+      z
+        .object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/), icons: z.record(z.string().min(1)) })
+        .strict(),
     ),
     /** 月度主题（问题记录 274）：每月 A/B/C/最后赏 4 个限定手办 */
     themes: z.array(
