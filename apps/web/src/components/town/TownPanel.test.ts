@@ -163,6 +163,18 @@ describe('TownPanel', () => {
     expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
   });
 
+  it('镇长问答：服务端还没更新、不带嘻哈男孩状态时照旧可以问，不写 undefined（终审）', () => {
+    const w = mount(TownPanel, { props: { data: townData({ mayor: { answered: false } as never }) } });
+    expect(w.get('[data-testid="mayor-row"]').text()).not.toContain('undefined');
+    expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeUndefined();
+  });
+
+  it('镇长问答：区服关掉嘻哈男孩时不显示镇长这一行（他不会出来，问不了）', () => {
+    useRestaurantStore().rest = { disabledFeatures: ['hiphop'] } as never;
+    const w = mount(TownPanel, { props: { data: townData() } });
+    expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
+  });
+
   it('镇长问答：区服关掉的功能对应的地点不列出来（问题记录 256：嘻哈男孩不会去那里）', async () => {
     useRestaurantStore().rest = { disabledFeatures: ['kuji', 'temple'] } as never;
     const w = mount(TownPanel, { props: { data: townData() } });

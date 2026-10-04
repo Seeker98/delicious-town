@@ -56,7 +56,7 @@ html {
 }
 /* 触屏上输入框字号至少 16px：iPhone 点进字号小于 16px 的输入框会自动放大页面 */
 @media (pointer: coarse) {
-  input,
+  input:not([type='checkbox']):not([type='radio']),
   select,
   textarea,
   .form-control,

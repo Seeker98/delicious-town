@@ -121,7 +121,7 @@ const guide: Messages['guide'] = {
       a: [
         'El pack de registro diario puede traer algunos; los premios de actividad de 100 y 150 puntos; ',
         { to: '/rest/tasks', text: 'las misiones semanales' },
-        '; los packs de la clasificación de chefs y de la clasificación mensual de afinidad del Kraken; los premios de eventos y los códigos.',
+        '; los packs de la clasificación de chefs y de la clasificación mensual de afinidad del Kraken; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
       ],
     },
     {
@@ -129,7 +129,7 @@ const guide: Messages['guide'] = {
       a: [
         'Puedes ganarlas en la tragaperras del ',
         { to: '/bar', text: 'Bar' },
-        '; el árbol del dinero de la plaza suelta una de vez en cuando; la misión secundaria «Completar una prueba» también da una. Cámbialas por objetos raros en «Canjes» de la ',
+        '; sacudir la bolsa de Don Krab en la plaza a veces suelta una; la misión secundaria «Completar una Prueba» también da una. Cámbialas por objetos raros en «Canjes» de la ',
         { to: '/town', text: 'Plaza' },
         '.',
       ],

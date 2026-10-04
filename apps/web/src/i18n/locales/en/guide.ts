@@ -114,7 +114,7 @@ const guide: Messages['guide'] = {
       a: [
         'The daily check-in pack can contain some; the 100- and 150-point daily activity rewards; ',
         { to: '/rest/tasks', text: 'weekly quests' },
-        '; the Chef ranking and monthly Kraken affinity ranking packs; event rewards and redeem codes.',
+        '; the Chef ranking and monthly Kraken affinity ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
       ],
     },
     {
@@ -122,7 +122,7 @@ const guide: Messages['guide'] = {
       a: [
         'You can win them on the slot machine at the ',
         { to: '/bar', text: 'Bar' },
-        '; the money tree in the square sometimes drops one; the side quest “Complete a trial” also gives one. Exchange them for rare items under “Exchanges” in the ',
+        '; shaking Mr. Krab’s money bag in the square sometimes drops one; the side quest “Complete a Trial” also gives one. Exchange them for rare items under “Exchange” in the ',
         { to: '/town', text: 'Square' },
         '.',
       ],
