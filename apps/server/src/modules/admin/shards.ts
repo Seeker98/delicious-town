@@ -2,6 +2,7 @@ import { ZodError } from 'zod';
 import { fundErrors, GOODS_TYPE, isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
 import {
   ErrorCode,
+  gameDay,
   type AdminShardDto,
   type BoostActivityDef,
   type ShardHistoryDto,
@@ -66,6 +67,11 @@ export function createAdminShards(game: Game, log?: WarnLog) {
       goodsIds: new Set(config.goods.keys()),
       foodIds: new Set(config.foods.keys()),
       iconKeys: new Set(config.bundle.looks.icons.map((i) => i.key)),
+      // 只看当月和以后的月度称号：过去月份的豪华池早存了快照，不挡以后正式调整档位（质量期 ② 终审）
+      deluxeMonths: config.bundle.kujiDeluxeMonths.filter(
+        (m) => m.month >= gameDay(game.deps.now()).slice(0, 7),
+      ),
+      activationPoints: new Set(config.bundle.activationRewards.map((r) => r.points)),
     });
     if (kuji.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {

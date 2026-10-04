@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    rules1005:
+      "Ichiban Kuji : le premier lot ouvert à minuit le 1er du mois prend le thème et les titres du nouveau mois ; les remboursements du Fonds de développement sont arrondis plus précisément ; une erreur au règlement du Pronostic du marché n'annule plus la question du marché dans Prédictions",
     wiki1005:
       'Wiki du jeu : les ustensiles affichent leurs bonus de set et les gemmes le nom du rang suivant ; changer vite de page sur un réseau lent ne mélange plus les pages, et les erreurs de chargement sont signalées',
     fixes1005:

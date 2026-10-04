@@ -635,7 +635,8 @@ export function createExchangeService(d: GameDeps) {
       .select('price')
       .where('shard_id', '=', ctx.shardId)
       .where('foods_id', '=', foodsId)
-      .where('system', '=', false)
+      // 写成字面的 not system，部分索引 exchange_trade_last_player 才一定用得上（参数化的 = false 要看计划器）
+      .where(sql<boolean>`not system`)
       .orderBy('id', 'desc')
       .executeTakeFirst();
     const vol = await d.db

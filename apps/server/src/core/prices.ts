@@ -1,7 +1,13 @@
 import type { Food } from '@dt/config';
 
-/** 万能食材 467~471 顶替 1~5 级（和交易所参考价 exchange/rules.ts 一致） */
+/** 万能食材的 id：466 + 能顶替的普通等级（规格书 03 §3.3，467~471 顶替 1~5 级） */
 const UNIVERSAL_BASE = 466;
+
+/** 万能食材能顶替的等级（1~5）；不是万能食材为 null。菜价倍率和交易所参考价共用 */
+export function universalLevel(food: Food): number | null {
+  const base = food.id - UNIVERSAL_BASE;
+  return food.level === 9 && base >= 1 && base <= 5 ? base : null;
+}
 
 /** 浮点尾数的容差：680 × 0.35 算出 237.99999…，向下取整前先补上（和交易所做市一致） */
 const EPS = 1e-6;
@@ -13,8 +19,7 @@ export function dishCoin(base: number, rate: number): number {
 
 /** 食材的价格倍数：第 N 个是 N 级；万能食材按它能顶替的等级；没写的等级按 1 */
 export function levelRateOf(food: Food, rates: readonly number[]): number {
-  const base = food.id - UNIVERSAL_BASE;
-  const level = food.level === 9 && base >= 1 && base <= 5 ? base : food.level;
+  const level = universalLevel(food) ?? food.level;
   return rates[level - 1] ?? 1;
 }
 

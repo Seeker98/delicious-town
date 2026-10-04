@@ -62,17 +62,20 @@ describe('个人缺料倾向（问题记录 50、68）', () => {
     const r = await newRestaurant(t, { shardId });
     const need = needOf();
     const ids: number[] = [];
-    for (let i = 0; i < 40; i++) {
+    // 抽到至少 12 次食材：新手街 3 级以内的缺量里稀有食材约占 59%，12 次都不出稀有的概率约十万分之二
+    for (let i = 0; i < 300 && ids.length < 12; i++) {
       const res = await runOp(t.game.deps, r, { feature: 'store', source: 'test' }, (o) =>
         randomAward(o, { level: 3 }),
       );
       if (res.data.kind === 'foods') ids.push(res.data.id!);
     }
-    expect(ids.length).toBeGreaterThan(0);
+    expect(ids.length).toBe(12);
     for (const id of ids) {
       expect(levelOf(id)).toBeLessThanOrEqual(3);
       expect(need.has(id)).toBe(true);
     }
+    // 真的出过稀有食材（质量期 ②）
+    expect(ids.some((id) => config().requireFood(id).odds < 100)).toBe(true);
   });
 
   it('合成命中缺料：出的都是目标等级的缺料，不出已经堆满的（Review Focus 3）', async () => {

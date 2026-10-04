@@ -172,6 +172,26 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
   });
 
+  it('每日特价抽到高档海报时也看星级：3 星买不了、不扣钱、不占库存（质量期 ②）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 3 } });
+    const { tuning } = await t.game.shards.settings(ctx.shardId);
+    const day = latestSlot(t.clock.now, [tuning.shop.specialHour]).day;
+    await t.db
+      .insertInto('shop_special')
+      .values({ shard_id: ctx.shardId, day, goods_id: 93201, discount: 0.5, tier_name: 'x', stock: 5 })
+      .execute();
+    await expect(shop().buySpecial(ctx, { num: 1 })).rejects.toMatchObject({
+      params: { reason: 'star', need: 4, have: 3 },
+    });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
+    const row = await t.db
+      .selectFrom('shop_special')
+      .select('sold')
+      .where('shard_id', '=', ctx.shardId)
+      .executeTakeFirstOrThrow();
+    expect(row.sold).toBe(0);
+  });
+
   it('星级刚好够（4 星）就能买（Review Focus 1）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 4 } });
     const l = await shop().items(ctx);

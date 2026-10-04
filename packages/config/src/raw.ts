@@ -435,7 +435,10 @@ export const kujiFile = z
     deluxeTicket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
     /** 豪华池按月轮换的称号（240-2）：年月 → 档位 key（或 last）→ 称号 */
     deluxeMonths: z.array(
-      z.object({ month: z.string().regex(/^\d{4}-\d{2}$/), icons: z.record(z.string().min(1)) }).strict(),
+      // 月份只能 01~12：写成 2026-13 那一项永远对不上（质量期 ②）
+      z
+        .object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/), icons: z.record(z.string().min(1)) })
+        .strict(),
     ),
     /** 月度主题（问题记录 274）：每月 A/B/C/最后赏 4 个限定手办 */
     themes: z.array(
@@ -481,8 +484,11 @@ export const devicesExtraFile = z
   })
   .strict();
 
-/** data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50） */
-export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).max(1) }).strict();
+/**
+ * data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50）。
+ * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）
+ */
+export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).lt(1) }).strict();
 
 /** data/game/fund.json：小镇发展基金的勋章（240-2） */
 export const fundFile = z

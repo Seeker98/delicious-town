@@ -413,7 +413,10 @@ export function buildBundle(src: SourceData): BuildResult {
   }));
   // 新手大礼包（goods 54）：原数据没有内容，按 newbie_pack.json 配上（问题记录 331）
   const withPack = builtGoods.map((g) =>
-    g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
+    // 原版的 value（30 万金币、500 经验等）没人读，清掉免得误会（质量期 ②）
+    g.id === newbieRaw.pack.goodsId
+      ? { ...g, value: null, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } }
+      : g,
   );
   if (!builtGoods.some((g) => g.id === newbieRaw.pack.goodsId))
     errors.push(`newbie_pack references unknown goods ${newbieRaw.pack.goodsId}`);
@@ -510,6 +513,10 @@ export function buildBundle(src: SourceData): BuildResult {
   // 食材出现权重向全服需求靠 α（问题记录 50）
   const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend);
   for (const f of foods) f.weight = weights.get(f.id) ?? f.odds;
+  // 食材随机券那一级要有抽得出的食材：配错时用券会白扣（质量期 ②）
+  for (const v of newbieRaw.vouchers)
+    if (!foods.some((f) => f.level === v.level && f.weight > 0))
+      errors.push(`newbie_pack voucher ${v.id} level ${v.level} has no food to draw`);
   unique(
     'cookbooks',
     cookbooks.map((c) => c.id),
@@ -1122,25 +1129,20 @@ export function buildBundle(src: SourceData): BuildResult {
   if (!doorIds.has(tuning.friend.npc.door))
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
   // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
-  errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
+  errors.push(
+    ...kujiErrors(tuning.kuji, {
+      goodsIds,
+      foodIds,
+      iconKeys,
+      deluxeMonths: kujiRaw.deluxeMonths,
+      activationPoints: new Set(activationRewards.map((r) => r.points)),
+    }),
+  );
   // 小镇发展基金（240-2）：同一套检查后台保存区服数值时也跑
   const honorIds = new Set(goods.filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id));
   errors.push(...fundErrors(tuning.fund, { honorIds }));
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
-  // 豪华池按月轮换的称号（240-2）
-  {
-    const deluxeKeys = new Set([...tuning.kuji.deluxe.tiers.map((x) => x.key), 'last']);
-    const seenMonth = new Set<string>();
-    for (const m of kujiRaw.deluxeMonths) {
-      if (seenMonth.has(m.month)) errors.push(`kuji deluxeMonths duplicate month ${m.month}`);
-      seenMonth.add(m.month);
-      for (const [key, icon] of Object.entries(m.icons)) {
-        if (!deluxeKeys.has(key)) errors.push(`kuji deluxeMonths ${m.month} key ${key} is not a deluxe tier`);
-        if (!iconKeys.has(icon)) errors.push(`kuji deluxeMonths ${m.month} icon ${icon} not in looks.icons`);
-      }
-    }
-  }
 
   if (errors.length > 0) return { bundle: null, errors };
 
@@ -1230,7 +1232,10 @@ export function buildBundle(src: SourceData): BuildResult {
   return { bundle: { version, ...body }, errors: [] };
 }
 
-/** 纪念品类型的道具：没有加成和用途，不出售，不占仓库格 */
+/**
+ * 纪念品类型的道具：没有加成和用途，不出售，不占仓库格。
+ * 也拿来当别的道具的底子：改了 type 的照新类型算，例如食材随机券是消耗品，占仓库格
+ */
 function souvenirLike(id: number, name: string, desc: string): Goods {
   return {
     id,

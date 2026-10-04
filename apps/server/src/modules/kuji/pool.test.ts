@@ -40,6 +40,23 @@ describe('奖池（一番赏设计 §5.2）', () => {
     expect(old).toContainEqual({ line: 'deluxe', status: 'sold_out' });
   });
 
+  it('豪华线开满不挡普通线：每日上限按各自的池号算（backlog 豪华一番赏）', async () => {
+    const shardId = await createShard(t.db);
+    const now = gameTime('2026-10-04', 12);
+    const soldOut = (id: string) =>
+      t.db.updateTable('kuji_pool').set({ status: 'sold_out' }).where('id', '=', id).execute();
+    // 豪华线开到第 2 池并抽完：豪华线今天开满
+    await soldOut((await cur(t.db, shardId, tiers(), now, undefined, { line: 'deluxe', maxPools: 2 })).id);
+    await soldOut((await cur(t.db, shardId, tiers(), now, undefined, { line: 'deluxe', maxPools: 2 })).id);
+    expect(
+      await currentPool(t.db, shardId, tiers(), now, undefined, { line: 'deluxe', maxPools: 2 }),
+    ).toBeNull();
+    // 普通线同样上限 2：第 1 池抽完后照样能开第 2 池
+    await soldOut((await cur(t.db, shardId, tiers(), now, undefined, { maxPools: 2 })).id);
+    const n2 = await cur(t.db, shardId, tiers(), now, undefined, { maxPools: 2 });
+    expect([n2.line, n2.seq]).toEqual(['normal', 2]);
+  });
+
   it('第一次用到时开池：80 张签，各档张数对得上；再取还是同一池', async () => {
     const shardId = await createShard(t.db);
     const now = t.clock.now;
@@ -113,5 +130,23 @@ describe('backlog 一番赏：跨 0 点', () => {
     const lateYesterday = gameTime(addDays(today, -1), 23, 59);
     const p = await cur(t.db, shardId, tiers(), lateYesterday, undefined, { clock: () => t.clock.now });
     expect(p.day).toBe(today);
+  });
+
+  it('跨月 0 点：奖品按拿到锁之后的日期算，10 月 1 日第 1 池不按 9 月存快照（质量期 ②）', async () => {
+    const shardId = await createShard(t.db);
+    const lastSept = gameTime('2026-09-30', 23, 59);
+    const oct1 = gameTime('2026-10-01', 0, 1);
+    // 奖品随月份变：档位 key 写成月份，看快照存的是哪个月
+    const prizesAt = (at: Date) => ({
+      tiers: [{ key: gameDay(at).slice(0, 7), count: 2, award: { coin: 1 } }],
+      last: { award: { coin: 1 } },
+    });
+    const p = await cur(t.db, shardId, prizesAt(lastSept).tiers, lastSept, prizesAt(lastSept).last, {
+      clock: () => oct1,
+      prizesAt,
+    });
+    expect(p.day).toBe('2026-10-01');
+    expect(Object.fromEntries(await tierLeft(t.db, p.id))).toEqual({ '2026-10': 2 });
+    expect(p.tiers).toEqual(prizesAt(oct1).tiers);
   });
 });

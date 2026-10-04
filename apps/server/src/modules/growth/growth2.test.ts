@@ -280,4 +280,14 @@ describe('后期海报奖杯摆放要星级（问题记录 146）', () => {
       expect.objectContaining({ sourceType: 'device', sourceId: 1, effects: { coinValue: 8 } }),
     );
   });
+
+  it('高档海报换下旧海报：这个位置只剩新海报的加成（质量期 ②）', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 4 }, goods: { 13: 1, 93201: 1 } });
+    await g().placeDevice(ctx, { slot: 1, goodsId: 13 });
+    await g().placeDevice(ctx, { slot: 1, goodsId: 93201 });
+    const effects = await listActiveEffects(t.db, ctx.restaurantId, t.clock.now);
+    expect(
+      effects.filter((e) => e.sourceType === 'device' && e.sourceId === 1).map((e) => e.effects),
+    ).toEqual([{ coinValue: 8 }]);
+  });
 });

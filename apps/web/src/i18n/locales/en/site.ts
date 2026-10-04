@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    rules1005:
+      "Ichiban Kuji: the first pool opened at midnight on the 1st now uses the new month's theme and titles; Town Development Fund refunds round more precisely; an error while settling Market guessing no longer voids the market question in Predictions",
     wiki1005:
       'Game wiki: cookware pages show set bonuses and gems name their next tier; switching quickly on a slow network no longer mixes up pages, and load errors are reported',
     fixes1005:

@@ -78,7 +78,8 @@ export function awardFoodsPool(foods: readonly Food[], level: number): number[] 
 
 /**
  * 随机奖励（规格书 00 §0.8），当场发放。
- * 随机数顺序：类型（onlyGoods 时没有）→ 幸运翻倍（物品、食材）→ 抽取（物品、食材）。物品池空时改发银币
+ * 随机数顺序：类型（onlyGoods 时没有）→ 幸运翻倍（物品、食材）→ 抽取。物品池空时改发银币。
+ * 食材的抽取先判一次是否命中个人缺料（概率为 0 或没有缺料时不耗随机数），命中按缺量抽缺料，没命中按原来的池子抽（问题记录 50）
  */
 export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<RandomAward> {
   const { level } = opts;

@@ -36,8 +36,11 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
     d.items[0].needStar = 13;
     d.items[1].deviceType = 6;
     d.items[2].id = 13;
+    // 负数星级（质量期 ②）
+    d.items[3].needStar = -1;
     const errs = buildBundle({ ...src, 'game/devices_extra': d }).errors.join('\n');
     expect(errs).toContain('needStar 13');
+    expect(errs).toContain('devices_extra 93204 needStar -1');
     expect(errs).toContain('deviceType 6');
     expect(errs).toContain('duplicate id 13');
   });

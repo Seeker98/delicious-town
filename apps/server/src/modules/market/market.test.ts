@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { gameTime, hashSeed, latestSlot, seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
@@ -271,5 +271,31 @@ describe('竞猜（规格书 06 §6.3）', () => {
     expect(g.settled_at).not.toBeNull();
     expect(g.hits).toBeNull();
     t.clock.set(new Date());
+  });
+
+  it('开奖出错时货架照样算刷新成功：只记日志，周期任务能写完成时间，菜场题不按“没刷新”作废（质量期 ②）', async () => {
+    const ctx = await newRestaurant(t);
+    const slot = latestSlot(gameTime('2026-09-30', 12), t_.dailyHours);
+    t.clock.set(slot.start);
+    const db = t.deps.db;
+    const original = db.selectFrom.bind(db);
+    const spy = vi.spyOn(db, 'selectFrom').mockImplementation(((from: never) => {
+      if (from === 'market_guess') throw new Error('boom');
+      return original(from);
+    }) as typeof db.selectFrom);
+    const log = { error: vi.fn() };
+    try {
+      const r = await m().refresh(ctx.shardId, 0, slot, slot.start, log as never);
+      expect(r.foods).toHaveLength(5);
+      expect(r.guesses).toBe(0);
+      expect(r.guessError).toBe(true);
+      expect(log.error).toHaveBeenCalledWith(
+        expect.objectContaining({ shardId: ctx.shardId }),
+        'market guess settle failed',
+      );
+    } finally {
+      spy.mockRestore();
+      t.clock.set(new Date());
+    }
   });
 });

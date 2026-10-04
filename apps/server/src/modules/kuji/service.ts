@@ -164,20 +164,23 @@ export function createKujiService(d: GameDeps) {
     now: Date,
     line: KujiLine,
   ): Promise<PoolRow | null> {
+    // 按拿到开池锁之后的时间取主题、称号和日期：请求排队时可能跨过 0 点（backlog 一番赏、质量期 ②）。
+    // 开池用 prizesAt 的结果；按 now 算的 tiers、last 只是 currentPool 的必填参数，给了 prizesAt 就不用
     if (line === 'deluxe') {
-      const p = deluxeThemed(k.deluxe, d.now());
+      const p = deluxeThemed(k.deluxe, now);
       return currentPool(tx, shardId, p.tiers, now, p.last, {
         maxPools: k.deluxe.maxPools,
         clock: () => d.now(),
+        prizesAt: (at) => deluxeThemed(k.deluxe, at),
         line,
       });
     }
-    // 按现在的时间取主题和开池：请求排队时可能跨过 0 点（backlog 一番赏）
-    const p = themed(k, d.now());
+    const p = themed(k, now);
     return currentPool(tx, shardId, p.tiers, now, p.last, {
       maxPools: k.maxPools,
       theme: p.theme,
       clock: () => d.now(),
+      prizesAt: (at) => themed(k, at),
     });
   }
 

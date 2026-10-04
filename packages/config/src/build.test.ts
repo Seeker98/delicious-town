@@ -1004,6 +1004,19 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
     ]);
   });
 
+  it('随机券那一级没有可抽的食材时构建报错：配错时用券会白扣（质量期 ②）', () => {
+    const src = source();
+    const foods = structuredClone(src['dataset/foods']) as Array<Record<string, unknown>>;
+    // 五级食材出现权重全改成 0：五级食材随机券抽不出东西
+    for (const f of foods) if (f.level === 5) f.odds = 0;
+    const { errors } = buildBundle({ ...src, 'dataset/foods': foods });
+    expect(errors).toContain('newbie_pack voucher 93005 level 5 has no food to draw');
+  });
+
+  it('大礼包不留原版的 value（30 万金币、500 经验等没人读，容易误会，质量期 ②）', () => {
+    expect(goods(NEWBIE.pack).value).toBeNull();
+  });
+
   it('开店送一个新手大礼包；老玩家用新手码补领', () => {
     expect(b().restaurantDefaults.giftGoods).toContainEqual({ id: NEWBIE.pack, num: 1 });
     const code = b().newbieCodes.find((c) => c.code === 'XINSHOULIBAO')!;
@@ -1091,5 +1104,24 @@ describe('豪华一番赏（240-2）', () => {
     expect(errors).toContain('kuji deluxeMonths duplicate month 2026-10');
     expect(errors).toContain('kuji deluxeMonths 2026-12 icon nope not in looks.icons');
     expect(errors).toContain('kuji deluxeMonths 2027-01 key Z is not a deluxe tier');
+  });
+
+  it('deluxeMonths：不存在的月份（13 月、0 月）写不进去（质量期 ②）', () => {
+    for (const month of ['2026-13', '2026-00']) {
+      const src = source();
+      const kuji = structuredClone(src['game/kuji']) as { deluxeMonths: Array<Record<string, unknown>> };
+      kuji.deluxeMonths.push({ month, icons: { A: 'kuji_dx_a' } });
+      const { bundle, errors } = buildBundle({ ...src, 'game/kuji': kuji });
+      expect(bundle).toBeNull();
+      expect(errors.join('\n')).toContain('deluxeMonths');
+    }
+  });
+
+  it('送一番赏券的活跃度档不在活跃奖励里时报错（质量期 ②）', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { kuji: { activeTicketPoints: number } };
+    tuning.kuji.activeTicketPoints = 123;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.kuji.activeTicketPoints 123 is not an activation reward');
   });
 });

@@ -451,6 +451,22 @@ describe('豪华一番赏（240-2）', () => {
     expect((await svc().view(r)).recent).toEqual([]);
   });
 
+  it('最近的大赏：没有 line 的旧新闻算普通池，普通看板能看到、豪华看板看不到（backlog 豪华一番赏）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId);
+    await t.db
+      .insertInto('news')
+      .values({
+        shard_id: shardId,
+        type: 'kuji.big',
+        rest_id: r.restaurantId,
+        params: JSON.stringify({ tier: 'A' }),
+      })
+      .execute();
+    expect((await svc().view(r)).recent.map((x) => x.tier)).toEqual(['A']);
+    expect((await svc().view(r, 'deluxe')).recent).toEqual([]);
+  });
+
   it('没有配置的月份发固定称号（Review Focus 4）', async () => {
     t.clock.set(gameTime('2027-03-15', 12));
     const shardId = await createShard(t.db);
