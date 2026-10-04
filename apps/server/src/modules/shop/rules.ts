@@ -10,10 +10,14 @@ export interface BuyState {
   price: number;
   /** 仓库已满（买新种类会被拒） */
   storeFull: boolean;
+  /** 餐厅星级 */
+  star: number;
 }
 
 /** 一次最多能买几个，和买不了的原因（与 buy 里的 assertBuyable 同一套规则） */
 export function buyCap(g: Goods, s: BuyState, maxBuy: number): { max: number; blocked: BuyBlock } {
+  // 后期海报奖杯按星级可用（问题记录 146）
+  if ((g.needStar ?? 0) > s.star) return { max: 0, blocked: 'star' };
   const plaque = isPlaque(g);
   const honor = g.type === GOODS_TYPE.honor;
   const permanent = plaque || (honor && goodsEffectHours(g) === null);
