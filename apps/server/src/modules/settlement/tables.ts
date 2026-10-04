@@ -34,6 +34,11 @@ export function realValue(x: number, add: number): number {
   return x === 0 ? 0 : Math.max(0, x + add);
 }
 
+/** 每桌耗油：同 realValue，但有客人的桌至少耗 1 油（问题记录 346：节油类的每桌 −N 不能把油减成 0） */
+export function tableOil(x: number, add: number): number {
+  return x === 0 ? 0 : Math.max(1, x + add);
+}
+
 export interface Candidate {
   cookbookId: number;
   req: number;
@@ -155,7 +160,7 @@ export function allocateTables(
       const loss = acc.loss;
       const fexp = acc.exp;
       if (table.no <= seatedLimit) seatedLimit += 1;
-      const oilT = realValue(oil, rates.oilValue.total);
+      const oilT = tableOil(oil, rates.oilValue.total);
       out.oil += oilT;
       out.coin -= loss;
       next = {
@@ -329,7 +334,7 @@ export function allocateTables(
     let coinT = 0;
     let expT = 0;
     if (PAYING.has(type)) {
-      oilT = realValue(oil, rates.oilValue.total);
+      oilT = tableOil(oil, rates.oilValue.total);
       // 全服银币倍率（148-4 全服加成，默认 1）
       coinT = (coin + rates.coinValue.total + mcCoin) * t.coinMultiplier;
       expT = realValue(exp + mcExp, rates.expValue.total) * t.expMultiplier;
