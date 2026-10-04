@@ -5,7 +5,11 @@ import { useCatalogStore } from '../stores/catalog';
 import SocietyMoveView from './SocietyMoveView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { move: vi.fn(), overview: vi.fn().mockRejectedValue(new Error('offline')) },
+  endpoints: {
+    move: vi.fn(),
+    moveCost: vi.fn().mockResolvedValue({ cost: 20000 }),
+    overview: vi.fn().mockRejectedValue(new Error('offline')),
+  },
 }));
 
 describe('SocietyMoveView', () => {
@@ -21,5 +25,11 @@ describe('SocietyMoveView', () => {
     expect(w.find('[data-testid="move-bonus"]').exists()).toBe(false);
     await w.find('select').setValue(24);
     expect(w.get('[data-testid="move-bonus"]').text()).toBe('街道加成：探险时获得神秘食材概率+2%,幸运值+25');
+  });
+
+  it('搬街费显示服务端算好的数（240-1 终审 I-2：前端不自己算，星级系数也在里面）', async () => {
+    const w = mount(SocietyMoveView);
+    await flushPromises();
+    expect(w.text()).toContain('20,000');
   });
 });

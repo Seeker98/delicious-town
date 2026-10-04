@@ -3,13 +3,24 @@ import type { OilNeed, StarNeed } from '@dt/config';
 import type { NeedCheckDto } from '@dt/shared';
 import type { CookbookCounts } from '../../db/schema';
 
+/** 搬街费（幸运半价之前，240-1）：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数） */
+export function moveCost(tables: number, tableACoin: number, star: number, moveStarRate: number): number {
+  return Math.floor(tables * (tableACoin / 2) * (1 + star * moveStarRate));
+}
+
+/** 升到第 star 星要付的银币（240-1）：starCoin 第 star 个数，没写的星不收 */
+export function starCoinOf(g: { starCoin: readonly number[] }, star: number): number {
+  return g.starCoin[star - 1] ?? 0;
+}
+
 export function starChecks(
-  rest: { level: number },
+  rest: { level: number; coin: number },
   counts: CookbookCounts,
   certs: number,
   need: StarNeed,
+  coin: number,
 ): NeedCheckDto[] {
-  return [
+  const checks: NeedCheckDto[] = [
     { key: 'level', need: need.needLevel, have: rest.level, ok: rest.level >= need.needLevel },
     {
       key: 'cookbooks',
@@ -19,6 +30,9 @@ export function starChecks(
     },
     { key: 'goods', id: 86, need: need.needCerts, have: certs, ok: certs >= need.needCerts },
   ];
+  // 升星银币（240-1）：不收时不显示这一行
+  if (coin > 0) checks.push({ key: 'coin', need: coin, have: rest.coin, ok: rest.coin >= coin });
+  return checks;
 }
 
 export function oilChecks(

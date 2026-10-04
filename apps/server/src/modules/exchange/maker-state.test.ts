@@ -7,6 +7,9 @@ import { addBought, addStock, makerQuote, makerState, TO_SYSTEM } from './maker'
 import { initialRef } from './rules';
 import { trader } from './test';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -58,7 +61,7 @@ describe('系统库存和每日收购（156-3 设计 §5）', () => {
     const shardId = await createShard(t.db);
     const f = lv6();
     const r = await trader(t, { shardId });
-    const base = initialRef(f, t.deps.config);
+    const base = initialRef(f, t.deps.config, ONE);
     const quote = (k: number) =>
       makerQuote(t.db, {
         config: t.deps.config,

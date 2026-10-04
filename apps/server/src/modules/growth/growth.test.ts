@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
 const config = testConfig();
@@ -68,6 +69,39 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
     expect(await goodsNum(t, ctx.restaurantId, 117)).toBe(1);
     const news = await t.db.selectFrom('news').selectAll().where('rest_id', '=', ctx.restaurantId).execute();
     expect(news.map((n) => n.type)).toContain('star.up');
+  });
+
+  it('区服设了升星银币（240-1）：条件多一行银币；够时扣银币升星，不够报 NOT_ENOUGH 且凭证不扣（Review Focus 4）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { growth: { starCoin: [50000] } } }) })
+      .execute();
+    const poor = await newRestaurant(t, {
+      shardId,
+      patch: { level: 13, coin: 49999 },
+      cookbooks: learned(15),
+      goods: { 86: 1 },
+    });
+    const need = await t.game.growth.starNeed(poor);
+    expect(need.checks.at(-1)).toEqual({ key: 'coin', need: 50000, have: 49999, ok: false });
+    expect(need.ok).toBe(false);
+    await expect(t.game.growth.starUp(poor)).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'coin' },
+    });
+    expect(await goodsNum(t, poor.restaurantId, 86)).toBe(1);
+    const rich = await newRestaurant(t, {
+      shardId,
+      patch: { level: 13, coin: 60000 },
+      cookbooks: learned(15),
+      goods: { 86: 1 },
+    });
+    await t.game.growth.starUp(rich);
+    const r = await restRow(t, rich.restaurantId);
+    expect(r.star_level).toBe(1);
+    expect(r.coin).toBe(10000); // 1 星奖励只有礼包 117（道具），不给银币
+    expect(await goodsNum(t, rich.restaurantId, 86)).toBe(0);
   });
 
   it('等级不够、食谱不够、凭证不够分别报错', async () => {

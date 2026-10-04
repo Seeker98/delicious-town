@@ -1,3 +1,4 @@
+import { foodPrice } from '../../core/prices';
 import { sql, type Kysely } from 'kysely';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 import type { WeightedPool } from '@dt/shared';
@@ -36,10 +37,10 @@ export function marketFloor(food: Food, config: GameConfig, mt: Tuning['market']
   const pool = config.foodPools.get(food.level);
   const inLevel = inPool(pool, food);
   const prices: number[] = [];
-  if (inLevel && hasLevel(mt.dailyLevelWeights, food.level)) prices.push(food.coin);
+  if (inLevel && hasLevel(mt.dailyLevelWeights, food.level)) prices.push(foodPrice(food, mt));
   if ((inLevel && hasLevel(mt.specialLevelWeights, food.level)) || inPool(config.hotFoodPool, food))
     prices.push(mt.specialPrice);
-  if (inLevel && food.level === mt.premiumLevel) prices.push(food.coin * mt.premiumPriceFactor);
+  if (inLevel && food.level === mt.premiumLevel) prices.push(foodPrice(food, mt) * mt.premiumPriceFactor);
   if (prices.length === 0) return null;
   return Math.min(...prices) * cheapestWeather(config) * mt.priceFactor;
 }
@@ -48,8 +49,13 @@ export function marketFloor(food: Food, config: GameConfig, mt: Tuning['market']
  * 系统收购价的锚：初始参考价（refOverrides 或 initialRef）。
  * 参考价可以被小号对倒推高，收购价只跟着参考价往下走，不跟着往上涨（156-3 终审 C1）
  */
-export function makerBase(food: Food, config: GameConfig, t: ExchangeTuning): number {
-  return t.refOverrides[String(food.id)] ?? initialRef(food, config);
+export function makerBase(
+  food: Food,
+  config: GameConfig,
+  t: ExchangeTuning,
+  rates: readonly number[],
+): number {
+  return t.refOverrides[String(food.id)] ?? initialRef(food, config, rates);
 }
 
 /** 系统的买价和卖价（156-3 设计 §4.2）：买价不超过初始参考价那一档；低于挂单下限时没有买这一档 */
@@ -180,7 +186,7 @@ export async function makerQuote(
     marketFloor(food, x.config, x.tuning.market),
     priceBand(x.ref, x.tuning.exchange),
     m,
-    makerBase(food, x.config, x.tuning.exchange),
+    makerBase(food, x.config, x.tuning.exchange, x.tuning.market.levelPriceRate),
   );
   const st = await makerState(db, x.shardId, x.foodsId, x.day);
   const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);

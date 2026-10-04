@@ -4,6 +4,7 @@ import {
   type AttrResultDto,
   type DeviceOptionsDto,
   type OilNeedDto,
+  type MoveCostDto,
   type StarNeedDto,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
@@ -22,7 +23,7 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice, removeDevice } from './devices';
-import { oilChecks, renameProblem, starChecks } from './rules';
+import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -94,7 +95,14 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         return { star: r.star_level, nextStar: null, available: false, checks: [], award: null, ok: false };
       const available = need.cookbooksKind === 'learned';
       const have = await goodsHave(r.id);
-      const checks = starChecks(r, normalizeCounts(r.cookbook_counts), have(GOODS.starCert), need);
+      const s = await d.shards.settings(ctx.shardId);
+      const checks = starChecks(
+        r,
+        normalizeCounts(r.cookbook_counts),
+        have(GOODS.starCert),
+        need,
+        starCoinOf(s.tuning.growth, next),
+      );
       return {
         star: r.star_level,
         nextStar: next,
@@ -117,6 +125,8 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         if (counts.learned < need.needCookbooks)
           throw requirement('cookbooks', { need: need.needCookbooks, have: counts.learned });
         await consumeGoods(o, GOODS.starCert, need.needCerts);
+        // 升星银币（240-1）：不够时 spendCoin 报 NOT_ENOUGH，整个操作回滚，凭证不扣
+        spendCoin(o, starCoinOf(o.tuning.growth, next));
         setRest(o, 'star_level', next);
         const award = o.config.starAward.get(next);
         if (award) await grantAward(o, award);
@@ -229,6 +239,27 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
       });
     },
 
+    /** 搬家页显示的搬街费（终审 I-2：前端不自己算，和实际扣费同一个函数） */
+    async moveCost(ctx: RestCtx): Promise<MoveCostDto> {
+      const [r, tr, s] = await Promise.all([
+        readRest(ctx.restaurantId),
+        d.db
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+        d.shards.settings(ctx.shardId),
+      ]);
+      return {
+        cost: moveCost(
+          tr.tables.length,
+          d.config.requireGoods(GOODS.tableA).coin,
+          r.star_level,
+          s.tuning.growth.moveStarRate,
+        ),
+      };
+    },
+
     move(ctx: RestCtx, streetId: number) {
       return op(ctx, 'rest.move', async (o) => {
         if (!o.config.streets.has(streetId) || streetId === o.rest.street_id)
@@ -239,7 +270,13 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           .select('tables')
           .where('rest_id', '=', o.rest.id)
           .executeTakeFirstOrThrow();
-        let cost = Math.floor(tr.tables.length * (o.config.requireGoods(GOODS.tableA).coin / 2));
+        // 搬街费随星级上涨（240-1）
+        let cost = moveCost(
+          tr.tables.length,
+          o.config.requireGoods(GOODS.tableA).coin,
+          o.rest.star_level,
+          o.tuning.growth.moveStarRate,
+        );
         const { rate } = await opLuck(o);
         if (o.rng.chance(rate)) cost = Math.floor(cost / 2);
         spendCoin(o, cost);

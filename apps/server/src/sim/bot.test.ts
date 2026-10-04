@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameTime, latestSlot } from '@dt/shared';
 import { GOODS } from '@dt/config';
 import { testConfig } from '../../test/config';
+import { createShard } from '../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../test/game';
 import { botTurn, PERSONAS } from './bot';
 
@@ -49,6 +50,31 @@ describe('机器人策略', () => {
       expect(r.tables).toHaveLength(4);
       expect(await marketSpent(ctx.restaurantId)).toBe(0);
     } else expect(r.starLevel).toBe(1);
+  }, 60_000);
+
+  it('升星银币（240-1）：只差凭证和银币、钱不够时不升星，钱留着不花在餐桌和菜场上', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { growth: { starCoin: [10_000_000] } } }),
+      })
+      .execute();
+    const config = testConfig();
+    const ids = config.cookbookIndex.idsByStreet.get(0)!.slice(0, 15);
+    const tables = [1, 2, 3, 4].map((no) => ({ no, floor: 1, customer: 0 }));
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { level: 13, coin: 200_000, oil: 1000, oil_max: 1000, table_num: 16 },
+      cookbooks: Object.fromEntries(ids.map((id) => [id, 1])),
+      tables,
+    });
+    await botTurn(t.game, { name: 'b', persona: PERSONAS[0]!, ctx });
+    const r = await t.game.restaurant.overview(ctx.restaurantId);
+    expect(r.starLevel).toBe(0);
+    expect(r.tables).toHaveLength(4);
+    expect(await marketSpent(ctx.restaurantId)).toBe(0);
   }, 60_000);
 
   it('扩油壶只差银币时先攒钱，不再花在餐桌和菜场上（油壶小会在夜里断油停业）', async () => {

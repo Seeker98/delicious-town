@@ -239,7 +239,7 @@ describe('结算的数据库往返（问题记录 258：结算余量）', () => 
     const g = await createTestGame({ db });
     try {
       const shardId = await createShard(g.db);
-      await newRestaurant(g, { shardId, patch: { coin: 1000, oil: 100000 } });
+      const { restaurantId } = await newRestaurant(g, { shardId, patch: { coin: 1000, oil: 100000 } });
       // 第一轮会顺带算出加成汇总（新店的 effect_dirty 默认为 true），从第二轮开始计数
       await settleShardRound(g.game.deps, g.game.world, shardId, round, new Date());
       sqls = [];
@@ -253,7 +253,16 @@ describe('结算的数据库往返（问题记录 258：结算余量）', () => 
       expect(tx).toBeDefined();
       // 随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，种子按区服、店 id 取，不数
       const fixed = tx!.filter((q) => !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q));
-      expect(fixed).toHaveLength(6);
+      // 这一轮一桌都没坐（约千分之一，种子跟区服 id 走）时店铺没有变化，不写回店铺：少一条（CI 上偶发 5 ≠ 6）
+      const inc = await g.db
+        .selectFrom('income_round')
+        .select(['coin', 'exp', 'oil'])
+        .where('rest_id', '=', restaurantId)
+        .where('round_no', '=', round + 1)
+        .executeTakeFirstOrThrow();
+      const changed = Number(inc.coin) !== 0 || Number(inc.exp) !== 0 || inc.oil !== 0;
+      expect(fixed).toHaveLength(changed ? 6 : 5);
+      expect(fixed.some((q) => /^update "restaurant" set/.test(q))).toBe(changed);
     } finally {
       await db.destroy();
       await g.close();

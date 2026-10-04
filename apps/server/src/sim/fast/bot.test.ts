@@ -60,6 +60,40 @@ describe('机器人（设计 §4.5）', () => {
     expect(b.rest.star).toBe(1);
   });
 
+  it('升星银币（240-1）：只差凭证和银币时钱够就买凭证、付银币升星；不够就攒钱，不买桌子', () => {
+    const coinTuning = { ...settings.tuning, growth: { ...settings.tuning.growth, starCoin: [100000] } };
+    const c = { ...ctx(), tuning: coinTuning };
+    const b = bot(c);
+    noQuests(b);
+    b.rest.store.delete(NEWBIE.pack);
+    b.rest.daily.set('signin', 1);
+    const need = config.starNeed.get(1)!;
+    b.rest.level = need.needLevel;
+    b.rest.counts.learned = need.needCookbooks;
+    const cert = config.requireGoods(GOODS.starCert).coin;
+    b.rest.coin = cert + 50000;
+    const tables = b.rest.tables.length;
+    botTurn(c, b, newMarket(), world(), null);
+    expect(b.rest.star).toBe(0);
+    expect(b.rest.tables).toHaveLength(tables);
+    b.rest.coin = 1e9;
+    botTurn(c, b, newMarket(), world(), null);
+    expect(b.rest.star).toBe(1);
+    expect(c.stats.spend!.star).toBe(100000);
+  });
+
+  it('升星银币不够时卡点原因有 coin（240-1）', () => {
+    const coinTuning = { ...settings.tuning, growth: { ...settings.tuning.growth, starCoin: [100000] } };
+    const c = { ...ctx(), tuning: coinTuning };
+    const b = bot(c);
+    const need = config.starNeed.get(1)!;
+    b.rest.level = need.needLevel;
+    b.rest.counts.learned = need.needCookbooks;
+    b.rest.store.set(GOODS.starCert, { num: need.needCerts, expiresAt: null });
+    b.rest.coin = 10;
+    expect(starBlockers(c, b.rest)).toEqual(['coin']);
+  });
+
   it('银币为 0、仓库空、停业时不报错（Review Focus 2）', () => {
     const c = ctx();
     const b = bot(c);
@@ -129,6 +163,22 @@ describe('机器人（设计 §4.5）', () => {
       expect(c.stats.spend!.move).toBeGreaterThan(0);
       expect(b.rest.store.has(config.streetMedalId(0))).toBe(false);
       expect(b.rest.store.has(config.streetMedalId(b.rest.streetId))).toBe(true);
+    });
+
+    it('搬街费随星级上涨（240-1）', () => {
+      const c = {
+        ...ctx(),
+        tuning: { ...settings.tuning, growth: { ...settings.tuning.growth, moveStarRate: 0.5 } },
+      };
+      const b = exhausted(c);
+      b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
+      const tables = b.rest.tables.length;
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).not.toBe(0);
+      const full = Math.floor(
+        tables * (config.requireGoods(GOODS.tableA).coin / 2) * (1 + b.rest.star * 0.5),
+      );
+      expect([full, Math.floor(full / 2)]).toContain(c.stats.spend!.move);
     });
 
     it('没有搬家卡时花钻石在黑市买一张；钻石不够就不搬', () => {

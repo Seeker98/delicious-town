@@ -2,7 +2,7 @@ import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } f
 import { gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
 import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from '../../modules/cookbook/rules';
 import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
-import { oilChecks, starChecks } from '../../modules/growth/rules';
+import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
 import { personLimit, unitPrice } from '../../modules/market/rules';
@@ -286,11 +286,19 @@ function foodsLack(c: FastCtx, r: FastRest): Map<number, number> {
 /** 本街连续这么久没学到新菜，就当这条街学不动了 */
 const STALE_MS = 3 * 86_400_000;
 
-/** 搬街：有搬家处工作证免卡，否则用搬家卡（没有就花钻石在黑市买一张）；付 餐桌数 × 餐桌A 半价，幸运时再减半；换街道勋章 */
+/**
+ * 搬街：有搬家处工作证免卡，否则用搬家卡（没有就花钻石在黑市买一张）；
+ * 付 餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数，240-1），幸运时再减半；换街道勋章
+ */
 function moveStreet(c: FastCtx, r: FastRest, streetId: number): boolean {
   const cfg = c.config;
   const job = countGoods(c, r, GOODS.moveJobHonor) > 0;
-  let cost = Math.floor(r.tables.length * (cfg.requireGoods(GOODS.tableA).coin / 2));
+  let cost = moveCost(
+    r.tables.length,
+    cfg.requireGoods(GOODS.tableA).coin,
+    r.star,
+    c.tuning.growth.moveStarRate,
+  );
   if (r.coin < cost) return false;
   if (!job && countGoods(c, r, GOODS.moveCard) === 0 && !buyBlack(c, r, GOODS.moveCard, 1)) return false;
   if (!job) consumeGoods(c, r, GOODS.moveCard, 1);
@@ -339,7 +347,14 @@ function maybeMove(c: FastCtx, r: FastRest): boolean {
 export function starBlockers(c: FastCtx, r: FastRest): string[] {
   const need = c.config.starNeed.get(r.star + 1);
   if (!need) return [];
-  const checks = starChecks({ level: r.level }, r.counts, countGoods(c, r, GOODS.starCert), need);
+  const coin = starCoinOf(c.tuning.growth, r.star + 1);
+  const checks = starChecks(
+    { level: r.level, coin: r.coin },
+    r.counts,
+    countGoods(c, r, GOODS.starCert),
+    need,
+    coin,
+  );
   const out: string[] = [];
   for (const ch of checks) {
     if (ch.ok) continue;
@@ -354,6 +369,7 @@ export function starBlockers(c: FastCtx, r: FastRest): string[] {
       const cert = c.config.requireGoods(GOODS.starCert);
       if (r.coin < cert.coin * (ch.need - ch.have)) out.push('coin');
     }
+    if (ch.key === 'coin' && !out.includes('coin')) out.push('coin');
   }
   return out;
 }
@@ -506,21 +522,30 @@ export function botTurn(
     if (goodsId !== undefined) placeDevice(c, r, dev.id, goodsId);
   }
 
-  // 升星：只差凭证时钱够就买，钱不够把凭证钱攒下来
+  // 升星：只差凭证和升星银币时，钱够就买凭证、付银币升星；钱不够就把这笔钱攒下来（240-1）
   let saving = 0;
   const starNeed = cfg.starNeed.get(r.star + 1);
   if (starNeed && starNeed.cookbooksKind === 'learned') {
-    const checks = starChecks({ level: r.level }, r.counts, countGoods(c, r, GOODS.starCert), starNeed);
+    const starCoin = starCoinOf(c.tuning.growth, r.star + 1);
+    const checks = starChecks(
+      { level: r.level, coin: r.coin },
+      r.counts,
+      countGoods(c, r, GOODS.starCert),
+      starNeed,
+      starCoin,
+    );
     const cert = checks.find((x) => x.key === 'goods');
-    const others = checks.filter((x) => x.key !== 'goods').every((x) => x.ok);
-    if (others && cert && !cert.ok) {
-      const num = cert.need - cert.have;
-      if (!shopBuy(c, r, GOODS.starCert, num)) saving = cfg.requireGoods(GOODS.starCert).coin * num;
-    }
-    if (others && consumeGoods(c, r, GOODS.starCert, starNeed.needCerts)) {
-      r.star += 1;
-      const award = cfg.starAward.get(r.star);
-      if (award) grantAward(c, r, award, 'star');
+    const others = checks.filter((x) => x.key !== 'goods' && x.key !== 'coin').every((x) => x.ok);
+    if (others) {
+      const num = cert && !cert.ok ? cert.need - cert.have : 0;
+      const cost = cfg.requireGoods(GOODS.starCert).coin * num + starCoin;
+      if (r.coin < cost || (num > 0 && !shopBuy(c, r, GOODS.starCert, num))) saving = cost;
+      else if (consumeGoods(c, r, GOODS.starCert, starNeed.needCerts)) {
+        spendCoin(c, r, starCoin, 'star');
+        r.star += 1;
+        const award = cfg.starAward.get(r.star);
+        if (award) grantAward(c, r, award, 'star');
+      }
     }
   }
 

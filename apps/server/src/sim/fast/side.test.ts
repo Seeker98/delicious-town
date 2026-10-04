@@ -63,4 +63,16 @@ describe('旁支产出表（设计 §5）', () => {
       loadSideTable({ participation: { diligent: 2, normal: 1, casual: 1 }, rows: [] }, config),
     ).toThrow();
   });
+
+  it('外卖那几行的银币乘菜价倍率（240-1）', () => {
+    const ctx = {
+      ...c(),
+      tuning: { ...settings.tuning, settlement: { ...settings.tuning.settlement, dishCoinRate: 0.5 } },
+    };
+    const r = openFastRest(ctx, 1, settings);
+    r.level = 60;
+    const coin0 = r.coin;
+    applySide(ctx, r, table([{ source: 'takeaway', minLevel: 1, coin: 1000 }]), 'diligent');
+    expect(r.coin - coin0).toBe(500);
+  });
 });

@@ -53,6 +53,13 @@ describe('价格与限购（规格书 06 §6.2）', () => {
     expect(unitPrice(1, food, t, {})).toBe(2999);
     expect(unitPrice(2, food, t, {})).toBe(food.coin * 2);
   });
+  it('各等级价格倍数（240-1）：日常、高级货架按等级乘倍数；特价货架是固定价不变', () => {
+    const lv3 = [...config.foods.values()].find((f) => f.level === 3)!;
+    const t2 = { ...t, levelPriceRate: [1, 1, 2] };
+    expect(unitPrice(0, lv3, t2, {})).toBe(lv3.coin * 2);
+    expect(unitPrice(2, lv3, t2, {})).toBe(lv3.coin * 2 * t.premiumPriceFactor);
+    expect(unitPrice(1, lv3, t2, {})).toBe(t.specialPrice);
+  });
   it('日常稀有食材上架 55 分钟内每人最多 odds×2+10 份', () => {
     const opened = new Date('2026-09-30T00:00:00Z');
     expect(personLimit(0, food, opened, new Date(opened.getTime() + 54 * 60_000), t)).toBe(

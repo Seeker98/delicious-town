@@ -172,18 +172,23 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     }
   }
 
-  // 升星只差凭证时：钱够就买凭证升星；钱不够就把凭证的钱攒下来，本次不再花在油壶、餐桌和菜场上
+  // 升星只差凭证和升星银币时：钱够就买凭证升星；钱不够就把钱攒下来，本次不再花在油壶、餐桌和菜场上（240-1）
   const star = await game.growth.starNeed(ctx);
   let saving = 0;
   if (star.available && star.nextStar !== null) {
     const cert = star.checks.find((c) => c.key === 'goods');
-    const others = star.checks.filter((c) => c.key !== 'goods').every((c) => c.ok);
-    if (others && cert && !cert.ok) {
-      const num = cert.need - cert.have;
-      if (!(await attempt(() => game.shop.buy(ctx, { goodsId: cert.id!, num }))))
-        saving = config.requireGoods(cert.id!).coin * num;
+    const starCoin = star.checks.find((c) => c.key === 'coin')?.need ?? 0;
+    const others = star.checks.filter((c) => c.key !== 'goods' && c.key !== 'coin').every((c) => c.ok);
+    if (others) {
+      const num = cert && !cert.ok ? cert.need - cert.have : 0;
+      const cost = (num > 0 ? config.requireGoods(cert!.id!).coin * num : 0) + starCoin;
+      if (
+        (await rest()).coin < cost ||
+        (num > 0 && !(await attempt(() => game.shop.buy(ctx, { goodsId: cert!.id!, num }))))
+      )
+        saving = cost;
+      else await attempt(() => game.growth.starUp(ctx));
     }
-    if (others) await attempt(() => game.growth.starUp(ctx));
   }
 
   // 扩油壶：等级和星级够了就扩；银币不够时把钱攒下来（油壶小，夜里没人上线会断油停业）

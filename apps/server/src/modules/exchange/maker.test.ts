@@ -4,6 +4,9 @@ import { testConfig } from '../../../test/config';
 import { makerBase, makerBuyQty, makerPrices, marketFloor } from './maker';
 import { initialRef, priceBand } from './rules';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 const config = testConfig();
 const mt = config.tuning.market;
 const ex = config.tuning.exchange;
@@ -38,6 +41,17 @@ describe('菜场最低价（156-3 设计 §4.1）', () => {
   it('菜场不卖的返回 null', () => {
     expect(marketFloor(rareAt(6), config, mt)).toBeNull();
     expect(marketFloor({ ...rareAt(1), level: 8 } as Food, config, mt)).toBeNull();
+  });
+
+  it('各等级价格倍数（240-1）：日常、高级货架的价格跟着等级倍数变，特价货架不变', () => {
+    const rates = { ...mt, levelPriceRate: [3, 1, 1, 2, 1, 1, 1] };
+    const f1 = rareAt(1);
+    expect(marketFloor(f1, config, rates)).toBeCloseTo(f1.coin * 3 * CHEAPEST, 6);
+    const f4 = rareAt(4);
+    expect(marketFloor(f4, config, rates)).toBeCloseTo(
+      Math.min(mt.specialPrice, f4.coin * 2 * mt.premiumPriceFactor) * CHEAPEST,
+      6,
+    );
   });
 
   it('priceFactor 打折时封顶跟着降（Review Focus 5）', () => {
@@ -92,13 +106,13 @@ describe('3~5 级兜底收购（问题记录 244）', () => {
     const cheapestSpecial = mt.specialPrice * CHEAPEST * mt.priceFactor;
     for (const lv of [3, 4, 5]) {
       for (const food of config.foodPools.get(lv)?.items ?? []) {
-        const ref = initialRef(food, config);
+        const ref = initialRef(food, config, ONE);
         const p = makerPrices(
           ref,
           marketFloor(food, config, mt),
           priceBand(ref, ex),
           m,
-          makerBase(food, config, ex),
+          makerBase(food, config, ex, ONE),
         );
         expect(p.bid, food.name).not.toBeNull();
         expect(p.bid!, food.name).toBeLessThan(cheapestSpecial);
@@ -108,13 +122,13 @@ describe('3~5 级兜底收购（问题记录 244）', () => {
 
   it('1 级仍是普通买档，不是兜底', () => {
     const food = rareAt(1);
-    const ref = initialRef(food, config);
+    const ref = initialRef(food, config, ONE);
     const p = makerPrices(
       ref,
       marketFloor(food, config, mt),
       priceBand(ref, ex),
       m,
-      makerBase(food, config, ex),
+      makerBase(food, config, ex, ONE),
     );
     expect(p.floor).toBe(false);
   });
@@ -151,8 +165,8 @@ describe('收购价按初始参考价封顶（终审 C1：防止推高参考价�
 
   it('初始参考价：refOverrides 优先，否则 initialRef', () => {
     const f = rareAt(6);
-    expect(makerBase(f, config, ex)).toBe(initialRef(f, config));
-    expect(makerBase(f, config, { ...ex, refOverrides: { [String(f.id)]: 777 } })).toBe(777);
+    expect(makerBase(f, config, ex, ONE)).toBe(initialRef(f, config, ONE));
+    expect(makerBase(f, config, { ...ex, refOverrides: { [String(f.id)]: 777 } }, ONE)).toBe(777);
   });
 });
 

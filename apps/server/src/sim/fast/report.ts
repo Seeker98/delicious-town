@@ -155,6 +155,7 @@ const SPEND_NAMES: Record<string, string> = {
   'oil.auto': '加油',
   'oil.expand': '扩油箱',
   move: '搬街',
+  star: '升星',
 };
 
 /** 每人每天的银币流入、流出（按用途）和净额（问题记录 240） */

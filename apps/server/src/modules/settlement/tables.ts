@@ -1,3 +1,4 @@
+import { dishCoin } from '../../core/prices';
 import { GOODS } from '@dt/config';
 import type { Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
@@ -255,7 +256,10 @@ export function allocateTables(
           satisfied = true;
           oil = oil + oil + grade;
           exp += t.krabExpPerGrade * grade;
-          coin += g.cookbooks.coin[cb]! * (1 + g.grade(grade).spCoinAddRate) * t.krabCoinMultiplier;
+          coin +=
+            dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) *
+            (1 + g.grade(grade).spCoinAddRate) *
+            t.krabCoinMultiplier;
           out.drops.push({ goodsId: GOODS.krabHappy, num: 1 });
           out.logs.push({ type: 'krab.happy', params: { cookbookId: cb, grade, req } });
         } else if (flags.husky && rng.chance(t.huskyRate)) {
@@ -285,7 +289,7 @@ export function allocateTables(
           exp += grade * (local ? 1 : 2);
           if (grade >= req) {
             satisfied = true;
-            coin += g.cookbooks.coin[cb]! * (1 + g.grade(grade).spCoinAddRate);
+            coin += dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) * (1 + g.grade(grade).spCoinAddRate);
             const m = eatSpecial(2, false);
             mcCoin += m.coin;
             mcExp += m.exp;

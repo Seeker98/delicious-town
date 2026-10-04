@@ -35,6 +35,7 @@ export function growthRoutes(svc: GrowthService): FastifyPluginAsync {
     r.post('/rename', async (req) =>
       okOp(await svc.rename(restCtxOf(req), parse(renameBody, req.body).name)),
     );
+    r.get('/move', async (req) => ok(await svc.moveCost(restCtxOf(req))));
     r.post('/move', async (req) => okOp(await svc.move(restCtxOf(req), parse(moveBody, req.body).streetId)));
     r.post('/promo', async (req) => okOp(await svc.setPromo(restCtxOf(req), parse(toggleBody, req.body).on)));
     r.post('/cookfoods', async (req) =>

@@ -34,6 +34,7 @@
     "planktonHostCooldownHours": 24,
     "expMultiplier": 5,
     "coinMultiplier": 1,
+    "dishCoinRate": 1,
     "roachRateBase": 0.0018,
     "roachRatePerStar": 0.0001,
     "roachMaxShare": 0.33,
@@ -87,7 +88,9 @@
     "drivePlanktonExpPerRenown": 300,
     "drivePlanktonBookExpPerRenown": 1000,
     "renameCoinPerRoach": 100,
-    "renameMaxLength": 9
+    "renameMaxLength": 9,
+    "starCoin": [],
+    "moveStarRate": 0
   },
   "cupboard": {
     "handleMax": 100,
@@ -126,6 +129,7 @@
     "premiumLevel": 4,
     "premiumPriceFactor": 2,
     "priceFactor": 1,
+    "levelPriceRate": [1, 1, 1, 1, 1, 1, 1],
     "shelfLimits": [1000, 1, 9],
     "rareWindowMinutes": 55,
     "rareLimitOddsFactor": 2,

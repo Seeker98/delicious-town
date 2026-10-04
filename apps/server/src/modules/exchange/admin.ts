@@ -282,7 +282,7 @@ export function createExchangeAdmin(game: Game) {
     const stockBy = new Map(stock.map((x) => [x.foods_id, x.num]));
     const boughtBy = new Map(bought.map((x) => [x.foods_id, x.bought]));
     const ids = [...new Set([...stockBy.keys(), ...boughtBy.keys()])].sort((a, b) => a - b);
-    const refs = await refPrices(db, game.deps.config, t, shardId, ids, day);
+    const refs = await refPrices(db, game.deps.config, t, s.tuning.market.levelPriceRate, shardId, ids, day);
     const foods = ids.map((id) => {
       const ref = refs.get(id)!;
       const food = game.deps.config.requireFood(id);
@@ -291,7 +291,7 @@ export function createExchangeAdmin(game: Game) {
         marketFloor(food, game.deps.config, s.tuning.market),
         priceBand(ref, t),
         t.maker,
-        makerBase(food, game.deps.config, t),
+        makerBase(food, game.deps.config, t, s.tuning.market.levelPriceRate),
       );
       return {
         foodsId: id,

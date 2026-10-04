@@ -10,6 +10,9 @@ import { refPrice } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
 import { trader } from './test';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -42,7 +45,7 @@ async function setup(maker?: Record<string, unknown>) {
 describe('卖给系统（问题记录 244）', () => {
   it('3 级是兜底价，低于挂单下限；卖给系统：扣食材、按系统价减手续费加银币、库存和额度增加、订单直接成交', async () => {
     const { shardId, f, seller, sys } = await setup();
-    const ref = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, day());
+    const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day());
     expect(sys).toMatchObject({ floor: true });
     expect(sys!.price).toBeLessThan(priceBand(ref, tune()).min);
     const r = await svc().sellToSystem(seller, { foodsId: f.id, qty: 5, price: sys!.price });
@@ -116,7 +119,7 @@ describe('卖给系统（问题记录 244）', () => {
 
   it('普通卖单仍然不能低于挂单下限，按下限挂的卖单也不会和兜底档成交', async () => {
     const { shardId, f, seller, sys } = await setup();
-    const ref = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, day());
+    const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day());
     const band = priceBand(ref, tune());
     await expect(
       svc().place(seller, { foodsId: f.id, side: 'sell', price: sys!.price, qty: 1 }),

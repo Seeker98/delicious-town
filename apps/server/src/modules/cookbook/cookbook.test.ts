@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { testConfig } from '../../../test/config';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 
 let t: TestGame;
@@ -143,5 +145,21 @@ describe('食谱列表、详情、需求', () => {
     const grape = n.items.find((x) => x.foodsId === 302)!;
     expect(grape.have).toBe(1);
     expect(grape.lack).toBe(grape.need - 1);
+  });
+});
+
+describe('菜谱详情（240-1）', () => {
+  it('菜谱详情的售价乘本区服的菜价倍率', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { settlement: { dishCoinRate: 0.5 } } }),
+      })
+      .execute();
+    const ctx = await newRestaurant(t, { shardId });
+    const detail = await t.game.cookbook.detail(ctx, 194);
+    expect(detail.coin).toBe(Math.floor(testConfig().requireCookbook(194).coin * 0.5));
   });
 });

@@ -99,7 +99,9 @@ export function applySide(c: FastCtx, r: FastRest, t: SideTable, persona: Person
   r.effects = r.effects.filter((e) => e.sourceType !== 'side');
   for (const row of rows) {
     const source = `side.${row.source}`;
-    gainCoin(c, r, n(row.coin), source);
+    // 外卖单价乘菜价倍率（240-1），产出表里外卖的银币按同样比例折算
+    const rate = row.source === 'takeaway' ? c.tuning.settlement.dishCoinRate : 1;
+    gainCoin(c, r, Math.floor(n(row.coin) * rate), source);
     gainExp(c, r, n(row.exp), source);
     gainDiamond(c, r, n(row.diamond), source);
     gainStrength(c, r, n(row.strength));
