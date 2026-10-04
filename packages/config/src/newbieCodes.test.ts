@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
+import { NEWBIE } from './ids';
 import { checkNewbieCodes } from './newbieCodes';
 import { defaultDataDir, readSourceDir } from './source';
 
@@ -41,5 +42,9 @@ describe('新手码配置（设计 §4.1）', () => {
       ['XINSHOU20', 20],
       ['XINSHOULIBAO', 1],
     ]);
+    // 开店时按 NEWBIE.packCode 把补领码记成已领，码名和内容要对得上
+    expect(bundle!.newbieCodes.find((c) => c.code === NEWBIE.packCode)?.items).toEqual({
+      goods: [{ id: NEWBIE.pack, num: 1 }],
+    });
   });
 });

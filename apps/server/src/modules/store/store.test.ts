@@ -91,6 +91,16 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(await goodsNum(t, ctx.restaurantId, 93002)).toBe(0);
   });
 
+  it('一次用 50 张食材随机券：同一种食材合成一条记录，不是每张一条', async () => {
+    const ctx = await newRestaurant(t, { goods: { 93001: 50 } });
+    const r = await s().use(ctx, { goodsId: 93001, num: 50 });
+    const foods = r.events.filter((e) => e.kind === 'foods' && e.type === 'gain');
+    expect(foods.reduce((n, e) => n + (e.num ?? 0), 0)).toBe(50);
+    // 一级食材 27 种，抽 50 次必有重复
+    expect(new Set(foods.map((e) => e.id)).size).toBe(foods.length);
+    expect(foods.length).toBeLessThan(50);
+  });
+
   it('新手大礼包打开后：银币 5 万、钻石 50、喇叭 3、一二三级食材随机券 50、20、10 张等（问题记录 331）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 0, diamond: 0 }, goods: { 54: 1 } });
     await s().use(ctx, { goodsId: 54, num: 1 });

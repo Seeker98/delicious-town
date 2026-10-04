@@ -124,9 +124,14 @@ export async function useGoods(
     }
     case 'randomFood': {
       // N 级食材随机券（问题记录 331）：和礼包里的“随机 N 级食材”一样按掉落权重抽，稀有的少
+      // 先数好每种抽到几个再一起加：一次用几十张时，同一种食材只写一次、只记一条
       const pool = op.config.foodPools.get(use.level);
-      for (let i = 0; i < num && pool && pool.total > 0; i++)
-        await addFoods(op, pickWeighted(pool, op.rng).id, 1);
+      const got = new Map<number, number>();
+      for (let i = 0; i < num && pool && pool.total > 0; i++) {
+        const id = pickWeighted(pool, op.rng).id;
+        got.set(id, (got.get(id) ?? 0) + 1);
+      }
+      for (const [id, n] of got) await addFoods(op, id, n);
       break;
     }
     case 'lockSlots':

@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { NEWBIE } from '@dt/config';
 import { createGame } from '../../game';
+import { syncNewbieCodes } from '../redeem/newbie';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -118,6 +120,19 @@ describe('开店', () => {
       .where('type', '=', 'restaurant.open')
       .execute();
     expect(news[0]!.params).toEqual({ name: '记录小店' });
+  });
+
+  it('新店开局已送新手大礼包：补领码记成本店已领，再兑换报已领，不会丢礼包也不会领两份（问题记录 331）', async () => {
+    await syncNewbieCodes(ctx.deps.db, ctx.deps.config.newbieCodes, { warn() {} });
+    const shardId = await createShard(ctx.deps.db);
+    const u = await playerIn(shardId);
+    await create(u.cookie, '大礼包小店');
+    const guide = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
+    const codes = guide.json.data as { code: string; state: string }[];
+    expect(codes.find((c) => c.code === NEWBIE.packCode)?.state).toBe('used');
+    const r = await call(ctx.app, 'POST', '/api/v1/redeem', { cookie: u.cookie, body: { code: NEWBIE.packCode } });
+    expect(r.status).not.toBe(200);
+    expect(JSON.stringify(r.json)).toContain('code_used');
   });
 
   it('名称校验', async () => {
