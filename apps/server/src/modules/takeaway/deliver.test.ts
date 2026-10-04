@@ -76,7 +76,7 @@ describe('接单（设计文档 §3.3）', () => {
     expect((await t.game.takeaway.overview(other.ctx)).orders).toEqual([]);
   });
 
-  it('菜价倍率（240-1）：区服把菜价倍率调到 0.5，外卖银币跟着减半', async () => {
+  it('菜价倍率（240-1）：区服把菜价倍率调到 0.5，外卖银币跟着减半，经验不变', async () => {
     const shardId = await createShard(t.db);
     await t.db
       .insertInto('shard_config')
@@ -90,12 +90,13 @@ describe('接单（设计文档 §3.3）', () => {
     const r = await deliver(ctx, order, rider);
     const row = await t.db
       .selectFrom('takeaway_delivery')
-      .select('coin')
+      .select(['coin', 'exp'])
       .where('id', '=', r.data.id)
       .executeTakeFirstOrThrow();
-    // 默认倍率时这一单是 198（见上一条）
+    // 默认倍率时这一单是 银币 198、经验 13（见第一条）；菜价倍率只压银币（终审 I-1）
     expect(row.coin).toBeGreaterThanOrEqual(98);
     expect(row.coin).toBeLessThanOrEqual(99);
+    expect(row.exp).toBe(13);
   });
 
   it('天气和我的加成算进数值：阴天银币 +10%，外卖之星经验 +30%', async () => {

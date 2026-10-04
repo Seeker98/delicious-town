@@ -1,4 +1,3 @@
-import { dishCoin } from '../../core/prices';
 import type { TakeawayDeliveryDto } from '@dt/shared';
 import { invalidState, limitReached, notEnough, requirement } from '../../core/errors';
 import { opAgg } from '../../core/luck';
@@ -71,7 +70,7 @@ export async function deliverOrder(
   gainRenown(o, -order.need_renown);
   const v = orderValues(
     {
-      price: dishCoin(cb.coin, o.tuning.settlement.dishCoinRate),
+      price: cb.coin,
       grade: order.grade,
       myGrade,
       level: o.rest.level,
@@ -95,7 +94,8 @@ export async function deliverOrder(
       private: isPrivate,
       double: b.double,
       mystery_kinds: lines.filter((l) => o.config.foods.get(l.foodsId)?.level === 7).length,
-      coin: v.coin,
+      // 菜价倍率只压外卖银币，经验和档位照原价算（240-1，终审 I-1）
+      coin: Math.floor(v.coin * o.tuning.settlement.dishCoinRate),
       exp: v.exp,
       renown: v.renown,
       success_odds: v.odds,
