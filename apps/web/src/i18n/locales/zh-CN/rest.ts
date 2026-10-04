@@ -84,6 +84,7 @@ export default {
     claimChapter: '领章末奖励',
     chapterLeft: (n: number) => `还差 ${n} 个任务`,
     claimFirst: '先领完上面的任务',
+    leftover: '补领：前面章节后来开放的任务',
     lockedLevel: (n: number) => `🔒 ${n} 级解锁`,
     lockedStar: (n: number) => `🔒 ${n} 星解锁`,
     claimedTask: '✓ 已领',

@@ -83,6 +83,7 @@ const rest: Messages['rest'] = {
     claimChapter: 'Recoger',
     chapterLeft: (n) => `Faltan ${n} ${n === 1 ? 'misión' : 'misiones'}`,
     claimFirst: 'Recoge antes las misiones de arriba',
+    leftover: 'Pendientes: misiones de capítulos anteriores abiertas después',
     lockedLevel: (n) => `🔒 Se desbloquea en el nivel ${n}`,
     lockedStar: (n) => `🔒 Se desbloquea con ${n} ${n === 1 ? 'estrella' : 'estrellas'}`,
     claimedTask: '✓ Recogido',

@@ -62,6 +62,7 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
     doneCount: main.filter((x) => x.done || x.claimed).length,
   },
   main,
+  leftover: [],
   allMainDone: false,
   lines: [],
   weekly: null,
@@ -337,19 +338,39 @@ describe('任务页终审遗留（backlog 318）', () => {
     expect((await mountView()).get('[data-testid="claim-chapter"]').text()).toBe('先领完上面的任务');
   });
 
-  it('主线全做完后补出来的任务照样列出、能领', async () => {
-    vi.mocked(endpoints.tasks).mockResolvedValue(
-      quests([task({ id: 2061, name: '摇一次酒吧老虎机', progress: 1, done: true })], {
-        chapter: null,
-        allMainDone: true,
-      }),
-    );
-    const w = await mountView();
-    const card = w.get('[data-testid="card-main"]');
-    expect(card.text()).toContain('主线已全部完成');
-    await card.get('[data-testid="claim-task-2061"]').trigger('click');
+  it('补出来的任务单独列在"补领"下面，不混进本章、不算本章进度；章锁定、主线全做完时也列出', async () => {
+    const left = task({ id: 2061, name: '摇一次酒吧老虎机', progress: 1, done: true });
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ id: 2081 })], { leftover: [left] }));
+    let w = await mountView();
+    let card = w.get('[data-testid="card-main"]');
+    expect(card.get('[data-testid="chapter"]').text()).toContain('（0/1）');
+    const box = card.get('[data-testid="main-leftover"]');
+    expect(box.text()).toContain('补领');
+    expect(box.find('[data-testid="task-2061"]').exists()).toBe(true);
+    expect(card.findAll('[data-testid^="task-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'task-2081',
+      'task-2061',
+    ]);
+    await box.get('[data-testid="claim-task-2061"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(2061);
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([], {
+        chapter: { ...quests([]).chapter!, id: 2, needLevel: 5, locked: true },
+        leftover: [left],
+      }),
+    );
+    w = await mountView();
+    expect(w.get('[data-testid="main-leftover"]').text()).toContain('摇一次酒吧老虎机');
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([], { chapter: null, allMainDone: true, leftover: [left] }),
+    );
+    w = await mountView();
+    card = w.get('[data-testid="card-main"]');
+    expect(card.text()).toContain('主线已全部完成');
+    expect(card.find('[data-testid="main-leftover"] [data-testid="task-2061"]').exists()).toBe(true);
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
+    expect((await mountView()).find('[data-testid="main-leftover"]').exists()).toBe(false);
   });
 
   const weeklyOf = (qs: QuestDto[], full: Partial<NonNullable<QuestsDto['weekly']>['full']> = {}) => ({

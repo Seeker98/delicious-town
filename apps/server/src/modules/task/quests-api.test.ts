@@ -137,12 +137,13 @@ describe('章末领过后功能又打开（backlog 318）', () => {
     ]);
     let list = await task().tasks(ctx);
     expect(list.chapter).toMatchObject({ id: 4, total: mainIds(4).length, claimedCount: 0, doneCount: 0 });
-    const left = list.main.find((q) => q.id === bar.id)!;
+    expect(list.main.some((q) => q.id === bar.id)).toBe(false);
+    const left = list.leftover.find((q) => q.id === bar.id)!;
     expect(left).toMatchObject({ done: false, claimed: false });
     await setCounters(ctx.restaurantId, { [bar.cond.key.split('|')[0]!]: bar.cond.target });
     await task().claimTask(ctx, bar.id);
     list = await task().tasks(ctx);
-    expect(list.main.some((q) => q.id === bar.id)).toBe(false);
+    expect(list.leftover).toEqual([]);
     expect(list.chapter!.id).toBe(4);
     await markDone(ctx.restaurantId, mainIds(4));
     expect((await task().tasks(ctx)).chapter).toMatchObject({ id: 4, claimable: true });

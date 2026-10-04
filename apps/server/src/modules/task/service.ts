@@ -202,8 +202,8 @@ export function createTaskService(d: GameDeps) {
         claimedCount: s.main.quests.filter((q) => done.has(q.id)).length,
         doneCount: s.main.quests.filter((q) => done.has(q.id) || progress(q.cond) >= q.cond.target).length,
       },
-      // 当前章的任务在前，章末领过的章里补出来的任务接在后面（backlog 318），章的进度只数当前章
-      main: [...s.main.quests, ...s.main.leftover].map((q) => questDto(q, progress(q.cond), done.has(q.id))),
+      main: s.main.quests.map((q) => questDto(q, progress(q.cond), done.has(q.id))),
+      leftover: s.main.leftover.map((q) => questDto(q, progress(q.cond), false)),
       allMainDone: s.main.allDone,
       lines: s.lines.map((l) => ({
         id: l.line.id,

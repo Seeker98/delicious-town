@@ -60,6 +60,7 @@ const pct = (count: number, limit: number) => Math.min(100, Math.round((count / 
 /** 本章任务：可领的在前，没完成的其次，已领的最后（问题记录 318） */
 const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
 const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
+const leftoverList = computed(() => [...(tasks.value?.leftover ?? [])].sort((a, b) => rank(a) - rank(b)));
 const weeklyList = computed(() => [...(tasks.value?.weekly?.quests ?? [])].sort((a, b) => rank(a) - rank(b)));
 const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
 /** 章末、每周全完成按钮：还有没完成的写还差几个；都完成了只差领写先领完上面的任务（backlog 318） */
@@ -76,18 +77,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     <section class="dt-card mb-3" data-testid="card-main">
       <div class="dt-card-title mb-1">{{ t.rest.tasks.main }}</div>
       <div v-if="tasks.allMainDone" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
-      <!-- 主线做完后，章末领过的章里补出来的任务（功能后来才打开）照样列出（backlog 318） -->
-      <template v-if="tasks.allMainDone">
-        <QuestCard
-          v-for="x in mainList"
-          :key="x.id"
-          :quest="x"
-          :name="questName(x)"
-          :award="awardText(x.award)"
-          :busy="busy"
-          @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
-        />
-      </template>
       <template v-else-if="tasks.chapter">
         <div class="d-flex align-items-center small mb-1" data-testid="chapter">
           <b v-if="tasks.chapter.locked">{{
@@ -138,6 +127,19 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           </button>
         </div>
       </template>
+      <!-- 章末领过的章里后来补出来的任务（功能后来才打开）：单独一块，不混进本章（backlog 318） -->
+      <div v-if="leftoverList.length > 0" class="mt-2" data-testid="main-leftover">
+        <div class="small text-muted mb-1">{{ t.rest.tasks.leftover }}</div>
+        <QuestCard
+          v-for="x in leftoverList"
+          :key="x.id"
+          :quest="x"
+          :name="questName(x)"
+          :award="awardText(x.award)"
+          :busy="busy"
+          @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+        />
+      </div>
     </section>
     <!-- 支线：每条一次显示一档 -->
     <section class="dt-card mb-3" data-testid="card-lines">
