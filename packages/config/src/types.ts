@@ -346,6 +346,8 @@ export interface ConfigBundle {
   activationRewards: ActivationReward[];
   /** 一番赏月度主题（问题记录 274）：每月 A/B/C/最后赏的限定手办道具 id */
   kujiThemes: KujiTheme[];
+  /** 豪华一番赏按月轮换的称号（240-2）：month 形如 2026-10，icons 是档位 key（或 last）→ 称号 */
+  kujiDeluxeMonths: Array<{ month: string; icons: Record<string, string> }>;
   cookbookGrades: CookbookGrade[];
   shopSpecialTiers: ShopSpecialTier[];
   shopPools: { special: number[]; black: number[] };

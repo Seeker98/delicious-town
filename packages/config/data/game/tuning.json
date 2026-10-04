@@ -357,7 +357,20 @@
       { "key": "E", "count": 15, "award": { "coin": 15000 } },
       { "key": "F", "count": 50, "award": { "coin": 5000 } }
     ],
-    "last": { "award": { "diamond": 200 }, "icon": "kuji_last", "news": "broadcast" }
+    "last": { "award": { "diamond": 200 }, "icon": "kuji_last", "news": "broadcast" },
+    "deluxe": {
+      "price": 300000,
+      "dailyBuy": 10,
+      "maxDraw": 10,
+      "maxPools": 3,
+      "tiers": [
+        { "key": "A", "count": 1, "award": { "diamond": 50 }, "icon": "kuji_dx_a", "news": "broadcast" },
+        { "key": "B", "count": 2, "award": { "coin": 300000 }, "news": "news" },
+        { "key": "C", "count": 5, "award": { "coin": 100000 } },
+        { "key": "D", "count": 12, "award": { "coin": 50000 } }
+      ],
+      "last": { "award": { "diamond": 50 }, "icon": "kuji_dx_last", "news": "broadcast" }
+    }
   },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,

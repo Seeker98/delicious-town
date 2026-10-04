@@ -2535,6 +2535,10 @@
     "name": "Boleto Ichiban Kuji",
     "desc": "Un boleto para sortear el Ichiban Kuji; úsalo en la página del Ichiban Kuji."
   },
+  "90202": {
+    "name": "Boleto Kuji de lujo",
+    "desc": "Un boleto para el Ichiban Kuji de lujo. Úsalo en la página del Ichiban Kuji, pestaña «Lujo»."
+  },
   "91011": {
     "name": "Figura del chef de la danza del león",
     "desc": "Un chef con cabeza de león sirve un pescado entero para «abundancia cada año», con cintas rojas colgando de los bigotes. (Ichiban Kuji · Sabores de Año Nuevo)"

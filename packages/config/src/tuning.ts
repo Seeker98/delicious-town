@@ -22,6 +22,19 @@ const kujiAward = z.object({
 });
 const kujiNews = z.enum(['broadcast', 'news']).optional();
 const levelWeights = z.array(z.tuple([int, num])).min(1);
+/** 一番赏一条线的档位和最后赏（普通池、豪华池共用） */
+const kujiTiers = z
+  .array(
+    z.object({
+      key: z.string().min(1).max(4),
+      count: int.min(1),
+      award: kujiAward,
+      icon: z.string().min(1).optional(),
+      news: kujiNews,
+    }),
+  )
+  .min(1);
+const kujiLast = z.object({ award: kujiAward, icon: z.string().min(1).optional(), news: kujiNews });
 
 /** 数值常量（data/game/tuning.json）。区服可以通过 shard_config.override.tuning 覆盖任意字段 */
 export const tuningSchema = z.object({
@@ -658,18 +671,17 @@ export const tuningSchema = z.object({
     activeTicketPoints: int.min(1),
     /** 每个区服每天最多开几池（问题记录 274） */
     maxPools: int.min(1),
-    tiers: z
-      .array(
-        z.object({
-          key: z.string().min(1).max(4),
-          count: int.min(1),
-          award: kujiAward,
-          icon: z.string().min(1).optional(),
-          news: kujiNews,
-        }),
-      )
-      .min(1),
-    last: z.object({ award: kujiAward, icon: z.string().min(1).optional(), news: kujiNews }),
+    tiers: kujiTiers,
+    last: kujiLast,
+    /** 豪华一番赏（240-2）：一条独立的奖池线，结构和普通池的价格、限购、档位、最后赏相同 */
+    deluxe: z.object({
+      price: int.min(1),
+      dailyBuy: int.min(1),
+      maxDraw: int.min(1).max(100),
+      maxPools: int.min(1),
+      tiers: kujiTiers,
+      last: kujiLast,
+    }),
   }),
   forum: z.object({
     titleMax: int.min(1),

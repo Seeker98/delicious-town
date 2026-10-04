@@ -94,4 +94,14 @@ describe('一番赏配置（设计 §3、§4）', () => {
     expect(errors.join('\n')).toMatch(/kuji.*icon nope/);
     expect(errors.join('\n')).toMatch(/kuji.*unknown goods 999999/);
   });
+
+  it('豪华池的档位、称号也检查，错误写明 deluxe（240-2）', () => {
+    const src = source();
+    const t = JSON.parse(JSON.stringify(src['game/tuning']));
+    t.kuji.deluxe.tiers[1].key = 'A';
+    t.kuji.deluxe.last.icon = 'nope';
+    const { errors } = buildBundle({ ...src, 'game/tuning': t });
+    expect(errors).toContain('tuning.kuji.deluxe.tiers duplicate key A');
+    expect(errors).toContain('tuning.kuji.deluxe.last icon nope not in looks.icons');
+  });
 });

@@ -2535,6 +2535,10 @@
     "name": "Ticket Ichiban Kuji",
     "desc": "Un ticket pour tirer à l'Ichiban Kuji ; à utiliser sur la page Ichiban Kuji."
   },
+  "90202": {
+    "name": "Ticket Kuji de luxe",
+    "desc": "Un ticket pour l'Ichiban Kuji de luxe. À utiliser sur la page Ichiban Kuji, onglet « Luxe »."
+  },
   "91011": {
     "name": "Figurine du chef à la danse du lion",
     "desc": "Un chef coiffé d'une tête de lion sert un poisson entier pour « l'abondance chaque année », des rubans rouges pendus à ses moustaches. (Ichiban Kuji · Saveurs du Nouvel An)"
