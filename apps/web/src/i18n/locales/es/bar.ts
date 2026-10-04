@@ -102,7 +102,8 @@ const bar: Messages['bar'] = {
     rule1: 'Seis vasos en la mesa; el barman le echó picante a uno. Empiezas tú y luego elegís por turnos.',
     rule2:
       'Si le toca al barman, ganas: cada vaso que aguantas multiplica el bote por 1,4 (1/2/3 vasos devuelven 1,4/1,96/2,74 veces la apuesta).',
-    rule3: 'Si te toca a ti, pierdes la apuesta y tienes resaca 1 hora (ocupación -10 %).',
+    rule3:
+      'Si te toca a ti, pierdes la apuesta y tienes resaca 1 hora (ocupación -10 %). Si vuelve a tocarte con resaca, la hora empieza de nuevo; no se acumula.',
     askStake: '¿Cuántos vales misteriosos apuestas?',
     stake: (n) => `Apostar ${n}`,
     progress: (stake, survived) =>

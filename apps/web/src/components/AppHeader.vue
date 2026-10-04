@@ -64,7 +64,7 @@ function back() {
     <RouterLink
       v-if="inGame"
       to="/mail"
-      class="text-reset text-decoration-none position-relative"
+      class="text-reset text-decoration-none position-relative d-flex align-items-center"
       data-testid="mail-link"
       :aria-label="mail.unread > 0 ? t.nav.mailUnread(mail.unread) : t.nav.mail"
     >

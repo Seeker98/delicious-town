@@ -85,6 +85,7 @@ const rest: Messages['rest'] = {
       `The ${p}-point reward also gives ${num} Ichiban Kuji ${plEn(num, 'ticket', 'tickets')}`,
     full: '✓ Done',
     locked: (star) => `🔒 Opens at ${star} ${plEn(star, 'star', 'stars')}`,
+    off: '🔒 Not open on this server',
     per: (p) => `${p} ${p === 1 ? 'point' : 'points'} each`,
     main: 'Main quest',
     mainDone: 'Main quest complete',

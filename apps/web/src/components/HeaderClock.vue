@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { GAME_TIME_ZONE, ROUND_MS } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -14,6 +14,27 @@ const t = useT();
 const server = ref<string | null>(null);
 const { now } = useServerClock(() => server.value ?? new Date().toISOString());
 const open = ref(false);
+const root = ref<HTMLElement | null>(null);
+/** 点开后点别处（包括底部导航去别的页面）、按 Esc 就收起（问题记录 358） */
+function onDown(e: Event) {
+  if (root.value && !root.value.contains(e.target as Node)) open.value = false;
+}
+function onKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') open.value = false;
+}
+watch(open, (v) => {
+  if (v) {
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+  } else {
+    document.removeEventListener('pointerdown', onDown);
+    document.removeEventListener('keydown', onKey);
+  }
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDown);
+  document.removeEventListener('keydown', onKey);
+});
 /** 拿到服务器时间（或读失败）之前不显示，免得先闪一下本机时间 */
 const ready = ref(false);
 
@@ -38,13 +59,14 @@ const nextRound = computed(() => {
 
 <template>
   <!-- 外层一直在：顶栏靠它把邮箱推到右边 -->
-  <span class="position-relative">
+  <span ref="root" class="position-relative">
     <template v-if="ready">
       <button
         type="button"
         class="btn btn-link btn-sm p-0 text-reset text-decoration-none small"
         :title="t.site.clockTitle"
         data-testid="clock"
+        :aria-expanded="open"
         @click="open = !open"
       >
         {{ time }}

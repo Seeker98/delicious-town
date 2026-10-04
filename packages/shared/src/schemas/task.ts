@@ -67,9 +67,23 @@ export interface ActivationDto {
   signedIn: boolean;
   /** 签到发的礼包（道具 id）：首页写明领到了什么（backlog 厨具小修） */
   signInGift: number;
-  /** 餐厅星级（活跃项按 needStar 判断是否开放） */
+  /** 餐厅星级、等级（活跃项按 needStar、needLevel 判断是否开放） */
   star: number;
-  items: Array<{ id: number; name: string; points: number; limit: number; count: number; needStar: number }>;
+  level: number;
+  /**
+   * needLevel：功能本身的等级门槛（交易所、事件预测，问题记录 360），没有为 0；
+   * off：本区服关掉了这个功能
+   */
+  items: Array<{
+    id: number;
+    name: string;
+    points: number;
+    limit: number;
+    count: number;
+    needStar: number;
+    needLevel: number;
+    off: boolean;
+  }>;
   rewards: Array<{ points: number; award: AwardDto; claimed: boolean; multiplier: number }>;
   /** 领哪一档另送一番赏抽赏券、送几张；区服关掉一番赏或不送时为 null（backlog 一番赏） */
   kujiTicket: { points: number; num: number } | null;
