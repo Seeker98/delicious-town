@@ -4,18 +4,21 @@
  * 默认读仓库外的 ../data/新街道菜谱 和 ../data/i18n。写出 data/designed/*_new.json，补 8~10 品级，
  * 再把新菜的英法西菜名并进 data/i18n/<语言>/cookbooks.json。重跑会整份替换这些文件，
  * 并删掉已经不存在的新菜谱译名、给勋章对照表补上新街道的行（backlog 284）。
- * 新菜谱 id 已上线：要求数据那边固定 id，不能顺移
+ * 新菜谱 id 已上线：要求数据那边固定 id，不能顺移。上次导入过的 id 没了或换了街道时什么都不写、直接退出，
+ * 确认无误后加 --allow-removed 重跑
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { seededRng } from '@dt/shared';
 import { collectTransitions, extendGrades, type GradeTable } from '../src/gradeGen';
-import { addMedalRows, pruneNames } from '../src/streetImport';
+import { addMedalRows, importConflicts, pruneNames } from '../src/streetImport';
 
 const pkg = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const srcDir = process.argv[2] ?? resolve(pkg, '../../../data/新街道菜谱');
-const i18nDir = process.argv[3] ?? resolve(pkg, '../../../data/i18n');
+const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const allowRemoved = process.argv.includes('--allow-removed');
+const srcDir = args[0] ?? resolve(pkg, '../../../data/新街道菜谱');
+const i18nDir = args[1] ?? resolve(pkg, '../../../data/i18n');
 const data = join(pkg, 'data');
 const read = <T>(p: string): T => JSON.parse(readFileSync(p, 'utf8')) as T;
 /** 和 data/designed 下其他文件一样：1 空格缩进、结尾没有换行 */
@@ -62,6 +65,20 @@ const rng = seededRng(284);
  */
 const medalId = (streetId: number) => 92000 + streetId;
 
+const sorted = [...cookbooks].sort((a, b) => a.id - b.id);
+// 新菜谱 id 已上线：上次导入过的 id 没了或换了街道（多半是顺移了 id），先停下，什么都不写（backlog 284 终审）
+const conflicts = importConflicts(
+  read<{ data: Array<{ id: number; streetId: number }> }>(join(data, 'designed', 'cookbooks_new.json')).data,
+  sorted,
+);
+if (!allowRemoved && (conflicts.removed.length > 0 || conflicts.restreeted.length > 0)) {
+  console.error(
+    `上次导入过的新菜谱 id 这次没了 ${JSON.stringify(conflicts.removed)}，或换了街道 ${JSON.stringify(conflicts.restreeted)}。` +
+      '新菜谱 id 已经上线，不能顺移；确认确实要删或改，再加 --allow-removed 重跑。',
+  );
+  process.exit(1);
+}
+
 write(
   'streets_new',
   '新增街道 14~29；desc = 街道加成文字（与勋章 desc 一致）',
@@ -94,7 +111,6 @@ write(
     id: medalId(m.devicetype as number),
   })),
 );
-const sorted = [...cookbooks].sort((a, b) => a.id - b.id);
 write(
   'cookbooks_new',
   '新街道菜谱；1~7 品级来自 data/新街道菜谱，8~10 品级按老数据换料频率生成（gradeGen.ts，种子 284）',

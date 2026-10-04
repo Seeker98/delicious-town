@@ -36,3 +36,18 @@ export function addMedalRows(
     added,
   };
 }
+
+/**
+ * 新菜谱 id 已经上线（学过的店按 id 存）：上次导入过的 id 这次没了、或者换了街道，多半是数据那边顺移了 id。
+ * 导入脚本据此中止，确认无误后加 --allow-removed 才继续（backlog 284 终审）
+ */
+export function importConflicts(
+  prev: ReadonlyArray<{ id: number; streetId: number }>,
+  next: ReadonlyArray<{ id: number; streetId: number }>,
+): { removed: number[]; restreeted: number[] } {
+  const now = new Map(next.map((c) => [c.id, c.streetId]));
+  return {
+    removed: prev.filter((c) => !now.has(c.id)).map((c) => c.id),
+    restreeted: prev.filter((c) => now.has(c.id) && now.get(c.id) !== c.streetId).map((c) => c.id),
+  };
+}
