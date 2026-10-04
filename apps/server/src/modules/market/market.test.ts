@@ -288,6 +288,7 @@ describe('竞猜（规格书 06 §6.3）', () => {
       const r = await m().refresh(ctx.shardId, 0, slot, slot.start, log as never);
       expect(r.foods).toHaveLength(5);
       expect(r.guesses).toBe(0);
+      expect(r.guessError).toBe(true);
       expect(log.error).toHaveBeenCalledWith(
         expect.objectContaining({ shardId: ctx.shardId }),
         'market guess settle failed',

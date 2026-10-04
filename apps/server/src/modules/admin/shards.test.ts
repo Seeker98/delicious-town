@@ -156,21 +156,13 @@ describe('区服数值（HTTP）', () => {
     expect((await save({ needBase: 0.1, needMax: 0.4 })).status).toBe(200);
   });
 
-  it('豪华档位改名后月度称号对不上、送券的活跃档不存在：400（质量期 ②）', async () => {
+  it('送券的活跃档不存在：400（质量期 ②）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const save = (kuji: unknown) =>
       call(ctx.app, 'POST', `${S}/${shardId}/override`, {
         cookie: admin.cookie,
         body: { override: { tuning: { kuji } }, note: 'x', version: 0 },
       });
-    // 豪华 A 改叫 S：deluxeMonths 里写的 A 不再是豪华档位，这一档会一直发固定称号
-    const renamed = await save({
-      deluxe: { tiers: [{ key: 'S', count: 1, award: { diamond: 50 }, icon: 'kuji_dx_a' }] },
-    });
-    expect(renamed.status).toBe(400);
-    expect(JSON.stringify(renamed.json.params.issues)).toContain(
-      'deluxeMonths 2026-10 key A is not a deluxe tier',
-    );
     // 活跃奖励没有 123 这一档：提示会写一个领不到的档，券也永远送不出去
     const points = await save({ activeTicketPoints: 123 });
     expect(points.status).toBe(400);
@@ -230,6 +222,51 @@ describe('区服数值（HTTP）', () => {
     });
     expect(bad.status).toBe(400);
     expect(bad.json.code).toBe('INVALID_CONFIG');
+  });
+});
+
+describe('区服数值：豪华档位改名和月度称号（质量期 ②）', () => {
+  // 时钟可调：按数据里的月份测，不依赖今天的日期
+  let at = new Date();
+  let fx: TestContext;
+  let fxAdmin: { cookie: string };
+  beforeAll(async () => {
+    fx = await createTestApp({ now: () => at });
+    fxAdmin = await userWithRole(fx, 'admin');
+  });
+  afterAll(() => fx.close());
+  const months = testConfig().bundle.kujiDeluxeMonths;
+  const mid = (month: string) => new Date(`${month}-15T04:00:00.000Z`);
+  // 豪华 A 改叫 S
+  const renameA = { deluxe: { tiers: [{ key: 'S', count: 1, award: { diamond: 50 }, icon: 'kuji_dx_a' }] } };
+
+  it('当月或以后的月份还对照着 A：改名 400，免得这一档一直发固定称号', async () => {
+    const m = months.find((x) => x.icons.A)!;
+    at = mid(m.month);
+    const shardId = await createShard(fx.deps.db);
+    const r = await call(fx.app, 'POST', `${S}/${shardId}/override`, {
+      cookie: fxAdmin.cookie,
+      body: { override: { tuning: { kuji: renameA } }, note: 'x', version: 0 },
+    });
+    expect(r.status).toBe(400);
+    expect(JSON.stringify(r.json.params.issues)).toContain(
+      `deluxeMonths ${m.month} key A is not a deluxe tier`,
+    );
+  });
+
+  it('对照表里的月份都过去了：改名能保存（过去的池子早存了快照，审查 Minor 1）', async () => {
+    const last = months
+      .map((x) => x.month)
+      .sort()
+      .at(-1)!;
+    const [y, mo] = last.split('-').map(Number) as [number, number];
+    at = mid(mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`);
+    const shardId = await createShard(fx.deps.db);
+    const r = await call(fx.app, 'POST', `${S}/${shardId}/override`, {
+      cookie: fxAdmin.cookie,
+      body: { override: { tuning: { kuji: renameA } }, note: 'x', version: 0 },
+    });
+    expect(r.status).toBe(200);
   });
 });
 

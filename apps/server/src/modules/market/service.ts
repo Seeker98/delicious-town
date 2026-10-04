@@ -408,7 +408,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       slot: Slot,
       now: Date,
       log?: Log,
-    ): Promise<{ foods: number[]; guesses: number }> {
+    ): Promise<{ foods: number[]; guesses: number; guessError?: true }> {
       const { tuning } = await d.shards.settings(shardId);
       const rng = seededRng(gameSeed(shardId, 'market', shelf, slot.key));
       const items = rollShelf(shelf, slot.hour, d.config, tuning.market, rng);
@@ -443,12 +443,14 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       const foods = items.map((x) => x.foodsId);
       // 货架已经换好：开奖出错只记日志，这一轮照样算刷新成功（周期任务写完成时间，菜场题不按“没刷新”作废）；
       // 没结算的报名下一轮当作错过的轮次退还（质量期 ②）
+      // 出错时带 guessError，写进 job_run.stats，后台看得到（质量期 ② 终审）
       let guesses = 0;
       if (shelf === 0)
         try {
           guesses = await settleGuesses(shardId, slot, foods, now, log);
         } catch (err) {
           log?.error({ err, shardId, period: slot.key }, 'market guess settle failed');
+          return { foods, guesses, guessError: true };
         }
       return { foods, guesses };
     },
