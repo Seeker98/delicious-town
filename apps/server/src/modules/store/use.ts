@@ -8,6 +8,7 @@ import { AppError } from '../../http/errors';
 import { openGift } from '../award/award';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
+import { opNeedPick } from '../../core/scarcity';
 import { consumeGoods, countGoods, grantGoodsOp } from './goods';
 import { KEY } from '../tower/common';
 
@@ -127,8 +128,13 @@ export async function useGoods(
       // 先数好每种抽到几个再一起加：一次用几十张时，同一种食材只写一次、只记一条
       const pool = op.config.foodPools.get(use.level);
       const got = new Map<number, number>();
+      // 个人缺料倾向（问题记录 50）
+      const needPick = await opNeedPick(op);
       for (let i = 0; i < num && pool && pool.total > 0; i++) {
-        const id = pickWeighted(pool, op.rng).id;
+        const id = needPick(
+          (id) => op.config.foods.get(id)?.level === use.level,
+          () => pickWeighted(pool, op.rng).id,
+        );
         got.set(id, (got.get(id) ?? 0) + 1);
       }
       for (const [id, n] of got) await addFoods(op, id, n);

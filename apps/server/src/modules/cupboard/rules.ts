@@ -30,7 +30,14 @@ export interface HandleOutcome {
   picks: number[];
 }
 
-export function runHandle(input: HandleInput, pool: WeightedPool<Food>, rng: Rng): HandleOutcome {
+/** pick：自定义抽取（合成的个人缺料倾向，问题记录 50）；不传时按池子权重抽 */
+export function runHandle(
+  input: HandleInput,
+  pool: WeightedPool<Food>,
+  rng: Rng,
+  pick?: () => number,
+): HandleOutcome {
+  const draw = pick ?? (() => pickWeighted(pool, rng).id);
   const base = input.way === 'decompose' ? input.num * 2 : Math.floor(input.num / 2);
   let chances = base;
   if (input.extraRate > 0) {
@@ -43,11 +50,11 @@ export function runHandle(input: HandleInput, pool: WeightedPool<Food>, rng: Rng
   for (let i = 0; i < chances; i++) {
     if (rng.next() < rate) {
       out.success += 1;
-      out.picks.push(pickWeighted(pool, rng).id);
+      out.picks.push(draw());
     } else if (rng.chance(input.luckRate)) {
       out.success += 1;
       out.lucky += 1;
-      out.picks.push(pickWeighted(pool, rng).id);
+      out.picks.push(draw());
     } else {
       out.failCoin += Math.floor(input.foodCoin * input.tuning.cupboard.failCoinRate * rng.next());
     }
@@ -65,5 +72,5 @@ export function composePool(
 ): WeightedPool<Food> {
   const left = pool.items.filter((f) => !full(f.id));
   if (left.length === 0 || left.length === pool.items.length) return pool;
-  return buildPool(left, (f) => f.odds);
+  return buildPool(left, (f) => f.weight);
 }

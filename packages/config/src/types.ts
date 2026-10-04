@@ -25,6 +25,8 @@ export interface Food {
   level: number;
   coin: number;
   odds: number;
+  /** 抽食材用的出现权重（问题记录 50）：向全服需求靠一部分；“稀有”判断仍看 odds */
+  weight: number;
   /** 0 调料坚果 / 1 肉蛋奶 / 2 蔬果，决定仙贝颜色 */
   type: number | null;
   maxNum: number;

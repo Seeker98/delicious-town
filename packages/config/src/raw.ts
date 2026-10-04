@@ -458,6 +458,9 @@ export const kujiFile = z
   })
   .strict();
 
+/** data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50） */
+export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).max(1) }).strict();
+
 /** data/game/fund.json：小镇发展基金的勋章（240-2） */
 export const fundFile = z
   .object({

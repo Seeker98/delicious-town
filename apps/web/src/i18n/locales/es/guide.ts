@@ -87,6 +87,12 @@ const guide: Messages['guide'] = {
       ],
     },
     {
+      q: '¿Y si siempre me falta el mismo ingrediente?',
+      a: [
+        'Los ingredientes aleatorios (packs de regalo, vales de ingrediente aleatorio, Combinar, premios del Bar y de la Torre, el Templo, El Glotón) pueden ser justo el que le falta a tu próxima receta, y cuanta más suerte tengas, más probable es. También puedes cubrirlo con un ingrediente universal, o comprarlo en el Mercado o en la Bolsa (la Bolsa solo vende ingredientes raros).',
+      ],
+    },
+    {
       q: '¿Cómo se hacen más fuertes los utensilios? ',
       a: [
         'La mejora puede fallar. Los utensilios de gama alta piden un nivel mínimo y no se pueden equipar antes.',

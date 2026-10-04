@@ -2,6 +2,7 @@ import { sql } from 'kysely';
 import type { MysteriousCookbook } from '@dt/config';
 import { ErrorCode, pickWeighted } from '@dt/shared';
 import type { Op } from '../../core/op';
+import type { NeedPick } from '../../core/scarcity';
 import { recordChange } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { addFoodsMany } from '../cupboard/foods';
@@ -16,11 +17,14 @@ export function bump(m: Map<number, number>, id: number, n = 1): void {
 export const toList = (m: Map<number, number>): Array<{ foodsId: number; num: number }> =>
   [...m].map(([foodsId, num]) => ({ foodsId, num }));
 
-/** 按权重抽一个该等级的食材 */
-export function pickFood(o: Op, level: number): number {
+/** 按权重抽一个该等级的食材；needPick 带个人缺料倾向（问题记录 50） */
+export function pickFood(o: Op, level: number, needPick: NeedPick): number {
   const pool = o.config.foodPools.get(level);
   if (!pool) throw new Error(`no foods of level ${level}`);
-  return pickWeighted(pool, o.rng).id;
+  return needPick(
+    (id) => o.config.foods.get(id)?.level === level,
+    () => pickWeighted(pool, o.rng).id,
+  );
 }
 
 /** 合并后一次发放（同一种食材只有一个事件、一条流水；只查、写一次橱柜） */

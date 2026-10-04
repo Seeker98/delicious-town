@@ -3,6 +3,7 @@ import { gameDay, pickWeighted, type MissileResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { invalidState, notEnough, requirement } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
+import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
 import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
@@ -71,13 +72,18 @@ export async function shootMissiles(
   let rare: number | null = null;
   if (killed) {
     await incrementDaily(o.tx, o.rest.id, 'guardian.killed', 1, day);
+    // 个人缺料倾向（问题记录 50）
+    const needPick = await opNeedPick(o);
     if (o.rng.chance(t.guardianRareRate + luck / 4)) {
-      rare = pickWeighted(o.config.foodPools.get(7)!, o.rng).id;
+      rare = needPick(
+        (id) => o.config.foods.get(id)?.level === 7,
+        () => pickWeighted(o.config.foodPools.get(7)!, o.rng).id,
+      );
       bump(foods, rare);
       opNews(o, 'temple.guardian.rare', { foodsId: rare });
     }
     for (const x of guardianFoods(t, o.rng))
-      for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level));
+      for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
   }
   await addFoodsMerged(o, foods);
   const dtTickets = await drawDtTickets(o, Math.floor(total / 100) * (dream ? 2 : 1));

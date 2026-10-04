@@ -683,6 +683,14 @@ export const tuningSchema = z.object({
       last: kujiLast,
     }),
   }),
+  /** 个人缺料倾向（问题记录 50、68）：随机食材有 p 的概率改成本街学菜正缺的；p = min(上限, 基础 + 幸运率 × 系数) */
+  scarcity: z
+    .object({
+      needBase: z.number().min(0).max(1),
+      needLuckFactor: z.number().min(0),
+      needMax: z.number().min(0).max(1),
+    })
+    .refine((s) => s.needBase <= s.needMax, { message: 'scarcity needBase must not exceed needMax' }),
   /** 小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档 */
   fund: z.object({
     days: int.min(1),

@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
 import { runOp } from '../../core/op';
 import { grantAward, openGift } from './award';
 
@@ -14,6 +16,13 @@ beforeAll(async () => {
 afterAll(() => t.close());
 const run = <T>(ctx: Parameters<typeof runOp>[1], fn: Parameters<typeof runOp<T>>[3]) =>
   runOp(t.game.deps, ctx, { feature: 'store', source: 'test' }, fn);
+
+/** 固定随机序列的用例关掉个人缺料倾向（问题记录 50）：倾向会多消耗一次随机数 */
+async function noTiltShard(t: TestGame): Promise<number> {
+  const shardId = await createShard(t.db);
+  await setTuning(t, shardId, { scarcity: { needBase: 0, needLuckFactor: 0, needMax: 0 } });
+  return shardId;
+}
 
 describe('grantAward（规格书 00 §0.7）', () => {
   it('银币、经验（会升级）、钻石、声望、道具、食材', async () => {
@@ -69,7 +78,7 @@ describe('openGift（规格书 07 §7.5）', () => {
   });
 
   it('随机万能食材礼包：万能食材按权重、1 级食材按权重', async () => {
-    const ctx = await newRestaurant(t);
+    const ctx = await newRestaurant(t, { shardId: await noTiltShard(t) });
     rngValues = [0.5, 0, 0.5, 0];
     await run(ctx, (op) => openGift(op, config.requireGoods(131), 1));
     expect((await foodNum(t, ctx.restaurantId, 467)).num).toBe(1);

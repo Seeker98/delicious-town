@@ -62,6 +62,7 @@
     "tuning.exchange": "交易所：开通门槛、手续费、涨跌幅、挂单数量和有效期；refOverrides 按食材 id 指定初始参考价（没有成交前用它，代替系统定价）；maker 是系统做市（低价收、高价卖，差价回收银币）",
     "tuning.predict": "事件预测：每份结算银币、手续费、持有和单笔上限、默认流动性、开通门槛；auto 是系统每天自动出的题",
     "tuning.kuji": "一番赏：券价、限购、单次抽签上限、活跃度送券、各档张数和奖品、最后赏；改了下一池生效；A/B/C/最后赏的限定手办按当月主题（game/kuji.json）自动加进奖品；deluxe 是豪华一番赏（240-2）：独立的奖池线，A 赏和最后赏的称号按 game/kuji.json 的 deluxeMonths 按月替换",
+    "tuning.scarcity": "个人缺料倾向（问题记录 50、68）：玩家自己抽随机食材（礼包、随机奖励、随机券、合成、神殿、大胃王）时，有 p 的概率改成本街学菜正缺的那种，p = min(上限, 基础 + 幸运率 × 系数)；菜场、交易所不受影响",
     "tuning.fund": "小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档金额和勋章；存期和勋章按存入时记下，比例按领取时的值",
     "tuning.forum": "论坛：标题正文长度、发帖回复冷却、加精奖励",
     "restaurant": "开店默认值：新店的等级、资源、容量和开店礼包"
@@ -622,6 +623,9 @@
     "tuning.kuji.deluxe.last.award.diamond": "豪华池最后赏：钻石",
     "tuning.kuji.deluxe.last.icon": "豪华池最后赏：限定称号（looks.icons 的 key，当月有轮换时会被替换）",
     "tuning.kuji.deluxe.last.news": "豪华池最后赏的播报：broadcast 全服广播 / news 新闻 / 不填不播",
+    "tuning.scarcity.needBase": "幸运为 0 时的概率（0~1，不能大于 needMax）",
+    "tuning.scarcity.needLuckFactor": "幸运率乘的系数（幸运 100 的幸运率约 0.17、300 是 0.30）",
+    "tuning.scarcity.needMax": "概率上限（0~1；要关掉缺料倾向，needBase 和 needMax 都设成 0，needBase 不能大于 needMax）",
     "tuning.fund.days": "存期：存入后多少天到期（天）；只影响之后的新存款",
     "tuning.fund.returnRate": "到期领回本金的比例（0~1，向下取整）",
     "tuning.fund.earlyRate": "提前取出退回本金的比例（0~1，不能大于 returnRate；提前取出没有勋章）",

@@ -55,11 +55,11 @@ describe('合成分解（规格书 05 §5.4）', () => {
 
 describe('合成不抽已经堆满的食材（问题记录 290）', () => {
   const pool = config.foodPools.get(2)!;
-  it('排除已满的；其余照原掉率', () => {
+  it('排除已满的；其余照原掉率（出现权重，问题记录 50）', () => {
     const keep = pool.items[3]!.id;
     const p = composePool(pool, (id) => id !== keep);
     expect(p.items.map((f) => f.id)).toEqual([keep]);
-    expect(p.total).toBe(pool.items[3]!.odds);
+    expect(p.total).toBe(pool.items[3]!.weight);
   });
   it('全都满了时照常从整个池子抽', () => {
     expect(composePool(pool, () => true)).toBe(pool);

@@ -9,6 +9,7 @@ import {
 } from '@dt/config';
 import { luckRate, pickWeighted } from '@dt/shared';
 import { applyExp } from '../../core/level';
+import { needChance, needMapOf, pickWithNeed, type NeedPick } from '../../core/scarcity';
 import { planAddFoods } from '../../modules/cupboard/foods';
 import { computeEffectAgg } from '../../modules/effects/aggregate';
 import { newFastRest, type FastCtx, type FastRest } from './state';
@@ -227,19 +228,45 @@ function randRange(c: FastCtx, min: number, max: number): number {
   return max > min ? min + c.rng.int(max - min) : min;
 }
 
-function pickGiftFood(c: FastCtx, item: Extract<GiftItem, { type: 'foods' }>): number | null {
+/** 个人缺料倾向（问题记录 50）：和服务端 core/scarcity.ts 的 opNeedPick 同一套，调用时算一次缺料清单 */
+export function needPickOf(c: FastCtx, r: FastRest): NeedPick {
+  const p = needChance(c.tuning.scarcity, luckOf(c, r).rate);
+  const need =
+    p > 0
+      ? needMapOf(
+          c.config.cookbookIndex.idsByStreet.get(r.streetId) ?? [],
+          r.levels,
+          c.tuning.rest.cookbookMaxGrade,
+          (id, g) => c.config.requireCookbook(id).needFoods[g] ?? [],
+          (id) => r.foods.get(id) ?? 0,
+        )
+      : new Map<number, number>();
+  return (accept, fallback) => pickWithNeed(need, accept, p, c.rng, fallback);
+}
+
+function pickGiftFood(
+  c: FastCtx,
+  item: Extract<GiftItem, { type: 'foods' }>,
+  needPick: NeedPick,
+): number | null {
   if (item.id !== undefined && item.id > 0) return item.id;
   if (item.flag === 'master') {
     return c.config.masterFoodPool.total > 0 ? pickWeighted(c.config.masterFoodPool, c.rng).id : null;
   }
-  const pool = c.config.foodPools.get(Number(item.flag));
-  return pool && pool.total > 0 ? pickWeighted(pool, c.rng).id : null;
+  const lv = Number(item.flag);
+  const pool = c.config.foodPools.get(lv);
+  if (!pool || pool.total <= 0) return null;
+  return needPick(
+    (id) => c.config.foods.get(id)?.level === lv,
+    () => pickWeighted(pool, c.rng).id,
+  );
 }
 
 /** 打开礼包 times 次：每项独立按 rate + 幸运率判定（照抄 openGift） */
 export function openGift(c: FastCtx, r: FastRest, goods: Goods, times: number, source = 'other'): void {
   const items = goods.gift ?? [];
   const lr = luckOf(c, r).rate;
+  const needPick = needPickOf(c, r);
   const goodsAdd = new Map<number, number>();
   const foodsAdd = new Map<number, number>();
   for (let i = 0; i < times; i++) {
@@ -256,7 +283,7 @@ export function openGift(c: FastCtx, r: FastRest, goods: Goods, times: number, s
           break;
         }
         case 'foods': {
-          const id = pickGiftFood(c, item);
+          const id = pickGiftFood(c, item, needPick);
           if (id !== null) foodsAdd.set(id, (foodsAdd.get(id) ?? 0) + item.num);
           break;
         }

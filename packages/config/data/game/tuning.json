@@ -372,6 +372,7 @@
       "last": { "award": { "diamond": 50 }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
+  "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
   "fund": {
     "days": 7, "returnRate": 0.9, "earlyRate": 0.7,
     "tiers": [
