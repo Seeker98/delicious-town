@@ -103,7 +103,8 @@ const bar: Messages['bar'] = {
       'Six cups on the table; the bartender made one of them extra spicy. You go first, then take turns picking.',
     rule2:
       'If the bartender gets it, you win: each cup you survive multiplies the pot by 1.4 (1/2/3 cups win back 1.4/1.96/2.74× your stake).',
-    rule3: "If you get it, you lose your stake and you're hungover for 1 hour (occupancy -10%).",
+    rule3:
+      "If you get it, you lose your stake and you're hungover for 1 hour (occupancy -10%). Getting it again while hungover restarts the hour; it doesn't stack.",
     askStake: 'How many Mystery Vouchers will you bet?',
     stake: (n) => `Bet ${n}`,
     progress: (stake, survived) =>

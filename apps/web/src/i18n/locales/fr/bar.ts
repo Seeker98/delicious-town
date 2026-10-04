@@ -105,7 +105,7 @@ const bar: Messages['bar'] = {
     rule2:
       'Si le barman tombe dessus, vous gagnez : chaque verre tenu multiplie le pot par 1,4 (1/2/3 verres rapportent 1,4/1,96/2,74 fois la mise).',
     rule3:
-      "Si c'est vous, vous perdez la mise et avez la gueule de bois pendant 1 heure (fréquentation -10 %).",
+      "Si c'est vous, vous perdez la mise et avez la gueule de bois pendant 1 heure (fréquentation -10 %). Retomber dessus pendant la gueule de bois relance l'heure, sans cumuler.",
     askStake: 'Combien de bons mystère misez-vous ?',
     stake: (n) => `Miser ${n}`,
     progress: (stake, survived) => `Mise ${stake} · Verres tenus : ${survived}`,

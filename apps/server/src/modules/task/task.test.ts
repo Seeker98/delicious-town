@@ -64,7 +64,11 @@ describe('活跃项的门槛（问题记录 360）', () => {
     const a = await task().activation(ctx);
     const item = (name: string) => a.items.find((x) => x.name === name)!;
     expect(a.level).toBe(1);
-    expect(item('交易所成交')).toMatchObject({ needLevel: tuning.exchange.minLevel, needStar: 0, off: false });
+    expect(item('交易所成交')).toMatchObject({
+      needLevel: tuning.exchange.minLevel,
+      needStar: 0,
+      off: false,
+    });
     expect(item('事件预测交易')).toMatchObject({ needLevel: tuning.predict.minLevel, off: false });
     expect(item('与好友赛厨')).toMatchObject({ needStar: 1, needLevel: 0 });
     expect(item('签到')).toMatchObject({ needStar: 0, needLevel: 0, off: false });

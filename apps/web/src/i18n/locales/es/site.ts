@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    tasks1005:
+      'Tareas: las actividades con requisito de nivel (bolsa, predicciones…) o cerradas en este servidor aparecen bloqueadas; la ventanita de la hora se cierra al tocar fuera; el icono del correo está alineado',
     looks1005:
       'Aspecto: a partir de ahora, las puertas que compras (y la que tienes puesta) son tuyas y volver a ellas es gratis; los avisos de estrellas insuficientes muestran tus estrellas actuales; la wiki indica las estrellas necesarias para carteles y trofeos',
     visual1005:

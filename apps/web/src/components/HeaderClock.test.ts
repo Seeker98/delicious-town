@@ -43,4 +43,21 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
     expect(w.get('[data-testid="clock"]').text()).toBe('14:31');
     expect(w.get('[data-testid="clock-detail"]').text()).toContain('0:50');
   });
+
+  it('点开后点别处、按 Esc 收起；点框里面不收起（问题记录 358）', async () => {
+    const w = mount(HeaderClock, { attachTo: document.body });
+    await flushPromises();
+    await w.get('[data-testid="clock"]').trigger('click');
+    w.get('[data-testid="clock-detail"]').element.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+    await w.vm.$nextTick();
+    expect(w.find('[data-testid="clock-detail"]').exists()).toBe(true);
+    document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+    await w.vm.$nextTick();
+    expect(w.find('[data-testid="clock-detail"]').exists()).toBe(false);
+    await w.get('[data-testid="clock"]').trigger('click');
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    await w.vm.$nextTick();
+    expect(w.find('[data-testid="clock-detail"]').exists()).toBe(false);
+    w.unmount();
+  });
 });

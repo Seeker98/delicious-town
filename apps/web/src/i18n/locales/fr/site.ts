@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    tasks1005:
+      "Tâches : les activités soumises à un niveau (bourse, prédictions…) ou fermées sur ce serveur s'affichent verrouillées ; la bulle de l'heure se ferme en touchant ailleurs ; l'icône du courrier est alignée",
     looks1005:
       "Apparence : désormais, les portes achetées (et celle installée actuellement) vous appartiennent, y revenir est gratuit ; les messages d'étoiles insuffisantes indiquent vos étoiles actuelles ; le wiki indique les étoiles requises pour les affiches et trophées",
     visual1005:
