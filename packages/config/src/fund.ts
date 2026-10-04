@@ -9,7 +9,8 @@ export function fundErrors(f: Tuning['fund'], ref: { honorIds: ReadonlySet<numbe
   for (const t of f.tiers) {
     if (seen.has(t.key)) errors.push(`tuning.fund.tiers duplicate key ${t.key}`);
     seen.add(t.key);
-    if (!ref.honorIds.has(t.medal)) errors.push(`tuning.fund.tiers ${t.key} medal ${t.medal} is not an honor`);
+    if (!ref.honorIds.has(t.medal))
+      errors.push(`tuning.fund.tiers ${t.key} medal ${t.medal} is not an honor`);
   }
   return errors;
 }
