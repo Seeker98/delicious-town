@@ -7,7 +7,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 REF="${1:-origin/main}"
-COMPOSE=(docker compose -f infra/compose.prod.yml)
+# 在 infra 目录里执行 compose：.env（POSTGRES_PASSWORD、TUNNEL_TOKEN 等）从当前目录读取，和手动升级的命令一致
+COMPOSE=(docker compose -f compose.prod.yml)
 
 # 同一时间只跑一次部署（连续合并时后一次等前一次跑完）
 exec 9>/tmp/dt-deploy.lock
@@ -26,6 +27,8 @@ before=$(git rev-parse --short HEAD)
 git merge --quiet --ff-only "$REF"
 after=$(git rev-parse --short HEAD)
 echo "代码：$before → $after"
+
+cd infra
 
 "${COMPOSE[@]}" build migrate
 "${COMPOSE[@]}" up -d
