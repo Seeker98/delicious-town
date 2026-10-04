@@ -134,7 +134,7 @@ describe('TownPanel', () => {
   describe('冷却按服务器时间倒计时（终审 I1）', () => {
     afterEach(() => vi.useRealTimers());
     it('镇长问答：页面开着过了嘻哈男孩出来的整点，按钮自己变可点，并重新读取（backlog #118）', async () => {
-      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'setTimeout', 'clearTimeout', 'Date'] });
       vi.setSystemTime(new Date('2026-09-30T04:59:30.000Z'));
       const w = mount(TownPanel, {
         props: {
@@ -148,6 +148,9 @@ describe('TownPanel', () => {
       vi.advanceTimersByTime(60_000);
       await nextTick();
       expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeUndefined();
+      // 服务端每几秒才生成当天的嘻哈男孩记录：过 15 秒再读，免得读到的还是没出来
+      expect(w.emitted('reload')).toBeUndefined();
+      vi.advanceTimersByTime(15_000);
       expect(w.emitted('reload')).toHaveLength(1);
       vi.advanceTimersByTime(60_000);
       await nextTick();

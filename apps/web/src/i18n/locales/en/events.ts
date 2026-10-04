@@ -221,9 +221,9 @@ const events: Messages['events'] = {
     'fund.deposit': (p) =>
       `Deposited ${formatNum(n(p, 'coin'))} coins into the Town Development Fund (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `Claimed the Town Development Fund: got back ${formatNum(n(p, 'coin'))} coins and ${names.goodsName(n(p, 'medal'))}`,
+      `Claimed a matured Town Development Fund deposit: got back ${formatNum(n(p, 'coin'))} coins and ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
-      `Withdrew early from the Town Development Fund: got back ${formatNum(n(p, 'coin'))} coins`,
+      `Withdrew a Town Development Fund deposit early: got back ${formatNum(n(p, 'coin'))} coins`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>

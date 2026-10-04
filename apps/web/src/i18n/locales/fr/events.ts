@@ -222,9 +222,9 @@ const events: Messages['events'] = {
     'fund.deposit': (p) =>
       `A déposé ${formatNum(n(p, 'coin'))} pièces dans le Fonds de développement (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `A récupéré le Fonds de développement : ${formatNum(n(p, 'coin'))} pièces et ${names.goodsName(n(p, 'medal'))}`,
+      `A récupéré son dépôt échu du Fonds de développement : ${formatNum(n(p, 'coin'))} pièces et ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
-      `A retiré en avance du Fonds de développement : ${formatNum(n(p, 'coin'))} pièces récupérées`,
+      `A retiré son dépôt du Fonds de développement avant l'échéance : ${formatNum(n(p, 'coin'))} pièces récupérées`,
     'activity.claim': (p) => `A récupéré les récompenses de l'événement « ${String(p.title ?? '')} »`,
     'activity.unlock': (p) =>
       `A débloqué les récompenses premium de l'événement « ${String(p.title ?? '')} »`,
