@@ -6,7 +6,7 @@ import { PERSONAS } from '../bot';
 import { CHAPTER_MARK } from '../../modules/task/quests';
 import { botTurn, starBlockers, type FastBot } from './bot';
 import { newMarket } from './market';
-import { openFastRest } from './ops';
+import { needPickOf, openFastRest } from './ops';
 import type { FastCtx } from './state';
 import type { FastWorld } from './world';
 
@@ -309,5 +309,24 @@ describe('任务（问题记录 318）', () => {
     b.rest.state = 2;
     botTurn(c, b, newMarket(), world(), null);
     for (const id of [2021, 2022, 2025]) expect(b.rest.questDone.has(id), String(id)).toBe(true);
+  });
+});
+
+describe('个人缺料倾向（问题记录 50）', () => {
+  it('概率为 1 时，3 级随机食材都出本街正缺的；概率为 0 时走原来的抽法', () => {
+    const on = {
+      ...ctx(),
+      tuning: { ...settings.tuning, scarcity: { needBase: 1, needLuckFactor: 0, needMax: 1 } },
+    };
+    const r = openFastRest(on, 1, settings);
+    const lv3 = (id: number) => config.foods.get(id)?.level === 3;
+    const pick = needPickOf(on, r);
+    const got = Array.from({ length: 20 }, () => pick(lv3, () => -1));
+    expect(got.every((id) => id > 0 && lv3(id))).toBe(true);
+    const off = {
+      ...ctx(),
+      tuning: { ...settings.tuning, scarcity: { needBase: 0, needLuckFactor: 0, needMax: 0 } },
+    };
+    expect(needPickOf(off, openFastRest(off, 1, settings))(lv3, () => -1)).toBe(-1);
   });
 });

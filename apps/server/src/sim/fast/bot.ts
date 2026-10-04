@@ -19,6 +19,7 @@ import { activationTotal, stateValue } from '../../modules/task/rules';
 import { CHEAP_DEVICES, USE_ALL, type Persona } from '../bot';
 import { joinGuess, marketBuy, type FastMarket } from './market';
 import {
+  needPickOf,
   action,
   addFoods,
   aggOf,
@@ -170,7 +171,18 @@ function useGoods(c: FastCtx, r: FastRest, g: Goods, num: number): boolean {
     case 'randomFood': {
       // 和 store/use.ts 一样按掉落权重抽（问题记录 331）
       const pool = c.config.foodPools.get(use.level);
-      for (let i = 0; i < num && pool && pool.total > 0; i++) addFoods(c, r, pickWeighted(pool, c.rng).id, 1);
+      // 个人缺料倾向（问题记录 50）
+      const needPick = needPickOf(c, r);
+      for (let i = 0; i < num && pool && pool.total > 0; i++)
+        addFoods(
+          c,
+          r,
+          needPick(
+            (id) => c.config.foods.get(id)?.level === use.level,
+            () => pickWeighted(pool, c.rng).id,
+          ),
+          1,
+        );
       break;
     }
     case 'lockSlots':
@@ -645,6 +657,10 @@ export function botTurn(
     subFoods(c, r, id, num);
     r.daily.set('handle', (r.daily.get('handle') ?? 0) + 1);
     const agg = aggOf(c, r);
+    // 和真实合成一样不抽已经堆满的食材（问题记录 290），带个人缺料倾向（问题记录 50）
+    const full = (fid: number) => (r.foods.get(fid) ?? 0) >= r.foodsMaxNum;
+    const cp = composePool(cfg.foodPools.get(target)!, full);
+    const needPick = needPickOf(c, r);
     const out = runHandle(
       {
         way: 'compose',
@@ -656,9 +672,13 @@ export function botTurn(
         extraRate: agg.composeFoodsRate ?? 0,
         tuning: c.tuning,
       },
-      // 和真实合成一样不抽已经堆满的食材（问题记录 290）
-      composePool(cfg.foodPools.get(target)!, (fid) => (r.foods.get(fid) ?? 0) >= r.foodsMaxNum),
+      cp,
       c.rng,
+      () =>
+        needPick(
+          (fid) => cfg.foods.get(fid)?.level === target && !full(fid),
+          () => pickWeighted(cp, c.rng).id,
+        ),
     );
     for (const p of out.picks) addFoods(c, r, p, 1);
     gainCoin(c, r, out.failCoin, 'other');
