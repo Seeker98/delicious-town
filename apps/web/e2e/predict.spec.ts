@@ -42,6 +42,8 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
     });
     expect(created.ok()).toBe(true);
     eventId = ((await created.json()) as { data: { id: number } }).data.id;
+    // 出题人不能交易自己出的题（backlog 238-1）：当成别的管理员出的，本号再来买
+    await client.query('update predict_event set created_by = null where id = $1', [eventId]);
 
     await page.goto('/predict');
     await page.getByTestId(`pd-event-${eventId}`).click();
