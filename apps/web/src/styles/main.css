@@ -114,14 +114,19 @@ body {
 .dt-bottom-nav a.router-link-exact-active {
   color: var(--dt-primary);
 }
+/* 问题记录 344：顶栏（44px）下面；不拦截点击，按钮在提示下面也点得到 */
 .dt-toasts {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 76px;
+  top: 52px;
   width: calc(100% - 32px);
   max-width: 688px;
   z-index: 1040;
+}
+.dt-toasts-passthrough,
+.dt-toasts-passthrough * {
+  pointer-events: none;
 }
 .dt-tag {
   display: inline-block;

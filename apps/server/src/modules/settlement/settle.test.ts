@@ -51,6 +51,28 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.coin).toBe(20);
   });
 
+  it('每桌耗油减到 0 以下时仍至少 1 油（问题记录 346：节油器不能让有客人的桌不耗油）', () => {
+    const r = settle({ agg: { oilValue: -4 } }, {}, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(r.tables[0]!.last).toMatchObject({ type: 1, oil: 1 });
+    expect(r.oil).toBe(1);
+    // 空桌仍然不耗油
+    expect(r.tables[1]!.last).toMatchObject({ type: 0, oil: 0 });
+  });
+
+  it('白食桌每桌耗油也至少 1 油（问题记录 346）', () => {
+    const now = new Date('2026-09-30T04:00:00Z');
+    const tables = [
+      {
+        no: 1,
+        floor: 1,
+        customer: 9,
+        freeloader: { restId: 99, level: 16, since: '2026-09-30T03:00:00.000Z', coin: 0, exp: 0 },
+      },
+    ];
+    const r = settle({ tables, now, agg: { oilValue: -20 } }, {}, [0.5, 0.65, 0.5, 0.5]);
+    expect(r.tables[0]!.last).toMatchObject({ type: 9, oil: 1 });
+  });
+
   it('每桌银币加成只加一次（设计文档 裁定 1）', () => {
     const r = settle({ agg: { coinValue: 3 } }, {}, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
     expect(r.coin).toBe(13);
