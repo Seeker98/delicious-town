@@ -12,6 +12,7 @@ import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, notEnough } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
+import { opNeedPick } from '../../core/scarcity';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
@@ -204,6 +205,10 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         // 合成不抽已经堆满的食材（问题记录 290）；按合成前的数量算，同一次合成中途才满的不排除
         const have =
           b.way === 'compose' ? await foodsMap(o.tx, o.rest.id) : new Map<number, { num: number }>();
+        // 合成不抽已经堆满的食材（问题记录 290），个人缺料倾向也一样（问题记录 50）
+        const full = (id: number) => (have.get(id)?.num ?? 0) >= o.rest.foods_max_num;
+        const cp = b.way === 'compose' ? composePool(pool, full) : pool;
+        const needPick = b.way === 'compose' ? await opNeedPick(o) : null;
         const outcome = runHandle(
           {
             way: b.way,
@@ -215,10 +220,15 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
             extraRate: (b.way === 'decompose' ? agg.operFoodsAddRate : agg.composeFoodsRate) ?? 0,
             tuning: o.tuning,
           },
-          b.way === 'compose'
-            ? composePool(pool, (id) => (have.get(id)?.num ?? 0) >= o.rest.foods_max_num)
-            : pool,
+          cp,
           o.rng,
+          needPick
+            ? () =>
+                needPick(
+                  (id) => o.config.foods.get(id)?.level === target && !full(id),
+                  () => pickWeighted(cp, o.rng).id,
+                )
+            : undefined,
         );
         const gained = new Map<number, number>();
         for (const id of outcome.picks) gained.set(id, (gained.get(id) ?? 0) + 1);
@@ -239,11 +249,18 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
     exchange(ctx: RestCtx, b: { foodsId: 467 | 468; times: number }) {
       return op(ctx, 'foods.exchange.master', async (o) => {
         await subFoods(o, b.foodsId, 2 * b.times);
-        const pool = o.config.rareFoodPools.get(b.foodsId === 467 ? 2 : 3)!;
+        const lv = b.foodsId === 467 ? 2 : 3;
+        const pool = o.config.rareFoodPools.get(lv)!;
         const got = new Map<number, number>();
+        // 个人缺料倾向（问题记录 50）：只在同等级的稀有缺料里挑
+        const needPick = await opNeedPick(o);
+        const rare = (id: number) => {
+          const f = o.config.foods.get(id);
+          return f?.level === lv && f.odds < 100;
+        };
         for (let i = 0; i < b.times; i++) {
-          const f = pickWeighted(pool, o.rng);
-          got.set(f.id, (got.get(f.id) ?? 0) + 1);
+          const id = needPick(rare, () => pickWeighted(pool, o.rng).id);
+          got.set(id, (got.get(id) ?? 0) + 1);
         }
         for (const [id, n] of got) await addFoods(o, id, n);
         return { gained: [...got].map(([foodsId, num]) => ({ foodsId, num })) };

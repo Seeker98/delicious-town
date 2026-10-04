@@ -13,6 +13,7 @@ import { restLog, type Op } from '../../core/op';
 import { AppError } from '../../http/errors';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addFoods } from '../cupboard/foods';
+import { opNeedPick } from '../../core/scarcity';
 import { grantGoodsOp } from '../store/goods';
 import { addSeeds } from '../temple/common';
 import { setTownRest, townRest } from './common';
@@ -27,13 +28,18 @@ export async function talk(o: Op, npc: NpcKey): Promise<TalkResultDto> {
   // 台词照原版 NPCTools，只返回代码，前端按语言显示（问题记录 272）
   let line: TalkLine = npc;
   if (npc === 'bigEater') {
-    const pool = o.config.foodPools.get(pickBigEaterLevel(t.bigEaterLevelWeights, o.rng));
+    const lv = pickBigEaterLevel(t.bigEaterLevelWeights, o.rng);
+    const pool = o.config.foodPools.get(lv);
     if (!pool || pool.total <= 0) throw invalidState('no_foods');
-    const food = pickWeighted(pool, o.rng);
+    // 个人缺料倾向（问题记录 50）
+    const foodId = (await opNeedPick(o))(
+      (id) => o.config.foods.get(id)?.level === lv,
+      () => pickWeighted(pool, o.rng).id,
+    );
     const num = rollRange(t.bigEaterNum, o.rng);
     // 奖励按实际到账显示：超过持有上限被丢弃的部分不算（PR26 遗留）
-    const got = await addFoods(o, food.id, num);
-    rewards.push({ kind: 'foods', id: food.id, num: got.toCupboard + got.toFridge });
+    const got = await addFoods(o, foodId, num);
+    rewards.push({ kind: 'foods', id: foodId, num: got.toCupboard + got.toFridge });
     const seed = pickWeighted(o.config.seedPool, o.rng);
     await addSeeds(o, seed.id, 1);
     rewards.push({ kind: 'seed', id: seed.id, num: 1 });

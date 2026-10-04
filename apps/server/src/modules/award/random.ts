@@ -1,6 +1,7 @@
 import { GOODS, GOODS_TYPE, type Food, type Goods } from '@dt/config';
 import { opLuck } from '../../core/luck';
 import type { Op } from '../../core/op';
+import { opNeedPick } from '../../core/scarcity';
 import { gainCoin, gainExp } from '../../core/resources';
 import { addFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
@@ -108,7 +109,12 @@ export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<Rand
     return { kind, id, num: granted, lucky: lucky && granted > 1 };
   }
   const pool = awardFoodsPool(o.config.bundle.foods, level);
-  const id = pool[o.rng.int(pool.length)]!;
+  // 个人缺料倾向（问题记录 50、68）：命中时给本街学菜正缺的，可以是稀有食材
+  const maxLevel = Math.min(level, 5);
+  const id = (await opNeedPick(o))(
+    (f) => (o.config.foods.get(f)?.level ?? 99) <= maxLevel,
+    () => pool[o.rng.int(pool.length)]!,
+  );
   await addFoods(o, id, num, { ...gain, lucky });
   return { kind, id, num, lucky };
 }

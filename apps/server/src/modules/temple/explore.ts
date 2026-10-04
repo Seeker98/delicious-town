@@ -2,6 +2,7 @@ import { GOODS, type GameConfig } from '@dt/config';
 import type { ExploreResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { opLuck } from '../../core/luck';
+import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
 import { gainExp, spendStrength } from '../../core/resources';
 import { restGear, suitEffect } from '../equip/power';
@@ -50,6 +51,8 @@ export async function exploreMaps(
   let fail = 0;
   const rare = new Map<number, number>();
   const foods = new Map<number, number>();
+  // 个人缺料倾向（问题记录 50）
+  const needPick = await opNeedPick(o);
   for (let i = 0; i < b.times; i++) {
     if (!o.rng.chance(rate + luck / 12)) {
       fail += 1;
@@ -57,12 +60,12 @@ export async function exploreMaps(
     }
     success += 1;
     if (o.rng.chance(rareRate + luck / 20)) {
-      const id = pickFood(o, 7);
+      const id = pickFood(o, 7, needPick);
       bump(rare, id, starKey && o.rng.chance(0.5) ? 2 : 1);
     }
     for (const x of exploreSplit(def, exploreAwardNum(def, starKey, o.rng)))
-      for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level));
-    for (let k = 0; k < level3; k++) bump(foods, pickFood(o, 3));
+      for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
+    for (let k = 0; k < level3; k++) bump(foods, pickFood(o, 3, needPick));
   }
   await addFoodsMerged(o, rare);
   await addFoodsMerged(o, foods);

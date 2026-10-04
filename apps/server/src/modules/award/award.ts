@@ -1,6 +1,7 @@
 import type { Award, GiftItem, Goods } from '@dt/config';
 import { pickWeighted } from '@dt/shared';
 import { opLuck } from '../../core/luck';
+import { opNeedPick, type NeedPick } from '../../core/scarcity';
 import type { Op } from '../../core/op';
 import { gainCoin, gainDiamond, gainExp, gainRenown } from '../../core/resources';
 import { addFoods } from '../cupboard/foods';
@@ -35,14 +36,19 @@ function pickRandomGoods(op: Op, level: number): number | null {
   return pool.length === 0 ? null : pool[op.rng.int(pool.length)]!;
 }
 
-/** 礼包里的食材项：指定 id；flag=master 为万能食材；flag 为数字时是该等级的普通食材 */
-function pickGiftFood(op: Op, item: Extract<GiftItem, { type: 'foods' }>): number | null {
+/** 礼包里的食材项：指定 id；flag=master 为万能食材；flag 为数字时是该等级的食材（带个人缺料倾向，问题记录 50） */
+function pickGiftFood(op: Op, item: Extract<GiftItem, { type: 'foods' }>, needPick: NeedPick): number | null {
   if (item.id !== undefined && item.id > 0) return item.id;
   if (item.flag === 'master') {
     return op.config.masterFoodPool.total > 0 ? pickWeighted(op.config.masterFoodPool, op.rng).id : null;
   }
-  const pool = op.config.foodPools.get(Number(item.flag));
-  return pool && pool.total > 0 ? pickWeighted(pool, op.rng).id : null;
+  const lv = Number(item.flag);
+  const pool = op.config.foodPools.get(lv);
+  if (!pool || pool.total <= 0) return null;
+  return needPick(
+    (id) => op.config.foods.get(id)?.level === lv,
+    () => pickWeighted(pool, op.rng).id,
+  );
 }
 
 /**
@@ -57,6 +63,7 @@ export async function openGift(
 ): Promise<void> {
   const items = goods.gift ?? [];
   const { rate: lr } = await opLuck(op);
+  const needPick = await opNeedPick(op);
   const source = opts.source ?? `gift.${goods.id}`;
   const pending = new Map<string, { type: 'goods' | 'foods'; id: number; num: number; lucky: boolean }>();
   const add = (type: 'goods' | 'foods', id: number, num: number, lucky: boolean) => {
@@ -77,7 +84,7 @@ export async function openGift(
           break;
         }
         case 'foods': {
-          const id = pickGiftFood(op, item);
+          const id = pickGiftFood(op, item, needPick);
           if (id !== null) add('foods', id, item.num, o.lucky);
           break;
         }

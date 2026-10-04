@@ -3,11 +3,20 @@ import { GOODS, GOODS_TYPE } from '@dt/config';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
 import { runOp } from '../../core/op';
 import { awardExp, awardFoodsPool, awardGoodsPool, awardKindOf, randomAward } from './random';
 
 const config = testConfig();
 const rates = { foods: 0.25, goods: 0.15, coin: 0.3, exp: 0.3 };
+
+/** 固定随机序列的用例关掉个人缺料倾向（问题记录 50）：倾向会多消耗一次随机数 */
+async function noTiltShard(t: TestGame): Promise<number> {
+  const shardId = await createShard(t.db);
+  await setTuning(t, shardId, { scarcity: { needBase: 0, needLuckFactor: 0, needMax: 0 } });
+  return shardId;
+}
 
 describe('awardKindOf（规格书 00 §0.8）', () => {
   it('幸运 0、等级 2：起点 −0.00002，依次是食材、物品、银币、经验，超出算食材', () => {
@@ -100,7 +109,7 @@ describe('randomAward（发放）', () => {
   });
 
   it('食材：幸运率 0.3 时随机数 0.2 让数量翻倍、标记幸运', async () => {
-    const ctx = await newRestaurant(t, { patch: { luck: 300 } });
+    const ctx = await newRestaurant(t, { shardId: await noTiltShard(t), patch: { luck: 300 } });
     rngValues = [0.1, 0.2, 0];
     const pool = awardFoodsPool(config.bundle.foods, 2);
     const r = await run(ctx, (o) => randomAward(o, { level: 2 }));
