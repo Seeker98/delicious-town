@@ -63,7 +63,7 @@
 
 **Files:**
 - Create: `packages/config/data/game/devices_extra.json`、`packages/config/src/devicesExtra.test.ts`
-- Modify: `packages/config/src/{raw,source,types,build}.ts`、`packages/config/data/i18n/{en,fr,es}/goods.json`、`packages/config/src/build.test.ts`（道具总数 715 → 723）、`apps/server/src/modules/world/world.test.ts`（同样 +8）
+- Modify: `packages/config/src/{raw,source,types,build}.ts`、`packages/config/data/i18n/{en,fr,es}/goods.json`、`packages/config/src/build.test.ts`（道具总数 707 → 715）、`apps/server/src/modules/world/world.test.ts`（同样 +8）
 
 **Interfaces:**
 - Produces：`Goods.needStar?: number`（新道具才有）；道具 93201~93208。
