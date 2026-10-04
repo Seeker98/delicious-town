@@ -34,6 +34,7 @@ import { createActivityService, type ActivityService } from './modules/activity/
 import { createExchangeService, type ExchangeService } from './modules/exchange/service';
 import { createPredictService, type PredictService } from './modules/predict/service';
 import { createKujiService, type KujiService } from './modules/kuji/service';
+import { createFundService, type FundService } from './modules/fund/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -90,6 +91,7 @@ export interface Game {
   exchange: ExchangeService;
   predict: PredictService;
   kuji: KujiService;
+  fund: FundService;
   jobs: PeriodicJob[];
 }
 
@@ -158,6 +160,7 @@ export function createGame(app: AppDeps): Game {
     exchange: createExchangeService(deps),
     predict: createPredictService(deps),
     kuji: createKujiService(deps),
+    fund: createFundService(deps),
     shop,
     market,
     task: createTaskService(deps),

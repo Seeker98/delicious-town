@@ -1,5 +1,5 @@
 import { ZodError } from 'zod';
-import { isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
+import { fundErrors, GOODS_TYPE, isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
 import {
   ErrorCode,
   type AdminShardDto,
@@ -70,6 +70,16 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (kuji.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: kuji.map((message) => ({ path: 'tuning.kuji', message })),
+      });
+    // 小镇发展基金（240-2）：和配置构建同一套检查
+    const fund = fundErrors(resolved.tuning.fund, {
+      honorIds: new Set(
+        [...config.goods.values()].filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id),
+      ),
+    });
+    if (fund.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: fund.map((message) => ({ path: 'tuning.fund', message })),
       });
   }
 
