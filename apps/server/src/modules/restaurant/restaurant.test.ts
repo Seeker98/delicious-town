@@ -130,7 +130,10 @@ describe('开店', () => {
     const guide = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
     const codes = guide.json.data as { code: string; state: string }[];
     expect(codes.find((c) => c.code === NEWBIE.packCode)?.state).toBe('used');
-    const r = await call(ctx.app, 'POST', '/api/v1/redeem', { cookie: u.cookie, body: { code: NEWBIE.packCode } });
+    const r = await call(ctx.app, 'POST', '/api/v1/redeem', {
+      cookie: u.cookie,
+      body: { code: NEWBIE.packCode },
+    });
     expect(r.status).not.toBe(200);
     expect(JSON.stringify(r.json)).toContain('code_used');
   });

@@ -152,7 +152,11 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
           .where('code', '=', NEWBIE.packCode)
           .where('actor_account_id', '=', await npcAccountId(d.db))
           .executeTakeFirst();
-        if (code) await tx.insertInto('redeem_use').values({ code_id: code.id, rest_id: id, account_id: accountId }).execute();
+        if (code)
+          await tx
+            .insertInto('redeem_use')
+            .values({ code_id: code.id, rest_id: id, account_id: accountId })
+            .execute();
       }
       // 新店橱柜是空的，开局食材直接放进去（种类远少于橱柜格数）
       if (defaults.giftFoods.length > 0)
