@@ -106,7 +106,8 @@ export interface TownDto {
   diamond: number;
   talked: Record<NpcKey, boolean>;
   /** 镇长问答（4E-2）：今天是否已经回答过 */
-  mayor: { answered: boolean };
+  /** hiphopOut：今天的嘻哈男孩出来了没有（今天的地点记录已生成）；hour：几点出来（问题记录 333）。旧服务端没有这两项 */
+  mayor: { answered: boolean; hiphopOut?: boolean; hour?: number };
   /** 大胃哥的首次礼物已经领过 */
   bigEaterGift: boolean;
   shaken: boolean;

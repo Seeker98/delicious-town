@@ -84,6 +84,9 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return sp.codeLevel(str(params.level));
   if (code === 'INVALID_STATE' && reason === 'query_text' && params.max !== undefined)
     return sp.queryText(str(params.max));
+  // 嘻哈男孩出来的钟点按区服设置（问题记录 333）
+  if (code === 'INVALID_STATE' && reason === 'hiphop_not_out' && params.hour !== undefined)
+    return sp.hiphopNotOut(str(params.hour));
   if (code === 'INVALID_STATE' && Object.hasOwn(e.state, reason))
     return e.state[reason as keyof typeof e.state];
   return Object.hasOwn(e.code, code) ? e.code[code as keyof typeof e.code] : sp.unknown(code);

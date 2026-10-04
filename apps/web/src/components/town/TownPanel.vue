@@ -45,6 +45,10 @@ const rewards = (list: TownRewardDto[]) => list.map((r) => rewardText(r, catalog
 const mayorOpen = ref(false);
 /** 只列本区服开着的功能的地点：关掉的功能嘻哈男孩不会去（问题记录 256） */
 const restaurant = useRestaurantStore();
+/** 确定嘻哈男孩今天还没出来时才拦着（服务端没带这个状态的旧版本照旧可以问，问错了服务端会提示） */
+const mayorWaiting = computed(
+  () => props.data.mayor.hiphopOut === false && props.data.mayor.hour !== undefined,
+);
 const PLACES = computed(() =>
   HIPHOP_PLACES.filter((p) => {
     const f = HIPHOP_PLACE_FEATURE[p];
@@ -174,17 +178,25 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       </button>
     </div>
   </div>
-  <div class="dt-item">
+  <!-- 嘻哈男孩今天还没出来时写明几点出来、按钮不能点，不让人选完地点才报错（问题记录 333）；
+       区服关掉嘻哈男孩时他不会出来，这一行不显示 -->
+  <div v-if="restaurant.featureOn('hiphop')" class="dt-item" data-testid="mayor-row">
     <div class="dt-item-main">
       <div class="dt-item-title">{{ t.town.mayorName }}</div>
       <div class="dt-meta">
-        {{ data.mayor.answered ? t.town.mayorAnswered : t.town.mayorHint }}
+        {{
+          data.mayor.answered
+            ? t.town.mayorAnswered
+            : mayorWaiting
+              ? t.town.mayorNotOut(data.mayor.hour!)
+              : t.town.mayorHint
+        }}
       </div>
     </div>
     <div v-if="!data.mayor.answered" class="dt-item-actions">
       <button
         class="btn btn-sm btn-outline-primary"
-        :disabled="busy"
+        :disabled="busy || mayorWaiting"
         data-testid="mayor-open"
         @click="mayorOpen = !mayorOpen"
       >
@@ -192,7 +204,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       </button>
     </div>
   </div>
-  <div v-if="mayorOpen && !data.mayor.answered" class="dt-pick-grid mb-2">
+  <div v-if="mayorOpen && !data.mayor.answered && !mayorWaiting" class="dt-pick-grid mb-2">
     <button
       v-for="p in PLACES"
       :key="p.id"

@@ -282,16 +282,16 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     vi.mocked(endpoints.activation).mockResolvedValue(act());
   });
 
-  it('四块依次是主线、支线、每周、活跃度', async () => {
+  it('四块依次是今日活跃、主线、每周、支线（问题记录 325：每天都要做的放最上面）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([false, false, false, false]) }),
     );
     const w = await mountView();
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
-      'card-main',
-      'card-lines',
-      'card-weekly',
       'card-activation',
+      'card-main',
+      'card-weekly',
+      'card-lines',
     ]);
     expect(w.get('[data-testid="card-main"]').text()).toContain('主线');
     expect(w.get('[data-testid="card-activation"]').text()).toContain('今日活跃 120');

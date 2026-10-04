@@ -155,6 +155,26 @@ describe('TownPanel', () => {
     });
   });
 
+  it('镇长问答：嘻哈男孩今天还没出来时写明几点出来，按钮不能点（问题记录 333）', () => {
+    const w = mount(TownPanel, {
+      props: { data: townData({ mayor: { answered: false, hiphopOut: false, hour: 10 } }) },
+    });
+    expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 10 点出来，到时再来告诉镇长');
+    expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('镇长问答：服务端还没更新、不带嘻哈男孩状态时照旧可以问，不写 undefined（终审）', () => {
+    const w = mount(TownPanel, { props: { data: townData({ mayor: { answered: false } as never }) } });
+    expect(w.get('[data-testid="mayor-row"]').text()).not.toContain('undefined');
+    expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeUndefined();
+  });
+
+  it('镇长问答：区服关掉嘻哈男孩时不显示镇长这一行（他不会出来，问不了）', () => {
+    useRestaurantStore().rest = { disabledFeatures: ['hiphop'] } as never;
+    const w = mount(TownPanel, { props: { data: townData() } });
+    expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
+  });
+
   it('镇长问答：区服关掉的功能对应的地点不列出来（问题记录 256：嘻哈男孩不会去那里）', async () => {
     useRestaurantStore().rest = { disabledFeatures: ['kuji', 'temple'] } as never;
     const w = mount(TownPanel, { props: { data: townData() } });
@@ -185,7 +205,9 @@ describe('TownPanel', () => {
     );
     expect(w.emitted('reload')).toHaveLength(1);
 
-    const done = mount(TownPanel, { props: { data: townData({ mayor: { answered: true } }) } });
+    const done = mount(TownPanel, {
+      props: { data: townData({ mayor: { answered: true, hiphopOut: true, hour: 9 } }) },
+    });
     expect(done.find('[data-testid="mayor-open"]').exists()).toBe(false);
     expect(done.text()).toContain('今天已经告诉过镇长了');
   });

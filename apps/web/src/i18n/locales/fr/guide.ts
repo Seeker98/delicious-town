@@ -119,6 +119,24 @@ const guide: Messages['guide'] = {
         "Non. Avant l'échéance, vous pouvez vendre vos parts au prix actuel à tout moment : vendez pour limiter la perte si vous pensez vous être trompé, ou pour prendre le gain quand le prix vous convient.",
       ],
     },
+    {
+      q: 'Comment obtenir des diamants ? ',
+      a: [
+        "Le pack de pointage quotidien peut en contenir ; les récompenses d'activité de 100 et 150 points ; ",
+        { to: '/rest/tasks', text: 'les quêtes hebdomadaires' },
+        ' ; les packs du classement des chefs et du classement mensuel d’affinité du Kraken ; les prix A, B, C et Dernier Prix de l’Ichiban Kuji ; les amis invités qui atteignent les niv. 10 et 30 ; un message du forum mis en avant ; les récompenses d’événements et les codes cadeaux.',
+      ],
+    },
+    {
+      q: 'Comment obtenir des Krabby Patty, et à quoi servent-ils ? ',
+      a: [
+        'On peut en gagner à la machine à sous du ',
+        { to: '/bar', text: 'Bar' },
+        ' ; secouer la bourse de M. Krab sur la place en fait parfois tomber un ; la quête secondaire « Réussir une Épreuve » en donne un aussi. Échangez-les contre des objets rares dans « Échanges » sur la ',
+        { to: '/town', text: 'Place' },
+        '.',
+      ],
+    },
   ],
   rules: 'Règles du jeu',
   rulesItems: [

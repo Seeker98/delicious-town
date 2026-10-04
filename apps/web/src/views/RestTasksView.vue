@@ -71,7 +71,71 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <!-- 四块：主线、支线、每周、活跃度（问题记录 318 设计 §10） -->
+  <!-- 四块：今日活跃、主线、每周、支线（问题记录 318 设计 §10；问题记录 325：每天都要做的签到和活跃放最上面） -->
+  <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
+    <div class="d-flex align-items-center mb-2">
+      <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
+      <button
+        class="btn btn-sm btn-primary ms-auto"
+        data-testid="signin"
+        :disabled="busy || act.signedIn"
+        @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
+      >
+        {{ act.signedIn ? t.rest.tasks.signedIn : t.rest.tasks.signIn }}
+      </button>
+    </div>
+    <div class="d-flex flex-wrap gap-1 mb-2">
+      <button
+        v-for="r in act.rewards"
+        :key="r.points"
+        :class="[
+          'btn btn-sm',
+          r.claimed
+            ? 'btn-light text-muted'
+            : act.total >= r.points
+              ? 'btn-success'
+              : 'btn-outline-secondary',
+        ]"
+        :data-testid="`claim-${r.points}`"
+        :disabled="busy || r.claimed || act.total < r.points"
+        @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
+      >
+        <template v-if="r.claimed">{{ t.rest.tasks.claimed(r.points) }}</template>
+        <template v-else-if="act.total >= r.points">{{
+          t.rest.tasks.claim(r.points, r.multiplier > 1)
+        }}</template>
+        <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
+      </button>
+    </div>
+    <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->
+    <div v-if="act.kujiTicket" class="small text-muted mb-2" data-testid="act-kuji-hint">
+      {{ t.rest.tasks.kujiHint(act.kujiTicket.points, act.kujiTicket.num) }}
+    </div>
+    <div class="dt-act-grid small">
+      <div
+        v-for="i in items"
+        :key="i.id"
+        :class="[
+          'dt-act',
+          { 'dt-act-done': stateOf(i) === 'done', 'dt-act-locked': stateOf(i) === 'locked' },
+        ]"
+        :data-testid="`act-${i.id}`"
+      >
+        <div class="d-flex align-items-center gap-1">
+          <span class="dt-clamp2">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
+          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
+            t.rest.tasks.full
+          }}</span>
+          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{
+            t.rest.tasks.locked(i.needStar)
+          }}</span>
+          <span v-else class="ms-auto text-nowrap">{{ i.count }}/{{ i.limit }}</span>
+        </div>
+        <div class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
+        <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
+      </div>
+    </div>
+  </section>
   <template v-if="tasks">
     <!-- 主线：当前章 -->
     <section class="dt-card mb-3" data-testid="card-main">
@@ -141,27 +205,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         />
       </div>
     </section>
-    <!-- 支线：每条一次显示一档 -->
-    <section class="dt-card mb-3" data-testid="card-lines">
-      <div class="dt-card-title mb-1">{{ t.rest.tasks.side }}</div>
-      <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
-      <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">
-        <div class="d-flex small text-muted">
-          <span>{{ catalog.data('questLines', l.id)?.name ?? l.name }}</span>
-          <span class="ms-auto">{{ l.doneCount }}/{{ l.total }}</span>
-        </div>
-        <QuestCard
-          v-if="l.quest"
-          :quest="l.quest"
-          :name="questName(l.quest)"
-          :award="awardText(l.quest.award)"
-          :busy="busy"
-          :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
-          @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
-        />
-        <div v-else class="small text-success">{{ t.rest.tasks.lineDone }}</div>
-      </div>
-    </section>
     <!-- 每周：按当前星级分组，周一 0 点刷新 -->
     <section v-if="tasks.weekly" class="dt-card mb-3" data-testid="card-weekly">
       <div class="d-flex align-items-center mb-1">
@@ -204,69 +247,26 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         </button>
       </div>
     </section>
-  </template>
-  <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
-    <div class="d-flex align-items-center mb-2">
-      <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
-      <button
-        class="btn btn-sm btn-primary ms-auto"
-        data-testid="signin"
-        :disabled="busy || act.signedIn"
-        @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
-      >
-        {{ act.signedIn ? t.rest.tasks.signedIn : t.rest.tasks.signIn }}
-      </button>
-    </div>
-    <div class="d-flex flex-wrap gap-1 mb-2">
-      <button
-        v-for="r in act.rewards"
-        :key="r.points"
-        :class="[
-          'btn btn-sm',
-          r.claimed
-            ? 'btn-light text-muted'
-            : act.total >= r.points
-              ? 'btn-success'
-              : 'btn-outline-secondary',
-        ]"
-        :data-testid="`claim-${r.points}`"
-        :disabled="busy || r.claimed || act.total < r.points"
-        @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
-      >
-        <template v-if="r.claimed">{{ t.rest.tasks.claimed(r.points) }}</template>
-        <template v-else-if="act.total >= r.points">{{
-          t.rest.tasks.claim(r.points, r.multiplier > 1)
-        }}</template>
-        <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
-      </button>
-    </div>
-    <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->
-    <div v-if="act.kujiTicket" class="small text-muted mb-2" data-testid="act-kuji-hint">
-      {{ t.rest.tasks.kujiHint(act.kujiTicket.points, act.kujiTicket.num) }}
-    </div>
-    <div class="dt-act-grid small">
-      <div
-        v-for="i in items"
-        :key="i.id"
-        :class="[
-          'dt-act',
-          { 'dt-act-done': stateOf(i) === 'done', 'dt-act-locked': stateOf(i) === 'locked' },
-        ]"
-        :data-testid="`act-${i.id}`"
-      >
-        <div class="d-flex align-items-center gap-1">
-          <span class="dt-clamp2">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
-          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
-            t.rest.tasks.full
-          }}</span>
-          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{
-            t.rest.tasks.locked(i.needStar)
-          }}</span>
-          <span v-else class="ms-auto text-nowrap">{{ i.count }}/{{ i.limit }}</span>
+    <!-- 支线：每条一次显示一档 -->
+    <section class="dt-card mb-3" data-testid="card-lines">
+      <div class="dt-card-title mb-1">{{ t.rest.tasks.side }}</div>
+      <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
+      <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">
+        <div class="d-flex small text-muted">
+          <span>{{ catalog.data('questLines', l.id)?.name ?? l.name }}</span>
+          <span class="ms-auto">{{ l.doneCount }}/{{ l.total }}</span>
         </div>
-        <div class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
-        <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
+        <QuestCard
+          v-if="l.quest"
+          :quest="l.quest"
+          :name="questName(l.quest)"
+          :award="awardText(l.quest.award)"
+          :busy="busy"
+          :locked="l.lockedStar === null ? null : t.rest.tasks.lockedStar(l.lockedStar)"
+          @claim="run(() => endpoints.claimTask(l.quest!.id), t.rest.tasks.claimFailed)"
+        />
+        <div v-else class="small text-success">{{ t.rest.tasks.lineDone }}</div>
       </div>
-    </div>
-  </section>
+    </section>
+  </template>
 </template>

@@ -18,9 +18,16 @@ describe('镇长问答（设计文档 §2.3）', () => {
     t.clock.set(gameTime(DAY, 8));
     await expect(t.game.town.mayor(a, 3)).rejects.toMatchObject({
       code: 'INVALID_STATE',
-      params: { reason: 'hiphop_not_out' },
+      params: { reason: 'hiphop_not_out', hour: t.deps.config.tuning.hiphop.hour },
+    });
+    // 小镇页事先就知道他还没出来、几点出来（问题记录 333）
+    expect((await t.game.town.overview(a)).mayor).toEqual({
+      answered: false,
+      hiphopOut: false,
+      hour: t.deps.config.tuning.hiphop.hour,
     });
     await forceHiphopDay(t.db, a.shardId, t.clock.now, { place: 3 });
+    expect((await t.game.town.overview(a)).mayor.hiphopOut).toBe(true);
     expect((await t.game.town.mayor(a, 3)).data.talk).toBe('mayorRight');
   });
 
@@ -35,7 +42,7 @@ describe('镇长问答（设计文档 §2.3）', () => {
     });
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
     await expect(t.game.town.mayor(a, 3)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
-    expect((await t.game.town.overview(a)).mayor).toEqual({ answered: true });
+    expect((await t.game.town.overview(a)).mayor).toMatchObject({ answered: true, hiphopOut: true });
   });
 
   it('答错得镇长的针对', async () => {

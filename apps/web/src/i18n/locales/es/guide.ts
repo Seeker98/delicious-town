@@ -116,6 +116,24 @@ const guide: Messages['guide'] = {
         'No. Antes del cierre puedes vender tus participaciones al precio actual cuando quieras: vende para cortar pérdidas si crees que te equivocaste, o para asegurar la ganancia cuando el precio te convenga.',
       ],
     },
+    {
+      q: '¿Cómo consigo diamantes? ',
+      a: [
+        'El pack de registro diario puede traer algunos; los premios de actividad de 100 y 150 puntos; ',
+        { to: '/rest/tasks', text: 'las misiones semanales' },
+        '; los packs de la clasificación de chefs y de la clasificación mensual de afinidad del Kraken; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
+      ],
+    },
+    {
+      q: '¿Cómo consigo Cangreburgers y para qué sirven? ',
+      a: [
+        'Puedes ganarlas en la tragaperras del ',
+        { to: '/bar', text: 'Bar' },
+        '; sacudir la bolsa de Don Krab en la plaza a veces suelta una; la misión secundaria «Completar una Prueba» también da una. Cámbialas por objetos raros en «Canjes» de la ',
+        { to: '/town', text: 'Plaza' },
+        '.',
+      ],
+    },
   ],
   rules: 'Normas del juego',
   rulesItems: [

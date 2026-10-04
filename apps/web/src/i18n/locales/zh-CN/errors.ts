@@ -250,7 +250,7 @@ export default {
     query_text: '搜索词太长了（最多 20 字）',
     cursor: '翻页参数不对，请刷新',
     post_changed: '帖子状态变了，请刷新后再试',
-    hiphop_not_out: '嘻哈男孩今天还没出来，9 点以后再来问镇长吧',
+    hiphop_not_out: '嘻哈男孩今天还没出来，晚些时候再来问镇长吧',
     pick_food: '请选择要打赏的食材',
     pick_count: '竞猜的食材数量不对',
     bad_food: '只能竞猜 1~2 级食材',
@@ -380,6 +380,7 @@ export default {
     mailLevel: (level: string) => `等级不够，需 ${level} 级`,
     codeLevel: (level: string) => `兑换码要求 ${level} 级`,
     queryText: (max: string) => `搜索词最多 ${max} 字`,
+    hiphopNotOut: (hour: string) => `嘻哈男孩今天还没出来，${hour} 点以后再来问镇长吧`,
     unknown: (code: string) => `出错了（${code}）`,
   },
   /** 名字查不到时的占位 */

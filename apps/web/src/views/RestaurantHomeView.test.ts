@@ -624,6 +624,16 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
   });
 
+  it('任务读失败（比如服务端还没更新）只少了主线行，首页其余照常显示、不报获取餐厅信息失败（问题记录 327）', async () => {
+    vi.mocked(endpoints.tasks).mockRejectedValue(
+      new TypeError("Cannot read properties of undefined (reading 'find')"),
+    );
+    const w = await mountView();
+    expect(w.find('.alert-danger').exists()).toBe(false);
+    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+    expect(w.find('[data-testid="home-todo"]').exists()).toBe(true);
+  });
+
   it('主线行：本章任务都领了显示章末奖励和领奖按钮；章锁定时写解锁条件（问题记录 318 PR 2）', async () => {
     const all = quests([quest({ progress: 1, done: true, claimed: true })]);
     vi.mocked(endpoints.tasks).mockResolvedValue({ ...all, chapter: { ...all.chapter!, claimable: true } });

@@ -99,12 +99,19 @@ async function load() {
     void loadGuideCodes();
     // 本章第一个可领的；没有可领的显示第一个没完成的（问题记录 318）
     // 本章任务都领完时显示章末奖励，章锁定时写解锁条件
-    const q = await endpoints.tasks();
-    // 补领的任务（backlog 318）只在能领时占主线行，没完成的不显示
-    const ready = q.main.find((x) => x.done && !x.claimed) ?? q.leftover.find((x) => x.done && !x.claimed);
-    const chapterRow = q.chapter && (q.chapter.claimable || q.chapter.locked);
-    mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
-    mainChapter.value = !ready && chapterRow ? q.chapter : null;
+    // 任务单独读：读失败（比如前端先上线、服务端还没更新）只少了主线行，不让整个首页报错（问题记录 327）
+    try {
+      const q = await endpoints.tasks();
+      // 补领的任务（backlog 318）只在能领时占主线行，没完成的不显示；旧服务端没有 leftover 时按空的算
+      const ready =
+        q.main.find((x) => x.done && !x.claimed) ?? (q.leftover ?? []).find((x) => x.done && !x.claimed);
+      const chapterRow = q.chapter && (q.chapter.claimable || q.chapter.locked);
+      mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
+      mainChapter.value = !ready && chapterRow ? q.chapter : null;
+    } catch {
+      mainTask.value = null;
+      mainChapter.value = null;
+    }
     dining.value = await endpoints.dineCurrent();
     error.value = '';
   } catch (e) {

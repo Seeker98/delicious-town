@@ -48,6 +48,24 @@
   --dt-ink-secondary: hsl(208, 7%, 40%);
   --dt-fill-secondary: hsl(208, 7%, 68%);
 }
+/* 手机上防误触放大（问题记录 329）：双击不再放大，保留双指缩放；字号不随横竖屏自动调整 */
+html {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+/* 触屏上输入框字号至少 16px：iPhone 点进字号小于 16px 的输入框会自动放大页面 */
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea,
+  .form-control,
+  .form-control-sm,
+  .form-select,
+  .form-select-sm {
+    font-size: 16px;
+  }
+}
 body {
   background: var(--dt-bg);
   min-width: 360px;
