@@ -683,6 +683,22 @@ export const tuningSchema = z.object({
       last: kujiLast,
     }),
   }),
+  /** 小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档 */
+  fund: z.object({
+    days: int.min(1),
+    returnRate: z.number().gt(0).max(1),
+    earlyRate: z.number().gt(0).max(1),
+    tiers: z
+      .array(
+        z.object({
+          key: z.string().min(1).max(16),
+          coin: int.min(1),
+          medal: int.min(1),
+          news: z.enum(['broadcast', 'news']).optional(),
+        }),
+      )
+      .min(1),
+  }),
   forum: z.object({
     titleMax: int.min(1),
     contentMax: int.min(1),

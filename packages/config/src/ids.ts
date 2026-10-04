@@ -129,3 +129,6 @@ export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([51, 83, 124]);
 
 /** 问题记录 331：新手大礼包；一到五级食材随机券 = foodVoucherBase + 等级（93001~93005）；packCode 是老店补领大礼包的新手码 */
 export const NEWBIE = { pack: 54, foodVoucherBase: 93000, packCode: 'XINSHOULIBAO' } as const;
+
+/** 240-2：小镇发展基金勋章（game/fund.json），C·流动赋能、B·增值资本、A·基石领投 */
+export const FUND = { C: 93101, B: 93102, A: 93103 } as const;

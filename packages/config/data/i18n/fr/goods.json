@@ -2814,5 +2814,17 @@
   "93005": {
     "name": "Ticket d'ingrédient aléatoire niv. 5",
     "desc": "Donne un ingrédient de niveau 5 au hasard"
+  },
+  "93101": {
+    "name": "Médaille Liquidité",
+    "desc": "A tenu un terme complet du Fonds de développement, C · Liquidité. EXP finale +5 %"
+  },
+  "93102": {
+    "name": "Médaille Capital de croissance",
+    "desc": "A tenu un terme complet du Fonds de développement, B · Capital de croissance. EXP finale +10 %"
+  },
+  "93103": {
+    "name": "Médaille Investisseur pilier",
+    "desc": "A tenu un terme complet du Fonds de développement, A · Investisseur pilier. EXP finale +15 %"
   }
 }

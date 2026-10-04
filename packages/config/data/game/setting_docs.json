@@ -28,6 +28,7 @@
     "exchange": "交易所：玩家之间用限价单买卖稀有食材（关掉后不能下单；撤单、取出、过期退回照常）",
     "predict": "事件预测：玩家用银币买卖“是/否”份额（关掉后不能买卖；已有事件照常截止、判定、结算）",
     "kuji": "一番赏：玩家买券抽签（关掉后不能买、不能抽，入口隐藏，活跃度不送券；已有的券保留）",
+    "fund": "小镇发展基金：存银币 7 天到期领回九成并得经验勋章（关掉后不能存、不能领，标签隐藏；已存的钱保留，重新打开后照常领取）",
     "activity": "限时活动：活动页、进度计数、领奖、战令解锁（关掉后不计数、不显示；已结束活动的未领奖励照常补发）"
   },
   "groups": {
@@ -61,6 +62,7 @@
     "tuning.exchange": "交易所：开通门槛、手续费、涨跌幅、挂单数量和有效期；refOverrides 按食材 id 指定初始参考价（没有成交前用它，代替系统定价）；maker 是系统做市（低价收、高价卖，差价回收银币）",
     "tuning.predict": "事件预测：每份结算银币、手续费、持有和单笔上限、默认流动性、开通门槛；auto 是系统每天自动出的题",
     "tuning.kuji": "一番赏：券价、限购、单次抽签上限、活跃度送券、各档张数和奖品、最后赏；改了下一池生效；A/B/C/最后赏的限定手办按当月主题（game/kuji.json）自动加进奖品；deluxe 是豪华一番赏（240-2）：独立的奖池线，A 赏和最后赏的称号按 game/kuji.json 的 deluxeMonths 按月替换",
+    "tuning.fund": "小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档金额和勋章；存期和勋章按存入时记下，比例按领取时的值",
     "tuning.forum": "论坛：标题正文长度、发帖回复冷却、加精奖励",
     "restaurant": "开店默认值：新店的等级、资源、容量和开店礼包"
   },
@@ -620,6 +622,10 @@
     "tuning.kuji.deluxe.last.award.diamond": "豪华池最后赏：钻石",
     "tuning.kuji.deluxe.last.icon": "豪华池最后赏：限定称号（looks.icons 的 key，当月有轮换时会被替换）",
     "tuning.kuji.deluxe.last.news": "豪华池最后赏的播报：broadcast 全服广播 / news 新闻 / 不填不播",
+    "tuning.fund.days": "存期：存入后多少天到期（天）；只影响之后的新存款",
+    "tuning.fund.returnRate": "到期领回本金的比例（0~1，向下取整）",
+    "tuning.fund.earlyRate": "提前取出退回本金的比例（0~1，不能大于 returnRate；提前取出没有勋章）",
+    "tuning.fund.tiers": "各档：key 档位（新闻和页面按 A/B/C 选文案，其他 key 用通用文案）、coin 存入银币、medal 到期领的勋章（荣誉类道具 id）、news 存入时的播报（broadcast 全服广播样式 / news 新闻 / 不填不播）",
     "tuning.forum.titleMax": "帖子标题最多几个字（字）",
     "tuning.forum.contentMax": "帖子正文最多几个字（字）",
     "tuning.forum.replyMax": "回复最多几个字（字）",

@@ -2814,5 +2814,17 @@
   "93005": {
     "name": "Vale de ingrediente aleatorio nv. 5",
     "desc": "Al usarlo, recibes un ingrediente de nivel 5 al azar"
+  },
+  "93101": {
+    "name": "Medalla de Liquidez",
+    "desc": "Completó un plazo del Fondo de Desarrollo, C · Liquidez. EXP final +5 %"
+  },
+  "93102": {
+    "name": "Medalla de Capital de Crecimiento",
+    "desc": "Completó un plazo del Fondo de Desarrollo, B · Capital de Crecimiento. EXP final +10 %"
+  },
+  "93103": {
+    "name": "Medalla de Inversor Ancla",
+    "desc": "Completó un plazo del Fondo de Desarrollo, A · Inversor Ancla. EXP final +15 %"
   }
 }

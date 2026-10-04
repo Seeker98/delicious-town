@@ -458,6 +458,23 @@ export const kujiFile = z
   })
   .strict();
 
+/** data/game/fund.json：小镇发展基金的勋章（240-2） */
+export const fundFile = z
+  .object({
+    medals: z.array(
+      z
+        .object({
+          id: int.min(1),
+          name: z.string().min(1),
+          desc: z.string().min(1),
+          hours: int.min(1),
+          effects: z.record(z.number()),
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+
 /** data/game/tower_fix.json：守塔人厨力和换层（问题记录 120）；数据集会被同步覆盖，所以单独放 */
 export const towerFixFile = z.object({
   floors: z.array(
