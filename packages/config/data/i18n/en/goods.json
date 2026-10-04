@@ -2790,5 +2790,25 @@
   "92029": {
     "name": "Chop Suey Street",
     "desc": "Takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%"
+  },
+  "93001": {
+    "name": "Level 1 Random Ingredient Ticket",
+    "desc": "Use it to get a random level 1 ingredient"
+  },
+  "93002": {
+    "name": "Level 2 Random Ingredient Ticket",
+    "desc": "Use it to get a random level 2 ingredient"
+  },
+  "93003": {
+    "name": "Level 3 Random Ingredient Ticket",
+    "desc": "Use it to get a random level 3 ingredient"
+  },
+  "93004": {
+    "name": "Level 4 Random Ingredient Ticket",
+    "desc": "Use it to get a random level 4 ingredient"
+  },
+  "93005": {
+    "name": "Level 5 Random Ingredient Ticket",
+    "desc": "Use it to get a random level 5 ingredient"
   }
 }

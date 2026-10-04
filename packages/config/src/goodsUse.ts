@@ -6,6 +6,8 @@ export type GoodsUse =
   | { kind: 'addTable' }
   | { kind: 'strength'; amount: number }
   | { kind: 'mysteryFood'; level: number }
+  /** N 级食材随机券：按掉落权重随机得一个这一等级的食材（问题记录 331） */
+  | { kind: 'randomFood'; level: number }
   | { kind: 'lockSlots'; amount: number }
   | { kind: 'resetAttr' }
   | { kind: 'bundle'; goods: number; num: number; targetGoods: number; targetNum: number }

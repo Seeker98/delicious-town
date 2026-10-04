@@ -106,9 +106,9 @@ describe('开店', () => {
       .select(['goods_id', 'num'])
       .where('rest_id', '=', restId)
       .execute();
-    expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual([81, 100, 140]);
+    expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual([54, 81, 100, 140]); // 54 新手大礼包（问题记录 331）
     const ledger = await db.selectFrom('ledger').selectAll().where('rest_id', '=', restId).execute();
-    expect(ledger.filter((l) => l.kind === 'goods')).toHaveLength(3);
+    expect(ledger.filter((l) => l.kind === 'goods')).toHaveLength(4);
     expect(ledger.filter((l) => l.kind === 'foods')).toHaveLength(11); // 开局 11 种食材（问题记录 284 加了十三香）
     expect(ledger.every((l) => l.source === 'restaurant.create')).toBe(true);
     const news = await db

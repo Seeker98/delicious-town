@@ -395,6 +395,24 @@ export const souvenirsFile = z
   })
   .strict();
 
+/** data/game/newbie_pack.json：一到五级食材随机券、新手大礼包的内容（问题记录 331） */
+export const newbiePackFile = z
+  .object({
+    rule: z.string(),
+    vouchers: z.array(
+      z
+        .object({
+          id: int.min(1),
+          level: int.min(1).max(7),
+          name: z.string().min(1),
+          desc: z.string().min(1),
+        })
+        .strict(),
+    ),
+    pack: z.object({ goodsId: int.min(1), gift: z.array(giftItemSchema).min(1) }).strict(),
+  })
+  .strict();
+
 /** data/game/kuji.json：一番赏抽赏券（一番赏设计 §4） */
 const kujiFigure = z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict();
 export const kujiFile = z

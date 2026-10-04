@@ -158,6 +158,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
   const souvenirsRaw = parse('game/souvenirs', raw.souvenirsFile);
+  const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
   const kujiRaw = parse('game/kuji', raw.kujiFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
@@ -210,6 +211,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !settingDocs ||
     !newbieCodesRaw ||
     !souvenirsRaw ||
+    !newbieRaw ||
     !kujiRaw ||
     !defaults
   ) {
@@ -356,11 +358,25 @@ export function buildBundle(src: SourceData): BuildResult {
     for (let m = 1; m <= 12; m++) if (!seenMonth.has(m)) errors.push(`kuji themes missing month ${m}`);
     kujiThemes.sort((a, b) => a.month - b.month);
   }
+  // 一到五级食材随机券（问题记录 331）：消耗品，不出售，可堆叠
+  const foodVouchers: Goods[] = newbieRaw.vouchers.map((v) => ({
+    ...souvenirLike(v.id, v.name, v.desc),
+    type: GOODS_TYPE.consumable,
+    maxNum: 9999,
+    use: { kind: 'randomFood', level: v.level },
+  }));
+  // 新手大礼包（goods 54）：原数据没有内容，按 newbie_pack.json 配上（问题记录 331）
+  const withPack = builtGoods.map((g) =>
+    g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
+  );
+  if (!builtGoods.some((g) => g.id === newbieRaw.pack.goodsId))
+    errors.push(`newbie_pack references unknown goods ${newbieRaw.pack.goodsId}`);
   const goods = [
-    ...applyStressTables(builtGoods, equipLore.stressTables, errors),
+    ...applyStressTables(withPack, equipLore.stressTables, errors),
     ...souvenirGoods,
     kujiTicket,
     ...kujiFigures,
+    ...foodVouchers,
   ];
   unique(
     'goods',

@@ -82,6 +82,27 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(config.requireFood(food.id!).level).toBe(7);
   });
 
+  it('N 级食材随机券：用 3 张得到 3 个这一等级的食材（问题记录 331）', async () => {
+    const ctx = await newRestaurant(t, { goods: { 93002: 3 } });
+    const r = await s().use(ctx, { goodsId: 93002, num: 3 });
+    const foods = r.events.filter((e) => e.kind === 'foods' && e.type === 'gain');
+    expect(foods.reduce((n, e) => n + (e.num ?? 0), 0)).toBe(3);
+    for (const e of foods) expect(config.requireFood(e.id!).level).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, 93002)).toBe(0);
+  });
+
+  it('新手大礼包打开后：银币 5 万、钻石 50、喇叭 3、一二三级食材随机券 50、20、10 张等（问题记录 331）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 0, diamond: 0 }, goods: { 54: 1 } });
+    await s().use(ctx, { goodsId: 54, num: 1 });
+    const row = await restRow(t, ctx.restaurantId);
+    expect([row.coin, row.diamond]).toEqual([50000, 50]);
+    expect(await goodsNum(t, ctx.restaurantId, 315)).toBe(3);
+    expect(await goodsNum(t, ctx.restaurantId, 93001)).toBe(50);
+    expect(await goodsNum(t, ctx.restaurantId, 93002)).toBe(20);
+    expect(await goodsNum(t, ctx.restaurantId, 93003)).toBe(10);
+    expect(await goodsNum(t, ctx.restaurantId, 54)).toBe(0);
+  });
+
   it('洗点卡：返还已加的点；没加过点时报错', async () => {
     const ctx = await newRestaurant(t, {
       patch: { attr_left: 1, attr_cook: 2, attr_fire: 1 },

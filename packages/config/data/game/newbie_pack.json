@@ -1,0 +1,25 @@
+{
+  "rule": "问题记录 331：一到五级食材随机券（使用后按掉落权重随机得一个这一等级的食材）；新手大礼包（goods 54）的内容，开店时送一个（restaurant_defaults.giftGoods），老玩家用新手码 XINSHOULIBAO 补领",
+  "vouchers": [
+    { "id": 93001, "level": 1, "name": "一级食材随机券", "desc": "使用后随机获得一个一级食材" },
+    { "id": 93002, "level": 2, "name": "二级食材随机券", "desc": "使用后随机获得一个二级食材" },
+    { "id": 93003, "level": 3, "name": "三级食材随机券", "desc": "使用后随机获得一个三级食材" },
+    { "id": 93004, "level": 4, "name": "四级食材随机券", "desc": "使用后随机获得一个四级食材" },
+    { "id": 93005, "level": 5, "name": "五级食材随机券", "desc": "使用后随机获得一个五级食材" }
+  ],
+  "pack": {
+    "goodsId": 54,
+    "gift": [
+      { "type": "coin", "min": 50000, "max": 50000, "rate": 1 },
+      { "type": "diamond", "min": 50, "max": 50, "rate": 1 },
+      { "type": "goods", "id": 315, "num": 3, "rate": 1 },
+      { "type": "goods", "id": 131, "num": 5, "rate": 1 },
+      { "type": "goods", "id": 241, "num": 5, "rate": 1 },
+      { "type": "goods", "id": 242, "num": 3, "rate": 1 },
+      { "type": "goods", "id": 13, "num": 1, "rate": 1 },
+      { "type": "goods", "id": 93001, "num": 50, "rate": 1 },
+      { "type": "goods", "id": 93002, "num": 20, "rate": 1 },
+      { "type": "goods", "id": 93003, "num": 10, "rate": 1 }
+    ]
+  }
+}

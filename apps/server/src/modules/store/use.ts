@@ -1,5 +1,5 @@
 import type { GoodsUse, Tuning } from '@dt/config';
-import { ErrorCode, gameDay } from '@dt/shared';
+import { ErrorCode, gameDay, pickWeighted } from '@dt/shared';
 import { featureAvailable } from '../../core/features';
 import { invalidState, limitReached } from '../../core/errors';
 import { restLog, setRest, type Op } from '../../core/op';
@@ -120,6 +120,13 @@ export async function useGoods(
       const list = op.config.foodsByLevel.get(use.level) ?? [];
       for (let i = 0; i < num && list.length > 0; i++)
         await addFoods(op, list[op.rng.int(list.length)]!.id, 1);
+      break;
+    }
+    case 'randomFood': {
+      // N 级食材随机券（问题记录 331）：和礼包里的“随机 N 级食材”一样按掉落权重抽，稀有的少
+      const pool = op.config.foodPools.get(use.level);
+      for (let i = 0; i < num && pool && pool.total > 0; i++)
+        await addFoods(op, pickWeighted(pool, op.rng).id, 1);
       break;
     }
     case 'lockSlots':

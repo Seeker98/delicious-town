@@ -125,3 +125,6 @@ export type HatTier = keyof typeof SPONSOR_HATS;
 
 /** 后台专用、游戏里拿不到的道具：开放接口和 Wiki 不显示（问题记录 142）。开发测试礼包、测试勋章、升星促销勋章礼包（测试） */
 export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([51, 83, 124]);
+
+/** 问题记录 331：新手大礼包；一到五级食材随机券 = foodVoucherBase + 等级（93001~93005） */
+export const NEWBIE = { pack: 54, foodVoucherBase: 93000 } as const;
