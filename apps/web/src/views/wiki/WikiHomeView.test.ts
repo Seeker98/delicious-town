@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../../api/endpoints';
+import { useToastStore } from '../../stores/toast';
 import WikiHomeView from './WikiHomeView.vue';
 
 vi.mock('../../api/endpoints', () => ({
@@ -71,5 +72,11 @@ describe('游戏资料首页（问题记录 142）', () => {
     ]);
     expect(hits[1]!.attributes('href')).toBe('/wiki/cookbooks/1');
     expect(hits[0]!.text()).toContain('食材');
+  });
+
+  it('读目录失败时弹提示（设计 §3.4，质量期 ①b 终审）', async () => {
+    vi.mocked(endpoints.openIndex).mockRejectedValue(new Error('net'));
+    await mountView();
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
   });
 });

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, shallowRef, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { OpenIndexDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { matchText } from '../../utils/match';
 import { useWikiData, WIKI_KINDS, wikiPath, type WikiKind } from './wiki';
 
@@ -21,13 +22,15 @@ const index = ref<OpenIndexDto | null>(null);
 const error = ref(false);
 const q = ref('');
 /** 全局搜索用的名字表：第一次输入时才读 */
-const names = ref<Array<{ kind: WikiKind; id: number; name: string }> | null>(null);
+const names = shallowRef<Array<{ kind: WikiKind; id: number; name: string }> | null>(null);
+const toast = useToastStore();
 
 onMounted(async () => {
   try {
     index.value = await data.index();
   } catch {
     error.value = true;
+    toast.push(t.value.wiki.loadFailed, 'danger');
   }
 });
 watch(q, async (v) => {
@@ -47,6 +50,7 @@ watch(q, async (v) => {
     ];
   } catch {
     error.value = true;
+    toast.push(t.value.wiki.loadFailed, 'danger');
   }
 });
 const hits = computed(() =>

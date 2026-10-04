@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { OpenFoodDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
@@ -21,6 +21,8 @@ const shown = ref(PAGE);
 const toast = useToastStore();
 /** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
 let seq = 0;
+// 离开页面后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
+onBeforeUnmount(() => seq++);
 watch(
   () => Number(route.params.id),
   async (id) => {

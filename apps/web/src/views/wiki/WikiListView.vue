@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type {
   OpenCookbookBrief,
@@ -53,6 +53,8 @@ const shown = ref(PAGE);
 
 /** 读取序号：慢网络下先点 A 再点 B，A 晚到的结果（包括失败）不影响 B（backlog #115） */
 let seq = 0;
+// 离开页面（包括切换语言重新挂载）后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
+onBeforeUnmount(() => seq++);
 async function load(k: WikiKind) {
   const mine = ++seq;
   loaded.value = false;
@@ -89,7 +91,9 @@ watch(
     filter.value = null;
     rareOnly.value = false;
     street.value = null;
+    // 类目不合法时也作废还在路上的请求
     if (k) void load(k);
+    else seq++;
   },
   { immediate: true },
 );
@@ -220,7 +224,7 @@ const onStreet = (e: Event) => {
         v-if="kind === 'cookbooks'"
         class="form-select form-select-sm mb-2"
         :value="street ?? ''"
-        :aria-label="t.wiki.allStreets"
+        :aria-label="t.wiki.kinds.streets"
         data-testid="wiki-street"
         @change="onStreet"
       >
@@ -228,36 +232,36 @@ const onStreet = (e: Event) => {
         <option v-for="s in streets" :key="s.id" :value="s.id">{{ s.name }}</option>
       </select>
       <div v-if="pills.length > 0" class="dt-pills mb-2">
-        <a
-          href="#"
+        <button
+          type="button"
           :class="{ active: filter === null }"
-          role="button"
           :aria-pressed="filter === null"
           data-testid="wiki-filter-all"
-          @click.prevent="filter = null"
-          >{{ t.wiki.all }}</a
+          @click="filter = null"
         >
-        <a
+          {{ t.wiki.all }}
+        </button>
+        <button
           v-for="p in pills"
           :key="p.value"
-          href="#"
+          type="button"
           :class="{ active: filter === p.value }"
-          role="button"
           :aria-pressed="filter === p.value"
           :data-testid="`wiki-filter-${p.value}`"
-          @click.prevent="filter = p.value"
-          >{{ p.label }}</a
+          @click="filter = p.value"
         >
-        <a
+          {{ p.label }}
+        </button>
+        <button
           v-if="kind === 'foods'"
-          href="#"
+          type="button"
           :class="{ active: rareOnly }"
-          role="button"
           :aria-pressed="rareOnly"
           data-testid="wiki-rare"
-          @click.prevent="rareOnly = !rareOnly"
-          >{{ t.wiki.rareOnly }}</a
+          @click="rareOnly = !rareOnly"
         >
+          {{ t.wiki.rareOnly }}
+        </button>
       </div>
       <div v-if="error" class="dt-empty" data-testid="wiki-error">{{ t.wiki.loadFailed }}</div>
       <template v-else-if="loaded">

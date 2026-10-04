@@ -235,6 +235,8 @@ describe('游戏资料详情（问题记录 142）', () => {
     vi.mocked(endpoints.openGoodsDetail).mockRejectedValue(new ApiError('NOT_FOUND'));
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/51');
     expect(w.get('[data-testid="wiki-error"]').text()).toBe('没有这一条');
+    // 不存在不算读失败，不弹提示
+    expect(useToastStore().items).toEqual([]);
   });
 
   it('食材：属性、菜园种子、用到它的菜谱（带街道和最低品级、链接）、特色菜', async () => {
@@ -366,6 +368,13 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     vi.mocked(endpoints.openCookbook).mockRejectedValue(new Error('net'));
     await w.vm.$router.push('/wiki/cookbooks/3');
     await flushPromises();
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
+  });
+
+  it('街道详情读失败时弹提示（质量期 ①b 终审）', async () => {
+    vi.mocked(endpoints.openStreets).mockRejectedValue(new Error('net'));
+    const w = await mountAt(WikiStreetView, '/wiki/streets/:id', '/wiki/streets/0');
+    expect(w.find('[data-testid="wiki-error"]').exists()).toBe(true);
     expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
   });
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { OpenGiftItem, OpenGoodsDto, OpenSuitDto } from '@dt/shared';
 import WikiExchangeRule from '../../components/wiki/WikiExchangeRule.vue';
@@ -22,6 +22,8 @@ const nextGemName = ref<string | null>(null);
 
 /** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
 let seq = 0;
+// 离开页面后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
+onBeforeUnmount(() => seq++);
 watch(
   () => Number(route.params.id),
   async (id) => {
@@ -45,7 +47,8 @@ watch(
       const v = g.value;
       if (v.equip && v.equip.suitId > 0) {
         const s = (await data.equips()).suits.find((x) => x.id === v.equip!.suitId) ?? null;
-        if (mine === seq) suit.value = s;
+        if (mine !== seq) return;
+        suit.value = s;
       }
       if (v.gem && v.gem.nextId !== null) {
         const n = (await data.goods()).items.find((x) => x.id === v.gem!.nextId)?.name ?? null;

@@ -167,16 +167,26 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(rows(w)).toEqual(['101']);
   });
 
-  it('无障碍：搜索框、街道下拉有名字，筛选胶囊标明是否按下（backlog #115）', async () => {
+  it('无障碍：搜索框、街道下拉有名字，筛选胶囊是按钮并标明是否按下（backlog #115）', async () => {
     vi.mocked(endpoints.openCookbooks).mockResolvedValue({ ...meta, items: [] } as never);
     const w = await mountAt('/wiki/cookbooks');
     expect(w.get('[data-testid="wiki-q"]').attributes('aria-label')).toBeTruthy();
     expect(w.get('[data-testid="wiki-street"]').attributes('aria-label')).toBeTruthy();
-    expect(w.get('[data-testid="wiki-filter-all"]').attributes()).toMatchObject({
-      role: 'button',
-      'aria-pressed': 'true',
-    });
+    // 胶囊用真正的按钮：读屏按空格能按（质量期 ①b 终审）
+    expect(w.get('[data-testid="wiki-filter-all"]').element.tagName).toBe('BUTTON');
+    expect(w.get('[data-testid="wiki-filter-all"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="wiki-street"]').attributes('aria-label')).toBe('街道');
     expect(w.get('[data-testid="wiki-filter-0"]').attributes('aria-pressed')).toBe('false');
+  });
+
+  it('离开页面后，旧请求失败不再弹提示（质量期 ①b 终审）', async () => {
+    let fail: (e: unknown) => void = () => undefined;
+    vi.mocked(endpoints.openGoods).mockReturnValue(new Promise((_, rej) => (fail = rej)));
+    const w = await mountAt('/wiki/goods');
+    w.unmount();
+    fail(new Error('net'));
+    await flushPromises();
+    expect(useToastStore().items).toEqual([]);
   });
 
   it('英法西的条数分单复数（backlog #115）', () => {
