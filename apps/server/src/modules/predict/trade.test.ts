@@ -268,7 +268,7 @@ describe('列表和详情（238-1 设计 §7.1）', () => {
   });
 });
 
-describe('backlog 238-1：交易所被冻结的店不能用事件合约', () => {
+describe('backlog 238-1：交易所被冻结的店不能用事件预测', () => {
   it('冻结中买卖报 predict_frozen，列表写明不能参与；解冻后照常', async () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId);
@@ -288,7 +288,7 @@ describe('backlog 238-1：交易所被冻结的店不能用事件合约', () => 
   });
 });
 
-describe('backlog 238-1：关掉事件合约开关时只禁买卖', () => {
+describe('backlog 238-1：关掉事件预测开关时只禁买卖', () => {
   it('列表和详情照常能看（带 enabled = false），买卖报 FEATURE_DISABLED', async () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId);
@@ -312,7 +312,7 @@ describe('backlog 238-1：关掉事件合约开关时只禁买卖', () => {
 });
 
 describe('任务计数（问题记录 318）', () => {
-  it('买入、卖出各计一次 predict.trade；活跃"事件合约交易"计入', async () => {
+  it('买入、卖出各计一次 predict.trade；活跃"事件预测交易"计入', async () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId);
     const r = await trader(t, { shardId, coin: 1_000_000 });
@@ -320,7 +320,7 @@ describe('任务计数（问题记录 318）', () => {
     await svc().trade(r, id, { side: 'yes', dir: 'sell', qty: 2 });
     expect(await eventCount(t, r.restaurantId, 'predict.trade')).toBe(2);
     expect(
-      (await t.game.task.activation(r)).items.find((i) => i.name === '事件合约交易')!.count,
+      (await t.game.task.activation(r)).items.find((i) => i.name === '事件预测交易')!.count,
     ).toBeGreaterThan(0);
   });
 });

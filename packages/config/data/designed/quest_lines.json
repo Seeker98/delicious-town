@@ -880,14 +880,14 @@
   {
    "id": 11,
    "key": "predict",
-   "name": "事件合约",
+   "name": "事件预测",
    "chapter": 6,
    "steps": [
     {
      "id": 3221,
      "order": 1,
      "needStar": 0,
-     "name": "事件合约交易 1 次",
+     "name": "事件预测交易 1 次",
      "cond": {
       "kind": "counter",
       "key": "predict.trade",
@@ -903,7 +903,7 @@
      "id": 3222,
      "order": 2,
      "needStar": 0,
-     "name": "事件合约交易 10 次",
+     "name": "事件预测交易 10 次",
      "cond": {
       "kind": "counter",
       "key": "predict.trade",
@@ -919,7 +919,7 @@
      "id": 3223,
      "order": 3,
      "needStar": 0,
-     "name": "押中一次事件合约结算",
+     "name": "押中一次事件预测结算",
      "cond": {
       "kind": "counter",
       "key": "predict.win",
