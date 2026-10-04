@@ -167,7 +167,7 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     expect(l.coin.find((x) => x.goodsId === 13)).not.toHaveProperty('needStar');
     await expect(shop().buy(ctx, { goodsId: 93201, num: 1 })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'star', need: 4 },
+      params: { reason: 'star', need: 4, have: 3 },
     });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
   });

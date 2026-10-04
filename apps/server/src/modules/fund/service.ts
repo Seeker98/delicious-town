@@ -2,13 +2,15 @@ import { FUND_MEDALS, goodsEffectHours, type Tuning } from '@dt/config';
 import type { FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
-import { opNews, runOp, type Op } from '../../core/op';
+import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { iconLive, MAX_SHOWN_ICONS } from '../friend/looks';
 import { grantGoodsOp, removeHonor } from '../store/goods';
 
 type F = Tuning['fund'];
 const DAY = 86_400_000;
+/** 本金 × 比例向下取整，加一点点免得 700,000 × 0.7 算成 489,999.99…（backlog 基金） */
+const share = (coin: number, rate: number) => Math.floor(coin * rate + 1e-6);
 
 /**
  * 领取时一起发的限时称号（用户追加）：和勋章同时到期；先去掉别的基金称号（和勋章一样不叠加），
@@ -74,7 +76,7 @@ export function createFundService(d: GameDeps) {
       tiers: f.tiers.map((x) => ({
         key: x.key,
         coin: x.coin,
-        back: Math.floor(x.coin * f.returnRate),
+        back: share(x.coin, f.returnRate),
         medal: x.medal,
         // 页面写勋章加成用；目录里的道具不带加成
         expRate: d.config.goods.get(x.medal)?.effects.expRate ?? 0,
@@ -88,8 +90,10 @@ export function createFundService(d: GameDeps) {
             startedAt: a.started_at.toISOString(),
             maturesAt: a.matures_at.toISOString(),
             mature: a.matures_at <= now,
-            back: Math.floor(a.coin * f.returnRate),
-            early: Math.floor(a.coin * f.earlyRate),
+            back: share(a.coin, f.returnRate),
+            early: share(a.coin, f.earlyRate),
+            // 勋章加成按存入时的勋章取，运营删档、换勋章后也对（backlog 基金）
+            expRate: d.config.goods.get(a.medal)?.effects.expRate ?? 0,
           }
         : null,
       coin,
@@ -131,6 +135,7 @@ export function createFundService(d: GameDeps) {
         // A 档用全服广播样式（fund.big 在 BROADCAST_STYLE_NEWS 里），其余普通新闻；文案按档位 key 选句子
         if (t.news)
           opNews(o, t.news === 'broadcast' ? 'fund.big' : 'fund.deposit', { tier: t.key, coin: t.coin });
+        restLog(o, 'fund.deposit', { tier: t.key, coin: t.coin });
         return opView(o);
       }),
     claim: (ctx: RestCtx) =>
@@ -138,7 +143,7 @@ export function createFundService(d: GameDeps) {
         const a = await activeOf(o.tx, o.rest.id);
         if (!a) throw invalidState('fund_none');
         if (a.matures_at > o.now) throw invalidState('fund_not_mature');
-        const back = Math.floor(a.coin * o.tuning.fund.returnRate);
+        const back = share(a.coin, o.tuning.fund.returnRate);
         gainCoin(o, back);
         // 勋章不叠加：去掉身上其他基金勋章（不只当前档位里的，运营可能删过档）再发这一笔的
         for (const id of FUND_MEDALS) if (id !== a.medal) await removeHonor(o, id);
@@ -149,6 +154,7 @@ export function createFundService(d: GameDeps) {
           .set({ status: 'claimed', settled_at: o.now, returned: back })
           .where('id', '=', a.id)
           .execute();
+        restLog(o, 'fund.claim', { tier: a.tier, coin: back, medal: a.medal });
         return opView(o);
       }),
     withdraw: (ctx: RestCtx) =>
@@ -156,13 +162,14 @@ export function createFundService(d: GameDeps) {
         const a = await activeOf(o.tx, o.rest.id);
         if (!a) throw invalidState('fund_none');
         if (a.matures_at <= o.now) throw invalidState('fund_mature');
-        const back = Math.floor(a.coin * o.tuning.fund.earlyRate);
+        const back = share(a.coin, o.tuning.fund.earlyRate);
         gainCoin(o, back);
         await o.tx
           .updateTable('fund_deposit')
           .set({ status: 'withdrawn', settled_at: o.now, returned: back })
           .where('id', '=', a.id)
           .execute();
+        restLog(o, 'fund.withdraw', { tier: a.tier, coin: back });
         return opView(o);
       }),
   };

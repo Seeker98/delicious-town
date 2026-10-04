@@ -35,7 +35,8 @@ describe('翻译核心（问题记录 272）', () => {
     expect(formatNum(3000000).replace(/\s/g, ' ')).toBe('3 000 000');
     await s.set('zh-CN');
     expect(formatNum(3000000)).toBe('3,000,000');
-  });
+    // 第一次加载英、法语言包时 Vite 现场编译，全量并行跑可能超过默认的 15 秒（backlog 测试不稳定）
+  }, 60_000);
 
   it('初始化：浏览器里存了合法的语言就用它；存的值不合法按浏览器语言判断', async () => {
     localStorage.setItem('dt_locale', 'es');

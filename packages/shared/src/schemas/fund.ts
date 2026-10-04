@@ -13,6 +13,8 @@ export interface FundDepositDto {
   /** 到期领回、提前取出各能退多少（按现在的比例） */
   back: number;
   early: number;
+  /** 这一笔勋章的经验加成（按存入时的勋章）；旧服务端没有 */
+  expRate?: number;
 }
 
 export interface FundViewDto {

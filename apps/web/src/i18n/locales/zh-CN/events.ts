@@ -1,6 +1,7 @@
 import type { RestLogDto } from '@dt/shared';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
+import fund from './fund';
 import { n, table, type P } from '../../helpers';
 
 /** 得失提示、个人日志、好友动态的文案（问题记录 272） */
@@ -206,6 +207,12 @@ export default {
         .join('、');
       return `${p.line === 'deluxe' ? '豪华' : ''}一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张：${tiers}${p.last ? '，并拿下最后赏' : ''}`;
     },
+    // 小镇发展基金（backlog 基金）：档位名跟着发展基金页的叫法
+    'fund.deposit': (p) =>
+      `向小镇发展基金存入 ${formatNum(n(p, 'coin'))} 银币（${fund.tierName(String(p.tier ?? ''))}）`,
+    'fund.claim': (p, names) =>
+      `领取小镇发展基金：拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'medal'))}`,
+    'fund.withdraw': (p) => `提前取出小镇发展基金，拿回 ${formatNum(n(p, 'coin'))} 银币`,
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
     'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,

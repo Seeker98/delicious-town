@@ -65,6 +65,13 @@ html {
   .form-select-sm {
     font-size: 16px;
   }
+  /* 小号输入框字号变大后比旁边的 btn-sm 高 3px（backlog #118）：行高压到 btn-sm 的 21px，总高还是 31px */
+  /* 只管单行的：多行的 textarea（发帖、回帖）行距不压 */
+  input.form-control-sm,
+  select.form-select-sm {
+    line-height: 1.3125;
+    min-height: calc(1.3125em + 0.5rem + 2px);
+  }
 }
 body {
   background: var(--dt-bg);
@@ -411,6 +418,20 @@ body {
 .nav-tabs .nav-link.active {
   color: var(--dt-primary-ink);
   font-weight: 600;
+}
+/* 手机宽度标签左右留白收窄：广场 6 个标签（简中）一屏放得下，不用先滑才看到第一个（backlog 基金） */
+@media (max-width: 420px) {
+  .nav-tabs .nav-link {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+}
+/* 360px 宽的安卓机再收一档：简中 6 个标签刚好放下（质量期 ①a 终审） */
+@media (max-width: 380px) {
+  .nav-tabs .nav-link {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 .form-control:focus,
 .form-select:focus {

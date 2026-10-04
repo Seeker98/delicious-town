@@ -67,5 +67,6 @@ export interface AttrResultDto {
 export interface DeviceOptionsDto {
   slots: DeviceSlotDto[];
   /** 仓库里可以摆放的设施道具 */
-  store: Array<{ goodsId: number; num: number; deviceType: number }>;
+  /** needStar：需要的星级，只有有门槛的道具才有（backlog 146） */
+  store: Array<{ goodsId: number; num: number; deviceType: number; needStar?: number }>;
 }

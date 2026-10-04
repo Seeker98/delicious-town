@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { HIPHOP_PLACE_FEATURE, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { gameParts, HIPHOP_PLACE_FEATURE, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
 import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -47,8 +47,18 @@ const mayorOpen = ref(false);
 const restaurant = useRestaurantStore();
 /** 确定嘻哈男孩今天还没出来时才拦着（服务端没带这个状态的旧版本照旧可以问，问错了服务端会提示） */
 const mayorWaiting = computed(
-  () => props.data.mayor.hiphopOut === false && props.data.mayor.hour !== undefined,
+  () =>
+    props.data.mayor.hiphopOut === false &&
+    props.data.mayor.hour !== undefined &&
+    // 页面开着过了整点就不再拦着（按服务器时间），稍后重新读取一次拿到他今天的状态（backlog #118）
+    gameParts(new Date(clock.now.value)).hour < props.data.mayor.hour,
 );
+// 服务端每几秒才生成当天的嘻哈男孩记录：过 15 秒再读一次，免得读到的还是“没出来”（质量期 ①a 终审）
+let reloadTimer: ReturnType<typeof setTimeout> | undefined;
+watch(mayorWaiting, (now, before) => {
+  if (before && !now) reloadTimer = setTimeout(() => emit('reload'), 15_000);
+});
+onBeforeUnmount(() => clearTimeout(reloadTimer));
 const PLACES = computed(() =>
   HIPHOP_PLACES.filter((p) => {
     const f = HIPHOP_PLACE_FEATURE[p];

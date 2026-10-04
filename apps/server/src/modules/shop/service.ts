@@ -31,7 +31,8 @@ import { gameSeed } from '../../core/seed';
 /** 勋章、牌匾只能一个一个买；永久的已拥有就不能再买；其他道具受持有上限和仓库容量限制 */
 async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
   // 后期海报奖杯按星级可用（问题记录 146）
-  if ((g.needStar ?? 0) > o.rest.star_level) throw requirement('star', { need: g.needStar });
+  if ((g.needStar ?? 0) > o.rest.star_level)
+    throw requirement('star', { need: g.needStar, have: o.rest.star_level });
   const plaque = isPlaque(g);
   const honor = g.type === GOODS_TYPE.honor;
   if ((plaque || honor || !g.stackable) && num > 1) throw invalidState('single', { goodsId: g.id });

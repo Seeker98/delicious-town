@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fixes1005:
+      'Petites corrections : la ligne du Maire se débloque seule à l’heure du Hip-hop Boy ; les dépôts et retraits du Fonds apparaissent dans votre journal ; les affiches et trophées pas encore utilisables sont grisés dans le choix des installations',
     posters:
       'La boutique ajoute 4 nouveaux niveaux d’affiches et de trophées du Dieu de la cuisine, disponibles dès 4, 6, 8 et 10★, pour des bonus de pièces et d’EXP qui suivent en fin de partie',
     scarcity:

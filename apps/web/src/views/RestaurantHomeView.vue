@@ -532,13 +532,19 @@ onBeforeUnmount(() => {
           <a href="#" @click.prevent="pickingSlot = null">{{ t.common.cancel }}</a>
         </div>
         <div v-if="choices.length === 0" class="text-muted">{{ t.home.noChoices }}</div>
+        <!-- 星级不够的高档海报奖杯变灰，写几星可用（backlog 146） -->
         <button
           v-for="c in choices"
           :key="c.goodsId"
           class="btn btn-sm btn-outline-primary me-1 mt-1"
+          :disabled="(c.needStar ?? 0) > (rest?.starLevel ?? 0)"
+          :data-testid="`choice-${c.goodsId}`"
           @click="place(c.goodsId)"
         >
-          {{ catalog.goodsName(c.goodsId) }}×{{ c.num }}
+          {{ catalog.goodsName(c.goodsId) }}×{{ c.num
+          }}<span v-if="(c.needStar ?? 0) > (rest?.starLevel ?? 0)" class="ms-1 small">{{
+            t.store.shop.why.star(c.needStar!)
+          }}</span>
         </button>
       </div>
     </div>

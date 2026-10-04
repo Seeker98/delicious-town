@@ -2,6 +2,7 @@
 import type { RestLogDto } from '@dt/shared';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
+import fund from './fund';
 import { n, table, type P } from '../../helpers';
 
 /** 得失提示、個人日誌、好友動態的文案（問題記錄 272） */
@@ -207,6 +208,12 @@ export default {
         .join('、');
       return `${p.line === 'deluxe' ? '豪華' : ''}一番賞第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 張：${tiers}${p.last ? '，並拿下最後賞' : ''}`;
     },
+    // 小鎮發展基金（backlog 基金）：檔位名跟著發展基金頁的叫法
+    'fund.deposit': (p) =>
+      `向小鎮發展基金存入 ${formatNum(n(p, 'coin'))} 銀幣（${fund.tierName(String(p.tier ?? ''))}）`,
+    'fund.claim': (p, names) =>
+      `領取小鎮發展基金：拿回 ${formatNum(n(p, 'coin'))} 銀幣和${names.goodsName(n(p, 'medal'))}`,
+    'fund.withdraw': (p) => `提前取出小鎮發展基金，拿回 ${formatNum(n(p, 'coin'))} 銀幣`,
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
     'activity.exchange': (p) => `在活動「${String(p.title ?? '')}」兌換了 ${String(p.times ?? 1)} 次`,

@@ -40,6 +40,10 @@ const catalog = useCatalogStore();
 const route = useRoute();
 const router = useRouter();
 const tab = ref<Tab>(initialTab(route.query.tab));
+// 餐厅数据后到、区服关了某个标签的功能时（发展基金），当前标签退回新闻
+watch(TABS, (list) => {
+  if (!list.includes(tab.value)) tab.value = 'news';
+});
 const data = ref<TownDto | null>(null);
 
 /** 读取序号：几次读取同时进行时只采用最新一次的结果 */

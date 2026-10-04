@@ -395,6 +395,7 @@ export function buildBundle(src: SourceData): BuildResult {
     ...souvenirLike(x.id, x.name, x.desc),
     type: GOODS_TYPE.device,
     deviceType: x.deviceType,
+    level: x.level,
     coin: x.coin,
     onSale: true,
     value: { time: x.time, [x.effect]: x.value },

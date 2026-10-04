@@ -39,3 +39,15 @@ describe('main.css', () => {
     expect(html).not.toMatch(/user-scalable=no|maximum-scale=1/);
   });
 });
+
+describe('触屏小号输入框和 btn-sm 等高（质量期 ①a）', () => {
+  it('压行高只给单行的输入框和下拉，不碰多行的 textarea（发帖、回帖行距不变）', () => {
+    const rule = css.match(/([^{}]+)\{\s*line-height: 1\.3125;/);
+    expect(rule).not.toBeNull();
+    const sels = rule![1]!
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .split(',')
+      .map((s) => s.trim());
+    expect(sels).toEqual(['input.form-control-sm', 'select.form-select-sm']);
+  });
+});

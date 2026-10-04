@@ -2,6 +2,7 @@ import type { RestLogDto } from '@dt/shared';
 import type { Messages } from '../..';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
+import fund from './fund';
 import { n, type P } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Signature dish ${id}`;
@@ -217,6 +218,12 @@ const events: Messages['events'] = {
         .join(', ');
       return `Drew ${n(p, 'num')} from ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji pool #${n(p, 'seq')}: ${tiers}${p.last ? ', plus the Last Prize' : ''}`;
     },
+    'fund.deposit': (p) =>
+      `Deposited ${formatNum(n(p, 'coin'))} coins into the Town Development Fund (${fund.tierName(String(p.tier ?? ''))})`,
+    'fund.claim': (p, names) =>
+      `Claimed a matured Town Development Fund deposit: got back ${formatNum(n(p, 'coin'))} coins and ${names.goodsName(n(p, 'medal'))}`,
+    'fund.withdraw': (p) =>
+      `Withdrew a Town Development Fund deposit early: got back ${formatNum(n(p, 'coin'))} coins`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>
