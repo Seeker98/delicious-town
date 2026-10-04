@@ -136,3 +136,47 @@ describe('系统成交不算参考价（156-3 设计 §2.4）', () => {
     expect((await refPrices(t.db, t.deps.config, tune(), other, [f.id], d1)).get(f.id)).toBe(base);
   });
 });
+
+describe('中间有一天没生成参考价（backlog 156-1）', () => {
+  it('d1 有成交、d2 没人打开：d3 先补算 d2（= d1 的均价），不跳过 d1 的成交；单个算和批量算一致', async () => {
+    for (const batch of [false, true]) {
+      const shardId = await createShard(t.db);
+      const f = rare();
+      const d0 = gameDay(t.clock.now);
+      const [d1, d3] = [addDays(d0, 1), addDays(d0, 3)];
+      const get = (day: string) =>
+        batch
+          ? refPrices(t.db, t.deps.config, tune(), shardId, [f.id], day).then((m) => m.get(f.id)!)
+          : refPrice(t.db, t.deps.config, tune(), shardId, f.id, day);
+      expect(await get(d1)).toBe(f.coin);
+      const inD1 = new Date(t.clock.now.getTime() + 86_400_000);
+      await trade(shardId, f.id, 100, 1, inD1);
+      await trade(shardId, f.id, 200, 1, inD1);
+      await trade(shardId, f.id, 300, 2, inD1);
+      // d2 没有人打开交易所，没保存参考价；d2 本身没有成交
+      expect(await get(d3)).toBe(225);
+      const saved = await t.db
+        .selectFrom('exchange_ref')
+        .select(['day', 'price'])
+        .where('shard_id', '=', shardId)
+        .where('foods_id', '=', f.id)
+        .orderBy('day')
+        .execute();
+      expect(saved.map((r) => r.price)).toEqual([f.coin, 225, 225]);
+    }
+  });
+
+  it('补算最多往前 7 天；更早的空档沿用最近一天保存的参考价', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const d0 = gameDay(t.clock.now);
+    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d0)).toBe(f.coin);
+    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, addDays(d0, 30))).toBe(f.coin);
+    const n = await t.db
+      .selectFrom('exchange_ref')
+      .select((eb) => eb.fn.countAll<string>().as('n'))
+      .where('shard_id', '=', shardId)
+      .executeTakeFirstOrThrow();
+    expect(Number(n.n)).toBe(1 + 8);
+  });
+});
