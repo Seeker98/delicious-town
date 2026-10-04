@@ -33,6 +33,7 @@
   "features": {
     "rest.": "restaurant",
     "rest.thumbs": "friend",
+    "rest.move": "growth",
     "cookbooks.": "cookbook",
     "cookbook.": "cookbook",
     "oil.": "growth",

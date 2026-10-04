@@ -33,8 +33,12 @@ export interface QuestsDto {
     claimable: boolean;
     total: number;
     claimedCount: number;
+    /** 本章已完成（含已领）的任务数：章末按钮据此写"还差几个"或"先领完上面的任务"（backlog 318） */
+    doneCount: number;
   } | null;
   main: QuestDto[];
+  /** 章末领过的章里后来补出来的任务（领章末时功能关着）：单独列出、照常能领，不算本章进度（backlog 318） */
+  leftover: QuestDto[];
   allMainDone: boolean;
   /** 已开启的支线，各显示当前一档；quest 为 null 表示这条支线做完了 */
   lines: Array<{

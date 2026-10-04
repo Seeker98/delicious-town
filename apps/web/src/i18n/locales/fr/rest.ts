@@ -82,6 +82,8 @@ const rest: Messages['rest'] = {
     chapterAward: (text) => `Récompense du chapitre : ${text}`,
     claimChapter: 'Récupérer',
     chapterLeft: (n) => `Encore ${n} ${n === 1 ? 'quête' : 'quêtes'}`,
+    claimFirst: 'Récupérez d’abord les quêtes ci-dessus',
+    leftover: 'Rattrapage : quêtes de chapitres précédents ouvertes depuis',
     lockedLevel: (n) => `🔒 Débloqué au niveau ${n}`,
     lockedStar: (n) => `🔒 Débloqué à ${n} ${n === 1 ? 'étoile' : 'étoiles'}`,
     claimedTask: '✓ Récupéré',

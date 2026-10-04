@@ -32,8 +32,10 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
     claimable: false,
     total: main.length,
     claimedCount: main.filter((x) => x.claimed).length,
+    doneCount: main.filter((x) => x.done || x.claimed).length,
   },
   main,
+  leftover: [],
   allMainDone: false,
   lines: [],
   weekly: null,
@@ -96,7 +98,6 @@ const dto: RestaurantDto = {
   headlines: { news: [], broadcast: null },
   boosts: [],
   disabledFeatures: [],
-  mainTaskStep: 1,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
     { slot: 4, name: '捕鼠夹', deviceType: 4, needStar: 2, unlocked: false, goodsId: null, expiresAt: null },
@@ -595,6 +596,28 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
     expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
+    w = await mountView();
+    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+  });
+
+  it('主线行：补领的任务能领时显示（本章可领的优先）；没完成的补领任务不占主线行（backlog 318 终审）', async () => {
+    const left = quest({ id: 2122, name: '领一次限时活动奖励', progress: 1, done: true });
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([quest({ id: 2041, name: '本章任务', progress: 1, done: true })], { leftover: [left] }),
+    );
+    let w = await mountView();
+    expect(w.get('[data-testid="main-task"]').text()).toContain('本章任务');
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([quest({ id: 2041, name: '本章任务' })], { leftover: [left] }),
+    );
+    w = await mountView();
+    expect(w.get('[data-testid="main-task"]').text()).toContain('领一次限时活动奖励');
+    await w.get('[data-testid="main-task"] button').trigger('click');
+    await flushPromises();
+    expect(endpoints.claimTask).toHaveBeenCalledWith(2122);
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([], { chapter: null, allMainDone: true, leftover: [{ ...left, progress: 0, done: false }] }),
+    );
     w = await mountView();
     expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
   });

@@ -209,6 +209,15 @@ describe('任务计数（问题记录 318）', () => {
 
   it('两家互为挂单方同时成交：计数不死锁，各计一次', async () => {
     const shardId = await createShard(t.db);
+    // 两家来回成交 10 笔会被判"反复对倒"、所得冻结，冻结的成交不计数（backlog 318）；这里只验死锁，调高门槛
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { exchange: { suspicious: { repeatCount: 1000 } } } }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
     const [f1, f2] = [...t.deps.config.foods.values()].filter((f) => f.odds < 100 && f.coin >= 1000);
     const x = await trader(t, { shardId, foods: { [f1!.id]: 20 } });
     const y = await trader(t, { shardId, foods: { [f2!.id]: 20 } });
@@ -222,5 +231,59 @@ describe('任务计数（问题记录 318）', () => {
     }
     expect(await eventCount(t, x.restaurantId, 'exchange.fill')).toBe(10);
     expect(await eventCount(t, y.restaurantId, 'exchange.fill')).toBe(10);
+  });
+});
+
+describe('任务计数的终审遗留（backlog 318）', () => {
+  async function trace(accountId: number, ip: string) {
+    await t.db.insertInto('login_trace').values({ account_id: accountId, ip, device_id: null }).execute();
+  }
+
+  it('判为可疑、所得冻结的成交不计 exchange.fill，买卖双方都不计；同一单里正常的那笔照常计', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const s = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    await trace(s.accountId, '10.9.9.1');
+    await trace(b.accountId, '10.9.9.1');
+    const res = await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 });
+    expect(res.data.fills).toEqual([{ price: f.coin, qty: 1, held: true }]);
+    expect(await eventCount(t, s.restaurantId, 'exchange.fill')).toBe(0);
+    expect(await eventCount(t, b.restaurantId, 'exchange.fill')).toBe(0);
+    expect((await t.game.task.activation(b)).items.find((i) => i.name === '交易所成交')!.count).toBe(0);
+
+    const other = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    await svc().place(other, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    const mixed = await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 2 });
+    expect(mixed.data.fills.map((x) => x.held).sort()).toEqual([false, true]);
+    expect(await eventCount(t, b.restaurantId, 'exchange.fill')).toBe(1);
+    expect(await eventCount(t, other.restaurantId, 'exchange.fill')).toBe(1);
+    expect(await eventCount(t, s.restaurantId, 'exchange.fill')).toBe(0);
+  });
+
+  it('挂单方的动作事件带上挂单方自己的星级和等级', async () => {
+    const shardId = await createShard(t.db);
+    const f = rare();
+    const s = await trader(t, { shardId, foods: { [f.id]: 5 } });
+    await t.db
+      .updateTable('restaurant')
+      .set({ star_level: 4, level: 66 })
+      .where('id', '=', s.restaurantId)
+      .execute();
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: f.coin, qty: 1 });
+    const b = await trader(t, { shardId, coin: 1_000_000 });
+    const seen: Array<{ restId: number; star: number; level: number }> = [];
+    t.deps.bus.on('action', async (_tx, e) => {
+      const p = e.payload as { key: string; star: number; level: number };
+      if (p.key === 'exchange.fill') seen.push({ restId: e.restId, star: p.star, level: p.level });
+    });
+    await svc().place(b, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 });
+    expect(seen.find((x) => x.restId === s.restaurantId)).toEqual({
+      restId: s.restaurantId,
+      star: 4,
+      level: 66,
+    });
   });
 });

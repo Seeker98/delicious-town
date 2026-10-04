@@ -60,8 +60,12 @@ const pct = (count: number, limit: number) => Math.min(100, Math.round((count / 
 /** 本章任务：可领的在前，没完成的其次，已领的最后（问题记录 318） */
 const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
 const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
+const leftoverList = computed(() => [...(tasks.value?.leftover ?? [])].sort((a, b) => rank(a) - rank(b)));
 const weeklyList = computed(() => [...(tasks.value?.weekly?.quests ?? [])].sort((a, b) => rank(a) - rank(b)));
 const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
+/** 章末、每周全完成按钮：还有没完成的写还差几个；都完成了只差领写先领完上面的任务（backlog 318） */
+const leftText = (unfinished: number) =>
+  unfinished > 0 ? t.value.rest.tasks.chapterLeft(unfinished) : t.value.rest.tasks.claimFirst;
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
@@ -108,7 +112,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           <span class="text-muted flex-fill">{{
             t.rest.tasks.chapterAward(awardText(tasks.chapter.award))
           }}</span>
-          <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈） -->
+          <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈）；只差领时写先领完（backlog 318） -->
           <button
             :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
             data-testid="claim-chapter"
@@ -118,11 +122,24 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
             {{
               tasks.chapter.claimable
                 ? t.rest.tasks.claimChapter
-                : t.rest.tasks.chapterLeft(tasks.chapter.total - tasks.chapter.claimedCount)
+                : leftText(tasks.chapter.total - tasks.chapter.doneCount)
             }}
           </button>
         </div>
       </template>
+      <!-- 章末领过的章里后来补出来的任务（功能后来才打开）：单独一块，不混进本章（backlog 318） -->
+      <div v-if="leftoverList.length > 0" class="mt-2" data-testid="main-leftover">
+        <div class="small text-muted mb-1">{{ t.rest.tasks.leftover }}</div>
+        <QuestCard
+          v-for="x in leftoverList"
+          :key="x.id"
+          :quest="x"
+          :name="questName(x)"
+          :award="awardText(x.award)"
+          :busy="busy"
+          @claim="run(() => endpoints.claimTask(x.id), t.rest.tasks.claimFailed)"
+        />
+      </div>
     </section>
     <!-- 支线：每条一次显示一档 -->
     <section class="dt-card mb-3" data-testid="card-lines">
@@ -165,7 +182,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           t.rest.tasks.weeklyFull(awardText(tasks.weekly.full.award))
         }}</span>
         <button
-          :class="['btn btn-sm', tasks.weekly.full.claimable ? 'btn-success' : 'btn-outline-secondary']"
+          :class="[
+            'btn btn-sm',
+            tasks.weekly.full.claimed
+              ? 'btn-light text-muted'
+              : tasks.weekly.full.claimable
+                ? 'btn-success'
+                : 'btn-outline-secondary',
+          ]"
           data-testid="claim-weekly-full"
           :disabled="busy || !tasks.weekly.full.claimable"
           @click="run(() => endpoints.claimTask(tasks!.weekly!.full.id), t.rest.tasks.claimFailed)"
@@ -175,7 +199,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
               ? t.rest.tasks.weeklyFullClaimed
               : tasks.weekly.full.claimable
                 ? t.rest.tasks.claimWeeklyFull
-                : t.rest.tasks.chapterLeft(tasks.weekly.quests.filter((q) => !q.claimed).length)
+                : leftText(tasks.weekly.quests.filter((q) => !q.done && !q.claimed).length)
           }}
         </button>
       </div>
@@ -183,7 +207,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
   </template>
   <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
     <div class="d-flex align-items-center mb-2">
-      <h6 class="mb-0">{{ t.rest.tasks.today(act.total) }}</h6>
+      <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
       <button
         class="btn btn-sm btn-primary ms-auto"
         data-testid="signin"

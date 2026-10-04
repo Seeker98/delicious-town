@@ -54,6 +54,8 @@ export function newRestaurantValues(
     store_num: d.storeNum,
     foods_max_num: d.foodsMaxNum,
     foods_lock_num: d.foodsLockNum,
+    // 新店没有老进度要换算，直接记新任务版本（backlog 318）
+    quest_version: 1,
   };
 }
 
@@ -120,7 +122,6 @@ export function toRestaurantDto(
     plaque2Open: r.plaque2_open,
     plaque2Cost: extra.plaque2Cost,
     cookfoodsPerFlag: extra.cookfoodsPerFlag,
-    mainTaskStep: r.main_task_step,
     devices: extra.devices,
     lastRound: extra.lastRound,
     weather: extra.weather,

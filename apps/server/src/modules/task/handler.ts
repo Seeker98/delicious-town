@@ -3,6 +3,7 @@ import type { GameConfig } from '@dt/config';
 import { gameDay, weekStart } from '@dt/shared';
 import type { EventBus } from '../../events/bus';
 import { incrementDaily } from '../counter/dailyCounter';
+import { weeklyCounterKeys } from './quests';
 
 interface ActionPayload {
   key: string;
@@ -18,7 +19,7 @@ const registered = new WeakSet<EventBus>();
 export function registerTaskHandlers(bus: EventBus, config: GameConfig): void {
   if (registered.has(bus)) return;
   registered.add(bus);
-  const weeklyKeys = new Set(config.bundle.weeklyGroups.flatMap((g) => g.quests.map((q) => q.key)));
+  const weeklyKeys = weeklyCounterKeys(config.bundle.weeklyGroups);
   bus.on('action', async (tx, e) => {
     const p = e.payload as unknown as ActionPayload;
     await tx

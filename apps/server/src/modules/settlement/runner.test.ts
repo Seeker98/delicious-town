@@ -245,10 +245,14 @@ describe('结算的数据库往返（问题记录 258：结算余量）', () => 
       sqls = [];
       const s = await settleShardRound(g.game.deps, g.game.world, shardId, round + 1, new Date());
       expect(s).toMatchObject({ settled: 1, failed: 0 });
-      const from = sqls.indexOf('begin');
-      const tx = sqls.slice(from, sqls.indexOf('commit', from) + 1);
+      // 按"锁店读行"找这家店的结算事务，不假定它是第一个事务（以后结算里加区服级事务也不受影响，backlog 318）
+      const txs: string[][] = [];
+      for (let i = sqls.indexOf('begin'); i >= 0; i = sqls.indexOf('begin', i + 1))
+        txs.push(sqls.slice(i, sqls.indexOf('commit', i) + 1));
+      const tx = txs.find((x) => x.some((q) => /from "restaurant" where .* for (no key )?update/.test(q)));
+      expect(tx).toBeDefined();
       // 随机事件（掉神秘礼券、蟹币、蟹老板、痞老板）额外写仓库、加成、日志、新闻，种子按区服、店 id 取，不数
-      const fixed = tx.filter((q) => !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q));
+      const fixed = tx!.filter((q) => !/"(store_item|effect_source|rest_log|news)"|"effect_dirty"/.test(q));
       expect(fixed).toHaveLength(6);
     } finally {
       await db.destroy();

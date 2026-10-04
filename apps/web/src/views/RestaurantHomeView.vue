@@ -100,7 +100,8 @@ async function load() {
     // 本章第一个可领的；没有可领的显示第一个没完成的（问题记录 318）
     // 本章任务都领完时显示章末奖励，章锁定时写解锁条件
     const q = await endpoints.tasks();
-    const ready = q.main.find((x) => x.done && !x.claimed);
+    // 补领的任务（backlog 318）只在能领时占主线行，没完成的不显示
+    const ready = q.main.find((x) => x.done && !x.claimed) ?? q.leftover.find((x) => x.done && !x.claimed);
     const chapterRow = q.chapter && (q.chapter.claimable || q.chapter.locked);
     mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
     mainChapter.value = !ready && chapterRow ? q.chapter : null;
