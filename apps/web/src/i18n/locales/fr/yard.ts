@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum } from '../../../utils/format';
 
 const yard: Messages['yard'] = {
   title: 'Potager',
@@ -44,7 +45,8 @@ const yard: Messages['yard'] = {
   },
   land: {
     loadFailed: 'Impossible de charger le potager',
-    noCoin: (need, have) => `Pas assez de pièces (il en faut ${need}, vous en avez ${have})`,
+    noCoin: (need, have) =>
+      `Pas assez de pièces (il en faut ${formatNum(need)}, vous en avez ${formatNum(have)})`,
     noSeeds: "Pas de graines. Achetez-en ou échangez-en dans l'onglet « Graines »",
     watered: 'Arrosée',
     waterFailed: "Échec de l'arrosage",
@@ -60,7 +62,7 @@ const yard: Messages['yard'] = {
     removed: 'Arrachée',
     removeFailed: "Impossible de l'arracher",
     strength: (n) => `Énergie ${n}`,
-    coin: (n) => `Pièces ${n}`,
+    coin: (n) => `Pièces ${formatNum(n)}`,
     fertilizer: 'Engrais',
     fertOption: (name, num, min) => `${name} (${num}, −${min} min à chaque fois)`,
     landHead: (no, level) => `Parcelle ${no} · niv. ${level}`,
@@ -71,7 +73,7 @@ const yard: Messages['yard'] = {
     sow: 'Semer',
     expanded: 'Nouvelle parcelle défrichée',
     expandFailed: 'Impossible de défricher',
-    expand: (coin) => `Défricher (${coin ?? 0} pièces)`,
+    expand: (coin) => `Défricher (${formatNum(coin ?? 0)} pièces)`,
     locked: 'Non défrichée',
   },
   basket: {
@@ -140,7 +142,7 @@ const yard: Messages['yard'] = {
   },
   seed: {
     loadFailed: 'Impossible de charger les graines',
-    noCoin: (price) => `Pas assez de pièces (${price} l'unité)`,
+    noCoin: (price) => `Pas assez de pièces (${formatNum(price)} l'unité)`,
     noEssence: (need, have) => `Pas assez d'essence de formule (${need} à chaque fois, vous en avez ${have})`,
     bought: (n) => `${n} graine(s) achetée(s)`,
     buyFailed: "Échec de l'achat",
@@ -150,9 +152,9 @@ const yard: Messages['yard'] = {
     none: 'Pas encore de graines',
     shop: 'Boutique de graines',
     shopClosed: "La boutique de graines n'est pas encore ouverte",
-    shopOption: (name, price) => `${name} (${price} pièces)`,
+    shopOption: (name, price) => `${name} (${formatNum(price)} pièces)`,
     buy: (n) => `Acheter ×${n}`,
-    coin: (n) => `Pièces ${n}`,
+    coin: (n) => `Pièces ${formatNum(n)}`,
     exchange: 'Échange d’essence de formule',
     essence: (n) => `Essence de formule ${n} (obtenue en décomposant des fragments)`,
     exOption: (name, num, essence) => `${name} ×${num} (${essence} essence)`,

@@ -49,4 +49,19 @@ describe('RestInfoView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
     expect((await mountView()).find('[data-testid="to-points"]').text()).toBe('厨具与加点 →');
   });
+
+  it('日志：读完是空的才写还没有日志；读的时候不写；读失败写读取失败（问题记录 100 终审）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
+    let done: (v: { items: never[]; nextBefore: null }) => void = () => undefined;
+    vi.mocked(endpoints.restLog).mockReturnValue(new Promise((r) => (done = r)));
+    const w = await mountView();
+    expect(w.find('[data-testid="logs-empty"]').exists()).toBe(false);
+    done({ items: [], nextBefore: null });
+    await flushPromises();
+    expect(w.get('[data-testid="logs-empty"]').text()).toBe('还没有日志');
+    vi.mocked(endpoints.restLog).mockRejectedValue(new Error('net'));
+    const failed = await mountView();
+    expect(failed.find('[data-testid="logs-empty"]').exists()).toBe(false);
+    expect(failed.get('[data-testid="logs-failed"]').text()).toBe('读取日志失败');
+  });
 });

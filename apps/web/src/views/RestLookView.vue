@@ -49,7 +49,7 @@ onMounted(async () => {
 <template>
   <h5>{{ t.rest.look.title }}</h5>
   <template v-if="mine">
-    <h6>{{ t.rest.look.avatar }}</h6>
+    <h6 class="dt-section mt-0">{{ t.rest.look.avatar }}</h6>
     <p v-if="mine.avatar === null" class="small text-danger">{{ t.rest.look.noAvatar }}</p>
     <div class="d-flex flex-wrap gap-1 mb-3">
       <button
@@ -64,7 +64,7 @@ onMounted(async () => {
       </button>
     </div>
 
-    <h6>{{ t.rest.look.door }}</h6>
+    <h6 class="dt-section">{{ t.rest.look.door }}</h6>
     <div class="d-flex flex-wrap gap-1 mb-3">
       <button
         v-for="d in looks?.doors ?? []"
@@ -79,7 +79,7 @@ onMounted(async () => {
       </button>
     </div>
 
-    <h6>{{ t.rest.look.notice }}</h6>
+    <h6 class="dt-section">{{ t.rest.look.notice }}</h6>
     <textarea
       v-model="notice"
       class="form-control mb-1"
@@ -99,7 +99,7 @@ onMounted(async () => {
       </button>
     </div>
 
-    <h6>{{ t.rest.look.icons }}</h6>
+    <h6 class="dt-section">{{ t.rest.look.icons }}</h6>
     <p v-if="mine.icons.length === 0" class="small text-muted">{{ t.rest.look.noIcons }}</p>
     <div v-for="i in mine.icons" :key="i.id" class="form-check">
       <input

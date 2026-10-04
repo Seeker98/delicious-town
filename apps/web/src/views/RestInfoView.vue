@@ -16,6 +16,8 @@ const t = useT();
 const rest = computed(() => store.rest);
 const logs = ref<RestLogDto[]>([]);
 const next = ref<string | null>(null);
+/** 第一页日志的状态：读完是空的才写"还没有日志"，读失败写出来（问题记录 100 终审） */
+const logsState = ref<'loading' | 'ok' | 'failed'>('loading');
 
 async function moreLogs() {
   const page = await endpoints.restLog(next.value ?? undefined);
@@ -24,22 +26,27 @@ async function moreLogs() {
 }
 onMounted(async () => {
   await store.refresh().catch(() => undefined);
-  await moreLogs().catch(() => undefined);
+  try {
+    await moreLogs();
+    logsState.value = 'ok';
+  } catch {
+    logsState.value = 'failed';
+  }
 });
 </script>
 
 <template>
   <div v-if="rest">
-    <h6>{{ t.rest.info.attrs }}</h6>
+    <h6 class="dt-section mt-0">{{ t.rest.info.attrs }}</h6>
     <div class="row g-1 small align-items-center">
-      <div v-for="k in ATTR_KEYS" :key="k" class="col-4">
+      <div v-for="k in ATTR_KEYS" :key="k" class="col-6">
         {{ ATTR_NAMES[k] }} {{ k === 'luck' ? rest.luck : rest.attrs[k] }}
       </div>
     </div>
     <RouterLink to="/rest/equip" class="small" data-testid="to-points">{{
       rest.attrLeft > 0 ? t.rest.info.toPoints(rest.attrLeft) : t.rest.info.toEquip
     }}</RouterLink>
-    <h6 class="mt-3">{{ t.rest.info.capacity }}</h6>
+    <h6 class="dt-section">{{ t.rest.info.capacity }}</h6>
     <div class="row g-1 small">
       <div class="col-6">{{ t.rest.info.tableNum }} {{ rest.tableNum }}</div>
       <div class="col-6">{{ t.rest.info.cupboardNum }} {{ rest.cupboardNum }}</div>
@@ -48,7 +55,13 @@ onMounted(async () => {
       <div class="col-6">{{ t.rest.info.storeNum }} {{ rest.storeNum }}</div>
       <div class="col-6">{{ t.rest.info.oil(rest.oilLevel) }}</div>
     </div>
-    <h6 class="mt-3">{{ t.rest.info.logs }}</h6>
+    <h6 class="dt-section">{{ t.rest.info.logs }}</h6>
+    <div v-if="logsState === 'ok' && logs.length === 0" class="dt-empty" data-testid="logs-empty">
+      {{ t.rest.info.noLogs }}
+    </div>
+    <div v-else-if="logsState === 'failed'" class="dt-empty" data-testid="logs-failed">
+      {{ t.rest.info.logsFailed }}
+    </div>
     <ul class="list-unstyled small">
       <li v-for="(l, i) in logs" :key="i">
         <span class="text-muted">{{ new Date(l.at).toLocaleString(activeLocale()) }}</span>

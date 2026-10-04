@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum } from '../../../utils/format';
 
 const yard: Messages['yard'] = {
   title: 'Garden',
@@ -44,7 +45,7 @@ const yard: Messages['yard'] = {
   },
   land: {
     loadFailed: "Couldn't load the garden",
-    noCoin: (need, have) => `Not enough coins (need ${need}, have ${have})`,
+    noCoin: (need, have) => `Not enough coins (need ${formatNum(need)}, have ${formatNum(have)})`,
     noSeeds: 'No seeds. Buy or exchange some on the "Seeds" tab',
     watered: 'Watered',
     waterFailed: "Couldn't water",
@@ -60,7 +61,7 @@ const yard: Messages['yard'] = {
     removed: 'Removed',
     removeFailed: "Couldn't remove it",
     strength: (n) => `Stamina ${n}`,
-    coin: (n) => `Coins ${n}`,
+    coin: (n) => `Coins ${formatNum(n)}`,
     fertilizer: 'Fertilizer',
     fertOption: (name, num, min) => `${name} (${num}, −${min} min each)`,
     landHead: (no, level) => `Plot ${no} · Lv. ${level}`,
@@ -71,7 +72,7 @@ const yard: Messages['yard'] = {
     sow: 'Sow',
     expanded: 'New plot cleared',
     expandFailed: "Couldn't clear a plot",
-    expand: (coin) => `Clear a plot (${coin ?? 0} coins)`,
+    expand: (coin) => `Clear a plot (${formatNum(coin ?? 0)} coins)`,
     locked: 'Not cleared',
   },
   basket: {
@@ -139,7 +140,7 @@ const yard: Messages['yard'] = {
   },
   seed: {
     loadFailed: "Couldn't load seeds",
-    noCoin: (price) => `Not enough coins (${price} each)`,
+    noCoin: (price) => `Not enough coins (${formatNum(price)} each)`,
     noEssence: (need, have) => `Not enough formula essence (${need} each, have ${have})`,
     bought: (n) => `Bought ${n} seeds`,
     buyFailed: 'Purchase failed',
@@ -149,9 +150,9 @@ const yard: Messages['yard'] = {
     none: 'No seeds yet',
     shop: 'Seed shop',
     shopClosed: "The seed shop isn't open yet",
-    shopOption: (name, price) => `${name} (${price} coins)`,
+    shopOption: (name, price) => `${name} (${formatNum(price)} coins)`,
     buy: (n) => `Buy ×${n}`,
-    coin: (n) => `Coins ${n}`,
+    coin: (n) => `Coins ${formatNum(n)}`,
     exchange: 'Formula essence exchange',
     essence: (n) => `Formula essence ${n} (from breaking down formula fragments)`,
     exOption: (name, num, essence) => `${name} ×${num} (${essence} essence)`,

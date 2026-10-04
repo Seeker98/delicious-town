@@ -482,7 +482,7 @@ onBeforeUnmount(() => {
             :disabled="!d.unlocked || busy"
             @click="openSlot(d.slot)"
           >
-            <div class="text-muted text-truncate">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
+            <div class="text-muted dt-clamp2">{{ catalog.deviceName(d.slot) ?? d.name }}</div>
             <div v-if="!d.unlocked && d.slot === PLAQUE2_SLOT && plaque2Offer">
               <i class="bi bi-lock"></i> {{ t.home.notOpened }}
             </div>

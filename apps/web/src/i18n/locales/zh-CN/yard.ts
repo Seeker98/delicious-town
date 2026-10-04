@@ -1,3 +1,4 @@
+import { formatNum } from '../../../utils/format';
 /** 菜园：地块、作物、菜篮、配方、种子、好友菜园（问题记录 272） */
 export default {
   title: '菜园',
@@ -44,7 +45,7 @@ export default {
   },
   land: {
     loadFailed: '读取菜园失败',
-    noCoin: (need: number, have: number) => `银币不够（要 ${need}，现有 ${have}）`,
+    noCoin: (need: number, have: number) => `银币不够（要 ${formatNum(need)}，现有 ${formatNum(have)}）`,
     noSeeds: '没有种子，去"种子"标签买或兑换',
     watered: '浇水成功',
     waterFailed: '浇水失败',
@@ -60,7 +61,7 @@ export default {
     removed: '铲除了',
     removeFailed: '铲除失败',
     strength: (n: string) => `体力 ${n}`,
-    coin: (n: number) => `银币 ${n}`,
+    coin: (n: number) => `银币 ${formatNum(n)}`,
     fertilizer: '肥料',
     fertOption: (name: string, num: number, min: number) => `${name}（${num}，每次 −${min} 分钟）`,
     landHead: (no: number, level: number) => `${no} 号地 · ${level} 级`,
@@ -71,7 +72,7 @@ export default {
     sow: '播种',
     expanded: '开垦了一块地',
     expandFailed: '开垦失败',
-    expand: (coin: number | null) => `开垦（${coin ?? 0} 银币）`,
+    expand: (coin: number | null) => `开垦（${formatNum(coin ?? 0)} 银币）`,
     locked: '未开垦',
   },
   basket: {
@@ -147,7 +148,7 @@ export default {
   },
   seed: {
     loadFailed: '读取种子失败',
-    noCoin: (price: number) => `银币不够（单价 ${price}）`,
+    noCoin: (price: number) => `银币不够（单价 ${formatNum(price)}）`,
     noEssence: (need: number, have: number) => `配方精华不够（每次 ${need}，现有 ${have}）`,
     bought: (n: number) => `买了 ${n} 颗种子`,
     buyFailed: '购买失败',
@@ -157,9 +158,9 @@ export default {
     none: '还没有种子',
     shop: '种子商店',
     shopClosed: '种子商店暂未开放',
-    shopOption: (name: string, price: number) => `${name}（${price} 银币）`,
+    shopOption: (name: string, price: number) => `${name}（${formatNum(price)} 银币）`,
     buy: (n: number) => `买 ×${n}`,
-    coin: (n: number) => `银币 ${n}`,
+    coin: (n: number) => `银币 ${formatNum(n)}`,
     exchange: '配方精华兑换',
     essence: (n: number) => `配方精华 ${n}（分解配方碎片得到）`,
     exOption: (name: string, num: number, essence: number) => `${name} ×${num}（${essence} 精华）`,

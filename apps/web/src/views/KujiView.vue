@@ -106,7 +106,7 @@ onMounted(() => void load());
   </div>
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
-    <div v-if="data.theme" class="alert alert-info py-1 small mb-2" data-testid="kj-theme">
+    <div v-if="data.theme" class="dt-note small mb-2" data-testid="kj-theme">
       <b>{{
         t.kuji.theme(data.theme.month, catalog.data('kujiThemes', data.theme.month)?.name ?? data.theme.name)
       }}</b>

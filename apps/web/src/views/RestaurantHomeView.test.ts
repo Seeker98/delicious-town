@@ -507,11 +507,11 @@ describe('RestaurantHomeView', () => {
     expect(w.findAll('[data-testid="effect-row"]')).toHaveLength(7);
   });
 
-  it('设施格同一行一样高，名字太长时截断（审查）', async () => {
+  it('设施格同一行一样高，名字最多两行再截断（审查；问题记录 100：法文名一行放不下）', async () => {
     const w = await mountView();
     const slot = w.find('[data-testid="slot-1"]');
     expect(slot.classes()).toContain('h-100');
-    expect(slot.find('.text-truncate').exists()).toBe(true);
+    expect(slot.find('.dt-clamp2').exists()).toBe(true);
   });
 
   it('小镇新闻：最新广播 + 3 条新闻，点"更多"去小镇页', async () => {
