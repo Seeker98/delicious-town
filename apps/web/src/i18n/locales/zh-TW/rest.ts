@@ -14,6 +14,7 @@ export default {
     oil: (lv: number) => `油壺 ${lv} 級`,
     logs: '個人日誌',
     moreLogs: '更早的日誌',
+    noLogs: '還沒有日誌',
   },
   income: {
     loadFailed: '讀取收益失敗',

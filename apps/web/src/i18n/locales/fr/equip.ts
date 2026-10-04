@@ -7,7 +7,7 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Puissance',
   powerNote:
-    '(somme des cinq caractéristiques + Chance/2 ; compte pour la Tour des chefs, le classement des chefs et les duels entre amis)',
+    ' (somme des cinq caractéristiques + Chance/2 ; compte pour la Tour des chefs, le classement des chefs et les duels entre amis)',
   empty: 'Vide',
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,

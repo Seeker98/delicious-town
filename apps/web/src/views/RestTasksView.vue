@@ -227,7 +227,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         :data-testid="`act-${i.id}`"
       >
         <div class="d-flex align-items-center gap-1">
-          <span class="text-truncate">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
+          <span class="dt-clamp2">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
           <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
             t.rest.tasks.full
           }}</span>

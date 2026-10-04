@@ -1,4 +1,5 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+import { formatNum } from '../../../utils/format';
 /** 菜園：地塊、作物、菜籃、配方、種子、好友菜園（問題記錄 272） */
 export default {
   title: '菜園',
@@ -45,7 +46,7 @@ export default {
   },
   land: {
     loadFailed: '讀取菜園失敗',
-    noCoin: (need: number, have: number) => `銀幣不夠（要 ${need}，現有 ${have}）`,
+    noCoin: (need: number, have: number) => `銀幣不夠（要 ${formatNum(need)}，現有 ${formatNum(have)}）`,
     noSeeds: '沒有種子，去"種子"標籤買或兌換',
     watered: '澆水成功',
     waterFailed: '澆水失敗',
@@ -61,7 +62,7 @@ export default {
     removed: '剷除了',
     removeFailed: '剷除失敗',
     strength: (n: string) => `體力 ${n}`,
-    coin: (n: number) => `銀幣 ${n}`,
+    coin: (n: number) => `銀幣 ${formatNum(n)}`,
     fertilizer: '肥料',
     fertOption: (name: string, num: number, min: number) => `${name}（${num}，每次 −${min} 分鐘）`,
     landHead: (no: number, level: number) => `${no} 號地 · ${level} 級`,
@@ -72,7 +73,7 @@ export default {
     sow: '播種',
     expanded: '開墾了一塊地',
     expandFailed: '開墾失敗',
-    expand: (coin: number | null) => `開墾（${coin ?? 0} 銀幣）`,
+    expand: (coin: number | null) => `開墾（${formatNum(coin ?? 0)} 銀幣）`,
     locked: '未開墾',
   },
   basket: {
@@ -148,7 +149,7 @@ export default {
   },
   seed: {
     loadFailed: '讀取種子失敗',
-    noCoin: (price: number) => `銀幣不夠（單價 ${price}）`,
+    noCoin: (price: number) => `銀幣不夠（單價 ${formatNum(price)}）`,
     noEssence: (need: number, have: number) => `配方精華不夠（每次 ${need}，現有 ${have}）`,
     bought: (n: number) => `買了 ${n} 顆種子`,
     buyFailed: '購買失敗',
@@ -158,9 +159,9 @@ export default {
     none: '還沒有種子',
     shop: '種子商店',
     shopClosed: '種子商店暫未開放',
-    shopOption: (name: string, price: number) => `${name}（${price} 銀幣）`,
+    shopOption: (name: string, price: number) => `${name}（${formatNum(price)} 銀幣）`,
     buy: (n: number) => `買 ×${n}`,
-    coin: (n: number) => `銀幣 ${n}`,
+    coin: (n: number) => `銀幣 ${formatNum(n)}`,
     exchange: '配方精華兌換',
     essence: (n: number) => `配方精華 ${n}（分解配方碎片得到）`,
     exOption: (name: string, num: number, essence: number) => `${name} ×${num}（${essence} 精華）`,

@@ -14,6 +14,7 @@ const rest: Messages['rest'] = {
     oil: (lv) => `Oil tank level ${lv}`,
     logs: 'Personal log',
     moreLogs: 'Older entries',
+    noLogs: 'No log entries yet',
   },
   income: {
     loadFailed: 'Could not load income',

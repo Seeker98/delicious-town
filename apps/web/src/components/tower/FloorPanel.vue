@@ -61,13 +61,14 @@ async function go(f: TowerFloorDto, test: boolean) {
       class="border rounded p-2 mb-1"
       :data-testid="`floor-${f.floor}`"
     >
-      <div class="d-flex align-items-center">
-        <b>{{ t.tower.floor.name(f.floor, floorText(f).name) }}</b>
-        <span class="dt-tag ms-2">{{ floorText(f).title }}</span>
-        <span class="ms-auto text-muted">{{ t.tower.floor.power(f.power) }}</span>
+      <!-- 名字一行（长了折行）、战力靠右；守护者称号放到说明行开头，英法西文不再三样挤在一行（问题记录 100） -->
+      <div class="d-flex align-items-baseline gap-2">
+        <span class="dt-card-title flex-fill">{{ t.tower.floor.name(f.floor, floorText(f).name) }}</span>
+        <span class="text-muted text-nowrap">{{ t.tower.floor.power(f.power) }}</span>
       </div>
       <div class="text-muted">
-        {{ t.tower.floor.meta(floorText(f).note, f.minLevel, floorText(f).name, f.left, f.maxTimes)
+        <span class="dt-tag me-1">{{ floorText(f).title }}</span
+        >{{ t.tower.floor.meta(floorText(f).note, f.minLevel, floorText(f).name, f.left, f.maxTimes)
         }}<span v-if="f.mc">{{ t.tower.floor.mc(catalog.mcName(f.mc.mcId), f.mc.price) }}</span>
       </div>
       <div class="d-flex flex-wrap gap-1 align-items-center mt-1">

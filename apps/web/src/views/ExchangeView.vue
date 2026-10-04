@@ -268,12 +268,12 @@ onMounted(async () => {
     data-testid="ex-search"
   />
   <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small">
-    <div class="btn-group btn-group-sm">
+    <div class="dt-pills mb-0">
       <button
         v-for="x in FILTERS"
         :key="x"
         type="button"
-        :class="['btn', filter === x ? 'btn-secondary' : 'btn-outline-secondary']"
+        :class="{ active: filter === x }"
         :data-testid="`ex-filter-${x}`"
         @click="setFilter(x)"
       >

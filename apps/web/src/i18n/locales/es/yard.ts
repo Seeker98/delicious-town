@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum } from '../../../utils/format';
 
 const yard: Messages['yard'] = {
   title: 'Huerto',
@@ -44,7 +45,8 @@ const yard: Messages['yard'] = {
   },
   land: {
     loadFailed: 'No se pudo cargar el huerto',
-    noCoin: (need, have) => `No tienes suficientes monedas (necesitas ${need}, tienes ${have})`,
+    noCoin: (need, have) =>
+      `No tienes suficientes monedas (necesitas ${formatNum(need)}, tienes ${formatNum(have)})`,
     noSeeds: 'No tienes semillas. Cómpralas o canjéalas en la pestaña «Semillas»',
     watered: 'Regada',
     waterFailed: 'No se pudo regar',
@@ -60,7 +62,7 @@ const yard: Messages['yard'] = {
     removed: 'Arrancada',
     removeFailed: 'No se pudo arrancar',
     strength: (n) => `Energía ${n}`,
-    coin: (n) => `Monedas ${n}`,
+    coin: (n) => `Monedas ${formatNum(n)}`,
     fertilizer: 'Abono',
     fertOption: (name, num, min) => `${name} (${num}, −${min} min cada vez)`,
     landHead: (no, level) => `Parcela ${no} · nv. ${level}`,
@@ -71,7 +73,7 @@ const yard: Messages['yard'] = {
     sow: 'Sembrar',
     expanded: 'Parcela nueva desbrozada',
     expandFailed: 'No se pudo desbrozar',
-    expand: (coin) => `Desbrozar (${coin ?? 0} monedas)`,
+    expand: (coin) => `Desbrozar (${formatNum(coin ?? 0)} monedas)`,
     locked: 'Sin desbrozar',
   },
   basket: {
@@ -140,7 +142,7 @@ const yard: Messages['yard'] = {
   },
   seed: {
     loadFailed: 'No se pudieron cargar las semillas',
-    noCoin: (price) => `No tienes suficientes monedas (${price} cada una)`,
+    noCoin: (price) => `No tienes suficientes monedas (${formatNum(price)} cada una)`,
     noEssence: (need, have) => `No tienes suficiente esencia de fórmula (${need} cada vez, tienes ${have})`,
     bought: (n) => `Compraste ${n} semillas`,
     buyFailed: 'No se pudo comprar',
@@ -150,9 +152,9 @@ const yard: Messages['yard'] = {
     none: 'Aún no tienes semillas',
     shop: 'Tienda de semillas',
     shopClosed: 'La tienda de semillas aún no está abierta',
-    shopOption: (name, price) => `${name} (${price} monedas)`,
+    shopOption: (name, price) => `${name} (${formatNum(price)} monedas)`,
     buy: (n) => `Comprar ×${n}`,
-    coin: (n) => `Monedas ${n}`,
+    coin: (n) => `Monedas ${formatNum(n)}`,
     exchange: 'Canje de esencia de fórmula',
     essence: (n) => `Esencia de fórmula ${n} (se obtiene al descomponer fragmentos)`,
     exOption: (name, num, essence) => `${name} ×${num} (${essence} de esencia)`,

@@ -143,18 +143,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
         })
       }}
     </div>
-    <div class="d-flex flex-wrap gap-1 mb-2">
-      <button
-        :class="['btn', 'btn-sm', level === 0 ? 'btn-secondary' : 'btn-outline-secondary']"
-        data-testid="level-all"
-        @click="level = 0"
-      >
+    <div class="dt-pills">
+      <button type="button" :class="{ active: level === 0 }" data-testid="level-all" @click="level = 0">
         {{ t.cupboard.levelCount(t.common.all, data.items.length) }}
       </button>
       <button
         v-for="x in levels"
         :key="x.lv"
-        :class="['btn', 'btn-sm', level === x.lv ? 'btn-secondary' : 'btn-outline-secondary']"
+        type="button"
+        :class="{ active: level === x.lv }"
         :data-testid="`level-${x.lv}`"
         @click="level = x.lv"
       >
@@ -275,14 +272,3 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
     </div>
   </template>
 </template>
-
-<style scoped>
-/* 问题记录 138：窄屏下五个字以上的食材名不截断，最多两行 */
-.dt-tile-name {
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

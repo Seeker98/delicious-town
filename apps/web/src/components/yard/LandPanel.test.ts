@@ -50,7 +50,7 @@ describe('LandPanel', () => {
   it('9 格：已开垦的地可以播种；下一块显示开垦价；其他未开垦', async () => {
     const w = await mountWith();
     expect(w.find('[data-testid="land-1"]').text()).toContain('1 号地');
-    expect(w.find('[data-testid="expand"]').text()).toContain('200000');
+    expect(w.find('[data-testid="expand"]').text()).toContain('200,000');
     expect(w.find('[data-testid="land-3"]').text()).toContain('未开垦');
     await w.find('[data-testid="sow-1"]').trigger('click');
     await flushPromises();

@@ -146,7 +146,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       </button>
     </div>
 
-    <h6>{{ t.mc.learned(o.learned.length) }}</h6>
+    <h6 class="dt-section">{{ t.mc.learned(o.learned.length) }}</h6>
     <div v-if="o.learned.length === 0" class="small text-muted mb-2">
       {{ t.mc.noLearned }}
     </div>
@@ -223,7 +223,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       </div>
     </div>
 
-    <h6 class="mt-3">{{ t.mc.remnants }}</h6>
+    <h6 class="dt-section">{{ t.mc.remnants }}</h6>
     <div v-if="o.remnants.length === 0" class="small text-muted">{{ t.mc.noRemnants }}</div>
     <div v-for="g in groups" :key="g.key" class="mb-2" :data-testid="`group-${g.key}`">
       <div class="d-flex align-items-center small fw-bold text-muted mt-1">

@@ -14,6 +14,7 @@ const rest: Messages['rest'] = {
     oil: (lv) => `Bidon d'huile niveau ${lv}`,
     logs: 'Journal personnel',
     moreLogs: 'Entrées plus anciennes',
+    noLogs: 'Aucune entrée pour l’instant',
   },
   income: {
     loadFailed: 'Impossible de charger les revenus',

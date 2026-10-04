@@ -14,6 +14,7 @@ const rest: Messages['rest'] = {
     oil: (lv) => `Bidón de aceite nivel ${lv}`,
     logs: 'Registro personal',
     moreLogs: 'Entradas anteriores',
+    noLogs: 'Todavía no hay registros',
   },
   income: {
     loadFailed: 'No se pudieron cargar los ingresos',
