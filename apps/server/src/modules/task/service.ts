@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import { DEVICE_TYPE, GOODS, type Award, type Quest, type QuestCond, type ShardSettings } from '@dt/config';
 import {
   addDays,
@@ -50,66 +50,41 @@ export function createTaskService(d: GameDeps) {
     const settings = known ?? (await d.shards.settings(rest.shard_id, db));
     // "领一次限时活动奖励"：区服当前没有本店能参加的进行中活动时按做不了算，不挡主线（终审 Important 2）
     const now = d.now();
-    const running = await db
-      .selectFrom('activity')
-      .select('id')
-      .where('deleted_at', 'is', null)
-      .where((eb) => eb.or([eb('shard_id', '=', rest.shard_id), eb('shard_id', 'is', null)]))
-      .where('starts_at', '<=', now)
-      .where('ends_at', '>', now)
-      .where('min_level', '<=', rest.level)
-      .limit(1)
-      .executeTakeFirst();
-    const available = (f: string) =>
-      featureAvailable(settings, f) && (f !== 'activity' || running !== undefined);
-    const done = new Set(
-      (await db.selectFrom('quest_done').select('quest_id').where('rest_id', '=', rest.id).execute()).map(
-        (r) => r.quest_id,
-      ),
-    );
-    const counters = Object.fromEntries(
-      (
-        await db.selectFrom('event_counter').select(['key', 'count']).where('rest_id', '=', rest.id).execute()
-      ).map((r) => [r.key, r.count]),
-    );
+    // 本店的几项计数一条查询读完（质量期 ③：原来 8 条；这里可能在调用方的事务里跑，不能并发，所以合成子查询）
+    const facts = await db
+      .selectNoFrom([
+        sql<boolean>`exists(select 1 from activity where deleted_at is null and (shard_id = ${rest.shard_id} or shard_id is null) and starts_at <= ${now} and ends_at > ${now} and min_level <= ${rest.level})`.as(
+          'running',
+        ),
+        sql<number[]>`coalesce((select array_agg(quest_id) from quest_done where rest_id = ${rest.id}), '{}')`.as(
+          'done',
+        ),
+        sql<Record<string, number>>`coalesce((select jsonb_object_agg(key, count) from event_counter where rest_id = ${rest.id}), '{}'::jsonb)`.as(
+          'counters',
+        ),
+        sql<number>`(select count(*) from friend where rest_id = ${rest.id})`.as('friends'),
+        sql<number | null>`(select max(stress) from equip where rest_id = ${rest.id})`.as('maxStress'),
+        sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
+        sql<number>`(select count(*) from yard_land where rest_id = ${rest.id})`.as('lands'),
+        sql<boolean>`exists(select 1 from takeaway_state where rest_id = ${rest.id})`.as('takeaway'),
+      ])
+      .executeTakeFirstOrThrow();
+    const available = (f: string) => featureAvailable(settings, f) && (f !== 'activity' || facts.running);
+    const done = new Set<number>(facts.done);
+    const counters = facts.counters;
     const counts = normalizeCounts(rest.cookbook_counts);
-    const friends = await db
-      .selectFrom('friend')
-      .select((eb) => eb.fn.countAll<number>().as('n'))
-      .where('rest_id', '=', rest.id)
-      .executeTakeFirstOrThrow();
-    const maxStress = await db
-      .selectFrom('equip')
-      .select((eb) => eb.fn.max('stress').as('m'))
-      .where('rest_id', '=', rest.id)
-      .executeTakeFirst();
-    const mcLearned = await db
-      .selectFrom('rest_mc')
-      .select((eb) => eb.fn.countAll<number>().as('n'))
-      .where('rest_id', '=', rest.id)
-      .executeTakeFirstOrThrow();
-    const lands = await db
-      .selectFrom('yard_land')
-      .select((eb) => eb.fn.countAll<number>().as('n'))
-      .where('rest_id', '=', rest.id)
-      .executeTakeFirstOrThrow();
     // 有效盆栽勋章的种数，和"集盆栽"加成同一套计数（4C-1 设计文档裁定 10）
     const pots = (await listActiveEffects(db, rest.id, d.now())).filter(
       (s) => s.sourceType === 'honor' && d.config.goods.get(s.sourceId)?.deviceType === DEVICE_TYPE.pot,
     ).length;
-    const takeaway = await db
-      .selectFrom('takeaway_state')
-      .select('rest_id')
-      .where('rest_id', '=', rest.id)
-      .executeTakeFirst();
     const extra = {
-      'friends.count': Number(friends.n),
+      'friends.count': Number(facts.friends),
       'rest.thumbs': counters['thumbs.received'] ?? 0,
-      'equip.maxStress': Number(maxStress?.m ?? 0),
-      'mc.learned': Number(mcLearned.n),
-      'yard.lands': Number(lands.n),
+      'equip.maxStress': Number(facts.maxStress ?? 0),
+      'mc.learned': Number(facts.mcLearned),
+      'yard.lands': Number(facts.lands),
       'honor.potCount': pots,
-      'takeaway.open': takeaway ? 1 : 0,
+      'takeaway.open': facts.takeaway ? 1 : 0,
       'cookbooks.foreignLearned': foreignLearned(counts.street),
     };
     const progress = (c: QuestCond) =>

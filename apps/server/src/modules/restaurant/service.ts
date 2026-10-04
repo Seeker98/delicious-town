@@ -58,41 +58,44 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
   async function overview(restId: number): Promise<RestaurantDto> {
     const row = await d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirst();
     if (!row) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
-    const tables = await d.db
-      .selectFrom('restaurant_tables')
-      .select('tables')
-      .where('rest_id', '=', restId)
-      .executeTakeFirstOrThrow();
     const now = d.now();
-    const effects = await listActiveEffects(d.db, restId, now);
-    const snap = await world.ensure(row.shard_id, now);
-    const settings = await shards.settings(row.shard_id);
+    // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
+    const settingsP = shards.settings(row.shard_id);
+    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today] = await Promise.all([
+      d.db.selectFrom('restaurant_tables').select('tables').where('rest_id', '=', restId).executeTakeFirstOrThrow(),
+      listActiveEffects(d.db, restId, now),
+      world.ensure(row.shard_id, now),
+      settingsP,
+      deviceSlots(d.db, d.config, row, now),
+      lastRound(d.db, restId),
+      shownIcons(restId),
+      headlines(d.db, row.shard_id),
+      // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
+      settingsP.then((st) => (isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [])),
+      todayBless(d.db, d.config, row.shard_id, now),
+    ]);
     const tuning = settings.tuning;
     const growth = tuning.growth;
     const dto = toRestaurantDto(row, tables.tables, effects, d.config, {
-      devices: await deviceSlots(d.db, d.config, row, now),
-      lastRound: await lastRound(d.db, restId),
+      devices,
+      lastRound: last,
       weather: { id: snap.weather.id, name: snap.weather.name },
       isPlanktonHost: snap.planktonRestId === restId,
-      icons: await shownIcons(restId),
+      icons,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
-      headlines: await headlines(d.db, row.shard_id),
-      // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
-      boosts: isFeatureEnabled(settings, 'activity')
-        ? (await activeBoosts(d.db, row.shard_id, now)).map((b) => ({
-            id: b.id,
-            title: b.title,
-            items: b.items,
-            endsAt: b.endsAt.toISOString(),
-          }))
-        : [],
+      headlines: news,
+      boosts: boosts.map((b) => ({
+        id: b.id,
+        title: b.title,
+        items: b.items,
+        endsAt: b.endsAt.toISOString(),
+      })),
       disabledFeatures: Object.entries(settings.features)
         .filter(([, on]) => on === false)
         .map(([k]) => k)
         .sort(),
     });
-    const today = await todayBless(d.db, d.config, row.shard_id, now);
     if (today)
       dto.effects.unshift({
         sourceType: 'bless',
