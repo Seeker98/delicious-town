@@ -769,12 +769,41 @@ export function createExchangeService(d: GameDeps) {
   const op = <T>(ctx: RestCtx, feature: string, fn: (o: Op) => Promise<T>) =>
     runOp(d, ctx, { feature, source: 'exchange' }, fn);
 
+  /**
+   * 进锁店事务之前先把今天的参考价算好存下（质量期 ③）：冷门食材一周多没人看时，第一笔下单要往前补算，
+   * 最多约 40 条查询，不该占着店锁。事务里再取就只读一条；正好跨过 0 点时事务里照常补算
+   */
+  async function warmRef(ctx: RestCtx, foodsId: number): Promise<void> {
+    if (!isTradable(d.config.foods.get(foodsId))) return;
+    // 功能关着时照常报 FEATURE_DISABLED；等级不够的不补算（锁里的资格检查会拒绝），免得随便下单就触发几十条查询（终审 Important 2）
+    const { tuning } = await d.shards.ensureFeature(ctx.shardId, 'exchange');
+    const rest = await d.db
+      .selectFrom('restaurant')
+      .select('level')
+      .where('id', '=', ctx.restaurantId)
+      .executeTakeFirst();
+    if (!rest || rest.level < tuning.exchange.minLevel) return;
+    await refPrice(
+      d.db,
+      d.config,
+      tuning.exchange,
+      tuning.market.levelPriceRate,
+      ctx.shardId,
+      foodsId,
+      gameDay(d.now()),
+    );
+  }
+
   return {
-    place: (ctx: RestCtx, b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) =>
-      op(ctx, 'exchange', (o) => place(o, b)),
+    place: async (ctx: RestCtx, b: { foodsId: number; side: 'buy' | 'sell'; price: number; qty: number }) => {
+      await warmRef(ctx, b.foodsId);
+      return op(ctx, 'exchange', (o) => place(o, b));
+    },
     /** 卖给系统（问题记录 244）：按系统收购价立即成交，可以是低于挂单下限的兜底价 */
-    sellToSystem: (ctx: RestCtx, b: { foodsId: number; price: number; qty: number }) =>
-      op(ctx, 'exchange', (o) => place(o, { ...b, side: 'sell' }, { toSystem: true })),
+    sellToSystem: async (ctx: RestCtx, b: { foodsId: number; price: number; qty: number }) => {
+      await warmRef(ctx, b.foodsId);
+      return op(ctx, 'exchange', (o) => place(o, { ...b, side: 'sell' }, { toSystem: true }));
+    },
     cancel: (ctx: RestCtx, id: number) => op(ctx, 'restaurant', (o) => cancel(o, id)),
     withdraw: (ctx: RestCtx) => op(ctx, 'restaurant', (o) => withdraw(o)),
     foods,

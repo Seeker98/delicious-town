@@ -208,7 +208,7 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         // 合成不抽已经堆满的食材（问题记录 290），个人缺料倾向也一样（问题记录 50）
         const full = (id: number) => (have.get(id)?.num ?? 0) >= o.rest.foods_max_num;
         const cp = b.way === 'compose' ? composePool(pool, full) : pool;
-        const needPick = b.way === 'compose' ? await opNeedPick(o) : null;
+        const needPick = b.way === 'compose' ? await opNeedPick(o, { foods: have }) : null;
         const outcome = runHandle(
           {
             way: b.way,

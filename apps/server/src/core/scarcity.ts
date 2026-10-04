@@ -56,8 +56,14 @@ export function pickWithNeed(
 
 export type NeedPick = (accept: (foodsId: number) => boolean, fallback: () => number) => number;
 
-/** 一次操作里的缺料抽取器：缺料清单和概率只算一次（缓存在 op 上；同一次操作里抽到的不回头改清单） */
-export async function opNeedPick(o: Op): Promise<NeedPick> {
+/**
+ * 一次操作里的缺料抽取器：缺料清单和概率只算一次（缓存在 op 上；同一次操作里抽到的不回头改清单）。
+ * foods：调用方已经读过的橱柜（合成），给了就不再读一遍（质量期 ③）
+ */
+export async function opNeedPick(
+  o: Op,
+  known?: { foods?: ReadonlyMap<number, { num: number }> },
+): Promise<NeedPick> {
   const hit = o.cache.get('needPick') as NeedPick | undefined;
   if (hit) return hit;
   const p = needChance(o.tuning.scarcity, (await opLuck(o)).rate);
@@ -65,7 +71,7 @@ export async function opNeedPick(o: Op): Promise<NeedPick> {
   if (p > 0) {
     // 同一个事务连接上不能并发查询（pg 会排队并警告，pg@9 会报错），按顺序读
     const levels = await levelsOf(o.tx, o.rest.id);
-    const foods = await foodsMap(o.tx, o.rest.id);
+    const foods = known?.foods ?? (await foodsMap(o.tx, o.rest.id));
     need = needMapOf(
       o.config.cookbookIndex.idsByStreet.get(o.rest.street_id) ?? [],
       levels,

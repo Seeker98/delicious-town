@@ -9,6 +9,7 @@ import { smtpMailer } from './infra/mailer';
 import { createRedis } from './infra/redis';
 import { setSeedSecret } from './core/seed';
 import { createSessionStore } from './security/sessionStore';
+import { queryHook } from './infra/queryStats';
 
 export function createDeps(env: Env): AppDeps {
   setSeedSecret(env.RNG_SECRET);
@@ -16,7 +17,7 @@ export function createDeps(env: Env): AppDeps {
   const clock = env.ENABLE_TEST_API ? createShiftClock() : undefined;
   return {
     env,
-    db: createDb(env.DATABASE_URL, env.DB_POOL_SIZE),
+    db: createDb(env.DATABASE_URL, env.DB_POOL_SIZE, queryHook(env)),
     redis,
     config: loadGameConfig(env.CONFIG_BUNDLE_PATH),
     mailer: smtpMailer(env.SMTP_URL, env.MAIL_FROM),

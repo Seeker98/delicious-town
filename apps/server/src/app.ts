@@ -13,6 +13,7 @@ import { createGame } from './game';
 import { registerClientIp } from './http/clientIp';
 import { registerErrorHandling } from './http/errorHandling';
 import { registerHealth } from './http/health';
+import { registerQueryStats } from './infra/queryStats';
 import { subscribeSettings } from './infra/settingsBus';
 import { testApiRoutes } from './http/testApi';
 import type { Captcha } from './infra/captcha';
@@ -59,6 +60,8 @@ export async function buildApp(
   });
   // 响应压缩（backlog 多语言）：道具目录加了菜名后英文约 355KB，gzip 后约 78KB；小于 1KB 的不压
   await app.register(compress, { global: true, threshold: 1024, encodings: ['br', 'gzip', 'deflate'] });
+  // 查询统计放最前：这个请求后面所有钩子里的查询都算进去（质量期 ③）
+  registerQueryStats(app, deps.env);
   await app.register(cookie);
   await app.register(cors, { origin: deps.env.WEB_ORIGIN, credentials: true, methods: ['GET', 'POST'] });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);

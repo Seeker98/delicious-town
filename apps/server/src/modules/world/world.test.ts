@@ -93,6 +93,29 @@ describe('接口', () => {
     expect(r.json.data.version).toBe(config.version);
   });
 
+  it('目录带 ETag：浏览器带 If-None-Match 再来、目录没变时回 304 不带正文；语言不同 ETag 不同（质量期 ③）', async () => {
+    const first = await call(http.app, 'GET', '/api/v1/world/catalog');
+    const etag = String(first.res.headers.etag);
+    expect(etag).toMatch(/^"[0-9a-f]{16}"$/);
+    expect(first.res.headers['cache-control']).toBe('no-cache');
+    const again = await call(http.app, 'GET', '/api/v1/world/catalog', {
+      headers: { 'if-none-match': etag },
+    });
+    expect(again.status).toBe(304);
+    expect(again.res.body).toBe('');
+    // 生产走 Cloudflare：压缩时把 ETag 改成弱的 W/"…"，浏览器带回来的也是弱的；也可能带多个（终审 Important 1）
+    for (const h of [`W/${etag}`, `"zzz", ${etag}`]) {
+      const r = await call(http.app, 'GET', '/api/v1/world/catalog', { headers: { 'if-none-match': h } });
+      expect(r.status, h).toBe(304);
+    }
+    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en', {
+      headers: { 'if-none-match': etag },
+    });
+    expect(en.status).toBe(200);
+    expect(en.res.headers.etag).not.toBe(etag);
+    expect(en.json.data.version).toBe(config.version + ':en');
+  });
+
   it('目录的街道带加成说明，按语言翻译（问题记录 284：搬家页要显示）', async () => {
     const zh = await call(http.app, 'GET', '/api/v1/world/catalog');
     expect(zh.json.data.streets.find((s: { id: number }) => s.id === 24)).toMatchObject({

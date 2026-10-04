@@ -8,6 +8,7 @@ export default defineConfig({
     'cli/migrate': 'src/cli/migrate.ts',
     'cli/account': 'src/cli/account.ts',
     'cli/equip-rescale': 'src/cli/equip-rescale.ts',
+    'cli/bench-api': 'src/cli/bench-api.ts',
   },
   format: ['esm'],
   platform: 'node',
