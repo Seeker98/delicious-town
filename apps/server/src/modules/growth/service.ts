@@ -190,7 +190,13 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
       const store = rows
         .map((x) => ({ goodsId: x.goods_id, num: x.num, g: d.config.goods.get(x.goods_id) }))
         .filter((x) => x.g?.type === GOODS_TYPE.device && x.g.deviceType !== null)
-        .map((x) => ({ goodsId: x.goodsId, num: x.num, deviceType: x.g!.deviceType! }));
+        .map((x) => ({
+          goodsId: x.goodsId,
+          num: x.num,
+          deviceType: x.g!.deviceType!,
+          // 设施页把星级不够的置灰（backlog 146）
+          ...(x.g!.needStar ? { needStar: x.g!.needStar } : {}),
+        }));
       return { slots: await deviceSlots(d.db, d.config, r, d.now()), store };
     },
 

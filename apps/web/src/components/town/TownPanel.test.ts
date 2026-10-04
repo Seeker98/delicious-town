@@ -133,6 +133,27 @@ describe('TownPanel', () => {
 
   describe('冷却按服务器时间倒计时（终审 I1）', () => {
     afterEach(() => vi.useRealTimers());
+    it('镇长问答：页面开着过了嘻哈男孩出来的整点，按钮自己变可点，并重新读取（backlog #118）', async () => {
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
+      vi.setSystemTime(new Date('2026-09-30T04:59:30.000Z'));
+      const w = mount(TownPanel, {
+        props: {
+          data: townData({
+            now: '2026-09-30T04:59:30.000Z',
+            mayor: { answered: false, hiphopOut: false, hour: 13 },
+          }),
+        },
+      });
+      expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
+      vi.advanceTimersByTime(60_000);
+      await nextTick();
+      expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeUndefined();
+      expect(w.emitted('reload')).toHaveLength(1);
+      vi.advanceTimersByTime(60_000);
+      await nextTick();
+      expect(w.emitted('reload')).toHaveLength(1);
+    });
+
     it('全镇 90 秒间隔结束后换天气按钮自己恢复', async () => {
       vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
       vi.setSystemTime(new Date('2026-09-30T04:00:00.000Z'));
@@ -157,9 +178,9 @@ describe('TownPanel', () => {
 
   it('镇长问答：嘻哈男孩今天还没出来时写明几点出来，按钮不能点（问题记录 333）', () => {
     const w = mount(TownPanel, {
-      props: { data: townData({ mayor: { answered: false, hiphopOut: false, hour: 10 } }) },
+      props: { data: townData({ mayor: { answered: false, hiphopOut: false, hour: 13 } }) },
     });
-    expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 10 点出来，到时再来告诉镇长');
+    expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 13 点出来，到时再来告诉镇长');
     expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
   });
 

@@ -2,6 +2,7 @@ import type { RestLogDto } from '@dt/shared';
 import type { Messages } from '../..';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
+import fund from './fund';
 import { n, type P } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plat signature ${id}`;
@@ -218,6 +219,12 @@ const events: Messages['events'] = {
         .join(', ');
       return `A tiré ${n(p, 'num')} tickets du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
     },
+    'fund.deposit': (p) =>
+      `A déposé ${formatNum(n(p, 'coin'))} pièces dans le Fonds de développement (${fund.tierName(String(p.tier ?? ''))})`,
+    'fund.claim': (p, names) =>
+      `A récupéré le Fonds de développement : ${formatNum(n(p, 'coin'))} pièces et ${names.goodsName(n(p, 'medal'))}`,
+    'fund.withdraw': (p) =>
+      `A retiré en avance du Fonds de développement : ${formatNum(n(p, 'coin'))} pièces récupérées`,
     'activity.claim': (p) => `A récupéré les récompenses de l'événement « ${String(p.title ?? '')} »`,
     'activity.unlock': (p) =>
       `A débloqué les récompenses premium de l'événement « ${String(p.title ?? '')} »`,

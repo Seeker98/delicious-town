@@ -247,6 +247,18 @@ describe('交易所日志（156-1）', () => {
     );
   });
 
+  it('发展基金日志（backlog 基金）', () => {
+    const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
+    const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
+    expect(log('fund.deposit', { tier: 'B', coin: 3000000 })).toBe(
+      '向小镇发展基金存入 3,000,000 银币（B·增值资本）',
+    );
+    expect(log('fund.claim', { tier: 'B', coin: 2700000, medal: 93102 })).toBe(
+      '领取小镇发展基金：拿回 2,700,000 银币和道具93102',
+    );
+    expect(log('fund.withdraw', { tier: 'C', coin: 700000 })).toBe('提前取出小镇发展基金，拿回 700,000 银币');
+  });
+
   it('一番赏日志', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);

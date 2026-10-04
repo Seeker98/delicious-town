@@ -109,6 +109,24 @@ describe('TownView', () => {
     expect(endpoints.fund).not.toHaveBeenCalled();
   });
 
+  it('餐厅数据后到、区服关了发展基金：当前标签退回新闻（backlog 基金）', async () => {
+    vi.mocked(endpoints.fund).mockResolvedValue({
+      days: 7,
+      returnRate: 0.9,
+      earlyRate: 0.7,
+      coin: 0,
+      deposit: null,
+      tiers: [],
+    });
+    localStorage.setItem('dt_town_tab', 'fund');
+    const w = await mountAt('/town');
+    expect(w.find('[data-testid="tab-fund"]').classes()).toContain('active');
+    useRestaurantStore().rest = { disabledFeatures: ['fund'] } as never;
+    await flushPromises();
+    expect(w.find('[data-testid="tab-fund"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
+  });
+
   it('?tab=fund 打开发展基金（240-2）', async () => {
     vi.mocked(endpoints.fund).mockResolvedValue({
       days: 7,

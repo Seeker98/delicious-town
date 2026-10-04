@@ -34,6 +34,7 @@ const deposit = (o: Partial<FundDepositDto> = {}): FundDepositDto => ({
   mature: false,
   back: 900_000,
   early: 700_000,
+  expRate: 0.05,
   ...o,
 });
 
@@ -93,6 +94,13 @@ describe('FundPanel（240-2）', () => {
     expect(endpoints.fund).toHaveBeenCalledTimes(2);
     expect(w.find('[data-testid="fund-withdraw"]').exists()).toBe(false);
     expect(w.find('[data-testid="fund-claim"]').exists()).toBe(true);
+  });
+
+  it('存款卡片的勋章加成用服务端给的，运营删了这一档也对（backlog 基金）', async () => {
+    vi.mocked(endpoints.fund).mockResolvedValue({ ...base, tiers: [], deposit: deposit({ expRate: 0.08 }) });
+    const w = mount(FundPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="fund-mine"]').text()).toContain('8%');
   });
 
   it('已到期：按钮是领取，没有提前取出', async () => {

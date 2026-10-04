@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { HIPHOP_PLACE_FEATURE, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
+import { computed, ref, watch } from 'vue';
+import { gameParts, HIPHOP_PLACE_FEATURE, HIPHOP_PLACES, type HiphopPlace } from '@dt/shared';
 import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -47,8 +47,15 @@ const mayorOpen = ref(false);
 const restaurant = useRestaurantStore();
 /** 确定嘻哈男孩今天还没出来时才拦着（服务端没带这个状态的旧版本照旧可以问，问错了服务端会提示） */
 const mayorWaiting = computed(
-  () => props.data.mayor.hiphopOut === false && props.data.mayor.hour !== undefined,
+  () =>
+    props.data.mayor.hiphopOut === false &&
+    props.data.mayor.hour !== undefined &&
+    // 页面开着过了整点就不再拦着（按服务器时间），并重新读取一次拿到他今天的状态（backlog #118）
+    gameParts(new Date(clock.now.value)).hour < props.data.mayor.hour,
 );
+watch(mayorWaiting, (now, before) => {
+  if (before && !now) emit('reload');
+});
 const PLACES = computed(() =>
   HIPHOP_PLACES.filter((p) => {
     const f = HIPHOP_PLACE_FEATURE[p];

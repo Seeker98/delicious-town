@@ -264,9 +264,12 @@ describe('后期海报奖杯摆放要星级（问题记录 146）', () => {
     const ctx = await newRestaurant(t, { patch: { star_level: 3 }, goods: { 93201: 1 } });
     await expect(g().placeDevice(ctx, { slot: 1, goodsId: 93201 })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'star', need: 4 },
+      params: { reason: 'star', need: 4, have: 3 },
     });
     expect(await goodsNum(t, ctx.restaurantId, 93201)).toBe(1);
+    // 设施页的选择列表带上需要的星级，前端好置灰（backlog 146）
+    const opts = await g().devices(ctx);
+    expect(opts.store.find((x) => x.goodsId === 93201)).toMatchObject({ needStar: 4 });
   });
 
   it('4 星能摆，每桌银币 +8 进加成（Review Focus 3）', async () => {

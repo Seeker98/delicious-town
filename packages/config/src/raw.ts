@@ -467,6 +467,8 @@ export const devicesExtraFile = z
           id: int.min(1),
           name: z.string().min(1),
           desc: z.string().min(1),
+          /** 道具等级（Wiki 显示）：按档 4~7 */
+          level: int.min(1),
           deviceType: int,
           time: int.min(1),
           effect: z.enum(['coinValue', 'expValue']),

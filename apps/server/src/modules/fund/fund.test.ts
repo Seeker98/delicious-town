@@ -233,6 +233,38 @@ describe('小镇发展基金（240-2）', () => {
     expect(await medalEffects(r.restaurantId)).toEqual([[FUND.A, 0.15]]);
   });
 
+  it('存款信息直接带勋章加成；存入、领取、提前取出都写进我的动态（backlog 基金）', async () => {
+    const r = await newRestaurant(t, { patch: { coin: 4_000_000 } });
+    const dep = await svc().deposit(r, 'B');
+    expect(dep.data.deposit).toMatchObject({ medal: FUND.B, expRate: 0.1 });
+    later(7 * DAY);
+    await svc().claim(r);
+    await svc().deposit(r, 'C');
+    await svc().withdraw(r);
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select(['type', 'params'])
+      .where('rest_id', '=', r.restaurantId)
+      .where('type', 'like', 'fund.%')
+      .orderBy('id')
+      .execute();
+    expect(logs).toEqual([
+      { type: 'fund.deposit', params: { tier: 'B', coin: 3_000_000 } },
+      { type: 'fund.claim', params: { tier: 'B', coin: 2_700_000, medal: FUND.B } },
+      { type: 'fund.deposit', params: { tier: 'C', coin: 1_000_000 } },
+      { type: 'fund.withdraw', params: { tier: 'C', coin: 700_000 } },
+    ]);
+  });
+
+  it('退回金额没有浮点误差：70 万提前取出退 49 万，不是 489,999（backlog 基金）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { fund: { tiers: [{ key: 'C', coin: 700_000, medal: FUND.C }] } });
+    const r = await newRestaurant(t, { shardId, patch: { coin: 700_000 } });
+    await svc().deposit(r, 'C');
+    const v = await svc().withdraw(r);
+    expect(v.data.coin).toBe(490_000);
+  });
+
   it('提前取出：退 70%、没有勋章；到期后不能提前取出（Review Focus 1）', async () => {
     const r = await newRestaurant(t, { patch: { coin: 3_000_000 } });
     await svc().deposit(r, 'B');

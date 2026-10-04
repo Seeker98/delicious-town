@@ -11,17 +11,17 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
     expect(errors).toEqual([]);
     const rows = [93201, 93202, 93203, 93204, 93205, 93206, 93207, 93208].map((id) => {
       const g = bundle!.goods.find((x) => x.id === id)!;
-      return [g.type, g.deviceType, g.effects, g.coin, g.onSale, g.needStar, g.awardFlag];
+      return [g.type, g.deviceType, g.effects, g.coin, g.onSale, g.needStar, g.awardFlag, g.level];
     });
     expect(rows).toEqual([
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 8 }, 30000, true, 4, null],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 15 }, 50000, true, 6, null],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 30 }, 80000, true, 8, null],
-      [GOODS_TYPE.device, 1, { time: 24, coinValue: 50 }, 150000, true, 10, null],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 4 }, 30000, true, 4, null],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 5 }, 50000, true, 6, null],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 6 }, 80000, true, 8, null],
-      [GOODS_TYPE.device, 2, { time: 24, expValue: 7 }, 150000, true, 10, null],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 8 }, 30000, true, 4, null, 4],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 15 }, 50000, true, 6, null, 5],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 30 }, 80000, true, 8, null, 6],
+      [GOODS_TYPE.device, 1, { time: 24, coinValue: 50 }, 150000, true, 10, null, 7],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 4 }, 30000, true, 4, null, 4],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 5 }, 50000, true, 6, null, 5],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 6 }, 80000, true, 8, null, 6],
+      [GOODS_TYPE.device, 2, { time: 24, expValue: 7 }, 150000, true, 10, null, 7],
     ]);
     // 现有的普通海报照旧：同样的效果格式，没有星级门槛
     expect(bundle!.goods.find((g) => g.id === 13)).toMatchObject({ effects: { time: 24, coinValue: 2 } });

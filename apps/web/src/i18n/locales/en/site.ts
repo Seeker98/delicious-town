@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fixes1005:
+      'Fixed a batch of small issues: the Mayor row unlocks by itself once Hip-hop Boy is due; fund deposits and claims now show in your activity log; the Plaza tabs fit on a phone screen; posters and trophies you can’t use yet are greyed out on the facility picker',
     posters:
       'The shop adds 4 new tiers of promo posters and Town God of Cookery trophies, unlocking at 4, 6, 8 and 10★, so late-game coin and EXP boosts keep up',
     scarcity:

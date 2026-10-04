@@ -65,6 +65,12 @@ html {
   .form-select-sm {
     font-size: 16px;
   }
+  /* 小号输入框字号变大后比旁边的 btn-sm 高 3px（backlog #118）：行高压到 btn-sm 的 21px，总高还是 31px */
+  .form-control-sm,
+  .form-select-sm {
+    line-height: 1.3125;
+    min-height: calc(1.3125em + 0.5rem + 2px);
+  }
 }
 body {
   background: var(--dt-bg);
@@ -411,6 +417,13 @@ body {
 .nav-tabs .nav-link.active {
   color: var(--dt-primary-ink);
   font-weight: 600;
+}
+/* 手机宽度标签左右留白收窄：广场 6 个标签（简中）一屏放得下，不用先滑才看到第一个（backlog 基金） */
+@media (max-width: 420px) {
+  .nav-tabs .nav-link {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
 }
 .form-control:focus,
 .form-select:focus {

@@ -247,6 +247,24 @@ describe('RestaurantHomeView', () => {
     confirm.mockRestore();
   });
 
+  it('设施选择：星级不够的高档海报变灰并写几星可用（backlog 146）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 3 });
+    vi.mocked(endpoints.devices).mockResolvedValue({
+      slots: dto.devices,
+      store: [
+        { goodsId: 14, deviceType: 1, num: 1 },
+        { goodsId: 93201, deviceType: 1, num: 1, needStar: 4 },
+      ],
+    } as never);
+    const w = await mountView();
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    const locked = w.get('[data-testid="choice-93201"]');
+    expect(locked.attributes('disabled')).toBeDefined();
+    expect(locked.text()).toContain('4 星可用');
+    expect(w.get('[data-testid="choice-14"]').attributes('disabled')).toBeUndefined();
+  });
+
   it('体力、声望也按千分位显示，和银币、油一致（问题记录 296）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       ...dto,

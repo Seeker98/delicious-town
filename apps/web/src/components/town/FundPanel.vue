@@ -93,7 +93,10 @@ onMounted(load);
             </div>
             <div class="small text-muted">
               {{
-                t.fund.medalLine(catalog.goodsName(data.deposit.medal), pct(medalRate(data.deposit.medal)))
+                t.fund.medalLine(
+                  catalog.goodsName(data.deposit.medal),
+                  pct(data.deposit.expRate ?? medalRate(data.deposit.medal)),
+                )
               }}
             </div>
             <div v-if="medalIcon(data.deposit.medal)" class="small text-muted">
