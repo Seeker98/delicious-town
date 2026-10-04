@@ -16,6 +16,7 @@ export const GENEROUS_RULES: Record<RateRuleName, RateRule> = {
   default: { capacity: 100_000, refillPerSec: 100_000 },
   auth: { capacity: 100_000, refillPerSec: 100_000 },
   email: { capacity: 100_000, refillPerSec: 100_000 },
+  open: { capacity: 100_000, refillPerSec: 100_000 },
 };
 
 export { testConfig };

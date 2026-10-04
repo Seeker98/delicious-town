@@ -46,6 +46,12 @@ onMounted(() => {
   <div class="dt-page-title">
     <h5>{{ t.guide.title }}</h5>
   </div>
+  <!-- 游戏资料入口（问题记录 142） -->
+  <p class="small mb-2">
+    <RouterLink to="/wiki" data-testid="guide-wiki"
+      ><i class="bi bi-book me-1"></i>{{ t.guide.wikiHint }}</RouterLink
+    >
+  </p>
 
   <details open class="mb-2" data-testid="guide-codes">
     <summary class="dt-section">{{ t.guide.codes }}</summary>

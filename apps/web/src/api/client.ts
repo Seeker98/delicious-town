@@ -26,8 +26,14 @@ export function createApiClient(
   fetchImpl: FetchLike = (url, init) => fetch(url, init),
   base: string = import.meta.env.VITE_API_BASE ?? '',
 ) {
-  async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
-    const headers: Record<string, string> = { 'x-device-id': deviceId() };
+  /** anonymous：公开接口不带 Cookie 和自定义头，浏览器不发预检，服务端可以回 *（开放接口，问题记录 142） */
+  async function request<T>(
+    method: 'GET' | 'POST',
+    path: string,
+    body?: unknown,
+    anonymous = false,
+  ): Promise<T> {
+    const headers: Record<string, string> = anonymous ? {} : { 'x-device-id': deviceId() };
     if (method === 'POST') {
       headers['content-type'] = 'application/json';
       headers['idempotency-key'] = crypto.randomUUID();
@@ -36,7 +42,7 @@ export function createApiClient(
     try {
       res = await fetchImpl(base + path, {
         method,
-        credentials: 'include',
+        credentials: anonymous ? 'omit' : 'include',
         headers,
         body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined,
       });
@@ -56,6 +62,7 @@ export function createApiClient(
 
   return {
     get: <T>(path: string) => request<T>('GET', path),
+    getPublic: <T>(path: string) => request<T>('GET', path, undefined, true),
     post: <T>(path: string, body?: unknown) => request<T>('POST', path, body),
   };
 }

@@ -5,12 +5,14 @@ export interface RateRule {
   refillPerSec: number;
 }
 
-export type RateRuleName = 'default' | 'auth' | 'email';
+export type RateRuleName = 'default' | 'auth' | 'email' | 'open';
 
 export const DEFAULT_RATE_RULES: Record<RateRuleName, RateRule> = {
   default: { capacity: 60, refillPerSec: 10 },
   auth: { capacity: 10, refillPerSec: 0.2 },
   email: { capacity: 3, refillPerSec: 1 / 60 },
+  /** 开放接口（问题记录 142）：只按 IP，约每分钟 120 次 */
+  open: { capacity: 120, refillPerSec: 2 },
 };
 
 /** 按倍数放大所有规则（RATE_LIMIT_SCALE：开发环境里两个自动化玩家共用一个 IP，生产为 1） */

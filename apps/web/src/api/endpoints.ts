@@ -1,5 +1,15 @@
 import type {
   AccountProfileDto,
+  OpenCookbookBrief,
+  OpenCookbookDto,
+  OpenEquipsDto,
+  OpenFoodBrief,
+  OpenFoodDto,
+  OpenGoodsBrief,
+  OpenGoodsDto,
+  OpenIndexDto,
+  OpenListDto,
+  OpenStreetDto,
   ChangePasswordInput,
   ForumAdminAction,
   ForumAdminDto,
@@ -188,6 +198,20 @@ export const endpoints = {
   weather: () => api.get<WorldDto>('/api/v1/world/weather'),
   /** 道具目录：按语言返回名字（问题记录 272） */
   catalog: (lang: Locale) => api.get<CatalogDto>(`/api/v1/world/catalog?lang=${lang}`),
+  /** 开放接口（问题记录 142）：Wiki 用，不用登录 */
+  openIndex: (lang: Locale) => api.getPublic<OpenIndexDto>(`/api/v1/open?lang=${lang}`),
+  openGoods: (lang: Locale) => api.getPublic<OpenListDto<OpenGoodsBrief>>(`/api/v1/open/goods?lang=${lang}`),
+  openGoodsDetail: (lang: Locale, id: number) =>
+    api.getPublic<OpenGoodsDto>(`/api/v1/open/goods/${id}?lang=${lang}`),
+  openFoods: (lang: Locale) => api.getPublic<OpenListDto<OpenFoodBrief>>(`/api/v1/open/foods?lang=${lang}`),
+  openFood: (lang: Locale, id: number) => api.getPublic<OpenFoodDto>(`/api/v1/open/foods/${id}?lang=${lang}`),
+  openCookbooks: (lang: Locale) =>
+    api.getPublic<OpenListDto<OpenCookbookBrief>>(`/api/v1/open/cookbooks?lang=${lang}`),
+  openCookbook: (lang: Locale, id: number) =>
+    api.getPublic<OpenCookbookDto>(`/api/v1/open/cookbooks/${id}?lang=${lang}`),
+  openEquips: (lang: Locale) => api.getPublic<OpenEquipsDto>(`/api/v1/open/equips?lang=${lang}`),
+  openStreets: (lang: Locale) =>
+    api.getPublic<OpenListDto<OpenStreetDto>>(`/api/v1/open/streets?lang=${lang}`),
 
   starNeed: () => api.get<StarNeedDto>('/api/v1/growth/star'),
   oilNeed: () => api.get<OilNeedDto>('/api/v1/growth/oil'),

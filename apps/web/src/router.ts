@@ -142,6 +142,50 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
   },
+  // 游戏资料（问题记录 142）：不用登录；已开店时显示底部导航
+  {
+    path: '/wiki',
+    name: 'wiki',
+    component: () => import('./views/wiki/WikiHomeView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
+    path: '/wiki/api',
+    name: 'wiki-api',
+    component: () => import('./views/wiki/WikiApiView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
+    path: '/wiki/goods/:id(\\d+)',
+    name: 'wiki-goods',
+    component: () => import('./views/wiki/WikiGoodsView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  { path: '/wiki/equips/:id(\\d+)', redirect: (to) => `/wiki/goods/${String(to.params.id)}` },
+  {
+    path: '/wiki/foods/:id(\\d+)',
+    name: 'wiki-food',
+    component: () => import('./views/wiki/WikiFoodView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
+    path: '/wiki/cookbooks/:id(\\d+)',
+    name: 'wiki-cookbook',
+    component: () => import('./views/wiki/WikiCookbookView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
+    path: '/wiki/streets/:id(\\d+)',
+    name: 'wiki-street',
+    component: () => import('./views/wiki/WikiStreetView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
+    path: '/wiki/:kind',
+    name: 'wiki-list',
+    component: () => import('./views/wiki/WikiListView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
   {
     path: '/guide',
     name: 'guide',

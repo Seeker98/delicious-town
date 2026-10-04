@@ -16,6 +16,11 @@ describe('"更多"入口（问题记录 248）', () => {
     expect(targets()).toEqual(expect.arrayContaining(['/yard', '/exchange', '/predict', '/bar']));
   });
 
+  it('"其他"里有游戏资料入口，不受区服功能开关影响（问题记录 142）', () => {
+    useRestaurantStore().rest = { disabledFeatures: ['yard', 'exchange'] } as never;
+    expect(targets()).toContain('/wiki');
+  });
+
   it('区服关掉的功能不显示入口；没关的照常', () => {
     useRestaurantStore().rest = { disabledFeatures: ['yard', 'exchange', 'predict'] } as never;
     const to = targets();

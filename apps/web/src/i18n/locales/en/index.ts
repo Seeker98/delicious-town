@@ -15,6 +15,7 @@ import home from './home';
 import kuji from './kuji';
 import equip from './equip';
 import guide from './guide';
+import wiki from './wiki';
 import misc from './misc';
 import rest from './rest';
 import server from './server';
@@ -67,6 +68,7 @@ const messages: Messages = {
   equip,
   rest,
   guide,
+  wiki,
   misc,
   server,
 };

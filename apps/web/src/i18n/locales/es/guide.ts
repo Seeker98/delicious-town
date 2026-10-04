@@ -2,6 +2,7 @@ import type { Messages } from '../..';
 
 const guide: Messages['guide'] = {
   title: 'Guía',
+  wikiHint: '¿Buscas objetos, ingredientes o recetas? Mira los datos del juego',
   codes: 'Códigos de bienvenida',
   codesNoRest:
     'Disponibles cuando entres en un servidor y abras un restaurante. Cada restaurante puede canjear cada código una vez.',

@@ -450,7 +450,8 @@ details.dt-card > summary {
 /* 标签 | 内容 两列（问题记录 300）：标签灰色、按最长的对齐；每行至少 32px 高，有下拉框的行也不突兀 */
 .dt-kv {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  /* 值一列可以收窄：长名字折行，不把页面撑出手机屏幕（问题记录 142 终审） */
+  grid-template-columns: max-content minmax(0, 1fr);
   column-gap: 12px;
   align-items: center;
   margin: 0;
@@ -524,6 +525,21 @@ details.dt-card > summary {
 }
 .dt-card + .dt-card {
   margin-top: 8px;
+}
+/* 游戏资料首页的类目卡片：两列网格，卡片之间不再叠上边距（问题记录 142） */
+.dt-wiki-kinds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dt-wiki-kinds > .dt-card {
+  margin-top: 0;
+}
+/* 菜谱各品级的食材：每种食材一段，不在中间断行 */
+.dt-wiki-foods {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 8px;
 }
 /* 标签页里的二级分类 */
 .dt-pills {

@@ -58,6 +58,7 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
       { to: '/rest/look', icon: 'bi-palette', key: 'look' },
       { to: '/invite', icon: 'bi-person-plus', key: 'invite', feature: 'invite' },
       { to: '/guide', icon: 'bi-signpost-2', key: 'guide' },
+      { to: '/wiki', icon: 'bi-book', key: 'wiki' },
       { to: '/redeem', icon: 'bi-ticket-perforated', key: 'redeem', feature: 'redeem' },
       { to: '/shards', icon: 'bi-arrow-left-right', key: 'shards' },
     ],
