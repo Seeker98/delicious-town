@@ -6,6 +6,13 @@ import { defaultDataDir, readSourceDir } from './source';
 
 const source = () => readSourceDir(defaultDataDir());
 
+describe('Wiki 隐藏道具清单（问题记录 142）', () => {
+  it('清单里的道具都存在（改了道具 id 时提醒更新清单）', () => {
+    const ids = new Set(realBuild().bundle!.goods.map((g) => g.id));
+    for (const id of WIKI_HIDDEN_GOODS) expect(ids.has(id), String(id)).toBe(true);
+  });
+});
+
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
@@ -949,12 +956,5 @@ describe('任务配置（问题记录 318）', () => {
     expect(errs).toMatch(/unknown chapter 99/);
     expect(errs).toMatch(/unknown state key rest\.nope/);
     expect(errs).toMatch(/999999/);
-  });
-});
-
-describe('Wiki 隐藏道具清单（问题记录 142）', () => {
-  it('清单里的道具都存在（改了道具 id 时提醒更新清单）', () => {
-    const ids = new Set(realBuild().bundle!.goods.map((g) => g.id));
-    for (const id of WIKI_HIDDEN_GOODS) expect(ids.has(id), String(id)).toBe(true);
   });
 });
