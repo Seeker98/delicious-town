@@ -21,6 +21,9 @@ export interface Bot {
   name: string;
   persona: Persona;
   ctx: RestCtx;
+  /** 搬街判断用：上次看到的学会食谱数、最近一次学到新菜（或搬街）的时间 */
+  lastLearned?: number;
+  lastFreshAt?: Date;
 }
 
 export async function createBots(
@@ -217,6 +220,8 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
 
   await shopForFoods(game, bot, attempt, saving);
 
+  await maybeMove(game, bot, attempt);
+
   {
     // 只能学本街的菜（问题记录 312）；可学（没学过的）和可升级（已学的）分开查，先学新的
     const q = { street: (await rest()).streetId, page: 1 } as const;
@@ -224,19 +229,21 @@ export async function botTurn(game: Game, bot: Bot): Promise<TurnStats> {
     const upgradable = await game.cookbook.list(ctx, { ...q, filter: 'upgradable' });
     for (const row of [...learnable.items, ...upgradable.items].slice(0, 20))
       await attempt(() => game.cookbook.learn(ctx, row.id));
+    // 学到新菜的时间当场记下（快速模型在学的那一刻记），搬街判断两边才对得上
+    await learnedNow(game, bot);
   }
 
   await composeSurplus(game, bot, attempt);
   return stats;
 }
 
-/** 买"把所有食谱学到 1 品级还缺"的食材；留出加满一次油的钱和正在攒的钱 */
+/** 买"把本街食谱学到 1 品级还缺"的食材（只能学本街的菜，问题记录 312）；留出加满一次油的钱和正在攒的钱 */
 async function shopForFoods(game: Game, bot: Bot, attempt: Attempt, saving: number): Promise<void> {
   const ctx = bot.ctx;
-  const need = await game.cookbook.foodsNeed(ctx, { target: 1 });
+  let r = await game.restaurant.overview(ctx.restaurantId);
+  const need = await game.cookbook.foodsNeed(ctx, { target: 1, street: r.streetId });
   const lack = new Map(need.items.filter((x) => x.lack > 0).map((x) => [x.foodsId, x.lack]));
   const market = await game.market.view(ctx);
-  let r = await game.restaurant.overview(ctx.restaurantId);
   const reserve = r.oilMax + 20_000 + saving;
   for (const it of [...market.daily, ...market.special]) {
     const want = lack.get(it.foodsId) ?? 0;
@@ -257,12 +264,63 @@ async function shopForFoods(game: Game, bot: Bot, attempt: Attempt, saving: numb
   }
 }
 
+/** 本街连续这么久没学到新菜，就当这条街学不动了（和快速模型 sim/fast/bot.ts 一致） */
+const STALE_MS = 3 * 86_400_000;
+
+/** 读学会的食谱；比上次多了就把"最近学到新菜"记成现在 */
+async function learnedNow(game: Game, bot: Bot): Promise<{ levels: Uint8Array; learned: number }> {
+  const row = await game.app.db
+    .selectFrom('restaurant_cookbooks')
+    .select('levels')
+    .where('rest_id', '=', bot.ctx.restaurantId)
+    .executeTakeFirstOrThrow();
+  const levels = new Uint8Array(row.levels);
+  const learned = levels.reduce((n, g) => n + (g > 0 ? 1 : 0), 0);
+  if (bot.lastFreshAt === undefined || learned > (bot.lastLearned ?? 0)) bot.lastFreshAt = game.app.now();
+  bot.lastLearned = learned;
+  return { levels, learned };
+}
+
+/**
+ * 搬街（和快速模型同一规则，问题记录 240 报告）：下一星还差食谱数，而本街没学过的菜学完了、
+ * 或者连续 3 天没学到新菜，就搬到没学过的菜最多的街；没有搬家卡时花钻石在黑市买一张
+ */
+async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> {
+  const ctx = bot.ctx;
+  const config = game.app.config;
+  const now = game.app.now();
+  const { levels, learned } = await learnedNow(game, bot);
+  const r = await game.restaurant.overview(ctx.restaurantId);
+  const need = config.starNeed.get(r.starLevel + 1);
+  if (!need || need.cookbooksKind !== 'learned' || learned >= need.needCookbooks) return;
+  const byStreet = config.cookbookIndex.idsByStreet;
+  const fresh = (street: number) => (byStreet.get(street) ?? []).filter((id) => !levels[id]).length;
+  const stale = now.getTime() - (bot.lastFreshAt ?? now).getTime() >= STALE_MS;
+  if (fresh(r.streetId) > 0 && !stale) return;
+  let target = -1;
+  let best = 0;
+  for (const id of [...byStreet.keys()].sort((a, b) => a - b)) {
+    if (id === r.streetId) continue;
+    const n = fresh(id);
+    if (n > best) {
+      best = n;
+      target = id;
+    }
+  }
+  if (target < 0) return;
+  const store = await game.store.list(ctx, {});
+  if (!store.items.some((x) => x.goodsId === GOODS.moveCard && x.num > 0))
+    await attempt(() => game.shop.buyBlack(ctx, { goodsId: GOODS.moveCard, num: 1 }));
+  if (await attempt(() => game.growth.move(ctx, target))) bot.lastFreshAt = now;
+}
+
 /** 用当天的免体力次数，把学食谱用不到的 1~4 级食材合成上去 */
 async function composeSurplus(game: Game, bot: Bot, attempt: Attempt): Promise<void> {
   const ctx = bot.ctx;
   const cup = await game.cupboard.list(ctx);
   let free = cup.freeHandleLeft;
-  const need = await game.cookbook.foodsNeed(ctx, { target: 1 });
+  const { streetId } = await game.restaurant.overview(ctx.restaurantId);
+  const need = await game.cookbook.foodsNeed(ctx, { target: 1, street: streetId });
   const needed = new Map(need.items.map((x) => [x.foodsId, x.need]));
   for (const it of cup.items) {
     if (free <= 0) break;
