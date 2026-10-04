@@ -78,7 +78,12 @@ export interface OpenGoodsDto extends OpenMeta, OpenGoodsBrief {
     stressTable: number[];
   } | null;
   /** nextName：下一阶的名字（按语言）；没有下一阶为 null */
-  gem: { level: number; nextId: number | null; nextName: string | null; attrs: Record<string, number> } | null;
+  gem: {
+    level: number;
+    nextId: number | null;
+    nextName: string | null;
+    attrs: Record<string, number>;
+  } | null;
   gift: OpenGiftItem[] | null;
   sources: {
     shop: { coin: number; diamond: number } | null;
