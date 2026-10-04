@@ -265,6 +265,21 @@ describe('小镇发展基金（240-2）', () => {
     expect(v.data.coin).toBe(490_000);
   });
 
+  it('比例小数位多时不多给：3 × 0.333333 退 0，不是 1；100 万 × 0.333333 退 333,333（质量期 ②）', async () => {
+    for (const [coin, back] of [
+      [3, 0],
+      [1_000_000, 333_333],
+    ] as const) {
+      const shardId = await createShard(t.db);
+      await setTuning(t, shardId, {
+        fund: { earlyRate: 0.333333, tiers: [{ key: 'C', coin, medal: FUND.C }] },
+      });
+      const r = await newRestaurant(t, { shardId, patch: { coin } });
+      await svc().deposit(r, 'C');
+      expect((await svc().withdraw(r)).data.coin).toBe(back);
+    }
+  });
+
   it('提前取出：退 70%、没有勋章；到期后不能提前取出（Review Focus 1）', async () => {
     const r = await newRestaurant(t, { patch: { coin: 3_000_000 } });
     await svc().deposit(r, 'B');
