@@ -40,6 +40,7 @@ describe('RestLookView', () => {
     });
     vi.mocked(endpoints.myLooks).mockResolvedValue({
       door: 0,
+      ownedDoors: [0],
       avatar: null,
       notice: '',
       icons: [{ id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: false, expiresAt: null }],
@@ -48,9 +49,35 @@ describe('RestLookView', () => {
       vi.mocked(endpoints[f]).mockResolvedValue({} as never);
   });
 
+  it('买过的门写“已拥有”、不写价格；没买过的写价格（问题记录 350）', async () => {
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0, 1],
+      avatar: null,
+      notice: '',
+      icons: [],
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    expect(w.get('[data-testid="door-1"]').text()).toContain('已拥有');
+    expect(w.get('[data-testid="door-1"]').text()).not.toContain('20,000');
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: null,
+      notice: '',
+      icons: [],
+    });
+    const v = mount(RestLookView);
+    await flushPromises();
+    expect(v.get('[data-testid="door-1"]').text()).toContain('20,000');
+    expect(v.text()).toContain('第一次换上时付银币');
+  });
+
   it('限时称号（240-2 发展基金）写剩余时间，永久的不写', async () => {
     vi.mocked(endpoints.myLooks).mockResolvedValue({
       door: 0,
+      ownedDoors: [0],
       avatar: null,
       notice: '',
       icons: [
@@ -95,6 +122,7 @@ describe('RestLookView', () => {
     const endsAt = new Date(Date.now() + 3 * 86_400_000 + 3_600_000).toISOString();
     vi.mocked(endpoints.myLooks).mockResolvedValue({
       door: 0,
+      ownedDoors: [0],
       avatar: null,
       notice: '',
       icons: [],
@@ -120,7 +148,7 @@ describe('RestLookView', () => {
     expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
     confirm.mockRestore();
 
-    vi.mocked(endpoints.myLooks).mockResolvedValue({ door: 0, avatar: null, notice: '', icons: [] });
+    vi.mocked(endpoints.myLooks).mockResolvedValue({ door: 0, ownedDoors: [0], avatar: null, notice: '', icons: [] });
     const old = mount(RestLookView);
     await flushPromises();
     expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);

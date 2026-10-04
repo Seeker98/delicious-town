@@ -425,6 +425,13 @@ export interface NpcInviteTable {
   created_at: TsDefault;
 }
 
+/** 买过的门（问题记录 350）：默认门 0 不记 */
+export interface RestDoorTable {
+  rest_id: number;
+  door_id: number;
+  acquired_at: TsDefault;
+}
+
 export interface RestIconTable {
   id: Generated<number>;
   rest_id: number;
@@ -1290,6 +1297,7 @@ export interface DB {
   cupboard_flip: CupboardFlipTable;
   thumb: ThumbTable;
   rest_icon: RestIconTable;
+  rest_door: RestDoorTable;
   npc_invite: NpcInviteTable;
   equip: EquipTable;
   equip_gem: EquipGemTable;

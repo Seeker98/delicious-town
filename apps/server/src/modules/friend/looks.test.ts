@@ -30,6 +30,24 @@ describe('装扮（规格书 02 §2.8）', () => {
     expect(await restRow(t, a.restaurantId)).toMatchObject({ door: 0, coin: 10_000 });
   });
 
+  it('买过的门永久拥有：A→B→A 只在第一次换上 A、B 时扣钱；装扮页列出已拥有的门（问题记录 350）', async () => {
+    const a = await newRestaurant(t, { patch: { coin: 100_000 } });
+    await looks().door(a, 1);
+    await looks().door(a, 2);
+    expect((await restRow(t, a.restaurantId)).coin).toBe(60_000);
+    await looks().door(a, 1);
+    expect(await restRow(t, a.restaurantId)).toMatchObject({ door: 1, coin: 60_000 });
+    await looks().door(a, 0);
+    await looks().door(a, 2);
+    expect(await restRow(t, a.restaurantId)).toMatchObject({ door: 2, coin: 60_000 });
+    const mine = await looks().mine(a);
+    expect(mine.ownedDoors).toEqual([0, 1, 2]);
+    // 钱不够也能换回买过的门
+    await t.db.updateTable('restaurant').set({ coin: 0 }).where('id', '=', a.restaurantId).execute();
+    await looks().door(a, 1);
+    expect((await restRow(t, a.restaurantId)).door).toBe(1);
+  });
+
   it('头像只能选列表里的', async () => {
     const a = await newRestaurant(t);
     await looks().avatar(a, 5);

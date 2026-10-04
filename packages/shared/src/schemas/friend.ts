@@ -196,6 +196,8 @@ export const iconBuyBody = z.object({ key: z.string().min(1).max(32) });
 
 export interface MyLooksDto {
   door: number;
+  /** 已拥有的门（含默认门 0）：买过的门换回来免费（问题记录 350） */
+  ownedDoors: number[];
   avatar: number | null;
   notice: string;
   /** expiresAt：限时称号（240-2 发展基金）的到期时间，永久的为空 */
