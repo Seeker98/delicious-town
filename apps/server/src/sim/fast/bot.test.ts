@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GOODS, resolveShardSettings } from '@dt/config';
+import { GOODS, NEWBIE, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { PERSONAS } from '../bot';
@@ -117,6 +117,7 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
   it('只差凭证但买不起时攒钱：不买桌子，不升星', () => {
     const c = ctx();
     const b = bot(c);
+    b.rest.store.delete(NEWBIE.pack); // 新手大礼包里有 5 万银币（问题记录 331），这里要测买不起的情况
     const need = config.starNeed.get(1)!;
     b.rest.level = need.needLevel;
     b.rest.counts.learned = need.needCookbooks;
@@ -132,6 +133,7 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     const { unitPrice } = await import('../../modules/market/rules');
     const c = ctx();
     const b = bot(c);
+    b.rest.store.delete(NEWBIE.pack); // 大礼包里的银币和食材随机券会改变要算的钱和缺口（问题记录 331）
     noQuests(b);
     b.rest.daily.set('signin', 1);
     b.rest.foods.clear();
