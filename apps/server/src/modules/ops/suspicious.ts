@@ -75,56 +75,78 @@ export function createSuspicious(game: Game) {
       const from = gameTime(day, 0);
       const to = gameTime(addDays(day, 1), 0);
       const out: SuspiciousSurgeDto = { day, coin: [], diamond: [], exp: [] };
-      for (const kind of SURGE_KINDS) {
-        // 结算的银币、经验不进流水（ledger: false），在 income_round 里；按来源 settlement 一起算（终审 I1）
-        const ledgerPart = sql`select rest_id, delta, source from ledger
-          where kind = ${kind} and created_at >= ${from} and created_at < ${to}`;
-        const src =
-          kind === 'diamond'
-            ? ledgerPart
-            : sql`${ledgerPart}
-              union all
-              select rest_id, ${sql.ref(kind)} as delta, 'settlement' as source from income_round
-              where created_at >= ${from} and created_at < ${to}`;
-        const top = await sql<{
-          rest_id: number;
-          name: string;
-          account_id: number;
-          username: string;
-          net: string;
-        }>`
-          select r.id as rest_id, r.name, a.id as account_id, a.username, sum(l.delta) as net
-          from (${src}) l
-          join restaurant r on r.id = l.rest_id
-          join account a on a.id = r.account_id
-          where r.shard_id = ${shardId} and not r.npc
-          group by r.id, r.name, a.id, a.username
-          order by sum(l.delta) desc
-          limit ${t.topN}`.execute(db);
-        const ids = top.rows.map((r) => r.rest_id);
-        const sources = ids.length
-          ? await sql<{ rest_id: number; source: string; delta: string }>`
-              select rest_id, source, sum(delta) as delta from (${src}) l
-              where rest_id in (${sql.join(ids)})
-              group by rest_id, source`.execute(db)
-          : { rows: [] };
-        const bySource = new Map<number, Array<{ source: string; delta: number }>>();
-        for (const s of sources.rows) {
-          const list = bySource.get(s.rest_id) ?? [];
-          list.push({ source: s.source, delta: Number(s.delta) });
-          bySource.set(s.rest_id, list);
+      // 一条查询把三种资源按“店 × 来源”一起汇总，先限定本区服（质量期 ③：原来每种资源两条、各扫一遍当天的流水和收益，共 6 遍）。
+      // 结算的银币、经验不进流水（ledger: false），在 income_round 里；按来源 settlement 一起算（终审 I1）。
+      // 某种资源没有流水时那一列是 null：只有出现过的店才进那一榜（和原来一致）
+      const rows = await sql<{
+        rest_id: number;
+        source: string;
+        coin: string | null;
+        diamond: string | null;
+        exp: string | null;
+      }>`
+        with l as (
+          select rest_id, source,
+            sum(delta) filter (where kind = 'coin') as coin,
+            sum(delta) filter (where kind = 'diamond') as diamond,
+            sum(delta) filter (where kind = 'exp') as exp
+          from ledger
+          where kind in ('coin', 'diamond', 'exp') and created_at >= ${from} and created_at < ${to}
+          group by rest_id, source
+          union all
+          select rest_id, 'settlement', sum(coin), null, sum(exp) from income_round
+          where created_at >= ${from} and created_at < ${to}
+          group by rest_id
+        )
+        select l.rest_id, l.source, l.coin, l.diamond, l.exp
+        from l join restaurant r on r.id = l.rest_id
+        where r.shard_id = ${shardId} and not r.npc`.execute(db);
+      // 店 → 资源 → 来源 → 金额（流水和结算都有 settlement 来源时合在一起）
+      const by = new Map<number, Record<(typeof SURGE_KINDS)[number], Map<string, number>>>();
+      for (const row of rows.rows) {
+        let m = by.get(row.rest_id);
+        if (!m) by.set(row.rest_id, (m = { coin: new Map(), diamond: new Map(), exp: new Map() }));
+        for (const kind of SURGE_KINDS) {
+          const v = row[kind];
+          if (v === null) continue;
+          m[kind].set(row.source, (m[kind].get(row.source) ?? 0) + Number(v));
         }
-        out[kind] = top.rows.map((r): SuspiciousSurgeRow => ({
-          restId: r.rest_id,
-          restName: r.name,
-          accountId: r.account_id,
-          username: r.username,
-          net: Number(r.net),
-          topSources: (bySource.get(r.rest_id) ?? [])
-            .sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))
-            .slice(0, 3),
-        }));
       }
+      const tops = SURGE_KINDS.map((kind) => {
+        const list = [...by].flatMap(([restId, m]) =>
+          m[kind].size === 0 ? [] : [{ restId, sources: m[kind], net: [...m[kind].values()].reduce((a, x) => a + x, 0) }],
+        );
+        list.sort((x, y) => y.net - x.net || x.restId - y.restId);
+        return [kind, list.slice(0, t.topN)] as const;
+      });
+      const ids = [...new Set(tops.flatMap(([, list]) => list.map((x) => x.restId)))];
+      const names = ids.length
+        ? await db
+            .selectFrom('restaurant as r')
+            .innerJoin('account as a', 'a.id', 'r.account_id')
+            .select(['r.id', 'r.name', 'a.id as account_id', 'a.username'])
+            .where('r.id', 'in', ids)
+            .execute()
+        : [];
+      const nameOf = new Map(names.map((x) => [x.id, x]));
+      for (const [kind, list] of tops)
+        out[kind] = list.flatMap((x): SuspiciousSurgeRow[] => {
+          const n = nameOf.get(x.restId);
+          if (!n) return [];
+          return [
+            {
+              restId: x.restId,
+              restName: n.name,
+              accountId: n.account_id,
+              username: n.username,
+              net: x.net,
+              topSources: [...x.sources]
+                .map(([source, delta]) => ({ source, delta }))
+                .sort((p, q) => Math.abs(q.delta) - Math.abs(p.delta))
+                .slice(0, 3),
+            },
+          ];
+        });
       return out;
     },
 
@@ -194,13 +216,18 @@ export function createSuspicious(game: Game) {
       do {
         const [next, keys] = await redis.scan(cursor, 'MATCH', 'redeem:fail:*', 'COUNT', 200);
         cursor = next;
-        for (const key of keys) {
-          const fails = Number((await redis.get(key)) ?? 0);
-          if (fails < failLimit) continue;
+        if (keys.length === 0) continue;
+        // 这一批的计数和剩余时间一次取回（质量期 ③：原来每个键单独 GET、TTL 各一次往返）
+        const p = redis.pipeline();
+        for (const key of keys) p.get(key).ttl(key);
+        const res = (await p.exec()) ?? [];
+        keys.forEach((key, i) => {
+          const fails = Number(res[i * 2]?.[1] ?? 0);
+          if (fails < failLimit) return;
           const accountId = Number(key.slice('redeem:fail:'.length));
-          if (!Number.isInteger(accountId)) continue;
-          found.push({ accountId, fails, ttlSec: Math.max(0, await redis.ttl(key)) });
-        }
+          if (!Number.isInteger(accountId)) return;
+          found.push({ accountId, fails, ttlSec: Math.max(0, Number(res[i * 2 + 1]?.[1] ?? 0)) });
+        });
       } while (cursor !== '0');
       if (found.length === 0) return [];
       const names = await db

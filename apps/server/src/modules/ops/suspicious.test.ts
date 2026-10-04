@@ -5,6 +5,7 @@ import { setTuning } from '../../../test/town';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { recordLogin } from '../account/loginTrace';
 import { createSuspicious, MULTI_ACCOUNTS_MAX } from './suspicious';
+import { queryCounter } from '../../../test/queries';
 
 let t: TestGame;
 let s: ReturnType<typeof createSuspicious>;
@@ -127,5 +128,47 @@ describe('backlog 6B-2：多号分组', () => {
     const g = (await s.multi(shardId)).find((x) => x.key === ip)!;
     expect(g.total).toBe(MULTI_ACCOUNTS_MAX + 2);
     expect(g.accounts).toHaveLength(MULTI_ACCOUNTS_MAX);
+  });
+});
+
+describe('资源暴涨一次扫完（质量期 ③）', () => {
+  const q = queryCounter();
+  let qt: TestGame;
+  beforeAll(async () => {
+    qt = await createTestGame({ db: q.db });
+  });
+  afterAll(async () => {
+    await qt.close();
+    await q.db.destroy();
+  });
+
+  it('三种资源一共 2 条查询；只有某种资源流水的店只进那一榜；别的区服、NPC 不算', async () => {
+    const shardId = await createShard(qt.db);
+    const other = await createShard(qt.db);
+    const a = await newRestaurant(qt, { shardId });
+    const b = await newRestaurant(qt, { shardId });
+    const npc = await newRestaurant(qt, { shardId, patch: { npc: true } });
+    const far = await newRestaurant(qt, { shardId: other });
+    const day = addDays(gameDay(qt.clock.now), -1);
+    const at = new Date(gameTime(day, 0).getTime() + 3_600_000);
+    const put = (restId: number, kind: string, delta: number, source: string) =>
+      qt.db.insertInto('ledger').values({ rest_id: restId, kind, delta, source, created_at: at }).execute();
+    await put(a.restaurantId, 'coin', 300, 'shop.sell');
+    await put(a.restaurantId, 'coin', -100, 'shop.buy');
+    await put(a.restaurantId, 'exp', 50, 'task.main');
+    await put(b.restaurantId, 'diamond', 7, 'redeem');
+    await put(npc.restaurantId, 'coin', 999_999, 'shop.sell');
+    await put(far.restaurantId, 'coin', 999_999, 'shop.sell');
+    // 区服设置有进程内缓存，先读一次，只数资源暴涨本身
+    await qt.game.shards.settings(shardId);
+    const { n, result: r } = await q.count(() => createSuspicious(qt.game).surge(shardId, day));
+    expect(n).toBeLessThanOrEqual(2);
+    expect(r.coin.map((x) => [x.restId, x.net])).toEqual([[a.restaurantId, 200]]);
+    expect(r.coin[0]!.topSources).toEqual([
+      { source: 'shop.sell', delta: 300 },
+      { source: 'shop.buy', delta: -100 },
+    ]);
+    expect(r.diamond.map((x) => [x.restId, x.net, x.username])).toEqual([[b.restaurantId, 7, expect.any(String)]]);
+    expect(r.exp.map((x) => [x.restId, x.net])).toEqual([[a.restaurantId, 50]]);
   });
 });
