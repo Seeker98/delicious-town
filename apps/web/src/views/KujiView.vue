@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import type { KujiAwardDto, KujiDrawDto, KujiViewDto } from '@dt/shared';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import type { KujiAwardDto, KujiDrawDto, KujiLine, KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { activeLocale } from '../i18n';
@@ -18,6 +19,15 @@ const data = ref<KujiViewDto | null>(null);
 const result = ref<KujiDrawDto | null>(null);
 const buyNum = ref<number | ''>(1);
 const busy = ref(false);
+/** 普通 / 豪华（240-2）：记在网址的 line 里，刷新后保持 */
+const route = useRoute();
+const router = useRouter();
+const line = computed<KujiLine>(() => (route.query.line === 'deluxe' ? 'deluxe' : 'normal'));
+const deluxe = computed(() => line.value === 'deluxe');
+function pickLine(x: KujiLine) {
+  if (x === line.value) return;
+  void router.replace({ query: { ...route.query, line: x === 'deluxe' ? 'deluxe' : undefined } });
+}
 
 const awardText = (a: KujiAwardDto) =>
   [
@@ -64,7 +74,7 @@ const buyOk = computed(() => buyNum.value !== '' && buyHint.value === '');
 
 async function load() {
   try {
-    data.value = await endpoints.kuji();
+    data.value = deluxe.value ? await endpoints.kuji('deluxe') : await endpoints.kuji();
   } catch (e) {
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
@@ -74,8 +84,8 @@ async function buy() {
   if (!Number.isInteger(n) || n < 1) return;
   busy.value = true;
   try {
-    data.value = await endpoints.kujiBuy(n);
-    toast.push(t.value.kuji.bought(n));
+    data.value = deluxe.value ? await endpoints.kujiBuy(n, 'deluxe') : await endpoints.kujiBuy(n);
+    toast.push(deluxe.value ? t.value.kuji.boughtDeluxe(n) : t.value.kuji.bought(n));
   } catch (e) {
     toast.push(errorMessage(e, t.value.kuji.buyFailed), 'danger');
   } finally {
@@ -85,7 +95,7 @@ async function buy() {
 async function draw(n: number) {
   busy.value = true;
   try {
-    const r = await endpoints.kujiDraw(n);
+    const r = deluxe.value ? await endpoints.kujiDraw(n, 'deluxe') : await endpoints.kujiDraw(n);
     result.value = r;
     data.value = r.view;
   } catch (e) {
@@ -96,13 +106,32 @@ async function draw(n: number) {
   }
 }
 onMounted(() => void load());
+watch(line, () => {
+  result.value = null;
+  data.value = null;
+  void load();
+});
 </script>
 
 <template>
   <h5>{{ t.kuji.title }}</h5>
   <HiphopCard :place="12" />
+  <div class="dt-pills mb-2">
+    <button
+      v-for="x in ['normal', 'deluxe'] as const"
+      :key="x"
+      type="button"
+      :class="{ active: line === x }"
+      :aria-pressed="line === x"
+      :data-testid="`kj-line-${x}`"
+      @click="pickLine(x)"
+    >
+      {{ x === 'deluxe' ? t.kuji.lineDeluxe : t.kuji.lineNormal }}
+    </button>
+  </div>
   <div class="small text-muted mb-2">
-    {{ t.kuji.rule(data?.pool.total ?? 80) }}
+    {{ t.kuji.rule(data?.pool.total ?? (deluxe ? 20 : 80)) }}
+    <span v-if="deluxe" class="d-block" data-testid="kj-deluxe-note">{{ t.kuji.deluxeNote }}</span>
   </div>
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
@@ -152,7 +181,9 @@ onMounted(() => void load());
       </tbody>
     </table>
     <div class="dt-card mb-2 small">
-      <div class="mb-1" data-testid="kj-tickets">{{ t.kuji.tickets(data.tickets) }}</div>
+      <div class="mb-1" data-testid="kj-tickets">
+        {{ deluxe ? t.kuji.ticketsDeluxe(data.tickets) : t.kuji.tickets(data.tickets) }}
+      </div>
       <div class="mb-1 text-muted" data-testid="kj-coin">{{ t.kuji.balance(formatNum(data.coin)) }}</div>
       <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
         {{ t.kuji.buyPrefix }}

@@ -22,6 +22,12 @@ const kuji: Messages['kuji'] = {
   icon: ' (con icono limitado)',
   lastWho: 'Quien saque el último boleto',
   tickets: (n) => `Mis boletos kuji: ${n}`,
+  lineNormal: 'Normal',
+  lineDeluxe: 'Lujo',
+  ticketsDeluxe: (n) => `Mis boletos kuji de lujo: ${n}`,
+  boughtDeluxe: (n) => `Compraste ${n} boletos kuji de lujo`,
+  deluxeNote:
+    'Sorteo de lujo: el premio A y el Último Premio dan el título limitado del mes y se anuncian a todo el servidor.',
   buyPrefix: 'Comprar',
   buyTotal: (coin) => `boletos por ${coin} monedas`,
   buy: 'Comprar boletos',

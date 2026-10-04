@@ -22,6 +22,12 @@ const kuji: Messages['kuji'] = {
   icon: ' (with a limited icon)',
   lastWho: 'Whoever draws the last ticket',
   tickets: (n) => `My kuji tickets: ${n}`,
+  lineNormal: 'Standard',
+  lineDeluxe: 'Deluxe',
+  ticketsDeluxe: (n) => `My deluxe kuji tickets: ${n}`,
+  boughtDeluxe: (n) => `Bought ${n} deluxe kuji tickets`,
+  deluxeNote:
+    "Deluxe pool: the A prize and the Last Prize give this month's limited title and are announced to the whole server.",
   buyPrefix: 'Buy',
   buyTotal: (coin) => `tickets for ${coin} coins`,
   buy: 'Buy tickets',
