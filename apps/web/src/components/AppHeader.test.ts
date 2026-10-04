@@ -71,6 +71,26 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
     expect(w.find('[data-testid="back"]').exists()).toBe(false);
   });
 
+  it('Wiki（问题记录 338）：没登录、登录了都能点店名回去（没登录时首页会被守卫送去登录页）', async () => {
+    const router = makeRouter();
+    await router.push('/wiki/goods');
+    const w = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(w.find('[data-testid="home"]').attributes('href')).toBe('/');
+    expect(w.find('[data-testid="back"]').exists()).toBe(false);
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player',
+      shardId: 1,
+      restaurantId: 1,
+      lang: null,
+    };
+    const w2 = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
+    expect(w2.find('[data-testid="home"]').attributes('href')).toBe('/');
+  });
+
   it('后台页面（问题记录：admin 页左上角点不回主界面）：店名也链接回首页，没有返回按钮', async () => {
     const router = makeRouter();
     await router.push('/admin/players');

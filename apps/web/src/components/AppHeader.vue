@@ -14,11 +14,15 @@ const session = useSessionStore();
 const t = useT();
 /**
  * 登录以后都能点店名回首页（问题记录 188、190：选区服页、没进区服时的指引页也要能回）；
- * 没有选店时首页会被守卫送回选区服页。登录、注册等公开页面只显示文字
+ * 没有选店时首页会被守卫送回选区服页。登录、注册等公开页面只显示文字；
+ * Wiki 也是公开页面，但要能点回去（问题记录 338）：没登录时首页会被守卫送去登录页
  */
 const linked = computed(
   () =>
-    props.inGame || route.path.startsWith('/admin') || (session.me !== null && route.meta.public !== true),
+    props.inGame ||
+    route.path.startsWith('/admin') ||
+    route.path.startsWith('/wiki') ||
+    (session.me !== null && route.meta.public !== true),
 );
 /** 邮箱未读数（子项目 6A）：游戏里每次换页刷新一次，30 秒内不重复请求 */
 const mail = useMailStore();
