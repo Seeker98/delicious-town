@@ -2,7 +2,7 @@
 # 服务端部署（问题记录 335）：GitHub Actions 在 main 的 CI 通过后用 SSH 调用，也可以在服务器上手动执行。
 #   infra/deploy.sh [提交号]    不带提交号时部署 origin/main 的最新提交
 # 只往前快进（--ff-only）：部署的提交比服务器上的旧时什么都不改，不会倒退。
-# 迁移由 migrate 服务在 api、worker 启动前自动执行；最后等 api 的 /readyz 通过才算部署成功。
+# 迁移由 migrate 服务在 api、worker 启动前自动执行；最后等所有 api 容器的健康检查（/readyz）通过才算部署成功。
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -33,10 +33,19 @@ cd infra
 "${COMPOSE[@]}" build migrate
 "${COMPOSE[@]}" up -d
 
-# 等 api 健康：最多 3 分钟
+# 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），
+# 不用 compose exec 进容器：exec 默认接管输入，经 SSH 执行时输入不结束会一直卡住
+api_healthy() {
+  local ids status
+  ids=$("${COMPOSE[@]}" ps -q api)
+  [ -n "$ids" ] || return 1
+  # shellcheck disable=SC2086 # 每个容器 id 是一个参数
+  status=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' $ids)
+  ! grep -qv '^healthy$' <<<"$status"
+}
 for _ in $(seq 1 36); do
-  if "${COMPOSE[@]}" exec -T api wget -qO- http://localhost:3000/readyz >/dev/null 2>&1; then
-    docker image prune -f >/dev/null 2>&1 || true
+  if api_healthy; then
+    timeout 120 docker image prune -f >/dev/null 2>&1 || true
     echo "部署完成：$after"
     exit 0
   fi

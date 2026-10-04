@@ -46,20 +46,26 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 
 第一次配置：
 1. 服务器上先手动升级一次（照上面的命令），让 `/opt/dt/infra/deploy.sh` 存在。
-2. 找一个部署用的账号：它要能读写 `/opt/dt`，并且能执行 docker（在 `docker` 组里）。在自己电脑上生成一对专用密钥：
+2. 用平时登录服务器的账号（一般就是 root）就行，不用另建：它要能读写 `/opt/dt`、能执行 docker。登录服务器后生成一对部署专用的密钥：
    ```bash
-   ssh-keygen -t ed25519 -f dt_deploy -N "" -C "github-deploy"
+   ssh-keygen -t ed25519 -f ~/dt_deploy -N "" -C github-deploy
+   echo "restrict $(cat ~/dt_deploy.pub)" >> ~/.ssh/authorized_keys   # restrict：这把钥匙只能执行命令，不能转发端口
+   cat ~/dt_deploy                                                     # 全部复制下来（包括 BEGIN、END 两行），第 4 步要用
+   rm ~/dt_deploy ~/dt_deploy.pub
    ```
-   把 `dt_deploy.pub` 的内容追加到服务器上这个账号的 `~/.ssh/authorized_keys`。
-3. 在自己电脑上执行 `ssh-keyscan -p 22 <服务器地址>`，把输出记下来，这是服务器的指纹。最好登录服务器，用 `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` 核对一下。
+3. 在服务器上执行下面这行，得到的一行就是服务器的指纹（`<服务器地址>` 换成 `DEPLOY_HOST` 要填的值）：
+   ```bash
+   echo "<服务器地址> $(cut -d' ' -f1,2 /etc/ssh/ssh_host_ed25519_key.pub)"
+   ```
+   SSH 端口不是 22 时，开头写成 `[<服务器地址>]:<端口>`。也可以在自己电脑上执行 `ssh-keyscan -t ed25519 <服务器地址>`，但 Windows 自带的版本太旧，会报 `unsupported KEX method`，要用 Git Bash 里的。
 4. 在 GitHub 仓库的 Settings → Secrets and variables → Actions 里添加：
 
    | 名称 | 内容 |
    | --- | --- |
    | `DEPLOY_HOST` | 服务器地址（IP 或域名） |
-   | `DEPLOY_USER` | 第 2 步的账号 |
-   | `DEPLOY_SSH_KEY` | `dt_deploy` 私钥的全部内容 |
-   | `DEPLOY_KNOWN_HOSTS` | 第 3 步 `ssh-keyscan` 的输出 |
+   | `DEPLOY_USER` | 第 2 步登录服务器用的账号 |
+   | `DEPLOY_SSH_KEY` | 第 2 步 `cat ~/dt_deploy` 的全部输出 |
+   | `DEPLOY_KNOWN_HOSTS` | 第 3 步得到的那一行 |
    | `DEPLOY_PORT` | 可选：SSH 端口不是 22 时才填 |
    | `DEPLOY_PATH` | 可选：仓库不在 `/opt/dt` 时才填 |
 

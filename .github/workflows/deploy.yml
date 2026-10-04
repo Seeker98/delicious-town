@@ -20,7 +20,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
     steps:
       - name: 检查部署密钥
         id: check
@@ -48,6 +48,7 @@ jobs:
           printf '%s\n' "$KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -i ~/.ssh/deploy_key -p "${PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+          # -n：不把输入接到服务器上，免得远程命令等输入卡住
+          ssh -n -i ~/.ssh/deploy_key -p "${PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes \
             "$USER@$HOST" "bash ${APP_DIR:-/opt/dt}/infra/deploy.sh $SHA"
           echo "已部署 \`${SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"
