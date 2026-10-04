@@ -63,7 +63,12 @@ export async function openGift(
 ): Promise<void> {
   const items = goods.gift ?? [];
   const { rate: lr } = await opLuck(op);
-  const needPick = await opNeedPick(op);
+  // 只有按等级随机给食材的项目才用得上缺料倾向：只给银币、道具的礼包不去读菜谱等级和橱柜（质量期 ③）。
+  // 准备抽取器不耗随机数，不用时随机结果不变
+  const byLevel = items.some(
+    (i) => i.type === 'foods' && !(i.id !== undefined && i.id > 0) && i.flag !== 'master',
+  );
+  const needPick: NeedPick = byLevel ? await opNeedPick(op) : (_accept, fallback) => fallback();
   const source = opts.source ?? `gift.${goods.id}`;
   const pending = new Map<string, { type: 'goods' | 'foods'; id: number; num: number; lucky: boolean }>();
   const add = (type: 'goods' | 'foods', id: number, num: number, lucky: boolean) => {

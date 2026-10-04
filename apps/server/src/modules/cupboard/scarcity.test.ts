@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { NEWBIE } from '@dt/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { queryCounter } from '../../../test/queries';
 import { setTuning } from '../../../test/town';
 import { runOp } from '../../core/op';
 import { needMapOf } from '../../core/scarcity';
@@ -119,5 +120,38 @@ describe('个人缺料倾向（问题记录 50、68）', () => {
     await t.game.store.use(r, { goodsId: NEWBIE.foodVoucherBase + 3, num: 10 });
     const got = await gotFoods(r.restaurantId);
     expect([...got.values()].reduce((a, n) => a + n, 0)).toBe(10);
+  });
+});
+
+describe('缺料抽取器按需准备（质量期 ③）', () => {
+  const q = queryCounter();
+  let qt: TestGame;
+  beforeAll(async () => {
+    qt = await createTestGame({ db: q.db });
+  });
+  afterAll(async () => {
+    await qt.close();
+    await q.db.destroy();
+  });
+
+  it('开只有银币、钻石、道具的礼包（新手大礼包）：不读菜谱等级和橱柜', async () => {
+    const shardId = await createShard(qt.db);
+    await setTuning(qt, shardId, ALWAYS);
+    const r = await newRestaurant(qt, { shardId, goods: { [NEWBIE.pack]: 1 } });
+    const { sqls } = await q.count(() => qt.game.store.use(r, { goodsId: NEWBIE.pack, num: 1 }));
+    expect(sqls.filter((s) => /from "restaurant_cookbooks"/.test(s))).toEqual([]);
+  });
+
+  it('合成：橱柜只读一次（缺料清单用合成前读的那份）', async () => {
+    const shardId = await createShard(qt.db);
+    await setTuning(qt, shardId, ALWAYS);
+    const two = qt.game.deps.config.foodPools.get(2)!.items[0]!.id;
+    const r = await newRestaurant(qt, {
+      shardId,
+      patch: { coin: 100_000, strength: 100 },
+      foods: { [two]: 10 },
+    });
+    const { sqls } = await q.count(() => qt.game.cupboard.handle(r, { foodsId: two, way: 'compose', num: 10 }));
+    expect(sqls.filter((s) => /^select .* from "cupboard_food" where "rest_id" = \$1$/.test(s))).toHaveLength(1);
   });
 });
