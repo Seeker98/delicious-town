@@ -1022,3 +1022,40 @@ describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币�
     expect(t.growth.moveStarRate).toBe(0.5);
   });
 });
+
+describe('限定称号（240-2 称号商店）', () => {
+  it('真实数据：十月、十一月各三个限时上架的称号，价格 100 万、300 万、800 万', () => {
+    const { bundle } = buildBundle(readSourceDir(defaultDataDir()));
+    const shop = bundle!.looks.icons.filter((i) => i.shop);
+    expect(shop.map((i) => [i.key, i.shop!.coin])).toEqual([
+      ['oct26_s', 1_000_000],
+      ['oct26_m', 3_000_000],
+      ['oct26_l', 8_000_000],
+      ['nov26_s', 1_000_000],
+      ['nov26_m', 3_000_000],
+      ['nov26_l', 8_000_000],
+    ]);
+    expect(shop[0]!.shop).toMatchObject({ from: '2026-10-01', to: '2026-11-01' });
+  });
+
+  it('价格不是正数、下架不晚于上架时报错', () => {
+    const src = source();
+    const withIcon = (icon: Record<string, unknown>) => {
+      const looks = structuredClone(src['game/looks']) as { icons: Array<Record<string, unknown>> };
+      looks.icons.push(icon);
+      return buildBundle({ ...src, 'game/looks': looks }).errors;
+    };
+    const shop = { from: '2026-10-01', to: '2026-11-01' };
+    expect(
+      withIcon({ key: 'bad_price', title: '坏价格', desc: '', shop: { ...shop, coin: 0 } }).join(' '),
+    ).toMatch(/shop\.coin/);
+    expect(
+      withIcon({
+        key: 'bad_time',
+        title: '坏时间',
+        desc: '',
+        shop: { coin: 1, from: '2026-11-01', to: '2026-11-01' },
+      }),
+    ).toContain('looks: icon bad_time shop must end after it starts');
+  });
+});

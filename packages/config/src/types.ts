@@ -375,7 +375,13 @@ export interface ConfigBundle {
 export interface Looks {
   doors: Array<{ id: number; name: string; coin: number }>;
   avatars: Array<{ id: number; name: string }>;
-  icons: Array<{ key: string; title: string; desc: string }>;
+  /** shop：称号商店的限时上架（240-2），游戏日期 [from, to) 可买 */
+  icons: Array<{
+    key: string;
+    title: string;
+    desc: string;
+    shop?: { coin: number; from: string; to: string };
+  }>;
 }
 
 export type EquipAttr = (typeof EQUIP_ATTRS)[number];

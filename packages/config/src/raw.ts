@@ -352,7 +352,20 @@ export const looksFile = z.object({
   doors: z.array(z.object({ id: int.min(0), name: z.string().min(1), coin: int.min(0) })).min(1),
   avatars: z.array(z.object({ id: int.min(1), name: z.string().min(1) })).min(1),
   icons: z.array(
-    z.object({ key: z.string().regex(/^[a-z0-9_-]{1,32}$/), title: z.string().min(1), desc: z.string() }),
+    z.object({
+      key: z.string().regex(/^[a-z0-9_-]{1,32}$/),
+      title: z.string().min(1),
+      desc: z.string(),
+      /** 称号商店（240-2）：限时上架，按游戏日期 [from, to) 能用银币买；不写的只能靠活动、一番赏、后台发放 */
+      shop: z
+        .object({
+          coin: int.min(1),
+          from: ymd,
+          to: ymd,
+        })
+        .strict()
+        .optional(),
+    }),
   ),
 });
 
