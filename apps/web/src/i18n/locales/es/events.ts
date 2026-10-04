@@ -212,6 +212,8 @@ const events: Messages['events'] = {
       `Predicción «${String(p.title ?? '')}» anulada: se devolvieron ${formatNum(n(p, 'coin'))} monedas${predictNet(p)}`,
     'kuji.buy': (p) =>
       `Compraste ${n(p, 'num')} boletos de Ichiban Kuji por ${formatNum(n(p, 'coin'))} monedas`,
+    'kuji.activation': (p) =>
+      `Recogiste el premio de actividad de ${n(p, 'points')} puntos y ${n(p, 'num')} boletos de Ichiban Kuji extra`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `premio ${k} ×${v}`)

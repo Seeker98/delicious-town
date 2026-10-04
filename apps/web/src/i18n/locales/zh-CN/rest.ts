@@ -66,6 +66,7 @@ export default {
     claimed: (p: number) => `✓ 已领 ${p} 点`,
     claim: (p: number, double: boolean) => `领 ${p} 点奖励${double ? ' ×2' : ''}`,
     need: (p: number, left: number) => `${p} 点（还差 ${left}）`,
+    kujiHint: (p: number, num: number) => `领 ${p} 点奖励另送一番赏抽赏券 ×${num}`,
     full: '✓ 已满',
     locked: (star: number) => `🔒 ${star} 星开放`,
     per: (p: number) => `每次 ${p} 点`,

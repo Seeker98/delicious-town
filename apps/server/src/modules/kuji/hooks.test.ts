@@ -50,6 +50,31 @@ describe('活跃度送券（一番赏设计 §5.5）', () => {
     expect((await t.game.task.claimActivation(r2, at)).data).toMatchObject({ kujiTickets: 0 });
     expect(await goodsNum(t, r2.restaurantId, GOODS.kujiTicket)).toBe(0);
   });
+
+  it('送券写个人日志；活跃度面板写明哪一档送几张，区服关掉一番赏时不写（backlog 一番赏）', async () => {
+    const at = 150;
+    const top = Math.max(...t.deps.config.bundle.activationRewards.map((r) => r.points));
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    expect((await t.game.task.activation(r)).kujiTicket).toEqual({ points: at, num: 1 });
+    await fillActivation(r.restaurantId, top);
+    await t.game.task.claimActivation(r, at);
+    await t.game.task.claimActivation(r, top);
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select(['type', 'params'])
+      .where('rest_id', '=', r.restaurantId)
+      .where('type', '=', 'kuji.activation')
+      .execute();
+    expect(logs.map((x) => x.params)).toEqual([{ points: at, num: 1 }]);
+    const off = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: off, override: JSON.stringify({ features: { kuji: false } }) })
+      .execute();
+    t.game.shards.invalidate(off);
+    expect((await t.game.task.activation(await newRestaurant(t, { shardId: off }))).kujiTicket).toBeNull();
+  });
 });
 
 describe('首页广播栏（一番赏设计 §6）', () => {

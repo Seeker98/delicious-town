@@ -210,6 +210,8 @@ const events: Messages['events'] = {
       `Prédiction « ${String(p.title ?? '')} » annulée : ${formatNum(n(p, 'coin'))} pièces remboursées${predictNet(p)}`,
     'kuji.buy': (p) =>
       `A acheté ${n(p, 'num')} tickets d'Ichiban Kuji pour ${formatNum(n(p, 'coin'))} pièces`,
+    'kuji.activation': (p) =>
+      `Récompense d'activité de ${n(p, 'points')} points reçue, avec ${n(p, 'num')} tickets d'Ichiban Kuji en bonus`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `prix ${k} ×${v}`)

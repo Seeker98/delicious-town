@@ -67,6 +67,7 @@ const rest: Messages['rest'] = {
     claimed: (p) => `✓ Premio de ${p} puntos recogido`,
     claim: (p, double) => `Recoger premio de ${p} puntos${double ? ' ×2' : ''}`,
     need: (p, left) => `${p} puntos (faltan ${left})`,
+    kujiHint: (p, num) => `El premio de ${p} puntos también da ${num} boletos de Ichiban Kuji`,
     full: '✓ Completo',
     locked: (star) => `🔒 Se abre con ${star} estrellas`,
     per: (p) => `${p} punto${p === 1 ? '' : 's'} cada vez`,

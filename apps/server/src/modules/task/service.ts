@@ -14,7 +14,7 @@ import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { featureAvailable } from '../../core/features';
 import { invalidState, requirement } from '../../core/errors';
-import { runOp, setRest, type Op } from '../../core/op';
+import { restLog, runOp, setRest, type Op } from '../../core/op';
 import { withRestaurant } from '../../db/tx';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
@@ -259,7 +259,12 @@ export function createTaskService(d: GameDeps) {
       .execute();
   }
 
-  async function activationOf(db: Kysely<DB>, rest: RestaurantRow, day: string): Promise<ActivationDto> {
+  async function activationOf(
+    db: Kysely<DB>,
+    rest: RestaurantRow,
+    day: string,
+    settings: ShardSettings,
+  ): Promise<ActivationDto> {
     const rows = await db
       .selectFrom('daily_counter')
       .select(['key', 'count'])
@@ -295,7 +300,16 @@ export function createTaskService(d: GameDeps) {
         claimed: (byKey.get(claimKey(r.points)) ?? 0) > 0,
         multiplier,
       })),
+      kujiTicket: kujiTicketOf(settings),
     };
+  }
+
+  /** 活跃奖励另送一番赏券的那一档（一番赏设计 §5.5）；区服关掉一番赏或不送时为 null */
+  function kujiTicketOf(settings: ShardSettings): { points: number; num: number } | null {
+    const k = settings.tuning.kuji;
+    return featureAvailable(settings, 'kuji') && k.activeTickets > 0
+      ? { points: k.activeTicketPoints, num: k.activeTickets }
+      : null;
   }
 
   /** 活跃奖励：经验按 × 餐厅等级（规格书 15 §15.2） */
@@ -378,7 +392,7 @@ export function createTaskService(d: GameDeps) {
         .selectAll()
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
-      return activationOf(d.db, rest, gameDay(d.now()));
+      return activationOf(d.db, rest, gameDay(d.now()), await d.shards.settings(rest.shard_id));
     },
 
     claimActivation(ctx: RestCtx, points: number) {
@@ -386,7 +400,7 @@ export function createTaskService(d: GameDeps) {
         const reward = o.config.bundle.activationRewards.find((r) => r.points === points);
         if (!reward) throw invalidState('no_reward', { points });
         const day = gameDay(o.now);
-        const a = await activationOf(o.tx, o.rest, day);
+        const a = await activationOf(o.tx, o.rest, day, o.settings);
         if (a.total < points) throw requirement('activation', { need: points, have: a.total });
         if ((await incrementDaily(o.tx, o.rest.id, claimKey(points), 1, day)) > 1)
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
@@ -395,14 +409,12 @@ export function createTaskService(d: GameDeps) {
         // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（问题记录 318：新增 180 档后仍在 150 档）；
         // 区服关掉一番赏不送
         let kujiTickets = 0;
-        if (
-          points === o.tuning.kuji.activeTicketPoints &&
-          featureAvailable(o.settings, 'kuji') &&
-          o.tuning.kuji.activeTickets > 0
-        )
-          kujiTickets = await grantGoodsOp(o, GOODS.kujiTicket, o.tuning.kuji.activeTickets, {
-            source: 'activation',
-          });
+        const gift = kujiTicketOf(o.settings);
+        if (gift && points === gift.points) {
+          kujiTickets = await grantGoodsOp(o, GOODS.kujiTicket, gift.num, { source: 'activation' });
+          // 送券写个人日志（backlog 一番赏）：领活跃奖励本身不写，券是额外的，要查得到来源
+          if (kujiTickets > 0) restLog(o, 'kuji.activation', { points, num: kujiTickets });
+        }
         return { points, kujiTickets };
       });
     },

@@ -33,6 +33,7 @@ const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
     { points: 100, award: { diamond: 2 }, claimed: false, multiplier: 1 },
     { points: 150, award: { diamond: 5 }, claimed: false, multiplier: 1 },
   ],
+  kujiTicket: null,
   ...patch,
 });
 const task = (patch: Partial<QuestDto> = {}): QuestDto => ({
@@ -228,6 +229,22 @@ describe('RestTasksView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     const done = await mountView();
     expect(done.text()).toContain('主线已全部完成');
+  });
+});
+
+describe('活跃奖励另送一番赏券（backlog 一番赏）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
+  });
+  it('写明哪一档另送几张券；区服关掉一番赏时不写', async () => {
+    vi.mocked(endpoints.activation).mockResolvedValue(act({ kujiTicket: { points: 150, num: 1 } }));
+    expect((await mountView()).get('[data-testid="act-kuji-hint"]').text()).toBe(
+      '领 150 点奖励另送一番赏抽赏券 ×1',
+    );
+    vi.mocked(endpoints.activation).mockResolvedValue(act());
+    expect((await mountView()).find('[data-testid="act-kuji-hint"]').exists()).toBe(false);
   });
 });
 

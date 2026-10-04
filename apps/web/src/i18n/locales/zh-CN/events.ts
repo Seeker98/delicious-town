@@ -197,6 +197,7 @@ export default {
     'predict.refund': (p) =>
       `预测「${String(p.title ?? '')}」已作废，退回 ${formatNum(n(p, 'coin'))} 银币${predictNet(p)}`,
     'kuji.buy': (p) => `买了一番赏抽赏券 ×${n(p, 'num')}，花费 ${formatNum(n(p, 'coin'))} 银币`,
+    'kuji.activation': (p) => `领取活跃 ${n(p, 'points')} 点奖励，另得一番赏抽赏券 ×${n(p, 'num')}`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} 赏 ×${v}`)

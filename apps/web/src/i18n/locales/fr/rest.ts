@@ -67,6 +67,7 @@ const rest: Messages['rest'] = {
     claimed: (p) => `✓ Récompense de ${p} points reçue`,
     claim: (p, double) => `Récompense de ${p} points${double ? ' ×2' : ''}`,
     need: (p, left) => `${p} points (encore ${left})`,
+    kujiHint: (p, num) => `La récompense de ${p} points donne aussi ${num} tickets d'Ichiban Kuji`,
     full: '✓ Terminé',
     locked: (star) => `🔒 Ouvert à ${star} étoiles`,
     per: (p) => `${p} point${p > 1 ? 's' : ''} par fois`,
