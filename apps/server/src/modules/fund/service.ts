@@ -40,6 +40,8 @@ export function createFundService(d: GameDeps) {
         coin: x.coin,
         back: Math.floor(x.coin * f.returnRate),
         medal: x.medal,
+        // 页面写勋章加成用；目录里的道具不带加成
+        expRate: d.config.goods.get(x.medal)?.effects.expRate ?? 0,
       })),
       deposit: a
         ? {

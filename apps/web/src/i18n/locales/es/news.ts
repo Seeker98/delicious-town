@@ -10,6 +10,18 @@ const WEEKLY: Record<string, string> = {
 };
 const rank = (k: number) => `${k}.º`;
 
+/** Fondo de Desarrollo (240-2): una frase por clase; clase desconocida → frase simple */
+function fundNews(w: string, p: P): string {
+  const coin = formatNum(num(p.coin));
+  if (p.tier === 'A')
+    return `👑 ¡El capital ancla entra con fuerza! [${w}] inyecta ${coin} monedas de golpe y se asegura el puesto de inversor líder clase A del Fondo de Desarrollo!`;
+  if (p.tier === 'B')
+    return `¡Jugada maestra! [${w}] bloquea ${coin} monedas en participaciones clase B del Fondo de Desarrollo!`;
+  if (p.tier === 'C')
+    return `¡La economía real se recupera! [${w}] suscribió ${coin} monedas en participaciones clase C del Fondo de Desarrollo`;
+  return `[${w}] depositó ${coin} monedas en el Fondo de Desarrollo`;
+}
+
 function predictResult(p: P): string {
   const head = `Predicción «${str(p.title)}»`;
   if (p.outcome === null || p.outcome === undefined) {
@@ -101,6 +113,8 @@ const news: Messages['news'] = {
         : `¡${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''}!`,
     'kuji.win': (w, p) =>
       `${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''}`,
+    'fund.big': (w, p) => fundNews(w, p),
+    'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) =>
       `${w} compró el título limitado «${x.icon?.(str(p.key))?.title ?? str(p.title)}»`,
     'town.exchange': (w, p, x) => `${w} canjeó ${x.goodsName(num(p.goodsId))}×${num(p.num)} con el alcalde`,

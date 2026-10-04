@@ -3,7 +3,14 @@ import type { Messages } from '../..';
 const town: Messages['town'] = {
   title: 'Square',
   forum: 'Forum',
-  tabs: { news: 'News', town: 'Townsfolk', exchange: 'Exchange', rank: 'Rankings', classroom: 'Classroom' },
+  tabs: {
+    news: 'News',
+    town: 'Townsfolk',
+    exchange: 'Exchange',
+    rank: 'Rankings',
+    classroom: 'Classroom',
+    fund: 'Fund',
+  },
   loadFailed: "Couldn't load the square",
   places: {
     '1': 'Market',

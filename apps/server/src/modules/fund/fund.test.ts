@@ -39,10 +39,10 @@ describe('小镇发展基金（240-2）', () => {
     const r = await newRestaurant(t, { patch: { coin: 5_000_000 } });
     const v = await svc().view(r);
     expect(v).toMatchObject({ days: 7, returnRate: 0.9, earlyRate: 0.7, deposit: null, coin: 5_000_000 });
-    expect(v.tiers.map((x) => [x.key, x.coin, x.back, x.medal])).toEqual([
-      ['A', 10_000_000, 9_000_000, FUND.A],
-      ['B', 3_000_000, 2_700_000, FUND.B],
-      ['C', 1_000_000, 900_000, FUND.C],
+    expect(v.tiers.map((x) => [x.key, x.coin, x.back, x.medal, x.expRate])).toEqual([
+      ['A', 10_000_000, 9_000_000, FUND.A, 0.15],
+      ['B', 3_000_000, 2_700_000, FUND.B, 0.1],
+      ['C', 1_000_000, 900_000, FUND.C, 0.05],
     ]);
   });
 
