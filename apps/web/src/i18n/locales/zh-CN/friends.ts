@@ -40,7 +40,7 @@ export default {
     info: (level: number, star: number, renown: number) => `${level} 级 · ${star} 星 · 声望 ${renown}`,
     closed: ' · 停业中',
     door: '门',
-    equips: '厨具：',
+    equips: '厨具',
     special: '特色菜：',
     specialLine: (grade: string, left: number, price: number) =>
       `${grade} · 剩 ${left} 份 · 每份 ${price} 银币`,

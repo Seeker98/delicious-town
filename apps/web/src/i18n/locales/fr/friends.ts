@@ -41,7 +41,7 @@ const friends: Messages['friends'] = {
     info: (level, star, renown) => `Niv. ${level} · ${star}★ · Renommée ${renown}`,
     closed: ' · Fermé',
     door: 'Porte',
-    equips: 'Ustensiles : ',
+    equips: 'Ustensiles',
     special: 'Plat signature : ',
     specialLine: (grade, left, price) => `${grade} · reste ${left} · ${price} pièces la part`,
     tasted: 'Goûté ! Votre énergie a augmenté',

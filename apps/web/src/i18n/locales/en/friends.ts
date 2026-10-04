@@ -41,7 +41,7 @@ const friends: Messages['friends'] = {
     info: (level, star, renown) => `Lv. ${level} · ${star}★ · Renown ${renown}`,
     closed: ' · Closed',
     door: 'Door',
-    equips: 'Cookware: ',
+    equips: 'Cookware',
     special: 'Signature dish: ',
     specialLine: (grade, left, price) => `${grade} · ${left} left · ${price} coins each`,
     tasted: 'Tasted! Your Stamina went up',
