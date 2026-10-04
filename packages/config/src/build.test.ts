@@ -1011,14 +1011,14 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
   });
 });
 
-describe('货币回收 240-1 的区服数值（默认中性）', () => {
-  it('菜价倍率 1、各等级价格倍数全 1、升星不收银币、搬街费不随星级涨', () => {
+describe('货币回收 240-1 的区服数值（默认值见 docs/design/银币回收-数值.md）', () => {
+  it('菜价倍率 0.15；2~5 级食材 ×1.3/2/3/4；2~4 星收 200 万、500 万、1000 万；搬街费星级系数 0.5', () => {
     const { bundle, errors } = buildBundle(readSourceDir(defaultDataDir()));
     expect(errors).toEqual([]);
     const t = bundle!.tuning;
-    expect(t.settlement.dishCoinRate).toBe(1);
-    expect(t.market.levelPriceRate).toEqual([1, 1, 1, 1, 1, 1, 1]);
-    expect(t.growth.starCoin).toEqual([]);
-    expect(t.growth.moveStarRate).toBe(0);
+    expect(t.settlement.dishCoinRate).toBe(0.15);
+    expect(t.market.levelPriceRate).toEqual([1, 1.3, 2, 3, 4, 1, 1]);
+    expect(t.growth.starCoin).toEqual([0, 2000000, 5000000, 10000000]);
+    expect(t.growth.moveStarRate).toBe(0.5);
   });
 });

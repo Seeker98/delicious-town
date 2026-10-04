@@ -3,6 +3,7 @@ import { gameTime, hashSeed, latestSlot, seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { grantGoods } from '../store/grant';
+import { foodPrice } from '../../core/prices';
 import { rollShelf } from './rules';
 
 const config = testConfig();
@@ -191,7 +192,7 @@ describe('特价和高级菜场', () => {
     expect(row.sold).toBe(1);
   });
 
-  it('高级菜场需要爱心项链；价格 ×2', async () => {
+  it('高级菜场需要爱心项链；价格 ×2 再乘等级价格倍数', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const [item] = await openShelf(ctx.shardId, 2, 12);
     await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 })).rejects.toMatchObject({
@@ -202,7 +203,10 @@ describe('特价和高级菜场', () => {
     await m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 });
     const food = config.requireFood(item!.foods_id);
     const snap = await t.game.world.ensure(ctx.shardId);
-    const expected = Math.ceil(food.coin * 2 * (1 + (snap.weather.effects.marketCoin ?? 0)));
+    // 高级货架 ×2，再乘食材等级价格倍数（240-1，默认 4 级 ×3）
+    const expected = Math.ceil(
+      foodPrice(food, config.tuning.market) * 2 * (1 + (snap.weather.effects.marketCoin ?? 0)),
+    );
     expect(before - (await restRow(t, ctx.restaurantId)).coin).toBe(expected);
   });
 });

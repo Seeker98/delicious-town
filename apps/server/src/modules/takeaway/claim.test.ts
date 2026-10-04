@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
-import { testConfig } from '../../../test/config';
+import { originalDishConfig, testConfig } from '../../../test/config';
 import {
   befriend,
   createTestGame,
@@ -21,7 +21,7 @@ const config = testConfig();
 let rngValues: number[] = [0.4];
 let t: TestGame;
 beforeAll(async () => {
-  t = await createTestGame({ rng: () => sequenceRng(rngValues) });
+  t = await createTestGame({ rng: () => sequenceRng(rngValues), config: originalDishConfig() });
 });
 afterAll(() => t.close());
 beforeEach(() => {
