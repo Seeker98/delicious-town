@@ -1,4 +1,6 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
+import { formatNum } from '../../../utils/format';
+
 /** 遊戲資料（Wiki）和開放介面說明（問題記錄 142） */
 export default {
   title: '遊戲資料',
@@ -11,7 +13,7 @@ export default {
   back: '返回列表',
   home: '遊戲資料首頁',
   more: (n: number) => `再顯示 ${n} 條`,
-  count: (n: string) => `${n} 條`,
+  count: (n: number) => `${formatNum(n)} 條`,
   apiLink: '開放介面：給想研究遊戲、做小工具的玩家',
   kinds: { goods: '道具', foods: '食材', cookbooks: '菜譜', equips: '廚具', streets: '街道' },
   all: '全部',
@@ -24,7 +26,6 @@ export default {
   units: { coin: '銀幣', exp: '經驗', diamond: '鑽石' },
   rare: '稀有',
   common: '普通',
-  onSale: '商店在售',
   goodsTypes: {
     '0': '消耗品',
     '1': '道具',
@@ -37,7 +38,6 @@ export default {
   } as Record<string, string>,
   foodTypes: { '0': '調料堅果', '1': '肉蛋奶', '2': '蔬果' } as Record<string, string>,
   sections: {
-    info: '基本資訊',
     gift: '能開出',
     sources: '獲得途徑',
     usedIn: '可以拿去兌換',

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { OpenFoodDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES } from '../../utils/labels';
 import { isNotFound, useWikiData } from './wiki';
@@ -17,17 +18,28 @@ const streets = ref<OpenStreetDto[]>([]);
 const error = ref<'' | 'missing' | 'failed'>('');
 const shown = ref(PAGE);
 
+const toast = useToastStore();
+/** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
+let seq = 0;
+// 离开页面后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
+onBeforeUnmount(() => seq++);
 watch(
   () => Number(route.params.id),
   async (id) => {
+    const mine = ++seq;
     f.value = null;
     error.value = '';
     shown.value = PAGE;
     try {
-      streets.value = (await data.streets()).items;
-      f.value = await data.food(id);
+      const s = (await data.streets()).items;
+      const v = await data.food(id);
+      if (mine !== seq) return;
+      streets.value = s;
+      f.value = v;
     } catch (e) {
+      if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';
+      if (error.value === 'failed') toast.push(t.value.wiki.loadFailed, 'danger');
     }
   },
   { immediate: true },

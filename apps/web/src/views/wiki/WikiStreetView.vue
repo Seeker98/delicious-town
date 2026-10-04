@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { OpenCookbookBrief, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { useWikiData } from './wiki';
 
@@ -11,8 +12,9 @@ const PAGE = 50;
 const route = useRoute();
 const t = useT();
 const data = useWikiData();
-const streets = ref<OpenStreetDto[]>([]);
-const cookbooks = ref<OpenCookbookBrief[]>([]);
+const streets = shallowRef<OpenStreetDto[]>([]);
+const cookbooks = shallowRef<OpenCookbookBrief[]>([]);
+const toast = useToastStore();
 const error = ref(false);
 const loaded = ref(false);
 const shown = ref(PAGE);
@@ -29,6 +31,7 @@ watch(
       cookbooks.value = (await data.cookbooks()).items;
     } catch {
       error.value = true;
+      toast.push(t.value.wiki.loadFailed, 'danger');
     } finally {
       loaded.value = true;
     }
@@ -64,7 +67,7 @@ const list = computed(() => cookbooks.value.filter((c) => c.streetId === id.valu
       <div data-testid="wiki-street-cookbooks">
         <h6 class="dt-section">
           {{ w.sections.streetCookbooks }}
-          <small class="text-muted">{{ w.count(formatNum(list.length)) }}</small>
+          <small class="text-muted">{{ w.count(list.length) }}</small>
         </h6>
         <RouterLink
           v-for="c in list.slice(0, shown)"

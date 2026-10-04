@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { OpenCookbookDto, OpenFoodDto, OpenGoodsDto } from '@dt/shared';
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
+import { useToastStore } from '../../stores/toast';
 import WikiCookbookView from './WikiCookbookView.vue';
 import WikiFoodView from './WikiFoodView.vue';
 import WikiGoodsView from './WikiGoodsView.vue';
@@ -17,6 +18,8 @@ vi.mock('../../api/endpoints', () => ({
     openCookbook: vi.fn(),
     openCookbooks: vi.fn(),
     openStreets: vi.fn(),
+    openGoods: vi.fn(),
+    openEquips: vi.fn(),
   },
 }));
 
@@ -153,10 +156,87 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/180');
   });
 
+  it('厨具：写出套装效果（几件、效果），套装数据从厨具列表取（backlog #115）', async () => {
+    vi.mocked(endpoints.openEquips).mockResolvedValue({
+      ...meta,
+      items: [],
+      suits: [
+        {
+          id: 4,
+          name: '见习套装',
+          maxNum: 3,
+          tiers: [
+            { need: 2, desc: '厨艺+5' },
+            { need: 3, desc: '刀工+8' },
+          ],
+        },
+      ],
+    });
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(
+      goods({
+        id: 30,
+        name: '见习之铲',
+        type: 4,
+        equip: {
+          part: 1,
+          minLevel: 0,
+          suitId: 4,
+          suitName: '见习套装',
+          essence: 1,
+          hole: 0,
+          maxHole: 0,
+          ranges: { cook: 3 },
+          stressTable: [3],
+        },
+      }),
+    );
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/30');
+    const suit = w.get('[data-testid="wiki-suit"]');
+    expect(suit.text()).toContain('2 件');
+    expect(suit.text()).toContain('厨艺+5');
+    expect(suit.text()).toContain('刀工+8');
+  });
+
+  it('宝石的“下一阶”链接写下一阶宝石的名字（backlog #115）', async () => {
+    vi.mocked(endpoints.openGoods).mockResolvedValue({
+      ...meta,
+      items: [{ id: 502, name: '二阶红宝石', type: 5, level: 2, coin: 0, diamond: 0, onSale: false }],
+    } as never);
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(
+      goods({ id: 501, name: '一阶红宝石', type: 5, gem: { level: 1, nextId: 502, attrs: { cook: 2 } } }),
+    );
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/501');
+    expect(w.get('[data-testid="wiki-gem"] a').text()).toBe('二阶红宝石');
+  });
+
+  it('先打开 A（慢）再打开 B：A 晚到也不会盖掉 B（backlog #115）', async () => {
+    let slow: (v: OpenGoodsDto) => void = () => undefined;
+    vi.mocked(endpoints.openGoodsDetail).mockImplementation((_l, id) =>
+      id === 1 ? new Promise((r) => (slow = r)) : Promise.resolve(goods({ id: 2, name: '乙道具' })),
+    );
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/1');
+    await w.vm.$router.push('/wiki/goods/2');
+    await flushPromises();
+    expect(w.text()).toContain('乙道具');
+    slow(goods({ id: 1, name: '甲道具' }));
+    await flushPromises();
+    expect(w.text()).toContain('乙道具');
+    expect(w.text()).not.toContain('甲道具');
+  });
+
+  it('读失败（不是不存在）时弹提示（backlog #115）', async () => {
+    vi.mocked(endpoints.openGoodsDetail).mockRejectedValue(new Error('net'));
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/9');
+    expect(w.find('[data-testid="wiki-error"]').exists()).toBe(true);
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
+  });
+
   it('不存在的道具写没有这一条', async () => {
     vi.mocked(endpoints.openGoodsDetail).mockRejectedValue(new ApiError('NOT_FOUND'));
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/51');
     expect(w.get('[data-testid="wiki-error"]').text()).toBe('没有这一条');
+    // 不存在不算读失败，不弹提示
+    expect(useToastStore().items).toEqual([]);
   });
 
   it('食材：属性、菜园种子、用到它的菜谱（带街道和最低品级、链接）、特色菜', async () => {
@@ -225,5 +305,76 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(w.text()).toContain('湘菜售价 +5%');
     expect(w.get('[data-testid="wiki-medal"]').attributes('href')).toBe('/wiki/goods/140');
     expect(hrefs(w, '[data-testid="wiki-street-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);
+  });
+});
+
+describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #115）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.openStreets).mockResolvedValue(streets);
+  });
+  const food = (id: number, name: string): OpenFoodDto => ({
+    ...meta,
+    id,
+    name,
+    level: 1,
+    coin: 1,
+    rare: false,
+    type: 2,
+    maxNum: 99,
+    seed: null,
+    cookbooks: [],
+    mysterious: [],
+  });
+  const cookbook = (id: number, name: string): OpenCookbookDto => ({
+    ...meta,
+    id,
+    name,
+    streetId: 0,
+    level: 1,
+    coin: 1,
+    taste: [],
+    desc: null,
+    grades: [],
+  });
+
+  it('食材', async () => {
+    let slow: (v: OpenFoodDto) => void = () => undefined;
+    vi.mocked(endpoints.openFood).mockImplementation((_l, id) =>
+      id === 1 ? new Promise((r) => (slow = r)) : Promise.resolve(food(2, '乙食材')),
+    );
+    const w = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/1');
+    await w.vm.$router.push('/wiki/foods/2');
+    await flushPromises();
+    slow(food(1, '甲食材'));
+    await flushPromises();
+    expect(w.text()).toContain('乙食材');
+    expect(w.text()).not.toContain('甲食材');
+  });
+
+  it('菜谱；读失败时弹提示', async () => {
+    let slow: (v: OpenCookbookDto) => void = () => undefined;
+    vi.mocked(endpoints.openCookbook).mockImplementation((_l, id) =>
+      id === 1 ? new Promise((r) => (slow = r)) : Promise.resolve(cookbook(2, '乙菜')),
+    );
+    const w = await mountAt(WikiCookbookView, '/wiki/cookbooks/:id', '/wiki/cookbooks/1');
+    await w.vm.$router.push('/wiki/cookbooks/2');
+    await flushPromises();
+    slow(cookbook(1, '甲菜'));
+    await flushPromises();
+    expect(w.text()).toContain('乙菜');
+    expect(w.text()).not.toContain('甲菜');
+    vi.mocked(endpoints.openCookbook).mockRejectedValue(new Error('net'));
+    await w.vm.$router.push('/wiki/cookbooks/3');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
+  });
+
+  it('街道详情读失败时弹提示（质量期 ①b 终审）', async () => {
+    vi.mocked(endpoints.openStreets).mockRejectedValue(new Error('net'));
+    const w = await mountAt(WikiStreetView, '/wiki/streets/:id', '/wiki/streets/0');
+    expect(w.find('[data-testid="wiki-error"]').exists()).toBe(true);
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
   });
 });

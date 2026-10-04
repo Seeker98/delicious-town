@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onBeforeUnmount, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
-import type { OpenGiftItem, OpenGoodsDto } from '@dt/shared';
+import type { OpenGiftItem, OpenGoodsDto, OpenSuitDto } from '@dt/shared';
 import WikiExchangeRule from '../../components/wiki/WikiExchangeRule.vue';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../../utils/labels';
 import { isNotFound, useWikiData } from './wiki';
@@ -14,16 +15,47 @@ const t = useT();
 const data = useWikiData();
 const g = ref<OpenGoodsDto | null>(null);
 const error = ref<'' | 'missing' | 'failed'>('');
+const toast = useToastStore();
+/** 套装效果（从厨具列表取，backlog #115）、宝石下一阶的名字（从道具列表取） */
+const suit = ref<OpenSuitDto | null>(null);
+const nextGemName = ref<string | null>(null);
 
+/** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
+let seq = 0;
+// 离开页面后，旧请求的结果和失败提示都不要了（质量期 ①b 终审）
+onBeforeUnmount(() => seq++);
 watch(
   () => Number(route.params.id),
   async (id) => {
+    const mine = ++seq;
     g.value = null;
     error.value = '';
+    suit.value = null;
+    nextGemName.value = null;
     try {
-      g.value = await data.goodsDetail(id);
+      const v = await data.goodsDetail(id);
+      if (mine !== seq) return;
+      g.value = v;
     } catch (e) {
+      if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';
+      if (error.value === 'failed') toast.push(t.value.wiki.loadFailed, 'danger');
+      return;
+    }
+    // 这两项是补充信息：读不到就不显示，不算页面读失败
+    try {
+      const v = g.value;
+      if (v.equip && v.equip.suitId > 0) {
+        const s = (await data.equips()).suits.find((x) => x.id === v.equip!.suitId) ?? null;
+        if (mine !== seq) return;
+        suit.value = s;
+      }
+      if (v.gem && v.gem.nextId !== null) {
+        const n = (await data.goods()).items.find((x) => x.id === v.gem!.nextId)?.name ?? null;
+        if (mine === seq) nextGemName.value = n;
+      }
+    } catch {
+      // 忽略
     }
   },
   { immediate: true },
@@ -126,6 +158,15 @@ const shopPrice = computed(() => {
             <dd>{{ w.fields.holes(g.equip.hole, g.equip.maxHole) }}</dd>
           </template>
         </dl>
+        <template v-if="suit && suit.tiers.length > 0">
+          <h6 class="dt-section">{{ w.sections.suit }}</h6>
+          <dl class="dt-kv small" data-testid="wiki-suit">
+            <template v-for="x in suit.tiers" :key="x.need">
+              <dt>{{ w.fields.suitTier(x.need) }}</dt>
+              <dd>{{ x.desc }}</dd>
+            </template>
+          </dl>
+        </template>
         <h6 class="dt-section">{{ w.sections.stress }}</h6>
         <div class="table-responsive" data-testid="wiki-stress">
           <table class="table table-sm small mb-0 text-center">
@@ -151,7 +192,9 @@ const shopPrice = computed(() => {
           <template v-if="g.gem.nextId !== null">
             <dt>{{ w.fields.nextGem }}</dt>
             <dd>
-              <RouterLink :to="`/wiki/goods/${g.gem.nextId}`">{{ w.fields.nextGem }}</RouterLink>
+              <RouterLink :to="`/wiki/goods/${g.gem.nextId}`">{{
+                nextGemName ?? w.fields.nextGem
+              }}</RouterLink>
             </dd>
           </template>
         </dl>
