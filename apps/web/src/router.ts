@@ -186,6 +186,19 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/wiki/WikiListView.vue'),
     meta: { public: true, gameChrome: true },
   },
+  // 更新记录、友情链接（问题记录 348）
+  {
+    path: '/changelog',
+    name: 'changelog',
+    component: () => import('./views/ChangelogView.vue'),
+    meta: { gameChrome: true },
+  },
+  {
+    path: '/links',
+    name: 'links',
+    component: () => import('./views/LinksView.vue'),
+    meta: { gameChrome: true },
+  },
   {
     path: '/guide',
     name: 'guide',
@@ -374,6 +387,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'grants', component: () => import('./views/admin/AdminGrantsView.vue') },
       { path: 'mail', component: () => import('./views/admin/AdminMailView.vue') },
       { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
+      { path: 'links', component: () => import('./views/admin/AdminLinksView.vue') },
       { path: 'activities', component: () => import('./views/admin/AdminActivitiesView.vue') },
       { path: 'predict', component: () => import('./views/admin/AdminPredictView.vue') },
       { path: 'codes', component: () => import('./views/admin/AdminCodesView.vue') },

@@ -910,6 +910,17 @@ export interface MailStateTable {
   deleted_at: TsNullable;
 }
 
+/** 友情链接（问题记录 348） */
+export interface FriendLinkTable {
+  id: Generated<number>;
+  name: string;
+  url: string;
+  note: Default<string>;
+  sort: Default<number>;
+  created_at: TsDefault;
+  updated_at: TsDefault;
+}
+
 export interface AnnouncementTable {
   id: Generated<number>;
   shard_id: Nullable<number>;
@@ -1311,6 +1322,7 @@ export interface DB {
   mail: MailTable;
   mail_state: MailStateTable;
   announcement: AnnouncementTable;
+  friend_link: FriendLinkTable;
   announcement_seen: AnnouncementSeenTable;
   redeem_code: RedeemCodeTable;
   redeem_use: RedeemUseTable;

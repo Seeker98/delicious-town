@@ -6,10 +6,11 @@ import { endpoints } from '../api/endpoints';
 import { useSessionStore } from '../stores/session';
 import AppHeader from './AppHeader.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { mailUnread: vi.fn() } }));
+vi.mock('../api/endpoints', () => ({ endpoints: { mailUnread: vi.fn(), serverTime: vi.fn() } }));
 beforeEach(() => {
   setActivePinia(createPinia());
   vi.mocked(endpoints.mailUnread).mockResolvedValue({ count: 0 });
+  vi.mocked(endpoints.serverTime).mockResolvedValue({ now: new Date().toISOString() });
 });
 
 const makeRouter = () =>

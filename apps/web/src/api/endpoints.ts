@@ -150,6 +150,8 @@ import type {
   KujiDrawDto,
   KujiLine,
   KujiViewDto,
+  LinkDto,
+  ServerTimeDto,
   FundViewDto,
   PredictListDto,
   PredictTradeDto,
@@ -486,6 +488,9 @@ export const endpoints = {
   announcements: () => api.get<AnnouncementsDto>('/api/v1/announcements'),
   announcementSeen: (id: number) => api.post<null>(`/api/v1/announcements/${id}/seen`, {}),
   publicAnnouncements: () => api.get<AnnouncementsDto>('/api/v1/public/announcements'),
+  // 友情链接、服务器时间（问题记录 348）
+  links: () => api.get<LinkDto[]>('/api/v1/links'),
+  serverTime: () => api.get<ServerTimeDto>('/api/v1/time'),
   mail: () => api.get<MailListDto>('/api/v1/mail'),
   redeem: (code: string) => api.post<RedeemResultDto>('/api/v1/redeem', { code }),
   guideCodes: () => api.get<GuideCodeDto[]>('/api/v1/guide/codes'),

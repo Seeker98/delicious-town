@@ -12,6 +12,7 @@ let ids: {
   iconId: number;
   mailId: number;
   announcementId: number;
+  linkId: number;
   activityId: number;
   codeId: number;
   reportIds: number[];
@@ -129,6 +130,11 @@ beforeAll(async () => {
     })
     .returning('id')
     .executeTakeFirstOrThrow();
+  const link = await ctx.deps.db
+    .insertInto('friend_link')
+    .values({ name: '权限测试', url: 'https://example.com' })
+    .returning('id')
+    .executeTakeFirstOrThrow();
   ids = {
     shardId,
     accountId: target.accountId,
@@ -136,6 +142,7 @@ beforeAll(async () => {
     iconId: icon.id,
     mailId: mail.id,
     announcementId: announcement.id,
+    linkId: link.id,
     activityId: activity.id,
     codeId: code.id,
     reportIds,
@@ -150,6 +157,7 @@ beforeAll(async () => {
 });
 afterAll(() => ctx.close());
 
+const linkBody = () => ({ name: '权限测试', url: 'https://example.com', note: '', sort: 0 });
 const announceBody = () => ({
   shardId: null,
   title: '权限测试',
@@ -462,6 +470,32 @@ const CASES: Case[] = [
     method: 'POST',
     route: '/api/v1/admin/announcements/:id/delete',
     url: () => `/api/v1/admin/announcements/${ids.announcementId}/delete`,
+    min: 'admin',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/links',
+    url: () => '/api/v1/admin/links',
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/links',
+    url: () => '/api/v1/admin/links',
+    body: () => linkBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/links/:id',
+    url: () => `/api/v1/admin/links/${ids.linkId}`,
+    body: () => linkBody(),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/links/:id/delete',
+    url: () => `/api/v1/admin/links/${ids.linkId}/delete`,
     min: 'admin',
   },
   {

@@ -31,6 +31,8 @@ export default {
     wiki: '游戏资料',
     redeem: '兑换码',
     shards: '切换区服',
+    changelog: '更新记录',
+    links: '友情链接',
     admin: '管理后台',
   },
   /** 顶栏 */
