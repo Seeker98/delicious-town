@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    looks1005:
+      "Apparence : les portes achetées vous appartiennent, y revenir est gratuit ; les messages d'étoiles insuffisantes indiquent vos étoiles actuelles ; le wiki indique les étoiles requises pour les affiches et trophées",
     visual1005:
       "Anglais, français et espagnol : le singulier et le pluriel suivent le nombre (1 pièce, 1 jour…) ; sur mobile, les caractéristiques des ustensiles tiennent sur un écran, les effets météo ne sont plus répétés et les durées de plus d'un jour s'affichent en jours",
     perf1005:
