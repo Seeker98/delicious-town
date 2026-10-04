@@ -71,6 +71,24 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.oil).toBe(5);
   });
 
+  it('菜价倍率（240-1）：挑剔、蟹老板按菜价付的银币乘倍率并向下取整；普通顾客不变', () => {
+    const half = { ...rules, settlement: { ...rules.settlement, dishCoinRate: 0.5 } };
+    const picky = settle(
+      { cookbooks: { 194: 1 } },
+      { tuning: half },
+      [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9],
+    );
+    expect(picky.coin).toBe(Math.floor(10 + Math.floor(price(194) * 0.5) * 1.2));
+    const krab = settle(
+      { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 3 } },
+      { krabStreet: 1, tuning: half },
+      [0.5, 0.65, 0.9, 0.1, 0.0001, 0.2, 0, 0.9, 0.9, 0.9],
+    );
+    expect(krab.coin).toBe(Math.floor(10 + Math.floor(price(street1) * 0.5) * 1.6 * 5));
+    const plain = settle({}, { tuning: half }, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(plain.coin).toBe(10);
+  });
+
   it('挑剔点了没学过的菜：经验减半，没有二哈时银币减半', () => {
     const r = settle({}, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0.9, 0.9, 0.9]);
     expect(r.tables[0]!.last).toMatchObject({ type: 2, req: 1, satisfied: false, coin: 5, exp: 1, oil: 2 });

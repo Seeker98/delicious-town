@@ -1,3 +1,4 @@
+import { dishCoin, foodPrice } from '../../core/prices';
 import {
   WIKI_HIDDEN_GOODS,
   type GameConfig,
@@ -131,14 +132,20 @@ export function createOpenData(config: GameConfig) {
       id: f.id,
       name: foodName(lang, f.id),
       level: f.level,
-      coin: f.coin,
+      coin: Math.round(foodPrice(f, config.tuning.market)),
       rare: f.odds < 100,
       type: f.type,
     };
   };
   const cookbookBrief = (lang: Locale, id: number): OpenCookbookBrief => {
     const c = config.cookbooks.get(id)!;
-    return { id: c.id, name: cookbookName(lang, c.id), streetId: c.streetId, level: c.level, coin: c.coin };
+    return {
+      id: c.id,
+      name: cookbookName(lang, c.id),
+      streetId: c.streetId,
+      level: c.level,
+      coin: dishCoin(c.coin, config.tuning.settlement.dishCoinRate),
+    };
   };
 
   return {

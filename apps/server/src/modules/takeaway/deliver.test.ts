@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { addOrder, openFor, setWeather } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
@@ -73,6 +74,28 @@ describe('接单（设计文档 §3.3）', () => {
     expect(v.deliveries.map((d) => d.id)).toEqual([r.data.id]);
     expect(v.riders[0]!.busy).toBe(1);
     expect((await t.game.takeaway.overview(other.ctx)).orders).toEqual([]);
+  });
+
+  it('菜价倍率（240-1）：区服把菜价倍率调到 0.5，外卖银币跟着减半', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { settlement: { dishCoinRate: 0.5 } } }),
+      })
+      .execute();
+    const { ctx, rider } = await cook(shardId);
+    const order = await addOrder(t, shardId);
+    const r = await deliver(ctx, order, rider);
+    const row = await t.db
+      .selectFrom('takeaway_delivery')
+      .select('coin')
+      .where('id', '=', r.data.id)
+      .executeTakeFirstOrThrow();
+    // 默认倍率时这一单是 198（见上一条）
+    expect(row.coin).toBeGreaterThanOrEqual(98);
+    expect(row.coin).toBeLessThanOrEqual(99);
   });
 
   it('天气和我的加成算进数值：阴天银币 +10%，外卖之星经验 +30%', async () => {

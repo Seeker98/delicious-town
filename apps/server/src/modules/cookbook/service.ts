@@ -1,3 +1,4 @@
+import { dishCoin } from '../../core/prices';
 import type { Kysely } from 'kysely';
 import {
   ErrorCode,
@@ -122,7 +123,7 @@ export function createCookbookService(d: GameDeps) {
     async detail(ctx: RestCtx, id: number): Promise<CookbookDetailDto> {
       const c = d.config.cookbooks.get(id);
       if (!c) throw invalidState('no_cookbook', { id });
-      const [levels, have, max, rest] = await Promise.all([
+      const [levels, have, max, rest, settings] = await Promise.all([
         levelsOf(d.db, ctx.restaurantId),
         haveOf(d.db, ctx.restaurantId),
         maxGrade(ctx.shardId),
@@ -131,6 +132,7 @@ export function createCookbookService(d: GameDeps) {
           .select('street_id')
           .where('id', '=', ctx.restaurantId)
           .executeTakeFirstOrThrow(),
+        d.shards.settings(ctx.shardId),
       ]);
       const row = rowOf(id, levels, have, max, rest.street_id);
       return {
@@ -139,7 +141,8 @@ export function createCookbookService(d: GameDeps) {
         streetId: c.streetId,
         streetName: d.config.streets.get(c.streetId)?.name ?? '',
         taste: c.taste,
-        coin: c.coin,
+        // 显示的售价乘本区服的菜价倍率（240-1），和实际付的一致
+        coin: dishCoin(c.coin, settings.tuning.settlement.dishCoinRate),
         level: c.level,
         desc: c.desc,
         grade: row.grade,

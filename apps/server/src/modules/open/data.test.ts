@@ -99,3 +99,22 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(s.reduce((n, x) => n + x.cookbookCount, 0)).toBe(b.cookbooks.length);
   });
 });
+
+describe('售价按默认数值算（240-1）', () => {
+  it('菜谱乘菜价倍率，食材乘本等级价格倍数', () => {
+    const tuning = {
+      ...config.tuning,
+      settlement: { ...config.tuning.settlement, dishCoinRate: 0.5 },
+      market: { ...config.tuning.market, levelPriceRate: [2, 2, 2, 2, 2, 2, 2] },
+    };
+    // 保留原型上的方法，只换 tuning
+    const cfg = Object.assign(Object.create(Object.getPrototypeOf(config)), config, {
+      tuning,
+    }) as typeof config;
+    const d = createOpenData(cfg);
+    const cb = d.cookbooks('zh-CN').items.find((x) => x.id === 194)!;
+    expect(cb.coin).toBe(Math.floor(config.requireCookbook(194).coin * 0.5));
+    const f = d.foods('zh-CN').items[0]!;
+    expect(f.coin).toBe(config.requireFood(f.id).coin * 2);
+  });
+});

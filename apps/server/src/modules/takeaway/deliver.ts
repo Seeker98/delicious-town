@@ -1,3 +1,4 @@
+import { dishCoin } from '../../core/prices';
 import type { TakeawayDeliveryDto } from '@dt/shared';
 import { invalidState, limitReached, notEnough, requirement } from '../../core/errors';
 import { opAgg } from '../../core/luck';
@@ -70,7 +71,7 @@ export async function deliverOrder(
   gainRenown(o, -order.need_renown);
   const v = orderValues(
     {
-      price: cb.coin,
+      price: dishCoin(cb.coin, o.tuning.settlement.dishCoinRate),
       grade: order.grade,
       myGrade,
       level: o.rest.level,
