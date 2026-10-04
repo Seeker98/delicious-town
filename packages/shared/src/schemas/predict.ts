@@ -52,6 +52,8 @@ export interface PredictEventDto {
   params: Record<string, unknown>;
   /** 自动题判定依据的参数；旧数据和手动题为 null，显示 resultNote 原文 */
   resultParams: Record<string, unknown> | null;
+  /** 我的账号出的题（后台出题）：不能买卖（backlog 238-1） */
+  own: boolean;
 }
 
 export interface PredictListDto {

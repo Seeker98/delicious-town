@@ -60,6 +60,7 @@ export default {
     estimate: (buy: boolean, total: string, fee: string, pct: number) =>
       `${buy ? '预计花费' : '预计得到'} ${total} 银币（含手续费 ${fee}），成交后"是" ${pct}%`,
     enterQty: '输入份数（卖出不能超过持有）',
+    own: '这道题是你出的，不能交易',
     summary: '本局盈亏',
     summaryLine: (bought: string, sold: string, fees: string, net: string) =>
       `买入共花 ${bought}，卖出共得 ${sold}（手续费合计 ${fees}），净投入 ${net}`,

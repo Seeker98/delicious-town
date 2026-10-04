@@ -154,6 +154,7 @@ const errors: Messages['errors'] = {
     exchange_price_moved:
       'The system price changed. The order book has been refreshed; please confirm before selling.',
     predict_closed: 'Trading on this event has stopped',
+    predict_own: 'You created this question, so you can’t trade on it',
     predict_frozen:
       'Your exchange is frozen, so predictions are paused too. Contact an admin if you have questions',
     kuji_ticket: 'Not enough kuji tickets',
