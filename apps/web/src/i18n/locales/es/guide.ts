@@ -89,7 +89,7 @@ const guide: Messages['guide'] = {
     {
       q: '¿Y si siempre me falta el mismo ingrediente?',
       a: [
-        'Los ingredientes aleatorios (packs de regalo, vales de ingrediente aleatorio, fusión, premios del Bar y de la Torre, el Templo, el Glotón) pueden ser justo el que le falta a tu próxima receta, y cuanta más suerte tengas, más probable es. También puedes cubrirlo con un ingrediente universal o comprarlo en la Bolsa.',
+        'Los ingredientes aleatorios (packs de regalo, vales de ingrediente aleatorio, Combinar, premios del Bar y de la Torre, el Templo, El Glotón) pueden ser justo el que le falta a tu próxima receta, y cuanta más suerte tengas, más probable es. También puedes cubrirlo con un ingrediente universal, o comprarlo en el Mercado o en la Bolsa (la Bolsa solo vende ingredientes raros).',
       ],
     },
     {

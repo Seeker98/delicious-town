@@ -82,7 +82,7 @@ const guide: Messages['guide'] = {
     {
       q: 'What if I keep missing one ingredient?',
       a: [
-        'Random ingredients (gift packs, random ingredient tickets, crafting, Bar and Tower rewards, the Temple, the Big Eater) have a chance to be exactly what your next recipe is missing, and higher luck makes it more likely. You can also cover the gap with a universal ingredient or buy it on the Exchange.',
+        'Random ingredients (gift packs, random ingredient tickets, Combine, Bar and Tower rewards, the Temple, Big Belly) have a chance to be exactly what your next recipe is missing, and higher luck makes it more likely. You can also cover the gap with a universal ingredient, or buy it at the Market or on the Exchange (the Exchange only trades rare ingredients).',
       ],
     },
     {

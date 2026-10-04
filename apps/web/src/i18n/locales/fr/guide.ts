@@ -92,7 +92,7 @@ const guide: Messages['guide'] = {
     {
       q: 'Et s’il me manque toujours le même ingrédient ?',
       a: [
-        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, fusion, récompenses du Bar et de la Tour, Temple, Gros mangeur) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel ou l’acheter à la Bourse.',
+        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, Combiner, récompenses du Bar et de la Tour, Temple, Gros Mangeur) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel, ou l’acheter au Marché ou à la Bourse (la Bourse ne vend que des ingrédients rares).',
       ],
     },
     {

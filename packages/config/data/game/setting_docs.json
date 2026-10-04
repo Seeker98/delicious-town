@@ -625,7 +625,7 @@
     "tuning.kuji.deluxe.last.news": "豪华池最后赏的播报：broadcast 全服广播 / news 新闻 / 不填不播",
     "tuning.scarcity.needBase": "幸运为 0 时的概率（0~1，不能大于 needMax）",
     "tuning.scarcity.needLuckFactor": "幸运率乘的系数（幸运 100 的幸运率约 0.17、300 是 0.30）",
-    "tuning.scarcity.needMax": "概率上限（0~1；设成 0 就关掉缺料倾向）",
+    "tuning.scarcity.needMax": "概率上限（0~1；要关掉缺料倾向，needBase 和 needMax 都设成 0，needBase 不能大于 needMax）",
     "tuning.fund.days": "存期：存入后多少天到期（天）；只影响之后的新存款",
     "tuning.fund.returnRate": "到期领回本金的比例（0~1，向下取整）",
     "tuning.fund.earlyRate": "提前取出退回本金的比例（0~1，不能大于 returnRate；提前取出没有勋章）",

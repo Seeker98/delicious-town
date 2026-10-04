@@ -63,7 +63,9 @@ export async function opNeedPick(o: Op): Promise<NeedPick> {
   const p = needChance(o.tuning.scarcity, (await opLuck(o)).rate);
   let need: NeedMap = new Map();
   if (p > 0) {
-    const [levels, foods] = await Promise.all([levelsOf(o.tx, o.rest.id), foodsMap(o.tx, o.rest.id)]);
+    // 同一个事务连接上不能并发查询（pg 会排队并警告，pg@9 会报错），按顺序读
+    const levels = await levelsOf(o.tx, o.rest.id);
+    const foods = await foodsMap(o.tx, o.rest.id);
     need = needMapOf(
       o.config.cookbookIndex.idsByStreet.get(o.rest.street_id) ?? [],
       levels,
