@@ -6,11 +6,19 @@ import type { DB } from './schema';
 pg.types.setTypeParser(pg.types.builtins.INT8, (v) => Number(v));
 pg.types.setTypeParser(pg.types.builtins.DATE, (v) => v);
 
-export function createDb(url: string, max = 10): Kysely<DB> {
+/** 每条查询跑完回调（语句、毫秒）：查询条数预算测试和慢查询日志用（质量期 ③） */
+export type OnQuery = (sql: string, ms: number) => void;
+
+export function createDb(url: string, max = 10, onQuery?: OnQuery): Kysely<DB> {
   return new Kysely<DB>({
     dialect: new PostgresDialect({
       pool: new pg.Pool({ connectionString: url, max, connectionTimeoutMillis: 10_000 }),
     }),
+    log: onQuery
+      ? (e) => {
+          if (e.level === 'query') onQuery(e.query.sql, e.queryDurationMillis);
+        }
+      : undefined,
   });
 }
 

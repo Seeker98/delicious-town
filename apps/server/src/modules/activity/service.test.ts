@@ -5,6 +5,7 @@ import { createShard } from '../../../test/fixtures';
 import { insertActivity } from '../../../test/activity';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
+import { queryCounter } from '../../../test/queries';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -143,5 +144,54 @@ describe('任务计数（问题记录 318）', () => {
     await svc().claimAll(r, id);
     expect(await eventCount(t, r.restaurantId, 'activity.claim')).toBe(1);
     expect((await t.game.task.activation(r)).items.find((i) => i.name === '领取限时活动奖励')!.count).toBe(1);
+  });
+});
+
+describe('查询条数（质量期 ③）', () => {
+  const q = queryCounter();
+  let qt: TestGame;
+  beforeAll(async () => {
+    qt = await createTestGame({ db: q.db });
+  });
+  afterAll(async () => {
+    await qt.close();
+    await q.db.destroy();
+  });
+  const pass = {
+    kind: 'pass' as const,
+    def: {
+      rules: [{ key: 'market.buy', points: 10, dailyCap: 100 }],
+      levels: [{ points: 10, free: { coin: 1 }, premium: { coin: 100 } }],
+      unlock: { diamond: 50 },
+    },
+  };
+  const exchange = {
+    kind: 'exchange' as const,
+    def: {
+      currencies: [{ name: '福' }],
+      drops: [{ key: 'market.buy', chance: 0.5, currency: 0, num: 1, dailyCap: 5 }],
+      shop: [{ cost: [{ currency: 0, num: 2 }], award: { coin: 1 }, limit: 3 }],
+      graceHours: 24,
+    },
+  };
+
+  it('活动列表、红点的查询条数不随活动个数增长：3 个和 6 个一样多', async () => {
+    const one = await createShard(qt.db);
+    const six = await createShard(qt.db);
+    for (const spec of [goals, pass, exchange]) await insertActivity(qt, { shardId: one, spec });
+    for (const spec of [goals, pass, exchange, goals, pass, exchange]) await insertActivity(qt, { shardId: six, spec });
+    const r1 = await newRestaurant(qt, { shardId: one });
+    const r6 = await newRestaurant(qt, { shardId: six });
+    const svc = qt.game.activity;
+    // 先各跑一次：区服设置、活动缓存这类进程内缓存先填上
+    await svc.list(r1);
+    await svc.list(r6);
+    const l1 = await q.count(() => svc.list(r1));
+    const l6 = await q.count(() => svc.list(r6));
+    expect(l6.result.items).toHaveLength(6);
+    expect(l6.n).toBe(l1.n);
+    expect(l6.n).toBeLessThanOrEqual(8);
+    const s6 = await q.count(() => svc.summary(r6));
+    expect(s6.n).toBeLessThanOrEqual(l6.n);
   });
 });

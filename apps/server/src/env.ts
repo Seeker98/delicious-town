@@ -30,6 +30,10 @@ const envSchema = z.object({
    * 生产环境可以不配：启动时从数据库读，没有就生成一个存进去（问题记录 262，见 core/seedSecret.ts）
    */
   RNG_SECRET: z.string().default(''),
+  /** 每个请求的查询条数和耗时写进 Server-Timing 响应头（质量期 ③，开发、排查时打开） */
+  DB_QUERY_STATS: bool.default('false'),
+  /** 慢查询警告阈值（毫秒）；0 = 不记 */
+  DB_SLOW_MS: z.coerce.number().min(0).default(0),
 });
 
 export type Env = z.infer<typeof envSchema>;

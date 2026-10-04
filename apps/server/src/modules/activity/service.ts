@@ -107,54 +107,89 @@ export function createActivityService(d: GameDeps) {
     return v;
   }
 
-  async function settled(db: Kysely<DB>, activityId: number, shardId: number): Promise<boolean> {
-    const r = await db
-      .selectFrom('activity_settle')
-      .select('activity_id')
-      .where('activity_id', '=', activityId)
-      .where('shard_id', '=', shardId)
-      .executeTakeFirst();
-    return r !== undefined;
+  /** 今天计数用到的 daily_counter 键：兑换活动按掉落规则，战令、合力按积分规则（148-2 设计 §7） */
+  function dailyKeys(row: Row): string[] {
+    const spec = specOf(row);
+    if (spec.kind === 'exchange') return spec.def.drops.map((_, i) => dropDailyKey(row.id, i));
+    if (spec.kind === 'pass' || spec.kind === 'coop') return spec.def.rules.map((r) => passDailyKey(row.id, r.key));
+    return [];
   }
 
-  async function todayOf(
-    db: Kysely<DB>,
+  function todayOf(row: Row, daily: ReadonlyMap<string, number>): Record<string, number> {
+    const spec = specOf(row);
+    if (spec.kind === 'exchange')
+      return Object.fromEntries(spec.def.drops.map((_, i) => [`d${i}`, daily.get(dropDailyKey(row.id, i)) ?? 0]));
+    if (spec.kind !== 'pass' && spec.kind !== 'coop') return {};
+    return Object.fromEntries(spec.def.rules.map((r) => [r.key, daily.get(passDailyKey(row.id, r.key)) ?? 0]));
+  }
+
+  /**
+   * 列表里所有活动的进度、是否已结算、今天的计数一次读完（质量期 ③）：
+   * 原来每个活动各查 5 条，活动一多红点接口就几十条查询；现在固定 5 条，和活动个数无关
+   */
+  async function loadAll(rows: Row[], shardId: number, restId: number, now: Date) {
+    const ids = rows.map((r) => r.id);
+    const keys = rows.flatMap(dailyKeys);
+    const [cs, passes, claims, settles, daily] =
+      ids.length === 0
+        ? [[], [], [], [], []]
+        : await Promise.all([
+            d.db
+              .selectFrom('activity_counter')
+              .select(['activity_id', 'key', 'count'])
+              .where('activity_id', 'in', ids)
+              .where('rest_id', '=', restId)
+              .execute(),
+            d.db
+              .selectFrom('activity_pass')
+              .select('activity_id')
+              .where('activity_id', 'in', ids)
+              .where('rest_id', '=', restId)
+              .execute(),
+            d.db
+              .selectFrom('activity_claim')
+              .select(['activity_id', 'reward_key', 'via'])
+              .where('activity_id', 'in', ids)
+              .where('rest_id', '=', restId)
+              .execute(),
+            d.db
+              .selectFrom('activity_settle')
+              .select('activity_id')
+              .where('activity_id', 'in', ids)
+              .where('shard_id', '=', shardId)
+              .execute(),
+            keys.length === 0
+              ? Promise.resolve([] as Array<{ key: string; count: number }>)
+              : d.db
+                  .selectFrom('daily_counter')
+                  .select(['key', 'count'])
+                  .where('rest_id', '=', restId)
+                  .where('day', '=', gameDay(now))
+                  .where('key', 'in', keys)
+                  .execute(),
+          ]);
+    const progress = new Map<number, Progress>(
+      ids.map((id) => [id, { counters: {}, premium: false, claims: new Map() }]),
+    );
+    for (const c of cs) progress.get(c.activity_id)!.counters[c.key] = Number(c.count);
+    for (const p of passes) progress.get(p.activity_id)!.premium = true;
+    for (const c of claims) progress.get(c.activity_id)!.claims.set(c.reward_key, c.via);
+    return {
+      progress,
+      settled: new Set(settles.map((x) => x.activity_id)),
+      daily: new Map(daily.map((x) => [x.key, x.count])),
+    };
+  }
+
+  async function dto(
     row: Row,
+    shardId: number,
     restId: number,
     now: Date,
-  ): Promise<Record<string, number>> {
-    const spec = specOf(row);
-    // 兑换活动：各掉落规则今天已掉的数量（148-2 设计 §7）
-    if (spec.kind === 'exchange') {
-      const keys = spec.def.drops.map((_, i) => dropDailyKey(row.id, i));
-      const rows = await db
-        .selectFrom('daily_counter')
-        .select(['key', 'count'])
-        .where('rest_id', '=', restId)
-        .where('day', '=', gameDay(now))
-        .where('key', 'in', keys)
-        .execute();
-      const by = new Map(rows.map((r) => [r.key, r.count]));
-      return Object.fromEntries(
-        spec.def.drops.map((_, i) => [`d${i}`, by.get(dropDailyKey(row.id, i)) ?? 0]),
-      );
-    }
-    if (spec.kind !== 'pass' && spec.kind !== 'coop') return {};
-    const keys = spec.def.rules.map((r) => passDailyKey(row.id, r.key));
-    const rows = await db
-      .selectFrom('daily_counter')
-      .select(['key', 'count'])
-      .where('rest_id', '=', restId)
-      .where('day', '=', gameDay(now))
-      .where('key', 'in', keys)
-      .execute();
-    const by = new Map(rows.map((r) => [r.key, r.count]));
-    return Object.fromEntries(spec.def.rules.map((r) => [r.key, by.get(passDailyKey(row.id, r.key)) ?? 0]));
-  }
-
-  async function dto(row: Row, shardId: number, restId: number, now: Date): Promise<ActivityDto> {
-    const p = await loadProgress(d.db, row.id, restId);
-    const state = activityState(now, row.ends_at, await settled(d.db, row.id, shardId));
+    all: Awaited<ReturnType<typeof loadAll>>,
+  ): Promise<ActivityDto> {
+    const p = all.progress.get(row.id)!;
+    const state = activityState(now, row.ends_at, all.settled.has(row.id));
     const spec = specOf(row);
     const board = spec.kind === 'coop' ? await coopBoard(row.id, shardId) : null;
     const rewards = rewardsOf(spec, p.counters, p.premium, { pool: board?.pool }).map((x) => ({
@@ -173,7 +208,7 @@ export function createActivityService(d: GameDeps) {
       minLevel: row.min_level,
       state,
       counters: p.counters,
-      today: await todayOf(d.db, row, restId, now),
+      today: todayOf(row, all.daily),
       premium: p.premium,
       rewards,
       claimable: state === 'running' ? rewards.filter((x) => x.reached && !x.claimed).length : 0,
@@ -251,8 +286,9 @@ export function createActivityService(d: GameDeps) {
         .where('ends_at', '>', new Date(now.getTime() - LIST_AFTER_END_MS))
         .orderBy('ends_at')
         .execute()) as Row[];
+      const all = await loadAll(rows, ctx.shardId, ctx.restaurantId, now);
       return {
-        items: await Promise.all(rows.map((r) => dto(r, ctx.shardId, ctx.restaurantId, now))),
+        items: await Promise.all(rows.map((r) => dto(r, ctx.shardId, ctx.restaurantId, now, all))),
         level: rest.level,
       };
     },
