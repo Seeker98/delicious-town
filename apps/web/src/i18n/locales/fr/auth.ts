@@ -6,6 +6,7 @@ const auth: Messages['auth'] = {
   password: 'Mot de passe',
   login: 'Se connecter',
   toRegister: 'Créer un compte',
+  wiki: 'Données du jeu (wiki)',
   forgot: 'Mot de passe oublié',
   loginFailed: 'Échec de la connexion',
   registerTitle: 'Rejoindre Delicious Town',

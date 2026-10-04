@@ -37,6 +37,13 @@ describe('GuideView（问题记录 150）', () => {
     vi.mocked(endpoints.redeem).mockReset();
   });
 
+  it('页首有游戏资料入口（问题记录 142）', async () => {
+    useSessionStore().me = me(1);
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    const w = await mountView();
+    expect(w.get('[data-testid="guide-wiki"]').attributes('href')).toBe('/wiki');
+  });
+
   it('五块内容都在', async () => {
     useSessionStore().me = me(1);
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);

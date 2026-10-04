@@ -5,6 +5,7 @@ export default {
   password: '密码',
   login: '登录',
   toRegister: '注册新账号',
+  wiki: '游戏资料（Wiki）',
   forgot: '忘记密码',
   loginFailed: '登录失败',
   registerTitle: '注册美味小镇',

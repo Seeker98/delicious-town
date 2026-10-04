@@ -4,6 +4,7 @@ type Seg = string | { to: string; text: string };
 /** 游玩指引（问题记录 150、272） */
 export default {
   title: '游玩指引',
+  wikiHint: '想查道具、食材、菜谱？看游戏资料',
   codes: '新手兑换码',
   codesNoRest: '进入区服、开店后可以领。每家店每个码领一次。',
   codesNote: '每家店每个码领一次，等级够了就能领。',

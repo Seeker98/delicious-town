@@ -511,6 +511,21 @@ details.dt-card > summary {
 .dt-card + .dt-card {
   margin-top: 8px;
 }
+/* 游戏资料首页的类目卡片：两列网格，卡片之间不再叠上边距（问题记录 142） */
+.dt-wiki-kinds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dt-wiki-kinds > .dt-card {
+  margin-top: 0;
+}
+/* 菜谱各品级的食材：每种食材一段，不在中间断行 */
+.dt-wiki-foods {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 8px;
+}
 /* 标签页里的二级分类 */
 .dt-pills {
   display: flex;

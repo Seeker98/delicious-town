@@ -12,6 +12,7 @@ import exchange from './exchange';
 import forum from './forum';
 import friends from './friends';
 import guide from './guide';
+import wiki from './wiki';
 import home from './home';
 import kuji from './kuji';
 import labels from './labels';
@@ -67,6 +68,7 @@ const zhCN = {
   equip,
   rest,
   guide,
+  wiki,
   misc,
   server,
 };

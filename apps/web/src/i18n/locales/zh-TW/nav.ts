@@ -29,6 +29,7 @@ export default {
     look: '裝扮',
     invite: '邀請好友',
     guide: '遊玩指引',
+    wiki: '遊戲資料',
     redeem: '兌換碼',
     shards: '切換區服',
     admin: '管理後臺',

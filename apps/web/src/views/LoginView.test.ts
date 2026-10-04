@@ -42,6 +42,14 @@ describe('LoginView', () => {
     expect(w.find('[data-testid="announce-banner"]').text()).toContain('今晚停服维护');
   });
 
+  it('登录页底部有游戏资料入口，不用登录也能看（问题记录 142）', async () => {
+    vi.mocked(endpoints.publicAnnouncements).mockResolvedValue({ items: [] });
+    const w = await mountView();
+    const a = w.get('[data-testid="login-wiki"]');
+    expect(a.attributes('href')).toBe('/wiki');
+    expect(a.text()).toBe('游戏资料（Wiki）');
+  });
+
   it('读公告失败时照常显示登录表单', async () => {
     vi.mocked(endpoints.publicAnnouncements).mockRejectedValue(new Error('x'));
     const w = await mountView();

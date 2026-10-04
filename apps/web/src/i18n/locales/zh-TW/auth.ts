@@ -6,6 +6,7 @@ export default {
   password: '密碼',
   login: '登入',
   toRegister: '註冊新賬號',
+  wiki: '遊戲資料（Wiki）',
   forgot: '忘記密碼',
   loginFailed: '登入失敗',
   registerTitle: '註冊美味小鎮',

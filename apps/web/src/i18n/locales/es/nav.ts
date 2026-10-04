@@ -36,6 +36,7 @@ const nav: Messages['nav'] = {
     look: 'Apariencia',
     invite: 'Invitar amigos',
     guide: 'Guía',
+    wiki: 'Datos del juego',
     redeem: 'Canjear código',
     shards: 'Cambiar de servidor',
     admin: 'Administración',

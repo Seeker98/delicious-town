@@ -73,6 +73,12 @@ async function submit() {
         <RouterLink to="/register">{{ t.auth.toRegister }}</RouterLink>
         <RouterLink to="/forgot-password">{{ t.auth.forgot }}</RouterLink>
       </div>
+      <!-- 游戏资料不用登录也能看（问题记录 142） -->
+      <div class="text-center mt-3 small">
+        <RouterLink to="/wiki" data-testid="login-wiki"
+          ><i class="bi bi-book me-1"></i>{{ t.auth.wiki }}</RouterLink
+        >
+      </div>
     </div>
   </div>
 </template>

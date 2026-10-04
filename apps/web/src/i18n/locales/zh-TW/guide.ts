@@ -5,6 +5,7 @@ type Seg = string | { to: string; text: string };
 /** 遊玩指引（問題記錄 150、272） */
 export default {
   title: '遊玩指引',
+  wikiHint: '想查道具、食材、菜譜？看遊戲資料',
   codes: '新手兌換碼',
   codesNoRest: '進入區服、開店後可以領。每家店每個碼領一次。',
   codesNote: '每家店每個碼領一次，等級夠了就能領。',
