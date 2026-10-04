@@ -1010,3 +1010,15 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
     expect(code).toMatchObject({ minLevel: 1, items: { goods: [{ id: NEWBIE.pack, num: 1 }] } });
   });
 });
+
+describe('货币回收 240-1 的区服数值（默认中性）', () => {
+  it('菜价倍率 1、各等级价格倍数全 1、升星不收银币、搬街费不随星级涨', () => {
+    const { bundle, errors } = buildBundle(readSourceDir(defaultDataDir()));
+    expect(errors).toEqual([]);
+    const t = bundle!.tuning;
+    expect(t.settlement.dishCoinRate).toBe(1);
+    expect(t.market.levelPriceRate).toEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect(t.growth.starCoin).toEqual([]);
+    expect(t.growth.moveStarRate).toBe(0);
+  });
+});
