@@ -168,7 +168,9 @@ describe('区服数值（HTTP）', () => {
       deluxe: { tiers: [{ key: 'S', count: 1, award: { diamond: 50 }, icon: 'kuji_dx_a' }] },
     });
     expect(renamed.status).toBe(400);
-    expect(JSON.stringify(renamed.json.params.issues)).toContain('deluxeMonths 2026-10 key A is not a deluxe tier');
+    expect(JSON.stringify(renamed.json.params.issues)).toContain(
+      'deluxeMonths 2026-10 key A is not a deluxe tier',
+    );
     // 活跃奖励没有 123 这一档：提示会写一个领不到的档，券也永远送不出去
     const points = await save({ activeTicketPoints: 123 });
     expect(points.status).toBe(400);

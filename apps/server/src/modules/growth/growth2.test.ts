@@ -286,8 +286,8 @@ describe('后期海报奖杯摆放要星级（问题记录 146）', () => {
     await g().placeDevice(ctx, { slot: 1, goodsId: 13 });
     await g().placeDevice(ctx, { slot: 1, goodsId: 93201 });
     const effects = await listActiveEffects(t.db, ctx.restaurantId, t.clock.now);
-    expect(effects.filter((e) => e.sourceType === 'device' && e.sourceId === 1).map((e) => e.effects)).toEqual([
-      { coinValue: 8 },
-    ]);
+    expect(
+      effects.filter((e) => e.sourceType === 'device' && e.sourceId === 1).map((e) => e.effects),
+    ).toEqual([{ coinValue: 8 }]);
   });
 });

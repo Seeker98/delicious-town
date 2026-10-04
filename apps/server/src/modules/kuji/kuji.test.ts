@@ -456,7 +456,12 @@ describe('豪华一番赏（240-2）', () => {
     const r = await dxPlayer(shardId);
     await t.db
       .insertInto('news')
-      .values({ shard_id: shardId, type: 'kuji.big', rest_id: r.restaurantId, params: JSON.stringify({ tier: 'A' }) })
+      .values({
+        shard_id: shardId,
+        type: 'kuji.big',
+        rest_id: r.restaurantId,
+        params: JSON.stringify({ tier: 'A' }),
+      })
       .execute();
     expect((await svc().view(r)).recent.map((x) => x.tier)).toEqual(['A']);
     expect((await svc().view(r, 'deluxe')).recent).toEqual([]);

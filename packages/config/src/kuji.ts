@@ -31,7 +31,8 @@ export function kujiErrors(k: Tuning['kuji'], ref: KujiRef): string[] {
     seenMonth.add(m.month);
     for (const [key, icon] of Object.entries(m.icons)) {
       if (!deluxeKeys.has(key)) errors.push(`kuji deluxeMonths ${m.month} key ${key} is not a deluxe tier`);
-      if (!ref.iconKeys.has(icon)) errors.push(`kuji deluxeMonths ${m.month} icon ${icon} not in looks.icons`);
+      if (!ref.iconKeys.has(icon))
+        errors.push(`kuji deluxeMonths ${m.month} icon ${icon} not in looks.icons`);
     }
   }
   return errors;

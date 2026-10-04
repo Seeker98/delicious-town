@@ -50,7 +50,9 @@ describe('食材出现权重（问题记录 50）', () => {
       'food_supply',
     );
     // α 取 1 时没有需求的食材权重变 0、被剔出池子（某级稀有池可能变空），上限是 < 1（质量期 ②）
-    expect(buildBundle({ ...src, 'game/food_supply': { demandBlend: 1 } }).errors.join()).toContain('food_supply');
+    expect(buildBundle({ ...src, 'game/food_supply': { demandBlend: 1 } }).errors.join()).toContain(
+      'food_supply',
+    );
     const t = JSON.parse(JSON.stringify(src['game/tuning']));
     t.scarcity = { needBase: 0.5, needLuckFactor: 0.6, needMax: 0.3 };
     expect(buildBundle({ ...src, 'game/tuning': t }).errors.join()).toContain('scarcity');
