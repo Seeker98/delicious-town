@@ -116,7 +116,7 @@ onMounted(async () => {
         <div v-for="s in mine.shop" :key="s.key" class="dt-todo-row">
           <div class="flex-fill">
             <b>{{ catalog.icon(s.key)?.title ?? s.title }}</b>
-            <span class="small text-muted">{{ catalog.icon(s.key)?.desc ?? s.desc }}</span>
+            <span class="d-block small text-muted">{{ catalog.icon(s.key)?.desc ?? s.desc }}</span>
             <span class="d-block dt-meta">{{
               t.rest.look.shopMeta(formatNum(s.coin), daysLeft(s.endsAt))
             }}</span>
