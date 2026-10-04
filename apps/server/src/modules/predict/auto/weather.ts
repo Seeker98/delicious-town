@@ -4,7 +4,7 @@ import { gameSeed } from '../../../core/seed';
 import { featureAvailable } from '../../../core/features';
 import { rollWeather } from '../../world/rules';
 import { clampP, dayLabel, WEATHER_TYPE_NAMES, weatherTypeShares } from './odds';
-import { roundFinishedAt } from './rounds';
+import { finishedRound } from './rounds';
 import type { AutoKind } from './types';
 
 const SLOT_MS = 2 * 3_600_000;
@@ -39,9 +39,10 @@ export const weather: AutoKind = {
   async resolve(c, p) {
     const hour = Number(p.hour);
     const period = String(p.period);
-    // 那一轮没跑过（world 关掉、worker 漏跑）先不判；雷神锤只算轮换之后的（backlog 238-2）
-    const rotatedAt = await roundFinishedAt(c.d.db, c.shardId, 'weather', period);
-    if (rotatedAt === null) return null;
+    // 那一轮没跑过（world 关掉、worker 漏跑）先不判；雷神锤只算轮换之后的（backlog 238-2）。
+    // 天气在轮换任务开始时就换了，按开始时间截（质量期 ②）
+    const round = await finishedRound(c.d.db, c.shardId, 'weather', period);
+    if (round === null) return null;
     const auto = rollWeather(
       c.d.config,
       hour,
@@ -58,7 +59,7 @@ export const weather: AutoKind = {
       .select('params')
       .where('shard_id', '=', c.shardId)
       .where('type', '=', 'weather.change')
-      .where('created_at', '>=', rotatedAt)
+      .where('created_at', '>=', round.startedAt)
       .where('created_at', '<', new Date(start.getTime() + SLOT_MS))
       .where(sql<boolean>`params ? 'by'`)
       .orderBy('created_at', 'desc')

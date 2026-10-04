@@ -332,6 +332,37 @@ describe('判定边界（backlog 238-2）', () => {
     expect(r.noteParams).not.toHaveProperty('hammerTo');
   });
 
+  it('天气：轮换任务开始后、写完成时间前用的雷神锤也写进判定依据（天气在任务开始时就换了，质量期 ②）', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 15;
+    const period = slotKey(DAY, hour);
+    const start = gameTime(DAY, hour);
+    const { to } = await t.game.world.changeWeather(shardId, { key: period, day: DAY, hour, start }, start);
+    const type = t.deps.config.weather.get(to)!.type;
+    const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== type)!;
+    await t.db
+      .insertInto('job_run')
+      .values({
+        shard_id: shardId,
+        job: 'weather',
+        period,
+        started_at: new Date(start.getTime() + 30_000),
+        finished_at: new Date(start.getTime() + 90_000),
+      })
+      .execute();
+    await t.db
+      .insertInto('news')
+      .values({
+        shard_id: shardId,
+        type: 'weather.change',
+        params: JSON.stringify({ from: to, to: other.id, by: 1 }),
+        created_at: new Date(start.getTime() + 60_000),
+      })
+      .execute();
+    const r = (await weather.resolve(await rctx(shardId), { hour, type, period }))!;
+    expect(r.noteParams).toMatchObject({ hammerTo: other.id });
+  });
+
   it('菜场：货架被下一轮清掉时按种子重算那一轮的系统进货；那一轮没跑过返回 null', async () => {
     const shardId = await createShard(t.db);
     const hour = 12;

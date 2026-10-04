@@ -441,7 +441,15 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         );
       });
       const foods = items.map((x) => x.foodsId);
-      const guesses = shelf === 0 ? await settleGuesses(shardId, slot, foods, now, log) : 0;
+      // 货架已经换好：开奖出错只记日志，这一轮照样算刷新成功（周期任务写完成时间，菜场题不按“没刷新”作废）；
+      // 没结算的报名下一轮当作错过的轮次退还（质量期 ②）
+      let guesses = 0;
+      if (shelf === 0)
+        try {
+          guesses = await settleGuesses(shardId, slot, foods, now, log);
+        } catch (err) {
+          log?.error({ err, shardId, period: slot.key }, 'market guess settle failed');
+        }
       return { foods, guesses };
     },
 
