@@ -4,7 +4,10 @@ import { registerAndOpen } from './helpers';
 
 const DB_URL = process.env.E2E_DATABASE_URL ?? 'postgres://dt:dt@localhost:5432/dt';
 
-/** 只操作本用例新注册的账号和自己建的活动；结束时删掉活动行（连同计数和领奖记录，外键级联） */
+/**
+ * 只操作本用例新注册的账号和自己建的活动。结束时不硬删活动行：别的进程（worker）的活动缓存还认得它，
+ * 硬删后别的用例的动作事件给它计数会撞外键（backlog 318）。先走后台“结束”让 API 的缓存失效，再标记删除
+ */
 test('后台建签到活动 → 玩家签到后在活动页领奖，银币到账', async ({ page, request }) => {
   const { username } = await registerAndOpen(page, request);
   const client = new pg.Client({ connectionString: DB_URL });
@@ -49,7 +52,10 @@ test('后台建签到活动 → 玩家签到后在活动页领奖，银币到账
     await expect(card.getByText('已领')).toBeVisible();
     expect((await overview()).coin).toBe(before.coin + 4321);
   } finally {
-    if (activityId !== null) await client.query('delete from activity where id = $1', [activityId]);
+    if (activityId !== null) {
+      await page.request.post(`/api/v1/admin/activities/${activityId}/end`).catch(() => undefined);
+      await client.query('update activity set deleted_at = now() where id = $1', [activityId]);
+    }
     await client.end();
   }
 });
