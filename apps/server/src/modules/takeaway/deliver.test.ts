@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
-import { testConfig } from '../../../test/config';
+import { originalDishConfig, testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { addOrder, openFor, setWeather } from '../../../test/takeaway';
@@ -11,7 +11,7 @@ const DAY = '2026-09-30';
 const config = testConfig();
 let t: TestGame;
 beforeAll(async () => {
-  t = await createTestGame({ rng: () => sequenceRng([0.4]) });
+  t = await createTestGame({ rng: () => sequenceRng([0.4]), config: originalDishConfig() });
 });
 afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime(DAY, 12)));

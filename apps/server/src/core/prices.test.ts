@@ -32,4 +32,13 @@ describe('价格函数（问题记录 240-1）', () => {
     expect(foodPrice(f, { levelPriceRate: [1, 1, 2] })).toBe(f.coin * 2);
     expect(foodPrice(f, { levelPriceRate: [1, 1, 1, 1, 1, 1, 1] })).toBe(f.coin);
   });
+
+  it('浮点尾数不多收、不少给 1 银币（终审小问题）：680 × 0.35 = 238，1800 × 1.3 = 2340', () => {
+    expect(dishCoin(680, 0.35)).toBe(238);
+    const f = { ...level(2), coin: 1800 };
+    expect(foodPrice(f, { levelPriceRate: [1, 1.3] })).toBe(2340);
+    expect(Number.isInteger(foodPrice({ ...level(3), coin: 3600 }, { levelPriceRate: [1, 1, 1.3] }))).toBe(
+      true,
+    );
+  });
 });
