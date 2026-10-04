@@ -59,6 +59,8 @@ const wiki: Messages['wiki'] = {
     streetCookbooks: 'Recetas de esta calle',
   },
   fields: {
+    star: 'Estrellas',
+    needStar: (n) => `Disponible desde ${n} ${plEs(n, 'estrella', 'estrellas')}`,
     type: 'Tipo',
     level: 'Nivel',
     stackable: 'Apilable',

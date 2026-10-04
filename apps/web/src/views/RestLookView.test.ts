@@ -148,7 +148,13 @@ describe('RestLookView', () => {
     expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
     confirm.mockRestore();
 
-    vi.mocked(endpoints.myLooks).mockResolvedValue({ door: 0, ownedDoors: [0], avatar: null, notice: '', icons: [] });
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      ownedDoors: [0],
+      avatar: null,
+      notice: '',
+      icons: [],
+    });
     const old = mount(RestLookView);
     await flushPromises();
     expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);

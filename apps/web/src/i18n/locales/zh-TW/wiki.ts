@@ -52,6 +52,8 @@ export default {
     streetCookbooks: '這條街的菜譜',
   },
   fields: {
+    star: '星級',
+    needStar: (n: number) => `${n} 星可用`,
     type: '型別',
     level: '等級',
     stackable: '可以疊加',

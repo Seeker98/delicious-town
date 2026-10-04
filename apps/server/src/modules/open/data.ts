@@ -180,6 +180,7 @@ export function createOpenData(config: GameConfig) {
         stackable: g.stackable,
         maxNum: g.maxNum,
         invalidHours: g.invalidHours,
+        needStar: g.needStar ?? 0,
         equip: g.equip && {
           part: g.equip.part,
           minLevel: g.equip.minLevel,
@@ -191,7 +192,13 @@ export function createOpenData(config: GameConfig) {
           ranges: { ...g.equip.ranges },
           stressTable: [...g.equip.stressTable],
         },
-        gem: g.gem && { level: g.gem.level, nextId: g.gem.nextId, attrs: { ...g.gem.attrs } },
+        // 下一阶的名字直接给，Wiki 不用为一个名字拉整张道具列表（backlog #115）
+        gem: g.gem && {
+          level: g.gem.level,
+          nextId: g.gem.nextId,
+          nextName: g.gem.nextId === null ? null : nameOf(lang, g.gem.nextId),
+          attrs: { ...g.gem.attrs },
+        },
         gift: g.gift && g.gift.map((i) => giftItem(lang, i)).filter((x): x is OpenGiftItem => x !== null),
         sources: {
           shop: g.onSale ? { coin: g.coin, diamond: g.diamond } : null,

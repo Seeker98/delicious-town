@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { NEWBIE } from '@dt/config';
+import { seededRng } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { queryCounter } from '../../../test/queries';
 import { setTuning } from '../../../test/town';
-import { runOp } from '../../core/op';
+import { runSystemOp } from '../../core/op';
 import { needMapOf } from '../../core/scarcity';
 import { randomAward } from '../award/random';
 
@@ -63,12 +64,16 @@ describe('个人缺料倾向（问题记录 50、68）', () => {
     const r = await newRestaurant(t, { shardId });
     const need = needOf();
     const ids: number[] = [];
-    // 抽到至少 12 次食材：新手街 3 级以内的缺量里稀有食材约占 59%，12 次都不出稀有的概率约十万分之二
+    // 抽到至少 12 次食材；每次用固定种子，结果每次跑都一样（backlog 质量期 ②：原来是随机种子，约十万分之二会失败）
     for (let i = 0; i < 300 && ids.length < 12; i++) {
-      const res = await runOp(t.game.deps, r, { feature: 'store', source: 'test' }, (o) =>
-        randomAward(o, { level: 3 }),
+      const res = await runSystemOp(
+        t.game.deps,
+        r.shardId,
+        r.restaurantId,
+        { source: 'test', rng: seededRng(5000 + i) },
+        (o) => randomAward(o, { level: 3 }),
       );
-      if (res.data.kind === 'foods') ids.push(res.data.id!);
+      if (res.kind === 'foods') ids.push(res.id!);
     }
     expect(ids.length).toBe(12);
     for (const id of ids) {

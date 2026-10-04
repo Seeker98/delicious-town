@@ -92,6 +92,15 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.cookbooks('zh-CN').items).toHaveLength(b.cookbooks.length);
   });
 
+  it('道具详情带需要的星级；宝石带下一阶的名字（backlog 146、#115）', () => {
+    expect(data.goodsDetail('zh-CN', 93202)!.needStar).toBe(6);
+    expect(data.goodsDetail('zh-CN', 13)!.needStar).toBe(0);
+    const gem = b.goods.find((g) => g.gem && g.gem.nextId !== null)!;
+    const next = b.goods.find((g) => g.id === gem.gem!.nextId)!;
+    expect(data.goodsDetail('zh-CN', gem.id)!.gem).toMatchObject({ nextId: next.id, nextName: next.name });
+    expect(data.goodsDetail('en', gem.id)!.gem!.nextName).toBe(data.goodsDetail('en', next.id)!.name);
+  });
+
   it('街道：勋章和对照表一致，各街菜谱数合计等于菜谱总数', () => {
     const s = data.streets('zh-CN').items;
     expect(s).toHaveLength(b.streets.length);

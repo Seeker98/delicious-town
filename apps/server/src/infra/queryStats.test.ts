@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createDb } from '../db';
 import { call, createTestApp, registerUser, testEnvWith, type TestContext } from '../../test/helpers';
@@ -63,6 +64,17 @@ describe('查询统计（质量期 ③）', () => {
       });
     } finally {
       warn.mockRestore();
+    }
+  });
+
+  it('出错的查询也算一条（backlog 质量期 ③）', async () => {
+    const sqls: string[] = [];
+    const db = createDb(testEnvWith().DATABASE_URL, 1, (q) => sqls.push(q));
+    try {
+      await expect(sql`select * from no_such_table`.execute(db)).rejects.toThrow();
+      expect(sqls).toEqual(['select * from no_such_table']);
+    } finally {
+      await db.destroy();
     }
   });
 });

@@ -50,6 +50,7 @@ const goods = (p: Partial<OpenGoodsDto> = {}): OpenGoodsDto => ({
   stackable: true,
   maxNum: 999,
   invalidHours: null,
+  needStar: 0,
   equip: null,
   gem: null,
   gift: null,
@@ -197,16 +198,55 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(suit.text()).toContain('刀工+8');
   });
 
-  it('宝石的“下一阶”链接写下一阶宝石的名字（backlog #115）', async () => {
-    vi.mocked(endpoints.openGoods).mockResolvedValue({
-      ...meta,
-      items: [{ id: 502, name: '二阶红宝石', type: 5, level: 2, coin: 0, diamond: 0, onSale: false }],
-    } as never);
+  it('宝石的“下一阶”链接写下一阶宝石的名字，名字由详情直接给，不拉整张道具列表（backlog #115）', async () => {
     vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(
-      goods({ id: 501, name: '一阶红宝石', type: 5, gem: { level: 1, nextId: 502, attrs: { cook: 2 } } }),
+      goods({
+        id: 501,
+        name: '一阶红宝石',
+        type: 5,
+        gem: { level: 1, nextId: 502, nextName: '二阶红宝石', attrs: { cook: 2 } },
+      }),
     );
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/501');
     expect(w.get('[data-testid="wiki-gem"] a').text()).toBe('二阶红宝石');
+    expect(endpoints.openGoods).not.toHaveBeenCalled();
+  });
+
+  it('后期海报写几星可用；没有门槛的不写（backlog 146）', async () => {
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(
+      goods({ id: 93201, name: '13 哥宣传海报', needStar: 4 }),
+    );
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/93201');
+    expect(w.get('[data-testid="wiki-need-star"]').text()).toBe('4 星可用');
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(goods({ id: 13 }));
+    const v = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/13');
+    expect(v.find('[data-testid="wiki-need-star"]').exists()).toBe(false);
+  });
+
+  it('套装效果读不到时照样显示厨具、不弹提示（补充信息，backlog #115）', async () => {
+    vi.mocked(endpoints.openEquips).mockRejectedValue(new Error('net'));
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(
+      goods({
+        id: 30,
+        name: '见习锅铲',
+        type: 9,
+        equip: {
+          part: 1,
+          minLevel: 0,
+          suitId: 4,
+          suitName: '见习套装',
+          essence: 1,
+          hole: 0,
+          maxHole: 0,
+          ranges: {},
+          stressTable: [],
+        },
+      }),
+    );
+    const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/30');
+    expect(w.text()).toContain('见习锅铲');
+    expect(w.find('[data-testid="wiki-suit"]').exists()).toBe(false);
+    expect(useToastStore().items).toEqual([]);
   });
 
   it('先打开 A（慢）再打开 B：A 晚到也不会盖掉 B（backlog #115）', async () => {

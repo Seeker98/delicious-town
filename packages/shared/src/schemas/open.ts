@@ -62,6 +62,8 @@ export interface OpenGoodsDto extends OpenMeta, OpenGoodsBrief {
   maxNum: number;
   /** 限时道具的小时数；永久为 null */
   invalidHours: number | null;
+  /** 几星可用（后期海报奖杯，问题记录 146）；没有门槛为 0 */
+  needStar: number;
   equip: {
     part: number;
     minLevel: number;
@@ -75,7 +77,8 @@ export interface OpenGoodsDto extends OpenMeta, OpenGoodsBrief {
     /** 强化 +0~+10 时的属性总和 */
     stressTable: number[];
   } | null;
-  gem: { level: number; nextId: number | null; attrs: Record<string, number> } | null;
+  /** nextName：下一阶的名字（按语言）；没有下一阶为 null */
+  gem: { level: number; nextId: number | null; nextName: string | null; attrs: Record<string, number> } | null;
   gift: OpenGiftItem[] | null;
   sources: {
     shop: { coin: number; diamond: number } | null;
