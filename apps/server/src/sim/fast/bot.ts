@@ -1,5 +1,5 @@
 import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } from '@dt/config';
-import { gameDay, gameParts, nextSlot, type Rng } from '@dt/shared';
+import { gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
 import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from '../../modules/cookbook/rules';
 import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
 import { oilChecks, starChecks } from '../../modules/growth/rules';
@@ -156,6 +156,12 @@ function useGoods(c: FastCtx, r: FastRest, g: Goods, num: number): boolean {
     case 'mysteryFood': {
       const list = c.config.foodsByLevel.get(use.level) ?? [];
       for (let i = 0; i < num && list.length > 0; i++) addFoods(c, r, list[c.rng.int(list.length)]!.id, 1);
+      break;
+    }
+    case 'randomFood': {
+      // 和 store/use.ts 一样按掉落权重抽（问题记录 331）
+      const pool = c.config.foodPools.get(use.level);
+      for (let i = 0; i < num && pool && pool.total > 0; i++) addFoods(c, r, pickWeighted(pool, c.rng).id, 1);
       break;
     }
     case 'lockSlots':

@@ -2790,5 +2790,25 @@
   "92029": {
     "name": "Calle Chop Suey",
     "desc": "Monedas y EXP a domicilio +30%, ocupación +10%, monedas por mesa +1, clientes exigentes -10%"
+  },
+  "93001": {
+    "name": "Vale de ingrediente aleatorio nv. 1",
+    "desc": "Al usarlo, recibes un ingrediente de nivel 1 al azar"
+  },
+  "93002": {
+    "name": "Vale de ingrediente aleatorio nv. 2",
+    "desc": "Al usarlo, recibes un ingrediente de nivel 2 al azar"
+  },
+  "93003": {
+    "name": "Vale de ingrediente aleatorio nv. 3",
+    "desc": "Al usarlo, recibes un ingrediente de nivel 3 al azar"
+  },
+  "93004": {
+    "name": "Vale de ingrediente aleatorio nv. 4",
+    "desc": "Al usarlo, recibes un ingrediente de nivel 4 al azar"
+  },
+  "93005": {
+    "name": "Vale de ingrediente aleatorio nv. 5",
+    "desc": "Al usarlo, recibes un ingrediente de nivel 5 al azar"
   }
 }

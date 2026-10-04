@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
-import { SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 
@@ -18,7 +18,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(698); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件
+    expect(bundle!.goods).toHaveLength(703); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -971,5 +971,42 @@ describe('食谱售价表的检查（backlog 284）', () => {
     const { errors } = buildBundle({ ...src, 'designed/cookbooks_price_new': newPrices });
     expect(errors).toContain(`cookbooks_price: duplicate id ${oldPrices[0]!.id}`);
     expect(errors).toContain('cookbooks_price: price for unknown cookbook 999999');
+  });
+});
+
+describe('新手大礼包和食材随机券（问题记录 331）', () => {
+  const b = () => realBuild().bundle!;
+  const goods = (id: number) => b().goods.find((g) => g.id === id)!;
+
+  it('一到五级食材随机券：消耗品，使用后随机得一个这一等级的食材', () => {
+    const names = ['一级食材随机券', '二级食材随机券', '三级食材随机券', '四级食材随机券', '五级食材随机券'];
+    for (let level = 1; level <= 5; level++) {
+      const g = goods(NEWBIE.foodVoucherBase + level);
+      expect(g).toMatchObject({ name: names[level - 1], type: 0, stackable: true, onSale: false });
+      expect(g.use).toEqual({ kind: 'randomFood', level });
+    }
+  });
+
+  it('新手大礼包能打开：银币、钻石、喇叭、随机万能食材礼包、食材兑换券、宣传海报，外加一二三级食材随机券 50、20、10 张', () => {
+    const g = goods(NEWBIE.pack);
+    expect(g.use).toEqual({ kind: 'gift' });
+    expect(g.gift).toEqual([
+      { type: 'coin', min: 50000, max: 50000, rate: 1 },
+      { type: 'diamond', min: 50, max: 50, rate: 1 },
+      { type: 'goods', id: 315, num: 3, rate: 1 },
+      { type: 'goods', id: 131, num: 5, rate: 1 },
+      { type: 'goods', id: 241, num: 5, rate: 1 },
+      { type: 'goods', id: 242, num: 3, rate: 1 },
+      { type: 'goods', id: 13, num: 1, rate: 1 },
+      { type: 'goods', id: NEWBIE.foodVoucherBase + 1, num: 50, rate: 1 },
+      { type: 'goods', id: NEWBIE.foodVoucherBase + 2, num: 20, rate: 1 },
+      { type: 'goods', id: NEWBIE.foodVoucherBase + 3, num: 10, rate: 1 },
+    ]);
+  });
+
+  it('开店送一个新手大礼包；老玩家用新手码补领', () => {
+    expect(b().restaurantDefaults.giftGoods).toContainEqual({ id: NEWBIE.pack, num: 1 });
+    const code = b().newbieCodes.find((c) => c.code === 'XINSHOULIBAO')!;
+    expect(code).toMatchObject({ minLevel: 1, items: { goods: [{ id: NEWBIE.pack, num: 1 }] } });
   });
 });

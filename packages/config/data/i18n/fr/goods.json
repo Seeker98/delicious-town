@@ -2790,5 +2790,25 @@
   "92029": {
     "name": "Rue Chop Suey",
     "desc": "Pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %"
+  },
+  "93001": {
+    "name": "Ticket d'ingrédient aléatoire niv. 1",
+    "desc": "Donne un ingrédient de niveau 1 au hasard"
+  },
+  "93002": {
+    "name": "Ticket d'ingrédient aléatoire niv. 2",
+    "desc": "Donne un ingrédient de niveau 2 au hasard"
+  },
+  "93003": {
+    "name": "Ticket d'ingrédient aléatoire niv. 3",
+    "desc": "Donne un ingrédient de niveau 3 au hasard"
+  },
+  "93004": {
+    "name": "Ticket d'ingrédient aléatoire niv. 4",
+    "desc": "Donne un ingrédient de niveau 4 au hasard"
+  },
+  "93005": {
+    "name": "Ticket d'ingrédient aléatoire niv. 5",
+    "desc": "Donne un ingrédient de niveau 5 au hasard"
   }
 }

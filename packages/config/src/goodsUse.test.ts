@@ -25,10 +25,10 @@ describe('道具用途（构建时推导）', () => {
     expect(use(169)).toEqual({ kind: 'bundle', goods: 18, num: 36, targetGoods: 17, targetNum: 1 });
     expect(use(136)).toEqual({ kind: 'towerTicket' });
   });
-  it('新格式礼包可以打开，QQ 旧格式礼包不能用', () => {
+  it('新格式礼包可以打开，QQ 旧格式礼包不能用；新手大礼包按 newbie_pack.json 配了内容，能打开（问题记录 331）', () => {
     expect(use(115)).toEqual({ kind: 'gift' });
     expect(use(117)).toEqual({ kind: 'gift' });
-    expect(use(54)).toBeNull();
+    expect(use(54)).toEqual({ kind: 'gift' });
     expect(use(51)).toBeNull();
   });
   it('其他道具没有用途', () => {
