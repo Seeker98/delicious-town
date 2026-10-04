@@ -2826,5 +2826,37 @@
   "93103": {
     "name": "Cornerstone Medal",
     "desc": "Held a full term of the Town Development Fund, A · Cornerstone Lead. Final EXP +15%"
+  },
+  "93201": {
+    "name": "Brother 13 Promo Poster",
+    "desc": "A Brother 13 promo poster; coins per table +8 for 24 hours (from 4★)"
+  },
+  "93202": {
+    "name": "Mayor Promo Poster",
+    "desc": "A Mayor promo poster; coins per table +15 for 24 hours (from 6★)"
+  },
+  "93203": {
+    "name": "Mr. Krab Promo Poster",
+    "desc": "A Mr. Krab promo poster; coins per table +30 for 24 hours (from 8★)"
+  },
+  "93204": {
+    "name": "God of Cookery Promo Poster",
+    "desc": "A God of Cookery promo poster; coins per table +50 for 24 hours (from 10★)"
+  },
+  "93205": {
+    "name": "Town God of Cookery Trophy (Platinum)",
+    "desc": "A platinum trophy made by Delicious Town; EXP per table +4 for 24 hours (from 4★)"
+  },
+  "93206": {
+    "name": "Town God of Cookery Trophy (Diamond)",
+    "desc": "A diamond trophy made by Delicious Town; EXP per table +5 for 24 hours (from 6★)"
+  },
+  "93207": {
+    "name": "Town God of Cookery Trophy (Starlight)",
+    "desc": "A starlight trophy made by Delicious Town; EXP per table +6 for 24 hours (from 8★)"
+  },
+  "93208": {
+    "name": "Town God of Cookery Trophy (Legend)",
+    "desc": "A legendary trophy made by Delicious Town; EXP per table +7 for 24 hours (from 10★)"
   }
 }

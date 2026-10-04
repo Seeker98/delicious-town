@@ -64,6 +64,7 @@ export const SOURCE_FILES = [
   'game/kuji',
   'game/fund',
   'game/food_supply',
+  'game/devices_extra',
   'restaurant_defaults',
 ] as const;
 

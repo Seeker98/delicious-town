@@ -64,6 +64,8 @@ export interface Goods {
   equip: EquipDef | null;
   /** 宝石（type 5）的定义；其他为 null */
   gem: GemDef | null;
+  /** 购买、摆放要求的最低星级（问题记录 146 的后期海报奖杯）；不写是 0 */
+  needStar?: number;
 }
 
 export interface IdNumFood {
