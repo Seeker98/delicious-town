@@ -185,13 +185,13 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
   for (const [level, list] of foodsByLevel) {
     foodPools.set(
       level,
-      buildPool(list, (f) => f.odds),
+      buildPool(list, (f) => f.weight),
     );
     rareFoodPools.set(
       level,
       buildPool(
         list.filter((f) => f.odds < 100),
-        (f) => f.odds,
+        (f) => f.weight,
       ),
     );
   }
@@ -232,8 +232,8 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     foodsByLevel,
     foodPools,
     rareFoodPools,
-    hotFoodPool: buildPool(hot, (f) => f.odds),
-    masterFoodPool: buildPool(foodsByLevel.get(9) ?? [], (f) => f.odds),
+    hotFoodPool: buildPool(hot, (f) => f.weight),
+    masterFoodPool: buildPool(foodsByLevel.get(9) ?? [], (f) => f.weight),
     cookbookIndex: buildCookbookIndex(bundle.cookbooks),
     devices: byId(bundle.devices),
     starNeed: new Map(bundle.starNeed.map((s) => [s.star, s])),

@@ -65,5 +65,5 @@ export function composePool(
 ): WeightedPool<Food> {
   const left = pool.items.filter((f) => !full(f.id));
   if (left.length === 0 || left.length === pool.items.length) return pool;
-  return buildPool(left, (f) => f.odds);
+  return buildPool(left, (f) => f.weight);
 }

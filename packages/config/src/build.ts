@@ -11,6 +11,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
+import { foodWeights } from './foodSupply';
 import { FUND_MEDALS, GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
@@ -162,6 +163,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
   const kujiRaw = parse('game/kuji', raw.kujiFile);
   const fundRaw = parse('game/fund', raw.fundFile);
+  const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -216,6 +218,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !newbieRaw ||
     !kujiRaw ||
     !fundRaw ||
+    !foodSupply ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -236,6 +239,8 @@ export function buildBundle(src: SourceData): BuildResult {
     level: f.level,
     coin: f.coin,
     odds: f.odds,
+    // 菜谱建好后按需求回填（问题记录 50）
+    weight: f.odds,
     type: f.type ?? null,
     maxNum: f.maxNum ?? 999,
   }));
@@ -481,6 +486,9 @@ export function buildBundle(src: SourceData): BuildResult {
       needFoods,
     };
   });
+  // 食材出现权重向全服需求靠 α（问题记录 50）
+  const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend);
+  for (const f of foods) f.weight = weights.get(f.id) ?? f.odds;
   unique(
     'cookbooks',
     cookbooks.map((c) => c.id),
