@@ -84,6 +84,7 @@ export default {
     chapterAward: (text: string) => `章末獎勵：${text}`,
     claimChapter: '領章末獎勵',
     chapterLeft: (n: number) => `還差 ${n} 個任務`,
+    claimFirst: '先領完上面的任務',
     lockedLevel: (n: number) => `🔒 ${n} 級解鎖`,
     lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
     claimedTask: '✓ 已領',

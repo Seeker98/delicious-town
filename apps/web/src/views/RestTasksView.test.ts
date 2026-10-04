@@ -59,6 +59,7 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
     claimable: false,
     total: main.length,
     claimedCount: main.filter((x) => x.claimed).length,
+    doneCount: main.filter((x) => x.done || x.claimed).length,
   },
   main,
   allMainDone: false,
@@ -179,10 +180,10 @@ describe('RestTasksView', () => {
     expect(w.find('[data-testid="claim-chapter"]').attributes('disabled')).toBeDefined();
     // 没领完时不是绿色，写明还差几个（问题记录 318 试玩反馈：绿色按钮点不了像坏了）
     expect(w.get('[data-testid="claim-chapter"]').classes()).not.toContain('btn-success');
-    expect(w.get('[data-testid="claim-chapter"]').text()).toBe('还差 2 个任务');
+    expect(w.get('[data-testid="claim-chapter"]').text()).toBe('还差 1 个任务');
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task({ progress: 1, done: true, claimed: true })], {
-        chapter: { ...quests([]).chapter!, claimable: true, total: 1, claimedCount: 1 },
+        chapter: { ...quests([]).chapter!, claimable: true, total: 1, claimedCount: 1, doneCount: 1 },
       }),
     );
     const ready = await mountView();
@@ -292,7 +293,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     const full = card.get('[data-testid="claim-weekly-full"]');
     expect(full.attributes('disabled')).toBeDefined();
     expect(full.classes()).not.toContain('btn-success');
-    expect(full.text()).toBe('还差 3 个任务');
+    expect(full.text()).toBe('先领完上面的任务');
   });
 
   it('每周：4 个都领了能领全完成奖励；领过写已领；没有每周任务时不显示这一块', async () => {
@@ -315,5 +316,91 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
     const none = await mountView();
     expect(none.find('[data-testid="card-weekly"]').exists()).toBe(false);
+  });
+});
+
+describe('任务页终审遗留（backlog 318）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.activation).mockResolvedValue(act());
+  });
+
+  it('章末按钮：有没完成的写还差几个（只数没完成的）；都完成只差领时写先领完上面的任务', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task({ id: 2021, progress: 1, done: true }), task({ id: 2022 }), task({ id: 2023 })]),
+    );
+    expect((await mountView()).get('[data-testid="claim-chapter"]').text()).toBe('还差 2 个任务');
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task({ id: 2021, progress: 1, done: true }), task({ id: 2022, progress: 1, done: true })]),
+    );
+    expect((await mountView()).get('[data-testid="claim-chapter"]').text()).toBe('先领完上面的任务');
+  });
+
+  it('主线全做完后补出来的任务照样列出、能领', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task({ id: 2061, name: '摇一次酒吧老虎机', progress: 1, done: true })], {
+        chapter: null,
+        allMainDone: true,
+      }),
+    );
+    const w = await mountView();
+    const card = w.get('[data-testid="card-main"]');
+    expect(card.text()).toContain('主线已全部完成');
+    await card.get('[data-testid="claim-task-2061"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.claimTask).toHaveBeenCalledWith(2061);
+  });
+
+  const weeklyOf = (qs: QuestDto[], full: Partial<NonNullable<QuestsDto['weekly']>['full']> = {}) => ({
+    group: 'A',
+    week: '2026-09-28',
+    endsAt: new Date(Date.now() + 86_400_000).toISOString(),
+    quests: qs,
+    full: { id: 4019, award: { goods: [] }, claimable: false, claimed: false, ...full },
+  });
+
+  it('每周：没完成的显示进度条；可领的排前面、没完成的其次、已领的最后；全完成按钮数没完成的', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], {
+        weekly: weeklyOf([
+          task({ id: 4011, target: 10, progress: 10, done: true, claimed: true }),
+          task({ id: 4012, target: 10, progress: 4 }),
+          task({ id: 4013, target: 10, progress: 10, done: true }),
+          task({ id: 4014, target: 10, progress: 0 }),
+        ]),
+      }),
+    );
+    const card = (await mountView()).get('[data-testid="card-weekly"]');
+    expect(card.findAll('[data-testid^="task-40"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'task-4013',
+      'task-4012',
+      'task-4014',
+      'task-4011',
+    ]);
+    expect(card.get('[data-testid="task-4012"] .progress-bar').attributes('style')).toContain('width: 40%');
+    expect(card.find('[data-testid="claim-task-4012"]').exists()).toBe(false);
+    expect(card.get('[data-testid="claim-weekly-full"]').text()).toBe('还差 2 个任务');
+  });
+
+  it('每周全完成奖励领过后和活跃奖励的已领一个样子（浅灰底）', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task()], {
+        weekly: weeklyOf([task({ id: 4011, progress: 1, done: true, claimed: true })], { claimed: true }),
+      }),
+    );
+    const w = await mountView();
+    const full = w.get('[data-testid="claim-weekly-full"]');
+    const claimedAct = w.get('[data-testid="claim-50"]');
+    expect(full.classes()).toEqual(expect.arrayContaining(['btn-light', 'text-muted']));
+    expect(claimedAct.classes()).toEqual(expect.arrayContaining(['btn-light', 'text-muted']));
+    expect(full.classes()).not.toContain('btn-outline-secondary');
+  });
+
+  it('活跃度块的标题和另外三块一样用卡片标题样式', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
+    const card = (await mountView()).get('[data-testid="card-activation"]');
+    expect(card.find('h6').exists()).toBe(false);
+    expect(card.get('.dt-card-title').text()).toBe('今日活跃 120');
   });
 });

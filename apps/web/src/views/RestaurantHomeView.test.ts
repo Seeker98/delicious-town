@@ -32,6 +32,7 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
     claimable: false,
     total: main.length,
     claimedCount: main.filter((x) => x.claimed).length,
+    doneCount: main.filter((x) => x.done || x.claimed).length,
   },
   main,
   allMainDone: false,
@@ -96,7 +97,6 @@ const dto: RestaurantDto = {
   headlines: { news: [], broadcast: null },
   boosts: [],
   disabledFeatures: [],
-  mainTaskStep: 1,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
     { slot: 4, name: '捕鼠夹', deviceType: 4, needStar: 2, unlocked: false, goodsId: null, expiresAt: null },
