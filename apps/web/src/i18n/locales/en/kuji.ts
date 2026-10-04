@@ -20,6 +20,7 @@ const kuji: Messages['kuji'] = {
   left: (left, total) => `${left} / ${total} left`,
   big: 'Big prize',
   icon: ' (with a limited icon)',
+  iconNamed: (title) => ` (with the limited title "${title}")`,
   lastWho: 'Whoever draws the last ticket',
   tickets: (n) => `My kuji tickets: ${n}`,
   lineNormal: 'Standard',

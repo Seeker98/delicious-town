@@ -206,4 +206,19 @@ describe('backlog 一番赏：页面', () => {
     expect(w.find('[data-testid="kj-theme"]').exists()).toBe(false);
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
   });
+
+  it('奖品写出限定称号的名字（240-2：豪华池按月轮换，要看得出这个月发哪个称号）；目录里没有时照旧写“附限定图标”', async () => {
+    useCatalogStore().apply({
+      version: 'y',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      looks: { doors: [], avatars: [], icons: [{ key: 'kuji_a', title: '金秋鸿运', desc: 'x' }] },
+    } as never);
+    const { w } = await mountWithRouter('/kuji');
+    expect(w.get('[data-testid="kj-tier-A"]').text()).toContain('金秋鸿运');
+    expect(w.get('[data-testid="kj-last"]').text()).toContain('附限定图标');
+  });
 });

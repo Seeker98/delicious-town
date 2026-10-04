@@ -19,6 +19,7 @@ export default {
   left: (left: number, total: number) => `剩 ${left} / ${total}`,
   big: '大赏',
   icon: '（附限定图标）',
+  iconNamed: (title: string) => `（附限定称号「${title}」）`,
   lastWho: '抽走最后一张的人',
   tickets: (n: number) => `我的抽赏券：${n} 张`,
   lineNormal: '普通',

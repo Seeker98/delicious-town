@@ -38,6 +38,11 @@ const awardText = (a: KujiAwardDto) =>
     ...(a.exp ? [t.value.kuji.exp(formatNum(a.exp))] : []),
     ...(a.renown ? [t.value.kuji.renown(formatNum(a.renown))] : []),
   ].join(t.value.events.sep);
+/** 限定称号写出名字（240-2：豪华池按月轮换）；目录里没有时照旧写“附限定图标” */
+const iconText = (key: string) => {
+  const title = catalog.icon(key)?.title;
+  return title ? t.value.kuji.iconNamed(title) : t.value.kuji.icon;
+};
 const tierName = (k: string) => (k === 'last' ? t.value.kuji.lastTier : t.value.kuji.tier(k));
 const recentTime = (iso: string) => new Date(iso).toLocaleString(activeLocale());
 const canDraw = (n: number) =>
@@ -164,7 +169,7 @@ watch(line, () => {
             ><span v-if="x.big" class="badge text-bg-warning ms-1">{{ t.kuji.big }}</span>
           </td>
           <td>
-            {{ awardText(x.award) }}<span v-if="x.icon" class="text-muted">{{ t.kuji.icon }}</span>
+            {{ awardText(x.award) }}<span v-if="x.icon" class="text-muted">{{ iconText(x.icon) }}</span>
           </td>
           <td class="text-end text-nowrap">{{ x.left }} / {{ x.count }}</td>
         </tr>
@@ -174,7 +179,7 @@ watch(line, () => {
           </td>
           <td>
             {{ awardText(data.last.award)
-            }}<span v-if="data.last.icon" class="text-muted">{{ t.kuji.icon }}</span>
+            }}<span v-if="data.last.icon" class="text-muted">{{ iconText(data.last.icon) }}</span>
           </td>
           <td class="text-end text-muted">{{ t.kuji.lastWho }}</td>
         </tr>

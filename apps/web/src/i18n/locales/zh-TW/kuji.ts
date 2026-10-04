@@ -20,6 +20,7 @@ export default {
   left: (left: number, total: number) => `剩 ${left} / ${total}`,
   big: '大賞',
   icon: '（附限定圖示）',
+  iconNamed: (title: string) => `（附限定稱號「${title}」）`,
   lastWho: '抽走最後一張的人',
   tickets: (n: number) => `我的抽賞券：${n} 張`,
   lineNormal: '普通',
