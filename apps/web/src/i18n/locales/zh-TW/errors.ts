@@ -276,6 +276,8 @@ export default {
     foods_locked: '對方鎖定了這種食材，颶風天才能換',
     bad_look: '沒有這個款式',
     same_door: '已經是這扇門了',
+    icon_not_on_sale: '這個稱號現在沒有上架',
+    icon_owned: '已經有這個稱號了',
     guardian_down: '今天已經擊敗守護獸了，明天再來',
     trial_ready: '試煉勳章還有效，可以直接試煉',
     no_trial: '還沒準備試煉（或準備已過期），先注射或冥想',

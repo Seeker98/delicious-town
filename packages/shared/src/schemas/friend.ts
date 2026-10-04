@@ -191,10 +191,14 @@ export const doorBody = z.object({ door: z.number().int().min(0).max(1000) });
 export const avatarBody = z.object({ avatar: z.number().int().min(1).max(1000) });
 export const noticeBody = z.object({ text: z.string().max(200) });
 export const iconShowBody = z.object({ iconId: z.number().int().positive(), shown: z.boolean() });
+/** 称号商店购买（240-2） */
+export const iconBuyBody = z.object({ key: z.string().min(1).max(32) });
 
 export interface MyLooksDto {
   door: number;
   avatar: number | null;
   notice: string;
   icons: Array<{ id: number; key: string; title: string; desc: string; shown: boolean }>;
+  /** 称号商店里正在上架的限定称号（240-2）；endsAt 是下架时间。旧服务端没有这一项 */
+  shop?: Array<{ key: string; title: string; desc: string; coin: number; endsAt: string; owned: boolean }>;
 }

@@ -8,6 +8,7 @@ import {
   foodsExchangeBody,
   friendListQuery,
   friendSearchQuery,
+  iconBuyBody,
   iconShowBody,
   noticeBody,
   pageQuery,
@@ -99,6 +100,9 @@ export function socialRoutes(svc: SocialService): FastifyPluginAsync {
     );
     r.post('/rest/notice', async (req) =>
       okOp(await svc.looks.notice(restCtxOf(req), parse(noticeBody, req.body).text)),
+    );
+    r.post('/rest/icon/buy', async (req) =>
+      okOp(await svc.looks.buyIcon(restCtxOf(req), parse(iconBuyBody, req.body).key)),
     );
     r.post('/rest/icon/show', async (req) => {
       const b = parse(iconShowBody, req.body);

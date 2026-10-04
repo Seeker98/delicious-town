@@ -59,6 +59,16 @@ const rest: Messages['rest'] = {
     noIcons: 'Pas encore de badge.',
     iconUpdated: 'Mis à jour',
     iconFailed: 'Impossible de mettre à jour le badge',
+    shopTitle: 'Titres limités',
+    shopMeta: (coin: string, days: number) =>
+      `${coin} pièces · ${days > 0 ? `retiré dans ${days} jour${days === 1 ? '' : 's'}` : "retiré aujourd'hui"}`,
+    buy: 'Acheter',
+    owned: 'Possédé',
+    buyConfirm: (title: string, coin: string) =>
+      `Acheter le titre limité « ${title} » pour ${coin} pièces ? Une fois retiré, il ne sera plus disponible.`,
+    bought: (title: string) =>
+      `Titre limité « ${title} » acheté. Choisissez ci-dessous s'il faut l'afficher.`,
+    buyFailed: "Impossible d'acheter le titre",
   },
   tasks: {
     loadFailed: 'Impossible de charger les tâches',

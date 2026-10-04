@@ -49,4 +49,5 @@ export const NEWS_TYPES: readonly string[] = [
   'kuji.big',
   'kuji.win',
   'predict.result',
+  'icon.buy',
 ];

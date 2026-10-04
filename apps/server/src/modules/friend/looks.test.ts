@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
@@ -82,5 +83,73 @@ describe('装扮（规格书 02 §2.8）', () => {
       body: { text: '你好' },
     });
     expect(ok.json.data).toEqual({ notice: '你好' });
+  });
+});
+
+describe('称号商店（240-2）', () => {
+  const at = (day: string) => t.clock.set(gameTime(day, 12));
+  const icons = async (restId: number) =>
+    (await t.db.selectFrom('rest_icon').select('icon_key').where('rest_id', '=', restId).execute()).map(
+      (r) => r.icon_key,
+    );
+
+  it('上架期间能买：扣银币、进我的称号（默认不展示）、记流水、发新闻；装扮页列出正在上架的', async () => {
+    at('2026-10-15');
+    const a = await newRestaurant(t, { patch: { coin: 10_000_000 } });
+    const before = await looks().mine(a);
+    expect(before.shop!.map((x) => [x.key, x.coin, x.owned])).toEqual([
+      ['oct26_s', 1_000_000, false],
+      ['oct26_m', 3_000_000, false],
+      ['oct26_l', 8_000_000, false],
+    ]);
+    expect(before.shop![0]!.endsAt).toBe(gameTime('2026-11-01', 0).toISOString());
+    await looks().buyIcon(a, 'oct26_l');
+    expect((await restRow(t, a.restaurantId)).coin).toBe(2_000_000);
+    const after = await looks().mine(a);
+    expect(after.icons.find((x) => x.key === 'oct26_l')).toMatchObject({ title: '金秋食神', shown: false });
+    expect(after.shop!.find((x) => x.key === 'oct26_l')!.owned).toBe(true);
+    const ledger = await t.db
+      .selectFrom('ledger')
+      .select(['delta', 'source'])
+      .where('rest_id', '=', a.restaurantId)
+      .where('kind', '=', 'coin')
+      .execute();
+    expect(ledger).toContainEqual({ delta: -8_000_000, source: 'icon.buy' });
+    const news = await t.db
+      .selectFrom('news')
+      .select(['type', 'params'])
+      .where('rest_id', '=', a.restaurantId)
+      .where('type', '=', 'icon.buy')
+      .execute();
+    expect(news.map((n) => n.params)).toEqual([{ key: 'oct26_l', title: '金秋食神' }]);
+  });
+
+  it('没上架、已下架、不是商店称号都不能买；已有的不能再买', async () => {
+    at('2026-10-15');
+    const a = await newRestaurant(t, { patch: { coin: 50_000_000 } });
+    await expect(looks().buyIcon(a, 'nov26_s')).rejects.toMatchObject({
+      params: { reason: 'icon_not_on_sale' },
+    });
+    await expect(looks().buyIcon(a, 'founder')).rejects.toMatchObject({
+      params: { reason: 'icon_not_on_sale' },
+    });
+    await expect(looks().buyIcon(a, 'nope')).rejects.toMatchObject({
+      params: { reason: 'icon_not_on_sale' },
+    });
+    await looks().buyIcon(a, 'oct26_s');
+    await expect(looks().buyIcon(a, 'oct26_s')).rejects.toMatchObject({ params: { reason: 'icon_owned' } });
+    at('2026-11-01');
+    await expect(looks().buyIcon(a, 'oct26_m')).rejects.toMatchObject({
+      params: { reason: 'icon_not_on_sale' },
+    });
+    expect((await looks().mine(a)).shop!.map((x) => x.key)).toEqual(['nov26_s', 'nov26_m', 'nov26_l']);
+  });
+
+  it('银币不够：报 NOT_ENOUGH，什么都不扣、不给', async () => {
+    at('2026-10-15');
+    const a = await newRestaurant(t, { patch: { coin: 999_999 } });
+    await expect(looks().buyIcon(a, 'oct26_s')).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
+    expect((await restRow(t, a.restaurantId)).coin).toBe(999_999);
+    expect(await icons(a.restaurantId)).toEqual([]);
   });
 });

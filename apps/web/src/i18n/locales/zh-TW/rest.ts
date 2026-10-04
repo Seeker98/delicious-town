@@ -59,6 +59,15 @@ export default {
     noIcons: '還沒有個性圖示。',
     iconUpdated: '已更新',
     iconFailed: '更新圖示失敗',
+    shopTitle: '限定稱號',
+    shopMeta: (coin: string, days: number) =>
+      `${coin} 銀幣 · ${days > 0 ? `還剩 ${days} 天下架` : '今天下架'}`,
+    buy: '購買',
+    owned: '已擁有',
+    buyConfirm: (title: string, coin: string) =>
+      `花 ${coin} 銀幣購買限定稱號「${title}」？下架後就買不到了。`,
+    bought: (title: string) => `買下了限定稱號「${title}」，可以在下面選擇展示`,
+    buyFailed: '購買稱號失敗',
   },
   tasks: {
     loadFailed: '讀取任務失敗',

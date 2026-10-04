@@ -271,6 +271,8 @@ const errors: Messages['errors'] = {
     foods_locked: 'Bloqueó este ingrediente; solo se intercambia durante un huracán',
     bad_look: 'Este estilo no existe',
     same_door: 'Ya tienes esta puerta',
+    icon_not_on_sale: 'Este título no está a la venta ahora',
+    icon_owned: 'Ya tienes este título',
     guardian_down: 'Hoy ya derrotaste al guardián. Vuelve mañana.',
     trial_ready: 'Tu medalla de prueba sigue siendo válida; puedes empezar la prueba',
     no_trial: 'No te has preparado para la prueba (o caducó). Ponte una inyección o medita primero.',

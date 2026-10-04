@@ -273,6 +273,8 @@ const errors: Messages['errors'] = {
     foods_locked: 'They locked this ingredient; it can only be swapped during a hurricane',
     bad_look: "This style doesn't exist",
     same_door: 'You already have this door',
+    icon_not_on_sale: 'This title is not on sale right now',
+    icon_owned: 'You already have this title',
     guardian_down: "You've already defeated the guardian today. Come back tomorrow.",
     trial_ready: 'Your trial medal is still valid; you can start the trial now',
     no_trial: "You haven't prepared for the trial (or it expired). Take an injection or meditate first.",

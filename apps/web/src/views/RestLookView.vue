@@ -40,6 +40,17 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
   }
 }
 
+/** 限定称号（240-2）：还剩几天下架，不足一天算 0（显示“今天下架”） */
+function daysLeft(endsAt: string): number {
+  return Math.max(0, Math.floor((new Date(endsAt).getTime() - Date.now()) / 86_400_000));
+}
+
+function buyIcon(key: string, fallbackTitle: string, coin: number) {
+  const title = catalog.icon(key)?.title ?? fallbackTitle;
+  if (!window.confirm(t.value.rest.look.buyConfirm(title, formatNum(coin)))) return;
+  void act(() => endpoints.iconBuy(key), t.value.rest.look.bought(title), t.value.rest.look.buyFailed);
+}
+
 onMounted(async () => {
   await catalog.load().catch(() => undefined);
   await load();
@@ -98,6 +109,29 @@ onMounted(async () => {
         {{ t.rest.look.save }}
       </button>
     </div>
+
+    <template v-if="(mine.shop ?? []).length > 0">
+      <h6 class="dt-section">{{ t.rest.look.shopTitle }}</h6>
+      <div class="mb-2" data-testid="icon-shop">
+        <div v-for="s in mine.shop" :key="s.key" class="dt-todo-row">
+          <div class="flex-fill">
+            <b>{{ catalog.icon(s.key)?.title ?? s.title }}</b>
+            <span class="small text-muted">{{ catalog.icon(s.key)?.desc ?? s.desc }}</span>
+            <span class="d-block dt-meta">{{
+              t.rest.look.shopMeta(formatNum(s.coin), daysLeft(s.endsAt))
+            }}</span>
+          </div>
+          <button
+            class="btn btn-sm btn-primary"
+            :data-testid="`icon-buy-${s.key}`"
+            :disabled="busy || s.owned"
+            @click="buyIcon(s.key, s.title, s.coin)"
+          >
+            {{ s.owned ? t.rest.look.owned : t.rest.look.buy }}
+          </button>
+        </div>
+      </div>
+    </template>
 
     <h6 class="dt-section">{{ t.rest.look.icons }}</h6>
     <p v-if="mine.icons.length === 0" class="small text-muted">{{ t.rest.look.noIcons }}</p>
