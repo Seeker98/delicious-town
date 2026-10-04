@@ -17,6 +17,8 @@ export interface MainView {
   quests: Quest[];
   chapterClaimable: boolean;
   allDone: boolean;
+  /** 章末已经领过的章里补出来的任务（领章末时功能关着、后来又打开）：照常可领，不挡当前章（backlog 318） */
+  leftover: Quest[];
 }
 
 const sorted = (chapters: readonly Chapter[]) => [...chapters].sort((a, b) => a.id - b.id);
@@ -26,17 +28,31 @@ const chapterQuests = (quests: readonly Quest[], id: number, c: QuestCtx) =>
     .sort((a, b) => a.order - b.order);
 const unlocked = (ch: Chapter, c: QuestCtx) => c.level >= ch.needLevel && c.star >= ch.needStar;
 
-/** 当前章：第一个任务或章末没领完的章；解锁条件不够时返回这一章并标锁定 */
+/**
+ * 当前章：第一个章末没领的章；解锁条件不够时返回这一章并标锁定。
+ * 章末领过的章不再回到当前章：之后功能打开补出来的任务放进 leftover，不让当前章倒退（backlog 318）
+ */
 export function mainView(chapters: readonly Chapter[], quests: readonly Quest[], c: QuestCtx): MainView {
+  const leftover: Quest[] = [];
   for (const ch of sorted(chapters)) {
     const list = chapterQuests(quests, ch.id, c);
-    const allClaimed = list.every((q) => c.done.has(q.id));
-    if (allClaimed && c.done.has(CHAPTER_MARK + ch.id)) continue;
+    if (c.done.has(CHAPTER_MARK + ch.id)) {
+      leftover.push(...list.filter((q) => !c.done.has(q.id)));
+      continue;
+    }
     if (!unlocked(ch, c))
-      return { chapter: ch, locked: true, quests: [], chapterClaimable: false, allDone: false };
-    return { chapter: ch, locked: false, quests: list, chapterClaimable: allClaimed, allDone: false };
+      return { chapter: ch, locked: true, quests: [], chapterClaimable: false, allDone: false, leftover };
+    const allClaimed = list.every((q) => c.done.has(q.id));
+    return {
+      chapter: ch,
+      locked: false,
+      quests: list,
+      chapterClaimable: allClaimed,
+      allDone: false,
+      leftover,
+    };
   }
-  return { chapter: null, locked: false, quests: [], chapterClaimable: false, allDone: true };
+  return { chapter: null, locked: false, quests: [], chapterClaimable: false, allDone: true, leftover };
 }
 
 /** 已到达的章：当前章（锁定时算上一章）；全部做完 = 最后一章 + 1 */
@@ -73,6 +89,11 @@ export function lineViews(
       };
     })
     .filter((v) => v.total > 0);
+}
+
+/** 每周计数要记的动作键：| 连接的键拆开记，进度用 counterOf 取和（backlog 318） */
+export function weeklyCounterKeys(groups: readonly WeeklyGroup[]): Set<string> {
+  return new Set(groups.flatMap((g) => g.quests.flatMap((q) => q.key.split('|'))));
 }
 
 export function weeklyGroupFor(groups: readonly WeeklyGroup[], star: number): WeeklyGroup | null {

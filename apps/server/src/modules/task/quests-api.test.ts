@@ -121,6 +121,34 @@ describe('主线章节（问题记录 318）', () => {
   });
 });
 
+describe('章末领过后功能又打开（backlog 318）', () => {
+  it('关掉酒吧时领了第 3 章章末；酒吧再打开：当前章不退回第 3 章，酒吧任务列在主线里照常能领，不挡第 4 章章末', async () => {
+    const ctx = await fresh({ level: 10, star_level: 1 });
+    const bar = t.deps.config.bundle.quests.find(
+      (q) => q.line === null && q.chapter === 3 && q.feature === 'bar',
+    )!;
+    await markDone(ctx.restaurantId, [
+      ...mainIds(1),
+      ...mainIds(2),
+      ...mainIds(3).filter((id) => id !== bar.id),
+      CHAPTER_MARK + 1,
+      CHAPTER_MARK + 2,
+      CHAPTER_MARK + 3,
+    ]);
+    let list = await task().tasks(ctx);
+    expect(list.chapter).toMatchObject({ id: 4, total: mainIds(4).length, claimedCount: 0, doneCount: 0 });
+    const left = list.main.find((q) => q.id === bar.id)!;
+    expect(left).toMatchObject({ done: false, claimed: false });
+    await setCounters(ctx.restaurantId, { [bar.cond.key.split('|')[0]!]: bar.cond.target });
+    await task().claimTask(ctx, bar.id);
+    list = await task().tasks(ctx);
+    expect(list.main.some((q) => q.id === bar.id)).toBe(false);
+    expect(list.chapter!.id).toBe(4);
+    await markDone(ctx.restaurantId, mainIds(4));
+    expect((await task().tasks(ctx)).chapter).toMatchObject({ id: 4, claimable: true });
+  });
+});
+
 describe('终审修复', () => {
   it('区服没有进行中的限时活动时，第 6 章不列"领一次限时活动奖励"，也不挡章末（Important 2）', async () => {
     const ctx = await fresh();

@@ -256,6 +256,8 @@ describe('2A 新增配置', () => {
     expect(quest(2044).feature).toBe('friend'); // roach.kill
     expect(quest(2026).feature).toBe('restaurant'); // rest.level
     expect(b.quests.find((q) => q.cond.key === 'rest.thumbs')!.feature).toBe('friend');
+    // 搬家受 growth 开关控制（backlog 318）：区服关掉 growth 时第 8 章「搬一次家」跳过
+    expect(b.quests.find((q) => q.cond.key === 'rest.move')!.feature).toBe('growth');
   });
 
   it('"全部食谱"的门槛 = 菜谱总数（问题记录 284）', () => {

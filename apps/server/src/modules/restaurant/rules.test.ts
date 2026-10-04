@@ -19,6 +19,10 @@ describe('restaurant rules', () => {
     expect(buf.every((b) => b === 0)).toBe(true);
   });
 
+  it('新店不用做老号换算：任务版本直接是 1（backlog 318）', () => {
+    expect(newRestaurantValues(1, 2, '小店', testConfig().bundle.restaurantDefaults).quest_version).toBe(1);
+  });
+
   it('新店数值来自配置；幸运 = 等级 - 1', () => {
     const d = testConfig().bundle.restaurantDefaults;
     const v = newRestaurantValues(1, 2, '小店', d);

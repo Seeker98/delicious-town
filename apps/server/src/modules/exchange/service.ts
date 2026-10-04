@@ -247,7 +247,7 @@ export function createExchangeService(d: GameDeps) {
 
     const credits = newCredits();
     const fills: Array<{ price: number; qty: number; held: boolean }> = [];
-    /** 这次成交到的玩家挂单方（任务计数，问题记录 318）：同一家只计一次 */
+    /** 这次成交到的玩家挂单方（任务计数，问题记录 318）：同一家只计一次；冻结的成交不计（backlog 318） */
     const makers = new Set<number>();
     let left = b.qty;
     for (const lv of queue) {
@@ -400,7 +400,7 @@ export function createExchangeService(d: GameDeps) {
         });
       else gainCoin(o, price * n - fee, { source: 'exchange' });
       fills.push({ price, qty: n, held });
-      makers.add(m.rest_id);
+      if (!held) makers.add(m.rest_id);
       left -= n;
     }
     await creditWallets(o.tx, credits);
@@ -411,10 +411,11 @@ export function createExchangeService(d: GameDeps) {
       .where('id', '=', order.id)
       .returning(ORDER_COLS)
       .executeTakeFirstOrThrow()) as OrderRow;
-    // 任务和活跃"交易所成交"（问题记录 318）：下单方成交一次计一次，被成交的每家挂单方各计一次；卖给系统也算
+    // 任务和活跃"交易所成交"（问题记录 318）：下单方成交一次计一次，被成交的每家挂单方各计一次；卖给系统也算。
+    // 判为可疑、所得冻结的成交不计，解冻后也不补（backlog 318：关联小号互刷不能领交易所支线和每周奖励）
     // 下单方和挂单方一起按店 id 升序写计数：两笔成交互为挂单方、或同时给同两家挂单方计数时，
     // 加锁顺序一致，不会死锁（和 creditWallets 一样）
-    if (fills.length > 0) makers.add(o.rest.id);
+    if (fills.some((x) => !x.held)) makers.add(o.rest.id);
     for (const id of [...makers].sort((a, b) => a - b))
       await (id === o.rest.id ? emitAction(o, 'exchange.fill') : emitActionFor(o, id, 'exchange.fill'));
     restLog(o, 'exchange.order', {

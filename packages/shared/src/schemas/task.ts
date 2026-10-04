@@ -33,6 +33,8 @@ export interface QuestsDto {
     claimable: boolean;
     total: number;
     claimedCount: number;
+    /** 本章已完成（含已领）的任务数：章末按钮据此写"还差几个"或"先领完上面的任务"（backlog 318） */
+    doneCount: number;
   } | null;
   main: QuestDto[];
   allMainDone: boolean;

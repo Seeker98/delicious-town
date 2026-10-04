@@ -147,7 +147,7 @@ export function createTaskService(d: GameDeps) {
     const list = group.quests.filter((q) => available(q.feature));
     if (list.length === 0) return null;
     const week = weekStart(gameDay(d.now()));
-    const counter = new Map(
+    const counters = Object.fromEntries(
       (
         await db
           .selectFrom('weekly_counter')
@@ -157,6 +157,8 @@ export function createTaskService(d: GameDeps) {
           .execute()
       ).map((r) => [r.key, r.count]),
     );
+    // 和主线一样走 counterOf：键可以用 | 连接（backlog 318）
+    const progress = (key: string) => counterOf(key, counters);
     const claimed = new Set(
       (
         await db
@@ -167,7 +169,7 @@ export function createTaskService(d: GameDeps) {
           .execute()
       ).map((r) => r.quest_id),
     );
-    return { group, week, list, counter, claimed, allClaimed: list.every((q) => claimed.has(q.id)) };
+    return { group, week, list, progress, claimed, allClaimed: list.every((q) => claimed.has(q.id)) };
   }
 
   const questDto = (q: Quest, progress: number, claimed: boolean): QuestDto => ({
@@ -198,8 +200,10 @@ export function createTaskService(d: GameDeps) {
         claimable: s.main.chapterClaimable,
         total: s.main.quests.length,
         claimedCount: s.main.quests.filter((q) => done.has(q.id)).length,
+        doneCount: s.main.quests.filter((q) => done.has(q.id) || progress(q.cond) >= q.cond.target).length,
       },
-      main: s.main.quests.map((q) => questDto(q, progress(q.cond), done.has(q.id))),
+      // 当前章的任务在前，章末领过的章里补出来的任务接在后面（backlog 318），章的进度只数当前章
+      main: [...s.main.quests, ...s.main.leftover].map((q) => questDto(q, progress(q.cond), done.has(q.id))),
       allMainDone: s.main.allDone,
       lines: s.lines.map((l) => ({
         id: l.line.id,
@@ -219,8 +223,8 @@ export function createTaskService(d: GameDeps) {
           href: q.href,
           key: q.key,
           target: q.target,
-          progress: w.counter.get(q.key) ?? 0,
-          done: (w.counter.get(q.key) ?? 0) >= q.target,
+          progress: w.progress(q.key),
+          done: w.progress(q.key) >= q.target,
           claimed: w.claimed.has(q.id),
           award: q.award,
         })),
@@ -248,7 +252,7 @@ export function createTaskService(d: GameDeps) {
       const q = w.list.find((x) => x.id === id);
       if (!q) throw invalidState('not_visible', { taskId: id });
       if (w.claimed.has(id)) throw new AppError(ErrorCode.ALREADY_DONE, 400);
-      const progress = w.counter.get(q.key) ?? 0;
+      const progress = w.progress(q.key);
       if (progress < q.target) throw requirement('task', { progress, target: q.target });
       award = q.award;
     }
@@ -336,7 +340,8 @@ export function createTaskService(d: GameDeps) {
         const s = await snapshot(o.tx, o.rest, o.settings);
         const visible =
           q.line === null
-            ? !s.main.locked && s.main.quests.some((x) => x.id === taskId)
+            ? (!s.main.locked && s.main.quests.some((x) => x.id === taskId)) ||
+              s.main.leftover.some((x) => x.id === taskId)
             : s.lines.some((l) => l.quest?.id === taskId);
         if (!visible) throw invalidState('not_visible', { taskId });
         if (s.ctx.done.has(taskId)) throw new AppError(ErrorCode.ALREADY_DONE, 400);

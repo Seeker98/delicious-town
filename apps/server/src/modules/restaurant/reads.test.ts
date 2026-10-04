@@ -41,7 +41,6 @@ describe('餐厅读接口', () => {
       state: 1,
       stateReason: null,
       oilLevel: 0,
-      mainTaskStep: 1,
       lastRound: null,
       isPlanktonHost: false,
     });

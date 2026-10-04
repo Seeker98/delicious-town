@@ -10,6 +10,7 @@ import {
   lineViews,
   mainView,
   reachedChapter,
+  weeklyCounterKeys,
   weeklyGroupFor,
   type QuestCtx,
 } from './quests';
@@ -164,5 +165,39 @@ describe('每周和老号换算', () => {
   it('章没解锁时不往后换算', () => {
     const progress = () => 1;
     expect(convertOld(chapters, mains, ctx({ level: 3, progress }))).toEqual([2021, 2022]);
+  });
+});
+
+describe('章末领过后功能又打开（backlog 318）', () => {
+  // 第 1 章领章末时 b 功能关着：2022 没列出、没领；现在 b 又打开了
+  const reopened = (extra: number[] = [], p: Partial<QuestCtx> = {}) =>
+    mainView(chapters, mains, ctx({ done: new Set([2021, CHAPTER_MARK + 1, ...extra]), level: 5, ...p }));
+  it('当前章不退回第 1 章，补出来的任务单独列出', () => {
+    const v = reopened();
+    expect(v.chapter?.id).toBe(2);
+    expect(v.quests.map((x) => x.id)).toEqual([2041]);
+    expect(v.leftover.map((x) => x.id)).toEqual([2022]);
+  });
+  it('补出来的任务不挡当前章的章末', () => {
+    expect(reopened([2041]).chapterClaimable).toBe(true);
+  });
+  it('补出来的任务领了就不再列出；功能还关着时也不列', () => {
+    expect(reopened([2022]).leftover).toEqual([]);
+    expect(reopened([], { available: (f) => f !== 'b' }).leftover).toEqual([]);
+  });
+  it('主线全部做完时补出来的任务照样列出', () => {
+    const v = reopened([2041, 2061, CHAPTER_MARK + 2, CHAPTER_MARK + 3], { level: 99, star: 9 });
+    expect(v).toMatchObject({ chapter: null, allDone: true });
+    expect(v.leftover.map((x) => x.id)).toEqual([2022]);
+  });
+});
+
+describe('每周计数的键（backlog 318）', () => {
+  it('| 连接的键拆开记，和进度用的 counterOf 对得上', () => {
+    const groups = [
+      { quests: [{ key: 'market.buy' }, { key: 'post.create|post.reply' }] },
+      { quests: [{ key: 'market.buy' }] },
+    ] as unknown as WeeklyGroup[];
+    expect([...weeklyCounterKeys(groups)].sort()).toEqual(['market.buy', 'post.create', 'post.reply']);
   });
 });

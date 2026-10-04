@@ -13,14 +13,19 @@ export async function emitAction(op: Op, key: string, n = 1): Promise<void> {
 
 /**
  * 给另一家店发动作事件（问题记录 318：交易所成交时挂单方也计数）。
- * 没读那家店，不带星级和等级（记 0）：只用于不要求星级的活跃项和任务
+ * 只读那家店的星级和等级（不锁行），活跃项的星级要求、限时活动的等级门槛按它自己的算（backlog 318）
  */
 export async function emitActionFor(op: Op, restId: number, key: string, n = 1): Promise<void> {
+  const r = await op.tx
+    .selectFrom('restaurant')
+    .select(['star_level', 'level'])
+    .where('id', '=', restId)
+    .executeTakeFirstOrThrow();
   await op.deps.bus.emit(op.tx, {
     name: 'action',
     shardId: op.shardId,
     restId,
-    payload: { key, n, star: 0, level: 0, at: op.now.toISOString() },
+    payload: { key, n, star: r.star_level, level: r.level, at: op.now.toISOString() },
     events: [],
   });
 }
