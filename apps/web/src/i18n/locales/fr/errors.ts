@@ -274,6 +274,8 @@ const errors: Messages['errors'] = {
     foods_locked: "Ce joueur a verrouillé cet ingrédient ; il ne s'échange que pendant un ouragan",
     bad_look: "Ce style n'existe pas",
     same_door: 'Vous avez déjà cette porte',
+    icon_not_on_sale: "Ce titre n'est pas en vente en ce moment",
+    icon_owned: 'Vous avez déjà ce titre',
     guardian_down: "Vous avez déjà vaincu le gardien aujourd'hui. Revenez demain.",
     trial_ready: "Votre médaille d'épreuve est encore valide ; vous pouvez commencer l'épreuve",
     no_trial:

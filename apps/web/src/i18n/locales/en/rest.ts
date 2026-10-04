@@ -59,6 +59,15 @@ const rest: Messages['rest'] = {
     noIcons: 'No badges yet.',
     iconUpdated: 'Updated',
     iconFailed: 'Could not update the badge',
+    shopTitle: 'Limited titles',
+    shopMeta: (coin: string, days: number) =>
+      `${coin} coins · ${days > 0 ? `leaves in ${days} day${days === 1 ? '' : 's'}` : 'leaves today'}`,
+    buy: 'Buy',
+    owned: 'Owned',
+    buyConfirm: (title: string, coin: string) =>
+      `Buy the limited title "${title}" for ${coin} coins? It can't be bought once it leaves the shop.`,
+    bought: (title: string) => `You bought the limited title "${title}". Choose below whether to show it.`,
+    buyFailed: 'Could not buy the title',
   },
   tasks: {
     loadFailed: 'Could not load tasks',

@@ -12,6 +12,7 @@ vi.mock('../api/endpoints', () => ({
     setAvatar: vi.fn(),
     setNotice: vi.fn(),
     iconShow: vi.fn(),
+    iconBuy: vi.fn(),
   },
 }));
 
@@ -65,5 +66,40 @@ describe('RestLookView', () => {
     expect(endpoints.setDoor).toHaveBeenCalledWith(1);
     expect(endpoints.setNotice).toHaveBeenCalledWith('你好');
     expect(endpoints.iconShow).toHaveBeenCalledWith(5, true);
+  });
+
+  it('限定称号（240-2）：列出正在上架的，写价格和剩几天；确认后才买，已拥有的不能买；旧服务端没有这一块时不显示', async () => {
+    const endsAt = new Date(Date.now() + 3 * 86_400_000 + 3_600_000).toISOString();
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      avatar: null,
+      notice: '',
+      icons: [],
+      shop: [
+        { key: 'oct26_s', title: '桂香小馆', desc: 'a', coin: 1_000_000, endsAt, owned: true },
+        { key: 'oct26_l', title: '金秋食神', desc: 'b', coin: 8_000_000, endsAt, owned: false },
+      ],
+    });
+    vi.mocked(endpoints.iconBuy).mockResolvedValue({ key: 'oct26_l' });
+    const w = mount(RestLookView);
+    await flushPromises();
+    const shop = w.get('[data-testid="icon-shop"]');
+    expect(shop.text()).toContain('金秋食神');
+    expect(shop.text()).toContain('8,000,000');
+    expect(shop.text()).toContain('3 天');
+    expect(w.get('[data-testid="icon-buy-oct26_s"]').attributes('disabled')).toBeDefined();
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    await w.get('[data-testid="icon-buy-oct26_l"]').trigger('click');
+    expect(endpoints.iconBuy).not.toHaveBeenCalled();
+    await w.get('[data-testid="icon-buy-oct26_l"]').trigger('click');
+    await flushPromises();
+    expect(confirm.mock.calls[1]![0]).toContain('8,000,000');
+    expect(endpoints.iconBuy).toHaveBeenCalledWith('oct26_l');
+    confirm.mockRestore();
+
+    vi.mocked(endpoints.myLooks).mockResolvedValue({ door: 0, avatar: null, notice: '', icons: [] });
+    const old = mount(RestLookView);
+    await flushPromises();
+    expect(old.find('[data-testid="icon-shop"]').exists()).toBe(false);
   });
 });

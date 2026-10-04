@@ -100,6 +100,8 @@ const news: Messages['news'] = {
         ? `${w} a tiré le dernier ticket de l'Ichiban Kuji et remporte le Dernier Prix !`
         : `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji !`,
     'kuji.win': (w, p) => `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji`,
+    'icon.buy': (w, p, x) =>
+      `${w} a acheté le titre limité « ${x.icon?.(str(p.key))?.title ?? str(p.title)} »`,
     'town.exchange': (w, p, x) =>
       `${w} a échangé ${x.goodsName(num(p.goodsId))}×${num(p.num)} auprès du maire`,
     'predict.result': (_w, p) => predictResult(p),

@@ -30,5 +30,29 @@
   "kuji_last": {
     "title": "Ichiban Kuji Last Prize Winner",
     "desc": "Drew the last ticket of an Ichiban Kuji draw"
+  },
+  "oct26_s": {
+    "title": "Osmanthus Bistro",
+    "desc": "Oct 2026 limited: a bistro fragrant with osmanthus"
+  },
+  "oct26_m": {
+    "title": "Harvest Keeper",
+    "desc": "Oct 2026 limited: a shopkeeper of the golden harvest"
+  },
+  "oct26_l": {
+    "title": "Autumn Gourmet God",
+    "desc": "Oct 2026 limited: the culinary god of golden autumn"
+  },
+  "nov26_s": {
+    "title": "Hotpot Bistro",
+    "desc": "Nov 2026 limited: a bistro gathered round the hotpot"
+  },
+  "nov26_m": {
+    "title": "First Snow Keeper",
+    "desc": "Nov 2026 limited: a shopkeeper greeting the first snow"
+  },
+  "nov26_l": {
+    "title": "Winter Gourmet God",
+    "desc": "Nov 2026 limited: the culinary god of winter days"
   }
 }

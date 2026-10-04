@@ -25,6 +25,14 @@ const n = (
 });
 
 describe('新闻文案', () => {
+  it('买限定称号（240-2）：称号名按目录取（跟着语言），目录里没有时用新闻里记的名字', () => {
+    const p = { key: 'oct26_l', title: '金秋食神' };
+    expect(newsText(n('icon.buy', p), { ...names, icon: () => ({ title: 'Autumn Gourmet God' }) })).toBe(
+      '小王的店买下了限定称号「Autumn Gourmet God」',
+    );
+    expect(newsText(n('icon.buy', p), names)).toBe('小王的店买下了限定称号「金秋食神」');
+  });
+
   it('代码里每种新闻类型都有文案', () => {
     expect(NEWS_TYPES.filter((x) => !newsRendered().includes(x))).toEqual([]);
   });

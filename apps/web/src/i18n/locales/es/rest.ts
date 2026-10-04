@@ -59,6 +59,15 @@ const rest: Messages['rest'] = {
     noIcons: 'Aún no tienes insignias.',
     iconUpdated: 'Actualizado',
     iconFailed: 'No se pudo actualizar la insignia',
+    shopTitle: 'Títulos limitados',
+    shopMeta: (coin: string, days: number) =>
+      `${coin} monedas · ${days > 0 ? `se retira en ${days} día${days === 1 ? '' : 's'}` : 'se retira hoy'}`,
+    buy: 'Comprar',
+    owned: 'Ya lo tienes',
+    buyConfirm: (title: string, coin: string) =>
+      `¿Comprar el título limitado «${title}» por ${coin} monedas? Cuando se retire ya no se podrá comprar.`,
+    bought: (title: string) => `Compraste el título limitado «${title}». Elige abajo si quieres mostrarlo.`,
+    buyFailed: 'No se pudo comprar el título',
   },
   tasks: {
     loadFailed: 'No se pudieron cargar las tareas',

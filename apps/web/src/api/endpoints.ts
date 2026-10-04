@@ -316,6 +316,7 @@ export const endpoints = {
   setDoor: (door: number) => api.post<{ door: number }>('/api/v1/rest/door', { door }),
   setAvatar: (avatar: number) => api.post<{ avatar: number }>('/api/v1/rest/avatar', { avatar }),
   setNotice: (text: string) => api.post<{ notice: string }>('/api/v1/rest/notice', { text }),
+  iconBuy: (key: string) => api.post<{ key: string }>('/api/v1/rest/icon/buy', { key }),
   iconShow: (iconId: number, shown: boolean) =>
     api.post<{ iconId: number; shown: boolean }>('/api/v1/rest/icon/show', { iconId, shown }),
   equipOverview: () => api.get<EquipOverviewDto>('/api/v1/equip/overview'),

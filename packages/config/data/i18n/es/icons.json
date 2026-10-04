@@ -30,5 +30,29 @@
   "kuji_last": {
     "title": "Ganador del Último Premio del Ichiban Kuji",
     "desc": "Sacó el último boleto de un sorteo del Ichiban Kuji"
+  },
+  "oct26_s": {
+    "title": "Bistró del Osmanto",
+    "desc": "Edición limitada oct. 2026: un bistró con aroma a osmanto"
+  },
+  "oct26_m": {
+    "title": "Patrón de la Cosecha",
+    "desc": "Edición limitada oct. 2026: el patrón de la cosecha dorada"
+  },
+  "oct26_l": {
+    "title": "Dios Gourmet del Otoño",
+    "desc": "Edición limitada oct. 2026: el dios de la cocina del otoño dorado"
+  },
+  "nov26_s": {
+    "title": "Bistró del Hot Pot",
+    "desc": "Edición limitada nov. 2026: un bistró reunido alrededor del hot pot"
+  },
+  "nov26_m": {
+    "title": "Patrón de la Primera Nevada",
+    "desc": "Edición limitada nov. 2026: un patrón que recibe la primera nevada"
+  },
+  "nov26_l": {
+    "title": "Dios Gourmet del Invierno",
+    "desc": "Edición limitada nov. 2026: el dios de la cocina de los días de invierno"
   }
 }

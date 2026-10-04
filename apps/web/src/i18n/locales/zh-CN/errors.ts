@@ -275,6 +275,8 @@ export default {
     foods_locked: '对方锁定了这种食材，飓风天才能换',
     bad_look: '没有这个款式',
     same_door: '已经是这扇门了',
+    icon_not_on_sale: '这个称号现在没有上架',
+    icon_owned: '已经有这个称号了',
     guardian_down: '今天已经击败守护兽了，明天再来',
     trial_ready: '试炼勋章还有效，可以直接试炼',
     no_trial: '还没准备试炼（或准备已过期），先注射或冥想',

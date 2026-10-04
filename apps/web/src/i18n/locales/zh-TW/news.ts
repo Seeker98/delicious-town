@@ -97,6 +97,7 @@ export default {
         ? `${w}抽走了一番賞的最後一張籤，拿下最後賞！`
         : `${w}在一番賞抽中了 ${str(p.tier)} 賞！`,
     'kuji.win': (w, p) => `${w}在一番賞抽中了 ${str(p.tier)} 賞`,
+    'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在鎮長處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
   }),
