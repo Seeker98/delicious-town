@@ -413,7 +413,10 @@ export function buildBundle(src: SourceData): BuildResult {
   }));
   // 新手大礼包（goods 54）：原数据没有内容，按 newbie_pack.json 配上（问题记录 331）
   const withPack = builtGoods.map((g) =>
-    g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
+    // 原版的 value（30 万金币、500 经验等）没人读，清掉免得误会（质量期 ②）
+    g.id === newbieRaw.pack.goodsId
+      ? { ...g, value: null, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } }
+      : g,
   );
   if (!builtGoods.some((g) => g.id === newbieRaw.pack.goodsId))
     errors.push(`newbie_pack references unknown goods ${newbieRaw.pack.goodsId}`);
@@ -510,6 +513,10 @@ export function buildBundle(src: SourceData): BuildResult {
   // 食材出现权重向全服需求靠 α（问题记录 50）
   const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend);
   for (const f of foods) f.weight = weights.get(f.id) ?? f.odds;
+  // 食材随机券那一级要有抽得出的食材：配错时用券会白扣（质量期 ②）
+  for (const v of newbieRaw.vouchers)
+    if (!foods.some((f) => f.level === v.level && f.weight > 0))
+      errors.push(`newbie_pack voucher ${v.id} level ${v.level} has no food to draw`);
   unique(
     'cookbooks',
     cookbooks.map((c) => c.id),
@@ -1225,7 +1232,10 @@ export function buildBundle(src: SourceData): BuildResult {
   return { bundle: { version, ...body }, errors: [] };
 }
 
-/** 纪念品类型的道具：没有加成和用途，不出售，不占仓库格 */
+/**
+ * 纪念品类型的道具：没有加成和用途，不出售，不占仓库格。
+ * 也拿来当别的道具的底子：改了 type 的照新类型算，例如食材随机券是消耗品，占仓库格
+ */
 function souvenirLike(id: number, name: string, desc: string): Goods {
   return {
     id,

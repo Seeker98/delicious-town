@@ -1004,6 +1004,19 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
     ]);
   });
 
+  it('随机券那一级没有可抽的食材时构建报错：配错时用券会白扣（质量期 ②）', () => {
+    const src = source();
+    const foods = structuredClone(src['dataset/foods']) as Array<Record<string, unknown>>;
+    // 五级食材出现权重全改成 0：五级食材随机券抽不出东西
+    for (const f of foods) if (f.level === 5) f.odds = 0;
+    const { errors } = buildBundle({ ...src, 'dataset/foods': foods });
+    expect(errors).toContain('newbie_pack voucher 93005 level 5 has no food to draw');
+  });
+
+  it('大礼包不留原版的 value（30 万金币、500 经验等没人读，容易误会，质量期 ②）', () => {
+    expect(goods(NEWBIE.pack).value).toBeNull();
+  });
+
   it('开店送一个新手大礼包；老玩家用新手码补领', () => {
     expect(b().restaurantDefaults.giftGoods).toContainEqual({ id: NEWBIE.pack, num: 1 });
     const code = b().newbieCodes.find((c) => c.code === 'XINSHOULIBAO')!;

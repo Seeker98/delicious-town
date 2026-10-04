@@ -484,8 +484,11 @@ export const devicesExtraFile = z
   })
   .strict();
 
-/** data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50） */
-export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).max(1) }).strict();
+/**
+ * data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50）。
+ * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）
+ */
+export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).lt(1) }).strict();
 
 /** data/game/fund.json：小镇发展基金的勋章（240-2） */
 export const fundFile = z
