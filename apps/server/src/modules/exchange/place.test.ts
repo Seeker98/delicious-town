@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { addDays, gameDay } from '@dt/shared';
+import { queryCounter } from '../../../test/queries';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
@@ -309,5 +311,44 @@ describe('任务计数的终审遗留（backlog 318）', () => {
       star: 4,
       level: 66,
     });
+  });
+});
+
+describe('冷门食材的参考价不在锁店事务里补算（质量期 ③）', () => {
+  const q = queryCounter();
+  let qt: TestGame;
+  beforeAll(async () => {
+    qt = await createTestGame({ db: q.db });
+  });
+  afterAll(async () => {
+    await qt.close();
+    await q.db.destroy();
+  });
+
+  it('一周多没人看的食材第一笔下单：锁店事务里只读一次参考价，补算在锁外做完', async () => {
+    const shardId = await createShard(qt.db);
+    const f = rare();
+    const day = gameDay(qt.clock.now);
+    // 8 天前保存过参考价，之后没人看：要往前补算 7 天
+    await qt.db
+      .insertInto('exchange_ref')
+      .values({ shard_id: shardId, foods_id: f.id, day: addDays(day, -8), price: f.coin })
+      .execute();
+    const r = await trader(qt, { shardId, coin: 1_000_000 });
+    const { sqls } = await q.count(() =>
+      qt.game.exchange.place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 }),
+    );
+    const begin = sqls.findIndex((s, i) => s === 'begin' && /for (no key )?update/.test(sqls[i + 1] ?? ''));
+    const tx = sqls.slice(begin, sqls.indexOf('commit', begin) + 1);
+    expect(tx.length).toBeGreaterThan(2);
+    expect(tx.filter((s) => /"exchange_ref"|sum\(qty\)/.test(s))).toHaveLength(1);
+    // 补算的结果照样存下来了
+    const saved = await qt.db
+      .selectFrom('exchange_ref')
+      .select('day')
+      .where('shard_id', '=', shardId)
+      .where('foods_id', '=', f.id)
+      .execute();
+    expect(saved.length).toBe(9);
   });
 });
