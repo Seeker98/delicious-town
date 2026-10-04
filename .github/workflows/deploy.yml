@@ -1,0 +1,53 @@
+name: deploy
+# 服务端自动部署（问题记录 335）：main 上的 CI（test、docker）通过后，SSH 到服务器执行 infra/deploy.sh。
+# 前端在 Cloudflare Pages 上自动部署，不在这里。需要的仓库密钥见 docs/deploy.md「自动部署」；没配时跳过，不报错。
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+# 一次只部署一个；后来的排队，不取消正在跑的
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # 手动触发只认 main，免得把别的分支的提交快进到服务器的 main 上
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 检查部署密钥
+        id: check
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          if [ -z "$HOST" ]; then
+            echo "没有配置 DEPLOY_HOST 等密钥，跳过部署（配置方法见 docs/deploy.md「自动部署」）" >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 部署到服务器
+        if: steps.check.outputs.skip != 'true'
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          APP_DIR: ${{ secrets.DEPLOY_PATH }}
+          # CI 通过的那个提交；手动触发时是 main 的最新提交
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -p "${PORT:-22}" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$USER@$HOST" "bash ${APP_DIR:-/opt/dt}/infra/deploy.sh $SHA"
+          echo "已部署 \`${SHA:0:7}\`" >> "$GITHUB_STEP_SUMMARY"

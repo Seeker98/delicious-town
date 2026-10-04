@@ -38,6 +38,40 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 ```
 迁移由 `migrate` 服务在 api 和 worker 启动前自动执行。
 
+也可以直接执行 `bash /opt/dt/infra/deploy.sh`：它会拉取 main 的最新代码，然后构建、启动，并等 api 通过健康检查。
+
+### 自动部署（问题记录 335）
+
+合并进 main 以后，GitHub Actions 的 `ci`（test、docker）通过，接着 `deploy` 工作流就会 SSH 到服务器执行 `infra/deploy.sh <提交号>`。没有配密钥时，这一步只跳过、不报错。前端仍由 Cloudflare Pages 自己部署。
+
+第一次配置：
+1. 服务器上先手动升级一次（照上面的命令），让 `/opt/dt/infra/deploy.sh` 存在。
+2. 找一个部署用的账号：它要能读写 `/opt/dt`，并且能执行 docker（在 `docker` 组里）。在自己电脑上生成一对专用密钥：
+   ```bash
+   ssh-keygen -t ed25519 -f dt_deploy -N "" -C "github-deploy"
+   ```
+   把 `dt_deploy.pub` 的内容追加到服务器上这个账号的 `~/.ssh/authorized_keys`。
+3. 在自己电脑上执行 `ssh-keyscan -p 22 <服务器地址>`，把输出记下来，这是服务器的指纹。最好登录服务器，用 `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` 核对一下。
+4. 在 GitHub 仓库的 Settings → Secrets and variables → Actions 里添加：
+
+   | 名称 | 内容 |
+   | --- | --- |
+   | `DEPLOY_HOST` | 服务器地址（IP 或域名） |
+   | `DEPLOY_USER` | 第 2 步的账号 |
+   | `DEPLOY_SSH_KEY` | `dt_deploy` 私钥的全部内容 |
+   | `DEPLOY_KNOWN_HOSTS` | 第 3 步 `ssh-keyscan` 的输出 |
+   | `DEPLOY_PORT` | 可选：SSH 端口不是 22 时才填 |
+   | `DEPLOY_PATH` | 可选：仓库不在 `/opt/dt` 时才填 |
+
+5. 到 Actions → deploy → Run workflow 手动跑一次。看到“部署完成”就配好了，之后每次合并都会自动部署。
+
+注意：
+- GitHub 的机器 IP 不固定，所以服务器的 SSH 不能只对白名单 IP 开放。
+- 服务器上的仓库有未提交的改动时，部署会停下，不覆盖。`infra/.env` 不在仓库里，不受影响。
+- 部署只往前快进：连续合并会排队，一个一个部署。旧提交的部署不会让代码倒退。
+- api 3 分钟内没通过健康检查，这次部署就算失败（Actions 里显示红色，并打出 migrate、api 的日志）。这时到服务器上看 `docker compose -f compose.prod.yml ps`。
+- 前端在推送后几分钟内就会更新，服务端要等 CI 跑完再部署（加起来约 5 分钟）。这段时间里，新前端连的是旧服务端，所以前端读新字段时要能接受字段不存在。
+
 ## 五、资源包
 图片放在 `apps/web/public/pack/`（按 `goods/<道具名>.png` 这样的路径），不提交进仓库。
 原版美术素材有版权风险，正式运营前应替换为自制或授权的素材；图片缺失时页面会显示图标兜底。
