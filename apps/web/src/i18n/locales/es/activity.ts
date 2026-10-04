@@ -129,8 +129,8 @@ const activity: Messages['activity'] = {
     btn: 'Canjear',
   },
   coop: {
-    remain: (n) => `Al servidor le faltan ${n} ${plEs(n, 'punto', 'puntos')}`,
-    mine: (n) => `Te faltan ${n} ${plEs(n, 'punto', 'puntos')} de aporte`,
+    remain: (n) => `Al servidor le ${plEs(n, 'falta', 'faltan')} ${n} ${plEs(n, 'punto', 'puntos')}`,
+    mine: (n) => `Te ${plEs(n, 'falta', 'faltan')} ${n} ${plEs(n, 'punto', 'puntos')} de aporte`,
     rank: (from, to) => (from === to ? `${from}.º` : `${from}.º–${to}.º`),
     head: (pool, mine) => `Servidor ${pool} ${plEs(pool, 'punto', 'puntos')} · Mi aporte ${mine}`,
     myRank: (n) => ` · ${n}.º`,

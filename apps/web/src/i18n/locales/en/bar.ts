@@ -27,7 +27,7 @@ const bar: Messages['bar'] = {
   noTicketsEach: (n) => `Not enough Mystery Vouchers (${n} each time)`,
   again: 'Play again',
   todayPlayed: (played, max, cost) =>
-    `Today ${played}/${max} ${plEn(max, 'game', 'games')}, ${cost} Mystery Vouchers each`,
+    `Today ${played}/${max} ${plEn(max, 'game', 'games')}, ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')} each`,
   noMoreToday: 'No games left today',
   startFailed: "Couldn't start",
   cup: {
@@ -57,7 +57,7 @@ const bar: Messages['bar'] = {
     win: (lucky, times, award) => `${lucky}Hit! ${times}${award}`,
     failed: 'Number wheel failed',
     rule: (max, cost) =>
-      `Pick a number from 1 to ${max}; hit it to win an item. ${cost} Mystery Vouchers each spin.`,
+      `Pick a number from 1 to ${max}; hit it to win an item. ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')} each spin.`,
     spin: (cost) => `Spin (${cost} ${plEn(cost, 'voucher', 'vouchers')})`,
   },
   slot: {
@@ -91,7 +91,7 @@ const bar: Messages['bar'] = {
     status: (head, cup, also) =>
       `${head} drank cup ${cup}${also ? ' and is fine too' : ' and is fine'}. Your turn`,
     win: (survived, payout) =>
-      `The bartender got the spicy one! You survived ${survived} ${plEn(survived, 'cup', 'cups')} and won ${payout} Mystery Vouchers`,
+      `The bartender got the spicy one! You survived ${survived} ${plEn(survived, 'cup', 'cups')} and won ${payout} Mystery ${plEn(payout, 'Voucher', 'Vouchers')}`,
     lose: (stake, until) =>
       `You got the spicy one and lost your ${stake}-voucher stake. Hungover until ${until} (occupancy -10%)`,
     drankMe: 'You drank',
@@ -139,7 +139,7 @@ const bar: Messages['bar'] = {
     throwFailed: "Couldn't throw",
     head: (mine, boss) => `You ${mine} : ${boss} the boss, `,
     win: (award) => `you win! ${award}`,
-    draw: (n) => `a draw. ${n} Mystery Vouchers refunded`,
+    draw: (n) => `a draw. ${n} Mystery ${plEn(n, 'Voucher', 'Vouchers')} refunded`,
     lose: 'you lose',
     got: (text) => `Got ${text}`,
     rule: 'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5). Beat the bar owner\'s three-dart total to win.',

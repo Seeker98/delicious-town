@@ -53,7 +53,7 @@ const news: Messages['news'] = {
     'bar.slot': (w, p, x) =>
       `${w} won ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)} on the bar's slot machine`,
     'bar.devil': (w, p) =>
-      `${w} downed three Devil's Chili cups without flinching and won ${num(p.payout)} Mystery Vouchers`,
+      `${w} downed three Devil's Chili cups without flinching and won ${num(p.payout)} Mystery ${plEn(num(p.payout), 'Voucher', 'Vouchers')}`,
     'bar.memory': (w) => `${w} remembered all 7 ingredients in Memory Mixing`,
     'bar.darts': (w) => `${w} hit three bullseyes in a row and left the bar owner speechless`,
     'equip.stress': (w, p, x) => `${w} enhanced ${x.goodsName(num(p.goodsId))} to +${num(p.stress)}`,

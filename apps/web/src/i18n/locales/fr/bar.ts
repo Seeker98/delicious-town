@@ -140,7 +140,7 @@ const bar: Messages['bar'] = {
     throwFailed: 'Impossible de lancer',
     head: (mine, boss) => `Vous ${mine} : ${boss} le patron, `,
     win: (award) => `vous gagnez ! ${award}`,
-    draw: (n) => `égalité. ${n} ${plFr(n, 'bon', 'bons')} mystère remboursés`,
+    draw: (n) => `égalité. ${n} ${plFr(n, 'bon mystère remboursé', 'bons mystère remboursés')}`,
     lose: 'vous perdez',
     got: (text) => `Vous obtenez ${text}`,
     rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner.',

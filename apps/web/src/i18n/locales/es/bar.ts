@@ -138,7 +138,8 @@ const bar: Messages['bar'] = {
     throwFailed: 'No se pudo lanzar',
     head: (mine, boss) => `Tú ${mine} : ${boss} el jefe, `,
     win: (award) => `¡ganas! ${award}`,
-    draw: (n) => `empate. Se devuelven ${n} ${plEs(n, 'vale misterioso', 'vales misteriosos')}`,
+    draw: (n) =>
+      `empate. ${plEs(n, 'Se devuelve', 'Se devuelven')} ${n} ${plEs(n, 'vale misterioso', 'vales misteriosos')}`,
     lose: 'pierdes',
     got: (text) => `Conseguiste ${text}`,
     rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar.',
@@ -167,8 +168,9 @@ const bar: Messages['bar'] = {
       'También tengo un puesto en la plaza. Pásate a menudo.',
     ],
     memoryLeft: (n) =>
-      `Hoy te quedan ${n} ${plEs(n, 'partida', 'partidas')} de Cóctel Memoria. ¿Pones a prueba tu memoria?`,
-    dartsLeft: (n) => `Hoy te quedan ${n} ${plEs(n, 'partida', 'partidas')} de dardos. Pulso firme.`,
+      `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} de Cóctel Memoria. ¿Pones a prueba tu memoria?`,
+    dartsLeft: (n) =>
+      `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} de dardos. Pulso firme.`,
     noTickets: '¿Sin vales misteriosos? Ven a charlar conmigo a la plaza y te daré algunos.',
     slotFloor: (n) => `¡Solo ${n} ${plEs(n, 'tirada', 'tiradas')} más y la tragaperras te asegura un raro!`,
     devilOpen: 'No has terminado el Chile del Diablo. Nada de escaparse.',

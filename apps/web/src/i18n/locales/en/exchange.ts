@@ -30,7 +30,7 @@ const exchange: Messages['exchange'] = {
   cancelled: 'Order cancelled',
   cancelFailed: "Couldn't cancel",
   withdrawnLeft: (n) =>
-    `Withdrawn; ${n} ${plEn(n, 'ingredient', 'ingredients')} didn't fit and stay in your exchange account`,
+    `Withdrawn; ${n} ${plEn(n, 'ingredient', 'ingredients')} didn't fit and ${plEn(n, 'stays', 'stay')} in your exchange account`,
   withdrawn: 'Withdrawn',
   withdrawFailed: "Couldn't withdraw",
   loadFailed: "Couldn't load the exchange",

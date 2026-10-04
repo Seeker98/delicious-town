@@ -9,7 +9,7 @@ const kuji: Messages['kuji'] = {
   renown: (n) => `${n} Renown`,
   lastTier: 'Last Prize',
   tier: (k) => `Prize ${k}`,
-  bought: (n) => `Bought ${n} kuji tickets`,
+  bought: (n) => `Bought ${n} kuji ${plEn(n, 'ticket', 'tickets')}`,
   buyFailed: 'Purchase failed',
   drawFailed: 'Draw failed',
   rule: (total) =>
@@ -27,7 +27,7 @@ const kuji: Messages['kuji'] = {
   lineNormal: 'Standard',
   lineDeluxe: 'Deluxe',
   ticketsDeluxe: (n) => `My deluxe kuji tickets: ${n}`,
-  boughtDeluxe: (n) => `Bought ${n} deluxe kuji tickets`,
+  boughtDeluxe: (n) => `Bought ${n} deluxe kuji ${plEn(n, 'ticket', 'tickets')}`,
   deluxeNote:
     "Deluxe pool: the A prize and the Last Prize give this month's limited title and are announced to the whole server.",
   buyPrefix: 'Buy',

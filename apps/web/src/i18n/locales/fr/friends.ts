@@ -30,7 +30,7 @@ const friends: Messages['friends'] = {
   alreadyFriend: 'Déjà amis',
   requested: 'Demandé',
   addFriend: 'Ajouter',
-  thumbsToday: (n) => `${n} ${plFr(n, 'personne', 'personnes')} vous ont donné un pouce aujourd'hui`,
+  thumbsToday: (n) => `${n} ${plFr(n, 'personne vous a', 'personnes vous ont')} donné un pouce aujourd'hui`,
   returnAll: 'Tout rendre',
   noFeed: 'Aucune activité ces 3 derniers jours.',
   rest: {

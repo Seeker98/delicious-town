@@ -132,7 +132,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
         </thead>
         <tbody>
           <tr v-for="k in ATTR_KEYS" :key="k">
-            <th class="fw-normal">{{ ATTR_NAMES[k] }}</th>
+            <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
             <td class="text-end">{{ o.attrs.points[k] }}</td>
             <td class="text-end">{{ o.attrs.gear[k] }}</td>
             <td class="text-end fw-bold">{{ o.attrs.total[k] }}</td>

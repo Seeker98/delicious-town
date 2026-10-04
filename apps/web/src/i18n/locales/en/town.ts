@@ -41,7 +41,7 @@ const town: Messages['town'] = {
   shook: (coin) => `You shook out ${coin} ${plEn(coin, 'coin', 'coins')}`,
   shookEgg: (name, num) => `, and pulled ${name}×${num} out of his pocket`,
   shakeFailed: "Couldn't shake the money bag",
-  blessRandom: (lv, n) => `${n} random level ${lv} ${plEn(lv, 'ingredient', 'ingredients')}`,
+  blessRandom: (lv, n) => `${n} random level ${lv} ${plEn(n, 'ingredient', 'ingredients')}`,
   blessPick: (lv, n) => `Level ${lv} ingredient of your choice ×${n}`,
   blessCoin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
   blessDiamond: (n) => `${n} ${plEn(n, 'diamond', 'diamonds')}`,

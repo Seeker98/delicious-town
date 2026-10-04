@@ -32,7 +32,7 @@ const exchange: Messages['exchange'] = {
   cancelled: 'Ordre annulé',
   cancelFailed: "Impossible d'annuler",
   withdrawnLeft: (n) =>
-    `Retiré ; ${n} ${plFr(n, 'ingrédient', 'ingrédients')} ne rentrent pas et restent sur votre compte de bourse`,
+    `Retiré ; ${n} ${plFr(n, 'ingrédient ne rentre pas et reste', 'ingrédients ne rentrent pas et restent')} sur votre compte de bourse`,
   withdrawn: 'Retiré',
   withdrawFailed: 'Échec du retrait',
   loadFailed: 'Impossible de charger la bourse',

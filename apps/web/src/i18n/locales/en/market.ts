@@ -37,7 +37,7 @@ const market: Messages['market'] = {
     hint: (hour) => `Guess what the next daily market (${hour}:00) will sell`,
     last: (n) => `Last time you got ${n} right`,
     joined: (list) => `Entered: ${list}`,
-    rule: (max, cost) => `Pick up to ${max}, costs ${cost} Mystery Vouchers`,
+    rule: (max, cost) => `Pick up to ${max}, costs ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')}`,
     join: (n) => `Enter (${n} picked)`,
   },
   sis: {

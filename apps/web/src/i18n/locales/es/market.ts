@@ -66,7 +66,7 @@ const market: Messages['market'] = {
       '¿Dudas? Mira la sección «Guías» del foro.',
       'El mercado premium solo se repone tres veces al día. Si te lo pierdes, toca esperar.',
     ],
-    specialLeft: (n) => `Quedan ${n} ${plEs(n, 'oferta', 'ofertas')}. ¡Date prisa!`,
+    specialLeft: (n) => `${plEs(n, 'Queda', 'Quedan')} ${n} ${plEs(n, 'oferta', 'ofertas')}. ¡Date prisa!`,
     specialSoldOut: (time) => `Las ofertas se agotaron. Próxima reposición a las ${time}.`,
     nextDaily: (time) => `El mercado diario se repone a las ${time}. Pásate a verlo.`,
     guessOpen: 'Aún no has apostado en esta ronda. ¿Lo intentas abajo?',

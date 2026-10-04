@@ -218,9 +218,9 @@ const events: Messages['events'] = {
     'predict.refund': (p) =>
       `Prediction "${String(p.title ?? '')}" was voided: refunded ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}${predictNet(p)}`,
     'kuji.buy': (p) =>
-      `Bought ${n(p, 'num')} ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji tickets for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
+      `Bought ${n(p, 'num')} ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji ${plEn(n(p, 'num'), 'ticket', 'tickets')} for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'kuji.activation': (p) =>
-      `Claimed the ${n(p, 'points')}-point activity reward and got ${n(p, 'num')} bonus Ichiban Kuji tickets`,
+      `Claimed the ${n(p, 'points')}-point activity reward and got ${n(p, 'num')} bonus Ichiban Kuji ${plEn(n(p, 'num'), 'ticket', 'tickets')}`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} prize ×${v}`)

@@ -52,7 +52,7 @@ const tower: Messages['tower'] = {
     unranked: 'Sin clasificar',
     rankN: (n) => `${n}.º`,
     head: (left, strength) =>
-      ` · quedan ${left} ${plEs(left, 'desafío', 'desafíos')} hoy · ${strength} de energía cada uno`,
+      ` · ${plEs(left, 'queda', 'quedan')} ${left} ${plEs(left, 'desafío', 'desafíos')} hoy · ${strength} de energía cada uno`,
     weekly:
       'Nueva clasificación cada lunes a las 0:00: los puestos 1–3, 4–8 y 9–15 reciben un lote; los tres primeros son Dios, Sabio y Rey de los chefs',
     slotName: (name, level) => `${name} (nv. ${level})`,

@@ -35,7 +35,8 @@ const takeaway: Messages['takeaway'] = {
     needJob: 'Necesitas un permiso de trabajo de tienda válido',
     taken: (name, min) => `${name} va de camino, llega en ${min} min`,
     takeFailed: 'No se pudo aceptar el pedido',
-    refreshed: (n) => `Aparecieron ${n} ${plEs(n, 'pedido privado', 'pedidos privados')}`,
+    refreshed: (n) =>
+      `${plEs(n, 'Apareció', 'Aparecieron')} ${n} ${plEs(n, 'pedido privado', 'pedidos privados')}`,
     refreshFailed: 'No se pudo actualizar',
     renown: (n) => `Renombre ${n}`,
     riderOption: (name, busy, max) => `${name} (repartiendo ${busy}/${max})`,

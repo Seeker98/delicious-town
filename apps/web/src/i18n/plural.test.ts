@@ -28,4 +28,15 @@ describe('英法西的单复数（质量期 ④，backlog #116）', () => {
     expect(fr.town.classroom.stealFailed(1, '')).toContain('1 recette oubliée');
     expect(fr.town.classroom.stealFailed(2, '')).toContain('2 recettes oubliées');
   });
+
+  it('终审：动词在前、句中别处的动词分词也跟着数字变；英文两个词的名词；按数量不按等级（质量期 ④ 终审）', () => {
+    expect(es.market.sis.specialLeft(1)).toBe('Queda 1 oferta. ¡Date prisa!');
+    expect(es.market.sis.specialLeft(2)).toBe('Quedan 2 ofertas. ¡Date prisa!');
+    expect(es.bar.darts.draw(1)).toBe('empate. Se devuelve 1 vale misterioso');
+    expect(fr.friends.thumbsToday(1)).toContain('1 personne vous a donné');
+    expect(fr.bar.darts.draw(1)).toBe('égalité. 1 bon mystère remboursé');
+    expect(en.town.blessRandom('1', 5)).toBe('5 random level 1 ingredients');
+    expect(en.kuji.bought(1)).toBe('Bought 1 kuji ticket');
+    expect(en.bar.darts.draw(1)).toBe('a draw. 1 Mystery Voucher refunded');
+  });
 });

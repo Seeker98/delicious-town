@@ -33,7 +33,7 @@ function predictResult(p: P): string {
   const winners = num(p.winners);
   return winners === 0
     ? `${result}. ${plEs(players, 'Participó', 'Participaron')} ${players} ${plEs(players, 'restaurante', 'restaurantes')} y nadie acertó`
-    : `${result}. ${plEs(players, 'Participó', 'Participaron')} ${players} ${plEs(players, 'restaurante', 'restaurantes')}, ${plEs(winners, 'acertó', 'acertaron')} ${winners} y se ${plEs(winners, 'repartió', 'repartieron')} ${formatNum(num(p.paid))} ${plEs(formatNum(num(p.paid)), 'moneda', 'monedas')}`;
+    : `${result}. ${plEs(players, 'Participó', 'Participaron')} ${players} ${plEs(players, 'restaurante', 'restaurantes')}, ${plEs(winners, 'acertó', 'acertaron')} ${winners} y se ${plEs(formatNum(num(p.paid)), 'repartió', 'repartieron')} ${formatNum(num(p.paid))} ${plEs(formatNum(num(p.paid)), 'moneda', 'monedas')}`;
 }
 
 const news: Messages['news'] = {

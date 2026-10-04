@@ -30,7 +30,7 @@ const exchange: Messages['exchange'] = {
   cancelled: 'Orden cancelada',
   cancelFailed: 'No se pudo cancelar',
   withdrawnLeft: (n) =>
-    `Retirado; ${n} ${plEs(n, 'ingrediente', 'ingredientes')} no caben y se quedan en tu cuenta de la bolsa`,
+    `Retirado; ${n} ${plEs(n, 'ingrediente no cabe y se queda', 'ingredientes no caben y se quedan')} en tu cuenta de la bolsa`,
   withdrawn: 'Retirado',
   withdrawFailed: 'No se pudo retirar',
   loadFailed: 'No se pudo cargar la bolsa',

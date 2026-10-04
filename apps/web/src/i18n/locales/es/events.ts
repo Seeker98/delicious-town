@@ -218,7 +218,7 @@ const events: Messages['events'] = {
     'predict.settle': (p) =>
       `Predicción «${String(p.title ?? '')}»: resultado ${p.outcome ? 'Sí' : 'No'}, recibiste ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}${predictNet(p)}`,
     'predict.refund': (p) =>
-      `Predicción «${String(p.title ?? '')}» anulada: se devolvieron ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}${predictNet(p)}`,
+      `Predicción «${String(p.title ?? '')}» anulada: ${plEs(formatNum(n(p, 'coin')), 'se devolvió', 'se devolvieron')} ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}${predictNet(p)}`,
     'kuji.buy': (p) =>
       `Compraste ${n(p, 'num')} ${plEs(n(p, 'num'), 'boleto', 'boletos')} de Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''} por ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
     'kuji.activation': (p) =>
