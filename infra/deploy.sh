@@ -33,8 +33,7 @@ cd infra
 "${COMPOSE[@]}" build migrate
 "${COMPOSE[@]}" up -d
 
-# 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），
-# 不用 compose exec 进容器：exec 默认接管输入，经 SSH 执行时输入不结束会一直卡住
+# 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），两个副本都要通过
 api_healthy() {
   local ids status
   ids=$("${COMPOSE[@]}" ps -q api)
@@ -43,6 +42,7 @@ api_healthy() {
   status=$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' $ids)
   ! grep -qv '^healthy$' <<<"$status"
 }
+echo "等 api 通过健康检查（最多 3 分钟）…"
 for _ in $(seq 1 36); do
   if api_healthy; then
     timeout 120 docker image prune -f >/dev/null 2>&1 || true
