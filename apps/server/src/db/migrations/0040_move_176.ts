@@ -2,9 +2,11 @@ import type { Kysely } from 'kysely';
 import { reviseCookbooks } from './0039_old_street_revision';
 
 /** 问题记录 284：176 左宗棠鸡（海外中餐）随杂碎街上线，从湖南街移过去 */
+export const MOVE_176: ReadonlyArray<readonly [number, number, number]> = [[176, 1, 29]];
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function up(db: Kysely<any>): Promise<void> {
-  await reviseCookbooks(db, [], [[176, 1, 29]]);
+  await reviseCookbooks(db, [], MOVE_176);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

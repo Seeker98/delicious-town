@@ -56,19 +56,24 @@ const dec = (n: number | undefined) => Math.max(0, (n ?? 0) - 1);
 /**
  * 按清单修正每家店的已学食谱：被删的清字节、扣计数，移街的把街道计数挪过去（计数不低于 0）；
  * 再删掉点了被删菜谱、还能接（state 1）的外卖单。配送中的单照常走完（配送完成不读菜谱）。
- * 迁移里写死清单，不依赖配置包
+ * 迁移里写死清单，不依赖配置包。
+ * restIds 只给测试用（backlog 284）：只改这些店、外卖只清这些店所在区服的单；迁移不传，改所有店。
+ * 0040 也调用它：改这个函数要保证不传 restIds 时行为不变
  */
 export async function reviseCookbooks(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db: Kysely<any>,
   deleted: ReadonlyArray<readonly [number, number]>,
   moved: ReadonlyArray<readonly [number, number, number]>,
+  restIds?: readonly number[],
 ): Promise<void> {
+  if (restIds !== undefined && restIds.length === 0) return;
+  const only = restIds === undefined ? sql`` : sql` and c.rest_id = any(${[...restIds]}::int[])`;
   const minId = Math.min(...deleted.map((d) => d[0]), ...moved.map((m) => m[0]));
   const { rows } = await sql<{ rest_id: number; levels: Buffer; counts: Counts }>`
     select c.rest_id, c.levels, r.cookbook_counts as counts
     from restaurant_cookbooks c join restaurant r on r.id = c.rest_id
-    where length(c.levels) > ${minId}`.execute(db);
+    where length(c.levels) > ${minId}${only}`.execute(db);
   for (const row of rows) {
     const levels = Buffer.from(row.levels);
     const c: Counts = {
@@ -99,9 +104,11 @@ export async function reviseCookbooks(
     );
   }
   if (deleted.length > 0)
-    await sql`delete from takeaway_order where state = 1 and cookbook_id = any(${deleted.map((d) => d[0])}::int[])`.execute(
-      db,
-    );
+    await sql`delete from takeaway_order where state = 1 and cookbook_id = any(${deleted.map((d) => d[0])}::int[])${
+      restIds === undefined
+        ? sql``
+        : sql` and shard_id in (select shard_id from restaurant where id = any(${[...restIds]}::int[]))`
+    }`.execute(db);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
-import { up } from './0040_move_176';
+import { reviseCookbooks } from './0039_old_street_revision';
+import { MOVE_176 } from './0040_move_176';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -22,7 +23,7 @@ describe('迁移 0040：左宗棠鸡移到杂碎街（问题记录 284）', () =
     const levels = Buffer.alloc(18747);
     levels[176] = 2;
     await db.insertInto('restaurant_cookbooks').values({ rest_id: id, levels }).execute();
-    await up(db);
+    await reviseCookbooks(db, [], MOVE_176, [id]);
     const r = await db
       .selectFrom('restaurant')
       .select('cookbook_counts')
