@@ -12,7 +12,7 @@ import { weather } from './weather';
 const KINDS: Record<AutoKind['kind'], AutoKind> = { krab, hiphop, market, weather, stats };
 const GIVE_UP_MS = 24 * 3_600_000;
 
-type Log = { error(obj: object, msg: string): void };
+type Log = { error(obj: object, msg: string): void; info?(obj: object, msg: string): void };
 const noLog: Log = { error: () => undefined };
 
 /** 出当天的自动题（238-2 设计 §5.2）：每类一题，auto_key 唯一，重跑不重复 */
@@ -26,16 +26,17 @@ export async function createAutoEvents(
   const settings = await d.shards.settings(shardId);
   const t = settings.tuning.predict;
   const day = gameDay(now);
-  const plan: Array<[string, AutoKind]> = [];
+  // 每类按顺序试，前一个出不了（返回 null 或出错）换下一个：双数日嘻哈男孩出不了改出蟹老板（backlog 238-2）
+  const plan: Array<[string, AutoKind[]]> = [];
   if (t.auto.krab) {
     const odd = Number(day.slice(8)) % 2 === 1;
-    plan.push(['krab', odd || !featureAvailable(settings, 'hiphop') ? krab : hiphop]);
+    plan.push(['krab', odd || !featureAvailable(settings, 'hiphop') ? [krab] : [hiphop, krab]]);
   }
-  if (t.auto.market) plan.push(['market', market]);
-  if (t.auto.weather) plan.push(['weather', weather]);
-  if (t.auto.stats) plan.push(['stats', stats]);
+  if (t.auto.market) plan.push(['market', [market]]);
+  if (t.auto.weather) plan.push(['weather', [weather]]);
+  if (t.auto.stats) plan.push(['stats', [stats]]);
   const created: string[] = [];
-  for (const [flag, k] of plan) {
+  for (const [flag, kinds] of plan) {
     const autoKey = `${flag}:${day}`;
     const exists = await d.db
       .selectFrom('predict_event')
@@ -45,14 +46,24 @@ export async function createAutoEvents(
       .executeTakeFirst();
     if (exists) continue;
     // 一类出错不影响其他类（终审 I2）：周期任务认领后不重跑，出错的这一类当天就不出了
-    let dr: Awaited<ReturnType<AutoKind['create']>>;
-    try {
-      dr = await k.create({ d, shardId, settings, now, day, rng });
-    } catch (err) {
-      log.error({ err, shardId, kind: k.kind }, 'predict auto create failed');
+    let dr: Awaited<ReturnType<AutoKind['create']>> = null;
+    let k: AutoKind = kinds[0]!;
+    for (const cand of kinds) {
+      k = cand;
+      try {
+        dr = await cand.create({ d, shardId, settings, now, day, rng });
+      } catch (err) {
+        log.error({ err, shardId, kind: cand.kind }, 'predict auto create failed');
+        dr = null;
+      }
+      if (dr && dr.closeAt > now) break;
+      dr = null;
+    }
+    // 出不了的一类写日志，便于查"今天为什么少了一题"（backlog 238-2）
+    if (!dr) {
+      log.info?.({ shardId, flag }, 'predict auto skipped');
       continue;
     }
-    if (!dr || dr.closeAt <= now) continue;
     const s = initialShares(dr.p0, t.auto.b);
     const r = await d.db
       .insertInto('predict_event')

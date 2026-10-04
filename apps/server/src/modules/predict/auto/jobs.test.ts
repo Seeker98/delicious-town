@@ -3,10 +3,11 @@ import { gameTime, seededRng } from '@dt/shared';
 import { createShard } from '../../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../../test/game';
 import { createAutoEvents, resolveAutoEvents } from './index';
+import { hiphop } from './hiphop';
 import { market } from './market';
 
 afterEach(() => vi.restoreAllMocks());
-const log = { error: vi.fn() };
+const log = { error: vi.fn(), info: vi.fn() };
 
 let t: TestGame;
 beforeAll(async () => {
@@ -142,5 +143,18 @@ describe('出错隔离（终审 I2）', () => {
     );
     expect(r2.voided).toBeGreaterThanOrEqual(1);
     expect((await events(shardId)).find((r) => r.id === m.id)!.status).toBe('void');
+  });
+});
+
+describe('出题的兜底和日志（backlog 238-2）', () => {
+  it('双数日嘻哈男孩题出不了时改出蟹老板题；出不了的一类写日志', async () => {
+    const even = '2026-11-04';
+    const shardId = await createShard(t.db);
+    vi.spyOn(hiphop, 'create').mockResolvedValueOnce(null);
+    vi.spyOn(market, 'create').mockResolvedValueOnce(null);
+    const r = await createAutoEvents(t.game.deps, shardId, gameTime(even, 0, 5), seededRng(1), log);
+    expect(r.created.sort()).toEqual(['krab', 'stats', 'weather']);
+    expect((await events(shardId)).find((x) => x.auto_key === `krab:${even}`)!.kind).toBe('krab');
+    expect(log.info).toHaveBeenCalledWith({ shardId, flag: 'market' }, 'predict auto skipped');
   });
 });

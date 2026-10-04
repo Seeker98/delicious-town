@@ -58,7 +58,7 @@ function pickPlace(weights: ReadonlyArray<readonly [number, number]>, rng: Rng):
 }
 
 /** 近期有结算收益的玩家店（不含 NPC、封禁账号），按店号排序 */
-async function activeRests(db: Kysely<DB>, shardId: number, since: Date): Promise<number[]> {
+export async function activeRests(db: Kysely<DB>, shardId: number, since: Date): Promise<number[]> {
   const rows = await db
     .selectFrom('income_round as i')
     .innerJoin('restaurant as r', 'r.id', 'i.rest_id')
