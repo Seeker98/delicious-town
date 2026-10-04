@@ -124,7 +124,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <div class="equip-grid">
         <div v-for="e in equips" :key="e.part" class="equip-row" :data-testid="`friend-equip-${e.part}`">
           <span class="equip-part text-muted">{{ PART_NAMES[e.part] }}</span>
-          <span>{{ equipName(catalog, e) }}</span>
+          <span class="equip-name">{{ equipName(catalog, e) }}</span>
           <span v-if="e.stress > 0" class="badge text-bg-light border">+{{ e.stress }}</span>
           <span v-else></span>
         </div>
@@ -260,12 +260,16 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
 /* 部位一列按最长的部位名定宽，名字一列占满，强化等级靠右 */
 .equip-grid {
   display: grid;
-  grid-template-columns: max-content 1fr max-content;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
   column-gap: 0.75rem;
   row-gap: 0.25rem;
   align-items: baseline;
 }
 .equip-row {
   display: contents;
+}
+/* 没有空格的长名字（自定义名、法西文长词）也要折行，不撑宽手机屏幕 */
+.equip-name {
+  overflow-wrap: anywhere;
 }
 </style>
