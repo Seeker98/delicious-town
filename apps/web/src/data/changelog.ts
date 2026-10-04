@@ -1,0 +1,25 @@
+/**
+ * 游戏内“更新记录”（问题记录 348）：每个玩家看得到的改动在 PR 里加一条，从新到旧。
+ * 文字在各语言的 site.changelog 里，按 id 对应；繁中由 pnpm i18n:tw 生成
+ */
+export const CHANGELOG = [
+  { id: 'site', date: '2026-10-04' },
+  { id: 'oilToast', date: '2026-10-04' },
+  { id: 'fund', date: '2026-10-04' },
+  { id: 'kujiDeluxe', date: '2026-10-04' },
+  { id: 'titleShop', date: '2026-10-04' },
+  { id: 'coinSink', date: '2026-10-04' },
+  { id: 'newbiePack', date: '2026-10-04' },
+  { id: 'wiki', date: '2026-10-04' },
+  { id: 'quests', date: '2026-10-04' },
+  { id: 'newStreets', date: '2026-10-03' },
+  { id: 'languages', date: '2026-10-03' },
+  { id: 'craft', date: '2026-10-03' },
+  { id: 'home', date: '2026-10-02' },
+  { id: 'exchange', date: '2026-10-02' },
+  { id: 'predict', date: '2026-10-02' },
+  { id: 'kuji', date: '2026-10-02' },
+  { id: 'activities', date: '2026-10-02' },
+] as const;
+
+export type ChangelogId = (typeof CHANGELOG)[number]['id'];

@@ -1,0 +1,37 @@
+import type { Messages } from '../..';
+
+const site: Messages['site'] = {
+  changelogTitle: 'Registro de cambios',
+  linksTitle: 'Enlaces',
+  linksEmpty: 'Todavía no hay enlaces.',
+  linksLoadFailed: 'No se pudieron cargar los enlaces',
+  clockTitle: 'Hora actual (hora de Pekín)',
+  nextRound: (left) => `Siguiente ronda en ${left}`,
+  changelog: {
+    site: 'Se añaden un registro de cambios y una página de enlaces; la barra superior muestra la hora',
+    oilToast:
+      'Cada mesa con cliente gasta al menos 1 de aceite; los avisos salen arriba y ya no tapan los botones',
+    fund: 'Nuevo Fondo de Desarrollo en la Plaza: deposita monedas 7 días y recupera el 90 % más una medalla de EXP y un título temporal',
+    kujiDeluxe:
+      'El Ichiban Kuji suma un sorteo de lujo; el premio A y el último dan el título limitado del mes',
+    titleShop: 'Nueva tienda de títulos en Apariencia: títulos temporales a cambio de monedas',
+    coinSink:
+      'Economía: platos más baratos, ingredientes de nivel alto más caros, monedas para subir estrellas y mudarse',
+    newbiePack:
+      'Pack de bienvenida y vales de ingrediente aleatorio nv. 1 a 5; los restaurantes antiguos lo reciben con el código XINSHOULIBAO',
+    wiki: 'Nueva wiki del juego: objetos, ingredientes, recetas, utensilios y calles',
+    quests:
+      'Misiones renovadas: capítulos, misiones secundarias y semanales, y una lista del día en el inicio',
+    newStreets: '16 nuevas calles extranjeras y más de mil recetas; solo se aprenden los platos de tu calle',
+    languages: 'Disponible en chino tradicional, inglés, francés y español',
+    craft: 'La fusión ya no elige ingredientes de los que tu despensa está llena',
+    home: 'Página de inicio rediseñada',
+    exchange:
+      'Abre la Bolsa: intercambia ingredientes raros entre jugadores; los de nv. 3 a 5 se venden al sistema',
+    predict:
+      'Abren las predicciones: compra y vende participaciones «sí/no» que se liquidan con el resultado',
+    kuji: 'Abre el Ichiban Kuji, con figuras limitadas temáticas cada mes',
+    activities: 'Eventos temporales: objetivos, bingo, pase de batalla, canjes, metas y bonus de servidor',
+  },
+};
+export default site;

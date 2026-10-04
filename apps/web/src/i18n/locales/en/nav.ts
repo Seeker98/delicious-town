@@ -39,6 +39,8 @@ const nav: Messages['nav'] = {
     wiki: 'Game data',
     redeem: 'Redeem code',
     shards: 'Switch server',
+    changelog: 'Update log',
+    links: 'Links',
     admin: 'Admin',
   },
   appName: 'Delicious Town',

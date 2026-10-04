@@ -1,0 +1,38 @@
+import type { Messages } from '../..';
+
+const site: Messages['site'] = {
+  changelogTitle: 'Journal des mises à jour',
+  linksTitle: 'Liens',
+  linksEmpty: 'Aucun lien pour le moment.',
+  linksLoadFailed: 'Impossible de charger les liens',
+  clockTitle: 'Heure actuelle (heure de Pékin)',
+  nextRound: (left) => `Prochain tour dans ${left}`,
+  changelog: {
+    site: 'Ajout d’un journal des mises à jour et d’une page de liens ; la barre du haut affiche l’heure',
+    oilToast:
+      'Chaque table occupée consomme au moins 1 huile ; les messages s’affichent en haut et ne cachent plus les boutons',
+    fund: 'Nouveau Fonds de développement sur la Place : déposez des pièces 7 jours, récupérez 90 % plus une médaille d’EXP et un titre temporaire',
+    kujiDeluxe:
+      'L’Ichiban Kuji ajoute un tirage de luxe ; le prix A et le dernier prix donnent le titre limité du mois',
+    titleShop: 'Nouvelle boutique de titres dans Apparence : des titres temporaires contre des pièces',
+    coinSink:
+      'Économie : plats moins chers, ingrédients de haut niveau plus chers, des pièces pour monter en étoiles et déménager',
+    newbiePack:
+      'Pack de bienvenue et tickets d’ingrédient aléatoire niv. 1 à 5 ; les anciens restaurants l’obtiennent avec le code XINSHOULIBAO',
+    wiki: 'Nouveau wiki du jeu : objets, ingrédients, recettes, ustensiles et rues',
+    quests:
+      'Quêtes refaites : chapitres, quêtes annexes et hebdomadaires, plus une liste du jour sur l’accueil',
+    newStreets:
+      '16 nouvelles rues étrangères et plus de mille recettes ; on n’apprend que les plats de sa rue',
+    languages: 'Disponible en chinois traditionnel, anglais, français et espagnol',
+    craft: 'La fusion ne tire plus les ingrédients dont votre placard est déjà plein',
+    home: 'Page d’accueil repensée',
+    exchange:
+      'Ouverture de la Bourse : échangez des ingrédients rares entre joueurs ; les niv. 3 à 5 se vendent au système',
+    predict: 'Ouverture des prédictions : achetez et vendez des parts « oui/non », réglées au résultat',
+    kuji: 'Ouverture de l’Ichiban Kuji, avec des figurines limitées à thème chaque mois',
+    activities:
+      'Événements temporaires : objectifs, grille, passe de combat, échanges, objectifs et bonus de serveur',
+  },
+};
+export default site;

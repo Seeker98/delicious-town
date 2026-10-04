@@ -2,6 +2,7 @@
 import { computed, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import { useT } from '../composables/useT';
+import HeaderClock from './HeaderClock.vue';
 import { useMailStore } from '../stores/mail';
 import { useSessionStore } from '../stores/session';
 
@@ -58,10 +59,12 @@ function back() {
     <template v-else
       ><i class="bi bi-shop me-1"></i><span class="fw-bold">{{ t.nav.appName }}</span></template
     >
+    <!-- 当前时间（问题记录 348） -->
+    <HeaderClock v-if="inGame" class="ms-auto me-3" />
     <RouterLink
       v-if="inGame"
       to="/mail"
-      class="ms-auto text-reset text-decoration-none position-relative"
+      class="text-reset text-decoration-none position-relative"
       data-testid="mail-link"
       :aria-label="mail.unread > 0 ? t.nav.mailUnread(mail.unread) : t.nav.mail"
     >

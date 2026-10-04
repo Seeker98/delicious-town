@@ -32,6 +32,8 @@ export default {
     wiki: '遊戲資料',
     redeem: '兌換碼',
     shards: '切換區服',
+    changelog: '更新記錄',
+    links: '友情連結',
     admin: '管理後臺',
   },
   /** 頂欄 */

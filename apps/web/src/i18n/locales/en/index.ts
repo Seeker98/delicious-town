@@ -13,6 +13,7 @@ import forum from './forum';
 import friends from './friends';
 import home from './home';
 import kuji from './kuji';
+import site from './site';
 import fund from './fund';
 import equip from './equip';
 import guide from './guide';
@@ -66,6 +67,7 @@ const messages: Messages = {
   exchange,
   predict,
   kuji,
+  site,
   fund,
   equip,
   rest,

@@ -5,6 +5,7 @@ import {
   adminRenameBody,
   activityBody,
   announcementBody,
+  linkBody,
   auditQuery,
   createGrantBody,
   economyQuery,
@@ -57,6 +58,7 @@ import { createPredictAdmin } from '../predict/admin';
 import { createAdminReports } from '../report/admin';
 import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
+import { createSite } from '../site/service';
 import { distribution, economy, settlementRounds } from './stats';
 
 /** 后台路由（/api/v1/admin）：每个处理函数第一步都是 requireRole */
@@ -323,6 +325,26 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/announcements/:id/delete', async (req) => {
       const a = await requireRole(db, req, 'admin');
       await announces.remove(a, id(req));
+      return ok(null);
+    });
+
+    // 友情链接（问题记录 348）
+    const links = createSite(game).admin;
+    r.get('/links', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await links.list());
+    });
+    r.post('/links', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await links.create(a, parse(linkBody, req.body)));
+    });
+    r.post('/links/:id', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await links.update(a, id(req), parse(linkBody, req.body)));
+    });
+    r.post('/links/:id/delete', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await links.remove(a, id(req));
       return ok(null);
     });
 

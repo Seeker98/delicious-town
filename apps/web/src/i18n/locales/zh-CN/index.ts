@@ -15,6 +15,7 @@ import guide from './guide';
 import wiki from './wiki';
 import home from './home';
 import kuji from './kuji';
+import site from './site';
 import fund from './fund';
 import labels from './labels';
 import mail from './mail';
@@ -66,6 +67,7 @@ const zhCN = {
   exchange,
   predict,
   kuji,
+  site,
   fund,
   equip,
   rest,
