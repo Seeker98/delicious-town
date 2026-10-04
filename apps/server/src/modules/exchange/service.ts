@@ -775,7 +775,14 @@ export function createExchangeService(d: GameDeps) {
    */
   async function warmRef(ctx: RestCtx, foodsId: number): Promise<void> {
     if (!isTradable(d.config.foods.get(foodsId))) return;
-    const { tuning } = await d.shards.settings(ctx.shardId);
+    // 功能关着时照常报 FEATURE_DISABLED；等级不够的不补算（锁里的资格检查会拒绝），免得随便下单就触发几十条查询（终审 Important 2）
+    const { tuning } = await d.shards.ensureFeature(ctx.shardId, 'exchange');
+    const rest = await d.db
+      .selectFrom('restaurant')
+      .select('level')
+      .where('id', '=', ctx.restaurantId)
+      .executeTakeFirst();
+    if (!rest || rest.level < tuning.exchange.minLevel) return;
     await refPrice(
       d.db,
       d.config,

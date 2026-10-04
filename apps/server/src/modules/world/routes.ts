@@ -6,6 +6,7 @@ import { parse } from '../../http/validate';
 import { AppError } from '../../http/errors';
 import { ok } from '../../http/reply';
 import { requireAccount } from '../../security/session';
+import { etagMatches } from '../open/routes';
 import type { WorldService } from './service';
 
 export function worldRoutes(world: WorldService): FastifyPluginAsync {
@@ -35,7 +36,8 @@ export function worldRoutes(world: WorldService): FastifyPluginAsync {
       const c = catalogOf(lang);
       // no-cache：浏览器每次都来问一下，没变就 304，前端代码不用改
       reply.header('etag', c.etag).header('cache-control', 'no-cache');
-      if (req.headers['if-none-match'] === c.etag) return reply.code(304).send();
+      // 认弱 ETag（Cloudflare 压缩时改成 W/）和多个值（终审 Important 1）
+      if (etagMatches(req.headers['if-none-match'], c.etag)) return reply.code(304).send();
       return reply.type('application/json; charset=utf-8').send(c.body);
     });
   };

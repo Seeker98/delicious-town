@@ -1,7 +1,7 @@
 /**
  * 接口耗时压测（质量期 ③，方法见 docs/performance.md）：用一个玩家账号依次请求常用的 GET 接口，
  * 每个先热 2 次、再计 N 次，读服务端的 Server-Timing（开发服 .env.development 已打开 DB_QUERY_STATS），
- * 报服务端总耗时的中位数和 p95、查询耗时和条数、响应大小。
+ * 报服务端总耗时的中位数和 p95、查询耗时和条数、响应的字符数（解压后）。
  *
  *   pnpm -F @dt/server bench:api <用户名> [区服 id]
  *   环境变量：BASE（默认 http://localhost:3000/api/v1）、N（默认 20）、PASSWORD（默认 secret123，e2e 测试号的密码）、
@@ -108,7 +108,8 @@ async function main(): Promise<void> {
       0.5,
     );
   rows.sort((a, b) => med(b.samples, 'app') - med(a.samples, 'app'));
-  console.log('app50  app95   db50  queries   bytes  status path');
+  // chars：解压后的字符数，不是传输大小
+  console.log('app50  app95   db50  queries   chars  status path');
   for (const r of rows)
     console.log(
       [

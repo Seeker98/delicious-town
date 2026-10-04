@@ -103,6 +103,11 @@ describe('接口', () => {
     });
     expect(again.status).toBe(304);
     expect(again.res.body).toBe('');
+    // 生产走 Cloudflare：压缩时把 ETag 改成弱的 W/"…"，浏览器带回来的也是弱的；也可能带多个（终审 Important 1）
+    for (const h of [`W/${etag}`, `"zzz", ${etag}`]) {
+      const r = await call(http.app, 'GET', '/api/v1/world/catalog', { headers: { 'if-none-match': h } });
+      expect(r.status, h).toBe(304);
+    }
     const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en', {
       headers: { 'if-none-match': etag },
     });

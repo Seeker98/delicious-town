@@ -75,7 +75,7 @@ export function createSuspicious(game: Game) {
       const from = gameTime(day, 0);
       const to = gameTime(addDays(day, 1), 0);
       const out: SuspiciousSurgeDto = { day, coin: [], diamond: [], exp: [] };
-      // 一条查询把三种资源按“店 × 来源”一起汇总，先限定本区服（质量期 ③：原来每种资源两条、各扫一遍当天的流水和收益，共 6 遍）。
+      // 一条查询把三种资源按“店 × 来源”一起汇总，每段先限定本区服的店（质量期 ③：原来每种资源两条、各扫一遍当天的流水和收益，共 6 遍）。
       // 结算的银币、经验不进流水（ledger: false），在 income_round 里；按来源 settlement 一起算（终审 I1）。
       // 某种资源没有流水时那一列是 null：只有出现过的店才进那一榜（和原来一致）
       const rows = await sql<{
@@ -85,22 +85,22 @@ export function createSuspicious(game: Game) {
         diamond: string | null;
         exp: string | null;
       }>`
-        with l as (
+        with rests as (select id from restaurant where shard_id = ${shardId} and not npc),
+        l as (
           select rest_id, source,
             sum(delta) filter (where kind = 'coin') as coin,
             sum(delta) filter (where kind = 'diamond') as diamond,
             sum(delta) filter (where kind = 'exp') as exp
           from ledger
           where kind in ('coin', 'diamond', 'exp') and created_at >= ${from} and created_at < ${to}
+            and rest_id in (select id from rests)
           group by rest_id, source
           union all
           select rest_id, 'settlement', sum(coin), null, sum(exp) from income_round
-          where created_at >= ${from} and created_at < ${to}
+          where created_at >= ${from} and created_at < ${to} and rest_id in (select id from rests)
           group by rest_id
         )
-        select l.rest_id, l.source, l.coin, l.diamond, l.exp
-        from l join restaurant r on r.id = l.rest_id
-        where r.shard_id = ${shardId} and not r.npc`.execute(db);
+        select rest_id, source, coin, diamond, exp from l`.execute(db);
       // 店 → 资源 → 来源 → 金额（流水和结算都有 settlement 来源时合在一起）
       const by = new Map<number, Record<(typeof SURGE_KINDS)[number], Map<string, number>>>();
       for (const row of rows.rows) {

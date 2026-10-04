@@ -33,6 +33,7 @@ beforeAll(async () => {
 });
 afterAll(async () => {
   await ctx.close();
+  await q.db.destroy();
 });
 
 describe('常用接口的查询条数（质量期 ③）', () => {

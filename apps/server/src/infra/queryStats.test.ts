@@ -6,6 +6,8 @@ import { queryHook } from './queryStats';
 let ctx: TestContext | undefined;
 afterEach(async () => {
   await ctx?.close();
+  // createTestApp 只关它自己建的连接池，传进去的要自己关
+  await ctx?.deps.db.destroy();
   ctx = undefined;
 });
 

@@ -351,4 +351,28 @@ describe('冷门食材的参考价不在锁店事务里补算（质量期 ③）
       .execute();
     expect(saved.length).toBe(9);
   });
+
+  it('交易所关着、等级不够时下单被拒，也不在锁外补算参考价（终审 Important 2）', async () => {
+    const f = rare();
+    const refs = (shardId: number) =>
+      qt.db.selectFrom('exchange_ref').select('day').where('shard_id', '=', shardId).execute();
+    const off = await createShard(qt.db);
+    const r = await trader(qt, { shardId: off });
+    await qt.db
+      .insertInto('shard_config')
+      .values({ shard_id: off, override: JSON.stringify({ features: { exchange: false } }) })
+      .execute();
+    qt.game.shards.invalidate(off);
+    await expect(
+      qt.game.exchange.place(r, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 }),
+    ).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
+    expect(await refs(off)).toEqual([]);
+    const low = await createShard(qt.db);
+    const p = await trader(qt, { shardId: low });
+    await qt.db.updateTable('restaurant').set({ level: 5 }).where('id', '=', p.restaurantId).execute();
+    await expect(
+      qt.game.exchange.place(p, { foodsId: f.id, side: 'buy', price: f.coin, qty: 1 }),
+    ).rejects.toMatchObject({ params: { reason: 'exchange_level' } });
+    expect(await refs(low)).toEqual([]);
+  });
 });

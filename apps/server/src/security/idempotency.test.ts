@@ -8,6 +8,8 @@ let counter = 0;
 beforeAll(async () => {
   ctx = await createTestApp({}, (app) => {
     app.post('/t/count', async () => ok({ n: ++counter }));
+    // 超过 1KB、会被压缩的响应（质量期 ③ 终审发现）
+    app.post('/t/big', async () => ok({ n: ++counter, pad: 'x'.repeat(4000) }));
     app.post('/t/slow', async () => {
       await new Promise((r) => setTimeout(r, 200));
       return ok({ n: ++counter });
@@ -59,5 +61,21 @@ describe('幂等', () => {
     await call(ctx.app, 'POST', '/t/count');
     await call(ctx.app, 'POST', '/t/count', { headers: { 'idempotency-key': 'bad key!' } });
     expect(counter).toBe(before + 2);
+  });
+
+  it('响应超过 1KB 被压缩时也缓存：同一个 key 重试不会再执行一遍（质量期 ③ 终审）', async () => {
+    const key = newKey();
+    const before = counter;
+    const a = await ctx.app.inject({
+      method: 'POST',
+      url: '/t/big',
+      headers: { 'idempotency-key': key, 'accept-encoding': 'gzip', 'content-type': 'application/json' },
+      payload: '{}',
+    });
+    expect(a.headers['content-encoding']).toBe('gzip');
+    const b = await call(ctx.app, 'POST', '/t/big', { headers: { 'idempotency-key': key } });
+    expect(counter).toBe(before + 1);
+    expect(b.res.headers['idempotent-replay']).toBe('true');
+    expect(b.json.data.n).toBe(before + 1);
   });
 });
