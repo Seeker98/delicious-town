@@ -56,10 +56,12 @@ export function createTaskService(d: GameDeps) {
         sql<boolean>`exists(select 1 from activity where deleted_at is null and (shard_id = ${rest.shard_id} or shard_id is null) and starts_at <= ${now} and ends_at > ${now} and min_level <= ${rest.level})`.as(
           'running',
         ),
-        sql<number[]>`coalesce((select array_agg(quest_id) from quest_done where rest_id = ${rest.id}), '{}')`.as(
-          'done',
-        ),
-        sql<Record<string, number>>`coalesce((select jsonb_object_agg(key, count) from event_counter where rest_id = ${rest.id}), '{}'::jsonb)`.as(
+        sql<
+          number[]
+        >`coalesce((select array_agg(quest_id) from quest_done where rest_id = ${rest.id}), '{}')`.as('done'),
+        sql<
+          Record<string, number>
+        >`coalesce((select jsonb_object_agg(key, count) from event_counter where rest_id = ${rest.id}), '{}'::jsonb)`.as(
           'counters',
         ),
         sql<number>`(select count(*) from friend where rest_id = ${rest.id})`.as('friends'),

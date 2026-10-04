@@ -179,7 +179,8 @@ describe('查询条数（质量期 ③）', () => {
     const one = await createShard(qt.db);
     const six = await createShard(qt.db);
     for (const spec of [goals, pass, exchange]) await insertActivity(qt, { shardId: one, spec });
-    for (const spec of [goals, pass, exchange, goals, pass, exchange]) await insertActivity(qt, { shardId: six, spec });
+    for (const spec of [goals, pass, exchange, goals, pass, exchange])
+      await insertActivity(qt, { shardId: six, spec });
     const r1 = await newRestaurant(qt, { shardId: one });
     const r6 = await newRestaurant(qt, { shardId: six });
     const svc = qt.game.activity;

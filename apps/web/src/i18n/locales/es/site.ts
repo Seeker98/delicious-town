@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    perf1005:
+      'La página principal, las tareas y el aviso de eventos cargan más rápido; el catálogo de objetos ya no se vuelve a descargar si no ha cambiado',
     rules1005:
       'Ichiban Kuji: el primer lote abierto a medianoche del día 1 usa el tema y los títulos del nuevo mes; los reembolsos del Fondo de Desarrollo se redondean con más precisión; un error al resolver la Apuesta del mercado ya no anula la pregunta del mercado en Predicciones',
     wiki1005:

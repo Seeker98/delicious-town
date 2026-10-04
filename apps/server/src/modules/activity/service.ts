@@ -111,16 +111,21 @@ export function createActivityService(d: GameDeps) {
   function dailyKeys(row: Row): string[] {
     const spec = specOf(row);
     if (spec.kind === 'exchange') return spec.def.drops.map((_, i) => dropDailyKey(row.id, i));
-    if (spec.kind === 'pass' || spec.kind === 'coop') return spec.def.rules.map((r) => passDailyKey(row.id, r.key));
+    if (spec.kind === 'pass' || spec.kind === 'coop')
+      return spec.def.rules.map((r) => passDailyKey(row.id, r.key));
     return [];
   }
 
   function todayOf(row: Row, daily: ReadonlyMap<string, number>): Record<string, number> {
     const spec = specOf(row);
     if (spec.kind === 'exchange')
-      return Object.fromEntries(spec.def.drops.map((_, i) => [`d${i}`, daily.get(dropDailyKey(row.id, i)) ?? 0]));
+      return Object.fromEntries(
+        spec.def.drops.map((_, i) => [`d${i}`, daily.get(dropDailyKey(row.id, i)) ?? 0]),
+      );
     if (spec.kind !== 'pass' && spec.kind !== 'coop') return {};
-    return Object.fromEntries(spec.def.rules.map((r) => [r.key, daily.get(passDailyKey(row.id, r.key)) ?? 0]));
+    return Object.fromEntries(
+      spec.def.rules.map((r) => [r.key, daily.get(passDailyKey(row.id, r.key)) ?? 0]),
+    );
   }
 
   /**

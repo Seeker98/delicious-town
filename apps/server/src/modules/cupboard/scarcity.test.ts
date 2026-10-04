@@ -151,7 +151,11 @@ describe('缺料抽取器按需准备（质量期 ③）', () => {
       patch: { coin: 100_000, strength: 100 },
       foods: { [two]: 10 },
     });
-    const { sqls } = await q.count(() => qt.game.cupboard.handle(r, { foodsId: two, way: 'compose', num: 10 }));
-    expect(sqls.filter((s) => /^select .* from "cupboard_food" where "rest_id" = \$1$/.test(s))).toHaveLength(1);
+    const { sqls } = await q.count(() =>
+      qt.game.cupboard.handle(r, { foodsId: two, way: 'compose', num: 10 }),
+    );
+    expect(sqls.filter((s) => /^select .* from "cupboard_food" where "rest_id" = \$1$/.test(s))).toHaveLength(
+      1,
+    );
   });
 });

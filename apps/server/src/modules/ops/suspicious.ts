@@ -114,7 +114,9 @@ export function createSuspicious(game: Game) {
       }
       const tops = SURGE_KINDS.map((kind) => {
         const list = [...by].flatMap(([restId, m]) =>
-          m[kind].size === 0 ? [] : [{ restId, sources: m[kind], net: [...m[kind].values()].reduce((a, x) => a + x, 0) }],
+          m[kind].size === 0
+            ? []
+            : [{ restId, sources: m[kind], net: [...m[kind].values()].reduce((a, x) => a + x, 0) }],
         );
         list.sort((x, y) => y.net - x.net || x.restId - y.restId);
         return [kind, list.slice(0, t.topN)] as const;

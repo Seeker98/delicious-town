@@ -168,7 +168,9 @@ describe('资源暴涨一次扫完（质量期 ③）', () => {
       { source: 'shop.sell', delta: 300 },
       { source: 'shop.buy', delta: -100 },
     ]);
-    expect(r.diamond.map((x) => [x.restId, x.net, x.username])).toEqual([[b.restaurantId, 7, expect.any(String)]]);
+    expect(r.diamond.map((x) => [x.restId, x.net, x.username])).toEqual([
+      [b.restaurantId, 7, expect.any(String)],
+    ]);
     expect(r.exp.map((x) => [x.restId, x.net])).toEqual([[a.restaurantId, 50]]);
   });
 });

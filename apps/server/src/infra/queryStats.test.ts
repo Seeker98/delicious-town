@@ -54,7 +54,11 @@ describe('查询统计（质量期 ③）', () => {
       await db.destroy();
       const lines = warn.mock.calls.map((x) => String(x[0])).filter((s) => s.includes('slow query'));
       expect(lines).toHaveLength(1);
-      expect(JSON.parse(lines[0]!)).toMatchObject({ level: 40, msg: 'slow query', sql: expect.stringContaining('pg_sleep') });
+      expect(JSON.parse(lines[0]!)).toMatchObject({
+        level: 40,
+        msg: 'slow query',
+        sql: expect.stringContaining('pg_sleep'),
+      });
     } finally {
       warn.mockRestore();
     }

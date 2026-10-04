@@ -98,10 +98,14 @@ describe('接口', () => {
     const etag = String(first.res.headers.etag);
     expect(etag).toMatch(/^"[0-9a-f]{16}"$/);
     expect(first.res.headers['cache-control']).toBe('no-cache');
-    const again = await call(http.app, 'GET', '/api/v1/world/catalog', { headers: { 'if-none-match': etag } });
+    const again = await call(http.app, 'GET', '/api/v1/world/catalog', {
+      headers: { 'if-none-match': etag },
+    });
     expect(again.status).toBe(304);
     expect(again.res.body).toBe('');
-    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en', { headers: { 'if-none-match': etag } });
+    const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en', {
+      headers: { 'if-none-match': etag },
+    });
     expect(en.status).toBe(200);
     expect(en.res.headers.etag).not.toBe(etag);
     expect(en.json.data.version).toBe(config.version + ':en');

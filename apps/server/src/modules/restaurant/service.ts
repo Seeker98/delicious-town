@@ -62,7 +62,11 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
     const [tables, effects, snap, settings, devices, last, icons, news, boosts, today] = await Promise.all([
-      d.db.selectFrom('restaurant_tables').select('tables').where('rest_id', '=', restId).executeTakeFirstOrThrow(),
+      d.db
+        .selectFrom('restaurant_tables')
+        .select('tables')
+        .where('rest_id', '=', restId)
+        .executeTakeFirstOrThrow(),
       listActiveEffects(d.db, restId, now),
       world.ensure(row.shard_id, now),
       settingsP,

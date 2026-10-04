@@ -29,8 +29,13 @@ export function queryHook(env: Pick<Env, 'DB_QUERY_STATS' | 'DB_SLOW_MS'>): OnQu
     if (env.DB_SLOW_MS > 0 && ms >= env.DB_SLOW_MS)
       // 和 pino 一样一行 JSON（level 40 = warn）；worker 没有 Fastify 的 logger，所以直接写 stderr
       process.stderr.write(
-        JSON.stringify({ level: 40, time: Date.now(), msg: 'slow query', ms: Math.round(ms), sql: sql.slice(0, SQL_MAX) }) +
-          '\n',
+        JSON.stringify({
+          level: 40,
+          time: Date.now(),
+          msg: 'slow query',
+          ms: Math.round(ms),
+          sql: sql.slice(0, SQL_MAX),
+        }) + '\n',
       );
   };
 }
