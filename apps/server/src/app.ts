@@ -74,7 +74,7 @@ export async function buildApp(
   const game = createGame(deps);
   const settingsSub = subscribeSettings(deps.env.REDIS_URL, (id) => game.shards.invalidate(id));
   app.addHook('onClose', async () => settingsSub.close());
-  registerModules(app, game, deps.env.WEB_ORIGIN);
+  registerModules(app, game);
   if (deps.env.ENABLE_TEST_API && deps.clock) {
     app.register(testApiRoutes(game, deps.clock), { prefix: '/api/v1/test' });
   }

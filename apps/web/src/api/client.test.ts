@@ -17,6 +17,17 @@ describe('api client', () => {
     expect(init!.credentials).toBe('include');
   });
 
+  it('公开接口（开放接口，问题记录 142）：不带 Cookie、不带自定义头，浏览器不发预检、可以用 * 跨域', async () => {
+    const f = vi.fn(async (_url: string, _init?: RequestInit) =>
+      json({ ok: true, data: { a: 1 }, events: [] }),
+    );
+    expect(await createApiClient(f, 'http://api').getPublic('/open')).toEqual({ a: 1 });
+    const [url, init] = f.mock.calls[0]!;
+    expect(url).toBe('http://api/open');
+    expect(init!.credentials).toBe('omit');
+    expect(init!.headers).toEqual({});
+  });
+
   it('POST 发送 JSON、幂等键和设备标识', async () => {
     const f = vi.fn(async (_url: string, _init?: RequestInit) => json({ ok: true, data: null, events: [] }));
     await createApiClient(f, '').post('/y', { n: 1 });

@@ -436,7 +436,8 @@ details.dt-card > summary {
 /* 标签 | 内容 两列（问题记录 300）：标签灰色、按最长的对齐；每行至少 32px 高，有下拉框的行也不突兀 */
 .dt-kv {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  /* 值一列可以收窄：长名字折行，不把页面撑出手机屏幕（问题记录 142 终审） */
+  grid-template-columns: max-content minmax(0, 1fr);
   column-gap: 12px;
   align-items: center;
   margin: 0;

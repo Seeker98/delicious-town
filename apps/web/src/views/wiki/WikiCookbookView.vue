@@ -68,8 +68,10 @@ const tastes = computed(() =>
           <dt>{{ GRADE_NAMES[g.grade] }}</dt>
           <dd>
             <span class="dt-wiki-foods">
-              <span v-for="f in g.foods" :key="f.foodsId" class="text-nowrap"
-                ><RouterLink :to="`/wiki/foods/${f.foodsId}`">{{ f.name }}</RouterLink> ×{{ f.num }}</span
+              <!-- 长食材名可以折行，只有数量不和名字断开 -->
+              <span v-for="f in g.foods" :key="f.foodsId"
+                ><RouterLink :to="`/wiki/foods/${f.foodsId}`">{{ f.name }}</RouterLink>
+                <span class="text-nowrap">{{ ` ×${f.num}` }}</span></span
               >
             </span>
           </dd>
