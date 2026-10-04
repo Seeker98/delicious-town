@@ -70,7 +70,7 @@ export async function feedKraken(
   b: { num: number },
 ): Promise<KrakenFeedDto> {
   const t = o.tuning.temple;
-  if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+  if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
   if (!inFeedHours(gameParts(o.now).hour, t.krakenHours)) throw invalidState('not_feed_time');
   const day = gameDay(o.now);
   const fed = await o.tx

@@ -181,7 +181,7 @@ export function createLessonOps(d: GameDeps) {
           .executeTakeFirst();
         if (!learned) throw invalidState('mc_not_learned');
         const need = teacherStar(mc.level);
-        if (o.rest.star_level < need) throw requirement('star', { need });
+        if (o.rest.star_level < need) throw requirement('star', { need, have: o.rest.star_level });
         // 过期没关闭的课补写 closed_at（设计文档 §4.6）
         await o.tx
           .updateTable('mc_lesson')
@@ -260,7 +260,8 @@ export function createLessonOps(d: GameDeps) {
             throw requirement('cookbooks', { need: l.level * 10 });
           if (l.level >= 4 && mine.length < l.level) throw requirement('mc_count', { need: l.level });
           const needStar = studentStar(l.level);
-          if (o.rest.star_level < needStar) throw requirement('star', { need: needStar });
+          if (o.rest.star_level < needStar)
+            throw requirement('star', { need: needStar, have: o.rest.star_level });
           const mc = o.config.requireMc(l.mc_id);
           const agg = await opAgg(o);
           const { rate: luck } = await opLuck(o);

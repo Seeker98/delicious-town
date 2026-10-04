@@ -36,7 +36,7 @@ export async function friendDuel(p: PairOp): Promise<DuelResultDto> {
   const t = o.tuning.tower;
   if (p.them.rest.npc) throw invalidState('npc');
   if (o.rest.renown < 0) throw requirement('renown', { what: 'duel' });
-  if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+  if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
   const day = gameDay(o.now);
   if ((await getDaily(o.tx, o.rest.id, KEY.duel(p.them.rest.id), day)) >= t.duelPerFriend)
     throw limitReached('duel', { max: t.duelPerFriend });

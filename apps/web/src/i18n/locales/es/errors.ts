@@ -70,7 +70,10 @@ const errors: Messages['errors'] = {
       `Tu cuenta debe tener al menos ${s(p.days)} ${plEs(s(p.days), 'día', 'días')} para hacer predicciones`,
     predict_email: () => 'Verifica tu correo para hacer predicciones',
     level: (p) => `Nivel del restaurante insuficiente (se requiere nivel ${s(p.need)})`,
-    star: (p) => `No tienes suficientes estrellas (se requieren ${s(p.need)})`,
+    star: (p) =>
+      p.have === undefined
+        ? `No tienes suficientes estrellas (se requieren ${s(p.need)})`
+        : `No tienes suficientes estrellas (se requieren ${s(p.need)}, tienes ${s(p.have)})`,
     cookbooks: (p) => `No has aprendido suficientes recetas (se requieren ${s(p.need)})`,
     not_available: () => 'Este nivel de estrellas todavía no está abierto',
     slot_locked: () => 'Este espacio de instalación todavía no está desbloqueado',

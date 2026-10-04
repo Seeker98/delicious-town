@@ -336,7 +336,8 @@ export function createTaskService(d: GameDeps) {
             : s.lines.some((l) => l.quest?.id === taskId);
         if (!visible) throw invalidState('not_visible', { taskId });
         if (s.ctx.done.has(taskId)) throw new AppError(ErrorCode.ALREADY_DONE, 400);
-        if (o.rest.star_level < q.needStar) throw requirement('star', { need: q.needStar });
+        if (o.rest.star_level < q.needStar)
+          throw requirement('star', { need: q.needStar, have: o.rest.star_level });
         const progress = s.ctx.progress(q.cond);
         if (progress < q.cond.target) throw requirement('task', { progress, target: q.cond.target });
         await grantAward(o, q.award, { source: q.line === null ? 'task.main' : 'task.side' });

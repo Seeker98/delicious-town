@@ -76,7 +76,10 @@ export default {
     predict_age: (p) => `账号注册满 ${String(p.days)} 天才能参与预测`,
     predict_email: () => '验证邮箱后才能参与预测',
     level: (p) => `餐厅等级不够（需要 ${String(p.need)} 级）`,
-    star: (p) => `星级不够（需要 ${String(p.need)} 星）`,
+    star: (p) =>
+      p.have === undefined
+        ? `星级不够（需要 ${String(p.need)} 星）`
+        : `星级不够（需要 ${String(p.need)} 星，当前 ${String(p.have)} 星）`,
     cookbooks: (p) => `学会的食谱不够（需要 ${String(p.need)} 道）`,
     not_available: () => '这个星级暂未开放',
     slot_locked: () => '这个设施位还没开放',

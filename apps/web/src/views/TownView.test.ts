@@ -17,6 +17,7 @@ vi.mock('../api/endpoints', () => ({
     lessons: vi.fn(),
     mc: vi.fn(),
     fund: vi.fn(),
+    overview: vi.fn(),
   },
 }));
 
@@ -38,6 +39,7 @@ describe('TownView', () => {
     localStorage.clear();
     vi.mocked(endpoints.town).mockResolvedValue(townData());
     vi.mocked(endpoints.townNews).mockResolvedValue({ items: [], hasMore: false });
+    vi.mocked(endpoints.overview).mockResolvedValue({ disabledFeatures: [] } as never);
     vi.mocked(endpoints.catalog).mockResolvedValue({
       version: '1',
       goods: [],
@@ -118,12 +120,22 @@ describe('TownView', () => {
       deposit: null,
       tiers: [],
     });
+    // 餐厅数据一直没回来：手动设
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => {}));
     localStorage.setItem('dt_town_tab', 'fund');
     const w = await mountAt('/town');
     expect(w.find('[data-testid="tab-fund"]').classes()).toContain('active');
     useRestaurantStore().rest = { disabledFeatures: ['fund'] } as never;
     await flushPromises();
     expect(w.find('[data-testid="tab-fund"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
+  });
+
+  it('直接从链接进发展基金、区服关了它：餐厅数据读到前不请求基金，也就不弹“功能关闭”（backlog ①a）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ disabledFeatures: ['fund'] } as never);
+    const w = await mountAt('/town?tab=fund');
+    expect(endpoints.overview).toHaveBeenCalled();
+    expect(endpoints.fund).not.toHaveBeenCalled();
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
   });
 
