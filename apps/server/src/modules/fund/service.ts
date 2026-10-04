@@ -1,13 +1,49 @@
-import { FUND_MEDALS, type Tuning } from '@dt/config';
+import { FUND_MEDALS, goodsEffectHours, type Tuning } from '@dt/config';
 import type { FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { opNews, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
+import { iconLive, MAX_SHOWN_ICONS } from '../friend/looks';
 import { grantGoodsOp, removeHonor } from '../store/goods';
 
 type F = Tuning['fund'];
 const DAY = 86_400_000;
+
+/**
+ * 领取时一起发的限时称号（用户追加）：和勋章同时到期；先去掉别的基金称号（和勋章一样不叠加），
+ * 展示中的称号不满上限时自动展示
+ */
+async function grantFundIcon(o: Op, medal: number): Promise<void> {
+  const fundIcons = o.config.bundle.fundMedals.map((m) => m.icon);
+  const key = o.config.bundle.fundMedals.find((m) => m.id === medal)?.icon;
+  const others = fundIcons.filter((k) => k !== key);
+  if (others.length > 0)
+    await o.tx
+      .deleteFrom('rest_icon')
+      .where('rest_id', '=', o.rest.id)
+      .where('icon_key', 'in', others)
+      .execute();
+  if (!key) return;
+  const hours = goodsEffectHours(o.config.requireGoods(medal));
+  const expiresAt = hours === null ? null : new Date(o.now.getTime() + hours * 3600_000);
+  const n = await o.tx
+    .selectFrom('rest_icon')
+    .select((eb) => eb.fn.countAll<number>().as('n'))
+    .where('rest_id', '=', o.rest.id)
+    .where('shown', '=', true)
+    .where('icon_key', '!=', key)
+    .where(iconLive(o.now))
+    .executeTakeFirstOrThrow();
+  const shown = Number(n.n) < MAX_SHOWN_ICONS;
+  await o.tx
+    .insertInto('rest_icon')
+    .values({ rest_id: o.rest.id, icon_key: key, shown, expires_at: expiresAt })
+    .onConflict((oc) =>
+      oc.columns(['rest_id', 'icon_key']).doUpdateSet({ shown, expires_at: expiresAt, granted_at: o.now }),
+    )
+    .execute();
+}
 
 /** 小镇发展基金（240-2）：存 7 天，到期领回九成加经验勋章，提前取出只退七成；一店同时一笔 */
 export function createFundService(d: GameDeps) {
@@ -42,6 +78,7 @@ export function createFundService(d: GameDeps) {
         medal: x.medal,
         // 页面写勋章加成用；目录里的道具不带加成
         expRate: d.config.goods.get(x.medal)?.effects.expRate ?? 0,
+        icon: d.config.bundle.fundMedals.find((m) => m.id === x.medal)?.icon ?? null,
       })),
       deposit: a
         ? {
@@ -106,6 +143,7 @@ export function createFundService(d: GameDeps) {
         // 勋章不叠加：去掉身上其他基金勋章（不只当前档位里的，运营可能删过档）再发这一笔的
         for (const id of FUND_MEDALS) if (id !== a.medal) await removeHonor(o, id);
         await grantGoodsOp(o, a.medal, 1);
+        await grantFundIcon(o, a.medal);
         await o.tx
           .updateTable('fund_deposit')
           .set({ status: 'claimed', settled_at: o.now, returned: back })

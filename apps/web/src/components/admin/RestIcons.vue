@@ -59,7 +59,10 @@ watch(() => props.restId, load);
     <div v-if="error" class="text-danger small">{{ error }}</div>
     <div class="mb-1">
       <span v-for="i in icons" :key="i.id" class="badge bg-warning text-dark me-1">
-        {{ i.title }}<span v-if="i.shown">（展示中）</span>
+        {{ i.title }}<span v-if="i.shown">（展示中）</span
+        ><span v-if="i.expiresAt" :data-testid="`icon-expires-${i.id}`"
+          >（限时，{{ new Date(i.expiresAt).toLocaleString() }} 到期）</span
+        >
         <button class="btn btn-link btn-sm p-0 ms-1" :disabled="busy" @click="revoke(i)">收回</button>
       </span>
       <span v-if="icons.length === 0" class="small text-muted">没有</span>

@@ -432,6 +432,8 @@ export interface RestIconTable {
   shown: Default<boolean>;
   granted_at: TsDefault;
   granted_by: Nullable<number>;
+  /** 限时称号（240-2 发展基金）的到期时间；空是永久 */
+  expires_at: TsNullable;
 }
 
 type AttrCols<P extends string> = {

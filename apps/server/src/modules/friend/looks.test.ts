@@ -70,6 +70,36 @@ describe('装扮（规格书 02 §2.8）', () => {
     });
   });
 
+  it('限时图标（240-2 发展基金）：过期的不列出、不算进展示上限、不能再开关；页面带到期时间', async () => {
+    const a = await newRestaurant(t);
+    const now = t.clock.now;
+    const past = new Date(now.getTime() - 60_000);
+    const soon = new Date(now.getTime() + 3600_000);
+    const rows = await t.db
+      .insertInto('rest_icon')
+      .values([
+        ...['founder', 'helper', 'tester', 'champion'].map((k) => ({
+          rest_id: a.restaurantId,
+          icon_key: k,
+          shown: true,
+        })),
+        { rest_id: a.restaurantId, icon_key: 'fund_a', shown: true, expires_at: past },
+        { rest_id: a.restaurantId, icon_key: 'fund_c', expires_at: soon },
+      ])
+      .returning(['id', 'icon_key'])
+      .execute();
+    const id = (k: string) => rows.find((r) => r.icon_key === k)!.id;
+    const mine = await looks().mine(a);
+    expect(mine.icons.map((i) => i.key)).toEqual(['founder', 'helper', 'tester', 'champion', 'fund_c']);
+    expect(mine.icons.find((i) => i.key === 'fund_c')).toMatchObject({ expiresAt: soon.toISOString() });
+    expect(mine.icons.find((i) => i.key === 'founder')).toMatchObject({ expiresAt: null });
+    // 过期的 fund_a 虽然 shown，但不占 5 个名额
+    await looks().iconShow(a, id('fund_c'), true);
+    await expect(looks().iconShow(a, id('fund_a'), false)).rejects.toMatchObject({
+      params: { reason: 'not_owned' },
+    });
+  });
+
   it('接口：公告超过 200 字返回 VALIDATION_FAILED', async () => {
     const shardId = await createShard(ctx.deps.db);
     const p = await playerIn(ctx, shardId);

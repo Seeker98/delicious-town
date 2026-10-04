@@ -9,6 +9,7 @@ export default {
   tierName: (key: string) => TIERS[key] ?? key,
   tierLine: (coin: string, back: string) => `存入 ${coin} 银币，到期领回 ${back} 银币`,
   medalLine: (name: string, pct: number) => `到期得「${name}」：经验 +${pct}%`,
+  iconLine: (title: string) => `附限时称号「${title}」，和勋章同时到期`,
   days: (n: number) => `存期 ${n} 天`,
   deposit: '存入',
   notEnough: '银币不够',

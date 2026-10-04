@@ -20,7 +20,14 @@ export interface FundViewDto {
   returnRate: number;
   earlyRate: number;
   /** expRate 是勋章的经验加成 */
-  tiers: Array<{ key: string; coin: number; back: number; medal: number; expRate: number }>;
+  tiers: Array<{
+    key: string;
+    coin: number;
+    back: number;
+    medal: number;
+    expRate: number;
+    icon: string | null;
+  }>;
   deposit: FundDepositDto | null;
   /** 当前银币，页面判断哪档存得起 */
   coin: number;

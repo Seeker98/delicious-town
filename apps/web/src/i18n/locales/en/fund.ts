@@ -13,6 +13,7 @@ const fund: Messages['fund'] = {
   tierName: (key) => TIERS[key] ?? key,
   tierLine: (coin, back) => `Deposit ${coin} coins, get back ${back} at maturity`,
   medalLine: (name, pct) => `At maturity: "${name}", EXP +${pct}%`,
+  iconLine: (title) => `Plus the limited title "${title}", expiring with the medal`,
   days: (n) => `Term: ${n} days`,
   deposit: 'Deposit',
   notEnough: 'Not enough coins',

@@ -12,7 +12,7 @@ export function createAdminIcons(game: Game) {
   async function list(restId: number): Promise<AdminIconDto[]> {
     const rows = await db
       .selectFrom('rest_icon')
-      .select(['id', 'icon_key', 'shown', 'granted_at'])
+      .select(['id', 'icon_key', 'shown', 'granted_at', 'expires_at'])
       .where('rest_id', '=', restId)
       .orderBy('id')
       .execute();
@@ -22,6 +22,7 @@ export function createAdminIcons(game: Game) {
       title: defs.get(r.icon_key)?.title ?? r.icon_key,
       shown: r.shown,
       grantedAt: r.granted_at.toISOString(),
+      expiresAt: r.expires_at?.toISOString() ?? null,
     }));
   }
 
@@ -39,7 +40,7 @@ export function createAdminIcons(game: Game) {
         await tx
           .insertInto('rest_icon')
           .values({ rest_id: restId, icon_key: key, granted_by: actor.accountId })
-          .onConflict((oc) => oc.columns(['rest_id', 'icon_key']).doNothing())
+          .onConflict((oc) => oc.columns(['rest_id', 'icon_key']).doUpdateSet({ expires_at: null }))
           .execute();
         await writeAudit(tx, {
           actor,

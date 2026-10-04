@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
-import { GOODS_TYPE } from './ids';
+import { FUND, GOODS_TYPE } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
 
 const source = () => readSourceDir(defaultDataDir());
@@ -42,5 +42,26 @@ describe('小镇发展基金配置（240-2）', () => {
     t.fund.tiers[0].medal = 81;
     const { errors } = buildBundle({ ...src, 'game/tuning': t });
     expect(errors).toContain('tuning.fund.tiers A medal 81 is not a fund medal');
+  });
+
+  it('每枚基金勋章配一个限时称号（用户追加）：称号在 looks.icons 里，不上架；称号不存在时报错', () => {
+    const src = source();
+    const { bundle } = buildBundle(src);
+    expect(bundle!.fundMedals).toEqual([
+      { id: FUND.C, icon: 'fund_c' },
+      { id: FUND.B, icon: 'fund_b' },
+      { id: FUND.A, icon: 'fund_a' },
+    ]);
+    const icons = bundle!.looks.icons.filter((i) => i.key.startsWith('fund_'));
+    expect(icons.map((i) => [i.key, i.title, i.shop])).toEqual([
+      ['fund_c', '流动赋能', undefined],
+      ['fund_b', '增值资本', undefined],
+      ['fund_a', '基石领投', undefined],
+    ]);
+    const f = JSON.parse(JSON.stringify(src['game/fund']));
+    f.medals[0].icon = 'nope';
+    expect(buildBundle({ ...src, 'game/fund': f }).errors).toContain(
+      'fund medal 93101 icon nope not in looks.icons',
+    );
   });
 });

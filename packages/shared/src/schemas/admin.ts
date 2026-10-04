@@ -266,4 +266,6 @@ export interface AdminIconDto {
   title: string;
   shown: boolean;
   grantedAt: string;
+  /** 限时称号的到期时间，永久的为空（240-2） */
+  expiresAt: string | null;
 }

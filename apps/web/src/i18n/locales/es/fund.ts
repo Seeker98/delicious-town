@@ -13,6 +13,7 @@ const fund: Messages['fund'] = {
   tierName: (key) => TIERS[key] ?? key,
   tierLine: (coin, back) => `Deposita ${coin} monedas y recupera ${back} al vencer`,
   medalLine: (name, pct) => `Al vencer: «${name}», EXP +${pct} %`,
+  iconLine: (title) => `Incluye el título temporal «${title}», que vence con la medalla`,
   days: (n) => `Plazo: ${n} días`,
   deposit: 'Depositar',
   notEnough: 'No tienes monedas suficientes',

@@ -21,8 +21,8 @@ const base: FundViewDto = {
   coin: 2_000_000,
   deposit: null,
   tiers: [
-    { key: 'B', coin: 3_000_000, back: 2_700_000, medal: 93102, expRate: 0.1 },
-    { key: 'C', coin: 1_000_000, back: 900_000, medal: 93101, expRate: 0.05 },
+    { key: 'B', coin: 3_000_000, back: 2_700_000, medal: 93102, expRate: 0.1, icon: 'fund_b' },
+    { key: 'C', coin: 1_000_000, back: 900_000, medal: 93101, expRate: 0.05, icon: 'fund_c' },
   ],
 };
 const deposit = (o: Partial<FundDepositDto> = {}): FundDepositDto => ({
@@ -53,6 +53,7 @@ describe('FundPanel（240-2）', () => {
     expect(c).toContain('C·流动赋能');
     expect(c).toContain('900,000');
     expect(c).toContain('5%');
+    expect(c).toContain('限时称号');
     expect(w.get('[data-testid="fund-deposit-B"]').attributes('disabled')).toBeDefined();
     expect(w.get('[data-testid="fund-tier-B"]').text()).toContain('银币不够');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);

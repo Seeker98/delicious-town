@@ -19,6 +19,7 @@ import { flipSlots } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
 import { logPage, restNames, tableDto } from '../restaurant/reads';
 import { equipDisplayName } from '../equip/hats';
+import { iconLive } from './looks';
 
 /** 好友动态：别人对我做的操作（设计文档 §4.10） */
 export const FEED_TYPES = [
@@ -232,6 +233,7 @@ export function createFriendReads(d: GameDeps) {
           .select('icon_key')
           .where('rest_id', '=', restId)
           .where('shown', '=', true)
+          .where(iconLive(d.now()))
           .orderBy('id')
           .execute()
       ).flatMap((i) => {

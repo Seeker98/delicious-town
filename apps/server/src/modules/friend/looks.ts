@@ -1,4 +1,6 @@
+import type { ExpressionBuilder } from 'kysely';
 import { gameDay, gameTime, type MyLooksDto } from '@dt/shared';
+import type { DB } from '../../db/schema';
 import type { Looks } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached } from '../../core/errors';
@@ -13,6 +15,10 @@ export function cleanNotice(s: string): string {
   // eslint-disable-next-line no-control-regex
   return s.replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, '').trim();
 }
+
+/** 限时称号（240-2 发展基金）：到期时间为空是永久，过期的当作没有 */
+export const iconLive = (now: Date) => (eb: ExpressionBuilder<DB, 'rest_icon'>) =>
+  eb.or([eb('rest_icon.expires_at', 'is', null), eb('rest_icon.expires_at', '>', now)]);
 
 /** 称号商店（240-2）：这一天（游戏日期）正在上架的限定称号，上架 [from, to) */
 export function iconsOnSale(looks: Looks, day: string): Looks['icons'] {
@@ -34,8 +40,9 @@ export function createLooks(d: GameDeps) {
       const defs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
       const rows = await d.db
         .selectFrom('rest_icon')
-        .select(['id', 'icon_key', 'shown'])
+        .select(['id', 'icon_key', 'shown', 'expires_at'])
         .where('rest_id', '=', ctx.restaurantId)
+        .where(iconLive(d.now()))
         .orderBy('id')
         .execute();
       const owned = new Set(rows.map((x) => x.icon_key));
@@ -45,7 +52,18 @@ export function createLooks(d: GameDeps) {
         notice: r.notice,
         icons: rows.flatMap((x) => {
           const def = defs.get(x.icon_key);
-          return def ? [{ id: x.id, key: def.key, title: def.title, desc: def.desc, shown: x.shown }] : [];
+          return def
+            ? [
+                {
+                  id: x.id,
+                  key: def.key,
+                  title: def.title,
+                  desc: def.desc,
+                  shown: x.shown,
+                  expiresAt: x.expires_at?.toISOString() ?? null,
+                },
+              ]
+            : [];
         }),
         shop: iconsOnSale(d.config.bundle.looks, gameDay(d.now())).map((i) => ({
           key: i.key,
@@ -111,6 +129,7 @@ export function createLooks(d: GameDeps) {
           .select('shown')
           .where('id', '=', iconId)
           .where('rest_id', '=', o.rest.id)
+          .where(iconLive(o.now))
           .executeTakeFirst();
         if (!row) throw invalidState('not_owned');
         if (shown && !row.shown) {
@@ -119,6 +138,7 @@ export function createLooks(d: GameDeps) {
             .select((eb) => eb.fn.countAll<number>().as('n'))
             .where('rest_id', '=', o.rest.id)
             .where('shown', '=', true)
+            .where(iconLive(o.now))
             .executeTakeFirstOrThrow();
           if (Number(n.n) >= MAX_SHOWN_ICONS) throw limitReached('icons', { max: MAX_SHOWN_ICONS });
         }

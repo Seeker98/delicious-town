@@ -469,6 +469,8 @@ export const fundFile = z
           desc: z.string().min(1),
           hours: int.min(1),
           effects: z.record(z.number()),
+          /** 领取时一起发的限时称号（looks.icons 的 key），和勋章同时到期 */
+          icon: z.string().min(1),
         })
         .strict(),
     ),

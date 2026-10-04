@@ -41,6 +41,9 @@ async function act(fn: () => Promise<FundViewDto>, done: (v: FundViewDto) => str
 }
 const pct = (rate: number) => Math.round(rate * 100);
 const tierName = (key: string) => t.value.fund.tierName(key);
+/** 档位附带的限时称号名：按目录取（跟着语言），目录里没有时显示 key */
+const iconTitle = (key: string) => catalog.icon(key)?.title ?? key;
+const medalIcon = (medal: number) => data.value?.tiers.find((x) => x.medal === medal)?.icon ?? null;
 /** 存款的勋章加成：按勋章找档（存入后运营改了档位 key 也能找到） */
 const medalRate = (medal: number) => data.value?.tiers.find((x) => x.medal === medal)?.expRate ?? 0;
 
@@ -93,6 +96,9 @@ onMounted(load);
                 t.fund.medalLine(catalog.goodsName(data.deposit.medal), pct(medalRate(data.deposit.medal)))
               }}
             </div>
+            <div v-if="medalIcon(data.deposit.medal)" class="small text-muted">
+              {{ t.fund.iconLine(iconTitle(medalIcon(data.deposit.medal)!)) }}
+            </div>
             <div class="small">
               {{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}
               <span v-if="data.deposit.mature" class="text-success">{{ t.fund.mature }}</span>
@@ -128,6 +134,7 @@ onMounted(load);
               {{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} ·
               {{ t.fund.days(data.days) }}
             </div>
+            <div v-if="x.icon" class="small text-muted">{{ t.fund.iconLine(iconTitle(x.icon)) }}</div>
             <div v-if="data.coin < x.coin" class="small text-danger">{{ t.fund.notEnough }}</div>
           </div>
           <div class="dt-item-actions">

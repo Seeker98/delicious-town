@@ -78,5 +78,17 @@
   "kuji_dx_2611_last": {
     "title": "Early Winter Finale",
     "desc": "Deluxe Ichiban Kuji last prize winner, Nov 2026"
+  },
+  "fund_c": {
+    "title": "Liquidity Enabler",
+    "desc": "Town Development Fund, C · Liquidity Enabler (limited time, expires with the medal)"
+  },
+  "fund_b": {
+    "title": "Growth Capital",
+    "desc": "Town Development Fund, B · Growth Capital (limited time, expires with the medal)"
+  },
+  "fund_a": {
+    "title": "Cornerstone Lead",
+    "desc": "Town Development Fund, A · Cornerstone Lead (limited time, expires with the medal)"
   }
 }

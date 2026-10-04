@@ -39,10 +39,10 @@ describe('小镇发展基金（240-2）', () => {
     const r = await newRestaurant(t, { patch: { coin: 5_000_000 } });
     const v = await svc().view(r);
     expect(v).toMatchObject({ days: 7, returnRate: 0.9, earlyRate: 0.7, deposit: null, coin: 5_000_000 });
-    expect(v.tiers.map((x) => [x.key, x.coin, x.back, x.medal, x.expRate])).toEqual([
-      ['A', 10_000_000, 9_000_000, FUND.A, 0.15],
-      ['B', 3_000_000, 2_700_000, FUND.B, 0.1],
-      ['C', 1_000_000, 900_000, FUND.C, 0.05],
+    expect(v.tiers.map((x) => [x.key, x.coin, x.back, x.medal, x.expRate, x.icon])).toEqual([
+      ['A', 10_000_000, 9_000_000, FUND.A, 0.15, 'fund_a'],
+      ['B', 3_000_000, 2_700_000, FUND.B, 0.1, 'fund_b'],
+      ['C', 1_000_000, 900_000, FUND.C, 0.05, 'fund_c'],
     ]);
   });
 
@@ -104,6 +104,78 @@ describe('小镇发展基金（240-2）', () => {
     await svc().deposit(r, 'C');
     const rows = await t.db.selectFrom('news').select('type').where('shard_id', '=', shardId).execute();
     expect(rows.filter((x) => x.type.startsWith('fund.'))).toEqual([]);
+  });
+
+  it('领取时发对应的限时称号：和勋章同时到期，自动展示；过期后不再显示（用户追加）', async () => {
+    const r = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    await svc().deposit(r, 'C');
+    later(7 * DAY);
+    await svc().claim(r);
+    const medal = await t.db
+      .selectFrom('store_item')
+      .select('expires_at')
+      .where('rest_id', '=', r.restaurantId)
+      .where('goods_id', '=', FUND.C)
+      .executeTakeFirstOrThrow();
+    const icon = await t.db
+      .selectFrom('rest_icon')
+      .select(['icon_key', 'shown', 'expires_at'])
+      .where('rest_id', '=', r.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(icon).toEqual({ icon_key: 'fund_c', shown: true, expires_at: medal.expires_at });
+    expect(icon.expires_at!.getTime() - t.clock.now.getTime()).toBe(168 * 3600_000);
+    expect((await t.game.restaurant.overview(r.restaurantId)).icons.map((i) => i.key)).toEqual(['fund_c']);
+    later(168 * 3600_000);
+    expect((await t.game.restaurant.overview(r.restaurantId)).icons).toEqual([]);
+    expect((await t.game.social.looks.mine(r)).icons).toEqual([]);
+  });
+
+  it('换档：领新勋章时旧档的称号一起换掉；展示满 5 个时新称号不自动展示，但旧的基金称号让出的名额可以用', async () => {
+    const r = await newRestaurant(t, { patch: { coin: 11_000_000 } });
+    await t.db
+      .insertInto('rest_icon')
+      .values(
+        ['founder', 'helper', 'tester', 'champion'].map((k) => ({
+          rest_id: r.restaurantId,
+          icon_key: k,
+          shown: true,
+        })),
+      )
+      .execute();
+    await svc().deposit(r, 'C');
+    later(7 * DAY);
+    await svc().claim(r);
+    await svc().deposit(r, 'A');
+    later(7 * DAY);
+    await svc().claim(r);
+    const icons = await t.db
+      .selectFrom('rest_icon')
+      .select(['icon_key', 'shown'])
+      .where('rest_id', '=', r.restaurantId)
+      .where('icon_key', 'like', 'fund_%')
+      .execute();
+    expect(icons).toEqual([{ icon_key: 'fund_a', shown: true }]);
+    const s = await newRestaurant(t, { patch: { coin: 1_000_000 } });
+    await t.db
+      .insertInto('rest_icon')
+      .values(
+        ['founder', 'helper', 'tester', 'champion', 'artist'].map((k) => ({
+          rest_id: s.restaurantId,
+          icon_key: k,
+          shown: true,
+        })),
+      )
+      .execute();
+    await svc().deposit(s, 'C');
+    later(7 * DAY);
+    await svc().claim(s);
+    const c = await t.db
+      .selectFrom('rest_icon')
+      .select('shown')
+      .where('rest_id', '=', s.restaurantId)
+      .where('icon_key', '=', 'fund_c')
+      .executeTakeFirstOrThrow();
+    expect(c.shown).toBe(false);
   });
 
   it('领取：没到期不能领；到期退 90%、发勋章、经验加成生效；不能重复领（Review Focus 4）', async () => {

@@ -42,10 +42,33 @@ describe('RestLookView', () => {
       door: 0,
       avatar: null,
       notice: '',
-      icons: [{ id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: false }],
+      icons: [{ id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: false, expiresAt: null }],
     });
     for (const f of ['setDoor', 'setAvatar', 'setNotice', 'iconShow'] as const)
       vi.mocked(endpoints[f]).mockResolvedValue({} as never);
+  });
+
+  it('限时称号（240-2 发展基金）写剩余时间，永久的不写', async () => {
+    vi.mocked(endpoints.myLooks).mockResolvedValue({
+      door: 0,
+      avatar: null,
+      notice: '',
+      icons: [
+        { id: 5, key: 'founder', title: '开服元老', desc: 'x', shown: false, expiresAt: null },
+        {
+          id: 6,
+          key: 'fund_c',
+          title: '流动赋能',
+          desc: 'y',
+          shown: true,
+          expiresAt: new Date(Date.now() + 2 * 3_600_000 + 60_000).toISOString(),
+        },
+      ],
+    });
+    const w = mount(RestLookView);
+    await flushPromises();
+    expect(w.get('[data-testid="icon-left-6"]').text()).toContain('剩余 2 小时');
+    expect(w.find('[data-testid="icon-left-5"]').exists()).toBe(false);
   });
 
   it('没设头像时提示；选头像、换门、保存公告、展示图标', async () => {

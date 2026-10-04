@@ -1097,6 +1097,8 @@ export function buildBundle(src: SourceData): BuildResult {
   // 小镇发展基金（240-2）：同一套检查后台保存区服数值时也跑
   const honorIds = new Set(goods.filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id));
   errors.push(...fundErrors(tuning.fund, { honorIds }));
+  for (const m of fundRaw.medals)
+    if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
   // 豪华池按月轮换的称号（240-2）
   {
     const deluxeKeys = new Set([...tuning.kuji.deluxe.tiers.map((x) => x.key), 'last']);
@@ -1174,6 +1176,7 @@ export function buildBundle(src: SourceData): BuildResult {
     activationRewards,
     kujiThemes,
     kujiDeluxeMonths: kujiRaw.deluxeMonths,
+    fundMedals: fundRaw.medals.map((m) => ({ id: m.id, icon: m.icon })),
     cookbookGrades,
     shopSpecialTiers,
     shopPools,
