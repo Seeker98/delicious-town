@@ -1,4 +1,4 @@
-import { levelRateOf } from '../../core/prices';
+import { levelRateOf, universalLevel } from '../../core/prices';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 
 export type ExchangeTuning = Tuning['exchange'];
@@ -24,8 +24,6 @@ export function feeOf(price: number, qty: number, t: ExchangeTuning): number {
   return Math.floor(price * qty * t.feeRate);
 }
 
-/** 万能食材的 id：466 + 对应的普通等级（规格书 03 §3.3，1~5 级） */
-const UNIVERSAL_BASE = 466;
 const CLAMP_LOW = 0.75;
 const CLAMP_HIGH = 1.5;
 const UNIVERSAL_FACTOR = 1.5;
@@ -60,8 +58,8 @@ export function initialRef(food: Food, config: GameConfig, rates: readonly numbe
 /** 不算等级价格倍数的初始参考价（initialRef 原来的规则） */
 function baseRef(food: Food, config: GameConfig): number {
   const medians = rareMedians(config);
-  const base = food.id - UNIVERSAL_BASE;
-  if (food.level === 9 && base >= 1 && base <= 5) {
+  const base = universalLevel(food);
+  if (base !== null) {
     const m = medians.get(base);
     if (m !== undefined) return Math.round(m * UNIVERSAL_FACTOR);
   }

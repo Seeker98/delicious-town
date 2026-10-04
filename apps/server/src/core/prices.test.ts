@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../test/config';
-import { dishCoin, foodPrice, levelRateOf } from './prices';
+import { dishCoin, foodPrice, levelRateOf, universalLevel } from './prices';
 
 const config = testConfig();
 const level = (lv: number) => [...config.foods.values()].find((f) => f.level === lv)!;
@@ -23,8 +23,22 @@ describe('价格函数（问题记录 240-1）', () => {
     const rates = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7];
     expect(levelRateOf(config.requireFood(467), rates)).toBe(1.1);
     expect(levelRateOf(config.requireFood(471), rates)).toBe(1.5);
-    const odd = [...config.foods.values()].find((f) => f.level > 7 && (f.id < 467 || f.id > 471));
-    if (odd) expect(levelRateOf(odd, rates)).toBe(1);
+    // 现有数据里没有这样的食材，构造几个（backlog 240-1、质量期 ②）：8 级、0 级、不在 467~471 的 9 级
+    const base = level(1);
+    for (const odd of [
+      { ...base, level: 8 },
+      { ...base, level: 0 },
+      { ...base, id: 472, level: 9 },
+      { ...base, id: 466, level: 9 },
+    ])
+      expect(levelRateOf(odd, rates)).toBe(1);
+  });
+
+  it('universalLevel：467~471 的 9 级食材顶替 1~5 级，其他为 null（质量期 ②）', () => {
+    expect(universalLevel(config.requireFood(467))).toBe(1);
+    expect(universalLevel(config.requireFood(471))).toBe(5);
+    expect(universalLevel(level(3))).toBeNull();
+    expect(universalLevel({ ...level(1), id: 472, level: 9 })).toBeNull();
   });
 
   it('foodPrice = 基础价 × 本等级倍数；倍数全 1 时等于基础价', () => {

@@ -141,6 +141,21 @@ describe('区服数值（HTTP）', () => {
     expect((await save({ tiers: [{ key: 'X', count: 3, award: { coin: 1 } }] })).status).toBe(200);
   });
 
+  it('缺料倾向越界（大于 1、起点高于上限）：400，存不进去（问题记录 50、质量期 ②）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const save = (scarcity: unknown) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: { tuning: { scarcity } }, note: 'x', version: 0 },
+      });
+    for (const bad of [{ needMax: 1.5 }, { needBase: 0.5, needMax: 0.3 }, { needLuckFactor: -1 }]) {
+      const r = await save(bad);
+      expect(r.status).toBe(400);
+      expect(r.json.code).toBe('INVALID_CONFIG');
+    }
+    expect((await save({ needBase: 0.1, needMax: 0.4 })).status).toBe(200);
+  });
+
   it('豪华档位改名后月度称号对不上、送券的活跃档不存在：400（质量期 ②）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const save = (kuji: unknown) =>
