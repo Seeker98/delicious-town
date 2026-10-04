@@ -38,6 +38,8 @@ describe('跑一套数值（设计 §4、§7）', () => {
     expect(last.level).toBeGreaterThan(1);
     expect(r.income.diligent!.settlement!.coin).toBeGreaterThan(0);
     expect(last.settleCoin).toBeGreaterThan(0);
+    // 银币流出按来源汇总（问题记录 240）：两天里至少会买菜
+    expect(r.spend.diligent!['market.buy']).toBeGreaterThan(0);
   }, 60_000);
 });
 

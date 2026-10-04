@@ -8,6 +8,7 @@ import {
   aggOf,
   consumeGoods,
   countGoods,
+  gainCoin,
   gainExp,
   grantAward,
   grantGoods,
@@ -63,6 +64,17 @@ describe('快速模型原语（设计 §4.3）', () => {
     expect(r.coin).toBe(5);
     expect(spendCoin(c, r, 5, 'x')).toBe(true);
     expect(r.coin).toBe(0);
+  });
+
+  it('银币流出按来源记账（问题记录 240）：花掉的、扣成负数的都记；没扣成的不记', () => {
+    const c = ctx();
+    const r = openFastRest(c, 1, settings);
+    r.coin = 100;
+    spendCoin(c, r, 30, 'market.buy');
+    spendCoin(c, r, 500, 'market.buy');
+    spendCoin(c, r, 20, 'oil');
+    gainCoin(c, r, -10, 'dine');
+    expect(c.stats.spend).toEqual({ 'market.buy': 30, oil: 20, dine: 10 });
   });
 
   it('普通道具到持有上限为止；勋章数量恒为 1 并成为加成来源', () => {

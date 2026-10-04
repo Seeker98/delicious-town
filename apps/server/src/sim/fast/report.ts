@@ -145,6 +145,43 @@ function incomeSection(results: FastResult[]): string {
   return `<h2>收入来源</h2><p class="note">全部机器人累计的银币、经验各来自哪里（旁支按来源细分）。旁支占比太高时，结论要打折扣。</p><table><tr><th>数值</th><th>画像</th><th>占比</th></tr>${rows.join('')}</table>`;
 }
 
+const SPEND_NAMES: Record<string, string> = {
+  'market.buy': '买菜',
+  'shop.cert': '升星凭证',
+  'shop.table': '餐桌',
+  'shop.device': '设施',
+  'shop.other': '商店其他',
+  oil: '加油',
+  'oil.auto': '加油',
+  'oil.expand': '扩油箱',
+  move: '搬街',
+};
+
+/** 每人每天的银币流入、流出（按用途）和净额（问题记录 240） */
+function flowSection(results: FastResult[], meta: ReportMeta): string {
+  const per = meta.bots * meta.days;
+  const rows: string[] = [];
+  for (const r of results) {
+    for (const persona of personasOf([r])) {
+      const inc = Object.values(r.income[persona] ?? {}).reduce((n, v) => n + v.coin, 0) / per;
+      const groups = new Map<string, number>();
+      for (const [k, v] of Object.entries(r.spend[persona] ?? {})) {
+        const g = SPEND_NAMES[k] ?? k;
+        groups.set(g, (groups.get(g) ?? 0) + v / per);
+      }
+      const out = [...groups.values()].reduce((a, b) => a + b, 0);
+      const cells = [...groups]
+        .sort((a, b) => b[1] - a[1])
+        .map(([g, v]) => `${esc(g)} ${fmt(v)}（${fmt(out ? v / out : null, 'pct')}）`)
+        .join('<br>');
+      rows.push(
+        `<tr><td>${esc(r.name)}</td><td>${PERSONA_NAMES[persona]}</td><td>${fmt(inc)}</td><td>${fmt(out)}</td><td>${fmt(inc - out)}</td><td>${cells || '—'}</td></tr>`,
+      );
+    }
+  }
+  return `<h2>银币流入与流出</h2><p class="note">每人每天平均（全部天数）。流入含结算、任务、活跃和旁支产出表；流出只算快速模型里会做的事（买菜、商店、加油、扩油箱），旁支玩法自己的花费（外卖开通、厨具强化、一番赏、交易所等）不在里面。</p><table><tr><th>数值</th><th>画像</th><th>流入</th><th>流出</th><th>净额</th><th>流出用途</th></tr>${rows.join('')}</table>`;
+}
+
 function stuckSection(results: FastResult[]): string {
   const rows: string[] = [];
   for (const r of results) {
@@ -168,7 +205,7 @@ export function renderFastReport(results: FastResult[], meta: ReportMeta): strin
 table{border-collapse:collapse;font-size:13px;margin:8px 0;overflow-x:auto;display:block}th,td{border:1px solid #dee2e6;padding:3px 6px;text-align:right;white-space:nowrap}
 th:first-child,td:first-child,td:nth-child(2){text-align:left}.good{background:#d3f9d8}.bad{background:#ffe3e3}.note{color:#6c757d;font-size:13px}
 figure{margin:8px 0}figcaption{font-size:13px;font-weight:600}</style></head><body>
-<h1>快速数值模拟报告</h1>${intro}${keySection(rows, starsShown(results), results[0]!.name)}${chartsSection(results)}${incomeSection(results)}${stuckSection(results)}</body></html>`;
+<h1>快速数值模拟报告</h1>${intro}${keySection(rows, starsShown(results), results[0]!.name)}${chartsSection(results)}${incomeSection(results)}${flowSection(results, meta)}${stuckSection(results)}</body></html>`;
 }
 
 /** 写 report.html 和 CSV；返回写出的文件路径 */
@@ -185,6 +222,11 @@ export function writeFastReport(dir: string, results: FastResult[], meta: Report
       Object.entries(m).map(([source, v]) => ({ variant: r.name, persona, source, ...v })),
     ),
   );
+  const spend = results.flatMap((r) =>
+    Object.entries(r.spend).flatMap(([persona, m]) =>
+      Object.entries(m).map(([source, coin]) => ({ variant: r.name, persona, source, coin })),
+    ),
+  );
   const stuck = results.flatMap((r) =>
     r.stuck.map((s) => ({ variant: r.name, ...s, reasons: s.reasons.join('|') })),
   );
@@ -193,6 +235,7 @@ export function writeFastReport(dir: string, results: FastResult[], meta: Report
     ['key.csv', toCsv(key)],
     ['days.csv', toCsv(days as unknown as Array<Record<string, unknown>>)],
     ['income.csv', toCsv(income)],
+    ['spend.csv', toCsv(spend)],
     ['stuck.csv', toCsv(stuck)],
     ['results.json', JSON.stringify(results)],
   ];

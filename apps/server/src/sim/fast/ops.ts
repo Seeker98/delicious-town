@@ -26,18 +26,27 @@ function record(c: FastCtx, source: string, kind: 'coin' | 'exp' | 'diamond', n:
 
 // ---------- 资源（core/resources.ts） ----------
 
-/** 银币最低到 0（白食可以是负数） */
+function recordSpend(c: FastCtx, source: string, n: number): void {
+  if (n <= 0) return;
+  const s = (c.stats.spend ??= {});
+  s[source] = (s[source] ?? 0) + n;
+}
+
+/** 银币最低到 0（白食可以是负数）；扣成负数时实际扣掉的记进流出 */
 export function gainCoin(c: FastCtx, r: FastRest, n: number, source = 'other'): void {
   if (n === 0) return;
+  const before = r.coin;
   r.coin = Math.max(0, r.coin + n);
   record(c, source, 'coin', n);
+  recordSpend(c, source, before - r.coin);
 }
 
 /** 真实代码不够时抛错；这里返回 false，由调用方决定跳过 */
-export function spendCoin(_c: FastCtx, r: FastRest, n: number, _source = 'other'): boolean {
+export function spendCoin(c: FastCtx, r: FastRest, n: number, source = 'other'): boolean {
   if (n <= 0) return true;
   if (r.coin < n) return false;
   r.coin -= n;
+  recordSpend(c, source, n);
   return true;
 }
 

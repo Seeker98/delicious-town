@@ -107,7 +107,16 @@ function buyable(c: FastCtx, r: FastRest, g: Goods, num: number): boolean {
 function shopBuy(c: FastCtx, r: FastRest, goodsId: number, num: number): boolean {
   const g = c.config.requireGoods(goodsId);
   if (!g.onSale || g.coin <= 0 || !buyable(c, r, g, num)) return false;
-  if (!spendCoin(c, r, g.coin * num)) return false;
+  // 流出按用途分（问题记录 240）
+  const use =
+    g.id === GOODS.starCert
+      ? 'shop.cert'
+      : g.id === GOODS.tableA
+        ? 'shop.table'
+        : g.type === GOODS_TYPE.device
+          ? 'shop.device'
+          : 'shop.other';
+  if (!spendCoin(c, r, g.coin * num, use)) return false;
   grantGoods(c, r, g.id, num, 'shop');
   action(c, r, 'shop.buy');
   return true;
@@ -219,6 +228,7 @@ function learn(c: FastCtx, r: FastRest, id: number): boolean {
   if (plan.kind === 'none') return false;
   for (const x of plan.consume) subFoods(c, r, x.foodsId, x.num);
   r.levels[id] = to;
+  if (from === 0) r.lastFreshAt = c.now;
   r.counts = applyLearn(r.counts, cb.streetId, from, to);
   r.levelsVersion += 1;
   action(c, r, 'cookbook.learn');
@@ -269,6 +279,58 @@ function foodsLack(c: FastCtx, r: FastRest): Map<number, number> {
     if (l > 0) lack.set(id, l);
   }
   return lack;
+}
+
+// ---------- 搬街（growth/service.ts 的 move） ----------
+
+/** 本街连续这么久没学到新菜，就当这条街学不动了 */
+const STALE_MS = 3 * 86_400_000;
+
+/** 搬街：有搬家处工作证免卡，否则用搬家卡（没有就花钻石在黑市买一张）；付 餐桌数 × 餐桌A 半价，幸运时再减半；换街道勋章 */
+function moveStreet(c: FastCtx, r: FastRest, streetId: number): boolean {
+  const cfg = c.config;
+  const job = countGoods(c, r, GOODS.moveJobHonor) > 0;
+  let cost = Math.floor(r.tables.length * (cfg.requireGoods(GOODS.tableA).coin / 2));
+  if (r.coin < cost) return false;
+  if (!job && countGoods(c, r, GOODS.moveCard) === 0 && !buyBlack(c, r, GOODS.moveCard, 1)) return false;
+  if (!job) consumeGoods(c, r, GOODS.moveCard, 1);
+  if (c.rng.chance(luckOf(c, r).rate)) cost = Math.floor(cost / 2);
+  spendCoin(c, r, cost, 'move');
+  const old = cfg.streetMedalId(r.streetId);
+  r.store.delete(old);
+  r.effects = r.effects.filter((e) => !(e.sourceType === 'street' && e.sourceId === old));
+  r.aggDirty = true;
+  grantGoods(c, r, cfg.streetMedalId(streetId), 1, 'move');
+  r.streetId = streetId;
+  r.lastFreshAt = c.now;
+  r.learnIdleKey = '';
+  action(c, r, 'rest.move');
+  return true;
+}
+
+/**
+ * 什么时候搬（快速模型的假设，问题记录 240 报告）：下一星还差食谱数，而本街没学过的菜学完了、
+ * 或者连续 3 天没学到新菜，就搬到没学过的菜最多的街
+ */
+function maybeMove(c: FastCtx, r: FastRest): boolean {
+  const need = c.config.starNeed.get(r.star + 1);
+  if (!need || need.cookbooksKind !== 'learned' || r.counts.learned >= need.needCookbooks) return false;
+  const byStreet = c.config.cookbookIndex.idsByStreet;
+  const fresh = (street: number) => (byStreet.get(street) ?? []).filter((id) => !r.levels[id]).length;
+  r.lastFreshAt ??= c.now;
+  const stale = c.now.getTime() - r.lastFreshAt.getTime() >= STALE_MS;
+  if (fresh(r.streetId) > 0 && !stale) return false;
+  let target = -1;
+  let best = 0;
+  for (const id of [...byStreet.keys()].sort((a, b) => a - b)) {
+    if (id === r.streetId) continue;
+    const n = fresh(id);
+    if (n > best) {
+      best = n;
+      target = id;
+    }
+  }
+  return target >= 0 && moveStreet(c, r, target);
 }
 
 // ---------- 卡点 ----------
@@ -529,6 +591,9 @@ export function botTurn(
       .slice(0, t.guessMaxPick);
     if (pick.length > 0) joinGuess(c, r, m, pick);
   }
+
+  // 本街学不动了就搬街（只能学本街的菜，问题记录 312）
+  maybeMove(c, r);
 
   // 学食谱：每条街先学新的、再升级学过的，最多 20 个
   // 上次一道都没学到、橱柜和食谱都没变时，结果一样，跳过（性能）

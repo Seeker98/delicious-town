@@ -51,6 +51,8 @@ export interface FastRest {
   /** 橱柜每变一次 +1；上次学菜什么都没学到、橱柜和食谱都没变时跳过学菜（性能） */
   foodsVersion: number;
   learnIdleKey: string;
+  /** 最近一次在本街学到一道新菜（或搬街）的时间；null 是还没开始算（搬街判断用） */
+  lastFreshAt: Date | null;
   /** 道具 id → 数量和勋章有效期 */
   store: Map<number, { num: number; expiresAt: Date | null }>;
   foods: Map<number, number>;
@@ -80,6 +82,8 @@ export interface Income {
 export interface FastStats {
   /** 来源 → 累计收入（只记正数） */
   income: Record<string, Income>;
+  /** 来源 → 累计花掉的银币（问题记录 240 的银币流出报告）；测试里可以不给 */
+  spend?: Record<string, number>;
 }
 
 export interface FastCtx {
@@ -128,6 +132,7 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     needCache: null,
     foodsVersion: 0,
     learnIdleKey: '',
+    lastFreshAt: null,
     store: new Map(),
     foods: new Map(),
     fridge: new Map(),

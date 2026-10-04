@@ -46,6 +46,13 @@ describe('报告（设计 §7）', () => {
     for (const s of ['不模拟', '关键指标', '收入来源', '卡点']) expect(html).toContain(s);
   });
 
+  it('银币流入与流出（问题记录 240）：每人每天的流入、流出（按用途）、净额', () => {
+    const html = renderFastReport([one], meta);
+    expect(html).toContain('银币流入与流出');
+    expect(html).toContain('买菜');
+    expect(html).not.toContain('NaN');
+  });
+
   it('核对：等级差 2 级、星级不同、银币差超过 20% 都算不通过', () => {
     const row = (level: number, star: number, coin = 100): BotDay => ({
       day: 1,
