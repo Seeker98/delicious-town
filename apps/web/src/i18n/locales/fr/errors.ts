@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const s = (x: unknown) => String(x);
 
@@ -61,10 +62,12 @@ const errors: Messages['errors'] = {
   requirement: {
     activity: () => 'Pas encore atteint',
     exchange_level: (p) => `Votre restaurant doit être niveau ${s(p.need)} pour échanger`,
-    exchange_age: (p) => `Votre compte doit avoir au moins ${s(p.days)} jours pour échanger`,
+    exchange_age: (p) =>
+      `Votre compte doit avoir au moins ${s(p.days)} ${plFr(s(p.days), 'jour', 'jours')} pour échanger`,
     exchange_email: () => 'Vérifiez votre e-mail pour échanger',
     predict_level: (p) => `Votre restaurant doit être niveau ${s(p.need)} pour faire des prédictions`,
-    predict_age: (p) => `Votre compte doit avoir au moins ${s(p.days)} jours pour faire des prédictions`,
+    predict_age: (p) =>
+      `Votre compte doit avoir au moins ${s(p.days)} ${plFr(s(p.days), 'jour', 'jours')} pour faire des prédictions`,
     predict_email: () => 'Vérifiez votre e-mail pour faire des prédictions',
     level: (p) => `Niveau du restaurant insuffisant (niveau ${s(p.need)} requis)`,
     star: (p) => `Pas assez d'étoiles (${s(p.need)} requises)`,
@@ -79,7 +82,8 @@ const errors: Messages['errors'] = {
         ? `Pas assez de points d'activité (${s(p.need)} requis)`
         : `Pas assez de points d'activité (${s(p.need)} requis, vous en avez ${s(p.have)})`,
     avatar: () => "Choisissez un avatar dans « Apparence » avant de manger à l'œil",
-    dine_minutes: (p) => `Vous devez manger ${s(p.need)} minutes avant de partir ou d'être renvoyé`,
+    dine_minutes: (p) =>
+      `Vous devez manger ${s(p.need)} ${plFr(s(p.need), 'minute', 'minutes')} avant de partir ou d'être renvoyé`,
     renown: (p) =>
       p.what === 'duel'
         ? 'Impossible de défier quelqu’un avec une renommée négative'
@@ -95,17 +99,19 @@ const errors: Messages['errors'] = {
         : 'Il vous faut un permis de travail de boutique valide pour actualiser',
   },
   limit: {
-    exchange_orders: (p) => `Vous pouvez avoir au plus ${s(p.max)} ordres ouverts`,
+    exchange_orders: (p) =>
+      `Vous pouvez avoir au plus ${s(p.max)} ${plFr(s(p.max), 'ordre ouvert', 'ordres ouverts')}`,
     exchange_qty: (p) => `Au plus ${s(p.max)} par ordre`,
     exchange_system_qty: (p) => `Le système peut encore vous acheter au plus ${s(p.max)} aujourd'hui`,
-    predict_trade: (p) => `Au plus ${s(p.max)} parts par transaction`,
+    predict_trade: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'part', 'parts')} par transaction`,
     kuji_buy: (p) => `Vous pouvez encore en acheter ${s(p.left)} aujourd'hui (limite ${s(p.max)} par jour)`,
     kuji_draw: (p) => `Vous pouvez tirer au plus ${s(p.max)} à la fois`,
-    predict_hold: (p) => `Au plus ${s(p.max)} parts de chaque côté par événement`,
+    predict_hold: (p) =>
+      `Au plus ${s(p.max)} ${plFr(s(p.max), 'part', 'parts')} de chaque côté par événement`,
     activity_exchange: (p) =>
       `Chaque joueur peut échanger cet objet ${s(p.limit)} fois ; il en reste ${s(p.left)}`,
     forum_post: (p) => `Limite de publications du jour atteinte (${s(p.max)})`,
-    presets: (p) => `Au plus ${s(p.max)} préréglages`,
+    presets: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'préréglage', 'préréglages')}`,
     market: (p) => `Chaque joueur peut acheter au plus ${s(p.limit)} de ce lot`,
     foods_max: (p) => `Au plus ${s(p.max)} de chaque ingrédient`,
     tables: (p) =>
@@ -115,7 +121,8 @@ const errors: Messages['errors'] = {
     lock: () => 'Plus aucun emplacement de verrouillage',
     owned: () => 'Vous le possédez déjà et ne pouvez pas en acheter un autre',
     shake_device: () => "Quelqu'un sur le même réseau ou appareil l'a déjà secoué aujourd'hui",
-    bar_daily: (p) => `Vous avez joué ${s(p.max)} parties aujourd'hui. Revenez demain.`,
+    bar_daily: (p) =>
+      `Vous avez joué ${s(p.max)} ${plFr(s(p.max), 'partie', 'parties')} aujourd'hui. Revenez demain.`,
     town_exchange: (p) => `Chaque joueur peut échanger cet objet ${s(p.max)} fois (déjà ${s(p.used)})`,
     max: (p) => `Vous pouvez en posséder au plus ${s(p.max)}`,
     friends: (p) => `Votre liste d'amis est pleine (${s(p.max)} au plus)`,
@@ -126,11 +133,11 @@ const errors: Messages['errors'] = {
     exchange: (p) => `Vous avez utilisé tous vos échanges du jour avec ce joueur (${s(p.max)})`,
     exchange_total: () => "Vous avez trop échangé aujourd'hui. Revenez demain.",
     exchange_taken: () => "Ce joueur a reçu trop d'échanges aujourd'hui. Laissez-le tranquille.",
-    icons: (p) => `Vous pouvez afficher au plus ${s(p.max)} icônes`,
+    icons: (p) => `Vous pouvez afficher au plus ${s(p.max)} ${plFr(s(p.max), 'icône', 'icônes')}`,
     taste: (p) => `Vous avez déjà goûté ${s(p.max)} fois aujourd'hui`,
     lesson_full: () => 'Ce cours est complet',
     lesson_open: () => 'Vous avez déjà un cours en cours',
-    lands: (p) => `Vous pouvez cultiver au plus ${s(p.max)} parcelles`,
+    lands: (p) => `Vous pouvez cultiver au plus ${s(p.max)} ${plFr(s(p.max), 'parcelle', 'parcelles')}`,
     rider_busy: (p) => `Ce livreur a déjà le maximum de commandes (${s(p.max)})`,
     riders: (p) => `Vous avez déjà le maximum de livreurs (${s(p.max)})`,
     tower: (p) =>
@@ -374,7 +381,7 @@ const errors: Messages['errors'] = {
     hammer: (minutes) =>
       `Le marteau de Thor est en recharge. Attendez ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
-      `Les promotions ne peuvent être prises qu'une fois toutes les ${minutes} minutes depuis un même réseau. Attendez ${wait} min.`,
+      `Les promotions ne peuvent être prises qu'une fois toutes les ${minutes} ${plFr(minutes, 'minute', 'minutes')} depuis un même réseau. Attendez ${wait} min.`,
     notEnough: (what, need, have) => `${what} insuffisant(e)s (il en faut ${need}, vous en avez ${have})`,
     remnant: (name) => `Fragments de ${name}`,
     basket: (name) => `${name} dans le panier`,
@@ -383,11 +390,12 @@ const errors: Messages['errors'] = {
     exchangeFrozen: (why) =>
       `Votre compte de bourse est gelé : ${why}. Contactez un administrateur pour toute question.`,
     priceBand: (min, max) => `Le prix doit être compris entre ${min} et ${max}`,
-    postText: (field, max) => `Le ${field === 'title' ? 'titre' : 'texte'} doit faire 1 à ${max} caractères`,
-    replyText: (max) => `Les réponses doivent faire 1 à ${max} caractères`,
+    postText: (field, max) =>
+      `Le ${field === 'title' ? 'titre' : 'texte'} doit faire 1 à ${max} ${plFr(max, 'caractère', 'caractères')}`,
+    replyText: (max) => `Les réponses doivent faire 1 à ${max} ${plFr(max, 'caractère', 'caractères')}`,
     mailLevel: (level) => `Niveau insuffisant (niveau ${level} requis)`,
     codeLevel: (level) => `Ce code demande le niveau ${level}`,
-    queryText: (max) => `Le texte de recherche fait au plus ${max} caractères`,
+    queryText: (max) => `Le texte de recherche fait au plus ${max} ${plFr(max, 'caractère', 'caractères')}`,
     hiphopNotOut: (hour) =>
       `Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez au maire après ${hour} h.`,
     unknown: (code) => `Une erreur s'est produite (${code})`,

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const misc: Messages['misc'] = {
   redeem: {
@@ -9,6 +10,7 @@ const misc: Messages['misc'] = {
     loadFailed: 'No se pudo cargar el clima',
     noEffect: 'No afecta al negocio',
     zeroStar: ' (a los restaurantes de 0 estrellas no les afecta el clima)',
+    zeroStarLine: 'A los restaurantes de 0 estrellas no les afecta el clima',
     until: (time) => `Hasta las ${time}`,
     krabPre: 'Hoy Don Krab está en ',
     krabPost: ': los restaurantes de esta calle tienen más probabilidad de recibir clientes misteriosos.',
@@ -25,7 +27,7 @@ const misc: Messages['misc'] = {
     copy: 'Copiar',
     copyLink: 'Copiar enlace',
     rules: (cap) =>
-      `Tus amigos reciben un pack de inicio al abrir su restaurante. Cuando verifiquen su correo, recibirás un premio cuando su restaurante llegue al nivel 10 y otro al nivel 30. Cuentan como máximo ${cap} amigos al mes.`,
+      `Tus amigos reciben un pack de inicio al abrir su restaurante. Cuando verifiquen su correo, recibirás un premio cuando su restaurante llegue al nivel 10 y otro al nivel 30. Cuentan como máximo ${cap} ${plEs(cap, 'amigo', 'amigos')} al mes.`,
     month: (n, cap) => `Contados este mes: ${n} / ${cap}`,
     empty: 'Aún no has invitado a nadie',
     level: (n) => `Nivel ${n}`,

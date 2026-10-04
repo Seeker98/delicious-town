@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const mail: Messages['mail'] = {
   title: 'Buzón',
@@ -10,7 +11,7 @@ const mail: Messages['mail'] = {
   empty: 'No hay correo',
   claim: 'Reclamar',
   delete: 'Borrar',
-  daysLeft: (n) => ` · quedan ${n} día(s)`,
+  daysLeft: (n) => ` · ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'día', 'días')}`,
   needLevel: (n) => `· requiere nv. ${n}`,
   claimed: '· Reclamado',
   broken: '· El adjunto ya no es válido; contacta con soporte',

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const exchange: Messages['exchange'] = {
   title: 'Bolsa',
@@ -6,29 +7,30 @@ const exchange: Messages['exchange'] = {
   reasons: {
     exchange_level: (level, now) =>
       `Tu restaurante debe ser de nivel ${level} para operar (ahora es nivel ${now})`,
-    exchange_age: (days) => `Tu cuenta debe tener al menos ${days} días para operar`,
+    exchange_age: (days) => `Tu cuenta debe tener al menos ${days} ${plEs(days, 'día', 'días')} para operar`,
     exchange_email: 'Verifica tu correo para operar',
   },
   frozen: 'Tu cuenta de la bolsa está congelada',
   cannotTrade: 'Ahora no puedes operar',
-  coin: (n) => `${n} monedas`,
-  estimateBuy: (total) => `Cuesta como mucho ${total} monedas`,
-  estimateSell: (net) => `Unas ${net} monedas si se vende todo (sin comisión)`,
+  coin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
+  estimateBuy: (total) => `Cuesta como mucho ${total} ${plEs(total, 'moneda', 'monedas')}`,
+  estimateSell: (net) => `Unas ${net} ${plEs(net, 'moneda', 'monedas')} si se vende todo (sin comisión)`,
   sysEstimate: (price, qty, total, fee, net) =>
-    `${price} × ${qty} = ${total}, comisión ${fee}, recibes ${net} monedas`,
+    `${price} × ${qty} = ${total}, comisión ${fee}, recibes ${net} ${plEs(net, 'moneda', 'monedas')}`,
   soldToSystem: (n, price) => `Vendiste ${n} al sistema a ${price} cada uno`,
   sellSystemFailed: 'No se pudo vender al sistema',
   bookFailed: 'No se pudo cargar el libro de órdenes',
   placed: 'Orden colocada',
   heldNote: (hours) =>
-    `; algunas operaciones parecen sospechosas y sus ganancias quedan congeladas ${hours} horas`,
+    `; algunas operaciones parecen sospechosas y sus ganancias quedan congeladas ${hours} ${plEs(hours, 'hora', 'horas')}`,
   overSystem: (n) =>
     `El sistema solo te compra ${n} más; el resto queda a la venta a tu precio y otros pueden comprarlo barato`,
   filled: (n, partial, held) => `${n} ejecutados${partial ? ', el resto sigue en el libro' : ''}${held}`,
   placeFailed: 'No se pudo colocar la orden',
   cancelled: 'Orden cancelada',
   cancelFailed: 'No se pudo cancelar',
-  withdrawnLeft: (n) => `Retirado; ${n} ingredientes no caben y se quedan en tu cuenta de la bolsa`,
+  withdrawnLeft: (n) =>
+    `Retirado; ${n} ${plEs(n, 'ingrediente no cabe y se queda', 'ingredientes no caben y se quedan')} en tu cuenta de la bolsa`,
   withdrawn: 'Retirado',
   withdrawFailed: 'No se pudo retirar',
   loadFailed: 'No se pudo cargar la bolsa',

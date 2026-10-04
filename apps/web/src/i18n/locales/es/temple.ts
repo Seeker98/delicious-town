@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const temple: Messages['temple'] = {
   title: 'Templo',
@@ -28,11 +29,11 @@ const temple: Messages['temple'] = {
     noRecipe:
       'No tienes recetas misteriosas: cada tasación usa 1 receta misteriosa y 1 herramienta de tasación (las recetas misteriosas se venden en la tienda)',
     noTool: 'No tienes esta herramienta de tasación; prueba con otra',
-    done: (n, ok) => `Tasaste ${n} veces, ${ok} con éxito`,
+    done: (n, ok) => `Tasaste ${n} ${plEs(n, 'vez', 'veces')}, ${ok} con éxito`,
     failed: 'No se pudo tasar',
     title: 'Tasar recetas misteriosas',
     rule: (n) =>
-      `Cada intento usa 1 receta misteriosa y 1 herramienta de tasación; si sale bien, consigues un fragmento. Tienes ${n} recetas misteriosas.`,
+      `Cada intento usa 1 receta misteriosa y 1 herramienta de tasación; si sale bien, consigues un fragmento. Tienes ${n} ${plEs(n, 'receta misteriosa', 'recetas misteriosas')}.`,
     toolOption: (name, min, max, rate, have) => `${name} (nv. ${min}–${max}, ${rate} %, tienes ${have})`,
     btn: (n) => `Tasar ×${n}`,
     noRetry: 'No repetir por debajo del nivel 5 (Libro del dios de las estrellas)',
@@ -116,10 +117,10 @@ const temple: Messages['temple'] = {
     tentacle: '; 1 tentáculo',
     shop: 'Tienda de tentáculos',
     shopRule: (n) =>
-      `Tienes ${n} tentáculos. Cambia tantos tentáculos como el nivel del plato por un fragmento`,
+      `Tienes ${n} ${plEs(n, 'tentáculo', 'tentáculos')}. Cambia tantos tentáculos como el nivel del plato por un fragmento`,
     mcOption: (name, level) => `${name} (nv. ${level})`,
     bought: 'Canjeado',
-    exchange: (n) => `Canjear (${n} tentáculos)`,
+    exchange: (n) => `Canjear (${n} ${plEs(n, 'tentáculo', 'tentáculos')})`,
     freeRefresh: 'Actualizar gratis',
     refresh: 'Actualizar (1 tentáculo)',
     seedStock: 'Semillas',

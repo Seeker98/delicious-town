@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Forum',
@@ -13,7 +14,7 @@ const forum: Messages['forum'] = {
   pinned: 'Pinned',
   featured: 'Featured',
   itemMeta: (name, when, read, up, reply) =>
-    `${name} · ${when} · ${read} views · ${up} likes · ${reply} replies`,
+    `${name} · ${when} · ${read} ${plEn(read, 'view', 'views')} · ${up} ${plEn(up, 'like', 'likes')} · ${reply} ${plEn(reply, 'reply', 'replies')}`,
   post: {
     loadFailed: "Couldn't load the post",
     opFailed: 'Action failed',
@@ -25,7 +26,7 @@ const forum: Messages['forum'] = {
     replyFailed: "Couldn't reply",
     back: 'Back to forum',
     edited: (when) => ` · edited ${when}`,
-    read: (n) => ` · ${n} views`,
+    read: (n) => ` · ${n} ${plEn(n, 'view', 'views')}`,
     edit: 'Edit',
     delete: 'Delete',
     pin: 'Pin',
@@ -34,7 +35,7 @@ const forum: Messages['forum'] = {
     unfeature: 'Unfeature',
     reads: 'Readers',
     noReads: 'Nobody has read it yet',
-    readLine: (name, times, last) => `${name} · read ${times} times · last ${last}`,
+    readLine: (name, times, last) => `${name} · read ${times} ${plEn(times, 'time', 'times')} · last ${last}`,
     reaction: { up: 'liked', down: 'disliked' },
     replies: (n) => `Replies (${n})`,
     anonymousTag: ' (anonymous)',

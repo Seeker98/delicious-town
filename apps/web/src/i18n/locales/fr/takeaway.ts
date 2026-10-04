@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const takeaway: Messages['takeaway'] = {
   title: 'À emporter',
@@ -21,7 +22,8 @@ const takeaway: Messages['takeaway'] = {
       'Une fois la vente à emporter ouverte, vous prenez les commandes de toute la ville et envoyez des livreurs, pour gagner des pièces, de l’EXP, de la renommée et des objets.',
     star: (need, now) => `Restaurant à ${need}★ ou plus (actuellement ${now}★)`,
     renown: (need, now) => `Au moins ${need} de renommée, dépensée à l'ouverture (actuellement ${now})`,
-    cost: (coin, diamond) => `Plus 1 ticket de vente à emporter, ou ${coin} pièces + ${diamond} diamants`,
+    cost: (coin, diamond) =>
+      `Plus 1 ticket de vente à emporter, ou ${coin} ${plFr(coin, 'pièce', 'pièces')} + ${diamond} ${plFr(diamond, 'diamant', 'diamants')}`,
     byTicket: (n) => `Ouvrir avec un ticket (possédés ${n})`,
     byCoin: 'Ouvrir avec pièces et diamants',
   },
@@ -33,14 +35,14 @@ const takeaway: Messages['takeaway'] = {
     needJob: 'Il faut un permis de travail de boutique valide',
     taken: (name, min) => `${name} est en route, livraison dans ${min} min`,
     takeFailed: 'Impossible de prendre la commande',
-    refreshed: (n) => `${n} commande(s) privée(s) obtenue(s)`,
+    refreshed: (n) => `${n} ${plFr(n, 'commande privée obtenue', 'commandes privées obtenues')}`,
     refreshFailed: "Échec de l'actualisation",
     renown: (n) => `Renommée ${n}`,
     riderOption: (name, busy, max) => `${name} (en livraison ${busy}/${max})`,
     allBusy: 'Tous les livreurs sont occupés',
     double: 'Portion double (ingrédients ×2, EXP ×2)',
     needDouble: 'Il faut « Mission accomplie » pour les portions doubles',
-    refresh: (cost) => `Actualisation privée (${cost} pièces)`,
+    refresh: (cost) => `Actualisation privée (${cost} ${plFr(cost, 'pièce', 'pièces')})`,
     empty: 'Aucune commande pour le moment. De nouvelles arrivent à chaque heure pile',
     expires: (min) => `Valable encore ${min} min`,
     meta: (min, renown) => `Livraison ${min} min · ${renown} de renommée requise`,
@@ -66,7 +68,7 @@ const takeaway: Messages['takeaway'] = {
     left: (min) => `Encore ${min} min`,
     rider: (name) => `Livreur ${name}`,
     claim: 'Récupérer',
-    droneBtn: (n) => `Drone (${n} diamants)`,
+    droneBtn: (n) => `Drone (${n} ${plFr(n, 'diamant', 'diamants')})`,
   },
   riders: {
     reasons: {
@@ -82,7 +84,7 @@ const takeaway: Messages['takeaway'] = {
     hired: (name) => `${name} est embauché comme livreur`,
     hireFailed: "Impossible d'embaucher",
     dismissConfirm: (name, coin, exp) =>
-      `Renvoyer ${name} : payer ${coin} pièces et gagner ${exp} EXP. Continuer ?`,
+      `Renvoyer ${name} : payer ${coin} ${plFr(coin, 'pièce', 'pièces')} et gagner ${exp} EXP. Continuer ?`,
     dismissFailed: 'Impossible de le renvoyer',
     count: (n, cap) => `Livreurs ${n}/${cap} (la limite augmente quand votre propre livreur monte de niveau)`,
     self: ' (vous)',

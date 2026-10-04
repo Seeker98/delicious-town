@@ -3,13 +3,15 @@ import type { Messages } from '../..';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
 import fund from './fund';
-import { n, type P } from '../../helpers';
+import { n, type P, plFr } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Plat signature ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Graine ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
 const heldNote = (p: P) =>
-  p.held ? ` (transaction suspecte : gains gelés pendant ${holdHours(p)} heures)` : '';
+  p.held
+    ? ` (transaction suspecte : gains gelés pendant ${holdHours(p)} ${plFr(holdHours(p), 'heure', 'heures')})`
+    : '';
 const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
   [
     ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
@@ -33,7 +35,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'dine.start':
       return `${who} mange gratis à la table ${String(p.table)} de votre restaurant`;
     case 'dine.expelled':
-      return `${who} vous a mis à la porte de son restaurant ; vous avez payé ${String(p.coin)} pièces`;
+      return `${who} vous a mis à la porte de son restaurant ; vous avez payé ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
     case 'roach.laid':
       return `${who} a lâché un cafard à la table ${String(p.table)} de votre restaurant`;
     case 'roach.killed':
@@ -44,7 +46,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (p.outcome === 'food')
         return `${who} a fouillé votre garde-manger et pris ${foodName(Number(p.foodsId))}`;
       if (p.outcome === 'caught')
-        return `${who} s'est pris dans une tapette en fouillant votre garde-manger et vous a laissé ${String(p.coin)} pièces`;
+        return `${who} s'est pris dans une tapette en fouillant votre garde-manger et vous a laissé ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
       return `${who} a fouillé votre garde-manger sans rien trouver`;
     case 'exchange':
       return p.result === 'caught'
@@ -102,7 +104,7 @@ const events: Messages['events'] = {
       `Maîtrise de « ${mcNameOf(names, n(p, 'mcId'))} » au niveau ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
-      return `Espionnage raté : ${k} recettes oubliées${p.mcId ? ` ainsi que le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
+      return `Espionnage raté : ${k} ${plFr(k, 'recette oubliée', 'recettes oubliées')}${p.mcId ? ` ainsi que le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
     },
     'temple.trial': (p, names) =>
       p.success
@@ -113,7 +115,7 @@ const events: Messages['events'] = {
     'equip.stress': (p, names) =>
       `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')} : ${p.success ? 'réussi' : 'raté'}`,
     'level.up': (p) => `Le restaurant passe au niveau ${n(p, 'to')}`,
-    'star.up': (p) => `Le restaurant atteint ${n(p, 'star')} étoiles`,
+    'star.up': (p) => `Le restaurant atteint ${n(p, 'star')} ${plFr(n(p, 'star'), 'étoile', 'étoiles')}`,
     'oil.expand': (p) =>
       `Bidon d'huile agrandi au niveau ${n(p, 'level')} (max ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => "Plus d'huile : le restaurant a fermé",
@@ -121,7 +123,8 @@ const events: Messages['events'] = {
     'rest.rename': (p) => `Restaurant renommé « ${String(p.to ?? '')} »`,
     'rest.move': () => 'Le restaurant a déménagé',
     'mouse.escape': () => "Une souris est passée, mais par chance rien n'est arrivé",
-    'mouse.trap': (p) => `La tapette a attrapé une souris : ${formatNum(n(p, 'coin'))} pièces obtenues`,
+    'mouse.trap': (p) =>
+      `La tapette a attrapé une souris : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
     'mouse.steal': (p, names) => `Une souris a volé ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",
     'mouse.map': () => "Une souris a laissé une carte d'exploration",
@@ -143,8 +146,8 @@ const events: Messages['events'] = {
       `Fléchettes au bar : ${p.result === 'win' ? 'victoire' : p.result === 'draw' ? 'égalité' : 'défaite'}`,
     'bar.devil': (p) =>
       p.result === 'win'
-        ? `Piment du Diable : ${n(p, 'survived')} verres tenus, victoire`
-        : `Piment du Diable : ${n(p, 'survived')} verres tenus, puis K.-O.`,
+        ? `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`
+        : `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, puis K.-O.`,
     'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
     'dine.started': (p) => `A commencé à manger gratis chez « ${String(p.hostName ?? '')} »`,
     'dine.ended': (p) => `A fini de manger gratis chez « ${String(p.hostName ?? '')} »`,
@@ -161,30 +164,34 @@ const events: Messages['events'] = {
     'hiphop.wage': (p, names) => `A touché le salaire du Garçon hip-hop (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) =>
       `${n(p, 'rank')}e du classement hip-hop hebdomadaire, gagne ${names.goodsName(n(p, 'goodsId'))}`,
-    'market.manual': (p) => `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} pièces`,
+    'market.manual': (p) =>
+      `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} ${plFr(formatNum(n(p, 'cost')), 'pièce', 'pièces')}`,
     'market.share': (p, names) =>
       `Vos ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} partagés au marché ont été achetés`,
     'takeaway.open': () => 'A ouvert la vente à emporter',
     'takeaway.refresh': (p) => `A actualisé les commandes à emporter (${n(p, 'times')} fois aujourd'hui)`,
     'takeaway.deliver': () => 'A envoyé une commande à emporter',
     'takeaway.claim': (p) =>
-      p.success ? `Commande livrée : ${formatNum(n(p, 'coin'))} pièces obtenues` : 'La livraison a échoué',
+      p.success
+        ? `Commande livrée : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`
+        : 'La livraison a échoué',
     'takeaway.rebate': (p) =>
-      `Livraison effectuée comme livreur : ${formatNum(n(p, 'coin'))} pièces et ${formatNum(n(p, 'exp'))} EXP obtenus`,
+      `Livraison effectuée comme livreur : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${formatNum(n(p, 'exp'))} EXP obtenus`,
     'takeaway.hire': () => 'A embauché un ami comme livreur',
     'takeaway.dismiss': () => 'A payé et libéré un livreur',
     'tower.rank.week': (p, names) =>
       `${n(p, 'rank')}e du classement hebdomadaire de la Tour des chefs, gagne ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `A fait ${n(p, 'num')} échanges sur la place`,
+    'town.exchange': (p) => `A fait ${n(p, 'num')} ${plFr(n(p, 'num'), 'échange', 'échanges')} sur la place`,
     'town.levelTicket': (p) =>
-      `A utilisé un bon d'ingrédients de niveau ${n(p, 'level')} pour ${n(p, 'total')} ingrédients`,
+      `A utilisé un bon d'ingrédients de niveau ${n(p, 'level')} pour ${n(p, 'total')} ${plFr(n(p, 'total'), 'ingrédient', 'ingrédients')}`,
     'town.mysteryTicket': (p, names) =>
       `A obtenu ${names.foodName(n(p, 'foodsId'))} avec un bon d'ingrédient mystère`,
     'town.feast': () => 'A participé au festin sur la place',
     'town.hammer': () => 'A frappé avec le marteau météo et changé le temps',
     'town.mayor': (p) =>
       p.right ? 'A bien répondu à la question du maire' : 'A mal répondu à la question du maire',
-    'town.shake': (p) => `A secoué l'arbre à pièces : ${formatNum(n(p, 'coin'))} pièces`,
+    'town.shake': (p) =>
+      `A secoué l'arbre à pièces : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
     'town.talk': () => 'A discuté avec les habitants sur la place',
     'town.wish': () => 'A fait un vœu sur la place',
     'exchange.order': (p, names) =>
@@ -198,38 +205,38 @@ const events: Messages['events'] = {
     'exchange.expire': (p, names) =>
       `Ordre ${side(p)} expiré : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.withdraw': (p, names) =>
-      `Retrait du compte de bourse : ${coinFoods(p, names, (c) => `${c} pièces`)}`,
+      `Retrait du compte de bourse : ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
     'exchange.freezeCancel': (p, names) =>
       `Bourse gelée, ordre ${side(p)} annulé : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.confiscate': (p, names) =>
-      `Gains gelés de la bourse confisqués : ${coinFoods(p, names, (c) => `${c} pièces`)}`,
+      `Gains gelés de la bourse confisqués : ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
     'predict.trade': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » : ${p.dir === 'sell' ? 'vendu' : 'acheté'} ${n(p, 'qty')} parts ${p.side === 'no' ? 'Non' : 'Oui'} pour ${formatNum(n(p, 'amount'))}, frais ${formatNum(n(p, 'fee'))}`,
+      `Prédiction « ${String(p.title ?? '')} » : ${p.dir === 'sell' ? 'vendu' : 'acheté'} ${n(p, 'qty')} ${plFr(n(p, 'qty'), 'part', 'parts')} ${p.side === 'no' ? 'Non' : 'Oui'} pour ${formatNum(n(p, 'amount'))}, frais ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » : résultat ${p.outcome ? 'Oui' : 'Non'}, ${formatNum(n(p, 'coin'))} pièces reçues${predictNet(p)}`,
+      `Prédiction « ${String(p.title ?? '')} » : résultat ${p.outcome ? 'Oui' : 'Non'}, ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce reçue', 'pièces reçues')}${predictNet(p)}`,
     'predict.refund': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » annulée : ${formatNum(n(p, 'coin'))} pièces remboursées${predictNet(p)}`,
+      `Prédiction « ${String(p.title ?? '')} » annulée : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce remboursée', 'pièces remboursées')}${predictNet(p)}`,
     'kuji.buy': (p) =>
-      `A acheté ${n(p, 'num')} tickets d'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} pour ${formatNum(n(p, 'coin'))} pièces`,
+      `A acheté ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} d'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} pour ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
     'kuji.activation': (p) =>
-      `Récompense d'activité de ${n(p, 'points')} points reçue, avec ${n(p, 'num')} tickets d'Ichiban Kuji en bonus`,
+      `Récompense d'activité de ${n(p, 'points')} ${plFr(n(p, 'points'), 'point', 'points')} reçue, avec ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} d'Ichiban Kuji en bonus`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `prix ${k} ×${v}`)
         .join(', ');
-      return `A tiré ${n(p, 'num')} tickets du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
+      return `A tiré ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
     },
     'fund.deposit': (p) =>
-      `A déposé ${formatNum(n(p, 'coin'))} pièces dans le Fonds de développement (${fund.tierName(String(p.tier ?? ''))})`,
+      `A déposé ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} dans le Fonds de développement (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `A récupéré son dépôt échu du Fonds de développement : ${formatNum(n(p, 'coin'))} pièces et ${names.goodsName(n(p, 'medal'))}`,
+      `A récupéré son dépôt échu du Fonds de développement : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
-      `A retiré son dépôt du Fonds de développement avant l'échéance : ${formatNum(n(p, 'coin'))} pièces récupérées`,
+      `A retiré son dépôt du Fonds de développement avant l'échéance : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce récupérée', 'pièces récupérées')}`,
     'activity.claim': (p) => `A récupéré les récompenses de l'événement « ${String(p.title ?? '')} »`,
     'activity.unlock': (p) =>
       `A débloqué les récompenses premium de l'événement « ${String(p.title ?? '')} »`,
     'activity.exchange': (p) =>
-      `A fait ${String(p.times ?? 1)} échanges dans l'événement « ${String(p.title ?? '')} »`,
+      `A fait ${String(p.times ?? 1)} ${plFr(String(p.times ?? 1), 'échange', 'échanges')} dans l'événement « ${String(p.title ?? '')} »`,
     'mail.claim': (p) => `A récupéré les pièces jointes du courrier « ${String(p.title ?? '')} »`,
     'admin.rename': (p) =>
       `Un administrateur a renommé le restaurant de « ${String(p.from ?? '')} » en « ${String(p.to ?? '')} » : ${String(p.reason ?? '')}`,

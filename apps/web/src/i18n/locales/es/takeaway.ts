@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const takeaway: Messages['takeaway'] = {
   title: 'A domicilio',
@@ -21,7 +22,8 @@ const takeaway: Messages['takeaway'] = {
       'Con el servicio a domicilio abierto puedes aceptar pedidos de todo el pueblo y enviar repartidores, para ganar monedas, EXP, renombre y objetos.',
     star: (need, now) => `Restaurante de ${need}★ o más (ahora ${now}★)`,
     renown: (need, now) => `Al menos ${need} de renombre, que se gasta al abrir (ahora ${now})`,
-    cost: (coin, diamond) => `Además 1 vale de reparto, o ${coin} monedas + ${diamond} diamantes`,
+    cost: (coin, diamond) =>
+      `Además 1 vale de reparto, o ${coin} ${plEs(coin, 'moneda', 'monedas')} + ${diamond} ${plEs(diamond, 'diamante', 'diamantes')}`,
     byTicket: (n) => `Abrir con vale de reparto (tienes ${n})`,
     byCoin: 'Abrir con monedas y diamantes',
   },
@@ -33,14 +35,15 @@ const takeaway: Messages['takeaway'] = {
     needJob: 'Necesitas un permiso de trabajo de tienda válido',
     taken: (name, min) => `${name} va de camino, llega en ${min} min`,
     takeFailed: 'No se pudo aceptar el pedido',
-    refreshed: (n) => `Aparecieron ${n} pedidos privados`,
+    refreshed: (n) =>
+      `${plEs(n, 'Apareció', 'Aparecieron')} ${n} ${plEs(n, 'pedido privado', 'pedidos privados')}`,
     refreshFailed: 'No se pudo actualizar',
     renown: (n) => `Renombre ${n}`,
     riderOption: (name, busy, max) => `${name} (repartiendo ${busy}/${max})`,
     allBusy: 'Todos los repartidores están ocupados',
     double: 'Ración extra (ingredientes ×2, EXP ×2)',
     needDouble: 'Necesitas «Misión cumplida» para la ración extra',
-    refresh: (cost) => `Actualización privada (${cost} monedas)`,
+    refresh: (cost) => `Actualización privada (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
     empty: 'Ahora no hay pedidos. Llegan más cada hora en punto',
     expires: (min) => `Válido ${min} min más`,
     meta: (min, renown) => `Reparto ${min} min · requiere ${renown} de renombre`,
@@ -66,7 +69,7 @@ const takeaway: Messages['takeaway'] = {
     left: (min) => `Faltan ${min} min`,
     rider: (name) => `Repartidor ${name}`,
     claim: 'Reclamar',
-    droneBtn: (n) => `Dron (${n} diamantes)`,
+    droneBtn: (n) => `Dron (${n} ${plEs(n, 'diamante', 'diamantes')})`,
   },
   riders: {
     reasons: {
@@ -82,7 +85,7 @@ const takeaway: Messages['takeaway'] = {
     hired: (name) => `Contrataste a ${name} como repartidor`,
     hireFailed: 'No se pudo contratar',
     dismissConfirm: (name, coin, exp) =>
-      `Despedir a ${name}: pagas ${coin} monedas y ganas ${exp} EXP. ¿Seguro?`,
+      `Despedir a ${name}: pagas ${coin} ${plEs(coin, 'moneda', 'monedas')} y ganas ${exp} EXP. ¿Seguro?`,
     dismissFailed: 'No se pudo despedir',
     count: (n, cap) => `Repartidores ${n}/${cap} (el límite sube cuando tu propio repartidor sube de nivel)`,
     self: ' (tú)',

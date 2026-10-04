@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    visual1005:
+      "Anglais, français et espagnol : le singulier et le pluriel suivent le nombre (1 pièce, 1 jour…) ; sur mobile, les caractéristiques des ustensiles tiennent sur un écran, les effets météo ne sont plus répétés et les durées de plus d'un jour s'affichent en jours",
     perf1005:
       "La page d'accueil, les tâches et le badge des événements se chargent plus vite ; le catalogue des objets n'est plus retéléchargé s'il n'a pas changé",
     rules1005:

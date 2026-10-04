@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const market: Messages['market'] = {
   sections: {
@@ -9,7 +10,7 @@ const market: Messages['market'] = {
   specialNote: (min) =>
     `email verification required, 1 of each per person; one purchase per network every ${min} min`,
   manualConfirm: (cost, time) =>
-    `Spend ${cost} coins to stock 4 daily dishes? They'll be removed at the next daily restock (${time}).`,
+    `Spend ${cost} ${plEn(cost, 'coin', 'coins')} to stock 4 daily dishes? They'll be removed at the next daily restock (${time}).`,
   manualDone: (renown) => `Restocked. Renown +${renown}`,
   manualFailed: 'Restock failed',
   buyFailed: 'Purchase failed',
@@ -21,21 +22,22 @@ const market: Messages['market'] = {
   guessFailed: 'Guess failed',
   loadFailed: "Couldn't load the market",
   nextStock: (time) => `Next restock ${time}`,
-  manualBtn: (cost) => `Restock manually (${cost} coins)`,
+  manualBtn: (cost) => `Restock manually (${cost} ${plEn(cost, 'coin', 'coins')})`,
   specialWait: (min) => `You just bought a bargain. Your network must wait ${min} min to buy another`,
   empty: 'Nothing in stock yet',
   hot: 'Hot',
   ownFree: 'Your own stock, free',
   stockedBy: (name) => `Stocked by ${name}`,
   left: (n) => `${n} left`,
-  priceLine: (price, left, bought, limit) => `${price} coins · ${left} left · bought ${bought}/${limit}`,
+  priceLine: (price, left, bought, limit) =>
+    `${price} ${plEn(price, 'coin', 'coins')} · ${left} left · bought ${bought}/${limit}`,
   buy: 'Buy',
   guess: {
     title: 'Market guessing',
     hint: (hour) => `Guess what the next daily market (${hour}:00) will sell`,
     last: (n) => `Last time you got ${n} right`,
     joined: (list) => `Entered: ${list}`,
-    rule: (max, cost) => `Pick up to ${max}, costs ${cost} Mystery Vouchers`,
+    rule: (max, cost) => `Pick up to ${max}, costs ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')}`,
     join: (n) => `Enter (${n} picked)`,
   },
   sis: {
@@ -62,7 +64,7 @@ const market: Messages['market'] = {
       'Stuck? Check the "Guides" board on the forum.',
       'The premium market only restocks three times a day. Miss it and you wait.',
     ],
-    specialLeft: (n) => `${n} bargains left. Be quick!`,
+    specialLeft: (n) => `${n} ${plEn(n, 'bargain', 'bargains')} left. Be quick!`,
     specialSoldOut: (time) => `Bargains are sold out. Next restock at ${time}.`,
     nextDaily: (time) => `The daily market restocks at ${time}. Come take a look.`,
     guessOpen: "You haven't placed this round's guess yet. Want to try below?",

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const util: Messages['util'] = {
   remain: {
@@ -6,6 +7,8 @@ const util: Messages['util'] = {
     minutes: (m) => `Quedan ${m} min`,
     hours: (h) => `Quedan ${h} h`,
     hoursMinutes: (h, m) => `Quedan ${h} h ${m} min`,
+    days: (d) => `${plEs(d, 'Queda', 'Quedan')} ${d} ${plEs(d, 'día', 'días')}`,
+    daysHours: (d, h) => `Quedan ${d} d ${h} h`,
   },
   effects: {
     atRate: 'Ocupación',
@@ -20,8 +23,8 @@ const util: Messages['util'] = {
   },
   effect: (label, value) => `${label} ${value}`,
   reward: {
-    coin: (n) => `${n} monedas`,
-    diamond: (n) => `${n} diamantes`,
+    coin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
+    diamond: (n) => `${n} ${plEs(n, 'diamante', 'diamantes')}`,
     exp: (n) => `${n} EXP`,
     renown: (n) => `${n} de renombre`,
     hat: (prefix, name) => `Sombrero ${name} ${prefix}`,

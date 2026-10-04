@@ -1,7 +1,7 @@
 import { SHARED_GOODS } from '@dt/shared';
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
-import { list, num, str, type P } from '../../helpers';
+import { list, num, str, type P, plFr } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
   'flip.caught': 'pris en fouillant les garde-mangers',
@@ -14,12 +14,12 @@ const rank = (k: number) => (k === 1 ? '1er' : `${k}e`);
 function fundNews(w: string, p: P): string {
   const coin = formatNum(num(p.coin));
   if (p.tier === 'A')
-    return `👑 Le capital pilier entre en force ! [${w}] injecte ${coin} pièces d'un coup et décroche le siège d'investisseur principal de rang A du Fonds de développement !`;
+    return `👑 Le capital pilier entre en force ! [${w}] injecte ${coin} ${plFr(coin, 'pièce', 'pièces')} d'un coup et décroche le siège d'investisseur principal de rang A du Fonds de développement !`;
   if (p.tier === 'B')
-    return `Coup de maître ! [${w}] verrouille ${coin} pièces en parts de classe B du Fonds de développement !`;
+    return `Coup de maître ! [${w}] verrouille ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe B du Fonds de développement !`;
   if (p.tier === 'C')
-    return `L'économie réelle redémarre ! [${w}] a souscrit ${coin} pièces en parts de classe C du Fonds de développement`;
-  return `[${w}] a déposé ${coin} pièces dans le Fonds de développement`;
+    return `L'économie réelle redémarre ! [${w}] a souscrit ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe C du Fonds de développement`;
+  return `[${w}] a déposé ${coin} ${plFr(coin, 'pièce', 'pièces')} dans le Fonds de développement`;
 }
 
 function predictResult(p: P): string {
@@ -32,19 +32,20 @@ function predictResult(p: P): string {
   if (players === 0) return result;
   const winners = num(p.winners);
   return winners === 0
-    ? `${result}. ${players} restaurants ont participé, personne n'a deviné juste`
-    : `${result}. ${players} restaurants ont participé, ${winners} ont deviné juste, ${formatNum(num(p.paid))} pièces versées`;
+    ? `${result}. ${players} ${plFr(players, 'restaurant a', 'restaurants ont')} participé, personne n'a deviné juste`
+    : `${result}. ${players} ${plFr(players, 'restaurant a', 'restaurants ont')} participé, ${winners} ${plFr(winners, 'a', 'ont')} deviné juste, ${formatNum(num(p.paid))} ${plFr(formatNum(num(p.paid)), 'pièce versée', 'pièces versées')}`;
 }
 
 const news: Messages['news'] = {
   render: {
     'bar.cup': (w, p) => `${w} a trouvé le bon gobelet ${num(p.times)} fois de suite au bar`,
-    'bar.fg': (w, p) => `${w} a gagné ${num(p.times)} manches de pierre-feuille-ciseaux d'affilée au bar`,
+    'bar.fg': (w, p) =>
+      `${w} a gagné ${num(p.times)} ${plFr(num(p.times), 'manche', 'manches')} de pierre-feuille-ciseaux d'affilée au bar`,
     'bar.num': (w) => `${w} a touché le bon numéro à la roue du bar`,
     'bar.slot': (w, p, x) =>
       `${w} a gagné ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)} à la machine à sous du bar`,
     'bar.devil': (w, p) =>
-      `${w} a bu trois Piments du Diable sans broncher et a gagné ${num(p.payout)} bons mystère`,
+      `${w} a bu trois Piments du Diable sans broncher et a gagné ${num(p.payout)} ${plFr(num(p.payout), 'bon', 'bons')} mystère`,
     'bar.memory': (w) => `${w} a retenu les 7 ingrédients du Cocktail Mémoire`,
     'bar.darts': (w) => `${w} a mis trois fléchettes dans le mille et a bluffé le patron du bar`,
     'equip.stress': (w, p, x) => `${w} a renforcé ${x.goodsName(num(p.goodsId))} à +${num(p.stress)}`,
@@ -79,7 +80,7 @@ const news: Messages['news'] = {
     'rest.rename': (_w, p) => `${str(p.from)} s'appelle désormais ${str(p.to)}`,
     'restaurant.open': (w) => `${w} a ouvert ses portes`,
     'shop.special': (_w, p, x) => `Promotion du jour à la boutique : ${x.goodsName(num(p.goodsId))}`,
-    'star.up': (w, p) => `${w} a atteint ${num(p.star)} étoiles`,
+    'star.up': (w, p) => `${w} a atteint ${num(p.star)} ${plFr(num(p.star), 'étoile', 'étoiles')}`,
     'takeaway.customer': (w, p, x) => `${w} a croisé ${x.goodsName(num(p.goodsId))} en livrant à emporter`,
     'temple.explore.rare': (w, p, x) =>
       `${w} a trouvé ${list(p.foods)

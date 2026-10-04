@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const s = (x: unknown) => String(x);
 const plural = (n: unknown, one: string, many: string) => (Number(n) === 1 ? one : many);
@@ -62,10 +63,12 @@ const errors: Messages['errors'] = {
   requirement: {
     activity: () => 'Not reached yet',
     exchange_level: (p) => `Your restaurant must be level ${s(p.need)} to trade`,
-    exchange_age: (p) => `Your account must be at least ${s(p.days)} days old to trade`,
+    exchange_age: (p) =>
+      `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to trade`,
     exchange_email: () => 'Verify your email to trade',
     predict_level: (p) => `Your restaurant must be level ${s(p.need)} to make predictions`,
-    predict_age: (p) => `Your account must be at least ${s(p.days)} days old to make predictions`,
+    predict_age: (p) =>
+      `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to make predictions`,
     predict_email: () => 'Verify your email to make predictions',
     level: (p) => `Restaurant level too low (level ${s(p.need)} required)`,
     star: (p) => `Not enough stars (${s(p.need)} ${plural(p.need, 'star', 'stars')} required)`,
@@ -80,7 +83,8 @@ const errors: Messages['errors'] = {
         ? `Not enough activity points (${s(p.need)} required)`
         : `Not enough activity points (${s(p.need)} required, you have ${s(p.have)})`,
     avatar: () => 'Set an avatar in "Looks" before dining for free',
-    dine_minutes: (p) => `You must dine for ${s(p.need)} minutes before leaving or being sent away`,
+    dine_minutes: (p) =>
+      `You must dine for ${s(p.need)} ${plEn(s(p.need), 'minute', 'minutes')} before leaving or being sent away`,
     renown: (p) =>
       p.what === 'duel'
         ? "You can't duel while your renown is negative"
@@ -99,13 +103,15 @@ const errors: Messages['errors'] = {
     exchange_orders: (p) => `You can have at most ${s(p.max)} open orders`,
     exchange_qty: (p) => `At most ${s(p.max)} per order`,
     exchange_system_qty: (p) => `The system can buy at most ${s(p.max)} more from you today`,
-    predict_trade: (p) => `At most ${s(p.max)} shares per trade`,
+    predict_trade: (p) => `At most ${s(p.max)} ${plEn(s(p.max), 'share', 'shares')} per trade`,
     kuji_buy: (p) => `You can buy ${s(p.left)} more today (daily limit ${s(p.max)})`,
     kuji_draw: (p) => `You can draw at most ${s(p.max)} at once`,
-    predict_hold: (p) => `You can hold at most ${s(p.max)} shares of each side per event`,
-    activity_exchange: (p) => `Each player can exchange this ${s(p.limit)} times; ${s(p.left)} left`,
+    predict_hold: (p) =>
+      `You can hold at most ${s(p.max)} ${plEn(s(p.max), 'share', 'shares')} of each side per event`,
+    activity_exchange: (p) =>
+      `Each player can exchange this ${s(p.limit)} ${plEn(s(p.limit), 'time', 'times')}; ${s(p.left)} left`,
     forum_post: (p) => `You've reached today's post limit (${s(p.max)})`,
-    presets: (p) => `At most ${s(p.max)} presets`,
+    presets: (p) => `At most ${s(p.max)} ${plEn(s(p.max), 'preset', 'presets')}`,
     market: (p) => `Each player can buy at most ${s(p.limit)} of this batch`,
     foods_max: (p) => `At most ${s(p.max)} of each ingredient`,
     tables: (p) =>
@@ -115,8 +121,10 @@ const errors: Messages['errors'] = {
     lock: () => 'No lock slots left',
     owned: () => "You already own this and can't buy another",
     shake_device: () => 'Someone on the same network or device has already shaken it today',
-    bar_daily: (p) => `You've played this game ${s(p.max)} times today. Come back tomorrow.`,
-    town_exchange: (p) => `Each player can exchange this ${s(p.max)} times (used ${s(p.used)})`,
+    bar_daily: (p) =>
+      `You've played this game ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today. Come back tomorrow.`,
+    town_exchange: (p) =>
+      `Each player can exchange this ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} (used ${s(p.used)})`,
     max: (p) => `You can hold at most ${s(p.max)}`,
     friends: (p) => `Your friend list is full (max ${s(p.max)})`,
     target_friends: () => 'Their friend list is full',
@@ -126,11 +134,11 @@ const errors: Messages['errors'] = {
     exchange: (p) => `You've used all of today's swaps with them (${s(p.max)})`,
     exchange_total: () => "You've swapped too much today. Come back tomorrow.",
     exchange_taken: () => "They've been swapped with too often today. Give them a break.",
-    icons: (p) => `You can show at most ${s(p.max)} icons`,
-    taste: (p) => `You've already tasted ${s(p.max)} times today`,
+    icons: (p) => `You can show at most ${s(p.max)} ${plEn(s(p.max), 'icon', 'icons')}`,
+    taste: (p) => `You've already tasted ${s(p.max)} ${plEn(s(p.max), 'time', 'times')} today`,
     lesson_full: () => 'This class is full',
     lesson_open: () => 'You already have a class in progress',
-    lands: (p) => `You can cultivate at most ${s(p.max)} plots`,
+    lands: (p) => `You can cultivate at most ${s(p.max)} ${plEn(s(p.max), 'plot', 'plots')}`,
     rider_busy: (p) => `This rider already has the maximum number of orders (${s(p.max)})`,
     riders: (p) => `You already have the maximum number of riders (${s(p.max)})`,
     tower: (p) =>
@@ -370,7 +378,7 @@ const errors: Messages['errors'] = {
     hammer: (minutes) =>
       `Thor's Hammer is cooling down. Wait ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
-      `Specials can only be grabbed once per ${minutes} minutes from the same network. Wait ${wait} min.`,
+      `Specials can only be grabbed once per ${minutes} ${plEn(minutes, 'minute', 'minutes')} from the same network. Wait ${wait} min.`,
     notEnough: (what, need, have) => `Not enough ${what} (need ${need}, have ${have})`,
     remnant: (name) => `${name} fragments`,
     basket: (name) => `${name} in the basket`,
@@ -379,11 +387,12 @@ const errors: Messages['errors'] = {
     exchangeFrozen: (why) =>
       `Your exchange account is frozen: ${why}. Contact an admin if you have questions.`,
     priceBand: (min, max) => `The price must be between ${min} and ${max}`,
-    postText: (field, max) => `The ${field === 'title' ? 'title' : 'body'} must be 1–${max} characters`,
-    replyText: (max) => `Replies must be 1–${max} characters`,
+    postText: (field, max) =>
+      `The ${field === 'title' ? 'title' : 'body'} must be 1–${max} ${plEn(max, 'character', 'characters')}`,
+    replyText: (max) => `Replies must be 1–${max} ${plEn(max, 'character', 'characters')}`,
     mailLevel: (level) => `Level too low (level ${level} required)`,
     codeLevel: (level) => `This code requires level ${level}`,
-    queryText: (max) => `Search text can be at most ${max} characters`,
+    queryText: (max) => `Search text can be at most ${max} ${plEn(max, 'character', 'characters')}`,
     hiphopNotOut: (hour) => `The Hip-hop Boy hasn't come out today. Ask the mayor after ${hour}:00.`,
     unknown: (code) => `Something went wrong (${code})`,
   },

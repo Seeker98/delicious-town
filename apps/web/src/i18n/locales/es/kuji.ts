@@ -1,18 +1,19 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const kuji: Messages['kuji'] = {
   title: 'Ichiban Kuji',
-  diamond: (n) => `${n} diamantes`,
-  coin: (n) => `${n} monedas`,
+  diamond: (n) => `${n} ${plEs(n, 'diamante', 'diamantes')}`,
+  coin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
   exp: (n) => `${n} EXP`,
   renown: (n) => `${n} de renombre`,
   lastTier: 'Último Premio',
   tier: (k) => `Premio ${k}`,
-  bought: (n) => `Compraste ${n} boletos kuji`,
+  bought: (n) => `Compraste ${n} ${plEs(n, 'boleto', 'boletos')} kuji`,
   buyFailed: 'No se pudo comprar',
   drawFailed: 'No se pudo sacar',
   rule: (total) =>
-    `Cada sorteo tiene ${total} boletos y cada tirada quita uno; quien saca el último gana además el Último Premio. Cada día a las 0:00 se abre un sorteo nuevo y los boletos sin sacar caducan.`,
+    `Cada sorteo tiene ${total} ${plEs(total, 'boleto', 'boletos')} y cada tirada quita uno; quien saca el último gana además el Último Premio. Cada día a las 0:00 se abre un sorteo nuevo y los boletos sin sacar caducan.`,
   theme: (month, name) => `Tema del mes ${month}: ${name}`,
   themeLimited: ' Las figuras limitadas de este mes solo se pueden conseguir este mes.',
   closed: 'Hoy ya se sacaron todos los sorteos. Vuelve mañana a las 0:00.',
@@ -26,11 +27,11 @@ const kuji: Messages['kuji'] = {
   lineNormal: 'Normal',
   lineDeluxe: 'Lujo',
   ticketsDeluxe: (n) => `Mis boletos kuji de lujo: ${n}`,
-  boughtDeluxe: (n) => `Compraste ${n} boletos kuji de lujo`,
+  boughtDeluxe: (n) => `Compraste ${n} ${plEs(n, 'boleto', 'boletos')} kuji de lujo`,
   deluxeNote:
     'Sorteo de lujo: el premio A y el Último Premio dan el título limitado del mes y se anuncian a todo el servidor.',
   buyPrefix: 'Comprar',
-  buyTotal: (coin) => `boletos por ${coin} monedas`,
+  buyTotal: (coin) => `boletos por ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
   buy: 'Comprar boletos',
   buyLeft: (n) => `Hoy puedes comprar ${n} más`,
   buyMax: (n) => `Hoy puedes comprar como máximo ${n}`,

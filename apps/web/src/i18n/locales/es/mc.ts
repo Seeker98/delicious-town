@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const mc: Messages['mc'] = {
   title: 'Platos estrella',
@@ -10,12 +11,12 @@ const mc: Messages['mc'] = {
     short: 'Faltan fragmentos (3 para aprender uno)',
     learned: 'Platos que ya sabes (los fragmentos se pueden vender o descomponer)',
   },
-  learnedAll: (n, names) => `Aprendiste ${n} platos estrella: ${names}`,
+  learnedAll: (n, names) => `Aprendiste ${n} ${plEs(n, 'plato', 'platos')} estrella: ${names}`,
   learnFailed: 'No se pudo aprender',
   levelUp: 'el dominio subió de nivel',
   bob: 'Bob Esponja le dio un me gusta',
   cooked: (grade, lucky, num, price, extra) =>
-    `Cocinado: ${grade}${lucky ? ' (con suerte)' : ''}, ${num} raciones a ${price} monedas cada una${extra ? `; ${extra}` : ''}`,
+    `Cocinado: ${grade}${lucky ? ' (con suerte)' : ''}, ${num} ${plEs(num, 'ración', 'raciones')} a ${price} ${plEs(price, 'moneda', 'monedas')} cada una${extra ? `; ${extra}` : ''}`,
   cookFailed: 'No se pudo cocinar',
   dumpConfirm: 'Se tirarán todas las raciones que quedan. ¿Seguro?',
   dumped: 'Tirado',
@@ -24,7 +25,7 @@ const mc: Messages['mc'] = {
   onSale: 'A la venta: ',
   lucky: ' (con suerte)',
   saleMeta: (left, total, price, eaten) =>
-    `Quedan ${left} / ${total} · ${price} monedas cada una · probado ${eaten} veces`,
+    `Quedan ${left} / ${total} · ${price} ${plEs(price, 'moneda', 'monedas')} cada una · probado ${eaten} ${plEs(eaten, 'vez', 'veces')}`,
   dump: 'Tirar',
   learned: (n) => `Aprendidos (${n})`,
   noLearned:
@@ -34,7 +35,7 @@ const mc: Messages['mc'] = {
   cook: 'Cocinar',
   foods: 'Ingredientes: ',
   cookie: (n) => `Usar galletas de la suerte (1 por tanda, tienes ${n})`,
-  batches: (n) => `${n} tanda(s)`,
+  batches: (n) => `${n} ${plEs(n, 'tanda', 'tandas')}`,
   remnants: 'Fragmentos',
   noRemnants: 'No tienes fragmentos',
   groupTitle: (title, n) => `${title} (${n})`,

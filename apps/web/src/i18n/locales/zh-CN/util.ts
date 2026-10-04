@@ -5,6 +5,8 @@ export default {
     minutes: (m: number) => `剩余 ${m} 分钟`,
     hours: (h: number) => `剩余 ${h} 小时`,
     hoursMinutes: (h: number, m: number) => `剩余 ${h} 小时 ${m} 分`,
+    days: (d: number) => `剩余 ${d} 天`,
+    daysHours: (d: number, h: number) => `剩余 ${d} 天 ${h} 小时`,
   },
   /** 加成键的名称（规格书 00 §0.6） */
   effects: {

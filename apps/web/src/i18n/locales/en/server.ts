@@ -1,5 +1,5 @@
 import type { Messages } from '../..';
-import { n, num, str } from '../../helpers';
+import { n, num, str, plEn } from '../../helpers';
 
 const server: Messages['server'] = {
   mail: {
@@ -46,7 +46,7 @@ const server: Messages['server'] = {
             ? ''
             : num(p.banDays) === 0
               ? ' Your account has been banned permanently.'
-              : ` Your account has been banned for ${num(p.banDays)} day(s).`;
+              : ` Your account has been banned for ${num(p.banDays)} ${plEn(num(p.banDays), 'day', 'days')}.`;
         return `Your ${str(p.targetName)} broke the rules and has been ${what}.${ban}\nNote: ${str(p.note)}`;
       },
     },
@@ -127,7 +127,7 @@ const server: Messages['server'] = {
     device: 'Facility',
     equip: 'Cookware',
     hangover: 'Hangover',
-    suit: (name, need) => `${name} (${need} pieces)`,
+    suit: (name, need) => `${name} (${need} ${plEn(need, 'piece', 'pieces')})`,
     suitFallback: 'Set',
     bless: (name) => `Today's wish: ${name}`,
   },

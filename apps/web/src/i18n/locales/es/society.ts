@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const society: Messages['society'] = {
   title: 'Gremio',
@@ -14,7 +15,7 @@ const society: Messages['society'] = {
   move: {
     title: 'Mudarse',
     hint: (street, cost) =>
-      `Estás en ${street}. Necesitas 1 tarjeta de mudanza (gratis con permiso de la oficina de mudanzas) y unas ${cost} monedas (mitad de precio con suerte).`,
+      `Estás en ${street}. Necesitas 1 tarjeta de mudanza (gratis con permiso de la oficina de mudanzas) y unas ${cost} ${plEs(cost, 'moneda', 'monedas')} (mitad de precio con suerte).`,
     pick: 'Elige una calle nueva',
     bonus: (desc) => `Bonificación de la calle: ${desc}`,
     option: (name, cook) => `${name} (${cook})`,

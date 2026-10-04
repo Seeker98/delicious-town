@@ -3,12 +3,15 @@ import type { Messages } from '../..';
 import type { Names } from '../../../utils/events';
 import { formatNum } from '../../../utils/format';
 import fund from './fund';
-import { n, type P } from '../../helpers';
+import { n, type P, plEn } from '../../helpers';
 
 const mcNameOf = (names: Names, id: number) => names.mcName?.(id) ?? `Signature dish ${id}`;
 const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Seed ${id}`;
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
-const heldNote = (p: P) => (p.held ? ` (suspicious trade: proceeds frozen for ${holdHours(p)} hours)` : '');
+const heldNote = (p: P) =>
+  p.held
+    ? ` (suspicious trade: proceeds frozen for ${holdHours(p)} ${plEn(holdHours(p), 'hour', 'hours')})`
+    : '';
 const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
   [
     ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
@@ -32,7 +35,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'dine.start':
       return `${who} is eating for free at table ${String(p.table)} in your restaurant`;
     case 'dine.expelled':
-      return `${who} sent you out of their restaurant; you paid ${String(p.coin)} coins`;
+      return `${who} sent you out of their restaurant; you paid ${String(p.coin)} ${plEn(String(p.coin), 'coin', 'coins')}`;
     case 'roach.laid':
       return `${who} left a roach at table ${String(p.table)} in your restaurant`;
     case 'roach.killed':
@@ -42,7 +45,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'friend.flip':
       if (p.outcome === 'food') return `${who} raided your pantry and took ${foodName(Number(p.foodsId))}`;
       if (p.outcome === 'caught')
-        return `${who} got caught in a mousetrap raiding your pantry and dropped ${String(p.coin)} coins for you`;
+        return `${who} got caught in a mousetrap raiding your pantry and dropped ${String(p.coin)} ${plEn(String(p.coin), 'coin', 'coins')} for you`;
       return `${who} raided your pantry but found nothing`;
     case 'exchange':
       return p.result === 'caught'
@@ -101,7 +104,7 @@ const events: Messages['events'] = {
       `"${mcNameOf(names, n(p, 'mcId'))}" mastery reached level ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
-      return `Sneaking a lesson failed: forgot ${k} recipes${p.mcId ? ` and the signature dish "${mcNameOf(names, n(p, 'mcId'))}"` : ''}`;
+      return `Sneaking a lesson failed: forgot ${k} ${plEn(k, 'recipe', 'recipes')}${p.mcId ? ` and the signature dish "${mcNameOf(names, n(p, 'mcId'))}"` : ''}`;
     },
     'temple.trial': (p, names) =>
       p.success
@@ -112,14 +115,15 @@ const events: Messages['events'] = {
     'equip.stress': (p, names) =>
       `Enhancing ${names.goodsName(n(p, 'goodsId'))} to +${n(p, 'to')} ${p.success ? 'succeeded' : 'failed'}`,
     'level.up': (p) => `Restaurant reached level ${n(p, 'to')}`,
-    'star.up': (p) => `Restaurant reached ${n(p, 'star')} stars`,
+    'star.up': (p) => `Restaurant reached ${n(p, 'star')} ${plEn(n(p, 'star'), 'star', 'stars')}`,
     'oil.expand': (p) => `Oil tank expanded to level ${n(p, 'level')} (max ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => 'Ran out of oil; the restaurant closed',
     'rest.reopen': () => 'Refilled the oil; the restaurant reopened',
     'rest.rename': (p) => `Restaurant renamed to "${String(p.to ?? '')}"`,
     'rest.move': () => 'The restaurant moved',
     'mouse.escape': () => 'A mouse came by, but luckily nothing happened',
-    'mouse.trap': (p) => `The mousetrap caught a mouse: got ${formatNum(n(p, 'coin'))} coins`,
+    'mouse.trap': (p) =>
+      `The mousetrap caught a mouse: got ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'mouse.steal': (p, names) => `A mouse stole ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     'mouse.nothing': () => 'A mouse came by but stole nothing',
     'mouse.map': () => 'A mouse left an exploration map behind',
@@ -141,8 +145,8 @@ const events: Messages['events'] = {
     'bar.darts': (p) => `Bar darts: ${p.result === 'win' ? 'won' : p.result === 'draw' ? 'draw' : 'lost'}`,
     'bar.devil': (p) =>
       p.result === 'win'
-        ? `Devil's Chili: survived ${n(p, 'survived')} cups and won`
-        : `Devil's Chili: survived ${n(p, 'survived')} cups, then went down`,
+        ? `Devil's Chili: survived ${n(p, 'survived')} ${plEn(n(p, 'survived'), 'cup', 'cups')} and won`
+        : `Devil's Chili: survived ${n(p, 'survived')} ${plEn(n(p, 'survived'), 'cup', 'cups')}, then went down`,
     'bar.memory': (p) =>
       `Memory Mixing level ${n(p, 'level')}: ${p.correct ? 'got it right' : 'got it wrong'}`,
     'dine.started': (p) => `Started eating for free at "${String(p.hostName ?? '')}"`,
@@ -160,30 +164,35 @@ const events: Messages['events'] = {
     'hiphop.wage': (p, names) => `Collected the Hip-hop Boy's wage (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) =>
       `Ranked #${n(p, 'rank')} in the weekly Hip-hop ranking, got ${names.goodsName(n(p, 'goodsId'))}`,
-    'market.manual': (p) => `Restocked at the market manually for ${formatNum(n(p, 'cost'))} coins`,
+    'market.manual': (p) =>
+      `Restocked at the market manually for ${formatNum(n(p, 'cost'))} ${plEn(formatNum(n(p, 'cost')), 'coin', 'coins')}`,
     'market.share': (p, names) =>
       `Your shared ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} at the market was bought`,
     'takeaway.open': () => 'Opened takeaway service',
-    'takeaway.refresh': (p) => `Refreshed takeaway orders (${n(p, 'times')} times today)`,
+    'takeaway.refresh': (p) =>
+      `Refreshed takeaway orders (${n(p, 'times')} ${plEn(n(p, 'times'), 'time', 'times')} today)`,
     'takeaway.deliver': () => 'Sent out a takeaway order',
     'takeaway.claim': (p) =>
-      p.success ? `Takeaway delivered: got ${formatNum(n(p, 'coin'))} coins` : 'Takeaway delivery failed',
+      p.success
+        ? `Takeaway delivered: got ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`
+        : 'Takeaway delivery failed',
     'takeaway.rebate': (p) =>
-      `Delivered as a rider: got ${formatNum(n(p, 'coin'))} coins and ${formatNum(n(p, 'exp'))} EXP`,
+      `Delivered as a rider: got ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')} and ${formatNum(n(p, 'exp'))} EXP`,
     'takeaway.hire': () => 'Hired a friend as a rider',
     'takeaway.dismiss': () => 'Paid off and let go of a rider',
     'tower.rank.week': (p, names) =>
       `Ranked #${n(p, 'rank')} in the weekly Chef Tower ranking, got ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `Exchanged ${n(p, 'num')} times at the square`,
+    'town.exchange': (p) => `Exchanged ${n(p, 'num')} ${plEn(n(p, 'num'), 'time', 'times')} at the square`,
     'town.levelTicket': (p) =>
-      `Used a level ${n(p, 'level')} ingredient voucher for ${n(p, 'total')} ingredients`,
+      `Used a level ${n(p, 'level')} ingredient voucher for ${n(p, 'total')} ${plEn(n(p, 'total'), 'ingredient', 'ingredients')}`,
     'town.mysteryTicket': (p, names) =>
       `Used a Mystery Ingredient Voucher for ${names.foodName(n(p, 'foodsId'))}`,
     'town.feast': () => 'Joined the feast at the square',
     'town.hammer': () => 'Struck the weather hammer and changed the weather',
     'town.mayor': (p) =>
       p.right ? "Answered the mayor's question correctly" : "Got the mayor's question wrong",
-    'town.shake': (p) => `Shook the money tree for ${formatNum(n(p, 'coin'))} coins`,
+    'town.shake': (p) =>
+      `Shook the money tree for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'town.talk': () => 'Chatted with townsfolk at the square',
     'town.wish': () => 'Made a wish at the square',
     'exchange.order': (p, names) =>
@@ -197,21 +206,21 @@ const events: Messages['events'] = {
     'exchange.expire': (p, names) =>
       `A ${side(p)} order expired: ${names.foodName(n(p, 'foodsId'))}, the remaining ${n(p, 'left')} went back to your exchange account`,
     'exchange.withdraw': (p, names) =>
-      `Withdrew from your exchange account: ${coinFoods(p, names, (c) => `${c} coins`)}`,
+      `Withdrew from your exchange account: ${coinFoods(p, names, (c) => `${c} ${plEn(c, 'coin', 'coins')}`)}`,
     'exchange.freezeCancel': (p, names) =>
       `Your exchange was frozen and a ${side(p)} order was cancelled: ${names.foodName(n(p, 'foodsId'))}, the remaining ${n(p, 'left')} went back to your exchange account`,
     'exchange.confiscate': (p, names) =>
-      `Frozen exchange proceeds were confiscated: ${coinFoods(p, names, (c) => `${c} coins`)}`,
+      `Frozen exchange proceeds were confiscated: ${coinFoods(p, names, (c) => `${c} ${plEn(c, 'coin', 'coins')}`)}`,
     'predict.trade': (p) =>
       `Prediction "${String(p.title ?? '')}": ${p.dir === 'sell' ? 'sold' : 'bought'} ${n(p, 'qty')} ${p.side === 'no' ? 'No' : 'Yes'} shares for ${formatNum(n(p, 'amount'))}, fee ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>
-      `Prediction "${String(p.title ?? '')}" resolved ${p.outcome ? 'Yes' : 'No'}: received ${formatNum(n(p, 'coin'))} coins${predictNet(p)}`,
+      `Prediction "${String(p.title ?? '')}" resolved ${p.outcome ? 'Yes' : 'No'}: received ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}${predictNet(p)}`,
     'predict.refund': (p) =>
-      `Prediction "${String(p.title ?? '')}" was voided: refunded ${formatNum(n(p, 'coin'))} coins${predictNet(p)}`,
+      `Prediction "${String(p.title ?? '')}" was voided: refunded ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}${predictNet(p)}`,
     'kuji.buy': (p) =>
-      `Bought ${n(p, 'num')} ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji tickets for ${formatNum(n(p, 'coin'))} coins`,
+      `Bought ${n(p, 'num')} ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji ${plEn(n(p, 'num'), 'ticket', 'tickets')} for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'kuji.activation': (p) =>
-      `Claimed the ${n(p, 'points')}-point activity reward and got ${n(p, 'num')} bonus Ichiban Kuji tickets`,
+      `Claimed the ${n(p, 'points')}-point activity reward and got ${n(p, 'num')} bonus Ichiban Kuji ${plEn(n(p, 'num'), 'ticket', 'tickets')}`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} prize ×${v}`)
@@ -219,15 +228,15 @@ const events: Messages['events'] = {
       return `Drew ${n(p, 'num')} from ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji pool #${n(p, 'seq')}: ${tiers}${p.last ? ', plus the Last Prize' : ''}`;
     },
     'fund.deposit': (p) =>
-      `Deposited ${formatNum(n(p, 'coin'))} coins into the Town Development Fund (${fund.tierName(String(p.tier ?? ''))})`,
+      `Deposited ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')} into the Town Development Fund (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `Claimed a matured Town Development Fund deposit: got back ${formatNum(n(p, 'coin'))} coins and ${names.goodsName(n(p, 'medal'))}`,
+      `Claimed a matured Town Development Fund deposit: got back ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')} and ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
-      `Withdrew a Town Development Fund deposit early: got back ${formatNum(n(p, 'coin'))} coins`,
+      `Withdrew a Town Development Fund deposit early: got back ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>
-      `Exchanged ${String(p.times ?? 1)} times in the event "${String(p.title ?? '')}"`,
+      `Exchanged ${String(p.times ?? 1)} ${plEn(String(p.times ?? 1), 'time', 'times')} in the event "${String(p.title ?? '')}"`,
     'mail.claim': (p) => `Claimed the attachments of the mail "${String(p.title ?? '')}"`,
     'admin.rename': (p) =>
       `An admin renamed the restaurant from "${String(p.from ?? '')}" to "${String(p.to ?? '')}": ${String(p.reason ?? '')}`,

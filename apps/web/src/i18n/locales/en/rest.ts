@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const rest: Messages['rest'] = {
   info: {
@@ -30,7 +31,7 @@ const rest: Messages['rest'] = {
   floor: {
     loadFailed: 'Could not load tables',
     tableNo: (n) => `Table ${n}`,
-    last: (coin, exp) => `Last round ${coin} coins / ${exp} EXP`,
+    last: (coin, exp) => `Last round ${coin} ${plEn(coin, 'coin', 'coins')} / ${exp} EXP`,
     kill: 'Squash the roach',
     killed: 'Roach squashed',
     killFailed: 'Could not squash the roach',
@@ -48,7 +49,7 @@ const rest: Messages['rest'] = {
     avatarSet: 'Avatar changed',
     avatarFailed: 'Could not change the avatar',
     door: 'Door',
-    doorCoin: (n) => `${n} coins`,
+    doorCoin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
     doorSet: 'Door changed',
     doorFailed: 'Could not change the door',
     notice: 'Notice board',
@@ -61,11 +62,11 @@ const rest: Messages['rest'] = {
     iconFailed: 'Could not update the badge',
     shopTitle: 'Limited titles',
     shopMeta: (coin: string, days: number) =>
-      `${coin} coins · ${days > 0 ? `leaves in ${days} day${days === 1 ? '' : 's'}` : 'leaves today'}`,
+      `${coin} ${plEn(coin, 'coin', 'coins')} · ${days > 0 ? `leaves in ${days} day${days === 1 ? '' : 's'}` : 'leaves today'}`,
     buy: 'Buy',
     owned: 'Owned',
     buyConfirm: (title: string, coin: string) =>
-      `Buy the limited title "${title}" for ${coin} coins? It can't be bought once it leaves the shop.`,
+      `Buy the limited title "${title}" for ${coin} ${plEn(coin, 'coin', 'coins')}? It can't be bought once it leaves the shop.`,
     bought: (title: string) => `You bought the limited title "${title}". Choose below whether to show it.`,
     buyFailed: 'Could not buy the title',
   },
@@ -77,10 +78,11 @@ const rest: Messages['rest'] = {
     signInFailed: 'Could not check in',
     claimed: (p) => `✓ ${p}-point reward claimed`,
     claim: (p, double) => `Claim ${p}-point reward${double ? ' ×2' : ''}`,
-    need: (p, left) => `${p} points (${left} to go)`,
-    kujiHint: (p, num) => `The ${p}-point reward also gives ${num} Ichiban Kuji tickets`,
+    need: (p, left) => `${p} ${plEn(p, 'point', 'points')} (${left} to go)`,
+    kujiHint: (p, num) =>
+      `The ${p}-point reward also gives ${num} Ichiban Kuji ${plEn(num, 'ticket', 'tickets')}`,
     full: '✓ Done',
-    locked: (star) => `🔒 Opens at ${star} stars`,
+    locked: (star) => `🔒 Opens at ${star} ${plEn(star, 'star', 'stars')}`,
     per: (p) => `${p} ${p === 1 ? 'point' : 'points'} each`,
     main: 'Main quest',
     mainDone: 'Main quest complete',

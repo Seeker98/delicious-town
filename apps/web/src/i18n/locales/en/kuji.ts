@@ -1,18 +1,19 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const kuji: Messages['kuji'] = {
   title: 'Ichiban Kuji',
-  diamond: (n) => `${n} diamonds`,
-  coin: (n) => `${n} coins`,
+  diamond: (n) => `${n} ${plEn(n, 'diamond', 'diamonds')}`,
+  coin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
   exp: (n) => `${n} EXP`,
   renown: (n) => `${n} Renown`,
   lastTier: 'Last Prize',
   tier: (k) => `Prize ${k}`,
-  bought: (n) => `Bought ${n} kuji tickets`,
+  bought: (n) => `Bought ${n} kuji ${plEn(n, 'ticket', 'tickets')}`,
   buyFailed: 'Purchase failed',
   drawFailed: 'Draw failed',
   rule: (total) =>
-    `Each pool has ${total} tickets and every draw removes one; whoever draws the last ticket also wins the Last Prize. A new pool opens at 0:00 every day, and undrawn tickets expire.`,
+    `Each pool has ${total} ${plEn(total, 'ticket', 'tickets')} and every draw removes one; whoever draws the last ticket also wins the Last Prize. A new pool opens at 0:00 every day, and undrawn tickets expire.`,
   theme: (month, name) => `Theme for month ${month}: ${name}`,
   themeLimited: " This month's limited figures can only be drawn this month.",
   closed: "Today's pools are all drawn. Come back at 0:00 tomorrow.",
@@ -26,11 +27,11 @@ const kuji: Messages['kuji'] = {
   lineNormal: 'Standard',
   lineDeluxe: 'Deluxe',
   ticketsDeluxe: (n) => `My deluxe kuji tickets: ${n}`,
-  boughtDeluxe: (n) => `Bought ${n} deluxe kuji tickets`,
+  boughtDeluxe: (n) => `Bought ${n} deluxe kuji ${plEn(n, 'ticket', 'tickets')}`,
   deluxeNote:
     "Deluxe pool: the A prize and the Last Prize give this month's limited title and are announced to the whole server.",
   buyPrefix: 'Buy',
-  buyTotal: (coin) => `tickets for ${coin} coins`,
+  buyTotal: (coin) => `tickets for ${coin} ${plEn(coin, 'coin', 'coins')}`,
   buy: 'Buy tickets',
   buyLeft: (n) => `${n} more today`,
   buyMax: (n) => `You can buy at most ${n} more today`,

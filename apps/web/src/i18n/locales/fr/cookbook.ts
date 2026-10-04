@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const cookbook: Messages['cookbook'] = {
   filters: {
@@ -17,7 +18,7 @@ const cookbook: Messages['cookbook'] = {
   upgrade: 'Améliorer',
   useMaster: (level) => `Avec un universel niv. ${level}`,
   counts: (streetLearned, streetTotal, learned, total) =>
-    `Cette rue : ${streetLearned}/${streetTotal} apprises · ${learned} / ${total} recettes au total`,
+    `Cette rue : ${streetLearned}/${streetTotal} apprises · ${learned} / ${total} ${plFr(total, 'recette', 'recettes')} au total`,
   info: (street, level, taste, coin) => `${street} · Difficulté ${level} · Goût ${taste} · Prix ${coin}`,
   grade: 'Qualité',
   foodsNeeded: 'Ingrédients requis',

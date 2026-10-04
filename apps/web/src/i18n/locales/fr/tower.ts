@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Tour des chefs',
@@ -25,11 +26,11 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `L'étage ${floor} et au-dessus ouvrent après ${hour} h`,
     tired: "Il est fatigué pour aujourd'hui",
     head: (power, left, total, tickets, strength) =>
-      `Ma puissance ${power} · ${left}/${total} défis restants aujourd'hui · Tickets de défi ${tickets} (à utiliser dans l'entrepôt, un défi de plus aujourd'hui) · Énergie ${strength}`,
+      `Ma puissance ${power} · ${left}/${total} ${plFr(total, 'défi restant', 'défis restants')} aujourd'hui · Tickets de défi ${tickets} (à utiliser dans l'entrepôt, un défi de plus aujourd'hui) · Énergie ${strength}`,
     name: (floor, name) => `Étage ${floor} · ${name}`,
     power: (n) => `Puissance ${n}`,
     meta: (note, level, name, left, max) =>
-      `« ${note} » À partir du niv. ${level} ; encore ${left}/${max} défi(s) contre ${name} aujourd'hui`,
+      `« ${note} » À partir du niv. ${level} ; encore ${left}/${max} ${plFr(max, 'défi', 'défis')} contre ${name} aujourd'hui`,
     mc: (name, price) => ` ; plat signature du jour ${name} (${price} la part)`,
     test: (n) => `S'entraîner (${n} énergie)`,
     go: (n) => `Défier (${n} énergie)`,
@@ -43,13 +44,15 @@ const tower: Messages['tower'] = {
   },
   rank: {
     loadFailed: 'Impossible de charger le classement des chefs',
-    top: (top, gap) => `Pour défier le top ${top}, vous devez être classé à ${gap} places au plus`,
+    top: (top, gap) =>
+      `Pour défier le top ${top}, vous devez être classé à ${gap} ${plFr(gap, 'place', 'places')} au plus`,
     occupied: (n) => `Vous prenez la place ${n}`,
     occupyFailed: 'Impossible de prendre la place',
     myRank: 'Mon rang ',
     unranked: 'Non classé',
     rankN: (n) => `${n === 1 ? '1er' : `${n}e`}`,
-    head: (left, strength) => ` · encore ${left} défi(s) aujourd'hui · ${strength} énergie chacun`,
+    head: (left, strength) =>
+      ` · encore ${left} ${plFr(left, 'défi', 'défis')} aujourd'hui · ${strength} énergie chacun`,
     weekly:
       'Nouveau classement chaque lundi à 0 h : les places 1 à 3, 4 à 8 et 9 à 15 reçoivent un coffret ; les trois premiers deviennent Dieu, Sage et Roi des chefs',
     slotName: (name, level) => `${name} (niv. ${level})`,

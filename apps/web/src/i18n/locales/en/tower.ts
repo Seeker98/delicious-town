@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Chef Tower',
@@ -25,11 +26,11 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `Floor ${floor} and up open after ${hour}:00`,
     tired: "He's tired for today",
     head: (power, left, total, tickets, strength) =>
-      `My chef power ${power} · ${left}/${total} challenges left today · Challenge tickets ${tickets} (use in Storage for one more today) · Stamina ${strength}`,
+      `My chef power ${power} · ${left}/${total} ${plEn(total, 'challenge', 'challenges')} left today · Challenge tickets ${tickets} (use in Storage for one more today) · Stamina ${strength}`,
     name: (floor, name) => `Floor ${floor} · ${name}`,
     power: (n) => `Chef power ${n}`,
     meta: (note, level, name, left, max) =>
-      `"${note}" From Lv. ${level}; ${left}/${max} challenges against ${name} left today`,
+      `"${note}" From Lv. ${level}; ${left}/${max} ${plEn(max, 'challenge', 'challenges')} against ${name} left today`,
     mc: (name, price) => `; today's signature dish ${name} (${price} each)`,
     test: (n) => `Practice (${n} Stamina)`,
     go: (n) => `Challenge (${n} Stamina)`,
@@ -43,13 +44,15 @@ const tower: Messages['tower'] = {
   },
   rank: {
     loadFailed: "Couldn't load the chef ranking",
-    top: (top, gap) => `To challenge the top ${top}, you must be ranked within ${gap} places`,
+    top: (top, gap) =>
+      `To challenge the top ${top}, you must be ranked within ${gap} ${plEn(gap, 'place', 'places')}`,
     occupied: (n) => `You took #${n}`,
     occupyFailed: "Couldn't take the spot",
     myRank: 'My rank ',
     unranked: 'Unranked',
     rankN: (n) => `#${n}`,
-    head: (left, strength) => ` · ${left} challenges left today · ${strength} Stamina each`,
+    head: (left, strength) =>
+      ` · ${left} ${plEn(left, 'challenge', 'challenges')} left today · ${strength} Stamina each`,
     weekly:
       'A new board every Monday at 0:00: ranks 1–3, 4–8 and 9–15 get rank gift packs; the top three become Chef God, Chef Sage and Chef King',
     slotName: (name, level) => `${name} (Lv. ${level})`,

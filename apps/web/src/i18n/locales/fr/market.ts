@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const market: Messages['market'] = {
   sections: {
@@ -9,7 +10,7 @@ const market: Messages['market'] = {
   specialNote: (min) =>
     `e-mail vérifié requis, 1 de chaque par personne ; un achat par réseau toutes les ${min} min`,
   manualConfirm: (cost, time) =>
-    `Dépenser ${cost} pièces pour mettre 4 plats du jour en rayon ? Ils seront retirés au prochain réapprovisionnement (${time}).`,
+    `Dépenser ${cost} ${plFr(cost, 'pièce', 'pièces')} pour mettre 4 plats du jour en rayon ? Ils seront retirés au prochain réapprovisionnement (${time}).`,
   manualDone: (renown) => `Réapprovisionné. Renommée +${renown}`,
   manualFailed: 'Échec du réapprovisionnement',
   buyFailed: "Échec de l'achat",
@@ -22,7 +23,7 @@ const market: Messages['market'] = {
   guessFailed: 'Échec du pronostic',
   loadFailed: 'Impossible de charger le marché',
   nextStock: (time) => `Prochain arrivage ${time}`,
-  manualBtn: (cost) => `Réapprovisionner (${cost} pièces)`,
+  manualBtn: (cost) => `Réapprovisionner (${cost} ${plFr(cost, 'pièce', 'pièces')})`,
   specialWait: (min) =>
     `Vous venez d'acheter une promo. Votre réseau doit attendre ${min} min avant la suivante`,
   empty: 'Rien en rayon pour le moment',
@@ -30,15 +31,16 @@ const market: Messages['market'] = {
   ownFree: 'Votre propre stock, gratuit',
   stockedBy: (name) => `Mis en rayon par ${name}`,
   left: (n) => `Reste ${n}`,
-  priceLine: (price, left, bought, limit) => `${price} pièces · reste ${left} · acheté ${bought}/${limit}`,
+  priceLine: (price, left, bought, limit) =>
+    `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left} · acheté ${bought}/${limit}`,
   buy: 'Acheter',
   guess: {
     title: 'Pronostic du marché',
     hint: (hour) => `Devinez ce que vendra le prochain marché du jour (${hour} h)`,
-    last: (n) => `La dernière fois : ${n} bonne(s) réponse(s)`,
+    last: (n) => `La dernière fois : ${n} ${plFr(n, 'bonne réponse', 'bonnes réponses')}`,
     joined: (list) => `Inscrit : ${list}`,
-    rule: (max, cost) => `Choisissez jusqu'à ${max}, coût : ${cost} bons mystère`,
-    join: (n) => `S'inscrire (${n} choisi(s))`,
+    rule: (max, cost) => `Choisissez jusqu'à ${max}, coût : ${cost} ${plFr(cost, 'bon', 'bons')} mystère`,
+    join: (n) => `S'inscrire (${n} ${plFr(n, 'choisi', 'choisis')})`,
   },
   sis: {
     name: 'Sœur du Potager',
@@ -64,7 +66,7 @@ const market: Messages['market'] = {
       'Une question ? Consultez la section « Guides » du forum.',
       'Le marché premium ne se réapprovisionne que trois fois par jour. Ratez-le et il faudra attendre.',
     ],
-    specialLeft: (n) => `Encore ${n} promo(s). Faites vite !`,
+    specialLeft: (n) => `Encore ${n} ${plFr(n, 'promo', 'promos')}. Faites vite !`,
     specialSoldOut: (time) => `Les promos sont épuisées. Prochain arrivage à ${time}.`,
     nextDaily: (time) => `Le marché du jour se réapprovisionne à ${time}. Repassez voir.`,
     guessOpen: 'Vous n’avez pas encore fait votre pronostic pour ce tour. Essayez ci-dessous ?',

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Forum',
@@ -13,7 +14,7 @@ const forum: Messages['forum'] = {
   pinned: 'Épinglé',
   featured: 'Sélection',
   itemMeta: (name, when, read, up, reply) =>
-    `${name} · ${when} · ${read} vues · ${up} j'aime · ${reply} réponses`,
+    `${name} · ${when} · ${read} ${plFr(read, 'vue', 'vues')} · ${up} j'aime · ${reply} ${plFr(reply, 'réponse', 'réponses')}`,
   post: {
     loadFailed: 'Impossible de charger le sujet',
     opFailed: "L'action a échoué",
@@ -25,7 +26,7 @@ const forum: Messages['forum'] = {
     replyFailed: 'Impossible de répondre',
     back: 'Retour au forum',
     edited: (when) => ` · modifié ${when}`,
-    read: (n) => ` · ${n} vues`,
+    read: (n) => ` · ${n} ${plFr(n, 'vue', 'vues')}`,
     edit: 'Modifier',
     delete: 'Supprimer',
     pin: 'Épingler',

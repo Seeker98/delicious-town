@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
   tabs: { cupboard: 'Despensa', fridge: 'Nevera' },
@@ -24,10 +25,10 @@ const cupboard: Messages['cupboard'] = {
   handleFailed: 'No se pudo procesar',
   exchangeFailed: 'No se pudo cambiar',
   loadFailed: 'No se pudo cargar la despensa',
-  thawConfirm: (n, name, coin) => `¿Descongelar ${n} ${name} por ${coin} monedas?`,
+  thawConfirm: (n, name, coin) => `¿Descongelar ${n} ${name} por ${coin} ${plEs(coin, 'moneda', 'monedas')}?`,
   thawFailed: 'No se pudo descongelar',
   fridgeEmpty: 'La nevera está vacía',
   noRoom: 'No cabe en la despensa',
-  thaw: (n, coin) => `Descongelar ×${n} (${coin} monedas)`,
+  thaw: (n, coin) => `Descongelar ×${n} (${coin} ${plEs(coin, 'moneda', 'monedas')})`,
 };
 export default cupboard;

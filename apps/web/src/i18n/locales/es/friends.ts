@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const friends: Messages['friends'] = {
   tabs: { friends: 'Amigos', requests: 'Solicitudes', find: 'Buscar', feed: 'Actividad' },
@@ -43,7 +44,8 @@ const friends: Messages['friends'] = {
     door: 'Puerta',
     equips: 'Utensilios',
     special: 'Plato estrella: ',
-    specialLine: (grade, left, price) => `${grade} · quedan ${left} · ${price} monedas cada uno`,
+    specialLine: (grade, left, price) =>
+      `${grade} · quedan ${left} · ${price} ${plEs(price, 'moneda', 'monedas')} cada uno`,
     tasted: '¡Probado! Tu energía subió',
     tasteFailed: 'No se pudo probar',
     tastedAlready: 'Ya probado',
@@ -80,10 +82,10 @@ const friends: Messages['friends'] = {
     end: '.',
     left: (h, m) => `${h} h ${m} min`,
     strength: (n) => `Energía -${n}. `,
-    tickets: (n) => `, y además ${n} vale(s) Delicioso`,
+    tickets: (n) => `, y además ${n} ${plEs(n, 'vale', 'vales')} Delicioso`,
     food: (name) => `Encontraste ${name}`,
     ticket: 'Había un vale misterioso en la despensa',
-    caught: (coin) => `Te pilló la ratonera y perdiste ${coin} monedas`,
+    caught: (coin) => `Te pilló la ratonera y perdiste ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
     escaped: 'Casi te pilla la ratonera. ¡Qué suerte!',
     nothing: 'No había nada',
     loadFailed: 'No se pudo cargar la despensa',
@@ -98,14 +100,14 @@ const friends: Messages['friends'] = {
     done: 'Cambio hecho',
     failed: 'No se pudo cambiar',
     level: (l) => `Nv. ${l}`,
-    left: (n) => `Hoy te quedan ${n} cambios`,
+    left: (n) => `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'cambio', 'cambios')}`,
     storm: '; con huracán puedes tomar sus ingredientes bloqueados (50 % de que te pillen)',
     theirs: 'Los suyos',
     theirsEmpty: 'No hay ingredientes de este nivel',
     mine: 'Tú das (2 cada vez)',
     mineEmpty: 'No tienes ingredientes de este nivel',
     btn: 'Cambiar',
-    fee: (n) => ` (comisión ${n} monedas)`,
+    fee: (n) => ` (comisión ${n} ${plEs(n, 'moneda', 'monedas')})`,
   },
   report: {
     open: 'Denunciar',

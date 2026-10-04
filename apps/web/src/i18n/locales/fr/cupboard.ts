@@ -1,10 +1,11 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
   tabs: { cupboard: 'Garde-manger', fridge: 'Frigo' },
   newBadge: 'Nouveau',
   summary: (p) =>
-    `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} traitement(s) gratuit(s) restant(s) aujourd'hui · Objectif de la rue : qualité ${p.grade}`,
+    `Emplacements ${p.used}/${p.slots} · Verrouillés ${p.lockUsed}/${p.lockSlots} · Max ${p.max} chacun · ${p.free} ${plFr(p.free, 'traitement gratuit restant', 'traitements gratuits restants')} aujourd'hui · Objectif de la rue : qualité ${p.grade}`,
   levelCount: (label, n) => `${label} (${n})`,
   levelEmpty: 'Aucun ingrédient de ce niveau',
   streetNeed: (n) => `La rue en demande ${n}`,
@@ -20,14 +21,14 @@ const cupboard: Messages['cupboard'] = {
   handleHint: (decomposeMax, composeMax) =>
     `Jusqu'à ${decomposeMax} par décomposition, ${composeMax} par combinaison (nombre pair). Décomposer : 1 → 2 chances d'obtenir un ingrédient de niveau inférieur. Combiner : 2 → 1 chance d'obtenir un ingrédient de niveau supérieur, jamais un ingrédient déjà plein dans le garde-manger.`,
   handleResult: (success, chances, strengthUsed) =>
-    `${success}/${chances} réussite(s)${strengthUsed ? ', 1 énergie utilisée' : ''}`,
+    `${success}/${chances} ${plFr(chances, 'réussite', 'réussites')}${strengthUsed ? ', 1 énergie utilisée' : ''}`,
   handleFailed: 'Échec',
   exchangeFailed: "Échec de l'échange",
   loadFailed: 'Impossible de charger le garde-manger',
-  thawConfirm: (n, name, coin) => `Décongeler ${n} ${name} pour ${coin} pièces ?`,
+  thawConfirm: (n, name, coin) => `Décongeler ${n} ${name} pour ${coin} ${plFr(coin, 'pièce', 'pièces')} ?`,
   thawFailed: 'Échec de la décongélation',
   fridgeEmpty: 'Le frigo est vide',
   noRoom: 'Pas de place dans le garde-manger',
-  thaw: (n, coin) => `Décongeler ×${n} (${coin} pièces)`,
+  thaw: (n, coin) => `Décongeler ×${n} (${coin} ${plFr(coin, 'pièce', 'pièces')})`,
 };
 export default cupboard;

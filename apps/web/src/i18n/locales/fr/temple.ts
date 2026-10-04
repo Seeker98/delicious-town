@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const temple: Messages['temple'] = {
   title: 'Temple',
@@ -18,7 +19,8 @@ const temple: Messages['temple'] = {
     mapOption: (name, num, strength) => `${name} (${num}, ${strength} énergie chacune)`,
     btn: (n) => `Explorer ×${n}`,
     strength: (n) => `Énergie ${n}`,
-    result: (ok, fail) => `${ok} réussite(s), ${fail} perdu(s) en route`,
+    result: (ok, fail) =>
+      `${ok} ${plFr(ok, 'réussite', 'réussites')}, ${fail} ${plFr(fail, 'perdu', 'perdus')} en route`,
     rare: (list) => `Ingrédients mystère : ${list}`,
     foods: (list) => `Ingrédients : ${list}`,
     exp: (n) => `La lampe à pétrole a rapporté ${n} EXP`,
@@ -28,11 +30,11 @@ const temple: Messages['temple'] = {
     noRecipe:
       "Pas de recette mystère : chaque expertise utilise 1 recette mystère et 1 outil d'expertise (les recettes mystère sont vendues à la boutique)",
     noTool: "Vous n'avez pas cet outil d'expertise, essayez-en un autre",
-    done: (n, ok) => `${n} expertise(s), ${ok} réussie(s)`,
+    done: (n, ok) => `${n} ${plFr(n, 'expertise', 'expertises')}, ${ok} ${plFr(ok, 'réussie', 'réussies')}`,
     failed: "Échec de l'expertise",
     title: 'Expertiser des recettes mystère',
     rule: (n) =>
-      `Chaque essai utilise 1 recette mystère et 1 outil d'expertise ; une réussite donne un fragment. Vous avez ${n} recette(s) mystère.`,
+      `Chaque essai utilise 1 recette mystère et 1 outil d'expertise ; une réussite donne un fragment. Vous avez ${n} ${plFr(n, 'recette', 'recettes')} mystère.`,
     toolOption: (name, min, max, rate, have) => `${name} (niv. ${min} à ${max}, ${rate} %, possédé ${have})`,
     btn: (n) => `Expertiser ×${n}`,
     noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',
@@ -116,10 +118,10 @@ const temple: Messages['temple'] = {
     tentacle: ' ; 1 tentacule',
     shop: 'Boutique des tentacules',
     shopRule: (n) =>
-      `Vous avez ${n} tentacule(s). Échangez autant de tentacules que le niveau du plat contre un fragment`,
+      `Vous avez ${n} ${plFr(n, 'tentacule', 'tentacules')}. Échangez autant de tentacules que le niveau du plat contre un fragment`,
     mcOption: (name, level) => `${name} (niv. ${level})`,
     bought: 'Échangé',
-    exchange: (n) => `Échanger (${n} tentacules)`,
+    exchange: (n) => `Échanger (${n} ${plFr(n, 'tentacule', 'tentacules')})`,
     freeRefresh: 'Actualiser gratuitement',
     refresh: 'Actualiser (1 tentacule)',
     seedStock: 'Graines',

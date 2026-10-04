@@ -1,5 +1,5 @@
 import type { Messages } from '../..';
-import { n, num, str } from '../../helpers';
+import { n, num, str, plEs } from '../../helpers';
 
 const server: Messages['server'] = {
   mail: {
@@ -51,7 +51,7 @@ const server: Messages['server'] = {
             ? ''
             : num(p.banDays) === 0
               ? ' Tu cuenta ha sido baneada de forma permanente.'
-              : ` Tu cuenta ha sido baneada durante ${num(p.banDays)} día(s).`;
+              : ` Tu cuenta ha sido baneada durante ${num(p.banDays)} ${plEs(num(p.banDays), 'día', 'días')}.`;
         return `Tu contenido (${str(p.targetName)}) incumple las normas y ha sido ${what}.${ban}\nNota: ${str(p.note)}`;
       },
     },
@@ -133,7 +133,7 @@ const server: Messages['server'] = {
     device: 'Instalación',
     equip: 'Utensilios',
     hangover: 'Resaca',
-    suit: (name, need) => `${name} (${need} piezas)`,
+    suit: (name, need) => `${name} (${need} ${plEs(need, 'pieza', 'piezas')})`,
     suitFallback: 'Conjunto',
     bless: (name) => `Deseo de hoy: ${name}`,
   },

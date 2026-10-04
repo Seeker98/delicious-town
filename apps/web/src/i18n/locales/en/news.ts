@@ -1,7 +1,7 @@
 import { SHARED_GOODS } from '@dt/shared';
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
-import { list, num, str, type P } from '../../helpers';
+import { list, num, str, type P, plEn } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
   'flip.caught': 'caught raiding pantries',
@@ -21,12 +21,12 @@ const aPrize = (tier: string) => `${/^[AEFHILMNORSX]/.test(tier) ? 'an' : 'a'} $
 function fundNews(w: string, p: P): string {
   const coin = formatNum(num(p.coin));
   if (p.tier === 'A')
-    return `👑 Cornerstone capital makes its entrance! [${w}] injects ${coin} coins in one go and seizes the Town Development Fund's A-tier lead investor seat!`;
+    return `👑 Cornerstone capital makes its entrance! [${w}] injects ${coin} ${plEn(coin, 'coin', 'coins')} in one go and seizes the Town Development Fund's A-tier lead investor seat!`;
   if (p.tier === 'B')
-    return `Big move! [${w}] has locked in ${coin} coins of Town Development Fund B-class units!`;
+    return `Big move! [${w}] has locked in ${coin} ${plEn(coin, 'coin', 'coins')} of Town Development Fund B-class units!`;
   if (p.tier === 'C')
-    return `The real economy is bouncing back! [${w}] subscribed to ${coin} coins of Town Development Fund C-class units`;
-  return `[${w}] deposited ${coin} coins into the Town Development Fund`;
+    return `The real economy is bouncing back! [${w}] subscribed to ${coin} ${plEn(coin, 'coin', 'coins')} of Town Development Fund C-class units`;
+  return `[${w}] deposited ${coin} ${plEn(coin, 'coin', 'coins')} into the Town Development Fund`;
 }
 
 function predictResult(p: P): string {
@@ -39,19 +39,21 @@ function predictResult(p: P): string {
   if (players === 0) return result;
   const winners = num(p.winners);
   return winners === 0
-    ? `${result}. ${players} restaurants took part, nobody got it right`
-    : `${result}. ${players} restaurants took part, ${winners} got it right, ${formatNum(num(p.paid))} coins paid out`;
+    ? `${result}. ${players} ${plEn(players, 'restaurant', 'restaurants')} took part, nobody got it right`
+    : `${result}. ${players} ${plEn(players, 'restaurant', 'restaurants')} took part, ${winners} got it right, ${formatNum(num(p.paid))} ${plEn(formatNum(num(p.paid)), 'coin', 'coins')} paid out`;
 }
 
 const news: Messages['news'] = {
   render: {
-    'bar.cup': (w, p) => `${w} guessed the cup ${num(p.times)} times in a row at the bar`,
-    'bar.fg': (w, p) => `${w} won ${num(p.times)} rounds of rock-paper-scissors in a row at the bar`,
+    'bar.cup': (w, p) =>
+      `${w} guessed the cup ${num(p.times)} ${plEn(num(p.times), 'time', 'times')} in a row at the bar`,
+    'bar.fg': (w, p) =>
+      `${w} won ${num(p.times)} ${plEn(num(p.times), 'round', 'rounds')} of rock-paper-scissors in a row at the bar`,
     'bar.num': (w) => `${w} hit the number on the bar's wheel`,
     'bar.slot': (w, p, x) =>
       `${w} won ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)} on the bar's slot machine`,
     'bar.devil': (w, p) =>
-      `${w} downed three Devil's Chili cups without flinching and won ${num(p.payout)} Mystery Vouchers`,
+      `${w} downed three Devil's Chili cups without flinching and won ${num(p.payout)} Mystery ${plEn(num(p.payout), 'Voucher', 'Vouchers')}`,
     'bar.memory': (w) => `${w} remembered all 7 ingredients in Memory Mixing`,
     'bar.darts': (w) => `${w} hit three bullseyes in a row and left the bar owner speechless`,
     'equip.stress': (w, p, x) => `${w} enhanced ${x.goodsName(num(p.goodsId))} to +${num(p.stress)}`,
@@ -83,7 +85,7 @@ const news: Messages['news'] = {
     'rest.rename': (_w, p) => `${str(p.from)} is now called ${str(p.to)}`,
     'restaurant.open': (w) => `${w} opened for business`,
     'shop.special': (_w, p, x) => `Today's shop special: ${x.goodsName(num(p.goodsId))}`,
-    'star.up': (w, p) => `${w} reached ${num(p.star)} stars`,
+    'star.up': (w, p) => `${w} reached ${num(p.star)} ${plEn(num(p.star), 'star', 'stars')}`,
     'takeaway.customer': (w, p, x) => `${w} met ${x.goodsName(num(p.goodsId))} while delivering takeaway`,
     'temple.explore.rare': (w, p, x) =>
       `${w} found ${list(p.foods)

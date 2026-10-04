@@ -106,6 +106,15 @@ describe('EquipView', () => {
     expect(w.get('[data-testid="attr-table"]').find('table').exists()).toBe(true);
   });
 
+  it('属性表每项属性一行、只有加点/厨具/合计三列：英法西文在手机上也不用左右滑（质量期 ④）', async () => {
+    const w = await mountView();
+    const table = w.get('[data-testid="attr-table"] table');
+    expect(table.findAll('thead th')).toHaveLength(4);
+    const rows = table.findAll('tbody tr');
+    expect(rows).toHaveLength(6);
+    expect(rows[0]!.findAll('th, td')).toHaveLength(4);
+  });
+
   it('显示属性、厨力、5 个部位和套装档位', async () => {
     const w = await mountView();
     expect(w.find('[data-testid="power"]').text()).toBe('7');

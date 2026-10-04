@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const equip: Messages['equip'] = {
   title: 'Utensilios y puntos',
@@ -7,7 +8,7 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Poder de chef',
   powerNote:
-    ' (suma de los cinco atributos + Suerte/2; cuenta en la Torre de chefs, la clasificación de chefs y los duelos entre amigos)',
+    '(suma de los cinco atributos + Suerte/2; cuenta en la Torre de chefs, la clasificación de chefs y los duelos entre amigos)',
   empty: 'Vacío',
   noPieces: 'No hay utensilios para esta ranura',
   needLevel: (lv) => `Requiere nivel ${lv}`,
@@ -17,7 +18,7 @@ const equip: Messages['equip'] = {
   unwearFailed: 'No se pudo quitar',
   unwearAll: 'Quitar todo',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
-  suitTier: (need, desc) => `${need} piezas: ${desc}`,
+  suitTier: (need, desc) => `${need} ${plEs(need, 'pieza', 'piezas')}: ${desc}`,
   gem: 'Gemas',
   presets: 'Preajustes',
   batch: 'Limpieza rápida',
@@ -35,10 +36,10 @@ const equip: Messages['equip'] = {
   batchNote:
     'Solo se muestran utensilios sin bloquear, sin equipar, sin mejorar, sin gemas y fuera de los preajustes',
   essence: (n) => `${n} de esencia`,
-  coins: (n) => `${n} monedas`,
+  coins: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
   batchTotal: (text) => `Total ${text}`,
   batchConfirm: (n, salvage, total) =>
-    `¿Procesar ${n} utensilio${n === 1 ? '' : 's'} por ${salvage ? `${total} de esencia` : `${total} monedas`}?`,
+    `¿Procesar ${n} utensilio${n === 1 ? '' : 's'} por ${salvage ? `${total} de esencia` : `${total} ${plEs(total, 'moneda', 'monedas')}`}?`,
   process: 'Procesar',
   processFailed: 'No se pudo procesar',
   loadFailed: 'No se pudieron cargar los utensilios',
@@ -55,14 +56,15 @@ const equip: Messages['equip'] = {
     rateParts: (base, luck, weather, floor) =>
       `(base ${base} + suerte ${luck} + clima ${weather} + garantía ${floor})`,
     next: (gain, total) => `Si sale bien, atributos totales +${gain} (hasta ${total}, sin gemas)`,
-    cost: (essence, have, coin) => `Coste: esencia ×${essence} (tienes ${have}), ${coin} monedas`,
+    cost: (essence, have, coin) =>
+      `Coste: esencia ×${essence} (tienes ${have}), ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
     useStone: (n) => `Usar una Piedra de mejora (éxito seguro; tienes ${n})`,
     maxed: 'Mejora al máximo',
     backOption: (name, back, num) => `${name} (deshace ${back} nivel(es); tienes ${num})`,
     rollback: 'Deshacer',
     gems: 'Gemas',
     holeNote: (max, coinPerLevel) =>
-      `(hasta ${max} engarces; ${coinPerLevel ? `quitar cuesta rango × ${coinPerLevel} monedas` : 'quitar es gratis ahora (menos de 2 estrellas o día de lluvia ácida)'})`,
+      `(hasta ${max} ${plEs(max, 'engarce', 'engarces')}; ${coinPerLevel ? `quitar cuesta rango × ${coinPerLevel} ${plEs(coinPerLevel, 'moneda', 'monedas')}` : 'quitar es gratis ahora (menos de 2 estrellas o día de lluvia ácida)'})`,
     ungem: 'Quitar',
     gemOption: (name, num, level) => `${name} (tienes ${num}; cuesta ${level} de energía)`,
     inlay: 'Engarzar',
@@ -88,11 +90,11 @@ const equip: Messages['equip'] = {
     confirmRollback: (item, n, waste) =>
       `¿Usar 1 ${item} para deshacer ${n} nivel(es) de mejora?${waste > 0 ? ` Los ${waste} nivel(es) sobrantes se pierden.` : ''}`,
     rollbackFailed: 'No se pudo deshacer',
-    confirmUngem: (coin) => `Quitar esta gema cuesta ${coin} monedas. ¿Continuar?`,
+    confirmUngem: (coin) => `Quitar esta gema cuesta ${coin} ${plEs(coin, 'moneda', 'monedas')}. ¿Continuar?`,
     ungemFailed: 'No se pudo quitar la gema',
     confirmSalvage: (n) => `¿Desmontar por ${n} de esencia de utensilio?`,
     salvageFailed: 'No se pudo desmontar',
-    confirmSell: (coin) => `¿Vender por ${coin} monedas?`,
+    confirmSell: (coin) => `¿Vender por ${coin} ${plEs(coin, 'moneda', 'monedas')}?`,
     sellFailed: 'No se pudo vender',
     inlayFailed: 'No se pudo engarzar',
     drillFailed: 'No se pudo abrir el engarce',
@@ -106,7 +108,7 @@ const equip: Messages['equip'] = {
     next: (name, rate) => `→ ${name}, probabilidad de éxito ${rate}`,
     levelUp: (n) => `Subir ×${n}`,
     done: (success, lucky, fail, exp) =>
-      `Subida terminada: ${success} éxito(s)${lucky > 0 ? ` (${lucky} por suerte)` : ''}, ${fail} fallo(s)${exp ? `, ${exp} EXP ganados` : ''}`,
+      `Subida terminada: ${success} ${plEs(success, 'éxito', 'éxitos')}${lucky > 0 ? ` (${lucky} por suerte)` : ''}, ${fail} ${plEs(fail, 'fallo', 'fallos')}${exp ? `, ${exp} EXP ganados` : ''}`,
     failed: 'No se pudo subir de rango',
     loadFailed: 'No se pudieron cargar las gemas',
   },

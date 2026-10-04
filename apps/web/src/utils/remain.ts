@@ -6,6 +6,12 @@ export function remainText(at: string | null, now: number = Date.now()): string 
   if (!at) return r.forever;
   const minutes = Math.max(0, Math.ceil((new Date(at).getTime() - now) / 60_000));
   if (minutes < 60) return r.minutes(minutes);
+  // 一天以上写天和小时（不写分钟）：“368 小时”在手机上放不下、也不好读（质量期 ④）
+  if (minutes >= 24 * 60) {
+    const d = Math.floor(minutes / (24 * 60));
+    const dh = Math.floor((minutes % (24 * 60)) / 60);
+    return dh === 0 ? r.days(d) : r.daysHours(d, dh);
+  }
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return m === 0 ? r.hours(h) : r.hoursMinutes(h, m);

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const activity: Messages['activity'] = {
   title: 'Events',
@@ -130,10 +131,10 @@ const activity: Messages['activity'] = {
     remain: (n) => `The server needs ${n} more points`,
     mine: (n) => `You need ${n} more points`,
     rank: (from, to) => (from === to ? `#${from}` : `#${from}–${to}`),
-    head: (pool, mine) => `Server ${pool} points · My contribution ${mine}`,
+    head: (pool, mine) => `Server ${pool} ${plEn(pool, 'point', 'points')} · My contribution ${mine}`,
     myRank: (n) => ` · #${n}`,
     allDone: 'All milestones reached',
-    milestone: (n) => `Server ${n} points`,
+    milestone: (n) => `Server ${n} ${plEn(n, 'point', 'points')}`,
     minContribution: (n) => ` (you ≥ ${n})`,
     board: 'Contribution ranking',
     boardSettled: (mailed) => `Ranking settled${mailed ? '; rewards were mailed' : ''}`,
