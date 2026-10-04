@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, restRow, type TestGame } from '../../../test/game';
-import { expireOrders } from './jobs';
+import { addDays, gameDay } from '@dt/shared';
+import { exchangeJobs, expireOrders } from './jobs';
 import { trader, wallet } from './test';
 
 let t: TestGame;
@@ -183,5 +184,30 @@ describe('终审 I1：放不下的食材留在账户里，不写"丢掉了"', ()
     await svc().cancel(r, o.data.order.id);
     expect(await wallet(t, r.restaurantId)).toEqual({ coin: 0, foods: { [f.id]: 3 } });
     expect(await logs(r.restaurantId, 'fridge.drop')).toEqual([]);
+  });
+});
+
+describe('系统收购的每日计数只留 30 天（backlog 156-3）', () => {
+  it('清掉本区服 30 天前的 exchange_maker_day，别的区服和近 30 天的留着；每个游戏日跑一次', async () => {
+    const shardId = await createShard(t.db);
+    const other = await createShard(t.db);
+    const today = gameDay(t.clock.now);
+    const rows = [
+      { shard_id: shardId, foods_id: 1, day: addDays(today, -31), bought: 1 },
+      { shard_id: shardId, foods_id: 1, day: addDays(today, -30), bought: 2 },
+      { shard_id: shardId, foods_id: 2, day: today, bought: 3 },
+      { shard_id: other, foods_id: 1, day: addDays(today, -40), bought: 4 },
+    ];
+    await t.db.insertInto('exchange_maker_day').values(rows).execute();
+    const job = exchangeJobs(t.game.deps).find((j) => j.name === 'exchange-maker-day-prune')!;
+    expect(job.period(t.clock.now, await t.game.deps.shards.settings(shardId))).toBe(today);
+    expect(await job.run({ shardId, now: t.clock.now } as never)).toEqual({ deleted: 1 });
+    const left = await t.db
+      .selectFrom('exchange_maker_day')
+      .select('bought')
+      .where('shard_id', 'in', [shardId, other])
+      .orderBy('bought')
+      .execute();
+    expect(left.map((r) => r.bought)).toEqual([2, 3, 4]);
   });
 });

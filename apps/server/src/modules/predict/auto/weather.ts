@@ -3,7 +3,8 @@ import { gameTime, seededRng, slotKey } from '@dt/shared';
 import { gameSeed } from '../../../core/seed';
 import { featureAvailable } from '../../../core/features';
 import { rollWeather } from '../../world/rules';
-import { dayLabel, WEATHER_TYPE_NAMES, weatherTypeShares } from './odds';
+import { clampP, dayLabel, WEATHER_TYPE_NAMES, weatherTypeShares } from './odds';
+import { roundFinishedAt } from './rounds';
 import type { AutoKind } from './types';
 
 const SLOT_MS = 2 * 3_600_000;
@@ -29,7 +30,7 @@ export const weather: AutoKind = {
     return {
       title: `今天 ${hour} 点自动轮换的天气是${WEATHER_TYPE_NAMES[type]}类吗`,
       description: `以 ${hour} 点系统自动轮换出的天气为准，之后有人用雷神锤改的不算。`,
-      p0: Math.min(0.95, Math.max(0.05, p)),
+      p0: clampP(p),
       closeAt: new Date(start.getTime() - 5 * 60_000),
       resolveAt: new Date(start.getTime() + SLOT_MS),
       params: { hour, type, period: slotKey(c.day, hour) },
@@ -38,6 +39,9 @@ export const weather: AutoKind = {
   async resolve(c, p) {
     const hour = Number(p.hour);
     const period = String(p.period);
+    // 那一轮没跑过（world 关掉、worker 漏跑）先不判；雷神锤只算轮换之后的（backlog 238-2）
+    const rotatedAt = await roundFinishedAt(c.d.db, c.shardId, 'weather', period);
+    if (rotatedAt === null) return null;
     const auto = rollWeather(
       c.d.config,
       hour,
@@ -54,7 +58,7 @@ export const weather: AutoKind = {
       .select('params')
       .where('shard_id', '=', c.shardId)
       .where('type', '=', 'weather.change')
-      .where('created_at', '>=', start)
+      .where('created_at', '>=', rotatedAt)
       .where('created_at', '<', new Date(start.getTime() + SLOT_MS))
       .where(sql<boolean>`params ? 'by'`)
       .orderBy('created_at', 'desc')

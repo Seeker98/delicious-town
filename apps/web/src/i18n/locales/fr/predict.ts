@@ -62,6 +62,7 @@ const predict: Messages['predict'] = {
     estimate: (buy, total, fee, pct) =>
       `${buy ? 'Coût estimé' : 'Gain estimé'} ${total} pièces (frais ${fee} compris) ; « Oui » sera à ${pct} % après l'échange`,
     enterQty: 'Saisissez le nombre de parts (vous ne pouvez pas vendre plus que vous ne détenez)',
+    own: 'Vous avez créé cette question : vous ne pouvez ni acheter ni vendre de parts',
     summary: 'Gain/perte sur cet événement',
     summaryLine: (bought, sold, fees, net) =>
       `Acheté ${bought}, vendu ${sold} (frais ${fees}), mise nette ${net}`,

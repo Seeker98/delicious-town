@@ -68,13 +68,15 @@ export function createPredictService(d: GameDeps) {
     // 加锁顺序：店（runOp）→ 事件行
     const e = await o.tx
       .selectFrom('predict_event')
-      .select(['id', 'title', 'b', 'unit', 'q_yes', 'q_no', 'status', 'close_at'])
+      .select(['id', 'title', 'b', 'unit', 'q_yes', 'q_no', 'status', 'close_at', 'created_by'])
       .where('id', '=', String(id))
       .where('shard_id', '=', o.shardId)
       .forUpdate()
       .executeTakeFirst();
     if (!e) throw new AppError(ErrorCode.NOT_FOUND, 404, { what: 'predict_event', id });
     if (e.status !== 'open' || o.now >= e.close_at) throw invalidState('predict_closed');
+    // 出题人不能交易自己出的题，买卖都不行（backlog 238-1）；别的管理员、协管照常
+    if (e.created_by === o.rest.account_id) throw invalidState('predict_own');
     if (b.qty > t.maxTrade) throw limitReached('predict_trade', { max: t.maxTrade });
     const pos = await o.tx
       .selectFrom('predict_position')
@@ -169,6 +171,7 @@ export function createPredictService(d: GameDeps) {
     'e.kind',
     'e.params',
     'e.result_params',
+    'e.created_by',
     'p.yes',
     'p.no',
     'p.net_cost',
@@ -190,12 +193,13 @@ export function createPredictService(d: GameDeps) {
     kind: string;
     params: Record<string, unknown>;
     result_params: Record<string, unknown> | null;
+    created_by: number | null;
     yes: number | null;
     no: number | null;
     net_cost: number | null;
   };
 
-  const toDto = (r: Row, now: Date): PredictEventDto => {
+  const toDto = (r: Row, now: Date, accountId: number): PredictEventDto => {
     const p = { yes: r.yes ?? 0, no: r.no ?? 0, net_cost: Number(r.net_cost ?? 0) };
     return {
       id: Number(r.id),
@@ -214,6 +218,7 @@ export function createPredictService(d: GameDeps) {
       kind: r.kind,
       params: r.params,
       resultParams: r.result_params,
+      own: r.created_by === accountId,
     };
   };
 
@@ -262,7 +267,7 @@ export function createPredictService(d: GameDeps) {
       maxHold: t.maxHold,
       maxTrade: t.maxTrade,
       unit: t.unit,
-      events: rows.map((x) => toDto(x, now)),
+      events: rows.map((x) => toDto(x, now, ctx.accountId)),
     };
   }
 
@@ -309,7 +314,7 @@ export function createPredictService(d: GameDeps) {
       .execute();
     return {
       event: {
-        ...toDto(r, now),
+        ...toDto(r, now, ctx.accountId),
         description: r.description,
         b: r.b,
         unit: r.unit,

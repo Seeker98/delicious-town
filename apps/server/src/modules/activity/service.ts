@@ -182,7 +182,10 @@ export function createActivityService(d: GameDeps) {
         ? {
             pool: board.pool,
             top: board.top.map((r) => ({ ...r, mine: r.restId === restId })),
-            myRank: await myRankOf(d.db, row.id, shardId, p.counters.points ?? 0),
+            // 自己在缓存的前 10 名里时按缓存的名次写，和表里一致；不在才实时查（backlog 148-3）
+            myRank:
+              board.top.find((r) => r.restId === restId)?.rank ??
+              (await myRankOf(d.db, row.id, shardId, p.counters.points ?? 0)),
           }
         : null,
     };

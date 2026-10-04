@@ -30,6 +30,8 @@ export async function newEvent(
       open_at: t.clock.now,
       close_at: new Date(t.clock.now.getTime() + (o.closeInMs ?? 3_600_000)),
       status: o.status ?? 'open',
+      // 已判定的必须有结果（迁移 0042 的约束）：测试里默认判"是"
+      ...(o.status === 'resolved' ? { outcome: true } : {}),
     })
     .returning('id')
     .executeTakeFirstOrThrow();

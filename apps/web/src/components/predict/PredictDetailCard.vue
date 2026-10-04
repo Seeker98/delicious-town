@@ -244,12 +244,18 @@ async function submit() {
         <button
           type="button"
           class="btn btn-sm btn-primary"
-          :disabled="busy || !list.eligible || !list.enabled || quote === null || limitText !== ''"
+          :disabled="
+            busy || !list.eligible || !list.enabled || detail.event.own || quote === null || limitText !== ''
+          "
           data-testid="pd-submit"
           @click="submit"
         >
           {{ t.predict.detail.submit }}
         </button>
+      </div>
+      <!-- 出题人不能交易自己出的题（backlog 238-1） -->
+      <div v-if="detail.event.own" class="small text-muted mt-1" data-testid="pd-own">
+        {{ t.predict.detail.own }}
       </div>
       <div v-if="limitText" class="small text-danger mt-1" data-testid="pd-limit">{{ limitText }}</div>
       <div class="small text-muted mt-1" data-testid="pd-quote">

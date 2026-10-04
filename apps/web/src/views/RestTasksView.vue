@@ -240,6 +240,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
       </button>
     </div>
+    <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->
+    <div v-if="act.kujiTicket" class="small text-muted mb-2" data-testid="act-kuji-hint">
+      {{ t.rest.tasks.kujiHint(act.kujiTicket.points, act.kujiTicket.num) }}
+    </div>
     <div class="dt-act-grid small">
       <div
         v-for="i in items"

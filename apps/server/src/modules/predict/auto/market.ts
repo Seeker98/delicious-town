@@ -1,6 +1,9 @@
 import { gameTime, seededRng, slotKey } from '@dt/shared';
+import { gameSeed } from '../../../core/seed';
+import { rollShelf } from '../../market/rules';
 import { featureAvailable } from '../../../core/features';
 import { clampP, dayLabel, marketRareChance } from './odds';
+import { roundFinishedAt } from './rounds';
 import type { AutoKind } from './types';
 
 const SIMS = 2000;
@@ -41,10 +44,17 @@ export const market: AutoKind = {
       .where('period', '=', String(p.period))
       .where('owner_rest_id', 'is', null)
       .execute();
-    if (rows.length === 0) return null;
+    let foods = rows.map((r) => r.foods_id);
+    if (rows.length === 0) {
+      // 货架已经被下一轮清掉（判定晚了）：那一轮跑过就按同一个种子重算系统进货，没跑过先不判（backlog 238-2）
+      const period = String(p.period);
+      if ((await roundFinishedAt(c.d.db, c.shardId, 'market-daily', period)) === null) return null;
+      const rng = seededRng(gameSeed(c.shardId, 'market', 0, period));
+      foods = rollShelf(0, Number(p.hour), c.d.config, c.settings.tuning.market, rng).map((x) => x.foodsId);
+    }
     const level = Number(p.level);
-    const rare = rows
-      .map((r) => c.d.config.requireFood(r.foods_id))
+    const rare = foods
+      .map((id) => c.d.config.requireFood(id))
       .filter((f) => f.level === level && f.odds < 100);
     const hour = Number(p.hour);
     const day = String(p.period).split('@')[0]!;

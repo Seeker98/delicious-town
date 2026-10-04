@@ -28,6 +28,13 @@ async function ctx(shardId: number, seed = 1): Promise<AutoCtx> {
     rng: seededRng(seed),
   };
 }
+/** 登记某个周期任务跑完了（判定前要确认那一轮真的刷新过，backlog 238-2） */
+async function ran(shardId: number, job: string, period: string, at: Date) {
+  await t.db
+    .insertInto('job_run')
+    .values({ shard_id: shardId, job, period, started_at: at, finished_at: at })
+    .execute();
+}
 const rctx = async (shardId: number) => ({
   d: t.game.deps,
   shardId,
@@ -55,8 +62,9 @@ describe('蟹老板（238-2 设计 §4.1）', () => {
     const tomorrow = addDays(DAY, 1);
     const slot = { key: slotKey(tomorrow, 9), day: tomorrow, hour: 9, start: gameTime(tomorrow, 9) };
     const { street } = await t.game.world.changeKrabStreet(shardId, slot, gameTime(tomorrow, 9));
+    await ran(shardId, 'daily-event', slot.key, gameTime(tomorrow, 9));
     for (const from of [1, 5, 8]) {
-      const r = (await krab.resolve(await rctx(shardId), { day: tomorrow, from, to: from + 5 }))!;
+      const r = (await krab.resolve(await rctx(shardId), { day: tomorrow, from, to: from + 5, hour: 9 }))!;
       expect(r.outcome).toBe(street >= from && street <= from + 5);
       // 判定依据写具体日期：事后看"明天"会让人糊涂（终审 M4）
       expect(r.note).toBe(`11月4日 9 点蟹老板刷新在 ${street} 号街`);
@@ -95,6 +103,22 @@ describe('嘻哈男孩（238-2 设计 §4.2）', () => {
 
   it('出题：按地点权重，明天 hiphop.hour 判定；判定读地点记录，没生成返回 null', async () => {
     const shardId = await createShard(t.db);
+    // 有近期活跃的玩家店："某家餐厅"也在候选里，概率按全部地点权重算（backlog 238-2）
+    const active = await newRestaurant(t, { shardId });
+    await t.db
+      .insertInto('income_round')
+      .values({
+        rest_id: active.restaurantId,
+        round_no: 1,
+        coin: 1,
+        exp: 0,
+        oil: 0,
+        customers: JSON.stringify([]),
+        rates: JSON.stringify({}),
+        drops: JSON.stringify([]),
+        created_at: new Date(at0.getTime() - 3_600_000),
+      })
+      .execute();
     const dr = (await hiphop.create(await ctx(shardId, 3)))!;
     const place = dr.params.place as number;
     const weights = t.deps.config.tuning.hiphop.placeWeights;
@@ -192,6 +216,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     const period = slotKey(DAY, hour);
     const slot = { key: period, day: DAY, hour, start: gameTime(DAY, hour) };
     const { to } = await t.game.world.changeWeather(shardId, slot, gameTime(DAY, hour));
+    await ran(shardId, 'weather', period, new Date(gameTime(DAY, hour).getTime() + 30_000));
     const auto = t.deps.config.weather.get(to)!;
     const r = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r.outcome).toBe(true);
@@ -263,5 +288,94 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     });
     await income(DAY, 1);
     expect((await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!.outcome).toBe(true);
+  });
+});
+
+describe('判定边界（backlog 238-2）', () => {
+  it('蟹老板：那一轮没跑过（world 关掉、worker 漏跑）返回 null；按出题时记下的整点判，之后改了 krabHour 也不变', async () => {
+    const shardId = await createShard(t.db);
+    const tomorrow = addDays(DAY, 1);
+    const slot = { key: slotKey(tomorrow, 9), day: tomorrow, hour: 9, start: gameTime(tomorrow, 9) };
+    const { street } = await t.game.world.changeKrabStreet(shardId, slot, gameTime(tomorrow, 9));
+    const params = { day: tomorrow, from: street, to: street, hour: 9 };
+    expect(await krab.resolve(await rctx(shardId), params)).toBeNull();
+    await ran(shardId, 'daily-event', slot.key, gameTime(tomorrow, 9));
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { world: { krabHour: 15 } } }) })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const r = (await krab.resolve(await rctx(shardId), params))!;
+    expect(r).toMatchObject({ outcome: true, noteParams: { day: tomorrow, hour: 9, street } });
+  });
+
+  it('天气：那一轮没跑过返回 null；轮换之前用的雷神锤会被轮换覆盖，不写进判定依据', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 15;
+    const period = slotKey(DAY, hour);
+    const start = gameTime(DAY, hour);
+    const { to } = await t.game.world.changeWeather(shardId, { key: period, day: DAY, hour, start }, start);
+    const type = t.deps.config.weather.get(to)!.type;
+    expect(await weather.resolve(await rctx(shardId), { hour, type, period })).toBeNull();
+    const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== type)!;
+    await t.db
+      .insertInto('news')
+      .values({
+        shard_id: shardId,
+        type: 'weather.change',
+        params: JSON.stringify({ from: to, to: other.id, by: 1 }),
+        created_at: new Date(start.getTime() + 10_000),
+      })
+      .execute();
+    await ran(shardId, 'weather', period, new Date(start.getTime() + 30_000));
+    const r = (await weather.resolve(await rctx(shardId), { hour, type, period }))!;
+    expect(r.noteParams).not.toHaveProperty('hammerTo');
+  });
+
+  it('菜场：货架被下一轮清掉时按种子重算那一轮的系统进货；那一轮没跑过返回 null', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 12;
+    const period = slotKey(DAY, hour);
+    const slot = { key: period, day: DAY, hour, start: gameTime(DAY, hour) };
+    const { foods } = await t.game.market.refresh(shardId, 0, slot, gameTime(DAY, hour));
+    const level = foods.some((id) => {
+      const f = t.deps.config.requireFood(id);
+      return f.level === 1 && f.odds < 100;
+    })
+      ? 1
+      : 2;
+    const params = { hour, level, period };
+    const before = (await market.resolve(await rctx(shardId), params))!;
+    await t.db.deleteFrom('market_item').where('shard_id', '=', shardId).execute();
+    expect(await market.resolve(await rctx(shardId), params)).toBeNull();
+    await ran(shardId, 'market-daily', period, gameTime(DAY, hour));
+    expect(await market.resolve(await rctx(shardId), params)).toEqual(before);
+  });
+
+  it('嘻哈男孩：近期没有活跃玩家店时不出"某家餐厅"，概率按公共地点重新算', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({
+          tuning: {
+            hiphop: {
+              placeWeights: [
+                [9, 1000],
+                [2, 1],
+                [3, 1],
+              ],
+            },
+          },
+        }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const dr = (await hiphop.create(await ctx(shardId, seed)))!;
+      expect(dr.params.place).not.toBe(9);
+      expect(dr.p0).toBeCloseTo(0.5, 9);
+    }
   });
 });

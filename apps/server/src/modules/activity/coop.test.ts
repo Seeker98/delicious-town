@@ -136,6 +136,22 @@ describe('全服合力领取和列表（148-3 设计 §6、§8.1）', () => {
   });
 });
 
+describe('我的名次和缓存的前 10 名一致（backlog 148-3）', () => {
+  it('前 10 名还在缓存里时，我的名次按缓存里的写，不会表头第 1、表里第 2', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    const b = await newRestaurant(t, { shardId });
+    const id = await insertActivity(t, { shardId, spec: spec() });
+    await act(a, 'market.buy', 2);
+    await act(b, 'market.buy');
+    expect((await t.game.activity.list(b)).items.find((i) => i.id === id)!.coop!.myRank).toBe(2);
+    await act(b, 'market.buy', 2);
+    const coop = (await t.game.activity.list(b)).items.find((i) => i.id === id)!.coop!;
+    expect(coop.top.find((r) => r.mine)!.rank).toBe(2);
+    expect(coop.myRank).toBe(2);
+  });
+});
+
 describe('终审 I1：等级不够、没有贡献的店领不到门槛为 0 的里程碑', () => {
   it('列表里不算达成，领取报未达成', async () => {
     const shardId = await createShard(t.db);

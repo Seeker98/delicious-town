@@ -287,6 +287,53 @@ describe('抽签（一番赏设计 §5.4）', () => {
   });
 });
 
+describe('backlog 一番赏：随机性和并发', () => {
+  it('每张签被抽到的机会相同：两张签的池子开 80 次，第一抽抽到 X 的比例在 25%~75% 之间（不是总按顺序抽）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: {
+        maxPools: 1000,
+        tiers: [
+          { key: 'X', count: 1, award: { coin: 1 } },
+          { key: 'Y', count: 1, award: { coin: 1 } },
+        ],
+        last: { award: { coin: 1 } },
+      },
+    });
+    const r = await player(shardId, { tickets: 160 });
+    let x = 0;
+    for (let i = 0; i < 80; i++) {
+      if ((await svc().draw(r, 1)).data.draws[0]!.tier === 'X') x++;
+      await svc().draw(r, 1);
+    }
+    expect(x).toBeGreaterThanOrEqual(20);
+    expect(x).toBeLessThanOrEqual(60);
+  }, 60_000);
+
+  it('并发：两人同时各抽一半、都成功，签不重复，正好一人拿最后赏', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      kuji: { tiers: [{ key: 'X', count: 4, award: { coin: 1 } }], last: { award: { coin: 1000 } } },
+    });
+    const a = await player(shardId, { coin: 0, tickets: 2 });
+    const b = await player(shardId, { coin: 0, tickets: 2 });
+    const [ra, rb] = await Promise.all([svc().draw(a, 2), svc().draw(b, 2)]);
+    expect([ra.data.last, rb.data.last].filter((x) => x !== null)).toHaveLength(1);
+    const lastBy = ra.data.last !== null ? a : b;
+    expect(await coin(lastBy.restaurantId)).toBe(2 + 1000);
+    expect(await coin((lastBy === a ? b : a).restaurantId)).toBe(2);
+    const drawn = await t.db
+      .selectFrom('kuji_ticket as k')
+      .innerJoin('kuji_pool as p', 'p.id', 'k.pool_id')
+      .select(['k.idx', 'k.drawn_by'])
+      .where('p.shard_id', '=', shardId)
+      .where('p.seq', '=', 1)
+      .execute();
+    expect(new Set(drawn.map((d) => d.idx)).size).toBe(4);
+    expect(drawn.every((d) => d.drawn_by !== null)).toBe(true);
+  });
+});
+
 describe('backlog 一番赏：抽签结果和看板', () => {
   it('刚抽中的大赏，抽签结果里的"最近的大赏"马上就有自己（不用刷新）', async () => {
     const shardId = await createShard(t.db);

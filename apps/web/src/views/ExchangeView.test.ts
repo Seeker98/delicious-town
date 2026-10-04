@@ -101,6 +101,21 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(w.find('[data-testid="ex-band"]').text()).toContain('500 ~ 2,000');
   });
 
+  it('最新成交价放在盘口卖档和买档中间（backlog 156-1）；没有成交时写还没有成交', async () => {
+    const w = mount(ExchangeView);
+    await flushPromises();
+    await w.find('[data-testid="ex-food-11"]').trigger('click');
+    await flushPromises();
+    const rows = w.findAll('[data-testid="ex-book"] tr').map((r) => r.attributes('data-testid'));
+    expect(rows).toEqual(['ex-ask-1020', 'ex-ask-1010', 'ex-last', 'ex-bid-990']);
+    expect(w.get('[data-testid="ex-last"]').text()).toBe('最新成交 1,100');
+    expect(w.get('[data-testid="ex-book"] .d-flex').text()).not.toContain('最新');
+    vi.mocked(endpoints.tradeBook).mockResolvedValue({ ...book, last: null });
+    await w.find('[data-testid="ex-food-12"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="ex-last"]').text()).toBe('还没有成交');
+  });
+
   it('盘口的系统档写"系统"、换颜色；成交记录标"（系统）"', async () => {
     vi.mocked(endpoints.tradeBook).mockResolvedValue({
       ...book,

@@ -251,6 +251,8 @@ describe('交易所日志（156-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(log('kuji.buy', { num: 3, coin: 60000 })).toBe('买了一番赏抽赏券 ×3，花费 60,000 银币');
+    // 活跃奖励另送的券（backlog 一番赏）
+    expect(log('kuji.activation', { points: 150, num: 1 })).toBe('领取活跃 150 点奖励，另得一番赏抽赏券 ×1');
     expect(log('kuji.draw', { seq: 2, num: 3, tiers: { A: 1, F: 2 }, last: true })).toBe(
       '一番赏第 2 池抽了 3 张：A 赏 ×1、F 赏 ×2，并拿下最后赏',
     );

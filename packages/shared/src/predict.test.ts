@@ -97,3 +97,17 @@ describe('请求校验', () => {
     expect(predictCreateBody.safeParse({ ...ok, b: 5 }).success).toBe(false);
   });
 });
+
+describe('份额差极大时买入不会算成 0（backlog 238-1）', () => {
+  it('b = 10、"否"比"是"多 600 份以上：买 1 份"是"至少收 1 银币；差距不大时和精确值取整一致', () => {
+    const t = { unit: 100, feeRate: 0 };
+    for (const n of [600, 800, 6000, 100_000]) {
+      const q = predictQuote({ y: 0, n, b: 10 }, 'yes', 'buy', 1, t);
+      expect(q.amount).toBeGreaterThanOrEqual(1);
+    }
+    // 差距不大时结果不变：和精确值相差不到 1
+    const q = predictQuote({ y: 0, n: 200, b: 10 }, 'yes', 'buy', 1, t);
+    const exact = 100 * 10 * (Math.log1p(Math.exp(-19.9)) - Math.log1p(Math.exp(-20)));
+    expect(q.amount).toBe(Math.ceil(exact));
+  });
+});

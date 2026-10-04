@@ -28,6 +28,7 @@ const ev = (p: Partial<PredictListDto['events'][number]> = {}) => ({
   kind: 'manual',
   params: {},
   resultParams: null,
+  own: false,
   ...p,
 });
 const list = (p: Partial<PredictListDto> = {}): PredictListDto => ({
@@ -350,6 +351,32 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await w.get('[data-testid="pd-event-1"]').trigger('click');
     await flushPromises();
     expect(w.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+  });
+});
+
+describe('出题人不能交易自己出的题（backlog 238-1）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.predictList).mockResolvedValue(list());
+  });
+  it('自己出的题：交易块写明不能交易，提交禁用；别人的题照常', async () => {
+    vi.mocked(endpoints.predictDetail).mockResolvedValue({
+      ...detail,
+      event: { ...detail.event, own: true },
+    });
+    const w = mount(PredictView);
+    await flushPromises();
+    await w.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="pd-own"]').text()).toBe('这道题是你出的，不能交易');
+    expect(w.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
+    vi.mocked(endpoints.predictDetail).mockResolvedValue(detail);
+    const other = mount(PredictView);
+    await flushPromises();
+    await other.get('[data-testid="pd-event-1"]').trigger('click');
+    await flushPromises();
+    expect(other.find('[data-testid="pd-own"]').exists()).toBe(false);
   });
 });
 

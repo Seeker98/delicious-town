@@ -130,7 +130,8 @@ export function createExchangeService(d: GameDeps) {
     if (b.side === 'sell') await subFoods(o, b.foodsId, b.qty, { source: 'exchange' });
     else {
       spendCoin(o, b.price * b.qty, { source: 'exchange' });
-      // 橱柜检查：现有 + 未成交买单的剩余 + 本单都要放得下（156-1 设计 §6.1）
+      // 橱柜检查：现有 + 未成交买单的剩余 + 本单都要放得下（156-1 设计 §6.1）。
+      // 别的食材的未成交买单、橱柜里还没有的，成交后各要占一个新格子，先算作已占（backlog 156-1）
       const pending = await o.tx
         .selectFrom('exchange_order')
         .select(sql<string>`coalesce(sum(qty - filled), 0)`.as('n'))
@@ -138,6 +139,25 @@ export function createExchangeService(d: GameDeps) {
         .where('foods_id', '=', b.foodsId)
         .where('side', '=', 'buy')
         .where('status', '=', 'open')
+        .executeTakeFirstOrThrow();
+      const reserved = await o.tx
+        .selectFrom('exchange_order as x')
+        .select(sql<string>`count(distinct x.foods_id)`.as('n'))
+        .where('x.rest_id', '=', o.rest.id)
+        .where('x.foods_id', '!=', b.foodsId)
+        .where('x.side', '=', 'buy')
+        .where('x.status', '=', 'open')
+        .where(({ not, exists, selectFrom }) =>
+          not(
+            exists(
+              selectFrom('cupboard_food as c')
+                .select('c.foods_id')
+                .whereRef('c.rest_id', '=', 'x.rest_id')
+                .whereRef('c.foods_id', '=', 'x.foods_id')
+                .where('c.num', '>', 0),
+            ),
+          ),
+        )
         .executeTakeFirstOrThrow();
       const row = await o.tx
         .selectFrom('cupboard_food')
@@ -149,7 +169,7 @@ export function createExchangeService(d: GameDeps) {
         {
           have: row?.num ?? 0,
           fridge: row?.fridge_num ?? 0,
-          slotsUsed: await cupboardSlotsUsed(o.tx, o.rest.id),
+          slotsUsed: (await cupboardSlotsUsed(o.tx, o.rest.id)) + Number(reserved.n),
           slots: o.rest.cupboard_num,
           max: o.rest.foods_max_num,
         },

@@ -152,6 +152,7 @@ describe('RestaurantHomeView', () => {
       star: 0,
       items: [],
       rewards: [],
+      kujiTicket: null,
     });
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest()]));
   });
@@ -415,6 +416,7 @@ describe('RestaurantHomeView', () => {
       star: 0,
       items: [],
       rewards: [],
+      kujiTicket: null,
     });
     const w = await mountView();
     const status = w.get('[data-testid="home-status"]');
@@ -671,6 +673,7 @@ describe('RestaurantHomeView', () => {
       star: 0,
       items: [],
       rewards: [],
+      kujiTicket: null,
     });
     await btn.trigger('click');
     await flushPromises();
@@ -727,6 +730,7 @@ describe('RestaurantHomeView', () => {
       star: 0,
       items: [],
       rewards: [],
+      kujiTicket: null,
     });
     const w = await mountView();
     const row = w.get('[data-testid="home-signin-row"]');

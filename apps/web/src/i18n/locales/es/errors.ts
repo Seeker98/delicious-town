@@ -153,6 +153,7 @@ const errors: Messages['errors'] = {
     exchange_price_moved:
       'El precio del sistema cambió. Se actualizó el libro de órdenes; confirma antes de vender.',
     predict_closed: 'Las operaciones de este evento han terminado',
+    predict_own: 'Tú creaste esta pregunta, así que no puedes operar en ella',
     predict_frozen:
       'Tu bolsa está congelada, así que las predicciones también están en pausa. Contacta a un administrador si tienes dudas',
     kuji_ticket: 'No tienes suficientes boletos kuji',

@@ -324,3 +324,28 @@ describe('任务计数（问题记录 318）', () => {
     ).toBeGreaterThan(0);
   });
 });
+
+describe('出题人不能交易自己出的题（backlog 238-1）', () => {
+  it('后台出题的账号在这道题上买卖都报 predict_own；列表和详情标出是自己出的；别的管理员、玩家照常', async () => {
+    const shardId = await createShard(t.db);
+    const author = await trader(t, { shardId, coin: 1_000_000 });
+    const other = await trader(t, { shardId, coin: 1_000_000 });
+    const id = await newEvent(t, shardId);
+    await t.db
+      .updateTable('predict_event')
+      .set({ created_by: author.accountId })
+      .where('id', '=', String(id))
+      .execute();
+    await expect(svc().trade(author, id, { side: 'yes', dir: 'buy', qty: 1 })).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'predict_own' },
+    });
+    await expect(svc().trade(author, id, { side: 'yes', dir: 'sell', qty: 1 })).rejects.toMatchObject({
+      params: { reason: 'predict_own' },
+    });
+    expect((await svc().list(author)).events.find((e) => e.id === id)!.own).toBe(true);
+    expect((await svc().detail(author, id)).event.own).toBe(true);
+    expect((await svc().detail(other, id)).event.own).toBe(false);
+    await svc().trade(other, id, { side: 'yes', dir: 'buy', qty: 1 });
+  });
+});

@@ -10,6 +10,21 @@ export function lmsrCost(y: number, n: number, b: number): number {
   return b * (m + Math.log(Math.exp(a - m) + Math.exp(c - m)));
 }
 
+/**
+ * C(y1, n1) − C(y0, n0)，分开算"大的一项"和 log1p 的部分再相减（backlog 238-1）：
+ * 份额差极大时小的一项比大的一项小几十个数量级，直接两个 C 相减会被浮点吞掉、算成 0
+ */
+export function lmsrCostDiff(y0: number, n0: number, y1: number, n1: number, b: number): number {
+  const part = (y: number, n: number) => {
+    const a = y / b;
+    const c = n / b;
+    return { m: Math.max(a, c), l: Math.log1p(Math.exp(-Math.abs(a - c))) };
+  };
+  const p0 = part(y0, n0);
+  const p1 = part(y1, n1);
+  return b * (p1.m - p0.m + (p1.l - p0.l));
+}
+
 /** "是"的价格（0~1）；"否"是 1 − 它 */
 export function lmsrPrice(y: number, n: number, b: number): number {
   return 1 / (1 + Math.exp((n - y) / b));
@@ -38,7 +53,7 @@ export interface PredictQuote {
   priceAfter: number;
 }
 
-/** 一笔买卖的报价：买入向上取整、卖出向下取整，取整都向着系统 */
+/** 一笔买卖的报价：买入向上取整（至少 1）、卖出向下取整，取整都向着系统 */
 export function predictQuote(
   s: { y: number; n: number; b: number },
   side: PredictSide,
@@ -49,10 +64,10 @@ export function predictQuote(
   const d = dir === 'buy' ? qty : -qty;
   const yAfter = side === 'yes' ? s.y + d : s.y;
   const nAfter = side === 'no' ? s.n + d : s.n;
-  const hi = dir === 'buy' ? lmsrCost(yAfter, nAfter, s.b) : lmsrCost(s.y, s.n, s.b);
-  const lo = dir === 'buy' ? lmsrCost(s.y, s.n, s.b) : lmsrCost(yAfter, nAfter, s.b);
-  const exact = t.unit * (hi - lo);
-  const amount = dir === 'buy' ? Math.ceil(exact) : Math.floor(exact);
+  const diff = lmsrCostDiff(s.y, s.n, yAfter, nAfter, s.b);
+  const exact = t.unit * (dir === 'buy' ? diff : -diff);
+  // 买入至少收 1：差距大到连 log1p 也下溢时不白送（backlog 238-1）
+  const amount = dir === 'buy' ? Math.max(1, Math.ceil(exact)) : Math.floor(exact);
   const fee = Math.ceil(amount * t.feeRate);
   return {
     amount,

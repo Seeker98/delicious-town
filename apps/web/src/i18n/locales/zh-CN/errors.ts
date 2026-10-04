@@ -160,6 +160,7 @@ export default {
     exchange_no_system_bid: '系统现在不收这种食材',
     exchange_price_moved: '系统收购价变了，已刷新盘口，请确认后再卖',
     predict_closed: '这个事件已经停止交易',
+    predict_own: '这道题是你出的，不能交易',
     predict_frozen: '交易所已被冻结，事件预测也暂停使用，有疑问请联系管理员',
     kuji_ticket: '抽赏券不够',
     kuji_left: '这一池剩下的签不够了',

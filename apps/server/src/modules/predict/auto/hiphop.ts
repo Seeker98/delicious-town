@@ -1,6 +1,6 @@
 import { addDays, gameTime, HIPHOP_PLACE_NAMES, type HiphopPlace } from '@dt/shared';
 import { featureAvailable } from '../../../core/features';
-import { placeWeightsFor } from '../../hiphop/day';
+import { activeRests, HIPHOP_RESTAURANT, placeWeightsFor } from '../../hiphop/day';
 import { clampP, dayLabel } from './odds';
 import type { AutoKind } from './types';
 
@@ -13,7 +13,17 @@ export const hiphop: AutoKind = {
     if (!featureAvailable(c.settings, 'hiphop')) return null;
     const t = c.settings.tuning.hiphop;
     // 只考虑本区服开着的功能的地点（问题记录 256），和每天抽地点时一致
-    const weights = placeWeightsFor(c.settings);
+    const all = placeWeightsFor(c.settings);
+    // 近期没有活跃玩家店时，每天抽到"某家餐厅"会改抽公共地点：出题也按公共地点算（backlog 238-2）
+    const since = new Date(c.now.getTime() - t.restActiveDays * 86_400_000);
+    const hasRests =
+      all.some(([p]) => p === HIPHOP_RESTAURANT) && (await activeRests(c.d.db, c.shardId, since)).length > 0;
+    const pub = all.filter(([p]) => p !== HIPHOP_RESTAURANT);
+    const weights: ReadonlyArray<readonly [number, number]> = hasRests
+      ? all
+      : pub.length > 0
+        ? pub
+        : [[4, 1]];
     const total = weights.reduce((s, [, x]) => s + x, 0);
     if (total <= 0) return null;
     let r = c.rng.next() * total;

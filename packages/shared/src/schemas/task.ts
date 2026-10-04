@@ -71,4 +71,6 @@ export interface ActivationDto {
   star: number;
   items: Array<{ id: number; name: string; points: number; limit: number; count: number; needStar: number }>;
   rewards: Array<{ points: number; award: AwardDto; claimed: boolean; multiplier: number }>;
+  /** 领哪一档另送一番赏抽赏券、送几张；区服关掉一番赏或不送时为 null（backlog 一番赏） */
+  kujiTicket: { points: number; num: number } | null;
 }

@@ -95,6 +95,30 @@ describe('交易所下单（156-1 设计 §6.1）', () => {
   });
 });
 
+describe('挂买单的橱柜检查算上别的食材的未成交买单（backlog 156-1）', () => {
+  it('别的食材的未成交买单各占一个新格子：最后一格已被占，这单只能进冰箱，超出冰箱上限就不让挂', async () => {
+    const shardId = await createShard(t.db);
+    const [fa, fb] = [...t.deps.config.foods.values()].filter((x) => x.odds < 100 && x.coin >= 1000);
+    const b = await trader(t, { shardId, coin: 100_000_000 });
+    const used = await t.db
+      .selectFrom('cupboard_food')
+      .select((eb) => eb.fn.countAll<string>().as('n'))
+      .where('rest_id', '=', b.restaurantId)
+      .where('num', '>', 0)
+      .executeTakeFirstOrThrow();
+    await t.db
+      .updateTable('restaurant')
+      .set({ foods_max_num: 10, cupboard_num: Number(used.n) + 1 })
+      .where('id', '=', b.restaurantId)
+      .execute();
+    await svc().place(b, { foodsId: fa!.id, side: 'buy', price: fa!.coin, qty: 10 });
+    await expect(
+      svc().place(b, { foodsId: fb!.id, side: 'buy', price: fb!.coin, qty: 11 }),
+    ).rejects.toMatchObject({ params: { reason: 'cupboard_full' } });
+    await svc().place(b, { foodsId: fb!.id, side: 'buy', price: fb!.coin, qty: 10 });
+  });
+});
+
 describe('撮合（156-1 设计 §6.2）', () => {
   it('价格优先、时间优先、部分成交；成交价取挂单方价格；买方退差价；卖方扣 5% 进账户', async () => {
     const shardId = await createShard(t.db);

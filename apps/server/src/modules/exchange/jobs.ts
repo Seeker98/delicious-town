@@ -1,3 +1,4 @@
+import { addDays, gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { bookLock } from './service';
@@ -54,7 +55,19 @@ export async function expireOrders(d: GameDeps, shardId: number, now: Date): Pro
   });
 }
 
-/** 每分钟一次；挂在 restaurant 上，区服关掉交易所时也照常退回 */
+/** 系统收购的每日计数（exchange_maker_day）只读当天的，留 30 天备查，更早的删掉（backlog 156-3） */
+export const MAKER_DAY_KEEP_DAYS = 30;
+
+export async function pruneMakerDays(d: GameDeps, shardId: number, now: Date): Promise<{ deleted: number }> {
+  const r = await d.db
+    .deleteFrom('exchange_maker_day')
+    .where('shard_id', '=', shardId)
+    .where('day', '<', addDays(gameDay(now), -MAKER_DAY_KEEP_DAYS))
+    .executeTakeFirst();
+  return { deleted: Number(r.numDeletedRows) };
+}
+
+/** 过期每分钟一次、清理每个游戏日一次；挂在 restaurant 上，区服关掉交易所时也照常跑 */
 export function exchangeJobs(d: GameDeps): PeriodicJob[] {
   return [
     {
@@ -62,6 +75,12 @@ export function exchangeJobs(d: GameDeps): PeriodicJob[] {
       feature: 'restaurant',
       period: (now) => now.toISOString().slice(0, 16),
       run: ({ shardId, now }) => expireOrders(d, shardId, now),
+    },
+    {
+      name: 'exchange-maker-day-prune',
+      feature: 'restaurant',
+      period: (now) => gameDay(now),
+      run: ({ shardId, now }) => pruneMakerDays(d, shardId, now),
     },
   ];
 }
