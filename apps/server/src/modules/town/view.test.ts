@@ -23,7 +23,7 @@ describe('小镇概览（设计文档 §3.8）', () => {
       coin: 500,
       diamond: 7,
       talked: { bigEater: false, wenjie: false, bro13: false },
-      mayor: { answered: false },
+      mayor: { answered: false, hiphopOut: false, hour: 9 },
       bigEaterGift: false,
       shaken: false,
       broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 },

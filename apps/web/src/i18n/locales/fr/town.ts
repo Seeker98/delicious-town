@@ -59,6 +59,7 @@ const town: Messages['town'] = {
   talkedToday: "Déjà discuté aujourd'hui",
   talk: 'Discuter',
   mayorAnswered: "Vous avez déjà répondu au maire aujourd'hui",
+  mayorNotOut: (h) => `Le Garçon hip-hop sort à ${h} h. Revenez le dire au maire à ce moment-là`,
   mayorHint:
     "Dites au maire où est le Garçon hip-hop aujourd'hui : bonne réponse = bonus, mauvaise = réprimande",
   mayorOpen: 'Répondre au maire',

@@ -53,6 +53,7 @@ const town: Messages['town'] = {
   talkedToday: 'Chatted today',
   talk: 'Chat',
   mayorAnswered: 'You already told the mayor today',
+  mayorNotOut: (h) => `The Hip-hop Boy comes out at ${h}:00. Come back and tell the mayor then`,
   mayorHint: 'Tell the mayor where the Hip-hop Boy is today: right gives a bonus, wrong gets you scolded',
   mayorOpen: 'Tell the mayor',
   krab: "Mr. Krab's money bag",

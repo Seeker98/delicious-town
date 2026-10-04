@@ -174,17 +174,24 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       </button>
     </div>
   </div>
-  <div class="dt-item">
+  <!-- 嘻哈男孩今天还没出来时写明几点出来、按钮不能点，不让人选完地点才报错（问题记录 333） -->
+  <div class="dt-item" data-testid="mayor-row">
     <div class="dt-item-main">
       <div class="dt-item-title">{{ t.town.mayorName }}</div>
       <div class="dt-meta">
-        {{ data.mayor.answered ? t.town.mayorAnswered : t.town.mayorHint }}
+        {{
+          data.mayor.answered
+            ? t.town.mayorAnswered
+            : data.mayor.hiphopOut
+              ? t.town.mayorHint
+              : t.town.mayorNotOut(data.mayor.hour)
+        }}
       </div>
     </div>
     <div v-if="!data.mayor.answered" class="dt-item-actions">
       <button
         class="btn btn-sm btn-outline-primary"
-        :disabled="busy"
+        :disabled="busy || !data.mayor.hiphopOut"
         data-testid="mayor-open"
         @click="mayorOpen = !mayorOpen"
       >
@@ -192,7 +199,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
       </button>
     </div>
   </div>
-  <div v-if="mayorOpen && !data.mayor.answered" class="dt-pick-grid mb-2">
+  <div v-if="mayorOpen && !data.mayor.answered && data.mayor.hiphopOut" class="dt-pick-grid mb-2">
     <button
       v-for="p in PLACES"
       :key="p.id"

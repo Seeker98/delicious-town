@@ -44,6 +44,16 @@ describe('GuideView（问题记录 150）', () => {
     expect(w.get('[data-testid="guide-wiki"]').attributes('href')).toBe('/wiki');
   });
 
+  it('常见问题写明钻石、蟹黄堡怎么获得，带去酒吧、小镇的链接（问题记录 332）', async () => {
+    useSessionStore().me = me(1);
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    const faq = (await mountView()).get('[data-testid="guide-faq"]');
+    expect(faq.text()).toContain('钻石怎么获得');
+    expect(faq.text()).toContain('蟹黄堡怎么获得');
+    const links = faq.findAll('a').map((x) => x.attributes('href'));
+    expect(links).toEqual(expect.arrayContaining(['/bar', '/town', '/rest/tasks']));
+  });
+
   it('五块内容都在', async () => {
     useSessionStore().me = me(1);
     vi.mocked(endpoints.guideCodes).mockResolvedValue([]);

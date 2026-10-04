@@ -5,6 +5,7 @@ import type { WorldService } from '../world/service';
 import { blessDto, todayBless } from './bless';
 import { activationPoints } from './common';
 import { goodsCounts } from './exchange';
+import { hiphopDay } from '../hiphop/day';
 
 const NPCS: NpcKey[] = ['bigEater', 'wenjie', 'bro13'];
 const later = (at: Date | null, ms: number, now: Date): string | null =>
@@ -60,7 +61,12 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     coin: rest.coin,
     diamond: rest.diamond,
     talked: talked as Record<NpcKey, boolean>,
-    mayor: { answered: (counters.get('town.talk.mayor') ?? 0) > 0 },
+    // 嘻哈男孩今天还没出来时镇长那里先写明几点出来，不让人选完才报错（问题记录 333）
+    mayor: {
+      answered: (counters.get('town.talk.mayor') ?? 0) > 0,
+      hiphopOut: (await hiphopDay(d.db, ctx.shardId, now)) !== null,
+      hour: s.tuning.hiphop.hour,
+    },
     bigEaterGift: tr?.big_eater_gift ?? false,
     shaken: shaken !== undefined,
     broadcast: {

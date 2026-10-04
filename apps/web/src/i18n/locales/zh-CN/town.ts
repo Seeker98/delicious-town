@@ -55,6 +55,7 @@ export default {
   talkedToday: '今天聊过了',
   talk: '聊天',
   mayorAnswered: '今天已经告诉过镇长了',
+  mayorNotOut: (h: number) => `嘻哈男孩 ${h} 点出来，到时再来告诉镇长`,
   mayorHint: '告诉镇长嘻哈男孩今天在哪：答对有加成，答错要挨批',
   mayorOpen: '告诉镇长',
   krab: '蟹老板的钱袋',

@@ -30,4 +30,12 @@ describe('main.css', () => {
     const dup = [...seen].filter(([, n]) => n > 1).map(([s]) => s);
     expect(dup).toEqual([]);
   });
+
+  it('手机上防误触放大、保留双指缩放（问题记录 329）：双击不放大；触屏上输入框字号至少 16px，点进去不自动放大', () => {
+    expect(css).toMatch(/html {[^}]*touch-action: manipulation/);
+    const coarse = css.slice(css.indexOf('@media (pointer: coarse)'));
+    expect(coarse).toMatch(/.form-control-sm[^{]*{[^}]*font-size: 16px/);
+    const html = readFileSync(join(__dirname, '../../index.html'), 'utf8');
+    expect(html).not.toMatch(/user-scalable=no|maximum-scale=1/);
+  });
 });

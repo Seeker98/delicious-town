@@ -119,6 +119,24 @@ const guide: Messages['guide'] = {
         "Non. Avant l'échéance, vous pouvez vendre vos parts au prix actuel à tout moment : vendez pour limiter la perte si vous pensez vous être trompé, ou pour prendre le gain quand le prix vous convient.",
       ],
     },
+    {
+      q: 'Comment obtenir des diamants ? ',
+      a: [
+        "Le pack de pointage quotidien peut en contenir ; les récompenses d'activité de 100 et 150 points ; ",
+        { to: '/rest/tasks', text: 'les quêtes hebdomadaires' },
+        ' ; les packs du classement des chefs et du classement mensuel d’affinité du Kraken ; les récompenses d’événements et les codes cadeaux.',
+      ],
+    },
+    {
+      q: 'Comment obtenir des Krabby Patty, et à quoi servent-ils ? ',
+      a: [
+        'On peut en gagner à la machine à sous du ',
+        { to: '/bar', text: 'Bar' },
+        ' ; l’arbre à sous de la place en lâche parfois un ; la quête secondaire « Terminer une épreuve » en donne un aussi. Échangez-les contre des objets rares dans « Échanges » sur la ',
+        { to: '/town', text: 'Place' },
+        '.',
+      ],
+    },
   ],
   rules: 'Règles du jeu',
   rulesItems: [

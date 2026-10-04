@@ -13,7 +13,7 @@ import { grantGoodsOp } from '../store/goods';
  */
 export async function askMayor(o: Op, place: HiphopPlace): Promise<TalkResultDto> {
   const day = await hiphopDay(o.tx, o.shardId, o.now);
-  if (!day) throw invalidState('hiphop_not_out');
+  if (!day) throw invalidState('hiphop_not_out', { hour: o.tuning.hiphop.hour });
   if ((await incrementDaily(o.tx, o.rest.id, 'town.talk.mayor', 1, gameDay(o.now))) > 1)
     throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'mayor' });
   const right = day.place === place;
