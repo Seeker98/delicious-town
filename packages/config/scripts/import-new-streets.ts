@@ -2,17 +2,23 @@
  * 导入另一个 agent 生成的新街道数据（问题记录 284，设计文档 §5.1~5.3）：
  *   pnpm -F @dt/config import-streets [新街道菜谱目录] [i18n 目录]
  * 默认读仓库外的 ../data/新街道菜谱 和 ../data/i18n。写出 data/designed/*_new.json，补 8~10 品级，
- * 再把新菜的英法西菜名并进 data/i18n/<语言>/cookbooks.json。重跑会整份替换这些文件
+ * 再把新菜的英法西菜名并进 data/i18n/<语言>/cookbooks.json。重跑会整份替换这些文件，
+ * 并删掉已经不存在的新菜谱译名、给勋章对照表补上新街道的行（backlog 284）。
+ * 新菜谱 id 已上线：要求数据那边固定 id，不能顺移。上次导入过的 id 没了或换了街道时什么都不写、直接退出，
+ * 确认无误后加 --allow-removed 重跑
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { seededRng } from '@dt/shared';
 import { collectTransitions, extendGrades, type GradeTable } from '../src/gradeGen';
+import { addMedalRows, importConflicts, pruneNames } from '../src/streetImport';
 
 const pkg = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const srcDir = process.argv[2] ?? resolve(pkg, '../../../data/新街道菜谱');
-const i18nDir = process.argv[3] ?? resolve(pkg, '../../../data/i18n');
+const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+const allowRemoved = process.argv.includes('--allow-removed');
+const srcDir = args[0] ?? resolve(pkg, '../../../data/新街道菜谱');
+const i18nDir = args[1] ?? resolve(pkg, '../../../data/i18n');
 const data = join(pkg, 'data');
 const read = <T>(p: string): T => JSON.parse(readFileSync(p, 'utf8')) as T;
 /** 和 data/designed 下其他文件一样：1 空格缩进、结尾没有换行 */
@@ -44,7 +50,7 @@ const foods = read<{ data: Food[] }>(join(srcDir, 'foods_new.json')).data;
 const medals = read<{ data: Array<Record<string, unknown>> }>(join(srcDir, 'street_medals_new.json')).data;
 const cookbooks = read<{ data: Cb[] }>(join(srcDir, 'cookbooks_new.json')).data;
 
-const old = read<{ data: Array<{ needFoodsByLevel: GradeTable }> }>(
+const old = read<{ data: Array<{ id: number; needFoodsByLevel: GradeTable }> }>(
   join(data, 'dataset/cookbooks.json'),
 ).data;
 const level = new Map(
@@ -58,6 +64,20 @@ const rng = seededRng(284);
  * 改成 92000 + 街道 id（纪念品 90xxx、一番赏 91xxx 也是单独一段）
  */
 const medalId = (streetId: number) => 92000 + streetId;
+
+const sorted = [...cookbooks].sort((a, b) => a.id - b.id);
+// 新菜谱 id 已上线：上次导入过的 id 没了或换了街道（多半是顺移了 id），先停下，什么都不写（backlog 284 终审）
+const conflicts = importConflicts(
+  read<{ data: Array<{ id: number; streetId: number }> }>(join(data, 'designed', 'cookbooks_new.json')).data,
+  sorted,
+);
+if (!allowRemoved && (conflicts.removed.length > 0 || conflicts.restreeted.length > 0)) {
+  console.error(
+    `上次导入过的新菜谱 id 这次没了 ${JSON.stringify(conflicts.removed)}，或换了街道 ${JSON.stringify(conflicts.restreeted)}。` +
+      '新菜谱 id 已经上线，不能顺移；确认确实要删或改，再加 --allow-removed 重跑。',
+  );
+  process.exit(1);
+}
 
 write(
   'streets_new',
@@ -91,7 +111,6 @@ write(
     id: medalId(m.devicetype as number),
   })),
 );
-const sorted = [...cookbooks].sort((a, b) => a.id - b.id);
 write(
   'cookbooks_new',
   '新街道菜谱；1~7 品级来自 data/新街道菜谱，8~10 品级按老数据换料频率生成（gradeGen.ts，种子 284）',
@@ -109,9 +128,33 @@ write(
   sorted.map((c) => ({ id: c.id, coin: c.coin, level: c.level, desc: c.desc })),
 );
 
+const mapPath = join(data, 'designed', 'street_medal_map.json');
+const map = read<{
+  source: string;
+  rule: string;
+  count: number;
+  data: Array<{ streetId: number; goodsId: number }>;
+}>(mapPath);
+const medalRows = addMedalRows(
+  map.data,
+  streets.map((x) => (x as { id: number }).id),
+  medalId,
+);
+if (medalRows.added.length > 0) {
+  writeFileSync(
+    mapPath,
+    JSON.stringify({ ...map, count: medalRows.rows.length, data: medalRows.rows }, null, 1),
+  );
+  console.log(`street_medal_map: added streets ${medalRows.added.join(', ')}`);
+}
+
+const oldIds = new Set(old.map((c) => c.id));
+const newIds = new Set(sorted.map((c) => c.id));
 for (const l of ['en', 'fr', 'es']) {
   const p = join(data, 'i18n', l, 'cookbooks.json');
-  const mine = read<Record<string, { name: string }>>(p);
+  const { names: mine, removed } = pruneNames(read<Record<string, { name: string }>>(p), oldIds, newIds);
+  if (removed.length > 0)
+    console.log(`${l}: removed names of ${removed.length} cookbooks no longer imported`);
   const theirs = read<Record<string, { name: string }>>(join(i18nDir, l, 'cookbooks.json'));
   for (const c of sorted) {
     const e = theirs[c.id];

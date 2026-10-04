@@ -46,7 +46,7 @@ describe('迁移 0039：老街道修订（问题记录 284）', () => {
       { 446: 3, 51: 5, 1: 2, 344: 1 },
       { learned: 4, grade: [0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0], street: { '0': 1, '6': 2, '9': 1 } },
     );
-    await reviseCookbooks(db, DELETED, MOVED);
+    await reviseCookbooks(db, DELETED, MOVED, [id]);
     const r = await read(id);
     expect([r.levels[446], r.levels[51], r.levels[1], r.levels[344]]).toEqual([0, 0, 2, 1]);
     expect(r.counts).toEqual({
@@ -63,7 +63,7 @@ describe('迁移 0039：老街道修订（问题记录 284）', () => {
       { 1: 1 },
       { learned: 1, grade: [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0], street: { '6': 1 } },
     );
-    await reviseCookbooks(db, DELETED, MOVED);
+    await reviseCookbooks(db, DELETED, MOVED, [a, b]);
     expect((await read(a)).counts).toEqual({ learned: 0, grade: zeros(), street: { '0': 0 } });
     expect((await read(b)).counts).toEqual({
       learned: 1,
@@ -95,12 +95,52 @@ describe('迁移 0039：老街道修订（问题记录 284）', () => {
     const gone = await order(446, 1);
     const busy = await order(446, 2);
     const fine = await order(1, 1);
-    await reviseCookbooks(db, DELETED, MOVED);
+    const mine = await rest(10, {}, { learned: 0, grade: zeros(), street: {} });
+    await reviseCookbooks(db, DELETED, MOVED, [mine]);
     const left = (
       await db.selectFrom('takeaway_order').select('id').where('shard_id', '=', shard).execute()
     ).map((r) => r.id);
     expect(left).toContain(busy.id);
     expect(left).toContain(fine.id);
     expect(left).not.toContain(gone.id);
+  });
+});
+
+describe('reviseCookbooks 只改指定的店（backlog 284：测试不再动共享测试库里所有店）', () => {
+  it('传了店号：只改这些店，外卖只清这些店所在区服的单', async () => {
+    const other = await createShard(db);
+    const counts = { learned: 1, grade: [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0], street: { '0': 1 } };
+    const a = await rest(18747, { 446: 3 }, counts);
+    const b = await createRestaurantRow(db, other, await createAccountRow(db), {
+      cookbook_counts: JSON.stringify(counts),
+    });
+    const levels = Buffer.alloc(18747);
+    levels[446] = 3;
+    await db.insertInto('restaurant_cookbooks').values({ rest_id: b, levels }).execute();
+    const now = new Date();
+    const order = (shard_id: number) =>
+      db
+        .insertInto('takeaway_order')
+        .values({
+          shard_id,
+          owner_rest_id: null,
+          cookbook_id: 446,
+          grade: 1,
+          need_minutes: 30,
+          need_renown: 3,
+          state: 1,
+          created_at: now,
+          expires_at: new Date(now.getTime() + 3_600_000),
+        })
+        .returning('id')
+        .executeTakeFirstOrThrow();
+    const inA = await order(shard);
+    const inB = await order(other);
+    await reviseCookbooks(db, DELETED, MOVED, [a]);
+    expect((await read(a)).levels[446]).toBe(0);
+    expect((await read(b)).levels[446]).toBe(3);
+    const left = (await db.selectFrom('takeaway_order').select('id').execute()).map((r) => r.id);
+    expect(left).not.toContain(inA.id);
+    expect(left).toContain(inB.id);
   });
 });

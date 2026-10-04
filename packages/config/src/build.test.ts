@@ -953,3 +953,16 @@ describe('任务配置（问题记录 318）', () => {
     expect(errs).toMatch(/999999/);
   });
 });
+
+describe('食谱售价表的检查（backlog 284）', () => {
+  it('老表和新表里同一个 id 出现两次、或给不存在的食谱定了价，构建报错', () => {
+    const src = source();
+    const oldPrices = structuredClone(src['designed/cookbooks_price']) as Array<{ id: number }>;
+    const newPrices = structuredClone(src['designed/cookbooks_price_new']) as Array<{ id: number }>;
+    newPrices.push({ ...newPrices[0]!, id: oldPrices[0]!.id });
+    newPrices.push({ ...newPrices[0]!, id: 999_999 });
+    const { errors } = buildBundle({ ...src, 'designed/cookbooks_price_new': newPrices });
+    expect(errors).toContain(`cookbooks_price: duplicate id ${oldPrices[0]!.id}`);
+    expect(errors).toContain('cookbooks_price: price for unknown cookbook 999999');
+  });
+});

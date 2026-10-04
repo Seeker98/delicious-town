@@ -405,6 +405,14 @@ export function buildBundle(src: SourceData): BuildResult {
   const streetIds = new Set(streets.map((s) => s.id));
 
   // ---------- 食谱 ----------
+  // 老表和新表合起来不能有重复 id，也不能给不存在的食谱定价（backlog 284）
+  unique(
+    'cookbooks_price',
+    pricesRaw.map((p) => p.id),
+  );
+  const cookbookIdSet = new Set(cookbooksRaw.map((c) => c.id));
+  for (const p of pricesRaw)
+    if (!cookbookIdSet.has(p.id)) errors.push(`cookbooks_price: price for unknown cookbook ${p.id}`);
   const prices = new Map(pricesRaw.map((p) => [p.id, p]));
   const cookbooks: Cookbook[] = cookbooksRaw.map((c) => {
     const price = prices.get(c.id);
