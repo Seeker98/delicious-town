@@ -33,6 +33,8 @@ import { shopRoutes } from './shop/routes';
 import { storeRoutes } from './store/routes';
 import { taskRoutes } from './task/routes';
 import { worldRoutes } from './world/routes';
+import { createOpenData } from './open/data';
+import { openRoutes } from './open/routes';
 
 /** 注册所有业务模块的路由 */
 export function registerModules(app: FastifyInstance, game: Game): void {
@@ -40,6 +42,10 @@ export function registerModules(app: FastifyInstance, game: Game): void {
   app.register(shardRoutes(game.shards), { prefix: '/api/v1/shard' });
   app.register(restaurantRoutes(game.restaurant), { prefix: '/api/v1/restaurant' });
   app.register(worldRoutes(game.world), { prefix: '/api/v1/world' });
+  // 开放接口（问题记录 142）：只读的静态游戏数据，不用登录
+  app.register(openRoutes(createOpenData(game.deps.config), game.deps.config.version), {
+    prefix: '/api/v1/open',
+  });
   app.register(growthRoutes(game.growth), { prefix: '/api/v1/growth' });
   app.register(cookbookRoutes(game.cookbook), { prefix: '/api/v1/cookbook' });
   app.register(cupboardRoutes(game.cupboard), { prefix: '/api/v1/cupboard' });

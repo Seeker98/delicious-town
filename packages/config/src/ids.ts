@@ -122,3 +122,6 @@ export const NON_SUIT_IDS: ReadonlySet<number> = new Set([0, 90, 99]);
 /** 赞助帽子（子项目 6A）：发放时可以按件命名，显示为"玉•{名字}之帽"；铉级在餐厅六星时自动换给（设计 §5） */
 export const SPONSOR_HATS = { jade: 641, xuan: 642 } as const;
 export type HatTier = keyof typeof SPONSOR_HATS;
+
+/** 后台专用、游戏里拿不到的道具：开放接口和 Wiki 不显示（问题记录 142）。开发测试礼包、测试勋章、升星促销勋章礼包（测试） */
+export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([51, 83, 124]);

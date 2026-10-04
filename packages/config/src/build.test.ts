@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
-import { SPONSOR_HATS } from './ids';
+import { SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 
@@ -949,5 +949,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(errs).toMatch(/unknown chapter 99/);
     expect(errs).toMatch(/unknown state key rest\.nope/);
     expect(errs).toMatch(/999999/);
+  });
+});
+
+describe('Wiki 隐藏道具清单（问题记录 142）', () => {
+  it('清单里的道具都存在（改了道具 id 时提醒更新清单）', () => {
+    const ids = new Set(realBuild().bundle!.goods.map((g) => g.id));
+    for (const id of WIKI_HIDDEN_GOODS) expect(ids.has(id), String(id)).toBe(true);
   });
 });
