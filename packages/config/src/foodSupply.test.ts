@@ -18,8 +18,15 @@ describe('食材出现权重（问题记录 50）', () => {
     expect(Object.fromEntries(foodWeights(foods, books, 0))).toEqual({ 1: 100, 2: 100, 3: 50 });
   });
 
-  it('真实数据：长胡椒、草鸡蛋的同级份额变大；区服数值默认值', () => {
+  it('真实数据：α 默认 0（模拟发现全服调权重会压低只有本街要的食材，用户定先关掉），出现权重等于 odds；区服数值默认值', () => {
     const { bundle, errors } = buildBundle(source());
+    expect(errors).toEqual([]);
+    expect(bundle!.foods.every((f) => f.weight === f.odds)).toBe(true);
+    expect(bundle!.tuning.scarcity).toEqual({ needBase: 0.05, needLuckFactor: 0.6, needMax: 0.3 });
+  });
+
+  it('真实数据把 α 调到 0.2 时：长胡椒、草鸡蛋的同级份额变大', () => {
+    const { bundle, errors } = buildBundle({ ...source(), 'game/food_supply': { demandBlend: 0.2 } });
     expect(errors).toEqual([]);
     const share = (name: string) => {
       const f = bundle!.foods.find((x) => x.name === name)!;
@@ -35,7 +42,6 @@ describe('食材出现权重（问题记录 50）', () => {
     const [e0, e1] = share('草鸡蛋');
     expect(e0).toBeCloseTo(0.0157, 3);
     expect(e1).toBeCloseTo(0.051, 2);
-    expect(bundle!.tuning.scarcity).toEqual({ needBase: 0.05, needLuckFactor: 0.6, needMax: 0.3 });
   });
 
   it('检查：α 越界、needBase 大于 needMax 时报错', () => {
