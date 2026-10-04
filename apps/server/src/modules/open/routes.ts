@@ -12,7 +12,7 @@ const idParam = z.object({ id: z.coerce.number().int().positive() });
  * 开放接口（问题记录 142，设计 §2）：不用登录、任何网站都能跨域读（不带 cookie）、按 IP 单独限流、可缓存。
  * 配置不变结果就不变：按"语言 + 键"缓存算好的结果，ETag 带配置版本
  */
-export function openRoutes(data: OpenData, version: string): FastifyPluginAsync {
+export function openRoutes(data: OpenData, version: string, webOrigin: string): FastifyPluginAsync {
   const cache = new Map<string, unknown>();
   /** 只缓存查得到的：不存在的 id 不进缓存，免得随便传 id 把内存撑大（各类 id 有限，缓存最多几万条） */
   const cached = <T>(lang: Locale, key: string, make: () => T | null): T | null => {
@@ -42,8 +42,10 @@ export function openRoutes(data: OpenData, version: string): FastifyPluginAsync 
   const config = { rateLimit: 'open' as const };
 
   return async (r) => {
-    // 全局 CORS 只允许本站、带 cookie；开放接口改成任何网站都能读、不带 cookie（错误响应也一样）
-    r.addHook('onSend', async (_req, reply, payload) => {
+    // 全局 CORS 只允许本站、带 cookie；开放接口改成任何网站都能读、不带 cookie（错误响应也一样）。
+    // 本站自己的 Wiki 页面请求带 cookie，浏览器不接受 *：本站来的照旧用全局 CORS 的头
+    r.addHook('onSend', async (req, reply, payload) => {
+      if (req.headers.origin === webOrigin) return payload;
       reply.header('access-control-allow-origin', '*');
       reply.removeHeader('access-control-allow-credentials');
       return payload;

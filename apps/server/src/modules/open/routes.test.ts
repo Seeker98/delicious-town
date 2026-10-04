@@ -48,6 +48,11 @@ describe('开放接口（问题记录 142）', () => {
       headers: { origin: 'https://example.org' },
     });
     expect(miss.res.headers['access-control-allow-origin']).toBe('*');
+    // 本站自己的 Wiki 页面带着 cookie 请求（credentials: include），不能回 *：照旧回本站地址、允许带 cookie
+    const web = ctx.deps.env.WEB_ORIGIN;
+    const mine = await call(ctx.app, 'GET', '/api/v1/open/streets', { headers: { origin: web } });
+    expect(mine.res.headers['access-control-allow-origin']).toBe(web);
+    expect(mine.res.headers['access-control-allow-credentials']).toBe('true');
     // 游戏自己的接口照旧只允许本站、带 cookie
     const own = await call(ctx.app, 'GET', '/api/v1/world/catalog', {
       headers: { origin: 'https://example.org' },

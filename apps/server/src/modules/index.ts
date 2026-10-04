@@ -37,13 +37,14 @@ import { createOpenData } from './open/data';
 import { openRoutes } from './open/routes';
 
 /** 注册所有业务模块的路由 */
-export function registerModules(app: FastifyInstance, game: Game): void {
+/** webOrigin：开放接口要分辨本站请求（本站带 cookie，不能回 *） */
+export function registerModules(app: FastifyInstance, game: Game, webOrigin: string): void {
   app.register(accountRoutes(game.account, game.app), { prefix: '/api/v1/account' });
   app.register(shardRoutes(game.shards), { prefix: '/api/v1/shard' });
   app.register(restaurantRoutes(game.restaurant), { prefix: '/api/v1/restaurant' });
   app.register(worldRoutes(game.world), { prefix: '/api/v1/world' });
   // 开放接口（问题记录 142）：只读的静态游戏数据，不用登录
-  app.register(openRoutes(createOpenData(game.deps.config), game.deps.config.version), {
+  app.register(openRoutes(createOpenData(game.deps.config), game.deps.config.version, webOrigin), {
     prefix: '/api/v1/open',
   });
   app.register(growthRoutes(game.growth), { prefix: '/api/v1/growth' });

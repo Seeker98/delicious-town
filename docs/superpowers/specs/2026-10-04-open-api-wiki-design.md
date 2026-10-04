@@ -77,6 +77,7 @@
 ### 2.3 跨域、缓存、限流
 
 - **跨域**：`/api/v1/open/*` 的响应写 `Access-Control-Allow-Origin: *`，去掉 `Access-Control-Allow-Credentials`（全局的 CORS 只允许本站、带 cookie）。只有 GET、不需要自定义头，浏览器不发预检。
+  - 例外：请求来自本站（`Origin` = `WEB_ORIGIN`）时照旧用全局 CORS 的头（本站地址 + 允许带 cookie）。本站页面的请求带 cookie，浏览器不接受 `*`。
 - **缓存**：`Cache-Control: public, max-age=3600`，`ETag` = `"<配置版本>:<语言>:<路径>"`；带 `If-None-Match` 且相同时回 304。服务端按"语言 + 接口"在进程里缓存算好的结果（配置不变，结果不变）。
 - **限流**：新规则 `open`，每个 IP 容量 120、每秒补 2 个（约每分钟 120 次）。超了照常报 `RATE_LIMITED`（429）。登录的玩家也按 IP 算（开放接口不需要账号）。
 
