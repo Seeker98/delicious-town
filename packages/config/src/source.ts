@@ -62,6 +62,7 @@ export const SOURCE_FILES = [
   'game/souvenirs',
   'game/newbie_pack',
   'game/kuji',
+  'game/fund',
   'restaurant_defaults',
 ] as const;
 

@@ -1,4 +1,4 @@
-import { DEVICE_TYPE, GOODS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
+import { DEVICE_TYPE, FUND_MEDALS, GOODS, GOODS_TYPE, type GameConfig, type Tuning } from '@dt/config';
 import { collectionEffects } from './collection';
 
 export interface EffectLike {
@@ -52,6 +52,8 @@ export function computeEffectAgg(
   let paintings = 0;
   for (const s of live) {
     if (s.sourceType !== 'honor') continue;
+    // 基金勋章只加经验（240-2）：不算勋章收藏，否则会额外加银币收入
+    if (FUND_MEDALS.has(s.sourceId)) continue;
     honors += 1;
     const dt = config.goods.get(s.sourceId)?.deviceType;
     if (dt === DEVICE_TYPE.pot) pots += 1;

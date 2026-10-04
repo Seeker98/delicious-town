@@ -9,6 +9,7 @@ const town: Messages['town'] = {
     exchange: 'Échanges',
     rank: 'Classements',
     classroom: 'Classe',
+    fund: 'Fonds',
   },
   loadFailed: 'Impossible de charger la place',
   places: {

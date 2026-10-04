@@ -10,7 +10,8 @@ import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { kujiErrors } from './kuji';
-import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
+import { fundErrors } from './fund';
+import { FUND_MEDALS, GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
@@ -160,6 +161,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const souvenirsRaw = parse('game/souvenirs', raw.souvenirsFile);
   const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
   const kujiRaw = parse('game/kuji', raw.kujiFile);
+  const fundRaw = parse('game/fund', raw.fundFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -213,6 +215,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !souvenirsRaw ||
     !newbieRaw ||
     !kujiRaw ||
+    !fundRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -372,6 +375,17 @@ export function buildBundle(src: SourceData): BuildResult {
     maxNum: 9999,
     use: { kind: 'randomFood', level: v.level },
   }));
+  // 小镇发展基金勋章（240-2）：限时荣誉，不出售；id 要和 ids.ts 的 FUND 一致
+  for (const m of fundRaw.medals) if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
+  const fundMedals: Goods[] = fundRaw.medals.map((m) => ({
+    ...souvenirLike(m.id, m.name, m.desc),
+    type: GOODS_TYPE.honor,
+    invalidHours: m.hours,
+    maxNum: 1,
+    stackable: false,
+    value: m.effects,
+    effects: m.effects,
+  }));
   // 新手大礼包（goods 54）：原数据没有内容，按 newbie_pack.json 配上（问题记录 331）
   const withPack = builtGoods.map((g) =>
     g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
@@ -385,6 +399,7 @@ export function buildBundle(src: SourceData): BuildResult {
     kujiDeluxeTicket,
     ...kujiFigures,
     ...foodVouchers,
+    ...fundMedals,
   ];
   unique(
     'goods',
@@ -1079,6 +1094,11 @@ export function buildBundle(src: SourceData): BuildResult {
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
   // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
   errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
+  // 小镇发展基金（240-2）：同一套检查后台保存区服数值时也跑
+  const honorIds = new Set(goods.filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id));
+  errors.push(...fundErrors(tuning.fund, { honorIds }));
+  for (const m of fundRaw.medals)
+    if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
   // 豪华池按月轮换的称号（240-2）
   {
     const deluxeKeys = new Set([...tuning.kuji.deluxe.tiers.map((x) => x.key), 'last']);
@@ -1156,6 +1176,7 @@ export function buildBundle(src: SourceData): BuildResult {
     activationRewards,
     kujiThemes,
     kujiDeluxeMonths: kujiRaw.deluxeMonths,
+    fundMedals: fundRaw.medals.map((m) => ({ id: m.id, icon: m.icon })),
     cookbookGrades,
     shopSpecialTiers,
     shopPools,

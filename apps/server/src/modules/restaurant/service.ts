@@ -25,6 +25,7 @@ import { postNews } from '../news/news';
 import { npcAccountId } from '../npc/npc';
 import type { ShardService } from '../shard/service';
 import { grantGoods } from '../store/grant';
+import { iconLive } from '../friend/looks';
 import type { WorldService } from '../world/service';
 import { buffsOf, deviceSlots, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
@@ -45,6 +46,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       .select('icon_key')
       .where('rest_id', '=', restId)
       .where('shown', '=', true)
+      .where(iconLive(d.now()))
       .orderBy('id')
       .execute();
     return rows.flatMap((i) => {

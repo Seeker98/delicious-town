@@ -372,6 +372,14 @@
       "last": { "award": { "diamond": 50 }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
+  "fund": {
+    "days": 7, "returnRate": 0.9, "earlyRate": 0.7,
+    "tiers": [
+      { "key": "A", "coin": 10000000, "medal": 93103, "news": "broadcast" },
+      { "key": "B", "coin": 3000000, "medal": 93102, "news": "news" },
+      { "key": "C", "coin": 1000000, "medal": 93101, "news": "news" }
+    ]
+  },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,

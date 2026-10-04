@@ -8,6 +8,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { remainText } from '../utils/remain';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -149,7 +150,10 @@ onMounted(async () => {
       />
       <label class="form-check-label" :for="`icon-${i.id}`"
         >{{ catalog.icon(i.key)?.title ?? i.title }}
-        <span class="small text-muted">{{ catalog.icon(i.key)?.desc ?? i.desc }}</span></label
+        <span class="small text-muted">{{ catalog.icon(i.key)?.desc ?? i.desc }}</span>
+        <span v-if="i.expiresAt" class="small text-warning ms-1" :data-testid="`icon-left-${i.id}`">{{
+          remainText(i.expiresAt)
+        }}</span></label
       >
     </div>
   </template>

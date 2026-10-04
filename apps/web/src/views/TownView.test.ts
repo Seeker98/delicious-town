@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { townData } from '../components/town/testData';
+import { useRestaurantStore } from '../stores/restaurant';
 import TownView from './TownView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -15,6 +16,7 @@ vi.mock('../api/endpoints', () => ({
     catalog: vi.fn(),
     lessons: vi.fn(),
     mc: vi.fn(),
+    fund: vi.fn(),
   },
 }));
 
@@ -83,10 +85,41 @@ describe('TownView', () => {
     expect(router.currentRoute.value.query.tab).toBe('town');
   });
 
-  it('页面叫"广场"；标签是新闻、居民、兑换、排行、教室（问题记录 122）', async () => {
+  it('页面叫"广场"；标签是新闻、居民、兑换、排行、教室、发展基金（问题记录 122、240-2）', async () => {
     const w = await mountAt('/town?tab=news');
     expect(w.find('h5').text()).toBe('广场');
-    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '兑换', '排行', '教室']);
+    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual([
+      '新闻',
+      '居民',
+      '兑换',
+      '排行',
+      '教室',
+      '发展基金',
+    ]);
+  });
+
+  it('区服关掉发展基金：没有这个标签，存下的上次标签和 ?tab=fund 都退回新闻（240-2）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['fund'] } as never;
+    localStorage.setItem('dt_town_tab', 'fund');
+    const w = await mountAt('/town');
+    expect(w.find('[data-testid="tab-fund"]').exists()).toBe(false);
+    expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
+    const q = await mountAt('/town?tab=fund');
+    expect(q.find('[data-testid="tab-news"]').classes()).toContain('active');
+    expect(endpoints.fund).not.toHaveBeenCalled();
+  });
+
+  it('?tab=fund 打开发展基金（240-2）', async () => {
+    vi.mocked(endpoints.fund).mockResolvedValue({
+      days: 7,
+      returnRate: 0.9,
+      earlyRate: 0.7,
+      coin: 0,
+      deposit: null,
+      tiers: [],
+    });
+    const w = await mountAt('/town?tab=fund');
+    expect(w.find('[data-testid="fund-panel"]').exists()).toBe(true);
   });
 
   it('?tab=classroom 打开教室（问题记录 122：教室放进广场）', async () => {

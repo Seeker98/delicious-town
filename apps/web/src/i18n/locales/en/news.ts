@@ -17,6 +17,18 @@ const ordinal = (k: number) => {
 /** 字母念出来以元音开头时用 an（an A prize、an S prize） */
 const aPrize = (tier: string) => `${/^[AEFHILMNORSX]/.test(tier) ? 'an' : 'a'} ${tier} prize`;
 
+/** Town Development Fund (240-2): one line per tier; unknown tier keys get a plain line */
+function fundNews(w: string, p: P): string {
+  const coin = formatNum(num(p.coin));
+  if (p.tier === 'A')
+    return `👑 Cornerstone capital makes its entrance! [${w}] injects ${coin} coins in one go and seizes the Town Development Fund's A-tier lead investor seat!`;
+  if (p.tier === 'B')
+    return `Big move! [${w}] has locked in ${coin} coins of Town Development Fund B-class units!`;
+  if (p.tier === 'C')
+    return `The real economy is bouncing back! [${w}] subscribed to ${coin} coins of Town Development Fund C-class units`;
+  return `[${w}] deposited ${coin} coins into the Town Development Fund`;
+}
+
 function predictResult(p: P): string {
   const head = `Prediction "${str(p.title)}"`;
   if (p.outcome === null || p.outcome === undefined) {
@@ -102,6 +114,8 @@ const news: Messages['news'] = {
         : `${w} won ${aPrize(str(p.tier))} in ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji!`,
     'kuji.win': (w, p) =>
       `${w} won ${aPrize(str(p.tier))} in ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji`,
+    'fund.big': (w, p) => fundNews(w, p),
+    'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w} bought the limited title "${x.icon?.(str(p.key))?.title ?? str(p.title)}"`,
     'town.exchange': (w, p, x) =>
       `${w} exchanged ${x.goodsName(num(p.goodsId))}×${num(p.num)} with the mayor`,

@@ -21,7 +21,22 @@ describe('RestIcons', () => {
     });
     vi.mocked(adminApi.icons).mockResolvedValue([]);
     vi.mocked(adminApi.grantIcon).mockResolvedValue([
-      { id: 1, key: 'founder', title: '开服元老', shown: false, grantedAt: '2026-09-30T00:00:00Z' },
+      {
+        id: 1,
+        key: 'founder',
+        title: '开服元老',
+        shown: false,
+        grantedAt: '2026-09-30T00:00:00Z',
+        expiresAt: null,
+      },
+      {
+        id: 2,
+        key: 'fund_c',
+        title: '流动赋能',
+        shown: true,
+        grantedAt: '2026-09-30T00:00:00Z',
+        expiresAt: '2026-10-07T00:00:00Z',
+      },
     ]);
   });
 
@@ -34,5 +49,7 @@ describe('RestIcons', () => {
     await flushPromises();
     expect(adminApi.grantIcon).toHaveBeenCalledWith(3, 'founder');
     expect(w.text()).toContain('开服元老');
+    expect(w.get('[data-testid="icon-expires-2"]').text()).toContain('限时');
+    expect(w.find('[data-testid="icon-expires-1"]').exists()).toBe(false);
   });
 });

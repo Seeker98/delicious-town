@@ -150,6 +150,7 @@ import type {
   KujiDrawDto,
   KujiLine,
   KujiViewDto,
+  FundViewDto,
   PredictListDto,
   PredictTradeDto,
   ActivitySummaryDto,
@@ -515,6 +516,11 @@ export const endpoints = {
     api.post<KujiViewDto>('/api/v1/kuji/buy', { num, ...(line ? { line } : {}) }),
   kujiDraw: (num: number, line?: KujiLine) =>
     api.post<KujiDrawDto>('/api/v1/kuji/draw', { num, ...(line ? { line } : {}) }),
+  // 小镇发展基金（240-2）
+  fund: () => api.get<FundViewDto>('/api/v1/fund'),
+  fundDeposit: (tier: string) => api.post<FundViewDto>('/api/v1/fund/deposit', { tier }),
+  fundClaim: () => api.post<FundViewDto>('/api/v1/fund/claim', {}),
+  fundWithdraw: () => api.post<FundViewDto>('/api/v1/fund/withdraw', {}),
   predictList: () => api.get<PredictListDto>('/api/v1/predict/events'),
   predictDetail: (id: number) => api.get<PredictDetailDto>(`/api/v1/predict/events/${id}`),
   predictTrade: (id: number, b: { side: 'yes' | 'no'; dir: 'buy' | 'sell'; qty: number; limit?: number }) =>

@@ -2814,5 +2814,17 @@
   "93005": {
     "name": "Level 5 Random Ingredient Ticket",
     "desc": "Use it to get a random level 5 ingredient"
+  },
+  "93101": {
+    "name": "Liquidity Medal",
+    "desc": "Held a full term of the Town Development Fund, C · Liquidity Enabler. Final EXP +5%"
+  },
+  "93102": {
+    "name": "Growth Capital Medal",
+    "desc": "Held a full term of the Town Development Fund, B · Growth Capital. Final EXP +10%"
+  },
+  "93103": {
+    "name": "Cornerstone Medal",
+    "desc": "Held a full term of the Town Development Fund, A · Cornerstone Lead. Final EXP +15%"
   }
 }

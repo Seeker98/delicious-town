@@ -40,6 +40,24 @@ describe('新闻文案', () => {
     expect(newsText(n('kuji.big', { tier: 'A' }), names)).not.toContain('豪华');
   });
 
+  it('小镇发展基金（240-2）：按档位选句子，店名带【】，金额按实际；不认识的档位用通用句', () => {
+    expect(newsText(n('fund.big', { tier: 'A', coin: 10_000_000 }), names)).toBe(
+      '👑 基石资本强势进场！【小王的店】一次性注资 10,000,000 银币，斩获小镇发展基金 A 级领投席位！',
+    );
+    expect(newsText(n('fund.deposit', { tier: 'B', coin: 3_000_000 }), names)).toBe(
+      '大手笔！【小王的店】成功锁仓 3,000,000 银币小镇发展基金 B 类份额！',
+    );
+    expect(newsText(n('fund.deposit', { tier: 'C', coin: 1_000_000 }), names)).toBe(
+      '实体经济复苏！【小王的店】认购了 1,000,000 银币小镇发展基金 C 类份额',
+    );
+    expect(newsText(n('fund.deposit', { tier: 'D', coin: 500_000 }), names)).toBe(
+      '【小王的店】向小镇发展基金存入 500,000 银币',
+    );
+    expect(newsText(n('fund.big', { tier: 'C', coin: 1_000_000 }), names)).toBe(
+      '实体经济复苏！【小王的店】认购了 1,000,000 银币小镇发展基金 C 类份额',
+    );
+  });
+
   it('代码里每种新闻类型都有文案', () => {
     expect(NEWS_TYPES.filter((x) => !newsRendered().includes(x))).toEqual([]);
   });

@@ -78,5 +78,17 @@
   "kuji_dx_2611_last": {
     "title": "Finale du début d'hiver",
     "desc": "Gagnant du Dernier Prix de l'Ichiban Kuji de luxe, nov. 2026"
+  },
+  "fund_c": {
+    "title": "Liquidité",
+    "desc": "Fonds de développement, C · Liquidité (temporaire, expire avec la médaille)"
+  },
+  "fund_b": {
+    "title": "Capital de croissance",
+    "desc": "Fonds de développement, B · Capital de croissance (temporaire, expire avec la médaille)"
+  },
+  "fund_a": {
+    "title": "Investisseur pilier",
+    "desc": "Fonds de développement, A · Investisseur pilier (temporaire, expire avec la médaille)"
   }
 }

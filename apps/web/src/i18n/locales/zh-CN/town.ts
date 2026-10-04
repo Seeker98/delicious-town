@@ -2,7 +2,7 @@
 export default {
   title: '广场',
   forum: '论坛',
-  tabs: { news: '新闻', town: '居民', exchange: '兑换', rank: '排行', classroom: '教室' },
+  tabs: { news: '新闻', town: '居民', exchange: '兑换', rank: '排行', classroom: '教室', fund: '发展基金' },
   loadFailed: '读取广场失败',
   /** 嘻哈男孩可能去的地点（下标 = 地点编号） */
   places: {

@@ -1,25 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import ClassroomPanel from '../components/town/ClassroomPanel.vue';
 import ExchangePanel from '../components/town/ExchangePanel.vue';
+import FundPanel from '../components/town/FundPanel.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
 import RankPanel from '../components/town/RankPanel.vue';
 import TownPanel from '../components/town/TownPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 'town' 是"居民"标签，键名沿用旧的，免得已存的上次标签和旧链接失效 */
-type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom';
+type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom' | 'fund';
 const KEY = 'dt_town_tab';
-/** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室也在这里（问题记录 122） */
-const TABS: readonly Tab[] = ['news', 'town', 'exchange', 'rank', 'classroom'];
-const isTab = (v: unknown): v is Tab => TABS.includes(v as Tab);
+/** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室也在这里（问题记录 122）；发展基金按区服开关显示（240-2） */
+const ALL_TABS: readonly Tab[] = ['news', 'town', 'exchange', 'rank', 'classroom', 'fund'];
+const restaurant = useRestaurantStore();
+const TABS = computed(() => ALL_TABS.filter((x) => x !== 'fund' || restaurant.featureOn('fund')));
+const isTab = (v: unknown): v is Tab => TABS.value.includes(v as Tab);
 /** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
 function initialTab(query: unknown): Tab {
   if (isTab(query)) return query;
@@ -87,6 +91,7 @@ onMounted(() => {
   </ul>
   <ExchangePanel v-if="tab === 'exchange'" />
   <ClassroomPanel v-else-if="tab === 'classroom'" />
+  <FundPanel v-else-if="tab === 'fund'" />
   <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />

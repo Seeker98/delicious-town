@@ -78,5 +78,17 @@
   "kuji_dx_2611_last": {
     "title": "Gran final de principios de invierno",
     "desc": "Ganador del Último premio del Ichiban Kuji de lujo, nov. 2026"
+  },
+  "fund_c": {
+    "title": "Liquidez",
+    "desc": "Fondo de Desarrollo, C · Liquidez (temporal, vence con la medalla)"
+  },
+  "fund_b": {
+    "title": "Capital de Crecimiento",
+    "desc": "Fondo de Desarrollo, B · Capital de Crecimiento (temporal, vence con la medalla)"
+  },
+  "fund_a": {
+    "title": "Inversor Ancla",
+    "desc": "Fondo de Desarrollo, A · Inversor Ancla (temporal, vence con la medalla)"
   }
 }

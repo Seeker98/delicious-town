@@ -27,6 +27,8 @@ describe('新闻、日志、标签按语言（问题记录 272）', () => {
   it('英语：新闻、事件预测开奖、得失提示、日志、标签', async () => {
     await useLocaleStore().set('en');
     expect(newsText(news('kuji.win', { tier: 'B' }), names)).toBe('Bob won a B prize in Ichiban Kuji');
+    expect(newsText(news('fund.big', { tier: 'A', coin: 10_000_000 }), names)).toContain('[Bob]');
+    expect(newsText(news('fund.big', { tier: 'A', coin: 10_000_000 }), names)).toContain('10,000,000');
     expect(
       newsText(
         news('predict.result', { title: 'Rain?', outcome: true, players: 12, winners: 7, paid: 85000 }),

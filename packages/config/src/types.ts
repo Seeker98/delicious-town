@@ -348,6 +348,8 @@ export interface ConfigBundle {
   kujiThemes: KujiTheme[];
   /** 豪华一番赏按月轮换的称号（240-2）：month 形如 2026-10，icons 是档位 key（或 last）→ 称号 */
   kujiDeluxeMonths: Array<{ month: string; icons: Record<string, string> }>;
+  /** 小镇发展基金勋章（240-2）：领取时一起发的限时称号 */
+  fundMedals: Array<{ id: number; icon: string }>;
   cookbookGrades: CookbookGrade[];
   shopSpecialTiers: ShopSpecialTier[];
   shopPools: { special: number[]; black: number[] };

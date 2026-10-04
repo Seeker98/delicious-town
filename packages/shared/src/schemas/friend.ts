@@ -198,7 +198,15 @@ export interface MyLooksDto {
   door: number;
   avatar: number | null;
   notice: string;
-  icons: Array<{ id: number; key: string; title: string; desc: string; shown: boolean }>;
+  /** expiresAt：限时称号（240-2 发展基金）的到期时间，永久的为空 */
+  icons: Array<{
+    id: number;
+    key: string;
+    title: string;
+    desc: string;
+    shown: boolean;
+    expiresAt: string | null;
+  }>;
   /** 称号商店里正在上架的限定称号（240-2）；endsAt 是下架时间。旧服务端没有这一项 */
   shop?: Array<{ key: string; title: string; desc: string; coin: number; endsAt: string; owned: boolean }>;
 }

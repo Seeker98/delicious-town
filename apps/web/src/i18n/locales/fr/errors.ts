@@ -276,6 +276,11 @@ const errors: Messages['errors'] = {
     same_door: 'Vous avez déjà cette porte',
     icon_not_on_sale: "Ce titre n'est pas en vente en ce moment",
     icon_owned: 'Vous avez déjà ce titre',
+    fund_active: "Vous avez déjà un dépôt ; réclamez-le ou retirez-le d'abord",
+    fund_none: 'Aucun dépôt',
+    fund_not_mature: 'Pas encore échu',
+    fund_mature: 'Déjà échu : réclamez-le plutôt',
+    bad_tier: "Ce rang n'existe pas",
     guardian_down: "Vous avez déjà vaincu le gardien aujourd'hui. Revenez demain.",
     trial_ready: "Votre médaille d'épreuve est encore valide ; vous pouvez commencer l'épreuve",
     no_trial:

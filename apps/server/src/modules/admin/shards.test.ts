@@ -141,6 +141,23 @@ describe('区服数值（HTTP）', () => {
     expect((await save({ tiers: [{ key: 'X', count: 3, award: { coin: 1 } }] })).status).toBe(200);
   });
 
+  it('小镇发展基金：提前比例大于到期比例、勋章不是荣誉类：400（240-2）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const save = (fund: unknown) =>
+      call(ctx.app, 'POST', `${S}/${shardId}/override`, {
+        cookie: admin.cookie,
+        body: { override: { tuning: { fund } }, note: 'x', version: 0 },
+      });
+    const bad = await save({ earlyRate: 0.95, tiers: [{ key: 'C', coin: 1000000, medal: 1 }] });
+    expect(bad.status).toBe(400);
+    expect(bad.json.code).toBe('INVALID_CONFIG');
+    expect(bad.json.params.issues).toEqual([
+      { path: 'tuning.fund', message: 'tuning.fund earlyRate 0.95 must not exceed returnRate 0.9' },
+      { path: 'tuning.fund', message: 'tuning.fund.tiers C medal 1 is not an honor' },
+    ]);
+    expect((await save({ tiers: [{ key: 'C', coin: 500000, medal: 93101 }] })).status).toBe(200);
+  });
+
   it('mod 不能保存（404）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const r = await call(ctx.app, 'POST', `${S}/${shardId}/override`, {

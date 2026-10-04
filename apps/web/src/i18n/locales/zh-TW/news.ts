@@ -13,6 +13,16 @@ const WEEKLY: Record<string, string> = {
   'roach.kill': '滅蟑螂',
 };
 
+/** 小鎮發展基金（240-2）：按檔位選句子（使用者定的文案），店名帶【】；運營改了檔位 key 時用通用句 */
+function fundNews(w: string, p: P): string {
+  const coin = formatNum(num(p.coin));
+  if (p.tier === 'A')
+    return `👑 基石資本強勢進場！【${w}】一次性注資 ${coin} 銀幣，斬獲小鎮發展基金 A 級領投席位！`;
+  if (p.tier === 'B') return `大手筆！【${w}】成功鎖倉 ${coin} 銀幣小鎮發展基金 B 類份額！`;
+  if (p.tier === 'C') return `實體經濟復甦！【${w}】認購了 ${coin} 銀幣小鎮發展基金 C 類份額`;
+  return `【${w}】向小鎮發展基金存入 ${coin} 銀幣`;
+}
+
 /** 事件預測開獎（問題記錄 268）：沒有發起人，文案不帶店名 */
 function predictResult(p: P): string {
   const head = `事件預測「${str(p.title)}」`;
@@ -98,6 +108,8 @@ export default {
         ? `${w}抽走了${p.line === 'deluxe' ? '豪華' : ''}一番賞的最後一張籤，拿下最後賞！`
         : `${w}在${p.line === 'deluxe' ? '豪華' : ''}一番賞抽中了 ${str(p.tier)} 賞！`,
     'kuji.win': (w, p) => `${w}在${p.line === 'deluxe' ? '豪華' : ''}一番賞抽中了 ${str(p.tier)} 賞`,
+    'fund.big': (w, p) => fundNews(w, p),
+    'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在鎮長處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
