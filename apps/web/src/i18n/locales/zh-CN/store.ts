@@ -42,6 +42,8 @@ export default {
       owned: '已经拥有',
       store: '仓库满了',
       other: '买不了',
+      /** 后期海报奖杯按星级可用（问题记录 146） */
+      star: (n: number) => `${n} 星可用`,
     },
     price: (price: string, diamond: boolean) => `${price} ${diamond ? '钻石' : '银币'}`,
     owned: (n: number) => `已有 ${n}`,

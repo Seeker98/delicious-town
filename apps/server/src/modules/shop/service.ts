@@ -11,7 +11,7 @@ import {
 import { sql } from 'kysely';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, limitReached } from '../../core/errors';
+import { invalidState, limitReached, requirement } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendDiamond } from '../../core/resources';
 import { AppError } from '../../http/errors';
@@ -30,6 +30,8 @@ import { gameSeed } from '../../core/seed';
 
 /** 勋章、牌匾只能一个一个买；永久的已拥有就不能再买；其他道具受持有上限和仓库容量限制 */
 async function assertBuyable(o: Op, g: Goods, num: number): Promise<void> {
+  // 后期海报奖杯按星级可用（问题记录 146）
+  if ((g.needStar ?? 0) > o.rest.star_level) throw requirement('star', { need: g.needStar });
   const plaque = isPlaque(g);
   const honor = g.type === GOODS_TYPE.honor;
   if ((plaque || honor || !g.stackable) && num > 1) throw invalidState('single', { goodsId: g.id });
@@ -61,7 +63,7 @@ export function createShopService(d: GameDeps) {
       const now = d.now();
       const rest = await d.db
         .selectFrom('restaurant')
-        .select(['coin', 'diamond', 'store_num'])
+        .select(['coin', 'diamond', 'store_num', 'star_level'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
       const rows = await d.db
@@ -80,7 +82,11 @@ export function createShopService(d: GameDeps) {
       const limitOf = (g: Goods) => (isPlaque(g) || g.type === GOODS_TYPE.honor || !g.stackable ? 1 : null);
       const row = (g: Goods, price: number, money: number): ShopItemDto => {
         const have = owned.get(g.id) ?? 0;
-        const cap = buyCap(g, { owned: have, money, price, storeFull }, tuning.shop.maxBuy);
+        const cap = buyCap(
+          g,
+          { owned: have, money, price, storeFull, star: rest.star_level },
+          tuning.shop.maxBuy,
+        );
         return {
           goodsId: g.id,
           price,
@@ -88,6 +94,7 @@ export function createShopService(d: GameDeps) {
           limit: limitOf(g),
           maxBuy: cap.max,
           blocked: cap.blocked,
+          ...(g.needStar ? { needStar: g.needStar } : {}),
         };
       };
       const coin = d.config.bundle.goods

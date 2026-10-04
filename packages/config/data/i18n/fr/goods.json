@@ -2826,5 +2826,37 @@
   "93103": {
     "name": "Médaille Investisseur pilier",
     "desc": "A tenu un terme complet du Fonds de développement, A · Investisseur pilier. EXP finale +15 %"
+  },
+  "93201": {
+    "name": "Affiche de Frère 13",
+    "desc": "Affiche de Frère 13 ; pièces par table +8 pendant 24 heures (dès 4★)"
+  },
+  "93202": {
+    "name": "Affiche du Maire",
+    "desc": "Affiche du Maire ; pièces par table +15 pendant 24 heures (dès 6★)"
+  },
+  "93203": {
+    "name": "Affiche de M. Krab",
+    "desc": "Affiche de M. Krab ; pièces par table +30 pendant 24 heures (dès 8★)"
+  },
+  "93204": {
+    "name": "Affiche du Dieu de la cuisine",
+    "desc": "Affiche du Dieu de la cuisine ; pièces par table +50 pendant 24 heures (dès 10★)"
+  },
+  "93205": {
+    "name": "Trophée du Dieu de la cuisine (platine)",
+    "desc": "Trophée en platine fabriqué par Delicious Town ; EXP par table +4 pendant 24 heures (dès 4★)"
+  },
+  "93206": {
+    "name": "Trophée du Dieu de la cuisine (diamant)",
+    "desc": "Trophée en diamant fabriqué par Delicious Town ; EXP par table +5 pendant 24 heures (dès 6★)"
+  },
+  "93207": {
+    "name": "Trophée du Dieu de la cuisine (étoile)",
+    "desc": "Trophée étoilé fabriqué par Delicious Town ; EXP par table +6 pendant 24 heures (dès 8★)"
+  },
+  "93208": {
+    "name": "Trophée du Dieu de la cuisine (légende)",
+    "desc": "Trophée légendaire fabriqué par Delicious Town ; EXP par table +7 pendant 24 heures (dès 10★)"
   }
 }

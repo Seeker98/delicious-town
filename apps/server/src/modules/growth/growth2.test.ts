@@ -258,3 +258,23 @@ describe('任务计数（问题记录 318）', () => {
     expect(await eventCount(t, ctx.restaurantId, 'rest.move')).toBe(1);
   });
 });
+
+describe('后期海报奖杯摆放要星级（问题记录 146）', () => {
+  it('3 星摆 4 星的海报：报星级不够，道具还在（Review Focus 2）', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 3 }, goods: { 93201: 1 } });
+    await expect(g().placeDevice(ctx, { slot: 1, goodsId: 93201 })).rejects.toMatchObject({
+      code: 'REQUIREMENT_NOT_MET',
+      params: { reason: 'star', need: 4 },
+    });
+    expect(await goodsNum(t, ctx.restaurantId, 93201)).toBe(1);
+  });
+
+  it('4 星能摆，每桌银币 +8 进加成（Review Focus 3）', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 4 }, goods: { 93201: 1 } });
+    await g().placeDevice(ctx, { slot: 1, goodsId: 93201 });
+    const effects = await listActiveEffects(t.db, ctx.restaurantId, t.clock.now);
+    expect(effects).toContainEqual(
+      expect.objectContaining({ sourceType: 'device', sourceId: 1, effects: { coinValue: 8 } }),
+    );
+  });
+});

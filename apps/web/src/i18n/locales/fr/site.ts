@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    posters:
+      'La boutique ajoute 4 nouveaux niveaux d’affiches et de trophées du Dieu de la cuisine, disponibles dès 4, 6, 8 et 10★, pour des bonus de pièces et d’EXP qui suivent en fin de partie',
     scarcity:
       'Les ingrédients aléatoires ont une chance d’être justement ceux qui manquent à vos recettes, plus souvent avec une chance élevée ; les récompenses du Bar et de la Tour peuvent donner des ingrédients rares',
     site: 'Ajout d’un journal des mises à jour et d’une page de liens ; la barre du haut affiche l’heure',

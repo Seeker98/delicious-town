@@ -164,6 +164,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const kujiRaw = parse('game/kuji', raw.kujiFile);
   const fundRaw = parse('game/fund', raw.fundFile);
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
+  const devicesExtra = parse('game/devices_extra', raw.devicesExtraFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -219,6 +220,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !kujiRaw ||
     !fundRaw ||
     !foodSupply ||
+    !devicesExtra ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -382,6 +384,23 @@ export function buildBundle(src: SourceData): BuildResult {
   }));
   // 小镇发展基金勋章（240-2）：限时荣誉，不出售；id 要和 ids.ts 的 FUND 一致
   for (const m of fundRaw.medals) if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
+  // 后期的宣传海报、奖杯（问题记录 146）：设施，商店有售，按星级可用；不进随机奖励池
+  const maxStar = Math.max(...starNeedRaw.map((s) => s.starlevel));
+  for (const x of devicesExtra.items) {
+    if (x.deviceType !== 1 && x.deviceType !== 2)
+      errors.push(`devices_extra ${x.id} deviceType ${x.deviceType}`);
+    if (x.needStar < 0 || x.needStar > maxStar) errors.push(`devices_extra ${x.id} needStar ${x.needStar}`);
+  }
+  const extraDevices: Goods[] = devicesExtra.items.map((x) => ({
+    ...souvenirLike(x.id, x.name, x.desc),
+    type: GOODS_TYPE.device,
+    deviceType: x.deviceType,
+    coin: x.coin,
+    onSale: true,
+    value: { time: x.time, [x.effect]: x.value },
+    effects: { time: x.time, [x.effect]: x.value },
+    needStar: x.needStar,
+  }));
   const fundMedals: Goods[] = fundRaw.medals.map((m) => ({
     ...souvenirLike(m.id, m.name, m.desc),
     type: GOODS_TYPE.honor,
@@ -405,6 +424,7 @@ export function buildBundle(src: SourceData): BuildResult {
     ...kujiFigures,
     ...foodVouchers,
     ...fundMedals,
+    ...extraDevices,
   ];
   unique(
     'goods',

@@ -88,7 +88,7 @@ describe('接口', () => {
 
   it('目录接口不需要登录', async () => {
     const r = await call(http.app, 'GET', '/api/v1/world/catalog');
-    expect(r.json.data.goods).toHaveLength(707); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2）
+    expect(r.json.data.goods).toHaveLength(715); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）
     expect(r.json.data.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
     expect(r.json.data.version).toBe(config.version);
   });

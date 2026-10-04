@@ -19,6 +19,8 @@ export async function placeDevice(
   const g = op.config.requireGoods(goodsId);
   if (g.type !== GOODS_TYPE.device || g.deviceType !== dev.deviceType)
     throw invalidState('wrong_device', { slot, goodsId });
+  // 后期海报奖杯按星级可用（问题记录 146）：从别处拿到的也装不上，道具不消耗
+  if ((g.needStar ?? 0) > op.rest.star_level) throw requirement('star', { need: g.needStar });
   if (g.deviceType === DEVICE_TYPE.plaque) {
     if ((await countGoods(op, goodsId)) < 1) throw notEnough('goods', 1, 0, goodsId);
     const other = await op.tx

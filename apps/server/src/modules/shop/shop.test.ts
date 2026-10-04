@@ -154,3 +154,30 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
     expect(item(l, 'coin', 86)).toMatchObject({ maxBuy: 18, blocked: null });
   });
 });
+
+describe('后期海报奖杯按星级可用（问题记录 146）', () => {
+  it('3 星：列表标 star、能买 0 个、带需要星级；买的接口报星级不够，不扣钱', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 3 } });
+    const l = await shop().items(ctx);
+    expect(l.coin.find((x) => x.goodsId === 93201)).toMatchObject({
+      maxBuy: 0,
+      blocked: 'star',
+      needStar: 4,
+    });
+    expect(l.coin.find((x) => x.goodsId === 13)).not.toHaveProperty('needStar');
+    await expect(shop().buy(ctx, { goodsId: 93201, num: 1 })).rejects.toMatchObject({
+      code: 'REQUIREMENT_NOT_MET',
+      params: { reason: 'star', need: 4 },
+    });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000);
+  });
+
+  it('星级刚好够（4 星）就能买（Review Focus 1）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, star_level: 4 } });
+    const l = await shop().items(ctx);
+    expect(l.coin.find((x) => x.goodsId === 93201)).toMatchObject({ blocked: null, needStar: 4 });
+    await shop().buy(ctx, { goodsId: 93201, num: 1 });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(970_000);
+    expect(await goodsNum(t, ctx.restaurantId, 93201)).toBe(1);
+  });
+});

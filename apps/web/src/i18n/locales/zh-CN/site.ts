@@ -8,6 +8,7 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    posters: '商店新增 4 档宣传海报和小镇食神奖杯，4、6、8、10 星可用，后期的银币和经验加成跟得上了',
     scarcity:
       '随机得到的食材有一定概率是你学菜正缺的那种，幸运越高越容易；酒吧、厨塔的随机奖励也能出稀缺食材了',
     site: '游戏里加了更新记录和友情链接，顶栏显示当前时间',

@@ -2826,5 +2826,37 @@
   "93103": {
     "name": "Medalla de Inversor Ancla",
     "desc": "Completó un plazo del Fondo de Desarrollo, A · Inversor Ancla. EXP final +15 %"
+  },
+  "93201": {
+    "name": "Cartel del Hermano 13",
+    "desc": "Cartel del Hermano 13; monedas por mesa +8 durante 24 horas (desde 4★)"
+  },
+  "93202": {
+    "name": "Cartel del Alcalde",
+    "desc": "Cartel del Alcalde; monedas por mesa +15 durante 24 horas (desde 6★)"
+  },
+  "93203": {
+    "name": "Cartel de Don Krab",
+    "desc": "Cartel de Don Krab; monedas por mesa +30 durante 24 horas (desde 8★)"
+  },
+  "93204": {
+    "name": "Cartel del Dios de la Cocina",
+    "desc": "Cartel del Dios de la Cocina; monedas por mesa +50 durante 24 horas (desde 10★)"
+  },
+  "93205": {
+    "name": "Trofeo del Dios de la Cocina (platino)",
+    "desc": "Trofeo de platino hecho por Delicious Town; EXP por mesa +4 durante 24 horas (desde 4★)"
+  },
+  "93206": {
+    "name": "Trofeo del Dios de la Cocina (diamante)",
+    "desc": "Trofeo de diamante hecho por Delicious Town; EXP por mesa +5 durante 24 horas (desde 6★)"
+  },
+  "93207": {
+    "name": "Trofeo del Dios de la Cocina (estelar)",
+    "desc": "Trofeo estelar hecho por Delicious Town; EXP por mesa +6 durante 24 horas (desde 8★)"
+  },
+  "93208": {
+    "name": "Trofeo del Dios de la Cocina (leyenda)",
+    "desc": "Trofeo legendario hecho por Delicious Town; EXP por mesa +7 durante 24 horas (desde 10★)"
   }
 }

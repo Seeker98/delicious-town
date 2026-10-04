@@ -458,6 +458,27 @@ export const kujiFile = z
   })
   .strict();
 
+/** data/game/devices_extra.json：后期的宣传海报、奖杯（问题记录 146） */
+export const devicesExtraFile = z
+  .object({
+    items: z.array(
+      z
+        .object({
+          id: int.min(1),
+          name: z.string().min(1),
+          desc: z.string().min(1),
+          deviceType: int,
+          time: int.min(1),
+          effect: z.enum(['coinValue', 'expValue']),
+          value: z.number().positive(),
+          coin: int.min(1),
+          needStar: int,
+        })
+        .strict(),
+    ),
+  })
+  .strict();
+
 /** data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50） */
 export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).max(1) }).strict();
 
