@@ -197,13 +197,15 @@ export default {
       `預測「${String(p.title ?? '')}」結果為${p.outcome ? '是' : '否'}，結算得到 ${formatNum(n(p, 'coin'))} 銀幣${predictNet(p)}`,
     'predict.refund': (p) =>
       `預測「${String(p.title ?? '')}」已作廢，退回 ${formatNum(n(p, 'coin'))} 銀幣${predictNet(p)}`,
-    'kuji.buy': (p) => `買了一番賞抽賞券 ×${n(p, 'num')}，花費 ${formatNum(n(p, 'coin'))} 銀幣`,
+    // 豪華一番賞（240-2）的記錄帶 line: 'deluxe'
+    'kuji.buy': (p) =>
+      `買了${p.line === 'deluxe' ? '豪華籤券' : '一番賞抽賞券'} ×${n(p, 'num')}，花費 ${formatNum(n(p, 'coin'))} 銀幣`,
     'kuji.activation': (p) => `領取活躍 ${n(p, 'points')} 點獎勵，另得一番賞抽賞券 ×${n(p, 'num')}`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} 賞 ×${v}`)
         .join('、');
-      return `一番賞第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 張：${tiers}${p.last ? '，並拿下最後賞' : ''}`;
+      return `${p.line === 'deluxe' ? '豪華' : ''}一番賞第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 張：${tiers}${p.last ? '，並拿下最後賞' : ''}`;
     },
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
