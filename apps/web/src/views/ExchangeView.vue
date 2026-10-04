@@ -313,7 +313,6 @@ onMounted(async () => {
     <div class="d-flex flex-wrap gap-2 small mb-1">
       <b>{{ catalog.foodName(book.foodsId) }}</b>
       <span>{{ t.exchange.ref(formatNum(book.ref)) }}</span>
-      <span v-if="book.last !== null">{{ t.exchange.last(formatNum(book.last)) }}</span>
       <span>{{ t.exchange.volume(formatNum(book.volume)) }}</span>
       <span class="text-muted" data-testid="ex-band">{{
         t.exchange.band(formatNum(book.min), formatNum(book.max))
@@ -332,6 +331,12 @@ onMounted(async () => {
           <td>{{ a.system ? t.exchange.askSys : t.exchange.ask }}</td>
           <td>{{ formatNum(a.price) }}</td>
           <td class="text-end">{{ formatNum(a.qty) }}</td>
+        </tr>
+        <!-- 最新成交价放在卖档和买档中间（156-1 设计 §8，backlog 156-1） -->
+        <tr data-testid="ex-last">
+          <td colspan="3" class="text-center fw-semibold" :class="{ 'text-muted': book.last === null }">
+            {{ book.last === null ? t.exchange.noTrade : t.exchange.last(formatNum(book.last)) }}
+          </td>
         </tr>
         <tr
           v-for="b in book.bids"
