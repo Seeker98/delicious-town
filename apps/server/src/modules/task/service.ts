@@ -240,32 +240,27 @@ export function createTaskService(d: GameDeps) {
       .execute();
   }
 
-  /**
-   * 活跃项另外的门槛（问题记录 360）：配置里只写了星级，这几项的功能开关、等级和星级门槛写在各自的功能里，
-   * 这里照着列出来，任务页才能和"挑战守护兽"一样标锁定
-   */
-  function actGate(
-    id: number,
-    settings: ShardSettings,
-  ): { feature: string; needLevel: number; needStar: number } | null {
+  /** 活跃项的等级门槛（问题记录 360）：配置里只写了星级，交易所、事件预测的等级门槛在区服数值里 */
+  function actNeedLevel(id: number, settings: ShardSettings): number {
     const t = settings.tuning;
-    switch (id) {
-      case 40: // 与好友赛厨：好友切磋要 1 星（tower/friendDuel）
-        return { feature: 'tower', needLevel: 0, needStar: 1 };
-      case 901:
-        return { feature: 'exchange', needLevel: t.exchange.minLevel, needStar: 0 };
-      case 902:
-        return { feature: 'predict', needLevel: t.predict.minLevel, needStar: 0 };
-      case 903:
-        return { feature: 'kuji', needLevel: 0, needStar: 0 };
-      case 904:
-        return { feature: 'activity', needLevel: 0, needStar: 0 };
-      case 905:
-        return { feature: 'forum', needLevel: 0, needStar: 0 };
-      default:
-        return null;
-    }
+    if (id === 901) return t.exchange.minLevel;
+    if (id === 902) return t.predict.minLevel;
+    return 0;
   }
+
+  /**
+   * 活跃项的功能（问题记录 360）：按动作对照表找出算进这一项的所有动作，换成各自的功能；
+   * 这些功能在本区服全都关了才算没开放（只要有一种做法还能做就不锁）
+   */
+  const actFeatures = new Map<string, string[]>();
+  for (const [key, name] of Object.entries(d.config.bundle.actionMap.activation)) {
+    const f = d.config.featureOfKey(key);
+    if (f) actFeatures.set(name, [...(actFeatures.get(name) ?? []), f]);
+  }
+  const actOff = (name: string, settings: ShardSettings): boolean => {
+    const fs = actFeatures.get(name) ?? [];
+    return fs.length > 0 && fs.every((x) => !featureAvailable(settings, x));
+  };
 
   async function activationOf(
     db: Kysely<DB>,
@@ -296,16 +291,15 @@ export function createTaskService(d: GameDeps) {
       star: rest.star_level,
       level: rest.level,
       items: acts.map((a) => {
-        const g = actGate(a.id, settings);
         return {
           id: a.id,
           name: a.name,
           points: a.points,
           limit: a.limitTimes,
           count: counts.get(a.id) ?? 0,
-          needStar: Math.max(a.needStar, g?.needStar ?? 0),
-          needLevel: g?.needLevel ?? 0,
-          off: g !== null && !featureAvailable(settings, g.feature),
+          needStar: a.needStar,
+          needLevel: actNeedLevel(a.id, settings),
+          off: actOff(a.name, settings),
         };
       }),
       rewards: d.config.bundle.activationRewards.map((r) => ({

@@ -58,7 +58,7 @@ describe('活跃度（规格书 15 §15.2）', () => {
 });
 
 describe('活跃项的门槛（问题记录 360）', () => {
-  it('交易所、事件预测按区服的等级门槛；与好友赛厨要 1 星；区服关掉的功能标成未开放；带上餐厅等级', async () => {
+  it('交易所、事件预测按区服的等级门槛；区服关掉的功能标成未开放；带上餐厅等级', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 1, star_level: 0 } });
     const { tuning } = await t.game.shards.settings(ctx.shardId);
     const a = await task().activation(ctx);
@@ -70,14 +70,19 @@ describe('活跃项的门槛（问题记录 360）', () => {
       off: false,
     });
     expect(item('事件预测交易')).toMatchObject({ needLevel: tuning.predict.minLevel, off: false });
-    expect(item('与好友赛厨')).toMatchObject({ needStar: 1, needLevel: 0 });
+    // 排位挑战也算这一项、不要星级：不标 1 星（质量期 ⑥ 终审）
+    expect(item('与好友赛厨')).toMatchObject({ needStar: 0, needLevel: 0 });
     expect(item('签到')).toMatchObject({ needStar: 0, needLevel: 0, off: false });
     await t.db
       .insertInto('shard_config')
-      .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { exchange: false } }) })
+      .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { exchange: false, bar: false } }) })
       .execute();
     t.game.shards.invalidate(ctx.shardId);
-    expect((await task().activation(ctx)).items.find((x) => x.name === '交易所成交')!.off).toBe(true);
+    const b = await task().activation(ctx);
+    expect(b.items.find((x) => x.name === '交易所成交')!.off).toBe(true);
+    // 所有功能都按动作对照表推：酒吧关了，“酒吧娱乐”也标未开放（质量期 ⑥ 终审）
+    expect(b.items.find((x) => x.name === '酒吧娱乐')!.off).toBe(true);
+    expect(b.items.find((x) => x.name === '签到')!.off).toBe(false);
   });
 });
 
