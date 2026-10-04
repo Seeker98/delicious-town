@@ -18,15 +18,41 @@ export function etagMatches(header: string | undefined, etag: string): boolean {
  * 配置不变结果就不变：按"语言 + 键"缓存算好的结果，ETag 带配置版本。
  * 本站的 Wiki 也用不带 cookie 的请求，所以一律回 *，响应不随来源变，共享缓存不会串（终审）
  */
-export function openRoutes(data: OpenData, version: string): FastifyPluginAsync {
-  const cache = new Map<string, unknown>();
-  /** 只缓存查得到的：不存在的 id 不进缓存，免得随便传 id 把内存撑大（各类 id 有限，缓存最多几万条） */
-  const cached = <T>(lang: Locale, key: string, make: () => T | null): T | null => {
+/** 详情缓存最多留多少条（各语言合计）：一条约 1~2KB，2000 条几 MB */
+const DETAIL_MAX = 2000;
+
+export function openRoutes(
+  data: OpenData,
+  version: string,
+  opts: { detailMax?: number } = {},
+): FastifyPluginAsync {
+  const detailMax = opts.detailMax ?? DETAIL_MAX;
+  /**
+   * 缓存序列化好的正文（质量期 ③）：列表只有几十个键，全留；详情（各语言合计两万多个）只留最近用过的，
+   * 原来全部留对象，爬一遍就几十 MB，而且每次请求还要重新序列化。
+   * 只缓存查得到的：不存在的 id 不进缓存
+   */
+  const lists = new Map<string, string>();
+  const details = new Map<string, string>();
+  const cached = <T>(lang: Locale, key: string, make: () => T | null): string | null => {
     const k = `${lang}:${key}`;
-    if (cache.has(k)) return cache.get(k) as T;
+    const detail = key.includes('/');
+    const store = detail ? details : lists;
+    const hit = store.get(k);
+    if (hit !== undefined) {
+      // Map 按插入顺序：用到一次挪到最后，最久没用的在最前面
+      if (detail) {
+        store.delete(k);
+        store.set(k, hit);
+      }
+      return hit;
+    }
     const v = make();
-    if (v !== null) cache.set(k, v);
-    return v;
+    if (v === null) return null;
+    const body = JSON.stringify(ok(v));
+    store.set(k, body);
+    if (detail && store.size > detailMax) store.delete(store.keys().next().value!);
+    return body;
   };
   const langOf = (req: FastifyRequest): Locale => parse(openQuery, req.query).lang ?? 'zh-CN';
   const notFound = (id: number) => new AppError(ErrorCode.NOT_FOUND, 404, { what: 'open', id });
@@ -45,7 +71,7 @@ export function openRoutes(data: OpenData, version: string): FastifyPluginAsync 
     const body = cached(lang, key, make);
     if (body === null) throw notFound(Number(key.split('/')[1]));
     cacheHeaders();
-    return ok(body);
+    return reply.type('application/json; charset=utf-8').send(body);
   };
   const config = { rateLimit: 'open' as const };
 

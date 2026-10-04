@@ -1,4 +1,9 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import Fastify from 'fastify';
+import { testConfig } from '../../../test/config';
+import { registerErrorHandling } from '../../http/errorHandling';
+import { createOpenData } from './data';
+import { openRoutes } from './routes';
 import { call, createTestApp, GENEROUS_RULES, type TestContext } from '../../../test/helpers';
 
 let ctx: TestContext;
@@ -121,5 +126,31 @@ describe('开放接口限流', () => {
     } finally {
       await tight.close();
     }
+  });
+});
+
+describe('开放接口的缓存（质量期 ③）', () => {
+  it('详情只留最近用过的若干条（爬一遍不会把内存撑大）；列表不受影响；缓存的正文和直接算的一样', async () => {
+    const data = createOpenData(testConfig());
+    const detail = vi.spyOn(data, 'goodsDetail');
+    const list = vi.spyOn(data, 'goods');
+    const app = Fastify();
+    registerErrorHandling(app);
+    await app.register(openRoutes(data, 'v', { detailMax: 2 }), { prefix: '/open' });
+    const get = async (url: string) => (await app.inject({ method: 'GET', url })).json();
+    const first = await get('/open/goods/1');
+    expect(first.data).toEqual(JSON.parse(JSON.stringify(data.goodsDetail('zh-CN', 1))));
+    detail.mockClear();
+    await get('/open/goods/2');
+    await get('/open/goods/3');
+    await get('/open/goods/3');
+    await get('/open/goods');
+    await get('/open/goods');
+    expect(detail.mock.calls.map((c) => c[1])).toEqual([2, 3]);
+    expect(list).toHaveBeenCalledTimes(1);
+    // 1 号已经被挤出去，再读要重新算
+    await get('/open/goods/1');
+    expect(detail.mock.calls.map((c) => c[1])).toEqual([2, 3, 1]);
+    await app.close();
   });
 });
