@@ -39,6 +39,8 @@ async function act(fn: () => Promise<FundViewDto>, done: (v: FundViewDto) => str
 }
 const pct = (rate: number) => Math.round(rate * 100);
 const tierName = (key: string) => t.value.fund.tierName(key);
+/** 存款的勋章加成：按勋章找档（存入后运营改了档位 key 也能找到） */
+const medalRate = (medal: number) => data.value?.tiers.find((x) => x.medal === medal)?.expRate ?? 0;
 
 function deposit(x: FundViewDto['tiers'][number]) {
   const d = data.value;
@@ -77,21 +79,24 @@ onMounted(load);
         {{ t.fund.rule(data.days, pct(data.returnRate), pct(data.earlyRate)) }}
       </p>
       <p class="small mb-2">{{ t.fund.myCoin(formatNum(data.coin)) }}</p>
-      <div v-if="data.deposit" class="dt-item" data-testid="fund-mine">
-        <div class="fw-bold">{{ t.fund.mine }}</div>
-        <div>{{ t.fund.depositLine(tierName(data.deposit.tier), formatNum(data.deposit.coin)) }}</div>
-        <div class="small text-muted">
-          {{
-            t.fund.medalLine(
-              catalog.goodsName(data.deposit.medal),
-              pct(data.tiers.find((x) => x.key === data!.deposit!.tier)?.expRate ?? 0),
-            )
-          }}
-        </div>
-        <div class="small">
-          {{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}
-          <span v-if="data.deposit.mature" class="text-success">{{ t.fund.mature }}</span>
-          <span v-else class="text-muted">{{ remainText(data.deposit.maturesAt) }}</span>
+      <template v-if="data.deposit">
+        <div class="fw-bold small mb-1">{{ t.fund.mine }}</div>
+        <div class="dt-item" data-testid="fund-mine">
+          <div class="dt-item-main">
+            <div class="dt-item-title">
+              {{ t.fund.depositLine(tierName(data.deposit.tier), formatNum(data.deposit.coin)) }}
+            </div>
+            <div class="small text-muted">
+              {{
+                t.fund.medalLine(catalog.goodsName(data.deposit.medal), pct(medalRate(data.deposit.medal)))
+              }}
+            </div>
+            <div class="small">
+              {{ t.fund.maturesAt(newsTime(data.deposit.maturesAt)) }}
+              <span v-if="data.deposit.mature" class="text-success">{{ t.fund.mature }}</span>
+              <span v-else class="text-muted">{{ remainText(data.deposit.maturesAt) }}</span>
+            </div>
+          </div>
         </div>
         <button
           v-if="data.deposit.mature"
@@ -111,23 +116,28 @@ onMounted(load);
         >
           {{ t.fund.withdraw(formatNum(data.deposit.early)) }}
         </button>
-      </div>
+      </template>
       <template v-else>
         <div v-for="x in data.tiers" :key="x.key" class="dt-item" :data-testid="`fund-tier-${x.key}`">
-          <div class="fw-bold">{{ tierName(x.key) }}</div>
-          <div>{{ t.fund.tierLine(formatNum(x.coin), formatNum(x.back)) }}</div>
-          <div class="small text-muted">
-            {{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} · {{ t.fund.days(data.days) }}
+          <div class="dt-item-main">
+            <div class="dt-item-title">{{ tierName(x.key) }}</div>
+            <div class="small">{{ t.fund.tierLine(formatNum(x.coin), formatNum(x.back)) }}</div>
+            <div class="small text-muted">
+              {{ t.fund.medalLine(catalog.goodsName(x.medal), pct(x.expRate)) }} ·
+              {{ t.fund.days(data.days) }}
+            </div>
+            <div v-if="data.coin < x.coin" class="small text-danger">{{ t.fund.notEnough }}</div>
           </div>
-          <button
-            class="btn btn-sm btn-primary mt-2"
-            :disabled="busy || data.coin < x.coin"
-            :data-testid="`fund-deposit-${x.key}`"
-            @click="deposit(x)"
-          >
-            {{ t.fund.deposit }}
-          </button>
-          <span v-if="data.coin < x.coin" class="small text-danger ms-2">{{ t.fund.notEnough }}</span>
+          <div class="dt-item-actions">
+            <button
+              class="btn btn-sm btn-primary"
+              :disabled="busy || data.coin < x.coin"
+              :data-testid="`fund-deposit-${x.key}`"
+              @click="deposit(x)"
+            >
+              {{ t.fund.deposit }}
+            </button>
+          </div>
         </div>
       </template>
     </template>
