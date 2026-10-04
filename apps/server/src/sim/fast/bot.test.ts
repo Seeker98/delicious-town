@@ -100,6 +100,68 @@ describe('机器人（设计 §4.5）', () => {
     expect(learnedNew.length).toBeGreaterThan(0);
   });
 
+  describe('搬街（问题记录 240 报告：只能学本街的菜以后，新手街 69 道菜不够升 2 星）', () => {
+    /** 新手街的菜全学到 1 品级，等级够 2 星，只差食谱数 */
+    const exhausted = (c: FastCtx) => {
+      const b = bot(c);
+      noQuests(b);
+      for (const id of config.cookbookIndex.idsByStreet.get(0)!) b.rest.levels[id] = 1;
+      b.rest.star = 1;
+      b.rest.level = config.starNeed.get(2)!.needLevel;
+      b.rest.counts.learned = config.cookbookIndex.idsByStreet.get(0)!.length;
+      b.rest.coin = 1e7;
+      b.rest.daily.set('signin', 1); // 签到送的银币、钻石不干扰
+      b.rest.store.delete(NEWBIE.pack); // 新手大礼包里有 50 钻石
+      return b;
+    };
+
+    it('本街没学过的菜学完了、下一星还要更多：用搬家卡搬到没学过的菜最多的街，付银币，换街道勋章', () => {
+      const c = ctx();
+      const b = exhausted(c);
+      b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).not.toBe(0);
+      const most = Math.max(
+        ...[...config.cookbookIndex.idsByStreet].filter(([id]) => id !== 0).map(([, ids]) => ids.length),
+      );
+      expect(config.cookbookIndex.idsByStreet.get(b.rest.streetId)!.length).toBe(most);
+      expect(b.rest.store.has(GOODS.moveCard)).toBe(false);
+      expect(c.stats.spend!.move).toBeGreaterThan(0);
+      expect(b.rest.store.has(config.streetMedalId(0))).toBe(false);
+      expect(b.rest.store.has(config.streetMedalId(b.rest.streetId))).toBe(true);
+    });
+
+    it('没有搬家卡时花钻石在黑市买一张；钻石不够就不搬', () => {
+      const c = ctx();
+      const b = exhausted(c);
+      b.rest.diamond = 0;
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).toBe(0);
+      const c2 = ctx();
+      const b2 = exhausted(c2);
+      b2.rest.diamond = config.requireGoods(GOODS.moveCard).diamond;
+      botTurn(c2, b2, newMarket(), world(), null);
+      expect(b2.rest.streetId).not.toBe(0);
+      expect(b2.rest.diamond).toBe(0);
+    });
+
+    it('本街还有没学过的菜但 3 天没学到新菜：也搬；不到 3 天不搬', () => {
+      const c = ctx();
+      const b = exhausted(c);
+      const left = config.cookbookIndex.idsByStreet.get(0)![0]!;
+      b.rest.levels[left] = 0;
+      b.rest.counts.learned -= 1;
+      b.rest.foods.clear();
+      b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
+      b.rest.lastFreshAt = new Date(c.now.getTime() - 2 * 86_400_000);
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).toBe(0);
+      b.rest.lastFreshAt = new Date(c.now.getTime() - 4 * 86_400_000);
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).not.toBe(0);
+    });
+  });
+
   it('凭证不够又没钱时，卡点原因有 certs 和 coin', () => {
     const c = ctx();
     const b = bot(c);

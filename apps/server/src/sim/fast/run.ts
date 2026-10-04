@@ -73,6 +73,8 @@ export interface FastResult {
   days: FastDay[];
   /** 画像 → 来源 → 累计收入 */
   income: Record<string, Record<string, Income>>;
+  /** 画像 → 用途 → 累计花掉的银币（问题记录 240） */
+  spend: Record<string, Record<string, number>>;
   stuck: FastStuck[];
   /** 体力恢复任务跑了几次（诊断用：真实定时任务每 10 分钟一次） */
   regenCount: number;
@@ -274,5 +276,18 @@ export function runFast(
       t.diamond += v.diamond;
     }
   }
-  return { name, days, income, stuck: [...stuck.values()], regenCount, elapsedMs: Date.now() - started };
+  const spend: FastResult['spend'] = {};
+  for (const x of runners) {
+    const p = (spend[x.bot.persona.key] ??= {});
+    for (const [k, v] of Object.entries(x.stats.spend ?? {})) p[k] = (p[k] ?? 0) + v;
+  }
+  return {
+    name,
+    days,
+    income,
+    spend,
+    stuck: [...stuck.values()],
+    regenCount,
+    elapsedMs: Date.now() - started,
+  };
 }
