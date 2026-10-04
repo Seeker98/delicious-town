@@ -196,13 +196,15 @@ export default {
       `预测「${String(p.title ?? '')}」结果为${p.outcome ? '是' : '否'}，结算得到 ${formatNum(n(p, 'coin'))} 银币${predictNet(p)}`,
     'predict.refund': (p) =>
       `预测「${String(p.title ?? '')}」已作废，退回 ${formatNum(n(p, 'coin'))} 银币${predictNet(p)}`,
-    'kuji.buy': (p) => `买了一番赏抽赏券 ×${n(p, 'num')}，花费 ${formatNum(n(p, 'coin'))} 银币`,
+    // 豪华一番赏（240-2）的记录带 line: 'deluxe'
+    'kuji.buy': (p) =>
+      `买了${p.line === 'deluxe' ? '豪华签券' : '一番赏抽赏券'} ×${n(p, 'num')}，花费 ${formatNum(n(p, 'coin'))} 银币`,
     'kuji.activation': (p) => `领取活跃 ${n(p, 'points')} 点奖励，另得一番赏抽赏券 ×${n(p, 'num')}`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} 赏 ×${v}`)
         .join('、');
-      return `一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张：${tiers}${p.last ? '，并拿下最后赏' : ''}`;
+      return `${p.line === 'deluxe' ? '豪华' : ''}一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张：${tiers}${p.last ? '，并拿下最后赏' : ''}`;
     },
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,

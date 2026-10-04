@@ -54,5 +54,29 @@
   "nov26_l": {
     "title": "Winter Gourmet God",
     "desc": "Nov 2026 limited: the culinary god of winter days"
+  },
+  "kuji_dx_a": {
+    "title": "Deluxe Ichiban Kuji A Prize Winner",
+    "desc": "Won the A prize in the Deluxe Ichiban Kuji"
+  },
+  "kuji_dx_last": {
+    "title": "Deluxe Ichiban Kuji Last Prize Winner",
+    "desc": "Drew the last slip of a Deluxe Ichiban Kuji pool"
+  },
+  "kuji_dx_2610_a": {
+    "title": "Golden Autumn Fortune",
+    "desc": "Deluxe Ichiban Kuji A prize winner, Oct 2026"
+  },
+  "kuji_dx_2610_last": {
+    "title": "Golden Autumn Finale",
+    "desc": "Deluxe Ichiban Kuji last prize winner, Oct 2026"
+  },
+  "kuji_dx_2611_a": {
+    "title": "Early Winter Fortune",
+    "desc": "Deluxe Ichiban Kuji A prize winner, Nov 2026"
+  },
+  "kuji_dx_2611_last": {
+    "title": "Early Winter Finale",
+    "desc": "Deluxe Ichiban Kuji last prize winner, Nov 2026"
   }
 }

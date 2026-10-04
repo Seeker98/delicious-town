@@ -207,14 +207,15 @@ const events: Messages['events'] = {
       `Prediction "${String(p.title ?? '')}" resolved ${p.outcome ? 'Yes' : 'No'}: received ${formatNum(n(p, 'coin'))} coins${predictNet(p)}`,
     'predict.refund': (p) =>
       `Prediction "${String(p.title ?? '')}" was voided: refunded ${formatNum(n(p, 'coin'))} coins${predictNet(p)}`,
-    'kuji.buy': (p) => `Bought ${n(p, 'num')} Ichiban Kuji tickets for ${formatNum(n(p, 'coin'))} coins`,
+    'kuji.buy': (p) =>
+      `Bought ${n(p, 'num')} ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji tickets for ${formatNum(n(p, 'coin'))} coins`,
     'kuji.activation': (p) =>
       `Claimed the ${n(p, 'points')}-point activity reward and got ${n(p, 'num')} bonus Ichiban Kuji tickets`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} prize ×${v}`)
         .join(', ');
-      return `Drew ${n(p, 'num')} from Ichiban Kuji pool #${n(p, 'seq')}: ${tiers}${p.last ? ', plus the Last Prize' : ''}`;
+      return `Drew ${n(p, 'num')} from ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji pool #${n(p, 'seq')}: ${tiers}${p.last ? ', plus the Last Prize' : ''}`;
     },
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,

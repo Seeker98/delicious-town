@@ -97,9 +97,10 @@ const news: Messages['news'] = {
       `¡Enhorabuena! ${w} metió la mano en el bolsillo de Don Krab y sacó ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'kuji.big': (w, p) =>
       p.tier === 'last'
-        ? `¡${w} sacó el último boleto del Ichiban Kuji y se llevó el Último Premio!`
-        : `¡${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji!`,
-    'kuji.win': (w, p) => `${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji`,
+        ? `¡${w} sacó el último boleto del Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''} y se llevó el Último Premio!`
+        : `¡${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''}!`,
+    'kuji.win': (w, p) =>
+      `${w} ganó el premio ${str(p.tier)} en el Ichiban Kuji${p.line === 'deluxe' ? ' de lujo' : ''}`,
     'icon.buy': (w, p, x) =>
       `${w} compró el título limitado «${x.icon?.(str(p.key))?.title ?? str(p.title)}»`,
     'town.exchange': (w, p, x) => `${w} canjeó ${x.goodsName(num(p.goodsId))}×${num(p.num)} con el alcalde`,

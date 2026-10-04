@@ -7,10 +7,15 @@ export const KUJI_MAX_TICKETS = 1000;
  * 一番赏配置的引用检查（一番赏设计 §3、终审 I3）：档位不重复、不能叫 last（最后赏专用）、
  * 一池总张数不超过上限、图标存在、奖品引用的道具和食材存在。配置构建和后台保存区服数值都调用
  */
-export function kujiErrors(
-  k: Tuning['kuji'],
-  ref: { goodsIds: ReadonlySet<number>; foodIds: ReadonlySet<number>; iconKeys: ReadonlySet<string> },
-): string[] {
+type KujiRef = { goodsIds: ReadonlySet<number>; foodIds: ReadonlySet<number>; iconKeys: ReadonlySet<string> };
+
+export function kujiErrors(k: Tuning['kuji'], ref: KujiRef): string[] {
+  // 豪华一番赏（240-2）一起检查，错误写明 deluxe
+  return [...lineErrors('tuning.kuji', k, ref), ...lineErrors('tuning.kuji.deluxe', k.deluxe, ref)];
+}
+
+/** 一条奖池线的检查；prefix 写进错误信息，区分普通池和豪华池 */
+function lineErrors(prefix: string, k: Pick<Tuning['kuji'], 'tiers' | 'last'>, ref: KujiRef): string[] {
   const errors: string[] = [];
   const award = (where: string, a: Tuning['kuji']['last']['award']) => {
     for (const g of a.goods ?? [])
@@ -20,17 +25,17 @@ export function kujiErrors(
   };
   const seen = new Set<string>();
   for (const tier of k.tiers) {
-    if (seen.has(tier.key)) errors.push(`tuning.kuji.tiers duplicate key ${tier.key}`);
+    if (seen.has(tier.key)) errors.push(`${prefix}.tiers duplicate key ${tier.key}`);
     seen.add(tier.key);
-    if (tier.key === 'last') errors.push('tuning.kuji.tiers key "last" is reserved for the last prize');
+    if (tier.key === 'last') errors.push(`${prefix}.tiers key "last" is reserved for the last prize`);
     if (tier.icon && !ref.iconKeys.has(tier.icon))
-      errors.push(`tuning.kuji.tiers ${tier.key} icon ${tier.icon} not in looks.icons`);
-    award(`tuning.kuji.tiers ${tier.key}`, tier.award);
+      errors.push(`${prefix}.tiers ${tier.key} icon ${tier.icon} not in looks.icons`);
+    award(`${prefix}.tiers ${tier.key}`, tier.award);
   }
   const total = k.tiers.reduce((s, x) => s + x.count, 0);
-  if (total > KUJI_MAX_TICKETS) errors.push(`tuning.kuji.tiers total ${total} > ${KUJI_MAX_TICKETS}`);
+  if (total > KUJI_MAX_TICKETS) errors.push(`${prefix}.tiers total ${total} > ${KUJI_MAX_TICKETS}`);
   if (k.last.icon && !ref.iconKeys.has(k.last.icon))
-    errors.push(`tuning.kuji.last icon ${k.last.icon} not in looks.icons`);
-  award('tuning.kuji.last', k.last.award);
+    errors.push(`${prefix}.last icon ${k.last.icon} not in looks.icons`);
+  award(`${prefix}.last`, k.last.award);
   return errors;
 }

@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
 import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
@@ -372,5 +372,108 @@ describe('任务计数（问题记录 318）', () => {
     expect(
       (await t.game.task.activation(r)).items.find((i) => i.name === '一番赏抽赏')!.count,
     ).toBeGreaterThan(0);
+  });
+});
+
+describe('豪华一番赏（240-2）', () => {
+  let saved: Date;
+  beforeEach(() => {
+    saved = t.clock.now;
+  });
+  afterEach(() => t.clock.set(saved));
+  const DX = GOODS.kujiDeluxeTicket;
+  const dxPlayer = (shardId: number, o: { coin?: number; tickets?: number } = {}) =>
+    newRestaurant(t, {
+      shardId,
+      patch: { coin: o.coin ?? 10_000_000 },
+      goods: o.tickets ? { [DX]: o.tickets } : {},
+    });
+  const iconsOf = async (restId: number) =>
+    (await t.db.selectFrom('rest_icon').select('icon_key').where('rest_id', '=', restId).execute())
+      .map((x) => x.icon_key)
+      .sort();
+
+  it('看板：豪华池 20 张、每张 30 万、没有月度主题；普通看板不受影响', async () => {
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId);
+    const v = await svc().view(r, 'deluxe');
+    expect(v).toMatchObject({ line: 'deluxe', price: 300000, buyLeft: 10, maxDraw: 10, theme: null });
+    expect(v.pool).toMatchObject({ seq: 1, total: 20, left: 20 });
+    const n = await svc().view(r);
+    expect(n).toMatchObject({ line: 'normal', price: 20000 });
+    expect(n.pool.total).toBe(80);
+  });
+
+  it('买豪华券扣 30 万；限购和普通券分开计（Review Focus 3）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId);
+    await svc().buy(r, 10);
+    await svc().buy(r, 2, 'deluxe');
+    expect(await coin(r.restaurantId)).toBe(10_000_000 - 200_000 - 600_000);
+    expect(await goodsNum(t, r.restaurantId, DX)).toBe(2);
+    expect((await svc().view(r, 'deluxe')).buyLeft).toBe(8);
+    expect((await svc().view(r)).buyLeft).toBe(0);
+  });
+
+  it('普通券不能抽豪华池，豪华券不能抽普通池；什么都不扣（Review Focus 2）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, goods: { [T]: 3 } });
+    await expect(svc().draw(r, 1, 'deluxe')).rejects.toMatchObject({ params: { reason: 'kuji_ticket' } });
+    expect(await goodsNum(t, r.restaurantId, T)).toBe(3);
+    const s = await dxPlayer(shardId, { tickets: 3 });
+    await expect(svc().draw(s, 1)).rejects.toMatchObject({ params: { reason: 'kuji_ticket' } });
+    expect(await goodsNum(t, s.restaurantId, DX)).toBe(3);
+  });
+
+  it('十月开的池发十月称号；抽完发最后赏、开下一池；A 赏和最后赏全服广播且带 line；最近的大赏分线（Review Focus 4、5）', async () => {
+    t.clock.set(gameTime('2026-10-15', 12));
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId, { tickets: 20 });
+    await svc().draw(r, 10, 'deluxe');
+    const res = await svc().draw(r, 10, 'deluxe');
+    expect(res.data.last).not.toBeNull();
+    expect(await iconsOf(r.restaurantId)).toEqual(['kuji_dx_2610_a', 'kuji_dx_2610_last']);
+    const news = await t.db
+      .selectFrom('news')
+      .select(['type', 'params'])
+      .where('shard_id', '=', shardId)
+      .execute();
+    const big = news.filter((n) => n.type === 'kuji.big').map((n) => n.params);
+    expect(big).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ tier: 'A', line: 'deluxe' }),
+        expect.objectContaining({ tier: 'last', line: 'deluxe' }),
+      ]),
+    );
+    const dv = await svc().view(r, 'deluxe');
+    expect(dv.recent.length).toBeGreaterThan(0);
+    expect(dv.pool.seq).toBe(2);
+    expect((await svc().view(r)).recent).toEqual([]);
+  });
+
+  it('没有配置的月份发固定称号（Review Focus 4）', async () => {
+    t.clock.set(gameTime('2027-03-15', 12));
+    const shardId = await createShard(t.db);
+    const v = await svc().view(await dxPlayer(shardId), 'deluxe');
+    expect(v.tiers[0]!.icon).toBe('kuji_dx_a');
+    expect(v.last.icon).toBe('kuji_dx_last');
+  });
+
+  it('9 月 30 日开的豪华池在 10 月 1 日作废，10 月 1 日新开的池发十月称号（Review Focus 4）', async () => {
+    t.clock.set(gameTime('2026-09-30', 20));
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId);
+    const sep = await svc().view(r, 'deluxe');
+    expect(sep.tiers[0]!.icon).toBe('kuji_dx_a');
+    t.clock.set(gameTime('2026-10-01', 1));
+    const oct = await svc().view(r, 'deluxe');
+    expect(oct.pool.id).not.toBe(sep.pool.id);
+    expect(oct.tiers[0]!.icon).toBe('kuji_dx_2610_a');
+    const old = await t.db
+      .selectFrom('kuji_pool')
+      .select('status')
+      .where('id', '=', String(sep.pool.id))
+      .executeTakeFirstOrThrow();
+    expect(old.status).toBe('expired');
   });
 });

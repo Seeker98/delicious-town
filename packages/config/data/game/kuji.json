@@ -1,5 +1,10 @@
 {
   "ticket": { "id": 90201, "name": "一番赏抽赏券", "desc": "抽一番赏用的签券，在一番赏页面使用。" },
+  "deluxeTicket": { "id": 90202, "name": "豪华签券", "desc": "抽豪华一番赏用的签券，在一番赏页切到“豪华”使用。" },
+  "deluxeMonths": [
+    { "month": "2026-10", "icons": { "A": "kuji_dx_2610_a", "last": "kuji_dx_2610_last" } },
+    { "month": "2026-11", "icons": { "A": "kuji_dx_2611_a", "last": "kuji_dx_2611_last" } }
+  ],
   "themes": [
     {
       "month": 1, "name": "新春年味", "desc": "锣鼓一响，年夜饭的香味飘满小镇。",

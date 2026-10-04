@@ -42,6 +42,7 @@ import * as m0040 from './0040_move_176';
 import * as m0041 from './0041_quests';
 import * as m0042 from './0042_backlog_trade';
 import * as m0043 from './0043_coin_sink_refs';
+import * as m0044 from './0044_kuji_line';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -88,4 +89,5 @@ export const migrations: Record<string, Migration> = {
   '0041_quests': m0041,
   '0042_backlog_trade': m0042,
   '0043_coin_sink_refs': m0043,
+  '0044_kuji_line': m0044,
 };

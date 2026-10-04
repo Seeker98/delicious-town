@@ -256,6 +256,13 @@ describe('交易所日志（156-1）', () => {
     expect(log('kuji.draw', { seq: 2, num: 3, tiers: { A: 1, F: 2 }, last: true })).toBe(
       '一番赏第 2 池抽了 3 张：A 赏 ×1、F 赏 ×2，并拿下最后赏',
     );
+    // 豪华一番赏（240-2 终审）：记录写明是豪华签券、豪华池
+    expect(log('kuji.buy', { num: 2, coin: 600000, line: 'deluxe' })).toBe(
+      '买了豪华签券 ×2，花费 600,000 银币',
+    );
+    expect(log('kuji.draw', { seq: 1, num: 1, tiers: { D: 1 }, last: false, line: 'deluxe' })).toBe(
+      '豪华一番赏第 1 池抽了 1 张：D 赏 ×1',
+    );
   });
 
   it('事件合约日志（238-1）', () => {

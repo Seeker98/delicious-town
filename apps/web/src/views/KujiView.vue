@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import type { KujiAwardDto, KujiDrawDto, KujiViewDto } from '@dt/shared';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import type { KujiAwardDto, KujiDrawDto, KujiLine, KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { activeLocale } from '../i18n';
@@ -18,6 +19,15 @@ const data = ref<KujiViewDto | null>(null);
 const result = ref<KujiDrawDto | null>(null);
 const buyNum = ref<number | ''>(1);
 const busy = ref(false);
+/** 普通 / 豪华（240-2）：记在网址的 line 里，刷新后保持 */
+const route = useRoute();
+const router = useRouter();
+const line = computed<KujiLine>(() => (route.query.line === 'deluxe' ? 'deluxe' : 'normal'));
+const deluxe = computed(() => line.value === 'deluxe');
+function pickLine(x: KujiLine) {
+  if (x === line.value) return;
+  void router.replace({ query: { ...route.query, line: x === 'deluxe' ? 'deluxe' : undefined } });
+}
 
 const awardText = (a: KujiAwardDto) =>
   [
@@ -28,6 +38,11 @@ const awardText = (a: KujiAwardDto) =>
     ...(a.exp ? [t.value.kuji.exp(formatNum(a.exp))] : []),
     ...(a.renown ? [t.value.kuji.renown(formatNum(a.renown))] : []),
   ].join(t.value.events.sep);
+/** 限定称号写出名字（240-2：豪华池按月轮换）；目录里没有时照旧写“附限定图标” */
+const iconText = (key: string) => {
+  const title = catalog.icon(key)?.title;
+  return title ? t.value.kuji.iconNamed(title) : t.value.kuji.icon;
+};
 const tierName = (k: string) => (k === 'last' ? t.value.kuji.lastTier : t.value.kuji.tier(k));
 const recentTime = (iso: string) => new Date(iso).toLocaleString(activeLocale());
 const canDraw = (n: number) =>
@@ -62,20 +77,27 @@ const buyHint = computed(() => {
 });
 const buyOk = computed(() => buyNum.value !== '' && buyHint.value === '');
 
+/** 请求发起后切了线，响应就作废：不能把别的线的看板写进当前页（240-2 终审 I-1） */
+const stale = (l: KujiLine) => l !== line.value;
+
 async function load() {
+  const l = line.value;
   try {
-    data.value = await endpoints.kuji();
+    const v = l === 'deluxe' ? await endpoints.kuji('deluxe') : await endpoints.kuji();
+    if (!stale(l)) data.value = v;
   } catch (e) {
-    toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
+    if (!stale(l)) toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
 }
 async function buy() {
   const n = Number(buyNum.value);
   if (!Number.isInteger(n) || n < 1) return;
   busy.value = true;
+  const l = line.value;
   try {
-    data.value = await endpoints.kujiBuy(n);
-    toast.push(t.value.kuji.bought(n));
+    const v = l === 'deluxe' ? await endpoints.kujiBuy(n, 'deluxe') : await endpoints.kujiBuy(n);
+    toast.push(l === 'deluxe' ? t.value.kuji.boughtDeluxe(n) : t.value.kuji.bought(n));
+    if (!stale(l)) data.value = v;
   } catch (e) {
     toast.push(errorMessage(e, t.value.kuji.buyFailed), 'danger');
   } finally {
@@ -84,25 +106,47 @@ async function buy() {
 }
 async function draw(n: number) {
   busy.value = true;
+  const l = line.value;
   try {
-    const r = await endpoints.kujiDraw(n);
+    const r = l === 'deluxe' ? await endpoints.kujiDraw(n, 'deluxe') : await endpoints.kujiDraw(n);
+    if (stale(l)) return;
     result.value = r;
     data.value = r.view;
   } catch (e) {
     toast.push(errorMessage(e, t.value.kuji.drawFailed), 'danger');
-    await load();
+    if (!stale(l)) await load();
   } finally {
     busy.value = false;
   }
 }
 onMounted(() => void load());
+watch(line, () => {
+  result.value = null;
+  data.value = null;
+  void load();
+});
 </script>
 
 <template>
   <h5>{{ t.kuji.title }}</h5>
   <HiphopCard :place="12" />
+  <div class="dt-pills mb-2">
+    <button
+      v-for="x in ['normal', 'deluxe'] as const"
+      :key="x"
+      type="button"
+      :class="{ active: line === x }"
+      :aria-pressed="line === x"
+      :data-testid="`kj-line-${x}`"
+      :disabled="busy"
+      @click="pickLine(x)"
+    >
+      {{ x === 'deluxe' ? t.kuji.lineDeluxe : t.kuji.lineNormal }}
+    </button>
+  </div>
   <div class="small text-muted mb-2">
-    {{ t.kuji.rule(data?.pool.total ?? 80) }}
+    {{ t.kuji.rule(data?.pool.total ?? (deluxe ? 20 : 80)) }}
+    <span v-if="deluxe" class="d-block" data-testid="kj-deluxe-note">{{ t.kuji.deluxeNote }}</span>
   </div>
   <template v-if="data">
     <!-- 月度主题（问题记录 274）：A/B/C/最后赏的手办只在这个月抽得到 -->
@@ -135,7 +179,7 @@ onMounted(() => void load());
             ><span v-if="x.big" class="badge text-bg-warning ms-1">{{ t.kuji.big }}</span>
           </td>
           <td>
-            {{ awardText(x.award) }}<span v-if="x.icon" class="text-muted">{{ t.kuji.icon }}</span>
+            {{ awardText(x.award) }}<span v-if="x.icon" class="text-muted">{{ iconText(x.icon) }}</span>
           </td>
           <td class="text-end text-nowrap">{{ x.left }} / {{ x.count }}</td>
         </tr>
@@ -145,14 +189,16 @@ onMounted(() => void load());
           </td>
           <td>
             {{ awardText(data.last.award)
-            }}<span v-if="data.last.icon" class="text-muted">{{ t.kuji.icon }}</span>
+            }}<span v-if="data.last.icon" class="text-muted">{{ iconText(data.last.icon) }}</span>
           </td>
           <td class="text-end text-muted">{{ t.kuji.lastWho }}</td>
         </tr>
       </tbody>
     </table>
     <div class="dt-card mb-2 small">
-      <div class="mb-1" data-testid="kj-tickets">{{ t.kuji.tickets(data.tickets) }}</div>
+      <div class="mb-1" data-testid="kj-tickets">
+        {{ deluxe ? t.kuji.ticketsDeluxe(data.tickets) : t.kuji.tickets(data.tickets) }}
+      </div>
       <div class="mb-1 text-muted" data-testid="kj-coin">{{ t.kuji.balance(formatNum(data.coin)) }}</div>
       <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
         {{ t.kuji.buyPrefix }}

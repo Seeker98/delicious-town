@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import type { KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
@@ -9,6 +10,7 @@ import KujiView from './KujiView.vue';
 vi.mock('../api/endpoints', () => ({ endpoints: { kuji: vi.fn(), kujiBuy: vi.fn(), kujiDraw: vi.fn() } }));
 
 const view = (p: Partial<KujiViewDto> = {}): KujiViewDto => ({
+  line: 'normal',
   pool: { id: 1, day: '2026-10-02', seq: 2, total: 80, left: 79 },
   tiers: [
     {
@@ -33,6 +35,18 @@ const view = (p: Partial<KujiViewDto> = {}): KujiViewDto => ({
   ...p,
 });
 
+/** 页面读网址里的 line（240-2 豪华一番赏），挂载时要装路由 */
+async function mountWithRouter(path: string) {
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/:p(.*)*', component: { template: '<p/>' } }],
+  });
+  await router.push(path);
+  const w = mount(KujiView, { global: { plugins: [router] } });
+  await flushPromises();
+  return { w, router };
+}
+
 describe('KujiView（一番赏设计 §7.2）', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -49,7 +63,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
   });
 
   it('看板：第几池、剩余；抽完的档灰掉；奖品写道具名；最近大赏', async () => {
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('第 2 池');
     expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 79 / 80');
@@ -63,7 +77,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
   });
 
   it('抽签按钮按券数和剩余禁用；买券显示总价', async () => {
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     expect(w.get('[data-testid="kj-draw-1"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="kj-draw-5"]').attributes('disabled')).toBeDefined();
@@ -77,7 +91,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
       last: { diamond: 200 },
       view: view({ tickets: 2 }),
     });
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     await w.get('[data-testid="kj-draw-1"]').trigger('click');
     await flushPromises();
@@ -90,7 +104,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
   });
 
   it('看板显示本月主题（问题记录 274）', async () => {
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     const th = w.get('[data-testid="kj-theme"]').text();
     expect(th).toContain('7 月主题：夏日冰饮');
@@ -105,7 +119,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
         pool: { id: 1, day: '2026-10-02', seq: 3, total: 80, left: 0 },
       }),
     );
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     expect(w.get('[data-testid="kj-closed"]').text()).toContain('明天 0 点再来');
     for (const n of [1, 5, 10])
@@ -128,7 +142,7 @@ describe('backlog 一番赏：页面', () => {
   });
   const show = async (p: Partial<KujiViewDto>) => {
     vi.mocked(endpoints.kuji).mockResolvedValue(view(p));
-    const w = mount(KujiView);
+    const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     return w;
   };
@@ -170,5 +184,86 @@ describe('backlog 一番赏：页面', () => {
   it('显示银币余额', async () => {
     const w = await show({});
     expect(w.get('[data-testid="kj-coin"]').text()).toContain('1,234,567');
+  });
+
+  it('切到豪华（240-2）：请求带 line=deluxe，网址记下 line；票数写“豪华签券”；没有月度主题', async () => {
+    vi.mocked(endpoints.kuji).mockImplementation(async (line) =>
+      line === 'deluxe'
+        ? view({
+            line: 'deluxe',
+            pool: { id: 9, day: '2026-10-04', seq: 1, total: 20, left: 20 },
+            price: 300000,
+            theme: null,
+          })
+        : view(),
+    );
+    const { w, router } = await mountWithRouter('/kuji');
+    await w.get('[data-testid="kj-line-deluxe"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.kuji).toHaveBeenLastCalledWith('deluxe');
+    expect(router.currentRoute.value.query.line).toBe('deluxe');
+    expect(w.get('[data-testid="kj-tickets"]').text()).toContain('豪华签券');
+    expect(w.find('[data-testid="kj-theme"]').exists()).toBe(false);
+    expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
+  });
+
+  it('奖品写出限定称号的名字（240-2：豪华池按月轮换，要看得出这个月发哪个称号）；目录里没有时照旧写“附限定图标”', async () => {
+    useCatalogStore().apply({
+      version: 'y',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      looks: { doors: [], avatars: [], icons: [{ key: 'kuji_a', title: '金秋鸿运', desc: 'x' }] },
+    } as never);
+    // 自己给返回值：beforeEach 的 clearAllMocks 不清实现，不能靠上一条用例留下的（终审小问题 5）
+    vi.mocked(endpoints.kuji).mockResolvedValue(view());
+    const { w } = await mountWithRouter('/kuji');
+    expect(w.get('[data-testid="kj-tier-A"]').text()).toContain('金秋鸿运');
+    expect(w.get('[data-testid="kj-last"]').text()).toContain('附限定图标');
+  });
+
+  it('豪华页买券、抽签都带 deluxe（240-2 终审：漏传会在豪华页买到普通券）', async () => {
+    const dx = view({ line: 'deluxe', price: 300000, theme: null });
+    vi.mocked(endpoints.kuji).mockResolvedValue(dx);
+    vi.mocked(endpoints.kujiBuy).mockResolvedValue(dx);
+    vi.mocked(endpoints.kujiDraw).mockResolvedValue({ draws: [], last: null, view: dx });
+    const { w } = await mountWithRouter('/kuji?line=deluxe');
+    expect(endpoints.kuji).toHaveBeenLastCalledWith('deluxe');
+    await w.get('[data-testid="kj-buy-num"]').setValue('2');
+    await w.get('[data-testid="kj-buy"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.kujiBuy).toHaveBeenCalledWith(2, 'deluxe');
+    await w.get('[data-testid="kj-draw-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.kujiDraw).toHaveBeenCalledWith(1, 'deluxe');
+  });
+
+  it('切线时还没返回的旧请求作废：普通池看板晚到，不会写进豪华页；抽签进行中不能切线（240-2 终审 I-1）', async () => {
+    const dx = view({
+      line: 'deluxe',
+      price: 300000,
+      theme: null,
+      pool: { id: 9, day: '2026-10-04', seq: 1, total: 20, left: 20 },
+    });
+    let finishNormal!: (v: KujiViewDto) => void;
+    vi.mocked(endpoints.kuji).mockImplementation((line) =>
+      line === 'deluxe' ? Promise.resolve(dx) : new Promise((r) => (finishNormal = r)),
+    );
+    const { w } = await mountWithRouter('/kuji');
+    // 普通池的看板还没回来就切到豪华
+    await w.get('[data-testid="kj-line-deluxe"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
+    finishNormal(view());
+    await flushPromises();
+    expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
+    expect(w.get('[data-testid="kj-tickets"]').text()).toContain('豪华签券');
+
+    // 抽签还没返回时，切换按钮禁用
+    vi.mocked(endpoints.kujiDraw).mockReturnValue(new Promise(() => undefined));
+    await w.get('[data-testid="kj-draw-1"]').trigger('click');
+    expect(w.get('[data-testid="kj-line-normal"]').attributes('disabled')).toBeDefined();
   });
 });

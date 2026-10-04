@@ -209,14 +209,14 @@ const events: Messages['events'] = {
     'predict.refund': (p) =>
       `Prédiction « ${String(p.title ?? '')} » annulée : ${formatNum(n(p, 'coin'))} pièces remboursées${predictNet(p)}`,
     'kuji.buy': (p) =>
-      `A acheté ${n(p, 'num')} tickets d'Ichiban Kuji pour ${formatNum(n(p, 'coin'))} pièces`,
+      `A acheté ${n(p, 'num')} tickets d'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} pour ${formatNum(n(p, 'coin'))} pièces`,
     'kuji.activation': (p) =>
       `Récompense d'activité de ${n(p, 'points')} points reçue, avec ${n(p, 'num')} tickets d'Ichiban Kuji en bonus`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `prix ${k} ×${v}`)
         .join(', ');
-      return `A tiré ${n(p, 'num')} tickets du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
+      return `A tiré ${n(p, 'num')} tickets du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
     },
     'activity.claim': (p) => `A récupéré les récompenses de l'événement « ${String(p.title ?? '')} »`,
     'activity.unlock': (p) =>

@@ -33,6 +33,13 @@ describe('新闻文案', () => {
     expect(newsText(n('icon.buy', p), names)).toBe('小王的店买下了限定称号「金秋食神」');
   });
 
+  it('豪华一番赏的新闻写“豪华一番赏”（240-2）', () => {
+    expect(newsText(n('kuji.big', { tier: 'A', line: 'deluxe' }), names)).toContain('豪华一番赏');
+    expect(newsText(n('kuji.big', { tier: 'last', line: 'deluxe' }), names)).toContain('豪华一番赏');
+    expect(newsText(n('kuji.win', { tier: 'B', line: 'deluxe' }), names)).toContain('豪华一番赏');
+    expect(newsText(n('kuji.big', { tier: 'A' }), names)).not.toContain('豪华');
+  });
+
   it('代码里每种新闻类型都有文案', () => {
     expect(NEWS_TYPES.filter((x) => !newsRendered().includes(x))).toEqual([]);
   });

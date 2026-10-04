@@ -338,6 +338,13 @@ export function buildBundle(src: SourceData): BuildResult {
     equip: null,
     gem: null,
   };
+  // 豪华签券（240-2）：和普通券同一种生成方式
+  const kujiDeluxeTicket: Goods = {
+    ...kujiTicket,
+    id: kujiRaw.deluxeTicket.id,
+    name: kujiRaw.deluxeTicket.name,
+    desc: kujiRaw.deluxeTicket.desc,
+  };
   // 一番赏月度主题手办（问题记录 274）：纪念品，说明末尾注明主题
   const kujiThemes: KujiTheme[] = [];
   const kujiFigures: Goods[] = [];
@@ -375,6 +382,7 @@ export function buildBundle(src: SourceData): BuildResult {
     ...applyStressTables(withPack, equipLore.stressTables, errors),
     ...souvenirGoods,
     kujiTicket,
+    kujiDeluxeTicket,
     ...kujiFigures,
     ...foodVouchers,
   ];
@@ -1071,6 +1079,19 @@ export function buildBundle(src: SourceData): BuildResult {
     errors.push(`tuning.friend.npc.door ${tuning.friend.npc.door} not in looks`);
   // 一番赏（一番赏设计 §3）：引用检查和后台保存区服数值共用
   errors.push(...kujiErrors(tuning.kuji, { goodsIds, foodIds, iconKeys }));
+  // 豪华池按月轮换的称号（240-2）
+  {
+    const deluxeKeys = new Set([...tuning.kuji.deluxe.tiers.map((x) => x.key), 'last']);
+    const seenMonth = new Set<string>();
+    for (const m of kujiRaw.deluxeMonths) {
+      if (seenMonth.has(m.month)) errors.push(`kuji deluxeMonths duplicate month ${m.month}`);
+      seenMonth.add(m.month);
+      for (const [key, icon] of Object.entries(m.icons)) {
+        if (!deluxeKeys.has(key)) errors.push(`kuji deluxeMonths ${m.month} key ${key} is not a deluxe tier`);
+        if (!iconKeys.has(icon)) errors.push(`kuji deluxeMonths ${m.month} icon ${icon} not in looks.icons`);
+      }
+    }
+  }
 
   if (errors.length > 0) return { bundle: null, errors };
 
@@ -1134,6 +1155,7 @@ export function buildBundle(src: SourceData): BuildResult {
     activationTasks,
     activationRewards,
     kujiThemes,
+    kujiDeluxeMonths: kujiRaw.deluxeMonths,
     cookbookGrades,
     shopSpecialTiers,
     shopPools,

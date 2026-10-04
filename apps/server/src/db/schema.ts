@@ -1194,6 +1194,8 @@ export interface KujiPoolTable {
   last: ColumnType<unknown, string | null | undefined, string | null>;
   /** 开池时的月度主题（问题记录 274）：1~12；之前开的池为空 */
   theme: Nullable<number>;
+  /** 奖池线（240-2）：普通或豪华，迁移前的池都是 normal */
+  line: Default<'normal' | 'deluxe'>;
 }
 export interface KujiTicketTable {
   pool_id: string;

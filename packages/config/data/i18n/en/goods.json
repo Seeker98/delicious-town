@@ -2535,6 +2535,10 @@
     "name": "Ichiban Kuji Ticket",
     "desc": "A ticket for drawing the Ichiban Kuji; use it on the Ichiban Kuji page."
   },
+  "90202": {
+    "name": "Deluxe Kuji Ticket",
+    "desc": "A ticket for the Deluxe Ichiban Kuji. Use it on the Ichiban Kuji page after switching to \"Deluxe\"."
+  },
   "91011": {
     "name": "Lion Dance Chef Figure",
     "desc": "A chef wearing a lion's head serves a whole fish for \"abundance every year\", red silk still hanging from his whiskers. (Ichiban Kuji · Spring Festival Flavors)"

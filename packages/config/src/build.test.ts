@@ -18,7 +18,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(703); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）
+    expect(bundle!.goods).toHaveLength(704); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -1057,5 +1057,39 @@ describe('限定称号（240-2 称号商店）', () => {
         shop: { coin: 1, from: '2026-11-01', to: '2026-11-01' },
       }),
     ).toContain('looks: icon bad_time shop must end after it starts');
+  });
+});
+
+describe('豪华一番赏（240-2）', () => {
+  it('真实数据：豪华池 20 张、每张 30 万；豪华签券 90202；十月、十一月的轮换称号', () => {
+    const { bundle, errors } = buildBundle(readSourceDir(defaultDataDir()));
+    expect(errors).toEqual([]);
+    const dx = bundle!.tuning.kuji.deluxe;
+    expect(dx).toMatchObject({ price: 300000, dailyBuy: 10, maxDraw: 10, maxPools: 3 });
+    expect(dx.tiers.map((x) => [x.key, x.count])).toEqual([
+      ['A', 1],
+      ['B', 2],
+      ['C', 5],
+      ['D', 12],
+    ]);
+    expect(dx.tiers[0]).toMatchObject({ icon: 'kuji_dx_a', news: 'broadcast' });
+    expect(dx.last).toMatchObject({ icon: 'kuji_dx_last', news: 'broadcast' });
+    expect(bundle!.goods.find((g) => g.id === 90202)).toMatchObject({ name: '豪华签券', onSale: false });
+    expect(bundle!.kujiDeluxeMonths).toEqual([
+      { month: '2026-10', icons: { A: 'kuji_dx_2610_a', last: 'kuji_dx_2610_last' } },
+      { month: '2026-11', icons: { A: 'kuji_dx_2611_a', last: 'kuji_dx_2611_last' } },
+    ]);
+  });
+
+  it('deluxeMonths：年月重复、称号不存在、对照的不是豪华档位时报错', () => {
+    const src = source();
+    const kuji = structuredClone(src['game/kuji']) as { deluxeMonths: Array<Record<string, unknown>> };
+    kuji.deluxeMonths.push({ month: '2026-10', icons: { A: 'kuji_dx_2610_a' } });
+    kuji.deluxeMonths.push({ month: '2026-12', icons: { A: 'nope' } });
+    kuji.deluxeMonths.push({ month: '2027-01', icons: { Z: 'kuji_dx_a' } });
+    const { errors } = buildBundle({ ...src, 'game/kuji': kuji });
+    expect(errors).toContain('kuji deluxeMonths duplicate month 2026-10');
+    expect(errors).toContain('kuji deluxeMonths 2026-12 icon nope not in looks.icons');
+    expect(errors).toContain('kuji deluxeMonths 2027-01 key Z is not a deluxe tier');
   });
 });

@@ -91,11 +91,12 @@ export default {
     'town.bless': (w, p) => `${w}许愿得到星愿：${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>
       `恭喜${w}伸进蟹老板裤兜里掏出：${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+    // 豪华一番赏（240-2）的新闻带 line: 'deluxe'
     'kuji.big': (w, p) =>
       p.tier === 'last'
-        ? `${w}抽走了一番赏的最后一张签，拿下最后赏！`
-        : `${w}在一番赏抽中了 ${str(p.tier)} 赏！`,
-    'kuji.win': (w, p) => `${w}在一番赏抽中了 ${str(p.tier)} 赏`,
+        ? `${w}抽走了${p.line === 'deluxe' ? '豪华' : ''}一番赏的最后一张签，拿下最后赏！`
+        : `${w}在${p.line === 'deluxe' ? '豪华' : ''}一番赏抽中了 ${str(p.tier)} 赏！`,
+    'kuji.win': (w, p) => `${w}在${p.line === 'deluxe' ? '豪华' : ''}一番赏抽中了 ${str(p.tier)} 赏`,
     'icon.buy': (w, p, x) => `${w}买下了限定称号「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
     'town.exchange': (w, p, x) => `${w}在镇长处兑换了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),

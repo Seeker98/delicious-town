@@ -1,8 +1,12 @@
 import { z } from 'zod';
 
 /** 一番赏（一番赏设计 §5、§7） */
-export const kujiBuyBody = z.object({ num: z.number().int().min(1).max(100) });
-export const kujiDrawBody = z.object({ num: z.number().int().min(1).max(100) });
+/** 一番赏奖池线（240-2）：普通或豪华 */
+export type KujiLine = 'normal' | 'deluxe';
+const kujiLine = z.enum(['normal', 'deluxe']).optional();
+export const kujiBuyBody = z.object({ num: z.number().int().min(1).max(100), line: kujiLine });
+export const kujiDrawBody = z.object({ num: z.number().int().min(1).max(100), line: kujiLine });
+export const kujiViewQuery = z.object({ line: kujiLine });
 export interface KujiAwardDto {
   coin?: number;
   exp?: number;
@@ -20,6 +24,8 @@ export interface KujiTierDto {
   big: boolean;
 }
 export interface KujiViewDto {
+  /** 哪条奖池线（240-2） */
+  line: KujiLine;
   pool: { id: number; day: string; seq: number; total: number; left: number };
   tiers: KujiTierDto[];
   last: { award: KujiAwardDto; icon: string | null };

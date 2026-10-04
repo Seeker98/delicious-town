@@ -54,5 +54,29 @@
   "nov26_l": {
     "title": "Dieu Gourmet d'Hiver",
     "desc": "Édition limitée nov. 2026 : le dieu de la cuisine des jours d'hiver"
+  },
+  "kuji_dx_a": {
+    "title": "Gagnant du prix A de luxe",
+    "desc": "A gagné le prix A à l'Ichiban Kuji de luxe"
+  },
+  "kuji_dx_last": {
+    "title": "Gagnant du Dernier Prix de luxe",
+    "desc": "A tiré le dernier ticket d'un tirage Ichiban Kuji de luxe"
+  },
+  "kuji_dx_2610_a": {
+    "title": "Fortune de l'automne doré",
+    "desc": "Gagnant du prix A de l'Ichiban Kuji de luxe, oct. 2026"
+  },
+  "kuji_dx_2610_last": {
+    "title": "Finale de l'automne doré",
+    "desc": "Gagnant du Dernier Prix de l'Ichiban Kuji de luxe, oct. 2026"
+  },
+  "kuji_dx_2611_a": {
+    "title": "Fortune du début d'hiver",
+    "desc": "Gagnant du prix A de l'Ichiban Kuji de luxe, nov. 2026"
+  },
+  "kuji_dx_2611_last": {
+    "title": "Finale du début d'hiver",
+    "desc": "Gagnant du Dernier Prix de l'Ichiban Kuji de luxe, nov. 2026"
   }
 }

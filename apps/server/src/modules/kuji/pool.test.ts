@@ -15,6 +15,31 @@ afterAll(() => t.close());
 const tiers = () => t.deps.config.tuning.kuji.tiers;
 
 describe('奖池（一番赏设计 §5.2）', () => {
+  it('豪华线（240-2）：和普通线各自编号、各自过期、各自的每日上限（Review Focus 1）', async () => {
+    const shardId = await createShard(t.db);
+    const now = gameTime('2026-10-04', 12);
+    const n1 = await cur(t.db, shardId, tiers(), now);
+    const d1 = await cur(t.db, shardId, tiers(), now, undefined, { line: 'deluxe', maxPools: 1 });
+    expect([n1.seq, n1.line, d1.seq, d1.line]).toEqual([1, 'normal', 1, 'deluxe']);
+    await t.db.updateTable('kuji_pool').set({ status: 'sold_out' }).where('id', '=', d1.id).execute();
+    // 豪华线今天开满 1 池：再要豪华池返回空；普通线照常返回自己的池
+    expect(
+      await currentPool(t.db, shardId, tiers(), now, undefined, { line: 'deluxe', maxPools: 1 }),
+    ).toBeNull();
+    expect((await cur(t.db, shardId, tiers(), now)).id).toBe(n1.id);
+    // 第二天：要豪华池时只作废豪华线的旧池，普通线的不顺带动
+    const d2 = await cur(t.db, shardId, tiers(), gameTime('2026-10-05', 1), undefined, { line: 'deluxe' });
+    expect([d2.day, d2.seq, d2.line]).toEqual(['2026-10-05', 1, 'deluxe']);
+    const old = await t.db
+      .selectFrom('kuji_pool')
+      .select(['line', 'status'])
+      .where('shard_id', '=', shardId)
+      .where('day', '=', '2026-10-04')
+      .execute();
+    expect(old).toContainEqual({ line: 'normal', status: 'open' });
+    expect(old).toContainEqual({ line: 'deluxe', status: 'sold_out' });
+  });
+
   it('第一次用到时开池：80 张签，各档张数对得上；再取还是同一池', async () => {
     const shardId = await createShard(t.db);
     const now = t.clock.now;
