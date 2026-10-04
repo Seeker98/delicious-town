@@ -144,7 +144,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
       }}
     </div>
     <div class="dt-pills">
-      <button type="button" :class="{ active: level === 0 }" data-testid="level-all" @click="level = 0">
+      <button
+        type="button"
+        :class="{ active: level === 0 }"
+        :aria-pressed="level === 0"
+        data-testid="level-all"
+        @click="level = 0"
+      >
         {{ t.cupboard.levelCount(t.common.all, data.items.length) }}
       </button>
       <button
@@ -152,6 +158,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
         :key="x.lv"
         type="button"
         :class="{ active: level === x.lv }"
+        :aria-pressed="level === x.lv"
         :data-testid="`level-${x.lv}`"
         @click="level = x.lv"
       >

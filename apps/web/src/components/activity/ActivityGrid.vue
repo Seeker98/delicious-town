@@ -30,6 +30,7 @@ const lines = computed(() => props.a.rewards.filter((r) => !r.key.startsWith('c'
       <div class="small fw-bold">{{ actionName(c.key) }}</div>
       <div class="small text-muted">{{ Math.min(a.counters[c.key] ?? 0, c.target) }}/{{ c.target }}</div>
       <RewardButton
+        wrap
         :activity-id="a.id"
         :reward="byKey.get(`c${i}`)!"
         :state="a.state"

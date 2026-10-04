@@ -15,6 +15,7 @@ const rest: Messages['rest'] = {
     logs: 'Journal personnel',
     moreLogs: 'Entrées plus anciennes',
     noLogs: 'Aucune entrée pour l’instant',
+    logsFailed: 'Impossible de charger le journal',
   },
   income: {
     loadFailed: 'Impossible de charger les revenus',

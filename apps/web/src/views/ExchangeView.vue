@@ -274,6 +274,7 @@ onMounted(async () => {
         :key="x"
         type="button"
         :class="{ active: filter === x }"
+        :aria-pressed="filter === x"
         :data-testid="`ex-filter-${x}`"
         @click="setFilter(x)"
       >

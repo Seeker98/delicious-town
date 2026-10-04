@@ -15,6 +15,7 @@ const rest: Messages['rest'] = {
     logs: 'Registro personal',
     moreLogs: 'Entradas anteriores',
     noLogs: 'Todavía no hay registros',
+    logsFailed: 'No se pudo cargar el registro',
   },
   income: {
     loadFailed: 'No se pudieron cargar los ingresos',

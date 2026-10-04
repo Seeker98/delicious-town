@@ -15,6 +15,7 @@ const rest: Messages['rest'] = {
     logs: 'Personal log',
     moreLogs: 'Older entries',
     noLogs: 'No log entries yet',
+    logsFailed: 'Could not load the log',
   },
   income: {
     loadFailed: 'Could not load income',
