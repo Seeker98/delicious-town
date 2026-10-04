@@ -1179,6 +1179,27 @@ export interface PredictTradeTable {
   price_after: number;
   created_at: Ts;
 }
+/** 小镇发展基金存款（240-2）：同一家店同时只能有一笔 active */
+export interface FundDepositTable {
+  id: Generated<number>;
+  shard_id: number;
+  rest_id: number;
+  tier: string;
+  coin: number;
+  /** 存入时这一档的勋章；之后改区服数值不影响 */
+  medal: number;
+  started_at: Ts;
+  /** 存入时按当时的存期算好 */
+  matures_at: Ts;
+  status: ColumnType<
+    'active' | 'claimed' | 'withdrawn',
+    'active' | 'claimed' | 'withdrawn' | undefined,
+    'active' | 'claimed' | 'withdrawn'
+  >;
+  settled_at: TsNullable;
+  returned: Nullable<number>;
+}
+
 export interface KujiPoolTable {
   id: Generated<string>;
   shard_id: number;
@@ -1314,6 +1335,7 @@ export interface DB {
   predict_position: PredictPositionTable;
   predict_trade: PredictTradeTable;
   kuji_pool: KujiPoolTable;
+  fund_deposit: FundDepositTable;
   kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
