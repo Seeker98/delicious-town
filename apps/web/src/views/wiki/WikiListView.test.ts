@@ -3,6 +3,10 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../../api/endpoints';
+import en from '../../i18n/locales/en';
+import es from '../../i18n/locales/es';
+import fr from '../../i18n/locales/fr';
+import { useToastStore } from '../../stores/toast';
 import WikiListView from './WikiListView.vue';
 
 vi.mock('../../api/endpoints', () => ({
@@ -129,9 +133,56 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(w.get('[data-testid="wiki-row-0"]').text()).toContain('2 道菜');
   });
 
-  it('读失败时写读取失败', async () => {
+  it('读失败时写读取失败，并弹提示（设计 §3.4，backlog #115）', async () => {
     vi.mocked(endpoints.openGoods).mockRejectedValue(new Error('net'));
     const w = await mountAt('/wiki/goods');
     expect(w.get('[data-testid="wiki-error"]').text()).toBe('读取失败，请稍后再试');
+    expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
+  });
+
+  it('厨具没有等级门槛时信息行不写“0 级可以穿”（backlog #115）', async () => {
+    vi.mocked(endpoints.openEquips).mockResolvedValue({
+      ...meta,
+      items: [{ id: 30, name: '见习之铲', part: 1, minLevel: 0, suitId: 0, maxTotal: 18 }],
+      suits: [],
+    });
+    const w = await mountAt('/wiki/equips');
+    expect(w.get('[data-testid="wiki-row-30"]').text()).not.toContain('级可以穿');
+  });
+
+  it('先点道具（慢、后来失败）再点食材：晚到的道具结果不影响食材页（backlog #115）', async () => {
+    let fail: (e: unknown) => void = () => undefined;
+    vi.mocked(endpoints.openGoods).mockReturnValue(new Promise((_, rej) => (fail = rej)));
+    vi.mocked(endpoints.openFoods).mockResolvedValue({
+      ...meta,
+      items: [{ id: 101, name: '大米', level: 1, rare: false, type: 2 }],
+    } as never);
+    const w = await mountAt('/wiki/goods');
+    await w.vm.$router.push('/wiki/foods');
+    await flushPromises();
+    expect(rows(w)).toEqual(['101']);
+    fail(new Error('net'));
+    await flushPromises();
+    expect(w.find('[data-testid="wiki-error"]').exists()).toBe(false);
+    expect(rows(w)).toEqual(['101']);
+  });
+
+  it('无障碍：搜索框、街道下拉有名字，筛选胶囊标明是否按下（backlog #115）', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({ ...meta, items: [] } as never);
+    const w = await mountAt('/wiki/cookbooks');
+    expect(w.get('[data-testid="wiki-q"]').attributes('aria-label')).toBeTruthy();
+    expect(w.get('[data-testid="wiki-street"]').attributes('aria-label')).toBeTruthy();
+    expect(w.get('[data-testid="wiki-filter-all"]').attributes()).toMatchObject({
+      role: 'button',
+      'aria-pressed': 'true',
+    });
+    expect(w.get('[data-testid="wiki-filter-0"]').attributes('aria-pressed')).toBe('false');
+  });
+
+  it('英法西的条数分单复数（backlog #115）', () => {
+    expect([en.wiki.count(1), en.wiki.count(1200)]).toEqual(['1 entry', '1,200 entries']);
+    expect(fr.wiki.count(1).replace(/\s/g, ' ')).toBe('1 entrée');
+    expect(fr.wiki.count(2)).toBe('2 entrées');
+    expect([es.wiki.count(1), es.wiki.count(2)]).toEqual(['1 entrada', '2 entradas']);
   });
 });

@@ -64,7 +64,7 @@ const list = computed(() => cookbooks.value.filter((c) => c.streetId === id.valu
       <div data-testid="wiki-street-cookbooks">
         <h6 class="dt-section">
           {{ w.sections.streetCookbooks }}
-          <small class="text-muted">{{ w.count(formatNum(list.length)) }}</small>
+          <small class="text-muted">{{ w.count(list.length) }}</small>
         </h6>
         <RouterLink
           v-for="c in list.slice(0, shown)"

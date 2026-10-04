@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { OpenCookbookDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES, TASTE_NAMES } from '../../utils/labels';
 import { isNotFound, useWikiData } from './wiki';
@@ -15,16 +16,25 @@ const c = ref<OpenCookbookDto | null>(null);
 const streets = ref<OpenStreetDto[]>([]);
 const error = ref<'' | 'missing' | 'failed'>('');
 
+const toast = useToastStore();
+/** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
+let seq = 0;
 watch(
   () => Number(route.params.id),
   async (id) => {
+    const mine = ++seq;
     c.value = null;
     error.value = '';
     try {
-      streets.value = (await data.streets()).items;
-      c.value = await data.cookbook(id);
+      const s = (await data.streets()).items;
+      const v = await data.cookbook(id);
+      if (mine !== seq) return;
+      streets.value = s;
+      c.value = v;
     } catch (e) {
+      if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';
+      if (error.value === 'failed') toast.push(t.value.wiki.loadFailed, 'danger');
     }
   },
   { immediate: true },

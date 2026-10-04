@@ -5,7 +5,8 @@ test('游戏资料：不登录搜菜谱 → 菜谱详情 → 食材详情', asyn
   await page.goto('/login');
   await page.getByTestId('login-wiki').click();
   await expect(page).toHaveURL(/\/wiki$/);
-  await expect(page.getByTestId('wiki-kind-cookbooks')).toContainText('3,810');
+  // 菜谱数跟配置走，不写死（backlog #115）
+  await expect(page.getByTestId('wiki-kind-cookbooks')).toContainText(/\d[\d,]* 条/);
   await page.getByTestId('wiki-home-q').fill('南煎丸子');
   await page.getByTestId('wiki-hit-cookbooks-1').click();
   await expect(page).toHaveURL(/\/wiki\/cookbooks\/1$/);

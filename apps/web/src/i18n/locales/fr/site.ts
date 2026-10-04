@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    wiki1005:
+      'Wiki du jeu : les ustensiles affichent leurs bonus de set et les gemmes le nom du rang suivant ; changer vite de page sur un réseau lent ne mélange plus les pages, et les erreurs de chargement sont signalées',
     fixes1005:
       'Petites corrections : la ligne du Maire se débloque seule à l’heure du Hip-hop Boy ; les dépôts et retraits du Fonds apparaissent dans votre journal ; les affiches et trophées pas encore utilisables sont grisés dans le choix des installations',
     posters:

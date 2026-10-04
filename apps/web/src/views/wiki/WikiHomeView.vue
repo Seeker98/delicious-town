@@ -3,7 +3,6 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { OpenIndexDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
-import { formatNum } from '../../utils/format';
 import { matchText } from '../../utils/match';
 import { useWikiData, WIKI_KINDS, wikiPath, type WikiKind } from './wiki';
 
@@ -92,7 +91,7 @@ const hits = computed(() =>
         :data-testid="`wiki-kind-${k}`"
       >
         <div class="dt-card-title"><i :class="['bi', ICONS[k], 'me-1']"></i>{{ t.wiki.kinds[k] }}</div>
-        <div class="dt-meta">{{ index ? t.wiki.count(formatNum(index.counts[k])) : '' }}</div>
+        <div class="dt-meta">{{ index ? t.wiki.count(index.counts[k]) : '' }}</div>
       </RouterLink>
     </div>
     <RouterLink to="/wiki/api" class="small" data-testid="wiki-api-link"

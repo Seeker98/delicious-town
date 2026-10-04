@@ -1,3 +1,5 @@
+import { formatNum } from '../../../utils/format';
+
 /** 游戏资料（Wiki）和开放接口说明（问题记录 142） */
 export default {
   title: '游戏资料',
@@ -10,7 +12,7 @@ export default {
   back: '返回列表',
   home: '游戏资料首页',
   more: (n: number) => `再显示 ${n} 条`,
-  count: (n: string) => `${n} 条`,
+  count: (n: number) => `${formatNum(n)} 条`,
   apiLink: '开放接口：给想研究游戏、做小工具的玩家',
   kinds: { goods: '道具', foods: '食材', cookbooks: '菜谱', equips: '厨具', streets: '街道' },
   all: '全部',
@@ -23,7 +25,6 @@ export default {
   units: { coin: '银币', exp: '经验', diamond: '钻石' },
   rare: '稀有',
   common: '普通',
-  onSale: '商店在售',
   goodsTypes: {
     '0': '消耗品',
     '1': '道具',
@@ -36,7 +37,6 @@ export default {
   } as Record<string, string>,
   foodTypes: { '0': '调料坚果', '1': '肉蛋奶', '2': '蔬果' } as Record<string, string>,
   sections: {
-    info: '基本信息',
     gift: '能开出',
     sources: '获得途径',
     usedIn: '可以拿去兑换',

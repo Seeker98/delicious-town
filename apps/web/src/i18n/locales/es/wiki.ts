@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum } from '../../../utils/format';
 
 const wiki: Messages['wiki'] = {
   title: 'Datos del juego',
@@ -12,7 +13,7 @@ const wiki: Messages['wiki'] = {
   back: 'Volver a la lista',
   home: 'Inicio de datos del juego',
   more: (n) => `Mostrar ${n} más`,
-  count: (n) => `${n} entradas`,
+  count: (n) => `${formatNum(n)} ${n === 1 ? 'entrada' : 'entradas'}`,
   apiLink: 'API abierta: para quienes quieran estudiar el juego o crear herramientas',
   kinds: {
     goods: 'Objetos',
@@ -31,7 +32,6 @@ const wiki: Messages['wiki'] = {
   units: { coin: 'Monedas', exp: 'EXP', diamond: 'Diamantes' },
   rare: 'Raro',
   common: 'Común',
-  onSale: 'A la venta en la tienda',
   goodsTypes: {
     '0': 'Consumibles',
     '1': 'Objetos',
@@ -44,7 +44,6 @@ const wiki: Messages['wiki'] = {
   },
   foodTypes: { '0': 'Condimentos y frutos secos', '1': 'Carne, huevos y lácteos', '2': 'Frutas y verduras' },
   sections: {
-    info: 'Datos básicos',
     gift: 'Puede contener',
     sources: 'Cómo conseguirlo',
     usedIn: 'Se puede canjear por',

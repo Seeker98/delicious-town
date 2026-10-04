@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type {
   OpenCookbookBrief,
@@ -9,6 +9,7 @@ import type {
   OpenStreetDto,
 } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { PART_NAMES } from '../../utils/labels';
 import { matchText } from '../../utils/match';
@@ -33,11 +34,13 @@ const t = useT();
 const data = useWikiData();
 const kind = computed<WikiKind | null>(() => (isWikiKind(route.params.kind) ? route.params.kind : null));
 
-const goods = ref<OpenGoodsBrief[]>([]);
-const foods = ref<OpenFoodBrief[]>([]);
-const cookbooks = ref<OpenCookbookBrief[]>([]);
-const equips = ref<OpenEquipBrief[]>([]);
-const streets = ref<OpenStreetDto[]>([]);
+// 列表只整体替换、不逐条改：用 shallowRef，三千多条菜谱不必逐个做成响应式（backlog #115）
+const goods = shallowRef<OpenGoodsBrief[]>([]);
+const foods = shallowRef<OpenFoodBrief[]>([]);
+const cookbooks = shallowRef<OpenCookbookBrief[]>([]);
+const equips = shallowRef<OpenEquipBrief[]>([]);
+const streets = shallowRef<OpenStreetDto[]>([]);
+const toast = useToastStore();
 const error = ref(false);
 const loaded = ref(false);
 
@@ -48,20 +51,36 @@ const rareOnly = ref(false);
 const street = ref<number | null>(null);
 const shown = ref(PAGE);
 
+/** 读取序号：慢网络下先点 A 再点 B，A 晚到的结果（包括失败）不影响 B（backlog #115） */
+let seq = 0;
 async function load(k: WikiKind) {
+  const mine = ++seq;
   loaded.value = false;
   error.value = false;
   try {
-    streets.value = (await data.streets()).items;
-    if (k === 'goods') goods.value = (await data.goods()).items;
-    else if (k === 'foods') foods.value = (await data.foods()).items;
-    else if (k === 'cookbooks') cookbooks.value = (await data.cookbooks()).items;
-    else if (k === 'equips') equips.value = (await data.equips()).items;
+    const s = (await data.streets()).items;
+    const items =
+      k === 'goods'
+        ? (await data.goods()).items
+        : k === 'foods'
+          ? (await data.foods()).items
+          : k === 'cookbooks'
+            ? (await data.cookbooks()).items
+            : k === 'equips'
+              ? (await data.equips()).items
+              : null;
+    if (mine !== seq) return;
+    streets.value = s;
+    if (k === 'goods') goods.value = items as OpenGoodsBrief[];
+    else if (k === 'foods') foods.value = items as OpenFoodBrief[];
+    else if (k === 'cookbooks') cookbooks.value = items as OpenCookbookBrief[];
+    else if (k === 'equips') equips.value = items as OpenEquipBrief[];
   } catch {
+    if (mine !== seq) return;
     error.value = true;
-  } finally {
-    loaded.value = true;
+    toast.push(t.value.wiki.loadFailed, 'danger');
   }
+  if (mine === seq) loaded.value = true;
 }
 watch(
   kind,
@@ -140,9 +159,14 @@ const all = computed<Row[]>(() => {
       .map((e) => ({
         id: e.id,
         name: e.name,
-        meta: [PART_NAMES[e.part] ?? '', w.value.fields.minLevel(e.minLevel), `+10 ${e.maxTotal}`].join(
-          ' · ',
-        ),
+        // 没有等级门槛时不写“0 级可以穿”（backlog #115）
+        meta: [
+          PART_NAMES[e.part] ?? '',
+          e.minLevel > 0 ? w.value.fields.minLevel(e.minLevel) : '',
+          `+10 ${e.maxTotal}`,
+        ]
+          .filter(Boolean)
+          .join(' · '),
       }));
   if (k === 'streets')
     return streets.value.map((s) => ({
@@ -182,19 +206,21 @@ const onStreet = (e: Event) => {
     <template v-else>
       <h5 class="dt-page-title mt-2">
         {{ t.wiki.kinds[kind] }}
-        <small class="text-muted">{{ t.wiki.count(formatNum(matched.length)) }}</small>
+        <small class="text-muted">{{ t.wiki.count(matched.length) }}</small>
       </h5>
       <input
         v-model="q"
         type="search"
         class="form-control form-control-sm mb-2"
         :placeholder="t.wiki.search"
+        :aria-label="t.wiki.search"
         data-testid="wiki-q"
       />
       <select
         v-if="kind === 'cookbooks'"
         class="form-select form-select-sm mb-2"
         :value="street ?? ''"
+        :aria-label="t.wiki.allStreets"
         data-testid="wiki-street"
         @change="onStreet"
       >
@@ -205,6 +231,8 @@ const onStreet = (e: Event) => {
         <a
           href="#"
           :class="{ active: filter === null }"
+          role="button"
+          :aria-pressed="filter === null"
           data-testid="wiki-filter-all"
           @click.prevent="filter = null"
           >{{ t.wiki.all }}</a
@@ -214,6 +242,8 @@ const onStreet = (e: Event) => {
           :key="p.value"
           href="#"
           :class="{ active: filter === p.value }"
+          role="button"
+          :aria-pressed="filter === p.value"
           :data-testid="`wiki-filter-${p.value}`"
           @click.prevent="filter = p.value"
           >{{ p.label }}</a
@@ -222,6 +252,8 @@ const onStreet = (e: Event) => {
           v-if="kind === 'foods'"
           href="#"
           :class="{ active: rareOnly }"
+          role="button"
+          :aria-pressed="rareOnly"
           data-testid="wiki-rare"
           @click.prevent="rareOnly = !rareOnly"
           >{{ t.wiki.rareOnly }}</a
