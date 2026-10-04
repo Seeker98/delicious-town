@@ -85,6 +85,7 @@ const rest: Messages['rest'] = {
       `El premio de ${p} ${plEs(p, 'punto', 'puntos')} también da ${num} ${plEs(num, 'boleto', 'boletos')} de Ichiban Kuji`,
     full: '✓ Completo',
     locked: (star) => `🔒 Se abre con ${star} ${plEs(star, 'estrella', 'estrellas')}`,
+    off: '🔒 No disponible en este servidor',
     per: (p) => `${p} punto${p === 1 ? '' : 's'} cada vez`,
     main: 'Misión principal',
     mainDone: 'Misión principal completada',

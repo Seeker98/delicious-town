@@ -83,6 +83,7 @@ export default {
     kujiHint: (p: number, num: number) => `領 ${p} 點獎勵另送一番賞抽賞券 ×${num}`,
     full: '✓ 已滿',
     locked: (star: number) => `🔒 ${star} 星開放`,
+    off: '🔒 本服未開放',
     per: (p: number) => `每次 ${p} 點`,
     main: '主線',
     mainDone: '主線已全部完成',

@@ -86,6 +86,7 @@ const rest: Messages['rest'] = {
       `La récompense de ${p} ${plFr(p, 'point', 'points')} donne aussi ${num} ${plFr(num, 'ticket', 'tickets')} d'Ichiban Kuji`,
     full: '✓ Terminé',
     locked: (star) => `🔒 Ouvert à ${star} ${plFr(star, 'étoile', 'étoiles')}`,
+    off: '🔒 Pas ouvert sur ce serveur',
     per: (p) => `${p} point${p > 1 ? 's' : ''} par fois`,
     main: 'Quête principale',
     mainDone: 'Quête principale terminée',

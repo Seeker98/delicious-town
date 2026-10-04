@@ -46,11 +46,17 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
   }
 }
 type ActItem = ActivationDto['items'][number];
-/** 活跃项的状态：做满 / 星级不够 / 进行中（问题记录：灰色黑色分不清） */
+/** 活跃项的状态：做满 / 没开放（区服关了、星级或等级不够，问题记录 360） / 进行中（问题记录：灰色黑色分不清） */
 function stateOf(i: ActItem): 'done' | 'locked' | 'open' {
   if (i.count >= i.limit) return 'done';
-  if ((act.value?.star ?? 0) < i.needStar) return 'locked';
-  return 'open';
+  return lockText(i) === null ? 'open' : 'locked';
+}
+/** 锁定时写哪一条：区服没开 → 星级 → 等级 */
+function lockText(i: ActItem): string | null {
+  if (i.off) return t.value.rest.tasks.off;
+  if ((act.value?.star ?? 0) < i.needStar) return t.value.rest.tasks.locked(i.needStar);
+  if ((act.value?.level ?? 0) < i.needLevel) return t.value.rest.tasks.lockedLevel(i.needLevel);
+  return null;
 }
 const ORDER = { open: 0, locked: 1, done: 2 } as const;
 const items = computed(() =>
@@ -126,9 +132,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
             t.rest.tasks.full
           }}</span>
-          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{
-            t.rest.tasks.locked(i.needStar)
-          }}</span>
+          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{ lockText(i) }}</span>
           <span v-else class="ms-auto text-nowrap">{{ i.count }}/{{ i.limit }}</span>
         </div>
         <div class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>

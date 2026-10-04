@@ -23,10 +23,13 @@ const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
   signedIn: false,
   signInGift: 27,
   star: 1,
+  level: 10,
   items: [
-    { id: 1, name: '签到', points: 10, limit: 1, count: 1, needStar: 0 },
-    { id: 2, name: '打蟑螂', points: 1, limit: 12, count: 3, needStar: 0 },
-    { id: 50, name: '配送外卖', points: 5, limit: 2, count: 0, needStar: 2 },
+    { id: 1, name: '签到', points: 10, limit: 1, count: 1, needStar: 0, needLevel: 0, off: false },
+    { id: 2, name: '打蟑螂', points: 1, limit: 12, count: 3, needStar: 0, needLevel: 0, off: false },
+    { id: 50, name: '配送外卖', points: 5, limit: 2, count: 0, needStar: 2, needLevel: 0, off: false },
+    { id: 901, name: '交易所成交', points: 5, limit: 1, count: 0, needStar: 0, needLevel: 30, off: false },
+    { id: 903, name: '一番赏抽赏', points: 5, limit: 1, count: 0, needStar: 0, needLevel: 0, off: true },
   ],
   rewards: [
     { points: 50, award: { exp: 500 }, claimed: true, multiplier: 1 },
@@ -128,11 +131,17 @@ describe('RestTasksView', () => {
     expect(w.findAll('[data-testid^="act-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'act-2',
       'act-50',
+      'act-901',
+      'act-903',
       'act-1',
     ]);
     expect(w.find('[data-testid="act-2"]').text()).toContain('3/12');
     expect(w.find('[data-testid="act-50"]').text()).toContain('🔒 2 星开放');
     expect(w.find('[data-testid="act-50"]').classes()).toContain('dt-act-locked');
+    // 等级不够、区服没开的也标锁定（问题记录 360）
+    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 30 级解锁');
+    expect(w.find('[data-testid="act-901"]').classes()).toContain('dt-act-locked');
+    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 本服未开放');
     expect(w.find('[data-testid="act-1"]').text()).toContain('✓ 已满');
     expect(w.find('[data-testid="act-1"]').classes()).toContain('dt-act-done');
   });
