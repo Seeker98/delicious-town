@@ -90,6 +90,12 @@ const guide: Messages['guide'] = {
       ],
     },
     {
+      q: 'Et s’il me manque toujours le même ingrédient ?',
+      a: [
+        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, fusion, récompenses du Bar et de la Tour, Temple, Gros mangeur) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel ou l’acheter à la Bourse.',
+      ],
+    },
+    {
       q: 'Comment rendre ses ustensiles plus forts ? ',
       a: [
         "Le renfort peut échouer. Les ustensiles haut de gamme demandent un niveau minimum : on ne peut pas les équiper avant de l'atteindre.",

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    scarcity:
+      'Random ingredients now have a chance to be exactly what your recipes are missing, more likely with higher luck; Bar and Tower rewards can now give rare ingredients',
     site: 'Added an update log and links page; the top bar now shows the current time',
     oilToast:
       'Every table with a customer now uses at least 1 oil; pop-up messages moved to the top so they no longer cover buttons',

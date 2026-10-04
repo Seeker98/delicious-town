@@ -80,6 +80,12 @@ const guide: Messages['guide'] = {
       ],
     },
     {
+      q: 'What if I keep missing one ingredient?',
+      a: [
+        'Random ingredients (gift packs, random ingredient tickets, crafting, Bar and Tower rewards, the Temple, the Big Eater) have a chance to be exactly what your next recipe is missing, and higher luck makes it more likely. You can also cover the gap with a universal ingredient or buy it on the Exchange.',
+      ],
+    },
+    {
       q: 'How does cookware get stronger? ',
       a: [
         'Enhancing can fail. Higher-end cookware has a level requirement, and you can’t equip it until you reach it.',

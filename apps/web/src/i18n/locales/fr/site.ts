@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    scarcity:
+      'Les ingrédients aléatoires ont une chance d’être justement ceux qui manquent à vos recettes, plus souvent avec une chance élevée ; les récompenses du Bar et de la Tour peuvent donner des ingrédients rares',
     site: 'Ajout d’un journal des mises à jour et d’une page de liens ; la barre du haut affiche l’heure',
     oilToast:
       'Chaque table occupée consomme au moins 1 huile ; les messages s’affichent en haut et ne cachent plus les boutons',
