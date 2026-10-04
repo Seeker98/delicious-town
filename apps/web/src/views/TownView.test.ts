@@ -139,6 +139,14 @@ describe('TownView', () => {
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
   });
 
+  it('停在发展基金、餐厅数据还没回来：不把居民面板显示在基金标签下（质量期 ⑤ 终审）', async () => {
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => {}));
+    const w = await mountAt('/town?tab=fund');
+    expect(w.find('[data-testid="tab-fund"]').classes()).toContain('active');
+    expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
+    expect(w.find('[data-testid="fund-panel"]').exists()).toBe(false);
+  });
+
   it('?tab=fund 打开发展基金（240-2）', async () => {
     vi.mocked(endpoints.fund).mockResolvedValue({
       days: 7,

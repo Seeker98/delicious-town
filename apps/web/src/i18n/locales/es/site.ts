@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     looks1005:
-      'Aspecto: las puertas que compras son tuyas y volver a ellas es gratis; los avisos de estrellas insuficientes muestran tus estrellas actuales; la wiki indica las estrellas necesarias para carteles y trofeos',
+      'Aspecto: a partir de ahora, las puertas que compras (y la que tienes puesta) son tuyas y volver a ellas es gratis; los avisos de estrellas insuficientes muestran tus estrellas actuales; la wiki indica las estrellas necesarias para carteles y trofeos',
     visual1005:
       'Inglés, francés y español: el singular y el plural siguen al número (1 moneda, 1 día…); en el móvil los atributos de los utensilios caben en una pantalla, los efectos del clima ya no salen dos veces y los tiempos de más de un día se muestran en días',
     perf1005:

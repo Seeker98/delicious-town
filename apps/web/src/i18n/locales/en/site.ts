@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     looks1005:
-      'Looks: doors you have bought are yours to keep, so switching back is free; star requirement messages now show your current stars; the game wiki shows the star level needed for posters and trophies',
+      'Looks: from now on, doors you buy (and the one you have up now) are yours to keep, so switching back is free; star requirement messages now show your current stars; the game wiki shows the star level needed for posters and trophies',
     visual1005:
       'English, French and Spanish: singular and plural now match the number (1 day, 1 view…); on phones the cookware stats fit on one screen, weather effects are no longer listed twice, and times over a day show days',
     perf1005:

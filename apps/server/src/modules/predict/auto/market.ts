@@ -72,7 +72,8 @@ export const market: AutoKind = {
     }
     const level = Number(p.level);
     const rare = foods
-      .map((id) => c.d.config.requireFood(id))
+      // 进货新闻里的食材之后可能从配置里删掉了：找不到的跳过（质量期 ⑤ 终审）
+      .flatMap((id) => c.d.config.foods.get(id) ?? [])
       .filter((f) => f.level === level && f.odds < 100);
     const hour = Number(p.hour);
     const day = String(p.period).split('@')[0]!;

@@ -102,6 +102,6 @@ onMounted(() => {
   <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
-    <TownPanel v-else :data="data" @reload="load" />
+    <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />
   </template>
 </template>

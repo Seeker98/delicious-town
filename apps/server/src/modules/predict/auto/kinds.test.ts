@@ -395,7 +395,8 @@ describe('判定边界（backlog 238-2）', () => {
     )!;
     await t.db
       .updateTable('news')
-      .set({ params: JSON.stringify({ shelf: 0, foods: [r2.id] }) })
+      // 999999：之后从配置里删掉的食材，判定时跳过（质量期 ⑤ 终审）
+      .set({ params: JSON.stringify({ shelf: 0, foods: [999999, r2.id] }) })
       .where('shard_id', '=', shardId)
       .where('type', '=', 'market.restock')
       .execute();
