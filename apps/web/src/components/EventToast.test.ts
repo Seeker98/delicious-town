@@ -11,18 +11,28 @@ describe('EventToast', () => {
     vi.useFakeTimers();
   });
 
-  it('显示提示，3 秒后自动消失，点击立即消失', async () => {
+  it('显示提示，3 秒后自动消失；错误提示多停 2 秒（问题记录 344）', async () => {
     const toast = useToastStore();
     const w = mount(EventToast);
     toast.push('获得 银币 100');
-    toast.push('消耗 银币 5', 'info');
+    toast.push('银币不够', 'danger');
     await w.vm.$nextTick();
-    expect(w.findAll('[data-testid="toast"]').map((x) => x.text())).toEqual(['获得 银币 100', '消耗 银币 5']);
-    await w.findAll('[data-testid="toast"]')[0]!.trigger('click');
-    expect(w.findAll('[data-testid="toast"]')).toHaveLength(1);
+    expect(w.findAll('[data-testid="toast"]').map((x) => x.text())).toEqual(['获得 银币 100', '银币不够']);
     vi.advanceTimersByTime(3000);
     await w.vm.$nextTick();
+    expect(w.findAll('[data-testid="toast"]').map((x) => x.text())).toEqual(['银币不够']);
+    vi.advanceTimersByTime(2000);
+    await w.vm.$nextTick();
     expect(w.findAll('[data-testid="toast"]')).toHaveLength(0);
+    vi.useRealTimers();
+  });
+
+  it('提示不拦截点击（问题记录 344：点下面的按钮不会先点中提示）', async () => {
+    const toast = useToastStore();
+    const w = mount(EventToast);
+    toast.push('获得 银币 100');
+    await w.vm.$nextTick();
+    expect(w.get('.dt-toasts').classes()).toContain('dt-toasts-passthrough');
     vi.useRealTimers();
   });
 });
