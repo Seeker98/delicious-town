@@ -15,11 +15,12 @@ export async function refPrice(
   db: Kysely<DB>,
   config: GameConfig,
   t: ExchangeTuning,
+  rates: readonly number[],
   shardId: number,
   foodsId: number,
   day: string,
 ): Promise<number> {
-  return (await refPrices(db, config, t, shardId, [foodsId], day)).get(foodsId)!;
+  return (await refPrices(db, config, t, rates, shardId, [foodsId], day)).get(foodsId)!;
 }
 
 /**
@@ -32,6 +33,8 @@ export async function refPrices(
   db: Kysely<DB>,
   config: GameConfig,
   t: ExchangeTuning,
+  /** 食材等级价格倍数（240-1），没有成交时的初始参考价按它放大 */
+  rates: readonly number[],
   shardId: number,
   foodsIds: number[],
   day: string,
@@ -92,7 +95,7 @@ export async function refPrices(
   });
   const filled =
     gap.length > 0 && depth < REF_BACKFILL_DAYS
-      ? await refPrices(db, config, t, shardId, gap, prev, depth + 1)
+      ? await refPrices(db, config, t, rates, shardId, gap, prev, depth + 1)
       : new Map<number, number>();
   const rows = missing.map((id) => {
     const a = aggBy.get(id);
@@ -102,7 +105,7 @@ export async function refPrices(
         : (filled.get(id) ??
           lastBy.get(id)?.price ??
           t.refOverrides[String(id)] ??
-          initialRef(config.requireFood(id), config));
+          initialRef(config.requireFood(id), config, rates));
     return { shard_id: shardId, foods_id: id, day, price };
   });
   await db

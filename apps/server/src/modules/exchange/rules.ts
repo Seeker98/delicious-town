@@ -1,3 +1,4 @@
+import { levelRateOf } from '../../core/prices';
 import type { Food, GameConfig, Tuning } from '@dt/config';
 
 export type ExchangeTuning = Tuning['exchange'];
@@ -49,9 +50,15 @@ function rareMedians(config: GameConfig): Map<number, number> {
 /**
  * 没有成交前的初始参考价（问题记录 242）：
  * 普通食材用系统定价，但夹在同级稀有中位数的 0.75~1.5 倍（原作数据里个别 3 级食材比 4 级还贵）；
- * 万能食材能顶替任意同级食材，取同级稀有中位数 × 1.5
+ * 万能食材能顶替任意同级食材，取同级稀有中位数 × 1.5；
+ * 最后乘食材等级价格倍数（240-1，万能食材按它顶替的等级）
  */
-export function initialRef(food: Food, config: GameConfig): number {
+export function initialRef(food: Food, config: GameConfig, rates: readonly number[]): number {
+  return Math.round(baseRef(food, config) * levelRateOf(food, rates));
+}
+
+/** 不算等级价格倍数的初始参考价（initialRef 原来的规则） */
+function baseRef(food: Food, config: GameConfig): number {
   const medians = rareMedians(config);
   const base = food.id - UNIVERSAL_BASE;
   if (food.level === 9 && base >= 1 && base <= 5) {

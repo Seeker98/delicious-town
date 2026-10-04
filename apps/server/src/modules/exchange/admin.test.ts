@@ -9,6 +9,9 @@ import { priceBand } from './rules';
 import { trader, wallet } from './test';
 import { setTuning } from '../../../test/town';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -184,6 +187,7 @@ describe('后台系统做市汇总（156-3 设计 §7）', () => {
       t.db,
       t.deps.config,
       t.deps.config.tuning.exchange,
+      ONE,
       shardId,
       f.id,
       gameDay(t.clock.now),

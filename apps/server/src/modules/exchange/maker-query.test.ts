@@ -8,6 +8,9 @@ import { priceBand } from './rules';
 import { createExchangeAdmin } from './admin';
 import { trader } from './test';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -21,7 +24,7 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
   it('系统买档数量按看的人自己的剩余额度；有库存才有卖档（Review Focus 4）', async () => {
     const shardId = await createShard(t.db);
     const f = lv6();
-    const ref = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, gameDay(t.clock.now));
+    const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, gameDay(t.clock.now));
     const band = priceBand(ref, tune());
     const { bid: b0, ask } = makerPrices(ref, null, band, tune().maker, ref);
     const bid = b0!;
@@ -51,7 +54,7 @@ describe('盘口和查询里的系统档（156-3 设计 §6）', () => {
   it('我的成交里系统成交标 system；列表的最新成交价不看系统成交', async () => {
     const shardId = await createShard(t.db);
     const f = lv6();
-    const ref = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, gameDay(t.clock.now));
+    const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, gameDay(t.clock.now));
     const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 5 } });
     await svc().place(s, { foodsId: f.id, side: 'sell', price: priceBand(ref, tune()).min, qty: 2 });
     const me = await svc().me(s);

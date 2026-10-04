@@ -4,6 +4,9 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { refPrice, refPrices } from './ref';
 
+/** 各等级价格倍数全 1（240-1 默认值） */
+const ONE = [1, 1, 1, 1, 1, 1, 1];
+
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame();
@@ -35,13 +38,14 @@ describe('参考价（156-1 设计 §5）', () => {
     const shardId = await createShard(t.db);
     const f = rare();
     const day = gameDay(t.clock.now);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, day)).toBe(f.coin);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day)).toBe(f.coin);
     const other = [...t.deps.config.foods.values()].filter((x) => x.odds < 100)[1]!;
     expect(
       await refPrice(
         t.db,
         t.deps.config,
         { ...tune(), refOverrides: { [String(other.id)]: 777 } },
+        ONE,
         shardId,
         other.id,
         day,
@@ -55,14 +59,14 @@ describe('参考价（156-1 设计 §5）', () => {
     const d0 = gameDay(t.clock.now);
     const d1 = addDays(d0, 1);
     const d2 = addDays(d0, 2);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d0)).toBe(f.coin);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d0)).toBe(f.coin);
     const inD0 = new Date(t.clock.now.getTime());
     await trade(shardId, f.id, 100, 1, inD0);
     await trade(shardId, f.id, 200, 1, inD0);
     await trade(shardId, f.id, 300, 2, inD0);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d1)).toBe(225);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d1)).toBe(225);
     // d1 没有成交（不够 3 笔）：d2 沿用 225
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d2)).toBe(225);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d2)).toBe(225);
   });
 });
 
@@ -75,18 +79,18 @@ describe('终审 I2：批量参考价和逐个算的结果一致', () => {
     const d1 = addDays(d0, 1);
     const tn = { ...tune(), refOverrides: { [String(e)]: 4321 } };
     // a：d0 有 3 笔成交 → d1 用加权均价；b：d0 有参考价、没有成交 → d1 沿用；c：什么都没有 → 系统定价
-    await refPrice(t.db, t.deps.config, tn, shardId, b, d0);
+    await refPrice(t.db, t.deps.config, tn, ONE, shardId, b, d0);
     for (const p of [100, 200, 300]) await trade(shardId, a, p, 1, new Date(t.clock.now.getTime()));
     const one = new Map<number, number>();
-    for (const id of [a, b, c, e]) one.set(id, await refPrice(t.db, t.deps.config, tn, shardId, id, d1));
+    for (const id of [a, b, c, e]) one.set(id, await refPrice(t.db, t.deps.config, tn, ONE, shardId, id, d1));
     // 换一个区服做同样的事，批量算
     const s2 = await createShard(t.db);
-    await refPrice(t.db, t.deps.config, tn, s2, b, d0);
+    await refPrice(t.db, t.deps.config, tn, ONE, s2, b, d0);
     for (const p of [100, 200, 300]) await trade(s2, a, p, 1, new Date(t.clock.now.getTime()));
-    const bulk = await refPrices(t.db, t.deps.config, tn, s2, [a, b, c, e], d1);
+    const bulk = await refPrices(t.db, t.deps.config, tn, ONE, s2, [a, b, c, e], d1);
     expect(bulk).toEqual(one);
     // 再调一次走"已保存"的路径，结果不变
-    expect(await refPrices(t.db, t.deps.config, tn, s2, [a, b, c, e], d1)).toEqual(one);
+    expect(await refPrices(t.db, t.deps.config, tn, ONE, s2, [a, b, c, e], d1)).toEqual(one);
   });
 });
 
@@ -95,10 +99,12 @@ describe('问题记录 242：初始参考价用 initialRef', () => {
     const shardId = await createShard(t.db);
     const snow = [...t.deps.config.foods.values()].find((f) => f.name === '雪蛤')!;
     const day = gameDay(t.clock.now);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, snow.id, day)).toBe(6300);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, snow.id, day)).toBe(6300);
     const s2 = await createShard(t.db);
-    expect((await refPrices(t.db, t.deps.config, tune(), s2, [snow.id, 470], day)).get(snow.id)).toBe(6300);
-    expect((await refPrices(t.db, t.deps.config, tune(), s2, [snow.id, 470], day)).get(470)).toBe(8100);
+    expect((await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, 470], day)).get(snow.id)).toBe(
+      6300,
+    );
+    expect((await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, 470], day)).get(470)).toBe(8100);
   });
 });
 describe('系统成交不算参考价（156-3 设计 §2.4）', () => {
@@ -107,7 +113,7 @@ describe('系统成交不算参考价（156-3 设计 §2.4）', () => {
     const f = rare();
     const d0 = gameDay(t.clock.now);
     const d1 = addDays(d0, 1);
-    const base = await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d0);
+    const base = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d0);
     for (let i = 0; i < 5; i++)
       await t.db
         .insertInto('exchange_trade')
@@ -125,15 +131,15 @@ describe('系统成交不算参考价（156-3 设计 §2.4）', () => {
           system: true,
         })
         .execute();
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d1)).toBe(base);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d1)).toBe(base);
     const other = await createShard(t.db);
-    await refPrice(t.db, t.deps.config, tune(), other, f.id, d0);
+    await refPrice(t.db, t.deps.config, tune(), ONE, other, f.id, d0);
     await t.db
       .updateTable('exchange_trade')
       .set({ shard_id: other })
       .where('shard_id', '=', shardId)
       .execute();
-    expect((await refPrices(t.db, t.deps.config, tune(), other, [f.id], d1)).get(f.id)).toBe(base);
+    expect((await refPrices(t.db, t.deps.config, tune(), ONE, other, [f.id], d1)).get(f.id)).toBe(base);
   });
 });
 
@@ -146,8 +152,8 @@ describe('中间有一天没生成参考价（backlog 156-1）', () => {
       const [d1, d3] = [addDays(d0, 1), addDays(d0, 3)];
       const get = (day: string) =>
         batch
-          ? refPrices(t.db, t.deps.config, tune(), shardId, [f.id], day).then((m) => m.get(f.id)!)
-          : refPrice(t.db, t.deps.config, tune(), shardId, f.id, day);
+          ? refPrices(t.db, t.deps.config, tune(), ONE, shardId, [f.id], day).then((m) => m.get(f.id)!)
+          : refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day);
       expect(await get(d1)).toBe(f.coin);
       const inD1 = new Date(t.clock.now.getTime() + 86_400_000);
       await trade(shardId, f.id, 100, 1, inD1);
@@ -170,8 +176,8 @@ describe('中间有一天没生成参考价（backlog 156-1）', () => {
     const shardId = await createShard(t.db);
     const f = rare();
     const d0 = gameDay(t.clock.now);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, d0)).toBe(f.coin);
-    expect(await refPrice(t.db, t.deps.config, tune(), shardId, f.id, addDays(d0, 30))).toBe(f.coin);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, d0)).toBe(f.coin);
+    expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, addDays(d0, 30))).toBe(f.coin);
     const n = await t.db
       .selectFrom('exchange_ref')
       .select((eb) => eb.fn.countAll<string>().as('n'))
