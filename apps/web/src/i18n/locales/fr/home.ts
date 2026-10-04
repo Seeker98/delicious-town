@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const home: Messages['home'] = {
   loadFailed: 'Impossible de charger votre restaurant',
@@ -16,9 +17,11 @@ const home: Messages['home'] = {
   level: 'Niveau',
   closed: 'Fermé',
   renown: 'Renommée',
-  refuel: (full, cost) => `${full ? 'Faire le plein' : "Ajouter de l'huile"} (${cost} pièces)`,
+  refuel: (full, cost) =>
+    `${full ? 'Faire le plein' : "Ajouter de l'huile"} (${cost} ${plFr(cost, 'pièce', 'pièces')})`,
   refuelFailed: "Échec de l'ajout d'huile",
-  lastRound: (coin, exp, oil) => `Dernier tour : ${coin} pièces · ${exp} EXP · ${oil} d'huile consommée`,
+  lastRound: (coin, exp, oil) =>
+    `Dernier tour : ${coin} ${plFr(coin, 'pièce', 'pièces')} · ${exp} EXP · ${oil} d'huile consommée`,
   noGuests: 'Aucun client',
   income: 'Historique des gains ›',
   floor: 'Étages et tables ›',
@@ -51,11 +54,12 @@ const home: Messages['home'] = {
   placeFailed: "Échec de l'installation",
   plaque2: {
     title: "Débloquer l'emplacement de la deuxième plaque",
-    cost: (coin, diamond) => `${coin} pièces + ${diamond} diamants`,
+    cost: (coin, diamond) =>
+      `${coin} ${plFr(coin, 'pièce', 'pièces')} + ${diamond} ${plFr(diamond, 'diamant', 'diamants')}`,
     noCoin: (need) => `Pas assez de pièces (il en faut ${need})`,
     noDiamond: (need) => `Pas assez de diamants (il en faut ${need})`,
     confirm: (coin, diamond) =>
-      `Dépenser ${coin} pièces et ${diamond} diamants pour débloquer l'emplacement de la deuxième plaque ?`,
+      `Dépenser ${coin} ${plFr(coin, 'pièce', 'pièces')} et ${diamond} ${plFr(diamond, 'diamant', 'diamants')} pour débloquer l'emplacement de la deuxième plaque ?`,
     open: 'Débloquer',
     failed: 'Échec du déblocage',
   },

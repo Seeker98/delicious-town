@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const forum: Messages['forum'] = {
   title: 'Foro',
@@ -13,7 +14,7 @@ const forum: Messages['forum'] = {
   pinned: 'Fijado',
   featured: 'Destacado',
   itemMeta: (name, when, read, up, reply) =>
-    `${name} · ${when} · ${read} vistas · ${up} me gusta · ${reply} respuestas`,
+    `${name} · ${when} · ${read} ${plEs(read, 'vista', 'vistas')} · ${up} me gusta · ${reply} ${plEs(reply, 'respuesta', 'respuestas')}`,
   post: {
     loadFailed: 'No se pudo cargar el tema',
     opFailed: 'No se pudo completar la acción',
@@ -25,7 +26,7 @@ const forum: Messages['forum'] = {
     replyFailed: 'No se pudo responder',
     back: 'Volver al foro',
     edited: (when) => ` · editado ${when}`,
-    read: (n) => ` · ${n} vistas`,
+    read: (n) => ` · ${n} ${plEs(n, 'vista', 'vistas')}`,
     edit: 'Editar',
     delete: 'Borrar',
     pin: 'Fijar',
@@ -34,7 +35,8 @@ const forum: Messages['forum'] = {
     unfeature: 'Quitar de destacados',
     reads: 'Lectores',
     noReads: 'Nadie lo ha leído todavía',
-    readLine: (name, times, last) => `${name} · leído ${times} veces · última vez ${last}`,
+    readLine: (name, times, last) =>
+      `${name} · leído ${times} ${plEs(times, 'vez', 'veces')} · última vez ${last}`,
     reaction: { up: 'le gusta', down: 'no le gusta' },
     replies: (n) => `Respuestas (${n})`,
     anonymousTag: ' (anónimo)',

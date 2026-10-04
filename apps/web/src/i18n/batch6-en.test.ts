@@ -21,7 +21,7 @@ describe('第 6 批其他页面按语言（问题记录 272）', () => {
     await useLocaleStore().set('en');
     const m = activeMessages();
     expect(m.equip.detail.confirmRollback('Rollback Stone', 2, 1)).toBe(
-      'Use 1 Rollback Stone to undo 2 enhancement level(s)? The extra 1 level(s) will be wasted.',
+      'Use 1 Rollback Stone to undo 2 enhancement levels? The extra 1 level will be wasted.',
     );
     expect(m.rest.tasks.claim(40, true)).toBe('Claim 40-point reward ×2');
     expect(m.misc.invite.stage.pending(10)).toBe(

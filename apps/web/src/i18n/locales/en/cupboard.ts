@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const cupboard: Messages['cupboard'] = {
   tabs: { cupboard: 'Pantry', fridge: 'Fridge' },
@@ -24,10 +25,10 @@ const cupboard: Messages['cupboard'] = {
   handleFailed: 'Failed',
   exchangeFailed: 'Trade failed',
   loadFailed: "Couldn't load your pantry",
-  thawConfirm: (n, name, coin) => `Thaw ${n} ${name} for ${coin} coins?`,
+  thawConfirm: (n, name, coin) => `Thaw ${n} ${name} for ${coin} ${plEn(coin, 'coin', 'coins')}?`,
   thawFailed: 'Thawing failed',
   fridgeEmpty: 'The fridge is empty',
   noRoom: 'No room in the pantry',
-  thaw: (n, coin) => `Thaw ×${n} (${coin} coins)`,
+  thaw: (n, coin) => `Thaw ×${n} (${coin} ${plEn(coin, 'coin', 'coins')})`,
 };
 export default cupboard;

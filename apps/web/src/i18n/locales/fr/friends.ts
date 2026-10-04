@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const friends: Messages['friends'] = {
   tabs: { friends: 'Amis', requests: 'Demandes', find: 'Chercher', feed: 'Activité' },
@@ -9,7 +10,8 @@ const friends: Messages['friends'] = {
   searchFailed: 'Échec de la recherche',
   applied: 'Demande envoyée',
   applyFailed: "Impossible d'envoyer la demande",
-  returned: (ok, failed) => `Pouce rendu à ${ok} personne(s)${failed > 0 ? ` ; ${failed} échec(s)` : ''}`,
+  returned: (ok, failed) =>
+    `Pouce rendu à ${ok} ${plFr(ok, 'personne', 'personnes')}${failed > 0 ? ` ; ${failed} ${plFr(failed, 'échec', 'échecs')}` : ''}`,
   returnFailed: 'Impossible de rendre les pouces',
   count: (n, max) => `Amis ${n}/${max}`,
   sorts: { level: 'Par niveau', star: 'Par étoiles', recent: 'Ajoutés récemment' },
@@ -28,7 +30,7 @@ const friends: Messages['friends'] = {
   alreadyFriend: 'Déjà amis',
   requested: 'Demandé',
   addFriend: 'Ajouter',
-  thumbsToday: (n) => `${n} personne(s) vous ont donné un pouce aujourd'hui`,
+  thumbsToday: (n) => `${n} ${plFr(n, 'personne', 'personnes')} vous ont donné un pouce aujourd'hui`,
   returnAll: 'Tout rendre',
   noFeed: 'Aucune activité ces 3 derniers jours.',
   rest: {
@@ -43,7 +45,8 @@ const friends: Messages['friends'] = {
     door: 'Porte',
     equips: 'Ustensiles',
     special: 'Plat signature : ',
-    specialLine: (grade, left, price) => `${grade} · reste ${left} · ${price} pièces la part`,
+    specialLine: (grade, left, price) =>
+      `${grade} · reste ${left} · ${price} ${plFr(price, 'pièce', 'pièces')} la part`,
     tasted: 'Goûté ! Votre énergie a augmenté',
     tasteFailed: 'Impossible de goûter',
     tastedAlready: 'Déjà goûté',
@@ -80,10 +83,11 @@ const friends: Messages['friends'] = {
     end: '.',
     left: (h, m) => `${h} h ${m} min`,
     strength: (n) => `Énergie -${n}. `,
-    tickets: (n) => `, et ${n} ticket(s) Délice en plus`,
+    tickets: (n) => `, et ${n} ${plFr(n, 'ticket', 'tickets')} Délice en plus`,
     food: (name) => `Vous avez trouvé ${name}`,
     ticket: 'Il y avait un bon mystère dans le garde-manger',
-    caught: (coin) => `Votre main s'est prise dans une tapette, vous avez perdu ${coin} pièces`,
+    caught: (coin) =>
+      `Votre main s'est prise dans une tapette, vous avez perdu ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     escaped: 'Vous avez failli vous prendre dans une tapette. Ouf !',
     nothing: 'Rien du tout',
     loadFailed: 'Impossible de charger le garde-manger',
@@ -98,7 +102,7 @@ const friends: Messages['friends'] = {
     done: 'Échange fait',
     failed: "Échec de l'échange",
     level: (l) => `Niv. ${l}`,
-    left: (n) => `Encore ${n} échange(s) aujourd'hui`,
+    left: (n) => `Encore ${n} ${plFr(n, 'échange', 'échanges')} aujourd'hui`,
     storm:
       ' ; par temps d’ouragan, vous pouvez prendre ses ingrédients verrouillés (une chance sur deux d’être pris)',
     theirs: 'Les siens',
@@ -106,7 +110,7 @@ const friends: Messages['friends'] = {
     mine: 'Vous donnez (2 à chaque fois)',
     mineEmpty: "Vous n'avez pas d'ingrédient de ce niveau",
     btn: 'Échanger',
-    fee: (n) => ` (frais ${n} pièces)`,
+    fee: (n) => ` (frais ${n} ${plFr(n, 'pièce', 'pièces')})`,
   },
   report: {
     open: 'Signaler',

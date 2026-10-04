@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const exchange: Messages['exchange'] = {
   title: 'Exchange',
@@ -6,28 +7,30 @@ const exchange: Messages['exchange'] = {
   reasons: {
     exchange_level: (level, now) =>
       `Your restaurant must be level ${level} to trade (it is level ${now} now)`,
-    exchange_age: (days) => `Your account must be at least ${days} days old to trade`,
+    exchange_age: (days) => `Your account must be at least ${days} ${plEn(days, 'day', 'days')} old to trade`,
     exchange_email: 'Verify your email to trade',
   },
   frozen: 'Your exchange account is frozen',
   cannotTrade: "You can't trade right now",
-  coin: (n) => `${n} coins`,
-  estimateBuy: (total) => `Costs at most ${total} coins`,
-  estimateSell: (net) => `About ${net} coins if it all sells (after fees)`,
+  coin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
+  estimateBuy: (total) => `Costs at most ${total} ${plEn(total, 'coin', 'coins')}`,
+  estimateSell: (net) => `About ${net} ${plEn(net, 'coin', 'coins')} if it all sells (after fees)`,
   sysEstimate: (price, qty, total, fee, net) =>
-    `${price} × ${qty} = ${total}, fee ${fee}, you get ${net} coins`,
+    `${price} × ${qty} = ${total}, fee ${fee}, you get ${net} ${plEn(net, 'coin', 'coins')}`,
   soldToSystem: (n, price) => `Sold ${n} to the system at ${price} each`,
   sellSystemFailed: "Couldn't sell to the system",
   bookFailed: "Couldn't load the order book",
   placed: 'Order placed',
-  heldNote: (hours) => `; some fills look suspicious and their proceeds are frozen for ${hours} hours`,
+  heldNote: (hours) =>
+    `; some fills look suspicious and their proceeds are frozen for ${hours} ${plEn(hours, 'hour', 'hours')}`,
   overSystem: (n) =>
     `The system will only buy ${n} more from you; the rest stays listed at your price and others may buy it cheaply`,
   filled: (n, partial, held) => `${n} filled${partial ? ', the rest is on the book' : ''}${held}`,
   placeFailed: 'Order failed',
   cancelled: 'Order cancelled',
   cancelFailed: "Couldn't cancel",
-  withdrawnLeft: (n) => `Withdrawn; ${n} ingredients didn't fit and stay in your exchange account`,
+  withdrawnLeft: (n) =>
+    `Withdrawn; ${n} ${plEn(n, 'ingredient', 'ingredients')} didn't fit and stay in your exchange account`,
   withdrawn: 'Withdrawn',
   withdrawFailed: "Couldn't withdraw",
   loadFailed: "Couldn't load the exchange",

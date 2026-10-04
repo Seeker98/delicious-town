@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const town: Messages['town'] = {
   title: 'Place',
@@ -37,13 +38,13 @@ const town: Messages['town'] = {
   mayorName: 'Maire',
   mayorFailed: 'Impossible de répondre',
   talkFailed: 'Impossible de discuter',
-  shook: (coin) => `Vous avez secoué ${coin} pièces`,
+  shook: (coin) => `Vous avez secoué ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
   shookEgg: (name, num) => `, et sorti ${name}×${num} de sa poche`,
   shakeFailed: 'Impossible de secouer la bourse',
-  blessRandom: (lv, n) => `${n} ingrédient(s) aléatoire(s) de niveau ${lv}`,
+  blessRandom: (lv, n) => `${n} ${plFr(n, 'ingrédient aléatoire', 'ingrédients aléatoires')} de niveau ${lv}`,
   blessPick: (lv, n) => `Ingrédient de niveau ${lv} au choix ×${n}`,
-  blessCoin: (n) => `${n} pièces`,
-  blessDiamond: (n) => `${n} diamants`,
+  blessCoin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
+  blessDiamond: (n) => `${n} ${plFr(n, 'diamant', 'diamants')}`,
   lampCoin: ' (+10 % avec la lampe magique)',
   lampOne: ' (+1 avec la lampe magique)',
   feasted: "Déjà récupéré aujourd'hui",
@@ -79,7 +80,7 @@ const town: Messages['town'] = {
   hammer: 'Marteau de Thor',
   weatherNow: 'Météo actuelle : ',
   hammerHint: (coin, diamond) =>
-    `Passer à un type de météo : ${coin} pièces à chaque fois. Invoquer une météo spéciale : ${diamond} diamants à chaque fois`,
+    `Passer à un type de météo : ${coin} ${plFr(coin, 'pièce', 'pièces')} à chaque fois. Invoquer une météo spéciale : ${diamond} ${plFr(diamond, 'diamant', 'diamants')} à chaque fois`,
   hammerSpecial: 'Invoquer une météo spéciale',
   news: {
     loadFailed: 'Impossible de charger les nouvelles',
@@ -90,7 +91,7 @@ const town: Messages['town'] = {
     failed: "Échec de l'annonce",
     placeholder: 'Dites quelque chose à toute la ville',
     send: 'Annoncer',
-    horns: (n) => `${n} klaxon(s), 1 par annonce`,
+    horns: (n) => `${n} ${plFr(n, 'klaxon', 'klaxons')}, 1 par annonce`,
     empty: 'Pas encore de nouvelles',
   },
   rank: {
@@ -166,30 +167,33 @@ const town: Messages['town'] = {
   classroom: {
     loadFailed: 'Impossible de charger la classe',
     stealConfirm: (n, mc) =>
-      `Espionner un cours est gratuit, mais en cas d'échec vous oubliez ${n} recette(s)${mc ? ' et peut-être un plat signature' : ''}. Espionner ?`,
+      `Espionner un cours est gratuit, mais en cas d'échec vous oubliez ${n} ${plFr(n, 'recette', 'recettes')}${mc ? ' et peut-être un plat signature' : ''}. Espionner ?`,
     learned: (name) => `Vous avez appris ${name}`,
-    stealFailed: (n, mc) => `Espionnage raté : ${n} recette(s) oubliée(s)${mc ? ` et ${mc}` : ''}`,
+    stealFailed: (n, mc) =>
+      `Espionnage raté : ${n} ${plFr(n, 'recette oubliée', 'recettes oubliées')}${mc ? ` et ${mc}` : ''}`,
     notLearned: "Vous n'avez pas réussi. Revenez une autre fois",
     learnFailed: "Échec de l'apprentissage",
     opened: 'Cours ouvert',
     openFailed: "Impossible d'ouvrir le cours",
-    closeConfirm: (coin) => `Dépenser ${coin} pièces pour arrêter ce cours ?`,
+    closeConfirm: (coin) => `Dépenser ${coin} ${plFr(coin, 'pièce', 'pièces')} pour arrêter ce cours ?`,
     closed: 'Cours terminé',
     closeFailed: "Impossible d'arrêter le cours",
     mine: 'Mon cours : ',
-    mineLine: (level, n, max, left) => ` Niv. ${level} · ${n}/${max} élèves · ${left}`,
+    mineLine: (level, n, max, left) =>
+      ` Niv. ${level} · ${n}/${max} ${plFr(max, 'élève', 'élèves')} · ${left}`,
     forceClose: 'Arrêter',
     openTitle: "Ouvrir un cours (1 fragment et 1 certificat d'enseignant) :",
     pickMc: 'Choisir un plat signature appris',
     mcOption: (name, level) => `${name} (niv. ${level ?? '?'})`,
     pickCert: "Choisir un certificat d'enseignant",
     certOption: (name, strength, hours, max, have) =>
-      `${name} (énergie ${strength}, ${hours} h, ${max} élèves, possédé ${have})`,
+      `${name} (énergie ${strength}, ${hours} h, ${max} ${plFr(max, 'élève', 'élèves')}, possédé ${have})`,
     open: 'Ouvrir le cours',
     running: 'Cours en cours',
     none: "Aucun cours d'un autre joueur pour le moment",
     lessonLine: (level, teacher) => ` Niv. ${level} · prof ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} élèves (${stolen} espion(s)) · ${left}`,
+    lessonMeta: (n, max, stolen, left) =>
+      `${n}/${max} ${plFr(max, 'élève', 'élèves')} (${stolen} ${plFr(stolen, 'espion', 'espions')}) · ${left}`,
     learn: 'Apprendre',
     steal: 'Espionner',
     rule: 'Apprendre coûte prix×3 pièces et 2 fragments du même niveau ; le prof reçoit prix×2 et 1 fragment. Un seul essai par cours.',
@@ -215,7 +219,7 @@ const town: Messages['town'] = {
     level: (l) => `Bon d'ingrédient de niveau ${l}`,
     have: (n) => `Possédé : ${n}`,
     rule: 'Chaque bon donne un ingrédient commun du même niveau. Vous pouvez en choisir plusieurs sortes à la fois',
-    go: (n) => `Échanger (${n} bon(s))`,
+    go: (n) => `Échanger (${n} ${plFr(n, 'bon', 'bons')})`,
     mystery: "Bon d'ingrédient mystère",
     pickMystery: 'Choisir un ingrédient mystère',
     btn: 'Échanger',

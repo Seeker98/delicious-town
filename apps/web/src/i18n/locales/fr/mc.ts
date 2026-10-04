@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const mc: Messages['mc'] = {
   title: 'Plats signature',
@@ -10,12 +11,12 @@ const mc: Messages['mc'] = {
     short: 'Pas assez de fragments (3 pour en apprendre un)',
     learned: 'Plats connus (fragments à vendre ou décomposer)',
   },
-  learnedAll: (n, names) => `${n} plat(s) signature appris : ${names}`,
+  learnedAll: (n, names) => `${n} ${plFr(n, 'plat', 'plats')} signature appris : ${names}`,
   learnFailed: "Échec de l'apprentissage",
   levelUp: 'la maîtrise a augmenté',
   bob: 'Bob l’éponge a aimé',
   cooked: (grade, lucky, num, price, extra) =>
-    `Cuisiné : ${grade}${lucky ? ' (chanceux)' : ''}, ${num} parts à ${price} pièces chacune${extra ? ` ; ${extra}` : ''}`,
+    `Cuisiné : ${grade}${lucky ? ' (chanceux)' : ''}, ${num} ${plFr(num, 'part', 'parts')} à ${price} ${plFr(price, 'pièce', 'pièces')} chacune${extra ? ` ; ${extra}` : ''}`,
   cookFailed: 'Échec de la cuisson',
   dumpConfirm: 'Toutes les parts restantes seront jetées. Continuer ?',
   dumped: 'Jeté',
@@ -24,7 +25,7 @@ const mc: Messages['mc'] = {
   onSale: 'En vente : ',
   lucky: ' (chanceux)',
   saleMeta: (left, total, price, eaten) =>
-    `Reste ${left} / ${total} · ${price} pièces la part · goûté ${eaten} fois`,
+    `Reste ${left} / ${total} · ${price} ${plFr(price, 'pièce', 'pièces')} la part · goûté ${eaten} fois`,
   dump: 'Jeter',
   learned: (n) => `Appris (${n})`,
   noLearned:
@@ -34,7 +35,7 @@ const mc: Messages['mc'] = {
   cook: 'Cuisiner',
   foods: 'Ingrédients : ',
   cookie: (n) => `Utiliser des biscuits chanceux (1 par fournée, possédés ${n})`,
-  batches: (n) => `${n} fournée(s)`,
+  batches: (n) => `${n} ${plFr(n, 'fournée', 'fournées')}`,
   remnants: 'Fragments',
   noRemnants: 'Aucun fragment',
   groupTitle: (title, n) => `${title} (${n})`,

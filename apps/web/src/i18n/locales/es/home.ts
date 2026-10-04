@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const home: Messages['home'] = {
   loadFailed: 'No se pudo cargar tu restaurante',
@@ -16,9 +17,10 @@ const home: Messages['home'] = {
   level: 'Nivel',
   closed: 'Cerrado',
   renown: 'Renombre',
-  refuel: (full, cost) => `${full ? 'Llenar' : 'Echar aceite'} (${cost} monedas)`,
+  refuel: (full, cost) => `${full ? 'Llenar' : 'Echar aceite'} (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
   refuelFailed: 'No se pudo echar aceite',
-  lastRound: (coin, exp, oil) => `Última ronda: ${coin} monedas · ${exp} EXP · ${oil} de aceite gastado`,
+  lastRound: (coin, exp, oil) =>
+    `Última ronda: ${coin} ${plEs(coin, 'moneda', 'monedas')} · ${exp} EXP · ${oil} de aceite gastado`,
   noGuests: 'Sin clientes',
   income: 'Registro de ingresos ›',
   floor: 'Plantas y mesas ›',
@@ -51,11 +53,12 @@ const home: Messages['home'] = {
   placeFailed: 'No se pudo colocar',
   plaque2: {
     title: 'Desbloquear el hueco de la segunda placa',
-    cost: (coin, diamond) => `${coin} monedas + ${diamond} diamantes`,
+    cost: (coin, diamond) =>
+      `${coin} ${plEs(coin, 'moneda', 'monedas')} + ${diamond} ${plEs(diamond, 'diamante', 'diamantes')}`,
     noCoin: (need) => `No tienes suficientes monedas (hacen falta ${need})`,
     noDiamond: (need) => `No tienes suficientes diamantes (hacen falta ${need})`,
     confirm: (coin, diamond) =>
-      `¿Gastar ${coin} monedas y ${diamond} diamantes para desbloquear el hueco de la segunda placa?`,
+      `¿Gastar ${coin} ${plEs(coin, 'moneda', 'monedas')} y ${diamond} ${plEs(diamond, 'diamante', 'diamantes')} para desbloquear el hueco de la segunda placa?`,
     open: 'Desbloquear',
     failed: 'No se pudo desbloquear',
   },

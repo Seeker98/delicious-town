@@ -61,4 +61,26 @@ describe('WeatherView：天气名、说明、蟹老板的街按目录显示（�
     expect(text).toContain('经营: 上座率+3%');
     expect(text).toContain('广东街');
   });
+
+  it('有天气说明时不再按效果把经营写第二遍，只写 0 星不受影响（backlog #116）', async () => {
+    vi.mocked(endpoints.weather).mockResolvedValue({
+      ...world,
+      weather: { ...world.weather, effects: { atRate: 0.03 } },
+    });
+    const w = await mountView();
+    expect(w.get('[data-testid="weather-note"]').text()).toBe('经营: 上座率+3%');
+    expect(w.text().split('上座率+3%')).toHaveLength(2);
+    expect(w.text()).toContain('0 星餐厅不受天气影响');
+  });
+
+  it('没有天气说明时按效果写', async () => {
+    vi.mocked(endpoints.weather).mockResolvedValue({
+      ...world,
+      weather: { ...world.weather, note: '', effects: { atRate: 0.03 } },
+    });
+    const w = await mountView();
+    expect(w.find('[data-testid="weather-note"]').exists()).toBe(false);
+    expect(w.text()).toContain('上座率+3%');
+    expect(w.text()).toContain('（0 星餐厅不受天气影响）');
+  });
 });

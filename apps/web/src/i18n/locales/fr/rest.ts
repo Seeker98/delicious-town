@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const rest: Messages['rest'] = {
   info: {
@@ -30,7 +31,7 @@ const rest: Messages['rest'] = {
   floor: {
     loadFailed: 'Impossible de charger les tables',
     tableNo: (n) => `Table ${n}`,
-    last: (coin, exp) => `Dernier tour ${coin} pièces / ${exp} EXP`,
+    last: (coin, exp) => `Dernier tour ${coin} ${plFr(coin, 'pièce', 'pièces')} / ${exp} EXP`,
     kill: 'Écraser le cafard',
     killed: 'Cafard écrasé',
     killFailed: "Impossible d'écraser le cafard",
@@ -48,7 +49,7 @@ const rest: Messages['rest'] = {
     avatarSet: 'Avatar changé',
     avatarFailed: "Impossible de changer l'avatar",
     door: 'Porte',
-    doorCoin: (n) => `${n} pièces`,
+    doorCoin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
     doorSet: 'Porte changée',
     doorFailed: 'Impossible de changer la porte',
     notice: "Panneau d'annonce",
@@ -61,11 +62,11 @@ const rest: Messages['rest'] = {
     iconFailed: 'Impossible de mettre à jour le badge',
     shopTitle: 'Titres limités',
     shopMeta: (coin: string, days: number) =>
-      `${coin} pièces · ${days > 0 ? `retiré dans ${days} jour${days === 1 ? '' : 's'}` : "retiré aujourd'hui"}`,
+      `${coin} ${plFr(coin, 'pièce', 'pièces')} · ${days > 0 ? `retiré dans ${days} jour${days === 1 ? '' : 's'}` : "retiré aujourd'hui"}`,
     buy: 'Acheter',
     owned: 'Possédé',
     buyConfirm: (title: string, coin: string) =>
-      `Acheter le titre limité « ${title} » pour ${coin} pièces ? Une fois retiré, il ne sera plus disponible.`,
+      `Acheter le titre limité « ${title} » pour ${coin} ${plFr(coin, 'pièce', 'pièces')} ? Une fois retiré, il ne sera plus disponible.`,
     bought: (title: string) =>
       `Titre limité « ${title} » acheté. Choisissez ci-dessous s'il faut l'afficher.`,
     buyFailed: "Impossible d'acheter le titre",
@@ -76,12 +77,13 @@ const rest: Messages['rest'] = {
     signIn: 'Pointer',
     signedIn: "Pointé aujourd'hui",
     signInFailed: 'Impossible de pointer',
-    claimed: (p) => `✓ Récompense de ${p} points reçue`,
-    claim: (p, double) => `Récompense de ${p} points${double ? ' ×2' : ''}`,
-    need: (p, left) => `${p} points (encore ${left})`,
-    kujiHint: (p, num) => `La récompense de ${p} points donne aussi ${num} tickets d'Ichiban Kuji`,
+    claimed: (p) => `✓ Récompense de ${p} ${plFr(p, 'point', 'points')} reçue`,
+    claim: (p, double) => `Récompense de ${p} ${plFr(p, 'point', 'points')}${double ? ' ×2' : ''}`,
+    need: (p, left) => `${p} ${plFr(p, 'point', 'points')} (encore ${left})`,
+    kujiHint: (p, num) =>
+      `La récompense de ${p} ${plFr(p, 'point', 'points')} donne aussi ${num} ${plFr(num, 'ticket', 'tickets')} d'Ichiban Kuji`,
     full: '✓ Terminé',
-    locked: (star) => `🔒 Ouvert à ${star} étoiles`,
+    locked: (star) => `🔒 Ouvert à ${star} ${plFr(star, 'étoile', 'étoiles')}`,
     per: (p) => `${p} point${p > 1 ? 's' : ''} par fois`,
     main: 'Quête principale',
     mainDone: 'Quête principale terminée',

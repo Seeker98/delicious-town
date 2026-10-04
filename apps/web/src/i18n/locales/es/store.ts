@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const store: Messages['store'] = {
   tabs: { items: 'Almacén', souvenirs: 'Recuerdos', records: 'Registro de objetos' },
@@ -22,12 +23,12 @@ const store: Messages['store'] = {
   unitPrice: (price) => `${price} c/u`,
   atLimit: 'Límite alcanzado',
   batchMax: (n) => `Hasta ${n} a la vez`,
-  sellConfirm: (n, name, coin) => `¿Vender ${n} ${name} por ${coin} monedas?`,
+  sellConfirm: (n, name, coin) => `¿Vender ${n} ${name} por ${coin} ${plEs(coin, 'moneda', 'monedas')}?`,
   sellFailed: 'No se pudo vender',
   discardConfirm: (name) => `La bonificación de ${name} desaparece en cuanto lo tiras. ¿Tirarlo?`,
   discardFailed: 'No se pudo tirar',
-  used: (kinds, max) => `${kinds}/${max} tipos usados`,
-  equipsBefore: (n) => `Hay ${n} utensilio(s) más en la`,
+  used: (kinds, max) => `${kinds}/${max} ${plEs(max, 'tipo usado', 'tipos usados')}`,
+  equipsBefore: (n) => `Hay ${n} ${plEs(n, 'utensilio', 'utensilios')} más en la`,
   equipsLink: 'página de utensilios',
   equipsAfter: ' (cada uno ocupa un hueco)',
   use: 'Usar',
@@ -56,7 +57,8 @@ const store: Messages['store'] = {
     buy: 'Comprar',
     specialSoon: 'Nueva oferta hoy a mediodía',
     tier: (off) => `-${off} %`,
-    specialLine: (price, left, stock) => `${price} monedas · quedan ${left}/${stock}`,
+    specialLine: (price, left, stock) =>
+      `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left}/${stock}`,
     grab: '¡Lo quiero!',
   },
 };

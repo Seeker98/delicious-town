@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const town: Messages['town'] = {
   title: 'Square',
@@ -37,13 +38,13 @@ const town: Messages['town'] = {
   mayorName: 'Mayor',
   mayorFailed: "Couldn't answer",
   talkFailed: "Couldn't chat",
-  shook: (coin) => `You shook out ${coin} coins`,
+  shook: (coin) => `You shook out ${coin} ${plEn(coin, 'coin', 'coins')}`,
   shookEgg: (name, num) => `, and pulled ${name}×${num} out of his pocket`,
   shakeFailed: "Couldn't shake the money bag",
-  blessRandom: (lv, n) => `${n} random level ${lv} ingredients`,
+  blessRandom: (lv, n) => `${n} random level ${lv} ${plEn(lv, 'ingredient', 'ingredients')}`,
   blessPick: (lv, n) => `Level ${lv} ingredient of your choice ×${n}`,
-  blessCoin: (n) => `${n} coins`,
-  blessDiamond: (n) => `${n} diamonds`,
+  blessCoin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
+  blessDiamond: (n) => `${n} ${plEn(n, 'diamond', 'diamonds')}`,
   lampCoin: ' (+10% with the Magic Lamp)',
   lampOne: ' (+1 with the Magic Lamp)',
   feasted: 'Already claimed today',
@@ -78,7 +79,7 @@ const town: Messages['town'] = {
   hammer: "Thor's Hammer",
   weatherNow: 'Weather now: ',
   hammerHint: (coin, diamond) =>
-    `Switch to a weather type: ${coin} coins each time. Summon special weather: ${diamond} diamonds each time`,
+    `Switch to a weather type: ${coin} ${plEn(coin, 'coin', 'coins')} each time. Summon special weather: ${diamond} ${plEn(diamond, 'diamond', 'diamonds')} each time`,
   hammerSpecial: 'Summon special weather',
   news: {
     loadFailed: "Couldn't load the news",
@@ -159,30 +160,33 @@ const town: Messages['town'] = {
   classroom: {
     loadFailed: "Couldn't load the classroom",
     stealConfirm: (n, mc) =>
-      `Sneaking a lesson is free, but if it fails you forget ${n} recipes${mc ? ' and maybe a signature dish' : ''}. Sneak a lesson?`,
+      `Sneaking a lesson is free, but if it fails you forget ${n} ${plEn(n, 'recipe', 'recipes')}${mc ? ' and maybe a signature dish' : ''}. Sneak a lesson?`,
     learned: (name) => `You learned ${name}`,
-    stealFailed: (n, mc) => `Sneaking failed: you forgot ${n} recipes${mc ? ` and ${mc}` : ''}`,
+    stealFailed: (n, mc) =>
+      `Sneaking failed: you forgot ${n} ${plEn(n, 'recipe', 'recipes')}${mc ? ` and ${mc}` : ''}`,
     notLearned: "You didn't learn it. Try again next time",
     learnFailed: 'Learning failed',
     opened: 'Class opened',
     openFailed: "Couldn't open the class",
-    closeConfirm: (coin) => `Spend ${coin} coins to end this class early?`,
+    closeConfirm: (coin) => `Spend ${coin} ${plEn(coin, 'coin', 'coins')} to end this class early?`,
     closed: 'Class ended',
     closeFailed: "Couldn't end the class",
     mine: 'My class: ',
-    mineLine: (level, n, max, left) => ` Lv. ${level} · ${n}/${max} students · ${left}`,
+    mineLine: (level, n, max, left) =>
+      ` Lv. ${level} · ${n}/${max} ${plEn(max, 'student', 'students')} · ${left}`,
     forceClose: 'End now',
     openTitle: 'Open a class (uses 1 fragment and 1 Teacher Certificate):',
     pickMc: 'Choose a signature dish you know',
     mcOption: (name, level) => `${name} (Lv. ${level ?? '?'})`,
     pickCert: 'Choose a Teacher Certificate',
     certOption: (name, strength, hours, max, have) =>
-      `${name} (Stamina ${strength}, ${hours} h, ${max} students, own ${have})`,
+      `${name} (Stamina ${strength}, ${hours} h, ${max} ${plEn(max, 'student', 'students')}, own ${have})`,
     open: 'Open class',
     running: 'Classes in session',
     none: "Nobody else's class is running",
     lessonLine: (level, teacher) => ` Lv. ${level} · teacher ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} students (${stolen} sneaked) · ${left}`,
+    lessonMeta: (n, max, stolen, left) =>
+      `${n}/${max} ${plEn(max, 'student', 'students')} (${stolen} sneaked) · ${left}`,
     learn: 'Learn',
     steal: 'Sneak',
     rule: 'Learning costs price×3 coins and 2 fragments of the same level; the teacher gets price×2 and 1 fragment. One try per class.',

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const market: Messages['market'] = {
   sections: {
@@ -9,7 +10,7 @@ const market: Messages['market'] = {
   specialNote: (min) =>
     `requiere correo verificado, 1 de cada por persona; una compra por red cada ${min} min`,
   manualConfirm: (cost, time) =>
-    `¿Gastar ${cost} monedas para poner 4 platos del día a la venta? Se retirarán en la próxima reposición diaria (${time}).`,
+    `¿Gastar ${cost} ${plEs(cost, 'moneda', 'monedas')} para poner 4 platos del día a la venta? Se retirarán en la próxima reposición diaria (${time}).`,
   manualDone: (renown) => `Reposición hecha. Renombre +${renown}`,
   manualFailed: 'No se pudo reponer',
   buyFailed: 'No se pudo comprar',
@@ -22,7 +23,7 @@ const market: Messages['market'] = {
   guessFailed: 'No se pudo apostar',
   loadFailed: 'No se pudo cargar el mercado',
   nextStock: (time) => `Próxima reposición ${time}`,
-  manualBtn: (cost) => `Reponer a mano (${cost} monedas)`,
+  manualBtn: (cost) => `Reponer a mano (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
   specialWait: (min) => `Acabas de comprar una oferta. Tu red debe esperar ${min} min para comprar otra`,
   empty: 'Aún no hay género',
   hot: 'Popular',
@@ -30,14 +31,15 @@ const market: Messages['market'] = {
   stockedBy: (name) => `Puesto por ${name}`,
   left: (n) => `Quedan ${n}`,
   priceLine: (price, left, bought, limit) =>
-    `${price} monedas · quedan ${left} · comprado ${bought}/${limit}`,
+    `${price} ${plEs(price, 'moneda', 'monedas')} · quedan ${left} · comprado ${bought}/${limit}`,
   buy: 'Comprar',
   guess: {
     title: 'Apuesta del mercado',
     hint: (hour) => `Adivina qué venderá el próximo mercado diario (${hour}:00)`,
     last: (n) => `La última vez acertaste ${n}`,
     joined: (list) => `Apostado: ${list}`,
-    rule: (max, cost) => `Elige hasta ${max}, cuesta ${cost} vales misteriosos`,
+    rule: (max, cost) =>
+      `Elige hasta ${max}, cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}`,
     join: (n) => `Apostar (${n} elegidos)`,
   },
   sis: {
@@ -64,7 +66,7 @@ const market: Messages['market'] = {
       '¿Dudas? Mira la sección «Guías» del foro.',
       'El mercado premium solo se repone tres veces al día. Si te lo pierdes, toca esperar.',
     ],
-    specialLeft: (n) => `Quedan ${n} ofertas. ¡Date prisa!`,
+    specialLeft: (n) => `Quedan ${n} ${plEs(n, 'oferta', 'ofertas')}. ¡Date prisa!`,
     specialSoldOut: (time) => `Las ofertas se agotaron. Próxima reposición a las ${time}.`,
     nextDaily: (time) => `El mercado diario se repone a las ${time}. Pásate a verlo.`,
     guessOpen: 'Aún no has apostado en esta ronda. ¿Lo intentas abajo?',

@@ -119,27 +119,23 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     <h5>
       {{ t.equip.title }} <small class="text-muted">{{ t.equip.count(o.count) }}</small>
     </h5>
-    <!-- 七列在英法西文下放不进手机宽度：表格自己左右滑，不撑宽整页（问题记录 304） -->
+    <!-- 每项属性一行、三列数值：原来属性横排七列，英法西文在手机上要左右滑才看得到后几项（问题记录 304、质量期 ④） -->
     <div class="table-responsive mb-2" data-testid="attr-table">
       <table class="table table-sm small mb-0">
         <thead>
           <tr>
             <th></th>
-            <th v-for="k in ATTR_KEYS" :key="k">{{ ATTR_NAMES[k] }}</th>
+            <th class="text-end">{{ t.equip.rows.points }}</th>
+            <th class="text-end">{{ t.equip.rows.gear }}</th>
+            <th class="text-end">{{ t.equip.rows.total }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{ t.equip.rows.points }}</td>
-            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.points[k] }}</td>
-          </tr>
-          <tr>
-            <td>{{ t.equip.rows.gear }}</td>
-            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.gear[k] }}</td>
-          </tr>
-          <tr class="fw-bold">
-            <td>{{ t.equip.rows.total }}</td>
-            <td v-for="k in ATTR_KEYS" :key="k">{{ o.attrs.total[k] }}</td>
+          <tr v-for="k in ATTR_KEYS" :key="k">
+            <th class="fw-normal">{{ ATTR_NAMES[k] }}</th>
+            <td class="text-end">{{ o.attrs.points[k] }}</td>
+            <td class="text-end">{{ o.attrs.gear[k] }}</td>
+            <td class="text-end fw-bold">{{ o.attrs.total[k] }}</td>
           </tr>
         </tbody>
       </table>
@@ -147,7 +143,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     <AttrPoints @done="load" />
     <div class="small mb-2">
       {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
-      <span class="text-muted">{{ t.equip.powerNote }}</span>
+      <span class="text-muted ms-1">{{ t.equip.powerNote }}</span>
     </div>
 
     <div class="row g-1 mb-2">

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const activity: Messages['activity'] = {
   title: 'Eventos',
@@ -128,13 +129,13 @@ const activity: Messages['activity'] = {
     btn: 'Canjear',
   },
   coop: {
-    remain: (n) => `Al servidor le faltan ${n} puntos`,
-    mine: (n) => `Te faltan ${n} puntos de aporte`,
+    remain: (n) => `Al servidor le faltan ${n} ${plEs(n, 'punto', 'puntos')}`,
+    mine: (n) => `Te faltan ${n} ${plEs(n, 'punto', 'puntos')} de aporte`,
     rank: (from, to) => (from === to ? `${from}.º` : `${from}.º–${to}.º`),
-    head: (pool, mine) => `Servidor ${pool} puntos · Mi aporte ${mine}`,
+    head: (pool, mine) => `Servidor ${pool} ${plEs(pool, 'punto', 'puntos')} · Mi aporte ${mine}`,
     myRank: (n) => ` · ${n}.º`,
     allDone: 'Todos los hitos alcanzados',
-    milestone: (n) => `Servidor ${n} puntos`,
+    milestone: (n) => `Servidor ${n} ${plEs(n, 'punto', 'puntos')}`,
     minContribution: (n) => ` (tú ≥ ${n})`,
     board: 'Clasificación de aportes',
     boardSettled: (mailed) => `Clasificación cerrada${mailed ? ', recompensas enviadas por correo' : ''}`,

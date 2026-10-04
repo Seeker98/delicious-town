@@ -9,6 +9,7 @@ export default {
     loadFailed: '讀取天氣失敗',
     noEffect: '對經營沒有影響',
     zeroStar: '（0 星餐廳不受天氣影響）',
+    zeroStarLine: '0 星餐廳不受天氣影響',
     until: (time: string) => `持續到 ${time}`,
     /** 蟹老闆所在街道：前半句、街名（加粗）、後半句 */
     krabPre: '蟹老闆今天在 ',

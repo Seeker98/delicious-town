@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const temple: Messages['temple'] = {
   title: 'Temple',
@@ -22,7 +23,7 @@ const temple: Messages['temple'] = {
     noRecipe:
       'No Mystery Recipes: each appraisal uses 1 Mystery Recipe and 1 appraisal tool (Mystery Recipes are sold in the shop)',
     noTool: "You don't have this appraisal tool. Try another one",
-    done: (n, ok) => `Appraised ${n} times, ${ok} succeeded`,
+    done: (n, ok) => `Appraised ${n} ${plEn(n, 'time', 'times')}, ${ok} succeeded`,
     failed: 'Appraisal failed',
     title: 'Appraise Mystery Recipes',
     rule: (n) =>
@@ -107,10 +108,11 @@ const temple: Messages['temple'] = {
     krabCoin: (n) => `; Krab Coins ${n}`,
     tentacle: '; 1 tentacle',
     shop: 'Tentacle shop',
-    shopRule: (n) => `You have ${n} tentacles. Trade as many tentacles as the dish's level for a fragment`,
+    shopRule: (n) =>
+      `You have ${n} ${plEn(n, 'tentacle', 'tentacles')}. Trade as many tentacles as the dish's level for a fragment`,
     mcOption: (name, level) => `${name} (Lv. ${level})`,
     bought: 'Traded',
-    exchange: (n) => `Trade (${n} tentacles)`,
+    exchange: (n) => `Trade (${n} ${plEn(n, 'tentacle', 'tentacles')})`,
     freeRefresh: 'Free refresh',
     refresh: 'Refresh (1 tentacle)',
     seedStock: 'Seeds',

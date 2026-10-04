@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const store: Messages['store'] = {
   tabs: { items: 'Entrepôt', souvenirs: 'Souvenirs', records: 'Historique des objets' },
@@ -16,12 +17,12 @@ const store: Messages['store'] = {
   unitPrice: (price) => `${price} l'unité`,
   atLimit: 'Limite atteinte',
   batchMax: (n) => `${n} max à la fois`,
-  sellConfirm: (n, name, coin) => `Vendre ${n} ${name} pour ${coin} pièces ?`,
+  sellConfirm: (n, name, coin) => `Vendre ${n} ${name} pour ${coin} ${plFr(coin, 'pièce', 'pièces')} ?`,
   sellFailed: 'Échec de la vente',
   discardConfirm: (name) => `Le bonus de ${name} disparaît dès que vous le jetez. Le jeter ?`,
   discardFailed: 'Impossible de jeter',
-  used: (kinds, max) => `${kinds}/${max} types utilisés`,
-  equipsBefore: (n) => `${n} ustensile(s) de plus sur la`,
+  used: (kinds, max) => `${kinds}/${max} ${plFr(max, 'type utilisé', 'types utilisés')}`,
+  equipsBefore: (n) => `${n} ${plFr(n, 'ustensile', 'ustensiles')} de plus sur la`,
   equipsLink: 'page des ustensiles',
   equipsAfter: ' (un emplacement chacun)',
   use: 'Utiliser',
@@ -50,7 +51,8 @@ const store: Messages['store'] = {
     buy: 'Acheter',
     specialSoon: "Nouvelle promo aujourd'hui à midi",
     tier: (off) => `-${off} %`,
-    specialLine: (price, left, stock) => `${price} pièces · reste ${left}/${stock}`,
+    specialLine: (price, left, stock) =>
+      `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}/${stock}`,
     grab: 'Je prends',
   },
 };

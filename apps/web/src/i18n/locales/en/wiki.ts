@@ -1,5 +1,6 @@
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
+import { plEn } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
   title: 'Game data',
@@ -25,8 +26,8 @@ const wiki: Messages['wiki'] = {
   rareOnly: 'Rare only',
   allStreets: 'All streets',
   level: (n) => `Lv. ${n}`,
-  coin: (n) => `${n} coins`,
-  diamond: (n) => `${n} diamonds`,
+  coin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
+  diamond: (n) => `${n} ${plEn(n, 'diamond', 'diamonds')}`,
   renown: (n) => `${n} renown`,
   units: { coin: 'Coins', exp: 'EXP', diamond: 'Diamonds' },
   rare: 'Rare',
@@ -61,7 +62,7 @@ const wiki: Messages['wiki'] = {
     level: 'Level',
     stackable: 'Stackable',
     maxNum: (n) => `Hold up to ${n}`,
-    invalidHours: (n) => `Lasts ${n} hours`,
+    invalidHours: (n) => `Lasts ${n} ${plEn(n, 'hour', 'hours')}`,
     part: 'Slot',
     minLevel: (n) => `Wearable from Lv. ${n}`,
     suit: 'Set',
@@ -83,8 +84,8 @@ const wiki: Messages['wiki'] = {
     taste: 'Taste',
     cookName: 'Cuisine',
     bonus: 'Street bonus',
-    cookbookCount: (n) => `${n} dishes`,
-    suitTier: (n) => `${n} pieces`,
+    cookbookCount: (n) => `${n} ${plEn(n, 'dish', 'dishes')}`,
+    suitTier: (n) => `${n} ${plEn(n, 'piece', 'pieces')}`,
   },
   gift: {
     randomGoods: (level, num) => `A random Lv. ${level} item ×${num}`,

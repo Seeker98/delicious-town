@@ -21,3 +21,11 @@ export const compactNum = (locale: string, n: number): string | null =>
         maximumFractionDigits: Math.abs(n) >= 1e6 ? 2 : 1,
       }).format(n)
     : null;
+/**
+ * 英法西的单复数（质量期 ④，backlog #116）：按数字选名词的单数或复数。传原始数字，不要传格式化后的“1,000”。
+ * 英文、西文只有 1 用单数（0 也用复数）；法文 0 和 1 都用单数
+ */
+export const plEn = (x: unknown, one: string, many: string): string =>
+  Math.abs(Number(x)) === 1 ? one : many;
+export const plEs = plEn;
+export const plFr = (x: unknown, one: string, many: string): string => (Math.abs(Number(x)) < 2 ? one : many);

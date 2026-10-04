@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const mc: Messages['mc'] = {
   title: 'Signature dishes',
@@ -15,7 +16,7 @@ const mc: Messages['mc'] = {
   levelUp: 'mastery leveled up',
   bob: 'SpongeBob gave it a thumbs-up',
   cooked: (grade, lucky, num, price, extra) =>
-    `Cooked: ${grade}${lucky ? ' (lucky)' : ''}, ${num} servings at ${price} coins each${extra ? `; ${extra}` : ''}`,
+    `Cooked: ${grade}${lucky ? ' (lucky)' : ''}, ${num} ${plEn(num, 'serving', 'servings')} at ${price} ${plEn(price, 'coin', 'coins')} each${extra ? `; ${extra}` : ''}`,
   cookFailed: 'Cooking failed',
   dumpConfirm: 'All remaining servings will be thrown away. Continue?',
   dumped: 'Thrown away',
@@ -24,7 +25,7 @@ const mc: Messages['mc'] = {
   onSale: 'On sale: ',
   lucky: ' (lucky)',
   saleMeta: (left, total, price, eaten) =>
-    `${left} / ${total} left · ${price} coins each · tasted ${eaten} times`,
+    `${left} / ${total} left · ${price} ${plEn(price, 'coin', 'coins')} each · tasted ${eaten} ${plEn(eaten, 'time', 'times')}`,
   dump: 'Throw away',
   learned: (n) => `Learned (${n})`,
   noLearned:

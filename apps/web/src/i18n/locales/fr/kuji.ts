@@ -1,18 +1,19 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const kuji: Messages['kuji'] = {
   title: 'Ichiban Kuji',
-  diamond: (n) => `${n} diamants`,
-  coin: (n) => `${n} pièces`,
+  diamond: (n) => `${n} ${plFr(n, 'diamant', 'diamants')}`,
+  coin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   exp: (n) => `${n} EXP`,
   renown: (n) => `${n} renommée`,
   lastTier: 'Dernier Prix',
   tier: (k) => `Prix ${k}`,
-  bought: (n) => `${n} ticket(s) kuji acheté(s)`,
+  bought: (n) => `${n} ${plFr(n, 'ticket kuji acheté', 'tickets kuji achetés')}`,
   buyFailed: "Échec de l'achat",
   drawFailed: 'Échec du tirage',
   rule: (total) =>
-    `Chaque tirage contient ${total} tickets et chaque tirage en retire un ; celui qui tire le dernier gagne aussi le Dernier Prix. Un nouveau tirage s'ouvre chaque jour à 0 h ; les tickets non tirés expirent.`,
+    `Chaque tirage contient ${total} ${plFr(total, 'ticket', 'tickets')} et chaque tirage en retire un ; celui qui tire le dernier gagne aussi le Dernier Prix. Un nouveau tirage s'ouvre chaque jour à 0 h ; les tickets non tirés expirent.`,
   theme: (month, name) => `Thème du mois ${month} : ${name}`,
   themeLimited: ' Les figurines limitées de ce mois ne sont disponibles que ce mois-ci.',
   closed: 'Tous les tirages du jour sont terminés. Revenez demain à 0 h.',
@@ -26,11 +27,11 @@ const kuji: Messages['kuji'] = {
   lineNormal: 'Classique',
   lineDeluxe: 'Luxe',
   ticketsDeluxe: (n) => `Mes tickets kuji de luxe : ${n}`,
-  boughtDeluxe: (n) => `${n} ticket(s) kuji de luxe acheté(s)`,
+  boughtDeluxe: (n) => `${n} ${plFr(n, 'ticket kuji de luxe acheté', 'tickets kuji de luxe achetés')}`,
   deluxeNote:
     'Tirage de luxe : le prix A et le Dernier Prix donnent le titre limité du mois et sont annoncés à tout le serveur.',
   buyPrefix: 'Acheter',
-  buyTotal: (coin) => `ticket(s) pour ${coin} pièces`,
+  buyTotal: (coin) => `ticket(s) pour ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
   buy: 'Acheter des tickets',
   buyLeft: (n) => `Encore ${n} aujourd'hui`,
   buyMax: (n) => `Vous pouvez en acheter au plus ${n} aujourd'hui`,

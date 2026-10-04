@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const equip: Messages['equip'] = {
   title: 'Ustensiles et points',
@@ -7,7 +8,7 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Puissance',
   powerNote:
-    ' (somme des cinq caractéristiques + Chance/2 ; compte pour la Tour des chefs, le classement des chefs et les duels entre amis)',
+    '(somme des cinq caractéristiques + Chance/2 ; compte pour la Tour des chefs, le classement des chefs et les duels entre amis)',
   empty: 'Vide',
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,
@@ -17,7 +18,7 @@ const equip: Messages['equip'] = {
   unwearFailed: 'Impossible de retirer',
   unwearAll: 'Tout retirer',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
-  suitTier: (need, desc) => `${need} pièces : ${desc}`,
+  suitTier: (need, desc) => `${need} ${plFr(need, 'pièce', 'pièces')} : ${desc}`,
   gem: 'Gemmes',
   presets: 'Préréglages',
   batch: 'Tri rapide',
@@ -35,10 +36,10 @@ const equip: Messages['equip'] = {
   batchNote:
     'Seuls les ustensiles non verrouillés, non équipés, non renforcés, sans gemme et hors préréglage sont listés',
   essence: (n) => `${n} essence`,
-  coins: (n) => `${n} pièces`,
+  coins: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   batchTotal: (text) => `Total ${text}`,
   batchConfirm: (n, salvage, total) =>
-    `Traiter ${n} ustensile${n > 1 ? 's' : ''} pour ${salvage ? `${total} essence` : `${total} pièces`} ?`,
+    `Traiter ${n} ustensile${n > 1 ? 's' : ''} pour ${salvage ? `${total} essence` : `${total} ${plFr(total, 'pièce', 'pièces')}`} ?`,
   process: 'Valider',
   processFailed: 'Échec du traitement',
   loadFailed: 'Impossible de charger les ustensiles',
@@ -56,14 +57,15 @@ const equip: Messages['equip'] = {
       `(base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
     next: (gain, total) =>
       `En cas de réussite, total des caractéristiques +${gain} (soit ${total}, hors gemmes)`,
-    cost: (essence, have, coin) => `Coût : essence ×${essence} (vous en avez ${have}), ${coin} pièces`,
+    cost: (essence, have, coin) =>
+      `Coût : essence ×${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     useStone: (n) => `Utiliser une Pierre de renfort (réussite garantie ; vous en avez ${n})`,
     maxed: 'Renfort au maximum',
     backOption: (name, back, num) => `${name} (annule ${back} niveau(x) ; vous en avez ${num})`,
     rollback: 'Annuler',
     gems: 'Gemmes',
     holeNote: (max, coinPerLevel) =>
-      `(${max} chasses au maximum ; ${coinPerLevel ? `retirer coûte rang × ${coinPerLevel} pièces` : 'retirer est gratuit en ce moment (moins de 2 étoiles ou jour de pluie acide)'})`,
+      `(${max} ${plFr(max, 'chasse', 'chasses')} au maximum ; ${coinPerLevel ? `retirer coûte rang × ${coinPerLevel} ${plFr(coinPerLevel, 'pièce', 'pièces')}` : 'retirer est gratuit en ce moment (moins de 2 étoiles ou jour de pluie acide)'})`,
     ungem: 'Retirer',
     gemOption: (name, num, level) => `${name} (vous en avez ${num} ; coûte ${level} énergie)`,
     inlay: 'Sertir',
@@ -89,11 +91,11 @@ const equip: Messages['equip'] = {
     confirmRollback: (item, n, waste) =>
       `Utiliser 1 ${item} pour annuler ${n} niveau(x) de renfort ?${waste > 0 ? ` Les ${waste} niveau(x) en trop seront perdus.` : ''}`,
     rollbackFailed: "Impossible d'annuler",
-    confirmUngem: (coin) => `Retirer cette gemme coûte ${coin} pièces. Continuer ?`,
+    confirmUngem: (coin) => `Retirer cette gemme coûte ${coin} ${plFr(coin, 'pièce', 'pièces')}. Continuer ?`,
     ungemFailed: 'Impossible de retirer la gemme',
     confirmSalvage: (n) => `Démonter pour ${n} essence d'ustensile ?`,
     salvageFailed: 'Impossible de démonter',
-    confirmSell: (coin) => `Vendre pour ${coin} pièces ?`,
+    confirmSell: (coin) => `Vendre pour ${coin} ${plFr(coin, 'pièce', 'pièces')} ?`,
     sellFailed: 'Impossible de vendre',
     inlayFailed: 'Impossible de sertir',
     drillFailed: 'Impossible de percer',
@@ -107,7 +109,7 @@ const equip: Messages['equip'] = {
     next: (name, rate) => `→ ${name}, taux de réussite ${rate}`,
     levelUp: (n) => `Améliorer ×${n}`,
     done: (success, lucky, fail, exp) =>
-      `Amélioration terminée : ${success} réussite(s)${lucky > 0 ? ` (dont ${lucky} rattrapée(s) par la chance)` : ''}, ${fail} échec(s)${exp ? `, ${exp} EXP gagnés` : ''}`,
+      `Amélioration terminée : ${success} ${plFr(success, 'réussite', 'réussites')}${lucky > 0 ? ` (dont ${lucky} ${plFr(lucky, 'rattrapée', 'rattrapées')} par la chance)` : ''}, ${fail} ${plFr(fail, 'échec', 'échecs')}${exp ? `, ${exp} EXP gagnés` : ''}`,
     failed: "Impossible d'améliorer",
     loadFailed: 'Impossible de charger les gemmes',
   },

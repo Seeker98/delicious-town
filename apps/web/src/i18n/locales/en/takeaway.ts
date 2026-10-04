@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const takeaway: Messages['takeaway'] = {
   title: 'Takeaway',
@@ -21,7 +22,8 @@ const takeaway: Messages['takeaway'] = {
       'Once takeaway is open you can take orders from the whole town and send riders to deliver them, earning coins, EXP, Renown and items.',
     star: (need, now) => `Restaurant at ${need}★ or above (now ${now}★)`,
     renown: (need, now) => `At least ${need} Renown, spent when opening (now ${now})`,
-    cost: (coin, diamond) => `Plus 1 takeaway ticket, or ${coin} coins + ${diamond} diamonds`,
+    cost: (coin, diamond) =>
+      `Plus 1 takeaway ticket, or ${coin} ${plEn(coin, 'coin', 'coins')} + ${diamond} ${plEn(diamond, 'diamond', 'diamonds')}`,
     byTicket: (n) => `Open with a takeaway ticket (own ${n})`,
     byCoin: 'Open with coins and diamonds',
   },
@@ -40,7 +42,7 @@ const takeaway: Messages['takeaway'] = {
     allBusy: 'All riders are busy',
     double: 'Extra portion (ingredients ×2, EXP ×2)',
     needDouble: 'You need "Mission Accomplished" for extra portions',
-    refresh: (cost) => `Private refresh (${cost} coins)`,
+    refresh: (cost) => `Private refresh (${cost} ${plEn(cost, 'coin', 'coins')})`,
     empty: 'No orders right now. More come every hour on the hour',
     expires: (min) => `Valid for ${min} more min`,
     meta: (min, renown) => `Delivery ${min} min · needs ${renown} Renown`,
@@ -66,7 +68,7 @@ const takeaway: Messages['takeaway'] = {
     left: (min) => `${min} min to go`,
     rider: (name) => `Rider ${name}`,
     claim: 'Claim',
-    droneBtn: (n) => `Drone (${n} diamonds)`,
+    droneBtn: (n) => `Drone (${n} ${plEn(n, 'diamond', 'diamonds')})`,
   },
   riders: {
     reasons: {
@@ -81,7 +83,8 @@ const takeaway: Messages['takeaway'] = {
       `Time −${time}% · Coins +${coin}% · EXP +${exp}% · Renown +${renown}% · Success ${odds}%`,
     hired: (name) => `Hired ${name} as a rider`,
     hireFailed: "Couldn't hire",
-    dismissConfirm: (name, coin, exp) => `Let ${name} go: pay ${coin} coins and get ${exp} EXP. Continue?`,
+    dismissConfirm: (name, coin, exp) =>
+      `Let ${name} go: pay ${coin} ${plEn(coin, 'coin', 'coins')} and get ${exp} EXP. Continue?`,
     dismissFailed: "Couldn't let them go",
     count: (n, cap) => `Riders ${n}/${cap} (the cap grows as your own rider levels up)`,
     self: ' (you)',

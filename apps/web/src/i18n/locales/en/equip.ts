@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const equip: Messages['equip'] = {
   title: 'Cookware & points',
@@ -6,7 +7,7 @@ const equip: Messages['equip'] = {
   rows: { points: 'Points', gear: 'Cookware', total: 'Total' },
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Chef power',
-  powerNote: ' (sum of the five stats + Luck/2; used in the Chef Tower, the chef ranking and friend duels)',
+  powerNote: '(sum of the five stats + Luck/2; used in the Chef Tower, the chef ranking and friend duels)',
   empty: 'Empty',
   noPieces: 'No cookware for this slot',
   needLevel: (lv) => `Needs level ${lv}`,
@@ -16,7 +17,7 @@ const equip: Messages['equip'] = {
   unwearFailed: 'Could not remove',
   unwearAll: 'Remove all',
   suitName: (name, count, max) => `${name} (${count}/${max})`,
-  suitTier: (need, desc) => `${need} pieces: ${desc}`,
+  suitTier: (need, desc) => `${need} ${plEn(need, 'piece', 'pieces')}: ${desc}`,
   gem: 'Gems',
   presets: 'Presets',
   batch: 'Bulk clear-out',
@@ -34,10 +35,10 @@ const equip: Messages['equip'] = {
   batchNote:
     'Only cookware that is unlocked, not equipped, not enhanced, without gems and not in a preset is listed',
   essence: (n) => `${n} essence`,
-  coins: (n) => `${n} coins`,
+  coins: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
   batchTotal: (text) => `Total ${text}`,
   batchConfirm: (n, salvage, total) =>
-    `Clear out ${n} ${n === 1 ? 'piece' : 'pieces'} of cookware for ${salvage ? `${total} essence` : `${total} coins`}?`,
+    `Clear out ${n} ${n === 1 ? 'piece' : 'pieces'} of cookware for ${salvage ? `${total} essence` : `${total} ${plEn(total, 'coin', 'coins')}`}?`,
   process: 'Go',
   processFailed: 'Could not clear out',
   loadFailed: 'Could not load cookware',
@@ -54,14 +55,16 @@ const equip: Messages['equip'] = {
     rateParts: (base, luck, weather, floor) =>
       `(base ${base} + luck ${luck} + weather ${weather} + pity ${floor})`,
     next: (gain, total) => `On success, total stats +${gain} (to ${total}, gems not included)`,
-    cost: (essence, have, coin) => `Cost: essence ×${essence} (you have ${have}), ${coin} coins`,
+    cost: (essence, have, coin) =>
+      `Cost: essence ×${essence} (you have ${have}), ${coin} ${plEn(coin, 'coin', 'coins')}`,
     useStone: (n) => `Use an Enhancement Stone (always succeeds; you have ${n})`,
     maxed: 'Fully enhanced',
-    backOption: (name, back, num) => `${name} (undo ${back} level(s); you have ${num})`,
+    backOption: (name, back, num) =>
+      `${name} (undo ${back} ${plEn(back, 'level', 'levels')}; you have ${num})`,
     rollback: 'Undo',
     gems: 'Gems',
     holeNote: (max, coinPerLevel) =>
-      `(up to ${max} sockets; ${coinPerLevel ? `removing costs tier × ${coinPerLevel} coins` : 'removing is free right now (below 2 stars or on acid rain days)'})`,
+      `(up to ${max} ${plEn(max, 'socket', 'sockets')}; ${coinPerLevel ? `removing costs tier × ${coinPerLevel} ${plEn(coinPerLevel, 'coin', 'coins')}` : 'removing is free right now (below 2 stars or on acid rain days)'})`,
     ungem: 'Remove',
     gemOption: (name, num, level) => `${name} (you have ${num}; costs ${level} stamina)`,
     inlay: 'Socket',
@@ -85,13 +88,13 @@ const equip: Messages['equip'] = {
     stressMiss: 'Enhancement failed; the next attempt has a higher success rate',
     stressFailed: 'Could not enhance',
     confirmRollback: (item, n, waste) =>
-      `Use 1 ${item} to undo ${n} enhancement level(s)?${waste > 0 ? ` The extra ${waste} level(s) will be wasted.` : ''}`,
+      `Use 1 ${item} to undo ${n} enhancement ${plEn(n, 'level', 'levels')}?${waste > 0 ? ` The extra ${waste} ${plEn(waste, 'level', 'levels')} will be wasted.` : ''}`,
     rollbackFailed: 'Could not undo',
-    confirmUngem: (coin) => `Removing this gem costs ${coin} coins. Continue?`,
+    confirmUngem: (coin) => `Removing this gem costs ${coin} ${plEn(coin, 'coin', 'coins')}. Continue?`,
     ungemFailed: 'Could not remove the gem',
     confirmSalvage: (n) => `Salvage for ${n} cookware essence?`,
     salvageFailed: 'Could not salvage',
-    confirmSell: (coin) => `Sell for ${coin} coins?`,
+    confirmSell: (coin) => `Sell for ${coin} ${plEn(coin, 'coin', 'coins')}?`,
     sellFailed: 'Could not sell',
     inlayFailed: 'Could not socket the gem',
     drillFailed: 'Could not drill',

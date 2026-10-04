@@ -12,4 +12,11 @@ describe('剩余时间（问题记录 181）', () => {
     expect(remainText(at(-5), now)).toBe('剩余 0 分钟');
     expect(remainText(null, now)).toBe('永久');
   });
+
+  it('一天以上写天和小时（不写分钟）：368 小时写成 15 天 8 小时，手机上放得下（质量期 ④）', () => {
+    expect(remainText(at(368 * 60 + 39), now)).toBe('剩余 15 天 8 小时');
+    expect(remainText(at(48 * 60 + 10), now)).toBe('剩余 2 天');
+    expect(remainText(at(24 * 60), now)).toBe('剩余 1 天');
+    expect(remainText(at(23 * 60 + 59), now)).toBe('剩余 23 小时 59 分');
+  });
 });

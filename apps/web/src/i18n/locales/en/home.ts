@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const home: Messages['home'] = {
   loadFailed: "Couldn't load your restaurant",
@@ -16,9 +17,10 @@ const home: Messages['home'] = {
   level: 'Level',
   closed: 'Closed',
   renown: 'Renown',
-  refuel: (full, cost) => `${full ? 'Fill up' : 'Refuel'} (${cost} coins)`,
+  refuel: (full, cost) => `${full ? 'Fill up' : 'Refuel'} (${cost} ${plEn(cost, 'coin', 'coins')})`,
   refuelFailed: 'Refuel failed',
-  lastRound: (coin, exp, oil) => `Last round: ${coin} coins · ${exp} EXP · ${oil} oil used`,
+  lastRound: (coin, exp, oil) =>
+    `Last round: ${coin} ${plEn(coin, 'coin', 'coins')} · ${exp} EXP · ${oil} oil used`,
   noGuests: 'No guests',
   income: 'Income log ›',
   floor: 'Floors & tables ›',
@@ -51,11 +53,12 @@ const home: Messages['home'] = {
   placeFailed: 'Placing failed',
   plaque2: {
     title: 'Unlock the second plaque slot',
-    cost: (coin, diamond) => `${coin} coins + ${diamond} diamonds`,
+    cost: (coin, diamond) =>
+      `${coin} ${plEn(coin, 'coin', 'coins')} + ${diamond} ${plEn(diamond, 'diamond', 'diamonds')}`,
     noCoin: (need) => `Not enough coins (need ${need})`,
     noDiamond: (need) => `Not enough diamonds (need ${need})`,
     confirm: (coin, diamond) =>
-      `Spend ${coin} coins and ${diamond} diamonds to unlock the second plaque slot?`,
+      `Spend ${coin} ${plEn(coin, 'coin', 'coins')} and ${diamond} ${plEn(diamond, 'diamond', 'diamonds')} to unlock the second plaque slot?`,
     open: 'Unlock',
     failed: 'Unlock failed',
   },

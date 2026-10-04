@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const activity: Messages['activity'] = {
   title: 'Événements',
@@ -128,13 +129,13 @@ const activity: Messages['activity'] = {
     btn: 'Échanger',
   },
   coop: {
-    remain: (n) => `Il manque ${n} points au serveur`,
-    mine: (n) => `Il vous manque ${n} points de contribution`,
+    remain: (n) => `Il manque ${n} ${plFr(n, 'point', 'points')} au serveur`,
+    mine: (n) => `Il vous manque ${n} ${plFr(n, 'point', 'points')} de contribution`,
     rank: (from, to) => (from === to ? `${from === 1 ? '1er' : `${from}e`}` : `${from}e à ${to}e`),
-    head: (pool, mine) => `Serveur ${pool} points · Ma contribution ${mine}`,
+    head: (pool, mine) => `Serveur ${pool} ${plFr(pool, 'point', 'points')} · Ma contribution ${mine}`,
     myRank: (n) => ` · ${n === 1 ? '1er' : `${n}e`}`,
     allDone: 'Tous les paliers sont atteints',
-    milestone: (n) => `Serveur ${n} points`,
+    milestone: (n) => `Serveur ${n} ${plFr(n, 'point', 'points')}`,
     minContribution: (n) => ` (vous ≥ ${n})`,
     board: 'Classement des contributions',
     boardSettled: (mailed) => `Classement clôturé${mailed ? ', récompenses envoyées par courrier' : ''}`,

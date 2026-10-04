@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const bar: Messages['bar'] = {
   title: 'Bar',
@@ -16,7 +17,7 @@ const bar: Messages['bar'] = {
   hands: ['Rock', 'Scissors', 'Paper'],
   numHints: { close: 'So close!', soft: 'A little softer next time', hard: 'Too much force' },
   award: {
-    coin: (n) => `${n} coins`,
+    coin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
     exp: (n) => `${n} EXP`,
     lucky: (what) => `${what} (lucky)`,
   },
@@ -25,13 +26,14 @@ const bar: Messages['bar'] = {
   streak: (n) => `${n}-win streak`,
   noTicketsEach: (n) => `Not enough Mystery Vouchers (${n} each time)`,
   again: 'Play again',
-  todayPlayed: (played, max, cost) => `Today ${played}/${max} games, ${cost} Mystery Vouchers each`,
+  todayPlayed: (played, max, cost) =>
+    `Today ${played}/${max} ${plEn(max, 'game', 'games')}, ${cost} Mystery Vouchers each`,
   noMoreToday: 'No games left today',
   startFailed: "Couldn't start",
   cup: {
     noTickets: (n) => `Not enough Mystery Vouchers (this round costs ${n})`,
     lose: (times) =>
-      `Wrong${times > 1 ? `, ${times} misses in a row` : ''}. The next round starts at 1 voucher`,
+      `Wrong${times > 1 ? `, ${times} ${plEn(times, 'miss', 'misses')} in a row` : ''}. The next round starts at 1 voucher`,
     win: (lucky, times, award) => `${lucky}Right! ${times}-win streak${award}`,
     failed: 'Cup guess failed',
     rule1: 'Pick a cup. This round costs ',
@@ -41,7 +43,7 @@ const bar: Messages['bar'] = {
   fg: {
     noTickets: 'Not enough Mystery Vouchers (1 per round)',
     head: (mine, theirs) => `You played ${mine}, they played ${theirs}: `,
-    draw: (coin) => `draw, you got ${coin} coins`,
+    draw: (coin) => `draw, you got ${coin} ${plEn(coin, 'coin', 'coins')}`,
     lose: 'you lost',
     win: (lucky, streak, award) => `${lucky}you won${streak}${award}`,
     streak: (n) => ` (${n}-win streak)`,
@@ -50,13 +52,13 @@ const bar: Messages['bar'] = {
   },
   num: {
     miss: (num, hint) => `Landed on ${num}. ${hint}`,
-    times: (n) => `${n} wins in a row, `,
+    times: (n) => `${n} ${plEn(n, 'win', 'wins')} in a row, `,
     got: (text) => `got ${text}`,
     win: (lucky, times, award) => `${lucky}Hit! ${times}${award}`,
     failed: 'Number wheel failed',
     rule: (max, cost) =>
       `Pick a number from 1 to ${max}; hit it to win an item. ${cost} Mystery Vouchers each spin.`,
-    spin: (cost) => `Spin (${cost} vouchers)`,
+    spin: (cost) => `Spin (${cost} ${plEn(cost, 'voucher', 'vouchers')})`,
   },
   slot: {
     empty: 'Empty',
@@ -75,12 +77,12 @@ const bar: Messages['bar'] = {
     spin1: 'Spin once',
     spin10: 'Spin 10 times',
     exchange: 'Vouchers for Krab Coins',
-    exBtn: (n, tickets) => `Get ${n} (${tickets} vouchers)`,
+    exBtn: (n, tickets) => `Get ${n} (${tickets} ${plEn(tickets, 'voucher', 'vouchers')})`,
     pool: 'Prize pool',
     rare: 'Rare',
     stats: 'My stats',
     noStats: 'No spins yet',
-    statTotal: (n) => `${n} reels: `,
+    statTotal: (n) => `${n} ${plEn(n, 'reel', 'reels')}: `,
     statLine: (name, n) => `${name} ${n}`,
   },
   devil: {
@@ -89,7 +91,7 @@ const bar: Messages['bar'] = {
     status: (head, cup, also) =>
       `${head} drank cup ${cup}${also ? ' and is fine too' : ' and is fine'}. Your turn`,
     win: (survived, payout) =>
-      `The bartender got the spicy one! You survived ${survived} cups and won ${payout} Mystery Vouchers`,
+      `The bartender got the spicy one! You survived ${survived} ${plEn(survived, 'cup', 'cups')} and won ${payout} Mystery Vouchers`,
     lose: (stake, until) =>
       `You got the spicy one and lost your ${stake}-voucher stake. Hungover until ${until} (occupancy -10%)`,
     drankMe: 'You drank',
@@ -104,7 +106,8 @@ const bar: Messages['bar'] = {
     rule3: "If you get it, you lose your stake and you're hungover for 1 hour (occupancy -10%).",
     askStake: 'How many Mystery Vouchers will you bet?',
     stake: (n) => `Bet ${n}`,
-    progress: (stake, survived) => `Stake ${stake} · You've survived ${survived} cups`,
+    progress: (stake, survived) =>
+      `Stake ${stake} · You've survived ${survived} ${plEn(survived, 'cup', 'cups')}`,
   },
   memory: {
     mixes: ['Rum', 'Vodka', 'Gin', 'Lemon', 'Mint', 'Syrup', 'Ice', 'Soda'],
@@ -165,7 +168,7 @@ const bar: Messages['bar'] = {
       'I have a stall at the square too. Drop by often.',
     ],
     memoryLeft: (n) => `${n} Memory Mixing games left today. Want to test your memory?`,
-    dartsLeft: (n) => `${n} games of darts left today. Steady hands.`,
+    dartsLeft: (n) => `${n} ${plEn(n, 'game', 'games')} of darts left today. Steady hands.`,
     noTickets: "Out of Mystery Vouchers? Come chat with me at the square and I'll give you some.",
     slotFloor: (n) => `Just ${n} more spins and the slot machine guarantees a rare!`,
     devilOpen: "You haven't finished the Devil's Chili. No sneaking off.",

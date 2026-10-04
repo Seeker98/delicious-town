@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const friends: Messages['friends'] = {
   tabs: { friends: 'Friends', requests: 'Requests', find: 'Find', feed: 'Feed' },
@@ -43,7 +44,8 @@ const friends: Messages['friends'] = {
     door: 'Door',
     equips: 'Cookware',
     special: 'Signature dish: ',
-    specialLine: (grade, left, price) => `${grade} · ${left} left · ${price} coins each`,
+    specialLine: (grade, left, price) =>
+      `${grade} · ${left} left · ${price} ${plEn(price, 'coin', 'coins')} each`,
     tasted: 'Tasted! Your Stamina went up',
     tasteFailed: "Couldn't taste it",
     tastedAlready: 'Tasted',
@@ -83,7 +85,8 @@ const friends: Messages['friends'] = {
     tickets: (n) => `, plus ${n} Delicious ${n === 1 ? 'Ticket' : 'Tickets'}`,
     food: (name) => `You found ${name}`,
     ticket: 'There was a Mystery Voucher in the pantry',
-    caught: (coin) => `Your hand got caught in a mousetrap and you dropped ${coin} coins`,
+    caught: (coin) =>
+      `Your hand got caught in a mousetrap and you dropped ${coin} ${plEn(coin, 'coin', 'coins')}`,
     escaped: 'You nearly got caught in a mousetrap. Lucky!',
     nothing: 'Nothing there',
     loadFailed: "Couldn't load the pantry",
@@ -98,14 +101,14 @@ const friends: Messages['friends'] = {
     done: 'Swapped',
     failed: 'Swap failed',
     level: (l) => `Lv. ${l}`,
-    left: (n) => `${n} swaps left today`,
+    left: (n) => `${n} ${plEn(n, 'swap', 'swaps')} left today`,
     storm: '. In a hurricane you can take their locked ingredients (50% chance of getting caught)',
     theirs: 'Theirs',
     theirsEmpty: 'No ingredients at this level',
     mine: 'You give (2 each time)',
     mineEmpty: "You don't have ingredients at this level",
     btn: 'Swap',
-    fee: (n) => ` (fee ${n} coins)`,
+    fee: (n) => ` (fee ${n} ${plEn(n, 'coin', 'coins')})`,
   },
   report: {
     open: 'Report',

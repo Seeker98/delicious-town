@@ -1,5 +1,6 @@
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
+import { plFr } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
   title: 'Données du jeu',
@@ -25,8 +26,8 @@ const wiki: Messages['wiki'] = {
   rareOnly: 'Rares seulement',
   allStreets: 'Toutes les rues',
   level: (n) => `Niv. ${n}`,
-  coin: (n) => `${n} pièces`,
-  diamond: (n) => `${n} diamants`,
+  coin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
+  diamond: (n) => `${n} ${plFr(n, 'diamant', 'diamants')}`,
   renown: (n) => `${n} renommée`,
   units: { coin: 'Pièces', exp: 'EXP', diamond: 'Diamants' },
   rare: 'Rare',
@@ -61,7 +62,7 @@ const wiki: Messages['wiki'] = {
     level: 'Niveau',
     stackable: 'Empilable',
     maxNum: (n) => `${n} au maximum`,
-    invalidHours: (n) => `Dure ${n} heures`,
+    invalidHours: (n) => `Dure ${n} ${plFr(n, 'heure', 'heures')}`,
     part: 'Emplacement',
     minLevel: (n) => `Équipable dès le niv. ${n}`,
     suit: 'Ensemble',
@@ -83,8 +84,8 @@ const wiki: Messages['wiki'] = {
     taste: 'Goût',
     cookName: 'Cuisine',
     bonus: 'Bonus de rue',
-    cookbookCount: (n) => `${n} plats`,
-    suitTier: (n) => `${n} pièces`,
+    cookbookCount: (n) => `${n} ${plFr(n, 'plat', 'plats')}`,
+    suitTier: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   },
   gift: {
     randomGoods: (level, num) => `Un objet de niv. ${level} au hasard ×${num}`,

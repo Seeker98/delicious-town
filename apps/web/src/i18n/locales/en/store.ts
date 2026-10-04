@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const store: Messages['store'] = {
   tabs: { items: 'Storage', souvenirs: 'Souvenirs', records: 'Item log' },
@@ -16,11 +17,11 @@ const store: Messages['store'] = {
   unitPrice: (price) => `${price} each`,
   atLimit: 'Limit reached',
   batchMax: (n) => `Up to ${n} at once`,
-  sellConfirm: (n, name, coin) => `Sell ${n} ${name} for ${coin} coins?`,
+  sellConfirm: (n, name, coin) => `Sell ${n} ${name} for ${coin} ${plEn(coin, 'coin', 'coins')}?`,
   sellFailed: 'Selling failed',
   discardConfirm: (name) => `The bonus from ${name} disappears as soon as you discard it. Discard it?`,
   discardFailed: 'Discarding failed',
-  used: (kinds, max) => `${kinds}/${max} kinds used`,
+  used: (kinds, max) => `${kinds}/${max} ${plEn(max, 'kind', 'kinds')} used`,
   equipsBefore: (n) => `${n} more cookware ${n === 1 ? 'item is' : 'items are'} on the`,
   equipsLink: 'cookware page',
   equipsAfter: ' (each takes one slot)',
@@ -50,7 +51,7 @@ const store: Messages['store'] = {
     buy: 'Buy',
     specialSoon: 'New deal at noon today',
     tier: (off) => `${off}% off`,
-    specialLine: (price, left, stock) => `${price} coins · ${left}/${stock} left`,
+    specialLine: (price, left, stock) => `${price} ${plEn(price, 'coin', 'coins')} · ${left}/${stock} left`,
     grab: 'Grab it',
   },
 };

@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const exchange: Messages['exchange'] = {
   title: 'Bourse',
@@ -6,29 +7,32 @@ const exchange: Messages['exchange'] = {
   reasons: {
     exchange_level: (level, now) =>
       `Votre restaurant doit être niveau ${level} pour échanger (il est niveau ${now} actuellement)`,
-    exchange_age: (days) => `Votre compte doit avoir au moins ${days} jours pour échanger`,
+    exchange_age: (days) =>
+      `Votre compte doit avoir au moins ${days} ${plFr(days, 'jour', 'jours')} pour échanger`,
     exchange_email: 'Vérifiez votre e-mail pour échanger',
   },
   frozen: 'Votre compte de bourse est gelé',
   cannotTrade: 'Vous ne pouvez pas échanger pour le moment',
-  coin: (n) => `${n} pièces`,
-  estimateBuy: (total) => `Coût maximum ${total} pièces`,
-  estimateSell: (net) => `Environ ${net} pièces si tout est vendu (frais déduits)`,
+  coin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
+  estimateBuy: (total) => `Coût maximum ${total} ${plFr(total, 'pièce', 'pièces')}`,
+  estimateSell: (net) => `Environ ${net} ${plFr(net, 'pièce', 'pièces')} si tout est vendu (frais déduits)`,
   sysEstimate: (price, qty, total, fee, net) =>
-    `${price} × ${qty} = ${total}, frais ${fee}, vous recevez ${net} pièces`,
-  soldToSystem: (n, price) => `${n} vendu(s) au système à ${price} l'unité`,
+    `${price} × ${qty} = ${total}, frais ${fee}, vous recevez ${net} ${plFr(net, 'pièce', 'pièces')}`,
+  soldToSystem: (n, price) => `${n} ${plFr(n, 'vendu', 'vendus')} au système à ${price} l'unité`,
   sellSystemFailed: 'Échec de la vente au système',
   bookFailed: "Impossible de charger le carnet d'ordres",
   placed: 'Ordre passé',
   heldNote: (hours) =>
-    ` ; certaines exécutions semblent suspectes et leurs gains sont gelés pendant ${hours} heures`,
+    ` ; certaines exécutions semblent suspectes et leurs gains sont gelés pendant ${hours} ${plFr(hours, 'heure', 'heures')}`,
   overSystem: (n) =>
-    `Le système ne vous rachète plus que ${n} unités ; le reste reste en vente à votre prix et d'autres peuvent l'acheter à bas prix`,
-  filled: (n, partial, held) => `${n} exécuté(s)${partial ? ', le reste reste en carnet' : ''}${held}`,
+    `Le système ne vous rachète plus que ${n} ${plFr(n, 'unité', 'unités')} ; le reste reste en vente à votre prix et d'autres peuvent l'acheter à bas prix`,
+  filled: (n, partial, held) =>
+    `${n} ${plFr(n, 'exécuté', 'exécutés')}${partial ? ', le reste reste en carnet' : ''}${held}`,
   placeFailed: "Échec de l'ordre",
   cancelled: 'Ordre annulé',
   cancelFailed: "Impossible d'annuler",
-  withdrawnLeft: (n) => `Retiré ; ${n} ingrédient(s) ne rentrent pas et restent sur votre compte de bourse`,
+  withdrawnLeft: (n) =>
+    `Retiré ; ${n} ${plFr(n, 'ingrédient', 'ingrédients')} ne rentrent pas et restent sur votre compte de bourse`,
   withdrawn: 'Retiré',
   withdrawFailed: 'Échec du retrait',
   loadFailed: 'Impossible de charger la bourse',
@@ -78,7 +82,8 @@ const exchange: Messages['exchange'] = {
     `Gelé (période de gel des exécutions suspectes) : ${text}, ${left}, retirable ensuite`,
   myOrders: 'Mes ordres',
   noOrders: 'Aucun ordre',
-  orderLine: (name, price, qty, filled) => `${name} ${price} × ${qty} (${filled} exécuté(s))`,
+  orderLine: (name, price, qty, filled) =>
+    `${name} ${price} × ${qty} (${filled} ${plFr(filled, 'exécuté', 'exécutés')})`,
   cancel: 'Annuler',
   trades: 'Échanges des 7 derniers jours',
   noTrades: 'Aucun échange',

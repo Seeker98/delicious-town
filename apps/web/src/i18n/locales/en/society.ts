@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEn } from '../../helpers';
 
 const society: Messages['society'] = {
   title: 'Guild',
@@ -11,7 +12,7 @@ const society: Messages['society'] = {
   move: {
     title: 'Move',
     hint: (street, cost) =>
-      `You're on ${street}. Moving takes 1 Moving Card (free with a Moving Office permit) and about ${cost} coins (half price when lucky).`,
+      `You're on ${street}. Moving takes 1 Moving Card (free with a Moving Office permit) and about ${cost} ${plEn(cost, 'coin', 'coins')} (half price when lucky).`,
     pick: 'Choose a new street',
     bonus: (desc) => `Street bonus: ${desc}`,
     option: (name, cook) => `${name} (${cook})`,

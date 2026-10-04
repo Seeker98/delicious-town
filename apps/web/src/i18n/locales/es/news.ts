@@ -1,7 +1,7 @@
 import { SHARED_GOODS } from '@dt/shared';
 import type { Messages } from '../..';
 import { formatNum } from '../../../utils/format';
-import { list, num, str, type P } from '../../helpers';
+import { list, num, str, type P, plEs } from '../../helpers';
 
 const WEEKLY: Record<string, string> = {
   'flip.caught': 'atrapados revolviendo despensas',
@@ -14,12 +14,12 @@ const rank = (k: number) => `${k}.º`;
 function fundNews(w: string, p: P): string {
   const coin = formatNum(num(p.coin));
   if (p.tier === 'A')
-    return `👑 ¡El capital ancla entra con fuerza! [${w}] inyecta ${coin} monedas de golpe y se asegura el puesto de inversor líder clase A del Fondo de Desarrollo!`;
+    return `👑 ¡El capital ancla entra con fuerza! [${w}] inyecta ${coin} ${plEs(coin, 'moneda', 'monedas')} de golpe y se asegura el puesto de inversor líder clase A del Fondo de Desarrollo!`;
   if (p.tier === 'B')
-    return `¡Jugada maestra! [${w}] bloquea ${coin} monedas en participaciones clase B del Fondo de Desarrollo!`;
+    return `¡Jugada maestra! [${w}] bloquea ${coin} ${plEs(coin, 'moneda', 'monedas')} en participaciones clase B del Fondo de Desarrollo!`;
   if (p.tier === 'C')
-    return `¡La economía real se recupera! [${w}] suscribió ${coin} monedas en participaciones clase C del Fondo de Desarrollo`;
-  return `[${w}] depositó ${coin} monedas en el Fondo de Desarrollo`;
+    return `¡La economía real se recupera! [${w}] suscribió ${coin} ${plEs(coin, 'moneda', 'monedas')} en participaciones clase C del Fondo de Desarrollo`;
+  return `[${w}] depositó ${coin} ${plEs(coin, 'moneda', 'monedas')} en el Fondo de Desarrollo`;
 }
 
 function predictResult(p: P): string {
@@ -32,19 +32,21 @@ function predictResult(p: P): string {
   if (players === 0) return result;
   const winners = num(p.winners);
   return winners === 0
-    ? `${result}. Participaron ${players} restaurantes y nadie acertó`
-    : `${result}. Participaron ${players} restaurantes, acertaron ${winners} y se repartieron ${formatNum(num(p.paid))} monedas`;
+    ? `${result}. ${plEs(players, 'Participó', 'Participaron')} ${players} ${plEs(players, 'restaurante', 'restaurantes')} y nadie acertó`
+    : `${result}. ${plEs(players, 'Participó', 'Participaron')} ${players} ${plEs(players, 'restaurante', 'restaurantes')}, ${plEs(winners, 'acertó', 'acertaron')} ${winners} y se ${plEs(winners, 'repartió', 'repartieron')} ${formatNum(num(p.paid))} ${plEs(formatNum(num(p.paid)), 'moneda', 'monedas')}`;
 }
 
 const news: Messages['news'] = {
   render: {
-    'bar.cup': (w, p) => `${w} acertó el vaso ${num(p.times)} veces seguidas en el bar`,
-    'bar.fg': (w, p) => `${w} ganó ${num(p.times)} rondas seguidas de piedra, papel o tijera en el bar`,
+    'bar.cup': (w, p) =>
+      `${w} acertó el vaso ${num(p.times)} ${plEs(num(p.times), 'vez seguida', 'veces seguidas')} en el bar`,
+    'bar.fg': (w, p) =>
+      `${w} ganó ${num(p.times)} ${plEs(num(p.times), 'ronda seguida', 'rondas seguidas')} de piedra, papel o tijera en el bar`,
     'bar.num': (w) => `${w} acertó el número en la ruleta del bar`,
     'bar.slot': (w, p, x) =>
       `${w} ganó ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)} en la tragaperras del bar`,
     'bar.devil': (w, p) =>
-      `${w} se bebió tres Chiles del Diablo sin pestañear y ganó ${num(p.payout)} vales misteriosos`,
+      `${w} se bebió tres Chiles del Diablo sin pestañear y ganó ${num(p.payout)} ${plEs(num(p.payout), 'vale misterioso', 'vales misteriosos')}`,
     'bar.memory': (w) => `${w} recordó los 7 ingredientes del Cóctel Memoria`,
     'bar.darts': (w) => `${w} clavó tres dardos en la diana y dejó boquiabierto al dueño del bar`,
     'equip.stress': (w, p, x) => `${w} reforzó ${x.goodsName(num(p.goodsId))} a +${num(p.stress)}`,
@@ -78,7 +80,7 @@ const news: Messages['news'] = {
     'rest.rename': (_w, p) => `${str(p.from)} ahora se llama ${str(p.to)}`,
     'restaurant.open': (w) => `${w} abrió sus puertas`,
     'shop.special': (_w, p, x) => `Oferta del día en la tienda: ${x.goodsName(num(p.goodsId))}`,
-    'star.up': (w, p) => `${w} alcanzó ${num(p.star)} estrellas`,
+    'star.up': (w, p) => `${w} alcanzó ${num(p.star)} ${plEs(num(p.star), 'estrella', 'estrellas')}`,
     'takeaway.customer': (w, p, x) =>
       `${w} se encontró con ${x.goodsName(num(p.goodsId))} repartiendo a domicilio`,
     'temple.explore.rare': (w, p, x) =>

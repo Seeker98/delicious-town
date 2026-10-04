@@ -116,7 +116,7 @@ async function tip() {
       <select
         v-else-if="kind === 'food'"
         v-model.number="foodsId"
-        class="form-select form-select-sm w-auto"
+        class="form-select form-select-sm w-auto mw-100"
         data-testid="hiphop-food"
       >
         <option v-if="!hasWant" :value="null" disabled>{{ t.mc.hiphop.pick }}</option>

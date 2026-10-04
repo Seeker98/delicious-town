@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const tower: Messages['tower'] = {
   title: 'Torre de chefs',
@@ -25,11 +26,11 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `Del piso ${floor} hacia arriba se abre después de las ${hour}:00`,
     tired: 'Hoy ya está cansado',
     head: (power, left, total, tickets, strength) =>
-      `Mi poder ${power} · quedan ${left}/${total} desafíos hoy · Vales de desafío ${tickets} (úsalos en el almacén para uno más hoy) · Energía ${strength}`,
+      `Mi poder ${power} · quedan ${left}/${total} ${plEs(total, 'desafío', 'desafíos')} hoy · Vales de desafío ${tickets} (úsalos en el almacén para uno más hoy) · Energía ${strength}`,
     name: (floor, name) => `Piso ${floor} · ${name}`,
     power: (n) => `Poder ${n}`,
     meta: (note, level, name, left, max) =>
-      `«${note}» Desde nv. ${level}; hoy te quedan ${left}/${max} desafíos contra ${name}`,
+      `«${note}» Desde nv. ${level}; hoy te quedan ${left}/${max} ${plEs(max, 'desafío', 'desafíos')} contra ${name}`,
     mc: (name, price) => `; plato estrella de hoy ${name} (${price} cada uno)`,
     test: (n) => `Practicar (${n} de energía)`,
     go: (n) => `Desafiar (${n} de energía)`,
@@ -43,13 +44,15 @@ const tower: Messages['tower'] = {
   },
   rank: {
     loadFailed: 'No se pudo cargar la clasificación de chefs',
-    top: (top, gap) => `Para desafiar al top ${top} debes estar a ${gap} puestos como mucho`,
+    top: (top, gap) =>
+      `Para desafiar al top ${top} debes estar a ${gap} ${plEs(gap, 'puesto', 'puestos')} como mucho`,
     occupied: (n) => `Ocupaste el puesto ${n}`,
     occupyFailed: 'No se pudo ocupar el puesto',
     myRank: 'Mi puesto ',
     unranked: 'Sin clasificar',
     rankN: (n) => `${n}.º`,
-    head: (left, strength) => ` · quedan ${left} desafíos hoy · ${strength} de energía cada uno`,
+    head: (left, strength) =>
+      ` · quedan ${left} ${plEs(left, 'desafío', 'desafíos')} hoy · ${strength} de energía cada uno`,
     weekly:
       'Nueva clasificación cada lunes a las 0:00: los puestos 1–3, 4–8 y 9–15 reciben un lote; los tres primeros son Dios, Sabio y Rey de los chefs',
     slotName: (name, level) => `${name} (nv. ${level})`,

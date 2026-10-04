@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plFr } from '../../helpers';
 
 const bar: Messages['bar'] = {
   title: 'Bar',
@@ -16,23 +17,25 @@ const bar: Messages['bar'] = {
   hands: ['Pierre', 'Ciseaux', 'Feuille'],
   numHints: { close: 'Presque !', soft: 'Un peu plus doucement la prochaine fois', hard: 'Trop de force' },
   award: {
-    coin: (n) => `${n} pièces`,
+    coin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
     exp: (n) => `${n} EXP`,
     lucky: (what) => `${what} (chanceux)`,
   },
   luckily: 'Coup de chance ! ',
   gotAward: (text) => `, vous obtenez ${text}`,
-  streak: (n) => `${n} victoire(s) d'affilée`,
+  streak: (n) => `${n} ${plFr(n, 'victoire', 'victoires')} d'affilée`,
   noTicketsEach: (n) => `Pas assez de bons mystère (${n} à chaque fois)`,
   again: 'Rejouer',
-  todayPlayed: (played, max, cost) => `Aujourd'hui ${played}/${max} parties, ${cost} bons mystère chacune`,
+  todayPlayed: (played, max, cost) =>
+    `Aujourd'hui ${played}/${max} ${plFr(max, 'partie', 'parties')}, ${cost} ${plFr(cost, 'bon', 'bons')} mystère chacune`,
   noMoreToday: "Plus de parties aujourd'hui",
   startFailed: 'Impossible de commencer',
   cup: {
     noTickets: (n) => `Pas assez de bons mystère (cette manche en coûte ${n})`,
     lose: (times) =>
-      `Raté${times > 1 ? `, ${times} erreurs de suite` : ''}. La prochaine manche repart à 1 bon`,
-    win: (lucky, times, award) => `${lucky}Gagné ! ${times} victoire(s) d'affilée${award}`,
+      `Raté${times > 1 ? `, ${times} ${plFr(times, 'erreur', 'erreurs')} de suite` : ''}. La prochaine manche repart à 1 bon`,
+    win: (lucky, times, award) =>
+      `${lucky}Gagné ! ${times} ${plFr(times, 'victoire', 'victoires')} d'affilée${award}`,
     failed: 'Échec du jeu des gobelets',
     rule1: 'Choisissez un gobelet. Cette manche coûte ',
     rule2: ' bons mystère ; plus la série est longue, plus la mise et la récompense sont grandes.',
@@ -41,22 +44,22 @@ const bar: Messages['bar'] = {
   fg: {
     noTickets: 'Pas assez de bons mystère (1 par manche)',
     head: (mine, theirs) => `Vous jouez ${mine}, l'adversaire joue ${theirs} : `,
-    draw: (coin) => `égalité, vous gagnez ${coin} pièces`,
+    draw: (coin) => `égalité, vous gagnez ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     lose: 'perdu',
     win: (lucky, streak, award) => `${lucky}gagné${streak}${award}`,
-    streak: (n) => ` (${n} victoires d'affilée)`,
+    streak: (n) => ` (${n} ${plFr(n, 'victoire', 'victoires')} d'affilée)`,
     failed: 'Échec du chifoumi',
     rule: '1 bon mystère par manche. Gagnez une récompense aléatoire, meilleure avec une série ; une égalité rapporte des pièces.',
   },
   num: {
     miss: (num, hint) => `Tombé sur ${num}. ${hint}`,
-    times: (n) => `${n} gains d'affilée, `,
+    times: (n) => `${n} ${plFr(n, 'gain', 'gains')} d'affilée, `,
     got: (text) => `vous obtenez ${text}`,
     win: (lucky, times, award) => `${lucky}Gagné ! ${times}${award}`,
     failed: 'Échec de la roue',
     rule: (max, cost) =>
-      `Choisissez un numéro de 1 à ${max} ; touchez-le pour gagner un objet. ${cost} bons mystère par tour.`,
-    spin: (cost) => `Tourner (${cost} bons)`,
+      `Choisissez un numéro de 1 à ${max} ; touchez-le pour gagner un objet. ${cost} ${plFr(cost, 'bon', 'bons')} mystère par tour.`,
+    spin: (cost) => `Tourner (${cost} ${plFr(cost, 'bon', 'bons')})`,
   },
   slot: {
     empty: 'Vide',
@@ -75,7 +78,7 @@ const bar: Messages['bar'] = {
     spin1: 'Jouer 1 fois',
     spin10: 'Jouer 10 fois',
     exchange: 'Bons contre pièces Krab',
-    exBtn: (n, tickets) => `En obtenir ${n} (${tickets} bons)`,
+    exBtn: (n, tickets) => `En obtenir ${n} (${tickets} ${plFr(tickets, 'bon', 'bons')})`,
     pool: 'Lots',
     rare: 'Rare',
     stats: 'Mes statistiques',
@@ -89,9 +92,9 @@ const bar: Messages['bar'] = {
     status: (head, cup, also) =>
       `${head} a bu le verre ${cup}${also ? ', lui aussi sans souci' : ', sans souci'}. À vous`,
     win: (survived, payout) =>
-      `Le barman est tombé sur le verre pimenté ! Vous avez tenu ${survived} verre(s) et gagnez ${payout} bons mystère`,
+      `Le barman est tombé sur le verre pimenté ! Vous avez tenu ${survived} ${plFr(survived, 'verre', 'verres')} et gagnez ${payout} ${plFr(payout, 'bon', 'bons')} mystère`,
     lose: (stake, until) =>
-      `Vous êtes tombé sur le verre pimenté et perdez votre mise de ${stake} bons. Gueule de bois jusqu'à ${until} (fréquentation -10 %)`,
+      `Vous êtes tombé sur le verre pimenté et perdez votre mise de ${stake} ${plFr(stake, 'bon', 'bons')}. Gueule de bois jusqu'à ${until} (fréquentation -10 %)`,
     drankMe: 'Vous avez bu',
     drankBartender: 'Barman a bu',
     cup: (n) => `Verre ${n}`,
@@ -137,7 +140,7 @@ const bar: Messages['bar'] = {
     throwFailed: 'Impossible de lancer',
     head: (mine, boss) => `Vous ${mine} : ${boss} le patron, `,
     win: (award) => `vous gagnez ! ${award}`,
-    draw: (n) => `égalité. ${n} bons mystère remboursés`,
+    draw: (n) => `égalité. ${n} ${plFr(n, 'bon', 'bons')} mystère remboursés`,
     lose: 'vous perdez',
     got: (text) => `Vous obtenez ${text}`,
     rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner.',
@@ -165,10 +168,11 @@ const bar: Messages['bar'] = {
       'Le Gros Mangeur est encore venu boire à l’œil. Qu’est-ce qu’on y peut.',
       'J’ai aussi un stand sur la place. Passe me voir souvent.',
     ],
-    memoryLeft: (n) => `Encore ${n} partie(s) de Cocktail Mémoire aujourd’hui. On teste ta mémoire ?`,
-    dartsLeft: (n) => `Encore ${n} partie(s) de fléchettes aujourd’hui. Main sûre !`,
+    memoryLeft: (n) =>
+      `Encore ${n} ${plFr(n, 'partie', 'parties')} de Cocktail Mémoire aujourd’hui. On teste ta mémoire ?`,
+    dartsLeft: (n) => `Encore ${n} ${plFr(n, 'partie', 'parties')} de fléchettes aujourd’hui. Main sûre !`,
     noTickets: 'Plus de bons mystère ? Viens discuter avec moi sur la place, je t’en donnerai.',
-    slotFloor: (n) => `Plus que ${n} tour(s) et la machine à sous garantit un rare !`,
+    slotFloor: (n) => `Plus que ${n} ${plFr(n, 'tour', 'tours')} et la machine à sous garantit un rare !`,
     devilOpen: 'Tu n’as pas fini le Piment du Diable. Pas question de filer.',
   },
 };

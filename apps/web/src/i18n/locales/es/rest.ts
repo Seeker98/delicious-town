@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const rest: Messages['rest'] = {
   info: {
@@ -30,7 +31,7 @@ const rest: Messages['rest'] = {
   floor: {
     loadFailed: 'No se pudieron cargar las mesas',
     tableNo: (n) => `Mesa ${n}`,
-    last: (coin, exp) => `Última ronda ${coin} monedas / ${exp} EXP`,
+    last: (coin, exp) => `Última ronda ${coin} ${plEs(coin, 'moneda', 'monedas')} / ${exp} EXP`,
     kill: 'Aplastar la cucaracha',
     killed: 'Cucaracha aplastada',
     killFailed: 'No se pudo aplastar la cucaracha',
@@ -48,7 +49,7 @@ const rest: Messages['rest'] = {
     avatarSet: 'Avatar cambiado',
     avatarFailed: 'No se pudo cambiar el avatar',
     door: 'Puerta',
-    doorCoin: (n) => `${n} monedas`,
+    doorCoin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
     doorSet: 'Puerta cambiada',
     doorFailed: 'No se pudo cambiar la puerta',
     notice: 'Tablón de anuncios',
@@ -61,11 +62,11 @@ const rest: Messages['rest'] = {
     iconFailed: 'No se pudo actualizar la insignia',
     shopTitle: 'Títulos limitados',
     shopMeta: (coin: string, days: number) =>
-      `${coin} monedas · ${days > 0 ? `se retira en ${days} día${days === 1 ? '' : 's'}` : 'se retira hoy'}`,
+      `${coin} ${plEs(coin, 'moneda', 'monedas')} · ${days > 0 ? `se retira en ${days} día${days === 1 ? '' : 's'}` : 'se retira hoy'}`,
     buy: 'Comprar',
     owned: 'Ya lo tienes',
     buyConfirm: (title: string, coin: string) =>
-      `¿Comprar el título limitado «${title}» por ${coin} monedas? Cuando se retire ya no se podrá comprar.`,
+      `¿Comprar el título limitado «${title}» por ${coin} ${plEs(coin, 'moneda', 'monedas')}? Cuando se retire ya no se podrá comprar.`,
     bought: (title: string) => `Compraste el título limitado «${title}». Elige abajo si quieres mostrarlo.`,
     buyFailed: 'No se pudo comprar el título',
   },
@@ -75,12 +76,13 @@ const rest: Messages['rest'] = {
     signIn: 'Registrarse',
     signedIn: 'Registrado hoy',
     signInFailed: 'No se pudo registrar',
-    claimed: (p) => `✓ Premio de ${p} puntos recogido`,
-    claim: (p, double) => `Recoger premio de ${p} puntos${double ? ' ×2' : ''}`,
-    need: (p, left) => `${p} puntos (faltan ${left})`,
-    kujiHint: (p, num) => `El premio de ${p} puntos también da ${num} boletos de Ichiban Kuji`,
+    claimed: (p) => `✓ Premio de ${p} ${plEs(p, 'punto', 'puntos')} recogido`,
+    claim: (p, double) => `Recoger premio de ${p} ${plEs(p, 'punto', 'puntos')}${double ? ' ×2' : ''}`,
+    need: (p, left) => `${p} ${plEs(p, 'punto', 'puntos')} (faltan ${left})`,
+    kujiHint: (p, num) =>
+      `El premio de ${p} ${plEs(p, 'punto', 'puntos')} también da ${num} ${plEs(num, 'boleto', 'boletos')} de Ichiban Kuji`,
     full: '✓ Completo',
-    locked: (star) => `🔒 Se abre con ${star} estrellas`,
+    locked: (star) => `🔒 Se abre con ${star} ${plEs(star, 'estrella', 'estrellas')}`,
     per: (p) => `${p} punto${p === 1 ? '' : 's'} cada vez`,
     main: 'Misión principal',
     mainDone: 'Misión principal completada',

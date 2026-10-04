@@ -90,14 +90,15 @@ async function run(fn: () => Promise<TicketResultDto>) {
       <span>{{ t.town.ticket.have(data.mysteryTickets) }}</span>
     </div>
     <div class="d-flex align-items-center gap-1 mt-1">
-      <select v-model="mystery" class="form-select form-select-sm w-auto" data-testid="mt-food">
+      <!-- 下拉框占剩下的宽度、可以收窄：法文食材名长，原来把右边的按钮挤出屏幕（质量期 ④） -->
+      <select v-model="mystery" class="form-select form-select-sm dt-shrink" data-testid="mt-food">
         <option value="">{{ t.town.ticket.pickMystery }}</option>
         <option v-for="id in data.mysteryFoods" :key="id" :value="String(id)">
           {{ catalog.foodName(id) }}
         </option>
       </select>
       <button
-        class="btn btn-sm btn-primary"
+        class="btn btn-sm btn-primary flex-shrink-0"
         :disabled="busy || data.mysteryTickets === 0 || mystery === ''"
         data-testid="mt-go"
         @click="run(() => endpoints.townMysteryTicket(Number(mystery)))"

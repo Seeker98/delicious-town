@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const bar: Messages['bar'] = {
   title: 'Bar',
@@ -16,22 +17,23 @@ const bar: Messages['bar'] = {
   hands: ['Piedra', 'Tijera', 'Papel'],
   numHints: { close: '¡Casi!', soft: 'La próxima vez, un poco más suave', hard: 'Demasiada fuerza' },
   award: {
-    coin: (n) => `${n} monedas`,
+    coin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
     exp: (n) => `${n} EXP`,
     lucky: (what) => `${what} (con suerte)`,
   },
   luckily: '¡Qué suerte! ',
   gotAward: (text) => `, conseguiste ${text}`,
-  streak: (n) => `Racha de ${n} victorias`,
+  streak: (n) => `Racha de ${n} ${plEs(n, 'victoria', 'victorias')}`,
   noTicketsEach: (n) => `No tienes suficientes vales misteriosos (${n} cada vez)`,
   again: 'Otra partida',
-  todayPlayed: (played, max, cost) => `Hoy ${played}/${max} partidas, ${cost} vales misteriosos cada una`,
+  todayPlayed: (played, max, cost) =>
+    `Hoy ${played}/${max} ${plEs(max, 'partida', 'partidas')}, ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')} cada una`,
   noMoreToday: 'Hoy no te quedan partidas',
   startFailed: 'No se pudo empezar',
   cup: {
     noTickets: (n) => `No tienes suficientes vales misteriosos (esta ronda cuesta ${n})`,
     lose: (times) =>
-      `Fallaste${times > 1 ? `, ${times} fallos seguidos` : ''}. La próxima ronda empieza en 1 vale`,
+      `Fallaste${times > 1 ? `, ${times} ${plEs(times, 'fallo seguido', 'fallos seguidos')}` : ''}. La próxima ronda empieza en 1 vale`,
     win: (lucky, times, award) => `${lucky}¡Acertaste! Racha de ${times}${award}`,
     failed: 'No se pudo jugar',
     rule1: 'Elige un vaso. Esta ronda cuesta ',
@@ -41,7 +43,7 @@ const bar: Messages['bar'] = {
   fg: {
     noTickets: 'No tienes suficientes vales misteriosos (1 por ronda)',
     head: (mine, theirs) => `Sacaste ${mine}, el rival sacó ${theirs}: `,
-    draw: (coin) => `empate, ganas ${coin} monedas`,
+    draw: (coin) => `empate, ganas ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
     lose: 'perdiste',
     win: (lucky, streak, award) => `${lucky}ganaste${streak}${award}`,
     streak: (n) => ` (racha de ${n})`,
@@ -50,13 +52,13 @@ const bar: Messages['bar'] = {
   },
   num: {
     miss: (num, hint) => `Salió el ${num}. ${hint}`,
-    times: (n) => `${n} aciertos seguidos, `,
+    times: (n) => `${n} ${plEs(n, 'acierto seguido', 'aciertos seguidos')}, `,
     got: (text) => `conseguiste ${text}`,
     win: (lucky, times, award) => `${lucky}¡Acertaste! ${times}${award}`,
     failed: 'No se pudo girar la ruleta',
     rule: (max, cost) =>
-      `Elige un número del 1 al ${max}; si sale, ganas un objeto. ${cost} vales misteriosos por tirada.`,
-    spin: (cost) => `Girar (${cost} vales)`,
+      `Elige un número del 1 al ${max}; si sale, ganas un objeto. ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')} por tirada.`,
+    spin: (cost) => `Girar (${cost} ${plEs(cost, 'vale', 'vales')})`,
   },
   slot: {
     empty: 'Vacío',
@@ -75,12 +77,12 @@ const bar: Messages['bar'] = {
     spin1: 'Tirar 1 vez',
     spin10: 'Tirar 10 veces',
     exchange: 'Vales por monedas Krab',
-    exBtn: (n, tickets) => `Conseguir ${n} (${tickets} vales)`,
+    exBtn: (n, tickets) => `Conseguir ${n} (${tickets} ${plEs(tickets, 'vale', 'vales')})`,
     pool: 'Premios',
     rare: 'Raro',
     stats: 'Mis estadísticas',
     noStats: 'Aún no has jugado',
-    statTotal: (n) => `${n} rodillos: `,
+    statTotal: (n) => `${n} ${plEs(n, 'rodillo', 'rodillos')}: `,
     statLine: (name, n) => `${name} ${n}`,
   },
   devil: {
@@ -89,9 +91,9 @@ const bar: Messages['bar'] = {
     status: (head, cup, also) =>
       `${head} bebió el vaso ${cup}${also ? ' y también está bien' : ' y está bien'}. Te toca`,
     win: (survived, payout) =>
-      `¡Al barman le tocó el picante! Aguantaste ${survived} vasos y ganas ${payout} vales misteriosos`,
+      `¡Al barman le tocó el picante! Aguantaste ${survived} ${plEs(survived, 'vaso', 'vasos')} y ganas ${payout} ${plEs(payout, 'vale misterioso', 'vales misteriosos')}`,
     lose: (stake, until) =>
-      `Te tocó el picante y pierdes tu apuesta de ${stake} vales. Resaca hasta las ${until} (ocupación -10 %)`,
+      `Te tocó el picante y pierdes tu apuesta de ${stake} ${plEs(stake, 'vale', 'vales')}. Resaca hasta las ${until} (ocupación -10 %)`,
     drankMe: 'Bebiste',
     drankBartender: 'Bebió el barman',
     cup: (n) => `Vaso ${n}`,
@@ -103,7 +105,8 @@ const bar: Messages['bar'] = {
     rule3: 'Si te toca a ti, pierdes la apuesta y tienes resaca 1 hora (ocupación -10 %).',
     askStake: '¿Cuántos vales misteriosos apuestas?',
     stake: (n) => `Apostar ${n}`,
-    progress: (stake, survived) => `Apuesta ${stake} · Has aguantado ${survived} vasos`,
+    progress: (stake, survived) =>
+      `Apuesta ${stake} · Has aguantado ${survived} ${plEs(survived, 'vaso', 'vasos')}`,
   },
   memory: {
     mixes: ['Ron', 'Vodka', 'Ginebra', 'Limón', 'Menta', 'Sirope', 'Hielo', 'Soda'],
@@ -135,7 +138,7 @@ const bar: Messages['bar'] = {
     throwFailed: 'No se pudo lanzar',
     head: (mine, boss) => `Tú ${mine} : ${boss} el jefe, `,
     win: (award) => `¡ganas! ${award}`,
-    draw: (n) => `empate. Se devuelven ${n} vales misteriosos`,
+    draw: (n) => `empate. Se devuelven ${n} ${plEs(n, 'vale misterioso', 'vales misteriosos')}`,
     lose: 'pierdes',
     got: (text) => `Conseguiste ${text}`,
     rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar.',
@@ -163,10 +166,11 @@ const bar: Messages['bar'] = {
       'El Glotón ha vuelto a gorronear bebida. Qué le vamos a hacer.',
       'También tengo un puesto en la plaza. Pásate a menudo.',
     ],
-    memoryLeft: (n) => `Hoy te quedan ${n} partidas de Cóctel Memoria. ¿Pones a prueba tu memoria?`,
-    dartsLeft: (n) => `Hoy te quedan ${n} partidas de dardos. Pulso firme.`,
+    memoryLeft: (n) =>
+      `Hoy te quedan ${n} ${plEs(n, 'partida', 'partidas')} de Cóctel Memoria. ¿Pones a prueba tu memoria?`,
+    dartsLeft: (n) => `Hoy te quedan ${n} ${plEs(n, 'partida', 'partidas')} de dardos. Pulso firme.`,
     noTickets: '¿Sin vales misteriosos? Ven a charlar conmigo a la plaza y te daré algunos.',
-    slotFloor: (n) => `¡Solo ${n} tiradas más y la tragaperras te asegura un raro!`,
+    slotFloor: (n) => `¡Solo ${n} ${plEs(n, 'tirada', 'tiradas')} más y la tragaperras te asegura un raro!`,
     devilOpen: 'No has terminado el Chile del Diablo. Nada de escaparse.',
   },
 };

@@ -173,6 +173,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
             'btn',
             'btn-sm',
             'w-100',
+            'h-100',
             'border',
             'dt-tile',
             picked === f.foodsId ? 'btn-warning' : 'btn-light',

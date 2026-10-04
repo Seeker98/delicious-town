@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { plEs } from '../../helpers';
 
 const town: Messages['town'] = {
   title: 'Plaza',
@@ -37,13 +38,14 @@ const town: Messages['town'] = {
   mayorName: 'Alcalde',
   mayorFailed: 'No se pudo responder',
   talkFailed: 'No se pudo charlar',
-  shook: (coin) => `Sacudiste ${coin} monedas`,
+  shook: (coin) => `Sacudiste ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
   shookEgg: (name, num) => `, y sacaste ${name}×${num} de su bolsillo`,
   shakeFailed: 'No se pudo sacudir la bolsa',
-  blessRandom: (lv, n) => `${n} ingrediente(s) aleatorio(s) de nivel ${lv}`,
+  blessRandom: (lv, n) =>
+    `${n} ${plEs(n, 'ingrediente aleatorio', 'ingredientes aleatorios')} de nivel ${lv}`,
   blessPick: (lv, n) => `Ingrediente de nivel ${lv} a elegir ×${n}`,
-  blessCoin: (n) => `${n} monedas`,
-  blessDiamond: (n) => `${n} diamantes`,
+  blessCoin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
+  blessDiamond: (n) => `${n} ${plEs(n, 'diamante', 'diamantes')}`,
   lampCoin: ' (+10 % con la lámpara mágica)',
   lampOne: ' (+1 con la lámpara mágica)',
   feasted: 'Ya lo reclamaste hoy',
@@ -79,7 +81,7 @@ const town: Messages['town'] = {
   hammer: 'Martillo de Thor',
   weatherNow: 'Clima actual: ',
   hammerHint: (coin, diamond) =>
-    `Cambiar a un tipo de clima: ${coin} monedas cada vez. Invocar clima especial: ${diamond} diamantes cada vez`,
+    `Cambiar a un tipo de clima: ${coin} ${plEs(coin, 'moneda', 'monedas')} cada vez. Invocar clima especial: ${diamond} ${plEs(diamond, 'diamante', 'diamantes')} cada vez`,
   hammerSpecial: 'Invocar clima especial',
   news: {
     loadFailed: 'No se pudieron cargar las noticias',
@@ -90,7 +92,7 @@ const town: Messages['town'] = {
     failed: 'No se pudo anunciar',
     placeholder: 'Di algo a todo el pueblo',
     send: 'Anunciar',
-    horns: (n) => `${n} bocina(s), 1 por anuncio`,
+    horns: (n) => `${n} ${plEs(n, 'bocina', 'bocinas')}, 1 por anuncio`,
     empty: 'Aún no hay noticias',
   },
   rank: {
@@ -160,30 +162,33 @@ const town: Messages['town'] = {
   classroom: {
     loadFailed: 'No se pudo cargar el aula',
     stealConfirm: (n, mc) =>
-      `Espiar una clase es gratis, pero si fallas olvidas ${n} receta(s)${mc ? ' y quizá un plato estrella' : ''}. ¿Espiar?`,
+      `Espiar una clase es gratis, pero si fallas olvidas ${n} ${plEs(n, 'receta', 'recetas')}${mc ? ' y quizá un plato estrella' : ''}. ¿Espiar?`,
     learned: (name) => `Aprendiste ${name}`,
-    stealFailed: (n, mc) => `Espionaje fallido: olvidaste ${n} receta(s)${mc ? ` y ${mc}` : ''}`,
+    stealFailed: (n, mc) =>
+      `Espionaje fallido: olvidaste ${n} ${plEs(n, 'receta', 'recetas')}${mc ? ` y ${mc}` : ''}`,
     notLearned: 'No lo aprendiste. Vuelve otra vez',
     learnFailed: 'No se pudo aprender',
     opened: 'Clase abierta',
     openFailed: 'No se pudo abrir la clase',
-    closeConfirm: (coin) => `¿Gastar ${coin} monedas para terminar ya esta clase?`,
+    closeConfirm: (coin) => `¿Gastar ${coin} ${plEs(coin, 'moneda', 'monedas')} para terminar ya esta clase?`,
     closed: 'Clase terminada',
     closeFailed: 'No se pudo terminar la clase',
     mine: 'Mi clase: ',
-    mineLine: (level, n, max, left) => ` Nv. ${level} · ${n}/${max} alumnos · ${left}`,
+    mineLine: (level, n, max, left) =>
+      ` Nv. ${level} · ${n}/${max} ${plEs(max, 'alumno', 'alumnos')} · ${left}`,
     forceClose: 'Terminar ya',
     openTitle: 'Abrir una clase (gasta 1 fragmento y 1 certificado de profesor):',
     pickMc: 'Elige un plato estrella que sepas',
     mcOption: (name, level) => `${name} (nv. ${level ?? '?'})`,
     pickCert: 'Elige un certificado de profesor',
     certOption: (name, strength, hours, max, have) =>
-      `${name} (energía ${strength}, ${hours} h, ${max} alumnos, tienes ${have})`,
+      `${name} (energía ${strength}, ${hours} h, ${max} ${plEs(max, 'alumno', 'alumnos')}, tienes ${have})`,
     open: 'Abrir clase',
     running: 'Clases en curso',
     none: 'Ahora no hay clases de otros jugadores',
     lessonLine: (level, teacher) => ` Nv. ${level} · profe ${teacher}`,
-    lessonMeta: (n, max, stolen, left) => `${n}/${max} alumnos (${stolen} espiando) · ${left}`,
+    lessonMeta: (n, max, stolen, left) =>
+      `${n}/${max} ${plEs(max, 'alumno', 'alumnos')} (${stolen} espiando) · ${left}`,
     learn: 'Aprender',
     steal: 'Espiar',
     rule: 'Aprender cuesta precio×3 monedas y 2 fragmentos del mismo nivel; el profe recibe precio×2 y 1 fragmento. Un intento por clase.',
