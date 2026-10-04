@@ -8,8 +8,10 @@ export function remainText(at: string | null, now: number = Date.now()): string 
   if (minutes < 60) return r.minutes(minutes);
   // 一天以上写天和小时（不写分钟）：“368 小时”在手机上放不下、也不好读（质量期 ④）
   if (minutes >= 24 * 60) {
-    const d = Math.floor(minutes / (24 * 60));
-    const dh = Math.floor((minutes % (24 * 60)) / 60);
+    // 小时也向上取整，和一天以内的分钟一致（backlog #116）
+    const hours = Math.ceil(minutes / 60);
+    const d = Math.floor(hours / 24);
+    const dh = hours % 24;
     return dh === 0 ? r.days(d) : r.daysHours(d, dh);
   }
   const h = Math.floor(minutes / 60);

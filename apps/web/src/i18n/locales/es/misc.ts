@@ -27,7 +27,7 @@ const misc: Messages['misc'] = {
     copy: 'Copiar',
     copyLink: 'Copiar enlace',
     rules: (cap) =>
-      `Tus amigos reciben un pack de inicio al abrir su restaurante. Cuando verifiquen su correo, recibirás un premio cuando su restaurante llegue al nivel 10 y otro al nivel 30. Cuentan como máximo ${cap} ${plEs(cap, 'amigo', 'amigos')} al mes.`,
+      `Tus amigos reciben un pack de inicio al abrir su restaurante. Cuando verifiquen su correo, recibirás un premio cuando su restaurante llegue al nivel 10 y otro al nivel 30. ${plEs(cap, 'Cuenta', 'Cuentan')} como máximo ${cap} ${plEs(cap, 'amigo', 'amigos')} al mes.`,
     month: (n, cap) => `Contados este mes: ${n} / ${cap}`,
     empty: 'Aún no has invitado a nadie',
     level: (n) => `Nivel ${n}`,

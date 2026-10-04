@@ -384,7 +384,7 @@ const errors: Messages['errors'] = {
     hammer: (minutes) =>
       `Le marteau de Thor est en recharge. Attendez ${minutes >= 60 ? `${Math.floor(minutes / 60)} h ${minutes % 60} min` : `${minutes} min`}.`,
     marketSpecial: (minutes, wait) =>
-      `Les promotions ne peuvent être prises qu'une fois toutes les ${minutes} ${plFr(minutes, 'minute', 'minutes')} depuis un même réseau. Attendez ${wait} min.`,
+      `Les promotions ne peuvent être prises qu'une fois par période de ${minutes} min depuis un même réseau. Attendez ${wait} min.`,
     notEnough: (what, need, have) => `${what} insuffisant(e)s (il en faut ${need}, vous en avez ${have})`,
     remnant: (name) => `Fragments de ${name}`,
     basket: (name) => `${name} dans le panier`,
