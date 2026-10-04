@@ -55,6 +55,7 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
 
 const isEmpty = (t: TableDto) => (t.customer === 0 || t.customer === -3) && !t.roach && !t.freeloaderRestId;
 const mine = computed(() => session.me?.restaurantId ?? null);
+const equips = computed(() => [...(rest.value?.equips ?? [])].sort((a, b) => a.part - b.part));
 
 function refuel(num: number) {
   return act(
@@ -117,11 +118,17 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         catalog.icon(i.key)?.title ?? i.title
       }}</span>
     </div>
-    <div v-if="rest.equips.length > 0" class="small mb-2" data-testid="friend-equips">
-      {{ t.friends.rest.equips }}
-      <span v-for="e in rest.equips" :key="e.part" class="me-2">
-        {{ PART_NAMES[e.part] }} {{ equipName(catalog, e) }}{{ e.stress > 0 ? ` +${e.stress}` : '' }}
-      </span>
+    <!-- 每个部位一行，强化等级单独标出；名字长时自己折行，不和别的部位挤在一段里（问题记录 323） -->
+    <div v-if="equips.length > 0" class="border rounded p-2 mb-2 small" data-testid="friend-equips">
+      <div class="text-muted mb-1">{{ t.friends.rest.equips }}</div>
+      <div class="dt-equip-grid">
+        <div v-for="e in equips" :key="e.part" class="dt-equip-row" :data-testid="`friend-equip-${e.part}`">
+          <span class="text-muted">{{ PART_NAMES[e.part] }}</span>
+          <span class="dt-equip-name">{{ equipName(catalog, e) }}</span>
+          <span v-if="e.stress > 0" class="badge text-bg-light border">+{{ e.stress }}</span>
+          <span v-else></span>
+        </div>
+      </div>
     </div>
     <div
       v-if="rest.special"

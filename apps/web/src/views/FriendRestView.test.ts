@@ -114,6 +114,24 @@ describe('FriendRestView', () => {
     expect(w.find('[data-testid="friend-equips"]').text()).toContain('+3');
   });
 
+  it('厨具每个部位一行，按部位排好，强化等级单独标出（问题记录 323）', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({
+        equips: [
+          { part: 3, goodsId: 30, stress: 0, name: '大锅' },
+          { part: 1, goodsId: 30, stress: 10, name: null },
+        ],
+      }),
+    );
+    const w = await mountView();
+    const rows = w.findAll('[data-testid^="friend-equip-"]');
+    expect(rows.map((r) => r.attributes('data-testid'))).toEqual(['friend-equip-1', 'friend-equip-3']);
+    expect(rows[0]!.find('span').text()).toBe('铲');
+    expect(rows[0]!.find('.badge').text()).toBe('+10');
+    expect(rows[1]!.text()).toContain('大锅');
+    expect(rows[1]!.find('.badge').exists()).toBe(false);
+  });
+
   it('对方有特色菜时可以品尝；吃过显示已品尝', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(
       detail({ special: { mcId: 1, grade: 3, leftNum: 20, price: 40, eaten: false } }),
