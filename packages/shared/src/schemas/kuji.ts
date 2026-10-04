@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 /** 一番赏（一番赏设计 §5、§7） */
+/** 一番赏奖池线（240-2）：普通或豪华 */
+export type KujiLine = 'normal' | 'deluxe';
 export const kujiBuyBody = z.object({ num: z.number().int().min(1).max(100) });
 export const kujiDrawBody = z.object({ num: z.number().int().min(1).max(100) });
 export interface KujiAwardDto {
