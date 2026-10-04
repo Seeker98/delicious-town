@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { FUND } from '@dt/config';
 import { testDb } from '../../../test/db';
 import { testConfig } from '../../../test/config';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
@@ -13,6 +14,20 @@ beforeAll(async () => {
   shardId = await createShard(db);
 });
 const newRest = async () => createRestaurantRow(db, shardId, await createAccountRow(db));
+
+describe('基金勋章不算勋章收藏（240-2 终审 I1：设计写明只加经验、不加银币）', () => {
+  it('有效的基金勋章只带自己的 expRate，不给 honorAddCoin、honorAddExp', async () => {
+    const restId = await newRest();
+    const now = new Date();
+    await upsertEffectSource(db, restId, {
+      sourceType: 'honor',
+      sourceId: FUND.A,
+      effects: { expRate: 0.15 },
+      expiresAt: new Date(now.getTime() + 3600_000),
+    });
+    expect(await agg(restId, now)).toEqual({ expRate: 0.15 });
+  });
+});
 
 describe('effects service', () => {
   it('汇总并缓存；来源变动后重新汇总', async () => {

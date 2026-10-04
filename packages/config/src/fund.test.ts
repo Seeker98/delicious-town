@@ -35,4 +35,12 @@ describe('小镇发展基金配置（240-2）', () => {
     expect(errors).toContain('tuning.fund.tiers duplicate key C');
     expect(errors).toContain('tuning.fund.tiers C medal 1 is not an honor');
   });
+
+  it('检查：档位的勋章必须是基金勋章，填别的荣誉会在领取时被当成基金勋章删掉（终审 I2）', () => {
+    const src = source();
+    const t = JSON.parse(JSON.stringify(src['game/tuning']));
+    t.fund.tiers[0].medal = 81;
+    const { errors } = buildBundle({ ...src, 'game/tuning': t });
+    expect(errors).toContain('tuning.fund.tiers A medal 81 is not a fund medal');
+  });
 });

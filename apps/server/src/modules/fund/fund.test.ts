@@ -125,6 +125,22 @@ describe('小镇发展基金（240-2）', () => {
     expect(row).toEqual({ status: 'claimed', returned: 900_000 });
   });
 
+  it('运营删掉某一档后，领新勋章仍会去掉那一档的旧勋章（终审 I2）', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, patch: { coin: 11_000_000 } });
+    await svc().deposit(r, 'C');
+    later(7 * DAY);
+    await svc().claim(r);
+    await setTuning(t, shardId, {
+      fund: { days: 1, tiers: [{ key: 'A', coin: 10_000_000, medal: FUND.A }] },
+    });
+    await svc().deposit(r, 'A');
+    later(DAY);
+    await svc().claim(r);
+    expect(await goodsNum(t, r.restaurantId, FUND.C)).toBe(0);
+    expect(await medalEffects(r.restaurantId)).toEqual([[FUND.A, 0.15]]);
+  });
+
   it('领新勋章时去掉旧的基金勋章，加成不叠加（Review Focus 2）', async () => {
     const r = await newRestaurant(t, { patch: { coin: 21_000_000 } });
     await svc().deposit(r, 'C');

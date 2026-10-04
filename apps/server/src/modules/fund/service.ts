@@ -1,4 +1,4 @@
-import type { Tuning } from '@dt/config';
+import { FUND_MEDALS, type Tuning } from '@dt/config';
 import type { FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
@@ -103,9 +103,8 @@ export function createFundService(d: GameDeps) {
         if (a.matures_at > o.now) throw invalidState('fund_not_mature');
         const back = Math.floor(a.coin * o.tuning.fund.returnRate);
         gainCoin(o, back);
-        // 勋章不叠加：去掉其他基金勋章再发这一笔的
-        for (const id of new Set(o.tuning.fund.tiers.map((x) => x.medal)))
-          if (id !== a.medal) await removeHonor(o, id);
+        // 勋章不叠加：去掉身上其他基金勋章（不只当前档位里的，运营可能删过档）再发这一笔的
+        for (const id of FUND_MEDALS) if (id !== a.medal) await removeHonor(o, id);
         await grantGoodsOp(o, a.medal, 1);
         await o.tx
           .updateTable('fund_deposit')

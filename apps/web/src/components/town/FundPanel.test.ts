@@ -79,6 +79,21 @@ describe('FundPanel（240-2）', () => {
     expect(endpoints.fundWithdraw).toHaveBeenCalled();
   });
 
+  it('操作被拒（比如页面开着时已经到期）：提示后重新读取，按钮换成领取（终审 I3）', async () => {
+    vi.mocked(endpoints.fund)
+      .mockResolvedValueOnce({ ...base, deposit: deposit() })
+      .mockResolvedValueOnce({ ...base, deposit: deposit({ mature: true }) });
+    vi.mocked(endpoints.fundWithdraw).mockRejectedValue(new Error('fund_mature'));
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const w = mount(FundPanel);
+    await flushPromises();
+    await w.get('[data-testid="fund-withdraw"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.fund).toHaveBeenCalledTimes(2);
+    expect(w.find('[data-testid="fund-withdraw"]').exists()).toBe(false);
+    expect(w.find('[data-testid="fund-claim"]').exists()).toBe(true);
+  });
+
   it('已到期：按钮是领取，没有提前取出', async () => {
     vi.mocked(endpoints.fund).mockResolvedValue({ ...base, deposit: deposit({ mature: true }) });
     vi.mocked(endpoints.fundClaim).mockResolvedValue(base);

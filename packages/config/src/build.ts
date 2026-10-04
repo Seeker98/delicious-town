@@ -11,7 +11,7 @@ import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
-import { GOODS_TYPE, NON_SUIT_IDS } from './ids';
+import { FUND_MEDALS, GOODS_TYPE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
@@ -375,7 +375,8 @@ export function buildBundle(src: SourceData): BuildResult {
     maxNum: 9999,
     use: { kind: 'randomFood', level: v.level },
   }));
-  // 小镇发展基金勋章（240-2）：限时荣誉，不出售
+  // 小镇发展基金勋章（240-2）：限时荣誉，不出售；id 要和 ids.ts 的 FUND 一致
+  for (const m of fundRaw.medals) if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
   const fundMedals: Goods[] = fundRaw.medals.map((m) => ({
     ...souvenirLike(m.id, m.name, m.desc),
     type: GOODS_TYPE.honor,

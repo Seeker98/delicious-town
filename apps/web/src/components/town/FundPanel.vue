@@ -33,6 +33,8 @@ async function act(fn: () => Promise<FundViewDto>, done: (v: FundViewDto) => str
     toast.push(done(v));
   } catch (e) {
     toast.push(errorMessage(e, t.value.fund.failed), 'danger');
+    // 被拒多半是状态变了（页面开着时已到期、别处已经存过或领过）：重新读取
+    await load();
   } finally {
     busy.value = false;
   }
