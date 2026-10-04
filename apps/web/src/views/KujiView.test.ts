@@ -217,8 +217,53 @@ describe('backlog 一番赏：页面', () => {
       devices: [],
       looks: { doors: [], avatars: [], icons: [{ key: 'kuji_a', title: '金秋鸿运', desc: 'x' }] },
     } as never);
+    // 自己给返回值：beforeEach 的 clearAllMocks 不清实现，不能靠上一条用例留下的（终审小问题 5）
+    vi.mocked(endpoints.kuji).mockResolvedValue(view());
     const { w } = await mountWithRouter('/kuji');
     expect(w.get('[data-testid="kj-tier-A"]').text()).toContain('金秋鸿运');
     expect(w.get('[data-testid="kj-last"]').text()).toContain('附限定图标');
+  });
+
+  it('豪华页买券、抽签都带 deluxe（240-2 终审：漏传会在豪华页买到普通券）', async () => {
+    const dx = view({ line: 'deluxe', price: 300000, theme: null });
+    vi.mocked(endpoints.kuji).mockResolvedValue(dx);
+    vi.mocked(endpoints.kujiBuy).mockResolvedValue(dx);
+    vi.mocked(endpoints.kujiDraw).mockResolvedValue({ draws: [], last: null, view: dx });
+    const { w } = await mountWithRouter('/kuji?line=deluxe');
+    expect(endpoints.kuji).toHaveBeenLastCalledWith('deluxe');
+    await w.get('[data-testid="kj-buy-num"]').setValue('2');
+    await w.get('[data-testid="kj-buy"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.kujiBuy).toHaveBeenCalledWith(2, 'deluxe');
+    await w.get('[data-testid="kj-draw-1"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.kujiDraw).toHaveBeenCalledWith(1, 'deluxe');
+  });
+
+  it('切线时还没返回的旧请求作废：普通池看板晚到，不会写进豪华页；抽签进行中不能切线（240-2 终审 I-1）', async () => {
+    const dx = view({
+      line: 'deluxe',
+      price: 300000,
+      theme: null,
+      pool: { id: 9, day: '2026-10-04', seq: 1, total: 20, left: 20 },
+    });
+    let finishNormal!: (v: KujiViewDto) => void;
+    vi.mocked(endpoints.kuji).mockImplementation((line) =>
+      line === 'deluxe' ? Promise.resolve(dx) : new Promise((r) => (finishNormal = r)),
+    );
+    const { w } = await mountWithRouter('/kuji');
+    // 普通池的看板还没回来就切到豪华
+    await w.get('[data-testid="kj-line-deluxe"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
+    finishNormal(view());
+    await flushPromises();
+    expect(w.get('[data-testid="kj-pool"]').text()).toContain('剩 20 / 20');
+    expect(w.get('[data-testid="kj-tickets"]').text()).toContain('豪华签券');
+
+    // 抽签还没返回时，切换按钮禁用
+    vi.mocked(endpoints.kujiDraw).mockReturnValue(new Promise(() => undefined));
+    await w.get('[data-testid="kj-draw-1"]').trigger('click');
+    expect(w.get('[data-testid="kj-line-normal"]').attributes('disabled')).toBeDefined();
   });
 });

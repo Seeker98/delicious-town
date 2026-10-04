@@ -77,20 +77,27 @@ const buyHint = computed(() => {
 });
 const buyOk = computed(() => buyNum.value !== '' && buyHint.value === '');
 
+/** 请求发起后切了线，响应就作废：不能把别的线的看板写进当前页（240-2 终审 I-1） */
+const stale = (l: KujiLine) => l !== line.value;
+
 async function load() {
+  const l = line.value;
   try {
-    data.value = deluxe.value ? await endpoints.kuji('deluxe') : await endpoints.kuji();
+    const v = l === 'deluxe' ? await endpoints.kuji('deluxe') : await endpoints.kuji();
+    if (!stale(l)) data.value = v;
   } catch (e) {
-    toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
+    if (!stale(l)) toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
 }
 async function buy() {
   const n = Number(buyNum.value);
   if (!Number.isInteger(n) || n < 1) return;
   busy.value = true;
+  const l = line.value;
   try {
-    data.value = deluxe.value ? await endpoints.kujiBuy(n, 'deluxe') : await endpoints.kujiBuy(n);
-    toast.push(deluxe.value ? t.value.kuji.boughtDeluxe(n) : t.value.kuji.bought(n));
+    const v = l === 'deluxe' ? await endpoints.kujiBuy(n, 'deluxe') : await endpoints.kujiBuy(n);
+    toast.push(l === 'deluxe' ? t.value.kuji.boughtDeluxe(n) : t.value.kuji.bought(n));
+    if (!stale(l)) data.value = v;
   } catch (e) {
     toast.push(errorMessage(e, t.value.kuji.buyFailed), 'danger');
   } finally {
@@ -99,13 +106,15 @@ async function buy() {
 }
 async function draw(n: number) {
   busy.value = true;
+  const l = line.value;
   try {
-    const r = deluxe.value ? await endpoints.kujiDraw(n, 'deluxe') : await endpoints.kujiDraw(n);
+    const r = l === 'deluxe' ? await endpoints.kujiDraw(n, 'deluxe') : await endpoints.kujiDraw(n);
+    if (stale(l)) return;
     result.value = r;
     data.value = r.view;
   } catch (e) {
     toast.push(errorMessage(e, t.value.kuji.drawFailed), 'danger');
-    await load();
+    if (!stale(l)) await load();
   } finally {
     busy.value = false;
   }
@@ -129,6 +138,7 @@ watch(line, () => {
       :class="{ active: line === x }"
       :aria-pressed="line === x"
       :data-testid="`kj-line-${x}`"
+      :disabled="busy"
       @click="pickLine(x)"
     >
       {{ x === 'deluxe' ? t.kuji.lineDeluxe : t.kuji.lineNormal }}
