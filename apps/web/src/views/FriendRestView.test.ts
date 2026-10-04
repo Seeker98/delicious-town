@@ -126,7 +126,7 @@ describe('FriendRestView', () => {
     const w = await mountView();
     const rows = w.findAll('[data-testid^="friend-equip-"]');
     expect(rows.map((r) => r.attributes('data-testid'))).toEqual(['friend-equip-1', 'friend-equip-3']);
-    expect(rows[0]!.find('.equip-part').text()).toBe('铲');
+    expect(rows[0]!.find('span').text()).toBe('铲');
     expect(rows[0]!.find('.badge').text()).toBe('+10');
     expect(rows[1]!.text()).toContain('大锅');
     expect(rows[1]!.find('.badge').exists()).toBe(false);

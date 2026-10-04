@@ -121,10 +121,10 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <!-- 每个部位一行，强化等级单独标出；名字长时自己折行，不和别的部位挤在一段里（问题记录 323） -->
     <div v-if="equips.length > 0" class="border rounded p-2 mb-2 small" data-testid="friend-equips">
       <div class="text-muted mb-1">{{ t.friends.rest.equips }}</div>
-      <div class="equip-grid">
-        <div v-for="e in equips" :key="e.part" class="equip-row" :data-testid="`friend-equip-${e.part}`">
-          <span class="equip-part text-muted">{{ PART_NAMES[e.part] }}</span>
-          <span class="equip-name">{{ equipName(catalog, e) }}</span>
+      <div class="dt-equip-grid">
+        <div v-for="e in equips" :key="e.part" class="dt-equip-row" :data-testid="`friend-equip-${e.part}`">
+          <span class="text-muted">{{ PART_NAMES[e.part] }}</span>
+          <span class="dt-equip-name">{{ equipName(catalog, e) }}</span>
           <span v-if="e.stress > 0" class="badge text-bg-light border">+{{ e.stress }}</span>
           <span v-else></span>
         </div>
@@ -255,21 +255,3 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     </div>
   </template>
 </template>
-
-<style scoped>
-/* 部位一列按最长的部位名定宽，名字一列占满，强化等级靠右 */
-.equip-grid {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr) max-content;
-  column-gap: 0.75rem;
-  row-gap: 0.25rem;
-  align-items: baseline;
-}
-.equip-row {
-  display: contents;
-}
-/* 没有空格的长名字（自定义名、法西文长词）也要折行，不撑宽手机屏幕 */
-.equip-name {
-  overflow-wrap: anywhere;
-}
-</style>

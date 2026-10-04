@@ -189,6 +189,20 @@ body {
   color: var(--dt-primary);
 }
 /* 任务页的活跃项：进行中白底橙条、做满浅绿、星级不够灰底（问题记录：灰色黑色分不清） */
+/* 店铺页的厨具：部位一列按最长的部位名定宽，名字一列占满、没有空格的长名字也折行，强化等级靠右（问题记录 323） */
+.dt-equip-grid {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  column-gap: 0.75rem;
+  row-gap: 0.25rem;
+  align-items: baseline;
+}
+.dt-equip-row {
+  display: contents;
+}
+.dt-equip-name {
+  overflow-wrap: anywhere;
+}
 .dt-act-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
