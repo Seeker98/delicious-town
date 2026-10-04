@@ -131,18 +131,22 @@ describe('搬家（规格书 02 §2.8）', () => {
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
     expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([187]);
   });
-  it('搬街费 ×（1 + 星级 × 系数）（240-1）', async () => {
+  it('搬街费 ×（1 + 星级 × 系数）（240-1）；查询接口和实际扣费一致（终审 I-2）', async () => {
     const shardId = await createShard(t.db);
     await t.db
       .insertInto('shard_config')
       .values({ shard_id: shardId, override: JSON.stringify({ tuning: { growth: { moveStarRate: 0.5 } } }) })
       .execute();
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 100000, star_level: 2 }, goods: { 2: 1 } });
-    await grant(ctx.restaurantId, 140);
+    // 幸运 0、不带街道勋章：不会半价，费用是确定的
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { coin: 100000, star_level: 2, luck: 0 },
+      goods: { 2: 1 },
+    });
+    // 4 桌 × 2500 × (1 + 2 × 0.5) = 20000
+    expect(await g().moveCost(ctx)).toEqual({ cost: 20000 });
     await g().move(ctx, 11);
-    const r = await restRow(t, ctx.restaurantId);
-    // 4 桌 × 2500 × (1 + 2 × 0.5) = 20000；新手街勋章带幸运，可能半价
-    expect([100000 - 20000, 100000 - 10000]).toContain(r.coin);
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(80000);
   });
   it('持有搬家处工作证时不消耗搬家卡', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 } });

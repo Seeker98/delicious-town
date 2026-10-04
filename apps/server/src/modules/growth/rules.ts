@@ -3,6 +3,11 @@ import type { OilNeed, StarNeed } from '@dt/config';
 import type { NeedCheckDto } from '@dt/shared';
 import type { CookbookCounts } from '../../db/schema';
 
+/** 搬街费（幸运半价之前，240-1）：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数） */
+export function moveCost(tables: number, tableACoin: number, star: number, moveStarRate: number): number {
+  return Math.floor(tables * (tableACoin / 2) * (1 + star * moveStarRate));
+}
+
 /** 升到第 star 星要付的银币（240-1）：starCoin 第 star 个数，没写的星不收 */
 export function starCoinOf(g: { starCoin: readonly number[] }, star: number): number {
   return g.starCoin[star - 1] ?? 0;

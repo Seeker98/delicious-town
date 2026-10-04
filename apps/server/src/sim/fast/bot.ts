@@ -2,7 +2,7 @@ import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } f
 import { gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
 import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from '../../modules/cookbook/rules';
 import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
-import { oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
+import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
 import { personLimit, unitPrice } from '../../modules/market/rules';
@@ -293,8 +293,11 @@ const STALE_MS = 3 * 86_400_000;
 function moveStreet(c: FastCtx, r: FastRest, streetId: number): boolean {
   const cfg = c.config;
   const job = countGoods(c, r, GOODS.moveJobHonor) > 0;
-  let cost = Math.floor(
-    r.tables.length * (cfg.requireGoods(GOODS.tableA).coin / 2) * (1 + r.star * c.tuning.growth.moveStarRate),
+  let cost = moveCost(
+    r.tables.length,
+    cfg.requireGoods(GOODS.tableA).coin,
+    r.star,
+    c.tuning.growth.moveStarRate,
   );
   if (r.coin < cost) return false;
   if (!job && countGoods(c, r, GOODS.moveCard) === 0 && !buyBlack(c, r, GOODS.moveCard, 1)) return false;

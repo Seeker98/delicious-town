@@ -4,6 +4,7 @@ import {
   type AttrResultDto,
   type DeviceOptionsDto,
   type OilNeedDto,
+  type MoveCostDto,
   type StarNeedDto,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
@@ -22,7 +23,7 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice, removeDevice } from './devices';
-import { oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
+import { moveCost, oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -238,6 +239,27 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
       });
     },
 
+    /** 搬家页显示的搬街费（终审 I-2：前端不自己算，和实际扣费同一个函数） */
+    async moveCost(ctx: RestCtx): Promise<MoveCostDto> {
+      const [r, tr, s] = await Promise.all([
+        readRest(ctx.restaurantId),
+        d.db
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+        d.shards.settings(ctx.shardId),
+      ]);
+      return {
+        cost: moveCost(
+          tr.tables.length,
+          d.config.requireGoods(GOODS.tableA).coin,
+          r.star_level,
+          s.tuning.growth.moveStarRate,
+        ),
+      };
+    },
+
     move(ctx: RestCtx, streetId: number) {
       return op(ctx, 'rest.move', async (o) => {
         if (!o.config.streets.has(streetId) || streetId === o.rest.street_id)
@@ -248,11 +270,12 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           .select('tables')
           .where('rest_id', '=', o.rest.id)
           .executeTakeFirstOrThrow();
-        // 搬街费随星级上涨（240-1）：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数）
-        let cost = Math.floor(
-          tr.tables.length *
-            (o.config.requireGoods(GOODS.tableA).coin / 2) *
-            (1 + o.rest.star_level * o.tuning.growth.moveStarRate),
+        // 搬街费随星级上涨（240-1）
+        let cost = moveCost(
+          tr.tables.length,
+          o.config.requireGoods(GOODS.tableA).coin,
+          o.rest.star_level,
+          o.tuning.growth.moveStarRate,
         );
         const { rate } = await opLuck(o);
         if (o.rng.chance(rate)) cost = Math.floor(cost / 2);

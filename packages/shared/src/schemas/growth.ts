@@ -45,6 +45,11 @@ export interface StarNeedDto {
   ok: boolean;
 }
 
+/** 搬街费（幸运半价之前），240-1：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数） */
+export interface MoveCostDto {
+  cost: number;
+}
+
 export interface OilNeedDto {
   oilLevel: number;
   oilMax: number;

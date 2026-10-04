@@ -18,9 +18,15 @@ const rest = computed(() => restaurant.rest);
 const streets = computed(() => catalog.streets.filter((s) => s.id !== rest.value?.streetId));
 /** 30 条街只看名字不好选，选中后显示加成（问题记录 284） */
 const picked = computed(() => catalog.streets.find((s) => s.id === target.value) ?? null);
-const cost = computed(() =>
-  rest.value ? rest.value.tables.length * Math.floor((catalog.goods(82)?.coin ?? 5000) / 2) : 0,
-);
+/** 搬街费由服务端算（240-1 终审 I-2：随星级上涨，和实际扣费同一个函数）；幸运时实际只收一半 */
+const cost = ref(0);
+async function loadCost() {
+  try {
+    cost.value = (await endpoints.moveCost()).cost;
+  } catch {
+    cost.value = 0;
+  }
+}
 
 async function move() {
   if (target.value === null) return;
@@ -29,13 +35,17 @@ async function move() {
     await endpoints.move(target.value);
     toast.push(t.value.society.move.done(catalog.streetName(target.value)));
     await restaurant.refresh();
+    await loadCost();
   } catch (e) {
     toast.push(errorMessage(e, t.value.society.move.failed), 'danger');
   } finally {
     busy.value = false;
   }
 }
-onMounted(() => restaurant.refresh().catch(() => undefined));
+onMounted(() => {
+  restaurant.refresh().catch(() => undefined);
+  void loadCost();
+});
 </script>
 
 <template>
