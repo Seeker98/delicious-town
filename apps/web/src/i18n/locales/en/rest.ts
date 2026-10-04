@@ -50,6 +50,8 @@ const rest: Messages['rest'] = {
     avatarFailed: 'Could not change the avatar',
     door: 'Door',
     doorCoin: (n) => `${n} ${plEn(n, 'coin', 'coins')}`,
+    doorOwned: 'Owned',
+    doorHint: 'You pay coins the first time you put up a door; switching back to it later is free',
     doorSet: 'Door changed',
     doorFailed: 'Could not change the door',
     notice: 'Notice board',

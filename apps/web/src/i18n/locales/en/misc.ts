@@ -27,7 +27,7 @@ const misc: Messages['misc'] = {
     copy: 'Copy',
     copyLink: 'Copy link',
     rules: (cap) =>
-      `Friends get a starter pack when they open a restaurant. Once a friend verifies their email, you get a reward each time their restaurant reaches level 10 and level 30. Up to ${cap} ${plEn(cap, 'friend', 'friends')} count per month.`,
+      `Friends get a starter pack when they open a restaurant. Once a friend verifies their email, you get a reward each time their restaurant reaches level 10 and level 30. Up to ${cap} ${plEn(cap, 'friend counts', 'friends count')} per month.`,
     month: (n, cap) => `Counted this month: ${n} / ${cap}`,
     empty: "You haven't invited anyone yet",
     level: (n) => `Level ${n}`,

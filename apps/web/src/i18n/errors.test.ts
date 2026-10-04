@@ -62,4 +62,20 @@ describe('报错文案按语言（问题记录 272）', () => {
   it('非原型属性才算：constructor 之类不会被当成文案', () => {
     expect(errorText('INVALID_STATE', { reason: 'constructor' })).toBe('当前状态下不能这样做');
   });
+
+  it('星级不够：服务端带了当前星级就写出来（backlog ①a）', async () => {
+    const star = (have?: number) =>
+      errorText(
+        'REQUIREMENT_NOT_MET',
+        have === undefined ? { reason: 'star', need: 4 } : { reason: 'star', need: 4, have },
+      );
+    expect(star()).toBe('星级不够（需要 4 星）');
+    expect(star(3)).toBe('星级不够（需要 4 星，当前 3 星）');
+    await useLocaleStore().set('en');
+    expect(star(1)).toBe('Not enough stars (4 stars required, you have 1 star)');
+    await useLocaleStore().set('fr');
+    expect(star(1)).toBe("Pas assez d'étoiles (4 requises, vous en avez 1)");
+    await useLocaleStore().set('es');
+    expect(star(3)).toBe('No tienes suficientes estrellas (se requieren 4, tienes 3)');
+  });
 });

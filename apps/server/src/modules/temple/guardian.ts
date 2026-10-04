@@ -23,7 +23,7 @@ export async function shootMissiles(
   // 伤害按本区服 tuning 覆盖（试玩修复 14；终审：后台改分区数值要生效）
   const over = t.missileAttack.find(([id]) => id === b.goodsId);
   const def = over ? { ...base, attack: [over[1], over[2]] as [number, number] } : base;
-  if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+  if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
   const day = gameDay(o.now);
   if ((await getDaily(o.tx, o.rest.id, 'guardian.killed', day)) > 0) throw invalidState('guardian_down');
   const have = await countGoods(o, b.goodsId);

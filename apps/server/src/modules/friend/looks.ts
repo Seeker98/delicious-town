@@ -46,8 +46,15 @@ export function createLooks(d: GameDeps) {
         .orderBy('id')
         .execute();
       const owned = new Set(rows.map((x) => x.icon_key));
+      const doors = await d.db
+        .selectFrom('rest_door')
+        .select('door_id')
+        .where('rest_id', '=', ctx.restaurantId)
+        .execute();
       return {
         door: r.door,
+        // 已拥有的门：默认门 0 人人都有（问题记录 350）
+        ownedDoors: [0, ...doors.map((x) => x.door_id)].sort((a, b) => a - b),
         avatar: r.avatar,
         notice: r.notice,
         icons: rows.flatMap((x) => {
@@ -100,7 +107,16 @@ export function createLooks(d: GameDeps) {
         const def = o.config.bundle.looks.doors.find((x) => x.id === door);
         if (!def) throw invalidState('bad_look');
         if (door === o.rest.door) throw invalidState('same_door');
-        spendCoin(o, def.coin);
+        // 买过的门永久拥有：第一次换上时付钱，之后换回来免费（问题记录 350）
+        if (door !== 0) {
+          const bought = await o.tx
+            .insertInto('rest_door')
+            .values({ rest_id: o.rest.id, door_id: door, acquired_at: o.now })
+            .onConflict((oc) => oc.doNothing())
+            .returning('door_id')
+            .executeTakeFirst();
+          if (bought) spendCoin(o, def.coin);
+        }
         setRest(o, 'door', door);
         return { door };
       });

@@ -163,7 +163,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
       return op(ctx, 'mc.appraise', async (o): Promise<AppraiseResultDto> => {
         const def = o.config.appraiseTools.get(b.toolId);
         if (!def) throw badInput('not_appraise_tool');
-        if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+        if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
         await consumeGoods(o, GOODS.mysteryRecipe, b.times);
         await consumeGoods(o, b.toolId, b.times);
         const agg = await opAgg(o);
@@ -299,7 +299,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const t = o.tuning.mysterious;
         const mc = mcOf(b.mcId);
         if (!t.cookNums.includes(b.cookNum)) throw badInput('cook_num');
-        if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+        if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
         const row = await o.tx
           .selectFrom('rest_mc')
           .selectAll()

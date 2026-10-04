@@ -12,7 +12,8 @@ import { stateOf } from './common';
 export async function openTakeaway(o: Op, way: 'ticket' | 'coin'): Promise<{ opened: true }> {
   const t = o.tuning.takeaway;
   if (await stateOf(o.tx, o.rest.id)) throw new AppError(ErrorCode.ALREADY_DONE, 400, { what: 'takeaway' });
-  if (o.rest.star_level < t.openStar) throw requirement('star', { need: t.openStar });
+  if (o.rest.star_level < t.openStar)
+    throw requirement('star', { need: t.openStar, have: o.rest.star_level });
   if (o.rest.renown < t.openRenown) throw notEnough('renown', t.openRenown, o.rest.renown);
   if (way === 'ticket') {
     await consumeGoods(o, GOODS.takeawayTicket, 1);

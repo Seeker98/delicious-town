@@ -77,6 +77,7 @@ onMounted(async () => {
     </div>
 
     <h6 class="dt-section">{{ t.rest.look.door }}</h6>
+    <div class="dt-meta mb-1">{{ t.rest.look.doorHint }}</div>
     <div class="d-flex flex-wrap gap-1 mb-3">
       <button
         v-for="d in looks?.doors ?? []"
@@ -86,8 +87,11 @@ onMounted(async () => {
         :disabled="busy || mine.door === d.id"
         @click="act(() => endpoints.setDoor(d.id), t.rest.look.doorSet, t.rest.look.doorFailed)"
       >
-        {{ d.name
-        }}<span v-if="d.coin > 0" class="ms-1 small">{{ t.rest.look.doorCoin(formatNum(d.coin)) }}</span>
+        {{ d.name }}<!-- 买过的门换回来免费（问题记录 350） --><span
+          v-if="d.coin > 0 && mine.ownedDoors.includes(d.id)"
+          class="ms-1 small"
+          >{{ t.rest.look.doorOwned }}</span
+        ><span v-else-if="d.coin > 0" class="ms-1 small">{{ t.rest.look.doorCoin(formatNum(d.coin)) }}</span>
       </button>
     </div>
 

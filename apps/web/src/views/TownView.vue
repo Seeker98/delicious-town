@@ -71,6 +71,8 @@ watch(tab, (v) => {
 onMounted(() => {
   void catalog.load();
   void load();
+  // 直接从链接进来时还没有餐厅数据：读一次，才知道区服关没关发展基金（backlog ①a）
+  if (!restaurant.rest) restaurant.refresh().catch(() => undefined);
 });
 </script>
 
@@ -95,10 +97,11 @@ onMounted(() => {
   </ul>
   <ExchangePanel v-if="tab === 'exchange'" />
   <ClassroomPanel v-else-if="tab === 'classroom'" />
-  <FundPanel v-else-if="tab === 'fund'" />
+  <!-- 餐厅数据读到、确认区服开着发展基金后再挂：不然关掉时也会先请求一次、弹“功能关闭”（backlog ①a） -->
+  <FundPanel v-else-if="tab === 'fund' && restaurant.rest" />
   <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
-    <TownPanel v-else :data="data" @reload="load" />
+    <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />
   </template>
 </template>

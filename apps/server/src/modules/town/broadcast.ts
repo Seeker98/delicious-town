@@ -11,7 +11,7 @@ export async function broadcast(o: Op, raw: string): Promise<{ text: string }> {
   const text = raw.trim();
   if (text.length === 0 || [...text].length > t.maxLen)
     throw invalidState('broadcast_text', { max: t.maxLen });
-  if (o.rest.star_level < t.minStar) throw requirement('star', { need: t.minStar });
+  if (o.rest.star_level < t.minStar) throw requirement('star', { need: t.minStar, have: o.rest.star_level });
   await assertVerified(o);
   const tr = await townRest(o);
   if (tr.broadcast_at) {

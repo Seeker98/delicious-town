@@ -122,7 +122,12 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <div v-if="equips.length > 0" class="border rounded p-2 mb-2 small" data-testid="friend-equips">
       <div class="text-muted mb-1">{{ t.friends.rest.equips }}</div>
       <div class="dt-equip-grid">
-        <div v-for="e in equips" :key="e.part" class="dt-equip-row" :data-testid="`friend-equip-${e.part}`">
+        <div
+          v-for="(e, i) in equips"
+          :key="`${e.part}-${i}`"
+          class="dt-equip-row"
+          :data-testid="`friend-equip-${e.part}`"
+        >
           <span class="text-muted">{{ PART_NAMES[e.part] }}</span>
           <span class="dt-equip-name">{{ equipName(catalog, e) }}</span>
           <span v-if="e.stress > 0" class="badge text-bg-light border">+{{ e.stress }}</span>

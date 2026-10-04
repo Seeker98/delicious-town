@@ -383,6 +383,29 @@ describe('判定边界（backlog 238-2）', () => {
     expect(await market.resolve(await rctx(shardId), params)).toEqual(before);
   });
 
+  it('菜场：货架被清掉时按那一轮的进货新闻判，不按现在的数值重算（backlog #113）', async () => {
+    const shardId = await createShard(t.db);
+    const hour = 12;
+    const period = slotKey(DAY, hour);
+    const slot = { key: period, day: DAY, hour, start: gameTime(DAY, hour) };
+    const { foods } = await t.game.market.refresh(shardId, 0, slot, gameTime(DAY, hour));
+    // 当时进货新闻里记的是一种实际没进的 2 级稀有食材：判定要按新闻（运营事后改数值，重算会不一样）
+    const r2 = [...t.deps.config.foods.values()].find(
+      (f) => f.level === 2 && f.odds < 100 && !foods.includes(f.id),
+    )!;
+    await t.db
+      .updateTable('news')
+      // 999999：之后从配置里删掉的食材，判定时跳过（质量期 ⑤ 终审）
+      .set({ params: JSON.stringify({ shelf: 0, foods: [999999, r2.id] }) })
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'market.restock')
+      .execute();
+    await t.db.deleteFrom('market_item').where('shard_id', '=', shardId).execute();
+    await ran(shardId, 'market-daily', period, gameTime(DAY, hour));
+    const r = (await market.resolve(await rctx(shardId), { hour, level: 2, period }))!;
+    expect(r).toMatchObject({ outcome: true, noteParams: { foods: [r2.id] } });
+  });
+
   it('嘻哈男孩：近期没有活跃玩家店时不出"某家餐厅"，概率按公共地点重新算', async () => {
     const shardId = await createShard(t.db);
     await t.db

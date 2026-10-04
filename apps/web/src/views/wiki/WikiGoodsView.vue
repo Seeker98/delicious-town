@@ -18,7 +18,6 @@ const error = ref<'' | 'missing' | 'failed'>('');
 const toast = useToastStore();
 /** 套装效果（从厨具列表取，backlog #115）、宝石下一阶的名字（从道具列表取） */
 const suit = ref<OpenSuitDto | null>(null);
-const nextGemName = ref<string | null>(null);
 
 /** 读取序号：先打开 A 再打开 B，A 晚到的结果不盖掉 B（backlog #115） */
 let seq = 0;
@@ -31,7 +30,6 @@ watch(
     g.value = null;
     error.value = '';
     suit.value = null;
-    nextGemName.value = null;
     try {
       const v = await data.goodsDetail(id);
       if (mine !== seq) return;
@@ -42,17 +40,13 @@ watch(
       if (error.value === 'failed') toast.push(t.value.wiki.loadFailed, 'danger');
       return;
     }
-    // 这两项是补充信息：读不到就不显示，不算页面读失败
+    // 套装效果是补充信息：读不到就不显示，不算页面读失败
     try {
       const v = g.value;
       if (v.equip && v.equip.suitId > 0) {
         const s = (await data.equips()).suits.find((x) => x.id === v.equip!.suitId) ?? null;
         if (mine !== seq) return;
         suit.value = s;
-      }
-      if (v.gem && v.gem.nextId !== null) {
-        const n = (await data.goods()).items.find((x) => x.id === v.gem!.nextId)?.name ?? null;
-        if (mine === seq) nextGemName.value = n;
       }
     } catch {
       // 忽略
@@ -137,6 +131,10 @@ const shopPrice = computed(() => {
           <span v-if="g.stackable">· {{ w.fields.maxNum(g.maxNum) }}</span>
           <span v-if="g.invalidHours">· {{ w.fields.invalidHours(g.invalidHours) }}</span>
         </dd>
+        <template v-if="g.needStar > 0">
+          <dt>{{ w.fields.star }}</dt>
+          <dd data-testid="wiki-need-star">{{ w.fields.needStar(g.needStar) }}</dd>
+        </template>
       </dl>
 
       <template v-if="g.equip">
@@ -193,7 +191,7 @@ const shopPrice = computed(() => {
             <dt>{{ w.fields.nextGem }}</dt>
             <dd>
               <RouterLink :to="`/wiki/goods/${g.gem.nextId}`">{{
-                nextGemName ?? w.fields.nextGem
+                g.gem.nextName ?? w.fields.nextGem
               }}</RouterLink>
             </dd>
           </template>

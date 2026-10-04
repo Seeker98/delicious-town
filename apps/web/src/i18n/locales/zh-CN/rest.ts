@@ -48,6 +48,8 @@ export default {
     avatarFailed: '更换头像失败',
     door: '门',
     doorCoin: (n: string) => `${n} 银`,
+    doorOwned: '已拥有',
+    doorHint: '每扇门第一次换上时付银币，以后换回来免费',
     doorSet: '换门成功',
     doorFailed: '换门失败',
     notice: '公告栏',

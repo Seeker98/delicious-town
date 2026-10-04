@@ -16,7 +16,7 @@ const ready = async (o: Op) =>
   (await hasValidHonor(o, GOODS.creativePotion)) || (await hasValidHonor(o, GOODS.meditation));
 
 function assertStar(o: Op): void {
-  if (o.rest.star_level < 1) throw requirement('star', { need: 1 });
+  if (o.rest.star_level < 1) throw requirement('star', { need: 1, have: o.rest.star_level });
 }
 
 async function saveTarget(o: Op, mcId: number, way: number): Promise<void> {

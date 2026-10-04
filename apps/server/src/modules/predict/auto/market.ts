@@ -1,9 +1,10 @@
+import { sql } from 'kysely';
 import { gameTime, seededRng, slotKey } from '@dt/shared';
 import { gameSeed } from '../../../core/seed';
 import { rollShelf } from '../../market/rules';
 import { featureAvailable } from '../../../core/features';
 import { clampP, dayLabel, marketRareChance } from './odds';
-import { roundFinishedAt } from './rounds';
+import { finishedRound } from './rounds';
 import type { AutoKind } from './types';
 
 const SIMS = 2000;
@@ -46,15 +47,33 @@ export const market: AutoKind = {
       .execute();
     let foods = rows.map((r) => r.foods_id);
     if (rows.length === 0) {
-      // 货架已经被下一轮清掉（判定晚了）：那一轮跑过就按同一个种子重算系统进货，没跑过先不判（backlog 238-2）
+      // 货架已经被下一轮清掉（判定晚了）：那一轮没跑过先不判（backlog 238-2）
       const period = String(p.period);
-      if ((await roundFinishedAt(c.d.db, c.shardId, 'market-daily', period)) === null) return null;
-      const rng = seededRng(gameSeed(c.shardId, 'market', 0, period));
-      foods = rollShelf(0, Number(p.hour), c.d.config, c.settings.tuning.market, rng).map((x) => x.foodsId);
+      const round = await finishedRound(c.d.db, c.shardId, 'market-daily', period);
+      if (round === null) return null;
+      // 按那一轮刷新时发的进货新闻判：运营中途改了菜场数值，按现在的数值重算会和当时不一样（backlog #113）
+      const news = await c.d.db
+        .selectFrom('news')
+        .select('params')
+        .where('shard_id', '=', c.shardId)
+        .where('type', '=', 'market.restock')
+        .where(sql<string>`params->>'shelf'`, '=', '0')
+        .where('created_at', '>=', round.startedAt)
+        .where('created_at', '<=', round.finishedAt)
+        .orderBy('id')
+        .executeTakeFirst();
+      const logged = (news?.params as { foods?: unknown } | undefined)?.foods;
+      if (Array.isArray(logged)) foods = logged.map(Number);
+      else {
+        // 新闻没有了（老数据）：按同一个种子重算系统进货
+        const rng = seededRng(gameSeed(c.shardId, 'market', 0, period));
+        foods = rollShelf(0, Number(p.hour), c.d.config, c.settings.tuning.market, rng).map((x) => x.foodsId);
+      }
     }
     const level = Number(p.level);
     const rare = foods
-      .map((id) => c.d.config.requireFood(id))
+      // 进货新闻里的食材之后可能从配置里删掉了：找不到的跳过（质量期 ⑤ 终审）
+      .flatMap((id) => c.d.config.foods.get(id) ?? [])
       .filter((f) => f.level === level && f.odds < 100);
     const hour = Number(p.hour);
     const day = String(p.period).split('@')[0]!;

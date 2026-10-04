@@ -50,6 +50,8 @@ const rest: Messages['rest'] = {
     avatarFailed: "Impossible de changer l'avatar",
     door: 'Porte',
     doorCoin: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
+    doorOwned: 'Possédée',
+    doorHint: "Chaque porte se paie la première fois qu'on l'installe ; y revenir ensuite est gratuit",
     doorSet: 'Porte changée',
     doorFailed: 'Impossible de changer la porte',
     notice: "Panneau d'annonce",

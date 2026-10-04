@@ -16,7 +16,8 @@ export function createDb(url: string, max = 10, onQuery?: OnQuery): Kysely<DB> {
     }),
     log: onQuery
       ? (e) => {
-          if (e.level === 'query') onQuery(e.query.sql, e.queryDurationMillis);
+          // 出错的查询也算（backlog 质量期 ③）：慢的失败查询一样要看得到
+          onQuery(e.query.sql, e.queryDurationMillis);
         }
       : undefined,
   });

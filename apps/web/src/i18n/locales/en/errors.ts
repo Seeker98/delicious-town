@@ -71,7 +71,10 @@ const errors: Messages['errors'] = {
       `Your account must be at least ${s(p.days)} ${plEn(s(p.days), 'day', 'days')} old to make predictions`,
     predict_email: () => 'Verify your email to make predictions',
     level: (p) => `Restaurant level too low (level ${s(p.need)} required)`,
-    star: (p) => `Not enough stars (${s(p.need)} ${plural(p.need, 'star', 'stars')} required)`,
+    star: (p) =>
+      p.have === undefined
+        ? `Not enough stars (${s(p.need)} ${plural(p.need, 'star', 'stars')} required)`
+        : `Not enough stars (${s(p.need)} ${plural(p.need, 'star', 'stars')} required, you have ${s(p.have)} ${plural(p.have, 'star', 'stars')})`,
     cookbooks: (p) => `Not enough recipes learned (${s(p.need)} required)`,
     not_available: () => "This star level isn't open yet",
     slot_locked: () => "This facility slot isn't unlocked yet",

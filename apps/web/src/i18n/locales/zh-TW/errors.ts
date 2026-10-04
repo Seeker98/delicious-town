@@ -77,7 +77,10 @@ export default {
     predict_age: (p) => `賬號註冊滿 ${String(p.days)} 天才能參與預測`,
     predict_email: () => '驗證郵箱後才能參與預測',
     level: (p) => `餐廳等級不夠（需要 ${String(p.need)} 級）`,
-    star: (p) => `星級不夠（需要 ${String(p.need)} 星）`,
+    star: (p) =>
+      p.have === undefined
+        ? `星級不夠（需要 ${String(p.need)} 星）`
+        : `星級不夠（需要 ${String(p.need)} 星，當前 ${String(p.have)} 星）`,
     cookbooks: (p) => `學會的食譜不夠（需要 ${String(p.need)} 道）`,
     not_available: () => '這個星級暫未開放',
     slot_locked: () => '這個設施位還沒開放',
