@@ -70,7 +70,7 @@ export async function openPool(
       last: last ? JSON.stringify(last) : null,
       theme: theme ?? null,
     })
-    .onConflict((oc) => oc.columns(['shard_id', 'day', 'seq']).doNothing())
+    .onConflict((oc) => oc.columns(['shard_id', 'line', 'day', 'seq']).doNothing())
     .returning(COLS)
     .executeTakeFirst()) as PoolRow | undefined;
   if (!p) return null;
