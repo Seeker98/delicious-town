@@ -75,7 +75,10 @@ describe('活跃项的门槛（问题记录 360）', () => {
     expect(item('签到')).toMatchObject({ needStar: 0, needLevel: 0, off: false });
     await t.db
       .insertInto('shard_config')
-      .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { exchange: false, bar: false } }) })
+      .values({
+        shard_id: ctx.shardId,
+        override: JSON.stringify({ features: { exchange: false, bar: false } }),
+      })
       .execute();
     t.game.shards.invalidate(ctx.shardId);
     const b = await task().activation(ctx);
