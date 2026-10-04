@@ -22,7 +22,7 @@ import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor, removeHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { placeDevice, removeDevice } from './devices';
-import { oilChecks, renameProblem, starChecks } from './rules';
+import { oilChecks, renameProblem, starChecks, starCoinOf } from './rules';
 
 export function createGrowthService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (op: Op) => Promise<T>): Promise<OpResult<T>> =>
@@ -94,7 +94,14 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         return { star: r.star_level, nextStar: null, available: false, checks: [], award: null, ok: false };
       const available = need.cookbooksKind === 'learned';
       const have = await goodsHave(r.id);
-      const checks = starChecks(r, normalizeCounts(r.cookbook_counts), have(GOODS.starCert), need);
+      const s = await d.shards.settings(ctx.shardId);
+      const checks = starChecks(
+        r,
+        normalizeCounts(r.cookbook_counts),
+        have(GOODS.starCert),
+        need,
+        starCoinOf(s.tuning.growth, next),
+      );
       return {
         star: r.star_level,
         nextStar: next,
@@ -117,6 +124,8 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         if (counts.learned < need.needCookbooks)
           throw requirement('cookbooks', { need: need.needCookbooks, have: counts.learned });
         await consumeGoods(o, GOODS.starCert, need.needCerts);
+        // 升星银币（240-1）：不够时 spendCoin 报 NOT_ENOUGH，整个操作回滚，凭证不扣
+        spendCoin(o, starCoinOf(o.tuning.growth, next));
         setRest(o, 'star_level', next);
         const award = o.config.starAward.get(next);
         if (award) await grantAward(o, award);
