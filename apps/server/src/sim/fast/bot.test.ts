@@ -165,6 +165,22 @@ describe('机器人（设计 §4.5）', () => {
       expect(b.rest.store.has(config.streetMedalId(b.rest.streetId))).toBe(true);
     });
 
+    it('搬街费随星级上涨（240-1）', () => {
+      const c = {
+        ...ctx(),
+        tuning: { ...settings.tuning, growth: { ...settings.tuning.growth, moveStarRate: 0.5 } },
+      };
+      const b = exhausted(c);
+      b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
+      const tables = b.rest.tables.length;
+      botTurn(c, b, newMarket(), world(), null);
+      expect(b.rest.streetId).not.toBe(0);
+      const full = Math.floor(
+        tables * (config.requireGoods(GOODS.tableA).coin / 2) * (1 + b.rest.star * 0.5),
+      );
+      expect([full, Math.floor(full / 2)]).toContain(c.stats.spend!.move);
+    });
+
     it('没有搬家卡时花钻石在黑市买一张；钻石不够就不搬', () => {
       const c = ctx();
       const b = exhausted(c);

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
+import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { listActiveEffects } from '../effects/service';
@@ -129,6 +130,19 @@ describe('搬家（规格书 02 §2.8）', () => {
     expect(await goodsNum(t, ctx.restaurantId, 187)).toBe(1);
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
     expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([187]);
+  });
+  it('搬街费 ×（1 + 星级 × 系数）（240-1）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { growth: { moveStarRate: 0.5 } } }) })
+      .execute();
+    const ctx = await newRestaurant(t, { shardId, patch: { coin: 100000, star_level: 2 }, goods: { 2: 1 } });
+    await grant(ctx.restaurantId, 140);
+    await g().move(ctx, 11);
+    const r = await restRow(t, ctx.restaurantId);
+    // 4 桌 × 2500 × (1 + 2 × 0.5) = 20000；新手街勋章带幸运，可能半价
+    expect([100000 - 20000, 100000 - 10000]).toContain(r.coin);
   });
   it('持有搬家处工作证时不消耗搬家卡', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 } });

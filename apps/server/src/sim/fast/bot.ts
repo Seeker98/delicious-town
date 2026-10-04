@@ -286,11 +286,16 @@ function foodsLack(c: FastCtx, r: FastRest): Map<number, number> {
 /** 本街连续这么久没学到新菜，就当这条街学不动了 */
 const STALE_MS = 3 * 86_400_000;
 
-/** 搬街：有搬家处工作证免卡，否则用搬家卡（没有就花钻石在黑市买一张）；付 餐桌数 × 餐桌A 半价，幸运时再减半；换街道勋章 */
+/**
+ * 搬街：有搬家处工作证免卡，否则用搬家卡（没有就花钻石在黑市买一张）；
+ * 付 餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数，240-1），幸运时再减半；换街道勋章
+ */
 function moveStreet(c: FastCtx, r: FastRest, streetId: number): boolean {
   const cfg = c.config;
   const job = countGoods(c, r, GOODS.moveJobHonor) > 0;
-  let cost = Math.floor(r.tables.length * (cfg.requireGoods(GOODS.tableA).coin / 2));
+  let cost = Math.floor(
+    r.tables.length * (cfg.requireGoods(GOODS.tableA).coin / 2) * (1 + r.star * c.tuning.growth.moveStarRate),
+  );
   if (r.coin < cost) return false;
   if (!job && countGoods(c, r, GOODS.moveCard) === 0 && !buyBlack(c, r, GOODS.moveCard, 1)) return false;
   if (!job) consumeGoods(c, r, GOODS.moveCard, 1);

@@ -248,7 +248,12 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
           .select('tables')
           .where('rest_id', '=', o.rest.id)
           .executeTakeFirstOrThrow();
-        let cost = Math.floor(tr.tables.length * (o.config.requireGoods(GOODS.tableA).coin / 2));
+        // 搬街费随星级上涨（240-1）：餐桌数 × 餐桌A 半价 ×（1 + 星级 × 系数）
+        let cost = Math.floor(
+          tr.tables.length *
+            (o.config.requireGoods(GOODS.tableA).coin / 2) *
+            (1 + o.rest.star_level * o.tuning.growth.moveStarRate),
+        );
         const { rate } = await opLuck(o);
         if (o.rng.chance(rate)) cost = Math.floor(cost / 2);
         spendCoin(o, cost);
