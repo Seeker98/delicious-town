@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    posters:
+      'The shop adds 4 new tiers of promo posters and Town God of Cookery trophies, unlocking at 4, 6, 8 and 10★, so late-game coin and EXP boosts keep up',
     scarcity:
       'Random ingredients now have a chance to be exactly what your recipes are missing, more likely with higher luck; Bar and Tower rewards can now give rare ingredients',
     site: 'Added an update log and links page; the top bar now shows the current time',

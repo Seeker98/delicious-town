@@ -9,6 +9,7 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    posters: '商店新增 4 檔宣傳海報和小鎮食神獎盃，4、6、8、10 星可用，後期的銀幣和經驗加成跟得上了',
     scarcity:
       '隨機得到的食材有一定機率是你學菜正缺的那種，幸運越高越容易；酒吧、廚塔的隨機獎勵也能出稀缺食材了',
     site: '遊戲里加了更新記錄和友情連結，頂欄顯示當前時間',

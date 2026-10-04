@@ -42,6 +42,7 @@ const store: Messages['store'] = {
       owned: 'Déjà possédé',
       store: 'Entrepôt plein',
       other: 'Achat impossible',
+      star: (n) => `Disponible dès ${n}★`,
     },
     price: (price, diamond) => `${price} ${diamond ? 'diamants' : 'pièces'}`,
     owned: (n) => `Possédé : ${n}`,

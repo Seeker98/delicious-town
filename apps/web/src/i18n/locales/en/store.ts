@@ -42,6 +42,7 @@ const store: Messages['store'] = {
       owned: 'Already owned',
       store: 'Storage full',
       other: "Can't buy",
+      star: (n) => `Unlocks at ${n}★`,
     },
     price: (price, diamond) => `${price} ${diamond ? 'diamonds' : 'coins'}`,
     owned: (n) => `Own ${n}`,

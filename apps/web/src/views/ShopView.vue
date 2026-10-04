@@ -50,7 +50,9 @@ const buy = (it: ShopItemDto) =>
 const capText = (it: ShopItemDto) => {
   const s = t.value.store.shop;
   if (it.maxBuy > 0) return s.max(formatNum(it.maxBuy));
-  const why: Record<Exclude<BuyBlock, null>, string> = {
+  // 后期海报奖杯按星级可用（问题记录 146）
+  if (it.blocked === 'star') return s.why.star(it.needStar ?? 0);
+  const why: Record<Exclude<BuyBlock, null | 'star'>, string> = {
     money: tab.value === 'coin' ? s.why.coin : s.why.diamond,
     max: s.why.max,
     owned: s.why.owned,

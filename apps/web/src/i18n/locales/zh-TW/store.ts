@@ -43,6 +43,8 @@ export default {
       owned: '已經擁有',
       store: '倉庫滿了',
       other: '買不了',
+      /** 後期海報獎盃按星級可用（問題記錄 146） */
+      star: (n: number) => `${n} 星可用`,
     },
     price: (price: string, diamond: boolean) => `${price} ${diamond ? '鑽石' : '銀幣'}`,
     owned: (n: number) => `已有 ${n}`,
