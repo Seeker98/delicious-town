@@ -14,7 +14,7 @@ beforeAll(async () => {
 afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime(DAY, 12)));
 
-const ready = (patch = {}, goods: Record<number, number> = { 315: 2 }) =>
+const ready = (patch = {}, goods: Record<number, number> = { [GOODS.horn]: 2 }) =>
   newRestaurant(t, { patch: { star_level: 1, ...patch }, goods, verified: true });
 const send = (ctx: RestCtx, text: string) => t.game.town.broadcast(ctx, { text });
 
@@ -31,7 +31,7 @@ describe('广播（设计文档 §3.2）', () => {
   });
 
   it('64 个字可以，65 个字或全是空白不行', async () => {
-    const a = await ready({}, { 315: 5 });
+    const a = await ready({}, { [GOODS.horn]: 5 });
     await expect(send(a, '字'.repeat(65))).rejects.toMatchObject({
       code: 'INVALID_STATE',
       params: { reason: 'broadcast_text', max: 64 },

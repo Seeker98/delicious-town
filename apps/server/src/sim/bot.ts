@@ -82,7 +82,11 @@ export const USE_ALL: ReadonlySet<GoodsUse['kind']> = new Set([
   'randomFood',
 ]);
 /** 设施位没有设施时去商店买的便宜货：海报、奖杯、节油器 */
-export const CHEAP_DEVICES: Record<number, number> = { 1: 13, 2: 10, 3: 21 };
+export const CHEAP_DEVICES: Record<number, number> = {
+  1: GOODS.normalPoster,
+  2: GOODS.bronzeTrophy,
+  3: GOODS.shortOilSaver,
+};
 
 type Attempt = (fn: () => Promise<unknown>) => Promise<boolean>;
 

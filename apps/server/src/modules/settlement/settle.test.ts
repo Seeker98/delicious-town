@@ -81,7 +81,11 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   });
 
   it('挑剔满足：耗油加倍再加品级，经验加品级，银币加售价 ×(1+品级加成)', () => {
-    const r = settle({ cookbooks: { 194: 1 } }, {}, [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9]);
+    const r = settle(
+      { cookbooks: { [cid('桑椹葡萄粥')]: 1 } },
+      {},
+      [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9],
+    );
     expect(r.tables[0]!.last).toMatchObject({
       type: 2,
       req: 1,
@@ -91,7 +95,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       exp: 3,
       oil: 5,
     });
-    expect(r.coin).toBe(Math.floor(10 + price(194) * 1.2));
+    expect(r.coin).toBe(Math.floor(10 + price(cid('桑椹葡萄粥')) * 1.2));
     expect(r.exp).toBe(4);
     expect(r.oil).toBe(5);
   });
@@ -99,11 +103,11 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   it('菜价倍率（240-1）：挑剔、蟹老板按菜价付的银币乘倍率并向下取整；普通顾客不变', () => {
     const half = { ...rules, settlement: { ...rules.settlement, dishCoinRate: 0.5 } };
     const picky = settle(
-      { cookbooks: { 194: 1 } },
+      { cookbooks: { [cid('桑椹葡萄粥')]: 1 } },
       { tuning: half },
       [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9],
     );
-    expect(picky.coin).toBe(Math.floor(10 + Math.floor(price(194) * 0.5) * 1.2));
+    expect(picky.coin).toBe(Math.floor(10 + Math.floor(price(cid('桑椹葡萄粥')) * 0.5) * 1.2));
     const krab = settle(
       { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 3 } },
       { krabStreet: 1, tuning: half },

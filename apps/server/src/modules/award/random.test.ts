@@ -47,7 +47,9 @@ describe('物品池、食材池', () => {
     const p2 = awardGoodsPool(config.bundle.goods, 2, 0, false);
     expect(p2).toHaveLength(8);
     expect(p2).toContain(GOODS.mysteryTicket);
-    expect(awardGoodsPool(config.bundle.goods, 2, 0, true)).toEqual(p2.filter((id) => id !== 1));
+    expect(awardGoodsPool(config.bundle.goods, 2, 0, true)).toEqual(
+      p2.filter((id) => id !== GOODS.mysteryTicket),
+    );
     for (const id of awardGoodsPool(config.bundle.goods, 10, 0, false)) {
       const g = config.requireGoods(id);
       expect(g.type).not.toBe(GOODS_TYPE.equip);

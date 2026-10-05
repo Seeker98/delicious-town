@@ -141,7 +141,7 @@
     "guessBonusHours": [12, 18],
     "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 21, "discardable": [87], "maxBuy": 999 },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "maxBuy": 999 },
   "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
@@ -221,10 +221,10 @@
     "forgetPerLevel": 3, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.05,
     "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
-    "championGoodsId": 165
+    "championGoodsId": 10814
   },
   "temple": {
-    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[17, 2000, 2000]],
+    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[10701, 2000, 2000]],
     "missileTicketRate": 0.10, "missileMapRate": 0.03,
     "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10,
     "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,
@@ -275,7 +275,7 @@
     "winRenownBase": 6, "loseRenown": 6,
     "rankSize": 15, "rankTop": 8, "rankGap": 3, "rankDaily": 10,
     "rankWinRenown": 2, "rankLoseRenown": 1,
-    "rankGifts": [[1, 202], [2, 203], [3, 204], [8, 205], [15, 206]],
+    "rankGifts": [[1, 20301], [2, 20302], [3, 20303], [8, 20304], [15, 20305]],
     "duelStrength": 5, "duelPerFriend": 10,
     "duelWeakRate": 0.7, "duelStrongRate": 1.15,
     "duelRenown": { "weak": [0, -3], "strong": [6, -2], "normal": [5, -2] },
@@ -292,14 +292,14 @@
     "priceLine": 1000000, "coinRates": [0.24, 0.05], "expRates": [0.72, 0.22], "expDiv": 45,
     "successFloat": 200, "luckOddsRate": 200,
     "privateExpRate": 1.5, "friendRiderRate": 0.9, "rebateDiv": 9, "failExpRate": 0.5,
-    "customer": { "base": 0.015, "luckDiv": 50, "success": 265, "fail": 266 },
+    "customer": { "base": 0.015, "luckDiv": 50, "success": 60506, "fail": 60507 },
     "rider": {
       "maxLevel": 50, "expPerLevel2": 800, "expBase": 500, "timeSubMax": 40,
       "expAdd": 2, "coinAdd": 1, "renownEvery": 2,
       "oddsBase": 800, "oddsPerLevel": 5, "oddsMax": 950, "maxNumEvery": 5,
       "capLevels": [2, 5, 8], "dismissCoin": 50, "dismissExp": 500
     },
-    "awards": [[1, 56, 0], [170, 30, 0.2], [240, 8, 0.5], [171, 6, 0.5], [172, 2, 0.8], [310, 1, 1]],
+    "awards": [[10001, 56, 0], [10704, 30, 0.2], [10006, 8, 0.5], [10705, 6, 0.5], [10706, 2, 0.8], [10007, 1, 1]],
     "keepOpenDays": 1, "keepDoneDays": 7
   },
   "town": {
@@ -313,7 +313,7 @@
     "bless": { "lampCoinBonus": 0.1 },
     "news": { "pageSize": 50 },
     "rareExchange": false,
-    "mysteryExclude": [573, 574],
+    "mysteryExclude": [7011, 7012],
     "exchangeMaxNum": 99
   },
   "hiphop": {
@@ -325,15 +325,15 @@
     "coinMax": 100000000, "coinWorthDiv": 5, "coinExpDiv": 210,
     "diamondMax": 9999, "diamondWorthNum": 10001, "diamondWorthDen": 3, "diamondExpMul": 50,
     "expJitter": 0.1, "requireVerifiedEmail": false,
-    "weeklyCards": [108, 109, 107, 111, 110],
-    "wages": [[107, 233], [108, 234], [109, 235], [111, 236], [110, 237]]
+    "weeklyCards": [60402, 60403, 60401, 60405, 60404],
+    "wages": [[60401, 20401], [60402, 20402], [60403, 20403], [60405, 20404], [60404, 20405]]
   },
   "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 },
   "mail": { "expiresDays": 30, "listMax": 100 },
   "invite": {
     "monthlyCap": 20,
     "levels": { "lv10": 10, "lv30": 30 },
-    "newbie": { "coin": 50000, "goods": [{ "id": 1, "num": 5 }] },
+    "newbie": { "coin": 50000, "goods": [{ "id": 10001, "num": 5 }] },
     "rewards": { "lv10": { "diamond": 20 }, "lv30": { "diamond": 50, "coin": 200000 } }
   },
   "report": { "dailyMax": 10 },
@@ -376,15 +376,15 @@
   "fund": {
     "days": 7, "returnRate": 0.9, "earlyRate": 0.7,
     "tiers": [
-      { "key": "A", "coin": 10000000, "medal": 93103, "news": "broadcast" },
-      { "key": "B", "coin": 3000000, "medal": 93102, "news": "news" },
-      { "key": "C", "coin": 1000000, "medal": 93101, "news": "news" }
+      { "key": "A", "coin": 10000000, "medal": 61906, "news": "broadcast" },
+      { "key": "B", "coin": 3000000, "medal": 61905, "news": "news" },
+      { "key": "C", "coin": 1000000, "medal": 61904, "news": "news" }
     ]
   },
   "forum": {
     "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
     "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,
     "pageSize": 20, "excerpt": 60, "readsMax": 200,
-    "featureReward": { "goods": [[1, 20]], "diamond": 50 }
+    "featureReward": { "goods": [[10001, 20]], "diamond": 50 }
   }
 }

@@ -6,12 +6,12 @@
   {
    "id": 1,
    "category": "bg",
-   "goodsId": 139,
+   "goodsId": 10210,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 2
     }
    ],
@@ -21,12 +21,12 @@
   {
    "id": 2,
    "category": "bg",
-   "goodsId": 238,
+   "goodsId": 61301,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -36,12 +36,12 @@
   {
    "id": 3,
    "category": "bg",
-   "goodsId": 239,
+   "goodsId": 60601,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -51,12 +51,12 @@
   {
    "id": 4,
    "category": "bg",
-   "goodsId": 246,
+   "goodsId": 60602,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -66,12 +66,12 @@
   {
    "id": 5,
    "category": "bg",
-   "goodsId": 247,
+   "goodsId": 60603,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -81,12 +81,12 @@
   {
    "id": 6,
    "category": "bg",
-   "goodsId": 248,
+   "goodsId": 60701,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -96,12 +96,12 @@
   {
    "id": 7,
    "category": "bg",
-   "goodsId": 249,
+   "goodsId": 60702,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -111,12 +111,12 @@
   {
    "id": 8,
    "category": "bg",
-   "goodsId": 254,
+   "goodsId": 60703,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -126,12 +126,12 @@
   {
    "id": 9,
    "category": "bg",
-   "goodsId": 255,
+   "goodsId": 60801,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -141,12 +141,12 @@
   {
    "id": 10,
    "category": "bg",
-   "goodsId": 256,
+   "goodsId": 61405,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -156,12 +156,12 @@
   {
    "id": 11,
    "category": "bg",
-   "goodsId": 258,
+   "goodsId": 60802,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -171,12 +171,12 @@
   {
    "id": 12,
    "category": "bg",
-   "goodsId": 296,
+   "goodsId": 60803,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -186,12 +186,12 @@
   {
    "id": 13,
    "category": "bg",
-   "goodsId": 297,
+   "goodsId": 60804,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -201,12 +201,12 @@
   {
    "id": 14,
    "category": "bg",
-   "goodsId": 306,
+   "goodsId": 61302,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -216,12 +216,12 @@
   {
    "id": 15,
    "category": "bg",
-   "goodsId": 328,
+   "goodsId": 60805,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -231,12 +231,12 @@
   {
    "id": 16,
    "category": "bg",
-   "goodsId": 334,
+   "goodsId": 61409,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -246,12 +246,12 @@
   {
    "id": 17,
    "category": "bg",
-   "goodsId": 338,
+   "goodsId": 60704,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -261,12 +261,12 @@
   {
    "id": 18,
    "category": "bg",
-   "goodsId": 339,
+   "goodsId": 60604,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -276,12 +276,12 @@
   {
    "id": 19,
    "category": "bg",
-   "goodsId": 346,
+   "goodsId": 61410,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -291,12 +291,12 @@
   {
    "id": 20,
    "category": "bg",
-   "goodsId": 350,
+   "goodsId": 61412,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -306,12 +306,12 @@
   {
    "id": 21,
    "category": "bg",
-   "goodsId": 359,
+   "goodsId": 61205,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -321,12 +321,12 @@
   {
    "id": 22,
    "category": "bg",
-   "goodsId": 375,
+   "goodsId": 60806,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -336,12 +336,12 @@
   {
    "id": 23,
    "category": "bg",
-   "goodsId": 378,
+   "goodsId": 61414,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -351,12 +351,12 @@
   {
    "id": 24,
    "category": "bg",
-   "goodsId": 387,
+   "goodsId": 60705,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -366,12 +366,12 @@
   {
    "id": 25,
    "category": "bg",
-   "goodsId": 396,
+   "goodsId": 10707,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 2
     }
    ],
@@ -381,12 +381,12 @@
   {
    "id": 26,
    "category": "bg",
-   "goodsId": 406,
+   "goodsId": 61416,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -396,12 +396,12 @@
   {
    "id": 27,
    "category": "bg",
-   "goodsId": 408,
+   "goodsId": 61418,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -411,12 +411,12 @@
   {
    "id": 28,
    "category": "bg",
-   "goodsId": 415,
+   "goodsId": 61419,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -426,12 +426,12 @@
   {
    "id": 29,
    "category": "bg",
-   "goodsId": 416,
+   "goodsId": 61420,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -441,12 +441,12 @@
   {
    "id": 30,
    "category": "bg",
-   "goodsId": 422,
+   "goodsId": 61421,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -456,12 +456,12 @@
   {
    "id": 31,
    "category": "bg",
-   "goodsId": 461,
+   "goodsId": 61423,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 5
     }
    ],
@@ -471,12 +471,12 @@
   {
    "id": 32,
    "category": "bg",
-   "goodsId": 468,
+   "goodsId": 61426,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -486,12 +486,12 @@
   {
    "id": 33,
    "category": "bg",
-   "goodsId": 472,
+   "goodsId": 60706,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -501,12 +501,12 @@
   {
    "id": 34,
    "category": "bg",
-   "goodsId": 474,
+   "goodsId": 60707,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 3
     }
    ],
@@ -516,12 +516,12 @@
   {
    "id": 35,
    "category": "bg",
-   "goodsId": 528,
+   "goodsId": 61303,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 180,
+     "id": 10005,
      "num": 8
     }
    ],
@@ -531,12 +531,12 @@
   {
    "id": 36,
    "category": "dt",
-   "goodsId": 162,
+   "goodsId": 10811,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 3
     }
    ],
@@ -546,12 +546,12 @@
   {
    "id": 37,
    "category": "dt",
-   "goodsId": 166,
+   "goodsId": 30508,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 36
     }
    ],
@@ -561,12 +561,12 @@
   {
    "id": 38,
    "category": "dt",
-   "goodsId": 238,
+   "goodsId": 61301,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 99
     }
    ],
@@ -576,12 +576,12 @@
   {
    "id": 39,
    "category": "dt",
-   "goodsId": 240,
+   "goodsId": 10006,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 2
     }
    ],
@@ -591,12 +591,12 @@
   {
    "id": 40,
    "category": "dt",
-   "goodsId": 306,
+   "goodsId": 61302,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 99
     }
    ],
@@ -606,12 +606,12 @@
   {
    "id": 41,
    "category": "dt",
-   "goodsId": 311,
+   "goodsId": 30517,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 66
     }
    ],
@@ -621,12 +621,12 @@
   {
    "id": 42,
    "category": "dt",
-   "goodsId": 312,
+   "goodsId": 61201,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 99
     }
    ],
@@ -636,12 +636,12 @@
   {
    "id": 43,
    "category": "dt",
-   "goodsId": 323,
+   "goodsId": 61406,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 66
     }
    ],
@@ -651,12 +651,12 @@
   {
    "id": 44,
    "category": "dt",
-   "goodsId": 325,
+   "goodsId": 30519,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 36
     }
    ],
@@ -666,12 +666,12 @@
   {
    "id": 45,
    "category": "dt",
-   "goodsId": 332,
+   "goodsId": 60308,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 20
     }
    ],
@@ -681,12 +681,12 @@
   {
    "id": 46,
    "category": "dt",
-   "goodsId": 360,
+   "goodsId": 61206,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 36
     }
    ],
@@ -696,12 +696,12 @@
   {
    "id": 47,
    "category": "dt",
-   "goodsId": 388,
+   "goodsId": 60605,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 66
     }
    ],
@@ -711,12 +711,12 @@
   {
    "id": 48,
    "category": "dt",
-   "goodsId": 407,
+   "goodsId": 61417,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 36
     }
    ],
@@ -726,12 +726,12 @@
   {
    "id": 49,
    "category": "dt",
-   "goodsId": 411,
+   "goodsId": 60607,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 99
     }
    ],
@@ -741,12 +741,12 @@
   {
    "id": 50,
    "category": "dt",
-   "goodsId": 415,
+   "goodsId": 61419,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 66
     }
    ],
@@ -756,12 +756,12 @@
   {
    "id": 51,
    "category": "dt",
-   "goodsId": 465,
+   "goodsId": 61425,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 66
     }
    ],
@@ -771,12 +771,12 @@
   {
    "id": 52,
    "category": "dt",
-   "goodsId": 526,
+   "goodsId": 30522,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 36
     }
    ],
@@ -786,12 +786,12 @@
   {
    "id": 53,
    "category": "dt",
-   "goodsId": 619,
+   "goodsId": 30523,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 310,
+     "id": 10007,
      "num": 99
     }
    ],
@@ -801,12 +801,12 @@
   {
    "id": 54,
    "category": "chip",
-   "goodsId": 207,
+   "goodsId": 61701,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -816,12 +816,12 @@
   {
    "id": 55,
    "category": "chip",
-   "goodsId": 208,
+   "goodsId": 61502,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -831,12 +831,12 @@
   {
    "id": 56,
    "category": "chip",
-   "goodsId": 209,
+   "goodsId": 30516,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -846,12 +846,12 @@
   {
    "id": 57,
    "category": "chip",
-   "goodsId": 210,
+   "goodsId": 61801,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 80
     }
    ],
@@ -861,12 +861,12 @@
   {
    "id": 58,
    "category": "chip",
-   "goodsId": 216,
+   "goodsId": 61702,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -876,12 +876,12 @@
   {
    "id": 59,
    "category": "chip",
-   "goodsId": 217,
+   "goodsId": 61703,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -891,12 +891,12 @@
   {
    "id": 60,
    "category": "chip",
-   "goodsId": 219,
+   "goodsId": 61403,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 80
     }
    ],
@@ -906,12 +906,12 @@
   {
    "id": 61,
    "category": "chip",
-   "goodsId": 336,
+   "goodsId": 61202,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -921,12 +921,12 @@
   {
    "id": 62,
    "category": "chip",
-   "goodsId": 337,
+   "goodsId": 61203,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -936,12 +936,12 @@
   {
    "id": 63,
    "category": "chip",
-   "goodsId": 410,
+   "goodsId": 61208,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -951,12 +951,12 @@
   {
    "id": 64,
    "category": "chip",
-   "goodsId": 423,
+   "goodsId": 61422,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -966,12 +966,12 @@
   {
    "id": 65,
    "category": "chip",
-   "goodsId": 448,
+   "goodsId": 61209,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -981,12 +981,12 @@
   {
    "id": 66,
    "category": "chip",
-   "goodsId": 469,
+   "goodsId": 61427,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 50
     }
    ],
@@ -996,12 +996,12 @@
   {
    "id": 67,
    "category": "chip",
-   "goodsId": 477,
+   "goodsId": 61210,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -1011,12 +1011,12 @@
   {
    "id": 68,
    "category": "chip",
-   "goodsId": 478,
+   "goodsId": 61211,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -1026,12 +1026,12 @@
   {
    "id": 69,
    "category": "chip",
-   "goodsId": 482,
+   "goodsId": 61212,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -1041,12 +1041,12 @@
   {
    "id": 70,
    "category": "chip",
-   "goodsId": 483,
+   "goodsId": 61213,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -1056,12 +1056,12 @@
   {
    "id": 71,
    "category": "chip",
-   "goodsId": 531,
+   "goodsId": 61214,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 30
     }
    ],
@@ -1071,12 +1071,12 @@
   {
    "id": 72,
    "category": "chip",
-   "goodsId": 533,
+   "goodsId": 61428,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 185,
+     "id": 10805,
      "num": 80
     }
    ],
@@ -1086,12 +1086,12 @@
   {
    "id": 73,
    "category": "so",
-   "goodsId": 94,
+   "goodsId": 30205,
    "num": 1,
    "needGoods": [
     {
      "type": "goods",
-     "id": 240,
+     "id": 10006,
      "num": 2
     }
    ],

@@ -85,7 +85,7 @@
    "num": 30,
    "needAct": 60,
    "value": {
-    "goodsId": 1
+    "goodsId": 10001
    },
    "buff": {
     "atRate": 0.03
@@ -99,7 +99,7 @@
    "num": 1,
    "needAct": 150,
    "value": {
-    "goodsId": 139
+    "goodsId": 10210
    },
    "buff": {
     "spRate": 0.03
@@ -113,7 +113,7 @@
    "num": 2,
    "needAct": 120,
    "value": {
-    "goodsId": 240
+    "goodsId": 10006
    },
    "buff": {
     "coinRate": 0.05
@@ -127,7 +127,7 @@
    "num": 2,
    "needAct": 100,
    "value": {
-    "goodsId": 170
+    "goodsId": 10704
    },
    "buff": {
     "expRate": 0.08
@@ -141,7 +141,7 @@
    "num": 1,
    "needAct": 100,
    "value": {
-    "goodsId": 131
+    "goodsId": 20004
    },
    "buff": {
     "atRate": 0.05
@@ -155,7 +155,7 @@
    "num": 2,
    "needAct": 80,
    "value": {
-    "goodsId": 28
+    "goodsId": 10409
    },
    "buff": {
     "expRate": 0.05
@@ -169,7 +169,7 @@
    "num": 3,
    "needAct": 120,
    "value": {
-    "goodsId": 491
+    "goodsId": 10418
    },
    "buff": {
     "coinRate": 0.05

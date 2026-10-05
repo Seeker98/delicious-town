@@ -261,7 +261,7 @@ describe('竞猜（规格书 06 §6.3）', () => {
   it('worker 停机错过了报名那一轮：下次日常刷新时退还神秘礼券并标记已结算', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     t.clock.set(gameTime('2026-09-30', 9, 30));
-    const r = await m().joinGuess(ctx, [238, 240]);
+    const r = await m().joinGuess(ctx, [fid('白菜'), fid('黄瓜')]);
     expect(r.data.period).toBe('2026-09-30@10');
     expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(3);
     const slot = latestSlot(gameTime('2026-09-30', 12), t_.dailyHours);

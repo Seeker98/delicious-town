@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { GOODS } from '@dt/config';
 import { roundOf } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { upsertEffectSource } from '../effects/service';
 import { settleShardRound } from '../settlement/runner';
+import { gid } from '../../../test/items';
 
 let http: TestContext;
 let t: TestGame;
@@ -91,7 +93,9 @@ describe('餐厅读接口', () => {
     const buffs = (await get(p.cookie, '/buffs')).json.data;
     expect(buffs.roundNo).toBe(round);
     expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.3);
-    expect(buffs.sources.map((s: { sourceId: number }) => s.sourceId).sort()).toEqual([100, 140, 81]);
+    expect(buffs.sources.map((s: { sourceId: number }) => s.sourceId).sort()).toEqual(
+      [GOODS.redPants, gid('新手街'), gid('开张大吉')].sort(),
+    );
     const overview = (await get(p.cookie, '/overview')).json.data;
     expect(overview.lastRound.roundNo).toBe(round);
   });

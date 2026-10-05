@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { createGameConfig } from '@dt/config';
+import { createGameConfig, FUND, GOODS } from '@dt/config';
 import { seededRng, sequenceRng } from '@dt/shared';
 import { userWithRole } from '../../../test/admin';
 import { testConfig } from '../../../test/config';
@@ -179,14 +179,17 @@ describe('区服数值（HTTP）', () => {
         cookie: admin.cookie,
         body: { override: { tuning: { fund } }, note: 'x', version: 0 },
       });
-    const bad = await save({ earlyRate: 0.95, tiers: [{ key: 'C', coin: 1000000, medal: 1 }] });
+    const bad = await save({
+      earlyRate: 0.95,
+      tiers: [{ key: 'C', coin: 1000000, medal: GOODS.mysteryTicket }],
+    });
     expect(bad.status).toBe(400);
     expect(bad.json.code).toBe('INVALID_CONFIG');
     expect(bad.json.params.issues).toEqual([
       { path: 'tuning.fund', message: 'tuning.fund earlyRate 0.95 must not exceed returnRate 0.9' },
-      { path: 'tuning.fund', message: 'tuning.fund.tiers C medal 1 is not an honor' },
+      { path: 'tuning.fund', message: `tuning.fund.tiers C medal ${GOODS.mysteryTicket} is not an honor` },
     ]);
-    expect((await save({ tiers: [{ key: 'C', coin: 500000, medal: 93101 }] })).status).toBe(200);
+    expect((await save({ tiers: [{ key: 'C', coin: 500000, medal: FUND.C }] })).status).toBe(200);
   });
 
   it('下架的道具不能再写进区服数值的奖励（问题记录 367）', async () => {

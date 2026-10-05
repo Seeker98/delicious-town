@@ -71,15 +71,19 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
       goods: { [gid('[一阶]•蓝冥石')]: 2, [GOODS.essence]: 1 },
     });
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'));
-    await eq().inlay(ctx, { id, gemId: 44 });
+    await eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥石') });
     expect(await gemsOn(id)).toMatchObject([{ gem_goods_id: gid('[一阶]•蓝冥石'), level: 1, cook: 1 }]);
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(9);
     expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥石'))).toBe(1);
     const o = await eq().list(ctx, {});
     expect(o[0]!.gem.cook).toBe(1);
-    await expect(eq().inlay(ctx, { id, gemId: 44 })).rejects.toMatchObject({ params: { reason: 'no_hole' } });
+    await expect(eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥石') })).rejects.toMatchObject({
+      params: { reason: 'no_hole' },
+    });
     await t.db.updateTable('equip').set({ cur_hole: 2 }).where('id', '=', id).execute();
-    await expect(eq().inlay(ctx, { id, gemId: 52 })).rejects.toMatchObject({ params: { reason: 'not_gem' } });
+    await expect(eq().inlay(ctx, { id, gemId: GOODS.essence })).rejects.toMatchObject({
+      params: { reason: 'not_gem' },
+    });
   });
 
   it('摘除：2 星以下免费；2 星起花 阶数 × 1 万；酸雨免费；宝石退回仓库', async () => {
@@ -91,11 +95,11 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
         .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid, level })
         .returning('id')
         .executeTakeFirstOrThrow();
-    const g1 = await row(274, 2);
+    const g1 = await row(gid('[二阶]•智慧石'), 2);
     expect((await eq().ungem(ctx, { gemRowId: g1.id })).data).toEqual({ coin: 20_000 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(5_000);
     expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•智慧石'))).toBe(1);
-    const g2 = await row(274, 2);
+    const g2 = await row(gid('[二阶]•智慧石'), 2);
     await setWeather(ctx.shardId, 18);
     expect((await eq().ungem(ctx, { gemRowId: g2.id })).data).toEqual({ coin: 0 });
   });
@@ -176,7 +180,7 @@ describe('宝石升阶（设计文档 §3.9）', () => {
     expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥石'))).toMatchObject({
       num: 3,
       level: 1,
-      nextId: 286,
+      nextId: gid('[二阶]•蓝冥石'),
     });
     expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥石'))!.rate).toBeCloseTo(0.77);
     expect(g.items.find((x) => x.goodsId === gid('[六阶]•智慧石'))).toMatchObject({ nextId: null });
@@ -184,8 +188,18 @@ describe('宝石升阶（设计文档 §3.9）', () => {
 });
 
 describe('宝石排序（问题记录 132）', () => {
-  // 41 智慧一阶、43 黄玉一阶、44 蓝冥一阶、275 智慧三阶、286 蓝冥二阶、344 蓝冥六阶（数据里等级写的 5）、289 蓝冥五阶
-  const goods = { 41: 1, 43: 1, 44: 1, 275: 1, 286: 1, 289: 1, 344: 1 };
+  // 蓝冥六阶数据里等级写的 5
+  const goods = Object.fromEntries(
+    [
+      '[一阶]•智慧石',
+      '[一阶]•黄玉石',
+      '[一阶]•蓝冥石',
+      '[三阶]•智慧石',
+      '[二阶]•蓝冥石',
+      '[五阶]•蓝冥石',
+      '[六阶]•蓝冥石',
+    ].map((n) => [gid(n), 1]),
+  );
   const ORDER = [
     gid('[一阶]•蓝冥石'),
     gid('[二阶]•蓝冥石'),

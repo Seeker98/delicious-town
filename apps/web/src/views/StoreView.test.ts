@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { StoreDto } from '@dt/shared';
+import { SHARED_GOODS, type StoreDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import StoreView from './StoreView.vue';
@@ -215,7 +215,7 @@ describe('StoreView', () => {
       ...structuredClone(data),
       items: [
         {
-          goodsId: 87,
+          goodsId: SHARED_GOODS.starPromoHonor,
           type: 0,
           num: 1,
           expiresAt: null,

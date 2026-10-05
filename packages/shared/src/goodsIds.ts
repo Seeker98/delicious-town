@@ -3,14 +3,14 @@
  * 前端不能依赖 @dt/config，所以需要的放在这里
  */
 export const SHARED_GOODS = {
-  mysteryTicket: 1, // 神秘礼券
-  starPromoHonor: 87, // 升星促销勋章（仓库页单独说明）
-  krabCoin: 240, // 蟹币
+  mysteryTicket: 10001, // 神秘礼券
+  starPromoHonor: 60202, // 升星促销勋章（仓库页单独说明）
+  krabCoin: 10006, // 蟹币
 } as const;
 
 /** 前后端都要用到的食材 id：万能食材 = masterBase + 食材等级（1~5 级）；一级、二级能换稀有食材（重新编号 PR 2） */
 export const SHARED_FOODS = {
-  masterBase: 466,
-  masterLevel1: 467,
-  masterLevel2: 468,
+  masterBase: 9000,
+  masterLevel1: 9001,
+  masterLevel2: 9002,
 } as const;

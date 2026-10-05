@@ -55,7 +55,7 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
       href: '/yard',
       done: false,
     });
-    const r = await win.game.yard.appraiseFormula(ctx, { toolId: 164, times: 2 });
+    const r = await win.game.yard.appraiseFormula(ctx, { toolId: GOODS.seal, times: 2 });
     expect(r.data.results).toEqual([
       { ok: true, formulaId: 1, part: 'main', upgraded: false },
       { ok: true, formulaId: 1, part: 'main', upgraded: false },
@@ -69,7 +69,7 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
 
   it('失败时什么碎片也不得，道具照扣', async () => {
     const ctx = await newRestaurant(lose, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
-    const r = await lose.game.yard.appraiseFormula(ctx, { toolId: 164, times: 1 });
+    const r = await lose.game.yard.appraiseFormula(ctx, { toolId: GOODS.seal, times: 1 });
     expect(r.data.results).toEqual([{ ok: false }]);
     expect(await rowOf(lose, ctx.restaurantId)).toBeUndefined();
     expect(await goodsNum(lose, ctx.restaurantId, GOODS.formulaScroll)).toBe(0);
@@ -79,12 +79,12 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
     const has = await newRestaurant(moon, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
     await grantGoods(moon.db, config, has.restaurantId, GOODS.moonScroll, 1, moon.clock.now);
     await setRow(moon, has.restaurantId, { sub_num: 1 });
-    const r1 = await moon.game.yard.appraiseFormula(has, { toolId: 164, times: 1 });
+    const r1 = await moon.game.yard.appraiseFormula(has, { toolId: GOODS.seal, times: 1 });
     expect(r1.data.results).toEqual([{ ok: true, formulaId: 1, part: 'main', upgraded: true }]);
     expect(await rowOf(moon, has.restaurantId)).toMatchObject({ main_num: 1, sub_num: 1 });
     const none = await newRestaurant(moon, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
     await grantGoods(moon.db, config, none.restaurantId, GOODS.moonScroll, 1, moon.clock.now);
-    const r2 = await moon.game.yard.appraiseFormula(none, { toolId: 164, times: 1 });
+    const r2 = await moon.game.yard.appraiseFormula(none, { toolId: GOODS.seal, times: 1 });
     expect(r2.data.results).toEqual([{ ok: true, formulaId: 1, part: 'sub', upgraded: false }]);
   });
 
@@ -96,7 +96,7 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
         params: { reason: 'not_formula_tool' },
       });
     }
-    await expect(t.game.yard.appraiseFormula(ctx, { toolId: 164, times: 2 })).rejects.toMatchObject({
+    await expect(t.game.yard.appraiseFormula(ctx, { toolId: GOODS.seal, times: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'goods', id: GOODS.formulaScroll, need: 2, have: 1 },
     });
@@ -165,7 +165,7 @@ describe('配方合成（规格书 08 §8.5）', () => {
         .selectFrom('yard_basket')
         .select('num')
         .where('rest_id', '=', restId)
-        .where('foods_id', '=', 438)
+        .where('foods_id', '=', fid('槟榔芋'))
         .executeTakeFirst()
     )?.num ?? 0;
 

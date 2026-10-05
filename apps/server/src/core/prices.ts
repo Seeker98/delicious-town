@@ -1,11 +1,8 @@
-import type { Food } from '@dt/config';
+import { FOODS, type Food } from '@dt/config';
 
-/** 万能食材的 id：466 + 能顶替的普通等级（规格书 03 §3.3，467~471 顶替 1~5 级） */
-const UNIVERSAL_BASE = 466;
-
-/** 万能食材能顶替的等级（1~5）；不是万能食材为 null。菜价倍率和交易所参考价共用 */
+/** 万能食材能顶替的等级（1~5，id = FOODS.masterBase + 等级，规格书 03 §3.3）；不是万能食材为 null。菜价倍率和交易所参考价共用 */
 export function universalLevel(food: Food): number | null {
-  const base = food.id - UNIVERSAL_BASE;
+  const base = food.id - FOODS.masterBase;
   return food.level === 9 && base >= 1 && base <= 5 ? base : null;
 }
 

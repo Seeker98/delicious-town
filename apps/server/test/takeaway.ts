@@ -1,5 +1,6 @@
 import type { RestCtx } from '../src/core/deps';
 import type { TestGame } from './game';
+import { cid } from './items';
 
 /** 直接把这家店设成已开通：建开通状态和自己这个骑手；返回自己骑手的 id */
 export async function openFor(t: TestGame, ctx: RestCtx): Promise<number> {
@@ -58,7 +59,7 @@ export async function addOrder(t: TestGame, shardId: number, o: OrderInit = {}):
     .values({
       shard_id: shardId,
       owner_rest_id: o.owner ?? null,
-      cookbook_id: o.cookbookId ?? 1,
+      cookbook_id: o.cookbookId ?? cid('南煎丸子'),
       grade: o.grade ?? 1,
       need_minutes: o.needMinutes ?? 30,
       need_renown: o.needRenown ?? 3,

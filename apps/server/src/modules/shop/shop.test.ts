@@ -137,9 +137,9 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
   it('受银币 / 钻石限制，买不起时给出原因', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 3500, diamond: 12 } });
     const l = await shop().items(ctx);
-    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 3, blocked: null });
-    expect(item(l, 'coin', 86)).toMatchObject({ maxBuy: 0, blocked: 'money' });
-    expect(item(l, 'black', 86)).toMatchObject({ maxBuy: 2, blocked: null });
+    expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 3, blocked: null });
+    expect(item(l, 'coin', GOODS.starCert)).toMatchObject({ maxBuy: 0, blocked: 'money' });
+    expect(item(l, 'black', GOODS.starCert)).toMatchObject({ maxBuy: 2, blocked: null });
   });
 
   it('受持有上限和单次 999 个限制；厨具一次只能买 1 件', async () => {
@@ -148,16 +148,16 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
       goods: { [gid('体力卡')]: 9998, [GOODS.essence]: 9999 },
     });
     const l = await shop().items(ctx);
-    expect(item(l, 'coin', 29)).toMatchObject({ maxBuy: 1, blocked: null });
-    expect(item(l, 'coin', 52)).toMatchObject({ maxBuy: 0, blocked: 'max' });
-    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 999, blocked: null });
-    expect(item(l, 'coin', 30)).toMatchObject({ maxBuy: 1, blocked: null });
+    expect(item(l, 'coin', gid('体力卡'))).toMatchObject({ maxBuy: 1, blocked: null });
+    expect(item(l, 'coin', GOODS.essence)).toMatchObject({ maxBuy: 0, blocked: 'max' });
+    expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 999, blocked: null });
+    expect(item(l, 'coin', gid('见习之铲'))).toMatchObject({ maxBuy: 1, blocked: null });
   });
 
   it('教师证（不可叠放、持有上限 1）已有 1 张时不能再买（问题记录 136）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000_000 }, goods: { [gid('初级教师证')]: 1 } });
     const l = await shop().items(ctx);
-    expect(item(l, 'coin', 177)).toMatchObject({ maxBuy: 0, blocked: 'max' });
+    expect(item(l, 'coin', gid('初级教师证'))).toMatchObject({ maxBuy: 0, blocked: 'max' });
   });
 
   it('仓库满了：新种类为 0（store），已有的种类照常能买', async () => {
@@ -166,8 +166,8 @@ describe('列表给出一次最多能买几个（问题记录：商店不显示�
       goods: { [GOODS.starCert]: 1 },
     });
     const l = await shop().items(ctx);
-    expect(item(l, 'coin', 13)).toMatchObject({ maxBuy: 0, blocked: 'store' });
-    expect(item(l, 'coin', 86)).toMatchObject({ maxBuy: 18, blocked: null });
+    expect(item(l, 'coin', gid('普通宣传海报'))).toMatchObject({ maxBuy: 0, blocked: 'store' });
+    expect(item(l, 'coin', GOODS.starCert)).toMatchObject({ maxBuy: 18, blocked: null });
   });
 });
 

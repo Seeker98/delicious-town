@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
+import { SPONSOR_HATS } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
 import { rewriteStatDesc, scaleToTotal, statDescIssues } from './stressTable';
 import { gid } from './testItems';
@@ -45,12 +46,20 @@ describe('数值表（问题记录 120）', () => {
     // 中厨之锅：厨艺 1、火候 8 缩放到 4
     expect(g(gid('中厨之锅')).equip!.ranges).toMatchObject({ cook: 0, fire: 4 });
     // 赞助帽：玉级 25、铉级 41
-    expect(g(641).equip!.ranges.creatives).toBe(25);
-    expect(g(642).equip!.ranges.creatives).toBe(41);
-    const levels = Object.fromEntries(
-      [33, 637, 59, 56, 632, 352, 358, 73, 30].map((id) => [id, g(id).equip!.minLevel]),
-    );
-    expect(levels).toEqual({ 33: 40, 637: 50, 59: 60, 56: 65, 632: 70, 352: 80, 358: 90, 73: 13, 30: 0 });
+    expect(g(SPONSOR_HATS.jade).equip!.ranges.creatives).toBe(25);
+    expect(g(SPONSOR_HATS.xuan).equip!.ranges.creatives).toBe(41);
+    const levels = [
+      '灵魂之沙利叶的无情之铲',
+      '堕落之茵蔯的炙热之铲',
+      '裁决之巴贝雷特的悲鸣之铲',
+      '沉默之度玛的静谧之镬',
+      '意志之古尔图格的精华之铲',
+      '神谕之阿卡玛的荣耀之铲',
+      '食神之铲',
+      '宋嫂之铲',
+      '见习之铲',
+    ].map((n) => g(gid(n)).equip!.minLevel);
+    expect(levels).toEqual([40, 50, 60, 65, 70, 80, 90, 13, 0]);
   });
 
   it('一件厨具没有表、或被两张表覆盖时报错（Review Focus 1）', () => {
@@ -58,7 +67,7 @@ describe('数值表（问题记录 120）', () => {
     const lore = structuredClone(src['game/equip_lore']) as {
       stressTables: Array<{ goods?: number[]; suits?: number[] }>;
     };
-    lore.stressTables[0]!.goods = [...(lore.stressTables[0]!.goods ?? []), 352];
+    lore.stressTables[0]!.goods = [...(lore.stressTables[0]!.goods ?? []), gid('神谕之阿卡玛的荣耀之铲')];
     const two = buildBundle({ ...src, 'game/equip_lore': lore }).errors;
     expect(two).toContain(
       `goods ${gid('神谕之阿卡玛的荣耀之铲')} equip needs exactly one stress table (found 2)`,

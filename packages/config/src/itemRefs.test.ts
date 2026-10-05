@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GOODS } from './ids';
+import { FOODS, GOODS } from './ids';
 import { CODE_GOODS, CODE_FOODS, itemRefs, tuningRefs, type ItemRef } from './itemRefs';
 import { realBuild } from './testBundle';
 import { gid } from './testItems';
@@ -75,10 +75,23 @@ describe('道具、食材的引用（问题记录 367）', () => {
   });
 
   it('代码里写死的道具：GOODS 常量、按编号推的碎片和 N 级券、万能食材', () => {
-    for (const id of Object.values(GOODS)) expect(CODE_GOODS.has(id), String(id)).toBe(true);
-    for (const id of [181, 186, 241, 245]) expect(CODE_GOODS.has(id), String(id)).toBe(true);
+    // 基数（fragmentBase、levelTicketBase）本身不是道具（重新编号后是小类的起点，没有这件道具）
+    for (const [k, id] of Object.entries(GOODS)) expect(CODE_GOODS.has(id), k).toBe(!k.endsWith('Base'));
+    for (const id of [
+      GOODS.fragmentBase + 1,
+      GOODS.fragmentBase + 6,
+      GOODS.levelTicketBase + 1,
+      GOODS.levelTicketBase + 5,
+    ])
+      expect(CODE_GOODS.has(id), String(id)).toBe(true);
     expect(find('goods', GOODS.starCert, 'code')).toHaveLength(1);
-    expect(CODE_FOODS.has(467)).toBe(true);
-    expect(find('foods', 468, 'code')).toHaveLength(1);
+    expect(CODE_FOODS.has(FOODS.masterBase + 1)).toBe(true);
+    expect(find('foods', FOODS.masterBase + 2, 'code')).toHaveLength(1);
+  });
+
+  it('鞋带：捆绑用掉的普通飞弹、得到的极速飞弹都算引用（重新编号 PR 4）', () => {
+    const where = '鞋带';
+    expect(find('goods', gid('普通飞弹'), 'uses').map((r) => r.where)).toContain(where);
+    expect(find('goods', gid('极速飞弹'), 'gives').map((r) => r.where)).toContain(where);
   });
 });

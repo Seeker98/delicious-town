@@ -5,7 +5,7 @@ import { checkNewbieCodes } from './newbieCodes';
 import { defaultDataDir, readSourceDir } from './source';
 import { gid } from './testItems';
 
-const goods = new Set([1, 28, 29]);
+const goods = new Set(['神秘礼券', '小体力卡', '体力卡'].map(gid));
 const foods = new Set([10]);
 const run = (codes: unknown[]) => {
   const errors: string[] = [];

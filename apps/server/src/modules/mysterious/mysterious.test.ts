@@ -5,7 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 import { GOODS } from '@dt/config';
-import { gid } from '../../../test/items';
+import { fid, gid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -38,7 +38,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 10, [GOODS.krabburgerBook]: 10 },
     });
-    const r = await s().appraise(ctx, { toolId: 165, times: 10, noRetry: false });
+    const r = await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 10, noRetry: false });
     expect(r.data.results).toHaveLength(10);
     let total = 0;
     for (const x of r.data.results) {
@@ -68,7 +68,11 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 2, [gid('美味印章')]: 2 },
     });
-    const r = await unlucky.game.mysterious.appraise(ctx, { toolId: 163, times: 2, noRetry: false });
+    const r = await unlucky.game.mysterious.appraise(ctx, {
+      toolId: gid('美味印章'),
+      times: 2,
+      noRetry: false,
+    });
     expect(r.data.results.every((x) => !x.ok && typeof x.text === 'string')).toBe(true);
     // 失败文案带序号，前端按语言显示（问题记录 272）
     expect(r.data.results.every((x) => typeof x.textId === 'number' && x.textId >= 0 && x.textId < 4)).toBe(
@@ -79,7 +83,9 @@ describe('鉴定（规格书 04 §4.3）', () => {
 
   it('0 星报 REQUIREMENT_NOT_MET；不是鉴定道具报 VALIDATION_FAILED；神秘食谱不够时秘方也不扣', async () => {
     const zero = await newRestaurant(t, { goods: { [GOODS.mysteryRecipe]: 1, [GOODS.krabburgerBook]: 1 } });
-    await expect(s().appraise(zero, { toolId: 165, times: 1, noRetry: false })).rejects.toMatchObject({
+    await expect(
+      s().appraise(zero, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false }),
+    ).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'star', need: 1 },
     });
@@ -87,11 +93,13 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 1, [GOODS.krabburgerBook]: 5 },
     });
-    await expect(s().appraise(ctx, { toolId: 85, times: 1, noRetry: false })).rejects.toMatchObject({
+    await expect(s().appraise(ctx, { toolId: gid('金币'), times: 1, noRetry: false })).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
       params: { reason: 'not_appraise_tool' },
     });
-    await expect(s().appraise(ctx, { toolId: 165, times: 2, noRetry: false })).rejects.toMatchObject({
+    await expect(
+      s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 2, noRetry: false }),
+    ).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'goods', id: GOODS.mysteryRecipe },
     });
@@ -103,7 +111,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
       patch: { star_level: 1 },
       goods: { [GOODS.mysteryRecipe]: 99, [GOODS.krabburgerBook]: 99 },
     });
-    await s().appraise(ctx, { toolId: 165, times: 99, noRetry: false });
+    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 99, noRetry: false });
     const kinds = await t.db
       .selectFrom('mc_remnant')
       .select('mc_id')
@@ -126,7 +134,7 @@ describe('残卷', () => {
     expect(sold.data.coin).toBe(config.requireMc(1).coin * 2);
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(config.requireMc(1).coin * 2);
     await s().decomposeRemnant(ctx, { mcId: 1, num: 3 });
-    expect(await goodsNum(t, ctx.restaurantId, 180 + config.requireMc(1).level)).toBe(3);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.fragmentBase + config.requireMc(1).level)).toBe(3);
     expect(await remnantOf(ctx.restaurantId, 1)).toBe(0);
     await expect(s().sellRemnant(ctx, { mcId: 1, num: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
@@ -187,7 +195,12 @@ describe('概览、目录、任务、功能开关', () => {
 
   it('目录带特色菜（名称、等级、道、食材）', () => {
     const m = t.game.world.catalog().mysterious!.find((x) => x.id === 1)!;
-    expect(m).toMatchObject({ name: '秘·仿膳饽饽', level: 4, road: 1, foods: [390, 412, 261] });
+    expect(m).toMatchObject({
+      name: '秘·仿膳饽饽',
+      level: 4,
+      road: 1,
+      foods: [fid('海参'), fid('渤海对虾'), fid('冬笋')],
+    });
   });
 
   it('主线「鉴定一次神秘食谱」「学会一道特色菜」', async () => {
@@ -197,7 +210,7 @@ describe('概览、目录、任务、功能开关', () => {
     });
     await showQuest(t, ctx.restaurantId, 2081);
     expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ key: 'mc.appraise', done: false });
-    await s().appraise(ctx, { toolId: 165, times: 1, noRetry: false });
+    await s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false });
     expect(questIn(await t.game.task.tasks(ctx), 2081)).toMatchObject({ done: true });
     const ctx2 = await newRestaurant(t);
     await giveRemnant(ctx2, 1, 3);
@@ -221,7 +234,9 @@ describe('概览、目录、任务、功能开关', () => {
       .execute();
     t.game.shards.invalidate(ctx.shardId);
     await expect(s().overview(ctx)).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
-    await expect(s().appraise(ctx, { toolId: 165, times: 1, noRetry: false })).rejects.toMatchObject({
+    await expect(
+      s().appraise(ctx, { toolId: GOODS.krabburgerBook, times: 1, noRetry: false }),
+    ).rejects.toMatchObject({
       code: 'FEATURE_DISABLED',
     });
   });

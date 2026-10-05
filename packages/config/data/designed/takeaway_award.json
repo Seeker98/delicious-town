@@ -4,32 +4,32 @@
  "count": 6,
  "data": [
   {
-   "goodsId": 1,
+   "goodsId": 10001,
    "odds": 56,
    "gradeBonus": 0
   },
   {
-   "goodsId": 170,
+   "goodsId": 10704,
    "odds": 30,
    "gradeBonus": 0.2
   },
   {
-   "goodsId": 240,
+   "goodsId": 10006,
    "odds": 8,
    "gradeBonus": 0.5
   },
   {
-   "goodsId": 171,
+   "goodsId": 10705,
    "odds": 6,
    "gradeBonus": 0.5
   },
   {
-   "goodsId": 172,
+   "goodsId": 10706,
    "odds": 2,
    "gradeBonus": 0.8
   },
   {
-   "goodsId": 310,
+   "goodsId": 10007,
    "odds": 1,
    "gradeBonus": 1.0
   }

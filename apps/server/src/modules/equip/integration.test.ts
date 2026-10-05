@@ -56,7 +56,7 @@ describe('功能关闭（设计文档 裁定 10）', () => {
     const ctx = await newRestaurant(t, { patch: { level: 13 } });
     await showQuest(t, ctx.restaurantId, 3161);
     expect((await t.game.task.tasks(ctx)).lines.some((l) => l.id === 8)).toBe(true);
-    for (const g of [62, 103, 64])
+    for (const g of ['真爱之铲', '真爱之刀', '真爱之锅'].map(gid))
       await t.game.equip.wear(ctx, { id: await piece(ctx, g, { base_luck: 4 }) });
     await t.db
       .insertInto('shard_config')

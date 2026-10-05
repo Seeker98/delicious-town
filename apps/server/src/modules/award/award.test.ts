@@ -63,7 +63,9 @@ describe('openGift（规格书 07 §7.5）', () => {
     rngValues = [0.5, 0.1, 0, 0.5, 0.1, 0.5, 0.9, 0.2, 0.99];
     await run(ctx, (op) => openGift(op, config.requireGoods(GOODS.signInGift), 1));
     // 随机道具池的第一个如果恰好也是神秘礼券，礼券会多 1
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(20 + (pool[0] === 1 ? 1 : 0));
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(
+      20 + (pool[0] === GOODS.mysteryTicket ? 1 : 0),
+    );
     expect(await goodsNum(t, ctx.restaurantId, pool[0]!)).toBeGreaterThanOrEqual(1);
     const r = await restRow(t, ctx.restaurantId);
     expect(r.coin).toBe(1000 + Math.floor(0.5 * 19000));

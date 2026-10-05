@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { createGameConfig, goodsEffectHours } from './runtime';
 import { defaultDataDir, readSourceDir } from './source';
-import { GOODS } from './ids';
+import { FOODS, GOODS } from './ids';
 import { cid, fid, gid } from './testItems';
 
 const config = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bundle!);
@@ -30,25 +30,24 @@ describe('2A 运行时索引', () => {
     expect(cfg.foodsByLevel.get(1)!.length).toBe(27);
     expect(cfg.foodPools.get(2)!.items.length).toBe(89); // 81 + 新街道 8 种 2 级食材（问题记录 284）
     expect(cfg.rareFoodPools.get(2)!.items.every((f) => f.odds < 100)).toBe(true);
-    expect(cfg.masterFoodPool.items.map((f) => f.id)).toEqual([467, 468, 469, 470, 471]);
+    expect(cfg.masterFoodPool.items.map((f) => f.id)).toEqual(
+      [1, 2, 3, 4, 5].map((lv) => FOODS.masterBase + lv),
+    );
     expect(cfg.hotFoodPool.items.length).toBe(25); // 18 + 新街道 7 种用量多的稀有食材（问题记录 284）
   });
 
   it('食谱索引', () => {
     const idx = cfg.cookbookIndex;
-    expect(idx.street[1]).toBe(6);
-    expect(idx.coin[1]).toBe(cfg.cookbooks.get(cid('南煎丸子'))!.coin);
+    expect(idx.street[cid('南煎丸子')]).toBe(6);
+    expect(idx.coin[cid('南煎丸子')]).toBe(cfg.cookbooks.get(cid('南煎丸子'))!.coin);
     expect(idx.idsByStreet.get(0)!.length).toBe(69);
     expect(idx.allIds.length).toBe(3810);
   });
 
-  it('街道勋章：新手街 140，江西街 187', () => {
-    expect(cfg.streetMedalId(0)).toBe(140);
-    expect(cfg.streetMedalId(11)).toBe(187);
+  it('街道勋章 = 60000 + 街道编号（重新编号）', () => {
+    for (const s of [0, 11, 20, 29]) expect(cfg.streetMedalId(s)).toBe(60000 + s);
     expect(cfg.isStreetMedal(cfg.requireGoods(gid('北京街')))).toBe(true);
     expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.redPants))).toBe(false);
-    expect(cfg.streetMedalId(20)).toBe(92020);
-    expect(cfg.streetMedalId(29)).toBe(92029);
     // 雕像的 devicetype 也是 20，不是印度街勋章（问题记录 284）
     expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.thinker))).toBe(false);
     expect(cfg.isStreetMedal(cfg.requireGoods(gid('印度街')))).toBe(true);
@@ -61,7 +60,7 @@ describe('2A 运行时索引', () => {
     expect(cfg.oilNeed.get(1)!.oilMax).toBe(1500);
     expect(cfg.grade(7).spCoinAddRate).toBe(1.3);
     expect(cfg.activationByName.get('签到')!.points).toBe(10);
-    expect(cfg.guessFoodIds.has(238)).toBe(true);
+    expect(cfg.guessFoodIds.has(fid('白菜'))).toBe(true);
   });
 
   it('随机奖池不含装备，按 awardflag 过滤', () => {
@@ -88,16 +87,18 @@ describe('2A 运行时索引', () => {
 
 describe('特色菜索引（子项目 4A）', () => {
   it('鉴定道具和教师证按道具 id 索引', () => {
-    expect(config.appraiseTools.get(165)).toEqual({ min: 3, max: 5, rate: 1, num: 2 });
-    expect(config.appraiseTools.get(163)).toEqual({ min: 1, max: 6, rate: 0.28, num: 1 });
-    expect(config.appraiseTools.has(162)).toBe(false);
-    expect(config.teacherCerts.get(394)).toEqual({
+    expect(config.appraiseTools.get(gid('蟹黄堡秘方'))).toEqual({ min: 3, max: 5, rate: 1, num: 2 });
+    expect(config.appraiseTools.get(gid('美味印章'))).toEqual({ min: 1, max: 6, rate: 0.28, num: 1 });
+    expect(config.appraiseTools.has(gid('神秘食谱'))).toBe(false);
+    expect(config.teacherCerts.get(gid('顶级教师证'))).toEqual({
       levels: [6],
       needStrength: 100,
       maxNum: 5,
       lessonHour: 32,
     });
-    expect([...config.teacherCerts.keys()].sort((a, b) => a - b)).toEqual([177, 178, 179, 394]);
+    expect([...config.teacherCerts.keys()].sort((a, b) => a - b)).toEqual(
+      ['初级教师证', '中级教师证', '高级教师证', '顶级教师证'].map(gid),
+    );
     expect(config.requireMc(1).name).toBe('秘·仿膳饽饽');
     expect(() => config.requireMc(99999)).toThrow();
     expect(config.mcProficiency[2]!.name).toBe('熟练');
@@ -106,11 +107,25 @@ describe('特色菜索引（子项目 4A）', () => {
 
 describe('神殿索引（子项目 4B-1）', () => {
   it('飞弹、探险图按道具 id 索引；种子池', () => {
-    expect(config.missiles.get(17)).toEqual({ attack: [2000, 2000], hitRate: 0.96, crit: 0.2, critRate: 2 });
-    expect([...config.missiles.keys()].sort((a, b) => a - b)).toEqual([17, 18, 19]);
-    expect(config.maps.get(171)).toMatchObject({ rate: 0.9, level: [4, 5], num: [10, 20], needStrength: 5 });
-    expect([...config.maps.keys()].sort((a, b) => a - b)).toEqual([170, 171, 172, 396]);
-    expect(config.seeds.get(1)!.foodsId).toBe(101);
+    expect(config.missiles.get(gid('极速飞弹'))).toEqual({
+      attack: [2000, 2000],
+      hitRate: 0.96,
+      crit: 0.2,
+      critRate: 2,
+    });
+    expect([...config.missiles.keys()].sort((a, b) => a - b)).toEqual(
+      ['极速飞弹', '普通飞弹', '爆裂飞弹'].map(gid),
+    );
+    expect(config.maps.get(gid('高级探险图'))).toMatchObject({
+      rate: 0.9,
+      level: [4, 5],
+      num: [10, 20],
+      needStrength: 5,
+    });
+    expect([...config.maps.keys()].sort((a, b) => a - b)).toEqual(
+      ['探险图', '高级探险图', '顶级探险图', '极品探险图'].map(gid),
+    );
+    expect(config.seeds.get(1)!.foodsId).toBe(fid('大米'));
     expect(config.seedPool.items).toHaveLength(96);
     expect(config.tuning.temple.guardianHpBase).toBe(20000);
   });
@@ -118,12 +133,12 @@ describe('神殿索引（子项目 4B-1）', () => {
 
 describe('菜园索引（子项目 4B-2）', () => {
   it('配方池、种子兑换按种子 id、肥料分钟数、动作收益', () => {
-    expect(config.formulas.get(2)!.resFoodsId).toBe(448);
+    expect(config.formulas.get(2)!.resFoodsId).toBe(fid('三文鱼'));
     expect(config.formulaPool.items).toHaveLength(56);
     expect(config.seedExchange.get(1)).toEqual({ seedId: 1, seedNum: 5, essence: 2 });
     expect([...config.fertilizers]).toEqual([
-      [427, 20],
-      [428, 60],
+      [gid('低级肥料'), 20],
+      [gid('高级肥料'), 60],
     ]);
     expect(config.incomeAction(51)).toMatchObject({ coin: 1, exp: 1, landExp: 5 });
     expect(() => config.incomeAction(999)).toThrow();
@@ -196,11 +211,11 @@ describe('厨塔索引（子项目 4C-2）', () => {
       duelPerFriend: 10,
       sparMaxAt: 50,
       rankGifts: [
-        [1, 202],
-        [2, 203],
-        [3, 204],
-        [8, 205],
-        [15, 206],
+        [1, gid('赛厨第1名礼包')],
+        [2, gid('赛厨第2名礼包')],
+        [3, gid('赛厨第3名礼包')],
+        [8, gid('赛厨第4-8名礼包')],
+        [15, gid('赛厨第9-15名礼包')],
       ],
     });
   });
@@ -217,15 +232,15 @@ describe('外卖数值（子项目 4D）', () => {
       refreshCoin: 1_000_000,
       refreshRenown: 160,
       gradeRates: [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
-      customer: { base: 0.015, luckDiv: 50, success: 265, fail: 266 },
+      customer: { base: 0.015, luckDiv: 50, success: gid('珊迪'), fail: gid('派大星') },
       rider: { maxLevel: 50, capLevels: [2, 5, 8], oddsBase: 800, oddsMax: 950 },
       awards: [
-        [1, 56, 0],
-        [170, 30, 0.2],
-        [240, 8, 0.5],
-        [171, 6, 0.5],
-        [172, 2, 0.8],
-        [310, 1, 1],
+        [gid('神秘礼券'), 56, 0],
+        [gid('探险图'), 30, 0.2],
+        [gid('蟹币'), 8, 0.5],
+        [gid('高级探险图'), 6, 0.5],
+        [gid('顶级探险图'), 2, 0.8],
+        [gid('美味券'), 1, 1],
       ],
     });
   });
@@ -233,9 +248,9 @@ describe('外卖数值（子项目 4D）', () => {
 
 describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）', () => {
   it('极速飞弹伤害按 tuning 覆盖成 2000；普通、爆裂不变', () => {
-    expect(config.missiles.get(17)!.attack).toEqual([2000, 2000]);
-    expect(config.missiles.get(18)!.attack).toEqual([90, 110]);
-    expect(config.missiles.get(19)!.attack).toEqual([80, 130]);
+    expect(config.missiles.get(gid('极速飞弹'))!.attack).toEqual([2000, 2000]);
+    expect(config.missiles.get(gid('普通飞弹'))!.attack).toEqual([90, 110]);
+    expect(config.missiles.get(gid('爆裂飞弹'))!.attack).toEqual([80, 130]);
   });
   it('血量 2 万 + 1 万 × 星级', () => {
     expect(config.tuning.temple.guardianHpBase).toBe(20000);

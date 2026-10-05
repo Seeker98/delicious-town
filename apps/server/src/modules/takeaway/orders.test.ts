@@ -110,7 +110,7 @@ describe('概览里的单（设计文档 §5）', () => {
   it('看得到公共单和自己的私人单，看不到别人的私人单、过期的和被接走的；每张单写明能不能接', async () => {
     const me = await newRestaurant(t, {
       patch: { renown: 3 },
-      cookbooks: { 1: 1 },
+      cookbooks: { [cid('南煎丸子')]: 1 },
       foods: { [fid('猪肉')]: 1, [fid('鸡蛋')]: 1, [fid('香葱')]: 1 },
     });
     const other = await newRestaurant(t, { shardId: me.shardId });

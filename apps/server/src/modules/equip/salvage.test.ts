@@ -145,10 +145,10 @@ describe('删除厨具留流水（终审 Important 1）', () => {
       .orderBy('id')
       .execute();
     expect(rows).toEqual([
-      { item_id: 30, delta: -1, source: 'equip.salvage' },
-      { item_id: 31, delta: -1, source: 'equip.sell' },
-      { item_id: 32, delta: -1, source: 'equip.batch' },
-      { item_id: 47, delta: -1, source: 'equip.batch' },
+      { item_id: gid('见习之铲'), delta: -1, source: 'equip.salvage' },
+      { item_id: gid('见习之刀'), delta: -1, source: 'equip.sell' },
+      { item_id: gid('见习之锅'), delta: -1, source: 'equip.batch' },
+      { item_id: gid('中厨之铲'), delta: -1, source: 'equip.batch' },
     ]);
   });
 });

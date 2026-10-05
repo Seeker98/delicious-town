@@ -42,7 +42,7 @@ describe('重算已生成的厨具（设计 §6）', () => {
     const r = await newRestaurant(t);
     const table = t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable; // 巴贝雷特之铲
     // 旧的随机分配：厨艺 20、刀工 15（总和 35）；强化到 +3，只有 +1、+2 的记录，+2 回退后重强过一次
-    const id = await oldPiece(r.restaurantId, 59, {
+    const id = await oldPiece(r.restaurantId, gid('裁决之巴贝雷特的悲鸣之铲'), {
       base_cook: 20,
       base_cutting: 15,
       stress: 3,
@@ -72,7 +72,7 @@ describe('重算的终审修复', () => {
   it('穿着的厨具重算后，缓存的厨具幸运同步更新（终审 I2）', async () => {
     const r = await newRestaurant(t);
     // 巴贝雷特之铲旧数据：幸运 35（旧 total 35），穿着；先按旧值同步一次缓存
-    await oldPiece(r.restaurantId, 59, { base_luck: 35, worn: true });
+    await oldPiece(r.restaurantId, gid('裁决之巴贝雷特的悲鸣之铲'), { base_luck: 35, worn: true });
     await runSystemOp(t.game.deps, r.shardId, r.restaurantId, { source: 'test' }, (op) =>
       syncEquipEffects(op),
     );
@@ -88,7 +88,7 @@ describe('重算的终审修复', () => {
   it('和玩家操作串行：这家店正被锁着改强化等级时，重算等它改完，用改完后的等级（终审 I3）', async () => {
     const r = await newRestaurant(t);
     const table = t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable;
-    const id = await oldPiece(r.restaurantId, 59, { base_cook: 35, stress: 3 });
+    const id = await oldPiece(r.restaurantId, gid('裁决之巴贝雷特的悲鸣之铲'), { base_cook: 35, stress: 3 });
     let release!: () => void;
     const held = new Promise<void>((res) => (release = res));
     let locked!: () => void;

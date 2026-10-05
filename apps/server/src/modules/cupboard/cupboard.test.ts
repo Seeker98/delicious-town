@@ -43,21 +43,21 @@ describe('锁定（规格书 05 §5.3）', () => {
       patch: { foods_lock_num: 1 },
       foods: { [fid('大米')]: 1, [fid('青椒')]: 1 },
     });
-    await c().lock(ctx, 101);
-    await expect(c().lock(ctx, 102)).rejects.toMatchObject({ code: 'LIMIT_REACHED' });
+    await c().lock(ctx, fid('大米'));
+    await expect(c().lock(ctx, fid('青椒'))).rejects.toMatchObject({ code: 'LIMIT_REACHED' });
     await t.db
       .updateTable('cupboard_food')
       .set({ num: 0 })
       .where('rest_id', '=', ctx.restaurantId)
-      .where('foods_id', '=', 101)
+      .where('foods_id', '=', fid('大米'))
       .execute();
-    await c().unlock(ctx, 101);
+    await c().unlock(ctx, fid('大米'));
     const rows = await t.db
       .selectFrom('cupboard_food')
       .select('foods_id')
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(rows.map((r) => r.foods_id)).toEqual([102]);
+    expect(rows.map((r) => r.foods_id)).toEqual([fid('青椒')]);
   });
 });
 
@@ -93,7 +93,7 @@ describe('冰箱（规格书 05 §5.2）', () => {
     const f = await c().fridge(ctx);
     expect(f.items).toEqual([{ foodsId: fid('大米'), num: 2, thawable: 2, thawCoin: cost }]);
     await c().readFridge(ctx);
-    const r = await c().thaw(ctx, 101);
+    const r = await c().thaw(ctx, fid('大米'));
     expect(r.data).toEqual({ foodsId: fid('大米'), moved: 2, coin: cost });
     expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 2, fridge: 0 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(10000 - cost);
@@ -107,7 +107,7 @@ describe('冰箱（规格书 05 §5.2）', () => {
       .insertInto('cupboard_food')
       .values({ rest_id: ctx.restaurantId, foods_id: fid('大米'), num: 0, fridge_num: 2 })
       .execute();
-    await expect(c().thaw(ctx, 101)).rejects.toMatchObject({ code: 'CUPBOARD_FULL' });
+    await expect(c().thaw(ctx, fid('大米'))).rejects.toMatchObject({ code: 'CUPBOARD_FULL' });
   });
 });
 
@@ -166,7 +166,7 @@ describe('合成不抽已经堆满的食材（问题记录 290）', () => {
   it('同等级其他食材都堆满时，合成只出没满的那一种', async () => {
     const level2 = config.foodPools.get(2)!.items.map((f) => f.id);
     const want = level2.at(-1)!;
-    const foods: Record<number, number> = { 101: 4 };
+    const foods: Record<number, number> = { [fid('大米')]: 4 };
     for (const id of level2) if (id !== want) foods[id] = 5;
     const ctx = await newRestaurant(win, { patch: { coin: 1000, foods_max_num: 5 }, foods });
     const r = await win.game.cupboard.handle(ctx, { foodsId: fid('大米'), way: 'compose', num: 4 });

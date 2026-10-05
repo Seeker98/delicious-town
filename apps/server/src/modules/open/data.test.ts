@@ -37,7 +37,7 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('礼包内容只给种类和数量、不给概率；随机道具、随机食材、万能食材、随机银币分开写', () => {
-    const g = data.goodsDetail('zh-CN', 115)!;
+    const g = data.goodsDetail('zh-CN', GOODS.signInGift)!;
     expect(g.gift).toEqual(
       expect.arrayContaining([
         {
@@ -57,9 +57,15 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('来源：商店在售时写价格；声望商店；兑换得到和兑换用途', () => {
-    expect(data.goodsDetail('zh-CN', 10)!.sources.shop).toEqual({ coin: 1000, diamond: 0 });
-    expect(data.goodsDetail('zh-CN', 115)!.sources.shop).toBeNull();
-    expect(data.goodsDetail('zh-CN', 310)!.sources.renownShop).toEqual({ renown: 60, rotating: false });
+    expect(data.goodsDetail('zh-CN', gid('小镇食神奖杯(铜)'))!.sources.shop).toEqual({
+      coin: 1000,
+      diamond: 0,
+    });
+    expect(data.goodsDetail('zh-CN', GOODS.signInGift)!.sources.shop).toBeNull();
+    expect(data.goodsDetail('zh-CN', GOODS.dtTicket)!.sources.renownShop).toEqual({
+      renown: 60,
+      rotating: false,
+    });
     const rule = b.goodsExchange[0]!;
     const made = data.goodsDetail('zh-CN', rule.goodsId)!.sources.exchange;
     expect(made.map((r) => r.need.map((n) => n.goodsId))).toContainEqual(rule.need.map((n) => n.goodsId));
@@ -68,7 +74,7 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('厨具详情带强化表；厨具列表的 +10 总和是强化表末项', () => {
-    const eq = data.goodsDetail('zh-CN', 30)!.equip!;
+    const eq = data.goodsDetail('zh-CN', gid('见习之铲'))!.equip!;
     expect(eq).toMatchObject({ part: 1, stressTable: [2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18] });
     const list = data.equips('zh-CN');
     expect(list.items.find((x) => x.id === gid('见习之铲'))).toMatchObject({ part: 1, maxTotal: 18 });
@@ -76,9 +82,9 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('食材详情：用到它的菜谱（最低品级）、特色菜、种子', () => {
-    const food = data.food('zh-CN', 239)!;
+    const food = data.food('zh-CN', fid('猪肉'))!;
     expect(food.cookbooks).toContainEqual({
-      id: 1,
+      id: cid('南煎丸子'),
       name: '南煎丸子',
       streetId: config.cookbooks.get(cid('南煎丸子'))!.streetId,
       grade: 1,
@@ -94,7 +100,7 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('菜谱详情：10 个品级的食材带名字；描述只在简中给', () => {
-    const c = data.cookbook('zh-CN', 1)!;
+    const c = data.cookbook('zh-CN', cid('南煎丸子'))!;
     expect(c.grades).toHaveLength(10);
     expect(c.grades[0]!.foods.map((f) => f.foodsId)).toEqual([fid('猪肉'), fid('鸡蛋'), fid('香葱')]);
     expect(c.desc).toBe(config.cookbooks.get(cid('南煎丸子'))!.desc);
@@ -106,8 +112,8 @@ describe('开放接口数据（问题记录 142）', () => {
   });
 
   it('道具详情带需要的星级；宝石带下一阶的名字（backlog 146、#115）', () => {
-    expect(data.goodsDetail('zh-CN', 93202)!.needStar).toBe(6);
-    expect(data.goodsDetail('zh-CN', 13)!.needStar).toBe(0);
+    expect(data.goodsDetail('zh-CN', gid('镇长宣传海报'))!.needStar).toBe(6);
+    expect(data.goodsDetail('zh-CN', gid('普通宣传海报'))!.needStar).toBe(0);
     const gem = b.goods.find((g) => g.gem && g.gem.nextId !== null)!;
     const next = b.goods.find((g) => g.id === gem.gem!.nextId)!;
     expect(data.goodsDetail('zh-CN', gem.id)!.gem).toMatchObject({ nextId: next.id, nextName: next.name });
@@ -142,7 +148,7 @@ describe('售价按默认数值算（240-1）', () => {
 });
 
 describe('下架的道具、食材不上开放接口（问题记录 367）', () => {
-  const goodsId = 1;
+  const goodsId = GOODS.mysteryTicket;
   const foodId = b.foods[0]!.id;
   const retired = createOpenData(
     createGameConfig({

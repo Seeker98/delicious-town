@@ -4,7 +4,7 @@
  "count": 12,
  "data": [
   {
-   "goodsId": 310,
+   "goodsId": 10007,
    "renown": 60,
    "rareflag": 0,
    "weeklyLimit": 10,
@@ -12,7 +12,7 @@
    "require": null
   },
   {
-   "goodsId": 506,
+   "goodsId": 10905,
    "renown": 120,
    "rareflag": 0,
    "weeklyLimit": 20,
@@ -20,7 +20,7 @@
    "require": "xz"
   },
   {
-   "goodsId": 507,
+   "goodsId": 10906,
    "renown": 100,
    "rareflag": 0,
    "weeklyLimit": 20,
@@ -28,7 +28,7 @@
    "require": "xz"
   },
   {
-   "goodsId": 508,
+   "goodsId": 10907,
    "renown": 90,
    "rareflag": 0,
    "weeklyLimit": 20,
@@ -36,7 +36,7 @@
    "require": "xz"
   },
   {
-   "goodsId": 610,
+   "goodsId": 10506,
    "renown": 150,
    "rareflag": 0,
    "weeklyLimit": 10,
@@ -44,7 +44,7 @@
    "require": "tz"
   },
   {
-   "goodsId": 397,
+   "goodsId": 61601,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -52,7 +52,7 @@
    "require": null
   },
   {
-   "goodsId": 402,
+   "goodsId": 61602,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -60,7 +60,7 @@
    "require": null
   },
   {
-   "goodsId": 438,
+   "goodsId": 61603,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -68,7 +68,7 @@
    "require": null
   },
   {
-   "goodsId": 439,
+   "goodsId": 61604,
    "renown": 5000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -76,7 +76,7 @@
    "require": null
   },
   {
-   "goodsId": 460,
+   "goodsId": 61605,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -84,7 +84,7 @@
    "require": null
   },
   {
-   "goodsId": 476,
+   "goodsId": 61606,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,
@@ -92,7 +92,7 @@
    "require": null
   },
   {
-   "goodsId": 484,
+   "goodsId": 61607,
    "renown": 3000,
    "rareflag": 1,
    "weeklyLimit": 1,

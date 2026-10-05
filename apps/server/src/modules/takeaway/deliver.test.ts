@@ -22,7 +22,7 @@ const cook = async (shardId?: number): Promise<{ ctx: RestCtx; rider: number }> 
   const ctx = await newRestaurant(t, {
     shardId,
     patch: { renown: 10 },
-    cookbooks: { 1: 1 },
+    cookbooks: { [cid('南煎丸子')]: 1 },
     foods: { [fid('猪肉')]: 5, [fid('鸡蛋')]: 5, [fid('香葱')]: 5 },
   });
   const rider = await openFor(t, ctx);
@@ -130,7 +130,7 @@ describe('接单（设计文档 §3.3）', () => {
   it('记下用了几种神秘食材', async () => {
     const ctx = await newRestaurant(t, {
       patch: { renown: 10 },
-      cookbooks: { 4: 5 },
+      cookbooks: { [cid('水晶排骨')]: 5 },
       foods: { [fid('生姜')]: 1, [fid('神秘宝田犊')]: 1, [fid('章丘大葱')]: 1 },
     });
     const rider = await openFor(t, ctx);
@@ -188,7 +188,7 @@ describe('接单（设计文档 §3.3）', () => {
   });
 
   it('没开通不能接单', async () => {
-    const ctx = await newRestaurant(t, { cookbooks: { 1: 1 } });
+    const ctx = await newRestaurant(t, { cookbooks: { [cid('南煎丸子')]: 1 } });
     await expect(deliver(ctx, await addOrder(t, ctx.shardId), 1)).rejects.toMatchObject({
       params: { reason: 'takeaway_closed' },
     });

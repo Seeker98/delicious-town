@@ -20,11 +20,14 @@ const range = (base: number, from: number, to: number) =>
   Array.from({ length: to - from + 1 }, (_, i) => base + from + i);
 
 /**
- * 代码里直接用到的道具：ids.ts 的常量、按编号推算的（残卷碎片 181~186、N 级券 241~245），
+ * 代码里直接用到的道具：ids.ts 的常量、按编号推算的（残卷碎片 10801~10806、N 级券 10101~10105），
  * 构建里点名检查的（菜园、小镇、嘻哈男孩用到的道具）也都在 GOODS 里
  */
 export const CODE_GOODS: ReadonlySet<number> = new Set([
-  ...Object.values(GOODS),
+  // 基数（fragmentBase、levelTicketBase）只是推算的起点，不是道具
+  ...Object.entries(GOODS)
+    .filter(([k]) => !k.endsWith('Base'))
+    .map(([, id]) => id),
   ...range(GOODS.fragmentBase, 1, 6),
   ...range(GOODS.levelTicketBase, 1, 5),
   ...Object.values(SPONSOR_HATS),
@@ -33,7 +36,7 @@ export const CODE_GOODS: ReadonlySet<number> = new Set([
   ...range(NEWBIE.foodVoucherBase, 1, 5),
 ]);
 
-/** 代码里直接用到的食材：万能食材 467~471 */
+/** 代码里直接用到的食材：万能食材 9001~9005 */
 export const CODE_FOODS: ReadonlySet<number> = new Set(range(FOODS.masterBase, 1, 5));
 
 function collector() {
@@ -88,6 +91,11 @@ export function itemRefs(b: Omit<ConfigBundle, 'version' | 'i18n'>): ItemRef[] {
     if (g.awardFlag !== null) add('goods', g.id, 'gives', '随机奖励');
     if (g.gift) gift(`礼包 ${g.id} ${g.name}`, g.gift);
     if (g.gem?.nextId) add('goods', g.gem.nextId, 'gives', '宝石升阶');
+    // 鞋带：把 goods 捆成 targetGoods
+    if (g.use?.kind === 'bundle') {
+      add('goods', g.use.goods, 'uses', g.name);
+      add('goods', g.use.targetGoods, 'gives', g.name);
+    }
   }
   for (const id of b.shopPools.special) add('goods', id, 'gives', '商店特价');
   for (const id of b.shopPools.black) add('goods', id, 'gives', '黑市');

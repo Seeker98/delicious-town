@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { GOODS, GOODS_TYPE } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
+import { gid } from './testItems';
 
 const source = () => readSourceDir(defaultDataDir());
 
@@ -17,7 +18,7 @@ describe('一番赏配置（设计 §3、§4）', () => {
       onSale: false,
       stackable: true,
     });
-    for (const id of [90101, 90102, 90103, 90104]) {
+    for (const id of ['一番赏 A 赏手办', '一番赏 B 赏手办', '一番赏 C 赏手办', '一番赏最后赏手办'].map(gid)) {
       const g = b.goods.find((x) => x.id === id)!;
       expect(g.type).toBe(GOODS_TYPE.souvenir);
       // 初代手办（问题记录 274 之前）：不再产出，但道具还在
@@ -57,7 +58,8 @@ describe('一番赏配置（设计 §3、§4）', () => {
       }
     }
     expect(ids.size).toBe(48);
-    expect(b.kujiThemes[0]!.figures.A).toBe(91011);
+    // 月度手办 = 71000 + 月份 × 10 + 档位（重新编号）
+    expect(b.kujiThemes[0]!.figures).toEqual({ A: 71011, B: 71012, C: 71013, last: 71014 });
     const k = b.tuning.kuji;
     expect(k.maxPools).toBe(3);
     for (const tier of [...k.tiers, k.last]) expect(tier.award.goods ?? []).toEqual([]);
