@@ -34,11 +34,12 @@ cd infra
 # 这里按提交号拉下来、打成 compose 用的 dt-server:latest。拉不到时（CI 还没推、包还是私有的）退回在服务器上构建
 IMAGE=ghcr.io/seeker98/delicious-town-server
 sha=$(git rev-parse HEAD)
-if docker pull --quiet "$IMAGE:$sha" >/dev/null 2>&1; then
+if pulled=$(docker pull --quiet "$IMAGE:$sha" 2>&1); then
   docker tag "$IMAGE:$sha" dt-server:latest
   echo "镜像：$IMAGE:${sha:0:7}"
 else
-  echo "拉不到 $IMAGE:${sha:0:7}，改在服务器上构建" >&2
+  # 把拉不到的原因打出来（包还是私有的、架构不对等），免得每次悄悄退回在服务器上构建
+  echo "拉不到 $IMAGE:${sha:0:7}，改在服务器上构建：$pulled" >&2
   "${COMPOSE[@]}" build migrate
 fi
 "${COMPOSE[@]}" up -d

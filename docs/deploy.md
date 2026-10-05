@@ -36,6 +36,14 @@ VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进
 cd /opt/dt && git pull
 cd infra && docker compose -f compose.prod.yml build migrate && docker compose -f compose.prod.yml up -d
 ```
+
+不在服务器上构建的手动写法（镜像由 GitHub Actions 推好，见下面「自动部署」）：
+```bash
+cd /opt/dt && git pull && cd infra
+IMAGE=ghcr.io/seeker98/delicious-town-server
+docker pull "$IMAGE:$(git rev-parse HEAD)" && docker tag "$IMAGE:$(git rev-parse HEAD)" dt-server:latest
+docker compose -f compose.prod.yml up -d
+```
 迁移由 `migrate` 服务在 api 和 worker 启动前自动执行。
 
 也可以直接执行 `bash /opt/dt/infra/deploy.sh`：它会拉取 main 的最新代码，拉取（或构建）镜像、启动，并等 api 通过健康检查。上面手动 `build` 的写法会在服务器上构建镜像，内存只有 1 GB 时很吃力，平时用 `deploy.sh`。

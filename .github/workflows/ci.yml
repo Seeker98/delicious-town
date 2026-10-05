@@ -40,7 +40,7 @@ jobs:
       - run: pnpm test
 
   # 服务端镜像（问题记录 382）：PR 只构建；main 上构建后推到 GHCR，部署时服务器直接拉，
-  # 不在服务器上构建（服务器只有 1 GB 内存，构建会把数据库挤进交换区）。标签 = 提交号，另打 main
+  # 不在服务器上构建（服务器只有 1 GB 内存，构建会把数据库挤进交换区）。标签 = 提交号
   docker:
     runs-on: ubuntu-latest
     permissions:
@@ -62,8 +62,6 @@ jobs:
           context: .
           file: apps/server/Dockerfile
           push: ${{ env.PUSH == 'true' }}
-          tags: |
-            ghcr.io/seeker98/delicious-town-server:${{ github.sha }}
-            ghcr.io/seeker98/delicious-town-server:main
+          tags: ghcr.io/seeker98/delicious-town-server:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
