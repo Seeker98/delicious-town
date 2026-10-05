@@ -10,6 +10,7 @@ const cookbook: Messages['cookbook'] = {
     learned: 'Aprendidas',
   },
   loadFailed: 'No se pudieron cargar las recetas',
+  streetDesc: (desc) => `Bonificación de la calle: ${desc}`,
   learnFailed: 'No se pudo aprender',
   maxed: 'Nivel máx.',
   lackFoods: 'Faltan ingredientes',

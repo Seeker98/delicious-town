@@ -70,6 +70,7 @@ const friends: Messages['friends'] = {
     killFailed: "Couldn't squash the roach",
     kill: 'Squash roach',
     tableLocked: "You can't do anything at this table right now",
+    ownRoach: "You placed this roach, so you can't squash it yourself",
   },
   tables: {
     freeloader: (name) => `Freeloading: ${name ?? 'a friend'}`,

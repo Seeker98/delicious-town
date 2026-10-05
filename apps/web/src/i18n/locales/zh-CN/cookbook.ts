@@ -2,6 +2,7 @@
 export default {
   filters: { all: '全部', learnable: '可学', upgradable: '可升级', unlearned: '未学', learned: '已学' },
   loadFailed: '读取食谱失败',
+  streetDesc: (desc: string) => `街道加成：${desc}`,
   learnFailed: '学习失败',
   maxed: '已满级',
   lackFoods: '食材不够',

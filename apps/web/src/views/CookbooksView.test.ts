@@ -158,4 +158,119 @@ describe('CookbooksView', () => {
     expect(w.text()).toContain("Grape and Job's Tears Soup");
     expect(w.text()).toContain('另一道菜');
   });
+
+  it('街道、筛选、页码写进地址，从食谱详情返回时恢复（问题记录 372）', async () => {
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({ ...list, total: 100 });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/cookbooks', component: CookbooksView },
+        { path: '/cookbooks/:id', component: CookbooksView },
+      ],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.find('[data-testid="filter-learnable"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="next-page"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ street: '0', filter: 'learnable', page: '2' });
+    w.unmount();
+
+    // 详情页返回：地址带着原来的查询参数，重新挂载后按它读，不回到本店街道的第一页
+    vi.mocked(endpoints.cookbookList).mockClear();
+    vi.mocked(endpoints.overview).mockClear();
+    await router.push('/cookbooks?street=3&filter=learnable&page=2');
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.overview).not.toHaveBeenCalled();
+    expect(endpoints.cookbookList).toHaveBeenCalledTimes(1);
+    expect(endpoints.cookbookList).toHaveBeenCalledWith({ street: 3, page: 2, filter: 'learnable' });
+  });
+
+  it('选中的街道下面写街道简介，换街道跟着换（问题记录 380）', async () => {
+    const data = {
+      tasks: [],
+      chapters: [],
+      questLines: [],
+      activation: [],
+      bless: [],
+      tower: [],
+      formulas: [],
+      kujiThemes: [],
+      proficiency: [],
+      cookbooks: [],
+    };
+    useCatalogStore().apply({
+      version: 'v:zh',
+      goods: [],
+      foods: [],
+      streets: [
+        { id: 0, name: '新手街', cookName: '家常菜', desc: '上座率+35%' },
+        { id: 3, name: '四川街', cookName: '川菜', desc: '每桌经验+4' },
+      ],
+      weather: [],
+      devices: [],
+      data,
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：上座率+35%');
+    await w.get('select').setValue('3');
+    await flushPromises();
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：每桌经验+4');
+  });
+
+  it('恢复的页码超过现在的总页数（学完最后一道菜再返回）：退到最后一页，不留空页', async () => {
+    vi.mocked(endpoints.cookbookList).mockImplementation(async (q) => ({
+      ...list,
+      page: q.page,
+      total: 41,
+      items: q.page > 2 ? [] : list.items,
+    }));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=0&filter=learnable&page=3');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 2, filter: 'learnable' });
+    expect(w.find('[data-testid="cb-194"]').exists()).toBe(true);
+    expect(router.currentRoute.value.query.page).toBe('2');
+    w.unmount();
+  });
+
+  it('地址里是 0 号街（新手街）时停在 0 号街，不换成本店街道', async () => {
+    vi.mocked(endpoints.overview).mockClear();
+    vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 5 } as never);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=0');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.overview).not.toHaveBeenCalled();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
+    w.unmount();
+  });
+
+  it('地址里的参数不合法时按默认：本店街道、全部、第一页', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=x&filter=nope&page=-3');
+    vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 5 } as never);
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 5, page: 1, filter: 'all' });
+  });
 });

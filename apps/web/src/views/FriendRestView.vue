@@ -256,6 +256,10 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       >
         {{ t.friends.rest.kill }}
       </button>
+      <!-- 自己放的蟑螂要写明原因，不写笼统的“不能操作”（问题记录 374） -->
+      <span v-else-if="picked.customer === 3" class="text-muted" data-testid="own-roach">{{
+        t.friends.rest.ownRoach
+      }}</span>
       <span v-else class="text-muted">{{ t.friends.rest.tableLocked }}</span>
     </div>
   </template>

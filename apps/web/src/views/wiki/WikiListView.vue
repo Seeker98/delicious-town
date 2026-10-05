@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type {
   OpenCookbookBrief,
   OpenEquipBrief,
@@ -13,6 +13,7 @@ import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { PART_NAMES } from '../../utils/labels';
 import { matchText } from '../../utils/match';
+import { queryInt } from '../../utils/query';
 import { isWikiKind, useWikiData, wikiPath, type WikiKind } from './wiki';
 
 /** 游戏资料列表（问题记录 142）：五类共用，按类目换筛选和信息行 */
@@ -30,6 +31,7 @@ const LEVEL_BANDS: Array<[number, number]> = [
 ];
 
 const route = useRoute();
+const router = useRouter();
 const t = useT();
 const data = useWikiData();
 const kind = computed<WikiKind | null>(() => (isWikiKind(route.params.kind) ? route.params.kind : null));
@@ -49,7 +51,14 @@ const q = ref('');
 const filter = ref<number | null>(null);
 const rareOnly = ref(false);
 const street = ref<number | null>(null);
-const shown = ref(PAGE);
+/** 当前搜索和筛选的组合；显示条数只对点“再显示”时的这个组合有效，换了就回到一页 */
+const filterKey = computed(() => JSON.stringify([q.value, filter.value, rareOnly.value, street.value]));
+const more = ref({ key: '', n: PAGE });
+const shown = computed(() => (more.value.key === filterKey.value ? more.value.n : PAGE));
+// 条件一变就清掉多显示的条数：改回原来的条件也只显示一页（从地址恢复时 key 已经对上，不会被清）
+watch(filterKey, (k) => {
+  if (more.value.key !== k) more.value = { key: k, n: PAGE };
+});
 
 /** 读取序号：慢网络下先点 A 再点 B，A 晚到的结果（包括失败）不影响 B（backlog #115） */
 let seq = 0;
@@ -84,20 +93,35 @@ async function load(k: WikiKind) {
   }
   if (mine === seq) loaded.value = true;
 }
+// 搜索、筛选、街道、显示条数记在地址里（问题记录 372）：从详情返回时按地址恢复
 watch(
   kind,
   (k) => {
-    q.value = '';
-    filter.value = null;
-    rareOnly.value = false;
-    street.value = null;
+    const x = route.query;
+    q.value = typeof x.q === 'string' ? x.q : '';
+    filter.value = queryInt(x.f, 0);
+    rareOnly.value = x.rare === '1';
+    street.value = queryInt(x.street, 0);
+    more.value = { key: filterKey.value, n: queryInt(x.n, PAGE) ?? PAGE };
     // 类目不合法时也作废还在路上的请求
     if (k) void load(k);
     else seq++;
   },
   { immediate: true },
 );
-watch([q, filter, rareOnly, street], () => (shown.value = PAGE));
+watch([q, filter, rareOnly, street, shown], ([qq, f, rare, s, n]) => {
+  // 离开列表（点进详情）时路由先变：不能把列表的参数写到别的页面上
+  if (!kind.value || route.params.kind !== kind.value) return;
+  void router.replace({
+    query: {
+      street: s === null ? undefined : String(s),
+      f: f === null ? undefined : String(f),
+      rare: rare ? '1' : undefined,
+      q: qq === '' ? undefined : qq,
+      n: n > PAGE ? String(n) : undefined,
+    },
+  });
+});
 
 const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name])));
 const w = computed(() => t.value.wiki);
@@ -284,7 +308,7 @@ const onStreet = (e: Event) => {
           type="button"
           class="btn btn-sm btn-outline-primary w-100 mt-2"
           data-testid="wiki-more"
-          @click="shown += PAGE"
+          @click="more = { key: filterKey, n: shown + PAGE }"
         >
           {{ t.wiki.more(Math.min(PAGE, matched.length - visible.length)) }}
         </button>

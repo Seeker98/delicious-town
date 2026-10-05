@@ -6,7 +6,7 @@ import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES } from '../../utils/labels';
-import { isNotFound, useWikiData } from './wiki';
+import { isNotFound, listBack, useWikiData } from './wiki';
 
 /** 食材详情（问题记录 142）：用到它的菜谱一次显示 50 道 */
 const PAGE = 50;
@@ -53,7 +53,9 @@ const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name
 
 <template>
   <div>
-    <RouterLink to="/wiki/foods" class="small">{{ t.wiki.back }}</RouterLink>
+    <RouterLink :to="listBack('/wiki/foods', router.options.history.state.back)" class="small">{{
+      t.wiki.back
+    }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>

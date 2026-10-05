@@ -10,6 +10,14 @@ export const isWikiKind = (k: unknown): k is WikiKind => WIKI_KINDS.includes(k a
 /** 厨具的详情就是道具详情 */
 export const wikiPath = (kind: WikiKind, id: number) => `/wiki/${kind === 'equips' ? 'goods' : kind}/${id}`;
 
+/**
+ * 详情页的“返回”（问题记录 372）：从这个列表点进来的回到原来的列表地址（带搜索、筛选、显示条数），
+ * 别的情况回到列表首页。back 是浏览器历史里的上一页（router.options.history.state.back）
+ */
+export function listBack(list: string, back: unknown): string {
+  return typeof back === 'string' && (back === list || back.startsWith(`${list}?`)) ? back : list;
+}
+
 /** 各类数据：经 wiki store 按语言缓存 */
 export function useWikiData() {
   const wiki = useWikiStore();
