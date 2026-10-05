@@ -176,29 +176,28 @@ describe('buildBundle（真实数据）', () => {
 describe('buildBundle（坏数据）', () => {
   it('厨具引用了不存在的套装', () => {
     const src = source();
-    const goods = structuredClone(src['dataset/goods']) as Array<{ id: number; value: string }>;
-    const g = goods.find((x) => x.id === 30)!;
-    g.value = g.value.replace('"suitid": 0', '"suitid": 777');
-    const { errors } = buildBundle({ ...src, 'dataset/goods': goods });
+    const goods = structuredClone(src['master/goods']) as Array<{ id: number; value: { suitid: number } }>;
+    goods.find((x) => x.id === 30)!.value.suitid = 777;
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
     expect(errors).toContain('goods 30 references unknown suit 777');
   });
 
   it('食谱引用了不存在的食材', () => {
     const src = source();
-    const cookbooks = structuredClone(src['dataset/cookbooks']) as Array<{
-      needFoodsByLevel: Record<string, Array<{ foodsId: number }>>;
+    const cookbooks = structuredClone(src['master/cookbooks']) as Array<{
+      needFoods: Record<string, Array<{ foodsId: number }>>;
     }>;
-    cookbooks[0]!.needFoodsByLevel['1']![0]!.foodsId = 999999;
-    const { bundle, errors } = buildBundle({ ...src, 'dataset/cookbooks': cookbooks });
+    cookbooks[0]!.needFoods['1']![0]!.foodsId = 999999;
+    const { bundle, errors } = buildBundle({ ...src, 'master/cookbooks': cookbooks });
     expect(bundle).toBeNull();
     expect(errors).toContain('cookbook 1 grade 1 references unknown food 999999');
   });
 
   it('礼包引用了不存在的道具', () => {
     const src = source();
-    const goods = structuredClone(src['dataset/goods']) as Array<{ id: number; value: string | null }>;
-    goods.find((g) => g.id === 117)!.value = '[{"type":"goods","id":888888,"num":1,"rate":1}]';
-    const { errors } = buildBundle({ ...src, 'dataset/goods': goods });
+    const goods = structuredClone(src['master/goods']) as Array<{ id: number; value: unknown }>;
+    goods.find((g) => g.id === 117)!.value = [{ type: 'goods', id: 888888, num: 1, rate: 1 }];
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
     expect(errors).toContain('goods 117 gift references unknown goods 888888');
   });
 
@@ -222,10 +221,10 @@ describe('buildBundle（坏数据）', () => {
 
   it('字段类型错误时指出表名和路径', () => {
     const src = source();
-    const foods = structuredClone(src['dataset/foods']) as Array<Record<string, unknown>>;
+    const foods = structuredClone(src['master/foods']) as Array<Record<string, unknown>>;
     foods[0]!.coin = 'abc';
-    const { errors } = buildBundle({ ...src, 'dataset/foods': foods });
-    expect(errors.some((e) => e.startsWith('dataset/foods: 0.coin'))).toBe(true);
+    const { errors } = buildBundle({ ...src, 'master/foods': foods });
+    expect(errors.some((e) => e.startsWith('master/foods: 0.coin'))).toBe(true);
   });
 });
 describe('2A 新增配置', () => {
@@ -710,33 +709,15 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
       expect(bundle!.goods.filter((g) => g.equip?.suitId === s.id)).toHaveLength(s.maxNum);
   });
 
-  it('改名引用了不存在的道具、新增道具 id 重复时构建报错', () => {
-    const src = source();
-    const lore = structuredClone(src['game/equip_lore']) as {
-      rename: Array<{ id: number }>;
-      add: Array<{ id: number }>;
-    };
-    lore.rename[0]!.id = 999999;
-    lore.add[0]!.id = 33;
-    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
-    expect(errors).toContain('equip_lore rename references unknown goods 999999');
-    expect(errors).toContain('equip_lore add duplicates goods 33');
-  });
-
-  it('overlay 写错键名、套装效果键拼错、档位件数超过上限、件数和上限对不上时构建报错（终审 I3）', () => {
+  it('套装效果键拼错、档位件数超过上限、件数和上限对不上时构建报错（终审 I3）', () => {
     const src = source();
     type Lore = {
-      rename: Array<Record<string, unknown>>;
       suits: Array<{
         suitid: number;
         maxnum: number;
         tiers: Array<{ neednum: number; value: Record<string, number> }>;
       }>;
     };
-    const lore = structuredClone(src['game/equip_lore']) as Lore;
-    lore.rename[0]!.awardFlag = 8;
-    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
-    expect(errors).toContainEqual(expect.stringMatching(/^game\/equip_lore: rename\.0.*awardFlag/));
     const lore2 = structuredClone(src['game/equip_lore']) as Lore;
     lore2.suits.find((s) => s.suitid === 4)!.tiers[1]!.value = { luckvalue: 8 };
     lore2.suits.find((s) => s.suitid === 7)!.tiers[1]!.neednum = 5;
@@ -961,16 +942,52 @@ describe('任务配置（问题记录 318）', () => {
   });
 });
 
-describe('食谱售价表的检查（backlog 284）', () => {
-  it('老表和新表里同一个 id 出现两次、或给不存在的食谱定了价，构建报错', () => {
+describe('主表的检查（重新编号 PR 1）', () => {
+  it('道具、食谱编号重复时构建报错', () => {
     const src = source();
-    const oldPrices = structuredClone(src['designed/cookbooks_price']) as Array<{ id: number }>;
-    const newPrices = structuredClone(src['designed/cookbooks_price_new']) as Array<{ id: number }>;
-    newPrices.push({ ...newPrices[0]!, id: oldPrices[0]!.id });
-    newPrices.push({ ...newPrices[0]!, id: 999_999 });
-    const { errors } = buildBundle({ ...src, 'designed/cookbooks_price_new': newPrices });
-    expect(errors).toContain(`cookbooks_price: duplicate id ${oldPrices[0]!.id}`);
-    expect(errors).toContain('cookbooks_price: price for unknown cookbook 999999');
+    const goods = structuredClone(src['master/goods']) as Array<{ id: number }>;
+    goods.push({ ...goods[0]! });
+    const cookbooks = structuredClone(src['master/cookbooks']) as Array<{ id: number }>;
+    cookbooks.push({ ...cookbooks[0]! });
+    const { errors } = buildBundle({ ...src, 'master/goods': goods, 'master/cookbooks': cookbooks });
+    expect(errors).toContain(`goods: duplicate id ${goods[0]!.id}`);
+    expect(errors).toContain(`cookbooks: duplicate id ${cookbooks[0]!.id}`);
+  });
+
+  it('一番赏主题的手办、基金勋章要在主表里，类型对', () => {
+    const src = source();
+    const kuji = structuredClone(src['game/kuji']) as { themes: Array<{ figures: { A: number } }> };
+    kuji.themes[0]!.figures.A = 999_999;
+    kuji.themes[1]!.figures.A = 1; // 神秘礼券不是纪念品
+    const fund = structuredClone(src['game/fund']) as { medals: Array<{ id: number }> };
+    fund.medals[0]!.id = 1;
+    const { errors } = buildBundle({ ...src, 'game/kuji': kuji, 'game/fund': fund });
+    expect(errors).toContain('kuji theme 1 figure A 999999 is not a souvenir');
+    expect(errors).toContain('kuji theme 2 figure A 1 is not a souvenir');
+    expect(errors).toContain('fund medal 1 is not an honor');
+  });
+
+  it('食材随机券、基金勋章原来由构建写死的属性，主表里改错了要报错（终审 I1）', () => {
+    const src = source();
+    type M = { id: number; type: number; use?: unknown; invalidHours: number | null; maxNum: number };
+    const goods = structuredClone(src['master/goods']) as M[];
+    const g = (id: number) => goods.find((x) => x.id === id)!;
+    g(NEWBIE.foodVoucherBase + 4).type = 10; // 不是消耗品
+    delete g(NEWBIE.foodVoucherBase + 5).use; // 用不了
+    g(NEWBIE.foodVoucherBase + 2).use = { kind: 'randomFood', level: 4 }; // 和编号对不上
+    g(1).use = { kind: 'randomFood', level: 1 }; // 只有随机券能写用法
+    g(93101).invalidHours = null; // 基金勋章变成永久
+    g(93102).maxNum = 2;
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
+    expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 4} voucher must be a consumable`);
+    expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 5} voucher needs use randomFood`);
+    expect(errors).toContain(
+      `goods ${NEWBIE.foodVoucherBase + 2} voucher level 4 must be goods ${NEWBIE.foodVoucherBase + 4}`,
+    );
+    expect(errors).toContain('food voucher for level 2 is missing');
+    expect(errors).toContain('goods 1 use is only for food vouchers');
+    expect(errors).toContain('fund medal 93101 needs invalidHours >= 1');
+    expect(errors).toContain('fund medal 93102 maxNum must be 1');
   });
 });
 
@@ -1006,11 +1023,11 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
 
   it('随机券那一级没有可抽的食材时构建报错：配错时用券会白扣（质量期 ②）', () => {
     const src = source();
-    const foods = structuredClone(src['dataset/foods']) as Array<Record<string, unknown>>;
+    const foods = structuredClone(src['master/foods']) as Array<Record<string, unknown>>;
     // 五级食材出现权重全改成 0：五级食材随机券抽不出东西
     for (const f of foods) if (f.level === 5) f.odds = 0;
-    const { errors } = buildBundle({ ...src, 'dataset/foods': foods });
-    expect(errors).toContain('newbie_pack voucher 93005 level 5 has no food to draw');
+    const { errors } = buildBundle({ ...src, 'master/foods': foods });
+    expect(errors).toContain('goods 93005 randomFood level 5 has no food to draw');
   });
 
   it('大礼包不留原版的 value（30 万金币、500 经验等没人读，容易误会，质量期 ②）', () => {

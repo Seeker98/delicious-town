@@ -7,9 +7,10 @@ export type SourceData = Record<string, unknown>;
 
 /** 配置源文件（相对 data/，不含 .json） */
 export const SOURCE_FILES = [
-  'dataset/foods',
-  'dataset/goods',
-  'dataset/cookbooks',
+  // 道具、食材、菜谱的定义（重新编号 PR 1，设计 §3）
+  'master/goods',
+  'master/foods',
+  'master/cookbooks',
   'dataset/streets',
   'dataset/mysterious_cookbooks',
   'dataset/devices',
@@ -20,16 +21,10 @@ export const SOURCE_FILES = [
   'dataset/market_guess_foods',
   'dataset/bar_slot_machine_award',
   'dataset/tower_floors',
-  'designed/cookbooks_price',
   // 新街道（问题记录 284）：构建时和 dataset 里的同类数据拼在一起
-  'designed/cookbooks_price_new',
-  'designed/cookbooks_new',
-  'designed/foods_new',
   'designed/streets_new',
-  'designed/street_medals_new',
   'designed/street_medal_map',
   'designed/cookbook_grades',
-  'designed/goods_awardflag',
   'designed/weather',
   'designed/star_need',
   'designed/star_award',
@@ -59,12 +54,10 @@ export const SOURCE_FILES = [
   'game/tower_fix',
   'game/setting_docs',
   'game/newbie_codes',
-  'game/souvenirs',
   'game/newbie_pack',
   'game/kuji',
   'game/fund',
   'game/food_supply',
-  'game/devices_extra',
   'game/retired',
   'restaurant_defaults',
 ] as const;

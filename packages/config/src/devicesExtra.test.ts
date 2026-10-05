@@ -32,16 +32,17 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
 
   it('检查：星级越界、设施位不对、id 重复', () => {
     const src = source();
-    const d = JSON.parse(JSON.stringify(src['game/devices_extra']));
-    d.items[0].needStar = 13;
-    d.items[1].deviceType = 6;
-    d.items[2].id = 13;
+    const goods = structuredClone(src['master/goods']) as Array<Record<string, unknown>>;
+    const posters = goods.filter((g) => g.src === 'poster');
+    posters[0]!.needStar = 13;
+    posters[1]!.deviceType = 6;
+    posters[2]!.id = 13;
     // 负数星级（质量期 ②）
-    d.items[3].needStar = -1;
-    const errs = buildBundle({ ...src, 'game/devices_extra': d }).errors.join('\n');
-    expect(errs).toContain('needStar 13');
-    expect(errs).toContain('devices_extra 93204 needStar -1');
-    expect(errs).toContain('deviceType 6');
-    expect(errs).toContain('duplicate id 13');
+    posters[3]!.needStar = -1;
+    const errs = buildBundle({ ...src, 'master/goods': goods }).errors.join('\n');
+    expect(errs).toContain(`goods ${posters[0]!.id as number} needStar 13`);
+    expect(errs).toContain('goods 93204 needStar -1');
+    expect(errs).toContain(`goods ${posters[1]!.id as number} poster deviceType 6`);
+    expect(errs).toContain('goods: duplicate id 13');
   });
 });

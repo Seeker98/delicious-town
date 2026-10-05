@@ -19,11 +19,11 @@ describe('纪念品（148-2 设计 §6）', () => {
   });
   it('id 和已有道具冲突时构建报错', () => {
     const src = readSourceDir(defaultDataDir());
-    const file = src['game/souvenirs'] as { souvenirs: Array<{ id: number }> };
-    file.souvenirs[0]!.id = 1;
-    const r = buildBundle(src);
+    const goods = structuredClone(src['master/goods']) as Array<{ id: number; src: string }>;
+    goods.find((g) => g.src === 'souvenir')!.id = 1;
+    const r = buildBundle({ ...src, 'master/goods': goods });
     expect(r.bundle).toBeNull();
-    expect(r.errors.join('\n')).toMatch(/goods/);
+    expect(r.errors).toContain('goods: duplicate id 1');
   });
   it('勋章和纪念品不占仓库格，其他道具占', () => {
     expect(takesStoreSlot(config.requireGoods(90001))).toBe(false);

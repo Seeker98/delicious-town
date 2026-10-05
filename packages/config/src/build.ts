@@ -13,7 +13,7 @@ import { itemRefs, retiredErrors } from './itemRefs';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
 import { foodWeights } from './foodSupply';
-import { FUND_MEDALS, GOODS_TYPE, NON_SUIT_IDS } from './ids';
+import { FUND_MEDALS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
@@ -99,18 +99,10 @@ export function buildBundle(src: SourceData): BuildResult {
 
   /** 原始数据 + 新设计的同类数据（新街道，问题记录 284）；任一份解析失败就是 null */
   const both = <T>(a: T[] | null, b: T[] | null): T[] | null => (a && b ? [...a, ...b] : null);
-  const foodsRaw = both(
-    parse('dataset/foods', z.array(raw.rawFood)),
-    parse('designed/foods_new', z.array(raw.rawFood)),
-  );
-  const goodsRaw = both(
-    parse('dataset/goods', z.array(raw.rawGoods)),
-    parse('designed/street_medals_new', z.array(raw.rawGoods)),
-  );
-  const cookbooksRaw = both(
-    parse('dataset/cookbooks', z.array(raw.rawCookbook)),
-    parse('designed/cookbooks_new', z.array(raw.rawCookbook)),
-  );
+  // 道具、食材、菜谱的定义在主表（重新编号 PR 1）
+  const foodsRaw = parse('master/foods', z.array(raw.masterFood));
+  const goodsRaw = parse('master/goods', z.array(raw.masterGoods));
+  const cookbooksRaw = parse('master/cookbooks', z.array(raw.masterCookbook));
   const streetsRaw = both(
     parse('dataset/streets', z.array(raw.rawStreet)),
     parse('designed/streets_new', z.array(raw.rawStreet)),
@@ -121,11 +113,6 @@ export function buildBundle(src: SourceData): BuildResult {
   const actTasksRaw = parse('dataset/activation_tasks', z.array(raw.rawActivationTask));
   const actRewardsRaw = parse('dataset/activation_rewards', z.array(raw.rawActivationReward));
   const actExtra = parse('designed/activation_extra', raw.rawActivationExtra);
-  const pricesRaw = both(
-    parse('designed/cookbooks_price', z.array(raw.rawCookbookPrice)),
-    parse('designed/cookbooks_price_new', z.array(raw.rawCookbookPrice)),
-  );
-  const awardFlagsRaw = parse('designed/goods_awardflag', z.array(raw.rawAwardFlag));
   const weatherRaw = parse('designed/weather', z.array(raw.rawWeather));
   const starNeedRaw = parse('designed/star_need', z.array(raw.rawStarNeed));
   const starAwardRaw = parse('designed/star_award', z.array(raw.rawStarAward));
@@ -160,12 +147,10 @@ export function buildBundle(src: SourceData): BuildResult {
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
-  const souvenirsRaw = parse('game/souvenirs', raw.souvenirsFile);
   const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
   const kujiRaw = parse('game/kuji', raw.kujiFile);
   const fundRaw = parse('game/fund', raw.fundFile);
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
-  const devicesExtra = parse('game/devices_extra', raw.devicesExtraFile);
   const retiredRaw = parse('game/retired', raw.retiredFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
@@ -182,8 +167,6 @@ export function buildBundle(src: SourceData): BuildResult {
     !actTasksRaw ||
     !actRewardsRaw ||
     !actExtra ||
-    !pricesRaw ||
-    !awardFlagsRaw ||
     !weatherRaw ||
     !starNeedRaw ||
     !starAwardRaw ||
@@ -217,12 +200,10 @@ export function buildBundle(src: SourceData): BuildResult {
     !towerFix ||
     !settingDocs ||
     !newbieCodesRaw ||
-    !souvenirsRaw ||
     !newbieRaw ||
     !kujiRaw ||
     !fundRaw ||
     !foodSupply ||
-    !devicesExtra ||
     !retiredRaw ||
     !defaults
   ) {
@@ -246,8 +227,8 @@ export function buildBundle(src: SourceData): BuildResult {
     odds: f.odds,
     // 菜谱建好后按需求回填（问题记录 50）
     weight: f.odds,
-    type: f.type ?? null,
-    maxNum: f.maxNum ?? 999,
+    type: f.type,
+    maxNum: f.maxNum,
   }));
   unique(
     'foods',
@@ -255,38 +236,30 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   const foodIds = new Set(foods.map((f) => f.id));
 
-  // ---------- 道具 ----------
-  const lored = applyEquipLore(goodsRaw, suitsRaw, equipLore, errors);
-  const awardFlags = new Map(awardFlagsRaw.map((a) => [a.id, a.awardflag]));
-  const builtGoods: Goods[] = lored.goods.map((g) => {
-    let value: unknown = null;
-    if (g.value !== null && g.value !== undefined && g.value.trim() !== '') {
-      try {
-        value = JSON.parse(g.value);
-      } catch {
-        errors.push(`goods ${g.id} value is not valid JSON`);
-      }
-    }
+  // ---------- 道具（定义在主表，重新编号 PR 1） ----------
+  const suitsAll = applyEquipLore(suitsRaw, equipLore);
+  const builtGoods: Goods[] = goodsRaw.map((m) => {
+    const value = m.value ?? null;
     let gift: GiftItem[] | null = null;
     if (Array.isArray(value)) {
       const r = z.array(raw.giftItemSchema).safeParse(value);
       if (r.success) gift = r.data;
-      else errors.push(`goods ${g.id} gift is malformed: ${r.error.issues[0]?.message ?? ''}`);
+      else errors.push(`goods ${m.id} gift is malformed: ${r.error.issues[0]?.message ?? ''}`);
     }
     const item: Goods = {
-      id: g.id,
-      name: g.name,
-      type: g.type,
-      deviceType: g.devicetype ?? null,
-      invalidHours: g.invalidhour ?? null,
-      maxNum: g.maxNum ?? 9999,
-      stackable: g.subflag === 1,
-      level: g.level ?? 1,
-      coin: g.coin ?? 0,
-      diamond: g.diamond ?? 0,
-      onSale: g.saleflag === 1,
-      awardFlag: awardFlags.get(g.id) ?? g.awardflag ?? null,
-      desc: g.desc ?? '',
+      id: m.id,
+      name: m.name,
+      type: m.type,
+      deviceType: m.deviceType,
+      invalidHours: m.invalidHours,
+      maxNum: m.maxNum,
+      stackable: m.stackable,
+      level: m.level,
+      coin: m.coin,
+      diamond: m.diamond,
+      onSale: m.onSale,
+      awardFlag: m.awardFlag,
+      desc: m.desc,
       value,
       effects: numericEntries(value),
       gift,
@@ -294,145 +267,54 @@ export function buildBundle(src: SourceData): BuildResult {
       equip: null,
       gem: null,
     };
-    item.use = deriveGoodsUse(item);
+    item.use = m.use ?? deriveGoodsUse(item);
     if (item.type === GOODS_TYPE.equip) {
       const d = parseEquipDef(value);
-      if (typeof d === 'string') errors.push(`goods ${g.id} equip ${d}`);
+      if (typeof d === 'string') errors.push(`goods ${m.id} equip ${d}`);
       else item.equip = d;
     } else if (item.type === GOODS_TYPE.gem) {
       const d = parseGemDef(value);
-      if (typeof d === 'string') errors.push(`goods ${g.id} gem ${d}`);
+      if (typeof d === 'string') errors.push(`goods ${m.id} gem ${d}`);
       else item.gem = d;
     }
+    if (m.needStar !== undefined) item.needStar = m.needStar;
     return item;
   });
-  // ---------- 强化数值表（问题记录 120） ----------
-  // 纪念品（148-2 设计 §6）：配置里定义的永久道具，没有加成和用途；描述末尾注明节日
-  const souvenirGoods: Goods[] = souvenirsRaw.souvenirs.map((s) => ({
-    id: s.id,
-    name: s.name,
-    type: GOODS_TYPE.souvenir,
-    deviceType: null,
-    invalidHours: null,
-    maxNum: 99,
-    stackable: true,
-    level: 1,
-    coin: 0,
-    diamond: 0,
-    onSale: false,
-    awardFlag: null,
-    desc: `${s.desc}（${s.holiday}纪念品）`,
-    value: null,
-    effects: {},
-    gift: null,
-    use: null,
-    equip: null,
-    gem: null,
-  }));
-  // 一番赏抽赏券（一番赏设计 §4）：消耗品，不出售，可堆叠
-  const kujiTicket: Goods = {
-    id: kujiRaw.ticket.id,
-    name: kujiRaw.ticket.name,
-    type: GOODS_TYPE.consumable,
-    deviceType: null,
-    invalidHours: null,
-    maxNum: 9999,
-    stackable: true,
-    level: 1,
-    coin: 0,
-    diamond: 0,
-    onSale: false,
-    awardFlag: null,
-    desc: kujiRaw.ticket.desc,
-    value: null,
-    effects: {},
-    gift: null,
-    use: null,
-    equip: null,
-    gem: null,
-  };
-  // 豪华签券（240-2）：和普通券同一种生成方式
-  const kujiDeluxeTicket: Goods = {
-    ...kujiTicket,
-    id: kujiRaw.deluxeTicket.id,
-    name: kujiRaw.deluxeTicket.name,
-    desc: kujiRaw.deluxeTicket.desc,
-  };
-  // 一番赏月度主题手办（问题记录 274）：纪念品，说明末尾注明主题
-  const kujiThemes: KujiTheme[] = [];
-  const kujiFigures: Goods[] = [];
-  {
-    const seenMonth = new Set<number>();
-    for (const t of kujiRaw.themes) {
-      if (seenMonth.has(t.month)) errors.push(`kuji themes duplicate month ${t.month}`);
-      seenMonth.add(t.month);
-      for (const f of Object.values(t.figures))
-        kujiFigures.push({ ...souvenirLike(f.id, f.name, `${f.desc}（一番赏·${t.name}）`) });
-      kujiThemes.push({
-        month: t.month,
-        name: t.name,
-        desc: t.desc,
-        figures: { A: t.figures.A.id, B: t.figures.B.id, C: t.figures.C.id, last: t.figures.last.id },
-      });
-    }
-    for (let m = 1; m <= 12; m++) if (!seenMonth.has(m)) errors.push(`kuji themes missing month ${m}`);
-    kujiThemes.sort((a, b) => a.month - b.month);
-  }
-  // 一到五级食材随机券（问题记录 331）：消耗品，不出售，可堆叠
-  const foodVouchers: Goods[] = newbieRaw.vouchers.map((v) => ({
-    ...souvenirLike(v.id, v.name, v.desc),
-    type: GOODS_TYPE.consumable,
-    maxNum: 9999,
-    use: { kind: 'randomFood', level: v.level },
-  }));
-  // 小镇发展基金勋章（240-2）：限时荣誉，不出售；id 要和 ids.ts 的 FUND 一致
-  for (const m of fundRaw.medals) if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
-  // 后期的宣传海报、奖杯（问题记录 146）：设施，商店有售，按星级可用；不进随机奖励池
+  // 后期的宣传海报、奖杯（问题记录 146）：设施位只能是 1、2，星级不超过最高星
   const maxStar = Math.max(...starNeedRaw.map((s) => s.starlevel));
-  for (const x of devicesExtra.items) {
-    if (x.deviceType !== 1 && x.deviceType !== 2)
-      errors.push(`devices_extra ${x.id} deviceType ${x.deviceType}`);
-    if (x.needStar < 0 || x.needStar > maxStar) errors.push(`devices_extra ${x.id} needStar ${x.needStar}`);
+  for (const m of goodsRaw) {
+    if (m.needStar !== undefined && (m.needStar < 0 || m.needStar > maxStar))
+      errors.push(`goods ${m.id} needStar ${m.needStar}`);
+    if (m.src === 'poster' && m.deviceType !== 1 && m.deviceType !== 2)
+      errors.push(`goods ${m.id} poster deviceType ${m.deviceType}`);
   }
-  const extraDevices: Goods[] = devicesExtra.items.map((x) => ({
-    ...souvenirLike(x.id, x.name, x.desc),
-    type: GOODS_TYPE.device,
-    deviceType: x.deviceType,
-    level: x.level,
-    coin: x.coin,
-    onSale: true,
-    value: { time: x.time, [x.effect]: x.value },
-    effects: { time: x.time, [x.effect]: x.value },
-    needStar: x.needStar,
-  }));
-  const fundMedals: Goods[] = fundRaw.medals.map((m) => ({
-    ...souvenirLike(m.id, m.name, m.desc),
-    type: GOODS_TYPE.honor,
-    invalidHours: m.hours,
-    maxNum: 1,
-    stackable: false,
-    value: m.effects,
-    effects: m.effects,
-  }));
-  // 新手大礼包（goods 54）：原数据没有内容，按 newbie_pack.json 配上（问题记录 331）
+  // 一到五级食材随机券（问题记录 331）：原来由构建写死，主表可以手改了，按约定检查（终审 I1）：
+  // 每级一张、编号 = foodVoucherBase + 等级、消耗品、用法是随机食材；用法只有随机券能写
+  const voucherLevels = new Set<number>();
+  for (const m of goodsRaw) {
+    if (m.src !== 'newbie') {
+      if (m.use) errors.push(`goods ${m.id} use is only for food vouchers`);
+      continue;
+    }
+    if (m.type !== GOODS_TYPE.consumable) errors.push(`goods ${m.id} voucher must be a consumable`);
+    if (m.use?.kind !== 'randomFood') {
+      errors.push(`goods ${m.id} voucher needs use randomFood`);
+      continue;
+    }
+    const want = NEWBIE.foodVoucherBase + m.use.level;
+    if (m.id !== want) errors.push(`goods ${m.id} voucher level ${m.use.level} must be goods ${want}`);
+    else voucherLevels.add(m.use.level);
+  }
+  for (let lv = 1; lv <= 5; lv++)
+    if (!voucherLevels.has(lv)) errors.push(`food voucher for level ${lv} is missing`);
+  // 新手大礼包（goods 54）：内容按 newbie_pack.json 配（问题记录 331）
   const withPack = builtGoods.map((g) =>
-    // 原版的 value（30 万金币、500 经验等）没人读，清掉免得误会（质量期 ②）
-    g.id === newbieRaw.pack.goodsId
-      ? { ...g, value: null, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } }
-      : g,
+    g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
   );
   if (!builtGoods.some((g) => g.id === newbieRaw.pack.goodsId))
     errors.push(`newbie_pack references unknown goods ${newbieRaw.pack.goodsId}`);
-  const goods = [
-    ...applyStressTables(withPack, equipLore.stressTables, errors),
-    ...souvenirGoods,
-    kujiTicket,
-    kujiDeluxeTicket,
-    ...kujiFigures,
-    ...foodVouchers,
-    ...fundMedals,
-    ...extraDevices,
-  ];
+  // ---------- 强化数值表（问题记录 120） ----------
+  const goods = applyStressTables(withPack, equipLore.stressTables, errors);
   unique(
     'goods',
     goods.map((g) => g.id),
@@ -454,8 +336,6 @@ export function buildBundle(src: SourceData): BuildResult {
     if (retired.goods.has(g.id)) Object.assign(g, { retired: true, awardFlag: null, onSale: false });
   for (const f of foods) if (retired.foods.has(f.id)) f.retired = true;
 
-  for (const id of awardFlags.keys())
-    if (!goodsIds.has(id)) errors.push(`goods_awardflag references unknown goods ${id}`);
   for (const g of goods) {
     for (const item of g.gift ?? []) {
       if (item.type === 'goods' && item.id > 0 && !goodsIds.has(item.id)) {
@@ -491,41 +371,29 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   const streetIds = new Set(streets.map((s) => s.id));
 
-  // ---------- 食谱 ----------
-  // 老表和新表合起来不能有重复 id，也不能给不存在的食谱定价（backlog 284）
-  unique(
-    'cookbooks_price',
-    pricesRaw.map((p) => p.id),
-  );
-  const cookbookIdSet = new Set(cookbooksRaw.map((c) => c.id));
-  for (const p of pricesRaw)
-    if (!cookbookIdSet.has(p.id)) errors.push(`cookbooks_price: price for unknown cookbook ${p.id}`);
-  const prices = new Map(pricesRaw.map((p) => [p.id, p]));
+  // ---------- 食谱（定义在主表，含售价、推荐等级、描述） ----------
   const cookbooks: Cookbook[] = cookbooksRaw.map((c) => {
-    const price = prices.get(c.id);
-    if (!price) errors.push(`cookbook ${c.id} has no price`);
     if (!streetIds.has(c.streetId)) errors.push(`cookbook ${c.id} references unknown street ${c.streetId}`);
     const needFoods: Cookbook['needFoods'] = {};
     for (let grade = 1; grade <= 10; grade++) {
-      const list = c.needFoodsByLevel[String(grade)];
+      const list = c.needFoods[String(grade)];
       if (!list || list.length === 0) {
         errors.push(`cookbook ${c.id} is missing grade ${grade}`);
         continue;
       }
-      for (const f of list) {
+      for (const f of list)
         if (!foodIds.has(f.foodsId))
           errors.push(`cookbook ${c.id} grade ${grade} references unknown food ${f.foodsId}`);
-      }
       needFoods[grade] = list.map((f) => ({ foodsId: f.foodsId, num: f.num }));
     }
     return {
       id: c.id,
       name: c.name,
       streetId: c.streetId,
-      taste: c.taste ?? [],
-      coin: price?.coin ?? 0,
-      level: price?.level ?? 1,
-      desc: price?.desc ?? '',
+      taste: c.taste,
+      coin: c.coin,
+      level: c.level,
+      desc: c.desc,
       needFoods,
     };
   });
@@ -533,9 +401,11 @@ export function buildBundle(src: SourceData): BuildResult {
   const weights = foodWeights(foods, cookbooks, foodSupply.demandBlend);
   for (const f of foods) f.weight = weights.get(f.id) ?? f.odds;
   // 食材随机券那一级要有抽得出的食材：配错时用券会白扣（质量期 ②）
-  for (const v of newbieRaw.vouchers)
-    if (!foods.some((f) => f.level === v.level && f.weight > 0))
-      errors.push(`newbie_pack voucher ${v.id} level ${v.level} has no food to draw`);
+  for (const g of goods) {
+    const use = g.use;
+    if (use?.kind === 'randomFood' && !foods.some((f) => f.level === use.level && f.weight > 0))
+      errors.push(`goods ${g.id} randomFood level ${use.level} has no food to draw`);
+  }
   unique(
     'cookbooks',
     cookbooks.map((c) => c.id),
@@ -581,13 +451,13 @@ export function buildBundle(src: SourceData): BuildResult {
   }
 
   // ---------- 厨具套装、宝石升阶 ----------
-  const suits = buildSuits(lored.suits);
+  const suits = buildSuits(suitsAll);
   unique(
     'equip_suits',
     suits.map((s) => s.id),
   );
   const suitIds = new Set(suits.map((s) => s.id));
-  for (const s of lored.suits) {
+  for (const s of suitsAll) {
     for (const t of s.tiers) {
       if (t.neednum > s.maxnum)
         errors.push(`equip_suits ${s.suitid} tier needs ${t.neednum} pieces but maxnum is ${s.maxnum}`);
@@ -599,6 +469,30 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`equip_suits ${s.suitid} has ${pieces} pieces but maxnum is ${s.maxnum}`);
   }
   const goodsById = new Map(goods.map((g) => [g.id, g]));
+  // 一番赏月度主题（问题记录 274）：手办是主表里的纪念品
+  const kujiThemes: KujiTheme[] = [];
+  {
+    const seenMonth = new Set<number>();
+    for (const t of kujiRaw.themes) {
+      if (seenMonth.has(t.month)) errors.push(`kuji themes duplicate month ${t.month}`);
+      seenMonth.add(t.month);
+      for (const [slot, id] of Object.entries(t.figures))
+        if (goodsById.get(id)?.type !== GOODS_TYPE.souvenir)
+          errors.push(`kuji theme ${t.month} figure ${slot} ${id} is not a souvenir`);
+      kujiThemes.push({ month: t.month, name: t.name, desc: t.desc, figures: { ...t.figures } });
+    }
+    for (let m = 1; m <= 12; m++) if (!seenMonth.has(m)) errors.push(`kuji themes missing month ${m}`);
+    kujiThemes.sort((a, b) => a.month - b.month);
+  }
+  // 小镇发展基金勋章（240-2）：id 要和 ids.ts 的 FUND 一致，是主表里的荣誉
+  for (const m of fundRaw.medals) {
+    if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
+    const g = goodsById.get(m.id);
+    if (g?.type !== GOODS_TYPE.honor) errors.push(`fund medal ${m.id} is not an honor`);
+    // 时长、件数原来由构建写死（终审 I1）：没有时长会发出永久勋章和称号
+    if (g && !((g.invalidHours ?? 0) >= 1)) errors.push(`fund medal ${m.id} needs invalidHours >= 1`);
+    if (g && g.maxNum !== 1) errors.push(`fund medal ${m.id} maxNum must be 1`);
+  }
   for (const g of goods) {
     if (g.equip && !NON_SUIT_IDS.has(g.equip.suitId) && !suitIds.has(g.equip.suitId))
       errors.push(`goods ${g.id} references unknown suit ${g.equip.suitId}`);
@@ -1251,32 +1145,4 @@ export function buildBundle(src: SourceData): BuildResult {
   if (errors.length > 0) return { bundle: null, errors };
   const version = createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 12);
   return { bundle: { version, ...body }, errors: [] };
-}
-
-/**
- * 纪念品类型的道具：没有加成和用途，不出售，不占仓库格。
- * 也拿来当别的道具的底子：改了 type 的照新类型算，例如食材随机券是消耗品，占仓库格
- */
-function souvenirLike(id: number, name: string, desc: string): Goods {
-  return {
-    id,
-    name,
-    type: GOODS_TYPE.souvenir,
-    deviceType: null,
-    invalidHours: null,
-    maxNum: 99,
-    stackable: true,
-    level: 1,
-    coin: 0,
-    diamond: 0,
-    onSale: false,
-    awardFlag: null,
-    desc,
-    value: null,
-    effects: {},
-    gift: null,
-    use: null,
-    equip: null,
-    gem: null,
-  };
 }
