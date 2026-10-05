@@ -30,7 +30,17 @@ echo "代码：$before → $after"
 
 cd infra
 
-"${COMPOSE[@]}" build migrate
+# 镜像在 GitHub Actions 里构建好推到 GHCR（问题记录 382：服务器只有 1 GB 内存，在服务器上构建会把数据库挤进交换区），
+# 这里按提交号拉下来、打成 compose 用的 dt-server:latest。拉不到时（CI 还没推、包还是私有的）退回在服务器上构建
+IMAGE=ghcr.io/seeker98/delicious-town-server
+sha=$(git rev-parse HEAD)
+if docker pull --quiet "$IMAGE:$sha" >/dev/null 2>&1; then
+  docker tag "$IMAGE:$sha" dt-server:latest
+  echo "镜像：$IMAGE:${sha:0:7}"
+else
+  echo "拉不到 $IMAGE:${sha:0:7}，改在服务器上构建" >&2
+  "${COMPOSE[@]}" build migrate
+fi
 "${COMPOSE[@]}" up -d
 
 # 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），两个副本都要通过
@@ -45,6 +55,10 @@ api_healthy() {
 echo "等 api 通过健康检查（最多 3 分钟）…"
 for _ in $(seq 1 36); do
   if api_healthy; then
+    # 拉下来的旧版本镜像（按提交号的标签）只留这一次的，其余删掉，免得磁盘越积越多
+    docker images "$IMAGE" --format '{{.Tag}}' | grep -vx "$sha" | while read -r tag; do
+      docker rmi "$IMAGE:$tag" >/dev/null 2>&1 || true
+    done || true
     timeout 120 docker image prune -f >/dev/null 2>&1 || true
     echo "部署完成：$after"
     exit 0
