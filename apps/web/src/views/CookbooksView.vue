@@ -146,7 +146,7 @@ onMounted(async () => {
   </div>
   <!-- 街道简介（问题记录 380）：类型、加成、为什么是这个加成，按目录取当前语言 -->
   <div v-if="streetInfo && (streetInfo.focus || streetInfo.desc || streetInfo.theme)" class="small mb-1">
-    <span v-if="streetInfo.focus" class="dt-tag me-1" data-testid="street-focus">{{
+    <span v-if="streetInfo.focus" class="dt-tag dt-tag-lead me-1" data-testid="street-focus">{{
       STREET_FOCUS[streetInfo.focus]
     }}</span>
     <span v-if="streetInfo.desc" data-testid="street-desc">{{ t.cookbook.streetDesc(streetInfo.desc) }}</span>

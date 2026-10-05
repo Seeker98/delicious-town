@@ -9,6 +9,7 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    align1006: '食譜頁、搬家頁的街道類型標籤（銀幣街、均衡街、經驗街）和後面的加成說明對齊了',
     krab1006:
       '蟹老闆的櫥櫃放滿了：1~5 級每種食材都有，常見的幾百個、稀有的少一些，每天補回來；和蟹老闆交換食材的次數不變',
     guide1006:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    align1006:
+      'La etiqueta del tipo de calle (de monedas, equilibrada o de EXP) en las páginas de recetas y de mudanza ahora está alineada con el texto de la bonificación',
     krab1006:
       'La despensa de Don Krab ahora está llena: todos los ingredientes de nivel 1 a 5, hasta cientos de los comunes y menos de los raros, repuestos cada día. El número de cambios diarios con Don Krab no cambia',
     guide1006:
