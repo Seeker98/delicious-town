@@ -42,3 +42,14 @@ export {
   type ItemKind,
   type RefRole,
 } from './itemRefs';
+export {
+  isNewId,
+  patchJsonText,
+  rewriteIds,
+  TUNING_ID_PATHS,
+  type IdKind,
+  type IdMaps,
+  type JsonPath,
+  type Orphan,
+  type PathRule,
+} from './renumber';
