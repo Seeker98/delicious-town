@@ -54,7 +54,7 @@ describe('打赏周榜（设计文档 §2.4）', () => {
       .selectFrom('store_item')
       .select('expires_at')
       .where('rest_id', '=', rests[0]!.restaurantId)
-      .where('goods_id', '=', 108)
+      .where('goods_id', '=', GOODS.shopJobHonor)
       .executeTakeFirstOrThrow();
     expect(item.expires_at?.getTime()).toBe(now.getTime() + 160 * 3_600_000);
     const news = await t.db

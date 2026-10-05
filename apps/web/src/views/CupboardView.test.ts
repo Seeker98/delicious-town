@@ -5,6 +5,10 @@ import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useLocaleStore } from '../stores/locale';
 import CupboardView from './CupboardView.vue';
+import { SHARED_FOODS } from '@dt/shared';
+
+/** 一级万能食材；+1、+2 是二级、三级 */
+const M1 = SHARED_FOODS.masterLevel1;
 
 vi.mock('../api/endpoints', () => ({
   endpoints: {
@@ -173,15 +177,15 @@ describe('CupboardView', () => {
       freeHandleLeft: 20,
       handleMax: 100,
       items: [
-        { foodsId: 467, num: 4, locked: false, streetNeed: 0 },
-        { foodsId: 469, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: M1, num: 4, locked: false, streetNeed: 0 },
+        { foodsId: M1 + 2, num: 4, locked: false, streetNeed: 0 },
       ],
     });
     const w = mount(CupboardView);
     await flushPromises();
-    await w.find('[data-testid="pick-467"]').trigger('click');
+    await w.find(`[data-testid="pick-${M1}"]`).trigger('click');
     expect(w.find('[data-testid="master-rule"]').text()).toContain('2 个一级万能食材换 1 个随机二级稀有食材');
-    await w.find('[data-testid="pick-469"]').trigger('click');
+    await w.find(`[data-testid="pick-${M1 + 2}"]`).trigger('click');
     expect(w.find('[data-testid="master-rule"]').text()).toContain('三级及以上的万能食材不能兑换稀有食材');
   });
 
@@ -197,18 +201,18 @@ describe('CupboardView', () => {
       fridgeUnread: false,
       freeHandleLeft: 20,
       handleMax: 100,
-      items: [{ foodsId: 468, num: 300, locked: false, streetNeed: 0 }],
+      items: [{ foodsId: M1 + 1, num: 300, locked: false, streetNeed: 0 }],
     });
     vi.mocked(endpoints.exchangeMaster).mockResolvedValue({ gained: [] });
     const w = mount(CupboardView);
     await flushPromises();
-    await w.find('[data-testid="pick-468"]').trigger('click');
+    await w.find(`[data-testid="pick-${M1 + 1}"]`).trigger('click');
     await w.find('input[type="number"]').setValue(100);
     const btn = w.find('[data-testid="exchange"]');
     expect(btn.text()).toContain('×100');
     await btn.trigger('click');
     await flushPromises();
-    expect(endpoints.exchangeMaster).toHaveBeenCalledWith(468, 50);
+    expect(endpoints.exchangeMaster).toHaveBeenCalledWith(M1 + 1, 50);
     await w.find('input[type="number"]').setValue(7);
     expect(w.find('[data-testid="exchange"]').text()).toContain('×6');
   });

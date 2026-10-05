@@ -229,3 +229,49 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 - 没有迁移。服务端每次启动会按 `packages/config/data/game/newbie_codes.json` 同步新手兑换码（目前 3 个：XINSHOU、XINSHOU10、XINSHOU20），所有区服通用、每家店领一次。
 - 改奖励：改 `newbie_codes.json`，`pnpm --filter @dt/config build`，重启服务端。停用：后台兑换码页停用，重启不会恢复。
 - 后台手动建过同名的码时不覆盖，日志里有 `newbie code taken by a manual code` 警告。
+
+## 重新编号上线（一次性，2026-10）
+
+道具、食材、菜谱换成新编号（设计 `docs/superpowers/specs/2026-10-05-id-renumber-design.md`）。迁移 0049 把数据库里所有旧编号（含流水、日志、新闻、邮件、活动、区服数值覆盖和学会的菜）改成新编号，一个事务；在用的表里有查不到对照的旧编号、或自检（持有总数、学会的菜数）不通过就整体回滚。**不提供回退，出问题从备份恢复。**
+
+合并进 main 会自动部署、迁移在 api 和 worker 启动前自动跑，所以**要先停服、备份，再合并**：
+
+1. **先在线上数据的副本上演练**（在本机做；全程不碰开发库 `dt`）。
+   - 服务器上导出一份（`backup.sh` 上传 R2 后会删掉本地文件，所以这里另导一份；`pg_dump` 不锁表，不用停服）：
+     ```bash
+     cd /opt/dt/infra
+     docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /tmp/dt-rehearsal.dump
+     ls -lh /tmp/dt-rehearsal.dump
+     ```
+   - 拷到本机（在本机执行，用户名、主机换成自己的）：`scp <用户>@<服务器>:/tmp/dt-rehearsal.dump .`；拷完在服务器上删掉：`rm /tmp/dt-rehearsal.dump`（里面有玩家数据和随机种子密钥）。
+   - 本机恢复到新库 `dt_prod_copy`（文件先拷进容器再恢复，PowerShell 和 bash 都能用；两边都是 Postgres 16）：
+     ```bash
+     docker cp dt-rehearsal.dump dt-dev-postgres-1:/tmp/dt-rehearsal.dump
+     docker exec dt-dev-postgres-1 createdb -U dt dt_prod_copy
+     docker exec dt-dev-postgres-1 pg_restore -U dt -d dt_prod_copy --no-owner /tmp/dt-rehearsal.dump
+     ```
+   - 只演练（在仓库的 `apps/server` 目录下；先切到本分支或合并后的 main）：
+     - bash：`DATABASE_URL=postgres://dt:dt@localhost:5432/dt_prod_copy pnpm renumber:dry`
+     - PowerShell：`$env:DATABASE_URL='postgres://dt:dt@localhost:5432/dt_prod_copy'; pnpm renumber:dry; Remove-Item Env:DATABASE_URL`（最后一句别漏：不然同一个窗口里再起开发服会连到副本）
+     不要对副本起开发服（`pnpm dev` 会真的迁移副本）。
+   `renumber:dry` 跑迁移 0049 的全部改写和自检、打印报告，然后**总是回滚**。看两样：
+   - 报“在用的表里有查不到对照的旧编号”：库里有主表里没有的道具、食材、菜谱，先查清怎么处理再上线；
+   - `renumber orphan …` 是历史记录里查不到对照的（例如已删的菜谱），照原样保留，正常。
+   报告最后一行是耗时。开发库（约 1500 家店、流水 11 万、结算记录 15 万、日志 2.5 万）全表扫描约 4 秒，按线上行数估停服时长。
+   另外在副本上看一眼各区服的覆盖：`docker exec dt-dev-postgres-1 psql -U dt -d dt_prod_copy -c "select shard_id, override from shard_config"`。迁移会改写区服数值里的编号、开店礼物（`restaurant.giftGoods` / `giftFoods`）和交易所参考价覆盖（`tuning.exchange.refOverrides`，按食材编号做键）；如果覆盖里还有别的地方写着道具、食材、菜谱编号，先在这里停下来查。演练完删掉副本和容器里的文件：`docker exec dt-dev-postgres-1 dropdb -U dt dt_prod_copy`、`docker exec dt-dev-postgres-1 rm /tmp/dt-rehearsal.dump`，本机的 `dt-rehearsal.dump` 也删掉。
+2. 提前公告停服时间。
+3. 停服：服务器上 `cd /opt/dt/infra && docker compose -f compose.prod.yml stop api worker`。旧版本的 worker 不能在迁移时或迁移后继续跑——它按旧配置写进来的会是旧编号。
+4. 备份：`./backup.sh`（上传 R2），另在服务器本机留一份：`docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /opt/dt/renumber-before.dump`。
+5. 合并 PR：main 的 CI 通过后自动部署（`deploy.sh` → 先跑 migrate，成功才启动 api、worker）。前端（Cloudflare Pages）同时发布。
+6. 看迁移日志：`docker compose -f compose.prod.yml logs migrate`，应有各表改了多少行、`renumber learned …` 和 `migrations applied`。
+7. **迁移失败**：事务整体回滚，数据库保持原样，api、worker 不会启动。在 GitHub 上 revert 这个 PR（自动部署旧版本），查清原因再来。
+8. **迁移成功但游戏里发现问题**：**先恢复数据库，再让旧版本部署**（反过来的话，旧代码的迁移程序看到库里有 0049 的记录会报错，api 起不来）：
+   ```bash
+   cd /opt/dt/infra
+   docker compose -f compose.prod.yml stop api worker
+   docker compose -f compose.prod.yml exec -T postgres pg_restore -U dt --clean --if-exists -d dt < /opt/dt/renumber-before.dump
+   ```
+   恢复完在 GitHub 上 revert 这个 PR，自动部署旧版本。
+9. 上线后抽查：仓库、橱柜、学会的菜、邮件、活动、个人日志、新闻；Wiki 旧链接 `/wiki/goods/1` 跳到神秘礼券（`/wiki/goods/10001`）。
+
+开发环境：本分支上第一次启动开发服就会自动把开发库迁到 0049。**开发服（`pnpm dev`）的 worker 不是热重载**，启动迁移后要整个重启开发服，别让旧 worker 继续往新库里写旧编号。

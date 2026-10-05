@@ -44,7 +44,7 @@ test('菜园：开地 → 买种子 → 播种 → 浇水到收获期 → 收获
     await expect(page.getByTestId('sow-1')).toBeVisible();
 
     await page.getByTestId('tab-basket').click();
-    await page.getByTestId('basket-store-101').click();
+    await page.getByTestId('basket-store-1001').click();
     await expect(page.getByTestId('basket-empty')).toBeVisible();
   } finally {
     await client.end();

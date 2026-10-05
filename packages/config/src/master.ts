@@ -13,12 +13,21 @@ export function formatMaster(rule: string, list: readonly object[]): string {
   return `{\n "rule": ${JSON.stringify(rule)},\n "data": [${rows ? `\n${rows}\n ` : ''}]\n}\n`;
 }
 
-/** 原版格式的道具（数据集、新街道勋章）转成主表条目；和构建原来的缺省值一致 */
-export function goodsFromRaw(g: z.infer<typeof rawGoods>, src: GoodsSrc): MasterGoods {
+/**
+ * 原版格式的道具（数据集、新街道勋章）转成主表条目；和构建原来的缺省值一致。
+ * 外部数据是旧编号：新编号、旧编号、小类由调用方按编号规则给（重新编号 PR 4）
+ */
+export function goodsFromRaw(
+  g: z.infer<typeof rawGoods>,
+  src: GoodsSrc,
+  ids: { id: number; legacyId: number; group: string },
+): MasterGoods {
   const text = g.value?.trim() ?? '';
   return {
-    id: g.id,
+    id: ids.id,
+    legacyId: ids.legacyId,
     src,
+    group: ids.group,
     name: g.name,
     type: g.type,
     deviceType: g.devicetype ?? null,
@@ -35,10 +44,15 @@ export function goodsFromRaw(g: z.infer<typeof rawGoods>, src: GoodsSrc): Master
   };
 }
 
-/** 原版格式的食材转成主表条目 */
-export function foodFromRaw(f: z.infer<typeof rawFood>, src: MasterFood['src']): MasterFood {
+/** 原版格式的食材转成主表条目；新编号、旧编号由调用方给（重新编号 PR 4） */
+export function foodFromRaw(
+  f: z.infer<typeof rawFood>,
+  src: MasterFood['src'],
+  ids: { id: number; legacyId: number },
+): MasterFood {
   return {
-    id: f.id,
+    id: ids.id,
+    legacyId: ids.legacyId,
     src,
     name: f.name,
     level: f.level,

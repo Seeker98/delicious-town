@@ -16,8 +16,8 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
   try {
     await client.query('update restaurant set star_level = 1 where id = $1', [restId]);
     for (const [goodsId, num] of [
-      [162, 1],
-      [165, 1],
+      [10811, 1], // 神秘食谱
+      [10814, 1], // 蟹黄堡秘方
     ]) {
       await client.query('insert into store_item (rest_id, goods_id, num) values ($1, $2, $3)', [
         restId,
@@ -26,7 +26,7 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
       ]);
     }
     await client.query('insert into mc_remnant (rest_id, mc_id, num) values ($1, 1, 3)', [restId]);
-    for (const foodsId of [390, 412, 261]) {
+    for (const foodsId of [4007, 4028, 2006]) {
       await client.query(
         `insert into cupboard_food (rest_id, foods_id, num) values ($1, $2, 10)
          on conflict (rest_id, foods_id) do update set num = 10`,
@@ -38,7 +38,7 @@ test('特色菜：鉴定 → 学会 → 烹制 → 倒掉', async ({ page, reque
   }
 
   await page.goto('/temple');
-  await page.getByTestId('tool').selectOption('165');
+  await page.getByTestId('tool').selectOption('10814');
   await page.getByTestId('appraise').click();
   await expect(page.getByTestId('results')).toContainText('残卷');
 

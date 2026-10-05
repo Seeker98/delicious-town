@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onBeforeUnmount, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenGiftItem, OpenGoodsDto, OpenSuitDto } from '@dt/shared';
 import WikiExchangeRule from '../../components/wiki/WikiExchangeRule.vue';
 import { useT } from '../../composables/useT';
@@ -11,6 +11,7 @@ import { isNotFound, useWikiData } from './wiki';
 
 /** 道具详情（厨具也用这一页，问题记录 142） */
 const route = useRoute();
+const router = useRouter();
 const t = useT();
 const data = useWikiData();
 const g = ref<OpenGoodsDto | null>(null);
@@ -34,6 +35,8 @@ watch(
       const v = await data.goodsDetail(id);
       if (mine !== seq) return;
       g.value = v;
+      // 旧链接（重新编号前的编号）：接口已跳到新编号，地址栏也换成新的（设计 §5）
+      if (v.id !== id) void router.replace(`/wiki/goods/${v.id}`);
     } catch (e) {
       if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';

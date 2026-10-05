@@ -88,11 +88,12 @@ describe('穿戴（设计文档 §3.10）', () => {
   it('真爱套装：3 件上座 +5%、挑剔 +3%；5 件再加最终银币 +5%、幸运 +52', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 13 } });
     const base = await agg(ctx);
-    for (const g of [62, 103, 64]) await eq().wear(ctx, { id: await piece(ctx, g) });
+    for (const g of ['真爱之铲', '真爱之刀', '真爱之锅'].map(gid))
+      await eq().wear(ctx, { id: await piece(ctx, g) });
     const three = await agg(ctx);
     expect((three.atRate ?? 0) - (base.atRate ?? 0)).toBeCloseTo(0.05);
     expect((three.spRate ?? 0) - (base.spRate ?? 0)).toBeCloseTo(0.03);
-    for (const g of [105, 63]) await eq().wear(ctx, { id: await piece(ctx, g) });
+    for (const g of ['真爱之瓶', '真爱之帽'].map(gid)) await eq().wear(ctx, { id: await piece(ctx, g) });
     const five = await agg(ctx);
     expect((five.coinRate ?? 0) - (base.coinRate ?? 0)).toBeCloseTo(0.05);
     expect((five.luckValue ?? 0) - (base.luckValue ?? 0)).toBe(52);
@@ -116,7 +117,7 @@ describe('穿戴（设计文档 §3.10）', () => {
     const ctx = await newRestaurant(t, { patch: { level: 13, attr_cook: 4, luck: 10 } });
     await eq().wear(ctx, { id: await piece(ctx, gid('见习之铲'), { base_cook: 3, st_cook: 2 }) });
     const o = await eq().overview(ctx);
-    expect(o.worn.map((w) => w?.goodsId ?? null)).toEqual([30, null, null, null, null]);
+    expect(o.worn.map((w) => w?.goodsId ?? null)).toEqual([gid('见习之铲'), null, null, null, null]);
     expect(o.worn[0]).toMatchObject({ stress: 0, base: { cook: 3 }, boost: { cook: 2 }, total: { cook: 5 } });
     expect(o.attrs.gear.cook).toBe(5);
     expect(o.attrs.total.cook).toBe(9);
@@ -124,7 +125,7 @@ describe('穿戴（设计文档 §3.10）', () => {
     expect(o.suits).toEqual([]);
     expect(o.count).toBe(1);
     const list = await eq().list(ctx, { part: 1 });
-    expect(list.map((x) => x.goodsId)).toEqual([30]);
+    expect(list.map((x) => x.goodsId)).toEqual([gid('见习之铲')]);
     expect(await eq().list(ctx, { part: 2 })).toEqual([]);
   });
 

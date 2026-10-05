@@ -119,7 +119,7 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
     const { a, b, plantId } = await friends(hi);
     const r = await hi.game.yard.reap(a, { plantId });
     expect(r.data).toEqual({ foodsId: fid('大米'), num: 2, stolen: true, punished: null });
-    expect(await basketNum(hi, a.restaurantId, 101)).toBe(2);
+    expect(await basketNum(hi, a.restaurantId, fid('大米'))).toBe(2);
     expect((await plantOf(hi, plantId))!.harvest_num).toBe(18);
     // 系数 3：银币 ⌊3×2⌋，经验 ⌊3×3⌋ + 食材等级 1
     expect(await restRow(hi, a.restaurantId)).toMatchObject({ renown: 4, strength: 99, coin: 6, exp: 10 });
@@ -178,7 +178,7 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
       ])
       .execute();
     const r = await lo.game.yard.reap(a, { plantId });
-    expect(r.data).toEqual({ foodsId: fid('大米'), num: 1, stolen: true, punished: 103 });
+    expect(r.data).toEqual({ foodsId: fid('大米'), num: 1, stolen: true, punished: fid('苦瓜') });
     expect((await foodNum(lo, a.restaurantId, fid('苦瓜'))).num).toBe(1);
     expect((await foodNum(lo, b.restaurantId, fid('苦瓜'))).num).toBe(1);
     expect((await foodNum(lo, a.restaurantId, fid('青椒'))).num).toBe(3);

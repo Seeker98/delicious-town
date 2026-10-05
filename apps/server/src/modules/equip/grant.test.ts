@@ -76,7 +76,9 @@ describe('旧数据转换（计划裁定 2）', () => {
       goods: { [gid('见习之铲')]: 2, [gid('沉默之度玛的静谧之镬')]: 1, [gid('金币')]: 3 },
     });
     expect(await convertLegacyEquips(t.db, t.deps.config, shardId)).toBe(3);
-    expect((await equips(ctx.restaurantId)).map((e) => e.goods_id).sort()).toEqual([30, 30, 56]);
+    expect((await equips(ctx.restaurantId)).map((e) => e.goods_id).sort()).toEqual(
+      [gid('见习之铲'), gid('见习之铲'), gid('沉默之度玛的静谧之镬')].sort(),
+    );
     expect(await goodsNum(t, ctx.restaurantId, gid('见习之铲'))).toBe(0);
     expect(await goodsNum(t, ctx.restaurantId, gid('金币'))).toBe(3);
     expect(await convertLegacyEquips(t.db, t.deps.config, shardId)).toBe(0);

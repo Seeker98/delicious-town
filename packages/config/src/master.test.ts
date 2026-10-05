@@ -12,7 +12,7 @@ describe('主表（重新编号 PR 1）', () => {
     expect(JSON.parse(formatMaster('x', []))).toEqual({ rule: 'x', data: [] });
   });
 
-  it('原始道具转主表：value 解析成 JSON，标志位换成布尔，缺省补齐', () => {
+  it('原始道具转主表：编号、旧编号、小类由调用方给；value 解析成 JSON，标志位换成布尔，缺省补齐', () => {
     expect(
       goodsFromRaw(
         {
@@ -26,10 +26,13 @@ describe('主表（重新编号 PR 1）', () => {
           awardflag: 3,
         },
         'streets',
+        { id: 60014, legacyId: 5, group: 'streetMedal' },
       ),
     ).toEqual({
-      id: 5,
+      id: 60014,
+      legacyId: 5,
       src: 'streets',
+      group: 'streetMedal',
       name: '甲',
       type: 9,
       deviceType: 20,
@@ -44,12 +47,21 @@ describe('主表（重新编号 PR 1）', () => {
       desc: '',
       value: { coinValue: 2 },
     });
-    expect(goodsFromRaw({ id: 6, name: '乙', type: 1, value: '' }, 'original').value).toBeNull();
+    expect(
+      goodsFromRaw({ id: 6, name: '乙', type: 1, value: '' }, 'original', {
+        id: 10001,
+        legacyId: 6,
+        group: 'x',
+      }).value,
+    ).toBeNull();
   });
 
-  it('原始食材转主表：maxNum 缺省 999，type 缺省 null', () => {
-    expect(foodFromRaw({ id: 7, name: '丙', level: 2, coin: 10, odds: 100 }, 'streets')).toEqual({
-      id: 7,
+  it('原始食材转主表：编号、旧编号由调用方给；maxNum 缺省 999，type 缺省 null', () => {
+    expect(
+      foodFromRaw({ id: 7, name: '丙', level: 2, coin: 10, odds: 100 }, 'streets', { id: 2001, legacyId: 7 }),
+    ).toEqual({
+      id: 2001,
+      legacyId: 7,
       src: 'streets',
       name: '丙',
       level: 2,

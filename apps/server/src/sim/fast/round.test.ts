@@ -57,7 +57,7 @@ describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () =
     const r = openFastRest(c, 1, settings);
     r.luck = -1000;
     r.foods.clear();
-    r.foods.set(239, 5);
+    r.foods.set(fid('猪肉'), 5);
     const out = mouseVisit(c, r);
     expect(['stolen', 'trapped', 'escaped']).toContain(out);
     if (out === 'stolen') expect(r.foods.get(fid('猪肉'))).toBe(4);

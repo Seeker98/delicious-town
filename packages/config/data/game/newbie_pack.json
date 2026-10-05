@@ -1,18 +1,18 @@
 {
   "rule": "新手大礼包（goods 54）的内容：开店时送一个（restaurant_defaults.giftGoods），老玩家用新手码 XINSHOULIBAO 补领；一到五级食材随机券的定义在 data/master/goods.json",
   "pack": {
-    "goodsId": 54,
+    "goodsId": 20002,
     "gift": [
       { "type": "coin", "min": 50000, "max": 50000, "rate": 1 },
       { "type": "diamond", "min": 50, "max": 50, "rate": 1 },
-      { "type": "goods", "id": 315, "num": 3, "rate": 1 },
-      { "type": "goods", "id": 131, "num": 5, "rate": 1 },
-      { "type": "goods", "id": 241, "num": 5, "rate": 1 },
-      { "type": "goods", "id": 242, "num": 3, "rate": 1 },
-      { "type": "goods", "id": 13, "num": 1, "rate": 1 },
-      { "type": "goods", "id": 93001, "num": 50, "rate": 1 },
-      { "type": "goods", "id": 93002, "num": 20, "rate": 1 },
-      { "type": "goods", "id": 93003, "num": 10, "rate": 1 }
+      { "type": "goods", "id": 10417, "num": 3, "rate": 1 },
+      { "type": "goods", "id": 20004, "num": 5, "rate": 1 },
+      { "type": "goods", "id": 10101, "num": 5, "rate": 1 },
+      { "type": "goods", "id": 10102, "num": 3, "rate": 1 },
+      { "type": "goods", "id": 30001, "num": 1, "rate": 1 },
+      { "type": "goods", "id": 10201, "num": 50, "rate": 1 },
+      { "type": "goods", "id": 10202, "num": 20, "rate": 1 },
+      { "type": "goods", "id": 10203, "num": 10, "rate": 1 }
     ]
   }
 }

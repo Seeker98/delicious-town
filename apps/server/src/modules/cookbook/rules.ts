@@ -24,7 +24,7 @@ export type LearnPlan =
 
 /**
  * 学习或升级需要的食材（规格书 03 §3.3）：都够时普通学习；
- * 恰好缺一种 1~5 级食材、且同级万能食材（466 + 等级）能补足缺口时，先扣光这种食材已有的，缺口用万能食材扣
+ * 恰好缺一种 1~5 级食材、且同级万能食材（FOODS.masterBase + 等级）能补足缺口时，先扣光这种食材已有的，缺口用万能食材扣
  */
 export function planLearn(
   need: readonly NeedLine[],

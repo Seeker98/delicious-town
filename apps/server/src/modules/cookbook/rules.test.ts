@@ -9,6 +9,7 @@ import {
   setGrade,
   streetTargetGrade,
 } from './rules';
+import { FOODS } from '@dt/config';
 import { fid } from '../../../test/items';
 
 const level = (id: number) => ({ 1: 1, 2: 2, 3: 3, 7: 7 })[id] ?? 1;
@@ -23,8 +24,8 @@ describe('planLearn（规格书 03 §3.3）', () => {
   it('都够：普通学习', () => {
     expect(planLearn(need, stock({ 1: 1, 2: 2, 3: 1 }), level)).toEqual({ kind: 'normal', consume: need });
   });
-  it('恰好缺一种：先扣光已有的，缺口用同级万能食材（466 + 等级）', () => {
-    const p = planLearn(need, stock({ 1: 1, 2: 1, 3: 1, 468: 5 }), level);
+  it('恰好缺一种：先扣光已有的，缺口用同级万能食材（masterBase + 等级）', () => {
+    const p = planLearn(need, stock({ 1: 1, 2: 1, 3: 1, [FOODS.masterBase + 2]: 5 }), level);
     expect(p).toEqual({
       kind: 'wildcard',
       level: 2,
@@ -37,8 +38,10 @@ describe('planLearn（规格书 03 §3.3）', () => {
     });
   });
   it('万能食材不够、缺两种、缺的是神秘食材时不能学', () => {
-    expect(planLearn(need, stock({ 1: 1, 2: 0, 3: 1, 468: 1 }), level).kind).toBe('none');
-    expect(planLearn(need, stock({ 1: 1, 468: 9, 469: 9 }), level).kind).toBe('none');
+    expect(planLearn(need, stock({ 1: 1, 2: 0, 3: 1, [FOODS.masterBase + 2]: 1 }), level).kind).toBe('none');
+    expect(
+      planLearn(need, stock({ 1: 1, [FOODS.masterBase + 2]: 9, [FOODS.masterBase + 3]: 9 }), level).kind,
+    ).toBe('none');
     expect(planLearn([{ foodsId: 7, num: 1 }], stock({}), level).kind).toBe('none');
   });
   it('重复的食材合并计算', () => {
@@ -48,7 +51,7 @@ describe('planLearn（规格书 03 §3.3）', () => {
     ];
     // 合并后需要 2 个，只有 1 个：缺的 1 个用一级万能食材补
     expect(planLearn(dup, stock({ 1: 1 }), level).kind).toBe('none');
-    expect(planLearn(dup, stock({ 1: 1, 467: 1 }), level).kind).toBe('wildcard');
+    expect(planLearn(dup, stock({ 1: 1, [FOODS.masterBase + 1]: 1 }), level).kind).toBe('wildcard');
   });
 });
 

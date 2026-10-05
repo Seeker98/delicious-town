@@ -488,7 +488,11 @@ const goodsSrc = z.enum(['original', 'lore', 'streets', 'souvenir', 'kuji', 'new
 export const masterGoods = z
   .object({
     id: int,
+    /** 重新编号前的编号（之后新加的道具没有） */
+    legacyId: int.optional(),
     src: goodsSrc,
+    /** 小类（data/game/goods_groups.json 的 key），编号必须在它的号段里 */
+    group: z.string().min(1),
     name: z.string().min(1),
     type: int,
     deviceType: int.nullable(),
@@ -514,6 +518,8 @@ export const masterGoods = z
 export const masterFood = z
   .object({
     id: int,
+    /** 重新编号前的编号（之后新加的食材没有） */
+    legacyId: int.optional(),
     src: z.enum(['original', 'streets']),
     name: z.string().min(1),
     level: int,
@@ -526,6 +532,8 @@ export const masterFood = z
 export const masterCookbook = z
   .object({
     id: int,
+    /** 重新编号前的编号（之后新加的菜谱没有） */
+    legacyId: int.optional(),
     src: z.enum(['original', 'streets']),
     /** 学会记录的存储位（重新编号 PR 3）：只增不复用 */
     slot: int.min(0),
@@ -541,3 +549,13 @@ export const masterCookbook = z
 
 /** data/game/cookbook_slots.json：下一个可用的菜谱存储位（重新编号 PR 3）；删菜后存储位不回收，新菜从这里往后分 */
 export const cookbookSlotsFile = z.object({ next: int.min(1) }).strict();
+
+/** data/game/goods_groups.json：道具小类（重新编号，设计 §2.1） */
+export const goodsGroupsFile = z
+  .object({
+    rule: z.string(),
+    groups: z.array(
+      z.object({ key: z.string().min(1), name: z.string().min(1), base: int, size: int.min(1) }).strict(),
+    ),
+  })
+  .strict();

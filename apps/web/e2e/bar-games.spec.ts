@@ -13,7 +13,7 @@ test('酒吧扩展：魔鬼辣杯喝到出结果；飞镖投三镖', async ({ pa
   await client.connect();
   try {
     await client.query(
-      `insert into store_item (rest_id, goods_id, num) values ($1, 1, 50)
+      `insert into store_item (rest_id, goods_id, num) values ($1, 10001, 50)
        on conflict (rest_id, goods_id) do update set num = excluded.num`,
       [overview.data.id],
     );

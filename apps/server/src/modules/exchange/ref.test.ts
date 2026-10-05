@@ -3,6 +3,7 @@ import { addDays, gameDay } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { refPrice, refPrices } from './ref';
+import { fid } from '../../../test/items';
 
 /** 各等级价格倍数全 1（240-1 默认值） */
 const ONE = [1, 1, 1, 1, 1, 1, 1];
@@ -101,10 +102,16 @@ describe('问题记录 242：初始参考价用 initialRef', () => {
     const day = gameDay(t.clock.now);
     expect(await refPrice(t.db, t.deps.config, tune(), ONE, shardId, snow.id, day)).toBe(6300);
     const s2 = await createShard(t.db);
-    expect((await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, 470], day)).get(snow.id)).toBe(
-      6300,
-    );
-    expect((await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, 470], day)).get(470)).toBe(8100);
+    expect(
+      (await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, fid('四级万能食材')], day)).get(
+        snow.id,
+      ),
+    ).toBe(6300);
+    expect(
+      (await refPrices(t.db, t.deps.config, tune(), ONE, s2, [snow.id, fid('四级万能食材')], day)).get(
+        fid('四级万能食材'),
+      ),
+    ).toBe(8100);
   });
 });
 describe('系统成交不算参考价（156-3 设计 §2.4）', () => {

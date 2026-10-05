@@ -3,6 +3,7 @@ import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { GOODS } from '@dt/config';
+import { fid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -24,8 +25,8 @@ const lvl = (n: number) => config.bundle.mysteriousCookbooks.filter((m) => m.lev
 const MC3 = lvl(3)[0]!; // 食材 262、310、400
 const MC4 = lvl(4)[0]!;
 const MC6 = lvl(6)[0]!;
-const RARE = 150; // 5 级，odds 70
-const COMMON = 423; // 5 级，odds 100
+const RARE = fid('长胡椒'); // 5 级，odds 70
+const COMMON = fid('辽参'); // 5 级，odds 100
 
 async function ready(g: TestGame, learned: number[] = [MC3.id], patch: Record<string, number> = {}) {
   const foods = Object.fromEntries([RARE, COMMON, ...MC3.foods].map((f) => [f, 5]));

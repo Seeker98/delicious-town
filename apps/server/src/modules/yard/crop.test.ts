@@ -88,7 +88,7 @@ describe('作物（规格书 08 §8.3）', () => {
     expect(r.data).toEqual({ foodsId: fid('大米'), num: 21, stolen: false, punished: null });
     expect(await plantOf(t, data.plantId)).toBeUndefined();
     expect(await t.game.yard.basket(ctx)).toEqual({ items: [{ foodsId: fid('大米'), num: 21 }] });
-    expect(r.events).toContainEqual({ type: 'gain', kind: 'basket', num: 21, id: 101 });
+    expect(r.events).toContainEqual({ type: 'gain', kind: 'basket', num: 21, id: fid('大米') });
     // 土地经验：播种 10 + 浇水 5×3 + 收获 20
     expect(await landOf(t, ctx.restaurantId)).toMatchObject({ level: 2, exp: 45 });
     // 等级 1、自己的地：系数 5。播种 5 银币 10 经验；浇水各 5 / 5；收获 10 银币、15 + 食材等级 1 经验
@@ -98,8 +98,8 @@ describe('作物（规格书 08 §8.3）', () => {
 
     const s = await t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 21 });
     expect(s.data).toEqual({ stored: 21, dropped: 0 });
-    expect(s.events).toContainEqual({ type: 'loss', kind: 'basket', num: 21, id: 101 });
-    expect(await basketNum(t, ctx.restaurantId, 101)).toBe(0);
+    expect(s.events).toContainEqual({ type: 'loss', kind: 'basket', num: 21, id: fid('大米') });
+    expect(await basketNum(t, ctx.restaurantId, fid('大米'))).toBe(0);
     expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(21);
   });
 
@@ -272,12 +272,12 @@ describe('菜篮（设计文档 §3.4）', () => {
       .execute();
     await expect(t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 26 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'basket', id: 101, need: 26, have: 25 },
+      params: { kind: 'basket', id: fid('大米'), need: 26, have: 25 },
     });
     const r = await t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 25 });
     expect(r.data).toEqual({ stored: 10, dropped: 15 });
     expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 0, fridge: 10 });
-    expect(await basketNum(t, ctx.restaurantId, 101)).toBe(0);
+    expect(await basketNum(t, ctx.restaurantId, fid('大米'))).toBe(0);
     const logs = await t.db
       .selectFrom('rest_log')
       .select(['type', 'params'])

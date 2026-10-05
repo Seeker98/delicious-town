@@ -19,7 +19,8 @@
     "sim:fast": "tsx --env-file=.env.development src/sim/cli.ts fast",
     "sim:bench": "tsx --env-file=.env.development src/sim/cli.ts bench",
     "bench:api": "tsx src/cli/bench-api.ts",
-    "items": "tsx src/items/main.ts"
+    "items": "tsx src/items/main.ts",
+    "renumber:dry": "tsx --env-file=.env.development src/cli/renumber-dry-run.ts"
   },
   "dependencies": {
     "@dt/config": "workspace:*",

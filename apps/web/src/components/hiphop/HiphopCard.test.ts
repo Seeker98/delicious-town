@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { HiphopSpotDto, HiphopTipDto } from '@dt/shared';
+import { SHARED_GOODS, type HiphopSpotDto, type HiphopTipDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import HiphopCard from './HiphopCard.vue';
 
@@ -98,7 +98,9 @@ describe('HiphopCard', () => {
     await w.find('[data-testid="hiphop-num"]').setValue(10);
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="hiphop-result"]').text()).toBe('你在旁边捡到 道具240×3（虹）、道具1×2');
+    expect(w.find('[data-testid="hiphop-result"]').text()).toBe(
+      `你在旁边捡到 道具${SHARED_GOODS.krabCoin}×3（虹）、道具${SHARED_GOODS.mysteryTicket}×2`,
+    );
     vi.mocked(endpoints.hiphopTip).mockResolvedValue(tipDto({ exp: 0, fresh: false }));
     await w.find('[data-testid="hiphop-food"]').setValue('102');
     await w.find('[data-testid="hiphop-num"]').setValue(5);

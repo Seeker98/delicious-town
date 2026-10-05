@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NEWS_TYPES, type NewsDto } from '@dt/shared';
+import { NEWS_TYPES, SHARED_GOODS, type NewsDto } from '@dt/shared';
 import { newsRendered, newsText } from './news';
 import { rewardText } from './rewards';
 
@@ -110,7 +110,9 @@ describe('新闻文案', () => {
 
   it('嘻哈男孩和手动进货（4E-2）', () => {
     expect(newsText(n('hiphop.event'), names)).toBe('小王的店开启了嘻哈活动！');
-    expect(newsText(n('hiphop.krab', { num: 4 }), names)).toBe('小王的店通过打赏获得 道具240×4');
+    expect(newsText(n('hiphop.krab', { num: 4 }), names)).toBe(
+      `小王的店通过打赏获得 道具${SHARED_GOODS.krabCoin}×4`,
+    );
     expect(newsText(n('hiphop.weekly', { rank: 2, goodsId: 109 }), names)).toBe(
       '恭喜小王的店在每周打赏中获得第 2 名，奖励 道具109（160 小时）',
     );

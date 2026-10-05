@@ -16,7 +16,7 @@ import { addOrder, addRider, openFor, setWeather, type OrderInit } from '../../.
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
-import { fid, gid } from '../../../test/items';
+import { cid, fid, gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -33,7 +33,7 @@ beforeEach(() => {
 
 const COOK: NewRestaurantOptions = {
   patch: { renown: 10, diamond: 10 },
-  cookbooks: { 1: 1 },
+  cookbooks: { [cid('南煎丸子')]: 1 },
   foods: { [fid('猪肉')]: 20, [fid('鸡蛋')]: 20, [fid('香葱')]: 20 },
 };
 /** 学会南煎丸子、食材充足、声望 10、钻石 10、已开通、晴天 */
@@ -169,7 +169,7 @@ describe('领取（设计文档 §3.4）', () => {
     const id = await take(ctx, rider);
     later();
     rngValues = [0.01];
-    expect((await claim(ctx, id)).data).toMatchObject({ success: true, customer: 265 });
+    expect((await claim(ctx, id)).data).toMatchObject({ success: true, customer: gid('珊迪') });
     expect(await goodsNum(t, ctx.restaurantId, gid('珊迪'))).toBe(1);
     const news = await t.db
       .selectFrom('news')

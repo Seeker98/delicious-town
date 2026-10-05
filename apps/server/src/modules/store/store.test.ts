@@ -202,12 +202,12 @@ describe('仓库列表与流水', () => {
     });
     const l = await s().list(ctx, {});
     const item = (id: number) => l.items.find((x) => x.goodsId === id);
-    expect(item(85)?.maxUse).toBe(99);
-    expect(item(29)?.maxUse).toBe(3);
-    expect(item(82)).toMatchObject({ batch: true, maxUse: 2 });
-    expect(item(169)).toMatchObject({ batch: true, maxUse: 2 });
-    expect(item(55)).toMatchObject({ batch: false, maxUse: 1 });
-    expect(item(13)?.maxUse).toBe(0);
+    expect(item(gid('金币'))?.maxUse).toBe(99);
+    expect(item(gid('体力卡'))?.maxUse).toBe(3);
+    expect(item(GOODS.tableA)).toMatchObject({ batch: true, maxUse: 2 });
+    expect(item(gid('鞋带'))).toMatchObject({ batch: true, maxUse: 2 });
+    expect(item(GOODS.resetAttrCard)).toMatchObject({ batch: false, maxUse: 1 });
+    expect(item(gid('普通宣传海报'))?.maxUse).toBe(0);
   });
 
   it('批量超过单次上限时报 LIMIT_REACHED 并带上限，不扣道具', async () => {

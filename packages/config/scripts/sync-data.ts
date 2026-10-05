@@ -7,22 +7,20 @@ const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const analysis = process.env.DT_ANALYSIS_DIR ?? resolve(pkgDir, '../../../analysis/dataset');
 
 // goods、foods、cookbooks 不再同步：定义在 data/master 主表（重新编号 PR 1）；菜谱原版在 analysis/dataset
+// 特色菜用料、老虎机奖品、菜场竞猜食材里有食材、道具编号，重新编号后不再同步（原版数据里是旧编号，重新编号 PR 4）
 const DATASET = [
   'streets',
-  'mysterious_cookbooks',
   'roads',
   'devices',
   'activation_tasks',
   'activation_rewards',
   'tower_floors',
-  'bar_slot_machine_award',
   'hiphop_places',
   'suit_pot',
   'suit_painting',
   'suit_zodiac',
   'suit_pet',
   'suit_sculpture',
-  'market_guess_foods',
   'goods_sources',
   'goods_source_legend',
 ];

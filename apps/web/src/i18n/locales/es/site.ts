@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    renumber1005:
+      'Objetos, ingredientes y recetas se han renumerado por categoría: los identificadores de la wiki del juego y de la API abierta han cambiado, y los enlaces antiguos de la wiki redirigen a los nuevos. Lo que tienes, las recetas que has aprendido y tu historial no cambian',
     retire1005:
       'Wiki del juego: ya no aparecen 117 objetos antiguos que no se pueden conseguir en el juego (utensilios y medallas exclusivos de jugadores del juego original, un paquete de prueba y un paquete de actualización antiguo); quien ya los tenga los conserva y puede seguir usándolos',
     tasks1005:

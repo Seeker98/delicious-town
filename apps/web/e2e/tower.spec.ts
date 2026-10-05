@@ -40,7 +40,7 @@ test('厨塔：试打 → 挑战 1 层 → 赛厨榜占位 → 声望商店兑�
 
     await page.getByTestId('tab-shop').click();
     await expect(page.getByTestId('shop-renown')).toContainText('107');
-    await page.getByTestId('buy-310').click();
+    await page.getByTestId('buy-10007').click();
     await expect(page.getByTestId('shop-renown')).toContainText('47');
   } finally {
     await client.end();

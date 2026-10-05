@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import Fastify from 'fastify';
+import { GOODS } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { registerErrorHandling } from '../../http/errorHandling';
 import { createOpenData } from './data';
 import { openRoutes } from './routes';
 import { call, createTestApp, GENEROUS_RULES, type TestContext } from '../../../test/helpers';
+import { cid, fid, gid } from '../../../test/items';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -21,16 +23,16 @@ describe('开放接口（问题记录 142）', () => {
     expect(goods.json.data.lang).toBe('en');
     expect(goods.json.data.items.length).toBeGreaterThan(100);
     for (const url of [
-      '/api/v1/open/goods/1',
-      '/api/v1/open/foods/239',
-      '/api/v1/open/cookbooks/1',
+      `/api/v1/open/goods/${GOODS.mysteryTicket}`,
+      `/api/v1/open/foods/${fid('猪肉')}`,
+      `/api/v1/open/cookbooks/${cid('南煎丸子')}`,
       '/api/v1/open/foods',
       '/api/v1/open/cookbooks',
       '/api/v1/open/equips',
       '/api/v1/open/streets',
     ])
       expect((await call(ctx.app, 'GET', url)).status, url).toBe(200);
-    expect((await call(ctx.app, 'GET', '/api/v1/open/goods/51')).status).toBe(404);
+    expect((await call(ctx.app, 'GET', `/api/v1/open/goods/${gid('开发测试礼包')}`)).status).toBe(404);
     expect((await call(ctx.app, 'GET', '/api/v1/open/cookbooks/999999')).status).toBe(404);
     expect((await call(ctx.app, 'GET', '/api/v1/open/goods?lang=xx')).json.code).toBe('VALIDATION_FAILED');
   });
@@ -70,7 +72,7 @@ describe('开放接口的跨域和缓存细节（问题记录 142 终审）', ()
   it('别的网站带 If-None-Match 等头时的预检：回 *，允许这些头；能读到 ETag', async () => {
     const pre = await ctx.app.inject({
       method: 'OPTIONS',
-      url: '/api/v1/open/goods/1',
+      url: `/api/v1/open/goods/${GOODS.mysteryTicket}`,
       headers: {
         origin: 'https://tool.example',
         'access-control-request-method': 'GET',
@@ -82,7 +84,7 @@ describe('开放接口的跨域和缓存细节（问题记录 142 终审）', ()
     expect(pre.headers['access-control-allow-credentials']).toBeUndefined();
     expect(String(pre.headers['access-control-allow-headers']).toLowerCase()).toContain('if-none-match');
     expect(String(pre.headers['access-control-allow-methods'])).toContain('GET');
-    const r = await call(ctx.app, 'GET', '/api/v1/open/goods/1', {
+    const r = await call(ctx.app, 'GET', `/api/v1/open/goods/${GOODS.mysteryTicket}`, {
       headers: { origin: 'https://tool.example' },
     });
     expect(String(r.res.headers['access-control-expose-headers']).toLowerCase()).toContain('etag');
@@ -138,19 +140,38 @@ describe('开放接口的缓存（质量期 ③）', () => {
     registerErrorHandling(app);
     await app.register(openRoutes(data, 'v', { detailMax: 2 }), { prefix: '/open' });
     const get = async (url: string) => (await app.inject({ method: 'GET', url })).json();
-    const first = await get('/open/goods/1');
-    expect(first.data).toEqual(JSON.parse(JSON.stringify(data.goodsDetail('zh-CN', 1))));
+    const first = await get(`/open/goods/${GOODS.mysteryTicket}`);
+    expect(first.data).toEqual(JSON.parse(JSON.stringify(data.goodsDetail('zh-CN', GOODS.mysteryTicket))));
     detail.mockClear();
-    await get('/open/goods/2');
-    await get('/open/goods/3');
-    await get('/open/goods/3');
+    const [b, c] = [GOODS.moveCard, gid('小扩容卡')];
+    await get(`/open/goods/${b}`);
+    await get(`/open/goods/${c}`);
+    await get(`/open/goods/${c}`);
     await get('/open/goods');
     await get('/open/goods');
-    expect(detail.mock.calls.map((c) => c[1])).toEqual([2, 3]);
+    expect(detail.mock.calls.map((x) => x[1])).toEqual([b, c]);
     expect(list).toHaveBeenCalledTimes(1);
-    // 1 号已经被挤出去，再读要重新算
-    await get('/open/goods/1');
-    expect(detail.mock.calls.map((c) => c[1])).toEqual([2, 3, 1]);
+    // 第一件已经被挤出去，再读要重新算
+    await get(`/open/goods/${GOODS.mysteryTicket}`);
+    expect(detail.mock.calls.map((x) => x[1])).toEqual([b, c, GOODS.mysteryTicket]);
     await app.close();
+  });
+});
+
+describe('开放接口：旧编号跳到新编号（重新编号，设计 §5）', () => {
+  const cases: Array<[string, number, () => number]> = [
+    ['goods', 1, () => GOODS.mysteryTicket],
+    ['foods', 101, () => fid('大米')],
+    ['cookbooks', 1, () => cid('南煎丸子')],
+  ];
+  it.each(cases)('%s 旧编号 %i：301，查询串照带', async (kind, old, now) => {
+    const r = await call(ctx.app, 'GET', `/api/v1/open/${kind}/${old}?lang=en`);
+    expect(r.status).toBe(301);
+    expect(r.res.headers.location).toBe(`/api/v1/open/${kind}/${now()}?lang=en`);
+  });
+
+  it('新编号照常返回；两边都没有的照常 404', async () => {
+    expect((await call(ctx.app, 'GET', `/api/v1/open/goods/${GOODS.mysteryTicket}`)).status).toBe(200);
+    expect((await call(ctx.app, 'GET', '/api/v1/open/goods/999999')).status).toBe(404);
   });
 });

@@ -20,7 +20,7 @@ test('小镇：广播 → 和雯姐聊天 → 镇长兑换', async ({ page, requ
       [restId],
     );
     await client.query(
-      `insert into store_item (rest_id, goods_id, num) values ($1, 315, 2), ($1, 180, 5)
+      `insert into store_item (rest_id, goods_id, num) values ($1, 10417, 2), ($1, 10005, 5)
        on conflict (rest_id, goods_id) do update set num = excluded.num`,
       [restId],
     );

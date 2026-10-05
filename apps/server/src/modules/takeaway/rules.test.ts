@@ -20,7 +20,7 @@ import {
   sumBonus,
   takeawayPeriod,
 } from './rules';
-import { cid, gid } from '../../../test/items';
+import { gid } from '../../../test/items';
 import { GOODS } from '@dt/config';
 
 const t = testConfig().tuning.takeaway;
@@ -34,14 +34,14 @@ describe('出单（设计文档 §3.2）', () => {
 
   it('一张单：食谱 → 品级 → 时长 20+rand(10g) → 有效期 时长+rand(10g) → 声望 2g+rand[1,g]', () => {
     expect(rollOrder(sequenceRng([0.4]), [1, 2, 3, 4, 5], t)).toEqual({
-      cookbookId: cid('聊城熏鸡'),
+      cookbookId: 3,
       grade: 2,
       needMinutes: 28,
       expireMinutes: 36,
       needRenown: 5,
     });
     expect(rollOrder(sequenceRng([0.1]), [1, 2, 3, 4, 5], t)).toEqual({
-      cookbookId: cid('南煎丸子'),
+      cookbookId: 1,
       grade: 1,
       needMinutes: 21,
       expireMinutes: 22,
@@ -164,7 +164,7 @@ describe('接单时的数值（设计文档 §3.3）', () => {
 describe('结算（设计文档 §3.4、§3.6）', () => {
   it('奖池：品级越高礼券以外越多', () => {
     expect(awardWeights(1, t)).toEqual([
-      [1, 56],
+      [GOODS.mysteryTicket, 56],
       [gid('探险图'), 30],
       [gid('蟹币'), 8],
       [GOODS.mapHigh, 6],
@@ -172,9 +172,9 @@ describe('结算（设计文档 §3.4、§3.6）', () => {
       [GOODS.dtTicket, 1],
     ]);
     expect(awardWeights(3, t).map(([, w]) => fl(w * 10) / 10)).toEqual([56, 42, 16, 12, 5.2, 3]);
-    expect(pickAward(0.4, 1, t)).toBe(1);
-    expect(pickAward(0.99, 1, t)).toBe(172);
-    expect(pickAward(0.999, 1, t)).toBe(310);
+    expect(pickAward(0.4, 1, t)).toBe(GOODS.mysteryTicket);
+    expect(pickAward(0.99, 1, t)).toBe(gid('顶级探险图'));
+    expect(pickAward(0.999, 1, t)).toBe(GOODS.dtTicket);
   });
 
   it('经验：加料 ×2、好友骑手 ×0.9、私人单 ×1.5（逐步取整）', () => {

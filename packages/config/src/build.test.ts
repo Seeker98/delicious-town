@@ -1,9 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
-import { GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { FUND, GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 import { cid, fid, gid } from './testItems';
+
+/** 重新编号的对照表（旧编号 → 新编号） */
+const RENUMBER_MAP = JSON.parse(readFileSync(join(defaultDataDir(), 'renumber', 'map.json'), 'utf8')) as {
+  cookbooks: Array<[number, number]>;
+};
 
 const source = () => readSourceDir(defaultDataDir());
 
@@ -29,10 +36,17 @@ describe('buildBundle（真实数据）', () => {
   it('老街道修订（问题记录 284）：删 32 道、移街 8 道（176 随杂碎街移过去）', () => {
     const b = realBuild().bundle!;
     const ids = new Set(b.cookbooks.map((c) => c.id));
-    for (const id of [51, 446, 17204, 18441, 18622]) expect(ids.has(id), String(id)).toBe(false);
+    // 删掉的菜没有分到新编号（重新编号对照里没有它们的旧编号）
+    const renumbered = new Set(RENUMBER_MAP.cookbooks.map(([old]) => old));
+    for (const id of [51, 446, 17204, 18441, 18622]) expect(renumbered.has(id), String(id)).toBe(false);
+    expect(ids.size).toBe(renumbered.size);
     const street = (id: number) => b.cookbooks.find((c) => c.id === id)!.streetId;
-    expect([344, 345, 346, 350, 392, 401, 403].map(street)).toEqual([12, 12, 13, 12, 11, 11, 6]);
-    expect(street(176)).toBe(29);
+    expect(
+      ['开屏武昌鱼', '糍粑鱼', '北京烤鸭', '沔阳三蒸', '兴国米粉鱼', '信丰鸡', '诸候鹅(二)'].map((n) =>
+        street(cid(n)),
+      ),
+    ).toEqual([12, 12, 13, 12, 11, 11, 6]);
+    expect(street(cid('左宗棠鸡（美国/加拿大）'))).toBe(29);
     expect(b.cookbooks.find((c) => c.id === cid('左宗棠鸡（美国/加拿大）'))!.name).toBe(
       '左宗棠鸡（美国/加拿大）',
     );
@@ -42,33 +56,18 @@ describe('buildBundle（真实数据）', () => {
 
   it('新街道（问题记录 284）：每道菜 10 个品级、同一品级食材不重复、每条街一枚勋章', () => {
     const b = realBuild().bundle!;
-    for (const c of b.cookbooks.filter((x) => x.id >= 18747))
+    for (const c of b.cookbooks.filter((x) => x.streetId >= 14))
       for (let g = 1; g <= 10; g++) {
         const ids = c.needFoods[g]!.map((f) => f.foodsId);
         expect(new Set(ids).size, `${c.id} grade ${g}`).toBe(ids.length);
       }
-    expect(b.streets.map((s) => s.medalId)).toEqual([
-      140,
-      141,
-      142,
-      143,
-      144,
-      145,
-      146,
-      147,
-      148,
-      149,
-      150,
-      187,
-      188,
-      189,
-      ...Array.from({ length: 16 }, (_, i) => 92014 + i),
-    ]);
+    // 街道勋章 = 60000 + 街道编号（重新编号）
+    expect(b.streets.map((s) => s.medalId)).toEqual(b.streets.map((s) => 60000 + s.id));
     // 竞猜清单原本就是日常菜场能出的全部 1、2 级食材：新街道的 1、2 级食材也要能猜
     const guess = new Set(b.marketGuessFoods);
     const daily = new Set(b.tuning.market.dailyLevelWeights.map(([l]) => l));
     expect(b.foods.filter((f) => daily.has(f.level) && !guess.has(f.id)).map((f) => f.id)).toEqual([]);
-    expect(guess.has(586)).toBe(true);
+    expect(guess.has(fid('椰浆'))).toBe(true);
     expect(b.cookbooks.find((c) => c.id === cid('鲷鱼握寿司'))).toMatchObject({
       name: '鲷鱼握寿司',
       streetId: 14,
@@ -81,7 +80,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle } = realBuild();
     expect(bundle!.mysteriousCookbooks).toHaveLength(277);
     const m1 = bundle!.mysteriousCookbooks.find((m) => m.id === 1)!;
-    expect(m1.foods).toEqual([390, 412, 261]);
+    expect(m1.foods).toEqual([fid('海参'), fid('渤海对虾'), fid('冬笋')]);
     expect(m1.appraisable).toBe(true);
     expect(bundle!.mysteriousCookbooks.filter((m) => !m.appraisable)).toHaveLength(27);
     expect(bundle!.mcProficiency).toHaveLength(10);
@@ -146,10 +145,10 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.formulas.find((f) => f.id === 1)).toEqual({
       id: 1,
       name: '牡丹籽油配方',
-      mainFoodsId: 438,
-      subFoodsId: 431,
-      addFoodsId: 551,
-      resFoodsId: 447,
+      mainFoodsId: fid('槟榔芋'),
+      subFoodsId: fid('鱼唇'),
+      addFoodsId: fid('乌鸡'),
+      resFoodsId: fid('牡丹籽油'),
       odds: 10,
     });
     expect(bundle!.seedExchange).toHaveLength(96);
@@ -188,12 +187,13 @@ describe('buildBundle（坏数据）', () => {
   it('食谱引用了不存在的食材', () => {
     const src = source();
     const cookbooks = structuredClone(src['master/cookbooks']) as Array<{
+      id: number;
       needFoods: Record<string, Array<{ foodsId: number }>>;
     }>;
     cookbooks[0]!.needFoods['1']![0]!.foodsId = 999999;
     const { bundle, errors } = buildBundle({ ...src, 'master/cookbooks': cookbooks });
     expect(bundle).toBeNull();
-    expect(errors).toContain(`cookbook ${cid('南煎丸子')} grade 1 references unknown food 999999`);
+    expect(errors).toContain(`cookbook ${cookbooks[0]!.id} grade 1 references unknown food 999999`);
   });
 
   it('礼包引用了不存在的道具', () => {
@@ -243,8 +243,8 @@ describe('2A 新增配置', () => {
     });
     expect(b.shopSpecialTiers.map((t) => t.discount)).toEqual([0.9, 0.8, 0.7, 0.5, 0.1]);
     expect(b.shopSpecialTiers[0]).toMatchObject({ name: '九折', from: 0, to: 0.5, stock: 50 });
-    expect(b.shopPools.special).toContain(21);
-    expect(b.shopPools.black).toContain(86);
+    expect(b.shopPools.special).toContain(gid('短效节油器'));
+    expect(b.shopPools.black).toContain(gid('升星凭证'));
     expect(b.potTiers.map((t) => t.count)).toEqual([4, 6, 7]);
     expect(b.potTiers[0]!.effects).toEqual({ coinRate: 0.08 });
     expect(b.paintingTiers.map((t) => t.count)).toEqual([7, 10, 13]);
@@ -556,7 +556,9 @@ describe('嘻哈男孩、排行（子项目 4E-2）', () => {
   it('数值和工作证', () => {
     const { bundle } = realBuild();
     const h = bundle!.tuning.hiphop;
-    expect(h.weeklyCards).toEqual([108, 109, 107, 111, 110]);
+    expect(h.weeklyCards).toEqual(
+      ['商店工作证', '改名处工作证', '菜场工作证', '搬家处工作证', '保安证'].map(gid),
+    );
     expect(new Set(h.wages.map(([card]) => card))).toEqual(new Set(h.weeklyCards));
     expect(h.requireVerifiedEmail).toBe(false);
     expect(bundle!.tuning.market.manualPersonMax).toBe(99);
@@ -614,7 +616,7 @@ describe('论坛（子项目 4E-3）', () => {
       pageSize: 20,
       excerpt: 60,
       readsMax: 200,
-      featureReward: { goods: [[1, 20]], diamond: 50 },
+      featureReward: { goods: [[gid('神秘礼券'), 20]], diamond: 50 },
     });
     expect(bundle!.quests.find((q) => q.id === 2124)!.href).toBe('/forum');
   });
@@ -662,12 +664,13 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
 
   it('阿卡玛五件从厨塔第 8 层起掉落（原来没有获得途径）', () => {
     const { goods } = byId();
-    for (const id of [352, 353, 354, 356, 413]) expect(goods.get(id)!.awardFlag).toBe(8);
+    for (const n of ['铲', '刃', '镬', '瓶', '冠'])
+      expect(goods.get(gid(`神谕之阿卡玛的荣耀之${n}`))!.awardFlag).toBe(8);
   });
 
   it('新厨具：沙利叶镬瓶、巴贝雷特镬瓶、古尔图格五件、茵蔯四件', () => {
     const { goods } = byId();
-    const parts = (ids: number[]) => ids.map((id) => goods.get(id)!.equip!.part);
+    const parts = (names: string[]) => names.map((n) => goods.get(gid(n))!.equip!.part);
     expect(goods.get(gid('灵魂之沙利叶的无情之镬'))).toMatchObject({
       name: '灵魂之沙利叶的无情之镬',
       awardFlag: 4,
@@ -681,23 +684,32 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     });
     expect(goods.get(gid('灵魂之沙利叶的无情之镬'))!.equip!.ranges.fire).toBe(21);
     expect(goods.get(gid('灵魂之沙利叶的无情之瓶'))!.equip!.ranges.season).toBe(21);
-    expect(parts([630, 631])).toEqual([3, 4]);
+    expect(parts(['裁决之巴贝雷特的悲鸣之镬', '裁决之巴贝雷特的悲鸣之瓶'])).toEqual([3, 4]);
     expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.equip).toMatchObject({ suitId: 6, total: 31 });
     expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.awardFlag).toBe(6);
     expect(goods.get(gid('意志之古尔图格的精华之铲'))!.name).toBe('意志之古尔图格的精华之铲');
-    expect(parts([632, 633, 634, 635, 636])).toEqual([1, 2, 3, 4, 5]);
-    for (const id of [632, 636]) {
+    expect(parts(['铲', '刃', '镬', '瓶', '冠'].map((n) => '意志之古尔图格的精华之' + n))).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
+    for (const id of [gid('意志之古尔图格的精华之铲'), gid('意志之古尔图格的精华之冠')]) {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 41, minLevel: 70 });
       expect(goods.get(id)!.awardFlag).toBe(7);
     }
     expect(goods.get(gid('堕落之茵蔯的炙热之铲'))!.name).toBe('堕落之茵蔯的炙热之铲');
-    expect(parts([637, 638, 639, 640])).toEqual([1, 2, 3, 4]);
-    for (const id of [637, 640]) {
+    expect(parts(['铲', '刃', '镬', '瓶'].map((n) => '堕落之茵蔯的炙热之' + n))).toEqual([1, 2, 3, 4]);
+    for (const id of [gid('堕落之茵蔯的炙热之铲'), gid('堕落之茵蔯的炙热之瓶')]) {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 25, minLevel: 50 });
       expect(goods.get(id)!.awardFlag).toBe(5);
     }
-    for (const id of [628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640])
-      expect(goods.get(id)!.desc.length).toBeGreaterThan(10);
+    for (const n of [
+      '灵魂之沙利叶的无情之镬',
+      '灵魂之沙利叶的无情之瓶',
+      '裁决之巴贝雷特的悲鸣之镬',
+      '裁决之巴贝雷特的悲鸣之瓶',
+      ...['铲', '刃', '镬', '瓶', '冠'].map((x) => '意志之古尔图格的精华之' + x),
+      ...['铲', '刃', '镬', '瓶'].map((x) => '堕落之茵蔯的炙热之' + x),
+    ])
+      expect(goods.get(gid(n))!.desc.length).toBeGreaterThan(10);
   });
 
   it('套装改名，沙利叶 4 件、巴贝雷特 3/4/5 件、茵蔯 2/4 件、古尔图格 4/5 件', () => {
@@ -975,7 +987,7 @@ describe('主表的检查（重新编号 PR 1）', () => {
     cookbooks[2]!.slot = 999_999;
     const { errors } = buildBundle({ ...src, 'master/cookbooks': cookbooks });
     expect(errors).toContain(`cookbooks: duplicate slot ${cookbooks[0]!.slot}`);
-    expect(errors).toContain(`cookbook ${cookbooks[2]!.id} slot 999999 >= next 20226`);
+    expect(errors).toContain(`cookbook ${cookbooks[2]!.id} slot 999999 >= next 3810`);
   });
 
   it('道具、食谱编号重复时构建报错', () => {
@@ -1010,9 +1022,9 @@ describe('主表的检查（重新编号 PR 1）', () => {
     g(NEWBIE.foodVoucherBase + 4).type = 10; // 不是消耗品
     delete g(NEWBIE.foodVoucherBase + 5).use; // 用不了
     g(NEWBIE.foodVoucherBase + 2).use = { kind: 'randomFood', level: 4 }; // 和编号对不上
-    g(1).use = { kind: 'randomFood', level: 1 }; // 只有随机券能写用法
-    g(93101).invalidHours = null; // 基金勋章变成永久
-    g(93102).maxNum = 2;
+    g(GOODS.mysteryTicket).use = { kind: 'randomFood', level: 1 }; // 只有随机券能写用法
+    g(FUND.C).invalidHours = null; // 基金勋章变成永久
+    g(FUND.B).maxNum = 2;
     const { errors } = buildBundle({ ...src, 'master/goods': goods });
     expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 4} voucher must be a consumable`);
     expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 5} voucher needs use randomFood`);
@@ -1021,8 +1033,8 @@ describe('主表的检查（重新编号 PR 1）', () => {
     );
     expect(errors).toContain('food voucher for level 2 is missing');
     expect(errors).toContain(`goods ${GOODS.mysteryTicket} use is only for food vouchers`);
-    expect(errors).toContain('fund medal 93101 needs invalidHours >= 1');
-    expect(errors).toContain('fund medal 93102 maxNum must be 1');
+    expect(errors).toContain(`fund medal ${FUND.C} needs invalidHours >= 1`);
+    expect(errors).toContain(`fund medal ${FUND.B} maxNum must be 1`);
   });
 });
 
@@ -1045,11 +1057,11 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
     expect(g.gift).toEqual([
       { type: 'coin', min: 50000, max: 50000, rate: 1 },
       { type: 'diamond', min: 50, max: 50, rate: 1 },
-      { type: 'goods', id: 315, num: 3, rate: 1 },
-      { type: 'goods', id: 131, num: 5, rate: 1 },
-      { type: 'goods', id: 241, num: 5, rate: 1 },
-      { type: 'goods', id: 242, num: 3, rate: 1 },
-      { type: 'goods', id: 13, num: 1, rate: 1 },
+      { type: 'goods', id: gid('喇叭'), num: 3, rate: 1 },
+      { type: 'goods', id: gid('随机万能食材礼包'), num: 5, rate: 1 },
+      { type: 'goods', id: GOODS.levelTicketBase + 1, num: 5, rate: 1 },
+      { type: 'goods', id: GOODS.levelTicketBase + 2, num: 3, rate: 1 },
+      { type: 'goods', id: gid('普通宣传海报'), num: 1, rate: 1 },
       { type: 'goods', id: NEWBIE.foodVoucherBase + 1, num: 50, rate: 1 },
       { type: 'goods', id: NEWBIE.foodVoucherBase + 2, num: 20, rate: 1 },
       { type: 'goods', id: NEWBIE.foodVoucherBase + 3, num: 10, rate: 1 },
@@ -1178,5 +1190,51 @@ describe('豪华一番赏（240-2）', () => {
     tuning.kuji.activeTicketPoints = 123;
     const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
     expect(errors).toContain('tuning.kuji.activeTicketPoints 123 is not an activation reward');
+  });
+});
+
+describe('编号规则（重新编号 PR 4）', () => {
+  it('道具必须在所属小类的号段里；小类不能重叠、不能不存在', () => {
+    const src = source();
+    const goods = src['master/goods'] as Array<{ id: number; group: string }>;
+    goods[0]!.group = 'nope';
+    goods[1]!.id = 99999;
+    const groups = (
+      src['game/goods_groups'] as { groups: Array<{ key: string; base: number; size: number }> }
+    ).groups;
+    groups[1]!.base = groups[0]!.base + 50;
+    const { errors } = buildBundle(src);
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(`goods ${goods[0]!.id} group nope unknown`),
+        expect.stringContaining('goods 99999 outside group'),
+        expect.stringContaining(`goods groups ${groups[0]!.key} and ${groups[1]!.key} overlap`),
+      ]),
+    );
+  });
+
+  it('食材、菜谱编号在各自号段里；旧编号不能重复', () => {
+    const src = source();
+    const foods = src['master/foods'] as Array<{ id: number; legacyId?: number }>;
+    foods[0]!.id = 606;
+    foods[2]!.legacyId = foods[1]!.legacyId;
+    const cbs = src['master/cookbooks'] as Array<{ id: number }>;
+    cbs[0]!.id = 18000;
+    const { errors } = buildBundle(src);
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        'foods 606 outside 1001~9999',
+        `foods: duplicate legacyId ${foods[1]!.legacyId}`,
+        'cookbooks 18000 outside 100001~199999',
+      ]),
+    );
+  });
+
+  it('配置包带旧 → 新对照（旧链接跳转、原版获取途径用）', () => {
+    const b = realBuild().bundle!;
+    const g = b.goods.find((x) => x.name === '神秘礼券')!;
+    expect(b.legacy.goods).toContainEqual([1, g.id]);
+    expect(b.legacy.foods.length).toBe(b.foods.length);
+    expect(b.legacy.cookbooks.length).toBe(b.cookbooks.length);
   });
 });

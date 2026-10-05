@@ -93,19 +93,25 @@ export function createItemsTool(io: {
   };
 }
 
-/** 原版获取途径：dataset/goods_sources 每行是一组标记（值为 1），按图例换成名字；同一道具多行合并 */
+/**
+ * 原版获取途径：dataset/goods_sources 每行是一组标记（值为 1），按图例换成名字；同一道具多行合并。
+ * 表里是原版（旧）编号，按主表 legacyId 换成新编号；对不上的（已删的道具）丢掉（重新编号 PR 4）
+ */
 export function originalSources(
   rows: ReadonlyArray<Record<string, number>>,
   legend: Readonly<Record<string, string>>,
+  toNew: (legacyId: number) => number | undefined,
 ): Map<number, string[]> {
   const out = new Map<number, string[]>();
   for (const r of rows) {
-    const list = out.get(r.id!) ?? [];
+    const id = toNew(r.id!);
+    if (id === undefined) continue;
+    const list = out.get(id) ?? [];
     for (const [k, v] of Object.entries(r)) {
       const name = legend[k];
       if (v === 1 && name && !list.includes(name)) list.push(name);
     }
-    out.set(r.id!, list);
+    out.set(id, list);
   }
   return out;
 }

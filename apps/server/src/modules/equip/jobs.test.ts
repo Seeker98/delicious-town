@@ -5,6 +5,7 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { runDueJobs } from '../../worker/periodic';
 import { upsertEffectSource } from '../effects/service';
 import { equipJobs } from './jobs';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -45,8 +46,9 @@ describe('套装配置变化后重算套装加成（终审 I1）', () => {
     const shardId = await createShard(t.db);
     const three = await newRestaurant(t, { shardId });
     const four = await newRestaurant(t, { shardId });
-    for (const id of [59, 60, 61]) await wear(three, id);
-    for (const id of [59, 60, 61, 630]) await wear(four, id);
+    const BB = ['铲', '刃', '冠', '镬'].map((x) => gid(`裁决之巴贝雷特的悲鸣之${x}`));
+    for (const id of BB.slice(0, 3)) await wear(three, id);
+    for (const id of BB) await wear(four, id);
     // 改版前巴贝雷特 3 件是第 2 档（上座率 +8%），存成 61；改版后 3 件只有百分比档，不落库
     for (const ctx of [three, four])
       await upsertEffectSource(t.db, ctx.restaurantId, {

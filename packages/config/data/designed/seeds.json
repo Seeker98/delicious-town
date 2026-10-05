@@ -5,7 +5,7 @@
  "data": [
   {
    "id": 1,
-   "foodsId": 101,
+   "foodsId": 1001,
    "name": "大米种子",
    "foodsLevel": 1,
    "coin": 1800,
@@ -18,7 +18,7 @@
   },
   {
    "id": 2,
-   "foodsId": 102,
+   "foodsId": 1002,
    "name": "青椒种子",
    "foodsLevel": 1,
    "coin": 1800,
@@ -31,7 +31,7 @@
   },
   {
    "id": 3,
-   "foodsId": 103,
+   "foodsId": 1003,
    "name": "苦瓜种子",
    "foodsLevel": 1,
    "coin": 1800,
@@ -44,7 +44,7 @@
   },
   {
    "id": 4,
-   "foodsId": 104,
+   "foodsId": 1004,
    "name": "韭菜种子",
    "foodsLevel": 1,
    "coin": 1800,
@@ -57,7 +57,7 @@
   },
   {
    "id": 5,
-   "foodsId": 243,
+   "foodsId": 1011,
    "name": "番茄种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -70,7 +70,7 @@
   },
   {
    "id": 6,
-   "foodsId": 244,
+   "foodsId": 1012,
    "name": "茄子种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -83,7 +83,7 @@
   },
   {
    "id": 7,
-   "foodsId": 245,
+   "foodsId": 1013,
    "name": "糯米种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -96,7 +96,7 @@
   },
   {
    "id": 8,
-   "foodsId": 248,
+   "foodsId": 1016,
    "name": "辣椒种子",
    "foodsLevel": 1,
    "coin": 1600,
@@ -109,7 +109,7 @@
   },
   {
    "id": 9,
-   "foodsId": 253,
+   "foodsId": 1021,
    "name": "薏仁种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -122,7 +122,7 @@
   },
   {
    "id": 10,
-   "foodsId": 255,
+   "foodsId": 1023,
    "name": "土豆种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -135,7 +135,7 @@
   },
   {
    "id": 11,
-   "foodsId": 256,
+   "foodsId": 1024,
    "name": "生菜种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -148,7 +148,7 @@
   },
   {
    "id": 12,
-   "foodsId": 257,
+   "foodsId": 1025,
    "name": "扁豆种子",
    "foodsLevel": 1,
    "coin": 1200,
@@ -161,7 +161,7 @@
   },
   {
    "id": 13,
-   "foodsId": 529,
+   "foodsId": 1027,
    "name": "黄豆种子",
    "foodsLevel": 1,
    "coin": 1800,
@@ -174,7 +174,7 @@
   },
   {
    "id": 14,
-   "foodsId": 120,
+   "foodsId": 2001,
    "name": "四季豆种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -187,7 +187,7 @@
   },
   {
    "id": 15,
-   "foodsId": 122,
+   "foodsId": 2003,
    "name": "玉米种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -200,7 +200,7 @@
   },
   {
    "id": 16,
-   "foodsId": 259,
+   "foodsId": 2004,
    "name": "梨种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -213,7 +213,7 @@
   },
   {
    "id": 17,
-   "foodsId": 261,
+   "foodsId": 2006,
    "name": "冬笋种子",
    "foodsLevel": 2,
    "coin": 1950,
@@ -226,7 +226,7 @@
   },
   {
    "id": 18,
-   "foodsId": 263,
+   "foodsId": 2008,
    "name": "香菜种子",
    "foodsLevel": 2,
    "coin": 1880,
@@ -239,7 +239,7 @@
   },
   {
    "id": 19,
-   "foodsId": 267,
+   "foodsId": 2011,
    "name": "菜心种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -252,7 +252,7 @@
   },
   {
    "id": 20,
-   "foodsId": 269,
+   "foodsId": 2013,
    "name": "豌豆种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -265,7 +265,7 @@
   },
   {
    "id": 21,
-   "foodsId": 276,
+   "foodsId": 2020,
    "name": "蒜苗种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -278,7 +278,7 @@
   },
   {
    "id": 22,
-   "foodsId": 277,
+   "foodsId": 2021,
    "name": "豆芽种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -291,7 +291,7 @@
   },
   {
    "id": 23,
-   "foodsId": 279,
+   "foodsId": 2023,
    "name": "芹菜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -304,7 +304,7 @@
   },
   {
    "id": 24,
-   "foodsId": 282,
+   "foodsId": 2026,
    "name": "莲藕种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -317,7 +317,7 @@
   },
   {
    "id": 25,
-   "foodsId": 283,
+   "foodsId": 2027,
    "name": "菠菜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -330,7 +330,7 @@
   },
   {
    "id": 26,
-   "foodsId": 284,
+   "foodsId": 2028,
    "name": "洋葱种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -343,7 +343,7 @@
   },
   {
    "id": 27,
-   "foodsId": 285,
+   "foodsId": 2029,
    "name": "冬瓜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -356,7 +356,7 @@
   },
   {
    "id": 28,
-   "foodsId": 286,
+   "foodsId": 2030,
    "name": "芋头种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -369,7 +369,7 @@
   },
   {
    "id": 29,
-   "foodsId": 287,
+   "foodsId": 2031,
    "name": "桂圆种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -382,7 +382,7 @@
   },
   {
    "id": 30,
-   "foodsId": 291,
+   "foodsId": 2035,
    "name": "南瓜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -395,7 +395,7 @@
   },
   {
    "id": 31,
-   "foodsId": 292,
+   "foodsId": 2036,
    "name": "花菜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -408,7 +408,7 @@
   },
   {
    "id": 32,
-   "foodsId": 293,
+   "foodsId": 2037,
    "name": "花生种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -421,7 +421,7 @@
   },
   {
    "id": 33,
-   "foodsId": 295,
+   "foodsId": 2039,
    "name": "通菜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -434,7 +434,7 @@
   },
   {
    "id": 34,
-   "foodsId": 297,
+   "foodsId": 2041,
    "name": "菠萝种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -447,7 +447,7 @@
   },
   {
    "id": 35,
-   "foodsId": 300,
+   "foodsId": 2044,
    "name": "莴笋种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -460,7 +460,7 @@
   },
   {
    "id": 36,
-   "foodsId": 302,
+   "foodsId": 2046,
    "name": "葡萄种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -473,7 +473,7 @@
   },
   {
    "id": 37,
-   "foodsId": 303,
+   "foodsId": 2047,
    "name": "红枣种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -486,7 +486,7 @@
   },
   {
    "id": 38,
-   "foodsId": 305,
+   "foodsId": 2049,
    "name": "蓝莓种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -499,7 +499,7 @@
   },
   {
    "id": 39,
-   "foodsId": 316,
+   "foodsId": 2060,
    "name": "春笋种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -512,7 +512,7 @@
   },
   {
    "id": 40,
-   "foodsId": 317,
+   "foodsId": 2061,
    "name": "香蕉种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -525,7 +525,7 @@
   },
   {
    "id": 41,
-   "foodsId": 318,
+   "foodsId": 2062,
    "name": "莲子种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -538,7 +538,7 @@
   },
   {
    "id": 42,
-   "foodsId": 319,
+   "foodsId": 2063,
    "name": "桂花种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -551,7 +551,7 @@
   },
   {
    "id": 43,
-   "foodsId": 322,
+   "foodsId": 2065,
    "name": "胡萝卜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -564,7 +564,7 @@
   },
   {
    "id": 44,
-   "foodsId": 324,
+   "foodsId": 2067,
    "name": "白萝卜种子",
    "foodsLevel": 2,
    "coin": 1650,
@@ -577,7 +577,7 @@
   },
   {
    "id": 45,
-   "foodsId": 520,
+   "foodsId": 2074,
    "name": "藕种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -590,7 +590,7 @@
   },
   {
    "id": 46,
-   "foodsId": 552,
+   "foodsId": 2075,
    "name": "菜苔种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -603,7 +603,7 @@
   },
   {
    "id": 47,
-   "foodsId": 563,
+   "foodsId": 2076,
    "name": "红薯叶种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -616,7 +616,7 @@
   },
   {
    "id": 48,
-   "foodsId": 564,
+   "foodsId": 2077,
    "name": "红豆种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -629,7 +629,7 @@
   },
   {
    "id": 49,
-   "foodsId": 570,
+   "foodsId": 2080,
    "name": "绿豆种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -642,7 +642,7 @@
   },
   {
    "id": 50,
-   "foodsId": 571,
+   "foodsId": 2081,
    "name": "茼蒿种子",
    "foodsLevel": 2,
    "coin": 2100,
@@ -655,7 +655,7 @@
   },
   {
    "id": 51,
-   "foodsId": 134,
+   "foodsId": 3004,
    "name": "地瓜种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -668,7 +668,7 @@
   },
   {
    "id": 52,
-   "foodsId": 138,
+   "foodsId": 3008,
    "name": "山药种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -681,7 +681,7 @@
   },
   {
    "id": 53,
-   "foodsId": 340,
+   "foodsId": 3021,
    "name": "莼菜种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -694,7 +694,7 @@
   },
   {
    "id": 54,
-   "foodsId": 345,
+   "foodsId": 3026,
    "name": "香菇种子",
    "foodsLevel": 3,
    "coin": 2200,
@@ -707,7 +707,7 @@
   },
   {
    "id": 55,
-   "foodsId": 346,
+   "foodsId": 3027,
    "name": "蘑菇种子",
    "foodsLevel": 3,
    "coin": 2000,
@@ -720,7 +720,7 @@
   },
   {
    "id": 56,
-   "foodsId": 352,
+   "foodsId": 3033,
    "name": "木耳种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -733,7 +733,7 @@
   },
   {
    "id": 57,
-   "foodsId": 353,
+   "foodsId": 3034,
    "name": "豆苗种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -746,7 +746,7 @@
   },
   {
    "id": 58,
-   "foodsId": 359,
+   "foodsId": 3039,
    "name": "百合种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -759,7 +759,7 @@
   },
   {
    "id": 59,
-   "foodsId": 360,
+   "foodsId": 3040,
    "name": "芥兰种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -772,7 +772,7 @@
   },
   {
    "id": 60,
-   "foodsId": 361,
+   "foodsId": 3041,
    "name": "淮山种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -785,7 +785,7 @@
   },
   {
    "id": 61,
-   "foodsId": 362,
+   "foodsId": 3042,
    "name": "蒲菜种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -798,7 +798,7 @@
   },
   {
    "id": 62,
-   "foodsId": 363,
+   "foodsId": 3043,
    "name": "韭花种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -811,7 +811,7 @@
   },
   {
    "id": 63,
-   "foodsId": 366,
+   "foodsId": 3046,
    "name": "桑椹种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -824,7 +824,7 @@
   },
   {
    "id": 64,
-   "foodsId": 368,
+   "foodsId": 3048,
    "name": "樱桃种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -837,7 +837,7 @@
   },
   {
    "id": 65,
-   "foodsId": 370,
+   "foodsId": 3050,
    "name": "银耳种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -850,7 +850,7 @@
   },
   {
    "id": 66,
-   "foodsId": 371,
+   "foodsId": 3051,
    "name": "核桃种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -863,7 +863,7 @@
   },
   {
    "id": 67,
-   "foodsId": 378,
+   "foodsId": 3058,
    "name": "西兰花种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -876,7 +876,7 @@
   },
   {
    "id": 68,
-   "foodsId": 380,
+   "foodsId": 3060,
    "name": "金针菇种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -889,7 +889,7 @@
   },
   {
    "id": 69,
-   "foodsId": 382,
+   "foodsId": 3062,
    "name": "龙须菜种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -902,7 +902,7 @@
   },
   {
    "id": 70,
-   "foodsId": 383,
+   "foodsId": 3063,
    "name": "核桃仁种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -915,7 +915,7 @@
   },
   {
    "id": 71,
-   "foodsId": 387,
+   "foodsId": 3067,
    "name": "宝庆朝天椒种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -928,7 +928,7 @@
   },
   {
    "id": 72,
-   "foodsId": 388,
+   "foodsId": 3068,
    "name": "柑桔种子",
    "foodsLevel": 3,
    "coin": 1800,
@@ -941,7 +941,7 @@
   },
   {
    "id": 73,
-   "foodsId": 508,
+   "foodsId": 3074,
    "name": "红薯种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -954,7 +954,7 @@
   },
   {
    "id": 74,
-   "foodsId": 516,
+   "foodsId": 3076,
    "name": "冬菇种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -967,7 +967,7 @@
   },
   {
    "id": 75,
-   "foodsId": 537,
+   "foodsId": 3081,
    "name": "荷兰豆种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -980,7 +980,7 @@
   },
   {
    "id": 76,
-   "foodsId": 548,
+   "foodsId": 3082,
    "name": "木瓜种子",
    "foodsLevel": 3,
    "coin": 2100,
@@ -993,7 +993,7 @@
   },
   {
    "id": 77,
-   "foodsId": 143,
+   "foodsId": 4003,
    "name": "八角种子",
    "foodsLevel": 4,
    "coin": 2160,
@@ -1006,7 +1006,7 @@
   },
   {
    "id": 78,
-   "foodsId": 144,
+   "foodsId": 4004,
    "name": "猪腰种子",
    "foodsLevel": 4,
    "coin": 2160,
@@ -1019,7 +1019,7 @@
   },
   {
    "id": 79,
-   "foodsId": 145,
+   "foodsId": 4005,
    "name": "海螺种子",
    "foodsLevel": 4,
    "coin": 2160,
@@ -1032,7 +1032,7 @@
   },
   {
    "id": 80,
-   "foodsId": 406,
+   "foodsId": 4022,
    "name": "黄山毛峰种子",
    "foodsLevel": 4,
    "coin": 1920,
@@ -1045,7 +1045,7 @@
   },
   {
    "id": 81,
-   "foodsId": 408,
+   "foodsId": 4024,
    "name": "西湖龙井种子",
    "foodsLevel": 4,
    "coin": 1920,
@@ -1058,7 +1058,7 @@
   },
   {
    "id": 82,
-   "foodsId": 415,
+   "foodsId": 4031,
    "name": "章丘大葱种子",
    "foodsLevel": 4,
    "coin": 1920,
@@ -1071,7 +1071,7 @@
   },
   {
    "id": 83,
-   "foodsId": 417,
+   "foodsId": 4033,
    "name": "猴头菇种子",
    "foodsLevel": 4,
    "coin": 1920,
@@ -1084,7 +1084,7 @@
   },
   {
    "id": 84,
-   "foodsId": 519,
+   "foodsId": 4039,
    "name": "马蹄种子",
    "foodsLevel": 4,
    "coin": 2160,
@@ -1097,7 +1097,7 @@
   },
   {
    "id": 85,
-   "foodsId": 151,
+   "foodsId": 5002,
    "name": "银杏果种子",
    "foodsLevel": 5,
    "coin": 2790,
@@ -1110,7 +1110,7 @@
   },
   {
    "id": 86,
-   "foodsId": 422,
+   "foodsId": 5008,
    "name": "虫草种子",
    "foodsLevel": 5,
    "coin": 3240,
@@ -1123,7 +1123,7 @@
   },
   {
    "id": 87,
-   "foodsId": 423,
+   "foodsId": 5009,
    "name": "辽参种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1136,7 +1136,7 @@
   },
   {
    "id": 88,
-   "foodsId": 424,
+   "foodsId": 5010,
    "name": "松茸种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1149,7 +1149,7 @@
   },
   {
    "id": 89,
-   "foodsId": 427,
+   "foodsId": 5013,
    "name": "人参种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1162,7 +1162,7 @@
   },
   {
    "id": 90,
-   "foodsId": 432,
+   "foodsId": 5018,
    "name": "竹荪种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1175,7 +1175,7 @@
   },
   {
    "id": 91,
-   "foodsId": 438,
+   "foodsId": 5024,
    "name": "槟榔芋种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1188,7 +1188,7 @@
   },
   {
    "id": 92,
-   "foodsId": 439,
+   "foodsId": 5025,
    "name": "碧粳米种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1201,7 +1201,7 @@
   },
   {
    "id": 93,
-   "foodsId": 440,
+   "foodsId": 5026,
    "name": "碧根果种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1214,7 +1214,7 @@
   },
   {
    "id": 94,
-   "foodsId": 444,
+   "foodsId": 5030,
    "name": "铁棍山药种子",
    "foodsLevel": 5,
    "coin": 2250,
@@ -1227,7 +1227,7 @@
   },
   {
    "id": 95,
-   "foodsId": 460,
+   "foodsId": 7004,
    "name": "神秘高山虫种子",
    "foodsLevel": 7,
    "coin": 50000,
@@ -1240,7 +1240,7 @@
   },
   {
    "id": 96,
-   "foodsId": 463,
+   "foodsId": 7007,
    "name": "神秘金蟾菇种子",
    "foodsLevel": 7,
    "coin": 50000,

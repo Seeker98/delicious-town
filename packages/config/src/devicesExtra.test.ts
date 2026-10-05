@@ -6,11 +6,24 @@ import { gid } from './testItems';
 
 const source = () => readSourceDir(defaultDataDir());
 
+/** 后期加的 4 张海报、4 个奖杯（问题记录 146） */
+const POSTERS = () =>
+  [
+    '13 哥宣传海报',
+    '镇长宣传海报',
+    '蟹老板宣传海报',
+    '食神宣传海报',
+    '小镇食神奖杯(铂金)',
+    '小镇食神奖杯(钻石)',
+    '小镇食神奖杯(星耀)',
+    '小镇食神奖杯(传说)',
+  ].map(gid);
+
 describe('更多宣传海报和奖杯（问题记录 146）', () => {
   it('8 个新道具：设施、设施位、效果、24 小时、价格、需要星级；不进随机奖励池', () => {
     const { bundle, errors } = buildBundle(source());
     expect(errors).toEqual([]);
-    const rows = [93201, 93202, 93203, 93204, 93205, 93206, 93207, 93208].map((id) => {
+    const rows = POSTERS().map((id) => {
       const g = bundle!.goods.find((x) => x.id === id)!;
       return [g.type, g.deviceType, g.effects, g.coin, g.onSale, g.needStar, g.awardFlag, g.level];
     });
@@ -29,7 +42,7 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
       effects: { time: 24, coinValue: 2 },
     });
     expect(
-      bundle!.goods.filter((g) => g.id < 93201 || g.id > 93208).every((g) => g.needStar === undefined),
+      bundle!.goods.filter((g) => !POSTERS().includes(g.id)).every((g) => g.needStar === undefined),
     ).toBe(true);
   });
 
@@ -39,13 +52,13 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
     const posters = goods.filter((g) => g.src === 'poster');
     posters[0]!.needStar = 13;
     posters[1]!.deviceType = 6;
-    posters[2]!.id = 13;
+    posters[2]!.id = gid('普通宣传海报');
     // 负数星级（质量期 ②）
     posters[3]!.needStar = -1;
     const errs = buildBundle({ ...src, 'master/goods': goods }).errors.join('\n');
     expect(errs).toContain(`goods ${posters[0]!.id as number} needStar 13`);
     expect(errs).toContain(`goods ${gid('食神宣传海报')} needStar -1`);
     expect(errs).toContain(`goods ${posters[1]!.id as number} poster deviceType 6`);
-    expect(errs).toContain('goods: duplicate id 13');
+    expect(errs).toContain(`goods: duplicate id ${gid('普通宣传海报')}`);
   });
 });

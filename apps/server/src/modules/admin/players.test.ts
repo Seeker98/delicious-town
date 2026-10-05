@@ -67,7 +67,7 @@ describe('玩家查询', () => {
       .insertInto('ledger')
       .values([
         { rest_id: p.restId, kind: 'coin', delta: 5, source: 'x' },
-        { rest_id: p.restId, kind: 'goods', item_id: 1, delta: 1, source: 'y' },
+        { rest_id: p.restId, kind: 'goods', item_id: GOODS.mysteryTicket, delta: 1, source: 'y' },
       ])
       .execute();
     const d = (await get(mod.cookie, `/players/${p.accountId}`)).json.data;

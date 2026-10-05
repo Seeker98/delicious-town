@@ -67,6 +67,12 @@ export interface GameConfig {
   readonly hotFoodPool: WeightedPool<Food>;
   readonly masterFoodPool: WeightedPool<Food>;
   readonly cookbookIndex: CookbookIndex;
+  /** 重新编号前的编号 → 新编号（设计 §5） */
+  readonly legacy: {
+    readonly goods: ReadonlyMap<number, number>;
+    readonly foods: ReadonlyMap<number, number>;
+    readonly cookbooks: ReadonlyMap<number, number>;
+  };
   readonly devices: ReadonlyMap<number, Device>;
   readonly starNeed: ReadonlyMap<number, StarNeed>;
   readonly starAward: ReadonlyMap<number, Award>;
@@ -248,6 +254,11 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     hotFoodPool: buildPool(hot, (f) => f.weight),
     masterFoodPool: buildPool(foodsByLevel.get(9) ?? [], (f) => f.weight),
     cookbookIndex: buildCookbookIndex(bundle.cookbooks),
+    legacy: {
+      goods: new Map(bundle.legacy.goods),
+      foods: new Map(bundle.legacy.foods),
+      cookbooks: new Map(bundle.legacy.cookbooks),
+    },
     devices: byId(bundle.devices),
     starNeed: new Map(bundle.starNeed.map((s) => [s.star, s])),
     starAward: new Map(bundle.starAward.map((s) => [s.star, s.award])),

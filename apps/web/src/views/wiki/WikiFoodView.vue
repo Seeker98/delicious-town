@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onBeforeUnmount, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenFoodDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
@@ -11,6 +11,7 @@ import { isNotFound, useWikiData } from './wiki';
 /** 食材详情（问题记录 142）：用到它的菜谱一次显示 50 道 */
 const PAGE = 50;
 const route = useRoute();
+const router = useRouter();
 const t = useT();
 const data = useWikiData();
 const f = ref<OpenFoodDto | null>(null);
@@ -36,6 +37,8 @@ watch(
       if (mine !== seq) return;
       streets.value = s;
       f.value = v;
+      // 旧链接（重新编号前的编号）：接口已跳到新编号，地址栏也换成新的（设计 §5）
+      if (v.id !== id) void router.replace(`/wiki/foods/${v.id}`);
     } catch (e) {
       if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';

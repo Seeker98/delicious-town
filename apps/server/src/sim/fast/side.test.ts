@@ -46,7 +46,7 @@ describe('旁支产出表（设计 §5）', () => {
     const tickets = countGoods(ctx, r, 1);
     applySide(ctx, r, t, 'casual');
     expect(r.coin).toBe(coin + 400);
-    expect(countGoods(ctx, r, 1)).toBe(tickets + 1);
+    expect(countGoods(ctx, r, GOODS.mysteryTicket)).toBe(tickets + 1);
     expect(r.effects.filter((e) => e.sourceType === 'side').map((e) => e.effects)).toEqual([
       { atRate: 0.05 },
     ]);

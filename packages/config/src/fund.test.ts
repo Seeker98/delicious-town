@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { FUND, GOODS_TYPE } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
+import { gid } from './testItems';
 
 const source = () => readSourceDir(defaultDataDir());
 
@@ -12,11 +13,11 @@ describe('小镇发展基金配置（240-2）', () => {
     const f = bundle!.tuning.fund;
     expect(f).toMatchObject({ days: 7, returnRate: 0.9, earlyRate: 0.7 });
     expect(f.tiers.map((x) => [x.key, x.coin, x.medal, x.news])).toEqual([
-      ['A', 10000000, 93103, 'broadcast'],
-      ['B', 3000000, 93102, 'news'],
-      ['C', 1000000, 93101, 'news'],
+      ['A', 10000000, FUND.A, 'broadcast'],
+      ['B', 3000000, FUND.B, 'news'],
+      ['C', 1000000, FUND.C, 'news'],
     ]);
-    const medals = [93101, 93102, 93103].map((id) => bundle!.goods.find((g) => g.id === id)!);
+    const medals = [FUND.C, FUND.B, FUND.A].map((id) => bundle!.goods.find((g) => g.id === id)!);
     expect(medals.map((g) => [g.type, g.invalidHours, g.effects.expRate, g.onSale])).toEqual([
       [GOODS_TYPE.honor, 168, 0.05, false],
       [GOODS_TYPE.honor, 168, 0.1, false],
@@ -39,9 +40,9 @@ describe('小镇发展基金配置（240-2）', () => {
   it('检查：档位的勋章必须是基金勋章，填别的荣誉会在领取时被当成基金勋章删掉（终审 I2）', () => {
     const src = source();
     const t = JSON.parse(JSON.stringify(src['game/tuning']));
-    t.fund.tiers[0].medal = 81;
+    t.fund.tiers[0].medal = gid('开张大吉');
     const { errors } = buildBundle({ ...src, 'game/tuning': t });
-    expect(errors).toContain('tuning.fund.tiers A medal 81 is not a fund medal');
+    expect(errors).toContain(`tuning.fund.tiers A medal ${gid('开张大吉')} is not a fund medal`);
   });
 
   it('每枚基金勋章配一个限时称号（用户追加）：称号在 looks.icons 里，不上架；称号不存在时报错', () => {
@@ -61,7 +62,7 @@ describe('小镇发展基金配置（240-2）', () => {
     const f = JSON.parse(JSON.stringify(src['game/fund']));
     f.medals[0].icon = 'nope';
     expect(buildBundle({ ...src, 'game/fund': f }).errors).toContain(
-      'fund medal 93101 icon nope not in looks.icons',
+      `fund medal ${FUND.C} icon nope not in looks.icons`,
     );
   });
 });

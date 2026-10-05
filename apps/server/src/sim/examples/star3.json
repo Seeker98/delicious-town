@@ -1,7 +1,7 @@
 {
   "input": {
     "rest": { "star": 3, "level": 45, "streetId": 1, "luck": 44 },
-    "cookbooks": { "149": 3, "150": 2, "151": 1 },
+    "cookbooks": { "101001": 3, "101002": 2, "101003": 1 },
     "agg": { "atRate": 0.35, "coinValue": 2, "luckValue": 10 }
   },
   "globals": { "krabStreet": 1, "weather": { "coinRate": 0.1 } }

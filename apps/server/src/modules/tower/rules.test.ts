@@ -17,6 +17,8 @@ import {
   towerRenown,
   towerStrength,
 } from './rules';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const config = testConfig();
 const t = config.tuning.tower;
@@ -141,15 +143,10 @@ describe('赛厨榜（设计文档 §3.3）', () => {
     expect(rankOccupyError(4, 4)).toBe('rank_not_better');
   });
 
-  it('名次礼包：1、2、3 名 202~204，4~8 名 205，9~15 名 206', () => {
+  it('名次礼包：1、2、3 名各一档，4~8 名、9~15 名各一档', () => {
     expect([1, 2, 3, 4, 8, 9, 15, 16].map((r) => rankGift(r, t))).toEqual([
-      202,
-      203,
-      204,
-      205,
-      205,
-      206,
-      206,
+      ...['赛厨第1名礼包', '赛厨第2名礼包', '赛厨第3名礼包', '赛厨第4-8名礼包', '赛厨第4-8名礼包'].map(gid),
+      ...['赛厨第9-15名礼包', '赛厨第9-15名礼包'].map(gid),
       null,
     ]);
   });
@@ -166,7 +163,7 @@ describe('声望商店（设计文档 §3.5）', () => {
 
   it('本周在售：常驻且没有前置条件的，加上 ISO 周数 % 4 + 1 组的雕像', () => {
     const ids = (day: string) => shopOnSale(config.bundle.renownShop, day).map((x) => x.goodsId);
-    expect(ids('2026-09-30')).toEqual([310, 397, 460]);
-    expect(ids('2026-10-05')).toEqual([310, 402, 476]);
+    expect(ids('2026-09-30')).toEqual([GOODS.dtTicket, gid('思想者-雕像'), gid('史前怪石-雕像')]);
+    expect(ids('2026-10-05')).toEqual([GOODS.dtTicket, gid('恰克摩尔-雕像'), gid('破-雕像')]);
   });
 });

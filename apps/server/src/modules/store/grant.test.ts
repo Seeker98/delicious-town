@@ -29,11 +29,11 @@ describe('grantGoods', () => {
     const now = new Date('2026-09-29T00:00:00Z');
     await grantGoods(db, config, restId, gid('开张大吉'), 1, now);
     await grantGoods(db, config, restId, gid('开张大吉'), 1, now);
-    expect((await item(restId, 81))!.num).toBe(1);
+    expect((await item(restId, gid('开张大吉')))!.num).toBe(1);
     const [effect] = await listActiveEffects(db, restId, now);
     expect(effect).toMatchObject({
       sourceType: 'honor',
-      sourceId: 81,
+      sourceId: gid('开张大吉'),
       effects: { atRate: 0.25, coinRate: 1, expRate: 1 },
     });
     expect(effect!.expiresAt).toEqual(new Date(now.getTime() + 360 * 3600_000));
@@ -46,7 +46,7 @@ describe('grantGoods', () => {
     const restId = await newRest();
     await grantGoods(db, config, restId, gid('新手街'), 1, new Date());
     const [effect] = await listActiveEffects(db, restId, new Date());
-    expect(effect).toMatchObject({ sourceType: 'street', sourceId: 140, expiresAt: null });
+    expect(effect).toMatchObject({ sourceType: 'street', sourceId: gid('新手街'), expiresAt: null });
   });
 
   it('可叠加道具累加，但不超过持有上限', async () => {
@@ -54,6 +54,6 @@ describe('grantGoods', () => {
     const max = config.requireGoods(GOODS.mysteryTicket).maxNum;
     await grantGoods(db, config, restId, GOODS.mysteryTicket, max - 1, new Date());
     await grantGoods(db, config, restId, GOODS.mysteryTicket, 5, new Date());
-    expect((await item(restId, 1))!.num).toBe(max);
+    expect((await item(restId, GOODS.mysteryTicket))!.num).toBe(max);
   });
 });

@@ -22,7 +22,7 @@ afterAll(async () => {
 });
 
 const lvl = (n: number) => config.bundle.mysteriousCookbooks.filter((m) => m.level === n);
-const MC3 = lvl(3)[0]!; // 3 级：中级教师证 178 能开
+const MC3 = lvl(3)[0]!; // 3 级：中级教师证能开
 const MC4 = lvl(4)[0]!;
 const cookbookIds = (n: number) =>
   Object.fromEntries(config.cookbookIndex.allIds.slice(0, n).map((id) => [id, 1]));
@@ -48,7 +48,7 @@ async function student(
     verified: true,
     cookbooks: cookbookIds(level * 10),
     patch: { star_level: 3, strength: 500, coin: 10_000_000, ...patch },
-    goods: { [180 + level]: 10 },
+    goods: { [GOODS.fragmentBase + level]: 10 },
   });
 }
 const lessonRow = (g: TestGame, id: number) =>
@@ -57,7 +57,7 @@ const lessonRow = (g: TestGame, id: number) =>
 describe('开课（规格书 04 §4.7）', () => {
   it('扣残卷 1、教师证 1、体力；课程按教师证的时长和人数；列表里能看到', async () => {
     const tc = await teacher(t, MC3.id);
-    const r = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 });
+    const r = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') });
     const l = await lessonRow(t, r.data.id);
     expect(l).toMatchObject({
       teacher_rest_id: tc.restaurantId,
@@ -76,24 +76,32 @@ describe('开课（规格书 04 §4.7）', () => {
 
   it('教师证等级不符、没学、星级不够、已有进行中的课都报错；过期的课自动关闭后可以再开（Review Focus 3）', async () => {
     const tc = await teacher(t, MC4.id);
-    await expect(t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 177 })).rejects.toMatchObject({
+    await expect(
+      t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('初级教师证') }),
+    ).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
       params: { reason: 'cert_level' },
     });
-    await expect(t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 })).rejects.toMatchObject({
+    await expect(
+      t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') }),
+    ).rejects.toMatchObject({
       params: { reason: 'mc_not_learned' },
     });
     const low = await teacher(t, MC4.id, { star_level: 0 });
-    await expect(t.game.mysterious.openLesson(low, { mcId: MC4.id, certId: 178 })).rejects.toMatchObject({
+    await expect(
+      t.game.mysterious.openLesson(low, { mcId: MC4.id, certId: gid('中级教师证') }),
+    ).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'star', need: 1 },
     });
-    const first = await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 });
+    const first = await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
     await t.db
       .insertInto('store_item')
       .values({ rest_id: tc.restaurantId, goods_id: gid('中级教师证'), num: 1 })
       .execute();
-    await expect(t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 })).rejects.toMatchObject({
+    await expect(
+      t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') }),
+    ).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'lesson_open' },
     });
@@ -102,7 +110,7 @@ describe('开课（规格书 04 §4.7）', () => {
       .set({ ends_at: new Date(t.clock.now.getTime() - 1000) })
       .where('id', '=', first.data.id)
       .execute();
-    await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 });
+    await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
     expect((await lessonRow(t, first.data.id)).closed_at).not.toBeNull();
   });
 });
@@ -110,7 +118,7 @@ describe('开课（规格书 04 §4.7）', () => {
 describe('学习（规格书 04 §4.7）', () => {
   it('学成功：扣体力 50、学费 售价×3、碎片 2；老师得 售价×2 和碎片 1；学生学会（way 2，记老师）', async () => {
     const tc = await teacher(win, MC3.id);
-    const { data } = await win.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 });
+    const { data } = await win.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') });
     const st = await student(win, tc.shardId, 3);
     const teacherCoin = (await restRow(win, tc.restaurantId)).coin;
     const r = await win.game.mysterious.learnLesson(st, data.id, { type: 1 });
@@ -142,12 +150,12 @@ describe('学习（规格书 04 §4.7）', () => {
 
   it('碎片不够：报错，体力、学费没扣，老师什么也没拿到，没有学习记录', async () => {
     const tc = await teacher(t, MC3.id);
-    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 });
+    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') });
     const st = await student(t, tc.shardId, 3);
     await t.db
       .deleteFrom('store_item')
       .where('rest_id', '=', st.restaurantId)
-      .where('goods_id', '=', 183)
+      .where('goods_id', '=', gid('[三级]•残卷碎片'))
       .execute();
     const before = (await restRow(t, tc.restaurantId)).coin;
     await expect(t.game.mysterious.learnLesson(st, data.id, { type: 1 })).rejects.toMatchObject({
@@ -163,7 +171,7 @@ describe('学习（规格书 04 §4.7）', () => {
 
   it('学自己的课、课满、偷学人数满、课程过期、普通食谱不够、4 级课特色菜不够都报错', async () => {
     const tc = await teacher(t, MC4.id);
-    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 });
+    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
     await expect(t.game.mysterious.learnLesson(tc, data.id, { type: 1 })).rejects.toMatchObject({
       params: { reason: 'own_lesson' },
     });
@@ -203,7 +211,7 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
     const g = await createTestGame({ rng: () => sequenceRng([0.9, ...Array<number>(13).fill(0), 0, 0]) });
     try {
       const tc = await teacher(g, MC4.id);
-      const { data } = await g.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 });
+      const { data } = await g.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
       const st = await student(g, tc.shardId, 4);
       const [x, y] = lvl(1);
       const [z] = lvl(5);
@@ -265,7 +273,7 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
 describe('强制结束', () => {
   it('持有百世之师且人满时花 等级×50000 银币结束；人没满、没有勋章都不行', async () => {
     const tc = await teacher(t, MC3.id, { coin: 1_000_000 });
-    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 });
+    const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: gid('中级教师证') });
     await expect(t.game.mysterious.closeLesson(tc)).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'statue', goodsId: GOODS.hundredMaster },

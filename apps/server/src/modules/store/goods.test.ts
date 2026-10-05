@@ -24,7 +24,7 @@ describe('道具发放与扣除', () => {
       .selectFrom('store_item')
       .selectAll()
       .where('rest_id', '=', ctx.restaurantId)
-      .where('goods_id', '=', 13)
+      .where('goods_id', '=', gid('普通宣传海报'))
       .executeTakeFirstOrThrow();
     expect(row).toMatchObject({ num: 2, expires_at: null });
   });
@@ -36,9 +36,9 @@ describe('道具发放与扣除', () => {
       await grantGoodsOp(op, GOODS.krabHappy, 1, { hours: 5 });
     });
     t.clock.set(new Date('2026-09-30T04:59:00Z'));
-    expect((await run(ctx, (op) => hasValidHonor(op, 133))).data).toBe(true);
+    expect((await run(ctx, (op) => hasValidHonor(op, GOODS.krabHappy))).data).toBe(true);
     t.clock.set(new Date('2026-09-30T05:00:00Z'));
-    expect((await run(ctx, (op) => hasValidHonor(op, 133))).data).toBe(false);
+    expect((await run(ctx, (op) => hasValidHonor(op, GOODS.krabHappy))).data).toBe(false);
     t.clock.set(new Date());
   });
 
@@ -67,7 +67,7 @@ describe('道具发放与扣除', () => {
     const ctx = await newRestaurant(t);
     await run(ctx, (op) => grantGoodsOp(op, GOODS.promoHonor, 1));
     const r = await run(ctx, async (op) => {
-      await removeHonor(op, 106);
+      await removeHonor(op, GOODS.promoHonor);
       return opAgg(op);
     });
     expect(r.data.atRate ?? 0).toBe(0);
@@ -76,8 +76,10 @@ describe('道具发放与扣除', () => {
 
   it('仓库容量：种数满了不能放新种类；已有的、勋章不受限', async () => {
     const ctx = await newRestaurant(t, { patch: { store_num: 1 }, goods: { [GOODS.starCert]: 1 } });
-    await expect(run(ctx, (op) => assertStoreRoom(op, 24))).rejects.toMatchObject({ code: 'STORE_FULL' });
-    await run(ctx, (op) => assertStoreRoom(op, 86));
-    await run(ctx, (op) => assertStoreRoom(op, 167));
+    await expect(run(ctx, (op) => assertStoreRoom(op, gid('初级油壶扩容凭证')))).rejects.toMatchObject({
+      code: 'STORE_FULL',
+    });
+    await run(ctx, (op) => assertStoreRoom(op, GOODS.starCert));
+    await run(ctx, (op) => assertStoreRoom(op, GOODS.loveNecklace));
   });
 });

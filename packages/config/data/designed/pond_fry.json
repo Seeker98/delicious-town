@@ -5,7 +5,7 @@
  "data": [
   {
    "fryId": 1,
-   "foodsId": 265,
+   "foodsId": 2010,
    "name": "草鱼苗",
    "foodsLevel": 2,
    "diet": "grass",
@@ -18,7 +18,7 @@
   },
   {
    "fryId": 2,
-   "foodsId": 289,
+   "foodsId": 2033,
    "name": "鲢鱼苗",
    "foodsLevel": 2,
    "diet": "grass",
@@ -31,7 +31,7 @@
   },
   {
    "fryId": 3,
-   "foodsId": 273,
+   "foodsId": 2017,
    "name": "鲤鱼苗",
    "foodsLevel": 2,
    "diet": "omni",
@@ -44,7 +44,7 @@
   },
   {
    "fryId": 4,
-   "foodsId": 268,
+   "foodsId": 2012,
    "name": "黄鱼苗",
    "foodsLevel": 2,
    "diet": "meat",
@@ -57,7 +57,7 @@
   },
   {
    "fryId": 5,
-   "foodsId": 343,
+   "foodsId": 3024,
    "name": "青鱼苗",
    "foodsLevel": 3,
    "diet": "omni",
@@ -70,7 +70,7 @@
   },
   {
    "fryId": 6,
-   "foodsId": 365,
+   "foodsId": 3045,
    "name": "鳙鱼苗",
    "foodsLevel": 3,
    "diet": "grass",
@@ -83,7 +83,7 @@
   },
   {
    "fryId": 7,
-   "foodsId": 356,
+   "foodsId": 3037,
    "name": "鲈鱼苗",
    "foodsLevel": 3,
    "diet": "meat",
@@ -96,7 +96,7 @@
   },
   {
    "fryId": 8,
-   "foodsId": 330,
+   "foodsId": 3011,
    "name": "桂鱼苗",
    "foodsLevel": 3,
    "diet": "meat",
@@ -109,7 +109,7 @@
   },
   {
    "fryId": 9,
-   "foodsId": 350,
+   "foodsId": 3031,
    "name": "河虾苗",
    "foodsLevel": 3,
    "diet": "omni",
@@ -122,7 +122,7 @@
   },
   {
    "fryId": 10,
-   "foodsId": 376,
+   "foodsId": 3056,
    "name": "小龙虾苗",
    "foodsLevel": 3,
    "diet": "omni",
@@ -135,7 +135,7 @@
   },
   {
    "fryId": 11,
-   "foodsId": 402,
+   "foodsId": 4018,
    "name": "黄河鲤鱼苗",
    "foodsLevel": 4,
    "diet": "omni",
@@ -148,7 +148,7 @@
   },
   {
    "fryId": 12,
-   "foodsId": 403,
+   "foodsId": 4019,
    "name": "松江鲈鱼苗",
    "foodsLevel": 4,
    "diet": "meat",
@@ -161,7 +161,7 @@
   },
   {
    "fryId": 13,
-   "foodsId": 396,
+   "foodsId": 4012,
    "name": "黑鱼苗",
    "foodsLevel": 4,
    "diet": "meat",
@@ -174,7 +174,7 @@
   },
   {
    "fryId": 14,
-   "foodsId": 521,
+   "foodsId": 4040,
    "name": "甲鱼苗",
    "foodsLevel": 4,
    "diet": "omni",
@@ -187,7 +187,7 @@
   },
   {
    "fryId": 15,
-   "foodsId": 442,
+   "foodsId": 5028,
    "name": "长江刀鱼苗",
    "foodsLevel": 5,
    "diet": "meat",

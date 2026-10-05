@@ -89,7 +89,7 @@ describe('开店', () => {
     const expires = new Date(opening.expiresAt).getTime();
     expect(expires).toBeGreaterThanOrEqual(before + 360 * 3600_000 - 5000);
     expect(expires).toBeLessThanOrEqual(Date.now() + 360 * 3600_000 + 5000);
-    expect(d.effects.find((e: { sourceId: number }) => e.sourceId === 140)).toMatchObject({
+    expect(d.effects.find((e: { sourceId: number }) => e.sourceId === gid('新手街'))).toMatchObject({
       sourceType: 'street',
       expiresAt: null,
     });

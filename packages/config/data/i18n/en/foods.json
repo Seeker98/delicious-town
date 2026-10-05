@@ -1,1010 +1,1010 @@
 {
-  "101": {
+  "1001": {
     "name": "Rice"
   },
-  "102": {
+  "1002": {
     "name": "Green Pepper"
   },
-  "103": {
+  "1003": {
     "name": "Bitter Melon"
   },
-  "104": {
+  "1004": {
     "name": "Chinese Chives"
   },
-  "120": {
-    "name": "Green Beans"
-  },
-  "121": {
-    "name": "Ketchup"
-  },
-  "122": {
-    "name": "Corn"
-  },
-  "131": {
-    "name": "Chicken Wings"
-  },
-  "132": {
-    "name": "Pork Tenderloin"
-  },
-  "133": {
-    "name": "Sea Bream"
-  },
-  "134": {
-    "name": "Sweet Potato"
-  },
-  "135": {
-    "name": "Crucian Carp"
-  },
-  "136": {
-    "name": "Pork Belly"
-  },
-  "137": {
-    "name": "Yellow Wine"
-  },
-  "138": {
-    "name": "Chinese Yam"
-  },
-  "139": {
-    "name": "Century Egg"
-  },
-  "140": {
-    "name": "Olive Oil"
-  },
-  "142": {
-    "name": "Pork Intestines"
-  },
-  "143": {
-    "name": "Star Anise"
-  },
-  "144": {
-    "name": "Pork Kidney"
-  },
-  "145": {
-    "name": "Sea Snail"
-  },
-  "150": {
-    "name": "Long Pepper"
-  },
-  "151": {
-    "name": "Ginkgo Nuts"
-  },
-  "152": {
-    "name": "Cuttlefish"
-  },
-  "237": {
+  "1005": {
     "name": "Vinegar"
   },
-  "238": {
+  "1006": {
     "name": "Napa Cabbage"
   },
-  "239": {
+  "1007": {
     "name": "Pork"
   },
-  "240": {
+  "1008": {
     "name": "Cucumber"
   },
-  "241": {
+  "1009": {
     "name": "Perilla"
   },
-  "242": {
+  "1010": {
     "name": "Egg"
   },
-  "243": {
+  "1011": {
     "name": "Tomato"
   },
-  "244": {
+  "1012": {
     "name": "Eggplant"
   },
-  "245": {
+  "1013": {
     "name": "Glutinous Rice"
   },
-  "246": {
+  "1014": {
     "name": "White Sugar"
   },
-  "247": {
+  "1015": {
     "name": "Garlic"
   },
-  "248": {
+  "1016": {
     "name": "Chili Pepper"
   },
-  "249": {
+  "1017": {
     "name": "Leek Onion"
   },
-  "250": {
+  "1018": {
     "name": "Scallion"
   },
-  "251": {
+  "1019": {
     "name": "Ginger"
   },
-  "252": {
+  "1020": {
     "name": "Flour"
   },
-  "253": {
+  "1021": {
     "name": "Job's Tears"
   },
-  "254": {
+  "1022": {
     "name": "Brown Rice"
   },
-  "255": {
+  "1023": {
     "name": "Potato"
   },
-  "256": {
+  "1024": {
     "name": "Lettuce"
   },
-  "257": {
+  "1025": {
     "name": "Hyacinth Beans"
   },
-  "258": {
+  "1026": {
     "name": "Dried Chili"
   },
-  "259": {
-    "name": "Pear"
-  },
-  "260": {
-    "name": "Chicken"
-  },
-  "261": {
-    "name": "Winter Bamboo Shoots"
-  },
-  "262": {
-    "name": "Duck"
-  },
-  "263": {
-    "name": "Coriander"
-  },
-  "264": {
-    "name": "Tofu"
-  },
-  "265": {
-    "name": "Grass Carp"
-  },
-  "267": {
-    "name": "Choy Sum"
-  },
-  "268": {
-    "name": "Yellow Croaker"
-  },
-  "269": {
-    "name": "Peas"
-  },
-  "270": {
-    "name": "Rice Wine"
-  },
-  "271": {
-    "name": "Fermented Black Beans"
-  },
-  "272": {
-    "name": "Fermented Tofu"
-  },
-  "273": {
-    "name": "Carp"
-  },
-  "274": {
-    "name": "Rock Sugar"
-  },
-  "275": {
-    "name": "Fermented Rice Lees"
-  },
-  "276": {
-    "name": "Garlic Sprouts"
-  },
-  "277": {
-    "name": "Bean Sprouts"
-  },
-  "278": {
-    "name": "Glass Noodles"
-  },
-  "279": {
-    "name": "Celery"
-  },
-  "280": {
-    "name": "Tea Leaves"
-  },
-  "281": {
-    "name": "Chestnuts"
-  },
-  "282": {
-    "name": "Lotus Root"
-  },
-  "283": {
-    "name": "Spinach"
-  },
-  "284": {
-    "name": "Onion"
-  },
-  "285": {
-    "name": "Winter Melon"
-  },
-  "286": {
-    "name": "Taro"
-  },
-  "287": {
-    "name": "Longan"
-  },
-  "288": {
-    "name": "Milk"
-  },
-  "289": {
-    "name": "Silver Carp"
-  },
-  "290": {
-    "name": "Sesame"
-  },
-  "291": {
-    "name": "Pumpkin"
-  },
-  "292": {
-    "name": "Cauliflower"
-  },
-  "293": {
-    "name": "Peanuts"
-  },
-  "294": {
-    "name": "Kelp"
-  },
-  "295": {
-    "name": "Water Spinach"
-  },
-  "296": {
-    "name": "Duck Blood"
-  },
-  "297": {
-    "name": "Pineapple"
-  },
-  "298": {
-    "name": "Dried Tofu"
-  },
-  "299": {
-    "name": "Pepper"
-  },
-  "300": {
-    "name": "Celtuce"
-  },
-  "301": {
-    "name": "Sichuan Pepper"
-  },
-  "302": {
-    "name": "Grapes"
-  },
-  "303": {
-    "name": "Red Dates"
-  },
-  "304": {
-    "name": "Cream"
-  },
-  "305": {
-    "name": "Blueberries"
-  },
-  "306": {
-    "name": "Oat Noodles"
-  },
-  "307": {
-    "name": "Cumin"
-  },
-  "308": {
-    "name": "Rice Cake"
-  },
-  "309": {
-    "name": "Goji"
-  },
-  "310": {
-    "name": "Haw Jelly"
-  },
-  "311": {
-    "name": "Pickled Cabbage"
-  },
-  "312": {
-    "name": "Sweet Potato Noodles"
-  },
-  "313": {
-    "name": "Red Bean Paste"
-  },
-  "314": {
-    "name": "Pigeon Eggs"
-  },
-  "315": {
-    "name": "Agar"
-  },
-  "316": {
-    "name": "Spring Bamboo Shoots"
-  },
-  "317": {
-    "name": "Banana"
-  },
-  "318": {
-    "name": "Lotus Seeds"
-  },
-  "319": {
-    "name": "Osmanthus"
-  },
-  "320": {
-    "name": "Chili Bean Paste"
-  },
-  "322": {
-    "name": "Carrot"
-  },
-  "323": {
-    "name": "Sweet Bean Sauce"
-  },
-  "324": {
-    "name": "White Radish"
-  },
-  "325": {
-    "name": "Sacha Sauce"
-  },
-  "326": {
-    "name": "Thirteen Spices"
-  },
-  "327": {
-    "name": "Quail Eggs"
-  },
-  "328": {
-    "name": "Cocoa Beans"
-  },
-  "329": {
-    "name": "Prawns"
-  },
-  "330": {
-    "name": "Mandarin Fish"
-  },
-  "331": {
-    "name": "Broth"
-  },
-  "332": {
-    "name": "Dried Scallops"
-  },
-  "333": {
-    "name": "Rabbit"
-  },
-  "334": {
-    "name": "Snail Meat"
-  },
-  "335": {
-    "name": "Eel"
-  },
-  "336": {
-    "name": "Goose"
-  },
-  "337": {
-    "name": "Whitebait"
-  },
-  "338": {
-    "name": "Bullfrog"
-  },
-  "339": {
-    "name": "Reeves Shad"
-  },
-  "340": {
-    "name": "Water Shield"
-  },
-  "341": {
-    "name": "Mussels"
-  },
-  "342": {
-    "name": "Catfish"
-  },
-  "343": {
-    "name": "Black Carp"
-  },
-  "344": {
-    "name": "Ham"
-  },
-  "345": {
-    "name": "Shiitake"
-  },
-  "346": {
-    "name": "Mushrooms"
-  },
-  "347": {
-    "name": "Spare Ribs"
-  },
-  "348": {
-    "name": "Rice-field Eel"
-  },
-  "349": {
-    "name": "Squid"
-  },
-  "350": {
-    "name": "River Shrimp"
-  },
-  "351": {
-    "name": "Lamb"
-  },
-  "352": {
-    "name": "Wood Ear"
-  },
-  "353": {
-    "name": "Pea Shoots"
-  },
-  "354": {
-    "name": "Pork Tripe"
-  },
-  "355": {
-    "name": "Beef"
-  },
-  "356": {
-    "name": "Sea Bass"
-  },
-  "358": {
-    "name": "Cured Pork"
-  },
-  "359": {
-    "name": "Lily Bulbs"
-  },
-  "360": {
-    "name": "Chinese Broccoli"
-  },
-  "361": {
-    "name": "Huaishan Yam"
-  },
-  "362": {
-    "name": "Cattail Shoots"
-  },
-  "363": {
-    "name": "Chive Flowers"
-  },
-  "364": {
-    "name": "Salted Fish"
-  },
-  "365": {
-    "name": "Bighead Carp"
-  },
-  "366": {
-    "name": "Mulberries"
-  },
-  "367": {
-    "name": "Almonds"
-  },
-  "368": {
-    "name": "Cherries"
-  },
-  "369": {
-    "name": "Sour Soup Base"
-  },
-  "370": {
-    "name": "Snow Fungus"
-  },
-  "371": {
-    "name": "Walnuts"
-  },
-  "372": {
-    "name": "Sausage"
-  },
-  "373": {
-    "name": "Quail"
-  },
-  "374": {
-    "name": "Yellow Catfish"
-  },
-  "375": {
-    "name": "Huadiao Wine"
-  },
-  "376": {
-    "name": "Crayfish"
-  },
-  "377": {
-    "name": "Five Spices"
-  },
-  "378": {
-    "name": "Broccoli"
-  },
-  "379": {
-    "name": "Fire-dried Fish"
-  },
-  "380": {
-    "name": "Enoki Mushrooms"
-  },
-  "381": {
-    "name": "Wuchang Bream"
-  },
-  "382": {
-    "name": "Asparagus Fern Tips"
-  },
-  "383": {
-    "name": "Walnut Kernels"
-  },
-  "384": {
-    "name": "Hancheng Sichuan Pepper"
-  },
-  "385": {
-    "name": "Pixian Bean Paste"
-  },
-  "386": {
-    "name": "Chiffon Cake"
-  },
-  "387": {
-    "name": "Baoqing Facing-Heaven Chili"
-  },
-  "388": {
-    "name": "Mandarin Orange"
-  },
-  "389": {
-    "name": "Mud Crab"
-  },
-  "390": {
-    "name": "Sea Cucumber"
-  },
-  "392": {
-    "name": "Snake Meat"
-  },
-  "393": {
-    "name": "Grouper"
-  },
-  "394": {
-    "name": "Longsnout Catfish"
-  },
-  "395": {
-    "name": "Ya Fish"
-  },
-  "396": {
-    "name": "Snakehead"
-  },
-  "397": {
-    "name": "Hazel Grouse"
-  },
-  "398": {
-    "name": "Duck Tongue"
-  },
-  "399": {
-    "name": "Venison"
-  },
-  "400": {
-    "name": "Free-range Egg"
-  },
-  "401": {
-    "name": "Jinhua Ham"
-  },
-  "402": {
-    "name": "Yellow River Carp"
-  },
-  "403": {
-    "name": "Songjiang Perch"
-  },
-  "404": {
-    "name": "Black Mountain Pork"
-  },
-  "405": {
-    "name": "Sanhuang Chicken"
-  },
-  "406": {
-    "name": "Huangshan Maofeng Tea"
-  },
-  "407": {
-    "name": "Marbled Beef"
-  },
-  "408": {
-    "name": "West Lake Longjing Tea"
-  },
-  "409": {
-    "name": "Taihu Whitefish"
-  },
-  "410": {
-    "name": "Taihu White Shrimp"
-  },
-  "411": {
-    "name": "Taihu Icefish"
-  },
-  "412": {
-    "name": "Bohai Prawns"
-  },
-  "413": {
-    "name": "Jellyfish"
-  },
-  "414": {
-    "name": "Pigeon"
-  },
-  "415": {
-    "name": "Zhangqiu Scallion"
-  },
-  "416": {
-    "name": "Shanxi Aged Vinegar"
-  },
-  "417": {
-    "name": "Lion's Mane Mushroom"
-  },
-  "418": {
-    "name": "Shark Fin"
-  },
-  "419": {
-    "name": "Abalone"
-  },
-  "420": {
-    "name": "Fish Maw"
-  },
-  "421": {
-    "name": "Bird's Nest"
-  },
-  "422": {
-    "name": "Cordyceps"
-  },
-  "423": {
-    "name": "Liaoning Sea Cucumber"
-  },
-  "424": {
-    "name": "Matsutake"
-  },
-  "425": {
-    "name": "Deer Antler Velvet"
-  },
-  "426": {
-    "name": "Camel Hump"
-  },
-  "427": {
-    "name": "Ginseng"
-  },
-  "428": {
-    "name": "Bear Paw"
-  },
-  "429": {
-    "name": "Deer Pizzle"
-  },
-  "430": {
-    "name": "Bull Pizzle"
-  },
-  "431": {
-    "name": "Fish Lips"
-  },
-  "432": {
-    "name": "Bamboo Fungus"
-  },
-  "433": {
-    "name": "Deer Tail"
-  },
-  "434": {
-    "name": "Deer Tendon"
-  },
-  "435": {
-    "name": "King Crab"
-  },
-  "436": {
-    "name": "Hashima"
-  },
-  "437": {
-    "name": "Whole Wheat Flour"
-  },
-  "438": {
-    "name": "Betel Nut Taro"
-  },
-  "439": {
-    "name": "Bijing Rice"
-  },
-  "440": {
-    "name": "Pecans"
-  },
-  "441": {
-    "name": "Yongzhou Pit Viper"
-  },
-  "442": {
-    "name": "Yangtze Knife Fish"
-  },
-  "443": {
-    "name": "Saffron Powder"
-  },
-  "444": {
-    "name": "Iron Stick Yam"
-  },
-  "445": {
-    "name": "Liancheng White Duck"
-  },
-  "446": {
-    "name": "Camel Foot"
-  },
-  "447": {
-    "name": "Peony Seed Oil"
-  },
-  "448": {
-    "name": "Salmon"
-  },
-  "449": {
-    "name": "Black Pepper"
-  },
-  "450": {
-    "name": "Rosemary"
-  },
-  "451": {
-    "name": "Pasta"
-  },
-  "452": {
-    "name": "Ladyfingers"
-  },
-  "453": {
-    "name": "Quinine Short Ribs"
-  },
-  "454": {
-    "name": "Italian Tomatoes"
-  },
-  "455": {
-    "name": "Mascarpone"
-  },
-  "456": {
-    "name": "Marsala Wine"
-  },
-  "457": {
-    "name": "Mystery Nine-Heaven Fin"
-  },
-  "458": {
-    "name": "Mystery Nine-Hole Abalone"
-  },
-  "459": {
-    "name": "Mystery Golden Maw"
-  },
-  "460": {
-    "name": "Mystery Alpine Worm"
-  },
-  "461": {
-    "name": "Mystery Golden Nest"
-  },
-  "462": {
-    "name": "Mystery Ambergris"
-  },
-  "463": {
-    "name": "Mystery Golden Toad Mushroom"
-  },
-  "464": {
-    "name": "Mystery Snow River Chick"
-  },
-  "465": {
-    "name": "Mystery Golden Croaker"
-  },
-  "466": {
-    "name": "Mystery Baotian Calf"
-  },
-  "467": {
-    "name": "Level-1 Universal Ingredient"
-  },
-  "468": {
-    "name": "Level-2 Universal Ingredient"
-  },
-  "469": {
-    "name": "Level-3 Universal Ingredient"
-  },
-  "470": {
-    "name": "Level-4 Universal Ingredient"
-  },
-  "471": {
-    "name": "Level-5 Universal Ingredient"
-  },
-  "500": {
-    "name": "Ground Meat"
-  },
-  "501": {
-    "name": "Tofu Skin Sheets"
-  },
-  "502": {
-    "name": "Chinese Sausage"
-  },
-  "503": {
-    "name": "Oysters"
-  },
-  "504": {
-    "name": "Dried Scallop"
-  },
-  "505": {
-    "name": "Cod"
-  },
-  "506": {
-    "name": "Pork Liver"
-  },
-  "507": {
-    "name": "Shrimp"
-  },
-  "508": {
-    "name": "Red Sweet Potato"
-  },
-  "509": {
-    "name": "Pomfret"
-  },
-  "510": {
-    "name": "Beef Tendon"
-  },
-  "511": {
-    "name": "Pork Knuckle"
-  },
-  "516": {
-    "name": "Dried Shiitake"
-  },
-  "517": {
-    "name": "Dried Shrimp"
-  },
-  "518": {
-    "name": "Honey"
-  },
-  "519": {
-    "name": "Water Chestnuts"
-  },
-  "520": {
-    "name": "Lotus Root Slices"
-  },
-  "521": {
-    "name": "Soft-shell Turtle"
-  },
-  "522": {
-    "name": "Crab"
-  },
-  "529": {
+  "1027": {
     "name": "Soybeans"
   },
-  "530": {
-    "name": "Dried Tangerine Peel"
+  "2001": {
+    "name": "Green Beans"
   },
-  "531": {
-    "name": "Pig's Trotters"
+  "2002": {
+    "name": "Ketchup"
   },
-  "532": {
-    "name": "Chicken Feet"
+  "2003": {
+    "name": "Corn"
   },
-  "533": {
-    "name": "Beef Tripe"
+  "2004": {
+    "name": "Pear"
   },
-  "534": {
-    "name": "Goji Berries"
+  "2005": {
+    "name": "Chicken"
   },
-  "535": {
-    "name": "Mung Bean Sheets"
+  "2006": {
+    "name": "Winter Bamboo Shoots"
   },
-  "536": {
-    "name": "Turtle Meat"
+  "2007": {
+    "name": "Duck"
   },
-  "537": {
-    "name": "Snow Peas"
+  "2008": {
+    "name": "Coriander"
   },
-  "538": {
-    "name": "Ox Tripe"
+  "2009": {
+    "name": "Tofu"
   },
-  "539": {
-    "name": "Scallops"
+  "2010": {
+    "name": "Grass Carp"
   },
-  "548": {
-    "name": "Papaya"
+  "2011": {
+    "name": "Choy Sum"
   },
-  "549": {
-    "name": "Snow Frog"
+  "2012": {
+    "name": "Yellow Croaker"
   },
-  "550": {
-    "name": "Sea Clam"
+  "2013": {
+    "name": "Peas"
   },
-  "551": {
-    "name": "Black-bone Chicken"
+  "2014": {
+    "name": "Rice Wine"
   },
-  "552": {
+  "2015": {
+    "name": "Fermented Black Beans"
+  },
+  "2016": {
+    "name": "Fermented Tofu"
+  },
+  "2017": {
+    "name": "Carp"
+  },
+  "2018": {
+    "name": "Rock Sugar"
+  },
+  "2019": {
+    "name": "Fermented Rice Lees"
+  },
+  "2020": {
+    "name": "Garlic Sprouts"
+  },
+  "2021": {
+    "name": "Bean Sprouts"
+  },
+  "2022": {
+    "name": "Glass Noodles"
+  },
+  "2023": {
+    "name": "Celery"
+  },
+  "2024": {
+    "name": "Tea Leaves"
+  },
+  "2025": {
+    "name": "Chestnuts"
+  },
+  "2026": {
+    "name": "Lotus Root"
+  },
+  "2027": {
+    "name": "Spinach"
+  },
+  "2028": {
+    "name": "Onion"
+  },
+  "2029": {
+    "name": "Winter Melon"
+  },
+  "2030": {
+    "name": "Taro"
+  },
+  "2031": {
+    "name": "Longan"
+  },
+  "2032": {
+    "name": "Milk"
+  },
+  "2033": {
+    "name": "Silver Carp"
+  },
+  "2034": {
+    "name": "Sesame"
+  },
+  "2035": {
+    "name": "Pumpkin"
+  },
+  "2036": {
+    "name": "Cauliflower"
+  },
+  "2037": {
+    "name": "Peanuts"
+  },
+  "2038": {
+    "name": "Kelp"
+  },
+  "2039": {
+    "name": "Water Spinach"
+  },
+  "2040": {
+    "name": "Duck Blood"
+  },
+  "2041": {
+    "name": "Pineapple"
+  },
+  "2042": {
+    "name": "Dried Tofu"
+  },
+  "2043": {
+    "name": "Pepper"
+  },
+  "2044": {
+    "name": "Celtuce"
+  },
+  "2045": {
+    "name": "Sichuan Pepper"
+  },
+  "2046": {
+    "name": "Grapes"
+  },
+  "2047": {
+    "name": "Red Dates"
+  },
+  "2048": {
+    "name": "Cream"
+  },
+  "2049": {
+    "name": "Blueberries"
+  },
+  "2050": {
+    "name": "Oat Noodles"
+  },
+  "2051": {
+    "name": "Cumin"
+  },
+  "2052": {
+    "name": "Rice Cake"
+  },
+  "2053": {
+    "name": "Goji"
+  },
+  "2054": {
+    "name": "Haw Jelly"
+  },
+  "2055": {
+    "name": "Pickled Cabbage"
+  },
+  "2056": {
+    "name": "Sweet Potato Noodles"
+  },
+  "2057": {
+    "name": "Red Bean Paste"
+  },
+  "2058": {
+    "name": "Pigeon Eggs"
+  },
+  "2059": {
+    "name": "Agar"
+  },
+  "2060": {
+    "name": "Spring Bamboo Shoots"
+  },
+  "2061": {
+    "name": "Banana"
+  },
+  "2062": {
+    "name": "Lotus Seeds"
+  },
+  "2063": {
+    "name": "Osmanthus"
+  },
+  "2064": {
+    "name": "Chili Bean Paste"
+  },
+  "2065": {
+    "name": "Carrot"
+  },
+  "2066": {
+    "name": "Sweet Bean Sauce"
+  },
+  "2067": {
+    "name": "White Radish"
+  },
+  "2068": {
+    "name": "Sacha Sauce"
+  },
+  "2069": {
+    "name": "Thirteen Spices"
+  },
+  "2070": {
+    "name": "Quail Eggs"
+  },
+  "2071": {
+    "name": "Cocoa Beans"
+  },
+  "2072": {
+    "name": "Dried Shrimp"
+  },
+  "2073": {
+    "name": "Honey"
+  },
+  "2074": {
+    "name": "Lotus Root Slices"
+  },
+  "2075": {
     "name": "Flowering Cabbage"
   },
-  "559": {
-    "name": "River Snails"
-  },
-  "560": {
-    "name": "Foie Gras"
-  },
-  "563": {
+  "2076": {
     "name": "Sweet Potato Leaves"
   },
-  "564": {
+  "2077": {
     "name": "Red Beans"
   },
-  "565": {
-    "name": "Beer"
-  },
-  "566": {
-    "name": "Loach"
-  },
-  "567": {
-    "name": "Razor Clams"
-  },
-  "568": {
+  "2078": {
     "name": "Duck Eggs"
   },
-  "569": {
+  "2079": {
     "name": "Tofu Skin"
   },
-  "570": {
+  "2080": {
     "name": "Mung Beans"
   },
-  "571": {
+  "2081": {
     "name": "Garland Chrysanthemum"
   },
-  "572": {
-    "name": "Baijiu"
-  },
-  "573": {
-    "name": "Mystery Ningxiang Pig"
-  },
-  "574": {
-    "name": "Krabby Patty Secret Sauce"
-  },
-  "575": {
-    "name": "Almas Caviar"
-  },
-  "576": {
-    "name": "Périgord Black Truffle"
-  },
-  "577": {
-    "name": "Wu's Mantis Shrimp"
-  },
-  "578": {
-    "name": "Bluefin Tuna Steak"
-  },
-  "579": {
-    "name": "Ibérico Ham"
-  },
-  "580": {
-    "name": "Saffron"
-  },
-  "581": {
-    "name": "Kale"
-  },
-  "582": {
-    "name": "Tiger Puffer"
-  },
-  "583": {
-    "name": "Tianshan Snowcock"
-  },
-  "584": {
-    "name": "Cheese"
-  },
-  "585": {
+  "2082": {
     "name": "Curry"
   },
-  "586": {
+  "2083": {
     "name": "Coconut Milk"
   },
-  "587": {
+  "2084": {
     "name": "Fish Sauce"
   },
-  "588": {
+  "2085": {
     "name": "Yogurt"
   },
-  "589": {
+  "2086": {
     "name": "Miso"
   },
-  "590": {
-    "name": "Wine"
-  },
-  "591": {
-    "name": "Avocado"
-  },
-  "592": {
-    "name": "Parmesan"
-  },
-  "593": {
-    "name": "Siamese Coconut Milk"
-  },
-  "594": {
-    "name": "Greek Yogurt"
-  },
-  "595": {
-    "name": "Hass Avocado"
-  },
-  "596": {
-    "name": "Phu Quoc Fish Sauce"
-  },
-  "597": {
-    "name": "Shinshu Miso"
-  },
-  "598": {
-    "name": "Bordeaux Wine"
-  },
-  "599": {
-    "name": "Sicilian Lemon"
-  },
-  "600": {
-    "name": "Madras Curry"
-  },
-  "601": {
-    "name": "Isigny Cream"
-  },
-  "602": {
+  "2087": {
     "name": "Beetroot"
   },
-  "603": {
+  "2088": {
     "name": "Mint"
   },
-  "604": {
+  "2089": {
     "name": "Buckwheat"
   },
-  "605": {
+  "3001": {
+    "name": "Chicken Wings"
+  },
+  "3002": {
+    "name": "Pork Tenderloin"
+  },
+  "3003": {
+    "name": "Sea Bream"
+  },
+  "3004": {
+    "name": "Sweet Potato"
+  },
+  "3005": {
+    "name": "Crucian Carp"
+  },
+  "3006": {
+    "name": "Pork Belly"
+  },
+  "3007": {
+    "name": "Yellow Wine"
+  },
+  "3008": {
+    "name": "Chinese Yam"
+  },
+  "3009": {
+    "name": "Century Egg"
+  },
+  "3010": {
+    "name": "Prawns"
+  },
+  "3011": {
+    "name": "Mandarin Fish"
+  },
+  "3012": {
+    "name": "Broth"
+  },
+  "3013": {
+    "name": "Dried Scallops"
+  },
+  "3014": {
+    "name": "Rabbit"
+  },
+  "3015": {
+    "name": "Snail Meat"
+  },
+  "3016": {
+    "name": "Eel"
+  },
+  "3017": {
+    "name": "Goose"
+  },
+  "3018": {
+    "name": "Whitebait"
+  },
+  "3019": {
+    "name": "Bullfrog"
+  },
+  "3020": {
+    "name": "Reeves Shad"
+  },
+  "3021": {
+    "name": "Water Shield"
+  },
+  "3022": {
+    "name": "Mussels"
+  },
+  "3023": {
+    "name": "Catfish"
+  },
+  "3024": {
+    "name": "Black Carp"
+  },
+  "3025": {
+    "name": "Ham"
+  },
+  "3026": {
+    "name": "Shiitake"
+  },
+  "3027": {
+    "name": "Mushrooms"
+  },
+  "3028": {
+    "name": "Spare Ribs"
+  },
+  "3029": {
+    "name": "Rice-field Eel"
+  },
+  "3030": {
+    "name": "Squid"
+  },
+  "3031": {
+    "name": "River Shrimp"
+  },
+  "3032": {
+    "name": "Lamb"
+  },
+  "3033": {
+    "name": "Wood Ear"
+  },
+  "3034": {
+    "name": "Pea Shoots"
+  },
+  "3035": {
+    "name": "Pork Tripe"
+  },
+  "3036": {
+    "name": "Beef"
+  },
+  "3037": {
+    "name": "Sea Bass"
+  },
+  "3038": {
+    "name": "Cured Pork"
+  },
+  "3039": {
+    "name": "Lily Bulbs"
+  },
+  "3040": {
+    "name": "Chinese Broccoli"
+  },
+  "3041": {
+    "name": "Huaishan Yam"
+  },
+  "3042": {
+    "name": "Cattail Shoots"
+  },
+  "3043": {
+    "name": "Chive Flowers"
+  },
+  "3044": {
+    "name": "Salted Fish"
+  },
+  "3045": {
+    "name": "Bighead Carp"
+  },
+  "3046": {
+    "name": "Mulberries"
+  },
+  "3047": {
+    "name": "Almonds"
+  },
+  "3048": {
+    "name": "Cherries"
+  },
+  "3049": {
+    "name": "Sour Soup Base"
+  },
+  "3050": {
+    "name": "Snow Fungus"
+  },
+  "3051": {
+    "name": "Walnuts"
+  },
+  "3052": {
+    "name": "Sausage"
+  },
+  "3053": {
+    "name": "Quail"
+  },
+  "3054": {
+    "name": "Yellow Catfish"
+  },
+  "3055": {
+    "name": "Huadiao Wine"
+  },
+  "3056": {
+    "name": "Crayfish"
+  },
+  "3057": {
+    "name": "Five Spices"
+  },
+  "3058": {
+    "name": "Broccoli"
+  },
+  "3059": {
+    "name": "Fire-dried Fish"
+  },
+  "3060": {
+    "name": "Enoki Mushrooms"
+  },
+  "3061": {
+    "name": "Wuchang Bream"
+  },
+  "3062": {
+    "name": "Asparagus Fern Tips"
+  },
+  "3063": {
+    "name": "Walnut Kernels"
+  },
+  "3064": {
+    "name": "Hancheng Sichuan Pepper"
+  },
+  "3065": {
+    "name": "Pixian Bean Paste"
+  },
+  "3066": {
+    "name": "Chiffon Cake"
+  },
+  "3067": {
+    "name": "Baoqing Facing-Heaven Chili"
+  },
+  "3068": {
+    "name": "Mandarin Orange"
+  },
+  "3069": {
+    "name": "Ground Meat"
+  },
+  "3070": {
+    "name": "Tofu Skin Sheets"
+  },
+  "3071": {
+    "name": "Chinese Sausage"
+  },
+  "3072": {
+    "name": "Dried Scallop"
+  },
+  "3073": {
+    "name": "Shrimp"
+  },
+  "3074": {
+    "name": "Red Sweet Potato"
+  },
+  "3075": {
+    "name": "Pork Knuckle"
+  },
+  "3076": {
+    "name": "Dried Shiitake"
+  },
+  "3077": {
+    "name": "Dried Tangerine Peel"
+  },
+  "3078": {
+    "name": "Pig's Trotters"
+  },
+  "3079": {
+    "name": "Chicken Feet"
+  },
+  "3080": {
+    "name": "Mung Bean Sheets"
+  },
+  "3081": {
+    "name": "Snow Peas"
+  },
+  "3082": {
+    "name": "Papaya"
+  },
+  "3083": {
+    "name": "Snow Frog"
+  },
+  "3084": {
+    "name": "River Snails"
+  },
+  "3085": {
+    "name": "Foie Gras"
+  },
+  "3086": {
+    "name": "Beer"
+  },
+  "3087": {
+    "name": "Baijiu"
+  },
+  "3088": {
+    "name": "Cheese"
+  },
+  "3089": {
+    "name": "Wine"
+  },
+  "3090": {
+    "name": "Avocado"
+  },
+  "3091": {
     "name": "Quinoa"
   },
-  "606": {
+  "3092": {
     "name": "Cashew"
+  },
+  "4001": {
+    "name": "Olive Oil"
+  },
+  "4002": {
+    "name": "Pork Intestines"
+  },
+  "4003": {
+    "name": "Star Anise"
+  },
+  "4004": {
+    "name": "Pork Kidney"
+  },
+  "4005": {
+    "name": "Sea Snail"
+  },
+  "4006": {
+    "name": "Mud Crab"
+  },
+  "4007": {
+    "name": "Sea Cucumber"
+  },
+  "4008": {
+    "name": "Snake Meat"
+  },
+  "4009": {
+    "name": "Grouper"
+  },
+  "4010": {
+    "name": "Longsnout Catfish"
+  },
+  "4011": {
+    "name": "Ya Fish"
+  },
+  "4012": {
+    "name": "Snakehead"
+  },
+  "4013": {
+    "name": "Hazel Grouse"
+  },
+  "4014": {
+    "name": "Duck Tongue"
+  },
+  "4015": {
+    "name": "Venison"
+  },
+  "4016": {
+    "name": "Free-range Egg"
+  },
+  "4017": {
+    "name": "Jinhua Ham"
+  },
+  "4018": {
+    "name": "Yellow River Carp"
+  },
+  "4019": {
+    "name": "Songjiang Perch"
+  },
+  "4020": {
+    "name": "Black Mountain Pork"
+  },
+  "4021": {
+    "name": "Sanhuang Chicken"
+  },
+  "4022": {
+    "name": "Huangshan Maofeng Tea"
+  },
+  "4023": {
+    "name": "Marbled Beef"
+  },
+  "4024": {
+    "name": "West Lake Longjing Tea"
+  },
+  "4025": {
+    "name": "Taihu Whitefish"
+  },
+  "4026": {
+    "name": "Taihu White Shrimp"
+  },
+  "4027": {
+    "name": "Taihu Icefish"
+  },
+  "4028": {
+    "name": "Bohai Prawns"
+  },
+  "4029": {
+    "name": "Jellyfish"
+  },
+  "4030": {
+    "name": "Pigeon"
+  },
+  "4031": {
+    "name": "Zhangqiu Scallion"
+  },
+  "4032": {
+    "name": "Shanxi Aged Vinegar"
+  },
+  "4033": {
+    "name": "Lion's Mane Mushroom"
+  },
+  "4034": {
+    "name": "Oysters"
+  },
+  "4035": {
+    "name": "Cod"
+  },
+  "4036": {
+    "name": "Pork Liver"
+  },
+  "4037": {
+    "name": "Pomfret"
+  },
+  "4038": {
+    "name": "Beef Tendon"
+  },
+  "4039": {
+    "name": "Water Chestnuts"
+  },
+  "4040": {
+    "name": "Soft-shell Turtle"
+  },
+  "4041": {
+    "name": "Crab"
+  },
+  "4042": {
+    "name": "Beef Tripe"
+  },
+  "4043": {
+    "name": "Goji Berries"
+  },
+  "4044": {
+    "name": "Turtle Meat"
+  },
+  "4045": {
+    "name": "Ox Tripe"
+  },
+  "4046": {
+    "name": "Scallops"
+  },
+  "4047": {
+    "name": "Sea Clam"
+  },
+  "4048": {
+    "name": "Black-bone Chicken"
+  },
+  "4049": {
+    "name": "Loach"
+  },
+  "4050": {
+    "name": "Razor Clams"
+  },
+  "4051": {
+    "name": "Parmesan"
+  },
+  "4052": {
+    "name": "Siamese Coconut Milk"
+  },
+  "4053": {
+    "name": "Greek Yogurt"
+  },
+  "4054": {
+    "name": "Hass Avocado"
+  },
+  "4055": {
+    "name": "Phu Quoc Fish Sauce"
+  },
+  "4056": {
+    "name": "Shinshu Miso"
+  },
+  "4057": {
+    "name": "Bordeaux Wine"
+  },
+  "4058": {
+    "name": "Sicilian Lemon"
+  },
+  "4059": {
+    "name": "Madras Curry"
+  },
+  "4060": {
+    "name": "Isigny Cream"
+  },
+  "5001": {
+    "name": "Long Pepper"
+  },
+  "5002": {
+    "name": "Ginkgo Nuts"
+  },
+  "5003": {
+    "name": "Cuttlefish"
+  },
+  "5004": {
+    "name": "Shark Fin"
+  },
+  "5005": {
+    "name": "Abalone"
+  },
+  "5006": {
+    "name": "Fish Maw"
+  },
+  "5007": {
+    "name": "Bird's Nest"
+  },
+  "5008": {
+    "name": "Cordyceps"
+  },
+  "5009": {
+    "name": "Liaoning Sea Cucumber"
+  },
+  "5010": {
+    "name": "Matsutake"
+  },
+  "5011": {
+    "name": "Deer Antler Velvet"
+  },
+  "5012": {
+    "name": "Camel Hump"
+  },
+  "5013": {
+    "name": "Ginseng"
+  },
+  "5014": {
+    "name": "Bear Paw"
+  },
+  "5015": {
+    "name": "Deer Pizzle"
+  },
+  "5016": {
+    "name": "Bull Pizzle"
+  },
+  "5017": {
+    "name": "Fish Lips"
+  },
+  "5018": {
+    "name": "Bamboo Fungus"
+  },
+  "5019": {
+    "name": "Deer Tail"
+  },
+  "5020": {
+    "name": "Deer Tendon"
+  },
+  "5021": {
+    "name": "King Crab"
+  },
+  "5022": {
+    "name": "Hashima"
+  },
+  "5023": {
+    "name": "Whole Wheat Flour"
+  },
+  "5024": {
+    "name": "Betel Nut Taro"
+  },
+  "5025": {
+    "name": "Bijing Rice"
+  },
+  "5026": {
+    "name": "Pecans"
+  },
+  "5027": {
+    "name": "Yongzhou Pit Viper"
+  },
+  "5028": {
+    "name": "Yangtze Knife Fish"
+  },
+  "5029": {
+    "name": "Saffron Powder"
+  },
+  "5030": {
+    "name": "Iron Stick Yam"
+  },
+  "5031": {
+    "name": "Liancheng White Duck"
+  },
+  "5032": {
+    "name": "Camel Foot"
+  },
+  "6001": {
+    "name": "Peony Seed Oil"
+  },
+  "6002": {
+    "name": "Salmon"
+  },
+  "6003": {
+    "name": "Black Pepper"
+  },
+  "6004": {
+    "name": "Rosemary"
+  },
+  "6005": {
+    "name": "Pasta"
+  },
+  "6006": {
+    "name": "Ladyfingers"
+  },
+  "6007": {
+    "name": "Quinine Short Ribs"
+  },
+  "6008": {
+    "name": "Italian Tomatoes"
+  },
+  "6009": {
+    "name": "Mascarpone"
+  },
+  "6010": {
+    "name": "Marsala Wine"
+  },
+  "6011": {
+    "name": "Almas Caviar"
+  },
+  "6012": {
+    "name": "Périgord Black Truffle"
+  },
+  "6013": {
+    "name": "Wu's Mantis Shrimp"
+  },
+  "6014": {
+    "name": "Bluefin Tuna Steak"
+  },
+  "6015": {
+    "name": "Ibérico Ham"
+  },
+  "6016": {
+    "name": "Saffron"
+  },
+  "6017": {
+    "name": "Kale"
+  },
+  "6018": {
+    "name": "Tiger Puffer"
+  },
+  "6019": {
+    "name": "Tianshan Snowcock"
+  },
+  "7001": {
+    "name": "Mystery Nine-Heaven Fin"
+  },
+  "7002": {
+    "name": "Mystery Nine-Hole Abalone"
+  },
+  "7003": {
+    "name": "Mystery Golden Maw"
+  },
+  "7004": {
+    "name": "Mystery Alpine Worm"
+  },
+  "7005": {
+    "name": "Mystery Golden Nest"
+  },
+  "7006": {
+    "name": "Mystery Ambergris"
+  },
+  "7007": {
+    "name": "Mystery Golden Toad Mushroom"
+  },
+  "7008": {
+    "name": "Mystery Snow River Chick"
+  },
+  "7009": {
+    "name": "Mystery Golden Croaker"
+  },
+  "7010": {
+    "name": "Mystery Baotian Calf"
+  },
+  "7011": {
+    "name": "Mystery Ningxiang Pig"
+  },
+  "7012": {
+    "name": "Krabby Patty Secret Sauce"
+  },
+  "9001": {
+    "name": "Level-1 Universal Ingredient"
+  },
+  "9002": {
+    "name": "Level-2 Universal Ingredient"
+  },
+  "9003": {
+    "name": "Level-3 Universal Ingredient"
+  },
+  "9004": {
+    "name": "Level-4 Universal Ingredient"
+  },
+  "9005": {
+    "name": "Level-5 Universal Ingredient"
   }
 }

@@ -131,6 +131,20 @@
 - 服务端测试打乱后的存储位是连续排满的，没有空位、也没有比 `slots` 长的字节串；给 `splitLearned` 和教学遗忘各加一条：`idAt` 里有 -1、`levels.length > slots`（第 4 步上线后的真实情况）。
 - 菜被 `--allow-removed` 删掉、以后又以同一编号加回来时，会分到新的存储位：老店显示没学过，`cookbook_counts` 里却还计着。符合“存储位不回收”的设计，可以在 data-maintenance.md 补一句。
 
+## 重新编号 第 4 步（feat/id-renumber-4，换号和迁移）实施中记下的小问题
+
+- PR 2 的写死编号扫描认不出这些写法，换号后靠测试失败才找出来：函数调用位置参数（`detail(ctx, 194)`、`lock(ctx, 101)`、`hasValidHonor(op, 133)`）、`toolId` / `certId` / `gemId`、`cookbooks: { 1: 1 }`、`kind: 'basket'`、SQL 里的 `.where('foods_id', '=', 101)`、`Record<number, number> = { 1: 13 }` 这类常量表，还有 `const UNIVERSAL_BASE = 466` 这种起了别名的基数。可以补进 `itemLiterals.ts` 的规则。
+- `apps/web/src/components/*/testData.ts`（组件测试和截图用的模拟数据）里还是旧编号；自带名字、不连配置，测试都过，看着和真实编号对不上。
+- e2e `predict.spec.ts` 期望预测每份 1000 银币，开发库一服的区服覆盖把 `predict.unit` 改成了 500，所以在开发库上跑总是失败（和换号无关）。用例可以按区服设置算期望值。
+- 食材 Wiki 页“用到它的菜谱”按菜谱编号排；换号后是按街道排，原来排在最前的南煎丸子（旧 1 号）到了山东街那一段，要点“再显示”才看得到（e2e 已改成翻页找）。
+- 终审小问题：
+  - 迁移测试没做到“每个带编号的日志类型一条”：缺 `exchange.confiscate/withdraw`、`market.manual`、`temple.guardian.rare`、`takeaway.deliver`、`friend.flip`、`town.shake` 的 `egg.goodsId`、`town.feast`；另外建议加一条反例 `market.share { itemId: 货架编号, foodsId }`（同一对象没有 `kind`，`itemId` 现在没被误改，用测试钉住）。
+  - 迁移 0049 依赖 `@dt/config` 的改写规则，只靠注释“冻结”：把规则表复制进迁移目录，或给 `ID_KEYS` 等加快照测试。
+  - `renumber()` 参数收紧成 `Transaction<DB>`（`on commit drop` 的临时表只在事务里有效）。
+  - `market_guess.foods_ids`、`daily_counter.key` 没查孤立编号（没结算的竞猜里有查不到对照的旧编号会静默留下）。
+  - `0049_renumber.ts` 注释“bigint 列读出来是字符串”不准：`db/index.ts` 把 INT8 解析成 number。
+  - 构建没检查 `legacyId` 不落在同类的新号段里：手填错时开放接口、Wiki 会把合法的新编号 301 到别处。
+
 ## 测试不稳定
 
 - 已处理（质量期第 ①a 批）：`i18n/core.test.ts`「切换到英语」全量并行时偶尔超过 15 秒，同样放宽到 60 秒。

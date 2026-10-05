@@ -326,6 +326,12 @@ export interface Holidays {
 
 export interface ConfigBundle {
   version: string;
+  /** 重新编号前的编号 → 新编号（设计 §5：旧链接跳转、原版获取途径），按旧编号排 */
+  legacy: {
+    goods: Array<[number, number]>;
+    foods: Array<[number, number]>;
+    cookbooks: Array<[number, number]>;
+  };
   /** 游戏数据翻译（问题记录 272）：繁中自动转换，英法西来自 data/i18n/ */
   i18n: BundleI18n;
   foods: Food[];
