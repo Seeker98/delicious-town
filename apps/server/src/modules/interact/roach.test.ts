@@ -117,7 +117,12 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     await setTables(
       t,
       npc,
-      Array.from({ length: 5 }, (_, i) => ({ no: i + 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } })),
+      Array.from({ length: 5 }, (_, i) => ({
+        no: i + 1,
+        floor: 1,
+        customer: 3,
+        roach: { by: null, at: 'x' },
+      })),
     );
     for (const tableNo of [1, 2, 3, 4, 5]) await roach().kill(a, { restId: npc, tableNo });
     expect((await tablesOf(t, npc)).every((tb) => tb.customer === 0)).toBe(true);
