@@ -130,6 +130,7 @@ describe('测试里不写死编号（重新编号 PR 2）', () => {
         const r = rel(p);
         if (!/\.test\.ts$/.test(r) && !r.startsWith('apps/server/test/')) continue;
         if (r === 'packages/config/src/itemLiterals.test.ts') continue; // 本文件的规则样例
+        if (r === 'packages/config/src/renumber.test.ts') continue; // 换号规则的样例：故意用旧编号
         for (const h of findItemLiterals(readFileSync(p, 'utf8'), ids)) bad.push(`${r}: ${h.kind} ${h.id}`);
       }
     expect(bad).toEqual([]);
