@@ -96,55 +96,13 @@
 
 ## 道具整理工具（问题记录 367，feat/item-curator 终审小问题）
 
-- 合成类道具（`use.kind === 'bundle'`，用 `use.goods` 合成 `use.targetGoods`）的两个编号没进引用收集，工具也不把它算成目标道具的来源。现在只有鞋带 169（18 合 17），三个都是代码里用到的，暂时不影响。
 - “没有来源”只看一层：唯一来源是已下架礼包的，工具显示没有来源，保存却因为“还被引用：礼包 X”过不了（已下架礼包玩家手上还能开，所以构建这样算是对的）；反过来，玩家拿不到的礼包里的东西也被算成有来源。可以改成写“只从已下架礼包获得”，或者顺着礼包链判断。
 - 神殿探险的来源只按探险图的等级范围算；探险还会出 7 级食材、带探险者秘籍多出 3 级食材，蟹老板橱柜（1~5 级）也没标。现在不影响“没有来源”的判断。
-- 工具页面保存时请求失败、服务端返回 500 的纯文本，页面会一直停在“检查中…”，按钮也不再可用；要包 try/catch、显示错误、恢复按钮。
-- `award/random.test.ts` 的下架用例写死了食材池剩 15 种，原数据改了就要跟着改；可以改成比原来少 1。
 - 可以加一条测试：服务端每个发道具的地方（`grantGoodsOp` 的来源表）在引用收集里都有对应，免得再漏掉街道勋章这类。
-
-## 重新编号 第 1 步（feat/id-renumber，主表整合）终审小问题
-
-- 主表里几类手写定义原来的格式检查没了（`value` 是 `z.unknown()`）：海报奖杯的 `value`（`time ≥ 1`、加成键只能是 `coinValue`/`expValue`、数值为正）、纪念品必须是纪念品类型、抽赏券 `GOODS.kujiTicket`/`kujiDeluxeTicket` 必须是消耗品、只有海报能写 `needStar`。可以按 `src` 做一张检查表（随机券、基金勋章已在终审时补上）。
-- `equipLoreFile` 顶层不是 `.strict()`：`equip_lore.json` 里留一段 `rename`（比如别的分支带过来的）构建照样通过、被悄悄丢掉；旁边注释也还写着“厨具改名、新增厨具”。
-- 新街道导入脚本先写 `streets_new.json`、`master/foods.json`，再解析外部勋章的 `value`；勋章 `value` 不是合法 JSON 时抛不带编号的错误、留下写了一半的数据。改成全部算好再统一写，解析出错时报勋章编号。
-- 过时的注释、文档：`raw.ts` 残留 souvenirs.json 的注释；`ids.ts` 开头“同步检查 data/dataset/goods.json”、抽赏券和基金勋章“定义在 game/kuji.json、game/fund.json”；`docs/data-maintenance.md` 新街道一节还写着构建检查“售价表”。
-- 编号重复、菜谱引用未知食材的报错不带 `master/<表>` 前缀（带实体编号，能定位）。
-- `masterGoods.value` 允许整条不写 `value` 键（构建当成 null）。
 
 ## 下架 117 件旧道具（#143）审查小问题
 
-- `ids.ts` 的 `WIKI_HIDDEN_GOODS`（51、83、124）和下架名单重叠：51、83 已下架，只剩 124 需要单独隐藏，可以收窄并改注释（行为正确，开放接口按条件过滤，不会重复扣）。
 - 数据库里已有的内容没有下架检查：服务器启动时只查区服数值覆盖，不查已有的活动、兑换码、未领的邮件——引用了下架编号的兑换码、邮件仍能发出（`brokenItems` 只看道具存不存在）；进行中的活动 def 里有下架编号时，后台连改结束时间都会被 `checkNestedItems` 拒绝。这批 117 件原本不在任何奖励里，线上可以查一次 activity、redeem_code、mail 确认。
-
-## 重新编号 第 2 步（#144）审查小问题
-
-- `itemLiterals.ts` 的 `ambiguous` 输出已经用不上（{ id, num } 收紧后定不了种类的直接跳过），参数和注释可以删掉。
-- 测试里按名字查编号的工具（`packages/config/src/testItems.ts`、`apps/server/test/items.ts`）遇到重名时静默取最后一个；现在名字都唯一，可以在建表时发现重名就抛错。
-- 改写后有几条配置包测试变成了同义反复，例如 `goods.get(gid('X'))!.name` 断言等于 'X'，只剩“X 存在”的意思；测试名可以跟着改。
-- `CupboardView.vue` 换万能食材的类型断言写成了 `typeof SHARED_FOODS.masterLevel1`，更准确的是一级或二级的联合（只影响类型）。
-- 下架更新记录里“玩家专属勋章”也包括内测勋章、测试勋章，严格说不全是“玩家专属”。
-
-## 重新编号 第 3 步（#145）审查小问题
-
-- 过时注释还写着“下标 = 食谱 id”：`apps/server/src/db/schema.ts`（RestaurantCookbooksTable.levels）、`modules/restaurant/rules.ts`、`modules/settlement/types.ts`、`modules/takeaway/common.ts`；`packages/config/src/runtime.ts` 删掉 `maxCookbookId` 后留下一条孤立注释挂到了 `foodsByLevel` 上。改成“下标 = 存储位（cookbookIndex.slotOf）”。
-- 服务端测试打乱后的存储位是连续排满的，没有空位、也没有比 `slots` 长的字节串；给 `splitLearned` 和教学遗忘各加一条：`idAt` 里有 -1、`levels.length > slots`（第 4 步上线后的真实情况）。
-- 菜被 `--allow-removed` 删掉、以后又以同一编号加回来时，会分到新的存储位：老店显示没学过，`cookbook_counts` 里却还计着。符合“存储位不回收”的设计，可以在 data-maintenance.md 补一句。
-
-## 重新编号 第 4 步（feat/id-renumber-4，换号和迁移）实施中记下的小问题
-
-- PR 2 的写死编号扫描认不出这些写法，换号后靠测试失败才找出来：函数调用位置参数（`detail(ctx, 194)`、`lock(ctx, 101)`、`hasValidHonor(op, 133)`）、`toolId` / `certId` / `gemId`、`cookbooks: { 1: 1 }`、`kind: 'basket'`、SQL 里的 `.where('foods_id', '=', 101)`、`Record<number, number> = { 1: 13 }` 这类常量表，还有 `const UNIVERSAL_BASE = 466` 这种起了别名的基数。可以补进 `itemLiterals.ts` 的规则。
-- `apps/web/src/components/*/testData.ts`（组件测试和截图用的模拟数据）里还是旧编号；自带名字、不连配置，测试都过，看着和真实编号对不上。
-- e2e `predict.spec.ts` 期望预测每份 1000 银币，开发库一服的区服覆盖把 `predict.unit` 改成了 500，所以在开发库上跑总是失败（和换号无关）。用例可以按区服设置算期望值。
-- 食材 Wiki 页“用到它的菜谱”按菜谱编号排；换号后是按街道排，原来排在最前的南煎丸子（旧 1 号）到了山东街那一段，要点“再显示”才看得到（e2e 已改成翻页找）。
-- 终审小问题：
-  - 迁移测试没做到“每个带编号的日志类型一条”：缺 `exchange.confiscate/withdraw`、`market.manual`、`temple.guardian.rare`、`takeaway.deliver`、`friend.flip`、`town.shake` 的 `egg.goodsId`、`town.feast`；另外建议加一条反例 `market.share { itemId: 货架编号, foodsId }`（同一对象没有 `kind`，`itemId` 现在没被误改，用测试钉住）。
-  - 迁移 0049 依赖 `@dt/config` 的改写规则，只靠注释“冻结”：把规则表复制进迁移目录，或给 `ID_KEYS` 等加快照测试。
-  - `renumber()` 参数收紧成 `Transaction<DB>`（`on commit drop` 的临时表只在事务里有效）。
-  - `market_guess.foods_ids`、`daily_counter.key` 没查孤立编号（没结算的竞猜里有查不到对照的旧编号会静默留下）。
-  - `0049_renumber.ts` 注释“bigint 列读出来是字符串”不准：`db/index.ts` 把 INT8 解析成 number。
-  - 构建没检查 `legacyId` 不落在同类的新号段里：手填错时开放接口、Wiki 会把合法的新编号 301 到别处。
-
 ## 测试不稳定
 
 - 已处理（质量期第 ①a 批）：`i18n/core.test.ts`「切换到英语」全量并行时偶尔超过 15 秒，同样放宽到 60 秒。
