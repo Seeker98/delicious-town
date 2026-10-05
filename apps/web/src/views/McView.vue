@@ -67,14 +67,18 @@ const saved = savedFilter();
 const level = ref<Tab>(saved.level);
 const road = ref<Tab>(saved.road);
 watch([level, road], ([lv, rd]) => {
+  // 换页时收起烹制面板，免得切回来时还开着一个看不见的菜（问题记录 414 审查）
+  preview.value = null;
   try {
     localStorage.setItem(FILTER_KEY, JSON.stringify({ level: lv, road: rd }));
   } catch {
     // 存储不可用时忽略
   }
 });
-const inLevel = (id: number, lv: Tab) => lv === 'all' || dish(id)?.level === lv;
-const inRoad = (id: number, rd: Tab) => rd === 'all' || dish(id)?.road === rd;
+const filtering = computed(() => level.value !== 'all' || road.value !== 'all');
+// 目录还没读到时不知道等级和道，先全部显示，免得闪一下“这一页没有”
+const inLevel = (id: number, lv: Tab) => lv === 'all' || !catalog.loaded || dish(id)?.level === lv;
+const inRoad = (id: number, rd: Tab) => rd === 'all' || !catalog.loaded || dish(id)?.road === rd;
 const shown = (id: number) => inLevel(id, level.value) && inRoad(id, road.value);
 /** 已学和有残卷的特色菜（各算一次），用来数每一页有几道 */
 const allIds = computed(
@@ -84,29 +88,40 @@ const allIds = computed(
       ...(o.value?.remnants ?? []).map((r) => r.mcId),
     ]),
 );
+/** 一排分页：0 道的页不显示（“全部”和选中的那页除外），手机上少占几行 */
+function tabs(keys: Tab[], selected: Tab, name: (x: number) => string, count: (x: Tab) => number) {
+  return keys
+    .map((x) => ({
+      key: x,
+      n: count(x),
+      label: t.value.mc.filter.count(x === 'all' ? t.value.mc.filter.all : name(x), count(x)),
+    }))
+    .filter((x) => x.key === 'all' || x.key === selected || x.n > 0);
+}
 const levelTabs = computed(() =>
-  (['all', ...LEVELS] as Tab[]).map((x) => ({
-    key: x,
-    label: t.value.mc.filter.count(
-      x === 'all' ? t.value.mc.filter.all : t.value.mc.filter.level(x),
-      [...allIds.value].filter((id) => inLevel(id, x) && inRoad(id, road.value)).length,
-    ),
-  })),
+  tabs(
+    ['all', ...LEVELS],
+    level.value,
+    t.value.mc.filter.level,
+    (x) => [...allIds.value].filter((id) => inLevel(id, x) && inRoad(id, road.value)).length,
+  ),
 );
 const roadTabs = computed(() =>
-  (['all', ...ROADS] as Tab[]).map((x) => ({
-    key: x,
-    label: t.value.mc.filter.count(
-      x === 'all' ? t.value.mc.filter.all : (ROAD_NAMES[x] ?? ''),
-      [...allIds.value].filter((id) => inRoad(id, x) && inLevel(id, level.value)).length,
-    ),
-  })),
+  tabs(
+    ['all', ...ROADS],
+    road.value,
+    (x) => ROAD_NAMES[x] ?? '',
+    (x) => [...allIds.value].filter((id) => inRoad(id, x) && inLevel(id, level.value)).length,
+  ),
 );
 const sortedLearned = computed(() =>
   [...(o.value?.learned ?? [])].filter((m) => shown(m.mcId)).sort((a, b) => byLevel(a.mcId, b.mcId)),
 );
-/** 筛完已学和残卷都空了（但不是本来就没有） */
-const filterEmpty = computed(() => allIds.value.size > 0 && ![...allIds.value].some((id) => shown(id)));
+/** 能学的残卷总数（不管分页）：“全部学会”会把别的页的也学了，按钮上写明 */
+const learnableTotal = computed(() => {
+  const known = learnedIds.value;
+  return (o.value?.remnants ?? []).filter((r) => !known.has(r.mcId) && r.num >= LEARN_REMNANTS).length;
+});
 /** 残卷分三组（问题记录：能学和不能学的混在一起） */
 const groups = computed(() => {
   const rs = [...(o.value?.remnants ?? [])]
@@ -210,23 +225,25 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
     </div>
 
     <!-- 按级、按道分页（问题记录 414） -->
-    <div class="mb-2" data-testid="mc-filters">
-      <div class="d-flex flex-wrap gap-1 mb-1">
+    <div v-if="allIds.size > 0" class="mb-2" data-testid="mc-filters">
+      <div class="d-flex flex-wrap gap-1 mb-1" role="group" :aria-label="t.mc.filter.levelLabel">
         <button
           v-for="x in levelTabs"
           :key="String(x.key)"
           :class="['btn btn-sm', level === x.key ? 'btn-primary' : 'btn-outline-primary']"
+          :aria-pressed="level === x.key"
           :data-testid="`mc-level-${x.key}`"
           @click="level = x.key"
         >
           {{ x.label }}
         </button>
       </div>
-      <div class="d-flex flex-wrap gap-1">
+      <div class="d-flex flex-wrap gap-1" role="group" :aria-label="t.mc.filter.roadLabel">
         <button
           v-for="x in roadTabs"
           :key="String(x.key)"
           :class="['btn btn-sm', road === x.key ? 'btn-secondary' : 'btn-outline-secondary']"
+          :aria-pressed="road === x.key"
           :data-testid="`mc-road-${x.key}`"
           @click="road = x.key"
         >
@@ -234,13 +251,17 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         </button>
       </div>
     </div>
-    <div v-if="filterEmpty" class="small text-muted mb-2" data-testid="mc-filter-empty">
-      {{ t.mc.filter.empty }}
-    </div>
 
-    <h6 class="dt-section">{{ t.mc.learned(o.learned.length) }}</h6>
+    <h6 class="dt-section">
+      {{
+        filtering ? t.mc.learnedOf(sortedLearned.length, o.learned.length) : t.mc.learned(o.learned.length)
+      }}
+    </h6>
     <div v-if="o.learned.length === 0" class="small text-muted mb-2">
       {{ t.mc.noLearned }}
+    </div>
+    <div v-else-if="sortedLearned.length === 0" class="small text-muted mb-2" data-testid="mc-learned-none">
+      {{ t.mc.filter.none }}
     </div>
     <div
       v-for="m in sortedLearned"
@@ -317,6 +338,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
 
     <h6 class="dt-section">{{ t.mc.remnants }}</h6>
     <div v-if="o.remnants.length === 0" class="small text-muted">{{ t.mc.noRemnants }}</div>
+    <div v-else-if="groups.length === 0" class="small text-muted" data-testid="mc-remnants-none">
+      {{ t.mc.filter.none }}
+    </div>
     <div v-for="g in groups" :key="g.key" class="mb-2" :data-testid="`group-${g.key}`">
       <div class="d-flex align-items-center small fw-bold text-muted mt-1">
         <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
@@ -327,7 +351,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           :disabled="busy"
           @click="learnAll"
         >
-          {{ t.mc.learnAll }}
+          {{ learnableTotal > g.items.length ? t.mc.learnAllTotal(learnableTotal) : t.mc.learnAll }}
         </button>
       </div>
       <div

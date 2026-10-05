@@ -29,6 +29,8 @@ export default {
   saleRate: (rate: string) => ` · 賣給顧客時 ×${rate}（普通顧客付一半）`,
   dump: '倒掉',
   learned: (n: number) => `已學（${n}）`,
+  /** 分頁時：這一頁幾道 / 一共幾道 */
+  learnedOf: (shown: number, total: number) => `已學（${shown} / ${total}）`,
   noLearned: '還沒有學會特色菜：在神殿鑑定神秘食譜得到殘卷，3 張殘卷就能學會。',
   dishMeta: (level: number | undefined, road: string, levelName: string) =>
     `${level ?? '?'} 級 · ${road} · ${levelName}`,
@@ -42,12 +44,15 @@ export default {
     all: '全部',
     level: (n: number) => `${n} 級`,
     count: (label: string, n: number) => `${label}（${n}）`,
-    empty: '這一頁沒有特色菜',
+    none: '這一頁沒有',
+    levelLabel: '按等級',
+    roadLabel: '按道',
   },
   remnants: '殘卷',
   noRemnants: '沒有殘卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,
   learnAll: '全部學會',
+  learnAllTotal: (n: number) => `全部學會（含其他頁，共 ${n} 道）`,
   remnantMeta: (level: number | undefined, road: string, coin: string) =>
     `${level ?? '?'} 級 · ${road} · 單價 ${coin}`,
   short: (n: number) => ` · 還差 ${n} 張`,
