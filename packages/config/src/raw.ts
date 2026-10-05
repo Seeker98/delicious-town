@@ -68,8 +68,6 @@ export const rawCookbook = z.object({
   taste: z.array(int).nullish(),
   needFoodsByLevel: z.record(z.string(), z.array(z.object({ foodsId: int, num: int }))),
 });
-export const rawCookbookPrice = z.object({ id: int, coin: z.number(), level: int, desc: z.string() });
-export const rawAwardFlag = z.object({ id: int, awardflag: int });
 
 /** 街道 → 街道勋章（问题记录 284） */
 export const rawStreetMedal = z.object({ streetId: int, goodsId: int });
@@ -393,46 +391,17 @@ export const newbieCodesFile = z
   .strict();
 
 /** data/game/souvenirs.json：纪念品（148-2 设计 §6） */
-export const souvenirsFile = z
-  .object({
-    souvenirs: z.array(
-      z
-        .object({
-          id: int.min(1),
-          name: z.string().min(1),
-          holiday: z.string().min(1),
-          desc: z.string().min(1),
-        })
-        .strict(),
-    ),
-  })
-  .strict();
-
-/** data/game/newbie_pack.json：一到五级食材随机券、新手大礼包的内容（问题记录 331） */
+/** data/game/newbie_pack.json：新手大礼包的内容（问题记录 331）；食材随机券的定义在主表 */
 export const newbiePackFile = z
   .object({
     rule: z.string(),
-    vouchers: z.array(
-      z
-        .object({
-          id: int.min(1),
-          level: int.min(1).max(7),
-          name: z.string().min(1),
-          desc: z.string().min(1),
-        })
-        .strict(),
-    ),
     pack: z.object({ goodsId: int.min(1), gift: z.array(giftItemSchema).min(1) }).strict(),
   })
   .strict();
 
-/** data/game/kuji.json：一番赏抽赏券（一番赏设计 §4） */
-const kujiFigure = z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict();
+/** data/game/kuji.json：一番赏的月度主题和豪华池称号；抽赏券、手办的定义在主表（重新编号 PR 1） */
 export const kujiFile = z
   .object({
-    ticket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
-    /** 豪华签券（240-2） */
-    deluxeTicket: z.object({ id: int.min(1), name: z.string().min(1), desc: z.string().min(1) }).strict(),
     /** 豪华池按月轮换的称号（240-2）：年月 → 档位 key（或 last）→ 称号 */
     deluxeMonths: z.array(
       // 月份只能 01~12：写成 2026-13 那一项永远对不上（质量期 ②）
@@ -447,37 +416,8 @@ export const kujiFile = z
           month: int.min(1).max(12),
           name: z.string().min(1),
           desc: z.string().min(1),
-          figures: z
-            .object({
-              A: kujiFigure,
-              B: kujiFigure,
-              C: kujiFigure,
-              last: kujiFigure,
-            })
-            .strict(),
-        })
-        .strict(),
-    ),
-  })
-  .strict();
-
-/** data/game/devices_extra.json：后期的宣传海报、奖杯（问题记录 146） */
-export const devicesExtraFile = z
-  .object({
-    items: z.array(
-      z
-        .object({
-          id: int.min(1),
-          name: z.string().min(1),
-          desc: z.string().min(1),
-          /** 道具等级（Wiki 显示）：按档 4~7 */
-          level: int.min(1),
-          deviceType: int,
-          time: int.min(1),
-          effect: z.enum(['coinValue', 'expValue']),
-          value: z.number().positive(),
-          coin: int.min(1),
-          needStar: int,
+          /** 手办的道具编号 */
+          figures: z.object({ A: int, B: int, C: int, last: int }).strict(),
         })
         .strict(),
     ),
@@ -498,13 +438,10 @@ export const foodSupplyFile = z.object({ demandBlend: z.number().min(0).lt(1) })
 export const fundFile = z
   .object({
     medals: z.array(
+      // 名字、说明、时长、加成在主表（重新编号 PR 1）
       z
         .object({
           id: int.min(1),
-          name: z.string().min(1),
-          desc: z.string().min(1),
-          hours: int.min(1),
-          effects: z.record(z.number()),
           /** 领取时一起发的限时称号（looks.icons 的 key），和勋章同时到期 */
           icon: z.string().min(1),
         })
@@ -542,12 +479,6 @@ export type StressTableEntry = z.infer<typeof stressTableEntry>;
 
 /** data/game/equip_lore.json：厨具改名（带背景故事）、新增厨具、替换或新增套装；手写文件，多写的键报错（终审 I3） */
 export const equipLoreFile = z.object({
-  rename: z.array(
-    z
-      .object({ id: int, name: z.string().min(1), desc: z.string().min(1), awardflag: int.optional() })
-      .strict(),
-  ),
-  add: z.array(rawGoods.extend({ value: z.record(z.union([z.number(), z.string()])) }).strict()),
   suits: z.array(rawSuit.strict()),
   stressTables: z.array(stressTableEntry),
 });
