@@ -58,14 +58,14 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
     await expect(daily.getByText(/同一网络或设备本轮已买/).first()).toBeVisible();
   }
 
-  // 准备第一道菜（新手街 194）需要的食材，然后在食谱页学会它
+  // 准备第一道菜（新手街的桑椹葡萄粥 100001）需要的食材，然后在食谱页学会它
   const overview = (await (await page.request.get('/api/v1/restaurant/overview')).json()) as {
     data: { id: number };
   };
   const client = new pg.Client({ connectionString: DB_URL });
   await client.connect();
   try {
-    for (const foodsId of [302, 253, 366]) {
+    for (const foodsId of [2046, 1021, 3046]) {
       await client.query(
         `insert into cupboard_food (rest_id, foods_id, num) values ($1, $2, 1)
          on conflict (rest_id, foods_id) do update set num = cupboard_food.num + 1`,
@@ -76,7 +76,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
     await client.end();
   }
   await page.goto('/cookbooks');
-  await page.getByTestId('learn-194').click();
+  await page.getByTestId('learn-100001').click();
   // 学会后这道菜排到后面去了，按"已学数量"确认
   // 菜谱总数跟配置走，不写死（backlog #115）
   await expect(page.getByTestId('cookbook-counts')).toContainText(/共学会 1 \/ [\d,]+ 道/);

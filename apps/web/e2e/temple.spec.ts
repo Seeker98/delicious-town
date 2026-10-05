@@ -18,8 +18,8 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
       restId,
     ]);
     for (const [goodsId, num] of [
-      [17, 2],
-      [170, 2],
+      [10701, 2], // 极速飞弹
+      [10704, 2], // 探险图
     ]) {
       await client.query('insert into store_item (rest_id, goods_id, num) values ($1, $2, $3)', [
         restId,
@@ -28,7 +28,7 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
       ]);
     }
     await client.query('insert into rest_mc (rest_id, mc_id, way) values ($1, 3, 1)', [restId]);
-    for (const foodsId of [150, 423, 262, 310, 400]) {
+    for (const foodsId of [5001, 5009, 2007, 2054, 4016]) {
       await client.query(
         `insert into cupboard_food (rest_id, foods_id, num) values ($1, $2, 5)
          on conflict (rest_id, foods_id) do update set num = 5`,
@@ -41,20 +41,20 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
 
   await page.goto('/temple');
   await page.getByTestId('tab-guardian').click();
-  await page.getByTestId('missile').selectOption('17');
+  await page.getByTestId('missile').selectOption('10701');
   await page.getByTestId('fire').click();
   await expect(page.getByTestId('shots')).toBeVisible();
 
   await page.getByTestId('tab-explore').click();
-  await page.getByTestId('map').selectOption('170');
+  await page.getByTestId('map').selectOption('10704');
   await page.getByTestId('explore').click();
   await expect(page.getByTestId('explore-result')).toContainText('成功');
 
   await page.getByTestId('tab-trial').click();
   await page.getByTestId('trial-meditate').click();
   await expect(page.getByTestId('trial-target')).toBeVisible();
-  await page.getByTestId('trial-main').selectOption('150');
-  await page.getByTestId('trial-sub').selectOption('423');
+  await page.getByTestId('trial-main').selectOption('5001');
+  await page.getByTestId('trial-sub').selectOption('5009');
   await page.getByTestId('trial-start').click();
   await expect(page.getByTestId('trial-result')).toContainText('试炼');
 });

@@ -15,7 +15,7 @@ test('酒吧：划拳一次 → 礼券换蟹币 → 老虎机抽一次', async (
   try {
     // 神秘礼券定为 300 张（开店礼包可能已经送了一些）
     await client.query(
-      `insert into store_item (rest_id, goods_id, num) values ($1, 1, 300)
+      `insert into store_item (rest_id, goods_id, num) values ($1, 10001, 300)
        on conflict (rest_id, goods_id) do update set num = 300`,
       [restId],
     );

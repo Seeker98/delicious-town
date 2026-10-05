@@ -19,10 +19,10 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   try {
     await client.query('update restaurant set coin = 2000000, level = 20 where id = $1', [restId]);
     for (const [goodsId, num] of [
-      [52, 20],
-      [40, 1],
-      [46, 1],
-      [44, 1],
+      [10603, 20], // 厨具精华
+      [10601, 1], // 强化石
+      [10602, 1], // 打孔石
+      [50301, 1], // [一阶]•蓝冥石
     ]) {
       await client.query('insert into store_item (rest_id, goods_id, num) values ($1, $2, $3)', [
         restId,
@@ -32,7 +32,7 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
     }
     await client.query(
       `insert into equip (rest_id, goods_id, part, suit_id, min_level, cur_hole, max_hole, base_fire)
-       values ($1, 56, 3, 5, 13, 1, 3, 12)`,
+       values ($1, 40301, 3, 5, 13, 1, 3, 12)`,
       [restId],
     );
   } finally {
@@ -40,7 +40,7 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
   }
 
   // 商店买一件见习之铲（生成实例）
-  const buy = await page.request.post('/api/v1/shop/buy', { data: { goodsId: 30, num: 1 } });
+  const buy = await page.request.post('/api/v1/shop/buy', { data: { goodsId: 40001, num: 1 } });
   expect(buy.ok()).toBe(true);
 
   // 穿上铲和锅
