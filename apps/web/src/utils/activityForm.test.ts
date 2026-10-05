@@ -23,6 +23,7 @@ describe('后台活动表单工具', () => {
         { path: 'def.levels.1.points', message: 'not_increasing' },
         { path: 'endsAt', message: 'before_start' },
         { path: 'def.goals.1.award.goods.0.id', message: 'unknown' },
+        { path: 'def.goals.2.award.foods.0.id', message: 'retired' },
       ],
     });
     expect(issueMap(e)).toEqual({
@@ -31,6 +32,8 @@ describe('后台活动表单工具', () => {
       endsAt: '结束时间要晚于开始时间',
       // 道具、食材 id 不存在（问题记录 270 顺带：保存时校验）
       'def.goals.1.award.goods.0.id': '道具或食材不存在',
+      // 已下架（问题记录 367）
+      'def.goals.2.award.foods.0.id': '道具或食材已下架',
     });
     expect(issueMap(new Error('x'))).toEqual({});
   });

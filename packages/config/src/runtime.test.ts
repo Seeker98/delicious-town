@@ -240,3 +240,20 @@ describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）'
     expect(config.tuning.temple.guardianHpPerStar).toBe(10000);
   });
 });
+
+describe('下架的食材（问题记录 367）', () => {
+  it('退出各等级的食材池（菜场、合成、神殿、礼包都从这里抽），定义还在', () => {
+    const src = readSourceDir(defaultDataDir());
+    const b = buildBundle(src).bundle!;
+    const f = b.foods.find((x) => x.level === 3 && x.odds < 100)!;
+    const c = createGameConfig({
+      ...b,
+      foods: b.foods.map((x) => (x.id === f.id ? { ...x, retired: true } : x)),
+    });
+    expect(c.foods.get(f.id)).toBeDefined();
+    expect(c.foodsByLevel.get(3)!.some((x) => x.id === f.id)).toBe(false);
+    expect(c.foodPools.get(3)!.items.some((x) => x.id === f.id)).toBe(false);
+    expect(c.rareFoodPools.get(3)!.items.some((x) => x.id === f.id)).toBe(false);
+    expect(c.hotFoodPool.items.some((x) => x.id === f.id)).toBe(false);
+  });
+});

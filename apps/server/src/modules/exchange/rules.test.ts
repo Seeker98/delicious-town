@@ -15,6 +15,8 @@ describe('交易所规则（156-1 设计 §5、§6）', () => {
     expect(isTradable(rare)).toBe(true);
     expect(isTradable(common)).toBe(false);
     expect(isTradable(undefined)).toBe(false);
+    // 下架的食材不再上交易所（问题记录 367）
+    expect(isTradable({ ...rare, retired: true })).toBe(false);
   });
   it('价格范围：下限向上取整、上限向下取整，下限至少 1', () => {
     expect(priceBand(1001, t)).toEqual({ min: 501, max: 2002 });

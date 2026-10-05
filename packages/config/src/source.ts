@@ -65,6 +65,7 @@ export const SOURCE_FILES = [
   'game/fund',
   'game/food_supply',
   'game/devices_extra',
+  'game/retired',
   'restaurant_defaults',
 ] as const;
 

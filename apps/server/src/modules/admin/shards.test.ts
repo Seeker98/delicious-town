@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createGameConfig } from '@dt/config';
 import { seededRng, sequenceRng } from '@dt/shared';
 import { userWithRole } from '../../../test/admin';
 import { testConfig } from '../../../test/config';
@@ -185,6 +186,34 @@ describe('区服数值（HTTP）', () => {
       { path: 'tuning.fund', message: 'tuning.fund.tiers C medal 1 is not an honor' },
     ]);
     expect((await save({ tiers: [{ key: 'C', coin: 500000, medal: 93101 }] })).status).toBe(200);
+  });
+
+  it('下架的道具不能再写进区服数值的奖励（问题记录 367）', async () => {
+    const base = testConfig();
+    const gift = 93; // 和默认厨塔排行礼物无关的普通道具
+    const retired = createGameConfig({
+      ...base.bundle,
+      goods: base.bundle.goods.map((g) => (g.id === gift ? { ...g, retired: true as const } : g)),
+    });
+    const app = await createTestApp({ config: retired });
+    try {
+      const a = await userWithRole(app, 'admin');
+      const shardId = await createShard(app.deps.db);
+      const save = (rankGifts: Array<[number, number]>) =>
+        call(app.app, 'POST', `${S}/${shardId}/override`, {
+          cookie: a.cookie,
+          body: { override: { tuning: { tower: { rankGifts } } }, note: 'x', version: 0 },
+        });
+      const bad = await save([[1, gift]]);
+      expect(bad.status).toBe(400);
+      expect(bad.json.code).toBe('INVALID_CONFIG');
+      expect(bad.json.params.issues).toEqual([
+        { path: 'tuning', message: `retired goods ${gift} is still used by 厨塔排行 ×1` },
+      ]);
+      expect((await save(base.tuning.tower.rankGifts)).status).toBe(200);
+    } finally {
+      await app.close();
+    }
   });
 
   it('mod 不能保存（404）', async () => {

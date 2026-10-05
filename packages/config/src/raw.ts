@@ -484,6 +484,10 @@ export const devicesExtraFile = z
   })
   .strict();
 
+/** data/game/retired.json：下架的道具、食材（问题记录 367）；道具整理工具写入，name 只是方便看 diff */
+const retiredItem = z.object({ id: int, name: z.string().optional(), note: z.string().optional() }).strict();
+export const retiredFile = z.object({ goods: z.array(retiredItem), foods: z.array(retiredItem) }).strict();
+
 /**
  * data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50）。
  * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）

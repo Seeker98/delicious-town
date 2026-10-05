@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { WIKI_HIDDEN_GOODS } from '@dt/config';
+import { WIKI_HIDDEN_GOODS, createGameConfig } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { createOpenData } from './data';
 
@@ -125,5 +125,26 @@ describe('售价按默认数值算（240-1）', () => {
     expect(cb.coin).toBe(Math.floor(config.requireCookbook(194).coin * 0.5));
     const f = d.foods('zh-CN').items[0]!;
     expect(f.coin).toBe(config.requireFood(f.id).coin * 2);
+  });
+});
+
+describe('下架的道具、食材不上开放接口（问题记录 367）', () => {
+  const goodsId = 1;
+  const foodId = b.foods[0]!.id;
+  const retired = createOpenData(
+    createGameConfig({
+      ...b,
+      goods: b.goods.map((g) => (g.id === goodsId ? { ...g, retired: true as const } : g)),
+      foods: b.foods.map((f) => (f.id === foodId ? { ...f, retired: true as const } : f)),
+    }),
+  );
+
+  it('列表和数量不含，详情是 null', () => {
+    expect(retired.goods('zh-CN').items.some((g) => g.id === goodsId)).toBe(false);
+    expect(retired.goodsDetail('zh-CN', goodsId)).toBeNull();
+    expect(retired.foods('zh-CN').items.some((f) => f.id === foodId)).toBe(false);
+    expect(retired.food('zh-CN', foodId)).toBeNull();
+    expect(retired.index('zh-CN').counts.goods).toBe(data.index('zh-CN').counts.goods - 1);
+    expect(retired.index('zh-CN').counts.foods).toBe(b.foods.length - 1);
   });
 });

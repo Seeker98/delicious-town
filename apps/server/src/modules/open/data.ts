@@ -46,8 +46,10 @@ export const OPEN_ENDPOINTS = [
 export function createOpenData(config: GameConfig) {
   const b = config.bundle;
   const hidden = WIKI_HIDDEN_GOODS;
-  const visible = (id: number) => !hidden.has(id) && config.goods.has(id);
-  const goodsList = b.goods.filter((g) => !hidden.has(g.id));
+  // 下架的道具、食材（问题记录 367）和后台专用的一样不显示
+  const visible = (id: number) => !hidden.has(id) && config.goods.has(id) && !config.goods.get(id)!.retired;
+  const goodsList = b.goods.filter((g) => visible(g.id));
+  const foodsList = b.foods.filter((f) => !f.retired);
   const equipGoods = goodsList.filter((g) => g.equip !== null);
 
   /** 食材 → 用到它的菜谱（同一道菜只记最低品级） */
@@ -155,7 +157,7 @@ export function createOpenData(config: GameConfig) {
         langs: [...LOCALES],
         counts: {
           goods: goodsList.length,
-          foods: b.foods.length,
+          foods: foodsList.length,
           cookbooks: b.cookbooks.length,
           equips: equipGoods.length,
           streets: b.streets.length,
@@ -170,7 +172,7 @@ export function createOpenData(config: GameConfig) {
 
     goodsDetail(lang: Locale, id: number): OpenGoodsDto | null {
       const g = config.goods.get(id);
-      if (!g || hidden.has(id)) return null;
+      if (!g || !visible(id)) return null;
       const r = renown.get(id);
       const suit = g.equip ? config.suits.get(g.equip.suitId) : undefined;
       return {
@@ -210,12 +212,12 @@ export function createOpenData(config: GameConfig) {
     },
 
     foods(lang: Locale): OpenListDto<OpenFoodBrief> {
-      return { ...meta(lang), items: b.foods.map((f) => foodBrief(lang, f.id)) };
+      return { ...meta(lang), items: foodsList.map((f) => foodBrief(lang, f.id)) };
     },
 
     food(lang: Locale, id: number): OpenFoodDto | null {
       const f = config.foods.get(id);
-      if (!f) return null;
+      if (!f || f.retired) return null;
       const seed = seedByFood.get(id);
       return {
         ...meta(lang),

@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>道具整理</title>
+    <style>
+      :root {
+        --bg: #f7f7f5;
+        --panel: #fff;
+        --text: #222;
+        --muted: #777;
+        --line: #e3e3e0;
+        --accent: #b4532a;
+        --warn: #b7791f;
+        --bad: #c53030;
+        --ok: #2f855a;
+        --tag: #eef2f7;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          'Microsoft YaHei',
+          sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 16px;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 8px 0 0;
+        display: inline;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .bar label {
+        white-space: nowrap;
+      }
+      input[type='search'] {
+        width: 220px;
+      }
+      button {
+        cursor: pointer;
+      }
+      #save {
+        background: var(--accent);
+        color: #fff;
+        border: 0;
+        border-radius: 4px;
+        padding: 5px 14px;
+      }
+      #save:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      main {
+        padding: 12px 16px 40px;
+      }
+      details {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      #errors {
+        display: none;
+        background: #fff5f5;
+        border: 1px solid #feb2b2;
+        color: var(--bad);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        white-space: pre-wrap;
+      }
+      #msg {
+        color: var(--ok);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: var(--panel);
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 4px 6px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        position: sticky;
+        top: var(--head, 96px);
+        background: #fafaf8;
+        z-index: 1;
+        font-weight: 600;
+      }
+      tr.retired td {
+        background: #fdf3ee;
+      }
+      tr.err td {
+        background: #fff5f5;
+      }
+      td.num {
+        text-align: right;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .name {
+        font-weight: 600;
+        min-width: 140px;
+      }
+      td.nowrap {
+        white-space: nowrap;
+      }
+      .desc {
+        color: var(--muted);
+        font-size: 12px;
+        max-width: 280px;
+      }
+      .tag {
+        display: inline-block;
+        background: var(--tag);
+        border-radius: 3px;
+        padding: 0 5px;
+        margin: 1px 2px 1px 0;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .tag.via {
+        text-decoration: line-through;
+        color: var(--muted);
+      }
+      .tag.orig {
+        background: #f3f0ea;
+        color: #6b5d45;
+      }
+      .tag.note {
+        background: #fefcbf;
+        color: var(--warn);
+      }
+      .tag.code {
+        background: #e6fffa;
+        color: #2c7a7b;
+      }
+      .tag.none {
+        background: #fff5f5;
+        color: var(--bad);
+      }
+      .grades td,
+      .grades th {
+        position: static;
+        font-size: 13px;
+      }
+      input.note {
+        width: 100%;
+        min-width: 120px;
+        font-size: 12px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header id="head">
+      <h1>道具整理</h1>
+      <span class="muted" id="count"></span>
+      <div class="bar">
+        <label
+          >种类
+          <select id="kind">
+            <option value="">全部</option>
+            <option value="goods">道具</option>
+            <option value="foods">食材</option>
+          </select>
+        </label>
+        <label
+          >类别
+          <select id="cat"></select
+        ></label>
+        <label
+          >状态
+          <select id="state">
+            <option value="">全部</option>
+            <option value="live">未下架</option>
+            <option value="retired">已下架</option>
+            <option value="dirty">改了没保存</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="noSource" /> 没有来源</label>
+        <label><input type="checkbox" id="noUse" /> 没有用途</label>
+        <label><input type="checkbox" id="hasNote" /> 有条件说明</label>
+        <label><input type="checkbox" id="origOnly" /> 原版有来源、这里没有</label>
+        <label><input type="checkbox" id="hideCode" /> 隐藏代码用到的</label>
+        <input type="search" id="q" placeholder="搜编号、名称、说明" />
+      </div>
+      <div class="bar">
+        <button id="checkAll">勾选筛选出的全部</button>
+        <button id="uncheckAll">取消筛选出的全部</button>
+        <button id="dropErrors" style="display: none">取消报错的勾选</button>
+        <button id="save" disabled>保存下架名单</button>
+        <span id="msg"></span>
+      </div>
+    </header>
+    <main>
+      <div id="errors"></div>
+      <details>
+        <summary>说明</summary>
+        <p>
+          勾选 =
+          下架。下架的道具、食材保留定义（玩家手上已有的照常显示、能用能卖），但不再从任何途径产出：退出商店、随机奖励、食材池、交易所和
+          Wiki。保存前会按新名单构建一次：还被奖励、兑换、食谱等引用的，或代码里用到的，不能下架，会在上面列出原因，文件不写。
+        </p>
+        <p>
+          保存只写 <code>packages/config/data/game/retired.json</code>。要在游戏里生效：<code
+            >pnpm -F @dt/config build</code
+          >，再重启开发服务器。
+        </p>
+        <p>
+          来源、用途按配置和游戏里的规则函数算（默认区服数值）；划掉的来源是已下架的道具（例如下架礼包里的东西）。原版来源来自原版的获取途径表，只作参考。
+        </p>
+        <p>
+          看不到存在数据库里的奖励：后台配的活动、兑换码、邮件，以及各区服改过的区服数值。下架以后新建、保存这些时会拦下已下架的；已经存好的不会自动改，服务器启动时会对引用了已下架道具的区服数值写警告。
+        </p>
+      </details>
+      <details>
+        <summary>食谱品级</summary>
+        <div id="grades"></div>
+      </details>
+      <table>
+        <thead>
+          <tr>
+            <th>下架</th>
+            <th>编号</th>
+            <th>名称</th>
+            <th>类别</th>
+            <th>等级</th>
+            <th>来源</th>
+            <th>用途</th>
+            <th>原版来源</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </main>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let report = null;
+      /** 勾选中的：key → 备注 */
+      let picked = new Map();
+      let saved = new Map();
+      let errorKeys = new Set();
+      const keyOf = (r) => r.kind + ':' + r.id;
+      const esc = (s) =>
+        String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+      async function load() {
+        const r = await fetch('/api/report');
+        apply(await r.json());
+      }
+
+      function apply(rep) {
+        report = rep;
+        picked = new Map(rep.rows.filter((r) => r.retired).map((r) => [keyOf(r), r.retiredNote]));
+        saved = new Map(picked);
+        showErrors(rep.errors);
+        const cats = [...new Set(rep.rows.map((r) => r.category))].sort();
+        $('cat').innerHTML =
+          '<option value="">全部</option>' + cats.map((c) => '<option>' + esc(c) + '</option>').join('');
+        renderGrades();
+        render();
+      }
+
+      /** 构建错误换成中文：还被引用的写出名字和引用处 */
+      function errorText(e) {
+        const m = /^retired (goods|foods) (\d+) is still used by (.*)$/.exec(e);
+        if (!m) return e;
+        const r = report.rows.find((x) => x.kind === m[1] && x.id === Number(m[2]));
+        return (
+          (m[1] === 'goods' ? '道具 ' : '食材 ') +
+          m[2] +
+          ' ' +
+          (r ? r.name : '') +
+          ' 还被引用：' +
+          m[3].replace(/, /g, '、')
+        );
+      }
+
+      function showErrors(errors) {
+        errorKeys = new Set();
+        for (const e of errors) {
+          const m = /^retired (goods|foods) (\d+)/.exec(e);
+          if (m) errorKeys.add(m[1] + ':' + m[2]);
+        }
+        $('errors').style.display = errors.length ? 'block' : 'none';
+        $('errors').textContent = errors.length
+          ? '不能保存（文件没写）：\n' + errors.map(errorText).join('\n')
+          : '';
+        $('dropErrors').style.display = errorKeys.size ? '' : 'none';
+      }
+
+      function renderGrades() {
+        const lv = [...new Set(report.grades.flatMap((g) => Object.keys(g.foodLevels).map(Number)))].sort(
+          (a, b) => a - b,
+        );
+        $('grades').innerHTML =
+          '<p class="muted">默认区服数值的食谱品级上限：' +
+          report.maxGrade +
+          '（后台可调到 10）。表里是这一品级全部食谱要的食材，按食材等级数种次。</p>' +
+          '<table class="grades"><tr><th>品级</th><th>名称</th><th>开放</th>' +
+          lv.map((l) => '<th>' + l + ' 级食材</th>').join('') +
+          '</tr>' +
+          report.grades
+            .map(
+              (g) =>
+                '<tr><td>' +
+                g.grade +
+                '</td><td>' +
+                esc(g.name) +
+                '</td><td>' +
+                (g.open ? '是' : '<span class="muted">否</span>') +
+                '</td>' +
+                lv.map((l) => '<td class="num">' + (g.foodLevels[l] ?? '') + '</td>').join('') +
+                '</tr>',
+            )
+            .join('') +
+          '</table>';
+      }
+
+      function visible() {
+        const kind = $('kind').value;
+        const cat = $('cat').value;
+        const state = $('state').value;
+        const q = $('q').value.trim().toLowerCase();
+        return report.rows.filter((r) => {
+          const k = keyOf(r);
+          if (kind && r.kind !== kind) return false;
+          if (cat && r.category !== cat) return false;
+          if (state === 'live' && picked.has(k)) return false;
+          if (state === 'retired' && !picked.has(k)) return false;
+          if (state === 'dirty' && picked.has(k) === saved.has(k) && picked.get(k) === saved.get(k))
+            return false;
+          if ($('noSource').checked && !r.noSource) return false;
+          if ($('noUse').checked && !r.noUse) return false;
+          if ($('hasNote').checked && r.notes.length === 0) return false;
+          if ($('origOnly').checked && !(r.noSource && r.original.length > 0)) return false;
+          if ($('hideCode').checked && r.code) return false;
+          if (
+            q &&
+            !(String(r.id) === q || r.name.toLowerCase().includes(q) || r.desc.toLowerCase().includes(q))
+          )
+            return false;
+          return true;
+        });
+      }
+
+      const tags = (list) =>
+        list
+          .map(
+            (t) =>
+              '<span class="tag' +
+              (t.retired ? ' via' : '') +
+              '">' +
+              esc(t.where) +
+              (t.n > 1 ? ' ×' + t.n : '') +
+              '</span>',
+          )
+          .join('');
+
+      function render() {
+        const list = visible();
+        $('count').textContent =
+          '显示 ' + list.length + ' / ' + report.rows.length + '，已勾选 ' + picked.size;
+        $('rows').innerHTML = list
+          .map((r) => {
+            const k = keyOf(r);
+            const on = picked.has(k);
+            const gives = r.gives.length ? tags(r.gives) : r.code ? '' : '<span class="tag none">没有</span>';
+            const uses = r.uses.length ? tags(r.uses) : r.code ? '' : '<span class="tag none">没有</span>';
+            return (
+              '<tr class="' +
+              (on ? 'retired ' : '') +
+              (errorKeys.has(k) ? 'err' : '') +
+              '" data-k="' +
+              k +
+              '"><td><input type="checkbox" class="pick"' +
+              (on ? ' checked' : '') +
+              (r.code && !on ? ' disabled title="代码里用到，不能下架"' : '') +
+              ' />' +
+              (on
+                ? '<input class="note" placeholder="备注" value="' + esc(picked.get(k) ?? '') + '" />'
+                : '') +
+              '</td><td class="num">' +
+              r.id +
+              '</td><td><div class="name">' +
+              esc(r.name) +
+              '</div><div class="desc">' +
+              esc(r.desc) +
+              '</div></td><td class="nowrap">' +
+              esc(r.category) +
+              '</td><td class="num">' +
+              r.level +
+              '</td><td>' +
+              (r.code ? '<span class="tag code">代码</span>' : '') +
+              gives +
+              '</td><td>' +
+              uses +
+              '</td><td>' +
+              r.original.map((o) => '<span class="tag orig">' + esc(o) + '</span>').join('') +
+              '</td><td>' +
+              r.notes.map((n) => '<span class="tag note">' + esc(n) + '</span>').join('') +
+              '</td></tr>'
+            );
+          })
+          .join('');
+        $('save').disabled = !dirty();
+      }
+
+      function dirty() {
+        if (picked.size !== saved.size) return true;
+        for (const [k, v] of picked) if (!saved.has(k) || saved.get(k) !== v) return true;
+        return false;
+      }
+
+      $('rows').addEventListener('change', (e) => {
+        const tr = e.target.closest('tr');
+        if (!tr) return;
+        const k = tr.dataset.k;
+        if (e.target.classList.contains('pick')) {
+          if (e.target.checked) picked.set(k, saved.get(k) ?? '');
+          else picked.delete(k);
+          render();
+        }
+      });
+      $('rows').addEventListener('input', (e) => {
+        if (!e.target.classList.contains('note')) return;
+        picked.set(e.target.closest('tr').dataset.k, e.target.value);
+        $('save').disabled = !dirty();
+      });
+      for (const id of ['kind', 'cat', 'state', 'noSource', 'noUse', 'hasNote', 'origOnly', 'hideCode'])
+        $(id).addEventListener('change', render);
+      $('q').addEventListener('input', render);
+      $('checkAll').addEventListener('click', () => {
+        for (const r of visible()) if (!r.code && !picked.has(keyOf(r))) picked.set(keyOf(r), '');
+        render();
+      });
+      $('uncheckAll').addEventListener('click', () => {
+        for (const r of visible()) picked.delete(keyOf(r));
+        render();
+      });
+      $('dropErrors').addEventListener('click', () => {
+        for (const k of errorKeys) picked.delete(k);
+        showErrors([]);
+        render();
+      });
+      $('save').addEventListener('click', async () => {
+        const body = { goods: [], foods: [] };
+        for (const [k, note] of picked) {
+          const [kind, id] = k.split(':');
+          body[kind].push({ id: Number(id), ...(note ? { note } : {}) });
+        }
+        $('save').disabled = true;
+        $('msg').textContent = '检查中…';
+        const res = await (
+          await fetch('/api/retired', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          })
+        ).json();
+        if (res.errors.length) {
+          $('msg').textContent = '';
+          showErrors(res.errors);
+          render();
+          return;
+        }
+        apply(res.report);
+        $('msg').textContent = '已保存。运行 pnpm -F @dt/config build 后重启开发服务器生效';
+      });
+      new ResizeObserver(() =>
+        document.documentElement.style.setProperty('--head', $('head').offsetHeight + 'px'),
+      ).observe($('head'));
+      load();
+    </script>
+  </body>
+</html>
