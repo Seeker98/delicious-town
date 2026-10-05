@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    krab1006:
+      'Le garde-manger de M. Krab est maintenant bien rempli : tous les ingrédients de niveau 1 à 5, jusqu’à des centaines pour les plus courants et moins pour les rares, réapprovisionnés chaque jour. Le nombre d’échanges quotidiens avec M. Krab ne change pas',
     guide1006:
       'Le wiki du jeu a maintenant un guide de jeu : trois rythmes de jeu, quoi faire à chaque connexion, quand déménager et où dépenser ses pièces en premier. La page des recettes suggère de déménager quand votre rue n’a pas assez de recettes pour l’étoile suivante',
     batch9:

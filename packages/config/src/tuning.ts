@@ -278,8 +278,10 @@ export const tuningSchema = z.object({
       avatar: int,
       door: int,
       roachRate: num,
-      restockKinds: int.min(1),
-      restockNum: int.min(1),
+      // 橱柜（问题记录 370）：1~5 级食材各补到 [最少, 最多] 之间的随机数，下标 = 等级 - 1；稀有食材按 odds 打折
+      restockRanges: z
+        .array(z.tuple([int.min(1), int.min(1)]).refine(([lo, hi]) => lo <= hi, 'min must be <= max'))
+        .length(5),
     }),
   }),
   equip: z.object({

@@ -232,7 +232,7 @@ runPairOp<T>(deps, ctx, targetRestId, opts: { feature: string; source: string; f
 - **创建** `ensureNpc(db, shardId)`：系统账号 `krab`（迁移时创建，`is_system=true`，随机密码哈希）；每区一家 `npc=true` 的餐厅，数值取 `tuning.friend.npc`，餐桌 32 张；迁移为现有区服创建，新建区服的流程里调用（幂等）
 - **排除**：普通结算、老鼠、排行、管理后台统计（经济、分布、结算）、玩家搜索、`friend/street`
 - **餐桌结算**：结算轮次里对每区的 NPC 单独跑一次"只处理餐桌"：白食桌累计（不扣 NPC 银币，裁定 11）、以 `npc.roachRate` 在空桌自然产生蟑螂、蟑螂保持；不产生收益和 `income_round`
-- **补货** 定时任务 `npc-restock`（每天 00:05）：清空 NPC 橱柜，从 1~5 级食材中随机选 `restockKinds` 种、各 `restockNum` 个
+- **补货** 定时任务 `npc-restock`（每天 00:05）：清空 NPC 橱柜，从 1~5 级食材中随机选 `restockKinds` 种、各 `restockNum` 个（已被问题记录 370 取代：1~5 级每种都放、按等级的随机数只补不减，见 `friend.npc.restockRanges`）
 - **自动申请** `npc-befriend`（每天一次，另外在验证邮箱和开店时对单店调用）：对区服里邮箱已验证、不是 NPC 好友、也没有待处理申请的餐厅，写 NPC → 该店的申请（幂等）
 - NPC 不主动互动、不请走白食者、不删好友
 

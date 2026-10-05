@@ -48,7 +48,7 @@ export function npcJobs(d: GameDeps): PeriodicJob[] {
             seededRng(gameSeed(shardId, 'npc-restock', period)),
           );
         });
-        return { kinds };
+        return { topped: kinds };
       },
     },
   ];

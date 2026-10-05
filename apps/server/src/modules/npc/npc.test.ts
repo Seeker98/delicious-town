@@ -4,7 +4,15 @@ import { testConfig } from '../../../test/config';
 import { createAccountRow, createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, setTables, tablesOf, type TestGame } from '../../../test/game';
 import { settleShardRound } from '../settlement/runner';
-import { ensureNpc, npcIdOf, npcInvite, npcTableRound, NPC_USERNAME } from './npc';
+import {
+  ensureNpc,
+  npcIdOf,
+  npcInvite,
+  npcRestockTarget,
+  npcTableRound,
+  NPC_USERNAME,
+  restockNpc,
+} from './npc';
 
 const config = testConfig();
 const npcT = config.tuning.friend.npc;
@@ -27,7 +35,9 @@ describe('蟹老板（设计文档 §4.9）', () => {
       .select('foods_id')
       .where('rest_id', '=', a.id)
       .execute();
-    expect(foods).toHaveLength(npcT.restockKinds);
+    // 1~5 级所有（未下架的）食材都有（问题记录 370）
+    const live = [1, 2, 3, 4, 5].flatMap((l) => config.foodsByLevel.get(l) ?? []);
+    expect(foods).toHaveLength(live.length);
     const acc = await t.db
       .selectFrom('restaurant as r')
       .innerJoin('account as x', 'x.id', 'r.account_id')
@@ -128,5 +138,81 @@ describe('蟹老板（设计文档 §4.9）', () => {
     const inc = await t.db.selectFrom('income_round').select('id').where('rest_id', '=', npc).execute();
     expect(inc).toHaveLength(0);
     expect(await npcIdOf(t.db, shardId)).toBe(npc);
+  });
+});
+
+describe('蟹老板的橱柜（问题记录 370）：1~5 级食材都有，几十到几百个，每天补回来', () => {
+  const food = (level: number) => config.foodsByLevel.get(level)!.find((f) => f.odds === 100)!;
+  const rare = (level: number) => config.foodsByLevel.get(level)!.find((f) => f.odds < 100)!;
+
+  it('每种的数量按等级的区间随机；稀有食材按出现权重打折，至少 1 个', () => {
+    for (let level = 1; level <= 5; level++) {
+      const [lo, hi] = npcT.restockRanges[level - 1]!;
+      for (let seed = 1; seed <= 30; seed++) {
+        const n = npcRestockTarget(food(level), npcT, seededRng(seed));
+        expect(n).toBeGreaterThanOrEqual(lo);
+        expect(n).toBeLessThanOrEqual(hi);
+        const r = rare(level);
+        const m = npcRestockTarget(r, npcT, seededRng(seed));
+        expect(m).toBeGreaterThanOrEqual(1);
+        expect(m).toBeLessThanOrEqual(Math.max(1, Math.round((hi * r.odds) / 100)));
+      }
+    }
+  });
+
+  it('补货只补不减：被换走、翻走的补到当天的数，比当天的数多的不动', async () => {
+    const shardId = await createShard(t.db);
+    const npc = (await ensureNpc(t.db, config, npcT, shardId, seededRng(1))).id;
+    const a = food(1);
+    const b = food(2);
+    await t.db
+      .updateTable('cupboard_food')
+      .set({ num: 0 })
+      .where('rest_id', '=', npc)
+      .where('foods_id', '=', a.id)
+      .execute();
+    await t.db
+      .updateTable('cupboard_food')
+      .set({ num: 999 })
+      .where('rest_id', '=', npc)
+      .where('foods_id', '=', b.id)
+      .execute();
+    const topped = await restockNpc(t.db, config, npcT, npc, seededRng(2));
+    expect(topped).toBeGreaterThanOrEqual(1);
+    const rows = new Map(
+      (
+        await t.db
+          .selectFrom('cupboard_food')
+          .select(['foods_id', 'num'])
+          .where('rest_id', '=', npc)
+          .execute()
+      ).map((r) => [r.foods_id, r.num]),
+    );
+    expect(rows.get(a.id)).toBeGreaterThanOrEqual(npcT.restockRanges[0]![0]);
+    expect(rows.get(b.id)).toBe(999);
+  });
+
+  it('补货时清掉不该在的：不在 1~5 级现有食材里的（以后下架的、6 级以上）删掉，冰箱清空；同一天重跑结果一样（审查）', async () => {
+    const shardId = await createShard(t.db);
+    const npc = (await ensureNpc(t.db, config, npcT, shardId, seededRng(1))).id;
+    const high = config.foodsByLevel.get(6)![0]!;
+    const a = food(1);
+    await t.db.insertInto('cupboard_food').values({ rest_id: npc, foods_id: high.id, num: 7 }).execute();
+    await t.db
+      .updateTable('cupboard_food')
+      .set({ fridge_num: 50 })
+      .where('rest_id', '=', npc)
+      .where('foods_id', '=', a.id)
+      .execute();
+    await restockNpc(t.db, config, npcT, npc, seededRng(3));
+    const rows = await t.db
+      .selectFrom('cupboard_food')
+      .select(['foods_id', 'num', 'fridge_num'])
+      .where('rest_id', '=', npc)
+      .orderBy('foods_id')
+      .execute();
+    expect(rows.some((r) => r.foods_id === high.id)).toBe(false);
+    expect(rows.find((r) => r.foods_id === a.id)!.fridge_num).toBe(0);
+    expect(await restockNpc(t.db, config, npcT, npc, seededRng(3))).toBe(0);
   });
 });

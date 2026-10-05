@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    krab1006:
+      'Mr. Krab’s pantry is now fully stocked: every level 1–5 ingredient, up to hundreds of the common ones and fewer of the rare ones, restocked daily. The number of daily swaps with Mr. Krab is unchanged',
     guide1006:
       'The game wiki now has a play guide: three play paces, what to do each time you log in, when to move and what to spend coins on first. The recipe page now suggests moving when your street doesn’t have enough recipes for the next star',
     batch9:

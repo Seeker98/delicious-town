@@ -183,7 +183,7 @@
     "refuel": { "bigTank": 8000, "drawsPerChunk": 2 },
     "npc": {
       "name": "蟹老板", "level": 60, "star": 5, "tables": 32, "oil": 1000000000, "avatar": 12, "door": 7,
-      "roachRate": 0.02, "restockKinds": 30, "restockNum": 5
+      "roachRate": 0.02, "restockRanges": [[100, 300], [60, 200], [30, 120], [20, 80], [10, 50]]
     }
   },
   "equip": {
