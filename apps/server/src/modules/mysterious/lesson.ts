@@ -9,6 +9,7 @@ import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { applyForget, gradeOf, padLevels, setGrade } from '../cookbook/rules';
+import { splitLearned } from '../settlement/tables';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import { subRemnant } from './remnant';
@@ -32,14 +33,10 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
     .select('levels')
     .where('rest_id', '=', o.rest.id)
     .executeTakeFirstOrThrow();
-  const { slotOf, idAt } = o.config.cookbookIndex;
+  const { slotOf } = o.config.cookbookIndex;
   const levels = padLevels(new Uint8Array(cb.levels), o.config.cookbookIndex.slots);
-  const learned: number[] = [];
-  // 按存储位遍历，换回食谱 id（重新编号 PR 3）；空位（删掉的菜）跳过
-  for (let s = 0; s < levels.length; s++) {
-    const id = idAt[s] ?? -1;
-    if (levels[s]! > 0 && id >= 0) learned.push(id);
-  }
+  // 按存储位换回食谱 id（重新编号 PR 3）；空位、超出存储位总数的字节跳过，和结算同一套
+  const learned = splitLearned(levels, o.config.cookbookIndex, -1).all;
   const picks = pickSome(learned, forgetCount(level, t), o.rng);
   if (picks.length > 0) {
     let counts = normalizeCounts(o.rest.cookbook_counts);

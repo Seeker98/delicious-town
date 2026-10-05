@@ -40,8 +40,19 @@ export function goodsFromRaw(
     onSale: g.saleflag === 1,
     awardFlag: g.awardflag ?? null,
     desc: g.desc ?? '',
-    value: text === '' ? null : (JSON.parse(text) as unknown),
+    value: text === '' ? null : parseValue(text, ids),
   };
+}
+
+/** 道具的 value（原版是 JSON 字符串）；坏了报错带编号，免得只看到一句 Unexpected token */
+function parseValue(text: string, ids: { id: number; legacyId: number }): unknown {
+  try {
+    return JSON.parse(text) as unknown;
+  } catch (e) {
+    throw new Error(
+      `goods ${ids.id} (legacy ${ids.legacyId}) value is not valid JSON: ${(e as Error).message}`,
+    );
+  }
 }
 
 /** 原版格式的食材转成主表条目；新编号、旧编号由调用方给（重新编号 PR 4） */

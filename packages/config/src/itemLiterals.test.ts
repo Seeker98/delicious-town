@@ -85,6 +85,41 @@ describe('写死的编号的识别（重新编号 PR 2）', () => {
     ]);
   });
 
+  it('重新编号第 4 步才发现的写法：鉴定道具、教师证、宝石字段，菜谱和食材的记录，菜园篮子，SQL 条件，几个服务函数的编号参数', () => {
+    const hits = findItemLiterals(
+      [
+        'appraise(ctx, { toolId: 30204, times: 1 }); openLesson(tc, { certId: 30204 }); inlay(ctx, { id, gemId: 30204 })',
+        'newRestaurant(t, { cookbooks: { 106001: 7, 5: 1 } })',
+        "{ type: 'gain', kind: 'basket', id: 1001 }",
+        ".where('goods_id', '=', 30204).where('foods_id', '=', 1001).where('cookbook_id', '=', 106001)",
+        'cb().learn(ctx, 106001); cb().detail(ctx, 106001); c().lock(ctx, 1001); c().thaw(ctx, 1001)',
+        'hasValidHonor(op, 30204); removeHonor(op, 30204); assertStoreRoom(op, 30204)',
+        "data.goodsDetail('zh-CN', 30204); data.food('zh-CN', 1001); data.cookbook('zh-CN', 106001)",
+      ].join('\n'),
+      ids,
+    );
+    expect(hits.map((h) => [h.kind, h.id])).toEqual([
+      ['goods', 30204],
+      ['goods', 30204],
+      ['goods', 30204],
+      ['cookbooks', 106001],
+      ['foods', 1001],
+      ['goods', 30204],
+      ['foods', 1001],
+      ['cookbooks', 106001],
+      ['cookbooks', 106001],
+      ['cookbooks', 106001],
+      ['foods', 1001],
+      ['foods', 1001],
+      ['goods', 30204],
+      ['goods', 30204],
+      ['goods', 30204],
+      ['goods', 30204],
+      ['foods', 1001],
+      ['cookbooks', 106001],
+    ]);
+  });
+
   it('{ id, num } 按前面最近的 goods / foods 键判断', () => {
     const hits = findItemLiterals(
       'award: { goods: [{ id: 30204, num: 1 }], foods: [{ id: 1001, num: 2 }] }',

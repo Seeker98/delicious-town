@@ -72,10 +72,11 @@ describe('物品池、食材池', () => {
   });
 
   it('下架的食材不进食材池（问题记录 367）', () => {
-    const [first] = awardFoodsPool(config.bundle.foods, 1);
+    const before = awardFoodsPool(config.bundle.foods, 1);
+    const [first] = before;
     const foods = config.bundle.foods.map((f) => (f.id === first ? { ...f, retired: true as const } : f));
     expect(awardFoodsPool(foods, 1)).not.toContain(first);
-    expect(awardFoodsPool(foods, 1)).toHaveLength(15);
+    expect(awardFoodsPool(foods, 1)).toHaveLength(before.length - 1);
   });
 });
 

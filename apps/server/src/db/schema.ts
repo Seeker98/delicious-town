@@ -147,7 +147,7 @@ export interface RestaurantTablesTable {
 
 export interface RestaurantCookbooksTable {
   rest_id: number;
-  /** 下标 = 食谱 id，值 = 品级 0~10 */
+  /** 下标 = 存储位（cookbookIndex.slotOf），值 = 品级 0~10 */
   levels: Buffer;
 }
 

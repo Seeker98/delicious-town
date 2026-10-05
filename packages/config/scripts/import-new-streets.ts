@@ -35,9 +35,12 @@ const srcDir = args[0] ?? resolve(pkg, '../../../data/新街道菜谱');
 const i18nDir = args[1] ?? resolve(pkg, '../../../data/i18n');
 const data = join(pkg, 'data');
 const read = <T>(p: string): T => JSON.parse(readFileSync(p, 'utf8')) as T;
+/** 先全部算好再统一写：中途出错（例如勋章 value 坏了）时不留下写了一半的数据（质量期第 ⑦ 批） */
+const pending = new Map<string, string>();
+const stage = (path: string, text: string) => pending.set(path, text);
 /** 和 data/designed 下其他文件一样：1 空格缩进、结尾没有换行 */
 const write = (name: string, rule: string, list: unknown[]) =>
-  writeFileSync(
+  stage(
     join(data, 'designed', `${name}.json`),
     JSON.stringify(
       { source: '新设计(data/新街道菜谱，import-new-streets.ts 导入)', rule, count: list.length, data: list },
@@ -139,7 +142,7 @@ const writeMaster = <T extends { src: string; id: number }>(
   m: { rule: string; data: T[] },
   entries: T[],
 ) =>
-  writeFileSync(
+  stage(
     join(data, 'master', `${name}.json`),
     formatMaster(
       m.rule,
@@ -175,7 +178,7 @@ const assigned = assignSlots(
   slotsFile.next,
 );
 if (assigned.next !== slotsFile.next) {
-  writeFileSync(slotsPath, `${JSON.stringify({ next: assigned.next }, null, 2)}\n`);
+  stage(slotsPath, `${JSON.stringify({ next: assigned.next }, null, 2)}\n`);
   console.log(`cookbook_slots: next ${slotsFile.next} -> ${assigned.next}`);
 }
 writeMaster(
@@ -217,10 +220,7 @@ const medalRows = addMedalRows(
   medalId,
 );
 if (medalRows.added.length > 0) {
-  writeFileSync(
-    mapPath,
-    JSON.stringify({ ...map, count: medalRows.rows.length, data: medalRows.rows }, null, 1),
-  );
+  stage(mapPath, JSON.stringify({ ...map, count: medalRows.rows.length, data: medalRows.rows }, null, 1));
   console.log(`street_medal_map: added streets ${medalRows.added.join(', ')}`);
 }
 
@@ -237,8 +237,9 @@ for (const l of ['en', 'fr', 'es']) {
     const e = theirs[c.id];
     if (e) mine[cbId.get(c.id)!] = { name: e.name };
   }
-  writeFileSync(p, JSON.stringify(mine, null, 2) + '\n');
+  stage(p, JSON.stringify(mine, null, 2) + '\n');
 }
+for (const [path, text] of pending) writeFileSync(path, text);
 console.log(
   `streets ${streets.length}, foods ${foods.length}, medals ${medals.length}, cookbooks ${sorted.length}`,
 );

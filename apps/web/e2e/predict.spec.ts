@@ -44,6 +44,10 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
     eventId = ((await created.json()) as { data: { id: number } }).data.id;
     // 出题人不能交易自己出的题（backlog 238-1）：当成别的管理员出的，本号再来买
     await client.query('update predict_event set created_by = null where id = $1', [eventId]);
+    // 每份结算金额按区服设置（开发库一服改成了 500），出题时记进题目里
+    const unit = (
+      await client.query<{ unit: number }>('select unit from predict_event where id = $1', [eventId])
+    ).rows[0]!.unit;
 
     await page.goto('/predict');
     await page.getByTestId(`pd-event-${eventId}`).click();
@@ -58,7 +62,7 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
     });
     expect(resolved.ok()).toBe(true);
     // 推进 1 分钟跑结算任务；同一分钟可能碰上营业结算、或开发 worker 先抢到结算任务，
-    // 所以不比银币总数，轮询这家店的结算日志：这一局得到 10 份 × 1,000
+    // 所以不比银币总数，轮询这家店的结算日志：这一局得到 10 份 × 每份金额
     await page.request.post('/api/v1/test/tick', { data: { minutes: 1, shardIds: [me.shardId] } });
     await expect
       .poll(
@@ -73,7 +77,7 @@ test('事件预测：出题、买入、判定、结算到账', async ({ page, re
           ).rows[0]?.coin,
         { timeout: 15_000 },
       )
-      .toBe(10_000);
+      .toBe(10 * unit);
   } finally {
     if (eventId !== null) await client.query('delete from predict_event where id = $1', [eventId]);
     await client.end();

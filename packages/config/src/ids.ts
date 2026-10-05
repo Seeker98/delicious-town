@@ -86,8 +86,8 @@ export const GOODS = {
   takeawayTicket: 10302, // 外卖券
   shopJobHonor: 60402, // 商店工作证（外卖私人刷新）
   horn: 10417, // 喇叭（小镇广播）
-  kujiTicket: 10303, // 一番赏抽赏券（game/kuji.json）
-  kujiDeluxeTicket: 10304, // 豪华签券（game/kuji.json，240-2）
+  kujiTicket: 10303, // 一番赏抽赏券
+  kujiDeluxeTicket: 10304, // 豪华签券（240-2）
   thorHammer: 61405, // 雷神锤
   krabBurger: 10005, // 蟹黄堡
   levelTicketBase: 10100, // N 级食材兑换券 = 10100 + N（10101~10105）
@@ -126,13 +126,16 @@ export const NON_SUIT_IDS: ReadonlySet<number> = new Set([0, 90, 99]);
 export const SPONSOR_HATS = { jade: 41036, xuan: 41135 } as const;
 export type HatTier = keyof typeof SPONSOR_HATS;
 
-/** 后台专用、游戏里拿不到的道具：开放接口和 Wiki 不显示（问题记录 142）。开发测试礼包、测试勋章、升星促销勋章礼包（测试） */
-export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([20001, 60103, 20107]);
+/**
+ * 后台专用、游戏里拿不到、又没下架的道具：开放接口和 Wiki 不显示（问题记录 142）。升星促销勋章礼包（测试）；
+ * 下架的（开发测试礼包、测试勋章等，game/retired.json）开放接口本来就不显示，不再列
+ */
+export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([20107]);
 
 /** 问题记录 331：新手大礼包；一到五级食材随机券 = foodVoucherBase + 等级（10201~10205）；packCode 是老店补领大礼包的新手码 */
 export const NEWBIE = { pack: 20002, foodVoucherBase: 10200, packCode: 'XINSHOULIBAO' } as const;
 
-/** 240-2：小镇发展基金勋章（game/fund.json），C·流动赋能、B·增值资本、A·基石领投 */
+/** 240-2：小镇发展基金勋章（定义在主表，game/fund.json 只配称号），C·流动赋能、B·增值资本、A·基石领投 */
 export const FUND = { C: 61904, B: 61905, A: 61906 } as const;
 /** 全部基金勋章：领取时一起去掉（不叠加），也不算进勋章收藏加成（只加经验，不加银币） */
 export const FUND_MEDALS: ReadonlySet<number> = new Set(Object.values(FUND));

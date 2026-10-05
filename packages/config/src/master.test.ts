@@ -56,6 +56,16 @@ describe('主表（重新编号 PR 1）', () => {
     ).toBeNull();
   });
 
+  it('value 不是合法 JSON 时报错带编号（新街道勋章，质量期第 ⑦ 批）', () => {
+    expect(() =>
+      goodsFromRaw({ id: 6, name: '乙', type: 9, value: '{bad' }, 'streets', {
+        id: 60014,
+        legacyId: 92014,
+        group: 'x',
+      }),
+    ).toThrow('goods 60014 (legacy 92014) value is not valid JSON');
+  });
+
   it('原始食材转主表：编号、旧编号由调用方给；maxNum 缺省 999，type 缺省 null', () => {
     expect(
       foodFromRaw({ id: 7, name: '丙', level: 2, coin: 10, odds: 100 }, 'streets', { id: 2001, legacyId: 7 }),

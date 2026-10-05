@@ -9,7 +9,7 @@ const config = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bun
 
 describe('GameConfig', () => {
   it('按 id 索引', () => {
-    expect(config.foods.get(fid('大米'))!.name).toBe('大米');
+    expect(config.foods.get(fid('大米'))!.level).toBe(1);
     expect(config.requireStreet(0).name).toBe('新手街');
     expect(config.cookbookIndex.slots).toBeGreaterThanOrEqual(config.bundle.cookbooks.length);
   });

@@ -26,7 +26,7 @@ export interface SpecialDish {
 export interface SettleInput {
   rest: SettleRest;
   tables: TableState[];
-  /** 下标 = 食谱 id，值 = 品级 */
+  /** 下标 = 存储位（cookbookIndex.slotOf），值 = 品级 */
   levels: Uint8Array;
   counts: CookbookCounts;
   /** 加成汇总（含收集类派生键） */
