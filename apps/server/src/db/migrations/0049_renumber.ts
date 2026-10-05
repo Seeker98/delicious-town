@@ -1,5 +1,5 @@
 import { sql, type Kysely, type Transaction } from 'kysely';
-import { isNewId, rewriteIds, TUNING_ID_PATHS, type IdKind, type IdMaps, type PathRule } from '@dt/config';
+import { rewriteIds, TUNING_ID_PATHS, type IdKind, type IdMaps, type PathRule } from '@dt/config';
 import type { DB } from '../schema';
 import { COOKBOOK_SLOTS, COOKBOOKS, FOODS, GOODS, SLOTS } from './0049_renumber_map';
 
