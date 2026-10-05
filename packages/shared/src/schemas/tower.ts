@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { BarAwardDto } from './bar';
+import type { AttrsDto } from './equip';
 import type { DuelJudgeId } from '../rules/duelJudges';
 
 export const towerChallengeBody = z.object({
@@ -60,6 +61,23 @@ export interface TowerFloorDto {
   cost: number;
   /** 当天的特色菜；1~3 层和还没换菜时为 null */
   mc: { mcId: number; price: number } | null;
+  /** 长老的装备和加点（问题记录 408） */
+  elder: TowerElderDto;
+}
+
+export interface TowerElderDto {
+  level: number;
+  /** 每件厨具都强化到这一级 */
+  stress: number;
+  /** 等级属性点 */
+  points: { cook: number; cutting: number; fire: number };
+  /** 每件厨具的属性（基础 + 强化） */
+  pieces: Array<{ id: number; attrs: AttrsDto }>;
+  /** 被挑战时的属性：加点 + 厨具，算上套装和防守加成 */
+  attrs: AttrsDto;
+  /** 打赢可能掉的厨具和概率 */
+  drops: number[];
+  dropRate: number;
 }
 
 export interface TowerDto {

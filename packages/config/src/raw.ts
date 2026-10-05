@@ -296,6 +296,27 @@ export const rawTowerFloor = z.object({
   attrSum: int,
   note: z.string().nullish(),
 });
+const elderAttrsSchema = z
+  .object({ cook: int, cutting: int, fire: int, season: int, creatives: int, luck: int })
+  .strict();
+/** 赛厨长老（问题记录 408）：apps/server/src/sim/elders.ts 生成 */
+export const towerEldersFile = z.object({
+  note: z.string(),
+  floors: z.array(
+    z
+      .object({
+        floor: int.min(1),
+        level: int.min(1),
+        stress: int.min(0),
+        points: z.object({ cook: int.min(0), cutting: int.min(0), fire: int.min(0) }).strict(),
+        pieces: z
+          .array(z.object({ id: int, base: elderAttrsSchema, gain: elderAttrsSchema }).strict())
+          .min(1),
+        drops: z.array(int).min(1),
+      })
+      .strict(),
+  ),
+});
 export const rawBless = z.object({
   id: int,
   name: z.string(),
@@ -459,7 +480,6 @@ export const towerFixFile = z.object({
     z
       .object({
         floor: int.min(1),
-        power: int.min(1),
         watchmanRestName: z.string().min(1).optional(),
         watchman: z.string().min(1).optional(),
         note: z.string().optional(),

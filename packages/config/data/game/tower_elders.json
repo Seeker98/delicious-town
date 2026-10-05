@@ -1,0 +1,1043 @@
+{
+  "note": "赛厨长老（问题记录 408）：由 pnpm -F @dt/server elders 生成，别手改；改等级、厨具、强化在 apps/server/src/sim/elders.ts 的 ELDER_SPECS",
+  "floors": [
+    {
+      "floor": 1,
+      "level": 8,
+      "stress": 3,
+      "drops": [
+        40001,
+        40002,
+        40003
+      ],
+      "points": {
+        "cook": 0,
+        "cutting": 21,
+        "fire": 0
+      },
+      "pieces": [
+        {
+          "id": 40001,
+          "base": {
+            "cook": 2,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40002,
+          "base": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40003,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 2,
+      "level": 27,
+      "stress": 5,
+      "drops": [
+        40004,
+        40005,
+        40006,
+        40007
+      ],
+      "points": {
+        "cook": 0,
+        "cutting": 0,
+        "fire": 78
+      },
+      "pieces": [
+        {
+          "id": 40004,
+          "base": {
+            "cook": 4,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 6,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40005,
+          "base": {
+            "cook": 0,
+            "cutting": 4,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 6,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40006,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 4,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 6,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40007,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 4,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 2,
+            "fire": 1,
+            "season": 6,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 3,
+      "level": 39,
+      "stress": 5,
+      "drops": [
+        40101,
+        40102,
+        40103,
+        40104
+      ],
+      "points": {
+        "cook": 29,
+        "cutting": 57,
+        "fire": 28
+      },
+      "pieces": [
+        {
+          "id": 40101,
+          "base": {
+            "cook": 3,
+            "cutting": 2,
+            "fire": 1,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 14,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40102,
+          "base": {
+            "cook": 0,
+            "cutting": 3,
+            "fire": 2,
+            "season": 1,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 14,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40103,
+          "base": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 3,
+            "season": 2,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 14,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40104,
+          "base": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 0,
+            "season": 3,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 14,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 4,
+      "level": 49,
+      "stress": 5,
+      "drops": [
+        40201,
+        40202,
+        40203,
+        40204
+      ],
+      "points": {
+        "cook": 36,
+        "cutting": 72,
+        "fire": 36
+      },
+      "pieces": [
+        {
+          "id": 40201,
+          "base": {
+            "cook": 21,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 10,
+            "creatives": 7,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40202,
+          "base": {
+            "cook": 0,
+            "cutting": 21,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 10,
+            "creatives": 7,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40203,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 21,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 10,
+            "creatives": 7,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40204,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 21,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 10,
+            "creatives": 7,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 5,
+      "level": 61,
+      "stress": 5,
+      "drops": [
+        40401,
+        40402,
+        40403,
+        40404,
+        40405
+      ],
+      "points": {
+        "cook": 45,
+        "cutting": 90,
+        "fire": 45
+      },
+      "pieces": [
+        {
+          "id": 40401,
+          "base": {
+            "cook": 16,
+            "cutting": 8,
+            "fire": 4,
+            "season": 2,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 0,
+            "season": 13,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40402,
+          "base": {
+            "cook": 2,
+            "cutting": 16,
+            "fire": 8,
+            "season": 4,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 0,
+            "season": 13,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40404,
+          "base": {
+            "cook": 4,
+            "cutting": 2,
+            "fire": 16,
+            "season": 8,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 0,
+            "season": 13,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40405,
+          "base": {
+            "cook": 8,
+            "cutting": 4,
+            "fire": 2,
+            "season": 16,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 0,
+            "season": 13,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40403,
+          "base": {
+            "cook": 8,
+            "cutting": 4,
+            "fire": 2,
+            "season": 1,
+            "creatives": 16,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 0,
+            "fire": 0,
+            "season": 13,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 6,
+      "level": 67,
+      "stress": 5,
+      "drops": [
+        40301,
+        40302,
+        40303
+      ],
+      "points": {
+        "cook": 50,
+        "cutting": 99,
+        "fire": 49
+      },
+      "pieces": [
+        {
+          "id": 40401,
+          "base": {
+            "cook": 16,
+            "cutting": 8,
+            "fire": 4,
+            "season": 2,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 1,
+            "season": 10,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40402,
+          "base": {
+            "cook": 2,
+            "cutting": 16,
+            "fire": 8,
+            "season": 4,
+            "creatives": 0,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 1,
+            "season": 10,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40301,
+          "base": {
+            "cook": 5,
+            "cutting": 2,
+            "fire": 18,
+            "season": 9,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 1,
+            "season": 10,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40302,
+          "base": {
+            "cook": 9,
+            "cutting": 5,
+            "fire": 2,
+            "season": 18,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 1,
+            "season": 10,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40303,
+          "base": {
+            "cook": 9,
+            "cutting": 5,
+            "fire": 2,
+            "season": 1,
+            "creatives": 18,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 2,
+            "cutting": 1,
+            "fire": 1,
+            "season": 10,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 7,
+      "level": 75,
+      "stress": 5,
+      "drops": [
+        40801,
+        40802,
+        40803,
+        40804,
+        40805
+      ],
+      "points": {
+        "cook": 56,
+        "cutting": 111,
+        "fire": 55
+      },
+      "pieces": [
+        {
+          "id": 40801,
+          "base": {
+            "cook": 21,
+            "cutting": 10,
+            "fire": 5,
+            "season": 3,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 1,
+            "fire": 0,
+            "season": 12,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40802,
+          "base": {
+            "cook": 3,
+            "cutting": 21,
+            "fire": 10,
+            "season": 5,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 1,
+            "fire": 0,
+            "season": 12,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40803,
+          "base": {
+            "cook": 5,
+            "cutting": 3,
+            "fire": 21,
+            "season": 10,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 1,
+            "fire": 0,
+            "season": 12,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40804,
+          "base": {
+            "cook": 10,
+            "cutting": 5,
+            "fire": 3,
+            "season": 21,
+            "creatives": 1,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 1,
+            "fire": 0,
+            "season": 12,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40805,
+          "base": {
+            "cook": 10,
+            "cutting": 5,
+            "fire": 3,
+            "season": 1,
+            "creatives": 21,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 1,
+            "cutting": 1,
+            "fire": 0,
+            "season": 12,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 8,
+      "level": 81,
+      "stress": 5,
+      "drops": [
+        40601,
+        40602,
+        40603,
+        40604,
+        40605
+      ],
+      "points": {
+        "cook": 60,
+        "cutting": 180,
+        "fire": 0
+      },
+      "pieces": [
+        {
+          "id": 40601,
+          "base": {
+            "cook": 51,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 28,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40602,
+          "base": {
+            "cook": 0,
+            "cutting": 51,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 28,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40603,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 51,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 28,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40604,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 51,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 28,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40605,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 51,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 28,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    },
+    {
+      "floor": 9,
+      "level": 87,
+      "stress": 6,
+      "drops": [
+        40601,
+        40602,
+        40603,
+        40604,
+        40605
+      ],
+      "points": {
+        "cook": 65,
+        "cutting": 193,
+        "fire": 0
+      },
+      "pieces": [
+        {
+          "id": 40601,
+          "base": {
+            "cook": 51,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 23,
+            "creatives": 11,
+            "luck": 2
+          }
+        },
+        {
+          "id": 40602,
+          "base": {
+            "cook": 0,
+            "cutting": 51,
+            "fire": 0,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 23,
+            "creatives": 11,
+            "luck": 2
+          }
+        },
+        {
+          "id": 40603,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 51,
+            "season": 0,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 23,
+            "creatives": 11,
+            "luck": 2
+          }
+        },
+        {
+          "id": 40604,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 51,
+            "creatives": 0,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 23,
+            "creatives": 11,
+            "luck": 2
+          }
+        },
+        {
+          "id": 40605,
+          "base": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 0,
+            "creatives": 51,
+            "luck": 0
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 0,
+            "season": 23,
+            "creatives": 11,
+            "luck": 2
+          }
+        }
+      ]
+    },
+    {
+      "floor": 10,
+      "level": 94,
+      "stress": 5,
+      "drops": [
+        40701,
+        40702,
+        40703,
+        40704,
+        40705
+      ],
+      "points": {
+        "cook": 70,
+        "cutting": 209,
+        "fire": 0
+      },
+      "pieces": [
+        {
+          "id": 40704,
+          "base": {
+            "cook": 31,
+            "cutting": 15,
+            "fire": 8,
+            "season": 4,
+            "creatives": 1,
+            "luck": 2
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 32,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40703,
+          "base": {
+            "cook": 4,
+            "cutting": 31,
+            "fire": 15,
+            "season": 8,
+            "creatives": 1,
+            "luck": 2
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 32,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40701,
+          "base": {
+            "cook": 8,
+            "cutting": 4,
+            "fire": 31,
+            "season": 15,
+            "creatives": 1,
+            "luck": 2
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 32,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40702,
+          "base": {
+            "cook": 15,
+            "cutting": 8,
+            "fire": 4,
+            "season": 31,
+            "creatives": 1,
+            "luck": 2
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 32,
+            "creatives": 0,
+            "luck": 0
+          }
+        },
+        {
+          "id": 40705,
+          "base": {
+            "cook": 15,
+            "cutting": 8,
+            "fire": 4,
+            "season": 2,
+            "creatives": 31,
+            "luck": 1
+          },
+          "gain": {
+            "cook": 0,
+            "cutting": 0,
+            "fire": 2,
+            "season": 32,
+            "creatives": 0,
+            "luck": 0
+          }
+        }
+      ]
+    }
+  ]
+}

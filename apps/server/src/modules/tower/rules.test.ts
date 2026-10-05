@@ -34,15 +34,17 @@ const config = testConfig();
 const t = config.tuning.tower;
 const zero: DuelAttrs = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
 const floor1 = config.towerFloors.get(1)!;
+/** 固定的一组属性（原来的 1 层守塔人），不跟长老配置走 */
+const small: DuelAttrs = { cook: 3, cutting: 3, fire: 3, season: 2, creatives: 2, luck: 0 };
 
 describe('五项评分（问题记录 396）', () => {
   const d = t.duel;
 
-  it('1 层守塔人，随机数 0.4：波动 = 创意 × 0.5 × (1 + 幸运率) × 0.4；养 = 火候 0.2 + 调味 0.3 + 刀工 0.2', () => {
-    // 创意 2、幸运 0：波动 0.4。色 3 香 2.2 味 2.5 形 3.3 养 1.8
-    const s = duelScores({ name: '守', attrs: floor1.attrs, mcPrice: 0 }, d, sequenceRng([0.4]));
-    expect(s).toEqual([3.4, 2.6, 2.9, 3.7, 2.2]);
-    expect(sumScores(s)).toBe(14.8);
+  it('随机数 0.4：波动 = 创意 × 0.4 × (1 + 幸运率) × 0.4（问题记录 408 改成 0.4）；养 = 火候 0.2 + 调味 0.3 + 刀工 0.2', () => {
+    // 创意 2、幸运 0：波动 0.32。色 3 香 2.2 味 2.5 形 3.3 养 1.8
+    const s = duelScores({ name: '守', attrs: small, mcPrice: 0 }, d, sequenceRng([0.4]));
+    expect(s).toEqual([3.3, 2.5, 2.8, 3.6, 2.1]);
+    expect(sumScores(s)).toBe(14.3);
   });
 
   it('幸运 300（幸运率 0.3）让波动 × 1.3；幸运极低时系数不小于 0', () => {
@@ -51,7 +53,7 @@ describe('五项评分（问题记录 396）', () => {
       d,
       sequenceRng([0.5]),
     );
-    expect(lucky).toEqual([3.3, 3.3, 3.3, 3.3, 3.3]);
+    expect(lucky).toEqual([2.6, 2.6, 2.6, 2.6, 2.6]);
     const cursed = duelScores(
       { name: 'a', attrs: { ...zero, creatives: 10, luck: -50000 }, mcPrice: 0 },
       d,
@@ -80,7 +82,7 @@ describe('五项评分（问题记录 396）', () => {
       d,
       sequenceRng([0, 0, 0, 0, 1]),
     );
-    expect(s).toEqual([0, 0, 0, 0, 20]);
+    expect(s).toEqual([0, 0, 0, 0, 19]);
   });
 });
 
@@ -138,16 +140,16 @@ describe('评委（问题记录 396）', () => {
   });
 
   it('厨力 = 五项属性 + ⌊幸运/2⌋；duel 先算挑战方五项、再算对方、再抽评委', () => {
-    expect(duelPower(floor1.attrs)).toBe(13);
+    expect(duelPower(small)).toBe(13);
     const r = duel(
       { name: '我', attrs: { ...zero, cook: 20, cutting: 20, fire: 20, season: 10 }, mcPrice: 0 },
-      { name: '守', attrs: floor1.attrs, mcPrice: 0 },
+      { name: '守', attrs: small, mcPrice: 0 },
       t.duel,
       sequenceRng([0.4]),
     );
     expect(r.win).toBe(true);
     expect(r.me.scores).toEqual([20, 13, 15, 22, 11]);
-    expect(r.them).toEqual({ scores: [3.4, 2.6, 2.9, 3.7, 2.2], sum: 14.8 });
+    expect(r.them).toEqual({ scores: [3.3, 2.5, 2.8, 3.6, 2.1], sum: 14.3 });
     expect(r.votes).toEqual([3, 0]);
     expect(r.judges).toHaveLength(3);
   });

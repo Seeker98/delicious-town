@@ -46,6 +46,16 @@ export default {
     rulesJudges: '評委和他們關注的項目：',
     awards: (text: string) => `得到 ${text}`,
   },
+  /** 賽廚長老的裝備（問題記錄 408） */
+  elder: {
+    summary: (level: number, stress: number, pct: string) =>
+      `長老裝備：${level} 級，全套強化 +${stress}；打贏有 ${pct} 掉一件`,
+    points: (text: string) => `加點：${text}`,
+    piece: (name: string, stress: number, text: string) => `${name} +${stress}：${text}`,
+    attrs: (text: string) => `被挑戰時：${text}`,
+    drops: (names: string) => `可能掉落：${names}`,
+    sep: '、',
+  },
   floor: {
     needLevel: (n: number) => `餐廳 ${n} 級才能挑戰`,
     needPrev: (n: number) => `先打贏第 ${n} 層`,

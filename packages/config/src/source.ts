@@ -52,6 +52,7 @@ export const SOURCE_FILES = [
   'game/looks',
   'game/equip_lore',
   'game/tower_fix',
+  'game/tower_elders',
   'game/setting_docs',
   'game/newbie_codes',
   'game/newbie_pack',

@@ -400,12 +400,12 @@ describe('酒吧配置（子项目 4C-1）', () => {
 });
 
 describe('厨塔配置（子项目 4C-2）', () => {
-  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性按 tower_fix 的厨力校准（问题记录 120）', () => {
+  it('守塔人 10 层：名字、称号、最低等级、每日次数、是否比拼特色菜；属性由长老装备算出（问题记录 408）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(f.map((x) => x.power)).toEqual([13, 66, 169, 234, 421, 494, 640, 803, 1164, 1522]);
+    expect(f.map((x) => x.power)).toEqual([39, 143, 217, 334, 461, 478, 559, 732, 787, 850]);
     expect(f[9]).toMatchObject({
       name: '彭祖',
       title: '食神',
@@ -413,8 +413,9 @@ describe('厨塔配置（子项目 4C-2）', () => {
       maxTimes: 2,
       mc: true,
       note: '你会做蛋炒饭吗?',
-      attrs: { cook: 350, cutting: 350, fire: 350, season: 194, creatives: 194, luck: 169 },
+      attrs: { cook: 157, cutting: 275, fire: 72, season: 242, creatives: 35, luck: 138 },
     });
+    expect(f[9]!.elder).toMatchObject({ level: 94, stress: 5, drops: [40701, 40702, 40703, 40704, 40705] });
     expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
     expect(f.map((x) => x.maxTimes)).toEqual([10, 10, 10, 10, 5, 3, 2, 1, 1, 2]);
   });
@@ -854,7 +855,7 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
 });
 
 describe('守塔人（问题记录 120）', () => {
-  it('第 5、6 层互换；厨力按参照玩家重算', () => {
+  it('第 5、6 层互换（名字、称号、台词；属性改由长老装备算，问题记录 408）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
@@ -872,25 +873,48 @@ describe('守塔人（问题记录 120）', () => {
       minLevel: 51,
       maxTimes: 3,
     });
-    const want = [14, 66, 168, 236, 420, 494, 640, 802, 1162, 1522];
-    f.forEach((x, i) => expect(Math.abs(x.power - want[i]!)).toBeLessThanOrEqual(3));
   });
 
   it('覆盖文件写了不存在的层时报错', () => {
     const src = source();
-    expect(buildBundle({ ...src, 'game/tower_fix': { floors: [{ floor: 11, power: 1 }] } }).errors).toContain(
-      'tower_fix references unknown floor 11',
-    );
+    expect(
+      buildBundle({ ...src, 'game/tower_fix': { floors: [{ floor: 11, watchman: '某长老' }] } }).errors,
+    ).toContain('tower_fix references unknown floor 11');
   });
 
   it('同一层写了两次时报错（backlog 厨具小修：以前不报错，后一条生效）', () => {
     const src = source();
     const floors = [
-      { floor: 3, power: 100 },
-      { floor: 3, power: 200 },
+      { floor: 3, watchman: '甲' },
+      { floor: 3, watchman: '乙' },
     ];
     expect(buildBundle({ ...src, 'game/tower_fix': { floors } }).errors).toContain(
       'tower_fix lists floor 3 twice',
+    );
+  });
+});
+
+describe('赛厨长老（问题记录 408）', () => {
+  const elders = () =>
+    source()['game/tower_elders'] as { note: string; floors: Array<Record<string, unknown>> };
+
+  it('少一层时报错', () => {
+    const e = elders();
+    expect(
+      buildBundle({
+        ...source(),
+        'game/tower_elders': { ...e, floors: e.floors.filter((f) => f.floor !== 10) },
+      }).errors,
+    ).toContain('tower_elders misses floor 10');
+  });
+
+  it('和厨具配置对不上时报错（加点总数不对）', () => {
+    const e = elders();
+    const floors = e.floors.map((f) =>
+      f.floor === 1 ? { ...f, points: { cook: 0, cutting: 0, fire: 1 } } : f,
+    );
+    expect(buildBundle({ ...source(), 'game/tower_elders': { ...e, floors } }).errors).toContain(
+      'tower_elders floor 1: points sum 1, expected 21',
     );
   });
 });

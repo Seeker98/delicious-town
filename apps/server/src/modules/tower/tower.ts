@@ -8,6 +8,8 @@ import { gainRenown, spendStrength } from '../../core/resources';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { randomAward, type RandomAward } from '../award/random';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
+import { addAttrs } from '../equip/rules';
+import { grantGoodsOp } from '../store/goods';
 import { KEY, badInput, lockTowerState } from './common';
 import { duel, duelPower } from './duel';
 import {
@@ -77,6 +79,15 @@ export async function towerView(
       unlocked: floorUnlocked(f, rest.level, best),
       cost: towerStrength(f.floor, false, t),
       mc: f.mc ? (mcs.get(f.floor) ?? null) : null,
+      elder: {
+        level: f.elder.level,
+        stress: f.elder.stress,
+        points: f.elder.points,
+        pieces: f.elder.pieces.map((x) => ({ id: x.id, attrs: addAttrs(x.base, x.gain) })),
+        attrs: f.attrs,
+        drops: f.elder.drops,
+        dropRate: t.elderDropRates[f.floor - 1] ?? 0,
+      },
     })),
     power: duelPower(me.attrs),
     left: Math.max(0, total - count(KEY.done)),
@@ -130,6 +141,13 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     if (r.win) {
       for (let i = 0; i < floorNo; i++)
         awards.push(await randomAward(o, { level: floorNo + 2, equipFlag: floorNo }));
+      // 长老的套装（问题记录 408）：按这一层的概率掉一件，掉哪件平均抽
+      const drops = f.elder.drops;
+      if (drops.length > 0 && o.rng.next() < (t.elderDropRates[floorNo - 1] ?? 0)) {
+        const id = drops[o.rng.int(drops.length)]!;
+        await grantGoodsOp(o, id, 1);
+        awards.push({ kind: 'goods', id, num: 1, lucky: false });
+      }
       if (floorNo > state.best_floor)
         await o.tx
           .updateTable('tower_state')

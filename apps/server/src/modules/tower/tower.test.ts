@@ -2,6 +2,9 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
+import { addAttrs } from '../equip/rules';
 import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
@@ -19,6 +22,16 @@ beforeEach(() => {
 
 const setDaily = (restId: number, key: string, count: number) =>
   t.db.insertInto('daily_counter').values({ rest_id: restId, day: DAY, key, count }).execute();
+/** 厨具在 equip 表里一件一行 */
+const equipNum = async (restId: number, goodsId: number) =>
+  (
+    await t.db
+      .selectFrom('equip')
+      .select('id')
+      .where('rest_id', '=', restId)
+      .where('goods_id', '=', goodsId)
+      .execute()
+  ).length;
 const setBest = (restId: number, best: number) =>
   t.db.insertInto('tower_state').values({ rest_id: restId, best_floor: best }).execute();
 
@@ -39,11 +52,23 @@ describe('厨塔概览', () => {
       power: 70,
     });
     expect(v.floors).toHaveLength(10);
+    // 长老的装备（问题记录 408）：每件 = 基础 + 强化；被挑战时的属性；掉落和概率
+    const f1 = t.game.deps.config.towerFloors.get(1)!;
+    expect(v.floors[0]!.elder).toMatchObject({
+      level: 8,
+      stress: 3,
+      points: f1.elder.points,
+      attrs: f1.attrs,
+      drops: f1.elder.drops,
+      dropRate: 0.2,
+    });
+    const p0 = f1.elder.pieces[0]!;
+    expect(v.floors[0]!.elder.pieces[0]).toEqual({ id: p0.id, attrs: addAttrs(p0.base, p0.gain) });
     expect(v.floors[0]).toMatchObject({
       floor: 1,
       name: '见习模范餐厅',
       title: '见习守护者',
-      power: 13,
+      power: 39,
       left: 10,
       maxTimes: 10,
       unlocked: true,
@@ -73,9 +98,9 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(r.data.me).toMatchObject({ power: 70, scores: [20, 13, 15, 22, 11], sum: 81 });
     expect(r.data.them).toEqual({
       name: '见习模范餐厅',
-      power: 13,
-      scores: [3.4, 2.6, 2.9, 3.7, 2.2],
-      sum: 14.8,
+      power: 39,
+      scores: [10.1, 0.8, 2.5, 22.3, 6.8],
+      sum: 42.5,
     });
     expect(r.data.votes).toEqual([3, 0]);
     expect(r.data.judges).toHaveLength(3);
@@ -86,6 +111,22 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(questIn(await t.game.task.tasks(ctx), 2105)).toMatchObject({ progress: 1, done: true });
     const act = await t.game.task.activation(ctx);
     expect(act.items.find((i) => i.name === '厨塔挑战')!.count).toBe(1);
+  });
+
+  it('打赢长老按这一层的概率掉一件它的套装（问题记录 408）；试打不掉', async () => {
+    const shardId = await createShard(t.db);
+    const rates = [1, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05];
+    await setTuning(t, shardId, { tower: { elderDropRates: rates } });
+    const ctx = await newRestaurant(t, { shardId, patch: { ...STRONG, level: 5 } });
+    const drops = t.game.deps.config.towerFloors.get(1)!.elder.drops;
+    const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
+    expect(r.data.win).toBe(true);
+    // 随机数 0.4：掉落 0.4 < 1；三件里第 ⌊0.4 × 3⌋ = 1 件
+    expect(r.data.awards).toContainEqual({ kind: 'goods', id: drops[1], num: 1, lucky: false });
+    expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
+    const test = await t.game.tower.challenge(ctx, { floor: 1, test: true });
+    expect(test.data).toMatchObject({ win: true, awards: [] });
+    expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
   });
 
   it('负：声望 +6，没有奖励，最高层不变', async () => {

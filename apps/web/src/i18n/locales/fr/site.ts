@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    elders1006:
+      'Les gardiens de la Tour des chefs sont maintenant des Anciens : chaque étage porte son propre équipement complet (+3 à +6) et les points d’attribut de son niveau, que vous pouvez déplier pour les voir. Une vraie victoire peut faire tomber une pièce de l’ensemble de l’Ancien (20 % aux étages 1 à 3, moins plus haut). L’étage 1 est maintenant un Ancien de niveau 8, les nouveaux joueurs le battent plus tôt. Le bonus aléatoire de la Créativité dans les duels culinaires baisse un peu et ne vaut plus davantage que les autres attributs',
     duel1006:
       'Les duels culinaires (Tour des chefs, Classement des chefs et duels entre amis) sont maintenant départagés par des juges : à chaque duel, 5 des 10 juges sont tirés au sort, chacun regarde quelques-unes des cinq notes, et le premier camp à 3 voix gagne. De meilleurs attributs sont maintenant bien plus fiables ; la Créativité et la Chance ajoutent un bonus aléatoire. Voir « Règles du duel culinaire » sur la page de la Tour des chefs',
     barPrize1006:
