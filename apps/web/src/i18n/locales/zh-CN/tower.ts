@@ -45,6 +45,16 @@ export default {
     rulesJudges: '评委和他们关注的项目：',
     awards: (text: string) => `得到 ${text}`,
   },
+  /** 赛厨长老的装备（问题记录 408） */
+  elder: {
+    summary: (level: number, stress: number, pct: string) =>
+      `长老装备：${level} 级，全套强化 +${stress}；打赢有 ${pct} 掉一件`,
+    points: (text: string) => `加点：${text}`,
+    piece: (name: string, stress: number, text: string) => `${name} +${stress}：${text}`,
+    attrs: (text: string) => `被挑战时：${text}`,
+    drops: (names: string) => `可能掉落：${names}`,
+    sep: '、',
+  },
   floor: {
     needLevel: (n: number) => `餐厅 ${n} 级才能挑战`,
     needPrev: (n: number) => `先打赢第 ${n} 层`,

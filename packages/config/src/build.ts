@@ -20,7 +20,7 @@ import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
 import { checkStreetDescs } from './streetDesc';
-import { calibrateWatchman } from './towerFloor';
+import { elderAttrs, elderErrors } from './towerFloor';
 import type {
   ActivationReward,
   Chapter,
@@ -147,6 +147,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const looks = parse('game/looks', raw.looksFile);
   const equipLore = parse('game/equip_lore', raw.equipLoreFile);
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
+  const towerElders = parse('game/tower_elders', raw.towerEldersFile);
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
   const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
@@ -202,6 +203,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !looks ||
     !equipLore ||
     !towerFix ||
+    !towerElders ||
     !settingDocs ||
     !newbieCodesRaw ||
     !newbieRaw ||
@@ -897,12 +899,37 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const f of towerFix.floors)
     if (!towerRaw.some((r) => r.floor === f.floor))
       errors.push(`tower_fix references unknown floor ${f.floor}`);
+  // 赛厨长老（问题记录 408）：每层一条，校验和厨具配置对得上，再算出被挑战时的属性
+  const elderCtx = {
+    goods: new Map(goods.map((g) => [g.id, g])),
+    suits: new Map(suits.map((s) => [s.id, s])),
+    attrPerLevel: tuning.rest.attrPerLevel,
+    luckPerLevel: tuning.rest.luckPerLevel,
+  };
+  const elderByFloor = new Map(towerElders.floors.map((e) => [e.floor, e]));
+  for (const e of towerElders.floors) {
+    if (!towerRaw.some((r) => r.floor === e.floor))
+      errors.push(`tower_elders references unknown floor ${e.floor}`);
+    errors.push(...elderErrors(e, elderCtx));
+  }
+  const elderOfFloor = (floor: number) => {
+    const e = elderByFloor.get(floor);
+    if (!e) {
+      errors.push(`tower_elders misses floor ${floor}`);
+      return {
+        attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 },
+        power: 0,
+        elder: { level: 1, stress: 0, points: { cook: 0, cutting: 0, fire: 0 }, pieces: [], drops: [] },
+      };
+    }
+    const { floor: _f, ...elder } = e;
+    return { ...elderAttrs(e, elderCtx), elder };
+  };
   const towerSrc = towerRaw.map((r) => {
     const x = fixByFloor.get(r.floor);
     return x
       ? {
           ...r,
-          attrSum: x.power,
           watchmanRestName: x.watchmanRestName ?? r.watchmanRestName,
           watchman: x.watchman ?? r.watchman,
           note: x.note ?? r.note,
@@ -919,14 +946,13 @@ export function buildBundle(src: SourceData): BuildResult {
       maxTimes: f.challengemaxtimes,
       mc: f.specialflag === 1,
       note: f.note ?? '',
-      ...calibrateWatchman(f.floor, f.minlevel, f.attrSum),
+      ...elderOfFloor(f.floor),
     }));
   towerFloors.forEach((f, i) => {
     if (f.floor !== i + 1) errors.push(`tower_floors: floor ${f.floor} out of order`);
   });
   for (const f of towerSrc) {
-    if (f.attrSum <= 0 || f.challengemaxtimes <= 0)
-      errors.push(`tower_floors ${f.floor} needs positive attrSum and challengemaxtimes`);
+    if (f.challengemaxtimes <= 0) errors.push(`tower_floors ${f.floor} needs positive challengemaxtimes`);
   }
   const renownShop: RenownShopItem[] = renownRaw.map((r) => ({
     goodsId: r.goodsId,

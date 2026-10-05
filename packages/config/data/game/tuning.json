@@ -291,7 +291,7 @@
     "duelWeakRate": 0.7, "duelStrongRate": 1.15,
     "duelRenown": { "weak": [0, -3], "strong": [6, -2], "normal": [5, -2] },
     "duel": {
-      "wave": 0.5,
+      "wave": 0.4,
       "weights": [
         { "cook": 0.7, "cutting": 0.3, "fire": 0, "season": 0, "mc": 0 },
         { "cook": 0.4, "cutting": 0, "fire": 0, "season": 0.5, "mc": 0 },
@@ -301,6 +301,7 @@
       ],
       "judges": 5
     },
+    "elderDropRates": [0.2, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05],
     "sparFullAt": 20, "sparFullRenown": 2, "sparMaxAt": 50,
     "sparAwards": [[10, 2, 4], [20, 2, 2], [999999, 1, 2]], "sparEquipFlag": 3,
     "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }

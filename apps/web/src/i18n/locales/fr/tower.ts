@@ -43,6 +43,15 @@ const tower: Messages['tower'] = {
     rulesJudges: 'Les juges et ce qu’ils regardent :',
     awards: (text) => `Obtenu : ${text}`,
   },
+  elder: {
+    summary: (level, stress, pct) =>
+      `Équipement de l’ancien : niveau ${level}, tout à +${stress} ; ${pct} de chances de lâcher une pièce si vous gagnez`,
+    points: (text) => `Points d’attribut : ${text}`,
+    piece: (name, stress, text) => `${name} +${stress} : ${text}`,
+    attrs: (text) => `Quand il est défié : ${text}`,
+    drops: (names) => `Peut lâcher : ${names}`,
+    sep: ', ',
+  },
   floor: {
     needLevel: (n) => `Votre restaurant doit être niveau ${n}`,
     needPrev: (n) => `Battez d'abord l'étage ${n}`,

@@ -8,6 +8,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import DuelResult from './DuelResult.vue';
+import ElderGear from './ElderGear.vue';
 
 const props = defineProps<{ data: TowerDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -92,6 +93,7 @@ async function go(f: TowerFloorDto, test: boolean) {
           blockOf(f, false)
         }}</span>
       </div>
+      <ElderGear :elder="f.elder" />
     </div>
   </div>
 </template>

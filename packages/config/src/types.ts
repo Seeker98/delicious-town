@@ -564,9 +564,21 @@ export interface TowerFloor {
   /** 是否比拼特色菜（每天 05:58 换菜） */
   mc: boolean;
   note: string;
+  /** 长老被挑战时的属性（套装百分比、防守加成都已算进去），由 elder 算出 */
   attrs: EquipAttrs;
   /** attrs 算出的厨力 */
   power: number;
+  /** 长老的装备和加点（问题记录 408） */
+  elder: TowerElder;
+}
+
+/** 赛厨长老：等级、强化、加点，每件厨具 = 基础 + 强化增量；打赢可能掉的厨具 */
+export interface TowerElder {
+  level: number;
+  stress: number;
+  points: { cook: number; cutting: number; fire: number };
+  pieces: Array<{ id: number; base: EquipAttrs; gain: EquipAttrs }>;
+  drops: number[];
 }
 
 /** 声望商店（designed/renown_shop；子项目 4C-2） */
