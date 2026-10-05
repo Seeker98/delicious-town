@@ -21,7 +21,7 @@ const grant = (ctx: RestCtx, goodsId: number, num: number) =>
 describe('发放厨具生成实例（设计文档 §4.2）', () => {
   it('固定属性：每件一个实例，不进仓库表', async () => {
     const ctx = await newRestaurant(t);
-    await grant(ctx, 30, 2);
+    await grant(ctx, gid('见习之铲'), 2);
     const rows = await equips(ctx.restaurantId);
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({
@@ -37,7 +37,7 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
 
   it('随机属性：总和等于 total，孔位、等级门槛、套装取自道具', async () => {
     const ctx = await newRestaurant(t);
-    await grant(ctx, 56, 1);
+    await grant(ctx, gid('沉默之度玛的静谧之镬'), 1);
     const [e] = await equips(ctx.restaurantId);
     const sum =
       e!.base_cook + e!.base_cutting + e!.base_fire + e!.base_season + e!.base_creatives + e!.base_luck;
@@ -47,7 +47,7 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
 
   it('仓库满了照发：一次 10 件都生成（Review Focus 4）', async () => {
     const ctx = await newRestaurant(t, { patch: { store_num: 1 }, goods: { [gid('金币')]: 1 } });
-    await grant(ctx, 30, 10);
+    await grant(ctx, gid('见习之铲'), 10);
     expect(await equips(ctx.restaurantId)).toHaveLength(10);
   });
 

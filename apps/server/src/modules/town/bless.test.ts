@@ -36,7 +36,10 @@ const giveActivation = async (ctx: RestCtx, points: number) => {
 describe('许愿（设计文档 §3.7）', () => {
   it('持有神灯才能许愿；许到的星愿写新闻，神灯不消耗', async () => {
     const none = await newRestaurant(t);
-    await expect(t.game.town.wish(none)).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { id: 389 } });
+    await expect(t.game.town.wish(none)).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { id: GOODS.magicLamp },
+    });
     const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
     const { bless } = (await t.game.town.wish(a)).data;
     expect(config.bless.get(bless.id)!.name).toBe(bless.name);
@@ -110,7 +113,9 @@ describe('共飨（设计文档 §3.7、裁定 8~10）', () => {
     const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
     await setBless(a.shardId, a.restaurantId, 6);
     await giveActivation(a, 60);
-    expect((await t.game.town.feast(a, {})).data.rewards).toEqual([{ kind: 'goods', id: 1, num: 31 }]);
+    expect((await t.game.town.feast(a, {})).data.rewards).toEqual([
+      { kind: 'goods', id: GOODS.mysteryTicket, num: 31 },
+    ]);
     const b = await newRestaurant(t, { patch: { diamond: 0 } });
     await setBless(b.shardId, b.restaurantId, 5);
     await giveActivation(b, 150);

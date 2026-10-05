@@ -93,7 +93,7 @@ describe('鉴定（规格书 04 §4.3）', () => {
     });
     await expect(s().appraise(ctx, { toolId: 165, times: 2, noRetry: false })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 162 },
+      params: { kind: 'goods', id: GOODS.mysteryRecipe },
     });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.krabburgerBook)).toBe(5);
   });
@@ -174,7 +174,7 @@ describe('概览、目录、任务、功能开关', () => {
       },
     ]);
     expect(o.remnants).toEqual([{ mcId: 3, num: 2 }]);
-    expect(o.tools.find((x) => x.goodsId === 165)).toEqual({
+    expect(o.tools.find((x) => x.goodsId === GOODS.krabburgerBook)).toEqual({
       goodsId: GOODS.krabburgerBook,
       num: 1,
       min: 3,

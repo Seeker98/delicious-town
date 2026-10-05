@@ -50,7 +50,7 @@ describe('广播（设计文档 §3.2）', () => {
     await expect(send(unverified, '你好')).rejects.toMatchObject({ code: 'EMAIL_NOT_VERIFIED' });
     await expect(send(await ready({}, {}), '你好')).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 315, need: 1, have: 0 },
+      params: { kind: 'goods', id: GOODS.horn, need: 1, have: 0 },
     });
   });
 

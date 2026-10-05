@@ -66,7 +66,7 @@ describe('addFoods / subFoods', () => {
     const r = await run(ctx, async (op) => {
       await addFoods(op, fid('大米'), 4);
     });
-    expect(r.events).toEqual([{ type: 'gain', kind: 'foods', id: 101, num: 4 }]);
+    expect(r.events).toEqual([{ type: 'gain', kind: 'foods', id: fid('大米'), num: 4 }]);
     const l = await t.db.selectFrom('ledger').selectAll().where('rest_id', '=', ctx.restaurantId).execute();
     expect(l.map((x) => [x.kind, x.item_id, x.delta])).toEqual([['foods', 101, 4]]);
   });
@@ -80,8 +80,8 @@ describe('addFoods / subFoods', () => {
       .where('foods_id', '=', 102)
       .execute();
     await run(ctx, async (op) => {
-      await subFoods(op, 101, 2);
-      await subFoods(op, 102, 2);
+      await subFoods(op, fid('大米'), 2);
+      await subFoods(op, fid('青椒'), 2);
     });
     const rows = await t.db
       .selectFrom('cupboard_food')
@@ -95,9 +95,12 @@ describe('addFoods / subFoods', () => {
     const ctx = await newRestaurant(t, { foods: { [fid('大米')]: 1 } });
     await expect(
       run(ctx, async (op) => {
-        await subFoods(op, 101, 3);
+        await subFoods(op, fid('大米'), 3);
       }),
-    ).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { kind: 'foods', id: 101, need: 3, have: 1 } });
+    ).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'foods', id: fid('大米'), need: 3, have: 1 },
+    });
   });
 });
 

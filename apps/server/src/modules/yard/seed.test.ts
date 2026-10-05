@@ -79,7 +79,7 @@ describe('种子（设计文档 §3.6，裁定 1、5）', () => {
     expect(await goodsNum(t, ctx.restaurantId, GOODS.formulaEssence)).toBe(1);
     await expect(t.game.yard.exchangeSeed(ctx, { seedId: 1, times: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 470, need: 2, have: 1 },
+      params: { kind: 'goods', id: GOODS.formulaEssence, need: 2, have: 1 },
     });
     const broke = await newRestaurant(t);
     await expect(t.game.yard.exchangeSeed(broke, { seedId: 95, times: 1 })).rejects.toMatchObject({

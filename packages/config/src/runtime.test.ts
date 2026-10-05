@@ -170,7 +170,7 @@ describe('酒吧索引（子项目 4C-1）', () => {
   it('老虎机奖池按 odds 抽、按 id 索引；tuning.bar', () => {
     expect(config.slotPool.total).toBe(19553);
     expect(config.slotPool.items).toHaveLength(22);
-    expect(config.slotAwards.get(100)).toMatchObject({ kind: 'goods', itemId: 180, rare: true });
+    expect(config.slotAwards.get(100)).toMatchObject({ kind: 'goods', itemId: gid('蟹黄堡'), rare: true });
     expect(config.tuning.bar).toMatchObject({
       fgWinRate: 0.25,
       numCost: 8,

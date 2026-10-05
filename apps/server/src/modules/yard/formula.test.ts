@@ -98,7 +98,7 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
     }
     await expect(t.game.yard.appraiseFormula(ctx, { toolId: 164, times: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 464, need: 2, have: 1 },
+      params: { kind: 'goods', id: GOODS.formulaScroll, need: 2, have: 1 },
     });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.seal)).toBe(2);
   });
@@ -189,7 +189,7 @@ describe('配方合成（规格书 08 §8.5）', () => {
     const ctx = await cook(t, { sub: 1 });
     await expect(t.game.yard.composeFormula(ctx, { formulaId: 1, num: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'foods', id: 431, need: 2, have: 1 },
+      params: { kind: 'foods', id: fid('鱼唇'), need: 2, have: 1 },
     });
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(100);
     expect(await basketOf(t, ctx.restaurantId)).toBe(5);

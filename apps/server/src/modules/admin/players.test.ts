@@ -3,6 +3,7 @@ import { userWithRole } from '../../../test/admin';
 import { createRestaurantFull, createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { gid } from '../../../test/items';
+import { GOODS } from '@dt/config';
 
 let ctx: TestContext;
 let admin: { cookie: string; accountId: number };
@@ -95,7 +96,9 @@ describe('玩家查询', () => {
       }),
     ]);
     const ledger = (await get(mod.cookie, `/restaurants/${p.restId}/ledger?kind=goods`)).json.data;
-    expect(ledger.items).toEqual([expect.objectContaining({ kind: 'goods', itemId: 1, source: 'y' })]);
+    expect(ledger.items).toEqual([
+      expect.objectContaining({ kind: 'goods', itemId: GOODS.mysteryTicket, source: 'y' }),
+    ]);
     expect((await get(mod.cookie, '/players/999999999')).status).toBe(404);
   });
 });

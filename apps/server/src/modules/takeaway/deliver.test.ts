@@ -32,7 +32,7 @@ const cook = async (shardId?: number): Promise<{ ctx: RestCtx; rider: number }> 
 const deliver = (ctx: RestCtx, orderId: number, riderId: number, double = false) =>
   t.game.takeaway.deliver(ctx, { orderId, riderId, double });
 const foods = async (restId: number) =>
-  Promise.all([239, 242, 250].map(async (id) => (await foodNum(t, restId, id)).num));
+  Promise.all([fid('猪肉'), fid('鸡蛋'), fid('香葱')].map(async (id) => (await foodNum(t, restId, id)).num));
 
 describe('接单（设计文档 §3.3）', () => {
   it('扣食材和声望；单变成配送中，别人看不到；这一单的数值定下来', async () => {

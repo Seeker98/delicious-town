@@ -119,7 +119,7 @@ describe('收集类加成进入汇总', () => {
       ])
       .execute();
     // 四个盆栽勋章（devicetype 36）
-    for (const id of [248, 249, 254, 338]) {
+    for (const id of [gid('仙人掌'), gid('发财树'), gid('迎客松'), gid('天使泪')]) {
       await upsertEffectSource(db, restId, {
         sourceType: 'honor',
         sourceId: id,

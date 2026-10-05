@@ -33,7 +33,7 @@ describe('橱柜列表', () => {
       targetGrade: 5,
       handleMax: 100,
     });
-    expect(l.items.find((x) => x.foodsId === 302)!.streetNeed).toBeGreaterThan(0);
+    expect(l.items.find((x) => x.foodsId === fid('葡萄'))!.streetNeed).toBeGreaterThan(0);
   });
 });
 

@@ -72,7 +72,7 @@ describe('猜酒杯（设计文档 §3.3）', () => {
     await t.game.bar.cup(ctx);
     await expect(t.game.bar.cup(ctx)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 1, need: 2, have: 1 },
+      params: { kind: 'goods', id: GOODS.mysteryTicket, need: 2, have: 1 },
     });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(1);
     expect((await t.game.bar.overview(ctx)).cup).toEqual({ result: 'win', times: 1, nextCost: 2 });
@@ -157,7 +157,7 @@ describe('礼券换蟹币（设计文档 §3.6）', () => {
     expect((await t.game.bar.exchange(ctx, { num: 2 })).data).toEqual({ krabCoins: 2, tickets: 50 });
     await expect(t.game.bar.exchange(ctx, { num: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 1, need: 100, have: 50 },
+      params: { kind: 'goods', id: GOODS.mysteryTicket, need: 100, have: 50 },
     });
     expect(await goodsNum(t, ctx.restaurantId, gid('蟹币'))).toBe(2);
     const act = await t.game.task.activation(ctx);

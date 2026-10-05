@@ -62,7 +62,7 @@ describe('下架的道具、食材不能再写进后台奖励（问题记录 367
   const food = base.bundle.foods[0]!.id;
   const config = createGameConfig({
     ...base.bundle,
-    goods: base.bundle.goods.map((g) => (g.id === 93 ? { ...g, retired: true as const } : g)),
+    goods: base.bundle.goods.map((g) => (g.id === gid('高级节油器') ? { ...g, retired: true as const } : g)),
     foods: base.bundle.foods.map((f) => (f.id === food ? { ...f, retired: true as const } : f)),
   });
   const issues = (fn: () => void) => {

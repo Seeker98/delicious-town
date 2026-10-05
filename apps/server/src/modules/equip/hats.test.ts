@@ -58,7 +58,7 @@ describe('显示名下发', () => {
       .execute();
     const list = await t.game.equip.list(ctx, {});
     expect(list.find((e) => e.id === hatId)!.name).toBe('玉•大橘之帽');
-    expect(list.find((e) => e.goodsId === 30)!.name).toBeNull();
+    expect(list.find((e) => e.goodsId === gid('见习之铲'))!.name).toBeNull();
     expect((await t.game.equip.detail(ctx, hatId)).equip.name).toBe('玉•大橘之帽');
     const friend = await t.game.social.reads.detail(viewer, ctx.restaurantId);
     expect(friend.equips.map((e) => e.name)).toEqual([null, '玉•大橘之帽']);

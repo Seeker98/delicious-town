@@ -103,7 +103,7 @@ describe('划拳（设计文档 §3.2）', () => {
     const ctx = await newRestaurant(t);
     await expect(t.game.bar.fg(ctx, { hand: 0 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 1, need: 1 },
+      params: { kind: 'goods', id: GOODS.mysteryTicket, need: 1 },
     });
     expect(
       await t.db.selectFrom('bar_state').selectAll().where('rest_id', '=', ctx.restaurantId).execute(),
@@ -139,7 +139,7 @@ describe('酒吧概览', () => {
     expect(v.slot.pool.find((a) => a.id === 100)).toEqual({
       id: 100,
       kind: 'goods',
-      itemId: 180,
+      itemId: gid('蟹黄堡'),
       rate: 12 / 19553,
       rare: true,
     });

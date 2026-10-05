@@ -151,7 +151,7 @@ describe('食谱列表、详情、需求', () => {
   it('需求计算：新手街全部学会 1 品级还差多少', async () => {
     const ctx = await newRestaurant(t, { foods: { [fid('葡萄')]: 1 } });
     const n = await cb().foodsNeed(ctx, { street: 0, target: 1 });
-    const grape = n.items.find((x) => x.foodsId === 302)!;
+    const grape = n.items.find((x) => x.foodsId === fid('葡萄'))!;
     expect(grape.have).toBe(1);
     expect(grape.lack).toBe(grape.need - 1);
   });

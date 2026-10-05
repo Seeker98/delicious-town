@@ -18,7 +18,7 @@ describe('纪念品（148-2 设计 §6.2）', () => {
     const view = await t.game.store.list(r, {});
     expect(view.kinds).toBe(1);
     // 仓库接口带上道具类型（问题记录 276）：前端按它分纪念品，不依赖可能过期的道具目录
-    expect(view.items.find((i) => i.goodsId === 90009)).toMatchObject({
+    expect(view.items.find((i) => i.goodsId === gid('小红旗徽章'))).toMatchObject({
       usable: false,
       sellPrice: null,
       type: 10,

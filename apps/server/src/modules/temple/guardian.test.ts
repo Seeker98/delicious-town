@@ -77,7 +77,7 @@ describe('守护兽（规格书 09 §9.1）', () => {
     });
     await expect(t.game.temple.missile(ctx, { goodsId: GOODS.missileNormal, num: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 18 },
+      params: { kind: 'goods', id: GOODS.missileNormal },
     });
   });
 
@@ -98,7 +98,9 @@ describe('守护兽（规格书 09 §9.1）', () => {
       .insertInto('shard_config')
       .values({
         shard_id: ctx.shardId,
-        override: JSON.stringify({ tuning: { temple: { missileAttack: [[17, 1500, 1500]] } } }),
+        override: JSON.stringify({
+          tuning: { temple: { missileAttack: [[GOODS.missileSpeed, 1500, 1500]] } },
+        }),
       })
       .execute();
     win.game.shards.invalidate(ctx.shardId);

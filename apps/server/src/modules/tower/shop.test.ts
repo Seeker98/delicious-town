@@ -65,7 +65,7 @@ describe('声望商店（设计文档 §3.5）', () => {
 
   it('本周不卖的、要前置玩法的报 not_on_sale；声望不够报 NOT_ENOUGH，什么都不变', async () => {
     const ctx = await newRestaurant(t, { patch: { renown: 50 } });
-    for (const goodsId of [402, 506])
+    for (const goodsId of [gid('恰克摩尔-雕像'), gid('仙贝-红')])
       await expect(t.game.tower.buy(ctx, { goodsId, num: 1 })).rejects.toMatchObject({
         code: 'INVALID_STATE',
         params: { reason: 'not_on_sale' },

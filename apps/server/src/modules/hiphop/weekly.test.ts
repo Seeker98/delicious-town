@@ -39,7 +39,13 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     const now = gameTime(SUN, 23);
     t.clock.set(now);
     expect(await awardWeekly(t.game.deps, shardId, MON, now)).toEqual({ winners: 5, failed: 0 });
-    const cards = [108, 109, 107, 111, 110];
+    const cards = [
+      GOODS.shopJobHonor,
+      GOODS.renameJobHonor,
+      GOODS.marketJobHonor,
+      GOODS.moveJobHonor,
+      GOODS.securityCard,
+    ];
     for (const [i, goodsId] of cards.entries())
       expect(await goodsNum(t, rests[i]!.restaurantId, goodsId)).toBe(1);
     expect(await goodsNum(t, rests[5]!.restaurantId, GOODS.securityCard)).toBe(0);

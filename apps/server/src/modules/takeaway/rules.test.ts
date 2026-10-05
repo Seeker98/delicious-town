@@ -20,7 +20,8 @@ import {
   sumBonus,
   takeawayPeriod,
 } from './rules';
-import { cid } from '../../../test/items';
+import { cid, gid } from '../../../test/items';
+import { GOODS } from '@dt/config';
 
 const t = testConfig().tuning.takeaway;
 
@@ -164,11 +165,11 @@ describe('结算（设计文档 §3.4、§3.6）', () => {
   it('奖池：品级越高礼券以外越多', () => {
     expect(awardWeights(1, t)).toEqual([
       [1, 56],
-      [170, 30],
-      [240, 8],
-      [171, 6],
-      [172, 2],
-      [310, 1],
+      [gid('探险图'), 30],
+      [gid('蟹币'), 8],
+      [GOODS.mapHigh, 6],
+      [gid('顶级探险图'), 2],
+      [GOODS.dtTicket, 1],
     ]);
     expect(awardWeights(3, t).map(([, w]) => fl(w * 10) / 10)).toEqual([56, 42, 16, 12, 5.2, 3]);
     expect(pickAward(0.4, 1, t)).toBe(1);

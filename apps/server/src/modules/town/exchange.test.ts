@@ -71,7 +71,7 @@ describe('镇长兑换（设计文档 §3.6）', () => {
     });
     await expect(t.game.town.exchange(a, { id: 1, num: 3 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 180, need: 6, have: 5 },
+      params: { kind: 'goods', id: gid('蟹黄堡'), need: 6, have: 5 },
     });
     expect(await goodsNum(t, a.restaurantId, gid('蟹黄堡'))).toBe(5);
     expect(await goodsNum(t, a.restaurantId, gid('神秘食材随机劵'))).toBe(0);
@@ -129,7 +129,10 @@ describe('食材兑换券（设计文档 §3.6）', () => {
     ).rejects.toMatchObject({ params: { reason: 'foods_not_allowed' } });
     await expect(
       t.game.town.levelTicket(a, { level: 1, picks: [{ foodsId: common[0]!.id, num: 2 }] }),
-    ).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { kind: 'goods', id: 241, need: 2, have: 1 } });
+    ).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'goods', id: gid('一级食材兑换券'), need: 2, have: 1 },
+    });
     expect(await goodsNum(t, a.restaurantId, gid('一级食材兑换券'))).toBe(1);
   });
 

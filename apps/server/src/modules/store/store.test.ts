@@ -50,14 +50,14 @@ describe('使用道具（规格书 07 §7.4）', () => {
       patch: { cupboard_num: config.foods.size - 15 },
       goods: { [gid('大扩容卡')]: 5 },
     });
-    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === 5)?.maxUse).toBe(2);
+    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === gid('大扩容卡'))?.maxUse).toBe(2);
     await expect(s().use(ctx, { goodsId: gid('大扩容卡'), num: 3 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'batch', max: 2 },
     });
     await s().use(ctx, { goodsId: gid('大扩容卡'), num: 2 });
     expect((await restRow(t, ctx.restaurantId)).cupboard_num).toBe(config.foods.size);
-    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === 5)?.maxUse).toBe(0);
+    expect((await s().list(ctx, {})).items.find((x) => x.goodsId === gid('大扩容卡'))?.maxUse).toBe(0);
     await expect(s().use(ctx, { goodsId: gid('大扩容卡'), num: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'cupboard_slots' },
@@ -175,9 +175,12 @@ describe('仓库列表与流水', () => {
     const ctx = await newRestaurant(t, { goods: { [gid('金币')]: 1, [gid('普通宣传海报')]: 1 } });
     await grantGoods(t.db, config, ctx.restaurantId, GOODS.krabHappy, 1, new Date(Date.now() - 5 * 3600_000));
     const l = await s().list(ctx, {});
-    expect(l.items.find((x) => x.goodsId === 85)).toMatchObject({ usable: true, batch: true });
-    expect(l.items.find((x) => x.goodsId === 13)).toMatchObject({ usable: false, sellPrice: 700 });
-    expect(l.items.some((x) => x.goodsId === 133)).toBe(false);
+    expect(l.items.find((x) => x.goodsId === gid('金币'))).toMatchObject({ usable: true, batch: true });
+    expect(l.items.find((x) => x.goodsId === gid('普通宣传海报'))).toMatchObject({
+      usable: false,
+      sellPrice: 700,
+    });
+    expect(l.items.some((x) => x.goodsId === GOODS.krabHappy)).toBe(false);
     expect(l.kinds).toBe(2);
   });
 

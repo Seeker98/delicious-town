@@ -57,6 +57,34 @@ describe('写死的编号的识别（重新编号 PR 2）', () => {
     ]);
   });
 
+  it('#144 审查补的写法：kind 写在一起的 id / itemId、比较、扣东西、厨具测试的小工具', () => {
+    const hits = findItemLiterals(
+      [
+        "params: { kind: 'goods', id: 93 }",
+        "{ kind: 'foods', itemId: 101, num: 3 }",
+        "{ key: 'goods', id: 93, need: 1 }",
+        'x.goodsId === 93; y.foodsId === 101; z.cookbookId === 1',
+        'subFoods(op, 101, 2); consumeGoods(op, 93, 3)',
+        'piece(ctx, 30); wear(e, 30); grant(restId, 93)',
+        "awardId: 1, kind: 'foods', itemId: 999999",
+      ].join('\n'),
+      ids,
+    );
+    expect(hits.map((h) => [h.kind, h.id])).toEqual([
+      ['goods', 93],
+      ['foods', 101],
+      ['goods', 93],
+      ['goods', 93],
+      ['foods', 101],
+      ['cookbooks', 1],
+      ['foods', 101],
+      ['goods', 93],
+      ['goods', 30],
+      ['goods', 30],
+      ['goods', 93],
+    ]);
+  });
+
   it('{ id, num } 按前面最近的 goods / foods 键判断', () => {
     const hits = findItemLiterals(
       'award: { goods: [{ id: 93, num: 1 }], foods: [{ id: 101, num: 2 }] }',

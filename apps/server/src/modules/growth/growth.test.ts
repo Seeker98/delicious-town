@@ -131,7 +131,7 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
     const noCert = await newRestaurant(t, { patch: { level: 13 }, cookbooks: learned(15) });
     await expect(t.game.growth.starUp(noCert)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 86 },
+      params: { kind: 'goods', id: GOODS.starCert },
     });
   });
 
@@ -160,7 +160,7 @@ describe('油壶扩容（规格书 02 §2.5、20 §20.6）', () => {
       { key: 'level', need: 3, have: 2, ok: false },
       { key: 'star', need: 0, have: 0, ok: true },
       { key: 'coin', need: 5000, have: 100, ok: false },
-      { key: 'goods', id: 24, need: 1, have: 0, ok: false },
+      { key: 'goods', id: gid('初级油壶扩容凭证'), need: 1, have: 0, ok: false },
     ]);
   });
 });

@@ -70,7 +70,7 @@ describe('开课（规格书 04 §4.7）', () => {
     expect((await restRow(t, tc.restaurantId)).strength).toBe(500 - 65);
     const list = await t.game.mysterious.lessons(tc);
     expect(list.mine).toMatchObject({ id: r.data.id, teacherId: tc.restaurantId });
-    expect(list.certs.find((c) => c.goodsId === 177)).toMatchObject({ num: 1, levels: [1, 2] });
+    expect(list.certs.find((c) => c.goodsId === gid('初级教师证'))).toMatchObject({ num: 1, levels: [1, 2] });
   });
 
   it('教师证等级不符、没学、星级不够、已有进行中的课都报错；过期的课自动关闭后可以再开（Review Focus 3）', async () => {
@@ -151,7 +151,7 @@ describe('学习（规格书 04 §4.7）', () => {
     const before = (await restRow(t, tc.restaurantId)).coin;
     await expect(t.game.mysterious.learnLesson(st, data.id, { type: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 183 },
+      params: { kind: 'goods', id: gid('[三级]•残卷碎片') },
     });
     expect((await restRow(t, st.restaurantId)).strength).toBe(500);
     expect((await restRow(t, tc.restaurantId)).coin).toBe(before);

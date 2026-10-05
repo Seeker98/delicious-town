@@ -33,7 +33,7 @@ describe('设施（规格书 02 §2.6）', () => {
 
   it('荣誉延长设施时长（幻紫沙漏 +15%）', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 1 } });
-    await grant(ctx.restaurantId, 422);
+    await grant(ctx.restaurantId, gid('幻紫沙漏'));
     t.clock.set(new Date('2026-09-30T00:00:00Z'));
     const r = await g().placeDevice(ctx, { slot: 1, goodsId: gid('普通宣传海报') });
     expect(new Date(r.data.expiresAt!).getTime() - t.clock.now.getTime()).toBe(
@@ -122,7 +122,7 @@ describe('改名（规格书 02 §2.8）', () => {
 describe('搬家（规格书 02 §2.8）', () => {
   it('消耗搬家卡和 桌数×餐桌价/2 银币，换街道勋章', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { [GOODS.moveCard]: 1 } });
-    await grant(ctx.restaurantId, 140);
+    await grant(ctx.restaurantId, gid('新手街'));
     await g().move(ctx, 11);
     const r = await restRow(t, ctx.restaurantId);
     expect(r.street_id).toBe(11);
@@ -131,7 +131,7 @@ describe('搬家（规格书 02 §2.8）', () => {
     expect(await goodsNum(t, ctx.restaurantId, gid('新手街'))).toBe(0);
     expect(await goodsNum(t, ctx.restaurantId, gid('江西街'))).toBe(1);
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
-    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([187]);
+    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([gid('江西街')]);
   });
   it('搬街费 ×（1 + 星级 × 系数）（240-1）；查询接口和实际扣费一致（终审 I-2）', async () => {
     const shardId = await createShard(t.db);
@@ -152,8 +152,8 @@ describe('搬家（规格书 02 §2.8）', () => {
   });
   it('持有搬家处工作证时不消耗搬家卡', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 } });
-    await grant(ctx.restaurantId, 140);
-    await grant(ctx.restaurantId, 111);
+    await grant(ctx.restaurantId, gid('新手街'));
+    await grant(ctx.restaurantId, GOODS.moveJobHonor);
     await g().move(ctx, 3);
     expect((await restRow(t, ctx.restaurantId)).street_id).toBe(3);
   });
@@ -162,24 +162,24 @@ describe('搬家（规格书 02 §2.8）', () => {
       patch: { coin: 100000, street_id: 11 },
       goods: { [GOODS.moveCard]: 1 },
     });
-    await grant(ctx.restaurantId, 187);
+    await grant(ctx.restaurantId, gid('江西街'));
     await g().move(ctx, 0);
     expect((await restRow(t, ctx.restaurantId)).street_id).toBe(0);
     expect(await goodsNum(t, ctx.restaurantId, gid('江西街'))).toBe(0);
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
-    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([140]);
+    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([gid('新手街')]);
   });
   it('搬到新街道印度街（id 20）：换上印度街勋章，devicetype 也是 20 的雕像不受影响（问题记录 284）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { [GOODS.moveCard]: 1 } });
-    await grant(ctx.restaurantId, 140);
-    await grant(ctx.restaurantId, 397);
+    await grant(ctx.restaurantId, gid('新手街'));
+    await grant(ctx.restaurantId, GOODS.thinker);
     await g().move(ctx, 20);
     expect((await restRow(t, ctx.restaurantId)).street_id).toBe(20);
     expect(await goodsNum(t, ctx.restaurantId, gid('新手街'))).toBe(0);
     expect(await goodsNum(t, ctx.restaurantId, gid('印度街'))).toBe(1);
     expect(await goodsNum(t, ctx.restaurantId, GOODS.thinker)).toBe(1);
     const effects = await listActiveEffects(t.db, ctx.restaurantId, new Date());
-    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([92020]);
+    expect(effects.filter((e) => e.sourceType === 'street').map((e) => e.sourceId)).toEqual([gid('印度街')]);
   });
   it('不能搬到原街道或不存在的街道', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.moveCard]: 1 } });
@@ -208,7 +208,7 @@ describe('开关', () => {
   it('银币转经验：需要阿波罗雕像', async () => {
     const ctx = await newRestaurant(t);
     await expect(g().setCte(ctx, true)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
-    await grant(ctx.restaurantId, 438);
+    await grant(ctx.restaurantId, GOODS.apolloStatue);
     await g().setCte(ctx, true);
     expect((await restRow(t, ctx.restaurantId)).cte_on).toBe(true);
   });
@@ -220,7 +220,7 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
     const ctx = await newRestaurant(t, { patch: { level: 16, strength: 100, renown: 10 }, tables });
     await t.game.world.ensure(ctx.shardId);
     await t.game.world.setPlankton(t.db, ctx.shardId, ctx.restaurantId);
-    await grant(ctx.restaurantId, 363);
+    await grant(ctx.restaurantId, GOODS.plankton);
     await g().drivePlankton(ctx, 'strength');
     const r = await restRow(t, ctx.restaurantId);
     // 声望 = ⌊√16⌋×10 = 40，经验 = 40×300
@@ -246,9 +246,9 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
   });
   it('赶走生气的蟹老板：需要纪念碑，50 体力', async () => {
     const ctx = await newRestaurant(t, { patch: { strength: 60 } });
-    await grant(ctx.restaurantId, 134);
+    await grant(ctx.restaurantId, GOODS.krabAngry);
     await expect(g().driveKrab(ctx)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
-    await grant(ctx.restaurantId, 439);
+    await grant(ctx.restaurantId, GOODS.armStatue);
     await g().driveKrab(ctx);
     expect(await goodsNum(t, ctx.restaurantId, GOODS.krabAngry)).toBe(0);
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(10);
@@ -258,7 +258,7 @@ describe('赶走 NPC（规格书 02 §2.8）', () => {
 describe('任务计数（问题记录 318）', () => {
   it('搬一次家计 rest.move', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { [GOODS.moveCard]: 1 } });
-    await grant(ctx.restaurantId, 140);
+    await grant(ctx.restaurantId, gid('新手街'));
     await g().move(ctx, 11);
     expect(await eventCount(t, ctx.restaurantId, 'rest.move')).toBe(1);
   });
@@ -274,7 +274,7 @@ describe('后期海报奖杯摆放要星级（问题记录 146）', () => {
     expect(await goodsNum(t, ctx.restaurantId, gid('13 哥宣传海报'))).toBe(1);
     // 设施页的选择列表带上需要的星级，前端好置灰（backlog 146）
     const opts = await g().devices(ctx);
-    expect(opts.store.find((x) => x.goodsId === 93201)).toMatchObject({ needStar: 4 });
+    expect(opts.store.find((x) => x.goodsId === gid('13 哥宣传海报'))).toMatchObject({ needStar: 4 });
   });
 
   it('4 星能摆，每桌银币 +8 进加成（Review Focus 3）', async () => {

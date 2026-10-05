@@ -57,7 +57,7 @@ describe('雷神锤（设计文档 §3.5）', () => {
     const none = await newRestaurant(t, { patch: RICH });
     await expect(coin(none, 1)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 256 },
+      params: { kind: 'goods', id: GOODS.thorHammer },
     });
     const a = await holder();
     await setWeather(t, a.shardId, 10);

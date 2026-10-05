@@ -220,10 +220,10 @@ describe('竞猜（规格书 06 §6.3）', () => {
   it('在 10:00:00 报名算进 12 点那一轮（Review Focus 2）；花 2 张神秘礼券；每轮一次', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     t.clock.set(gameTime('2026-09-30', 10));
-    const r = await m().joinGuess(ctx, [238, 240]);
+    const r = await m().joinGuess(ctx, [fid('白菜'), fid('黄瓜')]);
     expect(r.data.period).toBe('2026-09-30@12');
     expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(3);
-    await expect(m().joinGuess(ctx, [238])).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    await expect(m().joinGuess(ctx, [fid('白菜')])).rejects.toMatchObject({ code: 'ALREADY_DONE' });
   });
 
   it('开奖：猜中 3 种得幸运饼干 ×3 + 三级食材兑换券 ×3；12 点猜中 5 种再加 15 蟹币', async () => {

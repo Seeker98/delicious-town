@@ -54,12 +54,12 @@ describe('道具发放与扣除', () => {
 
   it('扣除：不够时报错；扣到 0 删除', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.starCert]: 2 } });
-    await expect(run(ctx, (op) => consumeGoods(op, 86, 3))).rejects.toMatchObject({
+    await expect(run(ctx, (op) => consumeGoods(op, GOODS.starCert, 3))).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 86, need: 3, have: 2 },
+      params: { kind: 'goods', id: GOODS.starCert, need: 3, have: 2 },
     });
-    const r = await run(ctx, (op) => consumeGoods(op, 86, 2));
-    expect(r.events).toEqual([{ type: 'loss', kind: 'goods', id: 86, num: 2 }]);
+    const r = await run(ctx, (op) => consumeGoods(op, GOODS.starCert, 2));
+    expect(r.events).toEqual([{ type: 'loss', kind: 'goods', id: GOODS.starCert, num: 2 }]);
     expect(await goodsNum(t, ctx.restaurantId, GOODS.starCert)).toBe(0);
   });
 

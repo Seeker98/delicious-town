@@ -116,7 +116,7 @@ describe('烹制（规格书 04 §4.5）', () => {
     const ctx = await cookReady(t, { goods: { [GOODS.luckyCookie]: 3 } });
     await expect(t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 5, cookie: true })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 491 },
+      params: { kind: 'goods', id: GOODS.luckyCookie },
     });
     await t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: true });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.luckyCookie)).toBe(2);

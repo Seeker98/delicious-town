@@ -34,7 +34,7 @@ describe('老虎机（设计文档 §3.5）', () => {
         [1, 1, 1],
         [1, 1, 1],
       ],
-      rewards: [{ awardId: 1, kind: 'foods', itemId: 326, num: 6 }],
+      rewards: [{ awardId: 1, kind: 'foods', itemId: fid('十三香'), num: 6 }],
       krabCoins: 3,
       floorLeft: 99,
     });
@@ -68,14 +68,14 @@ describe('老虎机（设计文档 §3.5）', () => {
         [0, 0, 0],
         [100, 0, 0],
       ],
-      rewards: [{ awardId: 100, kind: 'goods', itemId: 180, num: 1 }],
+      rewards: [{ awardId: 100, kind: 'goods', itemId: gid('蟹黄堡'), num: 1 }],
       krabCoins: 0,
       floorLeft: 100,
     });
     expect(await goodsNum(t, ctx.restaurantId, gid('蟹黄堡'))).toBe(1);
     expect(await failOf(ctx.restaurantId)).toBe(2);
     expect(await newsOf(ctx.restaurantId)).toEqual([
-      { type: 'bar.slot', params: { awardId: 100, kind: 'goods', itemId: 180, num: 1 } },
+      { type: 'bar.slot', params: { awardId: 100, kind: 'goods', itemId: gid('蟹黄堡'), num: 1 } },
     ]);
   });
 
@@ -97,10 +97,10 @@ describe('老虎机（设计文档 §3.5）', () => {
     const ctx = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
     rngValues = [0.5, 0.9474];
     expect((await t.game.bar.slot(ctx, { times: 1 })).data.rewards).toEqual([
-      { awardId: 11, kind: 'foods', itemId: 450, num: 3 },
+      { awardId: 11, kind: 'foods', itemId: fid('迷迭香'), num: 3 },
     ]);
     expect(await newsOf(ctx.restaurantId)).toEqual([
-      { type: 'bar.slot', params: { awardId: 11, kind: 'foods', itemId: 450, num: 3 } },
+      { type: 'bar.slot', params: { awardId: 11, kind: 'foods', itemId: fid('迷迭香'), num: 3 } },
     ]);
   });
 
@@ -126,7 +126,7 @@ describe('老虎机（设计文档 §3.5）', () => {
     const poor = await newRestaurant(t, { verified: true, goods: { [gid('蟹币')]: 1 } });
     await expect(t.game.bar.slot(poor, { times: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 240, need: 2, have: 1 },
+      params: { kind: 'goods', id: gid('蟹币'), need: 2, have: 1 },
     });
     expect(await goodsNum(t, poor.restaurantId, gid('蟹币'))).toBe(1);
   });

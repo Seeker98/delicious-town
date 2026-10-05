@@ -19,7 +19,8 @@ describe('支线「集齐 4 株盆栽」（设计文档裁定 10）', () => {
     const side = async () => questIn(await t.game.task.tasks(ctx), 3085)!;
     expect(await side()).toMatchObject({ key: 'honor.potCount', progress: 0, done: false });
     const now = new Date();
-    for (const id of [248, 249, 254]) await grantGoods(t.db, config, ctx.restaurantId, id, 1, now);
+    for (const id of [gid('仙人掌'), gid('发财树'), gid('迎客松')])
+      await grantGoods(t.db, config, ctx.restaurantId, id, 1, now);
     // 两小时前拿到、有效期 1 小时：已过期
     await grantGoods(
       t.db,
