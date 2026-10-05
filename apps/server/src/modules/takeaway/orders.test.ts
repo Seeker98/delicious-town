@@ -4,6 +4,8 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { addOrder, openFor } from '../../../test/takeaway';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { cid, fid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -78,7 +80,7 @@ describe('私人刷新（设计文档 §3.2、裁定 4）', () => {
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'job_honor' },
     });
-    await grantGoods(t.db, config, me.restaurantId, 108, 1, t.clock.now);
+    await grantGoods(t.db, config, me.restaurantId, GOODS.shopJobHonor, 1, t.clock.now);
     expect((await t.game.takeaway.overview(me)).refresh).toEqual({ cost: 1_000_000, hasJob: true });
     expect((await t.game.takeaway.refresh(me)).data).toEqual({ created: 15 });
     expect(await restRow(t, me.restaurantId)).toMatchObject({ coin: 4_000_000, renown: 160 });
@@ -96,7 +98,7 @@ describe('私人刷新（设计文档 §3.2、裁定 4）', () => {
 
   it('没开通不能刷新', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 5_000_000 } });
-    await grantGoods(t.db, config, ctx.restaurantId, 108, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, GOODS.shopJobHonor, 1, t.clock.now);
     await expect(t.game.takeaway.refresh(ctx)).rejects.toMatchObject({
       code: 'INVALID_STATE',
       params: { reason: 'takeaway_closed' },
@@ -109,14 +111,14 @@ describe('概览里的单（设计文档 §5）', () => {
     const me = await newRestaurant(t, {
       patch: { renown: 3 },
       cookbooks: { 1: 1 },
-      foods: { 239: 1, 242: 1, 250: 1 },
+      foods: { [fid('猪肉')]: 1, [fid('鸡蛋')]: 1, [fid('香葱')]: 1 },
     });
     const other = await newRestaurant(t, { shardId: me.shardId });
     await openFor(t, me);
-    const ok = await addOrder(t, me.shardId, { cookbookId: 1, needRenown: 3 });
+    const ok = await addOrder(t, me.shardId, { cookbookId: cid('南煎丸子'), needRenown: 3 });
     const mine = await addOrder(t, me.shardId, { owner: me.restaurantId, grade: 2, needRenown: 3 });
     const renown = await addOrder(t, me.shardId, { needRenown: 4 });
-    const notLearned = await addOrder(t, me.shardId, { cookbookId: 3 });
+    const notLearned = await addOrder(t, me.shardId, { cookbookId: cid('聊城熏鸡') });
     await addOrder(t, me.shardId, { owner: other.restaurantId });
     await addOrder(t, me.shardId, { expiresIn: -1 });
     await addOrder(t, me.shardId, { state: 2 });
@@ -130,13 +132,13 @@ describe('概览里的单（设计文档 §5）', () => {
       private: false,
       block: null,
       foods: [
-        { foodsId: 239, need: 1, have: 1 },
-        { foodsId: 242, need: 1, have: 1 },
-        { foodsId: 250, need: 1, have: 1 },
+        { foodsId: fid('猪肉'), need: 1, have: 1 },
+        { foodsId: fid('鸡蛋'), need: 1, have: 1 },
+        { foodsId: fid('香葱'), need: 1, have: 1 },
       ],
     });
     expect(byId.get(mine)).toMatchObject({ private: true, block: 'foods' });
-    expect(byId.get(mine)!.foods[0]).toEqual({ foodsId: 239, need: 2, have: 1 });
+    expect(byId.get(mine)!.foods[0]).toEqual({ foodsId: fid('猪肉'), need: 2, have: 1 });
     expect(byId.get(renown)!.block).toBe('renown');
     expect(byId.get(notLearned)!.block).toBe('not_learned');
   });

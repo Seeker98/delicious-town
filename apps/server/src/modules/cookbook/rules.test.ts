@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyForget, applyLearn, foodsNeedFor, padLevels, planLearn, streetTargetGrade } from './rules';
+import { fid } from '../../../test/items';
 
 const level = (id: number) => ({ 1: 1, 2: 2, 3: 3, 7: 7 })[id] ?? 1;
 const stock = (m: Record<number, number>) => (id: number) => m[id] ?? 0;
@@ -22,7 +23,7 @@ describe('planLearn（规格书 03 §3.3）', () => {
         { foodsId: 1, num: 1 },
         { foodsId: 3, num: 1 },
         { foodsId: 2, num: 1 },
-        { foodsId: 468, num: 1 },
+        { foodsId: fid('二级万能食材'), num: 1 },
       ],
     });
   });

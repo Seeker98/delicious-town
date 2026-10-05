@@ -6,6 +6,7 @@ import { createShard } from '../../../test/fixtures';
 import { counters, insertActivity } from '../../../test/activity';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
+import { gid } from '../../../test/items';
 
 /** 可控随机数：rolls 里有值就按顺序取，取完一律 0.99（不命中） */
 const rolls: number[] = [];
@@ -205,11 +206,17 @@ describe('问题记录 224：掉落时有提示', () => {
 describe('backlog 148-2：仓库满了也能兑换纪念品（走兑换流程）', () => {
   it('仓库格子已满时兑换纪念品照常到账', async () => {
     const shardId = await createShard(t.db);
-    const r = await newRestaurant(t, { shardId, patch: { store_num: 1 }, goods: { 85: 1 } });
+    const r = await newRestaurant(t, { shardId, patch: { store_num: 1 }, goods: { [gid('金币')]: 1 } });
     const id = await insertActivity(t, {
       shardId,
       spec: spec({
-        shop: [{ cost: [{ currency: 0, num: 1 }], award: { goods: [{ id: 90009, num: 1 }] }, limit: 1 }],
+        shop: [
+          {
+            cost: [{ currency: 0, num: 1 }],
+            award: { goods: [{ id: gid('小红旗徽章'), num: 1 }] },
+            limit: 1,
+          },
+        ],
       }),
     });
     await t.db
@@ -217,7 +224,7 @@ describe('backlog 148-2：仓库满了也能兑换纪念品（走兑换流程）
       .values({ activity_id: id, rest_id: r.restaurantId, key: 'm0', count: 1 })
       .execute();
     await t.game.activity.exchange(r, id, 0, 1);
-    expect(await goodsNum(t, r.restaurantId, 90009)).toBe(1);
+    expect(await goodsNum(t, r.restaurantId, gid('小红旗徽章'))).toBe(1);
   });
 });
 

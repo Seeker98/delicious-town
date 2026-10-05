@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GridDef, PassDef } from '@dt/shared';
 import { activityState, mergeRewards, rankRows, rewardsOf, scaleRewards } from './rules';
+import { gid } from '../../../test/items';
 
 const a = (coin: number) => ({ coin });
 const reached = (xs: Array<{ key: string; reached: boolean }>) =>
@@ -82,13 +83,13 @@ describe('合并奖励（设计 §6）', () => {
   it('数值相加，道具、食材按 id 合并，帽子拼接', () => {
     expect(
       mergeRewards([
-        { coin: 1, goods: [{ id: 5, num: 1 }], hats: [{ tier: 'jade', name: '甲' }] },
+        { coin: 1, goods: [{ id: gid('大扩容卡'), num: 1 }], hats: [{ tier: 'jade', name: '甲' }] },
         {
           coin: 2,
           diamond: 3,
           goods: [
-            { id: 5, num: 2 },
-            { id: 6, num: 1 },
+            { id: gid('大扩容卡'), num: 2 },
+            { id: gid('小扩建卡'), num: 1 },
           ],
           foods: [{ id: 9, num: 4 }],
         },
@@ -99,8 +100,8 @@ describe('合并奖励（设计 §6）', () => {
       diamond: 3,
       exp: 7,
       goods: [
-        { id: 5, num: 3 },
-        { id: 6, num: 1 },
+        { id: gid('大扩容卡'), num: 3 },
+        { id: gid('小扩建卡'), num: 1 },
       ],
       foods: [{ id: 9, num: 4 }],
       hats: [
@@ -123,10 +124,13 @@ describe('活动状态', () => {
 describe('scaleRewards（148-2）', () => {
   it('数量乘次数，帽子重复次数', () => {
     expect(
-      scaleRewards({ coin: 2, goods: [{ id: 5, num: 3 }], hats: [{ tier: 'jade', name: '甲' }] }, 2),
+      scaleRewards(
+        { coin: 2, goods: [{ id: gid('大扩容卡'), num: 3 }], hats: [{ tier: 'jade', name: '甲' }] },
+        2,
+      ),
     ).toEqual({
       coin: 4,
-      goods: [{ id: 5, num: 6 }],
+      goods: [{ id: gid('大扩容卡'), num: 6 }],
       hats: [
         { tier: 'jade', name: '甲' },
         { tier: 'jade', name: '甲' },

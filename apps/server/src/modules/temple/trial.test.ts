@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { GOODS } from '@dt/config';
 
 const config = testConfig();
 let t: TestGame;
@@ -30,7 +31,7 @@ async function ready(g: TestGame, learned: number[] = [MC3.id], patch: Record<st
   const foods = Object.fromEntries([RARE, COMMON, ...MC3.foods].map((f) => [f, 5]));
   const ctx = await newRestaurant(g, {
     patch: { star_level: 1, coin: 1_000_000, ...patch },
-    goods: { 434: 2 },
+    goods: { [GOODS.tentacle]: 2 },
     foods,
   });
   for (const id of learned)
@@ -50,7 +51,7 @@ describe('试炼准备（设计文档 裁定 1、7）', () => {
     const ctx = await ready(win, [MC3.id, MC6.id]);
     const r = await win.game.temple.prepareTrial(ctx, { way: 2 });
     expect(r.data.mcId).toBe(MC3.id);
-    expect(await goodsNum(win, ctx.restaurantId, 327)).toBe(1);
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.meditation)).toBe(1);
     const row = await win.db
       .selectFrom('rest_trial')
       .selectAll()
@@ -66,7 +67,7 @@ describe('试炼准备（设计文档 裁定 1、7）', () => {
     const ctx = await ready(t, [MC3.id], { coin: 300_000 });
     await t.game.temple.prepareTrial(ctx, { way: 1 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(50_000);
-    expect(await goodsNum(t, ctx.restaurantId, 326)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.creativePotion)).toBe(1);
     const only6 = await ready(t, [MC6.id]);
     await expect(t.game.temple.prepareTrial(only6, { way: 2 })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
@@ -82,7 +83,7 @@ describe('试炼准备（设计文档 裁定 1、7）', () => {
     expect((await restRow(win, ctx.restaurantId)).coin).toBe(1_000_000 - 20_000);
     const b = await win.game.temple.refreshTrial(ctx, { mcId: MC4.id });
     expect(b.data.mcId).toBe(MC4.id);
-    expect(await goodsNum(win, ctx.restaurantId, 434)).toBe(1);
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.tentacle)).toBe(1);
     for (const id of [lvl(5)[0]!.id, MC6.id])
       await expect(win.game.temple.refreshTrial(ctx, { mcId: id })).rejects.toMatchObject({
         params: { reason: 'mc_not_learned' },

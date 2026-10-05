@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
+import { fid } from '../../../test/items';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -15,7 +16,7 @@ const plantRow = (restId: number, landId: number) => ({
   shard_id: shard,
   land_id: landId,
   seed_id: 1,
-  foods_id: 101,
+  foods_id: fid('大米'),
   stage: 1,
   stage_at: new Date(),
   infancy: 24,
@@ -65,7 +66,10 @@ describe('迁移 0010', () => {
     const a = await newRest();
     const b = await newRest();
     await expect(
-      db.insertInto('yard_basket').values({ rest_id: a, foods_id: 101, num: -1 }).execute(),
+      db
+        .insertInto('yard_basket')
+        .values({ rest_id: a, foods_id: fid('大米'), num: -1 })
+        .execute(),
     ).rejects.toThrow();
     await expect(
       db.insertInto('rest_formula').values({ rest_id: a, formula_id: 1, main_num: -1 }).execute(),
@@ -103,7 +107,10 @@ describe('迁移 0010', () => {
     await db.deleteFrom('yard_plant').where('id', '=', p.id).execute();
     expect(await db.selectFrom('yard_steal').selectAll().where('plant_id', '=', p.id).execute()).toEqual([]);
     await db.insertInto('yard_plant').values(plantRow(a, land.id)).execute();
-    await db.insertInto('yard_basket').values({ rest_id: a, foods_id: 101, num: 3 }).execute();
+    await db
+      .insertInto('yard_basket')
+      .values({ rest_id: a, foods_id: fid('大米'), num: 3 })
+      .execute();
     await db.insertInto('rest_formula').values({ rest_id: a, formula_id: 1, sub_num: 2 }).execute();
     await db.deleteFrom('restaurant').where('id', '=', a).execute();
     for (const table of ['yard_land', 'yard_plant', 'yard_basket', 'rest_formula'] as const) {

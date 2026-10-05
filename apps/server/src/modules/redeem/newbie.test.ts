@@ -6,6 +6,7 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { randomCode } from './code';
 import { npcAccountId } from '../npc/npc';
 import { guideCodes, syncNewbieCodes } from './newbie';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -125,7 +126,7 @@ describe('backlog 新手码', () => {
 
   it('奖励有多个字段时，重复同步不会每次都"更新"（jsonb 的键顺序和配置不同）', async () => {
     const c = randomCode();
-    const items = { goods: [{ id: 28, num: 3 }], coin: 50000, diamond: 10 };
+    const items = { goods: [{ id: gid('小体力卡'), num: 3 }], coin: 50000, diamond: 10 };
     await syncNewbieCodes(t.db, [nc(c, { items })], log());
     expect(await syncNewbieCodes(t.db, [nc(c, { items })], log())).toMatchObject({ updated: 0 });
   });

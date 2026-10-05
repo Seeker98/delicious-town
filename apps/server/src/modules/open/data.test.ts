@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { WIKI_HIDDEN_GOODS, createGameConfig } from '@dt/config';
+import { GOODS, WIKI_HIDDEN_GOODS, createGameConfig } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { createOpenData } from './data';
+import { cid } from '../../../test/items';
 
 const config = testConfig();
 const data = createOpenData(config);
@@ -25,7 +26,7 @@ describe('开放接口数据（问题记录 142）', () => {
   it('道具列表不含隐藏道具；名字按语言', () => {
     const zh = data.goods('zh-CN').items;
     expect(zh.some((g) => WIKI_HIDDEN_GOODS.has(g.id))).toBe(false);
-    expect(zh.find((g) => g.id === 1)!.name).toBe(config.goods.get(1)!.name);
+    expect(zh.find((g) => g.id === 1)!.name).toBe(config.goods.get(GOODS.mysteryTicket)!.name);
     expect(data.goods('en').items.find((g) => g.id === 1)!.name).toBe(b.i18n.en!.goods['1']!.name);
     for (const id of WIKI_HIDDEN_GOODS) expect(data.goodsDetail('zh-CN', id)).toBeNull();
     expect(data.goodsDetail('zh-CN', 999_999)).toBeNull();
@@ -35,7 +36,7 @@ describe('开放接口数据（问题记录 142）', () => {
     const g = data.goodsDetail('zh-CN', 115)!;
     expect(g.gift).toEqual(
       expect.arrayContaining([
-        { kind: 'goods', id: 1, name: config.goods.get(1)!.name, num: 20 },
+        { kind: 'goods', id: 1, name: config.goods.get(GOODS.mysteryTicket)!.name, num: 20 },
         { kind: 'randomGoods', level: 7, num: 1 },
         { kind: 'masterFoods', num: 1 },
         { kind: 'coin', min: 1000, max: 19999 },
@@ -70,7 +71,7 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(food.cookbooks).toContainEqual({
       id: 1,
       name: '南煎丸子',
-      streetId: config.cookbooks.get(1)!.streetId,
+      streetId: config.cookbooks.get(cid('南煎丸子'))!.streetId,
       grade: 1,
     });
     expect(food.cookbooks.map((c) => c.id)).toEqual(
@@ -87,7 +88,7 @@ describe('开放接口数据（问题记录 142）', () => {
     const c = data.cookbook('zh-CN', 1)!;
     expect(c.grades).toHaveLength(10);
     expect(c.grades[0]!.foods.map((f) => f.foodsId)).toEqual([239, 242, 250]);
-    expect(c.desc).toBe(config.cookbooks.get(1)!.desc);
+    expect(c.desc).toBe(config.cookbooks.get(cid('南煎丸子'))!.desc);
     expect(data.cookbook('en', 1)!.desc).toBeNull();
     expect(data.cookbook('en', 1)!.name).toBe(b.i18n.en!.cookbooks['1']!.name);
     expect(data.cookbooks('zh-CN').items).toHaveLength(b.cookbooks.length);
@@ -123,7 +124,7 @@ describe('售价按默认数值算（240-1）', () => {
     }) as typeof config;
     const d = createOpenData(cfg);
     const cb = d.cookbooks('zh-CN').items.find((x) => x.id === 194)!;
-    expect(cb.coin).toBe(Math.floor(config.requireCookbook(194).coin * 0.5));
+    expect(cb.coin).toBe(Math.floor(config.requireCookbook(cid('桑椹葡萄粥')).coin * 0.5));
     const f = d.foods('zh-CN').items[0]!;
     expect(f.coin).toBe(config.requireFood(f.id).coin * 2);
   });

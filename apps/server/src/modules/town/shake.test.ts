@@ -9,6 +9,7 @@ import { createShard } from '../../../test/fixtures';
 import { runDueJobs } from '../../worker/periodic';
 import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
+import { gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 let t: TestGame;
@@ -90,10 +91,10 @@ describe('摇蟹老板钱包（设计文档 §3.4）', () => {
     const r = (await shake(a)).data;
     const [row] = await shakes(a.restaurantId);
     expect(row!.id).toBe(188);
-    expect(r.egg).toEqual({ goodsId: 180, num: 1 });
-    expect(await goodsNum(t, a.restaurantId, 180)).toBe(1);
+    expect(r.egg).toEqual({ goodsId: gid('蟹黄堡'), num: 1 });
+    expect(await goodsNum(t, a.restaurantId, gid('蟹黄堡'))).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.shake.lucky'] });
-    expect(n).toMatchObject({ restId: a.restaurantId, params: { goodsId: 180, num: 1 } });
+    expect(n).toMatchObject({ restId: a.restaurantId, params: { goodsId: gid('蟹黄堡'), num: 1 } });
   });
 
   it('蟹老板的钱袋：新建时和每天补货时补到 1000 万，比它多时不动（终审 C1）', async () => {

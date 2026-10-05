@@ -67,7 +67,7 @@ describe('改名费（规格书 02 §2.8）', () => {
   it('= 上周被放蟑螂数 × 100 × 等级 × (星级 + 1)', async () => {
     const a = await newRestaurant(t, {
       patch: { level: 10, star_level: 1, coin: 100_000 },
-      goods: { 53: 1 },
+      goods: { [GOODS.renameCard]: 1 },
     });
     t.clock.set(new Date('2026-10-07T04:00:00Z'));
     await incrementDaily(t.db, a.restaurantId, 'roach.laidOn', 2, '2026-09-29');

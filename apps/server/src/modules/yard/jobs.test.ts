@@ -4,6 +4,7 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { runDueJobs } from '../../worker/periodic';
 import { tickOne } from './jobs';
+import { fid } from '../../../test/items';
 
 const MIN = 60_000;
 const e = testConfig().tuning.yard.events;
@@ -61,7 +62,7 @@ async function cropOf(
       shard_id: shardId,
       land_id: land.id,
       seed_id: 1,
-      foods_id: 101,
+      foods_id: fid('大米'),
       stage: 1,
       stage_at: new Date(g.clock.now.getTime() - 30 * MIN),
       infancy: 24,

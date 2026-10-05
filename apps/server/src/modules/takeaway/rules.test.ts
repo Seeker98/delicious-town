@@ -20,6 +20,7 @@ import {
   sumBonus,
   takeawayPeriod,
 } from './rules';
+import { cid } from '../../../test/items';
 
 const t = testConfig().tuning.takeaway;
 
@@ -32,14 +33,14 @@ describe('出单（设计文档 §3.2）', () => {
 
   it('一张单：食谱 → 品级 → 时长 20+rand(10g) → 有效期 时长+rand(10g) → 声望 2g+rand[1,g]', () => {
     expect(rollOrder(sequenceRng([0.4]), [1, 2, 3, 4, 5], t)).toEqual({
-      cookbookId: 3,
+      cookbookId: cid('聊城熏鸡'),
       grade: 2,
       needMinutes: 28,
       expireMinutes: 36,
       needRenown: 5,
     });
     expect(rollOrder(sequenceRng([0.1]), [1, 2, 3, 4, 5], t)).toEqual({
-      cookbookId: 1,
+      cookbookId: cid('南煎丸子'),
       grade: 1,
       needMinutes: 21,
       expireMinutes: 22,

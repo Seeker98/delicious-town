@@ -4,6 +4,7 @@ import { runSystemOp } from '../../core/op';
 import { getEffectAgg } from '../effects/service';
 import { syncEquipEffects } from './effects';
 import { rescaleEquips } from './rescale';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -39,7 +40,7 @@ const log = (equipId: number, restId: number, stress: number, attr: string, val:
 describe('重算已生成的厨具（设计 §6）', () => {
   it('基础按比例缩放到 +0；增量按记录重写；缺记录的等级记到主属性；穿戴等级更新；再跑不变（Review Focus 4）', async () => {
     const r = await newRestaurant(t);
-    const table = t.deps.config.requireGoods(59).equip!.stressTable; // 巴贝雷特之铲
+    const table = t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable; // 巴贝雷特之铲
     // 旧的随机分配：厨艺 20、刀工 15（总和 35）；强化到 +3，只有 +1、+2 的记录，+2 回退后重强过一次
     const id = await oldPiece(r.restaurantId, 59, {
       base_cook: 20,
@@ -79,12 +80,14 @@ describe('重算的终审修复', () => {
     expect(before.luckValue).toBe(35);
     await rescaleEquips(t.game.deps);
     const after = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
-    expect(after.luckValue).toBe(t.deps.config.requireGoods(59).equip!.stressTable[0]);
+    expect(after.luckValue).toBe(
+      t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable[0],
+    );
   });
 
   it('和玩家操作串行：这家店正被锁着改强化等级时，重算等它改完，用改完后的等级（终审 I3）', async () => {
     const r = await newRestaurant(t);
-    const table = t.deps.config.requireGoods(59).equip!.stressTable;
+    const table = t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable;
     const id = await oldPiece(r.restaurantId, 59, { base_cook: 35, stress: 3 });
     let release!: () => void;
     const held = new Promise<void>((res) => (release = res));

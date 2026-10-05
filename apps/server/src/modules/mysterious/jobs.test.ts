@@ -3,6 +3,7 @@ import { addDays, gameDay, gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { awardChampion, mysteriousJobs } from './jobs';
+import { GOODS } from '@dt/config';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -42,9 +43,9 @@ describe('昨日特色菜冠军（规格书 16）', () => {
     await cooked(c!.restaurantId, shardId, gameTime(today, 1), 100000, 100);
     const r = await awardChampion(t.game.deps, shardId, today, gameTime(today, 9));
     expect(r).toEqual({ winners: 2, value: 1000 });
-    expect(await goodsNum(t, a!.restaurantId, 165)).toBe(1);
-    expect(await goodsNum(t, b!.restaurantId, 165)).toBe(1);
-    expect(await goodsNum(t, c!.restaurantId, 165)).toBe(0);
+    expect(await goodsNum(t, a!.restaurantId, GOODS.krabburgerBook)).toBe(1);
+    expect(await goodsNum(t, b!.restaurantId, GOODS.krabburgerBook)).toBe(1);
+    expect(await goodsNum(t, c!.restaurantId, GOODS.krabburgerBook)).toBe(0);
     const news = await t.db.selectFrom('news').select('type').where('shard_id', '=', shardId).execute();
     expect(news.filter((n) => n.type === 'mc.champion')).toHaveLength(2);
   });

@@ -7,6 +7,7 @@ import { insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { activityCacheFor } from './active';
 import { SETTLE_MAX_FAILS, settleActivities } from './settle';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -22,8 +23,8 @@ const spec = {
   kind: 'goals' as const,
   def: {
     goals: [
-      { key: 'market.buy', target: 1, award: { coin: 10, goods: [{ id: 5, num: 1 }] } },
-      { key: 'market.buy', target: 2, award: { coin: 20, goods: [{ id: 5, num: 2 }] } },
+      { key: 'market.buy', target: 1, award: { coin: 10, goods: [{ id: gid('大扩容卡'), num: 1 }] } },
+      { key: 'market.buy', target: 2, award: { coin: 20, goods: [{ id: gid('大扩容卡'), num: 2 }] } },
       { key: 'market.buy', target: 9, award: { coin: 90 } },
     ],
   },
@@ -59,7 +60,7 @@ describe('结束补发（设计 §6）', () => {
     // 系统邮件存模板键，前端按语言显示（问题记录 272）
     expect(ms[0]).toMatchObject({ tpl: 'activity.unclaimed', tpl_params: { activity: '国庆' } });
     expect(ms[0]!.source).toBe('activity');
-    expect(ms[0]!.items).toEqual({ coin: 20, goods: [{ id: 5, num: 2 }] });
+    expect(ms[0]!.items).toEqual({ coin: 20, goods: [{ id: gid('大扩容卡'), num: 2 }] });
     expect(await mails(idle.restaurantId)).toHaveLength(0);
     const claims = await t.db
       .selectFrom('activity_claim')

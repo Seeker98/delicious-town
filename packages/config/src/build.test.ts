@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
-import { NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
+import { fid, gid } from './testItems';
 
 const source = () => readSourceDir(defaultDataDir());
 
@@ -91,7 +92,7 @@ describe('buildBundle（真实数据）', () => {
     expect(bundle!.seeds).toHaveLength(96);
     expect(bundle!.seeds.find((s) => s.id === 1)).toEqual({
       id: 1,
-      foodsId: 101,
+      foodsId: fid('大米'),
       name: '大米种子',
       level: 1,
       coin: 1800,
@@ -116,19 +117,19 @@ describe('buildBundle（真实数据）', () => {
   it('解析道具 value：效果、礼包、纯数字', () => {
     const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
-    expect(goods.get(81)!.effects).toEqual({ atRate: 0.25, coinRate: 1, expRate: 1 });
-    expect(goods.get(115)!.gift!.length).toBeGreaterThan(0);
-    expect(goods.get(3)!.value).toBe(1);
+    expect(goods.get(gid('开张大吉'))!.effects).toEqual({ atRate: 0.25, coinRate: 1, expRate: 1 });
+    expect(goods.get(GOODS.signInGift)!.gift!.length).toBeGreaterThan(0);
+    expect(goods.get(gid('小扩容卡'))!.value).toBe(1);
   });
 
   it('厨具和宝石解析出定义，套装 9 套，引用都有效', () => {
     const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
-    expect(goods.get(30)!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
-    expect(goods.get(56)!.equip).toMatchObject({ part: 3, total: 36, suitId: 5 });
-    expect(goods.get(41)!.gem).toMatchObject({ level: 1, nextId: 274 });
-    expect(goods.get(341)!.gem).toMatchObject({ level: 6, nextId: null });
-    expect(goods.get(13)!.equip).toBeNull();
+    expect(goods.get(gid('见习之铲'))!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
+    expect(goods.get(gid('沉默之度玛的静谧之镬'))!.equip).toMatchObject({ part: 3, total: 36, suitId: 5 });
+    expect(goods.get(gid('[一阶]•智慧石'))!.gem).toMatchObject({ level: 1, nextId: 274 });
+    expect(goods.get(gid('[六阶]•智慧石'))!.gem).toMatchObject({ level: 6, nextId: null });
+    expect(goods.get(gid('普通宣传海报'))!.equip).toBeNull();
     expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
     expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
     expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 7, 80, 81, 82, 100]);
@@ -213,7 +214,7 @@ describe('buildBundle（坏数据）', () => {
     const map = (src['designed/street_medal_map'] as Array<{ streetId: number; goodsId: number }>).filter(
       (m) => m.streetId !== 20,
     );
-    map.push({ streetId: 21, goodsId: 1 });
+    map.push({ streetId: 21, goodsId: GOODS.mysteryTicket });
     const { errors } = buildBundle({ ...src, 'designed/street_medal_map': map });
     expect(errors).toContain('street 20 has no medal');
     expect(errors).toContain('street_medal_map street 21 goods 1 is not a medal');
@@ -410,7 +411,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
     const { bundle } = realBuild();
     expect(bundle!.renownShop).toHaveLength(12);
     expect(bundle!.renownShop[0]).toEqual({
-      goodsId: 310,
+      goodsId: GOODS.dtTicket,
       renown: 60,
       rare: false,
       weeklyLimit: 10,
@@ -476,9 +477,9 @@ describe('小镇（子项目 4E-1）', () => {
     expect(bundle!.goodsExchange[1]).toEqual({
       id: 2,
       category: 'bg',
-      goodsId: 238,
+      goodsId: gid('龙-十二生肖'),
       num: 1,
-      need: [{ goodsId: 180, num: 8 }],
+      need: [{ goodsId: gid('蟹黄堡'), num: 8 }],
       times: 1,
       news: true,
     });
@@ -494,7 +495,11 @@ describe('小镇（子项目 4E-1）', () => {
       buff: { atRate: 0.05 },
       odds: 10,
     });
-    expect(bundle!.bless.find((b) => b.id === 6)).toMatchObject({ type: 2, goodsId: 1, levels: null });
+    expect(bundle!.bless.find((b) => b.id === 6)).toMatchObject({
+      type: 2,
+      goodsId: GOODS.mysteryTicket,
+      levels: null,
+    });
     expect('goodsExchange' in bundle!.extra).toBe(false);
     expect('bless' in bundle!.extra).toBe(false);
     expect(bundle!.tuning.town.shake).toMatchObject({ limitIp: false, limitDevice: false });
@@ -632,19 +637,23 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
 
   it('旧厨具改名，说明里带背景故事', () => {
     const { goods } = byId();
-    expect(goods.get(33)!.name).toBe('灵魂之沙利叶的无情之铲');
-    expect(goods.get(34)!.name).toBe('灵魂之沙利叶的无情之刃');
-    expect(goods.get(56)!.name).toBe('沉默之度玛的静谧之镬');
-    expect(goods.get(58)!.name).toBe('沉默之度玛的静谧之冠');
-    expect(goods.get(59)!.name).toBe('裁决之巴贝雷特的悲鸣之铲');
-    expect(goods.get(61)!.name).toBe('裁决之巴贝雷特的悲鸣之冠');
-    expect(goods.get(352)!.name).toBe('神谕之阿卡玛的荣耀之铲');
-    expect(goods.get(413)!.name).toBe('神谕之阿卡玛的荣耀之冠');
+    expect(goods.get(gid('灵魂之沙利叶的无情之铲'))!.name).toBe('灵魂之沙利叶的无情之铲');
+    expect(goods.get(gid('灵魂之沙利叶的无情之刃'))!.name).toBe('灵魂之沙利叶的无情之刃');
+    expect(goods.get(gid('沉默之度玛的静谧之镬'))!.name).toBe('沉默之度玛的静谧之镬');
+    expect(goods.get(gid('沉默之度玛的静谧之冠'))!.name).toBe('沉默之度玛的静谧之冠');
+    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之铲'))!.name).toBe('裁决之巴贝雷特的悲鸣之铲');
+    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之冠'))!.name).toBe('裁决之巴贝雷特的悲鸣之冠');
+    expect(goods.get(gid('神谕之阿卡玛的荣耀之铲'))!.name).toBe('神谕之阿卡玛的荣耀之铲');
+    expect(goods.get(gid('神谕之阿卡玛的荣耀之冠'))!.name).toBe('神谕之阿卡玛的荣耀之冠');
     // 说明保留原来的属性提示，再加故事
-    expect(goods.get(33)!.desc).toMatch(/^厨艺\+21。.+/);
-    expect(goods.get(352)!.desc).toMatch(/^厨艺\+51。.+/);
+    expect(goods.get(gid('灵魂之沙利叶的无情之铲'))!.desc).toMatch(/^厨艺\+21。.+/);
+    expect(goods.get(gid('神谕之阿卡玛的荣耀之铲'))!.desc).toMatch(/^厨艺\+51。.+/);
     // 数值按强化数值表（问题记录 120）
-    expect(goods.get(59)!.equip).toMatchObject({ part: 1, total: 31, suitId: 6 });
+    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之铲'))!.equip).toMatchObject({
+      part: 1,
+      total: 31,
+      suitId: 6,
+    });
   });
 
   it('阿卡玛五件从厨塔第 8 层起掉落（原来没有获得途径）', () => {
@@ -655,20 +664,29 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
   it('新厨具：沙利叶镬瓶、巴贝雷特镬瓶、古尔图格五件、茵蔯四件', () => {
     const { goods } = byId();
     const parts = (ids: number[]) => ids.map((id) => goods.get(id)!.equip!.part);
-    expect(goods.get(628)).toMatchObject({ name: '灵魂之沙利叶的无情之镬', awardFlag: 4, type: 4 });
-    expect(goods.get(628)!.equip).toMatchObject({ part: 3, suitId: 4, minLevel: 40, total: null });
-    expect(goods.get(628)!.equip!.ranges.fire).toBe(21);
-    expect(goods.get(629)!.equip!.ranges.season).toBe(21);
+    expect(goods.get(gid('灵魂之沙利叶的无情之镬'))).toMatchObject({
+      name: '灵魂之沙利叶的无情之镬',
+      awardFlag: 4,
+      type: 4,
+    });
+    expect(goods.get(gid('灵魂之沙利叶的无情之镬'))!.equip).toMatchObject({
+      part: 3,
+      suitId: 4,
+      minLevel: 40,
+      total: null,
+    });
+    expect(goods.get(gid('灵魂之沙利叶的无情之镬'))!.equip!.ranges.fire).toBe(21);
+    expect(goods.get(gid('灵魂之沙利叶的无情之瓶'))!.equip!.ranges.season).toBe(21);
     expect(parts([630, 631])).toEqual([3, 4]);
-    expect(goods.get(630)!.equip).toMatchObject({ suitId: 6, total: 31 });
-    expect(goods.get(630)!.awardFlag).toBe(6);
-    expect(goods.get(632)!.name).toBe('意志之古尔图格的精华之铲');
+    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.equip).toMatchObject({ suitId: 6, total: 31 });
+    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.awardFlag).toBe(6);
+    expect(goods.get(gid('意志之古尔图格的精华之铲'))!.name).toBe('意志之古尔图格的精华之铲');
     expect(parts([632, 633, 634, 635, 636])).toEqual([1, 2, 3, 4, 5]);
     for (const id of [632, 636]) {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 41, minLevel: 70 });
       expect(goods.get(id)!.awardFlag).toBe(7);
     }
-    expect(goods.get(637)!.name).toBe('堕落之茵蔯的炙热之铲');
+    expect(goods.get(gid('堕落之茵蔯的炙热之铲'))!.name).toBe('堕落之茵蔯的炙热之铲');
     expect(parts([637, 638, 639, 640])).toEqual([1, 2, 3, 4]);
     for (const id of [637, 640]) {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 25, minLevel: 50 });
@@ -789,7 +807,10 @@ describe('邀请和兑换码数值（子项目 6A-2）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.tuning.invite).toMatchObject({ monthlyCap: 20, levels: { lv10: 10, lv30: 30 } });
-    expect(bundle!.tuning.invite.newbie).toEqual({ coin: 50000, goods: [{ id: 1, num: 5 }] });
+    expect(bundle!.tuning.invite.newbie).toEqual({
+      coin: 50000,
+      goods: [{ id: GOODS.mysteryTicket, num: 5 }],
+    });
     expect(bundle!.tuning.redeem).toEqual({ failLimit: 10, failWindowSec: 3600, batchMax: 1000 });
   });
 

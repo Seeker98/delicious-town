@@ -5,6 +5,8 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
 import { awardWeekly, payWages } from './weekly';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const MON = '2026-09-28';
 const SUN = '2026-10-04';
@@ -40,7 +42,7 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     const cards = [108, 109, 107, 111, 110];
     for (const [i, goodsId] of cards.entries())
       expect(await goodsNum(t, rests[i]!.restaurantId, goodsId)).toBe(1);
-    expect(await goodsNum(t, rests[5]!.restaurantId, 110)).toBe(0);
+    expect(await goodsNum(t, rests[5]!.restaurantId, GOODS.securityCard)).toBe(0);
     for (const id of cards) expect(await goodsNum(t, npc.restaurantId, id)).toBe(0);
     const item = await t.db
       .selectFrom('store_item')
@@ -70,9 +72,9 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     const now = gameTime(SUN, 23, 45);
     t.clock.set(now);
     await awardWeekly(t.game.deps, shardId, MON, now);
-    expect(await goodsNum(t, early.restaurantId, 108)).toBe(1);
-    expect(await goodsNum(t, late.restaurantId, 109)).toBe(1);
-    expect(await goodsNum(t, outside.restaurantId, 107)).toBe(0);
+    expect(await goodsNum(t, early.restaurantId, GOODS.shopJobHonor)).toBe(1);
+    expect(await goodsNum(t, late.restaurantId, GOODS.renameJobHonor)).toBe(1);
+    expect(await goodsNum(t, outside.restaurantId, GOODS.marketJobHonor)).toBe(0);
   });
 
   it('工资：持证的店领对应礼包，持两张领两个，过期的不领', async () => {
@@ -83,15 +85,15 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     const now = gameTime('2026-10-05', 7, 59);
     t.clock.set(now);
     const cfg = t.game.deps.config;
-    await grantGoods(t.db, cfg, a.restaurantId, 108, 1, gameTime(SUN, 23));
-    await grantGoods(t.db, cfg, b.restaurantId, 107, 1, gameTime(SUN, 23));
-    await grantGoods(t.db, cfg, b.restaurantId, 110, 1, gameTime(SUN, 23));
-    await grantGoods(t.db, cfg, c.restaurantId, 109, 1, gameTime('2026-09-20', 23));
+    await grantGoods(t.db, cfg, a.restaurantId, GOODS.shopJobHonor, 1, gameTime(SUN, 23));
+    await grantGoods(t.db, cfg, b.restaurantId, GOODS.marketJobHonor, 1, gameTime(SUN, 23));
+    await grantGoods(t.db, cfg, b.restaurantId, GOODS.securityCard, 1, gameTime(SUN, 23));
+    await grantGoods(t.db, cfg, c.restaurantId, GOODS.renameJobHonor, 1, gameTime('2026-09-20', 23));
     expect(await payWages(t.game.deps, shardId, now)).toEqual({ paid: 3, failed: 0 });
-    expect(await goodsNum(t, a.restaurantId, 234)).toBe(1);
-    expect(await goodsNum(t, b.restaurantId, 233)).toBe(1);
-    expect(await goodsNum(t, b.restaurantId, 237)).toBe(1);
-    expect(await goodsNum(t, c.restaurantId, 235)).toBe(0);
+    expect(await goodsNum(t, a.restaurantId, gid('商店工作礼包'))).toBe(1);
+    expect(await goodsNum(t, b.restaurantId, gid('菜场工作礼包'))).toBe(1);
+    expect(await goodsNum(t, b.restaurantId, gid('保安工作礼包'))).toBe(1);
+    expect(await goodsNum(t, c.restaurantId, gid('改名处工作礼包'))).toBe(0);
   });
 
   it('定时任务：周日 23 点结算本周、只跑一次；周一 7:59 发工资', async () => {
@@ -119,16 +121,16 @@ describe('打赏周榜（设计文档 §2.4）', () => {
     const restore = await failRestLog(t.db, first.restaurantId);
     expect(await awardWeekly(t.game.deps, shardId, MON, now)).toEqual({ winners: 1, failed: 1 });
     await restore();
-    expect(await goodsNum(t, first.restaurantId, 108)).toBe(0);
-    expect(await goodsNum(t, second.restaurantId, 109)).toBe(1);
+    expect(await goodsNum(t, first.restaurantId, GOODS.shopJobHonor)).toBe(0);
+    expect(await goodsNum(t, second.restaurantId, GOODS.renameJobHonor)).toBe(1);
 
     const banned = await newRestaurant(t, { shardId });
-    await grantGoods(t.db, t.game.deps.config, banned.restaurantId, 110, 1, now);
+    await grantGoods(t.db, t.game.deps.config, banned.restaurantId, GOODS.securityCard, 1, now);
     await t.db.updateTable('account').set({ banned_at: now }).where('id', '=', banned.accountId).execute();
     const wageAt = gameTime('2026-10-05', 7, 59);
     t.clock.set(wageAt);
     expect(await payWages(t.game.deps, shardId, wageAt)).toEqual({ paid: 1, failed: 0 });
-    expect(await goodsNum(t, banned.restaurantId, 237)).toBe(0);
-    expect(await goodsNum(t, second.restaurantId, 235)).toBe(1);
+    expect(await goodsNum(t, banned.restaurantId, gid('保安工作礼包'))).toBe(0);
+    expect(await goodsNum(t, second.restaurantId, gid('改名处工作礼包'))).toBe(1);
   });
 });

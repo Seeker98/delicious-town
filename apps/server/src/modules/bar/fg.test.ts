@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 let rngValues: number[] = [0.5];
@@ -15,7 +17,7 @@ const newsOf = (restId: number) =>
 
 describe('划拳（设计文档 §3.2）', () => {
   it('胜：扣 1 张礼券；对方出 (h+1)%3；奖励等级 2 → 银币 200；连胜跨请求累计，第 3 连奖励等级 3', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 10 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 10 } });
     rngValues = [0.1, 0.5]; // 胜；随机奖励类型 = 银币
     expect((await t.game.bar.fg(ctx, { hand: 0 })).data).toEqual({
       result: 'win',
@@ -32,12 +34,12 @@ describe('划拳（设计文档 §3.2）', () => {
       times: 3,
       award: { kind: 'coin', num: 300 },
     });
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(7);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(7);
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(700);
   });
 
   it('平：银币 = 餐厅等级 × 10 + 幸运总值，对方出同样的拳；负：对方出克制的拳；结果变了从 1 开始计', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 3 }, goods: { 1: 5 } });
+    const ctx = await newRestaurant(t, { patch: { level: 3 }, goods: { [GOODS.mysteryTicket]: 5 } });
     rngValues = [0.3];
     expect((await t.game.bar.fg(ctx, { hand: 2 })).data).toEqual({
       result: 'draw',
@@ -61,7 +63,7 @@ describe('划拳（设计文档 §3.2）', () => {
   });
 
   it('连胜中间出一次平局：连胜断掉，下一次胜是 1 连胜、奖励等级回到 2（Review Focus 4）', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 5 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     rngValues = [0.1, 0.5];
     await t.game.bar.fg(ctx, { hand: 0 });
     await t.game.bar.fg(ctx, { hand: 0 });
@@ -77,7 +79,7 @@ describe('划拳（设计文档 §3.2）', () => {
   });
 
   it('幸运：幸运 300（幸运率 0.3）时 0.4 也胜，标记幸运；银币按幸运总值算', async () => {
-    const ctx = await newRestaurant(t, { patch: { luck: 300 }, goods: { 1: 1 } });
+    const ctx = await newRestaurant(t, { patch: { luck: 300 }, goods: { [GOODS.mysteryTicket]: 1 } });
     rngValues = [0.4, 0.5];
     expect((await t.game.bar.fg(ctx, { hand: 0 })).data).toMatchObject({
       result: 'win',
@@ -87,7 +89,7 @@ describe('划拳（设计文档 §3.2）', () => {
   });
 
   it('连胜 5 发新闻 bar.fg', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 5 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     rngValues = [0.1, 0.5];
     for (let i = 0; i < 4; i++) await t.game.bar.fg(ctx, { hand: 0 });
     expect(await newsOf(ctx.restaurantId)).toEqual([]);
@@ -109,7 +111,7 @@ describe('划拳（设计文档 §3.2）', () => {
   });
 
   it('计活跃"酒吧娱乐"；主线「去酒吧玩一次」玩一次划拳就完成', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 5 }, goods: { 1: 1 } });
+    const ctx = await newRestaurant(t, { patch: { level: 5 }, goods: { [GOODS.mysteryTicket]: 1 } });
     await showQuest(t, ctx.restaurantId, 2064);
     expect(questIn(await t.game.task.tasks(ctx), 2064)).toMatchObject({ key: 'bar.play', done: false });
     rngValues = [0.9];
@@ -122,7 +124,7 @@ describe('划拳（设计文档 §3.2）', () => {
 
 describe('酒吧概览', () => {
   it('礼券、蟹币、三个游戏的上一局、猜酒杯下一局花费、老虎机保底和奖池', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 3, 240: 2 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 3, [gid('蟹币')]: 2 } });
     const v = await t.game.bar.overview(ctx);
     expect(v).toMatchObject({
       tickets: 3,
@@ -147,7 +149,7 @@ describe('酒吧概览', () => {
   });
 
   it('区服关闭 bar：接口报 FEATURE_DISABLED', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 1 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 1 } });
     await t.db
       .insertInto('shard_config')
       .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { bar: false } }) })

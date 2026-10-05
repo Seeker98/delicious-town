@@ -30,6 +30,8 @@ export interface ItemLiteral {
   /** 数字在文本里的位置和长度 */
   index: number;
   length: number;
+  /** 是 goods / foods 记录（{ 编号: 数量 }）里的键：改写时要写成 [表达式] */
+  key?: true;
 }
 
 /** 文本里编号位置上、确实是现有编号的数字；either 按前面最近的 goods / foods 键定种类，定不了的放进 ambiguous */
@@ -48,10 +50,14 @@ export function findItemLiterals(
       const id = Number(digits);
       let k: ItemLiteralKind | null = kind === 'either' ? null : kind;
       if (kind === 'either') {
-        const before = text.slice(Math.max(0, index - 300), index);
-        const g = before.lastIndexOf('goods');
-        const f = before.lastIndexOf('foods');
-        k = g < 0 && f < 0 ? null : g > f ? 'goods' : 'foods';
+        // 只认紧跟在 goods: / foods: 键后面的：goods: [{ id, num }, ...] 或 goods: { id, num }；
+        // 中间只能隔着同一列表里前面的 { ... } 项。town.exchange(a, { id, num }) 这种兑换规则编号不算
+        const before = text.slice(Math.max(0, m.index! - 400), m.index!);
+        const keys = [...before.matchAll(/\b(goods|foods)\s*:\s*/g)];
+        const last = keys.at(-1);
+        const gap = last ? before.slice(last.index! + last[0].length) : null;
+        if (!last || gap === null || !/^\[?\s*(\{[^{}]*\}\s*,\s*)*$/.test(gap)) continue;
+        k = last[1] === 'goods' ? 'goods' : 'foods';
       }
       if (k === null) {
         ambiguous.push({ kind: 'goods', id, index, length: digits.length });
@@ -60,6 +66,18 @@ export function findItemLiterals(
       if (!ids[k].has(id)) continue;
       seen.add(index);
       out.push({ kind: k, id, index, length: digits.length });
+    }
+  }
+  // goods / foods 记录里的数字键：newRestaurant(t, { goods: { 编号: 数量 } }) 这类
+  for (const m of text.matchAll(/\b(goods|foods)\s*:\s*\{([^{}]*)\}/g)) {
+    const kind: ItemLiteralKind = m[1] === 'goods' ? 'goods' : 'foods';
+    const bodyAt = m.index! + m[0].indexOf('{') + 1;
+    for (const k of m[2]!.matchAll(/(^|[\s,])(\d+)\s*:/g)) {
+      const index = bodyAt + k.index! + k[1]!.length;
+      const id = Number(k[2]);
+      if (seen.has(index) || !ids[kind].has(id)) continue;
+      seen.add(index);
+      out.push({ kind, id, index, length: k[2]!.length, key: true });
     }
   }
   return out.sort((a, b) => a.index - b.index);

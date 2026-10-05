@@ -7,6 +7,7 @@ import { settleRestaurant } from '../../modules/settlement/settle';
 import { aggOf, openFastRest } from './ops';
 import { fastSettleSource, settleRound } from './round';
 import type { FastCtx } from './state';
+import { fid } from '../../../test/items';
 
 const config = testConfig();
 const settings = resolveShardSettings(config, {});
@@ -59,7 +60,7 @@ describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () =
     r.foods.set(239, 5);
     const out = mouseVisit(c, r);
     expect(['stolen', 'trapped', 'escaped']).toContain(out);
-    if (out === 'stolen') expect(r.foods.get(239)).toBe(4);
+    if (out === 'stolen') expect(r.foods.get(fid('猪肉'))).toBe(4);
   });
 
   it('跑一天：体力每 10 分钟恢复一次（不是每轮）', async () => {

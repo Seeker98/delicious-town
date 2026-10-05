@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 const STRONG = { attr_cook: 20, attr_cutting: 20, attr_fire: 20, attr_season: 10 };
@@ -106,17 +107,17 @@ describe('挑战（设计文档 §3.2）', () => {
   });
 
   it('挑战券：一次只能用 1 张，用了当天多一次', async () => {
-    const ctx = await newRestaurant(t, { goods: { 136: 2 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.towerTicket]: 2 } });
     await setDaily(ctx.restaurantId, 'tower.done', 5);
-    await expect(t.game.store.use(ctx, { goodsId: 136, num: 2 })).rejects.toMatchObject({
+    await expect(t.game.store.use(ctx, { goodsId: GOODS.towerTicket, num: 2 })).rejects.toMatchObject({
       code: 'INVALID_STATE',
       params: { reason: 'no_batch' },
     });
-    await t.game.store.use(ctx, { goodsId: 136, num: 1 });
+    await t.game.store.use(ctx, { goodsId: GOODS.towerTicket, num: 1 });
     expect(await t.game.tower.overview(ctx)).toMatchObject({ left: 1, dailyTotal: 6, tickets: 1 });
     await t.game.tower.challenge(ctx, { floor: 1, test: false });
     expect((await t.game.tower.overview(ctx)).left).toBe(0);
-    expect(await goodsNum(t, ctx.restaurantId, 136)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.towerTicket)).toBe(1);
   });
 
   it('解锁：2 层要 11 级且打赢过 1 层', async () => {
@@ -172,7 +173,7 @@ describe('挑战（设计文档 §3.2）', () => {
   });
 
   it('区服关闭 tower：接口报 FEATURE_DISABLED，挑战券不能用', async () => {
-    const ctx = await newRestaurant(t, { goods: { 136: 1 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.towerTicket]: 1 } });
     await t.db
       .insertInto('shard_config')
       .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { tower: false } }) })
@@ -182,7 +183,7 @@ describe('挑战（设计文档 §3.2）', () => {
     await expect(t.game.tower.challenge(ctx, { floor: 1, test: true })).rejects.toMatchObject({
       code: 'FEATURE_DISABLED',
     });
-    await expect(t.game.store.use(ctx, { goodsId: 136, num: 1 })).rejects.toMatchObject({
+    await expect(t.game.store.use(ctx, { goodsId: GOODS.towerTicket, num: 1 })).rejects.toMatchObject({
       code: 'NOT_USABLE',
     });
   });

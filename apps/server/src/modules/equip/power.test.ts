@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { restPower } from './power';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -14,7 +15,7 @@ describe('restPower（规格书 20 §20.18）', () => {
     expect(await restPower(t.db, await restRow(t, ctx.restaurantId), t.deps.config.suits)).toBe(15);
     await t.db
       .insertInto('equip')
-      .values({ rest_id: ctx.restaurantId, goods_id: 30, part: 1, worn: true, base_cook: 7 })
+      .values({ rest_id: ctx.restaurantId, goods_id: gid('见习之铲'), part: 1, worn: true, base_cook: 7 })
       .execute();
     expect(await restPower(t.db, await restRow(t, ctx.restaurantId), t.deps.config.suits)).toBe(22);
   });

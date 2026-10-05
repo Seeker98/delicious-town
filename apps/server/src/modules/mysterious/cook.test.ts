@@ -4,6 +4,8 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -111,18 +113,18 @@ describe('烹制（规格书 04 §4.5）', () => {
   });
 
   it('幸运饼干：每批扣 1 个；不够时报错', async () => {
-    const ctx = await cookReady(t, { goods: { 491: 3 } });
+    const ctx = await cookReady(t, { goods: { [GOODS.luckyCookie]: 3 } });
     await expect(t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 5, cookie: true })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'goods', id: 491 },
     });
     await t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: true });
-    expect(await goodsNum(t, ctx.restaurantId, 491)).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.luckyCookie)).toBe(2);
   });
 
   it('烹饪魔书：随机一种非 7 级食材不扣（rng 0.5 → 第 2 种）', async () => {
     const ctx = await cookReady(fixed);
-    await grantGoods(fixed.db, config, ctx.restaurantId, 346, 1, new Date());
+    await grantGoods(fixed.db, config, ctx.restaurantId, gid('烹饪魔书'), 1, new Date());
     await fixed.game.mysterious.cook(ctx, { mcId: MC, cookNum: 5, cookie: false });
     const [a, b, c] = foodsOf(MC);
     expect((await foodNum(fixed, ctx.restaurantId, a!)).num).toBe(5);
@@ -136,7 +138,7 @@ describe('烹制（规格书 04 §4.5）', () => {
     await t.db.updateTable('rest_mc').set({ curexp: 199 }).where('rest_id', '=', ctx.restaurantId).execute();
     const r = await t.game.mysterious.cook(ctx, { mcId: six.id, cookNum: 1, cookie: false });
     expect(r.data.bob).toBe(true);
-    expect(await goodsNum(t, ctx.restaurantId, 304)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.spongeBob)).toBe(1);
     expect(r.data).toMatchObject({ curlevel: 2, levelUp: true });
   });
 });

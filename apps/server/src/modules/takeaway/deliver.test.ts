@@ -6,6 +6,7 @@ import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '
 import { addOrder, openFor, setWeather } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
+import { cid, fid, gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -22,7 +23,7 @@ const cook = async (shardId?: number): Promise<{ ctx: RestCtx; rider: number }> 
     shardId,
     patch: { renown: 10 },
     cookbooks: { 1: 1 },
-    foods: { 239: 5, 242: 5, 250: 5 },
+    foods: { [fid('猪肉')]: 5, [fid('鸡蛋')]: 5, [fid('香葱')]: 5 },
   });
   const rider = await openFor(t, ctx);
   await setWeather(t, ctx.shardId, 1);
@@ -42,7 +43,7 @@ describe('接单（设计文档 §3.3）', () => {
     expect(r.data).toEqual({
       id: expect.any(Number),
       orderId: order,
-      cookbookId: 1,
+      cookbookId: cid('南煎丸子'),
       cookbookName: '南煎丸子',
       grade: 1,
       private: false,
@@ -102,7 +103,7 @@ describe('接单（设计文档 §3.3）', () => {
   it('天气和我的加成算进数值：阴天银币 +10%，外卖之星经验 +30%', async () => {
     const { ctx, rider } = await cook();
     await setWeather(t, ctx.shardId, 2);
-    await grantGoods(t.db, config, ctx.restaurantId, 368, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, gid('外卖之星'), 1, t.clock.now);
     const r = await deliver(ctx, await addOrder(t, ctx.shardId), rider);
     expect(
       await t.db
@@ -120,7 +121,7 @@ describe('接单（设计文档 §3.3）', () => {
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'double' },
     });
-    await grantGoods(t.db, config, ctx.restaurantId, 370, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, gid('使命必达'), 1, t.clock.now);
     expect((await t.game.takeaway.overview(ctx)).canDouble).toBe(true);
     expect((await deliver(ctx, order, rider, true)).data.double).toBe(true);
     expect(await foods(ctx.restaurantId)).toEqual([3, 3, 3]);
@@ -130,11 +131,11 @@ describe('接单（设计文档 §3.3）', () => {
     const ctx = await newRestaurant(t, {
       patch: { renown: 10 },
       cookbooks: { 4: 5 },
-      foods: { 251: 1, 466: 1, 415: 1 },
+      foods: { [fid('生姜')]: 1, [fid('神秘宝田犊')]: 1, [fid('章丘大葱')]: 1 },
     });
     const rider = await openFor(t, ctx);
     await setWeather(t, ctx.shardId, 1);
-    const r = await deliver(ctx, await addOrder(t, ctx.shardId, { cookbookId: 4 }), rider);
+    const r = await deliver(ctx, await addOrder(t, ctx.shardId, { cookbookId: cid('水晶排骨') }), rider);
     expect(
       await t.db
         .selectFrom('takeaway_delivery')
@@ -162,7 +163,7 @@ describe('接单（设计文档 §3.3）', () => {
       params: { reason: 'rider_gone' },
     });
     await expect(
-      deliver(ctx, await addOrder(t, ctx.shardId, { cookbookId: 3 }), rider),
+      deliver(ctx, await addOrder(t, ctx.shardId, { cookbookId: cid('聊城熏鸡') }), rider),
     ).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'not_learned' },

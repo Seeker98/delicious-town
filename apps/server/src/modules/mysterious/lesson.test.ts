@@ -4,6 +4,8 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -28,7 +30,7 @@ async function teacher(g: TestGame, mcId: number, patch: Record<string, number> 
   const ctx = await newRestaurant(g, {
     verified: true,
     patch: { star_level: 2, strength: 500, ...patch },
-    goods: { 177: 1, 178: 1, 179: 1 },
+    goods: { [gid('初级教师证')]: 1, [gid('中级教师证')]: 1, [gid('高级教师证')]: 1 },
   });
   await g.db.insertInto('rest_mc').values({ rest_id: ctx.restaurantId, mc_id: mcId, way: 1 }).execute();
   await g.db.insertInto('mc_remnant').values({ rest_id: ctx.restaurantId, mc_id: mcId, num: 2 }).execute();
@@ -64,7 +66,7 @@ describe('开课（规格书 04 §4.7）', () => {
       closed_at: null,
     });
     expect(l.ends_at.getTime() - t.clock.now.getTime()).toBe(24 * 3600_000);
-    expect(await goodsNum(t, tc.restaurantId, 178)).toBe(0);
+    expect(await goodsNum(t, tc.restaurantId, gid('中级教师证'))).toBe(0);
     expect((await restRow(t, tc.restaurantId)).strength).toBe(500 - 65);
     const list = await t.game.mysterious.lessons(tc);
     expect(list.mine).toMatchObject({ id: r.data.id, teacherId: tc.restaurantId });
@@ -86,7 +88,10 @@ describe('开课（规格书 04 §4.7）', () => {
       params: { reason: 'star', need: 1 },
     });
     const first = await t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 });
-    await t.db.insertInto('store_item').values({ rest_id: tc.restaurantId, goods_id: 178, num: 1 }).execute();
+    await t.db
+      .insertInto('store_item')
+      .values({ rest_id: tc.restaurantId, goods_id: gid('中级教师证'), num: 1 })
+      .execute();
     await expect(t.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: 178 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'lesson_open' },
@@ -112,9 +117,9 @@ describe('学习（规格书 04 §4.7）', () => {
     const s = await restRow(win, st.restaurantId);
     expect(s.strength).toBe(450);
     expect(s.coin).toBe(10_000_000 - MC3.coin * 3);
-    expect(await goodsNum(win, st.restaurantId, 183)).toBe(8);
+    expect(await goodsNum(win, st.restaurantId, gid('[三级]•残卷碎片'))).toBe(8);
     expect((await restRow(win, tc.restaurantId)).coin).toBe(teacherCoin + MC3.coin * 2);
-    expect(await goodsNum(win, tc.restaurantId, 183)).toBe(1);
+    expect(await goodsNum(win, tc.restaurantId, gid('[三级]•残卷碎片'))).toBe(1);
     const m = await win.db
       .selectFrom('rest_mc')
       .selectAll()
@@ -261,9 +266,9 @@ describe('强制结束', () => {
     const { data } = await t.game.mysterious.openLesson(tc, { mcId: MC3.id, certId: 178 });
     await expect(t.game.mysterious.closeLesson(tc)).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
-      params: { reason: 'statue', goodsId: 216 },
+      params: { reason: 'statue', goodsId: GOODS.hundredMaster },
     });
-    await grantGoods(t.db, config, tc.restaurantId, 216, 1, new Date());
+    await grantGoods(t.db, config, tc.restaurantId, GOODS.hundredMaster, 1, new Date());
     await expect(t.game.mysterious.closeLesson(tc)).rejects.toMatchObject({
       params: { reason: 'lesson_not_full' },
     });

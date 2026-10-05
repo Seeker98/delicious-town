@@ -4,6 +4,7 @@ import { createTestGame, newRestaurant, type TestGame } from '../../../test/game
 import { showQuest } from '../../../test/quests';
 import { setWeather } from '../../../test/takeaway';
 import { krabFor } from '../../../test/town';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 let t: TestGame;
@@ -36,7 +37,7 @@ describe('小镇概览（设计文档 §3.8）', () => {
   it('做过各项之后：状态和冷却都反映出来', async () => {
     const a = await newRestaurant(t, {
       patch: { star_level: 1, coin: 1_000_000 },
-      goods: { 315: 3, 256: 1, 389: 1 },
+      goods: { [GOODS.horn]: 3, [GOODS.thorHammer]: 1, [GOODS.magicLamp]: 1 },
       verified: true,
     });
     await setWeather(t, a.shardId, 1);

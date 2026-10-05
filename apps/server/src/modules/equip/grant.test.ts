@@ -5,6 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import { runOp } from '../../core/op';
 import { grantGoodsOp } from '../store/goods';
 import { convertLegacyEquips } from './instances';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -24,14 +25,14 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
     const rows = await equips(ctx.restaurantId);
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({
-      goods_id: 30,
+      goods_id: gid('见习之铲'),
       part: 1,
       base_cook: 2,
       stress: 0,
       worn: false,
       max_hole: 0,
     });
-    expect(await goodsNum(t, ctx.restaurantId, 30)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, gid('见习之铲'))).toBe(0);
   });
 
   it('随机属性：总和等于 total，孔位、等级门槛、套装取自道具', async () => {
@@ -45,18 +46,23 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
   });
 
   it('仓库满了照发：一次 10 件都生成（Review Focus 4）', async () => {
-    const ctx = await newRestaurant(t, { patch: { store_num: 1 }, goods: { 85: 1 } });
+    const ctx = await newRestaurant(t, { patch: { store_num: 1 }, goods: { [gid('金币')]: 1 } });
     await grant(ctx, 30, 10);
     expect(await equips(ctx.restaurantId)).toHaveLength(10);
   });
 
   it('商店买厨具生成实例；未穿戴的厨具占仓库格，满了不能再买', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, store_num: 2 }, goods: { 85: 1 } });
-    await t.game.shop.buy(ctx, { goodsId: 30, num: 1 });
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 1_000_000, store_num: 2 },
+      goods: { [gid('金币')]: 1 },
+    });
+    await t.game.shop.buy(ctx, { goodsId: gid('见习之铲'), num: 1 });
     expect(await equips(ctx.restaurantId)).toHaveLength(1);
     const list = await t.game.store.list(ctx, {});
     expect(list).toMatchObject({ kinds: 2, equips: 1 });
-    await expect(t.game.shop.buy(ctx, { goodsId: 31, num: 1 })).rejects.toMatchObject({ code: 'STORE_FULL' });
+    await expect(t.game.shop.buy(ctx, { goodsId: gid('见习之刀'), num: 1 })).rejects.toMatchObject({
+      code: 'STORE_FULL',
+    });
     await t.db.updateTable('equip').set({ worn: true }).where('rest_id', '=', ctx.restaurantId).execute();
     expect((await t.game.store.list(ctx, {})).kinds).toBe(1);
   });
@@ -65,11 +71,14 @@ describe('发放厨具生成实例（设计文档 §4.2）', () => {
 describe('旧数据转换（计划裁定 2）', () => {
   it('仓库表里的厨具按数量转成实例，再跑一次不重复', async () => {
     const shardId = await createShard(t.db);
-    const ctx = await newRestaurant(t, { shardId, goods: { 30: 2, 56: 1, 85: 3 } });
+    const ctx = await newRestaurant(t, {
+      shardId,
+      goods: { [gid('见习之铲')]: 2, [gid('沉默之度玛的静谧之镬')]: 1, [gid('金币')]: 3 },
+    });
     expect(await convertLegacyEquips(t.db, t.deps.config, shardId)).toBe(3);
     expect((await equips(ctx.restaurantId)).map((e) => e.goods_id).sort()).toEqual([30, 30, 56]);
-    expect(await goodsNum(t, ctx.restaurantId, 30)).toBe(0);
-    expect(await goodsNum(t, ctx.restaurantId, 85)).toBe(3);
+    expect(await goodsNum(t, ctx.restaurantId, gid('见习之铲'))).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, gid('金币'))).toBe(3);
     expect(await convertLegacyEquips(t.db, t.deps.config, shardId)).toBe(0);
   });
 });

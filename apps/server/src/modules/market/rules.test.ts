@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { manualCost, manualRenown, personLimit, rollShelf, unitPrice } from './rules';
+import { fid } from '../../../test/items';
 
 const config = testConfig();
 const t = config.tuning.market;
@@ -47,7 +48,7 @@ describe('货架（规格书 06 §6.1）', () => {
 });
 
 describe('价格与限购（规格书 06 §6.2）', () => {
-  const food = config.requireFood(101);
+  const food = config.requireFood(fid('大米'));
   it('价格随天气浮动；特价固定 2999；高级 ×2', () => {
     expect(unitPrice(0, food, t, { marketCoin: -0.2 })).toBeCloseTo(food.coin * 0.8);
     expect(unitPrice(1, food, t, {})).toBe(2999);

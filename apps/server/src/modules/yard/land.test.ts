@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -10,7 +11,7 @@ afterAll(() => t.close());
 
 describe('菜园概览和开垦（规格书 08 §8.1）', () => {
   it('新店没有土地；下一块 100,000；体力、声望、种子、肥料持有', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 50, renown: 3 }, goods: { 427: 2 } });
+    const ctx = await newRestaurant(t, { patch: { coin: 50, renown: 3 }, goods: { [gid('低级肥料')]: 2 } });
     await t.db.insertInto('rest_seed').values({ rest_id: ctx.restaurantId, seed_id: 1, num: 4 }).execute();
     const y = await t.game.yard.overview(ctx);
     expect(y).toMatchObject({
@@ -23,8 +24,8 @@ describe('菜园概览和开垦（规格书 08 §8.1）', () => {
       seeds: [{ seedId: 1, num: 4 }],
     });
     expect(y.fertilizers).toEqual([
-      { goodsId: 427, minutes: 20, num: 2 },
-      { goodsId: 428, minutes: 60, num: 0 },
+      { goodsId: gid('低级肥料'), minutes: 20, num: 2 },
+      { goodsId: gid('高级肥料'), minutes: 60, num: 0 },
     ]);
   });
 

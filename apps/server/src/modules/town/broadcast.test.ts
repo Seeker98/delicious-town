@@ -4,6 +4,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import { questIn, showQuest } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 import { listNews } from '../news/news';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 let t: TestGame;
@@ -21,7 +22,7 @@ describe('广播（设计文档 §3.2）', () => {
   it('成功：去掉首尾空白，扣 1 个喇叭，写广播新闻，计入支线"在小镇广播一次"', async () => {
     const a = await ready();
     expect((await send(a, '  大家好  ')).data).toEqual({ text: '大家好' });
-    expect(await goodsNum(t, a.restaurantId, 315)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.horn)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1 });
     expect(n).toMatchObject({ type: 'town.broadcast', restId: a.restaurantId, params: { text: '大家好' } });
     await showQuest(t, a.restaurantId, 2123);
@@ -37,7 +38,7 @@ describe('广播（设计文档 §3.2）', () => {
     });
     await expect(send(a, '   ')).rejects.toMatchObject({ params: { reason: 'broadcast_text' } });
     await send(a, '字'.repeat(64));
-    expect(await goodsNum(t, a.restaurantId, 315)).toBe(4);
+    expect(await goodsNum(t, a.restaurantId, GOODS.horn)).toBe(4);
   });
 
   it('0 星、邮箱没验证、没有喇叭都不能广播', async () => {
@@ -45,7 +46,7 @@ describe('广播（设计文档 §3.2）', () => {
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'star', need: 1 },
     });
-    const unverified = await newRestaurant(t, { patch: { star_level: 1 }, goods: { 315: 1 } });
+    const unverified = await newRestaurant(t, { patch: { star_level: 1 }, goods: { [GOODS.horn]: 1 } });
     await expect(send(unverified, '你好')).rejects.toMatchObject({ code: 'EMAIL_NOT_VERIFIED' });
     await expect(send(await ready({}, {}), '你好')).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
@@ -63,6 +64,6 @@ describe('广播（设计文档 §3.2）', () => {
     });
     t.clock.advance(1_000);
     await send(a, '二');
-    expect(await goodsNum(t, a.restaurantId, 315)).toBe(0);
+    expect(await goodsNum(t, a.restaurantId, GOODS.horn)).toBe(0);
   });
 });

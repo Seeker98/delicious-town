@@ -4,6 +4,8 @@ import type { RestCtx } from '../../core/deps';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { getEffectAgg } from '../effects/service';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 /** 每个操作取一个新的固定序列随机数：测试里改 seq 就能控制成败 */
 let seq = [0.01];
@@ -31,7 +33,7 @@ const row = (id: number) =>
   t.db.selectFrom('equip').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
 const logs = (id: number) =>
   t.db.selectFrom('equip_stress_log').selectAll().where('equip_id', '=', id).orderBy('id').execute();
-const rich = () => newRestaurant(t, { patch: { coin: 1_000_000 }, goods: { 52: 50 } });
+const rich = () => newRestaurant(t, { patch: { coin: 1_000_000 }, goods: { [GOODS.essence]: 50 } });
 
 describe('强化（设计文档 §3.5）', () => {
   it('成功：扣精华和银币，等级 +1，按规则加属性，写记录', async () => {
@@ -43,7 +45,7 @@ describe('强化（设计文档 §3.5）', () => {
     expect(r.data).toEqual({ success: true, lucky: false, floor: false, attr: 'cook', val: 1, stress: 1 });
     expect(await row(id)).toMatchObject({ stress: 1, st_cook: 1, fail_streak: 0 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(1_000_000 - 10_000);
-    expect(await goodsNum(t, ctx.restaurantId, 52)).toBe(49);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.essence)).toBe(49);
     expect(await logs(id)).toMatchObject([{ stress: 1, success: true, attr: 'cook', val: 1, stone: false }]);
   });
 
@@ -71,21 +73,24 @@ describe('强化（设计文档 §3.5）', () => {
       code: 'NOT_ENOUGH',
       params: { kind: 'goods', id: 40 },
     });
-    await t.db.insertInto('store_item').values({ rest_id: ctx.restaurantId, goods_id: 40, num: 1 }).execute();
+    await t.db
+      .insertInto('store_item')
+      .values({ rest_id: ctx.restaurantId, goods_id: GOODS.stressStone, num: 1 })
+      .execute();
     // 0.3 选中厨艺；见习之铲 +0→+1 增量 = 3 − 2 = 1
     const r = await eq().stress(ctx, { id, stone: true });
     expect(r.data).toMatchObject({ success: true, attr: 'cook', val: 1 });
-    expect(await goodsNum(t, ctx.restaurantId, 40)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.stressStone)).toBe(0);
   });
 
   it('精华或银币不够报 NOT_ENOUGH，什么都不扣', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 5000 }, goods: { 52: 1 } });
+    const ctx = await newRestaurant(t, { patch: { coin: 5000 }, goods: { [GOODS.essence]: 1 } });
     const id = await piece(ctx, 30);
     await expect(eq().stress(ctx, { id, stone: false })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'coin' },
     });
-    expect(await goodsNum(t, ctx.restaurantId, 52)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.essence)).toBe(1);
     const poor = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const id2 = await piece(poor, 30);
     await expect(eq().stress(poor, { id: id2, stone: false })).rejects.toMatchObject({
@@ -105,7 +110,7 @@ describe('强化（设计文档 §3.5）', () => {
       .where('type', '=', 'equip.stress')
       .execute();
     expect(news).toHaveLength(1);
-    expect(news[0]!.params).toMatchObject({ goodsId: 30, stress: 8 });
+    expect(news[0]!.params).toMatchObject({ goodsId: gid('见习之铲'), stress: 8 });
     await t.db.updateTable('equip').set({ stress: 10 }).where('id', '=', id).execute();
     await expect(eq().stress(ctx, { id, stone: false })).rejects.toMatchObject({
       params: { reason: 'max_stress' },
@@ -141,39 +146,42 @@ describe('强化（设计文档 §3.5）', () => {
       reason: { params: { reason: 'max_stress' } },
     });
     expect((await row(id)).stress).toBe(10);
-    expect(await goodsNum(t, ctx.restaurantId, 52)).toBe(49);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.essence)).toBe(49);
   });
 });
 
 describe('强化回退（设计文档 §3.6、裁定 3）', () => {
   it('归元石回退 1 级扣回最近一次的增量；神秘水晶回到 +0；道具不对、没强化过都拒绝', async () => {
     seq = [0.01];
-    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 }, goods: { 52: 10, 225: 1, 224: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 1_000_000 },
+      goods: { [GOODS.essence]: 10, [GOODS.backStressOne]: 1, [GOODS.backStressAll]: 1 },
+    });
     const id = await piece(ctx, 30, { base_cook: 3 });
     await eq().stress(ctx, { id, stone: false });
     await eq().stress(ctx, { id, stone: false });
     expect(await row(id)).toMatchObject({ stress: 2, st_cook: 2 });
-    await expect(eq().rollback(ctx, { id, goodsId: 52 })).rejects.toMatchObject({
+    await expect(eq().rollback(ctx, { id, goodsId: GOODS.essence })).rejects.toMatchObject({
       params: { reason: 'not_back_stress' },
     });
-    await eq().rollback(ctx, { id, goodsId: 225 });
+    await eq().rollback(ctx, { id, goodsId: GOODS.backStressOne });
     expect(await row(id)).toMatchObject({ stress: 1, st_cook: 1 });
     expect(await logs(id)).toHaveLength(1);
-    expect(await goodsNum(t, ctx.restaurantId, 225)).toBe(0);
-    await eq().rollback(ctx, { id, goodsId: 224 });
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.backStressOne)).toBe(0);
+    await eq().rollback(ctx, { id, goodsId: GOODS.backStressAll });
     expect(await row(id)).toMatchObject({ stress: 0, st_cook: 0 });
     expect(await logs(id)).toEqual([]);
-    await expect(eq().rollback(ctx, { id, goodsId: 225 })).rejects.toMatchObject({
+    await expect(eq().rollback(ctx, { id, goodsId: GOODS.backStressOne })).rejects.toMatchObject({
       params: { reason: 'no_stress' },
     });
   });
 
   it('强化记录比等级少：等级照降，属性不减成负数；回到 +0 时增量清零（Review Focus 3）', async () => {
-    const ctx = await newRestaurant(t, { goods: { 225: 1, 224: 1 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.backStressOne]: 1, [GOODS.backStressAll]: 1 } });
     const id = await piece(ctx, 30, { stress: 5, st_cook: 7 });
-    await eq().rollback(ctx, { id, goodsId: 225 });
+    await eq().rollback(ctx, { id, goodsId: GOODS.backStressOne });
     expect(await row(id)).toMatchObject({ stress: 4, st_cook: 7 });
-    await eq().rollback(ctx, { id, goodsId: 224 });
+    await eq().rollback(ctx, { id, goodsId: GOODS.backStressAll });
     expect(await row(id)).toMatchObject({ stress: 0, st_cook: 0 });
   });
 });
@@ -181,7 +189,10 @@ describe('强化回退（设计文档 §3.6、裁定 3）', () => {
 describe('锁定和详情', () => {
   it('锁定 / 解锁；详情带花费、持有的回退道具和宝石、强化记录', async () => {
     seq = [0.01];
-    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 }, goods: { 52: 3, 225: 2, 44: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 1_000_000 },
+      goods: { [GOODS.essence]: 3, [GOODS.backStressOne]: 2, [gid('[一阶]•蓝冥石')]: 1 },
+    });
     const id = await piece(ctx, 56, { base_fire: 12 });
     await eq().lock(ctx, { id, locked: true });
     expect((await row(id)).locked).toBe(true);
@@ -189,11 +200,11 @@ describe('锁定和详情', () => {
       .stress(ctx, { id, stone: false })
       .catch(() => undefined);
     const d = await eq().detail(ctx, id);
-    expect(d.equip).toMatchObject({ id, goodsId: 56, locked: true });
+    expect(d.equip).toMatchObject({ id, goodsId: gid('沉默之度玛的静谧之镬'), locked: true });
     expect(d.cost).toEqual({ essence: 12, coin: 120_000 });
     expect(d.have).toEqual({ essence: 3, stone: 0, drill: 0 });
-    expect(d.backItems).toEqual([{ goodsId: 225, num: 2, back: 1 }]);
-    expect(d.gems).toEqual([{ goodsId: 44, num: 1, level: 1 }]);
+    expect(d.backItems).toEqual([{ goodsId: GOODS.backStressOne, num: 2, back: 1 }]);
+    expect(d.gems).toEqual([{ goodsId: gid('[一阶]•蓝冥石'), num: 1, level: 1 }]);
     await eq().lock(ctx, { id, locked: false });
     expect((await row(id)).locked).toBe(false);
     await expect(eq().detail(await newRestaurant(t), id)).rejects.toMatchObject({ code: 'NOT_FOUND' });
@@ -204,12 +215,15 @@ describe('强化数值表（问题记录 120）', () => {
   it('成功后属性总和到表里下一档；用强化石不再多加；详情给出下一档', async () => {
     seq = [0.01];
     const ctx = await rich();
-    const table = t.deps.config.requireGoods(30).equip!.stressTable;
+    const table = t.deps.config.requireGoods(gid('见习之铲')).equip!.stressTable;
     const id = await piece(ctx, 30, { base_cook: table[0]! });
     const d0 = await eq().detail(ctx, id);
     expect(d0.next).toEqual({ gain: table[1]! - table[0]!, total: table[1]! });
     await eq().stress(ctx, { id, stone: false });
-    await t.db.insertInto('store_item').values({ rest_id: ctx.restaurantId, goods_id: 40, num: 1 }).execute();
+    await t.db
+      .insertInto('store_item')
+      .values({ rest_id: ctx.restaurantId, goods_id: GOODS.stressStone, num: 1 })
+      .execute();
     const r = await eq().stress(ctx, { id, stone: true });
     expect(r.data.val).toBe(table[2]! - table[1]!);
     const e = await row(id);
@@ -224,7 +238,7 @@ describe('强化数值表（问题记录 120）', () => {
   it('两档相同（增量 0）也算成功，等级 +1，写记录（Review Focus 3）', async () => {
     seq = [0.01];
     const ctx = await rich();
-    const def = t.deps.config.requireGoods(30).equip!;
+    const def = t.deps.config.requireGoods(gid('见习之铲')).equip!;
     const table = def.stressTable as number[];
     const orig = [...table];
     table.splice(1, 1, table[0]!);
@@ -248,8 +262,12 @@ describe('区服把强化上限调到 10 以上（终审）', () => {
       .values({ shard_id: shardId, override: JSON.stringify({ tuning: { equip: { maxStress: 12 } } }) })
       .execute();
     t.game.shards.invalidate(shardId);
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 1_000_000 }, goods: { 52: 50, 40: 1 } });
-    const table = t.deps.config.requireGoods(30).equip!.stressTable;
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { coin: 1_000_000 },
+      goods: { [GOODS.essence]: 50, [GOODS.stressStone]: 1 },
+    });
+    const table = t.deps.config.requireGoods(gid('见习之铲')).equip!.stressTable;
     const id = await piece(ctx, 30, { base_cook: table[0]!, st_cook: table[10]! - table[0]!, stress: 10 });
     const d = await eq().detail(ctx, id);
     expect(d.next).toEqual({ gain: 0, total: table[10] });

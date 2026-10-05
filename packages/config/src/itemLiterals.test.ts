@@ -33,6 +33,30 @@ describe('写死的编号的识别（重新编号 PR 2）', () => {
     expect(hits.map((h) => h.id)).toEqual([93, 93, 93]);
   });
 
+  it('goods / foods 记录里的数字键也是编号，标成 key（改写时要加方括号）', () => {
+    const hits = findItemLiterals(
+      'newRestaurant(t, { goods: { 93: 2, 999999: 1 }, foods: { 101: 5, 102: 1 } })',
+      ids,
+    );
+    expect(hits.map((h) => [h.kind, h.id, h.key ?? false])).toEqual([
+      ['goods', 93, true],
+      ['foods', 101, true],
+      ['foods', 102, true],
+    ]);
+  });
+
+  it('{ id, num } 只认 goods / foods 键下面的列表或对象；别的 { id, num }（兑换规则编号等）不算', () => {
+    const hits = findItemLiterals(
+      'goodsNum(t, r, x); town.exchange(a, { id: 2, num: 1 }); award: { goods: [{ id: 93, num: 1 }, { id: 1, num: 2 }] }; goods: { id: 93, num: 1 }',
+      ids,
+    );
+    expect(hits.map((h) => [h.kind, h.id])).toEqual([
+      ['goods', 93],
+      ['goods', 1],
+      ['goods', 93],
+    ]);
+  });
+
   it('{ id, num } 按前面最近的 goods / foods 键判断', () => {
     const hits = findItemLiterals(
       'award: { goods: [{ id: 93, num: 1 }], foods: [{ id: 101, num: 2 }] }',
@@ -64,6 +88,20 @@ describe('源码里不写死编号（重新编号 PR 2）', () => {
       for (const p of files(join(ROOT, d))) {
         const r = rel(p);
         if (ALLOW.has(r) || /\.test\.ts$|testData\.ts$|testItems\.ts$/.test(r)) continue;
+        for (const h of findItemLiterals(readFileSync(p, 'utf8'), ids)) bad.push(`${r}: ${h.kind} ${h.id}`);
+      }
+    expect(bad).toEqual([]);
+  });
+});
+
+describe('测试里不写死编号（重新编号 PR 2）', () => {
+  it('服务端、配置包的测试用常量或按名字查', () => {
+    const bad: string[] = [];
+    for (const d of ['apps/server/src', 'apps/server/test', 'packages/config/src'])
+      for (const p of files(join(ROOT, d))) {
+        const r = rel(p);
+        if (!/\.test\.ts$/.test(r) && !r.startsWith('apps/server/test/')) continue;
+        if (r === 'packages/config/src/itemLiterals.test.ts') continue; // 本文件的规则样例
         for (const h of findItemLiterals(readFileSync(p, 'utf8'), ids)) bad.push(`${r}: ${h.kind} ${h.id}`);
       }
     expect(bad).toEqual([]);

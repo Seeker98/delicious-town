@@ -10,6 +10,8 @@ import {
   type TestGame,
 } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { GOODS } from '@dt/config';
+import { fid, gid } from '../../../test/items';
 
 let t: TestGame;
 /** 随机数固定 0：铲除必返还种子 */
@@ -71,7 +73,7 @@ describe('作物（规格书 08 §8.3）', () => {
       stage: 1,
       harvest_num: 21,
       harvest_max: 21,
-      foods_id: 101,
+      foods_id: fid('大米'),
       shard_id: ctx.shardId,
     });
     await expect(t.game.yard.water(ctx, { plantId: data.plantId })).rejects.toMatchObject({
@@ -83,9 +85,9 @@ describe('作物（规格书 08 §8.3）', () => {
     }
     expect((await plantOf(t, data.plantId))!.stage).toBe(4);
     const r = await t.game.yard.reap(ctx, { plantId: data.plantId });
-    expect(r.data).toEqual({ foodsId: 101, num: 21, stolen: false, punished: null });
+    expect(r.data).toEqual({ foodsId: fid('大米'), num: 21, stolen: false, punished: null });
     expect(await plantOf(t, data.plantId)).toBeUndefined();
-    expect(await t.game.yard.basket(ctx)).toEqual({ items: [{ foodsId: 101, num: 21 }] });
+    expect(await t.game.yard.basket(ctx)).toEqual({ items: [{ foodsId: fid('大米'), num: 21 }] });
     expect(r.events).toContainEqual({ type: 'gain', kind: 'basket', num: 21, id: 101 });
     // 土地经验：播种 10 + 浇水 5×3 + 收获 20
     expect(await landOf(t, ctx.restaurantId)).toMatchObject({ level: 2, exp: 45 });
@@ -94,11 +96,11 @@ describe('作物（规格书 08 §8.3）', () => {
     await showQuest(t, ctx.restaurantId, 2102);
     expect(questIn(await t.game.task.tasks(ctx), 2102)).toMatchObject({ done: true });
 
-    const s = await t.game.yard.storeBasket(ctx, { foodsId: 101, num: 21 });
+    const s = await t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 21 });
     expect(s.data).toEqual({ stored: 21, dropped: 0 });
     expect(s.events).toContainEqual({ type: 'loss', kind: 'basket', num: 21, id: 101 });
     expect(await basketNum(t, ctx.restaurantId, 101)).toBe(0);
-    expect((await foodNum(t, ctx.restaurantId, 101)).num).toBe(21);
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(21);
   });
 
   it('播种检查：不是种子、没开垦、种子不够、地上已有作物；失败时种子不扣', async () => {
@@ -182,19 +184,21 @@ describe('作物（规格书 08 §8.3）', () => {
 
   it('施肥：扣 1 个肥料抵扣本阶段时间；剩余时间不够报 feed_useless；不是肥料报 VALIDATION_FAILED', async () => {
     t.clock.set(noon());
-    const ctx = await withLand(t, { goods: { 427: 3, 428: 1 } });
+    const ctx = await withLand(t, { goods: { [gid('低级肥料')]: 3, [gid('高级肥料')]: 1 } });
     const { data } = await t.game.yard.plant(ctx, { landNo: 1, seedId: 1 });
     const plantId = data.plantId;
-    expect((await t.game.yard.feed(ctx, { plantId, goodsId: 427 })).data).toEqual({ feedMin: 20 });
-    expect(await goodsNum(t, ctx.restaurantId, 427)).toBe(2);
+    expect((await t.game.yard.feed(ctx, { plantId, goodsId: gid('低级肥料') })).data).toEqual({
+      feedMin: 20,
+    });
+    expect(await goodsNum(t, ctx.restaurantId, gid('低级肥料'))).toBe(2);
     t.clock.advance(4 * MIN);
     await t.game.yard.water(ctx, { plantId });
     expect(await plantOf(t, plantId)).toMatchObject({ stage: 2, feed_min: 0 });
-    await expect(t.game.yard.feed(ctx, { plantId, goodsId: 428 })).rejects.toMatchObject({
+    await expect(t.game.yard.feed(ctx, { plantId, goodsId: gid('高级肥料') })).rejects.toMatchObject({
       params: { reason: 'feed_useless' },
     });
-    expect(await goodsNum(t, ctx.restaurantId, 428)).toBe(1);
-    await expect(t.game.yard.feed(ctx, { plantId, goodsId: 18 })).rejects.toMatchObject({
+    expect(await goodsNum(t, ctx.restaurantId, gid('高级肥料'))).toBe(1);
+    await expect(t.game.yard.feed(ctx, { plantId, goodsId: GOODS.missileNormal })).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',
       params: { reason: 'not_fertilizer' },
     });
@@ -231,7 +235,7 @@ describe('作物（规格书 08 §8.3）', () => {
   });
 
   it('枯叶期只能铲除：浇水、施肥、除虫、除草、收获都报 withered，什么都不扣（Review Focus 1）', async () => {
-    const ctx = await withLand(t, { goods: { 427: 1 } });
+    const ctx = await withLand(t, { goods: { [gid('低级肥料')]: 1 } });
     const { data } = await t.game.yard.plant(ctx, { landNo: 1, seedId: 1 });
     const plantId = data.plantId;
     await t.db
@@ -241,7 +245,7 @@ describe('作物（规格书 08 §8.3）', () => {
       .execute();
     const calls = [
       () => t.game.yard.water(ctx, { plantId }),
-      () => t.game.yard.feed(ctx, { plantId, goodsId: 427 }),
+      () => t.game.yard.feed(ctx, { plantId, goodsId: gid('低级肥料') }),
       () => t.game.yard.deworm(ctx, { plantId }),
       () => t.game.yard.weed(ctx, { plantId }),
       () => t.game.yard.reap(ctx, { plantId }),
@@ -250,7 +254,7 @@ describe('作物（规格书 08 §8.3）', () => {
       await expect(call()).rejects.toMatchObject({ code: 'INVALID_STATE', params: { reason: 'withered' } });
     }
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(99);
-    expect(await goodsNum(t, ctx.restaurantId, 427)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('低级肥料'))).toBe(1);
     await t.game.yard.remove(ctx, { plantId });
     expect(await plantOf(t, plantId)).toBeUndefined();
   });
@@ -258,25 +262,28 @@ describe('作物（规格书 08 §8.3）', () => {
 
 describe('菜篮（设计文档 §3.4）', () => {
   it('橱柜格子满时进冰箱，冰箱满了丢弃并记日志；菜篮照扣（Review Focus 3）；菜篮不够报 NOT_ENOUGH basket', async () => {
-    const ctx = await newRestaurant(t, { patch: { cupboard_num: 1, foods_max_num: 10 }, foods: { 102: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { cupboard_num: 1, foods_max_num: 10 },
+      foods: { [fid('青椒')]: 1 },
+    });
     await t.db
       .insertInto('yard_basket')
-      .values({ rest_id: ctx.restaurantId, foods_id: 101, num: 25 })
+      .values({ rest_id: ctx.restaurantId, foods_id: fid('大米'), num: 25 })
       .execute();
-    await expect(t.game.yard.storeBasket(ctx, { foodsId: 101, num: 26 })).rejects.toMatchObject({
+    await expect(t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 26 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'basket', id: 101, need: 26, have: 25 },
     });
-    const r = await t.game.yard.storeBasket(ctx, { foodsId: 101, num: 25 });
+    const r = await t.game.yard.storeBasket(ctx, { foodsId: fid('大米'), num: 25 });
     expect(r.data).toEqual({ stored: 10, dropped: 15 });
-    expect(await foodNum(t, ctx.restaurantId, 101)).toEqual({ num: 0, fridge: 10 });
+    expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 0, fridge: 10 });
     expect(await basketNum(t, ctx.restaurantId, 101)).toBe(0);
     const logs = await t.db
       .selectFrom('rest_log')
       .select(['type', 'params'])
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(logs).toContainEqual({ type: 'fridge.drop', params: { foodsId: 101, num: 15 } });
+    expect(logs).toContainEqual({ type: 'fridge.drop', params: { foodsId: fid('大米'), num: 15 } });
     expect(await t.game.yard.basket(ctx)).toEqual({ items: [] });
   });
 });

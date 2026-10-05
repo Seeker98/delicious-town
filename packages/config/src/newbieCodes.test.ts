@@ -3,6 +3,7 @@ import { buildBundle } from './build';
 import { NEWBIE } from './ids';
 import { checkNewbieCodes } from './newbieCodes';
 import { defaultDataDir, readSourceDir } from './source';
+import { gid } from './testItems';
 
 const goods = new Set([1, 28, 29]);
 const foods = new Set([10]);
@@ -15,7 +16,9 @@ const ok = { code: 'XINSHOU', minLevel: 1, items: { coin: 100 }, note: '' };
 
 describe('新手码配置（设计 §4.1）', () => {
   it('合法的码没有错误', () => {
-    expect(run([ok, { ...ok, code: 'XINSHOU10', items: { goods: [{ id: 28, num: 3 }] } }])).toEqual([]);
+    expect(
+      run([ok, { ...ok, code: 'XINSHOU10', items: { goods: [{ id: gid('小体力卡'), num: 3 }] } }]),
+    ).toEqual([]);
   });
 
   it('码格式不对、重复', () => {

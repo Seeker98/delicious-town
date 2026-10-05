@@ -3,6 +3,7 @@ import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { mouseRound } from './mouse';
 import { regenStrength } from './strength';
+import { fid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -53,30 +54,30 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
 
   it('没有幸运和捕鼠夹：偷走一种未锁定食材', async () => {
     const shardId = await alwaysMouseShard();
-    const ctx = await newRestaurant(t, { shardId, foods: { 101: 5 } });
+    const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });
     const s = await mouseRound(t.game.deps, shardId, 'p1', new Date());
     expect(s).toMatchObject({ triggered: 1, stolen: 1 });
-    expect((await foodNum(t, ctx.restaurantId, 101)).num).toBe(4);
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(4);
     const logs = await t.db
       .selectFrom('rest_log')
       .selectAll()
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(logs.map((l) => [l.type, l.params])).toEqual([['mouse.steal', { foodsId: 101, num: 1 }]]);
+    expect(logs.map((l) => [l.type, l.params])).toEqual([['mouse.steal', { foodsId: fid('大米'), num: 1 }]]);
   });
 
   it('老鼠只进营业中的店；一家店出错只记日志，其他店照常', async () => {
     const shardId = await alwaysMouseShard();
-    const closed = await newRestaurant(t, { shardId, patch: { state: 2 }, foods: { 101: 5 } });
-    const broken = await newRestaurant(t, { shardId, foods: { 101: 5 } });
-    const ok = await newRestaurant(t, { shardId, foods: { 101: 5 } });
+    const closed = await newRestaurant(t, { shardId, patch: { state: 2 }, foods: { [fid('大米')]: 5 } });
+    const broken = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });
+    const ok = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });
     // 让 broken 这家店写个人日志时报错，模拟单店处理失败
     const restore = await failRestLog(t.db, broken.restaurantId);
     try {
       const log = { error: vi.fn() };
       const s = await mouseRound(t.game.deps, shardId, 'p1', new Date(), log);
-      expect((await foodNum(t, closed.restaurantId, 101)).num).toBe(5);
-      expect((await foodNum(t, ok.restaurantId, 101)).num).toBe(4);
+      expect((await foodNum(t, closed.restaurantId, fid('大米'))).num).toBe(5);
+      expect((await foodNum(t, ok.restaurantId, fid('大米'))).num).toBe(4);
       expect(s.triggered).toBe(2);
       expect(log.error).toHaveBeenCalledWith(
         expect.objectContaining({ shardId, restId: broken.restaurantId }),
@@ -89,7 +90,7 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
 
   it('只有锁定的食材时什么也偷不到', async () => {
     const shardId = await alwaysMouseShard();
-    const ctx = await newRestaurant(t, { shardId, foods: { 101: 5 } });
+    const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });
     await t.db
       .updateTable('cupboard_food')
       .set({ locked: true })
@@ -97,12 +98,16 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
       .execute();
     const s = await mouseRound(t.game.deps, shardId, 'p1', new Date());
     expect(s).toMatchObject({ triggered: 1, nothing: 1 });
-    expect((await foodNum(t, ctx.restaurantId, 101)).num).toBe(5);
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(5);
   });
 
   it('捕鼠夹 100% 时抓到老鼠，得到银币', async () => {
     const shardId = await alwaysMouseShard();
-    const ctx = await newRestaurant(t, { shardId, patch: { coin: 0, level: 10 }, foods: { 101: 5 } });
+    const ctx = await newRestaurant(t, {
+      shardId,
+      patch: { coin: 0, level: 10 },
+      foods: { [fid('大米')]: 5 },
+    });
     await t.db
       .updateTable('restaurant')
       .set({ effect_agg: JSON.stringify({ trapRate: 1 }), effect_dirty: false })

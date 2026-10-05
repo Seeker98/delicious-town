@@ -4,6 +4,8 @@ import { testConfig } from '../../../test/config';
 import { buildGlobals, buildInput, type InputPatch } from './globals';
 import { incomeValue, settleRestaurant } from './settle';
 import type { SettleGlobals } from './types';
+import { GOODS } from '@dt/config';
+import { cid } from '../../../test/items';
 
 const config = testConfig();
 const price = (id: number) => config.cookbookIndex.coin[id]!;
@@ -84,7 +86,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       type: 2,
       req: 1,
       grade: 1,
-      cookbookId: 194,
+      cookbookId: cid('桑椹葡萄粥'),
       satisfied: true,
       exp: 3,
       oil: 5,
@@ -154,7 +156,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]!.last).toMatchObject({ type: 8, req: 2, grade: 3, satisfied: true, oil: 7, exp: 17 });
     expect(r.coin).toBe(Math.floor(10 + price(street1) * 1.6 * 5));
     expect(r.exp).toBe(24);
-    expect(r.drops).toEqual([{ goodsId: 133, num: 1 }]);
+    expect(r.drops).toEqual([{ goodsId: GOODS.krabHappy, num: 1 }]);
     expect(r.logs.map((l) => l.type)).toContain('krab.happy');
   });
 
@@ -165,7 +167,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
       [0.5, 0.65, 0.9, 0.1, 0.0001, 0.2, 0, 0.9, 0.9, 0.9],
     );
     expect(angry.tables[0]!.last).toMatchObject({ type: 8, satisfied: false, coin: 5, exp: 1 });
-    expect(angry.drops).toEqual([{ goodsId: 134, num: 1 }]);
+    expect(angry.drops).toEqual([{ goodsId: GOODS.krabAngry, num: 1 }]);
     const husky = settle(
       { rest: { star: 1, streetId: 1 }, cookbooks: { [street1]: 1 }, agg: { husky: 1 } },
       { krabStreet: 1 },
@@ -178,7 +180,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
   it('痞老板：驻留店每轮最多出现一次，×5；下一轮保持', () => {
     const r = settle({ rest: { star: 1 } }, { planktonRestId: 1 }, [0.5, 0.65, 0.00005, 0.9, 0.9, 0.9]);
     expect(r.tables[0]).toMatchObject({ customer: 7, last: { type: 7, coin: 50, exp: 10, oil: 10 } });
-    expect(r.drops).toEqual([{ goodsId: 363, num: 1 }]);
+    expect(r.drops).toEqual([{ goodsId: GOODS.plankton, num: 1 }]);
     expect(r.planktonAppeared).toBe(true);
     const next = settle(
       { rest: { star: 1 }, tables: r.tables },

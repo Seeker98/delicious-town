@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { createGameConfig, goodsEffectHours } from './runtime';
 import { defaultDataDir, readSourceDir } from './source';
+import { GOODS } from './ids';
+import { cid, fid, gid } from './testItems';
 
 const config = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bundle!);
 
 describe('GameConfig', () => {
   it('按 id 索引', () => {
-    expect(config.foods.get(101)!.name).toBe('大米');
+    expect(config.foods.get(fid('大米'))!.name).toBe('大米');
     expect(config.requireStreet(0).name).toBe('新手街');
     expect(config.maxCookbookId).toBeGreaterThanOrEqual(2363);
   });
@@ -17,8 +19,8 @@ describe('GameConfig', () => {
   });
 
   it('道具有效期：invalidhour 优先，其次 value.time', () => {
-    expect(goodsEffectHours(config.requireGoods(81))).toBe(360);
-    expect(goodsEffectHours(config.requireGoods(140))).toBeNull();
+    expect(goodsEffectHours(config.requireGoods(gid('开张大吉')))).toBe(360);
+    expect(goodsEffectHours(config.requireGoods(gid('新手街')))).toBeNull();
   });
 });
 describe('2A 运行时索引', () => {
@@ -35,7 +37,7 @@ describe('2A 运行时索引', () => {
   it('食谱索引', () => {
     const idx = cfg.cookbookIndex;
     expect(idx.street[1]).toBe(6);
-    expect(idx.coin[1]).toBe(cfg.cookbooks.get(1)!.coin);
+    expect(idx.coin[1]).toBe(cfg.cookbooks.get(cid('南煎丸子'))!.coin);
     expect(idx.idsByStreet.get(0)!.length).toBe(69);
     expect(idx.allIds.length).toBe(3810);
   });
@@ -43,19 +45,19 @@ describe('2A 运行时索引', () => {
   it('街道勋章：新手街 140，江西街 187', () => {
     expect(cfg.streetMedalId(0)).toBe(140);
     expect(cfg.streetMedalId(11)).toBe(187);
-    expect(cfg.isStreetMedal(cfg.requireGoods(189))).toBe(true);
-    expect(cfg.isStreetMedal(cfg.requireGoods(100))).toBe(false);
+    expect(cfg.isStreetMedal(cfg.requireGoods(gid('北京街')))).toBe(true);
+    expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.redPants))).toBe(false);
     expect(cfg.streetMedalId(20)).toBe(92020);
     expect(cfg.streetMedalId(29)).toBe(92029);
     // 雕像的 devicetype 也是 20，不是印度街勋章（问题记录 284）
-    expect(cfg.isStreetMedal(cfg.requireGoods(397))).toBe(false);
-    expect(cfg.isStreetMedal(cfg.requireGoods(92020))).toBe(true);
+    expect(cfg.isStreetMedal(cfg.requireGoods(GOODS.thinker))).toBe(false);
+    expect(cfg.isStreetMedal(cfg.requireGoods(gid('印度街')))).toBe(true);
   });
 
   it('设施位、星级、油壶、品级、活跃项', () => {
     expect(cfg.devices.get(7)!.deviceType).toBe(6);
     expect(cfg.starNeed.get(1)!.needLevel).toBe(13);
-    expect(cfg.starAward.get(1)!.goods).toEqual([{ id: 117, num: 1 }]);
+    expect(cfg.starAward.get(1)!.goods).toEqual([{ id: gid('升星礼包(一星)'), num: 1 }]);
     expect(cfg.oilNeed.get(1)!.oilMax).toBe(1500);
     expect(cfg.grade(7).spCoinAddRate).toBe(1.3);
     expect(cfg.activationByName.get('签到')!.points).toBe(10);
@@ -132,13 +134,13 @@ describe('菜园索引（子项目 4B-2）', () => {
 
 describe('2026-09-30 抓取的数据（问题记录）', () => {
   it('新勋章 PSP；老K、阿黄银币加成 20%', () => {
-    expect(config.requireGoods(627)).toMatchObject({
+    expect(config.requireGoods(gid('PSP'))).toMatchObject({
       name: 'PSP',
       type: 9,
       effects: { spRate: 0.01, luckValue: 2 },
     });
-    expect(config.requireGoods(621).effects.coinRate).toBe(0.2);
-    expect(config.requireGoods(550).effects.coinRate).toBe(0.2);
+    expect(config.requireGoods(gid('老K')).effects.coinRate).toBe(0.2);
+    expect(config.requireGoods(gid('阿黄')).effects.coinRate).toBe(0.2);
   });
 
   it('夜间天气：新增夜间多星、血月；夜间天气都有说明；夜间专属权重按实际刷新概率换算', () => {

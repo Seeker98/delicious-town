@@ -4,6 +4,7 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
 import { krakenTarget } from './rules';
+import { GOODS } from '@dt/config';
 
 const config = testConfig();
 let t: TestGame;
@@ -146,20 +147,20 @@ describe('克拉肯（规格书 09 §9.5）', () => {
 
 describe('触手商店（规格书 09 §9.5）', () => {
   it('当天固定 6 格；首次刷新免费、之后每次 1 条触手；兑换扣等级数的触手得残卷；同格不能换两次', async () => {
-    const ctx = await newRestaurant(t, { goods: { 434: 20 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.tentacle]: 20 } });
     const s1 = await t.game.temple.tentacleShop(ctx);
     expect(s1.data.slots).toHaveLength(6);
     expect(s1.data).toMatchObject({ refreshes: 0, refreshCost: 0, tentacles: 20 });
     expect((await t.game.temple.tentacleShop(ctx)).data.slots).toEqual(s1.data.slots);
     await t.game.temple.refreshTentacle(ctx);
-    expect(await goodsNum(t, ctx.restaurantId, 434)).toBe(20);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.tentacle)).toBe(20);
     const s3 = await t.game.temple.refreshTentacle(ctx);
-    expect(await goodsNum(t, ctx.restaurantId, 434)).toBe(19);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.tentacle)).toBe(19);
     expect(s3.data).toMatchObject({ refreshes: 2, refreshCost: 1 });
     const mc = config.requireMc(s3.data.slots[0]!.mcId);
     const r = await t.game.temple.exchangeTentacle(ctx, { slot: 0 });
     expect(r.data.slots[0]!.bought).toBe(true);
-    expect(await goodsNum(t, ctx.restaurantId, 434)).toBe(19 - mc.level);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.tentacle)).toBe(19 - mc.level);
     const rem = await t.db
       .selectFrom('mc_remnant')
       .select('num')
@@ -177,7 +178,7 @@ describe('触手商店（规格书 09 §9.5）', () => {
   });
 
   it('不含 id 249', async () => {
-    const ctx = await newRestaurant(t, { goods: { 434: 50 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.tentacle]: 50 } });
     for (let i = 0; i < 5; i++) {
       const s = await t.game.temple.refreshTentacle(ctx);
       expect(s.data.slots.some((x) => x.mcId === 249)).toBe(false);

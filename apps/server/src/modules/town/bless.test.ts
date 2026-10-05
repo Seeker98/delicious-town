@@ -6,6 +6,7 @@ import type { RestCtx } from '../../core/deps';
 import { incrementDaily } from '../counter/dailyCounter';
 import { listNews } from '../news/news';
 import { settleShardRound } from '../settlement/runner';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -36,17 +37,17 @@ describe('许愿（设计文档 §3.7）', () => {
   it('持有神灯才能许愿；许到的星愿写新闻，神灯不消耗', async () => {
     const none = await newRestaurant(t);
     await expect(t.game.town.wish(none)).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { id: 389 } });
-    const a = await newRestaurant(t, { goods: { 389: 1 } });
+    const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
     const { bless } = (await t.game.town.wish(a)).data;
     expect(config.bless.get(bless.id)!.name).toBe(bless.name);
-    expect(await goodsNum(t, a.restaurantId, 389)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.magicLamp)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.bless'] });
     expect(n).toMatchObject({ restId: a.restaurantId, params: { blessId: bless.id, blessName: bless.name } });
   });
 
   it('每区服每天只有第一个许愿的人生效；两人同时许愿只成功一个；第二天可以再许', async () => {
-    const a = await newRestaurant(t, { goods: { 389: 1 } });
-    const b = await newRestaurant(t, { shardId: a.shardId, goods: { 389: 1 } });
+    const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
+    const b = await newRestaurant(t, { shardId: a.shardId, goods: { [GOODS.magicLamp]: 1 } });
     const both = await Promise.allSettled([t.game.town.wish(a), t.game.town.wish(b)]);
     expect(both.filter((x) => x.status === 'fulfilled')).toHaveLength(1);
     expect(both.find((x) => x.status === 'rejected')).toMatchObject({
@@ -77,7 +78,7 @@ describe('共飨（设计文档 §3.7、裁定 8~10）', () => {
   });
 
   it('随机食材：区间内不重复的 num 种各 1 个；有神灯多一种', async () => {
-    const a = await newRestaurant(t, { goods: { 389: 1 } });
+    const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
     await setBless(a.shardId, a.restaurantId, 1);
     await giveActivation(a, 60);
     const { rewards } = (await t.game.town.feast(a, {})).data;
@@ -106,7 +107,7 @@ describe('共飨（设计文档 §3.7、裁定 8~10）', () => {
   });
 
   it('道具、钻石', async () => {
-    const a = await newRestaurant(t, { goods: { 389: 1 } });
+    const a = await newRestaurant(t, { goods: { [GOODS.magicLamp]: 1 } });
     await setBless(a.shardId, a.restaurantId, 6);
     await giveActivation(a, 60);
     expect((await t.game.town.feast(a, {})).data.rewards).toEqual([{ kind: 'goods', id: 1, num: 31 }]);

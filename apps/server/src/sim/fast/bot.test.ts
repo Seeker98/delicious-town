@@ -9,6 +9,7 @@ import { newMarket } from './market';
 import { needPickOf, openFastRest } from './ops';
 import type { FastCtx } from './state';
 import type { FastWorld } from './world';
+import { cid } from '../../../test/items';
 
 const config = testConfig();
 const settings = resolveShardSettings(config, {});
@@ -125,7 +126,7 @@ describe('机器人（设计 §4.5）', () => {
     b.rest.streetId = 14;
     b.rest.foods.clear();
     // 18747 鲷鱼握寿司（日本街 14）：鲷鱼、大米、醋
-    for (const f of config.requireCookbook(18747).needFoods[1]!)
+    for (const f of config.requireCookbook(cid('鲷鱼握寿司')).needFoods[1]!)
       b.rest.foods.set(f.foodsId, (b.rest.foods.get(f.foodsId) ?? 0) + f.num);
     botTurn(c, b, newMarket(), world(), null);
     const learnedNew = [...config.cookbooks.values()].filter(

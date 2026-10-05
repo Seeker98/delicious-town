@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
 import { feeOf, initialRef, isTradable, priceBand, weightedPrice } from './rules';
+import { fid } from '../../../test/items';
 
 /** 各等级价格倍数全 1（240-1 默认值） */
 const ONE = [1, 1, 1, 1, 1, 1, 1];
@@ -46,13 +47,13 @@ describe('初始参考价（问题记录 242）', () => {
     const rates = [1, 1, 2, 1, 1, 1, 1];
     const lv3 = [...config.foods.values()].find((f) => f.level === 3 && isTradable(f))!;
     expect(initialRef(lv3, config, rates)).toBe(Math.round(initialRef(lv3, config, ONE) * 2));
-    expect(initialRef(config.requireFood(469), config, rates)).toBe(6300 * 2);
-    expect(initialRef(config.requireFood(468), config, rates)).toBe(4200);
+    expect(initialRef(config.requireFood(fid('三级万能食材')), config, rates)).toBe(6300 * 2);
+    expect(initialRef(config.requireFood(fid('二级万能食材')), config, rates)).toBe(4200);
   });
   it('万能食材：同级稀有中位数 × 1.5', () => {
-    expect(initialRef(config.requireFood(468), config, ONE)).toBe(4200);
-    expect(initialRef(config.requireFood(469), config, ONE)).toBe(6300);
-    expect(initialRef(config.requireFood(470), config, ONE)).toBe(8100);
-    expect(initialRef(config.requireFood(471), config, ONE)).toBe(16200);
+    expect(initialRef(config.requireFood(fid('二级万能食材')), config, ONE)).toBe(4200);
+    expect(initialRef(config.requireFood(fid('三级万能食材')), config, ONE)).toBe(6300);
+    expect(initialRef(config.requireFood(fid('四级万能食材')), config, ONE)).toBe(8100);
+    expect(initialRef(config.requireFood(fid('五级万能食材')), config, ONE)).toBe(16200);
   });
 });

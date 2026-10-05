@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { RestCtx } from '../../core/deps';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -31,7 +33,7 @@ describe('分解（设计文档 §3.7）', () => {
     const id = await piece(ctx, 56, { stress: 2 });
     const r = await eq().salvage(ctx, { id });
     expect(r.data).toEqual({ essence: 36 });
-    expect(await goodsNum(t, ctx.restaurantId, 52)).toBe(36);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.essence)).toBe(36);
     expect(await exists(id)).toBe(false);
   });
 
@@ -42,7 +44,13 @@ describe('分解（设计文档 §3.7）', () => {
     const gemmed = await piece(ctx, 32);
     await t.db
       .insertInto('equip_gem')
-      .values({ equip_id: gemmed, rest_id: ctx.restaurantId, gem_goods_id: 44, level: 1, cook: 1 })
+      .values({
+        equip_id: gemmed,
+        rest_id: ctx.restaurantId,
+        gem_goods_id: gid('[一阶]•蓝冥石'),
+        level: 1,
+        cook: 1,
+      })
       .execute();
     const preset = await piece(ctx, 47);
     await t.db

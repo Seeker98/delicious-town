@@ -2,6 +2,7 @@ import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantFull, createShard } from '../../../test/fixtures';
+import { fid } from '../../../test/items';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -32,7 +33,10 @@ describe('迁移 0002', () => {
 
   it('橱柜数量不能为负', async () => {
     await expect(
-      db.insertInto('cupboard_food').values({ rest_id: restId, foods_id: 101, num: -1 }).execute(),
+      db
+        .insertInto('cupboard_food')
+        .values({ rest_id: restId, foods_id: fid('大米'), num: -1 })
+        .execute(),
     ).rejects.toThrow();
   });
 
@@ -40,7 +44,7 @@ describe('迁移 0002', () => {
     const now = new Date();
     const item = await db
       .insertInto('market_item')
-      .values({ shard_id: shardId, shelf: 0, period: 'p', foods_id: 101, stock: 1, opened_at: now })
+      .values({ shard_id: shardId, shelf: 0, period: 'p', foods_id: fid('大米'), stock: 1, opened_at: now })
       .returning('id')
       .executeTakeFirstOrThrow();
     await expect(

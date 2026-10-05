@@ -50,7 +50,7 @@ describe('活跃度（规格书 15 §15.2）', () => {
     await expect(task().claimActivation(ctx, 50)).rejects.toMatchObject({ code: 'REQUIREMENT_NOT_MET' });
     await put({ 6: 1, 12: 1, 30: 1, 11: 1 });
     expect((await task().activation(ctx)).total).toBe(51);
-    await grantGoods(t.db, config, ctx.restaurantId, 167, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, GOODS.loveNecklace, 1, t.clock.now);
     const r = await task().claimActivation(ctx, 50);
     expect(r.events).toContainEqual({ type: 'gain', kind: 'exp', num: 500 * 10 * 2 });
     await expect(task().claimActivation(ctx, 50)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
@@ -94,11 +94,11 @@ describe('签到（规格书 15 §15.3）', () => {
     const ctx = await newRestaurant(t);
     t.clock.set(new Date('2026-09-30T15:59:00Z'));
     await task().signIn(ctx);
-    expect(await goodsNum(t, ctx.restaurantId, 115)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.signInGift)).toBe(1);
     await expect(task().signIn(ctx)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     t.clock.set(new Date('2026-09-30T16:00:00Z'));
     await task().signIn(ctx);
-    expect(await goodsNum(t, ctx.restaurantId, 115)).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.signInGift)).toBe(2);
     t.clock.set(new Date());
   });
 });

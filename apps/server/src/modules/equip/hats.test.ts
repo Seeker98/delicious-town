@@ -3,6 +3,7 @@ import { SPONSOR_HATS } from '@dt/config';
 import { runSystemOp } from '../../core/op';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { equipDisplayName, grantHatOp, hatDisplayName } from './hats';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -53,7 +54,7 @@ describe('显示名下发', () => {
     await t.db.updateTable('equip').set({ worn: true }).where('id', '=', hatId).execute();
     await t.db
       .insertInto('equip')
-      .values({ rest_id: ctx.restaurantId, goods_id: 30, part: 1, worn: true })
+      .values({ rest_id: ctx.restaurantId, goods_id: gid('见习之铲'), part: 1, worn: true })
       .execute();
     const list = await t.game.equip.list(ctx, {});
     expect(list.find((e) => e.id === hatId)!.name).toBe('玉•大橘之帽');

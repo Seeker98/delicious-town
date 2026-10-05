@@ -3,6 +3,7 @@ import type { RestCtx } from '../../core/deps';
 import { createTestGame, newPair, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
 import { getEffectAgg } from '../effects/service';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -46,7 +47,7 @@ describe('好友餐厅页显示对方穿戴（子项目 3 留给 2B）', () => {
     await piece(b, 31);
     await t.game.equip.wear(b, { id });
     const d = await t.game.social.reads.detail(a, b.restaurantId);
-    expect(d.equips).toEqual([{ part: 1, goodsId: 30, stress: 3, name: null }]);
+    expect(d.equips).toEqual([{ part: 1, goodsId: gid('见习之铲'), stress: 3, name: null }]);
   });
 });
 

@@ -4,6 +4,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import type { RestCtx } from '../../core/deps';
 import { getEffectAgg, listActiveEffects } from '../effects/service';
 import { listNews } from '../news/news';
+import { GOODS } from '@dt/config';
 
 /** 每次操作取下一个随机数：开局那个定特辣酒（⌊v×6⌋），之后每次"喝"定调酒师选第几杯（⌊v×剩余杯数⌋） */
 let script: number[] = [];
@@ -16,7 +17,7 @@ beforeEach(() => t.clock.set(gameTime('2026-09-30', 12)));
 
 const start = (ctx: RestCtx, stake: number) => t.game.bar.devilStart(ctx, { stake });
 const drink = (ctx: RestCtx, cup: number) => t.game.bar.devilDrink(ctx, { cup });
-const player = () => newRestaurant(t, { goods: { 1: 100 } });
+const player = () => newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 100 } });
 
 describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
   it('开局扣押注；局面里看不到特辣酒；押注不在可选范围、已有局时开局被拒', async () => {
@@ -30,7 +31,7 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
       result: null,
     });
     expect(r.spiked).toBeNull();
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(90);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(90);
     await expect(start(a, 10)).rejects.toMatchObject({ code: 'ALREADY_DONE', params: { what: 'bar_round' } });
     const b = await player();
     await expect(start(b, 3)).rejects.toMatchObject({
@@ -46,7 +47,7 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     const r = (await drink(a, 0)).data;
     expect(r).toMatchObject({ result: 'win', spiked: 5, survived: 1, payout: 14, lastBartender: 5 });
     expect(r.cups).toEqual(['me', null, null, null, null, 'bartender']);
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(90 + 14);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(90 + 14);
     // 局结束后可以再开
     script = [0];
     await start(a, 1);
@@ -74,7 +75,7 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     const r = (await drink(a, 0)).data;
     const until = new Date(gameTime('2026-09-30', 13)).toISOString();
     expect(r).toMatchObject({ result: 'lose', spiked: 0, payout: 0, hangoverUntil: until });
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(95);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(95);
     const hang = (await listActiveEffects(t.db, a.restaurantId, t.clock.now)).filter(
       (e) => e.sourceType === 'bar',
     );

@@ -3,6 +3,8 @@ import { gameTime, latestSlot } from '@dt/shared';
 import { createTestGame, newRestaurant, type TestGame } from '../../test/game';
 import { createDb } from '../db';
 import { grantGoods } from '../modules/store/grant';
+import { GOODS } from '@dt/config';
+import { fid } from '../../test/items';
 
 /**
  * 玩家操作的事务里不能再向连接池要连接：池子用满时（整点抢特价）所有事务互相等待，API 永久挂死。
@@ -47,8 +49,8 @@ describe('单连接连接池', () => {
   }, 20_000);
 
   it('合成分解不会在事务里另要连接', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 1000 }, foods: { 302: 3 } });
-    await finishes(t.game.cupboard.handle(ctx, { foodsId: 302, way: 'decompose', num: 1 }));
+    const ctx = await newRestaurant(t, { patch: { coin: 1000 }, foods: { [fid('葡萄')]: 3 } });
+    await finishes(t.game.cupboard.handle(ctx, { foodsId: fid('葡萄'), way: 'decompose', num: 1 }));
   }, 20_000);
 
   it('赶走痞老板不会在事务里另要连接', async () => {
@@ -56,7 +58,7 @@ describe('单连接连接池', () => {
     const ctx = await newRestaurant(t, { patch: { level: 16, strength: 100 }, tables });
     await t.game.world.ensure(ctx.shardId);
     await t.game.world.setPlankton(t.db, ctx.shardId, ctx.restaurantId);
-    await grantGoods(t.db, t.deps.config, ctx.restaurantId, 363, 1, new Date());
+    await grantGoods(t.db, t.deps.config, ctx.restaurantId, GOODS.plankton, 1, new Date());
     await finishes(t.game.growth.drivePlankton(ctx, 'strength'));
   }, 20_000);
 });
