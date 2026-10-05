@@ -159,11 +159,12 @@ describe('开放接口的缓存（质量期 ③）', () => {
 });
 
 describe('开放接口：旧编号跳到新编号（重新编号，设计 §5）', () => {
-  it.each([
+  const cases: Array<[string, number, () => number]> = [
     ['goods', 1, () => GOODS.mysteryTicket],
     ['foods', 101, () => fid('大米')],
     ['cookbooks', 1, () => cid('南煎丸子')],
-  ] as const)('%s 旧编号 %i：301，查询串照带', async (kind, old, now) => {
+  ];
+  it.each(cases)('%s 旧编号 %i：301，查询串照带', async (kind, old, now) => {
     const r = await call(ctx.app, 'GET', `/api/v1/open/${kind}/${old}?lang=en`);
     expect(r.status).toBe(301);
     expect(r.res.headers.location).toBe(`/api/v1/open/${kind}/${now()}?lang=en`);
