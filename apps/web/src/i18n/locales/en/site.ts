@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     retire1005:
-      "Game wiki: 117 old items that can't be obtained in the game (the original game's player-exclusive cookware, player titles and test packs) are no longer listed; anyone who already owns them keeps them and can still use them",
+      "Game wiki: 117 old items that can't be obtained in the game (the original game's player-exclusive cookware and medals, a test pack and an old update pack) are no longer listed; anyone who already owns them keeps them and can still use them",
     tasks1005:
       'Tasks: activity items with a level requirement (exchange, predictions…) or not open on this server now show as locked; the clock pop-up in the top bar closes when you tap elsewhere; the mail icon is aligned',
     looks1005:
