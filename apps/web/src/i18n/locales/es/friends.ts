@@ -70,6 +70,7 @@ const friends: Messages['friends'] = {
     killFailed: 'No se pudo eliminar la cucaracha',
     kill: 'Eliminar cucaracha',
     tableLocked: 'Ahora no puedes hacer nada en esta mesa',
+    ownRoach: 'Tú pusiste esta cucaracha, así que no puedes eliminarla',
   },
   tables: {
     freeloader: (name) => `Gorrón: ${name ?? 'un amigo'}`,

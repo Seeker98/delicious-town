@@ -71,6 +71,7 @@ const friends: Messages['friends'] = {
     killFailed: "Impossible d'écraser le cafard",
     kill: 'Écraser le cafard',
     tableLocked: 'Impossible d’agir sur cette table pour le moment',
+    ownRoach: 'C’est vous qui avez posé ce cafard : vous ne pouvez pas l’éliminer vous-même',
   },
   tables: {
     freeloader: (name) => `Pique-assiette : ${name ?? 'un ami'}`,

@@ -68,6 +68,7 @@ export default {
     killFailed: '灭蟑螂失败',
     kill: '消灭蟑螂',
     tableLocked: '这张桌现在不能操作',
+    ownRoach: '这只蟑螂是你放的，自己不能消灭',
   },
   tables: {
     freeloader: (name: string | null) => `白食：${name ?? '好友'}`,

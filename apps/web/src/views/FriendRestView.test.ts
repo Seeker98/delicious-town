@@ -98,6 +98,21 @@ describe('FriendRestView', () => {
     expect(endpoints.roachKill).toHaveBeenCalledWith(2, 2);
   });
 
+  it('自己放的蟑螂：写明不能自己消灭，不写“不能操作”（问题记录 374）', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({
+        tables: [
+          { no: 1, floor: 1, customer: 0 },
+          { no: 2, floor: 1, customer: 3, roach: true, roachBy: 1 },
+        ],
+      }),
+    );
+    const w = await mountView();
+    await w.find('[data-testid="table-2"]').trigger('click');
+    expect(w.find('[data-testid="act-kill"]').exists()).toBe(false);
+    expect(w.get('[data-testid="own-roach"]').text()).toBe('这只蟑螂是你放的，自己不能消灭');
+  });
+
   it('不是好友时只显示加好友', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ isFriend: false }));
     const w = await mountView();
