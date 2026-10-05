@@ -10,7 +10,7 @@ import { gainCoin, gainExp, spendStrength } from '../../core/resources';
 import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { grantGoodsOp } from '../store/goods';
-import { killReward, killStrength, layReward, type KillPlace } from './rules';
+import { killReward, killStrength, layReward, perHostLeft, type KillPlace } from './rules';
 import { roachCap } from '../settlement/tables';
 import { clearTable, findTable, isEmptyTable, readTables, writeTables } from './tables';
 
@@ -27,6 +27,11 @@ async function killIn(
   const table = findTable(tables, tableNo);
   if (table.customer !== 3) throw invalidState('no_roach');
   if (table.roach?.by === me.rest.id) throw invalidState('own_roach');
+  // 别人的店（含蟹老板）每人每天最多灭几只（问题记录 374：一个人一次灭完一家店的蟑螂）；自己店不限
+  const day = gameDay(me.now);
+  const hostKey = place === 'self' ? null : `roach.killHost:${host.rest.id}`;
+  if (hostKey && perHostLeft(rt.killPerHostDaily, await getDaily(me.tx, me.rest.id, hostKey, day)) === 0)
+    throw limitReached('roach_kill_host', { max: rt.killPerHostDaily });
   const agg = await opAgg(me);
   let strength = killStrength(place, agg, gameParts(me.now).hour, rt);
   if (strength > 0 && me.rng.chance(agg.killRoachNoStrengthRate ?? 0)) strength = 0;
@@ -45,7 +50,8 @@ async function killIn(
     await grantGoodsOp(me, GOODS.mysteryTicket, tickets);
   }
   if (place !== 'self') await drawDtTickets(me, 1);
-  await incrementDaily(me.tx, me.rest.id, 'roach.kill', 1, gameDay(me.now));
+  await incrementDaily(me.tx, me.rest.id, 'roach.kill', 1, day);
+  if (hostKey) await incrementDaily(me.tx, me.rest.id, hostKey, 1, day);
   await emitAction(me, 'roach.kill');
   if (p) feedLog(p, 'roach.killed', { table: tableNo });
   return { strength, coin: r.coin, exp: r.exp, tickets };

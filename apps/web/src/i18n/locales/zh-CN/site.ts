@@ -8,6 +8,8 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    hostLimit1005:
+      '同一家店每人每天最多翻 3 格橱柜、灭 3 只蟑螂（自己店不限），翻橱页写出今天在这家店还能翻几格',
     browse1005:
       '食谱页和游戏资料从详情返回时，停在原来的街道、筛选和页数；食谱页写出所选街道的加成；点自己放的蟑螂时写明不能自己消灭',
     renumber1005:

@@ -89,6 +89,8 @@ export default {
     nothing: '什么都没有',
     loadFailed: '读取橱柜失败',
     failed: '翻橱失败',
+    hostLeft: (n: number) => `今天在这家店还能翻 ${n} 格`,
+    hostDone: '今天在这家店已经翻够了，明天再来',
   },
   exchange: {
     title: '交换食材',

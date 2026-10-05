@@ -15,6 +15,7 @@ import {
   killReward,
   killStrength,
   layReward,
+  perHostLeft,
   refuelDraws,
 } from './rules';
 import { clearTable, isEmptyTable } from './tables';
@@ -137,5 +138,14 @@ describe('空桌（计划裁定 7）', () => {
       floor: 1,
       customer: 0,
     });
+  });
+});
+
+describe('同一家店每人每天的次数（问题记录 374）', () => {
+  it('剩几次 = 上限 - 已用，最少 0；上限 0 = 不限（null）', () => {
+    expect(perHostLeft(3, 0)).toBe(3);
+    expect(perHostLeft(3, 2)).toBe(1);
+    expect(perHostLeft(3, 5)).toBe(0);
+    expect(perHostLeft(0, 9)).toBeNull();
   });
 });

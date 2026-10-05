@@ -92,6 +92,8 @@ const friends: Messages['friends'] = {
     nothing: 'Nothing there',
     loadFailed: "Couldn't load the pantry",
     failed: 'Raid failed',
+    hostLeft: (n) => `You can raid ${n} more ${plEn(n, 'spot', 'spots')} at this restaurant today`,
+    hostDone: "You've raided this restaurant enough for today. Come back tomorrow",
   },
   exchange: {
     title: 'Swap ingredients',

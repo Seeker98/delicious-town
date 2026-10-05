@@ -122,3 +122,8 @@ export function refuelDraws(added: number, oilMax: number, t: F['refuel']): numb
   const chunk = oilMax >= t.bigTank ? t.bigTank : t.bigTank / 2;
   return Math.floor(added / chunk) * t.drawsPerChunk;
 }
+
+/** 同一家店每人每天还能做几次（问题记录 374：翻橱、灭蟑螂）；上限 0 = 不限，返回 null */
+export function perHostLeft(max: number, used: number): number | null {
+  return max <= 0 ? null : Math.max(0, max - used);
+}

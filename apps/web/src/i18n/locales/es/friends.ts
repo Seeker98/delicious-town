@@ -91,6 +91,8 @@ const friends: Messages['friends'] = {
     nothing: 'No había nada',
     loadFailed: 'No se pudo cargar la despensa',
     failed: 'No se pudo revolver',
+    hostLeft: (n) => `Hoy aún puedes revolver ${n} ${plEs(n, 'hueco', 'huecos')} en este restaurante`,
+    hostDone: 'Hoy ya has revuelto bastante en este restaurante. Vuelve mañana',
   },
   exchange: {
     title: 'Cambiar ingredientes',

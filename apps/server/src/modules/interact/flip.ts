@@ -12,7 +12,7 @@ import {
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
-import { invalidState, notEnough } from '../../core/errors';
+import { invalidState, limitReached, notEnough } from '../../core/errors';
 import { opAgg, opLuck } from '../../core/luck';
 import type { Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
@@ -22,7 +22,10 @@ import { AppError } from '../../http/errors';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { addFoods, subFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
-import { caughtCoin, flipCoolMs, flipSlots } from './rules';
+import { caughtCoin, flipCoolMs, flipSlots, perHostLeft } from './rules';
+
+/** 每人每天在这家店翻了几格（问题记录 374） */
+const flipHostKey = (hostId: number) => `flip.host:${hostId}`;
 
 /** 从对方未锁定的 1~5 级食材里按 odds 抽一种；没有返回 null */
 async function pickFood(op: Op, rng: Rng): Promise<number | null> {
@@ -68,6 +71,10 @@ export function createFlip(d: GameDeps) {
         slots: flipSlots(r.star_level, tuning.friend.flip),
         cooling: rows.map((x) => ({ slotNo: x.slot_no, until: x.cool_until.toISOString() })),
         todayTimes: await getDaily(d.db, ctx.restaurantId, 'flip.times', gameDay(now)),
+        hostLeft: perHostLeft(
+          tuning.friend.flip.perHostDaily,
+          await getDaily(d.db, ctx.restaurantId, flipHostKey(restId), gameDay(now)),
+        ),
       };
     },
 
@@ -83,6 +90,10 @@ export function createFlip(d: GameDeps) {
           const day = gameDay(me.now);
           const max = flipSlots(them.rest.star_level, t);
           if (b.slotNo > max) throw invalidState('bad_slot', { max });
+          // 同一家店每人每天最多翻几格（问题记录 374：一个人一次翻完一家店的橱柜）
+          const hostKey = flipHostKey(them.rest.id);
+          if (perHostLeft(t.perHostDaily, await getDaily(me.tx, me.rest.id, hostKey, day)) === 0)
+            throw limitReached('flip_host', { max: t.perHostDaily });
           const cool = await me.tx
             .selectFrom('cupboard_flip')
             .select('cool_until')
@@ -158,6 +169,7 @@ export function createFlip(d: GameDeps) {
             )
             .execute();
           await incrementDaily(me.tx, me.rest.id, 'flip.times', 1, day);
+          await incrementDaily(me.tx, me.rest.id, hostKey, 1, day);
           await incrementDaily(me.tx, them.rest.id, 'flip.flipped', 1, day);
           await emitAction(me, 'cupboard.flip');
           feedLog(p, 'friend.flip', {

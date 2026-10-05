@@ -134,6 +134,9 @@ const errors: Messages['errors'] = {
     dine: () => "You've already dined for free today. Come back tomorrow.",
     seats: (p) => `Their free-dining seats are full (max ${s(p.max)})`,
     roach_lay: (p) => `You've used all of today's roach placements (${s(p.max)})`,
+    flip_host: (p) => `You've already raided ${s(p.max)} spots at this restaurant today. Come back tomorrow`,
+    roach_kill_host: (p) =>
+      `You've already squashed ${s(p.max)} roaches at this restaurant today. Leave some for others`,
     exchange: (p) => `You've used all of today's swaps with them (${s(p.max)})`,
     exchange_total: () => "You've swapped too much today. Come back tomorrow.",
     exchange_taken: () => "They've been swapped with too often today. Give them a break.",

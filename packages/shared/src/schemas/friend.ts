@@ -126,6 +126,8 @@ export interface FlipSlotsDto {
   cooling: Array<{ slotNo: number; until: string }>;
   /** 我今天已经翻了几次（超过 100 次每次 2 体力） */
   todayTimes: number;
+  /** 今天在这家店还能翻几格（问题记录 374）；null = 不限 */
+  hostLeft: number | null;
 }
 
 export type FlipOutcome = 'food' | 'ticket' | 'nothing' | 'caught' | 'escaped';

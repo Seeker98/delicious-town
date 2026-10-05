@@ -73,13 +73,17 @@ onMounted(load);
     {{ t.friends.flip.rule }}<span v-if="data">{{ t.friends.flip.today(data.todayTimes) }}</span
     >{{ t.friends.flip.end }}
   </p>
+  <!-- 同一家店每人每天的格数（问题记录 374）；不限时不写 -->
+  <p v-if="data && data.hostLeft !== null" class="small" data-testid="host-left">
+    {{ data.hostLeft > 0 ? t.friends.flip.hostLeft(data.hostLeft) : t.friends.flip.hostDone }}
+  </p>
   <div v-if="result" class="alert alert-info small py-2" data-testid="flip-result">{{ result }}</div>
   <div v-if="data" class="row g-1">
     <div v-for="slot in data.slots" :key="slot" class="col-3">
       <button
         class="btn btn-outline-secondary w-100 small"
         :data-testid="`slot-${slot}`"
-        :disabled="busy || coolOf(slot) !== null"
+        :disabled="busy || coolOf(slot) !== null || data.hostLeft === 0"
         @click="flip(slot)"
       >
         <div>{{ slot }}</div>

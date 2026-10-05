@@ -93,6 +93,9 @@ const friends: Messages['friends'] = {
     nothing: 'Rien du tout',
     loadFailed: 'Impossible de charger le garde-manger',
     failed: 'Échec de la fouille',
+    hostLeft: (n) =>
+      `Encore ${n} ${plFr(n, 'emplacement', 'emplacements')} à fouiller dans ce restaurant aujourd’hui`,
+    hostDone: 'Vous avez assez fouillé ce restaurant aujourd’hui. Revenez demain',
   },
   exchange: {
     title: 'Échanger des ingrédients',

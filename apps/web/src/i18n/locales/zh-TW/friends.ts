@@ -90,6 +90,8 @@ export default {
     nothing: '什麼都沒有',
     loadFailed: '讀取櫥櫃失敗',
     failed: '翻櫥失敗',
+    hostLeft: (n: number) => `今天在這家店還能翻 ${n} 格`,
+    hostDone: '今天在這家店已經翻夠了，明天再來',
   },
   exchange: {
     title: '交換食材',

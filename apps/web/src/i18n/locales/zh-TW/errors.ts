@@ -133,6 +133,8 @@ export default {
     dine: () => '今天已經白食過了，明天再來',
     seats: (p) => `對方的白食位滿了（最多 ${String(p.max)} 人）`,
     roach_lay: (p) => `今天放蟑螂的次數用完了（${String(p.max)} 次）`,
+    flip_host: (p) => `今天在這家店已經翻了 ${String(p.max)} 格，明天再來`,
+    roach_kill_host: (p) => `今天在這家店已經滅了 ${String(p.max)} 只蟑螂，留點給別人吧`,
     exchange: (p) => `今天和它的交換次數用完了（${String(p.max)} 次）`,
     exchange_total: () => '今天換得太多了，明天再來',
     exchange_taken: () => '對方今天已經被換太多次了，放過它吧',

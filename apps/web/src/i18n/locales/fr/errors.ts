@@ -133,6 +133,10 @@ const errors: Messages['errors'] = {
     dine: () => "Vous avez déjà mangé à l'œil aujourd'hui. Revenez demain.",
     seats: (p) => `Ses places gratuites sont toutes prises (${s(p.max)} au plus)`,
     roach_lay: (p) => `Vous avez utilisé tous vos cafards du jour (${s(p.max)})`,
+    flip_host: (p) =>
+      `Vous avez déjà fouillé ${s(p.max)} emplacements dans ce restaurant aujourd’hui. Revenez demain`,
+    roach_kill_host: (p) =>
+      `Vous avez déjà écrasé ${s(p.max)} cafards dans ce restaurant aujourd’hui. Laissez-en aux autres`,
     exchange: (p) => `Vous avez utilisé tous vos échanges du jour avec ce joueur (${s(p.max)})`,
     exchange_total: () => "Vous avez trop échangé aujourd'hui. Revenez demain.",
     exchange_taken: () => "Ce joueur a reçu trop d'échanges aujourd'hui. Laissez-le tranquille.",
