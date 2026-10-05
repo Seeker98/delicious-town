@@ -27,7 +27,7 @@ import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { sellPrice } from '../store/rules';
 import { equipDisplayName } from './hats';
 import type { WorldService } from '../world/service';
-import { syncEquipEffects } from './effects';
+import { equipEffects, syncEquipEffects } from './effects';
 import { attrCols, baseAttrs, boostAttrs, gemAttrs, loadGems, pieceTotal } from './instances';
 import {
   activeSuits,
@@ -228,6 +228,10 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           tiers: x.suit.tiers.map((tier, i) => ({ need: tier.need, desc: tier.desc, active: x.active[i]! })),
         })),
         attrs: { points, gear, total, power },
+        income: (() => {
+          const e = equipEffects(gear, s.tuning.equip.income);
+          return { coinRate: e.coinRate ?? 0, expRate: e.expRate ?? 0, mcGoldRate: e.mcGoldRate ?? 0 };
+        })(),
         presets: await listPresets(d.db, ctx.restaurantId),
         count: rows.length,
         level: rest.level,

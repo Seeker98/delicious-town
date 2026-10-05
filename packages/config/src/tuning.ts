@@ -285,6 +285,22 @@ export const tuningSchema = z.object({
     }),
   }),
   equip: z.object({
+    /**
+     * 穿戴厨具（含宝石）对收益的加成（问题记录 411）：加权点数 = Σ 属性 × weights（幸运不算），
+     * 最终银币 + 点数 × coinRate，最终经验 + 点数 × expRate，特色菜金牌 + 点数 × mcGoldRate
+     */
+    income: z.object({
+      weights: z.object({
+        cook: num.min(0),
+        cutting: num.min(0),
+        fire: num.min(0),
+        season: num.min(0),
+        creatives: num.min(0),
+      }),
+      coinRate: num.min(0),
+      expRate: num.min(0),
+      mcGoldRate: num.min(0),
+    }),
     maxStress: int.min(1),
     baseRate: num,
     ratePerStress: num,
@@ -307,6 +323,8 @@ export const tuningSchema = z.object({
     historyLimit: int.min(1),
   }),
   mysterious: z.object({
+    /** 特色菜卖给顾客时每份价值的倍率，按特色菜等级（第 1 项是 1 级；没写的等级 ×1）；只在结算卖出时乘，赛厨等其他地方用原价（问题记录 412） */
+    saleRates: z.array(num.min(0)),
     cookNums: z.array(int.min(1)).min(1),
     baseNum: int,
     /** 等级大于它的特色菜份数打折 */

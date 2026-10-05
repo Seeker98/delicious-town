@@ -8,6 +8,10 @@ export default {
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '廚力',
   powerNote: '（五項之和 + 幸運/2；只作參考，賽廚的勝負看評委按色香味形養打分）',
+  /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
+  income: (coin: string, exp: string, gold: string) =>
+    `廚具收益加成：最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
+  incomeNote: '（廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少）',
   empty: '空',
   noPieces: '沒有這個部位的廚具',
   needLevel: (lv: number) => `需要 ${lv} 級`,

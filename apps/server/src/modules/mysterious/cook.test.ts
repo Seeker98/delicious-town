@@ -160,5 +160,7 @@ describe('概览里的当前在售', () => {
     await t.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: false });
     const o = await t.game.mysterious.overview(ctx);
     expect(o.current).toMatchObject({ mcId: MC });
+    // 卖给顾客时的倍率（问题记录 412）：这道是 4 级，×3.2
+    expect(o.saleRate).toBe(3.2);
   });
 });

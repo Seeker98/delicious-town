@@ -20,6 +20,7 @@ const util: Messages['util'] = {
     expValue: 'EXP par table',
     oilValue: 'Huile par table',
     luckValue: 'Chance',
+    mcGoldRate: 'Or du plat signature',
   },
   effect: (label, value) => `${label} ${value}`,
   reward: {

@@ -187,6 +187,12 @@
     }
   },
   "equip": {
+    "income": {
+      "weights": { "cook": 1, "cutting": 0.95, "fire": 1.1, "season": 0.9, "creatives": 1.4 },
+      "coinRate": 0.0004,
+      "expRate": 0.00025,
+      "mcGoldRate": 0.0003
+    },
     "maxStress": 10,
     "baseRate": 0.8,
     "ratePerStress": 0.08,
@@ -204,6 +210,7 @@
     "historyLimit": 50
   },
   "mysterious": {
+    "saleRates": [1.3, 1.7, 2.5, 3.2, 2.8, 1],
     "cookNums": [1, 5, 10, 15, 25, 50],
     "baseNum": 360,
     "highLevel": 5,

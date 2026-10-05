@@ -148,6 +148,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         }),
         remnants: remnants.map((r) => ({ mcId: r.mc_id, num: r.num })),
         current: current ? cookDto(current) : null,
+        saleRate: current ? (s.tuning.mysterious.saleRates[current.level - 1] ?? 1) : null,
         recipes: have(GOODS.mysteryRecipe),
         tools: toolIds.map((goodsId) => {
           const def = d.config.appraiseTools.get(goodsId)!;

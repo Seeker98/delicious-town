@@ -20,6 +20,7 @@ export default {
     expValue: '每桌經驗',
     oilValue: '每桌耗油',
     luckValue: '幸運',
+    mcGoldRate: '特色菜金牌',
   },
   /** 一項加成："挑剔率+10%" */
   effect: (label: string, value: string) => `${label}${value}`,

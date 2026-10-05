@@ -231,14 +231,24 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.coin).toBe(10);
   });
 
-  it('特色菜（输入存在时）：普通顾客吃 1 份半价', () => {
+  it('特色菜（输入存在时）：普通顾客吃 1 份半价；卖出时乘这一级的倍率（3 级 ×2.5，问题记录 412）', () => {
     const r = settle(
       { special: { price: 100, level: 3, leftNum: 1 } },
       {},
       [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
     );
     expect(r.specialUsed).toBe(1);
-    expect(r.tables[0]!.last).toMatchObject({ coin: 60, exp: 3 });
+    // 每桌银币 10 + 100 × 2.5 × 半价
+    expect(r.tables[0]!.last).toMatchObject({ coin: 135, exp: 3 });
+  });
+
+  it('特色菜卖出倍率按特色菜等级：1 级 ×1.3', () => {
+    const r = settle(
+      { special: { price: 100, level: 1, leftNum: 1 } },
+      {},
+      [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
+    );
+    expect(r.tables[0]!.last).toMatchObject({ coin: 75 });
   });
 
   it('没油：停业，桌子原样保留，不消耗随机数', () => {

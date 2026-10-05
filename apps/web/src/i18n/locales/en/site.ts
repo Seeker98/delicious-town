@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    gearIncome1006:
+      'Worn cookware (including gems) now adds final coins, final EXP and a better chance of gold signature dishes; higher stats give more (Creativity counts most, Luck doesn’t count), and the cookware page shows how much. Signature dishes now sell to customers for more depending on their level (level 3 ×2.5, level 4 ×3.2), since level 2–5 dishes used to earn back less than their ingredients cost. Cook-offs still use the original value per portion',
     elders1006:
       'The Chef Tower guardians are now Elders: each floor wears its own full gear set (+3 to +6) and stat points for its level, which you can expand to see. A real win can drop a piece of the Elder’s set (20% on floors 1–3, less higher up). Floors 1–2 are a bit harder than before and floors 6–10 are a lot easier. Creativity’s random bonus in cook-offs is a bit lower, so it’s no longer worth more than other stats',
     duel1006:

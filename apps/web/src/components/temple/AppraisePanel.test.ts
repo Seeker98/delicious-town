@@ -13,6 +13,7 @@ const overview: McOverviewDto = {
   learned: [],
   remnants: [],
   current: null,
+  saleRate: null,
   recipes: 2,
   tools: [
     { goodsId: 163, num: 0, min: 1, max: 6, rate: 0.28, perNum: 1 },

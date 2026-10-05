@@ -9,6 +9,10 @@ const equip: Messages['equip'] = {
   power: 'Puissance',
   powerNote:
     '(somme des cinq caractéristiques + Chance/2 ; indicatif seulement : les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition)',
+  income: (coin, exp, gold) =>
+    `Bonus de revenus de l’équipement : pièces finales ${coin}, EXP finale ${exp}, or du plat signature ${gold}`,
+  incomeNote:
+    '(plus les caractéristiques de l’équipement et des gemmes sont élevées, plus le bonus est grand ; la Chance ne compte pas ; par point, la Créativité compte le plus et l’Assaisonnement le moins)',
   empty: 'Vide',
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,
