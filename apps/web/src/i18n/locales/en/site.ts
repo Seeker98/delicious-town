@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    align1006:
+      'The street type tag (coin, balanced or EXP street) on the recipe and moving pages now lines up with the bonus text after it',
     krab1006:
       'Mr. Krab’s pantry is now fully stocked: every level 1–5 ingredient, up to hundreds of the common ones and fewer of the rare ones, restocked daily. The number of daily swaps with Mr. Krab is unchanged',
     guide1006:

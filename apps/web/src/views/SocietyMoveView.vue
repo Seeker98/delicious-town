@@ -62,7 +62,7 @@ onMounted(() => {
   </select>
   <div v-if="picked" class="small mb-2">
     <!-- 街道类型和为什么是这个加成（问题记录 380、378 方案 C） -->
-    <span v-if="picked.focus" class="dt-tag me-1" data-testid="move-focus">{{
+    <span v-if="picked.focus" class="dt-tag dt-tag-lead me-1" data-testid="move-focus">{{
       STREET_FOCUS[picked.focus]
     }}</span>
     <span data-testid="move-bonus">{{ t.society.move.bonus(picked.desc) }}</span>

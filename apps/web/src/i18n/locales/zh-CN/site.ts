@@ -8,6 +8,7 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    align1006: '食谱页、搬家页的街道类型标签（银币街、均衡街、经验街）和后面的加成说明对齐了',
     krab1006:
       '蟹老板的橱柜放满了：1~5 级每种食材都有，常见的几百个、稀有的少一些，每天补回来；和蟹老板交换食材的次数不变',
     guide1006:

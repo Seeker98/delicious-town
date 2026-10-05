@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    align1006:
+      'L’étiquette du type de rue (pièces, équilibrée ou EXP) sur les pages des recettes et du déménagement est maintenant alignée avec le texte du bonus',
     krab1006:
       'Le garde-manger de M. Krab est maintenant bien rempli : tous les ingrédients de niveau 1 à 5, jusqu’à des centaines pour les plus courants et moins pour les rares, réapprovisionnés chaque jour. Le nombre d’échanges quotidiens avec M. Krab ne change pas',
     guide1006:
