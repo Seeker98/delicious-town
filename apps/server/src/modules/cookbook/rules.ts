@@ -91,10 +91,31 @@ export function applyForget(counts: CookbookCounts, streetId: number, from: numb
   return c;
 }
 
+/**
+ * 学会记录按存储位存（重新编号 PR 3）：levels[存储位] = 品级，存储位由 cookbookIndex.slotOf 按食谱 id 查。
+ * 没有这道菜（或老店字节串不够长）算 0
+ */
+export function gradeOf(levels: Uint8Array, slotOf: Int32Array, id: number): number {
+  const s = slotOf[id] ?? -1;
+  return s < 0 ? 0 : (levels[s] ?? 0);
+}
+
+/** 写品级；字节串要先按 cookbookIndex.slots 补齐（padLevels） */
+export function setGrade(levels: Uint8Array, slotOf: Int32Array, id: number, grade: number): void {
+  const s = slotOf[id] ?? -1;
+  if (s < 0) throw new Error(`unknown cookbook ${id}`);
+  levels[s] = grade;
+}
+
 /** 本街目标品级（规格书 03 §3.8）：从 5 起算，本街全部达到当前目标就 +1，不超过 max */
-export function streetTargetGrade(levels: Uint8Array, ids: readonly number[], max: number): number {
+export function streetTargetGrade(
+  levels: Uint8Array,
+  slotOf: Int32Array,
+  ids: readonly number[],
+  max: number,
+): number {
   let t = Math.min(5, max);
-  while (t < max && ids.length > 0 && ids.every((id) => (levels[id] ?? 0) >= t)) t += 1;
+  while (t < max && ids.length > 0 && ids.every((id) => gradeOf(levels, slotOf, id) >= t)) t += 1;
   return t;
 }
 
@@ -102,12 +123,13 @@ export function streetTargetGrade(levels: Uint8Array, ids: readonly number[], ma
 export function foodsNeedFor(
   ids: readonly number[],
   levels: Uint8Array,
+  slotOf: Int32Array,
   target: number,
   needOf: (id: number, grade: number) => readonly NeedLine[],
 ): Map<number, number> {
   const out = new Map<number, number>();
   for (const id of ids) {
-    for (let g = (levels[id] ?? 0) + 1; g <= target; g++) {
+    for (let g = gradeOf(levels, slotOf, id) + 1; g <= target; g++) {
       for (const f of needOf(id, g)) out.set(f.foodsId, (out.get(f.foodsId) ?? 0) + f.num);
     }
   }
@@ -115,12 +137,12 @@ export function foodsNeedFor(
 }
 
 /**
- * 已学食谱字节串补齐到 maxCookbookId + 1（问题记录 284）：新街道上线前开的店长度不够，
+ * 已学食谱字节串补齐到 cookbookIndex.slots（问题记录 284；重新编号 PR 3 起按存储位）：新菜上线前开的店长度不够，
  * 往类型化数组越界写会被静默丢掉，学了新菜也存不下
  */
-export function padLevels(levels: Uint8Array, maxCookbookId: number): Uint8Array {
-  if (levels.length > maxCookbookId) return levels;
-  const out = new Uint8Array(maxCookbookId + 1);
+export function padLevels(levels: Uint8Array, slots: number): Uint8Array {
+  if (levels.length >= slots) return levels;
+  const out = new Uint8Array(slots);
   out.set(levels);
   return out;
 }

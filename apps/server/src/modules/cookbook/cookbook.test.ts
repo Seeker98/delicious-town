@@ -3,6 +3,7 @@ import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { cid, fid } from '../../../test/items';
+import { gradeOf } from './rules';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -17,7 +18,7 @@ const levelOf = async (restId: number, id: number) =>
       .select('levels')
       .where('rest_id', '=', restId)
       .executeTakeFirstOrThrow()
-  ).levels[id];
+  ).levels.at(t.deps.config.cookbookIndex.slotOf[id]!) ?? 0;
 
 describe('学习食谱', () => {
   it('食材够：学会 1 品级，扣食材，更新派生计数', async () => {
@@ -49,7 +50,7 @@ describe('学习食谱', () => {
     });
   });
 
-  it('新街道上线前开的店（已学记录只到老的最大 id）也能学新街道的菜（问题记录 284）', async () => {
+  it('新菜上线前开的店（已学记录比现在的存储位总数短）也能学新菜（问题记录 284）', async () => {
     // 店在日本街（14）：只能学本街的菜（问题记录 312）
     const ctx = await newRestaurant(t, {
       patch: { street_id: 14 },
@@ -57,10 +58,11 @@ describe('学习食谱', () => {
     });
     await t.db
       .updateTable('restaurant_cookbooks')
-      .set({ levels: Buffer.alloc(18747) })
+      // 字节串正好缺这道菜的存储位
+      .set({ levels: Buffer.alloc(t.deps.config.cookbookIndex.slotOf[cid('鲷鱼握寿司')]!) })
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    await cb().learn(ctx, 18747);
+    await cb().learn(ctx, cid('鲷鱼握寿司'));
     const levels = (
       await t.db
         .selectFrom('restaurant_cookbooks')
@@ -68,8 +70,8 @@ describe('学习食谱', () => {
         .where('rest_id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow()
     ).levels;
-    expect(levels.length).toBe(t.deps.config.maxCookbookId + 1);
-    expect(levels[18747]).toBe(1);
+    expect(levels.length).toBe(t.deps.config.cookbookIndex.slots);
+    expect(gradeOf(levels, t.deps.config.cookbookIndex.slotOf, cid('鲷鱼握寿司'))).toBe(1);
     expect((await restRow(t, ctx.restaurantId)).cookbook_counts.street['14']).toBe(1);
   });
 

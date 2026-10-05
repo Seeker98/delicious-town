@@ -126,7 +126,7 @@ export function newFastRest(id: number, config: GameConfig, settings: ShardSetti
     cookfoodsFlag: 0,
     cteOn: false,
     tables: initialTables(d.tableNum),
-    levels: new Uint8Array(config.maxCookbookId + 1),
+    levels: new Uint8Array(config.cookbookIndex.slots),
     counts: normalizeCounts({}),
     levelsVersion: 0,
     needCache: null,

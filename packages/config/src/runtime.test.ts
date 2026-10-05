@@ -11,7 +11,7 @@ describe('GameConfig', () => {
   it('按 id 索引', () => {
     expect(config.foods.get(fid('大米'))!.name).toBe('大米');
     expect(config.requireStreet(0).name).toBe('新手街');
-    expect(config.maxCookbookId).toBeGreaterThanOrEqual(2363);
+    expect(config.cookbookIndex.slots).toBeGreaterThanOrEqual(config.bundle.cookbooks.length);
   });
 
   it('require* 找不到时抛错', () => {
@@ -257,5 +257,25 @@ describe('下架的食材（问题记录 367）', () => {
     expect(c.foodPools.get(3)!.items.some((x) => x.id === f.id)).toBe(false);
     expect(c.rareFoodPools.get(3)!.items.some((x) => x.id === f.id)).toBe(false);
     expect(c.hotFoodPool.items.some((x) => x.id === f.id)).toBe(false);
+  });
+});
+
+describe('菜谱存储位（重新编号 PR 3）', () => {
+  it('编号 ↔ 存储位双向对得上；字节串长度 = 最大存储位 + 1', () => {
+    const b = buildBundle(readSourceDir(defaultDataDir())).bundle!;
+    const c = createGameConfig(b);
+    for (const cb of b.cookbooks) {
+      expect(c.cookbookIndex.slotOf[cb.id]).toBe(cb.slot);
+      expect(c.cookbookIndex.idAt[cb.slot]).toBe(cb.id);
+    }
+    expect(c.cookbookIndex.slots).toBe(Math.max(...b.cookbooks.map((x) => x.slot)) + 1);
+  });
+  it('存储位和编号不同时照样对得上', () => {
+    const b = buildBundle(readSourceDir(defaultDataDir())).bundle!;
+    const n = b.cookbooks.length;
+    const c = createGameConfig({ ...b, cookbooks: b.cookbooks.map((x, i) => ({ ...x, slot: n - 1 - i })) });
+    expect(c.cookbookIndex.slots).toBe(n);
+    expect(c.cookbookIndex.idAt[n - 1]).toBe(b.cookbooks[0]!.id);
+    expect(c.cookbookIndex.slotOf[b.cookbooks[0]!.id]).toBe(n - 1);
   });
 });

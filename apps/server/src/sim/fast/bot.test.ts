@@ -10,6 +10,7 @@ import { needPickOf, openFastRest } from './ops';
 import type { FastCtx } from './state';
 import type { FastWorld } from './world';
 import { cid } from '../../../test/items';
+import { setGrade } from '../../modules/cookbook/rules';
 
 const config = testConfig();
 const settings = resolveShardSettings(config, {});
@@ -130,7 +131,7 @@ describe('机器人（设计 §4.5）', () => {
       b.rest.foods.set(f.foodsId, (b.rest.foods.get(f.foodsId) ?? 0) + f.num);
     botTurn(c, b, newMarket(), world(), null);
     const learnedNew = [...config.cookbooks.values()].filter(
-      (x) => x.streetId >= 14 && b.rest.levels[x.id]! > 0,
+      (x) => x.streetId >= 14 && b.rest.levels[x.slot]! > 0,
     );
     expect(learnedNew.length).toBeGreaterThan(0);
   });
@@ -140,7 +141,8 @@ describe('机器人（设计 §4.5）', () => {
     const exhausted = (c: FastCtx) => {
       const b = bot(c);
       noQuests(b);
-      for (const id of config.cookbookIndex.idsByStreet.get(0)!) b.rest.levels[id] = 1;
+      for (const id of config.cookbookIndex.idsByStreet.get(0)!)
+        setGrade(b.rest.levels, config.cookbookIndex.slotOf, id, 1);
       b.rest.star = 1;
       b.rest.level = config.starNeed.get(2)!.needLevel;
       b.rest.counts.learned = config.cookbookIndex.idsByStreet.get(0)!.length;
@@ -200,7 +202,7 @@ describe('机器人（设计 §4.5）', () => {
       const c = ctx();
       const b = exhausted(c);
       const left = config.cookbookIndex.idsByStreet.get(0)![0]!;
-      b.rest.levels[left] = 0;
+      setGrade(b.rest.levels, config.cookbookIndex.slotOf, left, 0);
       b.rest.counts.learned -= 1;
       b.rest.foods.clear();
       b.rest.store.set(GOODS.moveCard, { num: 1, expiresAt: null });
@@ -289,7 +291,7 @@ describe('机器人决策（终审 I-3，设计 §9）', () => {
     const street = [...config.cookbookIndex.idsByStreet.keys()][0]!;
     const ids = config.cookbookIndex.idsByStreet.get(street)!;
     const [a, n] = ids.filter((id) => (config.requireCookbook(id).needFoods[2] ?? []).length > 0);
-    b.rest.levels[a!] = 1;
+    setGrade(b.rest.levels, config.cookbookIndex.slotOf, a!, 1);
     b.rest.foods.clear();
     for (const g of [1, 2] as const)
       for (const f of config.requireCookbook(g === 1 ? n! : a!).needFoods[g]!)

@@ -1,6 +1,14 @@
 import { deviceHours, DEVICE_TYPE, GOODS, GOODS_TYPE, type Award, type Goods } from '@dt/config';
 import { gameDay, gameParts, nextSlot, pickWeighted, type Rng } from '@dt/shared';
-import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, planLearn } from '../../modules/cookbook/rules';
+import {
+  applyLearn,
+  foodsNeedFor,
+  gradeOf,
+  learnTypeOf,
+  mergeNeed,
+  planLearn,
+  setGrade,
+} from '../../modules/cookbook/rules';
 import { composePool, handleTargetLevel, runHandle } from '../../modules/cupboard/rules';
 import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growth/rules';
 import { clearTable } from '../../modules/interact/tables';
@@ -233,13 +241,13 @@ function learn(c: FastCtx, r: FastRest, id: number): boolean {
   const cb = c.config.requireCookbook(id);
   // 和真实接口一样只能学、升级本街的菜（问题记录 312）
   if (cb.streetId !== r.streetId) return false;
-  const from = r.levels[id] ?? 0;
+  const from = gradeOf(r.levels, c.config.cookbookIndex.slotOf, id);
   const to = from + 1;
   if (to > c.tuning.rest.cookbookMaxGrade) return false;
   const plan = planLearn(mergedNeed(c, id, to), haveFood(r), levelOfFood(c));
   if (plan.kind === 'none') return false;
   for (const x of plan.consume) subFoods(c, r, x.foodsId, x.num);
-  r.levels[id] = to;
+  setGrade(r.levels, c.config.cookbookIndex.slotOf, id, to);
   if (from === 0) r.lastFreshAt = c.now;
   r.counts = applyLearn(r.counts, cb.streetId, from, to);
   r.levelsVersion += 1;
@@ -252,7 +260,7 @@ export function learnable(c: FastCtx, r: FastRest, street: number): number[] {
   const have = haveFood(r);
   const lv = levelOfFood(c);
   const rows = (c.config.cookbookIndex.idsByStreet.get(street) ?? []).map((id) => {
-    const grade = r.levels[id] ?? 0;
+    const grade = gradeOf(r.levels, c.config.cookbookIndex.slotOf, id);
     if (grade >= max) return { id, grade, learn: 'max', next: 0 };
     const need = mergedNeed(c, id, grade + 1);
     return { id, grade, learn: learnTypeOf(planLearn(need, have, lv)), next: need.length };
@@ -276,6 +284,7 @@ function foodsNeed(c: FastCtx, r: FastRest): Map<number, number> {
   const need = foodsNeedFor(
     c.config.cookbookIndex.idsByStreet.get(r.streetId) ?? [],
     r.levels,
+    c.config.cookbookIndex.slotOf,
     Math.min(1, c.tuning.rest.cookbookMaxGrade),
     needOf(c),
   );
@@ -336,7 +345,8 @@ function maybeMove(c: FastCtx, r: FastRest): boolean {
   const need = c.config.starNeed.get(r.star + 1);
   if (!need || need.cookbooksKind !== 'learned' || r.counts.learned >= need.needCookbooks) return false;
   const byStreet = c.config.cookbookIndex.idsByStreet;
-  const fresh = (street: number) => (byStreet.get(street) ?? []).filter((id) => !r.levels[id]).length;
+  const fresh = (street: number) =>
+    (byStreet.get(street) ?? []).filter((id) => !gradeOf(r.levels, c.config.cookbookIndex.slotOf, id)).length;
   r.lastFreshAt ??= c.now;
   const stale = c.now.getTime() - r.lastFreshAt.getTime() >= STALE_MS;
   if (fresh(r.streetId) > 0 && !stale) return false;

@@ -149,7 +149,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         .execute();
       await tx
         .insertInto('restaurant_cookbooks')
-        .values({ rest_id: id, levels: emptyCookbookLevels(d.config.maxCookbookId) })
+        .values({ rest_id: id, levels: emptyCookbookLevels(d.config.cookbookIndex.slots) })
         .execute();
       for (const gift of defaults.giftGoods) await grantGoods(tx, d.config, id, gift.id, gift.num, now);
       // 开局送了新手大礼包时，老店补领的新手码记成本店已领（问题记录 331）：大礼包一次只能拿一个，

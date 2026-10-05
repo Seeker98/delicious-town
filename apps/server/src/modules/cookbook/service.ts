@@ -19,7 +19,16 @@ import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
 import { normalizeCounts } from '../settlement/globals';
-import { applyLearn, foodsNeedFor, learnTypeOf, mergeNeed, padLevels, planLearn } from './rules';
+import {
+  applyLearn,
+  foodsNeedFor,
+  gradeOf,
+  learnTypeOf,
+  mergeNeed,
+  padLevels,
+  planLearn,
+  setGrade,
+} from './rules';
 
 const PAGE_SIZE = 40;
 /** 排序：可学 → 需要万能食材 → 不能学 → 已满级（规格书 03 §3.7 的 t → l → m → n） */
@@ -45,7 +54,7 @@ export function createCookbookService(d: GameDeps) {
       .select('levels')
       .where('rest_id', '=', restId)
       .executeTakeFirstOrThrow();
-    return padLevels(new Uint8Array(r.levels), d.config.maxCookbookId);
+    return padLevels(new Uint8Array(r.levels), d.config.cookbookIndex.slots);
   }
   async function haveOf(db: Kysely<DB>, restId: number): Promise<(id: number) => number> {
     const m = await foodsMap(db, restId);
@@ -62,7 +71,7 @@ export function createCookbookService(d: GameDeps) {
     street: number,
   ): CookbookRowDto {
     const c = d.config.requireCookbook(id);
-    const grade = levels[id] ?? 0;
+    const grade = gradeOf(levels, d.config.cookbookIndex.slotOf, id);
     if (grade >= max) return { id, name: c.name, grade, next: null, learn: 'max' };
     const need = mergeNeed(needOf(id, grade + 1));
     return {
@@ -170,7 +179,7 @@ export function createCookbookService(d: GameDeps) {
         q.street === undefined
           ? d.config.cookbookIndex.allIds
           : (d.config.cookbookIndex.idsByStreet.get(q.street) ?? []);
-      const items = [...foodsNeedFor(ids, levels, target, needOf)]
+      const items = [...foodsNeedFor(ids, levels, d.config.cookbookIndex.slotOf, target, needOf)]
         .filter(([id]) => q.foodLevel === undefined || levelOfFood(id) === q.foodLevel)
         .map(([foodsId, need]) => ({
           foodsId,
@@ -194,7 +203,7 @@ export function createCookbookService(d: GameDeps) {
           if (c.streetId !== op.rest.street_id)
             throw invalidState('other_street', { id: cookbookId, streetId: c.streetId });
           const levels = await levelsOf(op.tx, op.rest.id);
-          const from = levels[cookbookId] ?? 0;
+          const from = gradeOf(levels, op.config.cookbookIndex.slotOf, cookbookId);
           const to = from + 1;
           if (to > op.tuning.rest.cookbookMaxGrade) throw new AppError(ErrorCode.COOKBOOK_MAX_GRADE, 400);
           const fm = await foodsMap(op.tx, op.rest.id);
@@ -204,7 +213,7 @@ export function createCookbookService(d: GameDeps) {
             throw notEnough('foods', m.num, m.have, m.foodsId);
           }
           for (const x of plan.consume) await subFoods(op, x.foodsId, x.num);
-          levels[cookbookId] = to;
+          setGrade(levels, op.config.cookbookIndex.slotOf, cookbookId, to);
           await op.tx
             .updateTable('restaurant_cookbooks')
             .set({ levels: Buffer.from(levels) })

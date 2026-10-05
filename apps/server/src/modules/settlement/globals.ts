@@ -70,11 +70,11 @@ export interface InputPatch {
 
 /** 测试和模拟器用：按补丁构造一份结算输入，默认是一家 0 星新手街 4 桌的新店 */
 export function buildInput(config: GameConfig, patch: InputPatch = {}): SettleInput {
-  const levels = new Uint8Array(config.maxCookbookId + 1);
+  const levels = new Uint8Array(config.cookbookIndex.slots);
   const counts: CookbookCounts = { learned: 0, grade: Array(11).fill(0) as number[], street: {} };
   for (const [id, grade] of Object.entries(patch.cookbooks ?? {})) {
     const cb = config.requireCookbook(Number(id));
-    levels[cb.id] = grade;
+    levels[cb.slot] = grade;
     if (grade > 0) {
       counts.learned += 1;
       counts.grade[grade]! += 1;

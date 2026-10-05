@@ -37,6 +37,12 @@ import type {
 
 export interface CookbookIndex {
   readonly maxId: number;
+  /** 下标 = 食谱 id，值 = 学会记录里的存储位；-1 = 没有这个 id（重新编号 PR 3） */
+  readonly slotOf: Int32Array;
+  /** 下标 = 存储位，值 = 食谱 id；-1 = 空位（删掉的菜） */
+  readonly idAt: Int32Array;
+  /** 学会记录字节串的长度 = 最大存储位 + 1 */
+  readonly slots: number;
   /** 下标 = 食谱 id，值 = 街道；-1 = 没有这个 id */
   readonly street: Int16Array;
   /** 下标 = 食谱 id，值 = 售价 */
@@ -55,7 +61,6 @@ export interface GameConfig {
   readonly streets: ReadonlyMap<number, Street>;
   readonly weather: ReadonlyMap<number, Weather>;
   /** 最大食谱 id，用于确定每店已学食谱数组的长度 */
-  readonly maxCookbookId: number;
   readonly foodsByLevel: ReadonlyMap<number, readonly Food[]>;
   readonly foodPools: ReadonlyMap<number, WeightedPool<Food>>;
   readonly rareFoodPools: ReadonlyMap<number, WeightedPool<Food>>;
@@ -137,7 +142,14 @@ function buildCookbookIndex(cookbooks: Cookbook[]): CookbookIndex {
     list.push(c.id);
     byStreet.set(c.streetId, list);
   }
-  return { maxId, street, coin, idsByStreet: byStreet, allIds: sorted.map((c) => c.id) };
+  const slots = Math.max(...cookbooks.map((c) => c.slot)) + 1;
+  const slotOf = new Int32Array(maxId + 1).fill(-1);
+  const idAt = new Int32Array(slots).fill(-1);
+  for (const c of cookbooks) {
+    slotOf[c.id] = c.slot;
+    idAt[c.slot] = c.id;
+  }
+  return { maxId, slotOf, idAt, slots, street, coin, idsByStreet: byStreet, allIds: sorted.map((c) => c.id) };
 }
 
 export function createGameConfig(bundle: ConfigBundle): GameConfig {
@@ -230,7 +242,6 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     cookbooks,
     streets,
     weather: byId(bundle.weather),
-    maxCookbookId: Math.max(...bundle.cookbooks.map((c) => c.id)),
     foodsByLevel,
     foodPools,
     rareFoodPools,

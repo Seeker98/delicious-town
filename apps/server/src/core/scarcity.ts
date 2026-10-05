@@ -1,6 +1,7 @@
 import type { Tuning } from '@dt/config';
 import { buildPool, pickWeighted, type Rng } from '@dt/shared';
 import { foodsMap } from '../modules/cupboard/foods';
+import { gradeOf } from '../modules/cookbook/rules';
 import { levelsOf } from '../modules/takeaway/common';
 import { opLuck } from './luck';
 import type { Op } from './op';
@@ -15,13 +16,14 @@ export type NeedMap = ReadonlyMap<number, number>;
 export function needMapOf(
   ids: readonly number[],
   levels: Uint8Array,
+  slotOf: Int32Array,
   maxGrade: number,
   needOf: (id: number, grade: number) => ReadonlyArray<{ foodsId: number; num: number }>,
   have: (foodsId: number) => number,
 ): Map<number, number> {
   const total = new Map<number, number>();
   for (const id of ids) {
-    const next = (levels[id] ?? 0) + 1;
+    const next = gradeOf(levels, slotOf, id) + 1;
     if (next > maxGrade) continue;
     for (const x of needOf(id, next)) total.set(x.foodsId, (total.get(x.foodsId) ?? 0) + x.num);
   }
@@ -75,6 +77,7 @@ export async function opNeedPick(
     need = needMapOf(
       o.config.cookbookIndex.idsByStreet.get(o.rest.street_id) ?? [],
       levels,
+      o.config.cookbookIndex.slotOf,
       o.tuning.rest.cookbookMaxGrade,
       (id, g) => o.config.requireCookbook(id).needFoods[g] ?? [],
       (id) => foods.get(id)?.num ?? 0,

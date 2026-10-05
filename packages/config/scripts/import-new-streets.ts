@@ -24,7 +24,7 @@ import {
   type MasterGoods,
 } from '../src/master';
 import type { rawFood, rawGoods } from '../src/raw';
-import { addMedalRows, importConflicts, pruneNames } from '../src/streetImport';
+import { addMedalRows, assignSlots, importConflicts, pruneNames } from '../src/streetImport';
 
 const pkg = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
@@ -124,12 +124,29 @@ writeMaster(
     ),
   ),
 );
+// 学会记录的存储位（重新编号 PR 3）：已有的菜保留，新菜从 next 往后分，删掉的不回收
+const slotsPath = join(data, 'game', 'cookbook_slots.json');
+const slotsFile = read<{ next: number }>(slotsPath);
+const assigned = assignSlots(
+  mCookbooks.data,
+  sorted.map((c) => c.id),
+  slotsFile.next,
+);
+if (assigned.next !== slotsFile.next) {
+  writeFileSync(
+    slotsPath,
+    `${JSON.stringify({ next: assigned.next }, null, 2)}
+`,
+  );
+  console.log(`cookbook_slots: next ${slotsFile.next} -> ${assigned.next}`);
+}
 writeMaster(
   'cookbooks',
   mCookbooks,
   sorted.map((c): MasterCookbook => ({
     id: c.id,
     src: 'streets',
+    slot: assigned.slots.get(c.id)!,
     name: c.name,
     streetId: c.streetId,
     taste: c.taste,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addMedalRows, importConflicts, pruneNames } from './streetImport';
+import { addMedalRows, assignSlots, importConflicts, pruneNames } from './streetImport';
 import { gid } from './testItems';
 
 describe('新街道导入的辅助（backlog 284）', () => {
@@ -41,5 +41,27 @@ describe('导入前检查已上线的新菜谱 id（backlog 284 终审）', () =
     ];
     expect(importConflicts(prev, next)).toEqual({ removed: [18748], restreeted: [18749] });
     expect(importConflicts(prev, prev)).toEqual({ removed: [], restreeted: [] });
+  });
+});
+
+describe('新菜谱分配存储位（重新编号 PR 3）', () => {
+  it('已有的保留，新的从 next 往后，删掉的不回收', () => {
+    const r = assignSlots(
+      [
+        { id: 10, slot: 5 },
+        { id: 11, slot: 6 },
+      ],
+      [11, 12, 13],
+      7,
+    );
+    expect([...r.slots]).toEqual([
+      [11, 6],
+      [12, 7],
+      [13, 8],
+    ]);
+    expect(r.next).toBe(9);
+  });
+  it('没有新菜时 next 不变', () => {
+    expect(assignSlots([{ id: 10, slot: 5 }], [10], 7)).toEqual({ slots: new Map([[10, 5]]), next: 7 });
   });
 });

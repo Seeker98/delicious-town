@@ -116,7 +116,7 @@ export async function ensureNpc(
       .execute();
     await tx
       .insertInto('restaurant_cookbooks')
-      .values({ rest_id: ins.id, levels: emptyCookbookLevels(config.maxCookbookId) })
+      .values({ rest_id: ins.id, levels: emptyCookbookLevels(config.cookbookIndex.slots) })
       .execute();
     await restockNpc(tx, config, t, ins.id, rng);
     return { id: ins.id, created: true };

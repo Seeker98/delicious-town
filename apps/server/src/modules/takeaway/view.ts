@@ -2,7 +2,7 @@ import type { Kysely } from 'kysely';
 import { GOODS, type GameConfig, type Tuning } from '@dt/config';
 import { gameDay, type TakeawayDto, type TakeawayOrderDto, type TakeawayRiderDto } from '@dt/shared';
 import type { DB, RestaurantRow, TakeawayOrderRow, TakeawayRiderRow } from '../../db/schema';
-import { mergeNeed } from '../cookbook/rules';
+import { gradeOf, mergeNeed } from '../cookbook/rules';
 import { getDaily } from '../counter/dailyCounter';
 import { foodsMap } from '../cupboard/foods';
 import { getEffectAgg } from '../effects/service';
@@ -157,7 +157,16 @@ export async function takeawayView(
   return {
     ...base,
     opened: true,
-    orders: orders.map((o) => orderDto(o, config, levels[o.cookbook_id] ?? 0, have, rest.renown, rest.id)),
+    orders: orders.map((o) =>
+      orderDto(
+        o,
+        config,
+        gradeOf(levels, config.cookbookIndex.slotOf, o.cookbook_id),
+        have,
+        rest.renown,
+        rest.id,
+      ),
+    ),
     deliveries: deliveries.map((v) => ({
       id: v.id,
       orderId: v.order_id,

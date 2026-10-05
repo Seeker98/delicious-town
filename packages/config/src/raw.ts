@@ -527,6 +527,8 @@ export const masterCookbook = z
   .object({
     id: int,
     src: z.enum(['original', 'streets']),
+    /** 学会记录的存储位（重新编号 PR 3）：只增不复用 */
+    slot: int.min(0),
     name: z.string().min(1),
     streetId: int,
     taste: z.array(int),
@@ -536,3 +538,6 @@ export const masterCookbook = z
     needFoods: z.record(z.string(), z.array(z.object({ foodsId: int, num: int }).strict())),
   })
   .strict();
+
+/** data/game/cookbook_slots.json：下一个可用的菜谱存储位（重新编号 PR 3）；删菜后存储位不回收，新菜从这里往后分 */
+export const cookbookSlotsFile = z.object({ next: int.min(1) }).strict();

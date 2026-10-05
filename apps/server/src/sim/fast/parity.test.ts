@@ -6,6 +6,8 @@ import { getEffectAgg } from '../../modules/effects/service';
 import { grantGoods as grantGoodsDb } from '../../modules/store/grant';
 import { aggOf, grantGoods, openFastRest } from './ops';
 import type { FastCtx } from './state';
+import { cid } from '../../../test/items';
+import { setGrade } from '../../modules/cookbook/rules';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -70,8 +72,8 @@ describe('结算源字段一一对应（终审 I-3，设计 §9 第一条）', (
       .where('id', '=', ctx.restaurantId)
       .executeTakeFirstOrThrow();
     const tables = [{ no: 1, floor: 1, customer: 0 }];
-    const levels = new Uint8Array(config.maxCookbookId + 1);
-    levels[1] = 2;
+    const levels = new Uint8Array(config.cookbookIndex.slots);
+    setGrade(levels, config.cookbookIndex.slotOf, cid('南煎丸子'), 2);
     const agg = { atRate: 0.2 };
     const settings = resolveShardSettings(config, {});
     const c: FastCtx = {

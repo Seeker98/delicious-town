@@ -46,10 +46,15 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         .select('levels')
         .where('rest_id', '=', rest.id)
         .executeTakeFirstOrThrow();
-      const levels = padLevels(new Uint8Array(cb.levels), d.config.maxCookbookId);
+      const levels = padLevels(new Uint8Array(cb.levels), d.config.cookbookIndex.slots);
       const streetIds = d.config.cookbookIndex.idsByStreet.get(rest.street_id) ?? [];
-      const targetGrade = streetTargetGrade(levels, streetIds, tuning.rest.cookbookMaxGrade);
-      const needMap = foodsNeedFor(streetIds, levels, targetGrade, needOf);
+      const targetGrade = streetTargetGrade(
+        levels,
+        d.config.cookbookIndex.slotOf,
+        streetIds,
+        tuning.rest.cookbookMaxGrade,
+      );
+      const needMap = foodsNeedFor(streetIds, levels, d.config.cookbookIndex.slotOf, targetGrade, needOf);
       const used = await getDaily(d.db, rest.id, HANDLE_KEY, gameDay(d.now()));
       const all = [...rows];
       return {

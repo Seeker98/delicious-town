@@ -25,7 +25,8 @@ function needOf(have: Record<number, number> = {}): Map<number, number> {
   const c = config();
   return needMapOf(
     c.cookbookIndex.idsByStreet.get(0) ?? [],
-    new Uint8Array(c.maxCookbookId + 1),
+    new Uint8Array(c.cookbookIndex.slots),
+    c.cookbookIndex.slotOf,
     c.tuning.rest.cookbookMaxGrade,
     (id, g) => c.requireCookbook(id).needFoods[g] ?? [],
     (id) => have[id] ?? 0,
@@ -116,7 +117,7 @@ describe('个人缺料倾向（问题记录 50、68）', () => {
   it('本街菜全部满级（没有缺料）时照常抽，不报错（Review Focus 1）', async () => {
     const shardId = await shardWith(ALWAYS);
     const r = await newRestaurant(t, { shardId, goods: { [NEWBIE.foodVoucherBase + 3]: 10 } });
-    const levels = new Uint8Array(config().maxCookbookId + 1).fill(config().tuning.rest.cookbookMaxGrade);
+    const levels = new Uint8Array(config().cookbookIndex.slots).fill(config().tuning.rest.cookbookMaxGrade);
     await t.db
       .updateTable('restaurant_cookbooks')
       .set({ levels: Buffer.from(levels) })

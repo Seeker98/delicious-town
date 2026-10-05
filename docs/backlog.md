@@ -125,6 +125,12 @@
 - `CupboardView.vue` 换万能食材的类型断言写成了 `typeof SHARED_FOODS.masterLevel1`，更准确的是一级或二级的联合（只影响类型）。
 - 下架更新记录里“玩家专属勋章”也包括内测勋章、测试勋章，严格说不全是“玩家专属”。
 
+## 重新编号 第 3 步（#145）审查小问题
+
+- 过时注释还写着“下标 = 食谱 id”：`apps/server/src/db/schema.ts`（RestaurantCookbooksTable.levels）、`modules/restaurant/rules.ts`、`modules/settlement/types.ts`、`modules/takeaway/common.ts`；`packages/config/src/runtime.ts` 删掉 `maxCookbookId` 后留下一条孤立注释挂到了 `foodsByLevel` 上。改成“下标 = 存储位（cookbookIndex.slotOf）”。
+- 服务端测试打乱后的存储位是连续排满的，没有空位、也没有比 `slots` 长的字节串；给 `splitLearned` 和教学遗忘各加一条：`idAt` 里有 -1、`levels.length > slots`（第 4 步上线后的真实情况）。
+- 菜被 `--allow-removed` 删掉、以后又以同一编号加回来时，会分到新的存储位：老店显示没学过，`cookbook_counts` 里却还计着。符合“存储位不回收”的设计，可以在 data-maintenance.md 补一句。
+
 ## 测试不稳定
 
 - 已处理（质量期第 ①a 批）：`i18n/core.test.ts`「切换到英语」全量并行时偶尔超过 15 秒，同样放宽到 60 秒。

@@ -236,6 +236,7 @@ export function needPickOf(c: FastCtx, r: FastRest): NeedPick {
       ? needMapOf(
           c.config.cookbookIndex.idsByStreet.get(r.streetId) ?? [],
           r.levels,
+          c.config.cookbookIndex.slotOf,
           c.tuning.rest.cookbookMaxGrade,
           (id, g) => c.config.requireCookbook(id).needFoods[g] ?? [],
           (id) => r.foods.get(id) ?? 0,

@@ -13,8 +13,8 @@ describe('restaurant rules', () => {
     expect(initialTables(17)[16]).toEqual({ no: 17, floor: 2, customer: 0 });
   });
 
-  it('已学食谱数组：长度 = 最大食谱 id + 1，全部未学', () => {
-    const buf = emptyCookbookLevels(2363);
+  it('已学食谱数组：长度 = 存储位总数，全部未学（重新编号 PR 3）', () => {
+    const buf = emptyCookbookLevels(2364);
     expect(buf.length).toBe(2364);
     expect(buf.every((b) => b === 0)).toBe(true);
   });

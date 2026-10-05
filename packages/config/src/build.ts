@@ -152,6 +152,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const fundRaw = parse('game/fund', raw.fundFile);
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
   const retiredRaw = parse('game/retired', raw.retiredFile);
+  const slotsRaw = parse('game/cookbook_slots', raw.cookbookSlotsFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -205,6 +206,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !fundRaw ||
     !foodSupply ||
     !retiredRaw ||
+    !slotsRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -386,8 +388,10 @@ export function buildBundle(src: SourceData): BuildResult {
           errors.push(`cookbook ${c.id} grade ${grade} references unknown food ${f.foodsId}`);
       needFoods[grade] = list.map((f) => ({ foodsId: f.foodsId, num: f.num }));
     }
+    if (c.slot >= slotsRaw.next) errors.push(`cookbook ${c.id} slot ${c.slot} >= next ${slotsRaw.next}`);
     return {
       id: c.id,
+      slot: c.slot,
       name: c.name,
       streetId: c.streetId,
       taste: c.taste,
@@ -410,6 +414,12 @@ export function buildBundle(src: SourceData): BuildResult {
     'cookbooks',
     cookbooks.map((c) => c.id),
   );
+  // 存储位不能重复：两道菜共用一个字节，学会一道另一道也算学会（重新编号 PR 3）
+  const seenSlot = new Set<number>();
+  for (const c of cookbooks) {
+    if (seenSlot.has(c.slot)) errors.push(`cookbooks: duplicate slot ${c.slot}`);
+    seenSlot.add(c.slot);
+  }
 
   // ---------- 特色菜 ----------
   const mysteriousCookbooks = mysteriousRaw.map((m) => {
