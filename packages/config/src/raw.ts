@@ -551,3 +551,57 @@ export const equipLoreFile = z.object({
   suits: z.array(rawSuit.strict()),
   stressTables: z.array(stressTableEntry),
 });
+
+/** 主表（重新编号 PR 1）：道具、食材、菜谱的定义只在 data/master 下；src = 来历，新街道导入按它整块替换 */
+const goodsSrc = z.enum(['original', 'lore', 'streets', 'souvenir', 'kuji', 'newbie', 'fund', 'poster']);
+export const masterGoods = z
+  .object({
+    id: int,
+    src: goodsSrc,
+    name: z.string().min(1),
+    type: int,
+    deviceType: int.nullable(),
+    invalidHours: z.number().nullable(),
+    maxNum: int,
+    stackable: z.boolean(),
+    level: int,
+    coin: z.number(),
+    diamond: z.number(),
+    onSale: z.boolean(),
+    awardFlag: int.nullable(),
+    desc: z.string(),
+    value: z.unknown(),
+    /** 后期海报奖杯（问题记录 146） */
+    needStar: int.optional(),
+    /** 一到五级食材随机券（问题记录 331）：value 是空的，用法直接写 */
+    use: z
+      .object({ kind: z.literal('randomFood'), level: int.min(1).max(7) })
+      .strict()
+      .optional(),
+  })
+  .strict();
+export const masterFood = z
+  .object({
+    id: int,
+    src: z.enum(['original', 'streets']),
+    name: z.string().min(1),
+    level: int,
+    coin: z.number(),
+    odds: z.number(),
+    maxNum: int,
+    type: int.nullable(),
+  })
+  .strict();
+export const masterCookbook = z
+  .object({
+    id: int,
+    src: z.enum(['original', 'streets']),
+    name: z.string().min(1),
+    streetId: int,
+    taste: z.array(int),
+    coin: z.number(),
+    level: int,
+    desc: z.string(),
+    needFoods: z.record(z.string(), z.array(z.object({ foodsId: int, num: int }).strict())),
+  })
+  .strict();
