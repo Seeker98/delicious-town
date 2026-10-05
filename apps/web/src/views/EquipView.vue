@@ -16,8 +16,8 @@ import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
-/** 收益加成的百分比：+1.2%（保留一位小数） */
-const pctText = (x: number) => `+${Math.round(x * 1000) / 10}%`;
+/** 收益加成的百分比：+1.25%（最多两位小数，按语言写小数点） */
+const pctText = (x: number) => `+${formatNum(Math.round(x * 10000) / 100)}%`;
 const o = ref<EquipOverviewDto | null>(null);
 const part = ref<number | null>(null);
 const pieces = ref<EquipDto[]>([]);

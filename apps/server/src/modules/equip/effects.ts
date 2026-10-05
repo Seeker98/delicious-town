@@ -3,8 +3,7 @@ import { invalidateAgg } from '../../core/luck';
 import type { Op } from '../../core/op';
 import { markEffectsDirty, removeEffectSource, upsertEffectSource } from '../effects/service';
 import { loadGems, pieceTotal } from './instances';
-import { addAttrs, zeroAttrs } from './rules';
-import { activeSuits, suitAggEffects } from './rules';
+import { activeSuits, addAttrs, suitAggEffects, zeroAttrs } from './rules';
 
 /**
  * 穿戴厨具（含宝石）进 equip 行的加成：幸运之和；加权点数（幸运不算）× 系数的
