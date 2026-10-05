@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { SPONSOR_HATS } from '@dt/config';
+import { SPONSOR_HATS, createGameConfig } from '@dt/config';
+import { testConfig } from '../../../test/config';
 import { runSystemOp } from '../../core/op';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
-import { checkRewardItems, grantRewardOp } from './reward';
+import { checkNestedItems, checkRewardItems, grantRewardOp } from './reward';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -52,5 +53,39 @@ describe('附件发放（设计 §4）', () => {
     );
     expect(() => checkRewardItems(t.deps.config, { foods: [{ id: 999999, num: 1 }] })).toThrow();
     expect(() => checkRewardItems(t.deps.config, { coin: 1 })).not.toThrow();
+  });
+});
+
+describe('下架的道具、食材不能再写进后台奖励（问题记录 367 终审 I2）', () => {
+  const base = testConfig();
+  const food = base.bundle.foods[0]!.id;
+  const config = createGameConfig({
+    ...base.bundle,
+    goods: base.bundle.goods.map((g) => (g.id === 93 ? { ...g, retired: true as const } : g)),
+    foods: base.bundle.foods.map((f) => (f.id === food ? { ...f, retired: true as const } : f)),
+  });
+  const issues = (fn: () => void) => {
+    try {
+      fn();
+    } catch (e) {
+      return (e as { params?: { issues?: unknown } }).params?.issues;
+    }
+    return null;
+  };
+
+  it('邮件附件、兑换码（checkRewardItems）', () => {
+    expect(
+      issues(() => checkRewardItems(config, { goods: [{ id: 93, num: 1 }], foods: [{ id: food, num: 1 }] })),
+    ).toEqual([
+      { path: 'items.goods.0.id', message: 'retired' },
+      { path: 'items.foods.0.id', message: 'retired' },
+    ]);
+    expect(issues(() => checkRewardItems(config, { goods: [{ id: 1, num: 1 }] }))).toBeNull();
+  });
+
+  it('活动定义（checkNestedItems）', () => {
+    expect(
+      issues(() => checkNestedItems(config, { rewards: [{ goods: [{ id: 93, num: 1 }] }] }, 'def')),
+    ).toEqual([{ path: 'def.rewards.0.goods.0.id', message: 'retired' }]);
   });
 });

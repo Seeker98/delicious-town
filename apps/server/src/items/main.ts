@@ -39,6 +39,13 @@ createServer((req, res) => {
       if (req.method === 'GET' && req.url === '/api/report')
         return send(res, 200, 'application/json', JSON.stringify(tool.report()));
       if (req.method === 'POST' && req.url === '/api/retired') {
+        // 只收本页发的 JSON：别的网站跨站发的表单、纯文本请求不能改写名单（终审 m8）
+        const origin = req.headers.origin;
+        if (
+          !req.headers['content-type']?.startsWith('application/json') ||
+          (origin !== undefined && origin !== `http://127.0.0.1:${port}`)
+        )
+          return send(res, 403, 'text/plain', 'forbidden');
         const body = saveBody.safeParse(await readBody(req));
         if (!body.success)
           return send(res, 400, 'application/json', JSON.stringify({ errors: ['bad body'] }));

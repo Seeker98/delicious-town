@@ -69,6 +69,14 @@ describe('下架名单（问题记录 367）', () => {
     ).toBe(true);
   });
 
+  it('街道勋章不能下架：搬家时会发（终审 C1）', () => {
+    const medal = real.streets[1]!.medalId;
+    const { errors } = build({ goods: [{ id: medal }], foods: [] });
+    expect(
+      errors.some((x) => x.startsWith(`retired goods ${medal} is still used by`) && x.includes('搬家')),
+    ).toBe(true);
+  });
+
   it('食谱用到的食材不能下架：同一处只报一次，带次数', () => {
     const food = real.cookbooks[0]!.needFoods[1]![0]!.foodsId;
     const { errors } = build({ goods: [], foods: [{ id: food }] });

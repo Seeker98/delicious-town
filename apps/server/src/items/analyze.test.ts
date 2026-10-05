@@ -65,6 +65,16 @@ describe('道具整理的分析（问题记录 367）', () => {
     expect(wheres(row('goods', need), 'uses')).toContain('镇长兑换');
   });
 
+  it('纪念品只在后台配的活动里发：标“活动（后台配置）”，不算没有来源（终审 I2）', () => {
+    const souvenirs = report.rows.filter((r) => r.kind === 'goods' && r.category === '纪念品');
+    const plain = souvenirs.filter((r) => !r.gives.some((x) => x.where === '一番赏'));
+    expect(plain.length).toBeGreaterThanOrEqual(12);
+    for (const r of plain) {
+      expect(wheres(r, 'gives')).toEqual(['活动（后台配置）']);
+      expect(r.noSource).toBe(false);
+    }
+  });
+
   it('来源是已下架的礼包时标出来，不算真来源', () => {
     const gift = config.bundle.goods.find(
       (g) => g.gift?.some((i) => i.type === 'goods' && i.id > 0) && g.id !== GOODS.signInGift,

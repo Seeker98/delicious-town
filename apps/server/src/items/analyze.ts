@@ -112,6 +112,11 @@ export function analyzeItems(
     else add(r.kind, r.id, r.role, r.where, Number(giftOf.exec(r.where)?.[1] ?? NaN));
   }
 
+  // 纪念品（148-2）只在后台配的兑换活动里发，存在数据库里，配置里看不到（终审 I2）
+  for (const g of b.goods)
+    if (g.type === GOODS_TYPE.souvenir && !tags.get(key('goods', g.id, 'gives'))?.has('一番赏'))
+      add('goods', g.id, 'gives', '活动（后台配置）');
+
   // ---------- 道具的用途 ----------
   for (const g of b.goods) {
     if (g.use) add('goods', g.id, 'uses', USE_NAME[g.use.kind] ?? g.use.kind);

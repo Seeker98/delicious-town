@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { GOODS } from './ids';
-import { CODE_GOODS, CODE_FOODS, itemRefs, type ItemRef } from './itemRefs';
+import { CODE_GOODS, CODE_FOODS, itemRefs, tuningRefs, type ItemRef } from './itemRefs';
 import { realBuild } from './testBundle';
 
 const b = realBuild().bundle!;
@@ -58,6 +58,19 @@ describe('道具、食材的引用（问题记录 367）', () => {
     expect(find('goods', rankGift, 'gives').map((r) => r.where)).toContain('厨塔排行');
     const [takeaway] = b.tuning.takeaway.awards[0]!;
     expect(find('goods', takeaway, 'gives').map((r) => r.where)).toContain('外卖');
+  });
+
+  it('搬家发的街道勋章、区服数值里的特色菜冠军奖励都算来源（终审 C1、I4）', () => {
+    for (const s of b.streets)
+      expect(
+        find('goods', s.medalId, 'gives').map((r) => r.where),
+        String(s.id),
+      ).toContain('搬家（街道勋章）');
+    expect(
+      tuningRefs({ ...b.tuning, mysterious: { ...b.tuning.mysterious, championGoodsId: 93 } })
+        .filter((r) => r.id === 93)
+        .map((r) => r.where),
+    ).toContain('特色菜冠军');
   });
 
   it('代码里写死的道具：GOODS 常量、按编号推的碎片和 N 级券、万能食材', () => {

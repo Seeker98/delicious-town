@@ -81,6 +81,7 @@ const TEXT: Record<string, string> = {
   bad_range: '起始名次不能大于结束名次',
   overlap: '名次段不能重叠，要按名次从小到大排',
   unknown: '道具或食材不存在',
+  retired: '道具或食材已下架',
 };
 
 /** 服务端 VALIDATION_FAILED 的 issues → 路径 → 中文 */

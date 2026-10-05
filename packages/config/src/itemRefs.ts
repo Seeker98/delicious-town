@@ -82,6 +82,7 @@ export function tuningRefs(t: Tuning): ItemRef[] {
   }
   for (const tier of t.fund.tiers) add('goods', tier.medal, 'gives', '小镇发展基金');
   for (const [id] of t.temple.missileAttack) add('goods', id, 'uses', '神殿飞弹');
+  add('goods', t.mysterious.championGoodsId, 'gives', '特色菜冠军');
   return out;
 }
 
@@ -133,6 +134,8 @@ export function itemRefs(b: Omit<ConfigBundle, 'version' | 'i18n'>): ItemRef[] {
     if (a.itemId !== null) add(a.kind === 'foods' ? 'foods' : 'goods', a.itemId, 'gives', '老虎机');
   for (const r of b.renownShop) add('goods', r.goodsId, 'gives', '声望商店');
   for (const x of b.bless) if (x.goodsId !== null) add('goods', x.goodsId, 'gives', '星愿');
+  // 搬家时发新街道的勋章（growth/service.ts，终审 C1）
+  for (const s of b.streets) add('goods', s.medalId, 'gives', '搬家（街道勋章）');
   for (const t of b.kujiThemes)
     for (const id of Object.values(t.figures)) add('goods', id, 'gives', '一番赏');
 

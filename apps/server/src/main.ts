@@ -5,6 +5,7 @@ import { createDeps } from './deps';
 import { loadEnv } from './env';
 import { pullOffset } from './infra/clock';
 import { syncNewbieCodes } from './modules/redeem/newbie';
+import { retiredInOverrides } from './modules/shard/retired';
 import { maintainPartitions } from './worker/jobs';
 
 const env = loadEnv();
@@ -20,6 +21,13 @@ if (deps.clock) await pullOffset(deps.clock, deps.redis);
 await syncNewbieCodes(deps.db, deps.config.newbieCodes, console)
   .then((r) => console.info('sync newbie codes', r))
   .catch((err: unknown) => console.error('sync newbie codes failed', err));
+// 已存的区服数值引用了下架的道具、食材（问题记录 367）：只写警告，不挡启动；到后台改掉那几项
+await retiredInOverrides(deps.db, deps.config)
+  .then((list) => {
+    for (const x of list)
+      console.warn('shard', x.shardId, 'settings use retired items:', x.errors.join('; '));
+  })
+  .catch((err: unknown) => console.error('check retired items in shard settings failed', err));
 const app = await buildApp(deps);
 await app.listen({ port: env.PORT, host: '0.0.0.0' });
 

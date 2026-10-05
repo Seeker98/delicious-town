@@ -7,14 +7,22 @@ import { addFoods } from '../cupboard/foods';
 import { grantHatOp } from '../equip/hats';
 import { grantGoodsOp } from '../store/goods';
 
-/** 附件里的道具、食材必须在配置里存在（发送邮件、创建兑换码时检查） */
+/** 后台填的奖励里一项道具或食材的问题：不存在 unknown；已下架 retired（问题记录 367：活动、兑换码、邮件不能再发） */
+function itemProblem(item: { retired?: true } | undefined): 'unknown' | 'retired' | null {
+  if (!item) return 'unknown';
+  return item.retired ? 'retired' : null;
+}
+
+/** 附件里的道具、食材必须在配置里存在、没下架（发送邮件、创建兑换码时检查） */
 export function checkRewardItems(config: GameConfig, items: RewardItems): void {
   const bad: Array<{ path: string; message: string }> = [];
   (items.goods ?? []).forEach((g, i) => {
-    if (!config.goods.has(g.id)) bad.push({ path: `items.goods.${i}.id`, message: 'unknown' });
+    const m = itemProblem(config.goods.get(g.id));
+    if (m) bad.push({ path: `items.goods.${i}.id`, message: m });
   });
   (items.foods ?? []).forEach((f, i) => {
-    if (!config.foods.has(f.id)) bad.push({ path: `items.foods.${i}.id`, message: 'unknown' });
+    const m = itemProblem(config.foods.get(f.id));
+    if (m) bad.push({ path: `items.foods.${i}.id`, message: m });
   });
   if (bad.length > 0) throw new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: bad });
 }
@@ -36,8 +44,8 @@ export function checkNestedItems(config: GameConfig, value: unknown, prefix: str
       if (set && Array.isArray(x)) {
         x.forEach((it: unknown, i) => {
           const id = (it as { id?: unknown } | null)?.id;
-          if (typeof id === 'number' && !set.has(id))
-            bad.push({ path: `${path}.${k}.${i}.id`, message: 'unknown' });
+          const m = typeof id === 'number' ? itemProblem(set.get(id)) : null;
+          if (m) bad.push({ path: `${path}.${k}.${i}.id`, message: m });
         });
       } else walk(x, `${path}.${k}`);
     }
