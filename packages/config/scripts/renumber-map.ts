@@ -1,6 +1,7 @@
 /**
+ * 已于重新编号 PR 4 执行；主表已是新编号，重跑会报错或跳过，留作记录。
  * 重新编号 第 4 步：按设计 §2 生成新旧编号对照和审阅报告（docs/superpowers/specs/2026-10-05-id-renumber-design.md）。
- *   pnpm -F @dt/config renumber-map
+ *   pnpm -F @dt/config exec tsx scripts/renumber-map.ts
  * 输出：
  *   data/renumber/map.json          —— 旧编号 → 新编号（道具、食材、菜谱）和菜谱新存储位
  *   data/renumber/goods_groups.json —— 道具小类：名字、起始编号、容量

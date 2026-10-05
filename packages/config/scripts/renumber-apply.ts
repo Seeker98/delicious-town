@@ -1,4 +1,5 @@
 /**
+ * 已于重新编号 PR 4 执行；主表已是新编号，重跑会报错或跳过，留作记录。
  * 重新编号 第 4 步（一次性）：按 data/renumber/map.json 把配置数据换成新编号。
  *   pnpm -F @dt/config exec tsx scripts/renumber-apply.ts
  * - SOURCE_FILES 里的每个文件按 rewriteIds 的通用规则 + 下面 FILE_RULES 的位置规则换，按路径就地替换数字，排版不动；

@@ -1,4 +1,5 @@
 /**
+ * 已于重新编号 PR 4 执行；主表已是新编号，重跑会报错或跳过，留作记录。
  * 重新编号 第 4 步（一次性）：比对换号前后的配置包。
  *   pnpm -F @dt/config exec tsx scripts/renumber-verify.ts <换号前的配置包 JSON>
  * 换号前的包要用换号前的代码构建（常量也换了号，新代码构建不了旧数据）：先 git stash 掉换号改动、构建写出 JSON，再恢复
