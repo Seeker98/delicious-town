@@ -55,6 +55,10 @@ const street = ref<number | null>(null);
 const filterKey = computed(() => JSON.stringify([q.value, filter.value, rareOnly.value, street.value]));
 const more = ref({ key: '', n: PAGE });
 const shown = computed(() => (more.value.key === filterKey.value ? more.value.n : PAGE));
+// 条件一变就清掉多显示的条数：改回原来的条件也只显示一页（从地址恢复时 key 已经对上，不会被清）
+watch(filterKey, (k) => {
+  if (more.value.key !== k) more.value = { key: k, n: PAGE };
+});
 
 /** 读取序号：慢网络下先点 A 再点 B，A 晚到的结果（包括失败）不影响 B（backlog #115） */
 let seq = 0;

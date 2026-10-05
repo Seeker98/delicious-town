@@ -31,11 +31,18 @@ const streetDesc = computed(() => catalog.streets.find((s) => s.id === street.va
 
 async function load() {
   try {
-    list.value = await endpoints.cookbookList({
+    const r = await endpoints.cookbookList({
       street: street.value,
       page: page.value,
       filter: filter.value,
     });
+    // 页码超过现在的总页数（地址里恢复的页码，或学完这页最后一道菜）：退到最后一页，page 的 watch 重读，不留空页
+    const last = Math.max(1, Math.ceil(r.total / r.pageSize));
+    if (r.items.length === 0 && page.value > last) {
+      page.value = last;
+      return;
+    }
+    list.value = r;
   } catch (e) {
     toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
   }

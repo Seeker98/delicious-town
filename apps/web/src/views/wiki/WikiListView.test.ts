@@ -152,6 +152,25 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect((back.get('[data-testid="wiki-q"]').element as HTMLInputElement).value).toBe('菜');
   });
 
+  it('改过搜索或筛选后，显示条数回到 50；改回原来的也不恢复多显示的', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 120 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i + 1}`,
+        streetId: 0,
+        level: 1,
+        coin: 1,
+      })),
+    });
+    const w = await mountAt('/wiki/cookbooks');
+    await w.get('[data-testid="wiki-more"]').trigger('click');
+    expect(rows(w)).toHaveLength(100);
+    await w.get('[data-testid="wiki-q"]').setValue('菜1');
+    await w.get('[data-testid="wiki-q"]').setValue('');
+    expect(rows(w)).toHaveLength(50);
+  });
+
   it('食材：地址里的等级和只看稀有也能恢复', async () => {
     vi.mocked(endpoints.openFoods).mockResolvedValue({
       ...meta,

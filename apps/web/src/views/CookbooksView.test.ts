@@ -221,10 +221,45 @@ describe('CookbooksView', () => {
     await router.push('/cookbooks');
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道特点：上座率+35%');
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：上座率+35%');
     await w.get('select').setValue('3');
     await flushPromises();
-    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道特点：每桌经验+4');
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：每桌经验+4');
+  });
+
+  it('恢复的页码超过现在的总页数（学完最后一道菜再返回）：退到最后一页，不留空页', async () => {
+    vi.mocked(endpoints.cookbookList).mockImplementation(async (q) => ({
+      ...list,
+      page: q.page,
+      total: 41,
+      items: q.page > 2 ? [] : list.items,
+    }));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=0&filter=learnable&page=3');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 2, filter: 'learnable' });
+    expect(w.find('[data-testid="cb-194"]').exists()).toBe(true);
+    expect(router.currentRoute.value.query.page).toBe('2');
+    w.unmount();
+  });
+
+  it('地址里是 0 号街（新手街）时停在 0 号街，不换成本店街道', async () => {
+    vi.mocked(endpoints.overview).mockClear();
+    vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 5 } as never);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=0');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.overview).not.toHaveBeenCalled();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
+    w.unmount();
   });
 
   it('地址里的参数不合法时按默认：本店街道、全部、第一页', async () => {

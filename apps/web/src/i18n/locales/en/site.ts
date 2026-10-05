@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     browse1005:
-      'Going back from a recipe or wiki detail page now keeps your street, filters and page. The recipe page shows the selected street’s traits. Tapping a roach you placed now explains that you can’t remove it yourself',
+      'Going back from a recipe or wiki detail page now keeps your street, filters and page. The recipe page shows the selected street’s bonus. Tapping a roach you placed now explains that you can’t squash it yourself',
     renumber1005:
       'Items, ingredients and recipes have been renumbered by category: IDs in the game wiki and the open API have changed, and old wiki links redirect to the new IDs. Everything you own, every recipe you have learned and your history are unaffected',
     retire1005:
