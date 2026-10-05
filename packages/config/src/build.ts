@@ -153,6 +153,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
   const retiredRaw = parse('game/retired', raw.retiredFile);
   const slotsRaw = parse('game/cookbook_slots', raw.cookbookSlotsFile);
+  const groupsRaw = parse('game/goods_groups', raw.goodsGroupsFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -207,6 +208,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !foodSupply ||
     !retiredRaw ||
     !slotsRaw ||
+    !groupsRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -1092,6 +1094,39 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
 
+  // ---------- 编号规则（重新编号，设计 §2） ----------
+  const groupByKey = new Map(groupsRaw.groups.map((g) => [g.key, g]));
+  const sortedGroups = [...groupsRaw.groups].sort((a, b) => a.base - b.base);
+  sortedGroups.forEach((g, i) => {
+    const next = sortedGroups[i + 1];
+    if (next && g.base + g.size > next.base) errors.push(`goods groups ${g.key} and ${next.key} overlap`);
+  });
+  for (const m of goodsRaw) {
+    const g = groupByKey.get(m.group);
+    if (!g) errors.push(`goods ${m.id} group ${m.group} unknown`);
+    else if (m.id < g.base || m.id >= g.base + g.size)
+      errors.push(`goods ${m.id} outside group ${g.key} (${g.base}~${g.base + g.size - 1})`);
+  }
+  for (const f of foodsRaw) if (f.id < 1001 || f.id > 9999) errors.push(`foods ${f.id} outside 1001~9999`);
+  for (const c of cookbooksRaw)
+    if (c.id < 100001 || c.id > 199999) errors.push(`cookbooks ${c.id} outside 100001~199999`);
+  const legacyPairs = (name: string, list: ReadonlyArray<{ id: number; legacyId?: number }>) => {
+    const seen = new Set<number>();
+    const out: Array<[number, number]> = [];
+    for (const x of list) {
+      if (x.legacyId === undefined) continue;
+      if (seen.has(x.legacyId)) errors.push(`${name}: duplicate legacyId ${x.legacyId}`);
+      seen.add(x.legacyId);
+      out.push([x.legacyId, x.id]);
+    }
+    return out.sort((a, b) => a[0] - b[0]);
+  };
+  const legacy = {
+    goods: legacyPairs('goods', goodsRaw),
+    foods: legacyPairs('foods', foodsRaw),
+    cookbooks: legacyPairs('cookbooks', cookbooksRaw),
+  };
+
   if (errors.length > 0) return { bundle: null, errors };
 
   const i18n = buildI18n(
@@ -1128,6 +1163,7 @@ export function buildBundle(src: SourceData): BuildResult {
   if (errors.length > 0) return { bundle: null, errors };
 
   const body: Omit<ConfigBundle, 'version'> = {
+    legacy,
     i18n,
     foods,
     goods,

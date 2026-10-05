@@ -294,3 +294,11 @@ describe('菜谱存储位（重新编号 PR 3）', () => {
     expect(c.cookbookIndex.slotOf[b.cookbooks[0]!.id]).toBe(n - 1);
   });
 });
+
+describe('旧编号（重新编号 PR 4）', () => {
+  it('legacy 是旧编号 → 新编号的查找表', () => {
+    const c = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bundle!);
+    expect(c.legacy.goods.get(1)).toBe(GOODS.mysteryTicket);
+    expect(c.legacy.goods.get(GOODS.mysteryTicket)).toBeUndefined();
+  });
+});

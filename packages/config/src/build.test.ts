@@ -187,12 +187,13 @@ describe('buildBundle（坏数据）', () => {
   it('食谱引用了不存在的食材', () => {
     const src = source();
     const cookbooks = structuredClone(src['master/cookbooks']) as Array<{
+      id: number;
       needFoods: Record<string, Array<{ foodsId: number }>>;
     }>;
     cookbooks[0]!.needFoods['1']![0]!.foodsId = 999999;
     const { bundle, errors } = buildBundle({ ...src, 'master/cookbooks': cookbooks });
     expect(bundle).toBeNull();
-    expect(errors).toContain(`cookbook ${cid('南煎丸子')} grade 1 references unknown food 999999`);
+    expect(errors).toContain(`cookbook ${cookbooks[0]!.id} grade 1 references unknown food 999999`);
   });
 
   it('礼包引用了不存在的道具', () => {
@@ -1189,5 +1190,50 @@ describe('豪华一番赏（240-2）', () => {
     tuning.kuji.activeTicketPoints = 123;
     const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
     expect(errors).toContain('tuning.kuji.activeTicketPoints 123 is not an activation reward');
+  });
+});
+
+describe('编号规则（重新编号 PR 4）', () => {
+  it('道具必须在所属小类的号段里；小类不能重叠、不能不存在', () => {
+    const src = source();
+    const goods = src['master/goods'] as Array<{ id: number; group: string }>;
+    goods[0]!.group = 'nope';
+    goods[1]!.id = 99999;
+    const groups = (src['game/goods_groups'] as { groups: Array<{ key: string; base: number; size: number }> })
+      .groups;
+    groups[1]!.base = groups[0]!.base + 50;
+    const { errors } = buildBundle(src);
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining(`goods ${goods[0]!.id} group nope unknown`),
+        expect.stringContaining('goods 99999 outside group'),
+        expect.stringContaining(`goods groups ${groups[0]!.key} and ${groups[1]!.key} overlap`),
+      ]),
+    );
+  });
+
+  it('食材、菜谱编号在各自号段里；旧编号不能重复', () => {
+    const src = source();
+    const foods = src['master/foods'] as Array<{ id: number; legacyId?: number }>;
+    foods[0]!.id = 606;
+    foods[2]!.legacyId = foods[1]!.legacyId;
+    const cbs = src['master/cookbooks'] as Array<{ id: number }>;
+    cbs[0]!.id = 18000;
+    const { errors } = buildBundle(src);
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        'foods 606 outside 1001~9999',
+        `foods: duplicate legacyId ${foods[1]!.legacyId}`,
+        'cookbooks 18000 outside 100001~199999',
+      ]),
+    );
+  });
+
+  it('配置包带旧 → 新对照（旧链接跳转、原版获取途径用）', () => {
+    const b = realBuild().bundle!;
+    const g = b.goods.find((x) => x.name === '神秘礼券')!;
+    expect(b.legacy.goods).toContainEqual([1, g.id]);
+    expect(b.legacy.foods.length).toBe(b.foods.length);
+    expect(b.legacy.cookbooks.length).toBe(b.cookbooks.length);
   });
 });
