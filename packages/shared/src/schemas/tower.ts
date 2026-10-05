@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import type { BarAwardDto } from './bar';
+import type { DuelJudgeId } from '../rules/duelJudges';
 
 export const towerChallengeBody = z.object({
   floor: z.number().int().min(1).max(10),
@@ -20,10 +21,21 @@ export interface DuelSideDto {
   sum: number;
 }
 
+/** 一位上场的评委（问题记录 396）：双方在他关注项目上的和 */
+export interface DuelJudgeDto {
+  id: DuelJudgeId;
+  me: number;
+  them: number;
+}
+
 export interface DuelResultDto {
   win: boolean;
   me: DuelSideDto;
   them: DuelSideDto;
+  /** 按上场顺序；有一方先拿到多数票就结束，后面的评委不上场 */
+  judges: DuelJudgeDto[];
+  /** [我的票, 对方的票] */
+  votes: [number, number];
   /** 我的声望变化 */
   renown: number;
   awards: BarAwardDto[];

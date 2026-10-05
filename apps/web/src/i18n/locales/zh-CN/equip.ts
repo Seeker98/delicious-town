@@ -6,7 +6,7 @@ export default {
   /** 属性和数值："厨艺12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '厨力',
-  powerNote: '（五项之和 + 幸运/2；厨塔、赛厨榜、好友切磋按它比拼）',
+  powerNote: '（五项之和 + 幸运/2；只作参考，赛厨的胜负看评委按色香味形养打分）',
   empty: '空',
   noPieces: '没有这个部位的厨具',
   needLevel: (lv: number) => `需要 ${lv} 级`,

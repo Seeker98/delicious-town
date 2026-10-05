@@ -8,7 +8,7 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Puissance',
   powerNote:
-    '(somme des cinq caractéristiques + Chance/2 ; compte pour la Tour des chefs, le classement des chefs et les duels entre amis)',
+    '(somme des cinq caractéristiques + Chance/2 ; indicatif seulement : les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition)',
   empty: 'Vide',
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,

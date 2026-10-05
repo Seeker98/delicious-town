@@ -30,7 +30,7 @@ test('厨塔：试打 → 挑战 1 层 → 赛厨榜占位 → 声望商店兑�
     await page.getByTestId('tp-1').click();
     await expect(page.getByTestId('duel-headline')).toContainText('试打：赢了');
     await page.getByTestId('tc-1').click();
-    await expect(page.getByTestId('duel-headline')).toContainText('你赢了，声望 +7');
+    await expect(page.getByTestId('duel-headline')).toHaveText(/^你赢了 \d:\d，声望 \+7$/);
 
     await page.getByTestId('tab-rank').click();
     await expect(page.getByTestId('my-rank')).toHaveText('未上榜');

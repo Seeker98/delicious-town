@@ -7,7 +7,8 @@ const equip: Messages['equip'] = {
   rows: { points: 'Points', gear: 'Cookware', total: 'Total' },
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Chef power',
-  powerNote: '(sum of the five stats + Luck/2; used in the Chef Tower, the chef ranking and friend duels)',
+  powerNote:
+    '(sum of the five stats + Luck/2; a guide only: cook-offs are decided by judges scoring Look, Aroma, Taste, Shape and Nutrition)',
   empty: 'Empty',
   noPieces: 'No cookware for this slot',
   needLevel: (lv) => `Needs level ${lv}`,

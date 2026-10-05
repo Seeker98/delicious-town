@@ -5,6 +5,7 @@ export * from './time';
 export * from './errors';
 export * from './envelope';
 export * from './rules/restaurantName';
+export * from './rules/duelJudges';
 export * from './schemas/auth';
 export * from './schemas/shard';
 export * from './schemas/restaurant';

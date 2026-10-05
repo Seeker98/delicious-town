@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    duel1006:
+      'Cook-offs (Chef Tower, Chef ranking and friend duels) are now decided by judges: each match, 5 of 10 judges are picked at random, each looking at a few of the five scores, and the first side to 3 votes wins. Higher stats are now much more reliable; Creativity and Luck add a random bonus. See “Cook-off rules” on the Chef Tower page',
     barPrize1006:
       'Wins at Rock-paper-scissors, Cup guess, Memory Mixing and Darts in the bar now mostly give ingredients instead of small amounts of coins and EXP. The harder the win (longer streak, later level, perfect darts), the higher the ingredient level and the likelier a rare one',
     align1006:

@@ -70,13 +70,15 @@ describe('挑战（设计文档 §3.2）', () => {
       rank: null,
       awards: [{ kind: 'coin', id: null, num: 600, lucky: false }],
     });
-    expect(r.data.me).toMatchObject({ power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4], sum: 85 });
+    expect(r.data.me).toMatchObject({ power: 70, scores: [20, 13, 15, 22, 11], sum: 81 });
     expect(r.data.them).toEqual({
       name: '见习模范餐厅',
       power: 13,
-      scores: [3.8, 3.9, 3.3, 4.1, 1.9],
-      sum: 17,
+      scores: [3.4, 2.6, 2.9, 3.7, 2.2],
+      sum: 14.8,
     });
+    expect(r.data.votes).toEqual([3, 0]);
+    expect(r.data.judges).toHaveLength(3);
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ strength: 95, renown: 7, coin: 600 });
     const v = await t.game.tower.overview(ctx);
     expect(v).toMatchObject({ bestFloor: 1, left: 4 });

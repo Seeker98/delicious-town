@@ -8,7 +8,7 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Poder de chef',
   powerNote:
-    '(suma de los cinco atributos + Suerte/2; cuenta en la Torre de chefs, la clasificación de chefs y los duelos entre amigos)',
+    '(suma de los cinco atributos + Suerte/2; solo orientativo: los duelos de cocina los deciden jueces que puntúan Color, Aroma, Sabor, Forma y Nutrición)',
   empty: 'Vacío',
   noPieces: 'No hay utensilios para esta ranura',
   needLevel: (lv) => `Requiere nivel ${lv}`,

@@ -507,6 +507,25 @@ export const tuningSchema = z.object({
       strong: z.tuple([int, int]),
       normal: z.tuple([int, int]),
     }),
+    /**
+     * 赛厨评分和评委（问题记录 396）：五项（色香味形养）各 = 属性 × 权重之和 + 特色菜每份价值 × mc + 波动，
+     * 波动 = 创意 × wave × max(0, 1 + 幸运率) × rand；每局抽 judges 位评委，过半票数赢
+     */
+    duel: z.object({
+      wave: num.min(0),
+      weights: z
+        .array(
+          z.object({
+            cook: num.min(0),
+            cutting: num.min(0),
+            fire: num.min(0),
+            season: num.min(0),
+            mc: num.min(0),
+          }),
+        )
+        .length(5),
+      judges: int.min(1).max(10),
+    }),
     sparFullAt: int.min(0),
     sparFullRenown: int,
     sparMaxAt: int.min(0),

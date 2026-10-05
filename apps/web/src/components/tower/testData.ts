@@ -4,6 +4,13 @@ export const duelResult = (patch: Partial<DuelResultDto> = {}): DuelResultDto =>
   win: true,
   me: { name: '我的店', power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4], sum: 85 },
   them: { name: '见习模范餐厅', power: 29, scores: [8.1, 8, 6.6, 8.8, 3.6], sum: 35.1 },
+  judges: [
+    { id: 'carmen', me: 39.8, them: 16.1 },
+    { id: 'oldPoor', me: 29.8, them: 32.4 },
+    { id: 'fanDao', me: 34.8, them: 14.6 },
+    { id: 'xiaoKai', me: 22.8, them: 10.2 },
+  ],
+  votes: [3, 1],
   renown: 7,
   awards: [{ kind: 'coin', id: null, num: 600, lucky: false }],
   test: false,

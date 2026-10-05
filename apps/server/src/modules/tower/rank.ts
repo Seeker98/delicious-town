@@ -107,7 +107,7 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
     .executeTakeFirstOrThrow();
   const me = await playerSide(o, 'attack');
   const them = await cachedSide(o.tx, o.config, themRest, 'defend');
-  const r = duel(me, them, o.rng);
+  const r = duel(me, them, t.duel, o.rng);
   const before = await getDaily(o.tx, o.rest.id, KEY.spar, day);
   let myRank = mine;
   if (r.win) {
@@ -132,6 +132,8 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
     win: r.win,
     me: sideDto(me, r.me),
     them: sideDto(them, r.them),
+    judges: r.judges,
+    votes: r.votes,
     renown,
     awards,
     test: false,
