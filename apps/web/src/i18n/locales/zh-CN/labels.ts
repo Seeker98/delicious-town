@@ -39,6 +39,7 @@ export default {
     spOverflow: '挑剔溢出',
     atOverflow: '上座溢出',
     starPotential: '星潜力',
+    newbie: '新手经验',
     cte: '银币转经验',
   },
   taste: ['', '酸', '甘', '苦', '辛', '咸', '鲜'],

@@ -69,6 +69,7 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
   const expParts: Record<string, number> = {
     effects: v(a, 'expRate'),
     starPotential: st.starPotential[s] ?? 0,
+    newbie: newbieExpRate(rest.level, st.newbieExp),
     plaque: v(a, 'plaqueSum'),
     honor: v(a, 'honorAddExp'),
     pot: v(a, 'potExpRate'),
@@ -113,4 +114,10 @@ export function computeRates(input: SettleInput, g: SettleGlobals, rng: Rng): { 
     luckRate: luckRate(luckSum),
   };
   return { rates, flags };
+}
+
+/** 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0 */
+export function newbieExpRate(level: number, t: { maxLevel: number; rate: number }): number {
+  if (t.rate <= 0 || level >= t.maxLevel) return 0;
+  return (t.rate * (t.maxLevel - Math.max(1, level))) / (t.maxLevel - 1);
 }

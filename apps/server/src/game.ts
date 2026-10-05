@@ -7,6 +7,7 @@ import { statDailyJob } from './modules/admin/stats';
 import { createCookbookService, type CookbookService } from './modules/cookbook/service';
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
 import { createSocialService, type SocialService } from './modules/friend/service';
+import { effectJobs } from './modules/effects/resync';
 import { equipJobs } from './modules/equip/jobs';
 import { createEquipService, type EquipService } from './modules/equip/service';
 import { friendWeeklyJob } from './modules/friend/weekly';
@@ -121,6 +122,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...npcJobs(deps));
   jobs.push(friendWeeklyJob(deps));
   jobs.push(...equipJobs(deps));
+  jobs.push(...effectJobs(deps));
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));

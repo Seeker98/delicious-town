@@ -66,6 +66,8 @@ export const tuningSchema = z.object({
     adiaoOverflowRate: num,
     negativeRenownAtRate: num,
     starPotential: z.array(num),
+    // 低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0
+    newbieExp: z.object({ maxLevel: int.min(2), rate: num.min(0) }),
     cteRate: num,
     planktonRateBase: num,
     planktonRatePerStar: num,

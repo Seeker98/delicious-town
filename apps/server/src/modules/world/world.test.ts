@@ -120,14 +120,14 @@ describe('接口', () => {
     const zh = await call(http.app, 'GET', '/api/v1/world/catalog');
     expect(zh.json.data.streets.find((s: { id: number }) => s.id === 24)).toMatchObject({
       name: '摩洛哥街',
-      desc: '探险时获得神秘食材概率+2%,幸运值+25,最终经验收益+8%',
+      desc: '最终银币收益+15%,最终经验收益+30%,探险时获得神秘食材概率+2%,幸运值+25',
     });
     const en = await call(http.app, 'GET', '/api/v1/world/catalog?lang=en');
     expect(en.json.data.streets.find((s: { id: number }) => s.id === 14)).toEqual({
       id: 14,
       name: 'Japan Street',
       cookName: 'Japanese cuisine',
-      desc: 'Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%',
+      desc: 'Final coins +15%, final EXP +10%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%',
     });
   });
 });

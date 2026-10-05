@@ -6,8 +6,13 @@ import { computeRates } from './rates';
 import type { SettleGlobals } from './types';
 
 const config = testConfig();
+/** 其它规则按原作数值断言：低等级经验加成关掉（问题记录 378，下面单独测） */
+const tuning = {
+  ...config.tuning,
+  settlement: { ...config.tuning.settlement, newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 } },
+};
 const rates = (patch: InputPatch = {}, g: Partial<SettleGlobals> = {}, rng = [0.5, 0.65]) =>
-  computeRates(buildInput(config, patch), buildGlobals(config, config.tuning, g), sequenceRng(rng));
+  computeRates(buildInput(config, patch), buildGlobals(config, tuning, g), sequenceRng(rng));
 
 describe('汇总率（规格书 01 §1.3）', () => {
   it('0 星新店：上座 30%、挑剔 10%、星潜力经验 60%；0 星不受天气影响', () => {
@@ -61,6 +66,27 @@ describe('汇总率（规格书 01 §1.3）', () => {
     expect(r.coinRate.total).toBe(0);
     expect(r.expRate.parts.cte).toBeCloseTo(0.3);
     expect(r.expRate.total).toBeCloseTo(0.9);
+  });
+
+  it('低等级经验加成（问题记录 378）：1 级 +rate，线性减到 maxLevel 为 0；rate 0 不加', () => {
+    const at = (level: number, rate: number) => {
+      const tuning = {
+        ...config.tuning,
+        settlement: { ...config.tuning.settlement, newbieExp: { maxLevel: 30, rate } },
+      };
+      return computeRates(
+        buildInput(config, { rest: { level, star: 4 } }),
+        buildGlobals(config, tuning, {}),
+        sequenceRng([0.5, 0.65]),
+      ).rates.expRate;
+    };
+    expect(at(1, 1).parts.newbie).toBeCloseTo(1);
+    expect(at(1, 1).total).toBeCloseTo(1);
+    expect(at(15.5, 1).parts.newbie).toBeCloseTo(0.5);
+    expect(at(29, 1).parts.newbie).toBeCloseTo(1 / 29);
+    expect(at(30, 1).parts.newbie).toBeUndefined();
+    expect(at(60, 1).parts.newbie).toBeUndefined();
+    expect(at(1, 0).parts.newbie).toBeUndefined();
   });
 
   it('星潜力：1 星 45%，4 星及以上 0', () => {
