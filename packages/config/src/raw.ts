@@ -390,7 +390,6 @@ export const newbieCodesFile = z
   })
   .strict();
 
-/** data/game/souvenirs.json：纪念品（148-2 设计 §6） */
 /** data/game/newbie_pack.json：新手大礼包的内容（问题记录 331）；食材随机券的定义在主表 */
 export const newbiePackFile = z
   .object({
@@ -477,11 +476,13 @@ export const stressTableEntry = z
   .strict();
 export type StressTableEntry = z.infer<typeof stressTableEntry>;
 
-/** data/game/equip_lore.json：厨具改名（带背景故事）、新增厨具、替换或新增套装；手写文件，多写的键报错（终审 I3） */
-export const equipLoreFile = z.object({
-  suits: z.array(rawSuit.strict()),
-  stressTables: z.array(stressTableEntry),
-});
+/** data/game/equip_lore.json：替换或新增的套装、强化数值表；手写文件，多写的键报错（终审 I3） */
+export const equipLoreFile = z
+  .object({
+    suits: z.array(rawSuit.strict()),
+    stressTables: z.array(stressTableEntry),
+  })
+  .strict();
 
 /** 主表（重新编号 PR 1）：道具、食材、菜谱的定义只在 data/master 下；src = 来历，新街道导入按它整块替换 */
 const goodsSrc = z.enum(['original', 'lore', 'streets', 'souvenir', 'kuji', 'newbie', 'fund', 'poster']);
@@ -505,7 +506,8 @@ export const masterGoods = z
     onSale: z.boolean(),
     awardFlag: int.nullable(),
     desc: z.string(),
-    value: z.unknown(),
+    /** 必须写这个键，没有就写 null */
+    value: z.custom<unknown>((v) => v !== undefined, { message: 'value is required (use null)' }),
     /** 后期海报奖杯（问题记录 146） */
     needStar: int.optional(),
     /** 一到五级食材随机券（问题记录 331）：value 是空的，用法直接写 */

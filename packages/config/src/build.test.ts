@@ -19,6 +19,14 @@ describe('Wiki 隐藏道具清单（问题记录 142）', () => {
     const ids = new Set(realBuild().bundle!.goods.map((g) => g.id));
     for (const id of WIKI_HIDDEN_GOODS) expect(ids.has(id), String(id)).toBe(true);
   });
+  it('下架的道具开放接口本来就不显示，不用再列进清单（#143 审查）', () => {
+    const retired = new Set(
+      realBuild()
+        .bundle!.goods.filter((g) => g.retired)
+        .map((g) => g.id),
+    );
+    expect([...WIKI_HIDDEN_GOODS].filter((id) => retired.has(id))).toEqual([]);
+  });
 });
 
 describe('buildBundle（真实数据）', () => {
@@ -643,14 +651,19 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
 
   it('旧厨具改名，说明里带背景故事', () => {
     const { goods } = byId();
-    expect(goods.get(gid('灵魂之沙利叶的无情之铲'))!.name).toBe('灵魂之沙利叶的无情之铲');
-    expect(goods.get(gid('灵魂之沙利叶的无情之刃'))!.name).toBe('灵魂之沙利叶的无情之刃');
-    expect(goods.get(gid('沉默之度玛的静谧之镬'))!.name).toBe('沉默之度玛的静谧之镬');
-    expect(goods.get(gid('沉默之度玛的静谧之冠'))!.name).toBe('沉默之度玛的静谧之冠');
-    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之铲'))!.name).toBe('裁决之巴贝雷特的悲鸣之铲');
-    expect(goods.get(gid('裁决之巴贝雷特的悲鸣之冠'))!.name).toBe('裁决之巴贝雷特的悲鸣之冠');
-    expect(goods.get(gid('神谕之阿卡玛的荣耀之铲'))!.name).toBe('神谕之阿卡玛的荣耀之铲');
-    expect(goods.get(gid('神谕之阿卡玛的荣耀之冠'))!.name).toBe('神谕之阿卡玛的荣耀之冠');
+    // 改名的是原有厨具（有重新编号前的旧编号），不是新加的
+    const renamed = new Set(realBuild().bundle!.legacy.goods.map(([, id]) => id));
+    for (const n of [
+      '灵魂之沙利叶的无情之铲',
+      '灵魂之沙利叶的无情之刃',
+      '沉默之度玛的静谧之镬',
+      '沉默之度玛的静谧之冠',
+      '裁决之巴贝雷特的悲鸣之铲',
+      '裁决之巴贝雷特的悲鸣之冠',
+      '神谕之阿卡玛的荣耀之铲',
+      '神谕之阿卡玛的荣耀之冠',
+    ])
+      expect(renamed.has(gid(n)), n).toBe(true);
     // 说明保留原来的属性提示，再加故事
     expect(goods.get(gid('灵魂之沙利叶的无情之铲'))!.desc).toMatch(/^厨艺\+21。.+/);
     expect(goods.get(gid('神谕之阿卡玛的荣耀之铲'))!.desc).toMatch(/^厨艺\+51。.+/);
@@ -687,7 +700,6 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
     expect(parts(['裁决之巴贝雷特的悲鸣之镬', '裁决之巴贝雷特的悲鸣之瓶'])).toEqual([3, 4]);
     expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.equip).toMatchObject({ suitId: 6, total: 31 });
     expect(goods.get(gid('裁决之巴贝雷特的悲鸣之镬'))!.awardFlag).toBe(6);
-    expect(goods.get(gid('意志之古尔图格的精华之铲'))!.name).toBe('意志之古尔图格的精华之铲');
     expect(parts(['铲', '刃', '镬', '瓶', '冠'].map((n) => '意志之古尔图格的精华之' + n))).toEqual([
       1, 2, 3, 4, 5,
     ]);
@@ -695,7 +707,6 @@ describe('厨具改名和新套装（清理 15 · 问题记录）', () => {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 82, total: 41, minLevel: 70 });
       expect(goods.get(id)!.awardFlag).toBe(7);
     }
-    expect(goods.get(gid('堕落之茵蔯的炙热之铲'))!.name).toBe('堕落之茵蔯的炙热之铲');
     expect(parts(['铲', '刃', '镬', '瓶'].map((n) => '堕落之茵蔯的炙热之' + n))).toEqual([1, 2, 3, 4]);
     for (const id of [gid('堕落之茵蔯的炙热之铲'), gid('堕落之茵蔯的炙热之瓶')]) {
       expect(goods.get(id)!.equip).toMatchObject({ suitId: 7, total: 25, minLevel: 50 });
@@ -1236,5 +1247,79 @@ describe('编号规则（重新编号 PR 4）', () => {
     expect(b.legacy.goods).toContainEqual([1, g.id]);
     expect(b.legacy.foods.length).toBe(b.foods.length);
     expect(b.legacy.cookbooks.length).toBe(b.cookbooks.length);
+  });
+});
+
+describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
+  type M = Record<string, unknown> & { id: number; src: string };
+  const withGoods = (edit: (goods: M[]) => void) => {
+    const src = source();
+    const goods = structuredClone(src['master/goods']) as M[];
+    edit(goods);
+    return buildBundle({ ...src, 'master/goods': goods }).errors;
+  };
+  const first = (goods: M[], s: string) => goods.find((g) => g.src === s)!;
+
+  it('海报奖杯：value 要有 time ≥ 1，只能写 coinValue / expValue，数值为正', () => {
+    let id = 0;
+    const errors = withGoods((goods) => {
+      const p = first(goods, 'poster');
+      id = p.id;
+      p.value = { time: 0, coinValue: -1, atRate: 0.1 };
+    });
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        `goods ${id} poster value time must be >= 1`,
+        `goods ${id} poster value coinValue must be > 0`,
+        `goods ${id} poster value key atRate not allowed`,
+      ]),
+    );
+  });
+
+  it('只有海报奖杯能写 needStar；纪念品、一番赏手办必须是纪念品类型；抽赏券必须是消耗品', () => {
+    let ids: number[] = [];
+    const errors = withGoods((goods) => {
+      const o = first(goods, 'original');
+      o.needStar = 3;
+      const s = first(goods, 'souvenir');
+      s.type = 1;
+      const k = goods.find((g) => g.id === GOODS.kujiTicket)!;
+      k.type = 1;
+      ids = [o.id, s.id, k.id];
+    });
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        `goods ${ids[0]} needStar only for posters`,
+        `goods ${ids[1]} src souvenir must be type souvenir`,
+        `goods ${ids[2]} kuji ticket must be a consumable`,
+      ]),
+    );
+  });
+
+  it('道具定义必须写 value 键（没有就写 null）', () => {
+    let id = 0;
+    const errors = withGoods((goods) => {
+      const g = first(goods, 'original');
+      id = g.id;
+      delete g.value;
+    });
+    expect(errors.join('\n')).toContain('master/goods');
+    expect(errors.join('\n')).toContain('value');
+    expect(id).toBeGreaterThan(0);
+  });
+
+  it('legacyId 不能落在同类的新号段里（不然旧链接会把合法的新编号跳走）', () => {
+    const src = source();
+    const goods = structuredClone(src['master/goods']) as M[];
+    goods[0]!.legacyId = goods[1]!.id;
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
+    expect(errors).toContain(`goods ${goods[0]!.id} legacyId ${goods[1]!.id} is in the new id range`);
+  });
+
+  it('equip_lore.json 多写的顶层键报错（不悄悄丢掉）', () => {
+    const src = source();
+    const lore = { ...(src['game/equip_lore'] as object), rename: [] };
+    const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
+    expect(errors.join('\n')).toMatch(/equip_lore.*rename|rename.*equip_lore/);
   });
 });

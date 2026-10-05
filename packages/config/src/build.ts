@@ -18,6 +18,7 @@ import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
+import { isNewId, type IdKind } from './renumber';
 import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
@@ -291,6 +292,24 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`goods ${m.id} needStar ${m.needStar}`);
     if (m.src === 'poster' && m.deviceType !== 1 && m.deviceType !== 2)
       errors.push(`goods ${m.id} poster deviceType ${m.deviceType}`);
+    // 主表里手写的几类定义，原来各自文件的格式检查（质量期第 ⑦ 批）
+    if (m.needStar !== undefined && m.src !== 'poster')
+      errors.push(`goods ${m.id} needStar only for posters`);
+    if (m.src === 'poster') {
+      const v = (m.value ?? {}) as Record<string, unknown>;
+      if (typeof v.time !== 'number' || v.time < 1)
+        errors.push(`goods ${m.id} poster value time must be >= 1`);
+      for (const [k, x] of Object.entries(v)) {
+        if (k === 'time') continue;
+        if (k !== 'coinValue' && k !== 'expValue')
+          errors.push(`goods ${m.id} poster value key ${k} not allowed`);
+        else if (typeof x !== 'number' || x <= 0) errors.push(`goods ${m.id} poster value ${k} must be > 0`);
+      }
+    }
+    if (m.src === 'souvenir' && m.type !== GOODS_TYPE.souvenir)
+      errors.push(`goods ${m.id} src souvenir must be type souvenir`);
+    if ((m.id === GOODS.kujiTicket || m.id === GOODS.kujiDeluxeTicket) && m.type !== GOODS_TYPE.consumable)
+      errors.push(`goods ${m.id} kuji ticket must be a consumable`);
   }
   // 一到五级食材随机券（问题记录 331）：原来由构建写死，主表可以手改了，按约定检查（终审 I1）：
   // 每级一张、编号 = foodVoucherBase + 等级、消耗品、用法是随机食材；用法只有随机券能写
@@ -1110,12 +1129,15 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const f of foodsRaw) if (f.id < 1001 || f.id > 9999) errors.push(`foods ${f.id} outside 1001~9999`);
   for (const c of cookbooksRaw)
     if (c.id < 100001 || c.id > 199999) errors.push(`cookbooks ${c.id} outside 100001~199999`);
-  const legacyPairs = (name: string, list: ReadonlyArray<{ id: number; legacyId?: number }>) => {
+  const legacyPairs = (name: IdKind, list: ReadonlyArray<{ id: number; legacyId?: number }>) => {
     const seen = new Set<number>();
     const out: Array<[number, number]> = [];
     for (const x of list) {
       if (x.legacyId === undefined) continue;
       if (seen.has(x.legacyId)) errors.push(`${name}: duplicate legacyId ${x.legacyId}`);
+      // 旧编号落在新号段里时，旧链接会把一个合法的新编号跳走
+      if (isNewId(name, x.legacyId))
+        errors.push(`${name} ${x.id} legacyId ${x.legacyId} is in the new id range`);
       seen.add(x.legacyId);
       out.push([x.legacyId, x.id]);
     }
