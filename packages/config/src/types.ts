@@ -30,6 +30,8 @@ export interface Food {
   /** 0 调料坚果 / 1 肉蛋奶 / 2 蔬果，决定仙贝颜色 */
   type: number | null;
   maxNum: number;
+  /** 已下架（问题记录 367）：定义保留给已持有的玩家，不再从任何途径产出；没下架的不写 */
+  retired?: true;
 }
 
 export type GiftItem =
@@ -66,6 +68,8 @@ export interface Goods {
   gem: GemDef | null;
   /** 购买、摆放要求的最低星级（问题记录 146 的后期海报奖杯）；不写是 0 */
   needStar?: number;
+  /** 已下架（问题记录 367）：定义保留给已持有的玩家，不再从任何途径产出；没下架的不写 */
+  retired?: true;
 }
 
 export interface IdNumFood {

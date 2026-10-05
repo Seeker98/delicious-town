@@ -67,11 +67,11 @@ export function awardGoodsPool(
     .sort((a, b) => a - b);
 }
 
-/** 食材池：权重 100（普通食材）且等级 ≤ min(等级, 5)；按 id 排序 */
+/** 食材池：权重 100（普通食材）且等级 ≤ min(等级, 5)，下架的不算（问题记录 367）；按 id 排序 */
 export function awardFoodsPool(foods: readonly Food[], level: number): number[] {
   const max = Math.min(level, 5);
   return foods
-    .filter((f) => f.odds === 100 && f.level <= max)
+    .filter((f) => f.odds === 100 && f.level <= max && !f.retired)
     .map((f) => f.id)
     .sort((a, b) => a - b);
 }

@@ -1,5 +1,14 @@
 import { ZodError } from 'zod';
-import { fundErrors, GOODS_TYPE, isFeatureEnabled, kujiErrors, resolveShardSettings } from '@dt/config';
+import {
+  fundErrors,
+  GOODS_TYPE,
+  isFeatureEnabled,
+  kujiErrors,
+  resolveShardSettings,
+  retiredErrors,
+  retiredOf,
+  tuningRefs,
+} from '@dt/config';
 import {
   ErrorCode,
   gameDay,
@@ -86,6 +95,12 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (fund.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: fund.map((message) => ({ path: 'tuning.fund', message })),
+      });
+    // 下架的道具、食材（问题记录 367）：和配置构建同一套检查，区服数值的奖励里不能再写它们
+    const retired = retiredErrors(tuningRefs(resolved.tuning), retiredOf(config.bundle));
+    if (retired.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: retired.map((message) => ({ path: 'tuning', message })),
       });
   }
 

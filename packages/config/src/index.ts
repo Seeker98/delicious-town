@@ -31,3 +31,14 @@ export { applyBoosts } from './boost';
 export { takesStoreSlot } from './souvenir';
 export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
 export { fundErrors } from './fund';
+export {
+  itemRefs,
+  retiredErrors,
+  retiredOf,
+  tuningRefs,
+  CODE_GOODS,
+  CODE_FOODS,
+  type ItemRef,
+  type ItemKind,
+  type RefRole,
+} from './itemRefs';

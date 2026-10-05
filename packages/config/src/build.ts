@@ -9,6 +9,7 @@ import { applyEquipLore } from './lore';
 import { parseAppraiseDef, parseTeacherCert } from './mysterious';
 import { parseMapDef, parseMissileDef } from './temple';
 import { deriveGoodsUse } from './goodsUse';
+import { itemRefs, retiredErrors } from './itemRefs';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
 import { foodWeights } from './foodSupply';
@@ -165,6 +166,7 @@ export function buildBundle(src: SourceData): BuildResult {
   const fundRaw = parse('game/fund', raw.fundFile);
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
   const devicesExtra = parse('game/devices_extra', raw.devicesExtraFile);
+  const retiredRaw = parse('game/retired', raw.retiredFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
 
   if (
@@ -221,6 +223,7 @@ export function buildBundle(src: SourceData): BuildResult {
     !fundRaw ||
     !foodSupply ||
     !devicesExtra ||
+    !retiredRaw ||
     !defaults
   ) {
     return { bundle: null, errors };
@@ -435,6 +438,22 @@ export function buildBundle(src: SourceData): BuildResult {
     goods.map((g) => g.id),
   );
   const goodsIds = new Set(goods.map((g) => g.id));
+
+  // ---------- 下架（问题记录 367） ----------
+  // 定义保留给已持有的玩家；道具退出商店和随机奖励池，食材在运行时退出各等级的食材池。还被引用的在最后报错
+  const retired = { goods: new Set<number>(), foods: new Set<number>() };
+  for (const kind of ['goods', 'foods'] as const) {
+    const known = kind === 'goods' ? goodsIds : foodIds;
+    for (const { id } of retiredRaw[kind]) {
+      if (!known.has(id)) errors.push(`retired references unknown ${kind} ${id}`);
+      if (retired[kind].has(id)) errors.push(`retired lists ${kind} ${id} twice`);
+      retired[kind].add(id);
+    }
+  }
+  for (const g of goods)
+    if (retired.goods.has(g.id)) Object.assign(g, { retired: true, awardFlag: null, onSale: false });
+  for (const f of foods) if (retired.foods.has(f.id)) f.retired = true;
+
   for (const id of awardFlags.keys())
     if (!goodsIds.has(id)) errors.push(`goods_awardflag references unknown goods ${id}`);
   for (const g of goods) {
@@ -1228,6 +1247,8 @@ export function buildBundle(src: SourceData): BuildResult {
     bless,
     extra: {},
   };
+  errors.push(...retiredErrors(itemRefs(body), retired));
+  if (errors.length > 0) return { bundle: null, errors };
   const version = createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 12);
   return { bundle: { version, ...body }, errors: [] };
 }

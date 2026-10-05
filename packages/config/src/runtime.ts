@@ -179,7 +179,9 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     }
   }
 
-  const foodsByLevel = groupBy(bundle.foods, (f) => f.level);
+  // 下架的食材（问题记录 367）不进任何食材池：菜场、合成、神殿、礼包、蟹老板都从这里抽；定义仍在 foods 里
+  const liveFoods = bundle.foods.filter((f) => !f.retired);
+  const foodsByLevel = groupBy(liveFoods, (f) => f.level);
   const foodPools = new Map<number, WeightedPool<Food>>();
   const rareFoodPools = new Map<number, WeightedPool<Food>>();
   for (const [level, list] of foodsByLevel) {
@@ -203,7 +205,7 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
       for (const f of list) needCount.set(f.foodsId, (needCount.get(f.foodsId) ?? 0) + 1);
     }
   }
-  const hot = bundle.foods.filter(
+  const hot = liveFoods.filter(
     (f) =>
       f.level >= 2 &&
       f.level <= 5 &&
