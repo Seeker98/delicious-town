@@ -483,13 +483,27 @@
         }
         $('save').disabled = true;
         $('msg').textContent = '检查中…';
-        const res = await (
-          await fetch('/api/retired', {
+        let res;
+        try {
+          const r = await fetch('/api/retired', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(body),
-          })
-        ).json();
+          });
+          const text = await r.text();
+          try {
+            res = JSON.parse(text);
+          } catch {
+            // 服务端出错时回的是纯文本（例如 500）
+            throw new Error(`HTTP ${r.status}：${text.slice(0, 200)}`);
+          }
+          if (!Array.isArray(res.errors)) throw new Error(`HTTP ${r.status}：返回格式不对`);
+        } catch (e) {
+          // 请求失败也要恢复按钮、说清原因，不能一直停在“检查中…”
+          $('msg').textContent = `保存失败：${e.message}`;
+          $('save').disabled = !dirty();
+          return;
+        }
         if (res.errors.length) {
           $('msg').textContent = '';
           showErrors(res.errors);

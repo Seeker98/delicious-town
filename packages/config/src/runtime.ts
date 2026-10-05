@@ -60,7 +60,7 @@ export interface GameConfig {
   readonly cookbooks: ReadonlyMap<number, Cookbook>;
   readonly streets: ReadonlyMap<number, Street>;
   readonly weather: ReadonlyMap<number, Weather>;
-  /** 最大食谱 id，用于确定每店已学食谱数组的长度 */
+  /** 按等级分组的食材（不含已下架的） */
   readonly foodsByLevel: ReadonlyMap<number, readonly Food[]>;
   readonly foodPools: ReadonlyMap<number, WeightedPool<Food>>;
   readonly rareFoodPools: ReadonlyMap<number, WeightedPool<Food>>;

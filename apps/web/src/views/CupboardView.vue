@@ -254,7 +254,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
             run(
               () =>
                 endpoints.exchangeMaster(
-                  pickedItem!.foodsId as typeof SHARED_FOODS.masterLevel1,
+                  pickedItem!.foodsId as typeof SHARED_FOODS.masterLevel1 | typeof SHARED_FOODS.masterLevel2,
                   exchangeN / 2,
                 ),
               t.cupboard.exchangeFailed,

@@ -86,7 +86,7 @@ const overrideOpts = (): Parameters<typeof rewriteIds>[2] => ({
 });
 /**
  * JSON 列。key 是唯一键的 SQL 表达式（分批按它排序、写回按它对上），keyType 是它的类型
- * （bigint 列读出来是字符串，写回时显式转换；bar_round 是联合主键，拼成文本）
+ * （写回时按它的类型显式转换；bar_round 是联合主键，拼成文本）
  */
 interface JsonColumn {
   table: string;
@@ -140,7 +140,8 @@ const JSON_COLUMNS: readonly JsonColumn[] = [
 ];
 
 export async function renumber(
-  db: Kysely<DB> | Transaction<DB>,
+  /** 必须在事务里：临时对照表是 on commit drop，只在同一事务里有效 */
+  db: Transaction<DB>,
   log: (line: string) => void = console.log,
 ): Promise<RenumberReport> {
   const t0 = Date.now();
@@ -313,7 +314,9 @@ export async function renumber(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function up(db: Kysely<any>): Promise<void> {
-  await renumber(db as Kysely<DB>);
+  // Postgres 支持事务里的 DDL，Kysely 的迁移整体包在一个事务里，这里拿到的就是事务
+  if (!db.isTransaction) throw new Error('0049 renumber must run inside a transaction');
+  await renumber(db as unknown as Transaction<DB>);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

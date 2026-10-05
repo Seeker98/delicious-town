@@ -24,7 +24,7 @@ export async function requireOpen(o: Op): Promise<TakeawayStateRow> {
   return s;
 }
 
-/** 已学食谱的品级表：下标 = 食谱 id */
+/** 已学食谱的品级表：下标 = 存储位（cookbookIndex.slotOf） */
 export async function levelsOf(db: Kysely<DB>, restId: number): Promise<Uint8Array> {
   const r = await db
     .selectFrom('restaurant_cookbooks')
