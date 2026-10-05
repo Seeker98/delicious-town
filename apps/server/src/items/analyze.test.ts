@@ -23,6 +23,12 @@ describe('道具整理的分析（问题记录 367）', () => {
     expect(r.noSource).toBe(false);
   });
 
+  it('酒吧小游戏按档次出 1~5 级普通和稀有食材，不出 6 级（问题记录 352）', () => {
+    expect(wheres(row('foods', foodOf(3, true).id), 'gives')).toContain('酒吧小游戏');
+    expect(wheres(row('foods', foodOf(5, false).id), 'gives')).toContain('酒吧小游戏');
+    expect(wheres(row('foods', foodOf(6).id), 'gives')).not.toContain('酒吧小游戏');
+  });
+
   it('合成能合到 5 级、分解能分到 4 级（按游戏里的规则函数算）', () => {
     expect(wheres(row('foods', foodOf(5).id), 'gives')).toContain('合成');
     expect(wheres(row('foods', foodOf(4).id), 'gives')).toContain('分解');

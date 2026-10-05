@@ -1,5 +1,5 @@
 import { GOODS_TYPE, itemRefs, type GameConfig, type ItemKind } from '@dt/config';
-import { awardFoodsPool } from '../modules/award/random';
+import { awardFoodsPool, prizeFoodPools } from '../modules/award/random';
 import { handleTargetLevel } from '../modules/cupboard/rules';
 import { blessFoodIds, levelFoodIds, mysteryFoodIds } from '../modules/town/rules';
 
@@ -143,6 +143,13 @@ export function analyzeItems(
   byLevel(weighted(t.market.specialLevelWeights), '菜场特价');
   byLevel([t.market.premiumLevel], '菜场高级货');
   for (const id of awardFoodsPool(b.foods, Number.MAX_SAFE_INTEGER)) add('foods', id, 'gives', '随机奖励');
+  // 酒吧小游戏（问题记录 352）：各档次等级范围里的普通、稀有食材
+  const barFoods = new Set<number>();
+  for (const tier of t.bar.prize.foodTiers) {
+    const { normal, rare } = prizeFoodPools(b.foods, tier.levels);
+    for (const id of [...normal, ...rare.map((x) => x.id)]) barFoods.add(id);
+  }
+  for (const id of barFoods) add('foods', id, 'gives', '酒吧小游戏');
   const levels = [...new Set(b.foods.map((f) => f.level))];
   for (const lv of levels) {
     if (handleTargetLevel('compose', lv - 1) === lv) byLevel([lv], '合成');

@@ -144,7 +144,7 @@ const bar: Messages['bar'] = {
     draw: (n) => `égalité. ${n} ${plFr(n, 'bon mystère remboursé', 'bons mystère remboursés')}`,
     lose: 'vous perdez',
     got: (text) => `Vous obtenez ${text}`,
-    rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner. La récompense est surtout un ingrédient de niveau 4–5 ; trois mouches donnent un ingrédient de niveau 5 avec plus de chances d’être rare.',
+    rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner. La récompense est surtout un ingrédient de niveau 4–5 ; avec trois mouches, l’ingrédient obtenu est de niveau 5 avec plus de chances d’être rare.',
     board: 'Cible : 50 au centre, puis 25, 10 et 5 vers l’extérieur, 0 sur les bords',
     invalid: 'Le moment du lancer ne correspond pas : fléchette ratée, 0 point',
     throwLine: (i, score) => `Fléchette ${i} : ${score}`,

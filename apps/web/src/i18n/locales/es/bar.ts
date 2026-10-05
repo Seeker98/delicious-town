@@ -144,7 +144,7 @@ const bar: Messages['bar'] = {
       `empate. ${plEs(n, 'Se devuelve', 'Se devuelven')} ${n} ${plEs(n, 'vale misterioso', 'vales misteriosos')}`,
     lose: 'pierdes',
     got: (text) => `Conseguiste ${text}`,
-    rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar. El premio suele ser un ingrediente de nivel 4–5; tres dianas dan uno de nivel 5 con más probabilidad de ser raro.',
+    rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar. El premio suele ser un ingrediente de nivel 4–5; con tres dianas, el ingrediente que salga es de nivel 5 y con más probabilidad de ser raro.',
     board: 'Diana: 50 en el centro, luego 25, 10 y 5 hacia fuera, 0 en los bordes',
     invalid: 'El momento del lanzamiento no cuadra: cuenta como fallo, 0 puntos',
     throwLine: (i, score) => `Dardo ${i}: ${score}`,

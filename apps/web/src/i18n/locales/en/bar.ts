@@ -144,7 +144,7 @@ const bar: Messages['bar'] = {
     draw: (n) => `a draw. ${n} Mystery ${plEn(n, 'Voucher', 'Vouchers')} refunded`,
     lose: 'you lose',
     got: (text) => `Got ${text}`,
-    rule: 'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5). Beat the bar owner\'s three-dart total to win. The reward is mostly a level 4–5 ingredient; three bullseyes give a level 5 one that is more likely to be rare.',
+    rule: 'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5). Beat the bar owner\'s three-dart total to win. The reward is mostly a level 4–5 ingredient; with three bullseyes, any ingredient you get is level 5 and more likely to be rare.',
     board: 'Target strip: 50 in the middle, then 25, 10 and 5 outwards, 0 at the edges',
     invalid: "This throw's timing didn't match, so it counts as a miss: 0 points",
     throwLine: (i, score) => `Dart ${i}: ${score}`,
