@@ -158,4 +158,46 @@ describe('CookbooksView', () => {
     expect(w.text()).toContain("Grape and Job's Tears Soup");
     expect(w.text()).toContain('另一道菜');
   });
+
+  it('街道、筛选、页码写进地址，从食谱详情返回时恢复（问题记录 372）', async () => {
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({ ...list, total: 100 });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/cookbooks', component: CookbooksView },
+        { path: '/cookbooks/:id', component: CookbooksView },
+      ],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.find('[data-testid="filter-learnable"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="next-page"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ street: '0', filter: 'learnable', page: '2' });
+    w.unmount();
+
+    // 详情页返回：地址带着原来的查询参数，重新挂载后按它读，不回到本店街道的第一页
+    vi.mocked(endpoints.cookbookList).mockClear();
+    vi.mocked(endpoints.overview).mockClear();
+    await router.push('/cookbooks?street=3&filter=learnable&page=2');
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.overview).not.toHaveBeenCalled();
+    expect(endpoints.cookbookList).toHaveBeenCalledTimes(1);
+    expect(endpoints.cookbookList).toHaveBeenCalledWith({ street: 3, page: 2, filter: 'learnable' });
+  });
+
+  it('地址里的参数不合法时按默认：本店街道、全部、第一页', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=x&filter=nope&page=-3');
+    vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 5 } as never);
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 5, page: 1, filter: 'all' });
+  });
 });

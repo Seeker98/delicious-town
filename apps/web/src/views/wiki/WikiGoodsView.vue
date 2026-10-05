@@ -7,7 +7,7 @@ import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../../utils/labels';
-import { isNotFound, useWikiData } from './wiki';
+import { isNotFound, listBack, useWikiData } from './wiki';
 
 /** 道具详情（厨具也用这一页，问题记录 142） */
 const route = useRoute();
@@ -115,7 +115,11 @@ const shopPrice = computed(() => {
 
 <template>
   <div>
-    <RouterLink :to="g?.equip ? '/wiki/equips' : '/wiki/goods'" class="small">{{ t.wiki.back }}</RouterLink>
+    <RouterLink
+      :to="listBack(g?.equip ? '/wiki/equips' : '/wiki/goods', router.options.history.state.back)"
+      class="small"
+      >{{ t.wiki.back }}</RouterLink
+    >
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>

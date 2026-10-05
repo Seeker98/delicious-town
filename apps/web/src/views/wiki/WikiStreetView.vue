@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, shallowRef, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenCookbookBrief, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
-import { useWikiData } from './wiki';
+import { listBack, useWikiData } from './wiki';
 
 /** 街道详情（问题记录 142）：菜系、加成、街道勋章、这条街的菜谱（一次 50 道） */
 const PAGE = 50;
 const route = useRoute();
+const router = useRouter();
 const t = useT();
 const data = useWikiData();
 const streets = shallowRef<OpenStreetDto[]>([]);
@@ -45,7 +46,9 @@ const list = computed(() => cookbooks.value.filter((c) => c.streetId === id.valu
 
 <template>
   <div>
-    <RouterLink to="/wiki/streets" class="small">{{ t.wiki.back }}</RouterLink>
+    <RouterLink :to="listBack('/wiki/streets', router.options.history.state.back)" class="small">{{
+      t.wiki.back
+    }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">{{ t.wiki.loadFailed }}</div>
     <div v-else-if="loaded && !s" class="dt-empty" data-testid="wiki-error">{{ t.wiki.notFound }}</div>
     <template v-else-if="s">

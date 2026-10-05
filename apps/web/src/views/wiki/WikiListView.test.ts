@@ -111,6 +111,60 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(w.find('[data-testid="wiki-more"]').exists()).toBe(false);
   });
 
+  it('搜索、筛选、街道、显示条数写进地址，从详情返回时恢复（问题记录 372）', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 220 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i + 1}`,
+        streetId: i < 200 ? 0 : 14,
+        level: 1 + (i % 20),
+        coin: 100,
+      })),
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/wiki/:kind', component: WikiListView },
+        { path: '/:p(.*)', component: { template: '<div />' } },
+      ],
+    });
+    await router.push('/wiki/cookbooks');
+    const w = mount(WikiListView, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.get('[data-testid="wiki-street"]').setValue('0');
+    await w.get('[data-testid="wiki-filter-0"]').trigger('click');
+    await w.get('[data-testid="wiki-q"]').setValue('菜');
+    await w.get('[data-testid="wiki-more"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ street: '0', f: '0', q: '菜', n: '100' });
+    // 换筛选后显示条数回到 50，地址里不再写
+    await w.get('[data-testid="wiki-filter-all"]').trigger('click');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ street: '0', q: '菜' });
+    w.unmount();
+
+    const back = await mountAt('/wiki/cookbooks?street=0&f=0&q=%E8%8F%9C&n=100');
+    expect(rows(back)).toHaveLength(100);
+    expect(rows(back)[0]).toBe('1');
+    expect(back.get('[data-testid="wiki-filter-0"]').attributes('aria-pressed')).toBe('true');
+    expect((back.get('[data-testid="wiki-street"]').element as HTMLSelectElement).value).toBe('0');
+    expect((back.get('[data-testid="wiki-q"]').element as HTMLInputElement).value).toBe('菜');
+  });
+
+  it('食材：地址里的等级和只看稀有也能恢复', async () => {
+    vi.mocked(endpoints.openFoods).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 101, name: '大米', level: 1, coin: 10, rare: false, type: 2 },
+        { id: 201, name: '松露', level: 2, coin: 99, rare: true, type: 2 },
+        { id: 202, name: '土豆', level: 2, coin: 10, rare: false, type: 2 },
+      ],
+    });
+    const w = await mountAt('/wiki/foods?f=2&rare=1');
+    expect(rows(w)).toEqual(['201']);
+  });
+
   it('厨具：按部位筛选，进道具详情', async () => {
     vi.mocked(endpoints.openEquips).mockResolvedValue({
       ...meta,

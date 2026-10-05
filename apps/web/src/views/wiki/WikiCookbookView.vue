@@ -6,7 +6,7 @@ import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 import { GRADE_NAMES, TASTE_NAMES } from '../../utils/labels';
-import { isNotFound, useWikiData } from './wiki';
+import { isNotFound, listBack, useWikiData } from './wiki';
 
 /** 菜谱详情（问题记录 142）：1~10 品级的食材，食材都是链接 */
 const route = useRoute();
@@ -54,7 +54,9 @@ const tastes = computed(() =>
 
 <template>
   <div>
-    <RouterLink to="/wiki/cookbooks" class="small">{{ t.wiki.back }}</RouterLink>
+    <RouterLink :to="listBack('/wiki/cookbooks', router.options.history.state.back)" class="small">{{
+      t.wiki.back
+    }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">
       {{ error === 'missing' ? t.wiki.notFound : t.wiki.loadFailed }}
     </div>

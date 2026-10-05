@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { CookbookListDto, CookbookRowDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -9,18 +9,24 @@ import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { queryInt } from '../utils/query';
 import { GRADE_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
 const toast = useToastStore();
 const t = useT();
-const street = ref(0);
-const filter = ref<'all' | 'learnable' | 'upgradable' | 'unlearned' | 'learned'>('all');
-const page = ref(1);
+const route = useRoute();
+const router = useRouter();
+const FILTERS = ['all', 'learnable', 'upgradable', 'unlearned', 'learned'] as const;
+type Filter = (typeof FILTERS)[number];
+// 街道、筛选、页码记在地址里（问题记录 372）：从食谱详情返回时恢复，不回到本店街道的第一页
+const fromQuery = queryInt(route.query.street, 0);
+const street = ref(fromQuery ?? 0);
+const filter = ref<Filter>(FILTERS.find((f) => f === route.query.filter) ?? 'all');
+const page = ref(queryInt(route.query.page, 1) ?? 1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
-const FILTERS = ['all', 'learnable', 'upgradable', 'unlearned', 'learned'] as const;
 
 async function load() {
   try {
@@ -61,9 +67,25 @@ watch([street, filter], () => {
   void load();
 });
 watch(page, () => void load());
+watch([street, filter, page], ([s, f, p]) => {
+  void router.replace({
+    query: {
+      ...route.query,
+      street: String(s),
+      filter: f === 'all' ? undefined : f,
+      page: p > 1 ? String(p) : undefined,
+    },
+  });
+});
 onMounted(async () => {
-  const rest = await restaurant.refresh().catch(() => null);
-  if (rest) street.value = rest.streetId;
+  if (fromQuery === null) {
+    const rest = await restaurant.refresh().catch(() => null);
+    // 换街道时由上面的 watch 读列表
+    if (rest && rest.streetId !== street.value) {
+      street.value = rest.streetId;
+      return;
+    }
+  }
   await load();
 });
 </script>
@@ -124,12 +146,18 @@ onMounted(async () => {
     </button>
   </div>
   <div v-if="list && list.total > list.pageSize" class="d-flex justify-content-between mt-2">
-    <button class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="page -= 1">
+    <button
+      class="btn btn-sm btn-outline-secondary"
+      data-testid="prev-page"
+      :disabled="page <= 1"
+      @click="page -= 1"
+    >
       {{ t.common.prevPage }}
     </button>
     <span class="small">{{ page }} / {{ Math.ceil(list.total / list.pageSize) }}</span>
     <button
       class="btn btn-sm btn-outline-secondary"
+      data-testid="next-page"
       :disabled="page * list.pageSize >= list.total"
       @click="page += 1"
     >
