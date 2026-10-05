@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    mcTabs1006:
+      'The signature dish page now has tabs by level and by road: pick a level on top and a road below, and both your learned dishes and fragments are filtered, with a count on each tab. It remembers your choice next time',
     gearIncome1006:
       'Worn cookware (including gems) now adds final coins, final EXP and a better chance of gold signature dishes; higher stats give more (Creativity counts most, Luck doesn’t count), and the cookware page shows how much. Signature dishes now sell to customers for more depending on their level (level 3 ×2.5, level 4 ×3.2), since level 2–5 dishes used to earn back less than their ingredients cost. Cook-offs still use the original value per portion',
     elders1006:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    mcTabs1006:
+      'La page des plats signature a maintenant des onglets par niveau et par voie : choisissez un niveau en haut et une voie en bas, les plats appris et les fragments sont filtrés ensemble, avec le nombre sur chaque onglet. Votre choix est gardé pour la prochaine fois',
     gearIncome1006:
       'L’équipement porté (gemmes comprises) ajoute maintenant des pièces finales, de l’EXP finale et plus de chances d’obtenir des plats signature en or ; plus les caractéristiques sont élevées, plus le bonus est grand (la Créativité compte le plus, la Chance ne compte pas), et la page de l’équipement indique combien. Les plats signature se vendent plus cher aux clients selon leur niveau (niveau 3 ×2,5, niveau 4 ×3,2), car ceux de niveau 2 à 5 ne remboursaient pas le prix de leurs ingrédients. Les duels culinaires utilisent toujours la valeur d’origine par portion',
     elders1006:

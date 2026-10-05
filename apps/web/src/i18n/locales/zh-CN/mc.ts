@@ -36,6 +36,13 @@ export default {
   foods: '食材：',
   cookie: (n: number) => `用幸运饼干（每批 1 个，持有 ${n}）`,
   batches: (n: number) => `${n} 批`,
+  /** 按级、按道分页（问题记录 414） */
+  filter: {
+    all: '全部',
+    level: (n: number) => `${n} 级`,
+    count: (label: string, n: number) => `${label}（${n}）`,
+    empty: '这一页没有特色菜',
+  },
   remnants: '残卷',
   noRemnants: '没有残卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,

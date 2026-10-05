@@ -37,6 +37,13 @@ export default {
   foods: '食材：',
   cookie: (n: number) => `用幸運餅乾（每批 1 個，持有 ${n}）`,
   batches: (n: number) => `${n} 批`,
+  /** 按級、按道分頁（問題記錄 414） */
+  filter: {
+    all: '全部',
+    level: (n: number) => `${n} 級`,
+    count: (label: string, n: number) => `${label}（${n}）`,
+    empty: '這一頁沒有特色菜',
+  },
   remnants: '殘卷',
   noRemnants: '沒有殘卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,

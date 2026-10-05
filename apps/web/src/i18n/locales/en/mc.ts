@@ -37,6 +37,12 @@ const mc: Messages['mc'] = {
   foods: 'Ingredients: ',
   cookie: (n) => `Use Lucky Cookies (1 per batch, own ${n})`,
   batches: (n) => `${n} ${n === 1 ? 'batch' : 'batches'}`,
+  filter: {
+    all: 'All',
+    level: (n) => `Level ${n}`,
+    count: (label, n) => `${label} (${n})`,
+    empty: 'No signature dishes on this page',
+  },
   remnants: 'Fragments',
   noRemnants: 'No fragments',
   groupTitle: (title, n) => `${title} (${n})`,

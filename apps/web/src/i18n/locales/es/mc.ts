@@ -37,6 +37,12 @@ const mc: Messages['mc'] = {
   foods: 'Ingredientes: ',
   cookie: (n) => `Usar galletas de la suerte (1 por tanda, tienes ${n})`,
   batches: (n) => `${n} ${plEs(n, 'tanda', 'tandas')}`,
+  filter: {
+    all: 'Todos',
+    level: (n) => `Nivel ${n}`,
+    count: (label, n) => `${label} (${n})`,
+    empty: 'No hay platos estrella en esta página',
+  },
   remnants: 'Fragmentos',
   noRemnants: 'No tienes fragmentos',
   groupTitle: (title, n) => `${title} (${n})`,

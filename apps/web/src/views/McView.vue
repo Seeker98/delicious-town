@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type { McOverviewDto, McPreviewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -45,10 +45,73 @@ const LEARN_REMNANTS = 3;
 /** 等级从高到低，同级按道 */
 const byLevel = (a: number, b: number) =>
   (dish(b)?.level ?? 0) - (dish(a)?.level ?? 0) || (dish(a)?.road ?? 0) - (dish(b)?.road ?? 0) || a - b;
-const sortedLearned = computed(() => [...(o.value?.learned ?? [])].sort((a, b) => byLevel(a.mcId, b.mcId)));
+/** 按级、按道分页（问题记录 414）：已学和残卷一起筛；选择记在本机，存储不可用时用默认 */
+type Tab = 'all' | number;
+const FILTER_KEY = 'dt_mc_filter';
+const LEVELS = [1, 2, 3, 4, 5, 6] as const;
+const ROADS = [1, 2, 3, 4, 5, 6, 7] as const;
+function savedFilter(): { level: Tab; road: Tab } {
+  try {
+    const v = JSON.parse(localStorage.getItem(FILTER_KEY) ?? 'null') as {
+      level?: unknown;
+      road?: unknown;
+    } | null;
+    const ok = (x: unknown, list: readonly number[]): Tab =>
+      typeof x === 'number' && list.includes(x) ? x : 'all';
+    return { level: ok(v?.level, LEVELS), road: ok(v?.road, ROADS) };
+  } catch {
+    return { level: 'all', road: 'all' };
+  }
+}
+const saved = savedFilter();
+const level = ref<Tab>(saved.level);
+const road = ref<Tab>(saved.road);
+watch([level, road], ([lv, rd]) => {
+  try {
+    localStorage.setItem(FILTER_KEY, JSON.stringify({ level: lv, road: rd }));
+  } catch {
+    // 存储不可用时忽略
+  }
+});
+const inLevel = (id: number, lv: Tab) => lv === 'all' || dish(id)?.level === lv;
+const inRoad = (id: number, rd: Tab) => rd === 'all' || dish(id)?.road === rd;
+const shown = (id: number) => inLevel(id, level.value) && inRoad(id, road.value);
+/** 已学和有残卷的特色菜（各算一次），用来数每一页有几道 */
+const allIds = computed(
+  () =>
+    new Set([
+      ...(o.value?.learned ?? []).map((m) => m.mcId),
+      ...(o.value?.remnants ?? []).map((r) => r.mcId),
+    ]),
+);
+const levelTabs = computed(() =>
+  (['all', ...LEVELS] as Tab[]).map((x) => ({
+    key: x,
+    label: t.value.mc.filter.count(
+      x === 'all' ? t.value.mc.filter.all : t.value.mc.filter.level(x),
+      [...allIds.value].filter((id) => inLevel(id, x) && inRoad(id, road.value)).length,
+    ),
+  })),
+);
+const roadTabs = computed(() =>
+  (['all', ...ROADS] as Tab[]).map((x) => ({
+    key: x,
+    label: t.value.mc.filter.count(
+      x === 'all' ? t.value.mc.filter.all : (ROAD_NAMES[x] ?? ''),
+      [...allIds.value].filter((id) => inRoad(id, x) && inLevel(id, level.value)).length,
+    ),
+  })),
+);
+const sortedLearned = computed(() =>
+  [...(o.value?.learned ?? [])].filter((m) => shown(m.mcId)).sort((a, b) => byLevel(a.mcId, b.mcId)),
+);
+/** 筛完已学和残卷都空了（但不是本来就没有） */
+const filterEmpty = computed(() => allIds.value.size > 0 && ![...allIds.value].some((id) => shown(id)));
 /** 残卷分三组（问题记录：能学和不能学的混在一起） */
 const groups = computed(() => {
-  const rs = [...(o.value?.remnants ?? [])].sort((a, b) => byLevel(a.mcId, b.mcId));
+  const rs = [...(o.value?.remnants ?? [])]
+    .filter((r) => shown(r.mcId))
+    .sort((a, b) => byLevel(a.mcId, b.mcId));
   const known = learnedIds.value;
   return [
     {
@@ -144,6 +207,35 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       <button class="btn btn-sm btn-outline-danger" data-testid="dump" :disabled="busy" @click="dump">
         {{ t.mc.dump }}
       </button>
+    </div>
+
+    <!-- 按级、按道分页（问题记录 414） -->
+    <div class="mb-2" data-testid="mc-filters">
+      <div class="d-flex flex-wrap gap-1 mb-1">
+        <button
+          v-for="x in levelTabs"
+          :key="String(x.key)"
+          :class="['btn btn-sm', level === x.key ? 'btn-primary' : 'btn-outline-primary']"
+          :data-testid="`mc-level-${x.key}`"
+          @click="level = x.key"
+        >
+          {{ x.label }}
+        </button>
+      </div>
+      <div class="d-flex flex-wrap gap-1">
+        <button
+          v-for="x in roadTabs"
+          :key="String(x.key)"
+          :class="['btn btn-sm', road === x.key ? 'btn-secondary' : 'btn-outline-secondary']"
+          :data-testid="`mc-road-${x.key}`"
+          @click="road = x.key"
+        >
+          {{ x.label }}
+        </button>
+      </div>
+    </div>
+    <div v-if="filterEmpty" class="small text-muted mb-2" data-testid="mc-filter-empty">
+      {{ t.mc.filter.empty }}
     </div>
 
     <h6 class="dt-section">{{ t.mc.learned(o.learned.length) }}</h6>

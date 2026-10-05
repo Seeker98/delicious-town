@@ -37,6 +37,12 @@ const mc: Messages['mc'] = {
   foods: 'Ingrédients : ',
   cookie: (n) => `Utiliser des biscuits chanceux (1 par fournée, possédés ${n})`,
   batches: (n) => `${n} ${plFr(n, 'fournée', 'fournées')}`,
+  filter: {
+    all: 'Tous',
+    level: (n) => `Niveau ${n}`,
+    count: (label, n) => `${label} (${n})`,
+    empty: 'Aucun plat signature sur cette page',
+  },
   remnants: 'Fragments',
   noRemnants: 'Aucun fragment',
   groupTitle: (title, n) => `${title} (${n})`,
