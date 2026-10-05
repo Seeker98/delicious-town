@@ -62,7 +62,7 @@ export async function memoryAnswer(o: Op, answer: number[]): Promise<MemoryAnswe
     restLog(o, 'bar.memory', { level: s.level, correct: false, reason });
     return { correct: false, reason, level: s.level, award: null, canNext: false, finished: true };
   }
-  const award = await randomAward(o, { level: m.awardLevels[s.level - 1]!, noTicket: true });
+  const award = await randomAward(o, { level: m.awardLevels[s.level - 1]!, noTicket: true, bar: true });
   const last = s.level >= m.lengths.length;
   if (last) {
     await endRound(o, 'memory');

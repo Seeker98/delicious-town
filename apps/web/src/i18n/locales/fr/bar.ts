@@ -38,7 +38,8 @@ const bar: Messages['bar'] = {
       `${lucky}Gagné ! ${times} ${plFr(times, 'victoire', 'victoires')} d'affilée${award}`,
     failed: 'Échec du jeu des gobelets',
     rule1: 'Choisissez un gobelet. Cette manche coûte ',
-    rule2: ' bons mystère ; plus la série est longue, plus la mise et la récompense sont grandes.',
+    rule2:
+      ' bons mystère ; plus la série est longue, plus la mise et la récompense sont grandes. Les récompenses sont surtout des ingrédients : plus la série est longue, plus leur niveau est élevé et plus ils ont de chances d’être rares.',
     cup: (n) => `Gobelet ${n}`,
   },
   fg: {
@@ -49,7 +50,7 @@ const bar: Messages['bar'] = {
     win: (lucky, streak, award) => `${lucky}gagné${streak}${award}`,
     streak: (n) => ` (${n} ${plFr(n, 'victoire', 'victoires')} d'affilée)`,
     failed: 'Échec du chifoumi',
-    rule: '1 bon mystère par manche. Gagnez une récompense aléatoire, meilleure avec une série ; une égalité rapporte des pièces.',
+    rule: '1 bon mystère par manche. Gagnez une récompense aléatoire, surtout un ingrédient : plus la série est longue, plus son niveau est élevé et plus il a de chances d’être rare ; une égalité rapporte des pièces.',
   },
   num: {
     miss: (num, hint) => `Tombé sur ${num}. ${hint}`,
@@ -121,7 +122,7 @@ const bar: Messages['bar'] = {
     got: (text) => `Vous obtenez ${text}`,
     allPassed: (award) => `Les trois niveaux réussis ! ${award}`,
     passed: (award) => `Bonne réponse ! ${award}`,
-    rule: 'Le barman fait clignoter les ingrédients un par un. Retenez l’ordre et touchez-les dans le même ordre. Les niveaux 1/2/3 ont 3/5/7 ingrédients et chaque niveau réussi rapporte une récompense. Après une bonne réponse, vous pouvez continuer avec une recette plus longue ou vous arrêter.',
+    rule: 'Le barman fait clignoter les ingrédients un par un. Retenez l’ordre et touchez-les dans le même ordre. Les niveaux 1/2/3 ont 3/5/7 ingrédients et chaque niveau réussi rapporte une récompense, surtout un ingrédient : plus le niveau de la manche est avancé, plus l’ingrédient est de haut niveau et plus il a de chances d’être rare. Après une bonne réponse, vous pouvez continuer avec une recette plus longue ou vous arrêter.',
     resumePassed: (level) => `Niveau ${level} réussi. On continue ?`,
     next: 'Continuer',
     stop: "S'arrêter",
@@ -143,7 +144,7 @@ const bar: Messages['bar'] = {
     draw: (n) => `égalité. ${n} ${plFr(n, 'bon mystère remboursé', 'bons mystère remboursés')}`,
     lose: 'vous perdez',
     got: (text) => `Vous obtenez ${text}`,
-    rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner.',
+    rule: 'Le viseur oscille de gauche à droite ; touchez « Lancer ! » pour tirer. Plus c’est près du centre, plus ça rapporte (50/25/10/5). Battez le total des trois fléchettes du patron pour gagner. La récompense est surtout un ingrédient de niveau 4–5 ; trois mouches donnent un ingrédient de niveau 5 avec plus de chances d’être rare.',
     board: 'Cible : 50 au centre, puis 25, 10 et 5 vers l’extérieur, 0 sur les bords',
     invalid: 'Le moment du lancer ne correspond pas : fléchette ratée, 0 point',
     throwLine: (i, score) => `Fléchette ${i} : ${score}`,

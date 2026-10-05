@@ -35,7 +35,8 @@ export default {
     win: (lucky: string, times: number, award: string) => `${lucky}猜对了！${times} 连胜${award}`,
     failed: '猜酒杯失败',
     rule1: '选一个酒杯。这一局要 ',
-    rule2: ' 张神秘礼券；连胜越多，花得越多、奖励越好。',
+    rule2:
+      ' 张神秘礼券；连胜越多，花得越多、奖励越好。奖励多半是食材，连胜越多食材越高级、越可能是稀有食材。',
     cup: (n: number) => `${n} 号杯`,
   },
   fg: {
@@ -46,7 +47,7 @@ export default {
     win: (lucky: string, streak: string, award: string) => `${lucky}赢了${streak}${award}`,
     streak: (n: number) => `（${n} 连胜）`,
     failed: '划拳失败',
-    rule: '每局 1 张神秘礼券。赢了得随机奖励，连胜越多奖励越好；平局得银币。',
+    rule: '每局 1 张神秘礼券。赢了得随机奖励，多半是食材，连胜越多食材越高级、越可能是稀有食材；平局得银币。',
   },
   num: {
     miss: (num: number, hint: string) => `转到了 ${num}，${hint}`,
@@ -116,7 +117,7 @@ export default {
     got: (text: string) => `得到 ${text}`,
     allPassed: (award: string) => `三关全过！${award}`,
     passed: (award: string) => `答对了！${award}`,
-    rule: '调酒师依次闪出配方里的配料，记住顺序后依次点出来。第 1/2/3 关分别是 3/5/7 种配料，每过一关都有奖励；答对后可以继续挑战更长的配方，也可以收手。',
+    rule: '调酒师依次闪出配方里的配料，记住顺序后依次点出来。第 1/2/3 关分别是 3/5/7 种配料，每过一关都有奖励，多半是食材，关卡越后食材越高级、越可能是稀有食材；答对后可以继续挑战更长的配方，也可以收手。',
     resumePassed: (level: number) => `第 ${level} 关已经答对了，要继续吗？`,
     next: '继续',
     stop: '收手',
@@ -138,7 +139,7 @@ export default {
     draw: (n: number) => `平局，退还 ${n} 张神秘礼券`,
     lose: '输了',
     got: (text: string) => `得到 ${text}`,
-    rule: '准星在靶上左右摆动，点"投掷"出手；离靶心越近分越高（50/25/10/5）。三镖总分超过酒吧老板就赢。',
+    rule: '准星在靶上左右摆动，点"投掷"出手；离靶心越近分越高（50/25/10/5）。三镖总分超过酒吧老板就赢，奖励多半是 4~5 级食材，三镖都中靶心必是 5 级、更可能是稀有食材。',
     board: '靶条：正中 50 分，向外依次 25、10、5 分，边缘 0 分',
     invalid: '这一镖出手时间对不上，判为脱靶，记 0 分',
     throwLine: (i: number, score: number) => `第 ${i} 镖：${score} 分`,

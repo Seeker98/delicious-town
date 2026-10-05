@@ -41,7 +41,7 @@ export async function playFg(o: Op, hand: number): Promise<FgResultDto> {
   let coin = 0;
   let award: RandomAward | null = null;
   if (result === 1) {
-    award = await randomAward(o, { level: fgAwardLevel(times), noTicket: true });
+    award = await randomAward(o, { level: fgAwardLevel(times), noTicket: true, bar: true });
     if (times >= t.fgNewsStreak) opNews(o, 'bar.fg', { times, lucky, award });
   } else if (result === 0) {
     coin = Math.max(0, o.rest.level * 10 + luck.sum);
@@ -69,7 +69,7 @@ export async function playCup(o: Op): Promise<CupResultDto> {
   await saveBarState(o, { cup_result: win ? 1 : -1, cup_times: times });
   let award: RandomAward | null = null;
   if (win) {
-    award = await randomAward(o, { level: 2 + (n - 1), noTicket: true });
+    award = await randomAward(o, { level: 2 + (n - 1), noTicket: true, bar: true });
     if (n >= t.cupNewsStreak) opNews(o, 'bar.cup', { times: n, lucky });
   }
   await played(o, 'cup');

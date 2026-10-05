@@ -37,7 +37,8 @@ const bar: Messages['bar'] = {
     win: (lucky, times, award) => `${lucky}Right! ${times}-win streak${award}`,
     failed: 'Cup guess failed',
     rule1: 'Pick a cup. This round costs ',
-    rule2: ' Mystery Vouchers. The longer your streak, the higher the stake and the better the reward.',
+    rule2:
+      ' Mystery Vouchers. The longer your streak, the higher the stake and the better the reward. Rewards are mostly ingredients: the longer the streak, the higher their level and the likelier a rare one.',
     cup: (n) => `Cup ${n}`,
   },
   fg: {
@@ -48,7 +49,7 @@ const bar: Messages['bar'] = {
     win: (lucky, streak, award) => `${lucky}you won${streak}${award}`,
     streak: (n) => ` (${n}-win streak)`,
     failed: 'Rock-paper-scissors failed',
-    rule: '1 Mystery Voucher per round. Win for a random reward; the longer the streak the better. A draw gives coins.',
+    rule: '1 Mystery Voucher per round. Win for a random reward, mostly an ingredient: the longer the streak, the higher its level and the likelier a rare one. A draw gives coins.',
   },
   num: {
     miss: (num, hint) => `Landed on ${num}. ${hint}`,
@@ -121,7 +122,7 @@ const bar: Messages['bar'] = {
     got: (text) => `Got ${text}`,
     allPassed: (award) => `All three levels cleared! ${award}`,
     passed: (award) => `Correct! ${award}`,
-    rule: 'The bartender flashes the ingredients one by one. Remember the order and tap them back. Levels 1/2/3 have 3/5/7 ingredients and every level cleared gives a reward. After a correct answer you can go for a longer recipe or stop.',
+    rule: 'The bartender flashes the ingredients one by one. Remember the order and tap them back. Levels 1/2/3 have 3/5/7 ingredients and every level cleared gives a reward, mostly an ingredient: the later the level, the higher its level and the likelier a rare one. After a correct answer you can go for a longer recipe or stop.',
     resumePassed: (level) => `You cleared level ${level}. Keep going?`,
     next: 'Continue',
     stop: 'Stop here',
@@ -143,7 +144,7 @@ const bar: Messages['bar'] = {
     draw: (n) => `a draw. ${n} Mystery ${plEn(n, 'Voucher', 'Vouchers')} refunded`,
     lose: 'you lose',
     got: (text) => `Got ${text}`,
-    rule: 'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5). Beat the bar owner\'s three-dart total to win.',
+    rule: 'The crosshair sways left and right; tap "Throw!" to let go. Closer to the bullseye scores more (50/25/10/5). Beat the bar owner\'s three-dart total to win. The reward is mostly a level 4–5 ingredient; three bullseyes give a level 5 one that is more likely to be rare.',
     board: 'Target strip: 50 in the middle, then 25, 10 and 5 outwards, 0 at the edges',
     invalid: "This throw's timing didn't match, so it counts as a miss: 0 points",
     throwLine: (i, score) => `Dart ${i}: ${score}`,

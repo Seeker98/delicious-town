@@ -36,7 +36,8 @@ export default {
     win: (lucky: string, times: number, award: string) => `${lucky}猜對了！${times} 連勝${award}`,
     failed: '猜酒杯失敗',
     rule1: '選一個酒杯。這一局要 ',
-    rule2: ' 張神秘禮券；連勝越多，花得越多、獎勵越好。',
+    rule2:
+      ' 張神秘禮券；連勝越多，花得越多、獎勵越好。獎勵多半是食材，連勝越多食材越高階、越可能是稀有食材。',
     cup: (n: number) => `${n} 號杯`,
   },
   fg: {
@@ -47,7 +48,7 @@ export default {
     win: (lucky: string, streak: string, award: string) => `${lucky}贏了${streak}${award}`,
     streak: (n: number) => `（${n} 連勝）`,
     failed: '划拳失敗',
-    rule: '每局 1 張神秘禮券。贏了得隨機獎勵，連勝越多獎勵越好；平局得銀幣。',
+    rule: '每局 1 張神秘禮券。贏了得隨機獎勵，多半是食材，連勝越多食材越高階、越可能是稀有食材；平局得銀幣。',
   },
   num: {
     miss: (num: number, hint: string) => `轉到了 ${num}，${hint}`,
@@ -117,7 +118,7 @@ export default {
     got: (text: string) => `得到 ${text}`,
     allPassed: (award: string) => `三關全過！${award}`,
     passed: (award: string) => `答對了！${award}`,
-    rule: '調酒師依次閃出配方里的配料，記住順序後依次點出來。第 1/2/3 關分別是 3/5/7 種配料，每過一關都有獎勵；答對後可以繼續挑戰更長的配方，也可以收手。',
+    rule: '調酒師依次閃出配方里的配料，記住順序後依次點出來。第 1/2/3 關分別是 3/5/7 種配料，每過一關都有獎勵，多半是食材，關卡越後食材越高階、越可能是稀有食材；答對後可以繼續挑戰更長的配方，也可以收手。',
     resumePassed: (level: number) => `第 ${level} 關已經答對了，要繼續嗎？`,
     next: '繼續',
     stop: '收手',
@@ -139,7 +140,7 @@ export default {
     draw: (n: number) => `平局，退還 ${n} 張神秘禮券`,
     lose: '輸了',
     got: (text: string) => `得到 ${text}`,
-    rule: '準星在靶上左右擺動，點"投擲"出手；離靶心越近分越高（50/25/10/5）。三鏢總分超過酒吧老闆就贏。',
+    rule: '準星在靶上左右擺動，點"投擲"出手；離靶心越近分越高（50/25/10/5）。三鏢總分超過酒吧老闆就贏，獎勵多半是 4~5 級食材，三鏢都中靶心必是 5 級、更可能是稀有食材。',
     board: '靶條：正中 50 分，向外依次 25、10、5 分，邊緣 0 分',
     invalid: '這一鏢出手時間對不上，判為脫靶，記 0 分',
     throwLine: (i: number, score: number) => `第 ${i} 鏢：${score} 分`,

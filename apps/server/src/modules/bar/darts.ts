@@ -84,7 +84,7 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   let refund = 0;
   if (result === 'win') {
     const perfect = throws.every((t) => t === best);
-    award = await randomAward(o, { level: perfect ? d.perfectLevel : d.winLevel, noTicket: true });
+    award = await randomAward(o, { level: perfect ? d.perfectLevel : d.winLevel, noTicket: true, bar: true });
     // 每家店每天只写一条新闻（终审 I4：脚本刷屏）
     if (perfect && (await incrementDaily(o.tx, o.rest.id, 'bar.darts.news', 1, day)) === 1)
       opNews(o, 'bar.darts', { score: mine });
