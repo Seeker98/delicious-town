@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    retire1005:
+      'Wiki del juego: ya no aparecen 117 objetos antiguos que no se pueden conseguir en el juego (utensilios y títulos exclusivos de jugadores del juego original, y paquetes de prueba); quien ya los tenga los conserva y puede seguir usándolos',
     tasks1005:
       'Tareas: las actividades con requisito de nivel (bolsa, predicciones…) o cerradas en este servidor aparecen bloqueadas; la ventanita de la hora se cierra al tocar fuera; el icono del correo está alineado',
     looks1005:

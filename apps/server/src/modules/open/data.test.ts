@@ -13,10 +13,11 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(x).toMatchObject({ version: config.version, lang: 'en' });
     expect(x.langs).toEqual(['zh-CN', 'zh-TW', 'en', 'fr', 'es']);
     expect(x.counts).toEqual({
-      goods: b.goods.length - WIKI_HIDDEN_GOODS.size,
-      foods: b.foods.length,
+      // 后台专用的、下架的（问题记录 367）都不算
+      goods: b.goods.filter((g) => !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
+      foods: b.foods.filter((f) => !f.retired).length,
       cookbooks: b.cookbooks.length,
-      equips: b.goods.filter((g) => g.equip && !WIKI_HIDDEN_GOODS.has(g.id)).length,
+      equips: b.goods.filter((g) => g.equip && !WIKI_HIDDEN_GOODS.has(g.id) && !g.retired).length,
       streets: b.streets.length,
     });
   });
