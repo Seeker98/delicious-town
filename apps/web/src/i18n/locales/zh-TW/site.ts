@@ -9,6 +9,7 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    krab1006: '蟹老闆的櫥櫃放滿了：1~5 級每種食材都有，幾十到幾百個，每天補回來；和蟹老闆交換食材的次數不變',
     guide1006:
       '遊戲資料裡加了玩法攻略：三種節奏怎麼玩、每次上線做什麼、什麼時候搬街、錢先花在哪；食譜頁在本街的菜不夠升下一星時提示去搬家',
     batch9:

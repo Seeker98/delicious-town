@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    krab1006:
+      'La despensa de Don Krab ahora está llena: todos los ingredientes de nivel 1 a 5, de decenas a cientos de cada uno, repuestos cada día. El número de intercambios diarios con Don Krab no cambia',
     guide1006:
       'La wiki del juego tiene ahora una guía de juego: tres ritmos de juego, qué hacer cada vez que entras, cuándo mudarse y en qué gastar primero. La página de recetas sugiere mudarte cuando tu calle no tiene recetas suficientes para la siguiente estrella',
     batch9:
