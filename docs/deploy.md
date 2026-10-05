@@ -36,13 +36,25 @@ VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进
 cd /opt/dt && git pull
 cd infra && docker compose -f compose.prod.yml build migrate && docker compose -f compose.prod.yml up -d
 ```
+
+不在服务器上构建的手动写法（镜像由 GitHub Actions 推好，见下面「自动部署」）：
+```bash
+cd /opt/dt && git pull && cd infra
+IMAGE=ghcr.io/seeker98/delicious-town-server
+docker pull "$IMAGE:$(git rev-parse HEAD)" && docker tag "$IMAGE:$(git rev-parse HEAD)" dt-server:latest
+docker compose -f compose.prod.yml up -d
+```
 迁移由 `migrate` 服务在 api 和 worker 启动前自动执行。
 
-也可以直接执行 `bash /opt/dt/infra/deploy.sh`：它会拉取 main 的最新代码，然后构建、启动，并等 api 通过健康检查。
+也可以直接执行 `bash /opt/dt/infra/deploy.sh`：它会拉取 main 的最新代码，拉取（或构建）镜像、启动，并等 api 通过健康检查。上面手动 `build` 的写法会在服务器上构建镜像，内存只有 1 GB 时很吃力，平时用 `deploy.sh`。
 
 ### 自动部署（问题记录 335）
 
 合并进 main 以后，GitHub Actions 的 `ci`（test、docker）通过，接着 `deploy` 工作流就会 SSH 到服务器执行 `infra/deploy.sh <提交号>`。没有配密钥时，这一步只跳过、不报错。前端仍由 Cloudflare Pages 自己部署。
+
+服务端镜像在 GitHub Actions 里构建（问题记录 382）：`ci` 的 docker 任务在 main 上把镜像推到 `ghcr.io/seeker98/delicious-town-server`，标签是提交号；`deploy.sh` 按提交号拉下来、打成 `dt-server:latest` 再启动，不在服务器上构建，部署时不再把数据库挤进交换区。拉不到时（CI 还没推完、镜像包还是私有的）自动退回在服务器上构建。部署成功后只保留这一次的镜像，旧版本删掉。
+
+**第一次要做一次**：第一个合并进 main 的提交推完镜像后，到 GitHub 个人主页的 Packages → `delicious-town-server` → Package settings → Change visibility，改成 Public（仓库本来就公开，镜像里只有代码和配置，密钥都在服务器的 `infra/.env`）。不改的话服务器拉不到，每次部署都会退回在服务器上构建。
 
 第一次配置：
 1. 服务器上先手动升级一次（照上面的命令），让 `/opt/dt/infra/deploy.sh` 存在。
