@@ -6,6 +6,7 @@ import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
+import { gradeOf } from '../cookbook/rules';
 
 const config = testConfig();
 let t: TestGame;
@@ -241,7 +242,8 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
         .select('levels')
         .where('rest_id', '=', st.restaurantId)
         .executeTakeFirstOrThrow();
-      for (const id of r.data.forgot.cookbooks) expect(cb.levels[id]).toBe(0);
+      for (const id of r.data.forgot.cookbooks)
+        expect(gradeOf(cb.levels, g.deps.config.cookbookIndex.slotOf, id)).toBe(0);
       const left = (
         await g.db.selectFrom('rest_mc').select('mc_id').where('rest_id', '=', st.restaurantId).execute()
       ).map((m) => m.mc_id);

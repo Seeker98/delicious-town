@@ -3,7 +3,7 @@ import { invalidState, limitReached, notEnough, requirement } from '../../core/e
 import { opAgg } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
 import { gainRenown } from '../../core/resources';
-import { mergeNeed } from '../cookbook/rules';
+import { gradeOf, mergeNeed } from '../cookbook/rules';
 import { foodsMap, subFoods } from '../cupboard/foods';
 import { busyCount, levelsOf, requireOpen, riderLuckRate } from './common';
 import { droneDiamonds, orderValues, riderAttrs, sumBonus } from './rules';
@@ -41,7 +41,7 @@ export async function deliverOrder(
   const attrs = riderAttrs(rider.level, t);
   if ((await busyCount(o.tx, rider.id)) >= attrs.maxNum)
     throw limitReached('rider_busy', { max: attrs.maxNum });
-  const myGrade = (await levelsOf(o.tx, o.rest.id))[order.cookbook_id] ?? 0;
+  const myGrade = gradeOf(await levelsOf(o.tx, o.rest.id), o.config.cookbookIndex.slotOf, order.cookbook_id);
   if (myGrade < 1) throw requirement('not_learned');
   const agg = await opAgg(o);
   if (b.double && !((agg.taFoodsDoubleFlag ?? 0) > 0)) throw requirement('double');

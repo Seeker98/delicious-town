@@ -24,8 +24,8 @@ export function initialTables(tableNum: number): TableState[] {
 }
 
 /** 已学食谱：下标 = 食谱 id，值 = 品级（0 未学） */
-export function emptyCookbookLevels(maxCookbookId: number): Buffer {
-  return Buffer.alloc(maxCookbookId + 1);
+export function emptyCookbookLevels(slots: number): Buffer {
+  return Buffer.alloc(slots);
 }
 
 export function newRestaurantValues(

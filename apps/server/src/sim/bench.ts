@@ -1,5 +1,6 @@
 import { hashSeed, roundOf, ROUND_MS, seededRng } from '@dt/shared';
 import type { CookbookCounts } from '../db/schema';
+import { gradeOf, setGrade } from '../modules/cookbook/rules';
 import { settleShardRound } from '../modules/settlement/runner';
 import { openSimEnv, type SimEnv } from './env';
 
@@ -63,15 +64,15 @@ export async function seedRestaurants(env: SimEnv, n: number, seed: number): Pro
       const level = 1 + rng.int(99);
       const star = Math.min(7, Math.floor(level / 14));
       const street = movable[rng.int(movable.length)]!;
-      const levels = Buffer.alloc(config.maxCookbookId + 1);
+      const levels = Buffer.alloc(config.cookbookIndex.slots);
       const counts: CookbookCounts = { learned: 0, grade: Array(11).fill(0) as number[], street: {} };
       const learned = Math.min(allIds.length, level * 20);
       const offset = rng.int(allIds.length);
       for (let k = 0; k < learned; k++) {
         const id = allIds[(offset + k * 7) % allIds.length]!;
-        if (levels[id]! > 0) continue;
+        if (gradeOf(levels, config.cookbookIndex.slotOf, id) > 0) continue;
         const grade = 1 + rng.int(Math.min(7, star + 1));
-        levels[id] = grade;
+        setGrade(levels, config.cookbookIndex.slotOf, id, grade);
         counts.learned += 1;
         counts.grade[grade]! += 1;
         const s = String(config.cookbookIndex.street[id]);

@@ -96,10 +96,10 @@ export async function createRestaurantFull(
 ): Promise<number> {
   const config = testConfig();
   const counts = emptyCounts();
-  const levels = Buffer.alloc(config.maxCookbookId + 1);
+  const levels = Buffer.alloc(config.cookbookIndex.slots);
   for (const [id, grade] of Object.entries(opts.cookbooks ?? {})) {
     const cb = config.requireCookbook(Number(id));
-    levels[cb.id] = grade;
+    levels[cb.slot] = grade;
     if (grade > 0) {
       counts.learned += 1;
       counts.grade[grade]! += 1;

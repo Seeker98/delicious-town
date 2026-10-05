@@ -18,7 +18,9 @@ describe('缺料清单（问题记录 50）', () => {
             ]
           : [{ foodsId: fid('苦瓜'), num: 9 }];
     const have = (f: number) => (f === 101 ? 1 : f === 102 ? 5 : 0);
-    expect(Object.fromEntries(needMapOf([1, 2, 3], levels, 10, needOf, have))).toEqual({ 101: 2 });
+    expect(
+      Object.fromEntries(needMapOf([1, 2, 3], levels, Int32Array.from([0, 1, 2, 3]), 10, needOf, have)),
+    ).toEqual({ 101: 2 });
   });
 });
 

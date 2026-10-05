@@ -2,6 +2,7 @@ import { GOODS, type GoodsUse } from '@dt/config';
 import type { RestCtx } from '../core/deps';
 import type { Game } from '../game';
 import { AppError } from '../http/errors';
+import { gradeOf } from '../modules/cookbook/rules';
 import type { SimEnv } from './env';
 
 export interface Persona {
@@ -299,7 +300,8 @@ async function maybeMove(game: Game, bot: Bot, attempt: Attempt): Promise<void> 
   const need = config.starNeed.get(r.starLevel + 1);
   if (!need || need.cookbooksKind !== 'learned' || learned >= need.needCookbooks) return;
   const byStreet = config.cookbookIndex.idsByStreet;
-  const fresh = (street: number) => (byStreet.get(street) ?? []).filter((id) => !levels[id]).length;
+  const fresh = (street: number) =>
+    (byStreet.get(street) ?? []).filter((id) => !gradeOf(levels, config.cookbookIndex.slotOf, id)).length;
   const stale = now.getTime() - (bot.lastFreshAt ?? now).getTime() >= STALE_MS;
   if (fresh(r.streetId) > 0 && !stale) return;
   let target = -1;

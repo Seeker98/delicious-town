@@ -1,5 +1,6 @@
 import { dishCoin } from '../../core/prices';
-import { GOODS } from '@dt/config';
+import { GOODS, type CookbookIndex } from '@dt/config';
+import { gradeOf } from '../cookbook/rules';
 import type { Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
 import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog } from './types';
@@ -15,16 +16,22 @@ export interface Learned {
   other: number[];
 }
 
-/** 已学食谱按"本街 / 外街"分组（每轮每店扫一遍 levels，约 2400 字节） */
-export function splitLearned(levels: Uint8Array, street: Int16Array, streetId: number): Learned {
+/** 已学食谱按"本街 / 外街"分组，返回食谱 id（每轮每店扫一遍 levels）；levels 按存储位存（重新编号 PR 3） */
+export function splitLearned(
+  levels: Uint8Array,
+  idx: Pick<CookbookIndex, 'idAt' | 'street'>,
+  streetId: number,
+): Learned {
   const all: number[] = [];
   const local: number[] = [];
   const other: number[] = [];
-  const n = Math.min(levels.length, street.length);
-  for (let id = 1; id < n; id++) {
-    if (levels[id]! === 0 || street[id]! < 0) continue;
+  const n = Math.min(levels.length, idx.idAt.length);
+  for (let s = 0; s < n; s++) {
+    if (levels[s]! === 0) continue;
+    const id = idx.idAt[s]!;
+    if (id < 0 || idx.street[id]! < 0) continue;
     all.push(id);
-    (street[id] === streetId ? local : other).push(id);
+    (idx.street[id] === streetId ? local : other).push(id);
   }
   return { all, local, other };
 }
@@ -101,7 +108,7 @@ export function allocateTables(
   const coinBase = rt.coinBase - Math.floor(s / 2);
   const expBase = rt.expBase + Math.floor(s / 2);
   const oilBase = rt.oilBase;
-  const learned = splitLearned(input.levels, g.cookbooks.street, rest.streetId);
+  const learned = splitLearned(input.levels, g.cookbooks, rest.streetId);
   const sameKrabStreet = g.krabStreet !== null && g.krabStreet === rest.streetId;
   const isHost = g.planktonRestId === rest.id;
   const special = input.special ? { ...input.special } : null;
@@ -255,7 +262,7 @@ export function allocateTables(
         next.customer = 8;
         const req = rng.intMin1(t.krabMaxGrade);
         const cb = learned.all.length > 0 ? learned.all[rng.int(learned.all.length)]! : null;
-        const grade = cb === null ? 0 : input.levels[cb]!;
+        const grade = cb === null ? 0 : gradeOf(input.levels, g.cookbooks.slotOf, cb);
         Object.assign(extra, { req, grade, ...(cb !== null ? { cookbookId: cb } : {}) });
         if (cb !== null && grade >= req) {
           satisfied = true;
@@ -288,7 +295,7 @@ export function allocateTables(
         const pool = local ? learned.local : learned.other;
         const cb = pool.length > 0 ? pool[rng.int(pool.length)]! : null;
         if (cb !== null) {
-          const grade = input.levels[cb]!;
+          const grade = gradeOf(input.levels, g.cookbooks.slotOf, cb);
           Object.assign(extra, { req, grade, cookbookId: cb });
           oil = oil + oil + grade;
           exp += grade * (local ? 1 : 2);
