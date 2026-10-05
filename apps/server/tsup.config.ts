@@ -9,6 +9,7 @@ export default defineConfig({
     'cli/account': 'src/cli/account.ts',
     'cli/equip-rescale': 'src/cli/equip-rescale.ts',
     'cli/bench-api': 'src/cli/bench-api.ts',
+    'cli/renumber-dry-run': 'src/cli/renumber-dry-run.ts',
   },
   format: ['esm'],
   platform: 'node',

@@ -47,6 +47,7 @@ import * as m0045 from './0045_fund';
 import * as m0046 from './0046_icon_expiry';
 import * as m0047 from './0047_friend_link';
 import * as m0048 from './0048_rest_door';
+import * as m0049 from './0049_renumber';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -98,4 +99,5 @@ export const migrations: Record<string, Migration> = {
   '0046_icon_expiry': m0046,
   '0047_friend_link': m0047,
   '0048_rest_door': m0048,
+  '0049_renumber': m0049,
 };
