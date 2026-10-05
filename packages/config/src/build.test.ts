@@ -1199,8 +1199,9 @@ describe('编号规则（重新编号 PR 4）', () => {
     const goods = src['master/goods'] as Array<{ id: number; group: string }>;
     goods[0]!.group = 'nope';
     goods[1]!.id = 99999;
-    const groups = (src['game/goods_groups'] as { groups: Array<{ key: string; base: number; size: number }> })
-      .groups;
+    const groups = (
+      src['game/goods_groups'] as { groups: Array<{ key: string; base: number; size: number }> }
+    ).groups;
     groups[1]!.base = groups[0]!.base + 50;
     const { errors } = buildBundle(src);
     expect(errors).toEqual(
