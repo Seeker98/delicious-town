@@ -11,7 +11,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "sync": "tsx scripts/sync-data.ts",
     "import-streets": "tsx scripts/import-new-streets.ts",
-    "build": "tsx src/cli.ts"
+    "build": "tsx src/cli.ts",
+    "renumber-map": "tsx scripts/renumber-map.ts"
   },
   "dependencies": {
     "@dt/shared": "workspace:*",
