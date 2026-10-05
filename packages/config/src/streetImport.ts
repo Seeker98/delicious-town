@@ -51,3 +51,19 @@ export function importConflicts(
     restreeted: prev.filter((c) => now.has(c.id) && now.get(c.id) !== c.streetId).map((c) => c.id),
   };
 }
+
+/**
+ * 导入的菜谱分配学会记录的存储位（重新编号 PR 3）：已有的菜保留原存储位，
+ * 新菜从 next 往后分；删掉的菜存储位不回收（老店字节串里那一位可能还有数）
+ */
+export function assignSlots(
+  prev: ReadonlyArray<{ id: number; slot: number }>,
+  ids: readonly number[],
+  next: number,
+): { slots: Map<number, number>; next: number } {
+  const had = new Map(prev.map((c) => [c.id, c.slot]));
+  const slots = new Map<number, number>();
+  let n = next;
+  for (const id of ids) slots.set(id, had.get(id) ?? n++);
+  return { slots, next: n };
+}
