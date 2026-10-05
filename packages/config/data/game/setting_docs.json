@@ -93,6 +93,8 @@
     "tuning.settlement.adiaoOverflowRate": "阿刁加成下特殊顾客率超过 1 的部分按多少比例转成收益（比例）",
     "tuning.settlement.negativeRenownAtRate": "声望为负时到店率的修正（比例，负数表示降低）",
     "tuning.settlement.starPotential": "各星级的潜力值（列表，下标是星级 0~3）",
+    "tuning.settlement.newbieExp.maxLevel": "低等级经验加成到这一级减到 0（级）",
+    "tuning.settlement.newbieExp.rate": "低等级经验加成：1 级时结算经验额外 +这个比例，随等级线性减少，0 = 不加（比例）",
     "tuning.settlement.cteRate": "开启\"吃货特典\"时额外经验 = 银币收入 × 这个值（倍数）",
     "tuning.settlement.planktonRateBase": "痞老板来捣乱的基础概率（每桌每轮）",
     "tuning.settlement.planktonRatePerStar": "每颗星增加的痞老板出现概率",
