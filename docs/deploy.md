@@ -218,7 +218,7 @@ docker compose -f compose.prod.yml up -d
 ## 厨具数值重定（问题记录 120）
 
 - 厨具强化改为固定增量：每件厨具 +0~+10 的属性总和写在 `packages/config/data/game/equip_lore.json` 的 `stressTables`（同时定穿戴等级）；构建时按 +0 值缩放基础属性，并改写说明里的数字
-- 守塔人各层厨力和第 5、6 层互换写在 `packages/config/data/game/tower_fix.json`
+- 守塔人第 5、6 层互换写在 `packages/config/data/game/tower_fix.json`；各层长老的装备和加点在 `tower_elders.json`（问题记录 408），改了强化表要用 `pnpm -F @dt/server elders` 重新生成
 - **部署后跑一次**重算已经生成的厨具（基础属性、强化加成、强化记录、穿戴等级）：生产环境 `docker compose -f compose.prod.yml run --rm api node dist/cli/equip-rescale.js`，开发环境 `pnpm --filter @dt/server equip:rescale`。每家店一个锁店的短事务，不用停服；穿着的厨具变了会同步缓存的幸运和套装加成。以后改了表也要再跑；重复跑结果不变
 - 已穿着、但等级低于新穿戴等级的厨具不会被强制卸下
 

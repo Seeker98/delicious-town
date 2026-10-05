@@ -48,8 +48,8 @@ export default {
   },
   /** 賽廚長老的裝備（問題記錄 408） */
   elder: {
-    summary: (level: number, stress: number, pct: string) =>
-      `長老裝備：${level} 級，全套強化 +${stress}；打贏有 ${pct} 掉一件`,
+    summary: (level: number, stress: number, pct: number) =>
+      `長老裝備：${level} 級，全套強化 +${stress}${pct > 0 ? `；正式挑戰打贏有 ${pct}% 掉一件` : ''}`,
     points: (text: string) => `加點：${text}`,
     piece: (name: string, stress: number, text: string) => `${name} +${stress}：${text}`,
     attrs: (text: string) => `被挑戰時：${text}`,

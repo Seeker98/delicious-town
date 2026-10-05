@@ -26,6 +26,36 @@ export interface ElderContext {
 
 const sum = (a: EquipAttrs) => EQUIP_ATTRS.reduce((s, k) => s + a[k], 0);
 
+/** 强化 +0 到 +stress 每一级的增量（游戏里每次强化成功，这一级的增量整份加到一项上） */
+export function stressSteps(table: readonly number[], stress: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < stress; i++) out.push(table[i + 1]! - table[i]!);
+  return out;
+}
+
+/** 能不能把每一级的增量整份分到各项，正好凑出 gain（回溯，最多 10 级） */
+export function gainReachable(steps: readonly number[], gain: EquipAttrs): boolean {
+  const left = EQUIP_ATTRS.map((k) => gain[k]);
+  const sorted = [...steps].sort((a, b) => b - a);
+  const seen = new Set<string>();
+  const go = (i: number): boolean => {
+    if (i === sorted.length) return left.every((x) => x === 0);
+    const key = `${i}:${left.join(',')}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    const step = sorted[i]!;
+    for (let k = 0; k < left.length; k++) {
+      if (left[k]! < step) continue;
+      left[k] = left[k]! - step;
+      const ok = go(i + 1);
+      left[k] = left[k]! + step;
+      if (ok) return true;
+    }
+    return false;
+  };
+  return go(0);
+}
+
 /** 数据和厨具配置对不上的地方 */
 export function elderErrors(e: ElderInput, ctx: ElderContext): string[] {
   const out: string[] = [];
@@ -65,8 +95,15 @@ export function elderErrors(e: ElderInput, ctx: ElderContext): string[] {
     if (EQUIP_ATTRS.some((k) => p.gain[k] < 0)) out.push(`${at}: piece ${p.id} gain must not be negative`);
     else if (sum(p.gain) !== gain)
       out.push(`${at}: piece ${p.id} gain sums to ${sum(p.gain)}, expected ${gain}`);
+    else {
+      const steps = stressSteps(def.stressTable, e.stress);
+      if (!gainReachable(steps, p.gain))
+        out.push(`${at}: piece ${p.id} gain cannot be made from enhancement steps ${steps.join(', ')}`);
+    }
   }
   for (const id of e.drops) if (!ctx.goods.get(id)?.equip) out.push(`${at}: drop ${id} is not equipment`);
+  for (const id of new Set(e.drops.filter((x, i) => e.drops.indexOf(x) !== i)))
+    out.push(`${at}: drop ${id} listed twice`);
   return out;
 }
 
@@ -90,7 +127,8 @@ export function elderAttrs(e: ElderInput, ctx: ElderContext): { attrs: EquipAttr
     if (!NON_SUIT_IDS.has(suitId) && ctx.suits.has(suitId)) counts.set(suitId, (counts.get(suitId) ?? 0) + 1);
   }
   const eff: Record<string, number> = {};
-  for (const [id, n] of counts)
+  // 和 equip/rules 的 activeSuits 一样按套装 id 顺序累加（浮点加法的顺序会影响 .5 的取整）
+  for (const [id, n] of [...counts].sort((a, b) => a[0] - b[0]))
     for (const tier of ctx.suits.get(id)!.tiers)
       if (n >= tier.need) for (const [k, v] of Object.entries(tier.effects)) eff[k] = (eff[k] ?? 0) + v;
   const pct = (k: 'cook' | 'cutting' | 'fire' | 'season') => Math.round(raw[k] * (1 + (eff[`${k}Pct`] ?? 0)));

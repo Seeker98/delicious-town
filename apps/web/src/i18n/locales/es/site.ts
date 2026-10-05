@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     elders1006:
-      'Los guardianes de la Torre de chefs ahora son Ancianos: cada piso lleva su propio equipo completo (+3 a +6) y los puntos de atributo de su nivel, que puedes desplegar para verlos. Una victoria real puede soltar una pieza del conjunto del Anciano (20 % en los pisos 1–3, menos más arriba). El piso 1 es ahora un Anciano de nivel 8, así que los nuevos jugadores lo superan antes. El extra aleatorio de la Creatividad en los duelos de cocina baja un poco y ya no vale más que otros atributos',
+      'Los guardianes de la Torre de chefs ahora son Ancianos: cada piso lleva su propio equipo completo (+3 a +6) y los puntos de atributo de su nivel, que puedes desplegar para verlos. Una victoria real puede soltar una pieza del conjunto del Anciano (20 % en los pisos 1–3, menos más arriba). Los pisos 1–2 son algo más difíciles que antes y los pisos 6–10 bastante más fáciles. El extra aleatorio de la Creatividad en los duelos de cocina baja un poco y ya no vale más que otros atributos',
     duel1006:
       'Los duelos de cocina (Torre de chefs, Clasificación de chefs y duelos con amigos) ahora los deciden jueces: en cada duelo se eligen al azar 5 de 10 jueces, cada uno se fija en algunas de las cinco puntuaciones y gana el primero que llega a 3 votos. Tener mejores atributos es ahora mucho más fiable; la Creatividad y la Suerte dan un extra aleatorio. Mira «Reglas del duelo de cocina» en la página de la Torre de chefs',
     barPrize1006:

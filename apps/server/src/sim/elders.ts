@@ -9,12 +9,16 @@
  * - 守塔人当天的特色菜按这一层菜池的期望每份价值算。随机数用固定种子，同样的配置每次生成一样的结果。
  */
 import { writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join } from 'node:path';
 import {
   EQUIP_ATTRS,
+  buildBundle,
+  createGameConfig,
+  defaultDataDir,
   elderAttrs,
   elderErrors,
-  loadGameConfig,
+  readSourceDir,
+  stressSteps,
   type ElderInput,
   type EquipAttrs,
   type GameConfig,
@@ -125,6 +129,28 @@ export function expectedBase(config: GameConfig, id: number): EquipAttrs {
   return out;
 }
 
+/**
+ * 强化增量按比例分，但和游戏里一样每一级的增量只能整份加到一项（tower_elders 校验 gainReachable）：
+ * 从大的一级开始，给离目标份额还差最多的那项；差得一样多时按属性顺序
+ */
+export function assignSteps(steps: readonly number[], ratio: Ratio): EquipAttrs {
+  const total = steps.reduce((s, x) => s + x, 0);
+  const out = zeroAttrs();
+  for (const step of [...steps].sort((a, b) => b - a)) {
+    let best: (typeof EQUIP_ATTRS)[number] = EQUIP_ATTRS[0];
+    let gap = -Infinity;
+    for (const k of EQUIP_ATTRS) {
+      const g = total * ratio[k] - out[k];
+      if (g > gap + 1e-9) {
+        best = k;
+        gap = g;
+      }
+    }
+    out[best] += step;
+  }
+  return out;
+}
+
 export function elderOf(
   config: GameConfig,
   spec: (typeof ELDER_SPECS)[number],
@@ -144,7 +170,7 @@ export function elderOf(
       return {
         id,
         base: expectedBase(config, id),
-        gain: splitInt(table[spec.stress]! - table[0]!, gain, EQUIP_ATTRS),
+        gain: assignSteps(stressSteps(table, spec.stress), gain),
       };
     }),
   };
@@ -262,7 +288,10 @@ export function hardestElder(config: GameConfig, spec: (typeof ELDER_SPECS)[numb
 }
 
 function main(): void {
-  const config = loadGameConfig(process.env.CONFIG_BUNDLE_PATH!);
+  // 从配置源现场构建，忽略旧的长老数据：改了强化表、加点数以后旧数据通不过校验，也能重新生成（问题记录 408 审查）
+  const built = buildBundle(readSourceDir(defaultDataDir()), { ignoreElders: true });
+  if (!built.bundle) throw new Error(built.errors.join('\n'));
+  const config = createGameConfig(built.bundle);
   const ctx = { goods: config.goods, suits: config.suits, ...config.tuning.rest };
   const report = process.argv.includes('--report');
   const floors: ElderInput[] = [];
@@ -286,7 +315,7 @@ function main(): void {
     }
     console.log(line);
   }
-  const out = resolve(process.env.CONFIG_BUNDLE_PATH!, '../../data/game/tower_elders.json');
+  const out = join(defaultDataDir(), 'game/tower_elders.json');
   writeFileSync(
     out,
     JSON.stringify(

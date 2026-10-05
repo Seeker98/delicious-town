@@ -8,7 +8,7 @@ export {
   type I18nLocale,
   type I18nTable,
 } from './i18n';
-export { buildBundle, featureOfKey, type BuildResult } from './build';
+export { buildBundle, featureOfKey, type BuildOptions, type BuildResult } from './build';
 export { defaultDataDir, readSourceDir, SOURCE_FILES, type SourceData } from './source';
 export {
   createGameConfig,
@@ -28,7 +28,14 @@ export { settingGroup, settingLeaves } from './settingDocs';
 export type { NewbieCode } from './newbieCodes';
 export type { StressTableEntry } from './raw';
 export { applyBoosts } from './boost';
-export { elderAttrs, elderErrors, type ElderContext, type ElderInput } from './towerFloor';
+export {
+  elderAttrs,
+  elderErrors,
+  gainReachable,
+  stressSteps,
+  type ElderContext,
+  type ElderInput,
+} from './towerFloor';
 export { takesStoreSlot } from './souvenir';
 export { kujiErrors, KUJI_MAX_TICKETS } from './kuji';
 export { fundErrors } from './fund';

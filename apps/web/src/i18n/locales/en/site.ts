@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     elders1006:
-      'The Chef Tower guardians are now Elders: each floor wears its own full gear set (+3 to +6) and stat points for its level, which you can expand to see. A real win can drop a piece of the Elder’s set (20% on floors 1–3, less higher up). Floor 1 is now a level 8 Elder, so new players can beat it sooner. Creativity’s random bonus in cook-offs is a bit lower, so it’s no longer worth more than other stats',
+      'The Chef Tower guardians are now Elders: each floor wears its own full gear set (+3 to +6) and stat points for its level, which you can expand to see. A real win can drop a piece of the Elder’s set (20% on floors 1–3, less higher up). Floors 1–2 are a bit harder than before and floors 6–10 are a lot easier. Creativity’s random bonus in cook-offs is a bit lower, so it’s no longer worth more than other stats',
     duel1006:
       'Cook-offs (Chef Tower, Chef ranking and friend duels) are now decided by judges: each match, 5 of 10 judges are picked at random, each looking at a few of the five scores, and the first side to 3 votes wins. Higher stats are now much more reliable; Creativity and Luck add a random bonus. See “Cook-off rules” on the Chef Tower page',
     barPrize1006:

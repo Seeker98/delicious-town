@@ -293,9 +293,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 10,
-            "creatives": 7,
-            "luck": 0
+            "season": 11,
+            "creatives": 3,
+            "luck": 3
           }
         },
         {
@@ -312,9 +312,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 10,
-            "creatives": 7,
-            "luck": 0
+            "season": 11,
+            "creatives": 3,
+            "luck": 3
           }
         },
         {
@@ -331,9 +331,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 10,
-            "creatives": 7,
-            "luck": 0
+            "season": 11,
+            "creatives": 3,
+            "luck": 3
           }
         },
         {
@@ -350,9 +350,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 10,
-            "creatives": 7,
-            "luck": 0
+            "season": 11,
+            "creatives": 3,
+            "luck": 3
           }
         }
       ]
@@ -385,10 +385,10 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
+            "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 13,
+            "season": 14,
             "creatives": 0,
             "luck": 0
           }
@@ -404,10 +404,10 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
+            "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 13,
+            "season": 14,
             "creatives": 0,
             "luck": 0
           }
@@ -423,10 +423,10 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
+            "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 13,
+            "season": 14,
             "creatives": 0,
             "luck": 0
           }
@@ -442,10 +442,10 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
+            "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 13,
+            "season": 14,
             "creatives": 0,
             "luck": 0
           }
@@ -461,10 +461,10 @@
             "luck": 0
           },
           "gain": {
-            "cook": 1,
+            "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 13,
+            "season": 14,
             "creatives": 0,
             "luck": 0
           }
@@ -498,9 +498,9 @@
           },
           "gain": {
             "cook": 2,
-            "cutting": 1,
-            "fire": 1,
-            "season": 10,
+            "cutting": 0,
+            "fire": 0,
+            "season": 12,
             "creatives": 0,
             "luck": 0
           }
@@ -517,9 +517,9 @@
           },
           "gain": {
             "cook": 2,
-            "cutting": 1,
-            "fire": 1,
-            "season": 10,
+            "cutting": 0,
+            "fire": 0,
+            "season": 12,
             "creatives": 0,
             "luck": 0
           }
@@ -536,9 +536,9 @@
           },
           "gain": {
             "cook": 2,
-            "cutting": 1,
-            "fire": 1,
-            "season": 10,
+            "cutting": 0,
+            "fire": 0,
+            "season": 12,
             "creatives": 0,
             "luck": 0
           }
@@ -555,9 +555,9 @@
           },
           "gain": {
             "cook": 2,
-            "cutting": 1,
-            "fire": 1,
-            "season": 10,
+            "cutting": 0,
+            "fire": 0,
+            "season": 12,
             "creatives": 0,
             "luck": 0
           }
@@ -574,9 +574,9 @@
           },
           "gain": {
             "cook": 2,
-            "cutting": 1,
-            "fire": 1,
-            "season": 10,
+            "cutting": 0,
+            "fire": 0,
+            "season": 12,
             "creatives": 0,
             "luck": 0
           }
@@ -595,9 +595,9 @@
         40805
       ],
       "points": {
-        "cook": 56,
+        "cook": 0,
         "cutting": 111,
-        "fire": 55
+        "fire": 111
       },
       "pieces": [
         {
@@ -611,8 +611,8 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
-            "cutting": 1,
+            "cook": 0,
+            "cutting": 2,
             "fire": 0,
             "season": 12,
             "creatives": 0,
@@ -630,8 +630,8 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
-            "cutting": 1,
+            "cook": 0,
+            "cutting": 2,
             "fire": 0,
             "season": 12,
             "creatives": 0,
@@ -649,8 +649,8 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
-            "cutting": 1,
+            "cook": 0,
+            "cutting": 2,
             "fire": 0,
             "season": 12,
             "creatives": 0,
@@ -668,8 +668,8 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
-            "cutting": 1,
+            "cook": 0,
+            "cutting": 2,
             "fire": 0,
             "season": 12,
             "creatives": 0,
@@ -687,8 +687,8 @@
             "luck": 1
           },
           "gain": {
-            "cook": 1,
-            "cutting": 1,
+            "cook": 0,
+            "cutting": 2,
             "fire": 0,
             "season": 12,
             "creatives": 0,
@@ -842,9 +842,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 23,
-            "creatives": 11,
-            "luck": 2
+            "season": 22,
+            "creatives": 14,
+            "luck": 0
           }
         },
         {
@@ -861,9 +861,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 23,
-            "creatives": 11,
-            "luck": 2
+            "season": 22,
+            "creatives": 14,
+            "luck": 0
           }
         },
         {
@@ -880,9 +880,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 23,
-            "creatives": 11,
-            "luck": 2
+            "season": 22,
+            "creatives": 14,
+            "luck": 0
           }
         },
         {
@@ -899,9 +899,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 23,
-            "creatives": 11,
-            "luck": 2
+            "season": 22,
+            "creatives": 14,
+            "luck": 0
           }
         },
         {
@@ -918,9 +918,9 @@
             "cook": 0,
             "cutting": 0,
             "fire": 0,
-            "season": 23,
-            "creatives": 11,
-            "luck": 2
+            "season": 22,
+            "creatives": 14,
+            "luck": 0
           }
         }
       ]
@@ -955,8 +955,8 @@
           "gain": {
             "cook": 0,
             "cutting": 0,
-            "fire": 2,
-            "season": 32,
+            "fire": 0,
+            "season": 34,
             "creatives": 0,
             "luck": 0
           }
@@ -974,8 +974,8 @@
           "gain": {
             "cook": 0,
             "cutting": 0,
-            "fire": 2,
-            "season": 32,
+            "fire": 0,
+            "season": 34,
             "creatives": 0,
             "luck": 0
           }
@@ -993,8 +993,8 @@
           "gain": {
             "cook": 0,
             "cutting": 0,
-            "fire": 2,
-            "season": 32,
+            "fire": 0,
+            "season": 34,
             "creatives": 0,
             "luck": 0
           }
@@ -1012,8 +1012,8 @@
           "gain": {
             "cook": 0,
             "cutting": 0,
-            "fire": 2,
-            "season": 32,
+            "fire": 0,
+            "season": 34,
             "creatives": 0,
             "luck": 0
           }
@@ -1031,8 +1031,8 @@
           "gain": {
             "cook": 0,
             "cutting": 0,
-            "fire": 2,
-            "season": 32,
+            "fire": 0,
+            "season": 34,
             "creatives": 0,
             "luck": 0
           }
