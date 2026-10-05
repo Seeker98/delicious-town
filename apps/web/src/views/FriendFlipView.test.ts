@@ -75,3 +75,19 @@ describe('FriendFlipView：同一家店每人每天的格数（问题记录 374�
     expect(w.find('[data-testid="host-left"]').exists()).toBe(false);
   });
 });
+
+describe('FriendFlipView：翻失败后重新读格子（问题记录 374 审查）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('别的页面把次数用完了，这里翻时报错：重新读，按钮跟着锁上', async () => {
+    vi.mocked(endpoints.flipSlots)
+      .mockResolvedValueOnce({ slots: 5, cooling: [], todayTimes: 2, hostLeft: 1 })
+      .mockResolvedValueOnce({ slots: 5, cooling: [], todayTimes: 3, hostLeft: 0 });
+    vi.mocked(endpoints.flip).mockRejectedValueOnce(new Error('limit'));
+    const w = await mountView();
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店已经翻够了，明天再来');
+    expect(w.find('[data-testid="slot-1"]').attributes('disabled')).toBeDefined();
+  });
+});

@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     hostLimit1005:
-      'Each player can now raid at most 3 pantry spots and squash at most 3 roaches at the same restaurant per day (no limit in your own restaurant). The pantry page shows how many raids you have left there today',
+      'Each player can now raid at most 3 pantry spots per restaurant per day, and squash at most 3 roaches per friend’s restaurant per day (no limit in your own restaurant or Mr. Krab’s). The pantry page and the friend’s restaurant show how many you have left today',
     browse1005:
       'Going back from a recipe or wiki detail page now keeps your street, filters and page. The recipe page shows the selected street’s bonus. Tapping a roach you placed now explains that you can’t squash it yourself',
     renumber1005:

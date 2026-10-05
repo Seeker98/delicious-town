@@ -72,6 +72,8 @@ const friends: Messages['friends'] = {
     kill: 'Écraser le cafard',
     tableLocked: 'Impossible d’agir sur cette table pour le moment',
     ownRoach: 'C’est vous qui avez posé ce cafard : vous ne pouvez pas l’écraser vous-même',
+    killLeft: (n) => `Encore ${n} ${plFr(n, 'cafard', 'cafards')} à écraser ici aujourd’hui`,
+    killDone: 'Vous avez écrasé assez de cafards ici aujourd’hui. Laissez-en aux autres',
   },
   tables: {
     freeloader: (name) => `Pique-assiette : ${name ?? 'un ami'}`,

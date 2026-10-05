@@ -110,6 +110,19 @@ describe('灭蟑螂（规格书 13 §13.4、20 §20.18）', () => {
     for (const tableNo of [1, 2, 3, 4, 5]) await roach().kill(a, { restId: a.restaurantId, tableNo });
   });
 
+  it('蟹老板的店不限灭几只（问题记录 374 审查：它自己一天长两百多只，限了会被蟑螂占满）', async () => {
+    const [a] = await friends();
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    await befriend(t, a.restaurantId, npc);
+    await setTables(
+      t,
+      npc,
+      Array.from({ length: 5 }, (_, i) => ({ no: i + 1, floor: 1, customer: 3, roach: { by: null, at: 'x' } })),
+    );
+    for (const tableNo of [1, 2, 3, 4, 5]) await roach().kill(a, { restId: npc, tableNo });
+    expect((await tablesOf(t, npc)).every((tb) => tb.customer === 0)).toBe(true);
+  });
+
   it('蟹老板店不耗体力；巫毒娃娃可以免体力；礼券和美味券', async () => {
     const [a] = await friends();
     const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;

@@ -71,6 +71,8 @@ const friends: Messages['friends'] = {
     kill: 'Squash roach',
     tableLocked: "You can't do anything at this table right now",
     ownRoach: "You placed this roach, so you can't squash it yourself",
+    killLeft: (n) => `${n} more ${plEn(n, 'squash', 'squashes')} here today`,
+    killDone: "You've squashed enough roaches here today. Leave some for others",
   },
   tables: {
     freeloader: (name) => `Freeloading: ${name ?? 'a friend'}`,

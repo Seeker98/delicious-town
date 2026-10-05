@@ -10,7 +10,7 @@ import { gainCoin, gainExp, spendStrength } from '../../core/resources';
 import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { grantGoodsOp } from '../store/goods';
-import { killReward, killStrength, layReward, perHostLeft, type KillPlace } from './rules';
+import { killHostKey, killReward, killStrength, layReward, perHostLeft, type KillPlace } from './rules';
 import { roachCap } from '../settlement/tables';
 import { clearTable, findTable, isEmptyTable, readTables, writeTables } from './tables';
 
@@ -27,9 +27,10 @@ async function killIn(
   const table = findTable(tables, tableNo);
   if (table.customer !== 3) throw invalidState('no_roach');
   if (table.roach?.by === me.rest.id) throw invalidState('own_roach');
-  // 别人的店（含蟹老板）每人每天最多灭几只（问题记录 374：一个人一次灭完一家店的蟑螂）；自己店不限
+  // 好友的店每人每天最多灭几只（问题记录 374：一个人一次灭完一家店的蟑螂）。自己店不限；蟹老板的店也不限：
+  // 它每轮每张空桌 2% 自己长蟑螂、没有上限，一天两百多只，限了会被蟑螂占满（审查 Important 1）
   const day = gameDay(me.now);
-  const hostKey = place === 'self' ? null : `roach.killHost:${host.rest.id}`;
+  const hostKey = place === 'friend' ? killHostKey(host.rest.id) : null;
   if (hostKey && perHostLeft(rt.killPerHostDaily, await getDaily(me.tx, me.rest.id, hostKey, day)) === 0)
     throw limitReached('roach_kill_host', { max: rt.killPerHostDaily });
   const agg = await opAgg(me);

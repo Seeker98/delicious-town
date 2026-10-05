@@ -127,3 +127,7 @@ export function refuelDraws(added: number, oilMax: number, t: F['refuel']): numb
 export function perHostLeft(max: number, used: number): number | null {
   return max <= 0 ? null : Math.max(0, max - used);
 }
+
+/** 每人每天在这家店翻了几格、在这家好友店灭了几只（问题记录 374），记在 daily_counter */
+export const flipHostKey = (hostId: number) => `flip.host:${hostId}`;
+export const killHostKey = (hostId: number) => `roach.killHost:${hostId}`;

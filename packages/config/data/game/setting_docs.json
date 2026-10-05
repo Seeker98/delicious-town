@@ -235,7 +235,7 @@
     "tuning.friend.roach.killStrength.npc": "灭蟹老板店里一只蟑螂花的体力（点）",
     "tuning.friend.roach.ticketRate": "灭蟑螂掉礼券的基础概率（概率）",
     "tuning.friend.roach.ticketMax": "灭蟑螂一次最多掉几张礼券（张）",
-    "tuning.friend.roach.killPerHostDaily": "每人每天在同一家别人的店（含蟹老板）最多灭几只蟑螂；自己店不限，0 = 不限（只）",
+    "tuning.friend.roach.killPerHostDaily": "每人每天在同一家好友店最多灭几只蟑螂；自己店、蟹老板的店不限，0 = 不限（只）",
     "tuning.friend.flip.baseSlots": "被翻橱柜的格子数基础值（格）",
     "tuning.friend.flip.slotsPerStar": "每颗星增加的被翻格子数（格）",
     "tuning.friend.flip.coolHours": "同一个格子被翻后多久才能再翻（小时）",

@@ -15,7 +15,8 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { isFriend } from '../../core/pair';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
-import { flipSlots } from '../interact/rules';
+import { getDaily } from '../counter/dailyCounter';
+import { flipHostKey, flipSlots, killHostKey, perHostLeft } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
 import { logPage, restNames, tableDto } from '../restaurant/reads';
 import { equipDisplayName } from '../equip/hats';
@@ -139,6 +140,25 @@ export function createFriendReads(d: GameDeps) {
       const ids = rows.map((r) => r.id);
       const diners = await countBy(d.db, 'dine_dash', ids, now);
       const cooling = await countBy(d.db, 'cupboard_flip', ids, now);
+      // 今天在各家店已经翻了几格（问题记录 374：同一家店每人每天有上限）
+      const flipped = new Map<string, number>(
+        ids.length === 0
+          ? []
+          : (
+              await d.db
+                .selectFrom('daily_counter')
+                .select(['key', 'count'])
+                .where('rest_id', '=', ctx.restaurantId)
+                .where('day', '=', gameDay(now))
+                .where('key', 'in', ids.map(flipHostKey))
+                .execute()
+            ).map((x) => [x.key, x.count]),
+      );
+      const flipReady = (id: number, star: number): number => {
+        const free = Math.max(0, flipSlots(star, t.flip) - (cooling.get(id) ?? 0));
+        const left = perHostLeft(t.flip.perHostDaily, flipped.get(flipHostKey(id)) ?? 0);
+        return left === null ? free : Math.min(free, left);
+      };
       const items: FriendBriefDto[] = rows.map((r) => ({
         id: r.id,
         name: r.name,
@@ -151,7 +171,7 @@ export function createFriendReads(d: GameDeps) {
           r.state === 1 &&
           r.tables.some(isEmptyTable) &&
           (r.npc || (diners.get(r.id) ?? 0) < t.dine.baseSeats + r.star_level),
-        flipReady: Math.max(0, flipSlots(r.star_level, t.flip) - (cooling.get(r.id) ?? 0)),
+        flipReady: flipReady(r.id, r.star_level),
         since: r.created_at.toISOString(),
       }));
       const key = (x: FriendBriefDto): number =>
@@ -317,6 +337,14 @@ export function createFriendReads(d: GameDeps) {
         plaques,
         tables: tables.map((x) => tableDto(x, names)),
         thumbedToday: thumbed !== undefined,
+        // 今天在这家好友店还能灭几只（问题记录 374）；自己店、蟹老板的店不限
+        killLeft:
+          restId === ctx.restaurantId || r.npc
+            ? null
+            : perHostLeft(
+                (await d.shards.settings(ctx.shardId)).tuning.friend.roach.killPerHostDaily,
+                await getDaily(d.db, ctx.restaurantId, killHostKey(restId), gameDay(now)),
+              ),
         equips: equips.map((e) => ({
           part: e.part,
           goodsId: e.goods_id,

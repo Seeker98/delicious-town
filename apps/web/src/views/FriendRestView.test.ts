@@ -45,6 +45,7 @@ const detail = (patch: Partial<FriendRestDto> = {}): FriendRestDto => ({
     { no: 2, floor: 1, customer: 3, roach: true, roachBy: null },
   ],
   thumbedToday: false,
+  killLeft: 3,
   equips: [],
   special: null,
   ...patch,
@@ -111,6 +112,25 @@ describe('FriendRestView', () => {
     await w.find('[data-testid="table-2"]').trigger('click');
     expect(w.find('[data-testid="act-kill"]').exists()).toBe(false);
     expect(w.get('[data-testid="own-roach"]').text()).toBe('这只蟑螂是你放的，自己不能消灭');
+  });
+
+  it('好友店的蟑螂：写今天还能灭几只；灭够了换成说明，不放按钮（问题记录 374）', async () => {
+    const w = await mountView();
+    await w.find('[data-testid="table-2"]').trigger('click');
+    expect(w.get('[data-testid="kill-left"]').text()).toBe('今天在这家店还能灭 3 只蟑螂');
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ killLeft: 0 }));
+    const done = await mountView();
+    await done.find('[data-testid="table-2"]').trigger('click');
+    expect(done.find('[data-testid="act-kill"]').exists()).toBe(false);
+    expect(done.get('[data-testid="kill-done"]').text()).toBe('今天在这家店灭的蟑螂够多了，留点给别人吧');
+  });
+
+  it('不限（蟹老板的店）时不写剩几只', async () => {
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true, killLeft: null }));
+    const w = await mountView();
+    await w.find('[data-testid="table-2"]').trigger('click');
+    expect(w.find('[data-testid="act-kill"]').exists()).toBe(true);
+    expect(w.find('[data-testid="kill-left"]').exists()).toBe(false);
   });
 
   it('不是好友时只显示加好友', async () => {

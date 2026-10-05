@@ -71,6 +71,8 @@ const friends: Messages['friends'] = {
     kill: 'Eliminar cucaracha',
     tableLocked: 'Ahora no puedes hacer nada en esta mesa',
     ownRoach: 'Tú pusiste esta cucaracha, así que no puedes eliminarla',
+    killLeft: (n) => `Hoy aún puedes eliminar ${n} ${plEs(n, 'cucaracha', 'cucarachas')} aquí`,
+    killDone: 'Hoy ya has eliminado bastantes cucarachas aquí. Deja algunas para los demás',
   },
   tables: {
     freeloader: (name) => `Gorrón: ${name ?? 'un amigo'}`,

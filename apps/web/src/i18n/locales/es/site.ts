@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     hostLimit1005:
-      'Cada jugador puede revolver como máximo 3 huecos de la despensa y eliminar 3 cucarachas al día en un mismo restaurante (sin límite en el tuyo). La página de la despensa muestra cuántas veces te quedan hoy',
+      'Cada jugador puede revolver como máximo 3 huecos de la despensa por restaurante al día, y eliminar como máximo 3 cucarachas al día en el restaurante de un mismo amigo (sin límite en el tuyo ni en el de Don Krab). La despensa y el restaurante del amigo muestran cuántas veces te quedan hoy',
     browse1005:
       'Al volver de una receta o de una ficha de la wiki se mantienen la calle, los filtros y la página. La página de recetas muestra la bonificación de la calle elegida. Al tocar una cucaracha que pusiste se explica que no puedes eliminarla tú',
     renumber1005:

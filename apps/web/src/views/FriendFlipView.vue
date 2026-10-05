@@ -59,6 +59,8 @@ async function flip(slot: number) {
     await load();
   } catch (e) {
     toast.push(errorMessage(e, t.value.friends.flip.failed), 'danger');
+    // 次数或冷却可能在别处变了（例如另一个页面翻满了这家店）：重新读，按钮跟着更新
+    await load();
   } finally {
     busy.value = false;
   }

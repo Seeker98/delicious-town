@@ -22,10 +22,7 @@ import { AppError } from '../../http/errors';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { addFoods, subFoods } from '../cupboard/foods';
 import { grantGoodsOp } from '../store/goods';
-import { caughtCoin, flipCoolMs, flipSlots, perHostLeft } from './rules';
-
-/** 每人每天在这家店翻了几格（问题记录 374） */
-const flipHostKey = (hostId: number) => `flip.host:${hostId}`;
+import { caughtCoin, flipCoolMs, flipHostKey, flipSlots, perHostLeft } from './rules';
 
 /** 从对方未锁定的 1~5 级食材里按 odds 抽一种；没有返回 null */
 async function pickFood(op: Op, rng: Rng): Promise<number | null> {
