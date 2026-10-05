@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    batch9:
+      'Cada reposición diaria del mercado añade ahora un ingrediente que necesitan las recetas de la Calle de los novatos (Trece especias, Tofu, Costillas…), así que los nuevos jugadores ya no se atascan durante días. La página de recetas, la de mudanza y la wiki del juego muestran si una calle es de monedas, equilibrada o de EXP, y por qué tiene su bonificación',
     streets1005:
       'Bonificaciones de las calles reequilibradas: las calles que dan más monedas dan menos EXP y al revés, y los ingresos totales de las calles están mucho más igualados. También se aplica a los restaurantes que ya están en una calle: las monedas bajan más en la Calle Guangdong y las Calles Fusión I y II, y la EXP sube más en las Calles Shandong, Grecia y Chop Suey (mira la bonificación de la calle en la página de mudanza). Por debajo del nivel 40, la EXP de cada ronda recibe un extra, +200% en el nivel 1 y menos en cada nivel, así que los nuevos jugadores suben más rápido',
     hostLimit1005:

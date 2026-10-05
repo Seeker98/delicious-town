@@ -9,7 +9,7 @@ export const I18N_FIELDS = {
   goods: ['name', 'desc'],
   foods: ['name'],
   weather: ['name', 'note'],
-  streets: ['name', 'desc', 'cookName'],
+  streets: ['name', 'desc', 'cookName', 'theme'],
   devices: ['name'],
   suits: ['name', 'tiers'],
   mysterious: ['name'],
@@ -36,7 +36,7 @@ export const I18N_KINDS = Object.keys(I18N_FIELDS) as I18nKind[];
 export const I18N_FILE_LOCALES = ['en', 'fr', 'es'] as const;
 export type I18nLocale = 'zh-TW' | (typeof I18N_FILE_LOCALES)[number];
 
-type TextField = 'name' | 'desc' | 'note' | 'cookName' | 'title';
+type TextField = 'name' | 'desc' | 'note' | 'cookName' | 'title' | 'theme';
 const LIST_FIELDS: ReadonlySet<string> = new Set(['tiers']);
 
 export type I18nEntry = Partial<Record<TextField, string>> & { tiers?: string[] };

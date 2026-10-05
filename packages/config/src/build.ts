@@ -385,7 +385,15 @@ export function buildBundle(src: SourceData): BuildResult {
   const streets = streetsRaw.map((s) => {
     const medalId = medalOf.get(s.id);
     if (medalId === undefined) errors.push(`street ${s.id} has no medal`);
-    return { id: s.id, name: s.name, cookName: s.cookname ?? '', desc: s.desc ?? '', medalId: medalId ?? -1 };
+    return {
+      id: s.id,
+      name: s.name,
+      cookName: s.cookname ?? '',
+      desc: s.desc ?? '',
+      theme: s.theme ?? '',
+      focus: s.focus ?? null,
+      medalId: medalId ?? -1,
+    };
   });
   for (const id of medalOf.keys())
     if (!streets.some((s) => s.id === id)) errors.push(`street_medal_map references unknown street ${id}`);

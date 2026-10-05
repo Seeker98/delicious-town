@@ -1,3 +1,6 @@
+/** 街道类型（问题记录 378 方案 C）：银币街、均衡街、经验街 */
+export type StreetFocus = 'coin' | 'balanced' | 'exp';
+
 export interface WeatherDto {
   id: number;
   name: string;
@@ -46,7 +49,15 @@ export interface CatalogDto {
   goods: CatalogGoodsDto[];
   foods: CatalogFoodDto[];
   /** desc = 街道加成说明（搬家页显示，问题记录 284） */
-  streets: Array<{ id: number; name: string; cookName: string; desc: string }>;
+  /** theme：为什么是这个加成（问题记录 380）；focus：银币街、均衡街、经验街，新手街 null（问题记录 378 方案 C） */
+  streets: Array<{
+    id: number;
+    name: string;
+    cookName: string;
+    desc: string;
+    theme: string;
+    focus: StreetFocus | null;
+  }>;
   /** note 是天气效果说明（问题记录 272 起按语言；旧缓存里没有） */
   weather: Array<{ id: number; name: string; note?: string }>;
   devices: Array<{ id: number; name: string; deviceType: number; needStar: number }>;

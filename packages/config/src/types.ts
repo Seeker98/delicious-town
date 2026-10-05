@@ -91,11 +91,18 @@ export interface Cookbook {
   needFoods: Record<number, IdNumFood[]>;
 }
 
+/** 街道类型（问题记录 378 方案 C） */
+export type StreetFocus = 'coin' | 'balanced' | 'exp';
+
 export interface Street {
   id: number;
   name: string;
   cookName: string;
   desc: string;
+  /** 为什么是这个加成（问题记录 380） */
+  theme: string;
+  /** 银币街、均衡街、经验街（问题记录 378 方案 C）；新手街 null */
+  focus: StreetFocus | null;
   /** 街道勋章 goods id（designed/street_medal_map，问题记录 284） */
   medalId: number;
 }

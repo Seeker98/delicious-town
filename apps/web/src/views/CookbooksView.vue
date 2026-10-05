@@ -10,7 +10,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { queryInt } from '../utils/query';
-import { GRADE_NAMES } from '../utils/labels';
+import { GRADE_NAMES, STREET_FOCUS } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
@@ -27,7 +27,7 @@ const filter = ref<Filter>(FILTERS.find((f) => f === route.query.filter) ?? 'all
 const page = ref(queryInt(route.query.page, 1) ?? 1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
-const streetDesc = computed(() => catalog.streets.find((s) => s.id === street.value)?.desc ?? '');
+const streetInfo = computed(() => catalog.streets.find((s) => s.id === street.value) ?? null);
 
 async function load() {
   try {
@@ -116,9 +116,13 @@ onMounted(async () => {
       </button>
     </div>
   </div>
-  <!-- 街道简介（问题记录 380）：各街的加成，按目录取当前语言 -->
-  <div v-if="streetDesc" class="small mb-1" data-testid="street-desc">
-    {{ t.cookbook.streetDesc(streetDesc) }}
+  <!-- 街道简介（问题记录 380）：类型、加成、为什么是这个加成，按目录取当前语言 -->
+  <div v-if="streetInfo" class="small mb-1">
+    <span v-if="streetInfo.focus" class="dt-tag me-1" data-testid="street-focus">{{
+      STREET_FOCUS[streetInfo.focus]
+    }}</span>
+    <span v-if="streetInfo.desc" data-testid="street-desc">{{ t.cookbook.streetDesc(streetInfo.desc) }}</span>
+    <div v-if="streetInfo.theme" class="text-muted" data-testid="street-theme">{{ streetInfo.theme }}</div>
   </div>
   <div v-if="list" class="small text-muted mb-2" data-testid="cookbook-counts">
     {{

@@ -2,151 +2,181 @@
   "0": {
     "name": "Calle de los novatos",
     "desc": "Ocupación +35%, monedas por mesa +1, suerte +36, clientes exigentes -35%",
+    "theme": "Casas de comida casera y clientes habituales del barrio: clientes fáciles, ideal para empezar",
     "cookName": "Cocina casera"
   },
   "1": {
     "name": "Calle Hunan",
     "desc": "Monedas finales +10%, EXP final +40%, suerte +10",
+    "theme": "Platos de Hunan picantes que hacen volver a los clientes: monedas y EXP estables",
     "cookName": "Cocina de Hunan"
   },
   "2": {
     "name": "Calle Guangdong",
     "desc": "Monedas finales -25%, EXP final -30%, ocupación +10%, clientes exigentes +8%, aceite por mesa -2",
+    "theme": "Casas de dim sum llenas y comensales exigentes: muchos clientes exigentes, monedas rápidas y se ahorra aceite",
     "cookName": "Cocina cantonesa"
   },
   "3": {
     "name": "Calle Sichuan",
     "desc": "EXP y monedas finales -10%, EXP por mesa +4, aceite por mesa +2",
+    "theme": "Cocina de Sichuan picante que depende del fuego y gasta aceite: mucha EXP para mejorar, monedas normales",
     "cookName": "Cocina de Sichuan"
   },
   "4": {
     "name": "Calle Fujian",
     "desc": "EXP final -20%, monedas por mesa +2, EXP por mesa +3",
+    "theme": "Sopas y mariscos de Fujian: más monedas y EXP por mesa, ingresos equilibrados",
     "cookName": "Cocina de Fujian"
   },
   "5": {
     "name": "Calle Anhui",
     "desc": "Monedas finales +25%, monedas por mesa +3, consumo de aceite -15%",
+    "theme": "Cocina de Anhui contundente y guisada, comerciantes generosos: cada mesa paga bien y guisar ahorra aceite",
     "cookName": "Cocina de Anhui"
   },
   "6": {
     "name": "Calle Shandong",
     "desc": "Monedas finales +30%, EXP final +40%, EXP por mesa +6, consumo de aceite -10%, ocupación -20%",
+    "theme": "Grandes platos de banquete de Shandong: menos clientes, pero mucha EXP por mesa, y se ahorra aceite",
     "cookName": "Cocina de Shandong"
   },
   "7": {
     "name": "Calle Zhejiang",
     "desc": "Monedas finales -5%, EXP final -10%, clientes exigentes +10%, aceite por mesa -3",
+    "theme": "Cocina de Zhejiang ligera y refinada: clientes exigentes que pagan bien, y cocinar al vapor ahorra aceite",
     "cookName": "Cocina de Zhejiang"
   },
   "8": {
     "name": "Calle Jiangsu",
     "desc": "Monedas finales -20%, EXP final +30%, clientes exigentes +5%, consumo de aceite -50%",
+    "theme": "Cortes finos y fuego lento de Jiangsu: muy poco aceite, buena EXP, algo menos de monedas",
     "cookName": "Cocina de Jiangsu"
   },
   "9": {
     "name": "Calle Fusión I",
     "desc": "Monedas finales -30%, EXP final -15%, clientes exigentes +25%",
+    "theme": "Una calle gastronómica donde se juntan restaurantes de todas partes: muchos platos, clientela variada, muchos clientes exigentes que pagan bien",
     "cookName": "Cocina de la Calle Fusión I"
   },
   "10": {
     "name": "Calle Fusión II",
     "desc": "Monedas finales -30%, EXP final -15%, clientes exigentes +25%",
+    "theme": "Una calle de puestos que mezcla cocinas del norte y del sur: la que más platos tiene, muchos clientes exigentes, monedas rápidas",
     "cookName": "Cocina de la Calle Fusión II"
   },
   "11": {
     "name": "Calle Jiangxi",
     "desc": "Monedas finales -20%, EXP final +10%, ocupación +15%, monedas por mesa +3",
+    "theme": "Cocina de Jiangxi picante y barata, mucha gente: alta ocupación y más monedas por mesa",
     "cookName": "Cocina de Jiangxi"
   },
   "12": {
     "name": "Calle Hubei",
     "desc": "Monedas finales +15%, EXP final +40%, suerte +10",
+    "theme": "Cocina de Hubei, tierra de arroz y pescado: mucha EXP y buena suerte",
     "cookName": "Cocina de Hubei"
   },
   "13": {
     "name": "Calle Pekín",
     "desc": "Monedas finales +25%, EXP final -5%, EXP por mesa +2, consumo de aceite +30%",
+    "theme": "Pato laqueado famoso y clientes que gastan: muchas monedas, pero los hornos gastan aceite",
     "cookName": "Cocina de Pekín"
   },
   "14": {
     "name": "Calle Japón",
     "desc": "Monedas finales +15%, EXP final +10%, clientes exigentes +12%, monedas de los clientes exigentes satisfechos +15%, ocupación -8%",
+    "theme": "Cocina refinada basada en buenos ingredientes y cortes: muchos clientes exigentes que pagan generosamente, pero el listón alto atrae a menos gente",
     "cookName": "Cocina japonesa"
   },
   "15": {
     "name": "Calle Italia",
     "desc": "Monedas finales -15%, ocupación +15%, monedas por mesa +1, monedas a domicilio +30%, consumo de aceite +15%",
+    "theme": "Pizzas y pastas muy populares, muchos pedidos a domicilio, y los hornos gastan aceite",
     "cookName": "Cocina italiana"
   },
   "16": {
     "name": "Calle Francia",
     "desc": "Monedas finales +45%, EXP final +15%, clientes exigentes +8%, ocupación -12%",
+    "theme": "Alta cocina: cuentas altas, pero menos clientes y más exigentes",
     "cookName": "Cocina francesa"
   },
   "17": {
     "name": "Calle España",
     "desc": "EXP final +15%, ocupación +8%, monedas de clientes que comen platos estrella +20%, suerte +16, aceite por mesa +1",
+    "theme": "Tapas y cultura de compartir: los platos estrella se venden bien y abrir hasta tarde gasta algo más de aceite",
     "cookName": "Cocina española"
   },
   "18": {
     "name": "Calle México",
     "desc": "Monedas finales -30%, EXP final -20%, ocupación +20%, EXP por mesa +2, aceite por mesa +2",
+    "theme": "Ambiente de fiesta: mucha gente y mucha EXP, pero freír y asar gasta aceite",
     "cookName": "Cocina mexicana"
   },
   "19": {
     "name": "Calle Tailandia",
     "desc": "Monedas finales -10%, EXP final +5%, ocupación +12%, aceite por mesa -2, EXP a domicilio +30%",
+    "theme": "Comida callejera: muchos clientes, salteados rápidos que ahorran aceite, el reparto a domicilio va de maravilla, pero los precios son bajos",
     "cookName": "Cocina tailandesa"
   },
   "20": {
     "name": "Calle India",
     "desc": "Monedas finales +25%, EXP final -5%, raciones de platos estrella +5%, EXP por mesa +3, suerte +10, clientes exigentes -8%",
+    "theme": "Grandes ollas especiadas: más platos estrella y clientes fáciles",
     "cookName": "Cocina india"
   },
   "21": {
     "name": "Calle Turquía",
     "desc": "Monedas finales +20%, EXP final +15%, monedas por mesa +3, EXP por mesa +1, suerte +20, consumo de aceite +20%",
+    "theme": "Brasas y hospitalidad: más monedas por mesa, pero el carbón gasta aceite",
     "cookName": "Cocina turca"
   },
   "22": {
     "name": "Calle Vietnam",
     "desc": "Monedas finales -10%, EXP final +5%, consumo de aceite -30%, EXP por mesa +3",
+    "theme": "Fideos y caldos ligeros: muy poco aceite, pero precios bajos",
     "cookName": "Cocina vietnamita"
   },
   "23": {
     "name": "Calle América",
     "desc": "Monedas finales +5%, EXP final +25%, monedas y EXP a domicilio +20%, ocupación +25%, clientes exigentes -10%, consumo de aceite +20%",
+    "theme": "Comida rápida en raciones grandes: muchísima gente y mucho reparto a domicilio, clientes fáciles, pero las freidoras gastan aceite",
     "cookName": "Cocina estadounidense"
   },
   "24": {
     "name": "Calle Marruecos",
     "desc": "Monedas finales +15%, EXP final +30%, probabilidad de ingredientes misteriosos al explorar +2%, suerte +25",
+    "theme": "Mercados de especias y caravanas del desierto: buena suerte, y al explorar es más fácil dar con ingredientes misteriosos",
     "cookName": "Cocina marroquí"
   },
   "25": {
     "name": "Calle Argentina",
     "desc": "Monedas finales +5%, EXP final +30%, monedas por mesa +4, ocupación +5%, consumo de aceite +25%",
+    "theme": "Asado de la pampa: muchas monedas por mesa, pero asar toda la noche es lo que más aceite gasta",
     "cookName": "Cocina argentina"
   },
   "26": {
     "name": "Calle Grecia",
     "desc": "Monedas finales +10%, EXP final +85%, consumo de aceite -10%, clientes exigentes -5%",
+    "theme": "Aceite de oliva y tierra de filósofos: mucha EXP, se ahorra aceite, clientes fáciles",
     "cookName": "Cocina griega"
   },
   "27": {
     "name": "Calle Perú",
     "desc": "Monedas finales +5%, EXP final -20%, probabilidad de mejor calidad al cocinar platos estrella +8%, clientes exigentes +8%",
+    "theme": "Capital gastronómica obsesionada con la frescura: los platos estrella salen de mayor calidad más fácilmente, y los clientes son exigentes",
     "cookName": "Cocina peruana"
   },
   "28": {
     "name": "Calle Rusia",
     "desc": "Monedas finales -5%, EXP final -20%, EXP por mesa +5, ocupación -10%, cada cucaracha que aparezca tiene un 20 % de probabilidad de morir",
+    "theme": "Una tierra helada: los guisos dan mucha EXP y las cucarachas apenas sobreviven, pero el frío espanta a los clientes",
     "cookName": "Cocina rusa"
   },
   "29": {
     "name": "Calle Chop Suey",
     "desc": "Monedas finales +20%, EXP final +55%, monedas y EXP a domicilio +30%, ocupación +10%, monedas por mesa +1, clientes exigentes -10%",
+    "theme": "La comida china a domicilio de ultramar manda: muchos ingresos a domicilio, muchos clientes y poco exigentes",
     "cookName": "Cocina china de ultramar"
   }
 }

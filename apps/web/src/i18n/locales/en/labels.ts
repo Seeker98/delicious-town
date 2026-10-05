@@ -56,6 +56,7 @@ const labels: Messages['labels'] = {
     cte: 'Coins to EXP',
   },
   taste: ['', 'Sour', 'Sweet', 'Bitter', 'Spicy', 'Salty', 'Umami'],
+  streetFocus: { coin: 'Coin street', balanced: 'Balanced street', exp: 'EXP street' },
   equipPart: ['', 'Spatula', 'Knife', 'Wok', 'Bottle', 'Hat'],
   attr: {
     cook: 'Cooking',

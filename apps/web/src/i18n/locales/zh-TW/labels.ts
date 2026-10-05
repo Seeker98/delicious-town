@@ -44,6 +44,8 @@ export default {
     cte: '銀幣轉經驗',
   },
   taste: ['', '酸', '甘', '苦', '辛', '鹹', '鮮'],
+  /** 街道型別（問題記錄 378 方案 C） */
+  streetFocus: { coin: '銀幣街', balanced: '均衡街', exp: '經驗街' },
   /** 廚具部位（下標 = part） */
   equipPart: ['', '鏟', '刀', '鍋', '瓶', '帽'],
   attr: {

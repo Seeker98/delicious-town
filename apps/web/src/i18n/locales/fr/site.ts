@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    batch9:
+      'Chaque réassort du marché ajoute désormais un ingrédient dont ont besoin les recettes de la Rue des débutants (Treize épices, Tofu, Travers de porc…) : les nouveaux joueurs ne restent plus bloqués des jours. La page des recettes, la page de déménagement et le wiki du jeu indiquent si une rue est à pièces, équilibrée ou à EXP, et d’où vient son bonus',
     streets1005:
       'Bonus des rues rééquilibrés : les rues qui rapportent plus de pièces donnent moins d’EXP et inversement, et les revenus totaux des rues sont bien plus proches. Cela s’applique aussi aux restaurants déjà installés : les pièces baissent le plus rue du Guangdong et rues Fusion I et II, et l’EXP monte le plus rue du Shandong, rue de Grèce et rue Chop Suey (voir le bonus de rue sur la page de déménagement). Sous le niveau 40, l’EXP de chaque tour reçoit un bonus, +200 % au niveau 1 et de moins en moins à chaque niveau : les nouveaux joueurs montent plus vite',
     hostLimit1005:

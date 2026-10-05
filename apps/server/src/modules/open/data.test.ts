@@ -124,6 +124,12 @@ describe('开放接口数据（问题记录 142）', () => {
     const s = data.streets('zh-CN').items;
     expect(s).toHaveLength(b.streets.length);
     expect(s.find((x) => x.id === 0)!.medal!.id).toBe(config.streets.get(0)!.medalId);
+    // 主题说明和街道类型（问题记录 380、378 方案 C）
+    expect(s.find((x) => x.id === 14)).toMatchObject({
+      theme: expect.stringContaining('精致料理'),
+      focus: 'coin',
+    });
+    expect(data.streets('en').items.find((x) => x.id === 14)!.theme).toContain('knife skills');
     expect(s.reduce((n, x) => n + x.cookbookCount, 0)).toBe(b.cookbooks.length);
   });
 });

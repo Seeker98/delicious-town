@@ -79,8 +79,8 @@ describe('CookbooksView', () => {
 
   it('别的街的菜：按钮写"搬到 X 才能学"并禁用（问题记录 312）', async () => {
     useCatalogStore().streets = [
-      { id: 0, name: '新手街', cookName: '家常菜', desc: '' },
-      { id: 1, name: '湖南街', cookName: '湘菜', desc: '' },
+      { id: 0, name: '新手街', cookName: '家常菜', desc: '', theme: '', focus: null },
+      { id: 1, name: '湖南街', cookName: '湘菜', desc: '', theme: '', focus: null },
     ];
     vi.mocked(endpoints.cookbookList).mockResolvedValue({
       ...list,
@@ -207,8 +207,15 @@ describe('CookbooksView', () => {
       goods: [],
       foods: [],
       streets: [
-        { id: 0, name: '新手街', cookName: '家常菜', desc: '上座率+35%' },
-        { id: 3, name: '四川街', cookName: '川菜', desc: '每桌经验+4' },
+        { id: 0, name: '新手街', cookName: '家常菜', desc: '上座率+35%', theme: '', focus: null },
+        {
+          id: 3,
+          name: '四川街',
+          cookName: '川菜',
+          desc: '每桌经验+4',
+          theme: '川菜麻辣讲究火候',
+          focus: 'exp',
+        },
       ],
       weather: [],
       devices: [],
@@ -222,9 +229,13 @@ describe('CookbooksView', () => {
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：上座率+35%');
+    expect(w.find('[data-testid="street-focus"]').exists()).toBe(false);
     await w.get('select').setValue('3');
     await flushPromises();
     expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：每桌经验+4');
+    // 街道类型和为什么是这个加成（问题记录 380、378 方案 C）；新手街没有类型
+    expect(w.get('[data-testid="street-focus"]').text()).toBe('经验街');
+    expect(w.get('[data-testid="street-theme"]').text()).toBe('川菜麻辣讲究火候');
   });
 
   it('恢复的页码超过现在的总页数（学完最后一道菜再返回）：退到最后一页，不留空页', async () => {

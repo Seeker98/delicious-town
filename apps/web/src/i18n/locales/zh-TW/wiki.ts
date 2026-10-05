@@ -80,6 +80,8 @@ export default {
     taste: '口味',
     cookName: '菜系',
     bonus: '街道加成',
+    focus: '街道型別',
+    theme: '特色',
     cookbookCount: (n: number) => `${n} 道菜`,
     suitTier: (n: number) => `${n} 件`,
   },

@@ -86,6 +86,8 @@ const wiki: Messages['wiki'] = {
     taste: 'Goût',
     cookName: 'Cuisine',
     bonus: 'Bonus de rue',
+    focus: 'Type de rue',
+    theme: 'Ambiance',
     cookbookCount: (n) => `${n} ${plFr(n, 'plat', 'plats')}`,
     suitTier: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   },

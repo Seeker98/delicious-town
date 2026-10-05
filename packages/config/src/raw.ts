@@ -77,6 +77,10 @@ export const rawStreet = z.object({
   name: z.string(),
   cookname: z.string().nullish(),
   desc: z.string().nullish(),
+  /** 为什么是这个加成（问题记录 380） */
+  theme: z.string().nullish(),
+  /** 银币街、均衡街、经验街（问题记录 378 方案 C）；新手街不写 */
+  focus: z.enum(['coin', 'balanced', 'exp']).nullish(),
 });
 
 export const rawMysterious = z.object({
