@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    guide1006:
+      'Le wiki du jeu a maintenant un guide de jeu : trois rythmes de jeu, quoi faire à chaque connexion, quand déménager et où dépenser ses pièces en premier. La page des recettes suggère de déménager quand votre rue n’a pas assez de recettes pour l’étoile suivante',
     batch9:
       'Chaque réassort du marché ajoute désormais un ingrédient dont ont besoin les recettes de la Rue des débutants (Treize épices, Tofu, Sucre candi…) : les nouveaux joueurs ne restent plus bloqués des jours. La page des recettes, la page de déménagement et le wiki du jeu indiquent si une rue est à pièces, équilibrée ou à EXP, et d’où vient son bonus',
     streets1005:

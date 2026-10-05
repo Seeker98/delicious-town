@@ -8,8 +8,19 @@ import { useCatalogStore } from '../stores/catalog';
 import CookbooksView from './CookbooksView.vue';
 
 vi.mock('../api/endpoints', () => ({
-  endpoints: { cookbookList: vi.fn(), learn: vi.fn(), overview: vi.fn() },
+  endpoints: { cookbookList: vi.fn(), learn: vi.fn(), overview: vi.fn(), starNeed: vi.fn() },
 }));
+
+/** 下一星要学会 need 道菜（问题记录 378 后续的搬街提示用） */
+const starNeed = (need: number) =>
+  ({
+    star: 1,
+    nextStar: 2,
+    available: true,
+    checks: [{ key: 'cookbooks', need, have: 0, ok: false }],
+    award: null,
+    ok: false,
+  }) as never;
 
 const list: CookbookListDto = {
   street: 0,
@@ -31,6 +42,7 @@ describe('CookbooksView', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 0 } as never);
+    vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(15));
     vi.mocked(endpoints.cookbookList).mockResolvedValue(list);
     vi.mocked(endpoints.learn).mockResolvedValue({ cookbookId: 194, grade: 1, learnType: '0' });
   });
@@ -184,7 +196,6 @@ describe('CookbooksView', () => {
     await router.push('/cookbooks?street=3&filter=learnable&page=2');
     mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(endpoints.overview).not.toHaveBeenCalled();
     expect(endpoints.cookbookList).toHaveBeenCalledTimes(1);
     expect(endpoints.cookbookList).toHaveBeenCalledWith({ street: 3, page: 2, filter: 'learnable' });
   });
@@ -268,7 +279,6 @@ describe('CookbooksView', () => {
     await router.push('/cookbooks?street=0');
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(endpoints.overview).not.toHaveBeenCalled();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
     w.unmount();
   });
@@ -283,5 +293,61 @@ describe('CookbooksView', () => {
     mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 5, page: 1, filter: 'all' });
+  });
+
+  it('本街剩下的菜全学会也凑不够下一星：提示去搬家，带搬家页链接；看别的街时不提示（问题记录 378 后续）', async () => {
+    vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(100));
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 0,
+      streetTotal: 69,
+      streetLearned: 30,
+      learned: 30,
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/cookbooks', component: CookbooksView },
+        { path: '/society/move', component: CookbooksView },
+      ],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    const hint = w.get('[data-testid="move-hint"]');
+    expect(hint.text()).toContain('还差 31 道');
+    expect(hint.get('a').attributes('href')).toBe('/society/move');
+    w.unmount();
+
+    await router.push('/cookbooks?street=3');
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 3,
+      streetTotal: 69,
+      streetLearned: 30,
+      learned: 30,
+    });
+    const other = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(other.find('[data-testid="move-hint"]').exists()).toBe(false);
+  });
+
+  it('本街的菜够下一星：不提示', async () => {
+    vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(100));
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 0,
+      streetTotal: 333,
+      streetLearned: 10,
+      learned: 10,
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.find('[data-testid="move-hint"]').exists()).toBe(false);
   });
 });

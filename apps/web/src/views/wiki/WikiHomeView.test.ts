@@ -57,6 +57,8 @@ describe('游戏资料首页（问题记录 142）', () => {
     expect(w.get('[data-testid="wiki-kind-cookbooks"]').text()).toContain('3,810 条');
     expect(w.get('[data-testid="wiki-kind-cookbooks"]').attributes('href')).toBe('/wiki/cookbooks');
     expect(w.get('[data-testid="wiki-api-link"]').attributes('href')).toBe('/wiki/api');
+    // 玩法攻略（问题记录 384）
+    expect(w.get('[data-testid="wiki-guide-link"]').attributes('href')).toBe('/wiki/guide');
     // 没搜索时不读各类列表
     expect(endpoints.openCookbooks).not.toHaveBeenCalled();
   });

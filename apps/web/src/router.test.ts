@@ -6,6 +6,7 @@ describe('routes', () => {
     const wiki = routes.filter((r) => r.path.startsWith('/wiki') && !r.redirect);
     expect(wiki.map((r) => r.path)).toEqual([
       '/wiki',
+      '/wiki/guide',
       '/wiki/api',
       '/wiki/goods/:id(\\d+)',
       '/wiki/foods/:id(\\d+)',

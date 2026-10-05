@@ -106,6 +106,71 @@ const wiki: Messages['wiki'] = {
     times: (n) => (n < 0 ? '' : ` (${n} por jugador)`),
     none: 'No hay una fuente directa en los datos del juego: puede venir de eventos, packs de regalo, misiones u otras actividades.',
   },
+  /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
+  guide: {
+    title: 'Guía de juego',
+    link: 'Guía de juego: tres ritmos de juego y qué hacer cada vez que entras',
+    intro:
+      'Esta guía sale de la simulación de equilibrio del juego: unos bots jugaron 30 días a tres ritmos (constante, normal y ocasional). Aquí está lo que hicieron y hasta dónde llegaron. Las cifras son estimaciones y la partida real será distinta, así que tómalas como referencia.',
+    sections: [
+      {
+        title: 'Tres ritmos',
+        items: [
+          'Constante: entra cada hora desde la mañana hasta tarde por la noche. 1 estrella hacia el día 2 y nivel 30 hacia el día 7; si deja la Calle de los novatos cuando se le acaban las recetas, llega a 2 estrellas en unas dos semanas.',
+          'Normal: entra tres veces al día (mañana, mediodía y noche). 1 estrella hacia el día 3, nivel 30 hacia el día 9 y 2 estrellas hacia el día 18.',
+          'Ocasional: entra una vez cada noche. 1 estrella hacia el día 4 y nivel 30 hacia el día 23; las 2 estrellas suelen tardar más de un mes, y no pasa nada.',
+        ],
+      },
+      {
+        title: 'Cada vez que entres, en este orden',
+        items: [
+          'Regístrate y recoge las recompensas de puntos de actividad.',
+          'Usa los objetos del almacén que se usan directamente: mesas, paquetes de regalo, vales de ingredientes.',
+          'Pon todos los puntos de atributo en Cocina.',
+          'Echa aceite cuando baje del 60 %; un restaurante cerrado vuelve a abrir en cuanto tiene aceite.',
+          'Elimina las cucarachas de tu propio restaurante.',
+          'Recoge las misiones: misión principal, misiones secundarias y recompensas de capítulo en cuanto estén listas.',
+          'Llena los huecos de instalaciones vacíos; si no tienes ninguna en el almacén, compra las baratas.',
+          'Cuando solo te falten el certificado y las monedas para la siguiente estrella, compra el certificado y sube; si no te llega, ahorra en vez de gastar en otra cosa.',
+          'Amplía el bidón de aceite en cuanto tu nivel y tus estrellas lo permitan.',
+          'Compra mesas, pero guarda lo necesario para llenar el aceite y 20 000 más de reserva.',
+          'En el mercado, compra solo los ingredientes que les faltan a tus recetas: primero el puesto diario y luego las ofertas. Cada reposición del puesto diario tiene un hueco con un ingrediente que necesita la Calle de los novatos.',
+          'De paso, apúntate a las apuestas del mercado.',
+          'Aprende recetas: primero las nuevas y luego mejora las que ya sabes.',
+          'Usa las combinaciones gratis del día para convertir los ingredientes que no necesitas en otros de nivel superior.',
+        ],
+      },
+      {
+        title: 'Cuándo mudarse',
+        items: [
+          'Solo puedes aprender las recetas de la calle en la que estás. La Calle de los novatos tiene solo 69, y las 2 estrellas piden 100, así que tarde o temprano tendrás que mudarte.',
+          'Cuando ni aprendiendo todas las recetas que quedan en tu calle llegues a la siguiente estrella, la página de recetas te avisa. Cuando ya hayas aprendido casi todas y pases unos días sin aprender ninguna nueva, múdate.',
+          'Se aprende más rápido en calles con muchas recetas: la Calle Fusión II tiene 333.',
+          'Las calles son de monedas, equilibradas o de EXP: si te faltan monedas, ve a una calle de monedas; para subir de nivel, a una de EXP. La página de mudanza y la de recetas muestran el tipo y la bonificación de cada calle.',
+          'Mudarse cuesta una tarjeta de mudanza (gratis con un permiso de trabajo de mudanzas) y una tarifa, que se reduce a la mitad cuando tienes suerte.',
+        ],
+      },
+      {
+        title: 'En qué gastar primero',
+        items: [
+          'Primero el aceite: sin aceite el restaurante cierra y no gana nada.',
+          'Después las estrellas: certificados y monedas para subir de estrella.',
+          'Solo entonces mesas e instalaciones.',
+          'El reparto a domicilio pide 2 estrellas, 888 de renombre, 8,88 millones de monedas y 300 diamantes para abrirlo: si te interesa, empieza a ahorrar pronto.',
+        ],
+      },
+      {
+        title: 'Otras actividades',
+        items: [
+          'Sacude el árbol del dinero en el pueblo una vez al día, y mira si la Hermana Wen, el Hermano 13 y los demás tienen algo para ti.',
+          'Sube la Torre de chefs cada día: la primera planta está abierta desde el nivel 1, y las victorias dan renombre.',
+          'Desde el nivel 20 puedes usar la Bolsa y las Predicciones.',
+          'Llevar utensilios sube los ingresos de cada ronda.',
+          'Por debajo del nivel 40, la EXP de cada ronda recibe un extra (+200 % en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.',
+        ],
+      },
+    ],
+  },
   api: {
     title: 'API abierta',
     intro:
