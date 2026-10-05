@@ -34,6 +34,17 @@ const migrator = () =>
   new Migrator({ db, migrationTableSchema: SCHEMA, provider: { getMigrations: async () => migrations } });
 const json = (v: unknown) => JSON.stringify(v);
 
+/** 区服覆盖：区服数值（含不带键名的元组、按食材编号做键的参考价）和开店礼物（终审 C1、I2） */
+const OVERRIDE = {
+  restaurant: { giftGoods: [{ id: 1, num: 2 }], giftFoods: [{ id: 101, num: 3 }], coin: 101 },
+  tuning: {
+    shop: { discardable: [87] },
+    hiphop: { wages: [[108, 110]] },
+    predict: { unit: 500 },
+    exchange: { refOverrides: { '467': 5000 } },
+  },
+};
+
 /** 每种表、每种日志结构至少一条（Review Focus 1）；也放几条看着像编号但不是的 */
 async function seedOld() {
   await db.insertInto('store_item').values({ rest_id: rest, goods_id: 1, num: 3 }).execute();
@@ -221,16 +232,20 @@ async function seedOld() {
     .values({
       shard_id: shard,
       override: json({
-        tuning: { shop: { discardable: [87] }, hiphop: { wages: [[108, 110]] }, predict: { unit: 500 } },
+        ...OVERRIDE,
       }),
     })
     .onConflict((oc) =>
       oc.column('shard_id').doUpdateSet({
         override: json({
-          tuning: { shop: { discardable: [87] }, hiphop: { wages: [[108, 110]] }, predict: { unit: 500 } },
+          ...OVERRIDE,
         }),
       }),
     )
+    .execute();
+  await db
+    .insertInto('shard_config_history')
+    .values({ shard_id: shard, version: 1, override: json(OVERRIDE), note: 'n' })
     .execute();
   await db.deleteFrom('restaurant_tables').where('rest_id', '=', rest).execute();
   await db
@@ -467,16 +482,24 @@ describe('迁移 0049：重新编号', () => {
       { key: 'A', count: 1, award: { goods: [{ id: g(91101), num: 1 }], coin: 100 } },
     ]);
     expect(pool.last).toEqual({ award: { goods: [{ id: g(91104), num: 1 }] } });
-    expect(
-      (await db.selectFrom('shard_config').select('override').where('shard_id', '=', shard).execute())[0]!
-        .override,
-    ).toEqual({
+    const overrideNow = {
+      restaurant: { giftGoods: [{ id: g(1), num: 2 }], giftFoods: [{ id: f(101), num: 3 }], coin: 101 },
       tuning: {
         shop: { discardable: [g(87)] },
         hiphop: { wages: [[g(108), g(110)]] },
         predict: { unit: 500 },
+        exchange: { refOverrides: { [String(f(467))]: 5000 } },
       },
-    });
+    };
+    expect(
+      (await db.selectFrom('shard_config').select('override').where('shard_id', '=', shard).execute())[0]!
+        .override,
+    ).toEqual(overrideNow);
+    expect(
+      (
+        await db.selectFrom('shard_config_history').select('override').where('shard_id', '=', shard).execute()
+      )[0]!.override,
+    ).toEqual(overrideNow);
     expect(
       (await db.selectFrom('restaurant_tables').select('tables').where('rest_id', '=', rest).execute())[0]!
         .tables,

@@ -89,6 +89,14 @@ describe('道具、食材的引用（问题记录 367）', () => {
     expect(find('foods', FOODS.masterBase + 2, 'code')).toHaveLength(1);
   });
 
+  it('交易所参考价覆盖按食材编号做键：键也算引用（重新编号 PR 4 终审）', () => {
+    const t = structuredClone(b.tuning);
+    t.exchange.refOverrides = { [String(FOODS.masterBase + 1)]: 5000 };
+    expect(tuningRefs(t).filter((r) => r.where === '交易所参考价')).toEqual([
+      { kind: 'foods', id: FOODS.masterBase + 1, role: 'uses', where: '交易所参考价' },
+    ]);
+  });
+
   it('鞋带：捆绑用掉的普通飞弹、得到的极速飞弹都算引用（重新编号 PR 4）', () => {
     const where = '鞋带';
     expect(find('goods', gid('普通飞弹'), 'uses').map((r) => r.where)).toContain(where);

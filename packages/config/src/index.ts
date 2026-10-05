@@ -47,6 +47,7 @@ export {
   patchJsonText,
   rewriteIds,
   TUNING_ID_PATHS,
+  TUNING_KEY_PATHS,
   type IdKind,
   type IdMaps,
   type JsonPath,

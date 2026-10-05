@@ -108,6 +108,15 @@ describe('按键名改写编号（重新编号 PR 4）', () => {
     ]);
   });
 
+  it('按位置认的对象键（交易所参考价覆盖按食材编号做键）：键换成新编号，查不到的记 orphans', () => {
+    const r = run(
+      { exchange: { refOverrides: { '101': 5000, '1002': 7, '999': 1 } } },
+      { keyPaths: [[['exchange', 'refOverrides'], 'foods']] },
+    );
+    expect(r.value).toEqual({ exchange: { refOverrides: { '1001': 5000, '1002': 7, '999': 1 } } });
+    expect(r.orphans).toEqual([{ kind: 'foods', id: 999, path: ['exchange', 'refOverrides', '999'] }]);
+  });
+
   it('不改传进来的对象', () => {
     const input = { goodsId: 1 };
     run(input);

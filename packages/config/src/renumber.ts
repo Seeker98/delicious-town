@@ -60,6 +60,9 @@ export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['town', 'mysteryExclude', '*'], 'foods'],
 ];
 
+/** 区服数值里按编号做键的对象（只改键，不改值）：交易所参考价覆盖按食材编号做键（终审 I2） */
+export const TUNING_KEY_PATHS: readonly PathRule[] = [[['exchange', 'refOverrides'], 'foods']];
+
 const KIND_VALUES: ReadonlySet<unknown> = new Set(['goods', 'foods']);
 const isObj = (x: unknown): x is Record<string, unknown> =>
   typeof x === 'object' && x !== null && !Array.isArray(x);
@@ -71,12 +74,18 @@ function matches(rule: PathRule[0], path: JsonPath): boolean {
 export function rewriteIds(
   value: unknown,
   maps: IdMaps,
-  opts: { paths?: readonly PathRule[]; keys?: Readonly<Record<string, IdKind>> } = {},
+  opts: {
+    paths?: readonly PathRule[];
+    keys?: Readonly<Record<string, IdKind>>;
+    /** 这些位置上的对象，键是编号（只改键；不进 edits，保留排版的文本替换不支持换键） */
+    keyPaths?: readonly PathRule[];
+  } = {},
 ): { value: unknown; edits: Map<string, number>; orphans: Orphan[] } {
   const edits = new Map<string, number>();
   const orphans: Orphan[] = [];
   const keys = { ...ID_KEYS, ...opts.keys };
   const paths = opts.paths ?? [];
+  const keyPaths = opts.keyPaths ?? [];
 
   const swap = (kind: IdKind, v: unknown, path: JsonPath): unknown => {
     if (typeof v !== 'number' || !Number.isInteger(v) || v <= 0) return v;
@@ -113,7 +122,15 @@ export function rewriteIds(
       for (const k of Object.keys(x))
         if (!fieldKind.has(k) && keys[k] && typeof x[k] === 'number') fieldKind.set(k, keys[k]);
       const out: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(x)) {
+      const keyKind = keyPaths.find(([kp]) => matches(kp, path))?.[1];
+      for (const [k0, v] of Object.entries(x)) {
+        let k = k0;
+        if (keyKind !== undefined && /^\d+$/.test(k0)) {
+          const id = Number(k0);
+          const n = maps[keyKind].get(id);
+          if (n !== undefined) k = String(n);
+          else if (!isNewId(keyKind, id)) orphans.push({ kind: keyKind, id, path: [...path, k0] });
+        }
         const p = [...path, k];
         const pk = byPath(p);
         const fk = fieldKind.get(k);

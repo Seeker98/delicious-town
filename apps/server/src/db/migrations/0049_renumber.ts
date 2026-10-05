@@ -1,5 +1,12 @@
 import { sql, type Kysely, type Transaction } from 'kysely';
-import { rewriteIds, TUNING_ID_PATHS, type IdKind, type IdMaps, type PathRule } from '@dt/config';
+import {
+  rewriteIds,
+  TUNING_ID_PATHS,
+  TUNING_KEY_PATHS,
+  type IdKind,
+  type IdMaps,
+  type PathRule,
+} from '@dt/config';
 import type { DB } from '../schema';
 import { COOKBOOK_SLOTS, COOKBOOKS, FOODS, GOODS, SLOTS } from './0049_renumber_map';
 
@@ -66,6 +73,18 @@ const TEXT_COLUMNS: ReadonlyArray<readonly [string, string, string]> = [
 const tuningPaths = (prefix: string): PathRule[] =>
   TUNING_ID_PATHS.map(([p, k]) => [[prefix, ...p], k] as const);
 /**
+ * 区服覆盖（shard_config.override）：{ features, restaurant, tuning }。区服数值里不带键名的编号、按编号做键的参考价，
+ * 以及开店礼物 restaurant.giftGoods / giftFoods（键名不在通用规则里，终审 C1、I2）
+ */
+const overrideOpts = (): Parameters<typeof rewriteIds>[2] => ({
+  paths: [
+    ...tuningPaths('tuning'),
+    [['restaurant', 'giftGoods', '*', 'id'], 'goods'],
+    [['restaurant', 'giftFoods', '*', 'id'], 'foods'],
+  ],
+  keyPaths: TUNING_KEY_PATHS.map(([q, k]) => [['tuning', ...q], k] as const),
+});
+/**
  * JSON 列。key 是唯一键的 SQL 表达式（分批按它排序、写回按它对上），keyType 是它的类型
  * （bigint 列读出来是字符串，写回时显式转换；bar_round 是联合主键，拼成文本）
  */
@@ -93,7 +112,7 @@ const JSON_COLUMNS: readonly JsonColumn[] = [
     keyType: 'int',
     column: 'override',
     live: true,
-    opts: () => ({ paths: tuningPaths('tuning') }),
+    opts: overrideOpts,
   },
   {
     table: 'shard_config_history',
@@ -101,7 +120,7 @@ const JSON_COLUMNS: readonly JsonColumn[] = [
     keyType: 'bigint',
     column: 'override',
     live: false,
-    opts: () => ({ paths: tuningPaths('tuning') }),
+    opts: overrideOpts,
   },
   {
     table: 'rest_log',

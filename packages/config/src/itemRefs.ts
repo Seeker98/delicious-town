@@ -73,6 +73,7 @@ export function tuningRefs(t: Tuning): ItemRef[] {
   for (const [id] of t.temple.missileAttack) add('goods', id, 'uses', '神殿飞弹');
   add('goods', t.mysterious.championGoodsId, 'gives', '特色菜冠军');
   for (const id of t.town.mysteryExclude) add('foods', id, 'uses', '神秘食材兑换');
+  for (const k of Object.keys(t.exchange.refOverrides)) add('foods', Number(k), 'uses', '交易所参考价');
   return out;
 }
 
