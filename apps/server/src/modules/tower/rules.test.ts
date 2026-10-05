@@ -60,6 +60,20 @@ describe('五项评分（问题记录 396）', () => {
     expect(cursed).toEqual([0, 0, 0, 0, 0]);
   });
 
+  it('权重和波动系数按区服数值算', () => {
+    const custom = {
+      ...d,
+      wave: 0,
+      weights: d.weights.map(() => ({ cook: 1, cutting: 0, fire: 0, season: 0, mc: 1 })),
+    };
+    const s = duelScores(
+      { name: 'a', attrs: { ...zero, cook: 7, creatives: 50 }, mcPrice: 2 },
+      custom,
+      sequenceRng([0.9]),
+    );
+    expect(s).toEqual([9, 9, 9, 9, 9]);
+  });
+
   it('"养"加上特色菜每份价值 × 0.3；每项按顺序各抽一个随机数', () => {
     const s = duelScores(
       { name: 'a', attrs: { ...zero, creatives: 10 }, mcPrice: 50 },
@@ -73,9 +87,15 @@ describe('五项评分（问题记录 396）', () => {
 describe('评委（问题记录 396）', () => {
   it('从 10 位评委里不重复地抽 n 位；随机数全 0 时按顺序取前 n 位', () => {
     expect(pickJudges(5, sequenceRng([0]))).toEqual(DUEL_JUDGES.slice(0, 5).map((j) => j.id));
-    const ids = pickJudges(5, sequenceRng([0.99, 0.3, 0.7, 0.1, 0.5]));
-    expect(new Set(ids).size).toBe(5);
-    for (const id of ids) expect(DUEL_JUDGES.map((j) => j.id)).toContain(id);
+    // 第 i 位和 i + ⌊r × (10 − i)⌋ 位交换：9、3、7、3、7
+    expect(pickJudges(5, sequenceRng([0.99, 0.3, 0.7, 0.1, 0.5]))).toEqual([
+      'xiaoKai',
+      'bro13',
+      'oldPoor',
+      'xiaoC',
+      'wenjie',
+    ]);
+    expect(pickJudges(20, sequenceRng([0]))).toHaveLength(10);
   });
 
   it('每位评委比关注项目的和，高的一方得一票；先到 3 票就结束，后面的评委不上场', () => {

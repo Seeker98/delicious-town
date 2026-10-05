@@ -7,7 +7,7 @@ export default {
   /** 屬性和數值："廚藝12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '廚力',
-  powerNote: '（五項之和 + 幸運/2；廚塔、賽廚榜、好友切磋按它比拼）',
+  powerNote: '（五項之和 + 幸運/2；只作參考，賽廚的勝負看評委按色香味形養打分）',
   empty: '空',
   noPieces: '沒有這個部位的廚具',
   needLevel: (lv: number) => `需要 ${lv} 級`,

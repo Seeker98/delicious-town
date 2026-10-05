@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { DUEL_JUDGE_ITEMS, type DuelResultDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
@@ -8,6 +8,12 @@ import { awardText } from '../bar/award';
 const props = defineProps<{ result: DuelResultDto }>();
 const catalog = useCatalogStore();
 const t = useT();
+/** 每来一局新结果加 1，用作评委列表的 key：父组件复用这个卡片时动画也从头播 */
+const round = ref(0);
+watch(
+  () => props.result,
+  () => round.value++,
+);
 const rows = computed(() =>
   t.value.tower.duel.items.map((label, i) => ({
     label,
@@ -31,7 +37,7 @@ const headline = computed(() => {
   const r = props.result;
   const d = t.value.tower.duel;
   const head = r.test ? d.test(r.win) : r.win ? d.win : d.lose;
-  const votes = d.votes(r.votes[0], r.votes[1]);
+  const votes = d.votes(r.votes[0], r.votes[1]) + (r.votes[0] === r.votes[1] ? d.onTotal : '');
   const renown = r.renown === 0 ? '' : d.renown(r.renown);
   const rank = r.win && r.rank !== null ? d.rank(r.rank) : '';
   return `${head}${votes}${renown}${rank}`;
@@ -62,7 +68,7 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
     </table>
     <div class="fw-bold mb-1">{{ t.tower.duel.judgesTitle }}</div>
     <!-- 评委一位一位亮出（问题记录 396）；减少动画时直接显示 -->
-    <ol class="dt-duel-judges list-unstyled mb-1">
+    <ol :key="round" class="dt-duel-judges list-unstyled mb-1">
       <li
         v-for="(j, i) in judges"
         :key="j.id"

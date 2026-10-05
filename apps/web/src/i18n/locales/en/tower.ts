@@ -18,6 +18,7 @@ const tower: Messages['tower'] = {
     rank: (n) => `, you're now #${n}`,
     power: (name, power) => `${name} (Chef power ${power})`,
     votes: (me, them) => ` ${me}–${them}`,
+    onTotal: ' (tied on votes, decided on total)',
     judgesTitle: 'Judges',
     judges: {
       yardSis: 'Garden Sis',
@@ -29,7 +30,7 @@ const tower: Messages['tower'] = {
       gary: 'Gary',
       oldPoor: 'Old Pauper',
       carmen: 'Carmen',
-      xiaoKai: 'Kai',
+      xiaoKai: 'Little Kai',
     },
     judgeFocus: (name, items) => `${name} (${items})`,
     itemSep: ', ',

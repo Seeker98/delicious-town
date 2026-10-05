@@ -18,6 +18,7 @@ const tower: Messages['tower'] = {
     rank: (n) => `, ahora eres el ${n}.º`,
     power: (name, power) => `${name} (poder ${power})`,
     votes: (me, them) => ` ${me}-${them}`,
+    onTotal: ' (empate a votos, decide la suma)',
     judgesTitle: 'Jueces',
     judges: {
       yardSis: 'Hermana del Huerto',

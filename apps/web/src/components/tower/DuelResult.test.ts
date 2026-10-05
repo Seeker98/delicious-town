@@ -49,4 +49,16 @@ describe('DuelResult', () => {
     });
     expect(w.find('[data-testid="duel-judge"]').text()).toContain('平');
   });
+
+  it('票数持平时标题写明按总分定胜负', () => {
+    const w = mount(DuelResult, { props: { result: duelResult({ votes: [2, 2] }) } });
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2（票数相同，比总分），声望 +7');
+  });
+
+  it('换了一局结果时评委列表整个重画，动画从头播（同一位评委也重新淡入）', async () => {
+    const w = mount(DuelResult, { props: { result: duelResult() } });
+    const before = w.find('ol').element;
+    await w.setProps({ result: duelResult({ win: false, votes: [1, 3] }) });
+    expect(w.find('ol').element).not.toBe(before);
+  });
 });

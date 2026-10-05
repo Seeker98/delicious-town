@@ -174,7 +174,7 @@ describe('EquipView', () => {
     vi.mocked(endpoints.allocate).mockResolvedValue({} as never);
     const w = await mountView();
     expect(w.find('h5').text()).toContain('厨具与加点');
-    expect(w.text()).toContain('厨塔、赛厨榜、好友切磋按它比拼');
+    expect(w.text()).toContain('赛厨的胜负看评委按色香味形养打分');
     expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 3');
     await w.find('[data-testid="add-cook"]').setValue('2');
     await w.find('[data-testid="allocate"]').trigger('click');

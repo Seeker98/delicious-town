@@ -19,6 +19,8 @@ export default {
     power: (name: string, power: number) => `${name}（廚力 ${power}）`,
     /** 比分（問題記錄 396）：我的票 : 對方的票 */
     votes: (me: number, them: number) => ` ${me}:${them}`,
+    /** 票數持平、按上場評委的總分定勝負 */
+    onTotal: '（票數相同，比總分）',
     judgesTitle: '評委打分',
     judges: {
       yardSis: '菜園姐',
@@ -32,7 +34,7 @@ export default {
       carmen: '卡門',
       xiaoKai: '小凱',
     },
-    /** 評委名字和關注的專案 */
+    /** 評委名字和關注的項目 */
     judgeFocus: (name: string, items: string) => `${name}（${items}）`,
     itemSep: '、',
     verdict: { me: '投給你', them: '投給對方', tie: '平' },
@@ -41,7 +43,7 @@ export default {
       '雙方按屬性算出色、香、味、形、養五項：色看廚藝、刀工，香看廚藝、調味，味看火候、調味，形看火候、刀工，養看火候、調味、刀工和在售的特色菜。創意越高、幸運越好，每項多加的隨機分越多。',
       '每局從 10 位評委裡隨機請 5 位，依次比雙方在他關注的幾項上的總分，高的一方得一票，先拿到 3 票的贏；票數相同時比上場評委打的總分。',
     ],
-    rulesJudges: '評委和他們關注的專案：',
+    rulesJudges: '評委和他們關注的項目：',
     awards: (text: string) => `得到 ${text}`,
   },
   floor: {

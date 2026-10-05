@@ -18,6 +18,8 @@ export default {
     power: (name: string, power: number) => `${name}（厨力 ${power}）`,
     /** 比分（问题记录 396）：我的票 : 对方的票 */
     votes: (me: number, them: number) => ` ${me}:${them}`,
+    /** 票数持平、按上场评委的总分定胜负 */
+    onTotal: '（票数相同，比总分）',
     judgesTitle: '评委打分',
     judges: {
       yardSis: '菜园姐',
