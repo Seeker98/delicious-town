@@ -4,7 +4,7 @@ export default {
   filters: { all: '全部', learnable: '可學', upgradable: '可升級', unlearned: '未學', learned: '已學' },
   loadFailed: '讀取食譜失敗',
   streetDesc: (desc: string) => `街道加成：${desc}`,
-  moveHint: (star: number, need: number, gap: number) =>
+  moveHint: (star: number, need: string, gap: string) =>
     `本街剩下的菜全學會，也湊不夠升 ${star} 星要的 ${need} 道（還差 ${gap} 道）。本街學得差不多、幾天學不到新菜時，就換一條菜多的街。`,
   moveLink: '去搬家',
   learnFailed: '學習失敗',

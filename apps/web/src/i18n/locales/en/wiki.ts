@@ -108,14 +108,14 @@ const wiki: Messages['wiki'] = {
   /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
   guide: {
     title: 'Play guide',
-    link: 'Play guide: three play styles and what to do each time you log in',
+    link: 'Play guide: three play paces and what to do each time you log in',
     intro:
       'This guide comes from the game’s balance simulation: bots played for 30 days at three paces (diligent, regular and casual). Below is what they did and how far they got. The numbers are simulated estimates and real play will differ, so treat them as a rough guide.',
     sections: [
       {
         title: 'Three paces',
         items: [
-          'Diligent: checks in every hour from morning to late night. Reaches 1 star around day 2 and level 30 around day 7; moving off Newbie Street once its recipes run dry gets 2 stars in about two weeks.',
+          'Diligent: checks in every hour from morning to late night. Reaches 1 star around day 2 and level 30 around day 7; 2 stars depend on how many recipes you have learned, so move as soon as the recipe page suggests it — the earlier, the faster.',
           'Regular: checks in three times a day (morning, noon and evening). Reaches 1 star around day 3, level 30 around day 9 and 2 stars around day 18.',
           'Casual: checks in once each evening. Reaches 1 star around day 4 and level 30 around day 23; 2 stars usually take more than a month, and that’s fine.',
         ],
@@ -124,16 +124,16 @@ const wiki: Messages['wiki'] = {
         title: 'Each time you log in, in this order',
         items: [
           'Check in and claim activity point rewards.',
-          'Use the items in storage that can be used right away: tables, gift packs, ingredient vouchers.',
+          'Use the items in storage that can be used right away: tables, gift packs, Random Ingredient Tickets.',
           'Put all attribute points into Cooking.',
           'Refuel when oil is below 60%; a closed restaurant reopens once it has oil.',
           'Squash the roaches in your own restaurant.',
           'Claim quests: main quest, side quests and chapter rewards whenever they are ready.',
           'Fill empty facility slots; if storage has none, buy cheap ones.',
-          'When only the certificate and coins are missing for the next star, buy the certificate and star up; if you can’t afford it yet, save for it instead of spending elsewhere.',
+          'When only the Star-up Voucher and coins are missing for the next star, buy the voucher and star up; if you can’t afford it yet, save for it instead of spending elsewhere.',
           'Expand the oil tank once your level and stars allow it.',
           'Buy tables, but keep enough coins to refill your oil plus 20,000 to spare.',
-          'At the market, only buy ingredients your recipes are missing: check the daily shelf first, then the special shelf. Each daily restock has one slot for ingredients Newbie Street needs.',
+          'At the market, only buy ingredients your recipes are missing: check the Daily market first, then the Bargain market (needs a verified email). Every Daily market restock has one slot for an ingredient Newbie Street needs.',
           'Join the market guessing game while you are there.',
           'Learn recipes: new ones first, then upgrade the ones you know.',
           'Use the day’s free combines to turn ingredients you don’t need into higher-level ones.',
@@ -143,27 +143,27 @@ const wiki: Messages['wiki'] = {
         title: 'When to move',
         items: [
           'You can only learn recipes of the street you are on. Newbie Street has just 69, and 2 stars needs 100 learned, so you will have to move sooner or later.',
-          'When even learning every remaining recipe on your street can’t reach the next star, the recipe page tells you. Once you have learned most of them and go a few days without a new one, move.',
-          'Streets with more recipes are faster to learn on: Fusion Street II has 333.',
+          'When even learning every remaining recipe on your street can’t reach the next star, the recipe page tells you. Get ready to move then: don’t wait for the last few hard recipes — once learning slows down, move.',
+          'Streets with more recipes are faster to learn on: Fusion Street II has 333, the most of any street.',
           'Streets are coin, balanced or EXP streets: go to a coin street when you need coins, an EXP street to level up. The moving page and the recipe page show each street’s type and bonus.',
-          'Moving takes a Moving Card (free with a movers’ Work Permit) and a moving fee, halved when you are lucky.',
+          'Moving takes a Moving Card (not needed with a Moving Office Work Permit) and a moving fee, halved when you are lucky.',
         ],
       },
       {
         title: 'What to spend coins on first',
         items: [
           'Oil first: without oil the restaurant closes and earns nothing.',
-          'Then starring up: certificates and the star-up coins.',
+          'Then starring up: Star-up Vouchers and the star-up coins.',
           'Only then tables and facilities.',
-          'Takeaway needs 2 stars, 888 Renown, 8.88 million coins and 300 Diamonds to open, so start saving early if you want it.',
+          'Opening takeaway needs 2 stars and 888 Renown (spent when you open it), plus 8.88 million coins and 300 Diamonds or a Takeaway Pass, so start saving early if you want it.',
         ],
       },
       {
         title: 'Other activities',
         items: [
-          'Shake the money tree in town once a day, and see whether Sister Wen, Brother 13 and the others have something for you.',
-          'Climb the Chef Tower every day: the first floor is open from level 1, and wins give Renown.',
-          'From level 20 you can use the Exchange and Predictions.',
+          'Shake Mr. Krab’s money bag in the Square once a day, and see whether Sister Wen, Brother 13 and the others have something for you.',
+          'Climb the Chef Tower every day: the first floor is open from level 1, and you get Renown whether you win or lose.',
+          'From level 20, with an account at least 7 days old and a verified email, you can use the Exchange and Predictions.',
           'Wearing cookware raises your income each round.',
           'Below level 40, EXP from each round gets an extra boost (+200% at level 1, smaller each level), so early levels go fast.',
         ],

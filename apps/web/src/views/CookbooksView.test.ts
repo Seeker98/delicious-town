@@ -332,6 +332,58 @@ describe('CookbooksView', () => {
     expect(other.find('[data-testid="move-hint"]').exists()).toBe(false);
   });
 
+  it('地址带着本店街道、餐厅还没读过：也读一次餐厅，照样提示；数字带千分位', async () => {
+    vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(1000));
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 0,
+      streetTotal: 69,
+      streetLearned: 30,
+      learned: 30,
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=0');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
+    expect(w.get('[data-testid="move-hint"]').text()).toContain('1,000 道（还差 931 道）');
+  });
+
+  it('读不到升星条件、下一星没开放（泛紫）、已经满星：都不提示', async () => {
+    const mountAt = async () => {
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/cookbooks', component: CookbooksView }],
+      });
+      await router.push('/cookbooks');
+      const w = mount(CookbooksView, { global: { plugins: [router] } });
+      await flushPromises();
+      return w;
+    };
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 0,
+      streetTotal: 69,
+      streetLearned: 30,
+      learned: 30,
+    });
+    vi.mocked(endpoints.starNeed).mockRejectedValue(new Error('boom'));
+    expect((await mountAt()).find('[data-testid="move-hint"]').exists()).toBe(false);
+    vi.mocked(endpoints.starNeed).mockResolvedValue({
+      ...(starNeed(100) as object),
+      available: false,
+    } as never);
+    expect((await mountAt()).find('[data-testid="move-hint"]').exists()).toBe(false);
+    vi.mocked(endpoints.starNeed).mockResolvedValue({
+      ...(starNeed(100) as object),
+      nextStar: null,
+    } as never);
+    expect((await mountAt()).find('[data-testid="move-hint"]').exists()).toBe(false);
+  });
+
   it('本街的菜够下一星：不提示', async () => {
     vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(100));
     vi.mocked(endpoints.cookbookList).mockResolvedValue({

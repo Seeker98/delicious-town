@@ -103,7 +103,8 @@ async function loadStarNeed() {
   try {
     const s = await endpoints.starNeed();
     const c = s.checks.find((x) => x.key === 'cookbooks');
-    starNeed.value = s.nextStar !== null && c ? { star: s.nextStar, need: c.need } : null;
+    // 下一星没开放（泛紫星级的 cookbooks 一项不是“学会的菜”）或已满星时不提示
+    starNeed.value = s.available && s.nextStar !== null && c ? { star: s.nextStar, need: c.need } : null;
   } catch {
     starNeed.value = null;
   }
@@ -167,7 +168,7 @@ onMounted(async () => {
     class="alert alert-warning small py-2 mb-2"
     data-testid="move-hint"
   >
-    {{ t.cookbook.moveHint(starNeed.star, starNeed.need, hintGap) }}
+    {{ t.cookbook.moveHint(starNeed.star, formatNum(starNeed.need), formatNum(hintGap)) }}
     <RouterLink to="/society/move">{{ t.cookbook.moveLink }}</RouterLink>
   </div>
   <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
