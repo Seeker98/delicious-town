@@ -191,4 +191,28 @@ describe('蟹老板的橱柜（问题记录 370）：1~5 级食材都有，几�
     expect(rows.get(a.id)).toBeGreaterThanOrEqual(npcT.restockRanges[0]![0]);
     expect(rows.get(b.id)).toBe(999);
   });
+
+  it('补货时清掉不该在的：不在 1~5 级现有食材里的（以后下架的、6 级以上）删掉，冰箱清空；同一天重跑结果一样（审查）', async () => {
+    const shardId = await createShard(t.db);
+    const npc = (await ensureNpc(t.db, config, npcT, shardId, seededRng(1))).id;
+    const high = config.foodsByLevel.get(6)![0]!;
+    const a = food(1);
+    await t.db.insertInto('cupboard_food').values({ rest_id: npc, foods_id: high.id, num: 7 }).execute();
+    await t.db
+      .updateTable('cupboard_food')
+      .set({ fridge_num: 50 })
+      .where('rest_id', '=', npc)
+      .where('foods_id', '=', a.id)
+      .execute();
+    await restockNpc(t.db, config, npcT, npc, seededRng(3));
+    const rows = await t.db
+      .selectFrom('cupboard_food')
+      .select(['foods_id', 'num', 'fridge_num'])
+      .where('rest_id', '=', npc)
+      .orderBy('foods_id')
+      .execute();
+    expect(rows.some((r) => r.foods_id === high.id)).toBe(false);
+    expect(rows.find((r) => r.foods_id === a.id)!.fridge_num).toBe(0);
+    expect(await restockNpc(t.db, config, npcT, npc, seededRng(3))).toBe(0);
+  });
 });

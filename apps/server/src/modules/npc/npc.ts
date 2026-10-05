@@ -55,7 +55,9 @@ export function npcRestockTarget(
 
 /**
  * 蟹老板的橱柜（问题记录 370）：1~5 级所有（未下架的）食材都放，每种补到当天的随机数。
- * 只补不减：玩家换走、翻走的第二天补回来，比当天的数多的不动。返回补了几种
+ * 只补不减：玩家换走、翻走的第二天补回来，比当天的数多的不动。返回补了几种。
+ * 不在 1~5 级现有食材里的（以后下架的）删掉，免得还能被换走、翻走（审查 Important）；
+ * 冰箱清空：玩家交换时给他的食材只进不出，满了会进冰箱、再满就每次写一条掉落日志（审查 Minor）
  */
 export async function restockNpc(
   db: Kysely<DB>,
@@ -69,12 +71,27 @@ export async function restockNpc(
       await db.selectFrom('cupboard_food').select(['foods_id', 'num']).where('rest_id', '=', npcId).execute()
     ).map((r) => [r.foods_id, r.num]),
   );
+  const live = [1, 2, 3, 4, 5].flatMap((level) => config.foodsByLevel.get(level) ?? []);
+  await db
+    .deleteFrom('cupboard_food')
+    .where('rest_id', '=', npcId)
+    .where(
+      'foods_id',
+      'not in',
+      live.map((f) => f.id),
+    )
+    .execute();
+  await db
+    .updateTable('cupboard_food')
+    .set({ fridge_num: 0 })
+    .where('rest_id', '=', npcId)
+    .where('fridge_num', '>', 0)
+    .execute();
   const rows: Array<{ rest_id: number; foods_id: number; num: number }> = [];
-  for (const level of [1, 2, 3, 4, 5])
-    for (const f of config.foodsByLevel.get(level) ?? []) {
-      const target = npcRestockTarget(f, t, rng);
-      if ((have.get(f.id) ?? 0) < target) rows.push({ rest_id: npcId, foods_id: f.id, num: target });
-    }
+  for (const f of live) {
+    const target = npcRestockTarget(f, t, rng);
+    if ((have.get(f.id) ?? 0) < target) rows.push({ rest_id: npcId, foods_id: f.id, num: target });
+  }
   if (rows.length > 0)
     await db
       .insertInto('cupboard_food')
