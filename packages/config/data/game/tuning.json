@@ -167,11 +167,11 @@
       "layBase": 3, "layLevelRate": 0.2, "layCoin": 5, "layExp": 5,
       "killCoin": 10, "killExp": 5, "killCoinLevelRate": 0.5, "killSelfRate": 1.5,
       "killStrength": { "self": 1, "friend": 2, "npc": 0 },
-      "ticketRate": 0.1, "ticketMax": 3
+      "ticketRate": 0.1, "ticketMax": 3, "killPerHostDaily": 3
     },
     "flip": {
       "baseSlots": 5, "slotsPerStar": 5, "coolHours": 22, "coolRandHours": 4, "npcCoolHours": 10,
-      "cheapTimes": 100, "caughtCoinPerLevel": 100, "npcCaughtCoinPerStar": 10,
+      "cheapTimes": 100, "perHostDaily": 3, "caughtCoinPerLevel": 100, "npcCaughtCoinPerStar": 10,
       "hitRate": 0.3, "blessedRate": 0.8, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
     },
     "exchange": {

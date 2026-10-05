@@ -233,6 +233,7 @@ export const tuningSchema = z.object({
       killStrength: z.object({ self: int, friend: int, npc: int }),
       ticketRate: num,
       ticketMax: int.min(1),
+      killPerHostDaily: int.min(0),
     }),
     flip: z.object({
       baseSlots: int.min(1),
@@ -241,6 +242,7 @@ export const tuningSchema = z.object({
       coolRandHours: num,
       npcCoolHours: num,
       cheapTimes: int,
+      perHostDaily: int.min(0),
       caughtCoinPerLevel: int,
       npcCaughtCoinPerStar: int,
       hitRate: num,

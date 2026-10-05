@@ -71,6 +71,8 @@ const friends: Messages['friends'] = {
     kill: 'Eliminar cucaracha',
     tableLocked: 'Ahora no puedes hacer nada en esta mesa',
     ownRoach: 'Tú pusiste esta cucaracha, así que no puedes eliminarla',
+    killLeft: (n) => `Hoy aún puedes eliminar ${n} ${plEs(n, 'cucaracha', 'cucarachas')} aquí`,
+    killDone: 'Hoy ya has eliminado bastantes cucarachas aquí. Deja algunas para los demás',
   },
   tables: {
     freeloader: (name) => `Gorrón: ${name ?? 'un amigo'}`,
@@ -91,6 +93,8 @@ const friends: Messages['friends'] = {
     nothing: 'No había nada',
     loadFailed: 'No se pudo cargar la despensa',
     failed: 'No se pudo revolver',
+    hostLeft: (n) => `Hoy aún puedes revolver ${n} ${plEs(n, 'hueco', 'huecos')} en este restaurante`,
+    hostDone: 'Hoy ya has revuelto bastante en este restaurante. Vuelve mañana',
   },
   exchange: {
     title: 'Cambiar ingredientes',

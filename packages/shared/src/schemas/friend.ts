@@ -78,6 +78,8 @@ export interface FriendRestDto {
   tables: TableDto[];
   /** 我今天已经给它点过赞 */
   thumbedToday: boolean;
+  /** 今天在这家好友店还能灭几只蟑螂（问题记录 374）；null = 不限（自己店、蟹老板的店） */
+  killLeft: number | null;
   /** 对方穿着的厨具（子项目 2B）；name 是命名帽子的显示名，普通厨具为 null */
   equips: Array<{ part: number; goodsId: number; stress: number; name: string | null }>;
   /** 对方当前在售的特色菜（子项目 4A）；eaten = 这一批我已经吃过 */
@@ -126,6 +128,8 @@ export interface FlipSlotsDto {
   cooling: Array<{ slotNo: number; until: string }>;
   /** 我今天已经翻了几次（超过 100 次每次 2 体力） */
   todayTimes: number;
+  /** 今天在这家店还能翻几格（问题记录 374）；null = 不限 */
+  hostLeft: number | null;
 }
 
 export type FlipOutcome = 'food' | 'ticket' | 'nothing' | 'caught' | 'escaped';

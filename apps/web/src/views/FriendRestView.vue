@@ -241,21 +241,32 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
           {{ t.friends.rest.lay }}
         </button>
       </template>
-      <button
-        v-else-if="picked.customer === 3 && picked.roachBy !== mine"
-        class="btn btn-sm btn-success"
-        data-testid="act-kill"
-        :disabled="busy"
-        @click="
-          act(
-            () => endpoints.roachKill(restId, picked!.no),
-            t.friends.rest.roachKilled,
-            t.friends.rest.killFailed,
-          )
-        "
+      <!-- 同一家好友店每人每天灭的只数有上限（问题记录 374）：灭够了不放按钮，写明原因 -->
+      <span
+        v-else-if="picked.customer === 3 && picked.roachBy !== mine && rest.killLeft === 0"
+        class="text-muted"
+        data-testid="kill-done"
+        >{{ t.friends.rest.killDone }}</span
       >
-        {{ t.friends.rest.kill }}
-      </button>
+      <template v-else-if="picked.customer === 3 && picked.roachBy !== mine">
+        <button
+          class="btn btn-sm btn-success"
+          data-testid="act-kill"
+          :disabled="busy"
+          @click="
+            act(
+              () => endpoints.roachKill(restId, picked!.no),
+              t.friends.rest.roachKilled,
+              t.friends.rest.killFailed,
+            )
+          "
+        >
+          {{ t.friends.rest.kill }}
+        </button>
+        <span v-if="rest.killLeft !== null" class="text-muted ms-2" data-testid="kill-left">{{
+          t.friends.rest.killLeft(rest.killLeft)
+        }}</span>
+      </template>
       <!-- 自己放的蟑螂要写明原因，不写笼统的“不能操作”（问题记录 374） -->
       <span v-else-if="picked.customer === 3" class="text-muted" data-testid="own-roach">{{
         t.friends.rest.ownRoach

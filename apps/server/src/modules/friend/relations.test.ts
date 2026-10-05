@@ -1,5 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { gameDay } from '@dt/shared';
 import { befriend, createTestGame, newPair, newRestaurant, type TestGame } from '../../../test/game';
+import { incrementDaily } from '../counter/dailyCounter';
+import { flipHostKey, killHostKey } from '../interact/rules';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -126,8 +129,22 @@ describe('好友列表和搜索', () => {
     const list = await reads().list(a, 'level');
     expect(list.count).toBe(2);
     expect(list.items.map((x) => x.id)).toEqual([b.restaurantId, c.restaurantId]);
-    expect(list.items[0]).toMatchObject({ roaches: 1, dineSeat: false, flipReady: 9 });
-    expect(list.items[1]).toMatchObject({ roaches: 0, dineSeat: true, flipReady: 5 });
+    // 空闲格 9 和 5，但每天在同一家店最多翻 3 格（问题记录 374）
+    expect(list.items[0]).toMatchObject({ roaches: 1, dineSeat: false, flipReady: 3 });
+    expect(list.items[1]).toMatchObject({ roaches: 0, dineSeat: true, flipReady: 3 });
+  });
+
+  it('可翻橱数扣掉今天在这家店已翻的（问题记录 374）；好友店详情带今天还能灭几只，自己店和蟹老板店不限', async () => {
+    const [a, b] = await newPair(t);
+    await befriend(t, a.restaurantId, b.restaurantId);
+    const day = gameDay(t.clock.now);
+    await incrementDaily(t.db, a.restaurantId, flipHostKey(b.restaurantId), 2, day);
+    await incrementDaily(t.db, a.restaurantId, killHostKey(b.restaurantId), 3, day);
+    const list = await reads().list(a, 'level');
+    expect(list.items.find((x) => x.id === b.restaurantId)).toMatchObject({ flipReady: 1 });
+    expect((await reads().detail(a, b.restaurantId)).killLeft).toBe(0);
+    expect((await reads().detail(b, a.restaurantId)).killLeft).toBe(3);
+    expect((await reads().detail(a, a.restaurantId)).killLeft).toBeNull();
   });
 
   it('搜索按店名（通配符按字面），标出是否好友和是否已申请', async () => {

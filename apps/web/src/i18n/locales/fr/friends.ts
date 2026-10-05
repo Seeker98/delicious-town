@@ -72,6 +72,8 @@ const friends: Messages['friends'] = {
     kill: 'Écraser le cafard',
     tableLocked: 'Impossible d’agir sur cette table pour le moment',
     ownRoach: 'C’est vous qui avez posé ce cafard : vous ne pouvez pas l’écraser vous-même',
+    killLeft: (n) => `Encore ${n} ${plFr(n, 'cafard', 'cafards')} à écraser ici aujourd’hui`,
+    killDone: 'Vous avez écrasé assez de cafards ici aujourd’hui. Laissez-en aux autres',
   },
   tables: {
     freeloader: (name) => `Pique-assiette : ${name ?? 'un ami'}`,
@@ -93,6 +95,9 @@ const friends: Messages['friends'] = {
     nothing: 'Rien du tout',
     loadFailed: 'Impossible de charger le garde-manger',
     failed: 'Échec de la fouille',
+    hostLeft: (n) =>
+      `Encore ${n} ${plFr(n, 'emplacement', 'emplacements')} à fouiller dans ce restaurant aujourd’hui`,
+    hostDone: 'Vous avez assez fouillé ce restaurant aujourd’hui. Revenez demain',
   },
   exchange: {
     title: 'Échanger des ingrédients',

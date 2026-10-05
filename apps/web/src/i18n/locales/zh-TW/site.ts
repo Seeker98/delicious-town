@@ -9,6 +9,8 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    hostLimit1005:
+      '同一家店每人每天最多翻 3 格櫥櫃；同一家好友店每人每天最多滅 3 隻蟑螂（自己店和蟹老闆的店不限）；翻櫥頁和好友店寫出今天還剩幾次',
     browse1005:
       '食譜頁和遊戲資料從詳情返回時，停在原來的街道、篩選和頁數；食譜頁寫出所選街道的加成；點自己放的蟑螂時寫明不能自己消滅',
     renumber1005:

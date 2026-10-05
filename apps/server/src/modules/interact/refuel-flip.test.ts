@@ -8,6 +8,7 @@ import {
   foodNum,
   goodsNum,
   newPair,
+  newRestaurant,
   restRow,
   type NewRestaurantOptions,
   type TestGame,
@@ -83,6 +84,25 @@ describe('翻橱（规格书 05 §5.7）', () => {
     await expect(svc().flip.flip(a, { restId: b.restaurantId, slotNo: 6 })).rejects.toMatchObject({
       params: { reason: 'bad_slot' },
     });
+  });
+
+  it('同一家店每人每天最多翻 3 格（问题记录 374）；别人照样能翻；格子信息里带剩几次', async () => {
+    const [a, b] = await friends({ patch: { coin: 100 } });
+    seq = [0.99];
+    expect((await svc().flip.slots(a, b.restaurantId)).hostLeft).toBe(3);
+    for (const slotNo of [1, 2, 3]) await svc().flip.flip(a, { restId: b.restaurantId, slotNo });
+    expect((await svc().flip.slots(a, b.restaurantId)).hostLeft).toBe(0);
+    await expect(svc().flip.flip(a, { restId: b.restaurantId, slotNo: 4 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'flip_host', max: 3 },
+    });
+    expect((await restRow(t, a.restaurantId)).strength).toBe(97);
+    // 另一个好友不受 a 的次数影响
+    const c = await newRestaurant(t, { verified: true, shardId: b.shardId, patch: { coin: 100 } });
+    await befriend(t, c.restaurantId, b.restaurantId);
+    seq = [0.99];
+    expect((await svc().flip.slots(c, b.restaurantId)).hostLeft).toBe(3);
+    await svc().flip.flip(c, { restId: b.restaurantId, slotNo: 4 });
   });
 
   it('被老鼠夹夹住：银币给对方（低于 2 星减半）', async () => {

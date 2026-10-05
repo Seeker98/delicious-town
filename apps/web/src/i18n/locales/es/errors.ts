@@ -136,6 +136,10 @@ const errors: Messages['errors'] = {
     dine: () => 'Hoy ya has comido gratis. Vuelve mañana.',
     seats: (p) => `Sus plazas para comer gratis están llenas (máximo ${s(p.max)})`,
     roach_lay: (p) => `Has usado todas tus cucarachas de hoy (${s(p.max)})`,
+    flip_host: (p) =>
+      `Hoy ya has revuelto ${s(p.max)} ${plEs(p.max, 'hueco', 'huecos')} en este restaurante. Vuelve mañana`,
+    roach_kill_host: (p) =>
+      `Hoy ya has eliminado ${s(p.max)} ${plEs(p.max, 'cucaracha', 'cucarachas')} en este restaurante. Deja algunas para los demás`,
     exchange: (p) => `Has usado todos tus intercambios de hoy con este jugador (${s(p.max)})`,
     exchange_total: () => 'Hoy has intercambiado demasiado. Vuelve mañana.',
     exchange_taken: () => 'Este jugador ya ha recibido demasiados intercambios hoy. Déjalo tranquilo.',
