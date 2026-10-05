@@ -40,6 +40,7 @@ export default {
     spOverflow: '挑剔溢位',
     atOverflow: '上座溢位',
     starPotential: '星潛力',
+    newbie: '新手經驗',
     cte: '銀幣轉經驗',
   },
   taste: ['', '酸', '甘', '苦', '辛', '鹹', '鮮'],

@@ -8,7 +8,9 @@
  * 外部数据仍是重新编号前的编号（重新编号 PR 4）：按主表的 legacyId 对上新编号；新出现的条目按编号规则分配
  * （食材 等级 × 1000 + 序号、菜谱 100000 + 街道 × 1000 + 序号、勋章 60000 + 街道），legacyId 记外部编号。
  * 新菜谱 id 已上线：要求数据那边固定 id，不能顺移。上次导入过的 id 没了或换了街道时什么都不写、直接退出，
- * 确认无误后加 --allow-removed 重跑
+ * 确认无误后加 --allow-removed 重跑。
+ * 注意（问题记录 378）：街道勋章的最终银币、经验收益和说明后来在仓库里重新平衡过，外部数据还是旧值；
+ * 重跑会把 60014~60029 的勋章和 streets_new.json 写回旧值（构建会因为英法西说明和数值对不上而失败）。重跑前先把外部数据改成仓库里的值
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';

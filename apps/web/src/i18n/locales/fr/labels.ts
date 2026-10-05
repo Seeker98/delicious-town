@@ -52,6 +52,7 @@ const labels: Messages['labels'] = {
     spOverflow: 'Excédent de clients difficiles',
     atOverflow: 'Excédent de fréquentation',
     starPotential: "Potentiel d'étoiles",
+    newbie: 'EXP débutant',
     cte: 'Pièces en EXP',
   },
   taste: ['', 'Acide', 'Sucré', 'Amer', 'Piquant', 'Salé', 'Umami'],
