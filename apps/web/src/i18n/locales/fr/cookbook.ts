@@ -11,6 +11,9 @@ const cookbook: Messages['cookbook'] = {
   },
   loadFailed: 'Impossible de charger les recettes',
   streetDesc: (desc) => `Bonus de la rue : ${desc}`,
+  moveHint: (star, need, gap) =>
+    `Même en apprenant toutes les recettes restantes de cette rue, vous n’atteindrez pas les ${need} recettes demandées pour ${star} ${plFr(star, 'étoile', 'étoiles')} (il en manque ${gap}). Quand vous n’apprenez presque plus rien ici, déménagez dans une rue qui a plus de recettes.`,
+  moveLink: 'Déménager',
   learnFailed: "Échec de l'apprentissage",
   maxed: 'Niveau max',
   lackFoods: 'Ingrédients manquants',

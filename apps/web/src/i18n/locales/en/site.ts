@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    guide1006:
+      'The game wiki now has a play guide: three play paces, what to do each time you log in, when to move and what to spend coins on first. The recipe page now suggests moving when your street doesn’t have enough recipes for the next star',
     batch9:
       'Each daily market restock now adds one ingredient that Newbie Street recipes need (Thirteen Spices, Tofu, Rock Sugar and the like), so new players no longer get stuck for days. The recipe page, the moving page and the game wiki now show whether a street is a coin, balanced or EXP street, and why it has its bonus',
     streets1005:

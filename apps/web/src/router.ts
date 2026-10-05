@@ -150,6 +150,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { public: true, gameChrome: true },
   },
   {
+    path: '/wiki/guide',
+    name: 'wiki-guide',
+    component: () => import('./views/wiki/WikiGuideView.vue'),
+    meta: { public: true, gameChrome: true },
+  },
+  {
     path: '/wiki/api',
     name: 'wiki-api',
     component: () => import('./views/wiki/WikiApiView.vue'),

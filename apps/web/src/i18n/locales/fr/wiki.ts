@@ -105,6 +105,71 @@ const wiki: Messages['wiki'] = {
     times: (n) => (n < 0 ? '' : ` (${n} par joueur)`),
     none: 'Aucune source directe dans les données du jeu : peut venir d’événements, de packs cadeaux, de quêtes ou d’autres activités.',
   },
+  /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
+  guide: {
+    title: 'Guide de jeu',
+    link: 'Guide de jeu : trois rythmes de jeu et quoi faire à chaque connexion',
+    intro:
+      'Ce guide vient de la simulation d’équilibrage du jeu : des robots ont joué 30 jours à trois rythmes (assidu, régulier, occasionnel). Voici ce qu’ils ont fait et jusqu’où ils sont allés. Les chiffres sont des estimations, la vraie partie sera différente : prenez-les comme un repère.',
+    sections: [
+      {
+        title: 'Trois rythmes',
+        items: [
+          'Assidu : passe toutes les heures, du matin jusque tard le soir. 1 étoile vers le jour 2, niveau 30 vers le jour 7 ; les 2 étoiles dépendent du nombre de recettes apprises : déménagez dès que la page des recettes le suggère, plus c’est tôt, plus c’est rapide.',
+          'Régulier : passe trois fois par jour (matin, midi et soir). 1 étoile vers le jour 3, niveau 30 vers le jour 9, 2 étoiles vers le jour 18.',
+          'Occasionnel : passe une fois chaque soir. 1 étoile vers le jour 4, niveau 30 vers le jour 23 ; 2 étoiles prennent en général plus d’un mois, et ce n’est pas grave.',
+        ],
+      },
+      {
+        title: 'À chaque connexion, dans cet ordre',
+        items: [
+          'Pointez et récupérez les récompenses de points d’activité.',
+          'Utilisez les objets de l’entrepôt qui s’utilisent directement : tables, coffrets, tickets d’ingrédient aléatoire.',
+          'Mettez tous les points d’attribut en Cuisine.',
+          'Remettez de l’huile sous 60 % ; un restaurant fermé rouvre dès qu’il a de l’huile.',
+          'Écrasez les cafards de votre propre restaurant.',
+          'Récupérez les quêtes : quête principale, quêtes secondaires et récompenses de chapitre dès qu’elles sont prêtes.',
+          'Remplissez les emplacements d’équipement vides ; s’il n’y en a pas en entrepôt, achetez-en de bon marché.',
+          'Quand il ne manque que le bon de passage d’étoile et les pièces pour l’étoile suivante, achetez le bon et montez d’étoile ; si vous n’avez pas assez, mettez de côté plutôt que de dépenser ailleurs.',
+          'Agrandissez le bidon d’huile dès que votre niveau et vos étoiles le permettent.',
+          'Achetez des tables, mais gardez de quoi refaire le plein d’huile plus 20 000 en réserve.',
+          'Au marché, n’achetez que les ingrédients qui manquent à vos recettes : d’abord le Marché du jour, puis le Marché des promos (e-mail vérifié requis). Chaque réassort du Marché du jour a une place pour un ingrédient dont la Rue des débutants a besoin.',
+          'Participez aux pronostics du marché au passage.',
+          'Apprenez les recettes : d’abord les nouvelles, puis améliorez celles que vous connaissez.',
+          'Utilisez les combinaisons gratuites du jour pour transformer les ingrédients inutiles en ingrédients de niveau supérieur.',
+        ],
+      },
+      {
+        title: 'Quand déménager',
+        items: [
+          'On ne peut apprendre que les recettes de sa rue. La Rue des débutants n’en a que 69, et 2 étoiles en demandent 100 : il faudra déménager tôt ou tard.',
+          'Quand même toutes les recettes restantes de votre rue ne suffisent pas pour l’étoile suivante, la page des recettes vous prévient. Préparez-vous alors à déménager : n’attendez pas les dernières recettes difficiles, déménagez dès que l’apprentissage ralentit.',
+          'On apprend plus vite dans une rue qui a beaucoup de recettes : la Rue Fusion II en a 333, plus que toute autre rue.',
+          'Les rues sont à pièces, équilibrées ou à EXP : allez dans une rue des pièces quand il vous faut des pièces, dans une rue de l’EXP pour monter de niveau. La page de déménagement et la page des recettes indiquent le type et le bonus de chaque rue.',
+          'Déménager demande une carte de déménagement (inutile avec un permis de travail du bureau des déménagements) et des frais, divisés par deux quand vous avez de la chance.',
+        ],
+      },
+      {
+        title: 'Où dépenser ses pièces en premier',
+        items: [
+          'D’abord l’huile : sans huile, le restaurant ferme et ne gagne rien.',
+          'Ensuite les étoiles : bons de passage d’étoile et pièces pour monter d’étoile.',
+          'Seulement après, les tables et les équipements.',
+          'Ouvrir la vente à emporter demande 2 étoiles et 888 de renommée (dépensés à l’ouverture), plus 8,88 millions de pièces et 300 diamants ou un Pass à emporter : si elle vous intéresse, commencez à économiser tôt.',
+        ],
+      },
+      {
+        title: 'Autres activités',
+        items: [
+          'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Sœur Wen, Frère 13 et les autres ont quelque chose pour vous.',
+          'Faites la Tour des chefs chaque jour : le premier étage est ouvert dès le niveau 1, et vous gagnez de la renommée que vous gagniez ou perdiez.',
+          'À partir du niveau 20, avec un compte d’au moins 7 jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.',
+          'Porter des ustensiles augmente les revenus de chaque tour.',
+          'Sous le niveau 40, l’EXP de chaque tour reçoit un bonus (+200 % au niveau 1, de moins en moins à chaque niveau) : les premiers niveaux vont très vite.',
+        ],
+      },
+    ],
+  },
   api: {
     title: 'API ouverte',
     intro:

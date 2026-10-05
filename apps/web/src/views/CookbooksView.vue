@@ -9,6 +9,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { moveHint } from '../utils/moveHint';
 import { queryInt } from '../utils/query';
 import { GRADE_NAMES, STREET_FOCUS } from '../utils/labels';
 
@@ -85,7 +86,34 @@ watch([street, filter, page], ([s, f, p]) => {
     },
   });
 });
+/** 下一星要学会的菜数（问题记录 378 后续的搬街提示）；读不到时不提示 */
+const starNeed = ref<{ star: number; need: number } | null>(null);
+const hintGap = computed(() => {
+  const rest = restaurant.rest;
+  const l = list.value;
+  if (!rest || !l || !starNeed.value || l.street !== rest.streetId) return null;
+  return moveHint({
+    need: starNeed.value.need,
+    learned: l.learned,
+    streetTotal: l.streetTotal,
+    streetLearned: l.streetLearned,
+  });
+});
+async function loadStarNeed() {
+  try {
+    const s = await endpoints.starNeed();
+    const c = s.checks.find((x) => x.key === 'cookbooks');
+    // 下一星没开放（泛紫星级的 cookbooks 一项不是“学会的菜”）或已满星时不提示
+    starNeed.value = s.available && s.nextStar !== null && c ? { star: s.nextStar, need: c.need } : null;
+  } catch {
+    starNeed.value = null;
+  }
+}
+
 onMounted(async () => {
+  void loadStarNeed();
+  // 搬街提示要知道本店在哪条街：地址里带了街道时也读一次餐厅（不改所选街道）
+  if (fromQuery !== null && !restaurant.rest) void restaurant.refresh().catch(() => null);
   if (fromQuery === null) {
     const rest = await restaurant.refresh().catch(() => null);
     // 换街道时由上面的 watch 读列表
@@ -133,6 +161,15 @@ onMounted(async () => {
         formatNum(list.allTotal),
       )
     }}
+  </div>
+  <!-- 本街剩下的菜全学会也凑不够下一星（问题记录 378 后续）：提示学得差不多就搬街 -->
+  <div
+    v-if="hintGap !== null && starNeed"
+    class="alert alert-warning small py-2 mb-2"
+    data-testid="move-hint"
+  >
+    {{ t.cookbook.moveHint(starNeed.star, formatNum(starNeed.need), formatNum(hintGap)) }}
+    <RouterLink to="/society/move">{{ t.cookbook.moveLink }}</RouterLink>
   </div>
   <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
     <div class="flex-fill" style="min-width: 0">

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    guide1006:
+      'La wiki del juego tiene ahora una guía de juego: tres ritmos de juego, qué hacer cada vez que entras, cuándo mudarse y en qué gastar primero. La página de recetas sugiere mudarte cuando tu calle no tiene recetas suficientes para la siguiente estrella',
     batch9:
       'Cada reposición diaria del mercado añade ahora un ingrediente que necesitan las recetas de la Calle de los novatos (Trece especias, Tofu, Azúcar cande…), así que los nuevos jugadores ya no se atascan durante días. La página de recetas, la de mudanza y la wiki del juego muestran si una calle es de monedas, equilibrada o de EXP, y por qué tiene su bonificación',
     streets1005:
