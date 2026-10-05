@@ -57,6 +57,7 @@ export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['hiphop', 'wages', '*', 1], 'goods'],
   [['temple', 'missileAttack', '*', 0], 'goods'],
   [['mysterious', 'championGoodsId'], 'goods'],
+  [['town', 'mysteryExclude', '*'], 'foods'],
 ];
 
 const KIND_VALUES: ReadonlySet<unknown> = new Set(['goods', 'foods']);
