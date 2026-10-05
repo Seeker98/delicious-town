@@ -1309,119 +1309,119 @@
   },
   "60001": {
     "name": "Hunan Street",
-    "desc": "Final EXP and coin income +15%, luck +10"
+    "desc": "Final coins +10%, final EXP +40%, luck +10"
   },
   "60002": {
     "name": "Guangdong Street",
-    "desc": "Occupancy +10%, picky rate +8%, oil per table -2"
+    "desc": "Final coins -25%, final EXP -30%, occupancy +10%, picky rate +8%, oil per table -2"
   },
   "60003": {
     "name": "Sichuan Street",
-    "desc": "EXP per table +4, final oil use +2"
+    "desc": "Final EXP and coins -10%, EXP per table +4, final oil use +2"
   },
   "60004": {
     "name": "Fujian Street",
-    "desc": "Coins per table +2, EXP per table +3"
+    "desc": "Final EXP -20%, coins per table +2, EXP per table +3"
   },
   "60005": {
     "name": "Anhui Street",
-    "desc": "Coins per table +3, oil use -15%"
+    "desc": "Final coins +25%, coins per table +3, oil use -15%"
   },
   "60006": {
     "name": "Shandong Street",
-    "desc": "EXP per table +6, oil use -10%, occupancy -20%"
+    "desc": "Final coins +30%, final EXP +40%, EXP per table +6, oil use -10%, occupancy -20%"
   },
   "60007": {
     "name": "Zhejiang Street",
-    "desc": "Picky rate +10%, oil per table -3"
+    "desc": "Final coins -5%, final EXP -10%, picky rate +10%, oil per table -3"
   },
   "60008": {
     "name": "Jiangsu Street",
-    "desc": "Picky rate +5%, oil use -50%, final coin income -20%"
+    "desc": "Final coins -20%, final EXP +30%, picky rate +5%, oil use -50%"
   },
   "60009": {
     "name": "Fusion Street I",
-    "desc": "Picky rate +25%, final coin income -20%"
+    "desc": "Final coins -30%, final EXP -15%, picky rate +25%"
   },
   "60010": {
     "name": "Fusion Street II",
-    "desc": "Picky rate +25%, final EXP income -20%"
+    "desc": "Final coins -30%, final EXP -15%, picky rate +25%"
   },
   "60011": {
     "name": "Jiangxi Street",
-    "desc": "Occupancy +15%, coins per table +3"
+    "desc": "Final coins -20%, final EXP +10%, occupancy +15%, coins per table +3"
   },
   "60012": {
     "name": "Hubei Street",
-    "desc": "Final EXP income +40%, luck +10"
+    "desc": "Final coins +15%, final EXP +40%, luck +10"
   },
   "60013": {
     "name": "Beijing Street",
-    "desc": "Final coin income +25%, EXP per table +2, oil use +30%"
+    "desc": "Final coins +25%, final EXP -5%, EXP per table +2, oil use +30%"
   },
   "60014": {
     "name": "Japan Street",
-    "desc": "Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%"
+    "desc": "Final coins +15%, final EXP +10%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%"
   },
   "60015": {
     "name": "Italy Street",
-    "desc": "Occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%"
+    "desc": "Final coins -15%, occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%"
   },
   "60016": {
     "name": "France Street",
-    "desc": "Final coins +30%, picky rate +8%, occupancy -12%"
+    "desc": "Final coins +45%, final EXP +15%, picky rate +8%, occupancy -12%"
   },
   "60017": {
     "name": "Spain Street",
-    "desc": "Occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1"
+    "desc": "Final EXP +15%, occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1"
   },
   "60018": {
     "name": "Mexico Street",
-    "desc": "Occupancy +20%, EXP per table +2, oil per table +2"
+    "desc": "Final coins -30%, final EXP -20%, occupancy +20%, EXP per table +2, oil per table +2"
   },
   "60019": {
     "name": "Thailand Street",
-    "desc": "Occupancy +12%, oil per table -2, takeaway EXP +30%, final coins -8%"
+    "desc": "Final coins -10%, final EXP +5%, occupancy +12%, oil per table -2, takeaway EXP +30%"
   },
   "60020": {
     "name": "India Street",
-    "desc": "Signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%"
+    "desc": "Final coins +25%, final EXP -5%, signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%"
   },
   "60021": {
     "name": "Turkey Street",
-    "desc": "Coins per table +3, EXP per table +1, luck +20, oil use +20%"
+    "desc": "Final coins +20%, final EXP +15%, coins per table +3, EXP per table +1, luck +20, oil use +20%"
   },
   "60022": {
     "name": "Vietnam Street",
-    "desc": "Oil use -30%, EXP per table +3, final coins -8%"
+    "desc": "Final coins -10%, final EXP +5%, oil use -30%, EXP per table +3"
   },
   "60023": {
     "name": "America Street",
-    "desc": "Takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%"
+    "desc": "Final coins +5%, final EXP +25%, takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%"
   },
   "60024": {
     "name": "Morocco Street",
-    "desc": "Chance of mystery ingredients when exploring +2%, luck +25, final EXP +8%"
+    "desc": "Final coins +15%, final EXP +30%, chance of mystery ingredients when exploring +2%, luck +25"
   },
   "60025": {
     "name": "Argentina Street",
-    "desc": "Coins per table +4, occupancy +5%, oil use +25%"
+    "desc": "Final coins +5%, final EXP +30%, coins per table +4, occupancy +5%, oil use +25%"
   },
   "60026": {
     "name": "Greece Street",
-    "desc": "Final EXP +30%, oil use -10%, picky rate -5%"
+    "desc": "Final coins +10%, final EXP +85%, oil use -10%, picky rate -5%"
   },
   "60027": {
     "name": "Peru Street",
-    "desc": "Chance of higher grades when cooking signature dishes +8%, picky rate +8%, final coins +5%"
+    "desc": "Final coins +5%, final EXP -20%, chance of higher grades when cooking signature dishes +8%, picky rate +8%"
   },
   "60028": {
     "name": "Russia Street",
-    "desc": "EXP per table +5, final coins +10%, occupancy -10%, each roach that appears has a 20% chance of being killed"
+    "desc": "Final coins -5%, final EXP -20%, EXP per table +5, occupancy -10%, each roach that appears has a 20% chance of being killed"
   },
   "60029": {
     "name": "Chop Suey Street",
-    "desc": "Takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%"
+    "desc": "Final coins +20%, final EXP +55%, takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%"
   },
   "60101": {
     "name": "Closed Beta Medal (Gold)",

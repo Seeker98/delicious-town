@@ -6,147 +6,147 @@
   },
   "1": {
     "name": "Hunan Street",
-    "desc": "Final EXP and coins +15%, luck +10",
+    "desc": "Final coins +10%, final EXP +40%, luck +10",
     "cookName": "Hunan cuisine"
   },
   "2": {
     "name": "Guangdong Street",
-    "desc": "Occupancy +10%, picky rate +8%, oil per table -2",
+    "desc": "Final coins -25%, final EXP -30%, occupancy +10%, picky rate +8%, oil per table -2",
     "cookName": "Cantonese cuisine"
   },
   "3": {
     "name": "Sichuan Street",
-    "desc": "EXP per table +4, final oil use +2",
+    "desc": "Final EXP and coins -10%, EXP per table +4, final oil use +2",
     "cookName": "Sichuan cuisine"
   },
   "4": {
     "name": "Fujian Street",
-    "desc": "Coins per table +2, EXP per table +3",
+    "desc": "Final EXP -20%, coins per table +2, EXP per table +3",
     "cookName": "Fujian cuisine"
   },
   "5": {
     "name": "Anhui Street",
-    "desc": "Coins per table +3, oil use -15%",
+    "desc": "Final coins +25%, coins per table +3, oil use -15%",
     "cookName": "Anhui cuisine"
   },
   "6": {
     "name": "Shandong Street",
-    "desc": "EXP per table +6, oil use -10%, occupancy -20%",
+    "desc": "Final coins +30%, final EXP +40%, EXP per table +6, oil use -10%, occupancy -20%",
     "cookName": "Shandong cuisine"
   },
   "7": {
     "name": "Zhejiang Street",
-    "desc": "Picky rate +10%, oil per table -3",
+    "desc": "Final coins -5%, final EXP -10%, picky rate +10%, oil per table -3",
     "cookName": "Zhejiang cuisine"
   },
   "8": {
     "name": "Jiangsu Street",
-    "desc": "Picky rate +5%, oil use -50%, final coins -20%",
+    "desc": "Final coins -20%, final EXP +30%, picky rate +5%, oil use -50%",
     "cookName": "Jiangsu cuisine"
   },
   "9": {
     "name": "Fusion Street I",
-    "desc": "Picky rate +25%, final coins -20%",
+    "desc": "Final coins -30%, final EXP -15%, picky rate +25%",
     "cookName": "Fusion Street I cuisine"
   },
   "10": {
     "name": "Fusion Street II",
-    "desc": "Picky rate +25%, final EXP -20%",
+    "desc": "Final coins -30%, final EXP -15%, picky rate +25%",
     "cookName": "Fusion Street II cuisine"
   },
   "11": {
     "name": "Jiangxi Street",
-    "desc": "Occupancy +15%, coins per table +3",
+    "desc": "Final coins -20%, final EXP +10%, occupancy +15%, coins per table +3",
     "cookName": "Jiangxi cuisine"
   },
   "12": {
     "name": "Hubei Street",
-    "desc": "Final EXP +40%, luck +10",
+    "desc": "Final coins +15%, final EXP +40%, luck +10",
     "cookName": "Hubei cuisine"
   },
   "13": {
     "name": "Beijing Street",
-    "desc": "Final coins +25%, EXP per table +2, oil use +30%",
+    "desc": "Final coins +25%, final EXP -5%, EXP per table +2, oil use +30%",
     "cookName": "Beijing cuisine"
   },
   "14": {
     "name": "Japan Street",
-    "desc": "Picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%",
+    "desc": "Final coins +15%, final EXP +10%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%",
     "cookName": "Japanese cuisine"
   },
   "15": {
     "name": "Italy Street",
-    "desc": "Occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%",
+    "desc": "Final coins -15%, occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%",
     "cookName": "Italian cuisine"
   },
   "16": {
     "name": "France Street",
-    "desc": "Final coins +30%, picky rate +8%, occupancy -12%",
+    "desc": "Final coins +45%, final EXP +15%, picky rate +8%, occupancy -12%",
     "cookName": "French cuisine"
   },
   "17": {
     "name": "Spain Street",
-    "desc": "Occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1",
+    "desc": "Final EXP +15%, occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1",
     "cookName": "Spanish cuisine"
   },
   "18": {
     "name": "Mexico Street",
-    "desc": "Occupancy +20%, EXP per table +2, oil per table +2",
+    "desc": "Final coins -30%, final EXP -20%, occupancy +20%, EXP per table +2, oil per table +2",
     "cookName": "Mexican cuisine"
   },
   "19": {
     "name": "Thailand Street",
-    "desc": "Occupancy +12%, oil per table -2, takeaway EXP +30%, final coins -8%",
+    "desc": "Final coins -10%, final EXP +5%, occupancy +12%, oil per table -2, takeaway EXP +30%",
     "cookName": "Thai cuisine"
   },
   "20": {
     "name": "India Street",
-    "desc": "Signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%",
+    "desc": "Final coins +25%, final EXP -5%, signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%",
     "cookName": "Indian cuisine"
   },
   "21": {
     "name": "Turkey Street",
-    "desc": "Coins per table +3, EXP per table +1, luck +20, oil use +20%",
+    "desc": "Final coins +20%, final EXP +15%, coins per table +3, EXP per table +1, luck +20, oil use +20%",
     "cookName": "Turkish cuisine"
   },
   "22": {
     "name": "Vietnam Street",
-    "desc": "Oil use -30%, EXP per table +3, final coins -8%",
+    "desc": "Final coins -10%, final EXP +5%, oil use -30%, EXP per table +3",
     "cookName": "Vietnamese cuisine"
   },
   "23": {
     "name": "America Street",
-    "desc": "Takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%",
+    "desc": "Final coins +5%, final EXP +25%, takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%",
     "cookName": "American cuisine"
   },
   "24": {
     "name": "Morocco Street",
-    "desc": "Chance of mystery ingredients when exploring +2%, luck +25, final EXP +8%",
+    "desc": "Final coins +15%, final EXP +30%, chance of mystery ingredients when exploring +2%, luck +25",
     "cookName": "Moroccan cuisine"
   },
   "25": {
     "name": "Argentina Street",
-    "desc": "Coins per table +4, occupancy +5%, oil use +25%",
+    "desc": "Final coins +5%, final EXP +30%, coins per table +4, occupancy +5%, oil use +25%",
     "cookName": "Argentine cuisine"
   },
   "26": {
     "name": "Greece Street",
-    "desc": "Final EXP +30%, oil use -10%, picky rate -5%",
+    "desc": "Final coins +10%, final EXP +85%, oil use -10%, picky rate -5%",
     "cookName": "Greek cuisine"
   },
   "27": {
     "name": "Peru Street",
-    "desc": "Chance of higher grades when cooking signature dishes +8%, picky rate +8%, final coins +5%",
+    "desc": "Final coins +5%, final EXP -20%, chance of higher grades when cooking signature dishes +8%, picky rate +8%",
     "cookName": "Peruvian cuisine"
   },
   "28": {
     "name": "Russia Street",
-    "desc": "EXP per table +5, final coins +10%, occupancy -10%, each roach that appears has a 20% chance of being killed",
+    "desc": "Final coins -5%, final EXP -20%, EXP per table +5, occupancy -10%, each roach that appears has a 20% chance of being killed",
     "cookName": "Russian cuisine"
   },
   "29": {
     "name": "Chop Suey Street",
-    "desc": "Takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%",
+    "desc": "Final coins +20%, final EXP +55%, takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%",
     "cookName": "Overseas Chinese cuisine"
   }
 }
