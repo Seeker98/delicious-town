@@ -13,7 +13,7 @@ import { itemRefs, retiredErrors } from './itemRefs';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
 import { foodWeights } from './foodSupply';
-import { FUND_MEDALS, GOODS_TYPE, NON_SUIT_IDS } from './ids';
+import { FUND_MEDALS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
@@ -288,6 +288,25 @@ export function buildBundle(src: SourceData): BuildResult {
     if (m.src === 'poster' && m.deviceType !== 1 && m.deviceType !== 2)
       errors.push(`goods ${m.id} poster deviceType ${m.deviceType}`);
   }
+  // 一到五级食材随机券（问题记录 331）：原来由构建写死，主表可以手改了，按约定检查（终审 I1）：
+  // 每级一张、编号 = foodVoucherBase + 等级、消耗品、用法是随机食材；用法只有随机券能写
+  const voucherLevels = new Set<number>();
+  for (const m of goodsRaw) {
+    if (m.src !== 'newbie') {
+      if (m.use) errors.push(`goods ${m.id} use is only for food vouchers`);
+      continue;
+    }
+    if (m.type !== GOODS_TYPE.consumable) errors.push(`goods ${m.id} voucher must be a consumable`);
+    if (m.use?.kind !== 'randomFood') {
+      errors.push(`goods ${m.id} voucher needs use randomFood`);
+      continue;
+    }
+    const want = NEWBIE.foodVoucherBase + m.use.level;
+    if (m.id !== want) errors.push(`goods ${m.id} voucher level ${m.use.level} must be goods ${want}`);
+    else voucherLevels.add(m.use.level);
+  }
+  for (let lv = 1; lv <= 5; lv++)
+    if (!voucherLevels.has(lv)) errors.push(`food voucher for level ${lv} is missing`);
   // 新手大礼包（goods 54）：内容按 newbie_pack.json 配（问题记录 331）
   const withPack = builtGoods.map((g) =>
     g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
@@ -468,7 +487,11 @@ export function buildBundle(src: SourceData): BuildResult {
   // 小镇发展基金勋章（240-2）：id 要和 ids.ts 的 FUND 一致，是主表里的荣誉
   for (const m of fundRaw.medals) {
     if (!FUND_MEDALS.has(m.id)) errors.push(`fund medal ${m.id} not in FUND`);
-    if (goodsById.get(m.id)?.type !== GOODS_TYPE.honor) errors.push(`fund medal ${m.id} is not an honor`);
+    const g = goodsById.get(m.id);
+    if (g?.type !== GOODS_TYPE.honor) errors.push(`fund medal ${m.id} is not an honor`);
+    // 时长、件数原来由构建写死（终审 I1）：没有时长会发出永久勋章和称号
+    if (g && !((g.invalidHours ?? 0) >= 1)) errors.push(`fund medal ${m.id} needs invalidHours >= 1`);
+    if (g && g.maxNum !== 1) errors.push(`fund medal ${m.id} maxNum must be 1`);
   }
   for (const g of goods) {
     if (g.equip && !NON_SUIT_IDS.has(g.equip.suitId) && !suitIds.has(g.equip.suitId))

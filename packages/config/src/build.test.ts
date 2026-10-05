@@ -966,6 +966,29 @@ describe('主表的检查（重新编号 PR 1）', () => {
     expect(errors).toContain('kuji theme 2 figure A 1 is not a souvenir');
     expect(errors).toContain('fund medal 1 is not an honor');
   });
+
+  it('食材随机券、基金勋章原来由构建写死的属性，主表里改错了要报错（终审 I1）', () => {
+    const src = source();
+    type M = { id: number; type: number; use?: unknown; invalidHours: number | null; maxNum: number };
+    const goods = structuredClone(src['master/goods']) as M[];
+    const g = (id: number) => goods.find((x) => x.id === id)!;
+    g(NEWBIE.foodVoucherBase + 4).type = 10; // 不是消耗品
+    delete g(NEWBIE.foodVoucherBase + 5).use; // 用不了
+    g(NEWBIE.foodVoucherBase + 2).use = { kind: 'randomFood', level: 4 }; // 和编号对不上
+    g(1).use = { kind: 'randomFood', level: 1 }; // 只有随机券能写用法
+    g(93101).invalidHours = null; // 基金勋章变成永久
+    g(93102).maxNum = 2;
+    const { errors } = buildBundle({ ...src, 'master/goods': goods });
+    expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 4} voucher must be a consumable`);
+    expect(errors).toContain(`goods ${NEWBIE.foodVoucherBase + 5} voucher needs use randomFood`);
+    expect(errors).toContain(
+      `goods ${NEWBIE.foodVoucherBase + 2} voucher level 4 must be goods ${NEWBIE.foodVoucherBase + 4}`,
+    );
+    expect(errors).toContain('food voucher for level 2 is missing');
+    expect(errors).toContain('goods 1 use is only for food vouchers');
+    expect(errors).toContain('fund medal 93101 needs invalidHours >= 1');
+    expect(errors).toContain('fund medal 93102 maxNum must be 1');
+  });
 });
 
 describe('新手大礼包和食材随机券（问题记录 331）', () => {

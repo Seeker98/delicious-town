@@ -103,6 +103,15 @@
 - `award/random.test.ts` 的下架用例写死了食材池剩 15 种，原数据改了就要跟着改；可以改成比原来少 1。
 - 可以加一条测试：服务端每个发道具的地方（`grantGoodsOp` 的来源表）在引用收集里都有对应，免得再漏掉街道勋章这类。
 
+## 重新编号 第 1 步（feat/id-renumber，主表整合）终审小问题
+
+- 主表里几类手写定义原来的格式检查没了（`value` 是 `z.unknown()`）：海报奖杯的 `value`（`time ≥ 1`、加成键只能是 `coinValue`/`expValue`、数值为正）、纪念品必须是纪念品类型、抽赏券 `GOODS.kujiTicket`/`kujiDeluxeTicket` 必须是消耗品、只有海报能写 `needStar`。可以按 `src` 做一张检查表（随机券、基金勋章已在终审时补上）。
+- `equipLoreFile` 顶层不是 `.strict()`：`equip_lore.json` 里留一段 `rename`（比如别的分支带过来的）构建照样通过、被悄悄丢掉；旁边注释也还写着“厨具改名、新增厨具”。
+- 新街道导入脚本先写 `streets_new.json`、`master/foods.json`，再解析外部勋章的 `value`；勋章 `value` 不是合法 JSON 时抛不带编号的错误、留下写了一半的数据。改成全部算好再统一写，解析出错时报勋章编号。
+- 过时的注释、文档：`raw.ts` 残留 souvenirs.json 的注释；`ids.ts` 开头“同步检查 data/dataset/goods.json”、抽赏券和基金勋章“定义在 game/kuji.json、game/fund.json”；`docs/data-maintenance.md` 新街道一节还写着构建检查“售价表”。
+- 编号重复、菜谱引用未知食材的报错不带 `master/<表>` 前缀（带实体编号，能定位）。
+- `masterGoods.value` 允许整条不写 `value` 键（构建当成 null）。
+
 ## 测试不稳定
 
 - 已处理（质量期第 ①a 批）：`i18n/core.test.ts`「切换到英语」全量并行时偶尔超过 15 秒，同样放宽到 60 秒。
