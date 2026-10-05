@@ -9,6 +9,8 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    retire1005:
+      '遊戲資料：不再列出 117 件遊戲裡拿不到的舊道具（原版的玩家專屬廚具、玩家稱號和測試禮包）；已經擁有的照常保留、能用',
     tasks1005:
       '任務頁：交易所、事件預測等有等級門檻或本服沒開的活躍項標出鎖定；頂欄時間的小框點別處就收起；郵件圖示對齊',
     looks1005:
