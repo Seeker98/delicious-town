@@ -405,7 +405,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
     expect(errors).toEqual([]);
     const f = bundle!.towerFloors;
     expect(f.map((x) => x.floor)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    expect(f.map((x) => x.power)).toEqual([39, 143, 217, 334, 461, 478, 559, 732, 787, 850]);
+    expect(f.map((x) => x.power)).toEqual([39, 143, 217, 329, 461, 476, 562, 732, 792, 851]);
     expect(f[9]).toMatchObject({
       name: '彭祖',
       title: '食神',
@@ -413,7 +413,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
       maxTimes: 2,
       mc: true,
       note: '你会做蛋炒饭吗?',
-      attrs: { cook: 157, cutting: 275, fire: 72, season: 242, creatives: 35, luck: 138 },
+      attrs: { cook: 157, cutting: 275, fire: 62, season: 253, creatives: 35, luck: 138 },
     });
     expect(f[9]!.elder).toMatchObject({ level: 94, stress: 5, drops: [40701, 40702, 40703, 40704, 40705] });
     expect(f.filter((x) => x.mc).map((x) => x.floor)).toEqual([4, 5, 6, 7, 8, 9, 10]);
@@ -897,6 +897,25 @@ describe('守塔人（问题记录 120）', () => {
 describe('赛厨长老（问题记录 408）', () => {
   const elders = () =>
     source()['game/tower_elders'] as { note: string; floors: Array<Record<string, unknown>> };
+
+  it('同一层写两次时报错', () => {
+    const e = elders();
+    expect(
+      buildBundle({ ...source(), 'game/tower_elders': { ...e, floors: [...e.floors, e.floors[0]!] } }).errors,
+    ).toContain('tower_elders lists floor 1 twice');
+  });
+
+  it('生成器用 ignoreElders 构建：长老数据对不上或缺失时也能出配置（问题记录 408 审查）', () => {
+    const r = buildBundle(
+      { ...source(), 'game/tower_elders': { note: '', floors: [] } },
+      { ignoreElders: true },
+    );
+    expect(r.errors).toEqual([]);
+    expect(r.bundle!.towerFloors).toHaveLength(10);
+    expect(
+      buildBundle({ ...source(), 'game/tower_elders': null }, { ignoreElders: true }).bundle,
+    ).not.toBeNull();
+  });
 
   it('少一层时报错', () => {
     const e = elders();

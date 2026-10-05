@@ -129,6 +129,15 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
   });
 
+  it('这一层概率为 0 时打赢也不掉', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { tower: { elderDropRates: [0, 1, 1, 1, 1, 1, 1, 1, 1, 1] } });
+    const ctx = await newRestaurant(t, { shardId, patch: { ...STRONG, level: 5 } });
+    const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
+    expect(r.data.win).toBe(true);
+    expect(r.data.awards.filter((x) => x.kind === 'goods')).toEqual([]);
+  });
+
   it('负：声望 +6，没有奖励，最高层不变', async () => {
     const ctx = await newRestaurant(t);
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });

@@ -88,7 +88,15 @@ function splitTaste(s: string | null | undefined): number[] {
     .filter((n) => Number.isInteger(n) && n > 0);
 }
 
-export function buildBundle(src: SourceData): BuildResult {
+export interface BuildOptions {
+  /**
+   * 长老数据（game/tower_elders）对不上或缺失时也出配置：给生成长老的 pnpm -F @dt/server elders 用，
+   * 免得改了强化表、加点数后旧的长老数据通不过校验，生成器又拿不到新配置（问题记录 408 审查）
+   */
+  ignoreElders?: boolean;
+}
+
+export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResult {
   const errors: string[] = [];
 
   function parse<T>(key: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>): T | null {
@@ -147,7 +155,12 @@ export function buildBundle(src: SourceData): BuildResult {
   const looks = parse('game/looks', raw.looksFile);
   const equipLore = parse('game/equip_lore', raw.equipLoreFile);
   const towerFix = parse('game/tower_fix', raw.towerFixFile);
-  const towerElders = parse('game/tower_elders', raw.towerEldersFile);
+  const towerElders = opts.ignoreElders
+    ? (raw.towerEldersFile.safeParse(src['game/tower_elders']).data ?? { note: '', floors: [] })
+    : parse('game/tower_elders', raw.towerEldersFile);
+  const elderError = (m: string) => {
+    if (!opts.ignoreElders) errors.push(m);
+  };
   const settingDocs = parse('game/setting_docs', raw.settingDocsFile);
   const newbieCodesRaw = parse('game/newbie_codes', raw.newbieCodesFile);
   const newbieRaw = parse('game/newbie_pack', raw.newbiePackFile);
@@ -907,15 +920,18 @@ export function buildBundle(src: SourceData): BuildResult {
     luckPerLevel: tuning.rest.luckPerLevel,
   };
   const elderByFloor = new Map(towerElders.floors.map((e) => [e.floor, e]));
+  const seenElders = new Set<number>();
   for (const e of towerElders.floors) {
+    if (seenElders.has(e.floor)) elderError(`tower_elders lists floor ${e.floor} twice`);
+    seenElders.add(e.floor);
     if (!towerRaw.some((r) => r.floor === e.floor))
-      errors.push(`tower_elders references unknown floor ${e.floor}`);
-    errors.push(...elderErrors(e, elderCtx));
+      elderError(`tower_elders references unknown floor ${e.floor}`);
+    for (const m of elderErrors(e, elderCtx)) elderError(m);
   }
   const elderOfFloor = (floor: number) => {
     const e = elderByFloor.get(floor);
     if (!e) {
-      errors.push(`tower_elders misses floor ${floor}`);
+      elderError(`tower_elders misses floor ${floor}`);
       return {
         attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 },
         power: 0,

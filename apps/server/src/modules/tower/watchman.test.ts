@@ -2,10 +2,18 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { duelScores } from './duel';
 import { watchmanPeriod } from './watchman';
 
 const DAY = '2026-09-30';
 const config = testConfig();
+/** 4 层长老在随机数 0.4 下的“养”（菜价按 price 算）；长老数据重新生成时跟着变 */
+const floor4Yang = (price: number) =>
+  duelScores(
+    { name: '4', attrs: config.towerFloors.get(4)!.attrs, mcPrice: price },
+    config.tuning.tower.duel,
+    sequenceRng([0.4]),
+  )[4];
 let t: TestGame;
 beforeAll(async () => {
   t = await createTestGame({ rng: () => sequenceRng([0.4]) });
@@ -40,7 +48,7 @@ describe('守塔人换菜（设计文档裁定 2）', () => {
     const ctx = await floor4Ready();
     expect((await t.game.tower.overview(ctx)).floors[3]!.mc).toBeNull();
     const r = await t.game.tower.challenge(ctx, { floor: 4, test: true });
-    expect(r.data.them.scores[4]).toBe(55.2);
+    expect(r.data.them.scores[4]).toBe(floor4Yang(0));
   });
 
   it('4~10 层各换一道：等级在 [⌊(层−2)/2⌋, +3]，每份价值在营养值的 1~1.3 倍；再跑覆盖', async () => {
@@ -82,6 +90,7 @@ describe('守塔人换菜（设计文档裁定 2）', () => {
       .values({ shard_id: ctx.shardId, floor: 4, mc_id: 2, price: 100, day: DAY })
       .execute();
     const r = await t.game.tower.challenge(ctx, { floor: 4, test: true });
-    expect(r.data.them.scores[4]).toBe(85.2);
+    expect(r.data.them.scores[4]).toBe(floor4Yang(100));
+    expect(Math.round((floor4Yang(100)! - floor4Yang(0)!) * 10) / 10).toBe(30);
   });
 });
