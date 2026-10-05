@@ -6,6 +6,8 @@ import { insertActivity } from '../../../test/activity';
 import { testEnvWith } from '../../../test/helpers';
 import { showQuest } from '../../../test/quests';
 import { CHAPTER_MARK } from './quests';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -88,7 +90,7 @@ describe('主线章节（问题记录 318）', () => {
     await markDone(ctx.restaurantId, ids.slice(0, 1));
     expect((await task().tasks(ctx)).chapter).toMatchObject({ id: 1, claimable: true });
     await task().claimChapter(ctx, 1);
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(20);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(20);
     expect(await doneRows(ctx.restaurantId)).toContain(CHAPTER_MARK + 1);
     expect((await task().tasks(ctx)).chapter).toMatchObject({ id: 2, locked: false });
     await expect(task().claimChapter(ctx, 1)).rejects.toMatchObject({ code: 'INVALID_STATE' });
@@ -223,7 +225,7 @@ describe('每周任务', () => {
     const before = await restRow(t, ctx.restaurantId);
     await task().claimTask(ctx, q.id);
     expect((await restRow(t, ctx.restaurantId)).diamond - before.diamond).toBe(5);
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(10);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(10);
     await expect(task().claimTask(ctx, q.id)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     const now = t.clock.now;
     try {
@@ -248,7 +250,7 @@ describe('每周任务', () => {
     for (const q of w.quests) await task().claimTask(ctx, q.id);
     expect((await task().tasks(ctx)).weekly!.full).toMatchObject({ claimable: true, claimed: false });
     await task().claimTask(ctx, w.full.id);
-    expect(await goodsNum(t, ctx.restaurantId, 170)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('探险图'))).toBe(1);
     await expect(task().claimTask(ctx, w.full.id)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     await t.db.updateTable('restaurant').set({ star_level: 1 }).where('id', '=', ctx.restaurantId).execute();
     const b = (await task().tasks(ctx)).weekly!;

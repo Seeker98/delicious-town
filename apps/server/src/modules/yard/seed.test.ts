@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { GOODS } from '@dt/config';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -19,7 +20,7 @@ async function seedNum(restId: number, seedId: number) {
 
 describe('种子（设计文档 §3.6，裁定 1、5）', () => {
   it('种子页：库存、商店（不卖 7 级）、兑换表、精华持有', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 5000 }, goods: { 470: 7 } });
+    const ctx = await newRestaurant(t, { patch: { coin: 5000 }, goods: { [GOODS.formulaEssence]: 7 } });
     await t.db.insertInto('rest_seed').values({ rest_id: ctx.restaurantId, seed_id: 3, num: 2 }).execute();
     const v = await t.game.yard.seeds(ctx);
     expect(v).toMatchObject({ stock: [{ seedId: 3, num: 2 }], essence: 7, coin: 5000 });
@@ -72,13 +73,13 @@ describe('种子（设计文档 §3.6，裁定 1、5）', () => {
   });
 
   it('兑换：扣 精华 × 次数，种子 + 每次数量 × 次数；精华不足一律不能换（裁定 5）', async () => {
-    const ctx = await newRestaurant(t, { goods: { 470: 5 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.formulaEssence]: 5 } });
     expect((await t.game.yard.exchangeSeed(ctx, { seedId: 1, times: 2 })).data).toEqual({ seeds: 10 });
     expect(await seedNum(ctx.restaurantId, 1)).toBe(10);
-    expect(await goodsNum(t, ctx.restaurantId, 470)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.formulaEssence)).toBe(1);
     await expect(t.game.yard.exchangeSeed(ctx, { seedId: 1, times: 1 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 470, need: 2, have: 1 },
+      params: { kind: 'goods', id: GOODS.formulaEssence, need: 2, have: 1 },
     });
     const broke = await newRestaurant(t);
     await expect(t.game.yard.exchangeSeed(broke, { seedId: 95, times: 1 })).rejects.toMatchObject({

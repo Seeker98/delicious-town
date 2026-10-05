@@ -21,7 +21,7 @@ const range = (base: number, from: number, to: number) =>
 
 /**
  * 代码里直接用到的道具：ids.ts 的常量、按编号推算的（残卷碎片 181~186、N 级券 241~245），
- * 以及构建里点名检查的（菜园、小镇、嘻哈男孩用到的道具）
+ * 构建里点名检查的（菜园、小镇、嘻哈男孩用到的道具）也都在 GOODS 里
  */
 export const CODE_GOODS: ReadonlySet<number> = new Set([
   ...Object.values(GOODS),
@@ -31,21 +31,6 @@ export const CODE_GOODS: ReadonlySet<number> = new Set([
   ...Object.values(FUND),
   NEWBIE.pack,
   ...range(NEWBIE.foodVoucherBase, 1, 5),
-  // 菜园（build.ts yard）、小镇（build.ts town）
-  464,
-  465,
-  469,
-  470,
-  339,
-  19,
-  241,
-  242,
-  243,
-  244,
-  245,
-  256,
-  315,
-  491,
 ]);
 
 /** 代码里直接用到的食材：万能食材 467~471 */

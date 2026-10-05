@@ -5,6 +5,8 @@ import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGam
 import { grantGoods } from '../store/grant';
 import { foodPrice } from '../../core/prices';
 import { rollShelf } from './rules';
+import { GOODS } from '@dt/config';
+import { fid, gid } from '../../../test/items';
 
 const config = testConfig();
 const t_ = config.tuning.market;
@@ -101,7 +103,10 @@ describe('日常菜场', () => {
   });
 
   it('橱柜满了、没有这种食材时不能买', async () => {
-    const ctx = await newRestaurant(t, { patch: { coin: 1_000_000, cupboard_num: 1 }, foods: { 457: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { coin: 1_000_000, cupboard_num: 1 },
+      foods: { [fid('神秘九天翅')]: 1 },
+    });
     const [item] = await openShelf(ctx.shardId, 0);
     await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 })).rejects.toMatchObject({
       code: 'CUPBOARD_FULL',
@@ -198,7 +203,7 @@ describe('特价和高级菜场', () => {
     await expect(m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
     });
-    await grantGoods(t.db, config, ctx.restaurantId, 167, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, GOODS.loveNecklace, 1, t.clock.now);
     const before = (await restRow(t, ctx.restaurantId)).coin;
     await m().buy({ ...ctx, ip: uniqueIp() }, { itemId: item!.id, num: 1 });
     const food = config.requireFood(item!.foods_id);
@@ -213,17 +218,17 @@ describe('特价和高级菜场', () => {
 
 describe('竞猜（规格书 06 §6.3）', () => {
   it('在 10:00:00 报名算进 12 点那一轮（Review Focus 2）；花 2 张神秘礼券；每轮一次', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 5 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     t.clock.set(gameTime('2026-09-30', 10));
-    const r = await m().joinGuess(ctx, [238, 240]);
+    const r = await m().joinGuess(ctx, [fid('白菜'), fid('黄瓜')]);
     expect(r.data.period).toBe('2026-09-30@12');
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(3);
-    await expect(m().joinGuess(ctx, [238])).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(3);
+    await expect(m().joinGuess(ctx, [fid('白菜')])).rejects.toMatchObject({ code: 'ALREADY_DONE' });
   });
 
   it('开奖：猜中 3 种得幸运饼干 ×3 + 三级食材兑换券 ×3；12 点猜中 5 种再加 15 蟹币', async () => {
-    const three = await newRestaurant(t, { goods: { 1: 5 } });
-    const five = await newRestaurant(t, { shardId: three.shardId, goods: { 1: 5 } });
+    const three = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
+    const five = await newRestaurant(t, { shardId: three.shardId, goods: { [GOODS.mysteryTicket]: 5 } });
     const slot = latestSlot(gameTime('2026-09-30', 12), t_.dailyHours);
     const opened = rollShelf(
       0,
@@ -238,12 +243,12 @@ describe('竞猜（规格书 06 §6.3）', () => {
     await m().joinGuess(five, opened.slice(0, 5));
     t.clock.set(slot.start);
     await m().refresh(three.shardId, 0, slot, slot.start);
-    expect(await goodsNum(t, three.restaurantId, 491)).toBe(3);
-    expect(await goodsNum(t, three.restaurantId, 243)).toBe(3);
-    expect(await goodsNum(t, three.restaurantId, 240)).toBe(0);
-    expect(await goodsNum(t, five.restaurantId, 491)).toBe(5);
-    expect(await goodsNum(t, five.restaurantId, 245)).toBe(5);
-    expect(await goodsNum(t, five.restaurantId, 240)).toBe(15);
+    expect(await goodsNum(t, three.restaurantId, GOODS.luckyCookie)).toBe(3);
+    expect(await goodsNum(t, three.restaurantId, gid('三级食材兑换券'))).toBe(3);
+    expect(await goodsNum(t, three.restaurantId, gid('蟹币'))).toBe(0);
+    expect(await goodsNum(t, five.restaurantId, GOODS.luckyCookie)).toBe(5);
+    expect(await goodsNum(t, five.restaurantId, gid('五级食材兑换券'))).toBe(5);
+    expect(await goodsNum(t, five.restaurantId, gid('蟹币'))).toBe(15);
     const g = await t.db
       .selectFrom('market_guess')
       .selectAll()
@@ -254,15 +259,15 @@ describe('竞猜（规格书 06 §6.3）', () => {
   });
 
   it('worker 停机错过了报名那一轮：下次日常刷新时退还神秘礼券并标记已结算', async () => {
-    const ctx = await newRestaurant(t, { goods: { 1: 5 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
     t.clock.set(gameTime('2026-09-30', 9, 30));
     const r = await m().joinGuess(ctx, [238, 240]);
     expect(r.data.period).toBe('2026-09-30@10');
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(3);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(3);
     const slot = latestSlot(gameTime('2026-09-30', 12), t_.dailyHours);
     t.clock.set(slot.start);
     await m().refresh(ctx.shardId, 0, slot, slot.start);
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(5);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(5);
     const g = await t.db
       .selectFrom('market_guess')
       .selectAll()

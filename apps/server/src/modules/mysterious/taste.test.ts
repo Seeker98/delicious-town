@@ -11,6 +11,7 @@ import {
 } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
 import { settleShardRound } from '../settlement/runner';
+import { GOODS } from '@dt/config';
 
 let t: TestGame;
 /** 随机数固定 0：概率判定一律成功，礼券取 1 */
@@ -63,8 +64,8 @@ describe('品尝（规格书 13 §13.6）', () => {
     const r = await lucky.game.mysterious.taste(me, { restId: host.restaurantId });
     expect(r.data).toEqual({ strength: 157, recipe: true, left: 498 });
     expect((await restRow(lucky, me.restaurantId)).strength).toBe(157);
-    expect(await goodsNum(lucky, me.restaurantId, 162)).toBe(1);
-    expect(await goodsNum(lucky, host.restaurantId, 1)).toBe(1);
+    expect(await goodsNum(lucky, me.restaurantId, GOODS.mysteryRecipe)).toBe(1);
+    expect(await goodsNum(lucky, host.restaurantId, GOODS.mysteryTicket)).toBe(1);
     expect(await cookOf(lucky, id)).toMatchObject({ left_num: 498, eat_count: 1 });
     const feed = await lucky.db
       .selectFrom('rest_log')
@@ -103,7 +104,7 @@ describe('品尝（规格书 13 §13.6）', () => {
     await serve(lucky, host, { eatCount: 20 });
     const r = await lucky.game.mysterious.taste(me, { restId: host.restaurantId });
     expect(r.data.recipe).toBe(false);
-    expect(await goodsNum(lucky, host.restaurantId, 1)).toBe(0);
+    expect(await goodsNum(lucky, host.restaurantId, GOODS.mysteryTicket)).toBe(0);
   });
 
   it('吃完这批：结束（eaten）、清空店主指针；份数不够时报 NOT_ENOUGH portions', async () => {

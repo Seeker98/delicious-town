@@ -3,6 +3,7 @@ import { gameTime } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -27,8 +28,8 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     expect(food!.num).toBeGreaterThanOrEqual(1);
     expect(food!.num).toBeLessThanOrEqual(3);
     expect(seed).toMatchObject({ kind: 'seed', num: 1 });
-    expect(gift).toEqual({ kind: 'goods', id: 20, num: 1 });
-    expect(await goodsNum(t, a.restaurantId, 20)).toBe(1);
+    expect(gift).toEqual({ kind: 'goods', id: GOODS.mysteryFoodExchange, num: 1 });
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(1);
     const seedRow = await t.db
       .selectFrom('rest_seed')
       .select('num')
@@ -46,7 +47,7 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     const next = (await talk(a, 'bigEater')).data;
     expect(next.talk).toBe('bigEater');
     expect(next.rewards).toHaveLength(2);
-    expect(await goodsNum(t, a.restaurantId, 20)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(1);
   });
 
   it('雯姐送神秘礼券 1~20 张，13 哥送喇叭 1~2 个；各自每天一次', async () => {
@@ -54,14 +55,14 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     const w = (await talk(a, 'wenjie')).data;
     expect(w.talk).toBe('wenjie');
     expect(w.rewards).toHaveLength(1);
-    expect(w.rewards[0]).toMatchObject({ kind: 'goods', id: 1 });
+    expect(w.rewards[0]).toMatchObject({ kind: 'goods', id: GOODS.mysteryTicket });
     expect(w.rewards[0]!.num).toBeGreaterThanOrEqual(1);
     expect(w.rewards[0]!.num).toBeLessThanOrEqual(20);
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(w.rewards[0]!.num);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(w.rewards[0]!.num);
 
     const b = (await talk(a, 'bro13')).data;
     expect(b.talk).toBe('bro13');
-    expect(b.rewards[0]).toMatchObject({ kind: 'goods', id: 315 });
+    expect(b.rewards[0]).toMatchObject({ kind: 'goods', id: GOODS.horn });
     expect([1, 2]).toContain(b.rewards[0]!.num);
 
     await expect(talk(a, 'wenjie')).rejects.toMatchObject({ code: 'ALREADY_DONE' });
@@ -69,9 +70,9 @@ describe('NPC 对话（设计文档 §3.3）', () => {
   });
 
   it('奖励按实际到账显示：超过持有上限被丢弃的部分不算（PR26 遗留）', async () => {
-    const a = await newRestaurant(t, { goods: { 315: 9999 } });
+    const a = await newRestaurant(t, { goods: { [GOODS.horn]: 9999 } });
     const r = await t.game.town.talk(a, { npc: 'bro13' });
-    expect(r.data.rewards).toEqual([{ kind: 'goods', id: 315, num: 0 }]);
-    expect(await goodsNum(t, a.restaurantId, 315)).toBe(9999);
+    expect(r.data.rewards).toEqual([{ kind: 'goods', id: GOODS.horn, num: 0 }]);
+    expect(await goodsNum(t, a.restaurantId, GOODS.horn)).toBe(9999);
   });
 });

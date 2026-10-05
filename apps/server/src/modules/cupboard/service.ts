@@ -1,4 +1,5 @@
 import { sql } from 'kysely';
+import { FOODS } from '@dt/config';
 import {
   ErrorCode,
   gameDay,
@@ -246,10 +247,13 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
       });
     },
 
-    exchange(ctx: RestCtx, b: { foodsId: 467 | 468; times: number }) {
+    exchange(
+      ctx: RestCtx,
+      b: { foodsId: typeof FOODS.masterLevel1 | typeof FOODS.masterLevel2; times: number },
+    ) {
       return op(ctx, 'foods.exchange.master', async (o) => {
         await subFoods(o, b.foodsId, 2 * b.times);
-        const lv = b.foodsId === 467 ? 2 : 3;
+        const lv = b.foodsId === FOODS.masterLevel1 ? 2 : 3;
         const pool = o.config.rareFoodPools.get(lv)!;
         const got = new Map<number, number>();
         // 个人缺料倾向（问题记录 50）：只在同等级的稀有缺料里挑

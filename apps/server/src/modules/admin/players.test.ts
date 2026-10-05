@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { userWithRole } from '../../../test/admin';
 import { createRestaurantFull, createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { gid } from '../../../test/items';
+import { GOODS } from '@dt/config';
 
 let ctx: TestContext;
 let admin: { cookie: string; accountId: number };
@@ -79,12 +81,12 @@ describe('玩家查询', () => {
     // 厨具不在仓库表里：后台要能看到（终审 Important 1）
     await ctx.deps.db
       .insertInto('equip')
-      .values({ rest_id: p.restId, goods_id: 30, part: 1, stress: 2, worn: true })
+      .values({ rest_id: p.restId, goods_id: gid('见习之铲'), part: 1, stress: 2, worn: true })
       .execute();
     const rest2 = (await get(mod.cookie, `/restaurants/${p.restId}`)).json.data;
     expect(rest2.equips).toEqual([
       expect.objectContaining({
-        goodsId: 30,
+        goodsId: gid('见习之铲'),
         name: null,
         part: 1,
         stress: 2,
@@ -94,7 +96,9 @@ describe('玩家查询', () => {
       }),
     ]);
     const ledger = (await get(mod.cookie, `/restaurants/${p.restId}/ledger?kind=goods`)).json.data;
-    expect(ledger.items).toEqual([expect.objectContaining({ kind: 'goods', itemId: 1, source: 'y' })]);
+    expect(ledger.items).toEqual([
+      expect.objectContaining({ kind: 'goods', itemId: GOODS.mysteryTicket, source: 'y' }),
+    ]);
     expect((await get(mod.cookie, '/players/999999999')).status).toBe(404);
   });
 });

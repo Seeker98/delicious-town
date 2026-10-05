@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, foodNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { cid, fid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -20,26 +21,28 @@ const levelOf = async (restId: number, id: number) =>
 
 describe('学习食谱', () => {
   it('食材够：学会 1 品级，扣食材，更新派生计数', async () => {
-    const ctx = await newRestaurant(t, { foods: { 302: 1, 253: 1, 366: 2 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('葡萄')]: 1, [fid('薏仁')]: 1, [fid('桑椹')]: 2 } });
     const r = await cb().learn(ctx, 194);
-    expect(r.data).toEqual({ cookbookId: 194, grade: 1, learnType: '0' });
+    expect(r.data).toEqual({ cookbookId: cid('桑椹葡萄粥'), grade: 1, learnType: '0' });
     expect(await levelOf(ctx.restaurantId, 194)).toBe(1);
-    expect((await foodNum(t, ctx.restaurantId, 366)).num).toBe(1);
-    expect((await foodNum(t, ctx.restaurantId, 302)).num).toBe(0);
+    expect((await foodNum(t, ctx.restaurantId, fid('桑椹'))).num).toBe(1);
+    expect((await foodNum(t, ctx.restaurantId, fid('葡萄'))).num).toBe(0);
     const counts = (await restRow(t, ctx.restaurantId)).cookbook_counts;
     expect(counts).toMatchObject({ learned: 1, street: { '0': 1 } });
     expect(counts.grade[1]).toBe(1);
   });
 
   it('缺一种时用同级万能食材（桑椹 3 级 → 469）', async () => {
-    const ctx = await newRestaurant(t, { foods: { 302: 1, 253: 1, 469: 1 } });
+    const ctx = await newRestaurant(t, {
+      foods: { [fid('葡萄')]: 1, [fid('薏仁')]: 1, [fid('三级万能食材')]: 1 },
+    });
     const r = await cb().learn(ctx, 194);
     expect(r.data.learnType).toBe('3');
-    expect((await foodNum(t, ctx.restaurantId, 469)).num).toBe(0);
+    expect((await foodNum(t, ctx.restaurantId, fid('三级万能食材'))).num).toBe(0);
   });
 
   it('不够时报 NOT_ENOUGH（带第一种缺的食材）', async () => {
-    const ctx = await newRestaurant(t, { foods: { 302: 1 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('葡萄')]: 1 } });
     await expect(cb().learn(ctx, 194)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
       params: { kind: 'foods' },
@@ -48,7 +51,10 @@ describe('学习食谱', () => {
 
   it('新街道上线前开的店（已学记录只到老的最大 id）也能学新街道的菜（问题记录 284）', async () => {
     // 店在日本街（14）：只能学本街的菜（问题记录 312）
-    const ctx = await newRestaurant(t, { patch: { street_id: 14 }, foods: { 133: 1, 101: 1, 237: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { street_id: 14 },
+      foods: { [fid('鲷鱼')]: 1, [fid('大米')]: 1, [fid('醋')]: 1 },
+    });
     await t.db
       .updateTable('restaurant_cookbooks')
       .set({ levels: Buffer.alloc(18747) })
@@ -78,7 +84,7 @@ describe('只能学、升级所在街道的菜（问题记录 312）', () => {
     // 194 是新手街的菜；店在湖南街（1）
     const ctx = await newRestaurant(t, {
       patch: { street_id: 1 },
-      foods: { 302: 2, 253: 2, 366: 4 },
+      foods: { [fid('葡萄')]: 2, [fid('薏仁')]: 2, [fid('桑椹')]: 4 },
       cookbooks: { 195: 1 },
     });
     await expect(cb().learn(ctx, 194)).rejects.toMatchObject({
@@ -86,12 +92,15 @@ describe('只能学、升级所在街道的菜（问题记录 312）', () => {
       params: { reason: 'other_street', streetId: 0 },
     });
     await expect(cb().learn(ctx, 195)).rejects.toMatchObject({ params: { reason: 'other_street' } });
-    expect((await foodNum(t, ctx.restaurantId, 302)).num).toBe(2);
+    expect((await foodNum(t, ctx.restaurantId, fid('葡萄'))).num).toBe(2);
     expect(await levelOf(ctx.restaurantId, 195)).toBe(1);
   });
 
   it('列表：别的街的菜标成不能学（street），可学、可升级筛选里没有；本街照常', async () => {
-    const ctx = await newRestaurant(t, { patch: { street_id: 1 }, foods: { 302: 1, 253: 1, 366: 2 } });
+    const ctx = await newRestaurant(t, {
+      patch: { street_id: 1 },
+      foods: { [fid('葡萄')]: 1, [fid('薏仁')]: 1, [fid('桑椹')]: 2 },
+    });
     const other = await cb().list(ctx, { street: 0, page: 1, filter: 'all' });
     expect(other.items.every((r) => r.learn === 'street')).toBe(true);
     expect((await cb().list(ctx, { street: 0, page: 1, filter: 'learnable' })).items).toEqual([]);
@@ -104,11 +113,11 @@ describe('只能学、升级所在街道的菜（问题记录 312）', () => {
 
 describe('食谱列表、详情、需求', () => {
   it('列表：可以学的排在前面，带下一级所需食材和持有数', async () => {
-    const ctx = await newRestaurant(t, { foods: { 302: 1, 253: 1, 366: 1 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('葡萄')]: 1, [fid('薏仁')]: 1, [fid('桑椹')]: 1 } });
     const list = await cb().list(ctx, { street: 0, page: 1, filter: 'all' });
     expect(list.streetTotal).toBe(69);
     expect(list.items[0]).toMatchObject({ id: 194, grade: 0, learn: '0' });
-    expect(list.items[0]!.next).toEqual(expect.arrayContaining([{ foodsId: 366, num: 1, have: 1 }]));
+    expect(list.items[0]!.next).toEqual(expect.arrayContaining([{ foodsId: fid('桑椹'), num: 1, have: 1 }]));
     const learnable = await cb().list(ctx, { street: 0, page: 1, filter: 'learnable' });
     expect(learnable.items.every((x) => x.learn !== 'z' && x.learn !== 'max')).toBe(true);
   });
@@ -140,9 +149,9 @@ describe('食谱列表、详情、需求', () => {
   });
 
   it('需求计算：新手街全部学会 1 品级还差多少', async () => {
-    const ctx = await newRestaurant(t, { foods: { 302: 1 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('葡萄')]: 1 } });
     const n = await cb().foodsNeed(ctx, { street: 0, target: 1 });
-    const grape = n.items.find((x) => x.foodsId === 302)!;
+    const grape = n.items.find((x) => x.foodsId === fid('葡萄'))!;
     expect(grape.have).toBe(1);
     expect(grape.lack).toBe(grape.need - 1);
   });
@@ -160,6 +169,6 @@ describe('菜谱详情（240-1）', () => {
       .execute();
     const ctx = await newRestaurant(t, { shardId });
     const detail = await t.game.cookbook.detail(ctx, 194);
-    expect(detail.coin).toBe(Math.floor(testConfig().requireCookbook(194).coin * 0.5));
+    expect(detail.coin).toBe(Math.floor(testConfig().requireCookbook(cid('桑椹葡萄粥')).coin * 0.5));
   });
 });

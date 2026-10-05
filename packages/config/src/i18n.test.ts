@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { defaultDataDir, readSourceDir } from './source';
 import { realBuild } from './testBundle';
+import { gid } from './testItems';
 
 const src = () => readSourceDir(defaultDataDir());
 
@@ -22,12 +23,12 @@ describe('游戏数据翻译（问题记录 272）', () => {
     const foodId = String(realBuild().bundle!.foods[0]!.id);
     const { errors } = buildBundle({
       ...s,
-      'i18n/en/goods': { '99999999': { name: 'X' }, '85': { nam: 'Y' } },
+      'i18n/en/goods': { '99999999': { name: 'X' }, [String(gid('金币'))]: { nam: 'Y' } },
       'i18n/fr/foods': { [foodId]: { name: 3 } },
     });
     const all = errors.join('\n');
     expect(all).toMatch(/i18n en goods unknown id 99999999/);
-    expect(all).toMatch(/i18n en goods 85 unknown field nam/);
+    expect(all).toContain(`i18n en goods ${gid('金币')} unknown field nam`);
     expect(all).toMatch(new RegExp(`i18n fr foods ${foodId} name must be a string`));
   });
 

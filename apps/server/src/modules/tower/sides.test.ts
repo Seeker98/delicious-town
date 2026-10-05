@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { sideOf } from './sides';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -11,7 +12,13 @@ afterAll(() => t.close());
 describe('对决属性里的套装进攻加成', () => {
   it('古尔图格 5 件：主动挑战时厨艺 +5%，被挑战时不加', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 60, attr_cook: 100 } });
-    for (const goodsId of [632, 633, 634, 635, 636]) {
+    for (const goodsId of [
+      gid('意志之古尔图格的精华之铲'),
+      gid('意志之古尔图格的精华之刃'),
+      gid('意志之古尔图格的精华之镬'),
+      gid('意志之古尔图格的精华之瓶'),
+      gid('意志之古尔图格的精华之冠'),
+    ]) {
       const def = t.deps.config.requireGoods(goodsId).equip!;
       await t.db
         .insertInto('equip')

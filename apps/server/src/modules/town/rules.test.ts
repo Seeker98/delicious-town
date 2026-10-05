@@ -12,6 +12,7 @@ import {
   shakeCoin,
   shakeEgg,
 } from './rules';
+import { gid } from '../../../test/items';
 
 const W = [50, 25, 13, 9, 3];
 
@@ -42,10 +43,10 @@ describe('摇钱包规则', () => {
 
   it('流水号尾数 88 掏出东西：百位以上 %8 = 1 给蟹黄堡，否则 8 个蟹币', () => {
     expect(shakeEgg(87, S)).toBeNull();
-    expect(shakeEgg(88, S)).toEqual({ goodsId: 240, num: 8 });
-    expect(shakeEgg(188, S)).toEqual({ goodsId: 180, num: 1 });
-    expect(shakeEgg(988, S)).toEqual({ goodsId: 180, num: 1 });
-    expect(shakeEgg(288, S)).toEqual({ goodsId: 240, num: 8 });
+    expect(shakeEgg(88, S)).toEqual({ goodsId: gid('蟹币'), num: 8 });
+    expect(shakeEgg(188, S)).toEqual({ goodsId: gid('蟹黄堡'), num: 1 });
+    expect(shakeEgg(988, S)).toEqual({ goodsId: gid('蟹黄堡'), num: 1 });
+    expect(shakeEgg(288, S)).toEqual({ goodsId: gid('蟹币'), num: 8 });
   });
 });
 

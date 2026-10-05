@@ -8,6 +8,8 @@ import { testConfig } from '../../../test/config';
 import { ensureNpc } from '../npc/npc';
 import type { AdminActor } from './access';
 import { createAdminGrants, processGrants } from './grants';
+import { GOODS } from '@dt/config';
+import { fid } from '../../../test/items';
 
 describe('补偿（HTTP）', () => {
   let ctx: TestContext;
@@ -34,14 +36,18 @@ describe('补偿（HTTP）', () => {
       shardId: r0.shardId,
       target: 'rest',
       restId: r0.restaurantId,
-      items: { coin: 500, goods: [{ id: 1, num: 2 }], foods: [{ id: 101, num: 3 }] },
+      items: {
+        coin: 500,
+        goods: [{ id: GOODS.mysteryTicket, num: 2 }],
+        foods: [{ id: fid('大米'), num: 3 }],
+      },
       reason: '停服补偿',
     });
     expect(r.status).toBe(200);
     expect(r.json.data).toMatchObject({ status: 'done', total: 1, doneCount: 1, reason: '停服补偿' });
     expect((await restRow(t, r0.restaurantId)).coin).toBe(600);
-    expect(await goodsNum(t, r0.restaurantId, 1)).toBe(2);
-    expect((await foodNum(t, r0.restaurantId, 101)).num).toBe(3);
+    expect(await goodsNum(t, r0.restaurantId, GOODS.mysteryTicket)).toBe(2);
+    expect((await foodNum(t, r0.restaurantId, fid('大米'))).num).toBe(3);
     const ledger = await t.db
       .selectFrom('ledger')
       .select('source')
@@ -58,28 +64,28 @@ describe('补偿（HTTP）', () => {
   });
 
   it('橱柜满了新食材进冰箱，不报错', async () => {
-    const r0 = await newRestaurant(t, { patch: { cupboard_num: 1 }, foods: { 102: 1 } });
+    const r0 = await newRestaurant(t, { patch: { cupboard_num: 1 }, foods: { [fid('青椒')]: 1 } });
     await grant(admin.cookie, {
       shardId: r0.shardId,
       target: 'rest',
       restId: r0.restaurantId,
-      items: { foods: [{ id: 101, num: 2 }] },
+      items: { foods: [{ id: fid('大米'), num: 2 }] },
       reason: 'x',
     });
-    expect(await foodNum(t, r0.restaurantId, 101)).toMatchObject({ num: 0, fridge: 2 });
+    expect(await foodNum(t, r0.restaurantId, fid('大米'))).toMatchObject({ num: 0, fridge: 2 });
   });
 
   it('同一种道具或食材重复列出 400，不能绕过每种的上限', async () => {
     const r0 = await newRestaurant(t);
     const base = { shardId: r0.shardId, target: 'rest', restId: r0.restaurantId, reason: 'x' };
-    const goods = Array.from({ length: 3 }, () => ({ id: 1, num: 9999 }));
+    const goods = Array.from({ length: 3 }, () => ({ id: GOODS.mysteryTicket, num: 9999 }));
     expect((await grant(admin.cookie, { ...base, items: { goods } })).status).toBe(400);
     const foods = [
-      { id: 101, num: 1 },
-      { id: 101, num: 1 },
+      { id: fid('大米'), num: 1 },
+      { id: fid('大米'), num: 1 },
     ];
     expect((await grant(admin.cookie, { ...base, items: { foods } })).status).toBe(400);
-    expect(await goodsNum(t, r0.restaurantId, 1)).toBe(0);
+    expect(await goodsNum(t, r0.restaurantId, GOODS.mysteryTicket)).toBe(0);
   });
 
   it('超上限、不存在的道具、空内容都 400；mod 404', async () => {

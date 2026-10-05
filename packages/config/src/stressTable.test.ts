@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { defaultDataDir, readSourceDir } from './source';
 import { rewriteStatDesc, scaleToTotal, statDescIssues } from './stressTable';
+import { gid } from './testItems';
 
 const zero = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
 const source = () => readSourceDir(defaultDataDir());
@@ -31,18 +32,18 @@ describe('数值表（问题记录 120）', () => {
     const g = (id: number) => bundle!.goods.find((x) => x.id === id)!;
     expect(bundle!.goods.filter((x) => x.equip && x.equip.stressTable.length !== 11)).toEqual([]);
     // 阿卡玛之铲：固定厨艺 51，80 级
-    expect(g(352).equip).toMatchObject({
+    expect(g(gid('神谕之阿卡玛的荣耀之铲')).equip).toMatchObject({
       minLevel: 80,
       total: null,
       stressTable: [51, 55, 59, 65, 71, 79, 87, 97, 107, 119, 131],
     });
-    expect(g(352).equip!.ranges.cook).toBe(51);
-    expect(g(352).desc.startsWith('厨艺+51。')).toBe(true);
+    expect(g(gid('神谕之阿卡玛的荣耀之铲')).equip!.ranges.cook).toBe(51);
+    expect(g(gid('神谕之阿卡玛的荣耀之铲')).desc.startsWith('厨艺+51。')).toBe(true);
     // 巴贝雷特之铲：随机总和 31，60 级
-    expect(g(59).equip).toMatchObject({ minLevel: 60, total: 31 });
-    expect(g(59).desc.startsWith('随机增加31点属性。')).toBe(true);
+    expect(g(gid('裁决之巴贝雷特的悲鸣之铲')).equip).toMatchObject({ minLevel: 60, total: 31 });
+    expect(g(gid('裁决之巴贝雷特的悲鸣之铲')).desc.startsWith('随机增加31点属性。')).toBe(true);
     // 中厨之锅：厨艺 1、火候 8 缩放到 4
-    expect(g(49).equip!.ranges).toMatchObject({ cook: 0, fire: 4 });
+    expect(g(gid('中厨之锅')).equip!.ranges).toMatchObject({ cook: 0, fire: 4 });
     // 赞助帽：玉级 25、铉级 41
     expect(g(641).equip!.ranges.creatives).toBe(25);
     expect(g(642).equip!.ranges.creatives).toBe(41);
@@ -59,11 +60,13 @@ describe('数值表（问题记录 120）', () => {
     };
     lore.stressTables[0]!.goods = [...(lore.stressTables[0]!.goods ?? []), 352];
     const two = buildBundle({ ...src, 'game/equip_lore': lore }).errors;
-    expect(two).toContain('goods 352 equip needs exactly one stress table (found 2)');
+    expect(two).toContain(
+      `goods ${gid('神谕之阿卡玛的荣耀之铲')} equip needs exactly one stress table (found 2)`,
+    );
     const lore2 = structuredClone(src['game/equip_lore']) as { stressTables: Array<{ name: string }> };
     lore2.stressTables = lore2.stressTables.filter((t) => t.name !== '阿卡玛');
     expect(buildBundle({ ...src, 'game/equip_lore': lore2 }).errors).toContain(
-      'goods 352 equip needs exactly one stress table (found 0)',
+      `goods ${gid('神谕之阿卡玛的荣耀之铲')} equip needs exactly one stress table (found 0)`,
     );
   });
 

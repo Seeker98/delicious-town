@@ -4,6 +4,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import type { RestCtx } from '../../core/deps';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { listNews } from '../news/news';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 let t: TestGame;
@@ -15,7 +16,7 @@ beforeEach(() => t.clock.set(gameTime(DAY, 12)));
 
 /** n 种配料的展示时长：n×600 + (n−1)×200 */
 const show = (n: number) => n * 600 + (n - 1) * 200;
-const player = () => newRestaurant(t, { goods: { 1: 50 } });
+const player = () => newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 50 } });
 const start = (c: RestCtx) => t.game.bar.memoryStart(c);
 const answer = (c: RestCtx, a: number[]) => t.game.bar.memoryAnswer(c, { answer: a });
 
@@ -26,7 +27,7 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
     expect(r).toMatchObject({ level: 1, flashMs: 600, gapMs: 200, answerMs: 3000 + 3 * 1500 });
     expect(r.seq).toHaveLength(3);
     for (const x of r.seq) expect(x >= 0 && x < 8).toBe(true);
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
     await expect(start(a)).rejects.toMatchObject({ code: 'ALREADY_DONE', params: { what: 'bar_round' } });
     expect((await t.game.bar.overview(a)).memory).toMatchObject({
       played: 1,
@@ -56,7 +57,7 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
         expect(ans).toMatchObject({ canNext: false, finished: true });
       }
     }
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['bar.memory'] });
     expect(n).toMatchObject({ restId: a.restaurantId });
     expect(await getDaily(t.db, a.restaurantId, 'bar.memory.perfect', DAY)).toBe(1);
@@ -137,7 +138,7 @@ describe('记忆调酒（4C-3 设计文档 §2.2）', () => {
   });
 
   it('三关全过的新闻每家店每天只写一条（终审 I4：脚本刷屏）', async () => {
-    const a = newRestaurant(t, { goods: { 1: 50 } });
+    const a = newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 50 } });
     const ctx = await a;
     for (let k = 0; k < 2; k++) {
       let r = (await start(ctx)).data;

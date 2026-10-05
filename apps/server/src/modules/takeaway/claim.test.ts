@@ -15,6 +15,8 @@ import { questIn, showQuest } from '../../../test/quests';
 import { addOrder, addRider, openFor, setWeather, type OrderInit } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { fid, gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -32,7 +34,7 @@ beforeEach(() => {
 const COOK: NewRestaurantOptions = {
   patch: { renown: 10, diamond: 10 },
   cookbooks: { 1: 1 },
-  foods: { 239: 20, 242: 20, 250: 20 },
+  foods: { [fid('猪肉')]: 20, [fid('鸡蛋')]: 20, [fid('香葱')]: 20 },
 };
 /** 学会南煎丸子、食材充足、声望 10、钻石 10、已开通、晴天 */
 const cook = async (opts: NewRestaurantOptions = {}): Promise<{ ctx: RestCtx; rider: number }> => {
@@ -73,13 +75,13 @@ describe('领取（设计文档 §3.4）', () => {
       coin: 198,
       exp: 13,
       renown: 1,
-      goods: { id: 1, num: 1 },
+      goods: { id: GOODS.mysteryTicket, num: 1 },
       riderExp: 6,
       riderLevel: 1,
       customer: null,
     });
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ coin: 198, exp: 13, renown: 8 });
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(1);
     expect(await deliveryState(id)).toBe(2);
     const v = await t.game.takeaway.overview(ctx);
     expect(v.deliveries).toEqual([]);
@@ -107,7 +109,7 @@ describe('领取（设计文档 §3.4）', () => {
       success: true,
       drone: true,
       riderExp: 12,
-      goods: { id: 1, num: 2 },
+      goods: { id: GOODS.mysteryTicket, num: 2 },
     });
     expect((await restRow(t, ctx.restaurantId)).diamond).toBe(7);
   });
@@ -129,7 +131,7 @@ describe('领取（设计文档 §3.4）', () => {
     });
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ coin: 0, renown: 7 });
     expect(await deliveryState(a)).toBe(3);
-    await grantGoods(t.db, config, ctx.restaurantId, 388, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, gid('咕咕'), 1, t.clock.now);
     const b = await take(ctx, rider);
     later();
     expect((await claim(ctx, b)).data).toMatchObject({ success: false, exp: 13 });
@@ -139,14 +141,14 @@ describe('领取（设计文档 §3.4）', () => {
     rngValues = [0.9];
     const { ctx, rider } = await cook();
     const id = await take(ctx, rider);
-    await grantGoods(t.db, config, ctx.restaurantId, 339, 1, t.clock.now);
+    await grantGoods(t.db, config, ctx.restaurantId, GOODS.borderCollie, 1, t.clock.now);
     later();
     rngValues = [0.9, 0.1, 0.4, 0.4, 0.4];
     expect((await claim(ctx, id)).data).toMatchObject({
       success: true,
       forced: true,
       coin: 198,
-      goods: { id: 1, num: 1 },
+      goods: { id: GOODS.mysteryTicket, num: 1 },
     });
   });
 
@@ -155,7 +157,11 @@ describe('领取（设计文档 §3.4）', () => {
     const { ctx, rider } = await cook();
     const id = await take(ctx, rider, { owner: ctx.restaurantId });
     later();
-    expect((await claim(ctx, id)).data).toMatchObject({ success: true, exp: 19, goods: { id: 240, num: 1 } });
+    expect((await claim(ctx, id)).data).toMatchObject({
+      success: true,
+      exp: 19,
+      goods: { id: gid('蟹币'), num: 1 },
+    });
   });
 
   it('神秘顾客：成功时遇到珊迪，写新闻', async () => {
@@ -164,13 +170,13 @@ describe('领取（设计文档 §3.4）', () => {
     later();
     rngValues = [0.01];
     expect((await claim(ctx, id)).data).toMatchObject({ success: true, customer: 265 });
-    expect(await goodsNum(t, ctx.restaurantId, 265)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('珊迪'))).toBe(1);
     const news = await t.db
       .selectFrom('news')
       .select(['type', 'params'])
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(news).toEqual([{ type: 'takeaway.customer', params: { goodsId: 265 } }]);
+    expect(news).toEqual([{ type: 'takeaway.customer', params: { goodsId: gid('珊迪') } }]);
   });
 
   it('骑手是好友：我拿 0.9 的银币和经验，他的店拿 1/9 回扣，他的骑手经验加上', async () => {

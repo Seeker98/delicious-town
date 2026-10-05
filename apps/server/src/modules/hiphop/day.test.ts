@@ -5,6 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import { setTuning } from '../../../test/town';
 import { runDueJobs } from '../../worker/periodic';
 import { rollHiphopDay } from './day';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-10-01';
 let t: TestGame;
@@ -98,8 +99,8 @@ describe('嘻哈男孩每日地点（设计文档 §2.1）', () => {
     await setTuning(t, shardId, { hiphop: { placeWeights: [[9, 1]] } });
     const r = await rollHiphopDay(t.game.deps, shardId, DAY, t.clock.now);
     expect(r).toMatchObject({ created: true, place: 9, restId: busy.restaurantId });
-    expect(await goodsNum(t, busy.restaurantId, 230)).toBe(1);
-    expect(await goodsNum(t, idle.restaurantId, 230)).toBe(0);
+    expect(await goodsNum(t, busy.restaurantId, GOODS.hiphopCulture)).toBe(1);
+    expect(await goodsNum(t, idle.restaurantId, GOODS.hiphopCulture)).toBe(0);
     expect(await t.game.hiphop.spot(idle, { restId: busy.restaurantId })).toMatchObject({
       here: true,
       place: 9,
@@ -181,7 +182,7 @@ describe('嘻哈男孩每日地点（设计文档 §2.1）', () => {
     const r = await rollHiphopDay(t.game.deps, shardId, DAY, t.clock.now);
     await restore();
     expect(r).toMatchObject({ created: true, place: 4, restId: null });
-    expect(await goodsNum(t, busy.restaurantId, 230)).toBe(0);
+    expect(await goodsNum(t, busy.restaurantId, GOODS.hiphopCulture)).toBe(0);
     const row = await t.db
       .selectFrom('hiphop_day')
       .select(['place', 'rest_id'])

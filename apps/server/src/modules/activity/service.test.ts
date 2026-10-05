@@ -6,6 +6,7 @@ import { insertActivity } from '../../../test/activity';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { queryCounter } from '../../../test/queries';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -79,7 +80,11 @@ describe('玩家接口（设计 §5.1）', () => {
 
   it('战令解锁：扣钻石和道具；不够 NOT_ENOUGH；重复 ALREADY_DONE；解锁后之前的进阶档位可领；非战令 not_pass', async () => {
     const shardId = await createShard(t.db);
-    const r = await newRestaurant(t, { shardId, patch: { diamond: 100, coin: 0 }, goods: { 5: 2 } });
+    const r = await newRestaurant(t, {
+      shardId,
+      patch: { diamond: 100, coin: 0 },
+      goods: { [gid('大扩容卡')]: 2 },
+    });
     const poor = await newRestaurant(t, { shardId, patch: { diamond: 10 } });
     const id = await insertActivity(t, {
       shardId,
@@ -88,7 +93,7 @@ describe('玩家接口（设计 §5.1）', () => {
         def: {
           rules: [{ key: 'market.buy', points: 10, dailyCap: 100 }],
           levels: [{ points: 10, free: { coin: 1 }, premium: { coin: 100 } }],
-          unlock: { diamond: 50, goods: [{ id: 5, num: 1 }] },
+          unlock: { diamond: 50, goods: [{ id: gid('大扩容卡'), num: 1 }] },
         },
       },
     });
@@ -98,7 +103,7 @@ describe('玩家接口（设计 §5.1）', () => {
     await svc().unlock(r, id);
     const row = await restRow(t, r.restaurantId);
     expect(row.diamond).toBe(50);
-    expect(await goodsNum(t, r.restaurantId, 5)).toBe(1);
+    expect(await goodsNum(t, r.restaurantId, gid('大扩容卡'))).toBe(1);
     await expect(svc().unlock(r, id)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
     await svc().claim(r, id, 'p0');
     expect((await restRow(t, r.restaurantId)).coin).toBe(100);

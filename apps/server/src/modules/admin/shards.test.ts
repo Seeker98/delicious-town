@@ -12,6 +12,7 @@ import { settleRestaurant } from '../settlement/settle';
 import type { AdminActor } from './access';
 import { createAdminShards } from './shards';
 import { ensureNpc } from '../npc/npc';
+import { gid } from '../../../test/items';
 
 let ctx: TestContext;
 let admin: { cookie: string; accountId: number };
@@ -190,7 +191,7 @@ describe('区服数值（HTTP）', () => {
 
   it('下架的道具不能再写进区服数值的奖励（问题记录 367）', async () => {
     const base = testConfig();
-    const gift = 93; // 和默认厨塔排行礼物无关的普通道具
+    const gift = gid('高级节油器'); // 和默认厨塔排行礼物无关的普通道具
     const retired = createGameConfig({
       ...base.bundle,
       goods: base.bundle.goods.map((g) => (g.id === gift ? { ...g, retired: true as const } : g)),

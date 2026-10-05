@@ -5,6 +5,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -247,15 +248,15 @@ describe('抽签（一番赏设计 §5.4）', () => {
       const v = await svc().view(r);
       expect(v.theme).toEqual({ month: 7, name: '夏日冰饮', desc: expect.any(String) });
       const tier = (key: string) => v.tiers.find((x) => x.key === key)!.award.goods;
-      expect(tier('A')).toEqual([{ id: 91071, num: 1 }]);
-      expect(tier('B')).toEqual([{ id: 91072, num: 1 }]);
-      expect(tier('C')).toEqual([{ id: 91073, num: 1 }]);
+      expect(tier('A')).toEqual([{ id: gid('刨冰山大厨手办'), num: 1 }]);
+      expect(tier('B')).toEqual([{ id: gid('西瓜汽水侍者手办'), num: 1 }]);
+      expect(tier('C')).toEqual([{ id: gid('冰棒挂件'), num: 1 }]);
       expect(tier('D')).toBeUndefined();
-      expect(v.last.award.goods).toEqual([{ id: 91074, num: 1 }]);
+      expect(v.last.award.goods).toEqual([{ id: gid('海边冰饮小摊摆件'), num: 1 }]);
       t.clock.set(gameTime('2026-08-01', 12));
       const v2 = await svc().view(r);
       expect(v2.theme?.name).toBe('海鲜大排档');
-      expect(v2.last.award.goods).toEqual([{ id: 91084, num: 1 }]);
+      expect(v2.last.award.goods).toEqual([{ id: gid('渔港夜宵全景摆件'), num: 1 }]);
     } finally {
       t.clock.set(saved);
     }

@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     retire1005:
-      "Wiki du jeu : 117 anciens objets impossibles à obtenir en jeu (ustensiles et titres réservés à certains joueurs du jeu d'origine, paquets de test) ne sont plus listés ; ceux qui les possèdent déjà les gardent et peuvent toujours s'en servir",
+      "Wiki du jeu : 117 anciens objets impossibles à obtenir en jeu (ustensiles et médailles réservés à certains joueurs du jeu d'origine, un paquet de test et un ancien paquet de mise à jour) ne sont plus listés ; ceux qui les possèdent déjà les gardent et peuvent toujours s'en servir",
     tasks1005:
       "Tâches : les activités soumises à un niveau (bourse, prédictions…) ou fermées sur ce serveur s'affichent verrouillées ; la bulle de l'heure se ferme en touchant ailleurs ; l'icône du courrier est alignée",
     looks1005:

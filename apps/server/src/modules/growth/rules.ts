@@ -1,5 +1,5 @@
 import { checkRestaurantName } from '@dt/shared';
-import type { OilNeed, StarNeed } from '@dt/config';
+import { GOODS, type OilNeed, type StarNeed } from '@dt/config';
 import type { NeedCheckDto } from '@dt/shared';
 import type { CookbookCounts } from '../../db/schema';
 
@@ -28,7 +28,7 @@ export function starChecks(
       have: counts.learned,
       ok: counts.learned >= need.needCookbooks,
     },
-    { key: 'goods', id: 86, need: need.needCerts, have: certs, ok: certs >= need.needCerts },
+    { key: 'goods', id: GOODS.starCert, need: need.needCerts, have: certs, ok: certs >= need.needCerts },
   ];
   // 升星银币（240-1）：不收时不显示这一行
   if (coin > 0) checks.push({ key: 'coin', need: coin, have: rest.coin, ok: rest.coin >= coin });
@@ -50,10 +50,10 @@ export function oilChecks(
     checks.push({ key: 'goods', id: g.id, need: g.num, have: h, ok: h >= g.num });
   }
   if (need.needPurpleShells > 0) {
-    const h = have(610);
+    const h = have(GOODS.purpleShell);
     checks.push({
       key: 'goods',
-      id: 610,
+      id: GOODS.purpleShell,
       need: need.needPurpleShells,
       have: h,
       ok: h >= need.needPurpleShells,

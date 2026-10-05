@@ -4,6 +4,8 @@ import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { fid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -47,7 +49,7 @@ async function counter(g: TestGame, restId: number, key: string) {
 
 describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
   it('扣厨神玉玺和玄奥配方各 times 个；成功时按 odds 抽配方，rand < 0.25 得主碎片；活跃按次数；支线 114 完成', async () => {
-    const ctx = await newRestaurant(win, { goods: { 164: 3, 464: 3 } });
+    const ctx = await newRestaurant(win, { goods: { [GOODS.seal]: 3, [GOODS.formulaScroll]: 3 } });
     await showQuest(win, ctx.restaurantId, 3142);
     expect(questIn(await win.game.task.tasks(ctx), 3142)).toMatchObject({
       href: '/yard',
@@ -59,35 +61,35 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
       { ok: true, formulaId: 1, part: 'main', upgraded: false },
     ]);
     expect(await rowOf(win, ctx.restaurantId)).toMatchObject({ main_num: 2, sub_num: 0, learned: false });
-    expect(await goodsNum(win, ctx.restaurantId, 164)).toBe(1);
-    expect(await goodsNum(win, ctx.restaurantId, 464)).toBe(1);
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.seal)).toBe(1);
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.formulaScroll)).toBe(1);
     expect(await counter(win, ctx.restaurantId, 'formula.appraise')).toBe(2);
     expect(questIn(await win.game.task.tasks(ctx), 3142)).toMatchObject({ done: true });
   });
 
   it('失败时什么碎片也不得，道具照扣', async () => {
-    const ctx = await newRestaurant(lose, { goods: { 164: 1, 464: 1 } });
+    const ctx = await newRestaurant(lose, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
     const r = await lose.game.yard.appraiseFormula(ctx, { toolId: 164, times: 1 });
     expect(r.data.results).toEqual([{ ok: false }]);
     expect(await rowOf(lose, ctx.restaurantId)).toBeUndefined();
-    expect(await goodsNum(lose, ctx.restaurantId, 464)).toBe(0);
+    expect(await goodsNum(lose, ctx.restaurantId, GOODS.formulaScroll)).toBe(0);
   });
 
   it('星月密卷：已有该配方辅碎片时，辅碎片 rand < 0.2 转成主碎片；没有辅碎片时不转', async () => {
-    const has = await newRestaurant(moon, { goods: { 164: 1, 464: 1 } });
-    await grantGoods(moon.db, config, has.restaurantId, 465, 1, moon.clock.now);
+    const has = await newRestaurant(moon, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
+    await grantGoods(moon.db, config, has.restaurantId, GOODS.moonScroll, 1, moon.clock.now);
     await setRow(moon, has.restaurantId, { sub_num: 1 });
     const r1 = await moon.game.yard.appraiseFormula(has, { toolId: 164, times: 1 });
     expect(r1.data.results).toEqual([{ ok: true, formulaId: 1, part: 'main', upgraded: true }]);
     expect(await rowOf(moon, has.restaurantId)).toMatchObject({ main_num: 1, sub_num: 1 });
-    const none = await newRestaurant(moon, { goods: { 164: 1, 464: 1 } });
-    await grantGoods(moon.db, config, none.restaurantId, 465, 1, moon.clock.now);
+    const none = await newRestaurant(moon, { goods: { [GOODS.seal]: 1, [GOODS.formulaScroll]: 1 } });
+    await grantGoods(moon.db, config, none.restaurantId, GOODS.moonScroll, 1, moon.clock.now);
     const r2 = await moon.game.yard.appraiseFormula(none, { toolId: 164, times: 1 });
     expect(r2.data.results).toEqual([{ ok: true, formulaId: 1, part: 'sub', upgraded: false }]);
   });
 
   it('不是配方鉴定道具（星月密卷也不算）报 VALIDATION_FAILED；玄奥配方不够报 NOT_ENOUGH，什么都不扣', async () => {
-    const ctx = await newRestaurant(t, { goods: { 164: 2, 464: 1 } });
+    const ctx = await newRestaurant(t, { goods: { [GOODS.seal]: 2, [GOODS.formulaScroll]: 1 } });
     for (const toolId of [18, 465]) {
       await expect(t.game.yard.appraiseFormula(ctx, { toolId, times: 1 })).rejects.toMatchObject({
         code: 'VALIDATION_FAILED',
@@ -96,9 +98,9 @@ describe('配方鉴定（规格书 09 §9.3，裁定 8、9）', () => {
     }
     await expect(t.game.yard.appraiseFormula(ctx, { toolId: 164, times: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 464, need: 2, have: 1 },
+      params: { kind: 'goods', id: GOODS.formulaScroll, need: 2, have: 1 },
     });
-    expect(await goodsNum(t, ctx.restaurantId, 164)).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.seal)).toBe(2);
   });
 });
 
@@ -135,7 +137,7 @@ describe('配方学习和分解（规格书 08 §8.5）', () => {
     expect((await t.game.yard.decomposeFormula(ctx, { formulaId: 1, part: 'sub', num: 3 })).data).toEqual({
       essence: 3,
     });
-    expect(await goodsNum(t, ctx.restaurantId, 470)).toBe(9);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.formulaEssence)).toBe(9);
     expect(await rowOf(t, ctx.restaurantId)).toMatchObject({ main_num: 0, sub_num: 0 });
     await expect(
       t.game.yard.decomposeFormula(ctx, { formulaId: 1, part: 'sub', num: 1 }),
@@ -148,12 +150,12 @@ describe('配方合成（规格书 08 §8.5）', () => {
   async function cook(g: TestGame, opts: { sub?: number; strength?: number } = {}) {
     const ctx = await newRestaurant(g, {
       patch: { strength: opts.strength ?? 100 },
-      foods: { 431: opts.sub ?? 5, 551: 5 },
+      foods: { [fid('鱼唇')]: opts.sub ?? 5, [fid('乌鸡')]: 5 },
     });
     await setRow(g, ctx.restaurantId, { learned: true });
     await g.db
       .insertInto('yard_basket')
-      .values({ rest_id: ctx.restaurantId, foods_id: 438, num: 5 })
+      .values({ rest_id: ctx.restaurantId, foods_id: fid('槟榔芋'), num: 5 })
       .execute();
     return ctx;
   }
@@ -170,12 +172,12 @@ describe('配方合成（规格书 08 §8.5）', () => {
   it('扣体力 3×份、菜篮主料、橱柜辅料和添加料；随机数 0 时每份暴击 +1；结果进橱柜；活跃按份数', async () => {
     const ctx = await cook(win);
     const r = await win.game.yard.composeFormula(ctx, { formulaId: 1, num: 2 });
-    expect(r.data).toEqual({ foodsId: 447, num: 4, extra: 2 });
+    expect(r.data).toEqual({ foodsId: fid('牡丹籽油'), num: 4, extra: 2 });
     expect((await restRow(win, ctx.restaurantId)).strength).toBe(94);
     expect(await basketOf(win, ctx.restaurantId)).toBe(3);
-    expect((await foodNum(win, ctx.restaurantId, 431)).num).toBe(3);
-    expect((await foodNum(win, ctx.restaurantId, 551)).num).toBe(3);
-    expect((await foodNum(win, ctx.restaurantId, 447)).num).toBe(4);
+    expect((await foodNum(win, ctx.restaurantId, fid('鱼唇'))).num).toBe(3);
+    expect((await foodNum(win, ctx.restaurantId, fid('乌鸡'))).num).toBe(3);
+    expect((await foodNum(win, ctx.restaurantId, fid('牡丹籽油'))).num).toBe(4);
     expect(await counter(win, ctx.restaurantId, 'formula.compose')).toBe(2);
   });
 
@@ -187,18 +189,18 @@ describe('配方合成（规格书 08 §8.5）', () => {
     const ctx = await cook(t, { sub: 1 });
     await expect(t.game.yard.composeFormula(ctx, { formulaId: 1, num: 2 })).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'foods', id: 431, need: 2, have: 1 },
+      params: { kind: 'foods', id: fid('鱼唇'), need: 2, have: 1 },
     });
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(100);
     expect(await basketOf(t, ctx.restaurantId)).toBe(5);
-    expect((await foodNum(t, ctx.restaurantId, 551)).num).toBe(5);
+    expect((await foodNum(t, ctx.restaurantId, fid('乌鸡'))).num).toBe(5);
   });
 
   it('配方页：碎片、已学、原料持有、最多能合成几份（受体力限制）、鉴定道具', async () => {
     const ctx = await cook(t, { strength: 12 });
     await t.db
       .insertInto('store_item')
-      .values({ rest_id: ctx.restaurantId, goods_id: 164, num: 3 })
+      .values({ rest_id: ctx.restaurantId, goods_id: GOODS.seal, num: 3 })
       .execute();
     const v = await t.game.yard.formulas(ctx);
     expect(v.formulas).toHaveLength(56);
@@ -211,7 +213,7 @@ describe('配方合成（规格书 08 §8.5）', () => {
       maxCompose: 4,
     });
     expect(v.formulas.find((f) => f.id === 2)).toMatchObject({ learned: false, maxCompose: 0 });
-    expect(v.tools).toEqual([{ goodsId: 164, num: 3, rate: 0.25 }]);
+    expect(v.tools).toEqual([{ goodsId: GOODS.seal, num: 3, rate: 0.25 }]);
     expect(v).toMatchObject({ scrolls: 0, essence: 0, strength: 12, composeStrength: 3 });
   });
 });

@@ -3,6 +3,7 @@ import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
 import { rankWeekPeriod } from './rank';
+import { gid } from '../../../test/items';
 
 const DAY = '2026-09-30';
 const WEEK = '2026-09-28';
@@ -152,7 +153,7 @@ describe('周结算（设计文档 §3.3）', () => {
         log: { error: () => undefined },
       });
     expect(out).toEqual({ awarded: 3, failed: 0 });
-    expect(await goodsNum(t, a.restaurantId, 199)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, gid('厨神'))).toBe(1);
     expect((await restRow(t, a.restaurantId)).renown).toBe(500);
     expect((await restRow(t, b.restaurantId)).renown).toBe(150);
     expect((await restRow(t, c.restaurantId)).renown).toBe(100);

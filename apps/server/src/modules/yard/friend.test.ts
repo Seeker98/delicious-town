@@ -11,6 +11,8 @@ import {
   type TestGame,
 } from '../../../test/game';
 import { grantGoods } from '../store/grant';
+import { GOODS } from '@dt/config';
+import { fid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -43,7 +45,7 @@ async function cropOf(g: TestGame, restId: number, shardId: number, patch: Recor
       shard_id: shardId,
       land_id: land.id,
       seed_id: 1,
-      foods_id: 101,
+      foods_id: fid('大米'),
       stage: 4,
       stage_at: g.clock.now,
       infancy: 24,
@@ -106,7 +108,7 @@ describe('帮好友照料（规格书 08 §8.3）', () => {
     expect(land.exp).toBe(0);
     const logs = (await logsOf(t, b.restaurantId)).filter((l) => l.type === 'yard.helped');
     expect(logs.map((l) => (l.params as { what: string }).what)).toEqual(['deworm', 'weed', 'water']);
-    expect(logs[0]!.params).toMatchObject({ by: a.restaurantId, foodsId: 101 });
+    expect(logs[0]!.params).toMatchObject({ by: a.restaurantId, foodsId: fid('大米') });
     const feed = await t.game.social.reads.feed(b, { limit: 30 });
     expect(feed.items.filter((x) => x.type === 'yard.helped')).toHaveLength(3);
   });
@@ -116,7 +118,7 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
   it('扣 1 声望，偷 1~2 个进我的菜篮，对方剩余减少；每人每株一次；对方动态 yard.stolen', async () => {
     const { a, b, plantId } = await friends(hi);
     const r = await hi.game.yard.reap(a, { plantId });
-    expect(r.data).toEqual({ foodsId: 101, num: 2, stolen: true, punished: null });
+    expect(r.data).toEqual({ foodsId: fid('大米'), num: 2, stolen: true, punished: null });
     expect(await basketNum(hi, a.restaurantId, 101)).toBe(2);
     expect((await plantOf(hi, plantId))!.harvest_num).toBe(18);
     // 系数 3：银币 ⌊3×2⌋，经验 ⌊3×3⌋ + 食材等级 1
@@ -128,7 +130,7 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
     const logs = await logsOf(hi, b.restaurantId);
     expect(logs.find((l) => l.type === 'yard.stolen')!.params).toMatchObject({
       by: a.restaurantId,
-      foodsId: 101,
+      foodsId: fid('大米'),
       num: 2,
       punished: null,
     });
@@ -156,25 +158,30 @@ describe('偷菜（规格书 08 §8.3，裁定 4、10）', () => {
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'renown', need: 1 },
     });
-    const rare = await friends(hi, { seed_id: 95, foods_id: 460, harvest_num: 1, harvest_max: 1 });
+    const rare = await friends(hi, {
+      seed_id: 95,
+      foods_id: fid('神秘高山虫'),
+      harvest_num: 1,
+      harvest_max: 1,
+    });
     expect((await hi.game.yard.reap(rare.a, { plantId: rare.plantId })).data.num).toBe(1);
   });
 
   it('对方有边牧：随机数 0 → 从我的橱柜拿 1 个食材给对方（锁定的不拿）', async () => {
     const { a, b, plantId } = await friends(lo);
-    await grantGoods(lo.db, config, b.restaurantId, 339, 1, lo.clock.now);
+    await grantGoods(lo.db, config, b.restaurantId, GOODS.borderCollie, 1, lo.clock.now);
     await lo.db
       .insertInto('cupboard_food')
       .values([
-        { rest_id: a.restaurantId, foods_id: 102, num: 3, locked: true },
-        { rest_id: a.restaurantId, foods_id: 103, num: 2, locked: false },
+        { rest_id: a.restaurantId, foods_id: fid('青椒'), num: 3, locked: true },
+        { rest_id: a.restaurantId, foods_id: fid('苦瓜'), num: 2, locked: false },
       ])
       .execute();
     const r = await lo.game.yard.reap(a, { plantId });
-    expect(r.data).toEqual({ foodsId: 101, num: 1, stolen: true, punished: 103 });
-    expect((await foodNum(lo, a.restaurantId, 103)).num).toBe(1);
-    expect((await foodNum(lo, b.restaurantId, 103)).num).toBe(1);
-    expect((await foodNum(lo, a.restaurantId, 102)).num).toBe(3);
+    expect(r.data).toEqual({ foodsId: fid('大米'), num: 1, stolen: true, punished: 103 });
+    expect((await foodNum(lo, a.restaurantId, fid('苦瓜'))).num).toBe(1);
+    expect((await foodNum(lo, b.restaurantId, fid('苦瓜'))).num).toBe(1);
+    expect((await foodNum(lo, a.restaurantId, fid('青椒'))).num).toBe(3);
   });
 
   it('非好友报 NOT_FRIEND；不在收获期报 not_ripe；主人收获后再偷报 no_plant，什么都不扣（Review Focus 2）', async () => {

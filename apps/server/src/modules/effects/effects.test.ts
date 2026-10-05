@@ -4,6 +4,7 @@ import { testDb } from '../../../test/db';
 import { testConfig } from '../../../test/config';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
 import { getEffectAgg, listActiveEffects, removeEffectSource, upsertEffectSource } from './service';
+import { gid } from '../../../test/items';
 
 const db = testDb();
 const config = testConfig();
@@ -113,12 +114,12 @@ describe('收集类加成进入汇总', () => {
     await db
       .insertInto('store_item')
       .values([
-        { rest_id: restId, goods_id: 88, num: 1 },
-        { rest_id: restId, goods_id: 89, num: 1 },
+        { rest_id: restId, goods_id: gid('[一星牌匾]'), num: 1 },
+        { rest_id: restId, goods_id: gid('[二星牌匾]'), num: 1 },
       ])
       .execute();
     // 四个盆栽勋章（devicetype 36）
-    for (const id of [248, 249, 254, 338]) {
+    for (const id of [gid('仙人掌'), gid('发财树'), gid('迎客松'), gid('天使泪')]) {
       await upsertEffectSource(db, restId, {
         sourceType: 'honor',
         sourceId: id,

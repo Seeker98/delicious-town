@@ -4,6 +4,7 @@ import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, type TestGame } from '../../../test/game';
 import { retiredInOverrides } from './retired';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -18,18 +19,20 @@ describe('已存的区服数值引用了下架的道具（问题记录 367 终�
       .insertInto('shard_config')
       .values({
         shard_id: shardId,
-        override: JSON.stringify({ tuning: { tower: { rankGifts: [[1, 93]] } } }),
+        override: JSON.stringify({ tuning: { tower: { rankGifts: [[1, gid('高级节油器')]] } } }),
       })
       .execute();
     const base = testConfig();
     const retired = createGameConfig({
       ...base.bundle,
-      goods: base.bundle.goods.map((g) => (g.id === 93 ? { ...g, retired: true as const } : g)),
+      goods: base.bundle.goods.map((g) =>
+        g.id === gid('高级节油器') ? { ...g, retired: true as const } : g,
+      ),
     });
     const found = await retiredInOverrides(t.db, retired);
     expect(found.find((x) => x.shardId === shardId)).toEqual({
       shardId,
-      errors: ['retired goods 93 is still used by 厨塔排行 ×1'],
+      errors: [`retired goods ${gid('高级节油器')} is still used by 厨塔排行 ×1`],
     });
     // 名单是空的（默认）时不查
     expect(await retiredInOverrides(t.db, base)).toEqual([]);

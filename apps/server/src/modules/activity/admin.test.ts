@@ -6,6 +6,7 @@ import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import type { AdminActor } from '../admin/access';
 import { createAdminActivity } from './admin';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 let actor: AdminActor;
@@ -91,7 +92,7 @@ describe('后台活动（设计 §5.2）', () => {
     const shardId = await createShard(t.db);
     const def = {
       goals: [
-        { key: 'signin', target: 1, award: { goods: [{ id: 85, num: 1 }] } },
+        { key: 'signin', target: 1, award: { goods: [{ id: gid('金币'), num: 1 }] } },
         {
           key: 'signin',
           target: 2,

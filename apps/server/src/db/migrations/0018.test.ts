@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
+import { gid } from '../../../test/items';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -83,7 +84,7 @@ describe('迁移 0018', () => {
     ).rejects.toThrow();
     const e = await db
       .insertInto('equip')
-      .values({ rest_id: rest, goods_id: 30, part: 1, suit_id: 0, custom_name: '大橘' })
+      .values({ rest_id: rest, goods_id: gid('见习之铲'), part: 1, suit_id: 0, custom_name: '大橘' })
       .returning(['custom_name', 'xuan_sent_at'])
       .executeTakeFirstOrThrow();
     expect(e).toEqual({ custom_name: '大橘', xuan_sent_at: null });

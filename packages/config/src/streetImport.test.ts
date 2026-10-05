@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { addMedalRows, importConflicts, pruneNames } from './streetImport';
+import { gid } from './testItems';
 
 describe('新街道导入的辅助（backlog 284）', () => {
   it('重跑导入时删掉已经不存在的新菜谱译名；老菜谱和这次导入的照留', () => {
@@ -12,14 +13,14 @@ describe('新街道导入的辅助（backlog 284）', () => {
 
   it('新街道在勋章对照表里没有行时补上（勋章 id = 92000 + 街道 id），已有的不动', () => {
     const map = [
-      { streetId: 0, goodsId: 140 },
-      { streetId: 14, goodsId: 92014 },
+      { streetId: 0, goodsId: gid('新手街') },
+      { streetId: 14, goodsId: gid('日本街') },
     ];
     expect(addMedalRows(map, [14, 15], (s) => 92000 + s)).toEqual({
       rows: [
-        { streetId: 0, goodsId: 140 },
-        { streetId: 14, goodsId: 92014 },
-        { streetId: 15, goodsId: 92015 },
+        { streetId: 0, goodsId: gid('新手街') },
+        { streetId: 14, goodsId: gid('日本街') },
+        { streetId: 15, goodsId: gid('意大利街') },
       ],
       added: [15],
     });

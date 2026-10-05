@@ -4,6 +4,7 @@ import { createAccountRow, createRestaurantRow, createShard } from '../../test/f
 import { getDaily, incrementDaily } from './counter/dailyCounter';
 import { recordLedger } from './ledger/ledger';
 import { postNews } from './news/news';
+import { GOODS } from '@dt/config';
 
 const db = testDb();
 let shardId: number;
@@ -27,7 +28,7 @@ describe('dailyCounter', () => {
 describe('ledger / news', () => {
   it('写入流水', async () => {
     await recordLedger(db, [
-      { restId, kind: 'goods', itemId: 1, delta: 3, source: 'test' },
+      { restId, kind: 'goods', itemId: GOODS.mysteryTicket, delta: 3, source: 'test' },
       { restId, kind: 'coin', delta: -50, source: 'test' },
     ]);
     const rows = await db.selectFrom('ledger').selectAll().where('rest_id', '=', restId).execute();

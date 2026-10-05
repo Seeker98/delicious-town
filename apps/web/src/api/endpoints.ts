@@ -165,6 +165,7 @@ import type {
   InviteDto,
   Locale,
 } from '@dt/shared';
+import { SHARED_FOODS } from '@dt/shared';
 import { api } from './client';
 
 type Empty = Record<string, never>;
@@ -254,8 +255,10 @@ export const endpoints = {
   thaw: (foodsId: number) => api.post<ThawResultDto>('/api/v1/cupboard/thaw', { foodsId }),
   handleFoods: (b: { foodsId: number; way: 'compose' | 'decompose'; num: number }) =>
     api.post<HandleResultDto>('/api/v1/cupboard/handle', b),
-  exchangeMaster: (foodsId: 467 | 468, times: number) =>
-    api.post<Anything>('/api/v1/cupboard/exchange', { foodsId, times }),
+  exchangeMaster: (
+    foodsId: typeof SHARED_FOODS.masterLevel1 | typeof SHARED_FOODS.masterLevel2,
+    times: number,
+  ) => api.post<Anything>('/api/v1/cupboard/exchange', { foodsId, times }),
 
   market: () => api.get<MarketDto>('/api/v1/market/view'),
   marketBuy: (itemId: number, num: number) => api.post<Anything>('/api/v1/market/buy', { itemId, num }),

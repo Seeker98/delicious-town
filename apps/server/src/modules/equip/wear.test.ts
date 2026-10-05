@@ -5,6 +5,7 @@ import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { getEffectAgg } from '../effects/service';
 import { settleShardRound } from '../settlement/runner';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -48,21 +49,21 @@ const wornIds = async (ctx: RestCtx) =>
 describe('穿戴（设计文档 §3.10）', () => {
   it('等级不够不能穿；同部位已有的自动换下', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 1 } });
-    const a = await piece(ctx, 56);
+    const a = await piece(ctx, gid('沉默之度玛的静谧之镬'));
     await expect(eq().wear(ctx, { id: a })).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'level', need: 65 },
     });
     await t.db.updateTable('restaurant').set({ level: 70 }).where('id', '=', ctx.restaurantId).execute();
     await eq().wear(ctx, { id: a });
-    const b = await piece(ctx, 56);
+    const b = await piece(ctx, gid('沉默之度玛的静谧之镬'));
     await eq().wear(ctx, { id: b });
     expect(await wornIds(ctx)).toEqual([b]);
   });
 
   it('卸下、全部卸下；卸下没穿的报 not_worn；别人的厨具报 NOT_FOUND', async () => {
     const ctx = await newRestaurant(t);
-    const [a, b] = [await piece(ctx, 30), await piece(ctx, 31)];
+    const [a, b] = [await piece(ctx, gid('见习之铲')), await piece(ctx, gid('见习之刀'))];
     await eq().wear(ctx, { id: a });
     await eq().wear(ctx, { id: b });
     await eq().unwear(ctx, { id: a });
@@ -77,7 +78,7 @@ describe('穿戴（设计文档 §3.10）', () => {
   it('穿上后厨具幸运进加成汇总，卸下后去掉', async () => {
     const ctx = await newRestaurant(t);
     const before = (await agg(ctx)).luckValue ?? 0;
-    const a = await piece(ctx, 30, { base_luck: 5, st_luck: 2 });
+    const a = await piece(ctx, gid('见习之铲'), { base_luck: 5, st_luck: 2 });
     await eq().wear(ctx, { id: a });
     expect((await agg(ctx)).luckValue).toBe(before + 7);
     await eq().unwear(ctx, { id: a });
@@ -100,7 +101,7 @@ describe('穿戴（设计文档 §3.10）', () => {
   it('结算用上厨具幸运', async () => {
     const shardId = await createShard(t.db);
     const ctx = await newRestaurant(t, { shardId, patch: { oil: 1000 } });
-    await eq().wear(ctx, { id: await piece(ctx, 30, { base_luck: 30 }) });
+    await eq().wear(ctx, { id: await piece(ctx, gid('见习之铲'), { base_luck: 30 }) });
     await settleShardRound(t.game.deps, t.game.world, shardId, roundOf(new Date()), new Date());
     const row = await t.db
       .selectFrom('income_round')
@@ -113,7 +114,7 @@ describe('穿戴（设计文档 §3.10）', () => {
 
   it('概览：5 个部位、套装状态、属性（加点 + 厨具）和厨力', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 13, attr_cook: 4, luck: 10 } });
-    await eq().wear(ctx, { id: await piece(ctx, 30, { base_cook: 3, st_cook: 2 }) });
+    await eq().wear(ctx, { id: await piece(ctx, gid('见习之铲'), { base_cook: 3, st_cook: 2 }) });
     const o = await eq().overview(ctx);
     expect(o.worn.map((w) => w?.goodsId ?? null)).toEqual([30, null, null, null, null]);
     expect(o.worn[0]).toMatchObject({ stress: 0, base: { cook: 3 }, boost: { cook: 2 }, total: { cook: 5 } });

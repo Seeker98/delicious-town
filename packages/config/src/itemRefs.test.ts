@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GOODS } from './ids';
 import { CODE_GOODS, CODE_FOODS, itemRefs, tuningRefs, type ItemRef } from './itemRefs';
 import { realBuild } from './testBundle';
+import { gid } from './testItems';
 
 const b = realBuild().bundle!;
 const refs = itemRefs(b);
@@ -67,8 +68,8 @@ describe('道具、食材的引用（问题记录 367）', () => {
         String(s.id),
       ).toContain('搬家（街道勋章）');
     expect(
-      tuningRefs({ ...b.tuning, mysterious: { ...b.tuning.mysterious, championGoodsId: 93 } })
-        .filter((r) => r.id === 93)
+      tuningRefs({ ...b.tuning, mysterious: { ...b.tuning.mysterious, championGoodsId: gid('高级节油器') } })
+        .filter((r) => r.id === gid('高级节油器'))
         .map((r) => r.where),
     ).toContain('特色菜冠军');
   });

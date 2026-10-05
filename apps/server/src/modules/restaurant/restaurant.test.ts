@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
-import { NEWBIE } from '@dt/config';
+import { FOODS, GOODS, NEWBIE } from '@dt/config';
 import { createGame } from '../../game';
 import { syncNewbieCodes } from '../redeem/newbie';
+import { cid, gid } from '../../../test/items';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -28,7 +29,7 @@ describe('开店', () => {
     const r = await create(u.cookie, '开局食材店');
     expect(r.status).toBe(200);
     // 446 番茄炒蛋随老街道修订删了，保留同街的 16951 番茄炒鸡蛋（问题记录 284）
-    for (const cookbookId of [441, 442, 16951]) {
+    for (const cookbookId of [cid('锅包肉'), cid('茄子煲'), cid('番茄炒鸡蛋')]) {
       const learn = await call(ctx.app, 'POST', '/api/v1/cookbook/learn', {
         cookie: u.cookie,
         body: { cookbookId },
@@ -39,7 +40,7 @@ describe('开店', () => {
     const nums = new Map(
       cup.json.data.items.map((x: { foodsId: number; num: number }) => [x.foodsId, x.num]),
     );
-    expect([nums.get(467), nums.get(468), nums.get(469)]).toEqual([3, 3, 3]);
+    expect([1, 2, 3].map((lv) => nums.get(FOODS.masterBase + lv))).toEqual([3, 3, 3]);
   });
 
   it('新店初始值与规格一致（规格书 02 §2.1）', async () => {
@@ -80,8 +81,10 @@ describe('开店', () => {
       cookfoodsPerFlag: 50,
     });
     expect(d.tables).toHaveLength(4);
-    expect(d.effects.map((e: { sourceId: number }) => e.sourceId).sort()).toEqual([100, 140, 81]);
-    const opening = d.effects.find((e: { sourceId: number }) => e.sourceId === 81);
+    expect(d.effects.map((e: { sourceId: number }) => e.sourceId).sort()).toEqual(
+      [GOODS.redPants, gid('新手街'), gid('开张大吉')].sort(),
+    );
+    const opening = d.effects.find((e: { sourceId: number }) => e.sourceId === gid('开张大吉'));
     expect(opening.name).toBe('开张大吉');
     const expires = new Date(opening.expiresAt).getTime();
     expect(expires).toBeGreaterThanOrEqual(before + 360 * 3600_000 - 5000);
@@ -108,7 +111,9 @@ describe('开店', () => {
       .select(['goods_id', 'num'])
       .where('rest_id', '=', restId)
       .execute();
-    expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual([54, 81, 100, 140]); // 54 新手大礼包（问题记录 331）
+    expect(items.map((i) => i.goods_id).sort((a, b) => a - b)).toEqual(
+      [gid('新手大礼包'), gid('开张大吉'), GOODS.redPants, gid('新手街')].sort((a, b) => a - b),
+    ); // 54 新手大礼包（问题记录 331）
     const ledger = await db.selectFrom('ledger').selectAll().where('rest_id', '=', restId).execute();
     expect(ledger.filter((l) => l.kind === 'goods')).toHaveLength(4);
     expect(ledger.filter((l) => l.kind === 'foods')).toHaveLength(11); // 开局 11 种食材（问题记录 284 加了十三香）

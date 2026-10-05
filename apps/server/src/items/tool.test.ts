@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { GOODS, defaultDataDir, readSourceDir } from '@dt/config';
 import { createItemsTool, originalSources } from './tool';
+import { gid } from '../../test/items';
 
 const src = readSourceDir(defaultDataDir());
 
@@ -9,34 +10,34 @@ function tool(retired: unknown = { goods: [], foods: [] }) {
   const t = createItemsTool({
     readSource: () => ({ ...src, 'game/retired': written.length ? JSON.parse(written.at(-1)!) : retired }),
     writeRetired: (text) => written.push(text),
-    original: new Map([[1, ['商店', '任务']]]),
+    original: new Map([[GOODS.mysteryTicket, ['商店', '任务']]]),
   });
   return { t, written };
 }
 
 describe('道具整理工具（问题记录 367）', () => {
   it('报表：每行带原版来源、下架状态和备注；没有构建错误', () => {
-    const { t } = tool({ goods: [{ id: 116, name: 'XXX', note: '原版占位' }], foods: [] });
+    const { t } = tool({ goods: [{ id: gid('XXX'), name: 'XXX', note: '原版占位' }], foods: [] });
     const r = t.report();
     expect(r.errors).toEqual([]);
-    const g1 = r.rows.find((x) => x.kind === 'goods' && x.id === 1)!;
+    const g1 = r.rows.find((x) => x.kind === 'goods' && x.id === GOODS.mysteryTicket)!;
     expect(g1.original).toEqual(['商店', '任务']);
-    const g116 = r.rows.find((x) => x.kind === 'goods' && x.id === 116)!;
+    const g116 = r.rows.find((x) => x.kind === 'goods' && x.id === gid('XXX'))!;
     expect(g116).toMatchObject({ retired: true, retiredNote: '原版占位' });
     expect(r.grades).toHaveLength(10);
   });
 
   it('保存：先按新名单构建，能过才写文件；写进去的带名字，格式稳定', () => {
     const { t, written } = tool();
-    const res = t.save({ goods: [{ id: 116, note: '原版占位' }], foods: [] });
+    const res = t.save({ goods: [{ id: gid('XXX'), note: '原版占位' }], foods: [] });
     expect(res.errors).toEqual([]);
     expect(written).toHaveLength(1);
     expect(JSON.parse(written[0]!)).toEqual({
-      goods: [{ id: 116, name: 'XXX', note: '原版占位' }],
+      goods: [{ id: gid('XXX'), name: 'XXX', note: '原版占位' }],
       foods: [],
     });
     expect(written[0]!.endsWith('\n')).toBe(true);
-    expect(res.report!.rows.find((x) => x.kind === 'goods' && x.id === 116)!.retired).toBe(true);
+    expect(res.report!.rows.find((x) => x.kind === 'goods' && x.id === gid('XXX'))!.retired).toBe(true);
   });
 
   it('保存：还被引用的不写文件，返回构建错误', () => {
@@ -51,10 +52,10 @@ describe('道具整理工具（问题记录 367）', () => {
 
   it('保存：名单按编号排序，空备注不写', () => {
     const { t, written } = tool();
-    t.save({ goods: [{ id: 116, note: '' }, { id: 83 }], foods: [] });
+    t.save({ goods: [{ id: gid('XXX'), note: '' }, { id: gid('测试勋章') }], foods: [] });
     expect(JSON.parse(written[0]!).goods).toEqual([
-      { id: 83, name: '测试勋章' },
-      { id: 116, name: 'XXX' },
+      { id: gid('测试勋章'), name: '测试勋章' },
+      { id: gid('XXX'), name: 'XXX' },
     ]);
   });
 

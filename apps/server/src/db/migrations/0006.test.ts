@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
+import { gid } from '../../../test/items';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -10,7 +11,13 @@ beforeAll(async () => {
   rest = await createRestaurantRow(db, shardId, await createAccountRow(db));
 });
 
-const piece = (part: number, worn = false) => ({ rest_id: rest, goods_id: 30, part, worn, base_cook: 3 });
+const piece = (part: number, worn = false) => ({
+  rest_id: rest,
+  goods_id: gid('见习之铲'),
+  part,
+  worn,
+  base_cook: 3,
+});
 
 describe('迁移 0006', () => {
   it('厨具默认值；同一部位只能穿一件', async () => {
@@ -31,7 +38,7 @@ describe('迁移 0006', () => {
     const e = await db.insertInto('equip').values(piece(2)).returning('id').executeTakeFirstOrThrow();
     await db
       .insertInto('equip_gem')
-      .values({ equip_id: e.id, rest_id: rest, gem_goods_id: 44, level: 1, cook: 1 })
+      .values({ equip_id: e.id, rest_id: rest, gem_goods_id: gid('[一阶]•蓝冥石'), level: 1, cook: 1 })
       .execute();
     await db
       .insertInto('equip_stress_log')

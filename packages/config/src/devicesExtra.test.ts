@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { GOODS_TYPE } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
+import { gid } from './testItems';
 
 const source = () => readSourceDir(defaultDataDir());
 
@@ -24,7 +25,9 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
       [GOODS_TYPE.device, 2, { time: 24, expValue: 7 }, 150000, true, 10, null, 7],
     ]);
     // 现有的普通海报照旧：同样的效果格式，没有星级门槛
-    expect(bundle!.goods.find((g) => g.id === 13)).toMatchObject({ effects: { time: 24, coinValue: 2 } });
+    expect(bundle!.goods.find((g) => g.id === gid('普通宣传海报'))).toMatchObject({
+      effects: { time: 24, coinValue: 2 },
+    });
     expect(
       bundle!.goods.filter((g) => g.id < 93201 || g.id > 93208).every((g) => g.needStar === undefined),
     ).toBe(true);
@@ -41,7 +44,7 @@ describe('更多宣传海报和奖杯（问题记录 146）', () => {
     posters[3]!.needStar = -1;
     const errs = buildBundle({ ...src, 'master/goods': goods }).errors.join('\n');
     expect(errs).toContain(`goods ${posters[0]!.id as number} needStar 13`);
-    expect(errs).toContain('goods 93204 needStar -1');
+    expect(errs).toContain(`goods ${gid('食神宣传海报')} needStar -1`);
     expect(errs).toContain(`goods ${posters[1]!.id as number} poster deviceType 6`);
     expect(errs).toContain('goods: duplicate id 13');
   });

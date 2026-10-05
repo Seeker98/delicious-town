@@ -3,6 +3,7 @@ import type { RestCtx } from '../../core/deps';
 import { createTestGame, newPair, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
 import { getEffectAgg } from '../effects/service';
+import { gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -25,14 +26,14 @@ describe('任务（设计文档 §4.2）', () => {
     const ctx = await newRestaurant(t);
     await showQuest(t, ctx.restaurantId, 2103);
     expect(questIn(await t.game.task.tasks(ctx), 2103)).toMatchObject({ key: 'equip.wear', done: false });
-    await t.game.equip.wear(ctx, { id: await piece(ctx, 30) });
+    await t.game.equip.wear(ctx, { id: await piece(ctx, gid('见习之铲')) });
     expect(questIn(await t.game.task.tasks(ctx), 2103)).toMatchObject({ done: true });
   });
 
   it('支线「把厨具强化到 +5」按最高强化等级算', async () => {
     const ctx = await newRestaurant(t);
-    await piece(ctx, 30, { stress: 5 });
-    await piece(ctx, 31, { stress: 2 });
+    await piece(ctx, gid('见习之铲'), { stress: 5 });
+    await piece(ctx, gid('见习之刀'), { stress: 2 });
     await showQuest(t, ctx.restaurantId, 3163);
     const side = questIn(await t.game.task.tasks(ctx), 3163);
     expect(side).toMatchObject({ progress: 5, done: true });
@@ -42,11 +43,11 @@ describe('任务（设计文档 §4.2）', () => {
 describe('好友餐厅页显示对方穿戴（子项目 3 留给 2B）', () => {
   it('只列穿着的厨具', async () => {
     const [a, b] = await newPair(t);
-    const id = await piece(b, 30, { stress: 3 });
-    await piece(b, 31);
+    const id = await piece(b, gid('见习之铲'), { stress: 3 });
+    await piece(b, gid('见习之刀'));
     await t.game.equip.wear(b, { id });
     const d = await t.game.social.reads.detail(a, b.restaurantId);
-    expect(d.equips).toEqual([{ part: 1, goodsId: 30, stress: 3, name: null }]);
+    expect(d.equips).toEqual([{ part: 1, goodsId: gid('见习之铲'), stress: 3, name: null }]);
   });
 });
 

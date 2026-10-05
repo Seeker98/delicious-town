@@ -4,6 +4,7 @@ import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../..
 import type { RestCtx } from '../../core/deps';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { listNews } from '../news/news';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 /**
@@ -22,7 +23,7 @@ beforeEach(() => {
   script = [];
 });
 
-const player = () => newRestaurant(t, { goods: { 1: 50 } });
+const player = () => newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 50 } });
 const start = (c: RestCtx) => t.game.bar.dartsStart(c);
 const aim = (c: RestCtx) => t.game.bar.dartsAim(c);
 const shoot = (c: RestCtx, elapsedMs: number) => t.game.bar.dartsThrow(c, { elapsedMs });
@@ -49,7 +50,7 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     const a = await player();
     script.push([0.99, 0.99, 0.99]);
     expect((await start(a)).data).toEqual({ throws: [], aiming: false });
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(48);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(48);
     const v = (await t.game.bar.overview(a)).darts;
     expect(v).toMatchObject({ cost: 2, played: 1, max: 20, round: { throws: [], aiming: false } });
     expect(JSON.stringify(v)).not.toContain('boss');
@@ -98,14 +99,14 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     await miss(a);
     await miss(a);
     expect(await miss(a)).toMatchObject({ result: 'draw', boss: [0, 0, 0], refund: 1, award: null });
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(49);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(49);
 
     script.push([0]);
     await start(a);
     await miss(a);
     await miss(a);
     expect(await miss(a)).toMatchObject({ result: 'lose', boss: [50, 50, 50], refund: 0, award: null });
-    expect(await goodsNum(t, a.restaurantId, 1)).toBe(47);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
   });
 
   it('每天最多 20 局', async () => {

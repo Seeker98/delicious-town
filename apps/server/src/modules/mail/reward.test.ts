@@ -1,9 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { SPONSOR_HATS, createGameConfig } from '@dt/config';
+import { GOODS, SPONSOR_HATS, createGameConfig } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { runSystemOp } from '../../core/op';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { checkNestedItems, checkRewardItems, grantRewardOp } from './reward';
+import { fid, gid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -20,8 +21,8 @@ describe('附件发放（设计 §4）', () => {
         {
           coin: 100,
           diamond: 2,
-          goods: [{ id: 1, num: 3 }],
-          foods: [{ id: 101, num: 4 }],
+          goods: [{ id: GOODS.mysteryTicket, num: 3 }],
+          foods: [{ id: fid('大米'), num: 4 }],
           hats: [{ tier: 'jade', name: '大橘' }],
         },
         { source: 'mail.claim', logType: 'mail.claim', logParams: { mailId: 9, title: '开服礼' } },
@@ -29,8 +30,8 @@ describe('附件发放（设计 §4）', () => {
     );
     const r = await restRow(t, ctx.restaurantId);
     expect([r.coin, r.diamond]).toEqual([100, 2]);
-    expect(await goodsNum(t, ctx.restaurantId, 1)).toBe(3);
-    expect((await foodNum(t, ctx.restaurantId, 101)).num).toBe(4);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mysteryTicket)).toBe(3);
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBe(4);
     const hat = await t.db
       .selectFrom('equip')
       .select('custom_name')
@@ -61,7 +62,7 @@ describe('下架的道具、食材不能再写进后台奖励（问题记录 367
   const food = base.bundle.foods[0]!.id;
   const config = createGameConfig({
     ...base.bundle,
-    goods: base.bundle.goods.map((g) => (g.id === 93 ? { ...g, retired: true as const } : g)),
+    goods: base.bundle.goods.map((g) => (g.id === gid('高级节油器') ? { ...g, retired: true as const } : g)),
     foods: base.bundle.foods.map((f) => (f.id === food ? { ...f, retired: true as const } : f)),
   });
   const issues = (fn: () => void) => {
@@ -75,17 +76,26 @@ describe('下架的道具、食材不能再写进后台奖励（问题记录 367
 
   it('邮件附件、兑换码（checkRewardItems）', () => {
     expect(
-      issues(() => checkRewardItems(config, { goods: [{ id: 93, num: 1 }], foods: [{ id: food, num: 1 }] })),
+      issues(() =>
+        checkRewardItems(config, {
+          goods: [{ id: gid('高级节油器'), num: 1 }],
+          foods: [{ id: food, num: 1 }],
+        }),
+      ),
     ).toEqual([
       { path: 'items.goods.0.id', message: 'retired' },
       { path: 'items.foods.0.id', message: 'retired' },
     ]);
-    expect(issues(() => checkRewardItems(config, { goods: [{ id: 1, num: 1 }] }))).toBeNull();
+    expect(
+      issues(() => checkRewardItems(config, { goods: [{ id: GOODS.mysteryTicket, num: 1 }] })),
+    ).toBeNull();
   });
 
   it('活动定义（checkNestedItems）', () => {
     expect(
-      issues(() => checkNestedItems(config, { rewards: [{ goods: [{ id: 93, num: 1 }] }] }, 'def')),
+      issues(() =>
+        checkNestedItems(config, { rewards: [{ goods: [{ id: gid('高级节油器'), num: 1 }] }] }, 'def'),
+      ),
     ).toEqual([{ path: 'def.rewards.0.goods.0.id', message: 'retired' }]);
   });
 });

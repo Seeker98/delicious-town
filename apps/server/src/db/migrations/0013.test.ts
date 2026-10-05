@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testDb } from '../../../test/db';
 import { createAccountRow, createRestaurantRow, createShard } from '../../../test/fixtures';
+import { cid } from '../../../test/items';
 
 const db = testDb();
 afterAll(() => db.destroy());
@@ -63,7 +64,7 @@ describe('迁移 0013', () => {
       .executeTakeFirstOrThrow();
     const order = {
       shard_id: shard,
-      cookbook_id: 1,
+      cookbook_id: cid('南煎丸子'),
       grade: 1,
       need_minutes: 30,
       need_renown: 3,

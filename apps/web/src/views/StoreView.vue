@@ -2,7 +2,7 @@
 import { remainText } from '../utils/remain';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
-import type { LedgerRecordDto, StoreDto, StoreItemDto } from '@dt/shared';
+import { SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
@@ -188,7 +188,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
             {{ t.store.sell }}
           </button>
           <button
-            v-if="it.goodsId === 87"
+            v-if="it.goodsId === SHARED_GOODS.starPromoHonor"
             class="btn btn-sm btn-outline-danger"
             :disabled="busy"
             @click="discard(it)"

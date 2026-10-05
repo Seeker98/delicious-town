@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveShardSettings } from '@dt/config';
+import { GOODS, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { countGoods, openFastRest } from './ops';
@@ -37,7 +37,7 @@ describe('旁支产出表（设计 §5）', () => {
 
   it('参与度向下取整；常驻加成不打折，换段时替换，不累加', () => {
     const t = table([
-      { source: 'town', minLevel: 1, coin: 1000, goods: [{ id: 1, num: 3 }] },
+      { source: 'town', minLevel: 1, coin: 1000, goods: [{ id: GOODS.mysteryTicket, num: 3 }] },
       { source: 'equip', minLevel: 1, effects: { atRate: 0.05 } },
     ]);
     const ctx = c();

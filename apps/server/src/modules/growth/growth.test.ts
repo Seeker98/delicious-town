@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { testConfig } from '../../../test/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { GOODS } from '@dt/config';
+import { gid } from '../../../test/items';
 
 const config = testConfig();
 let t: TestGame;
@@ -60,13 +62,17 @@ describe('加油（规格书 02 §2.5）', () => {
 
 describe('升星（规格书 02 §2.4、20 §20.5）', () => {
   it('13 级、15 道食谱、1 张凭证 → 1 星，得到一星礼包', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 13 }, cookbooks: learned(15), goods: { 86: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { level: 13 },
+      cookbooks: learned(15),
+      goods: { [GOODS.starCert]: 1 },
+    });
     const need = await t.game.growth.starNeed(ctx);
     expect(need).toMatchObject({ star: 0, nextStar: 1, available: true, ok: true });
     await t.game.growth.starUp(ctx);
     expect((await restRow(t, ctx.restaurantId)).star_level).toBe(1);
-    expect(await goodsNum(t, ctx.restaurantId, 86)).toBe(0);
-    expect(await goodsNum(t, ctx.restaurantId, 117)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.starCert)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, gid('升星礼包(一星)'))).toBe(1);
     const news = await t.db.selectFrom('news').selectAll().where('rest_id', '=', ctx.restaurantId).execute();
     expect(news.map((n) => n.type)).toContain('star.up');
   });
@@ -81,7 +87,7 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
       shardId,
       patch: { level: 13, coin: 49999 },
       cookbooks: learned(15),
-      goods: { 86: 1 },
+      goods: { [GOODS.starCert]: 1 },
     });
     const need = await t.game.growth.starNeed(poor);
     expect(need.checks.at(-1)).toEqual({ key: 'coin', need: 50000, have: 49999, ok: false });
@@ -90,34 +96,42 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
       code: 'NOT_ENOUGH',
       params: { kind: 'coin' },
     });
-    expect(await goodsNum(t, poor.restaurantId, 86)).toBe(1);
+    expect(await goodsNum(t, poor.restaurantId, GOODS.starCert)).toBe(1);
     const rich = await newRestaurant(t, {
       shardId,
       patch: { level: 13, coin: 60000 },
       cookbooks: learned(15),
-      goods: { 86: 1 },
+      goods: { [GOODS.starCert]: 1 },
     });
     await t.game.growth.starUp(rich);
     const r = await restRow(t, rich.restaurantId);
     expect(r.star_level).toBe(1);
     expect(r.coin).toBe(10000); // 1 星奖励只有礼包 117（道具），不给银币
-    expect(await goodsNum(t, rich.restaurantId, 86)).toBe(0);
+    expect(await goodsNum(t, rich.restaurantId, GOODS.starCert)).toBe(0);
   });
 
   it('等级不够、食谱不够、凭证不够分别报错', async () => {
-    const low = await newRestaurant(t, { patch: { level: 12 }, cookbooks: learned(15), goods: { 86: 1 } });
+    const low = await newRestaurant(t, {
+      patch: { level: 12 },
+      cookbooks: learned(15),
+      goods: { [GOODS.starCert]: 1 },
+    });
     await expect(t.game.growth.starUp(low)).rejects.toMatchObject({
       code: 'REQUIREMENT_NOT_MET',
       params: { reason: 'level', need: 13, have: 12 },
     });
-    const few = await newRestaurant(t, { patch: { level: 13 }, cookbooks: learned(14), goods: { 86: 1 } });
+    const few = await newRestaurant(t, {
+      patch: { level: 13 },
+      cookbooks: learned(14),
+      goods: { [GOODS.starCert]: 1 },
+    });
     await expect(t.game.growth.starUp(few)).rejects.toMatchObject({
       params: { reason: 'cookbooks', need: 15, have: 14 },
     });
     const noCert = await newRestaurant(t, { patch: { level: 13 }, cookbooks: learned(15) });
     await expect(t.game.growth.starUp(noCert)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 86 },
+      params: { kind: 'goods', id: GOODS.starCert },
     });
   });
 
@@ -130,10 +144,13 @@ describe('升星（规格书 02 §2.4、20 §20.5）', () => {
 
 describe('油壶扩容（规格书 02 §2.5、20 §20.6）', () => {
   it('1 级：3 级餐厅、5000 银币、初级凭证 ×1 → 上限 1500', async () => {
-    const ctx = await newRestaurant(t, { patch: { level: 3, coin: 10000 }, goods: { 24: 1 } });
+    const ctx = await newRestaurant(t, {
+      patch: { level: 3, coin: 10000 },
+      goods: { [gid('初级油壶扩容凭证')]: 1 },
+    });
     await t.game.growth.oilExpand(ctx);
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ oil_level: 1, oil_max: 1500, coin: 5000 });
-    expect(await goodsNum(t, ctx.restaurantId, 24)).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, gid('初级油壶扩容凭证'))).toBe(0);
   });
   it('条件列表', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 2, coin: 100 } });
@@ -143,7 +160,7 @@ describe('油壶扩容（规格书 02 §2.5、20 §20.6）', () => {
       { key: 'level', need: 3, have: 2, ok: false },
       { key: 'star', need: 0, have: 0, ok: true },
       { key: 'coin', need: 5000, have: 100, ok: false },
-      { key: 'goods', id: 24, need: 1, have: 0, ok: false },
+      { key: 'goods', id: gid('初级油壶扩容凭证'), need: 1, have: 0, ok: false },
     ]);
   });
 });

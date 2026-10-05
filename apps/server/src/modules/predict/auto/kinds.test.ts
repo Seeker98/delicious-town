@@ -8,6 +8,7 @@ import { market } from './market';
 import { stats } from './stats';
 import type { AutoCtx } from './types';
 import { weather } from './weather';
+import { fid } from '../../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -133,7 +134,7 @@ describe('嘻哈男孩（238-2 设计 §4.2）', () => {
         shard_id: shardId,
         day: addDays(DAY, 1),
         place: other,
-        foods_id: 101,
+        foods_id: fid('大米'),
         worth: 1,
         created_at: at0,
       })

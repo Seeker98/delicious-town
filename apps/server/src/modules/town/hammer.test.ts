@@ -5,6 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { setWeather } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { listNews } from '../news/news';
+import { GOODS } from '@dt/config';
 
 const DAY = '2026-09-30';
 const config = testConfig();
@@ -16,7 +17,8 @@ afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime(DAY, 12)));
 
 const RICH = { coin: 1_000_000, diamond: 100 };
-const holder = (shardId?: number) => newRestaurant(t, { shardId, patch: RICH, goods: { 256: 1 } });
+const holder = (shardId?: number) =>
+  newRestaurant(t, { shardId, patch: RICH, goods: { [GOODS.thorHammer]: 1 } });
 const weatherOf = async (shardId: number) =>
   (
     await t.db
@@ -34,10 +36,10 @@ describe('雷神锤（设计文档 §3.5）', () => {
     const r = (await coin(a, 2)).data;
     expect(r.from).toBe(1);
     expect(config.weather.get(r.to)!.type).toBe(2);
-    expect(r.gift).toEqual({ goodsId: 19, num: 1 });
+    expect(r.gift).toEqual({ goodsId: GOODS.missileBurst, num: 1 });
     expect(await weatherOf(a.shardId)).toBe(r.to);
     expect((await restRow(t, a.restaurantId)).coin).toBe(900_000);
-    expect(await goodsNum(t, a.restaurantId, 19)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.missileBurst)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['weather.change'] });
     expect(n).toMatchObject({ restId: a.restaurantId, params: { from: 1, to: r.to, by: a.restaurantId } });
   });
@@ -48,14 +50,14 @@ describe('雷神锤（设计文档 §3.5）', () => {
     const r = (await t.game.town.hammer(a, { mode: 'diamond' })).data;
     expect(config.weather.get(r.to)!.special).toBe(true);
     expect((await restRow(t, a.restaurantId)).diamond).toBe(92);
-    expect(await goodsNum(t, a.restaurantId, 491)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.luckyCookie)).toBe(1);
   });
 
   it('没有雷神锤不能用；冷却 6 小时', async () => {
     const none = await newRestaurant(t, { patch: RICH });
     await expect(coin(none, 1)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
-      params: { kind: 'goods', id: 256 },
+      params: { kind: 'goods', id: GOODS.thorHammer },
     });
     const a = await holder();
     await setWeather(t, a.shardId, 10);

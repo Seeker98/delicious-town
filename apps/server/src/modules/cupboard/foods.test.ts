@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, foodNum, newRestaurant, type TestGame } from '../../../test/game';
 import { runOp } from '../../core/op';
 import { addFoods, addFoodsMany, planAddFoods, subFoods } from './foods';
+import { fid } from '../../../test/items';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -37,11 +38,14 @@ describe('planAddFoods（规格书 00 §0.10）', () => {
 
 describe('addFoods / subFoods', () => {
   it('橱柜满了：新食材进冰箱并标记未读；冰箱满了写丢弃日志，不报错', async () => {
-    const ctx = await newRestaurant(t, { patch: { cupboard_num: 1, foods_max_num: 10 }, foods: { 101: 3 } });
-    await run(ctx, async (op) => {
-      await addFoods(op, 102, 15);
+    const ctx = await newRestaurant(t, {
+      patch: { cupboard_num: 1, foods_max_num: 10 },
+      foods: { [fid('大米')]: 3 },
     });
-    expect(await foodNum(t, ctx.restaurantId, 102)).toEqual({ num: 0, fridge: 10 });
+    await run(ctx, async (op) => {
+      await addFoods(op, fid('青椒'), 15);
+    });
+    expect(await foodNum(t, ctx.restaurantId, fid('青椒'))).toEqual({ num: 0, fridge: 10 });
     const row = await t.db
       .selectFrom('cupboard_food')
       .selectAll()
@@ -54,21 +58,21 @@ describe('addFoods / subFoods', () => {
       .selectAll()
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    expect(logs.map((l) => [l.type, l.params])).toEqual([['fridge.drop', { foodsId: 102, num: 5 }]]);
+    expect(logs.map((l) => [l.type, l.params])).toEqual([['fridge.drop', { foodsId: fid('青椒'), num: 5 }]]);
   });
 
   it('得失提示和流水', async () => {
     const ctx = await newRestaurant(t);
     const r = await run(ctx, async (op) => {
-      await addFoods(op, 101, 4);
+      await addFoods(op, fid('大米'), 4);
     });
-    expect(r.events).toEqual([{ type: 'gain', kind: 'foods', id: 101, num: 4 }]);
+    expect(r.events).toEqual([{ type: 'gain', kind: 'foods', id: fid('大米'), num: 4 }]);
     const l = await t.db.selectFrom('ledger').selectAll().where('rest_id', '=', ctx.restaurantId).execute();
     expect(l.map((x) => [x.kind, x.item_id, x.delta])).toEqual([['foods', 101, 4]]);
   });
 
   it('扣到 0 删除这一行；锁定的保留（记住锁定）', async () => {
-    const ctx = await newRestaurant(t, { foods: { 101: 2, 102: 2 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('大米')]: 2, [fid('青椒')]: 2 } });
     await t.db
       .updateTable('cupboard_food')
       .set({ locked: true })
@@ -76,8 +80,8 @@ describe('addFoods / subFoods', () => {
       .where('foods_id', '=', 102)
       .execute();
     await run(ctx, async (op) => {
-      await subFoods(op, 101, 2);
-      await subFoods(op, 102, 2);
+      await subFoods(op, fid('大米'), 2);
+      await subFoods(op, fid('青椒'), 2);
     });
     const rows = await t.db
       .selectFrom('cupboard_food')
@@ -88,12 +92,15 @@ describe('addFoods / subFoods', () => {
   });
 
   it('不够时抛 NOT_ENOUGH（带食材 id）', async () => {
-    const ctx = await newRestaurant(t, { foods: { 101: 1 } });
+    const ctx = await newRestaurant(t, { foods: { [fid('大米')]: 1 } });
     await expect(
       run(ctx, async (op) => {
-        await subFoods(op, 101, 3);
+        await subFoods(op, fid('大米'), 3);
       }),
-    ).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { kind: 'foods', id: 101, need: 3, have: 1 } });
+    ).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'foods', id: fid('大米'), need: 3, have: 1 },
+    });
   });
 });
 
@@ -102,7 +109,7 @@ describe('addFoodsMany（一次加多种，问题记录：多张探险图卡顿�
   const setup = async () => {
     const ctx = await newRestaurant(t, {
       patch: { cupboard_num: 3, foods_max_num: 10 },
-      foods: { 101: 8, 102: 2, 120: 0 },
+      foods: { [fid('大米')]: 8, [fid('青椒')]: 2, [fid('四季豆')]: 0 },
     });
     await t.db
       .updateTable('cupboard_food')
@@ -153,11 +160,11 @@ describe('addFoodsMany（一次加多种，问题记录：多张探险图卡顿�
     expect(rb.events).toEqual(ra.events);
     expect(await snapshot(b.restaurantId)).toEqual(await snapshot(a.restaurantId));
     expect((await snapshot(b.restaurantId)).rows).toEqual([
-      { foods_id: 101, num: 10, fridge_num: 3, fridge_unread: true },
-      { foods_id: 102, num: 2, fridge_num: 0, fridge_unread: false },
-      { foods_id: 103, num: 4, fridge_num: 0, fridge_unread: false },
-      { foods_id: 104, num: 0, fridge_num: 10, fridge_unread: true },
-      { foods_id: 120, num: 0, fridge_num: 10, fridge_unread: true },
+      { foods_id: fid('大米'), num: 10, fridge_num: 3, fridge_unread: true },
+      { foods_id: fid('青椒'), num: 2, fridge_num: 0, fridge_unread: false },
+      { foods_id: fid('苦瓜'), num: 4, fridge_num: 0, fridge_unread: false },
+      { foods_id: fid('韭菜'), num: 0, fridge_num: 10, fridge_unread: true },
+      { foods_id: fid('四季豆'), num: 0, fridge_num: 10, fridge_unread: true },
     ]);
   });
 
@@ -168,6 +175,6 @@ describe('addFoodsMany（一次加多种，问题记录：多张探险图卡顿�
       await addFoodsMany(op, new Map([[101, 0]]));
     });
     expect(r.events).toEqual([]);
-    expect(await foodNum(t, ctx.restaurantId, 101)).toEqual({ num: 0, fridge: 0 });
+    expect(await foodNum(t, ctx.restaurantId, fid('大米'))).toEqual({ num: 0, fridge: 0 });
   });
 });
