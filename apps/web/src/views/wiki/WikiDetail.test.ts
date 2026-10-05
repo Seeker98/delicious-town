@@ -379,6 +379,19 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     grades: [],
   });
 
+  it('旧链接（重新编号前的编号）：接口跳到新编号后，地址栏也换成新编号（设计 §5）', async () => {
+    vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(goods({ id: 10001, name: '神秘礼券' }));
+    vi.mocked(endpoints.openFood).mockResolvedValue(food(1001, '大米'));
+    vi.mocked(endpoints.openCookbook).mockResolvedValue(cookbook(106001, '南煎丸子'));
+    const g = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/1');
+    expect(g.vm.$router.currentRoute.value.fullPath).toBe('/wiki/goods/10001');
+    const f = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/101');
+    expect(f.vm.$router.currentRoute.value.fullPath).toBe('/wiki/foods/1001');
+    const c = await mountAt(WikiCookbookView, '/wiki/cookbooks/:id', '/wiki/cookbooks/1');
+    expect(c.vm.$router.currentRoute.value.fullPath).toBe('/wiki/cookbooks/106001');
+    expect(c.text()).toContain('南煎丸子');
+  });
+
   it('食材', async () => {
     let slow: (v: OpenFoodDto) => void = () => undefined;
     vi.mocked(endpoints.openFood).mockImplementation((_l, id) =>

@@ -8,6 +8,14 @@ import type { OpenData } from './data';
 
 const idParam = z.object({ id: z.coerce.number().int().positive() });
 
+/** 重新编号前的编号：301 到新编号（设计 §5），路径前缀、查询串原样保留；旧号段和新号段不重叠，不会认错 */
+function legacyRedirect(req: FastifyRequest, reply: FastifyReply, now: number) {
+  const q = req.url.indexOf('?');
+  const path = q >= 0 ? req.url.slice(0, q) : req.url;
+  const to = path.replace(/[^/]+$/, String(now)) + (q >= 0 ? req.url.slice(q) : '');
+  return reply.redirect(to, 301);
+}
+
 /** If-None-Match 里有没有这个 ETag：认弱 ETag（CDN 重新压缩时改成 W/）和逗号分隔的多个 */
 export function etagMatches(header: string | undefined, etag: string): boolean {
   return !!header && header.split(',').some((t) => t.trim().replace(/^W\//, '') === etag);
@@ -111,6 +119,8 @@ export function openRoutes(
     r.get('/goods/:id', { config }, async (req, reply) => {
       const lang = langOf(req);
       const { id } = parse(idParam, req.params);
+      const now = data.moved('goods', id);
+      if (now !== undefined) return legacyRedirect(req, reply, now);
       return send(req, reply, lang, `goods/${id}`, () => data.goodsDetail(lang, id));
     });
     r.get('/foods', { config }, async (req, reply) => {
@@ -120,6 +130,8 @@ export function openRoutes(
     r.get('/foods/:id', { config }, async (req, reply) => {
       const lang = langOf(req);
       const { id } = parse(idParam, req.params);
+      const now = data.moved('foods', id);
+      if (now !== undefined) return legacyRedirect(req, reply, now);
       return send(req, reply, lang, `foods/${id}`, () => data.food(lang, id));
     });
     r.get('/cookbooks', { config }, async (req, reply) => {
@@ -129,6 +141,8 @@ export function openRoutes(
     r.get('/cookbooks/:id', { config }, async (req, reply) => {
       const lang = langOf(req);
       const { id } = parse(idParam, req.params);
+      const now = data.moved('cookbooks', id);
+      if (now !== undefined) return legacyRedirect(req, reply, now);
       return send(req, reply, lang, `cookbooks/${id}`, () => data.cookbook(lang, id));
     });
     r.get('/equips', { config }, async (req, reply) => {

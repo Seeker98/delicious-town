@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onBeforeUnmount, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { OpenCookbookDto, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
@@ -10,6 +10,7 @@ import { isNotFound, useWikiData } from './wiki';
 
 /** 菜谱详情（问题记录 142）：1~10 品级的食材，食材都是链接 */
 const route = useRoute();
+const router = useRouter();
 const t = useT();
 const data = useWikiData();
 const c = ref<OpenCookbookDto | null>(null);
@@ -33,6 +34,8 @@ watch(
       if (mine !== seq) return;
       streets.value = s;
       c.value = v;
+      // 旧链接（重新编号前的编号）：接口已跳到新编号，地址栏也换成新的（设计 §5）
+      if (v.id !== id) void router.replace(`/wiki/cookbooks/${v.id}`);
     } catch (e) {
       if (mine !== seq) return;
       error.value = isNotFound(e) ? 'missing' : 'failed';

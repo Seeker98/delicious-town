@@ -150,7 +150,11 @@ export function createOpenData(config: GameConfig) {
     };
   };
 
+  /** 重新编号前的编号对应的新编号（设计 §5）；不是旧编号时 undefined */
+  const moved = (kind: 'goods' | 'foods' | 'cookbooks', id: number) => config.legacy[kind].get(id);
+
   return {
+    moved,
     index(lang: Locale): OpenIndexDto {
       return {
         ...meta(lang),
