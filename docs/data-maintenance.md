@@ -7,12 +7,19 @@
 新街道的菜谱、食材、勋章由另一个 agent 生成，放在仓库外的 `data/新街道菜谱`，菜名译名在 `data/i18n`。那边改了数据后：
 
 1. 重跑导入：`pnpm -F @dt/config import-streets`
-   - 整份替换 `data/designed/` 下的 `*_new.json`，8~10 品级按老数据的换料频率重新生成（种子 284，结果固定）。
+   - 替换 `data/master/` 三份主表里 `src` 为 `streets` 的条目（其余条目和顺序不动），整份替换 `data/designed/streets_new.json`；8~10 品级按老数据的换料频率重新生成（种子 284，结果固定）。
    - 已经不存在的新菜谱译名会自动删掉；新增的街道会自动补进 `street_medal_map.json`（勋章 id = 92000 + 街道 id）。
    - 上次导入过的新菜谱 id 这次没了、或者换了街道时，脚本什么都不写、直接退出（多半是那边顺移了 id）。确认确实要删或改，再加 `--allow-removed` 重跑。
    - 去掉一条街时，`street_medal_map.json` 里那一行要手删（构建会报错提醒）。
 2. `pnpm -F @dt/config build`，构建会检查菜谱、售价表、勋章对照的一致性。
 3. **新菜谱 id 已经上线，要求那边固定 id，不能顺移。** 改了 id 等于删掉老菜、加一道新菜，学过的店会丢记录。
+
+## 道具、食材、菜谱的定义（重新编号 PR 1）
+
+- 全部在 `packages/config/data/master/`：`goods.json`、`foods.json`、`cookbooks.json`，每条一行，`src` 写来历。
+- 原版数据集（`../analysis/dataset`）不再同步这三类；原版获取途径表 `dataset/goods_sources.json` 仍同步，按原版编号。
+- 改定义直接改主表；新街道的条目由导入脚本整块替换，不要手改。
+- 一番赏主题、基金勋章、新手大礼包、厨具套装和强化表仍在 `data/game/` 各自的文件里，只引用主表的编号。
 
 ## 改已学食谱的迁移
 
