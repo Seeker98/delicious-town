@@ -19,6 +19,7 @@ import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
+import { checkStreetDescs } from './streetDesc';
 import { calibrateWatchman } from './towerFloor';
 import type {
   ActivationReward,
@@ -1182,6 +1183,7 @@ export function buildBundle(src: SourceData): BuildResult {
     src,
     errors,
   );
+  checkStreetDescs(streets, goods, i18n, errors);
   if (errors.length > 0) return { bundle: null, errors };
 
   const body: Omit<ConfigBundle, 'version'> = {
