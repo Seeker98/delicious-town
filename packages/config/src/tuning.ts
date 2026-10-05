@@ -421,7 +421,31 @@ export const tuningSchema = z.object({
     slotFloorSpins: int.min(1),
     slotFloorRate: num,
     slotFloorAwardId: int,
+    /** 厨塔的随机奖励类型比例（字段在 bar 下是历史原因）；酒吧小游戏用 prize.rates */
     awardRates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+    /**
+     * 酒吧小游戏的随机奖励（问题记录 352）：类型比例；食材按奖励档次取 minLevel ≤ 档次的最后一项，
+     * 从 levels 范围里出，rare 的概率出稀有食材（按出现权重抽）
+     */
+    prize: z.object({
+      rates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+      foodTiers: z
+        .array(
+          z.object({
+            minLevel: int.min(1),
+            levels: z
+              .tuple([int.min(1).max(5), int.min(1).max(5)])
+              .refine(([lo, hi]) => lo <= hi, 'min must be <= max'),
+            rare: num.min(0).max(1),
+          }),
+        )
+        .min(1)
+        .refine((ts) => ts[0]?.minLevel === 1, 'first tier must start at minLevel 1')
+        .refine(
+          (ts) => ts.every((x, i) => i === 0 || x.minLevel > ts[i - 1]!.minLevel),
+          'minLevel must increase',
+        ),
+    }),
     /** 魔鬼辣杯（子项目 4C-3） */
     devil: z.object({
       stakes: z.array(int.min(1)).min(1),

@@ -6,7 +6,15 @@ import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGam
 import { createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
 import { runOp } from '../../core/op';
-import { awardExp, awardFoodsPool, awardGoodsPool, awardKindOf, randomAward } from './random';
+import {
+  awardExp,
+  awardFoodsPool,
+  awardGoodsPool,
+  awardKindOf,
+  prizeFoodPools,
+  prizeFoodTier,
+  randomAward,
+} from './random';
 
 const config = testConfig();
 const rates = { foods: 0.25, goods: 0.15, coin: 0.3, exp: 0.3 };
@@ -80,6 +88,44 @@ describe('物品池、食材池', () => {
   });
 });
 
+describe('酒吧奖励的食材档次（问题记录 352）', () => {
+  const tiers = [
+    { minLevel: 1, levels: [1, 2] as [number, number], rare: 0.2 },
+    { minLevel: 4, levels: [3, 4] as [number, number], rare: 0.4 },
+    { minLevel: 6, levels: [5, 5] as [number, number], rare: 0.6 },
+  ];
+
+  it('取 minLevel 不超过奖励档次的最后一项', () => {
+    expect(prizeFoodTier(tiers, 2)).toBe(tiers[0]);
+    expect(prizeFoodTier(tiers, 3)).toBe(tiers[0]);
+    expect(prizeFoodTier(tiers, 4)).toBe(tiers[1]);
+    expect(prizeFoodTier(tiers, 8)).toBe(tiers[2]);
+  });
+
+  it('普通池是范围内权重 100 的，稀有池是范围内权重不到 100 的（带权重），都不含下架的，按 id 排序', () => {
+    const [first] = awardFoodsPool(config.bundle.foods, 4).filter((id) => config.foods.get(id)!.level === 3);
+    const foods = config.bundle.foods.map((f) => (f.id === first ? { ...f, retired: true as const } : f));
+    const { normal, rare } = prizeFoodPools(foods, [3, 4]);
+    expect(normal.length).toBeGreaterThan(0);
+    expect(rare.length).toBeGreaterThan(0);
+    expect(normal).not.toContain(first);
+    for (const id of normal) {
+      const f = config.foods.get(id)!;
+      expect([3, 4]).toContain(f.level);
+      expect(f.odds).toBe(100);
+    }
+    for (const r of rare) {
+      const f = config.foods.get(r.id)!;
+      expect(f.level === 3 || f.level === 4).toBe(true);
+      expect(r.odds).toBe(f.odds);
+      expect(f.odds).toBeLessThan(100);
+      expect(f.retired).toBeUndefined();
+    }
+    expect(normal).toEqual([...normal].sort((a, b) => a - b));
+    expect(rare.map((r) => r.id)).toEqual(rare.map((r) => r.id).sort((a, b) => a - b));
+  });
+});
+
 describe('randomAward（发放）', () => {
   let t: TestGame;
   let rngValues: number[] = [0.5];
@@ -145,6 +191,46 @@ describe('randomAward（发放）', () => {
     const r = await run(ctx, (o) => randomAward(o, { level: 10, onlyGoods: true, noTicket: true }));
     expect(r.data).toEqual({ kind: 'goods', id: pool[idx], num: 1, lucky: false });
     expect(await goodsNum(t, ctx.restaurantId, pool[idx]!)).toBe(1);
+  });
+
+  it('酒吧：类型按 bar.prize.rates（食材 0.7、物品 0.15、银币、经验各 0.075）', async () => {
+    const ctx = await newRestaurant(t);
+    rngValues = [0.9];
+    expect((await run(ctx, (o) => randomAward(o, { level: 2, bar: true }))).data).toMatchObject({
+      kind: 'coin',
+      num: 200,
+    });
+    rngValues = [0.95];
+    expect((await run(ctx, (o) => randomAward(o, { level: 2, bar: true }))).data).toMatchObject({
+      kind: 'exp',
+      num: 100,
+    });
+    rngValues = [0.8, 0.9, 0];
+    expect(
+      (await run(ctx, (o) => randomAward(o, { level: 2, bar: true, noTicket: true }))).data,
+    ).toMatchObject({ kind: 'goods' });
+  });
+
+  it('酒吧的食材：按档次的等级范围，先判稀有（< rare 出稀有，按权重抽），否则从普通池平均抽', async () => {
+    const ctx = await newRestaurant(t, { shardId: await noTiltShard(t) });
+    const tiers = t.game.deps.config.tuning.bar.prize.foodTiers;
+    const low = prizeFoodPools(config.bundle.foods, prizeFoodTier(tiers, 2).levels);
+    rngValues = [0.5, 0.9, 0.5, 0]; // 食材；不翻倍；0.5 ≥ 0.2 普通；池里第一个
+    expect((await run(ctx, (o) => randomAward(o, { level: 2, bar: true }))).data).toEqual({
+      kind: 'foods',
+      id: low.normal[0],
+      num: 1,
+      lucky: false,
+    });
+    rngValues = [0.5, 0.9, 0.1, 0]; // 0.1 < 0.2 稀有；按权重抽到第一个
+    expect((await run(ctx, (o) => randomAward(o, { level: 2, bar: true }))).data).toMatchObject({
+      kind: 'foods',
+      id: low.rare[0]!.id,
+    });
+    rngValues = [0.5, 0.9, 0.9, 0.999]; // 第 6 档以上只出 5 级
+    const r = await run(ctx, (o) => randomAward(o, { level: 8, bar: true }));
+    expect(config.foods.get(r.data.id!)!.level).toBe(5);
+    expect((await foodNum(t, ctx.restaurantId, low.normal[0]!)).num).toBe(1);
   });
 
   it('物品池空时改发银币', async () => {

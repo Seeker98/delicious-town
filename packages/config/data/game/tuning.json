@@ -258,6 +258,16 @@
     "krabCoinTickets": 100,
     "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,
     "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 },
+    "prize": {
+      "rates": { "foods": 0.7, "goods": 0.15, "coin": 0.075, "exp": 0.075 },
+      "foodTiers": [
+        { "minLevel": 1, "levels": [1, 2], "rare": 0.2 },
+        { "minLevel": 3, "levels": [2, 3], "rare": 0.3 },
+        { "minLevel": 4, "levels": [3, 4], "rare": 0.4 },
+        { "minLevel": 5, "levels": [4, 5], "rare": 0.5 },
+        { "minLevel": 6, "levels": [5, 5], "rare": 0.6 }
+      ]
+    },
     "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "rate": 1.4, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
     "memory": {
       "cost": 1, "dailyMax": 20, "ingredients": 8, "lengths": [3, 5, 7], "awardLevels": [2, 4, 8],

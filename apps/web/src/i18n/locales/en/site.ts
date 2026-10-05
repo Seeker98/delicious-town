@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    barPrize1006:
+      'Wins at Rock-paper-scissors, Cup guess, Memory Mixing and Darts in the bar now mostly give ingredients instead of small amounts of coins and EXP. The harder the win (longer streak, later level, perfect darts), the higher the ingredient level and the likelier a rare one',
     align1006:
       'The street type tag (coin, balanced or EXP street) on the recipe and moving pages now lines up with the bonus text after it',
     krab1006:

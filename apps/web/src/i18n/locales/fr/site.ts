@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    barPrize1006:
+      'Gagner au bar au Chifoumi, aux Gobelets, au Cocktail Mémoire et aux Fléchettes rapporte maintenant surtout des ingrédients au lieu de petites sommes de pièces et d’EXP. Plus la victoire est difficile (série plus longue, niveau plus avancé, fléchettes parfaites), plus l’ingrédient est de haut niveau et plus il a de chances d’être rare',
     align1006:
       'L’étiquette du type de rue (pièces, équilibrée ou EXP) sur les pages des recettes et du déménagement est maintenant alignée avec le texte du bonus',
     krab1006:

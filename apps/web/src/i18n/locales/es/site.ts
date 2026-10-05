@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    barPrize1006:
+      'Ganar en el bar a Piedra, papel o tijera, Adivina el vaso, Cóctel Memoria y Dardos ahora da casi siempre ingredientes en vez de pocas monedas y EXP. Cuanto más difícil la victoria (racha más larga, nivel más avanzado, dardos perfectos), de más nivel es el ingrediente y más probable que sea raro',
     align1006:
       'La etiqueta del tipo de calle (de monedas, equilibrada o de EXP) en las páginas de recetas y de mudanza ahora está alineada con el texto de la bonificación',
     krab1006:

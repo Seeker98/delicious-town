@@ -37,7 +37,8 @@ const bar: Messages['bar'] = {
     win: (lucky, times, award) => `${lucky}¡Acertaste! Racha de ${times}${award}`,
     failed: 'No se pudo jugar',
     rule1: 'Elige un vaso. Esta ronda cuesta ',
-    rule2: ' vales misteriosos; cuanto más larga la racha, mayor la apuesta y mejor el premio.',
+    rule2:
+      ' vales misteriosos; cuanto más larga la racha, mayor la apuesta y mejor el premio. Los premios suelen ser ingredientes: cuanto más larga la racha, de más nivel y más probable que sean raros.',
     cup: (n) => `Vaso ${n}`,
   },
   fg: {
@@ -48,7 +49,7 @@ const bar: Messages['bar'] = {
     win: (lucky, streak, award) => `${lucky}ganaste${streak}${award}`,
     streak: (n) => ` (racha de ${n})`,
     failed: 'No se pudo jugar',
-    rule: '1 vale misterioso por ronda. Si ganas, premio aleatorio, mejor cuanto más larga la racha; el empate da monedas.',
+    rule: '1 vale misterioso por ronda. Si ganas, premio aleatorio, casi siempre un ingrediente: cuanto más larga la racha, de más nivel y más probable que sea raro; el empate da monedas.',
   },
   num: {
     miss: (num, hint) => `Salió el ${num}. ${hint}`,
@@ -120,7 +121,7 @@ const bar: Messages['bar'] = {
     got: (text) => `Conseguiste ${text}`,
     allPassed: (award) => `¡Superaste los tres niveles! ${award}`,
     passed: (award) => `¡Correcto! ${award}`,
-    rule: 'El barman muestra los ingredientes uno a uno. Recuerda el orden y tócalos en el mismo orden. Los niveles 1/2/3 tienen 3/5/7 ingredientes y cada nivel superado da premio. Tras acertar puedes seguir con una receta más larga o plantarte.',
+    rule: 'El barman muestra los ingredientes uno a uno. Recuerda el orden y tócalos en el mismo orden. Los niveles 1/2/3 tienen 3/5/7 ingredientes y cada nivel superado da premio, casi siempre un ingrediente: cuanto más avanzado el nivel, de más nivel y más probable que sea raro. Tras acertar puedes seguir con una receta más larga o plantarte.',
     resumePassed: (level) => `Superaste el nivel ${level}. ¿Sigues?`,
     next: 'Seguir',
     stop: 'Plantarse',
@@ -143,7 +144,7 @@ const bar: Messages['bar'] = {
       `empate. ${plEs(n, 'Se devuelve', 'Se devuelven')} ${n} ${plEs(n, 'vale misterioso', 'vales misteriosos')}`,
     lose: 'pierdes',
     got: (text) => `Conseguiste ${text}`,
-    rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar.',
+    rule: 'La mira se mueve de lado a lado; pulsa «¡Lanzar!» para soltar. Cuanto más cerca del centro, más puntos (50/25/10/5). Supera el total de los tres dardos del dueño del bar para ganar. El premio suele ser un ingrediente de nivel 4–5; con tres dianas, el ingrediente que salga es de nivel 5 y con más probabilidad de ser raro.',
     board: 'Diana: 50 en el centro, luego 25, 10 y 5 hacia fuera, 0 en los bordes',
     invalid: 'El momento del lanzamiento no cuadra: cuenta como fallo, 0 puntos',
     throwLine: (i, score) => `Dardo ${i}: ${score}`,

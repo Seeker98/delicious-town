@@ -18,7 +18,7 @@ const newsOf = (restId: number) =>
 describe('划拳（设计文档 §3.2）', () => {
   it('胜：扣 1 张礼券；对方出 (h+1)%3；奖励等级 2 → 银币 200；连胜跨请求累计，第 3 连奖励等级 3', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 10 } });
-    rngValues = [0.1, 0.5]; // 胜；随机奖励类型 = 银币
+    rngValues = [0.1, 0.9]; // 胜；随机奖励类型 = 银币
     expect((await t.game.bar.fg(ctx, { hand: 0 })).data).toEqual({
       result: 'win',
       barHand: 1,
@@ -64,13 +64,13 @@ describe('划拳（设计文档 §3.2）', () => {
 
   it('连胜中间出一次平局：连胜断掉，下一次胜是 1 连胜、奖励等级回到 2（Review Focus 4）', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     await t.game.bar.fg(ctx, { hand: 0 });
     await t.game.bar.fg(ctx, { hand: 0 });
     rngValues = [0.3];
     await t.game.bar.fg(ctx, { hand: 0 });
     expect((await t.game.bar.overview(ctx)).fg).toEqual({ result: 'draw', times: 1 });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     expect((await t.game.bar.fg(ctx, { hand: 0 })).data).toMatchObject({
       result: 'win',
       times: 1,
@@ -80,7 +80,7 @@ describe('划拳（设计文档 §3.2）', () => {
 
   it('幸运：幸运 300（幸运率 0.3）时 0.4 也胜，标记幸运；银币按幸运总值算', async () => {
     const ctx = await newRestaurant(t, { patch: { luck: 300 }, goods: { [GOODS.mysteryTicket]: 1 } });
-    rngValues = [0.4, 0.5];
+    rngValues = [0.4, 0.9];
     expect((await t.game.bar.fg(ctx, { hand: 0 })).data).toMatchObject({
       result: 'win',
       lucky: true,
@@ -90,7 +90,7 @@ describe('划拳（设计文档 §3.2）', () => {
 
   it('连胜 5 发新闻 bar.fg', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 5 } });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     for (let i = 0; i < 4; i++) await t.game.bar.fg(ctx, { hand: 0 });
     expect(await newsOf(ctx.restaurantId)).toEqual([]);
     await t.game.bar.fg(ctx, { hand: 0 });
@@ -143,7 +143,7 @@ describe('酒吧概览', () => {
       rate: 12 / 19553,
       rare: true,
     });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     await t.game.bar.fg(ctx, { hand: 0 });
     expect((await t.game.bar.overview(ctx)).fg).toEqual({ result: 'win', times: 1 });
   });

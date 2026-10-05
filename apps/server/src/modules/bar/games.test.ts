@@ -20,7 +20,7 @@ const newsOf = (restId: number) =>
 describe('猜酒杯（设计文档 §3.3）', () => {
   it('按连胜收礼券 1、2、3、4；胜率 1/(n+1) 随连胜下降；奖励等级 2 + (n−1)；输了下一局回到 1 张', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 10 } });
-    rngValues = [0.1, 0.5]; // 猜中；随机奖励类型 = 银币
+    rngValues = [0.1, 0.9]; // 猜中；随机奖励类型 = 银币
     expect((await t.game.bar.cup(ctx)).data).toEqual({
       win: true,
       cost: 1,
@@ -53,6 +53,14 @@ describe('猜酒杯（设计文档 §3.3）', () => {
     expect((await t.game.bar.overview(ctx)).cup).toEqual({ result: 'lose', times: 1, nextCost: 1 });
   });
 
+  it('奖励按酒吧的比例和档次（问题记录 352）：类型随机数 0.5 是食材，第 1 连出 1~2 级', async () => {
+    const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 1 } });
+    rngValues = [0.1, 0.5];
+    const r = (await t.game.bar.cup(ctx)).data;
+    expect(r.award).toMatchObject({ kind: 'foods' });
+    expect([1, 2]).toContain(t.game.deps.config.foods.get(r.award!.id!)!.level);
+  });
+
   it('猜错：连错次数累计，每局 1 张', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 2 } });
     rngValues = [0.9];
@@ -68,7 +76,7 @@ describe('猜酒杯（设计文档 §3.3）', () => {
 
   it('连胜后礼券不够下一局：NOT_ENOUGH，礼券和连胜都不变（Review Focus 3）', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 2 } });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     await t.game.bar.cup(ctx);
     await expect(t.game.bar.cup(ctx)).rejects.toMatchObject({
       code: 'NOT_ENOUGH',
@@ -86,7 +94,7 @@ describe('猜酒杯（设计文档 §3.3）', () => {
 
   it('连胜 4 发新闻 bar.cup', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 10 } });
-    rngValues = [0.1, 0.5];
+    rngValues = [0.1, 0.9];
     for (let i = 0; i < 3; i++) await t.game.bar.cup(ctx);
     expect(await newsOf(ctx.restaurantId)).toEqual([]);
     await t.game.bar.cup(ctx);
