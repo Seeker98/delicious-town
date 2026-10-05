@@ -105,7 +105,7 @@ export async function towerView(
 
 /**
  * 挑战守塔人（设计文档 §3.2）。检查顺序：层号、解锁、夜间、（正式挑战）今日总次数、守塔人次数、体力。
- * 随机数顺序：对决（我五项、守塔人五项）→ 随机奖励
+ * 随机数顺序：对决（我五项、守塔人五项、抽评委）→ 随机奖励 → 长老套装掉落（判定、抽哪件、生成厨具属性）
  */
 export async function challengeTower(o: Op, floorNo: number, test: boolean): Promise<DuelResultDto> {
   const t = o.tuning.tower;
@@ -145,7 +145,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
       const drops = f.elder.drops;
       if (drops.length > 0 && o.rng.next() < (t.elderDropRates[floorNo - 1] ?? 0)) {
         const id = drops[o.rng.int(drops.length)]!;
-        await grantGoodsOp(o, id, 1);
+        await grantGoodsOp(o, id, 1, { source: 'tower.elder' });
         awards.push({ kind: 'goods', id, num: 1, lucky: false });
       }
       if (floorNo > state.best_floor)

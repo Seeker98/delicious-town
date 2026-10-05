@@ -113,4 +113,22 @@ describe('赛厨长老（问题记录 408）', () => {
       ),
     ).toEqual(['tower_elders floor 1: 9 is not equipment', 'tower_elders floor 1: drop 9 is not equipment']);
   });
+
+  it('强化增量要能由每一级的增量整份分到某一项得到（游戏里每次强化成功整份加到一项）', () => {
+    // 强化表 10、12、15：两级增量 2、3
+    const piece = (gain: Partial<EquipAttrs>) => ({
+      ...elder,
+      pieces: [{ ...elder.pieces[0]!, gain: attrs(gain) }],
+    });
+    expect(elderErrors(piece({ cutting: 2, fire: 3 }), ctx)).toEqual([]);
+    expect(elderErrors(piece({ cook: 1, cutting: 4 }), ctx)).toEqual([
+      'tower_elders floor 1: piece 1 gain cannot be made from enhancement steps 2, 3',
+    ]);
+  });
+
+  it('掉落列表不能重复', () => {
+    expect(elderErrors({ ...elder, drops: [1, 1] }, ctx)).toEqual([
+      'tower_elders floor 1: drop 1 listed twice',
+    ]);
+  });
 });

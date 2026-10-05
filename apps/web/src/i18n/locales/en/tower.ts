@@ -45,7 +45,7 @@ const tower: Messages['tower'] = {
   },
   elder: {
     summary: (level, stress, pct) =>
-      `Elder's gear: level ${level}, every piece +${stress}; ${pct} chance to drop a piece when you win`,
+      `Elder's gear: level ${level}, every piece +${stress}${pct > 0 ? `; ${pct}% chance to drop a piece when you win a real challenge` : ''}`,
     points: (text) => `Stat points: ${text}`,
     piece: (name, stress, text) => `${name} +${stress}: ${text}`,
     attrs: (text) => `When challenged: ${text}`,

@@ -3,7 +3,8 @@ import { EQUIP_ATTRS } from '@dt/config';
 import { testConfig } from '../../../test/config';
 import { activeSuits, addAttrs, attrSummary, suitPct, zeroAttrs } from '../equip/rules';
 import { suitEffect } from '../equip/power';
-import { ELDER_SPECS, expectedBase, splitInt } from '../../sim/elders';
+import { gainReachable } from '@dt/config';
+import { ELDER_SPECS, assignSteps, expectedBase, splitInt } from '../../sim/elders';
 import { duelPower } from './duel';
 
 const config = testConfig();
@@ -62,5 +63,13 @@ describe('赛厨长老（问题记录 408）', () => {
     // 固定属性的厨具照抄
     const sh = expectedBase(config, 40201);
     expect(EQUIP_ATTRS.map((k) => sh[k])).toEqual([21, 0, 0, 0, 0, 0]);
+  });
+
+  it('生成器分强化增量：每一级整份给离目标份额差最多的一项，结果总能通过 gainReachable', () => {
+    const ratio = { cook: 0, cutting: 0, fire: 0, season: 0.6, creatives: 0.3, luck: 0.1 };
+    const steps = [4, 4, 6, 6, 8, 8];
+    const g = assignSteps(steps, ratio);
+    expect(g).toEqual({ cook: 0, cutting: 0, fire: 0, season: 22, creatives: 10, luck: 4 });
+    expect(gainReachable(steps, g)).toBe(true);
   });
 });

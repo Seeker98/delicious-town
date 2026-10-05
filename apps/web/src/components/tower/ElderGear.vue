@@ -17,7 +17,7 @@ const view = computed(() => {
   const e = props.elder;
   const d = t.value.tower.elder;
   return {
-    summary: d.summary(e.level, e.stress, `${Math.round(e.dropRate * 100)}%`),
+    summary: d.summary(e.level, e.stress, Math.round(e.dropRate * 100)),
     points: d.points(list(e.points, true)),
     pieces: e.pieces.map((p) => ({
       id: p.id,
