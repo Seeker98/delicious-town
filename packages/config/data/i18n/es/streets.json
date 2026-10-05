@@ -2,7 +2,7 @@
   "0": {
     "name": "Calle de los novatos",
     "desc": "Ocupación +35%, monedas por mesa +1, suerte +36, clientes exigentes -35%",
-    "theme": "Casas de comida casera y clientes habituales del barrio: clientes fáciles, ideal para empezar",
+    "theme": "Casas de comida casera y clientes habituales del barrio: clientes poco exigentes, ideal para empezar",
     "cookName": "Cocina casera"
   },
   "1": {
@@ -14,7 +14,7 @@
   "2": {
     "name": "Calle Guangdong",
     "desc": "Monedas finales -25%, EXP final -30%, ocupación +10%, clientes exigentes +8%, aceite por mesa -2",
-    "theme": "Casas de dim sum llenas y comensales exigentes: muchos clientes exigentes, monedas rápidas y se ahorra aceite",
+    "theme": "Casas de dim sum llenas y comensales selectos: muchos clientes exigentes que pagan bien, y se ahorra aceite",
     "cookName": "Cocina cantonesa"
   },
   "3": {
@@ -62,7 +62,7 @@
   "10": {
     "name": "Calle Fusión II",
     "desc": "Monedas finales -30%, EXP final -15%, clientes exigentes +25%",
-    "theme": "Una calle de puestos que mezcla cocinas del norte y del sur: la que más platos tiene, muchos clientes exigentes, monedas rápidas",
+    "theme": "Una calle de puestos que mezcla cocinas del norte y del sur: la que más platos tiene, y muchos clientes exigentes que pagan bien",
     "cookName": "Cocina de la Calle Fusión II"
   },
   "11": {
@@ -122,7 +122,7 @@
   "20": {
     "name": "Calle India",
     "desc": "Monedas finales +25%, EXP final -5%, raciones de platos estrella +5%, EXP por mesa +3, suerte +10, clientes exigentes -8%",
-    "theme": "Grandes ollas especiadas: más platos estrella y clientes fáciles",
+    "theme": "Grandes ollas especiadas: más platos estrella, mucha EXP por mesa y clientes poco exigentes",
     "cookName": "Cocina india"
   },
   "21": {
@@ -140,7 +140,7 @@
   "23": {
     "name": "Calle América",
     "desc": "Monedas finales +5%, EXP final +25%, monedas y EXP a domicilio +20%, ocupación +25%, clientes exigentes -10%, consumo de aceite +20%",
-    "theme": "Comida rápida en raciones grandes: muchísima gente y mucho reparto a domicilio, clientes fáciles, pero las freidoras gastan aceite",
+    "theme": "Comida rápida en raciones grandes: muchísima gente y mucho reparto a domicilio, clientes poco exigentes, pero las freidoras gastan aceite",
     "cookName": "Cocina estadounidense"
   },
   "24": {
@@ -152,13 +152,13 @@
   "25": {
     "name": "Calle Argentina",
     "desc": "Monedas finales +5%, EXP final +30%, monedas por mesa +4, ocupación +5%, consumo de aceite +25%",
-    "theme": "Asado de la pampa: muchas monedas por mesa, pero asar toda la noche es lo que más aceite gasta",
+    "theme": "Asado de la pampa: muchas monedas por mesa, pero asar toda la noche gasta aceite",
     "cookName": "Cocina argentina"
   },
   "26": {
     "name": "Calle Grecia",
     "desc": "Monedas finales +10%, EXP final +85%, consumo de aceite -10%, clientes exigentes -5%",
-    "theme": "Aceite de oliva y tierra de filósofos: mucha EXP, se ahorra aceite, clientes fáciles",
+    "theme": "Aceite de oliva mediterráneo y tierra de filósofos: mucha EXP, se ahorra aceite, clientes poco exigentes",
     "cookName": "Cocina griega"
   },
   "27": {

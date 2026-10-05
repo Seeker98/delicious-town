@@ -46,7 +46,7 @@ export function rollShelf(
       const f = pickDistinct(config.foodPools.get(pickLevel(t.dailyLevelWeights, rng)));
       if (f) out.push({ foodsId: f.id, stock: f.odds < 100 ? t.dailyRareStock : t.dailyStock, hot: false });
     }
-    // 新手格（问题记录 378 N3）：新手街要的十三香这类 2 级以上食材，按等级抽好几天才出现一次，新手学不动菜
+    // 新手格（问题记录 378 N3）：新手街要的十三香这类 2 级食材，按等级抽好几天才出现一次，新手学不动菜
     for (let k = 0; k < t.dailyNewbieKinds; k++) {
       const f = pickDistinct(config.newbieFoodPool);
       if (f) out.push({ foodsId: f.id, stock: f.odds < 100 ? t.dailyRareStock : t.dailyStock, hot: false });

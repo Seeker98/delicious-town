@@ -14,7 +14,7 @@
   "2": {
     "name": "Guangdong Street",
     "desc": "Final coins -25%, final EXP -30%, occupancy +10%, picky rate +8%, oil per table -2",
-    "theme": "Busy dim sum houses and discerning diners: many picky customers, fast coins, and it saves oil",
+    "theme": "Busy dim sum houses and discerning diners: many picky customers who pay well, and it saves oil",
     "cookName": "Cantonese cuisine"
   },
   "3": {
@@ -62,7 +62,7 @@
   "10": {
     "name": "Fusion Street II",
     "desc": "Final coins -30%, final EXP -15%, picky rate +25%",
-    "theme": "A night-market street mixing northern and southern cuisines: the most dishes, many picky customers, fast coins",
+    "theme": "A night-market street mixing northern and southern cuisines: the most dishes, and many picky customers who pay well",
     "cookName": "Fusion Street II cuisine"
   },
   "11": {
@@ -122,7 +122,7 @@
   "20": {
     "name": "India Street",
     "desc": "Final coins +25%, final EXP -5%, signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%",
-    "theme": "Big pots of spiced curry: more signature dishes, and easygoing customers",
+    "theme": "Big pots of spiced curry: more signature dishes, plenty of EXP per table, and easygoing customers",
     "cookName": "Indian cuisine"
   },
   "21": {
@@ -152,13 +152,13 @@
   "25": {
     "name": "Argentina Street",
     "desc": "Final coins +5%, final EXP +30%, coins per table +4, occupancy +5%, oil use +25%",
-    "theme": "Pampas barbecue: high coins per table, but grilling all night burns the most oil",
+    "theme": "Pampas barbecue: high coins per table, but grilling all night burns oil",
     "cookName": "Argentine cuisine"
   },
   "26": {
     "name": "Greece Street",
     "desc": "Final coins +10%, final EXP +85%, oil use -10%, picky rate -5%",
-    "theme": "Olive oil and the home of philosophers: high EXP, saves oil, easygoing customers",
+    "theme": "Mediterranean olive oil and the land of philosophers: high EXP, saves oil, easygoing customers",
     "cookName": "Greek cuisine"
   },
   "27": {

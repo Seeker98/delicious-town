@@ -2,7 +2,7 @@
   "0": {
     "name": "Rue des débutants",
     "desc": "Fréquentation +35 %, pièces par table +1, chance +36, clients difficiles -35 %",
-    "theme": "Petits restos familiaux et habitués du quartier : des clients faciles, idéal pour démarrer",
+    "theme": "Petits restos familiaux et habitués du quartier : des clients peu exigeants, idéal pour démarrer",
     "cookName": "Cuisine familiale"
   },
   "1": {
@@ -14,7 +14,7 @@
   "2": {
     "name": "Rue du Guangdong",
     "desc": "Pièces finales -25 %, EXP finale -30 %, fréquentation +10 %, clients difficiles +8 %, huile par table -2",
-    "theme": "Maisons de dim sum animées et clients exigeants : beaucoup de clients difficiles, des pièces vite gagnées, et on économise l’huile",
+    "theme": "Maisons de dim sum animées et clients exigeants : beaucoup de clients difficiles qui paient bien, et on économise l’huile",
     "cookName": "Cuisine cantonaise"
   },
   "3": {
@@ -62,7 +62,7 @@
   "10": {
     "name": "Rue Fusion II",
     "desc": "Pièces finales -30 %, EXP finale -15 %, clients difficiles +25 %",
-    "theme": "Une rue de gargotes qui mélange cuisines du nord et du sud : le plus de plats, beaucoup de clients difficiles, des pièces vite gagnées",
+    "theme": "Une rue de gargotes qui mélange cuisines du nord et du sud : le plus de plats, et beaucoup de clients difficiles qui paient bien",
     "cookName": "Cuisine de la rue Fusion II"
   },
   "11": {
@@ -116,13 +116,13 @@
   "19": {
     "name": "Rue de Thaïlande",
     "desc": "Pièces finales -10 %, EXP finale +5 %, fréquentation +12 %, huile par table -2, EXP des commandes à emporter +30 %",
-    "theme": "Cuisine de rue : beaucoup de clients, des sautés rapides qui économisent l’huile, l’emporter cartonne, mais les prix sont bas",
+    "theme": "Cuisine de rue : beaucoup de clients, des sautés rapides qui économisent l’huile, la vente à emporter cartonne, mais les prix sont bas",
     "cookName": "Cuisine thaïlandaise"
   },
   "20": {
     "name": "Rue de l'Inde",
     "desc": "Pièces finales +25 %, EXP finale -5 %, portions de plats signature +5 %, EXP par table +3, chance +10, clients difficiles -8 %",
-    "theme": "Grandes marmites épicées : plus de plats signature, et des clients faciles",
+    "theme": "Grandes marmites épicées : plus de plats signature, beaucoup d’EXP par table, et des clients peu exigeants",
     "cookName": "Cuisine indienne"
   },
   "21": {
@@ -140,7 +140,7 @@
   "23": {
     "name": "Rue d'Amérique",
     "desc": "Pièces finales +5 %, EXP finale +25 %, pièces et EXP des commandes à emporter +20 %, fréquentation +25 %, clients difficiles -10 %, consommation d'huile +20 %",
-    "theme": "Fast-food en grandes portions : énormément de monde, l’emporter marche fort, des clients faciles, mais les friteuses consomment de l’huile",
+    "theme": "Fast-food en grandes portions : énormément de monde, la vente à emporter marche fort, des clients peu exigeants, mais les friteuses consomment de l’huile",
     "cookName": "Cuisine américaine"
   },
   "24": {
@@ -152,13 +152,13 @@
   "25": {
     "name": "Rue d'Argentine",
     "desc": "Pièces finales +5 %, EXP finale +30 %, pièces par table +4, fréquentation +5 %, consommation d'huile +25 %",
-    "theme": "Barbecue de la pampa : beaucoup de pièces par table, mais griller toute la nuit consomme le plus d’huile",
+    "theme": "Barbecue de la pampa : beaucoup de pièces par table, mais griller toute la nuit consomme de l’huile",
     "cookName": "Cuisine argentine"
   },
   "26": {
     "name": "Rue de Grèce",
     "desc": "Pièces finales +10 %, EXP finale +85 %, consommation d'huile -10 %, clients difficiles -5 %",
-    "theme": "Huile d’olive et patrie des philosophes : beaucoup d’EXP, on économise l’huile, des clients faciles",
+    "theme": "Huile d’olive méditerranéenne et patrie des philosophes : beaucoup d’EXP, on économise l’huile, des clients peu exigeants",
     "cookName": "Cuisine grecque"
   },
   "27": {
@@ -176,7 +176,7 @@
   "29": {
     "name": "Rue Chop Suey",
     "desc": "Pièces finales +20 %, EXP finale +55 %, pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %",
-    "theme": "La cuisine chinoise à emporter d’outre-mer : de gros revenus à emporter, beaucoup de clients et faciles",
+    "theme": "La cuisine chinoise à emporter d’outre-mer : de gros revenus à emporter, beaucoup de clients, peu exigeants",
     "cookName": "Cuisine chinoise d'outre-mer"
   }
 }

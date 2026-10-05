@@ -26,7 +26,7 @@ export default {
     wenjie: { name: '雯姐', desc: '每天送神秘禮券' },
     bro13: { name: '13 哥', desc: '每天送喇叭' },
   },
-  /** 雷神錘能換的天氣大類（下標 = 型別） */
+  /** 雷神錘能換的天氣大類（下標 = 類型） */
   weatherTypes: ['', '晴類', '雨類', '雪冰類', '風沙霧類'],
   said: (name: string, talk: string, rewards: string) => `${name}：${talk} 獲得 ${rewards}`,
   mayorName: '鎮長',

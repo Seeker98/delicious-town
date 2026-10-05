@@ -24,7 +24,7 @@ export default {
     hours: (h: number) => `還剩 ${h} 小時`,
     days: (d: number, h: number) => `還剩 ${d} 天 ${h} 小時`,
   },
-  /** 活動條上的型別名 */
+  /** 活動條上的類型名 */
   kinds: {
     goals: '目標',
     grid: '九宮格',

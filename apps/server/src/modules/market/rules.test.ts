@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { seededRng } from '@dt/shared';
+import type { Food } from '@dt/config';
+import { buildPool, seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { manualCost, manualRenown, personLimit, rollShelf, unitPrice } from './rules';
 import { fid } from '../../../test/items';
@@ -11,7 +12,6 @@ describe('货架（规格书 06 §6.1）', () => {
   it('新手格（问题记录 378 N3）：日常每轮另加几种新手街缺的食材，和原来的不重复，库存按日常', () => {
     const nb = { ...t, dailyNewbieKinds: 2 };
     const inPool = new Set(config.newbieFoodPool.items.map((f) => f.id));
-    let fromPool = 0;
     for (let seed = 1; seed <= 20; seed++) {
       const items = rollShelf(0, 10, config, nb, seededRng(seed));
       expect(items).toHaveLength(7);
@@ -20,13 +20,19 @@ describe('货架（规格书 06 §6.1）', () => {
       for (const x of extra) {
         expect(inPool.has(x.foodsId)).toBe(true);
         const f = config.requireFood(x.foodsId);
+        expect(f.level).toBe(2);
         expect(x.stock).toBe(f.odds < 100 ? 2048 : 5999);
       }
-      fromPool += extra.length;
+      // 加新手格不改前面日常的抽取：已有区服按同一种子重算结果不变
+      expect(items.slice(0, 5)).toEqual(
+        rollShelf(0, 10, config, { ...t, dailyNewbieKinds: 0 }, seededRng(seed)),
+      );
     }
-    expect(fromPool).toBe(40);
     expect(rollShelf(0, 20, config, nb, seededRng(1))).toHaveLength(8);
     expect(rollShelf(0, 10, config, { ...t, dailyNewbieKinds: 0 }, seededRng(1))).toHaveLength(5);
+    // 池子空（新手街没有 2 级需求）时不加
+    const empty = { ...config, newbieFoodPool: buildPool<Food>([], () => 1) };
+    expect(rollShelf(0, 10, empty, nb, seededRng(1))).toHaveLength(5);
   });
 
   it('日常：5 种（20 点 6 种），1~2 级，不重复；稀有食材库存 2048', () => {

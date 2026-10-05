@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     batch9:
-      'Each daily market restock now adds one ingredient that Newbie Street recipes need (Thirteen Spices, Tofu, Spare Ribs and the like), so new players no longer get stuck for days. The recipe page, the moving page and the game wiki now show whether a street is a coin, balanced or EXP street, and why it has its bonus',
+      'Each daily market restock now adds one ingredient that Newbie Street recipes need (Thirteen Spices, Tofu, Rock Sugar and the like), so new players no longer get stuck for days. The recipe page, the moving page and the game wiki now show whether a street is a coin, balanced or EXP street, and why it has its bonus',
     streets1005:
       'Street bonuses rebalanced: streets that pay more coins give less EXP and vice versa, and total income is now much closer between streets. This also applies to restaurants already on a street: coins drop the most on Guangdong Street and Fusion Streets I and II, and EXP rises the most on Shandong, Greece and Chop Suey Streets (see the street bonus on the moving page). Below level 40, EXP from each round gets an extra boost, +200% at level 1 and shrinking each level, so new players level up faster',
     hostLimit1005:
