@@ -13,7 +13,7 @@ import { itemRefs, retiredErrors } from './itemRefs';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
 import { foodWeights } from './foodSupply';
-import { FUND_MEDALS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
+import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { checkSettingDocs } from './settingDocs';
@@ -800,7 +800,13 @@ export function buildBundle(src: SourceData): BuildResult {
   );
   for (const id of [50, 51, 52, 53, 54, 55, 56])
     if (!incomeActions.some((a) => a.id === id)) errors.push(`income_action missing yard action ${id}`);
-  for (const id of [464, 465, 469, 470, 339])
+  for (const id of [
+    GOODS.formulaScroll,
+    GOODS.moonScroll,
+    GOODS.starTear,
+    GOODS.formulaEssence,
+    GOODS.borderCollie,
+  ])
     if (!goodsIds.has(id)) errors.push(`yard references unknown goods ${id}`);
   for (const g of goods) {
     if (g.deviceType === 80 && !((g.effects.plantTime ?? 0) > 0))
@@ -837,7 +843,8 @@ export function buildBundle(src: SourceData): BuildResult {
   if (!slotAwards.some((a) => a.id === tuning.bar.slotFloorAwardId && a.kind !== 'empty'))
     errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
-  for (const id of [1, 240, 389]) if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
+  for (const id of [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
+    if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
   // ---------- 厨塔（子项目 4C-2） ----------
   // 守塔人覆盖（问题记录 120）：各层厨力、第 5/6 层互换
   const fixByFloor = new Map(towerFix.floors.map((f) => [f.floor, f]));
@@ -892,14 +899,15 @@ export function buildBundle(src: SourceData): BuildResult {
   for (const [, id] of tuning.tower.rankGifts)
     if (!goodsIds.has(id)) errors.push(`tuning.tower.rankGifts references unknown goods ${id}`);
   // 厨塔挑战券（GOODS.towerTicket）
-  if (!goodsIds.has(136)) errors.push('tower references unknown goods 136');
+  if (!goodsIds.has(GOODS.towerTicket)) errors.push(`tower references unknown goods ${GOODS.towerTicket}`);
   // ---------- 外卖（子项目 4D） ----------
   for (const [id] of tuning.takeaway.awards)
     if (!goodsIds.has(id)) errors.push(`tuning.takeaway.awards references unknown goods ${id}`);
   for (const id of [tuning.takeaway.customer.success, tuning.takeaway.customer.fail])
     if (!goodsIds.has(id)) errors.push(`tuning.takeaway.customer references unknown goods ${id}`);
   // 外卖券、商店工作证（GOODS.takeawayTicket / shopJobHonor）
-  for (const id of [263, 108]) if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);
+  for (const id of [GOODS.takeawayTicket, GOODS.shopJobHonor])
+    if (!goodsIds.has(id)) errors.push(`takeaway references unknown goods ${id}`);
   if (Math.abs(tuning.takeaway.gradeRates.reduce((s, x) => s + x, 0) - 1) > 1e-9)
     errors.push('tuning.takeaway.gradeRates must sum to 1');
   for (const r of renownRaw)
@@ -951,7 +959,18 @@ export function buildBundle(src: SourceData): BuildResult {
       errors.push(`bless ${x.id} needs a level range within 1~6`);
   }
   // 神秘礼券、爆裂飞弹、神秘券、蟹黄堡、蟹币、N 级券、雷神锤、喇叭、神灯、幸运饼干
-  for (const id of [1, 19, 20, 180, 240, 241, 242, 243, 244, 245, 256, 315, 389, 491])
+  for (const id of [
+    GOODS.mysteryTicket,
+    GOODS.missileBurst,
+    GOODS.mysteryFoodExchange,
+    GOODS.krabBurger,
+    GOODS.krabCoin,
+    ...[1, 2, 3, 4, 5].map((lv) => GOODS.levelTicketBase + lv),
+    GOODS.thorHammer,
+    GOODS.horn,
+    GOODS.magicLamp,
+    GOODS.luckyCookie,
+  ])
     if (!goodsIds.has(id)) errors.push(`town references unknown goods ${id}`);
   for (const id of tuning.town.mysteryExclude)
     if (!foodIds.has(id)) errors.push(`tuning.town.mysteryExclude references unknown food ${id}`);
@@ -962,7 +981,13 @@ export function buildBundle(src: SourceData): BuildResult {
     // 和 @dt/shared 的 HIPHOP_PLACES 一致（问题记录 256 加了 10~15）
     if (![1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15].includes(place))
       errors.push(`tuning.hiphop.placeWeights has unknown place ${place}`);
-  for (const id of [...hh.weeklyCards, ...hh.wages.flat(), 230, 231, 232])
+  for (const id of [
+    ...hh.weeklyCards,
+    ...hh.wages.flat(),
+    GOODS.hiphopCulture,
+    GOODS.mayorFavor,
+    GOODS.mayorAgainst,
+  ])
     if (!goodsIds.has(id)) errors.push(`hiphop references unknown goods ${id}`);
   const wageCards = new Set(hh.wages.map(([card]) => card));
   if (wageCards.size !== hh.weeklyCards.length || hh.weeklyCards.some((c) => !wageCards.has(c)))

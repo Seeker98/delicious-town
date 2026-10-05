@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import type { CupboardDto, FridgeDto } from '@dt/shared';
+import { SHARED_FOODS, type CupboardDto, type FridgeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
@@ -53,7 +53,14 @@ const canCompose = computed(() => pickedLevel.value >= 1 && pickedLevel.value <=
 /** 问题记录 140：万能食材能不能换稀有食材 */
 const MASTER_RULE = computed((): Record<number, string> => {
   const c = t.value.cupboard;
-  return { 467: c.master1, 468: c.master2, 469: c.masterHigh, 470: c.masterHigh, 471: c.masterHigh };
+  const base = SHARED_FOODS.masterBase;
+  return {
+    [base + 1]: c.master1,
+    [base + 2]: c.master2,
+    [base + 3]: c.masterHigh,
+    [base + 4]: c.masterHigh,
+    [base + 5]: c.masterHigh,
+  };
 });
 
 /** 一次最多分解几个；合成要偶数个（问题记录：合成不显示最大数） */
@@ -236,13 +243,20 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
           {{ pickedItem.locked ? t.cupboard.unlock : t.cupboard.lock }}
         </button>
         <button
-          v-if="pickedItem.foodsId === 467 || pickedItem.foodsId === 468"
+          v-if="
+            pickedItem.foodsId === SHARED_FOODS.masterLevel1 ||
+            pickedItem.foodsId === SHARED_FOODS.masterLevel2
+          "
           class="btn btn-sm btn-outline-success"
           data-testid="exchange"
           :disabled="busy || exchangeMax < 2"
           @click="
             run(
-              () => endpoints.exchangeMaster(pickedItem!.foodsId as 467 | 468, exchangeN / 2),
+              () =>
+                endpoints.exchangeMaster(
+                  pickedItem!.foodsId as typeof SHARED_FOODS.masterLevel1,
+                  exchangeN / 2,
+                ),
               t.cupboard.exchangeFailed,
             )
           "

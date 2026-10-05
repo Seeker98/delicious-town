@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SHARED_FOODS } from '../goodsIds';
 
 export const foodsIdBody = z.object({ foodsId: z.number().int().positive() });
 export const handleBody = z.object({
@@ -7,7 +8,7 @@ export const handleBody = z.object({
   num: z.number().int().min(1).max(100),
 });
 export const exchangeBody = z.object({
-  foodsId: z.union([z.literal(467), z.literal(468)]),
+  foodsId: z.union([z.literal(SHARED_FOODS.masterLevel1), z.literal(SHARED_FOODS.masterLevel2)]),
   times: z.number().int().min(1).max(50),
 });
 

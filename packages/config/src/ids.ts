@@ -1,4 +1,4 @@
-import { SHARED_GOODS } from '@dt/shared';
+import { SHARED_FOODS, SHARED_GOODS } from '@dt/shared';
 
 /** 代码里直接引用的道具 id（规格书 00~07、20）。改动时同步检查 data/dataset/goods.json */
 export const GOODS = {
@@ -10,7 +10,7 @@ export const GOODS = {
   renameCard: 53, // 改名卡
   tableA: 82, // 餐桌A
   starCert: 86, // 升星凭证
-  starPromoHonor: 87, // 升星促销勋章
+  starPromoHonor: SHARED_GOODS.starPromoHonor, // 升星促销勋章
   promoHonor: 106, // 八折促销
   moveJobHonor: 111, // 搬家处工作证
   marketJobHonor: 107, // 菜场工作证（手动进货）
@@ -93,9 +93,9 @@ export const GOODS = {
 
 /** 万能食材：id = 466 + 食材等级（1~5 级） */
 export const FOODS = {
-  masterBase: 466,
-  masterLevel1: 467,
-  masterLevel2: 468,
+  masterBase: SHARED_FOODS.masterBase,
+  masterLevel1: SHARED_FOODS.masterLevel1,
+  masterLevel2: SHARED_FOODS.masterLevel2,
 } as const;
 
 /** 道具类型（goods.type） */
