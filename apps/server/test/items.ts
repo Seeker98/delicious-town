@@ -5,8 +5,15 @@ let maps: Record<'goods' | 'foods' | 'cookbooks', Map<string, number>> | null = 
 function lookup(kind: 'goods' | 'foods' | 'cookbooks', name: string): number {
   if (!maps) {
     const b = testConfig().bundle;
-    const of = (list: ReadonlyArray<{ id: number; name: string }>) =>
-      new Map(list.map((x) => [x.name, x.id]));
+    // 有重名就抛错（和 packages/config/src/testItems.ts 的 indexByName 一样），不能静默取最后一个
+    const of = (list: ReadonlyArray<{ id: number; name: string }>) => {
+      const out = new Map<string, number>();
+      for (const x of list) {
+        if (out.has(x.name)) throw new Error(`duplicate name ${x.name}: ${out.get(x.name)}, ${x.id}`);
+        out.set(x.name, x.id);
+      }
+      return out;
+    };
     maps = { goods: of(b.goods), foods: of(b.foods), cookbooks: of(b.cookbooks) };
   }
   const id = maps[kind].get(name);

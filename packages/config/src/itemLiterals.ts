@@ -32,6 +32,22 @@ export const ITEM_PATTERNS: Array<{ kind: ItemLiteralKind | 'either' | 'captured
   { kind: 'goods', re: /\b(?:consumeGoods|subGoods)\([^,()]+,\s*(\d+)\b/g },
   // 厨具、升星测试里自己的小工具：piece(ctx, 编号)、wear(厨具, 编号)、grant(店, 编号)
   { kind: 'goods', re: /\b(?:piece|wear|grant)\([^,()]+,\s*(\d+)\b/g },
+  // 重新编号第 4 步换号后才发现的写法
+  // 鉴定道具、教师证、宝石：{ toolId }、{ certId }、{ gemId }
+  { kind: 'goods', re: /\b(?:toolId|certId|gemId)\s*:\s*(\d+)\b/g },
+  // 菜园篮子：{ kind: 'basket', id } 是食材
+  { kind: 'foods', re: /\bkind:\s*'basket',\s*(?:id|itemId):\s*(\d+)\b/g },
+  // SQL 条件：.where('goods_id', '=', 编号)
+  { kind: 'goods', re: /\.where\('(?:goods_id|gem_goods_id)',\s*'=',\s*(\d+)\)/g },
+  { kind: 'foods', re: /\.where\('foods_id',\s*'=',\s*(\d+)\)/g },
+  { kind: 'cookbooks', re: /\.where\('cookbook_id',\s*'=',\s*(\d+)\)/g },
+  // 服务函数的编号参数：学菜和菜谱详情、橱柜锁定和解冻、荣誉和仓库格、开放接口详情
+  { kind: 'cookbooks', re: /\.(?:learn|detail)\([^,()]+,\s*(\d+)\)/g },
+  { kind: 'foods', re: /\.(?:lock|thaw)\([^,()]+,\s*(\d+)\)/g },
+  { kind: 'goods', re: /\b(?:hasValidHonor|removeHonor|assertStoreRoom)\([^,()]+,\s*(\d+)\)/g },
+  { kind: 'goods', re: /\bgoodsDetail\([^,()]+,\s*(\d+)\)/g },
+  { kind: 'foods', re: /\.food\([^,()]+,\s*(\d+)\)/g },
+  { kind: 'cookbooks', re: /\.cookbook\([^,()]+,\s*(\d+)\)/g },
 ];
 
 export interface ItemLiteral {
@@ -44,11 +60,10 @@ export interface ItemLiteral {
   key?: true;
 }
 
-/** 文本里编号位置上、确实是现有编号的数字；either 按前面最近的 goods / foods 键定种类，定不了的放进 ambiguous */
+/** 文本里编号位置上、确实是现有编号的数字；either 按前面最近的 goods / foods 键定种类，定不了的跳过 */
 export function findItemLiterals(
   text: string,
   ids: Record<ItemLiteralKind, ReadonlySet<number>>,
-  ambiguous: ItemLiteral[] = [],
 ): ItemLiteral[] {
   const out: ItemLiteral[] = [];
   const seen = new Set<number>();
@@ -70,18 +85,15 @@ export function findItemLiterals(
         if (!last || gap === null || !/^\[?\s*(\{[^{}]*\}\s*,\s*)*$/.test(gap)) continue;
         k = last[1] === 'goods' ? 'goods' : 'foods';
       }
-      if (k === null) {
-        ambiguous.push({ kind: 'goods', id, index, length: digits.length });
-        continue;
-      }
+      if (k === null) continue;
       if (!ids[k].has(id)) continue;
       seen.add(index);
       out.push({ kind: k, id, index, length: digits.length });
     }
   }
-  // goods / foods 记录里的数字键：newRestaurant(t, { goods: { 编号: 数量 } }) 这类
-  for (const m of text.matchAll(/\b(goods|foods)\s*:\s*\{([^{}]*)\}/g)) {
-    const kind: ItemLiteralKind = m[1] === 'goods' ? 'goods' : 'foods';
+  // goods / foods / cookbooks 记录里的数字键：newRestaurant(t, { goods: { 编号: 数量 }, cookbooks: { 编号: 品级 } }) 这类
+  for (const m of text.matchAll(/\b(goods|foods|cookbooks)\s*:\s*\{([^{}]*)\}/g)) {
+    const kind = m[1] as ItemLiteralKind;
     const bodyAt = m.index! + m[0].indexOf('{') + 1;
     for (const k of m[2]!.matchAll(/(^|[\s,])(\d+)\s*:/g)) {
       const index = bodyAt + k.index! + k[1]!.length;
