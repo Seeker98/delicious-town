@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { CookbookListDto, CookbookRowDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -27,6 +27,7 @@ const filter = ref<Filter>(FILTERS.find((f) => f === route.query.filter) ?? 'all
 const page = ref(queryInt(route.query.page, 1) ?? 1);
 const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
+const streetDesc = computed(() => catalog.streets.find((s) => s.id === street.value)?.desc ?? '');
 
 async function load() {
   try {
@@ -107,6 +108,10 @@ onMounted(async () => {
         {{ t.cookbook.filters[f] }}
       </button>
     </div>
+  </div>
+  <!-- 街道简介（问题记录 380）：各街的加成，按目录取当前语言 -->
+  <div v-if="streetDesc" class="small mb-1" data-testid="street-desc">
+    {{ t.cookbook.streetDesc(streetDesc) }}
   </div>
   <div v-if="list" class="small text-muted mb-2" data-testid="cookbook-counts">
     {{

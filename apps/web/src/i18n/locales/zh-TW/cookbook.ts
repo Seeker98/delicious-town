@@ -3,6 +3,7 @@
 export default {
   filters: { all: '全部', learnable: '可學', upgradable: '可升級', unlearned: '未學', learned: '已學' },
   loadFailed: '讀取食譜失敗',
+  streetDesc: (desc: string) => `街道特點：${desc}`,
   learnFailed: '學習失敗',
   maxed: '已滿級',
   lackFoods: '食材不夠',

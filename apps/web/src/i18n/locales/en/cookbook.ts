@@ -10,6 +10,7 @@ const cookbook: Messages['cookbook'] = {
     learned: 'Learned',
   },
   loadFailed: "Couldn't load recipes",
+  streetDesc: (desc) => `Street traits: ${desc}`,
   learnFailed: 'Learning failed',
   maxed: 'Maxed',
   lackFoods: 'Missing ingredients',

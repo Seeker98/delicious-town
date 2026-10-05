@@ -189,6 +189,44 @@ describe('CookbooksView', () => {
     expect(endpoints.cookbookList).toHaveBeenCalledWith({ street: 3, page: 2, filter: 'learnable' });
   });
 
+  it('选中的街道下面写街道简介，换街道跟着换（问题记录 380）', async () => {
+    const data = {
+      tasks: [],
+      chapters: [],
+      questLines: [],
+      activation: [],
+      bless: [],
+      tower: [],
+      formulas: [],
+      kujiThemes: [],
+      proficiency: [],
+      cookbooks: [],
+    };
+    useCatalogStore().apply({
+      version: 'v:zh',
+      goods: [],
+      foods: [],
+      streets: [
+        { id: 0, name: '新手街', cookName: '家常菜', desc: '上座率+35%' },
+        { id: 3, name: '四川街', cookName: '川菜', desc: '每桌经验+4' },
+      ],
+      weather: [],
+      devices: [],
+      data,
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道特点：上座率+35%');
+    await w.get('select').setValue('3');
+    await flushPromises();
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道特点：每桌经验+4');
+  });
+
   it('地址里的参数不合法时按默认：本店街道、全部、第一页', async () => {
     const router = createRouter({
       history: createMemoryHistory(),
