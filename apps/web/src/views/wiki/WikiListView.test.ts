@@ -23,8 +23,26 @@ const meta = { version: 'v1', lang: 'zh-CN' as const };
 const streets = {
   ...meta,
   items: [
-    { id: 0, name: '湖南街', cookName: '湘菜', desc: '', medal: null, cookbookCount: 2 },
-    { id: 14, name: '日本街', cookName: '日料', desc: '', medal: null, cookbookCount: 1 },
+    {
+      id: 0,
+      name: '湖南街',
+      cookName: '湘菜',
+      desc: '',
+      theme: '',
+      focus: null,
+      medal: null,
+      cookbookCount: 2,
+    },
+    {
+      id: 14,
+      name: '日本街',
+      cookName: '日料',
+      desc: '',
+      theme: '',
+      focus: null,
+      medal: null,
+      cookbookCount: 1,
+    },
   ],
 };
 

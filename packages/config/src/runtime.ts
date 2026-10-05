@@ -65,6 +65,8 @@ export interface GameConfig {
   readonly foodPools: ReadonlyMap<number, WeightedPool<Food>>;
   readonly rareFoodPools: ReadonlyMap<number, WeightedPool<Food>>;
   readonly hotFoodPool: WeightedPool<Food>;
+  /** 新手街缺料池（问题记录 378 N3）：新手街菜谱 1 品级要的 2 级食材，按要它的菜数加权 */
+  readonly newbieFoodPool: WeightedPool<Food>;
   readonly masterFoodPool: WeightedPool<Food>;
   readonly cookbookIndex: CookbookIndex;
   /** 重新编号前的编号 → 新编号（设计 §5） */
@@ -216,6 +218,18 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     );
   }
 
+  // 新手街缺料池（问题记录 378 N3）：菜场日常货架每轮的新手格从这里抽。只放 2 级：1 级日常货架本来就常有；
+  // 3 级以上进了日常货架就是日常的库存和限购，会冲掉特价、高级货架，影响全服（审查 Important）。
+  // 按配置包的起始街算；区服覆盖改了起始街时不跟着变
+  const newbieNeed = new Map<number, number>();
+  for (const c of bundle.cookbooks)
+    if (c.streetId === bundle.restaurantDefaults.streetId)
+      for (const n of c.needFoods['1'] ?? []) newbieNeed.set(n.foodsId, (newbieNeed.get(n.foodsId) ?? 0) + 1);
+  const newbieFoodPool = buildPool(
+    liveFoods.filter((f) => f.level === 2 && newbieNeed.has(f.id)),
+    (f) => newbieNeed.get(f.id) ?? 0,
+  );
+
   // "热门稀缺食材"：2~5 级、稀有、在食谱需求表里出现次数超过门槛（规格书 06 §6.1）
   const needCount = new Map<number, number>();
   for (const c of bundle.cookbooks) {
@@ -252,6 +266,7 @@ export function createGameConfig(bundle: ConfigBundle): GameConfig {
     foodPools,
     rareFoodPools,
     hotFoodPool: buildPool(hot, (f) => f.weight),
+    newbieFoodPool,
     masterFoodPool: buildPool(foodsByLevel.get(9) ?? [], (f) => f.weight),
     cookbookIndex: buildCookbookIndex(bundle.cookbooks),
     legacy: {

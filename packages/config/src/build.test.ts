@@ -1339,6 +1339,28 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     );
   });
 
+  it('街道带主题说明和类型（问题记录 380、378 方案 C）：除新手街外都要写，英法西有主题译文', () => {
+    const b = realBuild().bundle!;
+    const japan = b.streets.find((s) => s.id === 14)!;
+    expect(japan.theme).toContain('精致料理');
+    expect(japan.focus).toBe('coin');
+    expect(b.streets.find((s) => s.id === 0)!.focus).toBeNull();
+    for (const s of b.streets.filter((x) => x.id > 0)) {
+      expect(s.theme, `street ${s.id}`).not.toBe('');
+      expect(['coin', 'balanced', 'exp'], `street ${s.id}`).toContain(s.focus);
+    }
+    for (const l of ['en', 'fr', 'es'] as const)
+      for (const s of b.streets) expect(b.i18n[l].streets[String(s.id)]?.theme, `${l} ${s.id}`).toBeTruthy();
+  });
+
+  it('街道类型只能是 coin、balanced、exp', () => {
+    const src = source();
+    const streets = structuredClone(src['dataset/streets']) as Array<Record<string, unknown>>;
+    streets[1]!.focus = 'gold';
+    const { errors } = buildBundle({ ...src, 'dataset/streets': streets });
+    expect(errors.join('\n')).toContain('focus');
+  });
+
   it('equip_lore.json 多写的顶层键报错（不悄悄丢掉）', () => {
     const src = source();
     const lore = { ...(src['game/equip_lore'] as object), rename: [] };

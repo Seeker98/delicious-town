@@ -105,7 +105,7 @@
     "dailyHours": [8, 10, 12, 14, 16, 18, 20],
     "dailyKinds": 5,
     "dailyKindsLastHour": 20,
-    "dailyKindsLast": 6,
+    "dailyKindsLast": 6, "dailyNewbieKinds": 1,
     "dailyStock": 5999,
     "dailyRareStock": 2048,
     "dailyLevelWeights": [

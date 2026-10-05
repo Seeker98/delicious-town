@@ -136,7 +136,7 @@ export default {
     'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'admin.grant': (p) => `系統補償：${String(p.reason ?? '')}`,
     redeem: (p) => `使用了兌換碼 ${String(p.code ?? '')}`,
-    // 問題記錄 154：以下型別原來顯示英文型別名
+    // 問題記錄 154：以下類型原來顯示英文類型名
     'bar.darts': (p) => `酒吧飛鏢${p.result === 'win' ? '贏了' : p.result === 'draw' ? '打平' : '輸了'}`,
     'bar.devil': (p) =>
       p.result === 'win'

@@ -2,151 +2,181 @@
   "0": {
     "name": "Newbie Street",
     "desc": "Occupancy +35%, coins per table +1, luck +36, picky rate -35%",
+    "theme": "Home-style diners and friendly regulars: easygoing customers, a good place for a new restaurant to start",
     "cookName": "Home cooking"
   },
   "1": {
     "name": "Hunan Street",
     "desc": "Final coins +10%, final EXP +40%, luck +10",
+    "theme": "Spicy Hunan dishes that go great with rice and keep diners coming back: steady coins and EXP",
     "cookName": "Hunan cuisine"
   },
   "2": {
     "name": "Guangdong Street",
     "desc": "Final coins -25%, final EXP -30%, occupancy +10%, picky rate +8%, oil per table -2",
+    "theme": "Busy dim sum houses and discerning diners: many picky customers who pay well, and it saves oil",
     "cookName": "Cantonese cuisine"
   },
   "3": {
     "name": "Sichuan Street",
     "desc": "Final EXP and coins -10%, EXP per table +4, oil per table +2",
+    "theme": "Fiery Sichuan cooking that depends on heat control and burns oil: plenty of EXP for honing your skills, average coins",
     "cookName": "Sichuan cuisine"
   },
   "4": {
     "name": "Fujian Street",
     "desc": "Final EXP -20%, coins per table +2, EXP per table +3",
+    "theme": "Fujian's fresh soups and seafood: extra coins and EXP per table, a balanced income",
     "cookName": "Fujian cuisine"
   },
   "5": {
     "name": "Anhui Street",
     "desc": "Final coins +25%, coins per table +3, oil use -15%",
+    "theme": "Rich, slow-cooked Anhui food and free-spending merchants: high pay per table, and stewing saves oil",
     "cookName": "Anhui cuisine"
   },
   "6": {
     "name": "Shandong Street",
     "desc": "Final coins +30%, final EXP +40%, EXP per table +6, oil use -10%, occupancy -20%",
+    "theme": "Elaborate Shandong banquet dishes: fewer customers but lots of EXP per table, and it saves oil",
     "cookName": "Shandong cuisine"
   },
   "7": {
     "name": "Zhejiang Street",
     "desc": "Final coins -5%, final EXP -10%, picky rate +10%, oil per table -3",
+    "theme": "Light, refined Zhejiang cuisine: picky diners who pay well, and steaming saves oil",
     "cookName": "Zhejiang cuisine"
   },
   "8": {
     "name": "Jiangsu Street",
     "desc": "Final coins -20%, final EXP +30%, picky rate +5%, oil use -50%",
+    "theme": "Fine knife work and slow simmering in Jiangsu: very little oil, good EXP, slightly fewer coins",
     "cookName": "Jiangsu cuisine"
   },
   "9": {
     "name": "Fusion Street I",
     "desc": "Final coins -30%, final EXP -15%, picky rate +25%",
+    "theme": "A food street where restaurants from everywhere gather: many dishes, mixed crowds, many picky customers who pay well",
     "cookName": "Fusion Street I cuisine"
   },
   "10": {
     "name": "Fusion Street II",
     "desc": "Final coins -30%, final EXP -15%, picky rate +25%",
+    "theme": "A night-market street mixing northern and southern cuisines: the most dishes, and many picky customers who pay well",
     "cookName": "Fusion Street II cuisine"
   },
   "11": {
     "name": "Jiangxi Street",
     "desc": "Final coins -20%, final EXP +10%, occupancy +15%, coins per table +3",
+    "theme": "Fresh, spicy, affordable Jiangxi food and big crowds: high occupancy and extra coins per table",
     "cookName": "Jiangxi cuisine"
   },
   "12": {
     "name": "Hubei Street",
     "desc": "Final coins +15%, final EXP +40%, luck +10",
+    "theme": "Hubei food from the land of fish and rice: high EXP and good luck",
     "cookName": "Hubei cuisine"
   },
   "13": {
     "name": "Beijing Street",
     "desc": "Final coins +25%, final EXP -5%, EXP per table +2, oil use +30%",
+    "theme": "Famous Peking duck and diners happy to spend: plenty of coins, but the roasting ovens burn oil",
     "cookName": "Beijing cuisine"
   },
   "14": {
     "name": "Japan Street",
     "desc": "Final coins +15%, final EXP +10%, picky rate +12%, coins from satisfied picky customers +15%, occupancy -8%",
+    "theme": "Refined cuisine built on fine ingredients and knife skills: many picky customers who pay generously, but the high bar means fewer diners",
     "cookName": "Japanese cuisine"
   },
   "15": {
     "name": "Italy Street",
     "desc": "Final coins -15%, occupancy +15%, coins per table +1, takeaway coins +30%, oil use +15%",
+    "theme": "Popular pizza and pasta, lots of takeaway, and the ovens burn oil",
     "cookName": "Italian cuisine"
   },
   "16": {
     "name": "France Street",
     "desc": "Final coins +45%, final EXP +15%, picky rate +8%, occupancy -12%",
+    "theme": "High-end French dining: big bills, but fewer and pickier diners",
     "cookName": "French cuisine"
   },
   "17": {
     "name": "Spain Street",
     "desc": "Final EXP +15%, occupancy +8%, coins from customers eating signature dishes +20%, luck +16, oil per table +1",
+    "theme": "Tapas and a sharing culture: signature dishes sell well, and late nights use a bit more oil",
     "cookName": "Spanish cuisine"
   },
   "18": {
     "name": "Mexico Street",
     "desc": "Final coins -30%, final EXP -20%, occupancy +20%, EXP per table +2, oil per table +2",
+    "theme": "As lively as a festival: big crowds and plenty of EXP, but frying and grilling burn oil",
     "cookName": "Mexican cuisine"
   },
   "19": {
     "name": "Thailand Street",
     "desc": "Final coins -10%, final EXP +5%, occupancy +12%, oil per table -2, takeaway EXP +30%",
+    "theme": "Street food: many customers, quick stir-fries that save oil, booming takeaway, but low prices",
     "cookName": "Thai cuisine"
   },
   "20": {
     "name": "India Street",
     "desc": "Final coins +25%, final EXP -5%, signature dish portions +5%, EXP per table +3, luck +10, picky rate -8%",
+    "theme": "Big pots of spiced curry: more signature dishes, plenty of EXP per table, and easygoing customers",
     "cookName": "Indian cuisine"
   },
   "21": {
     "name": "Turkey Street",
     "desc": "Final coins +20%, final EXP +15%, coins per table +3, EXP per table +1, luck +20, oil use +20%",
+    "theme": "Charcoal kebabs and warm hospitality: more coins per table, but charcoal burns oil",
     "cookName": "Turkish cuisine"
   },
   "22": {
     "name": "Vietnam Street",
     "desc": "Final coins -10%, final EXP +5%, oil use -30%, EXP per table +3",
+    "theme": "Noodles and light broths: very little oil, but low prices",
     "cookName": "Vietnamese cuisine"
   },
   "23": {
     "name": "America Street",
     "desc": "Final coins +5%, final EXP +25%, takeaway coins and EXP +20%, occupancy +25%, picky rate -10%, oil use +20%",
+    "theme": "Big fast-food portions: huge crowds and strong takeaway, easygoing customers, but the fryers burn oil",
     "cookName": "American cuisine"
   },
   "24": {
     "name": "Morocco Street",
     "desc": "Final coins +15%, final EXP +30%, chance of mystery ingredients when exploring +2%, luck +25",
+    "theme": "Spice markets and desert caravans: good luck, and exploring turns up mystery ingredients more easily",
     "cookName": "Moroccan cuisine"
   },
   "25": {
     "name": "Argentina Street",
     "desc": "Final coins +5%, final EXP +30%, coins per table +4, occupancy +5%, oil use +25%",
+    "theme": "Pampas barbecue: high coins per table, but grilling all night burns oil",
     "cookName": "Argentine cuisine"
   },
   "26": {
     "name": "Greece Street",
     "desc": "Final coins +10%, final EXP +85%, oil use -10%, picky rate -5%",
+    "theme": "Mediterranean olive oil and the land of philosophers: high EXP, saves oil, easygoing customers",
     "cookName": "Greek cuisine"
   },
   "27": {
     "name": "Peru Street",
     "desc": "Final coins +5%, final EXP -20%, chance of higher grades when cooking signature dishes +8%, picky rate +8%",
+    "theme": "A capital of food that prizes freshness: signature dishes reach higher grades more easily, and diners are picky",
     "cookName": "Peruvian cuisine"
   },
   "28": {
     "name": "Russia Street",
     "desc": "Final coins -5%, final EXP -20%, EXP per table +5, occupancy -10%, each roach that appears has a 20% chance of being killed",
+    "theme": "A frozen land: stews give plenty of EXP and roaches struggle to survive, but the cold keeps customers away",
     "cookName": "Russian cuisine"
   },
   "29": {
     "name": "Chop Suey Street",
     "desc": "Final coins +20%, final EXP +55%, takeaway coins and EXP +30%, occupancy +10%, coins per table +1, picky rate -10%",
+    "theme": "Overseas Chinese takeaway rules: high takeaway income, and many easygoing customers",
     "cookName": "Overseas Chinese cuisine"
   }
 }

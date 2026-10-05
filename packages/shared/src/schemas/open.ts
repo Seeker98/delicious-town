@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { StreetFocus } from './world';
 import { localeSchema, type Locale } from '../locale';
 
 /** 开放接口（问题记录 142）：只读的静态游戏数据，全部来自配置包，不含玩家和区服数据 */
@@ -152,6 +153,10 @@ export interface OpenStreetDto {
   name: string;
   cookName: string;
   desc: string;
+  /** 为什么是这个加成（问题记录 380） */
+  theme: string;
+  /** 银币街、均衡街、经验街；新手街 null（问题记录 378 方案 C） */
+  focus: StreetFocus | null;
   medal: { id: number; name: string; desc: string } | null;
   cookbookCount: number;
 }

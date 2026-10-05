@@ -36,6 +36,21 @@ describe('2A 运行时索引', () => {
     expect(cfg.hotFoodPool.items.length).toBe(25); // 18 + 新街道 7 种用量多的稀有食材（问题记录 284）
   });
 
+  it('新手街缺料池（问题记录 378 N3）：新手街菜谱 1 品级要的 2 级食材，按要它的菜数加权；3 级以上不放（审查：会进日常货架冲掉特价、高级货架）', () => {
+    const pool = cfg.newbieFoodPool;
+    const newbie = cfg.bundle.cookbooks.filter((c) => c.streetId === cfg.bundle.restaurantDefaults.streetId);
+    const want = new Map<number, number>();
+    for (const c of newbie)
+      for (const n of c.needFoods['1'] ?? []) want.set(n.foodsId, (want.get(n.foodsId) ?? 0) + 1);
+    const expected = [...want].filter(([id]) => cfg.requireFood(id).level === 2);
+    expect(pool.items.map((f) => f.id).sort((a, b) => a - b)).toEqual(
+      expected.map(([id]) => id).sort((a, b) => a - b),
+    );
+    const shisanxiang = cfg.bundle.foods.find((f) => f.name === '十三香')!;
+    expect(pool.total).toBe(expected.reduce((s, [, n]) => s + n, 0));
+    expect(want.get(shisanxiang.id)).toBe(Math.max(...expected.map(([, n]) => n)));
+  });
+
   it('食谱索引', () => {
     const idx = cfg.cookbookIndex;
     expect(idx.street[cid('南煎丸子')]).toBe(6);

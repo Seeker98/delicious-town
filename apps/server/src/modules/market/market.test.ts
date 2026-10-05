@@ -36,7 +36,8 @@ describe('日常菜场', () => {
   it('进货后可以买：扣银币、进橱柜、记限购；新闻', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 1_000_000 } });
     const items = await openShelf(ctx.shardId, 0);
-    expect(items).toHaveLength(5);
+    // 日常 5 种 + 新手格（问题记录 378 N3）
+    expect(items).toHaveLength(config.tuning.market.dailyKinds + config.tuning.market.dailyNewbieKinds);
     const it0 = items[0]!;
     const price = config.requireFood(it0.foods_id).coin;
     t.clock.set(new Date(t.clock.now.getTime() + 60 * 60_000));
@@ -291,7 +292,7 @@ describe('竞猜（规格书 06 §6.3）', () => {
     const log = { error: vi.fn() };
     try {
       const r = await m().refresh(ctx.shardId, 0, slot, slot.start, log as never);
-      expect(r.foods).toHaveLength(5);
+      expect(r.foods).toHaveLength(config.tuning.market.dailyKinds + config.tuning.market.dailyNewbieKinds);
       expect(r.guesses).toBe(0);
       expect(r.guessError).toBe(true);
       expect(log.error).toHaveBeenCalledWith(

@@ -7,6 +7,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { STREET_FOCUS } from '../utils/labels';
 
 const catalog = useCatalogStore();
 const restaurant = useRestaurantStore();
@@ -59,7 +60,14 @@ onMounted(() => {
       {{ t.society.move.option(s.name, s.cookName) }}
     </option>
   </select>
-  <p v-if="picked" class="small mb-2" data-testid="move-bonus">{{ t.society.move.bonus(picked.desc) }}</p>
+  <div v-if="picked" class="small mb-2">
+    <!-- 街道类型和为什么是这个加成（问题记录 380、378 方案 C） -->
+    <span v-if="picked.focus" class="dt-tag me-1" data-testid="move-focus">{{
+      STREET_FOCUS[picked.focus]
+    }}</span>
+    <span data-testid="move-bonus">{{ t.society.move.bonus(picked.desc) }}</span>
+    <div v-if="picked.theme" class="text-muted" data-testid="move-theme">{{ picked.theme }}</div>
+  </div>
   <button class="btn btn-primary w-100" :disabled="busy || target === null" @click="move">
     {{ t.society.move.btn }}
   </button>

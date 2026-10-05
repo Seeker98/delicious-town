@@ -90,7 +90,7 @@ export default {
       note: (day: string, hour: number, weather: string, type: string) =>
         `${day} ${hour} 點自動輪換的天氣是${weather}（${type}類）`,
       hammer: (weather: string) => `；之後有人用雷神錘改成了${weather}，按題目規則不算`,
-      /** 天氣大類（下標 = 型別） */
+      /** 天氣大類（下標 = 類型） */
       types: ['', '晴', '雨', '雪', '風沙霧霾'],
     },
     stats: {

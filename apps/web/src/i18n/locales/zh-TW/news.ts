@@ -4,7 +4,7 @@ import type { NewsNames } from '../../../utils/news';
 import { formatNum } from '../../../utils/format';
 import { list, num, str, table, type P } from '../../helpers';
 
-/** 新聞文案（問題記錄 272）：服務端只存型別和引數 */
+/** 新聞文案（問題記錄 272）：服務端只存類型和引數 */
 type NewsFn = (who: string, p: P, x: NewsNames) => string;
 const news = table<NewsFn>();
 const WEEKLY: Record<string, string> = {
@@ -114,7 +114,7 @@ export default {
     'town.exchange': (w, p, x) => `${w}在鎮長處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
   }),
-  /** 沒有文案的新聞型別 */
+  /** 沒有文案的新聞類型 */
   unknown: '小鎮發生了一件事',
   /** 店已不存在、新聞裡也沒記名字時 */
   someone: '某家餐廳',

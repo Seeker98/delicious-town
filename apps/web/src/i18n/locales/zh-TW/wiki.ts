@@ -54,7 +54,7 @@ export default {
   fields: {
     star: '星級',
     needStar: (n: number) => `${n} 星可用`,
-    type: '型別',
+    type: '類型',
     level: '等級',
     stackable: '可以疊加',
     maxNum: (n: number) => `最多持有 ${n} 個`,
@@ -80,6 +80,8 @@ export default {
     taste: '口味',
     cookName: '菜系',
     bonus: '街道加成',
+    focus: '街道類型',
+    theme: '特色',
     cookbookCount: (n: number) => `${n} 道菜`,
     suitTier: (n: number) => `${n} 件`,
   },

@@ -170,6 +170,7 @@
     "tuning.market.dailyKinds": "日常菜场每次上几种菜（种）",
     "tuning.market.dailyKindsLastHour": "哪个整点是当天最后一次日常上新（点）",
     "tuning.market.dailyKindsLast": "最后一次日常上新上几种菜（种）",
+    "tuning.market.dailyNewbieKinds": "日常货架每轮另加几种新手街缺的食材（按新手街菜谱要它的菜数加权抽 2 级的），库存和限购按日常；0 = 不加（种）",
     "tuning.market.dailyStock": "日常菜场普通食材每种库存（个）",
     "tuning.market.dailyRareStock": "日常菜场稀有食材每种库存（个）",
     "tuning.market.dailyLevelWeights": "日常菜场按食材等级抽菜的权重（[等级, 权重] 列表）",

@@ -56,6 +56,7 @@ const labels: Messages['labels'] = {
     cte: 'Pièces en EXP',
   },
   taste: ['', 'Acide', 'Sucré', 'Amer', 'Piquant', 'Salé', 'Umami'],
+  streetFocus: { coin: 'Rue des pièces', balanced: 'Rue équilibrée', exp: 'Rue de l’EXP' },
   equipPart: ['', 'Spatule', 'Couteau', 'Wok', 'Bouteille', 'Toque'],
   attr: {
     cook: 'Cuisine',

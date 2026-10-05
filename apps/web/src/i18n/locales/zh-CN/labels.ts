@@ -43,6 +43,8 @@ export default {
     cte: '银币转经验',
   },
   taste: ['', '酸', '甘', '苦', '辛', '咸', '鲜'],
+  /** 街道类型（问题记录 378 方案 C） */
+  streetFocus: { coin: '银币街', balanced: '均衡街', exp: '经验街' },
   /** 厨具部位（下标 = part） */
   equipPart: ['', '铲', '刀', '锅', '瓶', '帽'],
   attr: {

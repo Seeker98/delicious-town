@@ -2,151 +2,181 @@
   "0": {
     "name": "Rue des débutants",
     "desc": "Fréquentation +35 %, pièces par table +1, chance +36, clients difficiles -35 %",
+    "theme": "Petits restos familiaux et habitués du quartier : des clients peu exigeants, idéal pour démarrer",
     "cookName": "Cuisine familiale"
   },
   "1": {
     "name": "Rue du Hunan",
     "desc": "Pièces finales +10 %, EXP finale +40 %, chance +10",
+    "theme": "Plats du Hunan épicés qui donnent envie de revenir : pièces et EXP réguliers",
     "cookName": "Cuisine du Hunan"
   },
   "2": {
     "name": "Rue du Guangdong",
     "desc": "Pièces finales -25 %, EXP finale -30 %, fréquentation +10 %, clients difficiles +8 %, huile par table -2",
+    "theme": "Maisons de dim sum animées et clients exigeants : beaucoup de clients difficiles qui paient bien, et on économise l’huile",
     "cookName": "Cuisine cantonaise"
   },
   "3": {
     "name": "Rue du Sichuan",
     "desc": "EXP et pièces finales -10 %, EXP par table +4, huile par table +2",
+    "theme": "Cuisine du Sichuan relevée, tout dans la maîtrise du feu, qui consomme de l’huile : beaucoup d’EXP pour progresser, pièces moyennes",
     "cookName": "Cuisine du Sichuan"
   },
   "4": {
     "name": "Rue du Fujian",
     "desc": "EXP finale -20 %, pièces par table +2, EXP par table +3",
+    "theme": "Soupes et fruits de mer du Fujian : plus de pièces et d’EXP par table, des revenus équilibrés",
     "cookName": "Cuisine du Fujian"
   },
   "5": {
     "name": "Rue de l'Anhui",
     "desc": "Pièces finales +25 %, pièces par table +3, consommation d'huile -15 %",
+    "theme": "Cuisine de l’Anhui riche et mijotée, marchands généreux : chaque table paie bien, et le mijotage économise l’huile",
     "cookName": "Cuisine de l'Anhui"
   },
   "6": {
     "name": "Rue du Shandong",
     "desc": "Pièces finales +30 %, EXP finale +40 %, EXP par table +6, consommation d'huile -10 %, fréquentation -20 %",
+    "theme": "Grands plats de banquet du Shandong : moins de clients, mais beaucoup d’EXP par table, et on économise l’huile",
     "cookName": "Cuisine du Shandong"
   },
   "7": {
     "name": "Rue du Zhejiang",
     "desc": "Pièces finales -5 %, EXP finale -10 %, clients difficiles +10 %, huile par table -3",
+    "theme": "Cuisine du Zhejiang légère et raffinée : des clients difficiles qui paient bien, et la vapeur économise l’huile",
     "cookName": "Cuisine du Zhejiang"
   },
   "8": {
     "name": "Rue du Jiangsu",
     "desc": "Pièces finales -20 %, EXP finale +30 %, clients difficiles +5 %, consommation d'huile -50 %",
+    "theme": "Découpe fine et cuisson lente du Jiangsu : très peu d’huile, bonne EXP, un peu moins de pièces",
     "cookName": "Cuisine du Jiangsu"
   },
   "9": {
     "name": "Rue Fusion I",
     "desc": "Pièces finales -30 %, EXP finale -15 %, clients difficiles +25 %",
+    "theme": "Une rue gourmande où se retrouvent les restaurants de partout : beaucoup de plats, une clientèle variée, beaucoup de clients difficiles qui paient bien",
     "cookName": "Cuisine de la rue Fusion I"
   },
   "10": {
     "name": "Rue Fusion II",
     "desc": "Pièces finales -30 %, EXP finale -15 %, clients difficiles +25 %",
+    "theme": "Une rue de gargotes qui mélange cuisines du nord et du sud : le plus de plats, et beaucoup de clients difficiles qui paient bien",
     "cookName": "Cuisine de la rue Fusion II"
   },
   "11": {
     "name": "Rue du Jiangxi",
     "desc": "Pièces finales -20 %, EXP finale +10 %, fréquentation +15 %, pièces par table +3",
+    "theme": "Cuisine du Jiangxi relevée et bon marché, beaucoup de monde : forte fréquentation et plus de pièces par table",
     "cookName": "Cuisine du Jiangxi"
   },
   "12": {
     "name": "Rue du Hubei",
     "desc": "Pièces finales +15 %, EXP finale +40 %, chance +10",
+    "theme": "Cuisine du Hubei, pays du riz et du poisson : beaucoup d’EXP et de la chance",
     "cookName": "Cuisine du Hubei"
   },
   "13": {
     "name": "Rue de Pékin",
     "desc": "Pièces finales +25 %, EXP finale -5 %, EXP par table +2, consommation d'huile +30 %",
+    "theme": "Canard laqué réputé et clients prêts à dépenser : beaucoup de pièces, mais les fours consomment de l’huile",
     "cookName": "Cuisine de Pékin"
   },
   "14": {
     "name": "Rue du Japon",
     "desc": "Pièces finales +15 %, EXP finale +10 %, clients difficiles +12 %, pièces des clients difficiles satisfaits +15 %, fréquentation -8 %",
+    "theme": "Cuisine raffinée, tout dans les produits et la découpe : beaucoup de clients difficiles qui paient généreusement, mais l’exigence fait venir moins de monde",
     "cookName": "Cuisine japonaise"
   },
   "15": {
     "name": "Rue d'Italie",
     "desc": "Pièces finales -15 %, fréquentation +15 %, pièces par table +1, pièces des commandes à emporter +30 %, consommation d'huile +15 %",
+    "theme": "Pizzas et pâtes très demandées, beaucoup de commandes à emporter, et les fours consomment de l’huile",
     "cookName": "Cuisine italienne"
   },
   "16": {
     "name": "Rue de France",
     "desc": "Pièces finales +45 %, EXP finale +15 %, clients difficiles +8 %, fréquentation -12 %",
+    "theme": "Gastronomie haut de gamme : grosses additions, mais moins de clients, et plus difficiles",
     "cookName": "Cuisine française"
   },
   "17": {
     "name": "Rue d'Espagne",
     "desc": "EXP finale +15 %, fréquentation +8 %, pièces des clients qui mangent un plat signature +20 %, chance +16, huile par table +1",
+    "theme": "Tapas et culture du partage : les plats signature se vendent bien, et les soirées tardives consomment un peu plus d’huile",
     "cookName": "Cuisine espagnole"
   },
   "18": {
     "name": "Rue du Mexique",
     "desc": "Pièces finales -30 %, EXP finale -20 %, fréquentation +20 %, EXP par table +2, huile par table +2",
+    "theme": "Une ambiance de fête : beaucoup de monde et beaucoup d’EXP, mais fritures et grillades consomment de l’huile",
     "cookName": "Cuisine mexicaine"
   },
   "19": {
     "name": "Rue de Thaïlande",
     "desc": "Pièces finales -10 %, EXP finale +5 %, fréquentation +12 %, huile par table -2, EXP des commandes à emporter +30 %",
+    "theme": "Cuisine de rue : beaucoup de clients, des sautés rapides qui économisent l’huile, la vente à emporter cartonne, mais les prix sont bas",
     "cookName": "Cuisine thaïlandaise"
   },
   "20": {
     "name": "Rue de l'Inde",
     "desc": "Pièces finales +25 %, EXP finale -5 %, portions de plats signature +5 %, EXP par table +3, chance +10, clients difficiles -8 %",
+    "theme": "Grandes marmites épicées : plus de plats signature, beaucoup d’EXP par table, et des clients peu exigeants",
     "cookName": "Cuisine indienne"
   },
   "21": {
     "name": "Rue de Turquie",
     "desc": "Pièces finales +20 %, EXP finale +15 %, pièces par table +3, EXP par table +1, chance +20, consommation d'huile +20 %",
+    "theme": "Grillades au charbon et accueil chaleureux : plus de pièces par table, mais le charbon consomme de l’huile",
     "cookName": "Cuisine turque"
   },
   "22": {
     "name": "Rue du Vietnam",
     "desc": "Pièces finales -10 %, EXP finale +5 %, consommation d'huile -30 %, EXP par table +3",
+    "theme": "Nouilles et bouillons légers : très peu d’huile, mais des prix bas",
     "cookName": "Cuisine vietnamienne"
   },
   "23": {
     "name": "Rue d'Amérique",
     "desc": "Pièces finales +5 %, EXP finale +25 %, pièces et EXP des commandes à emporter +20 %, fréquentation +25 %, clients difficiles -10 %, consommation d'huile +20 %",
+    "theme": "Fast-food en grandes portions : énormément de monde, la vente à emporter marche fort, des clients peu exigeants, mais les friteuses consomment de l’huile",
     "cookName": "Cuisine américaine"
   },
   "24": {
     "name": "Rue du Maroc",
     "desc": "Pièces finales +15 %, EXP finale +30 %, chance de trouver des ingrédients mystères en exploration +2 %, chance +25",
+    "theme": "Marchés d’épices et caravanes du désert : de la chance, et l’exploration trouve plus facilement des ingrédients mystère",
     "cookName": "Cuisine marocaine"
   },
   "25": {
     "name": "Rue d'Argentine",
     "desc": "Pièces finales +5 %, EXP finale +30 %, pièces par table +4, fréquentation +5 %, consommation d'huile +25 %",
+    "theme": "Barbecue de la pampa : beaucoup de pièces par table, mais griller toute la nuit consomme de l’huile",
     "cookName": "Cuisine argentine"
   },
   "26": {
     "name": "Rue de Grèce",
     "desc": "Pièces finales +10 %, EXP finale +85 %, consommation d'huile -10 %, clients difficiles -5 %",
+    "theme": "Huile d’olive méditerranéenne et patrie des philosophes : beaucoup d’EXP, on économise l’huile, des clients peu exigeants",
     "cookName": "Cuisine grecque"
   },
   "27": {
     "name": "Rue du Pérou",
     "desc": "Pièces finales +5 %, EXP finale -20 %, chance de meilleure qualité en cuisinant un plat signature +8 %, clients difficiles +8 %",
+    "theme": "Capitale de la gastronomie qui tient à la fraîcheur : les plats signature atteignent plus facilement une qualité élevée, et les clients sont difficiles",
     "cookName": "Cuisine péruvienne"
   },
   "28": {
     "name": "Rue de Russie",
     "desc": "Pièces finales -5 %, EXP finale -20 %, EXP par table +5, fréquentation -10 %, chaque cafard qui apparaît a 20 % de risque d'être tué",
+    "theme": "Une terre glacée : les ragoûts donnent beaucoup d’EXP et les cafards survivent mal, mais le froid fait fuir les clients",
     "cookName": "Cuisine russe"
   },
   "29": {
     "name": "Rue Chop Suey",
     "desc": "Pièces finales +20 %, EXP finale +55 %, pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %",
+    "theme": "La cuisine chinoise à emporter d’outre-mer : de gros revenus à emporter, beaucoup de clients, peu exigeants",
     "cookName": "Cuisine chinoise d'outre-mer"
   }
 }

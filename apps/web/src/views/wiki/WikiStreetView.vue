@@ -5,6 +5,7 @@ import type { OpenCookbookBrief, OpenStreetDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
 import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
+import { STREET_FOCUS } from '../../utils/labels';
 import { listBack, useWikiData } from './wiki';
 
 /** 街道详情（问题记录 142）：菜系、加成、街道勋章、这条街的菜谱（一次 50 道） */
@@ -58,6 +59,15 @@ const list = computed(() => cookbooks.value.filter((c) => c.streetId === id.valu
         <dd>{{ s.cookName }}</dd>
         <dt>{{ w.fields.bonus }}</dt>
         <dd>{{ s.desc }}</dd>
+        <!-- 街道类型和为什么是这个加成（问题记录 380、378 方案 C） -->
+        <template v-if="s.focus">
+          <dt>{{ w.fields.focus }}</dt>
+          <dd data-testid="wiki-street-focus">{{ STREET_FOCUS[s.focus] }}</dd>
+        </template>
+        <template v-if="s.theme">
+          <dt>{{ w.fields.theme }}</dt>
+          <dd data-testid="wiki-street-theme">{{ s.theme }}</dd>
+        </template>
         <template v-if="s.medal">
           <dt>{{ w.sections.medal }}</dt>
           <dd>

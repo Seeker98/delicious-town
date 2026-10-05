@@ -159,6 +159,8 @@ export const tuningSchema = z.object({
     dailyKinds: int,
     dailyKindsLastHour: int,
     dailyKindsLast: int,
+    // 日常货架每轮另加几种新手街缺的食材（问题记录 378 N3），0 = 不加
+    dailyNewbieKinds: int.min(0),
     dailyStock: int,
     dailyRareStock: int,
     dailyLevelWeights: levelWeights,

@@ -74,7 +74,9 @@ describe('菜场手动进货（设计文档 §2.5）', () => {
     await m().manualStock(a);
     await m().manualStock(a);
     const all = await t.db.selectFrom('market_item').selectAll().where('shard_id', '=', a.shardId).execute();
-    expect(all.filter((x) => x.owner_rest_id === null)).toHaveLength(5);
+    expect(all.filter((x) => x.owner_rest_id === null)).toHaveLength(
+      config.tuning.market.dailyKinds + config.tuning.market.dailyNewbieKinds,
+    );
     expect(all.filter((x) => x.owner_rest_id === a.restaurantId)).toHaveLength(4);
     const later = gameTime(DAY, 12);
     t.clock.set(later);

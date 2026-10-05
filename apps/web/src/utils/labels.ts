@@ -27,6 +27,8 @@ export const GRADE_NAMES = localized<readonly string[]>((l) => l.grade);
 export const RATE_LABELS = localized<Record<string, { label: string; percent: boolean }>>((l) => l.rate);
 export const PART_LABELS = localized<Record<string, string>>((l) => l.part);
 export const TASTE_NAMES = localized<readonly string[]>((l) => l.taste);
+/** 街道类型（问题记录 378 方案 C） */
+export const STREET_FOCUS = localized<Record<string, string>>((l) => l.streetFocus);
 
 export function pct(x: number): string {
   const v = Math.round(x * 1000) / 10;

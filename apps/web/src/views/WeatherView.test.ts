@@ -47,7 +47,9 @@ describe('WeatherView：天气名、说明、蟹老板的街按目录显示（�
       foods: [],
       devices: [],
       weather: [{ id: 1, name: 'Sunny', note: 'Business: occupancy +3%' }],
-      streets: [{ id: 2, name: 'Guangdong Street', cookName: 'Cantonese cuisine', desc: '' }],
+      streets: [
+        { id: 2, name: 'Guangdong Street', cookName: 'Cantonese cuisine', desc: '', theme: '', focus: null },
+      ],
     });
     const text = (await mountView()).text();
     expect(text).toContain('Sunny');

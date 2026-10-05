@@ -32,6 +32,8 @@ const streets = {
       name: '湖南街',
       cookName: '湘菜',
       desc: '湘菜售价 +5%',
+      theme: '湘菜香辣下饭',
+      focus: 'balanced' as const,
       medal: { id: 140, name: '湖南街勋章', desc: '湖南街的勋章' },
       cookbookCount: 2,
     },
@@ -343,6 +345,9 @@ describe('游戏资料详情（问题记录 142）', () => {
     const w = await mountAt(WikiStreetView, '/wiki/streets/:id', '/wiki/streets/0');
     expect(w.text()).toContain('湘菜');
     expect(w.text()).toContain('湘菜售价 +5%');
+    // 街道类型和为什么是这个加成（问题记录 380、378 方案 C）
+    expect(w.get('[data-testid="wiki-street-focus"]').text()).toBe('均衡街');
+    expect(w.get('[data-testid="wiki-street-theme"]').text()).toBe('湘菜香辣下饭');
     expect(w.get('[data-testid="wiki-medal"]').attributes('href')).toBe('/wiki/goods/140');
     expect(hrefs(w, '[data-testid="wiki-street-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);
   });

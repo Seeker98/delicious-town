@@ -191,6 +191,8 @@ export function createWorldService(d: GameDeps) {
         name: s.name,
         cookName: s.cookName,
         desc: s.desc,
+        theme: s.theme,
+        focus: s.focus,
       })),
       weather: d.config.bundle.weather.map((w) => ({ id: w.id, name: w.name, note: w.note })),
       devices: d.config.bundle.devices.map((x) => ({
@@ -286,7 +288,7 @@ export function localizeCatalog(base: CatalogDto, t: I18nTable | undefined, lang
     goods: pick(base.goods, t.goods, ['name', 'desc']),
     foods: pick(base.foods, t.foods, ['name']),
     weather: pick(base.weather, t.weather, ['name', 'note']),
-    streets: pick(base.streets, t.streets, ['name', 'cookName', 'desc']),
+    streets: pick(base.streets, t.streets, ['name', 'cookName', 'desc', 'theme']),
     devices: pick(base.devices, t.devices, ['name']),
     ...(suits ? { suits } : {}),
     ...(looks ? { looks } : {}),

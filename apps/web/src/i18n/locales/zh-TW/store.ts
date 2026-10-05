@@ -2,7 +2,7 @@
 /** 倉庫和商店（問題記錄 272） */
 export default {
   tabs: { items: '倉庫', souvenirs: '紀念品', records: '道具流水' },
-  /** 倉庫分組（道具型別） */
+  /** 倉庫分組（道具類型） */
   types: { '0': '消耗品', '1': '道具', '2': '禮包', '3': '設施', '9': '勳章' } as Record<string, string>,
   ranges: {
     '1h': '1 小時',

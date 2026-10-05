@@ -301,6 +301,8 @@ export function createOpenData(config: GameConfig) {
             name: e?.name ?? s.name,
             cookName: e?.cookName ?? s.cookName,
             desc: e?.desc ?? s.desc,
+            theme: e?.theme ?? s.theme,
+            focus: s.focus,
             medal: medal && {
               id: medal.id,
               name: goodsName(lang, medal),
