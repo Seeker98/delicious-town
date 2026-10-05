@@ -40,7 +40,7 @@ describe('守塔人换菜（设计文档裁定 2）', () => {
     const ctx = await floor4Ready();
     expect((await t.game.tower.overview(ctx)).floors[3]!.mc).toBeNull();
     const r = await t.game.tower.challenge(ctx, { floor: 4, test: true });
-    expect(r.data.them.scores[4]).toBe(24.9);
+    expect(r.data.them.scores[4]).toBe(37.1);
   });
 
   it('4~10 层各换一道：等级在 [⌊(层−2)/2⌋, +3]，每份价值在营养值的 1~1.3 倍；再跑覆盖', async () => {
@@ -75,13 +75,13 @@ describe('守塔人换菜（设计文档裁定 2）', () => {
     expect(again.map((r) => r.day)).toEqual(Array(7).fill('2026-10-01'));
   });
 
-  it('"养"加上守塔人当天的菜每份价值 × 0.6', async () => {
+  it('"养"加上守塔人当天的菜每份价值 × 0.3（问题记录 396）', async () => {
     const ctx = await floor4Ready();
     await t.db
       .insertInto('tower_watchman_mc')
       .values({ shard_id: ctx.shardId, floor: 4, mc_id: 2, price: 100, day: DAY })
       .execute();
     const r = await t.game.tower.challenge(ctx, { floor: 4, test: true });
-    expect(r.data.them.scores[4]).toBe(84.9);
+    expect(r.data.them.scores[4]).toBe(67.1);
   });
 });

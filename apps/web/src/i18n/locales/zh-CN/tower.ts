@@ -16,7 +16,31 @@ export default {
     renown: (n: number) => `，声望 ${n > 0 ? '+' : ''}${n}`,
     rank: (n: number) => `，你现在是第 ${n} 名`,
     power: (name: string, power: number) => `${name}（厨力 ${power}）`,
-    sum: '总和',
+    /** 比分（问题记录 396）：我的票 : 对方的票 */
+    votes: (me: number, them: number) => ` ${me}:${them}`,
+    judgesTitle: '评委打分',
+    judges: {
+      yardSis: '菜园姐',
+      xiaoC: '小c',
+      wenjie: '雯姐',
+      bro13: '13 哥',
+      bigEater: '大胃哥',
+      fanDao: '饭老道',
+      gary: '盖乐瑞',
+      oldPoor: '老穷头',
+      carmen: '卡门',
+      xiaoKai: '小凯',
+    },
+    /** 评委名字和关注的项目 */
+    judgeFocus: (name: string, items: string) => `${name}（${items}）`,
+    itemSep: '、',
+    verdict: { me: '投给你', them: '投给对方', tie: '平' },
+    rulesTitle: '赛厨规则',
+    rules: [
+      '双方按属性算出色、香、味、形、养五项：色看厨艺、刀工，香看厨艺、调味，味看火候、调味，形看火候、刀工，养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好，每项多加的随机分越多。',
+      '每局从 10 位评委里随机请 5 位，依次比双方在他关注的几项上的总分，高的一方得一票，先拿到 3 票的赢；票数相同时比上场评委打的总分。',
+    ],
+    rulesJudges: '评委和他们关注的项目：',
     awards: (text: string) => `得到 ${text}`,
   },
   floor: {

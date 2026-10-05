@@ -1,4 +1,12 @@
-import { luckRate, type Rng } from '@dt/shared';
+import type { Tuning } from '@dt/config';
+import {
+  DUEL_JUDGE_ITEMS,
+  DUEL_JUDGES,
+  luckRate,
+  type DuelJudgeDto,
+  type DuelJudgeId,
+  type Rng,
+} from '@dt/shared';
 
 export interface DuelAttrs {
   cook: number;
@@ -27,45 +35,83 @@ export function duelPower(a: DuelAttrs): number {
   return a.cook + a.cutting + a.fire + a.season + a.creatives + Math.floor(a.luck / 2);
 }
 
+export type DuelTuning = Tuning['tower']['duel'];
+
 /**
- * 五项评分（规格书 11.1，原版 getCookAttr）。每项：基础 + 波动，波动 = (创意×0.4 + 1) × (正 ? 1.1 : −0.9) × rand；
- * 正 = rand < 0.5，否则再抽一个 rand < 幸运率（短路）。每项 < 0 记 0，保留 1 位小数
+ * 五项评分（问题记录 396）。每项 = 属性 × 权重之和 + 特色菜每份价值 × mc + 波动，
+ * 波动 = 创意 × wave × max(0, 1 + 幸运率) × rand，每项按色香味形养的顺序各抽一个随机数。每项 < 0 记 0，保留 1 位小数
  */
-export function duelScores(s: DuelSide, rng: Rng): Scores {
+export function duelScores(s: DuelSide, t: DuelTuning, rng: Rng): Scores {
   const a = s.attrs;
-  const rate = luckRate(a.luck);
-  const amp = a.creatives * 0.4 + 1;
-  const wave = () => {
-    const up = rng.next() < 0.5 || rng.next() < rate;
-    return amp * (up ? 1.1 : -0.9) * rng.next();
-  };
-  const bases = [
-    a.cook * 0.7 + a.cutting * 0.3,
-    a.cook * 0.7 + a.season * 0.5,
-    a.fire * 0.5 + a.season * 0.5,
-    a.fire * 0.4 + a.cutting * 0.7,
-    a.fire * 0.2 + a.season * 0.1 + a.cutting * 0.1 + s.mcPrice * 0.6,
-  ];
-  return bases.map((b) => Math.max(0, round1(b + wave())));
+  const amp = a.creatives * t.wave * Math.max(0, 1 + luckRate(a.luck));
+  return t.weights.map((w) => {
+    const base =
+      a.cook * w.cook + a.cutting * w.cutting + a.fire * w.fire + a.season * w.season + s.mcPrice * w.mc;
+    return Math.max(0, round1(base + amp * rng.next()));
+  });
 }
 
 export function sumScores(s: Scores): number {
   return round1(s.reduce((x, y) => x + y, 0));
 }
 
-/** 赢 ≥ 4 项，或赢 3 项且五项总和 ≥ 对方（平项不算赢） */
-export function duelWin(me: Scores, them: Scores): boolean {
-  const wins = me.filter((v, i) => v > (them[i] ?? 0)).length;
-  return wins >= 4 || (wins === 3 && sumScores(me) >= sumScores(them));
+/** 从 10 位评委里不重复地抽 n 位（部分洗牌，抽 n 个随机数），按上场顺序 */
+export function pickJudges(n: number, rng: Rng): DuelJudgeId[] {
+  const ids: DuelJudgeId[] = DUEL_JUDGES.map((j) => j.id);
+  const k = Math.min(n, ids.length);
+  for (let i = 0; i < k; i++) {
+    const j = i + rng.int(ids.length - i);
+    [ids[i], ids[j]] = [ids[j]!, ids[i]!];
+  }
+  return ids.slice(0, k);
 }
 
-/** 一局对决：随机数顺序是挑战方五项、再被挑战方五项 */
+export function sumJudged(judges: readonly DuelJudgeDto[], side: 'me' | 'them'): number {
+  return round1(judges.reduce((x, j) => x + j[side], 0));
+}
+
+/**
+ * 评委依次打分：比双方在关注项目上的和，高的一方得一票，相同谁都不得；一方先拿到 need 票就结束。
+ * 赢 = 票多；票数相同时比上场评委的总分，总分也相同算挑战方赢（沿用原来的“总和 ≥ 对方”）
+ */
+export function judgeDuel(
+  me: Scores,
+  them: Scores,
+  ids: readonly DuelJudgeId[],
+  need: number,
+): { win: boolean; judges: DuelJudgeDto[]; votes: [number, number] } {
+  const judges: DuelJudgeDto[] = [];
+  const votes: [number, number] = [0, 0];
+  for (const id of ids) {
+    const items = DUEL_JUDGE_ITEMS.get(id)!;
+    const sum = (s: Scores) => round1(items.reduce((x, i) => x + (s[i] ?? 0), 0));
+    const j = { id, me: sum(me), them: sum(them) };
+    judges.push(j);
+    if (j.me > j.them) votes[0]++;
+    else if (j.them > j.me) votes[1]++;
+    if (votes[0] >= need || votes[1] >= need) break;
+  }
+  const win =
+    votes[0] !== votes[1] ? votes[0] > votes[1] : sumJudged(judges, 'me') >= sumJudged(judges, 'them');
+  return { win, judges, votes };
+}
+
+/** 一局对决：随机数顺序是挑战方五项、被挑战方五项、再抽评委；过半票数赢 */
 export function duel(
   me: DuelSide,
   them: DuelSide,
+  t: DuelTuning,
   rng: Rng,
-): { win: boolean; me: { scores: Scores; sum: number }; them: { scores: Scores; sum: number } } {
-  const a = duelScores(me, rng);
-  const b = duelScores(them, rng);
-  return { win: duelWin(a, b), me: { scores: a, sum: sumScores(a) }, them: { scores: b, sum: sumScores(b) } };
+): {
+  win: boolean;
+  me: { scores: Scores; sum: number };
+  them: { scores: Scores; sum: number };
+  judges: DuelJudgeDto[];
+  votes: [number, number];
+} {
+  const a = duelScores(me, t, rng);
+  const b = duelScores(them, t, rng);
+  const ids = pickJudges(t.judges, rng);
+  const r = judgeDuel(a, b, ids, Math.floor(ids.length / 2) + 1);
+  return { ...r, me: { scores: a, sum: sumScores(a) }, them: { scores: b, sum: sumScores(b) } };
 }

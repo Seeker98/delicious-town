@@ -121,7 +121,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     .executeTakeFirst();
   const me = await playerSide(o, 'attack');
   const them = watchmanSide(f, mc?.price ?? 0);
-  const r = duel(me, them, o.rng);
+  const r = duel(me, them, t.duel, o.rng);
   let renown = 0;
   const awards: RandomAward[] = [];
   if (!test) {
@@ -141,5 +141,15 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     await incrementDaily(o.tx, o.rest.id, KEY.floor(floorNo), 1, day);
     await emitAction(o, 'tower.challenge');
   }
-  return { win: r.win, me: sideDto(me, r.me), them: sideDto(them, r.them), renown, awards, test, rank: null };
+  return {
+    win: r.win,
+    me: sideDto(me, r.me),
+    them: sideDto(them, r.them),
+    judges: r.judges,
+    votes: r.votes,
+    renown,
+    awards,
+    test,
+    rank: null,
+  };
 }

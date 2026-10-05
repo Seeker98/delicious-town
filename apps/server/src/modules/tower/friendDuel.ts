@@ -43,7 +43,7 @@ export async function friendDuel(p: PairOp): Promise<DuelResultDto> {
   spendStrength(o, t.duelStrength);
   const me = await playerSide(o, 'attack');
   const them = await playerSide(p.them, 'defend');
-  const r = duel(me, them, o.rng);
+  const r = duel(me, them, t.duel, o.rng);
   const before = await getDaily(o.tx, o.rest.id, KEY.spar, day);
   const renown = duelRenown(duelTier(duelPower(me.attrs), duelPower(them.attrs), t), r.win, before, t);
   gainRenown(o, renown);
@@ -55,6 +55,8 @@ export async function friendDuel(p: PairOp): Promise<DuelResultDto> {
     win: r.win,
     me: sideDto(me, r.me),
     them: sideDto(them, r.them),
+    judges: r.judges,
+    votes: r.votes,
     renown,
     awards,
     test: false,

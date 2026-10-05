@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    duel1006:
+      'Los duelos de cocina (Torre de chefs, Clasificación de chefs y duelos con amigos) ahora los deciden jueces: en cada duelo se eligen al azar 5 de 10 jueces, cada uno se fija en algunas de las cinco puntuaciones y gana el primero que llega a 3 votos. Tener mejores atributos es ahora mucho más fiable; la Creatividad y la Suerte dan un extra aleatorio. Mira «Reglas del duelo de cocina» en la página de la Torre de chefs',
     barPrize1006:
       'Ganar en el bar a Piedra, papel o tijera, Adivina el vaso, Cóctel Memoria y Dardos ahora da casi siempre ingredientes en vez de pocas monedas y EXP. Cuanto más difícil la victoria (racha más larga, nivel más avanzado, dardos perfectos), de más nivel es el ingrediente y más probable que sea raro',
     align1006:

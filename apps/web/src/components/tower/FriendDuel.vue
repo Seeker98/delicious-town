@@ -7,6 +7,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
 import DuelResult from './DuelResult.vue';
+import DuelRules from './DuelRules.vue';
 
 const props = defineProps<{ restId: number }>();
 const toast = useToastStore();
@@ -62,5 +63,7 @@ onMounted(load);
     </button>
     <span v-if="block" class="small text-danger ms-1" data-testid="duel-block">{{ block }}</span>
     <DuelResult v-if="last" :result="last" />
+    <!-- 切磋过一次再给规则（问题记录 396），平时只是好友店里的一个按钮 -->
+    <DuelRules v-if="last" class="mt-1" />
   </div>
 </template>

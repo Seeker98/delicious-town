@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    duel1006:
+      'Les duels culinaires (Tour des chefs, Classement des chefs et duels entre amis) sont maintenant départagés par des juges : à chaque duel, 5 des 10 juges sont tirés au sort, chacun regarde quelques-unes des cinq notes, et le premier camp à 3 voix gagne. De meilleurs attributs sont maintenant bien plus fiables ; la Créativité et la Chance ajoutent un bonus aléatoire. Voir « Règles du duel culinaire » sur la page de la Tour des chefs',
     barPrize1006:
       'Gagner au bar au Chifoumi, aux Gobelets, au Cocktail Mémoire et aux Fléchettes rapporte maintenant surtout des ingrédients au lieu de petites sommes de pièces et d’EXP. Plus la victoire est difficile (série plus longue, niveau plus avancé, fléchettes parfaites), plus l’ingrédient est de haut niveau et plus il a de chances d’être rare',
     align1006:
