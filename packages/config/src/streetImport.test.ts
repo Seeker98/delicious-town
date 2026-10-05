@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addMedalRows, assignSlots, importConflicts, pruneNames } from './streetImport';
+import { addMedalRows, assignIds, assignSlots, importConflicts, pruneNames } from './streetImport';
 import { gid } from './testItems';
 
 describe('新街道导入的辅助（backlog 284）', () => {
@@ -63,5 +63,32 @@ describe('新菜谱分配存储位（重新编号 PR 3）', () => {
   });
   it('没有新菜时 next 不变', () => {
     expect(assignSlots([{ id: 10, slot: 5 }], [10], 7)).toEqual({ slots: new Map([[10, 5]]), next: 7 });
+  });
+});
+
+describe('按旧编号分配新编号（重新编号 PR 4）', () => {
+  it('主表里有这个旧编号的沿用；新的接在同一段已用的最大编号后面，按出现顺序', () => {
+    const known = new Map([[501, 7003]]);
+    const m = assignIds(
+      known,
+      [
+        { legacyId: 501, base: 7000 },
+        { legacyId: 640, base: 7000 },
+        { legacyId: 641, base: 6000 },
+        { legacyId: 642, base: 7000 },
+      ],
+      [7001, 7002, 7003, 6001],
+    );
+    expect([...m]).toEqual([
+      [501, 7003],
+      [640, 7004],
+      [641, 6002],
+      [642, 7005],
+    ]);
+  });
+
+  it('段里还没有编号时从 base + 1 开始；段满了报错', () => {
+    expect(assignIds(new Map(), [{ legacyId: 1, base: 129000 }], []).get(1)).toBe(129001);
+    expect(() => assignIds(new Map(), [{ legacyId: 1, base: 9000 }], [9999], 1000)).toThrow('9000');
   });
 });

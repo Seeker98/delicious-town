@@ -17,7 +17,7 @@
 ## 道具、食材、菜谱的定义（重新编号 PR 1）
 
 - 全部在 `packages/config/data/master/`：`goods.json`、`foods.json`、`cookbooks.json`，每条一行，`src` 写来历。
-- 原版数据集（`../analysis/dataset`）不再同步这三类；原版获取途径表 `dataset/goods_sources.json` 仍同步，按原版编号。
+- 原版数据集（`../analysis/dataset`）不再同步这三类，也不再同步带编号的特色菜用料、老虎机奖品、菜场竞猜食材（原版是旧编号）；原版获取途径表 `dataset/goods_sources.json` 仍同步，按原版（旧）编号，工具按 `legacyId` 对上。
 - 改定义直接改主表；新街道的条目由导入脚本整块替换，不要手改。
 - 一番赏主题、基金勋章、新手大礼包、厨具套装和强化表仍在 `data/game/` 各自的文件里，只引用主表的编号。
 - 菜谱的 `slot` 是学会记录（`restaurant_cookbooks.levels`，每道菜一个字节）里的存储位（重新编号 PR 3）：只增不复用，下一个可用的写在 `data/game/cookbook_slots.json`。新街道导入时已有的菜保留原存储位、新菜从那里往后分；手加菜谱也要这样分，并把 `next` 加上去。删菜时存储位空着，不要给别的菜用（老店那一位上可能还有品级）。

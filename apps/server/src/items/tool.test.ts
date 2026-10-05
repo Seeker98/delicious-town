@@ -66,7 +66,20 @@ describe('道具整理工具（问题记录 367）', () => {
         { id: 1, flag: 1, type: 2, t: 1, sl: 1 },
       ],
       { coin: '商店', t: '任务', sl: '餐厅升星' },
+      (old) => (old === 1 ? 10001 : undefined),
     );
-    expect(m.get(1)).toEqual(['商店', '任务', '餐厅升星']);
+    expect(m.get(10001)).toEqual(['商店', '任务', '餐厅升星']);
+  });
+
+  it('原版获取途径按旧编号对上新编号；对不上的（已删的道具）丢掉（重新编号 PR 4）', () => {
+    const m = originalSources(
+      [
+        { id: 1, t: 1 },
+        { id: 999, t: 1 },
+      ],
+      { t: '任务' },
+      (old) => (old === 1 ? 10001 : undefined),
+    );
+    expect([...m]).toEqual([[10001, ['任务']]]);
   });
 });

@@ -10,12 +10,19 @@ import { createItemsTool, originalSources, saveBody } from './tool';
  */
 const dir = defaultDataDir();
 const json = <T>(name: string) => JSON.parse(readFileSync(join(dir, name), 'utf8')) as T;
+/** 原版获取途径表按旧编号：主表 legacyId → 新编号（重新编号 PR 4） */
+const legacy = new Map(
+  json<{ data: Array<{ id: number; legacyId?: number }> }>('master/goods.json')
+    .data.filter((g) => g.legacyId !== undefined)
+    .map((g) => [g.legacyId!, g.id]),
+);
 const tool = createItemsTool({
   readSource: () => readSourceDir(dir),
   writeRetired: (text) => writeFileSync(join(dir, 'game', 'retired.json'), text),
   original: originalSources(
     json<{ data: Array<Record<string, number>> }>('dataset/goods_sources.json').data,
     json<Record<string, string>>('dataset/goods_source_legend.json'),
+    (old) => legacy.get(old),
   ),
 });
 const page = readFileSync(new URL('./page.html', import.meta.url), 'utf8');

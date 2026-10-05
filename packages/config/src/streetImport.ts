@@ -67,3 +67,29 @@ export function assignSlots(
   for (const id of ids) slots.set(id, had.get(id) ?? n++);
   return { slots, next: n };
 }
+/**
+ * 按旧编号（外部数据里的编号）分配新编号（重新编号，设计 §3）：主表里已有这个 legacyId 的沿用；
+ * 新出现的接在同一段（base + 1 ~ base + size - 1）已用的最大编号后面，按 items 的顺序
+ */
+export function assignIds(
+  known: ReadonlyMap<number, number>,
+  items: ReadonlyArray<{ legacyId: number; base: number }>,
+  taken: Iterable<number>,
+  size = 1000,
+): Map<number, number> {
+  const used = new Set(taken);
+  const out = new Map<number, number>();
+  for (const { legacyId, base } of items) {
+    const had = known.get(legacyId);
+    if (had !== undefined) {
+      out.set(legacyId, had);
+      continue;
+    }
+    let max = base;
+    for (const id of used) if (id > base && id < base + size && id > max) max = id;
+    if (max + 1 >= base + size) throw new Error(`no free id after ${base}`);
+    used.add(max + 1);
+    out.set(legacyId, max + 1);
+  }
+  return out;
+}
