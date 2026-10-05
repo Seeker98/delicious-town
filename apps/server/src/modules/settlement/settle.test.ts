@@ -13,8 +13,13 @@ const street1 = config.cookbookIndex.idsByStreet.get(1)![0]!;
 /** 规则测试按原作数值断言，经验倍率、菜价倍率固定为 1 */
 const withMultiplier = (m: number) => ({
   ...config.tuning,
-  // 菜价倍率也按原版 1（240-1 的效果由“菜价倍率”那条单独测）
-  settlement: { ...config.tuning.settlement, expMultiplier: m, dishCoinRate: 1 },
+  // 菜价倍率也按原版 1（240-1 的效果由“菜价倍率”那条单独测）；低等级经验加成关掉（问题记录 378，rates.test 单独测）
+  settlement: {
+    ...config.tuning.settlement,
+    expMultiplier: m,
+    dishCoinRate: 1,
+    newbieExp: { ...config.tuning.settlement.newbieExp, rate: 0 },
+  },
 });
 const rules = withMultiplier(1);
 const settle = (patch: InputPatch, g: Partial<SettleGlobals>, rng: number[]) =>

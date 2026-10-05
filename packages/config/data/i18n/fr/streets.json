@@ -6,147 +6,147 @@
   },
   "1": {
     "name": "Rue du Hunan",
-    "desc": "EXP et pièces finales +15 %, chance +10",
+    "desc": "Pièces finales +10 %, EXP finale +40 %, chance +10",
     "cookName": "Cuisine du Hunan"
   },
   "2": {
     "name": "Rue du Guangdong",
-    "desc": "Fréquentation +10 %, clients difficiles +8 %, huile par table -2",
+    "desc": "Pièces finales -25 %, EXP finale -30 %, fréquentation +10 %, clients difficiles +8 %, huile par table -2",
     "cookName": "Cuisine cantonaise"
   },
   "3": {
     "name": "Rue du Sichuan",
-    "desc": "EXP par table +4, consommation d'huile finale +2",
+    "desc": "EXP et pièces finales -10 %, EXP par table +4, huile par table +2",
     "cookName": "Cuisine du Sichuan"
   },
   "4": {
     "name": "Rue du Fujian",
-    "desc": "Pièces par table +2, EXP par table +3",
+    "desc": "EXP finale -20 %, pièces par table +2, EXP par table +3",
     "cookName": "Cuisine du Fujian"
   },
   "5": {
     "name": "Rue de l'Anhui",
-    "desc": "Pièces par table +3, consommation d'huile -15 %",
+    "desc": "Pièces finales +25 %, pièces par table +3, consommation d'huile -15 %",
     "cookName": "Cuisine de l'Anhui"
   },
   "6": {
     "name": "Rue du Shandong",
-    "desc": "EXP par table +6, consommation d'huile -10 %, fréquentation -20 %",
+    "desc": "Pièces finales +30 %, EXP finale +40 %, EXP par table +6, consommation d'huile -10 %, fréquentation -20 %",
     "cookName": "Cuisine du Shandong"
   },
   "7": {
     "name": "Rue du Zhejiang",
-    "desc": "Clients difficiles +10 %, huile par table -3",
+    "desc": "Pièces finales -5 %, EXP finale -10 %, clients difficiles +10 %, huile par table -3",
     "cookName": "Cuisine du Zhejiang"
   },
   "8": {
     "name": "Rue du Jiangsu",
-    "desc": "Clients difficiles +5 %, consommation d'huile -50 %, pièces finales -20 %",
+    "desc": "Pièces finales -20 %, EXP finale +30 %, clients difficiles +5 %, consommation d'huile -50 %",
     "cookName": "Cuisine du Jiangsu"
   },
   "9": {
     "name": "Rue Fusion I",
-    "desc": "Clients difficiles +25 %, pièces finales -20 %",
+    "desc": "Pièces finales -30 %, EXP finale -15 %, clients difficiles +25 %",
     "cookName": "Cuisine de la rue Fusion I"
   },
   "10": {
     "name": "Rue Fusion II",
-    "desc": "Clients difficiles +25 %, EXP finale -20 %",
+    "desc": "Pièces finales -30 %, EXP finale -15 %, clients difficiles +25 %",
     "cookName": "Cuisine de la rue Fusion II"
   },
   "11": {
     "name": "Rue du Jiangxi",
-    "desc": "Fréquentation +15 %, pièces par table +3",
+    "desc": "Pièces finales -20 %, EXP finale +10 %, fréquentation +15 %, pièces par table +3",
     "cookName": "Cuisine du Jiangxi"
   },
   "12": {
     "name": "Rue du Hubei",
-    "desc": "EXP finale +40 %, chance +10",
+    "desc": "Pièces finales +15 %, EXP finale +40 %, chance +10",
     "cookName": "Cuisine du Hubei"
   },
   "13": {
     "name": "Rue de Pékin",
-    "desc": "Pièces finales +25 %, EXP par table +2, consommation d'huile +30 %",
+    "desc": "Pièces finales +25 %, EXP finale -5 %, EXP par table +2, consommation d'huile +30 %",
     "cookName": "Cuisine de Pékin"
   },
   "14": {
     "name": "Rue du Japon",
-    "desc": "Clients difficiles +12 %, pièces des clients difficiles satisfaits +15 %, fréquentation -8 %",
+    "desc": "Pièces finales +15 %, EXP finale +10 %, clients difficiles +12 %, pièces des clients difficiles satisfaits +15 %, fréquentation -8 %",
     "cookName": "Cuisine japonaise"
   },
   "15": {
     "name": "Rue d'Italie",
-    "desc": "Fréquentation +15 %, pièces par table +1, pièces des commandes à emporter +30 %, consommation d'huile +15 %",
+    "desc": "Pièces finales -15 %, fréquentation +15 %, pièces par table +1, pièces des commandes à emporter +30 %, consommation d'huile +15 %",
     "cookName": "Cuisine italienne"
   },
   "16": {
     "name": "Rue de France",
-    "desc": "Pièces finales +30 %, clients difficiles +8 %, fréquentation -12 %",
+    "desc": "Pièces finales +45 %, EXP finale +15 %, clients difficiles +8 %, fréquentation -12 %",
     "cookName": "Cuisine française"
   },
   "17": {
     "name": "Rue d'Espagne",
-    "desc": "Fréquentation +8 %, pièces des clients qui mangent un plat signature +20 %, chance +16, huile par table +1",
+    "desc": "EXP finale +15 %, fréquentation +8 %, pièces des clients qui mangent un plat signature +20 %, chance +16, huile par table +1",
     "cookName": "Cuisine espagnole"
   },
   "18": {
     "name": "Rue du Mexique",
-    "desc": "Fréquentation +20 %, EXP par table +2, huile par table +2",
+    "desc": "Pièces finales -30 %, EXP finale -20 %, fréquentation +20 %, EXP par table +2, huile par table +2",
     "cookName": "Cuisine mexicaine"
   },
   "19": {
     "name": "Rue de Thaïlande",
-    "desc": "Fréquentation +12 %, huile par table -2, EXP des commandes à emporter +30 %, pièces finales -8 %",
+    "desc": "Pièces finales -10 %, EXP finale +5 %, fréquentation +12 %, huile par table -2, EXP des commandes à emporter +30 %",
     "cookName": "Cuisine thaïlandaise"
   },
   "20": {
     "name": "Rue de l'Inde",
-    "desc": "Portions de plats signature +5 %, EXP par table +3, chance +10, clients difficiles -8 %",
+    "desc": "Pièces finales +25 %, EXP finale -5 %, portions de plats signature +5 %, EXP par table +3, chance +10, clients difficiles -8 %",
     "cookName": "Cuisine indienne"
   },
   "21": {
     "name": "Rue de Turquie",
-    "desc": "Pièces par table +3, EXP par table +1, chance +20, consommation d'huile +20 %",
+    "desc": "Pièces finales +20 %, EXP finale +15 %, pièces par table +3, EXP par table +1, chance +20, consommation d'huile +20 %",
     "cookName": "Cuisine turque"
   },
   "22": {
     "name": "Rue du Vietnam",
-    "desc": "Consommation d'huile -30 %, EXP par table +3, pièces finales -8 %",
+    "desc": "Pièces finales -10 %, EXP finale +5 %, consommation d'huile -30 %, EXP par table +3",
     "cookName": "Cuisine vietnamienne"
   },
   "23": {
     "name": "Rue d'Amérique",
-    "desc": "Pièces et EXP des commandes à emporter +20 %, fréquentation +25 %, clients difficiles -10 %, consommation d'huile +20 %",
+    "desc": "Pièces finales +5 %, EXP finale +25 %, pièces et EXP des commandes à emporter +20 %, fréquentation +25 %, clients difficiles -10 %, consommation d'huile +20 %",
     "cookName": "Cuisine américaine"
   },
   "24": {
     "name": "Rue du Maroc",
-    "desc": "Chance de trouver des ingrédients mystères en exploration +2 %, chance +25, EXP finale +8 %",
+    "desc": "Pièces finales +15 %, EXP finale +30 %, chance de trouver des ingrédients mystères en exploration +2 %, chance +25",
     "cookName": "Cuisine marocaine"
   },
   "25": {
     "name": "Rue d'Argentine",
-    "desc": "Pièces par table +4, fréquentation +5 %, consommation d'huile +25 %",
+    "desc": "Pièces finales +5 %, EXP finale +30 %, pièces par table +4, fréquentation +5 %, consommation d'huile +25 %",
     "cookName": "Cuisine argentine"
   },
   "26": {
     "name": "Rue de Grèce",
-    "desc": "EXP finale +30 %, consommation d'huile -10 %, clients difficiles -5 %",
+    "desc": "Pièces finales +10 %, EXP finale +85 %, consommation d'huile -10 %, clients difficiles -5 %",
     "cookName": "Cuisine grecque"
   },
   "27": {
     "name": "Rue du Pérou",
-    "desc": "Chance de meilleure qualité en cuisinant un plat signature +8 %, clients difficiles +8 %, pièces finales +5 %",
+    "desc": "Pièces finales +5 %, EXP finale -20 %, chance de meilleure qualité en cuisinant un plat signature +8 %, clients difficiles +8 %",
     "cookName": "Cuisine péruvienne"
   },
   "28": {
     "name": "Rue de Russie",
-    "desc": "EXP par table +5, pièces finales +10 %, fréquentation -10 %, chaque cafard qui apparaît a 20 % de risque d'être tué",
+    "desc": "Pièces finales -5 %, EXP finale -20 %, EXP par table +5, fréquentation -10 %, chaque cafard qui apparaît a 20 % de risque d'être tué",
     "cookName": "Cuisine russe"
   },
   "29": {
     "name": "Rue Chop Suey",
-    "desc": "Pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %",
+    "desc": "Pièces finales +20 %, EXP finale +55 %, pièces et EXP des commandes à emporter +30 %, fréquentation +10 %, pièces par table +1, clients difficiles -10 %",
     "cookName": "Cuisine chinoise d'outre-mer"
   }
 }

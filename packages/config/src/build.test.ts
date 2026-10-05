@@ -1316,6 +1316,29 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     expect(errors).toContain(`goods ${goods[0]!.id} legacyId ${goods[1]!.id} is in the new id range`);
   });
 
+  it('街道和勋章说明里写的最终银币、经验收益要和勋章数值一致（问题记录 378：说明是手写的）', () => {
+    const src = source();
+    const en = structuredClone(src['i18n/en/streets']) as Record<string, { desc?: string }>;
+    en['1']!.desc = 'Final EXP and coins +99%, luck +10';
+    const goods = structuredClone(src['master/goods']) as M[];
+    const medal = goods.find((g) => g.id === 60012)!;
+    medal.desc = '最终经验收益+1%,幸运值+10';
+    const { errors } = buildBundle({ ...src, 'i18n/en/streets': en, 'master/goods': goods });
+    // 勋章实际数值从真实数据读，测试不跟着数值改
+    const real = realBuild().bundle!;
+    const has = (id: number) => {
+      const e = real.goods.find((g) => g.id === id)!.effects;
+      const p = (x = 0) => `${x >= 0 ? '+' : ''}${Math.round(x * 1000) / 10}%`;
+      return `medal ${id} has coin ${p(e.coinRate)} exp ${p(e.expRate)}`;
+    };
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        `street 1 desc (en) says final coin +99% exp +99%, ${has(60001)}`,
+        `goods 60012 desc (zh-CN) says final coin +0% exp +1%, ${has(60012)}`,
+      ]),
+    );
+  });
+
   it('equip_lore.json 多写的顶层键报错（不悄悄丢掉）', () => {
     const src = source();
     const lore = { ...(src['game/equip_lore'] as object), rename: [] };
