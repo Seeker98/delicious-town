@@ -134,8 +134,10 @@ export function allocateTables(
     const n = Math.min(portions, special.leftNum);
     special.leftNum -= n;
     out.specialUsed += n;
+    // 卖出倍率按特色菜等级（问题记录 412）：只在这里乘，赛厨的“养”、品尝等用原价
+    const sale = g.tuning.mysterious.saleRates[special.level - 1] ?? 1;
     return {
-      coin: special.price * n * (1 + flags.mcCoinRate) * (half ? 0.5 : 1),
+      coin: special.price * sale * n * (1 + flags.mcCoinRate) * (half ? 0.5 : 1),
       exp: (half ? 1 : special.level) * (1 + flags.mcExpRate),
     };
   };

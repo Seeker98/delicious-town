@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    gearIncome1006:
+      'L’équipement porté (gemmes comprises) ajoute maintenant des pièces finales, de l’EXP finale et plus de chances d’obtenir des plats signature en or ; plus les caractéristiques sont élevées, plus le bonus est grand (la Créativité compte le plus, la Chance ne compte pas), et la page de l’équipement indique combien. Les plats signature se vendent plus cher aux clients selon leur niveau (niveau 3 ×2,5, niveau 4 ×3,2), car ceux de niveau 2 à 5 ne remboursaient pas le prix de leurs ingrédients. Les duels culinaires utilisent toujours la valeur d’origine par portion',
     elders1006:
       'Les gardiens de la Tour des chefs sont maintenant des Anciens : chaque étage porte son propre équipement complet (+3 à +6) et les points d’attribut de son niveau, que vous pouvez déplier pour les voir. Une vraie victoire peut faire tomber une pièce de l’ensemble de l’Ancien (20 % aux étages 1 à 3, moins plus haut). Les étages 1 et 2 sont un peu plus durs qu’avant et les étages 6 à 10 nettement plus faciles. Le bonus aléatoire de la Créativité dans les duels culinaires baisse un peu et ne vaut plus davantage que les autres attributs',
     duel1006:

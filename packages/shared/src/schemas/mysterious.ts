@@ -53,6 +53,8 @@ export interface McOverviewDto {
   learned: McLearnedDto[];
   remnants: Array<{ mcId: number; num: number }>;
   current: McCookDto | null;
+  /** 在售特色菜卖给顾客时每份价值的倍率（问题记录 412）；没有在售为 null */
+  saleRate: number | null;
   /** 持有的神秘食谱数 */
   recipes: number;
   tools: McToolDto[];

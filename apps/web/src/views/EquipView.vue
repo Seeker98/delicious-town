@@ -16,6 +16,8 @@ import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
+/** 收益加成的百分比：+1.2%（保留一位小数） */
+const pctText = (x: number) => `+${Math.round(x * 1000) / 10}%`;
 const o = ref<EquipOverviewDto | null>(null);
 const part = ref<number | null>(null);
 const pieces = ref<EquipDto[]>([]);
@@ -144,6 +146,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     <div class="small mb-2">
       {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
       <span class="text-muted ms-1">{{ t.equip.powerNote }}</span>
+    </div>
+    <!-- 厨具收益加成（问题记录 411） -->
+    <div class="small mb-2" data-testid="gear-income">
+      {{
+        t.equip.income(pctText(o.income.coinRate), pctText(o.income.expRate), pctText(o.income.mcGoldRate))
+      }}
+      <span class="text-muted ms-1">{{ t.equip.incomeNote }}</span>
     </div>
 
     <div class="row g-1 mb-2">

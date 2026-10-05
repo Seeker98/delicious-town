@@ -24,6 +24,8 @@ export default {
   lucky: '（幸运）',
   saleMeta: (left: string, total: string, price: string, eaten: number) =>
     `剩余 ${left} / ${total} 份 · 每份 ${price} 银币 · 被品尝 ${eaten} 次`,
+  /** 卖给顾客时每份价值的倍率（问题记录 412）；赛厨等其他地方按原价 */
+  saleRate: (rate: string) => ` · 卖给顾客时 ×${rate}（普通顾客付一半）`,
   dump: '倒掉',
   learned: (n: number) => `已学（${n}）`,
   noLearned: '还没有学会特色菜：在神殿鉴定神秘食谱得到残卷，3 张残卷就能学会。',

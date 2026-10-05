@@ -8,6 +8,7 @@ import { createCookbookService, type CookbookService } from './modules/cookbook/
 import { createCupboardService, type CupboardService } from './modules/cupboard/service';
 import { createSocialService, type SocialService } from './modules/friend/service';
 import { effectJobs } from './modules/effects/resync';
+import { equipIncomeJobs } from './modules/equip/incomeResync';
 import { equipJobs } from './modules/equip/jobs';
 import { createEquipService, type EquipService } from './modules/equip/service';
 import { friendWeeklyJob } from './modules/friend/weekly';
@@ -123,6 +124,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(friendWeeklyJob(deps));
   jobs.push(...equipJobs(deps));
   jobs.push(...effectJobs(deps));
+  jobs.push(...equipIncomeJobs(deps));
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));

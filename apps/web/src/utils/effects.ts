@@ -6,6 +6,8 @@ const KEYS: Array<[key: keyof Messages['util']['effects'], kind: 'rate' | 'value
   ['spRate', 'rate'],
   ['coinRate', 'rate'],
   ['expRate', 'rate'],
+  // 特色菜金牌（厨具收益加成，问题记录 411）
+  ['mcGoldRate', 'rate'],
   ['oilRate', 'rate'],
   ['coinValue', 'value'],
   ['expValue', 'value'],

@@ -40,6 +40,7 @@ const overview: McOverviewDto = {
     { mcId: 4, num: 2 },
   ],
   current: null,
+  saleRate: null,
   recipes: 0,
   tools: [],
   cookies: 2,
@@ -148,12 +149,15 @@ describe('McView', () => {
         eatCount: 1,
         createdAt: '',
       },
+      saleRate: 3.2,
     });
     vi.mocked(endpoints.mcDump).mockResolvedValue({} as never);
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="mc-current"]').text()).toContain('120');
+    // 卖出倍率（问题记录 412）
+    expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2（普通顾客付一半）');
     expect(w.find('[data-testid="cook-1"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="dump"]').trigger('click');
     expect(endpoints.mcDump).not.toHaveBeenCalled();

@@ -9,6 +9,10 @@ const equip: Messages['equip'] = {
   power: 'Chef power',
   powerNote:
     '(sum of the five stats + Luck/2; a guide only: cook-offs are decided by judges scoring Look, Aroma, Taste, Shape and Nutrition)',
+  income: (coin, exp, gold) =>
+    `Gear income bonus: final coins ${coin}, final EXP ${exp}, signature dish gold ${gold}`,
+  incomeNote:
+    '(higher gear and gem stats give more, Luck doesn’t count; Creativity counts most per point, Seasoning least)',
   empty: 'Empty',
   noPieces: 'No cookware for this slot',
   needLevel: (lv) => `Needs level ${lv}`,

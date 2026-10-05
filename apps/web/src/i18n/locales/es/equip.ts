@@ -9,6 +9,10 @@ const equip: Messages['equip'] = {
   power: 'Poder de chef',
   powerNote:
     '(suma de los cinco atributos + Suerte/2; solo orientativo: los duelos de cocina los deciden jueces que puntúan Color, Aroma, Sabor, Forma y Nutrición)',
+  income: (coin, exp, gold) =>
+    `Bonificación del equipo: monedas finales ${coin}, EXP final ${exp}, oro del plato estrella ${gold}`,
+  incomeNote:
+    '(más atributos de equipo y gemas dan más; la Suerte no cuenta; por punto, la Creatividad es la que más y la Sazón la que menos)',
   empty: 'Vacío',
   noPieces: 'No hay utensilios para esta ranura',
   needLevel: (lv) => `Requiere nivel ${lv}`,

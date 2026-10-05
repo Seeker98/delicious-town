@@ -26,6 +26,7 @@ const mc: Messages['mc'] = {
   lucky: ' (con suerte)',
   saleMeta: (left, total, price, eaten) =>
     `Quedan ${left} / ${total} · ${price} ${plEs(price, 'moneda', 'monedas')} cada una · probado ${eaten} ${plEs(eaten, 'vez', 'veces')}`,
+  saleRate: (rate) => ` · se vende a los clientes a ×${rate} (los clientes normales pagan la mitad)`,
   dump: 'Tirar',
   learned: (n) => `Aprendidos (${n})`,
   noLearned:

@@ -85,6 +85,25 @@ describe('穿戴（设计文档 §3.10）', () => {
     expect((await agg(ctx)).luckValue ?? 0).toBe(before);
   });
 
+  it('厨具属性按权重进收益加成（问题记录 411）：银币 0.04%、经验 0.025%、特色菜金牌 0.03% 每点，幸运不算', async () => {
+    const ctx = await newRestaurant(t);
+    const before = await agg(ctx);
+    // 加权点数 = 厨艺 10 × 1 + 刀工 4 × 0.95 + 创意 5 × 1.4 = 20.8
+    const a = await piece(ctx, gid('见习之铲'), {
+      base_cook: 10,
+      st_cutting: 4,
+      base_creatives: 5,
+      base_luck: 3,
+    });
+    await eq().wear(ctx, { id: a });
+    const after = await agg(ctx);
+    expect((after.coinRate ?? 0) - (before.coinRate ?? 0)).toBeCloseTo(20.8 * 0.0004, 9);
+    expect((after.expRate ?? 0) - (before.expRate ?? 0)).toBeCloseTo(20.8 * 0.00025, 9);
+    expect((after.mcGoldRate ?? 0) - (before.mcGoldRate ?? 0)).toBeCloseTo(20.8 * 0.0003, 9);
+    await eq().unwear(ctx, { id: a });
+    expect((await agg(ctx)).coinRate ?? 0).toBeCloseTo(before.coinRate ?? 0, 9);
+  });
+
   it('真爱套装：3 件上座 +5%、挑剔 +3%；5 件再加最终银币 +5%、幸运 +52', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 13 } });
     const base = await agg(ctx);
@@ -123,6 +142,8 @@ describe('穿戴（设计文档 §3.10）', () => {
     expect(o.attrs.total.cook).toBe(9);
     expect(o.attrs.power).toBe(9 + 5);
     expect(o.suits).toEqual([]);
+    // 厨具收益加成（问题记录 411）：厨艺 5 × 1
+    expect(o.income).toEqual({ coinRate: 0.002, expRate: 0.00125, mcGoldRate: 0.0015 });
     expect(o.count).toBe(1);
     const list = await eq().list(ctx, { part: 1 });
     expect(list.map((x) => x.goodsId)).toEqual([gid('见习之铲')]);
