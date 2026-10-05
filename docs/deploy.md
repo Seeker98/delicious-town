@@ -236,17 +236,29 @@ cd infra && docker compose -f compose.prod.yml build migrate && docker compose -
 
 合并进 main 会自动部署、迁移在 api 和 worker 启动前自动跑，所以**要先停服、备份，再合并**：
 
-1. **先在线上数据的副本上演练**（本机做）：从 R2 下载最近一次备份，恢复到本机开发 Postgres 里一个新库（不要用开发库 `dt`）：
-   ```bash
-   docker exec dt-dev-postgres-1 createdb -U dt dt_prod_copy
-   docker exec -i dt-dev-postgres-1 pg_restore -U dt -d dt_prod_copy --no-owner < dt-<时间>.dump
-   cd apps/server && DATABASE_URL=postgres://dt:dt@localhost:5432/dt_prod_copy pnpm renumber:dry
-   ```
+1. **先在线上数据的副本上演练**（在本机做；全程不碰开发库 `dt`）。
+   - 服务器上导出一份（`backup.sh` 上传 R2 后会删掉本地文件，所以这里另导一份；`pg_dump` 不锁表，不用停服）：
+     ```bash
+     cd /opt/dt/infra
+     docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /tmp/dt-rehearsal.dump
+     ls -lh /tmp/dt-rehearsal.dump
+     ```
+   - 拷到本机（在本机执行，用户名、主机换成自己的）：`scp <用户>@<服务器>:/tmp/dt-rehearsal.dump .`；拷完在服务器上删掉：`rm /tmp/dt-rehearsal.dump`（里面有玩家数据和随机种子密钥）。
+   - 本机恢复到新库 `dt_prod_copy`（文件先拷进容器再恢复，PowerShell 和 bash 都能用；两边都是 Postgres 16）：
+     ```bash
+     docker cp dt-rehearsal.dump dt-dev-postgres-1:/tmp/dt-rehearsal.dump
+     docker exec dt-dev-postgres-1 createdb -U dt dt_prod_copy
+     docker exec dt-dev-postgres-1 pg_restore -U dt -d dt_prod_copy --no-owner /tmp/dt-rehearsal.dump
+     ```
+   - 只演练（在仓库的 `apps/server` 目录下；先切到本分支或合并后的 main）：
+     - bash：`DATABASE_URL=postgres://dt:dt@localhost:5432/dt_prod_copy pnpm renumber:dry`
+     - PowerShell：`$env:DATABASE_URL='postgres://dt:dt@localhost:5432/dt_prod_copy'; pnpm renumber:dry; Remove-Item Env:DATABASE_URL`（最后一句别漏：不然同一个窗口里再起开发服会连到副本）
+     不要对副本起开发服（`pnpm dev` 会真的迁移副本）。
    `renumber:dry` 跑迁移 0049 的全部改写和自检、打印报告，然后**总是回滚**。看两样：
    - 报“在用的表里有查不到对照的旧编号”：库里有主表里没有的道具、食材、菜谱，先查清怎么处理再上线；
    - `renumber orphan …` 是历史记录里查不到对照的（例如已删的菜谱），照原样保留，正常。
    报告最后一行是耗时。开发库（约 1500 家店、流水 11 万、结算记录 15 万、日志 2.5 万）全表扫描约 4 秒，按线上行数估停服时长。
-   另外在副本上看一眼各区服的覆盖：`docker exec dt-dev-postgres-1 psql -U dt -d dt_prod_copy -c "select shard_id, override from shard_config"`。迁移会改写区服数值里的编号、开店礼物（`restaurant.giftGoods` / `giftFoods`）和交易所参考价覆盖（`tuning.exchange.refOverrides`，按食材编号做键）；如果覆盖里还有别的地方写着道具、食材、菜谱编号，先在这里停下来查。演练完 `docker exec dt-dev-postgres-1 dropdb -U dt dt_prod_copy`。
+   另外在副本上看一眼各区服的覆盖：`docker exec dt-dev-postgres-1 psql -U dt -d dt_prod_copy -c "select shard_id, override from shard_config"`。迁移会改写区服数值里的编号、开店礼物（`restaurant.giftGoods` / `giftFoods`）和交易所参考价覆盖（`tuning.exchange.refOverrides`，按食材编号做键）；如果覆盖里还有别的地方写着道具、食材、菜谱编号，先在这里停下来查。演练完删掉副本和容器里的文件：`docker exec dt-dev-postgres-1 dropdb -U dt dt_prod_copy`、`docker exec dt-dev-postgres-1 rm /tmp/dt-rehearsal.dump`，本机的 `dt-rehearsal.dump` 也删掉。
 2. 提前公告停服时间。
 3. 停服：服务器上 `cd /opt/dt/infra && docker compose -f compose.prod.yml stop api worker`。旧版本的 worker 不能在迁移时或迁移后继续跑——它按旧配置写进来的会是旧编号。
 4. 备份：`./backup.sh`（上传 R2），另在服务器本机留一份：`docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /opt/dt/renumber-before.dump`。
