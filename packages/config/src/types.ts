@@ -79,6 +79,8 @@ export interface IdNumFood {
 
 export interface Cookbook {
   id: number;
+  /** 学会记录（restaurant_cookbooks.levels）里的存储位（重新编号 PR 3）：只增不复用 */
+  slot: number;
   name: string;
   streetId: number;
   taste: number[];

@@ -968,6 +968,16 @@ describe('任务配置（问题记录 318）', () => {
 });
 
 describe('主表的检查（重新编号 PR 1）', () => {
+  it('菜谱存储位：重复、超出 next 时构建报错（重新编号 PR 3）', () => {
+    const src = source();
+    const cookbooks = structuredClone(src['master/cookbooks']) as Array<{ id: number; slot: number }>;
+    cookbooks[1]!.slot = cookbooks[0]!.slot;
+    cookbooks[2]!.slot = 999_999;
+    const { errors } = buildBundle({ ...src, 'master/cookbooks': cookbooks });
+    expect(errors).toContain(`cookbooks: duplicate slot ${cookbooks[0]!.slot}`);
+    expect(errors).toContain(`cookbook ${cookbooks[2]!.id} slot 999999 >= next 20226`);
+  });
+
   it('道具、食谱编号重复时构建报错', () => {
     const src = source();
     const goods = structuredClone(src['master/goods']) as Array<{ id: number }>;
