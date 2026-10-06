@@ -337,6 +337,8 @@ const errors: Messages['errors'] = {
     delivery_gone: 'This delivery has already been claimed',
     broadcast_text: 'Broadcasts must be 1–64 characters',
     no_round: 'This round is over. Start a new one.',
+    cup_decide: 'You guessed right. Stop or go on first.',
+    cup_not_won: 'You haven’t guessed this round yet',
     not_passed: "You haven't passed this stage yet",
     no_aim: 'Aim before you throw',
     need_first: 'Choose who goes first',

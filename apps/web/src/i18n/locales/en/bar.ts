@@ -34,15 +34,27 @@ const bar: Messages['bar'] = {
   noMoreToday: 'No games left today',
   startFailed: "Couldn't start",
   cup: {
-    noTickets: (n) => `Not enough Mystery Vouchers (this round costs ${n})`,
-    lose: (times) =>
-      `Wrong${times > 1 ? `, ${times} ${plEn(times, 'miss', 'misses')} in a row` : ''}. The next round starts at 1 voucher`,
-    win: (lucky, times, award) => `${lucky}Right! ${times}-win streak${award}`,
+    rule: (cost, rounds) =>
+      `Each game costs ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')}. Up to ${rounds} rounds, with more cups each round and a die under just one of them. Each time you guess right, stop and take that round's reward, or go on to the next round; guess wrong and you get nothing. Rewards are mostly ingredients: the further you get, the higher their level and the likelier a rare one.`,
+    tierLine: (round, cups, awards, news) =>
+      `Round ${round} (${cups} cups): ${awards} ${plEn(awards, 'reward', 'rewards')}${news === 'broadcast' ? ', town-wide broadcast' : news === 'news' ? ', makes the news' : ''}`,
+    noTickets: (n) => `Not enough Mystery Vouchers (${n} per game)`,
+    pick: (round, cups) => `Round ${round}: ${cups} cups, pick one`,
+    won: (lucky, awards, round, cups) =>
+      `${lucky}Right! Stop and take ${awards} ${plEn(awards, 'reward', 'rewards')}, or go on to round ${round} (${cups} cups)?`,
+    stop: 'Stop',
+    next: 'Go on',
+    lose: (cup) => `Wrong. The die was under cup ${cup}.`,
+    stopped: (round) => `You stopped after clearing ${round} ${plEn(round, 'round', 'rounds')}`,
+    clear: (lucky) => `${lucky}Right! You cleared every round`,
+    got: (text) => `Got ${text}`,
     failed: 'Cup guess failed',
-    rule1: 'Pick a cup. This round costs ',
-    rule2:
-      ' Mystery Vouchers. The longer your streak, the higher the stake and the better the reward. Rewards are mostly ingredients: the longer the streak, the higher their level and the likelier a rare one.',
     cup: (n) => `Cup ${n}`,
+    /** 杯子状态、结果和奖励之间的分隔 */
+    sep: ', ',
+    yours: 'your pick',
+    ball: 'the die is here',
+    cupLabel: (n, state) => (state ? `Cup ${n}, ${state}` : `Cup ${n}`),
   },
   fg: {
     noTickets: 'Not enough Mystery Vouchers (1 per round)',
@@ -246,7 +258,7 @@ const bar: Messages['bar'] = {
     chat: [
       "Here again? What'll it be today?",
       'Out of Mystery Vouchers? Come chat with me at the square. I hand them out every day.',
-      'The longer your cup streak, the bigger the bet and the better the prize. Know when to stop.',
+      'In the cup game, each round has more cups and a better prize, but one wrong guess loses it all. Know when to stop.',
       "One of the Devil's Chili cups is extra spicy. Think before you drink.",
       'Watch the order in Memory Mixing. The recipes get longer as you go.',
       'The slot machine spins 3 reels. The more you play, the closer the guaranteed rare.',

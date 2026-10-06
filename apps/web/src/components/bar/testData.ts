@@ -5,7 +5,19 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
   coin: 0,
   krabCoins: 3,
   fg: { result: null, times: 0 },
-  cup: { result: null, times: 0, nextCost: 1 },
+  cup: {
+    result: null,
+    times: 0,
+    cost: 1,
+    cups: [2, 3, 5, 7],
+    tiers: [
+      { awards: 1, news: null },
+      { awards: 2, news: null },
+      { awards: 4, news: 'news' },
+      { awards: 8, news: 'broadcast' },
+    ],
+    round: null,
+  },
   num: { result: null, times: 0, cost: 8, max: 25 },
   slot: {
     emailVerified: true,

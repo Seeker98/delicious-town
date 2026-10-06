@@ -157,6 +157,12 @@ const events: Messages['events'] = {
     'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
     'bar.nim': (p) =>
       `Le dernier bonbon (table ${p.table === 'expert' ? 'experts' : 'débutants'}) : ${p.result === 'win' ? 'gagné' : 'perdu'}`,
+    'bar.cup': (p) =>
+      p.result === 'lose'
+        ? `Gobelets : raté à la manche ${n(p, 'round')}`
+        : p.result === 'clear'
+          ? `Gobelets : les ${n(p, 'round')} manches réussies, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`
+          : `Gobelets : arrêt après ${n(p, 'round')} ${plFr(n(p, 'round'), 'manche', 'manches')}, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`,
     'bar.spice': (p) =>
       p.result === 'win'
         ? `Mélange secret : trouvé à l’essai ${n(p, 'tries')}`

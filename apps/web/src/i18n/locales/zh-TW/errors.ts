@@ -330,6 +330,8 @@ export default {
     delivery_gone: '這一單已經領過了',
     broadcast_text: '廣播內容要 1~64 個字',
     no_round: '這一局已經結束了，請重新開局',
+    cup_decide: '猜中了，先選收手還是繼續',
+    cup_not_won: '這一輪還沒猜中',
     not_passed: '這一關還沒答對，不能繼續',
     no_aim: '先瞄準再投擲',
     need_first: '先選誰先拿',
