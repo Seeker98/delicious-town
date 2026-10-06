@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    mcLearn1006:
+      'Aprender platos estrella es más fácil: deshaz los fragmentos que no necesites en trozos, y 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel. El Sello Delicia ahora acierta un 40 % en vez de un 28 %, y el Sello de jade del Dios de la Cocina está en la tienda (300 000). La tasación del Templo indica cómo conseguir cada objeto, y la guía tiene una sección «Cómo aprender platos estrella»',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:

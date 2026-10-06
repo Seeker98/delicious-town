@@ -142,6 +142,29 @@ describe('残卷', () => {
     });
   });
 
+  it('碎片兑换指定残卷（问题记录 415）：3 张同级碎片换 1 张这一级任选一道的残卷；不够 NOT_ENOUGH；学过的、不能鉴定出来的不换', async () => {
+    const frag = GOODS.fragmentBase + config.requireMc(1).level;
+    const ctx = await newRestaurant(t, { goods: { [frag]: 7 } });
+    expect((await s().overview(ctx)).fragments[config.requireMc(1).level - 1]).toBe(7);
+    await s().exchangeFragments(ctx, { mcId: 1, num: 2 });
+    expect(await remnantOf(ctx.restaurantId, 1)).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, frag)).toBe(1);
+    await expect(s().exchangeFragments(ctx, { mcId: 1, num: 1 })).rejects.toMatchObject({
+      code: 'NOT_ENOUGH',
+      params: { kind: 'goods', id: frag, need: 3, have: 1 },
+    });
+    const learned = await newRestaurant(t, { goods: { [frag]: 3 } });
+    await giveRemnant(learned, 1, 3);
+    await s().learn(learned, { mcId: 1 });
+    await expect(s().exchangeFragments(learned, { mcId: 1, num: 1 })).rejects.toMatchObject({
+      params: { reason: 'mc_learned' },
+    });
+    const special = config.bundle.mysteriousCookbooks.find((m) => !m.appraisable)!;
+    await expect(s().exchangeFragments(ctx, { mcId: special.id, num: 1 })).rejects.toMatchObject({
+      code: 'VALIDATION_FAILED',
+    });
+  });
+
   it('3 张学会：写入熟练度 1 级；学过再学报 mc_learned 且不扣残卷；未知特色菜 NOT_FOUND', async () => {
     const ctx = await newRestaurant(t);
     await giveRemnant(ctx, 1, 7);
@@ -189,6 +212,16 @@ describe('概览、目录、任务、功能开关', () => {
       max: 5,
       rate: 1,
       perNum: 2,
+      // 怎么获得（问题记录 415）：不在商店卖；黑市 30 钻；随机奖励；昨日冠军
+      shopCoin: null,
+      blackDiamond: 30,
+      award: true,
+      champion: true,
+    });
+    expect(o.tools.find((x) => x.goodsId === gid('厨神玉玺'))).toMatchObject({
+      shopCoin: 300000,
+      blackDiamond: 14,
+      champion: false,
     });
     expect(o.cookNums).toEqual([1, 5, 10, 15, 25, 50]);
   });

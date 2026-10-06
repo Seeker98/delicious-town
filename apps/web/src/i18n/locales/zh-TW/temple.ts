@@ -25,6 +25,13 @@ export default {
     failed: '鑑定失敗',
     title: '鑑定神秘食譜',
     rule: (n: number) => `每次消耗 1 個神秘食譜和 1 個鑑定道具，成功得到殘卷。持有神秘食譜 ${n} 個。`,
+    /** 鑑定道具怎麼獲得（問題記錄 415） */
+    how: (parts: string) => `獲得：${parts}`,
+    howShop: (coin: string) => `銀幣商店 ${coin}`,
+    howBlack: (diamond: number) => `黑市 ${diamond} 鑽`,
+    howAward: '廚塔和酒吧等的隨機獎勵',
+    howChampion: '昨日特色菜冠軍',
+    howSep: '、',
     toolOption: (name: string, min: number, max: number, rate: number, have: number) =>
       `${name}（${min}~${max} 級，${rate}%，持有 ${have}）`,
     btn: (n: number) => `鑑定 ×${n}`,

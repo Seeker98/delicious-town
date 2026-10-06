@@ -24,6 +24,9 @@ export function mysteriousRoutes(svc: MysteriousService): FastifyPluginAsync {
     r.post('/mc/remnant/sell', async (req) =>
       okOp(await svc.sellRemnant(restCtxOf(req), parse(remnantBody, req.body))),
     );
+    r.post('/mc/remnant/exchange', async (req) =>
+      okOp(await svc.exchangeFragments(restCtxOf(req), parse(remnantBody, req.body))),
+    );
     r.post('/mc/remnant/decompose', async (req) =>
       okOp(await svc.decomposeRemnant(restCtxOf(req), parse(remnantBody, req.body))),
     );

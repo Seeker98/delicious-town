@@ -162,10 +162,19 @@ const wiki: Messages['wiki'] = {
         title: 'Autres activités',
         items: [
           'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Sœur Wen, Frère 13 et les autres ont quelque chose pour vous.',
-          'Faites la Tour des chefs chaque jour : le premier étage est ouvert dès le niveau 1, et vous gagnez de la renommée que vous gagniez ou perdiez.',
+          'Faites la Tour des chefs chaque jour : vous gagnez de la renommée que vous gagniez ou perdiez. L’Ancien du premier étage est niveau 8 ; vers le niveau 5, points répartis, vous pouvez le battre.',
           'À partir du niveau 20, avec un compte d’au moins 7 jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.',
           'Porter des ustensiles augmente les revenus de chaque tour.',
           'Sous le niveau 40, l’EXP de chaque tour reçoit un bonus (+200 % au niveau 1, de moins en moins à chaque niveau) : les premiers niveaux vont très vite.',
+        ],
+      },
+      {
+        title: 'Comment apprendre les plats signature',
+        items: [
+          'Il faut 3 fragments d’un plat pour l’apprendre ; on peut cuisiner dès 1 étoile.',
+          'Expertise : au Temple, utilisez 1 Recette mystère et 1 objet d’expertise ; en cas de réussite, vous obtenez un fragment d’un plat au hasard. Le Sceau Délice réussit 40 % du temps (90 000 à la boutique) ; le Sceau de jade du Dieu de la cuisine 52 % (300 000 à la boutique) ; les Formules secrètes du Seau de l’Enfer et du Krabby Patty réussissent toujours, se vendent contre des diamants au marché noir et tombent aussi des récompenses aléatoires de la Tour des chefs et du bar ; celle du Krabby Patty est aussi le prix du champion des plats signature d’hier.',
+          'Échange d’éclats : défaites les fragments inutiles en éclats du même niveau ; 3 éclats d’un niveau donnent 1 fragment de n’importe quel plat de ce niveau, alors gardez les éclats du niveau voulu.',
+          'Leçons : trouvez un joueur qui connaît le plat et donne un cours, payez les frais et un peu d’énergie, et vous l’apprendrez presque toujours du premier coup.',
         ],
       },
     ],

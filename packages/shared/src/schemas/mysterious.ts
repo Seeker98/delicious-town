@@ -46,6 +46,11 @@ export interface McToolDto {
   rate: number;
   /** 每次成功得到的残卷张数上限 */
   perNum: number;
+  /** 怎么获得（问题记录 415）：银币商店价、黑市钻石价（不卖为 null）；会不会从随机奖励出；是不是昨日冠军的奖励 */
+  shopCoin: number | null;
+  blackDiamond: number | null;
+  award: boolean;
+  champion: boolean;
 }
 
 export interface McOverviewDto {
@@ -53,6 +58,10 @@ export interface McOverviewDto {
   learned: McLearnedDto[];
   remnants: Array<{ mcId: number; num: number }>;
   current: McCookDto | null;
+  /** 持有的 1~6 级残卷碎片（下标 0 = 1 级；问题记录 415） */
+  fragments: number[];
+  /** 几张碎片换 1 张残卷 */
+  fragmentPerRemnant: number;
   /** 在售特色菜卖给顾客时每份价值的倍率（问题记录 412）；没有在售为 null */
   saleRate: number | null;
   /** 持有的神秘食谱数 */
