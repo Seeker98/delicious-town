@@ -333,6 +333,9 @@ describe('McView', () => {
     expect(row.text()).toContain('3 级碎片 4 张');
     // 3 级里能选的只有没学会的 5 号（3 号已学）
     expect(row.findAll('option').map((x) => x.attributes('value'))).toEqual(['', '5']);
+    // 没选时停在“选一道菜”（视觉第三轮：原来是空白）
+    expect((row.find('select').element as HTMLSelectElement).value).toBe('');
+    expect((row.find('select').element as HTMLSelectElement).selectedIndex).toBe(0);
     await row.find('select').setValue('5');
     await row.find('button').trigger('click');
     await flushPromises();

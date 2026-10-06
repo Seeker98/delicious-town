@@ -2,10 +2,12 @@
 import { computed, ref, watch } from 'vue';
 import { DUEL_JUDGE_ITEMS, type DuelResultDto } from '@dt/shared';
 import { useT } from '../../composables/useT';
+import { formatNum } from '../../utils/format';
 import { useCatalogStore } from '../../stores/catalog';
 import { awardText } from '../bar/award';
 
-const props = defineProps<{ result: DuelResultDto }>();
+/** themName：对手的显示名（厨塔楼层用译名；不传用服务器给的名字，视觉第三轮） */
+const props = defineProps<{ result: DuelResultDto; themName?: string }>();
 const catalog = useCatalogStore();
 const t = useT();
 /** 每来一局新结果加 1，用作评委列表的 key：父组件复用这个卡片时动画也从头播 */
@@ -60,14 +62,14 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
         <tr>
           <th></th>
           <th>{{ t.tower.duel.power(result.me.name, result.me.power) }}</th>
-          <th>{{ t.tower.duel.power(result.them.name, result.them.power) }}</th>
+          <th>{{ t.tower.duel.power(themName ?? result.them.name, result.them.power) }}</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="r in rows" :key="r.label">
           <th>{{ r.label }}</th>
-          <td :class="{ 'text-success fw-bold': r.me > r.them }">{{ r.me }}</td>
-          <td :class="{ 'text-success fw-bold': r.them > r.me }">{{ r.them }}</td>
+          <td :class="{ 'text-success fw-bold': r.me > r.them }">{{ formatNum(r.me) }}</td>
+          <td :class="{ 'text-success fw-bold': r.them > r.me }">{{ formatNum(r.them) }}</td>
         </tr>
       </tbody>
     </table>
@@ -83,9 +85,9 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
       >
         <span class="flex-grow-1">{{ j.who }}</span>
         <span>
-          <span :class="{ 'text-success fw-bold': j.vote === 'me' }">{{ j.me }}</span>
+          <span :class="{ 'text-success fw-bold': j.vote === 'me' }">{{ formatNum(j.me) }}</span>
           :
-          <span :class="{ 'text-success fw-bold': j.vote === 'them' }">{{ j.them }}</span>
+          <span :class="{ 'text-success fw-bold': j.vote === 'them' }">{{ formatNum(j.them) }}</span>
         </span>
         <span :class="j.vote === 'me' ? 'text-success' : j.vote === 'them' ? 'text-danger' : 'text-muted'">{{
           t.tower.duel.verdict[j.vote]

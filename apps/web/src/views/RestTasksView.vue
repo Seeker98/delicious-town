@@ -136,10 +136,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
             t.rest.tasks.full
           }}</span>
-          <span v-else-if="stateOf(i) === 'locked'" class="ms-auto text-nowrap">{{ lockText(i) }}</span>
-          <span v-else class="ms-auto text-nowrap">{{ i.count }}/{{ i.limit }}</span>
+          <span v-else-if="stateOf(i) !== 'locked'" class="ms-auto text-nowrap"
+            >{{ i.count }}/{{ i.limit }}</span
+          >
         </div>
-        <div class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
+        <!-- 锁定原因（注册天数、邮箱、没有活动）英法西文很长：单独一行放在进度条的位置，不挤名字（视觉第三轮） -->
+        <div v-if="stateOf(i) === 'locked'" class="dt-act-lock">{{ lockText(i) }}</div>
+        <div v-else class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
         <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
       </div>
     </div>

@@ -102,7 +102,7 @@ const rest: Messages['rest'] = {
     claimFirst: 'Recoge antes las misiones de arriba',
     leftover: 'Pendientes: misiones de capítulos anteriores abiertas después',
     lockedLevel: (n) => `🔒 Se desbloquea en el nivel ${n}`,
-    lockedDays: (n) => `🔒 Se desbloquea ${n} días después del registro`,
+    lockedDays: (n) => `🔒 Se desbloquea ${n} ${plEs(n, 'día', 'días')} después del registro`,
     lockedEmail: '🔒 Se desbloquea al verificar tu correo',
     noActivity: '🔒 No hay ningún evento por tiempo limitado en curso',
     lockedStar: (n) => `🔒 Se desbloquea con ${n} ${n === 1 ? 'estrella' : 'estrellas'}`,
