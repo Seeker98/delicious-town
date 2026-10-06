@@ -8,6 +8,7 @@ import { announcementBody } from './announce';
 import { createBatchBody, createSharedCodeBody, redeemBody } from './redeem';
 import { banBody, reportBody, resolveReportBody } from './report';
 import { suspiciousQuery } from './ops';
+import { barNimFirstBody, barNimStartBody, barNimTakeBody } from './bar';
 
 describe('registerBody', () => {
   const base = { username: '厨神小王', password: 'secret123', email: 'A@B.com', captchaToken: 't' };
@@ -147,5 +148,21 @@ describe('可疑数据查询（backlog 6B-2）', () => {
     expect(suspiciousQuery.safeParse({ shardId: 1, day: '2026-13-01' }).success).toBe(false);
     expect(suspiciousQuery.safeParse({ shardId: 1, day: '2028-02-29' }).success).toBe(true);
     expect(suspiciousQuery.safeParse({ shardId: 1 }).success).toBe(true);
+  });
+});
+
+describe('最后一颗糖（问题记录 427-1）', () => {
+  it('开局只认新手桌、高手桌；先后只认 me、bartender', () => {
+    expect(barNimStartBody.safeParse({ table: 'novice' }).success).toBe(true);
+    expect(barNimStartBody.safeParse({ table: 'expert' }).success).toBe(true);
+    expect(barNimStartBody.safeParse({ table: 'vip' }).success).toBe(false);
+    expect(barNimFirstBody.safeParse({ who: 'bartender' }).success).toBe(true);
+    expect(barNimFirstBody.safeParse({ who: 'boss' }).success).toBe(false);
+  });
+
+  it('拿的数量是正整数', () => {
+    expect(barNimTakeBody.safeParse({ num: 3 }).success).toBe(true);
+    expect(barNimTakeBody.safeParse({ num: 0 }).success).toBe(false);
+    expect(barNimTakeBody.safeParse({ num: 1.5 }).success).toBe(false);
   });
 });
