@@ -3,6 +3,7 @@ import type { RestCtx } from '../../core/deps';
 import { createTestGame, newPair, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
 import { getEffectAgg } from '../effects/service';
+import { restGear } from './power';
 import { gid } from '../../../test/items';
 
 let t: TestGame;
@@ -86,8 +87,20 @@ describe('功能关闭（设计文档 裁定 10；backlog 411~413 用户改定�
     expect(off.luckValue ?? 0).toBe(0);
     expect(off.atRate ?? 0).toBe(0);
     expect(off.coinRate ?? 0).toBe(0);
+    // 不进汇总的套装效果（探险成功率、赛厨进攻防守、四项百分比）也没有；首页、加成明细不列厨具、套装来源
+    const rest = await t.db
+      .selectFrom('restaurant')
+      .selectAll()
+      .where('id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect((await restGear(t.db, rest, t.deps.config.suits)).suits.length).toBeGreaterThan(0);
+    expect((await restGear(t.db, rest, t.deps.config.suits, true)).suits).toEqual([]);
+    const gearSource = (s: { sourceType: string }) => s.sourceType === 'equip' || s.sourceType === 'suit';
+    expect((await t.game.restaurant.overview(ctx.restaurantId)).effects.some(gearSource)).toBe(false);
+    expect((await t.game.restaurant.buffs(ctx)).sources.some(gearSource)).toBe(false);
     expect((await t.game.task.tasks(ctx)).lines.some((l) => l.id === 8)).toBe(false);
     await setEquip(true);
     expect(await agg()).toEqual(on);
+    expect((await t.game.restaurant.overview(ctx.restaurantId)).effects.some(gearSource)).toBe(true);
   });
 });

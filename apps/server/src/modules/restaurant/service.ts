@@ -18,6 +18,8 @@ import type { LoadedSession } from '../../security/session';
 import type { SessionStore } from '../../security/sessionStore';
 import { activeBoosts } from '../activity/boosts';
 import { listActiveEffects } from '../effects/service';
+import { shownEffects } from '../effects/aggregate';
+import { equipOff } from '../equip/power';
 import { headlines } from '../news/news';
 import { todayBless } from '../town/bless';
 import { recordLedger } from '../ledger/ledger';
@@ -80,7 +82,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     ]);
     const tuning = settings.tuning;
     const growth = tuning.growth;
-    const dto = toRestaurantDto(row, tables.tables, effects, d.config, {
+    const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
       devices,
       lastRound: last,
       weather: { id: snap.weather.id, name: snap.weather.name },
@@ -222,7 +224,8 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       return r.tables.map((t) => tableDto(t, names));
     },
     income: (restId: number, q: PageQuery) => incomePage(d.db, restId, q),
-    buffs: (restId: number) => buffsOf(d.db, d.config, restId, d.now()),
+    buffs: async (ctx: { shardId: number; restaurantId: number }) =>
+      buffsOf(d.db, d.config, ctx.restaurantId, d.now(), equipOff(await shards.settings(ctx.shardId))),
     log: (restId: number, q: PageQuery) => logPage(d.db, restId, q),
   };
 }

@@ -90,7 +90,7 @@ export async function getEffectAgg(
       .select(['effect_agg', 'effect_dirty', 'effect_next_expire_at'])
       .where('id', '=', restId)
       .executeTakeFirstOrThrow());
-  const equipOff = !isFeatureEnabled(settings as ShardSettings, 'equip');
+  const equipOff = !isFeatureEnabled(settings, 'equip');
   const stale =
     r.effect_dirty ||
     (r.effect_next_expire_at !== null && r.effect_next_expire_at <= now) ||

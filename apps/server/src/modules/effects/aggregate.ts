@@ -31,6 +31,11 @@ export function aggregateEffects(sources: EffectLike[], now: Date): EffectAggreg
 export const EQUIP_OFF_KEY = 'equipOff';
 const EQUIP_SOURCES = new Set(['equip', 'suit']);
 
+/** 区服关掉厨具功能时列给玩家看的加成来源也去掉厨具、套装（和汇总一致） */
+export function shownEffects<T extends { sourceType: string }>(list: T[], equipOff: boolean): T[] {
+  return equipOff ? list.filter((s) => !EQUIP_SOURCES.has(s.sourceType)) : list;
+}
+
 export interface ActiveEffectLike extends EffectLike {
   sourceType: string;
   sourceId: number;

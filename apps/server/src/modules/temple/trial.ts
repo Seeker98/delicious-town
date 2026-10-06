@@ -6,7 +6,7 @@ import { opAgg, opLuck } from '../../core/luck';
 import { restLog, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import { subFoods } from '../cupboard/foods';
-import { restGear } from '../equip/power';
+import { equipOff, restGear } from '../equip/power';
 import { addProficiency } from '../mysterious/rules';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import { badInput, learnedUpTo } from './common';
@@ -105,7 +105,7 @@ export async function startTrial(
 
   const agg = await opAgg(o);
   const { rate: luck } = await opLuck(o);
-  const gear = await restGear(o.tx, o.rest, o.config.suits);
+  const gear = await restGear(o.tx, o.rest, o.config.suits, equipOff(o.settings));
   const base = trialBase(gear.total.creatives + (agg.creatives ?? 0), t) + foodsTrial(mc.level, main, sub);
   const roll = o.rng.next();
   const success = roll < base + luck / 5;
