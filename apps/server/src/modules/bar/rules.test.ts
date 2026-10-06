@@ -3,7 +3,6 @@ import { seededRng, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   barHand,
-  cupRound,
   cupWinRate,
   fgAwardLevel,
   fgOutcome,
@@ -67,13 +66,11 @@ describe('划拳（设计文档 §3.2）', () => {
   });
 });
 
-describe('猜酒杯（设计文档 §3.3）', () => {
-  it('第几连 = 上一局赢了 ? 上一局连胜 + 1 : 1；胜率 = (1 + 幸运率)/(n + 1)', () => {
-    expect(cupRound(null, 0)).toBe(1);
-    expect(cupRound(1, 3)).toBe(4);
-    expect(cupRound(-1, 5)).toBe(1);
-    expect(cupWinRate(1, 0)).toBe(0.5);
-    expect(cupWinRate(3, 0.2)).toBeCloseTo(0.3, 10);
+describe('猜酒杯（问题记录 427-5）', () => {
+  it('猜中率 = (1 + 幸运率) / 杯子数，最高 maxRate', () => {
+    expect(cupWinRate(2, 0, 0.95)).toBe(0.5);
+    expect(cupWinRate(7, 0.4, 0.95)).toBeCloseTo(0.2, 10);
+    expect(cupWinRate(2, 1, 0.95)).toBe(0.95);
   });
 });
 

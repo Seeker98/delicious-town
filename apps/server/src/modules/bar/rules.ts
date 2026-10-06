@@ -31,14 +31,9 @@ export function fgAwardLevel(times: number): number {
   return 2 + Math.floor(times / 3);
 }
 
-/** 猜酒杯这一局是第几连（也是要花的礼券数）：上一局赢了是上一局连胜 + 1，否则 1 */
-export function cupRound(prev: BarResult | null, prevTimes: number): number {
-  return prev === 1 ? prevTimes + 1 : 1;
-}
-
-/** 猜酒杯胜率 = (1 + 幸运率) / (n + 1) */
-export function cupWinRate(n: number, luckRate: number): number {
-  return (1 + luckRate) / (n + 1);
+/** 猜酒杯这一轮的猜中率 = (1 + 幸运率) / 杯子数，最高 maxRate（问题记录 427-5） */
+export function cupWinRate(cups: number, luckRate: number, maxRate: number): number {
+  return Math.min(maxRate, (1 + luckRate) / cups);
 }
 
 /** 转数字胜率 = 1/numMax + 幸运率/numLuckDiv */
