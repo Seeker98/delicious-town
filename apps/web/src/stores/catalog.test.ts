@@ -6,6 +6,8 @@ import { useCatalogStore } from './catalog';
 import { useLocaleStore } from './locale';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { catalog: vi.fn() } }));
+// 切语言要第一次加载法、英翻译包，全量并行跑时偶尔超过 15 秒（和 LangSelect、core 一样放宽，backlog 408 那条）
+vi.setConfig({ testTimeout: 60_000 });
 
 const cat = (name: string, version = 'v1'): CatalogDto =>
   ({

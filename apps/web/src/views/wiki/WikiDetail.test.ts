@@ -384,6 +384,29 @@ describe('食材、菜谱详情：晚到的旧请求不盖新页面（backlog #1
     grades: [],
   });
 
+  it('“返回列表”回到进来前的列表地址（带搜索、筛选）；从别处进来时回列表首页（backlog 第 ⑧ 批）', async () => {
+    vi.mocked(endpoints.openFood).mockResolvedValue(food(1001, '大米'));
+    const mountWithBack = async (back: string | null) => {
+      const history = createMemoryHistory();
+      // 内存历史不记上一页：模拟浏览器历史里的 state.back
+      Object.defineProperty(history, 'state', { get: () => ({ back }) });
+      const router = createRouter({
+        history,
+        routes: [
+          { path: '/wiki/foods/:id', component: WikiFoodView },
+          { path: '/:p(.*)', component: { template: '<div />' } },
+        ],
+      });
+      await router.push('/wiki/foods/1001');
+      const w = mount(WikiFoodView, { global: { plugins: [router] } });
+      await flushPromises();
+      return w.find('a').attributes('href');
+    };
+    expect(await mountWithBack('/wiki/foods?f=2&q=%E7%B1%B3')).toBe('/wiki/foods?f=2&q=%E7%B1%B3');
+    expect(await mountWithBack('/home')).toBe('/wiki/foods');
+    expect(await mountWithBack(null)).toBe('/wiki/foods');
+  });
+
   it('旧链接（重新编号前的编号）：接口跳到新编号后，地址栏也换成新编号（设计 §5）', async () => {
     vi.mocked(endpoints.openGoodsDetail).mockResolvedValue(goods({ id: 10001, name: '神秘礼券' }));
     vi.mocked(endpoints.openFood).mockResolvedValue(food(1001, '大米'));

@@ -256,6 +256,24 @@ describe('randomAward（发放）', () => {
     expect((await foodNum(t, ctx.restaurantId, low.normal[0]!)).num).toBe(1);
   });
 
+  it('酒吧的个人缺料倾向只在档次的等级范围里挑（backlog 352）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { scarcity: { needBase: 1, needLuckFactor: 0, needMax: 1 } });
+    const ctx = await newRestaurant(t, { shardId });
+    const tiers = t.game.deps.config.tuning.bar.prize.foodTiers;
+    for (const level of [2, 4, 8]) {
+      const [lo, hi] = prizeFoodTier(tiers, level).levels;
+      for (const r of [0, 0.5, 0.99]) {
+        rngValues = [0.5, 0.9, r, r, r, r];
+        const got = await run(ctx, (o) => randomAward(o, { level, bar: true }));
+        expect(got.data.kind).toBe('foods');
+        const lv = config.foods.get(got.data.id!)!.level;
+        expect(lv).toBeGreaterThanOrEqual(lo);
+        expect(lv).toBeLessThanOrEqual(hi);
+      }
+    }
+  });
+
   it('物品池空时改发银币', async () => {
     const ctx = await newRestaurant(t);
     rngValues = [0.5];

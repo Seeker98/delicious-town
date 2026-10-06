@@ -17,7 +17,7 @@ const tower: Messages['tower'] = {
     renown: (n) => `, renombre ${n > 0 ? '+' : ''}${n}`,
     rank: (n) => `, ahora eres el ${n}.º`,
     power: (name, power) => `${name} (poder ${power})`,
-    votes: (me, them) => ` ${me}-${them}`,
+    votes: (me, them) => ` ${me}–${them}`,
     onTotal: ' (empate a votos, decide la suma)',
     judgesTitle: 'Jueces',
     judges: {
