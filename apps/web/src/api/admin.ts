@@ -1,5 +1,6 @@
 import type {
   AccountRole,
+  AdminItemsDto,
   ActivityInput,
   AdminActivityDto,
   AdminAnnouncementDto,
@@ -122,6 +123,8 @@ export const adminApi = {
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
+  /** 道具整理（问题记录 429，只读） */
+  items: () => api.get<AdminItemsDto>(`${A}/items`),
   suspiciousAcquire: (shardId: number) =>
     api.get<SuspiciousAcquireRow[]>(`${A}/suspicious/acquire${qs({ shardId })}`),
   launchCheck: () => api.get<LaunchCheckDto>(`${A}/launch-check`),

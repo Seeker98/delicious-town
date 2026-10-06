@@ -21,6 +21,7 @@ const links = computed(() => [
   { to: '/admin/activities', label: '活动' },
   { to: '/admin/predict', label: '预测' },
   { to: '/admin/codes', label: '兑换码' },
+  { to: '/admin/items', label: '道具整理' },
   { to: '/admin/stats', label: '统计' },
   { to: '/admin/audit', label: '审计' },
 ]);
