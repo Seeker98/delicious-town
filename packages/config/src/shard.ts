@@ -28,10 +28,13 @@ function deepMerge(base: unknown, override: unknown): unknown {
   return out;
 }
 
+/** 默认关的功能：区服覆盖里写 true 才开（收购 PR 1、2 还没有页面；PR 3 删掉） */
+export const DEFAULT_OFF_FEATURES: readonly string[] = ['acquire'];
+
 /** 基础配置 + 区服覆盖（深合并，数组整体替换），结果再校验一遍 */
 export function resolveShardSettings(config: GameConfig, override: unknown): ShardSettings {
   const base: ShardSettings = {
-    features: {},
+    features: Object.fromEntries(DEFAULT_OFF_FEATURES.map((f) => [f, false])),
     restaurant: config.bundle.restaurantDefaults,
     tuning: config.tuning,
   };

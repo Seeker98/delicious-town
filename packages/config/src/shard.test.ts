@@ -50,3 +50,25 @@ describe('backlog 156-1：交易所参考价覆盖值上限', () => {
     ).toEqual({ '1': 100_000_000 });
   });
 });
+
+describe('功能开关默认值（收购 PR 1）', () => {
+  it('收购默认关，区服覆盖里写 true 才开；别的功能照旧默认开', () => {
+    const base = resolveShardSettings(config, {});
+    expect(isFeatureEnabled(base, 'acquire')).toBe(false);
+    expect(isFeatureEnabled(base, 'fund')).toBe(true);
+    expect(isFeatureEnabled(resolveShardSettings(config, { features: { acquire: true } }), 'acquire')).toBe(
+      true,
+    );
+  });
+
+  it('收购的默认数值', () => {
+    expect(config.tuning.acquire).toMatchObject({
+      priceDays: 7,
+      priceMultiple: 5,
+      minPrice: 100000,
+      taxRate: 0.1,
+      maxHoldings: 10,
+      listMinRate: 0.5,
+    });
+  });
+});
