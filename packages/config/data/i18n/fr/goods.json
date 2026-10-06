@@ -1303,6 +1303,30 @@
     "name": "[Rang 6]•Pierre verte mystique",
     "desc": "Assaisonnement +24"
   },
+  "50501": {
+    "name": "[Rang 1]•Pierre du destin",
+    "desc": "Chance +1"
+  },
+  "50502": {
+    "name": "[Rang 2]•Pierre du destin",
+    "desc": "Chance +2"
+  },
+  "50503": {
+    "name": "[Rang 3]•Pierre du destin",
+    "desc": "Chance +4"
+  },
+  "50504": {
+    "name": "[Rang 4]•Pierre du destin",
+    "desc": "Chance +8"
+  },
+  "50505": {
+    "name": "[Rang 5]•Pierre du destin",
+    "desc": "Chance +16"
+  },
+  "50506": {
+    "name": "[Rang 6]•Pierre du destin",
+    "desc": "Chance +24"
+  },
   "60000": {
     "name": "Rue des débutants",
     "desc": "Fréquentation +35 %, pièces par table +1, chance +36, clients difficiles -35 %"

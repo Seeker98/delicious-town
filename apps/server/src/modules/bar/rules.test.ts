@@ -26,11 +26,16 @@ describe('划拳（设计文档 §3.2）', () => {
     expect(fgOutcome(0.5, 0, t)).toBe(-1);
   });
 
-  it('幸运率 0.1：胜到 0.35、平到 0.7', () => {
+  it('幸运率只加在胜上（问题记录 419）：幸运率 0.1 时胜到 0.35、平到 0.6', () => {
     expect(fgOutcome(0.34, 0.1, t)).toBe(1);
     expect(fgOutcome(0.36, 0.1, t)).toBe(0);
-    expect(fgOutcome(0.69, 0.1, t)).toBe(0);
-    expect(fgOutcome(0.71, 0.1, t)).toBe(-1);
+    expect(fgOutcome(0.59, 0.1, t)).toBe(0);
+    expect(fgOutcome(0.61, 0.1, t)).toBe(-1);
+  });
+
+  it('幸运率 0.3（约 300 幸运）仍会输：负 20%', () => {
+    expect(fgOutcome(0.79, 0.3, t)).toBe(0);
+    expect(fgOutcome(0.81, 0.3, t)).toBe(-1);
   });
 
   it('服务器出拳：胜 (h+1)%3、平 h、负 (h+2)%3', () => {
