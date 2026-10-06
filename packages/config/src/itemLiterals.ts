@@ -3,7 +3,7 @@
  * 扫描测试和一次性改写脚本共用；最后一个捕获组是编号
  */
 export type ItemLiteralKind = 'goods' | 'foods' | 'cookbooks';
-export const ITEM_PATTERNS: Array<{ kind: ItemLiteralKind | 'either' | 'captured'; re: RegExp }> = [
+const RAW_PATTERNS: Array<{ kind: ItemLiteralKind | 'either' | 'captured'; re: RegExp }> = [
   { kind: 'goods', re: /\bgoodsNum\([^,()]+,\s*[^,()]+,\s*(\d+)\)/g },
   // 发道具的几个函数编号参数位置不同：grantGoodsOp(op, 编号, 数量)、grantGoods(db, config, 店, 编号, 数量, 时间)、
   // 模拟器 grantGoods(c, r, 编号, 数量)
@@ -38,17 +38,34 @@ export const ITEM_PATTERNS: Array<{ kind: ItemLiteralKind | 'either' | 'captured
   // 菜园篮子：{ kind: 'basket', id } 是食材
   { kind: 'foods', re: /\bkind:\s*'basket',\s*(?:id|itemId):\s*(\d+)\b/g },
   // SQL 条件：.where('goods_id', '=', 编号)
-  { kind: 'goods', re: /\.where\('(?:goods_id|gem_goods_id)',\s*'=',\s*(\d+)\)/g },
-  { kind: 'foods', re: /\.where\('foods_id',\s*'=',\s*(\d+)\)/g },
-  { kind: 'cookbooks', re: /\.where\('cookbook_id',\s*'=',\s*(\d+)\)/g },
+  // 带表别名的也算：.where('s.goods_id', '=', 编号)（第 ⑦ 批审查）
+  { kind: 'goods', re: /\.where\('(?:\w+\.)?(?:goods_id|gem_goods_id)',\s*'=',\s*(\d+)\)/g },
+  { kind: 'foods', re: /\.where\('(?:\w+\.)?foods_id',\s*'=',\s*(\d+)\)/g },
+  { kind: 'cookbooks', re: /\.where\('(?:\w+\.)?cookbook_id',\s*'=',\s*(\d+)\)/g },
   // 服务函数的编号参数：学菜和菜谱详情、橱柜锁定和解冻、荣誉和仓库格、开放接口详情
-  { kind: 'cookbooks', re: /\.(?:learn|detail)\([^,()]+,\s*(\d+)\)/g },
-  { kind: 'foods', re: /\.(?:lock|thaw)\([^,()]+,\s*(\d+)\)/g },
-  { kind: 'goods', re: /\b(?:hasValidHonor|removeHonor|assertStoreRoom)\([^,()]+,\s*(\d+)\)/g },
-  { kind: 'goods', re: /\bgoodsDetail\([^,()]+,\s*(\d+)\)/g },
-  { kind: 'foods', re: /\.food\([^,()]+,\s*(\d+)\)/g },
-  { kind: 'cookbooks', re: /\.cookbook\([^,()]+,\s*(\d+)\)/g },
+  // 编号后面还可以有别的参数：learn(ctx, 编号, …)（第 ⑦ 批审查）
+  { kind: 'cookbooks', re: /\.(?:learn|detail)\([^,()]+,\s*(\d+)\s*[,)]/g },
+  { kind: 'foods', re: /\.(?:lock|thaw)\([^,()]+,\s*(\d+)\s*[,)]/g },
+  { kind: 'goods', re: /\b(?:hasValidHonor|removeHonor|assertStoreRoom)\([^,()]+,\s*(\d+)\s*[,)]/g },
+  { kind: 'goods', re: /\bgoodsDetail\([^,()]+,\s*(\d+)\s*[,)]/g },
+  { kind: 'foods', re: /\.food\([^,()]+,\s*(\d+)\s*[,)]/g },
+  { kind: 'cookbooks', re: /\.cookbook\([^,()]+,\s*(\d+)\s*[,)]/g },
 ];
+
+/** 数字可以带分隔符（106_001，第 ⑦ 批审查）：所有编号位置的 (\d+) 都换成能带下划线的写法 */
+export const ITEM_PATTERNS = RAW_PATTERNS.map(({ kind, re }) => ({
+  kind,
+  re: new RegExp(re.source.replaceAll('(\\d+)', '(\\d(?:_?\\d)*)'), re.flags),
+}));
+
+/** SQL 的 in 列表：.where('goods_id', 'in', [编号, …])，列表里每个数字都是编号（第 ⑦ 批审查） */
+const IN_LIST = /\.where\('(?:\w+\.)?(goods_id|gem_goods_id|foods_id|cookbook_id)',\s*'in',\s*\[([^\]]*)\]/g;
+const IN_KIND: Record<string, ItemLiteralKind> = {
+  goods_id: 'goods',
+  gem_goods_id: 'goods',
+  foods_id: 'foods',
+  cookbook_id: 'cookbooks',
+};
 
 export interface ItemLiteral {
   kind: ItemLiteralKind;
@@ -72,7 +89,7 @@ export function findItemLiterals(
       const digits = m[m.length - 1]!; // 编号是最后一个捕获组（captured 的第 1 组是种类）
       const index = m.index! + m[0].lastIndexOf(digits);
       if (seen.has(index)) continue;
-      const id = Number(digits);
+      const id = Number(digits.replaceAll('_', ''));
       let k: ItemLiteralKind | null =
         kind === 'either' ? null : kind === 'captured' ? (m[1] === 'goods' ? 'goods' : 'foods') : kind;
       if (kind === 'either') {
@@ -89,6 +106,17 @@ export function findItemLiterals(
       if (!ids[k].has(id)) continue;
       seen.add(index);
       out.push({ kind: k, id, index, length: digits.length });
+    }
+  }
+  for (const m of text.matchAll(IN_LIST)) {
+    const kind = IN_KIND[m[1]!]!;
+    const listAt = m.index! + m[0].lastIndexOf('[') + 1;
+    for (const n of m[2]!.matchAll(/\d(?:_?\d)*/g)) {
+      const index = listAt + n.index!;
+      const id = Number(n[0].replaceAll('_', ''));
+      if (seen.has(index) || !ids[kind].has(id)) continue;
+      seen.add(index);
+      out.push({ kind, id, index, length: n[0].length });
     }
   }
   // goods / foods / cookbooks 记录里的数字键：newRestaurant(t, { goods: { 编号: 数量 }, cookbooks: { 编号: 品级 } }) 这类
