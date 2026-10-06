@@ -95,7 +95,7 @@ describe('SpicePanel', () => {
     // 结束的结果由猜的返回给出，这里用一个已结束的局面直接挂载
     const done = mount(SpicePanel, { props: { data: withRound(r) } });
     expect(w.find('[data-testid="spice-result"]').exists()).toBe(false);
-    expect(done.get('[data-testid="spice-result"]').text()).toContain('第 1 次就猜中了');
+    expect(done.get('[data-testid="spice-result"]').text()).toContain('第 1 次猜中了');
     expect(done.get('[data-testid="spice-result"]').text()).toContain('声望 +5');
     expect(done.get('[data-testid="spice-result"]').text()).toContain('银币 800');
     expect(done.get('[data-testid="spice-secret"]').text()).toBe('配方：醋、糖、料酒、盐');
@@ -120,5 +120,62 @@ describe('SpicePanel', () => {
     await flushPromises();
     expect(w.emitted('reload')).toHaveLength(1);
     expect(w.find('[data-testid="spice-start"]').exists()).toBe(true);
+  });
+
+  it('读屏：固定的播报区念最新一次的回答，结束时念结果（审查 I1）', async () => {
+    vi.mocked(endpoints.barSpiceGuess).mockResolvedValue(
+      round({ guesses: [{ guess: [0, 1, 2, 3], a: 2, b: 1 }], left: 7 }),
+    );
+    const w = mount(SpicePanel, { props: { data: withRound(round()) } });
+    const live = w.get('[data-testid="spice-live"]');
+    expect(live.attributes('aria-live')).toBe('polite');
+    await pick(w, [0, 1, 2, 3]);
+    await w.get('[data-testid="spice-submit"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="spice-live"]').text()).toBe('第 1 次：盐、糖、酱油、醋 2A1B');
+    expect(w.findAll('[data-testid^="spice-row-"][aria-live]')).toHaveLength(0);
+  });
+
+  it('空位按钮的读屏标签写出里面是哪种调料（审查 I2）', async () => {
+    const w = mount(SpicePanel, { props: { data: withRound(round()) } });
+    await pick(w, [6]);
+    expect(w.get('[data-testid="spice-slot-0"]').attributes('aria-label')).toBe(
+      '第 1 位：八角（点一下拿掉）',
+    );
+    expect(w.get('[data-testid="spice-slot-1"]').attributes('aria-label')).toBe('第 2 位：空');
+  });
+
+  it('别的错误（比如网络）：不退回开局页面，用概览里的局面', async () => {
+    vi.mocked(endpoints.barSpiceGuess).mockRejectedValue(
+      new ApiError('VALIDATION_FAILED', { reason: 'guess' }),
+    );
+    const w = mount(SpicePanel, { props: { data: withRound(round({ left: 6 })) } });
+    await pick(w, [0, 1, 2, 3]);
+    await w.get('[data-testid="spice-submit"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+    expect(w.find('[data-testid="spice-start"]').exists()).toBe(false);
+    expect(w.text()).toContain('还能猜 6 次');
+  });
+
+  it('文案：第几次猜中不带“就”，奖励前写“得到”；档位只有一个次数时不写成 5~5', () => {
+    const r = round({
+      guesses: Array.from({ length: 8 }, () => ({ guess: [3, 1, 4, 0], a: 0, b: 0 })),
+      left: 0,
+      result: 'win',
+      secret: [3, 1, 4, 0],
+      tier: 2,
+      renown: 0,
+      award: { kind: 'coin', id: null, num: 800, lucky: false },
+    });
+    const done = mount(SpicePanel, { props: { data: withRound(r) } });
+    expect(done.get('[data-testid="spice-result"]').text()).toBe('第 8 次猜中了，得到 银币 800');
+    const tiers = [
+      { maxTries: 4, awardLevel: 8, renown: 5 },
+      { maxTries: 5, awardLevel: 5, renown: 2 },
+      { maxTries: 8, awardLevel: 3, renown: 0 },
+    ];
+    const w = mount(SpicePanel, { props: { data: withRound(null, { tiers }) } });
+    expect(w.get('[data-testid="spice-tier-1"]').text()).toContain('第 5 次猜中');
   });
 });

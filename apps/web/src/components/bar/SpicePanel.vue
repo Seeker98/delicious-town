@@ -7,6 +7,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { awardText } from './award';
+import { roundGone } from './gone';
 
 /** 秘制调料（问题记录 427-2）：猜调料的排列，回答几 A 几 B，猜得越快奖励越好 */
 const props = defineProps<{ data: BarDto }>();
@@ -54,9 +55,9 @@ async function run(fn: () => Promise<SpiceDto>, fallback: string) {
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
-    // 局面不在了，或者和服务端对不上（另一个标签页动过）：按概览重新读
+    // 局面不在了就回到开局；别的错误（网络、和服务端对不上）先用概览里的局面，再重新读（审查）
     resetPicked();
-    local.value = null;
+    local.value = roundGone(e) ? null : props.data.spice.round;
     emit('reload');
   } finally {
     busy.value = false;
@@ -79,15 +80,23 @@ const tierRows = computed(() =>
     renown: x.renown,
   })),
 );
+const liveText = computed(() => {
+  const r = local.value;
+  if (!r) return '';
+  if (r.result) return resultText.value;
+  const g = r.guesses.at(-1);
+  return g ? t.value.bar.spice.row(r.guesses.length, listOf(g.guess), g.a, g.b) : '';
+});
 const resultText = computed(() => {
   const r = local.value;
   if (!r?.result) return '';
   const x = t.value.bar.spice;
   if (r.result === 'lose') return x.lose(r.guesses.length || s.value.tries);
-  const parts = [x.win(r.guesses.length)];
-  if (r.renown > 0) parts.push(x.renown(r.renown));
-  if (r.award) parts.push(awardText(r.award, catalog));
-  return parts.join(' ');
+  return (
+    x.win(r.guesses.length) +
+    (r.renown > 0 ? x.renown(r.renown) : '') +
+    (r.award ? t.value.bar.gotAward(awardText(r.award, catalog)) : '')
+  );
 });
 </script>
 
@@ -110,13 +119,9 @@ const resultText = computed(() => {
       </button>
     </template>
     <template v-else>
-      <div
-        v-for="(g, i) in local.guesses"
-        :key="i"
-        class="dt-spice-row"
-        :data-testid="`spice-row-${i}`"
-        :aria-live="i === local.guesses.length - 1 ? 'polite' : undefined"
-      >
+      <!-- 读屏的固定播报区：最新一次的回答，结束时是结果（审查 I1：新插入的节点带 aria-live 不播报） -->
+      <div class="visually-hidden" aria-live="polite" data-testid="spice-live">{{ liveText }}</div>
+      <div v-for="(g, i) in local.guesses" :key="i" class="dt-spice-row" :data-testid="`spice-row-${i}`">
         {{ t.bar.spice.row(i + 1, listOf(g.guess), g.a, g.b) }}
       </div>
       <template v-if="!local.result">
@@ -127,7 +132,7 @@ const resultText = computed(() => {
             :key="i"
             type="button"
             class="dt-spice-slot"
-            :aria-label="t.bar.spice.slot(i + 1)"
+            :aria-label="t.bar.spice.slot(i + 1, x === null ? null : nameOf(x))"
             :disabled="busy || x === null"
             :data-testid="`spice-slot-${i}`"
             @click="unpick(i)"
@@ -160,7 +165,6 @@ const resultText = computed(() => {
       <template v-else>
         <div
           :class="['mt-2', 'fw-bold', local.result === 'win' ? 'text-success' : 'text-danger']"
-          aria-live="polite"
           data-testid="spice-result"
         >
           {{ resultText }}
