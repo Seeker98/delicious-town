@@ -138,6 +138,8 @@ describe('NimPanel', () => {
     const res = w.get('[data-testid="nim-result"]');
     expect(res.text()).toContain('你拿到了最后一颗！声望 +1');
     expect(res.text()).toContain('银币 500');
+    // 结束后不再写“还剩 0 颗”
+    expect(w.find('[data-testid="nim-status"]').exists()).toBe(false);
     await w.get('[data-testid="nim-again"]').trigger('click');
     expect(w.find('[data-testid="nim-start-novice"]').exists()).toBe(true);
   });

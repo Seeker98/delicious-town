@@ -148,7 +148,7 @@ const resultText = computed(() => {
       <div v-if="view.coin" class="dt-meta mb-1" data-testid="nim-coin">
         {{ view.coin === 'me' ? t.bar.nim.coinMe : t.bar.nim.coinBartender }}
       </div>
-      <div class="mb-1" aria-live="polite" data-testid="nim-status">
+      <div v-if="!view.result" class="mb-1" aria-live="polite" data-testid="nim-status">
         {{ t.bar.nim.status(view.left, view.k) }}
       </div>
       <div class="dt-nim-board mb-2" aria-hidden="true">
