@@ -1224,8 +1224,30 @@ export interface AcquireStateTable {
   list_rate: Nullable<number>;
   list_until: TsNullable;
   acquired_at: TsNullable;
-  /** 最近一次打理的游戏日（收购第二期用） */
-  tended_day: Nullable<string>;
+}
+
+/** 被收购的店替老板打理（收购 PR 2）：每家店每个游戏日一行 */
+export interface AcquireTendTable {
+  rest_id: number;
+  /** 游戏日 YYYY-MM-DD */
+  day: string;
+  created_at: Ts;
+}
+
+/** 每家被收购的店每天给老板的分红（压过封顶以后的）；day 是结算的那天 */
+export interface AcquireDividendTable {
+  rest_id: number;
+  day: string;
+  owner_rest_id: number;
+  coin: number;
+  /** 那天打理过（分红 × 1.5） */
+  tended: boolean;
+}
+
+/** 每个老板的累计分红（投资榜用，免得每次加总全表） */
+export interface AcquireHolderTable {
+  rest_id: number;
+  dividend_total: Default<number>;
 }
 
 export type AcquireLogKind = 'acquire' | 'buy_listed' | 'redeem' | 'release';
@@ -1418,6 +1440,9 @@ export interface DB {
   acquire_state: AcquireStateTable;
   acquire_log: AcquireLogTable;
   acquire_block: AcquireBlockTable;
+  acquire_tend: AcquireTendTable;
+  acquire_dividend: AcquireDividendTable;
+  acquire_holder: AcquireHolderTable;
   kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
