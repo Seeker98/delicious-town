@@ -811,6 +811,46 @@ details.dt-card > summary {
   --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e8936b'/%3e%3c/svg%3e");
 }
 /* ---------- 酒吧扩展（子项目 4C-3） ---------- */
+/* 一掷千金（问题记录 427-3）：10 个箱子每行 5 个；名字长时折行，不撑出屏幕 */
+.dt-deal-boxes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  max-width: 420px;
+}
+.dt-deal-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 52px;
+  padding: 4px 2px;
+  border: 1px solid var(--dt-line);
+  border-radius: 8px;
+  background: var(--dt-primary-soft);
+  font: inherit;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.dt-deal-box:disabled {
+  cursor: default;
+}
+.dt-deal-mine {
+  border-color: var(--dt-primary);
+  border-width: 2px;
+}
+.dt-deal-opened {
+  background: #fff;
+  color: var(--dt-muted);
+}
+.dt-deal-box-text {
+  font-size: 12px;
+}
+.dt-deal-prizes {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 12px;
+}
 /* 秘制调料（问题记录 427-2）：4 个空位一行；10 种调料每行 5 个 */
 .dt-spice-slots {
   display: grid;

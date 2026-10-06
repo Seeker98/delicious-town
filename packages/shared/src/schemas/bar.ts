@@ -30,6 +30,11 @@ export const barNimTakeBody = z.object({ num: z.number().int().min(1).max(99) })
 /** 调料编号；长度、不重复、上限由服务端按数值再查 */
 export const barSpiceGuessBody = z.object({ guess: z.array(z.number().int().min(0).max(99)).min(1).max(10) });
 
+// ---------- 一掷千金（问题记录 427-3） ----------
+/** 箱子编号；上限由服务端按奖品数再查 */
+export const barDealBoxBody = z.object({ box: z.number().int().min(0).max(99) });
+export const barDealAnswerBody = z.object({ deal: z.boolean() });
+
 export type BarResultDto = 'win' | 'draw' | 'lose';
 
 /** 随机奖励（规格书 00 §0.8） */
@@ -60,6 +65,8 @@ export interface SlotAwardDto {
 
 export interface BarDto {
   tickets: number;
+  /** 银币（一掷千金用银币入场） */
+  coin: number;
   krabCoins: number;
   fg: BarGameDto;
   /** nextCost：下一局要几张礼券 */
@@ -101,6 +108,51 @@ export interface BarDto {
     tiers: SpiceTierDto[];
     round: SpiceDto | null;
   };
+  /** 一掷千金：奖品表、每轮开几个；进行中的局不含没开的箱子内容 */
+  deal: {
+    cost: number;
+    played: number;
+    max: number;
+    count: number;
+    opens: number[];
+    prizes: Array<{ kind: 'food' | 'master'; level: number; num: number }>;
+    round: DealDto | null;
+  };
+}
+
+export interface DealPrizeDto {
+  foodsId: number;
+  num: number;
+  /** 按商店价算的价值（银币） */
+  value: number;
+}
+
+export interface DealOpenedDto extends DealPrizeDto {
+  box: number;
+}
+
+/** 一掷千金的局面；没开的箱子里是什么只在结束时给出 */
+export interface DealDto {
+  count: number;
+  /** 自己的箱子；还没选为 null */
+  mine: number | null;
+  round: number;
+  /** 这一轮还要开几个；有报价时为 0 */
+  toOpen: number;
+  opened: DealOpenedDto[];
+  /** 还没开出来的奖品（含自己的），按价值从高到低；不说在哪个箱子里 */
+  left: DealPrizeDto[];
+  offer: number | null;
+  result: 'deal' | 'box' | null;
+  /** 成交得到的银币 */
+  coin: number;
+  /** 自己箱子里的东西：结束时才有 */
+  prize: DealPrizeDto | null;
+  /** 全部箱子：结束时才有，下标就是箱子编号 */
+  all: DealPrizeDto[] | null;
+  /** 开自己的箱子时：橱柜放不下、放进冰箱的个数，冰箱也满了丢掉的个数 */
+  fridge: number;
+  dropped: number;
 }
 
 export interface SpiceGuessDto {

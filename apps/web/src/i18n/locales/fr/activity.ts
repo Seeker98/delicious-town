@@ -62,6 +62,7 @@ const activity: Messages['activity'] = {
     'bar.memory': 'Cocktail Mémoire',
     'bar.nim': 'Le dernier bonbon',
     'bar.spice': 'Mélange secret',
+    'bar.deal': 'À prendre ou à laisser',
     'tower.challenge': 'Défis de la Tour des chefs',
     'tower.friendDuel': 'Duels entre amis',
     'tower.rank': 'Défis du classement des chefs',

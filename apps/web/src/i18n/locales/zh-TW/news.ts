@@ -48,6 +48,8 @@ export default {
     'bar.devil': (w, p) => `${w}在魔鬼辣杯連喝三杯沒事，贏走 ${num(p.payout)} 張神秘禮券`,
     'bar.memory': (w) => `${w}在記憶調酒裡一口氣記住了 7 種配料`,
     'bar.spice': (w, p) => `${w}只用 ${num(p.tries)} 次就猜出了酒吧的秘製調料`,
+    'bar.deal': (w, p, x) =>
+      `${w}在一擲千金裡一路不成交，開啟自己的箱子拿到了${x.foodName(num(p.foodsId))}×${num(p.num)}`,
     'bar.darts': (w) => `${w}三鏢全中靶心，把酒吧老闆看呆了`,
     'equip.stress': (w, p, x) => `${w}把 ${x.goodsName(num(p.goodsId))} 強化到了 +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>

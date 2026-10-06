@@ -8,7 +8,14 @@ import { announcementBody } from './announce';
 import { createBatchBody, createSharedCodeBody, redeemBody } from './redeem';
 import { banBody, reportBody, resolveReportBody } from './report';
 import { suspiciousQuery } from './ops';
-import { barNimFirstBody, barNimStartBody, barNimTakeBody, barSpiceGuessBody } from './bar';
+import {
+  barDealAnswerBody,
+  barDealBoxBody,
+  barNimFirstBody,
+  barNimStartBody,
+  barNimTakeBody,
+  barSpiceGuessBody,
+} from './bar';
 
 describe('registerBody', () => {
   const base = { username: '厨神小王', password: 'secret123', email: 'A@B.com', captchaToken: 't' };
@@ -173,5 +180,15 @@ describe('秘制调料（问题记录 427-2）', () => {
     expect(barSpiceGuessBody.safeParse({ guess: [] }).success).toBe(false);
     expect(barSpiceGuessBody.safeParse({ guess: [0, 1.5, 2, 3] }).success).toBe(false);
     expect(barSpiceGuessBody.safeParse({ guess: [-1, 1, 2, 3] }).success).toBe(false);
+  });
+});
+
+describe('一掷千金（问题记录 427-3）', () => {
+  it('箱子编号是非负整数；回答是布尔', () => {
+    expect(barDealBoxBody.safeParse({ box: 0 }).success).toBe(true);
+    expect(barDealBoxBody.safeParse({ box: -1 }).success).toBe(false);
+    expect(barDealBoxBody.safeParse({ box: 1.5 }).success).toBe(false);
+    expect(barDealAnswerBody.safeParse({ deal: true }).success).toBe(true);
+    expect(barDealAnswerBody.safeParse({ deal: 'yes' }).success).toBe(false);
   });
 });

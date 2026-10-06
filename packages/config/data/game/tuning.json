@@ -287,6 +287,17 @@
       "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
       "winLevel": 5, "perfectLevel": 6, "tieRefund": 1
     },
+    "deal": {
+      "cost": 10000, "dailyMax": 3,
+      "prizes": [
+        { "kind": "food", "level": 1, "num": 1 }, { "kind": "food", "level": 1, "num": 3 },
+        { "kind": "food", "level": 2, "num": 2 }, { "kind": "master", "level": 1, "num": 2 },
+        { "kind": "food", "level": 3, "num": 2 }, { "kind": "food", "level": 4, "num": 2 },
+        { "kind": "food", "level": 5, "num": 2 }, { "kind": "master", "level": 3, "num": 2 },
+        { "kind": "master", "level": 5, "num": 2 }, { "kind": "master", "level": 5, "num": 5 }
+      ],
+      "opens": [3, 2, 2, 1], "offerRates": [0.5, 0.65, 0.8, 0.95], "valueRate": 0.5
+    },
     "spice": {
       "cost": 2, "dailyMax": 5, "kinds": 10, "length": 4, "tries": 8,
       "tiers": [

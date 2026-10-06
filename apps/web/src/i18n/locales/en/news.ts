@@ -57,6 +57,8 @@ const news: Messages['news'] = {
     'bar.memory': (w) => `${w} remembered all 7 ingredients in Memory Mixing`,
     'bar.spice': (w, p) =>
       `${w} cracked the bar’s Secret Blend in just ${num(p.tries)} ${plEn(Number(p.tries), 'try', 'tries')}`,
+    'bar.deal': (w, p, x) =>
+      `${w} said no to every deal in Deal or No Deal and opened ${x.foodName(num(p.foodsId))} ×${num(p.num)}`,
     'bar.darts': (w) => `${w} hit three bullseyes in a row and left the bar owner speechless`,
     'equip.stress': (w, p, x) => `${w} enhanced ${x.goodsName(num(p.goodsId))} to +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>

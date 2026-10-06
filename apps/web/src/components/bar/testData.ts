@@ -2,6 +2,7 @@ import type { BarDto } from '@dt/shared';
 
 export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
   tickets: 20,
+  coin: 0,
   krabCoins: 3,
   fg: { result: null, times: 0 },
   cup: { result: null, times: 0, nextCost: 1 },
@@ -28,6 +29,26 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
       novice: { cost: 1, k: [3, 3], pile: [10, 20], renown: 1, awardLevel: 2, first: 'choose' },
       expert: { cost: 2, k: [3, 5], pile: [20, 40], renown: 3, awardLevel: 5, first: 'coin' },
     },
+    round: null,
+  },
+  deal: {
+    cost: 10000,
+    played: 0,
+    max: 3,
+    count: 10,
+    opens: [3, 2, 2, 1],
+    prizes: [
+      { kind: 'food', level: 1, num: 1 },
+      { kind: 'food', level: 1, num: 3 },
+      { kind: 'food', level: 2, num: 2 },
+      { kind: 'master', level: 1, num: 2 },
+      { kind: 'food', level: 3, num: 2 },
+      { kind: 'food', level: 4, num: 2 },
+      { kind: 'food', level: 5, num: 2 },
+      { kind: 'master', level: 3, num: 2 },
+      { kind: 'master', level: 5, num: 2 },
+      { kind: 'master', level: 5, num: 5 },
+    ],
     round: null,
   },
   spice: {

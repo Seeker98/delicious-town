@@ -161,6 +161,10 @@ const events: Messages['events'] = {
       p.result === 'win'
         ? `Mélange secret : trouvé à l’essai ${n(p, 'tries')}`
         : `Mélange secret : pas trouvé en ${n(p, 'tries')} essais`,
+    'bar.deal': (p, names) =>
+      p.result === 'deal'
+        ? `À prendre ou à laisser : marché conclu pour ${formatNum(n(p, 'coin'))} pièces`
+        : `À prendre ou à laisser : vous avez ouvert votre boîte et obtenu ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} « ${String(p.name ?? '')} »${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,

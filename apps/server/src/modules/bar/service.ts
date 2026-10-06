@@ -7,6 +7,7 @@ import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
 import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
 import { nimFirst, nimStart, nimTake } from './nim';
 import { spiceGuess, spiceStart } from './spice';
+import { dealAnswer, dealOpen, dealPick, dealStart } from './deal';
 import { playSlot } from './slot';
 import { barView } from './view';
 
@@ -72,6 +73,18 @@ export function createBarService(d: GameDeps) {
     },
     spiceGuess(ctx: RestCtx, b: { guess: number[] }) {
       return op(ctx, 'bar.spice', (o) => spiceGuess(o, b.guess));
+    },
+    dealStart(ctx: RestCtx) {
+      return op(ctx, 'bar.deal', (o) => dealStart(o));
+    },
+    dealPick(ctx: RestCtx, b: { box: number }) {
+      return op(ctx, 'bar.deal', (o) => dealPick(o, b.box));
+    },
+    dealOpen(ctx: RestCtx, b: { box: number }) {
+      return op(ctx, 'bar.deal', (o) => dealOpen(o, b.box));
+    },
+    dealAnswer(ctx: RestCtx, b: { deal: boolean }) {
+      return op(ctx, 'bar.deal', (o) => dealAnswer(o, b.deal));
     },
     dartsStart(ctx: RestCtx) {
       return op(ctx, 'bar.darts', (o) => dartsStart(o));

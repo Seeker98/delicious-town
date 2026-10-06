@@ -524,6 +524,24 @@ export const tuningSchema = z.object({
       perfectLevel: int.min(1),
       tieRefund: int.min(0),
     }),
+    /** 一掷千金（问题记录 427-3）：奖品洗进箱子，分轮开，银行家按剩余平均 × valueRate × 本轮系数报买断价 */
+    deal: z
+      .object({
+        cost: int.min(0),
+        dailyMax: int.min(1),
+        prizes: z
+          .array(z.object({ kind: z.enum(['food', 'master']), level: int.min(1).max(5), num: int.min(1) }))
+          .min(3)
+          .max(16),
+        opens: z.array(int.min(1)).min(1),
+        offerRates: z.array(num.min(0).max(1)).min(1),
+        valueRate: num.min(0).max(1),
+      })
+      .refine((x) => x.opens.length === x.offerRates.length, 'opens and offerRates must have the same length')
+      .refine(
+        (x) => x.opens.reduce((a, b) => a + b, 0) === x.prizes.length - 2,
+        'opens must sum to prizes - 2',
+      ),
     /** 秘制调料（问题记录 427-2）：猜 kinds 种调料里 length 种的排列，最多 tries 次；按第几次猜中分档 */
     spice: z
       .object({

@@ -134,3 +134,9 @@ export function spiceTier(tries: number, tiers: ReadonlyArray<{ maxTries: number
   const i = tiers.findIndex((t) => tries <= t.maxTries);
   return i < 0 ? tiers.length - 1 : i;
 }
+
+/** 一掷千金的银行家报价（设计 §4）：剩下的箱子平均价值 × 估价成数 × 本轮系数，四舍五入到百位 */
+export function dealOffer(values: readonly number[], rate: number, valueRate: number): number {
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
+  return Math.round((avg * valueRate * rate) / 100) * 100;
+}

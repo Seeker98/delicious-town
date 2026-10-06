@@ -150,6 +150,10 @@ export default {
       `最後一顆糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '贏了' : '輸了'}`,
     'bar.spice': (p) =>
       p.result === 'win' ? `秘製調料第 ${n(p, 'tries')} 次猜中了` : `秘製調料 ${n(p, 'tries')} 次都沒猜中`,
+    'bar.deal': (p, names) =>
+      p.result === 'deal'
+        ? `一擲千金成交，得到 ${formatNum(n(p, 'coin'))} 銀幣`
+        : `一擲千金開啟自己的箱子，得到${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     // 收購（問題記錄 421）
     'acquire.bought': (p) =>
       `花 ${formatNum(n(p, 'price'))} 銀幣${p.way === 'listed' ? '買下了掛牌的' : '收購了'}「${String(p.name ?? '')}」`,

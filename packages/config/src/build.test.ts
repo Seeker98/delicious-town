@@ -588,6 +588,21 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
 
+  it('一掷千金的数值（问题记录 427-3）', () => {
+    const { bundle } = realBuild();
+    const d = bundle!.tuning.bar.deal;
+    expect(d).toMatchObject({
+      cost: 10000,
+      dailyMax: 3,
+      opens: [3, 2, 2, 1],
+      offerRates: [0.5, 0.65, 0.8, 0.95],
+      valueRate: 0.5,
+    });
+    expect(d.prizes).toHaveLength(10);
+    expect(d.prizes[0]).toEqual({ kind: 'food', level: 1, num: 1 });
+    expect(d.prizes[9]).toEqual({ kind: 'master', level: 5, num: 5 });
+  });
+
   it('秘制调料的数值（问题记录 427-2）', () => {
     const { bundle } = realBuild();
     expect(bundle!.tuning.bar.spice).toEqual({

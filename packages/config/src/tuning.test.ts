@@ -85,3 +85,23 @@ describe('bar.spice（秘制调料，问题记录 427-2）', () => {
     expect(withSpice((s) => (s.tiers[2]!.maxTries = 7))).toBe(false);
   });
 });
+
+describe('bar.deal（一掷千金，问题记录 427-3）', () => {
+  type Deal = { prizes: Array<Record<string, unknown>>; opens: number[]; offerRates: number[] };
+  const withDeal = (f: (d: Deal) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { bar: { deal: Deal } };
+    f(t.bar.deal);
+    return tuningSchema.safeParse(t).success;
+  };
+
+  it('合法配置通过；每轮开几个加起来 = 奖品数 − 2，和每轮系数一样多', () => {
+    expect(withDeal(() => undefined)).toBe(true);
+    expect(withDeal((d) => (d.opens = [3, 2, 2, 2]))).toBe(false);
+    expect(withDeal((d) => (d.offerRates = [0.5, 0.65, 0.8]))).toBe(false);
+  });
+
+  it('奖品等级 1~5；至少 3 个奖品', () => {
+    expect(withDeal((d) => (d.prizes[0]!.level = 6))).toBe(false);
+    expect(withDeal((d) => (d.prizes = d.prizes.slice(0, 2)))).toBe(false);
+  });
+});

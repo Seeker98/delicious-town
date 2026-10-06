@@ -7,6 +7,7 @@ import { resultDto } from './common';
 import { devilView, type DevilState } from './devil';
 import { memoryResume, type MemoryState } from './memory';
 import { nimTables, nimView, type NimState } from './nim';
+import { dealView, type DealState } from './deal';
 import { peekRounds } from './round';
 import { spiceTiers, spiceView, type SpiceState } from './spice';
 import { cupRound, slotFloorLeft, type BarResult, type BarTuning } from './rules';
@@ -41,13 +42,14 @@ export async function barView(
       .orderBy('award_id')
       .execute(),
     peekRounds(db, rest.id),
-    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice'], day),
+    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice', 'bar.deal'], day),
   ]);
   const devil = rounds.devil as DevilState | undefined;
   const memory = rounds.memory as MemoryState | undefined;
   const darts = rounds.darts as { throws: number[]; aim: unknown } | undefined;
   const nim = rounds.nim as NimState | undefined;
   const spice = rounds.spice as SpiceState | undefined;
+  const deal = rounds.deal as DealState | undefined;
   const have = (id: number) => {
     const r = items.find((x) => x.goods_id === id);
     return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
@@ -56,6 +58,7 @@ export async function barView(
   const total = config.slotPool.total;
   return {
     tickets: have(GOODS.mysteryTicket),
+    coin: rest.coin,
     krabCoins: have(GOODS.krabCoin),
     fg: { result: resultDto(s?.fg_result ?? null), times: s?.fg_times ?? 0 },
     cup: {
@@ -113,6 +116,15 @@ export async function barView(
       tries: t.spice.tries,
       tiers: spiceTiers(t.spice),
       round: spice ? spiceView(spice, t.spice) : null,
+    },
+    deal: {
+      cost: t.deal.cost,
+      played: daily['bar.deal']!,
+      max: t.deal.dailyMax,
+      count: t.deal.prizes.length,
+      opens: t.deal.opens,
+      prizes: t.deal.prizes,
+      round: deal ? dealView(deal) : null,
     },
   };
 }
