@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createAccountRow, createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { randomCode } from './code';
+import { testConfig } from '../../../test/config';
 
 let t: TestGame;
 let actor: number;
@@ -108,6 +109,13 @@ describe('兑换（设计 裁定 13~17）', () => {
 });
 
 describe('终审修复', () => {
+  it('附件里有已下架道具的码（下架前建的）：也报 code_broken（backlog #143）', async () => {
+    const retired = testConfig().bundle.goods.find((g) => g.retired)!;
+    const r = await newRestaurant(t);
+    const c = await code({ items: JSON.stringify({ goods: [{ id: retired.id, num: 1 }] }) });
+    await expect(redeem(r, c)).rejects.toMatchObject({ params: { reason: 'code_broken' } });
+  });
+
   it('附件里的道具已从配置删除的码：报 code_broken，不记用过、不占次数', async () => {
     const r = await newRestaurant(t);
     const c = await code({ items: JSON.stringify({ goods: [{ id: 999999, num: 1 }] }) });

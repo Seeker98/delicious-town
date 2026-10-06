@@ -6,6 +6,7 @@ import {
   gameDay,
   gameTime,
   weekStart,
+  type ActivationBlock,
   type ActivationDto,
   type QuestDto,
   type QuestsDto,
@@ -40,6 +41,24 @@ import { activationTotal, stateValue } from './rules';
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
 
+/**
+ * 本店眼下能拿到“领取限时活动奖励”的活动（SQL 条件，别名 a）：没删、本区服或全服、已开始、等级够；
+ * 全服加成没有奖励，不算；进行中，或兑换活动还在兑换期（ends_at + graceHours，见 activity/rules exchangeUntil）
+ */
+function claimableActivity(rest: Pick<RestaurantRow, 'shard_id' | 'level'>, now: Date) {
+  return sql<boolean>`exists(select 1 from activity a where a.deleted_at is null
+    and (a.shard_id = ${rest.shard_id} or a.shard_id is null) and a.kind <> 'boost'
+    and a.starts_at <= ${now} and a.min_level <= ${rest.level}
+    and (a.ends_at > ${now} or (a.kind = 'exchange'
+      and a.ends_at + coalesce((a.def->>'graceHours')::int, 24) * interval '1 hour' > ${now})))`;
+}
+
+/** 活跃项编号（activation_extra.json、原版活跃表） */
+const ACT_EXCHANGE = 901;
+const ACT_PREDICT = 902;
+const ACT_ACTIVITY = 904;
+const ACT_TAKEAWAY = 50;
+
 export function createTaskService(d: GameDeps) {
   const { chapters, quests, questLines, weeklyGroups } = d.config.bundle;
   const questById = new Map(quests.map((q) => [q.id, q]));
@@ -53,9 +72,7 @@ export function createTaskService(d: GameDeps) {
     // 本店的几项计数一条查询读完（质量期 ③：原来 8 条；这里可能在调用方的事务里跑，不能并发，所以合成子查询）
     const facts = await db
       .selectNoFrom([
-        sql<boolean>`exists(select 1 from activity where deleted_at is null and (shard_id = ${rest.shard_id} or shard_id is null) and starts_at <= ${now} and ends_at > ${now} and min_level <= ${rest.level})`.as(
-          'running',
-        ),
+        claimableActivity(rest, now).as('running'),
         sql<
           number[]
         >`coalesce((select array_agg(quest_id) from quest_done where rest_id = ${rest.id}), '{}')`.as('done'),
@@ -243,9 +260,40 @@ export function createTaskService(d: GameDeps) {
   /** 活跃项的等级门槛（问题记录 360）：配置里只写了星级，交易所、事件预测的等级门槛在区服数值里 */
   function actNeedLevel(id: number, settings: ShardSettings): number {
     const t = settings.tuning;
-    if (id === 901) return t.exchange.minLevel;
-    if (id === 902) return t.predict.minLevel;
+    if (id === ACT_EXCHANGE) return t.exchange.minLevel;
+    if (id === ACT_PREDICT) return t.predict.minLevel;
     return 0;
+  }
+
+  /** 活跃项的星级门槛：配送外卖按区服数值 takeaway.openStar（配置里写的 2 星只是默认；backlog 第 ⑥ 批） */
+  function actNeedStar(a: { id: number; needStar: number }, settings: ShardSettings): number {
+    return a.id === ACT_TAKEAWAY ? settings.tuning.takeaway.openStar : a.needStar;
+  }
+
+  /**
+   * 活跃项要读的店外数据一条查询读完（质量期 ③ 的查询预算）：爱心项链；交易所、事件预测的注册天数、
+   * 邮箱门槛；有没有能领奖的限时活动（backlog 第 ⑥ 批）
+   */
+  async function actFacts(db: Kysely<DB>, rest: RestaurantRow) {
+    const now = d.now();
+    const r = await db
+      .selectNoFrom([
+        sql<boolean>`exists(select 1 from store_item where rest_id = ${rest.id} and goods_id = ${GOODS.loveNecklace} and (expires_at is null or expires_at > ${now}))`.as(
+          'necklace',
+        ),
+        sql<Date>`(select created_at from account where id = ${rest.account_id})`.as('createdAt'),
+        sql<boolean>`(select email_verified_at is not null from account where id = ${rest.account_id})`.as(
+          'verified',
+        ),
+        claimableActivity(rest, now).as('activityOpen'),
+      ])
+      .executeTakeFirstOrThrow();
+    return {
+      necklace: r.necklace,
+      days: (now.getTime() - new Date(r.createdAt).getTime()) / 86_400_000,
+      verified: r.verified,
+      activityOpen: r.activityOpen,
+    };
   }
 
   /**
@@ -277,13 +325,22 @@ export function createTaskService(d: GameDeps) {
     const byKey = new Map(rows.map((r) => [r.key, r.count]));
     const acts = d.config.bundle.activationTasks.filter((a) => a.limitTimes > 0);
     const counts = new Map(acts.map((a) => [a.id, byKey.get(`act:${a.id}`) ?? 0]));
-    const necklace = await db
-      .selectFrom('store_item')
-      .select('expires_at')
-      .where('rest_id', '=', rest.id)
-      .where('goods_id', '=', GOODS.loveNecklace)
-      .executeTakeFirst();
-    const multiplier = necklace && (necklace.expires_at === null || necklace.expires_at > d.now()) ? 2 : 1;
+    const facts = await actFacts(db, rest);
+    const multiplier = facts.necklace ? 2 : 1;
+    const needDaysOf = (id: number) =>
+      id === ACT_EXCHANGE
+        ? settings.tuning.exchange.minAccountDays
+        : id === ACT_PREDICT
+          ? settings.tuning.predict.minAccountDays
+          : 0;
+    const blockedOf = (id: number): ActivationBlock => {
+      if (id === ACT_EXCHANGE || id === ACT_PREDICT) {
+        if (facts.days < needDaysOf(id)) return 'days';
+        if (!facts.verified) return 'email';
+      }
+      if (id === ACT_ACTIVITY && !facts.activityOpen) return 'noActivity';
+      return null;
+    };
     return {
       total: activationTotal(acts, counts),
       signedIn: (byKey.get(SIGNIN_KEY) ?? 0) > 0,
@@ -297,8 +354,10 @@ export function createTaskService(d: GameDeps) {
           points: a.points,
           limit: a.limitTimes,
           count: counts.get(a.id) ?? 0,
-          needStar: a.needStar,
+          needStar: actNeedStar(a, settings),
           needLevel: actNeedLevel(a.id, settings),
+          needDays: needDaysOf(a.id),
+          blocked: blockedOf(a.id),
           off: actOff(a.name, settings),
         };
       }),
