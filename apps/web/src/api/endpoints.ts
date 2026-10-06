@@ -38,6 +38,7 @@ import type {
   MemoryAnswerDto,
   MemoryRoundDto,
   NimDto,
+  SpiceDto,
   FeastResultDto,
   HammerResultDto,
   NewsPageDto,
@@ -441,6 +442,8 @@ export const endpoints = {
   barNimStart: (table: 'novice' | 'expert') => api.post<NimDto>('/api/v1/bar/nim/start', { table }),
   barNimFirst: (who: 'me' | 'bartender') => api.post<NimDto>('/api/v1/bar/nim/first', { who }),
   barNimTake: (num: number) => api.post<NimDto>('/api/v1/bar/nim/take', { num }),
+  barSpiceStart: () => api.post<SpiceDto>('/api/v1/bar/spice/start'),
+  barSpiceGuess: (guess: number[]) => api.post<SpiceDto>('/api/v1/bar/spice/guess', { guess }),
   tower: () => api.get<TowerDto>('/api/v1/tower'),
   towerChallenge: (floor: number, test: boolean) =>
     api.post<DuelResultDto>('/api/v1/tower/challenge', { floor, test }),

@@ -157,6 +157,10 @@ const events: Messages['events'] = {
     'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
     'bar.nim': (p) =>
       `Le dernier bonbon (table ${p.table === 'expert' ? 'experts' : 'débutants'}) : ${p.result === 'win' ? 'gagné' : 'perdu'}`,
+    'bar.spice': (p) =>
+      p.result === 'win'
+        ? `Mélange secret : trouvé à l’essai ${n(p, 'tries')}`
+        : `Mélange secret : pas trouvé en ${n(p, 'tries')} essais`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} « ${String(p.name ?? '')} »${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,

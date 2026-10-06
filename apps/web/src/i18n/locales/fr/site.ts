@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    spice1007:
+      'Nouveau jeu au bar, « Mélange secret » : le barman mélange 4 condiments parmi 10 dans un ordre précis. À chaque essai, vous donnez une combinaison et recevez une réponse en A et B (A : bon condiment à la bonne place ; B : bon condiment à la mauvaise place). Vous avez jusqu’à 8 essais, et plus vous trouvez vite, meilleur est le prix : en 4 essais ou moins, gros prix, renommée et passage aux nouvelles. 2 bons mystère par partie, 5 parties par jour',
     nim1007:
       'Nouveau jeu au bar, « Le dernier bonbon » : à tour de rôle avec le barman, prenez quelques bonbons dans un tas (chaque table a sa limite) ; celui qui prend le dernier gagne. La table débutants coûte 1 bon mystère, vous choisissez qui commence et le barman se trompe parfois ; la table experts coûte 2 bons mystère, une pièce décide qui commence et le barman ne se trompe jamais. Une victoire donne de la renommée et un prix ; 10 parties par jour pour les deux tables',
     homeLinks1007:

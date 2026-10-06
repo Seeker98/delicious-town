@@ -8,7 +8,7 @@ import { announcementBody } from './announce';
 import { createBatchBody, createSharedCodeBody, redeemBody } from './redeem';
 import { banBody, reportBody, resolveReportBody } from './report';
 import { suspiciousQuery } from './ops';
-import { barNimFirstBody, barNimStartBody, barNimTakeBody } from './bar';
+import { barNimFirstBody, barNimStartBody, barNimTakeBody, barSpiceGuessBody } from './bar';
 
 describe('registerBody', () => {
   const base = { username: '厨神小王', password: 'secret123', email: 'A@B.com', captchaToken: 't' };
@@ -164,5 +164,14 @@ describe('最后一颗糖（问题记录 427-1）', () => {
     expect(barNimTakeBody.safeParse({ num: 3 }).success).toBe(true);
     expect(barNimTakeBody.safeParse({ num: 0 }).success).toBe(false);
     expect(barNimTakeBody.safeParse({ num: 1.5 }).success).toBe(false);
+  });
+});
+
+describe('秘制调料（问题记录 427-2）', () => {
+  it('组合是 1~10 个非负整数；长度、重复、越界由服务端按数值再查', () => {
+    expect(barSpiceGuessBody.safeParse({ guess: [0, 1, 2, 3] }).success).toBe(true);
+    expect(barSpiceGuessBody.safeParse({ guess: [] }).success).toBe(false);
+    expect(barSpiceGuessBody.safeParse({ guess: [0, 1.5, 2, 3] }).success).toBe(false);
+    expect(barSpiceGuessBody.safeParse({ guess: [-1, 1, 2, 3] }).success).toBe(false);
   });
 });

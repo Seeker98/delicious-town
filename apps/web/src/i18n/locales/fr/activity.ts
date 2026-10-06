@@ -61,6 +61,7 @@ const activity: Messages['activity'] = {
     'bar.darts': 'Fléchettes',
     'bar.memory': 'Cocktail Mémoire',
     'bar.nim': 'Le dernier bonbon',
+    'bar.spice': 'Mélange secret',
     'tower.challenge': 'Défis de la Tour des chefs',
     'tower.friendDuel': 'Duels entre amis',
     'tower.rank': 'Défis du classement des chefs',

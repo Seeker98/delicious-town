@@ -10,6 +10,7 @@ import {
   barNimFirstBody,
   barNimStartBody,
   barNimTakeBody,
+  barSpiceGuessBody,
   barNumBody,
   barSlotBody,
 } from '@dt/shared';
@@ -48,6 +49,10 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
     );
     r.post('/bar/nim/first', async (req) =>
       okOp(await svc.nimFirst(restCtxOf(req), parse(barNimFirstBody, req.body))),
+    );
+    r.post('/bar/spice/start', async (req) => okOp(await svc.spiceStart(restCtxOf(req))));
+    r.post('/bar/spice/guess', async (req) =>
+      okOp(await svc.spiceGuess(restCtxOf(req), parse(barSpiceGuessBody, req.body))),
     );
     r.post('/bar/nim/take', async (req) =>
       okOp(await svc.nimTake(restCtxOf(req), parse(barNimTakeBody, req.body))),

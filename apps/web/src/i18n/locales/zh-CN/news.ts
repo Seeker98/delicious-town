@@ -46,6 +46,7 @@ export default {
       `${w}在酒吧拉霸拉到了 ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}×${num(p.num)}`,
     'bar.devil': (w, p) => `${w}在魔鬼辣杯连喝三杯没事，赢走 ${num(p.payout)} 张神秘礼券`,
     'bar.memory': (w) => `${w}在记忆调酒里一口气记住了 7 种配料`,
+    'bar.spice': (w, p) => `${w}只用 ${num(p.tries)} 次就猜出了酒吧的秘制调料`,
     'bar.darts': (w) => `${w}三镖全中靶心，把酒吧老板看呆了`,
     'equip.stress': (w, p, x) => `${w}把 ${x.goodsName(num(p.goodsId))} 强化到了 +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>

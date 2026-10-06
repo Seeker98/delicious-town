@@ -8,6 +8,8 @@ import {
   fgAwardLevel,
   fgOutcome,
   nimBartenderTake,
+  spiceScore,
+  spiceTier,
   nextTimes,
   numHint,
   numMissValue,
@@ -156,5 +158,20 @@ describe('最后一颗糖的调酒师（设计 §4.2）', () => {
       expect(take).toBeGreaterThanOrEqual(1);
       expect(take).toBeLessThanOrEqual(Math.min(k, left));
     }
+  });
+});
+
+describe('秘制调料的计分（设计 §4）', () => {
+  const secret = [0, 1, 2, 3];
+  it('A：调料和位置都对；B：调料对、位置不对', () => {
+    expect(spiceScore(secret, [0, 1, 2, 3])).toEqual({ a: 4, b: 0 });
+    expect(spiceScore(secret, [4, 5, 6, 7])).toEqual({ a: 0, b: 0 });
+    expect(spiceScore(secret, [3, 2, 1, 0])).toEqual({ a: 0, b: 4 });
+    expect(spiceScore(secret, [0, 2, 1, 9])).toEqual({ a: 1, b: 2 });
+  });
+
+  it('第几次猜中落在哪一档', () => {
+    const tiers = [{ maxTries: 4 }, { maxTries: 6 }, { maxTries: 8 }];
+    expect([1, 4, 5, 6, 7, 8].map((n) => spiceTier(n, tiers))).toEqual([0, 0, 1, 1, 2, 2]);
   });
 });

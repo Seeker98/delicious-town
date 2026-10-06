@@ -60,6 +60,7 @@ const activity: Messages['activity'] = {
     'bar.darts': 'Darts',
     'bar.memory': 'Memory Mixing',
     'bar.nim': 'Last Candy',
+    'bar.spice': 'Secret Blend',
     'tower.challenge': 'Chef Tower challenges',
     'tower.friendDuel': 'Duel friends',
     'tower.rank': 'Chef ranking challenges',

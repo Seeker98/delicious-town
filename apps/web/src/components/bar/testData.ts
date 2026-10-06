@@ -30,5 +30,19 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
     },
     round: null,
   },
+  spice: {
+    cost: 2,
+    played: 0,
+    max: 5,
+    kinds: 10,
+    length: 4,
+    tries: 8,
+    tiers: [
+      { maxTries: 4, awardLevel: 8, renown: 5 },
+      { maxTries: 6, awardLevel: 5, renown: 2 },
+      { maxTries: 8, awardLevel: 3, renown: 0 },
+    ],
+    round: null,
+  },
   ...patch,
 });

@@ -62,6 +62,7 @@ export default {
     'bar.darts': '飛鏢',
     'bar.memory': '記憶調酒',
     'bar.nim': '最後一顆糖',
+    'bar.spice': '秘製調料',
     'tower.challenge': '廚塔挑戰',
     'tower.friendDuel': '與好友切磋',
     'tower.rank': '賽廚榜挑戰',

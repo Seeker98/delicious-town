@@ -8,6 +8,7 @@ import { devilView, type DevilState } from './devil';
 import { memoryResume, type MemoryState } from './memory';
 import { nimTables, nimView, type NimState } from './nim';
 import { peekRounds } from './round';
+import { spiceTiers, spiceView, type SpiceState } from './spice';
 import { cupRound, slotFloorLeft, type BarResult, type BarTuning } from './rules';
 
 export async function barView(
@@ -40,12 +41,13 @@ export async function barView(
       .orderBy('award_id')
       .execute(),
     peekRounds(db, rest.id),
-    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim'], day),
+    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice'], day),
   ]);
   const devil = rounds.devil as DevilState | undefined;
   const memory = rounds.memory as MemoryState | undefined;
   const darts = rounds.darts as { throws: number[]; aim: unknown } | undefined;
   const nim = rounds.nim as NimState | undefined;
+  const spice = rounds.spice as SpiceState | undefined;
   const have = (id: number) => {
     const r = items.find((x) => x.goods_id === id);
     return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
@@ -101,6 +103,16 @@ export async function barView(
       max: t.nim.dailyMax,
       tables: nimTables(t.nim),
       round: nim ? nimView(nim) : null,
+    },
+    spice: {
+      cost: t.spice.cost,
+      played: daily['bar.spice']!,
+      max: t.spice.dailyMax,
+      kinds: t.spice.kinds,
+      length: t.spice.length,
+      tries: t.spice.tries,
+      tiers: spiceTiers(t.spice),
+      round: spice ? spiceView(spice, t.spice) : null,
     },
   };
 }
