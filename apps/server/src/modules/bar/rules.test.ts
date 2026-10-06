@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { seededRng, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   barHand,
@@ -6,6 +7,7 @@ import {
   cupWinRate,
   fgAwardLevel,
   fgOutcome,
+  nimBartenderTake,
   nextTimes,
   numHint,
   numMissValue,
@@ -116,5 +118,43 @@ describe('老虎机（设计文档 §3.5）', () => {
     expect(slotFloorLeft(298, t)).toBe(1);
     expect(slotFloorLeft(299, t)).toBe(1);
     expect(slotFloorLeft(300, t)).toBe(1);
+  });
+});
+
+describe('最后一颗糖的调酒师（设计 §4.2）', () => {
+  it('占优、不失手：拿余数，让剩下的是 k+1 的倍数', () => {
+    expect(nimBartenderTake(10, 3, 0, sequenceRng([0.9]))).toBe(2);
+    expect(nimBartenderTake(7, 3, 0, sequenceRng([0.9]))).toBe(3);
+    // 剩 2 颗、k=3：余数就是 2，一把拿完
+    expect(nimBartenderTake(2, 3, 0, sequenceRng([0.9]))).toBe(2);
+  });
+
+  it('新手桌占优时按失手概率：没失手拿余数，失手在 1~min(k, 剩余) 里随便拿', () => {
+    expect(nimBartenderTake(10, 3, 0.5, sequenceRng([0.6]))).toBe(2);
+    // 0.4 < 0.5 失手；再抽 int(3)，0 → 拿 1
+    expect(nimBartenderTake(10, 3, 0.5, sequenceRng([0.4, 0]))).toBe(1);
+  });
+
+  it('必输局面在 1~min(k, 剩余) 里随便拿', () => {
+    // 8 mod 4 = 0：不抽失手，直接 int(3)：0.99 → 2，拿 3；0 → 拿 1
+    expect(nimBartenderTake(8, 3, 0, sequenceRng([0.99]))).toBe(3);
+    expect(nimBartenderTake(8, 3, 0, sequenceRng([0]))).toBe(1);
+  });
+
+  it('剩 1 颗时拿 1', () => {
+    expect(nimBartenderTake(1, 5, 0, sequenceRng([0.5]))).toBe(1);
+    expect(nimBartenderTake(1, 5, 1, sequenceRng([0.5]))).toBe(1);
+  });
+
+  it('任意局面拿的数量都在 [1, min(k, 剩余)]', () => {
+    const rng = seededRng(42);
+    for (let i = 0; i < 1000; i++) {
+      const left = 1 + rng.int(40);
+      const k = 3 + rng.int(3);
+      const mistake = [0, 0.5, 1][i % 3]!;
+      const take = nimBartenderTake(left, k, mistake, rng);
+      expect(take).toBeGreaterThanOrEqual(1);
+      expect(take).toBeLessThanOrEqual(Math.min(k, left));
+    }
   });
 });
