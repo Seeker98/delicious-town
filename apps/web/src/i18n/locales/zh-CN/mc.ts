@@ -47,6 +47,15 @@ export default {
     levelLabel: '按等级',
     roadLabel: '按道',
   },
+  /** 碎片兑换指定残卷（问题记录 415） */
+  exchange: {
+    title: (n: number) => `碎片兑换：${n} 张同级碎片换 1 张任选一道的残卷（只能选还没学会、能鉴定出来的）`,
+    have: (level: number, n: number) => `${level} 级碎片 ${n} 张`,
+    pick: '选一道菜',
+    btn: '换 1 张',
+    done: (name: string) => `换到「${name}」残卷 1 张`,
+    failed: '兑换失败',
+  },
   remnants: '残卷',
   noRemnants: '没有残卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,

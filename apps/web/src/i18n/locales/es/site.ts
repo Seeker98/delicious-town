@@ -10,6 +10,8 @@ const site: Messages['site'] = {
   changelog: {
     luckGem1006:
       'Nueva gema, la Piedra del destino: engástala para ganar suerte (rangos 1 a 6: +1, 2, 4, 8, 16, 24). El rango 1 se vende en la tienda de monedas, en la Oferta del día y en el mercado negro, también sale en premios aleatorios y sube de rango como las demás gemas. En el bar, la suerte en Piedra, papel o tijera ahora solo sube la probabilidad de ganar, y siempre queda al menos un 10 % de perder; antes, con mucha suerte, ya no se podía perder',
+    mcLearn1006:
+      'Aprender platos estrella es más fácil: descompón los fragmentos que no necesites en trozos, y 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel. El Sello Delicia ahora acierta un 40 % en vez de un 28 %, y el Sello de jade del Dios de la Cocina está en la tienda (300 000). La tasación del Templo indica cómo conseguir cada objeto, y la guía tiene una sección «Cómo aprender platos estrella»',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:

@@ -302,6 +302,7 @@
     "tuning.equip.maxPresets": "厨具预设最多几套（套）",
     "tuning.equip.historyLimit": "厨具详情显示最近几条强化记录（条）",
     "tuning.mysterious.saleRates": "特色菜卖给顾客时每份价值的倍率（列表，第 1 项是 1 级；没写的等级 ×1）；只在结算卖出时乘，赛厨、品尝等用原价（问题记录 412）",
+    "tuning.mysterious.fragmentPerRemnant": "几张同级残卷碎片换 1 张这一级任选一道的残卷（张；问题记录 415）；只能换能鉴定出来、还没学会的",
     "tuning.mysterious.cookNums": "特色菜一次可选的烹制份数（列表）",
     "tuning.mysterious.baseNum": "特色菜每批产出份数基数（份，再乘烹制份数）",
     "tuning.mysterious.highLevel": "几级以上的特色菜算高级（级；产出份数打折、不判断鲍勃）",

@@ -48,6 +48,15 @@ export default {
     levelLabel: '按等級',
     roadLabel: '按道',
   },
+  /** 碎片兌換指定殘卷（問題記錄 415） */
+  exchange: {
+    title: (n: number) => `碎片兌換：${n} 張同級碎片換 1 張任選一道的殘卷（只能選還沒學會、能鑑定出來的）`,
+    have: (level: number, n: number) => `${level} 級碎片 ${n} 張`,
+    pick: '選一道菜',
+    btn: '換 1 張',
+    done: (name: string) => `換到「${name}」殘卷 1 張`,
+    failed: '兌換失敗',
+  },
   remnants: '殘卷',
   noRemnants: '沒有殘卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,
