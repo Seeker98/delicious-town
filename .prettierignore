@@ -7,3 +7,5 @@ apps/web/public/pack/
 .superpowers/
 # 繁中由 scripts/gen-zh-tw.mjs 生成：格式跟着简中走，不再单独格式化（backlog 多语言：简中接近行宽的文案转换后变长，格式化后又和生成结果对不上）
 apps/web/src/i18n/locales/zh-TW/
+# 图标子集由 apps/web/scripts/gen-icons.mjs 生成，不单独格式化
+apps/web/src/styles/icons.css

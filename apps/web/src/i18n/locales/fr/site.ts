@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    perf1006:
+      'Le site télécharge environ 140 Ko de moins au premier chargement (la police d’icônes ne contient que les icônes utilisées), et le Marché, le Bar, l’Ichiban Kuji, le Temple et la Place s’ouvrent plus vite',
     backlog6:
       'Les règles du duel indiquent le nombre de juges réellement utilisé sur ce serveur ; l’ustensile lâché par un ancien a sa propre ligne sur la carte de résultat et fait l’objet d’une nouvelle ; l’échange d’éclats des plats signature permet d’en échanger plusieurs à la fois ; le « Comment l’obtenir » des objets d’expertise mentionne les coups critiques sur le gardien du Temple ; les pages d’objets du wiki listent aussi la Promo du jour, le marché noir, les récompenses aléatoires et l’amélioration de gemmes comme sources',
     visual1006:

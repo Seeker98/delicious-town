@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+// 图标只带用到的那些（性能第二轮 A，pnpm -F @dt/web icons 生成）
+import './styles/icons.css';
 import './styles/main.css';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';

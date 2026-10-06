@@ -17,9 +17,8 @@ export const renownBuyBody = z.object({
 export interface DuelSideDto {
   name: string;
   power: number;
-  /** 色、香、味、形、养 */
+  /** 色、香、味、形、养（五项的和网页不显示，接口也不给；票数相同时服务端按和定胜负） */
   scores: number[];
-  sum: number;
 }
 
 /** 一位上场的评委（问题记录 396）：双方在他关注项目上的和 */

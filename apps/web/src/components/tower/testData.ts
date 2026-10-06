@@ -2,8 +2,8 @@ import type { DuelResultDto, RankDto, RenownShopDto, TowerDto, TowerFloorDto } f
 
 export const duelResult = (patch: Partial<DuelResultDto> = {}): DuelResultDto => ({
   win: true,
-  me: { name: '我的店', power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4], sum: 85 },
-  them: { name: '见习模范餐厅', power: 29, scores: [8.1, 8, 6.6, 8.8, 3.6], sum: 35.1 },
+  me: { name: '我的店', power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4] },
+  them: { name: '见习模范餐厅', power: 29, scores: [8.1, 8, 6.6, 8.8, 3.6] },
   judges: [
     { id: 'carmen', me: 39.8, them: 16.1 },
     { id: 'oldPoor', me: 29.8, them: 32.4 },

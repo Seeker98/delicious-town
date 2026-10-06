@@ -16,32 +16,37 @@ export async function barView(
   t: BarTuning,
   now: Date,
 ): Promise<BarDto> {
-  const s = await db.selectFrom('bar_state').selectAll().where('rest_id', '=', rest.id).executeTakeFirst();
-  const items = await db
-    .selectFrom('store_item')
-    .select(['goods_id', 'num', 'expires_at'])
-    .where('rest_id', '=', rest.id)
-    .where('goods_id', 'in', [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
-    .execute();
+  const day = gameDay(now);
+  // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 17 毫秒左右）。只从连接池调用，不在事务里
+  const [s, items, acc, stats, devil, memory, darts, memoryPlayed, dartsPlayed] = await Promise.all([
+    db.selectFrom('bar_state').selectAll().where('rest_id', '=', rest.id).executeTakeFirst(),
+    db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num', 'expires_at'])
+      .where('rest_id', '=', rest.id)
+      .where('goods_id', 'in', [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
+      .execute(),
+    db
+      .selectFrom('account')
+      .select('email_verified_at')
+      .where('id', '=', rest.account_id)
+      .executeTakeFirstOrThrow(),
+    db
+      .selectFrom('bar_slot_stat')
+      .select(['award_id', 'num'])
+      .where('rest_id', '=', rest.id)
+      .orderBy('award_id')
+      .execute(),
+    peekRound<DevilState>(db, rest.id, 'devil'),
+    peekRound<MemoryState>(db, rest.id, 'memory'),
+    peekRound<{ throws: number[]; aim: unknown }>(db, rest.id, 'darts'),
+    getDaily(db, rest.id, 'bar.memory', day),
+    getDaily(db, rest.id, 'bar.darts', day),
+  ]);
   const have = (id: number) => {
     const r = items.find((x) => x.goods_id === id);
     return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
   };
-  const acc = await db
-    .selectFrom('account')
-    .select('email_verified_at')
-    .where('id', '=', rest.account_id)
-    .executeTakeFirstOrThrow();
-  const stats = await db
-    .selectFrom('bar_slot_stat')
-    .select(['award_id', 'num'])
-    .where('rest_id', '=', rest.id)
-    .orderBy('award_id')
-    .execute();
-  const day = gameDay(now);
-  const devil = await peekRound<DevilState>(db, rest.id, 'devil');
-  const memory = await peekRound<MemoryState>(db, rest.id, 'memory');
-  const darts = await peekRound<{ throws: number[]; aim: unknown }>(db, rest.id, 'darts');
   const cupResult = (s?.cup_result ?? null) as BarResult | null;
   const total = config.slotPool.total;
   return {
@@ -76,7 +81,7 @@ export async function barView(
     devil: { stakes: t.devil.stakes, round: devil ? devilView(devil) : null },
     memory: {
       cost: t.memory.cost,
-      played: await getDaily(db, rest.id, 'bar.memory', day),
+      played: memoryPlayed,
       max: t.memory.dailyMax,
       flashMs: t.memory.flashMs,
       gapMs: t.memory.gapMs,
@@ -84,7 +89,7 @@ export async function barView(
     },
     darts: {
       cost: t.darts.cost,
-      played: await getDaily(db, rest.id, 'bar.darts', day),
+      played: dartsPlayed,
       max: t.darts.dailyMax,
       round: darts ? { throws: darts.throws, aiming: darts.aim !== null } : null,
     },

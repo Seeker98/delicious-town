@@ -97,12 +97,12 @@ describe('挑战（设计文档 §3.2）', () => {
       rank: null,
       awards: [{ kind: 'coin', id: null, num: 600, lucky: false }],
     });
-    expect(r.data.me).toMatchObject({ power: 70, scores: [20, 13, 15, 22, 11], sum: 81 });
+    expect(r.data.me).toMatchObject({ power: 70, scores: [20, 13, 15, 22, 11] });
+    // 五项的和网页不再显示，接口也不给（backlog 396）
     expect(r.data.them).toEqual({
       name: '见习模范餐厅',
       power: 39,
       scores: [10.1, 0.8, 2.5, 22.3, 6.8],
-      sum: 42.5,
     });
     expect(r.data.votes).toEqual([3, 0]);
     expect(r.data.judges).toHaveLength(3);

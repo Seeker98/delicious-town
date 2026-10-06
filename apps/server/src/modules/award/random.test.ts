@@ -72,6 +72,38 @@ describe('物品池、食材池', () => {
     expect(awardGoodsPool(config.bundle.goods, 100, 0, false)).toEqual([]);
   });
 
+  it('物品池各等级的大小锁住：加减了能进随机奖励的道具要有意改这张表（backlog 天机石审查）', () => {
+    // 等级 → 非厨具物品池的种数（2026-10-06，含天机石一~五阶）
+    const sizes: Record<number, number> = {
+      1: 3,
+      2: 8,
+      3: 15,
+      4: 26,
+      5: 43,
+      6: 59,
+      7: 73,
+      8: 86,
+      9: 87,
+      10: 78,
+      11: 65,
+      12: 46,
+      13: 26,
+      14: 14,
+      15: 6,
+      16: 0,
+    };
+    for (const [lv, n] of Object.entries(sizes))
+      expect(awardGoodsPool(config.bundle.goods, Number(lv), 0, false), `等级 ${lv}`).toHaveLength(n);
+    // 天机石一~五阶的奖励等级 7~11，六阶不进随机奖励
+    const gem = (n: string) => config.bundle.goods.find((g) => g.name === `[${n}阶]•天机石`)!;
+    expect(['一', '二', '三', '四', '五'].map((n) => gem(n).awardFlag)).toEqual([7, 8, 9, 10, 11]);
+    expect(awardGoodsPool(config.bundle.goods, 11, 0, false)).toEqual(
+      expect.arrayContaining(['一', '二', '三', '四', '五'].map((n) => gem(n).id)),
+    );
+    for (let lv = 1; lv <= 16; lv++)
+      expect(awardGoodsPool(config.bundle.goods, lv, 9, false)).not.toContain(gem('六').id);
+  });
+
   it('食材池：权重 100、等级 ≤ min(等级, 5)，按 id 排序', () => {
     expect(awardFoodsPool(config.bundle.foods, 1)).toHaveLength(16);
     expect(awardFoodsPool(config.bundle.foods, 2)).toHaveLength(80); // 77 + 新街道权重 100 的 3 种（问题记录 284）

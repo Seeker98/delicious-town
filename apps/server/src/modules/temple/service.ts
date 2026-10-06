@@ -28,14 +28,7 @@ export function createTempleService(d: GameDeps, world: WorldService) {
       const t = s.tuning.temple;
       const now = d.now();
       const day = gameDay(now);
-      const rest = await d.db
-        .selectFrom('restaurant')
-        .selectAll()
-        .where('id', '=', ctx.restaurantId)
-        .executeTakeFirstOrThrow();
-      const damage = await getDaily(d.db, rest.id, 'guardian.damage', day);
-      const killed = (await getDaily(d.db, rest.id, 'guardian.killed', day)) > 0;
-      const hpMax = guardianHp(rest.star_level, t);
+      const restId = ctx.restaurantId;
       const ids = [
         ...d.config.missiles.keys(),
         ...d.config.maps.keys(),
@@ -43,12 +36,41 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         GOODS.meditation,
         GOODS.tentacle,
       ];
-      const held = await d.db
-        .selectFrom('store_item')
-        .select(['goods_id', 'num', 'expires_at'])
-        .where('rest_id', '=', rest.id)
-        .where('goods_id', 'in', ids)
-        .execute();
+      // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）；厨具、烹制中的特色菜要等店读出来
+      const [rest, damage, killedCount, held, trial, agg, fed, seeds] = await Promise.all([
+        d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirstOrThrow(),
+        getDaily(d.db, restId, 'guardian.damage', day),
+        getDaily(d.db, restId, 'guardian.killed', day),
+        d.db
+          .selectFrom('store_item')
+          .select(['goods_id', 'num', 'expires_at'])
+          .where('rest_id', '=', restId)
+          .where('goods_id', 'in', ids)
+          .execute(),
+        d.db.selectFrom('rest_trial').selectAll().where('rest_id', '=', restId).executeTakeFirst(),
+        getEffectAgg(d.db, restId, now, d.config, s),
+        d.db
+          .selectFrom('kraken_feed')
+          .select('id')
+          .where('rest_id', '=', restId)
+          .where('day', '=', day)
+          .executeTakeFirst(),
+        d.db
+          .selectFrom('rest_seed')
+          .select(['seed_id', 'num'])
+          .where('rest_id', '=', restId)
+          .where('num', '>', 0)
+          .orderBy('seed_id')
+          .execute(),
+      ]);
+      const [gear, cook] = await Promise.all([
+        restGear(d.db, rest, d.config.suits, equipOff(s)),
+        rest.mc_cook_id === null
+          ? undefined
+          : d.db.selectFrom('mc_cook').selectAll().where('id', '=', rest.mc_cook_id).executeTakeFirst(),
+      ]);
+      const killed = killedCount > 0;
+      const hpMax = guardianHp(rest.star_level, t);
       const row = (id: number) => held.find((x) => x.goods_id === id);
       const have = (id: number) => {
         const r = row(id);
@@ -60,30 +82,6 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         if (r.expires_at === null) return 0;
         return Math.max(0, Math.ceil((r.expires_at.getTime() - now.getTime()) / 60_000));
       };
-      const trial = await d.db
-        .selectFrom('rest_trial')
-        .selectAll()
-        .where('rest_id', '=', rest.id)
-        .executeTakeFirst();
-      const gear = await restGear(d.db, rest, d.config.suits, equipOff(s));
-      const agg = await getEffectAgg(d.db, rest.id, now, d.config, s);
-      const fed = await d.db
-        .selectFrom('kraken_feed')
-        .select('id')
-        .where('rest_id', '=', rest.id)
-        .where('day', '=', day)
-        .executeTakeFirst();
-      const cook =
-        rest.mc_cook_id === null
-          ? undefined
-          : await d.db.selectFrom('mc_cook').selectAll().where('id', '=', rest.mc_cook_id).executeTakeFirst();
-      const seeds = await d.db
-        .selectFrom('rest_seed')
-        .select(['seed_id', 'num'])
-        .where('rest_id', '=', rest.id)
-        .where('num', '>', 0)
-        .orderBy('seed_id')
-        .execute();
       return {
         star: rest.star_level,
         strength: rest.strength,

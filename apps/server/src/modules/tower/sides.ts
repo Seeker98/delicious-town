@@ -70,6 +70,6 @@ export function watchmanSide(f: TowerFloor, price: number): DuelSide {
   return { name: f.name, attrs: f.attrs, mcPrice: f.mc ? price : 0 };
 }
 
-export function sideDto(s: DuelSide, r: { scores: Scores; sum: number }): DuelSideDto {
-  return { name: s.name, power: duelPower(s.attrs), scores: r.scores, sum: r.sum };
+export function sideDto(s: DuelSide, r: { scores: Scores }): DuelSideDto {
+  return { name: s.name, power: duelPower(s.attrs), scores: r.scores };
 }

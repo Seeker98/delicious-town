@@ -61,15 +61,35 @@ export function createKujiService(d: GameDeps) {
     coin: number,
     closedToday = false,
   ): Promise<KujiViewDto> {
-    const left = await tierLeft(db, pool.id);
     // 奖品按这一池开池时的快照显示（一番赏终审 I1）
     const prizes = prizesOf(pool, k);
-    const counts = await db
-      .selectFrom('kuji_ticket')
-      .select(['tier', sql<string>`count(*)`.as('n')])
-      .where('pool_id', '=', pool.id)
-      .groupBy('tier')
-      .execute();
+    const countsQ = () =>
+      db
+        .selectFrom('kuji_ticket')
+        .select(['tier', sql<string>`count(*)`.as('n')])
+        .where('pool_id', '=', pool.id)
+        .groupBy('tier')
+        .execute();
+    const recentQ = () =>
+      db
+        .selectFrom('news as n')
+        .leftJoin('restaurant as r', 'r.id', 'n.rest_id')
+        .select(['n.created_at', 'n.params', 'r.name'])
+        .where('n.shard_id', '=', pool.shard_id)
+        .where('n.type', 'in', ['kuji.big', 'kuji.win'])
+        // 最近的大赏按线分开（240-2）：旧新闻没有 line，算普通池
+        .where((eb) =>
+          pool.line === 'deluxe'
+            ? eb(sql<string>`n.params->>'line'`, '=', 'deluxe')
+            : eb(sql<string>`n.params->>'line'`, 'is', null),
+        )
+        .orderBy('n.id', 'desc')
+        .limit(RECENT)
+        .execute();
+    // 不在事务里（看首页）时三条一起发（性能第二轮）；买券、抽签在事务里调用，照旧一条接一条
+    const [left, counts, recent] = db.isTransaction
+      ? [await tierLeft(db, pool.id), await countsQ(), await recentQ()]
+      : await Promise.all([tierLeft(db, pool.id), countsQ(), recentQ()]);
     const order = new Map(prizes.tiers.map((x, i) => [x.key, i]));
     const tiers = counts
       .map((c) => {
@@ -84,21 +104,6 @@ export function createKujiService(d: GameDeps) {
         };
       })
       .sort((a, b) => (order.get(a.key) ?? 99) - (order.get(b.key) ?? 99) || a.key.localeCompare(b.key));
-    const recent = await db
-      .selectFrom('news as n')
-      .leftJoin('restaurant as r', 'r.id', 'n.rest_id')
-      .select(['n.created_at', 'n.params', 'r.name'])
-      .where('n.shard_id', '=', pool.shard_id)
-      .where('n.type', 'in', ['kuji.big', 'kuji.win'])
-      // 最近的大赏按线分开（240-2）：旧新闻没有 line，算普通池
-      .where((eb) =>
-        pool.line === 'deluxe'
-          ? eb(sql<string>`n.params->>'line'`, '=', 'deluxe')
-          : eb(sql<string>`n.params->>'line'`, 'is', null),
-      )
-      .orderBy('n.id', 'desc')
-      .limit(RECENT)
-      .execute();
     return {
       line: pool.line,
       pool: {
@@ -324,21 +329,22 @@ export function createKujiService(d: GameDeps) {
       const s = await d.shards.ensureFeature(ctx.shardId, 'kuji');
       const k = s.tuning.kuji;
       const now = d.now();
-      const { pool, closedToday } = await d.db
-        .transaction()
-        .execute((tx) => shownPool(tx, ctx.shardId, k, now, line));
-      const t = await d.db
-        .selectFrom('store_item')
-        .select('num')
-        .where('rest_id', '=', ctx.restaurantId)
-        .where('goods_id', '=', ticketOf(line))
-        .executeTakeFirst();
-      const bought = await getDaily(d.db, ctx.restaurantId, buyKeyOf(line), gameDay(now));
-      const rest = await d.db
-        .selectFrom('restaurant')
-        .select('coin')
-        .where('id', '=', ctx.restaurantId)
-        .executeTakeFirstOrThrow();
+      // 选池（可能要开新池，在事务里）和店里的券、今日已买、银币一起发（性能第二轮）
+      const [{ pool, closedToday }, t, bought, rest] = await Promise.all([
+        d.db.transaction().execute((tx) => shownPool(tx, ctx.shardId, k, now, line)),
+        d.db
+          .selectFrom('store_item')
+          .select('num')
+          .where('rest_id', '=', ctx.restaurantId)
+          .where('goods_id', '=', ticketOf(line))
+          .executeTakeFirst(),
+        getDaily(d.db, ctx.restaurantId, buyKeyOf(line), gameDay(now)),
+        d.db
+          .selectFrom('restaurant')
+          .select('coin')
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+      ]);
       return viewOf(
         d.db,
         ctx.shardId,

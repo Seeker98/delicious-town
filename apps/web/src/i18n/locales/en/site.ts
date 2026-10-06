@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    perf1006:
+      'The site now downloads about 140 KB less on first load (the icon font only includes the icons we use), and the Market, Bar, Ichiban Kuji, Temple and Square pages open faster',
     backlog6:
       'Duel rules now state how many judges this server actually uses; cookware dropped by an Elder gets its own line on the result card and makes the news; shard exchange on the signature dish page can trade several at once; appraisal items’ “How to get” now mentions critical hits on the Temple guardian; item pages in the game wiki also list Today’s deal, the black market, random rewards and gem upgrades as sources',
     visual1006:
