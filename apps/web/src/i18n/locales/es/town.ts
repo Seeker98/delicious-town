@@ -163,11 +163,11 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: 'No se pudo cargar el aula',
-    stealConfirm: (n, mc) =>
-      `Espiar una clase es gratis, pero si fallas olvidas ${n} ${plEs(n, 'receta', 'recetas')}${mc ? ' y quizá un plato estrella' : ''}. ¿Espiar?`,
+    stealConfirm: (n, g, mc) =>
+      `Espiar una clase es gratis, pero si fallas ${n} ${plEs(n, 'receta al azar baja', 'recetas al azar bajan')} ${g} ${plEs(g, 'rango', 'rangos')} (las de rango Común se olvidan)${mc ? ' y quizá olvides un plato estrella' : ''}. ¿Espiar?`,
     learned: (name) => `Aprendiste ${name}`,
-    stealFailed: (n, mc) =>
-      `Espionaje fallido: olvidaste ${n} ${plEs(n, 'receta', 'recetas')}${mc ? ` y ${mc}` : ''}`,
+    stealFailed: (n, g, mc) =>
+      `Espionaje fallido: ${n} ${plEs(n, 'receta bajó', 'recetas bajaron')} ${g} ${plEs(g, 'rango', 'rangos')}${mc ? ` y olvidaste ${mc}` : ''}`,
     notLearned: 'No lo aprendiste. Vuelve otra vez',
     learnFailed: 'No se pudo aprender',
     opened: 'Clase abierta',

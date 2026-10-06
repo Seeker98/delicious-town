@@ -158,8 +158,9 @@ export interface LessonsDto {
   /** 持有百世之师，可以强制结束 */
   canForceClose: boolean;
   forceCloseCoinPerLevel: number;
-  /** 偷学失败遗忘 等级×forgetPerLevel+1 道食谱 */
+  /** 偷学失败时 等级×forgetPerLevel+1 道食谱各降 forgetGrades 品，降到 0 就忘了（问题记录 424） */
   forgetPerLevel: number;
+  forgetGrades: number;
 }
 
 export interface LessonLearnDto {

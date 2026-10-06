@@ -8,7 +8,7 @@ import { restLog, runOp, setRest, type Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { applyForget, gradeOf, padLevels, setGrade } from '../cookbook/rules';
+import { applyDowngrade, gradeOf, padLevels, setGrade } from '../cookbook/rules';
 import { splitLearned } from '../settlement/tables';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
@@ -25,7 +25,7 @@ import {
 
 const badInput = (reason: string) => new AppError(ErrorCode.VALIDATION_FAILED, 400, { reason });
 
-/** 偷学失败：遗忘普通食谱，4 级起可能遗忘一道更低级的特色菜（正在售卖的除外） */
+/** 偷学失败：普通食谱各降几品（降到 0 就忘了，问题记录 424），4 级起可能遗忘一道更低级的特色菜（正在售卖的除外） */
 async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
   const t = o.tuning.mysterious;
   const cb = await o.tx
@@ -41,8 +41,10 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
   if (picks.length > 0) {
     let counts = normalizeCounts(o.rest.cookbook_counts);
     for (const id of picks) {
-      counts = applyForget(counts, o.config.requireCookbook(id).streetId, gradeOf(levels, slotOf, id));
-      setGrade(levels, slotOf, id, 0);
+      const from = gradeOf(levels, slotOf, id);
+      const to = Math.max(0, from - t.forgetGrades);
+      counts = applyDowngrade(counts, o.config.requireCookbook(id).streetId, from, to);
+      setGrade(levels, slotOf, id, to);
     }
     await o.tx
       .updateTable('restaurant_cookbooks')
@@ -78,7 +80,8 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
       await o.tx.deleteFrom('rest_mc').where('rest_id', '=', o.rest.id).where('mc_id', '=', mcId).execute();
     }
   }
-  restLog(o, 'mc.forget', { cookbooks: picks, mcId });
+  // grades：降了几品（问题记录 424 以前的日志没有这个键，是整道忘掉）
+  restLog(o, 'mc.forget', { cookbooks: picks, mcId, grades: t.forgetGrades });
   return { cookbooks: picks, mcId };
 }
 
@@ -156,6 +159,7 @@ export function createLessonOps(d: GameDeps) {
         canForceClose: have(GOODS.hundredMaster) > 0,
         forceCloseCoinPerLevel: s.tuning.mysterious.forceCloseCoinPerLevel,
         forgetPerLevel: s.tuning.mysterious.forgetPerLevel,
+        forgetGrades: s.tuning.mysterious.forgetGrades,
       };
     },
 

@@ -104,6 +104,8 @@ const events: Messages['events'] = {
       `Maîtrise de « ${mcNameOf(names, n(p, 'mcId'))} » au niveau ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
+      if (typeof p.grades === 'number')
+        return `Espionnage raté : ${k} ${plFr(k, 'recette a perdu', 'recettes ont perdu')} ${p.grades} ${plFr(p.grades, 'rang', 'rangs')} (celles au rang Commun sont oubliées)${p.mcId ? ` et vous avez oublié le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
       return `Espionnage raté : ${k} ${plFr(k, 'recette oubliée', 'recettes oubliées')}${p.mcId ? ` ainsi que le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
     },
     'temple.trial': (p, names) =>

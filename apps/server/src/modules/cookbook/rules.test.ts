@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyDowngrade,
   applyForget,
   applyLearn,
   foodsNeedFor,
@@ -90,6 +91,17 @@ describe('applyForget（设计文档 裁定 9）', () => {
   it('学会数 -1、原品级计数 -1、街道计数 -1', () => {
     const c = applyForget({ learned: 3, grade: [0, 1, 2, 0], street: { '5': 2, '6': 1 } }, 5, 2);
     expect(c).toEqual({ learned: 2, grade: [0, 1, 1, 0], street: { '5': 1, '6': 1 } });
+  });
+});
+
+describe('applyDowngrade（问题记录 424：偷学失败降品级）', () => {
+  it('降到 1 品以上：原品级 -1、新品级 +1，学会数和街道计数不变', () => {
+    const c = applyDowngrade({ learned: 3, grade: [0, 1, 0, 2], street: { '5': 3 } }, 5, 3, 2);
+    expect(c).toEqual({ learned: 3, grade: [0, 1, 1, 1], street: { '5': 3 } });
+  });
+  it('降到 0：等于遗忘', () => {
+    const counts = { learned: 3, grade: [0, 1, 2, 0], street: { '5': 2, '6': 1 } };
+    expect(applyDowngrade(counts, 5, 1, 0)).toEqual(applyForget(counts, 5, 1));
   });
 });
 

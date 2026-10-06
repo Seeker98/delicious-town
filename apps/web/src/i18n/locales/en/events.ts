@@ -104,6 +104,8 @@ const events: Messages['events'] = {
       `"${mcNameOf(names, n(p, 'mcId'))}" mastery reached level ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
+      if (typeof p.grades === 'number')
+        return `Sneaking a lesson failed: ${k} ${plEn(k, 'recipe', 'recipes')} dropped ${p.grades} ${plEn(p.grades, 'grade', 'grades')} (Common ones are forgotten)${p.mcId ? `, and you forgot the signature dish "${mcNameOf(names, n(p, 'mcId'))}"` : ''}`;
       return `Sneaking a lesson failed: forgot ${k} ${plEn(k, 'recipe', 'recipes')}${p.mcId ? ` and the signature dish "${mcNameOf(names, n(p, 'mcId'))}"` : ''}`;
     },
     'temple.trial': (p, names) =>

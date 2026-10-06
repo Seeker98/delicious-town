@@ -40,7 +40,8 @@ const lessons: LessonsDto = {
   ],
   canForceClose: false,
   forceCloseCoinPerLevel: 50000,
-  forgetPerLevel: 3,
+  forgetPerLevel: 2,
+  forgetGrades: 1,
 };
 const mc = {
   learned: [
@@ -68,22 +69,22 @@ describe('ClassroomPanel', () => {
     vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(mc));
   });
 
-  it('偷学先确认（写明会遗忘几道食谱）；失败时提示遗忘了多少', async () => {
+  it('偷学先确认（写明几道食谱各降几品）；失败时提示降了多少（问题记录 424）', async () => {
     vi.mocked(endpoints.lessonLearn).mockResolvedValue({
       success: false,
-      forgot: { cookbooks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], mcId: null },
+      forgot: { cookbooks: [1, 2, 3, 4, 5, 6, 7], mcId: null },
     });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const w = mount(ClassroomPanel);
     await flushPromises();
     await w.find('[data-testid="steal-7"]').trigger('click');
-    expect(confirm.mock.calls[0]![0]).toContain('遗忘 10 道食谱');
+    expect(confirm.mock.calls[0]![0]).toContain('7 道食谱各降 1 品');
     expect(endpoints.lessonLearn).not.toHaveBeenCalled();
     confirm.mockReturnValue(true);
     await w.find('[data-testid="steal-7"]').trigger('click');
     await flushPromises();
     expect(endpoints.lessonLearn).toHaveBeenCalledWith(7, 2);
-    expect(useToastStore().items.some((x) => x.text.includes('遗忘了 10 道食谱'))).toBe(true);
+    expect(useToastStore().items.some((x) => x.text.includes('7 道食谱降了 1 品'))).toBe(true);
     confirm.mockRestore();
   });
 

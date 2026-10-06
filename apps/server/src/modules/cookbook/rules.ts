@@ -79,6 +79,24 @@ export function applyLearn(
   return c;
 }
 
+/** 一道已学食谱从 from 品降到 to 品（偷学失败，问题记录 424）；降到 0 等于遗忘 */
+export function applyDowngrade(
+  counts: CookbookCounts,
+  streetId: number,
+  from: number,
+  to: number,
+): CookbookCounts {
+  if (to <= 0) return applyForget(counts, streetId, from);
+  const c: CookbookCounts = {
+    learned: counts.learned,
+    grade: [...counts.grade],
+    street: { ...counts.street },
+  };
+  c.grade[from] = Math.max(0, (c.grade[from] ?? 0) - 1);
+  c.grade[to] = (c.grade[to] ?? 0) + 1;
+  return c;
+}
+
 /** 遗忘一道已学食谱（偷学失败，子项目 4A 设计文档 裁定 9）：applyLearn 的反向 */
 export function applyForget(counts: CookbookCounts, streetId: number, from: number): CookbookCounts {
   const c: CookbookCounts = {

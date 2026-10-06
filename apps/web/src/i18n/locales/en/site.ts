@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    stealForget1006:
+      'Failed lesson sneaking is now less harsh: instead of fully forgetting (lesson level × 3 + 1) random recipes, (lesson level × 2 + 1) random recipes drop 1 grade, and only Common ones are forgotten',
     frTimes1006:
       'In the French interface, item quantities now follow French typography, with spaces around the × (e.g. “Riz × 3”)',
     web1006:

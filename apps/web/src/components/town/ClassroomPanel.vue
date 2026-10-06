@@ -44,15 +44,21 @@ const certsFor = computed(() => {
 const leftText = (at: string) => remainText(at);
 
 function learn(l: LessonDto, type: 1 | 2) {
-  const forget = l.level * (data.value?.forgetPerLevel ?? 3) + 1;
-  if (type === 2 && !window.confirm(t.value.town.classroom.stealConfirm(forget, l.level >= 4))) return;
+  const forget = l.level * (data.value?.forgetPerLevel ?? 2) + 1;
+  const grades = data.value?.forgetGrades ?? 1;
+  if (type === 2 && !window.confirm(t.value.town.classroom.stealConfirm(forget, grades, l.level >= 4)))
+    return;
   return act(async () => {
     const r = await endpoints.lessonLearn(l.id, type);
     const c = t.value.town.classroom;
     if (r.success) toast.push(c.learned(catalog.mcName(l.mcId)));
     else if (type === 2)
       toast.push(
-        c.stealFailed(r.forgot.cookbooks.length, r.forgot.mcId ? catalog.mcName(r.forgot.mcId) : null),
+        c.stealFailed(
+          r.forgot.cookbooks.length,
+          data.value?.forgetGrades ?? 1,
+          r.forgot.mcId ? catalog.mcName(r.forgot.mcId) : null,
+        ),
         'danger',
       );
     else toast.push(c.notLearned, 'danger');
