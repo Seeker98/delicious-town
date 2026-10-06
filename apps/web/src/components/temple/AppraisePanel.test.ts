@@ -29,6 +29,7 @@ const overview: McOverviewDto = {
       blackDiamond: 8,
       award: true,
       champion: false,
+      guardian: true,
     },
     {
       goodsId: 165,
@@ -41,6 +42,7 @@ const overview: McOverviewDto = {
       blackDiamond: 30,
       award: true,
       champion: true,
+      guardian: false,
     },
   ],
   cookies: 0,
@@ -117,7 +119,7 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
     );
     await w.find('[data-testid="tool"]').setValue(163);
     expect(w.find('[data-testid="tool-how"]').text()).toBe(
-      '获得：银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励',
+      '获得：银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、神殿守护兽暴击掉落',
     );
   });
 });

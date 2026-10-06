@@ -56,7 +56,15 @@ const goods = (p: Partial<OpenGoodsDto> = {}): OpenGoodsDto => ({
   equip: null,
   gem: null,
   gift: null,
-  sources: { shop: null, renownShop: null, exchange: [] },
+  sources: {
+    shop: null,
+    renownShop: null,
+    exchange: [],
+    special: false,
+    black: null,
+    award: false,
+    gemFrom: null,
+  },
   usedIn: [],
   ...p,
 });
@@ -139,6 +147,10 @@ describe('游戏资料详情（问题记录 142）', () => {
               times: 1,
             },
           ],
+          special: true,
+          black: 12,
+          award: true,
+          gemFrom: { id: 29, name: '[一阶]•天机石' },
         },
       }),
     );
@@ -157,6 +169,12 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(src.text()).toContain('蟹黄堡×2');
     expect(src.text()).toContain('每人限兑 1 次');
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/180');
+    // 今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮）
+    expect(src.text()).toContain('今日特价');
+    expect(src.text()).toContain('钻石黑市：12 钻石');
+    expect(src.text()).toContain('随机奖励');
+    expect(src.text()).toContain('两颗[一阶]•天机石');
+    expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/29');
   });
 
   it('厨具：写出套装效果（几件、效果），套装数据从厨具列表取（backlog #115）', async () => {

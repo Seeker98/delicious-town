@@ -100,6 +100,8 @@ const news: Messages['news'] = {
         .join(', ')}`,
     'tower.shop.rare': (w, p, x) =>
       `${w} a échangé ${x.goodsName(num(p.goodsId))} à la boutique de la Tour des chefs`,
+    'tower.elder': (w, p, x) =>
+      `${w} a battu l’ancien du ${num(p.floor)}e étage de la Tour des chefs et a obtenu ${x.goodsName(num(p.goodsId))}`,
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w} a utilisé le marteau de Thor : ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`

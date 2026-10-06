@@ -3,6 +3,7 @@
  * 文字在各语言的 site.changelog 里，按 id 对应；繁中由 pnpm i18n:tw 生成
  */
 export const CHANGELOG = [
+  { id: 'backlog6', date: '2026-10-06' },
   { id: 'frTimes1006', date: '2026-10-06' },
   { id: 'web1006', date: '2026-10-06' },
   { id: 'checks1006', date: '2026-10-06' },

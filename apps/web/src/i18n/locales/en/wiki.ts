@@ -99,6 +99,11 @@ const wiki: Messages['wiki'] = {
     note: 'Only lists what it can contain, not the odds.',
   },
   sources: {
+    special: 'Today’s deal (random each day)',
+    black: (n) => `Black market: ${n} diamonds`,
+    award: 'Random rewards from the Chef Tower, the bar and more',
+    gemFromBefore: 'Gem upgrade: two ',
+    gemFromAfter: ' make one',
     shop: 'Always in the shop: ',
     renownShop: (n, rotating) => `Renown shop: ${n} renown${rotating ? ' (rotating)' : ''}`,
     exchange: 'Exchange: ',

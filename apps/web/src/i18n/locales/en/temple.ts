@@ -33,6 +33,7 @@ const temple: Messages['temple'] = {
     howBlack: (diamond) => `black market ${diamond} diamonds`,
     howAward: 'random rewards from the Chef Tower, the bar and more',
     howChampion: 'yesterday’s signature dish champion',
+    howGuardian: 'critical hits on the Temple guardian',
     howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (Lv. ${min}–${max}, ${rate}%, own ${have})`,
     btn: (n) => `Appraise ×${n}`,

@@ -112,4 +112,16 @@ describe('补算已穿厨具的收益加成（问题记录 411）', () => {
     expect(job.period(new Date('2026-10-06T23:00:00+08:00'), settings)).toBe(p1);
     expect(job.period(new Date('2026-10-07T12:00:00+08:00'), settings)).not.toBe(p1);
   });
+
+  it('后台改了收益系数当天就补算，不等到第二天（backlog 411）', () => {
+    const job = equipIncomeJobs(t.game.deps)[0]!;
+    const tuning = t.deps.config.tuning;
+    const at = new Date('2026-10-06T12:00:00+08:00');
+    const before = job.period(at, { tuning } as never);
+    const changed = {
+      tuning: { ...tuning, equip: { ...tuning.equip, income: { ...tuning.equip.income, coinRate: 0.0005 } } },
+    } as never;
+    expect(job.period(at, changed)).not.toBe(before);
+    expect(job.period(at, { tuning } as never)).toBe(before);
+  });
 });

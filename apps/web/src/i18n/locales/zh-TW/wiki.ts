@@ -93,6 +93,11 @@ export default {
     note: '只列能開出的東西，不寫機率。',
   },
   sources: {
+    special: '今日特價（每天隨機上架）',
+    black: (n: string) => `鑽石黑市：${n} 鑽石`,
+    award: '廚塔、酒吧等的隨機獎勵',
+    gemFromBefore: '寶石升階：兩顆',
+    gemFromAfter: '合成一顆',
     shop: '商店常駐在售：',
     renownShop: (n: string, rotating: boolean) => `聲望商店：${n} 聲望${rotating ? '（輪換上架）' : ''}`,
     exchange: '兌換：',

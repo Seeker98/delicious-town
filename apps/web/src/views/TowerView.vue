@@ -60,7 +60,7 @@ onMounted(load);
       >
     </li>
   </ul>
-  <DuelRules v-if="tab !== 'shop'" />
+  <DuelRules v-if="tab !== 'shop'" :judge-count="data?.duelJudges" />
   <template v-if="tab === 'tower'">
     <FloorPanel v-if="data" :data="data" @reload="load" />
   </template>

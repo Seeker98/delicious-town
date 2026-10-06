@@ -58,6 +58,16 @@ describe('DuelResult', () => {
     expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
   });
 
+  it('长老掉的厨具单独一行写出来；没掉不写（backlog 408）', () => {
+    const w = mount(DuelResult, { props: { result: duelResult({ elderDrop: 40002 }) } });
+    expect(w.get('[data-testid="duel-elder-drop"]').text()).toContain('长老掉落');
+    expect(
+      mount(DuelResult, { props: { result: duelResult() } })
+        .find('[data-testid="duel-elder-drop"]')
+        .exists(),
+    ).toBe(false);
+  });
+
   it('票数持平时标题写明按总分定胜负', () => {
     const w = mount(DuelResult, { props: { result: duelResult({ votes: [2, 2] }) } });
     expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2（票数相同，比总分），声望 +7');

@@ -38,10 +38,12 @@ const tower: Messages['tower'] = {
     rulesTitle: 'Reglas del duelo de cocina',
     rules: [
       'Cada lado obtiene cinco puntuaciones según sus atributos: Color (Cocina, Corte), Aroma (Cocina, Sazón), Sabor (Control del fuego, Sazón), Forma (Control del fuego, Corte) y Nutrición (Control del fuego, Sazón, Corte y el plato estrella a la venta). Cuanta más Creatividad y Suerte, mayor es el extra aleatorio de cada puntuación.',
-      'En cada duelo se eligen al azar 5 de los 10 jueces. Uno a uno, cada juez compara la suma de los dos lados en lo que le importa y vota por la más alta; gana el primero que llega a 3 votos. Si los votos empatan, gana la suma más alta de los jueces que puntuaron.',
     ],
+    rulesVote: (total, n, need) =>
+      `En cada duelo se eligen al azar ${n} de los ${total} jueces. Uno a uno, cada juez compara la suma de los dos lados en lo que le importa y vota por la más alta; gana el primero que llega a ${need} ${plEs(need, 'voto', 'votos')}. Si los votos empatan, gana la suma más alta de los jueces que puntuaron.`,
     rulesJudges: 'Los jueces y en qué se fijan:',
     awards: (text) => `Conseguiste ${text}`,
+    elderDrop: (name) => `Botín del anciano: ${name}`,
   },
   elder: {
     summary: (level, stress, pct) =>

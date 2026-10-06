@@ -102,6 +102,8 @@ const news: Messages['news'] = {
         .map((r) => `#${num((r as P).rank)} ${str((r as P).name)}`)
         .join(', ')}`,
     'tower.shop.rare': (w, p, x) => `${w} redeemed ${x.goodsName(num(p.goodsId))} at the Chef Tower shop`,
+    'tower.elder': (w, p, x) =>
+      `${w} beat the Elder on floor ${num(p.floor)} of the Chef Tower and got ${x.goodsName(num(p.goodsId))}`,
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w} used Thor's Hammer: ${x.weatherName(num(p.from))} turned to ${x.weatherName(num(p.to))}`

@@ -67,6 +67,11 @@ export function createOpenData(config: GameConfig) {
   const seedByFood = new Map(b.seeds.map((s) => [s.foodsId, s]));
   // 兑换规则：涉及隐藏道具的整条不出
   const rules = b.goodsExchange.filter((r) => visible(r.goodsId) && r.need.every((n) => visible(n.goodsId)));
+  // 宝石的上一阶：两颗合成下一阶（视觉第三轮：来源写升阶）
+  const gemFrom = new Map<number, number>();
+  for (const g of config.bundle.goods) if (g.gem?.nextId) gemFrom.set(g.gem.nextId, g.id);
+  const specialPool = new Set(config.bundle.shopPools.special);
+  const blackPool = new Set(config.bundle.shopPools.black);
   const madeBy = new Map<number, GoodsExchange[]>();
   const usedBy = new Map<number, GoodsExchange[]>();
   for (const r of rules) {
@@ -211,6 +216,10 @@ export function createOpenData(config: GameConfig) {
           shop: g.onSale ? { coin: g.coin, diamond: g.diamond } : null,
           renownShop: r ? { renown: r.renown, rotating: r.weekGroup !== 0 } : null,
           exchange: (madeBy.get(id) ?? []).map((x) => rule(lang, x)),
+          special: specialPool.has(id),
+          black: blackPool.has(id) && g.diamond > 0 ? g.diamond : null,
+          award: g.awardFlag !== null,
+          gemFrom: gemFrom.has(id) ? { id: gemFrom.get(id)!, name: nameOf(lang, gemFrom.get(id)!) } : null,
         },
         usedIn: (usedBy.get(id) ?? []).map((x) => rule(lang, x)),
       };

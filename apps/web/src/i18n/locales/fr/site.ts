@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    backlog6:
+      'Les règles du duel indiquent le nombre de juges réellement utilisé sur ce serveur ; l’ustensile lâché par un ancien a sa propre ligne sur la carte de résultat et fait l’objet d’une nouvelle ; l’échange d’éclats des plats signature permet d’en échanger plusieurs à la fois ; le « Comment l’obtenir » des objets d’expertise mentionne les coups critiques sur le gardien du Temple ; les pages d’objets du wiki listent aussi la Promo du jour, le marché noir, les récompenses aléatoires et l’amélioration de gemmes comme sources',
     frTimes1006:
       'Les quantités d’objets suivent maintenant la typographie française, avec des espaces autour du × (par exemple « Riz × 3 »)',
     web1006:

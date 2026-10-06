@@ -173,6 +173,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
               d.config.bundle.shopPools.black.includes(goodsId) && g.diamond > 0 ? g.diamond : null,
             award: g.awardFlag !== null,
             champion: s.tuning.mysterious.championGoodsId === goodsId,
+            // 守护兽暴击掉的是厨神玉玺（temple/guardian 的 critGSRate）
+            guardian: goodsId === GOODS.seal,
           };
         }),
         cookies: have(GOODS.luckyCookie),

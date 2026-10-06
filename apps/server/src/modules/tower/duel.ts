@@ -108,10 +108,17 @@ export function duel(
   them: { scores: Scores; sum: number };
   judges: DuelJudgeDto[];
   votes: [number, number];
+  /** 这一局请了几位评委（有一方先过半就提前结束，上场的可能更少） */
+  judgeCount: number;
 } {
   const a = duelScores(me, t, rng);
   const b = duelScores(them, t, rng);
   const ids = pickJudges(t.judges, rng);
   const r = judgeDuel(a, b, ids, Math.floor(ids.length / 2) + 1);
-  return { ...r, me: { scores: a, sum: sumScores(a) }, them: { scores: b, sum: sumScores(b) } };
+  return {
+    ...r,
+    me: { scores: a, sum: sumScores(a) },
+    them: { scores: b, sum: sumScores(b) },
+    judgeCount: ids.length,
+  };
 }

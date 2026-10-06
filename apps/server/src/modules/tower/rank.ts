@@ -135,6 +135,8 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
     them: sideDto(them, r.them),
     judges: r.judges,
     votes: r.votes,
+    judgeCount: r.judgeCount,
+    elderDrop: null,
     renown,
     awards,
     test: false,

@@ -90,6 +90,14 @@ export interface OpenGoodsDto extends OpenMeta, OpenGoodsBrief {
     shop: { coin: number; diamond: number } | null;
     renownShop: { renown: number; rotating: boolean } | null;
     exchange: OpenExchangeRule[];
+    /** 今日特价（每天随机上架） */
+    special: boolean;
+    /** 钻石黑市的价格；不在黑市为 null */
+    black: number | null;
+    /** 厨塔、酒吧等的随机奖励会出 */
+    award: boolean;
+    /** 宝石：两颗上一阶合成 */
+    gemFrom: { id: number; name: string } | null;
   };
   /** 作为兑换材料能换什么 */
   usedIn: OpenExchangeRule[];

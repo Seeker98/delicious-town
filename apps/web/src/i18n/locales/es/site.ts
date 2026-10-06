@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    backlog6:
+      'Las reglas del duelo indican cuántos jueces usa realmente este servidor; el utensilio que suelta un anciano sale en su propia línea en la tarjeta de resultado y aparece en las noticias; el canje de trozos en los platos estrella permite cambiar varios a la vez; el «Cómo conseguirlo» de los objetos de tasación incluye los golpes críticos al guardián del Templo; las páginas de objetos de la wiki muestran también la Oferta del día, el mercado negro, los premios aleatorios y las mejoras de gemas como fuentes',
     frTimes1006:
       'En la interfaz en francés, las cantidades de objetos siguen ahora la tipografía francesa, con espacios alrededor del × (p. ej. «Riz × 3»)',
     web1006:

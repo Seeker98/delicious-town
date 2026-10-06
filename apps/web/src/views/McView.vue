@@ -158,13 +158,19 @@ watch(exchangeRows, (rows) => {
   for (const r of rows)
     if (exPick[r.level] && !r.options.some((m) => String(m.id) === exPick[r.level])) exPick[r.level] = '';
 });
-function exchange(lv: number) {
+/** 一次换几张（backlog 415：碎片多时要点很多下）；最多换到碎片够的张数 */
+const exNum = reactive<Record<number, number>>({});
+const exMax = (num: number) => Math.max(1, Math.floor(num / (o.value?.fragmentPerRemnant ?? 3)));
+const exCount = (lv: number, num: number) => Math.min(exMax(num), Math.max(1, Math.floor(exNum[lv] ?? 1)));
+function exchange(lv: number, num: number) {
   const mcId = Number(exPick[lv]);
   if (!mcId) return;
+  const n = exCount(lv, num);
   return act(
     async () => {
-      await endpoints.mcExchange(mcId, 1);
-      toast.push(t.value.mc.exchange.done(nameOf(mcId)));
+      await endpoints.mcExchange(mcId, n);
+      toast.push(t.value.mc.exchange.done(nameOf(mcId), n));
+      exNum[lv] = 1;
     },
     null,
     t.value.mc.exchange.failed,
@@ -382,12 +388,22 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           <option value="">{{ t.mc.exchange.pick }}</option>
           <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
         </select>
+        <input
+          v-if="exMax(r.num) > 1"
+          v-model.number="exNum[r.level]"
+          type="number"
+          min="1"
+          :max="exMax(r.num)"
+          class="form-control form-control-sm"
+          style="width: 60px"
+          :data-testid="`exchange-num-${r.level}`"
+        />
         <button
           class="btn btn-sm btn-outline-success"
           :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
-          @click="exchange(r.level)"
+          @click="exchange(r.level, r.num)"
         >
-          {{ t.mc.exchange.btn }}
+          {{ t.mc.exchange.btn(exCount(r.level, r.num)) }}
         </button>
       </div>
     </div>

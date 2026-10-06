@@ -93,6 +93,10 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
       </li>
     </ol>
     <div v-if="awards" data-testid="duel-awards">{{ t.tower.duel.awards(awards) }}</div>
+    <!-- 长老掉的厨具单独一行（backlog 408） -->
+    <div v-if="result.elderDrop" class="fw-bold text-success" data-testid="duel-elder-drop">
+      {{ t.tower.duel.elderDrop(catalog.goodsName(result.elderDrop)) }}
+    </div>
   </div>
 </template>
 

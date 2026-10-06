@@ -220,11 +220,14 @@ describe('概览、目录、任务、功能开关', () => {
       blackDiamond: 30,
       award: true,
       champion: true,
+      guardian: false,
     });
     expect(o.tools.find((x) => x.goodsId === gid('厨神玉玺'))).toMatchObject({
       shopCoin: 300000,
       blackDiamond: 14,
       champion: false,
+      // 神殿守护兽暴击会掉（backlog 415）
+      guardian: true,
     });
     expect(o.cookNums).toEqual([1, 5, 10, 15, 25, 50]);
   });

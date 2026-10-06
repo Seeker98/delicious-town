@@ -16,4 +16,11 @@ describe('DuelRules（问题记录 396）', () => {
     expect(judges[0]!.text()).toBe('菜园姐（色、形、养）');
     expect(judges[9]!.text()).toBe('小凯（味、养）');
   });
+
+  it('每局请几位评委按区服设置写，过半票数跟着变（backlog 396）', () => {
+    const w = mount(DuelRules, { props: { judgeCount: 3 } });
+    expect(w.text()).toContain('每局从 10 位评委里随机请 3 位');
+    expect(w.text()).toContain('先拿到 2 票的赢');
+    expect(mount(DuelRules).text()).toContain('随机请 5 位');
+  });
 });

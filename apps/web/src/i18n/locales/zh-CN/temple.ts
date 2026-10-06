@@ -30,6 +30,7 @@ export default {
     howBlack: (diamond: number) => `黑市 ${diamond} 钻`,
     howAward: '厨塔和酒吧等的随机奖励',
     howChampion: '昨日特色菜冠军',
+    howGuardian: '神殿守护兽暴击掉落',
     howSep: '、',
     toolOption: (name: string, min: number, max: number, rate: number, have: number) =>
       `${name}（${min}~${max} 级，${rate}%，持有 ${have}）`,
