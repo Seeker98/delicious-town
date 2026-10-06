@@ -67,3 +67,40 @@ export const suspiciousQuery = z.object({
     }, 'invalid_date')
     .optional(),
 });
+
+/** 道具整理只读页（问题记录 429）：和本地道具整理工具同一份分析（apps/server/src/items/analyze.ts） */
+export interface AdminItemTag {
+  where: string;
+  n: number;
+  /** 这处本身是已下架的道具 */
+  retired?: true;
+  /** 这处是礼包或道具，但它自己哪里都拿不到 */
+  dead?: true;
+}
+export interface AdminItemRow {
+  kind: 'goods' | 'foods';
+  id: number;
+  name: string;
+  category: string;
+  level: number;
+  desc: string;
+  gives: AdminItemTag[];
+  uses: AdminItemTag[];
+  /** 代码里直接用到 */
+  code: boolean;
+  noSource: boolean;
+  noUse: boolean;
+  notes: string[];
+  retired: boolean;
+}
+export interface AdminItemGradeRow {
+  grade: number;
+  name: string;
+  open: boolean;
+  foodLevels: Record<number, number>;
+}
+export interface AdminItemsDto {
+  maxGrade: number;
+  grades: AdminItemGradeRow[];
+  rows: AdminItemRow[];
+}
