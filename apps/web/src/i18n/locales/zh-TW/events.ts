@@ -102,8 +102,9 @@ export default {
     'mc.levelUp': (p, names) => `「${mcNameOf(names, n(p, 'mcId'))}」熟練度升到 ${n(p, 'curlevel')} 級`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
+      const lost = typeof p.lost === 'number' ? p.lost : 0;
       if (typeof p.grades === 'number')
-        return `偷學失敗，${k} 道食譜降了 ${p.grades} 品（普通品的就忘了）${p.mcId ? `，還忘了特色菜「${mcNameOf(names, n(p, 'mcId'))}」` : ''}`;
+        return `偷學失敗，${k} 道食譜降了 ${p.grades} 品${lost > 0 ? `，其中 ${lost} 道忘了` : ''}${p.mcId ? `，還忘了特色菜「${mcNameOf(names, n(p, 'mcId'))}」` : ''}`;
       return `偷學失敗，遺忘了 ${k} 道食譜${p.mcId ? `和特色菜「${mcNameOf(names, n(p, 'mcId'))}」` : ''}`;
     },
     'temple.trial': (p, names) =>

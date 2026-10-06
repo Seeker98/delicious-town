@@ -38,11 +38,13 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
   // 按存储位换回食谱 id（重新编号 PR 3）；空位、超出存储位总数的字节跳过，和结算同一套
   const learned = splitLearned(levels, o.config.cookbookIndex, -1).all;
   const picks = pickSome(learned, forgetCount(level, t), o.rng);
+  let lost = 0;
   if (picks.length > 0) {
     let counts = normalizeCounts(o.rest.cookbook_counts);
     for (const id of picks) {
       const from = gradeOf(levels, slotOf, id);
       const to = Math.max(0, from - t.forgetGrades);
+      if (to === 0) lost++;
       counts = applyDowngrade(counts, o.config.requireCookbook(id).streetId, from, to);
       setGrade(levels, slotOf, id, to);
     }
@@ -80,9 +82,9 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
       await o.tx.deleteFrom('rest_mc').where('rest_id', '=', o.rest.id).where('mc_id', '=', mcId).execute();
     }
   }
-  // grades：降了几品（问题记录 424 以前的日志没有这个键，是整道忘掉）
-  restLog(o, 'mc.forget', { cookbooks: picks, mcId, grades: t.forgetGrades });
-  return { cookbooks: picks, mcId };
+  // grades：降了几品、lost：其中忘了几道（问题记录 424 以前的日志没有这两个键，是整道忘掉）
+  restLog(o, 'mc.forget', { cookbooks: picks, mcId, grades: t.forgetGrades, lost });
+  return { cookbooks: picks, mcId, grades: t.forgetGrades, lost };
 }
 
 export function createLessonOps(d: GameDeps) {
@@ -272,7 +274,7 @@ export function createLessonOps(d: GameDeps) {
           const { rate: luck } = await opLuck(o);
           const thinker = (agg.thinker ?? 0) > 0;
           let success: boolean;
-          let forgot: LessonLearnDto['forgot'] = { cookbooks: [], mcId: null };
+          let forgot: LessonLearnDto['forgot'] = { cookbooks: [], mcId: null, grades: 0, lost: 0 };
           if (b.type === 1) {
             spendStrength(o, t.learnStrength);
             spendCoin(o, Math.floor(mc.coin * t.tuitionTimes));

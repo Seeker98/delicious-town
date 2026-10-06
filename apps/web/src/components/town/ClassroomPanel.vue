@@ -56,7 +56,8 @@ function learn(l: LessonDto, type: 1 | 2) {
       toast.push(
         c.stealFailed(
           r.forgot.cookbooks.length,
-          data.value?.forgetGrades ?? 1,
+          r.forgot.grades,
+          r.forgot.lost,
           r.forgot.mcId ? catalog.mcName(r.forgot.mcId) : null,
         ),
         'danger',

@@ -161,10 +161,10 @@ export default {
   classroom: {
     loadFailed: '讀取教室失敗',
     stealConfirm: (n: number, g: number, mc: boolean) =>
-      `偷學不花學費，但失敗會讓隨機 ${n} 道食譜各降 ${g} 品（普通品的就忘了）${mc ? '，還可能遺忘一道特色菜' : ''}。確定偷學嗎？`,
+      `偷學不花學費，但失敗會讓隨機 ${n} 道食譜各降 ${g} 品（品級降光的就忘了）${mc ? '，還可能遺忘一道特色菜' : ''}。確定偷學嗎？`,
     learned: (name: string) => `學會了${name}`,
-    stealFailed: (n: number, g: number, mc: string | null) =>
-      `偷學失敗，${n} 道食譜降了 ${g} 品${mc ? `，還忘了${mc}` : ''}`,
+    stealFailed: (n: number, g: number, lost: number, mc: string | null) =>
+      `偷學失敗，${n} 道食譜降了 ${g} 品${lost > 0 ? `，其中 ${lost} 道忘了` : ''}${mc ? `，還忘了${mc}` : ''}`,
     notLearned: '沒學會，下次再來',
     learnFailed: '學習失敗',
     opened: '開課了',

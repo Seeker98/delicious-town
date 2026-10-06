@@ -166,5 +166,6 @@ export interface LessonsDto {
 export interface LessonLearnDto {
   success: boolean;
   /** 偷学失败时遗忘的普通食谱和特色菜 */
-  forgot: { cookbooks: number[]; mcId: number | null };
+  /** cookbooks：降了品级的食谱；grades：各降几品；lost：其中降到 0 忘掉的道数（问题记录 424） */
+  forgot: { cookbooks: number[]; mcId: number | null; grades: number; lost: number };
 }

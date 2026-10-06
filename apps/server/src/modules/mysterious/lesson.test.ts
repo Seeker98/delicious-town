@@ -241,8 +241,8 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
 
       const r = await g.game.mysterious.learnLesson(st, data.id, { type: 2 });
       expect(r.data.success).toBe(false);
+      expect(r.data.forgot).toMatchObject({ mcId: y!.id, grades: 1, lost: 9 });
       expect(r.data.forgot.cookbooks).toHaveLength(9);
-      expect(r.data.forgot.mcId).toBe(y!.id);
       const s = await restRow(g, st.restaurantId);
       // 学生的菜都是普通品：降 1 品就忘了
       expect(s.cookbook_counts.learned).toBe(40 - 9);
@@ -260,10 +260,11 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
       expect(left).not.toContain(y!.id);
       const logs = await g.db
         .selectFrom('rest_log')
-        .select('type')
+        .select(['type', 'params'])
         .where('rest_id', '=', st.restaurantId)
         .execute();
-      expect(logs.map((l) => l.type)).toContain('mc.forget');
+      // 网页按 grades 区分新旧日志（问题记录 424）
+      expect(logs.find((l) => l.type === 'mc.forget')?.params).toMatchObject({ grades: 1, lost: 9 });
       expect((await lessonRow(g, data.id)).stolen).toBe(0);
     } finally {
       await g.close();
@@ -289,10 +290,13 @@ describe('偷学失败降品级（问题记录 424）', () => {
         await g.db.insertInto('rest_mc').values({ rest_id: st.restaurantId, mc_id: m.id, way: 1 }).execute();
       const r = await g.game.mysterious.learnLesson(st, data.id, { type: 2 });
       expect(r.data.success).toBe(false);
-      expect(r.data.forgot).toMatchObject({ mcId: null });
+      expect(r.data.forgot).toMatchObject({ mcId: null, grades: 1, lost: 0 });
       expect(r.data.forgot.cookbooks).toHaveLength(9);
       const s = await restRow(g, st.restaurantId);
       expect(s.cookbook_counts.learned).toBe(40);
+      // 街道计数不变：菜还在、还是这条街的
+      const streets = Object.values(s.cookbook_counts.street).reduce((a, b) => a + b, 0);
+      expect(streets).toBe(40);
       expect(s.cookbook_counts.grade[5]).toBe(31);
       expect(s.cookbook_counts.grade[4]).toBe(9);
       const cb = await g.db

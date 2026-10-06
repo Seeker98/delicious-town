@@ -364,7 +364,7 @@ export const tuningSchema = z.object({
     teacherShare: num,
     learnFragments: int,
     teacherFragments: int,
-    forgetPerLevel: int,
+    forgetPerLevel: int.min(0),
     /** 偷学失败时被抽中的食谱各降几品，降到 0 就是忘了（问题记录 424） */
     forgetGrades: int.min(1),
     forgetMcFromLevel: int,
