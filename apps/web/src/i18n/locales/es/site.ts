@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     stealForget1006:
-      'Fallar al espiar una clase castiga menos: antes olvidabas por completo (nivel de la clase × 3 + 1) recetas al azar; ahora (nivel de la clase × 2 + 1) recetas al azar bajan 1 nivel de calidad y solo se olvidan las de calidad Común',
+      'Fallar al espiar una clase castiga menos: antes olvidabas por completo (nivel de la clase × 3 + 1) recetas al azar; ahora (nivel de la clase × 2 + 1) recetas al azar bajan 1 nivel de calidad y solo se olvidan las de calidad Común; en clases de nivel 4 o más, la probabilidad de olvidar además un plato estrella de nivel inferior baja de nivel × 5 % a nivel × 2 %',
     frTimes1006:
       'En la interfaz en francés, las cantidades de objetos siguen ahora la tipografía francesa, con espacios alrededor del × (p. ej. «Riz × 3»)',
     web1006:
