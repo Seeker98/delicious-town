@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    deal1007:
+      'Nuevo juego del bar, «Trato o no trato»: 10 cajas en la mesa, cada una con ingredientes; la mayor tiene cinco ingredientes universales de nivel 5. Elige una como tu caja y abre las demás ronda a ronda. Tras cada ronda, el banquero del pueblo te ofrece monedas por tu caja: acepta y te vas, o sigue abriendo; si nunca aceptas, te llevas lo que haya en tu caja. 10.000 monedas por partida, 3 partidas al día',
     spice1007:
       'Nuevo juego del bar, «Mezcla secreta»: el barman mezcla 4 de 10 condimentos en un orden concreto. En cada intento entregas una combinación y recibes una respuesta en A y B (A: condimento correcto en el sitio correcto; B: condimento correcto en otro sitio). Tienes hasta 8 intentos y, cuanto antes la descubras, mejor premio: en 4 intentos o menos ganas un gran premio, renombre y sales en las noticias. 2 vales misteriosos por partida, 5 partidas al día',
     nim1007:

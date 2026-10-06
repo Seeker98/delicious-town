@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    deal1007:
+      'Nouveau jeu au bar, « À prendre ou à laisser » : 10 boîtes sur la table, chacune avec des ingrédients, la plus grosse avec cinq ingrédients universels de niveau 5. Choisissez votre boîte, puis ouvrez les autres manche après manche. Après chaque manche, le banquier de la ville propose des pièces pour votre boîte : acceptez et repartez, ou continuez d’ouvrir ; si vous refusez jusqu’au bout, vous gardez le contenu de votre boîte. 10 000 pièces la partie, 3 parties par jour',
     spice1007:
       'Nouveau jeu au bar, « Mélange secret » : le barman mélange 4 condiments parmi 10 dans un ordre précis. À chaque essai, vous donnez une combinaison et recevez une réponse en A et B (A : bon condiment à la bonne place ; B : bon condiment à la mauvaise place). Vous avez jusqu’à 8 essais, et plus vous trouvez vite, meilleur est le prix : en 4 essais ou moins, gros prix, renommée et passage aux nouvelles. 2 bons mystère par partie, 5 parties par jour',
     nim1007:

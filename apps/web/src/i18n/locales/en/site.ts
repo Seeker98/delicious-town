@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    deal1007:
+      'New bar game “Deal or No Deal”: 10 boxes on the table, each holding ingredients, the biggest being five Level-5 Universal Ingredients. Pick one as your box, then open the others round by round. After each round the town banker offers coins for your box: take the deal and walk away, or keep opening; never deal and you get what is in your box. 10,000 coins a game, 3 games a day',
     spice1007:
       'New bar game “Secret Blend”: the bartender mixes 4 of 10 seasonings in a set order. Each try you hand over a combination and get an answer in A and B (A: right seasoning, right place; B: right seasoning, wrong place). You get up to 8 tries, and the faster you crack it the better the prize: within 4 tries you win a big prize, renown and a spot in the news. 2 Mystery Vouchers a game, 5 games a day',
     nim1007:
