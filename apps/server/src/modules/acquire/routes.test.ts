@@ -66,6 +66,22 @@ describe('收购接口（收购 PR 1）', () => {
     const invest = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
     expect(invest.json.data.invest[0]).toMatchObject({ restId: a.restId, holdings: 1, value: 120_000 });
 
+    // 正好 .5 时身价、投资榜、首页资产都按 JS 的四舍五入（4.5 → 5），不能用 Postgres 的 round（double 时 4.5 → 4，#189 遗留）
+    await ctx.deps.db
+      .updateTable('acquire_state')
+      .set({ base: 3, heat: 1.5 })
+      .where('rest_id', '=', b.restId)
+      .execute();
+    const half = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
+    expect(half.json.data.invest[0]).toMatchObject({ restId: a.restId, value: 5 });
+    const home = await call(ctx.app, 'GET', '/api/v1/restaurant/overview', { cookie: a.cookie });
+    expect(home.json.data.assets).toBe(5);
+    await ctx.deps.db
+      .updateTable('acquire_state')
+      .set({ base: 100_000, heat: 1.2 })
+      .where('rest_id', '=', b.restId)
+      .execute();
+
     const list = await call(ctx.app, 'POST', '/api/v1/acquire/list', {
       cookie: a.cookie,
       body: { restId: b.restId, rate: 0.5 },

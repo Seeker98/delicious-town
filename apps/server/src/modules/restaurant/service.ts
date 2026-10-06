@@ -73,11 +73,11 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         'c.level as special_level',
         'c.left_num as special_left',
         'c.ended_at as special_ended',
-        // 和投资榜一样：每家身价先四舍五入再加
+        // 和投资榜一样：每家身价先四舍五入（floor(x + 0.5)，和 JS 的 Math.round 一致）再加
         (eb) =>
           eb
             .selectFrom('acquire_state as h')
-            .select(sql<string>`coalesce(sum(round(h.base * h.heat)), 0)`.as('v'))
+            .select(sql<string>`coalesce(sum(floor(h.base * h.heat + 0.5)), 0)`.as('v'))
             .whereRef('h.owner_rest_id', '=', 'r.id')
             .as('acquire_assets'),
       ])

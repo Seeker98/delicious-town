@@ -645,7 +645,8 @@ export function createAcquireService(d: GameDeps) {
           'o.name',
           'h.dividend_total',
           (eb) => eb.fn.countAll<number>().as('n'),
-          sql<number>`sum(round(s.base * s.heat))`.as('value'),
+          // 和 priceOf 的 Math.round 一样：正好 .5 进位（Postgres 对 double 的 round 是四舍六入五成双，#189 遗留）
+          sql<number>`sum(floor(s.base * s.heat + 0.5))`.as('value'),
         ])
         .where('s.shard_id', '=', ctx.shardId)
         .where('s.owner_rest_id', 'is not', null)
