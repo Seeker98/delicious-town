@@ -167,6 +167,28 @@ describe('每天的收购任务（收购 PR 1）', () => {
     ).toEqual([{ created_at: recent }]);
   });
 
+  it('分红、打理记录留 30 天，只清本区服的（收购 PR 2）', async () => {
+    const shardId = await createShard(t.db);
+    const other = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const o = await newRestaurant(t, { shardId: other });
+    for (const id of [r.restaurantId, o.restaurantId])
+      for (const day of ['2000-01-01', '2000-02-05']) {
+        await t.db
+          .insertInto('acquire_dividend')
+          .values({ rest_id: id, day, owner_rest_id: id, coin: 1, tended: false })
+          .execute();
+        await t.db.insertInto('acquire_tend').values({ rest_id: id, day, created_at: new Date() }).execute();
+      }
+    await runAcquireDay(t.game.deps, shardId, gameTime('2000-02-10', 1), a());
+    const days = (table: 'acquire_dividend' | 'acquire_tend', id: number) =>
+      t.db.selectFrom(table).select('day').where('rest_id', '=', id).orderBy('day').execute();
+    expect(await days('acquire_dividend', r.restaurantId)).toEqual([{ day: '2000-02-05' }]);
+    expect(await days('acquire_tend', r.restaurantId)).toEqual([{ day: '2000-02-05' }]);
+    expect(await days('acquire_dividend', o.restaurantId)).toHaveLength(2);
+    expect(await days('acquire_tend', o.restaurantId)).toHaveLength(2);
+  });
+
   it('00:05 之前不跑；之后每个游戏日一个周期键；收入汇总挂在结算上', () => {
     const [incomeJob, dayJob] = acquireJobs(t.game.deps);
     const settings = {

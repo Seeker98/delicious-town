@@ -2,11 +2,12 @@ import { sql } from 'kysely';
 import { addDays, gameDay, gameParts } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
+import { payDividends } from './dividend';
 import { aggregateIncomeDay, INCOME_KEEP_DAYS, pruneIncomeDays } from './income';
 import { basePrice, type T } from './rules';
 import { priceWindow } from './state';
 
-/** 交易记录、拦截记录留几天（设计 §3.1；同一对店 7 天、每天 3 次只看最近的） */
+/** 交易、拦截、分红、打理记录留几天（设计 §3.1；同一对店 7 天、每天 3 次只看最近的，页面只看昨天的分红） */
 const LOG_KEEP_DAYS = 30;
 /** 基础身价一次写多少家（每家 4 个参数，远低于参数个数上限） */
 const UPSERT_CHUNK = 1000;
@@ -30,7 +31,7 @@ async function aggregateRecent(d: GameDeps, shardId: number, today: string): Pro
 
 /**
  * 每天一次（收购 PR 1）：汇总前两天收入 → 重算基础身价（2 星以上、或已经有行的店）→ 热度回落 → 清掉到期挂牌
- * → 清掉 30 天前的交易、拦截记录。热度回落是一条原子语句，不会盖掉同时发生的强收；靠周期键保证一天一次
+ * → 清掉 30 天前的交易、拦截、分红、打理记录。热度回落是一条原子语句，不会盖掉同时发生的强收；靠周期键保证一天一次
  */
 export async function runAcquireDay(
   d: GameDeps,
@@ -86,6 +87,10 @@ export async function runAcquireDay(
     .where('shard_id', '=', shardId)
     .where('created_at', '<', cutoff)
     .execute();
+  const cutoffDay = addDays(today, -LOG_KEEP_DAYS);
+  const shardRests = d.db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId);
+  for (const table of ['acquire_dividend', 'acquire_tend'] as const)
+    await d.db.deleteFrom(table).where('day', '<', cutoffDay).where('rest_id', 'in', shardRests).execute();
   return {
     income,
     bases: rows.length,
@@ -119,6 +124,17 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
         return day === null ? null : `acquire-day-${day}`;
       },
       run: async ({ shardId, now, settings }) => runAcquireDay(d, shardId, now, settings.tuning.acquire),
+    },
+    {
+      // 排在 acquire-day 后面：前一天的收入已经汇总好
+      name: 'acquire-dividend',
+      feature: 'acquire',
+      period: (now) => {
+        const day = after0005(now);
+        return day === null ? null : `acquire-dividend-${day}`;
+      },
+      run: async ({ shardId, now, settings, log }) =>
+        payDividends(d, shardId, now, settings.tuning.acquire, log),
     },
   ];
 }
