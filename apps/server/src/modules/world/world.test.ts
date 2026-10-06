@@ -7,7 +7,7 @@ import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { runDueJobs } from '../../worker/periodic';
 import { hammerPool, isNight, rollWeather, weatherPool } from './rules';
-import { catalogCompressions } from './routes';
+import { catalogCompressions, pickEncoding } from './routes';
 
 const config = testConfig();
 const w = config.tuning.world;
@@ -116,6 +116,18 @@ describe('接口', () => {
     await get('gzip');
     // br、gzip 各压一次
     expect(catalogCompressions() - before).toBe(2);
+  });
+
+  it('Accept-Encoding：按 q 值选，x-gzip 和 * 当 gzip，q=0 不要（审查 Minor）', () => {
+    expect(pickEncoding('gzip, deflate, br')).toBe('br');
+    expect(pickEncoding('br;q=0.5, gzip;q=1')).toBe('gzip');
+    expect(pickEncoding('GZIP')).toBe('gzip');
+    expect(pickEncoding('x-gzip')).toBe('gzip');
+    expect(pickEncoding('*')).toBe('br');
+    expect(pickEncoding('br;q=0, *;q=0.1')).toBe('gzip');
+    expect(pickEncoding('deflate')).toBeNull();
+    expect(pickEncoding('br;q=0, gzip;q=0')).toBeNull();
+    expect(pickEncoding(undefined)).toBeNull();
   });
 
   it('目录带 ETag：浏览器带 If-None-Match 再来、目录没变时回 304 不带正文；语言不同 ETag 不同（质量期 ③）', async () => {

@@ -87,10 +87,11 @@ describe('补算已穿厨具的收益加成（问题记录 411）', () => {
       const id = await wornPiece(a.restaurantId, { base_cook: 10, base_luck: 4 });
       // 存着旧行：补算要改它
       await storeRow(a.restaurantId, { luckValue: 4 });
-      await Promise.all([
+      const [r] = await Promise.all([
         resyncEquipIncome(t.game.deps, shardId, income(), new Date(), log),
         t.game.equip.unwear(a, { id }),
       ]);
+      expect(r.failed).toBe(0);
       // 最后脱掉了：加成行应该没有了，再查一次也没有要改的
       expect(await equipRow(a.restaurantId)).toBeUndefined();
       expect(await staleEquipIncome(t.db, shardId, income())).toEqual([]);

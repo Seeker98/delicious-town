@@ -17,16 +17,28 @@ let compressions = 0;
 /** 目录一共现场压缩过几次（测试用：同一语言、同一压缩方式只压一次） */
 export const catalogCompressions = () => compressions;
 
-/** 按 Accept-Encoding 选压缩方式：br 优先，其次 gzip；都不认就不压 */
-function pickEncoding(header: string | string[] | undefined): 'br' | 'gzip' | null {
-  const accept = String(header ?? '')
-    .split(',')
-    .map((x) => x.trim().split(';'))
-    .filter(([, q]) => !q || !/^q=0(\.0*)?$/.test(q.trim()))
-    .map(([e]) => e!.toLowerCase());
-  if (accept.includes('br')) return 'br';
-  if (accept.includes('gzip')) return 'gzip';
-  return null;
+/**
+ * 按 Accept-Encoding 选压缩方式（和全局压缩插件一致）：x-gzip、* 当 gzip；按 q 值取高的，一样高时 br 优先；
+ * q=0 的不要；都不认就不压
+ */
+export function pickEncoding(header: string | string[] | undefined): 'br' | 'gzip' | null {
+  const q = new Map<string, number>();
+  for (const part of String(header ?? '')
+    .toLowerCase()
+    .split(',')) {
+    const [name, ...params] = part.trim().split(';');
+    const enc = name === 'x-gzip' ? 'gzip' : name!.trim();
+    const qp = params.map((x) => x.trim()).find((x) => x.startsWith('q='));
+    const v = qp ? Number(qp.slice(2)) : 1;
+    if (!Number.isFinite(v)) continue;
+    if (enc === '*') {
+      for (const e of ['br', 'gzip']) if (!q.has(e)) q.set(e, v);
+    } else q.set(enc, v);
+  }
+  const br = q.get('br') ?? 0;
+  const gz = q.get('gzip') ?? 0;
+  if (br <= 0 && gz <= 0) return null;
+  return br >= gz ? 'br' : 'gzip';
 }
 
 export function worldRoutes(world: WorldService): FastifyPluginAsync {
@@ -56,7 +68,13 @@ export function worldRoutes(world: WorldService): FastifyPluginAsync {
       compressions++;
       z =
         enc === 'br'
-          ? brotli(body, { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 } })
+          ? brotli(body, {
+              // 质量 10 比 11 快不少、只大一点；第一次请求要等它压完（审查 Minor）
+              params: {
+                [zlibConstants.BROTLI_PARAM_QUALITY]: 10,
+                [zlibConstants.BROTLI_PARAM_MODE]: zlibConstants.BROTLI_MODE_TEXT,
+              },
+            })
           : gzipAsync(body, { level: 9 });
       zipped.set(k, z);
       z.catch(() => zipped.delete(k));
@@ -75,7 +93,10 @@ export function worldRoutes(world: WorldService): FastifyPluginAsync {
       const lang = parse(z.object({ lang: localeSchema.optional() }), req.query).lang ?? 'zh-CN';
       const c = catalogOf(lang);
       // no-cache：浏览器每次都来问一下，没变就 304，前端代码不用改
-      reply.header('etag', c.etag).header('cache-control', 'no-cache').header('vary', 'accept-encoding');
+      reply.header('etag', c.etag).header('cache-control', 'no-cache');
+      // Vary 加在已有的后面，不覆盖（例如以后跨域改成按来源时的 Vary: Origin）
+      const vary = reply.getHeader('vary');
+      reply.header('vary', vary ? `${String(vary)}, accept-encoding` : 'accept-encoding');
       // 认弱 ETag（Cloudflare 压缩时改成 W/）和多个值（终审 Important 1）
       if (etagMatches(req.headers['if-none-match'], c.etag)) return reply.code(304).send();
       reply.type('application/json; charset=utf-8');
