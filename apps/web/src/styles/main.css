@@ -322,9 +322,9 @@ body {
   font-size: 11px;
   min-height: 1.3em;
 }
-/* 区块标题统一：加粗、左侧色条（问题记录：首页标题比内容小、不醒目） */
+/* 区块标题统一：加粗、左侧色条（问题记录：首页标题比内容小、不醒目）；上边距 16 → 12（问题记录 439） */
 .dt-section {
-  margin-top: 16px;
+  margin-top: 12px;
   padding-left: 8px;
   border-left: 3px solid var(--dt-primary);
   font-size: 15px;
@@ -458,7 +458,7 @@ body {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  margin: 4px 0 8px;
+  margin: 2px 0 6px;
 }
 .dt-page-title h5 {
   font-size: 18px;
@@ -470,13 +470,13 @@ h5 {
   font-size: 18px;
   font-weight: 600;
 }
-/* 首页今日待办（问题记录 280）：一行一件事，右边是操作 */
+/* 首页今日待办（问题记录 280）：一行一件事，右边是操作；行高 36 → 32（问题记录 439） */
 .dt-todo-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
-  padding: 4px 0;
+  min-height: 32px;
+  padding: 2px 0;
   border-top: 1px solid #f1e6da;
 }
 /* 有边框的紧凑按钮：放在信息行里不撑高行（首页加满油，280 反馈） */
@@ -547,12 +547,13 @@ details.dt-card > summary {
   border-bottom: 0;
 }
 
+/* 行高 44 → 40（问题记录 439）：按钮仍有 31px 高，手指点得到 */
 .dt-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 4px 0;
+  min-height: 40px;
+  padding: 3px 0;
   border-bottom: 1px solid var(--dt-line);
   font-size: 14px;
 }
@@ -596,14 +597,15 @@ details.dt-card > summary {
   flex-shrink: 0;
 }
 /* 卡片 */
+/* 内边距 8/12 → 6/10、卡片间距 8 → 6（问题记录 439） */
 .dt-card {
   background: #fff;
   border: 1px solid #f1e6da;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 6px 10px;
 }
 .dt-card + .dt-card {
-  margin-top: 8px;
+  margin-top: 6px;
 }
 /* 游戏资料首页的类目卡片：两列网格，卡片之间不再叠上边距（问题记录 142） */
 .dt-wiki-kinds {
@@ -699,7 +701,7 @@ details.dt-card > summary {
   text-align: center;
   color: var(--dt-muted);
   font-size: 13px;
-  padding: 16px 0;
+  padding: 12px 0;
 }
 /* 微交互：按下时轻微缩小；系统要求减少动态效果时不做 */
 @media (prefers-reduced-motion: no-preference) {

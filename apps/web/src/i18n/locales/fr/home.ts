@@ -20,8 +20,11 @@ const home: Messages['home'] = {
   refuel: (full, cost) =>
     `${full ? 'Faire le plein' : "Ajouter de l'huile"} (${cost} ${plFr(cost, 'pièce', 'pièces')})`,
   refuelFailed: "Échec de l'ajout d'huile",
-  lastRound: (coin, exp, oil) =>
-    `Dernier tour : ${coin} ${plFr(coin, 'pièce', 'pièces')} · ${exp} EXP · ${oil} d'huile consommée`,
+  lastRound: 'Dernier tour :',
+  roundCoin: 'Pièces',
+  roundExp: 'EXP',
+  roundOil: 'Huile consommée',
+  oilUpgrade: "Améliorer le bidon d'huile",
   noGuests: 'Aucun client',
   income: 'Historique des gains ›',
   floor: 'Étages et tables ›',
@@ -35,7 +38,6 @@ const home: Messages['home'] = {
   claim: 'Récupérer',
   claimFailed: 'Échec de la récupération',
   activation: (n) => `Points d'activité du jour : ${n}`,
-  tasks: 'Tâches ›',
   dining: {
     before: 'Vous mangez gratis chez',
     after: (table, minutes) => `table ${table}, depuis ${minutes} min`,

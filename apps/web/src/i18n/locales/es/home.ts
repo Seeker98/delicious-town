@@ -19,8 +19,11 @@ const home: Messages['home'] = {
   renown: 'Renombre',
   refuel: (full, cost) => `${full ? 'Llenar' : 'Echar aceite'} (${cost} ${plEs(cost, 'moneda', 'monedas')})`,
   refuelFailed: 'No se pudo echar aceite',
-  lastRound: (coin, exp, oil) =>
-    `Última ronda: ${coin} ${plEs(coin, 'moneda', 'monedas')} · ${exp} EXP · ${oil} de aceite gastado`,
+  lastRound: 'Última ronda:',
+  roundCoin: 'Monedas',
+  roundExp: 'EXP',
+  roundOil: 'Aceite gastado',
+  oilUpgrade: 'Mejorar bidón de aceite',
   noGuests: 'Sin clientes',
   income: 'Registro de ingresos ›',
   floor: 'Plantas y mesas ›',
@@ -34,7 +37,6 @@ const home: Messages['home'] = {
   claim: 'Reclamar',
   claimFailed: 'No se pudo reclamar',
   activation: (n) => `Puntos de actividad de hoy: ${n}`,
-  tasks: 'Tareas ›',
   dining: {
     before: 'Comiendo gratis en',
     after: (table, minutes) => `mesa ${table}, desde hace ${minutes} min`,

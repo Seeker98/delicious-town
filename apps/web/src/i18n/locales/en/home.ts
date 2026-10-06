@@ -19,8 +19,11 @@ const home: Messages['home'] = {
   renown: 'Renown',
   refuel: (full, cost) => `${full ? 'Fill up' : 'Refuel'} (${cost} ${plEn(cost, 'coin', 'coins')})`,
   refuelFailed: 'Refuel failed',
-  lastRound: (coin, exp, oil) =>
-    `Last round: ${coin} ${plEn(coin, 'coin', 'coins')} · ${exp} EXP · ${oil} oil used`,
+  lastRound: 'Last round:',
+  roundCoin: 'Coins',
+  roundExp: 'EXP',
+  roundOil: 'Oil used',
+  oilUpgrade: 'Upgrade oil can',
   noGuests: 'No guests',
   income: 'Income log ›',
   floor: 'Floors & tables ›',
@@ -34,7 +37,6 @@ const home: Messages['home'] = {
   claim: 'Claim',
   claimFailed: 'Claim failed',
   activation: (n) => `Activity points today: ${n}`,
-  tasks: 'Tasks ›',
   dining: {
     before: 'Eating for free at',
     after: (table, minutes) => `table ${table}, for ${minutes} min`,
