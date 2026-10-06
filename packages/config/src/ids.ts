@@ -127,10 +127,10 @@ export const SPONSOR_HATS = { jade: 41036, xuan: 41135 } as const;
 export type HatTier = keyof typeof SPONSOR_HATS;
 
 /**
- * 后台专用、游戏里拿不到、又没下架的道具：开放接口和 Wiki 不显示（问题记录 142）。升星促销勋章礼包（测试）；
+ * 后台专用、游戏里拿不到、又没下架的道具：开放接口和 Wiki 不显示（问题记录 142）。现在没有：升星促销勋章礼包（测试）2026-10-07 下架了；
  * 下架的（开发测试礼包、测试勋章等，game/retired.json）开放接口本来就不显示，不再列
  */
-export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set([20107]);
+export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set<number>([]);
 
 /** 问题记录 331：新手大礼包；一到五级食材随机券 = foodVoucherBase + 等级（10201~10205）；packCode 是老店补领大礼包的新手码 */
 export const NEWBIE = { pack: 20002, foodVoucherBase: 10200, packCode: 'XINSHOULIBAO' } as const;

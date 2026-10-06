@@ -29,6 +29,14 @@ describe('Wiki 隐藏道具清单（问题记录 142）', () => {
   });
 });
 
+describe('拿不到的礼包下架（道具整理 367 遗留，用户 2026-10-07 定）', () => {
+  it('克拉肯月好感排名礼包 20306~20311、升星促销勋章礼包 20107 已下架', () => {
+    const goods = realBuild().bundle!.goods;
+    for (const id of [20107, 20306, 20307, 20308, 20309, 20310, 20311])
+      expect(goods.find((g) => g.id === id)?.retired, String(id)).toBe(true);
+  });
+});
+
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
