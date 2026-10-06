@@ -776,7 +776,6 @@ export const tuningSchema = z.object({
       needMax: z.number().min(0).max(1),
     })
     .refine((s) => s.needBase <= s.needMax, { message: 'scarcity needBase must not exceed needMax' }),
-  /** 小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档 */
   /**
    * 收购（问题记录 421）：身价 = 基础身价 × 热度；基础身价 = 近 priceDays 天日均结算银币 × priceMultiple，不低于 minPrice。
    * 钱只在玩家之间流动，系统只收 taxRate；分红、打理的数值在收购 PR 2 用到
@@ -805,6 +804,7 @@ export const tuningSchema = z.object({
     tendFoods: int.min(0),
     newsMinPrice: int.min(0),
   }),
+  /** 小镇发展基金（240-2）：存期、到期领回和提前取出的比例、三档 */
   fund: z.object({
     days: int.min(1),
     returnRate: z.number().gt(0).max(1),

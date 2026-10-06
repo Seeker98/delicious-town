@@ -1199,7 +1199,7 @@ export interface PredictTradeTable {
   price_after: number;
   created_at: Ts;
 }
-/** 小镇发展基金存款（240-2）：同一家店同时只能有一笔 active */
+
 /** 每家店每个游戏日的结算银币合计和轮数（收购：income_round 只留 3 天，身价看 7 天） */
 export interface RestIncomeDayTable {
   rest_id: number;
@@ -1255,6 +1255,7 @@ export interface AcquireBlockTable {
   created_at: Ts;
 }
 
+/** 小镇发展基金存款（240-2）：同一家店同时只能有一笔 active */
 export interface FundDepositTable {
   id: Generated<number>;
   shard_id: number;

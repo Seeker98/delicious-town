@@ -273,6 +273,121 @@ describe('强收（收购 PR 1）', () => {
     expect(await coin(buyer.restaurantId)).toBe(5_000_000);
   });
 
+  it('不到 2 星、蟹老板、自己：先报原因，不给它们建收购状态行，也不记关联拦截（收购 PR 1 审查）', async () => {
+    const shardId = await acquireShard(t);
+    const buyer = await newRestaurant(t, { shardId, patch: { coin: 5_000_000, star_level: 2 } });
+    const low = await newRestaurant(t, { shardId, patch: { star_level: 1 } });
+    const npc = await newRestaurant(t, { shardId, patch: { star_level: 2, npc: true } });
+    // 1 星的店还和买家共用设备：报星级，不是关联
+    const lowAcc = (await restRow(t, low.restaurantId)).account_id;
+    await t.db
+      .insertInto('login_trace')
+      .values({ account_id: lowAcc, ip: '10.9.9.8', device_id: 'dev-shared-0002', last_seen: new Date() })
+      .execute();
+    const ctx = { ...buyer, deviceId: 'dev-shared-0002' };
+    for (const [restId, reason] of [
+      [low.restaurantId, 'star'],
+      [npc.restaurantId, 'npc'],
+      [buyer.restaurantId, 'self'],
+    ] as const) {
+      await expect(svc().buy(ctx, { restId, way: 'acquire', expect: 100_000 })).rejects.toMatchObject({
+        params: { reason },
+      });
+      const row = await t.db
+        .selectFrom('acquire_state')
+        .select('rest_id')
+        .where('rest_id', '=', restId)
+        .executeTakeFirst();
+      expect(row, reason).toBeUndefined();
+    }
+    const blocks = await t.db
+      .selectFrom('acquire_block')
+      .select('id')
+      .where('buyer_rest_id', '=', buyer.restaurantId)
+      .execute();
+    expect(blocks).toEqual([]);
+  });
+
+  it('和原主人（不是目标店）共用设备也拦下', async () => {
+    const shardId = await acquireShard(t);
+    const owner = await newRestaurant(t, { shardId });
+    const buyer = await newRestaurant(t, { shardId, patch: { coin: 5_000_000 } });
+    const target = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
+    await setState(target.restaurantId, shardId, { owner_rest_id: owner.restaurantId });
+    const ownerAcc = (await restRow(t, owner.restaurantId)).account_id;
+    await t.db
+      .insertInto('login_trace')
+      .values({ account_id: ownerAcc, ip: '10.9.9.7', device_id: 'dev-shared-0003', last_seen: new Date() })
+      .execute();
+    await expect(
+      svc().buy(
+        { ...buyer, deviceId: 'dev-shared-0003' },
+        { restId: target.restaurantId, way: 'acquire', expect: 1_000_000 },
+      ),
+    ).rejects.toMatchObject({ params: { reason: 'linked' } });
+  });
+
+  it('热度已到上限（价格不变）时两人同时收购：钱只按成交的笔数扣，合计只少税；店归最后成交的人', async () => {
+    const shardId = await acquireShard(t);
+    const a = await newRestaurant(t, { shardId, patch: { coin: 10_000_000 } });
+    const b = await newRestaurant(t, { shardId, patch: { coin: 10_000_000 } });
+    const target = await newRestaurant(t, { shardId, patch: { coin: 0, star_level: 2 } });
+    await setState(target.restaurantId, shardId, { heat: 3 });
+    const ids = [a.restaurantId, b.restaurantId, target.restaurantId];
+    const total = async () => {
+      let s = 0;
+      for (const id of ids) s += await coin(id);
+      return s;
+    };
+    const start = await total();
+    const rs = await Promise.allSettled([
+      svc().buy(a, { restId: target.restaurantId, way: 'acquire', expect: 3_000_000 }),
+      svc().buy(b, { restId: target.restaurantId, way: 'acquire', expect: 3_000_000 }),
+    ]);
+    const logs = await t.db
+      .selectFrom('acquire_log')
+      .select(['buyer_rest_id', 'tax'])
+      .where('target_rest_id', '=', target.restaurantId)
+      .orderBy('id')
+      .execute();
+    expect(logs).toHaveLength(rs.filter((x) => x.status === 'fulfilled').length);
+    for (const r of rs)
+      if (r.status === 'rejected') expect(r.reason).toMatchObject({ params: { reason: 'owner_changed' } });
+    expect(start - (await total())).toBe(logs.reduce((s, l) => s + l.tax, 0));
+    expect((await state(target.restaurantId)).owner_rest_id).toBe(logs.at(-1)!.buyer_rest_id);
+  });
+
+  it('收购和赎身同时发生：结果一致，合计只少税', async () => {
+    const shardId = await acquireShard(t);
+    const owner = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const buyer = await newRestaurant(t, { shardId, patch: { coin: 10_000_000 } });
+    const target = await newRestaurant(t, { shardId, patch: { coin: 10_000_000, star_level: 2 } });
+    await setState(target.restaurantId, shardId, { owner_rest_id: owner.restaurantId });
+    const ids = [owner.restaurantId, buyer.restaurantId, target.restaurantId];
+    const total = async () => {
+      let s = 0;
+      for (const id of ids) s += await coin(id);
+      return s;
+    };
+    const start = await total();
+    await Promise.allSettled([
+      svc().buy(buyer, { restId: target.restaurantId, way: 'acquire', expect: 1_000_000 }),
+      svc().redeem(target, { expect: 1_000_000 }),
+    ]);
+    const logs = await t.db
+      .selectFrom('acquire_log')
+      .select(['kind', 'buyer_rest_id', 'tax'])
+      .where('target_rest_id', '=', target.restaurantId)
+      .orderBy('id')
+      .execute();
+    expect(logs.length).toBeGreaterThanOrEqual(1);
+    expect(start - (await total())).toBe(logs.reduce((s, l) => s + l.tax, 0));
+    const last = logs.at(-1)!;
+    expect((await state(target.restaurantId)).owner_rest_id).toBe(
+      last.kind === 'redeem' ? null : buyer.restaurantId,
+    );
+  });
+
   it('两个人同时收购同一家：只有一个成功，钱只扣一次', async () => {
     const shardId = await acquireShard(t);
     const a = await newRestaurant(t, { shardId, patch: { coin: 5_000_000 } });

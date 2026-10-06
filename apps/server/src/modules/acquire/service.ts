@@ -165,10 +165,14 @@ export function createAcquireService(d: GameDeps) {
     const t0 = settings.tuning.acquire;
     const target0 = await d.db
       .selectFrom('restaurant')
-      .select(['id', 'shard_id', 'account_id'])
+      .select(['id', 'shard_id', 'account_id', 'star_level', 'npc'])
       .where('id', '=', b.restId)
       .executeTakeFirst();
     if (!target0 || target0.shard_id !== ctx.shardId) throw invalidState('other_shard');
+    // 先报这几项（不用锁也不会变）：免得给 1 星的店、蟹老板、自己建收购状态行，或者记一条用不着的关联拦截
+    if (b.restId === ctx.restaurantId) throw invalidState('self');
+    if (target0.npc) throw invalidState('npc');
+    if (target0.star_level < t0.minStar) throw invalidState('star');
     const pre = await ensureState(d.db, ctx.shardId, b.restId, t0, d.now());
     const sellerId = pre.owner_rest_id ?? b.restId;
     const accounts = await d.db
@@ -182,9 +186,8 @@ export function createAcquireService(d: GameDeps) {
       const target = ops.get(b.restId)!;
       const now = me.now;
       const s = (await lockState(me.tx, b.restId))!;
-      // 拿锁前读到的老板变了（别人刚收购、赎身、放手）：让玩家重新确认
-      if ((s.owner_rest_id ?? b.restId) !== sellerId)
-        throw invalidState('price_changed', { price: priceOf(s) });
+      // 拿锁前读到的老板变了（别人刚收购、赎身、放手）：挂牌也作废了，让玩家刷新重看
+      if ((s.owner_rest_id ?? b.restId) !== sellerId) throw invalidState('owner_changed');
       const mine = await lockState(me.tx, ctx.restaurantId);
       const acc = await me.tx
         .selectFrom('account')
@@ -269,7 +272,7 @@ export function createAcquireService(d: GameDeps) {
       const s = (await lockState(me.tx, ctx.restaurantId))!;
       // 拿锁前读到的老板变了（刚被别人收购、被放手）
       if (s.owner_rest_id === null) throw invalidState('not_owned');
-      if (s.owner_rest_id !== ownerId) throw invalidState('price_changed', { price: priceOf(s) });
+      if (s.owner_rest_id !== ownerId) throw invalidState('owner_changed');
       const price = priceOf(s);
       if (price !== b.expect) throw invalidState('price_changed', { price });
       const got = share(price, 1 - t.taxRate);

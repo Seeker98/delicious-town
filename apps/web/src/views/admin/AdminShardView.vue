@@ -148,7 +148,8 @@ function reset(p: string) {
 }
 
 /** 功能的默认开关：大多默认开，个别默认关（收购 PR 1）；默认值由接口的 defaults.features 给 */
-const featureDefault = (name: string) => data.value?.defaults.features?.[name] !== false;
+const featureDefault = (name: string) =>
+  (data.value?.defaults.features as Record<string, boolean> | undefined)?.[name] !== false;
 const featureOn = (name: string) => {
   const o = getAt(draft.value, `features.${name}`);
   return o === undefined ? featureDefault(name) : o !== false;
