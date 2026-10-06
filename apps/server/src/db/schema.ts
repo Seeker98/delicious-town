@@ -1200,6 +1200,61 @@ export interface PredictTradeTable {
   created_at: Ts;
 }
 /** 小镇发展基金存款（240-2）：同一家店同时只能有一笔 active */
+/** 每家店每个游戏日的结算银币合计和轮数（收购：income_round 只留 3 天，身价看 7 天） */
+export interface RestIncomeDayTable {
+  rest_id: number;
+  /** 游戏日 YYYY-MM-DD */
+  day: string;
+  coin: number;
+  rounds: number;
+}
+
+/** 每家店的收购状态（问题记录 421）：2 星以上、或被收购过的店才有行 */
+export interface AcquireStateTable {
+  rest_id: number;
+  shard_id: number;
+  /** 现在的老板；null = 自主经营 */
+  owner_rest_id: Nullable<number>;
+  /** 基础身价：每天 00:05 按近几天的结算银币算 */
+  base: number;
+  heat: Default<number>;
+  /** 赎身保护到什么时候 */
+  protected_until: TsNullable;
+  /** 挂牌折扣（身价的比例）；没挂牌为 null */
+  list_rate: Nullable<number>;
+  list_until: TsNullable;
+  acquired_at: TsNullable;
+  /** 最近一次打理的游戏日（收购第二期用） */
+  tended_day: Nullable<string>;
+}
+
+export type AcquireLogKind = 'acquire' | 'buy_listed' | 'redeem' | 'release';
+
+/** 收购的交易记录：强收、买挂牌、赎身、放手 */
+export interface AcquireLogTable {
+  id: Generated<number>;
+  shard_id: number;
+  kind: AcquireLogKind;
+  buyer_rest_id: Nullable<number>;
+  target_rest_id: number;
+  /** 收钱的一方（原主人；赎身时是老板；放手时是放手的老板） */
+  seller_rest_id: Nullable<number>;
+  price: number;
+  tax: number;
+  heat_after: number;
+  created_at: Ts;
+}
+
+/** 关联账号（共用设备 / IP）想收购时拦下来的记录：后台可疑数据页看 */
+export interface AcquireBlockTable {
+  id: Generated<number>;
+  shard_id: number;
+  buyer_rest_id: number;
+  target_rest_id: number;
+  reason: 'device' | 'ip';
+  created_at: Ts;
+}
+
 export interface FundDepositTable {
   id: Generated<number>;
   shard_id: number;
@@ -1358,6 +1413,10 @@ export interface DB {
   predict_trade: PredictTradeTable;
   kuji_pool: KujiPoolTable;
   fund_deposit: FundDepositTable;
+  rest_income_day: RestIncomeDayTable;
+  acquire_state: AcquireStateTable;
+  acquire_log: AcquireLogTable;
+  acquire_block: AcquireBlockTable;
   kuji_ticket: KujiTicketTable;
   tower_state: TowerStateTable;
   tower_watchman_mc: TowerWatchmanMcTable;
