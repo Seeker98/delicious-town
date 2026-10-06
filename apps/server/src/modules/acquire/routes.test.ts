@@ -130,13 +130,24 @@ describe('收购接口（收购 PR 1）', () => {
       .insertInto('acquire_holder')
       .values({ rest_id: a.restId, dividend_total: 5678 })
       .execute();
+    // 今天刚从前任（b）手里买来的店：昨天的分红是给前任的，新老板看到 null
+    const c = await playerIn(ctx, shardId);
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values({ rest_id: c.restId, shard_id: shardId, base: 50_000, heat: 1, owner_rest_id: a.restId })
+      .execute();
+    await ctx.deps.db
+      .insertInto('acquire_dividend')
+      .values({ rest_id: c.restId, day: yday, owner_rest_id: b.restId, coin: 99, tended: false })
+      .execute();
     const mine = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
     expect(mine.json.data.holdings).toMatchObject([
       { restId: b.restId, dividend: { coin: 1234, tended: true }, tendedToday: true },
+      { restId: c.restId, dividend: null, tendedToday: false },
     ]);
     expect(mine.json.data.tendedToday).toBe(false);
     const invest = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
-    expect(invest.json.data.invest).toMatchObject([{ restId: a.restId, holdings: 1, dividendTotal: 5678 }]);
+    expect(invest.json.data.invest).toMatchObject([{ restId: a.restId, holdings: 2, dividendTotal: 5678 }]);
   });
 
   it('参数不对报 VALIDATION_FAILED；别的区服的店 404；功能关着报 FEATURE_DISABLED', async () => {

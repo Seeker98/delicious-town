@@ -23,7 +23,6 @@ export async function up(db: Kysely<any>): Promise<void> {
       tended boolean not null,
       primary key (rest_id, day)
     )`.execute(db);
-  await sql`create index acquire_dividend_owner on acquire_dividend (owner_rest_id, day)`.execute(db);
   await sql`
     create table acquire_holder (
       rest_id integer primary key references restaurant(id) on delete cascade,

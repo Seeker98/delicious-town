@@ -99,6 +99,8 @@ describe('分红（收购 PR 2）', () => {
     expect(dividendOf(1_000_000, 90, true, t)).toBe(75_000);
     expect(dividendOf(1_000_000, 89, true, t)).toBeNull();
     expect(dividendOf(333, 100, false, t)).toBe(16);
+    // 收入是负数（不该有）也不发负的分红
+    expect(dividendOf(-1000, 100, false, t)).toBe(0);
   });
 
   it('封顶 = 近 7 天日均 × 25%', () => {

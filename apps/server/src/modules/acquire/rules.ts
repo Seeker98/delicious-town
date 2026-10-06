@@ -91,7 +91,7 @@ export function buyBlock(f: BuyFacts, t: T, way: 'acquire' | 'listed'): BuyBlock
  */
 export function dividendOf(coin: number, rounds: number, tended: boolean, t: T): number | null {
   if (rounds < t.minRounds) return null;
-  return share(coin, t.dividendRate * (tended ? 1 + t.tendBonus : 1));
+  return Math.max(0, share(coin, t.dividendRate * (tended ? 1 + t.tendBonus : 1)));
 }
 
 /** 老板一天的分红上限：自己近 priceDays 天的日均结算银币 × dividendCapRate */

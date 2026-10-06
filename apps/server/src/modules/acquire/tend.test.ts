@@ -62,6 +62,18 @@ describe('打理（收购 PR 2）', () => {
     expect(total(await foods(me.restaurantId))).toBe(once + 5);
   });
 
+  it('橱柜冰箱都满了：照样算打理过，放不下的不列在结果里', async () => {
+    const { me } = await owned();
+    await t.db
+      .updateTable('restaurant')
+      .set({ foods_max_num: 0 })
+      .where('id', '=', me.restaurantId)
+      .execute();
+    const r = await svc().tend(me);
+    expect(r.data.foods).toEqual([]);
+    await expect(svc().tend(me)).rejects.toMatchObject({ params: { reason: 'tended' } });
+  });
+
   it('没被收购不能打理', async () => {
     const shardId = await acquireShard(t);
     const free = await newRestaurant(t, { shardId });

@@ -20,7 +20,8 @@ interface Pending {
  * 发前一天的分红（收购 PR 2）：本区服每家被收购的店给现在的老板发 前一天结算 × 5%（那天打理过 × 1.5），
  * 不满 minRounds 轮的不发；每个老板的合计按自己近 priceDays 天的日均收入封顶，超了按比例压。
  * 老板被封不发。每个老板一个事务：某个老板失败只记日志，不影响别人。
- * 分红记录主键 (rest_id, day)，只给这次新写进去的发钱，同一天重跑不会重复发
+ * 分红记录主键 (rest_id, day)，只给还没发过的店发钱，同一天重跑不会重复发；已经发给这个老板的从封顶里扣掉。
+ * 前一天的收入一行都没汇总上时报错（任务记录里留下错误），不按 0 发
  */
 export async function payDividends(
   d: GameDeps,
@@ -51,6 +52,15 @@ export async function payDividends(
     .orderBy('s.owner_rest_id')
     .orderBy('s.rest_id')
     .execute();
+  if (rows.length === 0) return { owners: 0, rests: 0, coin: 0, failed: 0 };
+  const summed = await d.db
+    .selectFrom('rest_income_day')
+    .select('rest_id')
+    .where('day', '=', day)
+    .where('rest_id', 'in', d.db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId))
+    .limit(1)
+    .executeTakeFirst();
+  if (!summed) throw new Error(`acquire dividend: no income summary for ${day}`);
   const byOwner = new Map<number, Pending[]>();
   for (const r of rows) {
     if (isBanned(r, now)) continue;
@@ -65,16 +75,39 @@ export async function payDividends(
   const ownerIncome = await incomeSums(d.db, [...byOwner.keys()], w.from, w.to);
   const stats = { owners: 0, rests: 0, coin: 0, failed: 0 };
   for (const [ownerId, list] of byOwner) {
-    const capped = capDividends(
-      list.map((x) => x.coin),
-      dividendCap(ownerIncome.get(ownerId) ?? 0, t),
-    );
+    const cap = dividendCap(ownerIncome.get(ownerId) ?? 0, t);
     try {
       const paid = await runSystemOp(d, shardId, ownerId, { source: 'acquire.dividend', now }, async (op) => {
+        // 锁着老板的店（分红只有这个任务写）：已经发过的店不再算，已经发给这个老板的从封顶里扣掉
+        const done = await op.tx
+          .selectFrom('acquire_dividend')
+          .select(['rest_id', 'owner_rest_id', 'coin'])
+          .where('day', '=', day)
+          .where((eb) =>
+            eb.or([
+              eb('owner_rest_id', '=', ownerId),
+              eb(
+                'rest_id',
+                'in',
+                list.map((x) => x.restId),
+              ),
+            ]),
+          )
+          .execute();
+        const doneIds = new Set(done.map((x) => x.rest_id));
+        const todo = list.filter((x) => !doneIds.has(x.restId));
+        if (todo.length === 0) return { rests: 0, coin: 0 };
+        const paidBefore = done
+          .filter((x) => x.owner_rest_id === ownerId)
+          .reduce((a, x) => a + Number(x.coin), 0);
+        const capped = capDividends(
+          todo.map((x) => x.coin),
+          Math.max(0, cap - paidBefore),
+        );
         const inserted = await op.tx
           .insertInto('acquire_dividend')
           .values(
-            list.map((x, i) => ({
+            todo.map((x, i) => ({
               rest_id: x.restId,
               day,
               owner_rest_id: ownerId,

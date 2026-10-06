@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { addDays, gameTime } from '@dt/shared';
+import { acquireShard } from '../../../test/acquire';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { payDividends } from './dividend';
@@ -168,7 +169,7 @@ describe('分红（收购 PR 2）', () => {
     expect(await coin(o.restaurantId)).toBe(50_000);
   });
 
-  it('发给现在（00:05 以后）的老板；累计加在老板身上', async () => {
+  it('累计加在老板身上', async () => {
     const shardId = await createShard(t.db);
     const o = await newRestaurant(t, { shardId, patch: { coin: 0 } });
     const x = await newRestaurant(t, { shardId });
@@ -181,6 +182,68 @@ describe('分红（收购 PR 2）', () => {
       .execute();
     await pay(shardId);
     expect(await holder(o.restaurantId)).toBe(51_000);
+  });
+
+  it('前一天归前任、00:05 之前换了老板：发给现在的老板，前任不得', async () => {
+    const shardId = await acquireShard(t);
+    const prev = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const o = await newRestaurant(t, { shardId, patch: { coin: 10_000_000 } });
+    const x = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
+    for (const id of [prev.restaurantId, o.restaurantId]) await ownerIncome(id, 10_000_000);
+    await own(x.restaurantId, shardId, prev.restaurantId);
+    await income(x.restaurantId, YDAY, 1_000_000);
+    // 换个 IP，免得被当成关联账号
+    await t.db
+      .updateTable('login_trace')
+      .set({ ip: '10.20.30.41' })
+      .where('account_id', '=', x.accountId)
+      .execute();
+    await t.db
+      .updateTable('login_trace')
+      .set({ ip: '10.20.30.42' })
+      .where('account_id', '=', prev.accountId)
+      .execute();
+    t.clock.set(gameTime(TODAY, 0, 2));
+    await t.game.acquire.buy(o, { restId: x.restaurantId, way: 'acquire', expect: 1_000_000 });
+    const afterBuy = await coin(prev.restaurantId);
+    await pay(shardId);
+    expect(await coin(prev.restaurantId)).toBe(afterBuy);
+    expect(await dividends(o.restaurantId)).toMatchObject([{ rest_id: x.restaurantId, coin: 50_000 }]);
+  });
+
+  it('同一天手动重跑、中间换过老板：已经发给这个老板的从封顶里扣掉', async () => {
+    const shardId = await createShard(t.db);
+    const a0 = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const x1 = await newRestaurant(t, { shardId });
+    const x2 = await newRestaurant(t, { shardId });
+    // 封顶 250,000：x1 已经发满
+    await ownerIncome(a0.restaurantId, 1_000_000);
+    await own(x1.restaurantId, shardId, a0.restaurantId);
+    await own(x2.restaurantId, shardId, a0.restaurantId);
+    await income(x1.restaurantId, YDAY, 10_000_000);
+    await income(x2.restaurantId, YDAY, 10_000_000);
+    await t.db
+      .insertInto('acquire_dividend')
+      .values({
+        rest_id: x1.restaurantId,
+        day: YDAY,
+        owner_rest_id: a0.restaurantId,
+        coin: 250_000,
+        tended: false,
+      })
+      .execute();
+    await pay(shardId);
+    expect(await coin(a0.restaurantId)).toBe(0);
+    expect((await dividends(a0.restaurantId)).map((d) => d.coin)).toEqual([250_000, 0]);
+  });
+
+  it('前一天的收入没汇总上：报错（留在任务记录里），不发', async () => {
+    const shardId = await createShard(t.db);
+    const o = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const x = await newRestaurant(t, { shardId });
+    await own(x.restaurantId, shardId, o.restaurantId);
+    await expect(pay(shardId)).rejects.toThrow(/income/);
+    expect(await dividends(o.restaurantId)).toEqual([]);
   });
 
   it('只发本区服的', async () => {

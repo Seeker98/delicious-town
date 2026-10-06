@@ -419,7 +419,7 @@ export function createAcquireService(d: GameDeps) {
       for (const [id, num] of picked) {
         // 实际到账的数量：满了丢掉的不算
         const got = await addFoods(op, id, num, { source: 'acquire.tend' });
-        foods.push({ id, num: got.toCupboard + got.toFridge });
+        if (got.toCupboard + got.toFridge > 0) foods.push({ id, num: got.toCupboard + got.toFridge });
       }
       const n = foods.reduce((a, f) => a + f.num, 0);
       restLog(op, 'acquire.tended', { owner: s.owner_rest_id, ownerName: s.name, n });
@@ -584,11 +584,13 @@ export function createAcquireService(d: GameDeps) {
         .where('day', '=', today)
         .executeTakeFirst(),
     ]);
-    const holdings: AcquireHoldingDto[] = hold.map((x) => ({
-      ...m.get(x.rest_id)!,
-      dividend: x.coin === null ? null : { coin: Number(x.coin), tended: x.tended! },
-      tendedToday: x.tended_today !== null,
-    }));
+    const holdings: AcquireHoldingDto[] = hold
+      .filter((x) => m.has(x.rest_id))
+      .map((x) => ({
+        ...m.get(x.rest_id)!,
+        dividend: x.coin === null ? null : { coin: Number(x.coin), tended: x.tended! },
+        tendedToday: x.tended_today !== null,
+      }));
     return {
       me,
       tendedToday: myTend !== undefined,
