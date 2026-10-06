@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    visual1006:
+      'Corrections de mise en page sur mobile : le tableau des caractéristiques du détail d’ustensile a maintenant une ligne par caractéristique ; les raisons de blocage dans l’activité du jour ont leur propre ligne ; la liste déroulante d’échange d’éclats des plats signature ne déborde plus et affiche « Choisir un plat » ; la liste des bonus actifs et les lignes de fragments passent à la ligne si besoin ; la carte de résultat du duel affiche le nom traduit de l’Ancien et les scores avec la virgule décimale',
     frTimes1006:
       'Les quantités d’objets suivent maintenant la typographie française, avec des espaces autour du × (par exemple « Riz × 3 »)',
     web1006:

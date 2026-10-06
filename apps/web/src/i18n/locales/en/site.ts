@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    visual1006:
+      'Mobile layout fixes: the gear detail stats table now has one row per stat; locked reasons in Today’s activity sit on their own line; the shard exchange dropdown on the signature dish page no longer runs off screen and shows “Choose a dish” by default; the active bonus list and fragment rows wrap when needed; the duel result card shows the Elder’s translated name and scores use your language’s decimal separator',
     frTimes1006:
       'In the French interface, item quantities now follow French typography, with spaces around the × (e.g. “Riz × 3”)',
     web1006:

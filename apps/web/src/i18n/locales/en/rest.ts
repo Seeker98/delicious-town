@@ -102,7 +102,7 @@ const rest: Messages['rest'] = {
     claimFirst: 'Claim the quests above first',
     leftover: 'Catch up: quests from earlier chapters that opened later',
     lockedLevel: (n) => `🔒 Unlocks at level ${n}`,
-    lockedDays: (n) => `🔒 Unlocks ${n} days after sign-up`,
+    lockedDays: (n) => `🔒 Unlocks ${n} ${plEn(n, 'day', 'days')} after sign-up`,
     lockedEmail: '🔒 Unlocks after you verify your email',
     noActivity: '🔒 No limited-time event is running',
     lockedStar: (n) => `🔒 Unlocks at ${n} ${n === 1 ? 'star' : 'stars'}`,

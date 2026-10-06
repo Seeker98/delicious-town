@@ -116,17 +116,20 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
     </div>
     <p v-if="desc" class="small text-muted mb-2" data-testid="equip-desc">{{ desc }}</p>
 
+    <!-- 每项属性一行（视觉第三轮：六列属性横排，英法西文要左右滑；和厨具页的属性表一致） -->
     <table class="table table-sm small">
       <thead>
         <tr>
           <th></th>
-          <th v-for="k in ATTR_KEYS" :key="k">{{ ATTR_NAMES[k] }}</th>
+          <th v-for="key in ROWS" :key="key" class="text-end">{{ t.equip.detail.rows[key] }}</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="key in ROWS" :key="key">
-          <td>{{ t.equip.detail.rows[key] }}</td>
-          <td v-for="k in ATTR_KEYS" :key="k">{{ e[key][k] }}</td>
+        <tr v-for="k in ATTR_KEYS" :key="k" :data-testid="`attr-row-${k}`">
+          <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
+          <td v-for="key in ROWS" :key="key" :class="['text-end', { 'fw-bold': key === 'total' }]">
+            {{ e[key][k] }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -196,7 +199,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
         </button>
       </div>
       <div v-if="freeHoles > 0 && d.gems.length > 0" class="d-flex gap-1 mt-1">
-        <select v-model="gemPick" class="form-select form-select-sm w-auto" data-testid="inlay-pick">
+        <select v-model="gemPick" class="form-select form-select-sm dt-shrink" data-testid="inlay-pick">
           <option v-for="g in d.gems" :key="g.goodsId" :value="g.goodsId">
             {{ t.equip.detail.gemOption(catalog.goodsName(g.goodsId), g.num, g.level) }}
           </option>
