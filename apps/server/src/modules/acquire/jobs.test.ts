@@ -75,6 +75,98 @@ describe('每天的收购任务（收购 PR 1）', () => {
     expect((await ensureState(t.db, shardId, r.restaurantId, a(), new Date())).base).toBe(5_000_000);
   });
 
+  it('收入汇总每次补前两天（某天任务失败、最后一轮结算晚写进来时下一天补上）；只清本区服的旧收入', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const other = await newRestaurant(t);
+    const round = (coin: number, at: Date, no: number) =>
+      t.db
+        .insertInto('income_round')
+        .values({
+          rest_id: r.restaurantId,
+          round_no: no,
+          coin,
+          exp: 0,
+          oil: 0,
+          customers: JSON.stringify({}),
+          rates: JSON.stringify({}),
+          drops: JSON.stringify([]),
+          created_at: at,
+        })
+        .execute();
+    await round(30, gameTime('2000-01-08', 12), 1);
+    await round(40, gameTime('2000-01-09', 12), 2);
+    await income(r.restaurantId, '1999-12-01', 1);
+    await income(other.restaurantId, '1999-12-01', 1);
+    const [incomeJob] = acquireJobs(t.game.deps);
+    const settings = await t.game.shards.settings(shardId);
+    await incomeJob!.run({
+      shardId,
+      period: 'x',
+      now: gameTime('2000-01-10', 0, 6),
+      settings,
+      log: { error: () => undefined },
+    });
+    const days = await t.db
+      .selectFrom('rest_income_day')
+      .select(['day', 'coin'])
+      .where('rest_id', '=', r.restaurantId)
+      .orderBy('day')
+      .execute();
+    expect(days).toEqual([
+      { day: '2000-01-08', coin: 30 },
+      { day: '2000-01-09', coin: 40 },
+    ]);
+    // 别的区服的旧收入不归这个区服的任务清
+    expect(
+      await t.db
+        .selectFrom('rest_income_day')
+        .select('day')
+        .where('rest_id', '=', other.restaurantId)
+        .execute(),
+    ).toHaveLength(1);
+  });
+
+  it('交易记录、拦截记录留 30 天', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
+    const old = gameTime('2000-01-01', 12);
+    const recent = gameTime('2000-02-05', 12);
+    for (const at of [old, recent]) {
+      await t.db
+        .insertInto('acquire_log')
+        .values({
+          shard_id: shardId,
+          kind: 'release',
+          buyer_rest_id: null,
+          target_rest_id: r.restaurantId,
+          seller_rest_id: null,
+          price: 0,
+          tax: 0,
+          heat_after: 1,
+          created_at: at,
+        })
+        .execute();
+      await t.db
+        .insertInto('acquire_block')
+        .values({
+          shard_id: shardId,
+          buyer_rest_id: r.restaurantId,
+          target_rest_id: r.restaurantId,
+          reason: 'ip',
+          created_at: at,
+        })
+        .execute();
+    }
+    await runAcquireDay(t.game.deps, shardId, gameTime('2000-02-10', 1), a());
+    expect(
+      await t.db.selectFrom('acquire_log').select('created_at').where('shard_id', '=', shardId).execute(),
+    ).toEqual([{ created_at: recent }]);
+    expect(
+      await t.db.selectFrom('acquire_block').select('created_at').where('shard_id', '=', shardId).execute(),
+    ).toEqual([{ created_at: recent }]);
+  });
+
   it('00:05 之前不跑；之后每个游戏日一个周期键；收入汇总挂在结算上', () => {
     const [incomeJob, dayJob] = acquireJobs(t.game.deps);
     const settings = {

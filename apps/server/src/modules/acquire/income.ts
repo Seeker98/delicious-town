@@ -23,9 +23,13 @@ export async function aggregateIncomeDay(db: Kysely<DB>, shardId: number, day: s
   return Number(r.numAffectedRows ?? 0);
 }
 
-/** 删掉 before 以前的每天收入 */
-export async function pruneIncomeDays(db: Kysely<DB>, before: string): Promise<number> {
-  const r = await db.deleteFrom('rest_income_day').where('day', '<', before).executeTakeFirst();
+/** 删掉本区服 before 以前的每天收入（只管本区服的店：每个区服各跑一次，不重复扫全表） */
+export async function pruneIncomeDays(db: Kysely<DB>, shardId: number, before: string): Promise<number> {
+  const r = await db
+    .deleteFrom('rest_income_day')
+    .where('day', '<', before)
+    .where('rest_id', 'in', db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId))
+    .executeTakeFirst();
   return Number(r.numDeletedRows);
 }
 

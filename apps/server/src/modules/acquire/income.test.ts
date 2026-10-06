@@ -46,7 +46,8 @@ describe('每天的收入汇总（收购 PR 1）', () => {
   });
 
   it('区间合计 [from, to)；清理某天以前的', async () => {
-    const a = await newRestaurant(t);
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
     await t.db
       .insertInto('rest_income_day')
       .values([
@@ -59,7 +60,7 @@ describe('每天的收入汇总（收购 PR 1）', () => {
       10,
     );
     expect(await incomeSums(t.db, [], '2000-01-06', '2000-01-12')).toEqual(new Map());
-    await pruneIncomeDays(t.db, '2000-01-02');
+    await pruneIncomeDays(t.db, shardId, '2000-01-02');
     expect((await daysOf(a.restaurantId)).map((x) => x.day)).toEqual(['2000-01-11', '2000-01-12']);
   });
 });
