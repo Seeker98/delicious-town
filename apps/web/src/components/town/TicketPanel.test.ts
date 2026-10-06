@@ -48,4 +48,13 @@ describe('TicketPanel', () => {
     await flushPromises();
     expect(w.emitted('reload')).toHaveLength(1);
   });
+
+  it('part：只显示 N 级券（13 哥）或只显示神秘券（卡门，问题记录 441）', () => {
+    const level = mount(TicketPanel, { props: { data: exchangeData(), part: 'level' } });
+    expect(level.find('[data-testid="lt-level"]').exists()).toBe(true);
+    expect(level.find('[data-testid="mt-food"]').exists()).toBe(false);
+    const mystery = mount(TicketPanel, { props: { data: exchangeData(), part: 'mystery' } });
+    expect(mystery.find('[data-testid="lt-level"]').exists()).toBe(false);
+    expect(mystery.find('[data-testid="mt-food"]').exists()).toBe(true);
+  });
 });

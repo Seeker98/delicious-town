@@ -3,6 +3,13 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 import { resolveGuard, type RouteFlags } from './guard';
 import { useSessionStore } from './stores/session';
 
+/** 广场搬到协会的标签（问题记录 441）：旧的 /town?tab=… 转到这里 */
+const TOWN_MOVED: Record<string, string> = {
+  exchange: '/society/mayor',
+  classroom: '/society/classroom',
+  fund: '/society/fund',
+};
+
 export const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -141,6 +148,8 @@ export const routes: RouteRecordRaw[] = [
     name: 'town',
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
+    // 教室、兑换、发展基金搬到了协会（问题记录 441）：旧链接、书签直接转过去
+    beforeEnter: (to) => TOWN_MOVED[String(to.query.tab)] ?? true,
   },
   // 游戏资料（问题记录 142）：不用登录；已开店时显示底部导航
   {
@@ -235,8 +244,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/ActivitiesView.vue'),
     meta: { needRestaurant: true },
   },
-  // 教室并进广场（问题记录 122）：旧地址跳到广场的教室标签
-  { path: '/classroom', redirect: { path: '/town', query: { tab: 'classroom' } } },
+  // 教室先并进广场（问题记录 122），后来搬到协会（问题记录 441）：旧地址跳到协会的教室
+  { path: '/classroom', redirect: '/society/classroom' },
   {
     path: '/cookbooks',
     name: 'cookbooks',
@@ -301,6 +310,14 @@ export const routes: RouteRecordRaw[] = [
     path: '/society',
     name: 'society',
     component: () => import('./views/SocietyView.vue'),
+    meta: { needRestaurant: true },
+  },
+  // 从广场搬过来的教室、三位兑换 NPC、发展基金（问题记录 441、443）
+  {
+    path: '/society/:npc(classroom|mayor|bro13|carmen|fund)',
+    name: 'society-npc',
+    component: () => import('./views/SocietyNpcView.vue'),
+    props: true,
     meta: { needRestaurant: true },
   },
   {

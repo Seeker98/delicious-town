@@ -166,7 +166,7 @@ const bar: Messages['bar'] = {
       'Perdu au chifoumi ? Ne t’énerve pas, reviens demain.',
       'Aux fléchettes, vise le milieu. Plus c’est près du centre, plus ça rapporte.',
       'Les jeux du bar ont une limite par jour. Ne joue pas tout d’un coup.',
-      'Le Gros Mangeur est encore venu boire à l’œil. Qu’est-ce qu’on y peut.',
+      'Le Maire Grosse Marmite est encore venu boire à l’œil. Qu’est-ce qu’on y peut.',
       'J’ai aussi un stand sur la place. Passe me voir souvent.',
     ],
     memoryLeft: (n) =>

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    npc1007:
+      'El Aula, los canjes y el Fondo de Desarrollo pasan de la Plaza al Gremio. El Glotón de la Plaza era el alcalde y ahora se llama Alcalde Gran Olla, en el Gremio: allí están su charla diaria (ingrediente y semilla), la pregunta de dónde está el Chico hip-hop y el canje de objetos raros. El Hermano 13 (bocinas diarias, vales de ingredientes) y Carmen (vales de ingredientes misteriosos, y uno gratis en la primera visita) también están en el Gremio; Gary lleva el Fondo de Desarrollo. El juez de cocina El Glotón también pasa a ser el Alcalde Gran Olla. El Taoísta Fan aparece en la tasación del templo y Kai en la página de eventos temporales: tócalos para otra frase. La Plaza conserva Noticias, Vecinos y Clasificaciones',
     duel1007:
       'Los resultados del duelo de cocina ahora son comentarios de los jueces: cada juez repasa los aspectos que valora (victoria aplastante, muy parejo o derrota total) y da un marcador; el resultado también muestra el plato especial de cada lado («Sin plato especial» si no hay). El juez Viejo Pobretón pasa a ser Gordon, y Carmen pasa a ser Joe',
     home1007:

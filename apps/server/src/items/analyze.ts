@@ -168,7 +168,7 @@ export function analyzeItems(
   byLevel([1, 2, 3, 7], '神殿守护兽');
   byLevel(
     t.town.npc.bigEaterLevelWeights.flatMap((w, i) => (w > 0 ? [i + 1] : [])),
-    '大胃王',
+    '镇长大胃锅',
   );
   for (const x of b.bless)
     if ((x.type === 0 || x.type === 5) && x.levels)

@@ -9,6 +9,11 @@ import { useToastStore } from '../../stores/toast';
 import TicketPanel from './TicketPanel.vue';
 
 const CATS = ['bg', 'dt', 'chip', 'so'] as const;
+/**
+ * 兑换拆给三位 NPC（问题记录 441）：goods 是镇长大胃锅的稀有道具（四类），
+ * level 是 13 哥的食材兑换券，mystery 是卡门的神秘食材兑换券；三者读同一个接口
+ */
+const props = withDefaults(defineProps<{ part?: 'goods' | 'level' | 'mystery' }>(), { part: 'goods' });
 const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
@@ -63,7 +68,7 @@ async function go(x: TownExchangeItemDto) {
 </script>
 
 <template>
-  <template v-if="data">
+  <template v-if="data && props.part === 'goods'">
     <div class="dt-pills">
       <a
         v-for="c in CATS"
@@ -126,7 +131,6 @@ async function go(x: TownExchangeItemDto) {
         </button>
       </div>
     </div>
-    <h6 class="dt-section">{{ t.town.exchange.tickets }}</h6>
-    <TicketPanel :data="data" @reload="load" />
   </template>
+  <TicketPanel v-else-if="data && props.part !== 'goods'" :data="data" :part="props.part" @reload="load" />
 </template>

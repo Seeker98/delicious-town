@@ -202,7 +202,7 @@ const events: Messages['events'] = {
     'takeaway.dismiss': () => 'Paid off and let go of a rider',
     'tower.rank.week': (p, names) =>
       `Ranked #${n(p, 'rank')} in the weekly Chef Tower ranking, got ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `Exchanged ${n(p, 'num')} ${plEn(n(p, 'num'), 'time', 'times')} at the square`,
+    'town.exchange': (p) => `Exchanged ${n(p, 'num')} ${plEn(n(p, 'num'), 'time', 'times')} at the Guild`,
     'town.levelTicket': (p) =>
       `Used a level ${n(p, 'level')} ingredient voucher for ${n(p, 'total')} ${plEn(n(p, 'total'), 'ingredient', 'ingredients')}`,
     'town.mysteryTicket': (p, names) =>
@@ -210,10 +210,10 @@ const events: Messages['events'] = {
     'town.feast': () => 'Joined the feast at the square',
     'town.hammer': () => 'Struck the weather hammer and changed the weather',
     'town.mayor': (p) =>
-      p.right ? "Answered the mayor's question correctly" : "Got the mayor's question wrong",
+      p.right ? "Answered Mayor Big Pot's question correctly" : "Got Mayor Big Pot's question wrong",
     'town.shake': (p) =>
       `Shook the money tree for ${formatNum(n(p, 'coin'))} ${plEn(formatNum(n(p, 'coin')), 'coin', 'coins')}`,
-    'town.talk': () => 'Chatted with townsfolk at the square',
+    'town.talk': () => 'Chatted with the townsfolk',
     'town.wish': () => 'Made a wish at the square',
     'exchange.order': (p, names) =>
       `Placed a ${side(p)} order on the exchange: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')} at ${formatNum(n(p, 'price'))} each${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} filled immediately)` : ''}${heldNote(p)}`,

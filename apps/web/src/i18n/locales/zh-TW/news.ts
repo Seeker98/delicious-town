@@ -116,7 +116,7 @@ export default {
     'fund.big': (w, p) => fundNews(w, p),
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,
-    'town.exchange': (w, p, x) => `${w}在鎮長處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+    'town.exchange': (w, p, x) => `${w}在鎮長大胃鍋處兌換了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     'predict.result': (_w, p) => predictResult(p),
   }),
   /** 沒有文案的新聞類型 */

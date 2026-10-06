@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 const id = z.number().int().positive();
 
-export const npcKey = z.enum(['bigEater', 'wenjie', 'bro13']);
+/** bigEater 显示名是镇长大胃锅（问题记录 441：游戏里只有大胃锅，就是镇长；编号沿用）；carmen 只有一次见面礼 */
+export const npcKey = z.enum(['bigEater', 'wenjie', 'bro13', 'carmen']);
 export type NpcKey = z.infer<typeof npcKey>;
 
 export const townNewsQuery = z.object({ before: z.coerce.number().int().positive().optional() });
@@ -51,7 +52,7 @@ export interface TownRewardDto {
 }
 
 /** NPC 台词（问题记录 272）：前端按语言显示 */
-export type TalkLine = NpcKey | 'bigEaterFirst' | 'mayorRight' | 'mayorWrong';
+export type TalkLine = NpcKey | 'bigEaterFirst' | 'carmenFirst' | 'mayorRight' | 'mayorWrong';
 
 export interface TalkResultDto {
   npc: NpcKey | 'mayor';

@@ -17,7 +17,7 @@ export const townData = (patch: Partial<TownDto> = {}): TownDto => ({
   star: 1,
   coin: 1_000_000,
   diamond: 20,
-  talked: { bigEater: false, wenjie: false, bro13: false },
+  talked: { bigEater: false, wenjie: false, bro13: false, carmen: false },
   mayor: { answered: false, hiphopOut: true, hour: 9 },
   bigEaterGift: false,
   shaken: false,

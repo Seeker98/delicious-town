@@ -1,8 +1,8 @@
-/** 广场：新闻、居民、兑换、排行、教室（问题记录 272） */
+/** 广场：新闻、居民、排行（问题记录 272；教室、兑换、发展基金在 441 搬到协会，文案还在这里） */
 export default {
   title: '广场',
   forum: '论坛',
-  tabs: { news: '新闻', town: '居民', exchange: '兑换', rank: '排行', classroom: '教室', fund: '发展基金' },
+  tabs: { news: '新闻', town: '居民', rank: '排行' },
   loadFailed: '读取广场失败',
   restFailed: '读取餐厅数据失败。',
   retry: '重试',
@@ -23,14 +23,17 @@ export default {
     '15': '外卖',
   } as Record<string, string>,
   npcs: {
-    bigEater: { name: '大胃哥', desc: '每天送 1~5 级食材和一颗种子' },
+    bigEater: { name: '镇长大胃锅', desc: '每天聊天送 1~5 级食材和一颗种子' },
     wenjie: { name: '雯姐', desc: '每天送神秘礼券' },
-    bro13: { name: '13 哥', desc: '每天送喇叭' },
+    bro13: { name: '13 哥', desc: '每天聊天送喇叭' },
+    carmen: { name: '卡门', desc: '见面礼：神秘食材兑换券（每家店一次）' },
   },
   /** 雷神锤能换的天气大类（下标 = 类型） */
   weatherTypes: ['', '晴类', '雨类', '雪冰类', '风沙雾类'],
   said: (name: string, talk: string, rewards: string) => `${name}：${talk} 获得 ${rewards}`,
-  mayorName: '镇长',
+  mayorName: '镇长大胃锅',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: '嘻哈男孩今天在哪',
   mayorFailed: '回答失败',
   talkFailed: '聊天失败',
   shook: (coin: string) => `摇到银币 ${coin}`,
@@ -80,7 +83,7 @@ export default {
   news: {
     loadFailed: '读取新闻失败',
     needStar: (n: number) => `餐厅 ${n} 星才能广播`,
-    noHorn: '没有喇叭（和 13 哥聊天可以拿到）',
+    noHorn: '没有喇叭（去协会和 13 哥聊天可以拿到）',
     cooling: (s: number) => `广播冷却中，还要等 ${s} 秒`,
     sent: '广播已发出',
     failed: '广播失败',

@@ -27,7 +27,7 @@ export default {
       xiaoC: '小c',
       wenjie: '雯姐',
       bro13: '13 哥',
-      bigEater: '大胃哥',
+      bigEater: '鎮長大胃鍋',
       fanDao: '飯老道',
       gary: '蓋樂瑞',
       gordon: '戈登',

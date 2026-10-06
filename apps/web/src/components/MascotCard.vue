@@ -39,11 +39,12 @@ watch(
     :data-testid="testid"
     @click="next"
     @keydown.enter.prevent="next"
+    @keydown.space.prevent="next"
   >
     <GameImg :path="img" :alt="name" :fallback-icon="fallbackIcon" class="flex-shrink-0" />
     <div>
       <b>{{ t.common.colon(name) }}</b
-      ><span :data-testid="`${testid}-line`">{{ line }}</span>
+      ><span :data-testid="`${testid}-line`" aria-live="polite">{{ line }}</span>
     </div>
     <div v-if="$slots.default" class="ms-auto flex-shrink-0" @click.stop @keydown.enter.stop>
       <slot />

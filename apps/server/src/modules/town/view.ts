@@ -7,7 +7,7 @@ import { activationPoints } from './common';
 import { goodsCounts } from './exchange';
 import { hiphopDay } from '../hiphop/day';
 
-const NPCS: NpcKey[] = ['bigEater', 'wenjie', 'bro13'];
+const NPCS: NpcKey[] = ['bigEater', 'wenjie', 'bro13', 'carmen'];
 const later = (at: Date | null, ms: number, now: Date): string | null =>
   at && at.getTime() + ms > now.getTime() ? new Date(at.getTime() + ms).toISOString() : null;
 

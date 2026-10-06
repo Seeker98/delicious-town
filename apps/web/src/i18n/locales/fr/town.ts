@@ -7,10 +7,7 @@ const town: Messages['town'] = {
   tabs: {
     news: 'Nouvelles',
     town: 'Habitants',
-    exchange: 'Échanges',
     rank: 'Classements',
-    classroom: 'Classe',
-    fund: 'Fonds',
   },
   loadFailed: 'Impossible de charger la place',
   restFailed: 'Impossible de charger votre restaurant.',
@@ -31,13 +28,22 @@ const town: Messages['town'] = {
     '15': 'À emporter',
   },
   npcs: {
-    bigEater: { name: 'Gros Mangeur', desc: 'Offre chaque jour un ingrédient de niveau 1 à 5 et une graine' },
+    bigEater: {
+      name: 'Maire Grosse Marmite',
+      desc: 'Discussion quotidienne : un ingrédient de niveau 1 à 5 et une graine',
+    },
     wenjie: { name: 'Sœur Wen', desc: 'Offre des bons mystère chaque jour' },
-    bro13: { name: 'Frère 13', desc: 'Offre un klaxon chaque jour' },
+    bro13: { name: 'Frère 13', desc: 'Discussion quotidienne : des klaxons' },
+    carmen: {
+      name: 'Carmen',
+      desc: 'Cadeau de bienvenue : un bon d’ingrédient mystère (une fois par restaurant)',
+    },
   },
   weatherTypes: ['', 'Ensoleillé', 'Pluie', 'Neige et glace', 'Vent, sable et brouillard'],
   said: (name, talk, rewards) => `${name} : ${talk} Vous recevez ${rewards}`,
-  mayorName: 'Maire',
+  mayorName: 'Maire Grosse Marmite',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: 'Où est le Garçon hip-hop aujourd’hui ?',
   mayorFailed: 'Impossible de répondre',
   talkFailed: 'Impossible de discuter',
   shook: (coin) => `Vous avez secoué ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
@@ -88,7 +94,7 @@ const town: Messages['town'] = {
   news: {
     loadFailed: 'Impossible de charger les nouvelles',
     needStar: (n) => `Il faut ${n}★ pour faire une annonce`,
-    noHorn: 'Pas de klaxon (discutez avec Frère 13 pour en avoir)',
+    noHorn: 'Pas de klaxon (discutez avec Frère 13 à la Guilde pour en avoir)',
     cooling: (s) => `Annonce en recharge : encore ${s} s`,
     sent: 'Annonce envoyée',
     failed: "Échec de l'annonce",

@@ -205,7 +205,7 @@ const events: Messages['events'] = {
     'takeaway.dismiss': () => 'A payé et libéré un livreur',
     'tower.rank.week': (p, names) =>
       `${n(p, 'rank')}e du classement hebdomadaire de la Tour des chefs, gagne ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `A fait ${n(p, 'num')} ${plFr(n(p, 'num'), 'échange', 'échanges')} sur la place`,
+    'town.exchange': (p) => `A fait ${n(p, 'num')} ${plFr(n(p, 'num'), 'échange', 'échanges')} à la Guilde`,
     'town.levelTicket': (p) =>
       `A utilisé un bon d'ingrédients de niveau ${n(p, 'level')} pour ${n(p, 'total')} ${plFr(n(p, 'total'), 'ingrédient', 'ingrédients')}`,
     'town.mysteryTicket': (p, names) =>
@@ -213,10 +213,12 @@ const events: Messages['events'] = {
     'town.feast': () => 'A participé au festin sur la place',
     'town.hammer': () => 'A frappé avec le marteau météo et changé le temps',
     'town.mayor': (p) =>
-      p.right ? 'A bien répondu à la question du maire' : 'A mal répondu à la question du maire',
+      p.right
+        ? 'A bien répondu à la question du Maire Grosse Marmite'
+        : 'A mal répondu à la question du Maire Grosse Marmite',
     'town.shake': (p) =>
       `A secoué l'arbre à pièces : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
-    'town.talk': () => 'A discuté avec les habitants sur la place',
+    'town.talk': () => 'A discuté avec les habitants',
     'town.wish': () => 'A fait un vœu sur la place',
     'exchange.order': (p, names) =>
       `Ordre ${side(p)} passé en bourse : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} exécutés immédiatement)` : ''}${heldNote(p)}`,

@@ -71,7 +71,7 @@ describe('新闻文案', () => {
       '恭喜小王的店伸进蟹老板裤兜里掏出：道具180×1',
     );
     expect(newsText(n('town.exchange', { exchangeId: 2, goodsId: 238, num: 1 }), names)).toBe(
-      '小王的店在镇长处兑换了 道具238×1',
+      '小王的店在镇长大胃锅处兑换了 道具238×1',
     );
     expect(newsText(n('kuji.big', { tier: 'A' }), names)).toBe('小王的店在一番赏抽中了 A 赏！');
     expect(newsText(n('kuji.big', { tier: 'last' }), names)).toBe(

@@ -264,7 +264,8 @@ const errors: Messages['errors'] = {
     query_text: 'Le texte de recherche est trop long (20 caractères au plus)',
     cursor: 'Page invalide. Actualisez.',
     post_changed: 'La publication a changé. Actualisez et réessayez.',
-    hiphop_not_out: "Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez au maire plus tard.",
+    hiphop_not_out:
+      "Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez plus tard au Maire Grosse Marmite, à la Guilde.",
     pick_food: 'Choisissez un ingrédient à offrir',
     pick_count: "Nombre d'ingrédients pariés invalide",
     bad_food: 'Vous ne pouvez parier que sur des ingrédients de niveau 1 à 2',
@@ -432,7 +433,7 @@ const errors: Messages['errors'] = {
     codeLevel: (level) => `Ce code demande le niveau ${level}`,
     queryText: (max) => `Le texte de recherche fait au plus ${max} ${plFr(max, 'caractère', 'caractères')}`,
     hiphopNotOut: (hour) =>
-      `Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez au maire après ${hour} h.`,
+      `Le Garçon hip-hop n'est pas encore sorti aujourd'hui. Demandez au Maire Grosse Marmite, à la Guilde, après ${hour} h.`,
     unknown: (code) => `Une erreur s'est produite (${code})`,
   },
   fallbackName: {

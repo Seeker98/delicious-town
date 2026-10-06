@@ -58,7 +58,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Plaza: charla una vez al día con El Glotón, la Hermana Wen y el Hermano 13 para recibir regalos; responde la pregunta del Alcalde; sacude el árbol del dinero',
+      text: 'Plaza: charla una vez al día con la Hermana Wen para recibir vales misteriosos; sacude la bolsa de Don Krab',
+    },
+    {
+      to: '/society/mayor',
+      text: 'Gremio: charla a diario con el Alcalde Gran Olla (ingrediente y semilla) y dile dónde está hoy el Chico hip-hop; el Hermano 13 da bocinas cada día; Carmen regala un vale de ingrediente misterioso en tu primera visita',
     },
     {
       to: '/yard',
@@ -89,7 +93,7 @@ const guide: Messages['guide'] = {
     {
       q: '¿Y si siempre me falta el mismo ingrediente?',
       a: [
-        'Los ingredientes aleatorios (packs de regalo, vales de ingrediente aleatorio, Combinar, premios del Bar y de la Torre, el Templo, El Glotón) pueden ser justo el que le falta a tu próxima receta, y cuanta más suerte tengas, más probable es. También puedes cubrirlo con un ingrediente universal, o comprarlo en el Mercado o en la Bolsa (la Bolsa solo vende ingredientes raros).',
+        'Los ingredientes aleatorios (packs de regalo, vales de ingrediente aleatorio, Combinar, premios del Bar y de la Torre, el Templo, el Alcalde Gran Olla) pueden ser justo el que le falta a tu próxima receta, y cuanta más suerte tengas, más probable es. También puedes cubrirlo con un ingrediente universal, o comprarlo en el Mercado o en la Bolsa (la Bolsa solo vende ingredientes raros).',
       ],
     },
     {
@@ -135,8 +139,8 @@ const guide: Messages['guide'] = {
       a: [
         'Puedes ganarlas en la tragaperras del ',
         { to: '/bar', text: 'Bar' },
-        '; sacudir la bolsa de Don Krab en la plaza a veces suelta una; la misión secundaria «Completar una Prueba» también da una. Cámbialas por objetos raros en «Canjes» de la ',
-        { to: '/town', text: 'Plaza' },
+        '; sacudir la bolsa de Don Krab en la plaza a veces suelta una; la misión secundaria «Completar una Prueba» también da una. Cámbialas por objetos raros con el ',
+        { to: '/society/mayor', text: 'Alcalde Gran Olla del Gremio' },
         '.',
       ],
     },

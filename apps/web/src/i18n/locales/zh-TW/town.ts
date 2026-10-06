@@ -1,9 +1,9 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 廣場：新聞、居民、兌換、排行、教室（問題記錄 272） */
+/** 廣場：新聞、居民、排行（問題記錄 272；教室、兌換、發展基金在 441 搬到協會，文案還在這裡） */
 export default {
   title: '廣場',
   forum: '論壇',
-  tabs: { news: '新聞', town: '居民', exchange: '兌換', rank: '排行', classroom: '教室', fund: '發展基金' },
+  tabs: { news: '新聞', town: '居民', rank: '排行' },
   loadFailed: '讀取廣場失敗',
   restFailed: '讀取餐廳資料失敗。',
   retry: '重試',
@@ -24,14 +24,17 @@ export default {
     '15': '外賣',
   } as Record<string, string>,
   npcs: {
-    bigEater: { name: '大胃哥', desc: '每天送 1~5 級食材和一顆種子' },
+    bigEater: { name: '鎮長大胃鍋', desc: '每天聊天送 1~5 級食材和一顆種子' },
     wenjie: { name: '雯姐', desc: '每天送神秘禮券' },
-    bro13: { name: '13 哥', desc: '每天送喇叭' },
+    bro13: { name: '13 哥', desc: '每天聊天送喇叭' },
+    carmen: { name: '卡門', desc: '見面禮：神秘食材兌換券（每家店一次）' },
   },
   /** 雷神錘能換的天氣大類（下標 = 類型） */
   weatherTypes: ['', '晴類', '雨類', '雪冰類', '風沙霧類'],
   said: (name: string, talk: string, rewards: string) => `${name}：${talk} 獲得 ${rewards}`,
-  mayorName: '鎮長',
+  mayorName: '鎮長大胃鍋',
+  /** 鎮長大胃鍋頁上的問答標題（問題記錄 441） */
+  mayorAsk: '嘻哈男孩今天在哪',
   mayorFailed: '回答失敗',
   talkFailed: '聊天失敗',
   shook: (coin: string) => `搖到銀幣 ${coin}`,
@@ -81,7 +84,7 @@ export default {
   news: {
     loadFailed: '讀取新聞失敗',
     needStar: (n: number) => `餐廳 ${n} 星才能廣播`,
-    noHorn: '沒有喇叭（和 13 哥聊天可以拿到）',
+    noHorn: '沒有喇叭（去協會和 13 哥聊天可以拿到）',
     cooling: (s: number) => `廣播冷卻中，還要等 ${s} 秒`,
     sent: '廣播已發出',
     failed: '廣播失敗',

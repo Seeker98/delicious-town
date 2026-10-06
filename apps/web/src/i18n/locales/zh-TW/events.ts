@@ -184,14 +184,14 @@ export default {
     'takeaway.dismiss': () => '和一位騎手結算後解約',
     'tower.rank.week': (p, names) =>
       `賽廚榜周榜第 ${n(p, 'rank')} 名，獲得 ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `在廣場兌換了 ${n(p, 'num')} 次`,
+    'town.exchange': (p) => `在協會兌換了 ${n(p, 'num')} 次`,
     'town.levelTicket': (p) => `用 ${n(p, 'level')} 級食材兌換券換了 ${n(p, 'total')} 份食材`,
     'town.mysteryTicket': (p, names) => `用神秘食材券換到 ${names.foodName(n(p, 'foodsId'))}`,
     'town.feast': () => '參加了廣場宴席',
     'town.hammer': () => '敲了天氣錘，改變了天氣',
-    'town.mayor': (p) => (p.right ? '答對了鎮長的問題' : '答錯了鎮長的問題'),
+    'town.mayor': (p) => (p.right ? '答對了鎮長大胃鍋的問題' : '答錯了鎮長大胃鍋的問題'),
     'town.shake': (p) => `搖錢樹搖到銀幣 ${formatNum(n(p, 'coin'))}`,
-    'town.talk': () => '和廣場上的居民聊了天',
+    'town.talk': () => '和小鎮居民聊了天',
     'town.wish': () => '在廣場許了願',
     'exchange.order': (p, names) =>
       `在交易所掛${p.side === 'buy' ? '買' : '賣'}單：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（當場成交 ${n(p, 'filled')} 個）` : ''}${heldNote(p)}`,

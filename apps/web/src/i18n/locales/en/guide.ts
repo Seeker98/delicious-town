@@ -54,7 +54,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Square: chat with Big Belly, Sister Wen and Brother 13 once a day each for gifts; answer the Mayor’s question; shake the money tree',
+      text: 'Square: chat with Sister Wen once a day for Mystery Vouchers; shake Mr. Krab’s money bag',
+    },
+    {
+      to: '/society/mayor',
+      text: 'Guild: chat with Mayor Big Pot daily for an ingredient and a seed, and tell him where the Hip-hop Boy is today; Brother 13 gives horns daily; Carmen gives a mystery ingredient voucher on your first visit',
     },
     {
       to: '/yard',
@@ -82,7 +86,7 @@ const guide: Messages['guide'] = {
     {
       q: 'What if I keep missing one ingredient?',
       a: [
-        'Random ingredients (gift packs, random ingredient tickets, Combine, Bar and Tower rewards, the Temple, Big Belly) have a chance to be exactly what your next recipe is missing, and higher luck makes it more likely. You can also cover the gap with a universal ingredient, or buy it at the Market or on the Exchange (the Exchange only trades rare ingredients).',
+        'Random ingredients (gift packs, random ingredient tickets, Combine, Bar and Tower rewards, the Temple, Mayor Big Pot) have a chance to be exactly what your next recipe is missing, and higher luck makes it more likely. You can also cover the gap with a universal ingredient, or buy it at the Market or on the Exchange (the Exchange only trades rare ingredients).',
       ],
     },
     {
@@ -128,8 +132,8 @@ const guide: Messages['guide'] = {
       a: [
         'You can win them on the slot machine at the ',
         { to: '/bar', text: 'Bar' },
-        '; shaking Mr. Krab’s money bag in the square sometimes drops one; the side quest “Complete a Trial” also gives one. Exchange them for rare items under “Exchange” in the ',
-        { to: '/town', text: 'Square' },
+        '; shaking Mr. Krab’s money bag in the square sometimes drops one; the side quest “Complete a Trial” also gives one. Trade them for rare items with ',
+        { to: '/society/mayor', text: 'Mayor Big Pot at the Guild' },
         '.',
       ],
     },

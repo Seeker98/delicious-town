@@ -7,10 +7,7 @@ const town: Messages['town'] = {
   tabs: {
     news: 'Noticias',
     town: 'Vecinos',
-    exchange: 'Canjes',
     rank: 'Clasificaciones',
-    classroom: 'Aula',
-    fund: 'Fondo',
   },
   loadFailed: 'No se pudo cargar la plaza',
   restFailed: 'No se pudo cargar tu restaurante.',
@@ -31,13 +28,22 @@ const town: Messages['town'] = {
     '15': 'A domicilio',
   },
   npcs: {
-    bigEater: { name: 'El Glotón', desc: 'Regala cada día un ingrediente de nivel 1 a 5 y una semilla' },
+    bigEater: {
+      name: 'Alcalde Gran Olla',
+      desc: 'Charla a diario: un ingrediente de nivel 1 a 5 y una semilla',
+    },
     wenjie: { name: 'Hermana Wen', desc: 'Regala vales misteriosos cada día' },
-    bro13: { name: 'Hermano 13', desc: 'Regala una bocina cada día' },
+    bro13: { name: 'Hermano 13', desc: 'Charla a diario: bocinas' },
+    carmen: {
+      name: 'Carmen',
+      desc: 'Regalo de bienvenida: un vale de ingrediente misterioso (una vez por restaurante)',
+    },
   },
   weatherTypes: ['', 'Soleado', 'Lluvia', 'Nieve y hielo', 'Viento, arena y niebla'],
   said: (name, talk, rewards) => `${name}: ${talk} Recibiste ${rewards}`,
-  mayorName: 'Alcalde',
+  mayorName: 'Alcalde Gran Olla',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: '¿Dónde está hoy el Chico hip-hop?',
   mayorFailed: 'No se pudo responder',
   talkFailed: 'No se pudo charlar',
   shook: (coin) => `Sacudiste ${coin} ${plEs(coin, 'moneda', 'monedas')}`,
@@ -88,7 +94,7 @@ const town: Messages['town'] = {
   news: {
     loadFailed: 'No se pudieron cargar las noticias',
     needStar: (n) => `Tu restaurante necesita ${n}★ para anunciar`,
-    noHorn: 'No tienes bocinas (charla con el Hermano 13 para conseguir una)',
+    noHorn: 'No tienes bocinas (charla con el Hermano 13 en el Gremio para conseguir)',
     cooling: (s) => `Anuncio en recarga: faltan ${s} s`,
     sent: 'Anuncio enviado',
     failed: 'No se pudo anunciar',

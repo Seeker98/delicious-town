@@ -104,6 +104,7 @@ export default {
   /** 广场 NPC 台词（照原版 NPCTools） */
   talk: {
     bigEater: '你真有品味! 我也是这样觉得的! 哈哈哈!',
+    carmenFirst: '第一次见面，这张神秘食材兑换券送你。',
     bigEaterFirst: '你! 很有个性是吧!',
     wenjie: '用了飘柔就明显气质上来了!',
     bro13: '爱就直接去做!!!',

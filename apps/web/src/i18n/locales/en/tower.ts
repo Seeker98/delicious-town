@@ -25,7 +25,7 @@ const tower: Messages['tower'] = {
       xiaoC: 'Little C',
       wenjie: 'Sister Wen',
       bro13: 'Brother 13',
-      bigEater: 'Big Belly',
+      bigEater: 'Mayor Big Pot',
       fanDao: 'Taoist Fan',
       gary: 'Gary',
       gordon: 'Gordon',

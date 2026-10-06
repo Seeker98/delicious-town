@@ -166,7 +166,7 @@ const bar: Messages['bar'] = {
       '¿Perdiste a piedra, papel o tijera? No te piques, vuelve mañana.',
       'En los dardos apunta al centro. Cuanto más cerca, más puntos.',
       'Los juegos del bar tienen límite diario. No los gastes todos de golpe.',
-      'El Glotón ha vuelto a gorronear bebida. Qué le vamos a hacer.',
+      'El Alcalde Gran Olla ha vuelto a gorronear bebida. Qué le vamos a hacer.',
       'También tengo un puesto en la plaza. Pásate a menudo.',
     ],
     memoryLeft: (n) =>

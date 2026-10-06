@@ -107,6 +107,7 @@ const server: Messages['server'] = {
   },
   talk: {
     bigEater: "Vous avez du goût ! C'est aussi mon avis ! Hahaha !",
+    carmenFirst: 'Première visite ? Prenez ce bon d’ingrédient mystère.',
     bigEaterFirst: 'Vous ! Vous avez du caractère, hein !',
     wenjie: 'Avec Rejoice, on gagne tout de suite en allure !',
     bro13: 'Si tu aimes, fonce !!!',

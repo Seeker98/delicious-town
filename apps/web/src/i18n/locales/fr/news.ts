@@ -125,7 +125,7 @@ const news: Messages['news'] = {
     'icon.buy': (w, p, x) =>
       `${w} a acheté le titre limité « ${x.icon?.(str(p.key))?.title ?? str(p.title)} »`,
     'town.exchange': (w, p, x) =>
-      `${w} a échangé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} auprès du maire`,
+      `${w} a échangé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} auprès du Maire Grosse Marmite`,
     'predict.result': (_w, p) => predictResult(p),
   },
   unknown: "Il s'est passé quelque chose en ville",

@@ -204,7 +204,7 @@ const events: Messages['events'] = {
     'takeaway.dismiss': () => 'Pagaste y despediste a un repartidor',
     'tower.rank.week': (p, names) =>
       `${n(p, 'rank')}.º en la clasificación semanal de la Torre de chefs, ganas ${names.goodsName(n(p, 'goodsId'))}`,
-    'town.exchange': (p) => `Hiciste ${n(p, 'num')} ${plEs(n(p, 'num'), 'canje', 'canjes')} en la plaza`,
+    'town.exchange': (p) => `Hiciste ${n(p, 'num')} ${plEs(n(p, 'num'), 'canje', 'canjes')} en el Gremio`,
     'town.levelTicket': (p) =>
       `Usaste un vale de ingredientes de nivel ${n(p, 'level')} por ${n(p, 'total')} ${plEs(n(p, 'total'), 'ingrediente', 'ingredientes')}`,
     'town.mysteryTicket': (p, names) =>
@@ -212,10 +212,12 @@ const events: Messages['events'] = {
     'town.feast': () => 'Participaste en el banquete de la plaza',
     'town.hammer': () => 'Golpeaste con el martillo del clima y cambiaste el tiempo',
     'town.mayor': (p) =>
-      p.right ? 'Respondiste bien a la pregunta del alcalde' : 'Respondiste mal a la pregunta del alcalde',
+      p.right
+        ? 'Respondiste bien a la pregunta del Alcalde Gran Olla'
+        : 'Respondiste mal a la pregunta del Alcalde Gran Olla',
     'town.shake': (p) =>
       `Sacudiste el árbol del dinero: ${formatNum(n(p, 'coin'))} ${plEs(formatNum(n(p, 'coin')), 'moneda', 'monedas')}`,
-    'town.talk': () => 'Charlaste con los vecinos en la plaza',
+    'town.talk': () => 'Charlaste con los vecinos',
     'town.wish': () => 'Pediste un deseo en la plaza',
     'exchange.order': (p, names) =>
       `Pusiste una orden ${side(p)} en la bolsa: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')} a ${formatNum(n(p, 'price'))} cada uno${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} ejecutados al instante)` : ''}${heldNote(p)}`,

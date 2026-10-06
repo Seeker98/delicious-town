@@ -265,7 +265,8 @@ const errors: Messages['errors'] = {
     query_text: 'El texto de búsqueda es demasiado largo (máximo 20 caracteres)',
     cursor: 'Página no válida. Recarga.',
     post_changed: 'La publicación cambió. Recarga e inténtalo de nuevo.',
-    hiphop_not_out: 'El Chico hip-hop todavía no ha salido hoy. Pregunta al alcalde más tarde.',
+    hiphop_not_out:
+      'El Chico hip-hop todavía no ha salido hoy. Pregunta más tarde al Alcalde Gran Olla en el Gremio.',
     pick_food: 'Elige un ingrediente para dar de propina',
     pick_count: 'Número de ingredientes apostados no válido',
     bad_food: 'Solo puedes apostar por ingredientes de nivel 1 a 2',
@@ -432,7 +433,7 @@ const errors: Messages['errors'] = {
     queryText: (max) =>
       `El texto de búsqueda tiene como máximo ${max} ${plEs(max, 'carácter', 'caracteres')}`,
     hiphopNotOut: (hour) =>
-      `El Chico hip-hop todavía no ha salido hoy. Pregunta al alcalde después de las ${hour}:00.`,
+      `El Chico hip-hop todavía no ha salido hoy. Pregunta al Alcalde Gran Olla en el Gremio después de las ${hour}:00.`,
     unknown: (code) => `Algo salió mal (${code})`,
   },
   fallbackName: {

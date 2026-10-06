@@ -126,7 +126,7 @@ const news: Messages['news'] = {
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w} bought the limited title "${x.icon?.(str(p.key))?.title ?? str(p.title)}"`,
     'town.exchange': (w, p, x) =>
-      `${w} exchanged ${x.goodsName(num(p.goodsId))}×${num(p.num)} with the mayor`,
+      `${w} exchanged ${x.goodsName(num(p.goodsId))}×${num(p.num)} with Mayor Big Pot`,
     'predict.result': (_w, p) => predictResult(p),
   },
   unknown: 'Something happened in town',

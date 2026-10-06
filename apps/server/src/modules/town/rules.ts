@@ -6,7 +6,7 @@ export function rollRange(range: readonly [number, number], rng: Rng): number {
   return range[0] + rng.int(range[1] - range[0] + 1);
 }
 
-/** 大胃哥的食材等级（规格书 12.2：50% 1 级 / 25% 2 / 13% 3 / 9% 4 / 3% 5） */
+/** 镇长大胃锅（原来的大胃哥，问题记录 441）的食材等级（规格书 12.2：50% 1 级 / 25% 2 / 13% 3 / 9% 4 / 3% 5） */
 export function pickBigEaterLevel(weights: readonly number[], rng: Rng): number {
   const pool = buildPool(
     weights.map((w, i) => ({ level: i + 1, w })),
