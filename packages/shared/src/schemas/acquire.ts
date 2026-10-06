@@ -23,6 +23,11 @@ export interface AcquireResultDto {
   sellerGot: number;
 }
 
+/** 打理得到的食材（实际到账的数量） */
+export interface AcquireTendDto {
+  foods: Array<{ id: number; num: number }>;
+}
+
 /** 一家店的收购摘要：榜单、名下的店、在售都用 */
 export interface AcquireBriefDto {
   restId: number;
@@ -45,14 +50,26 @@ export interface AcquireRestDto extends AcquireBriefDto {
   listedBlock: string | null;
 }
 
+/** 名下的一家店：再加昨天给我的分红、今天打理没有 */
+export interface AcquireHoldingDto extends AcquireBriefDto {
+  /** 昨天这家给我的分红（压过封顶以后的）；没发（不满轮数、昨天还不归我）为 null */
+  dividend: { coin: number; tended: boolean } | null;
+  tendedToday: boolean;
+}
+
 export interface AcquireViewDto {
   me: AcquireRestDto;
-  holdings: AcquireBriefDto[];
+  /** 我今天替老板打理过没有 */
+  tendedToday: boolean;
+  holdings: AcquireHoldingDto[];
   maxHoldings: number;
   taxRate: number;
   listMinRate: number;
   listDays: number;
   protectDays: number;
+  dividendRate: number;
+  tendBonus: number;
+  tendFoods: number;
 }
 
 export interface AcquireInvestRowDto {
@@ -62,6 +79,8 @@ export interface AcquireInvestRowDto {
   holdings: number;
   /** 名下的店身价合计 */
   value: number;
+  /** 累计收到的分红 */
+  dividendTotal: number;
 }
 
 /** 身价榜、投资榜：board 指定的那个有数，另一个是空数组 */

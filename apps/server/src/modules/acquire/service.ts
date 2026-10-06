@@ -2,21 +2,26 @@ import { sql } from 'kysely';
 import {
   ErrorCode,
   type AcquireBriefDto,
+  type AcquireHoldingDto,
   type AcquireInvestRowDto,
   type AcquireMarketDto,
   type AcquireRankDto,
   type AcquireRestDto,
   type AcquireResultDto,
+  type AcquireTendDto,
   type AcquireViewDto,
 } from '@dt/shared';
-import { gameDay, gameTime } from '@dt/shared';
+import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
-import { createOp, flushOp, restLog, type Op, type OpResult } from '../../core/op';
+import { createOp, flushOp, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
+import { opNeedPick } from '../../core/scarcity';
 import { withRestaurants } from '../../db/tx';
 import { AppError } from '../../http/errors';
 import { isBanned } from '../admin/ban';
+import { awardFoodsPool } from '../award/random';
+import { addFoods } from '../cupboard/foods';
 import { linkedAccounts } from '../exchange/guard';
 import {
   buyBlock,
@@ -377,6 +382,51 @@ export function createAcquireService(d: GameDeps) {
     });
   }
 
+  /**
+   * 替老板打理（收购 PR 2）：被收购的店每个游戏日一次，得 tendFoods 份食材——和随机奖励一样的食材池
+   * （按店的等级，最高 5 级），带个人缺料倾向；老板第二天拿这一天的分红时 × (1 + tendBonus)
+   */
+  function tend(ctx: RestCtx): Promise<OpResult<AcquireTendDto>> {
+    return runOp(d, ctx, { feature: 'acquire', source: 'acquire.tend' }, async (op) => {
+      const s = await op.tx
+        .selectFrom('acquire_state as s')
+        .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+        .select(['s.owner_rest_id', 'o.name'])
+        .where('s.rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst();
+      if (!s) throw invalidState('not_owned');
+      // 锁着自己的店，主键再挡一次
+      const done = await op.tx
+        .insertInto('acquire_tend')
+        .values({ rest_id: ctx.restaurantId, day: gameDay(op.now), created_at: op.now })
+        .onConflict((oc) => oc.columns(['rest_id', 'day']).doNothing())
+        .returning('day')
+        .executeTakeFirst();
+      if (!done) throw invalidState('tended');
+      const t = op.tuning.acquire;
+      const pool = awardFoodsPool(op.config.bundle.foods, op.rest.level);
+      const maxLevel = Math.min(op.rest.level, 5);
+      const pick = await opNeedPick(op);
+      const picked = new Map<number, number>();
+      for (let i = 0; i < t.tendFoods && pool.length > 0; i++) {
+        const id = pick(
+          (f) => (op.config.foods.get(f)?.level ?? 99) <= maxLevel,
+          () => pool[op.rng.int(pool.length)]!,
+        );
+        picked.set(id, (picked.get(id) ?? 0) + 1);
+      }
+      const foods: AcquireTendDto['foods'] = [];
+      for (const [id, num] of picked) {
+        // 实际到账的数量：满了丢掉的不算
+        const got = await addFoods(op, id, num, { source: 'acquire.tend' });
+        if (got.toCupboard + got.toFridge > 0) foods.push({ id, num: got.toCupboard + got.toFridge });
+      }
+      const n = foods.reduce((a, f) => a + f.num, 0);
+      restLog(op, 'acquire.tended', { owner: s.owner_rest_id, ownerName: s.name, n });
+      return { foods };
+    });
+  }
+
   /** 一批店的摘要：店名、等级、星级、身价、老板名字、挂牌；一条查询读完 */
   async function briefs(ids: number[], now: Date): Promise<Map<number, AcquireBriefDto>> {
     if (ids.length === 0) return new Map();
@@ -502,26 +552,57 @@ export function createAcquireService(d: GameDeps) {
     return (await d.shards.ensureFeature(ctx.shardId, 'acquire')).tuning.acquire;
   }
 
-  /** 我的：我的身价、老板，名下的店（按身价从高到低），和几项规则数 */
+  /** 我的：我的身价、老板、今天打理没有，名下的店（按身价从高到低，带昨天给我的分红、今天打理没有），和几项规则数 */
   async function view(ctx: RestCtx): Promise<AcquireViewDto> {
     const t = await settingsOf(ctx);
     const now = d.now();
-    const holdIds = (
-      await d.db
-        .selectFrom('acquire_state')
-        .select('rest_id')
-        .where('owner_rest_id', '=', ctx.restaurantId)
-        .execute()
-    ).map((x) => x.rest_id);
-    const [me, m] = await Promise.all([restOf(ctx, ctx.restaurantId, t, now), briefs(holdIds, now)]);
+    const today = gameDay(now);
+    const yday = addDays(today, -1);
+    const hold = await d.db
+      .selectFrom('acquire_state as s')
+      // 昨天的分红只算发给我的（今天刚换老板的店，昨天的分红是给前一个老板的）
+      .leftJoin('acquire_dividend as dv', (j) =>
+        j
+          .onRef('dv.rest_id', '=', 's.rest_id')
+          .on('dv.day', '=', yday)
+          .on('dv.owner_rest_id', '=', ctx.restaurantId),
+      )
+      .leftJoin('acquire_tend as td', (j) => j.onRef('td.rest_id', '=', 's.rest_id').on('td.day', '=', today))
+      .select(['s.rest_id', 'dv.coin', 'dv.tended', 'td.rest_id as tended_today'])
+      .where('s.owner_rest_id', '=', ctx.restaurantId)
+      .execute();
+    const [me, m, myTend] = await Promise.all([
+      restOf(ctx, ctx.restaurantId, t, now),
+      briefs(
+        hold.map((x) => x.rest_id),
+        now,
+      ),
+      d.db
+        .selectFrom('acquire_tend')
+        .select('day')
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('day', '=', today)
+        .executeTakeFirst(),
+    ]);
+    const holdings: AcquireHoldingDto[] = hold
+      .filter((x) => m.has(x.rest_id))
+      .map((x) => ({
+        ...m.get(x.rest_id)!,
+        dividend: x.coin === null ? null : { coin: Number(x.coin), tended: x.tended! },
+        tendedToday: x.tended_today !== null,
+      }));
     return {
       me,
-      holdings: [...m.values()].sort((x, y) => y.price - x.price || x.restId - y.restId),
+      tendedToday: myTend !== undefined,
+      holdings: holdings.sort((x, y) => y.price - x.price || x.restId - y.restId),
       maxHoldings: t.maxHoldings,
       taxRate: t.taxRate,
       listMinRate: t.listMinRate,
       listDays: t.listDays,
       protectDays: t.protectDays,
+      dividendRate: t.dividendRate,
+      tendBonus: t.tendBonus,
+      tendFoods: t.tendFoods,
     };
   }
 
@@ -537,15 +618,17 @@ export function createAcquireService(d: GameDeps) {
       const rows = await d.db
         .selectFrom('acquire_state as s')
         .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+        .leftJoin('acquire_holder as h', 'h.rest_id', 's.owner_rest_id')
         .select([
           's.owner_rest_id',
           'o.name',
+          'h.dividend_total',
           (eb) => eb.fn.countAll<number>().as('n'),
           sql<number>`sum(round(s.base * s.heat))`.as('value'),
         ])
         .where('s.shard_id', '=', ctx.shardId)
         .where('s.owner_rest_id', 'is not', null)
-        .groupBy(['s.owner_rest_id', 'o.name'])
+        .groupBy(['s.owner_rest_id', 'o.name', 'h.dividend_total'])
         .orderBy('value', 'desc')
         .orderBy('s.owner_rest_id')
         .limit(RANK_SIZE)
@@ -555,6 +638,7 @@ export function createAcquireService(d: GameDeps) {
         name: r.name,
         holdings: Number(r.n),
         value: Number(r.value),
+        dividendTotal: Number(r.dividend_total ?? 0),
       }));
       return { board, price: [], invest };
     }
@@ -595,7 +679,7 @@ export function createAcquireService(d: GameDeps) {
     return { items: rows.map((x) => m.get(x.rest_id)!) };
   }
 
-  return { buy, redeem, release, list, unlist, view, rest, rank, market };
+  return { buy, redeem, release, list, unlist, tend, view, rest, rank, market };
 }
 
 export type AcquireService = ReturnType<typeof createAcquireService>;

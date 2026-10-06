@@ -165,6 +165,10 @@ const events: Messages['events'] = {
       `"${String(p.name ?? '')}" bought itself back; you got ${formatNum(n(p, 'got'))} coins`,
     'acquire.released': (p) => `Let go of "${String(p.name ?? '')}"`,
     'acquire.freed': (p) => `"${String(p.byName ?? '')}" let go of your restaurant; it's independent again`,
+    'acquire.dividend': (p) =>
+      `Yesterday's dividends from ${n(p, 'n')} restaurant(s) you own: ${formatNum(n(p, 'coin'))} coins`,
+    'acquire.tended': (p) =>
+      `Tended the restaurant for your owner "${String(p.ownerName ?? '')}" and got ${n(p, 'n')} ingredients`,
     'dine.started': (p) => `Started eating for free at "${String(p.hostName ?? '')}"`,
     'dine.ended': (p) => `Finished eating for free at "${String(p.hostName ?? '')}"`,
     'forum.post': (p) => `Posted forum thread #${n(p, 'postId')}`,

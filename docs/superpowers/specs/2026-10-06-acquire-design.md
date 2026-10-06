@@ -73,6 +73,7 @@
 - 发给的是 00:05 时的老板。
 - 银币直接加到老板身上，写一条日志（“昨天名下 N 家店分红共 X 银币”），流水来源 `acquire.dividend`。每家的分红记下来，给“昨天分了多少”和投资榜用。
 - 老板的账号被封时不发；被收购的店账号被封时照常算（分红只看结算）。
+- 老板和被收购的店近 30 天（`linkDays`）共用过设备或 IP 的，这家当天不发（收购时只查那一刻；PR 2 审查后用户 2026-10-06 定）。
 - **打理**：被收购的店每天能点一次“替老板打理”：
   - 自己得 5 份食材（`tendFoods`）：等级和随机奖励的食材池一样（按店的等级），带个人缺料倾向；
   - 标记当天已打理，老板第二天拿这一天的分红时 ×1.5；
@@ -101,7 +102,8 @@
 - 两个号来回强收：每次付 P、对方拿回 0.9P，一圈亏 0.2P，热度上去以后亏得更多；同一对 7 天内不能再收；共用设备、IP 的直接拦下。
 - 打折挂牌给自己的小号：只是把价值从大号挪给小号，还要交 10% 税。
 - 被收购的店紧接着赎身：赎身也收 10%。
-- 分红只看真实结算，又有每人封顶，身价锚在真实收入上，刷不出来。
+- 分红只看真实结算，又有每人封顶，身价锚在真实收入上。
+- 残留风险（PR 2 审查，用户 2026-10-06 定维持现状）：用不同网络登录过一次的小号绕得过关联检查，大号收购它只损失 10% 税，约 7 天回本后每天多拿小号收入的 7.5%（受大号自己收入 25% 的封顶）；分红时会再查一次关联。登录记录只在登录时写，要收紧就改成玩的时候也记（每小时一次）。
 
 ## 2. 数值（区服数值 `tuning.acquire`，后台可改）
 
@@ -140,25 +142,26 @@
 - `rest_income_day (rest_id, day, coin, rounds)`，主键 (rest_id, day)：每家店每个游戏日的结算银币合计和轮数。
   - 每天 00:05 的任务从 `income_round` 汇总前一天（`income_round` 只留 3 天，所以要另存），保留 14 天。
   - 结算本身不改，结算的查询条数不变。
-- `acquire_state (rest_id 主键, shard_id, owner_rest_id 可空, base, heat, protected_until 可空, list_rate 可空, list_until 可空, acquired_at 可空, tended_day 可空)`：
+- `acquire_state (rest_id 主键, shard_id, owner_rest_id 可空, base, heat, protected_until 可空, list_rate 可空, list_until 可空, acquired_at 可空)`：
   - 只给 2 星以上、或被收购过的店建行：每天任务给新到 2 星的店补行，其余在第一次被收购时建。
   - 索引：(shard_id, base × heat) 给身价榜用；(owner_rest_id) 给“名下的店”用；(shard_id, list_until) 给在售用。
 - `acquire_log (id, shard_id, kind, buyer_rest_id 可空, target_rest_id, seller_rest_id 可空, price, tax, heat_after, created_at)`：
   - kind：acquire / buy_listed / redeem / release。
   - 7 天同一对、每天 3 次的检查都查它；保留 30 天。
+- `acquire_tend (rest_id, day)`：打理记录，主键防一天两次（PR 2 从 `acquire_state.tended_day` 改成单独的表：00:00~00:05 打理今天会盖掉昨天的标记）。
 - `acquire_dividend (owner_rest_id, rest_id, day, coin, tended)`：每家每天的分红（压过封顶以后的），给“昨天分红”和累计分红用；累计数另外存在 `acquire_holder (rest_id 主键, dividend_total)`，免得投资榜每次加总全表。
 - `acquire_block (id, shard_id, buyer_rest_id, target_rest_id, reason, created_at)`：关联账号拦下来的记录，后台可疑数据页读它。
 
 ### 3.2 周期任务（feature `acquire`，每天一次）
 
-00:05 一个任务，按顺序做：
+00:05 以后，依次三个任务（周期键 `<任务>-YYYY-MM-DD`，每天一次）：
 
-1. 汇总前一天的 `rest_income_day`。
-2. 按前 7 天重算所有 `acquire_state.base`，给新到 2 星的店补行。
-3. 热度回落，清掉到期的挂牌。
-4. 发前一天的分红（每个老板锁一次自己的店加银币）。
-
-- 用周期键 `acquire-day-YYYY-MM-DD` 保证一天只跑一次；中途失败下一次补跑没做完的步骤（每一步都能重复跑）。
+1. `income-day`（挂在 `settlement` 上，收购关着也跑）：汇总前两天的 `rest_income_day`（覆盖写，前一天漏了下一天补上）。
+2. `acquire-day`：再汇总一次；按前 7 天重算所有 `acquire_state.base`，给新到 2 星的店补行；热度回落，清掉到期的挂牌和 30 天前的记录。
+3. `acquire-dividend`：发前一天的分红（每个老板一个事务，锁自己的店加银币）。
+   - 分红记录主键 (rest_id, day)，重跑不重复发；已经发给这个老板的从封顶里扣掉。
+   - 某个老板失败只记日志，不影响别人；整个任务失败当天不补发（补发时已经不知道 00:05 的老板是谁）。
+   - 前一天的收入一行都没汇总上时报错，不按 0 发。
 
 ### 3.3 接口（都要登录、选区服、开店，功能开关 `acquire`）
 

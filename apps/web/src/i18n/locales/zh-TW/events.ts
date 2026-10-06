@@ -157,6 +157,8 @@ export default {
     'acquire.lost': (p) => `「${String(p.name ?? '')}」贖回了自己，你得到 ${formatNum(n(p, 'got'))} 銀幣`,
     'acquire.released': (p) => `放手了名下的「${String(p.name ?? '')}」`,
     'acquire.freed': (p) => `「${String(p.byName ?? '')}」放手了你的餐廳，你又自主經營了`,
+    'acquire.dividend': (p) => `昨天名下 ${n(p, 'n')} 家店分紅共 ${formatNum(n(p, 'coin'))} 銀幣`,
+    'acquire.tended': (p) => `替老闆「${String(p.ownerName ?? '')}」打理了餐廳，得到 ${n(p, 'n')} 份食材`,
     'dine.started': (p) => `去「${String(p.hostName ?? '')}」白食`,
     'dine.ended': (p) => `在「${String(p.hostName ?? '')}」白食結束`,
     'forum.post': (p) => `在論壇發了帖子 #${n(p, 'postId')}`,

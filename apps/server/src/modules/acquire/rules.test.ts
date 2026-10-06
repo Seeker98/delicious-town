@@ -3,7 +3,10 @@ import { testConfig } from '../../../test/config';
 import {
   basePrice,
   buyBlock,
+  capDividends,
   decayHeat,
+  dividendCap,
+  dividendOf,
   heatAfterAcquire,
   heatAfterListedSale,
   listPrice,
@@ -87,5 +90,34 @@ describe('能不能买（收购 PR 1）', () => {
   it('买挂牌要正在挂牌', () => {
     expect(buyBlock(ok, t, 'listed')).toBe('not_listed');
     expect(buyBlock({ ...ok, targetOwnerId: 9, listed: true }, t, 'listed')).toBeNull();
+  });
+});
+
+describe('分红（收购 PR 2）', () => {
+  it('前一天结算 × 5%，打理过 × 1.5；不满 90 轮不发', () => {
+    expect(dividendOf(1_000_000, 90, false, t)).toBe(50_000);
+    expect(dividendOf(1_000_000, 90, true, t)).toBe(75_000);
+    expect(dividendOf(1_000_000, 89, true, t)).toBeNull();
+    expect(dividendOf(333, 100, false, t)).toBe(16);
+    // 收入是负数（不该有）也不发负的分红
+    expect(dividendOf(-1000, 100, false, t)).toBe(0);
+  });
+
+  it('封顶 = 近 7 天日均 × 25%', () => {
+    expect(dividendCap(7_000_000, t)).toBe(250_000);
+    expect(dividendCap(0, t)).toBe(0);
+    expect(dividendCap(6, t)).toBe(0);
+  });
+
+  it('超过封顶按比例压，合计不超过封顶', () => {
+    expect(capDividends([100, 200], 1000)).toEqual([100, 200]);
+    expect(capDividends([100, 300], 200)).toEqual([50, 150]);
+    const r = capDividends([333, 333, 334], 100);
+    expect(r.reduce((a, b) => a + b, 0)).toBeLessThanOrEqual(100);
+    expect(r).toEqual([33, 33, 33]);
+    expect(capDividends([5, 5], 0)).toEqual([0, 0]);
+    expect(capDividends([], 0)).toEqual([]);
+    // 大数不丢精度
+    expect(capDividends([4e15, 4e15], 4e15)).toEqual([2e15, 2e15]);
   });
 });

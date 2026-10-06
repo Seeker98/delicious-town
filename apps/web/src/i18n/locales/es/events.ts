@@ -167,6 +167,10 @@ const events: Messages['events'] = {
       `«${String(p.name ?? '')}» se recompró; recibiste ${formatNum(n(p, 'got'))} monedas`,
     'acquire.released': (p) => `Soltaste «${String(p.name ?? '')}»`,
     'acquire.freed': (p) => `«${String(p.byName ?? '')}» soltó tu restaurante; vuelves a ser independiente`,
+    'acquire.dividend': (p) =>
+      `Dividendos de ayer de tus ${n(p, 'n')} restaurante(s): ${formatNum(n(p, 'coin'))} monedas`,
+    'acquire.tended': (p) =>
+      `Atendiste el restaurante para tu dueño «${String(p.ownerName ?? '')}» y recibiste ${n(p, 'n')} ingredientes`,
     'dine.started': (p) => `Empezaste a comer gratis en «${String(p.hostName ?? '')}»`,
     'dine.ended': (p) => `Terminaste de comer gratis en «${String(p.hostName ?? '')}»`,
     'forum.post': (p) => `Publicaste el tema n.º ${n(p, 'postId')} en el foro`,
