@@ -147,11 +147,18 @@ function reset(p: string) {
   draft.value = removeAt(draft.value, p);
 }
 
-const featureOn = (name: string) => getAt(draft.value, `features.${name}`) !== false;
+/** 功能的默认开关：大多默认开，个别默认关（收购 PR 1）；默认值由接口的 defaults.features 给 */
+const featureDefault = (name: string) => data.value?.defaults.features?.[name] !== false;
+const featureOn = (name: string) => {
+  const o = getAt(draft.value, `features.${name}`);
+  return o === undefined ? featureDefault(name) : o !== false;
+};
+/** 改回默认值时去掉覆盖，和默认不一样时写进覆盖（默认关的功能要写 true 才开） */
 function setFeature(name: string, enabled: boolean) {
-  draft.value = enabled
-    ? removeAt(draft.value, `features.${name}`)
-    : setAt(draft.value, `features.${name}`, false);
+  draft.value =
+    enabled === featureDefault(name)
+      ? removeAt(draft.value, `features.${name}`)
+      : setAt(draft.value, `features.${name}`, enabled);
 }
 
 const dirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(data.value?.override ?? {}));

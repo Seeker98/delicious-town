@@ -119,6 +119,28 @@ describe('AdminShardView', () => {
     });
   });
 
+  it('默认关的功能（收购）：没覆盖时显示关；勾上写 true，再取消就去掉覆盖（收购 PR 1 审查）', async () => {
+    const d = structuredClone(dto);
+    d.defaults = { ...d.defaults, features: { acquire: false } };
+    d.features = [
+      { name: 'acquire', enabled: false },
+      { name: 'market', enabled: true },
+    ];
+    vi.mocked(adminApi.settings).mockResolvedValue(d);
+    const w = await mountView('admin');
+    const box = w.find('[data-testid="feature-acquire"]');
+    expect((box.element as HTMLInputElement).checked).toBe(false);
+    await box.setValue(true);
+    await w.find('[data-testid="save-note"]').setValue('x');
+    await w.find('[data-testid="save-settings"]').trigger('click');
+    await flushPromises();
+    expect(vi.mocked(adminApi.saveOverride).mock.calls.at(-1)![1].override).toEqual({
+      features: { acquire: true },
+    });
+    await box.setValue(false);
+    expect((box.element as HTMLInputElement).checked).toBe(false);
+  });
+
   it('协管只能看：输入框禁用，没有保存', async () => {
     const w = await mountView('mod');
     expect(w.find(field('tuning.settlement.expMultiplier')).attributes('disabled')).toBeDefined();
