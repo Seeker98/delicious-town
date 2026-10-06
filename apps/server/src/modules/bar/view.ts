@@ -124,7 +124,7 @@ export async function barView(
       count: t.deal.prizes.length,
       opens: t.deal.opens,
       prizes: t.deal.prizes,
-      round: deal ? dealView(deal, t.deal) : null,
+      round: deal ? dealView(deal) : null,
     },
   };
 }

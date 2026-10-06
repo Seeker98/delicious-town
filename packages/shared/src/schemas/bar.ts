@@ -150,6 +150,9 @@ export interface DealDto {
   prize: DealPrizeDto | null;
   /** 全部箱子：结束时才有，下标就是箱子编号 */
   all: DealPrizeDto[] | null;
+  /** 开自己的箱子时：橱柜放不下、放进冰箱的个数，冰箱也满了丢掉的个数 */
+  fridge: number;
+  dropped: number;
 }
 
 export interface SpiceGuessDto {

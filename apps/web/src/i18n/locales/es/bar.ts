@@ -219,6 +219,10 @@ const bar: Messages['bar'] = {
     yourBox: (what) => `Tu caja tenía: ${what}`,
     gotBox: (what) => `Abriste tu caja: ${what}`,
     allTitle: 'Todas las cajas',
+    fridge: (n) => `El armario estaba lleno: ${n} ${plEs(n, 'fue', 'fueron')} a la nevera`,
+    dropped: (n) =>
+      `La nevera también estaba llena: ${n} no ${plEs(n, 'cupo', 'cupieron')} y se ${plEs(n, 'perdió', 'perdieron')}`,
+    mineIs: (what) => `La tuya: ${what}`,
     failed: 'No se pudo completar',
   },
   darts: {

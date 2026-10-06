@@ -220,6 +220,9 @@ const bar: Messages['bar'] = {
     yourBox: (what) => `Votre boîte contenait : ${what}`,
     gotBox: (what) => `Vous ouvrez votre boîte : ${what}`,
     allTitle: 'Toutes les boîtes',
+    fridge: (n) => `Le garde-manger était plein : ${n} ${plFr(n, 'est allé', 'sont allés')} au frigo`,
+    dropped: (n) => `Le frigo était plein aussi : ${n} ${plFr(n, 'a été perdu', 'ont été perdus')}`,
+    mineIs: (what) => `La vôtre : ${what}`,
     failed: 'Échec de l’action',
   },
   darts: {

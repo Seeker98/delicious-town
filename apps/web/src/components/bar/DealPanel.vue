@@ -17,12 +17,17 @@ const toast = useToastStore();
 const catalog = useCatalogStore();
 const busy = ref(false);
 
+/** 局面进度：选箱子 → 每开一个 → 报价 → 回答（进下一轮） */
+const progress = (r: DealDto) =>
+  (r.mine === null ? 0 : 1) + r.opened.length * 10 + r.round * 2 + (r.offer === null ? 0 : 1);
 /** 当前局面：结束的结果留着展示，否则跟着概览里进行中的局 */
 const local = ref<DealDto | null>(null);
 watch(
   () => props.data.deal.round,
   (r) => {
     if (local.value?.result) return;
+    // 概览可能比刚收到的结果晚到：比手上的局面旧就不覆盖（审查：连点开箱子）
+    if (r && local.value && progress(r) < progress(local.value)) return;
     local.value = r;
   },
   { immediate: true },
@@ -95,17 +100,22 @@ const boxText = (i: number) => {
   if (local.value?.mine === i) return t.value.bar.deal.mine;
   return '';
 };
-/** 结束时每个箱子里是什么 */
+/** 结束时每个箱子里是什么；自己的箱子前面写“你的” */
 const allText = (i: number) => {
   const p = local.value?.all?.[i];
-  return p ? prizeText(p) : '';
+  if (!p) return '';
+  return local.value?.mine === i ? t.value.bar.deal.mineIs(prizeText(p)) : prizeText(p);
 };
 
 function resultLines(r: DealDto): string[] {
   const x = t.value.bar.deal;
   if (r.result === 'deal')
     return [x.dealt(formatNum(r.coin)), ...(r.prize ? [x.yourBox(prizeText(r.prize))] : [])];
-  return r.prize ? [x.gotBox(prizeText(r.prize))] : [];
+  return [
+    ...(r.prize ? [x.gotBox(prizeText(r.prize))] : []),
+    ...(r.fridge > 0 ? [x.fridge(r.fridge)] : []),
+    ...(r.dropped > 0 ? [x.dropped(r.dropped)] : []),
+  ];
 }
 const result = computed(() => (local.value?.result ? resultLines(local.value) : []));
 function again() {

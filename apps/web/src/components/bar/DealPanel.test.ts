@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DealDto, DealPrizeDto } from '@dt/shared';
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
+import { errorMessage } from '../../i18n/zh-CN';
 import DealPanel from './DealPanel.vue';
 import { barData } from './testData';
 
@@ -24,6 +25,8 @@ const round = (patch: Partial<DealDto> = {}): DealDto => ({
   coin: 0,
   prize: null,
   all: null,
+  fridge: 0,
+  dropped: 0,
   ...patch,
 });
 const withRound = (r: DealDto | null, patch: Partial<ReturnType<typeof barData>['deal']> = {}) => {
@@ -140,5 +143,49 @@ describe('DealPanel', () => {
     await w.get('[data-testid="deal-box-5"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="deal-start"]').exists()).toBe(true);
+  });
+
+  it('开到最后放不下：写放进冰箱、丢掉了多少（审查）', () => {
+    const all = Array.from({ length: 10 }, (_, i) => P((i + 1) * 1000));
+    const w = mount(DealPanel, {
+      props: {
+        data: withRound(round({ mine: 9, result: 'box', prize: all[9]!, all, fridge: 1, dropped: 1 })),
+      },
+    });
+    const res = w.get('[data-testid="deal-result"]').text();
+    expect(res).toContain('1 个放进了冰箱');
+    expect(res).toContain('1 个放不下，丢掉了');
+  });
+
+  it('概览晚到、比手上的局面旧时不覆盖（审查：连点开箱子）', async () => {
+    const newer = round({
+      mine: 0,
+      toOpen: 1,
+      opened: [
+        { box: 1, foodsId: 101, num: 2, value: 1 },
+        { box: 2, foodsId: 101, num: 2, value: 1 },
+      ],
+    });
+    const older = round({ mine: 0, toOpen: 2, opened: [{ box: 1, foodsId: 101, num: 2, value: 1 }] });
+    const w = mount(DealPanel, { props: { data: withRound(newer) } });
+    await w.setProps({ data: withRound(older) });
+    expect(w.get('[data-testid="deal-box-2"]').attributes('disabled')).toBeDefined();
+    expect(w.text()).toContain('再打开 1 个箱子');
+  });
+
+  it('结束后读屏标签仍写出哪个是自己的箱子', () => {
+    const all = Array.from({ length: 10 }, (_, i) => P((i + 1) * 1000));
+    const w = mount(DealPanel, {
+      props: { data: withRound(round({ mine: 3, result: 'box', prize: all[3]!, all })) },
+    });
+    expect(w.get('[data-testid="deal-box-3"]').attributes('aria-label')).toContain('你的');
+  });
+
+  it('四个状态原因都有自己的提示', () => {
+    for (const reason of ['deal_picked', 'deal_pick_first', 'deal_offer', 'deal_no_offer']) {
+      const text = errorMessage(new ApiError('INVALID_STATE', { reason }), 'x');
+      expect(text, reason).not.toBe('x');
+      expect(text, reason).not.toMatch(/当前状态/);
+    }
   });
 });

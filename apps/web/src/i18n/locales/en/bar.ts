@@ -219,6 +219,9 @@ const bar: Messages['bar'] = {
     yourBox: (what) => `Your box held: ${what}`,
     gotBox: (what) => `You opened your box: ${what}`,
     allTitle: 'All boxes',
+    fridge: (n) => `Your cupboard was full, so ${n} went into the fridge`,
+    dropped: (n) => `The fridge was full too, so ${n} could not be kept`,
+    mineIs: (what) => `Yours: ${what}`,
     failed: 'Something went wrong',
   },
   darts: {

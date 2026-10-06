@@ -38,7 +38,18 @@ const BOXES: DealPrizeDto[] = Array.from({ length: 10 }, (_, i) =>
     : { foodsId: FOODS.masterBase + 1, num: 1, value: (i + 1) * 1000 },
 );
 const setRound = (c: RestCtx, patch: Partial<DealState>) => {
-  const s: DealState = { boxes: BOXES, mine: 0, opened: [], round: 0, offer: null, top: 9, ...patch };
+  const s: DealState = {
+    boxes: BOXES,
+    mine: 0,
+    opened: [],
+    round: 0,
+    offer: null,
+    top: 9,
+    opens: [3, 2, 2, 1],
+    offerRates: [0.5, 0.65, 0.8, 0.95],
+    valueRate: 0.5,
+    ...patch,
+  };
   return t.db
     .insertInto('bar_round')
     .values({
@@ -220,5 +231,23 @@ describe('一掷千金：选箱子、开箱子、报价', () => {
     const a = await player();
     for (const f of [() => pick(a, 0), () => open(a, 0), () => answer(a, true)])
       await expect(f()).rejects.toMatchObject({ code: 'INVALID_STATE', params: { reason: 'no_round' } });
+  });
+
+  it('每轮开几个、报价系数按开局时存下的算：中途改区服数值不会卡住这一局（审查）', async () => {
+    const a = await player();
+    await setRound(a, { mine: 0, opens: [2, 2, 2, 2], offerRates: [1, 1, 1, 1], valueRate: 1 });
+    await open(a, 9);
+    const r = (await open(a, 8)).data;
+    // 剩 0~7 号：1000~8000，平均 4500
+    expect(r).toMatchObject({ toOpen: 0, offer: 4500 });
+  });
+
+  it('橱柜放不下时写明放进冰箱、丢掉了多少（审查）', async () => {
+    const a = await player(0);
+    await t.db.updateTable('restaurant').set({ cupboard_num: 0 }).where('id', '=', a.restaurantId).execute();
+    await setRound(a, { mine: 9, opened: [1, 2, 3, 4, 5, 6, 7, 8], round: 3, offer: 30_000 });
+    const r = (await answer(a, false)).data;
+    expect(r.result).toBe('box');
+    expect(r.fridge + r.dropped).toBe(5);
   });
 });

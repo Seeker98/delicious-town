@@ -207,6 +207,9 @@ export default {
     yourBox: (what: string) => `你的箱子里是：${what}`,
     gotBox: (what: string) => `打开你的箱子：${what}`,
     allTitle: '全部箱子',
+    fridge: (n: number) => `橱柜放不下，${n} 个放进了冰箱`,
+    dropped: (n: number) => `冰箱也满了，${n} 个放不下，丢掉了`,
+    mineIs: (what: string) => `你的：${what}`,
     failed: '操作失败',
   },
   darts: {
