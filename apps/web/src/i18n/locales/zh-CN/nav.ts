@@ -9,7 +9,7 @@ export default {
     predict: '事件预测',
     store: '仓库',
     shop: '商店',
-    equip: '厨具与加点',
+    equip: '厨具',
     floor: '楼层餐桌',
     income: '收益记录',
     info: '餐厅信息',
@@ -47,7 +47,7 @@ export default {
   activity: {
     running: (n: number) => `限时活动 ${n} 个进行中`,
     claimable: (n: number) => `可领 ${n} 份`,
-    view: '查看 ›',
+    view: '查看',
   },
   news: { title: '小镇新闻', more: '更多', broadcast: '【广播】', empty: '还没有新闻' },
 };

@@ -33,7 +33,7 @@ const guide: Messages['guide'] = {
     ],
     [
       'Empieza por esto: asigna tus puntos en ',
-      { to: '/rest/equip', text: 'Utensilios y puntos' },
+      { to: '/rest/equip', text: 'Utensilios' },
       ', rellena el aceite en la página de inicio, aprende platos nuevos en ',
       { to: '/cookbooks', text: 'Recetas' },
       ' y regístrate en la página de inicio.',

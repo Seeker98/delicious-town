@@ -30,9 +30,6 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
       { to: '/store', icon: 'bi-archive', key: 'store', feature: 'store' },
       { to: '/shop', icon: 'bi-bag', key: 'shop', feature: 'shop' },
       { to: '/rest/equip', icon: 'bi-tools', key: 'equip', feature: 'equip' },
-      { to: '/rest/floor', icon: 'bi-grid-3x3', key: 'floor' },
-      { to: '/rest/income', icon: 'bi-graph-up', key: 'income' },
-      { to: '/rest/info', icon: 'bi-person-badge', key: 'info' },
     ],
   },
   {
@@ -41,7 +38,6 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
       { to: '/mc', icon: 'bi-stars', key: 'mc', feature: 'mysterious' },
       { to: '/temple', icon: 'bi-bank2', key: 'temple', feature: 'temple' },
       { to: '/kuji', icon: 'bi-gift', key: 'kuji', feature: 'kuji' },
-      { to: '/acquire', icon: 'bi-shop', key: 'acquire', feature: 'acquire' },
       { to: '/yard', icon: 'bi-flower1', key: 'yard', feature: 'yard' },
       { to: '/bar', icon: 'bi-cup-straw', key: 'bar', feature: 'bar' },
       { to: '/tower', icon: 'bi-building', key: 'tower', feature: 'tower' },
@@ -55,9 +51,9 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
     key: 'other',
     links: [
       { to: '/account', icon: 'bi-person-circle', key: 'account' },
-      { to: '/weather', icon: 'bi-cloud-sun', key: 'weather' },
+      // 楼层餐桌、收益记录在首页上一轮那块，收购在首页资产那行，天气在首页右上角，邀请好友在我的账号里（问题记录 447）
+      { to: '/rest/info', icon: 'bi-person-badge', key: 'info' },
       { to: '/rest/look', icon: 'bi-palette', key: 'look' },
-      { to: '/invite', icon: 'bi-person-plus', key: 'invite', feature: 'invite' },
       { to: '/guide', icon: 'bi-signpost-2', key: 'guide' },
       { to: '/wiki', icon: 'bi-book', key: 'wiki' },
       { to: '/changelog', icon: 'bi-journal-text', key: 'changelog' },

@@ -63,13 +63,11 @@ async function loadAnnouncements() {
 
 /** 首页签到（问题记录 144）和今日活跃点数（问题记录 280）：读失败就不显示 */
 const signedIn = ref<boolean | null>(null);
-const signInGift = ref<number | null>(null);
 const activeTotal = ref<number | null>(null);
 async function loadSignIn() {
   try {
     const a = await endpoints.activation();
     signedIn.value = a.signedIn;
-    signInGift.value = a.signInGift;
     activeTotal.value = a.total;
   } catch {
     signedIn.value = null;
@@ -204,12 +202,13 @@ const strengthText = computed(() =>
   rest.value ? `${formatNum(rest.value.strength)}/${formatNum(rest.value.strengthMax)}` : '',
 );
 
-/** 餐厅卡底部的小链接（问题记录 280：任务入口并进待办卡的"今日活跃"） */
-const QUICK = [
-  { to: '/rest/equip', icon: 'bi-tools', key: 'equip' },
-  { to: '/store', icon: 'bi-archive', key: 'store' },
-  { to: '/shop', icon: 'bi-bag', key: 'shop' },
-] as const;
+/** 餐厅卡底部（问题记录 447）：原来的厨具、仓库、商店入口换成食谱数和在售特色菜；区服关了的不显示 */
+const showBooks = computed(() => store.featureOn('cookbook'));
+const showSpecial = computed(() => store.featureOn('mysterious'));
+const specialText = computed(() => {
+  const sp = rest.value?.special;
+  return sp ? t.value.home.special(catalog.mcName(sp.id), sp.level) : t.value.home.specialNone;
+});
 
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
@@ -268,11 +267,11 @@ onBeforeUnmount(() => {
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="mb-0" data-testid="rest-name">{{ rest.name }}</h5>
       <span class="small">
-        <RouterLink to="/weather"
+        <RouterLink to="/weather" class="dt-go"
           ><i class="bi bi-cloud-sun"></i>
           {{ rest.weather ? catalog.weatherName(rest.weather.id, rest.weather.name) : '' }}</RouterLink
         >
-        <RouterLink to="/shards" class="ms-2">{{ t.nav.links.shards }}</RouterLink>
+        <RouterLink to="/shards" class="dt-go ms-2">{{ t.nav.links.shards }}</RouterLink>
       </span>
     </div>
     <AnnounceBanner :items="announcements" />
@@ -283,7 +282,7 @@ onBeforeUnmount(() => {
       data-testid="home-acquired"
     >
       {{ t.acquire.homeOwned(rest.acquireOwner.name) }}
-      <RouterLink to="/acquire?tab=mine" class="ms-1">{{ t.acquire.homeLink }} ›</RouterLink>
+      <RouterLink to="/acquire?tab=mine" class="dt-go ms-1">{{ t.acquire.homeLink }}</RouterLink>
     </div>
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
@@ -366,20 +365,29 @@ onBeforeUnmount(() => {
             ><i class="bi bi-arrow-up-circle"></i
           ></RouterLink>
         </div>
+        <!-- 加油用图标加文字链接，不用按钮，行高和上面两行一样（问题记录 447） -->
         <div class="col-6">
           <button
-            class="btn btn-outline-primary dt-compact-btn"
+            type="button"
+            class="dt-link-btn"
             data-testid="refuel"
             :disabled="busy || refuelCost <= 0"
             @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
           >
+            <i class="bi bi-fuel-pump"></i>
             {{ t.home.refuel(refuelCost >= refuelNeed, formatNum(refuelCost)) }}
           </button>
         </div>
       </div>
       <!-- 上一轮（问题记录 433）：银币、经验、耗油用图标，悬停写名字；两个入口各放在一行的右边 -->
-      <div v-if="rest.lastRound" class="border-top mt-2 pt-1" data-testid="last-round">
-        <div class="d-flex align-items-center gap-2">
+      <!-- 还没结算过也显示这块：楼层页能灭蟑螂、赶白食，入口不能没有（问题记录 447 去掉了“更多”里的入口） -->
+      <div class="border-top mt-2 pt-1" data-testid="last-round">
+        <div v-if="!rest.lastRound" class="d-flex flex-wrap align-items-center gap-2">
+          <span class="dt-shrink text-muted">{{ t.home.noRound }}</span>
+          <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
+          <RouterLink to="/rest/floor" class="dt-go">{{ t.home.floor }}</RouterLink>
+        </div>
+        <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
           <!-- 每一项不拆开，放不下时整项换到下一行（法文“收益记录”长，原来被挤出屏幕） -->
           <span class="dt-shrink" data-testid="last-round-line"
             >{{ t.home.lastRound }}
@@ -399,20 +407,42 @@ onBeforeUnmount(() => {
               {{ formatNum(rest.lastRound.oil) }}</span
             ></span
           >
-          <RouterLink to="/rest/income" class="text-nowrap">{{ t.home.income }}</RouterLink>
+          <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
           <span class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
             customers || t.home.noGuests
           }}</span>
-          <RouterLink to="/rest/floor" class="text-nowrap">{{ t.home.floor }}</RouterLink>
+          <RouterLink to="/rest/floor" class="dt-go">{{ t.home.floor }}</RouterLink>
         </div>
       </div>
-      <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
-      <div class="border-top mt-2 pt-1 d-flex gap-3" data-testid="quick-links">
-        <RouterLink v-for="q in QUICK" :key="q.to" :to="q.to" class="text-decoration-none">
-          <i :class="['bi', q.icon]"></i> {{ t.nav.links[q.key] }}
-        </RouterLink>
+      <!-- 食谱数、在售特色菜（问题记录 447）：原来的厨具、仓库、商店入口 -->
+      <!-- 左边食谱数不换行，右边特色菜占剩下的宽度，放不下才截断（菜名长时几级不被挤掉） -->
+      <div
+        v-if="showBooks || showSpecial"
+        class="border-top mt-2 pt-1 d-flex align-items-center gap-3"
+        data-testid="home-books"
+      >
+        <RouterLink v-if="showBooks" to="/cookbooks" class="dt-go flex-shrink-0" data-testid="home-cookbooks"
+          ><i class="bi bi-journal-text"></i>
+          {{
+            t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
+          }}</RouterLink
+        >
+        <RouterLink v-if="showSpecial" to="/mc" class="dt-go ms-auto text-truncate" data-testid="home-special"
+          ><i class="bi bi-stars"></i> {{ specialText }}</RouterLink
+        >
+      </div>
+      <!-- 资产：名下的店身价合计，和投资榜一样；收购的入口从“更多”挪到这里（问题记录 447） -->
+      <div
+        v-if="rest.assets !== null"
+        class="border-top mt-2 pt-1 d-flex align-items-center gap-2"
+        data-testid="home-assets"
+      >
+        <span class="dt-shrink"
+          ><i class="bi bi-briefcase"></i> {{ t.home.assets(formatNum(rest.assets)) }}</span
+        >
+        <RouterLink to="/acquire" class="dt-go">{{ t.nav.links.acquire }}</RouterLink>
       </div>
     </div>
 
@@ -422,17 +452,15 @@ onBeforeUnmount(() => {
       <div v-if="signedIn !== null" class="dt-todo-row flex-wrap" data-testid="home-signin-row">
         <span class="flex-fill text-nowrap">
           <i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}
+          <!-- 问题记录 445：签完是一个细线对勾，没签是文字链接，不用绿色实心图标和大按钮 -->
           <span v-if="signedIn" data-testid="home-signed"
-            ><i
-              class="bi bi-check-circle-fill text-success ms-1"
-              :title="t.home.signedShort"
-              aria-hidden="true"
-            ></i
+            ><i class="bi bi-check2 text-success ms-1" :title="t.home.signedShort" aria-hidden="true"></i
             ><span class="visually-hidden">{{ t.home.signedShort }}</span></span
           >
           <button
             v-else
-            class="btn btn-sm btn-success ms-2"
+            type="button"
+            class="dt-link-btn ms-2"
             :disabled="busy"
             data-testid="home-signin"
             @click="act(() => endpoints.signIn(), t.home.signInFailed)"
@@ -443,15 +471,9 @@ onBeforeUnmount(() => {
         <RouterLink
           v-if="activeTotal !== null"
           to="/rest/tasks"
-          class="ms-auto text-nowrap text-decoration-none d-inline-block py-1"
+          class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
-          >{{ t.home.activation(activeTotal) }} ›</RouterLink
-        >
-        <span
-          v-if="signedIn && signInGift !== null"
-          class="w-100 order-last dt-meta"
-          data-testid="home-signin-gift"
-          >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
+          >{{ t.home.activation(activeTotal) }}</RouterLink
         >
       </div>
       <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
@@ -495,7 +517,7 @@ onBeforeUnmount(() => {
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
         <div class="flex-fill">
           <i class="bi bi-cup-hot me-1"></i>{{ t.home.dining.before }}
-          <RouterLink :to="`/friends/${dining.hostRestId}`">{{
+          <RouterLink :to="`/friends/${dining.hostRestId}`" class="text-decoration-none">{{
             restName(dining.hostRestId, dining.hostName)
           }}</RouterLink>
           {{ t.home.dining.after(dining.tableNo, dining.minutes) }}
@@ -513,10 +535,12 @@ onBeforeUnmount(() => {
       <RouterLink
         v-if="codesClaimable || rest.level < 10"
         to="/guide"
-        class="dt-todo-row"
+        class="dt-todo-row text-reset text-decoration-none"
         data-testid="guide-hint"
-        ><i class="bi bi-lightbulb me-1"></i
-        >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</RouterLink
+        ><span class="flex-fill"
+          ><i class="bi bi-lightbulb me-1"></i
+          >{{ codesClaimable ? t.home.guideCodes : t.home.guideHint }}</span
+        ><span class="dt-go">{{ t.nav.links.guide }}</span></RouterLink
       >
     </div>
 
@@ -704,7 +728,7 @@ onBeforeUnmount(() => {
       <a
         v-if="rest.effects.length > EFFECTS_SHOWN"
         href="#"
-        class="d-block mt-1"
+        class="d-block mt-1 text-decoration-none"
         data-testid="effects-more"
         @click.prevent="effectsAll = !effectsAll"
         >{{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}</a

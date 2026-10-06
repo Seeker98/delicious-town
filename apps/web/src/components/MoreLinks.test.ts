@@ -35,3 +35,24 @@ describe('"更多"入口（问题记录 248）', () => {
     expect(targets()).toContain('/predict');
   });
 });
+
+describe('"更多"入口精简（问题记录 447）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('去掉邀请好友、天气、收购、楼层餐桌、收益记录：首页和我的账号里已有', () => {
+    const to = targets();
+    for (const x of ['/invite', '/weather', '/acquire', '/rest/floor', '/rest/income'])
+      expect(to).not.toContain(x);
+  });
+
+  it('餐厅信息放在"其他"；厨具入口只写"厨具"', () => {
+    const w = mount(MoreLinks, { global: { stubs: { RouterLink: RouterLinkStub } } });
+    const groups = w.findAll('.mb-2');
+    // 组的文字：RouterLinkStub 渲染的 a 没有 href，按入口名字看
+    const text = (title: string) => groups.find((g) => g.text().startsWith(title))!.text();
+    expect(text('其他')).toContain('餐厅信息');
+    expect(text('经营')).not.toContain('餐厅信息');
+    const equip = w.findAllComponents(RouterLinkStub).find((l) => l.props('to') === '/rest/equip')!;
+    expect(equip.text()).toBe('厨具');
+  });
+});

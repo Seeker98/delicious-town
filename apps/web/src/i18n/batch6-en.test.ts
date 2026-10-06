@@ -55,7 +55,7 @@ describe('第 6 批其他页面按语言（问题记录 272）', () => {
     expect(start.text()).toContain('First day');
     expect(start.findAll('a').map((a) => a.text())).toEqual([
       'Market',
-      'Cookware & points',
+      'Cookware',
       'Recipes',
       'Guild',
       'Quests',

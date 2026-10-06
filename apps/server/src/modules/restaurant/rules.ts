@@ -72,6 +72,10 @@ export interface OverviewExtra {
   headlines: HeadlinesDto;
   disabledFeatures: string[];
   acquireOwner?: { restId: number; name: string } | null;
+  /** 名下的店身价合计（问题记录 447）；区服关了收购为 null */
+  assets: number | null;
+  cookbooks: { learned: number; total: number };
+  special: { id: number; level: number } | null;
   boosts: ActiveBoostDto[];
 }
 
@@ -141,6 +145,9 @@ export function toRestaurantDto(
     headlines: extra.headlines,
     disabledFeatures: extra.disabledFeatures,
     acquireOwner: extra.acquireOwner ?? null,
+    assets: extra.assets,
+    cookbooks: extra.cookbooks,
+    special: extra.special,
     createdAt: r.created_at.toISOString(),
   };
 }

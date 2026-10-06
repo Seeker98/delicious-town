@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    homeLinks1007:
+      'Home page tidy-up: text links now all use the brand colour with no underline and end in “›”; check-in is a text link, a thin check mark shows once you have checked in, and the gift line is gone; refuelling is an icon and text instead of a button; the cookware, storage and shop shortcuts are replaced by “Recipes learned/total” and your special on sale; a new “Assets” line shows the total value of the restaurants you own, with a link to Acquisitions; new restaurants that have not settled a round yet can still reach the income log and floors from home. In More, Invite friends (now in My account), Weather (top right of home), Acquisitions, Floors & tables and Income log are gone, Restaurant info moved to Other, and “Cookware & points” is now just “Cookware”',
     npc1007:
       'The Classroom, exchanges and the Development Fund moved from the Square to the Guild. Big Belly from the Square was the mayor all along and is now Mayor Big Pot at the Guild: his daily chat (an ingredient and a seed), the “where is the Hip-hop Boy” question and the rare item exchange are all with him. Brother 13 (daily horns, ingredient vouchers) and Carmen (mystery ingredient vouchers, plus a free one on your first visit) are at the Guild too, and Gary runs the Development Fund. The cook-off judge Big Belly is now Mayor Big Pot as well. Taoist Fan appears at temple appraisals and Little Kai on the limited-time events page — tap them for a new line. The Square keeps News, Townsfolk and Rankings',
     duel1007:

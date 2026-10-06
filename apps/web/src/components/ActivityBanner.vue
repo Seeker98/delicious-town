@@ -30,6 +30,6 @@ onMounted(async () => {
     <span v-if="s.claimable > 0" class="badge text-bg-danger">{{
       t.nav.activity.claimable(s.claimable)
     }}</span>
-    <span class="text-primary">{{ t.nav.activity.view }}</span>
+    <span class="dt-go">{{ t.nav.activity.view }}</span>
   </RouterLink>
 </template>

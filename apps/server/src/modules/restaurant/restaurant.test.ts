@@ -260,3 +260,46 @@ describe('餐厅概况带上本区服关掉的功能（问题记录 248）', () 
     expect(r.json.data.disabledFeatures).not.toContain('town');
   });
 });
+
+describe('首页的食谱数和在售特色菜（问题记录 447）', () => {
+  it('学会几道 / 全部几道；在售特色菜写哪道、几级，卖完或没有为 null', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const u = await playerIn(shardId);
+    await create(u.cookie, '首页特色菜店');
+    const overview = async () =>
+      (await call(ctx.app, 'GET', `${R}/overview`, { cookie: u.cookie })).json.data;
+    const first = await overview();
+    expect(first.cookbooks).toEqual({ learned: 0, total: ctx.deps.config.cookbooks.size });
+    expect(first.special).toBeNull();
+    await call(ctx.app, 'POST', '/api/v1/cookbook/learn', {
+      cookie: u.cookie,
+      body: { cookbookId: cid('锅包肉') },
+    });
+    const c = await ctx.deps.db
+      .insertInto('mc_cook')
+      .values({
+        rest_id: first.id,
+        shard_id: shardId,
+        mc_id: 3,
+        level: 5,
+        grade: 2,
+        cook_num: 1,
+        total_num: 10,
+        left_num: 10,
+        price: 157,
+        eat_count: 0,
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    await ctx.deps.db
+      .updateTable('restaurant')
+      .set({ mc_cook_id: c.id })
+      .where('id', '=', first.id)
+      .execute();
+    const second = await overview();
+    expect(second.cookbooks.learned).toBe(1);
+    expect(second.special).toEqual({ id: 3, level: 5 });
+    await ctx.deps.db.updateTable('mc_cook').set({ left_num: 0 }).where('id', '=', c.id).execute();
+    expect((await overview()).special).toBeNull();
+  });
+});

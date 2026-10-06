@@ -90,6 +90,12 @@ export interface RestaurantDto {
   disabledFeatures: string[];
   /** 被收购时的老板（首页提示，收购 PR 3）；区服关了收购时为 null */
   acquireOwner: { restId: number; name: string } | null;
+  /** 资产：名下的店身价合计，和投资榜一样（问题记录 447）；区服关了收购为 null */
+  assets: number | null;
+  /** 首页的食谱数：学会几道 / 全部几道（问题记录 447） */
+  cookbooks: { learned: number; total: number };
+  /** 在售的特色菜：哪道、几级；没有、卖完为 null（问题记录 447） */
+  special: { id: number; level: number } | null;
   createdAt: string;
 }
 
