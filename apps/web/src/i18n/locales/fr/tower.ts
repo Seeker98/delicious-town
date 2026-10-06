@@ -58,7 +58,7 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `L'étage ${floor} et au-dessus ouvrent après ${hour} h`,
     tired: "Il est fatigué pour aujourd'hui",
     head: (power, left, total, tickets, strength) =>
-      `Ma puissance ${power} · ${left}/${total} ${plFr(total, 'défi restant', 'défis restants')} aujourd'hui · Tickets de défi ${tickets} (à utiliser dans l'entrepôt, un défi de plus aujourd'hui) · Énergie ${strength}`,
+      `Ma puissance d’attaque ${power} · ${left}/${total} ${plFr(total, 'défi restant', 'défis restants')} aujourd'hui · Tickets de défi ${tickets} (à utiliser dans l'entrepôt, un défi de plus aujourd'hui) · Énergie ${strength}`,
     name: (floor, name) => `Étage ${floor} · ${name}`,
     power: (n) => `Puissance ${n}`,
     meta: (note, level, name, left, max) =>

@@ -58,7 +58,7 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `Floor ${floor} and up open after ${hour}:00`,
     tired: "He's tired for today",
     head: (power, left, total, tickets, strength) =>
-      `My chef power ${power} · ${left}/${total} ${plEn(total, 'challenge', 'challenges')} left today · Challenge tickets ${tickets} (use in Storage for one more today) · Stamina ${strength}`,
+      `My attack chef power ${power} · ${left}/${total} ${plEn(total, 'challenge', 'challenges')} left today · Challenge tickets ${tickets} (use in Storage for one more today) · Stamina ${strength}`,
     name: (floor, name) => `Floor ${floor} · ${name}`,
     power: (n) => `Chef power ${n}`,
     meta: (note, level, name, left, max) =>

@@ -70,6 +70,7 @@ const overview = (patch: Partial<EquipOverviewDto> = {}): EquipOverviewDto => ({
   ],
   attrs: { points: attrs({ cook: 4 }), gear: attrs({ cook: 3 }), total: attrs({ cook: 7 }), power: 7 },
   income: { coinRate: 0.012, expRate: 0.0075, mcGoldRate: 0.009 },
+  duelPower: { attack: 9, defend: 8 },
   presets: [{ id: 9, name: '日常', parts: [1, null, null, null, null] }],
   count: 3,
   level: 5,
@@ -123,6 +124,8 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="slot-2"]').text()).toContain('空');
     expect(w.text()).toContain('真爱套装（3/5）');
     expect(w.text()).toContain('上座率+5%, 挑剔率+3%');
+    // 赛厨时的厨力（问题记录 417）
+    expect(w.find('[data-testid="duel-power"]').text()).toContain('赛厨时：进攻 9、防守 8');
     // 厨具收益加成（问题记录 411）
     expect(w.find('[data-testid="gear-income"]').text()).toContain(
       '厨具收益加成：最终银币 +1.2%、最终经验 +0.75%、特色菜金牌 +0.9%',

@@ -9,6 +9,8 @@ const equip: Messages['equip'] = {
   power: 'Chef power',
   powerNote:
     '(sum of the five stats + Luck/2; a guide only: cook-offs are decided by judges scoring Look, Aroma, Taste, Shape and Nutrition)',
+  duelPower: (attack, defend) =>
+    `In cook-offs: attack ${attack}, defense ${defend} (with every Luck bonus and set attack/defense bonuses; the Chef Tower shows the attack one)`,
   income: (coin, exp, gold) =>
     `Gear income bonus: final coins ${coin}, final EXP ${exp}, signature dish gold ${gold}`,
   incomeNote:

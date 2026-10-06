@@ -9,6 +9,8 @@ const equip: Messages['equip'] = {
   power: 'Puissance',
   powerNote:
     '(somme des cinq caractéristiques + Chance/2 ; indicatif seulement : les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition)',
+  duelPower: (attack, defend) =>
+    `En duel : attaque ${attack}, défense ${defend} (avec tous les bonus de Chance et les bonus d’attaque et de défense des ensembles ; la Tour des chefs affiche celui d’attaque)`,
   income: (coin, exp, gold) =>
     `Bonus de revenus de l’équipement : pièces finales ${coin}, EXP finale ${exp}, or du plat signature ${gold}`,
   incomeNote:
