@@ -180,11 +180,21 @@ describe('查询条数（质量期 ③）', () => {
     },
   };
 
-  it('活动列表、红点的查询条数不随活动个数增长：3 个和 6 个一样多', async () => {
+  // 全服合力（backlog 质量期第 ③ 批审查：原来没放进这条）：总分和前 10 名有 30 秒进程内缓存，缓存热的时候不加条数
+  const coop = {
+    kind: 'coop' as const,
+    def: {
+      rules: [{ key: 'market.buy', points: 10, dailyCap: 30 }],
+      milestones: [{ target: 20, minContribution: 0, award: { coin: 10 } }],
+      ranks: [{ from: 1, to: 1, award: { diamond: 5 } }],
+    },
+  };
+
+  it('活动列表、红点的查询条数不随活动个数增长：4 个和 8 个一样多（含全服合力）', async () => {
     const one = await createShard(qt.db);
     const six = await createShard(qt.db);
-    for (const spec of [goals, pass, exchange]) await insertActivity(qt, { shardId: one, spec });
-    for (const spec of [goals, pass, exchange, goals, pass, exchange])
+    for (const spec of [goals, pass, exchange, coop]) await insertActivity(qt, { shardId: one, spec });
+    for (const spec of [goals, pass, exchange, coop, goals, pass, exchange, coop])
       await insertActivity(qt, { shardId: six, spec });
     const r1 = await newRestaurant(qt, { shardId: one });
     const r6 = await newRestaurant(qt, { shardId: six });
@@ -194,7 +204,7 @@ describe('查询条数（质量期 ③）', () => {
     await svc.list(r6);
     const l1 = await q.count(() => svc.list(r1));
     const l6 = await q.count(() => svc.list(r6));
-    expect(l6.result.items).toHaveLength(6);
+    expect(l6.result.items).toHaveLength(8);
     expect(l6.n).toBe(l1.n);
     expect(l6.n).toBeLessThanOrEqual(8);
     const s6 = await q.count(() => svc.summary(r6));

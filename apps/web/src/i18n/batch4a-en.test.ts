@@ -8,7 +8,7 @@ import { useLocaleStore } from '../stores/locale';
 import { wenjieLines } from '../utils/wenjie';
 
 const names = { goodsName: (id: number) => `G${id}`, foodName: (id: number) => `F${id}` };
-const side = (name: string, power: number) => ({ name, power, scores: [5, 4, 3, 2, 1], sum: 15 });
+const side = (name: string, power: number) => ({ name, power, scores: [5, 4, 3, 2, 1] });
 
 describe('第 4a 批酒吧、厨塔按语言（问题记录 272）', () => {
   beforeEach(() => setActivePinia(createPinia()));

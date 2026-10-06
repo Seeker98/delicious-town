@@ -18,42 +18,50 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
   const now = d.now();
   const day = gameDay(now);
   const restId = ctx.restaurantId;
-  const rest = await d.db
-    .selectFrom('restaurant')
-    .select(['star_level', 'coin', 'diamond'])
-    .where('id', '=', restId)
-    .executeTakeFirstOrThrow();
-  const counterRows = await d.db
-    .selectFrom('daily_counter')
-    .select(['key', 'count'])
-    .where('rest_id', '=', restId)
-    .where('day', '=', day)
-    .where('key', 'like', 'town.%')
-    .execute();
+  // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 16 毫秒左右）
+  const [rest, counterRows, tr, shaken, goods, snap, today, hiphop, activation] = await Promise.all([
+    d.db
+      .selectFrom('restaurant')
+      .select(['star_level', 'coin', 'diamond'])
+      .where('id', '=', restId)
+      .executeTakeFirstOrThrow(),
+    d.db
+      .selectFrom('daily_counter')
+      .select(['key', 'count'])
+      .where('rest_id', '=', restId)
+      .where('day', '=', day)
+      .where('key', 'like', 'town.%')
+      .execute(),
+    d.db
+      .selectFrom('town_rest')
+      .select(['hammer_at', 'broadcast_at', 'big_eater_gift'])
+      .where('rest_id', '=', restId)
+      .executeTakeFirst(),
+    d.db
+      .selectFrom('town_shake')
+      .select('id')
+      .where('shard_id', '=', ctx.shardId)
+      .where('day', '=', day)
+      .where('rest_id', '=', restId)
+      .executeTakeFirst(),
+    goodsCounts(d.db, restId, [GOODS.horn, GOODS.thorHammer, GOODS.magicLamp], now),
+    world.ensure(ctx.shardId, now),
+    todayBless(d.db, d.config, ctx.shardId, now),
+    hiphopDay(d.db, ctx.shardId, now),
+    activationPoints(d.db, d.config, restId, day),
+  ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
-  const tr = await d.db
-    .selectFrom('town_rest')
-    .select(['hammer_at', 'broadcast_at', 'big_eater_gift'])
-    .where('rest_id', '=', restId)
-    .executeTakeFirst();
-  const shaken = await d.db
-    .selectFrom('town_shake')
-    .select('id')
-    .where('shard_id', '=', ctx.shardId)
-    .where('day', '=', day)
-    .where('rest_id', '=', restId)
-    .executeTakeFirst();
-  const goods = await goodsCounts(d.db, restId, [GOODS.horn, GOODS.thorHammer, GOODS.magicLamp], now);
-  const snap = await world.ensure(ctx.shardId, now);
-  const ws = await d.db
-    .selectFrom('world_state')
-    .select('weather_changed_at')
-    .where('shard_id', '=', ctx.shardId)
-    .executeTakeFirstOrThrow();
-  const today = await todayBless(d.db, d.config, ctx.shardId, now);
-  const blessRest = today
-    ? await d.db.selectFrom('restaurant').select('name').where('id', '=', today.restId).executeTakeFirst()
-    : undefined;
+  // 新区服要等 ensure 建好 world_state 那一行再读；许愿的店名要等今天的星愿
+  const [ws, blessRest] = await Promise.all([
+    d.db
+      .selectFrom('world_state')
+      .select('weather_changed_at')
+      .where('shard_id', '=', ctx.shardId)
+      .executeTakeFirstOrThrow(),
+    today
+      ? d.db.selectFrom('restaurant').select('name').where('id', '=', today.restId).executeTakeFirst()
+      : undefined,
+  ]);
   const talked = Object.fromEntries(NPCS.map((n) => [n, (counters.get(`town.talk.${n}`) ?? 0) > 0]));
   return {
     now: now.toISOString(),
@@ -64,7 +72,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     // 嘻哈男孩今天还没出来时镇长那里先写明几点出来，不让人选完才报错（问题记录 333）
     mayor: {
       answered: (counters.get('town.talk.mayor') ?? 0) > 0,
-      hiphopOut: (await hiphopDay(d.db, ctx.shardId, now)) !== null,
+      hiphopOut: hiphop !== null,
       hour: s.tuning.hiphop.hour,
     },
     bigEaterGift: tr?.big_eater_gift ?? false,
@@ -87,7 +95,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
       today: today ? blessDto(today.bless) : null,
       restName: blessRest?.name ?? null,
       hasLamp: (goods.get(GOODS.magicLamp) ?? 0) > 0,
-      activation: await activationPoints(d.db, d.config, restId, day),
+      activation,
       feasted: (counters.get('town.feast') ?? 0) > 0,
     },
   };

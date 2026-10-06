@@ -1,0 +1,97 @@
+/*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 73 个图标 */
+
+@font-face {
+  font-display: block;
+  font-family: "bootstrap-icons";
+  src: url("./bootstrap-icons-subset.woff2") format("woff2");
+}
+
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -0.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bi-archive::before { content: "\f10d"; }
+.bi-arrow-left-right::before { content: "\f12b"; }
+.bi-award::before { content: "\f154"; }
+.bi-bag::before { content: "\f179"; }
+.bi-bank::before { content: "\f62e"; }
+.bi-bank2::before { content: "\f62f"; }
+.bi-bar-chart-steps::before { content: "\f17d"; }
+.bi-basket::before { content: "\f180"; }
+.bi-bicycle::before { content: "\f18d"; }
+.bi-book::before { content: "\f194"; }
+.bi-box-arrow-up-right::before { content: "\f1c5"; }
+.bi-box-seam::before { content: "\f1c7"; }
+.bi-braces::before { content: "\f1c9"; }
+.bi-bug::before { content: "\f1dc"; }
+.bi-building::before { content: "\f1dd"; }
+.bi-calendar-check::before { content: "\f1e2"; }
+.bi-calendar-event::before { content: "\f1e8"; }
+.bi-chat-square-text::before { content: "\f264"; }
+.bi-check-circle::before { content: "\f26b"; }
+.bi-check-circle-fill::before { content: "\f26a"; }
+.bi-check2-square::before { content: "\f271"; }
+.bi-chevron-down::before { content: "\f282"; }
+.bi-chevron-left::before { content: "\f284"; }
+.bi-chevron-right::before { content: "\f285"; }
+.bi-chevron-up::before { content: "\f286"; }
+.bi-cloud-sun::before { content: "\f2be"; }
+.bi-coin::before { content: "\f634"; }
+.bi-compass::before { content: "\f2d1"; }
+.bi-cup-hot::before { content: "\f7eb"; }
+.bi-cup-straw::before { content: "\f2df"; }
+.bi-door-closed::before { content: "\f306"; }
+.bi-droplet::before { content: "\f30d"; }
+.bi-droplet-half::before { content: "\f30c"; }
+.bi-envelope::before { content: "\f32f"; }
+.bi-exclamation-triangle::before { content: "\f33b"; }
+.bi-flag::before { content: "\f3cc"; }
+.bi-flower1::before { content: "\f3cd"; }
+.bi-flower2::before { content: "\f3ce"; }
+.bi-gem::before { content: "\f3e6"; }
+.bi-gift::before { content: "\f3ec"; }
+.bi-graph-up::before { content: "\f3f2"; }
+.bi-graph-up-arrow::before { content: "\f673"; }
+.bi-grid::before { content: "\f3fc"; }
+.bi-grid-3x3::before { content: "\f3fa"; }
+.bi-hand-thumbs-down::before { content: "\f405"; }
+.bi-hand-thumbs-up::before { content: "\f407"; }
+.bi-house-heart::before { content: "\f776"; }
+.bi-image::before { content: "\f42a"; }
+.bi-journal-text::before { content: "\f444"; }
+.bi-lightbulb::before { content: "\f46b"; }
+.bi-lightning::before { content: "\f46f"; }
+.bi-lightning-charge::before { content: "\f46d"; }
+.bi-link-45deg::before { content: "\f470"; }
+.bi-lock::before { content: "\f47b"; }
+.bi-lock-fill::before { content: "\f47a"; }
+.bi-megaphone::before { content: "\f484"; }
+.bi-music-note-beamed::before { content: "\f49e"; }
+.bi-palette::before { content: "\f4b1"; }
+.bi-pencil::before { content: "\f4cb"; }
+.bi-people::before { content: "\f4d0"; }
+.bi-person-badge::before { content: "\f4d3"; }
+.bi-person-circle::before { content: "\f4d7"; }
+.bi-person-plus::before { content: "\f4dd"; }
+.bi-shield-lock::before { content: "\f538"; }
+.bi-shop::before { content: "\f543"; }
+.bi-signpost::before { content: "\f54a"; }
+.bi-signpost-2::before { content: "\f546"; }
+.bi-star::before { content: "\f588"; }
+.bi-stars::before { content: "\f589"; }
+.bi-ticket-perforated::before { content: "\f6ca"; }
+.bi-tools::before { content: "\f5db"; }
+.bi-trash::before { content: "\f5de"; }
+.bi-x-circle::before { content: "\f623"; }

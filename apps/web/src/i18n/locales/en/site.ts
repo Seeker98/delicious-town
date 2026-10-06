@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    perf1006:
+      'The site now downloads about 140 KB less on first load (the icon font only includes the icons we use), and the Market, Bar, Ichiban Kuji, Temple and Square pages open faster',
     backlog7:
       'Mr. Krab’s restaurant name and welcome message now appear in your language; percentages follow your language’s format, and the success-rate breakdown after enhancement no longer runs into the number; in the French interface, “name × quantity” no longer breaks across lines on narrow screens; when your Exchange access is frozen, the Exchange and prediction items in Today’s activity say so; the recipe list in the game wiki shows at most 1,000 entries and then suggests narrowing it down by search or street, and an unknown street in the address now shows all recipes',
     backlog6:

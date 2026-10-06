@@ -276,50 +276,72 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       const now = d.now();
       const { tuning } = await d.shards.settings(ctx.shardId);
       const t = tuning.market;
-      const snap = await world.ensure(ctx.shardId, now);
-      const rows = await d.db
-        .selectFrom('market_item')
-        .selectAll()
-        .where('shard_id', '=', ctx.shardId)
-        .orderBy('shelf')
-        .orderBy('id')
-        .execute();
+      const period = nextSlot(now, t.dailyHours).key;
+      // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 18 毫秒左右）
+      const [snap, rows, rest, mine, slotsUsed, lastSpecial, joined, last] = await Promise.all([
+        world.ensure(ctx.shardId, now),
+        d.db
+          .selectFrom('market_item')
+          .selectAll()
+          .where('shard_id', '=', ctx.shardId)
+          .orderBy('shelf')
+          .orderBy('id')
+          .execute(),
+        d.db
+          .selectFrom('restaurant')
+          .select(['foods_max_num', 'cupboard_num'])
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+        foodsMap(d.db, ctx.restaurantId),
+        cupboardSlotsUsed(d.db, ctx.restaurantId),
+        // 特价同 IP 间隔（规格书 06：同 IP 两次购买间隔 10 分钟）；页面据此提示还要等多久
+        d.redis.get(`mkt-ip:${ctx.shardId}:${ctx.ip}`),
+        d.db
+          .selectFrom('market_guess')
+          .select('foods_ids')
+          .where('shard_id', '=', ctx.shardId)
+          .where('period', '=', period)
+          .where('rest_id', '=', ctx.restaurantId)
+          .executeTakeFirst(),
+        d.db
+          .selectFrom('market_guess')
+          .select(['period', 'hits'])
+          .where('rest_id', '=', ctx.restaurantId)
+          .where('settled_at', 'is not', null)
+          .orderBy('settled_at', 'desc')
+          .limit(1)
+          .executeTakeFirst(),
+      ]);
       // 限购按店、设备、网络分别算（claimLimit）；页面要把同一设备 / 网络买过的也算进去
       const own = `rest:${ctx.restaurantId}`;
       const subjects = [own, `ip:${ctx.ip}`, ...(ctx.deviceId ? [deviceSubject(ctx.deviceId)] : [])];
-      const bought = rows.length
-        ? await d.db
-            .selectFrom('market_buy')
-            .select(['market_item_id', 'subject', 'num'])
-            .where('subject', 'in', subjects)
-            .where(
-              'market_item_id',
-              'in',
-              rows.map((r) => r.id),
-            )
-            .execute()
-        : [];
+      const ownerIds = [...new Set(rows.map((r) => r.owner_rest_id).filter((x): x is number => x !== null))];
+      // 第二段：要用到货架的两条一起发
+      const [bought, owners] = await Promise.all([
+        rows.length
+          ? d.db
+              .selectFrom('market_buy')
+              .select(['market_item_id', 'subject', 'num'])
+              .where('subject', 'in', subjects)
+              .where(
+                'market_item_id',
+                'in',
+                rows.map((r) => r.id),
+              )
+              .execute()
+          : [],
+        ownerIds.length
+          ? d.db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ownerIds).execute()
+          : [],
+      ]);
       const boughtMap = new Map<number, number>();
       const sharedMap = new Map<number, number>();
       for (const b of bought) {
         const m = b.subject === own ? boughtMap : sharedMap;
         m.set(b.market_item_id, Math.max(m.get(b.market_item_id) ?? 0, b.num));
       }
-      const rest = await d.db
-        .selectFrom('restaurant')
-        .select(['foods_max_num', 'cupboard_num'])
-        .where('id', '=', ctx.restaurantId)
-        .executeTakeFirstOrThrow();
-      const mine = await foodsMap(d.db, ctx.restaurantId);
-      const cupboardFull = (await cupboardSlotsUsed(d.db, ctx.restaurantId)) >= rest.cupboard_num;
-      const ownerIds = [...new Set(rows.map((r) => r.owner_rest_id).filter((x): x is number => x !== null))];
-      const ownerNames = new Map(
-        ownerIds.length
-          ? (
-              await d.db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ownerIds).execute()
-            ).map((r) => [r.id, r.name] as const)
-          : [],
-      );
+      const cupboardFull = slotsUsed >= rest.cupboard_num;
+      const ownerNames = new Map(owners.map((r) => [r.id, r.name] as const));
       const dto = (r: (typeof rows)[number]): MarketItemDto => {
         const food = d.config.requireFood(r.foods_id);
         const shelf = r.shelf as Shelf;
@@ -356,25 +378,7 @@ export function createMarketService(d: GameDeps, world: WorldService) {
               : { restId: r.owner_rest_id, name: ownerNames.get(r.owner_rest_id) ?? '' },
         };
       };
-      // 特价同 IP 间隔（规格书 06：同 IP 两次购买间隔 10 分钟）；页面据此提示还要等多久
-      const lastSpecial = await d.redis.get(`mkt-ip:${ctx.shardId}:${ctx.ip}`);
       const until = lastSpecial ? Number(lastSpecial) + t.specialIpCooldownSec * 1000 : 0;
-      const period = nextSlot(now, t.dailyHours).key;
-      const joined = await d.db
-        .selectFrom('market_guess')
-        .select('foods_ids')
-        .where('shard_id', '=', ctx.shardId)
-        .where('period', '=', period)
-        .where('rest_id', '=', ctx.restaurantId)
-        .executeTakeFirst();
-      const last = await d.db
-        .selectFrom('market_guess')
-        .select(['period', 'hits'])
-        .where('rest_id', '=', ctx.restaurantId)
-        .where('settled_at', 'is not', null)
-        .orderBy('settled_at', 'desc')
-        .limit(1)
-        .executeTakeFirst();
       return {
         daily: rows.filter((r) => r.shelf === 0).map(dto),
         special: rows.filter((r) => r.shelf === 1).map(dto),

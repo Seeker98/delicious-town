@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    perf1006:
+      'Le site télécharge environ 140 Ko de moins au premier chargement (la police d’icônes ne contient que les icônes utilisées), et le Marché, le Bar, l’Ichiban Kuji, le Temple et la Place s’ouvrent plus vite',
     backlog7:
       'Le nom du restaurant de M. Krab et son message d’accueil s’affichent désormais dans votre langue ; les pourcentages suivent le format de votre langue (virgule décimale et espace avant %), et le détail du taux de renforcement n’est plus collé au nombre ; « nom × quantité » ne se coupe plus sur deux lignes sur les écrans étroits ; si votre accès à la Bourse est gelé, la Bourse et les prédictions de l’activité du jour l’indiquent ; la liste des recettes du wiki affiche au plus 1 000 entrées puis propose d’affiner par recherche ou par rue, et une rue inconnue dans l’adresse affiche toutes les recettes',
     backlog6:
