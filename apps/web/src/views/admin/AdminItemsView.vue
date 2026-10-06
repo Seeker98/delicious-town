@@ -26,21 +26,26 @@ const data = ref<AdminItemsDto | null>(null);
 const kind = ref<'goods' | 'foods'>('goods');
 const filter = ref<Filter>('all');
 const q = ref('');
+const failed = ref(false);
 
-onMounted(async () => {
+async function load() {
+  failed.value = false;
   try {
     data.value = await adminApi.items();
   } catch (e) {
+    failed.value = true;
     toast.push(errorMessage(e, '读取道具整理失败'), 'danger');
   }
-});
+}
+onMounted(load);
 
 const pass = (x: AdminItemRow): boolean => {
   switch (filter.value) {
+    // 已下架的本来就没有来源（下架去掉了奖励档位、不在商店卖），找要处理的只看没下架的（终审 I1）
     case 'noSource':
-      return x.noSource;
+      return x.noSource && !x.retired;
     case 'noUse':
-      return x.noUse;
+      return x.noUse && !x.retired;
     case 'retired':
       return x.retired;
     case 'code':
@@ -52,7 +57,8 @@ const pass = (x: AdminItemRow): boolean => {
   }
 };
 const matched = computed(() => {
-  const s = q.value.trim();
+  // 页面上编号写成 #20001，照抄过来也能搜
+  const s = q.value.trim().replace(/^#/, '');
   return (data.value?.rows ?? []).filter(
     (x) => x.kind === kind.value && pass(x) && (s === '' || x.name.includes(s) || String(x.id) === s),
   );
@@ -66,9 +72,9 @@ const tags = (list: AdminItemTag[]) => (list.length === 0 ? '—' : list.map(tag
 <template>
   <h5>道具整理</h5>
   <p class="small text-muted">
-    只读，按线上正在用的配置算。要下架或恢复：在本机运行 <code>pnpm -F @dt/server items</code>，勾选后保存，再
-    <code>pnpm -F @dt/config build</code>、提交 <code>retired.json</code>、发版（见
-    docs/data-maintenance.md）。
+    只读，按线上的配置包和默认区服数值算（不含各区服的数值覆盖和玩法开关，顶部切区服不影响这一页）。要下架或恢复：在本机运行
+    <code>pnpm -F @dt/server items</code>，勾选后保存，再 <code>pnpm -F @dt/config build</code>、提交
+    <code>retired.json</code>、发版（见 docs/data-maintenance.md）。
     已下架的道具在配置里去掉了奖励档位、不在商店卖，所以这里看到的是下架以后的来源。
   </p>
   <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
@@ -95,7 +101,13 @@ const tags = (list: AdminItemTag[]) => (list.length === 0 ? '—' : list.map(tag
     />
     <span v-if="data" class="small text-muted">共 {{ matched.length }} 项</span>
   </div>
-  <div v-if="!data" class="dt-empty">加载中…</div>
+  <div v-if="failed" class="dt-empty">
+    读取失败
+    <button class="btn btn-sm btn-link p-0 align-baseline" data-testid="items-retry" @click="load">
+      重试
+    </button>
+  </div>
+  <div v-else-if="!data" class="dt-empty">加载中…</div>
   <template v-else>
     <div v-if="matched.length === 0" class="dt-empty">没有符合的</div>
     <div
@@ -108,8 +120,8 @@ const tags = (list: AdminItemTag[]) => (list.length === 0 ? '—' : list.map(tag
         <b>{{ x.name }}</b>
         <span class="text-muted">#{{ x.id }} · {{ x.category }}</span>
         <span v-if="x.retired" class="badge text-bg-secondary">已下架</span>
-        <span v-if="x.noSource" class="badge text-bg-danger">没有来源</span>
-        <span v-if="x.noUse" class="badge text-bg-warning">没有用途</span>
+        <span v-if="x.noSource && !x.retired" class="badge text-bg-danger">没有来源</span>
+        <span v-if="x.noUse && !x.retired" class="badge text-bg-warning">没有用途</span>
         <span v-if="x.code" class="badge text-bg-info">代码里用到</span>
       </div>
       <div><span class="text-muted">来源：</span>{{ tags(x.gives) }}</div>

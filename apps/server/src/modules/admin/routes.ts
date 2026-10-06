@@ -1,5 +1,4 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { createAdminItems } from './items';
 import {
   ErrorCode,
   adminLedgerQuery,
@@ -45,6 +44,7 @@ import { AppError } from '../../http/errors';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireRole } from './access';
+import { createAdminItems } from './items';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';

@@ -1,4 +1,5 @@
 import { GOODS_TYPE, itemRefs, type GameConfig, type ItemKind } from '@dt/config';
+import type { AdminItemGradeRow, AdminItemRow, AdminItemsDto, AdminItemTag } from '@dt/shared';
 import { awardFoodsPool, prizeFoodPools } from '../modules/award/random';
 import { handleTargetLevel } from '../modules/cupboard/rules';
 import { blessFoodIds, levelFoodIds, mysteryFoodIds } from '../modules/town/rules';
@@ -8,52 +9,11 @@ import { blessFoodIds, levelFoodIds, mysteryFoodIds } from '../modules/town/rule
  * 配置里的引用来自 itemRefs；食材按等级的来源照游戏里的规则函数和默认区服数值算，规则改了这里跟着变
  */
 
-/**
- * 一处来源或用途；n 是同一处引用的条数；retired = 这处本身是已下架的道具（例如下架礼包里的东西）；
- * dead = 这处是礼包或道具，但它自己哪里都拿不到（顺着礼包链判断，backlog 道具整理工具）
- */
-export interface Tag {
-  where: string;
-  n: number;
-  retired?: true;
-  dead?: true;
-}
-
-export interface ItemRow {
-  kind: ItemKind;
-  id: number;
-  name: string;
-  /** 道具类型名，或“N 级食材”“N 级稀有食材” */
-  category: string;
-  level: number;
-  desc: string;
-  gives: Tag[];
-  uses: Tag[];
-  /** 代码里直接用到 */
-  code: boolean;
-  /** 除了已下架的来源，没有任何来源，代码里也没用到 */
-  noSource: boolean;
-  /** 没有任何用途，代码里也没用到 */
-  noUse: boolean;
-  /** 有条件才有来源或用途的说明 */
-  notes: string[];
-  retired: boolean;
-}
-
-export interface GradeRow {
-  grade: number;
-  name: string;
-  /** 默认区服数值的食谱品级上限以内 */
-  open: boolean;
-  /** 食材等级 → 这一品级全部食谱合计要几种次 */
-  foodLevels: Record<number, number>;
-}
-
-export interface ItemReport {
-  maxGrade: number;
-  grades: GradeRow[];
-  rows: ItemRow[];
-}
+/** 类型和后台道具整理只读页共用（问题记录 429），定义在 packages/shared 的 schemas/ops.ts */
+export type Tag = AdminItemTag;
+export type ItemRow = AdminItemRow;
+export type GradeRow = AdminItemGradeRow;
+export type ItemReport = AdminItemsDto;
 
 const GOODS_TYPE_NAME: Record<number, string> = {
   [GOODS_TYPE.consumable]: '消耗品',

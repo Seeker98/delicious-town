@@ -59,7 +59,8 @@ describe('后台道具整理只读页（问题记录 429）', () => {
     const dev = w.get('[data-testid="item-goods-20001"]').text();
     expect(dev).toContain('开发测试礼包');
     expect(dev).toContain('已下架');
-    expect(dev).toContain('没有来源');
+    // 已下架的本来就没有来源，不再标红（终审 I1）
+    expect(dev).not.toContain('没有来源');
     const gift = w.get('[data-testid="item-goods-3"]').text();
     expect(gift).toContain('礼包 A×2（已下架）');
     expect(gift).toContain('礼包 B（拿不到）');
@@ -73,14 +74,42 @@ describe('后台道具整理只读页（问题记录 429）', () => {
     expect(w.findAll('[data-testid^="item-goods-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'item-goods-2',
     ]);
+    // 没有来源只算没下架的（终审 I1）
+    await w.get('[data-testid="items-filter"]').setValue('noSource');
+    expect(w.findAll('[data-testid^="item-goods-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'item-goods-2',
+    ]);
     await w.get('[data-testid="items-filter"]').setValue('retired');
     expect(w.findAll('[data-testid^="item-goods-"]')).toHaveLength(1);
+    await w.get('[data-testid="items-filter"]').setValue('notes');
+    expect(w.findAll('[data-testid^="item-goods-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'item-goods-3',
+    ]);
     await w.get('[data-testid="items-filter"]').setValue('all');
     await w.get('[data-testid="items-search"]').setValue('20001');
+    expect(w.findAll('[data-testid^="item-goods-"]')).toHaveLength(1);
+    // 页面上编号写成 #20001，照抄也能搜到
+    await w.get('[data-testid="items-search"]').setValue('#20001');
     expect(w.findAll('[data-testid^="item-goods-"]')).toHaveLength(1);
     await w.get('[data-testid="items-search"]').setValue('');
     await w.get('[data-testid="items-kind-foods"]').trigger('click');
     expect(w.find('[data-testid="item-foods-101"]').exists()).toBe(true);
     expect(w.find('[data-testid^="item-goods-"]').exists()).toBe(false);
+  });
+
+  it('读取失败：写读取失败、带重试（终审 Minor 5）', async () => {
+    vi.mocked(adminApi.items).mockRejectedValueOnce(new Error('x'));
+    const w = mount(AdminItemsView);
+    await flushPromises();
+    expect(w.text()).not.toContain('加载中');
+    await w.get('[data-testid="items-retry"]').trigger('click');
+    await flushPromises();
+    expect(w.findAll('[data-testid^="item-goods-"]')).toHaveLength(4);
+  });
+
+  it('写明只按默认区服数值算（终审 I2：顶部切区服不影响这页）', async () => {
+    const w = mount(AdminItemsView);
+    await flushPromises();
+    expect(w.text()).toContain('默认区服数值');
   });
 });

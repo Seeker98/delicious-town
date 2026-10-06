@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { retiredOf } from '@dt/config';
 import { userWithRole } from '../../../test/admin';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 
@@ -30,8 +31,9 @@ describe('后台道具整理只读页（问题记录 429）', () => {
     const foods = d.rows.filter((x) => x.kind === 'foods');
     expect(goods.length).toBe(ctx.deps.config.bundle.goods.length);
     expect(foods.length).toBe(ctx.deps.config.bundle.foods.length);
-    // 开发测试礼包是下架名单里的第一项
-    expect(goods.find((x) => x.id === 20001)).toMatchObject({ retired: true });
+    // 从线上配置的下架名单里取一个（不依赖名单的现状）；下架后没有奖励档位、不在商店卖，来源为空
+    const retiredId = [...retiredOf(ctx.deps.config.bundle).goods][0]!;
+    expect(goods.find((x) => x.id === retiredId)).toMatchObject({ retired: true, noSource: true });
     const someOnSale = ctx.deps.config.bundle.goods.find((g) => g.onSale && !g.retired)!;
     expect(goods.find((x) => x.id === someOnSale.id)).toMatchObject({ retired: false });
     expect(goods.find((x) => x.id === someOnSale.id)!.gives.length).toBeGreaterThan(0);
