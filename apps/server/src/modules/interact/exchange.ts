@@ -88,7 +88,11 @@ export function createExchange(d: GameDeps, world: WorldService) {
           fee: them.npc ? 0 : exchangeFee(d.config.requireFood(r.foods_id), r.locked, t),
           need: need.get(r.foods_id) ?? 0,
         })),
-        mine: (await ofLevel(ctx.restaurantId)).map((r) => ({ foodsId: r.foods_id, num: r.num })),
+        // 我的这一级从上面读过的整个橱柜里取，不再查一次
+        mine: [...myFoods]
+          .filter(([id, r]) => r.num > 0 && d.config.foods.get(id)?.level === level)
+          .sort(([a], [b]) => a - b)
+          .map(([id, r]) => ({ foodsId: id, num: r.num })),
         left: Math.max(0, (them.npc ? lim.npc : lim.perFriend) - used),
         storm: await storm(ctx.shardId, now),
         npc: them.npc,

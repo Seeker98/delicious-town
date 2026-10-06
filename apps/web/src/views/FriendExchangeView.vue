@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { ExchangeFoodsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -7,6 +7,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { matchText } from '../utils/match';
 
 const route = useRoute();
 const toast = useToastStore();
@@ -19,18 +20,21 @@ const take = ref<number | null>(null);
 const give = ref<number | null>(null);
 const busy = ref(false);
 const fee = computed(() => data.value?.theirs.find((x) => x.foodsId === take.value)?.fee ?? 0);
-/** 按名字筛（backlog 370：蟹老板的橱柜一级有八九十种）；对方的里我学菜缺的排前面，缺得多的在前 */
+/**
+ * 对方的食材按名字筛（backlog 370：蟹老板的橱柜一级有八九十种；不区分大小写、忽略重音）；
+ * 我学菜缺的排前面、缺得多的在前，锁着换不了的排最后。我的那一栏不筛，选好要的再挑给出的
+ */
 const q = ref('');
-const match = (id: number) => {
-  const s = q.value.trim().toLowerCase();
-  return s === '' || catalog.foodName(id).toLowerCase().includes(s);
-};
+const takeable = (f: { locked: boolean }) => !f.locked || (data.value?.storm ?? false);
 const theirs = computed(() =>
   (data.value?.theirs ?? [])
-    .filter((f) => match(f.foodsId))
-    .sort((a, b) => b.need - a.need || a.foodsId - b.foodsId),
+    .filter((f) => matchText(catalog.foodName(f.foodsId), q.value.trim()))
+    .sort((a, b) => Number(takeable(b)) - Number(takeable(a)) || b.need - a.need || a.foodsId - b.foodsId),
 );
-const mine = computed(() => (data.value?.mine ?? []).filter((f) => match(f.foodsId)));
+// 选中的被搜索筛掉时取消选择，免得确认时换的是看不见的那个
+watch(theirs, (list) => {
+  if (take.value !== null && !list.some((f) => f.foodsId === take.value)) take.value = null;
+});
 
 async function load() {
   take.value = null;
@@ -98,8 +102,8 @@ onMounted(load);
     </p>
     <h6>{{ t.friends.exchange.theirs }}</h6>
     <div class="d-flex flex-wrap gap-1 mb-2">
-      <span v-if="data.theirs.length === 0" class="small text-muted">{{
-        t.friends.exchange.theirsEmpty
+      <span v-if="theirs.length === 0" class="small text-muted">{{
+        q.trim() === '' ? t.friends.exchange.theirsEmpty : t.friends.exchange.noMatch
       }}</span>
       <button
         v-for="f in theirs"
@@ -120,7 +124,7 @@ onMounted(load);
     <div class="d-flex flex-wrap gap-1 mb-2">
       <span v-if="data.mine.length === 0" class="small text-muted">{{ t.friends.exchange.mineEmpty }}</span>
       <button
-        v-for="f in mine"
+        v-for="f in data.mine"
         :key="f.foodsId"
         :class="['btn btn-sm', give === f.foodsId ? 'btn-primary' : 'btn-outline-secondary']"
         :data-testid="`mine-${f.foodsId}`"

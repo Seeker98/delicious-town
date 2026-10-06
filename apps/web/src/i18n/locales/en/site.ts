@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     web1006:
-      'When swapping ingredients with friends or Mr. Krab you can now search by name, and ingredients you need for your recipes come first with how many you’re missing; the move-street tip on the recipes page can be dismissed until your next star; “Claim all” for deliveries only shows when something has arrived; tapping “Recipes” in the bottom bar while viewing another street takes you back to your own; the development fund tab on the square lets you retry if your restaurant fails to load',
+      'When swapping ingredients with friends or Mr. Krab you can now search by name, and ingredients you need for your recipes come first with how many you’re missing; the move-street tip on the recipes page can be dismissed until your next star; “Claim all” for deliveries only shows when something has arrived; tapping “Recipes” in the bottom bar while viewing another street takes you back to your own; the Development Fund tab on the square lets you retry if your restaurant fails to load',
     power1006:
       'The cookware page now shows your attack and defense chef power in cook-offs (with every Luck bonus and set attack/defense bonuses), and the Chef Tower now says “My attack chef power”, so the two pages match',
     mcTabs1006:

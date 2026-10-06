@@ -30,13 +30,17 @@ const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
 const streetInfo = computed(() => catalog.streets.find((s) => s.id === street.value) ?? null);
 
+/** 只认最后一次请求的结果：换街道、点底部导航时连着发几次，先发的晚回来不能盖掉后发的（backlog 第 ③ 批审查） */
+let seq = 0;
 async function load() {
+  const mine = ++seq;
   try {
     const r = await endpoints.cookbookList({
       street: street.value,
       page: page.value,
       filter: filter.value,
     });
+    if (mine !== seq) return;
     // 页码超过现在的总页数（地址里恢复的页码，或学完这页最后一道菜）：退到最后一页，page 的 watch 重读，不留空页
     const last = Math.max(1, Math.ceil(r.total / r.pageSize));
     if (r.items.length === 0 && page.value > last) {
@@ -45,7 +49,7 @@ async function load() {
     }
     list.value = r;
   } catch (e) {
-    toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
   }
 }
 

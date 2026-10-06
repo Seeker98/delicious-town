@@ -47,13 +47,14 @@ describe('FriendExchangeView', () => {
     expect(endpoints.exchange).toHaveBeenCalledWith({ restId: 2, giveFoodsId: 12, takeFoodsId: 11 });
   });
 
-  it('对方的食材里我学菜缺的排前面、写缺几个；按名字搜两边都筛（backlog 370）', async () => {
+  it('对方的食材里我学菜缺的排前面、写缺几个，锁着的排最后；按名字搜只筛对方的（backlog 370）', async () => {
     vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
       level: 2,
       theirs: [
         { foodsId: 11, num: 3, locked: false, fee: 0, need: 0 },
         { foodsId: 21, num: 300, locked: false, fee: 0, need: 4 },
         { foodsId: 22, num: 300, locked: false, fee: 0, need: 9 },
+        { foodsId: 23, num: 300, locked: true, fee: 0, need: 20 },
       ],
       mine: [
         { foodsId: 12, num: 5 },
@@ -66,11 +67,17 @@ describe('FriendExchangeView', () => {
     const w = await mountView();
     const ids = (side: string) =>
       w.findAll(`[data-testid^="${side}-"]`).map((x) => x.attributes('data-testid'));
-    expect(ids('theirs')).toEqual(['theirs-22', 'theirs-21', 'theirs-11']);
+    expect(ids('theirs')).toEqual(['theirs-22', 'theirs-21', 'theirs-11', 'theirs-23']);
+    await w.get('[data-testid="theirs-22"]').trigger('click');
     expect(w.get('[data-testid="theirs-22"]').text()).toContain('缺 9');
     expect(w.get('[data-testid="theirs-11"]').text()).not.toContain('缺');
     await w.get('[data-testid="exchange-search"]').setValue('21');
     expect(ids('theirs')).toEqual(['theirs-21']);
-    expect(ids('mine')).toEqual(['mine-21']);
+    // 我的那一栏不筛；选中的 22 被筛掉了，取消选择
+    expect(ids('mine')).toEqual(['mine-12', 'mine-21']);
+    await w.get('[data-testid="mine-12"]').trigger('click');
+    expect(w.get('[data-testid="confirm"]').attributes('disabled')).toBeDefined();
+    await w.get('[data-testid="exchange-search"]').setValue('zzz');
+    expect(w.text()).toContain('没有找到');
   });
 });

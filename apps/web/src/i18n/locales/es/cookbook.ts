@@ -13,7 +13,7 @@ const cookbook: Messages['cookbook'] = {
   streetDesc: (desc) => `Bonificación de la calle: ${desc}`,
   moveHint: (star, need, gap) =>
     `Aunque aprendas todas las recetas que quedan en esta calle, no llegarás a las ${need} recetas que hacen falta para ${star} ${plEs(star, 'estrella', 'estrellas')} (faltan ${gap}). Cuando ya casi no aprendas nada aquí, múdate a una calle con más recetas.`,
-  moveHintClose: 'No mostrar más en esta estrella',
+  moveHintClose: 'Ocultar hasta la próxima estrella',
   moveLink: 'Mudarse',
   learnFailed: 'No se pudo aprender',
   maxed: 'Nivel máx.',

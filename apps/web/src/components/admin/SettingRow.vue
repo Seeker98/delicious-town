@@ -14,7 +14,7 @@ defineProps<{
 // 事件不叫 input：和原生 input 事件同名会在打字时多触发一次
 const emit = defineEmits<{ edit: [e: Event]; reset: [] }>();
 const show = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v));
-/** JSON 值按格式化后的行数调高（问题记录 152），最少 2 行、最多 8 行 */
+/** JSON 值按格式化后的行数调高（问题记录 152），最少 2 行、最多 16 行 */
 const rowsOf = (v: unknown) =>
   // 最多 16 行：赛厨权重这类三十多行的 JSON 原来 8 行太挤（backlog 396）
   Math.min(16, Math.max(2, (typeof v === 'string' ? v : JSON.stringify(v, null, 1)).split('\n').length));

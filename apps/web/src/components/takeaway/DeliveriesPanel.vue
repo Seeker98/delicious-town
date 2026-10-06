@@ -76,12 +76,7 @@ function gains(r: TakeawayClaimDto): string {
     </div>
     <!-- 有已到的单才显示（问题记录 394：领完后还挂着一个绿色按钮） -->
     <div v-if="anyArrived" class="mb-2">
-      <button
-        class="btn btn-sm btn-success"
-        data-testid="claim-all"
-        :disabled="busy"
-        @click="claimAll"
-      >
+      <button class="btn btn-sm btn-success" data-testid="claim-all" :disabled="busy" @click="claimAll">
         {{ t.takeaway.deliveries.claimAll }}
       </button>
     </div>
