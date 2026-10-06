@@ -157,8 +157,11 @@ describe('残卷', () => {
     await giveRemnant(learned, 1, 3);
     await s().learn(learned, { mcId: 1 });
     await expect(s().exchangeFragments(learned, { mcId: 1, num: 1 })).rejects.toMatchObject({
+      code: 'INVALID_STATE',
       params: { reason: 'mc_learned' },
     });
+    // 被拒绝时碎片一张不少
+    expect(await goodsNum(t, learned.restaurantId, frag)).toBe(3);
     const special = config.bundle.mysteriousCookbooks.find((m) => !m.appraisable)!;
     await expect(s().exchangeFragments(ctx, { mcId: special.id, num: 1 })).rejects.toMatchObject({
       code: 'VALIDATION_FAILED',

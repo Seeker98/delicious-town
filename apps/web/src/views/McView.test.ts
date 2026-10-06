@@ -75,7 +75,16 @@ describe('McView', () => {
       weather: [],
       devices: [],
       mysterious: [
-        { id: 1, name: '秘·仿膳饽饽', level: 4, road: 1, nutritive: 31, coin: 38333, foods: [390, 412] },
+        {
+          id: 1,
+          name: '秘·仿膳饽饽',
+          level: 4,
+          road: 1,
+          nutritive: 31,
+          coin: 38333,
+          foods: [390, 412],
+          appraisable: true,
+        },
         {
           id: 3,
           name: '秘·凤凰展翅',
@@ -328,7 +337,8 @@ describe('McView', () => {
     await row.find('button').trigger('click');
     await flushPromises();
     expect(endpoints.mcExchange).toHaveBeenCalledWith(5, 1);
-    // 4 级只有 1 张，不够 3 张：按钮不能点
+    // 4 级只有 1 张，不够 3 张：选了菜按钮也不能点
+    await w.find('[data-testid="exchange-4"] select').setValue('1');
     expect(w.find('[data-testid="exchange-4"] button').attributes('disabled')).toBeDefined();
   });
 });

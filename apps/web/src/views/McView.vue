@@ -154,6 +154,10 @@ const exchangeRows = computed(() => {
     }),
   );
 });
+watch(exchangeRows, (rows) => {
+  for (const r of rows)
+    if (exPick[r.level] && !r.options.some((m) => String(m.id) === exPick[r.level])) exPick[r.level] = '';
+});
 function exchange(lv: number) {
   const mcId = Number(exPick[lv]);
   if (!mcId) return;

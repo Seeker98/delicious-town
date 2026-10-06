@@ -236,7 +236,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
 
     /**
      * 碎片兑换指定残卷（问题记录 415）：fragmentPerRemnant 张同级碎片换 1 张这一级任选一道的残卷；
-     * 只换能鉴定出来、还没学会的（学会的残卷只能卖或分解，换了是白花）
+     * 只换能鉴定出来、还没学会的（用户定的范围；学会的残卷除了卖、分解，开课时也会用 1 张，但不让用碎片换来开课）
      */
     exchangeFragments(ctx: RestCtx, b: { mcId: number; num: number }) {
       return op(ctx, 'mc.remnant.exchange', async (o) => {
