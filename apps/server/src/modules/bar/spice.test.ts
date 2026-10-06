@@ -162,6 +162,54 @@ describe('秘制调料：猜', () => {
     expect(await hasRound(a)).toBe(false);
   });
 
+  it('区服中途改了配方长度、调料种数、次数：这一局照开局时的规则（#191 审查）', async () => {
+    const a = await player();
+    script = [0];
+    await start(a);
+    const secret = (
+      await t.db
+        .selectFrom('bar_round')
+        .select('state')
+        .where('rest_id', '=', a.restaurantId)
+        .where('game', '=', 'spice')
+        .executeTakeFirstOrThrow()
+    ).state as unknown as SpiceState;
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: a.shardId,
+        override: JSON.stringify({
+          tuning: {
+            bar: {
+              spice: {
+                kinds: 6,
+                length: 3,
+                tries: 5,
+                tiers: [
+                  { maxTries: 2, awardLevel: 8, renown: 5, news: true },
+                  { maxTries: 5, awardLevel: 3, renown: 0, news: false },
+                ],
+              },
+            },
+          },
+        }),
+      })
+      .onConflict((oc) => oc.column('shard_id').doUpdateSet({ override: JSON.stringify({}) }))
+      .execute();
+    t.game.shards.invalidate(a.shardId);
+    try {
+      const wrong = [9, 8, 7, 6].filter((x) => !secret.secret.includes(x)).slice(0, 1);
+      const g = [...wrong, ...[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter((x) => x !== wrong[0]).slice(0, 3)];
+      const r = (await guess(a, g)).data;
+      expect(r.guesses).toHaveLength(1);
+      expect(r.left).toBe(7);
+      expect((await guess(a, secret.secret)).data).toMatchObject({ result: 'win' });
+    } finally {
+      await t.db.deleteFrom('shard_config').where('shard_id', '=', a.shardId).execute();
+      t.game.shards.invalidate(a.shardId);
+    }
+  });
+
   it('没有进行中的局：报 no_round', async () => {
     const a = await player();
     await expect(guess(a, [0, 1, 2, 3])).rejects.toMatchObject({

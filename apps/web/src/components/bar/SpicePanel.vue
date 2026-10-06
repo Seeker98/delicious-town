@@ -23,6 +23,8 @@ watch(
   () => props.data.spice.round,
   (r) => {
     if (local.value?.result) return;
+    // 概览可能比刚收到的结果晚到：比手上的局面旧（猜的次数更少）就不覆盖（#191 审查）
+    if (r && local.value && r.guesses.length < local.value.guesses.length) return;
     local.value = r;
   },
   { immediate: true },
@@ -32,6 +34,8 @@ const picked = ref<Array<number | null>>([]);
 const s = computed(() => props.data.spice);
 const resetPicked = () => (picked.value = Array.from({ length: s.value.length }, () => null));
 resetPicked();
+// 页面开着时区服改了配方长度：空位跟着变（#191 审查）
+watch(() => s.value.length, resetPicked);
 
 const nameOf = (i: number) => t.value.bar.spice.kinds[i] ?? String(i);
 const listOf = (ids: readonly number[]) => ids.map(nameOf).join(t.value.bar.spice.sep);
@@ -126,7 +130,10 @@ const resultText = computed(() => {
       </div>
       <template v-if="!local.result">
         <div class="dt-meta my-1">{{ t.bar.spice.triesLeft(local.left) }}</div>
-        <div class="dt-spice-slots mb-2">
+        <div
+          class="dt-spice-slots mb-2"
+          :style="{ gridTemplateColumns: `repeat(${s.length}, minmax(0, 1fr))` }"
+        >
           <button
             v-for="(x, i) in picked"
             :key="i"

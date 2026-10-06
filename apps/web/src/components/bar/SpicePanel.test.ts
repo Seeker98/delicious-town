@@ -48,6 +48,24 @@ describe('SpicePanel', () => {
     expect(w.findAll('[data-testid^="spice-kind-"]')).toHaveLength(10);
   });
 
+  it('概览晚到、还是旧局面时不覆盖手上的局面（#191 审查）', async () => {
+    vi.mocked(endpoints.barSpiceGuess).mockResolvedValue(
+      round({ guesses: [{ guess: [2, 0, 9, 4], a: 1, b: 2 }], left: 7 }),
+    );
+    const w = mount(SpicePanel, { props: { data: withRound(round()) } });
+    await pick(w, [2, 0, 9, 4]);
+    await w.get('[data-testid="spice-submit"]').trigger('click');
+    await flushPromises();
+    await w.setProps({ data: withRound(round()) });
+    expect(w.find('[data-testid="spice-row-0"]').exists()).toBe(true);
+  });
+
+  it('空位个数和列数跟着配方长度（#191 审查）', () => {
+    const w = mount(SpicePanel, { props: { data: withRound(round(), { length: 3 }) } });
+    expect(w.findAll('[data-testid^="spice-slot-"]')).toHaveLength(3);
+    expect(w.get('.dt-spice-slots').attributes('style')).toContain('repeat(3, minmax(0, 1fr))');
+  });
+
   it('次数用完或礼券不够：开局按钮灰掉并写原因', () => {
     const used = mount(SpicePanel, { props: { data: withRound(null, { played: 5 }) } });
     expect(used.get('[data-testid="spice-start"]').attributes('disabled')).toBeDefined();
