@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
-import { sequenceRng } from '@dt/shared';
+import { seededRng, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   befriend,
@@ -14,6 +14,7 @@ import {
   type TestGame,
 } from '../../../test/game';
 import { upsertEffectSource } from '../effects/service';
+import { ensureNpc } from '../npc/npc';
 import { grantGoods } from '../store/grant';
 
 const config = testConfig();
@@ -129,6 +130,20 @@ describe('翻橱（规格书 05 §5.7）', () => {
     });
     expect((await restRow(t, a.restaurantId)).strength).toBe(100);
     expect((await svc().flip.slots(a, b.restaurantId)).cooling).toEqual([]);
+    // 被挡下的不占今天在这家店的次数（backlog 374）
+    expect((await svc().flip.slots(a, b.restaurantId)).hostLeft).toBe(3);
+  });
+
+  it('蟹老板的店也受每店每天 3 格的限制（backlog 374）', async () => {
+    const [a] = await friends({ patch: { coin: 100 } });
+    const npc = (await ensureNpc(t.db, config, config.tuning.friend.npc, a.shardId, seededRng(1))).id;
+    await befriend(t, a.restaurantId, npc);
+    seq = [0.99];
+    for (const slotNo of [1, 2, 3]) await svc().flip.flip(a, { restId: npc, slotNo });
+    await expect(svc().flip.flip(a, { restId: npc, slotNo: 4 })).rejects.toMatchObject({
+      code: 'LIMIT_REACHED',
+      params: { what: 'flip_host' },
+    });
   });
 
   it('对方橱柜空：改为神秘礼券；没翻中：什么都没有；没银币不能翻', async () => {
