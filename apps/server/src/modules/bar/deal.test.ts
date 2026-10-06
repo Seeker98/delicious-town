@@ -125,6 +125,17 @@ describe('一掷千金：开局（设计 §4）', () => {
       '5x2',
       '5x5',
     ]);
+    // 普通食材那几箱：等级和数量照奖品表，都是出现率 100 的普通食材（#192 审查）
+    const commons = s.boxes.filter((b) => !masters.includes(b));
+    expect(commons.map((b) => `${t.deps.config.foods.get(b.foodsId)!.level}x${b.num}`).sort()).toEqual([
+      '1x1',
+      '1x3',
+      '2x2',
+      '3x2',
+      '4x2',
+      '5x2',
+    ]);
+    expect(commons.every((b) => t.deps.config.foods.get(b.foodsId)!.odds === 100)).toBe(true);
     expect(s.boxes[s.top]).toMatchObject({ foodsId: M5, num: 5 });
   });
 

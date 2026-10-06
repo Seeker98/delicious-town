@@ -418,6 +418,14 @@ describe('酒吧配置（子项目 4C-1）', () => {
     expect(errors).toContain('bar_slot_machine_award 1 references unknown food 999999');
   });
 
+  it('一掷千金的普通食材奖品：这一级要有能抽的普通食材（#192 审查：原来开局会报 500）', () => {
+    const src = source();
+    const foods = structuredClone(src['master/foods']) as Array<{ level: number; odds: number }>;
+    for (const x of foods) if (x.level === 4 && x.odds === 100) x.odds = 99;
+    const { errors } = buildBundle({ ...src, 'master/foods': foods });
+    expect(errors).toContain('tuning.bar.deal.prizes: no common level-4 food to draw');
+  });
+
   it('保底奖项不在奖池里', () => {
     const src = source();
     const tuning = structuredClone(src['game/tuning']) as { bar: { slotFloorAwardId: number } };
