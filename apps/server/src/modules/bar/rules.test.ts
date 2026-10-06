@@ -38,6 +38,15 @@ describe('划拳（设计文档 §3.2）', () => {
     expect(fgOutcome(0.81, 0.3, t)).toBe(-1);
   });
 
+  it('幸运再高也至少有 fgLoseMin 的概率输：胜最多到 1 - 平 - fgLoseMin', () => {
+    expect(t.fgLoseMin).toBe(0.1);
+    expect(fgOutcome(0.64, 0.6, t)).toBe(1);
+    expect(fgOutcome(0.66, 0.6, t)).toBe(0);
+    expect(fgOutcome(0.89, 0.6, t)).toBe(0);
+    expect(fgOutcome(0.91, 0.6, t)).toBe(-1);
+    expect(fgOutcome(0.91, 5, t)).toBe(-1);
+  });
+
   it('服务器出拳：胜 (h+1)%3、平 h、负 (h+2)%3', () => {
     expect([0, 1, 2].map((h) => barHand(h, 1))).toEqual([1, 2, 0]);
     expect([0, 1, 2].map((h) => barHand(h, 0))).toEqual([0, 1, 2]);

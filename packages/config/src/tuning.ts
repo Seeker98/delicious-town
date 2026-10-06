@@ -428,6 +428,8 @@ export const tuningSchema = z.object({
   bar: z.object({
     fgWinRate: num,
     fgDrawRate: num,
+    /** 划拳输的最低概率：幸运加到胜上最多加到 1 - 平 - 它（问题记录 419） */
+    fgLoseMin: num.min(0).max(1),
     fgNewsStreak: int.min(1),
     cupNewsStreak: int.min(1),
     numMax: int.min(2),

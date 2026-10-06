@@ -4,9 +4,12 @@ export type BarTuning = Tuning['bar'];
 /** 1 胜 / 0 平 / -1 负（bar_state 的 *_result 列） */
 export type BarResult = 1 | 0 | -1;
 
-/** 划拳：先判胜、再判平（规格书 10 §10.1）；幸运率只加在胜上，原来胜、平各加一份，约 250 幸运以后就不会输（问题记录 419） */
+/**
+ * 划拳：先判胜、再判平（规格书 10 §10.1）。偏离规格（问题记录 419）：幸运率只加在胜上，
+ * 且胜最多到 1 − 平 − fgLoseMin；原来胜、平各加一份，约 200 幸运以后就不会输
+ */
 export function fgOutcome(r: number, luckRate: number, t: BarTuning): BarResult {
-  const win = t.fgWinRate + luckRate;
+  const win = Math.min(t.fgWinRate + luckRate, 1 - t.fgDrawRate - t.fgLoseMin);
   if (r < win) return 1;
   if (r < win + t.fgDrawRate) return 0;
   return -1;

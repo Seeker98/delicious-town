@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     luckGem1006:
-      'Nouvelle gemme, la Pierre du destin : sertissez-la pour gagner de la chance (rangs 1 à 6 : +1, 2, 4, 8, 16, 24). Le rang 1 est vendu dans la Promo du jour et au marché noir, il tombe aussi des récompenses aléatoires et monte de rang comme les autres gemmes. Au bar, la chance au Chifoumi n’augmente plus que la probabilité de gagner ; avant, avec beaucoup de chance, on ne pouvait plus perdre',
+      'Nouvelle gemme, la Pierre du destin : sertissez-la pour gagner de la chance (rangs 1 à 6 : +1, 2, 4, 8, 16, 24). Le rang 1 est vendu à la boutique (pièces), dans la Promo du jour et au marché noir, il tombe aussi des récompenses aléatoires et monte de rang comme les autres gemmes. Au bar, la chance au Chifoumi n’augmente plus que la probabilité de gagner, et il reste toujours au moins 10 % de risque de perdre ; avant, avec beaucoup de chance, on ne pouvait plus perdre',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

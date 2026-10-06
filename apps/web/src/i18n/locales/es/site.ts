@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     luckGem1006:
-      'Nueva gema, la Piedra del destino: engástala para ganar suerte (rangos 1 a 6: +1, 2, 4, 8, 16, 24). El rango 1 se vende en la Oferta del día y en el mercado negro, también sale en premios aleatorios y sube de rango como las demás gemas. En el bar, la suerte en Piedra, papel o tijera ahora solo sube la probabilidad de ganar; antes, con mucha suerte, ya no se podía perder',
+      'Nueva gema, la Piedra del destino: engástala para ganar suerte (rangos 1 a 6: +1, 2, 4, 8, 16, 24). El rango 1 se vende en la tienda de monedas, en la Oferta del día y en el mercado negro, también sale en premios aleatorios y sube de rango como las demás gemas. En el bar, la suerte en Piedra, papel o tijera ahora solo sube la probabilidad de ganar, y siempre queda al menos un 10 % de perder; antes, con mucha suerte, ya no se podía perder',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:

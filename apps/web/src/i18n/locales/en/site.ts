@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     luckGem1006:
-      'New gem, the Fate Stone: socket it for Luck (tiers 1–6 give +1, 2, 4, 8, 16, 24). Tier 1 is sold in Today’s deal and the black market, it also comes from random rewards, and it levels up like the other gems. In the bar, Luck in Rock-paper-scissors now only raises your chance to win; before, with high Luck you could never lose',
+      'New gem, the Fate Stone: socket it for Luck (tiers 1–6 give +1, 2, 4, 8, 16, 24). Tier 1 is sold in the coin shop, Today’s deal and the black market, it also comes from random rewards, and it levels up like the other gems. In the bar, Luck in Rock-paper-scissors now only raises your chance to win, and you always have at least a 10% chance to lose; before, with high Luck you could never lose',
     power1006:
       'The cookware page now shows your attack and defense chef power in cook-offs (with every Luck bonus and set attack/defense bonuses), and the Chef Tower now says “My attack chef power”, so the two pages match',
     mcTabs1006:
