@@ -1,5 +1,5 @@
 import { GOODS } from '@dt/config';
-import type { BarExchangeResultDto, CupResultDto, FgResultDto, NumResultDto } from '@dt/shared';
+import type { BarExchangeResultDto, FgResultDto, NumResultDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { opLuck } from '../../core/luck';
 import { opNews, type Op } from '../../core/op';
@@ -9,8 +9,6 @@ import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { badInput, resultDto } from './common';
 import {
   barHand,
-  cupRound,
-  cupWinRate,
   fgAwardLevel,
   fgOutcome,
   nextTimes,
@@ -22,7 +20,7 @@ import {
 import { lockBarState, saveBarState } from './state';
 
 /** 每局都计活跃"酒吧娱乐"（action_map：bar.play）和本游戏的计数 */
-async function played(o: Op, game: 'fg' | 'cup' | 'num'): Promise<void> {
+async function played(o: Op, game: 'fg' | 'num'): Promise<void> {
   await emitAction(o, 'bar.play');
   await emitAction(o, `bar.${game}`);
 }
@@ -49,31 +47,6 @@ export async function playFg(o: Op, hand: number): Promise<FgResultDto> {
   }
   await played(o, 'fg');
   return { result: resultDto(result)!, barHand: barHand(hand, result), times, lucky, coin, award };
-}
-
-/**
- * 猜酒杯（设计文档 §3.3）。杯号不参与判定（计划裁定 7）；奖励不出礼券（计划裁定 1）。
- * 随机数顺序：猜中 → 随机奖励
- */
-export async function playCup(o: Op): Promise<CupResultDto> {
-  const t = o.tuning.bar;
-  const s = await lockBarState(o);
-  const prev = s.cup_result as BarResult | null;
-  const n = cupRound(prev, s.cup_times);
-  await consumeGoods(o, GOODS.mysteryTicket, n);
-  const luck = await opLuck(o);
-  const r = o.rng.next();
-  const win = r < cupWinRate(n, luck.rate);
-  const lucky = win && r >= 1 / (n + 1);
-  const times = win ? n : nextTimes(prev, s.cup_times, -1);
-  await saveBarState(o, { cup_result: win ? 1 : -1, cup_times: times });
-  let award: RandomAward | null = null;
-  if (win) {
-    award = await randomAward(o, { level: 2 + (n - 1), noTicket: true, bar: true });
-    if (n >= t.cupNewsStreak) opNews(o, 'bar.cup', { times: n, lucky });
-  }
-  await played(o, 'cup');
-  return { win, cost: n, times, lucky, award };
 }
 
 /**

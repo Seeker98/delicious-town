@@ -123,14 +123,14 @@ describe('划拳（设计文档 §3.2）', () => {
 });
 
 describe('酒吧概览', () => {
-  it('礼券、蟹币、三个游戏的上一局、猜酒杯下一局花费、老虎机保底和奖池', async () => {
+  it('礼券、蟹币、三个游戏的上一局、猜酒杯的花费和杯子、老虎机保底和奖池', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 3, [gid('蟹币')]: 2 } });
     const v = await t.game.bar.overview(ctx);
     expect(v).toMatchObject({
       tickets: 3,
       krabCoins: 2,
       fg: { result: null, times: 0 },
-      cup: { result: null, times: 0, nextCost: 1 },
+      cup: { result: null, times: 0, cost: 1, cups: [2, 3, 5, 7], round: null },
       num: { result: null, times: 0, cost: 8, max: 25 },
       slot: { emailVerified: false, lamp: false, floorLeft: 101, stats: [] },
       krabCoinTickets: 100,

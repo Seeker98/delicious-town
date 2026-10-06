@@ -10,7 +10,8 @@ import { nimTables, nimView, type NimState } from './nim';
 import { dealView, type DealState } from './deal';
 import { peekRounds } from './round';
 import { spiceTiers, spiceView, type SpiceState } from './spice';
-import { cupRound, slotFloorLeft, type BarResult, type BarTuning } from './rules';
+import { cupTiers, cupView, type CupState } from './cup';
+import { slotFloorLeft, type BarTuning } from './rules';
 
 export async function barView(
   db: Kysely<DB>,
@@ -50,11 +51,11 @@ export async function barView(
   const nim = rounds.nim as NimState | undefined;
   const spice = rounds.spice as SpiceState | undefined;
   const deal = rounds.deal as DealState | undefined;
+  const cup = rounds.cup as CupState | undefined;
   const have = (id: number) => {
     const r = items.find((x) => x.goods_id === id);
     return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
   };
-  const cupResult = (s?.cup_result ?? null) as BarResult | null;
   const total = config.slotPool.total;
   return {
     tickets: have(GOODS.mysteryTicket),
@@ -62,9 +63,13 @@ export async function barView(
     krabCoins: have(GOODS.krabCoin),
     fg: { result: resultDto(s?.fg_result ?? null), times: s?.fg_times ?? 0 },
     cup: {
-      result: resultDto(cupResult),
+      result: resultDto(s?.cup_result ?? null),
       times: s?.cup_times ?? 0,
-      nextCost: cupRound(cupResult, s?.cup_times ?? 0),
+      cost: t.cup.cost,
+      cups: t.cup.cups,
+      tiers: cupTiers(t.cup),
+      // 区服数值把轮数改少了时，超出的旧局不给前端（下次操作时作废）
+      round: cup && cup.round < t.cup.cups.length ? cupView(cup, t.cup) : null,
     },
     num: {
       result: resultDto(s?.num_result ?? null),
