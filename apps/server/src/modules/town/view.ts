@@ -51,7 +51,7 @@ export async function townView(d: GameDeps, world: WorldService, ctx: RestCtx): 
     activationPoints(d.db, d.config, restId, day),
   ]);
   const counters = new Map(counterRows.map((r) => [r.key, r.count]));
-  // 天气换过的时间要在 ensure（可能换天气）之后读；许愿的店名要等今天的星愿
+  // 新区服要等 ensure 建好 world_state 那一行再读；许愿的店名要等今天的星愿
   const [ws, blessRest] = await Promise.all([
     d.db
       .selectFrom('world_state')

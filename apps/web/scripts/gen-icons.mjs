@@ -26,7 +26,8 @@ const outDir = join(here, '../src/styles');
 writeFileSync(join(outDir, 'bootstrap-icons-subset.woff2'), subset);
 
 const version = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8')).version;
-const css = `/* 由 scripts/gen-icons.mjs 生成，别手改：Bootstrap Icons v${version} 里网页用到的 ${names.length} 个图标（MIT 许可） */
+const css = `/*! Bootstrap Icons v${version} | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 ${names.length} 个图标 */
 
 @font-face {
   font-display: block;

@@ -77,6 +77,14 @@ describe('下架名单（问题记录 367）', () => {
     ).toBe(true);
   });
 
+  it('厨塔长老会掉的厨具不能下架（backlog 第 ⑦ 批审查：原来没算进引用）', () => {
+    const drop = real.towerFloors.find((f) => f.elder.drops.length > 0)!.elder.drops[0]!;
+    const { errors } = build({ goods: [{ id: drop }], foods: [] });
+    expect(
+      errors.some((x) => x.startsWith(`retired goods ${drop} is still used by`) && x.includes('厨塔长老')),
+    ).toBe(true);
+  });
+
   it('食谱用到的食材不能下架：同一处只报一次，带次数', () => {
     const food = real.cookbooks[0]!.needFoods[1]![0]!.foodsId;
     const { errors } = build({ goods: [], foods: [{ id: food }] });

@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
  * 写 GOODS.xxx 常量的都自动算“代码里用到”（itemRefs 的 CODE_GOODS），不用管；
  * 道具编号来自变量的列在下面，每处写明道具整理工具（items/analyze.ts、config 的 itemRefs）里对应的来源。
  * 这条测试挂了：说明加了（或改了）发道具的地方——先确认整理工具能把这些道具算成有来源，再更新这张表。
+ * 只扫 grantGoodsOp / grantGoods 本身；经别的函数转一道的（extendHonor、openGift 的礼包内容）由调用处或礼包配置负责。
  */
 const KNOWN: Record<string, string[]> = {
   // 配置里的奖励（任务、活跃、竞猜、新手码……）：itemRefs 的 award()
@@ -20,8 +21,9 @@ const KNOWN: Record<string, string[]> = {
   // 后台给论坛帖子发奖、后台邮件：后台填的道具
   'modules/forum/admin.ts': ['goodsId'],
   'modules/mail/reward.ts': ['g.id'],
-  // 好友周榜（a.goods）、嘻哈周卡（weeklyCards）和工资：区服数值（tuningRefs）
+  // 好友周榜：代码常量 AWARDS（都是 GOODS 常量）
   'modules/friend/weekly.ts': ['goodsId'],
+  // 嘻哈周卡（weeklyCards）和工资：区服数值（tuningRefs）
   'modules/hiphop/weekly.ts': ['goodsId', 'wages.get(h.goods_id)!'],
   // 发展基金勋章：FUND 常量（CODE_GOODS）
   'modules/fund/service.ts': ['a.medal'],
@@ -38,7 +40,7 @@ const KNOWN: Record<string, string[]> = {
   'modules/mysterious/service.ts': ['goodsId'], // 同样是 GOODS.fragmentBase + 等级
   // 开店礼物：itemRefs 的 restaurantDefaults.giftGoods
   'modules/restaurant/service.ts': ['gift.id'],
-  // 结算掉落（神秘礼券、蟹币等，区服数值）
+  // 结算掉落：GOODS.dtTicket、GOODS.krabCoin（settle.ts）
   'modules/settlement/runner.ts': ['drop.goodsId'],
   // 商店、特价、黑市
   'modules/shop/service.ts': ['g.id', 'g.id', 'g.id'],
@@ -48,12 +50,13 @@ const KNOWN: Record<string, string[]> = {
   'modules/takeaway/claim.ts': ['id', 'customer'],
   // 神殿试炼两种药水（GOODS 常量）
   'modules/temple/trial.ts': ['b.way === 1 ? GOODS.creativePotion : GOODS.meditation'],
-  // 厨塔声望商店、长老掉落（层的 elder.drops）
+  // 厨塔声望商店、长老掉落（层的 elder.drops，itemRefs 的“厨塔长老”）
   'modules/tower/shop.ts': ['goodsId'],
   'modules/tower/tower.ts': ['id'],
-  // 星愿（itemRefs 的 bless）、镇长兑换（goodsExchange）、摇一摇彩蛋（区服数值）
+  // 星愿（itemRefs 的 bless）、镇长兑换（goodsExchange）
   'modules/town/bless.ts': ['b.goodsId!'],
   'modules/town/exchange.ts': ['e.goodsId'],
+  // 摇一摇彩蛋：GOODS.krabBurger、GOODS.krabCoin（rules.ts，数量来自区服数值）
   'modules/town/shake.ts': ['egg.goodsId'],
   // 雷神锤、镇长、和 NPC 聊天：按条件二选一的 GOODS 常量
   'modules/town/hammer.ts': ['gift'],
@@ -79,6 +82,17 @@ function grantSites(): Record<string, string[]> {
     // 包装函数本身不算
     if (file === 'modules/store/goods.ts' || file === 'modules/store/grant.ts') continue;
     const src = readFileSync(p, 'utf8');
+    // 每处调用都要认得出编号那一项；认不出（第一个参数写法特殊、带泛型等）就报出来，免得新调用静默漏掉
+    const calls = [...src.matchAll(/\bgrantGoods(Op)?\s*(<[^>]*>)?\s*\(/g)].filter(
+      (m) => !/function\s+$/.test(src.slice(Math.max(0, m.index - 20), m.index)),
+    ).length;
+    const parsed =
+      [...src.matchAll(/\bgrantGoodsOp\(\s*[\w.]+,\s*([^,]+?),/g)].length +
+      [...src.matchAll(/\bgrantGoods\(\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*([^,]+?),/g)].length;
+    if (calls !== parsed) {
+      out[file] = [`认不出 ${calls - parsed} 处调用的编号，改测试的正则`];
+      continue;
+    }
     const ids = [
       ...[...src.matchAll(/\bgrantGoodsOp\(\s*[\w.]+,\s*([^,]+?),/g)].map((m) => m[1]!),
       ...[...src.matchAll(/\bgrantGoods\(\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*([^,]+?),/g)].map((m) => m[1]!),
