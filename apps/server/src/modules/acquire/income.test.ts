@@ -50,16 +50,16 @@ describe('每天的收入汇总（收购 PR 1）', () => {
     await t.db
       .insertInto('rest_income_day')
       .values([
-        { rest_id: a.restaurantId, day: '2026-09-20', coin: 1, rounds: 1 },
-        { rest_id: a.restaurantId, day: '2026-09-30', coin: 10, rounds: 1 },
-        { rest_id: a.restaurantId, day: '2026-10-01', coin: 20, rounds: 1 },
+        { rest_id: a.restaurantId, day: '2000-01-01', coin: 1, rounds: 1 },
+        { rest_id: a.restaurantId, day: '2000-01-11', coin: 10, rounds: 1 },
+        { rest_id: a.restaurantId, day: '2000-01-12', coin: 20, rounds: 1 },
       ])
       .execute();
-    expect((await incomeSums(t.db, [a.restaurantId], '2026-09-25', '2026-10-01')).get(a.restaurantId)).toBe(
+    expect((await incomeSums(t.db, [a.restaurantId], '2000-01-06', '2000-01-12')).get(a.restaurantId)).toBe(
       10,
     );
-    expect(await incomeSums(t.db, [], '2026-09-25', '2026-10-01')).toEqual(new Map());
-    await pruneIncomeDays(t.db, '2026-09-21');
-    expect((await daysOf(a.restaurantId)).map((x) => x.day)).toEqual(['2026-09-30', '2026-10-01']);
+    expect(await incomeSums(t.db, [], '2000-01-06', '2000-01-12')).toEqual(new Map());
+    await pruneIncomeDays(t.db, '2000-01-02');
+    expect((await daysOf(a.restaurantId)).map((x) => x.day)).toEqual(['2000-01-11', '2000-01-12']);
   });
 });
