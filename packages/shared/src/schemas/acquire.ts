@@ -22,3 +22,55 @@ export interface AcquireResultDto {
   /** 原主人（或目标店自己、赎身时的老板）得到的 */
   sellerGot: number;
 }
+
+/** 一家店的收购摘要：榜单、名下的店、在售都用 */
+export interface AcquireBriefDto {
+  restId: number;
+  name: string;
+  level: number;
+  star: number;
+  base: number;
+  heat: number;
+  price: number;
+  owner: { restId: number; name: string } | null;
+  listed: { rate: number; price: number; until: string } | null;
+}
+
+/** 对方餐厅页、我的身价：再加保护期和“我能不能收” */
+export interface AcquireRestDto extends AcquireBriefDto {
+  protectedUntil: string | null;
+  /** 我能不能强收：能为 null；不能时是原因（no_state = 还不到 2 星、没有身价） */
+  acquireBlock: string | null;
+  /** 我能不能买挂牌：同上 */
+  listedBlock: string | null;
+}
+
+export interface AcquireViewDto {
+  me: AcquireRestDto;
+  holdings: AcquireBriefDto[];
+  maxHoldings: number;
+  taxRate: number;
+  listMinRate: number;
+  listDays: number;
+  protectDays: number;
+}
+
+export interface AcquireInvestRowDto {
+  restId: number;
+  name: string;
+  /** 名下几家 */
+  holdings: number;
+  /** 名下的店身价合计 */
+  value: number;
+}
+
+/** 身价榜、投资榜：board 指定的那个有数，另一个是空数组 */
+export interface AcquireRankDto {
+  board: 'price' | 'invest';
+  price: AcquireBriefDto[];
+  invest: AcquireInvestRowDto[];
+}
+
+export interface AcquireMarketDto {
+  items: AcquireBriefDto[];
+}

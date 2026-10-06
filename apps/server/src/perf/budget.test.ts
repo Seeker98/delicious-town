@@ -46,3 +46,26 @@ describe('常用接口的查询条数（质量期 ③）', () => {
     expect(n).toBeLessThanOrEqual(max);
   });
 });
+
+/** 收购（问题记录 421）默认关：单独开一个打开收购的区服数（收购 PR 1） */
+const ACQUIRE_BUDGET: Record<string, number> = {
+  '/acquire': 4,
+  '/acquire/rank?board=price': 2,
+  '/acquire/rank?board=invest': 2,
+  '/acquire/market': 2,
+};
+
+describe('收购接口的查询条数（收购 PR 1）', () => {
+  it.each(Object.entries(ACQUIRE_BUDGET))('%s 不超过 %i 条', async (path, max) => {
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { acquire: true } }) })
+      .execute();
+    const p = await playerIn(ctx, shardId);
+    await call(ctx.app, 'GET', '/api/v1' + path, { cookie: p.cookie });
+    const { n, result } = await q.count(() => call(ctx.app, 'GET', '/api/v1' + path, { cookie: p.cookie }));
+    expect(result.status).toBe(200);
+    expect(n).toBeLessThanOrEqual(max);
+  });
+});

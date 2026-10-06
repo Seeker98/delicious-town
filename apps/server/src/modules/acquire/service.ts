@@ -1,10 +1,21 @@
-import type { AcquireResultDto } from '@dt/shared';
+import { sql } from 'kysely';
+import {
+  ErrorCode,
+  type AcquireBriefDto,
+  type AcquireInvestRowDto,
+  type AcquireMarketDto,
+  type AcquireRankDto,
+  type AcquireRestDto,
+  type AcquireResultDto,
+  type AcquireViewDto,
+} from '@dt/shared';
 import { gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, restLog, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { withRestaurants } from '../../db/tx';
+import { AppError } from '../../http/errors';
 import { isBanned } from '../admin/ban';
 import { linkedAccounts } from '../exchange/guard';
 import {
@@ -17,7 +28,38 @@ import {
   validListRate,
   type T,
 } from './rules';
-import { ensureState, lockState, type AcquireStateRow } from './state';
+import { baseOf, ensureState, lockState, type AcquireStateRow } from './state';
+
+const RANK_SIZE = 50;
+const MARKET_SIZE = 100;
+
+interface BriefRow {
+  rest_id: number;
+  name: string;
+  level: number;
+  star_level: number;
+  base: number;
+  heat: number;
+  owner_rest_id: number | null;
+  owner_name: string | null;
+  list_rate: number | null;
+  list_until: Date | null;
+}
+
+function briefOf(x: BriefRow, now: Date): AcquireBriefDto {
+  const listed = x.list_rate !== null && x.list_until !== null && x.list_until > now;
+  return {
+    restId: x.rest_id,
+    name: x.name,
+    level: x.level,
+    star: x.star_level,
+    base: x.base,
+    heat: x.heat,
+    price: priceOf(x),
+    owner: x.owner_rest_id === null ? null : { restId: x.owner_rest_id, name: x.owner_name ?? '' },
+    listed: listed ? { rate: x.list_rate!, price: listPrice(x)!, until: x.list_until!.toISOString() } : null,
+  };
+}
 
 const DAY_MS = 86_400_000;
 
@@ -332,7 +374,225 @@ export function createAcquireService(d: GameDeps) {
     });
   }
 
-  return { buy, redeem, release, list, unlist };
+  /** 一批店的摘要：店名、等级、星级、身价、老板名字、挂牌；一条查询读完 */
+  async function briefs(ids: number[], now: Date): Promise<Map<number, AcquireBriefDto>> {
+    if (ids.length === 0) return new Map();
+    const rows = await d.db
+      .selectFrom('acquire_state as s')
+      .innerJoin('restaurant as r', 'r.id', 's.rest_id')
+      .leftJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+      .select([
+        's.rest_id',
+        'r.name',
+        'r.level',
+        'r.star_level',
+        's.base',
+        's.heat',
+        's.owner_rest_id',
+        'o.name as owner_name',
+        's.list_rate',
+        's.list_until',
+      ])
+      .where('s.rest_id', 'in', ids)
+      .execute();
+    return new Map(rows.map((x) => [x.rest_id, briefOf(x, now)]));
+  }
+
+  /**
+   * 一家店的身价、老板、挂牌，和“我”能不能强收、买挂牌（对方餐厅页、我的身价用）。
+   * 还没有状态行时不建行：不到 minStar 两项都是 no_state；到了的按近几天收入算出基础身价显示
+   */
+  async function restOf(ctx: RestCtx, restId: number, t: T, now: Date): Promise<AcquireRestDto> {
+    const row = await d.db
+      .selectFrom('restaurant as r')
+      .innerJoin('account as a', 'a.id', 'r.account_id')
+      .leftJoin('acquire_state as s', 's.rest_id', 'r.id')
+      .leftJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+      .select([
+        'r.id',
+        'r.shard_id',
+        'r.name',
+        'r.level',
+        'r.star_level',
+        'r.npc',
+        'r.account_id',
+        'o.account_id as owner_account_id',
+        'a.banned_at',
+        'a.banned_until',
+        's.rest_id as state_id',
+        's.base',
+        's.heat',
+        's.owner_rest_id',
+        'o.name as owner_name',
+        's.list_rate',
+        's.list_until',
+        's.protected_until',
+      ])
+      .where('r.id', '=', restId)
+      .executeTakeFirst();
+    if (!row || row.shard_id !== ctx.shardId)
+      throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId });
+    const hasState = row.state_id !== null;
+    const brief = briefOf(
+      {
+        rest_id: row.id,
+        name: row.name,
+        level: row.level,
+        star_level: row.star_level,
+        base: hasState ? row.base! : await baseOf(d.db, restId, t, now),
+        heat: hasState ? row.heat! : 1,
+        owner_rest_id: row.owner_rest_id,
+        owner_name: row.owner_name,
+        list_rate: row.list_rate,
+        list_until: row.list_until,
+      },
+      now,
+    );
+    const protectedUntil = row.protected_until;
+    if (!hasState && row.star_level < t.minStar)
+      return { ...brief, protectedUntil: null, acquireBlock: 'no_state', listedBlock: 'no_state' };
+    const protectedIso = protectedUntil && protectedUntil > now ? protectedUntil.toISOString() : null;
+    // 自己的店：不用再查别的
+    if (restId === ctx.restaurantId)
+      return { ...brief, protectedUntil: protectedIso, acquireBlock: 'self', listedBlock: 'self' };
+    const [mine, holdings, facts, links] = await Promise.all([
+      d.db
+        .selectFrom('acquire_state')
+        .select('owner_rest_id')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst(),
+      holdingsOf(d.db, ctx.restaurantId),
+      tradeFacts(d.db, ctx.restaurantId, restId, t, now),
+      // 关联账号（共用设备 / IP）：页面上先标出来；真正买的时候还会再查并记录
+      linkedAccounts(
+        d.db,
+        { accountId: ctx.accountId, ip: ctx.ip, deviceId: ctx.deviceId },
+        [row.account_id, ...(row.owner_account_id === null ? [] : [row.owner_account_id])],
+        t.linkDays,
+        now,
+      ),
+    ]);
+    const facts0 = {
+      buyerId: ctx.restaurantId,
+      targetId: restId,
+      targetOwnerId: row.owner_rest_id,
+      buyerOwned: (mine?.owner_rest_id ?? null) !== null,
+      holdings,
+      targetStar: row.star_level,
+      targetNpc: row.npc,
+      targetBanned: isBanned(row, now),
+      protectedUntil,
+      todayCount: facts.todayCount,
+      pairRecent: facts.pairRecent,
+      listed: brief.listed !== null,
+      now,
+    };
+    return {
+      ...brief,
+      protectedUntil: protectedIso,
+      acquireBlock: buyBlock(facts0, t, 'acquire') ?? (links.size > 0 ? 'linked' : null),
+      listedBlock: buyBlock(facts0, t, 'listed') ?? (links.size > 0 ? 'linked' : null),
+    };
+  }
+
+  async function settingsOf(ctx: RestCtx): Promise<T> {
+    return (await d.shards.ensureFeature(ctx.shardId, 'acquire')).tuning.acquire;
+  }
+
+  /** 我的：我的身价、老板，名下的店（按身价从高到低），和几项规则数 */
+  async function view(ctx: RestCtx): Promise<AcquireViewDto> {
+    const t = await settingsOf(ctx);
+    const now = d.now();
+    const holdIds = (
+      await d.db
+        .selectFrom('acquire_state')
+        .select('rest_id')
+        .where('owner_rest_id', '=', ctx.restaurantId)
+        .execute()
+    ).map((x) => x.rest_id);
+    const [me, m] = await Promise.all([restOf(ctx, ctx.restaurantId, t, now), briefs(holdIds, now)]);
+    return {
+      me,
+      holdings: [...m.values()].sort((x, y) => y.price - x.price || x.restId - y.restId),
+      maxHoldings: t.maxHoldings,
+      taxRate: t.taxRate,
+      listMinRate: t.listMinRate,
+      listDays: t.listDays,
+      protectDays: t.protectDays,
+    };
+  }
+
+  async function rest(ctx: RestCtx, restId: number): Promise<AcquireRestDto> {
+    return restOf(ctx, restId, await settingsOf(ctx), d.now());
+  }
+
+  /** 身价榜（身价前 50）、投资榜（名下身价合计前 50）：只算 board 指定的那个 */
+  async function rank(ctx: RestCtx, board: 'price' | 'invest'): Promise<AcquireRankDto> {
+    await settingsOf(ctx);
+    const now = d.now();
+    if (board === 'invest') {
+      const rows = await d.db
+        .selectFrom('acquire_state as s')
+        .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+        .select([
+          's.owner_rest_id',
+          'o.name',
+          (eb) => eb.fn.countAll<number>().as('n'),
+          sql<number>`sum(round(s.base * s.heat))`.as('value'),
+        ])
+        .where('s.shard_id', '=', ctx.shardId)
+        .where('s.owner_rest_id', 'is not', null)
+        .groupBy(['s.owner_rest_id', 'o.name'])
+        .orderBy('value', 'desc')
+        .orderBy('s.owner_rest_id')
+        .limit(RANK_SIZE)
+        .execute();
+      const invest: AcquireInvestRowDto[] = rows.map((r) => ({
+        restId: r.owner_rest_id!,
+        name: r.name,
+        holdings: Number(r.n),
+        value: Number(r.value),
+      }));
+      return { board, price: [], invest };
+    }
+    const top = await d.db
+      .selectFrom('acquire_state as s')
+      .innerJoin('restaurant as r', 'r.id', 's.rest_id')
+      .select('s.rest_id')
+      .where('s.shard_id', '=', ctx.shardId)
+      .where('r.npc', '=', false)
+      .orderBy(sql`s.base * s.heat`, 'desc')
+      .orderBy('s.rest_id')
+      .limit(RANK_SIZE)
+      .execute();
+    const m = await briefs(
+      top.map((x) => x.rest_id),
+      now,
+    );
+    return { board, price: top.map((x) => m.get(x.rest_id)!), invest: [] };
+  }
+
+  /** 在售：正在挂牌的店，挂牌价从低到高 */
+  async function market(ctx: RestCtx): Promise<AcquireMarketDto> {
+    await settingsOf(ctx);
+    const now = d.now();
+    const rows = await d.db
+      .selectFrom('acquire_state')
+      .select('rest_id')
+      .where('shard_id', '=', ctx.shardId)
+      .where('list_until', '>', now)
+      .orderBy(sql`base * heat * list_rate`)
+      .orderBy('rest_id')
+      .limit(MARKET_SIZE)
+      .execute();
+    const m = await briefs(
+      rows.map((x) => x.rest_id),
+      now,
+    );
+    return { items: rows.map((x) => m.get(x.rest_id)!) };
+  }
+
+  return { buy, redeem, release, list, unlist, view, rest, rank, market };
 }
 
 export type AcquireService = ReturnType<typeof createAcquireService>;
