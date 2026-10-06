@@ -33,6 +33,16 @@ describe('新闻文案', () => {
     expect(newsText(n('icon.buy', p), names)).toBe('小王的店买下了限定称号「金秋食神」');
   });
 
+  it('猜酒杯改版（问题记录 427-5）：新闻写闯过几轮；改版前的旧新闻照旧写连中几次', () => {
+    expect(newsText(n('bar.cup', { round: 3, cups: 5 }), names)).toBe(
+      '小王的店在酒吧猜酒杯连闯 3 轮，从 5 个杯子里猜中了骰子',
+    );
+    expect(newsText(n('bar.cup.big', { round: 4, cups: 7 }), names)).toBe(
+      '小王的店在酒吧猜酒杯闯过全部 4 轮，从 7 个杯子里猜中了骰子！',
+    );
+    expect(newsText(n('bar.cup', { times: 4, lucky: false }), names)).toBe('小王的店在酒吧猜酒杯连中 4 次');
+  });
+
   it('豪华一番赏的新闻写“豪华一番赏”（240-2）', () => {
     expect(newsText(n('kuji.big', { tier: 'A', line: 'deluxe' }), names)).toContain('豪华一番赏');
     expect(newsText(n('kuji.big', { tier: 'last', line: 'deluxe' }), names)).toContain('豪华一番赏');

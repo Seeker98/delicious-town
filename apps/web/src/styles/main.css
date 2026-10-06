@@ -851,6 +851,40 @@ details.dt-card > summary {
   flex-wrap: wrap;
   column-gap: 12px;
 }
+/* 猜酒杯（问题记录 427-5）：一行最多 5 个杯子，列数由面板按杯子数给 */
+.dt-guess-grid {
+  display: grid;
+  gap: 4px;
+  max-width: 420px;
+}
+.dt-guess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 52px;
+  padding: 4px 2px;
+  border: 1px solid var(--dt-line);
+  border-radius: 8px;
+  background: var(--dt-primary-soft);
+  font: inherit;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.dt-guess:disabled {
+  cursor: default;
+}
+.dt-guess-pick {
+  border-color: var(--dt-primary);
+  border-width: 2px;
+}
+.dt-guess-ball {
+  background: var(--dt-soft-success);
+  color: var(--dt-ink-success);
+}
+.dt-guess-text {
+  font-size: 12px;
+}
 /* 秘制调料（问题记录 427-2）：4 个空位一行；10 种调料每行 5 个 */
 .dt-spice-slots {
   display: grid;

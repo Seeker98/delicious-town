@@ -1,8 +1,13 @@
 /** 小镇广播的新闻类型 */
 export const BROADCAST_NEWS = 'town.broadcast';
 
-/** 按广播醒目显示的新闻：玩家喇叭和一番赏大赏（一番赏设计 §6）；首页和小镇新闻共用，两处一致 */
-export const BROADCAST_STYLE_NEWS: readonly string[] = [BROADCAST_NEWS, 'kuji.big', 'fund.big'];
+/** 按广播醒目显示的新闻：玩家喇叭、一番赏大赏（一番赏设计 §6）、猜酒杯通关等；首页和小镇新闻共用，两处一致 */
+export const BROADCAST_STYLE_NEWS: readonly string[] = [
+  BROADCAST_NEWS,
+  'kuji.big',
+  'fund.big',
+  'bar.cup.big',
+];
 export const isBroadcastStyle = (type: string): boolean => BROADCAST_STYLE_NEWS.includes(type);
 
 /** 代码里会写入的全部新闻类型；前端 utils/news.ts 必须为每一种写文案（types.test 钉住） */
@@ -11,6 +16,7 @@ export const NEWS_TYPES: readonly string[] = [
   'acquire.redeem',
   'activity.coopRank',
   'bar.cup',
+  'bar.cup.big',
   'bar.fg',
   'bar.num',
   'bar.slot',

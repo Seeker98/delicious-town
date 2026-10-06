@@ -147,6 +147,12 @@ export default {
     'bar.memory': (p) => `记忆调酒第 ${n(p, 'level')} 关${p.correct ? '调对了' : '没调对'}`,
     'bar.nim': (p) =>
       `最后一颗糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '赢了' : '输了'}`,
+    'bar.cup': (p) =>
+      p.result === 'lose'
+        ? `猜酒杯第 ${n(p, 'round')} 轮猜错了`
+        : p.result === 'clear'
+          ? `猜酒杯 ${n(p, 'round')} 轮全部猜中，得到 ${n(p, 'awards')} 份奖励`
+          : `猜酒杯闯过 ${n(p, 'round')} 轮后收手，得到 ${n(p, 'awards')} 份奖励`,
     'bar.spice': (p) =>
       p.result === 'win' ? `秘制调料第 ${n(p, 'tries')} 次猜中了` : `秘制调料 ${n(p, 'tries')} 次都没猜中`,
     'bar.deal': (p, names) =>

@@ -1,6 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
-  barCupBody,
+  barCupGuessBody,
   barDartsThrowBody,
   barDevilDrinkBody,
   barDevilStartBody,
@@ -25,10 +25,11 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
   return async (r) => {
     r.get('/bar', async (req) => ok(await svc.overview(restCtxOf(req))));
     r.post('/bar/fg', async (req) => okOp(await svc.fg(restCtxOf(req), parse(barFgBody, req.body))));
-    r.post('/bar/cup', async (req) => {
-      parse(barCupBody, req.body);
-      return okOp(await svc.cup(restCtxOf(req)));
-    });
+    r.post('/bar/cup/guess', async (req) =>
+      okOp(await svc.cupGuess(restCtxOf(req), parse(barCupGuessBody, req.body))),
+    );
+    r.post('/bar/cup/stop', async (req) => okOp(await svc.cupStop(restCtxOf(req))));
+    r.post('/bar/cup/next', async (req) => okOp(await svc.cupNext(restCtxOf(req))));
     r.post('/bar/num', async (req) => okOp(await svc.num(restCtxOf(req), parse(barNumBody, req.body))));
     r.post('/bar/exchange', async (req) =>
       okOp(await svc.exchange(restCtxOf(req), parse(barExchangeBody, req.body))),

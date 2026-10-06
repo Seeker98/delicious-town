@@ -45,8 +45,13 @@ function predictResult(p: P): string {
 
 const news: Messages['news'] = {
   render: {
+    // 改版前（问题记录 427-5）的新闻没有 round，按连中次数写
     'bar.cup': (w, p) =>
-      `${w} guessed the cup ${num(p.times)} ${plEn(num(p.times), 'time', 'times')} in a row at the bar`,
+      p.round == null
+        ? `${w} guessed the cup ${num(p.times)} ${plEn(num(p.times), 'time', 'times')} in a row at the bar`
+        : `${w} cleared ${num(p.round)} rounds of the cup game at the bar, finding the die among ${num(p.cups)} cups`,
+    'bar.cup.big': (w, p) =>
+      `${w} cleared all ${num(p.round)} rounds of the cup game at the bar, finding the die among ${num(p.cups)} cups!`,
     'bar.fg': (w, p) =>
       `${w} won ${num(p.times)} ${plEn(num(p.times), 'round', 'rounds')} of rock-paper-scissors in a row at the bar`,
     'bar.num': (w) => `${w} hit the number on the bar's wheel`,

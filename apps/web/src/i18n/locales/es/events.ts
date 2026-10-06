@@ -156,6 +156,12 @@ const events: Messages['events'] = {
     'bar.memory': (p) => `Cóctel Memoria nivel ${n(p, 'level')}: ${p.correct ? 'acertaste' : 'fallaste'}`,
     'bar.nim': (p) =>
       `El último caramelo (mesa de ${p.table === 'expert' ? 'expertos' : 'principiantes'}): ${p.result === 'win' ? 'ganaste' : 'perdiste'}`,
+    'bar.cup': (p) =>
+      p.result === 'lose'
+        ? `Vasos: fallo en la ronda ${n(p, 'round')}`
+        : p.result === 'clear'
+          ? `Vasos: superadas las ${n(p, 'round')} rondas, ${n(p, 'awards')} ${plEs(n(p, 'awards'), 'premio', 'premios')}`
+          : `Vasos: plantado tras ${n(p, 'round')} ${plEs(n(p, 'round'), 'ronda', 'rondas')}, ${n(p, 'awards')} ${plEs(n(p, 'awards'), 'premio', 'premios')}`,
     'bar.spice': (p) =>
       p.result === 'win'
         ? `Mezcla secreta: descubierta en el intento ${n(p, 'tries')}`

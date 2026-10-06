@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cup1007:
+      'El juego de los vasos del bar cambia: hasta 4 rondas con 2, 3, 5 y 7 vasos, y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Cuanto más avanzas, mayor el premio: plantarte tras la ronda 3 sale en las noticias, y superar las 4 rondas da 8 grandes premios y un anuncio para todo el pueblo. Cada partida cuesta 1 vale misterioso, ya no sube con la racha; la probabilidad es uno entre el número de vasos (la suerte sigue ayudando)',
     deal1007:
       'Nuevo juego del bar, «Trato o no trato»: 10 cajas en la mesa, cada una con ingredientes; la mayor tiene cinco ingredientes universales de nivel 5. Elige una como tu caja y abre las demás ronda a ronda. Tras cada ronda, el banquero del pueblo te ofrece monedas por tu caja: acepta y te vas, o sigue abriendo; si nunca aceptas, te llevas lo que haya en tu caja. 10.000 monedas por partida, 3 partidas al día',
     spice1007:

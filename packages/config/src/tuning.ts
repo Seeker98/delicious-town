@@ -454,7 +454,6 @@ export const tuningSchema = z.object({
     /** 划拳输的最低概率：幸运加到胜上最多加到 1 - 平 - 它（问题记录 419） */
     fgLoseMin: num.min(0).max(1),
     fgNewsStreak: int.min(1),
-    cupNewsStreak: int.min(1),
     numMax: int.min(2),
     numCost: int.min(1),
     numLuckDiv: num,
@@ -489,6 +488,23 @@ export const tuningSchema = z.object({
           'minLevel must increase',
         ),
     }),
+    /** 猜酒杯（问题记录 427-5）：一局最多 cups.length 轮，第 i 轮 cups[i] 个杯子；第 i 轮猜中可以收手拿 tiers[i] */
+    cup: z
+      .object({
+        cost: int.min(0),
+        cups: z.array(int.min(2).max(10)).min(1),
+        maxRate: num.min(0).max(1),
+        tiers: z
+          .array(
+            z.object({
+              awards: int.min(1),
+              level: int.min(1),
+              news: z.enum(['news', 'broadcast']).nullable(),
+            }),
+          )
+          .min(1),
+      })
+      .refine((x) => x.cups.length === x.tiers.length, 'cups and tiers must have the same length'),
     /** 魔鬼辣杯（子项目 4C-3） */
     devil: z.object({
       stakes: z.array(int.min(1)).min(1),

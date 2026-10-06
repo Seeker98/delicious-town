@@ -34,15 +34,27 @@ const bar: Messages['bar'] = {
   noMoreToday: 'Hoy no te quedan partidas',
   startFailed: 'No se pudo empezar',
   cup: {
-    noTickets: (n) => `No tienes suficientes vales misteriosos (esta ronda cuesta ${n})`,
-    lose: (times) =>
-      `Fallaste${times > 1 ? `, ${times} ${plEs(times, 'fallo seguido', 'fallos seguidos')}` : ''}. La próxima ronda empieza en 1 vale`,
-    win: (lucky, times, award) => `${lucky}¡Acertaste! Racha de ${times}${award}`,
+    rule: (cost, rounds) =>
+      `Cada partida cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}. Hasta ${rounds} rondas, con más vasos en cada ronda y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Los premios suelen ser ingredientes: cuanto más avances, de más nivel y más probable que sean raros.`,
+    tierLine: (round, cups, awards, news) =>
+      `Ronda ${round} (${cups} vasos): ${awards} ${plEs(awards, 'premio', 'premios')}${news === 'broadcast' ? ', anuncio para todo el pueblo' : news === 'news' ? ', sale en las noticias' : ''}`,
+    noTickets: (n) => `No tienes suficientes vales misteriosos (${n} por partida)`,
+    pick: (round, cups) => `Ronda ${round}: ${cups} vasos, elige uno`,
+    won: (lucky, awards, round, cups) =>
+      `${lucky}¡Acertaste! ¿Te plantas con ${awards} ${plEs(awards, 'premio', 'premios')} o sigues a la ronda ${round} (${cups} vasos)?`,
+    stop: 'Plantarse',
+    next: 'Seguir',
+    lose: (cup) => `Fallaste. El dado estaba en el vaso ${cup}.`,
+    stopped: (round) => `Te plantaste tras superar ${round} ${plEs(round, 'ronda', 'rondas')}`,
+    clear: (lucky) => `${lucky}¡Acertaste! Superaste todas las rondas`,
+    got: (text) => `Obtienes ${text}`,
     failed: 'No se pudo jugar',
-    rule1: 'Elige un vaso. Esta ronda cuesta ',
-    rule2:
-      ' vales misteriosos; cuanto más larga la racha, mayor la apuesta y mejor el premio. Los premios suelen ser ingredientes: cuanto más larga la racha, de más nivel y más probable que sean raros.',
     cup: (n) => `Vaso ${n}`,
+    /** 杯子状态、结果和奖励之间的分隔 */
+    sep: ', ',
+    yours: 'tu elección',
+    ball: 'aquí está el dado',
+    cupLabel: (n, state) => (state ? `Vaso ${n}, ${state}` : `Vaso ${n}`),
   },
   fg: {
     noTickets: 'No tienes suficientes vales misteriosos (1 por ronda)',
@@ -248,7 +260,7 @@ const bar: Messages['bar'] = {
     chat: [
       '¿Otra vez por aquí? ¿A qué jugamos hoy?',
       '¿Sin vales misteriosos? Ven a charlar conmigo a la plaza, los regalo cada día.',
-      'Cuanto más larga tu racha con los vasos, mayor la apuesta y el premio. Sabe cuándo parar.',
+      'En los vasos, cada ronda trae más vasos y mejor premio, pero un fallo te deja sin nada. Sabe cuándo parar.',
       'Uno de los vasos del Chile del Diablo pica muchísimo. Piénsalo antes de beber.',
       'Fíjate bien en el orden del Cóctel Memoria. Las recetas se alargan.',
       'La tragaperras gira 3 rodillos. Cuanto más juegas, más cerca está el raro asegurado.',

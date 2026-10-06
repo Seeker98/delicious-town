@@ -39,7 +39,13 @@ function predictResult(p: P): string {
 
 export default {
   render: news({
-    'bar.cup': (w, p) => `${w}在酒吧猜酒杯连中 ${num(p.times)} 次`,
+    // 改版前（问题记录 427-5）的新闻没有 round，按连中次数写
+    'bar.cup': (w, p) =>
+      p.round == null
+        ? `${w}在酒吧猜酒杯连中 ${num(p.times)} 次`
+        : `${w}在酒吧猜酒杯连闯 ${num(p.round)} 轮，从 ${num(p.cups)} 个杯子里猜中了骰子`,
+    'bar.cup.big': (w, p) =>
+      `${w}在酒吧猜酒杯闯过全部 ${num(p.round)} 轮，从 ${num(p.cups)} 个杯子里猜中了骰子！`,
     'bar.fg': (w, p) => `${w}在酒吧猜拳连胜 ${num(p.times)} 次`,
     'bar.num': (w) => `${w}在酒吧转数字转中了`,
     'bar.slot': (w, p, x) =>

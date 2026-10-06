@@ -154,6 +154,12 @@ const events: Messages['events'] = {
       `Memory Mixing level ${n(p, 'level')}: ${p.correct ? 'got it right' : 'got it wrong'}`,
     'bar.nim': (p) =>
       `Last Candy (${p.table === 'expert' ? 'expert' : 'beginner'} table): ${p.result === 'win' ? 'won' : 'lost'}`,
+    'bar.cup': (p) =>
+      p.result === 'lose'
+        ? `Cup game: wrong guess in round ${n(p, 'round')}`
+        : p.result === 'clear'
+          ? `Cup game: cleared all ${n(p, 'round')} rounds, ${n(p, 'awards')} ${plEn(n(p, 'awards'), 'reward', 'rewards')}`
+          : `Cup game: stopped after ${n(p, 'round')} ${plEn(n(p, 'round'), 'round', 'rounds')}, ${n(p, 'awards')} ${plEn(n(p, 'awards'), 'reward', 'rewards')}`,
     'bar.spice': (p) =>
       p.result === 'win'
         ? `Secret Blend: cracked on try ${n(p, 'tries')}`

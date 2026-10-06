@@ -33,15 +33,29 @@ export default {
     `今天 ${played}/${max} 局，每局 ${cost} 張神秘禮券`,
   noMoreToday: '今天的局數用完了',
   startFailed: '開局失敗',
+  /** 猜酒杯（問題記錄 427-5）：一局闖關，猜中可以收手 */
   cup: {
-    noTickets: (n: number) => `神秘禮券不夠（這一局要 ${n} 張）`,
-    lose: (times: number) => `猜錯了${times > 1 ? `，已經連錯 ${times} 次` : ''}。下一局從 1 張禮券開始`,
-    win: (lucky: string, times: number, award: string) => `${lucky}猜對了！${times} 連勝${award}`,
+    rule: (cost: number, rounds: number) =>
+      `每局 ${cost} 張神秘禮券。一局最多 ${rounds} 輪，杯子一輪比一輪多，只有一個杯子裡有骰子。每猜中一輪，可以收手拿這一輪的獎勵，也可以繼續闖下一輪；猜錯就什麼都沒有。獎勵多半是食材，越往後越高階、越可能是稀有食材。`,
+    tierLine: (round: number, cups: number, awards: number, news: 'news' | 'broadcast' | null) =>
+      `第 ${round} 輪（${cups} 個杯子）：${awards} 份獎勵${news === 'broadcast' ? '，全服廣播' : news === 'news' ? '，上新聞' : ''}`,
+    noTickets: (n: number) => `神秘禮券不夠（每局 ${n} 張）`,
+    pick: (round: number, cups: number) => `第 ${round} 輪：${cups} 個杯子，選一個`,
+    won: (lucky: string, awards: number, round: number, cups: number) =>
+      `${lucky}猜中了！收手拿 ${awards} 份獎勵，還是繼續闖第 ${round} 輪（${cups} 個杯子）？`,
+    stop: '收手',
+    next: '繼續',
+    lose: (cup: number) => `猜錯了，骰子在 ${cup} 號杯。`,
+    stopped: (round: number) => `收手了，闖過 ${round} 輪`,
+    clear: (lucky: string) => `${lucky}猜中了！全部通關`,
+    got: (text: string) => `得到 ${text}`,
     failed: '猜酒杯失敗',
-    rule1: '選一個酒杯。這一局要 ',
-    rule2:
-      ' 張神秘禮券；連勝越多，花得越多、獎勵越好。獎勵多半是食材，連勝越多食材越高階、越可能是稀有食材。',
     cup: (n: number) => `${n} 號杯`,
+    /** 杯子狀態、結果和獎勵之間的分隔 */
+    sep: '，',
+    yours: '你選的',
+    ball: '骰子在這裡',
+    cupLabel: (n: number, state: string) => (state ? `${n} 號杯，${state}` : `${n} 號杯`),
   },
   fg: {
     noTickets: '神秘禮券不夠（每局 1 張）',
@@ -236,7 +250,7 @@ export default {
     chat: [
       '來啦？今天想玩點什麼？',
       '神秘禮券不夠了，就去廣場找我聊聊天，每天都送。',
-      '猜酒杯連勝越多，下注越大，獎勵也越好，見好就收哦。',
+      '猜酒杯每過一輪杯子更多、獎勵更好，可猜錯就全沒了，見好就收哦。',
       '魔鬼辣杯裡有一杯是特辣的，喝之前想清楚。',
       '記憶調酒要看清楚順序，越往後配方越長。',
       '老虎機每次開 3 格，抽得越多離保底越近。',

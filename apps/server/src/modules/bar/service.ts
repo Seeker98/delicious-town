@@ -3,7 +3,8 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { dartsAim, dartsStart, dartsThrow } from './darts';
 import { devilDrink, devilStart } from './devil';
-import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
+import { cupGuess, cupNext, cupStop } from './cup';
+import { exchangeKrabCoin, playFg, playNum } from './games';
 import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
 import { nimFirst, nimStart, nimTake } from './nim';
 import { spiceGuess, spiceStart } from './spice';
@@ -28,9 +29,14 @@ export function createBarService(d: GameDeps) {
     fg(ctx: RestCtx, b: { hand: number }) {
       return op(ctx, 'bar.fg', (o) => playFg(o, b.hand));
     },
-    /** 杯号只在路由里校验（计划裁定 7） */
-    cup(ctx: RestCtx) {
-      return op(ctx, 'bar.cup', (o) => playCup(o));
+    cupGuess(ctx: RestCtx, b: { cup: number; round: number | null }) {
+      return op(ctx, 'bar.cup', (o) => cupGuess(o, b.cup, b.round));
+    },
+    cupStop(ctx: RestCtx) {
+      return op(ctx, 'bar.cup', (o) => cupStop(o));
+    },
+    cupNext(ctx: RestCtx) {
+      return op(ctx, 'bar.cup', (o) => cupNext(o));
     },
     num(ctx: RestCtx, b: { num: number }) {
       return op(ctx, 'bar.num', (o) => playNum(o, b.num));

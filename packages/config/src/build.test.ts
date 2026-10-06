@@ -588,6 +588,19 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
 
+  it('猜酒杯改版的数值（问题记录 427-5）', () => {
+    const { bundle } = realBuild();
+    const c = bundle!.tuning.bar.cup;
+    expect(c).toMatchObject({ cost: 1, cups: [2, 3, 5, 7], maxRate: 0.95 });
+    expect(c.tiers).toEqual([
+      { awards: 1, level: 2, news: null },
+      { awards: 2, level: 4, news: null },
+      { awards: 4, level: 6, news: 'news' },
+      { awards: 8, level: 10, news: 'broadcast' },
+    ]);
+    expect('cupNewsStreak' in bundle!.tuning.bar).toBe(false);
+  });
+
   it('一掷千金的数值（问题记录 427-3）', () => {
     const { bundle } = realBuild();
     const d = bundle!.tuning.bar.deal;

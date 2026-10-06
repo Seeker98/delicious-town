@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    cup1007:
+      'Le jeu des gobelets du bar change : jusqu’à 4 manches avec 2, 3, 5 puis 7 gobelets, et un dé sous un seul d’entre eux. Chaque fois que vous trouvez, vous pouvez vous arrêter et prendre la récompense de la manche, ou passer à la suivante ; si vous vous trompez, vous repartez sans rien. Plus vous allez loin, plus la récompense est grande : s’arrêter après la manche 3 fait les gros titres, et réussir les 4 manches rapporte 8 grosses récompenses et une annonce à toute la ville. Chaque partie coûte 1 bon mystère, sans hausse avec la série ; la probabilité de trouver est d’une sur le nombre de gobelets (la chance aide toujours)',
     deal1007:
       'Nouveau jeu au bar, « À prendre ou à laisser » : 10 boîtes sur la table, chacune avec des ingrédients, la plus grosse avec cinq ingrédients universels de niveau 5. Choisissez votre boîte, puis ouvrez les autres manche après manche. Après chaque manche, le banquier de la ville propose des pièces pour votre boîte : acceptez et repartez, ou continuez d’ouvrir ; si vous refusez jusqu’au bout, vous gardez le contenu de votre boîte. 10 000 pièces la partie, 3 parties par jour',
     spice1007:

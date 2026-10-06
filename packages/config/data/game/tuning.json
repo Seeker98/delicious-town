@@ -261,7 +261,13 @@
   },
   "bar": {
     "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgLoseMin": 0.1, "fgNewsStreak": 5,
-    "cupNewsStreak": 4,
+    "cup": {
+      "cost": 1, "cups": [2, 3, 5, 7], "maxRate": 0.95,
+      "tiers": [
+        { "awards": 1, "level": 2, "news": null }, { "awards": 2, "level": 4, "news": null },
+        { "awards": 4, "level": 6, "news": "news" }, { "awards": 8, "level": 10, "news": "broadcast" }
+      ]
+    },
     "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
     "krabCoinTickets": 100,
     "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,

@@ -34,16 +34,27 @@ const bar: Messages['bar'] = {
   noMoreToday: "Plus de parties aujourd'hui",
   startFailed: 'Impossible de commencer',
   cup: {
-    noTickets: (n) => `Pas assez de bons mystère (cette manche en coûte ${n})`,
-    lose: (times) =>
-      `Raté${times > 1 ? `, ${times} ${plFr(times, 'erreur', 'erreurs')} de suite` : ''}. La prochaine manche repart à 1 bon`,
-    win: (lucky, times, award) =>
-      `${lucky}Gagné ! ${times} ${plFr(times, 'victoire', 'victoires')} d'affilée${award}`,
+    rule: (cost, rounds) =>
+      `Chaque partie coûte ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')}. Jusqu’à ${rounds} manches, avec plus de gobelets à chaque manche et un dé sous un seul d’entre eux. Chaque fois que vous trouvez, vous pouvez vous arrêter et prendre la récompense de la manche, ou passer à la suivante ; si vous vous trompez, vous repartez sans rien. Les récompenses sont surtout des ingrédients : plus vous allez loin, plus leur niveau est élevé et plus ils ont de chances d’être rares.`,
+    tierLine: (round, cups, awards, news) =>
+      `Manche ${round} (${cups} gobelets) : ${awards} ${plFr(awards, 'récompense', 'récompenses')}${news === 'broadcast' ? ', annonce à toute la ville' : news === 'news' ? ', fait les gros titres' : ''}`,
+    noTickets: (n) => `Pas assez de bons mystère (${n} par partie)`,
+    pick: (round, cups) => `Manche ${round} : ${cups} gobelets, choisissez-en un`,
+    won: (lucky, awards, round, cups) =>
+      `${lucky}Trouvé ! Vous arrêter avec ${awards} ${plFr(awards, 'récompense', 'récompenses')}, ou passer à la manche ${round} (${cups} gobelets) ?`,
+    stop: 'S’arrêter',
+    next: 'Continuer',
+    lose: (cup) => `Raté. Le dé était sous le gobelet ${cup}.`,
+    stopped: (round) => `Arrêt après ${round} ${plFr(round, 'manche réussie', 'manches réussies')}`,
+    clear: (lucky) => `${lucky}Trouvé ! Toutes les manches réussies`,
+    got: (text) => `Vous obtenez ${text}`,
     failed: 'Échec du jeu des gobelets',
-    rule1: 'Choisissez un gobelet. Cette manche coûte ',
-    rule2:
-      ' bons mystère ; plus la série est longue, plus la mise et la récompense sont grandes. Les récompenses sont surtout des ingrédients : plus la série est longue, plus leur niveau est élevé et plus ils ont de chances d’être rares.',
     cup: (n) => `Gobelet ${n}`,
+    /** 杯子状态、结果和奖励之间的分隔 */
+    sep: ', ',
+    yours: 'votre choix',
+    ball: 'le dé est ici',
+    cupLabel: (n, state) => (state ? `Gobelet ${n}, ${state}` : `Gobelet ${n}`),
   },
   fg: {
     noTickets: 'Pas assez de bons mystère (1 par manche)',
@@ -247,7 +258,7 @@ const bar: Messages['bar'] = {
     chat: [
       'Te revoilà ? À quoi on joue aujourd’hui ?',
       'Plus de bons mystère ? Viens discuter avec moi sur la place, j’en donne tous les jours.',
-      'Plus ta série aux gobelets est longue, plus la mise et le lot sont gros. Sache t’arrêter.',
+      'Aux gobelets, chaque manche a plus de gobelets et un meilleur lot, mais une erreur et tu perds tout. Sache t’arrêter.',
       'Un des verres du Piment du Diable est très épicé. Réfléchis avant de boire.',
       'Regarde bien l’ordre au Cocktail Mémoire. Les recettes s’allongent au fil des niveaux.',
       'La machine à sous tourne 3 rouleaux. Plus tu joues, plus le rare garanti approche.',
