@@ -246,6 +246,35 @@ describe('分红（收购 PR 2）', () => {
     expect(await dividends(o.restaurantId)).toEqual([]);
   });
 
+  it('老板和被收购的店近 30 天共用过设备或 IP：这家当天不发，别的照发', async () => {
+    const shardId = await createShard(t.db);
+    const o = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const [byIp, byDevice, clean] = [
+      await newRestaurant(t, { shardId }),
+      await newRestaurant(t, { shardId }),
+      await newRestaurant(t, { shardId }),
+    ];
+    await ownerIncome(o.restaurantId, 10_000_000);
+    for (const r of [byIp, byDevice, clean]) {
+      await own(r.restaurantId, shardId, o.restaurantId);
+      await income(r.restaurantId, YDAY, 1_000_000);
+    }
+    const trace = (accountId: number, ip: string, deviceId: string | null, lastSeen = NOW) =>
+      t.db
+        .insertInto('login_trace')
+        .values({ account_id: accountId, ip, device_id: deviceId, last_seen: lastSeen })
+        .execute();
+    await trace(o.accountId, '10.1.1.1', 'dev-owner');
+    await trace(byIp.accountId, '10.1.1.1', 'dev-a');
+    await trace(byDevice.accountId, '10.2.2.2', 'dev-owner');
+    await trace(clean.accountId, '10.3.3.3', 'dev-c');
+    // 31 天前共用过的不算
+    await trace(clean.accountId, '10.1.1.1', 'dev-owner', new Date(NOW.getTime() - 31 * 86_400_000));
+    const r = await pay(shardId);
+    expect(r).toMatchObject({ rests: 1, coin: 50_000, linked: 2 });
+    expect((await dividends(o.restaurantId)).map((d) => d.rest_id)).toEqual([clean.restaurantId]);
+  });
+
   it('只发本区服的', async () => {
     const shardId = await createShard(t.db);
     const other = await createShard(t.db);
