@@ -9,6 +9,7 @@ import { createCupboardService, type CupboardService } from './modules/cupboard/
 import { createSocialService, type SocialService } from './modules/friend/service';
 import { effectJobs } from './modules/effects/resync';
 import { equipIncomeJobs } from './modules/equip/incomeResync';
+import { acquireJobs } from './modules/acquire/jobs';
 import { equipJobs } from './modules/equip/jobs';
 import { createEquipService, type EquipService } from './modules/equip/service';
 import { friendWeeklyJob } from './modules/friend/weekly';
@@ -125,6 +126,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...equipJobs(deps));
   jobs.push(...effectJobs(deps));
   jobs.push(...equipIncomeJobs(deps));
+  jobs.push(...acquireJobs(deps));
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));
