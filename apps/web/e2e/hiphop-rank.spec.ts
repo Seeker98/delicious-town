@@ -46,8 +46,8 @@ test('嘻哈男孩、镇长问答、排行', async ({ page, request }) => {
       await expect(page.getByTestId('hiphop-card')).toHaveCount(0);
     }
 
-    await page.goto('/town');
-    await page.getByTestId('tab-town').click();
+    // 镇长问答搬到协会的镇长大胃锅（问题记录 441）
+    await page.goto('/society/mayor');
     await page.getByTestId('mayor-open').click();
     await page.getByTestId('mayor-1').click();
     await expect(page.getByText('谢谢你，我现在就去找他')).toBeVisible();

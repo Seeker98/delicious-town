@@ -28,9 +28,16 @@ const town: Messages['town'] = {
     '15': 'A domicilio',
   },
   npcs: {
-    bigEater: { name: 'El Glotón', desc: 'Regala cada día un ingrediente de nivel 1 a 5 y una semilla' },
+    bigEater: {
+      name: 'Alcalde Gran Olla',
+      desc: 'Charla a diario: un ingrediente de nivel 1 a 5 y una semilla',
+    },
     wenjie: { name: 'Hermana Wen', desc: 'Regala vales misteriosos cada día' },
-    bro13: { name: 'Hermano 13', desc: 'Regala una bocina cada día' },
+    bro13: { name: 'Hermano 13', desc: 'Charla a diario: bocinas' },
+    carmen: {
+      name: 'Carmen',
+      desc: 'Regalo de bienvenida: un vale de ingrediente misterioso (una vez por restaurante)',
+    },
   },
   weatherTypes: ['', 'Soleado', 'Lluvia', 'Nieve y hielo', 'Viento, arena y niebla'],
   said: (name, talk, rewards) => `${name}: ${talk} Recibiste ${rewards}`,
@@ -87,7 +94,7 @@ const town: Messages['town'] = {
   news: {
     loadFailed: 'No se pudieron cargar las noticias',
     needStar: (n) => `Tu restaurante necesita ${n}★ para anunciar`,
-    noHorn: 'No tienes bocinas (charla con el Hermano 13 para conseguir una)',
+    noHorn: 'No tienes bocinas (charla con el Hermano 13 en el Gremio para conseguir)',
     cooling: (s) => `Anuncio en recarga: faltan ${s} s`,
     sent: 'Anuncio enviado',
     failed: 'No se pudo anunciar',

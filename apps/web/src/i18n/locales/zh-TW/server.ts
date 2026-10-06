@@ -105,6 +105,7 @@ export default {
   /** 廣場 NPC 臺詞（照原版 NPCTools） */
   talk: {
     bigEater: '你真有品味! 我也是這樣覺得的! 哈哈哈!',
+    carmenFirst: '第一次見面，這張神秘食材兌換券送你。',
     bigEaterFirst: '你! 很有個性是吧!',
     wenjie: '用了飄柔就明顯氣質上來了!',
     bro13: '愛就直接去做!!!',

@@ -28,9 +28,10 @@ const town: Messages['town'] = {
     '15': 'Takeaway',
   },
   npcs: {
-    bigEater: { name: 'Big Belly', desc: 'Gives a level 1–5 ingredient and a seed every day' },
+    bigEater: { name: 'Mayor Big Pot', desc: 'Chat daily for a level 1–5 ingredient and a seed' },
     wenjie: { name: 'Sister Wen', desc: 'Gives Mystery Vouchers every day' },
-    bro13: { name: 'Brother 13', desc: 'Gives a horn every day' },
+    bro13: { name: 'Brother 13', desc: 'Chat daily for horns' },
+    carmen: { name: 'Carmen', desc: 'Welcome gift: a mystery ingredient voucher (once per restaurant)' },
   },
   weatherTypes: ['', 'Sunny', 'Rain', 'Snow & ice', 'Wind, sand & fog'],
   said: (name, talk, rewards) => `${name}: ${talk} You got ${rewards}`,
@@ -85,7 +86,7 @@ const town: Messages['town'] = {
   news: {
     loadFailed: "Couldn't load the news",
     needStar: (n) => `Your restaurant needs ${n}★ to broadcast`,
-    noHorn: 'No horns (chat with Brother 13 to get one)',
+    noHorn: 'No horns (chat with Brother 13 at the Guild to get some)',
     cooling: (s) => `Broadcast cooling down: ${s} s left`,
     sent: 'Broadcast sent',
     failed: 'Broadcast failed',

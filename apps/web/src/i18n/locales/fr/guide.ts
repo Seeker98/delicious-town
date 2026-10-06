@@ -58,11 +58,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Place : discutez une fois par jour avec Gros Mangeur et Sœur Wen pour des cadeaux ; secouez la bourse de M. Krab',
+      text: 'Place : discutez une fois par jour avec Sœur Wen pour des bons mystère ; secouez la bourse de M. Krab',
     },
     {
-      to: '/society',
-      text: 'Guilde : Frère 13 vous donne un klaxon chaque jour ; dites au Maire Grosse Marmite où est le Garçon hip-hop aujourd’hui',
+      to: '/society/mayor',
+      text: 'Guilde : discutez chaque jour avec le Maire Grosse Marmite (ingrédient et graine) et dites-lui où est le Garçon hip-hop ; Frère 13 donne des klaxons chaque jour ; Carmen offre un bon d’ingrédient mystère à la première visite',
     },
     {
       to: '/yard',
@@ -96,7 +96,7 @@ const guide: Messages['guide'] = {
     {
       q: 'Et s’il me manque toujours le même ingrédient ?',
       a: [
-        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, Combiner, récompenses du Bar et de la Tour, Temple, Gros Mangeur) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel, ou l’acheter au Marché ou à la Bourse (la Bourse ne vend que des ingrédients rares).',
+        'Les ingrédients aléatoires (packs cadeaux, tickets d’ingrédient aléatoire, Combiner, récompenses du Bar et de la Tour, Temple, le Maire Grosse Marmite) ont une chance d’être justement celui qui manque à votre prochaine recette, et plus votre chance est élevée, plus c’est probable. Vous pouvez aussi le remplacer par un ingrédient universel, ou l’acheter au Marché ou à la Bourse (la Bourse ne vend que des ingrédients rares).',
       ],
     },
     {
@@ -142,8 +142,8 @@ const guide: Messages['guide'] = {
       a: [
         'On peut en gagner à la machine à sous du ',
         { to: '/bar', text: 'Bar' },
-        ' ; secouer la bourse de M. Krab sur la place en fait parfois tomber un ; la quête secondaire « Réussir une Épreuve » en donne un aussi. Échangez-les contre des objets rares dans « Échanges » sur la ',
-        { to: '/town', text: 'Place' },
+        ' ; secouer la bourse de M. Krab sur la place en fait parfois tomber un ; la quête secondaire « Réussir une Épreuve » en donne un aussi. Échangez-les contre des objets rares auprès du ',
+        { to: '/society/mayor', text: 'Maire Grosse Marmite, à la Guilde' },
         '.',
       ],
     },

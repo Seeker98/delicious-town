@@ -7,13 +7,13 @@ const npc: Messages['npc'] = {
     lines: [
       'Krabby Patties, Delicious Tickets, fragments — trade them with me for rare items.',
       'Where did the Hip-hop Boy go today? Tell me, and a right answer earns you a bonus.',
-      "I'm Mayor Big Pot. Pot, not Belly — don't mix me up with Big Belly.",
+      "I'm Mayor Big Pot — a pot, not a bro. Chat with me every day for an ingredient and a seed.",
     ],
   },
   bro13: {
     name: 'Brother 13',
     lines: [
-      'Come chat with me every day and I’ll give you a horn.',
+      'Come chat with me every day and I’ll give you horns.',
       'One ingredient voucher gets you one regular ingredient of the same level; pick several at once.',
     ],
   },
@@ -22,6 +22,7 @@ const npc: Messages['npc'] = {
     lines: [
       'Hand over a mystery ingredient voucher and pick the mystery ingredient you want.',
       'Mystery ingredients go into signature dishes — choose wisely.',
+      'First visit? I’ll give you a mystery ingredient voucher.',
     ],
   },
   gary: {
@@ -37,7 +38,7 @@ const npc: Messages['npc'] = {
     lines: [
       'Each appraisal takes one Mystery Recipe and one appraisal item.',
       'A successful appraisal gives you a fragment of a signature dish; collect 3 to learn it.',
-      'Break down fragments you don’t need into shards; 3 shards of a level trade for a fragment of any dish of that level.',
+      'Break down fragments you don’t need into shards; enough shards of a level trade for a fragment of a dish of that level you haven’t learned.',
     ],
   },
   xiaoKai: {
@@ -49,9 +50,12 @@ const npc: Messages['npc'] = {
   },
   links: {
     classroom: { label: 'Classroom', desc: 'Teach, learn and sneak-learn signature dishes' },
-    mayor: { label: 'Mayor Big Pot', desc: 'Trade for rare items; tell him where the Hip-hop Boy is' },
-    bro13: { label: 'Brother 13', desc: 'A horn every day; trade ingredient vouchers' },
-    carmen: { label: 'Carmen', desc: 'Trade mystery ingredient vouchers' },
+    mayor: {
+      label: 'Mayor Big Pot',
+      desc: 'Daily chat for an ingredient and a seed; rare items; where is the Hip-hop Boy',
+    },
+    bro13: { label: 'Brother 13', desc: 'Daily chat for horns; trade ingredient vouchers' },
+    carmen: { label: 'Carmen', desc: 'Trade mystery ingredient vouchers; a free one on your first visit' },
     fund: { label: 'Gary', desc: 'Town Development Fund' },
   },
   titles: {
@@ -61,6 +65,8 @@ const npc: Messages['npc'] = {
     carmen: 'Mystery ingredient exchange',
     fund: 'Town Development Fund',
   },
+  /** 镇长页底部：兑换券分给了 13 哥和卡门 */
+  ticketsHint: 'Ingredient vouchers: see Brother 13; mystery ingredient vouchers: see Carmen —',
   off: 'This feature isn’t available on this server yet',
 };
 export default npc;

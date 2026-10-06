@@ -23,7 +23,7 @@ describe('小镇概览（设计文档 §3.8）', () => {
       star: 1,
       coin: 500,
       diamond: 7,
-      talked: { bigEater: false, wenjie: false, bro13: false },
+      talked: { bigEater: false, wenjie: false, bro13: false, carmen: false },
       mayor: { answered: false, hiphopOut: false, hour: 9 },
       bigEaterGift: false,
       shaken: false,
@@ -43,13 +43,15 @@ describe('小镇概览（设计文档 §3.8）', () => {
     await setWeather(t, a.shardId, 1);
     await krabFor(t, a.shardId, 1_000_000);
     await t.game.town.talk(a, { npc: 'bigEater' });
+    // 神秘食材兑换券的见面礼改由卡门送（问题记录 441）
+    await t.game.town.talk(a, { npc: 'carmen' });
     await t.game.town.broadcast(a, { text: '你好' });
     await t.game.town.shake(a);
     await t.game.town.hammer(a, { mode: 'coin', type: 2 });
     const { bless } = (await t.game.town.wish(a)).data;
     const v = await t.game.town.overview(a);
     const now = gameTime(DAY, 12).getTime();
-    expect(v.talked).toEqual({ bigEater: true, wenjie: false, bro13: false });
+    expect(v.talked).toEqual({ bigEater: true, wenjie: false, bro13: false, carmen: true });
     expect(v.bigEaterGift).toBe(true);
     expect(v.shaken).toBe(true);
     expect(v.broadcast).toMatchObject({ horns: 2, readyAt: new Date(now + 30_000).toISOString() });

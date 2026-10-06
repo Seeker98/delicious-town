@@ -166,7 +166,7 @@ const bar: Messages['bar'] = {
       "Lost at rock-paper-scissors? Don't get worked up. Come back tomorrow.",
       'Aim for the middle in darts. The closer to the bullseye, the higher the score.',
       "Bar games have daily limits. Don't play them all at once.",
-      "Big Belly's here mooching drinks again. What can you do.",
+      "Mayor Big Pot's here mooching drinks again. What can you do.",
       'I have a stall at the square too. Drop by often.',
     ],
     memoryLeft: (n) => `${n} Memory Mixing games left today. Want to test your memory?`,

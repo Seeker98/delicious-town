@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { RouterLink } from 'vue-router';
 import { useT } from '../composables/useT';
@@ -7,6 +7,10 @@ import { useRestaurantStore } from '../stores/restaurant';
 
 const t = useT();
 const restaurant = useRestaurantStore();
+// 直接打开、刷新协会页时还没有餐厅数据：读一次，关掉的功能才不显示入口
+onMounted(() => {
+  if (!restaurant.rest) restaurant.refresh().catch(() => {});
+});
 const links = computed(() => {
   const s = t.value.society.links;
   const n = t.value.npc.links;

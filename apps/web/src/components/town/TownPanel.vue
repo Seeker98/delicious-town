@@ -21,7 +21,7 @@ const t = useT();
 const busy = ref(false);
 const clock = useServerClock(() => props.data.now);
 
-const NPCS: readonly NpcKey[] = ['bigEater', 'wenjie'];
+const NPCS: readonly NpcKey[] = ['wenjie'];
 const TYPES = [1, 2, 3, 4] as const;
 
 async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: string) {
@@ -131,7 +131,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
 
 <template>
   <h6 class="dt-section">NPC</h6>
-  <!-- 13 哥、镇长大胃锅搬到协会（问题记录 441） -->
+  <!-- 13 哥、镇长大胃锅（原来的大胃哥）、卡门的见面礼都在协会（问题记录 441） -->
   <NpcTalk v-for="n in NPCS" :key="n" :data="data" :npc="n" @reload="emit('reload')" />
 
   <h6 class="dt-section">{{ t.town.krab }}</h6>

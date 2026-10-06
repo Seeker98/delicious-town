@@ -25,7 +25,7 @@ const tower: Messages['tower'] = {
       xiaoC: 'Pequeña C',
       wenjie: 'Hermana Wen',
       bro13: 'Hermano 13',
-      bigEater: 'El Glotón',
+      bigEater: 'Alcalde Gran Olla',
       fanDao: 'Taoísta Fan',
       gary: 'Gary',
       gordon: 'Gordon',

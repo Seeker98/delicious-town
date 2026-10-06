@@ -107,6 +107,7 @@ const server: Messages['server'] = {
   },
   talk: {
     bigEater: '¡Tienes buen gusto! ¡Yo también lo creo! ¡Jajaja!',
+    carmenFirst: '¿Primera vez por aquí? Toma este vale de ingrediente misterioso.',
     bigEaterFirst: '¡Tú! Tienes mucha personalidad, ¿eh?',
     wenjie: '¡Con Rejoice se nota enseguida el estilo!',
     bro13: '¡¡¡Si lo quieres, ve a por ello!!!',

@@ -9,7 +9,7 @@ import { useToastStore } from '../../stores/toast';
 import { rewardText } from '../../utils/rewards';
 import { talkText } from '../../utils/serverText';
 
-/** 和一位 NPC 每天聊一次（大胃哥、雯姐在广场，13 哥在协会，问题记录 441） */
+/** 和一位 NPC 每天聊一次（雯姐在广场；镇长大胃锅、13 哥在协会，卡门只有一次见面礼，问题记录 441） */
 const props = defineProps<{ data: TownDto; npc: NpcKey }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();

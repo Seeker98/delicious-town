@@ -32,9 +32,10 @@ describe('TownPanel', () => {
       rewards: [{ kind: 'goods', id: 1, num: 5 }],
     });
     const w = mount(TownPanel, {
-      props: { data: townData({ talked: { bigEater: true, wenjie: false, bro13: false } }) },
+      props: { data: townData({ talked: { bigEater: false, wenjie: false, bro13: false, carmen: false } }) },
     });
-    expect(w.find('[data-testid="talk-bigEater"]').attributes('disabled')).toBeDefined();
+    // 广场居民只剩雯姐（问题记录 441：大胃哥就是镇长大胃锅，和 13 哥一起在协会）
+    expect(w.find('[data-testid="talk-bigEater"]').exists()).toBe(false);
     await w.find('[data-testid="talk-wenjie"]').trigger('click');
     await flushPromises();
     expect(endpoints.townTalk).toHaveBeenCalledWith('wenjie');
@@ -156,13 +157,14 @@ describe('TownPanel', () => {
 
   it('NPC 和钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {
     const w = mount(TownPanel, { props: { data: townData() } });
-    for (const id of ['talk-bigEater', 'talk-wenjie', 'shake'])
+    for (const id of ['talk-wenjie', 'shake'])
       expect(w.find('.dt-item-actions [data-testid="' + id + '"]').exists()).toBe(true);
   });
 
-  it('13 哥和镇长大胃锅搬到协会：广场居民里没有他们（问题记录 441）', () => {
+  it('13 哥和镇长大胃锅（原来的大胃哥）搬到协会：广场居民里没有他们（问题记录 441）', () => {
     const w = mount(TownPanel, { props: { data: townData() } });
     expect(w.find('[data-testid="talk-bro13"]').exists()).toBe(false);
+    expect(w.find('[data-testid="talk-bigEater"]').exists()).toBe(false);
     expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
   });
 

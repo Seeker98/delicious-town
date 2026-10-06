@@ -37,7 +37,8 @@ test('小镇：广播 → 和雯姐聊天 → 镇长兑换', async ({ page, requ
     await page.getByTestId('talk-wenjie').click();
     await expect(page.getByTestId('talk-wenjie')).toHaveText('今天聊过了');
 
-    await page.getByTestId('tab-exchange').click();
+    // 兑换搬到协会的镇长大胃锅（问题记录 441）
+    await page.goto('/society/mayor');
     const done = page.waitForResponse(
       (r) => r.url().endsWith('/api/v1/town/exchange') && r.request().method() === 'POST',
     );

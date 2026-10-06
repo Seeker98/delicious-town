@@ -14,22 +14,23 @@ beforeAll(async () => {
 afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime(DAY, 12)));
 
-const talk = (ctx: RestCtx, npc: 'bigEater' | 'wenjie' | 'bro13') => t.game.town.talk(ctx, { npc });
+const talk = (ctx: RestCtx, npc: 'bigEater' | 'wenjie' | 'bro13' | 'carmen') =>
+  t.game.town.talk(ctx, { npc });
 
 describe('NPC 对话（设计文档 §3.3）', () => {
-  it('大胃哥：1~5 级食材 1~3 个 + 1 颗种子；第一次另送神秘食材兑换券，第二天不再送', async () => {
+  it('镇长大胃锅（原来的大胃哥，问题记录 441）：每天 1~5 级食材 1~3 个 + 1 颗种子；不再送神秘食材兑换券', async () => {
     const a = await newRestaurant(t);
     const first = (await talk(a, 'bigEater')).data;
-    expect(first.talk).toBe('bigEaterFirst');
-    const [food, seed, gift] = first.rewards;
+    expect(first.talk).toBe('bigEater');
+    expect(first.rewards).toHaveLength(2);
+    const [food, seed] = first.rewards;
     expect(food!.kind).toBe('foods');
     expect(config.requireFood(food!.id!).level).toBeGreaterThanOrEqual(1);
     expect(config.requireFood(food!.id!).level).toBeLessThanOrEqual(5);
     expect(food!.num).toBeGreaterThanOrEqual(1);
     expect(food!.num).toBeLessThanOrEqual(3);
     expect(seed).toMatchObject({ kind: 'seed', num: 1 });
-    expect(gift).toEqual({ kind: 'goods', id: GOODS.mysteryFoodExchange, num: 1 });
-    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(0);
     const seedRow = await t.db
       .selectFrom('rest_seed')
       .select('num')
@@ -44,9 +45,25 @@ describe('NPC 对话（设计文档 §3.3）', () => {
     });
 
     t.clock.set(gameTime('2026-10-01', 12));
-    const next = (await talk(a, 'bigEater')).data;
-    expect(next.talk).toBe('bigEater');
-    expect(next.rewards).toHaveLength(2);
+    expect((await talk(a, 'bigEater')).data.rewards).toHaveLength(2);
+  });
+
+  it('卡门的见面礼（问题记录 441：原来大胃哥第一次聊天送）：神秘食材兑换券 ×1，每家店一次', async () => {
+    const a = await newRestaurant(t);
+    const first = (await talk(a, 'carmen')).data;
+    expect(first).toMatchObject({
+      npc: 'carmen',
+      talk: 'carmenFirst',
+      rewards: [{ kind: 'goods', id: GOODS.mysteryFoodExchange, num: 1 }],
+    });
+    expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(1);
+    expect((await t.game.town.overview(a)).bigEaterGift).toBe(true);
+    // 第二天也不能再领
+    t.clock.set(gameTime('2026-10-01', 12));
+    await expect(talk(a, 'carmen')).rejects.toMatchObject({
+      code: 'ALREADY_DONE',
+      params: { what: 'carmen_gift' },
+    });
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryFoodExchange)).toBe(1);
   });
 

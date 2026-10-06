@@ -24,9 +24,10 @@ export default {
     '15': '外賣',
   } as Record<string, string>,
   npcs: {
-    bigEater: { name: '大胃哥', desc: '每天送 1~5 級食材和一顆種子' },
+    bigEater: { name: '鎮長大胃鍋', desc: '每天聊天送 1~5 級食材和一顆種子' },
     wenjie: { name: '雯姐', desc: '每天送神秘禮券' },
-    bro13: { name: '13 哥', desc: '每天送喇叭' },
+    bro13: { name: '13 哥', desc: '每天聊天送喇叭' },
+    carmen: { name: '卡門', desc: '見面禮：神秘食材兌換券（每家店一次）' },
   },
   /** 雷神錘能換的天氣大類（下標 = 類型） */
   weatherTypes: ['', '晴類', '雨類', '雪冰類', '風沙霧類'],
@@ -83,7 +84,7 @@ export default {
   news: {
     loadFailed: '讀取新聞失敗',
     needStar: (n: number) => `餐廳 ${n} 星才能廣播`,
-    noHorn: '沒有喇叭（和 13 哥聊天可以拿到）',
+    noHorn: '沒有喇叭（去協會和 13 哥聊天可以拿到）',
     cooling: (s: number) => `廣播冷卻中，還要等 ${s} 秒`,
     sent: '廣播已發出',
     failed: '廣播失敗',

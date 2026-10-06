@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     npc1007:
-      'The Classroom, exchanges and the Development Fund moved from the Square to the Guild. Exchanges are now split among three NPCs: Mayor Big Pot trades rare items (and the “where is the Hip-hop Boy” question moved with him), Brother 13 handles ingredient vouchers (his daily horn chat is there too), and Carmen handles mystery ingredient vouchers; Gary runs the Development Fund. Taoist Fan appears at temple appraisals and Little Kai on the limited-time events page — tap them for a new line. The Square keeps News, Townsfolk and Rankings',
+      'The Classroom, exchanges and the Development Fund moved from the Square to the Guild. Big Belly from the Square was the mayor all along and is now Mayor Big Pot at the Guild: his daily chat (an ingredient and a seed), the “where is the Hip-hop Boy” question and the rare item exchange are all with him. Brother 13 (daily horns, ingredient vouchers) and Carmen (mystery ingredient vouchers, plus a free one on your first visit) are at the Guild too, and Gary runs the Development Fund. The cook-off judge Big Belly is now Mayor Big Pot as well. Taoist Fan appears at temple appraisals and Little Kai on the limited-time events page — tap them for a new line. The Square keeps News, Townsfolk and Rankings',
     duel1007:
       'Cook-off results now read like judges\' comments: each judge goes through the items they care about — a crushing win, neck and neck, or a crushing loss — and gives a score; the result also shows the special dish each side brought ("No special dish" if none). Judge Old Pauper is replaced by Gordon, and Carmen by Joe',
     home1007:

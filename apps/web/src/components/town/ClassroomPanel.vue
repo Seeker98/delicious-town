@@ -93,7 +93,7 @@ onMounted(() =>
 </script>
 
 <template>
-  <!-- 教室是广场的一个标签（问题记录 122），原来的独立页面 /classroom 跳到这里 -->
+  <!-- 教室在协会里（问题记录 441，原来是广场的一个标签）（问题记录 122），原来的独立页面 /classroom 跳到这里 -->
   <div v-if="data" data-testid="classroom-panel">
     <div v-if="data.mine" class="border rounded p-2 mb-2 small" data-testid="my-lesson">
       {{ t.town.classroom.mine }}<b>{{ catalog.mcName(data.mine.mcId) }}</b

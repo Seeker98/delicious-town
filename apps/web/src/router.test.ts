@@ -21,6 +21,16 @@ describe('routes', () => {
     );
   });
 
+  it('旧的 /town?tab=exchange|classroom|fund 在路由里就转到协会（问题记录 441）', () => {
+    const town = routes.find((r) => r.path === '/town')!;
+    const guard = town.beforeEnter as (to: { query: Record<string, string> }) => unknown;
+    expect(guard({ query: { tab: 'exchange' } })).toBe('/society/mayor');
+    expect(guard({ query: { tab: 'classroom' } })).toBe('/society/classroom');
+    expect(guard({ query: { tab: 'fund' } })).toBe('/society/fund');
+    expect(guard({ query: { tab: 'news' } })).toBe(true);
+    expect(guard({ query: {} })).toBe(true);
+  });
+
   it('旧的教室地址跳到协会的教室（问题记录 122、441）', () => {
     expect(routes.find((r) => r.path === '/classroom')?.redirect).toBe('/society/classroom');
   });

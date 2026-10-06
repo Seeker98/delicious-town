@@ -170,7 +170,7 @@ const wiki: Messages['wiki'] = {
       {
         title: 'Other activities',
         items: [
-          'Shake Mr. Krab’s money bag in the Square once a day, and see whether Big Belly and Sister Wen have something for you; Brother 13 at the Guild gives a horn every day.',
+          'Shake Mr. Krab’s money bag and chat with Sister Wen in the Square once a day, then chat with Mayor Big Pot and Brother 13 at the Guild — they all have something for you.',
           'Climb the Chef Tower every day: you get Renown whether you win or lose. The first floor’s Elder is level 8; you can beat it around level 10 (a bit earlier with the Apprentice cookware).',
           (n) =>
             n.exchange.level === n.predict.level && n.exchange.days === n.predict.days

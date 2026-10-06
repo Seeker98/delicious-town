@@ -3,6 +3,13 @@ import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from
 import { resolveGuard, type RouteFlags } from './guard';
 import { useSessionStore } from './stores/session';
 
+/** 广场搬到协会的标签（问题记录 441）：旧的 /town?tab=… 转到这里 */
+const TOWN_MOVED: Record<string, string> = {
+  exchange: '/society/mayor',
+  classroom: '/society/classroom',
+  fund: '/society/fund',
+};
+
 export const routes: RouteRecordRaw[] = [
   {
     path: '/login',
@@ -141,6 +148,8 @@ export const routes: RouteRecordRaw[] = [
     name: 'town',
     component: () => import('./views/TownView.vue'),
     meta: { needRestaurant: true },
+    // 教室、兑换、发展基金搬到了协会（问题记录 441）：旧链接、书签直接转过去
+    beforeEnter: (to) => TOWN_MOVED[String(to.query.tab)] ?? true,
   },
   // 游戏资料（问题记录 142）：不用登录；已开店时显示底部导航
   {
