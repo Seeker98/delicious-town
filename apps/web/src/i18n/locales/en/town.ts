@@ -161,11 +161,11 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: "Couldn't load the classroom",
-    stealConfirm: (n, mc) =>
-      `Sneaking a lesson is free, but if it fails you forget ${n} ${plEn(n, 'recipe', 'recipes')}${mc ? ' and maybe a signature dish' : ''}. Sneak a lesson?`,
+    stealConfirm: (n, g, mc) =>
+      `Sneaking a lesson is free, but if it fails ${n} random ${plEn(n, 'recipe drops', 'recipes drop')} ${g} ${plEn(g, 'grade', 'grades')} (any that run out of grades are forgotten)${mc ? ' and you may forget a signature dish' : ''}. Sneak a lesson?`,
     learned: (name) => `You learned ${name}`,
-    stealFailed: (n, mc) =>
-      `Sneaking failed: you forgot ${n} ${plEn(n, 'recipe', 'recipes')}${mc ? ` and ${mc}` : ''}`,
+    stealFailed: (n, g, lost, mc) =>
+      `Sneaking failed: ${n} ${plEn(n, 'recipe', 'recipes')} dropped ${g} ${plEn(g, 'grade', 'grades')}${lost > 0 ? `, ${lost} of them forgotten` : ''}${mc ? `, and you forgot ${mc}` : ''}`,
     notLearned: "You didn't learn it. Try again next time",
     learnFailed: 'Learning failed',
     opened: 'Class opened',

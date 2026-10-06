@@ -168,11 +168,11 @@ const town: Messages['town'] = {
   },
   classroom: {
     loadFailed: 'Impossible de charger la classe',
-    stealConfirm: (n, mc) =>
-      `Espionner un cours est gratuit, mais en cas d'échec vous oubliez ${n} ${plFr(n, 'recette', 'recettes')}${mc ? ' et peut-être un plat signature' : ''}. Espionner ?`,
+    stealConfirm: (n, g, mc) =>
+      `Espionner un cours est gratuit, mais en cas d'échec ${n} ${plFr(n, 'recette au hasard perd', 'recettes au hasard perdent')} ${g} ${plFr(g, 'niveau de qualité', 'niveaux de qualité')} (celles qui n’en ont plus sont oubliées)${mc ? ' et vous pouvez oublier un plat signature' : ''}. Espionner ?`,
     learned: (name) => `Vous avez appris ${name}`,
-    stealFailed: (n, mc) =>
-      `Espionnage raté : ${n} ${plFr(n, 'recette oubliée', 'recettes oubliées')}${mc ? ` et ${mc}` : ''}`,
+    stealFailed: (n, g, lost, mc) =>
+      `Espionnage raté : ${n} ${plFr(n, 'recette a perdu', 'recettes ont perdu')} ${g} ${plFr(g, 'niveau de qualité', 'niveaux de qualité')}${lost > 0 ? `, dont ${lost} ${plFr(lost, 'oubliée', 'oubliées')}` : ''}${mc ? ` et vous avez oublié ${mc}` : ''}`,
     notLearned: "Vous n'avez pas réussi. Revenez une autre fois",
     learnFailed: "Échec de l'apprentissage",
     opened: 'Cours ouvert',

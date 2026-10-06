@@ -8,7 +8,7 @@ import { restLog, runOp, setRest, type Op } from '../../core/op';
 import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { applyForget, gradeOf, padLevels, setGrade } from '../cookbook/rules';
+import { applyDowngrade, gradeOf, padLevels, setGrade } from '../cookbook/rules';
 import { splitLearned } from '../settlement/tables';
 import { normalizeCounts } from '../settlement/globals';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
@@ -25,7 +25,7 @@ import {
 
 const badInput = (reason: string) => new AppError(ErrorCode.VALIDATION_FAILED, 400, { reason });
 
-/** 偷学失败：遗忘普通食谱，4 级起可能遗忘一道更低级的特色菜（正在售卖的除外） */
+/** 偷学失败：普通食谱各降几品（降到 0 就忘了，问题记录 424），4 级起可能遗忘一道更低级的特色菜（正在售卖的除外） */
 async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
   const t = o.tuning.mysterious;
   const cb = await o.tx
@@ -38,11 +38,15 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
   // 按存储位换回食谱 id（重新编号 PR 3）；空位、超出存储位总数的字节跳过，和结算同一套
   const learned = splitLearned(levels, o.config.cookbookIndex, -1).all;
   const picks = pickSome(learned, forgetCount(level, t), o.rng);
+  let lost = 0;
   if (picks.length > 0) {
     let counts = normalizeCounts(o.rest.cookbook_counts);
     for (const id of picks) {
-      counts = applyForget(counts, o.config.requireCookbook(id).streetId, gradeOf(levels, slotOf, id));
-      setGrade(levels, slotOf, id, 0);
+      const from = gradeOf(levels, slotOf, id);
+      const to = Math.max(0, from - t.forgetGrades);
+      if (to === 0) lost++;
+      counts = applyDowngrade(counts, o.config.requireCookbook(id).streetId, from, to);
+      setGrade(levels, slotOf, id, to);
     }
     await o.tx
       .updateTable('restaurant_cookbooks')
@@ -78,8 +82,9 @@ async function forget(o: Op, level: number): Promise<LessonLearnDto['forgot']> {
       await o.tx.deleteFrom('rest_mc').where('rest_id', '=', o.rest.id).where('mc_id', '=', mcId).execute();
     }
   }
-  restLog(o, 'mc.forget', { cookbooks: picks, mcId });
-  return { cookbooks: picks, mcId };
+  // grades：降了几品、lost：其中忘了几道（问题记录 424 以前的日志没有这两个键，是整道忘掉）
+  restLog(o, 'mc.forget', { cookbooks: picks, mcId, grades: t.forgetGrades, lost });
+  return { cookbooks: picks, mcId, grades: t.forgetGrades, lost };
 }
 
 export function createLessonOps(d: GameDeps) {
@@ -156,6 +161,7 @@ export function createLessonOps(d: GameDeps) {
         canForceClose: have(GOODS.hundredMaster) > 0,
         forceCloseCoinPerLevel: s.tuning.mysterious.forceCloseCoinPerLevel,
         forgetPerLevel: s.tuning.mysterious.forgetPerLevel,
+        forgetGrades: s.tuning.mysterious.forgetGrades,
       };
     },
 
@@ -268,7 +274,7 @@ export function createLessonOps(d: GameDeps) {
           const { rate: luck } = await opLuck(o);
           const thinker = (agg.thinker ?? 0) > 0;
           let success: boolean;
-          let forgot: LessonLearnDto['forgot'] = { cookbooks: [], mcId: null };
+          let forgot: LessonLearnDto['forgot'] = { cookbooks: [], mcId: null, grades: 0, lost: 0 };
           if (b.type === 1) {
             spendStrength(o, t.learnStrength);
             spendCoin(o, Math.floor(mc.coin * t.tuitionTimes));

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    stealForget1006:
+      'Rater l’espionnage d’un cours est moins sévère : au lieu d’oublier complètement (niveau du cours × 3 + 1) recettes au hasard, (niveau du cours × 2 + 1) recettes au hasard perdent 1 niveau de qualité, et seules celles de qualité Commun sont oubliées ; pour les cours de niveau 4 et plus, le risque d’oublier aussi un plat signature de niveau inférieur passe de niveau × 5 % à niveau × 2 %',
     frTimes1006:
       'Les quantités d’objets suivent maintenant la typographie française, avec des espaces autour du × (par exemple « Riz × 3 »)',
     web1006:

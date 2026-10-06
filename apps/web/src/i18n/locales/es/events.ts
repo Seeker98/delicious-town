@@ -105,6 +105,9 @@ const events: Messages['events'] = {
     'mc.levelUp': (p, names) => `Dominio de «${mcNameOf(names, n(p, 'mcId'))}» al nivel ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
+      const lost = typeof p.lost === 'number' ? p.lost : 0;
+      if (typeof p.grades === 'number')
+        return `Espionaje fallido: ${k} ${plEs(k, 'receta bajó', 'recetas bajaron')} ${p.grades} ${plEs(p.grades, 'nivel de calidad', 'niveles de calidad')}${lost > 0 ? `, ${lost} ${plEs(typeof p.lost === 'number' ? p.lost : 0, 'se olvidó', 'se olvidaron')}` : ''}${p.mcId ? ` y olvidaste el plato estrella «${mcNameOf(names, n(p, 'mcId'))}»` : ''}`;
       return `Espionaje fallido: olvidaste ${k} ${plEs(k, 'receta', 'recetas')}${p.mcId ? ` y el plato estrella «${mcNameOf(names, n(p, 'mcId'))}»` : ''}`;
     },
     'temple.trial': (p, names) =>
