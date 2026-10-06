@@ -126,7 +126,10 @@ describe('收购接口（收购 PR 1）', () => {
       .insertInto('acquire_dividend')
       .values({ rest_id: b.restId, day: yday, owner_rest_id: a.restId, coin: 1234, tended: true })
       .execute();
-    await ctx.deps.db.insertInto('acquire_holder').values({ rest_id: a.restId, dividend_total: 5678 }).execute();
+    await ctx.deps.db
+      .insertInto('acquire_holder')
+      .values({ rest_id: a.restId, dividend_total: 5678 })
+      .execute();
     const mine = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
     expect(mine.json.data.holdings).toMatchObject([
       { restId: b.restId, dividend: { coin: 1234, tended: true }, tendedToday: true },

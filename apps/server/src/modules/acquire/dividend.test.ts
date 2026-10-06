@@ -114,7 +114,11 @@ describe('分红（收购 PR 2）', () => {
     expect(await coin(o.restaurantId)).toBe(7);
     expect(await dividends(o.restaurantId)).toMatchObject([{ coin: 0 }]);
     expect(await holder(o.restaurantId)).toBe(0);
-    const logs = await t.db.selectFrom('rest_log').select('type').where('rest_id', '=', o.restaurantId).execute();
+    const logs = await t.db
+      .selectFrom('rest_log')
+      .select('type')
+      .where('rest_id', '=', o.restaurantId)
+      .execute();
     expect(logs).toEqual([]);
   });
 

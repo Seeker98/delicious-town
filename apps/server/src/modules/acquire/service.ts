@@ -562,7 +562,10 @@ export function createAcquireService(d: GameDeps) {
       .selectFrom('acquire_state as s')
       // 昨天的分红只算发给我的（今天刚换老板的店，昨天的分红是给前一个老板的）
       .leftJoin('acquire_dividend as dv', (j) =>
-        j.onRef('dv.rest_id', '=', 's.rest_id').on('dv.day', '=', yday).on('dv.owner_rest_id', '=', ctx.restaurantId),
+        j
+          .onRef('dv.rest_id', '=', 's.rest_id')
+          .on('dv.day', '=', yday)
+          .on('dv.owner_rest_id', '=', ctx.restaurantId),
       )
       .leftJoin('acquire_tend as td', (j) => j.onRef('td.rest_id', '=', 's.rest_id').on('td.day', '=', today))
       .select(['s.rest_id', 'dv.coin', 'dv.tended', 'td.rest_id as tended_today'])
