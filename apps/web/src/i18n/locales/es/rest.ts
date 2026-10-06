@@ -104,6 +104,7 @@ const rest: Messages['rest'] = {
     lockedLevel: (n) => `🔒 Se desbloquea en el nivel ${n}`,
     lockedDays: (n) => `🔒 Se desbloquea ${n} ${plEs(n, 'día', 'días')} después del registro`,
     lockedEmail: '🔒 Se desbloquea al verificar tu correo',
+    lockedFrozen: '🔒 Tu acceso a la Bolsa está congelado por ahora',
     noActivity: '🔒 No hay ningún evento por tiempo limitado en curso',
     lockedStar: (n) => `🔒 Se desbloquea con ${n} ${n === 1 ? 'estrella' : 'estrellas'}`,
     claimedTask: '✓ Recogido',

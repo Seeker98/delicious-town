@@ -19,7 +19,7 @@ import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { isFeatureEnabled } from '@dt/config';
 import { frozenReason } from '../exchange/guard';
-import { eligibility } from '../exchange/service';
+import { eligibility } from '../exchange/eligibility';
 
 const KEEP_DAYS = 7;
 

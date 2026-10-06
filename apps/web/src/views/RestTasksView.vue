@@ -51,7 +51,7 @@ function stateOf(i: ActItem): 'done' | 'locked' | 'open' {
   if (i.count >= i.limit) return 'done';
   return lockText(i) === null ? 'open' : 'locked';
 }
-/** 锁定时写哪一条：区服没开 → 星级 → 等级 → 注册天数、邮箱、没有限时活动（backlog 第 ⑥ 批） */
+/** 锁定时写哪一条：区服没开 → 星级 → 等级 → 注册天数、邮箱、交易所冻结、没有限时活动（backlog 第 ⑥ 批） */
 function lockText(i: ActItem): string | null {
   const x = t.value.rest.tasks;
   if (i.off) return x.off;
@@ -59,6 +59,7 @@ function lockText(i: ActItem): string | null {
   if ((act.value?.level ?? 0) < i.needLevel) return x.lockedLevel(i.needLevel);
   if (i.blocked === 'days') return x.lockedDays(i.needDays);
   if (i.blocked === 'email') return x.lockedEmail;
+  if (i.blocked === 'frozen') return x.lockedFrozen;
   if (i.blocked === 'noActivity') return x.noActivity;
   return null;
 }

@@ -2,6 +2,7 @@ import type { GameEvent, MailTpl, RestLogDto } from '@dt/shared';
 import { activeMessages } from '../i18n';
 import { formatNum } from './format';
 import { mailTitle } from './serverText';
+import { restName } from './npcName';
 
 export interface Names {
   goodsName(id: number): string;
@@ -72,7 +73,10 @@ export function logText(l: RestLogDto, names: Names): string {
           ...l.params,
           title: mailTitle({ title: String(l.params.title ?? ''), body: '', tpl: l.params.tpl as MailTpl }),
         }
-      : l.params;
+      : // 在蟹老板店白食：日志存的是当时的中文店名，按当前语言换
+        typeof l.params.host === 'number' && typeof l.params.hostName === 'string'
+        ? { ...l.params, hostName: restName(l.params.host, l.params.hostName) }
+        : l.params;
   return f ? f(params, names) : m.feed(l, (id) => names.foodName(id));
 }
 

@@ -50,7 +50,7 @@ const store: Messages['store'] = {
     limitOne: 'Limite 1',
     buy: 'Acheter',
     specialSoon: "Nouvelle promo aujourd'hui à midi",
-    tier: (off) => `-${off} %`,
+    tier: (off) => `-${off}\u202f%`,
     specialLine: (price, left, stock) =>
       `${price} ${plFr(price, 'pièce', 'pièces')} · reste ${left}/${stock}`,
     grab: 'Je prends',

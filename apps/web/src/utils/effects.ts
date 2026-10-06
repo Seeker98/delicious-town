@@ -1,4 +1,5 @@
 import { activeMessages, type Messages } from '../i18n';
+import { formatPct } from './format';
 
 /** 加成键的显示顺序（规格书 00 §0.6）；名称按语言（问题记录 272） */
 const KEYS: Array<[key: keyof Messages['util']['effects'], kind: 'rate' | 'value']> = [
@@ -18,7 +19,7 @@ const KEYS: Array<[key: keyof Messages['util']['effects'], kind: 'rate' | 'value
 /** 一项加成的文字："挑剔率+10%"、"每桌银币+5" */
 function effectText(key: keyof Messages['util']['effects'], kind: 'rate' | 'value', v: number): string {
   const u = activeMessages().util;
-  return u.effect(u.effects[key], kind === 'rate' ? `${signed(Math.round(v * 1000) / 10)}%` : signed(v));
+  return u.effect(u.effects[key], kind === 'rate' ? formatPct(v, { sign: true }) : signed(v));
 }
 
 function signed(n: number): string {

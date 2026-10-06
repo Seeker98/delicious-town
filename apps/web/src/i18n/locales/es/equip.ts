@@ -60,7 +60,7 @@ const equip: Messages['equip'] = {
     stress: 'Mejorar',
     rate: 'Probabilidad de éxito',
     rateParts: (base, luck, weather, floor) =>
-      `(base ${base} + suerte ${luck} + clima ${weather} + garantía ${floor})`,
+      ` (base ${base} + suerte ${luck} + clima ${weather} + garantía ${floor})`,
     next: (gain, total) => `Si sale bien, atributos totales +${gain} (hasta ${total}, sin gemas)`,
     cost: (essence, have, coin) =>
       `Coste: esencia ×${essence} (tienes ${have}), ${coin} ${plEs(coin, 'moneda', 'monedas')}`,

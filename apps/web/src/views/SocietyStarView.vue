@@ -6,6 +6,7 @@ import { useT } from '../composables/useT';
 import NeedChecks from '../components/NeedChecks.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 
 const catalog = useCatalogStore();
@@ -21,6 +22,10 @@ async function starUp() {
   busy.value = true;
   try {
     const r = await endpoints.starUp();
+    // 食谱页记住的下一星要求作废，餐厅的星级也重读（backlog 384 审查）
+    const restaurant = useRestaurantStore();
+    restaurant.starNeed = null;
+    void restaurant.refresh().catch(() => null);
     toast.push(t.value.society.star.done(r.star));
     await load();
   } catch (e) {

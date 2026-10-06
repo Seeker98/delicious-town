@@ -1,9 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { createPinia, setActivePinia } from 'pinia';
+import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { FriendRestDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useLocaleStore } from '../stores/locale';
 import { useSessionStore } from '../stores/session';
 import FriendRestView from './FriendRestView.vue';
 
@@ -74,6 +75,7 @@ describe('FriendRestView', () => {
       shardId: 1,
       restaurantId: 1,
       lang: null,
+      npcRestId: null,
     };
     vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
     vi.mocked(endpoints.dineStart).mockResolvedValue({});
@@ -210,5 +212,20 @@ describe('FriendRestView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(false);
     expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(false);
+  });
+
+  it('蟹老板的店：英文界面写 Mr. Krab 和英文公告（服务器给的是中文）', async () => {
+    const pinia = getActivePinia()!;
+    await useLocaleStore().set('en');
+    setActivePinia(pinia);
+    useSessionStore().me = { ...useSessionStore().me!, npcRestId: 2 };
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({ name: '蟹老板', notice: '欢迎光临蟹黄堡！', npc: true }),
+    );
+    const w = await mountView();
+    expect(w.text()).toContain('Mr. Krab');
+    expect(w.text()).toContain('Welcome to the Krusty Krab!');
+    expect(w.text()).not.toContain('蟹老板');
+    await useLocaleStore().set('zh-CN');
   });
 });

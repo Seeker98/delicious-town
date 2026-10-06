@@ -13,4 +13,6 @@ export interface ShardDto {
 export interface SelectShardResult {
   shardId: number;
   restaurantId: number | null;
+  /** 本区服蟹老板餐厅的编号（同 MeDto.npcRestId） */
+  npcRestId: number | null;
 }

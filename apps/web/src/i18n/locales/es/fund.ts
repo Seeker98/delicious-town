@@ -9,12 +9,12 @@ const TIERS: Record<string, string> = {
 
 const fund: Messages['fund'] = {
   rule: (days, back, early) =>
-    `Los depósitos vencen a los ${days} ${plEs(days, 'día', 'días')}: recuperas el ${back} % del capital y una medalla de EXP. Retirar antes solo devuelve el ${early} % y sin medalla. Un depósito a la vez por restaurante; las medallas del fondo no se acumulan.`,
+    `Los depósitos vencen a los ${days} ${plEs(days, 'día', 'días')}: recuperas el ${back}\u00a0% del capital y una medalla de EXP. Retirar antes solo devuelve el ${early}\u00a0% y sin medalla. Un depósito a la vez por restaurante; las medallas del fondo no se acumulan.`,
   myCoin: (n) => `Mis monedas: ${n}`,
   tierName: (key) => TIERS[key] ?? key,
   tierLine: (coin, back) =>
     `Deposita ${coin} ${plEs(coin, 'moneda', 'monedas')} y recupera ${back} al vencer`,
-  medalLine: (name, pct) => `Al vencer: «${name}», EXP +${pct} %`,
+  medalLine: (name, pct) => `Al vencer: «${name}», EXP +${pct}\u00a0%`,
   iconLine: (title) => `Incluye el título temporal «${title}», que vence con la medalla`,
   days: (n) => `Plazo: ${n} ${plEs(n, 'día', 'días')}`,
   deposit: 'Depositar',

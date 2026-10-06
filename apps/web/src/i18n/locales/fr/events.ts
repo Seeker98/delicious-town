@@ -16,7 +16,7 @@ const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
   [
     ...(n(p, 'coin') > 0 ? [coin(formatNum(n(p, 'coin')))] : []),
     ...(Array.isArray(p.foods) ? p.foods : []).map(
-      (f) => `${names.foodName(Number((f as P).foodsId))} × ${Number((f as P).num)}`,
+      (f) => `${names.foodName(Number((f as P).foodsId))}\u202f×\u202f${Number((f as P).num)}`,
     ),
   ].join(', ');
 function predictNet(p: P): string {
@@ -93,7 +93,8 @@ const events: Messages['events'] = {
   remnant: (names, id) => `Fragment de ${mcNameOf(names, id)}`,
   seed: (names, id) => seedNameOf(names, id),
   basket: (name) => `Panier · ${name}`,
-  activityCurrency: (name, num) => `${name ?? "Monnaie d'événement"} × ${num} (monnaie d'événement)`,
+  activityCurrency: (name, num) =>
+    `${name ?? "Monnaie d'événement"}\u202f×\u202f${num} (monnaie d'événement)`,
   lucky: ' (chanceux)',
   sep: ', ',
   groupSep: ' ; ',
@@ -111,7 +112,7 @@ const events: Messages['events'] = {
     },
     'temple.trial': (p, names) =>
       p.success
-        ? `« ${mcNameOf(names, n(p, 'mcId'))} » a réussi l'épreuve : valeur d'épreuve +${n(p, 'worth')} %, EXP d'épreuve +${n(p, 'exp')} %`
+        ? `« ${mcNameOf(names, n(p, 'mcId'))} » a réussi l'épreuve : valeur d'épreuve +${n(p, 'worth')}\u202f%, EXP d'épreuve +${n(p, 'exp')}\u202f%`
         : `« ${mcNameOf(names, n(p, 'mcId'))} » a échoué à l'épreuve`,
     'kraken.forget': (p, names) =>
       `Le Kraken était mécontent ; vous avez oublié le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »`,
@@ -128,7 +129,8 @@ const events: Messages['events'] = {
     'mouse.escape': () => "Une souris est passée, mais par chance rien n'est arrivé",
     'mouse.trap': (p) =>
       `La tapette a attrapé une souris : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
-    'mouse.steal': (p, names) => `Une souris a volé ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'num')}`,
+    'mouse.steal': (p, names) =>
+      `Une souris a volé ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",
     'mouse.map': () => "Une souris a laissé une carte d'exploration",
     'krab.happy': () => 'M. Krab a adoré le repas',
@@ -138,11 +140,12 @@ const events: Messages['events'] = {
     'krab.driven': () => 'M. Krab en colère a été chassé',
     'plankton.appear': () => 'Plancton est venu au restaurant',
     'plankton.driven': () => 'Plancton a été chassé',
-    'fridge.drop': (p, names) => `Frigo plein : ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'num')} jeté`,
+    'fridge.drop': (p, names) =>
+      `Frigo plein : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'goods.drop': (p, names) =>
-      `Limite de possession dépassée : ${names.goodsName(n(p, 'goodsId'))} × ${n(p, 'num')} jeté`,
+      `Limite de possession dépassée : ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'device.place': (p, names) => `A installé ${names.goodsName(n(p, 'goodsId'))}`,
-    'store.use': (p, names) => `A utilisé ${names.goodsName(n(p, 'goodsId'))} × ${n(p, 'num')}`,
+    'store.use': (p, names) => `A utilisé ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'admin.grant': (p) => `Compensation : ${String(p.reason ?? '')}`,
     redeem: (p) => `Code utilisé : ${String(p.code ?? '')}`,
     'bar.darts': (p) =>
@@ -170,7 +173,7 @@ const events: Messages['events'] = {
     'market.manual': (p) =>
       `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} ${plFr(formatNum(n(p, 'cost')), 'pièce', 'pièces')}`,
     'market.share': (p, names) =>
-      `Vos ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'num')} partagés au marché ont été achetés`,
+      `Vos ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} partagés au marché ont été achetés`,
     'takeaway.open': () => 'A ouvert la vente à emporter',
     'takeaway.refresh': (p) => `A actualisé les commandes à emporter (${n(p, 'times')} fois aujourd'hui)`,
     'takeaway.deliver': () => 'A envoyé une commande à emporter',
@@ -198,11 +201,11 @@ const events: Messages['events'] = {
     'town.talk': () => 'A discuté avec les habitants sur la place',
     'town.wish': () => 'A fait un vœu sur la place',
     'exchange.order': (p, names) =>
-      `Ordre ${side(p)} passé en bourse : ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} exécutés immédiatement)` : ''}${heldNote(p)}`,
+      `Ordre ${side(p)} passé en bourse : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} exécutés immédiatement)` : ''}${heldNote(p)}`,
     'exchange.fill': (p, names) =>
       p.side === 'sell'
-        ? `Ordre de vente exécuté : ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité, frais ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (gains sur votre compte de bourse)'}`
-        : `Ordre d'achat exécuté : ${names.foodName(n(p, 'foodsId'))} × ${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${p.held ? heldNote(p) : ' (ingrédients sur votre compte de bourse)'}`,
+        ? `Ordre de vente exécuté : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité, frais ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (gains sur votre compte de bourse)'}`
+        : `Ordre d'achat exécuté : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${p.held ? heldNote(p) : ' (ingrédients sur votre compte de bourse)'}`,
     'exchange.cancel': (p, names) =>
       `Ordre ${side(p)} annulé : ${names.foodName(n(p, 'foodsId'))}, ${n(p, 'left')} restitués`,
     'exchange.expire': (p, names) =>
@@ -225,7 +228,7 @@ const events: Messages['events'] = {
       `Récompense d'activité de ${n(p, 'points')} ${plFr(n(p, 'points'), 'point', 'points')} reçue, avec ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} d'Ichiban Kuji en bonus`,
     'kuji.draw': (p) => {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
-        .map(([k, v]) => `prix ${k} × ${v}`)
+        .map(([k, v]) => `prix ${k}\u202f×\u202f${v}`)
         .join(', ');
       return `A tiré ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
     },

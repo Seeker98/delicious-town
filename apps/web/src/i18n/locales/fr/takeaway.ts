@@ -80,7 +80,7 @@ const takeaway: Messages['takeaway'] = {
     loadFailed: 'Impossible de charger vos amis',
     full: 'Votre équipe de livreurs est complète',
     attrs: (time, coin, exp, renown, odds) =>
-      `Temps −${time} % · Pièces +${coin} % · EXP +${exp} % · Renommée +${renown} % · Réussite ${odds} %`,
+      `Temps −${time}\u202f% · Pièces +${coin}\u202f% · EXP +${exp}\u202f% · Renommée +${renown}\u202f% · Réussite ${odds}\u202f%`,
     hired: (name) => `${name} est embauché comme livreur`,
     hireFailed: "Impossible d'embaucher",
     dismissConfirm: (name, coin, exp) =>

@@ -11,6 +11,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useFriendsStore } from '../stores/friends';
 import { useToastStore } from '../stores/toast';
 import { describeFeed } from '../utils/feed';
+import { restName } from '../utils/npcName';
 
 type Tab = 'friends' | 'requests' | 'find' | 'feed';
 const toast = useToastStore();
@@ -85,7 +86,7 @@ async function show(next: Tab) {
 function respond(r: FriendRequestDto, accept: boolean) {
   return run(async () => {
     await endpoints.friendRespond(r.id, accept);
-    toast.push(accept ? t.value.friends.becameFriends(r.name) : t.value.friends.rejected);
+    toast.push(accept ? t.value.friends.becameFriends(restName(r.id, r.name)) : t.value.friends.rejected);
     await loadRequests();
   }, t.value.friends.respondFailed);
 }
@@ -103,7 +104,7 @@ function apply(r: RestBriefDto) {
     const res = await endpoints.friendApply(r.id);
     if (res.status === 'friends') {
       r.isFriend = true;
-      toast.push(t.value.friends.becameFriends(r.name));
+      toast.push(t.value.friends.becameFriends(restName(r.id, r.name)));
     } else {
       r.requested = true;
       toast.push(t.value.friends.applied);
@@ -153,13 +154,13 @@ onMounted(() => show('friends'));
     >
       <GameImg
         :path="`avatar/${f.avatar ?? 0}`"
-        :alt="f.name"
+        :alt="restName(f.id, f.name)"
         fallback-icon="bi-person-circle"
         class="me-1 flex-shrink-0"
       />
       <!-- 问题记录 168：店名、等级、状态压到一行 -->
       <div class="flex-fill dt-friend-line small">
-        <b>{{ f.name }}</b>
+        <b>{{ restName(f.id, f.name) }}</b>
         <span class="text-muted ms-1">{{ t.friends.levelStar(f.level, f.star) }}</span>
         <span v-if="f.roaches > 0" class="text-muted ms-2">{{ t.friends.roaches(f.roaches) }}</span>
         <span v-if="f.dineSeat" class="text-muted ms-2">{{ t.friends.canDine }}</span>
@@ -177,7 +178,7 @@ onMounted(() => show('friends'));
       :data-testid="`request-${r.id}`"
     >
       <div class="flex-fill">
-        {{ r.name }} <span class="text-muted small">{{ t.friends.level(r.level) }}</span>
+        {{ restName(r.id, r.name) }} <span class="text-muted small">{{ t.friends.level(r.level) }}</span>
       </div>
       <button
         class="btn btn-sm btn-primary me-1"
@@ -208,7 +209,8 @@ onMounted(() => show('friends'));
       <h6 v-if="gi === 1 && street.length > 0" class="mt-3">{{ t.friends.sameStreet }}</h6>
       <div v-for="r in group" :key="r.id" class="d-flex align-items-center border rounded p-2 mb-1">
         <RouterLink :to="`/friends/${r.id}`" class="flex-fill text-decoration-none">
-          {{ r.name }} <span class="text-muted small">{{ t.friends.levelStar(r.level, r.star) }}</span>
+          {{ restName(r.id, r.name) }}
+          <span class="text-muted small">{{ t.friends.levelStar(r.level, r.star) }}</span>
         </RouterLink>
         <span v-if="r.isFriend" class="small text-muted">{{ t.friends.alreadyFriend }}</span>
         <button

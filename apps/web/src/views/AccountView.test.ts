@@ -106,4 +106,24 @@ describe('backlog 账号：改密码后要重新登录', () => {
     expect(useToastStore().items.at(-1)?.text).toBe('密码已修改，请用新密码重新登录');
     expect(useSessionStore().me).toBeNull();
   });
+
+  it('进入别的区服：会话里换成那个区服的蟹老板店编号（backlog 第 ⑦ 批审查）', async () => {
+    vi.mocked(endpoints.accountProfile).mockResolvedValue(profile());
+    vi.mocked(endpoints.selectShard).mockResolvedValue({ shardId: 1, restaurantId: 5, npcRestId: 99 });
+    useSessionStore().me = {
+      accountId: 1,
+      username: 'u1',
+      email: 'u@x',
+      emailVerified: true,
+      role: 'player',
+      shardId: 2,
+      restaurantId: 8,
+      lang: null,
+      npcRestId: 3,
+    };
+    const w = await mountView();
+    await w.get('[data-testid="acc-rest-1"] button').trigger('click');
+    await flushPromises();
+    expect(useSessionStore().me).toMatchObject({ shardId: 1, restaurantId: 5, npcRestId: 99 });
+  });
 });

@@ -14,6 +14,7 @@ const wiki: Messages['wiki'] = {
   back: 'Volver a la lista',
   home: 'Inicio de datos del juego',
   more: (n) => `Mostrar ${n} más`,
+  maxShown: (n) => `Se muestran como máximo ${n}; usa la búsqueda o el filtro de calle para acotar`,
   count: (n) => `${formatNum(n)} ${n === 1 ? 'entrada' : 'entradas'}`,
   apiLink: 'API abierta: para quienes quieran estudiar el juego o crear herramientas',
   kinds: {

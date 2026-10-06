@@ -18,8 +18,9 @@ const common: Messages['common'] = {
   opFailed: "L'action a échoué",
   loadMore: 'Charger plus',
   paren: (s) => ` (${s})`,
-  qty: (name, num) => `${name} × ${num}`,
-  times: ' × ',
+  // 不换行的窄空格（U+202F）：窄屏上“Riz ×”和“3”不会折开
+  qty: (name, num) => `${name}\u202f×\u202f${num}`,
+  times: '\u202f×\u202f',
   parenOpen: ' (',
   parenClose: ')',
   colon: (s) => `${s} : `,

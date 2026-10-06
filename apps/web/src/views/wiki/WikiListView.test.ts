@@ -229,6 +229,71 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(rows(c)).toHaveLength(1000);
   });
 
+  it('显示到 1000 条就不再给“再显示”，改写怎么缩小范围（backlog 第 ⑧ 批审查）', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 1200 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i}`,
+        level: 1,
+        coin: 1,
+        streetId: 0,
+      })),
+    });
+    const w = await mountAt('/wiki/cookbooks?n=950');
+    expect(rows(w)).toHaveLength(950);
+    await w.get('[data-testid="wiki-more"]').trigger('click');
+    expect(rows(w)).toHaveLength(1000);
+    expect(w.find('[data-testid="wiki-more"]').exists()).toBe(false);
+    expect(w.get('[data-testid="wiki-max"]').text()).toContain('1,000');
+  });
+
+  it('地址里的街道不存在时当成全部（backlog 第 ⑧ 批审查）', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 1, name: '菜1', level: 1, coin: 1, streetId: 0 },
+        { id: 2, name: '菜2', level: 1, coin: 1, streetId: 14 },
+      ],
+    });
+    const w = await mountAt('/wiki/cookbooks?street=999');
+    expect(rows(w)).toEqual(['1', '2']);
+    expect((w.get('[data-testid="wiki-street"]').element as HTMLSelectElement).value).toBe('');
+    // 地址里的显示条数照旧
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 400 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i}`,
+        level: 1,
+        coin: 1,
+        streetId: 0,
+      })),
+    });
+    expect(rows(await mountAt('/wiki/cookbooks?street=999&n=300'))).toHaveLength(300);
+  });
+
+  it('写地址时保留别的参数（和食谱页一样，backlog 第 ⑧ 批审查）', async () => {
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: [{ id: 1, name: '菜1', level: 1, coin: 1, streetId: 0 }],
+    });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/wiki/:kind', component: WikiListView },
+        { path: '/:p(.*)', component: { template: '<div />' } },
+      ],
+    });
+    await router.push('/wiki/cookbooks?from=guide');
+    const w = mount(WikiListView, { global: { plugins: [router] } });
+    await flushPromises();
+    await w.get('[data-testid="wiki-q"]').setValue('菜');
+    await flushPromises();
+    expect(router.currentRoute.value.query).toEqual({ from: 'guide', q: '菜' });
+  });
+
   it('厨具：按部位筛选，进道具详情', async () => {
     vi.mocked(endpoints.openEquips).mockResolvedValue({
       ...meta,

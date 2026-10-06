@@ -15,6 +15,7 @@ import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
 import { equipName } from '../utils/equipName';
+import { restName, restNotice } from '../utils/npcName';
 
 const route = useRoute();
 const router = useRouter();
@@ -90,13 +91,13 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <div class="d-flex align-items-center mb-2">
       <GameImg
         :path="`avatar/${rest.avatar ?? 0}`"
-        :alt="rest.name"
+        :alt="restName(rest.id, rest.name)"
         fallback-icon="bi-person-circle"
         class="me-2"
       />
       <div class="flex-fill">
         <div class="fw-bold">
-          {{ rest.name }}
+          {{ restName(rest.id, rest.name) }}
           <!-- 蟹老板（NPC 店）不能举报，点了会被拒（backlog 6B-1） -->
           <ReportButton
             v-if="rest.id !== mine && !rest.npc"
@@ -161,7 +162,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       </button>
     </div>
     <div v-if="rest.notice" class="border rounded p-2 mb-2 small">
-      <div style="white-space: pre-wrap">{{ rest.notice }}</div>
+      <div style="white-space: pre-wrap">{{ restNotice(rest.id, rest.notice) }}</div>
       <div v-if="rest.id !== mine && !rest.npc" class="text-end">
         <ReportButton target-type="notice" :target-id="rest.id" testid="notice-report" />
       </div>

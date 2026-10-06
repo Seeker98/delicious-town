@@ -6,7 +6,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { formatNum, formatPct } from '../utils/format';
 import { ATTR_KEYS, ATTR_NAMES } from '../utils/labels';
 
 const catalog = useCatalogStore();
@@ -15,7 +15,7 @@ const t = useT();
 const g = ref<GemsDto | null>(null);
 const nums = reactive<Record<number, number>>({});
 const busy = ref(false);
-const pct = (x: number) => `${(Math.max(0, x) * 100).toFixed(1)}%`;
+const pct = (x: number) => formatPct(Math.max(0, x), { min: 1 });
 
 async function load() {
   g.value = await endpoints.gems();

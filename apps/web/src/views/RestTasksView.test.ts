@@ -202,7 +202,7 @@ describe('RestTasksView', () => {
   });
 
   it('交易所注册天数不够、邮箱没验证，没有能领奖的限时活动，也标锁定写原因（backlog 第 ⑥ 批）', async () => {
-    const item = (id: number, blocked: 'days' | 'email' | 'noActivity', needDays = 0) => ({
+    const item = (id: number, blocked: 'days' | 'email' | 'frozen' | 'noActivity', needDays = 0) => ({
       id,
       name: String(id),
       points: 5,
@@ -215,13 +215,17 @@ describe('RestTasksView', () => {
       off: false,
     });
     vi.mocked(endpoints.activation).mockResolvedValue(
-      act({ items: [item(901, 'days', 7), item(902, 'email'), item(904, 'noActivity')] }),
+      act({
+        items: [item(901, 'days', 7), item(902, 'email'), item(903, 'frozen'), item(904, 'noActivity')],
+      }),
     );
     const w = await mountView();
     expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 注册满 7 天解锁');
     expect(w.find('[data-testid="act-902"]').text()).toContain('🔒 验证邮箱后解锁');
+    // 交易所被冻结的店（backlog 下架编号审查）
+    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 交易所已被冻结');
     expect(w.find('[data-testid="act-904"]').text()).toContain('现在没有进行中的限时活动');
-    for (const id of [901, 902, 904])
+    for (const id of [901, 902, 903, 904])
       expect(w.find(`[data-testid="act-${id}"]`).classes()).toContain('dt-act-locked');
   });
 

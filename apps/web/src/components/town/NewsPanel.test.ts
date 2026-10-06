@@ -171,6 +171,7 @@ describe('NewsPanel', () => {
       shardId: 1,
       restaurantId: 1,
       lang: null,
+      npcRestId: null,
     };
     vi.mocked(endpoints.townNews).mockResolvedValue({
       items: [
@@ -197,6 +198,7 @@ describe('NewsPanel', () => {
       shardId: 1,
       restaurantId: 1,
       lang: null,
+      npcRestId: null,
     };
     vi.mocked(endpoints.townNews).mockResolvedValue({
       items: [item(9, 'town.broadcast', { text: '你好' })],

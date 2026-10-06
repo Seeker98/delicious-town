@@ -104,6 +104,7 @@ export default {
     lockedLevel: (n: number) => `🔒 ${n} 級解鎖`,
     lockedDays: (n: number) => `🔒 註冊滿 ${n} 天解鎖`,
     lockedEmail: '🔒 驗證郵箱後解鎖',
+    lockedFrozen: '🔒 交易所已被凍結，暫時不能做',
     noActivity: '🔒 現在沒有進行中的限時活動',
     lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
     claimedTask: '✓ 已領',

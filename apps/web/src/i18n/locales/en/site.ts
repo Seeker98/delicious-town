@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    backlog7:
+      'Mr. Krab’s restaurant name and welcome message now appear in your language; percentages follow your language’s format, and the success-rate breakdown after enhancement no longer runs into the number; in the French interface, “name × quantity” no longer breaks across lines on narrow screens; when your Exchange access is frozen, the Exchange and prediction items in Today’s activity say so; the recipe list in the game wiki shows at most 1,000 entries and then suggests narrowing it down by search or street, and an unknown street in the address now shows all recipes',
     backlog6:
       'Duel rules now state how many judges this server actually uses; cookware dropped by an Elder gets its own line on the result card and makes the news; shard exchange on the signature dish page can trade several at once; appraisal items’ “How to get” now mentions critical hits on the Temple guardian; item pages in the game wiki also list Today’s deal, the black market, random rewards and gem upgrades as sources',
     visual1006:
