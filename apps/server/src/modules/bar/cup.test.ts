@@ -95,6 +95,8 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     const a = await player(0);
     await expect(guess(a, 0)).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
     expect(await hasRound(a)).toBe(false);
+    const act = await t.game.task.activation(a);
+    expect(act.items.find((i) => i.name === '酒吧娱乐')!.count).toBe(0);
   });
 
   it('猜错：骰子在别的杯子里；本局结束，什么都没有，连败 +1', async () => {
@@ -215,6 +217,18 @@ describe('猜酒杯：收手、继续、通关', () => {
     expect((await bar().overview(a)).cup).toMatchObject({ result: 'win', times: 1, round: null });
   });
 
+  it('收手的奖励等级按档：第 2 轮（等级 4）的银币是第 1 轮（等级 2）的两倍', async () => {
+    const a = await player();
+    await setRound(a, won(0));
+    script = [0.9];
+    const low = (await stop(a)).data.awards[0]!;
+    await setRound(a, won(1));
+    script = [0.9];
+    const high = (await stop(a)).data.awards[0]!;
+    expect(low.kind).toBe('coin');
+    expect(high.num).toBe(low.num * 2);
+  });
+
   it('继续：进下一轮，杯子变多，上一档作废', async () => {
     const a = await player();
     await setRound(a, won(0));
@@ -249,17 +263,21 @@ describe('猜酒杯：收手、继续、通关', () => {
     expect(await newsOf(a)).toEqual([{ type: 'bar.cup.big', params: { round: 4, cups: 7 } }]);
   });
 
-  it('第 3 轮收手写新闻；同一天第二条不写（新闻和广播合计）', async () => {
+  it('第 3 轮收手每次都写新闻、四轮全过每次都发广播，不限条数（用户 2026-10-07 定）', async () => {
     const a = await player();
     await setRound(a, won(2));
     await stop(a);
-    expect(await newsOf(a)).toEqual([{ type: 'bar.cup', params: { round: 3, cups: 5 } }]);
     await setRound(a, { round: 3, won: false, last: null });
     await guess(a, 0, 3);
-    expect(await newsOf(a)).toHaveLength(1);
+    await setRound(a, won(2));
+    await stop(a);
     await setRound(a, won(1));
     await stop(a);
-    expect(await newsOf(a)).toHaveLength(1);
+    expect(await newsOf(a)).toEqual([
+      { type: 'bar.cup', params: { round: 3, cups: 5 } },
+      { type: 'bar.cup.big', params: { round: 4, cups: 7 } },
+      { type: 'bar.cup', params: { round: 3, cups: 5 } },
+    ]);
   });
 
   it('连胜、连败按局累计；排行“猜酒杯连胜”读得到', async () => {

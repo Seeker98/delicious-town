@@ -1,11 +1,10 @@
 import { GOODS, type Tuning } from '@dt/config';
-import { gameDay, type BarAwardDto, type CupDto, type CupGuessDto, type CupTierDto } from '@dt/shared';
+import { type BarAwardDto, type CupDto, type CupGuessDto, type CupTierDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { invalidState } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, type Op } from '../../core/op';
 import { randomAward } from '../award/random';
-import { incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods } from '../store/goods';
 import { badInput } from './common';
 import { endRound, loadRound, saveRound } from './round';
@@ -36,7 +35,7 @@ async function streak(o: Op, result: BarResult): Promise<void> {
   await saveBarState(o, { cup_result: result, cup_times: times });
 }
 
-/** 收手或通关：发这一档的奖励；有新闻的档每家店每天最多写一条（新闻和广播合计） */
+/** 收手或通关：发这一档的奖励；有新闻的档每次都写，不限条数（用户 2026-10-07 定） */
 async function finish(o: Op, s: CupState, result: 'stop' | 'clear'): Promise<CupDto> {
   const t = o.tuning.bar.cup;
   const tier = t.tiers[s.round]!;
@@ -46,7 +45,7 @@ async function finish(o: Op, s: CupState, result: 'stop' | 'clear'): Promise<Cup
     awards.push(await randomAward(o, { level: tier.level, noTicket: true, bar: true }));
   await streak(o, 1);
   const cups = t.cups[s.round]!;
-  if (tier.news && (await incrementDaily(o.tx, o.rest.id, 'bar.cup.news', 1, gameDay(o.now))) === 1)
+  if (tier.news)
     opNews(o, tier.news === 'broadcast' ? 'bar.cup.big' : 'bar.cup', { round: s.round + 1, cups });
   restLog(o, 'bar.cup', { result, round: s.round + 1, awards: tier.awards });
   return { ...cupView(s, t), won: false, result, awards };
