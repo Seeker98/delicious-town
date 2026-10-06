@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cup1007:
+      'The bar’s cup game has been redesigned: up to 4 rounds with 2, 3, 5 and 7 cups, and a die under just one of them. Each time you guess right, stop and take that round’s reward, or go on to the next round; guess wrong and you get nothing. The further you get, the bigger the reward: stopping after round 3 makes the news, and clearing all 4 rounds wins 8 top rewards and a town-wide broadcast. Each game costs 1 Mystery Voucher, no longer rising with your streak; your chance is one over the number of cups (luck still helps)',
     deal1007:
       'New bar game “Deal or No Deal”: 10 boxes on the table, each holding ingredients, the biggest being five Level-5 Universal Ingredients. Pick one as your box, then open the others round by round. After each round the town banker offers coins for your box: take the deal and walk away, or keep opening; never deal and you get what is in your box. 10,000 coins a game, 3 games a day',
     spice1007:
