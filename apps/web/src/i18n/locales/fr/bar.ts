@@ -200,8 +200,8 @@ const bar: Messages['bar'] = {
     rule: (count) =>
       `${count} boîtes sont posées sur la table, chacune avec des ingrédients. Choisissez-en une comme la vôtre, puis ouvrez les autres manche après manche. Après chaque manche, le banquier de la ville propose de racheter votre boîte contre des pièces : acceptez et repartez avec les pièces, ou refusez et continuez d’ouvrir. Si vous refusez jusqu’au bout, vous gardez le contenu de votre boîte.`,
     prizesTitle: 'Les prix dans les boîtes',
-    prizeFood: (level, num) => `Ingrédient de niveau ${level} × ${num}`,
-    item: (name, num) => `${name} × ${num}`,
+    prizeFood: (level, num) => `Ingrédient de niveau ${level}\u202f×\u202f${num}`,
+    item: (name, num) => `${name}\u202f×\u202f${num}`,
     left: (n) => `Encore ${n} ${plFr(n, 'partie', 'parties')} aujourd’hui`,
     noLeft: 'Plus de parties aujourd’hui',
     noCoin: 'Pas assez de pièces',
