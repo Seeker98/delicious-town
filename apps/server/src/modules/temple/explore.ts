@@ -5,7 +5,7 @@ import { opLuck } from '../../core/luck';
 import { opNeedPick } from '../../core/scarcity';
 import { opNews, type Op } from '../../core/op';
 import { gainExp, spendStrength } from '../../core/resources';
-import { restGear, suitEffect } from '../equip/power';
+import { equipOff, restGear, suitEffect } from '../equip/power';
 import { consumeGoods, hasValidHonor } from '../store/goods';
 import { addFoodsMerged, badInput, bump, pickFood, toList } from './common';
 import { exploreAwardNum, exploreRate, exploreSplit } from './rules';
@@ -32,7 +32,7 @@ export async function exploreMaps(
   const starKey = await hasValidHonor(o, GOODS.starKey);
   const book = b.goodsId === GOODS.mapHigh && (await hasValidHonor(o, GOODS.exploreBook));
   const eff = (id: number, key: string) => o.config.requireGoods(id).effects[key] ?? 0;
-  const gear = await restGear(o.tx, o.rest, o.config.suits);
+  const gear = await restGear(o.tx, o.rest, o.config.suits, equipOff(o.settings));
   const rate = exploreRate(def, {
     needle,
     lostRate: weather.mapLostRate ?? 0,

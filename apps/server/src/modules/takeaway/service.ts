@@ -42,7 +42,7 @@ export function createTakeawayService(d: GameDeps, world: WorldService) {
   return {
     async overview(ctx: RestCtx): Promise<TakeawayDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'takeaway');
-      return takeawayView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning, d.now());
+      return takeawayView(d.db, d.config, await restOf(ctx.restaurantId), s, d.now());
     },
     open(ctx: RestCtx, b: { way: 'ticket' | 'coin' }) {
       return op(ctx, 'takeaway.open', (o) => openTakeaway(o, b.way));

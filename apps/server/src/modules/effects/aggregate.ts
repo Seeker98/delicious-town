@@ -24,6 +24,18 @@ export function aggregateEffects(sources: EffectLike[], now: Date): EffectAggreg
   return { agg, nextExpireAt };
 }
 
+/**
+ * 区服关掉厨具功能时（backlog 411~413，用户定）：穿戴厨具（equip 行）和套装（suit 行）的加成都不算，
+ * 汇总里记上这个键，开关变了就重算（见 effects/service getEffectAgg）
+ */
+export const EQUIP_OFF_KEY = 'equipOff';
+const EQUIP_SOURCES = new Set(['equip', 'suit']);
+
+/** 区服关掉厨具功能时列给玩家看的加成来源也去掉厨具、套装（和汇总一致） */
+export function shownEffects<T extends { sourceType: string }>(list: T[], equipOff: boolean): T[] {
+  return equipOff ? list.filter((s) => !EQUIP_SOURCES.has(s.sourceType)) : list;
+}
+
 export interface ActiveEffectLike extends EffectLike {
   sourceType: string;
   sourceId: number;
@@ -39,8 +51,11 @@ export function computeEffectAgg(
   config: GameConfig,
   tuning: Tuning,
   now: Date,
+  opts: { equipOff?: boolean } = {},
 ): EffectAggregate {
-  const live = sources.filter((s) => !s.expiresAt || s.expiresAt > now);
+  const live = sources.filter(
+    (s) => (!s.expiresAt || s.expiresAt > now) && !(opts.equipOff && EQUIP_SOURCES.has(s.sourceType)),
+  );
   const { agg, nextExpireAt } = aggregateEffects(live, now);
   let plaques = 0;
   for (const id of owned) {
@@ -74,5 +89,6 @@ export function computeEffectAgg(
     config.bundle.paintingTiers,
   );
   for (const [k, v] of Object.entries(derived)) agg[k] = (agg[k] ?? 0) + v;
+  if (opts.equipOff) agg[EQUIP_OFF_KEY] = 1;
   return { agg, nextExpireAt };
 }

@@ -68,8 +68,12 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
   it('玩家喝到：输掉押注、宿醉 1 小时上座率 -10%；再次宿醉重新计时、不叠加', async () => {
     const a = await player();
     const base =
-      (await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, t.deps.config.tuning)).atRate ??
-      0;
+      (
+        await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, {
+          tuning: t.deps.config.tuning,
+          features: {},
+        })
+      ).atRate ?? 0;
     script = [0];
     await start(a, 5);
     const r = (await drink(a, 0)).data;
@@ -93,7 +97,10 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     expect(again).toHaveLength(1);
     expect(again[0]!.expiresAt).toEqual(new Date(t.clock.now.getTime() + 3600_000));
     // 加成汇总里上座率只扣一次 10%（PR28 遗留）
-    const agg = await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, t.deps.config.tuning);
+    const agg = await getEffectAgg(t.db, a.restaurantId, t.clock.now, t.deps.config, {
+      tuning: t.deps.config.tuning,
+      features: {},
+    });
     expect(agg.atRate ?? 0).toBeCloseTo(base - 0.1, 6);
   });
 

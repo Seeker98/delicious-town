@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { GOODS, type GameConfig, type Tuning } from '@dt/config';
+import { GOODS, type GameConfig, type ShardSettings } from '@dt/config';
 import { gameDay, type TakeawayDto, type TakeawayOrderDto, type TakeawayRiderDto } from '@dt/shared';
 import type { DB, RestaurantRow, TakeawayOrderRow, TakeawayRiderRow } from '../../db/schema';
 import { gradeOf, mergeNeed } from '../cookbook/rules';
@@ -79,9 +79,10 @@ export async function takeawayView(
   db: Kysely<DB>,
   config: GameConfig,
   rest: RestaurantRow,
-  tuning: Tuning,
+  settings: ShardSettings,
   now: Date,
 ): Promise<TakeawayDto> {
+  const tuning = settings.tuning;
   const t = tuning.takeaway;
   const base = {
     open: {
@@ -153,7 +154,7 @@ export async function takeawayView(
     .execute();
   const busy = await busyByRider(db, rest.id);
   const times = await getDaily(db, rest.id, KEY.refresh, gameDay(now));
-  const agg = await getEffectAgg(db, rest.id, now, config, tuning);
+  const agg = await getEffectAgg(db, rest.id, now, config, settings);
   return {
     ...base,
     opened: true,

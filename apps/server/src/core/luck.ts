@@ -6,7 +6,7 @@ import type { Op } from './op';
 export async function opAgg(op: Op): Promise<Record<string, number>> {
   const hit = op.cache.get('agg') as Record<string, number> | undefined;
   if (hit) return hit;
-  const agg = await getEffectAgg(op.tx, op.rest.id, op.now, op.config, op.tuning);
+  const agg = await getEffectAgg(op.tx, op.rest.id, op.now, op.config, op.settings);
   op.cache.set('agg', agg);
   return agg;
 }
@@ -18,7 +18,7 @@ export async function opAgg(op: Op): Promise<Record<string, number>> {
 export async function opAggAtStart(op: Op): Promise<Record<string, number>> {
   const hit = op.cache.get('agg') as Record<string, number> | undefined;
   if (hit) return hit;
-  const agg = await getEffectAgg(op.tx, op.rest.id, op.now, op.config, op.tuning, op.rest);
+  const agg = await getEffectAgg(op.tx, op.rest.id, op.now, op.config, op.settings, op.rest);
   op.cache.set('agg', agg);
   return agg;
 }

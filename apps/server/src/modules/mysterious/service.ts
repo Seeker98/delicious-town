@@ -22,7 +22,7 @@ import { gainCoin, gainExp, gainStrength } from '../../core/resources';
 import type { McCookRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
-import { restPower } from '../equip/power';
+import { equipOff, restPower } from '../equip/power';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { consumeSpecial, currentCook, endCook } from './cook';
@@ -381,7 +381,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             goldRate: (agg.mcGoldRate ?? 0) + (weather.mcGoldRate ?? 0),
             numRate: (agg.mcNumRate ?? 0) + (weather.mcNumRate ?? 0),
             roadRate: roadRate(mc.road, others, t),
-            power: await restPower(o.tx, o.rest, o.config.suits),
+            power: await restPower(o.tx, o.rest, o.config.suits, equipOff(o.settings)),
             coinAdd: agg.mcCoinAdd ?? 0,
             humanSon: await hasValidHonor(o, GOODS.humanSon),
             cookie: b.cookie,

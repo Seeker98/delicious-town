@@ -244,8 +244,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
             .selectAll()
             .where('id', '=', ctx.restaurantId)
             .executeTakeFirstOrThrow();
-          const luck =
-            (await getEffectAgg(d.db, ctx.restaurantId, d.now(), d.config, s.tuning)).luckValue ?? 0;
+          const luck = (await getEffectAgg(d.db, ctx.restaurantId, d.now(), d.config, s)).luckValue ?? 0;
           const of = async (mode: 'attack' | 'defend') =>
             duelPower((await sideOf(d.db, d.config, full, luck, mode)).attrs);
           return { attack: await of('attack'), defend: await of('defend') };
