@@ -289,9 +289,6 @@ body {
   background: #f1f3f5;
   color: #868e96;
 }
-.dt-act-locked .dt-act-bar {
-  visibility: hidden;
-}
 /* 锁定原因（注册天数、邮箱、没有限时活动）在英法西文里很长：单独一行，放在进度条的位置 */
 .dt-act-lock {
   font-size: 12px;

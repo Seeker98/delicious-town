@@ -382,6 +382,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         <select
           :value="exPick[r.level] ?? ''"
           class="form-select form-select-sm dt-shrink"
+          style="flex-basis: 10rem"
           @change="exPick[r.level] = ($event.target as HTMLSelectElement).value"
         >
           <option value="">{{ t.mc.exchange.pick }}</option>

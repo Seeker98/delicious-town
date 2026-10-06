@@ -205,7 +205,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
           </option>
         </select>
         <button
-          class="btn btn-sm btn-primary"
+          class="btn btn-sm btn-primary flex-shrink-0"
           :disabled="busy || gemPick === null"
           data-testid="inlay-go"
           @click="run(() => endpoints.equipInlay(id, gemPick!), t.equip.detail.inlayFailed)"
