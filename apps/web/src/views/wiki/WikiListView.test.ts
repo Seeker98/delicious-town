@@ -259,6 +259,19 @@ describe('游戏资料列表（问题记录 142）', () => {
     const w = await mountAt('/wiki/cookbooks?street=999');
     expect(rows(w)).toEqual(['1', '2']);
     expect((w.get('[data-testid="wiki-street"]').element as HTMLSelectElement).value).toBe('');
+    // 地址里的显示条数照旧
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 400 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i}`,
+        level: 1,
+        coin: 1,
+        streetId: 0,
+      })),
+    });
+    expect(rows(await mountAt('/wiki/cookbooks?street=999&n=300'))).toHaveLength(300);
   });
 
   it('写地址时保留别的参数（和食谱页一样，backlog 第 ⑧ 批审查）', async () => {

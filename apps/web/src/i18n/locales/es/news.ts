@@ -25,7 +25,7 @@ function fundNews(w: string, p: P): string {
 function predictResult(p: P): string {
   const head = `Predicción «${str(p.title)}»`;
   if (p.outcome === null || p.outcome === undefined) {
-    return `${head} anulada. Se devolvió a los participantes el ${Math.round(num(p.voidRatio) * 100)} % de su apuesta neta`;
+    return `${head} anulada. Se devolvió a los participantes el ${Math.round(num(p.voidRatio) * 100)}\u00a0% de su apuesta neta`;
   }
   const result = `${head}: resultado ${p.outcome ? 'Sí' : 'No'}`;
   const players = num(p.players);

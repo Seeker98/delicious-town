@@ -5,7 +5,7 @@ import { endpoints } from '../api/endpoints';
 import { useRestaurantStore } from '../stores/restaurant';
 import SocietyStarView from './SocietyStarView.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { starNeed: vi.fn(), starUp: vi.fn() } }));
+vi.mock('../api/endpoints', () => ({ endpoints: { starNeed: vi.fn(), starUp: vi.fn(), overview: vi.fn() } }));
 
 describe('SocietyStarView', () => {
   beforeEach(() => setActivePinia(createPinia()));
@@ -28,6 +28,8 @@ describe('SocietyStarView', () => {
     await flushPromises();
     expect(endpoints.starUp).toHaveBeenCalled();
     expect(useRestaurantStore().starNeed).toBeNull();
+    // 星级也重读
+    expect(endpoints.overview).toHaveBeenCalled();
   });
 
   it('条件不满足时按钮禁用；未开放的星级给出说明', async () => {

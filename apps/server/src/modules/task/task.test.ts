@@ -124,6 +124,15 @@ describe('活跃项的门槛（backlog 第 ⑥ 批）', () => {
     expect(items.find((x) => x.name === '交易所成交')).toMatchObject({ blocked: 'frozen' });
     expect(items.find((x) => x.name === '事件预测交易')).toMatchObject({ blocked: 'frozen' });
     expect(items.find((x) => x.name === '签到')).toMatchObject({ blocked: null });
+    // 冻结先于注册天数（和交易所下单一样）
+    await t.db
+      .updateTable('account')
+      .set({ created_at: t.clock.now })
+      .where('id', '=', ctx.accountId)
+      .execute();
+    expect((await task().activation(ctx)).items.find((x) => x.name === '交易所成交')).toMatchObject({
+      blocked: 'frozen',
+    });
   });
 
   it('领取限时活动奖励：只有全服加成（没有奖励）时仍标 noActivity；兑换活动结束后的兑换期里算能做', async () => {

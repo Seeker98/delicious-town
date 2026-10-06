@@ -41,7 +41,7 @@ const temple: Messages['temple'] = {
     howChampion: 'campeón de platos estrella de ayer',
     howGuardian: 'golpes críticos al guardián del Templo si tienes un Atrapasueños',
     howSep: ', ',
-    toolOption: (name, min, max, rate, have) => `${name} (nv. ${min}–${max}, ${rate} %, tienes ${have})`,
+    toolOption: (name, min, max, rate, have) => `${name} (nv. ${min}–${max}, ${rate}\u00a0%, tienes ${have})`,
     btn: (n) => `Tasar ×${n}`,
     noRetry: 'No repetir por debajo del nivel 5 (Libro del dios de las estrellas)',
     got: (name, num, blessed) =>
@@ -88,16 +88,16 @@ const temple: Messages['temple'] = {
     targetLevel: (level) => ` (nv. ${level})`,
     refresh: 'Cambiar (20.000 monedas)',
     stat: (worth, exp, level) =>
-      `Valor de prueba ${worth} % / 50 %, EXP de prueba ${exp} % / 150 %, dominio ${level}`,
+      `Valor de prueba ${worth}\u00a0% / 50 %, EXP de prueba ${exp}\u00a0% / 150 %, dominio ${level}`,
     pickByTentacle: (n) => `Elegir con tentáculo (tienes ${n})`,
     pick: 'Elegir',
     main: 'Ingrediente principal',
     sub: 'Ingrediente secundario',
     rate: (pct) =>
-      `Éxito estimado ${pct} % (sin contar la suerte); además cuesta 10.000 monedas y 1 de cada ingrediente del plato`,
+      `Éxito estimado ${pct}\u00a0% (sin contar la suerte); además cuesta 10.000 monedas y 1 de cada ingrediente del plato`,
     start: 'Empezar la prueba',
     success: (lucky, worth, exp, prof) =>
-      `Prueba superada${lucky ? ' (con suerte)' : ''}: valor de prueba +${worth} %, EXP de prueba +${exp} %, dominio +${prof}`,
+      `Prueba superada${lucky ? ' (con suerte)' : ''}: valor de prueba +${worth}\u00a0%, EXP de prueba +${exp}\u00a0%, dominio +${prof}`,
     fail: 'Prueba fallida',
   },
   kraken: {
@@ -109,7 +109,7 @@ const temple: Messages['temple'] = {
     noDish: 'Cocina primero un plato estrella en la página de platos estrella',
     notEnough: 'No hay suficientes raciones a la venta (debe quedar al menos 1 después)',
     forget: 'Olvidaste este plato estrella',
-    punish: (exp, v) => `${exp ? 'EXP de prueba' : 'Valor de prueba'} −${v} %`,
+    punish: (exp, v) => `${exp ? 'EXP de prueba' : 'Valor de prueba'} −${v}\u00a0%`,
     failed: 'No se pudo alimentar',
     exFailed: 'No se pudo canjear',
     refreshFailed: 'No se pudo actualizar',

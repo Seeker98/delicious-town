@@ -152,3 +152,20 @@ describe('me 带本区服蟹老板餐厅的编号（backlog：网页按语言换
     expect((await me(u.cookie)).npcRestId).toBeNull();
   });
 });
+
+describe('选区服的响应也带蟹老板餐厅的编号（backlog 第 ⑦ 批审查：选区服后网页不再读 me）', () => {
+  it('有 NPC 店时给编号、没有时是 null；自己的店照常', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const u = await registerUser(ctx.app);
+    const select = async () =>
+      (await call(ctx.app, 'POST', '/api/v1/shard/select', { cookie: u.cookie, body: { shardId } })).json
+        .data;
+    expect(await select()).toEqual({ shardId, restaurantId: null, npcRestId: null });
+    const config = ctx.deps.config;
+    const npc = await ensureNpc(ctx.deps.db, config, config.tuning.friend.npc, shardId, seededRng(1));
+    expect(await select()).toEqual({ shardId, restaurantId: null, npcRestId: npc.id });
+    const p = await playerIn(ctx, shardId);
+    const r = await call(ctx.app, 'POST', '/api/v1/shard/select', { cookie: p.cookie, body: { shardId } });
+    expect(r.json.data).toEqual({ shardId, restaurantId: p.restId, npcRestId: npc.id });
+  });
+});

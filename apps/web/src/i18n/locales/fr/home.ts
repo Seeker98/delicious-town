@@ -28,7 +28,7 @@ const home: Messages['home'] = {
   todo: 'À faire aujourd’hui',
   signIn: 'Pointage quotidien',
   signedShort: 'Pointé',
-  signInGiftLine: (gift) => `Reçu ${gift} × 1 (dans l'entrepôt)`,
+  signInGiftLine: (gift) => `Reçu ${gift}\u202f×\u202f1 (dans l'entrepôt)`,
   signInBtn: 'Pointer',
   signInFailed: 'Échec du pointage',
   mainTag: 'Principale',

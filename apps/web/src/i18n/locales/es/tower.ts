@@ -47,7 +47,7 @@ const tower: Messages['tower'] = {
   },
   elder: {
     summary: (level, stress, pct) =>
-      `Equipo del anciano: nivel ${level}, todo +${stress}${pct > 0 ? `; si ganas un desafío real, ${pct} % de soltar una pieza` : ''}`,
+      `Equipo del anciano: nivel ${level}, todo +${stress}${pct > 0 ? `; si ganas un desafío real, ${pct}\u00a0% de soltar una pieza` : ''}`,
     points: (text) => `Puntos de atributo: ${text}`,
     piece: (name, stress, text) => `${name} +${stress}: ${text}`,
     attrs: (text) => `Al ser desafiado: ${text}`,

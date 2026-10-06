@@ -9,12 +9,12 @@ const TIERS: Record<string, string> = {
 
 const fund: Messages['fund'] = {
   rule: (days, back, early) =>
-    `Un dépôt arrive à échéance après ${days} ${plFr(days, 'jour', 'jours')} : vous récupérez ${back} % du capital et une médaille d'EXP. Un retrait anticipé ne rend que ${early} %, sans médaille. Un seul dépôt à la fois par restaurant ; les médailles du fonds ne se cumulent pas.`,
+    `Un dépôt arrive à échéance après ${days} ${plFr(days, 'jour', 'jours')} : vous récupérez ${back}\u202f% du capital et une médaille d'EXP. Un retrait anticipé ne rend que ${early}\u202f%, sans médaille. Un seul dépôt à la fois par restaurant ; les médailles du fonds ne se cumulent pas.`,
   myCoin: (n) => `Mes pièces : ${n}`,
   tierName: (key) => TIERS[key] ?? key,
   tierLine: (coin, back) =>
     `Déposez ${coin} ${plFr(coin, 'pièce', 'pièces')}, récupérez-en ${back} à l'échéance`,
-  medalLine: (name, pct) => `À l'échéance : « ${name} », EXP +${pct} %`,
+  medalLine: (name, pct) => `À l'échéance : « ${name} », EXP +${pct}\u202f%`,
   iconLine: (title) => `Avec le titre temporaire « ${title} », qui expire avec la médaille`,
   days: (n) => `Durée : ${n} ${plFr(n, 'jour', 'jours')}`,
   deposit: 'Déposer',

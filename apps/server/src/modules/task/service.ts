@@ -339,6 +339,8 @@ export function createTaskService(d: GameDeps) {
           : 0;
     const blockedOf = (id: number): ActivationBlock => {
       if (id === ACT_EXCHANGE || id === ACT_PREDICT) {
+        // 交易所冻结的店两样都做不了；和交易所下单一样先看冻结（事件预测下单也查这个）
+        if (facts.frozen) return 'frozen';
         // 门槛和下单时同一个判断；等级另外写在 needLevel 里，这里不管
         const t = id === ACT_EXCHANGE ? settings.tuning.exchange : settings.tuning.predict;
         const why = eligibilityOf(
@@ -348,8 +350,6 @@ export function createTaskService(d: GameDeps) {
         );
         if (why === 'exchange_age') return 'days';
         if (why === 'exchange_email') return 'email';
-        // 交易所冻结的店两样都做不了（事件预测下单也查这个）
-        if (facts.frozen) return 'frozen';
       }
       if (id === ACT_ACTIVITY && !facts.activityOpen) return 'noActivity';
       return null;

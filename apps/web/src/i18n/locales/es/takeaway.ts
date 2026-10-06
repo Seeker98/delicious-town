@@ -81,7 +81,7 @@ const takeaway: Messages['takeaway'] = {
     loadFailed: 'No se pudieron cargar tus amigos',
     full: 'Tu equipo de repartidores está completo',
     attrs: (time, coin, exp, renown, odds) =>
-      `Tiempo −${time} % · Monedas +${coin} % · EXP +${exp} % · Renombre +${renown} % · Éxito ${odds} %`,
+      `Tiempo −${time}\u00a0% · Monedas +${coin}\u00a0% · EXP +${exp}\u00a0% · Renombre +${renown}\u00a0% · Éxito ${odds}\u00a0%`,
     hired: (name) => `Contrataste a ${name} como repartidor`,
     hireFailed: 'No se pudo contratar',
     dismissConfirm: (name, coin, exp) =>

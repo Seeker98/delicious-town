@@ -23,8 +23,8 @@ const predict: Messages['predict'] = {
   running: 'En cours',
   noRunning: 'Aucun événement en cours',
   auto: 'Question du système',
-  yesPct: (n) => `Oui ${n} %`,
-  noPct: (n) => `Non ${n} %`,
+  yesPct: (n) => `Oui ${n}\u202f%`,
+  noPct: (n) => `Non ${n}\u202f%`,
   holding: (yes, no) => ` · Je détiens Oui ${yes} / Non ${no}`,
   ended: 'Terminés',
   endedMore: (n) => `Tout afficher (${n})`,
@@ -55,7 +55,7 @@ const predict: Messages['predict'] = {
       `À la clôture, chaque part du bon côté rapporte ${unit} pièces et l'autre côté ne vaut rien. Par exemple, si « Oui » est à 63 %, 1 part coûte environ ${example} ${plFr(example, 'pièce', 'pièces')} ; si le résultat est « Oui » vous récupérez ${unit}, si c'est « Non » vous perdez ce que vous avez payé.`,
       "Le prix reflète la probabilité estimée par tous : plus on achète « Oui », plus « Oui » est cher et « Non » bon marché ; plus vous achetez d'un coup, plus chaque part suivante coûte cher.",
       "Pas besoin d'attendre le résultat : vous pouvez vendre au prix actuel à tout moment avant l'échéance. Vous pensez vous être trompé ? Vendez pour limiter la perte. Le prix a assez monté ? Vendez pour prendre le gain. Ce que vous gagnez ou perdez est la différence entre le prix de vente et le prix d'achat.",
-      `L'achat et la vente prélèvent chacun ${feePct} % de frais (sur le montant, arrondi au supérieur).`,
+      `L'achat et la vente prélèvent chacun ${feePct}\u202f% de frais (sur le montant, arrondi au supérieur).`,
       'Mise nette = ce que vous avez payé à l’achat (frais compris) − ce que la vente vous a rapporté ; gain/perte = gain à la clôture − mise nette.',
       "Si l'événement est annulé, la mise nette est remboursée ; si quelqu'un a revendu tôt avec profit et que le système n'a pas assez reçu, le remboursement est proportionnel.",
     ],
@@ -64,15 +64,15 @@ const predict: Messages['predict'] = {
     shares: 'part(s)',
     submit: 'Valider',
     estimate: (buy, total, fee, pct) =>
-      `${buy ? 'Coût estimé' : 'Gain estimé'} ${total} ${plFr(total, 'pièce', 'pièces')} (frais ${fee} compris) ; « Oui » sera à ${pct} % après l'échange`,
+      `${buy ? 'Coût estimé' : 'Gain estimé'} ${total} ${plFr(total, 'pièce', 'pièces')} (frais ${fee} compris) ; « Oui » sera à ${pct}\u202f% après l'échange`,
     enterQty: 'Saisissez le nombre de parts (vous ne pouvez pas vendre plus que vous ne détenez)',
     own: 'Vous avez créé cette question : vous ne pouvez ni acheter ni vendre de parts',
     summary: 'Gain/perte sur cet événement',
     summaryLine: (bought, sold, fees, net) =>
       `Acheté ${bought}, vendu ${sold} (frais ${fees}), mise nette ${net}`,
     resolved: (label, held, unit, payout) =>
-      `Résultat ${label} : ${held} ${plFr(held, 'part', 'parts')} ${label} × ${unit} = ${payout}`,
-    voided: (pct, payout) => `Annulé : ${pct} % de la mise nette remboursé, soit ${payout}`,
+      `Résultat ${label} : ${held} ${plFr(held, 'part', 'parts')} ${label}\u202f×\u202f${unit} = ${payout}`,
+    voided: (pct, payout) => `Annulé : ${pct}\u202f% de la mise nette remboursé, soit ${payout}`,
     waiting: 'Clos, en attente du résultat',
     summaryHint: '(gain à la clôture − mise nette)',
     mine: 'Mes échanges',
@@ -84,7 +84,7 @@ const predict: Messages['predict'] = {
       'Les 20 derniers échanges de tous (anonymes) : on voit quels échanges ont fait monter ou baisser le prix',
     noTrades: "Pas encore d'échange",
     tradeLine: (action, qty, per, pct) =>
-      `${action} ${qty} ${plFr(qty, 'part', 'parts')} à environ ${per} chacune, « Oui » à ${pct} % ensuite`,
+      `${action} ${qty} ${plFr(qty, 'part', 'parts')} à environ ${per} chacune, « Oui » à ${pct}\u202f% ensuite`,
   },
 };
 export default predict;

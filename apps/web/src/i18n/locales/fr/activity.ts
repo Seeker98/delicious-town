@@ -105,7 +105,7 @@ const activity: Messages['activity'] = {
     claim: 'Récupérer',
     premiumLocked: 'Débloquez pour récupérer',
   },
-  goalLine: (action, n) => `${action} × ${n}`,
+  goalLine: (action, n) => `${action}\u202f×\u202f${n}`,
   grid: {
     full: 'Tout terminé',
     d0: 'Diagonale ↘',
@@ -125,7 +125,7 @@ const activity: Messages['activity'] = {
   exchange: {
     rule: "La monnaie d'événement ne va pas dans l'entrepôt et ne s'utilise que dans cet événement. Elle expire après la période d'échange.",
     drop: (action, chance, currency, num, today, cap) =>
-      `${action} : ${chance} de chances d'obtenir ${currency} × ${num} (aujourd'hui ${today}/${cap})`,
+      `${action} : ${chance} de chances d'obtenir ${currency}\u202f×\u202f${num} (aujourd'hui ${today}/${cap})`,
     btn: 'Échanger',
   },
   coop: {

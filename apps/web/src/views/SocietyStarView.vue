@@ -22,8 +22,10 @@ async function starUp() {
   busy.value = true;
   try {
     const r = await endpoints.starUp();
-    // 食谱页记住的下一星要求作废（backlog 384 审查）
-    useRestaurantStore().starNeed = null;
+    // 食谱页记住的下一星要求作废，餐厅的星级也重读（backlog 384 审查）
+    const restaurant = useRestaurantStore();
+    restaurant.starNeed = null;
+    void restaurant.refresh().catch(() => null);
     toast.push(t.value.society.star.done(r.star));
     await load();
   } catch (e) {

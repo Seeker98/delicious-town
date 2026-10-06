@@ -93,7 +93,12 @@ async function load(k: WikiKind) {
     if (mine !== seq) return;
     streets.value = s;
     // 地址里的街道不存在（backlog 第 ⑧ 批审查）：当成全部
-    if (street.value !== null && !s.some((x) => x.id === street.value)) street.value = null;
+    if (street.value !== null && !s.some((x) => x.id === street.value)) {
+      // 地址里的显示条数照旧（换了条件组合，要把条数一起挪过去）
+      const n = more.value.n;
+      street.value = null;
+      more.value = { key: filterKey.value, n };
+    }
     if (k === 'goods') goods.value = items as OpenGoodsBrief[];
     else if (k === 'foods') foods.value = items as OpenFoodBrief[];
     else if (k === 'cookbooks') cookbooks.value = items as OpenCookbookBrief[];

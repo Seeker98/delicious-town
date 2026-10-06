@@ -95,15 +95,17 @@ export function createShardService(d: {
 
     async select(session: LoadedSession, shardId: number): Promise<SelectShardResult> {
       await assertOpen(shardId);
-      const rest = await d.db
+      // 自己的店和本区服蟹老板的店一条查询读出（网页按语言换 NPC 店名，选区服后不再读 me）
+      const rows = await d.db
         .selectFrom('restaurant')
-        .select('id')
+        .select(['id', 'npc'])
         .where('shard_id', '=', shardId)
-        .where('account_id', '=', session.data.accountId)
-        .executeTakeFirst();
-      const restaurantId = rest?.id ?? null;
+        .where((eb) => eb.or([eb('account_id', '=', session.data.accountId), eb('npc', '=', true)]))
+        .execute();
+      const restaurantId = rows.find((r) => !r.npc)?.id ?? null;
+      const npcRestId = rows.find((r) => r.npc)?.id ?? null;
       await d.sessions.update(session.token, { shardId, restaurantId });
-      return { shardId, restaurantId };
+      return { shardId, restaurantId, npcRestId };
     },
 
     async ensureFeature(shardId: number, feature: string): Promise<ShardSettings> {

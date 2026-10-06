@@ -112,7 +112,7 @@ const events: Messages['events'] = {
     },
     'temple.trial': (p, names) =>
       p.success
-        ? `«${mcNameOf(names, n(p, 'mcId'))}» superó la prueba: valor de prueba +${n(p, 'worth')} %, EXP de prueba +${n(p, 'exp')} %`
+        ? `«${mcNameOf(names, n(p, 'mcId'))}» superó la prueba: valor de prueba +${n(p, 'worth')}\u00a0%, EXP de prueba +${n(p, 'exp')}\u00a0%`
         : `«${mcNameOf(names, n(p, 'mcId'))}» no superó la prueba`,
     'kraken.forget': (p, names) =>
       `El Kraken quedó descontento; olvidaste el plato estrella «${mcNameOf(names, n(p, 'mcId'))}»`,
