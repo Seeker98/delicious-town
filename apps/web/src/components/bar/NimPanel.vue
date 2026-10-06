@@ -31,6 +31,8 @@ watch(
   (r) => {
     if (local.value?.result) return;
     if (waiting.value) return;
+    // 概览可能比刚收到的结果晚到：比手上的局面旧（拿的步数更少）就不覆盖（#191 审查）
+    if (r && local.value && r.log.length < local.value.log.length) return;
     local.value = r;
     shown.value = r;
   },
@@ -116,6 +118,16 @@ const resultText = computed(() => {
   if (v.result === 'lose') return x.lose;
   return x.win(v.renown) + (v.award ? t.value.bar.gotAward(awardText(v.award, catalog)) : '');
 });
+/** 固定播报区：调酒师那一步和剩余；结束时是结果（#190 审查：原来的 aria-live 在新插入的节点上，读屏不播报） */
+const liveText = computed(() => {
+  const v = view.value;
+  if (!v) return '';
+  if (v.result) return resultText.value;
+  const x = t.value.bar.nim;
+  return [lastBartender.value !== null ? x.bartenderTook(lastBartender.value) : '', x.status(v.left, v.k)]
+    .filter(Boolean)
+    .join(' ');
+});
 </script>
 
 <template>
@@ -130,7 +142,7 @@ const resultText = computed(() => {
             {{ t.bar.nim.tableLine(n.tables[x].cost, kText(n.tables[x].k), n.tables[x].renown) }}
           </div>
           <div class="dt-meta">
-            {{ x === 'novice' ? t.bar.nim.noviceHint : t.bar.nim.expertHint }}
+            {{ t.bar.nim.hint(n.tables[x].first, n.tables[x].careless) }}
           </div>
           <div v-if="blockOf(x)" class="dt-meta text-danger">{{ blockOf(x) }}</div>
         </div>
@@ -147,11 +159,12 @@ const resultText = computed(() => {
       </div>
     </template>
     <template v-else>
+      <div class="visually-hidden" aria-live="polite" data-testid="nim-live">{{ liveText }}</div>
       <div class="fw-bold mb-1">{{ t.bar.nim.tables[view.table] }}</div>
       <div v-if="view.coin" class="dt-meta mb-1" data-testid="nim-coin">
         {{ view.coin === 'me' ? t.bar.nim.coinMe : t.bar.nim.coinBartender }}
       </div>
-      <div v-if="!view.result" class="mb-1" aria-live="polite" data-testid="nim-status">
+      <div v-if="!view.result" class="mb-1" data-testid="nim-status">
         {{ t.bar.nim.status(view.left, view.k) }}
       </div>
       <div class="dt-nim-board mb-2" aria-hidden="true">
@@ -194,7 +207,6 @@ const resultText = computed(() => {
       <template v-if="view.result">
         <div
           :class="['mt-2', 'fw-bold', view.result === 'win' ? 'text-success' : 'text-danger']"
-          aria-live="polite"
           data-testid="nim-result"
         >
           {{ resultText }}

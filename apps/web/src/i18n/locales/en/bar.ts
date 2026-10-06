@@ -156,8 +156,8 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Beginner table', expert: 'Expert table' },
     tableLine: (cost, k, renown) =>
       `Entry: ${cost} ${plEn(cost, 'Mystery Voucher', 'Mystery Vouchers')}; take up to ${k} at a time; a win gives +${renown} renown and a prize`,
-    noviceHint: 'You choose who goes first, and the bartender sometimes slips up',
-    expertHint: 'A coin toss decides who goes first, and the bartender never slips up',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'You choose who goes first' : 'A coin toss decides who goes first'}, and the bartender ${careless ? 'sometimes slips up' : 'never slips up'}`,
     left: (n) => `${n} ${plEn(n, 'game', 'games')} left today`,
     noLeft: 'No games left today',
     noTickets: 'Not enough Mystery Vouchers',

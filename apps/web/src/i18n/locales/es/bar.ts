@@ -155,8 +155,8 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Mesa de principiantes', expert: 'Mesa de expertos' },
     tableLine: (cost, k, renown) =>
       `Entrada: ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}; coges hasta ${k} cada vez; si ganas, +${renown} de renombre y un premio`,
-    noviceHint: 'Tú eliges quién empieza, y el barman a veces se despista',
-    expertHint: 'Una moneda decide quién empieza, y el barman nunca falla',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'Tú eliges quién empieza' : 'Una moneda decide quién empieza'}, y el barman ${careless ? 'a veces se despista' : 'nunca falla'}`,
     left: (n) => `Te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} hoy`,
     noLeft: 'Hoy ya no te quedan partidas',
     noTickets: 'No tienes suficientes vales misteriosos',

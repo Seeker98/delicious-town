@@ -155,14 +155,13 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Table débutants', expert: 'Table experts' },
     tableLine: (cost, k, renown) =>
       `Entrée : ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')} ; jusqu’à ${k} par tour ; une victoire donne +${renown} de renommée et un prix`,
-    noviceHint: 'Vous choisissez qui commence, et le barman se trompe parfois',
-    expertHint: 'Une pièce décide qui commence, et le barman ne se trompe jamais',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'Vous choisissez qui commence' : 'Une pièce décide qui commence'}, et le barman ${careless ? 'se trompe parfois' : 'ne se trompe jamais'}`,
     left: (n) => `Encore ${n} ${plFr(n, 'partie', 'parties')} aujourd’hui`,
     noLeft: 'Plus de parties aujourd’hui',
     noTickets: 'Pas assez de bons mystère',
     start: 'S’asseoir ici',
-    status: (left, k) =>
-      `${plFr(left, 'Reste', 'Restent')} ${left} ${plFr(left, 'bonbon', 'bonbons')} ; prenez-en de 1 à ${k}`,
+    status: (left, k) => `Il reste ${left} ${plFr(left, 'bonbon', 'bonbons')} ; prenez-en de 1 à ${k}`,
     meFirst: 'Je commence',
     bartenderFirst: 'Le barman commence',
     coinMe: 'Pile ou face : vous commencez',

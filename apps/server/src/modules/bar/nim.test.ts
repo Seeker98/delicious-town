@@ -70,7 +70,10 @@ describe('最后一颗糖：开局（设计 §4）', () => {
       renown: 1,
       awardLevel: 2,
       first: 'choose',
+      careless: true,
     });
+    // 只说调酒师会不会走神，不给失手概率（#190 审查：桌子说明跟着区服数值走）
+    expect(ov.nim.tables.expert.careless).toBe(false);
     await expect(start(a, 'expert')).rejects.toMatchObject({
       code: 'ALREADY_DONE',
       params: { what: 'bar_round' },
@@ -164,6 +167,15 @@ describe('最后一颗糖：先后和拿', () => {
       result: null,
     });
     expect((await t.game.bar.overview(a)).nim.round).toEqual(r);
+  });
+
+  it('选让调酒师先拿、他一把拿完：直接判输，不留下拿不了的局（#190 审查）', async () => {
+    const a = await player();
+    await setRound(a, { table: 'novice', k: 3, pile: 2, left: 2, started: false, coin: null, log: [] });
+    script = [0.99]; // 不走神
+    const r = (await first(a, 'bartender')).data;
+    expect(r).toMatchObject({ result: 'lose', left: 0, log: [{ who: 'bartender', take: 2 }] });
+    expect(await roundOf(a)).toBeUndefined();
   });
 
   it('剩的比 k 少时不能拿超过剩余', async () => {

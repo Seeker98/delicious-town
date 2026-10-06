@@ -155,8 +155,9 @@ export default {
     tables: { novice: '新手桌', expert: '高手桌' },
     tableLine: (cost: number, k: string, renown: number) =>
       `入場 ${cost} 張神秘禮券；每次最多拿 ${k} 顆；贏了聲望 +${renown}，還有一份獎勵`,
-    noviceHint: '你自己選先後，調酒師有時會走神',
-    expertHint: '開局拋硬幣定誰先拿，調酒師從不失手',
+    /** 桌子說明跟著區服數值走（#190 審查） */
+    hint: (first: 'choose' | 'coin', careless: boolean) =>
+      `${first === 'choose' ? '你自己選先後' : '開局拋硬幣定誰先拿'}，${careless ? '調酒師有時會走神' : '調酒師從不失手'}`,
     left: (n: number) => `今天還能玩 ${n} 局`,
     noLeft: '今天的局數用完了',
     noTickets: '神秘禮券不夠',

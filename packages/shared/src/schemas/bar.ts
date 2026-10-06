@@ -202,6 +202,8 @@ export interface NimTableInfoDto {
   awardLevel: number;
   /** choose = 玩家自己选先后，coin = 抛硬币 */
   first: 'choose' | 'coin';
+  /** 调酒师会不会走神（失手概率大于 0）；不给具体概率 */
+  careless: boolean;
 }
 
 export interface NimMoveDto {
