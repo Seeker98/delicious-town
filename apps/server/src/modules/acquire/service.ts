@@ -7,8 +7,17 @@ import { gainCoin, spendCoin } from '../../core/resources';
 import { withRestaurants } from '../../db/tx';
 import { isBanned } from '../admin/ban';
 import { linkedAccounts } from '../exchange/guard';
-import { buyBlock, heatAfterAcquire, heatAfterListedSale, listPrice, priceOf, share, type T } from './rules';
-import { ensureState, lockState } from './state';
+import {
+  buyBlock,
+  heatAfterAcquire,
+  heatAfterListedSale,
+  listPrice,
+  priceOf,
+  share,
+  validListRate,
+  type T,
+} from './rules';
+import { ensureState, lockState, type AcquireStateRow } from './state';
 
 const DAY_MS = 86_400_000;
 
@@ -201,7 +210,129 @@ export function createAcquireService(d: GameDeps) {
     });
   }
 
-  return { buy };
+  /** 赎身：被收购的店按身价把自己买回来，老板得 (1 − 税率)；店变回自主，protectDays 天内不能被收购 */
+  async function redeem(ctx: RestCtx, b: { expect: number }): Promise<OpResult<AcquireResultDto>> {
+    await d.shards.ensureFeature(ctx.shardId, 'acquire');
+    const pre = await d.db
+      .selectFrom('acquire_state')
+      .select('owner_rest_id')
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirst();
+    const ownerId = pre?.owner_rest_id ?? null;
+    if (ownerId === null) throw invalidState('not_owned');
+    return runMulti(ctx, [ctx.restaurantId, ownerId], 'acquire.redeem', async (ops, t) => {
+      const me = ops.get(ctx.restaurantId)!;
+      const owner = ops.get(ownerId)!;
+      const now = me.now;
+      const s = (await lockState(me.tx, ctx.restaurantId))!;
+      // 拿锁前读到的老板变了（刚被别人收购、被放手）
+      if (s.owner_rest_id === null) throw invalidState('not_owned');
+      if (s.owner_rest_id !== ownerId) throw invalidState('price_changed', { price: priceOf(s) });
+      const price = priceOf(s);
+      if (price !== b.expect) throw invalidState('price_changed', { price });
+      const got = share(price, 1 - t.taxRate);
+      spendCoin(me, price, { source: 'acquire.redeem' });
+      gainCoin(owner, got, { source: 'acquire.sale' });
+      await me.tx
+        .updateTable('acquire_state')
+        .set({
+          owner_rest_id: null,
+          protected_until: new Date(now.getTime() + t.protectDays * DAY_MS),
+          list_rate: null,
+          list_until: null,
+          acquired_at: null,
+        })
+        .where('rest_id', '=', ctx.restaurantId)
+        .execute();
+      await me.tx
+        .insertInto('acquire_log')
+        .values({
+          shard_id: ctx.shardId,
+          kind: 'redeem',
+          buyer_rest_id: ctx.restaurantId,
+          target_rest_id: ctx.restaurantId,
+          seller_rest_id: ownerId,
+          price,
+          tax: price - got,
+          heat_after: s.heat,
+          created_at: now,
+        })
+        .execute();
+      restLog(me, 'acquire.redeemed', { price, from: owner.rest.name });
+      restLog(owner, 'acquire.lost', { restId: ctx.restaurantId, name: me.rest.name, got });
+      return { restId: ctx.restaurantId, price, tax: price - got, sellerGot: got };
+    });
+  }
+
+  /** 老板管名下一家店（放手、挂牌、撤牌）：锁住两家，确认是老板 */
+  function asOwner<R>(
+    ctx: RestCtx,
+    restId: number,
+    source: string,
+    fn: (me: Op, target: Op, s: AcquireStateRow, t: T) => Promise<R>,
+  ): Promise<OpResult<R>> {
+    return runMulti(ctx, [ctx.restaurantId, restId], source, async (ops, t) => {
+      const me = ops.get(ctx.restaurantId)!;
+      const s = restId === ctx.restaurantId ? undefined : await lockState(me.tx, restId);
+      if (!s || s.owner_rest_id !== ctx.restaurantId) throw invalidState('not_owner');
+      return fn(me, ops.get(restId)!, s, t);
+    });
+  }
+
+  /** 放手：免费放掉名下一家店，店变回自主；不退钱、热度不变、没有保护期 */
+  function release(ctx: RestCtx, b: { restId: number }) {
+    return asOwner(ctx, b.restId, 'acquire.release', async (me, target, s) => {
+      await me.tx
+        .updateTable('acquire_state')
+        .set({ owner_rest_id: null, list_rate: null, list_until: null, acquired_at: null })
+        .where('rest_id', '=', b.restId)
+        .execute();
+      await me.tx
+        .insertInto('acquire_log')
+        .values({
+          shard_id: ctx.shardId,
+          kind: 'release',
+          buyer_rest_id: null,
+          target_rest_id: b.restId,
+          seller_rest_id: ctx.restaurantId,
+          price: 0,
+          tax: 0,
+          heat_after: s.heat,
+          created_at: me.now,
+        })
+        .execute();
+      restLog(me, 'acquire.released', { restId: b.restId, name: target.rest.name });
+      restLog(target, 'acquire.freed', { by: ctx.restaurantId, byName: me.rest.name });
+      return { restId: b.restId };
+    });
+  }
+
+  /** 打折挂牌：身价的 listMinRate ~ 100%，5% 一档，listDays 天后自动撤下 */
+  function list(ctx: RestCtx, b: { restId: number; rate: number }) {
+    return asOwner(ctx, b.restId, 'acquire.list', async (me, _target, _s, t) => {
+      if (!validListRate(b.rate, t)) throw invalidState('list_rate', { min: t.listMinRate });
+      const until = new Date(me.now.getTime() + t.listDays * DAY_MS);
+      await me.tx
+        .updateTable('acquire_state')
+        .set({ list_rate: b.rate, list_until: until })
+        .where('rest_id', '=', b.restId)
+        .execute();
+      return { restId: b.restId, rate: b.rate, until: until.toISOString() };
+    });
+  }
+
+  function unlist(ctx: RestCtx, b: { restId: number }) {
+    return asOwner(ctx, b.restId, 'acquire.list', async (me) => {
+      await me.tx
+        .updateTable('acquire_state')
+        .set({ list_rate: null, list_until: null })
+        .where('rest_id', '=', b.restId)
+        .execute();
+      return { restId: b.restId };
+    });
+  }
+
+  return { buy, redeem, release, list, unlist };
 }
 
 export type AcquireService = ReturnType<typeof createAcquireService>;
