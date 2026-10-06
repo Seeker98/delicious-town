@@ -33,7 +33,8 @@ const rates = ref<Record<number, number>>({});
 
 const coin = (n: number) => formatNum(n);
 const pct = (x: number) => formatPct(x, { digits: 0 });
-const heat = (h: number) => String(Number(h.toFixed(2)));
+/** 热度最多两位小数，小数点按语言（法文、西文写逗号） */
+const heat = (h: number) => formatNum(Number(h.toFixed(2)));
 
 async function load() {
   try {

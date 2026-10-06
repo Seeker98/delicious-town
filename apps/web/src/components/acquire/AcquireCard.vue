@@ -52,7 +52,7 @@ onMounted(load);
   <div v-if="r" class="border rounded p-2 mb-2 small" data-testid="acquire-card">
     <div class="fw-bold">{{ t.acquire.cardTitle }}</div>
     <div>
-      {{ t.acquire.price(formatNum(r.price)) }} · {{ t.acquire.heat(String(Number(r.heat.toFixed(2)))) }}
+      {{ t.acquire.price(formatNum(r.price)) }} · {{ t.acquire.heat(formatNum(Number(r.heat.toFixed(2)))) }}
     </div>
     <div class="text-muted">{{ r.owner ? t.acquire.owner(r.owner.name) : t.acquire.free }}</div>
     <div v-if="r.listed">
