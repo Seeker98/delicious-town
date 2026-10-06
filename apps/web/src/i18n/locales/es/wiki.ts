@@ -150,7 +150,7 @@ const wiki: Messages['wiki'] = {
         title: 'Cuándo mudarse',
         items: [
           (n) =>
-            `Solo puedes aprender las recetas de la calle en la que estás. La Calle de los novatos tiene solo ${formatNum(n.startStreetCookbooks)}, y las 2 estrellas piden ${formatNum(n.star2Cookbooks)}, así que tarde o temprano tendrás que mudarte.`,
+            `Solo puedes aprender las recetas de la calle en la que estás. La ${n.startStreet.name} tiene solo ${formatNum(n.startStreet.cookbooks)}, y las 2 estrellas piden ${formatNum(n.star2Cookbooks)}, así que tarde o temprano tendrás que mudarte.`,
           'Cuando ni aprendiendo todas las recetas que quedan en tu calle llegues a la siguiente estrella, la página de recetas te avisa. Prepárate entonces para mudarte: no esperes a las últimas recetas difíciles, múdate en cuanto aprendas más despacio.',
           (n) =>
             `Se aprende más rápido en calles con muchas recetas: la ${n.biggestStreet.name} tiene ${formatNum(n.biggestStreet.cookbooks)}, más que ninguna otra.`,
@@ -165,7 +165,7 @@ const wiki: Messages['wiki'] = {
           'Después las estrellas: vales de subida de estrella y monedas para subir.',
           'Solo entonces mesas e instalaciones.',
           (n) =>
-            `Abrir el reparto a domicilio pide ${n.takeaway.star} estrellas y ${formatNum(n.takeaway.renown)} de renombre (se gastan al abrirlo), además de ${formatNum(n.takeaway.coin / 1_000_000)} millones de monedas y ${formatNum(n.takeaway.diamond)} diamantes o un Pase a domicilio: si te interesa, empieza a ahorrar pronto.`,
+            `Abrir el reparto a domicilio pide ${n.takeaway.star} ${plEs(n.takeaway.star, 'estrella', 'estrellas')} y ${formatNum(n.takeaway.renown)} de renombre (se gastan al abrirlo), además de ${formatNum(n.takeaway.coin / 1_000_000)} ${plEs(n.takeaway.coin / 1_000_000, 'millón', 'millones')} de monedas y ${formatNum(n.takeaway.diamond)} diamantes o un Pase a domicilio: si te interesa, empieza a ahorrar pronto.`,
         ],
       },
       {
@@ -174,7 +174,9 @@ const wiki: Messages['wiki'] = {
           'Sacude la bolsa de Don Krab en la Plaza una vez al día, y mira si la Hermana Wen, el Hermano 13 y los demás tienen algo para ti.',
           'Sube la Torre de chefs cada día: ganes o pierdas te da renombre. El anciano de la primera planta es de nivel 8; hacia el nivel 10 puedes ganarle (algo antes con el equipo de aprendiz).',
           (n) =>
-            `Desde el nivel ${n.exchange.level}, con una cuenta de al menos ${n.exchange.days} días y el correo verificado, puedes usar la Bolsa y las Predicciones.`,
+            n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
+              ? `Desde el nivel ${n.exchange.level}, con una cuenta de al menos ${n.exchange.days} días y el correo verificado, puedes usar la Bolsa y las Predicciones.`
+              : `Desde el nivel ${n.exchange.level}, con una cuenta de al menos ${n.exchange.days} días y el correo verificado, puedes usar la Bolsa; las Predicciones piden nivel ${n.predict.level} y ${n.predict.days} días.`,
           'Llevar utensilios sube los ingresos de cada ronda.',
           (n) =>
             `Por debajo del nivel ${n.newbieExp.maxLevel}, la EXP de cada ronda recibe un extra (${formatPct(n.newbieExp.rate, { sign: true })} en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.`,

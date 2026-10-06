@@ -43,6 +43,7 @@ const tower: Messages['tower'] = {
       `En cada duelo se eligen al azar ${n} de los ${total} jueces. Uno a uno, cada juez compara la suma de los dos lados en lo que le importa y vota por la más alta; gana el primero que llega a ${need} ${plEs(need, 'voto', 'votos')}. Si los votos empatan, gana la suma más alta de los jueces que puntuaron.`,
     rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
     rulesMc: 'el plato estrella a la venta',
+    rulesNone: (item) => `${item} (solo el extra aleatorio)`,
     rulesWeights: (parts) =>
       `Cada lado obtiene cinco puntuaciones según sus atributos: ${parts.slice(0, -1).join(', ')} y ${parts.at(-1)}. Cuanta más Creatividad y Suerte, mayor es el extra aleatorio de cada puntuación.`,
     rulesJudges: 'Los jueces y en qué se fijan:',

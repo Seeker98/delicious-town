@@ -12,11 +12,12 @@ vi.mock('../../api/endpoints', () => ({ endpoints: { openIndex: vi.fn() } }));
 
 /** 故意和现在的默认值都不一样：页面上的数要跟着接口走 */
 const guide: OpenGuideNumbers = {
-  startStreetCookbooks: 71,
+  startStreet: { name: '新手街', cookbooks: 71 },
   star2Cookbooks: 120,
   biggestStreet: { name: '测试大街', cookbooks: 345 },
   takeaway: { star: 3, renown: 999, coin: 9_990_000, diamond: 250 },
   exchange: { level: 25, days: 5 },
+  predict: { level: 25, days: 5 },
   newbieExp: { maxLevel: 35, rate: 1.5 },
 };
 const index = (g: OpenGuideNumbers | undefined) =>
@@ -67,6 +68,13 @@ describe('玩法攻略（问题记录 384）', () => {
     expect(text).toContain('999 万银币和 250 钻石');
     expect(text).toContain('25 级、注册满 5 天');
     expect(text).toContain('35 级以下结算经验有额外加成（1 级 +150%');
+  });
+
+  it('事件预测的门槛和交易所不一样时分开写（审查 I1）', async () => {
+    vi.mocked(endpoints.openIndex).mockResolvedValue(index({ ...guide, predict: { level: 30, days: 10 } }));
+    const text = (await mountGuide()).text();
+    expect(text).toContain('25 级、注册满 5 天并验证邮箱以后能用交易所');
+    expect(text).toContain('事件预测要 30 级、注册满 10 天');
   });
 
   it('接口还没有这些数（发版前缓存的旧响应）时，带数的几条先不显示', async () => {

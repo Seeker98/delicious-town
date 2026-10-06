@@ -15,16 +15,18 @@ export type OpenKind = 'goods' | 'foods' | 'cookbooks' | 'equips' | 'streets';
 
 /** 玩法攻略里用到的数（backlog 384：原来写死在文案里），按默认配置算 */
 export interface OpenGuideNumbers {
-  /** 开店所在的街（新手街）有几道菜 */
-  startStreetCookbooks: number;
+  /** 开店所在的街（新手街）：名字按语言、有几道菜 */
+  startStreet: { name: string; cookbooks: number };
   /** 升 2 星要学会几道菜 */
   star2Cookbooks: number;
   /** 菜最多的街：名字按语言 */
   biggestStreet: { name: string; cookbooks: number };
   /** 开通外卖：星级、声望、银币、钻石 */
   takeaway: { star: number; renown: number; coin: number; diamond: number };
-  /** 交易所（事件预测同）的等级、注册天数门槛 */
+  /** 交易所的等级、注册天数门槛 */
   exchange: { level: number; days: number };
+  /** 事件预测的等级、注册天数门槛（区服数值里和交易所分开设） */
+  predict: { level: number; days: number };
   /** 低等级经验加成：maxLevel 级以下有，1 级是 +rate（比例） */
   newbieExp: { maxLevel: number; rate: number };
 }

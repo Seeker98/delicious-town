@@ -143,7 +143,7 @@ export default {
         title: '什么时候搬街',
         items: [
           (n: G) =>
-            `只能学所在街道的菜。新手街只有 ${formatNum(n.startStreetCookbooks)} 道，升 2 星要学会 ${formatNum(n.star2Cookbooks)} 道，迟早要搬。`,
+            `只能学所在街道的菜。${n.startStreet.name}只有 ${formatNum(n.startStreet.cookbooks)} 道，升 2 星要学会 ${formatNum(n.star2Cookbooks)} 道，迟早要搬。`,
           '本街剩下的菜全学会也凑不够下一星时，食谱页会提示。看到提示就准备搬：别等最后几道难凑的菜，学得慢下来就去搬家。',
           (n: G) =>
             `搬到菜多的街学得快，比如${n.biggestStreet.name}有 ${formatNum(n.biggestStreet.cookbooks)} 道，是菜最多的街。`,
@@ -167,7 +167,9 @@ export default {
           '每天去广场摇一次蟹老板的钱袋，顺便看看雯姐、13 哥他们有没有东西送。',
           '每天打厨塔，输赢都拿声望；第一层的长老是 8 级，大约 10 级能打过（穿上见习厨具会早一点）。',
           (n: G) =>
-            `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后，能用交易所和事件预测。`,
+            n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
+              ? `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后，能用交易所和事件预测。`
+              : `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后能用交易所；事件预测要 ${n.predict.level} 级、注册满 ${n.predict.days} 天。`,
           '穿上厨具，结算收益会更高。',
           (n: G) =>
             `${n.newbieExp.maxLevel} 级以下结算经验有额外加成（1 级 ${formatPct(n.newbieExp.rate, { sign: true })}，逐级减少），前期升级很快。`,

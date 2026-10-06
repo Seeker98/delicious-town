@@ -149,7 +149,7 @@ const wiki: Messages['wiki'] = {
         title: 'Quand déménager',
         items: [
           (n) =>
-            `On ne peut apprendre que les recettes de sa rue. La Rue des débutants n’en a que ${formatNum(n.startStreetCookbooks)}, et 2 étoiles en demandent ${formatNum(n.star2Cookbooks)} : il faudra déménager tôt ou tard.`,
+            `On ne peut apprendre que les recettes de sa rue. La ${n.startStreet.name} n’en a que ${formatNum(n.startStreet.cookbooks)}, et 2 étoiles en demandent ${formatNum(n.star2Cookbooks)} : il faudra déménager tôt ou tard.`,
           'Quand même toutes les recettes restantes de votre rue ne suffisent pas pour l’étoile suivante, la page des recettes vous prévient. Préparez-vous alors à déménager : n’attendez pas les dernières recettes difficiles, déménagez dès que l’apprentissage ralentit.',
           (n) =>
             `On apprend plus vite dans une rue qui a beaucoup de recettes : la ${n.biggestStreet.name} en a ${formatNum(n.biggestStreet.cookbooks)}, plus que toute autre rue.`,
@@ -164,7 +164,7 @@ const wiki: Messages['wiki'] = {
           'Ensuite les étoiles : bons de passage d’étoile et pièces pour monter d’étoile.',
           'Seulement après, les tables et les équipements.',
           (n) =>
-            `Ouvrir la vente à emporter demande ${n.takeaway.star} étoiles et ${formatNum(n.takeaway.renown)} de renommée (dépensés à l’ouverture), plus ${formatNum(n.takeaway.coin / 1_000_000)} millions de pièces et ${formatNum(n.takeaway.diamond)} diamants ou un Pass à emporter : si elle vous intéresse, commencez à économiser tôt.`,
+            `Ouvrir la vente à emporter demande ${n.takeaway.star} ${plFr(n.takeaway.star, 'étoile', 'étoiles')} et ${formatNum(n.takeaway.renown)} de renommée (dépensés à l’ouverture), plus ${formatNum(n.takeaway.coin / 1_000_000)} ${plFr(n.takeaway.coin / 1_000_000, 'million', 'millions')} de pièces et ${formatNum(n.takeaway.diamond)} diamants ou un Pass à emporter : si elle vous intéresse, commencez à économiser tôt.`,
         ],
       },
       {
@@ -173,7 +173,9 @@ const wiki: Messages['wiki'] = {
           'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Sœur Wen, Frère 13 et les autres ont quelque chose pour vous.',
           'Faites la Tour des chefs chaque jour : vous gagnez de la renommée que vous gagniez ou perdiez. L’Ancien du premier étage est niveau 8 ; vous pouvez le battre vers le niveau 10 (un peu plus tôt avec l’équipement d’apprenti).',
           (n) =>
-            `À partir du niveau ${n.exchange.level}, avec un compte d’au moins ${n.exchange.days} jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.`,
+            n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
+              ? `À partir du niveau ${n.exchange.level}, avec un compte d’au moins ${n.exchange.days} jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.`
+              : `À partir du niveau ${n.exchange.level}, avec un compte d’au moins ${n.exchange.days} jours et un e-mail vérifié, la Bourse est ouverte ; les Prédictions demandent le niveau ${n.predict.level} et ${n.predict.days} jours.`,
           'Porter des ustensiles augmente les revenus de chaque tour.',
           (n) =>
             `Sous le niveau ${n.newbieExp.maxLevel}, l’EXP de chaque tour reçoit un bonus (${formatPct(n.newbieExp.rate, { sign: true })} au niveau 1, de moins en moins à chaque niveau) : les premiers niveaux vont très vite.`,

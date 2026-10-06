@@ -17,6 +17,9 @@ function legacyRedirect(req: FastifyRequest, reply: FastifyReply, now: number) {
 }
 
 /** If-None-Match 里有没有这个 ETag：认弱 ETag（CDN 重新压缩时改成 W/）和逗号分隔的多个 */
+/** 开放接口返回格式的版本：改了返回的结构（加减字段）要加一，ETag 带着它，客户端才会重新取（第 ⑧ 批审查） */
+const OPEN_FORMAT = 2;
+
 export function etagMatches(header: string | undefined, etag: string): boolean {
   return !!header && header.split(',').some((t) => t.trim().replace(/^W\//, '') === etag);
 }
@@ -72,7 +75,7 @@ export function openRoutes(
     key: string,
     make: () => T | null,
   ) => {
-    const etag = `"${version}:${lang}:${key}"`;
+    const etag = `"${version}:${OPEN_FORMAT}:${lang}:${key}"`;
     const cacheHeaders = () => reply.header('cache-control', 'public, max-age=3600').header('etag', etag);
     // ETag 只发给查得到的，带着它来的一定存在
     if (etagMatches(req.headers['if-none-match'], etag)) return cacheHeaders().code(304).send();

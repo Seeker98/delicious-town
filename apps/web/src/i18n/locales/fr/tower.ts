@@ -43,6 +43,7 @@ const tower: Messages['tower'] = {
       `À chaque duel, ${n} des ${total} juges sont tirés au sort. L’un après l’autre, chaque juge compare le total des deux camps sur ce qui l’intéresse et vote pour le plus élevé ; le premier camp à ${need} ${plFr(need, 'voix', 'voix')} gagne. En cas d’égalité de voix, le plus grand total chez les juges qui ont noté l’emporte.`,
     rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
     rulesMc: 'le plat signature en vente',
+    rulesNone: (item) => `${item} (bonus aléatoire seulement)`,
     rulesWeights: (parts) =>
       `Chaque camp obtient cinq notes selon ses attributs : ${parts.slice(0, -1).join(', ')} et ${parts.at(-1)}. Plus la Créativité et la Chance sont élevées, plus le bonus aléatoire de chaque note est grand.`,
     rulesJudges: 'Les juges et ce qu’ils regardent :',

@@ -25,7 +25,8 @@ const scoreLines = computed(() => {
       .sort((a, b) => x[b] - x[a] || ATTRS.indexOf(a) - ATTRS.indexOf(b))
       .map((a) => ATTR_NAMES[a] ?? a);
     if (x.mc > 0) attrs.push(d.rulesMc);
-    return d.rulesPart(d.items[i]!, attrs);
+    // 系数全是 0：这一项只有随机分
+    return attrs.length > 0 ? d.rulesPart(d.items[i]!, attrs) : d.rulesNone(d.items[i]!);
   });
   return [d.rulesWeights(parts)];
 });

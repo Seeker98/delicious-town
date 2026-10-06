@@ -149,7 +149,7 @@ const wiki: Messages['wiki'] = {
         title: 'When to move',
         items: [
           (n) =>
-            `You can only learn recipes of the street you are on. Newbie Street has just ${formatNum(n.startStreetCookbooks)}, and 2 stars needs ${formatNum(n.star2Cookbooks)} learned, so you will have to move sooner or later.`,
+            `You can only learn recipes of the street you are on. ${n.startStreet.name} has just ${formatNum(n.startStreet.cookbooks)}, and 2 stars needs ${formatNum(n.star2Cookbooks)} learned, so you will have to move sooner or later.`,
           'When even learning every remaining recipe on your street can’t reach the next star, the recipe page tells you. Get ready to move then: don’t wait for the last few hard recipes — once learning slows down, move.',
           (n) =>
             `Streets with more recipes are faster to learn on: ${n.biggestStreet.name} has ${formatNum(n.biggestStreet.cookbooks)}, the most of any street.`,
@@ -164,7 +164,7 @@ const wiki: Messages['wiki'] = {
           'Then starring up: Star-up Vouchers and the star-up coins.',
           'Only then tables and facilities.',
           (n) =>
-            `Opening takeaway needs ${n.takeaway.star} stars and ${formatNum(n.takeaway.renown)} Renown (spent when you open it), plus ${formatNum(n.takeaway.coin / 1_000_000)} million coins and ${formatNum(n.takeaway.diamond)} Diamonds or a Takeaway Pass, so start saving early if you want it.`,
+            `Opening takeaway needs ${n.takeaway.star} ${plEn(n.takeaway.star, 'star', 'stars')} and ${formatNum(n.takeaway.renown)} Renown (spent when you open it), plus ${formatNum(n.takeaway.coin / 1_000_000)} million coins and ${formatNum(n.takeaway.diamond)} Diamonds or a Takeaway Pass, so start saving early if you want it.`,
         ],
       },
       {
@@ -173,7 +173,9 @@ const wiki: Messages['wiki'] = {
           'Shake Mr. Krab’s money bag in the Square once a day, and see whether Sister Wen, Brother 13 and the others have something for you.',
           'Climb the Chef Tower every day: you get Renown whether you win or lose. The first floor’s Elder is level 8; you can beat it around level 10 (a bit earlier with the Apprentice cookware).',
           (n) =>
-            `From level ${n.exchange.level}, with an account at least ${n.exchange.days} days old and a verified email, you can use the Exchange and Predictions.`,
+            n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
+              ? `From level ${n.exchange.level}, with an account at least ${n.exchange.days} days old and a verified email, you can use the Exchange and Predictions.`
+              : `From level ${n.exchange.level}, with an account at least ${n.exchange.days} days old and a verified email, you can use the Exchange; Predictions need level ${n.predict.level} and ${n.predict.days} days.`,
           'Wearing cookware raises your income each round.',
           (n) =>
             `Below level ${n.newbieExp.maxLevel}, EXP from each round gets an extra boost (${formatPct(n.newbieExp.rate, { sign: true })} at level 1, smaller each level), so early levels go fast.`,

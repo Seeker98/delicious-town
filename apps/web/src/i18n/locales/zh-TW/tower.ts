@@ -48,6 +48,7 @@ export default {
     /** 五項各看哪些屬性按區服的評分權重拼（backlog 396）；rules 是沒有權重時的說明 */
     rulesPart: (item: string, attrs: string[]) => `${item}看${attrs.join('、')}`,
     rulesMc: '在售的特色菜',
+    rulesNone: (item: string) => `${item}只看隨機分`,
     rulesWeights: (parts: string[]) =>
       `雙方按屬性算出色、香、味、形、養五項：${parts.join('，')}。創意越高、幸運越好，每項多加的隨機分越多。`,
     rulesJudges: '評委和他們關注的項目：',
