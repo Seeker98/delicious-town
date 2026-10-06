@@ -3,7 +3,6 @@ import { z } from 'zod';
 const times = z.number().int().min(1).max(99);
 /** 0 石头、1 剪刀、2 布 */
 export const barFgBody = z.object({ hand: z.number().int().min(0).max(2) });
-export const barCupBody = z.object({ cup: z.number().int().min(1).max(3) });
 /** 上限由服务端按 tuning.bar.numMax 再查 */
 export const barNumBody = z.object({ num: times });
 export const barSlotBody = z.object({ times });
@@ -29,6 +28,10 @@ export const barNimTakeBody = z.object({ num: z.number().int().min(1).max(99) })
 // ---------- 秘制调料（问题记录 427-2） ----------
 /** 调料编号；长度、不重复、上限由服务端按数值再查 */
 export const barSpiceGuessBody = z.object({ guess: z.array(z.number().int().min(0).max(99)).min(1).max(10) });
+
+// ---------- 猜酒杯改版（问题记录 427-5） ----------
+/** 杯子编号，从 0 起；上限由服务端按这一轮的杯子数再查 */
+export const barCupGuessBody = z.object({ cup: z.number().int().min(0).max(99) });
 
 // ---------- 一掷千金（问题记录 427-3） ----------
 /** 箱子编号；上限由服务端按奖品数再查 */
@@ -69,8 +72,8 @@ export interface BarDto {
   coin: number;
   krabCoins: number;
   fg: BarGameDto;
-  /** nextCost：下一局要几张礼券 */
-  cup: BarGameDto & { nextCost: number };
+  /** 猜酒杯：上一局结果和连续局数；每轮几个杯子、每档奖励；进行中的局 */
+  cup: BarGameDto & { cost: number; cups: number[]; tiers: CupTierDto[]; round: CupDto | null };
   num: BarGameDto & { cost: number; max: number };
   slot: {
     emailVerified: boolean;
@@ -296,14 +299,33 @@ export interface FgResultDto {
   award: BarAwardDto | null;
 }
 
-export interface CupResultDto {
+/** 猜酒杯最近一次猜的结果：选的杯子、骰子所在的杯子（都从 0 起） */
+export interface CupGuessDto {
+  pick: number;
+  ball: number;
   win: boolean;
-  /** 这一局花的礼券 */
-  cost: number;
-  /** 猜对：当前连胜；猜错：连错次数 */
-  times: number;
   lucky: boolean;
-  award: BarAwardDto | null;
+}
+
+/** 猜酒杯的一局（问题记录 427-5） */
+export interface CupDto {
+  /** 这一轮，从 0 起 */
+  round: number;
+  /** 这一轮几个杯子 */
+  cups: number;
+  /** 这一轮已猜中，等玩家选收手或继续 */
+  won: boolean;
+  last: CupGuessDto | null;
+  /** 收手、通关、猜错；进行中为 null */
+  result: 'stop' | 'clear' | 'lose' | null;
+  /** 收手或通关拿到的奖励 */
+  awards: BarAwardDto[];
+}
+
+/** 猜酒杯的奖励档：几份随机奖励；news 写新闻、broadcast 全服广播 */
+export interface CupTierDto {
+  awards: number;
+  news: 'news' | 'broadcast' | null;
 }
 
 export interface NumResultDto {
