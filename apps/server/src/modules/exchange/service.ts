@@ -22,6 +22,7 @@ import { addFoods, cupboardSlotsUsed, planAddFoods, subFoods } from '../cupboard
 import { refPrice, refPrices } from './ref';
 import { feeOf, isTradable, priceBand } from './rules';
 import { addHold, frozenReason, linkedAccounts, tradeFlags } from './guard';
+import { eligibility } from './eligibility';
 import { addCredit, creditWallets, newCredits } from './wallet';
 import { incrementDaily } from '../counter/dailyCounter';
 import { addBought, addStock, makerQuote, TO_SYSTEM, type MakerLevel } from './maker';
@@ -68,25 +69,6 @@ const ORDER_COLS = [
   'created_at',
   'expires_at',
 ] as const;
-
-/** 开通门槛（156-1 设计 §6.1）：等级、注册天数、邮箱；满足返回 null */
-export async function eligibility(o: {
-  db: Kysely<DB>;
-  level: number;
-  accountId: number;
-  now: Date;
-  t: { minLevel: number; minAccountDays: number };
-}) {
-  if (o.level < o.t.minLevel) return 'exchange_level';
-  const acc = await o.db
-    .selectFrom('account')
-    .select(['created_at', 'email_verified_at'])
-    .where('id', '=', o.accountId)
-    .executeTakeFirstOrThrow();
-  if (o.now.getTime() - acc.created_at.getTime() < o.t.minAccountDays * 86_400_000) return 'exchange_age';
-  if (!acc.email_verified_at) return 'exchange_email';
-  return null;
-}
 
 export function createExchangeService(d: GameDeps) {
   /**

@@ -63,7 +63,7 @@ export interface QuestsDto {
 }
 
 /** 活跃项眼下做不了的原因（等级、星级、区服关闭之外的） */
-export type ActivationBlock = 'days' | 'email' | 'noActivity' | null;
+export type ActivationBlock = 'days' | 'email' | 'frozen' | 'noActivity' | null;
 
 export interface ActivationDto {
   total: number;

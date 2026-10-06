@@ -21,6 +21,7 @@ describe('RestFloorView', () => {
       shardId: 1,
       restaurantId: 7,
       lang: null,
+      npcRestId: null,
     };
     vi.mocked(endpoints.floor).mockResolvedValue([
       { no: 1, floor: 1, customer: 3, roach: true, roachBy: 9 },

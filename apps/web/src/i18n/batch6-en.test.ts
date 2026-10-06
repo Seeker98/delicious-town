@@ -43,6 +43,7 @@ describe('第 6 批其他页面按语言（问题记录 272）', () => {
       shardId: 1,
       restaurantId: 1,
       lang: 'en',
+      npcRestId: null,
     };
     const router = createRouter({
       history: createMemoryHistory(),

@@ -7,7 +7,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
-import { formatNum } from '../utils/format';
+import { formatNum, formatPct } from '../utils/format';
 import { matchText } from '../utils/match';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
@@ -60,7 +60,7 @@ const groups = computed(() => {
   for (const f of list) by.set(levelOf(f.foodsId), [...(by.get(levelOf(f.foodsId)) ?? []), f]);
   return [...by.entries()].sort((a, b) => a[0] - b[0]);
 });
-const pct = (x: number | null) => (x === null ? '' : `${x >= 0 ? '+' : ''}${Math.round(x * 1000) / 10}%`);
+const pct = (x: number | null) => (x === null ? '' : formatPct(x, { sign: true }));
 function reasonOf(m: ExchangeMeDto): string {
   const r = t.value.exchange.reasons;
   if (m.reason === 'exchange_level') return r.exchange_level(m.need.level, m.level);

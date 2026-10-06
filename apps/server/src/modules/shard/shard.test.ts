@@ -43,7 +43,7 @@ describe('区服', () => {
     const shardId = await createShard(ctx.deps.db);
     const u = await registerUser(ctx.app);
     const r = await call(ctx.app, 'POST', `${S}/select`, { cookie: u.cookie, body: { shardId } });
-    expect(r.json.data).toEqual({ shardId, restaurantId: null });
+    expect(r.json.data).toEqual({ shardId, restaurantId: null, npcRestId: null });
     const me = await call(ctx.app, 'GET', '/api/v1/account/me', { cookie: u.cookie });
     expect(me.json.data.shardId).toBe(shardId);
   });

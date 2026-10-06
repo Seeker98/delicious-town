@@ -10,6 +10,8 @@ const site: Messages['site'] = {
   changelog: {
     perf1006:
       'Le site télécharge environ 140 Ko de moins au premier chargement (la police d’icônes ne contient que les icônes utilisées), et le Marché, le Bar, l’Ichiban Kuji, le Temple et la Place s’ouvrent plus vite',
+    backlog7:
+      'Le nom du restaurant de M. Krab et son message d’accueil s’affichent désormais dans votre langue ; les pourcentages suivent le format de votre langue (virgule décimale et espace avant %), et le détail du taux de renforcement n’est plus collé au nombre ; « nom × quantité » ne se coupe plus sur deux lignes sur les écrans étroits ; si votre accès à la Bourse est gelé, la Bourse et les prédictions de l’activité du jour l’indiquent ; la liste des recettes du wiki affiche au plus 1 000 entrées puis propose d’affiner par recherche ou par rue, et une rue inconnue dans l’adresse affiche toutes les recettes',
     backlog6:
       'Les règles du duel indiquent le nombre de juges réellement utilisé sur ce serveur ; l’ustensile lâché par un ancien a sa propre ligne sur la carte de résultat et fait l’objet d’une nouvelle ; l’échange d’éclats des plats signature permet d’en échanger plusieurs à la fois ; le « Comment l’obtenir » des objets d’expertise mentionne les coups critiques sur le gardien du Temple ; les pages d’objets du wiki listent aussi la Promo du jour, le marché noir, les récompenses aléatoires et l’amélioration de gemmes comme sources',
     visual1006:

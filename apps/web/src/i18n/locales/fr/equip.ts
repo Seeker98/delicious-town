@@ -60,18 +60,18 @@ const equip: Messages['equip'] = {
     stress: 'Renforcer',
     rate: 'Taux de réussite',
     rateParts: (base, luck, weather, floor) =>
-      `(base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
+      ` (base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
     next: (gain, total) =>
       `En cas de réussite, total des caractéristiques +${gain} (soit ${total}, hors gemmes)`,
     cost: (essence, have, coin) =>
-      `Coût : essence × ${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
+      `Coût : essence\u202f×\u202f${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     useStone: (n) => `Utiliser une Pierre de renfort (réussite garantie ; vous en avez ${n})`,
     maxed: 'Renfort au maximum',
     backOption: (name, back, num) => `${name} (annule ${back} niveau(x) ; vous en avez ${num})`,
     rollback: 'Annuler',
     gems: 'Gemmes',
     holeNote: (max, coinPerLevel) =>
-      `(${max} ${plFr(max, 'chasse', 'chasses')} au maximum ; ${coinPerLevel ? `retirer coûte rang × ${coinPerLevel} ${plFr(coinPerLevel, 'pièce', 'pièces')}` : 'retirer est gratuit en ce moment (moins de 2 étoiles ou jour de pluie acide)'})`,
+      `(${max} ${plFr(max, 'chasse', 'chasses')} au maximum ; ${coinPerLevel ? `retirer coûte rang\u202f×\u202f${coinPerLevel} ${plFr(coinPerLevel, 'pièce', 'pièces')}` : 'retirer est gratuit en ce moment (moins de 2 étoiles ou jour de pluie acide)'})`,
     ungem: 'Retirer',
     gemOption: (name, num, level) => `${name} (vous en avez ${num} ; coûte ${level} énergie)`,
     inlay: 'Sertir',
@@ -109,7 +109,7 @@ const equip: Messages['equip'] = {
   gemPage: {
     title: 'Gemmes',
     intro: (luck, strength) =>
-      `Deux gemmes du même rang en donnent une du rang suivant ; chaque paire coûte autant d'énergie que son rang. Un échec a encore ${luck} de chance d'être rattrapé, et chaque paire ratée rapporte rang × 1 000 EXP. Énergie : ${strength}.`,
+      `Deux gemmes du même rang en donnent une du rang suivant ; chaque paire coûte autant d'énergie que son rang. Un échec a encore ${luck} de chance d'être rattrapé, et chaque paire ratée rapporte rang\u202f×\u202f1 000 EXP. Énergie : ${strength}.`,
     empty: 'Pas encore de gemme',
     maxed: 'Rang maximum',
     next: (name, rate) => `→ ${name}, taux de réussite ${rate}`,

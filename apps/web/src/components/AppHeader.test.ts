@@ -64,6 +64,7 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
       shardId: null,
       restaurantId: null,
       lang: null,
+      npcRestId: null,
     };
     const router = makeRouter();
     await router.push('/shards');
@@ -87,6 +88,7 @@ describe('AppHeader（问题记录：左上角"美味小镇"点了不能回主�
       shardId: 1,
       restaurantId: 1,
       lang: null,
+      npcRestId: null,
     };
     const w2 = mount(AppHeader, { props: { inGame: false }, global: { plugins: [router] } });
     expect(w2.find('[data-testid="home"]').attributes('href')).toBe('/');

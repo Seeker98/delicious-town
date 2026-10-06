@@ -8,9 +8,9 @@ import fr from './locales/fr/common';
 const STUCK = /(\}\}|\}|<\/\w+>) ?×(\{\{|\$\{)/;
 
 describe('名字×数量（backlog #116）', () => {
-  it('法文两边加空格，中文紧挨着', () => {
-    expect(fr.qty('Riz', 3)).toBe('Riz × 3');
-    expect(fr.times).toBe(' × ');
+  it('法文两边加不换行的窄空格（U+202F，窄屏上“Riz ×”和“3”不会折开），中文紧挨着', () => {
+    expect(fr.qty('Riz', 3)).toBe('Riz\u202f×\u202f3');
+    expect(fr.times).toBe('\u202f×\u202f');
     expect(zh.qty('大米', 3)).toBe('大米×3');
   });
 

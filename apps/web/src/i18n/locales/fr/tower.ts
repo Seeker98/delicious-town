@@ -47,7 +47,7 @@ const tower: Messages['tower'] = {
   },
   elder: {
     summary: (level, stress, pct) =>
-      `Équipement de l’ancien : niveau ${level}, tout à +${stress}${pct > 0 ? ` ; ${pct} % de chances de lâcher une pièce si vous gagnez un vrai défi` : ''}`,
+      `Équipement de l’ancien : niveau ${level}, tout à +${stress}${pct > 0 ? ` ; ${pct}\u202f% de chances de lâcher une pièce si vous gagnez un vrai défi` : ''}`,
     points: (text) => `Points d’attribut : ${text}`,
     piece: (name, stress, text) => `${name} +${stress} : ${text}`,
     attrs: (text) => `Quand il est défié : ${text}`,
@@ -99,7 +99,7 @@ const tower: Messages['tower'] = {
     owned: 'Possédé',
     soldOut: 'Épuisé cette semaine',
     noRenown: 'Pas assez de renommée',
-    got: (name, n) => `Obtenu : ${name} × ${n}`,
+    got: (name, n) => `Obtenu : ${name}\u202f×\u202f${n}`,
     failed: "Échec de l'échange",
     renown: (n) => `Ma renommée ${n}`,
     rule: 'Les tickets Délice sont toujours disponibles ; les statues changent chaque semaine et vous ne pouvez en posséder qu’une',

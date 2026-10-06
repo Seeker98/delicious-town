@@ -92,6 +92,13 @@ async function load(k: WikiKind) {
               : null;
     if (mine !== seq) return;
     streets.value = s;
+    // 地址里的街道不存在（backlog 第 ⑧ 批审查）：当成全部
+    if (street.value !== null && !s.some((x) => x.id === street.value)) {
+      // 地址里的显示条数照旧（换了条件组合，要把条数一起挪过去）
+      const n = more.value.n;
+      street.value = null;
+      more.value = { key: filterKey.value, n };
+    }
     if (k === 'goods') goods.value = items as OpenGoodsBrief[];
     else if (k === 'foods') foods.value = items as OpenFoodBrief[];
     else if (k === 'cookbooks') cookbooks.value = items as OpenCookbookBrief[];
@@ -126,6 +133,8 @@ watch([q, filter, rareOnly, street, shown], ([qq, f, rare, s, n]) => {
   if (!kind.value || route.params.kind !== kind.value) return;
   void router.replace({
     query: {
+      // 保留别的参数（和食谱页一样，backlog 第 ⑧ 批审查）；值为 undefined 的会去掉
+      ...route.query,
       street: s === null ? undefined : String(s),
       f: f === null ? undefined : String(f),
       rare: rare ? '1' : undefined,
@@ -315,15 +324,23 @@ const onStreet = (e: Event) => {
           <i class="bi bi-chevron-right text-muted"></i>
         </RouterLink>
         <div v-if="matched.length === 0" class="dt-empty" data-testid="wiki-empty">{{ t.wiki.noResult }}</div>
+        <!-- 显示条数最多 MAX_SHOWN（地址里恢复也按它）：到了就不再给“再显示”，改写怎么缩小范围（backlog 第 ⑧ 批审查） -->
         <button
-          v-if="visible.length < matched.length"
+          v-if="visible.length < matched.length && shown < MAX_SHOWN"
           type="button"
           class="btn btn-sm btn-outline-primary w-100 mt-2"
           data-testid="wiki-more"
-          @click="more = { key: filterKey, n: shown + PAGE }"
+          @click="more = { key: filterKey, n: Math.min(shown + PAGE, MAX_SHOWN) }"
         >
-          {{ t.wiki.more(Math.min(PAGE, matched.length - visible.length)) }}
+          {{ t.wiki.more(Math.min(PAGE, matched.length - visible.length, MAX_SHOWN - shown)) }}
         </button>
+        <div
+          v-else-if="visible.length < matched.length"
+          class="dt-meta mt-2 text-center"
+          data-testid="wiki-max"
+        >
+          {{ t.wiki.maxShown(formatNum(MAX_SHOWN)) }}
+        </div>
       </template>
     </template>
   </div>

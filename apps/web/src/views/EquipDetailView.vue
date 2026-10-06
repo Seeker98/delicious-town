@@ -8,7 +8,7 @@ import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { formatNum, formatPct } from '../utils/format';
 import { equipName } from '../utils/equipName';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 
@@ -23,7 +23,7 @@ const stone = ref(false);
 const gemPick = ref<number | null>(null);
 const backPick = ref<number | null>(null);
 const busy = ref(false);
-const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
+const pct = (x: number) => formatPct(x, { min: 1 });
 const ROWS = ['base', 'boost', 'gem', 'total'] as const;
 
 async function load() {

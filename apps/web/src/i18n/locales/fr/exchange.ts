@@ -17,7 +17,7 @@ const exchange: Messages['exchange'] = {
   estimateBuy: (total) => `Coût maximum ${total} ${plFr(total, 'pièce', 'pièces')}`,
   estimateSell: (net) => `Environ ${net} ${plFr(net, 'pièce', 'pièces')} si tout est vendu (frais déduits)`,
   sysEstimate: (price, qty, total, fee, net) =>
-    `${price} × ${qty} = ${total}, frais ${fee}, vous recevez ${net} ${plFr(net, 'pièce', 'pièces')}`,
+    `${price}\u202f×\u202f${qty} = ${total}, frais ${fee}, vous recevez ${net} ${plFr(net, 'pièce', 'pièces')}`,
   soldToSystem: (n, price) => `${n} ${plFr(n, 'vendu', 'vendus')} au système à ${price} l'unité`,
   sellSystemFailed: 'Échec de la vente au système',
   bookFailed: "Impossible de charger le carnet d'ordres",
@@ -42,9 +42,9 @@ const exchange: Messages['exchange'] = {
     'Les joueurs achètent et vendent ici des ingrédients rares. Les prix des ordres doivent être entre la moitié et le double du prix de référence du jour ; le vendeur paie des frais à chaque exécution.',
   sysHelp: 'Comment le système fixe ses prix',
   sysHelpItems: [
-    "Prix d'achat du système = référence × 0,7 ; prix de vente du système = référence × 1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
+    "Prix d'achat du système = référence\u202f×\u202f0,7 ; prix de vente du système = référence\u202f×\u202f1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
     "Le prix de référence est fixé chaque jour d'après les échanges entre joueurs de la veille (ceux du système ne comptent pas), donc les prix du système restent fixes toute la journée.",
-    "Pour les ingrédients aussi vendus au marché, le prix d'achat est plafonné à 0,9 × le prix le plus bas du marché, pour qu'on ne puisse pas acheter au marché et revendre au système avec profit.",
+    "Pour les ingrédients aussi vendus au marché, le prix d'achat est plafonné à 0,9\u202f×\u202fle prix le plus bas du marché, pour qu'on ne puisse pas acheter au marché et revendre au système avec profit.",
     "Quand le prix d'achat est sous le minimum autorisé pour un ordre, c'est un « prix plancher » (fréquent aux niveaux 3 à 5). On ne peut alors vendre qu'avec le bouton « Vendre au système », ce qui garantit de toujours pouvoir écouler sa marchandise.",
     'Le système achète au plus 100 unités de chaque ingrédient par jour, et chaque joueur peut lui en vendre au plus 20 par jour.',
   ],
@@ -83,11 +83,11 @@ const exchange: Messages['exchange'] = {
   myOrders: 'Mes ordres',
   noOrders: 'Aucun ordre',
   orderLine: (name, price, qty, filled) =>
-    `${name} ${price} × ${qty} (${filled} ${plFr(filled, 'exécuté', 'exécutés')})`,
+    `${name} ${price}\u202f×\u202f${qty} (${filled} ${plFr(filled, 'exécuté', 'exécutés')})`,
   cancel: 'Annuler',
   trades: 'Échanges des 7 derniers jours',
   noTrades: 'Aucun échange',
-  tradeLine: (buy, name, price, qty) => `${buy ? 'Acheté' : 'Vendu'} ${name} ${price} × ${qty}`,
+  tradeLine: (buy, name, price, qty) => `${buy ? 'Acheté' : 'Vendu'} ${name} ${price}\u202f×\u202f${qty}`,
   system: ' (système)',
   fee: (n) => ` (frais ${n})`,
 };

@@ -23,8 +23,8 @@ const predict: Messages['predict'] = {
   running: 'Abiertas',
   noRunning: 'Ahora no hay predicciones abiertas',
   auto: 'Pregunta del sistema',
-  yesPct: (n) => `Sí ${n} %`,
-  noPct: (n) => `No ${n} %`,
+  yesPct: (n) => `Sí ${n}\u00a0%`,
+  noPct: (n) => `No ${n}\u00a0%`,
   holding: (yes, no) => ` · Tengo Sí ${yes} / No ${no}`,
   ended: 'Terminadas',
   endedMore: (n) => `Ver todas (${n})`,
@@ -55,7 +55,7 @@ const predict: Messages['predict'] = {
       `Al cerrar, cada participación del lado ganador paga ${unit} monedas y el lado perdedor no vale nada. Por ejemplo, si «Sí» está al 63 %, 1 participación cuesta unas ${example} ${plEs(example, 'moneda', 'monedas')}; si sale «Sí» recuperas ${unit}, y si sale «No» pierdes lo que pagaste.`,
       'El precio es la probabilidad que todos creen que tiene: cuanta más gente compra «Sí», más caro está «Sí» y más barato «No»; cuanto más compras de una vez, más cara sale cada participación siguiente.',
       'No hace falta esperar al resultado: puedes vender al precio actual en cualquier momento antes del cierre. ¿Crees que te equivocaste? Vende para cortar la pérdida. ¿El precio subió lo suficiente? Vende para asegurar la ganancia. Lo que ganas o pierdes es la diferencia entre lo que obtienes al vender y lo que pagaste al comprar.',
-      `Comprar y vender cobran una comisión del ${feePct} % (sobre el importe, redondeada hacia arriba).`,
+      `Comprar y vender cobran una comisión del ${feePct}\u00a0% (sobre el importe, redondeada hacia arriba).`,
       'Inversión neta = lo que pagaste al comprar (con comisión) − lo que recuperaste al vender; balance = pago al cerrar − inversión neta.',
       'Si la predicción se anula, se devuelve la inversión neta; si alguien vendió antes con ganancia y el sistema no recaudó suficiente, la devolución es proporcional.',
     ],
@@ -64,7 +64,7 @@ const predict: Messages['predict'] = {
     shares: 'participaciones',
     submit: 'Confirmar',
     estimate: (buy, total, fee, pct) =>
-      `${buy ? 'Coste estimado' : 'Ingreso estimado'} ${total} ${plEs(total, 'moneda', 'monedas')} (comisión ${fee} incluida); «Sí» quedará al ${pct} % tras la operación`,
+      `${buy ? 'Coste estimado' : 'Ingreso estimado'} ${total} ${plEs(total, 'moneda', 'monedas')} (comisión ${fee} incluida); «Sí» quedará al ${pct}\u00a0% tras la operación`,
     enterQty: 'Escribe cuántas participaciones (no puedes vender más de las que tienes)',
     own: 'Tú creaste esta pregunta, así que no puedes operar en ella',
     summary: 'Balance de esta predicción',
@@ -72,7 +72,7 @@ const predict: Messages['predict'] = {
       `Compraste ${bought}, vendiste ${sold} (comisiones ${fees}), inversión neta ${net}`,
     resolved: (label, held, unit, payout) =>
       `Resultado ${label}: ${held} ${plEs(held, 'participación', 'participaciones')} ${label} × ${unit} = ${payout}`,
-    voided: (pct, payout) => `Anulada: se devuelve el ${pct} % de la inversión neta, ${payout} en total`,
+    voided: (pct, payout) => `Anulada: se devuelve el ${pct}\u00a0% de la inversión neta, ${payout} en total`,
     waiting: 'Cerrada, esperando el resultado',
     summaryHint: '(pago al cerrar − inversión neta)',
     mine: 'Mis operaciones',
@@ -84,7 +84,7 @@ const predict: Messages['predict'] = {
       'Las 20 últimas operaciones de todos (anónimas): muestran qué operaciones subieron o bajaron el precio',
     noTrades: 'Aún no hay operaciones',
     tradeLine: (action, qty, per, pct) =>
-      `${action} ${qty} ${plEs(qty, 'participación', 'participaciones')} a unos ${per} cada una, «Sí» al ${pct} % después`,
+      `${action} ${qty} ${plEs(qty, 'participación', 'participaciones')} a unos ${per} cada una, «Sí» al ${pct}\u00a0% después`,
   },
 };
 export default predict;

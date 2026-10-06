@@ -25,7 +25,7 @@ function fundNews(w: string, p: P): string {
 function predictResult(p: P): string {
   const head = `Prédiction « ${str(p.title)} »`;
   if (p.outcome === null || p.outcome === undefined) {
-    return `${head} annulée. Les participants ont été remboursés à ${Math.round(num(p.voidRatio) * 100)} % de leur mise nette`;
+    return `${head} annulée. Les participants ont été remboursés à ${Math.round(num(p.voidRatio) * 100)}\u202f% de leur mise nette`;
   }
   const result = `${head} : résultat ${p.outcome ? 'Oui' : 'Non'}`;
   const players = num(p.players);
@@ -43,7 +43,7 @@ const news: Messages['news'] = {
       `${w} a gagné ${num(p.times)} ${plFr(num(p.times), 'manche', 'manches')} de pierre-feuille-ciseaux d'affilée au bar`,
     'bar.num': (w) => `${w} a touché le bon numéro à la roue du bar`,
     'bar.slot': (w, p, x) =>
-      `${w} a gagné ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))} × ${num(p.num)} à la machine à sous du bar`,
+      `${w} a gagné ${p.kind === 'foods' ? x.foodName(num(p.itemId)) : x.goodsName(num(p.itemId))}\u202f×\u202f${num(p.num)} à la machine à sous du bar`,
     'bar.devil': (w, p) =>
       `${w} a bu trois Piments du Diable sans broncher et a gagné ${num(p.payout)} ${plFr(num(p.payout), 'bon', 'bons')} mystère`,
     'bar.memory': (w) => `${w} a retenu les 7 ingrédients du Cocktail Mémoire`,
@@ -52,14 +52,14 @@ const news: Messages['news'] = {
     'friend.weekly': (w, p, x) =>
       `${w} a fini ${rank(num(p.rank))} la semaine dernière (${WEEKLY[str(p.key)] ?? 'classement'}) et gagne ${x.goodsName(num(p.goodsId))}`,
     'gem.broken': (w, p, x) =>
-      `${w} a raté l'amélioration d'une gemme et a brisé ${x.goodsName(num(p.goodsId))} × ${num(p.num)}`,
+      `${w} a raté l'amélioration d'une gemme et a brisé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}`,
     'gem.levelUp': (w, p, x) =>
-      `${w} a obtenu ${x.goodsName(num(p.goodsId))} × ${num(p.num)} en améliorant une gemme`,
+      `${w} a obtenu ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} en améliorant une gemme`,
     'forum.pin': (w, p) => `Le message « ${str(p.title)} » de ${w} a été épinglé`,
     'forum.feature': (w, p) => `Le message « ${str(p.title)} » de ${w} a été mis en avant`,
     'hiphop.event': (w) => `${w} a lancé un événement hip-hop !`,
     'hiphop.krab': (w, p, x) =>
-      `${w} a obtenu ${x.goodsName(SHARED_GOODS.krabCoin)} × ${num(p.num)} en donnant des pourboires`,
+      `${w} a obtenu ${x.goodsName(SHARED_GOODS.krabCoin)}\u202f×\u202f${num(p.num)} en donnant des pourboires`,
     'hiphop.weekly': (w, p, x) =>
       `Bravo à ${w}, ${rank(num(p.rank))} du classement hebdomadaire des pourboires, qui gagne ${x.goodsName(num(p.goodsId))} (160 heures)`,
     'market.manual': (w, p, x) =>
@@ -72,7 +72,7 @@ const news: Messages['news'] = {
         .join(', ')}`,
     'mc.champion': (w, p) =>
       `${w} avait hier le plat signature le plus précieux (${formatNum(num(p.value))})`,
-    'mc.cook': (w, p, x) => `${w} a cuisiné ${x.mcName(num(p.mcId))} × ${num(p.num)}`,
+    'mc.cook': (w, p, x) => `${w} a cuisiné ${x.mcName(num(p.mcId))}\u202f×\u202f${num(p.num)}`,
     'oil.expand': (w, p) => `${w} a agrandi son bidon d'huile au niveau ${num(p.level)}`,
     'plankton.appear': (w) => `Plancton s'est installé chez ${w} et refuse de partir`,
     'plankton.driven': (w) => `${w} a chassé Plancton`,
@@ -84,7 +84,7 @@ const news: Messages['news'] = {
     'takeaway.customer': (w, p, x) => `${w} a croisé ${x.goodsName(num(p.goodsId))} en livrant à emporter`,
     'temple.explore.rare': (w, p, x) =>
       `${w} a trouvé ${list(p.foods)
-        .map((f) => `${x.foodName(num((f as P).foodsId))} × ${num((f as P).num)}`)
+        .map((f) => `${x.foodName(num((f as P).foodsId))}\u202f×\u202f${num((f as P).num)}`)
         .join(', ')} en explorant le temple`,
     'temple.guardian.rare': (w, p, x) =>
       `${w} a vaincu la bête gardienne et obtenu ${x.foodName(num(p.foodsId))}`,
@@ -109,7 +109,7 @@ const news: Messages['news'] = {
     'town.broadcast': (w, p) => `${w} : ${str(p.text)}`,
     'town.bless': (w, p) => `${w} a fait un vœu et reçu : ${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>
-      `Bravo ! ${w} a plongé la main dans la poche de M. Krab et en a sorti ${x.goodsName(num(p.goodsId))} × ${num(p.num)}`,
+      `Bravo ! ${w} a plongé la main dans la poche de M. Krab et en a sorti ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}`,
     'kuji.big': (w, p) =>
       p.tier === 'last'
         ? `${w} a tiré le dernier ticket de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} et remporte le Dernier Prix !`
@@ -121,7 +121,7 @@ const news: Messages['news'] = {
     'icon.buy': (w, p, x) =>
       `${w} a acheté le titre limité « ${x.icon?.(str(p.key))?.title ?? str(p.title)} »`,
     'town.exchange': (w, p, x) =>
-      `${w} a échangé ${x.goodsName(num(p.goodsId))} × ${num(p.num)} auprès du maire`,
+      `${w} a échangé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} auprès du maire`,
     'predict.result': (_w, p) => predictResult(p),
   },
   unknown: "Il s'est passé quelque chose en ville",

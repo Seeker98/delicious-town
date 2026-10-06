@@ -4,6 +4,7 @@
  */
 export const CHANGELOG = [
   { id: 'perf1006', date: '2026-10-06' },
+  { id: 'backlog7', date: '2026-10-06' },
   { id: 'backlog6', date: '2026-10-06' },
   { id: 'visual1006', date: '2026-10-06' },
   { id: 'stealForget1006', date: '2026-10-06' },

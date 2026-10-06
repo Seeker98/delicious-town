@@ -42,11 +42,12 @@ const temple: Messages['temple'] = {
     howChampion: 'champion des plats signature d’hier',
     howGuardian: 'coups critiques sur le gardien du Temple si vous avez un Attrape-rêves',
     howSep: ', ',
-    toolOption: (name, min, max, rate, have) => `${name} (niv. ${min} à ${max}, ${rate} %, possédé ${have})`,
+    toolOption: (name, min, max, rate, have) =>
+      `${name} (niv. ${min} à ${max}, ${rate}\u202f%, possédé ${have})`,
     btn: (n) => `Expertiser ×${n}`,
     noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',
     got: (name, num, blessed) =>
-      `Fragment de ${name} × ${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
+      `Fragment de ${name}\u202f×\u202f${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
   },
   guardian: {
     what: 'défier le gardien',
@@ -71,7 +72,8 @@ const temple: Messages['temple'] = {
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",
-    foodLabel: (name, level, rare, num) => `${name} (niv. ${level}${rare ? ', rare' : ''}) × ${num}`,
+    foodLabel: (name, level, rare, num) =>
+      `${name} (niv. ${level}${rare ? ', rare' : ''})\u202f×\u202f${num}`,
     intro: (creatives) =>
       `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +50 %) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +150 %). Créativité ${creatives}.`,
     help: 'Comment ça marche',
@@ -80,7 +82,7 @@ const temple: Messages['temple'] = {
       'À la préparation, un de vos plats signature de niveau 1 à 5 est tiré au hasard comme plat d’épreuve. Il ne vous plaît pas ? Changez-le pour 20 000 pièces, ou utilisez 1 tentacule (obtenue en nourrissant le Kraken) pour en choisir un.',
       'Chaque épreuve coûte 10 000 pièces et consomme 1 ingrédient principal et 1 secondaire choisis (2 s’ils sont identiques), plus 1 de chaque ingrédient du plat.',
       'La réussite dépend de trois choses : la créativité, le nombre de niveaux des ingrédients au-dessus du plat (le principal compte plus) et la rareté (rare = marqué « rare » dans la liste, poids inférieur à 100).',
-      'En cas de réussite : EXP d’épreuve +1 à 4 % (plus si les deux sont rares) ; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2 % en plus ; maîtrise +800 × niveau de maîtrise. La valeur d’épreuve plafonne à 50 % (plus de valeur par part), l’EXP d’épreuve à 150 % (EXP du restaurant en plus en cuisinant).',
+      'En cas de réussite : EXP d’épreuve +1 à 4 % (plus si les deux sont rares) ; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2 % en plus ; maîtrise +800\u202f×\u202fniveau de maîtrise. La valeur d’épreuve plafonne à 50 % (plus de valeur par part), l’EXP d’épreuve à 150 % (EXP du restaurant en plus en cuisinant).',
     ],
     inject: 'Injection (250 000 pièces, créativité +25)',
     meditate: 'Méditer (gratuit, créativité +5)',
@@ -89,16 +91,16 @@ const temple: Messages['temple'] = {
     targetLevel: (level) => ` (niv. ${level})`,
     refresh: 'Changer (20 000 pièces)',
     stat: (worth, exp, level) =>
-      `Valeur d'épreuve ${worth} % / 50 %, EXP d'épreuve ${exp} % / 150 %, maîtrise ${level}`,
+      `Valeur d'épreuve ${worth}\u202f% / 50 %, EXP d'épreuve ${exp}\u202f% / 150 %, maîtrise ${level}`,
     pickByTentacle: (n) => `Choisir avec une tentacule (possédées ${n})`,
     pick: 'Choisir',
     main: 'Ingrédient principal',
     sub: 'Ingrédient secondaire',
     rate: (pct) =>
-      `Réussite estimée ${pct} % (hors chance) ; coûte aussi 10 000 pièces et 1 de chaque ingrédient du plat`,
+      `Réussite estimée ${pct}\u202f% (hors chance) ; coûte aussi 10 000 pièces et 1 de chaque ingrédient du plat`,
     start: "Commencer l'épreuve",
     success: (lucky, worth, exp, prof) =>
-      `Épreuve réussie${lucky ? ' (chanceux)' : ''} : valeur d'épreuve +${worth} %, EXP d'épreuve +${exp} %, maîtrise +${prof}`,
+      `Épreuve réussie${lucky ? ' (chanceux)' : ''} : valeur d'épreuve +${worth}\u202f%, EXP d'épreuve +${exp}\u202f%, maîtrise +${prof}`,
     fail: "Échec de l'épreuve",
   },
   kraken: {
@@ -110,7 +112,7 @@ const temple: Messages['temple'] = {
     noDish: "Cuisinez d'abord un plat signature sur la page des plats signature",
     notEnough: 'Pas assez de parts en vente (au moins 1 doit rester après le repas)',
     forget: 'Vous avez oublié ce plat signature',
-    punish: (exp, v) => `${exp ? "EXP d'épreuve" : "Valeur d'épreuve"} −${v} %`,
+    punish: (exp, v) => `${exp ? "EXP d'épreuve" : "Valeur d'épreuve"} −${v}\u202f%`,
     failed: 'Échec du repas',
     exFailed: "Échec de l'échange",
     refreshFailed: "Échec de l'actualisation",
