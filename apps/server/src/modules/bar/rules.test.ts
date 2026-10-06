@@ -8,6 +8,7 @@ import {
   fgAwardLevel,
   fgOutcome,
   nimBartenderTake,
+  dealOffer,
   spiceScore,
   spiceTier,
   nextTimes,
@@ -173,5 +174,13 @@ describe('秘制调料的计分（设计 §4）', () => {
   it('第几次猜中落在哪一档', () => {
     const tiers = [{ maxTries: 4 }, { maxTries: 6 }, { maxTries: 8 }];
     expect([1, 4, 5, 6, 7, 8].map((n) => spiceTier(n, tiers))).toEqual([0, 0, 1, 1, 2, 2]);
+  });
+});
+
+describe('一掷千金的报价（设计 §4）', () => {
+  it('剩余平均 × 估价成数 × 本轮系数，四舍五入到百位', () => {
+    expect(dealOffer([70000, 1200], 0.95, 0.5)).toBe(16900);
+    const all = [1200, 3600, 4400, 6000, 7200, 10800, 15000, 15000, 28000, 70000];
+    expect(dealOffer(all, 0.5, 0.5)).toBe(4000);
   });
 });
