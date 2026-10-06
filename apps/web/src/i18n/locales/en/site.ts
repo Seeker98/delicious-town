@@ -10,6 +10,8 @@ const site: Messages['site'] = {
   changelog: {
     backlog6:
       'Duel rules now state how many judges this server actually uses; cookware dropped by an Elder gets its own line on the result card and makes the news; shard exchange on the signature dish page can trade several at once; appraisal items’ “How to get” now mentions critical hits on the Temple guardian; item pages in the game wiki also list Today’s deal, the black market, random rewards and gem upgrades as sources',
+    stealForget1006:
+      'Failed lesson sneaking is now less harsh: instead of fully forgetting (lesson level × 3 + 1) random recipes, (lesson level × 2 + 1) random recipes drop 1 grade, and only Common ones are forgotten; for lessons of level 4 and up, the chance of also forgetting a lower-level signature dish drops from level × 5% to level × 2%',
     frTimes1006:
       'In the French interface, item quantities now follow French typography, with spaces around the × (e.g. “Riz × 3”)',
     web1006:

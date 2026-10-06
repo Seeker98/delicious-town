@@ -81,6 +81,13 @@ describe('特色菜（子项目 4A）', () => {
     expect(
       logText({ type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: 9 }, at } as never, names),
     ).toBe('偷学失败，遗忘了 3 道食谱和特色菜「秘·9」');
+    // 问题记录 424 以后：记了 grades 的是降品级（以前的日志没有 grades，照旧写遗忘）
+    expect(
+      logText(
+        { type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: null, grades: 1, lost: 2 }, at } as never,
+        names,
+      ),
+    ).toBe('偷学失败，3 道食谱降了 1 品，其中 2 道忘了');
   });
 });
 

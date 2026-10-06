@@ -24,9 +24,13 @@ describe('英法西的单复数（质量期 ④，backlog #116）', () => {
     expect(fr.temple.kraken.exchange(1)).toBe('Échanger (1 tentacule)');
   });
 
-  it('后面的形容词、动词跟着名词变：1 recette oubliée、1 restaurant a participé', () => {
-    expect(fr.town.classroom.stealFailed(1, '')).toContain('1 recette oubliée');
-    expect(fr.town.classroom.stealFailed(2, '')).toContain('2 recettes oubliées');
+  it('后面的形容词、动词跟着名词变：1 recette a perdu、1 restaurant a participé', () => {
+    expect(fr.town.classroom.stealFailed(1, 1, 1, '')).toContain(
+      '1 recette a perdu 1 niveau de qualité, dont 1 oubliée',
+    );
+    expect(fr.town.classroom.stealFailed(2, 2, 2, '')).toContain(
+      '2 recettes ont perdu 2 niveaux de qualité, dont 2 oubliées',
+    );
   });
 
   it('终审：动词在前、句中别处的动词分词也跟着数字变；英文两个词的名词；按数量不按等级（质量期 ④ 终审）', () => {
