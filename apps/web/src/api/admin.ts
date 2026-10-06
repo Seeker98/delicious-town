@@ -14,6 +14,7 @@ import type {
   ExchangeMakerDto,
   PredictAdminRow,
   ExchangeSuspiciousRow,
+  SuspiciousAcquireRow,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
   SuspiciousRedeemRow,
@@ -121,6 +122,8 @@ export const adminApi = {
     api.get<SuspiciousMultiGroup[]>(`${A}/suspicious/multi${qs({ shardId })}`),
   suspiciousRedeem: (shardId: number) =>
     api.get<SuspiciousRedeemRow[]>(`${A}/suspicious/redeem${qs({ shardId })}`),
+  suspiciousAcquire: (shardId: number) =>
+    api.get<SuspiciousAcquireRow[]>(`${A}/suspicious/acquire${qs({ shardId })}`),
   launchCheck: () => api.get<LaunchCheckDto>(`${A}/launch-check`),
   launchCheckFix: (b: { shardId: number; version: number }) =>
     api.post<LaunchCheckDto>(`${A}/launch-check/fix`, b),

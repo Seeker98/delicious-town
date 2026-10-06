@@ -179,6 +179,8 @@ const wiki: Messages['wiki'] = {
           'Wearing cookware raises your income each round.',
           (n) =>
             `Below level ${n.newbieExp.maxLevel}, EXP from each round gets an extra boost (${formatPct(n.newbieExp.rate, { sign: true })} at level 1, smaller each level), so early levels go fast.`,
+          (n) =>
+            `From ${n.acquire.minStar} stars you can acquire other restaurants under More → Acquisitions: pay the valuation, the previous owner gets ${formatPct(1 - n.acquire.taxRate, { digits: 0 })} and ${formatPct(n.acquire.taxRate, { digits: 0 })} goes to tax; you can own up to ${n.acquire.maxHoldings}. Acquired restaurants pay their owner a daily dividend (${formatPct(n.acquire.dividendRate, { digits: 0 })} of the previous day's settlement coins, once they ran at least ${n.acquire.minRounds} rounds). An acquired restaurant can tend for its owner once a day to get ${n.acquire.tendFoods} ingredients, and the owner's dividend for that day goes up by ${formatPct(n.acquire.tendBonus, { digits: 0 })}. An acquired restaurant can buy itself back at its valuation and is then safe from acquisition for ${n.acquire.protectDays} days.`,
         ],
       },
       {

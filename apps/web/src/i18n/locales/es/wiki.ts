@@ -180,6 +180,8 @@ const wiki: Messages['wiki'] = {
           'Llevar utensilios sube los ingresos de cada ronda.',
           (n) =>
             `Por debajo del nivel ${n.newbieExp.maxLevel}, la EXP de cada ronda recibe un extra (${formatPct(n.newbieExp.rate, { sign: true })} en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.`,
+          (n) =>
+            `Desde ${n.acquire.minStar} estrellas puedes adquirir otros restaurantes en Más → Adquisiciones: pagas su valoración, el dueño anterior recibe el ${formatPct(1 - n.acquire.taxRate, { digits: 0 })} y el ${formatPct(n.acquire.taxRate, { digits: 0 })} es impuesto; puedes tener hasta ${n.acquire.maxHoldings}. Los restaurantes adquiridos pagan a su dueño un dividendo diario (el ${formatPct(n.acquire.dividendRate, { digits: 0 })} de las monedas de liquidación del día anterior, si hicieron al menos ${n.acquire.minRounds} rondas). Un restaurante adquirido puede atender a su dueño una vez al día y recibe ${n.acquire.tendFoods} ingredientes; el dividendo de ese día sube un ${formatPct(n.acquire.tendBonus, { digits: 0 })}. Un restaurante adquirido puede recomprarse por su valoración y luego no puede ser adquirido durante ${n.acquire.protectDays} días.`,
         ],
       },
       {

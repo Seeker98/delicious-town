@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    acquire1006:
+      'Nouvelle fonctionnalité « Rachats » (dans Plus) : les restaurants de 2 étoiles ou plus ont une valorisation, et vous pouvez racheter le restaurant d’un autre à ce prix. L’ancien propriétaire reçoit 90\u00a0% et 10\u00a0% part en taxe. Les restaurants rachetés versent chaque jour un dividende à leur propriétaire ; s’occuper du propriétaire une fois par jour vous rapporte 5 ingrédients et augmente son dividende de moitié. Vous pouvez racheter votre restaurant à sa valorisation, et les propriétaires peuvent le mettre en vente avec une remise ou le lâcher. La page des autres restaurants montre leur valorisation et leur propriétaire, et les rachats de 10 000 000 pièces ou plus font les nouvelles',
     backlog8:
       'Dans le guide du wiki, le nombre de recettes de la Rue des débutants et de la plus grande rue, les recettes nécessaires pour 2 étoiles, les conditions de la vente à emporter et de la Bourse et le bonus d’EXP de départ suivent désormais les valeurs par défaut actuelles du jeu ; les règles du duel indiquent aussi quels attributs compte chaque note selon les pondérations actuelles',
     perf1006:
