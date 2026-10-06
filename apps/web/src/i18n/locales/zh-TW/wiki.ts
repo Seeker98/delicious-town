@@ -86,9 +86,9 @@ export default {
     suitTier: (n: number) => `${n} 件`,
   },
   gift: {
-    randomGoods: (level: number, num: number) => `隨機一件 ${level} 級道具 ×${num}`,
-    randomFoods: (level: number, num: number) => `隨機 ${level} 級普通食材 ×${num}`,
-    masterFoods: (num: number) => `隨機萬能食材 ×${num}`,
+    randomGoods: (level: number, num: number) => `隨機一件 ${level} 級道具×${num}`,
+    randomFoods: (level: number, num: number) => `隨機 ${level} 級普通食材×${num}`,
+    masterFoods: (num: number) => `隨機萬能食材×${num}`,
     range: (min: string, max: string, unit: string) => `${unit} ${min}~${max}`,
     note: '只列能開出的東西，不寫機率。',
   },

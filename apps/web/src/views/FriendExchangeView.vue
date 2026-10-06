@@ -113,7 +113,7 @@ onMounted(load);
         :disabled="f.locked && !data.storm"
         @click="take = f.foodsId"
       >
-        {{ catalog.foodName(f.foodsId) }} ×{{ f.num
+        {{ t.common.qty(catalog.foodName(f.foodsId), f.num)
         }}<span v-if="f.need > 0" class="badge text-bg-warning ms-1">{{
           t.friends.exchange.need(f.need)
         }}</span
@@ -131,7 +131,7 @@ onMounted(load);
         :disabled="f.num < 2"
         @click="give = f.foodsId"
       >
-        {{ catalog.foodName(f.foodsId) }} ×{{ f.num }}
+        {{ t.common.qty(catalog.foodName(f.foodsId), f.num) }}
       </button>
     </div>
     <button

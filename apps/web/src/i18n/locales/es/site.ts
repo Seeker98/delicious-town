@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    frTimes1006:
+      'En la interfaz en francés, las cantidades de objetos siguen ahora la tipografía francesa, con espacios alrededor del × (p. ej. «Riz × 3»)',
     web1006:
       'Al cambiar ingredientes con amigos o con Don Krab ahora puedes buscar por nombre, y los que te faltan para tus recetas salen primero con cuántos faltan; el aviso de mudarse de calle en la página de recetas se puede ocultar hasta la siguiente estrella; «Reclamar todo» en los repartos solo aparece si ha llegado alguno; tocar «Recetas» en la barra inferior mientras ves otra calle te devuelve a la tuya; la pestaña del Fondo de Desarrollo en la plaza permite reintentar si tu restaurante no carga',
     checks1006:

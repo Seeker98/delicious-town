@@ -12,8 +12,9 @@ export function rewardSummary(
   if (i.coin) parts.push(r.coin(formatNum(i.coin)));
   if (i.diamond) parts.push(r.diamond(formatNum(i.diamond)));
   if (i.exp) parts.push(r.exp(formatNum(i.exp)));
-  for (const g of i.goods ?? []) parts.push(`${names.goodsName(g.id)}×${g.num}`);
-  for (const f of i.foods ?? []) parts.push(`${names.foodName(f.id)}×${f.num}`);
+  const q = activeMessages().common.qty;
+  for (const g of i.goods ?? []) parts.push(q(names.goodsName(g.id), g.num));
+  for (const f of i.foods ?? []) parts.push(q(names.foodName(f.id), f.num));
   for (const h of i.hats ?? []) parts.push(r.hat(HAT_PREFIX[h.tier], h.name));
   return parts.join(activeMessages().events.sep);
 }

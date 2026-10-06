@@ -41,7 +41,7 @@ const rewardText = computed(() => {
   const s = t.value.bar.slot;
   return rs.length === 0
     ? s.nothing
-    : s.got(rs.map((r) => `${awardName(r.awardId)}×${r.num}`).join(t.value.events.sep));
+    : s.got(rs.map((r) => t.value.common.qty(awardName(r.awardId), r.num)).join(t.value.events.sep));
 });
 const statTotal = computed(() => slot.value.stats.reduce((s, x) => s + x.num, 0));
 const exMax = computed(() => Math.min(99, Math.floor(props.data.tickets / props.data.krabCoinTickets)));

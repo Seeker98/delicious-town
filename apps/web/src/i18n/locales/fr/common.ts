@@ -18,6 +18,8 @@ const common: Messages['common'] = {
   opFailed: "L'action a échoué",
   loadMore: 'Charger plus',
   paren: (s) => ` (${s})`,
+  qty: (name, num) => `${name} × ${num}`,
+  times: ' × ',
   parenOpen: ' (',
   parenClose: ')',
   colon: (s) => `${s} : `,

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    frTimes1006:
+      'Les quantités d’objets suivent maintenant la typographie française, avec des espaces autour du × (par exemple « Riz × 3 »)',
     web1006:
       'En échangeant des ingrédients avec vos amis ou M. Krab, vous pouvez chercher par nom, et ceux qui vous manquent pour vos recettes apparaissent en premier avec la quantité manquante ; l’astuce pour changer de rue sur la page des recettes peut être masquée jusqu’à la prochaine étoile ; « Tout récupérer » pour les livraisons n’apparaît que si une commande est arrivée ; toucher « Recettes » dans la barre du bas quand vous regardez une autre rue vous ramène à la vôtre ; l’onglet du fonds de développement sur la place permet de réessayer si votre restaurant ne se charge pas',
     checks1006:

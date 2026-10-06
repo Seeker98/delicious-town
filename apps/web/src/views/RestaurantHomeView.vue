@@ -141,7 +141,7 @@ const refuelCost = computed(() => (rest.value ? Math.min(refuelNeed.value, rest.
 const customers = computed(() =>
   Object.entries(rest.value?.lastRound?.customers ?? {})
     .filter(([k]) => k !== '0')
-    .map(([k, v]) => `${CUSTOMER_NAMES[k] ?? k}×${v}`)
+    .map(([k, v]) => t.value.common.qty(CUSTOMER_NAMES[k] ?? k, v))
     .join(t.value.events.sep),
 );
 
@@ -541,7 +541,7 @@ onBeforeUnmount(() => {
           :data-testid="`choice-${c.goodsId}`"
           @click="place(c.goodsId)"
         >
-          {{ catalog.goodsName(c.goodsId) }}×{{ c.num
+          {{ t.common.qty(catalog.goodsName(c.goodsId), c.num)
           }}<span v-if="(c.needStar ?? 0) > (rest?.starLevel ?? 0)" class="ms-1 small">{{
             t.store.shop.why.star(c.needStar!)
           }}</span>

@@ -31,8 +31,10 @@ function pickLine(x: KujiLine) {
 
 const awardText = (a: KujiAwardDto) =>
   [
-    ...(a.goods ?? []).map((g) => `${catalog.goodsName(g.id)}${g.num > 1 ? ` ×${g.num}` : ''}`),
-    ...(a.foods ?? []).map((f) => `${catalog.foodName(f.id)} ×${f.num}`),
+    ...(a.goods ?? []).map((g) =>
+      g.num > 1 ? t.value.common.qty(catalog.goodsName(g.id), g.num) : catalog.goodsName(g.id),
+    ),
+    ...(a.foods ?? []).map((f) => t.value.common.qty(catalog.foodName(f.id), f.num)),
     ...(a.diamond ? [t.value.kuji.diamond(formatNum(a.diamond))] : []),
     ...(a.coin ? [t.value.kuji.coin(formatNum(a.coin))] : []),
     ...(a.exp ? [t.value.kuji.exp(formatNum(a.exp))] : []),

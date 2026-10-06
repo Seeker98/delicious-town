@@ -9,11 +9,11 @@ export function rewardText(
 ): string {
   switch (r.kind) {
     case 'foods':
-      return `${x.foodName(r.id!)}×${r.num}`;
+      return activeMessages().common.qty(x.foodName(r.id!), r.num);
     case 'goods':
-      return `${x.goodsName(r.id!)}×${r.num}`;
+      return activeMessages().common.qty(x.goodsName(r.id!), r.num);
     case 'seed':
-      return `${x.seedName(r.id!)}×${r.num}`;
+      return activeMessages().common.qty(x.seedName(r.id!), r.num);
     case 'coin':
       return activeMessages().util.reward.coin(formatNum(r.num));
     default:
