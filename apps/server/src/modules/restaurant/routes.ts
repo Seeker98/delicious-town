@@ -17,7 +17,7 @@ export function restaurantRoutes(svc: RestaurantService): FastifyPluginAsync {
     r.get('/income', async (req) =>
       ok(await svc.income(requireRestaurant(req).restaurantId, parse(pageQuery, req.query))),
     );
-    r.get('/buffs', async (req) => ok(await svc.buffs(requireRestaurant(req).restaurantId)));
+    r.get('/buffs', async (req) => ok(await svc.buffs(requireRestaurant(req))));
     r.get('/log', async (req) =>
       ok(await svc.log(requireRestaurant(req).restaurantId, parse(pageQuery, req.query))),
     );

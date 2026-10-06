@@ -358,6 +358,9 @@ export const endpoints = {
     api.post<{ coin: number }>('/api/v1/mc/remnant/sell', { mcId, num }),
   mcRemnantDecompose: (mcId: number, num: number) =>
     api.post<{ goodsId: number; num: number }>('/api/v1/mc/remnant/decompose', { mcId, num }),
+  /** 碎片兑换指定残卷（问题记录 415） */
+  mcExchange: (mcId: number, num: number) =>
+    api.post<{ mcId: number; num: number }>('/api/v1/mc/remnant/exchange', { mcId, num }),
   mcLearn: (mcId: number) => api.post<{ mcId: number }>('/api/v1/mc/learn', { mcId }),
   mcLearnAll: () => api.post<{ learned: number[] }>('/api/v1/mc/learnAll'),
   mcCook: (mcId: number, cookNum: number, cookie: boolean) =>

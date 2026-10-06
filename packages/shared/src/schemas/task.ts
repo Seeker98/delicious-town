@@ -62,6 +62,9 @@ export interface QuestsDto {
   } | null;
 }
 
+/** 活跃项眼下做不了的原因（等级、星级、区服关闭之外的） */
+export type ActivationBlock = 'days' | 'email' | 'noActivity' | null;
+
 export interface ActivationDto {
   total: number;
   signedIn: boolean;
@@ -82,6 +85,10 @@ export interface ActivationDto {
     count: number;
     needStar: number;
     needLevel: number;
+    /** 注册满几天才能做（交易所、事件预测），没有为 0 */
+    needDays: number;
+    /** 眼下做不了的其他原因（backlog 第 ⑥ 批）：注册天数不够、邮箱没验证、没有能领奖的限时活动 */
+    blocked: ActivationBlock;
     off: boolean;
   }>;
   rewards: Array<{ points: number; award: AwardDto; claimed: boolean; multiplier: number }>;

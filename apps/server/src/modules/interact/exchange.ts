@@ -9,7 +9,9 @@ import { feedLog, runPairOp } from '../../core/pair';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { AppError } from '../../http/errors';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
-import { addFoods, cupboardSlotsUsed, subFoods } from '../cupboard/foods';
+import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from '../cupboard/foods';
+import { needMapOf } from '../../core/scarcity';
+import { levelsOf } from '../takeaway/common';
 import type { WorldService } from '../world/service';
 import { extendHonor } from './honor';
 import { bangleRate, exchangeFee, exchangeLimits } from './rules';
@@ -46,7 +48,7 @@ export function createExchange(d: GameDeps, world: WorldService) {
         throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { restId });
       const me = await d.db
         .selectFrom('restaurant')
-        .select('star_level')
+        .select(['star_level', 'street_id'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
       const { tuning } = await d.shards.settings(ctx.shardId);
@@ -67,6 +69,16 @@ export function createExchange(d: GameDeps, world: WorldService) {
       const used = them.npc
         ? await getDaily(d.db, ctx.restaurantId, 'exchange.krab', day)
         : await getDaily(d.db, ctx.restaurantId, `exchange.with:${restId}`, day);
+      // 我学菜还缺几个（backlog 370：蟹老板的橱柜一级八九十种，把缺的排前面）：和个人缺料倾向同一个口径
+      const myFoods = await foodsMap(d.db, ctx.restaurantId);
+      const need = needMapOf(
+        d.config.cookbookIndex.idsByStreet.get(me.street_id) ?? [],
+        await levelsOf(d.db, ctx.restaurantId),
+        d.config.cookbookIndex.slotOf,
+        tuning.rest.cookbookMaxGrade,
+        (id, g) => d.config.requireCookbook(id).needFoods[g] ?? [],
+        (id) => myFoods.get(id)?.num ?? 0,
+      );
       return {
         level,
         theirs: (await ofLevel(restId)).map((r) => ({
@@ -74,8 +86,13 @@ export function createExchange(d: GameDeps, world: WorldService) {
           num: r.num,
           locked: r.locked,
           fee: them.npc ? 0 : exchangeFee(d.config.requireFood(r.foods_id), r.locked, t),
+          need: need.get(r.foods_id) ?? 0,
         })),
-        mine: (await ofLevel(ctx.restaurantId)).map((r) => ({ foodsId: r.foods_id, num: r.num })),
+        // 我的这一级从上面读过的整个橱柜里取，不再查一次
+        mine: [...myFoods]
+          .filter(([id, r]) => r.num > 0 && d.config.foods.get(id)?.level === level)
+          .sort(([a], [b]) => a - b)
+          .map(([id, r]) => ({ foodsId: id, num: r.num })),
         left: Math.max(0, (them.npc ? lim.npc : lim.perFriend) - used),
         storm: await storm(ctx.shardId, now),
         npc: them.npc,

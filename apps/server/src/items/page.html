@@ -499,7 +499,9 @@
           }
           if (!Array.isArray(res.errors)) throw new Error(`HTTP ${r.status}：返回格式不对`);
         } catch (e) {
-          // 请求失败也要恢复按钮、说清原因，不能一直停在“检查中…”
+          // 请求失败也要恢复按钮、说清原因，不能一直停在“检查中…”；上一次保存留下的错误列表清掉，免得两种失败混在一起
+          showErrors([]);
+          render();
           $('msg').textContent = `保存失败：${e.message}`;
           $('save').disabled = !dirty();
           return;

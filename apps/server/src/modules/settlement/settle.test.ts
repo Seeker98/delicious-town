@@ -242,6 +242,32 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]!.last).toMatchObject({ coin: 135, exp: 3 });
   });
 
+  it('挑剔满足时多吃 2 份特色菜，按原价 × 卖出倍率、不打折（backlog 411~413）', () => {
+    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const patch = { cookbooks: { [cid('桑椹葡萄粥')]: 1 } };
+    const base = settle(patch, {}, rng);
+    const r = settle({ ...patch, special: { price: 100, level: 3, leftNum: 5 } }, {}, rng);
+    expect(r.specialUsed).toBe(2);
+    expect(r.tables[0]!.last).toMatchObject({ type: 2, satisfied: true });
+    // 100 × 2.5 × 2 份
+    expect(r.coin - base.coin).toBe(500);
+  });
+
+  it('章鱼哥带魔笛：吃掉的特色菜按原价算经验，不乘卖出倍率（backlog 411~413）', () => {
+    const r = settle(
+      {
+        rest: { star: 3, streetId: 1 },
+        agg: { magicFlute: 1 },
+        special: { price: 100, level: 3, leftNum: 10 },
+      },
+      { krabStreet: 1 },
+      [0.5, 0.65, 0.9, 0.001, 0.9, 0.9, 0.9, 0.9, 0.9],
+    );
+    expect(r.tables[0]!.last).toMatchObject({ type: 6 });
+    const portions = rules.settlement.squidwardPortions;
+    expect(r.tables[0]!.last!.exp).toBe(100 * portions);
+  });
+
   it('特色菜卖出倍率按特色菜等级：1 级 ×1.3', () => {
     const r = settle(
       { special: { price: 100, level: 1, leftNum: 1 } },

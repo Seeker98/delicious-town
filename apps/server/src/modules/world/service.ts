@@ -216,6 +216,7 @@ export function createWorldService(d: GameDeps) {
         nutritive: m.nutritive,
         coin: m.coin,
         foods: m.foods,
+        appraisable: m.appraisable,
       })),
       seeds: d.config.bundle.seeds.map((s) => ({ id: s.id, foodsId: s.foodsId, level: s.level })),
       data: {

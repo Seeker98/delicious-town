@@ -30,8 +30,6 @@ describe('名字×数量（backlog #116）', () => {
 
   it('玩家页面的代码不再写死“名字×数量”（后台、菜园、倍率除外）', () => {
     const root = join(__dirname, '..');
-    // 交换页等 #169 合并后再改（那个 PR 改了同一行）
-    const allow = new Set(['views/FriendExchangeView.vue']);
     const files: string[] = [];
     const walk = (d: string) => {
       for (const e of readdirSync(join(root, d), { withFileTypes: true })) {
@@ -42,15 +40,13 @@ describe('名字×数量（backlog #116）', () => {
       }
     };
     walk('');
-    const bad = files
-      .filter((f) => !allow.has(f))
-      .flatMap((f) =>
-        readFileSync(join(root, f), 'utf8')
-          .split('\n')
-          // 加成倍率（×1.5）不是数量
-          .filter((l) => STUCK.test(l) && !l.includes('factor'))
-          .map((l) => `${f}: ${l.trim()}`),
-      );
+    const bad = files.flatMap((f) =>
+      readFileSync(join(root, f), 'utf8')
+        .split('\n')
+        // 加成倍率（×1.5）不是数量
+        .filter((l) => STUCK.test(l) && !l.includes('factor'))
+        .map((l) => `${f}: ${l.trim()}`),
+    );
     expect(bad).toEqual([]);
   });
 });

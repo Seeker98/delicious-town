@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { EquipAttrs, Goods, SuitDef } from './types';
-import { elderAttrs, elderErrors, type ElderInput } from './towerFloor';
+import { elderAttrs, elderErrors, elderLevelErrors, type ElderInput } from './towerFloor';
 
 const zero: EquipAttrs = { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0, luck: 0 };
 const attrs = (p: Partial<EquipAttrs>): EquipAttrs => ({ ...zero, ...p });
@@ -33,6 +33,7 @@ const goods = new Map<number, Goods>([
   [1, equip(1, 1, 7, { cook: 10 }, null)],
   [2, equip(2, 2, 7, { cutting: 10 }, null)],
   [3, equip(3, 3, 0, null, 6)],
+  [4, equip(4, 4, 8, { cook: 10 }, null)],
   [9, { id: 9, name: '不是厨具' } as unknown as Goods],
 ]);
 const suits = new Map<number, SuitDef>([
@@ -130,5 +131,30 @@ describe('赛厨长老（问题记录 408）', () => {
     expect(elderErrors({ ...elder, drops: [1, 1] }, ctx)).toEqual([
       'tower_elders floor 1: drop 1 listed twice',
     ]);
+  });
+
+  it('掉落要是长老身上某件厨具的同套装（backlog 408）', () => {
+    expect(elderErrors({ ...elder, drops: [1, 3] }, ctx)).toEqual([]);
+    expect(elderErrors({ ...elder, drops: [1, 4] }, ctx)).toEqual([
+      'tower_elders floor 1: drop 4 is suit 8, not worn by the elder',
+    ]);
+  });
+
+  it('长老等级不低于这层的解锁等级，且一层比一层高（backlog 408）', () => {
+    expect(
+      elderLevelErrors([
+        { floor: 1, minLevel: 1, level: 8 },
+        { floor: 2, minLevel: 11, level: 27 },
+      ]),
+    ).toEqual([]);
+    expect(elderLevelErrors([{ floor: 1, minLevel: 10, level: 8 }])).toEqual([
+      'tower_elders floor 1: level 8 is below the floor unlock level 10',
+    ]);
+    expect(
+      elderLevelErrors([
+        { floor: 2, minLevel: 11, level: 27 },
+        { floor: 1, minLevel: 1, level: 27 },
+      ]),
+    ).toEqual(['tower_elders floor 2: level 27 is not above floor 1 (27)']);
   });
 });

@@ -1303,6 +1303,30 @@
     "name": "[Tier 6]•Green Mystic Stone",
     "desc": "Seasoning +24"
   },
+  "50501": {
+    "name": "[Tier 1]•Fate Stone",
+    "desc": "Luck +1"
+  },
+  "50502": {
+    "name": "[Tier 2]•Fate Stone",
+    "desc": "Luck +2"
+  },
+  "50503": {
+    "name": "[Tier 3]•Fate Stone",
+    "desc": "Luck +4"
+  },
+  "50504": {
+    "name": "[Tier 4]•Fate Stone",
+    "desc": "Luck +8"
+  },
+  "50505": {
+    "name": "[Tier 5]•Fate Stone",
+    "desc": "Luck +16"
+  },
+  "50506": {
+    "name": "[Tier 6]•Fate Stone",
+    "desc": "Luck +24"
+  },
   "60000": {
     "name": "Newbie Street",
     "desc": "Occupancy +35%, coins per table +1, luck +36, picky rate -35%"

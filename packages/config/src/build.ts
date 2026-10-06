@@ -20,7 +20,7 @@ import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
 import { checkStreetDescs } from './streetDesc';
-import { elderAttrs, elderErrors } from './towerFloor';
+import { elderAttrs, elderErrors, elderLevelErrors } from './towerFloor';
 import type {
   ActivationReward,
   Chapter,
@@ -102,8 +102,14 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   function parse<T>(key: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>): T | null {
     const r = schema.safeParse(src[key]);
     if (r.success) return r.data;
+    // 数组里某一项出错时带上它的编号，免得只有下标（backlog 第 ⑦ 批）
+    const idAt = (i: unknown) => {
+      const x = typeof i === 'number' && Array.isArray(src[key]) ? (src[key] as unknown[])[i] : undefined;
+      const id = x && typeof x === 'object' ? (x as { id?: unknown }).id : undefined;
+      return typeof id === 'number' ? ` (${key.split('/').pop()} ${id})` : '';
+    };
     for (const issue of r.error.issues.slice(0, 20))
-      errors.push(`${key}: ${issue.path.join('.')}: ${issue.message}`);
+      errors.push(`${key}: ${issue.path.join('.')}: ${issue.message}${idAt(issue.path[0])}`);
     return null;
   }
 
@@ -313,8 +319,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       errors.push(`goods ${m.id} needStar only for posters`);
     if (m.src === 'poster') {
       const v = (m.value ?? {}) as Record<string, unknown>;
-      if (typeof v.time !== 'number' || v.time < 1)
-        errors.push(`goods ${m.id} poster value time must be >= 1`);
+      if (typeof v.time !== 'number' || !Number.isInteger(v.time) || v.time < 1)
+        errors.push(`goods ${m.id} poster value time must be an integer >= 1`);
+      if (Object.keys(v).filter((k) => k === 'coinValue' || k === 'expValue').length !== 1)
+        errors.push(`goods ${m.id} poster value needs exactly one of coinValue / expValue`);
+      if (m.type !== GOODS_TYPE.device) errors.push(`goods ${m.id} poster must be a device`);
       for (const [k, x] of Object.entries(v)) {
         if (k === 'time') continue;
         if (k !== 'coinValue' && k !== 'expValue')
@@ -928,6 +937,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       elderError(`tower_elders references unknown floor ${e.floor}`);
     for (const m of elderErrors(e, elderCtx)) elderError(m);
   }
+  for (const m of elderLevelErrors(
+    towerElders.floors.flatMap((e) => {
+      const r = towerRaw.find((x) => x.floor === e.floor);
+      return r ? [{ floor: e.floor, minLevel: r.minlevel, level: e.level }] : [];
+    }),
+  ))
+    elderError(m);
   const elderOfFloor = (floor: number) => {
     const e = elderByFloor.get(floor);
     if (!e) {

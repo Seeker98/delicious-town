@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import type { AppraiseResultDto, McOverviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
+import { formatNum } from '../../utils/format';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
@@ -24,6 +25,19 @@ async function load() {
     toolId.value = o.value.tools.find((t) => t.num > 0)?.goodsId ?? o.value.tools[0]?.goodsId ?? null;
 }
 const tool = computed(() => o.value?.tools.find((t) => t.goodsId === toolId.value) ?? null);
+/** 选中的鉴定道具怎么获得（问题记录 415：很多玩家以为玉玺、秘方拿不到） */
+const howText = computed(() => {
+  const x = tool.value;
+  if (!x) return '';
+  const a = t.value.temple.appraise;
+  const parts = [
+    x.shopCoin !== null ? a.howShop(formatNum(x.shopCoin)) : '',
+    x.blackDiamond !== null ? a.howBlack(x.blackDiamond) : '',
+    x.award ? a.howAward : '',
+    x.champion ? a.howChampion : '',
+  ].filter(Boolean);
+  return parts.length > 0 ? a.how(parts.join(a.howSep)) : '';
+});
 const maxTimes = computed(() => Math.min(o.value?.recipes ?? 0, tool.value?.num ?? 0, 99));
 const n = computed(() => Math.max(1, Math.min(times.value || 1, maxTimes.value)));
 /** 按钮灰掉的原因（问题记录：下拉框里的道具有，按钮却是灰的） */
@@ -73,6 +87,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
         }}
       </option>
     </select>
+    <div v-if="howText" class="small text-muted mb-1" data-testid="tool-how">{{ howText }}</div>
     <div class="d-flex gap-1 align-items-center mb-1">
       <input
         v-model.number="times"

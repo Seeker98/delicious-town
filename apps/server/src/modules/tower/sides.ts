@@ -4,7 +4,7 @@ import type { DuelSideDto } from '@dt/shared';
 import { opAgg } from '../../core/luck';
 import type { Op } from '../../core/op';
 import type { DB, RestaurantRow } from '../../db/schema';
-import { restGear, suitEffect } from '../equip/power';
+import { equipOff, restGear, suitEffect } from '../equip/power';
 import { duelPower, type DuelSide, type Scores } from './duel';
 
 export type DuelMode = 'attack' | 'defend';
@@ -30,8 +30,9 @@ export async function sideOf(
   rest: RestaurantRow,
   luckValue: number,
   mode: DuelMode,
+  off = false,
 ): Promise<DuelSide> {
-  const gear = await restGear(db, rest, config.suits);
+  const gear = await restGear(db, rest, config.suits, off);
   const cook = suitEffect(gear.suits, mode === 'attack' ? 'attackCook' : 'defendCook');
   const cut = suitEffect(gear.suits, mode === 'attack' ? 'attackCutting' : 'defendCutting');
   const fire = suitEffect(gear.suits, mode === 'attack' ? 'attackFire' : 'defendFire');
@@ -50,7 +51,7 @@ export async function sideOf(
 
 /** 操作里的一方（已锁店）：加成汇总按需重算 */
 export async function playerSide(o: Op, mode: DuelMode): Promise<DuelSide> {
-  return sideOf(o.tx, o.config, o.rest, (await opAgg(o)).luckValue ?? 0, mode);
+  return sideOf(o.tx, o.config, o.rest, (await opAgg(o)).luckValue ?? 0, mode, equipOff(o.settings));
 }
 
 /** 不锁对方的店：幸运用它缓存的加成汇总（计划裁定 1） */
@@ -59,8 +60,9 @@ export function cachedSide(
   config: GameConfig,
   rest: RestaurantRow,
   mode: DuelMode,
+  off = false,
 ): Promise<DuelSide> {
-  return sideOf(db, config, rest, rest.effect_agg.luckValue ?? 0, mode);
+  return sideOf(db, config, rest, rest.effect_agg.luckValue ?? 0, mode, off);
 }
 
 /** 守塔人：属性来自配置；只有比拼特色菜的层才算当天的菜 */

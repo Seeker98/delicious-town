@@ -104,6 +104,18 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
     expect((await eq().ungem(ctx, { gemRowId: g2.id })).data).toEqual({ coin: 0 });
   });
 
+  it('阶数按配置算：以前镶上、行里记成 5 阶的六阶蓝冥石，摘除按 6 阶收费、详情写 6 阶（backlog 第 ① 批审查）', async () => {
+    const ctx = await newRestaurant(t, { patch: { star_level: 2, coin: 100_000 } });
+    const id = await piece(ctx, gid('沉默之度玛的静谧之镬'), { cur_hole: 3 });
+    const g = await t.db
+      .insertInto('equip_gem')
+      .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid('[六阶]•蓝冥石'), level: 5 })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    expect((await eq().detail(ctx, id)).equip.gems.find((x) => x.id === g.id)!.level).toBe(6);
+    expect((await eq().ungem(ctx, { gemRowId: g.id })).data).toEqual({ coin: 60_000 });
+  });
+
   it('银币不够时拒绝，宝石还在厨具上（Review Focus 5）', async () => {
     const ctx = await newRestaurant(t, { patch: { star_level: 3, coin: 100 } });
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'));

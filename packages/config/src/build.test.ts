@@ -34,7 +34,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(715); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）
+    expect(bundle!.goods).toHaveLength(721); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);
@@ -141,7 +141,35 @@ describe('buildBundle（真实数据）', () => {
     expect(goods.get(gid('普通宣传海报'))!.equip).toBeNull();
     expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
     expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
+    // 宝石的阶就是道具等级（六阶蓝冥石、绿玄石原来写成 5，镶嵌体力、拆卸费按 5 阶算）
+    for (const g of bundle!.goods.filter((x) => x.gem)) expect([g.id, g.gem!.level]).toEqual([g.id, g.level]);
     expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 7, 80, 81, 82, 100]);
+  });
+
+  it('天机石 1~6 阶加幸运 1/2/4/8/16/24，升阶链完整，一阶和红晶石一样在特价池、黑市卖（问题记录 419）', () => {
+    const { bundle } = realBuild();
+    const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
+    const tiers = ['一', '二', '三', '四', '五', '六'].map((n) => goods.get(gid(`[${n}阶]•天机石`))!);
+    expect(tiers.map((g) => g.gem!.attrs.luck)).toEqual([1, 2, 4, 8, 16, 24]);
+    expect(tiers.map((g) => g.gem!.level)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(tiers.map((g) => g.gem!.nextId)).toEqual([...tiers.slice(1).map((g) => g.id), null]);
+    for (const g of tiers)
+      expect({ ...g.gem!.attrs, luck: 0 }).toEqual({
+        cook: 0,
+        cutting: 0,
+        fire: 0,
+        season: 0,
+        creatives: 0,
+        luck: 0,
+      });
+    const red = goods.get(gid('[一阶]•红晶石'))!;
+    expect([tiers[0]!.coin, tiers[0]!.diamond, tiers[0]!.onSale]).toEqual([
+      red.coin,
+      red.diamond,
+      red.onSale,
+    ]);
+    expect(bundle!.shopPools.special).toContain(tiers[0]!.id);
+    expect(bundle!.shopPools.black).toContain(tiers[0]!.id);
   });
 
   it('同样的输入生成同样的版本号', () => {
@@ -1312,11 +1340,41 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     });
     expect(errors).toEqual(
       expect.arrayContaining([
-        `goods ${id} poster value time must be >= 1`,
+        `goods ${id} poster value time must be an integer >= 1`,
         `goods ${id} poster value coinValue must be > 0`,
         `goods ${id} poster value key atRate not allowed`,
       ]),
     );
+  });
+
+  it('海报奖杯：time 是整数，加成恰好写一项，类型是设施（backlog 第 ⑦ 批）', () => {
+    let ids: number[] = [];
+    const errors = withGoods((goods) => {
+      const ps = goods.filter((g) => g.src === 'poster');
+      ps[0]!.value = { time: 1.5, coinValue: 8 };
+      ps[1]!.value = { time: 24 };
+      ps[2]!.value = { time: 24, coinValue: 8, expValue: 8 };
+      ps[3]!.type = 1;
+      ids = ps.slice(0, 4).map((g) => g.id);
+    });
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        `goods ${ids[0]} poster value time must be an integer >= 1`,
+        `goods ${ids[1]} poster value needs exactly one of coinValue / expValue`,
+        `goods ${ids[2]} poster value needs exactly one of coinValue / expValue`,
+        `goods ${ids[3]} poster must be a device`,
+      ]),
+    );
+  });
+
+  it('主表缺 value 时报错带道具编号（backlog 第 ⑦ 批）', () => {
+    let id = 0;
+    const errors = withGoods((goods) => {
+      const g = first(goods, 'poster');
+      id = g.id;
+      delete g.value;
+    });
+    expect(errors.some((e) => e.includes(`goods ${id}`))).toBe(true);
   });
 
   it('只有海报奖杯能写 needStar；纪念品、一番赏手办必须是纪念品类型；抽赏券必须是消耗品', () => {

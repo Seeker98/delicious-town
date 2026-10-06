@@ -46,6 +46,15 @@ const mc: Messages['mc'] = {
     levelLabel: 'Par niveau',
     roadLabel: 'Par voie',
   },
+  exchange: {
+    title: (n) =>
+      `Échange d’éclats : ${n} éclats d’un niveau contre 1 fragment de n’importe quel plat de ce niveau (seulement les plats non appris et que l’on peut expertiser)`,
+    have: (level, n) => `Éclats de niveau ${level} : ${n}`,
+    pick: 'Choisir un plat',
+    btn: 'Échanger 1',
+    done: (name) => `1 fragment de « ${name} » obtenu`,
+    failed: 'Échec de l’échange',
+  },
   remnants: 'Fragments',
   noRemnants: 'Aucun fragment',
   groupTitle: (title, n) => `${title} (${n})`,

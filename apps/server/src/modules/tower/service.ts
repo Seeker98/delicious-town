@@ -1,3 +1,4 @@
+import { equipOff } from '../equip/power';
 import type { DuelInfoDto, RankDto, RenownShopDto, TowerDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
@@ -16,7 +17,7 @@ export function createTowerService(d: GameDeps) {
   return {
     async overview(ctx: RestCtx): Promise<TowerDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'tower');
-      return towerView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning.tower, d.now());
+      return towerView(d.db, d.config, await restOf(ctx.restaurantId), s.tuning.tower, d.now(), equipOff(s));
     },
     challenge(ctx: RestCtx, b: { floor: number; test: boolean }) {
       return op(ctx, 'tower.challenge', (o) => challengeTower(o, b.floor, b.test));

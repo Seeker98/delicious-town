@@ -131,6 +131,24 @@ describe('TownView', () => {
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
   });
 
+  it('停在发展基金、餐厅数据读失败：写读取失败、带重试，重试成功后显示基金（backlog 第 ⑤ 批）', async () => {
+    vi.mocked(endpoints.fund).mockResolvedValue({
+      days: 7,
+      returnRate: 0.9,
+      earlyRate: 0.7,
+      coin: 0,
+      deposit: null,
+      tiers: [],
+    });
+    vi.mocked(endpoints.overview).mockRejectedValueOnce(new Error('net'));
+    const w = await mountAt('/town?tab=fund');
+    expect(w.find('[data-testid="fund-rest-failed"]').exists()).toBe(true);
+    await w.get('[data-testid="fund-rest-retry"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="fund-rest-failed"]').exists()).toBe(false);
+    expect(endpoints.fund).toHaveBeenCalled();
+  });
+
   it('直接从链接进发展基金、区服关了它：餐厅数据读到前不请求基金，也就不弹“功能关闭”（backlog ①a）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ disabledFeatures: ['fund'] } as never);
     const w = await mountAt('/town?tab=fund');

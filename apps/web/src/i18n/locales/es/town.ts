@@ -13,6 +13,8 @@ const town: Messages['town'] = {
     fund: 'Fondo',
   },
   loadFailed: 'No se pudo cargar la plaza',
+  restFailed: 'No se pudo cargar tu restaurante.',
+  retry: 'Reintentar',
   places: {
     '1': 'Mercado',
     '2': 'Tienda',

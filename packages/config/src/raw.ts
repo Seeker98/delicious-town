@@ -509,7 +509,17 @@ export const equipLoreFile = z
   .strict();
 
 /** 主表（重新编号 PR 1）：道具、食材、菜谱的定义只在 data/master 下；src = 来历，新街道导入按它整块替换 */
-const goodsSrc = z.enum(['original', 'lore', 'streets', 'souvenir', 'kuji', 'newbie', 'fund', 'poster']);
+const goodsSrc = z.enum([
+  'original',
+  'lore',
+  'streets',
+  'souvenir',
+  'kuji',
+  'newbie',
+  'fund',
+  'poster',
+  'luckGem',
+]);
 export const masterGoods = z
   .object({
     id: int,

@@ -4,7 +4,7 @@ import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { getDaily } from '../counter/dailyCounter';
 import { getEffectAgg } from '../effects/service';
-import { restGear } from '../equip/power';
+import { equipOff, restGear } from '../equip/power';
 import type { WorldService } from '../world/service';
 import { shootMissiles } from './guardian';
 import { exchangeTentacle, feedKraken, refreshTentacleShop, tentacleShop } from './kraken';
@@ -65,8 +65,8 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         .selectAll()
         .where('rest_id', '=', rest.id)
         .executeTakeFirst();
-      const gear = await restGear(d.db, rest, d.config.suits);
-      const agg = await getEffectAgg(d.db, rest.id, now, d.config, s.tuning);
+      const gear = await restGear(d.db, rest, d.config.suits, equipOff(s));
+      const agg = await getEffectAgg(d.db, rest.id, now, d.config, s);
       const fed = await d.db
         .selectFrom('kraken_feed')
         .select('id')

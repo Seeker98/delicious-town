@@ -35,6 +35,12 @@ const temple: Messages['temple'] = {
     title: 'Expertiser des recettes mystère',
     rule: (n) =>
       `Chaque essai utilise 1 recette mystère et 1 outil d'expertise ; une réussite donne un fragment. Vous avez ${n} ${plFr(n, 'recette', 'recettes')} mystère.`,
+    how: (parts) => `Comment l’obtenir : ${parts}`,
+    howShop: (coin) => `boutique (pièces) ${coin}`,
+    howBlack: (diamond) => `marché noir ${diamond} diamants`,
+    howAward: 'récompenses aléatoires de la Tour des chefs, du bar, etc.',
+    howChampion: 'champion des plats signature d’hier',
+    howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (niv. ${min} à ${max}, ${rate} %, possédé ${have})`,
     btn: (n) => `Expertiser ×${n}`,
     noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',

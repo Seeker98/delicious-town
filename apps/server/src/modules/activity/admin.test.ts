@@ -7,6 +7,7 @@ import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import type { AdminActor } from '../admin/access';
 import { createAdminActivity } from './admin';
 import { gid } from '../../../test/items';
+import { testConfig } from '../../../test/config';
 
 let t: TestGame;
 let actor: AdminActor;
@@ -85,6 +86,40 @@ describe('后台活动（设计 §5.2）', () => {
   it('区服不存在 NOT_FOUND', async () => {
     const svc = createAdminActivity(t.game);
     await expect(svc.create(actor, input(2_147_000_000))).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it('进行中的活动定义里有（上线后才）下架的道具：定义没改时仍能延长结束时间（backlog #143）', async () => {
+    const svc = createAdminActivity(t.game);
+    const shardId = await createShard(t.db);
+    const a = await svc.create(actor, input(shardId));
+    const retired = testConfig().bundle.goods.find((g) => g.retired)!;
+    const def = { goals: [{ key: 'signin', target: 1, award: { goods: [{ id: retired.id, num: 1 }] } }] };
+    await t.db
+      .updateTable('activity')
+      .set({ def: JSON.stringify(def) })
+      .where('id', '=', a.id)
+      .execute();
+    t.clock.advance(2 * H);
+    const cur = await svc.one(a.id);
+    const later = new Date(new Date(cur.endsAt).getTime() + H).toISOString();
+    const same = input(shardId, { startsAt: cur.startsAt, endsAt: later, def } as Partial<ActivityInput>);
+    expect((await svc.update(actor, a.id, same)).endsAt).toBe(later);
+  });
+
+  it('还没开始的活动定义没改也要查：开始后定义改不了，这是最后能改的时候（backlog #143 审查）', async () => {
+    const svc = createAdminActivity(t.game);
+    const shardId = await createShard(t.db);
+    const a = await svc.create(actor, input(shardId));
+    const retired = testConfig().bundle.goods.find((g) => g.retired)!;
+    const def = { goals: [{ key: 'signin', target: 1, award: { goods: [{ id: retired.id, num: 1 }] } }] };
+    await t.db
+      .updateTable('activity')
+      .set({ def: JSON.stringify(def) })
+      .where('id', '=', a.id)
+      .execute();
+    await expect(
+      svc.update(actor, a.id, input(shardId, { title: '改标题', def } as Partial<ActivityInput>)),
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
   });
 
   it('定义里的道具、食材 id 必须存在：新建、修改都检查，报带路径的字段错误（backlog 148-2）', async () => {

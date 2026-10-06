@@ -202,7 +202,8 @@ export function createOpenData(config: GameConfig) {
         gem: g.gem && {
           level: g.gem.level,
           nextId: g.gem.nextId,
-          nextName: g.gem.nextId === null ? null : nameOf(lang, g.gem.nextId),
+          nextName:
+            g.gem.nextId === null || !config.goods.has(g.gem.nextId) ? null : nameOf(lang, g.gem.nextId),
           attrs: { ...g.gem.attrs },
         },
         gift: g.gift && g.gift.map((i) => giftItem(lang, i)).filter((x): x is OpenGiftItem => x !== null),

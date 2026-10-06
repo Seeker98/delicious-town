@@ -202,6 +202,33 @@ describe('游戏资料列表（问题记录 142）', () => {
     expect(rows(w)).toEqual(['201']);
   });
 
+  it('地址里的参数按类目校验：等级超出范围的不算筛选、按下的是“全部”；显示条数最多 1000（backlog 第 ⑧ 批）', async () => {
+    vi.mocked(endpoints.openFoods).mockResolvedValue({
+      ...meta,
+      items: [
+        { id: 101, name: '大米', level: 1, coin: 10, rare: false, type: 2 },
+        { id: 201, name: '松露', level: 2, coin: 99, rare: true, type: 2 },
+      ],
+    });
+    const w = await mountAt('/wiki/foods?f=9&street=3');
+    expect(rows(w)).toEqual(['101', '201']);
+    expect(w.findAll('[aria-pressed="true"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'wiki-filter-all',
+    ]);
+    vi.mocked(endpoints.openCookbooks).mockResolvedValue({
+      ...meta,
+      items: Array.from({ length: 1200 }, (_, i) => ({
+        id: i + 1,
+        name: `菜${i}`,
+        level: 1,
+        coin: 1,
+        streetId: 0,
+      })),
+    });
+    const c = await mountAt('/wiki/cookbooks?n=5000');
+    expect(rows(c)).toHaveLength(1000);
+  });
+
   it('厨具：按部位筛选，进道具详情', async () => {
     vi.mocked(endpoints.openEquips).mockResolvedValue({
       ...meta,
