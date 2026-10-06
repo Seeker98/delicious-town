@@ -496,7 +496,11 @@ export const tuningSchema = z.object({
         maxRate: num.min(0).max(1),
         tiers: z
           .array(
-            z.object({ awards: int.min(1), level: int.min(1), news: z.enum(['news', 'broadcast']).nullable() }),
+            z.object({
+              awards: int.min(1),
+              level: int.min(1),
+              news: z.enum(['news', 'broadcast']).nullable(),
+            }),
           )
           .min(1),
       })

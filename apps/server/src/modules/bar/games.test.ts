@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
-import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import { awardGoodsPool } from '../award/random';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';

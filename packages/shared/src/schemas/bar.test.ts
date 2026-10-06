@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { barCupGuessBody, barDartsThrowBody, barExchangeBody, barFgBody, barNumBody, barSlotBody } from './bar';
+import {
+  barCupGuessBody,
+  barDartsThrowBody,
+  barExchangeBody,
+  barFgBody,
+  barNumBody,
+  barSlotBody,
+} from './bar';
 
 describe('酒吧接口 body', () => {
   it('出拳 0~2、杯号从 0 起（上限由服务端按这一轮的杯子数再查）、数字 1~99（上限由服务端按 numMax 再查）、次数和兑换数量 1~99 的整数', () => {
