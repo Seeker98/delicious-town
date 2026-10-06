@@ -174,3 +174,33 @@ describe('资源暴涨一次扫完（质量期 ③）', () => {
     expect(r.exp.map((x) => [x.restId, x.net])).toEqual([[a.restaurantId, 50]]);
   });
 });
+
+describe('收购关联账号拦截（收购 PR 3）', () => {
+  it('本区服近 30 天的拦截，新的在前；带两家店的名字和账号', async () => {
+    const shardId = await createShard(t.db);
+    const other = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId, patch: { name: '买家' } });
+    const b = await newRestaurant(t, { shardId, patch: { name: '目标' } });
+    const o = await newRestaurant(t, { shardId: other });
+    const block = (shard: number, buyer: number, target: number, reason: 'ip' | 'device', at: Date) =>
+      t.db
+        .insertInto('acquire_block')
+        .values({ shard_id: shard, buyer_rest_id: buyer, target_rest_id: target, reason, created_at: at })
+        .execute();
+    const now = t.clock.now;
+    await block(shardId, a.restaurantId, b.restaurantId, 'ip', new Date(now.getTime() - 3600_000));
+    await block(shardId, a.restaurantId, b.restaurantId, 'device', now);
+    await block(shardId, a.restaurantId, b.restaurantId, 'ip', new Date(now.getTime() - 31 * 86_400_000));
+    await block(other, o.restaurantId, o.restaurantId, 'ip', now);
+    const rows = await s.acquireBlocks(shardId);
+    expect(rows).toEqual([
+      {
+        at: now.toISOString(),
+        reason: 'device',
+        buyer: { restId: a.restaurantId, name: '买家', accountId: a.accountId },
+        target: { restId: b.restaurantId, name: '目标', accountId: b.accountId },
+      },
+      expect.objectContaining({ reason: 'ip' }),
+    ]);
+  });
+});
