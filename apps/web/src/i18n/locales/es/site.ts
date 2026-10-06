@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    mcTabs1006:
+      'La página de platos estrella ahora tiene pestañas por nivel y por vía: elige un nivel arriba y una vía abajo, y se filtran tanto los platos aprendidos como los fragmentos, con el número en cada pestaña. Recuerda tu elección para la próxima vez',
     gearIncome1006:
       'El equipo puesto (con gemas) ahora suma monedas finales, EXP final y más probabilidad de platos estrella de oro; más atributos dan más (la Creatividad cuenta más, la Suerte no cuenta) y la página de equipo muestra cuánto. Los platos estrella se venden a los clientes por más según su nivel (nivel 3 ×2,5, nivel 4 ×3,2), porque antes los de nivel 2 a 5 no recuperaban el coste de los ingredientes. Los duelos de cocina siguen usando el valor original por ración',
     elders1006:

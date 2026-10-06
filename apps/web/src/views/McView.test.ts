@@ -58,6 +58,7 @@ function mountView() {
 
 describe('McView', () => {
   beforeEach(() => {
+    localStorage.clear();
     vi.clearAllMocks();
     setActivePinia(createPinia());
     useCatalogStore().apply({
@@ -74,6 +75,7 @@ describe('McView', () => {
         { id: 1, name: '秘·仿膳饽饽', level: 4, road: 1, nutritive: 31, coin: 38333, foods: [390, 412] },
         { id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 22, coin: 26944, foods: [] },
         { id: 4, name: '秘·芙蓉大虾', level: 5, road: 1, nutritive: 40, coin: 50278, foods: [] },
+        { id: 5, name: '秘·宫保鸡丁', level: 3, road: 2, nutritive: 20, coin: 1, foods: [] },
       ],
     } as never);
     vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
@@ -222,5 +224,68 @@ describe('McView', () => {
     await flushPromises();
     const ids = w.findAll('[data-testid^="learned-"]').map((x) => x.attributes('data-testid'));
     expect(ids).toEqual(['learned-4', 'learned-1', 'learned-3']);
+  });
+
+  const ids = (w: ReturnType<typeof mountView>, prefix: string) =>
+    w.findAll(`[data-testid^="${prefix}-"]`).map((x) => x.attributes('data-testid'));
+  /** 已学 4、5 级各一道；残卷是两道能学的 3 级（一道、二道） */
+  const tabbed = () =>
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [1, 4].map((mcId) => ({ ...overview.learned[0]!, mcId })),
+      remnants: [
+        { mcId: 3, num: 3 },
+        { mcId: 5, num: 4 },
+      ],
+    });
+
+  it('按级、按道分页（问题记录 414）：已学和残卷一起筛；每页写几道菜，0 道的页不显示；标出选中的页', async () => {
+    tabbed();
+    const w = mountView();
+    await flushPromises();
+    expect(ids(w, 'learned')).toEqual(['learned-4', 'learned-1']);
+    expect(w.find('[data-testid="mc-level-all"]').text()).toBe('全部（4）');
+    expect(w.find('[data-testid="mc-level-3"]').text()).toBe('3 级（2）');
+    expect(w.find('[data-testid="mc-level-1"]').exists()).toBe(false);
+    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（3）');
+    await w.find('[data-testid="mc-level-3"]').trigger('click');
+    expect(w.find('[data-testid="mc-level-3"]').attributes('aria-pressed')).toBe('true');
+    // 选了 3 级以后道的数也跟着变
+    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（1）');
+    // 已学一栏这一页没有：标题写 0 / 2，并写明这一页没有
+    expect(ids(w, 'learned')).toEqual([]);
+    expect(w.text()).toContain('已学（0 / 2）');
+    expect(w.find('[data-testid="mc-learned-none"]').text()).toBe('这一页没有');
+    expect(ids(w, 'remnant-num')).toEqual(['remnant-num-3', 'remnant-num-5']);
+    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会');
+    await w.find('[data-testid="mc-road-2"]').trigger('click');
+    expect(ids(w, 'remnant-num')).toEqual(['remnant-num-5']);
+    // “全部学会”会学别的页的，按钮上写明总数
+    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会（含其他页，共 2 道）');
+  });
+
+  it('选择记在本机，重新进页面还在；存的值不对时回到全部', async () => {
+    tabbed();
+    const w = mountView();
+    await flushPromises();
+    await w.find('[data-testid="mc-level-3"]').trigger('click');
+    await w.find('[data-testid="mc-road-2"]').trigger('click');
+    w.unmount();
+    const again = mountView();
+    await flushPromises();
+    expect(ids(again, 'remnant-num')).toEqual(['remnant-num-5']);
+    again.unmount();
+    localStorage.setItem('dt_mc_filter', '{"level":9,"road":"x"}');
+    const bad = mountView();
+    await flushPromises();
+    expect(bad.find('[data-testid="mc-level-all"]').attributes('aria-pressed')).toBe('true');
+    expect(ids(bad, 'learned')).toEqual(['learned-4', 'learned-1']);
+  });
+
+  it('没有已学也没有残卷时不显示分页', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({ ...structuredClone(overview), learned: [], remnants: [] });
+    const w = mountView();
+    await flushPromises();
+    expect(w.find('[data-testid="mc-filters"]').exists()).toBe(false);
   });
 });

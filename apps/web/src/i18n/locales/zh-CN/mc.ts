@@ -28,6 +28,8 @@ export default {
   saleRate: (rate: string) => ` · 卖给顾客时 ×${rate}（普通顾客付一半）`,
   dump: '倒掉',
   learned: (n: number) => `已学（${n}）`,
+  /** 分页时：这一页几道 / 一共几道 */
+  learnedOf: (shown: number, total: number) => `已学（${shown} / ${total}）`,
   noLearned: '还没有学会特色菜：在神殿鉴定神秘食谱得到残卷，3 张残卷就能学会。',
   dishMeta: (level: number | undefined, road: string, levelName: string) =>
     `${level ?? '?'} 级 · ${road} · ${levelName}`,
@@ -36,10 +38,20 @@ export default {
   foods: '食材：',
   cookie: (n: number) => `用幸运饼干（每批 1 个，持有 ${n}）`,
   batches: (n: number) => `${n} 批`,
+  /** 按级、按道分页（问题记录 414） */
+  filter: {
+    all: '全部',
+    level: (n: number) => `${n} 级`,
+    count: (label: string, n: number) => `${label}（${n}）`,
+    none: '这一页没有',
+    levelLabel: '按等级',
+    roadLabel: '按道',
+  },
   remnants: '残卷',
   noRemnants: '没有残卷',
   groupTitle: (title: string, n: number) => `${title}（${n}）`,
   learnAll: '全部学会',
+  learnAllTotal: (n: number) => `全部学会（含其他页，共 ${n} 道）`,
   remnantMeta: (level: number | undefined, road: string, coin: string) =>
     `${level ?? '?'} 级 · ${road} · 单价 ${coin}`,
   short: (n: number) => ` · 还差 ${n} 张`,
