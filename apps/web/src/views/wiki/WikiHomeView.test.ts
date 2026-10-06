@@ -36,6 +36,14 @@ describe('游戏资料首页（问题记录 142）', () => {
       langs: ['zh-CN'],
       counts: { goods: 695, foods: 336, cookbooks: 3810, equips: 118, streets: 30 },
       endpoints: [],
+      guide: {
+        startStreetCookbooks: 69,
+        star2Cookbooks: 100,
+        biggestStreet: { name: '综合二街', cookbooks: 333 },
+        takeaway: { star: 2, renown: 888, coin: 8_880_000, diamond: 300 },
+        exchange: { level: 20, days: 7 },
+        newbieExp: { maxLevel: 40, rate: 2 },
+      },
     });
     vi.mocked(endpoints.openGoods).mockResolvedValue({
       ...meta,

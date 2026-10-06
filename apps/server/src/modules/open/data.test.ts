@@ -23,6 +23,28 @@ describe('开放接口数据（问题记录 142）', () => {
     });
   });
 
+  it('索引带玩法攻略用的数（backlog 384：攻略里的数不再写死），按默认配置算', () => {
+    const g = data.index('en').guide;
+    const start = b.restaurantDefaults.streetId;
+    expect(g.startStreetCookbooks).toBe(b.cookbooks.filter((c) => c.streetId === start).length);
+    expect(g.star2Cookbooks).toBe(config.starNeed.get(2)!.needCookbooks);
+    const counts = data.streets('en').items;
+    const top = counts.reduce((x, y) => (y.cookbookCount > x.cookbookCount ? y : x));
+    expect(g.biggestStreet).toEqual({ name: top.name, cookbooks: top.cookbookCount });
+    const t = b.tuning;
+    expect(g.takeaway).toEqual({
+      star: t.takeaway.openStar,
+      renown: t.takeaway.openRenown,
+      coin: t.takeaway.openCoin,
+      diamond: t.takeaway.openDiamond,
+    });
+    expect(g.exchange).toEqual({ level: t.exchange.minLevel, days: t.exchange.minAccountDays });
+    expect(g.newbieExp).toEqual({
+      maxLevel: t.settlement.newbieExp.maxLevel,
+      rate: t.settlement.newbieExp.rate,
+    });
+  });
+
   it('道具列表不含隐藏道具；名字按语言', () => {
     const zh = data.goods('zh-CN').items;
     expect(zh.some((g) => WIKI_HIDDEN_GOODS.has(g.id))).toBe(false);

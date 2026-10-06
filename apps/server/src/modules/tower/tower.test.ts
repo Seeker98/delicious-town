@@ -42,6 +42,8 @@ describe('厨塔概览', () => {
     expect(v).toMatchObject({
       // 每局请几位评委（规则说明按它写，backlog 396）
       duelJudges: t.deps.config.tuning.tower.duel.judges,
+      // 五项的评分权重（规则说明第一段按它写，backlog 396）
+      duelWeights: t.deps.config.tuning.tower.duel.weights,
       left: 5,
       dailyTotal: 5,
       tickets: 0,

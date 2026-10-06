@@ -58,6 +58,7 @@ export async function friendDuel(p: PairOp): Promise<DuelResultDto> {
     judges: r.judges,
     votes: r.votes,
     judgeCount: r.judgeCount,
+    weights: r.weights,
     elderDrop: null,
     renown,
     awards,

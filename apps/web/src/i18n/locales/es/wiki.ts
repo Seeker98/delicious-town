@@ -1,5 +1,5 @@
 import type { Messages } from '../..';
-import { formatNum } from '../../../utils/format';
+import { formatNum, formatPct } from '../../../utils/format';
 import { plEs } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
@@ -149,9 +149,11 @@ const wiki: Messages['wiki'] = {
       {
         title: 'Cuándo mudarse',
         items: [
-          'Solo puedes aprender las recetas de la calle en la que estás. La Calle de los novatos tiene solo 69, y las 2 estrellas piden 100, así que tarde o temprano tendrás que mudarte.',
+          (n) =>
+            `Solo puedes aprender las recetas de la calle en la que estás. La Calle de los novatos tiene solo ${formatNum(n.startStreetCookbooks)}, y las 2 estrellas piden ${formatNum(n.star2Cookbooks)}, así que tarde o temprano tendrás que mudarte.`,
           'Cuando ni aprendiendo todas las recetas que quedan en tu calle llegues a la siguiente estrella, la página de recetas te avisa. Prepárate entonces para mudarte: no esperes a las últimas recetas difíciles, múdate en cuanto aprendas más despacio.',
-          'Se aprende más rápido en calles con muchas recetas: la Calle Fusión II tiene 333, más que ninguna otra.',
+          (n) =>
+            `Se aprende más rápido en calles con muchas recetas: la ${n.biggestStreet.name} tiene ${formatNum(n.biggestStreet.cookbooks)}, más que ninguna otra.`,
           'Las calles son de monedas, equilibradas o de EXP: si te faltan monedas, ve a una calle de monedas; para subir de nivel, a una de EXP. La página de mudanza y la de recetas muestran el tipo y la bonificación de cada calle.',
           'Mudarse cuesta una tarjeta de mudanza (no hace falta con un permiso de trabajo de la oficina de mudanzas) y una tarifa, que se reduce a la mitad cuando tienes suerte.',
         ],
@@ -162,7 +164,8 @@ const wiki: Messages['wiki'] = {
           'Primero el aceite: sin aceite el restaurante cierra y no gana nada.',
           'Después las estrellas: vales de subida de estrella y monedas para subir.',
           'Solo entonces mesas e instalaciones.',
-          'Abrir el reparto a domicilio pide 2 estrellas y 888 de renombre (se gastan al abrirlo), además de 8,88 millones de monedas y 300 diamantes o un Pase a domicilio: si te interesa, empieza a ahorrar pronto.',
+          (n) =>
+            `Abrir el reparto a domicilio pide ${n.takeaway.star} estrellas y ${formatNum(n.takeaway.renown)} de renombre (se gastan al abrirlo), además de ${formatNum(n.takeaway.coin / 1_000_000)} millones de monedas y ${formatNum(n.takeaway.diamond)} diamantes o un Pase a domicilio: si te interesa, empieza a ahorrar pronto.`,
         ],
       },
       {
@@ -170,9 +173,11 @@ const wiki: Messages['wiki'] = {
         items: [
           'Sacude la bolsa de Don Krab en la Plaza una vez al día, y mira si la Hermana Wen, el Hermano 13 y los demás tienen algo para ti.',
           'Sube la Torre de chefs cada día: ganes o pierdas te da renombre. El anciano de la primera planta es de nivel 8; hacia el nivel 10 puedes ganarle (algo antes con el equipo de aprendiz).',
-          'Desde el nivel 20, con una cuenta de al menos 7 días y el correo verificado, puedes usar la Bolsa y las Predicciones.',
+          (n) =>
+            `Desde el nivel ${n.exchange.level}, con una cuenta de al menos ${n.exchange.days} días y el correo verificado, puedes usar la Bolsa y las Predicciones.`,
           'Llevar utensilios sube los ingresos de cada ronda.',
-          'Por debajo del nivel 40, la EXP de cada ronda recibe un extra (+200 % en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.',
+          (n) =>
+            `Por debajo del nivel ${n.newbieExp.maxLevel}, la EXP de cada ronda recibe un extra (${formatPct(n.newbieExp.rate, { sign: true })} en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.`,
         ],
       },
       {

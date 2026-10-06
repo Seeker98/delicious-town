@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    backlog8:
+      'In the game wiki’s strategy guide, the recipe counts of Newbie Street and the largest street, the recipes needed for 2 stars, the takeaway and Exchange requirements and the early EXP bonus now follow the game’s current values; the duel rules also list which stats each of Look, Aroma, Taste, Shape and Nutrition uses based on the current scoring weights',
     perf1006:
       'The site now downloads about 140 KB less on first load (the icon font only includes the icons we use), and the Market, Bar, Ichiban Kuji, Temple and Square pages open faster',
     backlog7:

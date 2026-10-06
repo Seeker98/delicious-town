@@ -10,6 +10,7 @@ import {
   type RenownShopItem,
 } from '@dt/config';
 import {
+  type OpenGuideNumbers,
   LOCALES,
   type Locale,
   type OpenCookbookBrief,
@@ -98,6 +99,29 @@ export function createOpenData(config: GameConfig) {
   const cookbookName = (lang: Locale, id: number) =>
     entry(lang, 'cookbooks', id)?.name ?? config.cookbooks.get(id)?.name ?? String(id);
   const meta = (lang: Locale) => ({ version: config.version, lang });
+  /** 玩法攻略里的数（backlog 384）：默认配置；菜最多的街取编号最小的那条 */
+  const guideNumbers = (lang: Locale): OpenGuideNumbers => {
+    const t = b.tuning;
+    const top = b.streets.reduce((x, y) =>
+      (cookbookCount.get(y.id) ?? 0) > (cookbookCount.get(x.id) ?? 0) ? y : x,
+    );
+    return {
+      startStreetCookbooks: cookbookCount.get(b.restaurantDefaults.streetId) ?? 0,
+      star2Cookbooks: config.starNeed.get(2)?.needCookbooks ?? 0,
+      biggestStreet: {
+        name: entry(lang, 'streets', top.id)?.name ?? top.name,
+        cookbooks: cookbookCount.get(top.id) ?? 0,
+      },
+      takeaway: {
+        star: t.takeaway.openStar,
+        renown: t.takeaway.openRenown,
+        coin: t.takeaway.openCoin,
+        diamond: t.takeaway.openDiamond,
+      },
+      exchange: { level: t.exchange.minLevel, days: t.exchange.minAccountDays },
+      newbieExp: { maxLevel: t.settlement.newbieExp.maxLevel, rate: t.settlement.newbieExp.rate },
+    };
+  };
 
   const goodsBrief = (lang: Locale, g: Goods): OpenGoodsBrief => ({
     id: g.id,
@@ -172,6 +196,7 @@ export function createOpenData(config: GameConfig) {
           streets: b.streets.length,
         },
         endpoints: OPEN_ENDPOINTS,
+        guide: guideNumbers(lang),
       };
     },
 

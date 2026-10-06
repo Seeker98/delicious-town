@@ -51,6 +51,7 @@ export async function rankView(
       return { rank: i + 1, restId: r?.rest_id ?? null, name: r?.name ?? null, level: r?.level ?? null };
     }),
     duelJudges: t.duel.judges,
+    duelWeights: t.duel.weights,
     myRank: rows.find((r) => r.rest_id === rest.id)?.rank ?? null,
     left: Math.max(0, t.rankDaily - (await getDaily(db, rest.id, KEY.rankDone, day))),
     spar: await getDaily(db, rest.id, KEY.spar, day),
@@ -137,6 +138,7 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
     judges: r.judges,
     votes: r.votes,
     judgeCount: r.judgeCount,
+    weights: r.weights,
     elderDrop: null,
     renown,
     awards,

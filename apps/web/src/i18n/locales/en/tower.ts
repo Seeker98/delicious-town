@@ -41,6 +41,10 @@ const tower: Messages['tower'] = {
     ],
     rulesVote: (total, n, need) =>
       `Each match, ${n} of the ${total} judges ${plEn(n, 'is', 'are')} picked at random. One by one, each judge compares the two sides’ totals on the scores they care about and votes for the higher one; the first side to ${need} ${plEn(need, 'vote', 'votes')} wins. If the votes are tied, the higher total across the judges who scored wins.`,
+    rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
+    rulesMc: 'the signature dish on sale',
+    rulesWeights: (parts) =>
+      `Each side gets five scores from its stats: ${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}. Higher Creativity and Luck add a bigger random bonus to every score.`,
     rulesJudges: 'The judges and what they look at:',
     awards: (text) => `Got ${text}`,
     elderDrop: (name) => `Elder drop: ${name}`,

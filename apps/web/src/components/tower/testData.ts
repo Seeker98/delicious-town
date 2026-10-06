@@ -1,5 +1,14 @@
 import type { DuelResultDto, RankDto, RenownShopDto, TowerDto, TowerFloorDto } from '@dt/shared';
 
+/** 默认区服数值里的赛厨评分权重（色、香、味、形、养） */
+const DUEL_WEIGHTS = [
+  { cook: 0.7, cutting: 0.3, fire: 0, season: 0, mc: 0 },
+  { cook: 0.4, cutting: 0, fire: 0, season: 0.5, mc: 0 },
+  { cook: 0, cutting: 0, fire: 0.5, season: 0.5, mc: 0 },
+  { cook: 0, cutting: 0.7, fire: 0.4, season: 0, mc: 0 },
+  { cook: 0, cutting: 0.2, fire: 0.2, season: 0.3, mc: 0.3 },
+];
+
 export const duelResult = (patch: Partial<DuelResultDto> = {}): DuelResultDto => ({
   win: true,
   me: { name: '我的店', power: 70, scores: [20.4, 19.4, 15.4, 22.4, 7.4] },
@@ -12,6 +21,7 @@ export const duelResult = (patch: Partial<DuelResultDto> = {}): DuelResultDto =>
   ],
   votes: [3, 1],
   judgeCount: 5,
+  weights: DUEL_WEIGHTS,
   elderDrop: null,
   renown: 7,
   awards: [{ kind: 'coin', id: null, num: 600, lucky: false }],
@@ -50,6 +60,7 @@ const floor = (n: number, patch: Partial<TowerFloorDto> = {}): TowerFloorDto => 
 export const towerData = (patch: Partial<TowerDto> = {}): TowerDto => ({
   floors: [floor(1), floor(2), floor(3), floor(4)],
   duelJudges: 5,
+  duelWeights: DUEL_WEIGHTS,
   power: 70,
   left: 5,
   dailyTotal: 5,
@@ -67,6 +78,7 @@ export { floor as towerFloor };
 
 export const rankData = (patch: Partial<RankDto> = {}): RankDto => ({
   duelJudges: 5,
+  duelWeights: DUEL_WEIGHTS,
   week: '2026-09-28',
   weekEnd: '2026-10-04T16:00:00.000Z',
   slots: Array.from({ length: 15 }, (_, i) => ({ rank: i + 1, restId: null, name: null, level: null })),

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    backlog8:
+      'En la guía de la wiki del juego, las recetas de la Calle de los novatos y de la calle más grande, las recetas necesarias para 2 estrellas, los requisitos del reparto a domicilio y de la Bolsa y el extra de EXP inicial siguen ahora los valores actuales del juego; las reglas del duelo también indican qué atributos usa cada puntuación según los pesos actuales',
     perf1006:
       'La web descarga unos 140 KB menos la primera vez (la fuente de iconos solo incluye los que usamos), y el Mercado, el Bar, el Ichiban Kuji, el Templo y la Plaza abren más rápido',
     backlog7:

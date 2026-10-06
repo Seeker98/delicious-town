@@ -1,5 +1,5 @@
 import type { Messages } from '../..';
-import { formatNum } from '../../../utils/format';
+import { formatNum, formatPct } from '../../../utils/format';
 import { plFr } from '../../helpers';
 
 const wiki: Messages['wiki'] = {
@@ -148,9 +148,11 @@ const wiki: Messages['wiki'] = {
       {
         title: 'Quand déménager',
         items: [
-          'On ne peut apprendre que les recettes de sa rue. La Rue des débutants n’en a que 69, et 2 étoiles en demandent 100 : il faudra déménager tôt ou tard.',
+          (n) =>
+            `On ne peut apprendre que les recettes de sa rue. La Rue des débutants n’en a que ${formatNum(n.startStreetCookbooks)}, et 2 étoiles en demandent ${formatNum(n.star2Cookbooks)} : il faudra déménager tôt ou tard.`,
           'Quand même toutes les recettes restantes de votre rue ne suffisent pas pour l’étoile suivante, la page des recettes vous prévient. Préparez-vous alors à déménager : n’attendez pas les dernières recettes difficiles, déménagez dès que l’apprentissage ralentit.',
-          'On apprend plus vite dans une rue qui a beaucoup de recettes : la Rue Fusion II en a 333, plus que toute autre rue.',
+          (n) =>
+            `On apprend plus vite dans une rue qui a beaucoup de recettes : la ${n.biggestStreet.name} en a ${formatNum(n.biggestStreet.cookbooks)}, plus que toute autre rue.`,
           'Les rues sont à pièces, équilibrées ou à EXP : allez dans une rue des pièces quand il vous faut des pièces, dans une rue de l’EXP pour monter de niveau. La page de déménagement et la page des recettes indiquent le type et le bonus de chaque rue.',
           'Déménager demande une carte de déménagement (inutile avec un permis de travail du bureau des déménagements) et des frais, divisés par deux quand vous avez de la chance.',
         ],
@@ -161,7 +163,8 @@ const wiki: Messages['wiki'] = {
           'D’abord l’huile : sans huile, le restaurant ferme et ne gagne rien.',
           'Ensuite les étoiles : bons de passage d’étoile et pièces pour monter d’étoile.',
           'Seulement après, les tables et les équipements.',
-          'Ouvrir la vente à emporter demande 2 étoiles et 888 de renommée (dépensés à l’ouverture), plus 8,88 millions de pièces et 300 diamants ou un Pass à emporter : si elle vous intéresse, commencez à économiser tôt.',
+          (n) =>
+            `Ouvrir la vente à emporter demande ${n.takeaway.star} étoiles et ${formatNum(n.takeaway.renown)} de renommée (dépensés à l’ouverture), plus ${formatNum(n.takeaway.coin / 1_000_000)} millions de pièces et ${formatNum(n.takeaway.diamond)} diamants ou un Pass à emporter : si elle vous intéresse, commencez à économiser tôt.`,
         ],
       },
       {
@@ -169,9 +172,11 @@ const wiki: Messages['wiki'] = {
         items: [
           'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Sœur Wen, Frère 13 et les autres ont quelque chose pour vous.',
           'Faites la Tour des chefs chaque jour : vous gagnez de la renommée que vous gagniez ou perdiez. L’Ancien du premier étage est niveau 8 ; vous pouvez le battre vers le niveau 10 (un peu plus tôt avec l’équipement d’apprenti).',
-          'À partir du niveau 20, avec un compte d’au moins 7 jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.',
+          (n) =>
+            `À partir du niveau ${n.exchange.level}, avec un compte d’au moins ${n.exchange.days} jours et un e-mail vérifié, la Bourse et les Prédictions sont ouvertes.`,
           'Porter des ustensiles augmente les revenus de chaque tour.',
-          'Sous le niveau 40, l’EXP de chaque tour reçoit un bonus (+200 % au niveau 1, de moins en moins à chaque niveau) : les premiers niveaux vont très vite.',
+          (n) =>
+            `Sous le niveau ${n.newbieExp.maxLevel}, l’EXP de chaque tour reçoit un bonus (${formatPct(n.newbieExp.rate, { sign: true })} au niveau 1, de moins en moins à chaque niveau) : les premiers niveaux vont très vite.`,
         ],
       },
       {
