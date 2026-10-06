@@ -63,13 +63,15 @@ describe('DeliveriesPanel', () => {
     expect(w.find('[data-testid="result"]').text()).toContain('骑手经验 +12');
   });
 
-  it('全部领取：没有已到的就灰掉；领到几单显示几张结果', async () => {
+  it('全部领取：没有已到的就不显示（问题记录 394：领完后还挂着绿色按钮）；领到几单显示几张结果', async () => {
     vi.mocked(endpoints.takeawayClaimAll).mockResolvedValue([
       claimResult(),
       claimResult({ deliveryId: 22, customer: 265 }),
     ]);
     const none = mount(DeliveriesPanel, { props: { data: takeawayData({ deliveries: [delivery()] }) } });
-    expect(none.find('[data-testid="claim-all"]').attributes('disabled')).toBeDefined();
+    expect(none.find('[data-testid="claim-all"]').exists()).toBe(false);
+    const empty = mount(DeliveriesPanel, { props: { data: takeawayData({ deliveries: [] }) } });
+    expect(empty.find('[data-testid="claim-all"]').exists()).toBe(false);
     const w = mount(DeliveriesPanel, {
       props: {
         data: takeawayData({

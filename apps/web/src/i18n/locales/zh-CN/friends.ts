@@ -110,6 +110,9 @@ export default {
     mine: '我给出（每次 2 个）',
     mineEmpty: '你没有这个等级的食材',
     btn: '交换',
+    search: '按名字找食材',
+    /** 我学本街菜的下一品级还缺几个（backlog 370） */
+    need: (n: number) => `缺 ${n}`,
     fee: (n: number) => `（手续费 ${n} 银币）`,
   },
   report: {

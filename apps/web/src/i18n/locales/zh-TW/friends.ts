@@ -111,6 +111,9 @@ export default {
     mine: '我給出（每次 2 個）',
     mineEmpty: '你沒有這個等級的食材',
     btn: '交換',
+    search: '按名字找食材',
+    /** 我學本街菜的下一品級還缺幾個（backlog 370） */
+    need: (n: number) => `缺 ${n}`,
     fee: (n: number) => `（手續費 ${n} 銀幣）`,
   },
   report: {

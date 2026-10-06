@@ -23,7 +23,7 @@ describe('FriendExchangeView', () => {
     setActivePinia(createPinia());
     vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
       level: 1,
-      theirs: [{ foodsId: 11, num: 3, locked: false, fee: 20 }],
+      theirs: [{ foodsId: 11, num: 3, locked: false, fee: 20, need: 0 }],
       mine: [
         { foodsId: 12, num: 5 },
         { foodsId: 13, num: 1 },
@@ -45,5 +45,32 @@ describe('FriendExchangeView', () => {
     await w.find('[data-testid="confirm"]').trigger('click');
     await flushPromises();
     expect(endpoints.exchange).toHaveBeenCalledWith({ restId: 2, giveFoodsId: 12, takeFoodsId: 11 });
+  });
+
+  it('对方的食材里我学菜缺的排前面、写缺几个；按名字搜两边都筛（backlog 370）', async () => {
+    vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
+      level: 2,
+      theirs: [
+        { foodsId: 11, num: 3, locked: false, fee: 0, need: 0 },
+        { foodsId: 21, num: 300, locked: false, fee: 0, need: 4 },
+        { foodsId: 22, num: 300, locked: false, fee: 0, need: 9 },
+      ],
+      mine: [
+        { foodsId: 12, num: 5 },
+        { foodsId: 21, num: 2 },
+      ],
+      left: 5,
+      storm: false,
+      npc: true,
+    });
+    const w = await mountView();
+    const ids = (side: string) =>
+      w.findAll(`[data-testid^="${side}-"]`).map((x) => x.attributes('data-testid'));
+    expect(ids('theirs')).toEqual(['theirs-22', 'theirs-21', 'theirs-11']);
+    expect(w.get('[data-testid="theirs-22"]').text()).toContain('缺 9');
+    expect(w.get('[data-testid="theirs-11"]').text()).not.toContain('缺');
+    await w.get('[data-testid="exchange-search"]').setValue('21');
+    expect(ids('theirs')).toEqual(['theirs-21']);
+    expect(ids('mine')).toEqual(['mine-21']);
   });
 });

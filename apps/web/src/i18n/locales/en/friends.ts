@@ -112,6 +112,8 @@ const friends: Messages['friends'] = {
     theirsEmpty: 'No ingredients at this level',
     mine: 'You give (2 each time)',
     mineEmpty: "You don't have ingredients at this level",
+    search: 'Search ingredients by name',
+    need: (n) => `Need ${n}`,
     btn: 'Swap',
     fee: (n) => ` (fee ${n} ${plEn(n, 'coin', 'coins')})`,
   },

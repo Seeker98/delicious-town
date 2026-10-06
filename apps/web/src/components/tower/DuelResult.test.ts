@@ -50,6 +50,14 @@ describe('DuelResult', () => {
     expect(w.find('[data-testid="duel-judge"]').text()).toContain('平');
   });
 
+  it('不认识的评委（服务器加了新评委、网页还是旧的）写编号，不写 undefined（backlog 396）', () => {
+    const w = mount(DuelResult, {
+      props: { result: duelResult({ judges: [{ id: 'newbie' as never, me: 12, them: 10 }], votes: [1, 0] }) },
+    });
+    expect(w.find('[data-testid="duel-judge"]').text()).toContain('newbie');
+    expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
+  });
+
   it('票数持平时标题写明按总分定胜负', () => {
     const w = mount(DuelResult, { props: { result: duelResult({ votes: [2, 2] }) } });
     expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2（票数相同，比总分），声望 +7');

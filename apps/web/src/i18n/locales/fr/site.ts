@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    web1006:
+      'En échangeant des ingrédients avec vos amis ou M. Krab, vous pouvez chercher par nom, et ceux qui vous manquent pour vos recettes apparaissent en premier avec la quantité manquante ; l’astuce pour changer de rue sur la page des recettes peut être masquée jusqu’à la prochaine étoile ; « Tout récupérer » pour les livraisons n’apparaît que si une commande est arrivée ; toucher « Recettes » dans la barre du bas quand vous regardez une autre rue vous ramène à la vôtre ; l’onglet du fonds de développement sur la place permet de réessayer si votre restaurant ne se charge pas',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

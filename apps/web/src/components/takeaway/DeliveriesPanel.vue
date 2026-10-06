@@ -74,11 +74,12 @@ function gains(r: TakeawayClaimDto): string {
         {{ t.takeaway.deliveries.customer(catalog.goodsName(r.customer)) }}
       </div>
     </div>
-    <div class="mb-2">
+    <!-- 有已到的单才显示（问题记录 394：领完后还挂着一个绿色按钮） -->
+    <div v-if="anyArrived" class="mb-2">
       <button
         class="btn btn-sm btn-success"
         data-testid="claim-all"
-        :disabled="busy || !anyArrived"
+        :disabled="busy"
         @click="claimAll"
       >
         {{ t.takeaway.deliveries.claimAll }}
