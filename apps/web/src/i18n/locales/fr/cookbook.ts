@@ -13,6 +13,7 @@ const cookbook: Messages['cookbook'] = {
   streetDesc: (desc) => `Bonus de la rue : ${desc}`,
   moveHint: (star, need, gap) =>
     `Même en apprenant toutes les recettes restantes de cette rue, vous n’atteindrez pas les ${need} recettes demandées pour ${star} ${plFr(star, 'étoile', 'étoiles')} (il en manque ${gap}). Quand vous n’apprenez presque plus rien ici, déménagez dans une rue qui a plus de recettes.`,
+  moveHintClose: 'Masquer jusqu’à la prochaine étoile',
   moveLink: 'Déménager',
   learnFailed: "Échec de l'apprentissage",
   maxed: 'Niveau max',

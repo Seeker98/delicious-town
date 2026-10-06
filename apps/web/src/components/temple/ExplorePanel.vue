@@ -31,7 +31,7 @@ const block = computed(() => {
   return '';
 });
 const list = (xs: Array<{ foodsId: number; num: number }>) =>
-  xs.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join(t.value.events.sep);
+  xs.map((f) => t.value.common.qty(catalog.foodName(f.foodsId), f.num)).join(t.value.events.sep);
 
 async function go() {
   if (busy.value || block.value) return;

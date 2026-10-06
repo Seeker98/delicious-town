@@ -30,13 +30,17 @@ const list = ref<CookbookListDto | null>(null);
 const busy = ref(false);
 const streetInfo = computed(() => catalog.streets.find((s) => s.id === street.value) ?? null);
 
+/** 只认最后一次请求的结果：换街道、点底部导航时连着发几次，先发的晚回来不能盖掉后发的（backlog 第 ③ 批审查） */
+let seq = 0;
 async function load() {
+  const mine = ++seq;
   try {
     const r = await endpoints.cookbookList({
       street: street.value,
       page: page.value,
       filter: filter.value,
     });
+    if (mine !== seq) return;
     // 页码超过现在的总页数（地址里恢复的页码，或学完这页最后一道菜）：退到最后一页，page 的 watch 重读，不留空页
     const last = Math.max(1, Math.ceil(r.total / r.pageSize));
     if (r.items.length === 0 && page.value > last) {
@@ -45,7 +49,7 @@ async function load() {
     }
     list.value = r;
   } catch (e) {
-    toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
+    if (mine === seq) toast.push(errorMessage(e, t.value.cookbook.loadFailed), 'danger');
   }
 }
 
@@ -76,6 +80,23 @@ watch([street, filter], () => {
   void load();
 });
 watch(page, () => void load());
+// 地址里的街道被外部清掉（停在别的街时点底部导航“食谱”，组件不重新挂载）：回到本店街道第 1 页（backlog 第 ⑧ 批）
+watch(
+  () => route.query.street,
+  async (q) => {
+    if (q !== undefined) return;
+    const rest = restaurant.rest ?? (await restaurant.refresh().catch(() => null));
+    const own = rest?.streetId ?? 0;
+    if (street.value === own && filter.value === 'all') {
+      if (page.value !== 1) page.value = 1;
+      // 三项都没变时 watch 不写地址，这里补上
+      else void router.replace({ query: { ...route.query, street: String(own) } });
+      return;
+    }
+    street.value = own;
+    filter.value = 'all';
+  },
+);
 watch([street, filter, page], ([s, f, p]) => {
   void router.replace({
     query: {
@@ -88,6 +109,23 @@ watch([street, filter, page], ([s, f, p]) => {
 });
 /** 下一星要学会的菜数（问题记录 378 后续的搬街提示）；读不到时不提示 */
 const starNeed = ref<{ star: number; need: number } | null>(null);
+/** 搬街提示关掉后记住到下一星（backlog 384：休闲玩家会挂好几周）：存“店 id:下一星” */
+const HINT_KEY = 'dt_move_hint_closed';
+const hintId = computed(() => (starNeed.value ? `${restaurant.rest?.id ?? 0}:${starNeed.value.star}` : ''));
+const hintClosed = ref<string | null>(null);
+try {
+  hintClosed.value = localStorage.getItem(HINT_KEY);
+} catch {
+  hintClosed.value = null;
+}
+function closeHint() {
+  hintClosed.value = hintId.value;
+  try {
+    localStorage.setItem(HINT_KEY, hintId.value);
+  } catch {
+    // 存不了就只在这次关掉
+  }
+}
 const hintGap = computed(() => {
   const rest = restaurant.rest;
   const l = list.value;
@@ -110,8 +148,18 @@ async function loadStarNeed() {
   }
 }
 
+// 下一星要求只在看本店街道时用：第一次看本店街道时读一次，看别的街不读（backlog 384）
+let starNeedAsked = false;
+watch(
+  () => list.value !== null && restaurant.rest !== null && list.value.street === restaurant.rest.streetId,
+  (own) => {
+    if (!own || starNeedAsked) return;
+    starNeedAsked = true;
+    void loadStarNeed();
+  },
+  { immediate: true },
+);
 onMounted(async () => {
-  void loadStarNeed();
   // 搬街提示要知道本店在哪条街：地址里带了街道时也读一次餐厅（不改所选街道）
   if (fromQuery !== null && !restaurant.rest) void restaurant.refresh().catch(() => null);
   if (fromQuery === null) {
@@ -164,12 +212,22 @@ onMounted(async () => {
   </div>
   <!-- 本街剩下的菜全学会也凑不够下一星（问题记录 378 后续）：提示学得差不多就搬街 -->
   <div
-    v-if="hintGap !== null && starNeed"
-    class="alert alert-warning small py-2 mb-2"
+    v-if="hintGap !== null && starNeed && hintClosed !== hintId"
+    class="alert alert-warning small py-2 mb-2 d-flex align-items-start gap-2"
     data-testid="move-hint"
   >
-    {{ t.cookbook.moveHint(starNeed.star, formatNum(starNeed.need), formatNum(hintGap)) }}
-    <RouterLink to="/society/move">{{ t.cookbook.moveLink }}</RouterLink>
+    <div class="flex-fill">
+      {{ t.cookbook.moveHint(starNeed.star, formatNum(starNeed.need), formatNum(hintGap)) }}
+      <RouterLink to="/society/move">{{ t.cookbook.moveLink }}</RouterLink>
+    </div>
+    <button
+      type="button"
+      class="btn btn-link btn-sm p-0 text-nowrap"
+      data-testid="move-hint-close"
+      @click="closeHint"
+    >
+      {{ t.cookbook.moveHintClose }}
+    </button>
   </div>
   <div v-for="r in list?.items ?? []" :key="r.id" class="dt-cb small" :data-testid="`cb-${r.id}`">
     <div class="flex-fill" style="min-width: 0">

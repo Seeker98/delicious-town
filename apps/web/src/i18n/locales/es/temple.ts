@@ -34,6 +34,12 @@ const temple: Messages['temple'] = {
     title: 'Tasar recetas misteriosas',
     rule: (n) =>
       `Cada intento usa 1 receta misteriosa y 1 herramienta de tasación; si sale bien, consigues un fragmento. Tienes ${n} ${plEs(n, 'receta misteriosa', 'recetas misteriosas')}.`,
+    how: (parts) => `Cómo conseguirlo: ${parts}`,
+    howShop: (coin) => `tienda de monedas ${coin}`,
+    howBlack: (diamond) => `mercado negro ${diamond} diamantes`,
+    howAward: 'premios aleatorios de la Torre de chefs, el bar y más',
+    howChampion: 'campeón de platos estrella de ayer',
+    howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (nv. ${min}–${max}, ${rate} %, tienes ${have})`,
     btn: (n) => `Tasar ×${n}`,
     noRetry: 'No repetir por debajo del nivel 5 (Libro del dios de las estrellas)',

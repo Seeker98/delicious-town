@@ -1,6 +1,12 @@
+import { DUEL_JUDGES } from '@dt/shared';
 import { z } from 'zod';
 
 const num = z.number();
+
+/** 随机奖励的类型比例：四项不为负、加起来不超过 1，抽不中的算食材（backlog 352） */
+const awardRates = z
+  .object({ foods: num.min(0), goods: num.min(0), coin: num.min(0), exp: num.min(0) })
+  .refine((r) => r.foods + r.goods + r.coin + r.exp <= 1 + 1e-9, 'rates must sum to at most 1');
 const int = z.number().int();
 /** 奖励（邀请等配置里用）：和后台补偿同样的五项 */
 const idNum = z.object({ id: int, num: int.min(1) });
@@ -325,6 +331,8 @@ export const tuningSchema = z.object({
   mysterious: z.object({
     /** 特色菜卖给顾客时每份价值的倍率，按特色菜等级（第 1 项是 1 级；没写的等级 ×1）；只在结算卖出时乘，赛厨等其他地方用原价（问题记录 412） */
     saleRates: z.array(num.min(0)),
+    /** 几张同级残卷碎片换 1 张这一级任选一道的残卷（问题记录 415） */
+    fragmentPerRemnant: int.min(1),
     cookNums: z.array(int.min(1)).min(1),
     baseNum: int,
     /** 等级大于它的特色菜份数打折 */
@@ -428,6 +436,8 @@ export const tuningSchema = z.object({
   bar: z.object({
     fgWinRate: num,
     fgDrawRate: num,
+    /** 划拳输的最低概率：幸运加到胜上最多加到 1 - 平 - 它（问题记录 419） */
+    fgLoseMin: num.min(0).max(1),
     fgNewsStreak: int.min(1),
     cupNewsStreak: int.min(1),
     numMax: int.min(2),
@@ -440,13 +450,13 @@ export const tuningSchema = z.object({
     slotFloorRate: num,
     slotFloorAwardId: int,
     /** 厨塔的随机奖励类型比例（字段在 bar 下是历史原因）；酒吧小游戏用 prize.rates */
-    awardRates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+    awardRates: awardRates,
     /**
      * 酒吧小游戏的随机奖励（问题记录 352）：类型比例；食材按奖励档次取 minLevel ≤ 档次的最后一项，
      * 从 levels 范围里出，rare 的概率出稀有食材（按出现权重抽）
      */
     prize: z.object({
-      rates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+      rates: awardRates,
       foodTiers: z
         .array(
           z.object({
@@ -542,7 +552,7 @@ export const tuningSchema = z.object({
           }),
         )
         .length(5),
-      judges: int.min(1).max(10),
+      judges: int.min(1).max(DUEL_JUDGES.length),
     }),
     /** 打赢长老（正式挑战）时掉一件这层套装的概率，按层（问题记录 408） */
     elderDropRates: z.array(num.min(0).max(1)).length(10),

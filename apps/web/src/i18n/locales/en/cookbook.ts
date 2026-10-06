@@ -13,6 +13,7 @@ const cookbook: Messages['cookbook'] = {
   streetDesc: (desc) => `Street bonus: ${desc}`,
   moveHint: (star, need, gap) =>
     `Even learning every remaining recipe on this street won't reach the ${need} recipes needed for ${star} ${plEn(star, 'star', 'stars')} (${gap} short). Once you're learning little here, move to a street with more recipes.`,
+  moveHintClose: 'Hide until next star',
   moveLink: 'Move',
   learnFailed: 'Learning failed',
   maxed: 'Maxed',

@@ -29,6 +29,16 @@ const LEVEL_BANDS: Array<[number, number]> = [
   [61, 80],
   [81, 999],
 ];
+/** 地址里的显示条数上限（手改成几千时不一次渲染三千多行） */
+const MAX_SHOWN = 1000;
+/** 每个类目的筛选胶囊取值 */
+function filtersOf(k: WikiKind | null): number[] {
+  if (k === 'goods') return GOODS_TYPES;
+  if (k === 'foods') return FOOD_LEVELS;
+  if (k === 'cookbooks') return LEVEL_BANDS.map((_, i) => i);
+  if (k === 'equips') return PARTS;
+  return [];
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -99,10 +109,12 @@ watch(
   (k) => {
     const x = route.query;
     q.value = typeof x.q === 'string' ? x.q : '';
-    filter.value = queryInt(x.f, 0);
-    rareOnly.value = x.rare === '1';
-    street.value = queryInt(x.street, 0);
-    more.value = { key: filterKey.value, n: queryInt(x.n, PAGE) ?? PAGE };
+    // 按类目校验（backlog 第 ⑧ 批）：筛选值不在这个类目的胶囊里就不算；街道只有菜谱、只看稀有只有食材有；条数有上限
+    const f = queryInt(x.f, 0);
+    filter.value = f !== null && filtersOf(k).includes(f) ? f : null;
+    rareOnly.value = k === 'foods' && x.rare === '1';
+    street.value = k === 'cookbooks' ? queryInt(x.street, 0) : null;
+    more.value = { key: filterKey.value, n: Math.min(queryInt(x.n, PAGE) ?? PAGE, MAX_SHOWN) };
     // 类目不合法时也作废还在路上的请求
     if (k) void load(k);
     else seq++;

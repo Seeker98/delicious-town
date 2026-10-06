@@ -56,6 +56,23 @@ export function gainReachable(steps: readonly number[], gain: EquipAttrs): boole
   return go(0);
 }
 
+/** 长老等级不低于这层的解锁等级，且一层比一层高（backlog 408） */
+export function elderLevelErrors(
+  floors: ReadonlyArray<{ floor: number; minLevel: number; level: number }>,
+): string[] {
+  const out: string[] = [];
+  const sorted = [...floors].sort((x, y) => x.floor - y.floor);
+  for (const [i, f] of sorted.entries()) {
+    const at = `tower_elders floor ${f.floor}`;
+    if (f.level < f.minLevel)
+      out.push(`${at}: level ${f.level} is below the floor unlock level ${f.minLevel}`);
+    const prev = sorted[i - 1];
+    if (prev && f.level <= prev.level)
+      out.push(`${at}: level ${f.level} is not above floor ${prev.floor} (${prev.level})`);
+  }
+  return out;
+}
+
 /** 数据和厨具配置对不上的地方 */
 export function elderErrors(e: ElderInput, ctx: ElderContext): string[] {
   const out: string[] = [];
@@ -101,7 +118,14 @@ export function elderErrors(e: ElderInput, ctx: ElderContext): string[] {
         out.push(`${at}: piece ${p.id} gain cannot be made from enhancement steps ${steps.join(', ')}`);
     }
   }
-  for (const id of e.drops) if (!ctx.goods.get(id)?.equip) out.push(`${at}: drop ${id} is not equipment`);
+  // 掉落是这位长老身上某件厨具的同套装（1、2 层穿的是不成套的见习、中厨，按套装编号 0 算；backlog 408）
+  const wornSuits = new Set(e.pieces.flatMap((p) => ctx.goods.get(p.id)?.equip?.suitId ?? []));
+  for (const id of e.drops) {
+    const def = ctx.goods.get(id)?.equip;
+    if (!def) out.push(`${at}: drop ${id} is not equipment`);
+    else if (!wornSuits.has(def.suitId))
+      out.push(`${at}: drop ${id} is suit ${def.suitId}, not worn by the elder`);
+  }
   for (const id of new Set(e.drops.filter((x, i) => e.drops.indexOf(x) !== i)))
     out.push(`${at}: drop ${id} listed twice`);
   return out;

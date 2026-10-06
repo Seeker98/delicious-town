@@ -11,6 +11,7 @@ import McView from './McView.vue';
 vi.mock('../api/endpoints', () => ({
   endpoints: {
     mc: vi.fn(),
+    mcExchange: vi.fn(),
     mcPreview: vi.fn(),
     mcCook: vi.fn(),
     mcDump: vi.fn(),
@@ -41,6 +42,8 @@ const overview: McOverviewDto = {
   ],
   current: null,
   saleRate: null,
+  fragments: [0, 0, 0, 0, 0, 0],
+  fragmentPerRemnant: 3,
   recipes: 0,
   tools: [],
   cookies: 2,
@@ -72,10 +75,37 @@ describe('McView', () => {
       weather: [],
       devices: [],
       mysterious: [
-        { id: 1, name: '秘·仿膳饽饽', level: 4, road: 1, nutritive: 31, coin: 38333, foods: [390, 412] },
-        { id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 22, coin: 26944, foods: [] },
+        {
+          id: 1,
+          name: '秘·仿膳饽饽',
+          level: 4,
+          road: 1,
+          nutritive: 31,
+          coin: 38333,
+          foods: [390, 412],
+          appraisable: true,
+        },
+        {
+          id: 3,
+          name: '秘·凤凰展翅',
+          level: 3,
+          road: 1,
+          nutritive: 22,
+          coin: 26944,
+          foods: [],
+          appraisable: true,
+        },
         { id: 4, name: '秘·芙蓉大虾', level: 5, road: 1, nutritive: 40, coin: 50278, foods: [] },
-        { id: 5, name: '秘·宫保鸡丁', level: 3, road: 2, nutritive: 20, coin: 1, foods: [] },
+        {
+          id: 5,
+          name: '秘·宫保鸡丁',
+          level: 3,
+          road: 2,
+          nutritive: 20,
+          coin: 1,
+          foods: [],
+          appraisable: true,
+        },
       ],
     } as never);
     vi.mocked(endpoints.mc).mockResolvedValue(structuredClone(overview));
@@ -287,5 +317,28 @@ describe('McView', () => {
     const w = mountView();
     await flushPromises();
     expect(w.find('[data-testid="mc-filters"]').exists()).toBe(false);
+  });
+
+  it('碎片兑换指定残卷（问题记录 415）：同级碎片够了能选一道还没学会、能鉴定出来的菜换 1 张', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [{ ...overview.learned[0]!, mcId: 3 }],
+      remnants: [],
+      fragments: [0, 0, 4, 1, 0, 0],
+    });
+    vi.mocked(endpoints.mcExchange).mockResolvedValue({ mcId: 5, num: 1 });
+    const w = mountView();
+    await flushPromises();
+    const row = w.find('[data-testid="exchange-3"]');
+    expect(row.text()).toContain('3 级碎片 4 张');
+    // 3 级里能选的只有没学会的 5 号（3 号已学）
+    expect(row.findAll('option').map((x) => x.attributes('value'))).toEqual(['', '5']);
+    await row.find('select').setValue('5');
+    await row.find('button').trigger('click');
+    await flushPromises();
+    expect(endpoints.mcExchange).toHaveBeenCalledWith(5, 1);
+    // 4 级只有 1 张，不够 3 张：选了菜按钮也不能点
+    await w.find('[data-testid="exchange-4"] select').setValue('1');
+    expect(w.find('[data-testid="exchange-4"] button').attributes('disabled')).toBeDefined();
   });
 });

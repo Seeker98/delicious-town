@@ -46,6 +46,15 @@ const mc: Messages['mc'] = {
     levelLabel: 'By level',
     roadLabel: 'By path',
   },
+  exchange: {
+    title: (n) =>
+      `Shard exchange: ${n} shards of a level for 1 fragment of any dish of that level (only dishes you haven’t learned and that can be appraised)`,
+    have: (level, n) => `Level ${level} shards: ${n}`,
+    pick: 'Choose a dish',
+    btn: 'Exchange 1',
+    done: (name) => `Got 1 fragment of “${name}”`,
+    failed: 'Exchange failed',
+  },
   remnants: 'Fragments',
   noRemnants: 'No fragments',
   groupTitle: (title, n) => `${title} (${n})`,

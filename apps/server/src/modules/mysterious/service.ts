@@ -22,7 +22,7 @@ import { gainCoin, gainExp, gainStrength } from '../../core/resources';
 import type { McCookRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { foodsMap, subFoods } from '../cupboard/foods';
-import { restPower } from '../equip/power';
+import { equipOff, restPower } from '../equip/power';
 import { consumeGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import type { WorldService } from '../world/service';
 import { consumeSpecial, currentCook, endCook } from './cook';
@@ -124,7 +124,13 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         .selectFrom('store_item')
         .select(['goods_id', 'num', 'expires_at'])
         .where('rest_id', '=', rid)
-        .where('goods_id', 'in', [...toolIds, GOODS.mysteryRecipe, GOODS.luckyCookie, GOODS.starBook])
+        .where('goods_id', 'in', [
+          ...toolIds,
+          GOODS.mysteryRecipe,
+          GOODS.luckyCookie,
+          GOODS.starBook,
+          ...[1, 2, 3, 4, 5, 6].map((lv) => GOODS.fragmentBase + lv),
+        ])
         .execute();
       const now = d.now();
       const have = (id: number) => {
@@ -150,9 +156,24 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         current: current ? cookDto(current) : null,
         saleRate: current ? (s.tuning.mysterious.saleRates[current.level - 1] ?? 1) : null,
         recipes: have(GOODS.mysteryRecipe),
+        fragments: [1, 2, 3, 4, 5, 6].map((lv) => have(GOODS.fragmentBase + lv)),
+        fragmentPerRemnant: s.tuning.mysterious.fragmentPerRemnant,
         tools: toolIds.map((goodsId) => {
           const def = d.config.appraiseTools.get(goodsId)!;
-          return { goodsId, num: have(goodsId), min: def.min, max: def.max, rate: def.rate, perNum: def.num };
+          const g = d.config.requireGoods(goodsId);
+          return {
+            goodsId,
+            num: have(goodsId),
+            min: def.min,
+            max: def.max,
+            rate: def.rate,
+            perNum: def.num,
+            shopCoin: g.onSale && g.coin > 0 ? g.coin : null,
+            blackDiamond:
+              d.config.bundle.shopPools.black.includes(goodsId) && g.diamond > 0 ? g.diamond : null,
+            award: g.awardFlag !== null,
+            champion: s.tuning.mysterious.championGoodsId === goodsId,
+          };
         }),
         cookies: have(GOODS.luckyCookie),
         cookNums: s.tuning.mysterious.cookNums,
@@ -210,6 +231,27 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         const goodsId = GOODS.fragmentBase + mc.level;
         await grantGoodsOp(o, goodsId, b.num);
         return { goodsId, num: b.num };
+      });
+    },
+
+    /**
+     * 碎片兑换指定残卷（问题记录 415）：fragmentPerRemnant 张同级碎片换 1 张这一级任选一道的残卷；
+     * 只换能鉴定出来、还没学会的（用户定的范围；学会的残卷除了卖、分解，开课时也会用 1 张，但不让用碎片换来开课）
+     */
+    exchangeFragments(ctx: RestCtx, b: { mcId: number; num: number }) {
+      return op(ctx, 'mc.remnant.exchange', async (o) => {
+        const mc = mcOf(b.mcId);
+        if (!mc.appraisable) throw badInput('not_appraisable');
+        const has = await o.tx
+          .selectFrom('rest_mc')
+          .select('mc_id')
+          .where('rest_id', '=', o.rest.id)
+          .where('mc_id', '=', mc.id)
+          .executeTakeFirst();
+        if (has) throw invalidState('mc_learned');
+        await consumeGoods(o, GOODS.fragmentBase + mc.level, o.tuning.mysterious.fragmentPerRemnant * b.num);
+        await addRemnant(o, mc.id, b.num);
+        return { mcId: mc.id, num: b.num };
       });
     },
 
@@ -339,7 +381,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             goldRate: (agg.mcGoldRate ?? 0) + (weather.mcGoldRate ?? 0),
             numRate: (agg.mcNumRate ?? 0) + (weather.mcNumRate ?? 0),
             roadRate: roadRate(mc.road, others, t),
-            power: await restPower(o.tx, o.rest, o.config.suits),
+            power: await restPower(o.tx, o.rest, o.config.suits, equipOff(o.settings)),
             coinAdd: agg.mcCoinAdd ?? 0,
             humanSon: await hasValidHonor(o, GOODS.humanSon),
             cookie: b.cookie,

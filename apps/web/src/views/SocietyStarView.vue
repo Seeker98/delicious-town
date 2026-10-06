@@ -40,9 +40,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
       <NeedChecks :checks="need.checks" />
       <div v-if="need.award" class="small mb-2">
         {{ t.society.star.award }}
-        <span v-for="g in need.award.goods ?? []" :key="g.id" class="dt-tag me-1"
-          >{{ catalog.goodsName(g.id) }}×{{ g.num }}</span
-        >
+        <span v-for="g in need.award.goods ?? []" :key="g.id" class="dt-tag me-1">{{
+          t.common.qty(catalog.goodsName(g.id), g.num)
+        }}</span>
       </div>
     </template>
     <p v-else class="small text-muted">{{ t.society.star.maxed }}</p>

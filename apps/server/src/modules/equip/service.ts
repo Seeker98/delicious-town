@@ -1,5 +1,5 @@
 import type { Kysely } from 'kysely';
-import { EQUIP_ATTRS, GOODS, type EquipAttr, type Tuning } from '@dt/config';
+import { EQUIP_ATTRS, GOODS, type EquipAttr, type GameConfig, type Tuning } from '@dt/config';
 import {
   ErrorCode,
   luckRate,
@@ -47,6 +47,14 @@ import {
 } from './rules';
 
 export const PART_COLS = ['part1', 'part2', 'part3', 'part4', 'part5'] as const;
+
+/**
+ * 镶着的宝石按配置的阶算（显示、摘除费）：行里的 level 是镶上时记的，六阶蓝冥石、绿玄石以前写成 5 阶
+ * （backlog 第 ① 批审查）；配置里没有这颗宝石时退回行里记的
+ */
+function gemLevel(config: GameConfig, row: Pick<EquipGemRow, 'gem_goods_id' | 'level'>): number {
+  return config.goods.get(row.gem_goods_id)?.gem?.level ?? row.level;
+}
 
 export function notFound(what: string, id: number): AppError {
   return new AppError(ErrorCode.NOT_FOUND, 404, { what, id });
@@ -108,7 +116,7 @@ export function toEquipDto(
     gems: gems.map((x) => ({
       id: x.id,
       goodsId: x.gem_goods_id,
-      level: x.level,
+      level: gemLevel(d.config, x),
       attrs: {
         cook: x.cook,
         cutting: x.cutting,
@@ -236,8 +244,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
             .selectAll()
             .where('id', '=', ctx.restaurantId)
             .executeTakeFirstOrThrow();
-          const luck =
-            (await getEffectAgg(d.db, ctx.restaurantId, d.now(), d.config, s.tuning)).luckValue ?? 0;
+          const luck = (await getEffectAgg(d.db, ctx.restaurantId, d.now(), d.config, s)).luckValue ?? 0;
           const of = async (mode: 'attack' | 'defend') =>
             duelPower((await sideOf(d.db, d.config, full, luck, mode)).attrs);
           return { attack: await of('attack'), defend: await of('defend') };
@@ -618,7 +625,7 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         if (!g) throw notFound('gem', b.gemRowId);
         const weather = (await world.ensure(o.shardId, o.now, o.tx)).weather.effects;
         const free = (weather.removeGemFree ?? 0) > 0 || o.rest.star_level < t.ungemMinStar;
-        const coin = free ? 0 : g.level * t.ungemCoinPerLevel;
+        const coin = free ? 0 : gemLevel(o.config, g) * t.ungemCoinPerLevel;
         spendCoin(o, coin);
         await o.tx.deleteFrom('equip_gem').where('id', '=', g.id).execute();
         await grantGoodsOp(o, g.gem_goods_id, 1);

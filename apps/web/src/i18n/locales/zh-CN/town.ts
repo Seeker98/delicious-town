@@ -4,6 +4,8 @@ export default {
   forum: '论坛',
   tabs: { news: '新闻', town: '居民', exchange: '兑换', rank: '排行', classroom: '教室', fund: '发展基金' },
   loadFailed: '读取广场失败',
+  restFailed: '读取餐厅数据失败。',
+  retry: '重试',
   /** 嘻哈男孩可能去的地点（下标 = 地点编号） */
   places: {
     '1': '菜场',

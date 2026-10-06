@@ -35,11 +35,17 @@ const temple: Messages['temple'] = {
     title: 'Expertiser des recettes mystère',
     rule: (n) =>
       `Chaque essai utilise 1 recette mystère et 1 outil d'expertise ; une réussite donne un fragment. Vous avez ${n} ${plFr(n, 'recette', 'recettes')} mystère.`,
+    how: (parts) => `Comment l’obtenir : ${parts}`,
+    howShop: (coin) => `boutique (pièces) ${coin}`,
+    howBlack: (diamond) => `marché noir ${diamond} diamants`,
+    howAward: 'récompenses aléatoires de la Tour des chefs, du bar, etc.',
+    howChampion: 'champion des plats signature d’hier',
+    howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (niv. ${min} à ${max}, ${rate} %, possédé ${have})`,
     btn: (n) => `Expertiser ×${n}`,
     noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',
     got: (name, num, blessed) =>
-      `Fragment de ${name} ×${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
+      `Fragment de ${name} × ${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
   },
   guardian: {
     what: 'défier le gardien',
@@ -64,7 +70,7 @@ const temple: Messages['temple'] = {
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",
-    foodLabel: (name, level, rare, num) => `${name} (niv. ${level}${rare ? ', rare' : ''}) ×${num}`,
+    foodLabel: (name, level, rare, num) => `${name} (niv. ${level}${rare ? ', rare' : ''}) × ${num}`,
     intro: (creatives) =>
       `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +50 %) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +150 %). Créativité ${creatives}.`,
     help: 'Comment ça marche',

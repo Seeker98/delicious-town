@@ -210,10 +210,12 @@ const shopPrice = computed(() => {
         <ul class="small mb-1 ps-3" data-testid="wiki-gift">
           <li v-for="(i, n) in g.gift" :key="n">
             <template v-if="i.kind === 'goods'">
-              <RouterLink :to="`/wiki/goods/${i.id}`">{{ i.name }}</RouterLink> ×{{ i.num }}
+              <RouterLink :to="`/wiki/goods/${i.id}`">{{ i.name }}</RouterLink
+              >{{ t.common.times }}{{ i.num }}
             </template>
             <template v-else-if="i.kind === 'foods'">
-              <RouterLink :to="`/wiki/foods/${i.id}`">{{ i.name }}</RouterLink> ×{{ i.num }}
+              <RouterLink :to="`/wiki/foods/${i.id}`">{{ i.name }}</RouterLink
+              >{{ t.common.times }}{{ i.num }}
             </template>
             <template v-else>{{ giftText(i) }}</template>
           </li>

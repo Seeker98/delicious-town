@@ -99,9 +99,9 @@ describe('游戏资料详情（问题记录 142）', () => {
     const w = await mountAt(WikiGoodsView, '/wiki/goods/:id', '/wiki/goods/115');
     expect(w.get('h5').text()).toContain('每日签到礼包');
     const gift = w.get('[data-testid="wiki-gift"]');
-    expect(gift.text()).toContain('神秘礼券 ×20');
-    expect(gift.text()).toContain('随机一件 7 级道具 ×1');
-    expect(gift.text()).toContain('随机万能食材 ×1');
+    expect(gift.text()).toContain('神秘礼券×20');
+    expect(gift.text()).toContain('随机一件 7 级道具×1');
+    expect(gift.text()).toContain('随机万能食材×1');
     expect(gift.text()).toContain('银币 1,000~19,999');
     expect(gift.text()).toContain('不写概率');
     expect(hrefs(w, '[data-testid="wiki-gift"]')).toEqual(['/wiki/goods/1', '/wiki/foods/239']);
@@ -154,7 +154,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     const src = w.get('[data-testid="wiki-sources"]');
     expect(src.text()).toContain('500 银币');
     expect(src.text()).toContain('声望商店：60 声望（轮换上架）');
-    expect(src.text()).toContain('蟹黄堡 ×2');
+    expect(src.text()).toContain('蟹黄堡×2');
     expect(src.text()).toContain('每人限兑 1 次');
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/180');
   });
@@ -330,7 +330,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(w.get('[data-testid="wiki-street-link"]').attributes('href')).toBe('/wiki/streets/0');
     const g = w.get('[data-testid="wiki-grades"]');
     expect(g.text()).toContain('天馔');
-    expect(g.text()).toContain('松露 ×10');
+    expect(g.text()).toContain('松露×10');
     expect(hrefs(w, '[data-testid="wiki-grades"]')).toHaveLength(10);
   });
 

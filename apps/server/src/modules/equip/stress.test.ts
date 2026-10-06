@@ -123,13 +123,20 @@ describe('强化（设计文档 §3.5）', () => {
     const id = await piece(ctx, gid('见习之铲'), { base_cook: 3 });
     await eq().wear(ctx, { id });
     const before =
-      (await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning))
-        .luckValue ?? 0;
+      (
+        await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, {
+          tuning: t.deps.config.tuning,
+          features: {},
+        })
+      ).luckValue ?? 0;
     // 成功 0.01；铲的顺序 厨艺 刀工 火候 调味 幸运：前四个 0.9 跳过，0.1 选中幸运；增量 = 见习之铲表 +0→+1 = 1
     seq = [0.01, 0.9, 0.9, 0.9, 0.9, 0.1, 0.5];
     const r = await eq().stress(ctx, { id, stone: false });
     expect(r.data).toMatchObject({ attr: 'luck', val: 1 });
-    const after = await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    const after = await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, {
+      tuning: t.deps.config.tuning,
+      features: {},
+    });
     expect(after.luckValue).toBe(before + 1);
   });
 

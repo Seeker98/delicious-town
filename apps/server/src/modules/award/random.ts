@@ -1,5 +1,5 @@
 import { GOODS, GOODS_TYPE, type Food, type Goods, type Tuning } from '@dt/config';
-import { buildPool, pickWeighted } from '@dt/shared';
+import { buildPool, pickWeighted, type Rng } from '@dt/shared';
 import { opLuck } from '../../core/luck';
 import type { Op } from '../../core/op';
 import { opNeedPick } from '../../core/scarcity';
@@ -103,6 +103,32 @@ export function prizeFoodPools(
 }
 
 /**
+ * 酒吧奖励没命中缺料时抽哪个食材（问题记录 352）：普通、稀有两边都空就从退回池平均抽（不判稀有）；
+ * 否则先判稀有（一次随机数），稀有池按权重、普通池平均抽，抽中的一边是空的就用另一边。
+ * 退回池也空返回 null，调用方改发银币
+ */
+export function pickPrizeFood(
+  normal: readonly number[],
+  rare: ReadonlyArray<{ id: number; odds: number }>,
+  rareRate: number,
+  fallback: readonly number[],
+  rng: Rng,
+): number | null {
+  if (normal.length === 0 && rare.length === 0)
+    return fallback.length === 0 ? null : fallback[rng.int(fallback.length)]!;
+  const wantRare = rng.next() < rareRate;
+  if ((wantRare && rare.length > 0) || normal.length === 0)
+    return pickWeighted(
+      buildPool(rare, (x) => x.odds),
+      rng,
+    ).id;
+  return normal[rng.int(normal.length)]!;
+}
+
+/** 食材池空时的占位（缺料抽取器的退回函数要返回数字），随后改发银币 */
+const NO_FOOD = -1;
+
+/**
  * 随机奖励（规格书 00 §0.8），当场发放。
  * 随机数顺序：类型（onlyGoods 时没有）→ 幸运翻倍（物品、食材）→ 抽取。物品池空时改发银币。
  * 食材的抽取先判一次是否命中个人缺料（概率为 0 或没有缺料时不耗随机数），命中按缺量抽缺料，没命中按原来的池子抽（问题记录 50）。
@@ -152,17 +178,9 @@ export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<Rand
       (f) => levelOf(f) >= lo && levelOf(f) <= hi,
       () => {
         const { normal, rare } = prizeFoodPools(o.config.bundle.foods, tier.levels);
-        if (normal.length === 0 && rare.length === 0) {
-          const pool = awardFoodsPool(o.config.bundle.foods, level);
-          return pool[o.rng.int(pool.length)]!;
-        }
-        const wantRare = o.rng.next() < tier.rare;
-        if ((wantRare && rare.length > 0) || normal.length === 0)
-          return pickWeighted(
-            buildPool(rare, (x) => x.odds),
-            o.rng,
-          ).id;
-        return normal[o.rng.int(normal.length)]!;
+        const fallback =
+          normal.length === 0 && rare.length === 0 ? awardFoodsPool(o.config.bundle.foods, level) : [];
+        return pickPrizeFood(normal, rare, tier.rare, fallback, o.rng) ?? NO_FOOD;
       },
     );
   } else {
@@ -170,9 +188,10 @@ export async function randomAward(o: Op, opts: RandomAwardOptions): Promise<Rand
     const maxLevel = Math.min(level, 5);
     id = (await opNeedPick(o))(
       (f) => levelOf(f) <= maxLevel,
-      () => pool[o.rng.int(pool.length)]!,
+      () => (pool.length === 0 ? NO_FOOD : pool[o.rng.int(pool.length)]!),
     );
   }
+  if (id === NO_FOOD) return coinOrExp('coin');
   await addFoods(o, id, num, { ...gain, lucky });
   return { kind, id, num, lucky };
 }

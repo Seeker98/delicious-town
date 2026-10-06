@@ -28,6 +28,12 @@ const temple: Messages['temple'] = {
     title: 'Appraise Mystery Recipes',
     rule: (n) =>
       `Each try uses 1 Mystery Recipe and 1 appraisal tool; success gives a fragment. You have ${n} Mystery Recipes.`,
+    how: (parts) => `How to get: ${parts}`,
+    howShop: (coin) => `coin shop ${coin}`,
+    howBlack: (diamond) => `black market ${diamond} diamonds`,
+    howAward: 'random rewards from the Chef Tower, the bar and more',
+    howChampion: 'yesterday’s signature dish champion',
+    howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (Lv. ${min}–${max}, ${rate}%, own ${have})`,
     btn: (n) => `Appraise ×${n}`,
     noRetry: "Don't reroll below level 5 (Book of the Star God)",

@@ -120,6 +120,15 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.goodsDetail('en', gem.id)!.gem!.nextName).toBe(data.goodsDetail('en', next.id)!.name);
   });
 
+  it('宝石的下一阶在配置里不存在时 nextName 是 null，不写编号（backlog 第 ⑤ 批）', () => {
+    const gem = b.goods.find((g) => g.gem && g.gem.nextId !== null)!;
+    const broken = createGameConfig({
+      ...b,
+      goods: b.goods.map((g) => (g.id === gem.id ? { ...g, gem: { ...g.gem!, nextId: 99999999 } } : g)),
+    });
+    expect(createOpenData(broken).goodsDetail('zh-CN', gem.id)!.gem!.nextName).toBeNull();
+  });
+
   it('街道：勋章和对照表一致，各街菜谱数合计等于菜谱总数', () => {
     const s = data.streets('zh-CN').items;
     expect(s).toHaveLength(b.streets.length);

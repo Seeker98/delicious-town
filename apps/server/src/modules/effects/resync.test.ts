@@ -24,7 +24,8 @@ describe('勋章加成按当前配置重写（问题记录 378 审查：调了�
     const fresh = await createRestaurantRow(db, shardId, await createAccountRow(db));
     for (const r of [stale, fresh]) await grantGoods(db, config, r, HUNAN, 1, now);
     // 先把两家的汇总算好（不脏），再把一家的勋章改回旧值
-    for (const r of [stale, fresh]) await getEffectAgg(db, r, now, config, config.tuning);
+    for (const r of [stale, fresh])
+      await getEffectAgg(db, r, now, config, { tuning: config.tuning, features: {} });
     await db
       .updateTable('effect_source')
       .set({ effects: JSON.stringify({ coinRate: 0.15, expRate: 0.15, luckValue: 10 }) })
@@ -49,9 +50,9 @@ describe('勋章加成按当前配置重写（问题记录 378 审查：调了�
       .orderBy('id')
       .execute();
     expect(dirty.map((r) => r.effect_dirty)).toEqual([true, false]);
-    expect((await getEffectAgg(db, stale, now, config, config.tuning)).coinRate).toBeCloseTo(
-      want.coinRate ?? 0,
-    );
+    expect(
+      (await getEffectAgg(db, stale, now, config, { tuning: config.tuning, features: {} })).coinRate,
+    ).toBeCloseTo(want.coinRate ?? 0);
     // 再跑一次什么都不改
     expect(await resyncHonorEffects(db, config, shardId)).toEqual({ sources: 0, restaurants: 0 });
   });

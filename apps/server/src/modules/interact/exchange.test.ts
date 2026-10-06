@@ -152,6 +152,21 @@ describe('交换食材（规格书 05 §5.6）', () => {
     });
   });
 
+  it('对方的食材带“我学菜还缺几个”：本街菜下一品级要的合计减去已有，不缺是 0（backlog 370）', async () => {
+    const a0 = await newRestaurant(t);
+    const street = (await restRow(t, a0.restaurantId)).street_id;
+    const want = new Map<number, number>();
+    for (const id of config.cookbookIndex.idsByStreet.get(street) ?? [])
+      for (const x of config.requireCookbook(id).needFoods[1] ?? [])
+        if (config.foods.get(x.foodsId)?.level === 2) want.set(x.foodsId, (want.get(x.foodsId) ?? 0) + x.num);
+    const [needed] = [...want.entries()].sort((x, y) => y[1] - x[1])[0]!;
+    const spare = config.foodsByLevel.get(2)!.find((f) => !want.has(f.id))!.id;
+    const [a, b] = await friends({ foods: { [needed]: 1 } }, { foods: { [needed]: 3, [spare]: 3 } });
+    const r = await ex().foods(a, b.restaurantId, 2);
+    expect(r.theirs.find((x) => x.foodsId === needed)!.need).toBe(want.get(needed)! - 1);
+    expect(r.theirs.find((x) => x.foodsId === spare)!.need).toBe(0);
+  });
+
   it('可交换食材列表：对方的（带锁定和手续费）、我的、剩余次数', async () => {
     const [a, b] = await friends();
     const r = await ex().foods(a, b.restaurantId, 2);

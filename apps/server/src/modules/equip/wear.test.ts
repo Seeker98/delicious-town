@@ -34,7 +34,10 @@ async function piece(ctx: RestCtx, goodsId: number, patch: Record<string, number
   return r.id;
 }
 const agg = (ctx: RestCtx) =>
-  getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+  getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, {
+    tuning: t.deps.config.tuning,
+    features: {},
+  });
 const wornIds = async (ctx: RestCtx) =>
   (
     await t.db

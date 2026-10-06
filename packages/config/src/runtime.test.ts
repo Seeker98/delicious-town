@@ -103,7 +103,9 @@ describe('2A 运行时索引', () => {
 describe('特色菜索引（子项目 4A）', () => {
   it('鉴定道具和教师证按道具 id 索引', () => {
     expect(config.appraiseTools.get(gid('蟹黄堡秘方'))).toEqual({ min: 3, max: 5, rate: 1, num: 2 });
-    expect(config.appraiseTools.get(gid('美味印章'))).toEqual({ min: 1, max: 6, rate: 0.28, num: 1 });
+    // 问题记录 415：美味印章成功率 28% → 40%；厨神玉玺进银币商店，30 万
+    expect(config.appraiseTools.get(gid('美味印章'))).toEqual({ min: 1, max: 6, rate: 0.4, num: 1 });
+    expect(config.requireGoods(gid('厨神玉玺'))).toMatchObject({ onSale: true, coin: 300000 });
     expect(config.appraiseTools.has(gid('神秘食谱'))).toBe(false);
     expect(config.teacherCerts.get(gid('顶级教师证'))).toEqual({
       levels: [6],

@@ -12,6 +12,7 @@ import type {
 } from '@dt/shared';
 import type { DB, RestaurantRow, TableState } from '../../db/schema';
 import { listActiveEffects } from '../effects/service';
+import { shownEffects } from '../effects/aggregate';
 import { effectSourceName } from '../effects/naming';
 
 /** 设施位是否已开放：星级够；第二牌匾位（7）还要先开通 */
@@ -140,6 +141,7 @@ export async function buffsOf(
   config: GameConfig,
   restId: number,
   now: Date,
+  equipOff = false,
 ): Promise<BuffsDto> {
   const r = await db
     .selectFrom('income_round')
@@ -148,7 +150,7 @@ export async function buffsOf(
     .orderBy('created_at', 'desc')
     .limit(1)
     .executeTakeFirst();
-  const effects = await listActiveEffects(db, restId, now);
+  const effects = shownEffects(await listActiveEffects(db, restId, now), equipOff);
   const raw = (r?.rates ?? null) as (Record<string, unknown> & { seated?: number }) | null;
   let rates: Record<string, RateBreakdownDto> | null = null;
   if (raw) {

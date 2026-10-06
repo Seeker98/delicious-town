@@ -89,6 +89,85 @@ describe('活跃项的门槛（问题记录 360）', () => {
   });
 });
 
+describe('活跃项的门槛（backlog 第 ⑥ 批）', () => {
+  it('交易所、事件预测：注册天数不够标 days、邮箱没验证标 email，都满足是 null', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 99 } });
+    const { tuning } = await t.game.shards.settings(ctx.shardId);
+    const item = async (name: string) => (await task().activation(ctx)).items.find((x) => x.name === name)!;
+    const acc = (patch: { created_at?: Date; email_verified_at?: Date | null }) =>
+      t.db.updateTable('account').set(patch).where('id', '=', ctx.accountId).execute();
+    await acc({ created_at: t.clock.now, email_verified_at: null });
+    expect(await item('交易所成交')).toMatchObject({
+      blocked: 'days',
+      needDays: tuning.exchange.minAccountDays,
+    });
+    expect(await item('事件预测交易')).toMatchObject({
+      blocked: 'days',
+      needDays: tuning.predict.minAccountDays,
+    });
+    await acc({ created_at: new Date(t.clock.now.getTime() - 400 * 86_400_000) });
+    expect(await item('交易所成交')).toMatchObject({ blocked: 'email' });
+    await acc({ email_verified_at: t.clock.now });
+    expect(await item('交易所成交')).toMatchObject({ blocked: null });
+    expect(await item('签到')).toMatchObject({ blocked: null });
+  });
+
+  it('领取限时活动奖励：只有全服加成（没有奖励）时仍标 noActivity；兑换活动结束后的兑换期里算能做', async () => {
+    const ctx = await newRestaurant(t);
+    const item = async () =>
+      (await task().activation(ctx)).items.find((x) => x.name === '领取限时活动奖励')!.blocked;
+    const H = 3_600_000;
+    const add = (kind: 'boost' | 'exchange', endsIn: number, def: object) =>
+      t.db
+        .insertInto('activity')
+        .values({
+          shard_id: ctx.shardId,
+          kind,
+          title: kind,
+          body: '',
+          starts_at: new Date(t.clock.now.getTime() - 48 * H),
+          ends_at: new Date(t.clock.now.getTime() + endsIn),
+          min_level: 1,
+          def: JSON.stringify(def),
+          actor_account_id: ctx.accountId,
+        })
+        .execute();
+    await add('boost', H, { items: [{ key: 'coin', factor: 1.5 }] });
+    expect(await item()).toBe('noActivity');
+    await add('exchange', -2 * H, { graceHours: 1 });
+    expect(await item()).toBe('noActivity');
+    await add('exchange', -2 * H, { graceHours: 3 });
+    expect(await item()).toBeNull();
+  });
+
+  it('领取限时活动奖励：没有进行中的活动标 noActivity；配送外卖的星级按区服的 takeaway.openStar', async () => {
+    const ctx = await newRestaurant(t);
+    const item = async (name: string) => (await task().activation(ctx)).items.find((x) => x.name === name)!;
+    expect(await item('领取限时活动奖励')).toMatchObject({ blocked: 'noActivity' });
+    await t.db
+      .insertInto('activity')
+      .values({
+        shard_id: ctx.shardId,
+        kind: 'goals',
+        title: '签到',
+        body: '',
+        starts_at: new Date(t.clock.now.getTime() - 3_600_000),
+        ends_at: new Date(t.clock.now.getTime() + 3_600_000),
+        min_level: 1,
+        def: JSON.stringify({ goals: [{ key: 'signin', target: 1, award: { coin: 1 } }] }),
+        actor_account_id: ctx.accountId,
+      })
+      .execute();
+    expect(await item('领取限时活动奖励')).toMatchObject({ blocked: null });
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: ctx.shardId, override: JSON.stringify({ tuning: { takeaway: { openStar: 3 } } }) })
+      .execute();
+    t.game.shards.invalidate(ctx.shardId);
+    expect(await item('配送外卖')).toMatchObject({ needStar: 3 });
+  });
+});
+
 describe('签到（规格书 15 §15.3）', () => {
   it('每天一次，得到每日签到礼包；按北京时间换日（Review Focus 4）', async () => {
     const ctx = await newRestaurant(t);

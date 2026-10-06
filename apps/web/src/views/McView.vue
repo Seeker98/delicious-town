@@ -140,6 +140,37 @@ const groups = computed(() => {
     { key: 'learned' as const, items: rs.filter((r) => known.has(r.mcId)) },
   ].filter((g) => g.items.length > 0);
 });
+/** 碎片兑换（问题记录 415）：每级一行，能选这一级能鉴定出来、还没学会的菜；按等级分页时只显示那一级 */
+const exPick = reactive<Record<number, string>>({});
+const exchangeRows = computed(() => {
+  const f = o.value?.fragments ?? [];
+  return LEVELS.filter((lv) => (f[lv - 1] ?? 0) > 0 && (level.value === 'all' || level.value === lv)).map(
+    (lv) => ({
+      level: lv,
+      num: f[lv - 1] ?? 0,
+      options: [...catalog.mcMap.values()]
+        .filter((m) => m.level === lv && m.appraisable && !learnedIds.value.has(m.id))
+        .sort((a, b) => a.road - b.road || a.id - b.id),
+    }),
+  );
+});
+watch(exchangeRows, (rows) => {
+  for (const r of rows)
+    if (exPick[r.level] && !r.options.some((m) => String(m.id) === exPick[r.level])) exPick[r.level] = '';
+});
+function exchange(lv: number) {
+  const mcId = Number(exPick[lv]);
+  if (!mcId) return;
+  return act(
+    async () => {
+      await endpoints.mcExchange(mcId, 1);
+      toast.push(t.value.mc.exchange.done(nameOf(mcId)));
+    },
+    null,
+    t.value.mc.exchange.failed,
+  );
+}
+
 function learnAll() {
   return act(
     async () => {
@@ -337,6 +368,29 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
     </div>
 
     <h6 class="dt-section">{{ t.mc.remnants }}</h6>
+    <!-- 碎片兑换指定残卷（问题记录 415） -->
+    <div v-if="exchangeRows.length > 0" class="mb-2 small" data-testid="mc-exchange">
+      <div class="text-muted mb-1">{{ t.mc.exchange.title(o.fragmentPerRemnant) }}</div>
+      <div
+        v-for="r in exchangeRows"
+        :key="r.level"
+        class="d-flex flex-wrap align-items-center gap-1 py-1 border-bottom"
+        :data-testid="`exchange-${r.level}`"
+      >
+        <span class="me-1">{{ t.mc.exchange.have(r.level, r.num) }}</span>
+        <select v-model="exPick[r.level]" class="form-select form-select-sm w-auto">
+          <option value="">{{ t.mc.exchange.pick }}</option>
+          <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
+        </select>
+        <button
+          class="btn btn-sm btn-outline-success"
+          :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
+          @click="exchange(r.level)"
+        >
+          {{ t.mc.exchange.btn }}
+        </button>
+      </div>
+    </div>
     <div v-if="o.remnants.length === 0" class="small text-muted">{{ t.mc.noRemnants }}</div>
     <div v-else-if="groups.length === 0" class="small text-muted" data-testid="mc-remnants-none">
       {{ t.mc.filter.none }}
@@ -363,7 +417,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         ]"
       >
         <div class="flex-fill">
-          <b>{{ nameOf(r.mcId) }}</b> ×{{ r.num }}
+          <b>{{ nameOf(r.mcId) }}</b
+          >{{ t.common.times }}{{ r.num }}
           <span class="text-muted">
             {{
               t.mc.remnantMeta(

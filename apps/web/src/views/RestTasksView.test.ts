@@ -25,11 +25,66 @@ const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
   star: 1,
   level: 10,
   items: [
-    { id: 1, name: '签到', points: 10, limit: 1, count: 1, needStar: 0, needLevel: 0, off: false },
-    { id: 2, name: '打蟑螂', points: 1, limit: 12, count: 3, needStar: 0, needLevel: 0, off: false },
-    { id: 50, name: '配送外卖', points: 5, limit: 2, count: 0, needStar: 2, needLevel: 0, off: false },
-    { id: 901, name: '交易所成交', points: 5, limit: 1, count: 0, needStar: 0, needLevel: 30, off: false },
-    { id: 903, name: '一番赏抽赏', points: 5, limit: 1, count: 0, needStar: 0, needLevel: 0, off: true },
+    {
+      id: 1,
+      name: '签到',
+      points: 10,
+      limit: 1,
+      count: 1,
+      needStar: 0,
+      needLevel: 0,
+      needDays: 0,
+      blocked: null,
+      off: false,
+    },
+    {
+      id: 2,
+      name: '打蟑螂',
+      points: 1,
+      limit: 12,
+      count: 3,
+      needStar: 0,
+      needLevel: 0,
+      needDays: 0,
+      blocked: null,
+      off: false,
+    },
+    {
+      id: 50,
+      name: '配送外卖',
+      points: 5,
+      limit: 2,
+      count: 0,
+      needStar: 2,
+      needLevel: 0,
+      needDays: 0,
+      blocked: null,
+      off: false,
+    },
+    {
+      id: 901,
+      name: '交易所成交',
+      points: 5,
+      limit: 1,
+      count: 0,
+      needStar: 0,
+      needLevel: 30,
+      needDays: 0,
+      blocked: null,
+      off: false,
+    },
+    {
+      id: 903,
+      name: '一番赏抽赏',
+      points: 5,
+      limit: 1,
+      count: 0,
+      needStar: 0,
+      needLevel: 0,
+      needDays: 0,
+      blocked: null,
+      off: true,
+    },
   ],
   rewards: [
     { points: 50, award: { exp: 500 }, claimed: true, multiplier: 1 },
@@ -144,6 +199,30 @@ describe('RestTasksView', () => {
     expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 本服未开放');
     expect(w.find('[data-testid="act-1"]').text()).toContain('✓ 已满');
     expect(w.find('[data-testid="act-1"]').classes()).toContain('dt-act-done');
+  });
+
+  it('交易所注册天数不够、邮箱没验证，没有能领奖的限时活动，也标锁定写原因（backlog 第 ⑥ 批）', async () => {
+    const item = (id: number, blocked: 'days' | 'email' | 'noActivity', needDays = 0) => ({
+      id,
+      name: String(id),
+      points: 5,
+      limit: 1,
+      count: 0,
+      needStar: 0,
+      needLevel: 0,
+      needDays,
+      blocked,
+      off: false,
+    });
+    vi.mocked(endpoints.activation).mockResolvedValue(
+      act({ items: [item(901, 'days', 7), item(902, 'email'), item(904, 'noActivity')] }),
+    );
+    const w = await mountView();
+    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 注册满 7 天解锁');
+    expect(w.find('[data-testid="act-902"]').text()).toContain('🔒 验证邮箱后解锁');
+    expect(w.find('[data-testid="act-904"]').text()).toContain('现在没有进行中的限时活动');
+    for (const id of [901, 902, 904])
+      expect(w.find(`[data-testid="act-${id}"]`).classes()).toContain('dt-act-locked');
   });
 
   it('活跃奖励三种样子：已领、可以领（实心）、还差几点', async () => {

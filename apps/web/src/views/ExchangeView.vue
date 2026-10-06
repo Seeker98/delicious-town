@@ -82,7 +82,7 @@ function holdText(list: ExchangeMeDto['holds']): string {
     if (h.foodsId !== null && h.num > 0) foods.set(h.foodsId, (foods.get(h.foodsId) ?? 0) + h.num);
   return [
     ...(coin > 0 ? [t.value.exchange.coin(formatNum(coin))] : []),
-    ...[...foods].map(([id, n]) => `${catalog.foodName(id)}×${n}`),
+    ...[...foods].map(([id, n]) => t.value.common.qty(catalog.foodName(id), n)),
   ].join(t.value.events.sep);
 }
 const valid = computed(
@@ -447,7 +447,9 @@ onMounted(async () => {
     <h6 class="dt-section">{{ t.exchange.account }}</h6>
     <div class="dt-card mb-3 d-flex flex-wrap align-items-center gap-2 small" data-testid="ex-wallet">
       <span>{{ t.exchange.coin(formatNum(me.wallet.coin)) }}</span>
-      <span v-for="f in me.wallet.foods" :key="f.foodsId">{{ catalog.foodName(f.foodsId) }}×{{ f.num }}</span>
+      <span v-for="f in me.wallet.foods" :key="f.foodsId">{{
+        t.common.qty(catalog.foodName(f.foodsId), f.num)
+      }}</span>
       <button
         type="button"
         class="btn btn-sm btn-outline-primary ms-auto"

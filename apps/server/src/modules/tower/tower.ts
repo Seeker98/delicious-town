@@ -41,6 +41,7 @@ export async function towerView(
   rest: RestaurantRow,
   t: TowerTuning,
   now: Date,
+  off = false,
 ): Promise<TowerDto> {
   const { day, hour } = gameParts(now);
   const state = await db
@@ -65,7 +66,7 @@ export async function towerView(
     .executeTakeFirst();
   const mcs = await watchmanMcs(db, rest.shard_id);
   const total = towerDailyTotal(count(KEY.ticket), t);
-  const me = await cachedSide(db, config, rest, 'attack');
+  const me = await cachedSide(db, config, rest, 'attack', off);
   return {
     floors: [...config.towerFloors.values()].map((f) => ({
       floor: f.floor,
