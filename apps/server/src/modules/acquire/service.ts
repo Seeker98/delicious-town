@@ -2,6 +2,7 @@ import { sql } from 'kysely';
 import {
   ErrorCode,
   type AcquireBriefDto,
+  type AcquireHoldingDto,
   type AcquireInvestRowDto,
   type AcquireMarketDto,
   type AcquireRankDto,
@@ -10,7 +11,7 @@ import {
   type AcquireTendDto,
   type AcquireViewDto,
 } from '@dt/shared';
-import { gameDay, gameTime } from '@dt/shared';
+import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, restLog, runOp, type Op, type OpResult } from '../../core/op';
@@ -551,26 +552,52 @@ export function createAcquireService(d: GameDeps) {
     return (await d.shards.ensureFeature(ctx.shardId, 'acquire')).tuning.acquire;
   }
 
-  /** 我的：我的身价、老板，名下的店（按身价从高到低），和几项规则数 */
+  /** 我的：我的身价、老板、今天打理没有，名下的店（按身价从高到低，带昨天给我的分红、今天打理没有），和几项规则数 */
   async function view(ctx: RestCtx): Promise<AcquireViewDto> {
     const t = await settingsOf(ctx);
     const now = d.now();
-    const holdIds = (
-      await d.db
-        .selectFrom('acquire_state')
-        .select('rest_id')
-        .where('owner_rest_id', '=', ctx.restaurantId)
-        .execute()
-    ).map((x) => x.rest_id);
-    const [me, m] = await Promise.all([restOf(ctx, ctx.restaurantId, t, now), briefs(holdIds, now)]);
+    const today = gameDay(now);
+    const yday = addDays(today, -1);
+    const hold = await d.db
+      .selectFrom('acquire_state as s')
+      // 昨天的分红只算发给我的（今天刚换老板的店，昨天的分红是给前一个老板的）
+      .leftJoin('acquire_dividend as dv', (j) =>
+        j.onRef('dv.rest_id', '=', 's.rest_id').on('dv.day', '=', yday).on('dv.owner_rest_id', '=', ctx.restaurantId),
+      )
+      .leftJoin('acquire_tend as td', (j) => j.onRef('td.rest_id', '=', 's.rest_id').on('td.day', '=', today))
+      .select(['s.rest_id', 'dv.coin', 'dv.tended', 'td.rest_id as tended_today'])
+      .where('s.owner_rest_id', '=', ctx.restaurantId)
+      .execute();
+    const [me, m, myTend] = await Promise.all([
+      restOf(ctx, ctx.restaurantId, t, now),
+      briefs(
+        hold.map((x) => x.rest_id),
+        now,
+      ),
+      d.db
+        .selectFrom('acquire_tend')
+        .select('day')
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('day', '=', today)
+        .executeTakeFirst(),
+    ]);
+    const holdings: AcquireHoldingDto[] = hold.map((x) => ({
+      ...m.get(x.rest_id)!,
+      dividend: x.coin === null ? null : { coin: Number(x.coin), tended: x.tended! },
+      tendedToday: x.tended_today !== null,
+    }));
     return {
       me,
-      holdings: [...m.values()].sort((x, y) => y.price - x.price || x.restId - y.restId),
+      tendedToday: myTend !== undefined,
+      holdings: holdings.sort((x, y) => y.price - x.price || x.restId - y.restId),
       maxHoldings: t.maxHoldings,
       taxRate: t.taxRate,
       listMinRate: t.listMinRate,
       listDays: t.listDays,
       protectDays: t.protectDays,
+      dividendRate: t.dividendRate,
+      tendBonus: t.tendBonus,
+      tendFoods: t.tendFoods,
     };
   }
 
@@ -586,15 +613,17 @@ export function createAcquireService(d: GameDeps) {
       const rows = await d.db
         .selectFrom('acquire_state as s')
         .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+        .leftJoin('acquire_holder as h', 'h.rest_id', 's.owner_rest_id')
         .select([
           's.owner_rest_id',
           'o.name',
+          'h.dividend_total',
           (eb) => eb.fn.countAll<number>().as('n'),
           sql<number>`sum(round(s.base * s.heat))`.as('value'),
         ])
         .where('s.shard_id', '=', ctx.shardId)
         .where('s.owner_rest_id', 'is not', null)
-        .groupBy(['s.owner_rest_id', 'o.name'])
+        .groupBy(['s.owner_rest_id', 'o.name', 'h.dividend_total'])
         .orderBy('value', 'desc')
         .orderBy('s.owner_rest_id')
         .limit(RANK_SIZE)
@@ -604,6 +633,7 @@ export function createAcquireService(d: GameDeps) {
         name: r.name,
         holdings: Number(r.n),
         value: Number(r.value),
+        dividendTotal: Number(r.dividend_total ?? 0),
       }));
       return { board, price: [], invest };
     }

@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { addDays, gameDay } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import { playerIn } from '../../../test/players';
@@ -101,6 +102,38 @@ describe('收购接口（收购 PR 1）', () => {
       .where('rest_id', '=', b.restId)
       .executeTakeFirst();
     expect(row).toBeUndefined();
+  });
+
+  it('打理 → 我的页面看到今天打理过；老板看到名下那家昨天的分红和今天打理；投资榜有累计分红（收购 PR 2）', async () => {
+    const shardId = await openShard();
+    const a = await playerIn(ctx, shardId);
+    const b = await playerIn(ctx, shardId);
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values({ rest_id: b.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: a.restId })
+      .execute();
+    const before = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: b.cookie });
+    expect(before.json.data).toMatchObject({ tendedToday: false, tendFoods: 5 });
+    const tend = await call(ctx.app, 'POST', '/api/v1/acquire/tend', { cookie: b.cookie });
+    expect(tend.status).toBe(200);
+    expect(tend.json.data.foods.reduce((s: number, f: { num: number }) => s + f.num, 0)).toBe(5);
+    expect((await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: b.cookie })).json.data.tendedToday).toBe(
+      true,
+    );
+
+    const yday = addDays(gameDay(new Date()), -1);
+    await ctx.deps.db
+      .insertInto('acquire_dividend')
+      .values({ rest_id: b.restId, day: yday, owner_rest_id: a.restId, coin: 1234, tended: true })
+      .execute();
+    await ctx.deps.db.insertInto('acquire_holder').values({ rest_id: a.restId, dividend_total: 5678 }).execute();
+    const mine = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
+    expect(mine.json.data.holdings).toMatchObject([
+      { restId: b.restId, dividend: { coin: 1234, tended: true }, tendedToday: true },
+    ]);
+    expect(mine.json.data.tendedToday).toBe(false);
+    const invest = await call(ctx.app, 'GET', '/api/v1/acquire/rank?board=invest', { cookie: a.cookie });
+    expect(invest.json.data.invest).toMatchObject([{ restId: a.restId, holdings: 1, dividendTotal: 5678 }]);
   });
 
   it('参数不对报 VALIDATION_FAILED；别的区服的店 404；功能关着报 FEATURE_DISABLED', async () => {
