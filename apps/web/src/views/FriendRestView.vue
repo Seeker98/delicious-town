@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AcquireCard from '../components/acquire/AcquireCard.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
@@ -11,6 +12,7 @@ import TableGrid from '../components/TableGrid.vue';
 import FriendDuel from '../components/tower/FriendDuel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { GRADE_NAMES, PART_NAMES } from '../utils/labels';
@@ -23,6 +25,7 @@ const toast = useToastStore();
 const t = useT();
 const catalog = useCatalogStore();
 const session = useSessionStore();
+const restStore = useRestaurantStore();
 const restId = computed(() => Number(route.params.restId));
 const rest = ref<FriendRestDto | null>(null);
 const picked = ref<TableDto | null>(null);
@@ -114,6 +117,8 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       <GameImg :path="`door/${rest.door}`" :alt="t.friends.rest.door" fallback-icon="bi-door-closed" />
     </div>
     <HiphopCard :rest-id="restId" />
+    <!-- 收购（问题记录 421）：蟹老板、自己的店不显示 -->
+    <AcquireCard v-if="restStore.featureOn('acquire') && !rest.npc && rest.id !== mine" :rest-id="rest.id" />
     <div v-if="rest.icons.length > 0" class="mb-2">
       <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{
         catalog.icon(i.key)?.title ?? i.title
