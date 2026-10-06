@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    visual1006:
+      'Mobile layout fixes: the cookware details stats table now has one row per stat; locked reasons in Today’s activity sit on their own line; the shard exchange dropdown on the signature dish page no longer runs off screen and shows “Choose a dish” by default; the active bonus list and fragment rows wrap when needed; the duel result card shows the Elder’s translated name and scores use your language’s decimal separator',
     stealForget1006:
       'Failed lesson sneaking is now less harsh: instead of fully forgetting (lesson level × 3 + 1) random recipes, (lesson level × 2 + 1) random recipes drop 1 grade, and only Common ones are forgotten; for lessons of level 4 and up, the chance of also forgetting a lower-level signature dish drops from level × 5% to level × 2%',
     frTimes1006:

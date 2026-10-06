@@ -378,7 +378,13 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         :data-testid="`exchange-${r.level}`"
       >
         <span class="me-1">{{ t.mc.exchange.have(r.level, r.num) }}</span>
-        <select v-model="exPick[r.level]" class="form-select form-select-sm w-auto">
+        <!-- 没选时停在“选一道菜”；菜名长时下拉框收窄、不挤出屏幕（视觉第三轮） -->
+        <select
+          :value="exPick[r.level] ?? ''"
+          class="form-select form-select-sm dt-shrink"
+          style="flex-basis: 10rem"
+          @change="exPick[r.level] = ($event.target as HTMLSelectElement).value"
+        >
           <option value="">{{ t.mc.exchange.pick }}</option>
           <option v-for="m in r.options" :key="m.id" :value="String(m.id)">{{ nameOf(m.id) }}</option>
         </select>
@@ -412,11 +418,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         v-for="r in g.items"
         :key="r.mcId"
         :class="[
-          'd-flex align-items-center gap-1 border-bottom py-1 small',
+          'd-flex flex-wrap align-items-center justify-content-end gap-1 border-bottom py-1 small',
           { 'bg-success-subtle': g.key === 'learnable' },
         ]"
       >
-        <div class="flex-fill">
+        <!-- 西文“Descomponer”这类长按钮放不下时，按钮换到下一行（视觉第三轮） -->
+        <div class="flex-fill" style="min-width: 45%">
           <b>{{ nameOf(r.mcId) }}</b
           >{{ t.common.times }}{{ r.num }}
           <span class="text-muted">

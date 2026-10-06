@@ -125,6 +125,14 @@ describe('EquipDetailView', () => {
     expect(useToastStore().items.some((x) => x.text.includes('强化成功 +3'))).toBe(true);
   });
 
+  it('属性表每项属性一行，列为基础、强化、宝石、合计（视觉第三轮：六列横排在英法西文下超出屏幕）', async () => {
+    const { w } = await mountView();
+    const rows = w.findAll('[data-testid^="attr-row-"]');
+    expect(rows).toHaveLength(6);
+    const fire = w.get('[data-testid="attr-row-fire"]');
+    expect(fire.findAll('td').map((x) => x.text())).toEqual(['12', '3', '0', '15']);
+  });
+
   it('回退、打孔、镶嵌、摘除调用对应接口', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     const { w } = await mountView();

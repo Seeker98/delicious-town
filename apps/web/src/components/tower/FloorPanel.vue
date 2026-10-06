@@ -22,6 +22,8 @@ const toast = useToastStore();
 const t = useT();
 const busy = ref(false);
 const last = ref<DuelResultDto | null>(null);
+/** 最近一局打的是哪一层：结果卡片里对手写这一层的译名 */
+const lastFloor = ref<TowerFloorDto | null>(null);
 
 /** 不能挑战（test = 试打）的原因；空串表示可以 */
 function blockOf(f: TowerFloorDto, test: boolean): string {
@@ -41,6 +43,7 @@ async function go(f: TowerFloorDto, test: boolean) {
   busy.value = true;
   try {
     last.value = await endpoints.towerChallenge(f.floor, test);
+    lastFloor.value = f;
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, t.value.tower.challengeFailed), 'danger');
@@ -55,7 +58,7 @@ async function go(f: TowerFloorDto, test: boolean) {
     <div class="mb-2" data-testid="tower-head">
       {{ t.tower.floor.head(data.power, data.left, data.dailyTotal, data.tickets, formatNum(data.strength)) }}
     </div>
-    <DuelResult v-if="last" :result="last" />
+    <DuelResult v-if="last" :result="last" :them-name="lastFloor ? floorText(lastFloor).name : undefined" />
     <div
       v-for="f in data.floors"
       :key="f.floor"

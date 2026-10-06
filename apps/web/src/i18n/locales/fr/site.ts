@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    visual1006:
+      'Corrections de mise en page sur mobile : le tableau des caractéristiques du détail d’ustensile a maintenant une ligne par caractéristique ; les raisons de blocage dans l’activité du jour ont leur propre ligne ; la liste déroulante d’échange d’éclats des plats signature ne déborde plus et affiche « Choisir un plat » ; la liste des bonus actifs et les lignes de fragments passent à la ligne si besoin ; la carte de résultat du duel affiche le nom traduit de l’ancien et les scores avec la virgule décimale',
     stealForget1006:
       'Rater l’espionnage d’un cours est moins sévère : au lieu d’oublier complètement (niveau du cours × 3 + 1) recettes au hasard, (niveau du cours × 2 + 1) recettes au hasard perdent 1 niveau de qualité, et seules celles de qualité Commun sont oubliées ; pour les cours de niveau 4 et plus, le risque d’oublier aussi un plat signature de niveau inférieur passe de niveau × 5 % à niveau × 2 %',
     frTimes1006:

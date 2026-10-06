@@ -624,17 +624,17 @@ onBeforeUnmount(() => {
         <div
           v-for="b in rest.boosts"
           :key="`boost-${b.id}`"
-          class="d-flex align-items-center gap-1 border-bottom py-1"
+          class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
           data-testid="boost-row"
         >
           <i class="bi bi-megaphone"></i>
-          <b class="text-nowrap">{{ b.title }}</b>
+          <b>{{ b.title }}</b>
           <span class="flex-fill d-flex flex-wrap gap-1">
             <span v-for="i in b.items" :key="i.key" class="dt-chip dt-chip-good"
               >{{ t.activity.boosts[i.key] ?? i.key }} ×{{ i.factor }}</span
             >
           </span>
-          <span class="text-muted text-nowrap">{{ expiresText(b.endsAt) }}</span>
+          <span class="text-muted text-nowrap ms-auto">{{ expiresText(b.endsAt) }}</span>
         </div>
       </template>
       <template v-for="g in effectGroups" :key="g.type">
@@ -642,11 +642,11 @@ onBeforeUnmount(() => {
         <div
           v-for="e in g.items"
           :key="`${e.sourceType}-${e.sourceId}`"
-          class="d-flex align-items-center gap-1 border-bottom py-1"
+          class="d-flex flex-wrap align-items-center gap-1 border-bottom py-1"
           data-testid="effect-row"
         >
           <GameImg :path="`goods/${e.name}`" :alt="effectName(e, catalog)" fallback-icon="bi-award" />
-          <b class="text-nowrap">{{ effectName(e, catalog) }}</b>
+          <b>{{ effectName(e, catalog) }}</b>
           <span class="flex-fill d-flex flex-wrap gap-1">
             <span
               v-for="c in effectChips(e.effects)"
@@ -655,7 +655,7 @@ onBeforeUnmount(() => {
               >{{ c.text }}</span
             >
           </span>
-          <span class="text-muted text-nowrap">{{ effectExpires(e) }}</span>
+          <span class="text-muted text-nowrap ms-auto">{{ effectExpires(e) }}</span>
         </div>
       </template>
       <a
