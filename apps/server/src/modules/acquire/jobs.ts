@@ -4,8 +4,8 @@ import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
 import { payDividends } from './dividend';
 import { aggregateIncomeDay, INCOME_KEEP_DAYS, pruneIncomeDays } from './income';
-import { basePrice, type T } from './rules';
-import { priceWindow } from './state';
+import { basePrice, windowDays, type T } from './rules';
+import { firstIncomeDay, priceWindow } from './state';
 
 /** 交易、拦截、分红、打理记录留几天（设计 §3.1；同一对店 7 天、每天 3 次只看最近的，页面只看昨天的分红） */
 const LOG_KEEP_DAYS = 30;
@@ -42,6 +42,7 @@ export async function runAcquireDay(
   const today = gameDay(now);
   const income = await aggregateRecent(d, shardId, today);
   const w = priceWindow(today, t);
+  const days = windowDays(w, await firstIncomeDay(d.db), t);
   // 本区服要算身价的店和它们近几天的收入合计：一条查询，不用把店号列表传来传去
   const rows = await d.db
     .selectFrom('restaurant as r')
@@ -60,7 +61,12 @@ export async function runAcquireDay(
     await d.db
       .insertInto('acquire_state')
       .values(
-        part.map((r) => ({ rest_id: r.id, shard_id: shardId, base: basePrice(Number(r.coin), t), heat: 1 })),
+        part.map((r) => ({
+          rest_id: r.id,
+          shard_id: shardId,
+          base: basePrice(Number(r.coin), t, days),
+          heat: 1,
+        })),
       )
       .onConflict((oc) => oc.column('rest_id').doUpdateSet({ base: (eb) => eb.ref('excluded.base') }))
       .execute();

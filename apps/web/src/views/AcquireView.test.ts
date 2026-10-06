@@ -261,4 +261,16 @@ describe('AcquireView（收购 PR 3）', () => {
     await flushPromises();
     expect(endpoints.acquireRelease).toHaveBeenCalledWith(3);
   });
+
+  it('切到别的标签、新数据还没回来时不先闪“没有数据”（审查 Minor 5）', async () => {
+    let resolve!: (v: { items: AcquireBriefDto[] }) => void;
+    vi.mocked(endpoints.acquireMarket).mockReturnValue(new Promise((r) => (resolve = r)));
+    const w = await mountView();
+    await w.get('[data-testid="acquire-tab-market"]').trigger('click');
+    await flushPromises();
+    expect(w.text()).not.toContain('现在没有挂牌的店');
+    resolve({ items: [] });
+    await flushPromises();
+    expect(w.text()).toContain('现在没有挂牌的店');
+  });
 });

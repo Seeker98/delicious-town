@@ -93,4 +93,13 @@ describe('玩法攻略（问题记录 384）', () => {
     expect(w.text()).not.toContain('新手街只有');
     expect(w.text()).toContain('勤快');
   });
+
+  it('旧响应有 guide、但缺后来加的数（收购 PR 3 审查）：缺数的那条不显示，别的照常，页面不报错', async () => {
+    const { acquire: _drop, ...old } = guide;
+    vi.mocked(endpoints.openIndex).mockResolvedValue(index(old as OpenGuideNumbers));
+    const w = await mountGuide();
+    expect(w.text()).toContain('勤快');
+    expect(w.text()).toContain('新手街');
+    expect(w.text()).not.toContain('收购');
+  });
 });

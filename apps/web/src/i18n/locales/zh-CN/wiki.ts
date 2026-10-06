@@ -174,7 +174,7 @@ export default {
           (n: G) =>
             `${n.newbieExp.maxLevel} 级以下结算经验有额外加成（1 级 ${formatPct(n.newbieExp.rate, { sign: true })}，逐级减少），前期升级很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以后可以在“更多 → 收购”里收购别人的餐厅：付它的身价，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是税，名下最多 ${n.acquire.maxHoldings} 家。被收购的店每天给老板分红（前一天结算银币的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，满 ${n.acquire.minRounds} 轮才发），被收购的店每天替老板打理一次能得 ${n.acquire.tendFoods} 份食材，老板那天的分红再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收购了也可以按身价赎身，赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
+            `${n.acquire.minStar} 星以上的餐厅有身价、可以被收购：在“更多 → 收购”里付它的身价就能收下，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是税，名下最多 ${n.acquire.maxHoldings} 家。被收购的店每天给老板分红（前一天结算银币的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，满 ${n.acquire.minRounds} 轮才发），被收购的店每天替老板打理一次能得 ${n.acquire.tendFoods} 份食材，老板那天的分红再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收购了也可以按身价赎身，赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
         ],
       },
       {

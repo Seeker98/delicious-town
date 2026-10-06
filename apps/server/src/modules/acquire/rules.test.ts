@@ -13,6 +13,7 @@ import {
   priceOf,
   share,
   validListRate,
+  windowDays,
   type BuyFacts,
 } from './rules';
 
@@ -119,5 +120,21 @@ describe('分红（收购 PR 2）', () => {
     expect(capDividends([], 0)).toEqual([]);
     // 大数不丢精度
     expect(capDividends([4e15, 4e15], 4e15)).toEqual([2e15, 2e15]);
+  });
+});
+
+describe('身价、封顶的天数（收购 PR 3 审查：收入汇总从上线那天才开始攒）', () => {
+  const w = { from: '2026-10-03', to: '2026-10-10' };
+  it('窗口里有汇总数据的天数：最早的汇总日以后才算；最少 1 天，最多 priceDays', () => {
+    expect(windowDays(w, '2026-10-04', t)).toBe(6);
+    expect(windowDays(w, '2026-10-01', t)).toBe(7);
+    expect(windowDays(w, '2026-10-09', t)).toBe(1);
+    // 还一行汇总都没有：照 priceDays（合计是 0，反正是下限）
+    expect(windowDays(w, null, t)).toBe(7);
+  });
+  it('基础身价、分红封顶按实际天数平均', () => {
+    expect(basePrice(400_000, t, 2)).toBe(1_000_000);
+    expect(basePrice(400_000, t)).toBe(285_714);
+    expect(dividendCap(2_000_000, t, 2)).toBe(250_000);
   });
 });

@@ -87,4 +87,23 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     await flushPromises();
     expect(w.find('[data-testid="acquire-card"]').exists()).toBe(false);
   });
+
+  it('还没有身价（1 星）：不写身价，只写原因（审查 Minor 1）', async () => {
+    vi.mocked(endpoints.acquireRest).mockResolvedValue(
+      rest({ star: 1, acquireBlock: 'no_state', listedBlock: 'no_state' }),
+    );
+    const w = mount(AcquireCard, { props: { restId: 2 } });
+    await flushPromises();
+    expect(w.text()).not.toContain('身价 1,000,000');
+    expect(w.get('[data-testid="card-block"]').text()).toBe('这家店星级不够，还没有身价');
+  });
+
+  it('对方被封号：卡片上也用笼统说法，不透露封号（审查 Minor 3）', async () => {
+    vi.mocked(endpoints.acquireRest).mockResolvedValue(
+      rest({ acquireBlock: 'banned', listedBlock: 'banned' }),
+    );
+    const w = mount(AcquireCard, { props: { restId: 2 } });
+    await flushPromises();
+    expect(w.get('[data-testid="card-block"]').text()).toBe('暂时不能收购这家店');
+  });
 });

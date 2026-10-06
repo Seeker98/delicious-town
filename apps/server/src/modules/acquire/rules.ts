@@ -5,9 +5,22 @@ export type T = Tuning['acquire'];
 /** 热度保留 3 位小数 */
 const r3 = (x: number) => Math.round(x * 1000) / 1000;
 
-/** 基础身价（问题记录 421）：近 priceDays 天合计 / priceDays × priceMultiple，向下取整，不低于 minPrice */
-export function basePrice(sumCoin: number, t: T): number {
-  return Math.max(t.minPrice, Math.floor((sumCoin / t.priceDays) * t.priceMultiple));
+const DAY_MS = 86_400_000;
+const dayMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
+
+/**
+ * 窗口 [from, to) 里算平均用几天（收购 PR 3 审查）：收入汇总从收购上线那天才开始攒，最早的汇总日以前的天不算；
+ * 最少 1 天，最多 priceDays。first 是全表最早的汇总日（不分店：新店没数据的天照样按 0 算）；一行都没有时照 priceDays
+ */
+export function windowDays(w: { from: string; to: string }, first: string | null, t: T): number {
+  if (first === null) return t.priceDays;
+  const from = Math.max(dayMs(w.from), dayMs(first));
+  return Math.min(t.priceDays, Math.max(1, Math.round((dayMs(w.to) - from) / DAY_MS)));
+}
+
+/** 基础身价（问题记录 421）：近 days 天（默认 priceDays）合计 / days × priceMultiple，向下取整，不低于 minPrice */
+export function basePrice(sumCoin: number, t: T, days: number = t.priceDays): number {
+  return Math.max(t.minPrice, Math.floor((sumCoin / days) * t.priceMultiple));
 }
 
 /** 身价 = 基础身价 × 热度，取整 */
@@ -94,9 +107,9 @@ export function dividendOf(coin: number, rounds: number, tended: boolean, t: T):
   return Math.max(0, share(coin, t.dividendRate * (tended ? 1 + t.tendBonus : 1)));
 }
 
-/** 老板一天的分红上限：自己近 priceDays 天的日均结算银币 × dividendCapRate */
-export const dividendCap = (ownerCoinSum: number, t: T): number =>
-  share(Math.floor(ownerCoinSum / t.priceDays), t.dividendCapRate);
+/** 老板一天的分红上限：自己近 days 天（默认 priceDays）的日均结算银币 × dividendCapRate */
+export const dividendCap = (ownerCoinSum: number, t: T, days: number = t.priceDays): number =>
+  share(Math.floor(ownerCoinSum / days), t.dividendCapRate);
 
 /** 合计超过上限时每家按比例压（向下取整，合计不超过上限）；用 BigInt 乘，免得大数超过 2^53 */
 export function capDividends(raw: readonly number[], cap: number): number[] {

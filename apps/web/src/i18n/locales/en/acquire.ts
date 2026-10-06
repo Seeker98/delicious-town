@@ -50,7 +50,7 @@ const acquire: Messages['acquire'] = {
   release: 'Let go',
   rateOption: (pct, coin) => `${pct} (${coin} coins)`,
   confirmList: (name, pct, coin, got, days) =>
-    `List "${name}" at ${pct} of its valuation (${coin} coins)?\nIf someone buys it you get ${got} coins. The listing ends after ${days} days.`,
+    `List "${name}" at ${pct} of its valuation (${coin} coins)?\nAt the current valuation you would get about ${got} coins if someone buys it (valuations change daily). The listing ends after ${days} days.`,
   listDone: (name) => `"${name}" is listed`,
   unlistDone: (name) => `"${name}" is no longer listed`,
   confirmRelease: (name) => `Let go of "${name}"?\nNo refund; it becomes independent again.`,

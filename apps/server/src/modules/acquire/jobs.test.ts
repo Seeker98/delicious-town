@@ -70,6 +70,9 @@ describe('每天的收购任务（收购 PR 1）', () => {
     const r = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
     const today = gameDay(new Date());
     await income(r.restaurantId, addDays(today, -1), 7_000_000);
+    // 最早的汇总日按全表算（收购 PR 3 终审）：测试库共用，垫一行 30 天前的，窗口 7 天都算数
+    const old = await newRestaurant(t, { shardId });
+    await income(old.restaurantId, addDays(today, -30), 1);
     const s = await ensureState(t.db, shardId, r.restaurantId, a(), new Date());
     expect(s).toMatchObject({ base: 5_000_000, heat: 1, owner_rest_id: null });
     expect((await ensureState(t.db, shardId, r.restaurantId, a(), new Date())).base).toBe(5_000_000);

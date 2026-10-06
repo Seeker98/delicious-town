@@ -51,7 +51,7 @@ const acquire: Messages['acquire'] = {
   release: 'Lâcher',
   rateOption: (pct, coin) => `${pct} (${coin} pièces)`,
   confirmList: (name, pct, coin, got, days) =>
-    `Mettre « ${name} » en vente à ${pct} de sa valorisation (${coin} pièces) ?\nSi quelqu'un l'achète, vous recevez ${got} pièces. La vente se termine au bout de ${days} jours.`,
+    `Mettre « ${name} » en vente à ${pct} de sa valorisation (${coin} pièces) ?\nÀ la valorisation actuelle, vous recevriez environ ${got} pièces si quelqu'un l'achète (la valorisation change chaque jour). La vente se termine au bout de ${days} jours.`,
   listDone: (name) => `« ${name} » est en vente`,
   unlistDone: (name) => `« ${name} » n'est plus en vente`,
   confirmRelease: (name) => `Lâcher « ${name} » ?\nPas de remboursement ; il redevient indépendant.`,

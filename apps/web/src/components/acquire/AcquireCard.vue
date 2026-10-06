@@ -14,6 +14,8 @@ const props = defineProps<{ restId: number }>();
 const t = useT();
 const toast = useToastStore();
 const r = ref<AcquireRestDto | null>(null);
+/** 卡片上的原因：封号、关联账号都用同一句笼统的话，不让人从好友页看出谁被封、谁和自己共用设备（终审 Minor 3） */
+const reasonText = (block: string) => acquireReason(block === 'banned' ? 'linked' : block);
 const busy = ref(false);
 
 async function load() {
@@ -51,7 +53,8 @@ onMounted(load);
 <template>
   <div v-if="r" class="border rounded p-2 mb-2 small" data-testid="acquire-card">
     <div class="fw-bold">{{ t.acquire.cardTitle }}</div>
-    <div>
+    <!-- 还没有身价（不到 2 星）：服务端照样估了个下限价，不写，免得和“还没有身价”打架 -->
+    <div v-if="r.acquireBlock !== 'no_state'">
       {{ t.acquire.price(formatNum(r.price)) }} · {{ t.acquire.heat(formatNum(Number(r.heat.toFixed(2)))) }}
     </div>
     <div class="text-muted">{{ r.owner ? t.acquire.owner(r.owner.name) : t.acquire.free }}</div>
@@ -78,7 +81,7 @@ onMounted(load);
         {{ t.acquire.acquire }}
       </button>
       <span v-else-if="r.acquireBlock !== 'self'" class="text-muted" data-testid="card-block">{{
-        acquireReason(r.acquireBlock)
+        reasonText(r.acquireBlock)
       }}</span>
       <button
         v-if="r.listed && r.listedBlock === null"

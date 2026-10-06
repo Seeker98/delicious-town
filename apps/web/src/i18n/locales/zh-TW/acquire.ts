@@ -49,7 +49,7 @@ export default {
   release: '放手',
   rateOption: (pct: string, coin: string) => `${pct}（${coin} 銀幣）`,
   confirmList: (name: string, pct: string, coin: string, got: string, days: number) =>
-    `把「${name}」按身價的 ${pct} 掛牌（${coin} 銀幣）？\n別人買下時你得 ${got} 銀幣；${days} 天后自動撤下。`,
+    `把「${name}」按身價的 ${pct} 掛牌（${coin} 銀幣）？\n按現在的身價，別人買下時你約得 ${got} 銀幣（身價每天會變）；${days} 天后自動撤下。`,
   listDone: (name: string) => `「${name}」掛牌了`,
   unlistDone: (name: string) => `「${name}」撤牌了`,
   confirmRelease: (name: string) => `放手「${name}」？\n不退錢，店變回自主經營。`,

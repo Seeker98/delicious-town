@@ -4,8 +4,8 @@ import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { isBanned } from '../admin/ban';
 import { incomeSums } from './income';
-import { capDividends, dividendCap, dividendOf, type T } from './rules';
-import { priceWindow } from './state';
+import { capDividends, dividendCap, dividendOf, windowDays, type T } from './rules';
+import { firstIncomeDay, priceWindow } from './state';
 
 type Log = { error(obj: object, msg: string): void };
 const NO_LOG: Log = { error: () => {} };
@@ -122,10 +122,11 @@ export async function payDividends(
     byOwner.set(r.owner_rest_id!, list);
   }
   const w = priceWindow(today, t);
+  const days = windowDays(w, await firstIncomeDay(d.db), t);
   const ownerIncome = await incomeSums(d.db, [...byOwner.keys()], w.from, w.to);
   const stats = { owners: 0, rests: 0, coin: 0, failed: 0, linked };
   for (const [ownerId, list] of byOwner) {
-    const cap = dividendCap(ownerIncome.get(ownerId) ?? 0, t);
+    const cap = dividendCap(ownerIncome.get(ownerId) ?? 0, t, days);
     try {
       const paid = await runSystemOp(d, shardId, ownerId, { source: 'acquire.dividend', now }, async (op) => {
         // 锁着老板的店（分红只有这个任务写）：已经发过的店不再算，已经发给这个老板的从封顶里扣掉

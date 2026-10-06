@@ -48,7 +48,7 @@ export default {
   release: '放手',
   rateOption: (pct: string, coin: string) => `${pct}（${coin} 银币）`,
   confirmList: (name: string, pct: string, coin: string, got: string, days: number) =>
-    `把「${name}」按身价的 ${pct} 挂牌（${coin} 银币）？\n别人买下时你得 ${got} 银币；${days} 天后自动撤下。`,
+    `把「${name}」按身价的 ${pct} 挂牌（${coin} 银币）？\n按现在的身价，别人买下时你约得 ${got} 银币（身价每天会变）；${days} 天后自动撤下。`,
   listDone: (name: string) => `「${name}」挂牌了`,
   unlistDone: (name: string) => `「${name}」撤牌了`,
   confirmRelease: (name: string) => `放手「${name}」？\n不退钱，店变回自主经营。`,

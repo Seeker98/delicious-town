@@ -22,8 +22,16 @@ onMounted(async () => {
   }
 });
 type Item = string | ((n: OpenGuideNumbers) => string);
+/** 带数的一条算不出来（旧响应缺后来加的数，比如收购的几项）就跳过这一条，不让整页报错（收购 PR 3 审查） */
+function line(x: (n: OpenGuideNumbers) => string, n: OpenGuideNumbers): string[] {
+  try {
+    return [x(n)];
+  } catch {
+    return [];
+  }
+}
 const shown = (items: readonly Item[]) =>
-  items.flatMap((x) => (typeof x === 'string' ? [x] : nums.value ? [x(nums.value)] : []));
+  items.flatMap((x) => (typeof x === 'string' ? [x] : nums.value ? line(x, nums.value) : []));
 </script>
 
 <template>

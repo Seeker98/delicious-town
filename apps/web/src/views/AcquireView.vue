@@ -163,7 +163,11 @@ function pick(x: Tab) {
   tab.value = x;
   void router.replace({ query: { ...route.query, tab: x } });
 }
-watch(tab, () => void load());
+// 切标签时先回到“读取中”：新数据回来之前不显示上一个标签留下的“没有数据”
+watch(tab, () => {
+  loaded.value = false;
+  void load();
+});
 onMounted(load);
 </script>
 
