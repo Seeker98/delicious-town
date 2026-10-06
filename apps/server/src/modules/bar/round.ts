@@ -5,7 +5,7 @@ import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 
 /** 酒吧扩展的游戏（子项目 4C-3、最后一颗糖）；局面存在 bar_round，结束就删 */
-export type BarGame = 'devil' | 'memory' | 'darts' | 'nim' | 'spice';
+export type BarGame = 'devil' | 'memory' | 'darts' | 'nim' | 'spice' | 'deal';
 
 /** 本店这个游戏进行中的局；调用方已锁店 */
 export async function loadRound<T>(o: Op, game: BarGame): Promise<T | null> {

@@ -11,6 +11,8 @@ import {
   barNimStartBody,
   barNimTakeBody,
   barSpiceGuessBody,
+  barDealAnswerBody,
+  barDealBoxBody,
   barNumBody,
   barSlotBody,
 } from '@dt/shared';
@@ -49,6 +51,16 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
     );
     r.post('/bar/nim/first', async (req) =>
       okOp(await svc.nimFirst(restCtxOf(req), parse(barNimFirstBody, req.body))),
+    );
+    r.post('/bar/deal/start', async (req) => okOp(await svc.dealStart(restCtxOf(req))));
+    r.post('/bar/deal/pick', async (req) =>
+      okOp(await svc.dealPick(restCtxOf(req), parse(barDealBoxBody, req.body))),
+    );
+    r.post('/bar/deal/open', async (req) =>
+      okOp(await svc.dealOpen(restCtxOf(req), parse(barDealBoxBody, req.body))),
+    );
+    r.post('/bar/deal/answer', async (req) =>
+      okOp(await svc.dealAnswer(restCtxOf(req), parse(barDealAnswerBody, req.body))),
     );
     r.post('/bar/spice/start', async (req) => okOp(await svc.spiceStart(restCtxOf(req))));
     r.post('/bar/spice/guess', async (req) =>
