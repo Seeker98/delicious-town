@@ -255,6 +255,8 @@ describe('餐厅概况带上本区服关掉的功能（问题记录 248）', () 
     const u = await playerIn(shardId);
     await create(u.cookie, '关功能的店');
     const r = await call(ctx.app, 'GET', `${R}/overview`, { cookie: u.cookie });
-    expect(r.json.data.disabledFeatures).toEqual(['bar', 'yard']);
+    // 默认关的功能（收购 PR 1、2）也会列在里面，所以只看这几项
+    expect(r.json.data.disabledFeatures).toEqual(expect.arrayContaining(['bar', 'yard']));
+    expect(r.json.data.disabledFeatures).not.toContain('town');
   });
 });

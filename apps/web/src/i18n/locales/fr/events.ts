@@ -155,6 +155,20 @@ const events: Messages['events'] = {
         ? `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`
         : `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, puis K.-O.`,
     'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
+    // 收购（问题记录 421）
+    'acquire.bought': (p) =>
+      `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} « ${String(p.name ?? '')} »${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,
+    'acquire.taken': (p) =>
+      `« ${String(p.byName ?? '')} » a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces`,
+    'acquire.sold': (p) =>
+      `« ${String(p.to ?? '')} » vous a acheté « ${String(p.name ?? '')} » ; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+    'acquire.redeemed': (p) =>
+      `Vous avez racheté votre restaurant à « ${String(p.from ?? '')} » pour ${formatNum(n(p, 'price'))} pièces`,
+    'acquire.lost': (p) =>
+      `« ${String(p.name ?? '')} » s’est racheté ; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+    'acquire.released': (p) => `Vous avez libéré « ${String(p.name ?? '')} »`,
+    'acquire.freed': (p) =>
+      `« ${String(p.byName ?? '')} » a libéré votre restaurant ; vous êtes de nouveau indépendant`,
     'dine.started': (p) => `A commencé à manger gratis chez « ${String(p.hostName ?? '')} »`,
     'dine.ended': (p) => `A fini de manger gratis chez « ${String(p.hostName ?? '')} »`,
     'forum.post': (p) => `A publié le sujet n° ${n(p, 'postId')} sur le forum`,
