@@ -103,6 +103,8 @@ export interface CatalogMcDto {
   nutritive: number;
   coin: number;
   foods: number[];
+  /** 能鉴定出来（碎片兑换只能换这些，问题记录 415） */
+  appraisable: boolean;
 }
 
 export interface LooksDto {

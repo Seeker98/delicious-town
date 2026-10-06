@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    mcLearn1006:
+      'Apprendre les plats signature est plus facile : décomposez les fragments inutiles en éclats, et 3 éclats d’un niveau donnent 1 fragment de n’importe quel plat de ce niveau. Le Sceau Délice réussit maintenant 40 % du temps au lieu de 28 %, et le Sceau de jade du Dieu de la cuisine est à la boutique (300 000). L’expertise du Temple indique comment obtenir chaque objet, et le guide a une section « Comment apprendre les plats signature »',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

@@ -14,10 +14,34 @@ const overview: McOverviewDto = {
   remnants: [],
   current: null,
   saleRate: null,
+  fragments: [0, 0, 0, 0, 0, 0],
+  fragmentPerRemnant: 3,
   recipes: 2,
   tools: [
-    { goodsId: 163, num: 0, min: 1, max: 6, rate: 0.28, perNum: 1 },
-    { goodsId: 165, num: 5, min: 3, max: 5, rate: 1, perNum: 2 },
+    {
+      goodsId: 163,
+      num: 0,
+      min: 1,
+      max: 6,
+      rate: 0.28,
+      perNum: 1,
+      shopCoin: 90000,
+      blackDiamond: 8,
+      award: true,
+      champion: false,
+    },
+    {
+      goodsId: 165,
+      num: 5,
+      min: 3,
+      max: 5,
+      rate: 1,
+      perNum: 2,
+      shopCoin: null,
+      blackDiamond: 30,
+      award: true,
+      champion: true,
+    },
   ],
   cookies: 0,
   cookNums: [1],
@@ -82,5 +106,18 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
     expect(w.find('[data-testid="appraise-block"]').exists()).toBe(false);
     await w.find('[data-testid="tool"]').setValue('163');
     expect(w.find('[data-testid="appraise-block"]').text()).toContain('没有这个鉴定道具');
+  });
+
+  it('写出选中的鉴定道具怎么获得（问题记录 415）', async () => {
+    const w = mount(AppraisePanel);
+    await flushPromises();
+    // 默认选有货的 165：不在商店卖
+    expect(w.find('[data-testid="tool-how"]').text()).toBe(
+      '获得：黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
+    );
+    await w.find('[data-testid="tool"]').setValue(163);
+    expect(w.find('[data-testid="tool-how"]').text()).toBe(
+      '获得：银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励',
+    );
   });
 });

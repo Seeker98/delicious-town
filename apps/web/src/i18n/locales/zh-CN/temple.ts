@@ -24,6 +24,13 @@ export default {
     failed: '鉴定失败',
     title: '鉴定神秘食谱',
     rule: (n: number) => `每次消耗 1 个神秘食谱和 1 个鉴定道具，成功得到残卷。持有神秘食谱 ${n} 个。`,
+    /** 鉴定道具怎么获得（问题记录 415） */
+    how: (parts: string) => `获得：${parts}`,
+    howShop: (coin: string) => `银币商店 ${coin}`,
+    howBlack: (diamond: number) => `黑市 ${diamond} 钻`,
+    howAward: '厨塔和酒吧等的随机奖励',
+    howChampion: '昨日特色菜冠军',
+    howSep: '、',
     toolOption: (name: string, min: number, max: number, rate: number, have: number) =>
       `${name}（${min}~${max} 级，${rate}%，持有 ${have}）`,
     btn: (n: number) => `鉴定 ×${n}`,
