@@ -138,7 +138,7 @@ const bar: Messages['bar'] = {
     nextLevel: (n) => `Go to level ${n}`,
   },
   nim: {
-    rule: 'A pile of candies sits on the table. You and the bartender take turns taking 1 to k of them; whoever takes the last candy wins.',
+    rule: 'A pile of candies sits on the table. You and the bartender take turns taking a few at a time, up to the table’s limit; whoever takes the last candy wins.',
     tables: { novice: 'Beginner table', expert: 'Expert table' },
     tableLine: (cost, k, renown) =>
       `Entry: ${cost} ${plEn(cost, 'Mystery Voucher', 'Mystery Vouchers')}; take up to ${k} at a time; a win gives +${renown} renown and a prize`,

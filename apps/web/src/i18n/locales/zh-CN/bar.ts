@@ -134,7 +134,7 @@ export default {
   },
   /** 最后一颗糖（问题记录 427-1） */
   nim: {
-    rule: '桌上一堆糖果，你和调酒师轮流拿，每次拿 1~k 颗，拿到最后一颗的人赢。',
+    rule: '桌上一堆糖果，你和调酒师轮流拿，每次最多拿几颗看桌子，拿到最后一颗的人赢。',
     tables: { novice: '新手桌', expert: '高手桌' },
     tableLine: (cost: number, k: string, renown: number) =>
       `入场 ${cost} 张神秘礼券；每次最多拿 ${k} 颗；赢了声望 +${renown}，还有一份奖励`,

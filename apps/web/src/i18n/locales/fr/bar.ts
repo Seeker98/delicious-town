@@ -138,7 +138,7 @@ const bar: Messages['bar'] = {
     nextLevel: (n) => `Passer au niveau ${n}`,
   },
   nim: {
-    rule: 'Un tas de bonbons est posé sur la table. Le barman et vous en prenez à tour de rôle de 1 à k ; celui qui prend le dernier gagne.',
+    rule: 'Un tas de bonbons est posé sur la table. Le barman et vous en prenez à tour de rôle, jusqu’à la limite de la table ; celui qui prend le dernier gagne.',
     tables: { novice: 'Table débutants', expert: 'Table experts' },
     tableLine: (cost, k, renown) =>
       `Entrée : ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')} ; jusqu’à ${k} par tour ; une victoire donne +${renown} de renommée et un prix`,

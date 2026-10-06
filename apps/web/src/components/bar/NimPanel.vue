@@ -67,10 +67,13 @@ async function run(fn: () => Promise<NimDto>, fallback: string) {
     emit('reload');
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
-    if (roundGone(e)) {
-      reset();
-      emit('reload');
+    // 局面不在了，或者和服务端对不上（另一个标签页动过）：都按概览重新读，不停在旧画面（审查）
+    reset();
+    if (!roundGone(e)) {
+      local.value = props.data.nim.round;
+      shown.value = props.data.nim.round;
     }
+    emit('reload');
   } finally {
     busy.value = false;
   }

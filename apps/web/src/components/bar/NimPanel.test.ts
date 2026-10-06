@@ -152,4 +152,15 @@ describe('NimPanel', () => {
     expect(w.emitted('reload')).toHaveLength(1);
     expect(w.find('[data-testid="nim-start-novice"]').exists()).toBe(true);
   });
+
+  it('别的错误（另一个标签页已经开了局、局面变了）：也重新读局面，不停在旧画面', async () => {
+    vi.mocked(endpoints.barNimTake).mockRejectedValue(new ApiError('VALIDATION_FAILED', { reason: 'num' }));
+    const w = mount(NimPanel, { props: { data: withRound(round({ left: 12 })) } });
+    await w.get('[data-testid="nim-take-3"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('reload')).toHaveLength(1);
+    // 概览读回来的新局面能顶掉旧画面
+    await w.setProps({ data: withRound(round({ left: 4 })) });
+    expect(w.findAll('.dt-nim-candy')).toHaveLength(4);
+  });
 });
