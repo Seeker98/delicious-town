@@ -7,10 +7,7 @@ const town: Messages['town'] = {
   tabs: {
     news: 'Noticias',
     town: 'Vecinos',
-    exchange: 'Canjes',
     rank: 'Clasificaciones',
-    classroom: 'Aula',
-    fund: 'Fondo',
   },
   loadFailed: 'No se pudo cargar la plaza',
   restFailed: 'No se pudo cargar tu restaurante.',
@@ -37,7 +34,9 @@ const town: Messages['town'] = {
   },
   weatherTypes: ['', 'Soleado', 'Lluvia', 'Nieve y hielo', 'Viento, arena y niebla'],
   said: (name, talk, rewards) => `${name}: ${talk} Recibiste ${rewards}`,
-  mayorName: 'Alcalde',
+  mayorName: 'Alcalde Gran Olla',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: '¿Dónde está hoy el Chico hip-hop?',
   mayorFailed: 'No se pudo responder',
   talkFailed: 'No se pudo charlar',
   shook: (coin) => `Sacudiste ${coin} ${plEs(coin, 'moneda', 'monedas')}`,

@@ -233,7 +233,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
     <div class="d-flex align-items-center mb-2">
       <h5 class="mb-0 flex-fill">{{ t.mc.title }}</h5>
       <RouterLink to="/temple" class="small me-2">{{ t.mc.temple }}</RouterLink>
-      <RouterLink to="/town?tab=classroom" class="small">{{ t.mc.classroom }}</RouterLink>
+      <RouterLink to="/society/classroom" class="small">{{ t.mc.classroom }}</RouterLink>
     </div>
     <p v-if="o.star < 1" class="small text-muted">{{ t.mc.needStar }}</p>
 

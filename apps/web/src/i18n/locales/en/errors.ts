@@ -264,7 +264,7 @@ const errors: Messages['errors'] = {
     query_text: 'The search text is too long (max 20 characters)',
     cursor: 'Invalid page. Please refresh.',
     post_changed: 'The post changed. Refresh and try again.',
-    hiphop_not_out: "The Hip-hop Boy hasn't come out today. Ask the mayor later.",
+    hiphop_not_out: "The Hip-hop Boy hasn't come out today. Ask Mayor Big Pot at the Guild later.",
     pick_food: 'Choose an ingredient to tip',
     pick_count: 'Wrong number of ingredients guessed',
     bad_food: 'You can only guess level 1–2 ingredients',
@@ -428,7 +428,8 @@ const errors: Messages['errors'] = {
     mailLevel: (level) => `Level too low (level ${level} required)`,
     codeLevel: (level) => `This code requires level ${level}`,
     queryText: (max) => `Search text can be at most ${max} ${plEn(max, 'character', 'characters')}`,
-    hiphopNotOut: (hour) => `The Hip-hop Boy hasn't come out today. Ask the mayor after ${hour}:00.`,
+    hiphopNotOut: (hour) =>
+      `The Hip-hop Boy hasn't come out today. Ask Mayor Big Pot at the Guild after ${hour}:00.`,
     unknown: (code) => `Something went wrong (${code})`,
   },
   fallbackName: {

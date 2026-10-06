@@ -171,7 +171,7 @@ const wiki: Messages['wiki'] = {
       {
         title: 'Otras actividades',
         items: [
-          'Sacude la bolsa de Don Krab en la Plaza una vez al día, y mira si la Hermana Wen, el Hermano 13 y los demás tienen algo para ti.',
+          'Sacude la bolsa de Don Krab en la Plaza una vez al día, y mira si El Glotón y la Hermana Wen tienen algo para ti; el Hermano 13 del Gremio da una bocina cada día.',
           'Sube la Torre de chefs cada día: ganes o pierdas te da renombre. El anciano de la primera planta es de nivel 8; hacia el nivel 10 puedes ganarle (algo antes con el equipo de aprendiz).',
           (n) =>
             n.exchange.level === n.predict.level && n.exchange.days === n.predict.days

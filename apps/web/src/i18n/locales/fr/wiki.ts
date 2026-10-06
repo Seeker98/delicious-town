@@ -170,7 +170,7 @@ const wiki: Messages['wiki'] = {
       {
         title: 'Autres activités',
         items: [
-          'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Sœur Wen, Frère 13 et les autres ont quelque chose pour vous.',
+          'Secouez la bourse de M. Krab sur la Place une fois par jour, et voyez si Gros Mangeur et Sœur Wen ont quelque chose pour vous ; Frère 13, à la Guilde, donne un klaxon chaque jour.',
           'Faites la Tour des chefs chaque jour : vous gagnez de la renommée que vous gagniez ou perdiez. L’Ancien du premier étage est niveau 8 ; vous pouvez le battre vers le niveau 10 (un peu plus tôt avec l’équipement d’apprenti).',
           (n) =>
             n.exchange.level === n.predict.level && n.exchange.days === n.predict.days

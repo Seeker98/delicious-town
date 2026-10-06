@@ -58,7 +58,7 @@ const market: Messages['market'] = {
       'Don Krab ha vuelto a regatear. Bah.',
       'La hermana Wen reparte vales en la plaza cada día. Ve a charlar con ella.',
       'El Glotón puede comerse medio puesto mío en un día.',
-      'Date una vuelta por la plaza: si aciertas la pregunta del alcalde, hay premio.',
+      'Date una vuelta por el Gremio: si aciertas la pregunta del Alcalde Gran Olla, hay premio.',
       'Los ingredientes parecen caros, pero una buena receta se amortiza enseguida.',
       'Si aciertas la apuesta del mercado, los premios valen la pena.',
       'Con más amigos hay más ayuda y mejores negocios.',

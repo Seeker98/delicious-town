@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import NpcCard from '../NpcCard.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { AppraiseResultDto, McOverviewDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -70,6 +71,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.common.lo
 </script>
 
 <template>
+  <!-- 鉴定神秘食谱的 NPC 是饭老道（问题记录 443） -->
+  <NpcCard npc="fanDao" />
   <div v-if="o">
     <h6>{{ t.temple.appraise.title }}</h6>
     <p class="small text-muted">

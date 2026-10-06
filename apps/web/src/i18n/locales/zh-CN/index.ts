@@ -24,6 +24,7 @@ import market from './market';
 import mc from './mc';
 import misc from './misc';
 import nav from './nav';
+import npc from './npc';
 import news from './news';
 import predict from './predict';
 import rest from './rest';
@@ -45,6 +46,7 @@ const zhCN = {
   events,
   labels,
   nav,
+  npc,
   auth,
   account,
   home,

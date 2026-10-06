@@ -56,7 +56,7 @@ const market: Messages['market'] = {
       'Mr. Krab came haggling again. Hmph.',
       'Sister Wen hands out vouchers at the square every day. Go have a chat.',
       'Big Belly can eat half my stall in a day.',
-      "Drop by the square. Answer the mayor's question right and you get a prize.",
+      "Drop by the Guild: answer Mayor Big Pot's question right and you get a prize.",
       'Ingredients look pricey, but a good recipe pays for itself.',
       'Get the market guess right and the prizes are generous.',
       'More friends means more help, and better business.',

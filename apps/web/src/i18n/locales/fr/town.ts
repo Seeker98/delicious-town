@@ -7,10 +7,7 @@ const town: Messages['town'] = {
   tabs: {
     news: 'Nouvelles',
     town: 'Habitants',
-    exchange: 'Échanges',
     rank: 'Classements',
-    classroom: 'Classe',
-    fund: 'Fonds',
   },
   loadFailed: 'Impossible de charger la place',
   restFailed: 'Impossible de charger votre restaurant.',
@@ -37,7 +34,9 @@ const town: Messages['town'] = {
   },
   weatherTypes: ['', 'Ensoleillé', 'Pluie', 'Neige et glace', 'Vent, sable et brouillard'],
   said: (name, talk, rewards) => `${name} : ${talk} Vous recevez ${rewards}`,
-  mayorName: 'Maire',
+  mayorName: 'Maire Grosse Marmite',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: 'Où est le Garçon hip-hop aujourd’hui ?',
   mayorFailed: 'Impossible de répondre',
   talkFailed: 'Impossible de discuter',
   shook: (coin) => `Vous avez secoué ${coin} ${plFr(coin, 'pièce', 'pièces')}`,

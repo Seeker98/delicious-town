@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    npc1007:
+      'La salle de classe, les échanges et le Fonds de développement passent de la Place à la Guilde. Les échanges sont répartis entre trois PNJ : le Maire Grosse Marmite pour les objets rares (la question « où est le Garçon hip-hop » le suit), Frère 13 pour les bons d’ingrédients (sa discussion quotidienne avec klaxon aussi) et Carmen pour les bons d’ingrédients mystères ; Gary gère le Fonds de développement. Le taoïste Fan apparaît à l’expertise du temple et Kai sur la page des événements : touchez-les pour une autre réplique. La Place garde Nouvelles, Habitants et Classements',
     duel1007:
       'Les résultats du duel culinaire se lisent désormais comme l’avis des juges : chaque juge passe en revue ses critères (victoire écrasante, au coude-à-coude ou déroute totale) et donne un score ; le résultat montre aussi le plat spécial de chaque camp (« Pas de plat spécial » s’il n’y en a pas). Le juge Vieux Fauché est remplacé par Gordon, et Carmen par Joe',
     home1007:

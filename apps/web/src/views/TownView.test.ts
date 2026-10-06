@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { townData } from '../components/town/testData';
-import { useRestaurantStore } from '../stores/restaurant';
 import TownView from './TownView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -87,110 +86,33 @@ describe('TownView', () => {
     expect(router.currentRoute.value.query.tab).toBe('town');
   });
 
-  it('页面叫"广场"；标签是新闻、居民、兑换、排行、教室、发展基金（问题记录 122、240-2）', async () => {
+  it('页面叫"广场"；标签只剩新闻、居民、排行（问题记录 441：教室、兑换、发展基金搬到协会）', async () => {
     const w = await mountAt('/town?tab=news');
     expect(w.find('h5').text()).toBe('广场');
-    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual([
-      '新闻',
-      '居民',
-      '兑换',
-      '排行',
-      '教室',
-      '发展基金',
-    ]);
+    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '排行']);
   });
 
-  it('区服关掉发展基金：没有这个标签，存下的上次标签和 ?tab=fund 都退回新闻（240-2）', async () => {
-    useRestaurantStore().rest = { disabledFeatures: ['fund'] } as never;
-    localStorage.setItem('dt_town_tab', 'fund');
-    const w = await mountAt('/town');
-    expect(w.find('[data-testid="tab-fund"]').exists()).toBe(false);
-    expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
-    const q = await mountAt('/town?tab=fund');
-    expect(q.find('[data-testid="tab-news"]').classes()).toContain('active');
-    expect(endpoints.fund).not.toHaveBeenCalled();
-  });
-
-  it('餐厅数据后到、区服关了发展基金：当前标签退回新闻（backlog 基金）', async () => {
-    vi.mocked(endpoints.fund).mockResolvedValue({
-      days: 7,
-      returnRate: 0.9,
-      earlyRate: 0.7,
-      coin: 0,
-      deposit: null,
-      tiers: [],
+  it.each([
+    ['exchange', '/society/mayor'],
+    ['classroom', '/society/classroom'],
+    ['fund', '/society/fund'],
+  ])('旧链接 ?tab=%s 转到协会 %s（问题记录 441）', async (tab, to) => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/town', component: TownView },
+        { path: '/society/:npc', component: { template: '<div />' } },
+      ],
     });
-    // 餐厅数据一直没回来：手动设
-    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => {}));
-    localStorage.setItem('dt_town_tab', 'fund');
-    const w = await mountAt('/town');
-    expect(w.find('[data-testid="tab-fund"]').classes()).toContain('active');
-    useRestaurantStore().rest = { disabledFeatures: ['fund'] } as never;
+    await router.push(`/town?tab=${tab}`);
+    mount(TownView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(w.find('[data-testid="tab-fund"]').exists()).toBe(false);
+    expect(router.currentRoute.value.path).toBe(to);
+  });
+
+  it('上次停在已经搬走的标签（存的是 exchange）：打开新闻', async () => {
+    localStorage.setItem('dt_town_tab', 'exchange');
+    const w = await mountAt('/town');
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
-  });
-
-  it('停在发展基金、餐厅数据读失败：写读取失败、带重试，重试成功后显示基金（backlog 第 ⑤ 批）', async () => {
-    vi.mocked(endpoints.fund).mockResolvedValue({
-      days: 7,
-      returnRate: 0.9,
-      earlyRate: 0.7,
-      coin: 0,
-      deposit: null,
-      tiers: [],
-    });
-    vi.mocked(endpoints.overview).mockRejectedValueOnce(new Error('net'));
-    const w = await mountAt('/town?tab=fund');
-    expect(w.find('[data-testid="fund-rest-failed"]').exists()).toBe(true);
-    await w.get('[data-testid="fund-rest-retry"]').trigger('click');
-    await flushPromises();
-    expect(w.find('[data-testid="fund-rest-failed"]').exists()).toBe(false);
-    expect(endpoints.fund).toHaveBeenCalled();
-  });
-
-  it('直接从链接进发展基金、区服关了它：餐厅数据读到前不请求基金，也就不弹“功能关闭”（backlog ①a）', async () => {
-    vi.mocked(endpoints.overview).mockResolvedValue({ disabledFeatures: ['fund'] } as never);
-    const w = await mountAt('/town?tab=fund');
-    expect(endpoints.overview).toHaveBeenCalled();
-    expect(endpoints.fund).not.toHaveBeenCalled();
-    expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
-  });
-
-  it('停在发展基金、餐厅数据还没回来：不把居民面板显示在基金标签下（质量期 ⑤ 终审）', async () => {
-    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => {}));
-    const w = await mountAt('/town?tab=fund');
-    expect(w.find('[data-testid="tab-fund"]').classes()).toContain('active');
-    expect(w.find('[data-testid="mayor-row"]').exists()).toBe(false);
-    expect(w.find('[data-testid="fund-panel"]').exists()).toBe(false);
-  });
-
-  it('?tab=fund 打开发展基金（240-2）', async () => {
-    vi.mocked(endpoints.fund).mockResolvedValue({
-      days: 7,
-      returnRate: 0.9,
-      earlyRate: 0.7,
-      coin: 0,
-      deposit: null,
-      tiers: [],
-    });
-    const w = await mountAt('/town?tab=fund');
-    expect(w.find('[data-testid="fund-panel"]').exists()).toBe(true);
-  });
-
-  it('?tab=classroom 打开教室（问题记录 122：教室放进广场）', async () => {
-    vi.mocked(endpoints.lessons).mockResolvedValue({
-      items: [],
-      mine: null,
-      certs: [],
-      canForceClose: false,
-      forceCloseCoinPerLevel: 0,
-      forgetPerLevel: 3,
-    } as never);
-    vi.mocked(endpoints.mc).mockResolvedValue({ items: [] } as never);
-    const w = await mountAt('/town?tab=classroom');
-    expect(w.find('[data-testid="tab-classroom"]').classes()).toContain('active');
-    expect(w.find('[data-testid="classroom-panel"]').exists()).toBe(true);
-    expect(endpoints.lessons).toHaveBeenCalled();
   });
 });

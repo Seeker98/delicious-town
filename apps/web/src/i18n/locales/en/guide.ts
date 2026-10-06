@@ -54,7 +54,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Square: chat with Big Belly, Sister Wen and Brother 13 once a day each for gifts; answer the Mayor’s question; shake the money tree',
+      text: 'Square: chat with Big Belly and Sister Wen once a day each for gifts; shake Mr. Krab’s money bag',
+    },
+    {
+      to: '/society',
+      text: 'Guild: Brother 13 gives you a horn every day; tell Mayor Big Pot where the Hip-hop Boy is today',
     },
     {
       to: '/yard',

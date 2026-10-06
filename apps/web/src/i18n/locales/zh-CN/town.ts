@@ -1,8 +1,8 @@
-/** 广场：新闻、居民、兑换、排行、教室（问题记录 272） */
+/** 广场：新闻、居民、排行（问题记录 272；教室、兑换、发展基金在 441 搬到协会，文案还在这里） */
 export default {
   title: '广场',
   forum: '论坛',
-  tabs: { news: '新闻', town: '居民', exchange: '兑换', rank: '排行', classroom: '教室', fund: '发展基金' },
+  tabs: { news: '新闻', town: '居民', rank: '排行' },
   loadFailed: '读取广场失败',
   restFailed: '读取餐厅数据失败。',
   retry: '重试',
@@ -30,7 +30,9 @@ export default {
   /** 雷神锤能换的天气大类（下标 = 类型） */
   weatherTypes: ['', '晴类', '雨类', '雪冰类', '风沙雾类'],
   said: (name: string, talk: string, rewards: string) => `${name}：${talk} 获得 ${rewards}`,
-  mayorName: '镇长',
+  mayorName: '镇长大胃锅',
+  /** 镇长大胃锅页上的问答标题（问题记录 441） */
+  mayorAsk: '嘻哈男孩今天在哪',
   mayorFailed: '回答失败',
   talkFailed: '聊天失败',
   shook: (coin: string) => `摇到银币 ${coin}`,

@@ -27,6 +27,7 @@ import mail from './mail';
 import market from './market';
 import mc from './mc';
 import nav from './nav';
+import npc from './npc';
 import news from './news';
 import predict from './predict';
 import society from './society';
@@ -45,6 +46,7 @@ const messages: Messages = {
   events,
   labels,
   nav,
+  npc,
   auth,
   account,
   home,

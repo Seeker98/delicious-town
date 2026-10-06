@@ -257,7 +257,7 @@ export default {
     query_text: '搜尋詞太長了（最多 20 字）',
     cursor: '翻頁引數不對，請重新整理',
     post_changed: '帖子狀態變了，請重新整理後再試',
-    hiphop_not_out: '嘻哈男孩今天還沒出來，晚些時候再來問鎮長吧',
+    hiphop_not_out: '嘻哈男孩今天還沒出來，晚些時候再去協會問鎮長大胃鍋吧',
     pick_food: '請選擇要打賞的食材',
     pick_count: '競猜的食材數量不對',
     bad_food: '只能競猜 1~2 級食材',
@@ -422,7 +422,7 @@ export default {
     mailLevel: (level: string) => `等級不夠，需 ${level} 級`,
     codeLevel: (level: string) => `兌換碼要求 ${level} 級`,
     queryText: (max: string) => `搜尋詞最多 ${max} 字`,
-    hiphopNotOut: (hour: string) => `嘻哈男孩今天還沒出來，${hour} 點以後再來問鎮長吧`,
+    hiphopNotOut: (hour: string) => `嘻哈男孩今天還沒出來，${hour} 點以後再去協會問鎮長大胃鍋吧`,
     unknown: (code: string) => `出錯了（${code}）`,
   },
   /** 名字查不到時的佔位 */

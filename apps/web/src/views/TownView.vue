@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { TownDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import ClassroomPanel from '../components/town/ClassroomPanel.vue';
-import ExchangePanel from '../components/town/ExchangePanel.vue';
-import FundPanel from '../components/town/FundPanel.vue';
 import NewsPanel from '../components/town/NewsPanel.vue';
 import RankPanel from '../components/town/RankPanel.vue';
 import TownPanel from '../components/town/TownPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
-import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 'town' 是"居民"标签，键名沿用旧的，免得已存的上次标签和旧链接失效 */
-type Tab = 'news' | 'town' | 'exchange' | 'rank' | 'classroom' | 'fund';
+type Tab = 'news' | 'town' | 'rank';
 const KEY = 'dt_town_tab';
-/** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室也在这里（问题记录 122）；发展基金按区服开关显示（240-2） */
-const ALL_TABS: readonly Tab[] = ['news', 'town', 'exchange', 'rank', 'classroom', 'fund'];
-const restaurant = useRestaurantStore();
-const TABS = computed(() => ALL_TABS.filter((x) => x !== 'fund' || restaurant.featureOn('fund')));
-const isTab = (v: unknown): v is Tab => TABS.value.includes(v as Tab);
+/** 页面叫"广场"，避免和游戏名"美味小镇"混淆；教室、兑换、发展基金搬到了协会（问题记录 441） */
+const TABS: readonly Tab[] = ['news', 'town', 'rank'];
+const isTab = (v: unknown): v is Tab => TABS.includes(v as Tab);
+/** 搬走的标签：旧链接、书签转到协会对应的页 */
+const MOVED: Record<string, string> = {
+  exchange: '/society/mayor',
+  classroom: '/society/classroom',
+  fund: '/society/fund',
+};
 /** 链接里指定了标签（首页新闻的"更多"带 ?tab=news）就用它，否则用上次停留的（问题记录 106） */
 function initialTab(query: unknown): Tab {
   if (isTab(query)) return query;
@@ -40,10 +40,8 @@ const catalog = useCatalogStore();
 const route = useRoute();
 const router = useRouter();
 const tab = ref<Tab>(initialTab(route.query.tab));
-// 餐厅数据后到、区服关了某个标签的功能时（发展基金），当前标签退回新闻
-watch(TABS, (list) => {
-  if (!list.includes(tab.value)) tab.value = 'news';
-});
+const moved = typeof route.query.tab === 'string' ? MOVED[route.query.tab] : undefined;
+if (moved) void router.replace(moved);
 const data = ref<TownDto | null>(null);
 
 /** 读取序号：几次读取同时进行时只采用最新一次的结果 */
@@ -68,19 +66,10 @@ watch(tab, (v) => {
     void router.replace({ query: { ...route.query, tab: v } });
   void load();
 });
-/** 餐厅数据读失败（backlog 第 ⑤ 批）：停在发展基金时原来整块空白，要刷新页面 */
-const restFailed = ref(false);
-function loadRest() {
-  restFailed.value = false;
-  restaurant.refresh().catch(() => {
-    restFailed.value = true;
-  });
-}
 onMounted(() => {
+  if (moved) return;
   void catalog.load();
   void load();
-  // 直接从链接进来时还没有餐厅数据：读一次，才知道区服关没关发展基金（backlog ①a）
-  if (!restaurant.rest) loadRest();
 });
 </script>
 
@@ -103,22 +92,7 @@ onMounted(() => {
       >
     </li>
   </ul>
-  <ExchangePanel v-if="tab === 'exchange'" />
-  <ClassroomPanel v-else-if="tab === 'classroom'" />
-  <!-- 餐厅数据读到、确认区服开着发展基金后再挂：不然关掉时也会先请求一次、弹“功能关闭”（backlog ①a） -->
-  <FundPanel v-else-if="tab === 'fund' && restaurant.rest" />
-  <div v-else-if="tab === 'fund' && restFailed" class="small text-muted" data-testid="fund-rest-failed">
-    {{ t.town.restFailed }}
-    <button
-      type="button"
-      class="btn btn-link btn-sm p-0 align-baseline"
-      data-testid="fund-rest-retry"
-      @click="loadRest"
-    >
-      {{ t.town.retry }}
-    </button>
-  </div>
-  <RankPanel v-else-if="tab === 'rank'" />
+  <RankPanel v-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />
     <TownPanel v-else-if="tab === 'town'" :data="data" @reload="load" />

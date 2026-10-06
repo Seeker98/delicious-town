@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import NpcCard from '../components/NpcCard.vue';
 import { computed, onMounted, ref } from 'vue';
 import type { ActivityDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -79,6 +80,8 @@ const isSignin = (a: ActivityDto) => a.kind === 'goals' && a.def.goals.every((g)
 
 <template>
   <h5>{{ t.activity.title }}</h5>
+  <!-- 限时活动的 NPC 是小凯（问题记录 443） -->
+  <NpcCard npc="xiaoKai" />
   <div v-if="loaded && items.length === 0" class="text-muted">{{ t.activity.none }}</div>
   <ActivityStrip
     v-if="ordered.length > 1"

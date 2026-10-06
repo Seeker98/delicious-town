@@ -235,8 +235,8 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('./views/ActivitiesView.vue'),
     meta: { needRestaurant: true },
   },
-  // 教室并进广场（问题记录 122）：旧地址跳到广场的教室标签
-  { path: '/classroom', redirect: { path: '/town', query: { tab: 'classroom' } } },
+  // 教室先并进广场（问题记录 122），后来搬到协会（问题记录 441）：旧地址跳到协会的教室
+  { path: '/classroom', redirect: '/society/classroom' },
   {
     path: '/cookbooks',
     name: 'cookbooks',
@@ -301,6 +301,14 @@ export const routes: RouteRecordRaw[] = [
     path: '/society',
     name: 'society',
     component: () => import('./views/SocietyView.vue'),
+    meta: { needRestaurant: true },
+  },
+  // 从广场搬过来的教室、三位兑换 NPC、发展基金（问题记录 441、443）
+  {
+    path: '/society/:npc(classroom|mayor|bro13|carmen|fund)',
+    name: 'society-npc',
+    component: () => import('./views/SocietyNpcView.vue'),
+    props: true,
     meta: { needRestaurant: true },
   },
   {

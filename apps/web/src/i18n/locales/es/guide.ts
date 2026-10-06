@@ -58,7 +58,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Plaza: charla una vez al día con El Glotón, la Hermana Wen y el Hermano 13 para recibir regalos; responde la pregunta del Alcalde; sacude el árbol del dinero',
+      text: 'Plaza: charla una vez al día con El Glotón y la Hermana Wen para recibir regalos; sacude la bolsa de Don Krab',
+    },
+    {
+      to: '/society',
+      text: 'Gremio: el Hermano 13 te da una bocina cada día; dile al Alcalde Gran Olla dónde está hoy el Chico hip-hop',
     },
     {
       to: '/yard',

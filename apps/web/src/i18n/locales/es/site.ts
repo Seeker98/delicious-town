@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    npc1007:
+      'El Aula, los canjes y el Fondo de Desarrollo pasan de la Plaza al Gremio. Los canjes se reparten entre tres NPC: el Alcalde Gran Olla cambia objetos raros (la pregunta de dónde está el Chico hip-hop se va con él), el Hermano 13 los vales de ingredientes (también su charla diaria con la bocina) y Carmen los vales de ingredientes misteriosos; Gary lleva el Fondo de Desarrollo. El Taoísta Fan aparece en la tasación del templo y Kai en la página de eventos temporales: tócalos para otra frase. La Plaza conserva Noticias, Vecinos y Clasificaciones',
     duel1007:
       'Los resultados del duelo de cocina ahora son comentarios de los jueces: cada juez repasa los aspectos que valora (victoria aplastante, muy parejo o derrota total) y da un marcador; el resultado también muestra el plato especial de cada lado («Sin plato especial» si no hay). El juez Viejo Pobretón pasa a ser Gordon, y Carmen pasa a ser Joe',
     home1007:

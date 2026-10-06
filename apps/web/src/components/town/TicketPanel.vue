@@ -7,7 +7,8 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 
-const props = defineProps<{ data: TownExchangeDto }>();
+/** part：只显示 N 级券（13 哥）或神秘券（卡门，问题记录 441）；不传两样都显示 */
+const props = defineProps<{ data: TownExchangeDto; part?: 'level' | 'mystery' }>();
 const emit = defineEmits<{ reload: [] }>();
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -56,55 +57,59 @@ async function run(fn: () => Promise<TicketResultDto>) {
 
 <template>
   <div class="small">
-    <div class="d-flex align-items-center gap-1 mb-1">
-      <select v-model.number="level" class="form-select form-select-sm w-auto" data-testid="lt-level">
-        <option v-for="l in [1, 2, 3, 4, 5]" :key="l" :value="l">{{ t.town.ticket.level(l) }}</option>
-      </select>
-      <span data-testid="lt-have">{{ t.town.ticket.have(have) }}</span>
-    </div>
-    <div class="text-muted mb-1">{{ t.town.ticket.rule }}</div>
-    <div class="dt-pick-grid">
-      <label v-for="id in foods" :key="id" class="dt-pick">
-        <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
-        <input
-          v-model.number="nums[id]"
-          type="number"
-          min="0"
-          placeholder="0"
-          class="form-control form-control-sm"
-          :data-testid="`lt-num-${id}`"
-        />
-      </label>
-    </div>
-    <button
-      class="btn btn-sm btn-primary mt-1"
-      :disabled="busy || total === 0 || total > have"
-      data-testid="lt-go"
-      @click="run(() => endpoints.townLevelTicket(level, picks))"
-    >
-      {{ t.town.ticket.go(total) }}
-    </button>
-
-    <div class="d-flex align-items-center gap-1 mt-3">
-      <b>{{ t.town.ticket.mystery }}</b>
-      <span>{{ t.town.ticket.have(data.mysteryTickets) }}</span>
-    </div>
-    <div class="d-flex align-items-center gap-1 mt-1">
-      <!-- 下拉框占剩下的宽度、可以收窄：法文食材名长，原来把右边的按钮挤出屏幕（质量期 ④） -->
-      <select v-model="mystery" class="form-select form-select-sm dt-shrink" data-testid="mt-food">
-        <option value="">{{ t.town.ticket.pickMystery }}</option>
-        <option v-for="id in data.mysteryFoods" :key="id" :value="String(id)">
-          {{ catalog.foodName(id) }}
-        </option>
-      </select>
+    <template v-if="part !== 'mystery'">
+      <div class="d-flex align-items-center gap-1 mb-1">
+        <select v-model.number="level" class="form-select form-select-sm w-auto" data-testid="lt-level">
+          <option v-for="l in [1, 2, 3, 4, 5]" :key="l" :value="l">{{ t.town.ticket.level(l) }}</option>
+        </select>
+        <span data-testid="lt-have">{{ t.town.ticket.have(have) }}</span>
+      </div>
+      <div class="text-muted mb-1">{{ t.town.ticket.rule }}</div>
+      <div class="dt-pick-grid">
+        <label v-for="id in foods" :key="id" class="dt-pick">
+          <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
+          <input
+            v-model.number="nums[id]"
+            type="number"
+            min="0"
+            placeholder="0"
+            class="form-control form-control-sm"
+            :data-testid="`lt-num-${id}`"
+          />
+        </label>
+      </div>
       <button
-        class="btn btn-sm btn-primary flex-shrink-0"
-        :disabled="busy || data.mysteryTickets === 0 || mystery === ''"
-        data-testid="mt-go"
-        @click="run(() => endpoints.townMysteryTicket(Number(mystery)))"
+        class="btn btn-sm btn-primary mt-1"
+        :disabled="busy || total === 0 || total > have"
+        data-testid="lt-go"
+        @click="run(() => endpoints.townLevelTicket(level, picks))"
       >
-        {{ t.town.ticket.btn }}
+        {{ t.town.ticket.go(total) }}
       </button>
-    </div>
+    </template>
+
+    <template v-if="part !== 'level'">
+      <div :class="['d-flex align-items-center gap-1', part === 'mystery' ? '' : 'mt-3']">
+        <b>{{ t.town.ticket.mystery }}</b>
+        <span>{{ t.town.ticket.have(data.mysteryTickets) }}</span>
+      </div>
+      <div class="d-flex align-items-center gap-1 mt-1">
+        <!-- 下拉框占剩下的宽度、可以收窄：法文食材名长，原来把右边的按钮挤出屏幕（质量期 ④） -->
+        <select v-model="mystery" class="form-select form-select-sm dt-shrink" data-testid="mt-food">
+          <option value="">{{ t.town.ticket.pickMystery }}</option>
+          <option v-for="id in data.mysteryFoods" :key="id" :value="String(id)">
+            {{ catalog.foodName(id) }}
+          </option>
+        </select>
+        <button
+          class="btn btn-sm btn-primary flex-shrink-0"
+          :disabled="busy || data.mysteryTickets === 0 || mystery === ''"
+          data-testid="mt-go"
+          @click="run(() => endpoints.townMysteryTicket(Number(mystery)))"
+        >
+          {{ t.town.ticket.btn }}
+        </button>
+      </div>
+    </template>
   </div>
 </template>

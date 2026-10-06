@@ -58,7 +58,7 @@ const market: Messages['market'] = {
       'M. Krab est encore venu marchander. Pff.',
       'Sœur Wen offre des bons sur la place tous les jours. Allez discuter avec elle.',
       'Le Gros Mangeur peut dévorer la moitié de mon étal en une journée.',
-      'Passez sur la place : répondez bien à la question du maire et vous gagnez un prix.',
+      'Passez à la Guilde : répondez bien à la question du Maire Grosse Marmite et vous gagnez un prix.',
       'Les ingrédients semblent chers, mais une bonne recette est vite rentabilisée.',
       'Un bon pronostic au marché rapporte de beaux prix.',
       'Plus d’amis, c’est plus d’entraide et de meilleures affaires.',

@@ -58,7 +58,11 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: "Place : discutez une fois par jour avec Gros Mangeur, Sœur Wen et Frère 13 pour des cadeaux ; répondez à la question du Maire ; secouez l'arbre à sous",
+      text: 'Place : discutez une fois par jour avec Gros Mangeur et Sœur Wen pour des cadeaux ; secouez la bourse de M. Krab',
+    },
+    {
+      to: '/society',
+      text: 'Guilde : Frère 13 vous donne un klaxon chaque jour ; dites au Maire Grosse Marmite où est le Garçon hip-hop aujourd’hui',
     },
     {
       to: '/yard',

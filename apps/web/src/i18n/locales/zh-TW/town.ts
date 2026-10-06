@@ -1,9 +1,9 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 廣場：新聞、居民、兌換、排行、教室（問題記錄 272） */
+/** 廣場：新聞、居民、排行（問題記錄 272；教室、兌換、發展基金在 441 搬到協會，文案還在這裡） */
 export default {
   title: '廣場',
   forum: '論壇',
-  tabs: { news: '新聞', town: '居民', exchange: '兌換', rank: '排行', classroom: '教室', fund: '發展基金' },
+  tabs: { news: '新聞', town: '居民', rank: '排行' },
   loadFailed: '讀取廣場失敗',
   restFailed: '讀取餐廳資料失敗。',
   retry: '重試',
@@ -31,7 +31,9 @@ export default {
   /** 雷神錘能換的天氣大類（下標 = 類型） */
   weatherTypes: ['', '晴類', '雨類', '雪冰類', '風沙霧類'],
   said: (name: string, talk: string, rewards: string) => `${name}：${talk} 獲得 ${rewards}`,
-  mayorName: '鎮長',
+  mayorName: '鎮長大胃鍋',
+  /** 鎮長大胃鍋頁上的問答標題（問題記錄 441） */
+  mayorAsk: '嘻哈男孩今天在哪',
   mayorFailed: '回答失敗',
   talkFailed: '聊天失敗',
   shook: (coin: string) => `搖到銀幣 ${coin}`,

@@ -146,10 +146,10 @@ describe('小镇错误文案（4E-1）', () => {
     expect(errorText('INVALID_STATE', { reason: 'query_text', max: 10 })).toBe('搜索词最多 10 字');
     // 嘻哈男孩出来的钟点按区服设置（问题记录 333）；没带时间时写晚些时候
     expect(errorText('INVALID_STATE', { reason: 'hiphop_not_out', hour: 10 })).toBe(
-      '嘻哈男孩今天还没出来，10 点以后再来问镇长吧',
+      '嘻哈男孩今天还没出来，10 点以后再去协会问镇长大胃锅吧',
     );
     expect(errorText('INVALID_STATE', { reason: 'hiphop_not_out' })).toBe(
-      '嘻哈男孩今天还没出来，晚些时候再来问镇长吧',
+      '嘻哈男孩今天还没出来，晚些时候再去协会问镇长大胃锅吧',
     );
   });
 });
