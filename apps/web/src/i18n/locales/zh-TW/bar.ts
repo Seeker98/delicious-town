@@ -1,5 +1,5 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-/** 酒吧：七個小遊戲和雯姐（問題記錄 272） */
+/** 酒吧：八個小遊戲和雯姐（問題記錄 272、427） */
 export default {
   title: '酒吧',
   tabs: {
@@ -10,6 +10,7 @@ export default {
     devil: '魔鬼辣杯',
     memory: '記憶調酒',
     darts: '飛鏢',
+    nim: '最後一顆糖',
   },
   loadFailed: '讀取酒吧失敗',
   wallet: (tickets: number, krab: number) => `神秘禮券 ${tickets}；蟹幣 ${krab}`,
@@ -131,6 +132,31 @@ export default {
     picked: (n: number, total: number, list: string) => `已選 ${n}/${total}：${list}`,
     undo: '撤回',
     nextLevel: (n: number) => `繼續第 ${n} 關`,
+  },
+  /** 最後一顆糖（問題記錄 427-1） */
+  nim: {
+    rule: '桌上一堆糖果，你和調酒師輪流拿，每次拿 1~k 顆，拿到最後一顆的人贏。',
+    tables: { novice: '新手桌', expert: '高手桌' },
+    tableLine: (cost: number, k: string, renown: number) =>
+      `入場 ${cost} 張神秘禮券；每次最多拿 ${k} 顆；贏了聲望 +${renown}，還有一份獎勵`,
+    noviceHint: '你自己選先後，調酒師有時會走神',
+    expertHint: '開局拋硬幣定誰先拿，調酒師從不失手',
+    left: (n: number) => `今天還能玩 ${n} 局`,
+    noLeft: '今天的局數用完了',
+    noTickets: '神秘禮券不夠',
+    start: '坐這桌',
+    status: (left: number, k: number) => `還剩 ${left} 顆，每次拿 1~${k} 顆`,
+    meFirst: '我先拿',
+    bartenderFirst: '讓調酒師先拿',
+    coinMe: '拋硬幣：你先拿',
+    coinBartender: '拋硬幣：調酒師先拿',
+    take: (n: number) => `拿 ${n}`,
+    bartenderTook: (n: number) => `調酒師拿了 ${n} 顆`,
+    logMe: (n: number) => `你 ${n}`,
+    logBartender: (n: number) => `調酒師 ${n}`,
+    win: (renown: number) => `你拿到了最後一顆！聲望 +${renown}`,
+    lose: '調酒師拿到了最後一顆，你輸了',
+    failed: '操作失敗',
   },
   darts: {
     aimFailed: '瞄準失敗',

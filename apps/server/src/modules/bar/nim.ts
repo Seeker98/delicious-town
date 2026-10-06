@@ -104,7 +104,7 @@ export async function nimStart(o: Op, table: NimTable): Promise<NimDto> {
 export async function nimFirst(o: Op, who: 'me' | 'bartender'): Promise<NimDto> {
   const s = await loadRound<NimState>(o, 'nim');
   if (!s) throw invalidState('no_round');
-  if (s.started) throw invalidState('started');
+  if (s.started) throw invalidState('nim_started');
   s.started = true;
   if (who === 'bartender') bartender(o, s);
   await saveRound(o, 'nim', s);

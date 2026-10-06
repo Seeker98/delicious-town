@@ -154,6 +154,8 @@ const events: Messages['events'] = {
         ? `Chile del Diablo: aguantaste ${n(p, 'survived')} ${plEs(n(p, 'survived'), 'vaso', 'vasos')} y ganaste`
         : `Chile del Diablo: aguantaste ${n(p, 'survived')} ${plEs(n(p, 'survived'), 'vaso', 'vasos')} y caíste`,
     'bar.memory': (p) => `Cóctel Memoria nivel ${n(p, 'level')}: ${p.correct ? 'acertaste' : 'fallaste'}`,
+    'bar.nim': (p) =>
+      `El último caramelo (mesa de ${p.table === 'expert' ? 'expertos' : 'principiantes'}): ${p.result === 'win' ? 'ganaste' : 'perdiste'}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Compraste' : 'Adquiriste'} «${String(p.name ?? '')}»${p.way === 'listed' ? ' (en venta)' : ''} por ${formatNum(n(p, 'price'))} monedas`,

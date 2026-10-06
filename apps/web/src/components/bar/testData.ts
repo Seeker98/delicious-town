@@ -21,5 +21,14 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
   devil: { stakes: [1, 5, 10, 20], round: null },
   memory: { cost: 1, played: 0, max: 20, flashMs: 600, gapMs: 200, round: null },
   darts: { cost: 2, played: 0, max: 20, round: null },
+  nim: {
+    played: 0,
+    max: 10,
+    tables: {
+      novice: { cost: 1, k: [3, 3], pile: [10, 20], renown: 1, awardLevel: 2, first: 'choose' },
+      expert: { cost: 2, k: [3, 5], pile: [20, 40], renown: 3, awardLevel: 5, first: 'coin' },
+    },
+    round: null,
+  },
   ...patch,
 });

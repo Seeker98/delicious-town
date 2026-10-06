@@ -109,7 +109,7 @@ describe('最后一颗糖：开局（设计 §4）', () => {
     });
     await expect(first(a, 'me')).rejects.toMatchObject({
       code: 'INVALID_STATE',
-      params: { reason: 'started' },
+      params: { reason: 'nim_started' },
     });
   });
 
@@ -140,7 +140,7 @@ describe('最后一颗糖：先后和拿', () => {
     expect(r).toMatchObject({ needFirst: false, left: 8, log: [{ who: 'bartender', take: 2 }] });
     await expect(first(a, 'me')).rejects.toMatchObject({
       code: 'INVALID_STATE',
-      params: { reason: 'started' },
+      params: { reason: 'nim_started' },
     });
   });
 

@@ -155,6 +155,8 @@ const events: Messages['events'] = {
         ? `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`
         : `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, puis K.-O.`,
     'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
+    'bar.nim': (p) =>
+      `Le dernier bonbon (table ${p.table === 'expert' ? 'experts' : 'débutants'}) : ${p.result === 'win' ? 'gagné' : 'perdu'}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} « ${String(p.name ?? '')} »${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,

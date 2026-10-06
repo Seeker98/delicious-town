@@ -332,6 +332,8 @@ export default {
     no_round: '這一局已經結束了，請重新開局',
     not_passed: '這一關還沒答對，不能繼續',
     no_aim: '先瞄準再投擲',
+    need_first: '先選誰先拿',
+    nim_started: '這一局已經開始了，不能再選先後',
     krab_broke: '蟹老闆的錢袋空空如也',
     no_bless: '今天還沒有人許願',
     foods_not_allowed: '這個食材不能換',

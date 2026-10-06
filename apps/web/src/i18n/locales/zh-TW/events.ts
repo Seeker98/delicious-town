@@ -146,6 +146,8 @@ export default {
         ? `魔鬼辣杯撐過 ${n(p, 'survived')} 杯，贏了`
         : `魔鬼辣杯撐過 ${n(p, 'survived')} 杯，倒下了`,
     'bar.memory': (p) => `記憶調酒第 ${n(p, 'level')} 關${p.correct ? '調對了' : '沒調對'}`,
+    'bar.nim': (p) =>
+      `最後一顆糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '贏了' : '輸了'}`,
     // 收購（問題記錄 421）
     'acquire.bought': (p) =>
       `花 ${formatNum(n(p, 'price'))} 銀幣${p.way === 'listed' ? '買下了掛牌的' : '收購了'}「${String(p.name ?? '')}」`,

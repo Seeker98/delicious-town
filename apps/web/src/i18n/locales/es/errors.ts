@@ -342,6 +342,8 @@ const errors: Messages['errors'] = {
     no_round: 'Esta partida terminó. Empieza una nueva.',
     not_passed: 'Todavía no has superado esta fase',
     no_aim: 'Apunta antes de lanzar',
+    need_first: 'Elige quién empieza',
+    nim_started: 'La partida ya ha empezado; ya no puedes elegir quién empieza',
     krab_broke: 'La bolsa de dinero de Don Krab está vacía',
     no_bless: 'Hoy todavía nadie ha pedido un deseo',
     foods_not_allowed: 'Este ingrediente no se puede canjear',

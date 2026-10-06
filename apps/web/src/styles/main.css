@@ -811,6 +811,18 @@ details.dt-card > summary {
   --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23e8936b'/%3e%3c/svg%3e");
 }
 /* ---------- 酒吧扩展（子项目 4C-3） ---------- */
+/* 最后一颗糖（问题记录 427-1）：糖果每行 10 颗 */
+.dt-nim-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  max-width: 320px;
+}
+.dt-nim-candy {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--dt-primary);
+}
 /* 魔鬼辣杯：6 个杯子两行 */
 .dt-cups {
   display: grid;

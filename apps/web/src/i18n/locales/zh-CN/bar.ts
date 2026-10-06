@@ -1,4 +1,4 @@
-/** 酒吧：七个小游戏和雯姐（问题记录 272） */
+/** 酒吧：八个小游戏和雯姐（问题记录 272、427） */
 export default {
   title: '酒吧',
   tabs: {
@@ -9,6 +9,7 @@ export default {
     devil: '魔鬼辣杯',
     memory: '记忆调酒',
     darts: '飞镖',
+    nim: '最后一颗糖',
   },
   loadFailed: '读取酒吧失败',
   wallet: (tickets: number, krab: number) => `神秘礼券 ${tickets}；蟹币 ${krab}`,
@@ -130,6 +131,31 @@ export default {
     picked: (n: number, total: number, list: string) => `已选 ${n}/${total}：${list}`,
     undo: '撤回',
     nextLevel: (n: number) => `继续第 ${n} 关`,
+  },
+  /** 最后一颗糖（问题记录 427-1） */
+  nim: {
+    rule: '桌上一堆糖果，你和调酒师轮流拿，每次拿 1~k 颗，拿到最后一颗的人赢。',
+    tables: { novice: '新手桌', expert: '高手桌' },
+    tableLine: (cost: number, k: string, renown: number) =>
+      `入场 ${cost} 张神秘礼券；每次最多拿 ${k} 颗；赢了声望 +${renown}，还有一份奖励`,
+    noviceHint: '你自己选先后，调酒师有时会走神',
+    expertHint: '开局抛硬币定谁先拿，调酒师从不失手',
+    left: (n: number) => `今天还能玩 ${n} 局`,
+    noLeft: '今天的局数用完了',
+    noTickets: '神秘礼券不够',
+    start: '坐这桌',
+    status: (left: number, k: number) => `还剩 ${left} 颗，每次拿 1~${k} 颗`,
+    meFirst: '我先拿',
+    bartenderFirst: '让调酒师先拿',
+    coinMe: '抛硬币：你先拿',
+    coinBartender: '抛硬币：调酒师先拿',
+    take: (n: number) => `拿 ${n}`,
+    bartenderTook: (n: number) => `调酒师拿了 ${n} 颗`,
+    logMe: (n: number) => `你 ${n}`,
+    logBartender: (n: number) => `调酒师 ${n}`,
+    win: (renown: number) => `你拿到了最后一颗！声望 +${renown}`,
+    lose: '调酒师拿到了最后一颗，你输了',
+    failed: '操作失败',
   },
   darts: {
     aimFailed: '瞄准失败',

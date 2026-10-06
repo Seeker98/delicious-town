@@ -59,6 +59,7 @@ const activity: Messages['activity'] = {
     'bar.devil': "Devil's Chili",
     'bar.darts': 'Darts',
     'bar.memory': 'Memory Mixing',
+    'bar.nim': 'Last Candy',
     'tower.challenge': 'Chef Tower challenges',
     'tower.friendDuel': 'Duel friends',
     'tower.rank': 'Chef ranking challenges',

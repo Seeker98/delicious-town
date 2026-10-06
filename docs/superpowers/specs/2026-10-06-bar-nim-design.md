@@ -141,7 +141,7 @@ nim: {
 | 礼券不够 | 原有的 `NOT_ENOUGH` |
 | 没有进行中的局 | `invalidState('no_round')` |
 | 新手桌还没选先后就拿 | `invalidState('need_first')` |
-| 高手桌选先后，或已经开始了还选先后 | `invalidState('started')` |
+| 高手桌选先后，或已经开始了还选先后 | `invalidState('nim_started')` |
 | `num` 小于 1、大于 k 或大于剩余 | `badInput` |
 | 区服关了酒吧 | 原有的功能开关 |
 
