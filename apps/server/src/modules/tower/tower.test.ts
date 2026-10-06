@@ -123,20 +123,21 @@ describe('挑战（设计文档 §3.2）', () => {
     const drops = t.game.deps.config.towerFloors.get(1)!.elder.drops;
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
     expect(r.data.win).toBe(true);
-    // 随机数 0.4：掉落 0.4 < 1；三件里第 ⌊0.4 × 3⌋ = 1 件。单独给，不混在随机奖励里（backlog 408）
-    expect(r.data.elderDrop).toBe(drops[1]);
-    expect(r.data.awards).not.toContainEqual({ kind: 'goods', id: drops[1], num: 1, lucky: false });
+    // 第一层掉落概率 1：一定掉这一层三件里的一件（不依赖固定随机数，backlog 408 审查）；单独给，不混在随机奖励里
+    const drop = r.data.elderDrop!;
+    expect(drops).toContain(drop);
+    expect(r.data.awards).not.toContainEqual({ kind: 'goods', id: drop, num: 1, lucky: false });
     // 上新闻
     const news = await t.db
       .selectFrom('news')
       .select(['type', 'params'])
       .where('shard_id', '=', shardId)
       .execute();
-    expect(news.find((n) => n.type === 'tower.elder')?.params).toMatchObject({ goodsId: drops[1], floor: 1 });
-    expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
+    expect(news.find((n) => n.type === 'tower.elder')?.params).toMatchObject({ goodsId: drop, floor: 1 });
+    expect(await equipNum(ctx.restaurantId, drop)).toBe(1);
     const test = await t.game.tower.challenge(ctx, { floor: 1, test: true });
     expect(test.data).toMatchObject({ win: true, awards: [], elderDrop: null });
-    expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
+    expect(await equipNum(ctx.restaurantId, drop)).toBe(1);
   });
 
   it('低于 elderNewsFloor 的层掉了厨具不上新闻（backlog 408 审查：低层掉得多会刷屏）', async () => {

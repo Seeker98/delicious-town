@@ -1,3 +1,4 @@
+import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameTime, hashSeed, latestSlot, seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
@@ -6,6 +7,7 @@ import { createTestGame, type TestGame } from '../../../test/game';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
 import { runDueJobs } from '../../worker/periodic';
 import { hammerPool, isNight, rollWeather, weatherPool } from './rules';
+import { catalogCompressions } from './routes';
 
 const config = testConfig();
 const w = config.tuning.world;
@@ -91,6 +93,29 @@ describe('接口', () => {
     expect(r.json.data.goods).toHaveLength(721); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）
     expect(r.json.data.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
     expect(r.json.data.version).toBe(config.version);
+  });
+
+  it('目录按语言和压缩方式只压缩一次，之后直接给压好的（backlog 质量期第 ③ 批）', async () => {
+    const get = (enc?: string) =>
+      http.app.inject({
+        method: 'GET',
+        url: '/api/v1/world/catalog?lang=fr',
+        headers: enc ? { 'accept-encoding': enc } : {},
+      });
+    const plain = await get();
+    expect(plain.headers['content-encoding']).toBeUndefined();
+    const before = catalogCompressions();
+    const br = await get('gzip, deflate, br');
+    expect(br.headers['content-encoding']).toBe('br');
+    expect(String(br.headers.vary)).toMatch(/accept-encoding/i);
+    expect(brotliDecompressSync(br.rawPayload).toString()).toBe(plain.body);
+    await get('gzip, deflate, br');
+    const gz = await get('gzip');
+    expect(gz.headers['content-encoding']).toBe('gzip');
+    expect(gunzipSync(gz.rawPayload).toString()).toBe(plain.body);
+    await get('gzip');
+    // br、gzip 各压一次
+    expect(catalogCompressions() - before).toBe(2);
   });
 
   it('目录带 ETag：浏览器带 If-None-Match 再来、目录没变时回 304 不带正文；语言不同 ETag 不同（质量期 ③）', async () => {

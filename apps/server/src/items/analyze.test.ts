@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GOODS } from '@dt/config';
+import { GOODS, createGameConfig } from '@dt/config';
 import { testConfig } from '../../test/config';
 import { analyzeItems, type ItemRow } from './analyze';
 
@@ -33,6 +33,14 @@ describe('道具整理的分析（问题记录 367）', () => {
     expect(wheres(row('foods', foodOf(5).id), 'gives')).toContain('合成');
     expect(wheres(row('foods', foodOf(4).id), 'gives')).toContain('分解');
     expect(wheres(row('foods', foodOf(6).id), 'gives')).not.toContain('合成');
+  });
+
+  it('神殿探险还出 7 级食材、带探险者秘籍多出 3 级食材；蟹老板橱柜出 1~5 级（backlog 道具整理工具）', () => {
+    expect(wheres(row('foods', foodOf(7).id), 'gives')).toContain('神殿探险');
+    expect(wheres(row('foods', foodOf(3).id), 'gives')).toContain('神殿探险（探险者秘籍）');
+    for (const lv of [1, 2, 3, 4, 5])
+      expect(wheres(row('foods', foodOf(lv).id), 'gives')).toContain('蟹老板橱柜');
+    expect(wheres(row('foods', foodOf(6).id), 'gives')).not.toContain('蟹老板橱柜');
   });
 
   it('7 级食材：神殿守护兽、神秘食材兑换券', () => {
@@ -79,6 +87,49 @@ describe('道具整理的分析（问题记录 367）', () => {
       expect(wheres(r, 'gives')).toEqual(['活动（后台配置）']);
       expect(r.noSource).toBe(false);
     }
+  });
+
+  describe('顺着礼包链判断来源（backlog 道具整理工具）', () => {
+    // 造两件新道具：礼包 99001（哪里都拿不到）装着 99002（只在这个礼包里）
+    const base = config.bundle.goods.find((g) => g.gift?.some((i) => i.type === 'goods'))!;
+    const plain = config.bundle.goods.find(
+      (g) => !g.gift && !g.use && !g.equip && !g.gem && g.type === base.type,
+    )!;
+    const pack = {
+      ...base,
+      id: 99001,
+      name: '测试礼包',
+      onSale: false,
+      awardFlag: null,
+      gift: [{ type: 'goods' as const, id: 99002, num: 1, rate: 1 }],
+    };
+    const inner = { ...plain, id: 99002, name: '测试道具', onSale: false, awardFlag: null };
+    const cfg = createGameConfig({ ...config.bundle, goods: [...config.bundle.goods, pack, inner] });
+    const rowOf = (r: ReturnType<typeof analyzeItems>, id: number) =>
+      r.rows.find((x) => x.kind === 'goods' && x.id === id)!;
+
+    it('只在拿不到的礼包里：这处来源标成拿不到，算没有来源，写明原因', () => {
+      const r = rowOf(analyzeItems(cfg, none), 99002);
+      expect(r.gives).toEqual([{ where: '礼包 99001 测试礼包', n: 1, dead: true }]);
+      expect(r.noSource).toBe(true);
+      expect(r.notes).toContain('只从拿不到的礼包或道具获得');
+    });
+
+    it('礼包能拿到（例如商店有售）时，里面的东西也算有来源', () => {
+      const sale = createGameConfig({
+        ...config.bundle,
+        goods: [...config.bundle.goods, { ...pack, onSale: true, coin: 100 }, inner],
+      });
+      const r = rowOf(analyzeItems(sale, none), 99002);
+      expect(r.gives[0]!.dead).toBeUndefined();
+      expect(r.noSource).toBe(false);
+    });
+
+    it('礼包下架了：写“只从已下架礼包获得”', () => {
+      const r = rowOf(analyzeItems(cfg, { goods: new Set([99001]), foods: new Set() }), 99002);
+      expect(r.noSource).toBe(true);
+      expect(r.notes).toContain('只从已下架礼包获得');
+    });
   });
 
   it('来源是已下架的礼包时标出来，不算真来源', () => {

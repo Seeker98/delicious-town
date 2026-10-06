@@ -12,6 +12,9 @@ import {
 import type { RestCtx } from '../../core/deps';
 import { settleShardRound } from '../settlement/runner';
 import { GOODS } from '@dt/config';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
+import { mcPriceOf } from '../tower/sides';
 
 let t: TestGame;
 /** 随机数固定 0：概率判定一律成功，礼券取 1 */
@@ -80,6 +83,16 @@ describe('品尝（规格书 13 §13.6）', () => {
     await serve(t, host);
     const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
     expect(r.data).toMatchObject({ strength: 78, left: 499 });
+  });
+
+  it('品尝和赛厨的“养”用特色菜原价，不乘卖出倍率（问题记录 412）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, { mysterious: { saleRates: [10, 10, 10, 10, 10, 10] } });
+    const [me, host] = await newPair(t, { shardId, patch: { strength: 0 } });
+    await serve(t, host);
+    expect(await mcPriceOf(t.db, await restRow(t, host.restaurantId))).toBe(157);
+    const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
+    expect(r.data).toMatchObject({ strength: 78 });
   });
 
   it('同一批只能吃一次；每天最多 2 次', async () => {
