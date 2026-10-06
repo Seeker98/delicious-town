@@ -117,3 +117,20 @@ export function nimBartenderTake(left: number, k: number, mistake: number, rng: 
   if (r !== 0 && !rng.chance(mistake)) return r;
   return 1 + rng.int(Math.min(k, left));
 }
+
+/** 秘制调料的回答（设计 §4）：A = 调料和位置都对，B = 调料对、位置不对（配方和组合都不重复） */
+export function spiceScore(secret: readonly number[], guess: readonly number[]): { a: number; b: number } {
+  let a = 0;
+  let b = 0;
+  guess.forEach((x, i) => {
+    if (secret[i] === x) a++;
+    else if (secret.includes(x)) b++;
+  });
+  return { a, b };
+}
+
+/** 第 tries 次猜中落在哪一档：第一个 tries ≤ maxTries 的档（数值保证最后一档等于最多次数） */
+export function spiceTier(tries: number, tiers: ReadonlyArray<{ maxTries: number }>): number {
+  const i = tiers.findIndex((t) => tries <= t.maxTries);
+  return i < 0 ? tiers.length - 1 : i;
+}
