@@ -69,6 +69,7 @@ export async function towerView(
   const me = await cachedSide(db, config, rest, 'attack', off);
   return {
     duelJudges: t.duel.judges,
+    duelWeights: t.duel.weights,
     floors: [...config.towerFloors.values()].map((f) => ({
       floor: f.floor,
       name: f.name,
@@ -171,6 +172,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     judges: r.judges,
     votes: r.votes,
     judgeCount: r.judgeCount,
+    weights: r.weights,
     elderDrop,
     renown,
     awards,

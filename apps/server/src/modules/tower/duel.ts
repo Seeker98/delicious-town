@@ -110,6 +110,8 @@ export function duel(
   votes: [number, number];
   /** 这一局请了几位评委（有一方先过半就提前结束，上场的可能更少） */
   judgeCount: number;
+  /** 五项的评分权重（规则说明按它写） */
+  weights: DuelTuning['weights'];
 } {
   const a = duelScores(me, t, rng);
   const b = duelScores(them, t, rng);
@@ -120,5 +122,6 @@ export function duel(
     me: { scores: a, sum: sumScores(a) },
     them: { scores: b, sum: sumScores(b) },
     judgeCount: ids.length,
+    weights: t.weights,
   };
 }

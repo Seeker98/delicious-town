@@ -44,6 +44,12 @@ export default {
     /** 每局怎么投票（backlog 396）：total 位评委里请 n 位，先拿到 need 票的赢 */
     rulesVote: (total: number, n: number, need: number) =>
       `每局从 ${total} 位评委里随机请 ${n} 位，依次比双方在他关注的几项上的总分，高的一方得一票，先拿到 ${need} 票的赢；票数相同时比上场评委打的总分。`,
+    /** 五项各看哪些属性按区服的评分权重拼（backlog 396）；rules 是没有权重时的说明 */
+    rulesPart: (item: string, attrs: string[]) => `${item}看${attrs.join('、')}`,
+    rulesMc: '在售的特色菜',
+    rulesNone: (item: string) => `${item}只看随机分`,
+    rulesWeights: (parts: string[]) =>
+      `双方按属性算出色、香、味、形、养五项：${parts.join('，')}。创意越高、幸运越好，每项多加的随机分越多。`,
     rulesJudges: '评委和他们关注的项目：',
     awards: (text: string) => `得到 ${text}`,
     /** 打赢长老掉的厨具（backlog 408） */

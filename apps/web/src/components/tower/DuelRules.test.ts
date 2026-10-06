@@ -23,4 +23,24 @@ describe('DuelRules（问题记录 396）', () => {
     expect(w.text()).toContain('先拿到 2 票的赢');
     expect(mount(DuelRules).text()).toContain('随机请 5 位');
   });
+
+  it('五项各看哪些属性按区服的评分权重写：权重大的在前，0 的不写，特色菜放最后（backlog 396）', () => {
+    const z = { cook: 0, cutting: 0, fire: 0, season: 0, mc: 0 };
+    const weights = [
+      { ...z, fire: 1 },
+      { ...z, cook: 0.2, season: 0.8 },
+      { ...z, fire: 0.5, season: 0.5 },
+      { ...z, cutting: 0.7, fire: 0.4 },
+      { ...z, cutting: 0.2, mc: 0.5, season: 0.3 },
+    ];
+    const text = mount(DuelRules, { props: { weights } }).text();
+    expect(text).toContain(
+      '色看火候，香看调味、厨艺，味看火候、调味，形看刀工、火候，养看调味、刀工、在售的特色菜',
+    );
+    // 一项的系数全是 0：只看随机分（审查 Minor）
+    const allZero = [z, ...weights.slice(1)];
+    expect(mount(DuelRules, { props: { weights: allZero } }).text()).toContain('色只看随机分');
+    // 没给权重（旧接口）时用原来的说明
+    expect(mount(DuelRules).text()).toContain('色看厨艺、刀工');
+  });
 });

@@ -65,7 +65,7 @@ const challenge = (s: RankSlotDto) => {
 </script>
 
 <template>
-  <DuelRules v-if="data" :judge-count="data.duelJudges" />
+  <DuelRules v-if="data" :judge-count="data.duelJudges" :weights="data.duelWeights" />
   <div v-if="data" class="small">
     <div class="mb-2">
       {{ t.tower.rank.myRank

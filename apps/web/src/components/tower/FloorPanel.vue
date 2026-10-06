@@ -55,7 +55,7 @@ async function go(f: TowerFloorDto, test: boolean) {
 </script>
 
 <template>
-  <DuelRules :judge-count="data.duelJudges" />
+  <DuelRules :judge-count="data.duelJudges" :weights="data.duelWeights" />
   <div class="small">
     <div class="mb-2" data-testid="tower-head">
       {{ t.tower.floor.head(data.power, data.left, data.dailyTotal, data.tickets, formatNum(data.strength)) }}

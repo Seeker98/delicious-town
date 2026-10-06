@@ -1,5 +1,6 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
-import { formatNum } from '../../../utils/format';
+import type { OpenGuideNumbers as G } from '@dt/shared';
+import { formatNum, formatPct } from '../../../utils/format';
 
 /** 遊戲資料（Wiki）和開放介面說明（問題記錄 142） */
 export default {
@@ -142,9 +143,11 @@ export default {
       {
         title: '什麼時候搬街',
         items: [
-          '只能學所在街道的菜。新手街只有 69 道，升 2 星要學會 100 道，遲早要搬。',
+          (n: G) =>
+            `只能學所在街道的菜。${n.startStreet.name}只有 ${formatNum(n.startStreet.cookbooks)} 道，升 2 星要學會 ${formatNum(n.star2Cookbooks)} 道，遲早要搬。`,
           '本街剩下的菜全學會也湊不夠下一星時，食譜頁會提示。看到提示就準備搬：別等最後幾道難湊的菜，學得慢下來就去搬家。',
-          '搬到菜多的街學得快，比如綜合二街有 333 道，是菜最多的街。',
+          (n: G) =>
+            `搬到菜多的街學得快，比如${n.biggestStreet.name}有 ${formatNum(n.biggestStreet.cookbooks)} 道，是菜最多的街。`,
           '各街分銀幣街、均衡街、經驗街：缺錢去銀幣街，趕等級去經驗街。搬家頁和食譜頁寫了每條街的類型和加成。',
           '搬家要一張搬家卡（有搬家處工作證時免）和一筆搬街費，幸運時半價。',
         ],
@@ -155,7 +158,8 @@ export default {
           '先保證有油：沒油就停業，什麼都不賺。',
           '其次是升星：升星憑證和升星銀幣。',
           '然後才是餐桌和設施。',
-          '外賣要 2 星、888 聲望才能開通（開通時扣掉這些聲望），還要 888 萬銀幣和 300 鑽石，或者一張外賣券；想開的話早點攢。',
+          (n: G) =>
+            `外賣要 ${n.takeaway.star} 星、${formatNum(n.takeaway.renown)} 聲望才能開通（開通時扣掉這些聲望），還要 ${formatNum(n.takeaway.coin / 10000)} 萬銀幣和 ${formatNum(n.takeaway.diamond)} 鑽石，或者一張外賣券；想開的話早點攢。`,
         ],
       },
       {
@@ -163,9 +167,13 @@ export default {
         items: [
           '每天去廣場搖一次蟹老闆的錢袋，順便看看雯姐、13 哥他們有沒有東西送。',
           '每天打廚塔，輸贏都拿聲望；第一層的長老是 8 級，大約 10 級能打過（穿上見習廚具會早一點）。',
-          '20 級、註冊滿 7 天並驗證郵箱以後，能用交易所和事件預測。',
+          (n: G) =>
+            n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
+              ? `${n.exchange.level} 級、註冊滿 ${n.exchange.days} 天並驗證郵箱以後，能用交易所和事件預測。`
+              : `${n.exchange.level} 級、註冊滿 ${n.exchange.days} 天並驗證郵箱以後能用交易所；事件預測要 ${n.predict.level} 級、註冊滿 ${n.predict.days} 天。`,
           '穿上廚具，結算收益會更高。',
-          '40 級以下結算經驗有額外加成（1 級 +200%，逐級減少），前期升級很快。',
+          (n: G) =>
+            `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成（1 級 ${formatPct(n.newbieExp.rate, { sign: true })}，逐級減少），前期升級很快。`,
         ],
       },
       {
