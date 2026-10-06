@@ -203,7 +203,34 @@ describe('RestaurantHomeView', () => {
     expect(w.findAll('a').some((a) => a.text() === '切换区服')).toBe(true);
     expect(w.find('[data-testid="rest-level"]').text()).toBe('1');
     expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
-    expect(w.find('[data-testid="last-round"]').text()).toContain('12');
+    // 问题记录 433：银币、经验、耗油换成图标；收益记录在上一轮那行右边，楼层餐桌在顾客那行右边
+    const last = w.get('[data-testid="last-round"]');
+    const line = last.get('[data-testid="last-round-line"]');
+    // 只显示图标；名字悬停能看（title），读屏读隐藏的文字（终审 I1：i 上的 aria-label 读屏不读）
+    const visible = line.element.cloneNode(true) as HTMLElement;
+    visible.querySelectorAll('.visually-hidden').forEach((x) => x.remove());
+    expect(visible.textContent).not.toMatch(/银币|经验|耗油/);
+    for (const [icon, label] of [
+      ['bi-coin', '银币'],
+      ['bi-mortarboard', '经验'],
+      ['bi-droplet', '耗油'],
+    ]) {
+      const i = line.get(`i.${icon}`);
+      expect(i.attributes('title')).toBe(label);
+      expect(i.attributes('aria-hidden')).toBe('true');
+      expect((i.element.nextElementSibling as HTMLElement).className).toBe('visually-hidden');
+      expect(i.element.nextElementSibling!.textContent).toBe(label);
+    }
+    // 经验条上也有同一个图标（手机上没有悬停，靠它认出经验）
+    expect(w.find('[data-testid="exp-text"] i.bi-mortarboard').exists()).toBe(true);
+    expect(line.text()).toContain('12');
+    expect(last.get('[data-testid="last-round-line"] + a').attributes('href')).toBe('/rest/income');
+    expect(last.get('[data-testid="last-round-guests"] + a').attributes('href')).toBe('/rest/floor');
+    // 问题记录 435：油量右边一个小升级图标，链到油壶升级
+    const up = w.get('[data-testid="oil-upgrade"]');
+    expect(up.attributes('href')).toBe('/society/oil');
+    expect(up.attributes('aria-label')).toBe('升级油壶');
+    expect(up.find('i.bi-arrow-up-circle').exists()).toBe(true);
     expect(w.text()).toContain('填一次油');
     expect(w.findAll('[data-testid^="slot-"]')).toHaveLength(2);
     expect(w.text()).toContain('上座率+35%');
@@ -724,6 +751,14 @@ describe('RestaurantHomeView', () => {
     expect(w.get('[data-testid="home-signed"]').text()).toBe('已签到');
   });
 
+  it('没签到时“签到”按钮和今日活跃在同一行（问题记录 437）', async () => {
+    const w = await mountView();
+    const row = w.get('[data-testid="home-signin-row"]');
+    expect(row.find('[data-testid="home-signin"]').exists()).toBe(true);
+    expect(row.find('[data-testid="home-activation"]').exists()).toBe(true);
+    expect(w.findAll('[data-testid="home-activation"]')).toHaveLength(1);
+  });
+
   it('读签到状态失败时不显示这一行', async () => {
     vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
     const w = await mountView();
@@ -756,7 +791,8 @@ describe('RestaurantHomeView', () => {
       expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
       expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
       expect(w.find('[data-testid="refuel"]').text()).toBe('Fill up (600 coins)');
-      expect(w.find('[data-testid="last-round"]').text()).toContain('Last round: 12 coins');
+      expect(w.find('[data-testid="last-round"]').text()).toContain('Last round:');
+      expect(w.get('[data-testid="last-round"] i.bi-coin').attributes('title')).toBe('Coins');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
       expect(w.text()).not.toMatch(/今日待办|经营开关|签到/);
     } finally {
@@ -764,7 +800,7 @@ describe('RestaurantHomeView', () => {
     }
   });
 
-  it('签到后右边只写短短的「已签到」，领到什么写在下面一行（问题记录 310：以前一长串挤得换行）', async () => {
+  it('签到后字样右边一个对勾（读屏读“已签到”）、右边今日活跃，领到什么单独写一行（问题记录 310、437）', async () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 10,
       signedIn: true,
@@ -777,8 +813,15 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     const row = w.get('[data-testid="home-signin-row"]');
-    expect(row.get('[data-testid="home-signed"]').text()).toBe('已签到');
-    expect(row.get('[data-testid="home-signed"]').find('i.bi-check-circle-fill').exists()).toBe(true);
+    // 问题记录 437：字样右边只放一个对勾；同一行右边是今日活跃，链到活跃页
+    const signed = row.get('[data-testid="home-signed"]');
+    const tick = signed.get('i.bi-check-circle-fill');
+    expect(tick.attributes('title')).toBe('已签到');
+    expect(tick.attributes('aria-hidden')).toBe('true');
+    expect(signed.get('.visually-hidden').text()).toBe('已签到');
+    const act = row.get('[data-testid="home-activation"]');
+    expect(act.text()).toContain('今日活跃 10');
+    expect(act.attributes('href')).toBe('/rest/tasks');
     expect(row.get('[data-testid="home-signin-gift"]').text()).toContain('×1（在仓库）');
   });
 });

@@ -335,7 +335,9 @@ onBeforeUnmount(() => {
         <span
           data-testid="exp-text"
           class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-          >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
+          ><i class="bi bi-mortarboard me-1" aria-hidden="true"></i>{{ formatNum(rest.exp) }}/{{
+            formatNum(rest.expToNext)
+          }}</span
         >
       </div>
       <div class="row g-1">
@@ -354,6 +356,15 @@ onBeforeUnmount(() => {
         <!-- 油和加满在同一个网格里，按钮紧凑，行高和上面一致（280 反馈） -->
         <div class="col-6">
           <i class="bi bi-droplet"></i> {{ formatNum(rest.oil) }}/{{ formatNum(rest.oilMax) }}
+          <!-- 油壶升级的入口（问题记录 435） -->
+          <RouterLink
+            to="/society/oil"
+            class="d-inline-block px-1 text-decoration-none"
+            :title="t.home.oilUpgrade"
+            :aria-label="t.home.oilUpgrade"
+            data-testid="oil-upgrade"
+            ><i class="bi bi-arrow-up-circle"></i
+          ></RouterLink>
         </div>
         <div class="col-6">
           <button
@@ -366,17 +377,36 @@ onBeforeUnmount(() => {
           </button>
         </div>
       </div>
+      <!-- 上一轮（问题记录 433）：银币、经验、耗油用图标，悬停写名字；两个入口各放在一行的右边 -->
       <div v-if="rest.lastRound" class="border-top mt-2 pt-1" data-testid="last-round">
-        {{
-          t.home.lastRound(
-            formatNum(rest.lastRound.coin),
-            formatNum(rest.lastRound.exp),
-            formatNum(rest.lastRound.oil),
-          )
-        }}
-        <div class="text-muted dt-clamp1">{{ customers || t.home.noGuests }}</div>
-        <RouterLink to="/rest/income">{{ t.home.income }}</RouterLink>
-        <RouterLink to="/rest/floor" class="ms-3">{{ t.home.floor }}</RouterLink>
+        <div class="d-flex align-items-center gap-2">
+          <!-- 每一项不拆开，放不下时整项换到下一行（法文“收益记录”长，原来被挤出屏幕） -->
+          <span class="dt-shrink" data-testid="last-round-line"
+            >{{ t.home.lastRound }}
+            <span class="text-nowrap"
+              ><i class="bi bi-coin" :title="t.home.roundCoin" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundCoin }}</span>
+              {{ formatNum(rest.lastRound.coin) }}</span
+            >
+            <span class="text-nowrap ms-1"
+              ><i class="bi bi-mortarboard" :title="t.home.roundExp" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundExp }}</span>
+              {{ formatNum(rest.lastRound.exp) }}</span
+            >
+            <span class="text-nowrap ms-1"
+              ><i class="bi bi-droplet" :title="t.home.roundOil" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundOil }}</span>
+              {{ formatNum(rest.lastRound.oil) }}</span
+            ></span
+          >
+          <RouterLink to="/rest/income" class="text-nowrap">{{ t.home.income }}</RouterLink>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
+            customers || t.home.noGuests
+          }}</span>
+          <RouterLink to="/rest/floor" class="text-nowrap">{{ t.home.floor }}</RouterLink>
+        </div>
       </div>
       <!-- 常用入口（问题记录：原来只有一个孤零零的厨具入口） -->
       <div class="border-top mt-2 pt-1 d-flex gap-3" data-testid="quick-links">
@@ -388,29 +418,41 @@ onBeforeUnmount(() => {
 
     <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
       <div class="dt-card-title mb-1">{{ t.home.todo }}</div>
-      <div v-if="signedIn !== null" class="dt-todo-row" data-testid="home-signin-row">
-        <!-- 右边只放短短的「已签到」，领到什么写在标题下面（问题记录 310：一长串挤得换行） -->
-        <span class="flex-fill">
+      <!-- 签到和今日活跃一行（问题记录 437）：签到在左，签完字样右边一个对勾；领到什么写在下面；右边是今日活跃 -->
+      <div v-if="signedIn !== null" class="dt-todo-row flex-wrap" data-testid="home-signin-row">
+        <span class="flex-fill text-nowrap">
           <i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}
-          <span
-            v-if="signedIn && signInGift !== null"
-            class="d-block dt-meta"
-            data-testid="home-signin-gift"
-            >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
+          <span v-if="signedIn" data-testid="home-signed"
+            ><i
+              class="bi bi-check-circle-fill text-success ms-1"
+              :title="t.home.signedShort"
+              aria-hidden="true"
+            ></i
+            ><span class="visually-hidden">{{ t.home.signedShort }}</span></span
           >
+          <button
+            v-else
+            class="btn btn-sm btn-success ms-2"
+            :disabled="busy"
+            data-testid="home-signin"
+            @click="act(() => endpoints.signIn(), t.home.signInFailed)"
+          >
+            {{ t.home.signInBtn }}
+          </button>
         </span>
-        <span v-if="signedIn" class="text-success text-nowrap" data-testid="home-signed"
-          ><i class="bi bi-check-circle-fill me-1"></i>{{ t.home.signedShort }}</span
+        <RouterLink
+          v-if="activeTotal !== null"
+          to="/rest/tasks"
+          class="ms-auto text-nowrap text-decoration-none d-inline-block py-1"
+          data-testid="home-activation"
+          >{{ t.home.activation(activeTotal) }} ›</RouterLink
         >
-        <button
-          v-else
-          class="btn btn-sm btn-success"
-          :disabled="busy"
-          data-testid="home-signin"
-          @click="act(() => endpoints.signIn(), t.home.signInFailed)"
+        <span
+          v-if="signedIn && signInGift !== null"
+          class="w-100 order-last dt-meta"
+          data-testid="home-signin-gift"
+          >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
         >
-          {{ t.home.signInBtn }}
-        </button>
       </div>
       <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
       <div v-if="mainTask" class="dt-todo-row" data-testid="main-task">
@@ -449,17 +491,6 @@ onBeforeUnmount(() => {
           {{ t.home.claim }}
         </button>
       </div>
-      <RouterLink
-        v-if="activeTotal !== null"
-        to="/rest/tasks"
-        class="dt-todo-row text-reset text-decoration-none"
-        data-testid="home-activation"
-      >
-        <span class="flex-fill"
-          ><i class="bi bi-check2-square me-1"></i>{{ t.home.activation(activeTotal) }}</span
-        >
-        <span class="text-primary">{{ t.home.tasks }}</span>
-      </RouterLink>
       <ActivityBanner />
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
         <div class="flex-fill">
