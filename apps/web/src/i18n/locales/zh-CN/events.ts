@@ -147,6 +147,8 @@ export default {
     'bar.memory': (p) => `记忆调酒第 ${n(p, 'level')} 关${p.correct ? '调对了' : '没调对'}`,
     'bar.nim': (p) =>
       `最后一颗糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '赢了' : '输了'}`,
+    'bar.spice': (p) =>
+      p.result === 'win' ? `秘制调料第 ${n(p, 'tries')} 次猜中了` : `秘制调料 ${n(p, 'tries')} 次都没猜中`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `花 ${formatNum(n(p, 'price'))} 银币${p.way === 'listed' ? '买下了挂牌的' : '收购了'}「${String(p.name ?? '')}」`,

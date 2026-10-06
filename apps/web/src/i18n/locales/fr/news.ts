@@ -47,6 +47,8 @@ const news: Messages['news'] = {
     'bar.devil': (w, p) =>
       `${w} a bu trois Piments du Diable sans broncher et a gagné ${num(p.payout)} ${plFr(num(p.payout), 'bon', 'bons')} mystère`,
     'bar.memory': (w) => `${w} a retenu les 7 ingrédients du Cocktail Mémoire`,
+    'bar.spice': (w, p) =>
+      `${w} a trouvé le mélange secret du bar en seulement ${num(p.tries)} ${plFr(Number(p.tries), 'essai', 'essais')}`,
     'bar.darts': (w) => `${w} a mis trois fléchettes dans le mille et a bluffé le patron du bar`,
     'equip.stress': (w, p, x) => `${w} a renforcé ${x.goodsName(num(p.goodsId))} à +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>

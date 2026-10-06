@@ -154,6 +154,10 @@ const events: Messages['events'] = {
       `Memory Mixing level ${n(p, 'level')}: ${p.correct ? 'got it right' : 'got it wrong'}`,
     'bar.nim': (p) =>
       `Last Candy (${p.table === 'expert' ? 'expert' : 'beginner'} table): ${p.result === 'win' ? 'won' : 'lost'}`,
+    'bar.spice': (p) =>
+      p.result === 'win'
+        ? `Secret Blend: cracked on try ${n(p, 'tries')}`
+        : `Secret Blend: not cracked in ${n(p, 'tries')} tries`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Bought the listed' : 'Acquired'} "${String(p.name ?? '')}" for ${formatNum(n(p, 'price'))} coins`,

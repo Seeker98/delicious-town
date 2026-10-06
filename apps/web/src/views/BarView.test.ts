@@ -16,6 +16,7 @@ const stubs = {
   MemoryPanel: { template: '<p>memory-panel</p>', props: ['data'] },
   DartsPanel: { template: '<p>darts-panel</p>', props: ['data'] },
   NimPanel: { template: '<p>nim-panel</p>', props: ['data'] },
+  SpicePanel: { template: '<p>spice-panel</p>', props: ['data'] },
 };
 
 describe('BarView', () => {
@@ -67,7 +68,7 @@ describe('BarView', () => {
     expect(endpoints.bar).toHaveBeenCalledTimes(2);
   });
 
-  it('八个游戏用胶囊标签，选中的高亮；新游戏可以切过去（4C-3、最后一颗糖）', async () => {
+  it('九个游戏用胶囊标签，选中的高亮；新游戏可以切过去（4C-3、最后一颗糖）', async () => {
     const w = mount(BarView, { global: { stubs } });
     await flushPromises();
     const pills = w.findAll('.dt-pills a');
@@ -80,7 +81,10 @@ describe('BarView', () => {
       '记忆调酒',
       '飞镖',
       '最后一颗糖',
+      '秘制调料',
     ]);
+    await w.find('[data-testid="tab-spice"]').trigger('click');
+    expect(w.text()).toContain('spice-panel');
     await w.find('[data-testid="tab-nim"]').trigger('click');
     expect(w.text()).toContain('nim-panel');
     await w.find('[data-testid="tab-devil"]').trigger('click');

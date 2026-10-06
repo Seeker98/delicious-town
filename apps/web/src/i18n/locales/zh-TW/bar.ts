@@ -11,6 +11,7 @@ export default {
     memory: '記憶調酒',
     darts: '飛鏢',
     nim: '最後一顆糖',
+    spice: '秘製調料',
   },
   loadFailed: '讀取酒吧失敗',
   wallet: (tickets: number, krab: number) => `神秘禮券 ${tickets}；蟹幣 ${krab}`,
@@ -156,6 +157,29 @@ export default {
     logBartender: (n: number) => `調酒師 ${n}`,
     win: (renown: number) => `你拿到了最後一顆！聲望 +${renown}`,
     lose: '調酒師拿到了最後一顆，你輸了',
+    failed: '操作失敗',
+  },
+  /** 秘製調料（問題記錄 427-2） */
+  spice: {
+    /** 調料名，下標就是服務端的調料編號 */
+    kinds: ['鹽', '糖', '醬油', '醋', '料酒', '花椒', '八角', '桂皮', '胡椒', '辣椒'],
+    rule: (length: number, tries: number) =>
+      `調酒師用下面的調料裡的 ${length} 種，按順序配了一份秘製調料。每次交 ${length} 種不重複的調料，調酒師回答幾 A 幾 B：A 是調料和位置都對，B 是調料對、位置不對。最多猜 ${tries} 次，猜得越快獎勵越好。`,
+    tierLine: (from: number, to: number, renown: number) =>
+      `第 ${from}~${to} 次猜中：${renown > 0 ? `聲望 +${renown}，` : ''}一份獎勵`,
+    left: (n: number) => `今天還能玩 ${n} 局`,
+    noLeft: '今天的局數用完了',
+    noTickets: '神秘禮券不夠',
+    start: (cost: number) => `開一局（${cost} 張神秘禮券）`,
+    slot: (i: number) => `第 ${i} 位`,
+    submit: '交給調酒師',
+    triesLeft: (n: number) => `還能猜 ${n} 次`,
+    sep: '、',
+    row: (i: number, list: string, a: number, b: number) => `第 ${i} 次：${list} ${a}A${b}B`,
+    win: (tries: number) => `第 ${tries} 次就猜中了！`,
+    renown: (n: number) => `聲望 +${n}`,
+    lose: (tries: number) => `${tries} 次都沒猜中`,
+    secret: (list: string) => `配方：${list}`,
     failed: '操作失敗',
   },
   darts: {
