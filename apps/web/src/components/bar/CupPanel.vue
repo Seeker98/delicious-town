@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import type { BarDto, CupDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -34,6 +34,14 @@ watch(
 );
 /** 读屏播报：每次猜的结果、进下一轮、结束 */
 const live = ref('');
+const root = ref<HTMLElement | null>(null);
+/** 按钮变灰或换掉后键盘焦点会丢：挪到接下来要点的地方（#193 审查） */
+async function focusNext() {
+  await nextTick();
+  const r = local.value;
+  const id = r?.result ? 'cup-again' : r?.won ? 'cup-stop' : 'cup-0';
+  root.value?.querySelector<HTMLElement>(`[data-testid="${id}"]`)?.focus();
+}
 
 const streak = computed(() => (c.value.result === 'win' ? c.value.times : 0));
 const block = computed(() =>
@@ -82,6 +90,7 @@ async function run(fn: () => Promise<CupDto>) {
     local.value = r;
     live.value = liveOf(r);
     emit('reload');
+    void focusNext();
   } catch (e) {
     toast.push(errorMessage(e, t.value.bar.cup.failed), 'danger');
     // 局面没了就回到开局；别的错误（网络、和服务端对不上）先用概览里的局面，再重新读
@@ -94,19 +103,27 @@ async function run(fn: () => Promise<CupDto>) {
 function again() {
   local.value = null;
   live.value = '';
+  void focusNext();
 }
+/** 奖励表里标出这一轮的档：没开局时不标 */
+const nowTier = computed(() => local.value?.round ?? -1);
 </script>
 
 <template>
-  <div class="small">
+  <div ref="root" class="small">
     <div class="dt-meta mb-2">{{ t.bar.cup.rule(c.cost, c.cups.length) }}</div>
     <div v-if="streak > 0" class="mb-1" data-testid="cup-streak">{{ t.bar.streak(streak) }}</div>
-    <template v-if="!local">
-      <div v-for="(line, i) in tierRows" :key="i" class="dt-meta" :data-testid="`cup-tier-${i}`">
-        {{ line }}
-      </div>
-      <div v-if="block" class="dt-meta text-danger mt-1" data-testid="block">{{ block }}</div>
-    </template>
+    <!-- 局里也显示，标出这一轮的档，方便决定收手还是继续（#193 审查） -->
+    <div
+      v-for="(line, i) in tierRows"
+      :key="i"
+      :class="['dt-meta', { 'fw-bold': i === nowTier }]"
+      :aria-current="i === nowTier ? 'true' : undefined"
+      :data-testid="`cup-tier-${i}`"
+    >
+      {{ line }}
+    </div>
+    <div v-if="block" class="dt-meta text-danger mt-1" data-testid="block">{{ block }}</div>
     <!-- 读屏的固定播报区：每次猜的结果、进下一轮、结束 -->
     <div class="visually-hidden" aria-live="polite" data-testid="cup-live">{{ live }}</div>
     <div v-if="!decided" class="mt-2 mb-1">{{ pickText(local) }}</div>

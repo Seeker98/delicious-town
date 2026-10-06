@@ -35,7 +35,7 @@ const bar: Messages['bar'] = {
   startFailed: 'No se pudo empezar',
   cup: {
     rule: (cost, rounds) =>
-      `Cada partida cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}. Hasta ${rounds} rondas, con más vasos en cada ronda y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Los premios suelen ser ingredientes: cuanto más avances, de más nivel y más probable que sean raros.`,
+      `Cada partida cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}. Hasta ${rounds} ${plEs(rounds, 'ronda', 'rondas')}, con más vasos en cada ronda y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Los premios suelen ser ingredientes: cuanto más avances, de más nivel y más probable que sean raros.`,
     tierLine: (round, cups, awards, news) =>
       `Ronda ${round} (${cups} vasos): ${awards} ${plEs(awards, 'premio', 'premios')}${news === 'broadcast' ? ', anuncio para todo el pueblo' : news === 'news' ? ', sale en las noticias' : ''}`,
     noTickets: (n) => `No tienes suficientes vales misteriosos (${n} por partida)`,

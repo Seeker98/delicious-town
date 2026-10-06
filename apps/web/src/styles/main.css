@@ -874,6 +874,10 @@ details.dt-card > summary {
 .dt-guess:disabled {
   cursor: default;
 }
+/* 不能点、也没翻开的杯子变淡（礼券不够、已经猜过），和能点的分开（#193 审查） */
+.dt-guess:disabled:not(.dt-guess-pick):not(.dt-guess-ball) {
+  opacity: 0.55;
+}
 .dt-guess-pick {
   border-color: var(--dt-primary);
   border-width: 2px;

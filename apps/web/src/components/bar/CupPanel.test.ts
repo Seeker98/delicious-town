@@ -164,6 +164,48 @@ describe('CupPanel', () => {
     expect(w.find('[data-testid="cup-won"]').exists()).toBe(true);
   });
 
+  it('局里奖励表照样显示，标出这一轮的档，方便决定收手还是继续（#193 审查）', () => {
+    const w = mount(CupPanel, {
+      props: {
+        data: withRound(
+          round({ round: 1, cups: 3, won: true, last: { pick: 0, ball: 0, win: true, lucky: false } }),
+        ),
+      },
+    });
+    expect(w.get('[data-testid="cup-tier-1"]').attributes('aria-current')).toBe('true');
+    expect(w.get('[data-testid="cup-tier-1"]').classes()).toContain('fw-bold');
+    expect(w.get('[data-testid="cup-tier-2"]').text()).toContain('上新闻');
+    expect(w.get('[data-testid="cup-tier-2"]').attributes('aria-current')).toBeUndefined();
+  });
+
+  it('键盘焦点跟着走：猜中到“收手”，结束到“再来一局”，继续和再来一局回到第一个杯子（#193 审查）', async () => {
+    vi.mocked(endpoints.barCupGuess).mockResolvedValue(
+      round({ won: true, last: { pick: 0, ball: 0, win: true, lucky: false } }),
+    );
+    vi.mocked(endpoints.barCupNext).mockResolvedValue(round({ round: 1, cups: 3 }));
+    vi.mocked(endpoints.barCupGuess).mockResolvedValueOnce(
+      round({ won: true, last: { pick: 0, ball: 0, win: true, lucky: false } }),
+    );
+    const w = mount(CupPanel, { props: { data: withRound(null) }, attachTo: document.body });
+    const focused = () => document.activeElement?.getAttribute('data-testid');
+    await w.get('[data-testid="cup-0"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('cup-stop');
+    await w.get('[data-testid="cup-next"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('cup-0');
+    vi.mocked(endpoints.barCupGuess).mockResolvedValueOnce(
+      round({ round: 1, cups: 3, result: 'lose', last: { pick: 0, ball: 2, win: false, lucky: false } }),
+    );
+    await w.get('[data-testid="cup-0"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('cup-again');
+    await w.get('[data-testid="cup-again"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('cup-0');
+    w.unmount();
+  });
+
   it('当前连胜写在规则下面', () => {
     const w = mount(CupPanel, { props: { data: withRound(null, { result: 'win', times: 3 }) } });
     expect(w.get('[data-testid="cup-streak"]').text()).toBe('当前 3 连胜');
