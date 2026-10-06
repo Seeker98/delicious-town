@@ -10,8 +10,8 @@ export const DUEL_JUDGES = [
   { id: 'bigEater', items: [0, 1, 4] }, // 大胃哥
   { id: 'fanDao', items: [1, 2] }, // 饭老道
   { id: 'gary', items: [1, 3] }, // 盖乐瑞
-  { id: 'oldPoor', items: [3, 4] }, // 老穷头
-  { id: 'carmen', items: [0, 1] }, // 卡门
+  { id: 'gordon', items: [3, 4] }, // 戈登（原来的老穷头，问题记录 431）
+  { id: 'joe', items: [0, 1] }, // 老乔（原来的卡门，问题记录 431）
   { id: 'xiaoKai', items: [2, 4] }, // 小凯
 ] as const satisfies ReadonlyArray<{ id: string; items: readonly number[] }>;
 

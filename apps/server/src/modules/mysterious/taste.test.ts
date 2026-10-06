@@ -14,7 +14,7 @@ import { settleShardRound } from '../settlement/runner';
 import { GOODS } from '@dt/config';
 import { createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
-import { mcPriceOf } from '../tower/sides';
+import { mcOf } from '../tower/sides';
 
 let t: TestGame;
 /** 随机数固定 0：概率判定一律成功，礼券取 1 */
@@ -90,7 +90,7 @@ describe('品尝（规格书 13 §13.6）', () => {
     await setTuning(t, shardId, { mysterious: { saleRates: [10, 10, 10, 10, 10, 10] } });
     const [me, host] = await newPair(t, { shardId, patch: { strength: 0 } });
     await serve(t, host);
-    expect(await mcPriceOf(t.db, await restRow(t, host.restaurantId))).toBe(157);
+    expect((await mcOf(t.db, await restRow(t, host.restaurantId))).price).toBe(157);
     const r = await t.game.mysterious.taste(me, { restId: host.restaurantId });
     expect(r.data).toMatchObject({ strength: 78 });
   });

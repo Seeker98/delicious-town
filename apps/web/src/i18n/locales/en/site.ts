@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    duel1007:
+      'Cook-off results now read like judges\' comments: each judge goes through the items they care about — a crushing win, neck and neck, or a crushing loss — and gives a score; the result also shows the special dish each side brought ("Nothing to cook with" if none). Judge Old Pauper is replaced by Gordon, and Carmen by Joe',
     home1007:
       "A tighter home page: last round's coins, EXP and oil now show as icons (the EXP icon matches the one on your EXP bar), with the income log and floors links on the right of their rows; a shortcut to upgrade the oil can sits next to your oil; daily check-in and today's activity points share one row, and a check mark shows once you've checked in. Cards, list rows and headings across the game have slightly less spacing, so more fits on screen",
     acquire1006:

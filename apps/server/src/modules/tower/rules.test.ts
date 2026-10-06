@@ -93,7 +93,7 @@ describe('评委（问题记录 396）', () => {
     expect(pickJudges(5, sequenceRng([0.99, 0.3, 0.7, 0.1, 0.5]))).toEqual([
       'xiaoKai',
       'bro13',
-      'oldPoor',
+      'gordon',
       'xiaoC',
       'wenjie',
     ]);
@@ -104,25 +104,25 @@ describe('评委（问题记录 396）', () => {
     // 我色、香高，对方味、形、养高
     const me = [10, 10, 0, 0, 0];
     const them = [0, 0, 5, 5, 5];
-    const r = judgeDuel(me, them, ['carmen', 'xiaoKai', 'oldPoor', 'fanDao', 'gary'], 3);
+    const r = judgeDuel(me, them, ['joe', 'xiaoKai', 'gordon', 'fanDao', 'gary'], 3);
     expect(r.judges).toEqual([
-      { id: 'carmen', me: 20, them: 0 },
+      { id: 'joe', me: 20, them: 0 },
       { id: 'xiaoKai', me: 0, them: 10 },
-      { id: 'oldPoor', me: 0, them: 10 },
+      { id: 'gordon', me: 0, them: 10 },
       { id: 'fanDao', me: 10, them: 5 },
       { id: 'gary', me: 10, them: 5 },
     ]);
     expect(r.votes).toEqual([3, 2]);
     expect(r.win).toBe(true);
-    const early = judgeDuel(me, them, ['xiaoKai', 'oldPoor', 'wenjie', 'carmen', 'fanDao'], 3);
-    expect(early.judges.map((j) => j.id)).toEqual(['xiaoKai', 'oldPoor', 'wenjie']);
+    const early = judgeDuel(me, them, ['xiaoKai', 'gordon', 'wenjie', 'joe', 'fanDao'], 3);
+    expect(early.judges.map((j) => j.id)).toEqual(['xiaoKai', 'gordon', 'wenjie']);
     expect(early.votes).toEqual([0, 3]);
     expect(early.win).toBe(false);
   });
 
   it('评委给的分相同这一票谁都不得；票数持平时比上场评委的总分，总分也相同算挑战方赢', () => {
     const same = [5, 5, 5, 5, 5];
-    const r = judgeDuel(same, same, ['carmen', 'xiaoKai', 'oldPoor', 'fanDao', 'gary'], 3);
+    const r = judgeDuel(same, same, ['joe', 'xiaoKai', 'gordon', 'fanDao', 'gary'], 3);
     expect(r.votes).toEqual([0, 0]);
     expect(r.judges).toHaveLength(5);
     expect(r.win).toBe(true);
@@ -130,7 +130,7 @@ describe('评委（问题记录 396）', () => {
     const r2 = judgeDuel(
       [4, 4, 0, 0, 0],
       [0, 0, 0, 0, 8],
-      ['carmen', 'xiaoKai', 'fanDao', 'oldPoor', 'bigEater'],
+      ['joe', 'xiaoKai', 'fanDao', 'gordon', 'bigEater'],
       3,
     );
     expect(r2.votes).toEqual([2, 2]);
