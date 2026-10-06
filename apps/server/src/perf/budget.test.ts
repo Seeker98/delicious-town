@@ -17,7 +17,7 @@ const BUDGET: Record<string, number> = {
   '/town': 10,
   '/kuji': 9,
   '/market/view': 9,
-  '/bar': 10,
+  '/bar': 7,
   '/temple': 9,
   '/exchange/me': 7,
   '/cupboard/list': 5,
