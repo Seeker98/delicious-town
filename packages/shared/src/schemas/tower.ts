@@ -114,6 +114,8 @@ export interface RankSlotDto {
 }
 
 export interface RankDto {
+  /** 每局请几位评委（规则说明按它写，backlog 396） */
+  duelJudges: number;
   /** 本周一 */
   week: string;
   /** 本周结束（下周一 0 点）的 ISO 时间 */

@@ -80,4 +80,11 @@ describe('RankPanel', () => {
     expect(w.find('[data-testid="occupy-7"]').exists()).toBe(false);
     expect(w.find('[data-testid="occupy-2"]').exists()).toBe(true);
   });
+
+  it('赛厨规则按赛厨榜接口给的评委数写（backlog 396 审查）', async () => {
+    vi.mocked(endpoints.towerRank).mockResolvedValue(rankData({ duelJudges: 3 }));
+    const w = mount(RankPanel);
+    await flushPromises();
+    expect(w.get('[data-testid="duel-rules"]').text()).toContain('随机请 3 位');
+  });
 });

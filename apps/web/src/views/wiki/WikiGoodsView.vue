@@ -101,9 +101,9 @@ const noSource = computed(
     !g.value.sources.renownShop &&
     g.value.sources.exchange.length === 0 &&
     !g.value.sources.special &&
-    g.value.sources.black === null &&
+    g.value.sources.black == null &&
     !g.value.sources.award &&
-    g.value.sources.gemFrom === null,
+    !g.value.sources.gemFrom,
 );
 const shopPrice = computed(() => {
   const s = g.value?.sources.shop;
@@ -235,7 +235,7 @@ const shopPrice = computed(() => {
         </li>
         <!-- 今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮：原来只写商店） -->
         <li v-if="g.sources.special">{{ w.sources.special }}</li>
-        <li v-if="g.sources.black !== null">{{ w.sources.black(formatNum(g.sources.black)) }}</li>
+        <li v-if="g.sources.black != null">{{ w.sources.black(formatNum(g.sources.black)) }}</li>
         <li v-if="g.sources.award">{{ w.sources.award }}</li>
         <li v-if="g.sources.gemFrom">
           {{ w.sources.gemFromBefore

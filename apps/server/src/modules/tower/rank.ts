@@ -50,6 +50,7 @@ export async function rankView(
       const r = byRank.get(i + 1);
       return { rank: i + 1, restId: r?.rest_id ?? null, name: r?.name ?? null, level: r?.level ?? null };
     }),
+    duelJudges: t.duel.judges,
     myRank: rows.find((r) => r.rest_id === rest.id)?.rank ?? null,
     left: Math.max(0, t.rankDaily - (await getDaily(db, rest.id, KEY.rankDone, day))),
     spar: await getDaily(db, rest.id, KEY.spar, day),

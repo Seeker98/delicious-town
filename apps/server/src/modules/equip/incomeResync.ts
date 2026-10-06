@@ -95,7 +95,7 @@ function incomeFingerprint(t: Tuning['equip']['income']): string {
 
 /**
  * 每天查一次（问题记录 411 审查）：只读比对，没有不一致时什么都不写。
- * 按日期跑而不是按系数指纹：系数改了又改回去、滚动部署时旧实例写的旧行，第二天都能补上
+ * 按日期跑，周期键另外带系数指纹：系数改了又改回去、滚动部署时旧实例写的旧行，第二天都能补上
  */
 export function equipIncomeJobs(d: GameDeps): PeriodicJob[] {
   return [

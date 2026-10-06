@@ -151,7 +151,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
         await grantGoodsOp(o, id, 1, { source: 'tower.elder' });
         // 单独给、上新闻（backlog 408：原来混在随机奖励里看不出来是长老掉的）
         elderDrop = id;
-        opNews(o, 'tower.elder', { goodsId: id, floor: floorNo });
+        if (floorNo >= t.elderNewsFloor) opNews(o, 'tower.elder', { goodsId: id, floor: floorNo });
       }
       if (floorNo > state.best_floor)
         await o.tx

@@ -118,7 +118,7 @@ describe('挑战（设计文档 §3.2）', () => {
   it('打赢长老按这一层的概率掉一件它的套装（问题记录 408）；试打不掉', async () => {
     const shardId = await createShard(t.db);
     const rates = [1, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05];
-    await setTuning(t, shardId, { tower: { elderDropRates: rates } });
+    await setTuning(t, shardId, { tower: { elderDropRates: rates, elderNewsFloor: 1 } });
     const ctx = await newRestaurant(t, { shardId, patch: { ...STRONG, level: 5 } });
     const drops = t.game.deps.config.towerFloors.get(1)!.elder.drops;
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
@@ -137,6 +137,18 @@ describe('挑战（设计文档 §3.2）', () => {
     const test = await t.game.tower.challenge(ctx, { floor: 1, test: true });
     expect(test.data).toMatchObject({ win: true, awards: [], elderDrop: null });
     expect(await equipNum(ctx.restaurantId, drops[1]!)).toBe(1);
+  });
+
+  it('低于 elderNewsFloor 的层掉了厨具不上新闻（backlog 408 审查：低层掉得多会刷屏）', async () => {
+    const shardId = await createShard(t.db);
+    await setTuning(t, shardId, {
+      tower: { elderDropRates: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], elderNewsFloor: 2 },
+    });
+    const ctx = await newRestaurant(t, { shardId, patch: { ...STRONG, level: 5 } });
+    const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
+    expect(r.data.elderDrop).not.toBeNull();
+    const news = await t.db.selectFrom('news').select('type').where('shard_id', '=', shardId).execute();
+    expect(news.some((n) => n.type === 'tower.elder')).toBe(false);
   });
 
   it('这一层概率为 0 时打赢也不掉', async () => {

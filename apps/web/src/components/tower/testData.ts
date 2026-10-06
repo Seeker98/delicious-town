@@ -66,6 +66,7 @@ export const towerData = (patch: Partial<TowerDto> = {}): TowerDto => ({
 export { floor as towerFloor };
 
 export const rankData = (patch: Partial<RankDto> = {}): RankDto => ({
+  duelJudges: 5,
   week: '2026-09-28',
   weekEnd: '2026-10-04T16:00:00.000Z',
   slots: Array.from({ length: 15 }, (_, i) => ({ rank: i + 1, restId: null, name: null, level: null })),

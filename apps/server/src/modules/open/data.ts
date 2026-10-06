@@ -69,7 +69,7 @@ export function createOpenData(config: GameConfig) {
   const rules = b.goodsExchange.filter((r) => visible(r.goodsId) && r.need.every((n) => visible(n.goodsId)));
   // 宝石的上一阶：两颗合成下一阶（视觉第三轮：来源写升阶）
   const gemFrom = new Map<number, number>();
-  for (const g of config.bundle.goods) if (g.gem?.nextId) gemFrom.set(g.gem.nextId, g.id);
+  for (const g of config.bundle.goods) if (g.gem?.nextId && visible(g.id)) gemFrom.set(g.gem.nextId, g.id);
   const specialPool = new Set(config.bundle.shopPools.special);
   const blackPool = new Set(config.bundle.shopPools.black);
   const madeBy = new Map<number, GoodsExchange[]>();
