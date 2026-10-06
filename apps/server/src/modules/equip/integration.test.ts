@@ -51,23 +51,43 @@ describe('好友餐厅页显示对方穿戴（子项目 3 留给 2B）', () => {
   });
 });
 
-describe('功能关闭（设计文档 裁定 10）', () => {
-  it('接口拒绝，已穿戴的幸运和套装加成照常生效', async () => {
+describe('功能关闭（设计文档 裁定 10；backlog 411~413 用户改定：关掉时加成一起停）', () => {
+  it('接口拒绝；穿戴的幸运、收益加成和套装加成都不生效；重新打开马上恢复', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 13 } });
     await showQuest(t, ctx.restaurantId, 3161);
     expect((await t.game.task.tasks(ctx)).lines.some((l) => l.id === 8)).toBe(true);
     for (const g of ['真爱之铲', '真爱之刀', '真爱之锅'].map(gid))
-      await t.game.equip.wear(ctx, { id: await piece(ctx, g, { base_luck: 4 }) });
-    await t.db
-      .insertInto('shard_config')
-      .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { equip: false } }) })
-      .execute();
-    t.game.shards.invalidate(ctx.shardId);
+      await t.game.equip.wear(ctx, { id: await piece(ctx, g, { base_luck: 4, base_cook: 10 }) });
+    const agg = async () =>
+      getEffectAgg(
+        t.db,
+        ctx.restaurantId,
+        new Date(),
+        t.deps.config,
+        await t.game.shards.settings(ctx.shardId),
+      );
+    const on = await agg();
+    expect(on.luckValue).toBeGreaterThanOrEqual(12);
+    expect(on.atRate).toBeGreaterThanOrEqual(0.05);
+    expect(on.coinRate).toBeGreaterThan(0);
+    const setEquip = async (equip: boolean) => {
+      await t.db
+        .insertInto('shard_config')
+        .values({ shard_id: ctx.shardId, override: JSON.stringify({ features: { equip } }) })
+        .onConflict((oc) =>
+          oc.column('shard_id').doUpdateSet({ override: JSON.stringify({ features: { equip } }) }),
+        )
+        .execute();
+      t.game.shards.invalidate(ctx.shardId);
+    };
+    await setEquip(false);
     await expect(t.game.equip.overview(ctx)).rejects.toMatchObject({ code: 'FEATURE_DISABLED' });
-    const agg = await getEffectAgg(t.db, ctx.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
-    expect(agg.luckValue).toBeGreaterThanOrEqual(12);
-    expect(agg.atRate).toBeGreaterThanOrEqual(0.05);
-    const off = await t.game.task.tasks(ctx);
-    expect(off.lines.some((l) => l.id === 8)).toBe(false);
+    const off = await agg();
+    expect(off.luckValue ?? 0).toBe(0);
+    expect(off.atRate ?? 0).toBe(0);
+    expect(off.coinRate ?? 0).toBe(0);
+    expect((await t.game.task.tasks(ctx)).lines.some((l) => l.id === 8)).toBe(false);
+    await setEquip(true);
+    expect(await agg()).toEqual(on);
   });
 });

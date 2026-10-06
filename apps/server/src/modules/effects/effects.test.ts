@@ -8,7 +8,8 @@ import { gid } from '../../../test/items';
 
 const db = testDb();
 const config = testConfig();
-const agg = (restId: number, at: Date) => getEffectAgg(db, restId, at, config, config.tuning);
+const agg = (restId: number, at: Date) =>
+  getEffectAgg(db, restId, at, config, { tuning: config.tuning, features: {} });
 let shardId: number;
 afterAll(() => db.destroy());
 beforeAll(async () => {

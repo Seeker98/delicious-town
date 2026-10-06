@@ -66,7 +66,7 @@ export function createTempleService(d: GameDeps, world: WorldService) {
         .where('rest_id', '=', rest.id)
         .executeTakeFirst();
       const gear = await restGear(d.db, rest, d.config.suits);
-      const agg = await getEffectAgg(d.db, rest.id, now, d.config, s.tuning);
+      const agg = await getEffectAgg(d.db, rest.id, now, d.config, s);
       const fed = await d.db
         .selectFrom('kraken_feed')
         .select('id')
