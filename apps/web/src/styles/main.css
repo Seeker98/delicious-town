@@ -831,6 +831,8 @@ details.dt-card > summary {
   font: inherit;
   color: inherit;
   overflow-wrap: anywhere;
+  /* 窄屏时英、法、西的长单词先按语言加连字符断开，不在中间硬断（#192 审查；<html lang> 跟着语言） */
+  hyphens: auto;
 }
 .dt-deal-box:disabled {
   cursor: default;
@@ -858,6 +860,7 @@ details.dt-card > summary {
   max-width: 420px;
 }
 .dt-guess {
+  hyphens: auto;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { SHARED_FOODS, type BarDto, type DealDto, type DealPrizeDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -34,6 +34,17 @@ watch(
 );
 /** 读屏播报：刚开出的东西、报价、结果 */
 const live = ref('');
+const root = ref<HTMLElement | null>(null);
+/** 按钮变灰或换掉后键盘焦点会丢：挪到接下来要点的地方（#192 审查） */
+async function focusNext() {
+  await nextTick();
+  const r = local.value;
+  const el = root.value;
+  if (!r || !el) return;
+  if (r.result) return el.querySelector<HTMLElement>('[data-testid="deal-again"]')?.focus();
+  if (r.offer !== null) return el.querySelector<HTMLElement>('[data-testid="deal-yes"]')?.focus();
+  el.querySelector<HTMLElement>('.dt-deal-box:not([disabled])')?.focus();
+}
 
 async function run(fn: () => Promise<DealDto>, fallback: string) {
   if (busy.value) return;
@@ -44,6 +55,7 @@ async function run(fn: () => Promise<DealDto>, fallback: string) {
     local.value = r;
     live.value = liveOf(r, before);
     emit('reload');
+    void focusNext();
   } catch (e) {
     toast.push(errorMessage(e, fallback), 'danger');
     // 局面没了就回到开局；别的错误（网络、和服务端对不上）先用概览里的局面，再重新读
@@ -121,11 +133,12 @@ const result = computed(() => (local.value?.result ? resultLines(local.value) : 
 function again() {
   local.value = null;
   live.value = '';
+  void nextTick(() => root.value?.querySelector<HTMLElement>('[data-testid="deal-start"]')?.focus());
 }
 </script>
 
 <template>
-  <div class="small">
+  <div ref="root" class="small">
     <div class="dt-meta mb-2">{{ t.bar.deal.rule(d.count) }}</div>
     <template v-if="!local">
       <div class="fw-bold mb-1">{{ t.bar.deal.prizesTitle }}</div>

@@ -173,6 +173,33 @@ describe('DealPanel', () => {
     expect(w.text()).toContain('再打开 1 个箱子');
   });
 
+  it('键盘焦点跟着走：有报价到“成交”，开箱子到下一个能开的箱子，结束到“再来一局”（#192 审查）', async () => {
+    const w = mount(DealPanel, {
+      props: { data: withRound(round({ mine: 0, toOpen: 1 })) },
+      attachTo: document.body,
+    });
+    const focused = () => document.activeElement?.getAttribute('data-testid');
+    vi.mocked(endpoints.barDealOpen).mockResolvedValueOnce(
+      round({ mine: 0, toOpen: 0, offer: 5000, opened: [{ box: 1, ...P(1200) }] }),
+    );
+    await w.get('[data-testid="deal-box-1"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('deal-yes');
+    vi.mocked(endpoints.barDealAnswer).mockResolvedValueOnce(
+      round({ mine: 0, round: 1, toOpen: 2, opened: [{ box: 1, ...P(1200) }] }),
+    );
+    await w.get('[data-testid="deal-no"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('deal-box-2');
+    vi.mocked(endpoints.barDealOpen).mockResolvedValueOnce(
+      round({ mine: 0, result: 'box', prize: P(70000), all: Array.from({ length: 10 }, () => P(1200)) }),
+    );
+    await w.get('[data-testid="deal-box-2"]').trigger('click');
+    await flushPromises();
+    expect(focused()).toBe('deal-again');
+    w.unmount();
+  });
+
   it('结束后读屏标签仍写出哪个是自己的箱子', () => {
     const all = Array.from({ length: 10 }, (_, i) => P((i + 1) * 1000));
     const w = mount(DealPanel, {
