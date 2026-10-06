@@ -39,7 +39,7 @@ export async function getDaily(
 
 /**
  * 删掉 keepDays 天以前的每日计数（backlog 374：原来没有清理，表每天按“玩家 × 动作”涨）。
- * 读得最远的是上周的排行、周奖励（13 天内），留 30 天足够。分批删，一次不锁太多行；返回删了几行
+ * 读得最远的是上周的排行、周奖励（14 天内），留 30 天足够。分批删，一次不锁太多行；返回删了几行
  */
 export async function pruneDailyCounters(
   db: Kysely<DB>,

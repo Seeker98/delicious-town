@@ -140,7 +140,7 @@ describe('翻橱（规格书 05 §5.7）', () => {
     await befriend(t, a.restaurantId, npc);
     seq = [0.99];
     for (const slotNo of [1, 2, 3]) await svc().flip.flip(a, { restId: npc, slotNo });
-    await expect(svc().flip.flip(a, { restId: npc, slotNo: 4 })).rejects.toMatchObject({
+    await expect(svc().flip.flip(a, { restId: npc, slotNo: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'flip_host' },
     });

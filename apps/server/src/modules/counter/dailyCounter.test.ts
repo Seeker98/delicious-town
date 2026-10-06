@@ -17,8 +17,8 @@ describe('每日计数清理（backlog 374）', () => {
     const today = gameDay(now);
     for (const back of [0, 13, 30, 31, 90])
       await incrementDaily(t.db, r.restaurantId, 'test.prune', back + 1, addDays(today, -back));
-    const n = await pruneDailyCounters(t.db, now, 30, 1);
-    expect(n).toBeGreaterThanOrEqual(2);
+    // 删了几行不断言：同一个测试库上别的跑也可能先删掉；看剩下的就够了
+    await pruneDailyCounters(t.db, now, 30, 1);
     const left = async (back: number) => getDaily(t.db, r.restaurantId, 'test.prune', addDays(today, -back));
     expect([await left(0), await left(13), await left(30)]).toEqual([1, 14, 31]);
     expect([await left(31), await left(90)]).toEqual([0, 0]);
