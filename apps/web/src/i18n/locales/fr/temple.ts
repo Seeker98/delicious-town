@@ -39,7 +39,7 @@ const temple: Messages['temple'] = {
     btn: (n) => `Expertiser ×${n}`,
     noRetry: 'Ne pas relancer sous le niveau 5 (Livre du dieu des étoiles)',
     got: (name, num, blessed) =>
-      `Fragment de ${name} ×${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
+      `Fragment de ${name} × ${num}${blessed ? ' (faveur du dieu des étoiles)' : ''}`,
   },
   guardian: {
     what: 'défier le gardien',
@@ -64,7 +64,7 @@ const temple: Messages['temple'] = {
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",
-    foodLabel: (name, level, rare, num) => `${name} (niv. ${level}${rare ? ', rare' : ''}) ×${num}`,
+    foodLabel: (name, level, rare, num) => `${name} (niv. ${level}${rare ? ', rare' : ''}) × ${num}`,
     intro: (creatives) =>
       `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +50 %) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +150 %). Créativité ${creatives}.`,
     help: 'Comment ça marche',

@@ -66,7 +66,7 @@ const maxOf = (i: number) => Math.max(1, Math.min(MAX_TIMES, props.a.def.shop[i]
     class="d-flex flex-wrap align-items-center gap-2 border-bottom py-1"
   >
     <span class="flex-fill small">
-      {{ s.cost.map((c) => `${a.def.currencies[c.currency]?.name} ×${c.num}`).join(' + ') }}
+      {{ s.cost.map((c) => t.common.qty(a.def.currencies[c.currency]?.name ?? '', c.num)).join(' + ') }}
       → {{ rewardSummary(s.award, catalog) }}
     </span>
     <span class="small text-muted">{{ done(i) }}/{{ s.limit }}</span>

@@ -114,7 +114,7 @@ const blessReward = computed(() => {
       : b.type === 0
         ? x.blessPick(lv, b.num)
         : b.type === 2
-          ? `${catalog.goodsName(b.goodsId!)}×${b.num}`
+          ? t.value.common.qty(catalog.goodsName(b.goodsId!), b.num)
           : b.type === 3
             ? x.blessCoin(formatNum(b.num))
             : x.blessDiamond(b.num);

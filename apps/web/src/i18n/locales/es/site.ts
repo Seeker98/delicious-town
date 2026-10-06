@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    frTimes1006:
+      'En la interfaz en francés, las cantidades de objetos siguen ahora la tipografía francesa, con espacios alrededor del × (p. ej. «Riz × 3»)',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:

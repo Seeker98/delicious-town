@@ -92,9 +92,9 @@ const wiki: Messages['wiki'] = {
     suitTier: (n) => `${n} ${plFr(n, 'pièce', 'pièces')}`,
   },
   gift: {
-    randomGoods: (level, num) => `Un objet de niv. ${level} au hasard ×${num}`,
-    randomFoods: (level, num) => `Ingrédients communs de niv. ${level} au hasard ×${num}`,
-    masterFoods: (num) => `Ingrédients universels au hasard ×${num}`,
+    randomGoods: (level, num) => `Un objet de niv. ${level} au hasard × ${num}`,
+    randomFoods: (level, num) => `Ingrédients communs de niv. ${level} au hasard × ${num}`,
+    masterFoods: (num) => `Ingrédients universels au hasard × ${num}`,
     range: (min, max, unit) => `${unit} ${min}–${max}`,
     note: 'Seul le contenu possible est listé, pas les probabilités.',
   },

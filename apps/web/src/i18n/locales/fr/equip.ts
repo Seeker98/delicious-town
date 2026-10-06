@@ -64,7 +64,7 @@ const equip: Messages['equip'] = {
     next: (gain, total) =>
       `En cas de réussite, total des caractéristiques +${gain} (soit ${total}, hors gemmes)`,
     cost: (essence, have, coin) =>
-      `Coût : essence ×${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
+      `Coût : essence × ${essence} (vous en avez ${have}), ${coin} ${plFr(coin, 'pièce', 'pièces')}`,
     useStone: (n) => `Utiliser une Pierre de renfort (réussite garantie ; vous en avez ${n})`,
     maxed: 'Renfort au maximum',
     backOption: (name, back, num) => `${name} (annule ${back} niveau(x) ; vous en avez ${num})`,

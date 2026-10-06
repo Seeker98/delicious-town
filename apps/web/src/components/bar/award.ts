@@ -16,6 +16,9 @@ export function awardText(a: BarAwardDto, names: Pick<Names, 'goodsName' | 'food
       ? w.coin(formatNum(a.num))
       : a.kind === 'exp'
         ? w.exp(formatNum(a.num))
-        : `${a.kind === 'goods' ? names.goodsName(a.id ?? 0) : names.foodName(a.id ?? 0)}×${a.num}`;
+        : activeMessages().common.qty(
+            a.kind === 'goods' ? names.goodsName(a.id ?? 0) : names.foodName(a.id ?? 0),
+            a.num,
+          );
   return a.lucky ? w.lucky(what) : what;
 }

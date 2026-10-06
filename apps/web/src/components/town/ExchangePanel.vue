@@ -89,7 +89,7 @@ async function go(x: TownExchangeItemDto) {
         </div>
         <div class="dt-meta dt-clamp1">
           <span v-for="(m, i) in x.need" :key="m.goodsId"
-            >{{ i > 0 ? t.events.sep : '' }}{{ catalog.goodsName(m.goodsId) }}×{{ m.num
+            >{{ i > 0 ? t.events.sep : '' }}{{ t.common.qty(catalog.goodsName(m.goodsId), m.num)
             }}{{ t.town.exchange.have(m.have) }}</span
           >
           · {{ x.times > 0 ? t.town.exchange.times(x.times, x.used) : t.town.exchange.unlimited }}

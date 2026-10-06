@@ -363,7 +363,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         ]"
       >
         <div class="flex-fill">
-          <b>{{ nameOf(r.mcId) }}</b> ×{{ r.num }}
+          <b>{{ nameOf(r.mcId) }}</b
+          >{{ t.common.times }}{{ r.num }}
           <span class="text-muted">
             {{
               t.mc.remnantMeta(

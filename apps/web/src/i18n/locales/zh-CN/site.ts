@@ -8,6 +8,7 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    frTimes1006: '法语界面里物品数量按法文习惯写，名字和数量之间加空格（例如 “Riz × 3”）',
     power1006:
       '厨具页在厨力下面写出赛厨时的进攻、防守厨力（算上所有幸运加成和套装的进攻、防守加成），厨塔页的“我的厨力”改叫“我的进攻厨力”，两边对得上了',
     mcTabs1006:

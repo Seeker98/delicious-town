@@ -97,7 +97,7 @@ const tower: Messages['tower'] = {
     owned: 'Possédé',
     soldOut: 'Épuisé cette semaine',
     noRenown: 'Pas assez de renommée',
-    got: (name, n) => `Obtenu : ${name}×${n}`,
+    got: (name, n) => `Obtenu : ${name} × ${n}`,
     failed: "Échec de l'échange",
     renown: (n) => `Ma renommée ${n}`,
     rule: 'Les tickets Délice sont toujours disponibles ; les statues changent chaque semaine et vous ne pouvez en posséder qu’une',

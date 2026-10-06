@@ -52,7 +52,7 @@ function gains(r: TakeawayClaimDto): string {
   if (r.coin) parts.push(x.coin(formatNum(r.coin)));
   if (r.exp) parts.push(x.exp(formatNum(r.exp)));
   if (r.renown) parts.push(x.renown(r.renown));
-  if (r.goods) parts.push(`${catalog.goodsName(r.goods.id)}×${r.goods.num}`);
+  if (r.goods) parts.push(t.value.common.qty(catalog.goodsName(r.goods.id), r.goods.num));
   return parts.join(t.value.events.sep);
 }
 </script>

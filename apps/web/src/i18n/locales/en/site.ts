@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    frTimes1006:
+      'In the French interface, item quantities now follow French typography, with spaces around the × (e.g. “Riz × 3”)',
     power1006:
       'The cookware page now shows your attack and defense chef power in cook-offs (with every Luck bonus and set attack/defense bonuses), and the Chef Tower now says “My attack chef power”, so the two pages match',
     mcTabs1006:

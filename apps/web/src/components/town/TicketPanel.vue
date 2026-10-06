@@ -38,7 +38,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
     const r = await fn();
     toast.push(
       t.value.town.ticket.got(
-        r.foods.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join(t.value.events.sep),
+        r.foods.map((f) => t.value.common.qty(catalog.foodName(f.foodsId), f.num)).join(t.value.events.sep),
       ),
       'success',
     );

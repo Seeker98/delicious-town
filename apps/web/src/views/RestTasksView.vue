@@ -26,8 +26,8 @@ function awardText(a: AwardDto): string {
   if (a.exp) parts.push(r.exp(formatNum(a.exp)));
   if (a.diamond) parts.push(r.diamond(formatNum(a.diamond)));
   if (a.renown) parts.push(r.renown(formatNum(a.renown)));
-  for (const g of a.goods ?? []) parts.push(`${catalog.goodsName(g.id)}×${g.num}`);
-  for (const f of a.foods ?? []) parts.push(`${catalog.foodName(f.id)}×${f.num}`);
+  for (const g of a.goods ?? []) parts.push(t.value.common.qty(catalog.goodsName(g.id), g.num));
+  for (const f of a.foods ?? []) parts.push(t.value.common.qty(catalog.foodName(f.id), f.num));
   return parts.join(m.events.sep);
 }
 

@@ -54,7 +54,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.gem
       class="d-flex align-items-center gap-1 border-bottom py-1 small"
     >
       <div class="flex-fill">
-        <b>{{ catalog.goodsName(x.goodsId) }}</b> ×{{ x.num }}
+        <b>{{ catalog.goodsName(x.goodsId) }}</b
+        >{{ t.common.times }}{{ x.num }}
         <span class="text-muted">
           {{
             ATTR_KEYS.filter((k) => x.attrs[k] > 0)

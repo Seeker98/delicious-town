@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    frTimes1006:
+      'Les quantités d’objets suivent maintenant la typographie française, avec des espaces autour du × (par exemple « Riz × 3 »)',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

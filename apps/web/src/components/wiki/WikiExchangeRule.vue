@@ -12,9 +12,10 @@ const t = useT();
   <span>
     <template v-for="(n, i) in rule.need" :key="n.goodsId">
       <span v-if="i > 0"> + </span>
-      <RouterLink :to="`/wiki/goods/${n.goodsId}`">{{ n.name }}</RouterLink> ×{{ n.num }}
+      <RouterLink :to="`/wiki/goods/${n.goodsId}`">{{ n.name }}</RouterLink
+      >{{ t.common.times }}{{ n.num }}
     </template>
-    → <RouterLink :to="`/wiki/goods/${rule.goodsId}`">{{ rule.goodsName }}</RouterLink> ×{{ rule.num
-    }}{{ t.wiki.sources.times(rule.times) }}
+    → <RouterLink :to="`/wiki/goods/${rule.goodsId}`">{{ rule.goodsName }}</RouterLink
+    >{{ t.common.times }}{{ rule.num }}{{ t.wiki.sources.times(rule.times) }}
   </span>
 </template>

@@ -102,7 +102,9 @@ async function fire() {
         <span v-if="result.drops.foods.length > 0">
           {{
             t.temple.guardian.dropFoods(
-              result.drops.foods.map((f) => `${catalog.foodName(f.foodsId)}×${f.num}`).join(t.events.sep),
+              result.drops.foods
+                .map((f) => t.common.qty(catalog.foodName(f.foodsId), f.num))
+                .join(t.events.sep),
             )
           }}
         </span>

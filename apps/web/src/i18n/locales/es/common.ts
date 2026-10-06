@@ -17,6 +17,8 @@ const common: Messages['common'] = {
   opFailed: 'No se pudo completar la acción',
   loadMore: 'Cargar más',
   paren: (s) => ` (${s})`,
+  qty: (name, num) => `${name}×${num}`,
+  times: '×',
   parenOpen: ' (',
   parenClose: ')',
   colon: (s) => `${s}: `,

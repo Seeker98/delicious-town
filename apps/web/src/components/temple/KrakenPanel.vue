@@ -118,7 +118,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
         ]
       }}{{
         t.temple.kraken.seeds(
-          result.seeds.map((s) => `${catalog.seedName(s.seedId)}×${s.num}`).join(t.events.sep),
+          result.seeds.map((s) => t.common.qty(catalog.seedName(s.seedId), s.num)).join(t.events.sep),
         )
       }}
       <span v-if="result.krabCoin > 0">{{ t.temple.kraken.krabCoin(result.krabCoin) }}</span>
@@ -155,9 +155,9 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
     <h6 class="mt-3">{{ t.temple.kraken.seedStock }}</h6>
     <div data-testid="seeds">
       <span v-if="data.seeds.length === 0" class="text-muted">{{ t.temple.kraken.noSeeds }}</span>
-      <span v-for="s in data.seeds" :key="s.seedId" class="me-2"
-        >{{ catalog.seedName(s.seedId) }}×{{ s.num }}</span
-      >
+      <span v-for="s in data.seeds" :key="s.seedId" class="me-2">{{
+        t.common.qty(catalog.seedName(s.seedId), s.num)
+      }}</span>
     </div>
     <div class="text-muted">{{ t.temple.kraken.plantLater }}</div>
   </div>

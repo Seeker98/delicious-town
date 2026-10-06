@@ -45,11 +45,12 @@ export function eventsSummary(events: GameEvent[], names: Names, max = 8): strin
 function eventItem(e: GameEvent, names: Names): string {
   const m = activeMessages().events;
   let what: string;
-  if (e.kind === 'goods') what = `${names.goodsName(e.id ?? 0)}×${formatNum(e.num)}`;
-  else if (e.kind === 'foods') what = `${names.foodName(e.id ?? 0)}×${formatNum(e.num)}`;
-  else if (e.kind === 'remnant') what = `${m.remnant(names, e.id ?? 0)}×${formatNum(e.num)}`;
-  else if (e.kind === 'seed') what = `${m.seed(names, e.id ?? 0)}×${formatNum(e.num)}`;
-  else if (e.kind === 'basket') what = `${m.basket(names.foodName(e.id ?? 0))}×${formatNum(e.num)}`;
+  const q = activeMessages().common.qty;
+  if (e.kind === 'goods') what = q(names.goodsName(e.id ?? 0), formatNum(e.num));
+  else if (e.kind === 'foods') what = q(names.foodName(e.id ?? 0), formatNum(e.num));
+  else if (e.kind === 'remnant') what = q(m.remnant(names, e.id ?? 0), formatNum(e.num));
+  else if (e.kind === 'seed') what = q(m.seed(names, e.id ?? 0), formatNum(e.num));
+  else if (e.kind === 'basket') what = q(m.basket(names.foodName(e.id ?? 0)), formatNum(e.num));
   else if (e.kind === 'activityCurrency') what = m.activityCurrency(e.name, formatNum(e.num));
   else what = `${kindName(e.kind)} ${formatNum(e.num)}`;
   return `${what}${e.lucky ? m.lucky : ''}`;

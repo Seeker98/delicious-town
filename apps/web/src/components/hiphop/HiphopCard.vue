@@ -57,8 +57,9 @@ function describe(r: HiphopTipDto): string {
   const head = r.fresh ? '' : h.stale;
   let body = r.reply === 'krab' ? '' : h.replies[r.reply];
   if (r.reply === 'krab') {
-    body = h.krab(`${catalog.goodsName(GOODS_KRAB_COIN)}×${r.krabCoin}`, !!r.rainbow);
-    if (r.tickets > 0) body += h.tickets(`${catalog.goodsName(GOODS_MYSTERY_TICKET)}×${r.tickets}`);
+    body = h.krab(t.value.common.qty(catalog.goodsName(GOODS_KRAB_COIN), r.krabCoin), !!r.rainbow);
+    if (r.tickets > 0)
+      body += h.tickets(t.value.common.qty(catalog.goodsName(GOODS_MYSTERY_TICKET), r.tickets));
   }
   const exp = r.exp > 0 ? h.exp(formatNum(r.exp)) : '';
   return head + body + exp;
