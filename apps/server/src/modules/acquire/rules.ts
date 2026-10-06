@@ -84,3 +84,25 @@ export function buyBlock(f: BuyFacts, t: T, way: 'acquire' | 'listed'): BuyBlock
   if (f.holdings >= t.maxHoldings) return 'holdings';
   return null;
 }
+
+/**
+ * 一家被收购的店给老板的分红（收购 PR 2）：前一天结算银币 × dividendRate，那天打理过再 × (1 + tendBonus)；
+ * 前一天结算不满 minRounds 轮不发（null）
+ */
+export function dividendOf(coin: number, rounds: number, tended: boolean, t: T): number | null {
+  if (rounds < t.minRounds) return null;
+  return share(coin, t.dividendRate * (tended ? 1 + t.tendBonus : 1));
+}
+
+/** 老板一天的分红上限：自己近 priceDays 天的日均结算银币 × dividendCapRate */
+export const dividendCap = (ownerCoinSum: number, t: T): number =>
+  share(Math.floor(ownerCoinSum / t.priceDays), t.dividendCapRate);
+
+/** 合计超过上限时每家按比例压（向下取整，合计不超过上限）；用 BigInt 乘，免得大数超过 2^53 */
+export function capDividends(raw: readonly number[], cap: number): number[] {
+  const total = raw.reduce((a, b) => a + b, 0);
+  if (total <= cap) return [...raw];
+  const c = BigInt(cap);
+  const sum = BigInt(total);
+  return raw.map((x) => Number((BigInt(x) * c) / sum));
+}
