@@ -58,7 +58,7 @@ const tower: Messages['tower'] = {
     night: (floor, hour) => `Del piso ${floor} hacia arriba se abre después de las ${hour}:00`,
     tired: 'Hoy ya está cansado',
     head: (power, left, total, tickets, strength) =>
-      `Mi poder ${power} · quedan ${left}/${total} ${plEs(total, 'desafío', 'desafíos')} hoy · Vales de desafío ${tickets} (úsalos en el almacén para uno más hoy) · Energía ${strength}`,
+      `Mi poder de ataque ${power} · quedan ${left}/${total} ${plEs(total, 'desafío', 'desafíos')} hoy · Vales de desafío ${tickets} (úsalos en el almacén para uno más hoy) · Energía ${strength}`,
     name: (floor, name) => `Piso ${floor} · ${name}`,
     power: (n) => `Poder ${n}`,
     meta: (note, level, name, left, max) =>

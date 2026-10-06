@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    power1006:
+      'The cookware page now shows your attack and defense chef power in cook-offs (with every Luck bonus and set attack/defense bonuses), and the Chef Tower now says “My attack chef power”, so the two pages match',
     mcTabs1006:
       'The signature dish page now has tabs by level and by path: pick a level on top and a path below, and both your learned dishes and fragments are filtered, with a count on each tab. It remembers your choice next time',
     gearIncome1006:

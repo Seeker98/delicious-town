@@ -22,7 +22,9 @@ import { gainCoin, gainExp, recordChange, spendCoin, spendStrength } from '../..
 import type { DB, EquipGemRow, EquipRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { aggregateEffects } from '../effects/aggregate';
-import { listActiveEffects } from '../effects/service';
+import { getEffectAgg, listActiveEffects } from '../effects/service';
+import { duelPower } from '../tower/duel';
+import { sideOf } from '../tower/sides';
 import { consumeGoods, grantGoodsOp } from '../store/goods';
 import { sellPrice } from '../store/rules';
 import { equipDisplayName } from './hats';
@@ -228,6 +230,18 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           tiers: x.suit.tiers.map((tier, i) => ({ need: tier.need, desc: tier.desc, active: x.active[i]! })),
         })),
         attrs: { points, gear, total, power },
+        duelPower: await (async () => {
+          const full = await d.db
+            .selectFrom('restaurant')
+            .selectAll()
+            .where('id', '=', ctx.restaurantId)
+            .executeTakeFirstOrThrow();
+          const luck =
+            (await getEffectAgg(d.db, ctx.restaurantId, d.now(), d.config, s.tuning)).luckValue ?? 0;
+          const of = async (mode: 'attack' | 'defend') =>
+            duelPower((await sideOf(d.db, d.config, full, luck, mode)).attrs);
+          return { attack: await of('attack'), defend: await of('defend') };
+        })(),
         income: (() => {
           const e = equipEffects(gear, s.tuning.equip.income);
           return { coinRate: e.coinRate ?? 0, expRate: e.expRate ?? 0, mcGoldRate: e.mcGoldRate ?? 0 };

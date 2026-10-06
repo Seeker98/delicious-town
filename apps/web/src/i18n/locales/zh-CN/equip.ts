@@ -8,6 +8,9 @@ export default {
   power: '厨力',
   powerNote: '（五项之和 + 幸运/2；只作参考，赛厨的胜负看评委按色香味形养打分）',
   /** 穿戴厨具（含宝石）的收益加成（问题记录 411） */
+  /** 赛厨时的厨力（问题记录 417） */
+  duelPower: (attack: string, defend: string) =>
+    `赛厨时：进攻 ${attack}、防守 ${defend}（算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个）`,
   income: (coin: string, exp: string, gold: string) =>
     `厨具收益加成：最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
   incomeNote: '（厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少）',

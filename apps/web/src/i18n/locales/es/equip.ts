@@ -9,6 +9,8 @@ const equip: Messages['equip'] = {
   power: 'Poder de chef',
   powerNote:
     '(suma de los cinco atributos + Suerte/2; solo orientativo: los duelos de cocina los deciden jueces que puntúan Color, Aroma, Sabor, Forma y Nutrición)',
+  duelPower: (attack, defend) =>
+    `En los duelos: ataque ${attack}, defensa ${defend} (con todos los extras de Suerte y los de ataque y defensa del conjunto; la Torre de chefs muestra el de ataque)`,
   income: (coin, exp, gold) =>
     `Bonificación del equipo: monedas finales ${coin}, EXP final ${exp}, oro del plato estrella ${gold}`,
   incomeNote:

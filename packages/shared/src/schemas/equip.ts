@@ -84,6 +84,8 @@ export interface EquipOverviewDto {
   attrs: { points: AttrsDto; gear: AttrsDto; total: AttrsDto; power: number };
   /** 穿戴厨具（含宝石）带来的收益加成（问题记录 411）：最终银币、最终经验、特色菜金牌，比例 */
   income: { coinRate: number; expRate: number; mcGoldRate: number };
+  /** 赛厨时的厨力（问题记录 417）：幸运算上所有加成，再乘套装的进攻 / 防守加成；厨塔页显示的是进攻这个 */
+  duelPower: { attack: number; defend: number };
   presets: EquipPresetDto[];
   /** 持有的厨具件数 */
   count: number;

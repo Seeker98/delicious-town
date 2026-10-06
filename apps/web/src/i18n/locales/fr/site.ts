@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    power1006:
+      'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:
       'La page des plats signature a maintenant des onglets par niveau et par voie : choisissez un niveau en haut et une voie en bas, les plats appris et les fragments sont filtrés ensemble, avec le nombre sur chaque onglet. Votre choix est gardé pour la prochaine fois',
     gearIncome1006:

@@ -147,6 +147,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
       {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
       <span class="text-muted ms-1">{{ t.equip.powerNote }}</span>
     </div>
+    <!-- 赛厨时的厨力（问题记录 417）：和厨塔页的对得上 -->
+    <div class="small text-muted mb-2" data-testid="duel-power">
+      {{ t.equip.duelPower(formatNum(o.duelPower.attack), formatNum(o.duelPower.defend)) }}
+    </div>
     <!-- 厨具收益加成（问题记录 411） -->
     <div class="small mb-2" data-testid="gear-income">
       {{

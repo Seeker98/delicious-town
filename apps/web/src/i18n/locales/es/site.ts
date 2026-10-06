@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    power1006:
+      'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:
       'La página de platos estrella ahora tiene pestañas por nivel y por vía: elige un nivel arriba y una vía abajo, y se filtran tanto los platos aprendidos como los fragmentos, con el número en cada pestaña. Recuerda tu elección para la próxima vez',
     gearIncome1006:

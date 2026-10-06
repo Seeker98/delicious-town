@@ -135,6 +135,15 @@ describe('穿戴（设计文档 §3.10）', () => {
   it('概览：5 个部位、套装状态、属性（加点 + 厨具）和厨力', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 13, attr_cook: 4, luck: 10 } });
     await eq().wear(ctx, { id: await piece(ctx, gid('见习之铲'), { base_cook: 3, st_cook: 2 }) });
+    await t.db
+      .insertInto('effect_source')
+      .values({
+        rest_id: ctx.restaurantId,
+        source_type: 'device',
+        source_id: 1,
+        effects: JSON.stringify({ luckValue: 20 }),
+      })
+      .execute();
     const o = await eq().overview(ctx);
     expect(o.worn.map((w) => w?.goodsId ?? null)).toEqual([gid('见习之铲'), null, null, null, null]);
     expect(o.worn[0]).toMatchObject({ stress: 0, base: { cook: 3 }, boost: { cook: 2 }, total: { cook: 5 } });
@@ -144,6 +153,8 @@ describe('穿戴（设计文档 §3.10）', () => {
     expect(o.suits).toEqual([]);
     // 厨具收益加成（问题记录 411）：厨艺 5 × 1
     expect(o.income).toEqual({ coinRate: 0.002, expRate: 0.00125, mcGoldRate: 0.0015 });
+    // 赛厨时的厨力（问题记录 417）：幸运算上所有加成（这里另有设施幸运 +20），和厨塔页显示的一样
+    expect(o.duelPower).toEqual({ attack: 9 + 15, defend: 9 + 15 });
     expect(o.count).toBe(1);
     const list = await eq().list(ctx, { part: 1 });
     expect(list.map((x) => x.goodsId)).toEqual([gid('见习之铲')]);
