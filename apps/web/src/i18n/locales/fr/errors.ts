@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum, formatPct } from '../../../utils/format';
 import { plFr } from '../../helpers';
 
 const s = (x: unknown) => String(x);
@@ -359,6 +360,33 @@ const errors: Messages['errors'] = {
     rank_not_better: 'Vous ne pouvez défier ou prendre qu’un rang supérieur',
     rank_gap: "Dans le top 8, vous ne pouvez défier qu'un joueur à 3 rangs au plus",
     npc: 'Vous ne pouvez pas défier M. Krab',
+  },
+  /** Rachats (INVALID_STATE avec scope = acquire) */
+  acquire: {
+    self: () => 'Vous ne pouvez pas racheter votre propre restaurant',
+    mine: () => 'Ce restaurant vous appartient déjà',
+    npc: () => 'Le restaurant de M. Krab ne peut pas être racheté',
+    banned: () => 'Le compte de ce restaurant est banni ; il ne peut pas être racheté',
+    not_listed: () => "Ce restaurant n'est pas en vente",
+    star: () => "Ce restaurant n'a pas encore assez d'étoiles pour être racheté",
+    no_state: () => "Ce restaurant n'a pas encore assez d'étoiles pour avoir une valorisation",
+    protected: () => 'Ce restaurant vient de se racheter et est encore protégé',
+    daily: () => "Ce restaurant a été racheté trop de fois aujourd'hui. Revenez demain",
+    pair: () => 'Vos deux restaurants ont fait affaire récemment. Réessayez dans quelques jours',
+    buyer_owned: () => "Tant que votre restaurant a un propriétaire, vous ne pouvez pas en racheter d'autres",
+    holdings: () => 'Vous ne pouvez plus posséder de restaurants supplémentaires',
+    linked: () => 'Vous ne pouvez pas racheter ce restaurant pour le moment',
+    other_shard: () => "Ce restaurant n'est pas sur ce serveur",
+    owner_changed: () => 'Ce restaurant vient de changer de propriétaire. Actualisez et regardez à nouveau',
+    price_changed: (p) =>
+      p.price === undefined
+        ? 'Le prix a changé. Actualisez et confirmez à nouveau'
+        : `Le prix a changé : il est maintenant de ${formatNum(Number(p.price))} ${plFr(p.price, 'pièce', 'pièces')}. Confirmez à nouveau`,
+    not_owned: () => "Votre restaurant n'appartient à personne",
+    not_owner: () => 'Ce restaurant ne vous appartient pas',
+    list_rate: (p) =>
+      `Le prix de vente doit être compris entre ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} et 100\u00a0% de la valorisation, par paliers de 5\u00a0%`,
+    tended: () => "Vous vous êtes déjà occupé du propriétaire aujourd'hui",
   },
   already: {
     activity_reward: 'Vous avez déjà réclamé cette récompense',

@@ -1,5 +1,11 @@
 import type {
   AccountProfileDto,
+  AcquireMarketDto,
+  AcquireRankDto,
+  AcquireRestDto,
+  AcquireResultDto,
+  AcquireTendDto,
+  AcquireViewDto,
   OpenCookbookBrief,
   OpenCookbookDto,
   OpenEquipsDto,
@@ -528,6 +534,19 @@ export const endpoints = {
   kujiDraw: (num: number, line?: KujiLine) =>
     api.post<KujiDrawDto>('/api/v1/kuji/draw', { num, ...(line ? { line } : {}) }),
   // 小镇发展基金（240-2）
+  // 收购（问题记录 421）
+  acquire: () => api.get<AcquireViewDto>('/api/v1/acquire'),
+  acquireRest: (restId: number) => api.get<AcquireRestDto>(`/api/v1/acquire/rest/${restId}`),
+  acquireRank: (board: 'price' | 'invest') => api.get<AcquireRankDto>(`/api/v1/acquire/rank?board=${board}`),
+  acquireMarket: () => api.get<AcquireMarketDto>('/api/v1/acquire/market'),
+  acquireBuy: (restId: number, way: 'acquire' | 'listed', expect: number) =>
+    api.post<AcquireResultDto>('/api/v1/acquire/buy', { restId, way, expect }),
+  acquireRedeem: (expect: number) => api.post<AcquireResultDto>('/api/v1/acquire/redeem', { expect }),
+  acquireRelease: (restId: number) => api.post<{ restId: number }>('/api/v1/acquire/release', { restId }),
+  acquireList: (restId: number, rate: number) =>
+    api.post<{ restId: number; rate: number; until: string }>('/api/v1/acquire/list', { restId, rate }),
+  acquireUnlist: (restId: number) => api.post<{ restId: number }>('/api/v1/acquire/unlist', { restId }),
+  acquireTend: () => api.post<AcquireTendDto>('/api/v1/acquire/tend', {}),
   fund: () => api.get<FundViewDto>('/api/v1/fund'),
   fundDeposit: (tier: string) => api.post<FundViewDto>('/api/v1/fund/deposit', { tier }),
   fundClaim: () => api.post<FundViewDto>('/api/v1/fund/claim', {}),

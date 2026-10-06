@@ -118,6 +118,10 @@ const news: Messages['news'] = {
         : `${w} won ${aPrize(str(p.tier))} in ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji!`,
     'kuji.win': (w, p) =>
       `${w} won ${aPrize(str(p.tier))} in ${p.line === 'deluxe' ? 'Deluxe ' : ''}Ichiban Kuji`,
+    'acquire.big': (w, p) =>
+      `${w} ${p.way === 'listed' ? 'bought' : 'acquired'} "${str(p.name)}" for ${formatNum(num(p.price))} ${plEn(num(p.price), 'coin', 'coins')}`,
+    'acquire.redeem': (w, p) =>
+      `${w} bought itself back for ${formatNum(num(p.price))} ${plEn(num(p.price), 'coin', 'coins')}`,
     'fund.big': (w, p) => fundNews(w, p),
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w} bought the limited title "${x.icon?.(str(p.key))?.title ?? str(p.title)}"`,

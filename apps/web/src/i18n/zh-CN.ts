@@ -69,6 +69,9 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return e.requirement[reason as keyof typeof e.requirement](params, names);
   if (code === 'LIMIT_REACHED' && Object.hasOwn(e.limit, what))
     return e.limit[what as keyof typeof e.limit](params, names);
+  // 收购的原因名和别的玩法重名（not_owned、npc 等）：带 scope 的先查收购自己的表（收购 PR 3）
+  if (code === 'INVALID_STATE' && params.scope === 'acquire' && Object.hasOwn(e.acquire, reason))
+    return e.acquire[reason as keyof typeof e.acquire](params, names);
   if (code === 'INVALID_STATE' && reason === 'exchange_frozen' && typeof params.why === 'string')
     return sp.exchangeFrozen(params.why);
   // 论坛长度：用服务端给的上限，改 tuning 后提示也跟着变（PR31 遗留）
@@ -91,6 +94,10 @@ export function errorText(code: string, params: Record<string, unknown> = {}): s
     return e.state[reason as keyof typeof e.state];
   return Object.hasOwn(e.code, code) ? e.code[code as keyof typeof e.code] : sp.unknown(code);
 }
+
+/** 收购不能这样做的原因（对方餐厅页、身价榜点“收购”时用；和服务端报错同一张表） */
+export const acquireReason = (reason: string): string =>
+  errorText('INVALID_STATE', { reason, scope: 'acquire' });
 
 /** 把任意异常转成给玩家看的文案 */
 export function errorMessage(e: unknown, fallback: string): string {

@@ -1,5 +1,6 @@
 import type { Messages } from '../..';
 import account from './account';
+import acquire from './acquire';
 import activity from './activity';
 import auth from './auth';
 import bar from './bar';
@@ -67,6 +68,7 @@ const messages: Messages = {
   exchange,
   predict,
   kuji,
+  acquire,
   site,
   fund,
   equip,

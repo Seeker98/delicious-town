@@ -41,6 +41,7 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
       { to: '/mc', icon: 'bi-stars', key: 'mc', feature: 'mysterious' },
       { to: '/temple', icon: 'bi-bank2', key: 'temple', feature: 'temple' },
       { to: '/kuji', icon: 'bi-gift', key: 'kuji', feature: 'kuji' },
+      { to: '/acquire', icon: 'bi-shop', key: 'acquire', feature: 'acquire' },
       { to: '/yard', icon: 'bi-flower1', key: 'yard', feature: 'yard' },
       { to: '/bar', icon: 'bi-cup-straw', key: 'bar', feature: 'bar' },
       { to: '/tower', icon: 'bi-building', key: 'tower', feature: 'tower' },

@@ -116,6 +116,10 @@ const news: Messages['news'] = {
         : `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} !`,
     'kuji.win': (w, p) =>
       `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''}`,
+    'acquire.big': (w, p) =>
+      `${w} a ${p.way === 'listed' ? 'acheté' : 'racheté'} « ${str(p.name)} » pour ${formatNum(num(p.price))} ${plFr(num(p.price), 'pièce', 'pièces')}`,
+    'acquire.redeem': (w, p) =>
+      `${w} s'est racheté pour ${formatNum(num(p.price))} ${plFr(num(p.price), 'pièce', 'pièces')}`,
     'fund.big': (w, p) => fundNews(w, p),
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) =>

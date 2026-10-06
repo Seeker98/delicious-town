@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum, formatPct } from '../../../utils/format';
 import { plEn } from '../../helpers';
 
 const s = (x: unknown) => String(x);
@@ -356,6 +357,33 @@ const errors: Messages['errors'] = {
     rank_not_better: 'You can only challenge or take a higher rank',
     rank_gap: 'In the top 8, you can only challenge someone within 3 ranks of you',
     npc: "You can't duel Mr. Krab",
+  },
+  /** Acquisitions (INVALID_STATE with scope = acquire) */
+  acquire: {
+    self: () => "You can't acquire your own restaurant",
+    mine: () => 'You already own this restaurant',
+    npc: () => "Mr. Krab's restaurant can't be acquired",
+    banned: () => "This restaurant's account is banned; it can't be acquired",
+    not_listed: () => "This restaurant isn't listed for sale",
+    star: () => "This restaurant doesn't have enough stars to be acquired yet",
+    no_state: () => "This restaurant doesn't have enough stars to have a valuation yet",
+    protected: () => 'This restaurant just bought itself back and is still protected',
+    daily: () => 'This restaurant has been acquired too many times today. Come back tomorrow',
+    pair: () => 'Your two restaurants traded recently. Try again in a few days',
+    buyer_owned: () => "While your restaurant is owned, you can't acquire others",
+    holdings: () => "You can't own any more restaurants",
+    linked: () => "You can't acquire this restaurant right now",
+    other_shard: () => "That restaurant isn't on this server",
+    owner_changed: () => 'This restaurant just changed owners. Refresh and look again',
+    price_changed: (p) =>
+      p.price === undefined
+        ? 'The price changed. Refresh and confirm again'
+        : `The price changed: it's now ${formatNum(Number(p.price))} ${plEn(p.price, 'coin', 'coins')}. Please confirm again`,
+    not_owned: () => "Your restaurant isn't owned by anyone",
+    not_owner: () => "You don't own this restaurant",
+    list_rate: (p) =>
+      `The listing price must be ${formatPct(Number(p.min ?? 0.5), { digits: 0 })}–100% of the valuation, in 5% steps`,
+    tended: () => "You've already tended for the owner today",
   },
   already: {
     activity_reward: "You've already claimed this reward",

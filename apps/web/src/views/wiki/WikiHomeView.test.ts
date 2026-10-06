@@ -44,6 +44,16 @@ describe('游戏资料首页（问题记录 142）', () => {
         exchange: { level: 20, days: 7 },
         predict: { level: 20, days: 7 },
         newbieExp: { maxLevel: 40, rate: 2 },
+        acquire: {
+          minStar: 2,
+          taxRate: 0.1,
+          maxHoldings: 10,
+          dividendRate: 0.05,
+          tendBonus: 0.5,
+          minRounds: 90,
+          tendFoods: 5,
+          protectDays: 3,
+        },
       },
     });
     vi.mocked(endpoints.openGoods).mockResolvedValue({

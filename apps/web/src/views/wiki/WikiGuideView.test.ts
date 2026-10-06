@@ -19,6 +19,16 @@ const guide: OpenGuideNumbers = {
   exchange: { level: 25, days: 5 },
   predict: { level: 25, days: 5 },
   newbieExp: { maxLevel: 35, rate: 1.5 },
+  acquire: {
+    minStar: 2,
+    taxRate: 0.1,
+    maxHoldings: 10,
+    dividendRate: 0.05,
+    tendBonus: 0.5,
+    minRounds: 90,
+    tendFoods: 5,
+    protectDays: 3,
+  },
 };
 const index = (g: OpenGuideNumbers | undefined) =>
   ({
