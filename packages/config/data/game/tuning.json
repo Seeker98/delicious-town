@@ -287,6 +287,14 @@
       "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
       "winLevel": 5, "perfectLevel": 6, "tieRefund": 1
     },
+    "spice": {
+      "cost": 2, "dailyMax": 5, "kinds": 10, "length": 4, "tries": 8,
+      "tiers": [
+        { "maxTries": 4, "awardLevel": 8, "renown": 5, "news": true },
+        { "maxTries": 6, "awardLevel": 5, "renown": 2, "news": false },
+        { "maxTries": 8, "awardLevel": 3, "renown": 0, "news": false }
+      ]
+    },
     "nim": {
       "dailyMax": 10,
       "tables": {

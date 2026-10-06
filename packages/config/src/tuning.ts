@@ -524,6 +524,26 @@ export const tuningSchema = z.object({
       perfectLevel: int.min(1),
       tieRefund: int.min(0),
     }),
+    /** 秘制调料（问题记录 427-2）：猜 kinds 种调料里 length 种的排列，最多 tries 次；按第几次猜中分档 */
+    spice: z
+      .object({
+        cost: int.min(0),
+        dailyMax: int.min(1),
+        kinds: int.min(2).max(10),
+        length: int.min(1),
+        tries: int.min(1),
+        tiers: z
+          .array(
+            z.object({ maxTries: int.min(1), awardLevel: int.min(1), renown: int.min(0), news: z.boolean() }),
+          )
+          .min(1),
+      })
+      .refine((x) => x.length <= x.kinds, 'length must be <= kinds')
+      .refine(
+        (x) => x.tiers.every((t, i) => i === 0 || t.maxTries > x.tiers[i - 1]!.maxTries),
+        'tiers.maxTries must increase',
+      )
+      .refine((x) => x.tiers.at(-1)!.maxTries === x.tries, 'last tier must equal tries'),
     /** 最后一颗糖（问题记录 427-1）：两张桌子，合计每天 dailyMax 局 */
     nim: z.object({
       dailyMax: int.min(1),

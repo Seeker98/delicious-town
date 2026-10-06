@@ -64,3 +64,24 @@ describe('bar.nim（最后一颗糖，问题记录 427-1）', () => {
     expect(withNim((n) => (n.tables.novice!.first = 'x'))).toBe(false);
   });
 });
+
+describe('bar.spice（秘制调料，问题记录 427-2）', () => {
+  const withSpice = (f: (s: Record<string, unknown> & { tiers: Array<Record<string, unknown>> }) => void) => {
+    const t = structuredClone(tuningJson) as unknown as {
+      bar: { spice: Record<string, unknown> & { tiers: Array<Record<string, unknown>> } };
+    };
+    f(t.bar.spice);
+    return tuningSchema.safeParse(t).success;
+  };
+
+  it('合法配置通过；配方长度不能超过调料种数，种数最多 10', () => {
+    expect(withSpice(() => undefined)).toBe(true);
+    expect(withSpice((s) => (s.length = 11))).toBe(false);
+    expect(withSpice((s) => (s.kinds = 11))).toBe(false);
+  });
+
+  it('档位的次数要递增，最后一档等于最多猜几次', () => {
+    expect(withSpice((s) => (s.tiers[1]!.maxTries = 3))).toBe(false);
+    expect(withSpice((s) => (s.tiers[2]!.maxTries = 7))).toBe(false);
+  });
+});

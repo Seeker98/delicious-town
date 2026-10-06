@@ -588,6 +588,22 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
 
+  it('秘制调料的数值（问题记录 427-2）', () => {
+    const { bundle } = realBuild();
+    expect(bundle!.tuning.bar.spice).toEqual({
+      cost: 2,
+      dailyMax: 5,
+      kinds: 10,
+      length: 4,
+      tries: 8,
+      tiers: [
+        { maxTries: 4, awardLevel: 8, renown: 5, news: true },
+        { maxTries: 6, awardLevel: 5, renown: 2, news: false },
+        { maxTries: 8, awardLevel: 3, renown: 0, news: false },
+      ],
+    });
+  });
+
   it('最后一颗糖的数值（问题记录 427-1）', () => {
     const { bundle } = realBuild();
     expect(bundle!.tuning.bar.nim).toEqual({
