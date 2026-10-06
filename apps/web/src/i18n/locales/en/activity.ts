@@ -61,6 +61,7 @@ const activity: Messages['activity'] = {
     'bar.memory': 'Memory Mixing',
     'bar.nim': 'Last Candy',
     'bar.spice': 'Secret Blend',
+    'bar.deal': 'Deal or No Deal',
     'tower.challenge': 'Chef Tower challenges',
     'tower.friendDuel': 'Duel friends',
     'tower.rank': 'Chef ranking challenges',

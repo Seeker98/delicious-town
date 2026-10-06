@@ -50,6 +50,8 @@ const news: Messages['news'] = {
     'bar.memory': (w) => `${w} recordó los 7 ingredientes del Cóctel Memoria`,
     'bar.spice': (w, p) =>
       `${w} descubrió la mezcla secreta del bar en solo ${num(p.tries)} ${plEs(Number(p.tries), 'intento', 'intentos')}`,
+    'bar.deal': (w, p, x) =>
+      `${w} rechazó todas las ofertas en Trato o no trato y abrió ${x.foodName(num(p.foodsId))} ×${num(p.num)}`,
     'bar.darts': (w) => `${w} clavó tres dardos en la diana y dejó boquiabierto al dueño del bar`,
     'equip.stress': (w, p, x) => `${w} reforzó ${x.goodsName(num(p.goodsId))} a +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>

@@ -149,6 +149,10 @@ export default {
       `最后一颗糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '赢了' : '输了'}`,
     'bar.spice': (p) =>
       p.result === 'win' ? `秘制调料第 ${n(p, 'tries')} 次猜中了` : `秘制调料 ${n(p, 'tries')} 次都没猜中`,
+    'bar.deal': (p, names) =>
+      p.result === 'deal'
+        ? `一掷千金成交，得到 ${formatNum(n(p, 'coin'))} 银币`
+        : `一掷千金打开自己的箱子，得到${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `花 ${formatNum(n(p, 'price'))} 银币${p.way === 'listed' ? '买下了挂牌的' : '收购了'}「${String(p.name ?? '')}」`,

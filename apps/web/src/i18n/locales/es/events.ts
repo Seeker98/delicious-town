@@ -160,6 +160,10 @@ const events: Messages['events'] = {
       p.result === 'win'
         ? `Mezcla secreta: descubierta en el intento ${n(p, 'tries')}`
         : `Mezcla secreta: no descubierta en ${n(p, 'tries')} intentos`,
+    'bar.deal': (p, names) =>
+      p.result === 'deal'
+        ? `Trato o no trato: aceptaste ${formatNum(n(p, 'coin'))} monedas`
+        : `Trato o no trato: abriste tu caja y te llevaste ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'num')}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Compraste' : 'Adquiriste'} «${String(p.name ?? '')}»${p.way === 'listed' ? ' (en venta)' : ''} por ${formatNum(n(p, 'price'))} monedas`,

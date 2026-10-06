@@ -77,6 +77,7 @@ describe('一掷千金：开局（设计 §4）', () => {
     expect(r.left.map((x) => x.value)).toEqual([...r.left.map((x) => x.value)].sort((x, y) => y - x));
     expect(await coinOf(a)).toBe(40_000);
     const ov = await bar().overview(a);
+    expect(ov.coin).toBe(40_000);
     expect(ov.deal).toMatchObject({
       cost: 10000,
       played: 1,

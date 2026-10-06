@@ -65,6 +65,8 @@ export interface SlotAwardDto {
 
 export interface BarDto {
   tickets: number;
+  /** 银币（一掷千金用银币入场） */
+  coin: number;
   krabCoins: number;
   fg: BarGameDto;
   /** nextCost：下一局要几张礼券 */

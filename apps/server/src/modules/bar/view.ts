@@ -58,6 +58,7 @@ export async function barView(
   const total = config.slotPool.total;
   return {
     tickets: have(GOODS.mysteryTicket),
+    coin: rest.coin,
     krabCoins: have(GOODS.krabCoin),
     fg: { result: resultDto(s?.fg_result ?? null), times: s?.fg_times ?? 0 },
     cup: {

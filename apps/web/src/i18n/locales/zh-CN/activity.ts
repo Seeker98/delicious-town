@@ -62,6 +62,7 @@ export default {
     'bar.memory': '记忆调酒',
     'bar.nim': '最后一颗糖',
     'bar.spice': '秘制调料',
+    'bar.deal': '一掷千金',
     'tower.challenge': '厨塔挑战',
     'tower.friendDuel': '与好友切磋',
     'tower.rank': '赛厨榜挑战',

@@ -158,6 +158,10 @@ const events: Messages['events'] = {
       p.result === 'win'
         ? `Secret Blend: cracked on try ${n(p, 'tries')}`
         : `Secret Blend: not cracked in ${n(p, 'tries')} tries`,
+    'bar.deal': (p, names) =>
+      p.result === 'deal'
+        ? `Deal or No Deal: took the deal for ${formatNum(n(p, 'coin'))} coins`
+        : `Deal or No Deal: opened your box and got ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'num')}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Bought the listed' : 'Acquired'} "${String(p.name ?? '')}" for ${formatNum(n(p, 'price'))} coins`,
