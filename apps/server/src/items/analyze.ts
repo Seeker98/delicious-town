@@ -8,11 +8,15 @@ import { blessFoodIds, levelFoodIds, mysteryFoodIds } from '../modules/town/rule
  * 配置里的引用来自 itemRefs；食材按等级的来源照游戏里的规则函数和默认区服数值算，规则改了这里跟着变
  */
 
-/** 一处来源或用途；n 是同一处引用的条数；retired = 这处本身是已下架的道具（例如下架礼包里的东西） */
+/**
+ * 一处来源或用途；n 是同一处引用的条数；retired = 这处本身是已下架的道具（例如下架礼包里的东西）；
+ * dead = 这处是礼包或道具，但它自己哪里都拿不到（顺着礼包链判断，backlog 道具整理工具）
+ */
 export interface Tag {
   where: string;
   n: number;
   retired?: true;
+  dead?: true;
 }
 
 export interface ItemRow {
@@ -156,6 +160,11 @@ export function analyzeItems(
     if (handleTargetLevel('decompose', lv + 1) === lv) byLevel([lv], '分解');
   }
   for (const m of config.maps.values()) byLevel(range(m.level[0], m.level[1]), '神殿探险');
+  // 探险成功时还可能出 7 级食材；带探险者秘籍多出 3 级食材（temple/explore.ts）
+  byLevel([7], '神殿探险');
+  byLevel([3], '神殿探险（探险者秘籍）');
+  // 蟹老板橱柜每天补 1~5 级（npc/npc.ts）
+  byLevel([1, 2, 3, 4, 5], '蟹老板橱柜');
   byLevel([1, 2, 3, 7], '神殿守护兽');
   byLevel(
     t.town.npc.bigEaterLevelWeights.flatMap((w, i) => (w > 0 ? [i + 1] : [])),
@@ -196,6 +205,38 @@ export function analyzeItems(
     foodLevels: gradeNeed.get(g.grade) ?? {},
   }));
 
+  // ---------- 顺着礼包链判断（backlog 道具整理工具）----------
+  // “礼包 N …”“道具 N …”这类来源要 N 自己拿得到才算：先找出有直接来源（或代码里发）的道具，再一层层往里推。
+  // 只顺着礼包和道具使用推；合成、宝石升阶、镇长兑换这类来源不查上游能不能拿到（只会少报，不会误报）
+  const viaOf = (where: string) => {
+    const m = /^(?:礼包|道具) (\d+) /.exec(where);
+    return m ? Number(m[1]) : null;
+  };
+  const reachable = new Set<number>();
+  for (const g of b.goods) {
+    const tagsOf = [...(tags.get(key('goods', g.id, 'gives'))?.values() ?? [])];
+    if (code.has(`goods:${g.id}`) || tagsOf.some((x) => !x.retired && viaOf(x.where) === null))
+      reachable.add(g.id);
+  }
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const g of b.goods) {
+      if (reachable.has(g.id) || retired.goods.has(g.id)) continue;
+      const tagsOf = [...(tags.get(key('goods', g.id, 'gives'))?.values() ?? [])];
+      if (tagsOf.some((x) => !x.retired && reachable.has(viaOf(x.where) ?? NaN))) {
+        reachable.add(g.id);
+        grew = true;
+      }
+    }
+  }
+  for (const [k, m] of tags) {
+    if (!k.endsWith(':gives')) continue;
+    for (const x of m.values()) {
+      const via = viaOf(x.where);
+      if (via !== null && !x.retired && !reachable.has(via)) x.dead = true;
+    }
+  }
+
   // ---------- 汇总 ----------
   const list = (kind: ItemKind, id: number, side: 'gives' | 'uses') =>
     [...(tags.get(key(kind, id, side))?.values() ?? [])].sort((a, b) => a.where.localeCompare(b.where, 'zh'));
@@ -210,8 +251,10 @@ export function analyzeItems(
     const gives = list(kind, id, 'gives');
     const uses = list(kind, id, 'uses');
     const isCode = code.has(`${kind}:${id}`);
-    const real = gives.filter((x) => !x.retired);
+    const real = gives.filter((x) => !x.retired && !x.dead);
     const notes: string[] = [];
+    if (gives.length > 0 && real.length === 0 && !isCode)
+      notes.push(gives.every((x) => x.retired) ? '只从已下架礼包获得' : '只从拿不到的礼包或道具获得');
     if (real.length > 0 && real.every((x) => YARD.has(x.where))) notes.push('只能靠菜园获得');
     const grade = /^食谱 (\d+) 品级$/;
     // 只看食谱：别的用途（例如菜园配方当材料）另算

@@ -80,6 +80,24 @@ describe('补算已穿厨具的收益加成（问题记录 411）', () => {
     expect(await staleEquipIncome(t.db, shardId, income())).toEqual([]);
   });
 
+  it('补算和玩家同时换装：都走锁店，谁先谁后结果都对，不会把换装后的加成写回旧的（问题记录 411 审查）', async () => {
+    for (let i = 0; i < 5; i++) {
+      const shardId = await createShard(t.db);
+      const a = await newRestaurant(t, { shardId });
+      const id = await wornPiece(a.restaurantId, { base_cook: 10, base_luck: 4 });
+      // 存着旧行：补算要改它
+      await storeRow(a.restaurantId, { luckValue: 4 });
+      const [r] = await Promise.all([
+        resyncEquipIncome(t.game.deps, shardId, income(), new Date(), log),
+        t.game.equip.unwear(a, { id }),
+      ]);
+      expect(r.failed).toBe(0);
+      // 最后脱掉了：加成行应该没有了，再查一次也没有要改的
+      expect(await equipRow(a.restaurantId)).toBeUndefined();
+      expect(await staleEquipIncome(t.db, shardId, income())).toEqual([]);
+    }
+  });
+
   it('宝石也算进去', async () => {
     const shardId = await createShard(t.db);
     const a = await newRestaurant(t, { shardId });

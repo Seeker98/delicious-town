@@ -5,7 +5,7 @@ import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from 
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
 import { sellPrice } from '../store/rules';
-import { GOODS } from '@dt/config';
+import { GOODS, createGameConfig } from '@dt/config';
 import { gid } from '../../../test/items';
 
 const config = testConfig();
@@ -225,5 +225,34 @@ describe('后期海报奖杯按星级可用（问题记录 146）', () => {
     await shop().buy(ctx, { goodsId: gid('13 哥宣传海报'), num: 1 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(970_000);
     expect(await goodsNum(t, ctx.restaurantId, gid('13 哥宣传海报'))).toBe(1);
+  });
+});
+
+describe('钻石黑市的星级门槛（backlog 146）', () => {
+  // 黑市池里现在没有带星级的道具：拿一张要 6 星的海报放进黑市、标上钻石价
+  const poster = gid('镇长宣传海报');
+  const b = config.bundle;
+  let g: TestGame;
+  beforeAll(async () => {
+    g = await createTestGame({
+      config: createGameConfig({
+        ...b,
+        goods: b.goods.map((x) => (x.id === poster ? { ...x, diamond: 5 } : x)),
+        shopPools: { ...b.shopPools, black: [...b.shopPools.black, poster] },
+      }),
+    });
+  });
+  afterAll(() => g.close());
+
+  it('星级不够买不了，不扣钻石；够了能买', async () => {
+    expect(g.deps.config.requireGoods(poster).needStar).toBe(6);
+    const low = await newRestaurant(g, { patch: { diamond: 20, star_level: 5 } });
+    await expect(g.game.shop.buyBlack(low, { goodsId: poster, num: 1 })).rejects.toMatchObject({
+      params: { reason: 'star', need: 6, have: 5 },
+    });
+    expect((await restRow(g, low.restaurantId)).diamond).toBe(20);
+    const high = await newRestaurant(g, { patch: { diamond: 20, star_level: 6 } });
+    await g.game.shop.buyBlack(high, { goodsId: poster, num: 1 });
+    expect(await goodsNum(g, high.restaurantId, poster)).toBe(1);
   });
 });

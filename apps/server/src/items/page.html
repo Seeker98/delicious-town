@@ -381,7 +381,7 @@
           .map(
             (t) =>
               '<span class="tag' +
-              (t.retired ? ' via' : '') +
+              (t.retired || t.dead ? ' via' : '') +
               '">' +
               esc(t.where) +
               (t.n > 1 ? ' ×' + t.n : '') +

@@ -169,6 +169,24 @@ describe('FriendRestView', () => {
     expect(rows[1]!.find('.badge').exists()).toBe(false);
   });
 
+  it('厨具一栏英文：标题不带冒号，部位按英文（#111 终审）', async () => {
+    const pinia = getActivePinia()!;
+    await useLocaleStore().set('en');
+    setActivePinia(pinia);
+    try {
+      vi.mocked(endpoints.friendDetail).mockResolvedValue(
+        detail({ equips: [{ part: 1, goodsId: 30, stress: 3, name: null }] }),
+      );
+      const w = await mountView();
+      const box = w.get('[data-testid="friend-equips"]');
+      expect(box.find('.text-muted').text()).toBe('Cookware');
+      expect(box.text()).not.toMatch(/[:：]/);
+      expect(w.get('[data-testid="friend-equip-1"]').find('span').text()).toBe('Spatula');
+    } finally {
+      await useLocaleStore().set('zh-CN');
+    }
+  });
+
   it('对方有特色菜时可以品尝；吃过显示已品尝', async () => {
     vi.mocked(endpoints.friendDetail).mockResolvedValue(
       detail({ special: { mcId: 1, grade: 3, leftNum: 20, price: 40, eaten: false } }),
