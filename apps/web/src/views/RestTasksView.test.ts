@@ -21,7 +21,6 @@ vi.mock('../api/endpoints', () => ({
 const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
   total: 120,
   signedIn: false,
-  signInGift: 27,
   star: 1,
   level: 10,
   items: [

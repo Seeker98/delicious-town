@@ -511,6 +511,13 @@ a:hover > .dt-go,
   color: var(--bs-link-color);
   text-decoration: none;
   white-space: nowrap;
+  position: relative;
+}
+/* 点击区域往外扩一圈，排版不变（#189 遗留：签到约 28×21，手指不好点） */
+.dt-link-btn::before {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
 }
 .dt-link-btn:disabled {
   color: var(--dt-muted);

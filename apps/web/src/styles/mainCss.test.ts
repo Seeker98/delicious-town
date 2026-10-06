@@ -50,4 +50,11 @@ describe('触屏小号输入框和 btn-sm 等高（质量期 ①a）', () => {
       .map((s) => s.trim());
     expect(sels).toEqual(['input.form-control-sm', 'select.form-select-sm']);
   });
+
+  it('本页操作的文字链接（签到、加油）点击区域往外扩，不改排版（#189 遗留：签到约 28×21 太小）', () => {
+    const rule = css.match(/\.dt-link-btn::before\s*\{([^}]*)\}/)?.[1] ?? '';
+    expect(rule).toMatch(/position:\s*absolute/);
+    expect(rule).toMatch(/inset:\s*-8px -6px/);
+    expect(css).toMatch(/\.dt-link-btn\s*\{[^}]*position:\s*relative/);
+  });
 });

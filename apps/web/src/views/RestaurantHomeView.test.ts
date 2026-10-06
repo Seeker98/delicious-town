@@ -152,7 +152,6 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: false,
-      signInGift: 27,
       star: 0,
       level: 1,
       items: [],
@@ -477,7 +476,6 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 18,
       signedIn: false,
-      signInGift: 27,
       star: 0,
       level: 1,
       items: [],
@@ -748,7 +746,6 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: true,
-      signInGift: 27,
       star: 0,
       level: 1,
       items: [],
@@ -816,7 +813,6 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 10,
       signedIn: true,
-      signInGift: 27,
       star: 0,
       level: 1,
       items: [],
