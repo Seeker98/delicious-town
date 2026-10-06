@@ -86,6 +86,26 @@ describe('bar.spice（秘制调料，问题记录 427-2）', () => {
   });
 });
 
+describe('bar.cup（猜酒杯改版，问题记录 427-5）', () => {
+  type Cup = { cups: number[]; tiers: Array<Record<string, unknown>> };
+  const withCup = (f: (c: Cup) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { bar: { cup: Cup } };
+    f(t.bar.cup);
+    return tuningSchema.safeParse(t).success;
+  };
+
+  it('合法配置通过；每轮杯子数和奖励档一样多', () => {
+    expect(withCup(() => undefined)).toBe(true);
+    expect(withCup((c) => (c.cups = [2, 3, 5]))).toBe(false);
+  });
+
+  it('杯子数 2~10；新闻只能是 news、broadcast 或 null', () => {
+    expect(withCup((c) => (c.cups[0] = 1))).toBe(false);
+    expect(withCup((c) => (c.cups[3] = 11))).toBe(false);
+    expect(withCup((c) => (c.tiers[0]!.news = 'loud'))).toBe(false);
+  });
+});
+
 describe('bar.deal（一掷千金，问题记录 427-3）', () => {
   type Deal = { prizes: Array<Record<string, unknown>>; opens: number[]; offerRates: number[] };
   const withDeal = (f: (d: Deal) => void) => {
