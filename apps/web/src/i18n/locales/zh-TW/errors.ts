@@ -332,6 +332,7 @@ export default {
     no_round: '這一局已經結束了，請重新開局',
     cup_decide: '猜中了，先選收手還是繼續',
     cup_not_won: '這一輪還沒猜中',
+    cup_round: '這一局的進度已經變了，已重新讀取',
     not_passed: '這一關還沒答對，不能繼續',
     no_aim: '先瞄準再投擲',
     need_first: '先選誰先拿',

@@ -30,8 +30,11 @@ export const barNimTakeBody = z.object({ num: z.number().int().min(1).max(99) })
 export const barSpiceGuessBody = z.object({ guess: z.array(z.number().int().min(0).max(99)).min(1).max(10) });
 
 // ---------- 猜酒杯改版（问题记录 427-5） ----------
-/** 杯子编号，从 0 起；上限由服务端按这一轮的杯子数再查 */
-export const barCupGuessBody = z.object({ cup: z.number().int().min(0).max(99) });
+/** 杯子编号，从 0 起；上限由服务端按这一轮的杯子数再查。round 是前端看到的这一轮（没有局为 null），和服务端不一致时拒绝 */
+export const barCupGuessBody = z.object({
+  cup: z.number().int().min(0).max(99),
+  round: z.number().int().min(0).max(99).nullable(),
+});
 
 // ---------- 一掷千金（问题记录 427-3） ----------
 /** 箱子编号；上限由服务端按奖品数再查 */

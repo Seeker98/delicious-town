@@ -126,7 +126,7 @@ function again() {
         :aria-label="t.bar.cup.cupLabel(i, cupState(i - 1))"
         :data-testid="`cup-${i - 1}`"
         :data-cup="i - 1"
-        @click="run(() => endpoints.barCupGuess(i - 1))"
+        @click="run(() => endpoints.barCupGuess(i - 1, local?.round ?? null))"
       >
         <span class="fw-bold">{{ t.bar.cup.cup(i) }}</span>
         <span class="dt-guess-text">{{ cupState(i - 1) }}</span>

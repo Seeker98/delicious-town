@@ -46,7 +46,7 @@ describe('CupPanel', () => {
     expect(cupButtons(w)).toHaveLength(2);
     await w.get('[data-testid="cup-1"]').trigger('click');
     await flushPromises();
-    expect(endpoints.barCupGuess).toHaveBeenCalledWith(1);
+    expect(endpoints.barCupGuess).toHaveBeenCalledWith(1, null);
     expect(w.emitted('reload')).toHaveLength(1);
   });
 
@@ -66,6 +66,7 @@ describe('CupPanel', () => {
     expect(w.text()).toContain('第 2 轮：3 个杯子，选一个');
     await w.get('[data-testid="cup-2"]').trigger('click');
     await flushPromises();
+    expect(endpoints.barCupGuess).toHaveBeenCalledWith(2, 1);
     const msg = '幸运地猜中了！收手拿 2 份奖励，还是继续闯第 3 轮（5 个杯子）？';
     expect(w.get('[data-testid="cup-won"]').text()).toBe(msg);
     expect(w.get('[data-testid="cup-live"]').text()).toBe(msg);

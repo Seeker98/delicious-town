@@ -342,6 +342,7 @@ const errors: Messages['errors'] = {
     no_round: 'Esta partida terminó. Empieza una nueva.',
     cup_decide: 'Acertaste: primero elige plantarte o seguir',
     cup_not_won: 'Aún no has acertado esta ronda',
+    cup_round: 'Esta partida ha avanzado. Se ha vuelto a cargar.',
     not_passed: 'Todavía no has superado esta fase',
     no_aim: 'Apunta antes de lanzar',
     need_first: 'Elige quién empieza',

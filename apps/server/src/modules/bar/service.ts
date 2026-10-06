@@ -29,8 +29,8 @@ export function createBarService(d: GameDeps) {
     fg(ctx: RestCtx, b: { hand: number }) {
       return op(ctx, 'bar.fg', (o) => playFg(o, b.hand));
     },
-    cupGuess(ctx: RestCtx, b: { cup: number }) {
-      return op(ctx, 'bar.cup', (o) => cupGuess(o, b.cup));
+    cupGuess(ctx: RestCtx, b: { cup: number; round: number | null }) {
+      return op(ctx, 'bar.cup', (o) => cupGuess(o, b.cup, b.round));
     },
     cupStop(ctx: RestCtx) {
       return op(ctx, 'bar.cup', (o) => cupStop(o));

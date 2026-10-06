@@ -53,12 +53,14 @@ async function finish(o: Op, s: CupState, result: 'stop' | 'clear'): Promise<Cup
 }
 
 /**
- * 猜这一轮的一个杯子；没有局时先开局（扣礼券、计活跃）。
+ * 猜这一轮的一个杯子；没有局时先开局（扣礼券、计活跃）。round 是前端看到的这一轮。
  * 随机数顺序：猜中 → 猜错时骰子在哪个杯子（跳过选的那个）
  */
-export async function cupGuess(o: Op, cup: number): Promise<CupDto> {
+export async function cupGuess(o: Op, cup: number, round: number | null): Promise<CupDto> {
   const t = o.tuning.bar.cup;
   let s = await load(o);
+  // 前端看到的轮次（没有局为 null）要和服务端一致：概览晚到时别把点击算到另一轮、另一局上（终审 1）
+  if ((s?.round ?? null) !== round) throw invalidState('cup_round');
   if (s?.won) throw invalidState('cup_decide');
   const cups = t.cups[s?.round ?? 0]!;
   if (cup >= cups) throw badInput('cup');
@@ -108,9 +110,10 @@ export async function cupStop(o: Op): Promise<CupDto> {
   return finish(o, await wonRound(o), 'stop');
 }
 
-/** 继续：这一档作废，进下一轮（最后一轮猜中直接通关，不会走到这里） */
+/** 继续：这一档作废，进下一轮（最后一轮猜中直接通关；区服把轮数改少后已没有下一轮时按通关发奖，终审 2） */
 export async function cupNext(o: Op): Promise<CupDto> {
   const s = await wonRound(o);
+  if (s.round + 1 >= o.tuning.bar.cup.cups.length) return finish(o, s, 'clear');
   const n: CupState = { round: s.round + 1, won: false, last: null };
   await saveRound(o, 'cup', n);
   return cupView(n, o.tuning.bar.cup);

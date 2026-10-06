@@ -427,7 +427,9 @@ export const endpoints = {
     api.post<{ seeds: number }>('/api/v1/yard/seed/exchange', { seedId, times }),
   bar: () => api.get<BarDto>('/api/v1/bar'),
   barFg: (hand: number) => api.post<FgResultDto>('/api/v1/bar/fg', { hand }),
-  barCupGuess: (cup: number) => api.post<CupDto>('/api/v1/bar/cup/guess', { cup }),
+  /** round：面板上看到的这一轮（没有局为 null），和服务端对不上时报 cup_round */
+  barCupGuess: (cup: number, round: number | null) =>
+    api.post<CupDto>('/api/v1/bar/cup/guess', { cup, round }),
   barCupStop: () => api.post<CupDto>('/api/v1/bar/cup/stop'),
   barCupNext: () => api.post<CupDto>('/api/v1/bar/cup/next'),
   barNum: (num: number) => api.post<NumResultDto>('/api/v1/bar/num', { num }),

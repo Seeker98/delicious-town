@@ -22,7 +22,8 @@ beforeEach(() => {
 const player = (tickets = 10, patch: Record<string, unknown> = {}) =>
   newRestaurant(t, { patch, goods: { [GOODS.mysteryTicket]: tickets } });
 const bar = () => t.game.bar;
-const guess = (c: RestCtx, cup: number) => bar().cupGuess(c, { cup });
+/** round：前端看到的这一轮（没有局时为 null） */
+const guess = (c: RestCtx, cup: number, round: number | null = null) => bar().cupGuess(c, { cup, round });
 const stop = (c: RestCtx) => bar().cupStop(c);
 const next = (c: RestCtx) => bar().cupNext(c);
 const tickets = (c: RestCtx) => goodsNum(t, c.restaurantId, GOODS.mysteryTicket);
@@ -84,7 +85,7 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     const a = await player(5);
     await guess(a, 0);
     await next(a);
-    await guess(a, 2);
+    await guess(a, 2, 1);
     expect(await tickets(a)).toBe(4);
     const act = await t.game.task.activation(a);
     expect(act.items.find((i) => i.name === '酒吧娱乐')!.count).toBe(1);
@@ -112,7 +113,7 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     // 第 3 轮 5 个杯子选 2 号：rng.int(4) = 2 跳过 2 号，骰子在 3 号
     await setRound(a, { round: 2, won: false, last: null });
     script = [0.9, 0.5];
-    expect((await guess(a, 2)).data.last).toEqual({ pick: 2, ball: 3, win: false, lucky: false });
+    expect((await guess(a, 2, 2)).data.last).toEqual({ pick: 2, ball: 3, win: false, lucky: false });
     expect((await bar().overview(a)).cup).toMatchObject({ result: 'lose', times: 2 });
   });
 
@@ -122,14 +123,30 @@ describe('猜酒杯：开局和猜（问题记录 427-5）', () => {
     expect(await tickets(a)).toBe(1);
     expect(await hasRound(a)).toBe(false);
     await setRound(a, { round: 2, won: false, last: null });
-    await expect(guess(a, 5)).rejects.toMatchObject({ params: { reason: 'cup' } });
-    expect((await guess(a, 4)).data).toMatchObject({ round: 2, cups: 5, won: true });
+    await expect(guess(a, 5, 2)).rejects.toMatchObject({ params: { reason: 'cup' } });
+    expect((await guess(a, 4, 2)).data).toMatchObject({ round: 2, cups: 5, won: true });
+  });
+
+  it('前端看到的轮次和服务端对不上（概览晚到）：cup_round，不扣礼券、不猜（终审 1）', async () => {
+    const a = await player(3);
+    await setRound(a, { round: 1, won: false, last: null });
+    await expect(guess(a, 0)).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'cup_round' },
+    });
+    await expect(guess(a, 0, 2)).rejects.toMatchObject({ params: { reason: 'cup_round' } });
+    expect(await tickets(a)).toBe(3);
+    expect((await bar().overview(a)).cup.round).toMatchObject({ round: 1, won: false, last: null });
+    const b = await player(3);
+    await expect(guess(b, 0, 1)).rejects.toMatchObject({ params: { reason: 'cup_round' } });
+    expect(await tickets(b)).toBe(3);
+    expect(await hasRound(b)).toBe(false);
   });
 
   it('猜中后没选收手或继续就再猜：cup_decide', async () => {
     const a = await player();
     await setRound(a, won(1));
-    await expect(guess(a, 0)).rejects.toMatchObject({
+    await expect(guess(a, 0, 1)).rejects.toMatchObject({
       code: 'INVALID_STATE',
       params: { reason: 'cup_decide' },
     });
@@ -172,6 +189,12 @@ describe('猜酒杯：区服数值把轮数改少了', () => {
       await expect(stop(a)).rejects.toMatchObject({ params: { reason: 'no_round' } });
       expect((await guess(a, 0)).data).toMatchObject({ round: 0, cups: 2 });
       expect(await tickets(a)).toBe(9);
+      // 已在新的最后一轮猜中的局（改数值前猜中的）：继续就按通关发最后一档（终审 2）
+      await setRound(a, won(1));
+      const r = (await next(a)).data;
+      expect(r).toMatchObject({ round: 1, cups: 3, result: 'clear' });
+      expect(r.awards).toHaveLength(2);
+      expect(await hasRound(a)).toBe(false);
     } finally {
       await t.db.deleteFrom('shard_config').where('shard_id', '=', a.shardId).execute();
       t.game.shards.invalidate(a.shardId);
@@ -219,7 +242,7 @@ describe('猜酒杯：收手、继续、通关', () => {
   it('第 4 轮猜中就是通关：直接发 8 份，写全服广播', async () => {
     const a = await player();
     await setRound(a, { round: 3, won: false, last: null });
-    const r = (await guess(a, 6)).data;
+    const r = (await guess(a, 6, 3)).data;
     expect(r).toMatchObject({ round: 3, cups: 7, result: 'clear', last: { pick: 6, ball: 6, win: true } });
     expect(r.awards).toHaveLength(8);
     expect(await hasRound(a)).toBe(false);
@@ -232,7 +255,7 @@ describe('猜酒杯：收手、继续、通关', () => {
     await stop(a);
     expect(await newsOf(a)).toEqual([{ type: 'bar.cup', params: { round: 3, cups: 5 } }]);
     await setRound(a, { round: 3, won: false, last: null });
-    await guess(a, 0);
+    await guess(a, 0, 3);
     expect(await newsOf(a)).toHaveLength(1);
     await setRound(a, won(1));
     await stop(a);
