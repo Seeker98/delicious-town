@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     home1007:
-      'Inicio más compacto: las monedas, la EXP y el aceite de la última ronda ahora son iconos (pasa el cursor para ver el nombre), y los enlaces al historial y a las plantas están a la derecha de sus filas; junto al aceite hay un acceso para mejorar el bidón; el registro diario y los puntos de actividad comparten fila, y al registrarte solo aparece una marca. Las tarjetas, filas y títulos de todo el juego tienen algo menos de espacio, así cabe más en pantalla',
+      'Inicio más compacto: las monedas, la EXP y el aceite de la última ronda ahora son iconos (el de EXP es el mismo que en tu barra de EXP), y los enlaces al historial y a las plantas están a la derecha de sus filas; junto al aceite hay un acceso para mejorar el bidón; el registro diario y los puntos de actividad comparten fila, y al registrarte solo aparece una marca. Las tarjetas, filas y títulos de todo el juego tienen algo menos de espacio, así cabe más en pantalla',
     acquire1006:
       'Nueva función «Adquisiciones» (en Más): los restaurantes de 2 estrellas o más tienen una valoración y puedes adquirir el restaurante de otro por ese precio. El dueño anterior recibe el 90\u00a0% y el 10\u00a0% es impuesto. Los restaurantes adquiridos pagan un dividendo diario a su dueño; atender al dueño una vez al día te da 5 ingredientes y sube su dividendo a la mitad más. Puedes recomprar tu restaurante por su valoración, y los dueños pueden ponerlo en venta con descuento o soltarlo. La página de otros restaurantes muestra su valoración y su dueño, y las adquisiciones, compras en venta y recompras de 10.000.000 de monedas o más salen en las noticias',
     backlog8:

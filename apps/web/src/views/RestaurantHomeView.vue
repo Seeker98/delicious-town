@@ -335,7 +335,9 @@ onBeforeUnmount(() => {
         <span
           data-testid="exp-text"
           class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center small text-dark"
-          >{{ formatNum(rest.exp) }}/{{ formatNum(rest.expToNext) }}</span
+          ><i class="bi bi-mortarboard me-1" aria-hidden="true"></i>{{ formatNum(rest.exp) }}/{{
+            formatNum(rest.expToNext)
+          }}</span
         >
       </div>
       <div class="row g-1">
@@ -357,7 +359,7 @@ onBeforeUnmount(() => {
           <!-- 油壶升级的入口（问题记录 435） -->
           <RouterLink
             to="/society/oil"
-            class="ms-1 text-decoration-none"
+            class="d-inline-block px-1 text-decoration-none"
             :title="t.home.oilUpgrade"
             :aria-label="t.home.oilUpgrade"
             data-testid="oil-upgrade"
@@ -382,15 +384,18 @@ onBeforeUnmount(() => {
           <span class="dt-shrink" data-testid="last-round-line"
             >{{ t.home.lastRound }}
             <span class="text-nowrap"
-              ><i class="bi bi-coin" :title="t.home.roundCoin" :aria-label="t.home.roundCoin"></i>
+              ><i class="bi bi-coin" :title="t.home.roundCoin" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundCoin }}</span>
               {{ formatNum(rest.lastRound.coin) }}</span
             >
             <span class="text-nowrap ms-1"
-              ><i class="bi bi-mortarboard" :title="t.home.roundExp" :aria-label="t.home.roundExp"></i>
+              ><i class="bi bi-mortarboard" :title="t.home.roundExp" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundExp }}</span>
               {{ formatNum(rest.lastRound.exp) }}</span
             >
             <span class="text-nowrap ms-1"
-              ><i class="bi bi-droplet" :title="t.home.roundOil" :aria-label="t.home.roundOil"></i>
+              ><i class="bi bi-droplet" :title="t.home.roundOil" aria-hidden="true"></i
+              ><span class="visually-hidden">{{ t.home.roundOil }}</span>
               {{ formatNum(rest.lastRound.oil) }}</span
             ></span
           >
@@ -414,40 +419,39 @@ onBeforeUnmount(() => {
     <div class="dt-card my-2 small dt-todo" data-testid="home-todo">
       <div class="dt-card-title mb-1">{{ t.home.todo }}</div>
       <!-- 签到和今日活跃一行（问题记录 437）：签到在左，签完字样右边一个对勾；领到什么写在下面；右边是今日活跃 -->
-      <div v-if="signedIn !== null || activeTotal !== null" class="dt-todo-row" data-testid="home-signin-row">
+      <div v-if="signedIn !== null" class="dt-todo-row flex-wrap" data-testid="home-signin-row">
         <span class="flex-fill text-nowrap">
-          <template v-if="signedIn !== null">
-            <i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}
-            <i
-              v-if="signedIn"
+          <i class="bi bi-calendar-check me-1"></i>{{ t.home.signIn }}
+          <span v-if="signedIn" data-testid="home-signed"
+            ><i
               class="bi bi-check-circle-fill text-success ms-1"
               :title="t.home.signedShort"
-              :aria-label="t.home.signedShort"
-              data-testid="home-signed"
-            ></i>
-            <button
-              v-else
-              class="btn btn-sm btn-success ms-2"
-              :disabled="busy"
-              data-testid="home-signin"
-              @click="act(() => endpoints.signIn(), t.home.signInFailed)"
-            >
-              {{ t.home.signInBtn }}
-            </button>
-            <span
-              v-if="signedIn && signInGift !== null"
-              class="d-block dt-meta text-wrap"
-              data-testid="home-signin-gift"
-              >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
-            >
-          </template>
+              aria-hidden="true"
+            ></i
+            ><span class="visually-hidden">{{ t.home.signedShort }}</span></span
+          >
+          <button
+            v-else
+            class="btn btn-sm btn-success ms-2"
+            :disabled="busy"
+            data-testid="home-signin"
+            @click="act(() => endpoints.signIn(), t.home.signInFailed)"
+          >
+            {{ t.home.signInBtn }}
+          </button>
         </span>
         <RouterLink
           v-if="activeTotal !== null"
           to="/rest/tasks"
-          class="text-end text-decoration-none"
+          class="ms-auto text-nowrap text-decoration-none d-inline-block py-1"
           data-testid="home-activation"
           >{{ t.home.activation(activeTotal) }} ›</RouterLink
+        >
+        <span
+          v-if="signedIn && signInGift !== null"
+          class="w-100 order-last dt-meta"
+          data-testid="home-signin-gift"
+          >{{ t.home.signInGiftLine(catalog.goodsName(signInGift)) }}</span
         >
       </div>
       <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->

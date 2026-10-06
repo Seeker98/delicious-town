@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     home1007:
-      "A tighter home page: last round's coins, EXP and oil now show as icons (hover for names), with the income log and floors links on the right of their rows; a shortcut to upgrade the oil can sits next to your oil; daily check-in and today's activity points share one row, and a check mark shows once you've checked in. Cards, list rows and headings across the game have slightly less spacing, so more fits on screen",
+      "A tighter home page: last round's coins, EXP and oil now show as icons (the EXP icon matches the one on your EXP bar), with the income log and floors links on the right of their rows; a shortcut to upgrade the oil can sits next to your oil; daily check-in and today's activity points share one row, and a check mark shows once you've checked in. Cards, list rows and headings across the game have slightly less spacing, so more fits on screen",
     acquire1006:
       'New feature "Acquisitions" (under More): restaurants with 2+ stars have a valuation, and you can acquire someone else\'s restaurant at that price. The previous owner gets 90% and 10% is tax. Acquired restaurants pay their owner a daily dividend; tending for the owner once a day gives you 5 ingredients and raises their dividend by half. You can buy your restaurant back at its valuation, and owners can list a restaurant at a discount or let it go. Other restaurants\' pages show their valuation and owner, and acquisitions, listing purchases and buy-backs of 10,000,000 coins or more make the news',
     backlog8:
