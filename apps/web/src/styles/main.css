@@ -814,11 +814,14 @@ details.dt-card > summary {
 /* 秘制调料（问题记录 427-2）：4 个空位一行；10 种调料每行 5 个 */
 .dt-spice-slots {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
   max-width: 360px;
 }
 .dt-spice-slot {
+  min-width: 0;
+  padding: 2px;
+  overflow-wrap: anywhere;
   min-height: 32px;
   border: 1px dashed var(--dt-line);
   border-radius: 6px;
@@ -828,9 +831,15 @@ details.dt-card > summary {
 }
 .dt-spice-kinds {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 4px;
   max-width: 420px;
+}
+/* 英法西文调料名长：格子可以收窄，名字折行（360 宽时法文撑出屏幕） */
+.dt-spice-kinds > .btn {
+  min-width: 0;
+  padding: 2px;
+  overflow-wrap: anywhere;
 }
 .dt-spice-row {
   padding: 2px 0;
