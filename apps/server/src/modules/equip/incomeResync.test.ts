@@ -72,7 +72,10 @@ describe('补算已穿厨具的收益加成（问题记录 411）', () => {
       mcGoldRate: 0.003,
     });
     expect(await equipRow(b.restaurantId)).toBeUndefined();
-    const agg = await getEffectAgg(t.db, a.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    const agg = await getEffectAgg(t.db, a.restaurantId, new Date(), t.deps.config, {
+      tuning: t.deps.config.tuning,
+      features: {},
+    });
     expect(agg.coinRate).toBeCloseTo(0.004, 9);
     expect(await staleEquipIncome(t.db, shardId, income())).toEqual([]);
   });

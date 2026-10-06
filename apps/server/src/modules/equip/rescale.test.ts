@@ -76,10 +76,16 @@ describe('重算的终审修复', () => {
     await runSystemOp(t.game.deps, r.shardId, r.restaurantId, { source: 'test' }, (op) =>
       syncEquipEffects(op),
     );
-    const before = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    const before = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, {
+      tuning: t.deps.config.tuning,
+      features: {},
+    });
     expect(before.luckValue).toBe(35);
     await rescaleEquips(t.game.deps);
-    const after = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, t.deps.config.tuning);
+    const after = await getEffectAgg(t.db, r.restaurantId, new Date(), t.deps.config, {
+      tuning: t.deps.config.tuning,
+      features: {},
+    });
     expect(after.luckValue).toBe(
       t.deps.config.requireGoods(gid('裁决之巴贝雷特的悲鸣之铲')).equip!.stressTable[0],
     );

@@ -25,7 +25,10 @@ describe('结算输入一致（设计 §9 第一条）', () => {
     await t.db.deleteFrom('effect_source').where('rest_id', '=', ctx.restaurantId).execute();
     await t.db.deleteFrom('store_item').where('rest_id', '=', ctx.restaurantId).execute();
     await grantGoodsDb(t.db, config, ctx.restaurantId, honor.id, 1, t.clock.now);
-    const real = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, config.tuning);
+    const real = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, {
+      tuning: config.tuning,
+      features: {},
+    });
 
     const settings = resolveShardSettings(config, {});
     const c: FastCtx = {
@@ -118,7 +121,10 @@ describe('结算源字段一一对应（终审 I-3，设计 §9 第一条）', (
     await t.db.deleteFrom('store_item').where('rest_id', '=', ctx.restaurantId).execute();
     await grantGoodsDb(t.db, config, ctx.restaurantId, goods.id, 1, t.clock.now);
     await t.game.growth.placeDevice(ctx, { slot: dev.id, goodsId: goods.id });
-    const real = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, config.tuning);
+    const real = await getEffectAgg(t.db, ctx.restaurantId, t.clock.now, config, {
+      tuning: config.tuning,
+      features: {},
+    });
     const c: FastCtx = {
       config,
       tuning: settings.tuning,

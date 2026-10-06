@@ -1,3 +1,4 @@
+import { equipOff } from '../equip/power';
 import { sql, type Kysely } from 'kysely';
 import { addDays, gameDay, gameParts, gameTime, type DuelResultDto, type RankDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
@@ -106,7 +107,7 @@ export async function challengeRank(o: Op, rank: number): Promise<DuelResultDto>
     .where('id', '=', target.rest_id)
     .executeTakeFirstOrThrow();
   const me = await playerSide(o, 'attack');
-  const them = await cachedSide(o.tx, o.config, themRest, 'defend');
+  const them = await cachedSide(o.tx, o.config, themRest, 'defend', equipOff(o.settings));
   const r = duel(me, them, t.duel, o.rng);
   const before = await getDaily(o.tx, o.rest.id, KEY.spar, day);
   let myRank = mine;

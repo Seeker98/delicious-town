@@ -38,6 +38,6 @@ export function resolveShardSettings(config: GameConfig, override: unknown): Sha
   return shardSettingsSchema.parse(deepMerge(base, isPlainObject(override) ? override : {}));
 }
 
-export function isFeatureEnabled(settings: ShardSettings, name: string): boolean {
+export function isFeatureEnabled(settings: Pick<ShardSettings, 'features'>, name: string): boolean {
   return settings.features[name] !== false;
 }

@@ -46,6 +46,15 @@ const mc: Messages['mc'] = {
     levelLabel: 'Por nivel',
     roadLabel: 'Por vía',
   },
+  exchange: {
+    title: (n) =>
+      `Canje de trozos: ${n} trozos de un nivel por 1 fragmento de cualquier plato de ese nivel (solo platos que no has aprendido y que se pueden tasar)`,
+    have: (level, n) => `Trozos de nivel ${level}: ${n}`,
+    pick: 'Elige un plato',
+    btn: 'Canjear 1',
+    done: (name) => `Conseguiste 1 fragmento de «${name}»`,
+    failed: 'No se pudo canjear',
+  },
   remnants: 'Fragmentos',
   noRemnants: 'No tienes fragmentos',
   groupTitle: (title, n) => `${title} (${n})`,

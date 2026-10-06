@@ -1,7 +1,7 @@
 import type { Kysely } from 'kysely';
-import type { GameConfig, Tuning } from '@dt/config';
+import { isFeatureEnabled, type GameConfig, type ShardSettings } from '@dt/config';
 import type { DB, RestaurantRow } from '../../db/schema';
-import { computeEffectAgg } from './aggregate';
+import { computeEffectAgg, EQUIP_OFF_KEY } from './aggregate';
 
 export interface EffectSourceInput {
   sourceType: string;
@@ -72,14 +72,15 @@ export async function listActiveEffects(db: Kysely<DB>, restId: number, now: Dat
 /**
  * 取加成汇总：缓存有效直接返回；来源有变动或有来源到期时重算并写回。
  * 汇总里包含收集类派生键（设计文档 §3.1）。调用方应已持有该店的行锁。
- * pre：调用方刚在同一事务里锁行读到、之后没改过加成的三列时传入，省一次查询（结算用，问题记录 258）
+ * pre：调用方刚在同一事务里锁行读到、之后没改过加成的三列时传入，省一次查询（结算用，问题记录 258）。
+ * settings：区服关掉厨具功能时不算厨具、套装加成；缓存是按另一种开关算的也要重算（backlog 411~413）
  */
 export async function getEffectAgg(
   db: Kysely<DB>,
   restId: number,
   now: Date,
   config: GameConfig,
-  tuning: Tuning,
+  settings: Pick<ShardSettings, 'tuning' | 'features'>,
   pre?: Pick<RestaurantRow, 'effect_agg' | 'effect_dirty' | 'effect_next_expire_at'>,
 ): Promise<Record<string, number>> {
   const r =
@@ -89,7 +90,11 @@ export async function getEffectAgg(
       .select(['effect_agg', 'effect_dirty', 'effect_next_expire_at'])
       .where('id', '=', restId)
       .executeTakeFirstOrThrow());
-  const stale = r.effect_dirty || (r.effect_next_expire_at !== null && r.effect_next_expire_at <= now);
+  const equipOff = !isFeatureEnabled(settings, 'equip');
+  const stale =
+    r.effect_dirty ||
+    (r.effect_next_expire_at !== null && r.effect_next_expire_at <= now) ||
+    (r.effect_agg[EQUIP_OFF_KEY] === 1) !== equipOff;
   if (!stale) return r.effect_agg;
 
   const sources = await listActiveEffects(db, restId, now);
@@ -103,8 +108,9 @@ export async function getEffectAgg(
     sources,
     new Set(owned.map((o) => o.goods_id)),
     config,
-    tuning,
+    settings.tuning,
     now,
+    { equipOff },
   );
 
   await db

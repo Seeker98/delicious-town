@@ -2,7 +2,7 @@ import type { RedeemResultDto, RewardItems } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import type { Op } from '../../core/op';
-import { brokenItems, grantRewardOp } from '../mail/reward';
+import { brokenItems, retiredItems, grantRewardOp } from '../mail/reward';
 
 const failKey = (accountId: number) => `redeem:fail:${accountId}`;
 
@@ -36,9 +36,10 @@ export async function redeemOp(o: Op, d: GameDeps, ctx: RestCtx, input: string):
   if (row.min_level !== null && row.min_level > o.rest.level)
     throw invalidState('code_level', { level: row.min_level });
 
-  // 附件里的道具已从配置删除：报失效，不记用过、不占次数（和邮件的"附件已失效"一致）
+  // 附件里的道具已从配置删除：报失效，不记用过、不占次数（和邮件的"附件已失效"一致）；
+  // 有已下架的道具也算失效（下架前建的码，backlog #143）。已发出的邮件照常能领：那是发给这个人的
   const items = row.items as RewardItems;
-  if (brokenItems(o.config, items)) throw invalidState('code_broken');
+  if (brokenItems(o.config, items) || retiredItems(o.config, items)) throw invalidState('code_broken');
 
   const used = await o.tx
     .insertInto('redeem_use')

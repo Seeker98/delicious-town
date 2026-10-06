@@ -161,7 +161,10 @@ export function createAdminActivity(game: Game, log?: WarnLog) {
     async update(actor: AdminActor, id: number, b: ActivityInput): Promise<AdminActivityDto> {
       const cur = await row(id);
       await checkShard(b.shardId);
-      checkNestedItems(game.deps.config, b.def, 'def');
+      // 开始后定义没改时不查：进行中的活动里有上线后才下架的道具时，还要能延长结束时间（backlog #143）；
+      // 开始前照查，那是最后能改定义的时候
+      if (now() < cur.starts_at || canon(b.def) !== canon(cur.def))
+        checkNestedItems(game.deps.config, b.def, 'def');
       const t = now();
       if (t >= cur.starts_at) {
         if (t >= cur.ends_at && new Date(b.endsAt).getTime() !== cur.ends_at.getTime())
