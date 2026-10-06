@@ -41,6 +41,8 @@ export default {
   holdingsEmpty: '名下还没有店。在身价榜、在售里能收购别人的餐厅。',
   dividend: (coin: string, tended: boolean) => `昨天分红 ${coin} 银币${tended ? '（打理过）' : ''}`,
   noDividend: '昨天没有分红',
+  /** 零点到分红任务跑完之间（收购 PR 2 遗留） */
+  dividendPending: '昨天的分红还没发',
   holdTended: '今天打理过',
   holdNotTended: '今天还没打理',
   list: '挂牌',

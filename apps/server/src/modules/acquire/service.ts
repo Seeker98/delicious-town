@@ -590,6 +590,12 @@ export function createAcquireService(d: GameDeps) {
       )
       .leftJoin('acquire_tend as td', (j) => j.onRef('td.rest_id', '=', 's.rest_id').on('td.day', '=', today))
       .select(['s.rest_id', 'dv.coin', 'dv.tended', 'td.rest_id as tended_today'])
+      // 今天的分红任务跑完没有：零点到任务跑完之间，名下店的“昨天分红”是还没发，不是没有（收购 PR 2 遗留）；
+      // 并进这条查询，条数不变
+      .select(
+        sql<boolean>`exists(select 1 from job_run where shard_id = ${ctx.shardId} and job = 'acquire-dividend'
+          and period = ${`acquire-dividend-${today}`} and finished_at is not null)`.as('paid'),
+      )
       .where('s.owner_rest_id', '=', ctx.restaurantId)
       .execute();
     const [me, m, myTend] = await Promise.all([
@@ -615,6 +621,8 @@ export function createAcquireService(d: GameDeps) {
     return {
       me,
       tendedToday: myTend !== undefined,
+      // 没有名下店时用不上，按已发
+      dividendPaid: hold[0]?.paid ?? true,
       holdings: holdings.sort((x, y) => y.price - x.price || x.restId - y.restId),
       maxHoldings: t.maxHoldings,
       taxRate: t.taxRate,

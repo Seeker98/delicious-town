@@ -42,6 +42,8 @@ export default {
   holdingsEmpty: '名下還沒有店。在身價榜、在售裡能收購別人的餐廳。',
   dividend: (coin: string, tended: boolean) => `昨天分紅 ${coin} 銀幣${tended ? '（打理過）' : ''}`,
   noDividend: '昨天沒有分紅',
+  /** 零點到分紅任務跑完之間（收購 PR 2 遺留） */
+  dividendPending: '昨天的分紅還沒發',
   holdTended: '今天打理過',
   holdNotTended: '今天還沒打理',
   list: '掛牌',

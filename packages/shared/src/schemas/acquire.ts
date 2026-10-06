@@ -63,6 +63,8 @@ export interface AcquireViewDto {
   me: AcquireRestDto;
   /** 我今天替老板打理过没有 */
   tendedToday: boolean;
+  /** 今天的分红任务跑完了（名下店的“昨天分红”已发）；没跑完时页面写“还没发”，不写“没有分红” */
+  dividendPaid: boolean;
   holdings: AcquireHoldingDto[];
   maxHoldings: number;
   taxRate: number;

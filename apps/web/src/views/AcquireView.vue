@@ -314,7 +314,11 @@ onMounted(load);
           <div class="small">{{ t.acquire.price(coin(h.price)) }} · {{ t.acquire.heat(heat(h.heat)) }}</div>
           <div class="small text-muted">
             {{
-              h.dividend ? t.acquire.dividend(coin(h.dividend.coin), h.dividend.tended) : t.acquire.noDividend
+              h.dividend
+                ? t.acquire.dividend(coin(h.dividend.coin), h.dividend.tended)
+                : view.dividendPaid
+                  ? t.acquire.noDividend
+                  : t.acquire.dividendPending
             }}
             · {{ h.tendedToday ? t.acquire.holdTended : t.acquire.holdNotTended }}
           </div>

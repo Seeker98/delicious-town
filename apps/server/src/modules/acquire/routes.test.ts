@@ -5,8 +5,10 @@ import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import { playerIn } from '../../../test/players';
 
 let ctx: TestContext;
+// 时间冻在开跑那一刻：测试里算的“昨天”和服务端用的同一天，跨游戏日零点时也不会差一天（收购 PR 2 遗留）
+const FROZEN = new Date();
 beforeAll(async () => {
-  ctx = await createTestApp();
+  ctx = await createTestApp({ now: () => FROZEN });
 });
 afterAll(() => ctx.close());
 
@@ -137,7 +139,7 @@ describe('收购接口（收购 PR 1）', () => {
       true,
     );
 
-    const yday = addDays(gameDay(new Date()), -1);
+    const yday = addDays(gameDay(ctx.deps.now()), -1);
     await ctx.deps.db
       .insertInto('acquire_dividend')
       .values({ rest_id: b.restId, day: yday, owner_rest_id: a.restId, coin: 1234, tended: true })
@@ -156,7 +158,21 @@ describe('收购接口（收购 PR 1）', () => {
       .insertInto('acquire_dividend')
       .values({ rest_id: c.restId, day: yday, owner_rest_id: b.restId, coin: 99, tended: false })
       .execute();
+    // 今天的分红任务还没跑完：页面写“还没发”，不写“昨天没有分红”（收购 PR 2 遗留）
+    const early = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
+    expect(early.json.data.dividendPaid).toBe(false);
+    await ctx.deps.db
+      .insertInto('job_run')
+      .values({
+        shard_id: shardId,
+        job: 'acquire-dividend',
+        period: `acquire-dividend-${gameDay(ctx.deps.now())}`,
+        started_at: ctx.deps.now(),
+        finished_at: ctx.deps.now(),
+      })
+      .execute();
     const mine = await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: a.cookie });
+    expect(mine.json.data.dividendPaid).toBe(true);
     expect(mine.json.data.holdings).toMatchObject([
       { restId: b.restId, dividend: { coin: 1234, tended: true }, tendedToday: true },
       { restId: c.restId, dividend: null, tendedToday: false },
