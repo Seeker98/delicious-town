@@ -483,6 +483,26 @@ describe('backlog 238-1：事件合约页', () => {
       expect(w.find('[data-testid="pd-sec-trade"]').exists()).toBe(true);
     });
 
+    it('已结束的事件按截止时间从新到旧排，先显示最近的 5 个（问题记录 449）', async () => {
+      const ended = [2, 3, 4, 5, 6, 7].map((id) =>
+        ev({
+          id,
+          title: `结束${id}`,
+          status: 'resolved',
+          outcome: true,
+          closeAt: `2026-10-0${id}T04:00:00.000Z`,
+        }),
+      );
+      vi.mocked(endpoints.predictList).mockResolvedValue(list({ events: [ev(), ...ended] }));
+      const w = mount(PredictView);
+      await flushPromises();
+      const ids = w
+        .findAll('[data-testid^="pd-ended-"]')
+        .map((x) => x.attributes('data-testid')!)
+        .filter((x) => /^pd-ended-\d+$/.test(x));
+      expect(ids).toEqual(['pd-ended-7', 'pd-ended-6', 'pd-ended-5', 'pd-ended-4', 'pd-ended-3']);
+    });
+
     it('已结束的事件：结果标签和我的盈亏；超过 5 个先收起', async () => {
       const ended = [2, 3, 4, 5, 6, 7].map((id) =>
         ev({
@@ -498,14 +518,14 @@ describe('backlog 238-1：事件合约页', () => {
       vi.mocked(endpoints.predictList).mockResolvedValue(list({ events: [ev(), ...ended] }));
       const w = mount(PredictView);
       await flushPromises();
-      expect(w.get('[data-testid="pd-ended-2"] [data-testid="pd-ended-tag"]').text()).toBe('是');
-      expect(w.get('[data-testid="pd-ended-3"] [data-testid="pd-ended-tag"]').text()).toBe('否');
-      expect(w.get('[data-testid="pd-ended-2"]').get('[data-testid="pd-ended-profit"]').text()).toContain(
+      expect(w.get('[data-testid="pd-ended-6"] [data-testid="pd-ended-tag"]').text()).toBe('是');
+      expect(w.get('[data-testid="pd-ended-7"] [data-testid="pd-ended-tag"]').text()).toBe('否');
+      expect(w.get('[data-testid="pd-ended-6"]').get('[data-testid="pd-ended-profit"]').text()).toContain(
         '+500',
       );
-      expect(w.find('[data-testid="pd-ended-7"]').exists()).toBe(false);
+      expect(w.find('[data-testid="pd-ended-2"]').exists()).toBe(false);
       await w.get('[data-testid="pd-ended-more"]').trigger('click');
-      expect(w.find('[data-testid="pd-ended-7"]').exists()).toBe(true);
+      expect(w.find('[data-testid="pd-ended-2"]').exists()).toBe(true);
     });
   });
 });

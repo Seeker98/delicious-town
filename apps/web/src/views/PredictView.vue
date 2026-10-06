@@ -20,7 +20,12 @@ const detail = ref<PredictDetailDto | null>(null);
 const selected = ref<number | null>(null);
 
 const open = computed(() => list.value?.events.filter((e) => e.status === 'open') ?? []);
-const ended = computed(() => list.value?.events.filter((e) => e.status !== 'open') ?? []);
+/** 已结束的按截止时间从新到旧（问题记录 449）；同一时间编号大的在前 */
+const ended = computed(() =>
+  (list.value?.events.filter((e) => e.status !== 'open') ?? []).sort(
+    (a, b) => b.closeAt.localeCompare(a.closeAt) || b.id - a.id,
+  ),
+);
 /** 详情只展开在被点的那一行下面（问题记录 264）；新详情读回来之前不显示上一个的 */
 const shown = (id: number) => selected.value === id && detail.value?.event.id === id;
 const reasonText = computed(() => {
