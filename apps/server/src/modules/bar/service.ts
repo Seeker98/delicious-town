@@ -6,6 +6,7 @@ import { devilDrink, devilStart } from './devil';
 import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
 import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
 import { nimFirst, nimStart, nimTake } from './nim';
+import { spiceGuess, spiceStart } from './spice';
 import { playSlot } from './slot';
 import { barView } from './view';
 
@@ -65,6 +66,12 @@ export function createBarService(d: GameDeps) {
     },
     nimTake(ctx: RestCtx, b: { num: number }) {
       return op(ctx, 'bar.nim', (o) => nimTake(o, b.num));
+    },
+    spiceStart(ctx: RestCtx) {
+      return op(ctx, 'bar.spice', (o) => spiceStart(o));
+    },
+    spiceGuess(ctx: RestCtx, b: { guess: number[] }) {
+      return op(ctx, 'bar.spice', (o) => spiceGuess(o, b.guess));
     },
     dartsStart(ctx: RestCtx) {
       return op(ctx, 'bar.darts', (o) => dartsStart(o));
