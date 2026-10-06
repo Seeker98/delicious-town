@@ -260,7 +260,7 @@
     }
   },
   "bar": {
-    "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgNewsStreak": 5,
+    "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgLoseMin": 0.1, "fgNewsStreak": 5,
     "cupNewsStreak": 4,
     "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
     "krabCoinTickets": 100,

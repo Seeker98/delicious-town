@@ -1303,6 +1303,30 @@
     "name": "[Rango 6]•Piedra verde mística",
     "desc": "Sazón +24"
   },
+  "50501": {
+    "name": "[Rango 1]•Piedra del destino",
+    "desc": "Suerte +1"
+  },
+  "50502": {
+    "name": "[Rango 2]•Piedra del destino",
+    "desc": "Suerte +2"
+  },
+  "50503": {
+    "name": "[Rango 3]•Piedra del destino",
+    "desc": "Suerte +4"
+  },
+  "50504": {
+    "name": "[Rango 4]•Piedra del destino",
+    "desc": "Suerte +8"
+  },
+  "50505": {
+    "name": "[Rango 5]•Piedra del destino",
+    "desc": "Suerte +16"
+  },
+  "50506": {
+    "name": "[Rango 6]•Piedra del destino",
+    "desc": "Suerte +24"
+  },
   "60000": {
     "name": "Calle de los novatos",
     "desc": "Ocupación +35%, monedas por mesa +1, suerte +36, clientes exigentes -35%"

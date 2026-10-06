@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    luckGem1006:
+      'New gem, the Fate Stone: socket it for Luck (tiers 1–6 give +1, 2, 4, 8, 16, 24). Tier 1 is sold in the coin shop, Today’s deal and the black market, it also comes from random rewards, and it levels up like the other gems. In the bar, Luck in Rock-paper-scissors now only raises your chance to win, and you always have at least a 10% chance to lose; before, with high Luck you could never lose',
     mcLearn1006:
       'Learning signature dishes is easier: break fragments you don’t need into shards, and 3 shards of a level get you 1 fragment of any dish of that level. Delicious Seal appraisal now succeeds 40% of the time instead of 28%, and the God of Cookery Jade Seal is in the shop (300,000). The Temple appraisal now shows how to get each appraisal item, and the play guide has a “How to learn signature dishes” section',
     power1006:
