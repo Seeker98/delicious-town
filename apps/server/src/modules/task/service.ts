@@ -37,6 +37,7 @@ import {
   type QuestCtx,
 } from './quests';
 import { activationTotal, stateValue } from './rules';
+import { eligibilityOf } from '../exchange/eligibility';
 
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
@@ -272,7 +273,7 @@ export function createTaskService(d: GameDeps) {
 
   /**
    * 活跃项要读的店外数据一条查询读完（质量期 ③ 的查询预算）：爱心项链；交易所、事件预测的注册天数、
-   * 邮箱门槛；有没有能领奖的限时活动（backlog 第 ⑥ 批）
+   * 邮箱门槛和交易所冻结；有没有能领奖的限时活动（backlog 第 ⑥ 批）
    */
   async function actFacts(db: Kysely<DB>, rest: RestaurantRow) {
     const now = d.now();
@@ -286,13 +287,16 @@ export function createTaskService(d: GameDeps) {
           'verified',
         ),
         claimableActivity(rest, now).as('activityOpen'),
+        sql<boolean>`exists(select 1 from exchange_freeze where rest_id = ${rest.id})`.as('frozen'),
       ])
       .executeTakeFirstOrThrow();
     return {
       necklace: r.necklace,
-      days: (now.getTime() - new Date(r.createdAt).getTime()) / 86_400_000,
+      createdAt: new Date(r.createdAt),
       verified: r.verified,
       activityOpen: r.activityOpen,
+      frozen: r.frozen,
+      now,
     };
   }
 
@@ -335,8 +339,17 @@ export function createTaskService(d: GameDeps) {
           : 0;
     const blockedOf = (id: number): ActivationBlock => {
       if (id === ACT_EXCHANGE || id === ACT_PREDICT) {
-        if (facts.days < needDaysOf(id)) return 'days';
-        if (!facts.verified) return 'email';
+        // 门槛和下单时同一个判断；等级另外写在 needLevel 里，这里不管
+        const t = id === ACT_EXCHANGE ? settings.tuning.exchange : settings.tuning.predict;
+        const why = eligibilityOf(
+          { level: Number.MAX_SAFE_INTEGER, createdAt: facts.createdAt, verified: facts.verified },
+          t,
+          facts.now,
+        );
+        if (why === 'exchange_age') return 'days';
+        if (why === 'exchange_email') return 'email';
+        // 交易所冻结的店两样都做不了（事件预测下单也查这个）
+        if (facts.frozen) return 'frozen';
       }
       if (id === ACT_ACTIVITY && !facts.activityOpen) return 'noActivity';
       return null;

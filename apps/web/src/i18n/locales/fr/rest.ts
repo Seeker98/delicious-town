@@ -105,6 +105,7 @@ const rest: Messages['rest'] = {
     lockedLevel: (n) => `🔒 Débloqué au niveau ${n}`,
     lockedDays: (n) => `🔒 Débloqué ${n} ${plFr(n, 'jour', 'jours')} après l’inscription`,
     lockedEmail: '🔒 Débloqué après vérification de votre e-mail',
+    lockedFrozen: '🔒 Votre accès à la Bourse est gelé pour le moment',
     noActivity: '🔒 Aucun événement à durée limitée en cours',
     lockedStar: (n) => `🔒 Débloqué à ${n} ${n === 1 ? 'étoile' : 'étoiles'}`,
     claimedTask: '✓ Récupéré',

@@ -138,12 +138,20 @@ const hintGap = computed(() => {
   });
 });
 async function loadStarNeed() {
+  // 同一家店、同一星级读过就用记住的（从食谱详情回来页面会重新挂载，backlog 384 审查）
+  const key = `${restaurant.rest?.id ?? 0}:${restaurant.rest?.starLevel ?? 0}`;
+  if (restaurant.starNeed?.key === key) {
+    starNeed.value = restaurant.starNeed.value;
+    return;
+  }
   try {
     const s = await endpoints.starNeed();
     const c = s.checks.find((x) => x.key === 'cookbooks');
     // 下一星没开放（泛紫星级的 cookbooks 一项不是“学会的菜”）或已满星时不提示
     starNeed.value = s.available && s.nextStar !== null && c ? { star: s.nextStar, need: c.need } : null;
+    restaurant.starNeed = { key, value: starNeed.value };
   } catch {
+    // 读失败不记住，下次再试
     starNeed.value = null;
   }
 }

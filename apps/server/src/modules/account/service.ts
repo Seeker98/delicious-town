@@ -147,6 +147,17 @@ export function createAccountService(d: AccountDeps) {
       const a = await d.db
         .selectFrom('account')
         .select(['id', 'username', 'email', 'email_verified_at', 'role', 'lang'])
+        // 本区服蟹老板餐厅的编号：网页按语言换它的店名（视觉第三轮记下的）；并进同一条查询
+        // 没选区服时按 -1 查，查不到就是 null
+        .select((eb) =>
+          eb
+            .selectFrom('restaurant')
+            .select('id')
+            .where('shard_id', '=', sel.shardId ?? -1)
+            .where('npc', '=', true)
+            .limit(1)
+            .as('npc_rest_id'),
+        )
         .where('id', '=', accountId)
         .executeTakeFirst();
       if (!a) throw new AppError(ErrorCode.UNAUTHORIZED, 401);
@@ -159,6 +170,7 @@ export function createAccountService(d: AccountDeps) {
         role: a.role,
         shardId: sel.shardId,
         restaurantId: sel.restaurantId,
+        npcRestId: a.npc_rest_id ?? null,
       };
     },
 

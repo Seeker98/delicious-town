@@ -1,6 +1,9 @@
 /** 好友列表、好友餐厅、翻橱柜、换食材、餐桌、举报（问题记录 272） */
 export default {
   tabs: { friends: '好友', requests: '申请', find: '找好友', feed: '动态' },
+  /** 蟹老板（NPC）的店名、公告：服务器存的是中文，网页按语言换 */
+  npcName: '蟹老板',
+  npcNotice: '欢迎光临蟹黄堡！',
   becameFriends: (name: string) => `你和「${name}」成为了好友`,
   rejected: '已拒绝',
   respondFailed: '处理申请失败',

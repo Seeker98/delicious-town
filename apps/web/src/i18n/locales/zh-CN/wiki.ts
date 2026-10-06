@@ -12,6 +12,7 @@ export default {
   back: '返回列表',
   home: '游戏资料首页',
   more: (n: number) => `再显示 ${n} 条`,
+  maxShown: (n: string) => `最多显示 ${n} 条，用搜索或街道缩小范围`,
   count: (n: number) => `${formatNum(n)} 条`,
   apiLink: '开放接口：给想研究游戏、做小工具的玩家',
   kinds: { goods: '道具', foods: '食材', cookbooks: '菜谱', equips: '厨具', streets: '街道' },

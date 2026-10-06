@@ -26,6 +26,7 @@ import { formatNum } from '../utils/format';
 import { remainText } from '../utils/remain';
 import { effectName } from '../utils/serverText';
 import { CUSTOMER_NAMES } from '../utils/labels';
+import { restName } from '../utils/npcName';
 
 const store = useRestaurantStore();
 const catalog = useCatalogStore();
@@ -454,7 +455,9 @@ onBeforeUnmount(() => {
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
         <div class="flex-fill">
           <i class="bi bi-cup-hot me-1"></i>{{ t.home.dining.before }}
-          <RouterLink :to="`/friends/${dining.hostRestId}`">{{ dining.hostName }}</RouterLink>
+          <RouterLink :to="`/friends/${dining.hostRestId}`">{{
+            restName(dining.hostRestId, dining.hostName)
+          }}</RouterLink>
           {{ t.home.dining.after(dining.tableNo, dining.minutes) }}
         </div>
         <button

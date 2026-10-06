@@ -112,6 +112,20 @@ describe('活跃项的门槛（backlog 第 ⑥ 批）', () => {
     expect(await item('签到')).toMatchObject({ blocked: null });
   });
 
+  it('交易所被冻结的店：交易所、事件预测标 frozen（门槛都满足时；backlog 下架编号审查）', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 99 } });
+    await t.db
+      .updateTable('account')
+      .set({ created_at: new Date(t.clock.now.getTime() - 400 * 86_400_000), email_verified_at: t.clock.now })
+      .where('id', '=', ctx.accountId)
+      .execute();
+    await t.db.insertInto('exchange_freeze').values({ rest_id: ctx.restaurantId, reason: '对倒' }).execute();
+    const items = (await task().activation(ctx)).items;
+    expect(items.find((x) => x.name === '交易所成交')).toMatchObject({ blocked: 'frozen' });
+    expect(items.find((x) => x.name === '事件预测交易')).toMatchObject({ blocked: 'frozen' });
+    expect(items.find((x) => x.name === '签到')).toMatchObject({ blocked: null });
+  });
+
   it('领取限时活动奖励：只有全服加成（没有奖励）时仍标 noActivity；兑换活动结束后的兑换期里算能做', async () => {
     const ctx = await newRestaurant(t);
     const item = async () =>

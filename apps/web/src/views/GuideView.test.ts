@@ -19,6 +19,7 @@ const me = (restaurantId: number | null) => ({
   shardId: 1,
   restaurantId,
   lang: null,
+  npcRestId: null,
 });
 const mountView = async () => {
   const router = createRouter({

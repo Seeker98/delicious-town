@@ -3,6 +3,9 @@ import { plFr } from '../../helpers';
 
 const friends: Messages['friends'] = {
   tabs: { friends: 'Amis', requests: 'Demandes', find: 'Chercher', feed: 'Activité' },
+  /** 蟹老板（NPC）的店名、公告：服务器存的是中文，网页按语言换 */
+  npcName: 'M. Krab',
+  npcNotice: 'Bienvenue au Crabe Croustillant !',
   becameFriends: (name) => `« ${name} » et vous êtes maintenant amis`,
   rejected: 'Refusée',
   respondFailed: 'Impossible de traiter la demande',

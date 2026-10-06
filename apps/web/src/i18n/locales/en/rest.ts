@@ -104,6 +104,7 @@ const rest: Messages['rest'] = {
     lockedLevel: (n) => `🔒 Unlocks at level ${n}`,
     lockedDays: (n) => `🔒 Unlocks ${n} ${plEn(n, 'day', 'days')} after sign-up`,
     lockedEmail: '🔒 Unlocks after you verify your email',
+    lockedFrozen: '🔒 Your Exchange access is frozen for now',
     noActivity: '🔒 No limited-time event is running',
     lockedStar: (n) => `🔒 Unlocks at ${n} ${n === 1 ? 'star' : 'stars'}`,
     claimedTask: '✓ Claimed',

@@ -5,6 +5,7 @@ import { useT } from '../../composables/useT';
 import { useCatalogStore } from '../../stores/catalog';
 import { actionName } from '../../utils/activity';
 import { rewardSummary } from '../../utils/reward';
+import { formatPct } from '../../utils/format';
 
 /** 兑换活动卡片（148-2）：余额、掉落、兑换表 */
 const props = defineProps<{
@@ -21,7 +22,7 @@ const MAX_TIMES = 99;
 const times = reactive<Record<number, number | string>>({});
 const bal = (i: number) => props.a.counters[`m${i}`] ?? 0;
 const done = (i: number) => props.a.counters[`x${i}`] ?? 0;
-const pct = (p: number) => `${Math.round(p * 10000) / 100}%`;
+const pct = (p: number) => formatPct(p, { digits: 2 });
 /** 输入框里的次数：没填过算 1；空、0、负数、小数、超过 99 都无效（终审 I1） */
 function timesOf(i: number): number | null {
   const v = times[i] ?? 1;

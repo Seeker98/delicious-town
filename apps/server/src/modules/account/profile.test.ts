@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createShard } from '../../../test/fixtures';
 import { call, cookieOf, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { seededRng } from '@dt/shared';
 import { playerIn } from '../../../test/players';
+import { ensureNpc } from '../npc/npc';
 
 let ctx: TestContext;
 beforeAll(async () => {
@@ -134,5 +136,19 @@ describe('backlog 指引、我的账号：接口层的未登录、未开店', ()
     await call(ctx.app, 'POST', '/api/v1/shard/select', { cookie: u.cookie, body: { shardId } });
     const codes = await call(ctx.app, 'GET', '/api/v1/guide/codes', { cookie: u.cookie });
     expect(codes.json.code).toBe('RESTAURANT_NOT_FOUND');
+  });
+});
+
+describe('me 带本区服蟹老板餐厅的编号（backlog：网页按语言换 NPC 店名）', () => {
+  it('区服有 NPC 店时给它的编号；没选区服、区服没有 NPC 时是 null', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const p = await playerIn(ctx, shardId);
+    const me = async (cookie: string) => (await call(ctx.app, 'GET', `${A}/me`, { cookie })).json.data;
+    expect((await me(p.cookie)).npcRestId).toBeNull();
+    const config = ctx.deps.config;
+    const npc = await ensureNpc(ctx.deps.db, config, config.tuning.friend.npc, shardId, seededRng(1));
+    expect((await me(p.cookie)).npcRestId).toBe(npc.id);
+    const u = await registerUser(ctx.app);
+    expect((await me(u.cookie)).npcRestId).toBeNull();
   });
 });

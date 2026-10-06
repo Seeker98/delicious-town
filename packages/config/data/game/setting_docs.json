@@ -269,7 +269,7 @@
     "tuning.friend.thumbs.strengthMax": "点赞奖励最多几点体力（点）",
     "tuning.friend.refuel.bigTank": "大油箱的门槛（油）；帮好友加油每加满一份抽奖次数增加",
     "tuning.friend.refuel.drawsPerChunk": "帮好友加油每加一份给几次抽奖（次）",
-    "tuning.friend.npc.name": "NPC 蟹老板的店名",
+    "tuning.friend.npc.name": "NPC 蟹老板的店名（只在建 NPC 店时写进数据库）；网页上按玩家的语言显示蟹老板的译名和公告，不读这个值",
     "tuning.friend.npc.level": "蟹老板的等级（级）",
     "tuning.friend.npc.star": "蟹老板的星级（星）",
     "tuning.friend.npc.tables": "蟹老板的桌数（桌）",

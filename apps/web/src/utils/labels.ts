@@ -1,4 +1,5 @@
 import { activeMessages, type Messages } from '../i18n';
+import { formatPct } from './format';
 
 /**
  * 各处用的名称表（问题记录 272 起按语言）：导出的是代理，每次读取都取当前语言的表，
@@ -30,9 +31,9 @@ export const TASTE_NAMES = localized<readonly string[]>((l) => l.taste);
 /** 街道类型（问题记录 378 方案 C） */
 export const STREET_FOCUS = localized<Record<string, string>>((l) => l.streetFocus);
 
+/** 带正负号的百分数（按语言写，视觉第三轮） */
 export function pct(x: number): string {
-  const v = Math.round(x * 1000) / 10;
-  return `${v >= 0 ? '+' : ''}${v}%`;
+  return formatPct(x, { sign: true });
 }
 
 /** 厨具部位（下标 = part） */

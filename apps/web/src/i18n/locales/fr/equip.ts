@@ -60,7 +60,7 @@ const equip: Messages['equip'] = {
     stress: 'Renforcer',
     rate: 'Taux de réussite',
     rateParts: (base, luck, weather, floor) =>
-      `(base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
+      ` (base ${base} + chance ${luck} + météo ${weather} + garantie ${floor})`,
     next: (gain, total) =>
       `En cas de réussite, total des caractéristiques +${gain} (soit ${total}, hors gemmes)`,
     cost: (essence, have, coin) =>

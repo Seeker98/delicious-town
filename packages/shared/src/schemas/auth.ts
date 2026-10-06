@@ -47,6 +47,8 @@ export interface MeDto {
   restaurantId: number | null;
   /** 账号语言（问题记录 272）；null 表示还没选过 */
   lang: Locale | null;
+  /** 当前区服蟹老板餐厅的编号：网页按语言换它的店名；没选区服或区服还没有 NPC 时为 null */
+  npcRestId: number | null;
 }
 
 /** 设置账号语言（问题记录 272） */

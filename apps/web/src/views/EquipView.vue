@@ -9,7 +9,7 @@ import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { formatNum, formatPct } from '../utils/format';
 import { equipName } from '../utils/equipName';
 import { ATTR_KEYS, ATTR_NAMES, PART_NAMES } from '../utils/labels';
 
@@ -17,7 +17,7 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 /** 收益加成的百分比：+1.25%（最多两位小数，按语言写小数点） */
-const pctText = (x: number) => `+${formatNum(Math.round(x * 10000) / 100)}%`;
+const pctText = (x: number) => formatPct(x, { digits: 2, sign: true });
 const o = ref<EquipOverviewDto | null>(null);
 const part = ref<number | null>(null);
 const pieces = ref<EquipDto[]>([]);

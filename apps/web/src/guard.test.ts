@@ -11,6 +11,7 @@ const me = (patch: Partial<MeDto> = {}): MeDto => ({
   shardId: null,
   restaurantId: null,
   lang: null,
+  npcRestId: null,
   ...patch,
 });
 

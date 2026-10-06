@@ -6,6 +6,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import { formatPct } from '../../utils/format';
 
 const props = defineProps<{ data: BarDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -132,7 +133,7 @@ async function exchange() {
             {{ awardName(a.id)
             }}<span v-if="a.rare" class="badge text-bg-warning ms-1">{{ t.bar.slot.rare }}</span>
           </td>
-          <td class="text-end">{{ (a.rate * 100).toFixed(2) }}%</td>
+          <td class="text-end">{{ formatPct(a.rate, { digits: 2, min: 2 }) }}</td>
         </tr>
       </tbody>
     </table>

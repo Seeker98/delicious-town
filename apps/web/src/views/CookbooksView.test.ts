@@ -372,6 +372,30 @@ describe('CookbooksView', () => {
     expect(endpoints.starNeed).toHaveBeenCalledTimes(1);
   });
 
+  it('从食谱详情回到本店街道（页面重新挂载）不再请求下一星要求；升星后才重读（backlog 384 审查）', async () => {
+    vi.mocked(endpoints.starNeed).mockClear();
+    vi.mocked(endpoints.overview).mockResolvedValue({ id: 7, streetId: 0, starLevel: 2 } as never);
+    vi.mocked(endpoints.cookbookList).mockImplementation(async (q) => ({ ...list, street: q.street }));
+    const open = async () => {
+      const router = createRouter({
+        history: createMemoryHistory(),
+        routes: [{ path: '/cookbooks', component: CookbooksView }],
+      });
+      await router.push('/cookbooks');
+      const w = mount(CookbooksView, { global: { plugins: [router] } });
+      await flushPromises();
+      return w;
+    };
+    (await open()).unmount();
+    expect(endpoints.starNeed).toHaveBeenCalledTimes(1);
+    (await open()).unmount();
+    expect(endpoints.starNeed).toHaveBeenCalledTimes(1);
+    // 升了一星：要求变了，重读
+    vi.mocked(endpoints.overview).mockResolvedValue({ id: 7, streetId: 0, starLevel: 3 } as never);
+    (await open()).unmount();
+    expect(endpoints.starNeed).toHaveBeenCalledTimes(2);
+  });
+
   it('搬街提示能关掉，记住到下一星（backlog 384：休闲玩家会挂好几周）', async () => {
     localStorage.clear();
     vi.mocked(endpoints.cookbookList).mockResolvedValue({
@@ -397,7 +421,8 @@ describe('CookbooksView', () => {
     expect(w.find('[data-testid="move-hint"]').exists()).toBe(false);
     w.unmount();
     expect((await mountIt()).find('[data-testid="move-hint"]').exists()).toBe(false);
-    // 升了一星、下一星的要求变了，再提示
+    // 升了一星（餐厅的星级跟着变）、下一星的要求变了，再提示
+    vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 0, starLevel: 2 } as never);
     vi.mocked(endpoints.starNeed).mockResolvedValue({
       ...(starNeed(200) as object),
       star: 2,

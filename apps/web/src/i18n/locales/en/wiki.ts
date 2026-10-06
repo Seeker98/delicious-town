@@ -13,6 +13,7 @@ const wiki: Messages['wiki'] = {
   back: 'Back to the list',
   home: 'Game data home',
   more: (n) => `Show ${n} more`,
+  maxShown: (n) => `Showing at most ${n}; use search or the street filter to narrow it down`,
   count: (n) => `${formatNum(n)} ${n === 1 ? 'entry' : 'entries'}`,
   apiLink: 'Open API: for players who want to study the game or build tools',
   kinds: {

@@ -2,6 +2,9 @@
 /** 好友列表、好友餐廳、翻櫥櫃、換食材、餐桌、舉報（問題記錄 272） */
 export default {
   tabs: { friends: '好友', requests: '申請', find: '找好友', feed: '動態' },
+  /** 蟹老闆（NPC）的店名、公告：伺服器存的是中文，網頁按語言換 */
+  npcName: '蟹老闆',
+  npcNotice: '歡迎光臨蟹黃堡！',
   becameFriends: (name: string) => `你和「${name}」成為了好友`,
   rejected: '已拒絕',
   respondFailed: '處理申請失敗',
