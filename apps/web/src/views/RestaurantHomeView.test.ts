@@ -373,7 +373,11 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, coin: 250 });
     const w = await mountView();
     const btn = w.find('[data-testid="refuel"]');
-    expect(btn.text()).toContain('加油（250 银币）');
+    // 看得见的是“加油”和银币数（数字不会被截掉），整句写在读屏标签和悬停提示里（审查 I1：法西文整句太长撑出屏幕）
+    expect(btn.attributes('aria-label')).toBe('加油（250 银币）');
+    expect(btn.attributes('title')).toBe('加油（250 银币）');
+    expect(btn.get('.text-truncate').text()).toBe('加油');
+    expect(btn.get('.flex-shrink-0').text()).toBe('250');
     expect(btn.attributes('disabled')).toBeUndefined();
   });
 
@@ -797,7 +801,8 @@ describe('RestaurantHomeView', () => {
       expect(w.find('[data-testid="home-devices"] .dt-card-title').text()).toBe('Facilities');
       expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
       expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
-      expect(w.find('[data-testid="refuel"]').text()).toBe('Fill up (600 coins)');
+      expect(w.find('[data-testid="refuel"]').attributes('aria-label')).toBe('Fill up (600 coins)');
+      expect(w.find('[data-testid="refuel"] .text-truncate').text()).toBe('Fill up');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Last round:');
       expect(w.get('[data-testid="last-round"] i.bi-coin').attributes('title')).toBe('Coins');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
@@ -846,7 +851,11 @@ describe('RestaurantHomeView', () => {
     expect(sp.attributes('href')).toBe('/mc');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
     const w2 = await mountView();
-    expect(w2.get('[data-testid="home-special"]').text()).toMatch(/^特色菜：.+（5 级）$/);
+    const sp2 = w2.get('[data-testid="home-special"]');
+    expect(sp2.text()).toMatch(/^特色菜：.+（5 级）$/);
+    // 放不下时只截菜名，几级不截（审查 I2）
+    expect(sp2.get('.text-truncate').text()).toMatch(/^特色菜：/);
+    expect(sp2.get('.flex-shrink-0').text()).toBe('（5 级）');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['mysterious'] });
     const w3 = await mountView();
     expect(w3.find('[data-testid="home-special"]').exists()).toBe(false);
@@ -870,7 +879,8 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, lastRound: null });
     const w = await mountView();
     const last = w.get('[data-testid="last-round"]');
-    expect(last.text()).toContain('还没有结算');
+    // 收益记录只留 3 天：停业久了的老店也会这样，不能写“还没有”（审查 I3）
+    expect(last.text()).toContain('最近没有结算');
     expect(last.find('a[href="/rest/income"]').exists()).toBe(true);
     expect(last.find('a[href="/rest/floor"]').exists()).toBe(true);
   });

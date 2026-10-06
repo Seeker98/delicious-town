@@ -205,10 +205,14 @@ const strengthText = computed(() =>
 /** 餐厅卡底部（问题记录 447）：原来的厨具、仓库、商店入口换成食谱数和在售特色菜；区服关了的不显示 */
 const showBooks = computed(() => store.featureOn('cookbook'));
 const showSpecial = computed(() => store.featureOn('mysterious'));
-const specialText = computed(() => {
+/** 菜名和几级分两段：放不下时只截菜名（审查 I2） */
+const specialName = computed(() => {
   const sp = rest.value?.special;
-  return sp ? t.value.home.special(catalog.mcName(sp.id), sp.level) : t.value.home.specialNone;
+  return sp ? t.value.home.special(catalog.mcName(sp.id)) : t.value.home.specialNone;
 });
+const refuelText = computed(() =>
+  t.value.home.refuel(refuelCost.value >= refuelNeed.value, formatNum(refuelCost.value)),
+);
 
 /** 生效的加成按来源分组，默认只显示前几条（问题记录：展示凌乱） */
 const EFFECTS_SHOWN = 5;
@@ -367,15 +371,21 @@ onBeforeUnmount(() => {
         </div>
         <!-- 加油用图标加文字链接，不用按钮，行高和上面两行一样（问题记录 447） -->
         <div class="col-6">
+          <!-- 看得见的是“加满/加油”和银币数，整句放读屏标签和悬停提示；名字放不下才截断，数字不截（审查 I1） -->
           <button
             type="button"
-            class="dt-link-btn"
+            class="dt-link-btn d-inline-flex align-items-center gap-1 mw-100"
             data-testid="refuel"
+            :title="refuelText"
+            :aria-label="refuelText"
             :disabled="busy || refuelCost <= 0"
             @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
           >
-            <i class="bi bi-fuel-pump"></i>
-            {{ t.home.refuel(refuelCost >= refuelNeed, formatNum(refuelCost)) }}
+            <i class="bi bi-fuel-pump" aria-hidden="true"></i
+            ><span class="text-truncate">{{ t.home.refuelShort(refuelCost >= refuelNeed) }}</span
+            ><span class="flex-shrink-0"
+              ><i class="bi bi-coin me-1" aria-hidden="true"></i>{{ formatNum(refuelCost) }}</span
+            >
           </button>
         </div>
       </div>
@@ -429,8 +439,15 @@ onBeforeUnmount(() => {
             t.home.cookbooks(formatNum(rest.cookbooks.learned), formatNum(rest.cookbooks.total))
           }}</RouterLink
         >
-        <RouterLink v-if="showSpecial" to="/mc" class="dt-go ms-auto text-truncate" data-testid="home-special"
-          ><i class="bi bi-stars"></i> {{ specialText }}</RouterLink
+        <RouterLink
+          v-if="showSpecial"
+          to="/mc"
+          class="dt-go ms-auto d-flex align-items-center gap-1 dt-min0"
+          data-testid="home-special"
+          ><i class="bi bi-stars"></i><span class="text-truncate">{{ specialName }}</span
+          ><span v-if="rest.special" class="flex-shrink-0">{{
+            t.home.specialLevel(rest.special.level)
+          }}</span></RouterLink
         >
       </div>
       <!-- 资产：名下的店身价合计，和投资榜一样；收购的入口从“更多”挪到这里（问题记录 447） -->
@@ -596,7 +613,7 @@ onBeforeUnmount(() => {
       <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
         <div class="d-flex justify-content-between">
           <b>{{ t.home.pick }}</b>
-          <a href="#" @click.prevent="pickingSlot = null">{{ t.common.cancel }}</a>
+          <button type="button" class="dt-link-btn" @click="pickingSlot = null">{{ t.common.cancel }}</button>
         </div>
         <div v-if="choices.length === 0" class="text-muted">{{ t.home.noChoices }}</div>
         <!-- 星级不够的高档海报奖杯变灰，写几星可用（backlog 146） -->
@@ -725,14 +742,15 @@ onBeforeUnmount(() => {
           <span class="text-muted text-nowrap ms-auto">{{ effectExpires(e) }}</span>
         </div>
       </template>
-      <a
+      <button
         v-if="rest.effects.length > EFFECTS_SHOWN"
-        href="#"
-        class="d-block mt-1 text-decoration-none"
+        type="button"
+        class="dt-link-btn d-block mt-1"
         data-testid="effects-more"
-        @click.prevent="effectsAll = !effectsAll"
-        >{{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}</a
+        @click="effectsAll = !effectsAll"
       >
+        {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}
+      </button>
     </details>
   </div>
 </template>

@@ -490,8 +490,13 @@ h5 {
   white-space: nowrap;
 }
 .dt-go:hover,
+a:hover > .dt-go,
 .dt-link-btn:hover:not(:disabled) {
   color: var(--bs-link-hover-color);
+}
+/* 放在 flex 行里、要截断子项的链接：允许比内容窄 */
+.dt-min0 {
+  min-width: 0;
 }
 .dt-go::after {
   content: '\a0›';

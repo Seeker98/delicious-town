@@ -26,7 +26,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
     if (o.data.lastRound) break;
   }
   await page.goto('/');
-  await expect(page.getByTestId('last-round')).toBeVisible();
+  await expect(page.getByTestId('last-round-line')).toBeVisible();
 
   // 结算耗了油，加油后领主线（问题记录 318：第 1 章任务同时列出，首页显示第一个可领的——签到或加油）
   await page.getByTestId('refuel').click();
