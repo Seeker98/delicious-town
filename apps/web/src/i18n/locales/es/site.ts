@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    spice1007:
+      'Nuevo juego del bar, «Mezcla secreta»: el barman mezcla 4 de 10 condimentos en un orden concreto. En cada intento entregas una combinación y recibes una respuesta en A y B (A: condimento correcto en el sitio correcto; B: condimento correcto en otro sitio). Tienes hasta 8 intentos y, cuanto antes la descubras, mejor premio: en 4 intentos o menos ganas un gran premio, renombre y sales en las noticias. 2 vales misteriosos por partida, 5 partidas al día',
     nim1007:
       'Nuevo juego del bar, «El último caramelo»: por turnos con el barman, coges unos cuantos caramelos de un montón (cada mesa tiene un límite); quien coge el último gana. La mesa de principiantes cuesta 1 vale misterioso, eliges quién empieza y el barman a veces se despista; la mesa de expertos cuesta 2 vales misteriosos, una moneda decide quién empieza y el barman nunca falla. Si ganas, recibes renombre y un premio; 10 partidas al día entre las dos mesas',
     homeLinks1007:

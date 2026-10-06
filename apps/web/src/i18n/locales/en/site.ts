@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    spice1007:
+      'New bar game “Secret Blend”: the bartender mixes 4 of 10 seasonings in a set order. Each try you hand over a combination and get an answer in A and B (A: right seasoning, right place; B: right seasoning, wrong place). You get up to 8 tries, and the faster you crack it the better the prize: within 4 tries you win a big prize, renown and a spot in the news. 2 Mystery Vouchers a game, 5 games a day',
     nim1007:
       'New bar game “Last Candy”: take turns with the bartender taking a few candies from a pile (each table has a limit); whoever takes the last one wins. The beginner table costs 1 Mystery Voucher, you choose who goes first, and the bartender sometimes slips up; the expert table costs 2 Mystery Vouchers, a coin toss decides who goes first, and the bartender never slips up. A win gives renown and a prize; 10 games a day across both tables',
     homeLinks1007:
