@@ -145,5 +145,10 @@ describe('赛厨双方的特色菜（问题记录 431：结果里写“【菜（
       dish: null,
     });
     expect(watchmanSide(withMc, null, t.deps.config)).toMatchObject({ mcPrice: 0, dish: null });
+    // 配置里已经没有这道菜：照样加分，但不写菜（不写成“0 级”）
+    expect(watchmanSide(withMc, { price: 99, mcId: 999_999 }, t.deps.config)).toMatchObject({
+      mcPrice: 99,
+      dish: null,
+    });
   });
 });

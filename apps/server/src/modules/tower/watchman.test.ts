@@ -10,7 +10,7 @@ const config = testConfig();
 /** 4 层长老在随机数 0.4 下的“养”（菜价按 price 算）；长老数据重新生成时跟着变 */
 const floor4Yang = (price: number) =>
   duelScores(
-    { name: '4', attrs: config.towerFloors.get(4)!.attrs, mcPrice: price },
+    { name: '4', attrs: config.towerFloors.get(4)!.attrs, mcPrice: price, dish: null },
     config.tuning.tower.duel,
     sequenceRng([0.4]),
   )[4];
@@ -91,6 +91,8 @@ describe('守塔人换菜（设计文档裁定 2）', () => {
       .execute();
     const r = await t.game.tower.challenge(ctx, { floor: 4, test: true });
     expect(r.data.them.scores[4]).toBe(floor4Yang(100));
+    // 结果里写守塔人比拼的就是这道菜（问题记录 431）
+    expect(r.data.them.dish).toEqual({ id: 2, level: t.deps.config.mysterious.get(2)!.level });
     expect(Math.round((floor4Yang(100)! - floor4Yang(0)!) * 10) / 10).toBe(30);
   });
 });

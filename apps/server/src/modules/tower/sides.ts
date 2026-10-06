@@ -79,14 +79,16 @@ export function watchmanSide(
   config: GameConfig,
 ): DuelSide {
   const on = f.mc && mc !== null;
+  const def = on ? config.mysterious.get(mc.mcId) : undefined;
   return {
     name: f.name,
     attrs: f.attrs,
     mcPrice: on ? mc.price : 0,
-    dish: on ? { id: mc.mcId, level: config.mysterious.get(mc.mcId)?.level ?? 0 } : null,
+    // 配置里已经没有这道菜（删了、当天的还没换）：照样加分，不写菜
+    dish: on && def ? { id: mc.mcId, level: def.level } : null,
   };
 }
 
 export function sideDto(s: DuelSide, r: { scores: Scores }): DuelSideDto {
-  return { name: s.name, power: duelPower(s.attrs), scores: r.scores, dish: s.dish ?? null };
+  return { name: s.name, power: duelPower(s.attrs), scores: r.scores, dish: s.dish };
 }

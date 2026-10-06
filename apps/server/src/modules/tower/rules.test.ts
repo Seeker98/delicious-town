@@ -42,20 +42,20 @@ describe('五项评分（问题记录 396）', () => {
 
   it('随机数 0.4：波动 = 创意 × 0.4 × (1 + 幸运率) × 0.4（问题记录 408 改成 0.4）；养 = 火候 0.2 + 调味 0.3 + 刀工 0.2', () => {
     // 创意 2、幸运 0：波动 0.32。色 3 香 2.2 味 2.5 形 3.3 养 1.8
-    const s = duelScores({ name: '守', attrs: small, mcPrice: 0 }, d, sequenceRng([0.4]));
+    const s = duelScores({ name: '守', attrs: small, mcPrice: 0, dish: null }, d, sequenceRng([0.4]));
     expect(s).toEqual([3.3, 2.5, 2.8, 3.6, 2.1]);
     expect(sumScores(s)).toBe(14.3);
   });
 
   it('幸运 300（幸运率 0.3）让波动 × 1.3；幸运极低时系数不小于 0', () => {
     const lucky = duelScores(
-      { name: 'a', attrs: { ...zero, creatives: 10, luck: 300 }, mcPrice: 0 },
+      { name: 'a', attrs: { ...zero, creatives: 10, luck: 300 }, mcPrice: 0, dish: null },
       d,
       sequenceRng([0.5]),
     );
     expect(lucky).toEqual([2.6, 2.6, 2.6, 2.6, 2.6]);
     const cursed = duelScores(
-      { name: 'a', attrs: { ...zero, creatives: 10, luck: -50000 }, mcPrice: 0 },
+      { name: 'a', attrs: { ...zero, creatives: 10, luck: -50000 }, mcPrice: 0, dish: null },
       d,
       sequenceRng([0.5]),
     );
@@ -69,7 +69,7 @@ describe('五项评分（问题记录 396）', () => {
       weights: d.weights.map(() => ({ cook: 1, cutting: 0, fire: 0, season: 0, mc: 1 })),
     };
     const s = duelScores(
-      { name: 'a', attrs: { ...zero, cook: 7, creatives: 50 }, mcPrice: 2 },
+      { name: 'a', attrs: { ...zero, cook: 7, creatives: 50 }, mcPrice: 2, dish: null },
       custom,
       sequenceRng([0.9]),
     );
@@ -78,7 +78,7 @@ describe('五项评分（问题记录 396）', () => {
 
   it('"养"加上特色菜每份价值 × 0.3；每项按顺序各抽一个随机数', () => {
     const s = duelScores(
-      { name: 'a', attrs: { ...zero, creatives: 10 }, mcPrice: 50 },
+      { name: 'a', attrs: { ...zero, creatives: 10 }, mcPrice: 50, dish: null },
       d,
       sequenceRng([0, 0, 0, 0, 1]),
     );
@@ -142,8 +142,8 @@ describe('评委（问题记录 396）', () => {
   it('厨力 = 五项属性 + ⌊幸运/2⌋；duel 先算挑战方五项、再算对方、再抽评委', () => {
     expect(duelPower(small)).toBe(13);
     const r = duel(
-      { name: '我', attrs: { ...zero, cook: 20, cutting: 20, fire: 20, season: 10 }, mcPrice: 0 },
-      { name: '守', attrs: small, mcPrice: 0 },
+      { name: '我', attrs: { ...zero, cook: 20, cutting: 20, fire: 20, season: 10 }, mcPrice: 0, dish: null },
+      { name: '守', attrs: small, mcPrice: 0, dish: null },
       t.duel,
       sequenceRng([0.4]),
     );

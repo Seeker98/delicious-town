@@ -47,12 +47,13 @@ const judges = computed(() => {
     };
   });
 });
-/** 双方比拼的特色菜（问题记录 431）；旧服务器没有 dish 时也按没有写 */
+/** 双方比拼的特色菜（问题记录 431）；旧服务器的结果没有 dish（undefined）时不写这一行，免得把有菜的写成无米之炊 */
 const dishes = computed(() => {
   const d = t.value.tower.duel;
-  const name = (x: DuelResultDto['me']['dish'] | undefined) =>
-    x ? d.dish(catalog.mcName(x.id), x.level) : d.noDish;
-  return d.dishes(name(props.result.me.dish), name(props.result.them.dish));
+  const { me, them } = props.result;
+  if (me.dish === undefined || them.dish === undefined) return null;
+  const name = (x: DuelResultDto['me']['dish']) => (x ? d.dish(catalog.mcName(x.id), x.level) : d.noDish);
+  return d.dishes(name(me.dish), name(them.dish));
 });
 const headline = computed(() => {
   const r = props.result;
@@ -87,7 +88,7 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
         </tr>
       </tbody>
     </table>
-    <div class="mb-1" data-testid="duel-dishes">{{ dishes }}</div>
+    <div v-if="dishes" class="mb-1" data-testid="duel-dishes">{{ dishes }}</div>
     <div class="fw-bold mb-1">{{ t.tower.duel.judgesTitle }}</div>
     <!-- 评委一位一位亮出（问题记录 396）；减少动画时直接显示 -->
     <ol :key="round" class="dt-duel-judges list-unstyled mb-1">

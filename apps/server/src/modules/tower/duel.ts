@@ -24,7 +24,7 @@ export interface DuelSide {
   /** 在售特色菜每份价值；没有为 0 */
   mcPrice: number;
   /** 拿来比拼的特色菜（结果里写“【菜（几级）】 VS 【菜】”，问题记录 431）；没有为 null */
-  dish?: { id: number; level: number } | null;
+  dish: { id: number; level: number } | null;
 }
 
 /** 色、香、味、形、养 */
