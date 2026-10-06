@@ -5,6 +5,9 @@ generated/
 coverage/
 .env
 infra/.env
+# .env 的备份、nano 断线时的应急副本（.env.save）：留在服务器上也不让部署以为仓库有改动
+infra/.env.*
+!infra/.env.example
 apps/web/public/pack/
 apps/web/playwright-report/
 apps/web/test-results/

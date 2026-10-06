@@ -20,7 +20,7 @@
    ```
 5. 建区服：`docker compose -f compose.prod.yml run --rm api node dist/cli/shard.js ensure --id 1 --name 一服`
 6. 检查：`curl https://api.<域名>/readyz` 返回 `{"ok":true,...}`
-7. 备份：`chmod +x backup.sh`，`crontab -e` 加入 `0 4 * * * /opt/dt/infra/backup.sh`
+7. 备份：`crontab -e` 加入 `0 4 * * * bash /opt/dt/infra/backup.sh >> /var/log/dt-backup.log 2>&1`。用 `bash` 调用，不要 `chmod +x`：仓库里的文件一改（连权限也算），`deploy.sh` 就会因为“服务器上的仓库有未提交的改动”拒绝部署（2026-10-06 因此连续 8 次部署失败）
 
 VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进来）。
 
@@ -274,7 +274,7 @@ docker compose -f compose.prod.yml up -d
    另外在副本上看一眼各区服的覆盖：`docker exec dt-dev-postgres-1 psql -U dt -d dt_prod_copy -c "select shard_id, override from shard_config"`。迁移会改写区服数值里的编号、开店礼物（`restaurant.giftGoods` / `giftFoods`）和交易所参考价覆盖（`tuning.exchange.refOverrides`，按食材编号做键）；如果覆盖里还有别的地方写着道具、食材、菜谱编号，先在这里停下来查。演练完删掉副本和容器里的文件：`docker exec dt-dev-postgres-1 dropdb -U dt dt_prod_copy`、`docker exec dt-dev-postgres-1 rm /tmp/dt-rehearsal.dump`，本机的 `dt-rehearsal.dump` 也删掉。
 2. 提前公告停服时间。
 3. 停服：服务器上 `cd /opt/dt/infra && docker compose -f compose.prod.yml stop api worker`。旧版本的 worker 不能在迁移时或迁移后继续跑——它按旧配置写进来的会是旧编号。
-4. 备份：`./backup.sh`（上传 R2），另在服务器本机留一份：`docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /opt/dt/renumber-before.dump`。
+4. 备份：`bash backup.sh`（上传 R2），另在服务器本机留一份：`docker compose -f compose.prod.yml exec -T postgres pg_dump -U dt -d dt -Fc > /opt/dt/renumber-before.dump`。
 5. 合并 PR：main 的 CI 通过后自动部署（`deploy.sh` → 先跑 migrate，成功才启动 api、worker）。前端（Cloudflare Pages）同时发布。
 6. 看迁移日志：`docker compose -f compose.prod.yml logs migrate`，应有各表改了多少行、`renumber learned …` 和 `migrations applied`。
 7. **迁移失败**：事务整体回滚，数据库保持原样，api、worker 不会启动。在 GitHub 上 revert 这个 PR（自动部署旧版本），查清原因再来。
