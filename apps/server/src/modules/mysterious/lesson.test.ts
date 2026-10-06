@@ -206,9 +206,9 @@ describe('学习（规格书 04 §4.7）', () => {
 });
 
 describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
-  it('遗忘 等级×3+1 道普通食谱，计数跟着改；4 级课还可能遗忘一道更低级的特色菜，但不会是正在售卖的', async () => {
-    // 抽随机数的顺序：偷学判定 0.9（失败）→ 13 次挑食谱 → 遗忘特色菜判定 0（中）→ 挑特色菜 0
-    const g = await createTestGame({ rng: () => sequenceRng([0.9, ...Array<number>(13).fill(0), 0, 0]) });
+  it('等级×2+1 道普通食谱各降 1 品，普通品的就忘了，计数跟着改；4 级课还可能遗忘一道更低级的特色菜，但不会是正在售卖的（问题记录 424）', async () => {
+    // 抽随机数的顺序：偷学判定 0.9（失败）→ 9 次挑食谱 → 遗忘特色菜判定 0（中）→ 挑特色菜 0
+    const g = await createTestGame({ rng: () => sequenceRng([0.9, ...Array<number>(9).fill(0), 0, 0]) });
     try {
       const tc = await teacher(g, MC4.id);
       const { data } = await g.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
@@ -241,10 +241,11 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
 
       const r = await g.game.mysterious.learnLesson(st, data.id, { type: 2 });
       expect(r.data.success).toBe(false);
-      expect(r.data.forgot.cookbooks).toHaveLength(13);
-      expect(r.data.forgot.mcId).toBe(y!.id);
+      expect(r.data.forgot).toMatchObject({ mcId: y!.id, grades: 1, lost: 9 });
+      expect(r.data.forgot.cookbooks).toHaveLength(9);
       const s = await restRow(g, st.restaurantId);
-      expect(s.cookbook_counts.learned).toBe(40 - 13);
+      // 学生的菜都是普通品：降 1 品就忘了
+      expect(s.cookbook_counts.learned).toBe(40 - 9);
       const cb = await g.db
         .selectFrom('restaurant_cookbooks')
         .select('levels')
@@ -259,11 +260,52 @@ describe('偷学失败的遗忘（设计文档 裁定 8、9）', () => {
       expect(left).not.toContain(y!.id);
       const logs = await g.db
         .selectFrom('rest_log')
-        .select('type')
+        .select(['type', 'params'])
         .where('rest_id', '=', st.restaurantId)
         .execute();
-      expect(logs.map((l) => l.type)).toContain('mc.forget');
+      // 网页按 grades 区分新旧日志（问题记录 424）
+      expect(logs.find((l) => l.type === 'mc.forget')?.params).toMatchObject({ grades: 1, lost: 9 });
       expect((await lessonRow(g, data.id)).stolen).toBe(0);
+    } finally {
+      await g.close();
+    }
+  });
+});
+
+describe('偷学失败降品级（问题记录 424）', () => {
+  it('高品级的菜只降 1 品，不清零：学会数不变，品级计数挪一格', async () => {
+    const g = await createTestGame({ rng: () => sequenceRng([0.9, ...Array<number>(9).fill(0), 0.99]) });
+    try {
+      const tc = await teacher(g, MC4.id);
+      const { data } = await g.game.mysterious.openLesson(tc, { mcId: MC4.id, certId: gid('中级教师证') });
+      const ids = g.deps.config.cookbookIndex.allIds.slice(0, 40);
+      const st = await newRestaurant(g, {
+        shardId: tc.shardId,
+        verified: true,
+        cookbooks: Object.fromEntries(ids.map((id) => [id, 5])),
+        patch: { star_level: 3, strength: 500, coin: 10_000_000 },
+        goods: { [GOODS.fragmentBase + 4]: 10 },
+      });
+      for (const m of lvl(1).slice(0, 4))
+        await g.db.insertInto('rest_mc').values({ rest_id: st.restaurantId, mc_id: m.id, way: 1 }).execute();
+      const r = await g.game.mysterious.learnLesson(st, data.id, { type: 2 });
+      expect(r.data.success).toBe(false);
+      expect(r.data.forgot).toMatchObject({ mcId: null, grades: 1, lost: 0 });
+      expect(r.data.forgot.cookbooks).toHaveLength(9);
+      const s = await restRow(g, st.restaurantId);
+      expect(s.cookbook_counts.learned).toBe(40);
+      // 街道计数不变：菜还在、还是这条街的
+      const streets = Object.values(s.cookbook_counts.street).reduce((a, b) => a + b, 0);
+      expect(streets).toBe(40);
+      expect(s.cookbook_counts.grade[5]).toBe(31);
+      expect(s.cookbook_counts.grade[4]).toBe(9);
+      const cb = await g.db
+        .selectFrom('restaurant_cookbooks')
+        .select('levels')
+        .where('rest_id', '=', st.restaurantId)
+        .executeTakeFirstOrThrow();
+      for (const id of r.data.forgot.cookbooks)
+        expect(gradeOf(cb.levels, g.deps.config.cookbookIndex.slotOf, id)).toBe(4);
     } finally {
       await g.close();
     }

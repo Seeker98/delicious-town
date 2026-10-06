@@ -227,7 +227,7 @@
     "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02, "thinkerStealBonus": 0.05,
     "learnStrength": 50, "stealStrength": 80,
     "tuitionTimes": 3, "teacherShare": 2, "learnFragments": 2, "teacherFragments": 1,
-    "forgetPerLevel": 3, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.05,
+    "forgetPerLevel": 2, "forgetGrades": 1, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.02,
     "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
     "championGoodsId": 10814

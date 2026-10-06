@@ -165,10 +165,13 @@ describe('教室（规格书 04 §4.7）', () => {
     expect(stealRate(5, true, 0, t)).toBeCloseTo(0.35, 10);
   });
 
-  it('遗忘 等级×3+1 道；4 级起才可能遗忘特色菜，概率 等级×5%', () => {
-    expect(forgetCount(4, t)).toBe(13);
+  it('降级 等级×2+1 道（问题记录 424）；4 级起才可能遗忘特色菜，概率 等级×2%', () => {
+    expect(forgetCount(4, t)).toBe(9);
+    expect(forgetCount(1, t)).toBe(3);
+    expect(t.forgetGrades).toBe(1);
     expect(forgetMcChance(3, t)).toBe(0);
-    expect(forgetMcChance(4, t)).toBeCloseTo(0.2, 10);
+    expect(forgetMcChance(4, t)).toBeCloseTo(0.08, 10);
+    expect(forgetMcChance(6, t)).toBeCloseTo(0.12, 10);
   });
 
   it('星级门槛：老师 max(1, ⌊(等级-1)/2⌋)，学生 ⌊(等级-1)/2⌋+1', () => {
