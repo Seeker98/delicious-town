@@ -26,6 +26,10 @@ export const barNimFirstBody = z.object({ who: z.enum(['me', 'bartender']) });
 /** 上限由服务端按本局的 k 和剩余再查 */
 export const barNimTakeBody = z.object({ num: z.number().int().min(1).max(99) });
 
+// ---------- 秘制调料（问题记录 427-2） ----------
+/** 调料编号；长度、不重复、上限由服务端按数值再查 */
+export const barSpiceGuessBody = z.object({ guess: z.array(z.number().int().min(0).max(99)).min(1).max(10) });
+
 export type BarResultDto = 'win' | 'draw' | 'lose';
 
 /** 随机奖励（规格书 00 §0.8） */
@@ -86,6 +90,45 @@ export interface BarDto {
   darts: { cost: number; played: number; max: number; round: DartsDto | null };
   /** 最后一颗糖：两张桌子合计的次数；进行中的局（全部公开） */
   nim: { played: number; max: number; tables: Record<NimTable, NimTableInfoDto>; round: NimDto | null };
+  /** 秘制调料：kinds 种调料里 length 种的排列，最多 tries 次；进行中的局不含配方 */
+  spice: {
+    cost: number;
+    played: number;
+    max: number;
+    kinds: number;
+    length: number;
+    tries: number;
+    tiers: SpiceTierDto[];
+    round: SpiceDto | null;
+  };
+}
+
+export interface SpiceGuessDto {
+  guess: number[];
+  /** 调料和位置都对 */
+  a: number;
+  /** 调料对、位置不对 */
+  b: number;
+}
+
+export interface SpiceTierDto {
+  /** 第几次以内猜中算这一档 */
+  maxTries: number;
+  awardLevel: number;
+  renown: number;
+}
+
+/** 秘制调料的局面；配方只在结束时给出 */
+export interface SpiceDto {
+  guesses: SpiceGuessDto[];
+  /** 还能猜几次 */
+  left: number;
+  result: 'win' | 'lose' | null;
+  secret: number[] | null;
+  /** 猜中的档位，0 是大奖；没猜中为 null */
+  tier: number | null;
+  renown: number;
+  award: BarAwardDto | null;
 }
 
 export type NimTable = 'novice' | 'expert';

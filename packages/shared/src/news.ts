@@ -16,6 +16,7 @@ export const NEWS_TYPES: readonly string[] = [
   'bar.slot',
   'bar.devil',
   'bar.memory',
+  'bar.spice',
   'bar.darts',
   'equip.stress',
   'friend.weekly',
