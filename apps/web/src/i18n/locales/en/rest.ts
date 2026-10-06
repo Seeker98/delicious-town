@@ -104,7 +104,7 @@ const rest: Messages['rest'] = {
     lockedLevel: (n) => `🔒 Unlocks at level ${n}`,
     lockedDays: (n) => `🔒 Unlocks ${n} days after sign-up`,
     lockedEmail: '🔒 Unlocks after you verify your email',
-    noActivity: 'No limited-time event is running',
+    noActivity: '🔒 No limited-time event is running',
     lockedStar: (n) => `🔒 Unlocks at ${n} ${n === 1 ? 'star' : 'stars'}`,
     claimedTask: '✓ Claimed',
     lineDone: 'All done',

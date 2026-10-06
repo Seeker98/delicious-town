@@ -37,19 +37,27 @@ import {
   type QuestCtx,
 } from './quests';
 import { activationTotal, stateValue } from './rules';
-import { exchangeUntil } from '../activity/rules';
-import type { ActivitySpec } from '@dt/shared';
 
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
+
+/**
+ * 本店眼下能拿到“领取限时活动奖励”的活动（SQL 条件，别名 a）：没删、本区服或全服、已开始、等级够；
+ * 全服加成没有奖励，不算；进行中，或兑换活动还在兑换期（ends_at + graceHours，见 activity/rules exchangeUntil）
+ */
+function claimableActivity(rest: Pick<RestaurantRow, 'shard_id' | 'level'>, now: Date) {
+  return sql<boolean>`exists(select 1 from activity a where a.deleted_at is null
+    and (a.shard_id = ${rest.shard_id} or a.shard_id is null) and a.kind <> 'boost'
+    and a.starts_at <= ${now} and a.min_level <= ${rest.level}
+    and (a.ends_at > ${now} or (a.kind = 'exchange'
+      and a.ends_at + coalesce((a.def->>'graceHours')::int, 24) * interval '1 hour' > ${now})))`;
+}
 
 /** 活跃项编号（activation_extra.json、原版活跃表） */
 const ACT_EXCHANGE = 901;
 const ACT_PREDICT = 902;
 const ACT_ACTIVITY = 904;
 const ACT_TAKEAWAY = 50;
-/** 找“还能领奖或兑换”的活动时往回看多久（兑换期按小时计，远小于这个） */
-const ACTIVITY_LOOKBACK_MS = 60 * 86_400_000;
 
 export function createTaskService(d: GameDeps) {
   const { chapters, quests, questLines, weeklyGroups } = d.config.bundle;
@@ -64,9 +72,7 @@ export function createTaskService(d: GameDeps) {
     // 本店的几项计数一条查询读完（质量期 ③：原来 8 条；这里可能在调用方的事务里跑，不能并发，所以合成子查询）
     const facts = await db
       .selectNoFrom([
-        sql<boolean>`exists(select 1 from activity where deleted_at is null and (shard_id = ${rest.shard_id} or shard_id is null) and starts_at <= ${now} and ends_at > ${now} and min_level <= ${rest.level})`.as(
-          'running',
-        ),
+        claimableActivity(rest, now).as('running'),
         sql<
           number[]
         >`coalesce((select array_agg(quest_id) from quest_done where rest_id = ${rest.id}), '{}')`.as('done'),
@@ -265,38 +271,28 @@ export function createTaskService(d: GameDeps) {
   }
 
   /**
-   * 活跃项眼下做不了的其他原因（backlog 第 ⑥ 批）：交易所、事件预测的注册天数、邮箱门槛；
-   * 领取限时活动奖励要有能领奖或兑换的活动（进行中，或兑换活动还在兑换期，等级够）
+   * 活跃项要读的店外数据一条查询读完（质量期 ③ 的查询预算）：爱心项链；交易所、事件预测的注册天数、
+   * 邮箱门槛；有没有能领奖的限时活动（backlog 第 ⑥ 批）
    */
-  async function actBlocks(
-    db: Kysely<DB>,
-    rest: RestaurantRow,
-  ): Promise<{ account: { days: number; verified: boolean }; activityOpen: boolean }> {
+  async function actFacts(db: Kysely<DB>, rest: RestaurantRow) {
     const now = d.now();
-    const acc = await db
-      .selectFrom('account')
-      .select(['created_at', 'email_verified_at'])
-      .where('id', '=', rest.account_id)
+    const r = await db
+      .selectNoFrom([
+        sql<boolean>`exists(select 1 from store_item where rest_id = ${rest.id} and goods_id = ${GOODS.loveNecklace} and (expires_at is null or expires_at > ${now}))`.as(
+          'necklace',
+        ),
+        sql<Date>`(select created_at from account where id = ${rest.account_id})`.as('createdAt'),
+        sql<boolean>`(select email_verified_at is not null from account where id = ${rest.account_id})`.as(
+          'verified',
+        ),
+        claimableActivity(rest, now).as('activityOpen'),
+      ])
       .executeTakeFirstOrThrow();
-    const rows = await db
-      .selectFrom('activity')
-      .select(['kind', 'def', 'ends_at', 'min_level'])
-      .where('deleted_at', 'is', null)
-      .where((eb) => eb.or([eb('shard_id', '=', rest.shard_id), eb('shard_id', 'is', null)]))
-      .where('starts_at', '<=', now)
-      .where('ends_at', '>', new Date(now.getTime() - ACTIVITY_LOOKBACK_MS))
-      .execute();
-    const activityOpen = rows.some((r) => {
-      if (r.min_level > rest.level) return false;
-      const until = exchangeUntil({ kind: r.kind, def: r.def } as ActivitySpec, r.ends_at) ?? r.ends_at;
-      return now < until;
-    });
     return {
-      account: {
-        days: (now.getTime() - acc.created_at.getTime()) / 86_400_000,
-        verified: acc.email_verified_at !== null,
-      },
-      activityOpen,
+      necklace: r.necklace,
+      days: (now.getTime() - new Date(r.createdAt).getTime()) / 86_400_000,
+      verified: r.verified,
+      activityOpen: r.activityOpen,
     };
   }
 
@@ -329,14 +325,8 @@ export function createTaskService(d: GameDeps) {
     const byKey = new Map(rows.map((r) => [r.key, r.count]));
     const acts = d.config.bundle.activationTasks.filter((a) => a.limitTimes > 0);
     const counts = new Map(acts.map((a) => [a.id, byKey.get(`act:${a.id}`) ?? 0]));
-    const necklace = await db
-      .selectFrom('store_item')
-      .select('expires_at')
-      .where('rest_id', '=', rest.id)
-      .where('goods_id', '=', GOODS.loveNecklace)
-      .executeTakeFirst();
-    const multiplier = necklace && (necklace.expires_at === null || necklace.expires_at > d.now()) ? 2 : 1;
-    const blocks = await actBlocks(db, rest);
+    const facts = await actFacts(db, rest);
+    const multiplier = facts.necklace ? 2 : 1;
     const needDaysOf = (id: number) =>
       id === ACT_EXCHANGE
         ? settings.tuning.exchange.minAccountDays
@@ -345,10 +335,10 @@ export function createTaskService(d: GameDeps) {
           : 0;
     const blockedOf = (id: number): ActivationBlock => {
       if (id === ACT_EXCHANGE || id === ACT_PREDICT) {
-        if (blocks.account.days < needDaysOf(id)) return 'days';
-        if (!blocks.account.verified) return 'email';
+        if (facts.days < needDaysOf(id)) return 'days';
+        if (!facts.verified) return 'email';
       }
-      if (id === ACT_ACTIVITY && !blocks.activityOpen) return 'noActivity';
+      if (id === ACT_ACTIVITY && !facts.activityOpen) return 'noActivity';
       return null;
     };
     return {

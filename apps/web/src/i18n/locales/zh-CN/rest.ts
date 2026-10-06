@@ -103,7 +103,7 @@ export default {
     lockedLevel: (n: number) => `🔒 ${n} 级解锁`,
     lockedDays: (n: number) => `🔒 注册满 ${n} 天解锁`,
     lockedEmail: '🔒 验证邮箱后解锁',
-    noActivity: '现在没有进行中的限时活动',
+    noActivity: '🔒 现在没有进行中的限时活动',
     lockedStar: (n: number) => `🔒 ${n} 星解锁`,
     claimedTask: '✓ 已领',
     lineDone: '已全部完成',

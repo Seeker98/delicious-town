@@ -112,6 +112,34 @@ describe('活跃项的门槛（backlog 第 ⑥ 批）', () => {
     expect(await item('签到')).toMatchObject({ blocked: null });
   });
 
+  it('领取限时活动奖励：只有全服加成（没有奖励）时仍标 noActivity；兑换活动结束后的兑换期里算能做', async () => {
+    const ctx = await newRestaurant(t);
+    const item = async () =>
+      (await task().activation(ctx)).items.find((x) => x.name === '领取限时活动奖励')!.blocked;
+    const H = 3_600_000;
+    const add = (kind: 'boost' | 'exchange', endsIn: number, def: object) =>
+      t.db
+        .insertInto('activity')
+        .values({
+          shard_id: ctx.shardId,
+          kind,
+          title: kind,
+          body: '',
+          starts_at: new Date(t.clock.now.getTime() - 48 * H),
+          ends_at: new Date(t.clock.now.getTime() + endsIn),
+          min_level: 1,
+          def: JSON.stringify(def),
+          actor_account_id: ctx.accountId,
+        })
+        .execute();
+    await add('boost', H, { items: [{ key: 'coin', factor: 1.5 }] });
+    expect(await item()).toBe('noActivity');
+    await add('exchange', -2 * H, { graceHours: 1 });
+    expect(await item()).toBe('noActivity');
+    await add('exchange', -2 * H, { graceHours: 3 });
+    expect(await item()).toBeNull();
+  });
+
   it('领取限时活动奖励：没有进行中的活动标 noActivity；配送外卖的星级按区服的 takeaway.openStar', async () => {
     const ctx = await newRestaurant(t);
     const item = async (name: string) => (await task().activation(ctx)).items.find((x) => x.name === name)!;

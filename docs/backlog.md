@@ -95,6 +95,8 @@
 ## 下架 117 件旧道具（#143）审查小问题
 
 - 线上可以查一次 activity、redeem_code、mail 有没有引用下架编号（代码已处理：兑换码里有下架道具报失效；进行中的活动定义没改时能延长结束时间；已发的邮件照常能领）。
+- 上线前看一眼线上区服覆盖：随机奖励类型比例（`bar.awardRates`、`bar.prize.rates`）四项加起来超过 1、有负数，或 `tower.duel.judges` 超过 10 的，现在构建区服设置时会报错（backlog 第 ① 批加的校验）。
+- 今日活跃里交易所、事件预测只标了注册天数、邮箱，冻结中的店（frozenReason）还显示能做；门槛判断是从交易所的 eligibility 抄的一份，改门槛时两处都要改。
 ## 质量期第 ⑦ 批（fix/batch7-renumber-tail）审查小问题
 
 - 写死编号扫描仍认不出的写法：`Record<number, number> = { 1: 13 }` 这类常量表、起了别名的基数常量（`const X_BASE = 466`）、带表别名的 `.where('s.goods_id', …)`、`.where('goods_id', 'in', [N])`、编号后面还有参数的调用（`learn(ctx, N, …)`）、带分隔符的 `106_001`。现在仓库里没有实际漏网的。

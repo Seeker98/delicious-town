@@ -106,6 +106,22 @@ describe('后台活动（设计 §5.2）', () => {
     expect((await svc.update(actor, a.id, same)).endsAt).toBe(later);
   });
 
+  it('还没开始的活动定义没改也要查：开始后定义改不了，这是最后能改的时候（backlog #143 审查）', async () => {
+    const svc = createAdminActivity(t.game);
+    const shardId = await createShard(t.db);
+    const a = await svc.create(actor, input(shardId));
+    const retired = testConfig().bundle.goods.find((g) => g.retired)!;
+    const def = { goals: [{ key: 'signin', target: 1, award: { goods: [{ id: retired.id, num: 1 }] } }] };
+    await t.db
+      .updateTable('activity')
+      .set({ def: JSON.stringify(def) })
+      .where('id', '=', a.id)
+      .execute();
+    await expect(
+      svc.update(actor, a.id, input(shardId, { title: '改标题', def } as Partial<ActivityInput>)),
+    ).rejects.toMatchObject({ code: 'VALIDATION_FAILED' });
+  });
+
   it('定义里的道具、食材 id 必须存在：新建、修改都检查，报带路径的字段错误（backlog 148-2）', async () => {
     const svc = createAdminActivity(t.game);
     const shardId = await createShard(t.db);
