@@ -9,15 +9,20 @@ import { duelPower, type DuelSide, type Scores } from './duel';
 
 export type DuelMode = 'attack' | 'defend';
 
-/** 在售特色菜每份价值：mc_cook_id 指向、没结束、还有剩；没有为 0 */
-export async function mcPriceOf(db: Kysely<DB>, rest: RestaurantRow): Promise<number> {
-  if (rest.mc_cook_id === null) return 0;
+/** 在售特色菜：mc_cook_id 指向、没结束、还有剩；每份价值和哪道菜（问题记录 431）。没有为价值 0、菜 null */
+export async function mcOf(
+  db: Kysely<DB>,
+  rest: RestaurantRow,
+): Promise<{ price: number; dish: { id: number; level: number } | null }> {
+  if (rest.mc_cook_id === null) return { price: 0, dish: null };
   const r = await db
     .selectFrom('mc_cook')
-    .select(['price', 'left_num', 'ended_at'])
+    .select(['price', 'left_num', 'ended_at', 'mc_id', 'level'])
     .where('id', '=', rest.mc_cook_id)
     .executeTakeFirst();
-  return r && r.left_num > 0 && r.ended_at === null ? r.price : 0;
+  return r && r.left_num > 0 && r.ended_at === null
+    ? { price: r.price, dish: { id: r.mc_id, level: r.level } }
+    : { price: 0, dish: null };
 }
 
 /**
@@ -36,6 +41,7 @@ export async function sideOf(
   const cook = suitEffect(gear.suits, mode === 'attack' ? 'attackCook' : 'defendCook');
   const cut = suitEffect(gear.suits, mode === 'attack' ? 'attackCutting' : 'defendCutting');
   const fire = suitEffect(gear.suits, mode === 'attack' ? 'attackFire' : 'defendFire');
+  const mc = await mcOf(db, rest);
   return {
     name: rest.name,
     attrs: {
@@ -45,7 +51,8 @@ export async function sideOf(
       fire: Math.round(gear.total.fire * (1 + fire)),
       luck: rest.luck + luckValue,
     },
-    mcPrice: await mcPriceOf(db, rest),
+    mcPrice: mc.price,
+    dish: mc.dish,
   };
 }
 
@@ -65,11 +72,23 @@ export function cachedSide(
   return sideOf(db, config, rest, rest.effect_agg.luckValue ?? 0, mode, off);
 }
 
-/** 守塔人：属性来自配置；只有比拼特色菜的层才算当天的菜 */
-export function watchmanSide(f: TowerFloor, price: number): DuelSide {
-  return { name: f.name, attrs: f.attrs, mcPrice: f.mc ? price : 0 };
+/** 守塔人：属性来自配置；只有比拼特色菜的层才算当天的菜（mc 是这一层当天抽到的菜，没有为 null） */
+export function watchmanSide(
+  f: TowerFloor,
+  mc: { price: number; mcId: number } | null,
+  config: GameConfig,
+): DuelSide {
+  const on = f.mc && mc !== null;
+  const def = on ? config.mysterious.get(mc.mcId) : undefined;
+  return {
+    name: f.name,
+    attrs: f.attrs,
+    mcPrice: on ? mc.price : 0,
+    // 配置里已经没有这道菜（删了、当天的还没换）：照样加分，不写菜
+    dish: on && def ? { id: mc.mcId, level: def.level } : null,
+  };
 }
 
 export function sideDto(s: DuelSide, r: { scores: Scores }): DuelSideDto {
-  return { name: s.name, power: duelPower(s.attrs), scores: r.scores };
+  return { name: s.name, power: duelPower(s.attrs), scores: r.scores, dish: s.dish };
 }

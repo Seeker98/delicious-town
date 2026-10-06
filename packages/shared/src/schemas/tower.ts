@@ -28,6 +28,8 @@ export interface DuelSideDto {
   power: number;
   /** 色、香、味、形、养（五项的和网页不显示，接口也不给；票数相同时服务端按和定胜负） */
   scores: number[];
+  /** 拿来比拼的特色菜（问题记录 431）：编号和等级；没有为 null（网页写“无米之炊”） */
+  dish: { id: number; level: number } | null;
 }
 
 /** 一位上场的评委（问题记录 396）：双方在他关注项目上的和 */

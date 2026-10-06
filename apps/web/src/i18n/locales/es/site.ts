@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    duel1007:
+      'Los resultados del duelo de cocina ahora son comentarios de los jueces: cada juez repasa los aspectos que valora (victoria aplastante, muy parejo o derrota total) y da un marcador; el resultado también muestra el plato especial de cada lado («Sin plato especial» si no hay). El juez Viejo Pobretón pasa a ser Gordon, y Carmen pasa a ser Joe',
     home1007:
       'Inicio más compacto: las monedas, la EXP y el aceite de la última ronda ahora son iconos (el de EXP es el mismo que en tu barra de EXP), y los enlaces al historial y a las plantas están a la derecha de sus filas; junto al aceite hay un acceso para mejorar el bidón; el registro diario y los puntos de actividad comparten fila, y al registrarte solo aparece una marca. Las tarjetas, filas y títulos de todo el juego tienen algo menos de espacio, así cabe más en pantalla',
     acquire1006:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    duel1007:
+      'Les résultats du duel culinaire se lisent désormais comme l’avis des juges : chaque juge passe en revue ses critères (victoire écrasante, au coude-à-coude ou déroute totale) et donne un score ; le résultat montre aussi le plat spécial de chaque camp (« Pas de plat spécial » s’il n’y en a pas). Le juge Vieux Fauché est remplacé par Gordon, et Carmen par Joe',
     home1007:
       'Accueil plus compact : les pièces, l’EXP et l’huile du dernier tour s’affichent en icônes (celle de l’EXP est la même que sur votre barre d’EXP), avec l’historique des gains et les étages à droite de leurs lignes ; un raccourci pour améliorer le bidon d’huile est à côté de votre huile ; le pointage quotidien et les points d’activité partagent une ligne, et une coche apparaît une fois pointé. Les cartes, lignes et titres de tout le jeu sont un peu moins espacés, pour en voir plus à l’écran',
     acquire1006:

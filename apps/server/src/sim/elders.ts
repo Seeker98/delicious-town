@@ -214,6 +214,7 @@ export function typicalPlayer(config: GameConfig, level: number, stress: number)
       luck: t.luckPerLevel * (level - 1) + gear.luck + suitEffect(list, 'luckValue'),
     },
     mcPrice: 0,
+    dish: null,
   };
 }
 
@@ -262,7 +263,13 @@ export function hardestElder(config: GameConfig, spec: (typeof ELDER_SPECS)[numb
   const mc = expectedMc(config, spec.floor);
   const rate = (pts: PointRatio, gain: Ratio, n: number) => {
     const e = elderOf(config, spec, pts, gain);
-    return winRate(player, { name: '长老', attrs: elderAttrs(e, ctx).attrs, mcPrice: mc }, t, n, rng);
+    return winRate(
+      player,
+      { name: '长老', attrs: elderAttrs(e, ctx).attrs, mcPrice: mc, dish: null },
+      t,
+      n,
+      rng,
+    );
   };
   let best = { pts: POINTS[0]!, gain: [...grid(0.2)][0]!, r: 2 };
   for (const gain of grid(0.2))
@@ -303,7 +310,7 @@ function main(): void {
     const { attrs, power } = elderAttrs(e, ctx);
     let line = `${spec.floor} 层 ${spec.level} 级 +${spec.stress}：厨力 ${power} ${JSON.stringify(attrs)}`;
     if (report) {
-      const them = { name: '长老', attrs, mcPrice: expectedMc(config, spec.floor) };
+      const them = { name: '长老', attrs, mcPrice: expectedMc(config, spec.floor), dish: null };
       const rng = seededRng(1);
       const reach = (stress: number, target: number) => {
         for (let lv = 1; lv <= 130; lv++)

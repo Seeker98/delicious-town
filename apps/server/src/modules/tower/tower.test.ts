@@ -105,6 +105,8 @@ describe('挑战（设计文档 §3.2）', () => {
       name: '见习模范餐厅',
       power: 39,
       scores: [10.1, 0.8, 2.5, 22.3, 6.8],
+      // 第 1 层不比特色菜（问题记录 431：网页写“无米之炊”）
+      dish: null,
     });
     expect(r.data.votes).toEqual([3, 0]);
     expect(r.data.judges).toHaveLength(3);

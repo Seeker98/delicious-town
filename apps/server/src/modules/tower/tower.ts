@@ -129,12 +129,12 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
   spendStrength(o, towerStrength(floorNo, test, t));
   const mc = await o.tx
     .selectFrom('tower_watchman_mc')
-    .select('price')
+    .select(['price', 'mc_id'])
     .where('shard_id', '=', o.shardId)
     .where('floor', '=', floorNo)
     .executeTakeFirst();
   const me = await playerSide(o, 'attack');
-  const them = watchmanSide(f, mc?.price ?? 0);
+  const them = watchmanSide(f, mc ? { price: mc.price, mcId: mc.mc_id } : null, o.config);
   const r = duel(me, them, t.duel, o.rng);
   let renown = 0;
   const awards: RandomAward[] = [];

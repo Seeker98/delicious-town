@@ -30,17 +30,66 @@ describe('DuelResult', () => {
     expect(lose.find('[data-testid="duel-headline"]').text()).toBe('你输了 1:3，声望 -2');
   });
 
-  it('评委按上场顺序列出：名字、关注的项目、双方的分，这一票给谁（问题记录 396）', () => {
+  it('评委按上场顺序点评：逐项写胜负、比分，这一票给谁（问题记录 396、431）', () => {
     const w = mount(DuelResult, { props: { result: duelResult() } });
+    expect(w.text()).toContain('评委点评');
     const rows = w.findAll('[data-testid="duel-judge"]');
     expect(rows).toHaveLength(4);
-    expect(rows[0]!.text()).toContain('卡门');
-    expect(rows[0]!.text()).toContain('色、香');
-    expect(rows[0]!.text()).toContain('39.8 : 16.1');
+    // 老乔（原来的卡门）看色、香；戈登（原来的老穷头）看形、养
+    expect(rows[0]!.text()).toContain('【老乔 点评 我】：以[色]大获全胜，以[香]大获全胜，比分 39.8:16.1');
     expect(rows[0]!.text()).toContain('投给你');
-    expect(rows[1]!.text()).toContain('老穷头');
+    expect(rows[1]!.text()).toContain('【戈登 点评 我】');
     expect(rows[1]!.text()).toContain('投给对方');
-    expect(w.text()).not.toContain('总和');
+    expect(w.text()).not.toMatch(/卡门|老穷头|总和/);
+  });
+
+  it('每项的点评：差 10% 以内不分伯仲，高出大获全胜，低了全军覆没（问题记录 431）', () => {
+    const base = duelResult();
+    const w = mount(DuelResult, {
+      props: {
+        result: duelResult({
+          me: { ...base.me, scores: [10, 10, 10, 10, 10] },
+          them: { ...base.them, scores: [20, 10.5, 5, 10, 0] },
+          judges: [
+            { id: 'joe', me: 20, them: 30.5 },
+            { id: 'xiaoKai', me: 20, them: 10 },
+          ],
+          votes: [1, 1],
+        }),
+      },
+    });
+    const rows = w.findAll('[data-testid="duel-judge"]');
+    expect(rows[0]!.text()).toContain('以[色]全军覆没，以[香]不分伯仲，比分 20:30.5');
+    // 小凯看味、养：10 比 5、10 比 0
+    expect(rows[1]!.text()).toContain('以[味]大获全胜，以[养]大获全胜');
+  });
+
+  it('双方的特色菜：“【菜（几级）】 VS 【菜】”，没有写“无米之炊”（问题记录 431）', () => {
+    const w = mount(DuelResult, { props: { result: duelResult() } });
+    expect(w.get('[data-testid="duel-dishes"]').text()).toMatch(/^【.+（5 级）】 VS 【无米之炊】$/);
+  });
+
+  it('旧服务器的结果没有 dish：不写菜那一行（不把有菜的写成无米之炊）', () => {
+    const base = duelResult();
+    const { dish: _a, ...me } = base.me;
+    const { dish: _b, ...them } = base.them;
+    const w = mount(DuelResult, { props: { result: { ...base, me, them } as never } });
+    expect(w.find('[data-testid="duel-dishes"]').exists()).toBe(false);
+  });
+
+  it('某项双方都是 0：不分伯仲', () => {
+    const base = duelResult();
+    const w = mount(DuelResult, {
+      props: {
+        result: duelResult({
+          me: { ...base.me, scores: [0, 0, 1, 1, 1] },
+          them: { ...base.them, scores: [0, 0, 1, 1, 1] },
+          judges: [{ id: 'joe', me: 0, them: 0 }],
+          votes: [0, 0],
+        }),
+      },
+    });
+    expect(w.get('[data-testid="duel-judge"]').text()).toContain('以[色]不分伯仲，以[香]不分伯仲');
   });
 
   it('评委给的分相同：写“平”', () => {
@@ -54,7 +103,7 @@ describe('DuelResult', () => {
     const w = mount(DuelResult, {
       props: { result: duelResult({ judges: [{ id: 'newbie' as never, me: 12, them: 10 }], votes: [1, 0] }) },
     });
-    expect(w.find('[data-testid="duel-judge"]').text()).toContain('newbie');
+    expect(w.find('[data-testid="duel-judge"]').text()).toContain('【newbie 点评 我】：比分 12:10');
     expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
   });
 

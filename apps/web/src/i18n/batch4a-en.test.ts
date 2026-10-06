@@ -32,16 +32,18 @@ describe('第 4a 批酒吧、厨塔按语言（问题记录 272）', () => {
       me: side('Me', 100),
       them: side('Bob', 90),
       judges: [
-        { id: 'carmen', me: 30, them: 20 },
-        { id: 'oldPoor', me: 10, them: 10 },
+        { id: 'joe', me: 30, them: 20 },
+        { id: 'gordon', me: 10, them: 10 },
       ],
       votes: [3, 1],
       awards: [],
     } as unknown as DuelResultDto;
     const w = mount(DuelResult, { props: { result } });
     expect(w.find('[data-testid="duel-headline"]').text()).toBe("You won 3–1, Renown +5, you're now #3");
-    expect(w.text()).toContain('Carmen (Look, Aroma)');
-    expect(w.text()).toContain('Old Pauper (Shape, Nutrition)');
+    // 问题记录 431：评委逐项点评，卡门、老穷头换成老乔（Joe）、戈登（Gordon）
+    expect(w.text()).toContain("Joe's verdict: ");
+    expect(w.text()).toContain("Gordon's verdict: ");
+    expect(w.text()).toContain('score 30:20');
     expect(w.text()).toContain('Me (Chef power 100)');
     expect(w.text()).not.toMatch(/[一-鿿]/);
   });

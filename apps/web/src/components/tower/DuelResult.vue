@@ -23,22 +23,37 @@ const rows = computed(() =>
     them: props.result.them.scores[i] ?? 0,
   })),
 );
-/** 上场的评委（问题记录 396）：名字、关注的项目、双方的分、这一票给谁 */
+/** 一项的点评（问题记录 431）：差在高的一方的 10% 以内算不分伯仲，否则按谁高写大获全胜 / 全军覆没 */
+const CLOSE = 0.1;
+function itemVerdict(me: number, them: number): 'win' | 'close' | 'lose' {
+  if (Math.abs(me - them) <= CLOSE * Math.max(me, them)) return 'close';
+  return me > them ? 'win' : 'lose';
+}
+/** 上场的评委（问题记录 396、431）：【评委 点评 我】：以[项]胜负……，比分；这一票给谁 */
 const judges = computed(() => {
   const d = t.value.tower.duel;
-  return props.result.judges.map((j) => ({
-    ...j,
-    // 不认识的评委（服务器加了新评委、网页还是旧的）只写编号（backlog 396）
-    who: DUEL_JUDGE_ITEMS.has(j.id)
-      ? d.judgeFocus(
-          d.judges[j.id],
-          DUEL_JUDGE_ITEMS.get(j.id)!
-            .map((i) => d.items[i])
-            .join(d.itemSep),
-        )
-      : String(j.id),
-    vote: j.me > j.them ? ('me' as const) : j.them > j.me ? ('them' as const) : ('tie' as const),
-  }));
+  const r = props.result;
+  return r.judges.map((j) => {
+    const items = DUEL_JUDGE_ITEMS.get(j.id);
+    const comments = (items ?? []).map((i) =>
+      d.itemLine(d.items[i] ?? '', d.itemVerdict[itemVerdict(r.me.scores[i] ?? 0, r.them.scores[i] ?? 0)]),
+    );
+    return {
+      ...j,
+      // 不认识的评委（服务器加了新评委、网页还是旧的）只写编号（backlog 396）
+      who: d.judgeOn(items ? d.judges[j.id] : String(j.id)),
+      text: [...comments, d.judgeScore(formatNum(j.me), formatNum(j.them))].join(d.commentSep),
+      vote: j.me > j.them ? ('me' as const) : j.them > j.me ? ('them' as const) : ('tie' as const),
+    };
+  });
+});
+/** 双方比拼的特色菜（问题记录 431）；旧服务器的结果没有 dish（undefined）时不写这一行，免得把有菜的写成无米之炊 */
+const dishes = computed(() => {
+  const d = t.value.tower.duel;
+  const { me, them } = props.result;
+  if (me.dish === undefined || them.dish === undefined) return null;
+  const name = (x: DuelResultDto['me']['dish']) => (x ? d.dish(catalog.mcName(x.id), x.level) : d.noDish);
+  return d.dishes(name(me.dish), name(them.dish));
 });
 const headline = computed(() => {
   const r = props.result;
@@ -73,25 +88,24 @@ const awards = computed(() => props.result.awards.map((a) => awardText(a, catalo
         </tr>
       </tbody>
     </table>
+    <div v-if="dishes" class="mb-1" data-testid="duel-dishes">{{ dishes }}</div>
     <div class="fw-bold mb-1">{{ t.tower.duel.judgesTitle }}</div>
     <!-- 评委一位一位亮出（问题记录 396）；减少动画时直接显示 -->
     <ol :key="round" class="dt-duel-judges list-unstyled mb-1">
       <li
         v-for="(j, i) in judges"
         :key="j.id"
-        class="dt-duel-judge d-flex flex-wrap gap-2 py-1 border-top"
+        class="dt-duel-judge py-1 border-top"
         :style="{ animationDelay: `${i * 0.4}s` }"
         data-testid="duel-judge"
       >
-        <span class="flex-grow-1">{{ j.who }}</span>
-        <span>
-          <span :class="{ 'text-success fw-bold': j.vote === 'me' }">{{ formatNum(j.me) }}</span>
-          :
-          <span :class="{ 'text-success fw-bold': j.vote === 'them' }">{{ formatNum(j.them) }}</span>
-        </span>
-        <span :class="j.vote === 'me' ? 'text-success' : j.vote === 'them' ? 'text-danger' : 'text-muted'">{{
-          t.tower.duel.verdict[j.vote]
-        }}</span>
+        <!-- 点评和这一票接着写，不另起一行（问题记录 431） -->
+        {{ j.who }}{{ j.text }}
+        <span
+          class="text-nowrap ms-1"
+          :class="j.vote === 'me' ? 'text-success' : j.vote === 'them' ? 'text-danger' : 'text-muted'"
+          >{{ t.tower.duel.verdict[j.vote] }}</span
+        >
       </li>
     </ol>
     <div v-if="awards" data-testid="duel-awards">{{ t.tower.duel.awards(awards) }}</div>

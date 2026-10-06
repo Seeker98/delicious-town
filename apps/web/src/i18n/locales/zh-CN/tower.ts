@@ -20,7 +20,7 @@ export default {
     votes: (me: number, them: number) => ` ${me}:${them}`,
     /** 票数持平、按上场评委的总分定胜负 */
     onTotal: '（票数相同，比总分）',
-    judgesTitle: '评委打分',
+    judgesTitle: '评委点评',
     judges: {
       yardSis: '菜园姐',
       xiaoC: '小c',
@@ -29,11 +29,21 @@ export default {
       bigEater: '大胃哥',
       fanDao: '饭老道',
       gary: '盖乐瑞',
-      oldPoor: '老穷头',
-      carmen: '卡门',
+      gordon: '戈登',
+      joe: '老乔',
       xiaoKai: '小凯',
     },
-    /** 评委名字和关注的项目 */
+    /** 评委点评（问题记录 431）：【评委 点评 我】：以[项]胜负，……，比分 我:对方 */
+    judgeOn: (name: string) => `【${name} 点评 我】：`,
+    itemVerdict: { win: '大获全胜', close: '不分伯仲', lose: '全军覆没' },
+    itemLine: (item: string, verdict: string) => `以[${item}]${verdict}`,
+    commentSep: '，',
+    judgeScore: (me: string, them: string) => `比分 ${me}:${them}`,
+    /** 双方比拼的特色菜（问题记录 431） */
+    dishes: (me: string, them: string) => `【${me}】 VS 【${them}】`,
+    dish: (name: string, level: number) => `${name}（${level} 级）`,
+    noDish: '无米之炊',
+    /** 评委名字和关注的项目（规则说明用） */
     judgeFocus: (name: string, items: string) => `${name}（${items}）`,
     itemSep: '、',
     verdict: { me: '投给你', them: '投给对方', tie: '平' },

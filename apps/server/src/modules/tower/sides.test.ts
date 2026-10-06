@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
-import { sideOf } from './sides';
+import { sideDto, sideOf, watchmanSide } from './sides';
 import { runSystemOp } from '../../core/op';
 import { opAgg } from '../../core/luck';
 import { syncEquipEffects } from '../equip/effects';
@@ -93,5 +93,62 @@ describe('对决属性里的套装进攻加成', () => {
     const defend = await sideOf(t.db, t.deps.config, rest, 0, 'defend');
     expect(defend.attrs.cook).toBe(100);
     expect(attack.attrs.cook).toBe(105);
+  });
+});
+
+describe('赛厨双方的特色菜（问题记录 431：结果里写“【菜（几级）】 VS 【菜】”）', () => {
+  it('在售、还有剩的特色菜写进一方；卖完、没有都是 null；结果里带上', async () => {
+    const ctx = await newRestaurant(t);
+    const none = await sideOf(t.db, t.deps.config, await restRow(t, ctx.restaurantId), 0, 'attack');
+    expect(none.dish).toBeNull();
+    const c = await t.db
+      .insertInto('mc_cook')
+      .values({
+        rest_id: ctx.restaurantId,
+        shard_id: ctx.shardId,
+        mc_id: 3,
+        level: 5,
+        grade: 2,
+        cook_num: 1,
+        total_num: 10,
+        left_num: 10,
+        price: 157,
+        eat_count: 0,
+      })
+      .returning('id')
+      .executeTakeFirstOrThrow();
+    await t.db
+      .updateTable('restaurant')
+      .set({ mc_cook_id: c.id })
+      .where('id', '=', ctx.restaurantId)
+      .execute();
+    const s = await sideOf(t.db, t.deps.config, await restRow(t, ctx.restaurantId), 0, 'attack');
+    expect(s).toMatchObject({ mcPrice: 157, dish: { id: 3, level: 5 } });
+    expect(sideDto(s, { scores: [1, 2, 3, 4, 5] }).dish).toEqual({ id: 3, level: 5 });
+    await t.db.updateTable('mc_cook').set({ left_num: 0 }).where('id', '=', c.id).execute();
+    const sold = await sideOf(t.db, t.deps.config, await restRow(t, ctx.restaurantId), 0, 'attack');
+    expect(sold).toMatchObject({ mcPrice: 0, dish: null });
+  });
+
+  it('守塔人：比拼特色菜的层带当天的菜，别的层没有', () => {
+    const floors = [...t.deps.config.towerFloors.values()];
+    const withMc = floors.find((f) => f.mc)!;
+    const without = floors.find((f) => !f.mc)!;
+    const mcId = [...t.deps.config.mysterious.keys()][0]!;
+    const level = t.deps.config.mysterious.get(mcId)!.level;
+    expect(watchmanSide(withMc, { price: 99, mcId }, t.deps.config)).toMatchObject({
+      mcPrice: 99,
+      dish: { id: mcId, level },
+    });
+    expect(watchmanSide(without, { price: 99, mcId }, t.deps.config)).toMatchObject({
+      mcPrice: 0,
+      dish: null,
+    });
+    expect(watchmanSide(withMc, null, t.deps.config)).toMatchObject({ mcPrice: 0, dish: null });
+    // 配置里已经没有这道菜：照样加分，但不写菜（不写成“0 级”）
+    expect(watchmanSide(withMc, { price: 99, mcId: 999_999 }, t.deps.config)).toMatchObject({
+      mcPrice: 99,
+      dish: null,
+    });
   });
 });
