@@ -43,6 +43,8 @@ export interface AcquireBriefDto {
 
 /** 对方餐厅页、我的身价：再加保护期和“我能不能收” */
 export interface AcquireRestDto extends AcquireBriefDto {
+  /** 税率：确认框算对方得多少 */
+  taxRate: number;
   protectedUntil: string | null;
   /** 我能不能强收：能为 null；不能时是原因（no_state = 还不到 2 星、没有身价） */
   acquireBlock: string | null;

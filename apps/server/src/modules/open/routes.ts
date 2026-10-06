@@ -18,7 +18,7 @@ function legacyRedirect(req: FastifyRequest, reply: FastifyReply, now: number) {
 
 /** If-None-Match 里有没有这个 ETag：认弱 ETag（CDN 重新压缩时改成 W/）和逗号分隔的多个 */
 /** 开放接口返回格式的版本：改了返回的结构（加减字段）要加一，ETag 带着它，客户端才会重新取（第 ⑧ 批审查） */
-const OPEN_FORMAT = 2;
+const OPEN_FORMAT = 3;
 
 export function etagMatches(header: string | undefined, etag: string): boolean {
   return !!header && header.split(',').some((t) => t.trim().replace(/^W\//, '') === etag);

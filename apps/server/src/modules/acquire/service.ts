@@ -14,7 +14,7 @@ import {
 import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
-import { createOp, flushOp, restLog, runOp, type Op, type OpResult } from '../../core/op';
+import { createOp, flushOp, opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { opNeedPick } from '../../core/scarcity';
 import { withRestaurants } from '../../db/tx';
@@ -68,6 +68,10 @@ function briefOf(x: BriefRow, now: Date): AcquireBriefDto {
 
 const DAY_MS = 86_400_000;
 
+/** 收购的“不能这样做”：带 scope，前端按收购自己的文案表显示（原因名 not_owned、npc 等和别的玩法重名） */
+const bad = (reason: string, params: Record<string, unknown> = {}) =>
+  invalidState(reason, { scope: 'acquire', ...params });
+
 /** 收购（问题记录 421）：强收、买挂牌、赎身、放手、挂牌 / 撤牌和读接口 */
 export function createAcquireService(d: GameDeps) {
   /**
@@ -85,7 +89,7 @@ export function createAcquireService(d: GameDeps) {
       const now = d.now();
       const ops = new Map<number, Op>();
       for (const [id, row] of rests) {
-        if (row.shard_id !== ctx.shardId) throw invalidState('other_shard');
+        if (row.shard_id !== ctx.shardId) throw bad('other_shard');
         ops.set(
           id,
           createOp(d, tx, row, settings, { source, ctx: id === ctx.restaurantId ? ctx : null, now }),
@@ -118,7 +122,7 @@ export function createAcquireService(d: GameDeps) {
         created_at: d.now(),
       })
       .execute();
-    throw invalidState('linked');
+    throw bad('linked');
   }
 
   /** 目标店今天被强收、买下几次；这两家 pairDays 天内交易过没有（不分方向） */
@@ -173,11 +177,11 @@ export function createAcquireService(d: GameDeps) {
       .select(['id', 'shard_id', 'account_id', 'star_level', 'npc'])
       .where('id', '=', b.restId)
       .executeTakeFirst();
-    if (!target0 || target0.shard_id !== ctx.shardId) throw invalidState('other_shard');
+    if (!target0 || target0.shard_id !== ctx.shardId) throw bad('other_shard');
     // 先报这几项（不用锁也不会变）：免得给 1 星的店、蟹老板、自己建收购状态行，或者记一条用不着的关联拦截
-    if (b.restId === ctx.restaurantId) throw invalidState('self');
-    if (target0.npc) throw invalidState('npc');
-    if (target0.star_level < t0.minStar) throw invalidState('star');
+    if (b.restId === ctx.restaurantId) throw bad('self');
+    if (target0.npc) throw bad('npc');
+    if (target0.star_level < t0.minStar) throw bad('star');
     const pre = await ensureState(d.db, ctx.shardId, b.restId, t0, d.now());
     const sellerId = pre.owner_rest_id ?? b.restId;
     const accounts = await d.db
@@ -192,7 +196,7 @@ export function createAcquireService(d: GameDeps) {
       const now = me.now;
       const s = (await lockState(me.tx, b.restId))!;
       // 拿锁前读到的老板变了（别人刚收购、赎身、放手）：挂牌也作废了，让玩家刷新重看
-      if ((s.owner_rest_id ?? b.restId) !== sellerId) throw invalidState('owner_changed');
+      if ((s.owner_rest_id ?? b.restId) !== sellerId) throw bad('owner_changed');
       const mine = await lockState(me.tx, ctx.restaurantId);
       const acc = await me.tx
         .selectFrom('account')
@@ -220,9 +224,9 @@ export function createAcquireService(d: GameDeps) {
         t,
         b.way,
       );
-      if (block !== null) throw invalidState(block);
+      if (block !== null) throw bad(block);
       const price = b.way === 'listed' ? listPrice(s)! : priceOf(s);
-      if (price !== b.expect) throw invalidState('price_changed', { price });
+      if (price !== b.expect) throw bad('price_changed', { price });
       const sellerGot = share(price, 1 - t.taxRate);
       const seller = ops.get(sellerId)!;
       spendCoin(me, price, { source: 'acquire.buy' });
@@ -249,6 +253,8 @@ export function createAcquireService(d: GameDeps) {
         .execute();
       restLog(me, 'acquire.bought', { restId: b.restId, name: target.rest.name, price, way: b.way });
       restLog(target, 'acquire.taken', { by: ctx.restaurantId, byName: me.rest.name, price });
+      if (price >= t.newsMinPrice)
+        opNews(me, 'acquire.big', { restId: b.restId, name: target.rest.name, price, way: b.way });
       if (sellerId !== b.restId)
         restLog(seller, 'acquire.sold', {
           restId: b.restId,
@@ -269,17 +275,17 @@ export function createAcquireService(d: GameDeps) {
       .where('rest_id', '=', ctx.restaurantId)
       .executeTakeFirst();
     const ownerId = pre?.owner_rest_id ?? null;
-    if (ownerId === null) throw invalidState('not_owned');
+    if (ownerId === null) throw bad('not_owned');
     return runMulti(ctx, [ctx.restaurantId, ownerId], 'acquire.redeem', async (ops, t) => {
       const me = ops.get(ctx.restaurantId)!;
       const owner = ops.get(ownerId)!;
       const now = me.now;
       const s = (await lockState(me.tx, ctx.restaurantId))!;
       // 拿锁前读到的老板变了（刚被别人收购、被放手）
-      if (s.owner_rest_id === null) throw invalidState('not_owned');
-      if (s.owner_rest_id !== ownerId) throw invalidState('owner_changed');
+      if (s.owner_rest_id === null) throw bad('not_owned');
+      if (s.owner_rest_id !== ownerId) throw bad('owner_changed');
       const price = priceOf(s);
-      if (price !== b.expect) throw invalidState('price_changed', { price });
+      if (price !== b.expect) throw bad('price_changed', { price });
       const got = share(price, 1 - t.taxRate);
       spendCoin(me, price, { source: 'acquire.redeem' });
       gainCoin(owner, got, { source: 'acquire.sale' });
@@ -310,6 +316,8 @@ export function createAcquireService(d: GameDeps) {
         .execute();
       restLog(me, 'acquire.redeemed', { price, from: owner.rest.name });
       restLog(owner, 'acquire.lost', { restId: ctx.restaurantId, name: me.rest.name, got });
+      // 赎身也按 newsMinPrice 门槛（收购 PR 3 裁定 2：小店赎身不刷屏）
+      if (price >= t.newsMinPrice) opNews(me, 'acquire.redeem', { price, ownerName: owner.rest.name });
       return { restId: ctx.restaurantId, price, tax: price - got, sellerGot: got };
     });
   }
@@ -324,7 +332,7 @@ export function createAcquireService(d: GameDeps) {
     return runMulti(ctx, [ctx.restaurantId, restId], source, async (ops, t) => {
       const me = ops.get(ctx.restaurantId)!;
       const s = restId === ctx.restaurantId ? undefined : await lockState(me.tx, restId);
-      if (!s || s.owner_rest_id !== ctx.restaurantId) throw invalidState('not_owner');
+      if (!s || s.owner_rest_id !== ctx.restaurantId) throw bad('not_owner');
       return fn(me, ops.get(restId)!, s, t);
     });
   }
@@ -360,7 +368,7 @@ export function createAcquireService(d: GameDeps) {
   /** 打折挂牌：身价的 listMinRate ~ 100%，5% 一档，listDays 天后自动撤下 */
   function list(ctx: RestCtx, b: { restId: number; rate: number }) {
     return asOwner(ctx, b.restId, 'acquire.list', async (me, _target, _s, t) => {
-      if (!validListRate(b.rate, t)) throw invalidState('list_rate', { min: t.listMinRate });
+      if (!validListRate(b.rate, t)) throw bad('list_rate', { min: t.listMinRate });
       const until = new Date(me.now.getTime() + t.listDays * DAY_MS);
       await me.tx
         .updateTable('acquire_state')
@@ -394,7 +402,7 @@ export function createAcquireService(d: GameDeps) {
         .select(['s.owner_rest_id', 'o.name'])
         .where('s.rest_id', '=', ctx.restaurantId)
         .executeTakeFirst();
-      if (!s) throw invalidState('not_owned');
+      if (!s) throw bad('not_owned');
       // 锁着自己的店，主键再挡一次
       const done = await op.tx
         .insertInto('acquire_tend')
@@ -402,7 +410,7 @@ export function createAcquireService(d: GameDeps) {
         .onConflict((oc) => oc.columns(['rest_id', 'day']).doNothing())
         .returning('day')
         .executeTakeFirst();
-      if (!done) throw invalidState('tended');
+      if (!done) throw bad('tended');
       const t = op.tuning.acquire;
       const pool = awardFoodsPool(op.config.bundle.foods, op.rest.level);
       const maxLevel = Math.min(op.rest.level, 5);
@@ -503,11 +511,23 @@ export function createAcquireService(d: GameDeps) {
     );
     const protectedUntil = row.protected_until;
     if (!hasState && row.star_level < t.minStar)
-      return { ...brief, protectedUntil: null, acquireBlock: 'no_state', listedBlock: 'no_state' };
+      return {
+        ...brief,
+        taxRate: t.taxRate,
+        protectedUntil: null,
+        acquireBlock: 'no_state',
+        listedBlock: 'no_state',
+      };
     const protectedIso = protectedUntil && protectedUntil > now ? protectedUntil.toISOString() : null;
     // 自己的店：不用再查别的
     if (restId === ctx.restaurantId)
-      return { ...brief, protectedUntil: protectedIso, acquireBlock: 'self', listedBlock: 'self' };
+      return {
+        ...brief,
+        taxRate: t.taxRate,
+        protectedUntil: protectedIso,
+        acquireBlock: 'self',
+        listedBlock: 'self',
+      };
     const [mine, holdings, facts, links] = await Promise.all([
       d.db
         .selectFrom('acquire_state')
@@ -542,6 +562,7 @@ export function createAcquireService(d: GameDeps) {
     };
     return {
       ...brief,
+      taxRate: t.taxRate,
       protectedUntil: protectedIso,
       acquireBlock: buyBlock(facts0, t, 'acquire') ?? (links.size > 0 ? 'linked' : null),
       listedBlock: buyBlock(facts0, t, 'listed') ?? (links.size > 0 ? 'linked' : null),

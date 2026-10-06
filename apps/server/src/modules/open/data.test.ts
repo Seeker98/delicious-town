@@ -49,6 +49,18 @@ describe('开放接口数据（问题记录 142）', () => {
       maxLevel: t.settlement.newbieExp.maxLevel,
       rate: t.settlement.newbieExp.rate,
     });
+    // 收购（收购 PR 3）
+    const a = t.acquire;
+    expect(g.acquire).toEqual({
+      minStar: a.minStar,
+      taxRate: a.taxRate,
+      maxHoldings: a.maxHoldings,
+      dividendRate: a.dividendRate,
+      tendBonus: a.tendBonus,
+      minRounds: a.minRounds,
+      tendFoods: a.tendFoods,
+      protectDays: a.protectDays,
+    });
   });
 
   it('道具列表不含隐藏道具；名字按语言', () => {

@@ -29,6 +29,17 @@ export interface OpenGuideNumbers {
   predict: { level: number; days: number };
   /** 低等级经验加成：maxLevel 级以下有，1 级是 +rate（比例） */
   newbieExp: { maxLevel: number; rate: number };
+  /** 收购（收购 PR 3）：几星能被收购、税率、名下上限、分红比例、打理加成、分红要满几轮、打理得几份食材、赎身保护几天 */
+  acquire: {
+    minStar: number;
+    taxRate: number;
+    maxHoldings: number;
+    dividendRate: number;
+    tendBonus: number;
+    minRounds: number;
+    tendFoods: number;
+    protectDays: number;
+  };
 }
 
 export interface OpenIndexDto extends OpenMeta {

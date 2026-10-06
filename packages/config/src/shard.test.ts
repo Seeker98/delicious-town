@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
 import { createGameConfig } from './runtime';
-import { isFeatureEnabled, resolveShardSettings } from './shard';
+import { DEFAULT_OFF_FEATURES, isFeatureEnabled, resolveShardSettings } from './shard';
 import { defaultDataDir, readSourceDir } from './source';
 
 const config = createGameConfig(buildBundle(readSourceDir(defaultDataDir())).bundle!);
@@ -52,12 +52,12 @@ describe('backlog 156-1：交易所参考价覆盖值上限', () => {
 });
 
 describe('功能开关默认值（收购 PR 1）', () => {
-  it('收购默认关，区服覆盖里写 true 才开；别的功能照旧默认开', () => {
+  it('收购默认开（收购 PR 3），区服覆盖里写 false 关掉；默认关的功能现在一个也没有', () => {
     const base = resolveShardSettings(config, {});
-    expect(isFeatureEnabled(base, 'acquire')).toBe(false);
-    expect(isFeatureEnabled(base, 'fund')).toBe(true);
-    expect(isFeatureEnabled(resolveShardSettings(config, { features: { acquire: true } }), 'acquire')).toBe(
-      true,
+    expect(DEFAULT_OFF_FEATURES).toEqual([]);
+    expect(isFeatureEnabled(base, 'acquire')).toBe(true);
+    expect(isFeatureEnabled(resolveShardSettings(config, { features: { acquire: false } }), 'acquire')).toBe(
+      false,
     );
   });
 

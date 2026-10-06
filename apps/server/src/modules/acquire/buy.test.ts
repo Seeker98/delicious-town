@@ -94,7 +94,7 @@ describe('强收（收购 PR 1）', () => {
     await setState(target.restaurantId, shardId, {
       owner_rest_id: owner.restaurantId,
       list_rate: 0.5,
-      list_until: new Date(Date.now() - 1000),
+      list_until: new Date(t.clock.now.getTime() - 1000),
     });
     await expect(
       svc().buy(buyer, { restId: target.restaurantId, way: 'listed', expect: 500_000 }),
@@ -404,7 +404,12 @@ describe('强收（收购 PR 1）', () => {
   });
 
   it('功能关着：报 FEATURE_DISABLED', async () => {
+    // 收购 PR 3 起默认开：要在区服覆盖里关掉
     const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { acquire: false } }) })
+      .execute();
     const buyer = await newRestaurant(t, { shardId, patch: { coin: 5_000_000 } });
     const target = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
     await expect(

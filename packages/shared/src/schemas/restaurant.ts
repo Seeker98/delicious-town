@@ -88,6 +88,8 @@ export interface RestaurantDto {
   headlines: HeadlinesDto;
   /** 本区服后台关掉的功能，前端据此隐藏入口（问题记录 248） */
   disabledFeatures: string[];
+  /** 被收购时的老板（首页提示，收购 PR 3）；区服关了收购时为 null */
+  acquireOwner: { restId: number; name: string } | null;
   createdAt: string;
 }
 
