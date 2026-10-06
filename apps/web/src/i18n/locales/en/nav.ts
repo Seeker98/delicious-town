@@ -17,7 +17,7 @@ const nav: Messages['nav'] = {
     predict: 'Predictions',
     store: 'Storage',
     shop: 'Shop',
-    equip: 'Cookware & points',
+    equip: 'Cookware',
     floor: 'Floors & tables',
     income: 'Income log',
     info: 'Restaurant info',
@@ -53,7 +53,7 @@ const nav: Messages['nav'] = {
   activity: {
     running: (n) => `${n} ${n === 1 ? 'event' : 'events'} running`,
     claimable: (n) => `${n} to claim`,
-    view: 'View ›',
+    view: 'View',
   },
   news: { title: 'Town news', more: 'More', broadcast: '[Broadcast] ', empty: 'No news yet' },
 };

@@ -184,6 +184,33 @@ describe('收购接口（收购 PR 1）', () => {
     expect(await overview(b2.cookie)).toBeNull();
   });
 
+  it('餐厅总览带上资产：名下的店身价合计（问题记录 447）；区服关了收购为 null', async () => {
+    const shardId = await openShard();
+    const a = await playerIn(ctx, shardId);
+    const b = await playerIn(ctx, shardId);
+    const c = await playerIn(ctx, shardId);
+    const assets = async (cookie = a.cookie) =>
+      (await call(ctx.app, 'GET', '/api/v1/restaurant/overview', { cookie })).json.data.assets;
+    expect(await assets()).toBe(0);
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values([
+        { rest_id: b.restId, shard_id: shardId, base: 100_000, heat: 1.2, owner_rest_id: a.restId },
+        { rest_id: c.restId, shard_id: shardId, base: 50_001, heat: 1.5, owner_rest_id: a.restId },
+      ])
+      .execute();
+    // 和投资榜一样每家先四舍五入再加：120000 + 75002
+    expect(await assets()).toBe(195_002);
+    expect(await assets(b.cookie)).toBe(0);
+    const offShard = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: offShard, override: JSON.stringify({ features: { acquire: false } }) })
+      .execute();
+    const a2 = await playerIn(ctx, offShard);
+    expect(await assets(a2.cookie)).toBeNull();
+  });
+
   it('参数不对报 VALIDATION_FAILED；别的区服的店 404；功能关着报 FEATURE_DISABLED', async () => {
     const shardId = await openShard();
     const a = await playerIn(ctx, shardId);

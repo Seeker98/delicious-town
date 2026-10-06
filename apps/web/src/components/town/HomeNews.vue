@@ -14,7 +14,9 @@ const t = useT();
   <div class="dt-card my-2 small">
     <div class="d-flex justify-content-between">
       <b>{{ t.nav.news.title }}</b>
-      <RouterLink to="/town?tab=news" data-testid="home-news-more">{{ t.nav.news.more }}</RouterLink>
+      <RouterLink to="/town?tab=news" class="dt-go" data-testid="home-news-more">{{
+        t.nav.news.more
+      }}</RouterLink>
     </div>
     <div v-if="headlines.broadcast" class="text-primary fw-bold dt-clamp1" data-testid="home-broadcast">
       {{ t.nav.news.broadcast }}{{ newsText(headlines.broadcast, catalog) }}

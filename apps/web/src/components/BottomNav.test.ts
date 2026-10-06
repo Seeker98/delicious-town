@@ -52,8 +52,7 @@ describe('BottomNav', () => {
     await w.find('[data-testid="tab-more"]').trigger('click');
     expect(router.currentRoute.value.path).toBe('/cupboard');
     const sheet = w.find('[data-testid="more-sheet"]');
-    for (const x of ['经营', '玩法', '其他', '厨塔', '厨具与加点', '切换区服'])
-      expect(sheet.text()).toContain(x);
+    for (const x of ['经营', '玩法', '其他', '厨塔', '厨具', '切换区服']) expect(sheet.text()).toContain(x);
     await w.find('[data-testid="more-backdrop"]').trigger('click');
     expect(w.find('[data-testid="more-sheet"]').exists()).toBe(false);
     await w.find('[data-testid="tab-more"]').trigger('click');

@@ -33,7 +33,7 @@ const guide: Messages['guide'] = {
     ],
     [
       'Commencez par : répartir vos points dans ',
-      { to: '/rest/equip', text: 'Ustensiles et points' },
+      { to: '/rest/equip', text: 'Ustensiles' },
       ", remettre de l'huile sur la page d'accueil, apprendre de nouveaux plats dans ",
       { to: '/cookbooks', text: 'Recettes' },
       ", puis pointer sur la page d'accueil.",

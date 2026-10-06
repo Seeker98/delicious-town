@@ -10,7 +10,7 @@ export default {
     predict: '事件預測',
     store: '倉庫',
     shop: '商店',
-    equip: '廚具與加點',
+    equip: '廚具',
     floor: '樓層餐桌',
     income: '收益記錄',
     info: '餐廳資訊',
@@ -48,7 +48,7 @@ export default {
   activity: {
     running: (n: number) => `限時活動 ${n} 個進行中`,
     claimable: (n: number) => `可領 ${n} 份`,
-    view: '檢視 ›',
+    view: '檢視',
   },
   news: { title: '小鎮新聞', more: '更多', broadcast: '【廣播】', empty: '還沒有新聞' },
 };

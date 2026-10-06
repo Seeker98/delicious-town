@@ -479,11 +479,46 @@ h5 {
   padding: 2px 0;
   border-top: 1px solid #f1e6da;
 }
-/* 有边框的紧凑按钮：放在信息行里不撑高行（首页加满油，280 反馈） */
-.dt-compact-btn {
-  padding: 0 8px;
-  font-size: 12px;
-  line-height: 20px;
+/*
+ * 文字链接统一（问题记录 445）：都是品牌色、没有下划线。
+ * .dt-go 去别的页面，末尾由样式加一个 ›（读屏不读）；文案里不再自己写箭头。
+ * .dt-link-btn 在本页做一件事（签到、加油），不加箭头；用 <button> 写，样子和链接一样，行高跟着文字走。
+ */
+.dt-go {
+  color: var(--bs-link-color);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dt-go:hover,
+a:hover > .dt-go,
+.dt-link-btn:hover:not(:disabled) {
+  color: var(--bs-link-hover-color);
+}
+/* 放在 flex 行里、要截断子项的链接：允许比内容窄 */
+.dt-min0 {
+  min-width: 0;
+}
+.dt-go::after {
+  content: '\a0›';
+  content: '\a0›' / '';
+}
+.dt-link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  line-height: inherit;
+  color: var(--bs-link-color);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dt-link-btn:disabled {
+  color: var(--dt-muted);
+  cursor: not-allowed;
+}
+.dt-link-btn:focus-visible {
+  outline: 2px solid var(--dt-primary);
+  outline-offset: 1px;
 }
 /* 首页折叠的"生效的加成" */
 details.dt-card > summary {

@@ -33,7 +33,7 @@ const guide: Messages['guide'] = {
     ],
     [
       'Start with these: assign your stat points in ',
-      { to: '/rest/equip', text: 'Cookware & points' },
+      { to: '/rest/equip', text: 'Cookware' },
       ', refill oil on the home page, learn new dishes in ',
       { to: '/cookbooks', text: 'Recipes' },
       ', and check in on the home page.',

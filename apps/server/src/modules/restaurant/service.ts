@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import { isFeatureEnabled, NEWBIE, type GameConfig } from '@dt/config';
 import {
   addDays,
@@ -28,6 +28,7 @@ import { npcAccountId } from '../npc/npc';
 import type { ShardService } from '../shard/service';
 import { grantGoods } from '../store/grant';
 import { iconLive } from '../friend/looks';
+import { normalizeCounts } from '../settlement/globals';
 import type { WorldService } from '../world/service';
 import { buffsOf, deviceSlots, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
@@ -58,17 +59,41 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
   }
 
   async function overview(restId: number): Promise<RestaurantDto> {
-    // 被收购时的老板一起读出来（收购 PR 3：首页提示），不多一条查询
+    // 被收购时的老板（收购 PR 3：首页提示）、在售特色菜和名下的店身价合计（问题记录 447）一起读出来，不多查询
     const joined = await d.db
       .selectFrom('restaurant as r')
       .leftJoin('acquire_state as s', 's.rest_id', 'r.id')
       .leftJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+      .leftJoin('mc_cook as c', 'c.id', 'r.mc_cook_id')
       .selectAll('r')
-      .select(['s.owner_rest_id as acquire_owner_id', 'o.name as acquire_owner_name'])
+      .select([
+        's.owner_rest_id as acquire_owner_id',
+        'o.name as acquire_owner_name',
+        'c.mc_id as special_id',
+        'c.level as special_level',
+        'c.left_num as special_left',
+        'c.ended_at as special_ended',
+        // 和投资榜一样：每家身价先四舍五入再加
+        (eb) =>
+          eb
+            .selectFrom('acquire_state as h')
+            .select(sql<string>`coalesce(sum(round(h.base * h.heat)), 0)`.as('v'))
+            .whereRef('h.owner_rest_id', '=', 'r.id')
+            .as('acquire_assets'),
+      ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
     if (!joined) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
-    const { acquire_owner_id: ownerId, acquire_owner_name: ownerName, ...row } = joined;
+    const {
+      acquire_owner_id: ownerId,
+      acquire_owner_name: ownerName,
+      special_id: specialId,
+      special_level: specialLevel,
+      special_left: specialLeft,
+      special_ended: specialEnded,
+      acquire_assets: assets,
+      ...row
+    } = joined;
     const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
@@ -109,6 +134,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       acquireOwner:
         ownerId !== null && isFeatureEnabled(settings, 'acquire')
           ? { restId: ownerId, name: ownerName ?? '' }
+          : null,
+      assets: isFeatureEnabled(settings, 'acquire') ? Number(assets ?? 0) : null,
+      cookbooks: { learned: normalizeCounts(row.cookbook_counts).learned, total: d.config.cookbooks.size },
+      // 和赛厨一样：卖完或倒掉的不算在售（tower/sides.ts mcOf）
+      special:
+        specialId !== null && specialLevel !== null && (specialLeft ?? 0) > 0 && specialEnded === null
+          ? { id: specialId, level: specialLevel }
           : null,
       disabledFeatures: Object.entries(settings.features)
         .filter(([, on]) => on === false)

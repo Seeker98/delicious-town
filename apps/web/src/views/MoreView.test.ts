@@ -47,8 +47,7 @@ describe('MoreView', () => {
       '酒吧',
       '厨塔',
       '外卖',
-      '厨具与加点',
-      '邀请好友',
+      '厨具',
       '兑换码',
       '游玩指引',
       '我的账号',
@@ -56,6 +55,8 @@ describe('MoreView', () => {
       expect(text).toContain(x);
     expect(text).not.toContain('教室');
     expect(text).not.toContain('小镇');
+    // 邀请好友在我的账号里（问题记录 447）
+    expect(text).not.toContain('邀请好友');
     // 和底部弹出的面板同一套分组
     for (const g of ['经营', '玩法', '其他']) expect(text).toContain(g);
   });

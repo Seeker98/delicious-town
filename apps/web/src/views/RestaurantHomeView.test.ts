@@ -99,6 +99,9 @@ const dto: RestaurantDto = {
   boosts: [],
   disabledFeatures: [],
   acquireOwner: null,
+  assets: null,
+  cookbooks: { learned: 12, total: 3810 },
+  special: null,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
     { slot: 4, name: '捕鼠夹', deviceType: 4, needStar: 2, unlocked: false, goodsId: null, expiresAt: null },
@@ -226,6 +229,7 @@ describe('RestaurantHomeView', () => {
     expect(line.text()).toContain('12');
     expect(last.get('[data-testid="last-round-line"] + a').attributes('href')).toBe('/rest/income');
     expect(last.get('[data-testid="last-round-guests"] + a').attributes('href')).toBe('/rest/floor');
+    expect(last.get('[data-testid="last-round-line"] + a').classes()).toContain('dt-go');
     // 问题记录 435：油量右边一个小升级图标，链到油壶升级
     const up = w.get('[data-testid="oil-upgrade"]');
     expect(up.attributes('href')).toBe('/society/oil');
@@ -369,7 +373,11 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, coin: 250 });
     const w = await mountView();
     const btn = w.find('[data-testid="refuel"]');
-    expect(btn.text()).toContain('加油（250 银币）');
+    // 看得见的是“加油”和银币数（数字不会被截掉），整句写在读屏标签和悬停提示里（审查 I1：法西文整句太长撑出屏幕）
+    expect(btn.attributes('aria-label')).toBe('加油（250 银币）');
+    expect(btn.attributes('title')).toBe('加油（250 银币）');
+    expect(btn.get('.text-truncate').text()).toBe('加油');
+    expect(btn.get('.flex-shrink-0').text()).toBe('250');
     expect(btn.attributes('disabled')).toBeUndefined();
   });
 
@@ -478,14 +486,12 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     const status = w.get('[data-testid="home-status"]');
-    for (const id of ['rest-level', 'exp-text', 'rest-coin', 'refuel', 'quick-links'])
+    for (const id of ['rest-level', 'exp-text', 'rest-coin', 'refuel', 'home-books'])
       expect(status.find(`[data-testid="${id}"]`).exists(), id).toBe(true);
-    // 任务入口并进待办卡的"今日活跃"，快捷入口只剩厨具、仓库、商店
-    expect(w.findAll('[data-testid="quick-links"] a').map((a) => a.attributes('href'))).toEqual([
-      '/rest/equip',
-      '/store',
-      '/shop',
-    ]);
+    // 问题记录 447：厨具、仓库、商店入口去掉，换成食谱数和在售特色菜
+    expect(status.find('[data-testid="quick-links"]').exists()).toBe(false);
+    for (const to of ['/rest/equip', '/store', '/shop'])
+      expect(status.find(`a[href="${to}"]`).exists(), to).toBe(false);
     const todo = w.get('[data-testid="home-todo"]');
     expect(todo.find('[data-testid="home-signin-row"]').exists()).toBe(true);
     expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
@@ -504,9 +510,11 @@ describe('RestaurantHomeView', () => {
     const sw = w.get('[data-testid="home-switches"]');
     expect(sw.get('.dt-card-title').text()).toBe('经营开关');
     expect(sw.findAll('.dt-todo-row').length).toBeGreaterThanOrEqual(2);
-    // 油那一行和银币、钻石同在一个两列网格里，按钮用紧凑样式，行高不被撑大
+    // 油那一行和银币、钻石同在一个两列网格里；加油是图标加文字链接，不是按钮，行高和上面两行一样（问题记录 447）
     const refuel = w.get('[data-testid="refuel"]');
-    expect(refuel.classes()).toContain('dt-compact-btn');
+    expect(refuel.classes()).toContain('dt-link-btn');
+    expect(refuel.classes()).not.toContain('btn');
+    expect(refuel.find('i.bi-fuel-pump').exists()).toBe(true);
     expect(refuel.element.closest('.row')).not.toBeNull();
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
   });
@@ -734,6 +742,9 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const btn = w.find('[data-testid="home-signin"]');
     expect(btn.text()).toContain('签到');
+    // 问题记录 445：不用绿色大按钮，改成文字链接的样子
+    expect(btn.classes()).toContain('dt-link-btn');
+    expect(btn.classes()).not.toContain('btn');
     vi.mocked(endpoints.activation).mockResolvedValue({
       total: 0,
       signedIn: true,
@@ -772,10 +783,10 @@ describe('RestaurantHomeView', () => {
     expect(cell.text()).not.toContain('声望');
   });
 
-  it('经验条紧跟等级那一行，在常用入口之前（问题记录 172）', async () => {
+  it('经验条紧跟等级那一行，在食谱、特色菜之前（问题记录 172）', async () => {
     const w = await mountView();
     const exp = w.find('[data-testid="exp-text"]').element;
-    const quick = w.find('[data-testid="quick-links"]').element;
+    const quick = w.find('[data-testid="home-books"]').element;
     expect(exp.compareDocumentPosition(quick) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
   it('切到英语后首页标题、按钮是英文，数字用逗号（问题记录 272）', async () => {
@@ -790,7 +801,8 @@ describe('RestaurantHomeView', () => {
       expect(w.find('[data-testid="home-devices"] .dt-card-title').text()).toBe('Facilities');
       expect(w.find('[data-testid="home-signin"]').text()).toBe('Check in');
       expect(w.find('[data-testid="rest-coin"]').text()).toBe('100,000');
-      expect(w.find('[data-testid="refuel"]').text()).toBe('Fill up (600 coins)');
+      expect(w.find('[data-testid="refuel"]').attributes('aria-label')).toBe('Fill up (600 coins)');
+      expect(w.find('[data-testid="refuel"] .text-truncate').text()).toBe('Fill up');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Last round:');
       expect(w.get('[data-testid="last-round"] i.bi-coin').attributes('title')).toBe('Coins');
       expect(w.find('[data-testid="last-round"]').text()).toContain('Regular customer×1');
@@ -815,13 +827,85 @@ describe('RestaurantHomeView', () => {
     const row = w.get('[data-testid="home-signin-row"]');
     // 问题记录 437：字样右边只放一个对勾；同一行右边是今日活跃，链到活跃页
     const signed = row.get('[data-testid="home-signed"]');
-    const tick = signed.get('i.bi-check-circle-fill');
+    // 问题记录 445：细线对勾，不用绿底实心圆
+    expect(signed.find('i.bi-check-circle-fill').exists()).toBe(false);
+    const tick = signed.get('i.bi-check2');
     expect(tick.attributes('title')).toBe('已签到');
     expect(tick.attributes('aria-hidden')).toBe('true');
     expect(signed.get('.visually-hidden').text()).toBe('已签到');
     const act = row.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 10');
     expect(act.attributes('href')).toBe('/rest/tasks');
-    expect(row.get('[data-testid="home-signin-gift"]').text()).toContain('×1（在仓库）');
+    // 问题记录 445：不再写签到领到了什么
+    expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
+  });
+
+  it('食谱数、在售特色菜（问题记录 447）：都链到对应页面；区服关了的不显示', async () => {
+    const w = await mountView();
+    const books = w.get('[data-testid="home-books"]');
+    const cb = books.get('[data-testid="home-cookbooks"]');
+    expect(cb.text()).toContain('食谱 12/3,810');
+    expect(cb.attributes('href')).toBe('/cookbooks');
+    const sp = books.get('[data-testid="home-special"]');
+    expect(sp.text()).toBe('特色菜：无');
+    expect(sp.attributes('href')).toBe('/mc');
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
+    const w2 = await mountView();
+    const sp2 = w2.get('[data-testid="home-special"]');
+    expect(sp2.text()).toMatch(/^特色菜：.+（5 级）$/);
+    // 放不下时只截菜名，几级不截（审查 I2）
+    expect(sp2.get('.text-truncate').text()).toMatch(/^特色菜：/);
+    expect(sp2.get('.flex-shrink-0').text()).toBe('（5 级）');
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['mysterious'] });
+    const w3 = await mountView();
+    expect(w3.find('[data-testid="home-special"]').exists()).toBe(false);
+    expect(w3.find('[data-testid="home-cookbooks"]').exists()).toBe(true);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['mysterious', 'cookbook'] });
+    expect((await mountView()).find('[data-testid="home-books"]').exists()).toBe(false);
+  });
+
+  it('资产一行（问题记录 447）：名下身价合计，链到收购页；区服关了收购（null）不显示', async () => {
+    const w = await mountView();
+    expect(w.find('[data-testid="home-assets"]').exists()).toBe(false);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, assets: 195_002 });
+    const row = (await mountView()).get('[data-testid="home-assets"]');
+    expect(row.text()).toContain('资产：195,002');
+    const link = row.get('a');
+    expect(link.attributes('href')).toBe('/acquire');
+    expect(link.classes()).toContain('dt-go');
+  });
+
+  it('还没结算过时“上一轮”那块照样有收益记录、楼层餐桌入口（楼层页能灭蟑螂、赶白食）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, lastRound: null });
+    const w = await mountView();
+    const last = w.get('[data-testid="last-round"]');
+    // 收益记录只留 3 天：停业久了的老店也会这样，不能写“还没有”（审查 I3）
+    expect(last.text()).toContain('最近没有结算');
+    expect(last.find('a[href="/rest/income"]').exists()).toBe(true);
+    expect(last.find('a[href="/rest/floor"]').exists()).toBe(true);
+  });
+
+  it('首页的文字链接统一（问题记录 445）：去别的页面的用 dt-go（品牌色、无下划线、箭头由样式加），文案里不再自带箭头', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      level: 5,
+      assets: 0,
+      acquireOwner: { restId: 9, name: '大老板' },
+    });
+    vi.mocked(endpoints.guideCodes).mockResolvedValue([]);
+    const w = await mountView();
+    for (const sel of [
+      '[data-testid="home-acquired"] a',
+      '[data-testid="home-activation"]',
+      '[data-testid="home-news-more"]',
+      '[data-testid="home-cookbooks"]',
+      '[data-testid="home-special"]',
+      '[data-testid="home-assets"] a',
+      '[data-testid="guide-hint"] .dt-go',
+      'a[href="/shards"]',
+      'a[href="/weather"]',
+    ])
+      expect(w.get(sel).classes(), sel).toContain('dt-go');
+    expect(w.text()).not.toMatch(/[›→]/);
   });
 });
