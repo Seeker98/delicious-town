@@ -35,6 +35,7 @@ const howText = computed(() => {
     x.blackDiamond !== null ? a.howBlack(x.blackDiamond) : '',
     x.award ? a.howAward : '',
     x.champion ? a.howChampion : '',
+    x.guardian ? a.howGuardian : '',
   ].filter(Boolean);
   return parts.length > 0 ? a.how(parts.join(a.howSep)) : '';
 });

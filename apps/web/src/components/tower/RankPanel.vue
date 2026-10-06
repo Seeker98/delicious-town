@@ -7,6 +7,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
 import DuelResult from './DuelResult.vue';
+import DuelRules from './DuelRules.vue';
 
 const toast = useToastStore();
 const t = useT();
@@ -64,6 +65,7 @@ const challenge = (s: RankSlotDto) => {
 </script>
 
 <template>
+  <DuelRules v-if="data" :judge-count="data.duelJudges" />
   <div v-if="data" class="small">
     <div class="mb-2">
       {{ t.tower.rank.myRank

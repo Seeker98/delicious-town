@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    backlog6:
+      'Duel rules now state how many judges this server actually uses; cookware dropped by an Elder gets its own line on the result card and makes the news; shard exchange on the signature dish page can trade several at once; appraisal items’ “How to get” now mentions critical hits on the Temple guardian; item pages in the game wiki also list Today’s deal, the black market, random rewards and gem upgrades as sources',
     visual1006:
       'Mobile layout fixes: the cookware details stats table now has one row per stat; locked reasons in Today’s activity sit on their own line; the shard exchange dropdown on the signature dish page no longer runs off screen and shows “Choose a dish” by default; the active bonus list and fragment rows wrap when needed; the duel result card shows the Elder’s translated name and scores use your language’s decimal separator',
     stealForget1006:

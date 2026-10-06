@@ -344,4 +344,25 @@ describe('McView', () => {
     await w.find('[data-testid="exchange-4"] select').setValue('1');
     expect(w.find('[data-testid="exchange-4"] button').attributes('disabled')).toBeDefined();
   });
+
+  it('碎片兑换一次可以换几张，最多换到碎片够的张数（backlog 415：碎片多时要点很多下）', async () => {
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      ...structuredClone(overview),
+      learned: [{ ...overview.learned[0]!, mcId: 3 }],
+      remnants: [],
+      fragments: [0, 0, 7, 0, 0, 0],
+    });
+    vi.mocked(endpoints.mcExchange).mockResolvedValue({ mcId: 5, num: 2 });
+    const w = mountView();
+    await flushPromises();
+    const row = w.find('[data-testid="exchange-3"]');
+    const qty = row.find('[data-testid="exchange-num-3"]');
+    expect(qty.attributes('max')).toBe('2');
+    await row.find('select').setValue('5');
+    await qty.setValue(2);
+    expect(row.find('button').text()).toContain('2');
+    await row.find('button').trigger('click');
+    await flushPromises();
+    expect(endpoints.mcExchange).toHaveBeenCalledWith(5, 2);
+  });
 });

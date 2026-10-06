@@ -41,6 +41,7 @@ export const NEWS_TYPES: readonly string[] = [
   'temple.guardian.rare',
   'tower.rank.week',
   'tower.shop.rare',
+  'tower.elder',
   'weather.change',
   'town.broadcast',
   'town.bless',

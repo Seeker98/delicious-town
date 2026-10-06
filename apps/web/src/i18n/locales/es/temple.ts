@@ -39,6 +39,7 @@ const temple: Messages['temple'] = {
     howBlack: (diamond) => `mercado negro ${diamond} diamantes`,
     howAward: 'premios aleatorios de la Torre de chefs, el bar y más',
     howChampion: 'campeón de platos estrella de ayer',
+    howGuardian: 'golpes críticos al guardián del Templo si tienes un Atrapasueños',
     howSep: ', ',
     toolOption: (name, min, max, rate, have) => `${name} (nv. ${min}–${max}, ${rate} %, tienes ${have})`,
     btn: (n) => `Tasar ×${n}`,

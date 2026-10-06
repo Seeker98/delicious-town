@@ -37,6 +37,10 @@ export interface DuelResultDto {
   judges: DuelJudgeDto[];
   /** [我的票, 对方的票] */
   votes: [number, number];
+  /** 这一局请了几位评委（规则说明按它写，backlog 396） */
+  judgeCount: number;
+  /** 打赢长老掉的那件厨具（backlog 408：不混在随机奖励里）；没掉或不是厨塔为 null */
+  elderDrop: number | null;
   /** 我的声望变化 */
   renown: number;
   awards: BarAwardDto[];
@@ -82,6 +86,8 @@ export interface TowerElderDto {
 
 export interface TowerDto {
   floors: TowerFloorDto[];
+  /** 每局请几位评委（区服数值 tower.duel.judges；规则说明按它写，backlog 396） */
+  duelJudges: number;
   /** 我的进攻厨力 */
   power: number;
   /** 今日厨塔剩余次数、总次数（5 + 用掉的挑战券） */
@@ -108,6 +114,8 @@ export interface RankSlotDto {
 }
 
 export interface RankDto {
+  /** 每局请几位评委（规则说明按它写，backlog 396） */
+  duelJudges: number;
   /** 本周一 */
   week: string;
   /** 本周结束（下周一 0 点）的 ISO 时间 */

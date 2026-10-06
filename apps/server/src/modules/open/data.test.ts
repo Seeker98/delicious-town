@@ -56,6 +56,16 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.goodsDetail('zh-CN', lv.id)!.gift).toContainEqual({ kind: 'randomFoods', level: 1, num: 2 });
   });
 
+  it('来源还有今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮：原来只写商店）', () => {
+    const t1 = data.goodsDetail('zh-CN', gid('[一阶]•天机石'))!.sources;
+    expect(t1).toMatchObject({ special: true, black: 12, award: true, gemFrom: null });
+    const t2 = data.goodsDetail('zh-CN', gid('[二阶]•天机石'))!.sources;
+    expect(t2).toMatchObject({ special: false, black: null, award: true });
+    expect(t2.gemFrom).toEqual({ id: gid('[一阶]•天机石'), name: '[一阶]•天机石' });
+    // 六阶不进随机奖励
+    expect(data.goodsDetail('zh-CN', gid('[六阶]•天机石'))!.sources.award).toBe(false);
+  });
+
   it('来源：商店在售时写价格；声望商店；兑换得到和兑换用途', () => {
     expect(data.goodsDetail('zh-CN', gid('小镇食神奖杯(铜)'))!.sources.shop).toEqual({
       coin: 1000,

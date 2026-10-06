@@ -4,7 +4,6 @@ import { onMounted, ref, watch } from 'vue';
 import type { TowerDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import DuelRules from '../components/tower/DuelRules.vue';
 import FloorPanel from '../components/tower/FloorPanel.vue';
 import RankPanel from '../components/tower/RankPanel.vue';
 import ShopPanel from '../components/tower/ShopPanel.vue';
@@ -60,7 +59,6 @@ onMounted(load);
       >
     </li>
   </ul>
-  <DuelRules v-if="tab !== 'shop'" />
   <template v-if="tab === 'tower'">
     <FloorPanel v-if="data" :data="data" @reload="load" />
   </template>

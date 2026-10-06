@@ -152,6 +152,8 @@ describe('评委（问题记录 396）', () => {
     expect(r.them).toEqual({ scores: [3.3, 2.5, 2.8, 3.6, 2.1], sum: 14.3 });
     expect(r.votes).toEqual([3, 0]);
     expect(r.judges).toHaveLength(3);
+    // 这一局请了几位评委（规则说明按它写，backlog 396）：先到 3 票提前结束时上场的少于它
+    expect(r.judgeCount).toBe(t.duel.judges);
   });
 });
 

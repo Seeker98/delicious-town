@@ -38,10 +38,12 @@ const tower: Messages['tower'] = {
     rulesTitle: 'Règles du duel culinaire',
     rules: [
       'Chaque camp obtient cinq notes selon ses attributs : Couleur (Cuisine, Découpe), Arôme (Cuisine, Assaisonnement), Goût (Maîtrise du feu, Assaisonnement), Forme (Maîtrise du feu, Découpe) et Nutrition (Maîtrise du feu, Assaisonnement, Découpe et le plat signature en vente). Plus la Créativité et la Chance sont élevées, plus le bonus aléatoire de chaque note est grand.',
-      'À chaque duel, 5 des 10 juges sont tirés au sort. L’un après l’autre, chaque juge compare le total des deux camps sur ce qui l’intéresse et vote pour le plus élevé ; le premier camp à 3 voix gagne. En cas d’égalité de voix, le plus grand total chez les juges qui ont noté l’emporte.',
     ],
+    rulesVote: (total, n, need) =>
+      `À chaque duel, ${n} des ${total} juges sont tirés au sort. L’un après l’autre, chaque juge compare le total des deux camps sur ce qui l’intéresse et vote pour le plus élevé ; le premier camp à ${need} ${plFr(need, 'voix', 'voix')} gagne. En cas d’égalité de voix, le plus grand total chez les juges qui ont noté l’emporte.`,
     rulesJudges: 'Les juges et ce qu’ils regardent :',
     awards: (text) => `Obtenu : ${text}`,
+    elderDrop: (name) => `Butin de l’ancien : ${name}`,
   },
   elder: {
     summary: (level, stress, pct) =>

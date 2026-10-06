@@ -99,7 +99,11 @@ const noSource = computed(
     g.value !== null &&
     !g.value.sources.shop &&
     !g.value.sources.renownShop &&
-    g.value.sources.exchange.length === 0,
+    g.value.sources.exchange.length === 0 &&
+    !g.value.sources.special &&
+    g.value.sources.black == null &&
+    !g.value.sources.award &&
+    !g.value.sources.gemFrom,
 );
 const shopPrice = computed(() => {
   const s = g.value?.sources.shop;
@@ -228,6 +232,15 @@ const shopPrice = computed(() => {
         <li v-if="g.sources.shop">{{ w.sources.shop }}{{ shopPrice }}</li>
         <li v-if="g.sources.renownShop">
           {{ w.sources.renownShop(formatNum(g.sources.renownShop.renown), g.sources.renownShop.rotating) }}
+        </li>
+        <!-- 今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮：原来只写商店） -->
+        <li v-if="g.sources.special">{{ w.sources.special }}</li>
+        <li v-if="g.sources.black != null">{{ w.sources.black(formatNum(g.sources.black)) }}</li>
+        <li v-if="g.sources.award">{{ w.sources.award }}</li>
+        <li v-if="g.sources.gemFrom">
+          {{ w.sources.gemFromBefore
+          }}<RouterLink :to="`/wiki/goods/${g.sources.gemFrom.id}`">{{ g.sources.gemFrom.name }}</RouterLink
+          >{{ w.sources.gemFromAfter }}
         </li>
         <li v-for="(r, n) in g.sources.exchange" :key="`x${n}`">
           {{ w.sources.exchange }}<WikiExchangeRule :rule="r" />

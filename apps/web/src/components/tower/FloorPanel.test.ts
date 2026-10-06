@@ -98,4 +98,9 @@ describe('问题记录 230：次数提示用对手的名字', () => {
     expect(w.find(`[data-testid="floor-${f.floor}"]`).text()).toContain(`今天还能挑战${f.name}`);
     expect(w.text()).not.toContain('挑战他');
   });
+
+  it('赛厨规则按厨塔接口给的评委数写（backlog 396 审查）', () => {
+    const w = mount(FloorPanel, { props: { data: towerData({ duelJudges: 3 }) } });
+    expect(w.get('[data-testid="duel-rules"]').text()).toContain('随机请 3 位');
+  });
 });

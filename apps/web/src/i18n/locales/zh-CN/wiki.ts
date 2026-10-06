@@ -92,6 +92,11 @@ export default {
     note: '只列能开出的东西，不写概率。',
   },
   sources: {
+    special: '今日特价（每天随机上架）',
+    black: (n: string) => `钻石黑市：${n} 钻石`,
+    award: '厨塔、酒吧等的随机奖励',
+    gemFromBefore: '宝石升阶：两颗',
+    gemFromAfter: '合成一颗',
     shop: '商店常驻在售：',
     renownShop: (n: string, rotating: boolean) => `声望商店：${n} 声望${rotating ? '（轮换上架）' : ''}`,
     exchange: '兑换：',

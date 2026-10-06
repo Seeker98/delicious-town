@@ -11,6 +11,8 @@ export const duelResult = (patch: Partial<DuelResultDto> = {}): DuelResultDto =>
     { id: 'xiaoKai', me: 22.8, them: 10.2 },
   ],
   votes: [3, 1],
+  judgeCount: 5,
+  elderDrop: null,
   renown: 7,
   awards: [{ kind: 'coin', id: null, num: 600, lucky: false }],
   test: false,
@@ -47,6 +49,7 @@ const floor = (n: number, patch: Partial<TowerFloorDto> = {}): TowerFloorDto => 
 
 export const towerData = (patch: Partial<TowerDto> = {}): TowerDto => ({
   floors: [floor(1), floor(2), floor(3), floor(4)],
+  duelJudges: 5,
   power: 70,
   left: 5,
   dailyTotal: 5,
@@ -63,6 +66,7 @@ export const towerData = (patch: Partial<TowerDto> = {}): TowerDto => ({
 export { floor as towerFloor };
 
 export const rankData = (patch: Partial<RankDto> = {}): RankDto => ({
+  duelJudges: 5,
   week: '2026-09-28',
   weekEnd: '2026-10-04T16:00:00.000Z',
   slots: Array.from({ length: 15 }, (_, i) => ({ rank: i + 1, restId: null, name: null, level: null })),

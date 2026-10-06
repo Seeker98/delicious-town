@@ -51,6 +51,8 @@ export interface McToolDto {
   blackDiamond: number | null;
   award: boolean;
   champion: boolean;
+  /** 神殿守护兽暴击会掉（厨神玉玺，backlog 415） */
+  guardian: boolean;
 }
 
 export interface McOverviewDto {

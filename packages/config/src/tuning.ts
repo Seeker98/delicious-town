@@ -558,6 +558,8 @@ export const tuningSchema = z.object({
     }),
     /** 打赢长老（正式挑战）时掉一件这层套装的概率，按层（问题记录 408） */
     elderDropRates: z.array(num.min(0).max(1)).length(10),
+    /** 打赢第几层（含）以上的长老、掉了厨具才上新闻（backlog 408 审查：低层掉得多，会刷屏） */
+    elderNewsFloor: int.min(1),
     sparFullAt: int.min(0),
     sparFullRenown: int,
     sparMaxAt: int.min(0),

@@ -58,6 +58,16 @@ describe('DuelResult', () => {
     expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
   });
 
+  it('长老掉的厨具单独一行写出来；没掉不写（backlog 408）', () => {
+    const w = mount(DuelResult, { props: { result: duelResult({ elderDrop: 40002 }) } });
+    expect(w.get('[data-testid="duel-elder-drop"]').text()).toContain('长老掉落');
+    expect(
+      mount(DuelResult, { props: { result: duelResult() } })
+        .find('[data-testid="duel-elder-drop"]')
+        .exists(),
+    ).toBe(false);
+  });
+
   it('传了对手的显示名（厨塔楼层的译名）就用它，不用服务器给的中文名（视觉第三轮）', () => {
     const w = mount(DuelResult, { props: { result: duelResult(), themName: 'Restaurant modèle' } });
     expect(w.find('thead').text()).toContain('Restaurant modèle');

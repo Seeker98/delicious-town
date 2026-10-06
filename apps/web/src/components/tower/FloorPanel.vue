@@ -8,6 +8,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import DuelResult from './DuelResult.vue';
+import DuelRules from './DuelRules.vue';
 import ElderGear from './ElderGear.vue';
 
 const props = defineProps<{ data: TowerDto }>();
@@ -54,6 +55,7 @@ async function go(f: TowerFloorDto, test: boolean) {
 </script>
 
 <template>
+  <DuelRules :judge-count="data.duelJudges" />
   <div class="small">
     <div class="mb-2" data-testid="tower-head">
       {{ t.tower.floor.head(data.power, data.left, data.dailyTotal, data.tickets, formatNum(data.strength)) }}

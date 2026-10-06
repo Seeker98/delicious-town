@@ -309,7 +309,7 @@
       ],
       "judges": 5
     },
-    "elderDropRates": [0.2, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05],
+    "elderDropRates": [0.2, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05], "elderNewsFloor": 7,
     "sparFullAt": 20, "sparFullRenown": 2, "sparMaxAt": 50,
     "sparAwards": [[10, 2, 4], [20, 2, 2], [999999, 1, 2]], "sparEquipFlag": 3,
     "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }

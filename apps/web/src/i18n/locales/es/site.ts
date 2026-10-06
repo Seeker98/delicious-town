@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    backlog6:
+      'Las reglas del duelo indican cuántos jueces usa realmente este servidor; el utensilio que suelta un anciano sale en su propia línea en la tarjeta de resultado y aparece en las noticias; el canje de trozos en los platos estrella permite cambiar varios a la vez; el «Cómo conseguirlo» de los objetos de tasación incluye los golpes críticos al guardián del Templo; las páginas de objetos de la wiki muestran también la Oferta del día, el mercado negro, los premios aleatorios y las mejoras de gemas como fuentes',
     visual1006:
       'Ajustes de diseño en móvil: la tabla de atributos del detalle de utensilios ahora tiene una fila por atributo; los motivos de bloqueo en la actividad de hoy van en su propia línea; el desplegable de canje de trozos en los platos estrella ya no se sale de la pantalla y muestra «Elige un plato»; la lista de bonificaciones y las filas de fragmentos pasan a otra línea si no caben; la tarjeta de resultado del duelo muestra el nombre traducido del anciano y las puntuaciones con la coma decimal',
     stealForget1006:

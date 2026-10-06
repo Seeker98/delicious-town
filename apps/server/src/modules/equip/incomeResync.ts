@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import type { Kysely } from 'kysely';
 import type { Tuning } from '@dt/config';
@@ -87,16 +88,22 @@ export async function resyncEquipIncome(
   return { synced, failed };
 }
 
+/** 收益系数的指纹：后台改了系数，周期键跟着变 */
+function incomeFingerprint(t: Tuning['equip']['income']): string {
+  return createHash('sha256').update(JSON.stringify(t)).digest('hex').slice(0, 8);
+}
+
 /**
  * 每天查一次（问题记录 411 审查）：只读比对，没有不一致时什么都不写。
- * 按日期跑而不是按系数指纹：系数改了又改回去、滚动部署时旧实例写的旧行，第二天都能补上
+ * 按日期跑，周期键另外带系数指纹：系数改了又改回去、滚动部署时旧实例写的旧行，第二天都能补上
  */
 export function equipIncomeJobs(d: GameDeps): PeriodicJob[] {
   return [
     {
       name: 'equip-income-resync',
       feature: 'equip',
-      period: (now) => `income-${gameDay(now)}`,
+      // 每天一次，另外系数一改就换周期键、当天补算（backlog 411）
+      period: (now, settings) => `income-${gameDay(now)}-${incomeFingerprint(settings.tuning.equip.income)}`,
       run: async ({ shardId, settings, now, log }) =>
         resyncEquipIncome(d, shardId, settings.tuning.equip.income, now, log),
     },

@@ -3,7 +3,7 @@ import { GOODS, type GameConfig } from '@dt/config';
 import { gameParts, type DuelResultDto, type TowerDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import { invalidState, limitReached } from '../../core/errors';
-import type { Op } from '../../core/op';
+import { opNews, type Op } from '../../core/op';
 import { gainRenown, spendStrength } from '../../core/resources';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { randomAward, type RandomAward } from '../award/random';
@@ -68,6 +68,7 @@ export async function towerView(
   const total = towerDailyTotal(count(KEY.ticket), t);
   const me = await cachedSide(db, config, rest, 'attack', off);
   return {
+    duelJudges: t.duel.judges,
     floors: [...config.towerFloors.values()].map((f) => ({
       floor: f.floor,
       name: f.name,
@@ -136,6 +137,7 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
   const r = duel(me, them, t.duel, o.rng);
   let renown = 0;
   const awards: RandomAward[] = [];
+  let elderDrop: number | null = null;
   if (!test) {
     renown = towerRenown(floorNo, r.win, t);
     gainRenown(o, renown);
@@ -147,7 +149,9 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
       if (drops.length > 0 && o.rng.next() < (t.elderDropRates[floorNo - 1] ?? 0)) {
         const id = drops[o.rng.int(drops.length)]!;
         await grantGoodsOp(o, id, 1, { source: 'tower.elder' });
-        awards.push({ kind: 'goods', id, num: 1, lucky: false });
+        // 单独给、上新闻（backlog 408：原来混在随机奖励里看不出来是长老掉的）
+        elderDrop = id;
+        if (floorNo >= t.elderNewsFloor) opNews(o, 'tower.elder', { goodsId: id, floor: floorNo });
       }
       if (floorNo > state.best_floor)
         await o.tx
@@ -166,6 +170,8 @@ export async function challengeTower(o: Op, floorNo: number, test: boolean): Pro
     them: sideDto(them, r.them),
     judges: r.judges,
     votes: r.votes,
+    judgeCount: r.judgeCount,
+    elderDrop,
     renown,
     awards,
     test,

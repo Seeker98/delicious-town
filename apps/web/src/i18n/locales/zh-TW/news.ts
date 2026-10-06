@@ -94,6 +94,8 @@ export default {
         .map((r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)}`)
         .join('，')}`,
     'tower.shop.rare': (w, p, x) => `${w}在廚塔商店兌換了 ${x.goodsName(num(p.goodsId))}`,
+    'tower.elder': (w, p, x) =>
+      `${w}打贏廚塔第 ${num(p.floor)} 層長老，得到了 ${x.goodsName(num(p.goodsId))}`,
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w}使用雷神錘，${x.weatherName(num(p.from))}轉${x.weatherName(num(p.to))}了`

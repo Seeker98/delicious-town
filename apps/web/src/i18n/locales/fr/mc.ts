@@ -51,8 +51,9 @@ const mc: Messages['mc'] = {
       `Échange d’éclats : ${n} éclats d’un niveau contre 1 fragment de n’importe quel plat de ce niveau (seulement les plats non appris et que l’on peut expertiser)`,
     have: (level, n) => `Éclats de niveau ${level} : ${n}`,
     pick: 'Choisir un plat',
-    btn: 'Échanger 1',
-    done: (name) => `1 fragment de « ${name} » obtenu`,
+    btn: (n) => `Échanger ${n}`,
+    done: (name, n) =>
+      `${n} ${plFr(n, 'fragment', 'fragments')} de « ${name} » ${plFr(n, 'obtenu', 'obtenus')}`,
     failed: 'Échec de l’échange',
   },
   remnants: 'Fragments',

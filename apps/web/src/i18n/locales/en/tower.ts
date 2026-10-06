@@ -38,10 +38,12 @@ const tower: Messages['tower'] = {
     rulesTitle: 'Cook-off rules',
     rules: [
       'Each side gets five scores from its stats: Look (Cooking, Knife skills), Aroma (Cooking, Seasoning), Taste (Heat control, Seasoning), Shape (Heat control, Knife skills) and Nutrition (Heat control, Seasoning, Knife skills and the signature dish on sale). Higher Creativity and Luck add a bigger random bonus to every score.',
-      'Each match, 5 of the 10 judges are picked at random. One by one, each judge compares the two sides’ totals on the scores they care about and votes for the higher one; the first side to 3 votes wins. If the votes are tied, the higher total across the judges who scored wins.',
     ],
+    rulesVote: (total, n, need) =>
+      `Each match, ${n} of the ${total} judges ${plEn(n, 'is', 'are')} picked at random. One by one, each judge compares the two sides’ totals on the scores they care about and votes for the higher one; the first side to ${need} ${plEn(need, 'vote', 'votes')} wins. If the votes are tied, the higher total across the judges who scored wins.`,
     rulesJudges: 'The judges and what they look at:',
     awards: (text) => `Got ${text}`,
+    elderDrop: (name) => `Elder drop: ${name}`,
   },
   elder: {
     summary: (level, stress, pct) =>

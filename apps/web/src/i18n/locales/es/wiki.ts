@@ -100,6 +100,11 @@ const wiki: Messages['wiki'] = {
     note: 'Solo se indica lo que puede contener, no las probabilidades.',
   },
   sources: {
+    special: 'Oferta del día (al azar cada día)',
+    black: (n) => `Mercado negro: ${n} diamantes`,
+    award: 'Premios aleatorios de la Torre de chefs, el bar y más',
+    gemFromBefore: 'Mejora de gemas: dos ',
+    gemFromAfter: ' forman una',
     shop: 'Siempre en la tienda: ',
     renownShop: (n, rotating) => `Tienda de renombre: ${n} de renombre${rotating ? ' (rotativo)' : ''}`,
     exchange: 'Canje: ',
