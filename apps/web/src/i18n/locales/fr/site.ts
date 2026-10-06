@@ -10,6 +10,10 @@ const site: Messages['site'] = {
   changelog: {
     checks1006:
       'Dans l’activité du jour, la bourse et les prédictions indiquent s’il manque encore des jours depuis l’inscription ou la vérification de l’e-mail, « Récupérer les récompenses d’événement » apparaît comme indisponible quand aucun événement n’est en cours, et les livraisons affichent le nombre d’étoiles réellement exigé par ce serveur. Les pierres bleues et vertes de rang 6 comptent désormais comme rang 6 (elles coûtaient l’énergie et les frais de retrait d’un rang 5)',
+    luckGem1006:
+      'Nouvelle gemme, la Pierre du destin : sertissez-la pour gagner de la chance (rangs 1 à 6 : +1, 2, 4, 8, 16, 24). Le rang 1 est vendu à la boutique (pièces), dans la Promo du jour et au marché noir, il tombe aussi des récompenses aléatoires et monte de rang comme les autres gemmes. Au bar, la chance au Chifoumi n’augmente plus que la probabilité de gagner, et il reste toujours au moins 10 % de risque de perdre ; avant, avec beaucoup de chance, on ne pouvait plus perdre',
+    mcLearn1006:
+      'Apprendre les plats signature est plus facile : décomposez les fragments inutiles en éclats, et 3 éclats d’un niveau donnent 1 fragment de n’importe quel plat de ce niveau. Le Sceau Délice réussit maintenant 40 % du temps au lieu de 28 %, et le Sceau de jade du Dieu de la cuisine est à la boutique (300 000). L’expertise du Temple indique comment obtenir chaque objet, et le guide a une section « Comment apprendre les plats signature »',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

@@ -163,10 +163,19 @@ const wiki: Messages['wiki'] = {
         title: 'Otras actividades',
         items: [
           'Sacude la bolsa de Don Krab en la Plaza una vez al día, y mira si la Hermana Wen, el Hermano 13 y los demás tienen algo para ti.',
-          'Sube la Torre de chefs cada día: la primera planta está abierta desde el nivel 1, y ganes o pierdas te da renombre.',
+          'Sube la Torre de chefs cada día: ganes o pierdas te da renombre. El anciano de la primera planta es de nivel 8; hacia el nivel 10 puedes ganarle (algo antes con el equipo de aprendiz).',
           'Desde el nivel 20, con una cuenta de al menos 7 días y el correo verificado, puedes usar la Bolsa y las Predicciones.',
           'Llevar utensilios sube los ingresos de cada ronda.',
           'Por debajo del nivel 40, la EXP de cada ronda recibe un extra (+200 % en el nivel 1 y menos en cada nivel), así que los primeros niveles van muy rápido.',
+        ],
+      },
+      {
+        title: 'Cómo aprender platos estrella',
+        items: [
+          'Necesitas 3 fragmentos de un plato para aprenderlo; puedes cocinar desde 1 estrella.',
+          'Tasación (desde 1 estrella): en el Templo, usa 1 Receta misteriosa y 1 objeto de tasación; si sale bien, consigues un fragmento de un plato al azar. El Sello Delicia da niveles 1 a 6 y acierta un 40 % (90 000 en la tienda); el Sello de jade del Dios de la Cocina niveles 2 a 5, un 52 % (300 000 en la tienda); las Fórmulas secretas del Balde de Carnada (niveles 1 a 3) y de la Cangreburger (niveles 3 a 5) siempre aciertan, se venden por diamantes en el mercado negro y también salen en los premios aleatorios de la Torre de chefs y del bar; la de la Cangreburger es además el premio del campeón de platos estrella de ayer.',
+          'Canje de trozos: descompón los fragmentos que no necesites en trozos del mismo nivel; 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel, así que guarda trozos del nivel que quieras.',
+          'Clases: busca a un jugador que sepa el plato y dé clase, paga la matrícula y algo de energía, y casi siempre lo aprendes a la primera.',
         ],
       },
     ],

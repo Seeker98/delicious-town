@@ -331,6 +331,8 @@ export const tuningSchema = z.object({
   mysterious: z.object({
     /** 特色菜卖给顾客时每份价值的倍率，按特色菜等级（第 1 项是 1 级；没写的等级 ×1）；只在结算卖出时乘，赛厨等其他地方用原价（问题记录 412） */
     saleRates: z.array(num.min(0)),
+    /** 几张同级残卷碎片换 1 张这一级任选一道的残卷（问题记录 415） */
+    fragmentPerRemnant: int.min(1),
     cookNums: z.array(int.min(1)).min(1),
     baseNum: int,
     /** 等级大于它的特色菜份数打折 */
@@ -434,6 +436,8 @@ export const tuningSchema = z.object({
   bar: z.object({
     fgWinRate: num,
     fgDrawRate: num,
+    /** 划拳输的最低概率：幸运加到胜上最多加到 1 - 平 - 它（问题记录 419） */
+    fgLoseMin: num.min(0).max(1),
     fgNewsStreak: int.min(1),
     cupNewsStreak: int.min(1),
     numMax: int.min(2),
