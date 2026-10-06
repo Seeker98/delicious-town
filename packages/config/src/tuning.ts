@@ -1,6 +1,12 @@
+import { DUEL_JUDGES } from '@dt/shared';
 import { z } from 'zod';
 
 const num = z.number();
+
+/** 随机奖励的类型比例：四项不为负、加起来不超过 1，抽不中的算食材（backlog 352） */
+const awardRates = z
+  .object({ foods: num.min(0), goods: num.min(0), coin: num.min(0), exp: num.min(0) })
+  .refine((r) => r.foods + r.goods + r.coin + r.exp <= 1 + 1e-9, 'rates must sum to at most 1');
 const int = z.number().int();
 /** 奖励（邀请等配置里用）：和后台补偿同样的五项 */
 const idNum = z.object({ id: int, num: int.min(1) });
@@ -440,13 +446,13 @@ export const tuningSchema = z.object({
     slotFloorRate: num,
     slotFloorAwardId: int,
     /** 厨塔的随机奖励类型比例（字段在 bar 下是历史原因）；酒吧小游戏用 prize.rates */
-    awardRates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+    awardRates: awardRates,
     /**
      * 酒吧小游戏的随机奖励（问题记录 352）：类型比例；食材按奖励档次取 minLevel ≤ 档次的最后一项，
      * 从 levels 范围里出，rare 的概率出稀有食材（按出现权重抽）
      */
     prize: z.object({
-      rates: z.object({ foods: num, goods: num, coin: num, exp: num }),
+      rates: awardRates,
       foodTiers: z
         .array(
           z.object({
@@ -542,7 +548,7 @@ export const tuningSchema = z.object({
           }),
         )
         .length(5),
-      judges: int.min(1).max(10),
+      judges: int.min(1).max(DUEL_JUDGES.length),
     }),
     /** 打赢长老（正式挑战）时掉一件这层套装的概率，按层（问题记录 408） */
     elderDropRates: z.array(num.min(0).max(1)).length(10),

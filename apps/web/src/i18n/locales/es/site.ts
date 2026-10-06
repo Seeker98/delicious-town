@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    checks1006:
+      'En la actividad de hoy, el mercado y las predicciones de eventos indican si aún faltan días desde el registro o verificar el correo, «Reclamar premios de eventos por tiempo limitado» aparece como no disponible si no hay ningún evento en curso y los repartos muestran las estrellas que exige este servidor. Las piedras de rango 6 azul y verde cuentan ahora como rango 6 (antes costaban energía y la retirada como rango 5)',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:

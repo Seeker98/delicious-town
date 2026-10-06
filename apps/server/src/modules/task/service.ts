@@ -6,6 +6,7 @@ import {
   gameDay,
   gameTime,
   weekStart,
+  type ActivationBlock,
   type ActivationDto,
   type QuestDto,
   type QuestsDto,
@@ -36,9 +37,19 @@ import {
   type QuestCtx,
 } from './quests';
 import { activationTotal, stateValue } from './rules';
+import { exchangeUntil } from '../activity/rules';
+import type { ActivitySpec } from '@dt/shared';
 
 const SIGNIN_KEY = 'signin';
 const claimKey = (points: number) => `act.claim:${points}`;
+
+/** 活跃项编号（activation_extra.json、原版活跃表） */
+const ACT_EXCHANGE = 901;
+const ACT_PREDICT = 902;
+const ACT_ACTIVITY = 904;
+const ACT_TAKEAWAY = 50;
+/** 找“还能领奖或兑换”的活动时往回看多久（兑换期按小时计，远小于这个） */
+const ACTIVITY_LOOKBACK_MS = 60 * 86_400_000;
 
 export function createTaskService(d: GameDeps) {
   const { chapters, quests, questLines, weeklyGroups } = d.config.bundle;
@@ -243,9 +254,50 @@ export function createTaskService(d: GameDeps) {
   /** 活跃项的等级门槛（问题记录 360）：配置里只写了星级，交易所、事件预测的等级门槛在区服数值里 */
   function actNeedLevel(id: number, settings: ShardSettings): number {
     const t = settings.tuning;
-    if (id === 901) return t.exchange.minLevel;
-    if (id === 902) return t.predict.minLevel;
+    if (id === ACT_EXCHANGE) return t.exchange.minLevel;
+    if (id === ACT_PREDICT) return t.predict.minLevel;
     return 0;
+  }
+
+  /** 活跃项的星级门槛：配送外卖按区服数值 takeaway.openStar（配置里写的 2 星只是默认；backlog 第 ⑥ 批） */
+  function actNeedStar(a: { id: number; needStar: number }, settings: ShardSettings): number {
+    return a.id === ACT_TAKEAWAY ? settings.tuning.takeaway.openStar : a.needStar;
+  }
+
+  /**
+   * 活跃项眼下做不了的其他原因（backlog 第 ⑥ 批）：交易所、事件预测的注册天数、邮箱门槛；
+   * 领取限时活动奖励要有能领奖或兑换的活动（进行中，或兑换活动还在兑换期，等级够）
+   */
+  async function actBlocks(
+    db: Kysely<DB>,
+    rest: RestaurantRow,
+  ): Promise<{ account: { days: number; verified: boolean }; activityOpen: boolean }> {
+    const now = d.now();
+    const acc = await db
+      .selectFrom('account')
+      .select(['created_at', 'email_verified_at'])
+      .where('id', '=', rest.account_id)
+      .executeTakeFirstOrThrow();
+    const rows = await db
+      .selectFrom('activity')
+      .select(['kind', 'def', 'ends_at', 'min_level'])
+      .where('deleted_at', 'is', null)
+      .where((eb) => eb.or([eb('shard_id', '=', rest.shard_id), eb('shard_id', 'is', null)]))
+      .where('starts_at', '<=', now)
+      .where('ends_at', '>', new Date(now.getTime() - ACTIVITY_LOOKBACK_MS))
+      .execute();
+    const activityOpen = rows.some((r) => {
+      if (r.min_level > rest.level) return false;
+      const until = exchangeUntil({ kind: r.kind, def: r.def } as ActivitySpec, r.ends_at) ?? r.ends_at;
+      return now < until;
+    });
+    return {
+      account: {
+        days: (now.getTime() - acc.created_at.getTime()) / 86_400_000,
+        verified: acc.email_verified_at !== null,
+      },
+      activityOpen,
+    };
   }
 
   /**
@@ -284,6 +336,21 @@ export function createTaskService(d: GameDeps) {
       .where('goods_id', '=', GOODS.loveNecklace)
       .executeTakeFirst();
     const multiplier = necklace && (necklace.expires_at === null || necklace.expires_at > d.now()) ? 2 : 1;
+    const blocks = await actBlocks(db, rest);
+    const needDaysOf = (id: number) =>
+      id === ACT_EXCHANGE
+        ? settings.tuning.exchange.minAccountDays
+        : id === ACT_PREDICT
+          ? settings.tuning.predict.minAccountDays
+          : 0;
+    const blockedOf = (id: number): ActivationBlock => {
+      if (id === ACT_EXCHANGE || id === ACT_PREDICT) {
+        if (blocks.account.days < needDaysOf(id)) return 'days';
+        if (!blocks.account.verified) return 'email';
+      }
+      if (id === ACT_ACTIVITY && !blocks.activityOpen) return 'noActivity';
+      return null;
+    };
     return {
       total: activationTotal(acts, counts),
       signedIn: (byKey.get(SIGNIN_KEY) ?? 0) > 0,
@@ -297,8 +364,10 @@ export function createTaskService(d: GameDeps) {
           points: a.points,
           limit: a.limitTimes,
           count: counts.get(a.id) ?? 0,
-          needStar: a.needStar,
+          needStar: actNeedStar(a, settings),
           needLevel: actNeedLevel(a.id, settings),
+          needDays: needDaysOf(a.id),
+          blocked: blockedOf(a.id),
           off: actOff(a.name, settings),
         };
       }),

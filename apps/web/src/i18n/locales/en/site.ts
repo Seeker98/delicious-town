@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    checks1006:
+      'In Today’s activity, the exchange and event predictions now say when you still need more days since sign-up or a verified email, “Claim limited-time event rewards” shows as unavailable when no event is running, and deliveries show the star level this server actually requires. Tier 6 Blue Nether and Green Mystic Stones now count as tier 6 (they used to cost stamina and removal fees as tier 5)',
     power1006:
       'The cookware page now shows your attack and defense chef power in cook-offs (with every Luck bonus and set attack/defense bonuses), and the Chef Tower now says “My attack chef power”, so the two pages match',
     mcTabs1006:

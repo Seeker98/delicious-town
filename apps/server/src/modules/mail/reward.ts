@@ -63,6 +63,15 @@ export function brokenItems(config: GameConfig, items: RewardItems | null): bool
   );
 }
 
+/** 附件里有已下架的道具、食材（问题记录 367 之前建的兑换码；backlog #143） */
+export function retiredItems(config: GameConfig, items: RewardItems | null): boolean {
+  if (!items) return false;
+  return (
+    (items.goods ?? []).some((g) => config.goods.get(g.id)?.retired) ||
+    (items.foods ?? []).some((f) => config.foods.get(f.id)?.retired)
+  );
+}
+
 /**
  * 发放附件（设计 §4）：橱柜满了进冰箱、仓库满了照发；流水来源、个人日志类型由调用方给。
  * 补偿、邮件领取、兑换码都走这里

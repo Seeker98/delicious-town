@@ -51,11 +51,15 @@ function stateOf(i: ActItem): 'done' | 'locked' | 'open' {
   if (i.count >= i.limit) return 'done';
   return lockText(i) === null ? 'open' : 'locked';
 }
-/** 锁定时写哪一条：区服没开 → 星级 → 等级 */
+/** 锁定时写哪一条：区服没开 → 星级 → 等级 → 注册天数、邮箱、没有限时活动（backlog 第 ⑥ 批） */
 function lockText(i: ActItem): string | null {
-  if (i.off) return t.value.rest.tasks.off;
-  if ((act.value?.star ?? 0) < i.needStar) return t.value.rest.tasks.locked(i.needStar);
-  if ((act.value?.level ?? 0) < i.needLevel) return t.value.rest.tasks.lockedLevel(i.needLevel);
+  const x = t.value.rest.tasks;
+  if (i.off) return x.off;
+  if ((act.value?.star ?? 0) < i.needStar) return x.locked(i.needStar);
+  if ((act.value?.level ?? 0) < i.needLevel) return x.lockedLevel(i.needLevel);
+  if (i.blocked === 'days') return x.lockedDays(i.needDays);
+  if (i.blocked === 'email') return x.lockedEmail;
+  if (i.blocked === 'noActivity') return x.noActivity;
   return null;
 }
 const ORDER = { open: 0, locked: 1, done: 2 } as const;

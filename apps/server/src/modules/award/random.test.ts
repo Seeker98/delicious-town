@@ -11,6 +11,7 @@ import {
   awardFoodsPool,
   awardGoodsPool,
   awardKindOf,
+  pickPrizeFood,
   prizeFoodPools,
   prizeFoodTier,
   randomAward,
@@ -85,6 +86,28 @@ describe('物品池、食材池', () => {
     const foods = config.bundle.foods.map((f) => (f.id === first ? { ...f, retired: true as const } : f));
     expect(awardFoodsPool(foods, 1)).not.toContain(first);
     expect(awardFoodsPool(foods, 1)).toHaveLength(before.length - 1);
+  });
+});
+
+describe('酒吧奖励抽哪个食材（backlog 352）', () => {
+  const rare = [
+    { id: 1, odds: 10 },
+    { id: 2, odds: 30 },
+  ];
+  it('先判稀有（一次随机数），稀有池按权重抽', () => {
+    expect(pickPrizeFood([5, 6], rare, 0.5, [], sequenceRng([0.1, 0.2]))).toBe(1);
+    expect(pickPrizeFood([5, 6], rare, 0.5, [], sequenceRng([0.1, 0.3]))).toBe(2);
+  });
+  it('没抽中稀有时普通池平均抽', () => {
+    expect(pickPrizeFood([5, 6], rare, 0.5, [], sequenceRng([0.6, 0.7]))).toBe(6);
+  });
+  it('抽中的一边是空的就用另一边', () => {
+    expect(pickPrizeFood([5, 6], [], 0.5, [], sequenceRng([0.1, 0.2]))).toBe(5);
+    expect(pickPrizeFood([], rare, 0.5, [], sequenceRng([0.9, 0.3]))).toBe(2);
+  });
+  it('两边都空用退回池；退回池也空返回 null（调用方改发银币）', () => {
+    expect(pickPrizeFood([], [], 0.5, [7, 8], sequenceRng([0.6]))).toBe(8);
+    expect(pickPrizeFood([], [], 0.5, [], sequenceRng([0.6]))).toBeNull();
   });
 });
 

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    checks1006:
+      'Dans l’activité du jour, la bourse et les prédictions indiquent s’il manque encore des jours depuis l’inscription ou la vérification de l’e-mail, « Récupérer les récompenses d’événement » apparaît comme indisponible quand aucun événement n’est en cours, et les livraisons affichent le nombre d’étoiles réellement exigé par ce serveur. Les pierres bleues et vertes de rang 6 comptent désormais comme rang 6 (elles coûtaient l’énergie et les frais de retrait d’un rang 5)',
     power1006:
       'La page de l’équipement affiche maintenant votre puissance d’attaque et de défense en duel (avec tous les bonus de Chance et ceux des ensembles), et la Tour des chefs indique « Ma puissance d’attaque » : les deux pages concordent',
     mcTabs1006:

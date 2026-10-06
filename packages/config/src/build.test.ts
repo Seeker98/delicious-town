@@ -141,6 +141,8 @@ describe('buildBundle（真实数据）', () => {
     expect(goods.get(gid('普通宣传海报'))!.equip).toBeNull();
     expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
     expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
+    // 宝石的阶就是道具等级（六阶蓝冥石、绿玄石原来写成 5，镶嵌体力、拆卸费按 5 阶算）
+    for (const g of bundle!.goods.filter((x) => x.gem)) expect([g.id, g.gem!.level]).toEqual([g.id, g.level]);
     expect(bundle!.suits.map((s) => s.id).sort((a, b) => a - b)).toEqual([3, 4, 5, 6, 7, 80, 81, 82, 100]);
   });
 
@@ -1312,11 +1314,41 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     });
     expect(errors).toEqual(
       expect.arrayContaining([
-        `goods ${id} poster value time must be >= 1`,
+        `goods ${id} poster value time must be an integer >= 1`,
         `goods ${id} poster value coinValue must be > 0`,
         `goods ${id} poster value key atRate not allowed`,
       ]),
     );
+  });
+
+  it('海报奖杯：time 是整数，加成恰好写一项，类型是设施（backlog 第 ⑦ 批）', () => {
+    let ids: number[] = [];
+    const errors = withGoods((goods) => {
+      const ps = goods.filter((g) => g.src === 'poster');
+      ps[0]!.value = { time: 1.5, coinValue: 8 };
+      ps[1]!.value = { time: 24 };
+      ps[2]!.value = { time: 24, coinValue: 8, expValue: 8 };
+      ps[3]!.type = 1;
+      ids = ps.slice(0, 4).map((g) => g.id);
+    });
+    expect(errors).toEqual(
+      expect.arrayContaining([
+        `goods ${ids[0]} poster value time must be an integer >= 1`,
+        `goods ${ids[1]} poster value needs exactly one of coinValue / expValue`,
+        `goods ${ids[2]} poster value needs exactly one of coinValue / expValue`,
+        `goods ${ids[3]} poster must be a device`,
+      ]),
+    );
+  });
+
+  it('主表缺 value 时报错带道具编号（backlog 第 ⑦ 批）', () => {
+    let id = 0;
+    const errors = withGoods((goods) => {
+      const g = first(goods, 'poster');
+      id = g.id;
+      delete g.value;
+    });
+    expect(errors.some((e) => e.includes(`goods ${id}`))).toBe(true);
   });
 
   it('只有海报奖杯能写 needStar；纪念品、一番赏手办必须是纪念品类型；抽赏券必须是消耗品', () => {
