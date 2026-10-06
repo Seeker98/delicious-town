@@ -26,10 +26,15 @@ const judges = computed(() => {
   const d = t.value.tower.duel;
   return props.result.judges.map((j) => ({
     ...j,
-    who: d.judgeFocus(
-      d.judges[j.id],
-      (DUEL_JUDGE_ITEMS.get(j.id) ?? []).map((i) => d.items[i]).join(d.itemSep),
-    ),
+    // 不认识的评委（服务器加了新评委、网页还是旧的）只写编号（backlog 396）
+    who: DUEL_JUDGE_ITEMS.has(j.id)
+      ? d.judgeFocus(
+          d.judges[j.id],
+          DUEL_JUDGE_ITEMS.get(j.id)!
+            .map((i) => d.items[i])
+            .join(d.itemSep),
+        )
+      : String(j.id),
     vote: j.me > j.them ? ('me' as const) : j.them > j.me ? ('them' as const) : ('tie' as const),
   }));
 });

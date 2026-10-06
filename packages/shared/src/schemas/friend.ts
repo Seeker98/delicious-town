@@ -149,8 +149,8 @@ export const exchangeFoodsQuery = z.object({ level: z.coerce.number().int().min(
 
 export interface ExchangeFoodsDto {
   level: number;
-  /** 对方这个等级的食材；fee = 换它要付的手续费 */
-  theirs: Array<{ foodsId: number; num: number; locked: boolean; fee: number }>;
+  /** 对方这个等级的食材；fee = 换它要付的手续费；need = 我学本街菜的下一品级还缺几个（不缺为 0） */
+  theirs: Array<{ foodsId: number; num: number; locked: boolean; fee: number; need: number }>;
   /** 我这个等级的食材 */
   mine: Array<{ foodsId: number; num: number }>;
   /** 今天和它还能换几次 */

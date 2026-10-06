@@ -68,11 +68,19 @@ watch(tab, (v) => {
     void router.replace({ query: { ...route.query, tab: v } });
   void load();
 });
+/** 餐厅数据读失败（backlog 第 ⑤ 批）：停在发展基金时原来整块空白，要刷新页面 */
+const restFailed = ref(false);
+function loadRest() {
+  restFailed.value = false;
+  restaurant.refresh().catch(() => {
+    restFailed.value = true;
+  });
+}
 onMounted(() => {
   void catalog.load();
   void load();
   // 直接从链接进来时还没有餐厅数据：读一次，才知道区服关没关发展基金（backlog ①a）
-  if (!restaurant.rest) restaurant.refresh().catch(() => undefined);
+  if (!restaurant.rest) loadRest();
 });
 </script>
 
@@ -99,6 +107,17 @@ onMounted(() => {
   <ClassroomPanel v-else-if="tab === 'classroom'" />
   <!-- 餐厅数据读到、确认区服开着发展基金后再挂：不然关掉时也会先请求一次、弹“功能关闭”（backlog ①a） -->
   <FundPanel v-else-if="tab === 'fund' && restaurant.rest" />
+  <div v-else-if="tab === 'fund' && restFailed" class="small text-muted" data-testid="fund-rest-failed">
+    {{ t.town.restFailed }}
+    <button
+      type="button"
+      class="btn btn-link btn-sm p-0 align-baseline"
+      data-testid="fund-rest-retry"
+      @click="loadRest"
+    >
+      {{ t.town.retry }}
+    </button>
+  </div>
   <RankPanel v-else-if="tab === 'rank'" />
   <template v-else-if="data">
     <NewsPanel v-if="tab === 'news'" :data="data" @reload="load" />

@@ -40,6 +40,7 @@ const list: CookbookListDto = {
 
 describe('CookbooksView', () => {
   beforeEach(() => {
+    localStorage.clear();
     setActivePinia(createPinia());
     vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 0 } as never);
     vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(15));
@@ -330,6 +331,79 @@ describe('CookbooksView', () => {
     const other = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(other.find('[data-testid="move-hint"]').exists()).toBe(false);
+  });
+
+  it('停在别的街第 2 页时点底部导航（地址被清空）：回到本店街道第 1 页（backlog 第 ⑧ 批）', async () => {
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({ ...list, total: 100 });
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=3&filter=learned&page=2');
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 3, page: 2, filter: 'learned' });
+    await router.push('/cookbooks');
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
+    expect(router.currentRoute.value.query.street).toBe('0');
+  });
+
+  it('看别的街时不请求下一星要求；回到本店街道才请求，且只请求一次（backlog 384）', async () => {
+    vi.mocked(endpoints.starNeed).mockClear();
+    vi.mocked(endpoints.cookbookList).mockImplementation(async (q) => ({ ...list, street: q.street }));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks?street=3');
+    const w = mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.starNeed).not.toHaveBeenCalled();
+    // 点底部导航回到本店街道
+    await router.push('/cookbooks');
+    await flushPromises();
+    expect(w.find('select').exists()).toBe(true);
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
+    expect(endpoints.starNeed).toHaveBeenCalledTimes(1);
+    // 列表按别的条件重读：不再请求
+    await router.push('/cookbooks?street=0&filter=learned');
+    await flushPromises();
+    expect(endpoints.starNeed).toHaveBeenCalledTimes(1);
+  });
+
+  it('搬街提示能关掉，记住到下一星（backlog 384：休闲玩家会挂好几周）', async () => {
+    localStorage.clear();
+    vi.mocked(endpoints.cookbookList).mockResolvedValue({
+      ...list,
+      street: 0,
+      streetTotal: 69,
+      streetLearned: 30,
+      learned: 30,
+    });
+    vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(100));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/cookbooks', component: CookbooksView }],
+    });
+    await router.push('/cookbooks');
+    const mountIt = async () => {
+      const w = mount(CookbooksView, { global: { plugins: [router] } });
+      await flushPromises();
+      return w;
+    };
+    const w = await mountIt();
+    await w.get('[data-testid="move-hint-close"]').trigger('click');
+    expect(w.find('[data-testid="move-hint"]').exists()).toBe(false);
+    w.unmount();
+    expect((await mountIt()).find('[data-testid="move-hint"]').exists()).toBe(false);
+    // 升了一星、下一星的要求变了，再提示
+    vi.mocked(endpoints.starNeed).mockResolvedValue({
+      ...(starNeed(200) as object),
+      star: 2,
+      nextStar: 3,
+    } as never);
+    expect((await mountIt()).find('[data-testid="move-hint"]').exists()).toBe(true);
   });
 
   it('地址带着本店街道、餐厅还没读过：也读一次餐厅，照样提示；数字带千分位', async () => {

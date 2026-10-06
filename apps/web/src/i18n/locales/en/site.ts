@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    web1006:
+      'When swapping ingredients with friends or Mr. Krab you can now search by name, and ingredients you need for your recipes come first with how many you’re missing; the move-street tip on the recipes page can be dismissed until your next star; “Claim all” for deliveries only shows when something has arrived; tapping “Recipes” in the bottom bar while viewing another street takes you back to your own; the Development Fund tab on the square lets you retry if your restaurant fails to load',
     checks1006:
       'In Today’s activity, the exchange and event predictions now say when you still need more days since sign-up or a verified email, “Claim limited-time event rewards” shows as unavailable when no event is running, and deliveries show the star level this server actually requires. Tier 6 Blue Nether and Green Mystic Stones now count as tier 6 (they used to cost stamina and removal fees as tier 5)',
     luckGem1006:

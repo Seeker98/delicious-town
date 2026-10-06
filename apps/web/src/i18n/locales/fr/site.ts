@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    web1006:
+      'En échangeant des ingrédients avec vos amis ou M. Krab, vous pouvez chercher par nom, et ceux qui vous manquent pour vos recettes apparaissent en premier avec la quantité manquante ; l’astuce pour changer de rue sur la page des recettes peut être masquée jusqu’à la prochaine étoile ; « Tout récupérer » pour les livraisons n’apparaît que si une commande est arrivée ; toucher « Recettes » dans la barre du bas quand vous regardez une autre rue vous ramène à la vôtre ; l’onglet du fonds de développement sur la place permet de réessayer si votre restaurant ne se charge pas',
     checks1006:
       'Dans l’activité du jour, la bourse et les prédictions indiquent s’il manque encore des jours depuis l’inscription ou la vérification de l’e-mail, « Récupérer les récompenses d’événement » apparaît comme indisponible quand aucun événement n’est en cours, et les livraisons affichent le nombre d’étoiles réellement exigé par ce serveur. Les pierres bleues et vertes de rang 6 comptent désormais comme rang 6 (elles coûtaient l’énergie et les frais de retrait d’un rang 5)',
     luckGem1006:

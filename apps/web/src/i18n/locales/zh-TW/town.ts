@@ -5,6 +5,8 @@ export default {
   forum: '論壇',
   tabs: { news: '新聞', town: '居民', exchange: '兌換', rank: '排行', classroom: '教室', fund: '發展基金' },
   loadFailed: '讀取廣場失敗',
+  restFailed: '讀取餐廳資料失敗。',
+  retry: '重試',
   /** 嘻哈男孩可能去的地點（下標 = 地點編號） */
   places: {
     '1': '菜場',
