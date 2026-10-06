@@ -42,3 +42,25 @@ describe('随机奖励类型比例（backlog 352）', () => {
     );
   });
 });
+
+describe('bar.nim（最后一颗糖，问题记录 427-1）', () => {
+  const withNim = (f: (n: { tables: Record<string, Record<string, unknown>> }) => void) => {
+    const t = structuredClone(tuningJson) as unknown as {
+      bar: { nim: { tables: Record<string, Record<string, unknown>> } };
+    };
+    f(t.bar.nim);
+    return tuningSchema.safeParse(t).success;
+  };
+
+  it('合法配置通过；k、糖果数要是 [下限, 上限]，糖果数下限要大于 k 上限', () => {
+    expect(withNim(() => undefined)).toBe(true);
+    expect(withNim((n) => (n.tables.expert!.k = [5, 3]))).toBe(false);
+    expect(withNim((n) => (n.tables.expert!.pile = [5, 40]))).toBe(false);
+    expect(withNim((n) => (n.tables.novice!.pile = [3, 20]))).toBe(false);
+  });
+
+  it('失手概率在 0~1；先后只能是 choose 或 coin', () => {
+    expect(withNim((n) => (n.tables.novice!.mistake = 1.2))).toBe(false);
+    expect(withNim((n) => (n.tables.novice!.first = 'x'))).toBe(false);
+  });
+});

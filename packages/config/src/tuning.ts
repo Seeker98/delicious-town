@@ -10,6 +10,19 @@ const awardRates = z
 const int = z.number().int();
 /** 奖励（邀请等配置里用）：和后台补偿同样的五项 */
 const idNum = z.object({ id: int, num: int.min(1) });
+const range = z.tuple([int.min(1), int.min(1)]).refine(([lo, hi]) => lo <= hi, 'min must be <= max');
+/** 最后一颗糖的一张桌子（问题记录 427-1）：糖果数下限要大于每次最多拿的上限，免得一开局就能一把拿完 */
+const nimTable = z
+  .object({
+    cost: int.min(0),
+    k: range,
+    pile: range,
+    mistake: num.min(0).max(1),
+    first: z.enum(['choose', 'coin']),
+    renown: int.min(0),
+    awardLevel: int.min(1),
+  })
+  .refine((x) => x.pile[0] > x.k[1], 'pile min must be greater than k max');
 const rewardSchema = z.object({
   coin: int.min(1).optional(),
   diamond: int.min(1).optional(),
@@ -510,6 +523,11 @@ export const tuningSchema = z.object({
       winLevel: int.min(1),
       perfectLevel: int.min(1),
       tieRefund: int.min(0),
+    }),
+    /** 最后一颗糖（问题记录 427-1）：两张桌子，合计每天 dailyMax 局 */
+    nim: z.object({
+      dailyMax: int.min(1),
+      tables: z.object({ novice: nimTable, expert: nimTable }),
     }),
   }),
   tower: z.object({

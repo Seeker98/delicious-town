@@ -286,6 +286,13 @@
       "rings": [[0.05, 50], [0.15, 25], [0.3, 10], [0.5, 5]],
       "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
       "winLevel": 5, "perfectLevel": 6, "tieRefund": 1
+    },
+    "nim": {
+      "dailyMax": 10,
+      "tables": {
+        "novice": { "cost": 1, "k": [3, 3], "pile": [10, 20], "mistake": 0.5, "first": "choose", "renown": 1, "awardLevel": 2 },
+        "expert": { "cost": 2, "k": [3, 5], "pile": [20, 40], "mistake": 0, "first": "coin", "renown": 3, "awardLevel": 5 }
+      }
     }
   },
   "tower": {
