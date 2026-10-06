@@ -23,6 +23,11 @@ export interface AcquireResultDto {
   sellerGot: number;
 }
 
+/** 打理得到的食材（实际到账的数量） */
+export interface AcquireTendDto {
+  foods: Array<{ id: number; num: number }>;
+}
+
 /** 一家店的收购摘要：榜单、名下的店、在售都用 */
 export interface AcquireBriefDto {
   restId: number;

@@ -7,16 +7,20 @@ import {
   type AcquireRankDto,
   type AcquireRestDto,
   type AcquireResultDto,
+  type AcquireTendDto,
   type AcquireViewDto,
 } from '@dt/shared';
 import { gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
-import { createOp, flushOp, restLog, type Op, type OpResult } from '../../core/op';
+import { createOp, flushOp, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
+import { opNeedPick } from '../../core/scarcity';
 import { withRestaurants } from '../../db/tx';
 import { AppError } from '../../http/errors';
 import { isBanned } from '../admin/ban';
+import { awardFoodsPool } from '../award/random';
+import { addFoods } from '../cupboard/foods';
 import { linkedAccounts } from '../exchange/guard';
 import {
   buyBlock,
@@ -377,6 +381,51 @@ export function createAcquireService(d: GameDeps) {
     });
   }
 
+  /**
+   * 替老板打理（收购 PR 2）：被收购的店每个游戏日一次，得 tendFoods 份食材——和随机奖励一样的食材池
+   * （按店的等级，最高 5 级），带个人缺料倾向；老板第二天拿这一天的分红时 × (1 + tendBonus)
+   */
+  function tend(ctx: RestCtx): Promise<OpResult<AcquireTendDto>> {
+    return runOp(d, ctx, { feature: 'acquire', source: 'acquire.tend' }, async (op) => {
+      const s = await op.tx
+        .selectFrom('acquire_state as s')
+        .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+        .select(['s.owner_rest_id', 'o.name'])
+        .where('s.rest_id', '=', ctx.restaurantId)
+        .executeTakeFirst();
+      if (!s) throw invalidState('not_owned');
+      // 锁着自己的店，主键再挡一次
+      const done = await op.tx
+        .insertInto('acquire_tend')
+        .values({ rest_id: ctx.restaurantId, day: gameDay(op.now), created_at: op.now })
+        .onConflict((oc) => oc.columns(['rest_id', 'day']).doNothing())
+        .returning('day')
+        .executeTakeFirst();
+      if (!done) throw invalidState('tended');
+      const t = op.tuning.acquire;
+      const pool = awardFoodsPool(op.config.bundle.foods, op.rest.level);
+      const maxLevel = Math.min(op.rest.level, 5);
+      const pick = await opNeedPick(op);
+      const picked = new Map<number, number>();
+      for (let i = 0; i < t.tendFoods && pool.length > 0; i++) {
+        const id = pick(
+          (f) => (op.config.foods.get(f)?.level ?? 99) <= maxLevel,
+          () => pool[op.rng.int(pool.length)]!,
+        );
+        picked.set(id, (picked.get(id) ?? 0) + 1);
+      }
+      const foods: AcquireTendDto['foods'] = [];
+      for (const [id, num] of picked) {
+        // 实际到账的数量：满了丢掉的不算
+        const got = await addFoods(op, id, num, { source: 'acquire.tend' });
+        foods.push({ id, num: got.toCupboard + got.toFridge });
+      }
+      const n = foods.reduce((a, f) => a + f.num, 0);
+      restLog(op, 'acquire.tended', { owner: s.owner_rest_id, ownerName: s.name, n });
+      return { foods };
+    });
+  }
+
   /** 一批店的摘要：店名、等级、星级、身价、老板名字、挂牌；一条查询读完 */
   async function briefs(ids: number[], now: Date): Promise<Map<number, AcquireBriefDto>> {
     if (ids.length === 0) return new Map();
@@ -595,7 +644,7 @@ export function createAcquireService(d: GameDeps) {
     return { items: rows.map((x) => m.get(x.rest_id)!) };
   }
 
-  return { buy, redeem, release, list, unlist, view, rest, rank, market };
+  return { buy, redeem, release, list, unlist, tend, view, rest, rank, market };
 }
 
 export type AcquireService = ReturnType<typeof createAcquireService>;

@@ -40,5 +40,6 @@ export function acquireRoutes(svc: AcquireService): FastifyPluginAsync {
     r.post('/acquire/unlist', async (req) =>
       okOp(await svc.unlist(restCtxOf(req), parse(acquireRestBody, req.body))),
     );
+    r.post('/acquire/tend', async (req) => okOp(await svc.tend(restCtxOf(req))));
   };
 }
