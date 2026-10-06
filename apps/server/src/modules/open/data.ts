@@ -122,6 +122,16 @@ export function createOpenData(config: GameConfig) {
       exchange: { level: t.exchange.minLevel, days: t.exchange.minAccountDays },
       predict: { level: t.predict.minLevel, days: t.predict.minAccountDays },
       newbieExp: { maxLevel: t.settlement.newbieExp.maxLevel, rate: t.settlement.newbieExp.rate },
+      acquire: {
+        minStar: t.acquire.minStar,
+        taxRate: t.acquire.taxRate,
+        maxHoldings: t.acquire.maxHoldings,
+        dividendRate: t.acquire.dividendRate,
+        tendBonus: t.acquire.tendBonus,
+        minRounds: t.acquire.minRounds,
+        tendFoods: t.acquire.tendFoods,
+        protectDays: t.acquire.protectDays,
+      },
     };
   };
 

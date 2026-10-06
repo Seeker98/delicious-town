@@ -2,9 +2,10 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, getActivePinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import type { FriendRestDto } from '@dt/shared';
+import type { FriendRestDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useLocaleStore } from '../stores/locale';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import FriendRestView from './FriendRestView.vue';
 
@@ -21,6 +22,7 @@ vi.mock('../api/endpoints', () => ({
     mcTaste: vi.fn(),
     duelInfo: vi.fn(),
     friendDuel: vi.fn(),
+    acquireRest: vi.fn(),
   },
 }));
 
@@ -230,6 +232,33 @@ describe('FriendRestView', () => {
     const w = await mountView();
     expect(w.find('[data-testid="rest-name-report-open"]').exists()).toBe(false);
     expect(w.find('[data-testid="notice-report-open"]').exists()).toBe(false);
+  });
+
+  it('收购卡片（收购 PR 3）：别人的店显示；蟹老板、自己的店、区服关了收购不显示', async () => {
+    vi.mocked(endpoints.acquireRest).mockResolvedValue({
+      restId: 2,
+      name: '乙店',
+      level: 5,
+      star: 2,
+      base: 100_000,
+      heat: 1,
+      price: 100_000,
+      owner: null,
+      listed: null,
+      taxRate: 0.1,
+      protectedUntil: null,
+      acquireBlock: null,
+      listedBlock: 'not_listed',
+    });
+    const w = await mountView();
+    expect(w.find('[data-testid="acquire-card"]').exists()).toBe(true);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ npc: true }));
+    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ id: 1 }));
+    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail());
+    useRestaurantStore().rest = { disabledFeatures: ['acquire'] } as unknown as RestaurantDto;
+    expect((await mountView()).find('[data-testid="acquire-card"]').exists()).toBe(false);
   });
 
   it('蟹老板的店：英文界面写 Mr. Krab 和英文公告（服务器给的是中文）', async () => {

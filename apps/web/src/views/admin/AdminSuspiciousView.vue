@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
+  SuspiciousAcquireRow,
   SuspiciousBarRow,
   SuspiciousMultiGroup,
   SuspiciousRedeemRow,
@@ -17,13 +18,14 @@ import { useToastStore } from '../../stores/toast';
 import { formatNum } from '../../utils/format';
 
 /** 可疑数据（子项目 6B-2，设计 §5）：只读，只作提醒 */
-type Tab = 'bar' | 'surge' | 'multi' | 'redeem' | 'exchange';
+type Tab = 'bar' | 'surge' | 'multi' | 'redeem' | 'exchange' | 'acquire';
 const TABS: Array<[Tab, string]> = [
   ['bar', '酒吧'],
   ['surge', '资源暴涨'],
   ['multi', '多号'],
   ['redeem', '兑换码被锁'],
   ['exchange', '交易所'],
+  ['acquire', '收购拦截'],
 ];
 const SURGE: Array<['coin' | 'diamond' | 'exp', string]> = [
   ['coin', '银币'],
@@ -38,6 +40,7 @@ const bar = ref<SuspiciousBarRow[]>([]);
 const surge = ref<SuspiciousSurgeDto | null>(null);
 const multi = ref<SuspiciousMultiGroup[]>([]);
 const redeem = ref<SuspiciousRedeemRow[]>([]);
+const acquire = ref<SuspiciousAcquireRow[]>([]);
 const loading = ref(false);
 /** 请求序号：快速切换区服或标签时，丢弃先发出、后回来的旧响应（backlog 6B-2） */
 let seq = 0;
@@ -61,6 +64,9 @@ async function load() {
     } else if (tab.value === 'redeem') {
       const r = await adminApi.suspiciousRedeem(shardId);
       if (fresh()) redeem.value = r;
+    } else if (tab.value === 'acquire') {
+      const r = await adminApi.suspiciousAcquire(shardId);
+      if (fresh()) acquire.value = r;
     }
     // 交易所标签由 ExchangeGuardPanel 自己读取（156-2）
   } catch (e) {
@@ -183,7 +189,37 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
     </div>
   </template>
 
-  <template v-else>
+  <template v-else-if="tab === 'acquire'">
+    <p class="small text-muted">
+      收购时和目标店（或它的老板）近 30 天共用过设备或 IP，被拦下的记录；留 30 天，最多列 200 条。
+    </p>
+    <div v-if="loading" class="dt-empty">加载中…</div>
+    <div v-else-if="acquire.length === 0" class="dt-empty">没有拦截记录</div>
+    <table v-else class="table table-sm small">
+      <thead>
+        <tr>
+          <th>时间</th>
+          <th>买家</th>
+          <th>目标店</th>
+          <th>原因</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(r, i) in acquire" :key="i" :data-testid="`sus-acquire-${i}`">
+          <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+          <td>
+            <RouterLink :to="player(r.buyer.accountId)">{{ r.buyer.name }}</RouterLink>
+          </td>
+          <td>
+            <RouterLink :to="player(r.target.accountId)">{{ r.target.name }}</RouterLink>
+          </td>
+          <td>{{ r.reason === 'device' ? '共用设备' : '共用 IP' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </template>
+
+  <template v-else-if="tab === 'redeem'">
     <p class="small text-muted">兑换码输错次数按账号计，不分区服。</p>
     <div v-if="loading" class="dt-empty">加载中…</div>
     <div v-else-if="redeem.length === 0" class="dt-empty">没有被锁的账号</div>

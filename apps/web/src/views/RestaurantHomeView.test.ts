@@ -98,6 +98,7 @@ const dto: RestaurantDto = {
   headlines: { news: [], broadcast: null },
   boosts: [],
   disabledFeatures: [],
+  acquireOwner: null,
   devices: [
     { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: null, expiresAt: null },
     { slot: 4, name: '捕鼠夹', deviceType: 4, needStar: 2, unlocked: false, goodsId: null, expiresAt: null },
@@ -314,6 +315,16 @@ describe('RestaurantHomeView', () => {
     // 经验条也不再用亮黄色（问题记录 212）
     expect(w.find('[data-testid="exp-bar"]').classes()).toContain('dt-exp-bar');
     expect(w.find('[data-testid="exp-bar"]').classes()).not.toContain('bg-warning');
+  });
+
+  it('被收购时提示归谁所有，链到收购页“我的”（收购 PR 3）；没被收购不显示', async () => {
+    const w0 = await mountView();
+    expect(w0.find('[data-testid="home-acquired"]').exists()).toBe(false);
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, acquireOwner: { restId: 9, name: '大老板' } });
+    const w = await mountView();
+    const box = w.get('[data-testid="home-acquired"]');
+    expect(box.text()).toContain('你的餐厅归「大老板」所有');
+    expect(box.get('a').attributes('href')).toBe('/acquire?tab=mine');
   });
 
   it('加油：显示花费，点击后刷新', async () => {

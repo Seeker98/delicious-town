@@ -1,5 +1,6 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 import account from './account';
+import acquire from './acquire';
 import activity from './activity';
 import auth from './auth';
 import bar from './bar';
@@ -68,6 +69,7 @@ const zhCN = {
   exchange,
   predict,
   kuji,
+  acquire,
   site,
   fund,
   equip,

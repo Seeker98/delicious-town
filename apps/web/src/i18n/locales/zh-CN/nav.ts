@@ -16,6 +16,7 @@ export default {
     mc: '特色菜',
     temple: '神殿',
     kuji: '一番赏',
+    acquire: '收购',
     yard: '菜园',
     bar: '酒吧',
     tower: '厨塔',

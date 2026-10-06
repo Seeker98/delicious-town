@@ -110,6 +110,9 @@ export default {
         ? `${w}抽走了${p.line === 'deluxe' ? '豪華' : ''}一番賞的最後一張籤，拿下最後賞！`
         : `${w}在${p.line === 'deluxe' ? '豪華' : ''}一番賞抽中了 ${str(p.tier)} 賞！`,
     'kuji.win': (w, p) => `${w}在${p.line === 'deluxe' ? '豪華' : ''}一番賞抽中了 ${str(p.tier)} 賞`,
+    'acquire.big': (w, p) =>
+      `${w}以 ${formatNum(num(p.price))} 銀幣${p.way === 'listed' ? '買下' : '收購'}了「${str(p.name)}」`,
+    'acquire.redeem': (w, p) => `${w}以 ${formatNum(num(p.price))} 銀幣贖回了自己`,
     'fund.big': (w, p) => fundNews(w, p),
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) => `${w}買下了限定稱號「${x.icon?.(str(p.key))?.title ?? str(p.title)}」`,

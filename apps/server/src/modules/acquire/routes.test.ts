@@ -150,6 +150,40 @@ describe('收购接口（收购 PR 1）', () => {
     expect(invest.json.data.invest).toMatchObject([{ restId: a.restId, holdings: 2, dividendTotal: 5678 }]);
   });
 
+  it('餐厅总览带上老板（首页提示用，收购 PR 3）；区服关了收购就不带', async () => {
+    const shardId = await openShard();
+    const a = await playerIn(ctx, shardId);
+    const b = await playerIn(ctx, shardId);
+    const overview = async (cookie = b.cookie) =>
+      (await call(ctx.app, 'GET', '/api/v1/restaurant/overview', { cookie })).json.data.acquireOwner;
+    expect(await overview()).toBeNull();
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values({ rest_id: b.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: a.restId })
+      .execute();
+    const name = (
+      await ctx.deps.db
+        .selectFrom('restaurant')
+        .select('name')
+        .where('id', '=', a.restId)
+        .executeTakeFirstOrThrow()
+    ).name;
+    expect(await overview()).toEqual({ restId: a.restId, name });
+    // 关了收购的区服：有老板也不带
+    const offShard = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: offShard, override: JSON.stringify({ features: { acquire: false } }) })
+      .execute();
+    const a2 = await playerIn(ctx, offShard);
+    const b2 = await playerIn(ctx, offShard);
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values({ rest_id: b2.restId, shard_id: offShard, base: 100_000, heat: 1, owner_rest_id: a2.restId })
+      .execute();
+    expect(await overview(b2.cookie)).toBeNull();
+  });
+
   it('参数不对报 VALIDATION_FAILED；别的区服的店 404；功能关着报 FEATURE_DISABLED', async () => {
     const shardId = await openShard();
     const a = await playerIn(ctx, shardId);
@@ -162,7 +196,12 @@ describe('收购接口（收购 PR 1）', () => {
     expect(
       (await call(ctx.app, 'GET', `/api/v1/acquire/rest/${far.restId}`, { cookie: a.cookie })).status,
     ).toBe(404);
-    const off = await playerIn(ctx, await createShard(ctx.deps.db));
+    const offShard = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: offShard, override: JSON.stringify({ features: { acquire: false } }) })
+      .execute();
+    const off = await playerIn(ctx, offShard);
     expect((await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: off.cookie })).json.code).toBe(
       'FEATURE_DISABLED',
     );

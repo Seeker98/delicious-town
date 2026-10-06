@@ -24,6 +24,7 @@ const nav: Messages['nav'] = {
     mc: 'Signature dishes',
     temple: 'Temple',
     kuji: 'Ichiban Kuji',
+    acquire: 'Acquisitions',
     yard: 'Garden',
     bar: 'Bar',
     tower: 'Chef Tower',

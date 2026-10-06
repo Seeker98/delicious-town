@@ -1,0 +1,62 @@
+import type { Messages } from '../..';
+
+/** Acquisitions (issue 421). Amounts and percentages arrive already formatted */
+const acquire: Messages['acquire'] = {
+  title: 'Acquisitions',
+  tabs: { price: 'Valuations', market: 'For sale', invest: 'Investors', mine: 'Mine' },
+  loadFailed: 'Failed to load acquisitions',
+  failed: 'Action failed',
+  rule: (got, tax, max, div, bonus, days) =>
+    `To acquire someone's restaurant you pay its valuation: the previous owner (or the restaurant itself, if it was independent) gets ${got} and ${tax} goes to tax. You can own up to ${max} restaurants. Every day an acquired restaurant pays its owner a dividend of ${div} of the previous day's settlement coins, plus ${bonus} more on days it tended for the owner. An acquired restaurant can buy itself back at its valuation, and then can't be acquired again for ${days} days.`,
+  price: (coin) => `Valuation ${coin}`,
+  heat: (h) => `Heat ${h}`,
+  owner: (name) => `Owner: ${name}`,
+  free: 'Independent',
+  listed: (pct, coin, left) => `Listed at ${pct}: ${coin} coins, ${left} left`,
+  protectedLeft: (left) => `Just bought itself back; can be acquired again in ${left}`,
+  acquire: 'Acquire',
+  buyListed: 'Buy',
+  confirmAcquire: (name, coin, seller, got, tax) =>
+    `Acquire "${name}" for ${coin} coins?\n"${seller}" gets ${got} coins; tax is ${tax} coins.`,
+  confirmListed: (name, coin, seller, got, tax) =>
+    `Buy "${name}" at its listed price of ${coin} coins?\n"${seller}" gets ${got} coins; tax is ${tax} coins.`,
+  bought: (name) => `"${name}" is now yours`,
+  colRank: 'Rank',
+  colHoldings: (n) => `Owns ${n}`,
+  colValue: (coin) => `Total valuation ${coin}`,
+  colDividend: (coin) => `Dividends to date ${coin}`,
+  rankEmpty: 'No restaurants on the board yet',
+  marketEmpty: 'No restaurants are listed right now',
+  investEmpty: 'Nobody has acquired a restaurant yet',
+  myPrice: 'My valuation',
+  ownedBy: (name) => `Your restaurant is owned by "${name}"`,
+  independent: 'Your restaurant is independent',
+  tend: (n) => `Tend for the owner (get ${n} ingredients)`,
+  tendedToday: 'Already tended for the owner today',
+  tendDone: (n) => `Done! You got ${n} ingredients`,
+  redeem: (coin) => `Buy back (${coin} coins)`,
+  confirmRedeem: (coin, owner, got, tax, days) =>
+    `Buy your restaurant back for ${coin} coins?\nThe owner "${owner}" gets ${got} coins; tax is ${tax} coins. You can't be acquired again for ${days} days.`,
+  redeemed: 'Bought back! Your restaurant is independent again',
+  holdings: (n, max) => `Restaurants I own (${n} / ${max})`,
+  ownedNoBuy: "While you're owned, you can't acquire other restaurants",
+  holdingsEmpty: "You don't own any restaurants yet. You can acquire them from Valuations and For sale.",
+  dividend: (coin, tended) => `Yesterday's dividend ${coin} coins${tended ? ' (tended)' : ''}`,
+  noDividend: 'No dividend yesterday',
+  holdTended: 'Tended today',
+  holdNotTended: 'Not tended yet today',
+  list: 'List',
+  unlist: 'Unlist',
+  release: 'Let go',
+  rateOption: (pct, coin) => `${pct} (${coin} coins)`,
+  confirmList: (name, pct, coin, got, days) =>
+    `List "${name}" at ${pct} of its valuation (${coin} coins)?\nAt the current valuation you would get about ${got} coins if someone buys it (valuations change daily). The listing ends after ${days} days.`,
+  listDone: (name) => `"${name}" is listed`,
+  unlistDone: (name) => `"${name}" is no longer listed`,
+  confirmRelease: (name) => `Let go of "${name}"?\nNo refund; it becomes independent again.`,
+  releaseDone: (name) => `Let go of "${name}"`,
+  homeOwned: (name) => `Your restaurant is owned by "${name}"`,
+  homeLink: 'Tend or buy back',
+  cardTitle: 'Acquisition',
+};
+export default acquire;

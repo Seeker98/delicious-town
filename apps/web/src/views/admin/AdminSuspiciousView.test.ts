@@ -12,6 +12,7 @@ vi.mock('../../api/admin', () => ({
     suspiciousSurge: vi.fn(),
     suspiciousMulti: vi.fn(),
     suspiciousRedeem: vi.fn(),
+    suspiciousAcquire: vi.fn(),
   },
 }));
 
@@ -150,5 +151,28 @@ describe('backlog 6B-2：多号分组只列一部分账号时写明总数', () =
     await w.find('[data-testid="sus-tab-multi"]').trigger('click');
     await flushPromises();
     expect(w.text()).toContain('共 80 个账号，只列最近 2 个');
+  });
+
+  it('收购拦截（收购 PR 3）：时间、买家、目标店、原因，链到两个玩家', async () => {
+    vi.mocked(adminApi.suspiciousAcquire).mockResolvedValue([
+      {
+        at: '2026-10-06T04:00:00.000Z',
+        reason: 'device',
+        buyer: { restId: 3, name: '买家店', accountId: 9 },
+        target: { restId: 4, name: '目标店', accountId: 10 },
+      },
+    ]);
+    const w = await mountView();
+    await w.get('[data-testid="sus-tab-acquire"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.suspiciousAcquire).toHaveBeenCalledWith(1);
+    const row = w.get('[data-testid="sus-acquire-0"]');
+    expect(row.text()).toContain('买家店');
+    expect(row.text()).toContain('目标店');
+    expect(row.text()).toContain('共用设备');
+    expect(row.findAll('a').map((a) => a.attributes('href'))).toEqual([
+      '/admin/players/9',
+      '/admin/players/10',
+    ]);
   });
 });

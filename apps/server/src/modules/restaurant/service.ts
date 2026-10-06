@@ -58,8 +58,17 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
   }
 
   async function overview(restId: number): Promise<RestaurantDto> {
-    const row = await d.db.selectFrom('restaurant').selectAll().where('id', '=', restId).executeTakeFirst();
-    if (!row) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
+    // 被收购时的老板一起读出来（收购 PR 3：首页提示），不多一条查询
+    const joined = await d.db
+      .selectFrom('restaurant as r')
+      .leftJoin('acquire_state as s', 's.rest_id', 'r.id')
+      .leftJoin('restaurant as o', 'o.id', 's.owner_rest_id')
+      .selectAll('r')
+      .select(['s.owner_rest_id as acquire_owner_id', 'o.name as acquire_owner_name'])
+      .where('r.id', '=', restId)
+      .executeTakeFirst();
+    if (!joined) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
+    const { acquire_owner_id: ownerId, acquire_owner_name: ownerName, ...row } = joined;
     const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
@@ -97,6 +106,10 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         items: b.items,
         endsAt: b.endsAt.toISOString(),
       })),
+      acquireOwner:
+        ownerId !== null && isFeatureEnabled(settings, 'acquire')
+          ? { restId: ownerId, name: ownerName ?? '' }
+          : null,
       disabledFeatures: Object.entries(settings.features)
         .filter(([, on]) => on === false)
         .map(([k]) => k)

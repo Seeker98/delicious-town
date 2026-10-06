@@ -1,4 +1,5 @@
 import type { ErrorCode } from '@dt/shared';
+import { formatNum, formatPct } from '../../../utils/format';
 import type { NameResolver } from '../../zh-CN';
 
 /** 报错文案（问题记录 272）：服务端只传错误码和参数，文案在这里按语言拼 */
@@ -348,6 +349,34 @@ export default {
     rank_gap: '前 8 名只能由名次相差 3 以内的人挑战',
     npc: '不能和蟹老板切磋',
   },
+  /** 收购不能这样做（INVALID_STATE、scope = acquire 的 reason；收购 PR 3）：原因名和别的玩法重名，单独一张表 */
+  acquire: fns({
+    self: () => '不能收购自己的餐厅',
+    mine: () => '这家店已经在你名下了',
+    npc: () => '蟹老板的店不能收购',
+    banned: () => '这家店的账号被封了，不能收购',
+    not_listed: () => '这家店没有在挂牌',
+    star: () => '这家店星级不够，还不能被收购',
+    no_state: () => '这家店星级不够，还没有身价',
+    protected: () => '这家店刚赎身，还在保护期',
+    daily: () => '这家店今天被收购的次数满了，明天再来',
+    pair: () => '你们两家最近交易过，过几天再来',
+    buyer_owned: () => '你的餐厅被收购期间不能收购别的店',
+    holdings: () => '名下的店已经满了',
+    // 关联账号：用笼统的说法（设计 §1.3）
+    linked: () => '暂时不能收购这家店',
+    other_shard: () => '不是本区服的餐厅',
+    owner_changed: () => '这家店刚换了老板，请刷新后再看',
+    price_changed: (p) =>
+      p.price === undefined
+        ? '价格变了，请刷新后重新确认'
+        : `价格变了，现在是 ${formatNum(Number(p.price))} 银币，请重新确认`,
+    not_owned: () => '你的餐厅没有被收购',
+    not_owner: () => '这家店不在你名下',
+    list_rate: (p) =>
+      `挂牌价要在身价的 ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} ~ 100% 之间，5% 一档`,
+    tended: () => '今天已经替老板打理过了',
+  }),
   /** 已经做过了（ALREADY_DONE 的 what） */
   already: {
     activity_reward: '这份奖励已经领过了',

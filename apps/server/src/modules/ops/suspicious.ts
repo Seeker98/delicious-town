@@ -3,6 +3,7 @@ import {
   addDays,
   gameDay,
   gameTime,
+  type SuspiciousAcquireRow,
   type SuspiciousBarRow,
   type SuspiciousMultiGroup,
   type SuspiciousRedeemRow,
@@ -12,6 +13,8 @@ import {
 import type { Game } from '../../game';
 
 const KEEP_MS = 30 * 86_400_000;
+/** 收购拦截最多列出几条（收购 PR 3） */
+const ACQUIRE_BLOCKS_MAX = 200;
 /** 多号每组最多列出几个账号（最近登录的在前）；总数另给（backlog 6B-2） */
 export const MULTI_ACCOUNTS_MAX = 50;
 const SURGE_KINDS = ['coin', 'diamond', 'exp'] as const;
@@ -246,6 +249,37 @@ export function createSuspicious(game: Game) {
         .filter((f) => nameOf.has(f.accountId))
         .map((f) => ({ ...f, username: nameOf.get(f.accountId)! }))
         .sort((x, y) => y.fails - x.fails);
+    },
+
+    /** 收购时因为关联账号（共用设备 / IP）被拦下的记录（收购 PR 3）：本区服近 30 天，新的在前 */
+    async acquireBlocks(shardId: number): Promise<SuspiciousAcquireRow[]> {
+      const since = new Date(game.deps.now().getTime() - KEEP_MS);
+      const rows = await db
+        .selectFrom('acquire_block as k')
+        .innerJoin('restaurant as b', 'b.id', 'k.buyer_rest_id')
+        .innerJoin('restaurant as t', 't.id', 'k.target_rest_id')
+        .select([
+          'k.created_at',
+          'k.reason',
+          'b.id as buyer_id',
+          'b.name as buyer_name',
+          'b.account_id as buyer_account',
+          't.id as target_id',
+          't.name as target_name',
+          't.account_id as target_account',
+        ])
+        .where('k.shard_id', '=', shardId)
+        .where('k.created_at', '>=', since)
+        .orderBy('k.created_at', 'desc')
+        .orderBy('k.id', 'desc')
+        .limit(ACQUIRE_BLOCKS_MAX)
+        .execute();
+      return rows.map((r) => ({
+        at: r.created_at.toISOString(),
+        reason: r.reason,
+        buyer: { restId: r.buyer_id, name: r.buyer_name, accountId: r.buyer_account },
+        target: { restId: r.target_id, name: r.target_name, accountId: r.target_account },
+      }));
     },
   };
 }

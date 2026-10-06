@@ -675,7 +675,7 @@
     "tuning.acquire.minRounds": "前一天结算满几轮的店才发分红（轮，每轮 4 分钟；收购第二期起用）",
     "tuning.acquire.dividendCapRate": "老板每天分红合计不超过自己近几天日均结算银币 × 这个数（0~1；收购第二期起用）",
     "tuning.acquire.tendFoods": "打理一次得几份食材（份；收购第二期起用）",
-    "tuning.acquire.newsMinPrice": "多少银币以上的收购上新闻（银币；收购第三期起用）",
+    "tuning.acquire.newsMinPrice": "强收、买挂牌、赎身的价格到多少银币以上上新闻（银币）",
     "tuning.fund.days": "存期：存入后多少天到期（天）；只影响之后的新存款",
     "tuning.fund.returnRate": "到期领回本金的比例（0~1，向下取整）",
     "tuning.fund.earlyRate": "提前取出退回本金的比例（0~1，不能大于 returnRate；提前取出没有勋章）",

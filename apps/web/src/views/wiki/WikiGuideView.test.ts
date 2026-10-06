@@ -19,6 +19,16 @@ const guide: OpenGuideNumbers = {
   exchange: { level: 25, days: 5 },
   predict: { level: 25, days: 5 },
   newbieExp: { maxLevel: 35, rate: 1.5 },
+  acquire: {
+    minStar: 2,
+    taxRate: 0.1,
+    maxHoldings: 10,
+    dividendRate: 0.05,
+    tendBonus: 0.5,
+    minRounds: 90,
+    tendFoods: 5,
+    protectDays: 3,
+  },
 };
 const index = (g: OpenGuideNumbers | undefined) =>
   ({
@@ -82,5 +92,14 @@ describe('玩法攻略（问题记录 384）', () => {
     const w = await mountGuide();
     expect(w.text()).not.toContain('新手街只有');
     expect(w.text()).toContain('勤快');
+  });
+
+  it('旧响应有 guide、但缺后来加的数（收购 PR 3 审查）：缺数的那条不显示，别的照常，页面不报错', async () => {
+    const { acquire: _drop, ...old } = guide;
+    vi.mocked(endpoints.openIndex).mockResolvedValue(index(old as OpenGuideNumbers));
+    const w = await mountGuide();
+    expect(w.text()).toContain('勤快');
+    expect(w.text()).toContain('新手街');
+    expect(w.text()).not.toContain('收购');
   });
 });

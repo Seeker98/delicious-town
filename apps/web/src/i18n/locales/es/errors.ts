@@ -1,4 +1,5 @@
 import type { Messages } from '../..';
+import { formatNum, formatPct } from '../../../utils/format';
 import { plEs } from '../../helpers';
 
 const s = (x: unknown) => String(x);
@@ -358,6 +359,33 @@ const errors: Messages['errors'] = {
     rank_not_better: 'Solo puedes retar o tomar un puesto superior',
     rank_gap: 'En el top 8 solo puedes retar a alguien a 3 puestos o menos',
     npc: 'No puedes retar a Don Krab',
+  },
+  /** Adquisiciones (INVALID_STATE con scope = acquire) */
+  acquire: {
+    self: () => 'No puedes adquirir tu propio restaurante',
+    mine: () => 'Este restaurante ya es tuyo',
+    npc: () => 'El restaurante de Don Krab no se puede adquirir',
+    banned: () => 'La cuenta de este restaurante está bloqueada; no se puede adquirir',
+    not_listed: () => 'Este restaurante no está en venta',
+    star: () => 'Este restaurante aún no tiene estrellas suficientes para ser adquirido',
+    no_state: () => 'Este restaurante aún no tiene estrellas suficientes para tener valoración',
+    protected: () => 'Este restaurante acaba de recomprarse y sigue protegido',
+    daily: () => 'Este restaurante ya fue adquirido demasiadas veces hoy. Vuelve mañana',
+    pair: () => 'Vuestros dos restaurantes negociaron hace poco. Inténtalo dentro de unos días',
+    buyer_owned: () => 'Mientras tu restaurante tenga dueño, no puedes adquirir otros',
+    holdings: () => 'No puedes tener más restaurantes',
+    linked: () => 'Ahora mismo no puedes adquirir este restaurante',
+    other_shard: () => 'Ese restaurante no está en este servidor',
+    owner_changed: () => 'Este restaurante acaba de cambiar de dueño. Actualiza y vuelve a mirar',
+    price_changed: (p) =>
+      p.price === undefined
+        ? 'El precio cambió. Actualiza y vuelve a confirmar'
+        : `El precio cambió: ahora es de ${formatNum(Number(p.price))} ${plEs(p.price, 'moneda', 'monedas')}. Vuelve a confirmar`,
+    not_owned: () => 'Tu restaurante no tiene dueño',
+    not_owner: () => 'Este restaurante no es tuyo',
+    list_rate: (p) =>
+      `El precio de venta debe estar entre el ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} y el 100\u00a0% de la valoración, en pasos del 5\u00a0%`,
+    tended: () => 'Hoy ya atendiste para el dueño',
   },
   already: {
     activity_reward: 'Ya has reclamado esta recompensa',

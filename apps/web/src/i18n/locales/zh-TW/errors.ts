@@ -1,5 +1,6 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 import type { ErrorCode } from '@dt/shared';
+import { formatNum, formatPct } from '../../../utils/format';
 import type { NameResolver } from '../../zh-CN';
 
 /** 報錯文案（問題記錄 272）：服務端只傳錯誤碼和引數，文案在這裡按語言拼 */
@@ -349,6 +350,34 @@ export default {
     rank_gap: '前 8 名只能由名次相差 3 以內的人挑戰',
     npc: '不能和蟹老闆切磋',
   },
+  /** 收購不能這樣做（INVALID_STATE、scope = acquire 的 reason；收購 PR 3）：原因名和別的玩法重名，單獨一張表 */
+  acquire: fns({
+    self: () => '不能收購自己的餐廳',
+    mine: () => '這家店已經在你名下了',
+    npc: () => '蟹老闆的店不能收購',
+    banned: () => '這家店的賬號被封了，不能收購',
+    not_listed: () => '這家店沒有在掛牌',
+    star: () => '這家店星級不夠，還不能被收購',
+    no_state: () => '這家店星級不夠，還沒有身價',
+    protected: () => '這家店剛贖身，還在保護期',
+    daily: () => '這家店今天被收購的次數滿了，明天再來',
+    pair: () => '你們兩家最近交易過，過幾天再來',
+    buyer_owned: () => '你的餐廳被收購期間不能收購別的店',
+    holdings: () => '名下的店已經滿了',
+    // 關聯賬號：用籠統的說法（設計 §1.3）
+    linked: () => '暫時不能收購這家店',
+    other_shard: () => '不是本區服的餐廳',
+    owner_changed: () => '這家店剛換了老闆，請重新整理後再看',
+    price_changed: (p) =>
+      p.price === undefined
+        ? '價格變了，請重新整理後重新確認'
+        : `價格變了，現在是 ${formatNum(Number(p.price))} 銀幣，請重新確認`,
+    not_owned: () => '你的餐廳沒有被收購',
+    not_owner: () => '這家店不在你名下',
+    list_rate: (p) =>
+      `掛牌價要在身價的 ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} ~ 100% 之間，5% 一檔`,
+    tended: () => '今天已經替老闆打理過了',
+  }),
   /** 已經做過了（ALREADY_DONE 的 what） */
   already: {
     activity_reward: '這份獎勵已經領過了',

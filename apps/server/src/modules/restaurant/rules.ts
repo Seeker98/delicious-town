@@ -71,6 +71,7 @@ export interface OverviewExtra {
   cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
   disabledFeatures: string[];
+  acquireOwner?: { restId: number; name: string } | null;
   boosts: ActiveBoostDto[];
 }
 
@@ -139,6 +140,7 @@ export function toRestaurantDto(
     boosts: extra.boosts,
     headlines: extra.headlines,
     disabledFeatures: extra.disabledFeatures,
+    acquireOwner: extra.acquireOwner ?? null,
     createdAt: r.created_at.toISOString(),
   };
 }

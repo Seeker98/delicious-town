@@ -48,6 +48,13 @@ export interface SuspiciousRedeemRow {
   /** 还要锁多少秒 */
   ttlSec: number;
 }
+/** 收购时被拦下的关联账号（收购 PR 3） */
+export interface SuspiciousAcquireRow {
+  at: string;
+  reason: 'device' | 'ip';
+  buyer: { restId: number; name: string; accountId: number };
+  target: { restId: number; name: string; accountId: number };
+}
 export const suspiciousQuery = z.object({
   shardId: z.coerce.number().int().positive(),
   // 不存在的日期（如 2026-02-30）在这里拦下报 400，不再进到查询里报 500（backlog 6B-2）

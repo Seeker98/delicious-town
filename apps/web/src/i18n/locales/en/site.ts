@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    acquire1006:
+      'New feature "Acquisitions" (under More): restaurants with 2+ stars have a valuation, and you can acquire someone else\'s restaurant at that price. The previous owner gets 90% and 10% is tax. Acquired restaurants pay their owner a daily dividend; tending for the owner once a day gives you 5 ingredients and raises their dividend by half. You can buy your restaurant back at its valuation, and owners can list a restaurant at a discount or let it go. Other restaurants\' pages show their valuation and owner, and acquisitions, listing purchases and buy-backs of 10,000,000 coins or more make the news',
     backlog8:
       'In the game wiki’s strategy guide, the recipe counts of Newbie Street and the largest street, the recipes needed for 2 stars, the takeaway and Exchange requirements and the early EXP bonus now follow the game’s current default values; the duel rules also list which stats each of Look, Aroma, Taste, Shape and Nutrition uses based on the current scoring weights',
     perf1006:

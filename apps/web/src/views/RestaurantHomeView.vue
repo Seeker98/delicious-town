@@ -276,6 +276,15 @@ onBeforeUnmount(() => {
       </span>
     </div>
     <AnnounceBanner :items="announcements" />
+    <!-- 被收购时（问题记录 421）：归谁所有，去收购页打理、赎身 -->
+    <div
+      v-if="rest.acquireOwner"
+      class="alert alert-info py-1 px-2 small mt-2 mb-0"
+      data-testid="home-acquired"
+    >
+      {{ t.acquire.homeOwned(rest.acquireOwner.name) }}
+      <RouterLink to="/acquire?tab=mine" class="ms-1">{{ t.acquire.homeLink }} ›</RouterLink>
+    </div>
     <HiphopCard :rest-id="rest.id" class="mt-2" @changed="load" />
     <div v-if="rest.isPlanktonHost" class="alert alert-warning py-2 small" data-testid="plankton">
       <div>

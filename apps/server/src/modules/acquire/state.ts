@@ -1,8 +1,7 @@
-import type { Kysely, Selectable, Transaction } from 'kysely';
+import { sql, type Kysely, type Selectable, type Transaction } from 'kysely';
 import { addDays, gameDay } from '@dt/shared';
 import type { AcquireStateTable, DB } from '../../db/schema';
-import { incomeSums } from './income';
-import { basePrice, type T } from './rules';
+import { basePrice, windowDays, type T } from './rules';
 
 export type AcquireStateRow = Selectable<AcquireStateTable>;
 
@@ -11,10 +10,24 @@ export function priceWindow(today: string, t: T): { from: string; to: string } {
   return { from: addDays(today, -t.priceDays), to: today };
 }
 
-/** 按近 priceDays 天的收入算一家店的基础身价（不写库） */
+/** 全表最早的汇总日（day 有索引）；一行都没有为 null */
+export async function firstIncomeDay(db: Kysely<DB>): Promise<string | null> {
+  const r = await db
+    .selectFrom('rest_income_day')
+    .select((eb) => eb.fn.min('day').as('first'))
+    .executeTakeFirst();
+  return r?.first ?? null;
+}
+
+/** 按近 priceDays 天的收入算一家店的基础身价（不写库）；最早的汇总日一起查，一条查询 */
 export async function baseOf(db: Kysely<DB>, restId: number, t: T, now: Date): Promise<number> {
   const w = priceWindow(gameDay(now), t);
-  return basePrice((await incomeSums(db, [restId], w.from, w.to)).get(restId) ?? 0, t);
+  const r = await sql<{ coin: string | number | null; first: string | null }>`
+    select (select sum(coin) from rest_income_day
+              where rest_id = ${restId} and day >= ${w.from} and day < ${w.to}) as coin,
+           (select min(day) from rest_income_day)::text as first`.execute(db);
+  const row = r.rows[0];
+  return basePrice(Number(row?.coin ?? 0), t, windowDays(w, row?.first ?? null, t));
 }
 
 /** 事务里锁住一家店的收购状态 */

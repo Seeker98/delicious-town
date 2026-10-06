@@ -1,0 +1,62 @@
+import type { Messages } from '../..';
+
+/** Adquisiciones (incidencia 421). Las cantidades y porcentajes llegan ya formateados */
+const acquire: Messages['acquire'] = {
+  title: 'Adquisiciones',
+  tabs: { price: 'Valoraciones', market: 'En venta', invest: 'Inversores', mine: 'Lo mío' },
+  loadFailed: 'No se pudieron cargar las adquisiciones',
+  failed: 'La acción falló',
+  rule: (got, tax, max, div, bonus, days) =>
+    `Para adquirir el restaurante de otro pagas su valoración: el dueño anterior (o el propio restaurante, si era independiente) recibe el ${got} y el ${tax} es impuesto. Puedes tener hasta ${max} restaurantes. Cada día un restaurante adquirido paga a su dueño un dividendo del ${div} de las monedas de liquidación del día anterior, y un ${bonus} más los días en que atendió al dueño. Un restaurante adquirido puede recomprarse por su valoración y después no puede volver a ser adquirido durante ${days} días.`,
+  price: (coin) => `Valoración ${coin}`,
+  heat: (h) => `Popularidad ${h}`,
+  owner: (name) => `Dueño: ${name}`,
+  free: 'Independiente',
+  listed: (pct, coin, left) => `En venta al ${pct}: ${coin} monedas, quedan ${left}`,
+  protectedLeft: (left) => `Acaba de recomprarse; podrá ser adquirido de nuevo en ${left}`,
+  acquire: 'Adquirir',
+  buyListed: 'Comprar',
+  confirmAcquire: (name, coin, seller, got, tax) =>
+    `¿Adquirir «${name}» por ${coin} monedas?\n«${seller}» recibe ${got} monedas; el impuesto es de ${tax} monedas.`,
+  confirmListed: (name, coin, seller, got, tax) =>
+    `¿Comprar «${name}» a su precio de venta de ${coin} monedas?\n«${seller}» recibe ${got} monedas; el impuesto es de ${tax} monedas.`,
+  bought: (name) => `«${name}» ahora es tuyo`,
+  colRank: 'Puesto',
+  colHoldings: (n) => `Tiene ${n}`,
+  colValue: (coin) => `Valoración total ${coin}`,
+  colDividend: (coin) => `Dividendos acumulados ${coin}`,
+  rankEmpty: 'Todavía no hay restaurantes en la tabla',
+  marketEmpty: 'Ahora mismo no hay restaurantes en venta',
+  investEmpty: 'Todavía nadie ha adquirido un restaurante',
+  myPrice: 'Mi valoración',
+  ownedBy: (name) => `Tu restaurante pertenece a «${name}»`,
+  independent: 'Tu restaurante es independiente',
+  tend: (n) => `Atender para el dueño (recibes ${n} ingredientes)`,
+  tendedToday: 'Hoy ya atendiste para el dueño',
+  tendDone: (n) => `¡Hecho! Recibiste ${n} ingredientes`,
+  redeem: (coin) => `Recomprar (${coin} monedas)`,
+  confirmRedeem: (coin, owner, got, tax, days) =>
+    `¿Recomprar tu restaurante por ${coin} monedas?\nEl dueño «${owner}» recibe ${got} monedas; el impuesto es de ${tax} monedas. No podrán adquirirte de nuevo durante ${days} días.`,
+  redeemed: '¡Recomprado! Tu restaurante vuelve a ser independiente',
+  holdings: (n, max) => `Mis restaurantes (${n} / ${max})`,
+  ownedNoBuy: 'Mientras tu restaurante tenga dueño, no puedes adquirir otros',
+  holdingsEmpty: 'Todavía no tienes restaurantes. Puedes adquirirlos en Valoraciones y En venta.',
+  dividend: (coin, tended) => `Dividendo de ayer ${coin} monedas${tended ? ' (atendido)' : ''}`,
+  noDividend: 'Ayer no hubo dividendo',
+  holdTended: 'Atendido hoy',
+  holdNotTended: 'Hoy aún no atendido',
+  list: 'Poner en venta',
+  unlist: 'Retirar',
+  release: 'Soltar',
+  rateOption: (pct, coin) => `${pct} (${coin} monedas)`,
+  confirmList: (name, pct, coin, got, days) =>
+    `¿Poner «${name}» en venta al ${pct} de su valoración (${coin} monedas)?\nCon la valoración actual recibirías unas ${got} monedas si alguien lo compra (la valoración cambia cada día). La venta termina a los ${days} días.`,
+  listDone: (name) => `«${name}» está en venta`,
+  unlistDone: (name) => `«${name}» ya no está en venta`,
+  confirmRelease: (name) => `¿Soltar «${name}»?\nNo se devuelve el dinero; vuelve a ser independiente.`,
+  releaseDone: (name) => `Soltaste «${name}»`,
+  homeOwned: (name) => `Tu restaurante pertenece a «${name}»`,
+  homeLink: 'Atender o recomprar',
+  cardTitle: 'Adquisición',
+};
+export default acquire;

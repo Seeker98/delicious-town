@@ -174,6 +174,8 @@ export default {
           '穿上廚具，結算收益會更高。',
           (n: G) =>
             `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成（1 級 ${formatPct(n.newbieExp.rate, { sign: true })}，逐級減少），前期升級很快。`,
+          (n: G) =>
+            `${n.acquire.minStar} 星以上的餐廳有身價、可以被收購：在“更多 → 收購”裡付它的身價就能收下，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是稅，名下最多 ${n.acquire.maxHoldings} 家。被收購的店每天給老闆分紅（前一天結算銀幣的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，滿 ${n.acquire.minRounds} 輪才發），被收購的店每天替老闆打理一次能得 ${n.acquire.tendFoods} 份食材，老闆那天的分紅再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收購了也可以按身價贖身，贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
         ],
       },
       {
