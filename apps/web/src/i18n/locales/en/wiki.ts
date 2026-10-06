@@ -92,9 +92,9 @@ const wiki: Messages['wiki'] = {
     suitTier: (n) => `${n} ${plEn(n, 'piece', 'pieces')}`,
   },
   gift: {
-    randomGoods: (level, num) => `A random Lv. ${level} item ×${num}`,
-    randomFoods: (level, num) => `Random Lv. ${level} common ingredients ×${num}`,
-    masterFoods: (num) => `Random universal ingredients ×${num}`,
+    randomGoods: (level, num) => `A random Lv. ${level} item×${num}`,
+    randomFoods: (level, num) => `Random Lv. ${level} common ingredients×${num}`,
+    masterFoods: (num) => `Random universal ingredients×${num}`,
     range: (min, max, unit) => `${unit} ${min}–${max}`,
     note: 'Only lists what it can contain, not the odds.',
   },

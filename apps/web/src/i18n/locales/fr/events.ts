@@ -70,7 +70,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       const caught = p.punished
         ? `, s'est fait attraper par votre border collie et a laissé ${foodName(Number(p.punished))}`
         : '';
-      return `${who} a volé votre ${foodName(Number(p.foodsId))} × ${String(p.num)}${caught}`;
+      return `${who} a volé votre ${foodName(Number(p.foodsId))}×${String(p.num)}${caught}`;
     }
     case 'friend.accept':
       return `${who} a accepté votre demande d'ami`;

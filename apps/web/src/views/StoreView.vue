@@ -227,7 +227,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       />
       <div class="flex-fill">
         <div>
-          <b>{{ catalog.goodsName(it.goodsId) }}</b> <span class="small text-muted">×{{ it.num }}</span>
+          <b>{{ catalog.goodsName(it.goodsId) }}</b
+          ><span class="small text-muted">{{ t.common.times }}{{ it.num }}</span>
         </div>
         <div class="small text-muted">{{ catalog.goodsMap.get(it.goodsId)?.desc }}</div>
       </div>
