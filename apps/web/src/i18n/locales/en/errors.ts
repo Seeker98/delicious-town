@@ -339,6 +339,8 @@ const errors: Messages['errors'] = {
     no_round: 'This round is over. Start a new one.',
     not_passed: "You haven't passed this stage yet",
     no_aim: 'Aim before you throw',
+    need_first: 'Choose who goes first',
+    nim_started: 'This game has already started; you can’t choose who goes first now',
     krab_broke: "Mr. Krab's money bag is empty",
     no_bless: 'Nobody has made a wish today yet',
     foods_not_allowed: "This ingredient can't be exchanged",

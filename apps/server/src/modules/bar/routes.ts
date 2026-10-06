@@ -7,6 +7,9 @@ import {
   barExchangeBody,
   barFgBody,
   barMemoryAnswerBody,
+  barNimFirstBody,
+  barNimStartBody,
+  barNimTakeBody,
   barNumBody,
   barSlotBody,
 } from '@dt/shared';
@@ -40,6 +43,15 @@ export function barRoutes(svc: BarService): FastifyPluginAsync {
     );
     r.post('/bar/memory/next', async (req) => okOp(await svc.memoryNext(restCtxOf(req))));
     r.post('/bar/memory/stop', async (req) => okOp(await svc.memoryStop(restCtxOf(req))));
+    r.post('/bar/nim/start', async (req) =>
+      okOp(await svc.nimStart(restCtxOf(req), parse(barNimStartBody, req.body))),
+    );
+    r.post('/bar/nim/first', async (req) =>
+      okOp(await svc.nimFirst(restCtxOf(req), parse(barNimFirstBody, req.body))),
+    );
+    r.post('/bar/nim/take', async (req) =>
+      okOp(await svc.nimTake(restCtxOf(req), parse(barNimTakeBody, req.body))),
+    );
     r.post('/bar/darts/start', async (req) => okOp(await svc.dartsStart(restCtxOf(req))));
     r.post('/bar/darts/aim', async (req) => okOp(await svc.dartsAim(restCtxOf(req))));
     r.post('/bar/darts/throw', async (req) =>

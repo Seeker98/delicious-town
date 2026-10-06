@@ -343,6 +343,8 @@ const errors: Messages['errors'] = {
     no_round: 'Cette partie est terminée. Commencez-en une nouvelle.',
     not_passed: "Vous n'avez pas encore réussi cette étape",
     no_aim: 'Visez avant de lancer',
+    need_first: 'Choisissez qui commence',
+    nim_started: 'La partie a déjà commencé ; vous ne pouvez plus choisir qui commence',
     krab_broke: 'La bourse de M. Krab est vide',
     no_bless: "Personne n'a encore fait de vœu aujourd'hui",
     foods_not_allowed: 'Cet ingrédient ne peut pas être échangé',

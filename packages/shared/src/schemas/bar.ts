@@ -20,6 +20,12 @@ export const barMemoryAnswerBody = z.object({
 /** 上限放到 1 天：瞄准后放久了再投也按服务端时间判分，不报参数错误（PR28 遗留） */
 export const barDartsThrowBody = z.object({ elapsedMs: z.number().int().min(0).max(86_400_000) });
 
+// ---------- 最后一颗糖（问题记录 427-1） ----------
+export const barNimStartBody = z.object({ table: z.enum(['novice', 'expert']) });
+export const barNimFirstBody = z.object({ who: z.enum(['me', 'bartender']) });
+/** 上限由服务端按本局的 k 和剩余再查 */
+export const barNimTakeBody = z.object({ num: z.number().int().min(1).max(99) });
+
 export type BarResultDto = 'win' | 'draw' | 'lose';
 
 /** 随机奖励（规格书 00 §0.8） */
@@ -78,6 +84,46 @@ export interface BarDto {
     round: { level: number; passed: boolean; seq: number[] | null; leftMs: number | null } | null;
   };
   darts: { cost: number; played: number; max: number; round: DartsDto | null };
+  /** 最后一颗糖：两张桌子合计的次数；进行中的局（全部公开） */
+  nim: { played: number; max: number; tables: Record<NimTable, NimTableInfoDto>; round: NimDto | null };
+}
+
+export type NimTable = 'novice' | 'expert';
+
+/** 一张桌子给前端看的数值（不含调酒师的失手概率） */
+export interface NimTableInfoDto {
+  cost: number;
+  /** 每次最多拿几颗的范围 */
+  k: [number, number];
+  /** 开局糖果数的范围 */
+  pile: [number, number];
+  renown: number;
+  awardLevel: number;
+  /** choose = 玩家自己选先后，coin = 抛硬币 */
+  first: 'choose' | 'coin';
+}
+
+export interface NimMoveDto {
+  who: 'me' | 'bartender';
+  take: number;
+}
+
+/** 最后一颗糖的局面 */
+export interface NimDto {
+  table: NimTable;
+  k: number;
+  /** 开局的糖果数 */
+  pile: number;
+  left: number;
+  log: NimMoveDto[];
+  /** 新手桌还没选先后 */
+  needFirst: boolean;
+  /** 高手桌抛硬币的结果；新手桌为 null */
+  coin: 'me' | 'bartender' | null;
+  /** 结束时的输赢；进行中为 null */
+  result: 'win' | 'lose' | null;
+  renown: number;
+  award: BarAwardDto | null;
 }
 
 /** 魔鬼辣杯的局面；特辣酒位置只在结束时给出 */

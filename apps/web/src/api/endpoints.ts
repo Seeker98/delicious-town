@@ -37,6 +37,7 @@ import type {
   DevilDto,
   MemoryAnswerDto,
   MemoryRoundDto,
+  NimDto,
   FeastResultDto,
   HammerResultDto,
   NewsPageDto,
@@ -437,6 +438,9 @@ export const endpoints = {
   barDartsStart: () => api.post<DartsDto>('/api/v1/bar/darts/start'),
   barDartsAim: () => api.post<DartsAimDto>('/api/v1/bar/darts/aim'),
   barDartsThrow: (elapsedMs: number) => api.post<DartsThrowDto>('/api/v1/bar/darts/throw', { elapsedMs }),
+  barNimStart: (table: 'novice' | 'expert') => api.post<NimDto>('/api/v1/bar/nim/start', { table }),
+  barNimFirst: (who: 'me' | 'bartender') => api.post<NimDto>('/api/v1/bar/nim/first', { who }),
+  barNimTake: (num: number) => api.post<NimDto>('/api/v1/bar/nim/take', { num }),
   tower: () => api.get<TowerDto>('/api/v1/tower'),
   towerChallenge: (floor: number, test: boolean) =>
     api.post<DuelResultDto>('/api/v1/tower/challenge', { floor, test }),

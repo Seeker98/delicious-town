@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    nim1007:
+      'Nouveau jeu au bar, « Le dernier bonbon » : à tour de rôle avec le barman, prenez quelques bonbons dans un tas (chaque table a sa limite) ; celui qui prend le dernier gagne. La table débutants coûte 1 bon mystère, vous choisissez qui commence et le barman se trompe parfois ; la table experts coûte 2 bons mystère, une pièce décide qui commence et le barman ne se trompe jamais. Une victoire donne de la renommée et un prix ; 10 parties par jour pour les deux tables',
     homeLinks1007:
       'Accueil réorganisé : les liens texte ont tous la couleur de la marque, sans soulignement, et finissent par « › » ; le pointage est un lien texte, une coche fine s’affiche une fois pointé et la ligne du cadeau disparaît ; remettre de l’huile est une icône avec du texte au lieu d’un bouton ; les raccourcis ustensiles, entrepôt et boutique sont remplacés par « Recettes apprises/total » et votre spécialité en vente ; une nouvelle ligne « Patrimoine » indique la valeur totale des restaurants que vous possédez, avec un lien vers les Rachats ; les nouveaux restaurants qui n’ont encore réglé aucun tour accèdent aussi à l’historique des gains et aux étages depuis l’accueil. Dans Plus, Inviter des amis (dans Mon compte), Météo (en haut à droite de l’accueil), Rachats, Étages et tables et Historique des gains disparaissent, Infos du restaurant passe dans Autres et « Ustensiles et points » devient simplement « Ustensiles »',
     npc1007:

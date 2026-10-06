@@ -2,11 +2,12 @@ import type { Kysely } from 'kysely';
 import { GOODS, type GameConfig } from '@dt/config';
 import { gameDay, type BarDto } from '@dt/shared';
 import type { DB, RestaurantRow } from '../../db/schema';
-import { getDaily } from '../counter/dailyCounter';
+import { getDailies } from '../counter/dailyCounter';
 import { resultDto } from './common';
 import { devilView, type DevilState } from './devil';
 import { memoryResume, type MemoryState } from './memory';
-import { peekRound } from './round';
+import { nimTables, nimView, type NimState } from './nim';
+import { peekRounds } from './round';
 import { cupRound, slotFloorLeft, type BarResult, type BarTuning } from './rules';
 
 export async function barView(
@@ -18,7 +19,8 @@ export async function barView(
 ): Promise<BarDto> {
   const day = gameDay(now);
   // 互不依赖的查询一起发（性能第二轮：原来一条接一条，开发服 17 毫秒左右）。只从连接池调用，不在事务里
-  const [s, items, acc, stats, devil, memory, darts, memoryPlayed, dartsPlayed] = await Promise.all([
+  // 进行中的局、每日次数各一条查询（最后一颗糖加进来以后查询条数不变）
+  const [s, items, acc, stats, rounds, daily] = await Promise.all([
     db.selectFrom('bar_state').selectAll().where('rest_id', '=', rest.id).executeTakeFirst(),
     db
       .selectFrom('store_item')
@@ -37,12 +39,13 @@ export async function barView(
       .where('rest_id', '=', rest.id)
       .orderBy('award_id')
       .execute(),
-    peekRound<DevilState>(db, rest.id, 'devil'),
-    peekRound<MemoryState>(db, rest.id, 'memory'),
-    peekRound<{ throws: number[]; aim: unknown }>(db, rest.id, 'darts'),
-    getDaily(db, rest.id, 'bar.memory', day),
-    getDaily(db, rest.id, 'bar.darts', day),
+    peekRounds(db, rest.id),
+    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim'], day),
   ]);
+  const devil = rounds.devil as DevilState | undefined;
+  const memory = rounds.memory as MemoryState | undefined;
+  const darts = rounds.darts as { throws: number[]; aim: unknown } | undefined;
+  const nim = rounds.nim as NimState | undefined;
   const have = (id: number) => {
     const r = items.find((x) => x.goods_id === id);
     return r && (r.expires_at === null || r.expires_at > now) ? r.num : 0;
@@ -81,7 +84,7 @@ export async function barView(
     devil: { stakes: t.devil.stakes, round: devil ? devilView(devil) : null },
     memory: {
       cost: t.memory.cost,
-      played: memoryPlayed,
+      played: daily['bar.memory']!,
       max: t.memory.dailyMax,
       flashMs: t.memory.flashMs,
       gapMs: t.memory.gapMs,
@@ -89,9 +92,15 @@ export async function barView(
     },
     darts: {
       cost: t.darts.cost,
-      played: dartsPlayed,
+      played: daily['bar.darts']!,
       max: t.darts.dailyMax,
       round: darts ? { throws: darts.throws, aiming: darts.aim !== null } : null,
+    },
+    nim: {
+      played: daily['bar.nim']!,
+      max: t.nim.dailyMax,
+      tables: nimTables(t.nim),
+      round: nim ? nimView(nim) : null,
     },
   };
 }

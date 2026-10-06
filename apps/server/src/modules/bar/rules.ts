@@ -1,4 +1,5 @@
 import type { Tuning } from '@dt/config';
+import type { Rng } from '@dt/shared';
 
 export type BarTuning = Tuning['bar'];
 /** 1 胜 / 0 平 / -1 负（bar_state 的 *_result 列） */
@@ -105,4 +106,14 @@ export function memoryWindow(
 ): { showMs: number; earliest: number; latest: number } {
   const showMs = len * m.flashMs + (len - 1) * m.gapMs;
   return { showMs, earliest: showMs - m.earlyMs, latest: showMs + m.answerBaseMs + len * m.answerPerItemMs };
+}
+
+/**
+ * 最后一颗糖的调酒师（设计 §4.2）：剩余 mod (k+1) 不为 0 时拿余数，让剩下的是 k+1 的倍数；
+ * 新手桌有 mistake 的概率失手；必输局面在 1~min(k, 剩余) 里随便拿
+ */
+export function nimBartenderTake(left: number, k: number, mistake: number, rng: Rng): number {
+  const r = left % (k + 1);
+  if (r !== 0 && !rng.chance(mistake)) return r;
+  return 1 + rng.int(Math.min(k, left));
 }

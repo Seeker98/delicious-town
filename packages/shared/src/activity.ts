@@ -25,6 +25,7 @@ export const ACTIVITY_ACTIONS: Readonly<Record<string, string>> = {
   'bar.devil': '魔鬼辣杯',
   'bar.darts': '飞镖',
   'bar.memory': '记忆调酒',
+  'bar.nim': '最后一颗糖',
   'tower.challenge': '厨塔挑战',
   'tower.friendDuel': '与好友切磋',
   'tower.rank': '赛厨榜挑战',

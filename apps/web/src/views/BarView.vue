@@ -10,13 +10,14 @@ import DartsPanel from '../components/bar/DartsPanel.vue';
 import DevilPanel from '../components/bar/DevilPanel.vue';
 import FgPanel from '../components/bar/FgPanel.vue';
 import MemoryPanel from '../components/bar/MemoryPanel.vue';
+import NimPanel from '../components/bar/NimPanel.vue';
 import NumPanel from '../components/bar/NumPanel.vue';
 import SlotPanel from '../components/bar/SlotPanel.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 
-type Tab = 'fg' | 'cup' | 'num' | 'slot' | 'devil' | 'memory' | 'darts';
-const TABS: readonly Tab[] = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts'];
+type Tab = 'fg' | 'cup' | 'num' | 'slot' | 'devil' | 'memory' | 'darts' | 'nim';
+const TABS: readonly Tab[] = ['fg', 'cup', 'num', 'slot', 'devil', 'memory', 'darts', 'nim'];
 const KEY = 'dt_bar_tab';
 function savedTab(): Tab {
   try {
@@ -78,6 +79,7 @@ onMounted(load);
     <SlotPanel v-else-if="tab === 'slot'" :data="data" @reload="load" />
     <DevilPanel v-else-if="tab === 'devil'" :data="data" @reload="load" />
     <MemoryPanel v-else-if="tab === 'memory'" :data="data" @reload="load" />
-    <DartsPanel v-else :data="data" @reload="load" />
+    <DartsPanel v-else-if="tab === 'darts'" :data="data" @reload="load" />
+    <NimPanel v-else :data="data" @reload="load" />
   </KeepAlive>
 </template>

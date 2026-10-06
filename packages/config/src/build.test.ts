@@ -587,6 +587,25 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.darts.perfectLevel).toBe(6);
     expect(bar.darts.rings[0]).toEqual([0.05, 50]);
   });
+
+  it('最后一颗糖的数值（问题记录 427-1）', () => {
+    const { bundle } = realBuild();
+    expect(bundle!.tuning.bar.nim).toEqual({
+      dailyMax: 10,
+      tables: {
+        novice: {
+          cost: 1,
+          k: [3, 3],
+          pile: [10, 20],
+          mistake: 0.5,
+          first: 'choose',
+          renown: 1,
+          awardLevel: 2,
+        },
+        expert: { cost: 2, k: [3, 5], pile: [20, 40], mistake: 0, first: 'coin', renown: 3, awardLevel: 5 },
+      },
+    });
+  });
 });
 
 describe('嘻哈男孩、排行（子项目 4E-2）', () => {

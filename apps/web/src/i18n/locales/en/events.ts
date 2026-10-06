@@ -152,6 +152,8 @@ const events: Messages['events'] = {
         : `Devil's Chili: survived ${n(p, 'survived')} ${plEn(n(p, 'survived'), 'cup', 'cups')}, then went down`,
     'bar.memory': (p) =>
       `Memory Mixing level ${n(p, 'level')}: ${p.correct ? 'got it right' : 'got it wrong'}`,
+    'bar.nim': (p) =>
+      `Last Candy (${p.table === 'expert' ? 'expert' : 'beginner'} table): ${p.result === 'win' ? 'won' : 'lost'}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
       `${p.way === 'listed' ? 'Bought the listed' : 'Acquired'} "${String(p.name ?? '')}" for ${formatNum(n(p, 'price'))} coins`,

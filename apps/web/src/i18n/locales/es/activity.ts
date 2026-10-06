@@ -60,6 +60,7 @@ const activity: Messages['activity'] = {
     'bar.devil': 'Chile del Diablo',
     'bar.darts': 'Dardos',
     'bar.memory': 'Cóctel Memoria',
+    'bar.nim': 'El último caramelo',
     'tower.challenge': 'Desafíos de la Torre de chefs',
     'tower.friendDuel': 'Duelos con amigos',
     'tower.rank': 'Desafíos de la clasificación de chefs',

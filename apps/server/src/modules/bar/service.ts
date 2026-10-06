@@ -1,10 +1,11 @@
-import type { BarDto } from '@dt/shared';
+import type { BarDto, NimTable } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { dartsAim, dartsStart, dartsThrow } from './darts';
 import { devilDrink, devilStart } from './devil';
 import { exchangeKrabCoin, playCup, playFg, playNum } from './games';
 import { memoryAnswer, memoryNext, memoryStart, memoryStop } from './memory';
+import { nimFirst, nimStart, nimTake } from './nim';
 import { playSlot } from './slot';
 import { barView } from './view';
 
@@ -55,6 +56,15 @@ export function createBarService(d: GameDeps) {
     },
     memoryStop(ctx: RestCtx) {
       return op(ctx, 'bar.memory', (o) => memoryStop(o));
+    },
+    nimStart(ctx: RestCtx, b: { table: NimTable }) {
+      return op(ctx, 'bar.nim', (o) => nimStart(o, b.table));
+    },
+    nimFirst(ctx: RestCtx, b: { who: 'me' | 'bartender' }) {
+      return op(ctx, 'bar.nim', (o) => nimFirst(o, b.who));
+    },
+    nimTake(ctx: RestCtx, b: { num: number }) {
+      return op(ctx, 'bar.nim', (o) => nimTake(o, b.num));
     },
     dartsStart(ctx: RestCtx) {
       return op(ctx, 'bar.darts', (o) => dartsStart(o));
