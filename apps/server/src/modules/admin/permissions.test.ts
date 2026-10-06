@@ -388,7 +388,7 @@ const CASES: Case[] = [
     body: () => ({ restId: ids.restId }),
     min: 'admin',
   },
-  ...(['bar', 'surge', 'multi', 'redeem', 'exchange'] as const).map((k) => ({
+  ...(['bar', 'surge', 'multi', 'redeem', 'exchange', 'acquire'] as const).map((k) => ({
     method: 'GET' as const,
     route: `/api/v1/admin/suspicious/${k}`,
     url: () => `/api/v1/admin/suspicious/${k}?shardId=${ids.shardId}`,
