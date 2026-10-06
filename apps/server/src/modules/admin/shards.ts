@@ -8,6 +8,7 @@ import {
   retiredErrors,
   retiredOf,
   tuningRefs,
+  DEFAULT_OFF_FEATURES,
 } from '@dt/config';
 import {
   ErrorCode,
@@ -217,7 +218,12 @@ export function createAdminShards(game: Game, log?: WarnLog) {
         .execute();
       return {
         version: row?.version ?? 0,
-        defaults: { features: {}, restaurant: config.bundle.restaurantDefaults, tuning: config.tuning },
+        // 默认关的功能写成 false，后台据此显示和写覆盖（收购 PR 1）
+        defaults: {
+          features: Object.fromEntries(DEFAULT_OFF_FEATURES.map((f) => [f, false])),
+          restaurant: config.bundle.restaurantDefaults,
+          tuning: config.tuning,
+        },
         override,
         effective: effective as unknown as Record<string, unknown>,
         features: [...IMPLEMENTED_FEATURES]

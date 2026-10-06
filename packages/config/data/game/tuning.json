@@ -404,6 +404,14 @@
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
+  "acquire": {
+    "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
+    "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,
+    "taxRate": 0.1, "protectDays": 3, "maxHoldings": 10, "maxPerDay": 3, "pairDays": 7, "linkDays": 30,
+    "minStar": 2, "listMinRate": 0.5, "listDays": 3,
+    "dividendRate": 0.05, "tendBonus": 0.5, "minRounds": 90, "dividendCapRate": 0.25, "tendFoods": 5,
+    "newsMinPrice": 10000000
+  },
   "fund": {
     "days": 7, "returnRate": 0.9, "earlyRate": 0.7,
     "tiers": [

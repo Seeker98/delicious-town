@@ -154,6 +154,19 @@ const events: Messages['events'] = {
         ? `Chile del Diablo: aguantaste ${n(p, 'survived')} ${plEs(n(p, 'survived'), 'vaso', 'vasos')} y ganaste`
         : `Chile del Diablo: aguantaste ${n(p, 'survived')} ${plEs(n(p, 'survived'), 'vaso', 'vasos')} y caíste`,
     'bar.memory': (p) => `Cóctel Memoria nivel ${n(p, 'level')}: ${p.correct ? 'acertaste' : 'fallaste'}`,
+    // 收购（问题记录 421）
+    'acquire.bought': (p) =>
+      `${p.way === 'listed' ? 'Compraste' : 'Adquiriste'} «${String(p.name ?? '')}»${p.way === 'listed' ? ' (en venta)' : ''} por ${formatNum(n(p, 'price'))} monedas`,
+    'acquire.taken': (p) =>
+      `«${String(p.byName ?? '')}» adquirió tu restaurante por ${formatNum(n(p, 'price'))} monedas`,
+    'acquire.sold': (p) =>
+      `«${String(p.to ?? '')}» te compró «${String(p.name ?? '')}»; recibiste ${formatNum(n(p, 'got'))} monedas`,
+    'acquire.redeemed': (p) =>
+      `Recompraste tu restaurante a «${String(p.from ?? '')}» por ${formatNum(n(p, 'price'))} monedas`,
+    'acquire.lost': (p) =>
+      `«${String(p.name ?? '')}» se recompró; recibiste ${formatNum(n(p, 'got'))} monedas`,
+    'acquire.released': (p) => `Soltaste «${String(p.name ?? '')}»`,
+    'acquire.freed': (p) => `«${String(p.byName ?? '')}» soltó tu restaurante; vuelves a ser independiente`,
     'dine.started': (p) => `Empezaste a comer gratis en «${String(p.hostName ?? '')}»`,
     'dine.ended': (p) => `Terminaste de comer gratis en «${String(p.hostName ?? '')}»`,
     'forum.post': (p) => `Publicaste el tema n.º ${n(p, 'postId')} en el foro`,

@@ -9,6 +9,7 @@ import { createCupboardService, type CupboardService } from './modules/cupboard/
 import { createSocialService, type SocialService } from './modules/friend/service';
 import { effectJobs } from './modules/effects/resync';
 import { equipIncomeJobs } from './modules/equip/incomeResync';
+import { acquireJobs } from './modules/acquire/jobs';
 import { equipJobs } from './modules/equip/jobs';
 import { createEquipService, type EquipService } from './modules/equip/service';
 import { friendWeeklyJob } from './modules/friend/weekly';
@@ -37,6 +38,7 @@ import { createExchangeService, type ExchangeService } from './modules/exchange/
 import { createPredictService, type PredictService } from './modules/predict/service';
 import { createKujiService, type KujiService } from './modules/kuji/service';
 import { createFundService, type FundService } from './modules/fund/service';
+import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
 import { createInviteService, type InviteService } from './modules/invite/service';
@@ -94,6 +96,7 @@ export interface Game {
   predict: PredictService;
   kuji: KujiService;
   fund: FundService;
+  acquire: AcquireService;
   jobs: PeriodicJob[];
 }
 
@@ -125,6 +128,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...equipJobs(deps));
   jobs.push(...effectJobs(deps));
   jobs.push(...equipIncomeJobs(deps));
+  jobs.push(...acquireJobs(deps));
   jobs.push(...mysteriousJobs(deps));
   jobs.push(...yardJobs(deps, world));
   jobs.push(...towerJobs(deps));
@@ -165,6 +169,7 @@ export function createGame(app: AppDeps): Game {
     predict: createPredictService(deps),
     kuji: createKujiService(deps),
     fund: createFundService(deps),
+    acquire: createAcquireService(deps),
     shop,
     market,
     task: createTaskService(deps),

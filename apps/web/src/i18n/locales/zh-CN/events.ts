@@ -145,6 +145,17 @@ export default {
         ? `魔鬼辣杯撑过 ${n(p, 'survived')} 杯，赢了`
         : `魔鬼辣杯撑过 ${n(p, 'survived')} 杯，倒下了`,
     'bar.memory': (p) => `记忆调酒第 ${n(p, 'level')} 关${p.correct ? '调对了' : '没调对'}`,
+    // 收购（问题记录 421）
+    'acquire.bought': (p) =>
+      `花 ${formatNum(n(p, 'price'))} 银币${p.way === 'listed' ? '买下了挂牌的' : '收购了'}「${String(p.name ?? '')}」`,
+    'acquire.taken': (p) => `「${String(p.byName ?? '')}」花 ${formatNum(n(p, 'price'))} 银币收购了你的餐厅`,
+    'acquire.sold': (p) =>
+      `名下的「${String(p.name ?? '')}」被「${String(p.to ?? '')}」买走，你得到 ${formatNum(n(p, 'got'))} 银币`,
+    'acquire.redeemed': (p) =>
+      `花 ${formatNum(n(p, 'price'))} 银币从「${String(p.from ?? '')}」手里赎回了自己的餐厅`,
+    'acquire.lost': (p) => `「${String(p.name ?? '')}」赎回了自己，你得到 ${formatNum(n(p, 'got'))} 银币`,
+    'acquire.released': (p) => `放手了名下的「${String(p.name ?? '')}」`,
+    'acquire.freed': (p) => `「${String(p.byName ?? '')}」放手了你的餐厅，你又自主经营了`,
     'dine.started': (p) => `去「${String(p.hostName ?? '')}」白食`,
     'dine.ended': (p) => `在「${String(p.hostName ?? '')}」白食结束`,
     'forum.post': (p) => `在论坛发了帖子 #${n(p, 'postId')}`,

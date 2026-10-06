@@ -152,6 +152,19 @@ const events: Messages['events'] = {
         : `Devil's Chili: survived ${n(p, 'survived')} ${plEn(n(p, 'survived'), 'cup', 'cups')}, then went down`,
     'bar.memory': (p) =>
       `Memory Mixing level ${n(p, 'level')}: ${p.correct ? 'got it right' : 'got it wrong'}`,
+    // 收购（问题记录 421）
+    'acquire.bought': (p) =>
+      `${p.way === 'listed' ? 'Bought the listed' : 'Acquired'} "${String(p.name ?? '')}" for ${formatNum(n(p, 'price'))} coins`,
+    'acquire.taken': (p) =>
+      `"${String(p.byName ?? '')}" acquired your restaurant for ${formatNum(n(p, 'price'))} coins`,
+    'acquire.sold': (p) =>
+      `"${String(p.to ?? '')}" bought "${String(p.name ?? '')}" from you; you got ${formatNum(n(p, 'got'))} coins`,
+    'acquire.redeemed': (p) =>
+      `Bought your restaurant back from "${String(p.from ?? '')}" for ${formatNum(n(p, 'price'))} coins`,
+    'acquire.lost': (p) =>
+      `"${String(p.name ?? '')}" bought itself back; you got ${formatNum(n(p, 'got'))} coins`,
+    'acquire.released': (p) => `Let go of "${String(p.name ?? '')}"`,
+    'acquire.freed': (p) => `"${String(p.byName ?? '')}" let go of your restaurant; it's independent again`,
     'dine.started': (p) => `Started eating for free at "${String(p.hostName ?? '')}"`,
     'dine.ended': (p) => `Finished eating for free at "${String(p.hostName ?? '')}"`,
     'forum.post': (p) => `Posted forum thread #${n(p, 'postId')}`,

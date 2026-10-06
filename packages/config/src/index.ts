@@ -18,7 +18,7 @@ export {
   type GameConfig,
   type CookbookIndex,
 } from './runtime';
-export { resolveShardSettings, isFeatureEnabled, type ShardSettings } from './shard';
+export { resolveShardSettings, isFeatureEnabled, DEFAULT_OFF_FEATURES, type ShardSettings } from './shard';
 export * from './tuning';
 export * from './ids';
 export { QUEST_STATE_KEYS, isQuestStateKey } from './quests';
