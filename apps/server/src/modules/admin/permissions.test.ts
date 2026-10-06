@@ -511,6 +511,7 @@ const CASES: Case[] = [
     url: () => `/api/v1/admin/mails/${ids.mailId}/revoke`,
     min: 'admin',
   },
+  { method: 'GET', route: '/api/v1/admin/items', url: () => '/api/v1/admin/items', min: 'mod' },
   {
     method: 'GET',
     route: '/api/v1/admin/stats/economy',

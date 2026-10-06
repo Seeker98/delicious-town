@@ -44,6 +44,7 @@ import { AppError } from '../../http/errors';
 import { ok } from '../../http/reply';
 import { parse } from '../../http/validate';
 import { requireRole } from './access';
+import { createAdminItems } from './items';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
@@ -169,6 +170,12 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     r.post('/launch-check/fix', async (req) => {
       const a = await requireRole(db, req, 'admin');
       return ok(await launch.fix(a, parse(launchCheckFixBody, req.body)));
+    });
+
+    const items = createAdminItems(game.deps.config);
+    r.get('/items', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(items.report());
     });
 
     const suspicious = createSuspicious(game);

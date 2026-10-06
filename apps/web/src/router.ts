@@ -422,6 +422,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'codes', component: () => import('./views/admin/AdminCodesView.vue') },
       { path: 'reports', component: () => import('./views/admin/AdminReportsView.vue') },
       { path: 'suspicious', component: () => import('./views/admin/AdminSuspiciousView.vue') },
+      { path: 'items', component: () => import('./views/admin/AdminItemsView.vue') },
       { path: '', component: () => import('./views/admin/AdminHomeView.vue') },
       { path: 'stats', component: () => import('./views/admin/AdminStatsView.vue') },
       { path: 'audit', component: () => import('./views/admin/AdminAuditView.vue') },
