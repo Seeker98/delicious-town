@@ -4,8 +4,8 @@ import type { Op } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { AppError } from '../../http/errors';
 
-/** 酒吧扩展的三个游戏（子项目 4C-3）；局面存在 bar_round，结束就删 */
-export type BarGame = 'devil' | 'memory' | 'darts';
+/** 酒吧扩展的游戏（子项目 4C-3、最后一颗糖）；局面存在 bar_round，结束就删 */
+export type BarGame = 'devil' | 'memory' | 'darts' | 'nim';
 
 /** 本店这个游戏进行中的局；调用方已锁店 */
 export async function loadRound<T>(o: Op, game: BarGame): Promise<T | null> {
@@ -45,4 +45,14 @@ export async function peekRound<T>(db: Kysely<DB>, restId: number, game: BarGame
     .where('game', '=', game)
     .executeTakeFirst();
   return r ? (r.state as T) : null;
+}
+
+/** 概览用：一条查询读出本店所有进行中的局（不加锁） */
+export async function peekRounds(db: Kysely<DB>, restId: number): Promise<Partial<Record<BarGame, unknown>>> {
+  const rows = await db
+    .selectFrom('bar_round')
+    .select(['game', 'state'])
+    .where('rest_id', '=', restId)
+    .execute();
+  return Object.fromEntries(rows.map((x) => [x.game, x.state])) as Partial<Record<BarGame, unknown>>;
 }

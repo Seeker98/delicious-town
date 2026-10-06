@@ -37,6 +37,25 @@ export async function getDaily(
   return row?.count ?? 0;
 }
 
+/** 一条查询读几个计数；没有的记 0 */
+export async function getDailies(
+  db: Kysely<DB>,
+  restId: number,
+  keys: readonly string[],
+  day: string = gameDay(),
+): Promise<Record<string, number>> {
+  const rows = await db
+    .selectFrom('daily_counter')
+    .select(['key', 'count'])
+    .where('rest_id', '=', restId)
+    .where('day', '=', day)
+    .where('key', 'in', [...keys])
+    .execute();
+  const out: Record<string, number> = Object.fromEntries(keys.map((k) => [k, 0]));
+  for (const x of rows) out[x.key] = x.count;
+  return out;
+}
+
 /**
  * 删掉 keepDays 天以前的每日计数（backlog 374：原来没有清理，表每天按“玩家 × 动作”涨）。
  * 读得最远的是上周的排行、周奖励（14 天内），留 30 天足够。分批删，一次不锁太多行；返回删了几行
