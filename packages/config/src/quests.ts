@@ -10,7 +10,6 @@ export const QUEST_STATE_KEYS: ReadonlySet<string> = new Set([
   'mc.learned',
   'yard.lands',
   'equip.maxStress',
-  'honor.potCount',
   'takeaway.open',
 ]);
 

@@ -252,11 +252,18 @@ describe('抽签（一番赏设计 §5.4）', () => {
       expect(tier('B')).toEqual([{ id: gid('西瓜汽水侍者手办'), num: 1 }]);
       expect(tier('C')).toEqual([{ id: gid('冰棒挂件'), num: 1 }]);
       expect(tier('D')).toBeUndefined();
-      expect(v.last.award.goods).toEqual([{ id: gid('海边冰饮小摊摆件'), num: 1 }]);
+      // 最后赏默认的 1 个蟹黄堡在前（问题记录 515），当月手办追加在后
+      expect(v.last.award.goods).toEqual([
+        { id: GOODS.krabBurger, num: 1 },
+        { id: gid('海边冰饮小摊摆件'), num: 1 },
+      ]);
       t.clock.set(gameTime('2026-08-01', 12));
       const v2 = await svc().view(r);
       expect(v2.theme?.name).toBe('海鲜大排档');
-      expect(v2.last.award.goods).toEqual([{ id: gid('渔港夜宵全景摆件'), num: 1 }]);
+      expect(v2.last.award.goods).toEqual([
+        { id: GOODS.krabBurger, num: 1 },
+        { id: gid('渔港夜宵全景摆件'), num: 1 },
+      ]);
     } finally {
       t.clock.set(saved);
     }

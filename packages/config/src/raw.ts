@@ -144,6 +144,8 @@ export const rawChapter = z.object({
   needLevel: int,
   needStar: int,
   award: awardSchema,
+  /** 暂未开放（问题记录 515：泛紫要天馔，还做不了）：构建时连同这一章的任务一起去掉 */
+  hidden: z.boolean().optional(),
 });
 export const rawQuestMain = z.object({
   id: int,
@@ -169,6 +171,8 @@ export const rawQuestLine = z.object({
         cond: questCond,
         award: awardSchema,
         href: z.string(),
+        /** 暂未开放：构建时去掉这一档 */
+        hidden: z.boolean().optional(),
       }),
     )
     .min(1),

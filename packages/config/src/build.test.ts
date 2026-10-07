@@ -1322,9 +1322,9 @@ describe('活跃度新增项目（问题记录 318）', () => {
 });
 
 describe('任务配置（问题记录 318）', () => {
-  it('12 章；主线按章排；支线 15 条；每周 3 组各 4 个；id 不重复', () => {
+  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 15 条；每周 3 组；id 不重复', () => {
     const b = realBuild().bundle!;
-    expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     const mains = b.quests.filter((q) => q.line === null);
     expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
     expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
@@ -1333,8 +1333,9 @@ describe('任务配置（问题记录 318）', () => {
     expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
     expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
       ['A', 0, 0, 4],
-      ['B', 1, 2, 4],
-      ['C', 3, 99, 4],
+      // B、C 组多一条“领取本周探险图”（问题记录 515）
+      ['B', 1, 2, 5],
+      ['C', 3, 99, 5],
     ]);
     const ids = [
       ...b.quests.map((q) => q.id),
@@ -1343,12 +1344,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量和设计一致：主线 1,192 万、支线 381 万银币；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,072 万、支线 351 万银币（第 12 章 120 万、天馔一档 30 万暂未开放，问题记录 515）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
-    expect(coin(true)).toBe(11_920_000);
-    expect(coin(false)).toBe(3_808_000);
+    expect(coin(true)).toBe(10_720_000);
+    expect(coin(false)).toBe(3_508_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 
@@ -1790,5 +1791,55 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     const lore = { ...(src['game/equip_lore'] as object), rename: [] };
     const { errors } = buildBundle({ ...src, 'game/equip_lore': lore });
     expect(errors.join('\n')).toMatch(/equip_lore.*rename|rename.*equip_lore/);
+  });
+});
+
+describe('任务清单的修改（问题记录 515，用户 2026-10-08 定）', () => {
+  const b = realBuild().bundle!;
+  const quest = (id: number) => b.quests.find((q) => q.id === id);
+  const goodsOf = (id: number) => (quest(id)!.award.goods ?? []).map((g) => [g.id, g.num]);
+
+  it('升到一星先发鉴定和探险要用的：神秘食谱、美味印章、探险图各 1，一级残卷碎片 9；第 4 章那两个任务不再给', () => {
+    expect(goodsOf(2068)).toEqual([
+      [GOODS.mysteryRecipe, 1],
+      [gid('美味印章'), 1],
+      [GOODS.mapNormal, 1],
+      [GOODS.fragmentBase + 1, 9],
+    ]);
+    expect(goodsOf(2081)).toEqual([]);
+    expect(goodsOf(2085)).toEqual([]);
+  });
+
+  it('升到二星给 1 张外卖券（开通外卖另一条路：声望照样要）', () => {
+    expect(goodsOf(2126)).toContainEqual([GOODS.takeawayTicket, 1]);
+  });
+
+  it('B、C 组每周任务多一条“领取本周探险图”：目标 0（一打开就能领），3 张探险图', () => {
+    for (const [key, id] of [
+      ['B', 4025],
+      ['C', 4035],
+    ] as const) {
+      const g = b.weeklyGroups.find((x) => x.key === key)!;
+      expect(g.quests.find((q) => q.id === id)).toMatchObject({
+        target: 0,
+        feature: 'temple',
+        award: { goods: [{ id: GOODS.mapNormal, num: 3 }] },
+      });
+    }
+    expect(b.weeklyGroups.find((x) => x.key === 'A')!.quests.some((q) => q.target === 0)).toBe(false);
+  });
+
+  it('去掉“集齐 4 株盆栽”；一番赏两条线的最后赏都多给 1 个蟹黄堡', () => {
+    expect(b.quests.some((q) => q.cond.key === 'honor.potCount')).toBe(false);
+    const t = realBuild().bundle!.tuning.kuji;
+    expect(t.last.award.goods).toContainEqual({ id: gid('蟹黄堡'), num: 1 });
+    expect(t.deluxe.last.award.goods).toContainEqual({ id: gid('蟹黄堡'), num: 1 });
+  });
+
+  it('暂未开放的藏起来：第 12 章（泛紫）和它的任务、支线“把一道食谱升到天馔”', () => {
+    expect(b.chapters.some((c) => c.id === 12)).toBe(false);
+    expect(b.quests.some((q) => q.line === null && q.chapter === 12)).toBe(false);
+    expect(quest(3026)).toBeUndefined();
+    expect(b.questLines.find((l) => l.key === 'cookbook')).toBeDefined();
   });
 });

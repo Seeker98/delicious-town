@@ -62,7 +62,9 @@ describe('一番赏配置（设计 §3、§4）', () => {
     expect(b.kujiThemes[0]!.figures).toEqual({ A: 71011, B: 71012, C: 71013, last: 71014 });
     const k = b.tuning.kuji;
     expect(k.maxPools).toBe(3);
-    for (const tier of [...k.tiers, k.last]) expect(tier.award.goods ?? []).toEqual([]);
+    for (const tier of k.tiers) expect(tier.award.goods ?? []).toEqual([]);
+    // 最后赏默认只多给 1 个蟹黄堡（问题记录 515），当月手办开池时另外追加
+    expect(k.last.award.goods).toEqual([{ id: GOODS.krabBurger, num: 1 }]);
   });
 
   it('月度主题校验：缺月份、重复月份报错', () => {

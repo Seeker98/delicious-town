@@ -68,7 +68,6 @@ const TASK_EXTRA = {
   'equip.maxStress': 0,
   'mc.learned': 0,
   'yard.lands': 0,
-  'honor.potCount': 0,
   'takeaway.open': 0,
 };
 

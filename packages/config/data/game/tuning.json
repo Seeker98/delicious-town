@@ -421,7 +421,7 @@
       { "key": "E", "count": 15, "award": { "coin": 15000 } },
       { "key": "F", "count": 50, "award": { "coin": 5000 } }
     ],
-    "last": { "award": { "diamond": 200 }, "icon": "kuji_last", "news": "broadcast" },
+    "last": { "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
     "deluxe": {
       "price": 300000,
       "dailyBuy": 10,
@@ -433,7 +433,7 @@
         { "key": "C", "count": 5, "award": { "coin": 100000 } },
         { "key": "D", "count": 12, "award": { "coin": 50000 } }
       ],
-      "last": { "award": { "diamond": 50 }, "icon": "kuji_dx_last", "news": "broadcast" }
+      "last": { "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },

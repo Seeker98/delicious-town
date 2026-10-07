@@ -230,9 +230,6 @@
   "3084": {
     "name": "Jouer 50 fois au bar"
   },
-  "3085": {
-    "name": "Réunir 4 plantes en pot"
-  },
   "3101": {
     "name": "Cuisiner 10 fois des plats signature"
   },
@@ -374,6 +371,9 @@
   "4024": {
     "name": "Apprendre ou améliorer des recettes 20 fois"
   },
+  "4025": {
+    "name": "Récupérer les cartes d'exploration de la semaine"
+  },
   "4031": {
     "name": "Effectuer 10 livraisons"
   },
@@ -385,5 +385,8 @@
   },
   "4034": {
     "name": "Apprendre ou améliorer des recettes 30 fois"
+  },
+  "4035": {
+    "name": "Récupérer les cartes d'exploration de la semaine"
   }
 }

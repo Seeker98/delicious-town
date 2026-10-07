@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    quest1008:
+      'Cambios en las misiones: al llegar a 1 estrella también recibes 1 Receta misteriosa, 1 Sello Delicia, 1 Mapa de exploración y 9 [Nivel 1]•Trozo de fragmento (suficientes para canjear una especialidad de nivel 1); la receta y el mapa que daban las misiones de tasación y exploración pasan aquí; al llegar a 2 estrellas recibes también 1 Pase a domicilio; desde 1 estrella, las misiones semanales incluyen «Recoger los mapas de exploración de la semana», 3 mapas cada semana; se quita la misión de reunir 4 macetas y el Último Premio del Ichiban Kuji da además 1 Cangreburger; el capítulo «El camino de los festines divinos» y «Subir una receta a Manjar divino», que aún no se pueden hacer, se ocultan por ahora',
     rank1008:
       'Las clasificaciones de rachas de piedra, papel o tijera, adivina el vaso y la ruleta de números ahora ordenan por la mejor racha alcanzada en la semana, con tablas de esta semana y de la pasada: perder una partida ya no te saca de la tabla; una racha que sigue después del lunes sigue contando y queda en la semana en que llegó a esa cifra; en caso de empate va primero quien llegó antes',
     odds1007:
