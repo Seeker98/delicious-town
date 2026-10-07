@@ -5,6 +5,7 @@ import { runSystemOp } from '../../core/op';
 import { createShard } from '../../../test/fixtures';
 import { insertActivity } from '../../../test/activity';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { activityCacheFor } from './active';
 import { SETTLE_MAX_FAILS, settleActivities } from './settle';
 import { gid } from '../../../test/items';
@@ -190,6 +191,9 @@ describe('全服合力结算（148-3 设计 §7）', () => {
     await settleActivities(t.game.deps, shardId, after, log);
     expect(await own(a.restaurantId)).toHaveLength(2);
     expect(await own(b.restaurantId)).toHaveLength(2);
+    // 支线“社交”（问题记录 515）：贡献榜前 10 名各记一次，重跑不重复记
+    for (const r of [a, b, c]) expect(await eventCount(t, r.restaurantId, 'activity.top10')).toBe(1);
+    expect(await eventCount(t, idle.restaurantId, 'activity.top10')).toBe(0);
     // 新闻也不重复（backlog 148-3：以前只验证了邮件）
     const again = await t.db
       .selectFrom('news')

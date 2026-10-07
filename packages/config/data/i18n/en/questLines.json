@@ -49,5 +49,35 @@
   },
   "17": {
     "name": "Bar Ace"
+  },
+  "18": {
+    "name": "Appraisals"
+  },
+  "19": {
+    "name": "Guardian"
+  },
+  "20": {
+    "name": "Tower Keepers"
+  },
+  "21": {
+    "name": "Market Guessing"
+  },
+  "22": {
+    "name": "Takeaway Pro"
+  },
+  "23": {
+    "name": "Acquisitions"
+  },
+  "24": {
+    "name": "Gems"
+  },
+  "25": {
+    "name": "Collection"
+  },
+  "26": {
+    "name": "Check-in & Activity"
+  },
+  "27": {
+    "name": "Social"
   }
 }

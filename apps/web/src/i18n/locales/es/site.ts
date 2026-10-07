@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    sideB1008:
+      'Más misiones secundarias: nuevas líneas Recetas misteriosas, Guardián, Guardianes de la torre, Adivinanzas del Mercado, Reparto experto, Adquisiciones, Gemas, Colección, Registro y actividad y Social; la línea del Pueblo añade el Fondo de Desarrollo, la pregunta del Alcalde, la clasificación semanal del Chico hip-hop, el Martillo de Thor y la Lámpara mágica; la del Templo añade el favor del Kraken, los tentáculos y 50 comidas. Las rachas de registro cuentan tu racha más larga, y los registros de los últimos 30 días ya están incluidos',
     sideA1008:
       'Más misiones secundarias: la línea del bar incluye probar cada juego nuevo y jugar 500 y 2000 veces; dos líneas nuevas, «Suerte en el bar» (rachas de piedra, papel o tijera, superar Adivina el vaso, Chile del Diablo, 100 tiradas en la tragaperras y más) y «As del bar» (dardos, Cóctel Memoria, El último caramelo, Mezcla secreta, Trato o no trato); la Bolsa añade operar con el sistema, malvender al sistema, comprar y vender ingredientes raros y 500 operaciones; las predicciones añaden vender antes de tiempo, tener 100 y 200 participaciones y ganar o perder cierta cantidad en una liquidación; el Ichiban Kuji añade sacar un Premio A y el Ichiban Kuji de lujo; Hogar en todo el mundo añade misiones de la calle Chop Suey, y la última, «Nostalgia», es aprender todos sus platos',
     krab1008:

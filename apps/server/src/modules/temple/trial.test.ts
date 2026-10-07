@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
+import { eventCount } from '../../../test/quests';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { GOODS } from '@dt/config';
 import { fid } from '../../../test/items';
@@ -114,6 +115,8 @@ describe('试炼（规格书 09 §9.4）', () => {
       .where('key', '=', 'temple.trial')
       .executeTakeFirst();
     expect(c?.count).toBe(1);
+    // 支线“守护兽”的“试炼成功”（问题记录 515）
+    expect(await eventCount(win, ctx.restaurantId, 'temple.trial.success')).toBe(1);
   });
 
   it('价值上限 30（用户 2026-10-07 定，原来 50）：以前攒到 45 的，成功一次压到 30，不算负的增加', async () => {
@@ -147,6 +150,7 @@ describe('试炼（规格书 09 §9.4）', () => {
     await lose.game.temple.prepareTrial(ctx, { way: 2 });
     const r = await lose.game.temple.startTrial(ctx, { mainFoodsId: RARE, subFoodsId: COMMON });
     expect(r.data).toMatchObject({ success: false, addWorth: 0, addExp: 0, proficiency: 0 });
+    expect(await eventCount(lose, ctx.restaurantId, 'temple.trial.success')).toBe(0);
     expect(await mcRow(lose, ctx.restaurantId, MC3.id)).toMatchObject({
       trial_worth: 0,
       trial_exp: 0,

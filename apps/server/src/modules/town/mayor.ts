@@ -1,6 +1,7 @@
 import { GOODS } from '@dt/config';
 import { ErrorCode, gameDay, type HiphopPlace, type TalkResultDto } from '@dt/shared';
 import { invalidState } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { restLog, type Op } from '../../core/op';
 import { AppError } from '../../http/errors';
 import { incrementDaily } from '../counter/dailyCounter';
@@ -20,6 +21,8 @@ export async function askMayor(o: Op, place: HiphopPlace): Promise<TalkResultDto
   const goodsId = right ? GOODS.mayorFavor : GOODS.mayorAgainst;
   await grantGoodsOp(o, goodsId, 1);
   restLog(o, 'town.mayor', { place, right });
+  // “小镇”支线（问题记录 515）：答对的次数
+  if (right) await emitAction(o, 'town.mayor.right');
   return {
     npc: 'mayor',
     talk: right ? 'mayorRight' : 'mayorWrong',

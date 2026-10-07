@@ -177,6 +177,15 @@ export interface DailyCounterTable {
   count: Default<number>;
 }
 
+/** 连续签到（问题记录 515 支线扩充 B）：最后签到的那天、连着签了几天、历史最长 */
+export interface SigninStreakTable {
+  rest_id: number;
+  /** YYYY-MM-DD（游戏日） */
+  last_day: string;
+  streak: number;
+  best: number;
+}
+
 export interface LedgerTable {
   id: Generated<number>;
   rest_id: number;
@@ -1362,6 +1371,7 @@ export interface DB {
   effect_source: EffectSourceTable;
   store_item: StoreItemTable;
   daily_counter: DailyCounterTable;
+  signin_streak: SigninStreakTable;
   ledger: LedgerTable;
   news: NewsTable;
   audit_log: AuditLogTable;

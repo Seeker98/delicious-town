@@ -203,6 +203,24 @@
   "3043": {
     "name": "Join a Market guessing game"
   },
+  "3044": {
+    "name": "Answer Mayor Big Pot's question correctly 10 times"
+  },
+  "3045": {
+    "name": "Answer Mayor Big Pot's question correctly 50 times"
+  },
+  "3046": {
+    "name": "Make a deposit in the Town Development Fund"
+  },
+  "3047": {
+    "name": "Finish in the top 5 of the Hip-hop Boy's weekly tipping board"
+  },
+  "3048": {
+    "name": "Change the weather with Thor's Hammer"
+  },
+  "3049": {
+    "name": "Make a wish with the Magic Lamp"
+  },
   "3061": {
     "name": "Give 10 likes"
   },
@@ -277,6 +295,15 @@
   },
   "3124": {
     "name": "Feed the Kraken 10 times"
+  },
+  "3125": {
+    "name": "Get more than 35 favor from the Kraken in one feeding"
+  },
+  "3126": {
+    "name": "Get a Kraken tentacle from feeding 3 times"
+  },
+  "3127": {
+    "name": "Feed the Kraken 50 times"
   },
   "3141": {
     "name": "Harvest 10 times"
@@ -487,6 +514,153 @@
   },
   "3349": {
     "name": "Hit the bullseye with all 3 darts"
+  },
+  "3361": {
+    "name": "Appraise signature dishes 10 times"
+  },
+  "3362": {
+    "name": "Appraise a level 4+ signature dish"
+  },
+  "3363": {
+    "name": "Cook a batch of signature dishes worth 100,000+ coins"
+  },
+  "3364": {
+    "name": "Appraise a level 5+ signature dish"
+  },
+  "3381": {
+    "name": "Defeat the Guardian"
+  },
+  "3382": {
+    "name": "Pass a Trial 10 times"
+  },
+  "3383": {
+    "name": "Defeat the Guardian 30 times"
+  },
+  "3384": {
+    "name": "Defeat the Guardian at 5★ or higher"
+  },
+  "3401": {
+    "name": "Beat floor 4 of the Chef Tower"
+  },
+  "3402": {
+    "name": "Defeat tower keepers 10 times"
+  },
+  "3403": {
+    "name": "Beat floor 7 of the Chef Tower"
+  },
+  "3404": {
+    "name": "Defeat tower keepers 50 times"
+  },
+  "3405": {
+    "name": "Beat floor 10 of the Chef Tower"
+  },
+  "3406": {
+    "name": "Defeat tower keepers 100 times"
+  },
+  "3407": {
+    "name": "Defeat tower keepers 200 times"
+  },
+  "3408": {
+    "name": "Defeat tower keepers 300 times"
+  },
+  "3421": {
+    "name": "Join the Market guessing game 10 times"
+  },
+  "3422": {
+    "name": "Guess 3 or more ingredients right in one Market guessing game"
+  },
+  "3423": {
+    "name": "Guess 5 or more ingredients right in one Market guessing game"
+  },
+  "3441": {
+    "name": "Complete a 5★+ takeaway delivery"
+  },
+  "3442": {
+    "name": "Complete 20 takeaway deliveries of 5★+"
+  },
+  "3443": {
+    "name": "Deliver an order by drone"
+  },
+  "3461": {
+    "name": "Acquire a restaurant"
+  },
+  "3462": {
+    "name": "List one of your restaurants for sale"
+  },
+  "3463": {
+    "name": "Receive a dividend"
+  },
+  "3464": {
+    "name": "Own 8 restaurants at the same time"
+  },
+  "3481": {
+    "name": "Upgrade a gem to Tier 3"
+  },
+  "3482": {
+    "name": "Socket 3 gems into one piece of cookware"
+  },
+  "3483": {
+    "name": "Upgrade a gem to Tier 4"
+  },
+  "3484": {
+    "name": "Upgrade a gem to Tier 5"
+  },
+  "3501": {
+    "name": "Own 3 plaques"
+  },
+  "3502": {
+    "name": "Own 10 honors"
+  },
+  "3503": {
+    "name": "Own 7 paintings"
+  },
+  "3521": {
+    "name": "Check in 7 days in a row"
+  },
+  "3522": {
+    "name": "Claim the 100-point activity reward on 10 days"
+  },
+  "3523": {
+    "name": "Check in 30 days in a row"
+  },
+  "3524": {
+    "name": "Claim the 100-point activity reward on 30 days"
+  },
+  "3525": {
+    "name": "Check in 60 days in a row"
+  },
+  "3526": {
+    "name": "Check in 90 days in a row"
+  },
+  "3527": {
+    "name": "Claim the 100-point activity reward on 100 days"
+  },
+  "3528": {
+    "name": "Check in 180 days in a row"
+  },
+  "3529": {
+    "name": "Check in 365 days in a row"
+  },
+  "3541": {
+    "name": "Change your door"
+  },
+  "3542": {
+    "name": "Claim rewards in 3 different limited-time events"
+  },
+  "3543": {
+    "name": "Buy a title in the title shop"
+  },
+  "3544": {
+    "name": "Finish in the top 10 of a limited-time event"
+  },
+  "3545": {
+    "name": "Get a forum post featured"
+  },
+  "3546": {
+    "name": "Have a friend you invited reach level 10"
+  },
+  "3547": {
+    "name": "Have a friend you invited reach level 30"
   },
   "4011": {
     "name": "Check in 5 days"

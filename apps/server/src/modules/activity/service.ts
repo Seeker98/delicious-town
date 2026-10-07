@@ -271,6 +271,8 @@ export function createActivityService(d: GameDeps) {
     }
     // 任务和活跃"领取限时活动奖励"（问题记录 318）：领一次计一次，不管这次领了几个奖励
     if (out.keys.length > 0) await emitAction(o, 'activity.claim');
+    // 支线“社交”（问题记录 515）：在这个活动里第一次领奖，算参加了一个活动
+    if (out.keys.length > 0 && p.claims.size === 0) await emitAction(o, 'activity.join');
     return { all, p, out };
   }
 
@@ -364,6 +366,7 @@ export function createActivityService(d: GameDeps) {
         if (!item) throw invalidState('no_item', { index });
         const p = await loadProgress(o.tx, row.id, o.rest.id);
         const done = p.counters[exchangedKey(index)] ?? 0;
+        const first = spec.def.shop.every((_, i) => (p.counters[exchangedKey(i)] ?? 0) === 0);
         if (done + times > item.limit)
           throw limitReached('activity_exchange', { limit: item.limit, left: item.limit - done });
         for (const c of item.cost) {
@@ -405,6 +408,7 @@ export function createActivityService(d: GameDeps) {
         });
         // 兑换型活动只能靠兑换拿奖励：兑换一次也算"领取限时活动奖励"（问题记录 318）
         await emitAction(o, 'activity.claim');
+        if (first) await emitAction(o, 'activity.join');
         return { index, times, items };
       });
     },

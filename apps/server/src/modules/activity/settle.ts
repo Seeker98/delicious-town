@@ -2,6 +2,7 @@ import { sql } from 'kysely';
 import type { ActivitySpec } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import type { PeriodicJob } from '../../core/jobs';
+import { emitAction } from '../../core/action';
 import { runSystemOp } from '../../core/op';
 import { sendMail } from '../mail/send';
 import { postNews } from '../news/news';
@@ -180,6 +181,8 @@ export async function settleActivities(
                 source: 'activity',
                 actorAccountId: null,
               });
+              // 支线“社交”（问题记录 515）：贡献榜进前 10 名
+              if (row.rank <= 10) await emitAction(o, 'activity.top10');
               return true;
             });
             if (sent) mails++;

@@ -1325,13 +1325,13 @@ describe('活跃度新增项目（问题记录 318）', () => {
 });
 
 describe('任务配置（问题记录 318）', () => {
-  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 17 条（515 支线扩充 A 加了酒运、酒桌高手）；每周 3 组；id 不重复', () => {
+  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 27 条（515 支线扩充 A 加了酒运、酒桌高手，B 加了 10 条）；每周 3 组；id 不重复', () => {
     const b = realBuild().bundle!;
     expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     const mains = b.quests.filter((q) => q.line === null);
     expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
     expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
-    expect(b.questLines).toHaveLength(17);
+    expect(b.questLines).toHaveLength(27);
     const sides = b.quests.filter((q) => q.line !== null);
     expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
     expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
@@ -1347,12 +1347,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量：主线 1,072 万、支线 788 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万）；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,072 万、支线 1,465 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
     expect(coin(true)).toBe(10_720_000);
-    expect(coin(false)).toBe(7_878_000);
+    expect(coin(false)).toBe(14_648_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 
@@ -1900,5 +1900,93 @@ describe('支线扩充 A：酒吧、交易所、事件预测、一番赏、杂�
     );
     expect(world.find((q) => q.cond.key === 'rest.moveTo.29')!.feature).toBe('growth');
     expect(world.find((q) => q.cond.key === 'takeaway.deliver.street.29')!.feature).toBe('takeaway');
+  });
+});
+
+describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side-quests-design.md 第八节）', () => {
+  const b = realBuild().bundle!;
+  const line = (key: string) => {
+    const l = b.questLines.find((x) => x.key === key)!;
+    return b.quests.filter((q) => q.line === l.id).sort((x, y) => x.order - y.order);
+  };
+  const conds = (key: string) => line(key).map((q) => [q.cond.key, q.cond.target]);
+
+  it('新支线 10 条，出现的章节按方案', () => {
+    const ch = Object.fromEntries(b.questLines.map((l) => [l.key, l.chapter]));
+    expect(ch).toMatchObject({
+      appraise: 4,
+      guardian: 4,
+      keeper: 5,
+      guess: 2,
+      delivery: 7,
+      acquire: 6,
+      gem: 5,
+      collection: 5,
+      checkin: 1,
+      social: 3,
+    });
+  });
+
+  // 支线一次只显示一档：要花大钱、要钻石或道具、要别人配合的档放后面，不挡容易做的（终审）
+  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的雷神锤、神灯最后', () => {
+    expect(conds('town').slice(3)).toEqual([
+      ['town.mayor.right', 10],
+      ['town.mayor.right', 50],
+      ['fund.deposit', 1],
+      ['hiphop.top5', 1],
+      ['town.hammer', 1],
+      ['town.wish', 1],
+    ]);
+  });
+
+  it('外卖进阶：要钻石的无人机放最后；社交：靠别人的加精、邀请放最后', () => {
+    expect(conds('delivery').map(([k]) => k)).toEqual([
+      'takeaway.grade5',
+      'takeaway.grade5',
+      'takeaway.drone',
+    ]);
+    expect(conds('social').map(([k]) => k)).toEqual([
+      'looks.door',
+      'activity.join',
+      'icon.buy',
+      'activity.top10',
+      'post.featured',
+      'invite.level10',
+      'invite.level30',
+    ]);
+  });
+
+  it('守塔人：4、7、10 层用最高通过层数，击败守塔人最高 300 次（用户定）', () => {
+    expect(conds('keeper').filter(([k]) => k === 'tower.bestFloor')).toEqual([
+      ['tower.bestFloor', 4],
+      ['tower.bestFloor', 7],
+      ['tower.bestFloor', 10],
+    ]);
+    expect(line('keeper').at(-1)!).toMatchObject({ cond: { key: 'tower.win', target: 300 } });
+    expect(line('keeper')[0]!.cond.kind).toBe('state');
+  });
+
+  it('签到连续 7/30/60/90/180/365 天、活跃 100 点累计 10/30/100 天（用户定）', () => {
+    const c = conds('checkin');
+    expect(c.filter(([k]) => k === 'signin.best').map(([, n]) => n)).toEqual([7, 30, 60, 90, 180, 365]);
+    expect(c.filter(([k]) => k === 'activation.100').map(([, n]) => n)).toEqual([10, 30, 100]);
+    expect(line('checkin').every((q) => q.feature === 'task')).toBe(true);
+  });
+
+  it('收购名下 8 家（用户定），功能归收购；5 星守护兽要 5 星', () => {
+    expect(line('acquire').at(-1)!.cond).toEqual({ kind: 'state', key: 'acquire.holdings', target: 8 });
+    expect(line('acquire').every((q) => q.feature === 'acquire')).toBe(true);
+    expect(line('guardian').at(-1)!).toMatchObject({ needStar: 5, cond: { key: 'temple.guardian.kill5' } });
+  });
+
+  it('新键按前缀归到对应功能', () => {
+    const f = (key: string) => b.quests.find((q) => q.cond.key === key)!.feature;
+    expect(f('town.hammer')).toBe('town');
+    expect(f('fund.deposit')).toBe('fund');
+    expect(f('gem.level3')).toBe('equip');
+    expect(f('collection.plaques')).toBe('store');
+    expect(f('looks.door')).toBe('friend');
+    expect(f('invite.level10')).toBe('invite');
+    expect(f('activity.top10')).toBe('activity');
   });
 });

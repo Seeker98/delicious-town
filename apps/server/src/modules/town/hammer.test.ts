@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, latestSlot } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setWeather } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { listNews } from '../news/news';
@@ -42,6 +43,8 @@ describe('雷神锤（设计文档 §3.5）', () => {
     expect(await goodsNum(t, a.restaurantId, GOODS.missileBurst)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['weather.change'] });
     expect(n).toMatchObject({ restId: a.restaurantId, params: { from: 1, to: r.to, by: a.restaurantId } });
+    // “小镇”支线（问题记录 515）
+    expect(await eventCount(t, a.restaurantId, 'town.hammer')).toBe(1);
   });
 
   it('钻石方式：只出特殊天气，扣 8 钻石，送幸运饼干', async () => {

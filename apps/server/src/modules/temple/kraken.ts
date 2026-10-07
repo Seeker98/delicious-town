@@ -119,6 +119,9 @@ export async function feedKraken(
     })
     .execute();
   await emitAction(o, 'kraken.feed');
+  // 神殿支线（问题记录 515）：好感过了掉触手的门槛记一次；拿到触手另记
+  if (favor > t.tentacleFavor) await emitAction(o, 'kraken.favorHigh');
+  if (tentacle) await emitAction(o, 'kraken.tentacle');
   return {
     relation,
     favor,

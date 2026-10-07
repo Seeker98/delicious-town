@@ -203,6 +203,24 @@
   "3043": {
     "name": "Participer au jeu de devinettes du Marché"
   },
+  "3044": {
+    "name": "Répondre correctement 10 fois à la question du Maire Grosse Marmite"
+  },
+  "3045": {
+    "name": "Répondre correctement 50 fois à la question du Maire Grosse Marmite"
+  },
+  "3046": {
+    "name": "Faire un dépôt au Fonds de développement de la ville"
+  },
+  "3047": {
+    "name": "Finir dans le top 5 du classement hebdomadaire des pourboires du Garçon hip-hop"
+  },
+  "3048": {
+    "name": "Changer la météo avec le Marteau de Thor"
+  },
+  "3049": {
+    "name": "Faire un vœu avec la Lampe magique"
+  },
   "3061": {
     "name": "Donner 10 j'aime"
   },
@@ -277,6 +295,15 @@
   },
   "3124": {
     "name": "Nourrir le Kraken 10 fois"
+  },
+  "3125": {
+    "name": "Obtenir plus de 35 de faveur du Kraken en un seul repas"
+  },
+  "3126": {
+    "name": "Obtenir 3 fois un tentacule du Kraken en le nourrissant"
+  },
+  "3127": {
+    "name": "Nourrir le Kraken 50 fois"
   },
   "3141": {
     "name": "Récolter 10 fois"
@@ -487,6 +514,153 @@
   },
   "3349": {
     "name": "Toucher le centre avec les 3 fléchettes"
+  },
+  "3361": {
+    "name": "Expertiser des plats signature 10 fois"
+  },
+  "3362": {
+    "name": "Expertiser un plat signature de niveau 4 ou plus"
+  },
+  "3363": {
+    "name": "Cuisiner une fournée de plats signature valant 100 000 pièces ou plus"
+  },
+  "3364": {
+    "name": "Expertiser un plat signature de niveau 5 ou plus"
+  },
+  "3381": {
+    "name": "Vaincre le Gardien"
+  },
+  "3382": {
+    "name": "Réussir 10 Épreuves"
+  },
+  "3383": {
+    "name": "Vaincre le Gardien 30 fois"
+  },
+  "3384": {
+    "name": "Vaincre le Gardien à 5★ ou plus"
+  },
+  "3401": {
+    "name": "Réussir l'étage 4 de la Tour des chefs"
+  },
+  "3402": {
+    "name": "Vaincre 10 fois les gardiens de la tour"
+  },
+  "3403": {
+    "name": "Réussir l'étage 7 de la Tour des chefs"
+  },
+  "3404": {
+    "name": "Vaincre 50 fois les gardiens de la tour"
+  },
+  "3405": {
+    "name": "Réussir l'étage 10 de la Tour des chefs"
+  },
+  "3406": {
+    "name": "Vaincre 100 fois les gardiens de la tour"
+  },
+  "3407": {
+    "name": "Vaincre 200 fois les gardiens de la tour"
+  },
+  "3408": {
+    "name": "Vaincre 300 fois les gardiens de la tour"
+  },
+  "3421": {
+    "name": "Participer 10 fois au jeu de devinettes du Marché"
+  },
+  "3422": {
+    "name": "Deviner juste 3 ingrédients ou plus en une devinette du Marché"
+  },
+  "3423": {
+    "name": "Deviner juste 5 ingrédients ou plus en une devinette du Marché"
+  },
+  "3441": {
+    "name": "Réussir une livraison 5★ ou plus"
+  },
+  "3442": {
+    "name": "Réussir 20 livraisons 5★ ou plus"
+  },
+  "3443": {
+    "name": "Livrer une commande par drone"
+  },
+  "3461": {
+    "name": "Acquérir un restaurant"
+  },
+  "3462": {
+    "name": "Mettre en vente un de vos restaurants"
+  },
+  "3463": {
+    "name": "Recevoir un dividende"
+  },
+  "3464": {
+    "name": "Posséder 8 restaurants en même temps"
+  },
+  "3481": {
+    "name": "Améliorer une gemme au Rang 3"
+  },
+  "3482": {
+    "name": "Sertir 3 gemmes sur un même ustensile"
+  },
+  "3483": {
+    "name": "Améliorer une gemme au Rang 4"
+  },
+  "3484": {
+    "name": "Améliorer une gemme au Rang 5"
+  },
+  "3501": {
+    "name": "Posséder 3 plaques"
+  },
+  "3502": {
+    "name": "Posséder 10 honneurs"
+  },
+  "3503": {
+    "name": "Posséder 7 tableaux"
+  },
+  "3521": {
+    "name": "Pointer 7 jours d'affilée"
+  },
+  "3522": {
+    "name": "Récupérer la récompense de 100 points d'activité 10 jours"
+  },
+  "3523": {
+    "name": "Pointer 30 jours d'affilée"
+  },
+  "3524": {
+    "name": "Récupérer la récompense de 100 points d'activité 30 jours"
+  },
+  "3525": {
+    "name": "Pointer 60 jours d'affilée"
+  },
+  "3526": {
+    "name": "Pointer 90 jours d'affilée"
+  },
+  "3527": {
+    "name": "Récupérer la récompense de 100 points d'activité 100 jours"
+  },
+  "3528": {
+    "name": "Pointer 180 jours d'affilée"
+  },
+  "3529": {
+    "name": "Pointer 365 jours d'affilée"
+  },
+  "3541": {
+    "name": "Changer de porte"
+  },
+  "3542": {
+    "name": "Récupérer des récompenses dans 3 événements à durée limitée différents"
+  },
+  "3543": {
+    "name": "Acheter un titre à la boutique de titres"
+  },
+  "3544": {
+    "name": "Finir dans le top 10 d'un événement à durée limitée"
+  },
+  "3545": {
+    "name": "Faire mettre en avant un message du forum"
+  },
+  "3546": {
+    "name": "Qu'un ami invité atteigne le niveau 10"
+  },
+  "3547": {
+    "name": "Qu'un ami invité atteigne le niveau 30"
   },
   "4011": {
     "name": "Pointer 5 jours"

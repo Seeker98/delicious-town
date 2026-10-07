@@ -1,5 +1,6 @@
 import { addDays, gameDay } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+import { emitAction } from '../../core/action';
 import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { isBanned } from '../admin/ban';
@@ -182,6 +183,8 @@ export async function payDividends(
             )
             .execute();
           restLog(op, 'acquire.dividend', { day, n: inserted.length, coin: total });
+          // 支线“收购”（问题记录 515）：领到一次分红
+          await emitAction(op, 'acquire.dividend');
         }
         return { rests: inserted.length, coin: total };
       });

@@ -42,6 +42,9 @@ import {
   trialRestExp,
 } from './rules';
 
+/** 支线“神秘菜谱”的“一批特色菜价值 10 万以上”（问题记录 515） */
+const BIG_BATCH = 100_000;
+
 /** 鉴定失败的文案（规格书 04 §4.3） */
 const FAIL_TEXTS = [
   '这只是一堆厕纸而已',
@@ -212,6 +215,12 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
         }
         for (const [mcId, num] of got) await addRemnant(o, mcId, num);
         await emitAction(o, 'mc.appraise', b.times);
+        // 支线“神秘菜谱”（问题记录 515）：鉴定出 4 级、5 级以上的各记几张
+        const levels = results.flatMap((x) => (x.ok ? [o.config.requireMc(x.mcId!).level] : []));
+        for (const lv of [4, 5]) {
+          const n = levels.filter((l) => l >= lv).length;
+          if (n > 0) await emitAction(o, `mc.appraise.l${lv}`, n);
+        }
         return { results };
       });
     },
@@ -424,6 +433,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
           .executeTakeFirstOrThrow();
         setRest(o, 'mc_cook_id', c.id);
         await emitAction(o, 'mc.cook');
+        // 支线“神秘菜谱”（问题记录 515）：这一批份数 × 单价到 10 万
+        if (out.num * out.price >= BIG_BATCH) await emitAction(o, 'mc.cook.big');
         opNews(o, 'mc.cook', { mcId: mc.id, grade: out.grade, num: out.num });
         return {
           cook: cookDto(c),

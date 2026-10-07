@@ -3,6 +3,7 @@ import { addDays, gameTime } from '@dt/shared';
 import { acquireShard } from '../../../test/acquire';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { payDividends } from './dividend';
 import { acquireJobs } from './jobs';
 
@@ -86,6 +87,8 @@ describe('分红（收购 PR 2）', () => {
       .where('rest_id', '=', o.restaurantId)
       .execute();
     expect(ledger).toEqual([{ kind: 'coin', delta: 200_000, source: 'acquire.dividend' }]);
+    // 支线“收购”（问题记录 515）：领到分红记一次（一天一次，不按家数）
+    expect(await eventCount(t, o.restaurantId, 'acquire.dividend')).toBe(1);
   });
 
   it('合计超过老板的封顶：每家按比例压', async () => {
@@ -121,6 +124,7 @@ describe('分红（收购 PR 2）', () => {
       .where('rest_id', '=', o.restaurantId)
       .execute();
     expect(logs).toEqual([]);
+    expect(await eventCount(t, o.restaurantId, 'acquire.dividend')).toBe(0);
   });
 
   it('零点到 00:05 之间打理了今天：昨天的打理照样算', async () => {

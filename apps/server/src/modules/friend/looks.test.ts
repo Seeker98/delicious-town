@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { call, createTestApp, type TestContext } from '../../../test/helpers';
 import { playerIn } from '../../../test/players';
 import { cleanNotice } from './looks';
@@ -23,6 +24,8 @@ describe('装扮（规格书 02 §2.8）', () => {
     const a = await newRestaurant(t, { patch: { coin: 30_000 } });
     await looks().door(a, 2);
     expect(await restRow(t, a.restaurantId)).toMatchObject({ door: 2, coin: 10_000 });
+    // 支线“社交”（问题记录 515）
+    expect(await eventCount(t, a.restaurantId, 'looks.door')).toBe(1);
     await expect(looks().door(a, 2)).rejects.toMatchObject({ params: { reason: 'same_door' } });
     await expect(looks().door(a, 99)).rejects.toMatchObject({ params: { reason: 'bad_look' } });
     await expect(looks().door(a, 3)).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
@@ -170,6 +173,8 @@ describe('称号商店（240-2）', () => {
       .where('type', '=', 'icon.buy')
       .execute();
     expect(news.map((n) => n.params)).toEqual([{ key: 'oct26_l', title: '金秋食神' }]);
+    // 支线“社交”（问题记录 515）
+    expect(await eventCount(t, a.restaurantId, 'icon.buy')).toBe(1);
   });
 
   it('没上架、已下架、不是商店称号都不能买；已有的不能再买', async () => {

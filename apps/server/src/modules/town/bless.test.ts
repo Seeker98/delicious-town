@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, roundOf } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import type { RestCtx } from '../../core/deps';
 import { incrementDaily } from '../counter/dailyCounter';
 import { listNews } from '../news/news';
@@ -46,6 +47,8 @@ describe('许愿（设计文档 §3.7）', () => {
     expect(await goodsNum(t, a.restaurantId, GOODS.magicLamp)).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.bless'] });
     expect(n).toMatchObject({ restId: a.restaurantId, params: { blessId: bless.id, blessName: bless.name } });
+    // “小镇”支线（问题记录 515）
+    expect(await eventCount(t, a.restaurantId, 'town.wish')).toBe(1);
   });
 
   it('每区服每天只有第一个许愿的人生效；两人同时许愿只成功一个；第二天可以再许', async () => {

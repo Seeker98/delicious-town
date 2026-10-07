@@ -2,6 +2,7 @@ import { FUND_MEDALS, goodsEffectHours, type Tuning } from '@dt/config';
 import type { FundViewDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { iconLive, MAX_SHOWN_ICONS } from '../friend/looks';
@@ -139,6 +140,7 @@ export function createFundService(d: GameDeps) {
         if (t.news)
           opNews(o, t.news === 'broadcast' ? 'fund.big' : 'fund.deposit', { tier: t.key, coin: t.coin });
         restLog(o, 'fund.deposit', { tier: t.key, coin: t.coin });
+        await emitAction(o, 'fund.deposit');
         return opView(o);
       }),
     claim: (ctx: RestCtx) =>

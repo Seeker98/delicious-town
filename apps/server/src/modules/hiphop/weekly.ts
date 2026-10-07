@@ -1,6 +1,7 @@
 import { sql, type Kysely } from 'kysely';
 import { addDays, gameTime } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, runSystemOp } from '../../core/op';
 import type { DB } from '../../db/schema';
 import type { RankSource } from '../rank/ranking';
@@ -64,6 +65,8 @@ export async function awardWeekly(
         await grantGoodsOp(o, goodsId, 1);
         opNews(o, 'hiphop.weekly', { rank: i + 1, goodsId });
         restLog(o, 'hiphop.weekly', { monday, rank: i + 1, goodsId });
+        // “小镇”支线（问题记录 515）：周榜进前 5
+        if (i < 5) await emitAction(o, 'hiphop.top5');
       });
     } catch (err) {
       failed += 1;

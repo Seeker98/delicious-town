@@ -4,6 +4,7 @@ import type { DB } from '../../db/schema';
 import type { Looks } from '@dt/config';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, runOp, setRest, type Op, type OpResult } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 
@@ -98,6 +99,7 @@ export function createLooks(d: GameDeps) {
         spendCoin(o, def.shop!.coin);
         await o.tx.insertInto('rest_icon').values({ rest_id: o.rest.id, icon_key: key }).execute();
         opNews(o, 'icon.buy', { key, title: def.title });
+        await emitAction(o, 'icon.buy');
         return { key };
       });
     },
@@ -118,6 +120,8 @@ export function createLooks(d: GameDeps) {
           if (bought) spendCoin(o, def.coin);
         }
         setRest(o, 'door', door);
+        // 支线“社交”（问题记录 515）：换一次门面，换回默认的门也算
+        await emitAction(o, 'looks.door');
         return { door };
       });
     },

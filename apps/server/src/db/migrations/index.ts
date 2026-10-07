@@ -56,6 +56,7 @@ import * as m0054 from './0054_duel_price';
 import * as m0055 from './0055_bar_streak_best';
 import * as m0056 from './0056_quest_compensate';
 import * as m0057 from './0057_zasui_backfill';
+import * as m0058 from './0058_signin_streak';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -116,4 +117,5 @@ export const migrations: Record<string, Migration> = {
   '0055_bar_streak_best': m0055,
   '0056_quest_compensate': m0056,
   '0057_zasui_backfill': m0057,
+  '0058_signin_streak': m0058,
 };

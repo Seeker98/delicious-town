@@ -95,6 +95,9 @@ export function createMarketService(d: GameDeps, world: WorldService) {
         .where('rest_id', '=', restId)
         .execute();
       restLog(o, 'market.guess', { period: slot.key, hits });
+      // 支线“菜场竞猜”（问题记录 515）：一次猜中 3 种以上、5 种以上
+      if (hits >= 3) await emitAction(o, 'market.guess.hit3');
+      if (hits >= 5) await emitAction(o, 'market.guess.hit5');
     });
   }
 

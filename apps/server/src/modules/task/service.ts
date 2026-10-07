@@ -1,5 +1,12 @@
 import { sql, type Kysely } from 'kysely';
-import { GOODS, type Award, type Quest, type QuestCond, type ShardSettings } from '@dt/config';
+import {
+  GOODS,
+  type Award,
+  type GameConfig,
+  type Quest,
+  type QuestCond,
+  type ShardSettings,
+} from '@dt/config';
 import {
   addDays,
   ErrorCode,
@@ -20,6 +27,7 @@ import { withRestaurant } from '../../db/tx';
 import type { DB, RestaurantRow } from '../../db/schema';
 import { AppError } from '../../http/errors';
 import { grantAward } from '../award/award';
+import { collectionCounts } from '../effects/aggregate';
 import { incrementDaily } from '../counter/dailyCounter';
 import { normalizeCounts } from '../settlement/globals';
 import { grantGoodsOp, hasValidHonor } from '../store/goods';
@@ -51,6 +59,32 @@ function claimableActivity(rest: Pick<RestaurantRow, 'shard_id' | 'level'>, now:
     and a.starts_at <= ${now} and a.min_level <= ${rest.level}
     and (a.ends_at > ${now} or (a.kind = 'exchange'
       and a.ends_at + coalesce((a.def->>'graceHours')::int, 24) * interval '1 hour' > ${now})))`;
+}
+
+/** 支线“收藏”的三个状态（问题记录 515）：和加成汇总同一个口径 */
+function collectionOf(owned: number[], honors: number[], config: GameConfig) {
+  const c = collectionCounts(owned, honors, config);
+  return {
+    'collection.plaques': c.plaques,
+    'collection.honors': c.honors,
+    'collection.paintings': c.paintings,
+  };
+}
+
+/** 连续签到（支线“签到和活跃”，问题记录 515）：昨天签过的接着数，否则从 1 开始；最长的留着 */
+async function recordStreak(db: Kysely<DB>, restId: number, day: string): Promise<void> {
+  const prev = await db
+    .selectFrom('signin_streak')
+    .select(['last_day', 'streak', 'best'])
+    .where('rest_id', '=', restId)
+    .executeTakeFirst();
+  const streak = prev?.last_day === addDays(day, -1) ? prev.streak + 1 : 1;
+  const row = { last_day: day, streak, best: Math.max(prev?.best ?? 0, streak) };
+  await db
+    .insertInto('signin_streak')
+    .values({ rest_id: restId, ...row })
+    .onConflict((oc) => oc.column('rest_id').doUpdateSet(row))
+    .execute();
 }
 
 /** 活跃项编号（activation_extra.json、原版活跃表） */
@@ -86,6 +120,21 @@ export function createTaskService(d: GameDeps) {
         sql<number>`(select count(*) from rest_mc where rest_id = ${rest.id})`.as('mcLearned'),
         sql<number>`(select count(*) from yard_land where rest_id = ${rest.id})`.as('lands'),
         sql<boolean>`exists(select 1 from takeaway_state where rest_id = ${rest.id})`.as('takeaway'),
+        // 支线扩充 B（问题记录 515）
+        sql<number | null>`(select best_floor from tower_state where rest_id = ${rest.id})`.as('bestFloor'),
+        sql<number>`(select count(*) from acquire_state where owner_rest_id = ${rest.id})`.as('holdings'),
+        sql<number | null>`(select best from signin_streak where rest_id = ${rest.id})`.as('signinBest'),
+        sql<
+          number[]
+        >`coalesce((select array_agg(goods_id) from store_item where rest_id = ${rest.id} and num > 0), '{}')`.as(
+          'owned',
+        ),
+        sql<number[]>`coalesce((select array_agg(source_id) from effect_source where rest_id = ${rest.id}
+          and source_type = 'honor' and (expires_at is null or expires_at > ${now})), '{}')`.as('honors'),
+        sql<{ lv10: number; lv30: number }>`(select json_build_object(
+          'lv10', count(distinct invitee_account_id) filter (where stage = 'lv10'),
+          'lv30', count(distinct invitee_account_id) filter (where stage = 'lv30'))
+          from invite_reward where inviter_account_id = ${rest.account_id})`.as('invited'),
       ])
       .executeTakeFirstOrThrow();
     const available = (f: string) => featureAvailable(settings, f) && (f !== 'activity' || facts.running);
@@ -100,6 +149,12 @@ export function createTaskService(d: GameDeps) {
       'yard.lands': Number(facts.lands),
       'takeaway.open': facts.takeaway ? 1 : 0,
       'cookbooks.foreignLearned': foreignLearned(counts.street),
+      'tower.bestFloor': facts.bestFloor ?? 0,
+      'acquire.holdings': Number(facts.holdings),
+      'signin.best': facts.signinBest ?? 0,
+      'invite.level10': Number(facts.invited.lv10),
+      'invite.level30': Number(facts.invited.lv30),
+      ...collectionOf(facts.owned, facts.honors, d.config),
     };
     const progress = (c: QuestCond) =>
       c.kind === 'counter' ? counterOf(c.key, counters) : (stateValue(c.key, rest, counts, extra) ?? 0);
@@ -481,6 +536,8 @@ export function createTaskService(d: GameDeps) {
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
         const multiplier = (await hasValidHonor(o, GOODS.loveNecklace)) ? 2 : 1;
         await grantAward(o, scaled(reward.award, o.rest.level), { multiplier });
+        // 支线“签到和活跃”（问题记录 515）：领 100 点这一档的天数
+        if (points === 100) await emitAction(o, 'activation.100');
         // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（问题记录 318：新增 180 档后仍在 150 档）；
         // 区服关掉一番赏不送
         let kujiTickets = 0;
@@ -496,8 +553,10 @@ export function createTaskService(d: GameDeps) {
 
     signIn(ctx: RestCtx) {
       return runOp(d, ctx, { feature: 'task', source: 'signin' }, async (o) => {
-        if ((await incrementDaily(o.tx, o.rest.id, SIGNIN_KEY, 1, gameDay(o.now))) > 1)
+        const day = gameDay(o.now);
+        if ((await incrementDaily(o.tx, o.rest.id, SIGNIN_KEY, 1, day)) > 1)
           throw new AppError(ErrorCode.ALREADY_DONE, 400);
+        await recordStreak(o.tx, o.rest.id, day);
         await grantGoodsOp(o, GOODS.signInGift, 1);
         await emitAction(o, 'signin');
         return { signedIn: true };

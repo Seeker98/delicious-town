@@ -3,6 +3,7 @@ import { sequenceRng } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
 
@@ -86,6 +87,15 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
     });
   });
 
+  it('一件厨具镶满 3 颗记一次（问题记录 515 支线“宝石”）', async () => {
+    const ctx = await newRestaurant(t, { patch: { strength: 10 }, goods: { [gid('[一阶]•蓝冥原石')]: 3 } });
+    const id = await piece(ctx, gid('沉默之度玛的静谧之镬'), { cur_hole: 3, max_hole: 3 });
+    for (const want of [0, 0, 1]) {
+      await eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥原石') });
+      expect(await eventCount(t, ctx.restaurantId, 'equip.gemFull')).toBe(want);
+    }
+  });
+
   it('摘除：2 星以下免费；2 星起花 阶数 × 1 万；酸雨免费；宝石退回仓库', async () => {
     const ctx = await newRestaurant(t, { patch: { star_level: 2, coin: 25_000 } });
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'), { cur_hole: 3 });
@@ -147,6 +157,26 @@ describe('宝石升阶（设计文档 §3.9）', () => {
     expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•蓝冥灵石'))).toBe(2);
     const rest = await restRow(t, ctx.restaurantId);
     expect(rest.strength).toBe(7);
+  });
+
+  it('升出 3、4、5 阶各按颗数记（问题记录 515 支线“宝石”）；升到 2 阶、失败不记', async () => {
+    const ctx = await newRestaurant(t, {
+      patch: { strength: 100, luck: 0 },
+      goods: { [gid('[一阶]•蓝冥原石')]: 2, [gid('[二阶]•蓝冥灵石')]: 4, [gid('[四阶]•智慧原玉')]: 4 },
+    });
+    const n = (k: string) => eventCount(t, ctx.restaurantId, k);
+    seq = [0.0];
+    await eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥原石'), num: 1 });
+    await eq().gemLevelUp(ctx, { goodsId: gid('[二阶]•蓝冥灵石'), num: 2 });
+    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧原玉'), num: 1 });
+    seq = [0.99];
+    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧原玉'), num: 1 });
+    expect([
+      await n('gem.level2'),
+      await n('gem.level3'),
+      await n('gem.level4'),
+      await n('gem.level5'),
+    ]).toEqual([0, 2, 0, 1]);
   });
 
   it('最高阶、宝石不够、体力不够都拒绝', async () => {

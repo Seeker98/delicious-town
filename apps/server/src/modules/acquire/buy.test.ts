@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { acquireShard, acquireStateOf, setAcquireState } from '../../../test/acquire';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -40,6 +41,9 @@ describe('强收（收购 PR 1）', () => {
     expect(log).toMatchObject([
       { kind: 'acquire', buyer_rest_id: buyer.restaurantId, price: 1_000_000, tax: 100_000 },
     ]);
+    // 支线“收购”（问题记录 515）
+    expect(await eventCount(t, buyer.restaurantId, 'acquire.buy')).toBe(1);
+    expect(await eventCount(t, target.restaurantId, 'acquire.buy')).toBe(0);
   });
 
   it('已经被收购的店：钱给原老板，目标店自己一分不得；挂牌作废', async () => {

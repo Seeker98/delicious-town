@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    sideB1008:
+      'Encore des quêtes secondaires\u202f: nouvelles lignes Recettes mystères, Gardien, Gardiens de la tour, Devinettes du Marché, Livraison experte, Acquisitions, Gemmes, Collection, Pointage et activité et Social\u202f; la ligne Ville ajoute le Fonds de développement, la question du Maire, le classement hebdomadaire du Garçon hip-hop, le Marteau de Thor et la Lampe magique\u202f; la ligne Temple ajoute la faveur du Kraken, les tentacules et 50 repas. Les séries de pointage comptent votre plus longue série, et les pointages des 30 derniers jours sont déjà pris en compte',
     sideA1008:
       'Plus de quêtes secondaires\u202f: la ligne du bar comprend l’essai de chaque nouveau jeu et 500 puis 2\u202f000 parties\u202f; deux nouvelles lignes, «\u202fChance au bar\u202f» (séries au chifoumi, Gobelets réussis, Piment du Diable, 100 parties de machine à sous…) et «\u202fAs du bar\u202f» (fléchettes, Cocktail Mémoire, Le dernier bonbon, Mélange secret, À prendre ou à laisser)\u202f; la Bourse ajoute les échanges avec le système, la vente à prix bradé au système, l’achat et la vente d’ingrédients rares et 500 échanges\u202f; les prédictions ajoutent la revente anticipée, la détention de 100 et 200 parts, et un gain ou une perte d’un certain montant en un règlement\u202f; l’Ichiban Kuji ajoute le tirage d’un Prix A et l’Ichiban Kuji de luxe\u202f; Chez soi partout ajoute des quêtes de la rue Chop Suey, la dernière étant «\u202fMal du pays\u202f»\u202f: apprendre tous ses plats',
     krab1008:
