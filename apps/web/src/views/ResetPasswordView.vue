@@ -60,7 +60,7 @@ async function submit() {
         <button class="btn btn-primary w-100" :disabled="busy">{{ t.common.confirm }}</button>
       </form>
       <div class="mt-2 small">
-        <RouterLink to="/login">{{ t.auth.goLogin }}</RouterLink>
+        <RouterLink to="/login" class="dt-go">{{ t.auth.goLogin }}</RouterLink>
       </div>
     </div>
   </div>

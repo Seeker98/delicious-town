@@ -99,10 +99,10 @@ const hits = computed(() =>
       </RouterLink>
     </div>
     <!-- 玩法攻略（问题记录 384） -->
-    <RouterLink to="/wiki/guide" class="d-block small mb-1" data-testid="wiki-guide-link"
+    <RouterLink to="/wiki/guide" class="d-block small mb-1 dt-go text-wrap" data-testid="wiki-guide-link"
       ><i class="bi bi-compass me-1"></i>{{ t.wiki.guide.link }}</RouterLink
     >
-    <RouterLink to="/wiki/api" class="small" data-testid="wiki-api-link"
+    <RouterLink to="/wiki/api" class="small dt-go text-wrap" data-testid="wiki-api-link"
       ><i class="bi bi-braces me-1"></i>{{ t.wiki.apiLink }}</RouterLink
     >
   </div>

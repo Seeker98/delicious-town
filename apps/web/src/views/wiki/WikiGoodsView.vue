@@ -121,7 +121,7 @@ const shopPrice = computed(() => {
   <div>
     <RouterLink
       :to="listBack(g?.equip ? '/wiki/equips' : '/wiki/goods', router.options.history.state.back)"
-      class="small"
+      class="small dt-back"
       >{{ t.wiki.back }}</RouterLink
     >
     <div v-if="error" class="dt-empty" data-testid="wiki-error">

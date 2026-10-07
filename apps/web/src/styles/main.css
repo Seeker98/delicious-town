@@ -160,14 +160,6 @@ body {
 .dt-tag-lead {
   vertical-align: text-top;
 }
-/* 跟正文同字号、同行高的文字按钮（问题记录 196：举报按钮和新闻错开半格、撑高行） */
-.dt-inline-btn {
-  padding: 0;
-  border: 0;
-  font-size: inherit;
-  line-height: inherit;
-  vertical-align: baseline;
-}
 /* 列表里的分类小标题（问题记录 194）：浅色小字加细线，不和加粗的条目名抢层级 */
 .dt-group-label {
   margin: 12px 0 2px;
@@ -501,6 +493,25 @@ a:hover > .dt-go,
 .dt-go::after {
   content: '\a0›';
   content: '\a0›' / '';
+}
+/*
+ * 全游戏文字链接（问题记录 451，规范见 docs/design/文字链接-2026-10-07.md）：
+ * 链接一律不带下划线（名字链接靠品牌色区分）；返回上一级用 .dt-back，开头由样式加 ‹（读屏不读）
+ */
+a {
+  text-decoration: none;
+}
+.dt-back {
+  color: var(--bs-link-color);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dt-back:hover {
+  color: var(--bs-link-hover-color);
+}
+.dt-back::before {
+  content: '‹\a0';
+  content: '‹\a0' / '';
 }
 .dt-link-btn {
   padding: 0;

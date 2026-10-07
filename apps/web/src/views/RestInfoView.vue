@@ -43,7 +43,7 @@ onMounted(async () => {
         {{ ATTR_NAMES[k] }} {{ k === 'luck' ? rest.luck : rest.attrs[k] }}
       </div>
     </div>
-    <RouterLink to="/rest/equip" class="small" data-testid="to-points">{{
+    <RouterLink to="/rest/equip" class="small dt-go" data-testid="to-points">{{
       rest.attrLeft > 0 ? t.rest.info.toPoints(rest.attrLeft) : t.rest.info.toEquip
     }}</RouterLink>
     <h6 class="dt-section">{{ t.rest.info.capacity }}</h6>

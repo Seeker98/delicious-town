@@ -53,7 +53,7 @@ const streetName = computed(() => new Map(streets.value.map((s) => [s.id, s.name
 
 <template>
   <div>
-    <RouterLink :to="listBack('/wiki/foods', router.options.history.state.back)" class="small">{{
+    <RouterLink :to="listBack('/wiki/foods', router.options.history.state.back)" class="small dt-back">{{
       t.wiki.back
     }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">

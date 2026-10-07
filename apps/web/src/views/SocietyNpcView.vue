@@ -84,12 +84,12 @@ onMounted(() => {
 
 <template>
   <div>
-    <RouterLink to="/society" class="small">‹ {{ t.society.title }}</RouterLink>
+    <RouterLink to="/society" class="small dt-back">{{ t.society.title }}</RouterLink>
     <h5 class="mt-1">{{ t.npc.titles[npc] }}</h5>
     <NpcCard v-if="CARD[npc]" :key="npc" :npc="CARD[npc]!" />
     <div v-if="restFailed" class="small text-muted" data-testid="npc-rest-failed">
       {{ t.town.restFailed }}
-      <button class="btn btn-sm btn-link p-0 align-baseline" data-testid="npc-rest-retry" @click="loadRest">
+      <button class="dt-link-btn" data-testid="npc-rest-retry" @click="loadRest">
         {{ t.town.retry }}
       </button>
     </div>
@@ -100,11 +100,7 @@ onMounted(() => {
       <template v-else>
         <div v-if="townFailed" class="small text-muted" data-testid="npc-town-failed">
           {{ t.town.loadFailed }}
-          <button
-            class="btn btn-sm btn-link p-0 align-baseline"
-            data-testid="npc-town-retry"
-            @click="loadTown"
-          >
+          <button class="dt-link-btn" data-testid="npc-town-retry" @click="loadTown">
             {{ t.town.retry }}
           </button>
         </div>

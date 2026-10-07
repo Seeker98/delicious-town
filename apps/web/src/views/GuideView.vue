@@ -48,7 +48,7 @@ onMounted(() => {
   </div>
   <!-- 游戏资料入口（问题记录 142） -->
   <p class="small mb-2">
-    <RouterLink to="/wiki" data-testid="guide-wiki"
+    <RouterLink to="/wiki" class="dt-go text-wrap" data-testid="guide-wiki"
       ><i class="bi bi-book me-1"></i>{{ t.guide.wikiHint }}</RouterLink
     >
   </p>

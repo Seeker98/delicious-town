@@ -47,7 +47,7 @@ const list = computed(() => cookbooks.value.filter((c) => c.streetId === id.valu
 
 <template>
   <div>
-    <RouterLink :to="listBack('/wiki/streets', router.options.history.state.back)" class="small">{{
+    <RouterLink :to="listBack('/wiki/streets', router.options.history.state.back)" class="small dt-back">{{
       t.wiki.back
     }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">{{ t.wiki.loadFailed }}</div>
