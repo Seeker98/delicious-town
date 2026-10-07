@@ -150,6 +150,10 @@ export interface TownExchangeDto {
   mysteryTickets: number;
   /** 每级可以用 N 级券换的食材 id（下标 0 = 一级） */
   levelFoods: number[][];
+  /** levelFoods 里我有的食材：id → 个数（问题记录 491，没有的不写） */
+  foodHave: Record<number, number>;
+  /** levelFoods 里本街的菜还要的食材：id → 合计要几个，不减去已有的（和橱柜 streetNeed 同一口径；不要的不写） */
+  streetNeed: Record<number, number>;
   /** 神秘券可以换的 7 级食材 id */
   mysteryFoods: number[];
   maxNum: number;

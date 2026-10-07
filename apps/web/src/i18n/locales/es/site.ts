@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ui1007c:
+      'Pruebas del templo: el ingrediente principal y el secundario son ahora dos casillas sobre una lista de ingredientes agrupada por nivel, con búsqueda; los niveles por debajo del plato empiezan plegados. Vales de ingredientes de Hermano 13: los niveles son botones que muestran cuántos vales tienes, primero salen los ingredientes que le faltan a tu calle y los que no tienes, con cuántos tienes y cuántos faltan, y se elige con +',
     batch1007b:
       'Los cambios con amigos ahora son 10 al día entre todos tus amigos, y a cada jugador se le puede cambiar como máximo 20 veces al día, sin importar las estrellas (con muchas estrellas tienes al menos 3 cambios con Don Krab); las gemas cambian de nombre por rango: piedra en bruto, espiritual y divina, luego jade en bruto, espiritual y divino; un icono de regalo junto a la actividad de hoy en la portada indica que hay recompensa por reclamar; en el aula puedes filtrar los platos estrella por nivel al abrir una clase; el mercado premium cierra por ahora; en la tienda de la torre, las estatuas muestran «Máx. 1» donde iría la cantidad',
     parens1007:

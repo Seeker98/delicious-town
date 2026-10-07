@@ -21,6 +21,24 @@ beforeAll(async () => {
 afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime(DAY, 12)));
 
+describe('13 哥食材兑换券页的排序数据（问题记录 491）', () => {
+  it('每种可换食材我有几个、本街的菜还要几个（和橱柜同一口径）；没有的、不要的不写', async () => {
+    const grape = fid('葡萄');
+    const a = await newRestaurant(t, { foods: { [grape]: 3 } });
+    const v = await t.game.town.exchangeView(a);
+    const level = config.foods.get(grape)!.level;
+    expect(v.levelFoods[level - 1]).toContain(grape);
+    expect(v.foodHave).toEqual({ [grape]: 3 });
+    const cup = await t.game.cupboard.list(a);
+    const need = cup.items.find((x) => x.foodsId === grape)!.streetNeed;
+    expect(need).toBeGreaterThan(0);
+    expect(v.streetNeed[grape]).toBe(need);
+    const listed = new Set(v.levelFoods.flat());
+    expect(Object.keys(v.streetNeed).every((id) => listed.has(Number(id)))).toBe(true);
+    expect(Object.values(v.streetNeed).every((n) => n > 0)).toBe(true);
+  });
+});
+
 describe('镇长兑换（设计文档 §3.6）', () => {
   it('兑换页：73 项、持有数、已兑次数、两种券和可换食材', async () => {
     const a = await newRestaurant(t, {

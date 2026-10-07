@@ -212,7 +212,18 @@ export default {
   ticket: {
     got: (list: string) => `换到 ${list}`,
     failed: '兑换失败',
-    level: (l: number) => `${l} 级食材兑换券`,
+    /** 等级按钮：有券时写几张（问题记录 491） */
+    levelPill: (l: number, n: number) => (n > 0 ? `${l} 级 ×${n}` : `${l} 级`),
+    levelLabel: '按券的等级',
+    search: '搜索食材',
+    noMatch: '没有找到',
+    foodHave: (n: number) => (n > 0 ? `有 ${n}` : '没有'),
+    /** 本街的菜还缺几个 */
+    short: (n: number) => `缺 ${n}`,
+    picked: (n: number, have: number) => `已选 ${n} / ${have} 张`,
+    addOne: (name: string) => `多换一个${name}`,
+    subOne: (name: string) => `少换一个${name}`,
+    numOf: (name: string) => `换几个${name}`,
     have: (n: number) => `持有 ${n} 张`,
     rule: '一张换一个同等级的普通食材，可以一次选多种',
     go: (n: number) => `兑换 (用 ${n} 张)`,

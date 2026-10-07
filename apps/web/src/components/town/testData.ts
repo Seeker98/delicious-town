@@ -70,6 +70,8 @@ export const exchangeData = (patch: Partial<TownExchangeDto> = {}): TownExchange
   levelTickets: [3, 0, 0, 0, 0],
   mysteryTickets: 1,
   levelFoods: [[101, 102], [201], [301], [401], [501]],
+  foodHave: {},
+  streetNeed: {},
   mysteryFoods: [701, 702],
   maxNum: 99,
   ...patch,

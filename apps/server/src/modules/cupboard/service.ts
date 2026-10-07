@@ -17,10 +17,10 @@ import { opNeedPick } from '../../core/scarcity';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin, spendStrength } from '../../core/resources';
 import { AppError } from '../../http/errors';
-import { foodsNeedFor, padLevels, streetTargetGrade } from '../cookbook/rules';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { WorldService } from '../world/service';
 import { addFoods, cupboardSlotsUsed, foodsMap, subFoods } from './foods';
+import { streetNeeds as streetNeedsOf } from './needs';
 import { composePool, handleTargetLevel, runHandle, type HandleWay } from './rules';
 
 const HANDLE_KEY = 'foods.handle';
@@ -28,22 +28,10 @@ const HANDLE_KEY = 'foods.handle';
 export function createCupboardService(d: GameDeps, world: WorldService) {
   const op = <T>(ctx: RestCtx, source: string, fn: (o: Op) => Promise<T>): Promise<OpResult<T>> =>
     runOp(d, ctx, { feature: 'cupboard', source }, fn);
-  const needOf = (id: number, grade: number) => d.config.requireCookbook(id).needFoods[grade] ?? [];
   const freeHandles = (star: number, t: { freeHandleBase: number; freeHandlePerStar: number }) =>
     t.freeHandleBase + t.freeHandlePerStar * star;
-  /** 本街的菜还要哪些食材、各几个（橱柜和冰箱共用，问题记录 465） */
-  async function streetNeeds(restId: number, streetId: number, maxGrade: number) {
-    const cb = await d.db
-      .selectFrom('restaurant_cookbooks')
-      .select('levels')
-      .where('rest_id', '=', restId)
-      .executeTakeFirstOrThrow();
-    const levels = padLevels(new Uint8Array(cb.levels), d.config.cookbookIndex.slots);
-    const streetIds = d.config.cookbookIndex.idsByStreet.get(streetId) ?? [];
-    const targetGrade = streetTargetGrade(levels, d.config.cookbookIndex.slotOf, streetIds, maxGrade);
-    const needMap = foodsNeedFor(streetIds, levels, d.config.cookbookIndex.slotOf, targetGrade, needOf);
-    return { targetGrade, needMap };
-  }
+  const streetNeeds = (restId: number, streetId: number, maxGrade: number) =>
+    streetNeedsOf(d.db, d.config, restId, streetId, maxGrade);
 
   return {
     async list(ctx: RestCtx): Promise<CupboardDto> {

@@ -53,8 +53,9 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
   await page.getByTestId('tab-trial').click();
   await page.getByTestId('trial-meditate').click();
   await expect(page.getByTestId('trial-target')).toBeVisible();
-  await page.getByTestId('trial-main').selectOption('5001');
-  await page.getByTestId('trial-sub').selectOption('5009');
+  // 主料槽默认选中，点完主料自动换到辅料（问题记录 487）
+  await page.getByTestId('trial-food-5001').click();
+  await page.getByTestId('trial-food-5009').click();
   await page.getByTestId('trial-start').click();
   await expect(page.getByTestId('trial-result')).toContainText('试炼');
 });

@@ -41,7 +41,7 @@ export function createTownService(d: GameDeps, world: WorldService) {
     },
     async exchangeView(ctx: RestCtx): Promise<TownExchangeDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'town');
-      return exchangeView(d.db, d.config, s.tuning.town, ctx.restaurantId, d.now());
+      return exchangeView(d.db, d.config, s.tuning, ctx.restaurantId, d.now());
     },
     exchange(ctx: RestCtx, b: { id: number; num: number }) {
       return op(ctx, 'town.exchange', (o) => doExchange(o, b.id, b.num));

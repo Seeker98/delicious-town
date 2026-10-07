@@ -6,6 +6,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import { matchText } from '../../utils/match';
 
 const props = defineProps<{ data: TempleDto }>();
 const emit = defineEmits<{ reload: [] }>();
@@ -22,7 +23,7 @@ const result = ref<TrialResultDto | null>(null);
 /** 稀有食材：odds < 100（规格书 09 §9.4） */
 const RARE = 100;
 
-onMounted(async () => {
+async function loadFoods() {
   try {
     const [c, m] = await Promise.all([endpoints.cupboard(), endpoints.mc()]);
     foods.value = c.items.filter((x) => x.num > 0);
@@ -30,21 +31,58 @@ onMounted(async () => {
   } catch (e) {
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
-});
+}
+onMounted(loadFoods);
+/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；用光的、不够主辅各一个的去掉，回到主料槽 */
+async function afterTrial() {
+  await loadFoods();
+  const num = (id: number | null) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
+  if (main.value !== null && num(main.value) === 0) main.value = null;
+  if (sub.value !== null && (num(sub.value) === 0 || (sub.value === main.value && num(sub.value) < 2)))
+    sub.value = null;
+  slot.value = main.value === null ? 'main' : 'sub';
+}
 
 const trial = computed(() => props.data.trial);
 const dish = computed(() => (trial.value.mcId === null ? undefined : catalog.mc(trial.value.mcId)));
 /** 试炼对象当前的试炼价值 / 经验（问题记录：试炼的选项说明不够） */
 const stat = computed(() => learned.value.find((m) => m.mcId === trial.value.mcId));
-const foodLabel = (f: CupboardFoodDto) => {
-  const d = catalog.food(f.foodsId);
-  return t.value.temple.trial.foodLabel(
-    catalog.foodName(f.foodsId),
-    d?.level ?? '?',
-    !!d && d.odds < RARE,
-    f.num,
-  );
-};
+/**
+ * 选主料辅料（问题记录 487：两个下拉框拉得太长）：两个槽位 + 按等级分组的食材框，可搜索。
+ * 比这道菜低的等级默认收起（低了成功率降），点组名展开；搜索时全部展开
+ */
+const slot = ref<'main' | 'sub'>('main');
+const q = ref('');
+const isRare = (id: number) => (catalog.food(id)?.odds ?? RARE) < RARE;
+const levelOf = (id: number) => catalog.food(id)?.level ?? 0;
+const groups = computed(() => {
+  const by = new Map<number, CupboardFoodDto[]>();
+  for (const f of foods.value) {
+    if (!matchText(catalog.foodName(f.foodsId), q.value.trim())) continue;
+    const lv = levelOf(f.foodsId);
+    by.set(lv, [...(by.get(lv) ?? []), f]);
+  }
+  return [...by.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([lv, list]) => ({ lv, list: list.sort((a, b) => a.foodsId - b.foodsId) }));
+});
+/** 手动展开 / 收起过的组；没动过的按“不低于这道菜的等级”决定 */
+const toggled = ref(new Map<number, boolean>());
+const isOpen = (lv: number) =>
+  q.value.trim() !== '' || (toggled.value.get(lv) ?? lv >= (dish.value?.level ?? 0));
+function toggleGroup(lv: number) {
+  toggled.value = new Map(toggled.value).set(lv, !isOpen(lv));
+}
+/** 另一个槽已经选了同一种、只有 1 个时不能再选 */
+const blockedFood = (f: CupboardFoodDto) =>
+  (slot.value === 'main' ? sub.value : main.value) === f.foodsId && f.num < 2;
+function pickFood(id: number) {
+  if (slot.value === 'main') {
+    main.value = id;
+    if (sub.value === null) slot.value = 'sub';
+  } else sub.value = id;
+}
+const slotName = (id: number | null) => (id === null ? t.value.temple.trial.slotEmpty : catalog.foodName(id));
 /** 预计成功率（不含幸运），与服务端同一公式，以服务端为准 */
 const rate = computed(() => {
   const a = main.value === null ? undefined : catalog.food(main.value);
@@ -80,10 +118,12 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 const prepare = (way: 1 | 2) => run(() => endpoints.trialPrepare(way), t.value.temple.trial.prepareFailed);
 const refresh = (mcId?: number) =>
   run(() => endpoints.trialRefresh(mcId), t.value.temple.trial.refreshFailed);
-const start = () =>
-  run(async () => {
+const start = async () => {
+  await run(async () => {
     result.value = await endpoints.trialStart(main.value!, sub.value!);
   }, t.value.temple.trial.failed);
+  await afterTrial();
+};
 </script>
 
 <template>
@@ -140,14 +180,73 @@ const start = () =>
           {{ t.temple.trial.pick }}
         </button>
       </div>
-      <select v-model.number="main" class="form-select form-select-sm mb-1" data-testid="trial-main">
-        <option :value="null" disabled>{{ t.temple.trial.main }}</option>
-        <option v-for="f in foods" :key="f.foodsId" :value="f.foodsId">{{ foodLabel(f) }}</option>
-      </select>
-      <select v-model.number="sub" class="form-select form-select-sm mb-1" data-testid="trial-sub">
-        <option :value="null" disabled>{{ t.temple.trial.sub }}</option>
-        <option v-for="f in foods" :key="f.foodsId" :value="f.foodsId">{{ foodLabel(f) }}</option>
-      </select>
+      <div class="d-flex gap-1 mb-1">
+        <button
+          v-for="s in ['main', 'sub'] as const"
+          :key="s"
+          type="button"
+          :class="[
+            'btn btn-sm flex-fill text-start dt-trial-slot',
+            slot === s ? 'btn-primary' : 'btn-outline-secondary',
+          ]"
+          :aria-pressed="slot === s"
+          :data-testid="`trial-slot-${s}`"
+          @click="slot = s"
+        >
+          <!-- 槽名和选中的食材分两行：法文槽名长，挤在一行会把食材名截掉 -->
+          <span class="d-block small opacity-75">{{ t.temple.trial[s] }}</span
+          ><span class="d-block dt-clamp1">{{ slotName(s === 'main' ? main : sub) }}</span>
+        </button>
+      </div>
+      <input
+        v-model="q"
+        type="search"
+        class="form-control form-control-sm mb-1"
+        :placeholder="t.temple.trial.search"
+        data-testid="trial-search"
+      />
+      <div class="dt-card dt-trial-foods mb-1" data-testid="trial-foods">
+        <div v-if="groups.length === 0" class="text-muted">{{ t.temple.trial.noFoods }}</div>
+        <div v-for="g in groups" :key="g.lv" class="mb-1">
+          <button
+            type="button"
+            class="dt-link-btn dt-group-label"
+            :aria-expanded="isOpen(g.lv)"
+            :data-testid="`trial-group-${g.lv}`"
+            @click="toggleGroup(g.lv)"
+          >
+            <i :class="['bi', isOpen(g.lv) ? 'bi-chevron-down' : 'bi-chevron-right']" aria-hidden="true"></i>
+            {{ t.temple.trial.group(g.lv, g.list.length) }}
+          </button>
+          <div v-if="isOpen(g.lv)">
+            <button
+              v-for="f in g.list"
+              :key="f.foodsId"
+              type="button"
+              :class="[
+                'btn btn-sm me-1 mb-1',
+                f.foodsId === main || f.foodsId === sub ? 'btn-primary' : 'btn-outline-secondary',
+              ]"
+              :disabled="blockedFood(f)"
+              :data-testid="`trial-food-${f.foodsId}`"
+              @click="pickFood(f.foodsId)"
+            >
+              {{ t.common.qty(catalog.foodName(f.foodsId), f.num)
+              }}<span v-if="isRare(f.foodsId)" class="dt-sale-tag ms-1">{{ t.temple.trial.rareTag }}</span
+              ><span
+                v-if="f.foodsId === main || f.foodsId === sub"
+                class="ms-1"
+                data-testid="trial-food-role"
+                >{{
+                  [f.foodsId === main ? t.temple.trial.main : '', f.foodsId === sub ? t.temple.trial.sub : '']
+                    .filter(Boolean)
+                    .join(t.events.sep)
+                }}</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
       <div v-if="rate !== null" class="text-muted" data-testid="trial-rate">
         {{ t.temple.trial.rate((rate * 100).toFixed(1)) }}
       </div>
@@ -169,3 +268,14 @@ const start = () =>
     </div>
   </div>
 </template>
+
+<style scoped>
+.dt-trial-slot {
+  min-width: 0;
+  flex-basis: 0;
+}
+.dt-trial-foods {
+  max-height: 16rem;
+  overflow-y: auto;
+}
+</style>
