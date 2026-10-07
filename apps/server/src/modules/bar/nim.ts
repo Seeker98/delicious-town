@@ -71,6 +71,8 @@ async function finish(o: Op, s: NimState, win: boolean): Promise<NimDto> {
   let award: BarAwardDto | null = null;
   if (win) {
     gainRenown(o, t.renown);
+    // 支线“酒桌高手”：按桌子分开记赢（问题记录 515）
+    await emitAction(o, `bar.nim.${s.table}`);
     award = await randomAward(o, { level: t.awardLevel, noTicket: true, bar: true });
   }
   restLog(o, 'bar.nim', { table: s.table, result: win ? 'win' : 'lose' });

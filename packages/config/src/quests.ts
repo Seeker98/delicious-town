@@ -14,4 +14,4 @@ export const QUEST_STATE_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 export const isQuestStateKey = (k: string): boolean =>
-  QUEST_STATE_KEYS.has(k) || /^cookbooks\.grade\d+$/.test(k);
+  QUEST_STATE_KEYS.has(k) || /^cookbooks\.grade\d+$/.test(k) || /^cookbooks\.street\.\d+$/.test(k);

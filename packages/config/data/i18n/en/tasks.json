@@ -230,6 +230,27 @@
   "3084": {
     "name": "Play 50 times at the bar"
   },
+  "3085": {
+    "name": "Play Cup guess once"
+  },
+  "3086": {
+    "name": "Play Devil's Chili once"
+  },
+  "3087": {
+    "name": "Play Last Candy once"
+  },
+  "3088": {
+    "name": "Play Secret Blend once"
+  },
+  "3089": {
+    "name": "Play Deal or No Deal once"
+  },
+  "3090": {
+    "name": "Play 500 times at the Bar"
+  },
+  "3091": {
+    "name": "Play 2,000 times at the Bar"
+  },
   "3101": {
     "name": "Cook signature dishes 10 times"
   },
@@ -308,6 +329,24 @@
   "3203": {
     "name": "Complete 50 Exchange trades"
   },
+  "3204": {
+    "name": "Sell ingredients to the system once"
+  },
+  "3205": {
+    "name": "Buy ingredients from the system once"
+  },
+  "3206": {
+    "name": "Dump to the system once (sell at the floor price)"
+  },
+  "3207": {
+    "name": "Buy 10 rare ingredients"
+  },
+  "3208": {
+    "name": "Sell 10 rare ingredients"
+  },
+  "3209": {
+    "name": "Complete 500 trades on the Exchange"
+  },
   "3221": {
     "name": "Make a prediction trade"
   },
@@ -317,6 +356,27 @@
   "3223": {
     "name": "Win a prediction settlement"
   },
+  "3224": {
+    "name": "Sell before settlement once"
+  },
+  "3225": {
+    "name": "Hold 100 shares in one event"
+  },
+  "3226": {
+    "name": "Earn 50,000 in one settlement"
+  },
+  "3227": {
+    "name": "Lose 30,000 in one settlement (a lesson paid for)"
+  },
+  "3228": {
+    "name": "Hold the full 200 shares in one event"
+  },
+  "3229": {
+    "name": "Earn 150,000 in one settlement"
+  },
+  "3230": {
+    "name": "Lose 150,000 in one settlement"
+  },
   "3241": {
     "name": "Draw Ichiban Kuji 10 times"
   },
@@ -325,6 +385,21 @@
   },
   "3243": {
     "name": "Win the Last Prize"
+  },
+  "3244": {
+    "name": "Draw Prize A once"
+  },
+  "3245": {
+    "name": "Draw from the Deluxe Ichiban Kuji once"
+  },
+  "3246": {
+    "name": "Draw from the Deluxe Ichiban Kuji 10 times"
+  },
+  "3247": {
+    "name": "Draw Prize A from the Deluxe Ichiban Kuji"
+  },
+  "3248": {
+    "name": "Win the Last Prize of the Deluxe Ichiban Kuji once"
   },
   "3261": {
     "name": "Make 10 takeaway deliveries"
@@ -344,8 +419,74 @@
   "3283": {
     "name": "Learn 500 dishes on foreign streets"
   },
+  "3284": {
+    "name": "Move to Chop Suey Street"
+  },
+  "3285": {
+    "name": "Make 30 deliveries on Chop Suey Street"
+  },
+  "3286": {
+    "name": "Learn 60 Chop Suey Street dishes"
+  },
+  "3287": {
+    "name": "Homesick: learn every Chop Suey Street dish"
+  },
   "3301": {
     "name": "Raise every recipe to Rare"
+  },
+  "3321": {
+    "name": "Win 3 Rock-paper-scissors games in a row"
+  },
+  "3322": {
+    "name": "Land the right number on the Number wheel once"
+  },
+  "3323": {
+    "name": "Clear round 2 of Cup guess"
+  },
+  "3324": {
+    "name": "Win Devil's Chili once"
+  },
+  "3325": {
+    "name": "Win 5 Rock-paper-scissors games in a row"
+  },
+  "3326": {
+    "name": "Clear all 4 rounds of Cup guess once"
+  },
+  "3327": {
+    "name": "Survive 3 cups in Devil's Chili"
+  },
+  "3328": {
+    "name": "Win 8 Rock-paper-scissors games in a row"
+  },
+  "3329": {
+    "name": "Spin the slot machine 100 times"
+  },
+  "3341": {
+    "name": "Beat the boss at Darts once"
+  },
+  "3342": {
+    "name": "Win Last Candy at the beginner table once"
+  },
+  "3343": {
+    "name": "Get the hardest Memory Mixing round right"
+  },
+  "3344": {
+    "name": "Crack Secret Blend within 6 tries"
+  },
+  "3345": {
+    "name": "Win Last Candy at the expert table once"
+  },
+  "3346": {
+    "name": "Crack Secret Blend within 4 tries"
+  },
+  "3347": {
+    "name": "Refuse every offer in Deal or No Deal and open the top prize"
+  },
+  "3348": {
+    "name": "Win Last Candy at the expert table 50 times"
+  },
+  "3349": {
+    "name": "Hit the bullseye with all 3 darts"
   },
   "4011": {
     "name": "Check in 5 days"

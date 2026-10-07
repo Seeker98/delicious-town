@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    sideA1008:
+      "More side quests: the Bar line now includes trying each new game and playing 500 and 2,000 times; two new lines, “Luck at the Bar” (Rock-paper-scissors streaks, clearing Cup guess, Devil's Chili, 100 slot spins and more) and “Bar Ace” (Darts, Memory Mixing, Last Candy, Secret Blend, Deal or No Deal); the Exchange line adds trading with the system, dumping to the system, buying and selling rare ingredients and 500 trades; the Predictions line adds selling early, holding 100 and 200 shares, and winning or losing a set amount in one settlement; the Ichiban Kuji line adds drawing Prize A and the Deluxe Ichiban Kuji; Home Across the World adds Chop Suey Street quests, ending with “Homesick”: learn every Chop Suey Street dish",
     krab1008:
       'Krab Coins can no longer be sold back to the shop; they are only for the slot machine and the mayor’s exchange',
     quest1008:

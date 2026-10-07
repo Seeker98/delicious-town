@@ -18,6 +18,9 @@ export function stateValue(
     const g = Number(m[1]);
     return counts.grade.slice(g).reduce((s, x) => s + (x ?? 0), 0);
   }
+  // 某条街学会了几道（问题记录 515：杂碎街）
+  const street = /^cookbooks\.street\.(\d+)$/.exec(key);
+  if (street) return counts.street[Number(street[1])] ?? 0;
   return null;
 }
 

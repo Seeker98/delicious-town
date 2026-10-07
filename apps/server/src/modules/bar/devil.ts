@@ -83,6 +83,9 @@ export async function devilDrink(o: Op, cup: number): Promise<DevilDto> {
     const payout = devilPayout(s.stake, s.survived, t.rate);
     await grantGoodsOp(o, GOODS.mysteryTicket, payout);
     if (s.survived >= t.newsSurvived) opNews(o, 'bar.devil', { stake: s.stake, payout });
+    // 支线“酒运”：赢、活过 3 杯（问题记录 515）
+    await emitAction(o, 'bar.devil.win');
+    if (s.survived >= 3) await emitAction(o, 'bar.devil.survive3');
     restLog(o, 'bar.devil', { stake: s.stake, result: 'win', survived: s.survived, payout });
     return dto(s, { result: 'win', spiked: s.spiked, payout, lastBartender: pick });
   }

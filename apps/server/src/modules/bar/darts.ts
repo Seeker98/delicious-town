@@ -80,10 +80,13 @@ export async function dartsThrow(o: Op, elapsedMs: number): Promise<DartsThrowDt
   const mine = throws.reduce((a, b) => a + b, 0);
   const theirs = s.boss.reduce((a, b) => a + b, 0);
   const result: BarResultDto = mine > theirs ? 'win' : mine === theirs ? 'draw' : 'lose';
+  const perfect = throws.every((x) => x === best);
+  // 支线“酒桌高手”：赢老板、三镖全中靶心（问题记录 515）
+  if (result === 'win') await emitAction(o, 'bar.darts.win');
+  if (perfect) await emitAction(o, 'bar.darts.perfect');
   let award: RandomAward | null = null;
   let refund = 0;
   if (result === 'win') {
-    const perfect = throws.every((t) => t === best);
     award = await randomAward(o, { level: perfect ? d.perfectLevel : d.winLevel, noTicket: true, bar: true });
     // 每家店每天只写一条新闻（终审 I4：脚本刷屏）
     if (perfect && (await incrementDaily(o.tx, o.rest.id, 'bar.darts.news', 1, day)) === 1)

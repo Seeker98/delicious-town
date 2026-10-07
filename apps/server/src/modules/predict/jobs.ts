@@ -21,6 +21,16 @@ export async function closeEvents(d: GameDeps, shardId: number, now: Date): Prom
   return { closed: Number(r.numUpdatedRows) };
 }
 
+/** 一次结算的赚亏达到支线的门槛（问题记录 515）：到账 − 净投入 ≥ 5 万、15 万；净投入 − 到账 ≥ 3 万、15 万 */
+export function settleQuestKeys(got: number, net: number): string[] {
+  const keys: string[] = [];
+  if (got - net >= 50_000) keys.push('predict.profit50k');
+  if (got - net >= 150_000) keys.push('predict.profit150k');
+  if (net - got >= 30_000) keys.push('predict.loss30k');
+  if (net - got >= 150_000) keys.push('predict.loss150k');
+  return keys;
+}
+
 /**
  * 结算（238-1 设计 §6.4）：已判定、已作废的事件，每个持仓单独一个事务（锁这家店），
  * 条件带 settled = false，重跑或并发也只发一次；不锁事件行（已是终态）。每次最多 200 个持仓
@@ -74,6 +84,8 @@ export async function settleEvents(
           }
           // 押中一方的结算到账（问题记录 318 支线"押中一次结算"）；作废退款不算
           if (e.status === 'resolved' && got > 0) await emitAction(o, 'predict.win');
+          // 支线“事件预测”（问题记录 515）：一次结算赚、亏到某个数；作废退款不算
+          if (e.status === 'resolved') for (const key of settleQuestKeys(got, net)) await emitAction(o, key);
           return true;
         });
         if (done) settled++;

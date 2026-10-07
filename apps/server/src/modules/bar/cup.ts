@@ -45,6 +45,7 @@ async function finish(o: Op, s: CupState, result: 'stop' | 'clear'): Promise<Cup
   for (let i = 0; i < tier.awards; i++)
     awards.push(await randomAward(o, { level: tier.level, noTicket: true, bar: true }));
   await streak(o, 1);
+  if (result === 'clear') await emitAction(o, 'bar.cup.clear');
   const cups = t.cups[s.round]!;
   if (tier.news)
     opNews(o, tier.news === 'broadcast' ? 'bar.cup.big' : 'bar.cup', { round: s.round + 1, cups });
@@ -75,6 +76,8 @@ export async function cupGuess(o: Op, cup: number, round: number | null): Promis
   const win = r < cupWinRate(cups, luck.rate, t.maxRate);
   if (win) {
     s.last = { pick: cup, ball: cup, win, lucky: r >= 1 / cups };
+    // 支线“酒运”：闯过第 2 轮（问题记录 515）
+    if (s.round === 1) await emitAction(o, 'bar.cup.round2');
     if (s.round === t.cups.length - 1) return finish(o, s, 'clear');
     s.won = true;
     await saveRound(o, 'cup', s);

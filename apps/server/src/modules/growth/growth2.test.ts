@@ -261,6 +261,15 @@ describe('任务计数（问题记录 318）', () => {
     await grant(ctx.restaurantId, gid('新手街'));
     await g().move(ctx, 11);
     expect(await eventCount(t, ctx.restaurantId, 'rest.move')).toBe(1);
+    // 按街道的计数只记任务用得上的街（问题记录 515：只有杂碎街有任务）
+    expect(await eventCount(t, ctx.restaurantId, 'rest.moveTo.11')).toBe(0);
+  });
+
+  it('搬到杂碎街记 rest.moveTo.29（支线“四海为家”，问题记录 515）', async () => {
+    const ctx = await newRestaurant(t, { patch: { coin: 100000 }, goods: { [GOODS.moveCard]: 1 } });
+    await grant(ctx.restaurantId, gid('新手街'));
+    await g().move(ctx, 29);
+    expect(await eventCount(t, ctx.restaurantId, 'rest.moveTo.29')).toBe(1);
   });
 });
 

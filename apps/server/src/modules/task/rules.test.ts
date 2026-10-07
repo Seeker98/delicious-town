@@ -6,11 +6,14 @@ const config = testConfig();
 describe('任务规则（设计文档 §5.8、裁定 7）', () => {
   it('状态条件', () => {
     const rest = { level: 12, star_level: 1, oil_level: 2 };
-    const counts = { learned: 20, grade: [0, 10, 5, 3, 2, 0, 0, 0, 0, 0, 0], street: {} };
+    const counts = { learned: 20, grade: [0, 10, 5, 3, 2, 0, 0, 0, 0, 0, 0], street: { 29: 7 } };
     expect(stateValue('rest.level', rest, counts)).toBe(12);
     expect(stateValue('cookbooks.learned', rest, counts)).toBe(20);
     expect(stateValue('cookbooks.grade3', rest, counts)).toBe(5);
     expect(stateValue('friends.count', rest, counts)).toBeNull();
+    // 某条街学会了几道（问题记录 515：杂碎街）；没学过的街是 0
+    expect(stateValue('cookbooks.street.29', rest, counts)).toBe(7);
+    expect(stateValue('cookbooks.street.11', rest, counts)).toBe(0);
   });
   it('活跃分：每项按每日次数上限计', () => {
     const acts = config.bundle.activationTasks;

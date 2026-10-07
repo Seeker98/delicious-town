@@ -623,6 +623,12 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
 
   /** "all" = 菜谱总数（"把全部食谱升到珍品"、泛紫 5 星，问题记录 284） */
   const allOr = (n: number | 'all') => (n === 'all' ? cookbooks.length : n);
+  /** 任务目标的 "all"：某条街学会几道（cookbooks.street.N）换成这条街的菜数（问题记录 515 支线扩充），别的换成菜谱总数 */
+  const targetOf = (c: { key: string; target: number | 'all' }) => {
+    const street = /^cookbooks\.street\.(\d+)$/.exec(c.key);
+    if (c.target === 'all' && street) return cookbooks.filter((x) => x.streetId === Number(street[1])).length;
+    return allOr(c.target);
+  };
   const starNeed = starNeedRaw.map((s) => ({
     star: s.starlevel,
     name: s.name,
@@ -695,7 +701,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       order: q.order,
       needStar: 0,
       name: q.name,
-      cond: { ...q.cond, target: allOr(q.cond.target) },
+      cond: { ...q.cond, target: targetOf(q.cond) },
       award: q.award,
       href: q.href,
       feature: questFeature(q.id, q.cond),
@@ -720,7 +726,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         order: st.order,
         needStar: st.needStar,
         name: st.name,
-        cond: { ...st.cond, target: allOr(st.cond.target) },
+        cond: { ...st.cond, target: targetOf(st.cond) },
         award: st.award,
         href: st.href,
         feature: questFeature(st.id, st.cond),

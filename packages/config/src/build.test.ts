@@ -1325,13 +1325,13 @@ describe('活跃度新增项目（问题记录 318）', () => {
 });
 
 describe('任务配置（问题记录 318）', () => {
-  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 15 条；每周 3 组；id 不重复', () => {
+  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 17 条（515 支线扩充 A 加了酒运、酒桌高手）；每周 3 组；id 不重复', () => {
     const b = realBuild().bundle!;
     expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     const mains = b.quests.filter((q) => q.line === null);
     expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
     expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
-    expect(b.questLines).toHaveLength(15);
+    expect(b.questLines).toHaveLength(17);
     const sides = b.quests.filter((q) => q.line !== null);
     expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
     expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
@@ -1347,12 +1347,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量：主线 1,072 万、支线 351 万银币（第 12 章 120 万、天馔一档 30 万暂未开放，问题记录 515）；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,072 万、支线 788 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
     expect(coin(true)).toBe(10_720_000);
-    expect(coin(false)).toBe(3_508_000);
+    expect(coin(false)).toBe(7_878_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 
@@ -1844,5 +1844,61 @@ describe('任务清单的修改（问题记录 515，用户 2026-10-08 定）', 
     expect(b.quests.some((q) => q.line === null && q.chapter === 12)).toBe(false);
     expect(quest(3026)).toBeUndefined();
     expect(b.questLines.find((l) => l.key === 'cookbook')).toBeDefined();
+  });
+});
+
+describe('支线扩充 A：酒吧、交易所、事件预测、一番赏、杂碎街（docs/superpowers/specs/2026-10-08-side-quests-design.md）', () => {
+  const b = realBuild().bundle!;
+  const line = (key: string) => {
+    const l = b.questLines.find((x) => x.key === key)!;
+    return b.quests.filter((q) => q.line === l.id).sort((x, y) => x.order - y.order);
+  };
+  const goods = (id: number) =>
+    (b.quests.find((q) => q.id === id)!.award.goods ?? []).map((g) => [g.id, g.num]);
+
+  it('新支线“酒运”“酒桌高手”在第 3 章出现，各 9 档；划拳连胜最高 8 次、老虎机 100 次、高手桌 50 次（用户定）；最难的老虎机、三镖全中放最后，不挡别的档（终审）', () => {
+    for (const key of ['luck', 'skill']) {
+      expect(b.questLines.find((x) => x.key === key)!.chapter).toBe(3);
+      expect(line(key)).toHaveLength(9);
+    }
+    expect(line('luck').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.fg.streak8', 1]);
+    expect(line('luck').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.slot', 100]);
+    expect(line('skill').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.nim.expert', 50]);
+    expect(line('luck').at(-1)!.cond).toMatchObject({ key: 'bar.slot', target: 100 });
+    expect(line('skill').at(-1)!.cond.key).toBe('bar.darts.perfect');
+    expect(line('luck').find((q) => q.cond.key === 'bar.devil.win')!.award).toEqual({
+      coin: 10_000,
+      exp: 1_000,
+      goods: [{ id: GOODS.mysteryTicket, num: 5 }],
+    });
+  });
+
+  it('“酒吧”支线接上 7 档，到玩 2,000 次（银币 15 万）', () => {
+    const bar = line('bar');
+    expect(bar).toHaveLength(11);
+    expect(bar.at(-1)!).toMatchObject({ cond: { key: 'bar.play', target: 2000 }, award: { coin: 150_000 } });
+  });
+
+  it('交易所接到成交 500 次（20 万）、事件预测接到亏 15 万（15 万）、一番赏接到豪华池最后赏', () => {
+    expect(line('exchange').at(-1)!).toMatchObject({
+      cond: { key: 'exchange.fill', target: 500 },
+      award: { coin: 200_000 },
+    });
+    expect(line('predict').at(-1)!).toMatchObject({
+      cond: { key: 'predict.loss150k' },
+      award: { coin: 150_000 },
+    });
+    expect(line('kuji').at(-1)!.cond.key).toBe('kuji.deluxe.last');
+    expect(goods(3247)).toEqual([[gid('美味券'), 5]]);
+  });
+
+  it('杂碎街：“全部”换成这条街的菜数（117），搬家、外卖按街道计', () => {
+    const world = line('world');
+    expect(world.at(-1)!.cond).toEqual({ kind: 'state', key: 'cookbooks.street.29', target: 117 });
+    expect(world.map((q) => q.cond.key)).toEqual(
+      expect.arrayContaining(['rest.moveTo.29', 'takeaway.deliver.street.29']),
+    );
+    expect(world.find((q) => q.cond.key === 'rest.moveTo.29')!.feature).toBe('growth');
+    expect(world.find((q) => q.cond.key === 'takeaway.deliver.street.29')!.feature).toBe('takeaway');
   });
 });

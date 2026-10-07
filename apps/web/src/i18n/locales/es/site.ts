@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    sideA1008:
+      'Más misiones secundarias: la línea del bar incluye probar cada juego nuevo y jugar 500 y 2000 veces; dos líneas nuevas, «Suerte en el bar» (rachas de piedra, papel o tijera, superar Adivina el vaso, Chile del Diablo, 100 tiradas en la tragaperras y más) y «As del bar» (dardos, Cóctel Memoria, El último caramelo, Mezcla secreta, Trato o no trato); la Bolsa añade operar con el sistema, malvender al sistema, comprar y vender ingredientes raros y 500 operaciones; las predicciones añaden vender antes de tiempo, tener 100 y 200 participaciones y ganar o perder cierta cantidad en una liquidación; el Ichiban Kuji añade sacar un Premio A y el Ichiban Kuji de lujo; Hogar en todo el mundo añade misiones de la calle Chop Suey, y la última, «Nostalgia», es aprender todos sus platos',
     krab1008:
       'Las Monedas Krab ya no se pueden vender a la tienda; solo sirven para la tragaperras y el canje del alcalde',
     quest1008:
