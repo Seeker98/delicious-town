@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { createPinia } from 'pinia';
+import { createPinia, setActivePinia } from 'pinia';
 import { describe, expect, it, vi } from 'vitest';
 import { defineComponent, onMounted } from 'vue';
 import { createMemoryHistory, createRouter } from 'vue-router';
@@ -30,8 +30,9 @@ describe('RegisterView', () => {
         { path: '/login', component: { render: () => null } },
       ],
     });
+    setActivePinia(createPinia());
     const w = mount(RegisterView, {
-      global: { plugins: [createPinia(), router], stubs: { TurnstileBox: TurnstileStub } },
+      global: { plugins: [router], stubs: { TurnstileBox: TurnstileStub } },
     });
     await flushPromises();
     const inputs = w.findAll('input');
@@ -55,8 +56,9 @@ describe('RegisterView', () => {
       routes: [{ path: '/register', component: RegisterView }],
     });
     await router.push('/register?invite=ABCD2345');
+    setActivePinia(createPinia());
     const w = mount(RegisterView, {
-      global: { plugins: [createPinia(), router], stubs: { TurnstileBox: TurnstileStub } },
+      global: { plugins: [router], stubs: { TurnstileBox: TurnstileStub } },
     });
     await flushPromises();
     const invite = w.find('input[placeholder="邀请码 (可不填)"]').element as HTMLInputElement;

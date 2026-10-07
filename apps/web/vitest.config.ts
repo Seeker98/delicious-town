@@ -11,5 +11,7 @@ export default defineProject({
     include: ['src/**/*.test.ts'],
     pool: 'vmThreads',
     testTimeout: 15_000,
+    // 挂载组件时自动装上当前的 pinia（src/testSetup.ts）
+    setupFiles: ['./src/testSetup.ts'],
   },
 });

@@ -49,7 +49,7 @@ describe('第 6 批其他页面按语言（问题记录 272）', () => {
       history: createMemoryHistory(),
       routes: [{ path: '/:p(.*)*', component: GuideView }],
     });
-    const w = mount(GuideView, { global: { plugins: [pinia, router] } });
+    const w = mount(GuideView, { global: { plugins: [router] } });
     await flushPromises();
     const start = w.get('[data-testid="guide-start"]');
     expect(start.text()).toContain('First day');
