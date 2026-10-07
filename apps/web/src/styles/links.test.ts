@@ -89,6 +89,12 @@ describe('文字链接统一（问题记录 451）', () => {
     expect(bad).toEqual([]);
   });
 
+  it('两列信息表（.dt-kv）右列里的入口和按钮可以换行：英、法、西文的长句不撑出手机屏幕（审查）', () => {
+    const tpl = GAME.find((f) => f.path === 'views/AccountView.vue')!.tpl;
+    for (const m of tpl.matchAll(/class="([^"]*\bdt-(?:go|link-btn)\b[^"]*)"/g))
+      expect(m[1]).toMatch(/\btext-wrap\b/);
+  });
+
   it('链接文案不自己写箭头（餐厅信息页的加点、厨具）', () => {
     expect(zhCN.rest.info.toPoints(3)).not.toMatch(/[→›]/);
     expect(zhCN.rest.info.toEquip).not.toMatch(/[→›]/);
