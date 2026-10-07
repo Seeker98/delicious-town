@@ -13,8 +13,7 @@ beforeAll(async () => {
 afterAll(() => t.close());
 
 const bar = () => t.game.bar;
-const rich = () =>
-  newRestaurant(t, { patch: { coin: 10_000_000 }, goods: { [GOODS.mysteryTicket]: 1000 } });
+const rich = () => newRestaurant(t, { patch: { coin: 10_000_000 }, goods: { [GOODS.mysteryTicket]: 1000 } });
 async function counters(ctx: RestCtx): Promise<Record<string, number>> {
   const rows = await t.db
     .selectFrom('event_counter')
@@ -114,7 +113,8 @@ describe('酒吧支线的计数（问题记录 515）', () => {
   it('最后一颗糖：按桌子分开记赢', async () => {
     const play = async (ctx: RestCtx, table: 'novice' | 'expert') => {
       let s = (await bar().nimStart(ctx, { table })).data;
-      if (s.needFirst) s = (await bar().nimFirst(ctx, { who: s.left % (s.k + 1) === 0 ? 'bartender' : 'me' })).data;
+      if (s.needFirst)
+        s = (await bar().nimFirst(ctx, { who: s.left % (s.k + 1) === 0 ? 'bartender' : 'me' })).data;
       while (s.result === null) {
         const r = s.left % (s.k + 1);
         s = (await bar().nimTake(ctx, { num: r === 0 ? 1 : r })).data;

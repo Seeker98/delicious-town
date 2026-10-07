@@ -1850,7 +1850,8 @@ describe('支线扩充 A：酒吧、交易所、事件预测、一番赏、杂�
     const l = b.questLines.find((x) => x.key === key)!;
     return b.quests.filter((q) => q.line === l.id).sort((x, y) => x.order - y.order);
   };
-  const goods = (id: number) => (b.quests.find((q) => q.id === id)!.award.goods ?? []).map((g) => [g.id, g.num]);
+  const goods = (id: number) =>
+    (b.quests.find((q) => q.id === id)!.award.goods ?? []).map((g) => [g.id, g.num]);
 
   it('新支线“酒运”“酒桌高手”在第 3 章出现，各 9 档；划拳连胜最高 8 次、老虎机 100 次、高手桌 50 次（用户定）', () => {
     for (const key of ['luck', 'skill']) {
@@ -1874,8 +1875,14 @@ describe('支线扩充 A：酒吧、交易所、事件预测、一番赏、杂�
   });
 
   it('交易所接到成交 500 次（20 万）、事件预测接到亏 15 万（15 万）、一番赏接到豪华池最后赏', () => {
-    expect(line('exchange').at(-1)!).toMatchObject({ cond: { key: 'exchange.fill', target: 500 }, award: { coin: 200_000 } });
-    expect(line('predict').at(-1)!).toMatchObject({ cond: { key: 'predict.loss150k' }, award: { coin: 150_000 } });
+    expect(line('exchange').at(-1)!).toMatchObject({
+      cond: { key: 'exchange.fill', target: 500 },
+      award: { coin: 200_000 },
+    });
+    expect(line('predict').at(-1)!).toMatchObject({
+      cond: { key: 'predict.loss150k' },
+      award: { coin: 150_000 },
+    });
     expect(line('kuji').at(-1)!.cond.key).toBe('kuji.deluxe.last');
     expect(goods(3247)).toEqual([[gid('美味券'), 5]]);
   });

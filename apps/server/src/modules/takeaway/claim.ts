@@ -137,5 +137,7 @@ export async function settleDelivery(
   await o.tx.updateTable('takeaway_order').set({ state: 3 }).where('id', '=', v.order_id).execute();
   restLog(o, 'takeaway.claim', { deliveryId: v.id, success, coin, exp, renown });
   await emitAction(o, 'takeaway.deliver');
+  // 支线“四海为家”按店所在的街道另记（问题记录 515：在杂碎街送外卖）
+  await emitAction(o, `takeaway.deliver.street.${o.rest.street_id}`);
   return result;
 }

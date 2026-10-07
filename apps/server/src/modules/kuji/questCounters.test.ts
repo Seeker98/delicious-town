@@ -21,7 +21,8 @@ async function drawAll(line: 'normal' | 'deluxe') {
   const shardId = await createShard(t.db);
   const ticket = line === 'deluxe' ? GOODS.kujiDeluxeTicket : GOODS.kujiTicket;
   const r = await newRestaurant(t, { shardId, goods: { [ticket]: total } });
-  for (let left = total; left > 0; left -= conf.maxDraw) await svc().draw(r, Math.min(conf.maxDraw, left), line);
+  for (let left = total; left > 0; left -= conf.maxDraw)
+    await svc().draw(r, Math.min(conf.maxDraw, left), line);
   return { r, total };
 }
 

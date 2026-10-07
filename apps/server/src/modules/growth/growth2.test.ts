@@ -261,6 +261,9 @@ describe('任务计数（问题记录 318）', () => {
     await grant(ctx.restaurantId, gid('新手街'));
     await g().move(ctx, 11);
     expect(await eventCount(t, ctx.restaurantId, 'rest.move')).toBe(1);
+    // 支线“四海为家”按搬到哪条街记（问题记录 515：搬到杂碎街）
+    expect(await eventCount(t, ctx.restaurantId, 'rest.moveTo.11')).toBe(1);
+    expect(await eventCount(t, ctx.restaurantId, 'rest.moveTo.29')).toBe(0);
   });
 });
 

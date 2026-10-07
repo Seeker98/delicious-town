@@ -11,7 +11,7 @@ import {
   type NewRestaurantOptions,
   type TestGame,
 } from '../../../test/game';
-import { questIn, showQuest } from '../../../test/quests';
+import { eventCount, questIn, showQuest } from '../../../test/quests';
 import { addOrder, addRider, openFor, setWeather, type OrderInit } from '../../../test/takeaway';
 import type { RestCtx } from '../../core/deps';
 import { grantGoods } from '../store/grant';
@@ -93,6 +93,14 @@ describe('领取（设计文档 §3.4）', () => {
     });
     const act = await t.game.task.activation(ctx);
     expect(act.items.find((i) => i.name === '配送外卖')!.count).toBe(1);
+  });
+
+  it('按店所在的街道另记一次配送（问题记录 515：在杂碎街送外卖）', async () => {
+    const { ctx, rider } = await cook({ patch: { star_level: 2, street_id: 29 } });
+    const id = await take(ctx, rider);
+    later();
+    await claim(ctx, id);
+    expect(await eventCount(t, ctx.restaurantId, 'takeaway.deliver.street.29')).toBe(1);
   });
 
   it('没到不能领；无人机随时领：花 2g+1 钻石、必定成功、骑手经验 ×2、礼券多 g 张', async () => {
