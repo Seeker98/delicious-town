@@ -4,7 +4,8 @@ import type { TicketResultDto, TownExchangeDto, TownExchangeResultDto } from '@d
 import { invalidState, limitReached } from '../../core/errors';
 import { opNews, restLog, type Op } from '../../core/op';
 import type { DB } from '../../db/schema';
-import { addFoods, addFoodsMany } from '../cupboard/foods';
+import { addFoods, addFoodsMany, foodsMap } from '../cupboard/foods';
+import { streetNeeds } from '../cupboard/needs';
 import { assertStoreRoom, consumeGoods, grantGoodsOp } from '../store/goods';
 import { levelFoodIds, mysteryFoodIds } from './rules';
 
@@ -29,10 +30,11 @@ export async function goodsCounts(
 export async function exchangeView(
   db: Kysely<DB>,
   config: GameConfig,
-  town: Tuning['town'],
+  tuning: Tuning,
   restId: number,
   now: Date,
 ): Promise<TownExchangeDto> {
+  const town = tuning.town;
   const list = [...config.goodsExchange.values()].sort((a, b) => a.id - b.id);
   const levels = [1, 2, 3, 4, 5];
   const ids = new Set<number>([GOODS.mysteryFoodExchange, ...levels.map((l) => GOODS.levelTicketBase + l)]);
@@ -44,6 +46,19 @@ export async function exchangeView(
     .where('rest_id', '=', restId)
     .execute();
   const used = new Map(usedRows.map((r) => [r.exchange_id, r.times]));
+  // 13 哥的食材兑换券页按“本街要的 → 我没有的 → 其他”排（问题记录 491）：每种我有几个、本街还要几个
+  const levelFoods = levels.map((l) => levelFoodIds(config, town, l));
+  const listed = new Set(levelFoods.flat());
+  const rest = await db
+    .selectFrom('restaurant')
+    .select('street_id')
+    .where('id', '=', restId)
+    .executeTakeFirstOrThrow();
+  const { needMap } = await streetNeeds(db, config, restId, rest.street_id, tuning.rest.cookbookMaxGrade);
+  const foodHave: Record<number, number> = {};
+  for (const [id, r] of await foodsMap(db, restId)) if (r.num > 0 && listed.has(id)) foodHave[id] = r.num;
+  const streetNeed: Record<number, number> = {};
+  for (const [id, n] of needMap) if (n > 0 && listed.has(id)) streetNeed[id] = n;
   return {
     items: list.map((e) => ({
       id: e.id,
@@ -56,7 +71,9 @@ export async function exchangeView(
     })),
     levelTickets: levels.map((l) => have.get(GOODS.levelTicketBase + l) ?? 0),
     mysteryTickets: have.get(GOODS.mysteryFoodExchange) ?? 0,
-    levelFoods: levels.map((l) => levelFoodIds(config, town, l)),
+    levelFoods,
+    foodHave,
+    streetNeed,
     mysteryFoods: mysteryFoodIds(config, town),
     maxNum: town.exchangeMaxNum,
   };

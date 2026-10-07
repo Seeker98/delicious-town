@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 76 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 78 个图标 */
 
 @font-face {
   font-display: block;
@@ -54,6 +54,7 @@
 .bi-compass::before { content: "\f2d1"; }
 .bi-cup-hot::before { content: "\f7eb"; }
 .bi-cup-straw::before { content: "\f2df"; }
+.bi-dash-lg::before { content: "\f63b"; }
 .bi-door-closed::before { content: "\f306"; }
 .bi-droplet::before { content: "\f30d"; }
 .bi-droplet-fill::before { content: "\f30b"; }
@@ -87,6 +88,7 @@
 .bi-people::before { content: "\f4d0"; }
 .bi-person-badge::before { content: "\f4d3"; }
 .bi-person-circle::before { content: "\f4d7"; }
+.bi-plus-lg::before { content: "\f64d"; }
 .bi-search::before { content: "\f52a"; }
 .bi-shield-lock::before { content: "\f538"; }
 .bi-shop::before { content: "\f543"; }

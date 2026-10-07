@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    ui1007c:
+      'Temple trials: the main and side ingredients are now two slots above an ingredient list grouped by level, with search; levels below the dish start collapsed. Brother 13’s ingredient vouchers: levels are now buttons showing how many vouchers you have, ingredients your street still needs and ones you don’t own come first with how many you have and need, and you tap + to pick and adjust',
     batch1007b:
       'Friend swaps are now 10 a day across all friends, and each player can be swapped with at most 20 times a day, regardless of stars (high-star players get at least 3 swaps with Mr. Krab); gems are renamed by tier: Raw, Spirit and Divine Stone, then Raw, Spirit and Divine Jade; a gift icon next to today’s activity on the home page means a reward is ready; the classroom can filter signature dishes by level when opening a class; the premium market is closed for now; in the tower shop, statues show “Own 1 max” where the quantity box would be',
     parens1007:

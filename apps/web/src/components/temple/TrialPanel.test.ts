@@ -79,13 +79,83 @@ describe('TrialPanel', () => {
     });
     await flushPromises();
     expect(w.text()).toContain('秘·凤凰展翅');
-    await w.find('[data-testid="trial-main"]').setValue('150');
-    await w.find('[data-testid="trial-sub"]').setValue('423');
+    // 主料槽默认选中；点一个食材填进主料，自动换到辅料槽（问题记录 487）
+    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('稀有料');
+    expect(w.get('[data-testid="trial-slot-sub"]').attributes('aria-pressed')).toBe('true');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
     expect(w.find('[data-testid="trial-rate"]').text()).toContain('%');
     await w.find('[data-testid="trial-start"]').trigger('click');
     await flushPromises();
     expect(endpoints.trialStart).toHaveBeenCalledWith(150, 423);
     expect(w.find('[data-testid="trial-result"]').text()).toContain('试炼价值 +1%');
+  });
+
+  it('食材按等级从高到低分组；比这道菜低的组默认收起、点开能看；搜索时都展开（问题记录 487）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 150, name: '稀有料', level: 5, odds: 70, coin: 1, type: 0 },
+        { id: 423, name: '普通料', level: 5, odds: 100, coin: 1, type: 0 },
+        { id: 31, name: '三级料', level: 3, odds: 100, coin: 1, type: 0 },
+        { id: 21, name: '二级料', level: 2, odds: 100, coin: 1, type: 0 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [{ id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 1, coin: 1, foods: [] }],
+    } as never);
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [150, 423, 31, 21].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+    } as never);
+    const w = mount(TrialPanel, {
+      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+    });
+    await flushPromises();
+    const groups = w.findAll('[data-testid^="trial-group-"]');
+    expect(groups.map((g) => g.attributes('data-testid'))).toEqual([
+      'trial-group-5',
+      'trial-group-3',
+      'trial-group-2',
+    ]);
+    expect(groups[0]!.text()).toContain('5 级 (2 种)');
+    expect(w.get('[data-testid="trial-group-3"]').attributes('aria-expanded')).toBe('true');
+    expect(w.get('[data-testid="trial-group-2"]').attributes('aria-expanded')).toBe('false');
+    expect(w.find('[data-testid="trial-food-21"]').exists()).toBe(false);
+    // 稀有的写明
+    expect(w.get('[data-testid="trial-food-150"]').text()).toContain('稀有');
+    expect(w.get('[data-testid="trial-food-423"]').text()).not.toContain('稀有');
+    await w.get('[data-testid="trial-group-2"]').trigger('click');
+    expect(w.find('[data-testid="trial-food-21"]').exists()).toBe(true);
+    await w.get('[data-testid="trial-group-2"]').trigger('click');
+    await w.get('[data-testid="trial-search"]').setValue('二级');
+    expect(w.findAll('[data-testid^="trial-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'trial-food-21',
+    ]);
+  });
+
+  it('主辅选同一种要 2 个：只有 1 个时，另一个槽里这种灰掉（问题记录 487）', async () => {
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [
+        { foodsId: 150, num: 1, locked: false, streetNeed: 0 },
+        { foodsId: 423, num: 5, locked: false, streetNeed: 0 },
+      ],
+    } as never);
+    const w = mount(TrialPanel, {
+      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeDefined();
+    // 灰掉了也看得出它是主料
+    expect(w.get('[data-testid="trial-food-150"] [data-testid="trial-food-role"]').text()).toBe('主料');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await w.get('[data-testid="trial-slot-main"]').trigger('click');
+    // 回到主料槽：150 就是主料自己，可以点（换成别的再换回来）
+    expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeUndefined();
   });
 
   it('有玩法说明，显示试炼对象当前的试炼价值和经验及上限（问题记录：试炼的选项说明不够）', async () => {

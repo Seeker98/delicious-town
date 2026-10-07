@@ -63,7 +63,11 @@ const temple: Messages['temple'] = {
     prepareFailed: "Couldn't prepare",
     refreshFailed: "Couldn't change the dish",
     failed: 'Trial failed',
-    foodLabel: (name, level, rare, num) => `${name} (Lv. ${level}${rare ? ', rare' : ''}) ×${num}`,
+    slotEmpty: 'not chosen',
+    search: 'Search ingredients',
+    noFoods: 'No ingredients to use',
+    group: (level, n) => `Level ${level} (${n} ${plEn(n, 'kind', 'kinds')})`,
+    rareTag: 'rare',
     intro: (creatives) =>
       `Trials raise a signature dish's trial value (value per serving, up to +50%) and trial EXP (restaurant EXP when cooking, up to +150%). Creativity ${creatives}.`,
     help: 'How it works',

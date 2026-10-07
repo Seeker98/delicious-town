@@ -70,7 +70,11 @@ const temple: Messages['temple'] = {
     prepareFailed: 'No se pudo preparar',
     refreshFailed: 'No se pudo cambiar el plato',
     failed: 'No se pudo hacer la prueba',
-    foodLabel: (name, level, rare, num) => `${name} (nv. ${level}${rare ? ', raro' : ''}) ×${num}`,
+    slotEmpty: 'sin elegir',
+    search: 'Buscar ingredientes',
+    noFoods: 'No hay ingredientes para usar',
+    group: (level, n) => `Nivel ${level} (${n} ${plEs(n, 'tipo', 'tipos')})`,
+    rareTag: 'raro',
     intro: (creatives) =>
       `Las pruebas suben el valor de prueba de un plato estrella (valor por ración, hasta +50 %) y la EXP de prueba (EXP del restaurante al cocinar, hasta +150 %). Creatividad ${creatives}.`,
     help: 'Cómo funciona',

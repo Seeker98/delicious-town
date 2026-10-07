@@ -213,7 +213,17 @@ export default {
   ticket: {
     got: (list: string) => `換到 ${list}`,
     failed: '兌換失敗',
-    level: (l: number) => `${l} 級食材兌換券`,
+    /** 等級按鈕：有券時寫幾張（問題記錄 491） */
+    levelPill: (l: number, n: number) => (n > 0 ? `${l} 級 ×${n}` : `${l} 級`),
+    levelLabel: '按券的等級',
+    search: '搜尋食材',
+    noMatch: '沒有找到',
+    foodHave: (n: number) => (n > 0 ? `有 ${n}` : '沒有'),
+    /** 本街的菜還缺幾個 */
+    short: (n: number) => `缺 ${n}`,
+    picked: (n: number, have: number) => `已選 ${n} / ${have} 張`,
+    addOne: (name: string) => `多換一個${name}`,
+    subOne: (name: string) => `少換一個${name}`,
     have: (n: number) => `持有 ${n} 張`,
     rule: '一張換一個同等級的普通食材，可以一次選多種',
     go: (n: number) => `兌換 (用 ${n} 張)`,

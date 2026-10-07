@@ -72,8 +72,11 @@ const temple: Messages['temple'] = {
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",
-    foodLabel: (name, level, rare, num) =>
-      `${name} (niv. ${level}${rare ? ', rare' : ''})\u202f×\u202f${num}`,
+    slotEmpty: 'non choisi',
+    search: 'Rechercher un ingrédient',
+    noFoods: 'Aucun ingrédient utilisable',
+    group: (level, n) => `Niveau ${level} (${n} ${plFr(n, 'sorte', 'sortes')})`,
+    rareTag: 'rare',
     intro: (creatives) =>
       `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +50 %) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +150 %). Créativité ${creatives}.`,
     help: 'Comment ça marche',

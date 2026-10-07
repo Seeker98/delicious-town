@@ -70,7 +70,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     const w = await mountAt('bro13');
     expect(w.get('[data-testid="npc-bro13"]').text()).toContain('13 哥');
     expect(w.find('[data-testid="talk-bro13"]').exists()).toBe(true);
-    expect(w.find('[data-testid="lt-level"]').exists()).toBe(true);
+    expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(true);
     expect(w.find('[data-testid^="ex-row-"]').exists()).toBe(false);
     expect(w.find('[data-testid="mt-food"]').exists()).toBe(false);
   });
@@ -79,7 +79,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     const w = await mountAt('carmen');
     expect(w.get('[data-testid="npc-carmen"]').text()).toContain('卡门');
     expect(w.find('[data-testid="mt-food"]').exists()).toBe(true);
-    expect(w.find('[data-testid="lt-level"]').exists()).toBe(false);
+    expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(false);
     expect(w.find('[data-testid^="ex-row-"]').exists()).toBe(false);
     expect(w.find('[data-testid="talk-carmen"]').exists()).toBe(true);
     expect(w.text()).toContain('见面礼：神秘食材兑换券 (每家店一次)');
