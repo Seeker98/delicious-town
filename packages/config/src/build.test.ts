@@ -45,6 +45,22 @@ describe('玩家看得到的数据不用中文括号（用户 2026-10-07 定）'
   });
 });
 
+describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不是极速飞弹）', () => {
+  it('道具名和说明里不再有“极速飞弹”；英西法叫 Cluster / de racimo / à fragmentation', () => {
+    const b = realBuild().bundle!;
+    expect(b.goods.filter((g) => /极速/.test(`${g.name}${g.desc ?? ''}`)).map((g) => g.id)).toEqual([]);
+    expect(b.goods.find((g) => g.id === GOODS.missileCluster)!.name).toBe('集束飞弹');
+    const names = { en: 'Cluster Missile', es: 'Misil de racimo', fr: 'Missile à fragmentation' };
+    for (const [lang, name] of Object.entries(names)) {
+      const tr = JSON.parse(
+        readFileSync(join(defaultDataDir(), 'i18n', lang, 'goods.json'), 'utf8'),
+      ) as Record<string, { name: string; desc?: string }>;
+      expect(tr[GOODS.missileCluster]!.name).toBe(name);
+      expect(JSON.stringify(tr)).not.toMatch(/Rapid Missile|misiles? rápidos?|missiles? rapides?/i);
+    }
+  });
+});
+
 describe('宝石按阶改名（问题记录 493）', () => {
   const TIER = ['一', '二', '三', '四', '五', '六'];
   const WORD = ['原石', '灵石', '神石', '原玉', '灵玉', '神玉'];

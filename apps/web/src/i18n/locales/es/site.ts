@@ -8,6 +8,7 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cluster1007: 'El «Misil rápido» recupera su nombre original, «Misil de racimo»; el objeto no cambia',
     ui1007c:
       'Pruebas del templo: el ingrediente principal y el secundario son ahora dos casillas sobre una lista de ingredientes agrupada por nivel, con búsqueda; los niveles por debajo del plato empiezan plegados. Vales de ingredientes de Hermano 13: los niveles son botones que muestran cuántos vales tienes, primero salen los ingredientes que le faltan a tu calle y los que no tienes, con cuántos tienes y cuántos faltan, y se elige con +',
     batch1007b:

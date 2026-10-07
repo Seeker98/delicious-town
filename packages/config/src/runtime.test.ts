@@ -124,14 +124,14 @@ describe('特色菜索引（子项目 4A）', () => {
 
 describe('神殿索引（子项目 4B-1）', () => {
   it('飞弹、探险图按道具 id 索引；种子池', () => {
-    expect(config.missiles.get(gid('极速飞弹'))).toEqual({
+    expect(config.missiles.get(gid('集束飞弹'))).toEqual({
       attack: [2000, 2000],
       hitRate: 0.96,
       crit: 0.2,
       critRate: 2,
     });
     expect([...config.missiles.keys()].sort((a, b) => a - b)).toEqual(
-      ['极速飞弹', '普通飞弹', '爆裂飞弹'].map(gid),
+      ['集束飞弹', '普通飞弹', '爆裂飞弹'].map(gid),
     );
     expect(config.maps.get(gid('高级探险图'))).toMatchObject({
       rate: 0.9,
@@ -264,8 +264,8 @@ describe('外卖数值（子项目 4D）', () => {
 });
 
 describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）', () => {
-  it('极速飞弹伤害按 tuning 覆盖成 2000；普通、爆裂不变', () => {
-    expect(config.missiles.get(gid('极速飞弹'))!.attack).toEqual([2000, 2000]);
+  it('集束飞弹伤害按 tuning 覆盖成 2000；普通、爆裂不变', () => {
+    expect(config.missiles.get(gid('集束飞弹'))!.attack).toEqual([2000, 2000]);
     expect(config.missiles.get(gid('普通飞弹'))!.attack).toEqual([90, 110]);
     expect(config.missiles.get(gid('爆裂飞弹'))!.attack).toEqual([80, 130]);
   });

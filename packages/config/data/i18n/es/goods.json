@@ -145,7 +145,7 @@
   },
   "10414": {
     "name": "Cordón",
-    "desc": "Ata 36 misiles estándar en 1 misil rápido"
+    "desc": "Ata 36 misiles estándar en 1 misil de racimo"
   },
   "10415": {
     "name": "Tarjeta de apilado pequeña",
@@ -208,12 +208,12 @@
     "desc": "Deshace un nivel de mejora de un utensilio mejorado"
   },
   "10701": {
-    "name": "Misil rápido",
-    "desc": "Misil rápido, para desafiar al guardián del templo. ¡Altísima precisión y daño enorme!"
+    "name": "Misil de racimo",
+    "desc": "Misil de racimo, para desafiar al guardián del templo. ¡Altísima precisión y daño enorme!"
   },
   "10702": {
     "name": "Misil estándar",
-    "desc": "Misil estándar, para desafiar al guardián del templo (también se cambia por misiles rápidos). ¡Alta precisión, poco daño!"
+    "desc": "Misil estándar, para desafiar al guardián del templo (también se cambia por misiles de racimo). ¡Alta precisión, poco daño!"
   },
   "10703": {
     "name": "Misil explosivo",
@@ -1905,7 +1905,7 @@
   },
   "61426": {
     "name": "Atrapasueños",
-    "desc": "¡La leyenda dice que atrapa lo que se ve en sueños! Duplica la probabilidad de vales Deliciosos al atacar al guardián. Los críticos tienen un 3 % de probabilidad de soltar un sello de jade del Dios de la Cocina (32 % con misiles rápidos). Probabilidad de ingredientes de nivel 6 al matar al guardián +20%"
+    "desc": "¡La leyenda dice que atrapa lo que se ve en sueños! Duplica la probabilidad de vales Deliciosos al atacar al guardián. Los críticos tienen un 3 % de probabilidad de soltar un sello de jade del Dios de la Cocina (32 % con misiles de racimo). Probabilidad de ingredientes de nivel 6 al matar al guardián +20%"
   },
   "61427": {
     "name": "Lágrima del Dios de las Estrellas",

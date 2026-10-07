@@ -19,12 +19,12 @@ describe('神殿概览', () => {
     t.clock.set(gameTime(day, 12));
     const ctx = await newRestaurant(t, {
       patch: { star_level: 1, strength: 80 },
-      goods: { [GOODS.missileSpeed]: 2, [GOODS.mapHigh]: 3, [GOODS.tentacle]: 4 },
+      goods: { [GOODS.missileCluster]: 2, [GOODS.mapHigh]: 3, [GOODS.tentacle]: 4 },
     });
     await t.db.insertInto('rest_seed').values({ rest_id: ctx.restaurantId, seed_id: 5, num: 3 }).execute();
     const o = await t.game.temple.overview(ctx);
     expect(o).toMatchObject({ star: 1, strength: 80, tentacles: 4, seeds: [{ seedId: 5, num: 3 }] });
-    expect(o.missiles).toContainEqual({ goodsId: GOODS.missileSpeed, num: 2 });
+    expect(o.missiles).toContainEqual({ goodsId: GOODS.missileCluster, num: 2 });
     expect(o.missiles).toContainEqual({ goodsId: GOODS.missileNormal, num: 0 });
     expect(o.maps).toContainEqual({ goodsId: GOODS.mapHigh, num: 3, needStrength: 5 });
     expect(o.trial).toEqual({ mcId: null, readyMinutes: 0, creatives: 0 });

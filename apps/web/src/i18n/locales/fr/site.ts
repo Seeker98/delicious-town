@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    cluster1007:
+      'Le «\u202fMissile rapide\u202f» reprend son nom d’origine, «\u202fMissile à fragmentation\u202f»\u202f; l’objet ne change pas',
     ui1007c:
       'Épreuves du temple\u202f: l’ingrédient principal et le secondaire sont maintenant deux cases au-dessus d’une liste d’ingrédients groupée par niveau, avec recherche\u202f; les niveaux inférieurs au plat sont repliés. Bons d’ingrédient de Frère 13\u202f: les niveaux sont des boutons qui indiquent combien de bons vous avez, les ingrédients qui manquent à votre rue et ceux que vous n’avez pas passent en premier, avec combien vous en avez et combien il en manque, et on choisit avec +',
     batch1007b:

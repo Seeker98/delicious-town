@@ -145,7 +145,7 @@
   },
   "10414": {
     "name": "Lacet",
-    "desc": "Attache 36 missiles standard en 1 missile rapide"
+    "desc": "Attache 36 missiles standard en 1 missile à fragmentation"
   },
   "10415": {
     "name": "Petite carte d'empilement",
@@ -208,12 +208,12 @@
     "desc": "Annule un niveau de renfort d'un ustensile renforcé"
   },
   "10701": {
-    "name": "Missile rapide",
-    "desc": "Missile rapide, pour défier le gardien du temple. Très grande précision et dégâts énormes !"
+    "name": "Missile à fragmentation",
+    "desc": "Missile à fragmentation, pour défier le gardien du temple. Très grande précision et dégâts énormes !"
   },
   "10702": {
     "name": "Missile standard",
-    "desc": "Missile standard, pour défier le gardien du temple (s'échange aussi contre des missiles rapides). Grande précision, faibles dégâts !"
+    "desc": "Missile standard, pour défier le gardien du temple (s'échange aussi contre des missiles à fragmentation). Grande précision, faibles dégâts !"
   },
   "10703": {
     "name": "Missile explosif",
@@ -1905,7 +1905,7 @@
   },
   "61426": {
     "name": "Attrape-rêves",
-    "desc": "La légende dit qu'il capture ce qu'on voit en rêve ! Double la chance d'obtenir des tickets Délice en attaquant le gardien ! Les coups critiques ont 3 % de chance de donner un sceau de jade du Dieu de la cuisine (32 % avec les missiles rapides) ! Chance d'ingrédients de niveau 6 en tuant le gardien +20 % !"
+    "desc": "La légende dit qu'il capture ce qu'on voit en rêve ! Double la chance d'obtenir des tickets Délice en attaquant le gardien ! Les coups critiques ont 3 % de chance de donner un sceau de jade du Dieu de la cuisine (32 % avec les missiles à fragmentation) ! Chance d'ingrédients de niveau 6 en tuant le gardien +20 % !"
   },
   "61427": {
     "name": "Larme du Dieu des étoiles",

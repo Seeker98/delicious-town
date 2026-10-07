@@ -97,9 +97,9 @@ describe('道具、食材的引用（问题记录 367）', () => {
     ]);
   });
 
-  it('鞋带：捆绑用掉的普通飞弹、得到的极速飞弹都算引用（重新编号 PR 4）', () => {
+  it('鞋带：捆绑用掉的普通飞弹、得到的集束飞弹都算引用（重新编号 PR 4）', () => {
     const where = '鞋带';
     expect(find('goods', gid('普通飞弹'), 'uses').map((r) => r.where)).toContain(where);
-    expect(find('goods', gid('极速飞弹'), 'gives').map((r) => r.where)).toContain(where);
+    expect(find('goods', gid('集束飞弹'), 'gives').map((r) => r.where)).toContain(where);
   });
 });

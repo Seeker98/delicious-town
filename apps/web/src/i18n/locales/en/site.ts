@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cluster1007:
+      'The “Rapid Missile” is now called by its original name, the “Cluster Missile”; the item itself is unchanged',
     ui1007c:
       'Temple trials: the main and side ingredients are now two slots above an ingredient list grouped by level, with search; levels below the dish start collapsed. Brother 13’s ingredient vouchers: levels are now buttons showing how many vouchers you have, ingredients your street still needs and ones you don’t own come first with how many you have and need, and you tap + to pick and adjust',
     batch1007b:

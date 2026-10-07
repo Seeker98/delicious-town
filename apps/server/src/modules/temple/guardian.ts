@@ -37,7 +37,7 @@ export async function shootMissiles(
   const dream = await hasValidHonor(o, GOODS.dreamNet);
   const net = o.config.requireGoods(GOODS.dreamNet).effects;
   const sealRate = dream
-    ? ((b.goodsId === GOODS.missileSpeed ? net.critSpeedGSRate : net.critGSRate) ?? 0)
+    ? ((b.goodsId === GOODS.missileCluster ? net.critSpeedGSRate : net.critGSRate) ?? 0)
     : 0;
   const input = {
     def,

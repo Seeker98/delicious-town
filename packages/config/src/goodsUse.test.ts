@@ -28,7 +28,7 @@ describe('道具用途（构建时推导）', () => {
       kind: 'bundle',
       goods: gid('普通飞弹'),
       num: 36,
-      targetGoods: gid('极速飞弹'),
+      targetGoods: gid('集束飞弹'),
       targetNum: 1,
     });
     expect(use(gid('厨塔挑战券'))).toEqual({ kind: 'towerTicket' });
