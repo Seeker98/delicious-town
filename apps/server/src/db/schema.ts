@@ -1275,6 +1275,8 @@ export interface AcquireBlockTable {
   target_rest_id: number;
   reason: 'device' | 'ip';
   created_at: Ts;
+  /** 关联的账号（迁移 0052）；旧记录为空 */
+  linked_account_id: number | null;
 }
 
 /** 小镇发展基金存款（240-2）：同一家店同时只能有一笔 active */

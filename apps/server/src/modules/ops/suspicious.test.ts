@@ -185,7 +185,15 @@ describe('收购关联账号拦截（收购 PR 3）', () => {
     const block = (shard: number, buyer: number, target: number, reason: 'ip' | 'device', at: Date) =>
       t.db
         .insertInto('acquire_block')
-        .values({ shard_id: shard, buyer_rest_id: buyer, target_rest_id: target, reason, created_at: at })
+        .values({
+          shard_id: shard,
+          buyer_rest_id: buyer,
+          target_rest_id: target,
+          reason,
+          created_at: at,
+          // 关联的账号（收购 PR 3 遗留）：设备那条是目标店老板；旧记录没有
+          linked_account_id: reason === 'device' ? b.accountId : null,
+        })
         .execute();
     const now = t.clock.now;
     await block(shardId, a.restaurantId, b.restaurantId, 'ip', new Date(now.getTime() - 3600_000));
@@ -199,8 +207,9 @@ describe('收购关联账号拦截（收购 PR 3）', () => {
         reason: 'device',
         buyer: { restId: a.restaurantId, name: '买家', accountId: a.accountId },
         target: { restId: b.restaurantId, name: '目标', accountId: b.accountId },
+        linked: { accountId: b.accountId, username: expect.any(String) },
       },
-      expect.objectContaining({ reason: 'ip' }),
+      expect.objectContaining({ reason: 'ip', linked: null }),
     ]);
   });
 });

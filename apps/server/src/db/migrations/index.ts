@@ -50,6 +50,7 @@ import * as m0048 from './0048_rest_door';
 import * as m0049 from './0049_renumber';
 import * as m0050 from './0050_acquire';
 import * as m0051 from './0051_acquire_dividend';
+import * as m0052 from './0052_backlog_1007';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -104,4 +105,5 @@ export const migrations: Record<string, Migration> = {
   '0049_renumber': m0049,
   '0050_acquire': m0050,
   '0051_acquire_dividend': m0051,
+  '0052_backlog_1007': m0052,
 };

@@ -112,6 +112,8 @@ export function createAcquireService(d: GameDeps) {
     );
     if (links.size === 0) return;
     const reason = [...links.values()].includes('device') ? 'device' : 'ip';
+    // 记下按这个原因关联上的账号（可能是目标店的老板，不是目标店本身），后台才看得出（收购 PR 3 遗留）
+    const linked = [...links].find(([, why]) => why === reason)![0];
     await d.db
       .insertInto('acquire_block')
       .values({
@@ -120,6 +122,7 @@ export function createAcquireService(d: GameDeps) {
         target_rest_id: targetId,
         reason,
         created_at: d.now(),
+        linked_account_id: linked,
       })
       .execute();
     throw bad('linked');

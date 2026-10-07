@@ -54,6 +54,8 @@ export interface SuspiciousAcquireRow {
   reason: 'device' | 'ip';
   buyer: { restId: number; name: string; accountId: number };
   target: { restId: number; name: string; accountId: number };
+  /** 关联上的账号（可能是目标店的老板）；旧记录为 null */
+  linked: { accountId: number; username: string } | null;
 }
 export const suspiciousQuery = z.object({
   shardId: z.coerce.number().int().positive(),
