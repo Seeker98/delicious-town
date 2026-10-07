@@ -51,14 +51,16 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     expect(endpoints.acquireRest).toHaveBeenCalledTimes(2);
   });
 
-  it('不能收：写原因，不给收购按钮；关联账号用笼统说法', async () => {
+  it('不能收：写原因，不给收购按钮；关联账号写明最近在同一设备或网络登录过（问题记录 495）', async () => {
     vi.mocked(endpoints.acquireRest).mockResolvedValue(
       rest({ acquireBlock: 'linked', listedBlock: 'linked' }),
     );
     const w = mount(AcquireCard, { props: { restId: 2 } });
     await flushPromises();
     expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
-    expect(w.get('[data-testid="card-block"]').text()).toBe('暂时不能收购这家店');
+    expect(w.get('[data-testid="card-block"]').text()).toBe(
+      '你和这家店的老板最近在同一台设备或同一网络登录过，不能收购',
+    );
   });
 
   it('有老板、在挂牌：写老板和挂牌，能按挂牌价买下', async () => {

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { FOODS, FUND, GOODS, GOODS_TYPE, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { deriveGoodsUse } from './goodsUse';
+import { itemRefs } from './itemRefs';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 import { cid, fid, gid } from './testItems';
@@ -326,6 +327,58 @@ describe('buildBundle（真实数据）', () => {
   });
 });
 
+describe('下架时产出类列表自动去掉（问题记录 501，用户 2026-10-07 定）', () => {
+  const real = realBuild().bundle!;
+  // 挑只在这张表里出现的道具（别处还有引用的会照样报错，不是这里要测的）
+  const refs = itemRefs(real);
+  const onlyIn = (where: string, ids: number[]) =>
+    ids.find((id) => {
+      const mine = refs.filter((r) => r.kind === 'goods' && r.id === id);
+      return mine.length > 0 && mine.every((r) => r.where === where && r.role === 'gives');
+    })!;
+  const exId = onlyIn(
+    '镇长兑换',
+    real.goodsExchange.map((e) => e.goodsId),
+  );
+  const renownId = onlyIn(
+    '声望商店',
+    real.renownShop.map((r) => r.goodsId),
+  );
+  // 星愿里的道具别处都还有引用：测试时把一条许道具的星愿改成许 blessId（只在声望商店出现的另一种）
+  const blessId = onlyIn(
+    '声望商店',
+    real.renownShop.map((r) => r.goodsId).filter((id) => id !== renownId),
+  );
+  const retire = (ids: number[]) => {
+    const src = source();
+    const bless = structuredClone(src['designed/bless']) as Array<{
+      type: number;
+      value?: { goodsId?: number };
+    }>;
+    bless.find((x) => x.type === 2 && x.value?.goodsId)!.value!.goodsId = blessId;
+    src['designed/bless'] = bless;
+    const file = structuredClone(src['game/retired']) as { goods: Array<{ id: number }>; foods: unknown[] };
+    file.goods.push(...ids.filter((id) => !file.goods.some((g) => g.id === id)).map((id) => ({ id })));
+    return buildBundle({ ...src, 'game/retired': file });
+  };
+
+  it('镇长兑换、声望商店、星愿里换到 / 买到 / 许到的东西下架了：这几条不再出现，也不报“还被引用”', () => {
+    const b = retire([exId, renownId, blessId]);
+    const where = /镇长兑换|声望商店|星愿/;
+    expect(b.errors.filter((e) => where.test(e))).toEqual([]);
+    expect(b.errors).toEqual([]);
+    expect(b.bundle?.goodsExchange.some((e) => e.goodsId === exId)).toBe(false);
+    expect(b.bundle?.renownShop.some((r) => r.goodsId === renownId)).toBe(false);
+    expect(b.bundle?.bless.some((x) => x.goodsId === blessId)).toBe(false);
+  });
+
+  it('镇长兑换要用掉的材料下架了仍然拦下（消耗类引用要人工处理）', () => {
+    const need = real.goodsExchange[0]!.need[0]!.goodsId;
+    const b = retire([need]);
+    expect(b.errors.join('\n')).toMatch(new RegExp(`retired goods ${need} is still used by .*镇长兑换`));
+  });
+});
+
 describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上', () => {
   const MISSILE = gid('普通飞弹');
   const RED = gid('[一阶]•红晶原石');
@@ -345,6 +398,16 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
       (g) => g.id === MISSILE,
     )!;
     expect(raw.coin).toBe(4000);
+  });
+
+  it('扩建卡上架银币商店（问题记录 513）：小 3 万、中 12 万、大 20 万；保险卡不上', () => {
+    const b = realBuild();
+    expect([gid('小扩建卡'), gid('中扩建卡'), gid('大扩建卡')].map((id) => good(b, id))).toMatchObject([
+      { onSale: true, coin: 30000 },
+      { onSale: true, coin: 120000 },
+      { onSale: true, coin: 200000 },
+    ]);
+    expect(good(b, gid('保险卡')).onSale).toBe(false);
   });
 
   it('改银币价、钻石价、上下架；没写的字段不动', () => {

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    misc1007d:
+      'Les cartes d’agrandissement petite, moyenne et grande sont maintenant à la boutique (30\u202f000, 120\u202f000 et 200\u202f000 pièces)\u202f; l’échange du maire affiche d’abord l’illimité, puis ce que vous pouvez échanger, ce qui vous manque et ce qui est épuisé, du moins cher au plus cher dans chaque groupe\u202f; quand un rachat est bloqué, le message précise que c’est parce que vous vous êtes connectés récemment depuis le même appareil ou réseau\u202f; après une mise à jour, une ancienne page qui n’arrive pas à en ouvrir une nouvelle se recharge une fois',
     retire1007:
       'Un lot d’objets inutilisés a été retiré\u202f: ils n’apparaissent plus dans la boutique, au marché noir, dans la promo du jour ni dans aucune récompense. Ceux que vous possédez déjà restent affichés et peuvent être utilisés ou vendus',
     cluster1007:

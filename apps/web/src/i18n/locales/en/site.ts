@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    misc1007d:
+      'Small, medium and large expansion cards are now in the coin shop (30,000, 120,000 and 200,000); the mayor’s exchange lists unlimited items first, then what you can exchange, then what you lack materials for, then what’s used up, cheapest first in each group; when an acquisition is blocked, the message now says it’s because you recently logged in on the same device or network; after an update, an old page that can’t open a new one reloads itself once',
     retire1007:
       'A batch of unused items has been retired: they no longer appear in the shop, black market, today’s deal or any rewards. Items you already own still show up and can be used or sold',
     cluster1007:

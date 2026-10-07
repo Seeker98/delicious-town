@@ -15,7 +15,7 @@ const t = useT();
 const toast = useToastStore();
 const r = ref<AcquireRestDto | null>(null);
 /** 卡片上的原因：封号、关联账号都用同一句笼统的话，不让人从好友页看出谁被封、谁和自己共用设备（终审 Minor 3） */
-const reasonText = (block: string) => acquireReason(block === 'banned' ? 'linked' : block);
+const reasonText = (block: string) => acquireReason(block === 'banned' ? 'unavailable' : block);
 const busy = ref(false);
 
 async function load() {

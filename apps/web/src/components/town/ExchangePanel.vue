@@ -32,9 +32,20 @@ async function load() {
 }
 onMounted(() => void load());
 
-const shown = computed(() => (data.value?.items ?? []).filter((x) => x.category === cat.value));
 const numOf = (x: TownExchangeItemDto) => Math.max(1, Math.floor(Number(nums[x.id] ?? 1)) || 1);
 const left = (x: TownExchangeItemDto) => (x.times > 0 ? x.times - x.used : Infinity);
+/**
+ * 排序（问题记录 499：原来按原版兑换表的编号，价格高低交错）：不限次数的在前，
+ * 再是能兑一份的、材料不够的、已兑完的；同一组按价格从低到高。按一份算，不跟着输入的份数跳
+ */
+const rank = (x: TownExchangeItemDto) =>
+  x.times <= 0 ? 0 : left(x) <= 0 ? 3 : x.need.some((m) => m.have < m.num) ? 2 : 1;
+const cost = (x: TownExchangeItemDto) => x.need.reduce((s, m) => s + m.num, 0);
+const shown = computed(() =>
+  (data.value?.items ?? [])
+    .filter((x) => x.category === cat.value)
+    .sort((a, b) => rank(a) - rank(b) || cost(a) - cost(b) || a.id - b.id),
+);
 function block(x: TownExchangeItemDto): string {
   const e = t.value.town.exchange;
   if (left(x) <= 0) return e.soldOut;

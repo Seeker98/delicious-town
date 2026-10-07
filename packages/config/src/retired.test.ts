@@ -54,13 +54,11 @@ describe('下架名单（问题记录 367）', () => {
     expect(errors).toContain(`retired lists goods ${loose.id} twice`);
   });
 
-  it('还被别处引用的不能下架：按引用处归并报错', () => {
-    const e = real.goodsExchange[0]!;
-    const { errors } = build({ goods: [{ id: e.goodsId }, { id: GOODS.starCert }], foods: [] });
+  it('还被别处引用的不能下架：按引用处归并报错（镇长兑换换到的东西会自动去掉，要用掉的材料仍然拦，问题记录 501）', () => {
+    const need = real.goodsExchange[0]!.need[0]!.goodsId;
+    const { errors } = build({ goods: [{ id: need }, { id: GOODS.starCert }], foods: [] });
     expect(
-      errors.some(
-        (x) => x.startsWith(`retired goods ${e.goodsId} is still used by`) && x.includes('镇长兑换'),
-      ),
+      errors.some((x) => x.startsWith(`retired goods ${need} is still used by`) && x.includes('镇长兑换')),
     ).toBe(true);
     expect(
       errors.some(
