@@ -636,6 +636,7 @@
     "tuning.exchange.maxOpenOrders": "每人同时最多几张挂单（张）",
     "tuning.exchange.orderHours": "挂单有效期（小时）",
     "tuning.exchange.maxQty": "每张单最多几个（个）",
+    "tuning.exchange.closedLevels": "不能上交易所的食材等级，如 [6]；关掉以后不能下单、不在列表里，已挂着的单在下一分钟的过期任务里下架、退回交易所账户",
     "tuning.exchange.suspicious.traceDays": "关联账号：看最近几天的登录记录（天）",
     "tuning.exchange.suspicious.edgeHigh": "成交价 ≥ 参考价 × 这个数算价格贴边（倍）",
     "tuning.exchange.suspicious.edgeLow": "成交价 ≤ 参考价 × 这个数算价格贴边（倍）",

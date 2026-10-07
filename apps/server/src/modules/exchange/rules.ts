@@ -4,9 +4,10 @@ import type { Food, GameConfig, Tuning } from '@dt/config';
 export type ExchangeTuning = Tuning['exchange'];
 
 /** 可交易：稀有食材，和菜场判断稀有的口径一致（156-1 设计 §2） */
-export function isTradable(food: Food | undefined): boolean {
-  // 下架的食材（问题记录 367）不再上交易所：别人手里的也不能再流到新玩家手上
-  return food !== undefined && food.odds < 100 && !food.retired;
+export function isTradable(food: Food | undefined, closedLevels: readonly number[] = []): boolean {
+  // 下架的食材（问题记录 367）不再上交易所：别人手里的也不能再流到新玩家手上；
+  // closedLevels 是区服关掉的等级（问题记录 461：六级暂定不交易）
+  return food !== undefined && food.odds < 100 && !food.retired && !closedLevels.includes(food.level);
 }
 
 /** 当天允许的挂单价（156-1 设计 §5） */

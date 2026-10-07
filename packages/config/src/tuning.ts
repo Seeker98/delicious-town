@@ -773,6 +773,8 @@ export const tuningSchema = z.object({
     maxOpenOrders: int.min(1),
     orderHours: int.min(1),
     maxQty: int.min(1).max(999),
+    /** 不能上交易所的食材等级（问题记录 461：六级暂定关掉）；已挂着的单在下一次过期任务时下架退回 */
+    closedLevels: z.array(int.min(1).max(9)),
     /** 进阶防作弊（156-2） */
     suspicious: z.object({
       traceDays: int.min(1),

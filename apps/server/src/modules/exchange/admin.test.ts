@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createShard } from '../../../test/fixtures';
+// 六级默认关掉交易（问题记录 461）：这里的区服放开全部等级
+import { createShardAllLevels as createShard } from './test';
 import { createTestGame, foodNum, type TestGame } from '../../../test/game';
 import { gameDay } from '@dt/shared';
 import { createExchangeAdmin } from './admin';

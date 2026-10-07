@@ -6,15 +6,29 @@ import { addCredit, creditWallets, newCredits } from './wallet';
 
 const BATCH = 500;
 
-/** 过期（156-1 设计 §6.4）：剩余部分退回交易所账户，不锁店；一批最多 500 张 */
-export async function expireOrders(d: GameDeps, shardId: number, now: Date): Promise<{ expired: number }> {
+/**
+ * 过期（156-1 设计 §6.4）：剩余部分退回交易所账户，不锁店；一批最多 500 张。
+ * 区服关掉的等级（exchange.closedLevels，问题记录 461）的单不等到期，一起下架
+ */
+export async function expireOrders(
+  d: GameDeps,
+  shardId: number,
+  now: Date,
+  closedLevels?: readonly number[],
+): Promise<{ expired: number }> {
+  const levels = closedLevels ?? (await d.shards.settings(shardId)).tuning.exchange.closedLevels;
+  const closed = [...d.config.foods.values()].filter((f) => levels.includes(f.level)).map((f) => f.id);
   return d.db.transaction().execute(async (tx) => {
     const due = await tx
       .selectFrom('exchange_order')
       .select(['id', 'foods_id'])
       .where('shard_id', '=', shardId)
       .where('status', '=', 'open')
-      .where('expires_at', '<=', now)
+      .where((eb) =>
+        closed.length > 0
+          ? eb.or([eb('expires_at', '<=', now), eb('foods_id', 'in', closed)])
+          : eb('expires_at', '<=', now),
+      )
       .orderBy('foods_id')
       .orderBy('id')
       .limit(BATCH)
@@ -74,7 +88,8 @@ export function exchangeJobs(d: GameDeps): PeriodicJob[] {
       name: 'exchange-expire',
       feature: 'restaurant',
       period: (now) => now.toISOString().slice(0, 16),
-      run: ({ shardId, now }) => expireOrders(d, shardId, now),
+      run: ({ shardId, now, settings }) =>
+        expireOrders(d, shardId, now, settings.tuning.exchange.closedLevels),
     },
     {
       name: 'exchange-maker-day-prune',
