@@ -47,7 +47,7 @@ describe('分解（设计文档 §3.7）', () => {
       .values({
         equip_id: gemmed,
         rest_id: ctx.restaurantId,
-        gem_goods_id: gid('[一阶]•蓝冥石'),
+        gem_goods_id: gid('[一阶]•蓝冥原石'),
         level: 1,
         cook: 1,
       })

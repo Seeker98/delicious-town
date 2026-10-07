@@ -70,7 +70,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/market',
-      text: 'Mercado: el mercado diario se renueva cada dos horas durante el día, el de ofertas cada hora y el premium tres veces al día',
+      text: 'Mercado: el mercado diario se renueva cada dos horas durante el día y el de ofertas cada hora',
     },
     {
       to: '/bar',

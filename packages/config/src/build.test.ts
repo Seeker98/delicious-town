@@ -45,6 +45,54 @@ describe('玩家看得到的数据不用中文括号（用户 2026-10-07 定）'
   });
 });
 
+describe('宝石按阶改名（问题记录 493）', () => {
+  const TIER = ['一', '二', '三', '四', '五', '六'];
+  const WORD = ['原石', '灵石', '神石', '原玉', '灵玉', '神玉'];
+  const BASE = ['智慧', '红晶', '黄玉', '蓝冥', '绿玄', '天机'];
+  const ids = BASE.flatMap((_, k) => TIER.map((_, i) => 50001 + k * 100 + i));
+  it('一~六阶：原石、灵石、神石、原玉、灵玉、神玉，例如 [一阶]•智慧原石、[六阶]•红晶神玉', () => {
+    const b = realBuild().bundle!;
+    const names = ids.map((id) => b.goods.find((g) => g.id === id)?.name);
+    expect(names).toEqual(BASE.flatMap((base) => TIER.map((n, i) => `[${n}阶]•${base}${WORD[i]}`)));
+  });
+  it('英西法跟着按阶换词：一~三阶是石、四~六阶是玉', () => {
+    const word = {
+      en: [
+        /^\[Tier 1\]•Raw .+ Stone$/,
+        /^\[Tier 2\]•Spirit .+ Stone$/,
+        /^\[Tier 3\]•Divine .+ Stone$/,
+        /^\[Tier 4\]•Raw .+ Jade$/,
+        /^\[Tier 5\]•Spirit .+ Jade$/,
+        /^\[Tier 6\]•Divine .+ Jade$/,
+      ],
+      es: [
+        /^\[Rango 1\]•Piedra en bruto /,
+        /^\[Rango 2\]•Piedra espiritual /,
+        /^\[Rango 3\]•Piedra divina /,
+        /^\[Rango 4\]•Jade en bruto /,
+        /^\[Rango 5\]•Jade espiritual /,
+        /^\[Rango 6\]•Jade divino /,
+      ],
+      fr: [
+        /^\[Rang 1\]•Pierre brute /,
+        /^\[Rang 2\]•Pierre spirituelle /,
+        /^\[Rang 3\]•Pierre divine /,
+        /^\[Rang 4\]•Jade brut /,
+        /^\[Rang 5\]•Jade spirituel /,
+        /^\[Rang 6\]•Jade divin /,
+      ],
+    };
+    for (const [lang, res] of Object.entries(word)) {
+      const tr = JSON.parse(
+        readFileSync(join(defaultDataDir(), 'i18n', lang, 'goods.json'), 'utf8'),
+      ) as Record<string, { name: string }>;
+      for (const id of ids) expect(tr[id]!.name, `${lang} ${id}`).toMatch(res[(id % 100) - 1]!);
+      // 同一阶六种宝石名字不重
+      expect(new Set(ids.map((id) => tr[id]!.name)).size).toBe(ids.length);
+    }
+  });
+});
+
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
@@ -152,8 +200,11 @@ describe('buildBundle（真实数据）', () => {
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
     expect(goods.get(gid('见习之铲'))!.equip).toMatchObject({ part: 1, essence: 1, total: null, suitId: 0 });
     expect(goods.get(gid('沉默之度玛的静谧之镬'))!.equip).toMatchObject({ part: 3, total: 36, suitId: 5 });
-    expect(goods.get(gid('[一阶]•智慧石'))!.gem).toMatchObject({ level: 1, nextId: gid('[二阶]•智慧石') });
-    expect(goods.get(gid('[六阶]•智慧石'))!.gem).toMatchObject({ level: 6, nextId: null });
+    expect(goods.get(gid('[一阶]•智慧原石'))!.gem).toMatchObject({
+      level: 1,
+      nextId: gid('[二阶]•智慧灵石'),
+    });
+    expect(goods.get(gid('[六阶]•智慧神玉'))!.gem).toMatchObject({ level: 6, nextId: null });
     expect(goods.get(gid('普通宣传海报'))!.equip).toBeNull();
     expect(bundle!.goods.filter((g) => g.type === 4).every((g) => g.equip !== null)).toBe(true);
     expect(bundle!.goods.filter((g) => g.type === 5).every((g) => g.gem !== null)).toBe(true);
@@ -165,7 +216,15 @@ describe('buildBundle（真实数据）', () => {
   it('天机石 1~6 阶加幸运 1/2/4/8/16/24，升阶链完整，一阶和红晶石一样在特价池、黑市卖（问题记录 419）', () => {
     const { bundle } = realBuild();
     const goods = new Map(bundle!.goods.map((g) => [g.id, g]));
-    const tiers = ['一', '二', '三', '四', '五', '六'].map((n) => goods.get(gid(`[${n}阶]•天机石`))!);
+    // 问题记录 493 起按阶改名：天机原石、天机灵石……天机神玉
+    const tiers = [
+      '[一阶]•天机原石',
+      '[二阶]•天机灵石',
+      '[三阶]•天机神石',
+      '[四阶]•天机原玉',
+      '[五阶]•天机灵玉',
+      '[六阶]•天机神玉',
+    ].map((n) => goods.get(gid(n))!);
     expect(tiers.map((g) => g.gem!.attrs.luck)).toEqual([1, 2, 4, 8, 16, 24]);
     expect(tiers.map((g) => g.gem!.level)).toEqual([1, 2, 3, 4, 5, 6]);
     expect(tiers.map((g) => g.gem!.nextId)).toEqual([...tiers.slice(1).map((g) => g.id), null]);
@@ -178,7 +237,7 @@ describe('buildBundle（真实数据）', () => {
         creatives: 0,
         luck: 0,
       });
-    const red = goods.get(gid('[一阶]•红晶石'))!;
+    const red = goods.get(gid('[一阶]•红晶原石'))!;
     expect([tiers[0]!.coin, tiers[0]!.diamond, tiers[0]!.onSale]).toEqual([
       red.coin,
       red.diamond,

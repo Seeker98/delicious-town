@@ -56,7 +56,6 @@ export default {
       '好友多了，互相帮忙生意更好做。',
       '累了就歇歇，体力每轮都会恢复一点。',
       '有什么不懂的，去论坛「攻略」版看看大家的心得。',
-      '高级菜场一天只上新三次，错过就要等了。',
     ] as string[],
     specialLeft: (n: number) => `特价菜还剩 ${n} 样，手快有手慢无！`,
     specialSoldOut: (time: string) => `特价菜卖光了，下次 ${time} 进货。`,

@@ -38,7 +38,7 @@ describe('迁移 0006', () => {
     const e = await db.insertInto('equip').values(piece(2)).returning('id').executeTakeFirstOrThrow();
     await db
       .insertInto('equip_gem')
-      .values({ equip_id: e.id, rest_id: rest, gem_goods_id: gid('[一阶]•蓝冥石'), level: 1, cook: 1 })
+      .values({ equip_id: e.id, rest_id: rest, gem_goods_id: gid('[一阶]•蓝冥原石'), level: 1, cook: 1 })
       .execute();
     await db
       .insertInto('equip_stress_log')

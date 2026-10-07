@@ -842,6 +842,38 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
   });
 
+  it('今日活跃有够了点数还没领的档位时，后面跟一个礼物图标，读屏读“有奖励可领”；领完或不够时不显示（问题记录 481）', async () => {
+    const award = { coin: 100 } as never;
+    const base = { signedIn: true, star: 0, level: 1, items: [], kujiTicket: null };
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      ...base,
+      total: 40,
+      rewards: [
+        { points: 30, award, claimed: true, multiplier: 1 },
+        { points: 40, award, claimed: false, multiplier: 1 },
+        { points: 60, award, claimed: false, multiplier: 1 },
+      ],
+    });
+    const w = await mountView();
+    const act = w.get('[data-testid="home-activation"]');
+    const gift = act.get('[data-testid="home-activation-gift"]');
+    expect(gift.get('i.bi-gift').attributes('aria-hidden')).toBe('true');
+    expect(gift.get('.visually-hidden').text()).toBe('有奖励可领');
+    // 不加可见文字：链接上看得到的字还是“今日活跃 40”
+    expect(act.text().replace('有奖励可领', '').trim()).toBe('今日活跃 40');
+
+    vi.mocked(endpoints.activation).mockResolvedValue({
+      ...base,
+      total: 50,
+      rewards: [
+        { points: 40, award, claimed: true, multiplier: 1 },
+        { points: 60, award, claimed: false, multiplier: 1 },
+      ],
+    });
+    const k = await mountView();
+    expect(k.find('[data-testid="home-activation-gift"]').exists()).toBe(false);
+  });
+
   it('食谱数、在售特色菜（问题记录 447）：都链到对应页面；区服关了的不显示', async () => {
     const w = await mountView();
     const books = w.get('[data-testid="home-books"]');

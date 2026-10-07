@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    batch1007b:
+      'Les échanges avec les amis passent à 10 par jour tous amis confondus, et chaque joueur peut être sollicité au plus 20 fois par jour, quel que soit le nombre d’étoiles (avec beaucoup d’étoiles, vous gardez au moins 3 échanges avec M. Krab)\u202f; les gemmes sont renommées par rang\u202f: pierre brute, spirituelle et divine, puis jade brut, spirituel et divin\u202f; une icône cadeau à côté de l’activité du jour sur l’accueil signale une récompense à récupérer\u202f; en classe, on peut filtrer les plats signature par niveau pour ouvrir un cours\u202f; le marché de luxe ferme pour l’instant\u202f; dans la boutique de la tour, les statues affichent «\u202f1 max\u202f» à la place de la quantité',
     parens1007:
       'Dans l’interface en chinois (y compris les descriptions d’objets et les noms de recettes), les parenthèses pleine chasse sont maintenant des parenthèses normales avec une espace de chaque côté, pour faire tenir plus de texte par ligne',
     ui1007:

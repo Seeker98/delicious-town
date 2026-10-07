@@ -640,6 +640,10 @@ details.dt-card > summary {
 .dt-qty {
   width: 64px;
 }
+/* 数量框位置上的一行字（“限拥有 1 个”）：至少和数量框一样宽，不折行（问题记录 489） */
+.dt-qty-text {
+  min-width: 64px;
+}
 /* 只读的紧凑列表：新闻、流水 */
 .dt-feed {
   display: flex;

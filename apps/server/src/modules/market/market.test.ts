@@ -51,6 +51,19 @@ describe('日常菜场', () => {
     expect(view.daily.find((x) => x.id === it0.id)).toMatchObject({ bought: 10, left: it0.stock - 10 });
   });
 
+  it('高级菜场暂时隐藏（问题记录 477）：照常进货，但不发“菜场进货了”的新闻，免得玩家去找看不到的货', async () => {
+    const ctx = await newRestaurant(t);
+    const items = await openShelf(ctx.shardId, 2);
+    expect(items.length).toBeGreaterThan(0);
+    const news = await t.db
+      .selectFrom('news')
+      .select('params')
+      .where('shard_id', '=', ctx.shardId)
+      .where('type', '=', 'market.restock')
+      .execute();
+    expect(news.filter((n) => (n.params as { shelf?: number }).shelf === 2)).toEqual([]);
+  });
+
   it('最多还能买几个 = 限购剩余、库存剩余、橱柜单种上限剩余取小（问题记录：显示能买 1000 实际只能买 996）', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 100_000_000 } });
     const [item] = await openShelf(ctx.shardId, 0);

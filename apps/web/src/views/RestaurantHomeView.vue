@@ -64,14 +64,18 @@ async function loadAnnouncements() {
 /** 首页签到（问题记录 144）和今日活跃点数（问题记录 280）：读失败就不显示 */
 const signedIn = ref<boolean | null>(null);
 const activeTotal = ref<number | null>(null);
+/** 有够了点数还没领的活跃档位（问题记录 481）：今日活跃后面跟一个礼物图标 */
+const activeClaimable = ref(false);
 async function loadSignIn() {
   try {
     const a = await endpoints.activation();
     signedIn.value = a.signedIn;
     activeTotal.value = a.total;
+    activeClaimable.value = a.rewards.some((r) => !r.claimed && a.total >= r.points);
   } catch {
     signedIn.value = null;
     activeTotal.value = null;
+    activeClaimable.value = false;
   }
 }
 
@@ -490,7 +494,11 @@ onBeforeUnmount(() => {
           to="/rest/tasks"
           class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
-          >{{ t.home.activation(activeTotal) }}</RouterLink
+          >{{ t.home.activation(activeTotal)
+          }}<span v-if="activeClaimable" class="text-primary ms-1" data-testid="home-activation-gift"
+            ><i class="bi bi-gift" aria-hidden="true"></i
+            ><span class="visually-hidden">{{ t.home.activationClaimable }}</span></span
+          ></RouterLink
         >
       </div>
       <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->

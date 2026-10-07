@@ -1184,147 +1184,147 @@
     "desc": "Un agradecimiento a los restaurantes que han aportado al pueblo, se obtiene con 6 estrellas. Creatividad +41."
   },
   "50001": {
-    "name": "[Rango 1]•Piedra de sabiduría",
+    "name": "[Rango 1]•Piedra en bruto de sabiduría",
     "desc": "Creatividad +1"
   },
   "50002": {
-    "name": "[Rango 2]•Piedra de sabiduría",
+    "name": "[Rango 2]•Piedra espiritual de sabiduría",
     "desc": "Creatividad +2"
   },
   "50003": {
-    "name": "[Rango 3]•Piedra de sabiduría",
+    "name": "[Rango 3]•Piedra divina de sabiduría",
     "desc": "Creatividad +4"
   },
   "50004": {
-    "name": "[Rango 4]•Piedra de sabiduría",
+    "name": "[Rango 4]•Jade en bruto de sabiduría",
     "desc": "Creatividad +8"
   },
   "50005": {
-    "name": "[Rango 5]•Piedra de sabiduría",
+    "name": "[Rango 5]•Jade espiritual de sabiduría",
     "desc": "Creatividad +16"
   },
   "50006": {
-    "name": "[Rango 6]•Piedra de sabiduría",
+    "name": "[Rango 6]•Jade divino de sabiduría",
     "desc": "Creatividad +24"
   },
   "50101": {
-    "name": "[Rango 1]•Cristal rojo",
+    "name": "[Rango 1]•Piedra en bruto de cristal rojo",
     "desc": "Control del fuego +1"
   },
   "50102": {
-    "name": "[Rango 2]•Cristal rojo",
+    "name": "[Rango 2]•Piedra espiritual de cristal rojo",
     "desc": "Control del fuego +2"
   },
   "50103": {
-    "name": "[Rango 3]•Cristal rojo",
+    "name": "[Rango 3]•Piedra divina de cristal rojo",
     "desc": "Control del fuego +4"
   },
   "50104": {
-    "name": "[Rango 4]•Cristal rojo",
+    "name": "[Rango 4]•Jade en bruto de cristal rojo",
     "desc": "Control del fuego +8"
   },
   "50105": {
-    "name": "[Rango 5]•Cristal rojo",
+    "name": "[Rango 5]•Jade espiritual de cristal rojo",
     "desc": "Control del fuego +16"
   },
   "50106": {
-    "name": "[Rango 6]•Cristal rojo",
+    "name": "[Rango 6]•Jade divino de cristal rojo",
     "desc": "Control del fuego +24"
   },
   "50201": {
-    "name": "[Rango 1]•Topacio",
+    "name": "[Rango 1]•Piedra en bruto de topacio",
     "desc": "Corte +1"
   },
   "50202": {
-    "name": "[Rango 2]•Topacio",
+    "name": "[Rango 2]•Piedra espiritual de topacio",
     "desc": "Corte +2"
   },
   "50203": {
-    "name": "[Rango 3]•Topacio",
+    "name": "[Rango 3]•Piedra divina de topacio",
     "desc": "Corte +4"
   },
   "50204": {
-    "name": "[Rango 4]•Topacio",
+    "name": "[Rango 4]•Jade en bruto de topacio",
     "desc": "Corte +8"
   },
   "50205": {
-    "name": "[Rango 5]•Topacio",
+    "name": "[Rango 5]•Jade espiritual de topacio",
     "desc": "Corte +16"
   },
   "50206": {
-    "name": "[Rango 6]•Topacio",
+    "name": "[Rango 6]•Jade divino de topacio",
     "desc": "Corte +24"
   },
   "50301": {
-    "name": "[Rango 1]•Piedra azul abisal",
+    "name": "[Rango 1]•Piedra en bruto del abismo azul",
     "desc": "Cocina +1"
   },
   "50302": {
-    "name": "[Rango 2]•Piedra azul abisal",
+    "name": "[Rango 2]•Piedra espiritual del abismo azul",
     "desc": "Cocina +2"
   },
   "50303": {
-    "name": "[Rango 3]•Piedra azul abisal",
+    "name": "[Rango 3]•Piedra divina del abismo azul",
     "desc": "Cocina +4"
   },
   "50304": {
-    "name": "[Rango 4]•Piedra azul abisal",
+    "name": "[Rango 4]•Jade en bruto del abismo azul",
     "desc": "Cocina +8"
   },
   "50305": {
-    "name": "[Rango 5]•Piedra azul abisal",
+    "name": "[Rango 5]•Jade espiritual del abismo azul",
     "desc": "Cocina +16"
   },
   "50306": {
-    "name": "[Rango 6]•Piedra azul abisal",
+    "name": "[Rango 6]•Jade divino del abismo azul",
     "desc": "Cocina +24"
   },
   "50401": {
-    "name": "[Rango 1]•Piedra verde mística",
+    "name": "[Rango 1]•Piedra en bruto del misterio verde",
     "desc": "Sazón +1"
   },
   "50402": {
-    "name": "[Rango 2]•Piedra verde mística",
+    "name": "[Rango 2]•Piedra espiritual del misterio verde",
     "desc": "Sazón +2"
   },
   "50403": {
-    "name": "[Rango 3]•Piedra verde mística",
+    "name": "[Rango 3]•Piedra divina del misterio verde",
     "desc": "Sazón +4"
   },
   "50404": {
-    "name": "[Rango 4]•Piedra verde mística",
+    "name": "[Rango 4]•Jade en bruto del misterio verde",
     "desc": "Sazón +8"
   },
   "50405": {
-    "name": "[Rango 5]•Piedra verde mística",
+    "name": "[Rango 5]•Jade espiritual del misterio verde",
     "desc": "Sazón +16"
   },
   "50406": {
-    "name": "[Rango 6]•Piedra verde mística",
+    "name": "[Rango 6]•Jade divino del misterio verde",
     "desc": "Sazón +24"
   },
   "50501": {
-    "name": "[Rango 1]•Piedra del destino",
+    "name": "[Rango 1]•Piedra en bruto del destino",
     "desc": "Suerte +1"
   },
   "50502": {
-    "name": "[Rango 2]•Piedra del destino",
+    "name": "[Rango 2]•Piedra espiritual del destino",
     "desc": "Suerte +2"
   },
   "50503": {
-    "name": "[Rango 3]•Piedra del destino",
+    "name": "[Rango 3]•Piedra divina del destino",
     "desc": "Suerte +4"
   },
   "50504": {
-    "name": "[Rango 4]•Piedra del destino",
+    "name": "[Rango 4]•Jade en bruto del destino",
     "desc": "Suerte +8"
   },
   "50505": {
-    "name": "[Rango 5]•Piedra del destino",
+    "name": "[Rango 5]•Jade espiritual del destino",
     "desc": "Suerte +16"
   },
   "50506": {
-    "name": "[Rango 6]•Piedra del destino",
+    "name": "[Rango 6]•Jade divino del destino",
     "desc": "Suerte +24"
   },
   "60000": {

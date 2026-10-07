@@ -68,16 +68,16 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
   it('镶嵌：扣宝石和体力（= 阶数），属性加到厨具上；孔满了、不是宝石都拒绝', async () => {
     const ctx = await newRestaurant(t, {
       patch: { strength: 10 },
-      goods: { [gid('[一阶]•蓝冥石')]: 2, [GOODS.essence]: 1 },
+      goods: { [gid('[一阶]•蓝冥原石')]: 2, [GOODS.essence]: 1 },
     });
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'));
-    await eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥石') });
-    expect(await gemsOn(id)).toMatchObject([{ gem_goods_id: gid('[一阶]•蓝冥石'), level: 1, cook: 1 }]);
+    await eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥原石') });
+    expect(await gemsOn(id)).toMatchObject([{ gem_goods_id: gid('[一阶]•蓝冥原石'), level: 1, cook: 1 }]);
     expect((await restRow(t, ctx.restaurantId)).strength).toBe(9);
-    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥石'))).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥原石'))).toBe(1);
     const o = await eq().list(ctx, {});
     expect(o[0]!.gem.cook).toBe(1);
-    await expect(eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥石') })).rejects.toMatchObject({
+    await expect(eq().inlay(ctx, { id, gemId: gid('[一阶]•蓝冥原石') })).rejects.toMatchObject({
       params: { reason: 'no_hole' },
     });
     await t.db.updateTable('equip').set({ cur_hole: 2 }).where('id', '=', id).execute();
@@ -95,11 +95,11 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
         .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid, level })
         .returning('id')
         .executeTakeFirstOrThrow();
-    const g1 = await row(gid('[二阶]•智慧石'), 2);
+    const g1 = await row(gid('[二阶]•智慧灵石'), 2);
     expect((await eq().ungem(ctx, { gemRowId: g1.id })).data).toEqual({ coin: 20_000 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(5_000);
-    expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•智慧石'))).toBe(1);
-    const g2 = await row(gid('[二阶]•智慧石'), 2);
+    expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•智慧灵石'))).toBe(1);
+    const g2 = await row(gid('[二阶]•智慧灵石'), 2);
     await setWeather(ctx.shardId, 18);
     expect((await eq().ungem(ctx, { gemRowId: g2.id })).data).toEqual({ coin: 0 });
   });
@@ -109,7 +109,7 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'), { cur_hole: 3 });
     const g = await t.db
       .insertInto('equip_gem')
-      .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid('[六阶]•蓝冥石'), level: 5 })
+      .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid('[六阶]•蓝冥神玉'), level: 5 })
       .returning('id')
       .executeTakeFirstOrThrow();
     expect((await eq().detail(ctx, id)).equip.gems.find((x) => x.id === g.id)!.level).toBe(6);
@@ -121,12 +121,12 @@ describe('镶嵌和摘除（设计文档 §3.8、裁定 6）', () => {
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'));
     const g = await t.db
       .insertInto('equip_gem')
-      .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid('[一阶]•蓝冥石'), level: 1 })
+      .values({ equip_id: id, rest_id: ctx.restaurantId, gem_goods_id: gid('[一阶]•蓝冥原石'), level: 1 })
       .returning('id')
       .executeTakeFirstOrThrow();
     await expect(eq().ungem(ctx, { gemRowId: g.id })).rejects.toMatchObject({ params: { kind: 'coin' } });
     expect(await gemsOn(id)).toHaveLength(1);
-    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥石'))).toBe(0);
+    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥原石'))).toBe(0);
     await expect(eq().ungem(await newRestaurant(t), { gemRowId: g.id })).rejects.toMatchObject({
       code: 'NOT_FOUND',
     });
@@ -139,12 +139,12 @@ describe('宝石升阶（设计文档 §3.9）', () => {
     seq = [0.5, 0.9, 0.0, 0.9, 0.9];
     const ctx = await newRestaurant(t, {
       patch: { strength: 10, luck: 100 },
-      goods: { [gid('[一阶]•蓝冥石')]: 7 },
+      goods: { [gid('[一阶]•蓝冥原石')]: 7 },
     });
-    const r = await eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥石'), num: 3 });
+    const r = await eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥原石'), num: 3 });
     expect(r.data).toEqual({ success: 2, lucky: 1, fail: 1, exp: 1000 });
-    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥石'))).toBe(1);
-    expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•蓝冥石'))).toBe(2);
+    expect(await goodsNum(t, ctx.restaurantId, gid('[一阶]•蓝冥原石'))).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, gid('[二阶]•蓝冥灵石'))).toBe(2);
     const rest = await restRow(t, ctx.restaurantId);
     expect(rest.strength).toBe(7);
   });
@@ -152,16 +152,16 @@ describe('宝石升阶（设计文档 §3.9）', () => {
   it('最高阶、宝石不够、体力不够都拒绝', async () => {
     const ctx = await newRestaurant(t, {
       patch: { strength: 1 },
-      goods: { [gid('[六阶]•智慧石')]: 2, [gid('[一阶]•蓝冥石')]: 3 },
+      goods: { [gid('[六阶]•智慧神玉')]: 2, [gid('[一阶]•蓝冥原石')]: 3 },
     });
-    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[六阶]•智慧石'), num: 1 })).rejects.toMatchObject({
+    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[六阶]•智慧神玉'), num: 1 })).rejects.toMatchObject({
       params: { reason: 'gem_max' },
     });
-    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥石'), num: 2 })).rejects.toMatchObject({
-      params: { kind: 'goods', id: gid('[一阶]•蓝冥石') },
+    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥原石'), num: 2 })).rejects.toMatchObject({
+      params: { kind: 'goods', id: gid('[一阶]•蓝冥原石') },
     });
     await t.db.updateTable('restaurant').set({ strength: 0 }).where('id', '=', ctx.restaurantId).execute();
-    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥石'), num: 1 })).rejects.toMatchObject({
+    await expect(eq().gemLevelUp(ctx, { goodsId: gid('[一阶]•蓝冥原石'), num: 1 })).rejects.toMatchObject({
       params: { kind: 'strength' },
     });
   });
@@ -169,12 +169,12 @@ describe('宝石升阶（设计文档 §3.9）', () => {
   it('升到 4 阶以上发新闻；5 阶以上失败发破碎新闻', async () => {
     const ctx = await newRestaurant(t, {
       patch: { strength: 100, luck: 0 },
-      goods: { [gid('[四阶]•智慧石')]: 4 },
+      goods: { [gid('[四阶]•智慧原玉')]: 4 },
     });
     seq = [0.0];
-    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧石'), num: 1 });
+    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧原玉'), num: 1 });
     seq = [0.99];
-    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧石'), num: 1 });
+    await eq().gemLevelUp(ctx, { goodsId: gid('[四阶]•智慧原玉'), num: 1 });
     const types = (
       await t.db
         .selectFrom('news')
@@ -187,15 +187,17 @@ describe('宝石升阶（设计文档 §3.9）', () => {
   });
 
   it('宝石列表：持有数、下一阶、成功率（不含幸运）', async () => {
-    const ctx = await newRestaurant(t, { goods: { [gid('[一阶]•蓝冥石')]: 3, [gid('[六阶]•智慧石')]: 1 } });
+    const ctx = await newRestaurant(t, {
+      goods: { [gid('[一阶]•蓝冥原石')]: 3, [gid('[六阶]•智慧神玉')]: 1 },
+    });
     const g = await eq().gems(ctx);
-    expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥石'))).toMatchObject({
+    expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥原石'))).toMatchObject({
       num: 3,
       level: 1,
-      nextId: gid('[二阶]•蓝冥石'),
+      nextId: gid('[二阶]•蓝冥灵石'),
     });
-    expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥石'))!.rate).toBeCloseTo(0.77);
-    expect(g.items.find((x) => x.goodsId === gid('[六阶]•智慧石'))).toMatchObject({ nextId: null });
+    expect(g.items.find((x) => x.goodsId === gid('[一阶]•蓝冥原石'))!.rate).toBeCloseTo(0.77);
+    expect(g.items.find((x) => x.goodsId === gid('[六阶]•智慧神玉'))).toMatchObject({ nextId: null });
   });
 });
 
@@ -203,23 +205,23 @@ describe('宝石排序（问题记录 132）', () => {
   // 蓝冥六阶数据里等级写的 5
   const goods = Object.fromEntries(
     [
-      '[一阶]•智慧石',
-      '[一阶]•黄玉石',
-      '[一阶]•蓝冥石',
-      '[三阶]•智慧石',
-      '[二阶]•蓝冥石',
-      '[五阶]•蓝冥石',
-      '[六阶]•蓝冥石',
+      '[一阶]•智慧原石',
+      '[一阶]•黄玉原石',
+      '[一阶]•蓝冥原石',
+      '[三阶]•智慧神石',
+      '[二阶]•蓝冥灵石',
+      '[五阶]•蓝冥灵玉',
+      '[六阶]•蓝冥神玉',
     ].map((n) => [gid(n), 1]),
   );
   const ORDER = [
-    gid('[一阶]•蓝冥石'),
-    gid('[二阶]•蓝冥石'),
-    gid('[五阶]•蓝冥石'),
-    gid('[六阶]•蓝冥石'),
-    gid('[一阶]•黄玉石'),
-    gid('[一阶]•智慧石'),
-    gid('[三阶]•智慧石'),
+    gid('[一阶]•蓝冥原石'),
+    gid('[二阶]•蓝冥灵石'),
+    gid('[五阶]•蓝冥灵玉'),
+    gid('[六阶]•蓝冥神玉'),
+    gid('[一阶]•黄玉原石'),
+    gid('[一阶]•智慧原石'),
+    gid('[三阶]•智慧神石'),
   ];
 
   it('宝石页：按属性（厨艺、刀工、火候、调味、创意）分组，组内按加成从低到高', async () => {

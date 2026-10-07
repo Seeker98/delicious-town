@@ -64,7 +64,6 @@ const market: Messages['market'] = {
       'Plus d’amis, c’est plus d’entraide et de meilleures affaires.',
       'Faites une pause si vous êtes fatigué. L’énergie remonte un peu à chaque tour.',
       'Une question ? Consultez la section « Guides » du forum.',
-      'Le marché premium ne se réapprovisionne que trois fois par jour. Ratez-le et il faudra attendre.',
     ],
     specialLeft: (n) => `Encore ${n} ${plFr(n, 'promo', 'promos')}. Faites vite !`,
     specialSoldOut: (time) => `Les promos sont épuisées. Prochain arrivage à ${time}.`,

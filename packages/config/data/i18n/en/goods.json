@@ -1184,147 +1184,147 @@
     "desc": "A thank-you to restaurants that have contributed to the town, obtained at 6 stars. Creativity +41."
   },
   "50001": {
-    "name": "[Tier 1]•Wisdom Stone",
+    "name": "[Tier 1]•Raw Wisdom Stone",
     "desc": "Creativity +1"
   },
   "50002": {
-    "name": "[Tier 2]•Wisdom Stone",
+    "name": "[Tier 2]•Spirit Wisdom Stone",
     "desc": "Creativity +2"
   },
   "50003": {
-    "name": "[Tier 3]•Wisdom Stone",
+    "name": "[Tier 3]•Divine Wisdom Stone",
     "desc": "Creativity +4"
   },
   "50004": {
-    "name": "[Tier 4]•Wisdom Stone",
+    "name": "[Tier 4]•Raw Wisdom Jade",
     "desc": "Creativity +8"
   },
   "50005": {
-    "name": "[Tier 5]•Wisdom Stone",
+    "name": "[Tier 5]•Spirit Wisdom Jade",
     "desc": "Creativity +16"
   },
   "50006": {
-    "name": "[Tier 6]•Wisdom Stone",
+    "name": "[Tier 6]•Divine Wisdom Jade",
     "desc": "Creativity +24"
   },
   "50101": {
-    "name": "[Tier 1]•Red Crystal",
+    "name": "[Tier 1]•Raw Red Crystal Stone",
     "desc": "Heat control +1"
   },
   "50102": {
-    "name": "[Tier 2]•Red Crystal",
+    "name": "[Tier 2]•Spirit Red Crystal Stone",
     "desc": "Heat control +2"
   },
   "50103": {
-    "name": "[Tier 3]•Red Crystal",
+    "name": "[Tier 3]•Divine Red Crystal Stone",
     "desc": "Heat control +4"
   },
   "50104": {
-    "name": "[Tier 4]•Red Crystal",
+    "name": "[Tier 4]•Raw Red Crystal Jade",
     "desc": "Heat control +8"
   },
   "50105": {
-    "name": "[Tier 5]•Red Crystal",
+    "name": "[Tier 5]•Spirit Red Crystal Jade",
     "desc": "Heat control +16"
   },
   "50106": {
-    "name": "[Tier 6]•Red Crystal",
+    "name": "[Tier 6]•Divine Red Crystal Jade",
     "desc": "Heat control +24"
   },
   "50201": {
-    "name": "[Tier 1]•Topaz",
+    "name": "[Tier 1]•Raw Topaz Stone",
     "desc": "Knife skills +1"
   },
   "50202": {
-    "name": "[Tier 2]•Topaz",
+    "name": "[Tier 2]•Spirit Topaz Stone",
     "desc": "Knife skills +2"
   },
   "50203": {
-    "name": "[Tier 3]•Topaz",
+    "name": "[Tier 3]•Divine Topaz Stone",
     "desc": "Knife skills +4"
   },
   "50204": {
-    "name": "[Tier 4]•Topaz",
+    "name": "[Tier 4]•Raw Topaz Jade",
     "desc": "Knife skills +8"
   },
   "50205": {
-    "name": "[Tier 5]•Topaz",
+    "name": "[Tier 5]•Spirit Topaz Jade",
     "desc": "Knife skills +16"
   },
   "50206": {
-    "name": "[Tier 6]•Topaz",
+    "name": "[Tier 6]•Divine Topaz Jade",
     "desc": "Knife skills +24"
   },
   "50301": {
-    "name": "[Tier 1]•Blue Nether Stone",
+    "name": "[Tier 1]•Raw Blue Nether Stone",
     "desc": "Cooking +1"
   },
   "50302": {
-    "name": "[Tier 2]•Blue Nether Stone",
+    "name": "[Tier 2]•Spirit Blue Nether Stone",
     "desc": "Cooking +2"
   },
   "50303": {
-    "name": "[Tier 3]•Blue Nether Stone",
+    "name": "[Tier 3]•Divine Blue Nether Stone",
     "desc": "Cooking +4"
   },
   "50304": {
-    "name": "[Tier 4]•Blue Nether Stone",
+    "name": "[Tier 4]•Raw Blue Nether Jade",
     "desc": "Cooking +8"
   },
   "50305": {
-    "name": "[Tier 5]•Blue Nether Stone",
+    "name": "[Tier 5]•Spirit Blue Nether Jade",
     "desc": "Cooking +16"
   },
   "50306": {
-    "name": "[Tier 6]•Blue Nether Stone",
+    "name": "[Tier 6]•Divine Blue Nether Jade",
     "desc": "Cooking +24"
   },
   "50401": {
-    "name": "[Tier 1]•Green Mystic Stone",
+    "name": "[Tier 1]•Raw Green Mystic Stone",
     "desc": "Seasoning +1"
   },
   "50402": {
-    "name": "[Tier 2]•Green Mystic Stone",
+    "name": "[Tier 2]•Spirit Green Mystic Stone",
     "desc": "Seasoning +2"
   },
   "50403": {
-    "name": "[Tier 3]•Green Mystic Stone",
+    "name": "[Tier 3]•Divine Green Mystic Stone",
     "desc": "Seasoning +4"
   },
   "50404": {
-    "name": "[Tier 4]•Green Mystic Stone",
+    "name": "[Tier 4]•Raw Green Mystic Jade",
     "desc": "Seasoning +8"
   },
   "50405": {
-    "name": "[Tier 5]•Green Mystic Stone",
+    "name": "[Tier 5]•Spirit Green Mystic Jade",
     "desc": "Seasoning +16"
   },
   "50406": {
-    "name": "[Tier 6]•Green Mystic Stone",
+    "name": "[Tier 6]•Divine Green Mystic Jade",
     "desc": "Seasoning +24"
   },
   "50501": {
-    "name": "[Tier 1]•Fate Stone",
+    "name": "[Tier 1]•Raw Fate Stone",
     "desc": "Luck +1"
   },
   "50502": {
-    "name": "[Tier 2]•Fate Stone",
+    "name": "[Tier 2]•Spirit Fate Stone",
     "desc": "Luck +2"
   },
   "50503": {
-    "name": "[Tier 3]•Fate Stone",
+    "name": "[Tier 3]•Divine Fate Stone",
     "desc": "Luck +4"
   },
   "50504": {
-    "name": "[Tier 4]•Fate Stone",
+    "name": "[Tier 4]•Raw Fate Jade",
     "desc": "Luck +8"
   },
   "50505": {
-    "name": "[Tier 5]•Fate Stone",
+    "name": "[Tier 5]•Spirit Fate Jade",
     "desc": "Luck +16"
   },
   "50506": {
-    "name": "[Tier 6]•Fate Stone",
+    "name": "[Tier 6]•Divine Fate Jade",
     "desc": "Luck +24"
   },
   "60000": {

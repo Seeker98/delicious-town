@@ -103,17 +103,15 @@ export function bangleRate(level: number, odds: number, t: F['exchange']): numbe
   return t.bangleBase + level * (105 - odds) * t.bangleFactor;
 }
 
+/** 每天的交换次数（问题记录 479）：和好友只看总数和被换数，不看星级；蟹老板单算 */
 export function exchangeLimits(
   myStar: number,
-  theirStar: number,
   t: F['exchange'],
-): { perFriend: number; total: number; taken: number; npc: number } {
-  const perFriend = t.base - Math.floor(myStar / 2);
+): { total: number; taken: number; npc: number } {
   return {
-    perFriend,
-    total: perFriend * t.perDayTotalMul,
-    taken: t.takenBase + theirStar,
-    npc: t.npcBase - myStar,
+    total: t.perDay,
+    taken: t.takenPerDay,
+    npc: Math.max(t.npcMin, t.npcBase - myStar),
   };
 }
 

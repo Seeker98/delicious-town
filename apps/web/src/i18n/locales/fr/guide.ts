@@ -70,7 +70,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/market',
-      text: 'Marché : le marché du jour se renouvelle toutes les deux heures en journée, le marché des promos toutes les heures et le marché de luxe trois fois par jour',
+      text: 'Marché : le marché du jour se renouvelle toutes les deux heures en journée et le marché des promos toutes les heures',
     },
     {
       to: '/bar',

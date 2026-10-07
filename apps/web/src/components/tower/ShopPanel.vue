@@ -64,7 +64,6 @@ async function buy(x: RenownShopItemDto) {
     >
       <span class="flex-fill">
         {{ catalog.goodsName(x.goodsId) }}
-        <span v-if="x.rare" class="badge text-bg-warning ms-1">{{ t.tower.shop.limitOne }}</span>
         <span class="text-muted ms-1">{{
           t.tower.shop.meta(formatNum(x.renown), x.bought, x.weeklyLimit)
         }}</span>
@@ -75,10 +74,16 @@ async function buy(x: RenownShopItemDto) {
         type="number"
         min="1"
         :max="Math.max(1, maxOf(x))"
-        class="form-control form-control-sm"
-        style="width: 70px"
+        class="form-control form-control-sm dt-qty"
         :data-testid="`num-${x.goodsId}`"
       />
+      <!-- 雕像不填数量，限购写在数量框的位置，和银币商店一样（问题记录 489：标签挂在名字后面偏下） -->
+      <span
+        v-else
+        class="text-muted text-nowrap text-center dt-qty-text"
+        :data-testid="`limit-${x.goodsId}`"
+        >{{ t.tower.shop.limitOne }}</span
+      >
       <button
         class="btn btn-sm btn-outline-primary"
         :data-testid="`buy-${x.goodsId}`"

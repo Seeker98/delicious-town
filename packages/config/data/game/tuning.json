@@ -177,8 +177,8 @@
       "hitRate": 0.3, "blessedRate": 0.8, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
     },
     "exchange": {
-      "maxLevel": 5, "base": 14, "feeRate": 0.5, "lockedFeeMul": 2, "perDayTotalMul": 10, "takenBase": 10,
-      "npcBase": 8, "stormCaughtRate": 0.5, "bangleBase": 0.3, "bangleFactor": 0.0006
+      "maxLevel": 5, "feeRate": 0.5, "lockedFeeMul": 2, "perDay": 10, "takenPerDay": 20,
+      "npcBase": 8, "npcMin": 3, "stormCaughtRate": 0.5, "bangleBase": 0.3, "bangleFactor": 0.0006
     },
     "thumbs": { "rewardTimes": 10, "ticketMax": 2, "overRenown": -1, "strengthMax": 3 },
     "refuel": { "bigTank": 8000, "drawsPerChunk": 2 },
