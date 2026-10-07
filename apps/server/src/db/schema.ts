@@ -685,6 +685,17 @@ export interface BarStateTable {
   slot_fail: Default<number>;
 }
 
+/** 酒吧连胜、连败的每周最高（问题记录 517）：week 是那一周的周一 */
+export interface BarStreakBestTable {
+  rest_id: number;
+  game: string;
+  /** 1 连胜 / 连中，-1 连败 / 连不中 */
+  result: number;
+  week: string;
+  times: number;
+  reached_at: Ts;
+}
+
 /** 酒吧进行中的局（子项目 4C-3）：一家店一种游戏一行，结束就删 */
 export interface BarRoundTable {
   rest_id: number;
@@ -1401,6 +1412,7 @@ export interface DB {
   yard_basket: YardBasketTable;
   rest_formula: RestFormulaTable;
   bar_state: BarStateTable;
+  bar_streak_best: BarStreakBestTable;
   bar_slot_stat: BarSlotStatTable;
   bar_round: BarRoundTable;
   hiphop_day: HiphopDayTable;

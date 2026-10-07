@@ -17,7 +17,7 @@ import {
   numWinRate,
   type BarResult,
 } from './rules';
-import { lockBarState, saveBarState } from './state';
+import { lockBarState, recordStreak, saveBarState } from './state';
 
 /** 每局都计活跃"酒吧娱乐"（action_map：bar.play）和本游戏的计数 */
 async function played(o: Op, game: 'fg' | 'num'): Promise<void> {
@@ -35,6 +35,7 @@ export async function playFg(o: Op, hand: number): Promise<FgResultDto> {
   const result = fgOutcome(r, luck.rate, t);
   const times = nextTimes(s.fg_result as BarResult | null, s.fg_times, result);
   await saveBarState(o, { fg_result: result, fg_times: times });
+  await recordStreak(o, 'fg', result, times);
   const lucky = result === 1 && r >= t.fgWinRate;
   let coin = 0;
   let award: RandomAward | null = null;
@@ -64,6 +65,7 @@ export async function playNum(o: Op, num: number): Promise<NumResultDto> {
   const result: BarResult = win ? 1 : -1;
   const times = nextTimes(s.num_result as BarResult | null, s.num_times, result);
   await saveBarState(o, { num_result: result, num_times: times });
+  await recordStreak(o, 'num', result, times);
   await played(o, 'num');
   if (!win) {
     const barNum = numMissValue(num, o.rng.int(t.numMax - 1));

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    rank1008:
+      'Las clasificaciones de rachas de piedra, papel o tijera, adivina el vaso y la ruleta de números ahora ordenan por la mejor racha alcanzada en la semana, con tablas de esta semana y de la pasada: perder una partida ya no te saca de la tabla; una racha que sigue después del lunes sigue contando y queda en la semana en que llegó a esa cifra; en caso de empate va primero quien llegó antes',
     odds1007:
       'El regalo de registro diario da ahora 1–5 diamantes cuando da diamantes (antes 1–3); bajo la tabla de premios de la tragaperras, una nota aclara que las probabilidades son por casilla sin contar el premio asegurado, y cada cuántas tiradas sale de media un premio raro contándolo',
     misc1007d:
