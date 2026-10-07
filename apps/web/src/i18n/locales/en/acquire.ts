@@ -43,6 +43,7 @@ const acquire: Messages['acquire'] = {
   holdingsEmpty: "You don't own any restaurants yet. You can acquire them from Valuations and For sale.",
   dividend: (coin, tended) => `Yesterday's dividend ${coin} coins${tended ? ' (tended)' : ''}`,
   noDividend: 'No dividend yesterday',
+  dividendPending: 'Yesterday’s dividend hasn’t been paid yet',
   holdTended: 'Tended today',
   holdNotTended: 'Not tended yet today',
   list: 'List',

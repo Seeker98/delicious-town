@@ -36,17 +36,6 @@ export async function endRound(o: Op, game: BarGame): Promise<void> {
   await o.tx.deleteFrom('bar_round').where('rest_id', '=', o.rest.id).where('game', '=', game).execute();
 }
 
-/** 概览用：不加锁读取 */
-export async function peekRound<T>(db: Kysely<DB>, restId: number, game: BarGame): Promise<T | null> {
-  const r = await db
-    .selectFrom('bar_round')
-    .select('state')
-    .where('rest_id', '=', restId)
-    .where('game', '=', game)
-    .executeTakeFirst();
-  return r ? (r.state as T) : null;
-}
-
 /** 概览用：一条查询读出本店所有进行中的局（不加锁） */
 export async function peekRounds(db: Kysely<DB>, restId: number): Promise<Partial<Record<BarGame, unknown>>> {
   const rows = await db

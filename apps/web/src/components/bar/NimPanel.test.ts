@@ -53,6 +53,17 @@ describe('NimPanel', () => {
     expect(w.find('[data-testid="nim-first-me"]').exists()).toBe(true);
   });
 
+  it('桌子说明跟着区服数值走：先后怎么定、调酒师会不会走神（#190 审查）', () => {
+    const data = withRound(null);
+    data.nim.tables.novice = { ...data.nim.tables.novice, first: 'coin', careless: false };
+    const w = mount(NimPanel, { props: { data } });
+    expect(w.get('[data-testid="nim-table-novice"]').text()).toContain('开局抛硬币定谁先拿，调酒师从不失手');
+    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('开局抛硬币定谁先拿，调酒师从不失手');
+    data.nim.tables.novice = { ...data.nim.tables.novice, first: 'choose', careless: true };
+    const v = mount(NimPanel, { props: { data } });
+    expect(v.get('[data-testid="nim-table-novice"]').text()).toContain('你自己选先后，调酒师有时会走神');
+  });
+
   it('次数用完或礼券不够时开局按钮灰掉并写原因', () => {
     const used = mount(NimPanel, { props: { data: withRound(null, { played: 10 }) } });
     expect(used.get('[data-testid="nim-start-novice"]').attributes('disabled')).toBeDefined();
@@ -107,8 +118,24 @@ describe('NimPanel', () => {
     await flushPromises();
     expect(w.findAll('.dt-nim-candy')).toHaveLength(8);
     expect(w.get('[data-testid="nim-bartender"]').text()).toBe('调酒师拿了 3 颗');
+    // 固定的播报区念出调酒师那一步和剩余（#190 审查）
+    expect(w.get('[data-testid="nim-live"]').text()).toBe('调酒师拿了 3 颗 还剩 8 颗，每次拿 1~3 颗');
     expect(w.get('[data-testid="nim-take-1"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="nim-log"]').text()).toBe('你 1 · 调酒师 3');
+  });
+
+  it('概览晚到、还是旧局面时不覆盖手上的局面（#191 审查）', async () => {
+    vi.mocked(endpoints.barNimTake).mockResolvedValue(round({ left: 10, log: [{ who: 'me', take: 2 }] }));
+    const w = mount(NimPanel, { props: { data: withRound(round()) } });
+    await w.get('[data-testid="nim-take-2"]').trigger('click');
+    await flushPromises();
+    await w.setProps({ data: withRound(round()) });
+    expect(w.findAll('.dt-nim-candy')).toHaveLength(10);
+  });
+
+  it('播报区一直在（没开局时也在），开局后第一条播报才念得出来（终审）', () => {
+    const w = mount(NimPanel, { props: { data: withRound(null) } });
+    expect(w.find('[data-testid="nim-live"]').exists()).toBe(true);
   });
 
   it('高手桌写抛硬币的结果', () => {
@@ -138,6 +165,7 @@ describe('NimPanel', () => {
     const res = w.get('[data-testid="nim-result"]');
     expect(res.text()).toContain('你拿到了最后一颗！声望 +1');
     expect(res.text()).toContain('银币 500');
+    expect(w.get('[data-testid="nim-live"]').text()).toContain('你拿到了最后一颗！声望 +1');
     // 结束后不再写“还剩 0 颗”
     expect(w.find('[data-testid="nim-status"]').exists()).toBe(false);
     await w.get('[data-testid="nim-again"]').trigger('click');

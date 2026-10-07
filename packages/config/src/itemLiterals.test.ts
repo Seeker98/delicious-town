@@ -120,6 +120,31 @@ describe('写死的编号的识别（重新编号 PR 2）', () => {
     ]);
   });
 
+  it('第 ⑦ 批审查记下的写法：带表别名的 SQL 列、in 列表、编号后面还有参数、带分隔符的数字', () => {
+    const hits = findItemLiterals(
+      [
+        ".where('s.goods_id', '=', 30204).where('x.foods_id', '=', 1001).where('c.cookbook_id', '=', 106001)",
+        ".where('goods_id', 'in', [30204, 10001]).where('f.foods_id', 'in', [1001])",
+        'cb().learn(ctx, 106001, true); c().lock(ctx, 1001, 2); hasValidHonor(op, 30204, now)',
+        'goodsNum(t, rest, 30_204); requireCookbook(106_001)',
+      ].join('\n'),
+      ids,
+    );
+    expect(hits.map((h) => [h.kind, h.id])).toEqual([
+      ['goods', 30204],
+      ['foods', 1001],
+      ['cookbooks', 106001],
+      ['goods', 30204],
+      ['goods', 10001],
+      ['foods', 1001],
+      ['cookbooks', 106001],
+      ['foods', 1001],
+      ['goods', 30204],
+      ['goods', 30204],
+      ['cookbooks', 106001],
+    ]);
+  });
+
   it('{ id, num } 按前面最近的 goods / foods 键判断', () => {
     const hits = findItemLiterals(
       'award: { goods: [{ id: 30204, num: 1 }], foods: [{ id: 1001, num: 2 }] }',

@@ -44,6 +44,7 @@ const acquire: Messages['acquire'] = {
     'Vous ne possédez encore aucun restaurant. Vous pouvez en racheter depuis Valorisations et En vente.',
   dividend: (coin, tended) => `Dividende d'hier ${coin} pièces${tended ? ' (entretenu)' : ''}`,
   noDividend: 'Pas de dividende hier',
+  dividendPending: 'Le dividende d’hier n’a pas encore été versé',
   holdTended: "Entretenu aujourd'hui",
   holdNotTended: "Pas encore entretenu aujourd'hui",
   list: 'Mettre en vente',

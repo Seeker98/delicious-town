@@ -904,6 +904,10 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     'bar_slot_machine_award',
     slotAwards.map((a) => a.id),
   );
+  // 一掷千金开局按“这一级、出现率 100、没下架”的普通食材抽（bar/deal.ts）；某一级没有能抽的会报 500（#192 审查）
+  for (const level of new Set(tuning.bar.deal.prizes.filter((p) => p.kind === 'food').map((p) => p.level)))
+    if (!foods.some((f) => f.level === level && f.odds === 100 && !f.retired))
+      errors.push(`tuning.bar.deal.prizes: no common level-${level} food to draw`);
   if (!slotAwards.some((a) => a.id === tuning.bar.slotFloorAwardId && a.kind !== 'empty'))
     errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）

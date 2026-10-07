@@ -29,6 +29,14 @@ describe('Wiki 隐藏道具清单（问题记录 142）', () => {
   });
 });
 
+describe('拿不到的礼包下架（道具整理 367 遗留，用户 2026-10-07 定）', () => {
+  it('克拉肯月好感排名礼包 20306~20311、升星促销勋章礼包 20107 已下架', () => {
+    const goods = realBuild().bundle!.goods;
+    for (const id of [20107, 20306, 20307, 20308, 20309, 20310, 20311])
+      expect(goods.find((g) => g.id === id)?.retired, String(id)).toBe(true);
+  });
+});
+
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
@@ -416,6 +424,14 @@ describe('酒吧配置（子项目 4C-1）', () => {
     awards.find((a) => a.id === 1)!.foodsId = 999999;
     const { errors } = buildBundle({ ...src, 'dataset/bar_slot_machine_award': awards });
     expect(errors).toContain('bar_slot_machine_award 1 references unknown food 999999');
+  });
+
+  it('一掷千金的普通食材奖品：这一级要有能抽的普通食材（#192 审查：原来开局会报 500）', () => {
+    const src = source();
+    const foods = structuredClone(src['master/foods']) as Array<{ level: number; odds: number }>;
+    for (const x of foods) if (x.level === 4 && x.odds === 100) x.odds = 99;
+    const { errors } = buildBundle({ ...src, 'master/foods': foods });
+    expect(errors).toContain('tuning.bar.deal.prizes: no common level-4 food to draw');
   });
 
   it('保底奖项不在奖池里', () => {

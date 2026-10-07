@@ -35,7 +35,7 @@ const bar: Messages['bar'] = {
   startFailed: "Couldn't start",
   cup: {
     rule: (cost, rounds) =>
-      `Each game costs ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')}. Up to ${rounds} rounds, with more cups each round and a die under just one of them. Each time you guess right, stop and take that round's reward, or go on to the next round; guess wrong and you get nothing. Rewards are mostly ingredients: the further you get, the higher their level and the likelier a rare one.`,
+      `Each game costs ${cost} Mystery ${plEn(cost, 'Voucher', 'Vouchers')}. Up to ${rounds} ${plEn(rounds, 'round', 'rounds')}, with more cups each round and a die under just one of them. Each time you guess right, stop and take that round's reward, or go on to the next round; guess wrong and you get nothing. Rewards are mostly ingredients: the further you get, the higher their level and the likelier a rare one.`,
     tierLine: (round, cups, awards, news) =>
       `Round ${round} (${cups} cups): ${awards} ${plEn(awards, 'reward', 'rewards')}${news === 'broadcast' ? ', town-wide broadcast' : news === 'news' ? ', makes the news' : ''}`,
     noTickets: (n) => `Not enough Mystery Vouchers (${n} per game)`,
@@ -156,8 +156,8 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Beginner table', expert: 'Expert table' },
     tableLine: (cost, k, renown) =>
       `Entry: ${cost} ${plEn(cost, 'Mystery Voucher', 'Mystery Vouchers')}; take up to ${k} at a time; a win gives +${renown} renown and a prize`,
-    noviceHint: 'You choose who goes first, and the bartender sometimes slips up',
-    expertHint: 'A coin toss decides who goes first, and the bartender never slips up',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'You choose who goes first' : 'A coin toss decides who goes first'}, and the bartender ${careless ? 'sometimes slips up' : 'never slips up'}`,
     left: (n) => `${n} ${plEn(n, 'game', 'games')} left today`,
     noLeft: 'No games left today',
     noTickets: 'Not enough Mystery Vouchers',

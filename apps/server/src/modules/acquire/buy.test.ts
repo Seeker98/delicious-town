@@ -325,6 +325,13 @@ describe('强收（收购 PR 1）', () => {
         { restId: target.restaurantId, way: 'acquire', expect: 1_000_000 },
       ),
     ).rejects.toMatchObject({ params: { reason: 'linked' } });
+    // 拦截记录写明关联的是哪个账号（原主人，不是目标店），后台才看得出来（收购 PR 3 遗留）
+    const blocks = await t.db
+      .selectFrom('acquire_block')
+      .select(['target_rest_id', 'linked_account_id'])
+      .where('buyer_rest_id', '=', buyer.restaurantId)
+      .execute();
+    expect(blocks).toEqual([{ target_rest_id: target.restaurantId, linked_account_id: ownerAcc }]);
   });
 
   it('热度已到上限（价格不变）时两人同时收购：钱只按成交的笔数扣，合计只少税；店归最后成交的人', async () => {

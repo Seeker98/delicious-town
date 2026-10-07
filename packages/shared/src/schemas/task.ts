@@ -68,8 +68,6 @@ export type ActivationBlock = 'days' | 'email' | 'frozen' | 'noActivity' | null;
 export interface ActivationDto {
   total: number;
   signedIn: boolean;
-  /** 签到发的礼包（道具 id）：首页写明领到了什么（backlog 厨具小修） */
-  signInGift: number;
   /** 餐厅星级、等级（活跃项按 needStar、needLevel 判断是否开放） */
   star: number;
   level: number;

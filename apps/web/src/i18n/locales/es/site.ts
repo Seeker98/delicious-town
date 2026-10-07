@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1007:
+      'Un lote de pequeños arreglos: en las predicciones, los eventos terminados muestran primero los más recientes; en los vasos, plantarse tras la ronda 3 siempre sale en las noticias y superar las 4 rondas siempre se anuncia a todo el pueblo (ya no hay límite de uno al día), y la tabla de premios sigue visible con la ronda actual marcada mientras decides si plantarte; las descripciones de las mesas de El último caramelo siguen las reglas reales; la página «Míos» de adquisiciones indica que el dividendo de ayer aún no se ha pagado hasta que se paga; los enlaces de registro diario y repostar de la página principal son más fáciles de pulsar; los enlaces de nombres dentro del texto se subrayan al pasar el ratón o al seleccionarlos con el teclado',
     links1007:
       'Los enlaces de texto de todo el juego ahora se ven como los de la página principal: color de la marca, sin subrayado, con un «›» al final cuando llevan a otra página y un «‹» al principio cuando vuelven atrás. Las acciones de la misma página, como reenviar, actualizar, cancelar o responder, se ven igual que los enlaces, sin subrayado ni relleno extra',
     cup1007:
@@ -73,7 +75,7 @@ const site: Messages['site'] = {
     streets1005:
       'Bonificaciones de las calles reequilibradas: las calles que dan más monedas dan menos EXP y al revés, y los ingresos totales de las calles están mucho más igualados. También se aplica a los restaurantes que ya están en una calle: las monedas bajan más en la Calle Guangdong y las Calles Fusión I y II, y la EXP sube más en las Calles Shandong, Grecia y Chop Suey (mira la bonificación de la calle en la página de mudanza). Por debajo del nivel 40, la EXP de cada ronda recibe un extra, +200% en el nivel 1 y menos en cada nivel, así que los nuevos jugadores suben más rápido',
     hostLimit1005:
-      'Cada jugador puede revolver como máximo 3 huecos de la despensa por restaurante al día, y eliminar como máximo 3 cucarachas al día en el restaurante de un mismo amigo (sin límite en el tuyo ni en el de Don Krab). La despensa y el restaurante del amigo muestran cuántas veces te quedan hoy',
+      'Cada jugador solo puede revolver unos pocos huecos de la despensa por restaurante al día, y eliminar unas pocas cucarachas al día en el restaurante de un mismo amigo (sin límite en el tuyo ni en el de Don Krab). La despensa y el restaurante del amigo muestran cuántas veces te quedan hoy',
     browse1005:
       'Al volver de una receta o de una ficha de la wiki se mantienen la calle, los filtros y la página. La página de recetas muestra la bonificación de la calle elegida. Al tocar una cucaracha que pusiste se explica que no puedes eliminarla tú',
     renumber1005:

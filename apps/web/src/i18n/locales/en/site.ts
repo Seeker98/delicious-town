@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1007:
+      'A batch of small fixes: finished events on the prediction page now show the most recent first; in the cup game, stopping after round 3 always makes the news and clearing all 4 rounds always gets a town-wide broadcast (no more one-per-day limit), and the reward table stays visible with the current round marked while you decide whether to stop; Last Candy’s table descriptions now follow the actual rules; the acquisition “Mine” page says yesterday’s dividend hasn’t been paid yet until it is; the sign-in and refuel links on the home page are easier to tap; name links inside text are underlined when you hover over them or select them with the keyboard',
     links1007:
       'Text links across the game now look like the ones on the home page: brand color, no underline, a “›” at the end when they take you to another page and a “‹” at the start when they take you back. On-page actions such as resend, refresh, cancel and reply look the same as links, without the underline or the extra padding',
     cup1007:
@@ -73,7 +75,7 @@ const site: Messages['site'] = {
     streets1005:
       'Street bonuses rebalanced: streets that pay more coins give less EXP and vice versa, and total income is now much closer between streets. This also applies to restaurants already on a street: coins drop the most on Guangdong Street and Fusion Streets I and II, and EXP rises the most on Shandong, Greece and Chop Suey Streets (see the street bonus on the moving page). Below level 40, EXP from each round gets an extra boost, +200% at level 1 and shrinking each level, so new players level up faster',
     hostLimit1005:
-      'Each player can now raid at most 3 pantry spots per restaurant per day, and squash at most 3 roaches per friend’s restaurant per day (no limit in your own restaurant or Mr. Krab’s). The pantry page and the friend’s restaurant show how many you have left today',
+      'Each player can now raid only a few pantry spots per restaurant per day, and squash only a few roaches per friend’s restaurant per day (no limit in your own restaurant or Mr. Krab’s). The pantry page and the friend’s restaurant show how many you have left today',
     browse1005:
       'Going back from a recipe or wiki detail page now keeps your street, filters and page. The recipe page shows the selected street’s bonus. Tapping a roach you placed now explains that you can’t squash it yourself',
     renumber1005:

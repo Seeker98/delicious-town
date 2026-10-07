@@ -53,6 +53,7 @@ const holding = (o: Partial<AcquireHoldingDto> = {}): AcquireHoldingDto => ({
 const view = (o: Partial<AcquireViewDto> = {}): AcquireViewDto => ({
   me: rest({ restId: 1, name: '我的店', price: 500_000, acquireBlock: 'self', listedBlock: 'self' }),
   tendedToday: false,
+  dividendPaid: true,
   holdings: [],
   maxHoldings: 10,
   taxRate: 0.1,
@@ -167,6 +168,16 @@ describe('AcquireView（收购 PR 3）', () => {
     await flushPromises();
     expect(confirm.mock.calls[0]![0]).toContain('「老板店」得 540,000 银币，税 60,000 银币');
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'listed', 600_000);
+  });
+
+  it('今天的分红还没发：名下店写“昨天的分红还没发”，不写“没有”（收购 PR 2 遗留）', async () => {
+    vi.mocked(endpoints.acquire).mockResolvedValue(
+      view({ dividendPaid: false, holdings: [holding({ dividend: null })] }),
+    );
+    const w = await mountView('/acquire?tab=mine');
+    const h3 = w.get('[data-testid="acquire-hold-3"]').text();
+    expect(h3).toContain('昨天的分红还没发');
+    expect(h3).not.toContain('昨天没有分红');
   });
 
   it('投资榜：名下几家、身价合计、累计分红', async () => {

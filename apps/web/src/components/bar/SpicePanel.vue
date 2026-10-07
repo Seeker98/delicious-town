@@ -23,6 +23,8 @@ watch(
   () => props.data.spice.round,
   (r) => {
     if (local.value?.result) return;
+    // 概览可能比刚收到的结果晚到：比手上的局面旧（猜的次数更少）就不覆盖（#191 审查）
+    if (r && local.value && r.guesses.length < local.value.guesses.length) return;
     local.value = r;
   },
   { immediate: true },
@@ -30,8 +32,13 @@ watch(
 /** 已选的调料，按空位顺序；null 是空位 */
 const picked = ref<Array<number | null>>([]);
 const s = computed(() => props.data.spice);
-const resetPicked = () => (picked.value = Array.from({ length: s.value.length }, () => null));
+/** 进行中的局按开局时的长度、种数（终审：区服中途改了数值，照新数值画空位交什么都被拒，这一局卡死）；没开局时按当前数值 */
+const length = computed(() => local.value?.length ?? s.value.length);
+const kinds = computed(() => local.value?.kinds ?? s.value.kinds);
+const resetPicked = () => (picked.value = Array.from({ length: length.value }, () => null));
 resetPicked();
+// 页面开着时区服改了配方长度、或换了一局：空位跟着变（#191 审查）
+watch(length, resetPicked);
 
 const nameOf = (i: number) => t.value.bar.spice.kinds[i] ?? String(i);
 const listOf = (ids: readonly number[]) => ids.map(nameOf).join(t.value.bar.spice.sep);
@@ -126,7 +133,10 @@ const resultText = computed(() => {
       </div>
       <template v-if="!local.result">
         <div class="dt-meta my-1">{{ t.bar.spice.triesLeft(local.left) }}</div>
-        <div class="dt-spice-slots mb-2">
+        <div
+          class="dt-spice-slots mb-2"
+          :style="{ gridTemplateColumns: `repeat(${length}, minmax(0, 1fr))` }"
+        >
           <button
             v-for="(x, i) in picked"
             :key="i"
@@ -142,7 +152,7 @@ const resultText = computed(() => {
         </div>
         <div class="dt-spice-kinds mb-2">
           <button
-            v-for="i in s.kinds"
+            v-for="i in kinds"
             :key="i - 1"
             type="button"
             class="btn btn-sm btn-outline-secondary"

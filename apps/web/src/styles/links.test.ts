@@ -35,6 +35,12 @@ describe('文字链接统一（问题记录 451）', () => {
     expect(css).toMatch(/\.dt-back::before\s*\{[^}]*content:\s*'‹\\a0'\s*\/\s*''/);
   });
 
+  it('没加类的链接（句子、列表里的名字）鼠标移上去或键盘选中时显示下划线：不只靠颜色区分（用户 2026-10-07 定）', () => {
+    expect(css).toMatch(
+      /a:not\(\[class\]\):hover,\s*a:not\(\[class\]\):focus-visible\s*\{[^}]*text-decoration:\s*underline/,
+    );
+  });
+
   it('本页操作用 .dt-link-btn，不再用带下划线、带内边距的 btn-link', () => {
     const bad = GAME.filter((f) => !BLOCK_BTN_LINK.has(f.path) && /\bbtn-link\b/.test(f.tpl)).map(
       (f) => f.path,

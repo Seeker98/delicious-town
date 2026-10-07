@@ -153,13 +153,15 @@ describe('backlog 6B-2：多号分组只列一部分账号时写明总数', () =
     expect(w.text()).toContain('共 80 个账号，只列最近 2 个');
   });
 
-  it('收购拦截（收购 PR 3）：时间、买家、目标店、原因，链到两个玩家', async () => {
+  it('收购拦截（收购 PR 3）：时间、买家、目标店、原因、关联账号，链到这几个玩家', async () => {
     vi.mocked(adminApi.suspiciousAcquire).mockResolvedValue([
       {
         at: '2026-10-06T04:00:00.000Z',
         reason: 'device',
         buyer: { restId: 3, name: '买家店', accountId: 9 },
         target: { restId: 4, name: '目标店', accountId: 10 },
+        // 关联上的是目标店的老板（收购 PR 3 遗留）
+        linked: { accountId: 11, username: 'boss' },
       },
     ]);
     const w = await mountView();
@@ -173,6 +175,8 @@ describe('backlog 6B-2：多号分组只列一部分账号时写明总数', () =
     expect(row.findAll('a').map((a) => a.attributes('href'))).toEqual([
       '/admin/players/9',
       '/admin/players/10',
+      '/admin/players/11',
     ]);
+    expect(row.text()).toContain('boss');
   });
 });

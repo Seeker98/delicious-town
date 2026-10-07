@@ -35,7 +35,7 @@ const bar: Messages['bar'] = {
   startFailed: 'No se pudo empezar',
   cup: {
     rule: (cost, rounds) =>
-      `Cada partida cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}. Hasta ${rounds} rondas, con más vasos en cada ronda y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Los premios suelen ser ingredientes: cuanto más avances, de más nivel y más probable que sean raros.`,
+      `Cada partida cuesta ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}. Hasta ${rounds} ${plEs(rounds, 'ronda', 'rondas')}, con más vasos en cada ronda y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Los premios suelen ser ingredientes: cuanto más avances, de más nivel y más probable que sean raros.`,
     tierLine: (round, cups, awards, news) =>
       `Ronda ${round} (${cups} vasos): ${awards} ${plEs(awards, 'premio', 'premios')}${news === 'broadcast' ? ', anuncio para todo el pueblo' : news === 'news' ? ', sale en las noticias' : ''}`,
     noTickets: (n) => `No tienes suficientes vales misteriosos (${n} por partida)`,
@@ -155,8 +155,8 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Mesa de principiantes', expert: 'Mesa de expertos' },
     tableLine: (cost, k, renown) =>
       `Entrada: ${cost} ${plEs(cost, 'vale misterioso', 'vales misteriosos')}; coges hasta ${k} cada vez; si ganas, +${renown} de renombre y un premio`,
-    noviceHint: 'Tú eliges quién empieza, y el barman a veces se despista',
-    expertHint: 'Una moneda decide quién empieza, y el barman nunca falla',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'Tú eliges quién empieza' : 'Una moneda decide quién empieza'}, y el barman ${careless ? 'a veces se despista' : 'nunca falla'}`,
     left: (n) => `Te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} hoy`,
     noLeft: 'Hoy ya no te quedan partidas',
     noTickets: 'No tienes suficientes vales misteriosos',

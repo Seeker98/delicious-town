@@ -42,9 +42,9 @@ const news: Messages['news'] = {
     'bar.cup': (w, p) =>
       p.round == null
         ? `${w} acertó el vaso ${num(p.times)} ${plEs(num(p.times), 'vez seguida', 'veces seguidas')} en el bar`
-        : `${w} superó ${num(p.round)} rondas del juego de los vasos en el bar y encontró el dado entre ${num(p.cups)} vasos`,
+        : `${w} superó ${num(p.round)} ${plEs(num(p.round), 'ronda', 'rondas')} del juego de los vasos en el bar y encontró el dado entre ${num(p.cups)} vasos`,
     'bar.cup.big': (w, p) =>
-      `¡${w} superó las ${num(p.round)} rondas del juego de los vasos en el bar y encontró el dado entre ${num(p.cups)} vasos!`,
+      `¡${w} superó ${num(p.round)} ${plEs(num(p.round), 'ronda', 'rondas')} del juego de los vasos en el bar y encontró el dado entre ${num(p.cups)} vasos!`,
     'bar.fg': (w, p) =>
       `${w} ganó ${num(p.times)} ${plEs(num(p.times), 'ronda seguida', 'rondas seguidas')} de piedra, papel o tijera en el bar`,
     'bar.num': (w) => `${w} acertó el número en la ruleta del bar`,

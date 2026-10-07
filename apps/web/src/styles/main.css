@@ -501,6 +501,11 @@ a:hover > .dt-go,
 a {
   text-decoration: none;
 }
+/* 没加类的链接（句子、列表里的名字）：鼠标移上去或键盘选中时显示下划线，不只靠颜色和正文区分（用户 2026-10-07 定） */
+a:not([class]):hover,
+a:not([class]):focus-visible {
+  text-decoration: underline;
+}
 .dt-back {
   color: var(--bs-link-color);
   text-decoration: none;
@@ -522,6 +527,13 @@ a {
   color: var(--bs-link-color);
   text-decoration: none;
   white-space: nowrap;
+  position: relative;
+}
+/* 点击区域往外扩一圈，排版不变（#189 遗留：签到约 28×21，手指不好点） */
+.dt-link-btn::before {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
 }
 .dt-link-btn:disabled {
   color: var(--dt-muted);
@@ -842,6 +854,8 @@ details.dt-card > summary {
   font: inherit;
   color: inherit;
   overflow-wrap: anywhere;
+  /* 窄屏时英、法、西的长单词先按语言加连字符断开，不在中间硬断（#192 审查；<html lang> 跟着语言） */
+  hyphens: auto;
 }
 .dt-deal-box:disabled {
   cursor: default;
@@ -869,6 +883,7 @@ details.dt-card > summary {
   max-width: 420px;
 }
 .dt-guess {
+  hyphens: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -884,6 +899,10 @@ details.dt-card > summary {
 }
 .dt-guess:disabled {
   cursor: default;
+}
+/* 不能点、也没翻开的杯子变淡（礼券不够、已经猜过），和能点的分开（#193 审查） */
+.dt-guess:disabled:not(.dt-guess-pick):not(.dt-guess-ball) {
+  opacity: 0.55;
 }
 .dt-guess-pick {
   border-color: var(--dt-primary);

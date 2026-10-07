@@ -35,13 +35,13 @@ const bar: Messages['bar'] = {
   startFailed: 'Impossible de commencer',
   cup: {
     rule: (cost, rounds) =>
-      `Chaque partie coûte ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')}. Jusqu’à ${rounds} manches, avec plus de gobelets à chaque manche et un dé sous un seul d’entre eux. Chaque fois que vous trouvez, vous pouvez vous arrêter et prendre la récompense de la manche, ou passer à la suivante ; si vous vous trompez, vous repartez sans rien. Les récompenses sont surtout des ingrédients : plus vous allez loin, plus leur niveau est élevé et plus ils ont de chances d’être rares.`,
+      `Chaque partie coûte ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')}. Jusqu’à ${rounds} ${plFr(rounds, 'manche', 'manches')}, avec plus de gobelets à chaque manche et un dé sous un seul d’entre eux. Chaque fois que vous trouvez, vous pouvez vous arrêter et prendre la récompense de la manche, ou passer à la suivante ; si vous vous trompez, vous repartez sans rien. Les récompenses sont surtout des ingrédients : plus vous allez loin, plus leur niveau est élevé et plus ils ont de chances d’être rares.`,
     tierLine: (round, cups, awards, news) =>
       `Manche ${round} (${cups} gobelets) : ${awards} ${plFr(awards, 'récompense', 'récompenses')}${news === 'broadcast' ? ', annonce à toute la ville' : news === 'news' ? ', fait les gros titres' : ''}`,
     noTickets: (n) => `Pas assez de bons mystère (${n} par partie)`,
     pick: (round, cups) => `Manche ${round} : ${cups} gobelets, choisissez-en un`,
     won: (lucky, awards, round, cups) =>
-      `${lucky}Trouvé ! Vous arrêter avec ${awards} ${plFr(awards, 'récompense', 'récompenses')}, ou passer à la manche ${round} (${cups} gobelets) ?`,
+      `${lucky}Trouvé ! Vous vous arrêtez avec ${awards} ${plFr(awards, 'récompense', 'récompenses')}, ou vous passez à la manche ${round} (${cups} gobelets) ?`,
     stop: 'S’arrêter',
     next: 'Continuer',
     lose: (cup) => `Raté. Le dé était sous le gobelet ${cup}.`,
@@ -155,14 +155,13 @@ const bar: Messages['bar'] = {
     tables: { novice: 'Table débutants', expert: 'Table experts' },
     tableLine: (cost, k, renown) =>
       `Entrée : ${cost} ${plFr(cost, 'bon mystère', 'bons mystère')} ; jusqu’à ${k} par tour ; une victoire donne +${renown} de renommée et un prix`,
-    noviceHint: 'Vous choisissez qui commence, et le barman se trompe parfois',
-    expertHint: 'Une pièce décide qui commence, et le barman ne se trompe jamais',
+    hint: (first, careless) =>
+      `${first === 'choose' ? 'Vous choisissez qui commence' : 'Une pièce décide qui commence'}, et le barman ${careless ? 'se trompe parfois' : 'ne se trompe jamais'}`,
     left: (n) => `Encore ${n} ${plFr(n, 'partie', 'parties')} aujourd’hui`,
     noLeft: 'Plus de parties aujourd’hui',
     noTickets: 'Pas assez de bons mystère',
     start: 'S’asseoir ici',
-    status: (left, k) =>
-      `${plFr(left, 'Reste', 'Restent')} ${left} ${plFr(left, 'bonbon', 'bonbons')} ; prenez-en de 1 à ${k}`,
+    status: (left, k) => `Il reste ${left} ${plFr(left, 'bonbon', 'bonbons')} ; prenez-en de 1 à ${k}`,
     meFirst: 'Je commence',
     bartenderFirst: 'Le barman commence',
     coinMe: 'Pile ou face : vous commencez',

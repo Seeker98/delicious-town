@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1007:
+      'Une série de petits correctifs : dans les prédictions, les événements terminés affichent d’abord les plus récents ; aux gobelets, s’arrêter après la manche 3 fait toujours les gros titres et réussir les 4 manches est toujours annoncé à toute la ville (plus de limite d’une fois par jour), et le tableau des récompenses reste visible avec la manche en cours mise en évidence pendant que vous décidez ; les descriptions des tables du Dernier bonbon suivent les vraies règles ; la page « Les miens » des rachats indique que le dividende d’hier n’a pas encore été versé tant qu’il ne l’est pas ; les liens de connexion quotidienne et de remplissage d’huile de l’accueil sont plus faciles à toucher ; les liens de noms dans le texte sont soulignés au survol de la souris ou quand on les sélectionne au clavier',
     links1007:
       'Les liens texte de tout le jeu ressemblent désormais à ceux de l’accueil : couleur de la marque, sans soulignement, avec un « › » à la fin quand ils mènent à une autre page et un « ‹ » au début quand ils ramènent en arrière. Les actions sur la page même (renvoyer, actualiser, annuler, répondre) ont le même aspect que les liens, sans soulignement ni marge en plus',
     cup1007:
@@ -73,7 +75,7 @@ const site: Messages['site'] = {
     streets1005:
       'Bonus des rues rééquilibrés : les rues qui rapportent plus de pièces donnent moins d’EXP et inversement, et les revenus totaux des rues sont bien plus proches. Cela s’applique aussi aux restaurants déjà installés : les pièces baissent le plus rue du Guangdong et rues Fusion I et II, et l’EXP monte le plus rue du Shandong, rue de Grèce et rue Chop Suey (voir le bonus de rue sur la page de déménagement). Sous le niveau 40, l’EXP de chaque tour reçoit un bonus, +200 % au niveau 1 et de moins en moins à chaque niveau : les nouveaux joueurs montent plus vite',
     hostLimit1005:
-      'Chaque joueur peut désormais fouiller au plus 3 emplacements par restaurant et par jour, et écraser au plus 3 cafards par jour chez un même ami (pas de limite chez vous ni chez M. Krab). Le garde-manger et le restaurant de l’ami indiquent ce qu’il vous reste aujourd’hui',
+      'Chaque joueur ne peut désormais fouiller que quelques emplacements par restaurant et par jour, et écraser que quelques cafards par jour chez un même ami (pas de limite chez vous ni chez M. Krab). Le garde-manger et le restaurant de l’ami indiquent ce qu’il vous reste aujourd’hui',
     browse1005:
       'En revenant d’une recette ou d’une fiche du wiki, la rue, les filtres et la page sont conservés. La page des recettes affiche le bonus de la rue choisie. Toucher un cafard que vous avez posé indique que vous ne pouvez pas l’écraser vous-même',
     renumber1005:

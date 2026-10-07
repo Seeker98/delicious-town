@@ -103,6 +103,8 @@ describe('迁移 0039：老街道修订（问题记录 284）', () => {
     expect(left).toContain(busy.id);
     expect(left).toContain(fine.id);
     expect(left).not.toContain(gone.id);
+    // 共享测试库：留下的单删掉，别在别的测试里冒出被删菜谱的外卖单（#114 遗留）
+    await db.deleteFrom('takeaway_order').where('id', 'in', [busy.id, fine.id]).execute();
   });
 });
 
@@ -142,5 +144,6 @@ describe('reviseCookbooks 只改指定的店（backlog 284：测试不再动共�
     const left = (await db.selectFrom('takeaway_order').select('id').execute()).map((r) => r.id);
     expect(left).not.toContain(inA.id);
     expect(left).toContain(inB.id);
+    await db.deleteFrom('takeaway_order').where('id', '=', inB.id).execute();
   });
 });

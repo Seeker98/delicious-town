@@ -7,6 +7,7 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useLocaleStore } from '../stores/locale';
+import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 
@@ -20,6 +21,7 @@ const newPw = ref('');
 const newPw2 = ref('');
 const busy = ref(false);
 const t = useT();
+const restStore = useRestaurantStore();
 const locale = useLocaleStore();
 
 onMounted(async () => {
@@ -116,12 +118,15 @@ async function logout() {
           </button>
         </template>
       </dd>
-      <dt>{{ t.account.inviteCode }}</dt>
-      <dd>
-        <RouterLink to="/invite" class="dt-go text-wrap">{{
-          p.inviteCode ?? t.account.makeInvite
-        }}</RouterLink>
-      </dd>
+      <!-- 邀请是区服功能：当前区服关了就不显示（#189 遗留：这里是唯一入口） -->
+      <template v-if="restStore.featureOn('invite')">
+        <dt>{{ t.account.inviteCode }}</dt>
+        <dd>
+          <RouterLink to="/invite" class="dt-go text-wrap">{{
+            p.inviteCode ?? t.account.makeInvite
+          }}</RouterLink>
+        </dd>
+      </template>
     </dl>
 
     <h6 class="dt-section">{{ t.account.myRests }}</h6>

@@ -42,9 +42,9 @@ const news: Messages['news'] = {
     'bar.cup': (w, p) =>
       p.round == null
         ? `${w} a trouvé le bon gobelet ${num(p.times)} fois de suite au bar`
-        : `${w} a réussi ${num(p.round)} manches du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets`,
+        : `${w} a réussi ${num(p.round)} ${plFr(num(p.round), 'manche', 'manches')} du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets`,
     'bar.cup.big': (w, p) =>
-      `${w} a réussi les ${num(p.round)} manches du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets !`,
+      `${w} a réussi ${num(p.round)} ${plFr(num(p.round), 'manche', 'manches')} du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets !`,
     'bar.fg': (w, p) =>
       `${w} a gagné ${num(p.times)} ${plFr(num(p.times), 'manche', 'manches')} de pierre-feuille-ciseaux d'affilée au bar`,
     'bar.num': (w) => `${w} a touché le bon numéro à la roue du bar`,

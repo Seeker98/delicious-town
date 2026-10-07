@@ -258,7 +258,10 @@ export function createSuspicious(game: Game) {
         .selectFrom('acquire_block as k')
         .innerJoin('restaurant as b', 'b.id', 'k.buyer_rest_id')
         .innerJoin('restaurant as t', 't.id', 'k.target_rest_id')
+        .leftJoin('account as la', 'la.id', 'k.linked_account_id')
         .select([
+          'la.id as linked_id',
+          'la.username as linked_name',
           'k.created_at',
           'k.reason',
           'b.id as buyer_id',
@@ -279,6 +282,7 @@ export function createSuspicious(game: Game) {
         reason: r.reason,
         buyer: { restId: r.buyer_id, name: r.buyer_name, accountId: r.buyer_account },
         target: { restId: r.target_id, name: r.target_name, accountId: r.target_account },
+        linked: r.linked_id === null ? null : { accountId: r.linked_id, username: r.linked_name! },
       }));
     },
   };

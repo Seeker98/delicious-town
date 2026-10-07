@@ -17,7 +17,7 @@ const BUDGET: Record<string, number> = {
   '/town': 10,
   '/kuji': 9,
   '/market/view': 9,
-  '/bar': 10,
+  '/bar': 7,
   '/temple': 9,
   '/exchange/me': 7,
   '/cupboard/list': 5,
@@ -67,5 +67,26 @@ describe('收购接口的查询条数（收购 PR 1）', () => {
     const { n, result } = await q.count(() => call(ctx.app, 'GET', '/api/v1' + path, { cookie: p.cookie }));
     expect(result.status).toBe(200);
     expect(n).toBeLessThanOrEqual(max);
+  });
+
+  it('名下有两家店时 /acquire 不超过 5 条（收购 PR 2 遗留：原来只测了没有名下店的号）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    await ctx.deps.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ features: { acquire: true } }) })
+      .execute();
+    const p = await playerIn(ctx, shardId);
+    for (let k = 0; k < 2; k++) {
+      const x = await playerIn(ctx, shardId);
+      await ctx.deps.db
+        .insertInto('acquire_state')
+        .values({ rest_id: x.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: p.restId })
+        .execute();
+    }
+    await call(ctx.app, 'GET', '/api/v1/acquire', { cookie: p.cookie });
+    const { n, result } = await q.count(() => call(ctx.app, 'GET', '/api/v1/acquire', { cookie: p.cookie }));
+    expect(result.status).toBe(200);
+    expect(result.json.data.holdings).toHaveLength(2);
+    expect(n).toBeLessThanOrEqual(5);
   });
 });

@@ -202,6 +202,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
           <th>买家</th>
           <th>目标店</th>
           <th>原因</th>
+          <th>关联账号</th>
         </tr>
       </thead>
       <tbody>
@@ -214,6 +215,10 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
             <RouterLink :to="player(r.target.accountId)">{{ r.target.name }}</RouterLink>
           </td>
           <td>{{ r.reason === 'device' ? '共用设备' : '共用 IP' }}</td>
+          <td>
+            <RouterLink v-if="r.linked" :to="player(r.linked.accountId)">{{ r.linked.username }}</RouterLink>
+            <span v-else class="text-muted">–</span>
+          </td>
         </tr>
       </tbody>
     </table>

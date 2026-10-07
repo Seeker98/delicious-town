@@ -51,6 +51,7 @@ export function nimTables(n: Tuning['bar']['nim']): Record<NimTable, NimTableInf
     renown: x.renown,
     awardLevel: x.awardLevel,
     first: x.first,
+    careless: x.mistake > 0,
   });
   return { novice: info(n.tables.novice), expert: info(n.tables.expert) };
 }
@@ -91,8 +92,12 @@ export async function nimStart(o: Op, table: NimTable): Promise<NimDto> {
   const s: NimState = { table, k, pile, left: pile, started: t.first !== 'choose', coin: null, log: [] };
   if (t.first === 'coin') {
     s.coin = o.rng.chance(0.5) ? 'me' : 'bartender';
-    // 糖果数下限大于 k 上限（数值校验），调酒师第一步拿不完
-    if (s.coin === 'bartender') bartender(o, s);
+    // 糖果数下限大于 k 上限（数值校验），调酒师第一步拿不完；万一拿完了照样判输，不留下拿不了的局（#190 审查）
+    if (s.coin === 'bartender' && bartender(o, s)) {
+      await emitAction(o, 'bar.play');
+      await emitAction(o, 'bar.nim');
+      return finish(o, s, false);
+    }
   }
   await saveRound(o, 'nim', s);
   await emitAction(o, 'bar.play');
@@ -106,7 +111,7 @@ export async function nimFirst(o: Op, who: 'me' | 'bartender'): Promise<NimDto> 
   if (!s) throw invalidState('no_round');
   if (s.started) throw invalidState('nim_started');
   s.started = true;
-  if (who === 'bartender') bartender(o, s);
+  if (who === 'bartender' && bartender(o, s)) return finish(o, s, false);
   await saveRound(o, 'nim', s);
   return nimView(s);
 }
