@@ -528,10 +528,10 @@
     "name": "Tasar un plato estrella de nivel 5 o más"
   },
   "3381": {
-    "name": "Derrotar al Guardián"
+    "name": "Superar una Prueba 10 veces"
   },
   "3382": {
-    "name": "Superar una Prueba 10 veces"
+    "name": "Derrotar al Guardián"
   },
   "3383": {
     "name": "Derrotar al Guardián 30 veces"
@@ -552,16 +552,16 @@
     "name": "Derrotar a los guardianes de la torre 50 veces"
   },
   "3405": {
-    "name": "Superar el piso 10 de la Torre de chefs"
-  },
-  "3406": {
     "name": "Derrotar a los guardianes de la torre 100 veces"
   },
-  "3407": {
+  "3406": {
     "name": "Derrotar a los guardianes de la torre 200 veces"
   },
-  "3408": {
+  "3407": {
     "name": "Derrotar a los guardianes de la torre 300 veces"
+  },
+  "3408": {
+    "name": "Superar el piso 10 de la Torre de chefs"
   },
   "3421": {
     "name": "Participar en el juego de adivinanzas del Mercado 10 veces"

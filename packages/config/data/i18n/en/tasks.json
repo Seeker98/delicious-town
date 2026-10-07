@@ -528,10 +528,10 @@
     "name": "Appraise a level 5+ signature dish"
   },
   "3381": {
-    "name": "Defeat the Guardian"
+    "name": "Pass a Trial 10 times"
   },
   "3382": {
-    "name": "Pass a Trial 10 times"
+    "name": "Defeat the Guardian"
   },
   "3383": {
     "name": "Defeat the Guardian 30 times"
@@ -552,16 +552,16 @@
     "name": "Defeat tower keepers 50 times"
   },
   "3405": {
-    "name": "Beat floor 10 of the Chef Tower"
-  },
-  "3406": {
     "name": "Defeat tower keepers 100 times"
   },
-  "3407": {
+  "3406": {
     "name": "Defeat tower keepers 200 times"
   },
-  "3408": {
+  "3407": {
     "name": "Defeat tower keepers 300 times"
+  },
+  "3408": {
+    "name": "Beat floor 10 of the Chef Tower"
   },
   "3421": {
     "name": "Join the Market guessing game 10 times"

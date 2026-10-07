@@ -528,10 +528,10 @@
     "name": "Expertiser un plat signature de niveau 5 ou plus"
   },
   "3381": {
-    "name": "Vaincre le Gardien"
+    "name": "Réussir 10 Épreuves"
   },
   "3382": {
-    "name": "Réussir 10 Épreuves"
+    "name": "Vaincre le Gardien"
   },
   "3383": {
     "name": "Vaincre le Gardien 30 fois"
@@ -552,16 +552,16 @@
     "name": "Vaincre 50 fois les gardiens de la tour"
   },
   "3405": {
-    "name": "Réussir l'étage 10 de la Tour des chefs"
-  },
-  "3406": {
     "name": "Vaincre 100 fois les gardiens de la tour"
   },
-  "3407": {
+  "3406": {
     "name": "Vaincre 200 fois les gardiens de la tour"
   },
-  "3408": {
+  "3407": {
     "name": "Vaincre 300 fois les gardiens de la tour"
+  },
+  "3408": {
+    "name": "Réussir l'étage 10 de la Tour des chefs"
   },
   "3421": {
     "name": "Participer 10 fois au jeu de devinettes du Marché"
