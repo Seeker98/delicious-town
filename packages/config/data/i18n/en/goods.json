@@ -145,7 +145,7 @@
   },
   "10414": {
     "name": "Shoelace",
-    "desc": "Ties 36 Standard Missiles into 1 Rapid Missile"
+    "desc": "Ties 36 Standard Missiles into 1 Cluster Missile"
   },
   "10415": {
     "name": "Small Stack Card",
@@ -208,12 +208,12 @@
     "desc": "Undoes one enhancement level on enhanced cookware"
   },
   "10701": {
-    "name": "Rapid Missile",
-    "desc": "Rapid Missile, used to challenge the temple guardian. Very high hit rate and massive damage!"
+    "name": "Cluster Missile",
+    "desc": "Cluster Missile, used to challenge the temple guardian. Very high hit rate and massive damage!"
   },
   "10702": {
     "name": "Standard Missile",
-    "desc": "Standard Missile, used to challenge the temple guardian (can also be exchanged for Rapid Missiles). High hit rate, small damage!"
+    "desc": "Standard Missile, used to challenge the temple guardian (can also be exchanged for Cluster Missiles). High hit rate, small damage!"
   },
   "10703": {
     "name": "Burst Missile",
@@ -1905,7 +1905,7 @@
   },
   "61426": {
     "name": "Dreamcatcher",
-    "desc": "Legend says it catches things in dreams! Doubles the chance of Delicious Tickets dropping when attacking the guardian! Critical hits have a 3% chance of dropping a God of Cookery Jade Seal (32% with Rapid Missiles)! Chance of level-6 ingredients when killing the guardian +20%!"
+    "desc": "Legend says it catches things in dreams! Doubles the chance of Delicious Tickets dropping when attacking the guardian! Critical hits have a 3% chance of dropping a God of Cookery Jade Seal (32% with Cluster Missiles)! Chance of level-6 ingredients when killing the guardian +20%!"
   },
   "61427": {
     "name": "Star God's Tear",

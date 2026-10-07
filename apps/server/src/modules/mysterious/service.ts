@@ -147,7 +147,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             levelName: p?.name ?? '',
             curexp: m.curexp,
             expNext: p?.expNext ?? null,
-            trialWorth: m.trial_worth,
+            trialWorth: Math.min(m.trial_worth, s.tuning.temple.trialWorthMax),
             trialExp: m.trial_exp,
             way: m.way,
           };
@@ -377,7 +377,8 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             mc,
             cookNum: b.cookNum,
             curlevel: row.curlevel,
-            trialWorth: row.trial_worth,
+            // 上限调低后（用户 2026-10-07 定：50 → 30），以前攒得多的按上限算
+            trialWorth: Math.min(row.trial_worth, o.tuning.temple.trialWorthMax),
             star: o.rest.star_level,
             luckRate: luck,
             goldRate: (agg.mcGoldRate ?? 0) + (weather.mcGoldRate ?? 0),
@@ -415,6 +416,7 @@ export function createMysteriousService(d: GameDeps, world: WorldService) {
             total_num: out.num,
             left_num: out.num,
             price: out.price,
+            duel_price: out.duelPrice,
             luck: out.luck,
             created_at: o.now,
           })

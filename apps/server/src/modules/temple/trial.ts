@@ -115,9 +115,11 @@ export async function startTrial(
   let curlevel = mcRow.curlevel;
   if (success) {
     const { n, m } = trialGainCaps(main.odds < t.rareOdds, sub.odds < t.rareOdds);
-    const worth = n > 0 ? Math.min(t.trialWorthMax, mcRow.trial_worth + o.rng.intMin1(n)) : mcRow.trial_worth;
+    // 上限调低后（用户 2026-10-07 定：50 → 30），以前攒得多的先压到上限，成功时存回去
+    const cur = Math.min(mcRow.trial_worth, t.trialWorthMax);
+    const worth = n > 0 ? Math.min(t.trialWorthMax, cur + o.rng.intMin1(n)) : cur;
     const exp = Math.min(t.trialExpMax, mcRow.trial_exp + o.rng.intMin1(m));
-    addWorth = worth - mcRow.trial_worth;
+    addWorth = worth - cur;
     addExp = exp - mcRow.trial_exp;
     proficiency = t.trialProficiencyPerLevel * mcRow.curlevel;
     const prof = addProficiency(mcRow.curlevel, mcRow.curexp, proficiency, o.config.mcProficiency);

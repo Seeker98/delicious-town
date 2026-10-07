@@ -18,7 +18,7 @@ test('神殿：打守护兽 → 探险 → 冥想准备试炼 → 试炼', async
       restId,
     ]);
     for (const [goodsId, num] of [
-      [10701, 2], // 极速飞弹
+      [10701, 2], // 集束飞弹
       [10704, 2], // 探险图
     ]) {
       await client.query('insert into store_item (rest_id, goods_id, num) values ($1, $2, $3)', [

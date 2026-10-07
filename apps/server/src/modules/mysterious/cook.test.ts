@@ -52,6 +52,39 @@ describe('预览', () => {
   });
 });
 
+describe('试炼价值（用户 2026-10-07 定）', () => {
+  it('超过上限 30 的按 30 算；对决用的每份价值不含试炼价值，另存一份', async () => {
+    const cookWith = async (worth: number) => {
+      const ctx = await cookReady(fixed);
+      await fixed.db
+        .updateTable('rest_mc')
+        .set({ trial_worth: worth })
+        .where('rest_id', '=', ctx.restaurantId)
+        .execute();
+      const r = await fixed.game.mysterious.cook(ctx, { mcId: MC, cookNum: 1, cookie: false });
+      return cookRow(fixed, r.data.cook.id);
+    };
+    const none = await cookWith(0);
+    const capped = await cookWith(30);
+    const over = await cookWith(45);
+    expect(capped.price).toBeGreaterThan(none.price);
+    expect(over.price).toBe(capped.price);
+    expect(none.duel_price).toBe(none.price);
+    expect(capped.duel_price).toBe(none.price);
+  });
+
+  it('特色菜页显示的试炼价值也压到上限', async () => {
+    const ctx = await cookReady(t);
+    await t.db
+      .updateTable('rest_mc')
+      .set({ trial_worth: 45 })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    const o = await t.game.mysterious.overview(ctx);
+    expect(o.learned.find((m) => m.mcId === MC)!.trialWorth).toBe(30);
+  });
+});
+
 describe('烹制（规格书 04 §4.5）', () => {
   it('扣每种食材 ×批数；写入在售批次和餐厅指针；新闻、活跃计数、熟练度', async () => {
     const ctx = await cookReady(t);

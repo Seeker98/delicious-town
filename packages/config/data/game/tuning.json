@@ -234,11 +234,11 @@
     "championGoodsId": 10814
   },
   "temple": {
-    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[10701, 2000, 2000]],
+    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[10701, 3200, 3200]],
     "missileTicketRate": 0.10, "missileMapRate": 0.03,
-    "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10,
+    "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10, "guardianRewardHp": 30000,
     "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,
-    "trialWorthMax": 50, "trialExpMax": 150, "trialProficiencyPerLevel": 800,
+    "trialWorthMax": 30, "trialExpMax": 150, "trialProficiencyPerLevel": 800,
     "trialCap": 0.6, "rareOdds": 100,
     "krakenHours": [[11, 14], [17, 21]],
     "krakenRates": { "same": 2.4, "road": 1, "other": 0.5 },

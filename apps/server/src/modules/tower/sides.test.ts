@@ -130,6 +130,41 @@ describe('赛厨双方的特色菜（问题记录 431：结果里写“【菜（
     expect(sold).toMatchObject({ mcPrice: 0, dish: null });
   });
 
+  it('对决用不含试炼价值的每份价值（用户 2026-10-07 定）；迁移前做的、没有这个值的用原价值', async () => {
+    const ctx = await newRestaurant(t);
+    const cook = (duel: number | null) =>
+      t.db
+        .insertInto('mc_cook')
+        .values({
+          rest_id: ctx.restaurantId,
+          shard_id: ctx.shardId,
+          mc_id: 3,
+          level: 5,
+          grade: 2,
+          cook_num: 1,
+          total_num: 10,
+          left_num: 10,
+          price: 200,
+          duel_price: duel,
+          eat_count: 0,
+        })
+        .returning('id')
+        .executeTakeFirstOrThrow();
+    for (const [duel, want] of [
+      [160, 160],
+      [null, 200],
+    ] as const) {
+      const c = await cook(duel);
+      await t.db
+        .updateTable('restaurant')
+        .set({ mc_cook_id: c.id })
+        .where('id', '=', ctx.restaurantId)
+        .execute();
+      const s = await sideOf(t.db, t.deps.config, await restRow(t, ctx.restaurantId), 0, 'attack');
+      expect(s.mcPrice).toBe(want);
+    }
+  });
+
   it('守塔人：比拼特色菜的层带当天的菜，别的层没有', () => {
     const floors = [...t.deps.config.towerFloors.values()];
     const withMc = floors.find((f) => f.mc)!;

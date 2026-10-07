@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { FOODS, FUND, GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { FOODS, FUND, GOODS, GOODS_TYPE, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { deriveGoodsUse } from './goodsUse';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 import { cid, fid, gid } from './testItems';
@@ -42,6 +43,45 @@ describe('玩家看得到的数据不用中文括号（用户 2026-10-07 定）'
     const b = realBuild().bundle!;
     expect(b.goods.filter((g) => /[（）]/.test(g.desc ?? '')).map((g) => g.id)).toEqual([]);
     expect(b.cookbooks.filter((c) => /[（）]/.test(c.name)).map((c) => c.id)).toEqual([]);
+  });
+});
+
+describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不是极速飞弹）', () => {
+  it('道具名和说明里不再有“极速飞弹”；英西法叫 Cluster / de racimo / à fragmentation', () => {
+    const b = realBuild().bundle!;
+    expect(b.goods.filter((g) => /极速/.test(`${g.name}${g.desc ?? ''}`)).map((g) => g.id)).toEqual([]);
+    expect(b.goods.find((g) => g.id === GOODS.missileCluster)!.name).toBe('集束飞弹');
+    const names = { en: 'Cluster Missile', es: 'Misil de racimo', fr: 'Missile à fragmentation' };
+    for (const [lang, name] of Object.entries(names)) {
+      const tr = JSON.parse(
+        readFileSync(join(defaultDataDir(), 'i18n', lang, 'goods.json'), 'utf8'),
+      ) as Record<string, { name: string; desc?: string }>;
+      expect(tr[GOODS.missileCluster]!.name).toBe(name);
+      expect(JSON.stringify(tr)).not.toMatch(/Rapid Missile|misiles? rápidos?|missiles? rapides?/i);
+    }
+  });
+});
+
+describe('买了再卖不能赚银币（终审：普通飞弹降到 2000 后，36 个捆成集束飞弹再卖能净赚）', () => {
+  const b = realBuild().bundle!;
+  const byId = new Map(b.goods.map((g) => [g.id, g]));
+  /** 回收价，和服务端 store/rules 的 sellPrice 一样：勋章、宝石、没有银币价的卖不了 */
+  const sell = (id: number) => {
+    const g = byId.get(id)!;
+    return g.coin <= 0 || g.type === GOODS_TYPE.honor || g.type === GOODS_TYPE.gem
+      ? 0
+      : Math.floor(g.coin * b.tuning.shop.sellRate);
+  };
+  it('捆绑道具：得到的东西回收价 ≤ 用掉的东西的银币价（不算捆绑卡本身）', () => {
+    const bad: string[] = [];
+    for (const g of b.goods) {
+      const u = deriveGoodsUse(g);
+      if (u?.kind !== 'bundle') continue;
+      const cost = u.num * byId.get(u.goods)!.coin;
+      const back = u.targetNum * sell(u.targetGoods);
+      if (back > cost) bad.push(`${g.name}: 卖 ${back} > 买 ${cost}`);
+    }
+    expect(bad).toEqual([]);
   });
 });
 

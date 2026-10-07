@@ -129,7 +129,7 @@ const start = async () => {
 <template>
   <div class="small">
     <p class="text-muted">
-      {{ t.temple.trial.intro(trial.creatives) }}
+      {{ t.temple.trial.intro(trial.creatives, trial.worthMax, trial.expMax) }}
     </p>
     <details class="mb-2" data-testid="trial-help">
       <summary>{{ t.temple.trial.help }}</summary>
@@ -164,7 +164,9 @@ const start = async () => {
           {{ t.temple.trial.refresh }}
         </button>
         <div v-if="stat" class="text-muted">
-          {{ t.temple.trial.stat(stat.trialWorth, stat.trialExp, stat.levelName) }}
+          {{
+            t.temple.trial.stat(stat.trialWorth, trial.worthMax, stat.trialExp, trial.expMax, stat.levelName)
+          }}
         </div>
       </div>
       <div class="d-flex gap-1 mb-2">

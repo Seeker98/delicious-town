@@ -77,15 +77,15 @@ const temple: Messages['temple'] = {
     noFoods: 'Aucun ingrédient utilisable',
     group: (level, n) => `Niveau ${level} (${n} ${plFr(n, 'sorte', 'sortes')})`,
     rareTag: 'rare',
-    intro: (creatives) =>
-      `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +50 %) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +150 %). Créativité ${creatives}.`,
+    intro: (creatives, worthMax, expMax) =>
+      `Les épreuves augmentent la valeur d'épreuve d'un plat signature (valeur par part, jusqu'à +${worthMax}\u202f%) et l'EXP d'épreuve (EXP du restaurant en cuisinant, jusqu'à +${expMax}\u202f%). Créativité ${creatives}.`,
     help: 'Comment ça marche',
     helpItems: [
       'Préparez-vous d’abord : une injection coûte 250 000 pièces et donne le badge « Potion de créativité » (créativité +25) ; la méditation est gratuite et donne le badge « Méditation » (créativité +5). Les badges durent 1 heure, pendant laquelle vous pouvez faire autant d’épreuves que vous voulez. Plus la créativité est haute, plus la réussite est probable.',
       'À la préparation, un de vos plats signature de niveau 1 à 5 est tiré au hasard comme plat d’épreuve. Il ne vous plaît pas ? Changez-le pour 20 000 pièces, ou utilisez 1 tentacule (obtenue en nourrissant le Kraken) pour en choisir un.',
       'Chaque épreuve coûte 10 000 pièces et consomme 1 ingrédient principal et 1 secondaire choisis (2 s’ils sont identiques), plus 1 de chaque ingrédient du plat.',
       'La réussite dépend de trois choses : la créativité, le nombre de niveaux des ingrédients au-dessus du plat (le principal compte plus) et la rareté (rare = marqué « rare » dans la liste, poids inférieur à 100).',
-      'En cas de réussite : EXP d’épreuve +1 à 4 % (plus si les deux sont rares) ; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2 % en plus ; maîtrise +800\u202f×\u202fniveau de maîtrise. La valeur d’épreuve plafonne à 50 % (plus de valeur par part), l’EXP d’épreuve à 150 % (EXP du restaurant en plus en cuisinant).',
+      'En cas de réussite : EXP d’épreuve +1 à 4 % (plus si les deux sont rares) ; si l’ingrédient principal est rare, valeur d’épreuve +1 à 2 % en plus ; maîtrise +800\u202f×\u202fniveau de maîtrise. La valeur d’épreuve augmente la valeur par part quand le plat se vend (elle ne compte pas dans les duels de la tour ni entre amis), l’EXP d’épreuve donne de l’EXP du restaurant en plus en cuisinant. Les plafonds sont indiqués plus haut.',
     ],
     inject: 'Injection (250 000 pièces, créativité +25)',
     meditate: 'Méditer (gratuit, créativité +5)',
@@ -93,8 +93,8 @@ const temple: Messages['temple'] = {
     target: "Plat d'épreuve : ",
     targetLevel: (level) => ` (niv. ${level})`,
     refresh: 'Changer (20 000 pièces)',
-    stat: (worth, exp, level) =>
-      `Valeur d'épreuve ${worth}\u202f% / 50 %, EXP d'épreuve ${exp}\u202f% / 150 %, maîtrise ${level}`,
+    stat: (worth, worthMax, exp, expMax, level) =>
+      `Valeur d'épreuve ${worth}\u202f% / ${worthMax}\u202f%, EXP d'épreuve ${exp}\u202f% / ${expMax}\u202f%, maîtrise ${level}`,
     pickByTentacle: (n) => `Choisir avec une tentacule (possédées ${n})`,
     pick: 'Choisir',
     main: 'Ingrédient principal',

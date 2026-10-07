@@ -399,6 +399,8 @@ export const tuningSchema = z.object({
     guardianRareRate: num,
     guardianFoodsBase: int,
     guardianFoodsSpread: int,
+    /** 击败奖励按血量放大：倍数 = 血量 ÷ 这个值（用户 2026-10-07 定，3 万 = 1 星为 1 倍） */
+    guardianRewardHp: int.min(1),
     injectCoin: int,
     refreshCoin: int,
     trialCoin: int,
@@ -415,7 +417,7 @@ export const tuningSchema = z.object({
     forgetRate: num,
     shopSlots: int.min(1),
     shopExclude: z.array(int),
-    /** 飞弹伤害覆盖：[道具 id, 最小, 最大]（试玩修复 14：极速飞弹太强） */
+    /** 飞弹伤害覆盖：[道具 id, 最小, 最大]（试玩修复 14：集束飞弹太强） */
     missileAttack: z.array(z.tuple([int, int.min(0), int.min(0)])),
   }),
   yard: z.object({

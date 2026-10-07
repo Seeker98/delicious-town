@@ -133,11 +133,11 @@ describe('使用道具（规格书 07 §7.4）', () => {
     expect(await goodsNum(t, ctx.restaurantId, GOODS.resetAttrCard)).toBe(1);
   });
 
-  it('鞋带：36 个普通飞弹捆成 1 个极速飞弹', async () => {
+  it('鞋带：36 个普通飞弹捆成 1 个集束飞弹', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('鞋带')]: 1, [GOODS.missileNormal]: 40 } });
     await s().use(ctx, { goodsId: gid('鞋带'), num: 1 });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.missileNormal)).toBe(4);
-    expect(await goodsNum(t, ctx.restaurantId, GOODS.missileSpeed)).toBe(1);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.missileCluster)).toBe(1);
   });
 
   it('打开签到礼包', async () => {

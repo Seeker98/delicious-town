@@ -8,6 +8,8 @@ import {
   exploreSplit,
   foodsTrial,
   guardianFoods,
+  guardianRareCount,
+  guardianScale,
   guardianHp,
   inFeedHours,
   krakenFavor,
@@ -103,6 +105,24 @@ describe('守护兽（规格书 09 §9.1）', () => {
       { level: 2, num: 34 },
       { level: 1, num: 64 },
     ]);
+  });
+
+  it('击败奖励按血量放大（用户 2026-10-07 定）：倍数 = 血量 ÷ 3 万，1 星是 1 倍；食材个数乘倍数取整', () => {
+    expect(guardianScale(1, t)).toBe(1);
+    expect(guardianScale(5, t)).toBeCloseTo(70000 / 30000);
+    expect(guardianFoods(t, sequenceRng([0]), guardianScale(5, t))).toEqual([
+      { level: 3, num: 35 },
+      { level: 2, num: 58 },
+      { level: 1, num: 128 },
+    ]);
+  });
+
+  it('神秘食材个数：期望值的整数部分必得，小数部分按概率再给一个', () => {
+    expect(guardianRareCount(0.25, sequenceRng([0.2]))).toBe(1);
+    expect(guardianRareCount(0.25, sequenceRng([0.3]))).toBe(0);
+    expect(guardianRareCount(1.17, sequenceRng([0.5]))).toBe(1);
+    expect(guardianRareCount(1.17, sequenceRng([0.1]))).toBe(2);
+    expect(guardianRareCount(2, sequenceRng([0]))).toBe(2);
   });
 });
 

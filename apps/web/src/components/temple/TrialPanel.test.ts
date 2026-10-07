@@ -75,7 +75,9 @@ describe('TrialPanel', () => {
 
   it('准备好后选主辅食材开始试炼，显示预计成功率和结果', async () => {
     const w = mount(TrialPanel, {
-      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
     });
     await flushPromises();
     expect(w.text()).toContain('秘·凤凰展翅');
@@ -112,7 +114,9 @@ describe('TrialPanel', () => {
       items: [150, 423, 31, 21].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
     } as never);
     const w = mount(TrialPanel, {
-      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
     });
     await flushPromises();
     const groups = w.findAll('[data-testid^="trial-group-"]');
@@ -139,7 +143,9 @@ describe('TrialPanel', () => {
 
   it('试炼后重读橱柜：数量跟着变，用光的从主辅里去掉、回到主料槽（终审）', async () => {
     const w = mount(TrialPanel, {
-      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
     });
     await flushPromises();
     await w.get('[data-testid="trial-food-150"]').trigger('click');
@@ -165,7 +171,9 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
-      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
     });
     await flushPromises();
     await w.get('[data-testid="trial-food-150"]').trigger('click');
@@ -194,12 +202,18 @@ describe('TrialPanel', () => {
       ],
     } as never);
     const w = mount(TrialPanel, {
-      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
     });
     await flushPromises();
-    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼价值 4% / 50%');
+    expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼价值 4% / 30%');
     expect(w.find('[data-testid="trial-target"]').text()).toContain('试炼经验 10% / 150%');
     const help = w.find('[data-testid="trial-help"]').text();
     for (const x of ['注射', '冥想', '触手', '稀有', '主料']) expect(help).toContain(x);
+    // 上限按区服数值写（用户 2026-10-07 定：50 → 30），说明里写明对决不算试炼价值
+    expect(w.text()).toContain('最多 +30%');
+    expect(w.text()).not.toMatch(/(^|[^0-9])50%/);
+    expect(help).toContain('对决');
   });
 });

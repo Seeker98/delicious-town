@@ -8,6 +8,17 @@ export function guardianHp(star: number, t: TempleTuning): number {
   return t.guardianHpBase + t.guardianHpPerStar * star;
 }
 
+/** 击败奖励倍数 = 血量 ÷ guardianRewardHp（用户 2026-10-07 定：奖励跟着血量涨） */
+export function guardianScale(star: number, t: TempleTuning): number {
+  return guardianHp(star, t) / t.guardianRewardHp;
+}
+
+/** 神秘食材个数：期望值的整数部分必得，小数部分按概率再给一个 */
+export function guardianRareCount(expected: number, rng: Rng): number {
+  const whole = Math.floor(Math.max(0, expected));
+  return whole + (rng.next() < expected - whole ? 1 : 0);
+}
+
 export interface ShotInput {
   def: MissileDef;
   luckRate: number;
@@ -47,15 +58,18 @@ export function shoot(i: ShotInput, t: TempleTuning, rng: Rng): Shot {
   return { hit: true, crit: true, damage, ticket, map, seal };
 }
 
-/** 击败奖励：3、2、1 级食材各 ⌊base/等级⌋ + rand(spread) − spread/2 个 */
-export function guardianFoods(t: TempleTuning, rng: Rng): Array<{ level: number; num: number }> {
+/** 击败奖励：3、2、1 级食材各 (⌊base/等级⌋ + rand(spread) − spread/2) × 奖励倍数 个，取整 */
+export function guardianFoods(t: TempleTuning, rng: Rng, scale = 1): Array<{ level: number; num: number }> {
   return [3, 2, 1].map((level) => ({
     level,
     num: Math.max(
       0,
-      Math.floor(t.guardianFoodsBase / level) +
-        rng.int(t.guardianFoodsSpread) -
-        Math.floor(t.guardianFoodsSpread / 2),
+      Math.round(
+        (Math.floor(t.guardianFoodsBase / level) +
+          rng.int(t.guardianFoodsSpread) -
+          Math.floor(t.guardianFoodsSpread / 2)) *
+          scale,
+      ),
     ),
   }));
 }

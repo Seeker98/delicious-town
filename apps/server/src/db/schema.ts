@@ -538,6 +538,8 @@ export interface McCookTable {
   total_num: number;
   left_num: number;
   price: number;
+  /** 对决用的每份价值，不含试炼价值（用户 2026-10-07 定）；迁移 0054 前做的为空，用 price */
+  duel_price: Nullable<number>;
   luck: Default<boolean>;
   eat_count: Default<number>;
   created_at: TsDefault;

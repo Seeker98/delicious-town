@@ -71,7 +71,7 @@ describe('品级（规格书 04 §4.5，设计文档 裁定 16）', () => {
 describe('cookDish', () => {
   it('没有加成：rand 0.9 → 上品；份数 = 360×(1+0.57)；每份 = 营养×1.57；熟练度 = 品级×份数/200', () => {
     const r = cookDish(input(), t, sequenceRng([0.9, 0.5, 0.5]));
-    expect(r).toEqual({ grade: 3, luck: false, num: 565, price: 157, exp: 8 });
+    expect(r).toEqual({ grade: 3, luck: false, num: 565, price: 157, duelPrice: 157, exp: 8 });
   });
 
   it('6 级菜份数打折；加成把品级抬到佳肴时标记幸运；熟练度、试炼价值、人子、饼干、名画都算进每份价值', () => {
@@ -100,6 +100,8 @@ describe('cookDish', () => {
     expect(r.num).toBe(3911);
     // ⌊100 × 2.05 × (1 + 0.08 + 0.1)⌋ + 1 + 3 + 3
     expect(r.price).toBe(248);
+    // 对决用的每份价值不吃试炼价值（用户 2026-10-07 定）：⌊100 × 2.05 × (1 + 0.08)⌋ + 1 + 3 + 3
+    expect(r.duelPrice).toBe(228);
     expect(r.exp).toBe(Math.floor((7 * 3911) / 200));
   });
 });

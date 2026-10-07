@@ -96,6 +96,8 @@ export function createTempleService(d: GameDeps, world: WorldService) {
           mcId: trial?.mc_id ?? null,
           readyMinutes: Math.max(minutesLeft(GOODS.creativePotion), minutesLeft(GOODS.meditation)),
           creatives: gear.total.creatives + (agg.creatives ?? 0),
+          worthMax: t.trialWorthMax,
+          expMax: t.trialExpMax,
         },
         kraken: {
           targetMcId: krakenTarget(krakenPool, ctx.shardId, day).id,

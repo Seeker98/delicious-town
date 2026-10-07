@@ -21,25 +21,34 @@ afterAll(async () => {
 });
 
 describe('守护兽（规格书 09 §9.1）', () => {
-  it('极速飞弹八发击败 1 星守护兽（试玩修复 14：血量 3 万，暴击 4000）：只扣 8 枚；暴击掉礼券和探险图；击败奖励；再打报 guardian_down（Review Focus 1）', async () => {
-    const ctx = await newRestaurant(win, { patch: { star_level: 1 }, goods: { [GOODS.missileSpeed]: 10 } });
-    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileSpeed, num: 99 });
-    expect(r.data.shots).toHaveLength(8);
-    expect(r.data.shots.every((s) => s.hit && s.crit && s.damage === 4000)).toBe(true);
+  it('集束飞弹五发击败 1 星守护兽（2026-10-07 起每发 3200，暴击 6400；血量 3 万）：只扣 5 枚；暴击掉礼券和探险图；击败奖励；再打报 guardian_down（Review Focus 1）', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 1 }, goods: { [GOODS.missileCluster]: 10 } });
+    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 99 });
+    expect(r.data.shots).toHaveLength(5);
+    expect(r.data.shots.every((s) => s.hit && s.crit && s.damage === 6400)).toBe(true);
     expect(r.data).toMatchObject({ hpMax: 30000, hpLeft: 0, killed: true });
-    expect(await goodsNum(win, ctx.restaurantId, GOODS.missileSpeed)).toBe(2);
-    expect(r.data.drops).toMatchObject({ tickets: 8, maps: 8, seals: 0, dtTickets: 320 });
-    expect(await goodsNum(win, ctx.restaurantId, GOODS.mysteryTicket)).toBe(8);
-    expect(await goodsNum(win, ctx.restaurantId, gid('探险图'))).toBe(8);
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.missileCluster)).toBe(5);
+    expect(r.data.drops).toMatchObject({ tickets: 5, maps: 5, seals: 0, dtTickets: 320 });
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.mysteryTicket)).toBe(5);
+    expect(await goodsNum(win, ctx.restaurantId, gid('探险图'))).toBe(5);
     expect(r.data.drops.rare).not.toBeNull();
     expect(config.requireFood(r.data.drops.rare!).level).toBe(7);
     expect(r.data.drops.foods.reduce((n, f) => n + f.num, 0)).toBe(1 + 15 + 25 + 55);
-    await expect(win.game.temple.missile(ctx, { goodsId: GOODS.missileSpeed, num: 1 })).rejects.toMatchObject(
-      {
-        params: { reason: 'guardian_down' },
-      },
-    );
-    expect(await goodsNum(win, ctx.restaurantId, GOODS.missileSpeed)).toBe(2);
+    await expect(
+      win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 1 }),
+    ).rejects.toMatchObject({
+      params: { reason: 'guardian_down' },
+    });
+    expect(await goodsNum(win, ctx.restaurantId, GOODS.missileCluster)).toBe(5);
+  });
+
+  it('击败奖励按血量放大（用户 2026-10-07 定）：5 星血量 7 万是 1 星的 7/3 倍，食材和神秘食材都放大', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 5 }, goods: { [GOODS.missileCluster]: 20 } });
+    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 99 });
+    expect(r.data).toMatchObject({ hpMax: 70000, killed: true });
+    // 神秘食材期望 0.25 × 7/3 ≈ 0.58：随机数 0 时给 1 个；食材 15/25/55 × 7/3 取整 = 35/58/128
+    expect(r.data.drops.rare).not.toBeNull();
+    expect(r.data.drops.foods.reduce((n, f) => n + f.num, 0)).toBe(1 + 35 + 58 + 128);
   });
 
   it('星级决定血量；伤害当天累计；0 星不能打', async () => {
@@ -61,10 +70,10 @@ describe('守护兽（规格书 09 §9.1）', () => {
     );
   });
 
-  it('捕梦网：暴击时按极速飞弹的概率掉厨神玉玺', async () => {
-    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { [GOODS.missileSpeed]: 1 } });
+  it('捕梦网：暴击时按集束飞弹的概率掉厨神玉玺', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { [GOODS.missileCluster]: 1 } });
     await grantGoods(win.db, config, ctx.restaurantId, GOODS.dreamNet, 1, new Date());
-    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileSpeed, num: 1 });
+    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 1 });
     expect(r.data.drops.seals).toBe(1);
     expect(await goodsNum(win, ctx.restaurantId, GOODS.seal)).toBe(1);
   });
@@ -93,18 +102,18 @@ describe('守护兽（规格书 09 §9.1）', () => {
   });
 
   it('区服覆盖 temple.missileAttack 后，飞弹伤害跟着变（终审 I2）', async () => {
-    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { [GOODS.missileSpeed]: 1 } });
+    const ctx = await newRestaurant(win, { patch: { star_level: 3 }, goods: { [GOODS.missileCluster]: 1 } });
     await win.db
       .insertInto('shard_config')
       .values({
         shard_id: ctx.shardId,
         override: JSON.stringify({
-          tuning: { temple: { missileAttack: [[GOODS.missileSpeed, 1500, 1500]] } },
+          tuning: { temple: { missileAttack: [[GOODS.missileCluster, 1500, 1500]] } },
         }),
       })
       .execute();
     win.game.shards.invalidate(ctx.shardId);
-    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileSpeed, num: 1 });
+    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 1 });
     expect(r.data.shots[0]!.damage).toBe(3000);
   });
 });

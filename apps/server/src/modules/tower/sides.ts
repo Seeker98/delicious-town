@@ -17,11 +17,12 @@ export async function mcOf(
   if (rest.mc_cook_id === null) return { price: 0, dish: null };
   const r = await db
     .selectFrom('mc_cook')
-    .select(['price', 'left_num', 'ended_at', 'mc_id', 'level'])
+    .select(['price', 'duel_price', 'left_num', 'ended_at', 'mc_id', 'level'])
     .where('id', '=', rest.mc_cook_id)
     .executeTakeFirst();
+  // 对决不吃试炼价值（用户 2026-10-07 定）；迁移前做的没有 duel_price，用原价值
   return r && r.left_num > 0 && r.ended_at === null
-    ? { price: r.price, dish: { id: r.mc_id, level: r.level } }
+    ? { price: r.duel_price ?? r.price, dish: { id: r.mc_id, level: r.level } }
     : { price: 0, dish: null };
 }
 

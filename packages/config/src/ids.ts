@@ -62,7 +62,7 @@ export const GOODS = {
   drillStone: 10602, // 打孔石
   backStressOne: 10605, // 归元石（回退 1 级）
   backStressAll: 10604, // 神秘水晶（回退 10 级）
-  missileSpeed: 10701, // 极速飞弹
+  missileCluster: 10701, // 集束飞弹
   missileNormal: 10702, // 普通飞弹
   missileBurst: 10703, // 爆裂飞弹
   mapNormal: 10704, // 探险图

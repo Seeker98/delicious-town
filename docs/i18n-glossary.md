@@ -90,7 +90,7 @@
 | 兑换码 | Redeem code | Code cadeau | Canjear código |
 | 神秘食谱 / 美味印章 / 厨神玉玺 | Mystery Recipe / Delicious Seal / God of Cookery Jade Seal | Recette mystère / Sceau Délice / Sceau de jade du Dieu de la cuisine | Receta misteriosa / Sello Delicia / Sello de jade del Dios de la Cocina |
 | 残卷碎片 | Fragment Shard | Éclat de fragment | Trozo de fragmento |
-| 飞弹（极速 / 普通 / 爆裂） | Missile (Rapid / Standard / Burst) | Missile (rapide / standard / explosif) | Misil (rápido / estándar / explosivo) |
+| 飞弹（集束 / 普通 / 爆裂） | Missile (Cluster / Standard / Burst) | Missile (à fragmentation / standard / explosif) | Misil (de racimo / estándar / explosivo) |
 | 节油器 | Oil Saver | Économiseur d'huile | Ahorrador de aceite |
 | 牌匾 / 勋章 / 荣誉 | Plaque / Medal / Honor | Plaque / Médaille / Honneur | Placa / Medalla / Honor |
 | 赞助帽（玉 / 铉） | Sponsor Hat (Jade / Xuan) | Chapeau de parrain (Jade / Xuan) | Gorro de patrocinador (Jade / Xuan) |
