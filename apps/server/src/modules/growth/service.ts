@@ -8,6 +8,7 @@ import {
   type StarNeedDto,
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
+import { questCounterKeys } from '../../core/questKeys';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, notEnough, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
@@ -292,8 +293,9 @@ export function createGrowthService(d: GameDeps, world: WorldService) {
         setRest(o, 'street_id', streetId);
         restLog(o, 'rest.move', { from, to: streetId });
         await emitAction(o, 'rest.move');
-        // 支线“四海为家”按搬到哪条街记（问题记录 515：搬到杂碎街）
-        await emitAction(o, `rest.moveTo.${streetId}`);
+        // 支线“四海为家”按搬到哪条街记（问题记录 515：搬到杂碎街）；只记任务用得上的街
+        const moveTo = `rest.moveTo.${streetId}`;
+        if (questCounterKeys(o.config).has(moveTo)) await emitAction(o, moveTo);
         opNews(o, 'rest.move', { from, to: streetId, name: o.rest.name });
         return { streetId };
       });

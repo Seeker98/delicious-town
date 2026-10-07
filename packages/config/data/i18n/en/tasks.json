@@ -234,7 +234,7 @@
     "name": "Play Cup guess once"
   },
   "3086": {
-    "name": "Play Devil’s Chili once"
+    "name": "Play Devil's Chili once"
   },
   "3087": {
     "name": "Play Last Candy once"
@@ -360,7 +360,7 @@
     "name": "Sell before settlement once"
   },
   "3225": {
-    "name": "Hold 100 shares in one question"
+    "name": "Hold 100 shares in one event"
   },
   "3226": {
     "name": "Earn 50,000 in one settlement"
@@ -369,7 +369,7 @@
     "name": "Lose 30,000 in one settlement (a lesson paid for)"
   },
   "3228": {
-    "name": "Hold the full 200 shares in one question"
+    "name": "Hold the full 200 shares in one event"
   },
   "3229": {
     "name": "Earn 150,000 in one settlement"
@@ -387,7 +387,7 @@
     "name": "Win the Last Prize"
   },
   "3244": {
-    "name": "Draw an A Prize once"
+    "name": "Draw Prize A once"
   },
   "3245": {
     "name": "Draw from the Deluxe Ichiban Kuji once"
@@ -396,7 +396,7 @@
     "name": "Draw from the Deluxe Ichiban Kuji 10 times"
   },
   "3247": {
-    "name": "Draw an A Prize from the Deluxe Ichiban Kuji"
+    "name": "Draw Prize A from the Deluxe Ichiban Kuji"
   },
   "3248": {
     "name": "Win the Last Prize of the Deluxe Ichiban Kuji once"
@@ -438,13 +438,13 @@
     "name": "Win 3 Rock-paper-scissors games in a row"
   },
   "3322": {
-    "name": "Hit on the Number wheel once"
+    "name": "Land the right number on the Number wheel once"
   },
   "3323": {
     "name": "Clear round 2 of Cup guess"
   },
   "3324": {
-    "name": "Win Devil’s Chili once"
+    "name": "Win Devil's Chili once"
   },
   "3325": {
     "name": "Win 5 Rock-paper-scissors games in a row"
@@ -453,13 +453,13 @@
     "name": "Clear all 4 rounds of Cup guess once"
   },
   "3327": {
-    "name": "Spin the slot machine 100 times"
+    "name": "Survive 3 cups in Devil's Chili"
   },
   "3328": {
-    "name": "Survive 3 cups in Devil’s Chili"
+    "name": "Win 8 Rock-paper-scissors games in a row"
   },
   "3329": {
-    "name": "Win 8 Rock-paper-scissors games in a row"
+    "name": "Spin the slot machine 100 times"
   },
   "3341": {
     "name": "Beat the boss at Darts once"
@@ -477,16 +477,16 @@
     "name": "Win Last Candy at the expert table once"
   },
   "3346": {
-    "name": "Hit the bullseye with all 3 darts"
-  },
-  "3347": {
     "name": "Crack Secret Blend within 4 tries"
   },
-  "3348": {
+  "3347": {
     "name": "Refuse every offer in Deal or No Deal and open the top prize"
   },
-  "3349": {
+  "3348": {
     "name": "Win Last Candy at the expert table 50 times"
+  },
+  "3349": {
+    "name": "Hit the bullseye with all 3 darts"
   },
   "4011": {
     "name": "Check in 5 days"

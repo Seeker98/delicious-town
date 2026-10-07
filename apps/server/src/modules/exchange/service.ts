@@ -258,7 +258,6 @@ export function createExchangeService(d: GameDeps) {
       m.set(key, (m.get(key) ?? 0) + n);
       quest.set(restId, m);
     };
-    const rare = (o.config.foods.get(b.foodsId)?.odds ?? 100) < 100;
     let left = b.qty;
     for (const lv of queue) {
       if (left === 0) break;
@@ -300,7 +299,8 @@ export function createExchangeService(d: GameDeps) {
         fills.push({ price, qty: n, held: false });
         count(o.rest.id, b.side === 'sell' ? 'exchange.system.sell' : 'exchange.system.buy', 1);
         if (b.side === 'sell' && lv.s.floor) count(o.rest.id, 'exchange.system.floor', 1);
-        if (rare) count(o.rest.id, `exchange.rare.${b.side}`, n);
+        // 交易所只交易稀有食材（isTradable），成交的都算“买卖稀有食材”
+        count(o.rest.id, `exchange.rare.${b.side}`, n);
         left -= n;
         continue;
       }
@@ -414,7 +414,7 @@ export function createExchangeService(d: GameDeps) {
       else gainCoin(o, price * n - fee, { source: 'exchange' });
       fills.push({ price, qty: n, held });
       if (!held) makers.add(m.rest_id);
-      if (!held && rare) {
+      if (!held) {
         count(o.rest.id, `exchange.rare.${b.side}`, n);
         count(m.rest_id, `exchange.rare.${m.side}`, n);
       }

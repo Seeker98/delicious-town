@@ -1853,14 +1853,16 @@ describe('支线扩充 A：酒吧、交易所、事件预测、一番赏、杂�
   const goods = (id: number) =>
     (b.quests.find((q) => q.id === id)!.award.goods ?? []).map((g) => [g.id, g.num]);
 
-  it('新支线“酒运”“酒桌高手”在第 3 章出现，各 9 档；划拳连胜最高 8 次、老虎机 100 次、高手桌 50 次（用户定）', () => {
+  it('新支线“酒运”“酒桌高手”在第 3 章出现，各 9 档；划拳连胜最高 8 次、老虎机 100 次、高手桌 50 次（用户定）；最难的老虎机、三镖全中放最后，不挡别的档（终审）', () => {
     for (const key of ['luck', 'skill']) {
       expect(b.questLines.find((x) => x.key === key)!.chapter).toBe(3);
       expect(line(key)).toHaveLength(9);
     }
     expect(line('luck').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.fg.streak8', 1]);
     expect(line('luck').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.slot', 100]);
-    expect(line('skill').at(-1)!.cond).toMatchObject({ key: 'bar.nim.expert', target: 50 });
+    expect(line('skill').map((q) => [q.cond.key, q.cond.target])).toContainEqual(['bar.nim.expert', 50]);
+    expect(line('luck').at(-1)!.cond).toMatchObject({ key: 'bar.slot', target: 100 });
+    expect(line('skill').at(-1)!.cond.key).toBe('bar.darts.perfect');
     expect(line('luck').find((q) => q.cond.key === 'bar.devil.win')!.award).toEqual({
       coin: 10_000,
       exp: 1_000,

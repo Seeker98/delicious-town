@@ -1862,11 +1862,27 @@
      "id": 3327,
      "order": 7,
      "needStar": 0,
-     "name": "老虎机玩 100 次",
+     "name": "魔鬼辣杯活过 3 杯",
      "cond": {
       "kind": "counter",
-      "key": "bar.slot",
-      "target": 100
+      "key": "bar.devil.survive3",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3328,
+     "order": 8,
+     "needStar": 0,
+     "name": "划拳连胜 8 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.fg.streak8",
+      "target": 1
      },
      "award": {
       "coin": 300000,
@@ -1881,30 +1897,14 @@
      "href": "/bar"
     },
     {
-     "id": 3328,
-     "order": 8,
-     "needStar": 0,
-     "name": "魔鬼辣杯活过 3 杯",
-     "cond": {
-      "kind": "counter",
-      "key": "bar.devil.survive3",
-      "target": 1
-     },
-     "award": {
-      "coin": 50000,
-      "exp": 5000
-     },
-     "href": "/bar"
-    },
-    {
      "id": 3329,
      "order": 9,
      "needStar": 0,
-     "name": "划拳连胜 8 次",
+     "name": "老虎机玩 100 次",
      "cond": {
       "kind": "counter",
-      "key": "bar.fg.streak8",
-      "target": 1
+      "key": "bar.slot",
+      "target": 100
      },
      "award": {
       "coin": 300000,
@@ -2034,28 +2034,6 @@
      "id": 3346,
      "order": 6,
      "needStar": 0,
-     "name": "飞镖三镖全中靶心",
-     "cond": {
-      "kind": "counter",
-      "key": "bar.darts.perfect",
-      "target": 1
-     },
-     "award": {
-      "coin": 150000,
-      "exp": 15000,
-      "goods": [
-       {
-        "id": 10007,
-        "num": 3
-       }
-      ]
-     },
-     "href": "/bar"
-    },
-    {
-     "id": 3347,
-     "order": 7,
-     "needStar": 0,
      "name": "秘制调料 4 次以内猜中",
      "cond": {
       "kind": "counter",
@@ -2075,8 +2053,8 @@
      "href": "/bar"
     },
     {
-     "id": 3348,
-     "order": 8,
+     "id": 3347,
+     "order": 7,
      "needStar": 0,
      "name": "一掷千金一路不成交，开出最大奖",
      "cond": {
@@ -2091,8 +2069,8 @@
      "href": "/bar"
     },
     {
-     "id": 3349,
-     "order": 9,
+     "id": 3348,
+     "order": 8,
      "needStar": 0,
      "name": "最后一颗糖在高手桌赢 50 次",
      "cond": {
@@ -2103,6 +2081,28 @@
      "award": {
       "coin": 300000,
       "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3349,
+     "order": 9,
+     "needStar": 0,
+     "name": "飞镖三镖全中靶心",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.darts.perfect",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
       "goods": [
        {
         "id": 10007,

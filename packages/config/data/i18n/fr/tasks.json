@@ -360,7 +360,7 @@
     "name": "Revendre avant le règlement une fois"
   },
   "3225": {
-    "name": "Détenir 100 parts sur une question"
+    "name": "Détenir 100 parts sur un événement"
   },
   "3226": {
     "name": "Gagner 50 000 en un règlement"
@@ -369,7 +369,7 @@
     "name": "Perdre 30 000 en un règlement (leçon apprise)"
   },
   "3228": {
-    "name": "Détenir les 200 parts sur une question"
+    "name": "Détenir les 200 parts sur un événement"
   },
   "3229": {
     "name": "Gagner 150 000 en un règlement"
@@ -453,13 +453,13 @@
     "name": "Réussir les 4 manches des Gobelets une fois"
   },
   "3327": {
-    "name": "Jouer 100 fois à la machine à sous"
-  },
-  "3328": {
     "name": "Survivre à 3 verres au Piment du Diable"
   },
-  "3329": {
+  "3328": {
     "name": "Gagner 8 parties de chifoumi d’affilée"
+  },
+  "3329": {
+    "name": "Jouer 100 fois à la machine à sous"
   },
   "3341": {
     "name": "Battre le patron aux fléchettes une fois"
@@ -477,16 +477,16 @@
     "name": "Gagner au dernier bonbon à la table expert une fois"
   },
   "3346": {
-    "name": "Toucher le centre avec les 3 fléchettes"
-  },
-  "3347": {
     "name": "Trouver le Mélange secret en 4 essais ou moins"
   },
-  "3348": {
+  "3347": {
     "name": "Refuser toutes les offres à À prendre ou à laisser et ouvrir le gros lot"
   },
-  "3349": {
+  "3348": {
     "name": "Gagner au dernier bonbon à la table expert 50 fois"
+  },
+  "3349": {
+    "name": "Toucher le centre avec les 3 fléchettes"
   },
   "4011": {
     "name": "Pointer 5 jours"

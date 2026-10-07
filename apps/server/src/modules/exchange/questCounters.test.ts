@@ -54,8 +54,8 @@ describe('交易所支线的计数（问题记录 515）', () => {
     await svc().sellToSystem(s, { foodsId: f.id, qty: 2, price: sys.price });
     expect(await count(s.restaurantId, 'exchange.system.floor')).toBe(1);
     expect(await count(s.restaurantId, 'exchange.system.sell')).toBe(1);
-    // 3 级普通食材不算稀有
-    expect(await count(s.restaurantId, 'exchange.rare.sell')).toBe(f.odds < 100 ? 2 : 0);
+    // 交易所只交易稀有食材，卖出的都算
+    expect(await count(s.restaurantId, 'exchange.rare.sell')).toBe(2);
   });
 
   it('玩家之间成交：挂单方、吃单方都按个数记稀有食材', async () => {

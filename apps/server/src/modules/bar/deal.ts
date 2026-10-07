@@ -166,8 +166,8 @@ export async function dealAnswer(o: Op, deal: boolean): Promise<DealDto> {
   await endRound(o, 'deal');
   // 橱柜放不下的进冰箱，冰箱也满了就丢掉：告诉玩家（审查）
   const plan = await addFoods(o, prize.foodsId, prize.num);
-  // 支线“酒桌高手”：一路不成交、开出这一局最大的奖（问题记录 515）
-  if (s.mine === s.top) await emitAction(o, 'bar.deal.top');
+  // 支线“酒桌高手”：一路不成交、开出这一局最大的奖（问题记录 515；按价值比，并列也算）
+  if (prize.value === Math.max(...s.boxes.map((x) => x.value))) await emitAction(o, 'bar.deal.top');
   // 一路不成交、开出最大奖才写新闻，每家店每天最多一条
   if (s.mine === s.top && (await incrementDaily(o.tx, o.rest.id, 'bar.deal.news', 1, gameDay(o.now))) === 1)
     opNews(o, 'bar.deal', { foodsId: prize.foodsId, num: prize.num });

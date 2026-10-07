@@ -336,7 +336,7 @@
     "name": "Comprar ingredientes al sistema una vez"
   },
   "3206": {
-    "name": "Malvender al sistema una vez (al precio mínimo)"
+    "name": "Malvender al sistema una vez (a precio suelo)"
   },
   "3207": {
     "name": "Comprar 10 ingredientes raros"
@@ -360,7 +360,7 @@
     "name": "Vender antes de la liquidación una vez"
   },
   "3225": {
-    "name": "Tener 100 participaciones en una pregunta"
+    "name": "Tener 100 participaciones en un evento"
   },
   "3226": {
     "name": "Ganar 50.000 en una liquidación"
@@ -369,7 +369,7 @@
     "name": "Perder 30.000 en una liquidación (lección aprendida)"
   },
   "3228": {
-    "name": "Tener las 200 participaciones en una pregunta"
+    "name": "Tener las 200 participaciones en un evento"
   },
   "3229": {
     "name": "Ganar 150.000 en una liquidación"
@@ -453,13 +453,13 @@
     "name": "Superar las 4 rondas de Adivina el vaso una vez"
   },
   "3327": {
-    "name": "Jugar 100 veces a la tragaperras"
-  },
-  "3328": {
     "name": "Sobrevivir a 3 vasos en el Chile del Diablo"
   },
-  "3329": {
+  "3328": {
     "name": "Ganar 8 partidas seguidas de piedra, papel o tijera"
+  },
+  "3329": {
+    "name": "Jugar 100 veces a la tragaperras"
   },
   "3341": {
     "name": "Ganar al jefe en los dardos una vez"
@@ -477,16 +477,16 @@
     "name": "Ganar El último caramelo en la mesa de expertos una vez"
   },
   "3346": {
-    "name": "Dar en el centro con los 3 dardos"
-  },
-  "3347": {
     "name": "Adivinar Mezcla secreta en 4 intentos o menos"
   },
-  "3348": {
+  "3347": {
     "name": "Rechazar todas las ofertas en Trato o no trato y abrir el premio mayor"
   },
-  "3349": {
+  "3348": {
     "name": "Ganar El último caramelo en la mesa de expertos 50 veces"
+  },
+  "3349": {
+    "name": "Dar en el centro con los 3 dardos"
   },
   "4011": {
     "name": "Registrarse 5 días"
