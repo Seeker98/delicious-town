@@ -7,14 +7,14 @@ export default {
   /** 屬性和數值："廚藝12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '廚力',
-  powerNote: '（五項之和 + 幸運/2；只作參考，賽廚的勝負看評委按色香味形養打分）',
+  powerNote: ' (五項之和 + 幸運/2；只作參考，賽廚的勝負看評委按色香味形養打分)',
   /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
   /** 賽廚時的廚力（問題記錄 417） */
   duelPower: (attack: string, defend: string) =>
-    `賽廚時：進攻 ${attack}、防守 ${defend}（算上所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個）`,
+    `賽廚時：進攻 ${attack}、防守 ${defend} (算上所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個)`,
   income: (coin: string, exp: string, gold: string) =>
     `廚具收益加成：最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
-  incomeNote: '（廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少）',
+  incomeNote: ' (廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少)',
   empty: '空',
   noPieces: '沒有這個部位的廚具',
   needLevel: (lv: number) => `需要 ${lv} 級`,
@@ -23,7 +23,7 @@ export default {
   unwear: '卸下',
   unwearFailed: '卸下失敗',
   unwearAll: '全部卸下',
-  suitName: (name: string, count: number, max: number) => `${name}（${count}/${max}）`,
+  suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
   suitTier: (need: number, desc: string) => `${need} 件：${desc}`,
   gem: '寶石',
   presets: '預設',
@@ -50,7 +50,7 @@ export default {
   loadFailed: '讀取廚具失敗',
   points: {
     left: (n: number) => `剩餘點數 ${n}`,
-    allocate: (n: number) => `加點（${n}）`,
+    allocate: (n: number) => `加點 (${n})`,
     failed: '加點失敗',
   },
   detail: {
@@ -59,25 +59,25 @@ export default {
     stress: '強化',
     rate: '成功率',
     rateParts: (base: string, luck: string, weather: string, floor: string) =>
-      `（基礎 ${base} + 幸運 ${luck} + 天氣 ${weather} + 保底 ${floor}）`,
-    next: (gain: number, total: number) => `成功後屬性總和 +${gain}（到 ${total}，不含寶石）`,
+      ` (基礎 ${base} + 幸運 ${luck} + 天氣 ${weather} + 保底 ${floor})`,
+    next: (gain: number, total: number) => `成功後屬性總和 +${gain} (到 ${total}，不含寶石)`,
     cost: (essence: number, have: number, coin: string) =>
-      `消耗：精華 ×${essence}（有 ${have}）、銀幣 ${coin}`,
-    useStone: (n: number) => `用強化石（必定成功，有 ${n}）`,
+      `消耗：精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
+    useStone: (n: number) => `用強化石 (必定成功，有 ${n})`,
     maxed: '已經強化到最高',
-    backOption: (name: string, back: number, num: number) => `${name}（回退 ${back} 級，有 ${num}）`,
+    backOption: (name: string, back: number, num: number) => `${name} (回退 ${back} 級，有 ${num})`,
     rollback: '回退',
     gems: '寶石',
     holeNote: (max: number, coinPerLevel: string | null) =>
-      `（最多 ${max} 孔；${coinPerLevel ? `摘除要花 階數×${coinPerLevel} 銀幣` : '現在摘除免費（2 星以下或酸雨天）'}）`,
+      ` (最多 ${max} 孔；${coinPerLevel ? `摘除要花 階數×${coinPerLevel} 銀幣` : '現在摘除免費 (2 星以下或酸雨天)'})`,
     ungem: '摘除',
-    gemOption: (name: string, num: number, level: number) => `${name}（有 ${num}，耗體力 ${level}）`,
+    gemOption: (name: string, num: number, level: number) => `${name} (有 ${num}，耗體力 ${level})`,
     inlay: '鑲嵌',
-    drill: (n: number) => `打孔（打孔石，有 ${n}）`,
+    drill: (n: number) => `打孔 (打孔石，有 ${n})`,
     lock: '鎖定',
     unlock: '解鎖',
-    salvage: (n: number) => `分解（${n} 精華）`,
-    sell: (price: string) => `出售（${price}）`,
+    salvage: (n: number) => `分解 (${n} 精華)`,
+    sell: (price: string) => `出售 (${price})`,
     blocked: {
       locked: '已鎖定',
       worn: '正在穿戴',
@@ -88,7 +88,7 @@ export default {
     history: '強化記錄',
     historyOk: (attr: string, val: number) => `成功 ${attr}+${val}`,
     historyFail: '失敗',
-    tags: { stone: '（強化石）', lucky: '（幸運）', floor: '（保底）' },
+    tags: { stone: ' (強化石)', lucky: ' (幸運)', floor: ' (保底)' },
     stressOk: (stress: number, attr: string, val: number, extra: string) =>
       `強化成功 +${stress}：${attr} +${val}${extra}`,
     stressMiss: '強化失敗，下次成功率會提高',
@@ -114,7 +114,7 @@ export default {
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,
     levelUp: (n: number) => `升階 ×${n}`,
     done: (success: number, lucky: number, fail: number, exp: string | null) =>
-      `升階完成：成功 ${success}${lucky > 0 ? `（含幸運補救 ${lucky}）` : ''}，失敗 ${fail}${exp ? `，得到經驗 ${exp}` : ''}`,
+      `升階完成：成功 ${success}${lucky > 0 ? ` (含幸運補救 ${lucky})` : ''}，失敗 ${fail}${exp ? `，得到經驗 ${exp}` : ''}`,
     failed: '升階失敗',
     loadFailed: '讀取寶石失敗',
   },

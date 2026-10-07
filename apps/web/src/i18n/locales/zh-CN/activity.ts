@@ -15,7 +15,7 @@ export default {
   none: '现在没有进行中的活动。',
   endedShort: '已结束',
   needLevel: (n: number) => `需要 ${n} 级，达到后才开始计数`,
-  claimAll: (n: number) => `全部领取（${n}）`,
+  claimAll: (n: number) => `全部领取 (${n})`,
   /** 剩余时间 */
   left: {
     ended: '已结束',
@@ -125,12 +125,12 @@ export default {
     pointsCol: '积分',
     free: '普通',
     premium: '进阶',
-    unlock: (price: string) => `解锁（${price}）`,
+    unlock: (price: string) => `解锁 (${price})`,
   },
   exchange: {
     rule: '活动货币不进仓库，只能在本活动里兑换；兑换期过后作废。',
     drop: (action: string, chance: string, currency: string, num: number, today: number, cap: number) =>
-      `${action} ${chance} 掉 ${currency} ×${num}（今天 ${today}/${cap}）`,
+      `${action} ${chance} 掉 ${currency} ×${num} (今天 ${today}/${cap})`,
     btn: '兑换',
   },
   coop: {
@@ -141,7 +141,7 @@ export default {
     myRank: (n: number) => ` · 第 ${n} 名`,
     allDone: '全部里程碑已达成',
     milestone: (n: string) => `全服 ${n} 分`,
-    minContribution: (n: string) => `（个人 ≥ ${n} 分）`,
+    minContribution: (n: string) => ` (个人 ≥ ${n} 分)`,
     board: '贡献榜',
     boardSettled: (mailed: boolean) => `贡献榜已结算${mailed ? '，奖励已发邮件' : ''}`,
     boardSettling: '贡献榜结算中',

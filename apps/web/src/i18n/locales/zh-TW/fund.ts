@@ -15,7 +15,7 @@ export default {
   deposit: '存入',
   notEnough: '銀幣不夠',
   depositConfirm: (tier: string, coin: string, back: string, days: number) =>
-    `確認向小鎮發展基金存入 ${coin} 銀幣（${tier}）？\n${days} 天后到期，可領回 ${back} 銀幣和勳章；提前取出只退一部分，沒有勳章。`,
+    `確認向小鎮發展基金存入 ${coin} 銀幣 (${tier})？\n${days} 天后到期，可領回 ${back} 銀幣和勳章；提前取出只退一部分，沒有勳章。`,
   deposited: (tier: string) => `已認購 ${tier}`,
   mine: '我的存款',
   depositLine: (tier: string, coin: string) => `${tier}：${coin} 銀幣`,
@@ -23,7 +23,7 @@ export default {
   mature: '已到期，可以領取',
   claim: (back: string) => `領取 ${back} 銀幣和勳章`,
   claimed: '領取成功，勳章已放進倉庫',
-  withdraw: (early: string) => `提前取出（只退 ${early} 銀幣）`,
+  withdraw: (early: string) => `提前取出 (只退 ${early} 銀幣)`,
   withdrawConfirm: (early: string, back: string) =>
     `確認提前取出？只退 ${early} 銀幣，沒有勳章；到期後領取可得 ${back} 銀幣和勳章。`,
   withdrawn: (n: string) => `已取出 ${n} 銀幣`,

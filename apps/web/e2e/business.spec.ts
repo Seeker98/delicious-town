@@ -32,7 +32,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   await page.getByTestId('refuel').click();
   await expect(page.getByText('消耗 银币')).toBeVisible();
   // 加油后页面会刷新并重新渲染任务卡片，等进度显示 1/1 再点，并等领奖请求返回
-  await expect(page.getByText('（1/1）')).toBeVisible();
+  await expect(page.getByText('(1/1)')).toBeVisible();
   const claimed = page.waitForResponse((r) => r.url().includes('/api/v1/task/claim'));
   await page.getByRole('button', { name: '领奖' }).click();
   expect((await claimed).ok()).toBe(true);

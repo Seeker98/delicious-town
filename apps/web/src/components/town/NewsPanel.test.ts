@@ -62,7 +62,7 @@ describe('NewsPanel', () => {
       props: { data: townData({ broadcast: { horns: 0, readyAt: null, minStar: 1, maxLen: 64 } }) },
     });
     await flushPromises();
-    expect(w.find('[data-testid="bc-block"]').text()).toBe('没有喇叭（去协会和 13 哥聊天可以拿到）');
+    expect(w.find('[data-testid="bc-block"]').text()).toBe('没有喇叭 (去协会和 13 哥聊天可以拿到)');
     expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
     const low = mount(NewsPanel, { props: { data: townData({ star: 0 }) } });
     await flushPromises();

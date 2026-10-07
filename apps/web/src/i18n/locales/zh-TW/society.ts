@@ -11,16 +11,16 @@ export default {
   move: {
     title: '搬家',
     hint: (street: string, cost: string) =>
-      `現在在 ${street}。需要 1 張搬家卡（持有搬家處工作證時免），花費約 ${cost} 銀幣（幸運時半價）。`,
+      `現在在 ${street}。需要 1 張搬家卡 (持有搬家處工作證時免)，花費約 ${cost} 銀幣 (幸運時半價)。`,
     pick: '選擇新街道',
     bonus: (desc: string) => `街道加成：${desc}`,
-    option: (name: string, cook: string) => `${name}（${cook}）`,
+    option: (name: string, cook: string) => `${name} (${cook})`,
     btn: '搬家',
     done: (street: string) => `已經搬到 ${street}`,
     failed: '搬家失敗',
   },
   oil: {
-    title: (level: number, max: string) => `油壺擴容（當前 ${level} 級，上限 ${max}）`,
+    title: (level: number, max: string) => `油壺擴容 (當前 ${level} 級，上限 ${max})`,
     next: (level: number, max: string) => `擴容到 ${level} 級後上限 ${max}`,
     maxed: '已經是最高階',
     btn: '擴容',
@@ -36,7 +36,7 @@ export default {
     failed: '改名失敗',
   },
   star: {
-    title: (star: number) => `升星（當前 ${star} 星）`,
+    title: (star: number) => `升星 (當前 ${star} 星)`,
     notOpen: (star: number) => `${star} 星暫未開放`,
     award: '獎勵：',
     maxed: '已經是最高星級',

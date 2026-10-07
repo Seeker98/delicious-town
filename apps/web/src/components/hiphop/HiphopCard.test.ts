@@ -99,7 +99,7 @@ describe('HiphopCard', () => {
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="hiphop-result"]').text()).toBe(
-      `你在旁边捡到 道具${SHARED_GOODS.krabCoin}×3（虹）、道具${SHARED_GOODS.mysteryTicket}×2`,
+      `你在旁边捡到 道具${SHARED_GOODS.krabCoin}×3 (虹)、道具${SHARED_GOODS.mysteryTicket}×2`,
     );
     vi.mocked(endpoints.hiphopTip).mockResolvedValue(tipDto({ exp: 0, fresh: false }));
     await w.find('[data-testid="hiphop-food"]').setValue('102');

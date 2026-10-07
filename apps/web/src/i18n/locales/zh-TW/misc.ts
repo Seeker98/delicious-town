@@ -8,7 +8,7 @@ export default {
   weather: {
     loadFailed: '讀取天氣失敗',
     noEffect: '對經營沒有影響',
-    zeroStar: '（0 星餐廳不受天氣影響）',
+    zeroStar: ' (0 星餐廳不受天氣影響)',
     zeroStarLine: '0 星餐廳不受天氣影響',
     until: (time: string) => `持續到 ${time}`,
     /** 蟹老闆所在街道：前半句、街名（加粗）、後半句 */
@@ -35,7 +35,7 @@ export default {
     unverified: '還沒驗證郵箱',
     stage: {
       sent: (lv: number) => `${lv} 級獎勵已發`,
-      pending: (lv: number) => `${lv} 級獎勵待發（你在該區開店後補發）`,
+      pending: (lv: number) => `${lv} 級獎勵待發 (你在該區開店後補發)`,
       capped: (lv: number) => `${lv} 級獎勵超出本月上限`,
     },
   },

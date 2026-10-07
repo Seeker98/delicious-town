@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    parens1007:
+      'En la interfaz en chino (incluidas las descripciones de objetos y los nombres de recetas), los paréntesis de ancho completo ahora son de ancho normal con un espacio a cada lado, así cabe más texto en cada línea',
     ui1007:
       'Pequeños ajustes de interfaz: Trato o no trato muestra ahora las cajas abiertas en cada ronda y su contenido; el «Reclamar» de la misión principal en la página principal es ahora un icono de regalo con texto, y los botones verdes del resto del juego usan el color de la marca; los filtros por nivel y por vía de los platos estrella son ahora pequeñas píldoras; los platos estrella ya no están en «Más»: entra desde la página principal',
     misc1007:

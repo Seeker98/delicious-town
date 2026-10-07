@@ -37,6 +37,14 @@ describe('拿不到的礼包下架（道具整理 367 遗留，用户 2026-10-07
   });
 });
 
+describe('玩家看得到的数据不用中文括号（用户 2026-10-07 定）', () => {
+  it('道具说明、菜谱名里没有（）：用半角括号，外侧两边加空格', () => {
+    const b = realBuild().bundle!;
+    expect(b.goods.filter((g) => /[（）]/.test(g.desc ?? '')).map((g) => g.id)).toEqual([]);
+    expect(b.cookbooks.filter((c) => /[（）]/.test(c.name)).map((c) => c.id)).toEqual([]);
+  });
+});
+
 describe('buildBundle（真实数据）', () => {
   it('没有错误，数量正确', () => {
     const { bundle, errors } = realBuild();
@@ -62,9 +70,9 @@ describe('buildBundle（真实数据）', () => {
         street(cid(n)),
       ),
     ).toEqual([12, 12, 13, 12, 11, 11, 6]);
-    expect(street(cid('左宗棠鸡（美国/加拿大）'))).toBe(29);
-    expect(b.cookbooks.find((c) => c.id === cid('左宗棠鸡（美国/加拿大）'))!.name).toBe(
-      '左宗棠鸡（美国/加拿大）',
+    expect(street(cid('左宗棠鸡 (美国/加拿大)'))).toBe(29);
+    expect(b.cookbooks.find((c) => c.id === cid('左宗棠鸡 (美国/加拿大)'))!.name).toBe(
+      '左宗棠鸡 (美国/加拿大)',
     );
     expect(b.cookbooks.filter((c) => c.streetId === 29)).toHaveLength(117);
     expect(b.cookbooks.find((c) => c.id === cid('开屏武昌鱼'))!.desc).toBe('楚菜，口味辛、咸、鲜');

@@ -122,7 +122,7 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="power"]').text()).toBe('7');
     expect(w.find('[data-testid="slot-1"]').text()).toContain('+2');
     expect(w.find('[data-testid="slot-2"]').text()).toContain('空');
-    expect(w.text()).toContain('真爱套装（3/5）');
+    expect(w.text()).toContain('真爱套装 (3/5)');
     expect(w.text()).toContain('上座率+5%, 挑剔率+3%');
     // 赛厨时的厨力（问题记录 417）
     expect(w.find('[data-testid="duel-power"]').text()).toContain('赛厨时：进攻 9、防守 8');
@@ -221,7 +221,7 @@ describe('EquipView', () => {
     const w = await mountView();
     await w.find('[data-testid="add-cook"]').setValue('');
     await w.find('[data-testid="add-cutting"]').setValue('1');
-    expect(w.find('[data-testid="allocate"]').text()).toBe('加点（1）');
+    expect(w.find('[data-testid="allocate"]').text()).toBe('加点 (1)');
     await w.find('[data-testid="allocate"]').trigger('click');
     await flushPromises();
     expect(endpoints.allocate).toHaveBeenCalledWith({ cook: 0, cutting: 1, fire: 0 });

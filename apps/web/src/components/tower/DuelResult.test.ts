@@ -14,7 +14,7 @@ describe('DuelResult', () => {
     expect(first[0]!.text()).toBe('20.4');
     expect(first[0]!.classes()).toContain('fw-bold');
     expect(first[1]!.classes()).not.toContain('fw-bold');
-    expect(w.text()).toContain('我的店（厨力 70）');
+    expect(w.text()).toContain('我的店 (厨力 70)');
     expect(w.find('[data-testid="duel-awards"]').text()).toBe('得到 银币 600');
   });
 
@@ -66,7 +66,7 @@ describe('DuelResult', () => {
 
   it('双方的特色菜：“【菜（几级）】 VS 【菜】”，没有写“无米之炊”（问题记录 431）', () => {
     const w = mount(DuelResult, { props: { result: duelResult() } });
-    expect(w.get('[data-testid="duel-dishes"]').text()).toMatch(/^【.+（5 级）】 VS 【无米之炊】$/);
+    expect(w.get('[data-testid="duel-dishes"]').text()).toMatch(/^【.+ \(5 级\)】 VS 【无米之炊】$/);
   });
 
   it('旧服务器的结果没有 dish：不写菜那一行（不把有菜的写成无米之炊）', () => {
@@ -125,7 +125,7 @@ describe('DuelResult', () => {
 
   it('票数持平时标题写明按总分定胜负', () => {
     const w = mount(DuelResult, { props: { result: duelResult({ votes: [2, 2] }) } });
-    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2（票数相同，比总分），声望 +7');
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 2:2 (票数相同，比总分)，声望 +7');
   });
 
   it('换了一局结果时评委列表整个重画，动画从头播（同一位评委也重新淡入）', async () => {

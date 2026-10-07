@@ -47,7 +47,7 @@ export default {
     stress: '強化後的屬性總和',
     gem: '寶石屬性',
     suit: '套裝效果',
-    cookbooks: (n: number) => `用到它的菜譜（${n} 道）`,
+    cookbooks: (n: number) => `用到它的菜譜 (${n} 道)`,
     mysterious: '用到它的特色菜',
     grades: '各品級食材',
     medal: '街道勳章',
@@ -95,15 +95,15 @@ export default {
     note: '只列能開出的東西，不寫機率。',
   },
   sources: {
-    special: '今日特價（每天隨機上架）',
+    special: '今日特價 (每天隨機上架)',
     black: (n: string) => `鑽石黑市：${n} 鑽石`,
     award: '廚塔、酒吧等的隨機獎勵',
     gemFromBefore: '寶石升階：兩顆',
     gemFromAfter: '合成一顆',
     shop: '商店常駐在售：',
-    renownShop: (n: string, rotating: boolean) => `聲望商店：${n} 聲望${rotating ? '（輪換上架）' : ''}`,
+    renownShop: (n: string, rotating: boolean) => `聲望商店：${n} 聲望${rotating ? ' (輪換上架)' : ''}`,
     exchange: '兌換：',
-    times: (n: number) => (n < 0 ? '' : `（每人限兌 ${n} 次）`),
+    times: (n: number) => (n < 0 ? '' : ` (每人限兌 ${n} 次)`),
     none: '遊戲配置裡沒有直接的獲得途徑，可能來自活動、禮包、任務或其他玩法。',
   },
   /** 玩法攻略（問題記錄 384）：來自快速模擬裡三種機器人的做法 */
@@ -117,7 +117,7 @@ export default {
         title: '三種節奏',
         items: [
           '勤快：白天到深夜每小時看一眼。大約第 2 天 1 星、第 7 天 30 級；2 星卡在學會的菜數上：看到食譜頁的搬街提示就搬，越早搬越快。',
-          '普通：一天看三次（早上、中午、晚上）。大約第 3 天 1 星、第 9 天 30 級、第 18 天左右 2 星。',
+          '普通：一天看三次 (早上、中午、晚上)。大約第 3 天 1 星、第 9 天 30 級、第 18 天左右 2 星。',
           '休閒：每晚看一次。大約第 4 天 1 星、第 23 天左右 30 級；一個月內一般到不了 2 星，慢慢來也沒關係。',
         ],
       },
@@ -134,7 +134,7 @@ export default {
           '升星只差升星憑證和銀幣時，錢夠就買憑證升星；錢不夠就先攢著，別花在別處。',
           '等級、星級夠了就擴油壺。',
           '買餐桌，但要留出加滿油的錢，再多留 2 萬備用。',
-          '去菜場只買學菜缺的食材：先看日常菜場，再看特價菜場（要驗證郵箱）。日常菜場每次進貨都有一格是新手街缺的食材。',
+          '去菜場只買學菜缺的食材：先看日常菜場，再看特價菜場 (要驗證郵箱)。日常菜場每次進貨都有一格是新手街缺的食材。',
           '順手報名菜場競猜。',
           '學菜：先學沒學過的，再升級學過的。',
           '用當天的免體力次數，把學菜用不到的食材合成上去。',
@@ -149,7 +149,7 @@ export default {
           (n: G) =>
             `搬到菜多的街學得快，比如${n.biggestStreet.name}有 ${formatNum(n.biggestStreet.cookbooks)} 道，是菜最多的街。`,
           '各街分銀幣街、均衡街、經驗街：缺錢去銀幣街，趕等級去經驗街。搬家頁和食譜頁寫了每條街的類型和加成。',
-          '搬家要一張搬家卡（有搬家處工作證時免）和一筆搬街費，幸運時半價。',
+          '搬家要一張搬家卡 (有搬家處工作證時免) 和一筆搬街費，幸運時半價。',
         ],
       },
       {
@@ -159,30 +159,30 @@ export default {
           '其次是升星：升星憑證和升星銀幣。',
           '然後才是餐桌和設施。',
           (n: G) =>
-            `外賣要 ${n.takeaway.star} 星、${formatNum(n.takeaway.renown)} 聲望才能開通（開通時扣掉這些聲望），還要 ${formatNum(n.takeaway.coin / 10000)} 萬銀幣和 ${formatNum(n.takeaway.diamond)} 鑽石，或者一張外賣券；想開的話早點攢。`,
+            `外賣要 ${n.takeaway.star} 星、${formatNum(n.takeaway.renown)} 聲望才能開通 (開通時扣掉這些聲望)，還要 ${formatNum(n.takeaway.coin / 10000)} 萬銀幣和 ${formatNum(n.takeaway.diamond)} 鑽石，或者一張外賣券；想開的話早點攢。`,
         ],
       },
       {
         title: '其他玩法',
         items: [
           '每天去廣場搖一次蟹老闆的錢袋、去酒吧找雯姐聊天；再去協會找鎮長大胃鍋、13 哥聊天，都有東西送。',
-          '每天打廚塔，輸贏都拿聲望；第一層的長老是 8 級，大約 10 級能打過（穿上見習廚具會早一點）。',
+          '每天打廚塔，輸贏都拿聲望；第一層的長老是 8 級，大約 10 級能打過 (穿上見習廚具會早一點)。',
           (n: G) =>
             n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
               ? `${n.exchange.level} 級、註冊滿 ${n.exchange.days} 天並驗證郵箱以後，能用交易所和事件預測。`
               : `${n.exchange.level} 級、註冊滿 ${n.exchange.days} 天並驗證郵箱以後能用交易所；事件預測要 ${n.predict.level} 級、註冊滿 ${n.predict.days} 天。`,
           '穿上廚具，結算收益會更高。',
           (n: G) =>
-            `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成（1 級 ${formatPct(n.newbieExp.rate, { sign: true })}，逐級減少），前期升級很快。`,
+            `${n.newbieExp.maxLevel} 級以下結算經驗有額外加成 (1 級 ${formatPct(n.newbieExp.rate, { sign: true })}，逐級減少)，前期升級很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以上的餐廳有身價、可以被收購：在首頁“資產”那一行點“收購”進去，付它的身價就能收下，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是稅，名下最多 ${n.acquire.maxHoldings} 家。被收購的店每天給老闆分紅（前一天結算銀幣的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，滿 ${n.acquire.minRounds} 輪才發），被收購的店每天替老闆打理一次能得 ${n.acquire.tendFoods} 份食材，老闆那天的分紅再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收購了也可以按身價贖身，贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
+            `${n.acquire.minStar} 星以上的餐廳有身價、可以被收購：在首頁“資產”那一行點“收購”進去，付它的身價就能收下，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是稅，名下最多 ${n.acquire.maxHoldings} 家。被收購的店每天給老闆分紅 (前一天結算銀幣的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，滿 ${n.acquire.minRounds} 輪才發)，被收購的店每天替老闆打理一次能得 ${n.acquire.tendFoods} 份食材，老闆那天的分紅再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收購了也可以按身價贖身，贖身後 ${n.acquire.protectDays} 天內不會再被收購。`,
         ],
       },
       {
         title: '怎麼學特色菜',
         items: [
           '學會一道特色菜要 3 張它的殘卷；1 星以後能烹製。',
-          '鑑定（1 星起）：在神殿用 1 張神秘食譜加 1 個鑑定道具，成功就得到隨機一道菜的殘卷。美味印章 1~6 級、成功率 40%（商店 9 萬）；廚神玉璽 2~5 級、52%（商店 30 萬）；海霸堡秘方 1~3 級、蟹黃堡秘方 3~5 級，都必定成功，在黑市用鑽石買，廚塔、酒吧的隨機獎勵也會出，蟹黃堡秘方還是昨日特色菜冠軍的獎勵。',
+          '鑑定 (1 星起)：在神殿用 1 張神秘食譜加 1 個鑑定道具，成功就得到隨機一道菜的殘卷。美味印章 1~6 級、成功率 40% (商店 9 萬)；廚神玉璽 2~5 級、52% (商店 30 萬)；海霸堡秘方 1~3 級、蟹黃堡秘方 3~5 級，都必定成功，在黑市用鑽石買，廚塔、酒吧的隨機獎勵也會出，蟹黃堡秘方還是昨日特色菜冠軍的獎勵。',
           '碎片兌換：用不上的殘卷分解成同級碎片，3 張同級碎片能換 1 張這一級任選一道菜的殘卷，想學哪道就攢那一級的碎片。',
           '學藝：找會這道菜、開了課的玩家，交學費、花體力學，大多一次就能學會。',
         ],
@@ -194,7 +194,7 @@ export default {
     intro:
       '只讀的靜態遊戲資料，和遊戲資料頁面同一套，給想研究遊戲、做小工具的玩家用。不包含任何玩家和區服的即時資料。',
     base: '基礎地址',
-    langParam: '每個介面都可以帶 lang 引數選語言：zh-CN（預設）、zh-TW、en、fr、es。',
+    langParam: '每個介面都可以帶 lang 引數選語言：zh-CN (預設)、zh-TW、en、fr、es。',
     endpoints: '介面',
     path: '路徑',
     content: '內容',
@@ -204,22 +204,22 @@ export default {
       goodsId: '道具詳情：說明、廚具和寶石屬性、禮包內容、獲得途徑、兌換用途',
       foods: '食材列表',
       foodsId: '食材詳情：用到它的菜譜和特色菜、菜園種子',
-      cookbooks: '菜譜列表（不含配方）',
+      cookbooks: '菜譜列表 (不含配方)',
       cookbooksId: '菜譜詳情：1~10 品級的食材',
       equips: '廚具列表和套裝',
       streets: '街道、菜系、加成和街道勳章',
     } as Record<string, string>,
     format: '返回格式',
     formatText:
-      '和遊戲介面一樣是 { ok, data }；data 裡都帶 version（配置版本）和 lang。找不到時返回 404 和錯誤碼。',
+      '和遊戲介面一樣是 { ok, data }；data 裡都帶 version (配置版本) 和 lang。找不到時返回 404 和錯誤碼。',
     cache: '版本和快取',
     cacheText: '遊戲資料更新時 version 會變。響應可以快取一小時；帶上次的 ETag 請求，資料沒變時返回 304。',
     cors: '跨域',
-    corsText: '任何網站都可以直接在瀏覽器裡讀這些介面（不帶登入資訊）。',
+    corsText: '任何網站都可以直接在瀏覽器裡讀這些介面 (不帶登入資訊)。',
     limit: '頻率限制',
     limitText: '每個 IP 大約每分鐘 120 次，超過時返回 429，稍等再試。',
     example: '示例',
     notIncluded: '不包含',
-    notIncludedText: '玩家、餐廳、區服的即時資料（天氣、交易所價格、排行榜等），以及掉落機率和活動獎勵。',
+    notIncludedText: '玩家、餐廳、區服的即時資料 (天氣、交易所價格、排行榜等)，以及掉落機率和活動獎勵。',
   },
 };

@@ -28,7 +28,7 @@ describe('FgPanel', () => {
     await flushPromises();
     expect(endpoints.barFg).toHaveBeenCalledWith(0);
     expect(w.find('[data-testid="fg-result"]').text()).toBe(
-      '你出石头，对方出剪刀：幸运地赢了（2 连胜），得到 银币 200',
+      '你出石头，对方出剪刀：幸运地赢了 (2 连胜)，得到 银币 200',
     );
     expect(w.emitted('reload')).toHaveLength(1);
   });

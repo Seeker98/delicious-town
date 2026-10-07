@@ -59,7 +59,7 @@ describe('RegisterView', () => {
       global: { plugins: [createPinia(), router], stubs: { TurnstileBox: TurnstileStub } },
     });
     await flushPromises();
-    const invite = w.find('input[placeholder="邀请码（可不填）"]').element as HTMLInputElement;
+    const invite = w.find('input[placeholder="邀请码 (可不填)"]').element as HTMLInputElement;
     expect(invite.value).toBe('ABCD2345');
   });
 });

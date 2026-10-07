@@ -8,7 +8,7 @@ describe('得失提示文案', () => {
     expect(eventText({ type: 'gain', kind: 'coin', num: 1500 }, names)).toBe('获得 银币 1,500');
     expect(eventText({ type: 'loss', kind: 'coin', num: 200 }, names)).toBe('消耗 银币 200');
     expect(eventText({ type: 'gain', kind: 'goods', id: 1, num: 3, lucky: true }, names)).toBe(
-      '获得 神秘礼券×3（幸运）',
+      '获得 神秘礼券×3 (幸运)',
     );
     expect(eventText({ type: 'gain', kind: 'foods', id: 101, num: 2 }, names)).toBe('获得 大米×2');
   });
@@ -203,7 +203,7 @@ describe('问题记录 224：活动货币', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const e = { type: 'gain' as const, kind: 'activityCurrency' as const, name: '马勋章', num: 1 };
     expect(eventsSummary([e, e, { ...e, name: '猫勋章' }], names)).toBe(
-      '获得 马勋章×2（活动货币）、猫勋章×1（活动货币）',
+      '获得 马勋章×2 (活动货币)、猫勋章×1 (活动货币)',
     );
   });
 });
@@ -213,10 +213,10 @@ describe('交易所日志（156-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(log('exchange.order', { side: 'buy', foodsId: 3, price: 100, qty: 5, filled: 2 })).toBe(
-      '在交易所挂买单：食材3 ×5，单价 100（当场成交 2 个）',
+      '在交易所挂买单：食材3 ×5，单价 100 (当场成交 2 个)',
     );
     expect(log('exchange.fill', { side: 'sell', foodsId: 3, price: 100, qty: 2, fee: 10 })).toBe(
-      '交易所卖单成交：食材3 ×2，单价 100，手续费 10（所得在交易所账户）',
+      '交易所卖单成交：食材3 ×2，单价 100，手续费 10 (所得在交易所账户)',
     );
     expect(log('exchange.cancel', { side: 'sell', foodsId: 3, price: 100, left: 1 })).toBe(
       '撤销交易所卖单：食材3，退回 1 个',
@@ -228,7 +228,7 @@ describe('交易所日志（156-1）', () => {
       '从交易所账户取出：银币 950、食材3×2',
     );
     expect(log('exchange.fill', { side: 'buy', foodsId: 3, price: 100, qty: 2, fee: 0, held: true })).toBe(
-      '交易所买单成交：食材3 ×2，单价 100（可疑成交，所得冻结 24 小时）',
+      '交易所买单成交：食材3 ×2，单价 100 (可疑成交，所得冻结 24 小时)',
     );
   });
 
@@ -245,7 +245,7 @@ describe('交易所日志（156-1）', () => {
         held: true,
         holdHours: 48,
       }),
-    ).toBe('交易所买单成交：食材3 ×2，单价 100（可疑成交，所得冻结 48 小时）');
+    ).toBe('交易所买单成交：食材3 ×2，单价 100 (可疑成交，所得冻结 48 小时)');
     expect(log('exchange.freezeCancel', { side: 'sell', foodsId: 3, price: 100, left: 2 })).toBe(
       '交易所被冻结，卖单撤销：食材3，剩余 2 个退回交易所账户',
     );
@@ -258,7 +258,7 @@ describe('交易所日志（156-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(log('fund.deposit', { tier: 'B', coin: 3000000 })).toBe(
-      '向小镇发展基金存入 3,000,000 银币（B·增值资本）',
+      '向小镇发展基金存入 3,000,000 银币 (B·增值资本)',
     );
     expect(log('fund.claim', { tier: 'B', coin: 2700000, medal: 93102 })).toBe(
       '领取小镇发展基金：拿回 2,700,000 银币和道具93102',

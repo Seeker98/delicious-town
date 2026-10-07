@@ -66,7 +66,7 @@ export default {
     'hiphop.event': (w) => `${w}开启了嘻哈活动！`,
     'hiphop.krab': (w, p, x) => `${w}通过打赏获得 ${x.goodsName(SHARED_GOODS.krabCoin)}×${num(p.num)}`,
     'hiphop.weekly': (w, p, x) =>
-      `恭喜${w}在每周打赏中获得第 ${num(p.rank)} 名，奖励 ${x.goodsName(num(p.goodsId))}（160 小时）`,
+      `恭喜${w}在每周打赏中获得第 ${num(p.rank)} 名，奖励 ${x.goodsName(num(p.goodsId))} (160 小时)`,
     'market.manual': (w, p, x) =>
       `${w}已进货日常菜：${list(p.foods)
         .map((id) => x.foodName(num(id)))
@@ -75,7 +75,7 @@ export default {
       `菜场进货了：${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join('、')}`,
-    'mc.champion': (w, p) => `${w}成为昨日特色菜价值第一（${formatNum(num(p.value))}）`,
+    'mc.champion': (w, p) => `${w}成为昨日特色菜价值第一 (${formatNum(num(p.value))})`,
     'mc.cook': (w, p, x) => `${w}烹制出 ${x.mcName(num(p.mcId))}×${num(p.num)}`,
     'oil.expand': (w, p) => `${w}把油壶扩容到 ${num(p.level)} 级`,
     'plankton.appear': (w) => `痞老板赖在了${w}不走`,
@@ -94,7 +94,7 @@ export default {
     'activity.coopRank': (_w, p) =>
       `《${str(p.title)}》贡献榜：${list(p.top)
         .map(
-          (r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)}（${formatNum(num((r as P).points))} 分）`,
+          (r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)} (${formatNum(num((r as P).points))} 分)`,
         )
         .join('、')}`,
     'tower.rank.week': (_w, p) =>

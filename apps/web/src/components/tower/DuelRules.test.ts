@@ -13,8 +13,8 @@ describe('DuelRules（问题记录 396）', () => {
     expect(w.text()).toContain('先拿到 3 票的赢');
     const judges = w.findAll('[data-testid="duel-rules-judge"]');
     expect(judges).toHaveLength(10);
-    expect(judges[0]!.text()).toBe('菜园姐（色、形、养）');
-    expect(judges[9]!.text()).toBe('小凯（味、养）');
+    expect(judges[0]!.text()).toBe('菜园姐 (色、形、养)');
+    expect(judges[9]!.text()).toBe('小凯 (味、养)');
   });
 
   it('每局请几位评委按区服设置写，过半票数跟着变（backlog 396）', () => {

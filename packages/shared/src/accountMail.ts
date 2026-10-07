@@ -13,7 +13,7 @@ export const ACCOUNT_MAILS: Record<Locale, Record<'verify' | 'reset', AccountMai
     },
     reset: {
       subject: '美味小镇：重置密码',
-      text: (link) => `请在 1 小时内打开下面的链接重置密码（如果不是你本人操作，请忽略这封邮件）：\n${link}`,
+      text: (link) => `请在 1 小时内打开下面的链接重置密码 (如果不是你本人操作，请忽略这封邮件)：\n${link}`,
     },
   },
   'zh-TW': {
@@ -23,7 +23,7 @@ export const ACCOUNT_MAILS: Record<Locale, Record<'verify' | 'reset', AccountMai
     },
     reset: {
       subject: '美味小鎮：重設密碼',
-      text: (link) => `請在 1 小時內打開下面的連結重設密碼（如果不是你本人操作，請忽略這封郵件）：\n${link}`,
+      text: (link) => `請在 1 小時內打開下面的連結重設密碼 (如果不是你本人操作，請忽略這封郵件)：\n${link}`,
     },
   },
   en: {

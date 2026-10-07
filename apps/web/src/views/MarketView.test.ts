@@ -153,7 +153,7 @@ describe('MarketView', () => {
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const before = vi.mocked(endpoints.market).mock.calls.length;
     const btn = w.find('[data-testid="market-manual"]');
-    expect(btn.text()).toBe('手动进货（2,000,000 银币）');
+    expect(btn.text()).toBe('手动进货 (2,000,000 银币)');
     await btn.trigger('click');
     await flushPromises();
     expect(endpoints.marketManualStock).toHaveBeenCalled();

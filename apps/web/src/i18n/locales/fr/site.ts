@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    parens1007:
+      'Dans l’interface en chinois (y compris les descriptions d’objets et les noms de recettes), les parenthèses pleine chasse sont maintenant des parenthèses normales avec une espace de chaque côté, pour faire tenir plus de texte par ligne',
     ui1007:
       'Petits ajustements d’interface : À prendre ou à laisser liste maintenant les boîtes ouvertes à chaque manche et leur contenu ; le « Récupérer » de la quête principale sur l’accueil est maintenant une icône cadeau avec du texte, et les boutons verts ailleurs prennent la couleur de la marque ; les filtres par niveau et par voie des plats signature sont maintenant de petites pastilles ; les plats signature ne sont plus dans « Plus » : on y accède depuis l’accueil',
     misc1007:

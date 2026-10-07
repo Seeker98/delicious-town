@@ -16,7 +16,7 @@ export default {
   none: '現在沒有進行中的活動。',
   endedShort: '已結束',
   needLevel: (n: number) => `需要 ${n} 級，達到後才開始計數`,
-  claimAll: (n: number) => `全部領取（${n}）`,
+  claimAll: (n: number) => `全部領取 (${n})`,
   /** 剩餘時間 */
   left: {
     ended: '已結束',
@@ -126,12 +126,12 @@ export default {
     pointsCol: '積分',
     free: '普通',
     premium: '進階',
-    unlock: (price: string) => `解鎖（${price}）`,
+    unlock: (price: string) => `解鎖 (${price})`,
   },
   exchange: {
     rule: '活動貨幣不進倉庫，只能在本活動裡兌換；兌換期過後作廢。',
     drop: (action: string, chance: string, currency: string, num: number, today: number, cap: number) =>
-      `${action} ${chance} 掉 ${currency} ×${num}（今天 ${today}/${cap}）`,
+      `${action} ${chance} 掉 ${currency} ×${num} (今天 ${today}/${cap})`,
     btn: '兌換',
   },
   coop: {
@@ -142,7 +142,7 @@ export default {
     myRank: (n: number) => ` · 第 ${n} 名`,
     allDone: '全部里程碑已達成',
     milestone: (n: string) => `全服 ${n} 分`,
-    minContribution: (n: string) => `（個人 ≥ ${n} 分）`,
+    minContribution: (n: string) => ` (個人 ≥ ${n} 分)`,
     board: '貢獻榜',
     boardSettled: (mailed: boolean) => `貢獻榜已結算${mailed ? '，獎勵已發郵件' : ''}`,
     boardSettling: '貢獻榜結算中',

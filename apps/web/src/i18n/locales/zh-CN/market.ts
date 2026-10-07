@@ -1,21 +1,21 @@
 /** 菜场和菜园姐（问题记录 272） */
 export default {
-  sections: { daily: '日常菜场', special: '特价菜场', premium: '高级菜场（需爱心项链）' },
+  sections: { daily: '日常菜场', special: '特价菜场', premium: '高级菜场 (需爱心项链)' },
   specialNote: (min: number) => `需验证邮箱，每种每人 1 份；同一网络 ${min} 分钟内只能抢一次`,
   manualConfirm: (cost: string, time: string) =>
-    `花 ${cost} 银币进 4 种日常菜？下次日常进货（${time}）时会一起下架。`,
+    `花 ${cost} 银币进 4 种日常菜？下次日常进货 (${time}) 时会一起下架。`,
   manualDone: (renown: number) => `进货完成，声望 +${renown}`,
   manualFailed: '进货失败',
   buyFailed: '购买失败',
   capShared: (shared: number, can: number) =>
-    `同一网络或设备本轮已买 ${shared} 份（限购按店、设备、网络分别算），最多再买 ${can}`,
+    `同一网络或设备本轮已买 ${shared} 份 (限购按店、设备、网络分别算)，最多再买 ${can}`,
   capSlots: '橱柜格子满了，先腾出一格',
-  capFull: (max: number) => `橱柜里已经放满了（单种上限 ${max}）`,
+  capFull: (max: number) => `橱柜里已经放满了 (单种上限 ${max})`,
   capRoom: (max: number, have: number, room: number) => `橱柜单种上限 ${max}，已有 ${have}，最多再买 ${room}`,
   guessFailed: '竞猜失败',
   loadFailed: '读取菜场失败',
   nextStock: (time: string) => `下次进货 ${time}`,
-  manualBtn: (cost: string) => `手动进货（${cost} 银币）`,
+  manualBtn: (cost: string) => `手动进货 (${cost} 银币)`,
   specialWait: (min: number) => `刚抢过特价，同一网络还要等 ${min} 分钟才能再抢`,
   empty: '还没有进货',
   hot: '热门',
@@ -27,11 +27,11 @@ export default {
   buy: '买',
   guess: {
     title: '菜场竞猜',
-    hint: (hour: string) => `猜下一轮日常菜场（${hour} 点）上什么菜`,
+    hint: (hour: string) => `猜下一轮日常菜场 (${hour} 点) 上什么菜`,
     last: (n: number) => `上次猜中 ${n} 种`,
     joined: (list: string) => `已报名：${list}`,
     rule: (max: number, cost: number) => `最多选 ${max} 种，花 ${cost} 张神秘礼券`,
-    join: (n: number) => `报名（${n} 种）`,
+    join: (n: number) => `报名 (${n} 种)`,
   },
   /** 菜园姐（问题记录 176）：闲聊只写游戏里真有的规则 */
   sis: {

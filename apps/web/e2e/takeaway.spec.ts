@@ -57,10 +57,10 @@ test('外卖：外卖券开通 → 私人刷新 → 接单 → 无人机送达',
     await page.getByTestId(`take-${orderId}`).click();
     expect((await delivered).ok()).toBe(true);
     await page.getByTestId('tab-deliveries').click();
-    await expect(page.getByTestId('tab-deliveries')).toHaveText('配送中（1）');
+    await expect(page.getByTestId('tab-deliveries')).toHaveText('配送中 (1)');
     await page.locator('[data-testid^="drone-"]').first().click();
     await expect(page.getByTestId('result-head')).toHaveText('无人机送到了');
-    await expect(page.getByTestId('tab-deliveries')).toHaveText('配送中（0）');
+    await expect(page.getByTestId('tab-deliveries')).toHaveText('配送中 (0)');
   } finally {
     await client.end();
   }

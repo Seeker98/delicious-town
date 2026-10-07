@@ -250,9 +250,9 @@ describe('AcquireView（收购 PR 3）', () => {
     vi.mocked(endpoints.acquireRelease).mockResolvedValue({ restId: 3 });
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = await mountView('/acquire?tab=mine');
-    expect(w.text()).toContain('名下的店（2 / 10）');
+    expect(w.text()).toContain('名下的店 (2 / 10)');
     const h3 = w.get('[data-testid="acquire-hold-3"]').text();
-    expect(h3).toContain('昨天分红 50,000 银币（打理过）');
+    expect(h3).toContain('昨天分红 50,000 银币 (打理过)');
     expect(h3).toContain('今天还没打理');
     const h4 = w.get('[data-testid="acquire-hold-4"]').text();
     expect(h4).toContain('昨天没有分红');
@@ -263,7 +263,7 @@ describe('AcquireView（收购 PR 3）', () => {
     await w.get('[data-testid="acquire-rate-3"]').setValue('0.7');
     await w.get('[data-testid="acquire-list-3"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('按身价的 70% 挂牌（700,000 银币）');
+    expect(confirm.mock.calls[0]![0]).toContain('按身价的 70% 挂牌 (700,000 银币)');
     expect(endpoints.acquireList).toHaveBeenCalledWith(3, 0.7);
     await w.get('[data-testid="acquire-unlist-4"]').trigger('click');
     await flushPromises();
