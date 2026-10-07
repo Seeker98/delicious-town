@@ -251,6 +251,14 @@ export function createExchangeService(d: GameDeps) {
     const fills: Array<{ price: number; qty: number; held: boolean }> = [];
     /** 这次成交到的玩家挂单方（任务计数，问题记录 318）：同一家只计一次；冻结的成交不计（backlog 318） */
     const makers = new Set<number>();
+    /** 支线“交易所”的计数（问题记录 515）：店 id → 键 → 数量；和系统买卖、兜底价卖给系统、稀有食材按个数，冻结的成交不计 */
+    const quest = new Map<number, Map<string, number>>();
+    const count = (restId: number, key: string, n: number) => {
+      const m = quest.get(restId) ?? new Map<string, number>();
+      m.set(key, (m.get(key) ?? 0) + n);
+      quest.set(restId, m);
+    };
+    const rare = (o.config.foods.get(b.foodsId)?.odds ?? 100) < 100;
     let left = b.qty;
     for (const lv of queue) {
       if (left === 0) break;
@@ -290,6 +298,9 @@ export function createExchangeService(d: GameDeps) {
           if (plan.dropped > 0) addCredit(credits, o.rest.id, 0, b.foodsId, plan.dropped);
         }
         fills.push({ price, qty: n, held: false });
+        count(o.rest.id, b.side === 'sell' ? 'exchange.system.sell' : 'exchange.system.buy', 1);
+        if (b.side === 'sell' && lv.s.floor) count(o.rest.id, 'exchange.system.floor', 1);
+        if (rare) count(o.rest.id, `exchange.rare.${b.side}`, n);
         left -= n;
         continue;
       }
@@ -403,6 +414,10 @@ export function createExchangeService(d: GameDeps) {
       else gainCoin(o, price * n - fee, { source: 'exchange' });
       fills.push({ price, qty: n, held });
       if (!held) makers.add(m.rest_id);
+      if (!held && rare) {
+        count(o.rest.id, `exchange.rare.${b.side}`, n);
+        count(m.rest_id, `exchange.rare.${m.side}`, n);
+      }
       left -= n;
     }
     await creditWallets(o.tx, credits);
@@ -418,8 +433,10 @@ export function createExchangeService(d: GameDeps) {
     // 下单方和挂单方一起按店 id 升序写计数：两笔成交互为挂单方、或同时给同两家挂单方计数时，
     // 加锁顺序一致，不会死锁（和 creditWallets 一样）
     if (fills.some((x) => !x.held)) makers.add(o.rest.id);
-    for (const id of [...makers].sort((a, b) => a - b))
-      await (id === o.rest.id ? emitAction(o, 'exchange.fill') : emitActionFor(o, id, 'exchange.fill'));
+    for (const id of makers) count(id, 'exchange.fill', 1);
+    for (const id of [...quest.keys()].sort((a, b) => a - b))
+      for (const [key, n] of quest.get(id)!)
+        await (id === o.rest.id ? emitAction(o, key, n) : emitActionFor(o, id, key, n));
     restLog(o, 'exchange.order', {
       ...(opts.toSystem ? { toSystem: true } : {}),
       side: b.side,
