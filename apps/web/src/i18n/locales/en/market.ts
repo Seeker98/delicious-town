@@ -54,7 +54,7 @@ const market: Messages['market'] = {
       'The more dishes you can cook, the more customers you get.',
       'Check in on the home page every day for a check-in gift.',
       'Mr. Krab came haggling again. Hmph.',
-      'Sister Wen hands out vouchers at the square every day. Go have a chat.',
+      'Sister Wen hands out vouchers at the bar every day. Go have a chat.',
       'Mayor Big Pot can eat half my stall in a day.',
       "Drop by the Guild: answer Mayor Big Pot's question right and you get a prize.",
       'Ingredients look pricey, but a good recipe pays for itself.',

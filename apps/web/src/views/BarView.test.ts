@@ -3,9 +3,12 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { barData } from '../components/bar/testData';
+import { useToastStore } from '../stores/toast';
+import { useRestaurantStore } from '../stores/restaurant';
+import type { RestaurantDto } from '@dt/shared';
 import BarView from './BarView.vue';
 
-vi.mock('../api/endpoints', () => ({ endpoints: { bar: vi.fn() } }));
+vi.mock('../api/endpoints', () => ({ endpoints: { bar: vi.fn(), townTalk: vi.fn() } }));
 
 const stubs = {
   FgPanel: { template: '<p>fg-panel</p>', props: ['data'] },
@@ -48,6 +51,32 @@ describe('BarView', () => {
     const w = mount(BarView, { global: { stubs } });
     await flushPromises();
     expect(w.find('[data-testid="bar-wenjie"]').text()).toContain('雯姐');
+  });
+
+  it('和雯姐每天聊一次搬到了酒吧：聊了提示台词和奖励，重新读取；聊过的变灰（问题记录 453）', async () => {
+    vi.mocked(endpoints.townTalk).mockResolvedValue({
+      npc: 'wenjie',
+      talk: 'wenjie',
+      rewards: [{ kind: 'goods', id: 1, num: 5 }],
+    });
+    const w = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    await w.get('[data-testid="talk-wenjie"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townTalk).toHaveBeenCalledWith('wenjie');
+    expect(useToastStore().items.at(-1)!.text).toBe('雯姐：用了飘柔就明显气质上来了! 获得 道具1×5');
+    expect(endpoints.bar).toHaveBeenCalledTimes(2);
+    vi.mocked(endpoints.bar).mockResolvedValue(barData({ wenjieTalked: true }));
+    const again = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    expect(again.get('[data-testid="talk-wenjie"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('区服关了小镇（聊天走小镇的接口）：酒吧不显示和雯姐聊天（终审）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['town'] } as unknown as RestaurantDto;
+    const w = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    expect(w.find('[data-testid="talk-wenjie"]').exists()).toBe(false);
   });
 
   it('面板要求刷新时重新读取', async () => {

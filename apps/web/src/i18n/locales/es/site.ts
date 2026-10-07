@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    misc1007:
+      'La charla diaria con la Hermana Wen se ha mudado de la plaza al bar; el Pack de ingrediente universal al azar ahora solo da un ingrediente universal, y el Pack de inicio también da 10 ingredientes universales de nivel 1, 10 de nivel 2 y 5 de nivel 3; las cucarachas que ponen los amigos se van solas como mucho a las 4 horas; los ingredientes de nivel 6 no se pueden comerciar en la bolsa por ahora, y sus órdenes abiertas se retiran y se devuelven a tu cuenta de la bolsa; la tarea «Comer gratis» cuenta en cuanto empiezas; la nevera también muestra el nivel de cada ingrediente y cuántos necesita aún tu calle; repostar usa ahora un icono de gota de aceite',
     fix1007:
       'Un lote de pequeños arreglos: en las predicciones, los eventos terminados muestran primero los más recientes; en los vasos, plantarse tras la ronda 3 siempre sale en las noticias y superar las 4 rondas siempre se anuncia a todo el pueblo (ya no hay límite de uno al día), y la tabla de premios sigue visible con la ronda actual marcada mientras decides si plantarte; las descripciones de las mesas de El último caramelo siguen las reglas reales; la página «Míos» de adquisiciones indica que el dividendo de ayer aún no se ha pagado hasta que se paga; los enlaces de registro diario y repostar de la página principal son más fáciles de pulsar; los enlaces de nombres dentro del texto se subrayan al pasar el ratón o al seleccionarlos con el teclado',
     links1007:

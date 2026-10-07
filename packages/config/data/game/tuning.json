@@ -39,6 +39,7 @@
     "roachRateBase": 0.0018,
     "roachRatePerStar": 0.0001,
     "roachMaxShare": 0.33,
+    "roachForeignHours": 4,
     "squidwardRate": 0.0015,
     "squidwardMinStar": 3,
     "squidwardOtherStreetFactor": 3,
@@ -404,7 +405,7 @@
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "exchange": {
     "minLevel": 20, "minAccountDays": 7, "feeRate": 0.05, "bandLow": 0.5, "bandHigh": 2,
-    "refMinTrades": 3, "maxOpenOrders": 10, "orderHours": 24, "maxQty": 999, 
+    "refMinTrades": 3, "maxOpenOrders": 10, "orderHours": 24, "maxQty": 999, "closedLevels": [6], 
     "suspicious": { "traceDays": 30, "edgeHigh": 1.8, "edgeLow": 0.6, "repeatDays": 7, "repeatCount": 3, "largeAmount": 1000000, "holdHours": 24 },
     "maker": { "enabled": true, "bidRate": 0.7, "askRate": 1.3, "marketCapRate": 0.9, "dailyBuy": 100, "stockMax": 500, "playerDaily": 20 },
     "refOverrides": {}

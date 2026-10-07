@@ -256,7 +256,7 @@ const bar: Messages['bar'] = {
     name: 'Sœur Wen',
     chat: [
       'Te revoilà ? À quoi on joue aujourd’hui ?',
-      'Plus de bons mystère ? Viens discuter avec moi sur la place, j’en donne tous les jours.',
+      'Plus de bons mystère ? Viens discuter avec moi, j’en donne tous les jours.',
       'Aux gobelets, chaque manche a plus de gobelets et un meilleur lot, mais une erreur et tu perds tout. Sache t’arrêter.',
       'Un des verres du Piment du Diable est très épicé. Réfléchis avant de boire.',
       'Regarde bien l’ordre au Cocktail Mémoire. Les recettes s’allongent au fil des niveaux.',
@@ -266,12 +266,12 @@ const bar: Messages['bar'] = {
       'Aux fléchettes, vise le milieu. Plus c’est près du centre, plus ça rapporte.',
       'Les jeux du bar ont une limite par jour. Ne joue pas tout d’un coup.',
       'Le Maire Grosse Marmite est encore venu boire à l’œil. Qu’est-ce qu’on y peut.',
-      'J’ai aussi un stand sur la place. Passe me voir souvent.',
+      'Viens discuter avec moi au bar une fois par jour. N’oublie pas.',
     ],
     memoryLeft: (n) =>
       `Encore ${n} ${plFr(n, 'partie', 'parties')} de Cocktail Mémoire aujourd’hui. On teste ta mémoire ?`,
     dartsLeft: (n) => `Encore ${n} ${plFr(n, 'partie', 'parties')} de fléchettes aujourd’hui. Main sûre !`,
-    noTickets: 'Plus de bons mystère ? Viens discuter avec moi sur la place, je t’en donnerai.',
+    noTickets: 'Plus de bons mystère ? Viens discuter avec moi, je t’en donnerai.',
     slotFloor: (n) => `Plus que ${n} ${plFr(n, 'tour', 'tours')} et la machine à sous garantit un rare !`,
     devilOpen: 'Tu n’as pas fini le Piment du Diable. Pas question de filer.',
   },

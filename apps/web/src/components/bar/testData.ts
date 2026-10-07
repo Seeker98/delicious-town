@@ -4,6 +4,7 @@ export const barData = (patch: Partial<BarDto> = {}): BarDto => ({
   tickets: 20,
   coin: 0,
   krabCoins: 3,
+  wenjieTalked: false,
   fg: { result: null, times: 0 },
   cup: {
     result: null,

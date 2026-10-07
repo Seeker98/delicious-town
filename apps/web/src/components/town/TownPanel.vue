@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { NpcKey, TownDto, TownRewardDto } from '@dt/shared';
+import type { TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
-import NpcTalk from './NpcTalk.vue';
 import { effectChips } from '../../utils/effects';
 import { formatNum } from '../../utils/format';
 import { rewardText } from '../../utils/rewards';
@@ -21,7 +20,6 @@ const t = useT();
 const busy = ref(false);
 const clock = useServerClock(() => props.data.now);
 
-const NPCS: readonly NpcKey[] = ['wenjie'];
 const TYPES = [1, 2, 3, 4] as const;
 
 async function act<T>(fn: () => Promise<T>, done: (r: T) => string, fallback: string) {
@@ -130,10 +128,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
 </script>
 
 <template>
-  <h6 class="dt-section">NPC</h6>
-  <!-- 13 哥、镇长大胃锅（原来的大胃哥）、卡门的见面礼都在协会（问题记录 441） -->
-  <NpcTalk v-for="n in NPCS" :key="n" :data="data" :npc="n" @reload="emit('reload')" />
-
+  <!-- 广场没有 NPC 了：雯姐在酒吧（问题记录 453）；13 哥、镇长大胃锅、卡门的见面礼在协会（问题记录 441） -->
   <h6 class="dt-section">{{ t.town.krab }}</h6>
   <div class="dt-item">
     <div class="dt-item-main">

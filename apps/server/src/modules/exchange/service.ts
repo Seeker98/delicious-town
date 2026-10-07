@@ -94,7 +94,7 @@ export function createExchangeService(d: GameDeps) {
     if (reason === 'exchange_level') throw requirement(reason, { need: t.minLevel });
     if (reason === 'exchange_age') throw requirement(reason, { days: t.minAccountDays });
     if (reason) throw requirement(reason);
-    if (!isTradable(o.config.foods.get(b.foodsId))) throw invalidState('not_tradable');
+    if (!isTradable(o.config.foods.get(b.foodsId), t.closedLevels)) throw invalidState('not_tradable');
     if (b.qty > t.maxQty) throw limitReached('exchange_qty', { max: t.maxQty });
     const day = gameDay(o.now);
     const ref = await refPrice(o.tx, o.config, t, o.tuning.market.levelPriceRate, o.shardId, b.foodsId, day);
@@ -535,7 +535,7 @@ export function createExchangeService(d: GameDeps) {
     const t = s.tuning.exchange;
     const day = gameDay(d.now());
     const list = [...d.config.foods.values()]
-      .filter((f) => isTradable(f))
+      .filter((f) => isTradable(f, t.closedLevels))
       .sort((a, b) => a.level - b.level || a.id - b.id);
     const ids = list.map((f) => f.id);
     // 一次批量取参考价；最新成交价每种食材走索引取一条（156-1 终审 I2）
@@ -586,7 +586,7 @@ export function createExchangeService(d: GameDeps) {
   async function book(ctx: RestCtx, foodsId: number): Promise<ExchangeBookDto> {
     const s = await d.shards.ensureFeature(ctx.shardId, 'exchange');
     const t = s.tuning.exchange;
-    if (!isTradable(d.config.foods.get(foodsId))) throw invalidState('not_tradable');
+    if (!isTradable(d.config.foods.get(foodsId), t.closedLevels)) throw invalidState('not_tradable');
     const now = d.now();
     const ref = await refPrice(
       d.db,
@@ -756,9 +756,9 @@ export function createExchangeService(d: GameDeps) {
    * 最多约 40 条查询，不该占着店锁。事务里再取就只读一条；正好跨过 0 点时事务里照常补算
    */
   async function warmRef(ctx: RestCtx, foodsId: number): Promise<void> {
-    if (!isTradable(d.config.foods.get(foodsId))) return;
     // 功能关着时照常报 FEATURE_DISABLED；等级不够的不补算（锁里的资格检查会拒绝），免得随便下单就触发几十条查询（终审 Important 2）
     const { tuning } = await d.shards.ensureFeature(ctx.shardId, 'exchange');
+    if (!isTradable(d.config.foods.get(foodsId), tuning.exchange.closedLevels)) return;
     const rest = await d.db
       .selectFrom('restaurant')
       .select('level')

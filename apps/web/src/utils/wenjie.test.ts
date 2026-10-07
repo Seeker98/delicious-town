@@ -29,8 +29,8 @@ describe('雯姐台词（问题记录 210）', () => {
     expect(texts(bar()).some((t) => t.includes('还能玩') || t.includes('还能扔'))).toBe(false);
   });
 
-  it('礼券用完提醒去广场找她；老虎机快保底时提醒；辣杯没喝完时提醒', () => {
-    expect(texts(bar({ tickets: 0 })).some((t) => t.includes('广场'))).toBe(true);
+  it('礼券用完提醒找她聊天（问题记录 453：聊天搬到酒吧）；老虎机快保底时提醒；辣杯没喝完时提醒', () => {
+    expect(texts(bar({ tickets: 0 })).some((t) => t.includes('找我聊聊天'))).toBe(true);
     const slot = { emailVerified: true, lamp: false, floorLeft: 3, pool: [], stats: [] };
     expect(texts(bar({ slot })).some((t) => t.includes('再拉 3 次'))).toBe(true);
     const devil = {

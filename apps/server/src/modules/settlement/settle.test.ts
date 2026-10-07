@@ -132,7 +132,7 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
 
   it('蟑螂：原有蟑螂被蟑螂药消灭变成 -3；新蟑螂在上座判定之前产生', () => {
     const tables = [
-      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T03:00:00.000Z' } },
       { no: 2, floor: 1, customer: 0 },
       { no: 3, floor: 1, customer: 0 },
       { no: 4, floor: 1, customer: 0 },
@@ -145,9 +145,23 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(kept.tables[0]).toMatchObject({ customer: 3, roach: { by: 7 } });
   });
 
-  it('关闭自然蟑螂时不产生新蟑螂，原有蟑螂照常处理', () => {
+  it('别人放的蟑螂待满 4 小时就跑掉，桌子照常接客；自然长的、不满 4 小时的留着（问题记录 457）', () => {
     const tables = [
       { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      { no: 2, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:01.000Z' } },
+      { no: 3, floor: 1, customer: 3, roach: { by: null, at: '2026-09-29T00:00:00.000Z' } },
+      { no: 4, floor: 1, customer: 0 },
+    ];
+    const r = settle({ tables }, { naturalRoach: false }, Array(20).fill(0.9) as number[]);
+    expect(r.tables[0]!.customer).not.toBe(3);
+    expect(r.tables[0]!.roach).toBeUndefined();
+    expect(r.tables[1]).toMatchObject({ customer: 3, roach: { by: 7 } });
+    expect(r.tables[2]).toMatchObject({ customer: 3, roach: { by: null } });
+  });
+
+  it('关闭自然蟑螂时不产生新蟑螂，原有蟑螂照常处理', () => {
+    const tables = [
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T03:00:00.000Z' } },
       { no: 2, floor: 1, customer: 0 },
     ];
     const r = settle({ tables }, { naturalRoach: false }, Array(12).fill(0.001) as number[]);
@@ -338,7 +352,7 @@ describe('问题记录 228：一家店的蟑螂上限', () => {
   });
   it('原有的蟑螂算在上限里；被蟑螂药消灭的腾出名额', () => {
     const tables = [
-      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T03:00:00.000Z' } },
       ...empty(6).slice(1),
     ];
     expect(roaches(settle({ tables }, {}, Array(80).fill(0.0001) as number[]))).toBe(2);

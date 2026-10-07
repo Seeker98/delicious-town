@@ -56,6 +56,7 @@
 .bi-cup-straw::before { content: "\f2df"; }
 .bi-door-closed::before { content: "\f306"; }
 .bi-droplet::before { content: "\f30d"; }
+.bi-droplet-fill::before { content: "\f30b"; }
 .bi-droplet-half::before { content: "\f30c"; }
 .bi-easel::before { content: "\f310"; }
 .bi-envelope::before { content: "\f32f"; }
@@ -63,7 +64,6 @@
 .bi-flag::before { content: "\f3cc"; }
 .bi-flower1::before { content: "\f3cd"; }
 .bi-flower2::before { content: "\f3ce"; }
-.bi-fuel-pump::before { content: "\f83e"; }
 .bi-gem::before { content: "\f3e6"; }
 .bi-gift::before { content: "\f3ec"; }
 .bi-graph-up-arrow::before { content: "\f673"; }

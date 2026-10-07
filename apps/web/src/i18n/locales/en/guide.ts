@@ -54,7 +54,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Square: chat with Sister Wen once a day for Mystery Vouchers; shake Mr. Krab’s money bag',
+      text: 'Square: shake Mr. Krab’s money bag',
     },
     {
       to: '/society/mayor',
@@ -68,7 +68,10 @@ const guide: Messages['guide'] = {
       to: '/market',
       text: 'Market: the daily market restocks every two hours during the day, the bargain market every hour, and the premium market three times a day',
     },
-    { to: '/bar', text: 'Bar: a few mini-games a day; Memory Mixing and darts both give rewards' },
+    {
+      to: '/bar',
+      text: 'Bar: chat with Sister Wen once a day for Mystery Vouchers; a few mini-games a day, and Memory Mixing and darts both give rewards',
+    },
     {
       to: '/tower',
       text: 'Chef Tower: challenge the tower keepers for renown, and spend it in the renown shop',

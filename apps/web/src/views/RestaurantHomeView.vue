@@ -381,7 +381,7 @@ onBeforeUnmount(() => {
             :disabled="busy || refuelCost <= 0"
             @click="act(() => endpoints.refuel(), t.home.refuelFailed)"
           >
-            <i class="bi bi-fuel-pump" aria-hidden="true"></i
+            <i class="bi bi-droplet-fill" aria-hidden="true"></i
             ><span class="text-truncate">{{ t.home.refuelShort(refuelCost >= refuelNeed) }}</span
             ><span class="flex-shrink-0"
               ><i class="bi bi-coin me-1" aria-hidden="true"></i>{{ formatNum(refuelCost) }}</span

@@ -220,8 +220,8 @@ describe('CupboardView', () => {
   it('冰箱：解冻按钮写明个数和银币，确认后才解冻；放不下时按钮灰掉（问题记录 206）', async () => {
     vi.mocked(endpoints.fridge).mockResolvedValue({
       items: [
-        { foodsId: 302, num: 5, thawable: 3, thawCoin: 750 },
-        { foodsId: 303, num: 2, thawable: 0, thawCoin: 0 },
+        { foodsId: 302, num: 5, thawable: 3, thawCoin: 750, streetNeed: 4 },
+        { foodsId: 303, num: 2, thawable: 0, thawCoin: 0, streetNeed: 0 },
       ],
     });
     vi.mocked(endpoints.thaw).mockResolvedValue({ foodsId: 302, moved: 3, coin: 750 });
@@ -230,6 +230,10 @@ describe('CupboardView', () => {
     await flushPromises();
     await w.find('[data-testid="tab-fridge"]').trigger('click');
     await flushPromises();
+    // 和橱柜一样写等级和本街还需几个（问题记录 465）
+    expect(w.get('[data-testid="fridge-302"]').text()).toContain('2 级');
+    expect(w.get('[data-testid="fridge-302"]').text()).toContain('本街还需 4');
+    expect(w.get('[data-testid="fridge-303"]').text()).not.toContain('本街还需');
     const btn = w.find('[data-testid="thaw-302"]');
     expect(btn.text()).toContain('×3');
     expect(btn.text()).toContain('750 银币');

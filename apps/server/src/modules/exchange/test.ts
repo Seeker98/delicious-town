@@ -1,6 +1,21 @@
-import { sql } from 'kysely';
+import { sql, type Kysely } from 'kysely';
+import type { DB } from '../../db/schema';
+import { createShard } from '../../../test/fixtures';
 import type { TestGame } from '../../../test/game';
 import { newRestaurant } from '../../../test/game';
+
+/**
+ * 放开全部等级的测试区服：六级默认关掉交易（问题记录 461），做市的用例照旧用菜场不卖的六级食材
+ * （七级系统价太高，会碰到大额冻结）
+ */
+export async function createShardAllLevels(db: Kysely<DB>): Promise<number> {
+  const id = await createShard(db);
+  await db
+    .insertInto('shard_config')
+    .values({ shard_id: id, override: JSON.stringify({ tuning: { exchange: { closedLevels: [] } } }) })
+    .execute();
+  return id;
+}
 
 /** 满足交易所门槛的店：等级 30、邮箱已验证、账号注册满 30 天，可指定银币和食材 */
 export async function trader(

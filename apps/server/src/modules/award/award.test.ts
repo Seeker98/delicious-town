@@ -83,13 +83,13 @@ describe('openGift（规格书 07 §7.5）', () => {
     expect(lucky[0]).toMatchObject({ type: 'gain', kind: 'goods', id: config.randomGoodsIds(7)[0] });
   });
 
-  it('随机万能食材礼包：万能食材按权重、1 级食材按权重', async () => {
+  it('随机万能食材礼包：只出 1 个万能食材，按权重（问题记录 455：不再附带 1 级食材）', async () => {
     const ctx = await newRestaurant(t, { shardId: await noTiltShard(t) });
     rngValues = [0.5, 0, 0.5, 0];
     await run(ctx, (op) => openGift(op, config.requireGoods(gid('随机万能食材礼包')), 1));
     expect((await foodNum(t, ctx.restaurantId, fid('一级万能食材'))).num).toBe(1);
     const firstLevel1 = config.foodPools.get(1)!.items[0]!.id;
-    expect((await foodNum(t, ctx.restaurantId, firstLevel1)).num).toBe(2);
+    expect((await foodNum(t, ctx.restaurantId, firstLevel1)).num).toBe(0);
     rngValues = [0.5];
   });
 });

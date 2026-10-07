@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    misc1007:
+      'La discussion quotidienne avec Sœur Wen a déménagé de la place au bar ; le Pack d’ingrédient universel au hasard ne donne plus qu’un ingrédient universel, et le Pack de départ offre aussi 10 ingrédients universels de niveau 1, 10 de niveau 2 et 5 de niveau 3 ; les cafards posés par des amis partent d’eux-mêmes au bout de 4 heures au plus ; les ingrédients de niveau 6 ne peuvent plus être échangés à la bourse pour l’instant, et leurs ordres en cours sont retirés et rendus sur votre compte de bourse ; la tâche « Manger gratis » compte dès que vous commencez ; le frigo affiche aussi le niveau de chaque ingrédient et combien il en faut encore pour votre rue ; le remplissage d’huile utilise une icône de goutte',
     fix1007:
       'Une série de petits correctifs : dans les prédictions, les événements terminés affichent d’abord les plus récents ; aux gobelets, s’arrêter après la manche 3 fait toujours les gros titres et réussir les 4 manches est toujours annoncé à toute la ville (plus de limite d’une fois par jour), et le tableau des récompenses reste visible avec la manche en cours mise en évidence pendant que vous décidez ; les descriptions des tables du Dernier bonbon suivent les vraies règles ; la page « Les miens » des rachats indique que le dividende d’hier n’a pas encore été versé tant qu’il ne l’est pas ; les liens de connexion quotidienne et de remplissage d’huile de l’accueil sont plus faciles à toucher ; les liens de noms dans le texte sont soulignés au survol de la souris ou quand on les sélectionne au clavier',
     links1007:

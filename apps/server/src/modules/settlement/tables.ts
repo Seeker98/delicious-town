@@ -183,8 +183,13 @@ export function allocateTables(
       continue;
     }
 
-    // C. 蟑螂桌
-    if (table.customer === 3) {
+    // C. 蟑螂桌。别人放的待满 roachForeignHours 就跑掉，这张桌子本轮照空桌处理（问题记录 457）
+    const foreignExpired =
+      table.customer === 3 &&
+      table.roach?.by != null &&
+      input.now.getTime() - Date.parse(table.roach.at) >= t.roachForeignHours * 3_600_000;
+    if (foreignExpired) roaches -= 1;
+    if (table.customer === 3 && !foreignExpired) {
       const killed = rng.chance(flags.roachClear);
       if (killed) roaches -= 1;
       type = killed ? -3 : 3;

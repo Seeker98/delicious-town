@@ -76,6 +76,22 @@ describe('冰箱（规格书 05 §5.2）', () => {
     });
   });
 
+  it('冰箱也写本街还需几个，和橱柜一样（问题记录 465）', async () => {
+    const ctx = await newRestaurant(t);
+    await t.db
+      .insertInto('cupboard_food')
+      .values([
+        { rest_id: ctx.restaurantId, foods_id: fid('葡萄'), num: 1, fridge_num: 4 },
+        { rest_id: ctx.restaurantId, foods_id: fid('大米'), num: 1, fridge_num: 2 },
+      ])
+      .execute();
+    const f = await c().fridge(ctx);
+    const list = await c().list(ctx);
+    expect(f.items.find((x) => x.foodsId === fid('葡萄'))!.streetNeed).toBeGreaterThan(0);
+    for (const x of f.items)
+      expect(x.streetNeed).toBe(list.items.find((y) => y.foodsId === x.foodsId)!.streetNeed);
+  });
+
   it('解冻：移回橱柜，花 数量×单价×0.25 银币', async () => {
     const ctx = await newRestaurant(t, { patch: { coin: 10000 } });
     await t.db
@@ -91,7 +107,9 @@ describe('冰箱（规格书 05 §5.2）', () => {
     const cost = Math.ceil(2 * config.requireFood(fid('大米')).coin * 0.25);
     // 列表先告诉玩家能解冻几个、要花多少银币（问题记录 206）
     const f = await c().fridge(ctx);
-    expect(f.items).toEqual([{ foodsId: fid('大米'), num: 2, thawable: 2, thawCoin: cost }]);
+    expect(f.items).toEqual([
+      { foodsId: fid('大米'), num: 2, thawable: 2, thawCoin: cost, streetNeed: expect.any(Number) },
+    ]);
     await c().readFridge(ctx);
     const r = await c().thaw(ctx, fid('大米'));
     expect(r.data).toEqual({ foodsId: fid('大米'), moved: 2, coin: cost });

@@ -43,7 +43,13 @@ export async function barView(
       .orderBy('award_id')
       .execute(),
     peekRounds(db, rest.id),
-    getDailies(db, rest.id, ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice', 'bar.deal'], day),
+    // 雯姐每天聊一次搬到了酒吧（问题记录 453）：聊天计数和酒吧的每日次数同一条查询
+    getDailies(
+      db,
+      rest.id,
+      ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice', 'bar.deal', 'town.talk.wenjie'],
+      day,
+    ),
   ]);
   const devil = rounds.devil as DevilState | undefined;
   const memory = rounds.memory as MemoryState | undefined;
@@ -61,6 +67,7 @@ export async function barView(
     tickets: have(GOODS.mysteryTicket),
     coin: rest.coin,
     krabCoins: have(GOODS.krabCoin),
+    wenjieTalked: daily['town.talk.wenjie']! > 0,
     fg: { result: resultDto(s?.fg_result ?? null), times: s?.fg_times ?? 0 },
     cup: {
       result: resultDto(s?.cup_result ?? null),
