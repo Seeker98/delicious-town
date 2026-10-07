@@ -115,7 +115,7 @@ async function exchange() {
         data-testid="ex-num"
       />
       <button
-        class="btn btn-sm btn-outline-success text-nowrap"
+        class="btn btn-sm btn-outline-primary text-nowrap"
         data-testid="ex-go"
         :disabled="busy || !!exBlock"
         @click="exchange"

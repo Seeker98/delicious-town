@@ -80,7 +80,7 @@ async function buy(x: RenownShopItemDto) {
         :data-testid="`num-${x.goodsId}`"
       />
       <button
-        class="btn btn-sm btn-outline-success"
+        class="btn btn-sm btn-outline-primary"
         :data-testid="`buy-${x.goodsId}`"
         :disabled="busy || !!blockOf(x)"
         @click="buy(x)"

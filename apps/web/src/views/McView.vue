@@ -405,7 +405,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           :data-testid="`exchange-num-${r.level}`"
         />
         <button
-          class="btn btn-sm btn-outline-success"
+          class="btn btn-sm btn-outline-primary"
           :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
           @click="exchange(r.level, r.num)"
         >
@@ -422,7 +422,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
         <button
           v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-primary"
           data-testid="learn-all"
           :disabled="busy"
           @click="learnAll"
@@ -455,7 +455,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         </div>
         <button
           v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-primary"
           :data-testid="`learn-${r.mcId}`"
           :disabled="busy"
           @click="act(() => endpoints.mcLearn(r.mcId), t.mc.learnedName(nameOf(r.mcId)), t.mc.learnFailed)"

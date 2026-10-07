@@ -247,7 +247,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
             pickedItem.foodsId === SHARED_FOODS.masterLevel1 ||
             pickedItem.foodsId === SHARED_FOODS.masterLevel2
           "
-          class="btn btn-sm btn-outline-success"
+          class="btn btn-sm btn-outline-primary"
           data-testid="exchange"
           :disabled="busy || exchangeMax < 2"
           @click="

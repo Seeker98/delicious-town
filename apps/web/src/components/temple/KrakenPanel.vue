@@ -134,7 +134,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
           t.temple.kraken.mcOption(catalog.mcName(s.mcId), catalog.mc(s.mcId)?.level ?? '?')
         }}</span>
         <button
-          class="btn btn-sm btn-outline-success"
+          class="btn btn-sm btn-outline-primary"
           :data-testid="`tentacle-${i}`"
           :disabled="busy || s.bought || shop.tentacles < (catalog.mc(s.mcId)?.level ?? 99)"
           @click="shopAct(() => endpoints.tentacleExchange(i), t.temple.kraken.exFailed)"
