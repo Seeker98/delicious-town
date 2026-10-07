@@ -59,7 +59,7 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     await flushPromises();
     expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
     expect(w.get('[data-testid="card-block"]').text()).toBe(
-      '你和这家店的老板最近在同一台设备或同一网络登录过，不能收购',
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过，不能收购',
     );
   });
 
@@ -100,12 +100,13 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     expect(w.get('[data-testid="card-block"]').text()).toBe('这家店星级不够，还没有身价');
   });
 
-  it('对方被封号：卡片上也用笼统说法，不透露封号（审查 Minor 3）', async () => {
+  it('对方被封号：卡片上不写原因、不给收购按钮，不透露封号（审查 Minor 3；终审：只有封号用笼统说法会被认出来）', async () => {
     vi.mocked(endpoints.acquireRest).mockResolvedValue(
       rest({ acquireBlock: 'banned', listedBlock: 'banned' }),
     );
     const w = mount(AcquireCard, { props: { restId: 2 } });
     await flushPromises();
-    expect(w.get('[data-testid="card-block"]').text()).toBe('暂时不能收购这家店');
+    expect(w.find('[data-testid="card-block"]').exists()).toBe(false);
+    expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
   });
 });

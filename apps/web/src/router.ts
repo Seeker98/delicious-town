@@ -1,6 +1,6 @@
 import type { Pinia } from 'pinia';
 import { createRouter, createWebHistory, type Router, type RouteRecordRaw } from 'vue-router';
-import { isChunkLoadError, reloadOnce } from './utils/chunkReload';
+import { installChunkReload } from './utils/chunkReload';
 import { resolveGuard, type RouteFlags } from './guard';
 import { useSessionStore } from './stores/session';
 
@@ -440,8 +440,6 @@ export function createAppRouter(pinia: Pinia): Router {
     return resolveGuard(to.meta as RouteFlags, session.me, to.fullPath);
   });
   // 发版后旧页面加载不到旧的页面文件：刷新一次转到要去的页面（问题记录 497）
-  router.onError((err, to) => {
-    if (isChunkLoadError(err)) reloadOnce(to.fullPath, (url) => window.location.assign(url));
-  });
+  installChunkReload(router, (url) => window.location.assign(url));
   return router;
 }

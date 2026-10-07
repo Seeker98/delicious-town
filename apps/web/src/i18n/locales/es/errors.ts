@@ -385,8 +385,7 @@ const errors: Messages['errors'] = {
     buyer_owned: () => 'Mientras tu restaurante tenga dueño, no puedes adquirir otros',
     holdings: () => 'No puedes tener más restaurantes',
     linked: () =>
-      'Tú y el dueño de este restaurante habéis entrado hace poco desde el mismo dispositivo o la misma red, así que no puedes adquirirlo',
-    unavailable: () => 'Ahora mismo no puedes adquirir este restaurante',
+      'Tú y este restaurante (o su dueño) habéis iniciado sesión hace poco desde el mismo dispositivo o la misma red, así que no puedes adquirirlo',
     other_shard: () => 'Ese restaurante no está en este servidor',
     owner_changed: () => 'Este restaurante acaba de cambiar de dueño. Actualiza y vuelve a mirar',
     price_changed: (p) =>

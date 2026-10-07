@@ -139,7 +139,7 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(confirm).not.toHaveBeenCalled();
     expect(endpoints.acquireBuy).not.toHaveBeenCalled();
     expect(useToastStore().items.at(-1)?.text).toBe(
-      '你和这家店的老板最近在同一台设备或同一网络登录过，不能收购',
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过，不能收购',
     );
   });
 
