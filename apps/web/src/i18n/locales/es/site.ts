@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ui1007:
+      'Pequeños ajustes de interfaz: Trato o no trato muestra ahora las cajas abiertas en cada ronda y su contenido; el «Reclamar» de la misión principal en la página principal es ahora un icono de regalo con texto, y los botones verdes del resto del juego usan el color de la marca; los filtros por nivel y por vía de los platos estrella son ahora pequeñas píldoras; los platos estrella ya no están en «Más»: entra desde la página principal',
     misc1007:
       'La charla diaria con la Hermana Wen se ha mudado de la plaza al bar; el Pack de ingrediente universal al azar ahora solo da un ingrediente universal, y el Pack de inicio también da 10 ingredientes universales de nivel 1, 10 de nivel 2 y 5 de nivel 3; las cucarachas que ponen los amigos se van solas como mucho a las 4 horas; los ingredientes de nivel 6 no se pueden comerciar en la bolsa por ahora, y sus órdenes abiertas se retiran y se devuelven a tu cuenta de la bolsa; la tarea «Comer gratis» cuenta en cuanto empiezas; la nevera también muestra el nivel de cada ingrediente y cuántos necesita aún tu calle; repostar usa ahora un icono de gota de aceite',
     fix1007:

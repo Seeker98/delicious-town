@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    ui1007:
+      'Petits ajustements d’interface : À prendre ou à laisser liste maintenant les boîtes ouvertes à chaque manche et leur contenu ; le « Récupérer » de la quête principale sur l’accueil est maintenant une icône cadeau avec du texte, et les boutons verts ailleurs prennent la couleur de la marque ; les filtres par niveau et par voie des plats signature sont maintenant de petites pastilles ; les plats signature ne sont plus dans « Plus » : on y accède depuis l’accueil',
     misc1007:
       'La discussion quotidienne avec Sœur Wen a déménagé de la place au bar ; le Pack d’ingrédient universel au hasard ne donne plus qu’un ingrédient universel, et le Pack de départ offre aussi 10 ingrédients universels de niveau 1, 10 de niveau 2 et 5 de niveau 3 ; les cafards posés par des amis partent d’eux-mêmes au bout de 4 heures au plus ; les ingrédients de niveau 6 ne peuvent plus être échangés à la bourse pour l’instant, et leurs ordres en cours sont retirés et rendus sur votre compte de bourse ; la tâche « Manger gratis » compte dès que vous commencez ; le frigo affiche aussi le niveau de chaque ingrédient et combien il en faut encore pour votre rue ; le remplissage d’huile utilise une icône de goutte',
     fix1007:

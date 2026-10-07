@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    ui1007:
+      'Small UI tweaks: Deal or No Deal now lists the boxes opened in each round and what was in them; the main quest “Claim” on the home page is now a gift icon with text, and the green buttons elsewhere now use the brand color; the level and path filters on the signature dish page are now small pills; Signature dishes was removed from “More” — open it from the home page',
     misc1007:
       'Sister Wen’s daily chat has moved from the square to the bar; the Random Universal Ingredient Pack now gives only a universal ingredient, and the Starter Pack also gives 10 level-1, 10 level-2 and 5 level-3 Universal Ingredients; roaches placed by friends leave on their own after at most 4 hours; level-6 ingredients can’t be traded on the exchange for now, and existing orders for them are withdrawn and returned to your exchange account; the “Eat for free” task now counts as soon as you start; the fridge also shows each ingredient’s level and how many your street still needs; refuelling now uses an oil-drop icon',
     fix1007:
