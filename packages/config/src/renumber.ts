@@ -48,6 +48,7 @@ export const ID_LIST_KEYS: Readonly<Record<string, IdKind>> = {
 export const TUNING_ID_PATHS: readonly PathRule[] = [
   [['shop', 'specialFallbackGoods'], 'goods'],
   [['shop', 'discardable', '*'], 'goods'],
+  [['shop', 'noSell', '*'], 'goods'],
   [['tower', 'rankGifts', '*', 1], 'goods'],
   [['takeaway', 'awards', '*', 0], 'goods'],
   [['takeaway', 'customer', 'success'], 'goods'],

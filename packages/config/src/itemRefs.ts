@@ -55,6 +55,7 @@ export function tuningRefs(t: Tuning): ItemRef[] {
   const { out, add, award } = collector();
   add('goods', t.shop.specialFallbackGoods, 'gives', '商店特价');
   for (const id of t.shop.discardable) add('goods', id, 'uses', '商店丢弃');
+  for (const id of t.shop.noSell) add('goods', id, 'uses', '不能卖回商店');
   for (const [, id] of t.tower.rankGifts) add('goods', id, 'gives', '厨塔排行');
   for (const [id] of t.takeaway.awards) add('goods', id, 'gives', '外卖');
   for (const id of [t.takeaway.customer.success, t.takeaway.customer.fail]) add('goods', id, 'gives', '外卖');
