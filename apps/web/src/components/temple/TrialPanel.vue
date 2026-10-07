@@ -120,7 +120,7 @@ const start = () =>
       <div class="mb-1" data-testid="trial-target">
         {{ t.temple.trial.target }}<b>{{ dish.name }}</b
         >{{ t.temple.trial.targetLevel(dish.level) }}
-        <button class="btn btn-sm btn-link" data-testid="trial-refresh" :disabled="busy" @click="refresh()">
+        <button class="dt-link-btn" data-testid="trial-refresh" :disabled="busy" @click="refresh()">
           {{ t.temple.trial.refresh }}
         </button>
         <div v-if="stat" class="text-muted">

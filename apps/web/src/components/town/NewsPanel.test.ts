@@ -210,7 +210,7 @@ describe('NewsPanel', () => {
     expect(row.classes()).not.toContain('fw-bold');
     expect(row.find('.dt-feed-time').classes()).not.toContain('fw-bold');
     expect(row.find('[data-testid="news-text"]').classes()).toContain('fw-bold');
-    expect(w.find('[data-testid="news-report-9-open"]').classes()).toContain('dt-inline-btn');
+    expect(w.find('[data-testid="news-report-9-open"]').classes()).toContain('dt-link-btn'); // 跟正文同字号、同行高（问题记录 196；451 起统一用 .dt-link-btn）
   });
 
   it('一番赏大赏和喇叭一样醒目显示（和首页一致），但没有举报按钮（backlog 一番赏）', async () => {

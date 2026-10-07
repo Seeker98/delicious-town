@@ -190,13 +190,11 @@ onMounted(() => void loadList());
         @refresh="refresh"
       />
     </template>
-    <a
-      v-if="ended.length > ENDED_SHOWN"
-      href="#"
-      class="small"
-      data-testid="pd-ended-more"
-      @click.prevent="endedAll = !endedAll"
-      >{{ endedAll ? t.predict.endedLess : t.predict.endedMore(ended.length) }}</a
-    >
+    <!-- .dt-link-btn 的字号跟着外层走：外面包一层 small -->
+    <div v-if="ended.length > ENDED_SHOWN" class="small">
+      <button type="button" class="dt-link-btn" data-testid="pd-ended-more" @click="endedAll = !endedAll">
+        {{ endedAll ? t.predict.endedLess : t.predict.endedMore(ended.length) }}
+      </button>
+    </div>
   </template>
 </template>

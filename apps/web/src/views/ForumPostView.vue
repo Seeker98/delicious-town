@@ -114,7 +114,7 @@ async function submit() {
   <template v-if="data">
     <div class="dt-page-title">
       <h5 class="mb-0">{{ data.post.title }}</h5>
-      <RouterLink to="/forum" class="small">{{ t.forum.post.back }}</RouterLink>
+      <RouterLink to="/forum" class="small dt-back">{{ t.forum.post.back }}</RouterLink>
     </div>
     <div class="dt-meta mb-2">
       <span class="badge bg-light text-dark border me-1">{{ t.forum.categories[data.post.category] }}</span>
@@ -225,7 +225,7 @@ async function submit() {
       <div class="dt-item-actions">
         <button
           v-if="data.can.reply && !r.deleted"
-          class="btn btn-sm btn-link"
+          class="dt-link-btn"
           :data-testid="`reply-to-${r.floor}`"
           @click="replyTo = r.floor"
         >
@@ -233,7 +233,7 @@ async function submit() {
         </button>
         <button
           v-if="r.canDelete"
-          class="btn btn-sm btn-link text-danger"
+          class="dt-link-btn text-danger"
           :disabled="busy"
           :data-testid="`reply-delete-${r.floor}`"
           @click="removeReply(r.id)"
@@ -252,7 +252,7 @@ async function submit() {
     <div v-if="data.can.reply" class="mt-3">
       <div v-if="replyTo !== null" class="dt-meta mb-1" data-testid="reply-target">
         {{ t.forum.post.replyTo(replyTo) }}{{ t.common.parenOpen
-        }}<a href="#" @click.prevent="replyTo = null">{{ t.common.cancel }}</a
+        }}<button type="button" class="dt-link-btn" @click="replyTo = null">{{ t.common.cancel }}</button
         >{{ t.common.parenClose }}
       </div>
       <textarea

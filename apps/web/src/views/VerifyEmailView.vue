@@ -31,7 +31,7 @@ onMounted(async () => {
       <p v-if="state === 'pending'">{{ t.auth.verifying }}</p>
       <p v-else-if="state === 'ok'" class="text-success">{{ t.auth.verifyOk }}</p>
       <p v-else class="text-danger">{{ error }}</p>
-      <RouterLink to="/shards">{{ t.auth.enterTown }}</RouterLink>
+      <RouterLink to="/shards" class="dt-go">{{ t.auth.enterTown }}</RouterLink>
     </div>
   </div>
 </template>

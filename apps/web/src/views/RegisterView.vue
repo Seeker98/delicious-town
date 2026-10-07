@@ -104,7 +104,7 @@ async function submit() {
         <button class="btn btn-primary w-100" :disabled="busy || !captchaToken">{{ t.auth.register }}</button>
       </form>
       <div class="mt-2 small">
-        <RouterLink to="/login">{{ t.auth.toLogin }}</RouterLink>
+        <RouterLink to="/login" class="dt-go">{{ t.auth.toLogin }}</RouterLink>
       </div>
     </div>
   </div>

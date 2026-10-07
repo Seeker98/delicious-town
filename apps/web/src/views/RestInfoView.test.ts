@@ -44,10 +44,11 @@ describe('RestInfoView', () => {
     expect(w.text()).toContain('幸运 6');
     expect(w.find('input').exists()).toBe(false);
     const link = w.find('[data-testid="to-points"]');
-    expect(link.text()).toBe('有 3 点可加 →');
+    expect(link.text()).toBe('有 3 点可加'); // 箭头由 .dt-go 加（问题记录 451）
+    expect(link.classes()).toContain('dt-go');
     expect(link.attributes('href')).toBe('/rest/equip');
     vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
-    expect((await mountView()).find('[data-testid="to-points"]').text()).toBe('厨具与加点 →');
+    expect((await mountView()).find('[data-testid="to-points"]').text()).toBe('厨具与加点');
   });
 
   it('日志：读完是空的才写还没有日志；读的时候不写；读失败写读取失败（问题记录 100 终审）', async () => {

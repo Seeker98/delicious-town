@@ -13,6 +13,12 @@ describe('ReportButton', () => {
     setActivePinia(createPinia());
   });
 
+  it('放在加粗的店名旁边也不加粗，保持灰色不显眼（问题记录 451 审查）', () => {
+    const w = mount(ReportButton, { props: { targetType: 'notice', targetId: 9 } });
+    const open = w.get('[data-testid="report-open"]');
+    expect(open.classes()).toEqual(expect.arrayContaining(['dt-link-btn', 'text-muted', 'fw-normal']));
+  });
+
   it('选理由、写说明、提交；成功后显示已收到', async () => {
     vi.mocked(endpoints.report).mockResolvedValue({ ok: true } as never);
     const w = mount(ReportButton, { props: { targetType: 'notice', targetId: 9 } });

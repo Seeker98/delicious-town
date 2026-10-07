@@ -51,7 +51,7 @@ onMounted(async () => {
     </p>
     <p class="small">
       {{ t.misc.weather.hammer
-      }}<RouterLink to="/town?tab=town" data-testid="weather-hammer">{{
+      }}<RouterLink to="/town?tab=town" class="dt-go" data-testid="weather-hammer">{{
         t.misc.weather.toSquare
       }}</RouterLink>
     </p>

@@ -26,7 +26,7 @@ const example = computed(
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small">{{ t.wiki.home }}</RouterLink>
+    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
     <h5 class="dt-page-title mt-2">{{ t.wiki.api.title }}</h5>
     <p class="small">{{ t.wiki.api.intro }}</p>
     <h6 class="dt-section">{{ t.wiki.api.base }}</h6>

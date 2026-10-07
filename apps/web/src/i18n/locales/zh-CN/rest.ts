@@ -2,8 +2,8 @@
 export default {
   info: {
     attrs: '属性',
-    toPoints: (n: number) => `有 ${n} 点可加 →`,
-    toEquip: '厨具与加点 →',
+    toPoints: (n: number) => `有 ${n} 点可加`,
+    toEquip: '厨具与加点',
     capacity: '容量',
     tableNum: '餐桌上限',
     cupboardNum: '橱柜格数',

@@ -4,8 +4,8 @@ import { plEn } from '../../helpers';
 const rest: Messages['rest'] = {
   info: {
     attrs: 'Stats',
-    toPoints: (n) => `${n} ${n === 1 ? 'point' : 'points'} to assign →`,
-    toEquip: 'Cookware & points →',
+    toPoints: (n) => `${n} ${n === 1 ? 'point' : 'points'} to assign`,
+    toEquip: 'Cookware & points',
     capacity: 'Capacity',
     tableNum: 'Max tables',
     cupboardNum: 'Pantry slots',

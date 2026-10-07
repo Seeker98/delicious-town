@@ -51,7 +51,7 @@ async function submit() {
         </button>
       </form>
       <div class="mt-2 small">
-        <RouterLink to="/login">{{ t.auth.backToLogin }}</RouterLink>
+        <RouterLink to="/login" class="dt-back">{{ t.auth.backToLogin }}</RouterLink>
       </div>
     </div>
   </div>

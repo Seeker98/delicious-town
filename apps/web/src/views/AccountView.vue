@@ -113,12 +113,7 @@ async function logout() {
         <span v-if="p.emailVerified" class="text-success">{{ t.account.verified }}</span>
         <template v-else>
           <span class="text-danger">{{ t.account.unverified }}</span>
-          <button
-            type="button"
-            class="btn btn-link btn-sm p-0 align-baseline ms-1"
-            data-testid="acc-resend"
-            @click="resend"
-          >
+          <button type="button" class="dt-link-btn text-wrap ms-1" data-testid="acc-resend" @click="resend">
             {{ t.account.resend }}
           </button>
         </template>
@@ -127,7 +122,9 @@ async function logout() {
       <template v-if="restStore.featureOn('invite')">
         <dt>{{ t.account.inviteCode }}</dt>
         <dd>
-          <RouterLink to="/invite">{{ p.inviteCode ?? t.account.makeInvite }}</RouterLink>
+          <RouterLink to="/invite" class="dt-go text-wrap">{{
+            p.inviteCode ?? t.account.makeInvite
+          }}</RouterLink>
         </dd>
       </template>
     </dl>

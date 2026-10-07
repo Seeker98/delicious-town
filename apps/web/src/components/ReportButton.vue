@@ -44,7 +44,7 @@ async function submit() {
     <button
       v-if="!open"
       type="button"
-      class="btn btn-link text-muted dt-inline-btn"
+      class="dt-link-btn text-muted fw-normal"
       :data-testid="tid('open')"
       @click="open = true"
     >

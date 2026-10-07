@@ -4,8 +4,8 @@ import { plFr } from '../../helpers';
 const rest: Messages['rest'] = {
   info: {
     attrs: 'Caractéristiques',
-    toPoints: (n) => `${n} point${n > 1 ? 's' : ''} à répartir →`,
-    toEquip: 'Ustensiles et points →',
+    toPoints: (n) => `${n} point${n > 1 ? 's' : ''} à répartir`,
+    toEquip: 'Ustensiles et points',
     capacity: 'Capacité',
     tableNum: 'Tables max',
     cupboardNum: 'Cases du garde-manger',
