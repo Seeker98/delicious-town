@@ -57,7 +57,7 @@ describe('语言选择（问题记录 272）', () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     useSessionStore(pinia).me = me('zh-CN');
-    const w = mount(LangSelect, { global: { plugins: [pinia] } });
+    const w = mount(LangSelect);
     await w.get('[data-testid="lang-select"]').setValue('fr');
     await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
     expect(useLocaleStore(pinia).locale).toBe('fr');
@@ -146,7 +146,7 @@ describe('backlog 多语言：存到账号、跟随账号失败时提示', () =>
     const pinia = createPinia();
     setActivePinia(pinia);
     useSessionStore(pinia).me = me('zh-CN');
-    const w = mount(LangSelect, { global: { plugins: [pinia] } });
+    const w = mount(LangSelect);
     await w.get('[data-testid="lang-select"]').setValue('fr');
     await vi.waitFor(() => expect(endpoints.setLang).toHaveBeenCalledWith('fr'), LOAD);
     // 提示按刚切过去的语言显示；存账号失败后才推提示，全量并行跑时一次 flush 可能还没到（偶发）
