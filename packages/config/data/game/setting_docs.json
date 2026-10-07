@@ -107,7 +107,7 @@
     "tuning.settlement.dishCoinRate": "菜价倍率：挑剔顾客、蟹老板满意时按菜价付的银币和外卖单价都乘它，菜谱页显示的售价也乘它（倍数，1 = 原版）",
     "tuning.settlement.roachRateBase": "自然长蟑螂的基础概率（每桌每轮）",
     "tuning.settlement.roachRatePerStar": "每颗星减少的自然长蟑螂概率",
-    "tuning.settlement.roachForeignHours": "好友放的蟑螂最多待几小时（小时），待满后下一次结算时跑掉、桌子照常接客；自然长的不受影响",
+    "tuning.settlement.roachForeignHours": "玩家放的蟑螂最多待几小时（小时），待满后下一次结算时跑掉、桌子照常接客；蟹老板的店在它每轮刷新桌子时一样处理；系统长的不受影响",
     "tuning.settlement.roachMaxShare": "一家店同时最多多少比例的桌子是蟑螂桌（向上取整，至少 1 张）；自然长的和好友放的合计，蟹老板的店不限",
     "tuning.settlement.squidwardRate": "章鱼哥来点特色菜的基础概率（每桌每轮）",
     "tuning.settlement.squidwardMinStar": "章鱼哥最低几星的店才会来（星）",
