@@ -14,6 +14,11 @@ const server: Messages['server'] = {
         "Merci pour votre contribution à l'effort commun du serveur. Voici votre récompense de classement.",
     },
     grant: { title: () => 'Compensation', body: null },
+    'quest.compensate': {
+      title: () => 'Complément de récompenses de quêtes',
+      body: () =>
+        'Les récompenses pour passer à 1 et 2 étoiles ont changé : voici les objets que vous n’aviez pas encore reçus.',
+    },
     'invite.welcome': {
       title: () => 'Bienvenue en ville',
       body: () => 'Un ami vous a invité : voici un pack de départ.',

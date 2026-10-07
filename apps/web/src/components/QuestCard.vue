@@ -31,7 +31,10 @@ const pct = (p: number, target: number) => Math.min(100, Math.round((p / Math.ma
         t.rest.tasks.claimedTask
       }}</span>
       <span v-else-if="locked" class="ms-auto text-nowrap">{{ locked }}</span>
-      <span v-else class="ms-auto">{{ Math.min(quest.progress, quest.target) }}/{{ quest.target }}</span>
+      <!-- 目标为 0 的（每周“领取本周探险图”，问题记录 515）不写进度 -->
+      <span v-else-if="quest.target > 0" class="ms-auto"
+        >{{ Math.min(quest.progress, quest.target) }}/{{ quest.target }}</span
+      >
     </div>
     <div class="text-muted">{{ t.rest.tasks.award(award) }}</div>
     <template v-if="!quest.claimed && !locked">

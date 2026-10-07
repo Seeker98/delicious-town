@@ -22,6 +22,10 @@ export default {
       body: () => '感谢你为全服合力做出的贡献，这是你的名次奖励。',
     },
     grant: { title: () => '系统补偿', body: null },
+    'quest.compensate': {
+      title: () => '任务奖励调整补发',
+      body: () => '升到一星、二星的任务奖励调整了，补上你还没拿到的道具。',
+    },
     'invite.welcome': { title: () => '欢迎来到小镇', body: () => '你是被朋友邀请来的，送你一份新手礼包。' },
     'invite.reward': {
       title: () => '邀请奖励',

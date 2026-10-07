@@ -259,7 +259,23 @@ describe('每周任务', () => {
     await expect(task().claimTask(ctx, w.quests[0]!.id)).rejects.toMatchObject({ code: 'INVALID_STATE' });
   });
 
-  it('区服关掉交易所：C 组不列交易所任务，全完成只看剩下的 3 个（Review Focus 5）', async () => {
+  it('B 组一打开就能领“领取本周探险图”：3 张探险图，每周一次；不领拿不到全完成奖励（问题记录 515）', async () => {
+    const ctx = await fresh({ star_level: 1 });
+    const w = (await task().tasks(ctx)).weekly!;
+    expect(w.group).toBe('B');
+    const supply = w.quests.find((q) => q.id === 4025)!;
+    expect(supply).toMatchObject({ target: 0, done: true, claimed: false });
+    await task().claimTask(ctx, supply.id);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mapNormal)).toBe(3);
+    await expect(task().claimTask(ctx, supply.id)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    expect((await task().tasks(ctx)).weekly!.full.claimable).toBe(false);
+    // 下周一又能领
+    t.clock.set(gameTime(addDays(weekStart(gameDay(t.clock.now)), 7), 9));
+    await task().claimTask(ctx, supply.id);
+    expect(await goodsNum(t, ctx.restaurantId, GOODS.mapNormal)).toBe(6);
+  });
+
+  it('区服关掉交易所：C 组不列交易所任务，全完成只看剩下的 4 个（含“领取本周探险图”）（Review Focus 5）', async () => {
     const ctx = await fresh({ star_level: 3 });
     await t.db
       .insertInto('shard_config')

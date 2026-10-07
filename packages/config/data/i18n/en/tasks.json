@@ -230,9 +230,6 @@
   "3084": {
     "name": "Play 50 times at the bar"
   },
-  "3085": {
-    "name": "Collect 4 potted plants"
-  },
   "3101": {
     "name": "Cook signature dishes 10 times"
   },
@@ -374,6 +371,9 @@
   "4024": {
     "name": "Learn or upgrade recipes 20 times"
   },
+  "4025": {
+    "name": "Claim this week's Exploration Maps"
+  },
   "4031": {
     "name": "Make 10 takeaway deliveries"
   },
@@ -385,5 +385,8 @@
   },
   "4034": {
     "name": "Learn or upgrade recipes 30 times"
+  },
+  "4035": {
+    "name": "Claim this week's Exploration Maps"
   }
 }

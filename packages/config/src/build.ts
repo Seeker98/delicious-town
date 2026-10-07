@@ -656,13 +656,17 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const o of oilNeed) checkGoodsList(`oil_need ${o.level}`, o.needGoods);
 
   // ---------- 任务（问题记录 318）：章节主线、玩法支线、每周任务 ----------
-  const chapters: Chapter[] = chaptersRaw.map((c) => ({ ...c }));
+  // 标了 hidden 的章暂未开放（问题记录 515）：连同它的任务一起去掉，引用照样检查
+  const hiddenChapters = new Set(chaptersRaw.filter((c) => c.hidden).map((c) => c.id));
+  const chapters: Chapter[] = chaptersRaw
+    .filter((c) => !c.hidden)
+    .map((c) => ({ id: c.id, name: c.name, needLevel: c.needLevel, needStar: c.needStar, award: c.award }));
   unique(
     'quest_chapters',
-    chapters.map((c) => c.id),
+    chaptersRaw.map((c) => c.id),
   );
-  for (const c of chapters) checkAward(`chapter ${c.id}`, c.award);
-  const chapterIds = new Set(chapters.map((c) => c.id));
+  for (const c of chaptersRaw) checkAward(`chapter ${c.id}`, c.award);
+  const chapterIds = new Set(chaptersRaw.map((c) => c.id));
   /** 条件键归到功能（| 连接的取第一个）；状态键必须能算出来 */
   const questFeature = (id: number, cond: { kind: string; key: string }) => {
     if (cond.kind === 'state' && !isQuestStateKey(cond.key))
@@ -672,10 +676,18 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     return f ?? '';
   };
   const quests: Quest[] = [];
+  /** 暂未开放、构建时去掉的任务：翻译照样检查，开放时不用再补（问题记录 515） */
+  const hiddenQuests: Array<{ id: number; name: string }> = [];
   for (const q of questMainRaw) {
     if (!chapterIds.has(q.chapter)) errors.push(`quest ${q.id} references unknown chapter ${q.chapter}`);
     if (q.id !== 2000 + q.chapter * 20 + q.order)
       errors.push(`quest ${q.id} id must be 2000 + chapter×20 + order`);
+    if (hiddenChapters.has(q.chapter)) {
+      hiddenQuests.push({ id: q.id, name: q.name });
+      questFeature(q.id, q.cond);
+      checkAward(`quest ${q.id}`, q.award);
+      continue;
+    }
     quests.push({
       id: q.id,
       line: null,
@@ -695,6 +707,12 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     for (const st of l.steps) {
       if (st.id !== 3000 + l.id * 20 + st.order)
         errors.push(`quest ${st.id} id must be 3000 + line×20 + order`);
+      if (st.hidden) {
+        hiddenQuests.push({ id: st.id, name: st.name });
+        questFeature(st.id, st.cond);
+        checkAward(`quest ${st.id}`, st.award);
+        continue;
+      }
       quests.push({
         id: st.id,
         line: l.id,
@@ -733,6 +751,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   });
   unique('quests', [
     ...quests.map((q) => q.id),
+    ...hiddenQuests.map((q) => q.id),
     ...weeklyGroups.flatMap((g) => [g.fullId, ...g.quests.map((q) => q.id)]),
   ]);
   for (const q of quests) checkAward(`quest ${q.id}`, q.award);
@@ -1279,8 +1298,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       doors: looks.doors,
       avatars: looks.avatars,
       icons: looks.icons.map((x) => ({ id: x.key, title: x.title, desc: x.desc })),
-      tasks: [...quests, ...weeklyGroups.flatMap((g) => g.quests)].map((q) => ({ id: q.id, name: q.name })),
-      chapters: chapters.map((c) => ({ id: c.id, name: c.name })),
+      tasks: [...quests, ...weeklyGroups.flatMap((g) => g.quests), ...hiddenQuests].map((q) => ({
+        id: q.id,
+        name: q.name,
+      })),
+      chapters: chaptersRaw.map((c) => ({ id: c.id, name: c.name })),
       questLines: questLines.map((l) => ({ id: l.id, name: l.name })),
       activation: activationTasks,
       bless: blessAll,

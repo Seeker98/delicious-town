@@ -103,7 +103,8 @@
       "coin": 300000,
       "exp": 30000
      },
-     "href": "/cookbooks"
+     "href": "/cookbooks",
+     "hidden": true
     }
    ]
   },
@@ -340,26 +341,6 @@
      "award": {
       "coin": 50000,
       "exp": 5000
-     },
-     "href": "/bar"
-    },
-    {
-     "id": 3085,
-     "order": 5,
-     "needStar": 0,
-     "name": "集齐 4 株盆栽",
-     "cond": {
-      "kind": "state",
-      "key": "honor.potCount",
-      "target": 4
-     },
-     "award": {
-      "goods": [
-       {
-        "id": 30518,
-        "num": 1
-       }
-      ]
      },
      "href": "/bar"
     }

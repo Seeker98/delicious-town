@@ -98,6 +98,21 @@
    },
    "quests": [
     {
+     "id": 4025,
+     "name": "领取本周探险图",
+     "key": "temple.explore",
+     "target": 0,
+     "award": {
+      "goods": [
+       {
+        "id": 10704,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
      "id": 4021,
      "name": "探险 10 次",
      "key": "temple.explore",
@@ -177,6 +192,21 @@
     ]
    },
    "quests": [
+    {
+     "id": 4035,
+     "name": "领取本周探险图",
+     "key": "temple.explore",
+     "target": 0,
+     "award": {
+      "goods": [
+       {
+        "id": 10704,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/temple"
+    },
     {
      "id": 4031,
      "name": "配送外卖 10 次",
