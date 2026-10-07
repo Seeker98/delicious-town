@@ -17,13 +17,13 @@ export default {
   opFailed: '操作失败',
   loadMore: '加载更多',
   /** 括号、冒号、分号：各语言写法不同，页面上不写死全角标点（backlog 多语言） */
-  paren: (s: string) => `（${s}）`,
+  paren: (s: string) => ` (${s})`,
   /** 名字×数量（backlog #116：法文两边加空格） */
   qty: (name: string, num: string | number) => `${name}×${num}`,
   /** 名字和数量分开渲染时中间的乘号（名字是链接时） */
   times: '×',
-  parenOpen: '（',
-  parenClose: '）',
+  parenOpen: ' (',
+  parenClose: ')',
   colon: (s: string) => `${s}：`,
   semi: '；',
 };

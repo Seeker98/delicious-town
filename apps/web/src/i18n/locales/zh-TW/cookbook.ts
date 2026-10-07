@@ -5,7 +5,7 @@ export default {
   loadFailed: '讀取食譜失敗',
   streetDesc: (desc: string) => `街道加成：${desc}`,
   moveHint: (star: number, need: string, gap: string) =>
-    `本街剩下的菜全學會，也湊不夠升 ${star} 星要的 ${need} 道（還差 ${gap} 道）。本街學得差不多、幾天學不到新菜時，就換一條菜多的街。`,
+    `本街剩下的菜全學會，也湊不夠升 ${star} 星要的 ${need} 道 (還差 ${gap} 道)。本街學得差不多、幾天學不到新菜時，就換一條菜多的街。`,
   moveLink: '去搬家',
   /** 搬街提示關掉，到下一星前不再顯示（backlog 384） */
   moveHintClose: '本星不再提示',

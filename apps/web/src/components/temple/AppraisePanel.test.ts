@@ -82,7 +82,7 @@ describe('AppraisePanel', () => {
     await flushPromises();
     expect(endpoints.mcAppraise).toHaveBeenCalledWith(165, 2, false);
     const text = w.find('[data-testid="results"]').text();
-    expect(text).toContain('秘·仿膳饽饽 残卷 ×2（星神眷恋）');
+    expect(text).toContain('秘·仿膳饽饽 残卷 ×2 (星神眷恋)');
     expect(text).toContain('这只是一堆厕纸而已');
   });
 });

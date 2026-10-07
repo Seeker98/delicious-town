@@ -23,7 +23,7 @@ export default {
   used: (kinds: number, max: number) => `已用 ${kinds}/${max} 种`,
   equipsBefore: (n: number) => `另有 ${n} 件厨具在`,
   equipsLink: '厨具页',
-  equipsAfter: '（每件占一格）',
+  equipsAfter: ' (每件占一格)',
   use: '使用',
   useFailed: '使用失败',
   sell: '卖',

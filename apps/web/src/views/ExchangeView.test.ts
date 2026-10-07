@@ -154,7 +154,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(w.get('[data-testid="ex-ask-1010"]').text()).not.toContain('系统');
     await w.get('[data-testid="ex-bid-sys-700"]').trigger('click');
     expect((w.get('[data-testid="ex-price"]').element as HTMLInputElement).value).toBe('700');
-    expect(w.text()).toContain('（系统）');
+    expect(w.text()).toContain(' (系统)');
   });
 
   it('卖给系统（问题记录 244）：兜底档写"系统兜底收"、点它不填进挂单单价；按钮弹出数量和到手金额；提交按系统价卖', async () => {
@@ -202,7 +202,7 @@ describe('ExchangeView（156-1 设计 §8）', () => {
     expect(w.get('[data-testid="ex-food-13"]').text()).not.toMatch(/卖|收/);
     expect(w.get('[data-testid="ex-legend"]').text()).toContain('卖');
     // 不再写"绿框"（问题记录 306：太突兀）
-    expect(w.get('[data-testid="ex-legend"]').text()).toBe('卖 N 有人在卖（含系统库存）；收 N 有人在收');
+    expect(w.get('[data-testid="ex-legend"]').text()).toBe('卖 N 有人在卖 (含系统库存)；收 N 有人在收');
     await w.get('[data-testid="ex-filter-sale"]').trigger('click');
     expect(w.findAll('[data-testid^="ex-food-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'ex-food-11',
@@ -468,7 +468,7 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
       me({ eligible: false, reason: 'exchange_level', level: 12 }),
     );
     const w = await open();
-    expect(w.text()).toContain('餐厅 20 级才能交易（你现在 12 级）');
+    expect(w.text()).toContain('餐厅 20 级才能交易 (你现在 12 级)');
   });
 
   it('可疑成交提示的冻结小时数按区服设置', async () => {

@@ -167,9 +167,7 @@ describe('SpicePanel', () => {
   it('空位按钮的读屏标签写出里面是哪种调料（审查 I2）', async () => {
     const w = mount(SpicePanel, { props: { data: withRound(round()) } });
     await pick(w, [6]);
-    expect(w.get('[data-testid="spice-slot-0"]').attributes('aria-label')).toBe(
-      '第 1 位：八角（点一下拿掉）',
-    );
+    expect(w.get('[data-testid="spice-slot-0"]').attributes('aria-label')).toBe('第 1 位：八角 (点一下拿掉)');
     expect(w.get('[data-testid="spice-slot-1"]').attributes('aria-label')).toBe('第 2 位：空');
   });
 

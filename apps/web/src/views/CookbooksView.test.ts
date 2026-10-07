@@ -448,7 +448,7 @@ describe('CookbooksView', () => {
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'all' });
-    expect(w.get('[data-testid="move-hint"]').text()).toContain('1,000 道（还差 931 道）');
+    expect(w.get('[data-testid="move-hint"]').text()).toContain('1,000 道 (还差 931 道)');
   });
 
   it('读不到升星条件、下一星没开放（泛紫）、已经满星：都不提示', async () => {

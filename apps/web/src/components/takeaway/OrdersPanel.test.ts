@@ -42,7 +42,7 @@ describe('OrdersPanel', () => {
       },
     });
     expect(w.find('[data-testid="why-1"]').text()).toBe('还没学会这道菜');
-    expect(w.find('[data-testid="why-2"]').text()).toBe('声望不够（要 12）');
+    expect(w.find('[data-testid="why-2"]').text()).toBe('声望不够 (要 12)');
     expect(w.find('[data-testid="why-3"]').text()).toBe('食材不够');
     expect(w.find('[data-testid="take-3"]').attributes('disabled')).toBeDefined();
     const busy = mount(OrdersPanel, { props: { data: takeawayData({ riders: [rider({ busy: 1 })] }) } });
@@ -67,7 +67,7 @@ describe('OrdersPanel', () => {
     const w = mount(OrdersPanel, {
       props: { data: takeawayData({ coin: 2_000_000, refresh: { cost: 1_000_000, hasJob: true } }) },
     });
-    expect(w.find('[data-testid="refresh"]').text()).toBe('私人刷新（1,000,000 银币）');
+    expect(w.find('[data-testid="refresh"]').text()).toBe('私人刷新 (1,000,000 银币)');
     await w.find('[data-testid="refresh"]').trigger('click');
     await flushPromises();
     expect(endpoints.takeawayRefresh).toHaveBeenCalled();

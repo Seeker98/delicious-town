@@ -222,7 +222,7 @@ describe('天气（238-2 设计 §4.4）', () => {
     const r = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r.outcome).toBe(true);
     expect(r.note).toBe(
-      `11月3日 ${hour} 点自动轮换的天气是${auto.name}（${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类）`,
+      `11月3日 ${hour} 点自动轮换的天气是${auto.name} (${['', '晴', '雨', '雪', '风沙雾霾'][auto.type]}类)`,
     );
     expect(r.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type });
     const other = [...t.deps.config.weather.values()].find((x) => !x.special && x.type !== auto.type)!;

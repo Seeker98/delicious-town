@@ -88,7 +88,7 @@ export default {
       title: (hour: number, type: string) => `今天 ${hour} 點自動輪換的天氣是${type}類嗎`,
       desc: (hour: number) => `以 ${hour} 點系統自動輪換出的天氣為準，之後有人用雷神錘改的不算。`,
       note: (day: string, hour: number, weather: string, type: string) =>
-        `${day} ${hour} 點自動輪換的天氣是${weather}（${type}類）`,
+        `${day} ${hour} 點自動輪換的天氣是${weather} (${type}類)`,
       hammer: (weather: string) => `；之後有人用雷神錘改成了${weather}，按題目規則不算`,
       /** 天氣大類（下標 = 類型） */
       types: ['', '晴', '雨', '雪', '風沙霧霾'],
@@ -135,7 +135,7 @@ export default {
     device: '設施',
     equip: '廚具',
     hangover: '宿醉',
-    suit: (name: string, need: number) => `${name}（${need} 件）`,
+    suit: (name: string, need: number) => `${name} (${need} 件)`,
     suitFallback: '套裝',
     bless: (name: string) => `今日星願：${name}`,
   },

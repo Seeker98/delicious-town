@@ -8,7 +8,7 @@ describe('awardText', () => {
     expect(awardText({ kind: 'coin', id: null, num: 1400, lucky: false }, names)).toBe('银币 1,400');
     expect(awardText({ kind: 'exp', id: null, num: 100, lucky: false }, names)).toBe('经验 100');
     expect(awardText({ kind: 'goods', id: 5, num: 1, lucky: false }, names)).toBe('道具5×1');
-    expect(awardText({ kind: 'foods', id: 101, num: 2, lucky: true }, names)).toBe('食材101×2（幸运）');
+    expect(awardText({ kind: 'foods', id: 101, num: 2, lucky: true }, names)).toBe('食材101×2 (幸运)');
   });
 
   it('出拳名', () => {

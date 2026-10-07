@@ -375,8 +375,8 @@ describe('RestaurantHomeView', () => {
     const w = await mountView();
     const btn = w.find('[data-testid="refuel"]');
     // 看得见的是“加油”和银币数（数字不会被截掉），整句写在读屏标签和悬停提示里（审查 I1：法西文整句太长撑出屏幕）
-    expect(btn.attributes('aria-label')).toBe('加油（250 银币）');
-    expect(btn.attributes('title')).toBe('加油（250 银币）');
+    expect(btn.attributes('aria-label')).toBe('加油 (250 银币)');
+    expect(btn.attributes('title')).toBe('加油 (250 银币)');
     expect(btn.get('.text-truncate').text()).toBe('加油');
     expect(btn.get('.flex-shrink-0').text()).toBe('250');
     expect(btn.attributes('disabled')).toBeUndefined();
@@ -450,7 +450,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...rich, diamond: 100 });
     const poor = await mountView();
     expect(poor.find('[data-testid="open-plaque2"]').attributes('disabled')).toBeDefined();
-    expect(poor.find('[data-testid="plaque2-block"]').text()).toBe('钻石不够（要 188）');
+    expect(poor.find('[data-testid="plaque2-block"]').text()).toBe('钻石不够 (要 188)');
 
     vi.mocked(endpoints.overview).mockResolvedValue({ ...rich, starLevel: 2 });
     const low = await mountView();
@@ -854,10 +854,10 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
     const w2 = await mountView();
     const sp2 = w2.get('[data-testid="home-special"]');
-    expect(sp2.text()).toMatch(/^特色菜：.+（5 级）$/);
+    expect(sp2.text()).toMatch(/^特色菜：.+ \(5 级\)$/);
     // 放不下时只截菜名，几级不截（审查 I2）
     expect(sp2.get('.text-truncate').text()).toMatch(/^特色菜：/);
-    expect(sp2.get('.flex-shrink-0').text()).toBe('（5 级）');
+    expect(sp2.get('.flex-shrink-0').text()).toBe('(5 级)');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['mysterious'] });
     const w3 = await mountView();
     expect(w3.find('[data-testid="home-special"]').exists()).toBe(false);

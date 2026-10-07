@@ -6,14 +6,14 @@ export default {
   /** 属性和数值："厨艺12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '厨力',
-  powerNote: '（五项之和 + 幸运/2；只作参考，赛厨的胜负看评委按色香味形养打分）',
+  powerNote: ' (五项之和 + 幸运/2；只作参考，赛厨的胜负看评委按色香味形养打分)',
   /** 穿戴厨具（含宝石）的收益加成（问题记录 411） */
   /** 赛厨时的厨力（问题记录 417） */
   duelPower: (attack: string, defend: string) =>
-    `赛厨时：进攻 ${attack}、防守 ${defend}（算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个）`,
+    `赛厨时：进攻 ${attack}、防守 ${defend} (算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个)`,
   income: (coin: string, exp: string, gold: string) =>
     `厨具收益加成：最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
-  incomeNote: '（厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少）',
+  incomeNote: ' (厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少)',
   empty: '空',
   noPieces: '没有这个部位的厨具',
   needLevel: (lv: number) => `需要 ${lv} 级`,
@@ -22,7 +22,7 @@ export default {
   unwear: '卸下',
   unwearFailed: '卸下失败',
   unwearAll: '全部卸下',
-  suitName: (name: string, count: number, max: number) => `${name}（${count}/${max}）`,
+  suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
   suitTier: (need: number, desc: string) => `${need} 件：${desc}`,
   gem: '宝石',
   presets: '预设',
@@ -49,7 +49,7 @@ export default {
   loadFailed: '读取厨具失败',
   points: {
     left: (n: number) => `剩余点数 ${n}`,
-    allocate: (n: number) => `加点（${n}）`,
+    allocate: (n: number) => `加点 (${n})`,
     failed: '加点失败',
   },
   detail: {
@@ -58,25 +58,25 @@ export default {
     stress: '强化',
     rate: '成功率',
     rateParts: (base: string, luck: string, weather: string, floor: string) =>
-      `（基础 ${base} + 幸运 ${luck} + 天气 ${weather} + 保底 ${floor}）`,
-    next: (gain: number, total: number) => `成功后属性总和 +${gain}（到 ${total}，不含宝石）`,
+      ` (基础 ${base} + 幸运 ${luck} + 天气 ${weather} + 保底 ${floor})`,
+    next: (gain: number, total: number) => `成功后属性总和 +${gain} (到 ${total}，不含宝石)`,
     cost: (essence: number, have: number, coin: string) =>
-      `消耗：精华 ×${essence}（有 ${have}）、银币 ${coin}`,
-    useStone: (n: number) => `用强化石（必定成功，有 ${n}）`,
+      `消耗：精华 ×${essence} (有 ${have})、银币 ${coin}`,
+    useStone: (n: number) => `用强化石 (必定成功，有 ${n})`,
     maxed: '已经强化到最高',
-    backOption: (name: string, back: number, num: number) => `${name}（回退 ${back} 级，有 ${num}）`,
+    backOption: (name: string, back: number, num: number) => `${name} (回退 ${back} 级，有 ${num})`,
     rollback: '回退',
     gems: '宝石',
     holeNote: (max: number, coinPerLevel: string | null) =>
-      `（最多 ${max} 孔；${coinPerLevel ? `摘除要花 阶数×${coinPerLevel} 银币` : '现在摘除免费（2 星以下或酸雨天）'}）`,
+      ` (最多 ${max} 孔；${coinPerLevel ? `摘除要花 阶数×${coinPerLevel} 银币` : '现在摘除免费 (2 星以下或酸雨天)'})`,
     ungem: '摘除',
-    gemOption: (name: string, num: number, level: number) => `${name}（有 ${num}，耗体力 ${level}）`,
+    gemOption: (name: string, num: number, level: number) => `${name} (有 ${num}，耗体力 ${level})`,
     inlay: '镶嵌',
-    drill: (n: number) => `打孔（打孔石，有 ${n}）`,
+    drill: (n: number) => `打孔 (打孔石，有 ${n})`,
     lock: '锁定',
     unlock: '解锁',
-    salvage: (n: number) => `分解（${n} 精华）`,
-    sell: (price: string) => `出售（${price}）`,
+    salvage: (n: number) => `分解 (${n} 精华)`,
+    sell: (price: string) => `出售 (${price})`,
     blocked: {
       locked: '已锁定',
       worn: '正在穿戴',
@@ -87,7 +87,7 @@ export default {
     history: '强化记录',
     historyOk: (attr: string, val: number) => `成功 ${attr}+${val}`,
     historyFail: '失败',
-    tags: { stone: '（强化石）', lucky: '（幸运）', floor: '（保底）' },
+    tags: { stone: ' (强化石)', lucky: ' (幸运)', floor: ' (保底)' },
     stressOk: (stress: number, attr: string, val: number, extra: string) =>
       `强化成功 +${stress}：${attr} +${val}${extra}`,
     stressMiss: '强化失败，下次成功率会提高',
@@ -113,7 +113,7 @@ export default {
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,
     levelUp: (n: number) => `升阶 ×${n}`,
     done: (success: number, lucky: number, fail: number, exp: string | null) =>
-      `升阶完成：成功 ${success}${lucky > 0 ? `（含幸运补救 ${lucky}）` : ''}，失败 ${fail}${exp ? `，得到经验 ${exp}` : ''}`,
+      `升阶完成：成功 ${success}${lucky > 0 ? ` (含幸运补救 ${lucky})` : ''}，失败 ${fail}${exp ? `，得到经验 ${exp}` : ''}`,
     failed: '升阶失败',
     loadFailed: '读取宝石失败',
   },

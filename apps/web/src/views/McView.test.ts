@@ -162,7 +162,7 @@ describe('McView', () => {
     const text = useToastStore()
       .items.map((x) => x.text)
       .join('|');
-    expect(text).toContain('佳肴（幸运）');
+    expect(text).toContain('佳肴 (幸运)');
     expect(text).toContain('600 份');
     expect(text).toContain('海绵宝宝');
   });
@@ -189,7 +189,7 @@ describe('McView', () => {
     await flushPromises();
     expect(w.find('[data-testid="mc-current"]').text()).toContain('120');
     // 卖出倍率（问题记录 412）
-    expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2（普通顾客付一半）');
+    expect(w.find('[data-testid="mc-current"]').text()).toContain('卖给顾客时 ×3.2 (普通顾客付一半)');
     expect(w.find('[data-testid="cook-1"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="dump"]').trigger('click');
     expect(endpoints.mcDump).not.toHaveBeenCalled();
@@ -274,10 +274,10 @@ describe('McView', () => {
     const w = mountView();
     await flushPromises();
     expect(ids(w, 'learned')).toEqual(['learned-4', 'learned-1']);
-    expect(w.find('[data-testid="mc-level-all"]').text()).toBe('全部（4）');
-    expect(w.find('[data-testid="mc-level-3"]').text()).toBe('3 级（2）');
+    expect(w.find('[data-testid="mc-level-all"]').text()).toBe('全部 (4)');
+    expect(w.find('[data-testid="mc-level-3"]').text()).toBe('3 级 (2)');
     expect(w.find('[data-testid="mc-level-1"]').exists()).toBe(false);
-    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（3）');
+    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道 (3)');
     await w.find('[data-testid="mc-level-3"]').trigger('click');
     expect(w.find('[data-testid="mc-level-3"]').attributes('aria-pressed')).toBe('true');
     // 筛选按视觉规范用小号胶囊（问题记录 471），选中的加 active，不用按钮组
@@ -287,17 +287,17 @@ describe('McView', () => {
     expect(lv3.element.closest('.dt-pills')).not.toBeNull();
     expect(w.get('[data-testid="mc-road-1"]').element.closest('.dt-pills')).not.toBeNull();
     // 选了 3 级以后道的数也跟着变
-    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（1）');
+    expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道 (1)');
     // 已学一栏这一页没有：标题写 0 / 2，并写明这一页没有
     expect(ids(w, 'learned')).toEqual([]);
-    expect(w.text()).toContain('已学（0 / 2）');
+    expect(w.text()).toContain('已学 (0 / 2)');
     expect(w.find('[data-testid="mc-learned-none"]').text()).toBe('这一页没有');
     expect(ids(w, 'remnant-num')).toEqual(['remnant-num-3', 'remnant-num-5']);
     expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会');
     await w.find('[data-testid="mc-road-2"]').trigger('click');
     expect(ids(w, 'remnant-num')).toEqual(['remnant-num-5']);
     // “全部学会”会学别的页的，按钮上写明总数
-    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会（含其他页，共 2 道）');
+    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会 (含其他页，共 2 道)');
   });
 
   it('选择记在本机，重新进页面还在；存的值不对时回到全部', async () => {

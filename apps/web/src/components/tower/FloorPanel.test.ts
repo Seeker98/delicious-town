@@ -83,7 +83,7 @@ describe('FloorPanel', () => {
     expect(used.find('[data-testid="tc-1"]').attributes('disabled')).toBeDefined();
     expect(used.find('[data-testid="tp-1"]').attributes('disabled')).toBeUndefined();
     const tired = mount(FloorPanel, { props: { data: towerData({ strength: 3 }) } });
-    expect(tired.find('[data-testid="block-1"]').text()).toBe('体力不够（要 5）');
+    expect(tired.find('[data-testid="block-1"]').text()).toBe('体力不够 (要 5)');
   });
 });
 

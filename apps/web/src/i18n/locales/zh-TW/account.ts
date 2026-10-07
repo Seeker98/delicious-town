@@ -19,7 +19,7 @@ export default {
   enter: '進入',
   changePw: '修改密碼',
   oldPw: '舊密碼',
-  newPw: '新密碼（6~64 位）',
+  newPw: '新密碼 (6~64 位)',
   newPw2: '再輸一次新密碼',
   pwMismatch: '兩次輸入的新密碼不一樣',
   pwChanged: '密碼已修改，其他裝置已下線',

@@ -39,7 +39,7 @@ describe('RidersPanel', () => {
       props: { data: takeawayData({ riders: [rider(), friend], riderCap: 3 }) },
     });
     await flushPromises();
-    expect(w.find('[data-testid="rider-31"]').text()).toContain('我的店（自己）');
+    expect(w.find('[data-testid="rider-31"]').text()).toContain('我的店 (自己)');
     expect(w.find('[data-testid="rider-31"]').text()).toContain('经验 6/1,300');
     expect(w.find('[data-testid="rider-31"]').text()).toContain('成功率 80%');
     expect(w.find('[data-testid="dismiss-31"]').exists()).toBe(false);

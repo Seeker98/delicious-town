@@ -238,7 +238,7 @@ describe('RestTasksView', () => {
     expect(ready.classes()).toContain('btn-primary');
     expect(ready.attributes('disabled')).toBeUndefined();
     const far = w.find('[data-testid="claim-150"]');
-    expect(far.text()).toBe('150 点（还差 30）');
+    expect(far.text()).toBe('150 点 (还差 30)');
     expect(far.attributes('disabled')).toBeDefined();
   });
 
@@ -263,7 +263,7 @@ describe('RestTasksView', () => {
       ]),
     );
     const w = await mountView();
-    expect(w.get('[data-testid="chapter"]').text()).toContain('第 1 章 开张大吉（1/3）');
+    expect(w.get('[data-testid="chapter"]').text()).toContain('第 1 章 开张大吉 (1/3)');
     expect(w.findAll('[data-testid^="task-20"]').map((x) => x.attributes('data-testid'))).toEqual([
       'task-2023',
       'task-2022',
@@ -451,7 +451,7 @@ describe('任务页终审遗留（backlog 318）', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ id: 2081 })], { leftover: [left] }));
     let w = await mountView();
     let card = w.get('[data-testid="card-main"]');
-    expect(card.get('[data-testid="chapter"]').text()).toContain('（0/1）');
+    expect(card.get('[data-testid="chapter"]').text()).toContain(' (0/1)');
     const box = card.get('[data-testid="main-leftover"]');
     expect(box.text()).toContain('补领');
     expect(box.find('[data-testid="task-2061"]').exists()).toBe(true);

@@ -37,8 +37,8 @@ describe('TakeawayView', () => {
     vi.mocked(endpoints.takeaway).mockResolvedValue(takeawayData());
     const w = mount(TakeawayView, { global: { stubs } });
     await flushPromises();
-    expect(w.find('[data-testid="tab-orders"]').text()).toBe('外卖单（1）');
-    expect(w.find('[data-testid="tab-deliveries"]').text()).toBe('配送中（0）');
+    expect(w.find('[data-testid="tab-orders"]').text()).toBe('外卖单 (1)');
+    expect(w.find('[data-testid="tab-deliveries"]').text()).toBe('配送中 (0)');
     await w.find('[data-testid="again"]').trigger('click');
     await flushPromises();
     expect(endpoints.takeaway).toHaveBeenCalledTimes(2);

@@ -83,6 +83,6 @@ describe('WeatherView：天气名、说明、蟹老板的街按目录显示（�
     const w = await mountView();
     expect(w.find('[data-testid="weather-note"]').exists()).toBe(false);
     expect(w.text()).toContain('上座率+3%');
-    expect(w.text()).toContain('（0 星餐厅不受天气影响）');
+    expect(w.text()).toContain(' (0 星餐厅不受天气影响)');
   });
 });

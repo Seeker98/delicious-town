@@ -22,7 +22,7 @@ describe('DeliveriesPanel', () => {
     const w = mount(DeliveriesPanel, { props: { data: takeawayData({ deliveries: [delivery()] }) } });
     expect(w.find('[data-testid="delivery-21"]').text()).toContain('还要 30 分钟');
     expect(w.find('[data-testid="claim-21"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="drone-21"]').text()).toBe('无人机（3 钻石）');
+    expect(w.find('[data-testid="drone-21"]').text()).toBe('无人机 (3 钻石)');
     await w.find('[data-testid="drone-21"]').trigger('click');
     await flushPromises();
     expect(endpoints.takeawayClaim).toHaveBeenCalledWith(21, true);

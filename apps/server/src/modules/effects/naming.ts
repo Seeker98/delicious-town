@@ -13,7 +13,7 @@ export function effectSourceName(e: { sourceType: string; sourceId: number }, co
   if (e.sourceType === 'suit') {
     const suit = config.suits.get(Math.floor(e.sourceId / 10));
     const tier = suit?.tiers[e.sourceId % 10];
-    return suit && tier ? `${suit.name}（${tier.need} 件）` : '套装';
+    return suit && tier ? `${suit.name} (${tier.need} 件)` : '套装';
   }
   return config.goods.get(e.sourceId)?.name ?? e.sourceType;
 }

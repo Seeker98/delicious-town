@@ -86,7 +86,7 @@ describe('TownPanel', () => {
     });
     expect(w.find('[data-testid="feast"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="feast-block"]').text()).toBe('今天活跃度 30，要 120 才能领');
-    expect(w.find('[data-testid="bless-reward"]').text()).toBe('银币 200,000（持有神灯多领 10%）');
+    expect(w.find('[data-testid="bless-reward"]').text()).toBe('银币 200,000 (持有神灯多领 10%)');
   });
 
   it('雷神锤：选类型用银币，或用钻石；冷却中全部灰掉', async () => {

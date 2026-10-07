@@ -165,7 +165,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(w.get('[data-testid="wiki-stress"]').text()).toContain('18');
     const src = w.get('[data-testid="wiki-sources"]');
     expect(src.text()).toContain('500 银币');
-    expect(src.text()).toContain('声望商店：60 声望（轮换上架）');
+    expect(src.text()).toContain('声望商店：60 声望 (轮换上架)');
     expect(src.text()).toContain('蟹黄堡×2');
     expect(src.text()).toContain('每人限兑 1 次');
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/180');
@@ -318,7 +318,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(w.text()).toContain('稀有');
     expect(w.text()).toContain('菜园能种出来，每次收获 20 个');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
-    expect(cb.text()).toContain('用到它的菜谱（1 道）');
+    expect(cb.text()).toContain('用到它的菜谱 (1 道)');
     expect(cb.text()).toContain('湖南街');
     expect(cb.text()).toContain('上品起');
     expect(hrefs(w, '[data-testid="wiki-cookbooks"]')).toEqual(['/wiki/cookbooks/1']);

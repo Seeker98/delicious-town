@@ -12,7 +12,7 @@ const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `种子
 /** 可疑成交的所得进冷静期（156-2） */
 /** 冻结几小时：日志里带 holdHours（backlog 156-2），旧日志没有时是 24 */
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
-const heldNote = (p: P) => (p.held ? `（可疑成交，所得冻结 ${holdHours(p)} 小时）` : '');
+const heldNote = (p: P) => (p.held ? ` (可疑成交，所得冻结 ${holdHours(p)} 小时)` : '');
 /** 银币和食材清单：交易所取出、没收共用 */
 const coinFoods = (p: P, names: Names, coin: (s: string) => string, sep: string) =>
   [
@@ -90,8 +90,8 @@ export default {
   remnant: (names: Names, id: number) => `${mcNameOf(names, id)}残卷`,
   seed: (names: Names, id: number) => seedNameOf(names, id),
   basket: (name: string) => `菜篮·${name}`,
-  activityCurrency: (name: string | undefined, num: string) => `${name ?? '活动货币'}×${num}（活动货币）`,
-  lucky: '（幸运）',
+  activityCurrency: (name: string | undefined, num: string) => `${name ?? '活动货币'}×${num} (活动货币)`,
+  lucky: ' (幸运)',
   /** 列表分隔：同类之间、得失之间 */
   sep: '、',
   groupSep: '；',
@@ -115,7 +115,7 @@ export default {
       `${names.goodsName(n(p, 'goodsId'))}强化到 +${n(p, 'to')}${p.success ? '成功' : '失败'}`,
     'level.up': (p) => `餐厅升到了 ${n(p, 'to')} 级`,
     'star.up': (p) => `餐厅升到了 ${n(p, 'star')} 星`,
-    'oil.expand': (p) => `油壶扩容到 ${n(p, 'level')} 级（上限 ${formatNum(n(p, 'oilMax'))}）`,
+    'oil.expand': (p) => `油壶扩容到 ${n(p, 'level')} 级 (上限 ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => '油用光了，餐厅停业',
     'rest.reopen': () => '加满了油，餐厅恢复营业',
     'rest.rename': (p) => `餐厅改名为「${String(p.to ?? '')}」`,
@@ -146,7 +146,7 @@ export default {
         : `魔鬼辣杯撑过 ${n(p, 'survived')} 杯，倒下了`,
     'bar.memory': (p) => `记忆调酒第 ${n(p, 'level')} 关${p.correct ? '调对了' : '没调对'}`,
     'bar.nim': (p) =>
-      `最后一颗糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '赢了' : '输了'}`,
+      `最后一颗糖 (${p.table === 'expert' ? '高手桌' : '新手桌'}) ${p.result === 'win' ? '赢了' : '输了'}`,
     'bar.cup': (p) =>
       p.result === 'lose'
         ? `猜酒杯第 ${n(p, 'round')} 轮猜错了`
@@ -183,12 +183,12 @@ export default {
     'friend.weekly': (p, names) => `好友周榜第 ${n(p, 'rank')} 名，获得 ${names.goodsName(n(p, 'goodsId'))}`,
     'hiphop.event': () => '嘻哈男孩来店里办了活动',
     'hiphop.tip': () => '打赏了嘻哈男孩',
-    'hiphop.wage': (p, names) => `领到嘻哈男孩的工资（${names.goodsName(n(p, 'cardId'))}）`,
+    'hiphop.wage': (p, names) => `领到嘻哈男孩的工资 (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) => `嘻哈周榜第 ${n(p, 'rank')} 名，获得 ${names.goodsName(n(p, 'goodsId'))}`,
     'market.manual': (p) => `菜场手动进货，花费银币 ${formatNum(n(p, 'cost'))}`,
     'market.share': (p, names) => `你在菜场分享的 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} 被买走了`,
     'takeaway.open': () => '开通了外卖',
-    'takeaway.refresh': (p) => `刷新了外卖订单（今天第 ${n(p, 'times')} 次）`,
+    'takeaway.refresh': (p) => `刷新了外卖订单 (今天第 ${n(p, 'times')} 次)`,
     'takeaway.deliver': () => '派出了一单外卖',
     'takeaway.claim': (p) => (p.success ? `外卖送达，获得银币 ${formatNum(n(p, 'coin'))}` : '外卖配送失败'),
     'takeaway.rebate': (p) =>
@@ -207,11 +207,11 @@ export default {
     'town.talk': () => '和小镇居民聊了天',
     'town.wish': () => '在广场许了愿',
     'exchange.order': (p, names) =>
-      `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（当场成交 ${n(p, 'filled')} 个）` : ''}${heldNote(p)}`,
+      `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? ` (当场成交 ${n(p, 'filled')} 个)` : ''}${heldNote(p)}`,
     'exchange.fill': (p, names) =>
       p.side === 'sell'
-        ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : '（所得在交易所账户）'}`
-        : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : '（食材在交易所账户）'}`,
+        ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (所得在交易所账户)'}`
+        : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所账户)'}`,
     'exchange.cancel': (p, names) =>
       `撤销交易所${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
     'exchange.expire': (p, names) =>
@@ -239,7 +239,7 @@ export default {
     },
     // 小镇发展基金（backlog 基金）：档位名跟着发展基金页的叫法
     'fund.deposit': (p) =>
-      `向小镇发展基金存入 ${formatNum(n(p, 'coin'))} 银币（${fund.tierName(String(p.tier ?? ''))}）`,
+      `向小镇发展基金存入 ${formatNum(n(p, 'coin'))} 银币 (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
       `领取小镇发展基金：拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) => `提前取出小镇发展基金，拿回 ${formatNum(n(p, 'coin'))} 银币`,

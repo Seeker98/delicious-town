@@ -23,7 +23,7 @@ describe('FriendDuel', () => {
     const w = mount(FriendDuel, { props: { restId: 2 } });
     await flushPromises();
     expect(endpoints.duelInfo).toHaveBeenCalledWith(2);
-    expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋（今天还能 10 次）');
+    expect(w.find('[data-testid="act-duel"]').text()).toBe('切磋 (今天还能 10 次)');
     await w.find('[data-testid="act-duel"]').trigger('click');
     await flushPromises();
     expect(endpoints.friendDuel).toHaveBeenCalledWith(2);
@@ -40,7 +40,7 @@ describe('FriendDuel', () => {
     vi.mocked(endpoints.duelInfo).mockResolvedValue({ left: 3, spar: 0, strength: 2, duelStrength: 5 });
     const tired = mount(FriendDuel, { props: { restId: 2 } });
     await flushPromises();
-    expect(tired.find('[data-testid="duel-block"]').text()).toBe('体力不够（要 5）');
+    expect(tired.find('[data-testid="duel-block"]').text()).toBe('体力不够 (要 5)');
   });
   it('区服没开放厨塔时整块不显示、也不弹错误（最终审查 Important 2）', async () => {
     vi.mocked(endpoints.duelInfo).mockRejectedValue(new ApiError('FEATURE_DISABLED', { feature: 'tower' }));

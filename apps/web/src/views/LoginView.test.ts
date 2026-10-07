@@ -47,7 +47,7 @@ describe('LoginView', () => {
     const w = await mountView();
     const a = w.get('[data-testid="login-wiki"]');
     expect(a.attributes('href')).toBe('/wiki');
-    expect(a.text()).toBe('游戏资料（Wiki）');
+    expect(a.text()).toBe('游戏资料 (Wiki)');
   });
 
   it('读公告失败时照常显示登录表单', async () => {

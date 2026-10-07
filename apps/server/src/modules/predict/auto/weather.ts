@@ -51,7 +51,7 @@ export const weather: AutoKind = {
     );
     const typeName = WEATHER_TYPE_NAMES[auto.type] ?? String(auto.type);
     const day = period.split('@')[0]!;
-    let note = `${dayLabel(day)} ${hour} 点自动轮换的天气是${auto.name}（${typeName}类）`;
+    let note = `${dayLabel(day)} ${hour} 点自动轮换的天气是${auto.name} (${typeName}类)`;
     const noteParams: Record<string, unknown> = { day, hour, weather: auto.id, type: auto.type };
     const start = gameTime(day, hour);
     const hammer = await c.d.db

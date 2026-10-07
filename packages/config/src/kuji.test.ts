@@ -22,7 +22,7 @@ describe('一番赏配置（设计 §3、§4）', () => {
       const g = b.goods.find((x) => x.id === id)!;
       expect(g.type).toBe(GOODS_TYPE.souvenir);
       // 初代手办（问题记录 274 之前）：不再产出，但道具还在
-      expect(g.desc).toContain('（一番赏纪念品）');
+      expect(g.desc).toContain('(一番赏纪念品)');
     }
     expect(b.looks.icons.map((i) => i.key)).toEqual(expect.arrayContaining(['kuji_a', 'kuji_last']));
     const k = b.tuning.kuji;
@@ -54,7 +54,7 @@ describe('一番赏配置（设计 §3、§4）', () => {
         ids.add(id);
         const g = b.goods.find((x) => x.id === id)!;
         expect(g.type).toBe(GOODS_TYPE.souvenir);
-        expect(g.desc).toContain(`（一番赏·${t.name}）`);
+        expect(g.desc).toContain(`(一番赏·${t.name})`);
       }
     }
     expect(ids.size).toBe(48);

@@ -13,7 +13,7 @@ const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `種子
 /** 可疑成交的所得進冷靜期（156-2） */
 /** 凍結幾小時：日誌裡帶 holdHours（backlog 156-2），舊日誌沒有時是 24 */
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
-const heldNote = (p: P) => (p.held ? `（可疑成交，所得凍結 ${holdHours(p)} 小時）` : '');
+const heldNote = (p: P) => (p.held ? ` (可疑成交，所得凍結 ${holdHours(p)} 小時)` : '');
 /** 銀幣和食材清單：交易所取出、沒收共用 */
 const coinFoods = (p: P, names: Names, coin: (s: string) => string, sep: string) =>
   [
@@ -91,8 +91,8 @@ export default {
   remnant: (names: Names, id: number) => `${mcNameOf(names, id)}殘卷`,
   seed: (names: Names, id: number) => seedNameOf(names, id),
   basket: (name: string) => `菜籃·${name}`,
-  activityCurrency: (name: string | undefined, num: string) => `${name ?? '活動貨幣'}×${num}（活動貨幣）`,
-  lucky: '（幸運）',
+  activityCurrency: (name: string | undefined, num: string) => `${name ?? '活動貨幣'}×${num} (活動貨幣)`,
+  lucky: ' (幸運)',
   /** 列表分隔：同類之間、得失之間 */
   sep: '、',
   groupSep: '；',
@@ -116,7 +116,7 @@ export default {
       `${names.goodsName(n(p, 'goodsId'))}強化到 +${n(p, 'to')}${p.success ? '成功' : '失敗'}`,
     'level.up': (p) => `餐廳升到了 ${n(p, 'to')} 級`,
     'star.up': (p) => `餐廳升到了 ${n(p, 'star')} 星`,
-    'oil.expand': (p) => `油壺擴容到 ${n(p, 'level')} 級（上限 ${formatNum(n(p, 'oilMax'))}）`,
+    'oil.expand': (p) => `油壺擴容到 ${n(p, 'level')} 級 (上限 ${formatNum(n(p, 'oilMax'))})`,
     'rest.closed': () => '油用光了，餐廳停業',
     'rest.reopen': () => '加滿了油，餐廳恢復營業',
     'rest.rename': (p) => `餐廳改名為「${String(p.to ?? '')}」`,
@@ -147,7 +147,7 @@ export default {
         : `魔鬼辣杯撐過 ${n(p, 'survived')} 杯，倒下了`,
     'bar.memory': (p) => `記憶調酒第 ${n(p, 'level')} 關${p.correct ? '調對了' : '沒調對'}`,
     'bar.nim': (p) =>
-      `最後一顆糖（${p.table === 'expert' ? '高手桌' : '新手桌'}）${p.result === 'win' ? '贏了' : '輸了'}`,
+      `最後一顆糖 (${p.table === 'expert' ? '高手桌' : '新手桌'}) ${p.result === 'win' ? '贏了' : '輸了'}`,
     'bar.cup': (p) =>
       p.result === 'lose'
         ? `猜酒杯第 ${n(p, 'round')} 輪猜錯了`
@@ -184,12 +184,12 @@ export default {
     'friend.weekly': (p, names) => `好友周榜第 ${n(p, 'rank')} 名，獲得 ${names.goodsName(n(p, 'goodsId'))}`,
     'hiphop.event': () => '嘻哈男孩來店裡辦了活動',
     'hiphop.tip': () => '打賞了嘻哈男孩',
-    'hiphop.wage': (p, names) => `領到嘻哈男孩的工資（${names.goodsName(n(p, 'cardId'))}）`,
+    'hiphop.wage': (p, names) => `領到嘻哈男孩的工資 (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) => `嘻哈周榜第 ${n(p, 'rank')} 名，獲得 ${names.goodsName(n(p, 'goodsId'))}`,
     'market.manual': (p) => `菜場手動進貨，花費銀幣 ${formatNum(n(p, 'cost'))}`,
     'market.share': (p, names) => `你在菜場分享的 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} 被買走了`,
     'takeaway.open': () => '開通了外賣',
-    'takeaway.refresh': (p) => `重新整理了外賣訂單（今天第 ${n(p, 'times')} 次）`,
+    'takeaway.refresh': (p) => `重新整理了外賣訂單 (今天第 ${n(p, 'times')} 次)`,
     'takeaway.deliver': () => '派出了一單外賣',
     'takeaway.claim': (p) => (p.success ? `外賣送達，獲得銀幣 ${formatNum(n(p, 'coin'))}` : '外賣配送失敗'),
     'takeaway.rebate': (p) =>
@@ -208,11 +208,11 @@ export default {
     'town.talk': () => '和小鎮居民聊了天',
     'town.wish': () => '在廣場許了願',
     'exchange.order': (p, names) =>
-      `在交易所掛${p.side === 'buy' ? '買' : '賣'}單：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? `（當場成交 ${n(p, 'filled')} 個）` : ''}${heldNote(p)}`,
+      `在交易所掛${p.side === 'buy' ? '買' : '賣'}單：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? ` (當場成交 ${n(p, 'filled')} 個)` : ''}${heldNote(p)}`,
     'exchange.fill': (p, names) =>
       p.side === 'sell'
-        ? `交易所賣單成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}，手續費 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : '（所得在交易所賬戶）'}`
-        : `交易所買單成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : '（食材在交易所賬戶）'}`,
+        ? `交易所賣單成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}，手續費 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (所得在交易所賬戶)'}`
+        : `交易所買單成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，單價 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所賬戶)'}`,
     'exchange.cancel': (p, names) =>
       `撤銷交易所${p.side === 'buy' ? '買' : '賣'}單：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 個`,
     'exchange.expire': (p, names) =>
@@ -240,7 +240,7 @@ export default {
     },
     // 小鎮發展基金（backlog 基金）：檔位名跟著發展基金頁的叫法
     'fund.deposit': (p) =>
-      `向小鎮發展基金存入 ${formatNum(n(p, 'coin'))} 銀幣（${fund.tierName(String(p.tier ?? ''))}）`,
+      `向小鎮發展基金存入 ${formatNum(n(p, 'coin'))} 銀幣 (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
       `領取小鎮發展基金：拿回 ${formatNum(n(p, 'coin'))} 銀幣和${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) => `提前取出小鎮發展基金，拿回 ${formatNum(n(p, 'coin'))} 銀幣`,

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    parens1007:
+      'In the Chinese interface, item descriptions and recipe names, full-width parentheses are now half-width with a space on each side, so more fits on a line',
     ui1007:
       'Small UI tweaks: Deal or No Deal now lists the boxes opened in each round and what was in them; the main quest “Claim” on the home page is now a gift icon with text, and the green buttons elsewhere now use the brand color; the level and path filters on the signature dish page are now small pills; Signature dishes was removed from “More” — open it from the home page',
     misc1007:

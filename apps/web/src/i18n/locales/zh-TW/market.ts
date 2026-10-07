@@ -1,22 +1,22 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 菜場和菜園姐（問題記錄 272） */
 export default {
-  sections: { daily: '日常菜場', special: '特價菜場', premium: '高階菜場（需愛心項鍊）' },
+  sections: { daily: '日常菜場', special: '特價菜場', premium: '高階菜場 (需愛心項鍊)' },
   specialNote: (min: number) => `需驗證郵箱，每種每人 1 份；同一網路 ${min} 分鐘內只能搶一次`,
   manualConfirm: (cost: string, time: string) =>
-    `花 ${cost} 銀幣進 4 種日常菜？下次日常進貨（${time}）時會一起下架。`,
+    `花 ${cost} 銀幣進 4 種日常菜？下次日常進貨 (${time}) 時會一起下架。`,
   manualDone: (renown: number) => `進貨完成，聲望 +${renown}`,
   manualFailed: '進貨失敗',
   buyFailed: '購買失敗',
   capShared: (shared: number, can: number) =>
-    `同一網路或裝置本輪已買 ${shared} 份（限購按店、裝置、網路分別算），最多再買 ${can}`,
+    `同一網路或裝置本輪已買 ${shared} 份 (限購按店、裝置、網路分別算)，最多再買 ${can}`,
   capSlots: '櫥櫃格子滿了，先騰出一格',
-  capFull: (max: number) => `櫥櫃裡已經放滿了（單種上限 ${max}）`,
+  capFull: (max: number) => `櫥櫃裡已經放滿了 (單種上限 ${max})`,
   capRoom: (max: number, have: number, room: number) => `櫥櫃單種上限 ${max}，已有 ${have}，最多再買 ${room}`,
   guessFailed: '競猜失敗',
   loadFailed: '讀取菜場失敗',
   nextStock: (time: string) => `下次進貨 ${time}`,
-  manualBtn: (cost: string) => `手動進貨（${cost} 銀幣）`,
+  manualBtn: (cost: string) => `手動進貨 (${cost} 銀幣)`,
   specialWait: (min: number) => `剛搶過特價，同一網路還要等 ${min} 分鐘才能再搶`,
   empty: '還沒有進貨',
   hot: '熱門',
@@ -28,11 +28,11 @@ export default {
   buy: '買',
   guess: {
     title: '菜場競猜',
-    hint: (hour: string) => `猜下一輪日常菜場（${hour} 點）上什麼菜`,
+    hint: (hour: string) => `猜下一輪日常菜場 (${hour} 點) 上什麼菜`,
     last: (n: number) => `上次猜中 ${n} 種`,
     joined: (list: string) => `已報名：${list}`,
     rule: (max: number, cost: number) => `最多選 ${max} 種，花 ${cost} 張神秘禮券`,
-    join: (n: number) => `報名（${n} 種）`,
+    join: (n: number) => `報名 (${n} 種)`,
   },
   /** 菜園姐（問題記錄 176）：閒聊只寫遊戲裡真有的規則 */
   sis: {

@@ -18,7 +18,7 @@ export default {
   enter: '进入',
   changePw: '修改密码',
   oldPw: '旧密码',
-  newPw: '新密码（6~64 位）',
+  newPw: '新密码 (6~64 位)',
   newPw2: '再输一次新密码',
   pwMismatch: '两次输入的新密码不一样',
   pwChanged: '密码已修改，其他设备已下线',
