@@ -76,7 +76,7 @@ describe('开放接口数据（问题记录 142）', () => {
     expect(data.goodsDetail('zh-CN', 999_999)).toBeNull();
   });
 
-  it('礼包内容只给种类和数量、不给概率；随机道具、随机食材、万能食材、随机银币分开写', () => {
+  it('礼包内容只给种类和数量、不给概率；随机道具、指定食材、万能食材、随机银币分开写', () => {
     const g = data.goodsDetail('zh-CN', GOODS.signInGift)!;
     expect(g.gift).toEqual(
       expect.arrayContaining([
@@ -92,8 +92,13 @@ describe('开放接口数据（问题记录 142）', () => {
       ]),
     );
     expect(JSON.stringify(g.gift)).not.toContain('rate');
-    const lv = b.goods.find((x) => x.gift?.some((i) => i.type === 'foods' && i.flag === '1'))!;
-    expect(data.goodsDetail('zh-CN', lv.id)!.gift).toContainEqual({ kind: 'randomFoods', level: 1, num: 2 });
+    // 指定的食材写名字和数量（问题记录 455：新手大礼包里的一级万能食材 ×10）；现在没有按等级随机给食材的礼包了
+    expect(data.goodsDetail('zh-CN', gid('新手大礼包'))!.gift).toContainEqual({
+      kind: 'foods',
+      id: fid('一级万能食材'),
+      name: '一级万能食材',
+      num: 10,
+    });
   });
 
   it('来源还有今日特价、钻石黑市、随机奖励、宝石升阶（视觉第三轮：原来只写商店）', () => {

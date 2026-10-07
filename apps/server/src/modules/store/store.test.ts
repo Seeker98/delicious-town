@@ -163,8 +163,8 @@ describe('批量开礼包（问题记录：99 个随机万能食材礼包要 1.5
       .select(['num', 'fridge_num'])
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
-    // 每个礼包：万能食材 1 个 + 1 级食材 2 个
-    expect(foods.reduce((n, f) => n + f.num + f.fridge_num, 0)).toBe(99 * 3);
+    // 每个礼包：万能食材 1 个（问题记录 455：不再附带 1 级食材）
+    expect(foods.reduce((n, f) => n + f.num + f.fridge_num, 0)).toBe(99);
     // 合并前每开一个礼包就有 2 条（共 199 条）；合并后不超过食材种数
     expect(r.events.length).toBeLessThanOrEqual(40);
   });
