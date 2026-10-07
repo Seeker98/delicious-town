@@ -141,6 +141,33 @@ describe('蟹老板（设计文档 §4.9）', () => {
   });
 });
 
+describe('蟹老板店里玩家放的蟑螂（问题记录 457 后续）', () => {
+  it('待满 4 小时就跑掉，桌子空出来；不满 4 小时的、系统长的留着', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { friend: { npc: { roachRate: 0 } } } }),
+      })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const npc = (await ensureNpc(t.db, config, npcT, shardId, seededRng(1))).id;
+    const now = new Date('2026-09-30T04:00:00Z');
+    await setTables(t, npc, [
+      { no: 1, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T00:00:00.000Z' } },
+      { no: 2, floor: 1, customer: 3, roach: { by: 7, at: '2026-09-30T03:00:00.000Z' } },
+      { no: 3, floor: 1, customer: 3, roach: { by: null, at: '2026-09-29T00:00:00.000Z' } },
+    ]);
+    expect(await npcTableRound(t.game.deps, shardId, roundOf(now), now)).toBe('settled');
+    const tables = await tablesOf(t, npc);
+    expect(tables[0]!.customer).toBe(0);
+    expect(tables[0]!.roach).toBeUndefined();
+    expect(tables[1]).toMatchObject({ customer: 3, roach: { by: 7 } });
+    expect(tables[2]).toMatchObject({ customer: 3, roach: { by: null } });
+  });
+});
+
 describe('蟹老板的橱柜（问题记录 370）：1~5 级食材都有，几十到几百个，每天补回来', () => {
   const food = (level: number) => config.foodsByLevel.get(level)!.find((f) => f.odds === 100)!;
   const rare = (level: number) => config.foodsByLevel.get(level)!.find((f) => f.odds < 100)!;

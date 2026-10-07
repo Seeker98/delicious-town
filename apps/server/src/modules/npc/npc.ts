@@ -225,7 +225,14 @@ export async function npcTableRound(
         coinBase: rt.coinBase - Math.floor(s / 2),
         expBase: rt.expBase + Math.floor(s / 2),
       };
-      const tables = tr.tables.map((tb) => {
+      const foreignMs = op.tuning.settlement.roachForeignHours * 3_600_000;
+      const tables = tr.tables.map((raw) => {
+        // 玩家放的蟑螂待满 roachForeignHours 就跑掉，桌子空出来照常长系统蟑螂：
+        // 一个人放的不能一直占着蟹老板的桌子（问题记录 457 后续，用户 2026-10-07 定）
+        const tb =
+          raw.customer === 3 && raw.roach?.by != null && now.getTime() - Date.parse(raw.roach.at) >= foreignMs
+            ? { no: raw.no, floor: raw.floor, customer: 0 }
+            : raw;
         if (tb.customer === 9 && tb.freeloader) {
           const a = dineAccrual(tb.freeloader, now, s, base, op.rng);
           return {
