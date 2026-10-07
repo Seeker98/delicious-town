@@ -68,9 +68,8 @@ describe('openGift（规格书 07 §7.5）', () => {
     );
     expect(await goodsNum(t, ctx.restaurantId, pool[0]!)).toBeGreaterThanOrEqual(1);
     const r = await restRow(t, ctx.restaurantId);
-    // 银币、经验、钻石的范围两头都能取到，和资料站写的“最小~最大”一致（问题记录 511；原版是 [min, max)）；
-    // 钻石 1~5（用户 2026-10-07 定，原来 1~4 实际只给 1~3）
-    expect(r.coin).toBe(1000 + Math.floor(0.5 * 19001));
+    // 银币、经验、钻石按 [min, max) 抽；钻石 1~5（问题记录 511，用户 2026-10-07 定；原来 1~3），数据里写 [1, 6)
+    expect(r.coin).toBe(1000 + Math.floor(0.5 * 19000));
     expect(r.diamond).toBe(5);
     expect(r.exp).toBe(0);
   });

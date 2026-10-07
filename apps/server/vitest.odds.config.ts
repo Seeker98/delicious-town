@@ -1,7 +1,7 @@
 import { defineProject } from 'vitest/config';
 import { testEnv } from './test/testEnv';
 
-/** 概率核对（问题记录 511）：不进 CI，要时手动跑 pnpm -F @dt/server odds */
+/** 概率核对（问题记录 511）：不进 CI，要时手动跑 pnpm -F @dt/server odds。会清空重建测试库，别和 pnpm test 同时跑 */
 export default defineProject({
   test: {
     name: 'odds',

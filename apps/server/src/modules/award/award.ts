@@ -26,12 +26,9 @@ export async function grantAward(op: Op, award: Award, opts: AwardOptions = {}):
   for (const f of award.foods ?? []) await addFoods(op, f.id, f.num * m, o);
 }
 
-/**
- * [min, max] 的整数：两头都能取到，和资料站写的“最小~最大”一致（问题记录 511）。
- * 原版是 [min, max)，每日签到礼包写着钻石 1~4、实际只给 1~3
- */
+/** [min, max) 的整数 */
 function randRange(op: Op, min: number, max: number): number {
-  return max > min ? min + op.rng.int(max - min + 1) : min;
+  return max > min ? min + op.rng.int(max - min) : min;
 }
 
 function pickRandomGoods(op: Op, level: number): number | null {

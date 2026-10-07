@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     odds1007:
-      'El regalo de registro diario da ahora 1–5 diamantes; las monedas, la experiencia y los diamantes de los regalos ya pueden llegar a los dos extremos del rango de la wiki (antes nunca salía el máximo); bajo la tabla de premios de la tragaperras, una nota aclara que las probabilidades son por casilla sin contar el premio asegurado, y cada cuántas tiradas sale de media un premio raro contándolo',
+      'El regalo de registro diario da ahora 1–5 diamantes cuando da diamantes (antes 1–3); bajo la tabla de premios de la tragaperras, una nota aclara que las probabilidades son por casilla sin contar el premio asegurado, y cada cuántas tiradas sale de media un premio raro contándolo',
     misc1007d:
       'Las tarjetas de ampliación pequeña, mediana y grande ya están en la tienda de monedas (30.000, 120.000 y 200.000); el canje del alcalde muestra primero lo ilimitado, luego lo que puedes canjear, lo que te falta y lo agotado, de más barato a más caro en cada grupo; cuando no puedes adquirir un restaurante, el aviso explica que es porque habéis entrado hace poco desde el mismo dispositivo o red; tras una actualización, una página antigua que no puede abrir otra se recarga sola una vez',
     retire1007:
