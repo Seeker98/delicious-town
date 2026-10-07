@@ -52,6 +52,7 @@ export function dealView(s: DealState): DealDto {
     all: null,
     fridge: 0,
     dropped: 0,
+    opens: s.opens,
   };
 }
 

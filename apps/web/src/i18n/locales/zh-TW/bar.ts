@@ -218,6 +218,10 @@ export default {
     offer: (coin: string) => `銀行家出價：${coin} 銀幣`,
     yes: '成交',
     no: '不成交，繼續開',
+    /** 按輪的開箱記錄（問題記錄 467） */
+    roundsTitle: '每輪開出的箱子',
+    roundLine: (n: number, list: string) => `第 ${n} 輪：${list}`,
+    sep: '、',
     leftTitle: '還沒開出來的獎品',
     dealt: (coin: string) => `成交，得到 ${coin} 銀幣`,
     yourBox: (what: string) => `你的箱子裡是：${what}`,

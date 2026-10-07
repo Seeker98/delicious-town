@@ -27,6 +27,7 @@ const round = (patch: Partial<DealDto> = {}): DealDto => ({
   all: null,
   fridge: 0,
   dropped: 0,
+  opens: [3, 2, 2, 1],
   ...patch,
 });
 const withRound = (r: DealDto | null, patch: Partial<ReturnType<typeof barData>['deal']> = {}) => {
@@ -198,6 +199,17 @@ describe('DealPanel', () => {
     await flushPromises();
     expect(focused()).toBe('deal-again');
     w.unmount();
+  });
+
+  it('按轮列出每一轮开出的箱子和奖品；还没开的轮不写（问题记录 467）', () => {
+    const opened = [4, 7, 2, 9].map((box, i) => ({ box, ...P((i + 1) * 1000) }));
+    const w = mount(DealPanel, {
+      props: { data: withRound(round({ mine: 0, round: 1, toOpen: 1, opened })) },
+    });
+    const rows = w.findAll('[data-testid^="deal-round-"]');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]!.text()).toBe('第 1 轮：5 号 食材101×2、8 号 食材101×2、3 号 食材101×2');
+    expect(rows[1]!.text()).toBe('第 2 轮：10 号 食材101×2');
   });
 
   it('结束后读屏标签仍写出哪个是自己的箱子', () => {

@@ -161,6 +161,8 @@ export interface DealDto {
   /** 开自己的箱子时：橱柜放不下、放进冰箱的个数，冰箱也满了丢掉的个数 */
   fridge: number;
   dropped: number;
+  /** 这一局每轮开几个（开局时定下的）：前端按轮列出开出的箱子（问题记录 467） */
+  opens: number[];
 }
 
 export interface SpiceGuessDto {
