@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    retire1007:
+      'Se ha retirado un lote de objetos sin uso: ya no aparecen en la tienda, el mercado negro, la oferta del día ni en ninguna recompensa. Los que ya tienes se siguen mostrando y se pueden usar o vender',
     cluster1007:
       'Cambios en el guardián del templo: el «Misil rápido» recupera su nombre original, «Misil de racimo», y hace 3200 por disparo en vez de 2000 (algo menos que 36 misiles estándar); el misil estándar baja a 2400 monedas; la recompensa por derrotar al guardián crece con su vida, así que con más estrellas da más ingredientes y más probabilidad de ingredientes misteriosos (a veces más de uno). El valor de prueba ahora llega como mucho al 30 % en vez del 50 % (lo que pase de ahí cuenta como 30 %), y los duelos de la torre y entre amigos ya no cuentan el valor de prueba',
     ui1007c:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    retire1007:
+      'A batch of unused items has been retired: they no longer appear in the shop, black market, today’s deal or any rewards. Items you already own still show up and can be used or sold',
     cluster1007:
       'Temple guardian changes: the “Rapid Missile” is back to its original name, the “Cluster Missile”, and deals 3,200 per shot instead of 2,000 (a bit less than 36 Standard Missiles); Standard Missiles now cost 2,400 coins; the reward for defeating the guardian grows with its HP, so higher stars give more ingredients and better odds of mystery ingredients (sometimes more than one). Trial value now caps at 30% instead of 50% (anything above counts as 30%), and tower and friend duels no longer count trial value',
     ui1007c:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    retire1007:
+      'Un lot d’objets inutilisés a été retiré\u202f: ils n’apparaissent plus dans la boutique, au marché noir, dans la promo du jour ni dans aucune récompense. Ceux que vous possédez déjà restent affichés et peuvent être utilisés ou vendus',
     cluster1007:
       'Changements du gardien du temple\u202f: le «\u202fMissile rapide\u202f» reprend son nom d’origine, «\u202fMissile à fragmentation\u202f», et inflige 3200 par tir au lieu de 2000 (un peu moins que 36 missiles standard)\u202f; le missile standard passe à 2400 pièces\u202f; la récompense pour avoir vaincu le gardien augmente avec ses PV, donc plus d’étoiles donnent plus d’ingrédients et plus de chances d’ingrédients mystère (parfois plusieurs). La valeur d’épreuve plafonne désormais à 30\u202f% au lieu de 50\u202f% (au-delà, elle compte pour 30\u202f%), et les duels de la tour et entre amis ne comptent plus la valeur d’épreuve',
     ui1007c:
