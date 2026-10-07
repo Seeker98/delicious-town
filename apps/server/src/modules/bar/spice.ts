@@ -27,6 +27,8 @@ export function spiceView(s: SpiceState, t: T): SpiceDto {
   return {
     guesses: s.guesses,
     left: (s.tries ?? t.tries) - s.guesses.length,
+    length: s.secret.length,
+    kinds: s.kinds ?? t.kinds,
     result: null,
     secret: null,
     tier: null,

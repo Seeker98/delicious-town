@@ -206,6 +206,17 @@ describe('CupPanel', () => {
     w.unmount();
   });
 
+  it('猜错以后奖励表不再标这一档（终审）', () => {
+    const w = mount(CupPanel, {
+      props: {
+        data: withRound(
+          round({ round: 2, cups: 5, result: 'lose', last: { pick: 0, ball: 1, win: false, lucky: false } }),
+        ),
+      },
+    });
+    expect(w.findAll('[aria-current="true"]')).toHaveLength(0);
+  });
+
   it('当前连胜写在规则下面', () => {
     const w = mount(CupPanel, { props: { data: withRound(null, { result: 'win', times: 3 }) } });
     expect(w.get('[data-testid="cup-streak"]').text()).toBe('当前 3 连胜');

@@ -106,7 +106,7 @@ function again() {
   void focusNext();
 }
 /** 奖励表里标出这一轮的档：没开局时不标 */
-const nowTier = computed(() => local.value?.round ?? -1);
+const nowTier = computed(() => (local.value && local.value.result !== 'lose' ? local.value.round : -1));
 </script>
 
 <template>

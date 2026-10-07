@@ -611,7 +611,8 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <div v-if="pickingSlot !== null" class="border rounded p-2 mt-2 small">
-        <div class="d-flex justify-content-between">
+        <!-- 取消的点击区域往外扩了 8px（.dt-link-btn::before），下面留 8px 别盖住第一排选项（终审） -->
+        <div class="d-flex justify-content-between mb-2" data-testid="pick-head">
           <b>{{ t.home.pick }}</b>
           <button type="button" class="dt-link-btn" @click="pickingSlot = null">{{ t.common.cancel }}</button>
         </div>

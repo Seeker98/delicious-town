@@ -133,6 +133,8 @@ const liveText = computed(() => {
 <template>
   <div class="small">
     <div class="dt-meta mb-2">{{ t.bar.nim.rule }}</div>
+    <!-- 固定播报区：一直在，开局后的第一条（抛硬币、调酒师先拿）也念得出来（终审） -->
+    <div class="visually-hidden" aria-live="polite" data-testid="nim-live">{{ liveText }}</div>
     <template v-if="!view">
       <div class="mb-1">{{ leftToday > 0 ? t.bar.nim.left(leftToday) : t.bar.nim.noLeft }}</div>
       <div v-for="x in TABLES" :key="x" class="dt-item" :data-testid="`nim-table-${x}`">
@@ -159,7 +161,6 @@ const liveText = computed(() => {
       </div>
     </template>
     <template v-else>
-      <div class="visually-hidden" aria-live="polite" data-testid="nim-live">{{ liveText }}</div>
       <div class="fw-bold mb-1">{{ t.bar.nim.tables[view.table] }}</div>
       <div v-if="view.coin" class="dt-meta mb-1" data-testid="nim-coin">
         {{ view.coin === 'me' ? t.bar.nim.coinMe : t.bar.nim.coinBartender }}

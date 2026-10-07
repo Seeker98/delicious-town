@@ -56,6 +56,8 @@ describe('秘制调料：开局（设计 §4.2）', () => {
     expect(r).toEqual({
       guesses: [],
       left: 8,
+      length: 4,
+      kinds: 10,
       result: null,
       secret: null,
       tier: null,
@@ -203,6 +205,9 @@ describe('秘制调料：猜', () => {
       const r = (await guess(a, g)).data;
       expect(r.guesses).toHaveLength(1);
       expect(r.left).toBe(7);
+      // 前端照这一局的长度和种数画空位、调料（终审：不然改了数值以后交什么都被拒，这一局卡死）
+      expect(r).toMatchObject({ length: 4, kinds: 10 });
+      expect((await t.game.bar.overview(a)).spice.round).toMatchObject({ length: 4, kinds: 10 });
       expect((await guess(a, secret.secret)).data).toMatchObject({ result: 'win' });
     } finally {
       await t.db.deleteFrom('shard_config').where('shard_id', '=', a.shardId).execute();

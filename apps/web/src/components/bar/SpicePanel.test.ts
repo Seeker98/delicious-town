@@ -12,6 +12,8 @@ vi.mock('../../api/endpoints', () => ({ endpoints: { barSpiceStart: vi.fn(), bar
 const round = (patch: Partial<SpiceDto> = {}): SpiceDto => ({
   guesses: [],
   left: 8,
+  length: 4,
+  kinds: 10,
   result: null,
   secret: null,
   tier: null,
@@ -60,8 +62,16 @@ describe('SpicePanel', () => {
     expect(w.find('[data-testid="spice-row-0"]').exists()).toBe(true);
   });
 
+  it('进行中的局按这一局开局时的长度、调料种数画，不跟着改过的数值（终审）', () => {
+    const w = mount(SpicePanel, {
+      props: { data: withRound(round({ length: 4, kinds: 10 }), { length: 3, kinds: 6 }) },
+    });
+    expect(w.findAll('[data-testid^="spice-slot-"]')).toHaveLength(4);
+    expect(w.findAll('[data-testid^="spice-kind-"]')).toHaveLength(10);
+  });
+
   it('空位个数和列数跟着配方长度（#191 审查）', () => {
-    const w = mount(SpicePanel, { props: { data: withRound(round(), { length: 3 }) } });
+    const w = mount(SpicePanel, { props: { data: withRound(round({ length: 3 }), { length: 3 }) } });
     expect(w.findAll('[data-testid^="spice-slot-"]')).toHaveLength(3);
     expect(w.get('.dt-spice-slots').attributes('style')).toContain('repeat(3, minmax(0, 1fr))');
   });

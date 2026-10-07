@@ -295,6 +295,8 @@ describe('RestaurantHomeView', () => {
     expect(locked.attributes('disabled')).toBeDefined();
     expect(locked.text()).toContain('4 星可用');
     expect(w.get('[data-testid="choice-14"]').attributes('disabled')).toBeUndefined();
+    // “取消”的点击区域往外扩了 8px：标题行下面留 8px，别盖住下面第一排选项（终审）
+    expect(w.get('[data-testid="pick-head"]').classes()).toContain('mb-2');
   });
 
   it('体力、声望也按千分位显示，和银币、油一致（问题记录 296）', async () => {

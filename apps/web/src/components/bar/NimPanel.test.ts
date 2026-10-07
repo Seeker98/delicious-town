@@ -133,6 +133,11 @@ describe('NimPanel', () => {
     expect(w.findAll('.dt-nim-candy')).toHaveLength(10);
   });
 
+  it('播报区一直在（没开局时也在），开局后第一条播报才念得出来（终审）', () => {
+    const w = mount(NimPanel, { props: { data: withRound(null) } });
+    expect(w.find('[data-testid="nim-live"]').exists()).toBe(true);
+  });
+
   it('高手桌写抛硬币的结果', () => {
     const w = mount(NimPanel, {
       props: {

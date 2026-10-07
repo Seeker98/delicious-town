@@ -181,6 +181,9 @@ export interface SpiceDto {
   guesses: SpiceGuessDto[];
   /** 还能猜几次 */
   left: number;
+  /** 这一局开局时的配方长度、调料种数：前端照这个画空位和调料（区服中途改数值时这一局照旧） */
+  length: number;
+  kinds: number;
   result: 'win' | 'lose' | null;
   secret: number[] | null;
   /** 猜中的档位，0 是大奖；没猜中为 null */
