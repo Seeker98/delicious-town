@@ -481,7 +481,7 @@ onMounted(async () => {
       }}</span>
       <button
         type="button"
-        class="btn btn-sm btn-link text-danger"
+        class="dt-link-btn text-danger"
         :disabled="busy"
         :data-testid="`ex-cancel-${o.id}`"
         @click="cancel(o.id)"

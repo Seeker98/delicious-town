@@ -54,7 +54,7 @@ const tastes = computed(() =>
 
 <template>
   <div>
-    <RouterLink :to="listBack('/wiki/cookbooks', router.options.history.state.back)" class="small">{{
+    <RouterLink :to="listBack('/wiki/cookbooks', router.options.history.state.back)" class="small dt-back">{{
       t.wiki.back
     }}</RouterLink>
     <div v-if="error" class="dt-empty" data-testid="wiki-error">

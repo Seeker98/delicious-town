@@ -36,7 +36,7 @@ const shown = (items: readonly Item[]) =>
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small">{{ t.wiki.home }}</RouterLink>
+    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
     <h5 class="dt-page-title mt-2">{{ t.wiki.guide.title }}</h5>
     <p class="small">{{ t.wiki.guide.intro }}</p>
     <section v-for="s in t.wiki.guide.sections" :key="s.title" class="mb-3" data-testid="guide-section">

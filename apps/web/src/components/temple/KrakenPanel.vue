@@ -143,7 +143,7 @@ async function shopAct(fn: () => Promise<TentacleShopDto>, fallback: string) {
         </button>
       </div>
       <button
-        class="btn btn-sm btn-link"
+        class="dt-link-btn"
         data-testid="tentacle-refresh"
         :disabled="busy || shop.tentacles < shop.refreshCost"
         @click="shopAct(() => endpoints.tentacleRefresh(), t.temple.kraken.refreshFailed)"

@@ -232,8 +232,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
   <div v-if="o">
     <div class="d-flex align-items-center mb-2">
       <h5 class="mb-0 flex-fill">{{ t.mc.title }}</h5>
-      <RouterLink to="/temple" class="small me-2">{{ t.mc.temple }}</RouterLink>
-      <RouterLink to="/society/classroom" class="small">{{ t.mc.classroom }}</RouterLink>
+      <RouterLink to="/temple" class="small me-2 dt-go">{{ t.mc.temple }}</RouterLink>
+      <RouterLink to="/society/classroom" class="small dt-go">{{ t.mc.classroom }}</RouterLink>
     </div>
     <p v-if="o.star < 1" class="small text-muted">{{ t.mc.needStar }}</p>
 
@@ -368,7 +368,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           >
             {{ t.mc.batches(c.n) }}
           </button>
-          <button class="btn btn-sm btn-link" @click="preview = null">{{ t.common.cancel }}</button>
+          <button class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
         </div>
       </div>
     </div>

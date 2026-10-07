@@ -61,7 +61,7 @@ async function logout() {
   <div>
     <div v-if="session.me && !session.me.emailVerified" class="alert alert-warning py-1 small">
       {{ t.account.shards.unverified }}
-      <button type="button" class="btn btn-link btn-sm p-0 align-baseline" @click="resend">
+      <button type="button" class="dt-link-btn" @click="resend">
         {{ t.account.resend }}
       </button>
     </div>
@@ -91,8 +91,8 @@ async function logout() {
       {{ t.account.shards.none }}
     </p>
     <div class="d-flex gap-3 align-items-center mt-3 small">
-      <RouterLink to="/account">{{ t.nav.links.account }}</RouterLink>
-      <RouterLink to="/guide">{{ t.nav.links.guide }}</RouterLink>
+      <RouterLink to="/account" class="dt-go">{{ t.nav.links.account }}</RouterLink>
+      <RouterLink to="/guide" class="dt-go">{{ t.nav.links.guide }}</RouterLink>
       <button type="button" class="btn btn-outline-secondary btn-sm ms-auto" @click="logout">
         {{ t.account.logout }}
       </button>

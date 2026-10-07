@@ -4,8 +4,8 @@ import { plEs } from '../../helpers';
 const rest: Messages['rest'] = {
   info: {
     attrs: 'Atributos',
-    toPoints: (n) => `${n} punto${n === 1 ? '' : 's'} por asignar →`,
-    toEquip: 'Utensilios y puntos →',
+    toPoints: (n) => `${n} punto${n === 1 ? '' : 's'} por asignar`,
+    toEquip: 'Utensilios y puntos',
     capacity: 'Capacidad',
     tableNum: 'Mesas máx.',
     cupboardNum: 'Huecos de la despensa',

@@ -189,9 +189,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
       <div class="d-flex align-items-center">
         <b>{{ t.market.guess.title }}</b>
         <span class="text-muted ms-2">{{ t.market.guess.hint(data.guess.period.slice(-2)) }}</span>
-        <a href="#" class="ms-auto" data-testid="guess-toggle" @click.prevent="guessOpen = !guessOpen">
+        <button
+          type="button"
+          class="dt-link-btn ms-auto"
+          data-testid="guess-toggle"
+          @click="guessOpen = !guessOpen"
+        >
           {{ guessOpen ? t.common.collapse : t.common.expand }}
-        </a>
+        </button>
       </div>
       <div v-if="data.guess.last" class="text-muted">
         {{ t.market.guess.last(data.guess.last.hits ?? 0) }}

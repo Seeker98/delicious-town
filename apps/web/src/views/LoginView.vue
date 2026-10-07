@@ -70,12 +70,12 @@ async function submit() {
         <button class="btn btn-primary w-100" :disabled="busy">{{ t.auth.login }}</button>
       </form>
       <div class="d-flex justify-content-between mt-2 small">
-        <RouterLink to="/register">{{ t.auth.toRegister }}</RouterLink>
-        <RouterLink to="/forgot-password">{{ t.auth.forgot }}</RouterLink>
+        <RouterLink to="/register" class="dt-go">{{ t.auth.toRegister }}</RouterLink>
+        <RouterLink to="/forgot-password" class="dt-go">{{ t.auth.forgot }}</RouterLink>
       </div>
       <!-- 游戏资料不用登录也能看（问题记录 142） -->
       <div class="text-center mt-3 small">
-        <RouterLink to="/wiki" data-testid="login-wiki"
+        <RouterLink to="/wiki" class="dt-go" data-testid="login-wiki"
           ><i class="bi bi-book me-1"></i>{{ t.auth.wiki }}</RouterLink
         >
       </div>

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    links1007:
+      'Los enlaces de texto de todo el juego ahora se ven como los de la página principal: color de la marca, sin subrayado, con un «›» al final cuando llevan a otra página y un «‹» al principio cuando vuelven atrás. Las acciones de la misma página, como reenviar, actualizar, cancelar o responder, se ven igual que los enlaces, sin subrayado ni relleno extra',
     cup1007:
       'El juego de los vasos del bar cambia: hasta 4 rondas con 2, 3, 5 y 7 vasos, y un dado bajo uno solo. Cada vez que aciertas, puedes plantarte y llevarte el premio de esa ronda o seguir a la siguiente; si fallas, te quedas sin nada. Cuanto más avanzas, mayor el premio: plantarte tras la ronda 3 sale en las noticias, y superar las 4 rondas da 8 grandes premios y un anuncio para todo el pueblo. Cada partida cuesta 1 vale misterioso, ya no sube con la racha; la probabilidad es uno entre el número de vasos (la suerte sigue ayudando)',
     deal1007:

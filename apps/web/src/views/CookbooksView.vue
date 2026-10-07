@@ -226,14 +226,9 @@ onMounted(async () => {
   >
     <div class="flex-fill">
       {{ t.cookbook.moveHint(starNeed.star, formatNum(starNeed.need), formatNum(hintGap)) }}
-      <RouterLink to="/society/move">{{ t.cookbook.moveLink }}</RouterLink>
+      <RouterLink to="/society/move" class="dt-go">{{ t.cookbook.moveLink }}</RouterLink>
     </div>
-    <button
-      type="button"
-      class="btn btn-link btn-sm p-0 text-nowrap"
-      data-testid="move-hint-close"
-      @click="closeHint"
-    >
+    <button type="button" class="dt-link-btn" data-testid="move-hint-close" @click="closeHint">
       {{ t.cookbook.moveHintClose }}
     </button>
   </div>

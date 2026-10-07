@@ -250,7 +250,7 @@ const onStreet = (e: Event) => {
 
 <template>
   <div>
-    <RouterLink to="/wiki" class="small">{{ t.wiki.home }}</RouterLink>
+    <RouterLink to="/wiki" class="small dt-back">{{ t.wiki.home }}</RouterLink>
     <div v-if="!kind" class="dt-empty" data-testid="wiki-error">{{ t.wiki.notFound }}</div>
     <template v-else>
       <h5 class="dt-page-title mt-2">
