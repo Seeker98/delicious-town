@@ -46,7 +46,7 @@ const guide: Messages['guide'] = {
     [
       'Sigue las ',
       { to: '/rest/tasks', text: 'Misiones' },
-      ': la misión principal tiene 12 capítulos, cada uno con unas misiones que puedes hacer en cualquier orden. Recógelas todas y luego la recompensa del capítulo; el siguiente capítulo se desbloquea con cierto nivel o estrellas. Cada función nueva abre sus misiones secundarias, y hay misiones semanales según tus estrellas.',
+      ': la misión principal avanza capítulo a capítulo, cada uno con unas misiones que puedes hacer en cualquier orden. Recógelas todas y luego la recompensa del capítulo; el siguiente capítulo se desbloquea con cierto nivel o estrellas. Cada función nueva abre sus misiones secundarias, y hay misiones semanales según tus estrellas.',
     ],
   ],
   daily: 'Rutina diaria',

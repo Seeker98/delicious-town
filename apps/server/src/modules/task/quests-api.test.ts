@@ -275,7 +275,7 @@ describe('每周任务', () => {
     expect(await goodsNum(t, ctx.restaurantId, GOODS.mapNormal)).toBe(6);
   });
 
-  it('区服关掉交易所：C 组不列交易所任务，全完成只看剩下的 3 个（Review Focus 5）', async () => {
+  it('区服关掉交易所：C 组不列交易所任务，全完成只看剩下的 4 个（含“领取本周探险图”）（Review Focus 5）', async () => {
     const ctx = await fresh({ star_level: 3 });
     await t.db
       .insertInto('shard_config')

@@ -55,6 +55,7 @@ export type MailTplKey =
   | 'activity.rank'
   | 'grant'
   | 'invite.welcome'
+  | 'quest.compensate'
   | 'invite.reward'
   | 'hat.upgrade'
   | 'report.handled'

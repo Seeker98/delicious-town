@@ -23,6 +23,10 @@ export default {
       body: () => '感謝你為全服合力做出的貢獻，這是你的名次獎勵。',
     },
     grant: { title: () => '系統補償', body: null },
+    'quest.compensate': {
+      title: () => '任務獎勵調整補發',
+      body: () => '升到一星、二星的任務獎勵調整了，補上你還沒拿到的道具。',
+    },
     'invite.welcome': { title: () => '歡迎來到小鎮', body: () => '你是被朋友邀請來的，送你一份新手禮包。' },
     'invite.reward': {
       title: () => '邀請獎勵',

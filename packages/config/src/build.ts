@@ -751,6 +751,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   });
   unique('quests', [
     ...quests.map((q) => q.id),
+    ...hiddenQuests.map((q) => q.id),
     ...weeklyGroups.flatMap((g) => [g.fullId, ...g.quests.map((q) => q.id)]),
   ]);
   for (const q of quests) checkAward(`quest ${q.id}`, q.award);

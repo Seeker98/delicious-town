@@ -13,6 +13,11 @@ const server: Messages['server'] = {
       body: () => 'Thank you for your contribution to the server-wide team-up. Here is your ranking reward.',
     },
     grant: { title: () => 'Compensation', body: null },
+    'quest.compensate': {
+      title: () => 'Task reward top-up',
+      body: () =>
+        'The rewards for reaching 1 and 2 stars have changed, so here are the items you hadn’t received yet.',
+    },
     'invite.welcome': {
       title: () => 'Welcome to town',
       body: () => 'A friend invited you here, so here is a starter pack for you.',
