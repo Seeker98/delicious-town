@@ -310,6 +310,13 @@ export function createKujiService(d: GameDeps) {
     // 任务和活跃（问题记录 318）：抽几张计几次；拿到最后赏另计
     await emitAction(o, 'kuji.draw', num);
     if (last !== null) await emitAction(o, 'kuji.last');
+    // 支线“一番赏”（问题记录 515）：抽中 A 赏按池子分开记；豪华池另记张数和最后赏
+    const deluxe = line === 'deluxe';
+    if (tally.A) await emitAction(o, deluxe ? 'kuji.deluxe.a' : 'kuji.a', tally.A);
+    if (deluxe) {
+      await emitAction(o, 'kuji.deluxe.draw', num);
+      if (last !== null) await emitAction(o, 'kuji.deluxe.last');
+    }
     // 新闻要等这次操作提交时才写库：把自己刚中的大赏先放进"最近的大赏"，不用刷新就能看到（backlog 一番赏）
     const view = await opView(o, line);
     const won = [
