@@ -136,7 +136,7 @@ const roundsOpened = computed(() => {
   if (!r) return [];
   const out: string[] = [];
   let at = 0;
-  for (const [i, n] of r.opens.entries()) {
+  for (const [i, n] of (r.opens ?? []).entries()) {
     const items = r.opened.slice(at, at + n);
     at += n;
     if (items.length === 0) break;
@@ -224,6 +224,14 @@ function again() {
           </button>
         </div>
       </div>
+      <!-- 结束时结果放最前面，开箱记录在后（终审） -->
+      <div
+        v-if="local.result"
+        :class="['fw-bold mb-2', local.result === 'deal' ? 'text-primary' : 'text-success']"
+        data-testid="deal-result"
+      >
+        <div v-for="(line, i) in result" :key="i">{{ line }}</div>
+      </div>
       <template v-if="roundsOpened.length > 0">
         <div class="fw-bold">{{ t.bar.deal.roundsTitle }}</div>
         <div class="mb-2">
@@ -239,13 +247,7 @@ function again() {
         </div>
       </template>
       <template v-else>
-        <div
-          :class="['fw-bold', local.result === 'deal' ? 'text-primary' : 'text-success']"
-          data-testid="deal-result"
-        >
-          <div v-for="(line, i) in result" :key="i">{{ line }}</div>
-        </div>
-        <div class="fw-bold mt-2">{{ t.bar.deal.allTitle }}</div>
+        <div class="fw-bold">{{ t.bar.deal.allTitle }}</div>
         <div class="dt-deal-prizes">
           <span v-for="(p, i) in local.all ?? []" :key="i" class="dt-meta" :data-testid="`deal-all-${i}`">
             {{ t.bar.deal.box(i + 1) }} {{ prizeText(p) }}

@@ -212,6 +212,28 @@ describe('DealPanel', () => {
     expect(rows[1]!.text()).toBe('第 2 轮：10 号 食材101×2');
   });
 
+  it('结束后先写结果，开箱记录排在结果后面（终审）', () => {
+    const opened = [1, 2, 3].map((box) => ({ box, ...P(1200) }));
+    const w = mount(DealPanel, {
+      props: {
+        data: withRound(
+          round({
+            mine: 0,
+            result: 'deal',
+            coin: 5000,
+            opened,
+            all: Array.from({ length: 10 }, () => P(1200)),
+          }),
+        ),
+      },
+    });
+    const html = w.html();
+    expect(html.indexOf('data-testid="deal-result"')).toBeGreaterThan(-1);
+    expect(html.indexOf('data-testid="deal-result"')).toBeLessThan(
+      html.indexOf('data-testid="deal-round-0"'),
+    );
+  });
+
   it('结束后读屏标签仍写出哪个是自己的箱子', () => {
     const all = Array.from({ length: 10 }, (_, i) => P((i + 1) * 1000));
     const w = mount(DealPanel, {
