@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import ts from 'typescript';
+import zhCN from './locales/zh-CN';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -30,5 +31,11 @@ describe('简中文案不用中文括号', () => {
       visit(src);
     }
     expect(bad).toEqual([]);
+  });
+
+  it('括号后面紧跟中文标点时不留空格（终审：偷学确认框写成“) 。”）', () => {
+    for (const mc of [true, false])
+      expect(zhCN.town.classroom.stealConfirm(3, 1, mc)).not.toMatch(/\) [，。：；！？]/);
+    expect(zhCN.town.classroom.stealConfirm(3, 1, false)).toContain('(品级降光的就忘了)。确定偷学吗？');
   });
 });

@@ -82,7 +82,7 @@ export default {
     night: (floor: number, hour: number) => `${floor} 層以上 ${hour} 點以後才能挑戰`,
     tired: '他今天已經累了',
     head: (power: number, left: number, total: number, tickets: number, strength: string) =>
-      `我的進攻廚力 ${power} · 今日還能挑戰 ${left}/${total} 次 · 挑戰券 ${tickets} (在倉庫使用，當天多一次)· 體力 ${strength}`,
+      `我的進攻廚力 ${power} · 今日還能挑戰 ${left}/${total} 次 · 挑戰券 ${tickets} (在倉庫使用，當天多一次) · 體力 ${strength}`,
     name: (floor: number, name: string) => `${floor} 層 · ${name}`,
     power: (n: number) => `廚力 ${n}`,
     meta: (note: string, level: number, name: string, left: number, max: number) =>

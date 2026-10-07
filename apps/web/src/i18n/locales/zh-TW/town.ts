@@ -164,7 +164,7 @@ export default {
   classroom: {
     loadFailed: '讀取教室失敗',
     stealConfirm: (n: number, g: number, mc: boolean) =>
-      `偷學不花學費，但失敗會讓隨機 ${n} 道食譜各降 ${g} 品 (品級降光的就忘了) ${mc ? '，還可能遺忘一道特色菜' : ''}。確定偷學嗎？`,
+      `偷學不花學費，但失敗會讓隨機 ${n} 道食譜各降 ${g} 品 (品級降光的就忘了)${mc ? '，還可能遺忘一道特色菜' : ''}。確定偷學嗎？`,
     learned: (name: string) => `學會了${name}`,
     stealFailed: (n: number, g: number, lost: number, mc: string | null) =>
       `偷學失敗，${n} 道食譜降了 ${g} 品${lost > 0 ? `，其中 ${lost} 道忘了` : ''}${mc ? `，還忘了${mc}` : ''}`,
@@ -190,7 +190,7 @@ export default {
     none: '現在沒有別人開的課',
     lessonLine: (level: number, teacher: string) => ` ${level} 級 · 老師 ${teacher}`,
     lessonMeta: (n: number, max: number, stolen: number, left: string) =>
-      `${n}/${max} 人 (偷學 ${stolen})· ${left}`,
+      `${n}/${max} 人 (偷學 ${stolen}) · ${left}`,
     learn: '學',
     steal: '偷學',
     rule: '學：花售價 × 3 的銀幣和 2 個同級殘卷碎片，老師分到售價 × 2 的銀幣和 1 個碎片。每門課只能試一次。',
