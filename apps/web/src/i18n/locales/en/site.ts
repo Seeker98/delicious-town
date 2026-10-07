@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     rank1008:
-      'The rock-paper-scissors, cup guess and number wheel streak leaderboards now rank the best streak reached this week, with separate this-week and last-week boards: losing a game no longer drops you off, and a new week starts every Monday; ties go to whoever got there first',
+      'The rock-paper-scissors, cup guess and number wheel streak leaderboards now rank the best streak reached this week, with separate this-week and last-week boards: losing a game no longer drops you off; a streak that runs past Monday keeps counting and goes on the board for the week it reached that length; ties go to whoever got there first',
     odds1007:
       'The daily sign-in gift now gives 1–5 diamonds when it gives diamonds (1–3 before); under the slot machine prize table, a note now says the odds are per slot without the guarantee, and how many spins it takes on average to get a rare prize with it',
     misc1007d:

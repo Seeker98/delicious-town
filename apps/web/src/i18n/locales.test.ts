@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LOCALES } from '@dt/shared';
+import { LOCALES, RANK_BOARDS, RANK_GROUPS } from '@dt/shared';
 import { convertZhTw } from '../../scripts/gen-zh-tw.mjs';
 import { loadMessages } from '.';
 import overrides from './zh-TW-overrides.json';
@@ -20,6 +20,17 @@ function keys(o: unknown, prefix = ''): string[] {
   if (o === null || typeof o !== 'object') return [prefix];
   return Object.entries(o).flatMap(([k, v]) => keys(v, prefix ? `${prefix}.${k}` : k));
 }
+
+describe('排行榜的大类和榜名（问题记录 517：大类名按位置对应，多一个少一个后面全错位）', () => {
+  it('每种语言的大类名和共用定义一样多；每个榜都有自己的名字', async () => {
+    for (const l of LOCALES) {
+      const rk = (await loadMessages(l)).town.rank;
+      expect(rk.groups, l).toHaveLength(RANK_GROUPS.length);
+      for (const b of RANK_BOARDS)
+        expect(rk.boards[b.key] ?? rk.periods[b.key.split('.').at(-1) ?? ''], `${l} ${b.key}`).toBeTruthy();
+    }
+  }, 30_000);
+});
 
 describe('各语言的翻译（问题记录 272）', () => {
   it('每种语言的键和简中完全一致（防止用 as 绕过类型检查）', async () => {
