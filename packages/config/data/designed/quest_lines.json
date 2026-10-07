@@ -176,28 +176,6 @@
      "id": 3044,
      "order": 4,
      "needStar": 0,
-     "name": "往小镇发展基金存一次",
-     "cond": {
-      "kind": "counter",
-      "key": "fund.deposit",
-      "target": 1
-     },
-     "award": {
-      "coin": 30000,
-      "exp": 3000,
-      "goods": [
-       {
-        "id": 10001,
-        "num": 20
-       }
-      ]
-     },
-     "href": "/society/fund"
-    },
-    {
-     "id": 3045,
-     "order": 5,
-     "needStar": 0,
      "name": "镇长问答答对 10 次",
      "cond": {
       "kind": "counter",
@@ -217,8 +195,8 @@
      "href": "/town"
     },
     {
-     "id": 3046,
-     "order": 6,
+     "id": 3045,
+     "order": 5,
      "needStar": 0,
      "name": "镇长问答答对 50 次",
      "cond": {
@@ -237,6 +215,28 @@
       ]
      },
      "href": "/town"
+    },
+    {
+     "id": 3046,
+     "order": 6,
+     "needStar": 0,
+     "name": "往小镇发展基金存一次",
+     "cond": {
+      "kind": "counter",
+      "key": "fund.deposit",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/society/fund"
     },
     {
      "id": 3047,
@@ -2772,28 +2772,6 @@
      "id": 3441,
      "order": 1,
      "needStar": 0,
-     "name": "用无人机送一次外卖",
-     "cond": {
-      "kind": "counter",
-      "key": "takeaway.drone",
-      "target": 1
-     },
-     "award": {
-      "coin": 30000,
-      "exp": 3000,
-      "goods": [
-       {
-        "id": 10001,
-        "num": 20
-       }
-      ]
-     },
-     "href": "/takeaway"
-    },
-    {
-     "id": 3442,
-     "order": 2,
-     "needStar": 0,
      "name": "送成一单 5 星以上的外卖",
      "cond": {
       "kind": "counter",
@@ -2813,8 +2791,8 @@
      "href": "/takeaway"
     },
     {
-     "id": 3443,
-     "order": 3,
+     "id": 3442,
+     "order": 2,
      "needStar": 0,
      "name": "送成 20 单 5 星以上的外卖",
      "cond": {
@@ -2829,6 +2807,28 @@
        {
         "id": 10007,
         "num": 3
+       }
+      ]
+     },
+     "href": "/takeaway"
+    },
+    {
+     "id": 3443,
+     "order": 3,
+     "needStar": 0,
+     "name": "用无人机送一次外卖",
+     "cond": {
+      "kind": "counter",
+      "key": "takeaway.drone",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
        }
       ]
      },
@@ -3334,22 +3334,6 @@
      "id": 3542,
      "order": 2,
      "needStar": 0,
-     "name": "在称号商店买一个称号",
-     "cond": {
-      "kind": "counter",
-      "key": "icon.buy",
-      "target": 1
-     },
-     "award": {
-      "coin": 20000,
-      "exp": 2000
-     },
-     "href": "/rest/look"
-    },
-    {
-     "id": 3543,
-     "order": 3,
-     "needStar": 0,
      "name": "在 3 个不同的限时活动里领过奖",
      "cond": {
       "kind": "counter",
@@ -3369,26 +3353,42 @@
      "href": "/activities"
     },
     {
-     "id": 3544,
-     "order": 4,
+     "id": 3543,
+     "order": 3,
      "needStar": 0,
-     "name": "邀请的好友升到 10 级",
+     "name": "在称号商店买一个称号",
      "cond": {
-      "kind": "state",
-      "key": "invite.level10",
+      "kind": "counter",
+      "key": "icon.buy",
       "target": 1
      },
      "award": {
-      "coin": 30000,
-      "exp": 3000,
+      "coin": 20000,
+      "exp": 2000
+     },
+     "href": "/rest/look"
+    },
+    {
+     "id": 3544,
+     "order": 4,
+     "needStar": 0,
+     "name": "在一次限时活动里进前 10 名",
+     "cond": {
+      "kind": "counter",
+      "key": "activity.top10",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
       "goods": [
        {
-        "id": 10001,
-        "num": 20
+        "id": 10007,
+        "num": 2
        }
       ]
      },
-     "href": "/invite"
+     "href": "/activities"
     },
     {
      "id": 3545,
@@ -3416,6 +3416,28 @@
      "id": 3546,
      "order": 6,
      "needStar": 0,
+     "name": "邀请的好友升到 10 级",
+     "cond": {
+      "kind": "state",
+      "key": "invite.level10",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/invite"
+    },
+    {
+     "id": 3547,
+     "order": 7,
+     "needStar": 0,
      "name": "邀请的好友升到 30 级",
      "cond": {
       "kind": "state",
@@ -3433,28 +3455,6 @@
       ]
      },
      "href": "/invite"
-    },
-    {
-     "id": 3547,
-     "order": 7,
-     "needStar": 0,
-     "name": "在一次限时活动里进前 10 名",
-     "cond": {
-      "kind": "counter",
-      "key": "activity.top10",
-      "target": 1
-     },
-     "award": {
-      "coin": 150000,
-      "exp": 15000,
-      "goods": [
-       {
-        "id": 10007,
-        "num": 2
-       }
-      ]
-     },
-     "href": "/activities"
     }
    ]
   }

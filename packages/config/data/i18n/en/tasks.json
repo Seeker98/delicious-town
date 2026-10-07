@@ -204,13 +204,13 @@
     "name": "Join a Market guessing game"
   },
   "3044": {
-    "name": "Make a deposit in the Town Development Fund"
-  },
-  "3045": {
     "name": "Answer Mayor Big Pot's question correctly 10 times"
   },
-  "3046": {
+  "3045": {
     "name": "Answer Mayor Big Pot's question correctly 50 times"
+  },
+  "3046": {
+    "name": "Make a deposit in the Town Development Fund"
   },
   "3047": {
     "name": "Finish in the top 5 of the Hip-hop Boy's weekly tipping board"
@@ -573,13 +573,13 @@
     "name": "Guess 5 or more ingredients right in one Market guessing game"
   },
   "3441": {
-    "name": "Deliver an order by drone"
-  },
-  "3442": {
     "name": "Complete a 5★+ takeaway delivery"
   },
-  "3443": {
+  "3442": {
     "name": "Complete 20 takeaway deliveries of 5★+"
+  },
+  "3443": {
+    "name": "Deliver an order by drone"
   },
   "3461": {
     "name": "Acquire a restaurant"
@@ -609,7 +609,7 @@
     "name": "Own 3 plaques"
   },
   "3502": {
-    "name": "Own 10 badges or pets"
+    "name": "Own 10 honors"
   },
   "3503": {
     "name": "Own 7 paintings"
@@ -645,22 +645,22 @@
     "name": "Change your door"
   },
   "3542": {
-    "name": "Buy a title in the title shop"
-  },
-  "3543": {
     "name": "Claim rewards in 3 different limited-time events"
   },
+  "3543": {
+    "name": "Buy a title in the title shop"
+  },
   "3544": {
-    "name": "Have a friend you invited reach level 10"
+    "name": "Finish in the top 10 of a limited-time event"
   },
   "3545": {
     "name": "Get a forum post featured"
   },
   "3546": {
-    "name": "Have a friend you invited reach level 30"
+    "name": "Have a friend you invited reach level 10"
   },
   "3547": {
-    "name": "Finish in the top 10 of a limited-time event"
+    "name": "Have a friend you invited reach level 30"
   },
   "4011": {
     "name": "Check in 5 days"

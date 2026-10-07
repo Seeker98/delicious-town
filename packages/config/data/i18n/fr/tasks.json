@@ -204,13 +204,13 @@
     "name": "Participer au jeu de devinettes du Marché"
   },
   "3044": {
-    "name": "Faire un dépôt au Fonds de développement de la ville"
-  },
-  "3045": {
     "name": "Répondre correctement 10 fois à la question du Maire Grosse Marmite"
   },
-  "3046": {
+  "3045": {
     "name": "Répondre correctement 50 fois à la question du Maire Grosse Marmite"
+  },
+  "3046": {
+    "name": "Faire un dépôt au Fonds de développement de la ville"
   },
   "3047": {
     "name": "Finir dans le top 5 du classement hebdomadaire des pourboires du Garçon hip-hop"
@@ -573,13 +573,13 @@
     "name": "Deviner juste 5 ingrédients ou plus en une devinette du Marché"
   },
   "3441": {
-    "name": "Livrer une commande par drone"
-  },
-  "3442": {
     "name": "Réussir une livraison 5★ ou plus"
   },
-  "3443": {
+  "3442": {
     "name": "Réussir 20 livraisons 5★ ou plus"
+  },
+  "3443": {
+    "name": "Livrer une commande par drone"
   },
   "3461": {
     "name": "Acquérir un restaurant"
@@ -609,7 +609,7 @@
     "name": "Posséder 3 plaques"
   },
   "3502": {
-    "name": "Posséder 10 insignes ou animaux"
+    "name": "Posséder 10 honneurs"
   },
   "3503": {
     "name": "Posséder 7 tableaux"
@@ -645,22 +645,22 @@
     "name": "Changer de porte"
   },
   "3542": {
-    "name": "Acheter un titre à la boutique de titres"
-  },
-  "3543": {
     "name": "Récupérer des récompenses dans 3 événements à durée limitée différents"
   },
+  "3543": {
+    "name": "Acheter un titre à la boutique de titres"
+  },
   "3544": {
-    "name": "Qu'un ami invité atteigne le niveau 10"
+    "name": "Finir dans le top 10 d'un événement à durée limitée"
   },
   "3545": {
     "name": "Faire mettre en avant un message du forum"
   },
   "3546": {
-    "name": "Qu'un ami invité atteigne le niveau 30"
+    "name": "Qu'un ami invité atteigne le niveau 10"
   },
   "3547": {
-    "name": "Finir dans le top 10 d'un événement à durée limitée"
+    "name": "Qu'un ami invité atteigne le niveau 30"
   },
   "4011": {
     "name": "Pointer 5 jours"

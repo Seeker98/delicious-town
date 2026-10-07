@@ -204,13 +204,13 @@
     "name": "Participar en el juego de adivinanzas del Mercado"
   },
   "3044": {
-    "name": "Hacer un depósito en el Fondo de Desarrollo del Pueblo"
-  },
-  "3045": {
     "name": "Acertar la pregunta del Alcalde Gran Olla 10 veces"
   },
-  "3046": {
+  "3045": {
     "name": "Acertar la pregunta del Alcalde Gran Olla 50 veces"
+  },
+  "3046": {
+    "name": "Hacer un depósito en el Fondo de Desarrollo del Pueblo"
   },
   "3047": {
     "name": "Quedar entre los 5 primeros de la clasificación semanal de propinas del Chico hip-hop"
@@ -573,13 +573,13 @@
     "name": "Acertar 5 o más ingredientes en una adivinanza del Mercado"
   },
   "3441": {
-    "name": "Entregar un pedido con dron"
-  },
-  "3442": {
     "name": "Completar un reparto de 5★ o más"
   },
-  "3443": {
+  "3442": {
     "name": "Completar 20 repartos de 5★ o más"
+  },
+  "3443": {
+    "name": "Entregar un pedido con dron"
   },
   "3461": {
     "name": "Adquirir un restaurante"
@@ -609,7 +609,7 @@
     "name": "Tener 3 placas"
   },
   "3502": {
-    "name": "Tener 10 insignias o mascotas"
+    "name": "Tener 10 honores"
   },
   "3503": {
     "name": "Tener 7 cuadros"
@@ -645,22 +645,22 @@
     "name": "Cambiar la puerta"
   },
   "3542": {
-    "name": "Comprar un título en la tienda de títulos"
-  },
-  "3543": {
     "name": "Reclamar recompensas en 3 eventos por tiempo limitado distintos"
   },
+  "3543": {
+    "name": "Comprar un título en la tienda de títulos"
+  },
   "3544": {
-    "name": "Que un amigo que invitaste llegue al nivel 10"
+    "name": "Quedar entre los 10 primeros de un evento por tiempo limitado"
   },
   "3545": {
     "name": "Conseguir que una publicación del foro sea destacada"
   },
   "3546": {
-    "name": "Que un amigo que invitaste llegue al nivel 30"
+    "name": "Que un amigo que invitaste llegue al nivel 10"
   },
   "3547": {
-    "name": "Quedar entre los 10 primeros de un evento por tiempo limitado"
+    "name": "Que un amigo que invitaste llegue al nivel 30"
   },
   "4011": {
     "name": "Registrarse 5 días"

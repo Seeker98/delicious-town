@@ -1927,13 +1927,29 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
     });
   });
 
-  it('要道具才能做的雷神锤、神灯放在“小镇”最后，不挡别的档', () => {
-    expect(
-      line('town')
-        .slice(-2)
-        .map((q) => q.cond.key),
-    ).toEqual(['town.hammer', 'town.wish']);
-    expect(conds('town')).toContainEqual(['town.mayor.right', 50]);
+  // 支线一次只显示一档：要花大钱、要钻石或道具、要别人配合的档放后面，不挡容易做的（终审）
+  it('小镇：先镇长问答，再基金（存 100 万）、周榜，要道具的雷神锤、神灯最后', () => {
+    expect(conds('town').slice(3)).toEqual([
+      ['town.mayor.right', 10],
+      ['town.mayor.right', 50],
+      ['fund.deposit', 1],
+      ['hiphop.top5', 1],
+      ['town.hammer', 1],
+      ['town.wish', 1],
+    ]);
+  });
+
+  it('外卖进阶：要钻石的无人机放最后；社交：靠别人的加精、邀请放最后', () => {
+    expect(conds('delivery').map(([k]) => k)).toEqual(['takeaway.grade5', 'takeaway.grade5', 'takeaway.drone']);
+    expect(conds('social').map(([k]) => k)).toEqual([
+      'looks.door',
+      'activity.join',
+      'icon.buy',
+      'activity.top10',
+      'post.featured',
+      'invite.level10',
+      'invite.level30',
+    ]);
   });
 
   it('守塔人：4、7、10 层用最高通过层数，击败守塔人最高 300 次（用户定）', () => {
