@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    rank1008:
+      'Les classements de séries au chifoumi, aux gobelets et à la roue des numéros prennent maintenant la meilleure série atteinte dans la semaine, avec un tableau pour cette semaine et un pour la semaine dernière\u202f: perdre une partie ne fait plus sortir du classement, et une nouvelle semaine commence chaque lundi\u202f; à égalité, le premier arrivé passe devant',
     odds1007:
       'Le cadeau de connexion quotidienne donne maintenant 1 à 5 diamants quand il en donne (1 à 3 avant)\u202f; sous le tableau des lots de la machine à sous, une note précise que les probabilités sont par case sans le lot garanti, et en combien de tirages tombe en moyenne un lot rare en le comptant',
     misc1007d:

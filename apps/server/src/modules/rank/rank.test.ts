@@ -126,22 +126,31 @@ describe('排行榜（设计文档 §2.6）', () => {
     expect((await board(a!, 'roach.kill.today')).rows.map((x) => x.restId)).toEqual([b!.restaurantId]);
   });
 
-  it('酒吧：当前连胜、连败分榜', async () => {
-    const [a, b] = await rests(2);
+  it('酒吧：本周、上周达到过的最高连胜、连败分榜；输了也不掉榜，同样高的先达到的在前（问题记录 517）', async () => {
+    const [a, b, c] = await rests(3);
+    const best = (restId: number, result: 1 | -1, week: string, times: number, at: Date) =>
+      t.db
+        .insertInto('bar_streak_best')
+        .values({ rest_id: restId, game: 'fg', result, week, times, reached_at: at })
+        .execute();
+    // 本周一 09-28；a、b 都连胜过 6，b 先达到
+    await best(a!.restaurantId, 1, '2026-09-28', 6, gameTime('2026-09-30', 20));
+    await best(b!.restaurantId, 1, '2026-09-28', 6, gameTime('2026-09-29', 9));
+    await best(c!.restaurantId, 1, '2026-09-21', 9, gameTime('2026-09-25', 9));
+    await best(c!.restaurantId, -1, '2026-09-28', 3, gameTime('2026-09-30', 9));
+    // a 现在已经输了：当前状态是连败 1，榜上仍按本周最高 6 算
     await t.db
       .insertInto('bar_state')
-      .values({ rest_id: a!.restaurantId, fg_result: 1, fg_times: 4 })
+      .values({ rest_id: a!.restaurantId, fg_result: -1, fg_times: 1 })
       .execute();
-    await t.db
-      .insertInto('bar_state')
-      .values({ rest_id: b!.restaurantId, fg_result: -1, fg_times: 9 })
-      .execute();
-    expect((await board(a!, 'bar.fg.win')).rows.map((x) => [x.restId, x.value])).toEqual([
-      [a!.restaurantId, 4],
+    const rows = (key: string) => board(a!, key).then((d) => d.rows.map((x) => [x.restId, x.rank, x.value]));
+    expect(await rows('bar.fg.win.thisWeek')).toEqual([
+      [b!.restaurantId, 1, 6],
+      [a!.restaurantId, 2, 6],
     ]);
-    expect((await board(a!, 'bar.fg.lose')).rows.map((x) => [x.restId, x.value])).toEqual([
-      [b!.restaurantId, 9],
-    ]);
+    expect(await rows('bar.fg.win.lastWeek')).toEqual([[c!.restaurantId, 1, 9]]);
+    expect(await rows('bar.fg.lose.thisWeek')).toEqual([[c!.restaurantId, 1, 3]]);
+    expect(await rows('bar.cup.win.thisWeek')).toEqual([]);
   });
 
   it('特色菜昨日价值：单批最大值', async () => {

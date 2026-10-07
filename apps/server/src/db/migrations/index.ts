@@ -53,6 +53,7 @@ import * as m0051 from './0051_acquire_dividend';
 import * as m0052 from './0052_backlog_1007';
 import * as m0053 from './0053_exchange_limits';
 import * as m0054 from './0054_duel_price';
+import * as m0055 from './0055_bar_streak_best';
 
 /** 迁移列表写在代码里（而不是按文件扫描），打包后也能用 */
 export const migrations: Record<string, Migration> = {
@@ -110,4 +111,5 @@ export const migrations: Record<string, Migration> = {
   '0052_backlog_1007': m0052,
   '0053_exchange_limits': m0053,
   '0054_duel_price': m0054,
+  '0055_bar_streak_best': m0055,
 };

@@ -280,17 +280,21 @@ describe('猜酒杯：收手、继续、通关', () => {
     ]);
   });
 
-  it('连胜、连败按局累计；排行“猜酒杯连胜”读得到', async () => {
+  it('连胜、连败按局累计；排行“猜酒杯连胜本周”读得到，输了也还在（问题记录 517）', async () => {
     const a = await player();
     await setRound(a, won(0));
     await stop(a);
     await setRound(a, won(0));
     await stop(a);
     expect((await bar().overview(a)).cup).toMatchObject({ result: 'win', times: 2 });
-    const rows = (await t.game.rank.board(a, 'bar.cup.win')).rows;
-    expect(rows.find((x) => x.restId === a.restaurantId)?.value).toBe(2);
+    const best = async () =>
+      (await t.game.rank.board(a, 'bar.cup.win.thisWeek')).rows.find((x) => x.restId === a.restaurantId)
+        ?.value;
+    expect(await best()).toBe(2);
     script = [0.9, 0];
     await guess(a, 0);
     expect((await bar().overview(a)).cup).toMatchObject({ result: 'lose', times: 1 });
+    t.game.rank.clearCache();
+    expect(await best()).toBe(2);
   });
 });

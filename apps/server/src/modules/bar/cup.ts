@@ -9,7 +9,7 @@ import { consumeGoods } from '../store/goods';
 import { badInput } from './common';
 import { endRound, loadRound, saveRound } from './round';
 import { cupWinRate, nextTimes, type BarResult } from './rules';
-import { lockBarState, saveBarState } from './state';
+import { lockBarState, recordStreak, saveBarState } from './state';
 
 type T = Tuning['bar']['cup'];
 
@@ -33,6 +33,7 @@ async function streak(o: Op, result: BarResult): Promise<void> {
   const s = await lockBarState(o);
   const times = nextTimes(s.cup_result as BarResult | null, s.cup_times, result);
   await saveBarState(o, { cup_result: result, cup_times: times });
+  await recordStreak(o, 'cup', result, times);
 }
 
 /** 收手或通关：发这一档的奖励；有新闻的档每次都写，不限条数（用户 2026-10-07 定） */

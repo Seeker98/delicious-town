@@ -147,15 +147,19 @@ const thumbs =
         group by r.id, r.name`,
     );
 
-/** 酒吧当前连续次数：*_result = 1 为连胜 / 连中，-1 为连败 / 连不中（bar/rules.ts BarResult） */
+/**
+ * 酒吧这一周达到过的最高连胜 / 连败（问题记录 517：原来按当前连续次数排，输一局就掉榜）。
+ * result = 1 为连胜 / 连中，-1 为连败 / 连不中；同样高的先达到的在前
+ */
 const bar =
-  (game: 'fg' | 'cup' | 'num', result: 1 | -1): Source =>
+  (game: 'fg' | 'cup' | 'num', result: 1 | -1, p: 'thisWeek' | 'lastWeek'): Source =>
   (c) =>
     run(
       c,
-      sql<Row>`select x.rest_id, r.name, ${sql.ref(`x.${game}_times`)}::float8 as v
-        from bar_state x ${JOIN}
-        where ${players(c.shardId)} and ${sql.ref(`x.${game}_result`)} = ${result}`,
+      sql<Row>`select x.rest_id, r.name, x.times::float8 as v, -extract(epoch from x.reached_at)::float8 as tie
+        from bar_streak_best x ${JOIN}
+        where ${players(c.shardId)} and x.game = ${game} and x.result = ${result}
+          and x.week = ${range(c.now, p).from}`,
     );
 
 /** 特色菜：单批价值 = 份数 × 单价，取最大；次数为批数 */
@@ -219,12 +223,18 @@ export const BOARD_SOURCES: Record<string, Source> = {
   ...periodSources('roach.kill', 'roach.kill'),
   ...periodSources('roach.lay', 'roach.lay'),
   ...periodSources('flip.flipped', 'flip.flipped'),
-  'bar.fg.win': bar('fg', 1),
-  'bar.fg.lose': bar('fg', -1),
-  'bar.cup.win': bar('cup', 1),
-  'bar.cup.lose': bar('cup', -1),
-  'bar.num.win': bar('num', 1),
-  'bar.num.lose': bar('num', -1),
+  'bar.fg.win.thisWeek': bar('fg', 1, 'thisWeek'),
+  'bar.fg.win.lastWeek': bar('fg', 1, 'lastWeek'),
+  'bar.fg.lose.thisWeek': bar('fg', -1, 'thisWeek'),
+  'bar.fg.lose.lastWeek': bar('fg', -1, 'lastWeek'),
+  'bar.cup.win.thisWeek': bar('cup', 1, 'thisWeek'),
+  'bar.cup.win.lastWeek': bar('cup', 1, 'lastWeek'),
+  'bar.cup.lose.thisWeek': bar('cup', -1, 'thisWeek'),
+  'bar.cup.lose.lastWeek': bar('cup', -1, 'lastWeek'),
+  'bar.num.win.thisWeek': bar('num', 1, 'thisWeek'),
+  'bar.num.win.lastWeek': bar('num', 1, 'lastWeek'),
+  'bar.num.lose.thisWeek': bar('num', -1, 'thisWeek'),
+  'bar.num.lose.lastWeek': bar('num', -1, 'lastWeek'),
   'mc.today': mc('value', 'today'),
   'mc.yesterday': mc('value', 'yesterday'),
   'mc.best': mc('value'),
