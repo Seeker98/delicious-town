@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>商店整理</title>
+    <style>
+      :root {
+        --bg: #f7f7f5;
+        --panel: #fff;
+        --text: #222;
+        --muted: #777;
+        --line: #e3e3e0;
+        --accent: #b4532a;
+        --bad: #c53030;
+        --dirty: #fff4d6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          'Microsoft YaHei',
+          sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 16px;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0 8px 0 0;
+        display: inline;
+      }
+      a {
+        color: var(--accent);
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .bar label {
+        white-space: nowrap;
+      }
+      input[type='search'] {
+        width: 220px;
+      }
+      main {
+        padding: 10px 16px 40px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: var(--panel);
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 4px 6px;
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        position: sticky;
+        top: 92px;
+        background: var(--panel);
+        font-weight: 600;
+      }
+      td.num input {
+        width: 90px;
+        text-align: right;
+      }
+      td.note input {
+        width: 100%;
+        min-width: 160px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .changed {
+        background: var(--dirty);
+      }
+      tr.retired td {
+        color: var(--muted);
+        text-decoration: line-through;
+      }
+      #errors {
+        color: var(--bad);
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>商店整理</h1>
+      <a href="/">道具整理</a>
+      <span class="muted" id="count"></span>
+      <div class="bar">
+        <label
+          >类别
+          <select id="cat"></select
+        ></label>
+        <label
+          >范围
+          <select id="scope">
+            <option value="">全部</option>
+            <option value="coin">银币商店在售</option>
+            <option value="special">今日特价池</option>
+            <option value="black">黑市池</option>
+            <option value="changed">和原版不同</option>
+            <option value="dirty">改了没保存</option>
+            <option value="retired">已下架</option>
+          </select>
+        </label>
+        <input type="search" id="q" placeholder="搜编号、名称" />
+        <button id="save" disabled>保存</button>
+        <button id="reset" disabled>放弃修改</button>
+        <span id="msg"></span>
+      </div>
+    </header>
+    <main>
+      <div id="errors"></div>
+      <details>
+        <summary>说明</summary>
+        <p>
+          银币价是银币商店的售价，也是回收价（×
+          <span id="rate"></span>）、今日特价折扣价、道具价值分析的基准；钻石价是黑市售价。 “银币商店”勾选 =
+          在银币商店上架（还要有银币价）。今日特价从特价池里随机挑一种打折卖；黑市卖黑市池里有钻石价的。
+        </p>
+        <p>
+          浅黄底 = 和原版（道具表、设计表）不同。保存时只写和原版不同的字段、改过的池子，以及备注，写到
+          <code>packages/config/data/game/shop.json</code
+          >；保存前会按新文件构建一次，过不了会在上面列出原因，文件不写。
+          已下架的道具不能上架，黑市池里的要有钻石价，特价池里的要有银币价。
+        </p>
+        <p>要在游戏里生效：<code>pnpm -F @dt/config build</code>，再重启开发服务器；线上要提交、发版。</p>
+      </details>
+      <table>
+        <thead>
+          <tr>
+            <th>编号</th>
+            <th>名称</th>
+            <th>类别</th>
+            <th>等级</th>
+            <th>银币价</th>
+            <th>回收价</th>
+            <th>钻石价</th>
+            <th>银币商店</th>
+            <th>特价池</th>
+            <th>黑市池</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </main>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let report = null;
+      /** id → 编辑中的值；保存成功或放弃后清空 */
+      let edits = new Map();
+      const FIELDS = ['coin', 'diamond', 'onSale', 'special', 'black', 'note'];
+
+      const valueOf = (r) => ({ ...pick(r), ...(edits.get(r.id) ?? {}) });
+      function pick(r) {
+        return {
+          coin: r.coin,
+          diamond: r.diamond,
+          onSale: r.onSale,
+          special: r.special,
+          black: r.black,
+          note: r.note,
+        };
+      }
+      const dirty = (r) =>
+        edits.has(r.id) &&
+        FIELDS.some((f) => edits.get(r.id)[f] !== undefined && edits.get(r.id)[f] !== r[f]);
+      const differs = (r, v, f) => (f === 'note' ? false : v[f] !== r.orig[f]);
+      // 和服务端 store/rules 的 sellPrice 一样先四舍五入到 6 位小数再取整，免得 2600 × 0.7 算成 1819
+      // 能不能回收看类型，不看保存时的价格：原来没价、改了价的也要显示出来（终审）
+      const sell = (r, v) =>
+        !r.sellable || v.coin <= 0
+          ? '—'
+          : Math.floor(Math.round(v.coin * report.sellRate * 1e6) / 1e6).toLocaleString();
+
+      async function load() {
+        const res = await fetch('/api/shop');
+        report = await res.json();
+        edits = new Map();
+        $('rate').textContent = report.sellRate;
+        const cats = [...new Set(report.rows.map((r) => r.category))].sort();
+        $('cat').innerHTML =
+          '<option value="">全部</option>' + cats.map((c) => `<option>${esc(c)}</option>`).join('');
+        showErrors(report.errors);
+        render();
+      }
+      const esc = (s) =>
+        String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+      function showErrors(list) {
+        $('errors').textContent = list.length ? '构建错误：\n' + list.join('\n') : '';
+      }
+
+      function shown() {
+        const q = $('q').value.trim();
+        const cat = $('cat').value;
+        const scope = $('scope').value;
+        return report.rows.filter((r) => {
+          const v = valueOf(r);
+          if (cat && r.category !== cat) return false;
+          if (q && !String(r.id).includes(q) && !r.name.includes(q)) return false;
+          if (scope === 'coin' && !(v.onSale && v.coin > 0)) return false;
+          if (scope === 'special' && !v.special) return false;
+          if (scope === 'black' && !v.black) return false;
+          if (
+            scope === 'changed' &&
+            !['coin', 'diamond', 'onSale', 'special', 'black'].some((f) => differs(r, v, f))
+          )
+            return false;
+          if (scope === 'dirty' && !dirty(r)) return false;
+          if (scope === 'retired' && !r.retired) return false;
+          return true;
+        });
+      }
+
+      /** 一行的单元格；改了以后只更新这一行的标记，不重画整张表（重画会把正在失焦的输入框删掉） */
+      function rowHtml(r) {
+        const v = valueOf(r);
+        const box = (f) =>
+          `<td data-c="${f}"><input type="checkbox" data-id="${r.id}" data-f="${f}" ${v[f] ? 'checked' : ''} ${r.retired && f === 'onSale' ? 'disabled' : ''}/><span class="muted hint"></span></td>`;
+        return `<tr data-row="${r.id}" class="${r.retired ? 'retired' : ''}">
+              <td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.category)}</td><td>${r.level}</td>
+              <td class="num" data-c="coin"><input type="number" min="0" data-id="${r.id}" data-f="coin" value="${v.coin}"/> <span class="muted hint" title="原版"></span></td>
+              <td class="muted" data-c="sell"></td>
+              <td class="num" data-c="diamond"><input type="number" min="0" data-id="${r.id}" data-f="diamond" value="${v.diamond}"/> <span class="muted hint" title="原版"></span></td>
+              ${box('onSale')}${box('special')}${box('black')}
+              <td class="note"><input data-id="${r.id}" data-f="note" value="${esc(v.note)}"/></td>
+            </tr>`;
+      }
+      function markRow(tr, r) {
+        const v = valueOf(r);
+        for (const f of ['coin', 'diamond', 'onSale', 'special', 'black']) {
+          const td = tr.querySelector(`[data-c="${f}"]`);
+          const d = differs(r, v, f);
+          td.classList.toggle('changed', d);
+          td.querySelector('.hint').textContent = d
+            ? typeof r.orig[f] === 'boolean'
+              ? '改'
+              : String(r.orig[f])
+            : '';
+        }
+        tr.querySelector('[data-c="sell"]').textContent = sell(r, v);
+      }
+      function updateButtons() {
+        const any = report.rows.some(dirty);
+        $('save').disabled = !any;
+        $('reset').disabled = !any;
+      }
+      function render() {
+        const list = shown();
+        $('count').textContent = `${list.length} / ${report.rows.length} 种`;
+        $('rows').innerHTML = list.map(rowHtml).join('');
+        const byId = new Map(list.map((r) => [r.id, r]));
+        for (const tr of $('rows').children) markRow(tr, byId.get(Number(tr.dataset.row)));
+        updateButtons();
+      }
+
+      $('rows').addEventListener('change', (e) => {
+        const el = e.target;
+        const id = Number(el.dataset.id);
+        const f = el.dataset.f;
+        if (!f) return;
+        const val =
+          el.type === 'checkbox'
+            ? el.checked
+            : f === 'note'
+              ? el.value
+              : Math.max(0, Math.floor(Number(el.value) || 0));
+        if (el.type === 'number') el.value = val;
+        edits.set(id, { ...(edits.get(id) ?? {}), [f]: val });
+        markRow(
+          el.closest('tr'),
+          report.rows.find((r) => r.id === id),
+        );
+        updateButtons();
+      });
+      for (const id of ['q', 'cat', 'scope']) $(id).addEventListener('input', render);
+      $('reset').addEventListener('click', () => {
+        edits = new Map();
+        render();
+      });
+      $('save').addEventListener('click', async () => {
+        const vals = report.rows.map((r) => ({ r, v: valueOf(r) }));
+        const body = {
+          goods: vals.map(({ r, v }) => ({
+            id: r.id,
+            coin: v.coin,
+            diamond: v.diamond,
+            onSale: v.onSale,
+            ...(v.note ? { note: v.note } : {}),
+          })),
+          pools: {
+            special: vals.filter(({ v }) => v.special).map(({ r }) => r.id),
+            black: vals.filter(({ v }) => v.black).map(({ r }) => r.id),
+          },
+        };
+        $('msg').textContent = '保存中…';
+        const res = await fetch('/api/shop', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const out = await res.json();
+        if (out.errors && out.errors.length) {
+          showErrors(out.errors);
+          $('msg').textContent = '没保存：构建不过，见上面';
+          return;
+        }
+        report = out.report;
+        edits = new Map();
+        showErrors([]);
+        $('msg').textContent = '已保存。运行 pnpm -F @dt/config build，再重启开发服务器';
+        render();
+      });
+      load();
+    </script>
+  </body>
+</html>

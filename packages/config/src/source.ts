@@ -60,6 +60,7 @@ export const SOURCE_FILES = [
   'game/fund',
   'game/food_supply',
   'game/retired',
+  'game/shop',
   'game/cookbook_slots',
   'game/goods_groups',
   'restaurant_defaults',

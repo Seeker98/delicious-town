@@ -174,6 +174,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const fundRaw = parse('game/fund', raw.fundFile);
   const foodSupply = parse('game/food_supply', raw.foodSupplyFile);
   const retiredRaw = parse('game/retired', raw.retiredFile);
+  const shopRaw = parse('game/shop', raw.shopFile);
   const slotsRaw = parse('game/cookbook_slots', raw.cookbookSlotsFile);
   const groupsRaw = parse('game/goods_groups', raw.goodsGroupsFile);
   const defaults = parse('restaurant_defaults', raw.restaurantDefaultsSchema);
@@ -230,6 +231,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     !fundRaw ||
     !foodSupply ||
     !retiredRaw ||
+    !shopRaw ||
     !slotsRaw ||
     !groupsRaw ||
     !defaults
@@ -383,6 +385,22 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const g of goods)
     if (retired.goods.has(g.id)) Object.assign(g, { retired: true, awardFlag: null, onSale: false });
   for (const f of foods) if (retired.foods.has(f.id)) f.retired = true;
+
+  // ---------- 商店整理（问题记录 483）：改价、上下架 ----------
+  const shopSeen = new Set<number>();
+  for (const s of shopRaw.goods) {
+    const g = goods.find((x) => x.id === s.id);
+    if (!g) {
+      errors.push(`shop references unknown goods ${s.id}`);
+      continue;
+    }
+    if (shopSeen.has(s.id)) errors.push(`shop lists goods ${s.id} twice`);
+    shopSeen.add(s.id);
+    if (s.onSale && g.retired) errors.push(`shop puts retired goods ${s.id} on sale`);
+    if (s.coin !== undefined) g.coin = s.coin;
+    if (s.diamond !== undefined) g.diamond = s.diamond;
+    if (s.onSale !== undefined && !g.retired) g.onSale = s.onSale;
+  }
 
   for (const g of goods) {
     for (const item of g.gift ?? []) {
@@ -779,6 +797,25 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     }
     shopPools[p.pool] = p.goods;
   }
+  // 商店整理写了哪个池就整份替换（问题记录 483）
+  for (const pool of ['special', 'black'] as const) {
+    const list = shopRaw.pools?.[pool];
+    if (!list) continue;
+    for (const id of list)
+      if (!goodsIds.has(id)) errors.push(`shop ${pool} pool references unknown goods ${id}`);
+    shopPools[pool] = list;
+  }
+  // 最终生效的池子都要有价格：只改了池里东西的价格、池子没写进 shop.json 时也要查（终审：特价抽到 0 价就是白送）
+  for (const pool of ['special', 'black'] as const) {
+    for (const id of shopPools[pool]) {
+      const g = goods.find((x) => x.id === id);
+      if (!g) continue;
+      if (pool === 'black' && g.diamond <= 0) errors.push(`shop black pool goods ${id} has no diamond price`);
+      if (pool === 'special' && g.coin <= 0) errors.push(`shop special pool goods ${id} has no coin price`);
+    }
+  }
+  if ((goods.find((x) => x.id === tuning.shop.specialFallbackGoods)?.coin ?? 1) <= 0)
+    errors.push(`tuning shop.specialFallbackGoods ${tuning.shop.specialFallbackGoods} has no coin price`);
   if (!goodsIds.has(tuning.shop.specialFallbackGoods))
     errors.push(
       `tuning shop.specialFallbackGoods references unknown goods ${tuning.shop.specialFallbackGoods}`,
