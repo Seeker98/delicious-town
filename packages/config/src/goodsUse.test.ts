@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildBundle } from './build';
+import { FOODS } from './ids';
 import { defaultDataDir, readSourceDir } from './source';
 import { gid } from './testItems';
 
@@ -38,6 +39,17 @@ describe('道具用途（构建时推导）', () => {
     expect(use(gid('新手大礼包'))).toEqual({ kind: 'gift' });
     expect(use(gid('开发测试礼包'))).toBeNull();
   });
+  it('随机万能食材礼包只出 1 个万能食材；新手大礼包另送一级、二级万能食材各 10 个、三级 5 个（问题记录 455）', () => {
+    const gift = (id: number) => bundle.goods.find((g) => g.id === id)!.gift;
+    expect(gift(gid('随机万能食材礼包'))).toEqual([{ type: 'foods', num: 1, rate: 1, flag: 'master' }]);
+    const pack = gift(gid('新手大礼包'))!;
+    const master = (lv: number) =>
+      pack.find((x) => x.type === 'foods' && 'id' in x && x.id === FOODS.masterBase + lv);
+    expect(master(1)).toMatchObject({ num: 10, rate: 1 });
+    expect(master(2)).toMatchObject({ num: 10, rate: 1 });
+    expect(master(3)).toMatchObject({ num: 5, rate: 1 });
+  });
+
   it('其他道具没有用途', () => {
     expect(use(gid('升星凭证'))).toBeNull();
     expect(use(gid('神秘礼券'))).toBeNull();

@@ -1,5 +1,5 @@
 {
-  "rule": "新手大礼包（goods 54）的内容：开店时送一个（restaurant_defaults.giftGoods），老玩家用新手码 XINSHOULIBAO 补领；一到五级食材随机券的定义在 data/master/goods.json",
+  "rule": "新手大礼包（goods 54）的内容：开店时送一个（restaurant_defaults.giftGoods），老玩家用新手码 XINSHOULIBAO 补领；一到五级食材随机券的定义在 data/master/goods.json；一、二、三级万能食材 ×10、×10、×5 是问题记录 455 加的（前期学菜缺料时用）",
   "pack": {
     "goodsId": 20002,
     "gift": [
@@ -7,6 +7,9 @@
       { "type": "diamond", "min": 50, "max": 50, "rate": 1 },
       { "type": "goods", "id": 10417, "num": 3, "rate": 1 },
       { "type": "goods", "id": 20004, "num": 5, "rate": 1 },
+      { "type": "foods", "id": 9001, "num": 10, "rate": 1 },
+      { "type": "foods", "id": 9002, "num": 10, "rate": 1 },
+      { "type": "foods", "id": 9003, "num": 5, "rate": 1 },
       { "type": "goods", "id": 10101, "num": 5, "rate": 1 },
       { "type": "goods", "id": 10102, "num": 3, "rate": 1 },
       { "type": "goods", "id": 30001, "num": 1, "rate": 1 },

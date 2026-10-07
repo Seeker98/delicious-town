@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { FUND, GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { FOODS, FUND, GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 import { cid, fid, gid } from './testItems';
@@ -1212,7 +1212,7 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
     }
   });
 
-  it('新手大礼包能打开：银币、钻石、喇叭、随机万能食材礼包、食材兑换券、宣传海报，外加一二三级食材随机券 50、20、10 张', () => {
+  it('新手大礼包能打开：银币、钻石、喇叭、随机万能食材礼包、一二三级万能食材、食材兑换券、宣传海报，外加一二三级食材随机券 50、20、10 张', () => {
     const g = goods(NEWBIE.pack);
     expect(g.use).toEqual({ kind: 'gift' });
     expect(g.gift).toEqual([
@@ -1220,6 +1220,10 @@ describe('新手大礼包和食材随机券（问题记录 331）', () => {
       { type: 'diamond', min: 50, max: 50, rate: 1 },
       { type: 'goods', id: gid('喇叭'), num: 3, rate: 1 },
       { type: 'goods', id: gid('随机万能食材礼包'), num: 5, rate: 1 },
+      // 问题记录 455：前期学菜缺料时用
+      { type: 'foods', id: FOODS.masterBase + 1, num: 10, rate: 1 },
+      { type: 'foods', id: FOODS.masterBase + 2, num: 10, rate: 1 },
+      { type: 'foods', id: FOODS.masterBase + 3, num: 5, rate: 1 },
       { type: 'goods', id: GOODS.levelTicketBase + 1, num: 5, rate: 1 },
       { type: 'goods', id: GOODS.levelTicketBase + 2, num: 3, rate: 1 },
       { type: 'goods', id: gid('普通宣传海报'), num: 1, rate: 1 },
