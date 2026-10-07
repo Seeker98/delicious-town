@@ -1,7 +1,7 @@
 {
  "source": "新设计（问题记录 318）",
  "rule": "玩法支线：在开启章开始时出现，一次显示一档；档位 id = 3000 + 支线×20 + 顺序",
- "count": 15,
+ "count": 17,
  "data": [
   {
    "id": 1,
@@ -341,6 +341,154 @@
      "award": {
       "coin": 50000,
       "exp": 5000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3085,
+     "order": 5,
+     "needStar": 0,
+     "name": "玩一次猜酒杯",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.cup",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3086,
+     "order": 6,
+     "needStar": 0,
+     "name": "玩一次魔鬼辣杯",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.devil",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3087,
+     "order": 7,
+     "needStar": 0,
+     "name": "玩一次最后一颗糖",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.nim",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3088,
+     "order": 8,
+     "needStar": 0,
+     "name": "玩一次秘制调料",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.spice",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3089,
+     "order": 9,
+     "needStar": 0,
+     "name": "玩一次一掷千金",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.deal",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3090,
+     "order": 10,
+     "needStar": 0,
+     "name": "在酒吧玩 500 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.play",
+      "target": 500
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10006,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3091,
+     "order": 11,
+     "needStar": 0,
+     "name": "在酒吧玩 2,000 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.play",
+      "target": 2000
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
      },
      "href": "/bar"
     }
@@ -855,6 +1003,132 @@
       "exp": 15000
      },
      "href": "/exchange"
+    },
+    {
+     "id": 3204,
+     "order": 4,
+     "needStar": 0,
+     "name": "把食材卖给系统一次",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.system.sell",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3205,
+     "order": 5,
+     "needStar": 0,
+     "name": "从系统买一次食材",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.system.buy",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3206,
+     "order": 6,
+     "needStar": 0,
+     "name": "低价倒给系统一次 (以兜底价卖给系统)",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.system.floor",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3207,
+     "order": 7,
+     "needStar": 0,
+     "name": "买入稀有食材 10 个",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.rare.buy",
+      "target": 10
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3208,
+     "order": 8,
+     "needStar": 0,
+     "name": "卖出稀有食材 10 个",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.rare.sell",
+      "target": 10
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/exchange"
+    },
+    {
+     "id": 3209,
+     "order": 9,
+     "needStar": 0,
+     "name": "在交易所成交 500 次",
+     "cond": {
+      "kind": "counter",
+      "key": "exchange.fill",
+      "target": 500
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000
+     },
+     "href": "/exchange"
     }
    ]
   },
@@ -911,6 +1185,136 @@
       "exp": 10000
      },
      "href": "/predict"
+    },
+    {
+     "id": 3224,
+     "order": 4,
+     "needStar": 0,
+     "name": "结算前卖出一次",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.sell",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3225,
+     "order": 5,
+     "needStar": 0,
+     "name": "一道题持有 100 份",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.hold100",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3226,
+     "order": 6,
+     "needStar": 0,
+     "name": "一次结算赚 5 万",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.profit50k",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3227,
+     "order": 7,
+     "needStar": 0,
+     "name": "一次结算亏 3 万 (交学费)",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.loss30k",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3228,
+     "order": 8,
+     "needStar": 0,
+     "name": "一道题持有满 200 份",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.hold200",
+      "target": 1
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10303,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3229,
+     "order": 9,
+     "needStar": 0,
+     "name": "一次结算赚 15 万",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.profit150k",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/predict"
+    },
+    {
+     "id": 3230,
+     "order": 10,
+     "needStar": 0,
+     "name": "一次结算亏 15 万",
+     "cond": {
+      "kind": "counter",
+      "key": "predict.loss150k",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/predict"
     }
    ]
   },
@@ -963,6 +1367,116 @@
       "target": 1
      },
      "award": {
+      "goods": [
+       {
+        "id": 10303,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3244,
+     "order": 4,
+     "needStar": 0,
+     "name": "抽中一次 A 赏",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.a",
+      "target": 1
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10303,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3245,
+     "order": 5,
+     "needStar": 0,
+     "name": "抽一次豪华一番赏",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.deluxe.draw",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10303,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3246,
+     "order": 6,
+     "needStar": 0,
+     "name": "抽豪华一番赏 10 次",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.deluxe.draw",
+      "target": 10
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3247,
+     "order": 7,
+     "needStar": 0,
+     "name": "豪华一番赏抽中 A 赏",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.deluxe.a",
+      "target": 1
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/kuji"
+    },
+    {
+     "id": 3248,
+     "order": 8,
+     "needStar": 0,
+     "name": "拿到一次豪华一番赏的最后赏",
+     "cond": {
+      "kind": "counter",
+      "key": "kuji.deluxe.last",
+      "target": 1
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
       "goods": [
        {
         "id": 10303,
@@ -1087,6 +1601,94 @@
       "exp": 40000
      },
      "href": "/cookbooks"
+    },
+    {
+     "id": 3284,
+     "order": 4,
+     "needStar": 0,
+     "name": "搬到杂碎街",
+     "cond": {
+      "kind": "counter",
+      "key": "rest.moveTo.29",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/society/move"
+    },
+    {
+     "id": 3285,
+     "order": 5,
+     "needStar": 0,
+     "name": "在杂碎街送 30 次外卖",
+     "cond": {
+      "kind": "counter",
+      "key": "takeaway.deliver.street.29",
+      "target": 30
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/takeaway"
+    },
+    {
+     "id": 3286,
+     "order": 6,
+     "needStar": 0,
+     "name": "学会 60 道杂碎街的菜",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.street.29",
+      "target": 60
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/cookbooks"
+    },
+    {
+     "id": 3287,
+     "order": 7,
+     "needStar": 0,
+     "name": "思乡之情：学会杂碎街全部菜",
+     "cond": {
+      "kind": "state",
+      "key": "cookbooks.street.29",
+      "target": "all"
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/cookbooks"
     }
    ]
   },
@@ -1115,6 +1717,400 @@
       ]
      },
      "href": "/cookbooks"
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "key": "luck",
+   "name": "酒运",
+   "chapter": 3,
+   "steps": [
+    {
+     "id": 3321,
+     "order": 1,
+     "needStar": 0,
+     "name": "划拳连胜 3 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.fg.streak3",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3322,
+     "order": 2,
+     "needStar": 0,
+     "name": "转数字转中一次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.num.win",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3323,
+     "order": 3,
+     "needStar": 0,
+     "name": "猜酒杯闯过第 2 轮",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.cup.round2",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3324,
+     "order": 4,
+     "needStar": 0,
+     "name": "魔鬼辣杯赢一次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.devil.win",
+      "target": 1
+     },
+     "award": {
+      "coin": 10000,
+      "exp": 1000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3325,
+     "order": 5,
+     "needStar": 0,
+     "name": "划拳连胜 5 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.fg.streak5",
+      "target": 1
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10006,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3326,
+     "order": 6,
+     "needStar": 0,
+     "name": "猜酒杯通关一次 (4 轮全中)",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.cup.clear",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
+      "goods": [
+       {
+        "id": 10303,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3327,
+     "order": 7,
+     "needStar": 0,
+     "name": "老虎机玩 100 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.slot",
+      "target": 100
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3328,
+     "order": 8,
+     "needStar": 0,
+     "name": "魔鬼辣杯活过 3 杯",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.devil.survive3",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3329,
+     "order": 9,
+     "needStar": 0,
+     "name": "划拳连胜 8 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.fg.streak8",
+      "target": 1
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/bar"
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "key": "skill",
+   "name": "酒桌高手",
+   "chapter": 3,
+   "steps": [
+    {
+     "id": 3341,
+     "order": 1,
+     "needStar": 0,
+     "name": "飞镖赢老板一次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.darts.win",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3342,
+     "order": 2,
+     "needStar": 0,
+     "name": "最后一颗糖在新手桌赢一次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.nim.novice",
+      "target": 1
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3343,
+     "order": 3,
+     "needStar": 0,
+     "name": "记忆调酒答对最难的一档",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.memory.top",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3344,
+     "order": 4,
+     "needStar": 0,
+     "name": "秘制调料 6 次以内猜中",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.spice.win6",
+      "target": 1
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3345,
+     "order": 5,
+     "needStar": 0,
+     "name": "最后一颗糖在高手桌赢一次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.nim.expert",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3346,
+     "order": 6,
+     "needStar": 0,
+     "name": "飞镖三镖全中靶心",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.darts.perfect",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3347,
+     "order": 7,
+     "needStar": 0,
+     "name": "秘制调料 4 次以内猜中",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.spice.win4",
+      "target": 1
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3348,
+     "order": 8,
+     "needStar": 0,
+     "name": "一掷千金一路不成交，开出最大奖",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.deal.top",
+      "target": 1
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000
+     },
+     "href": "/bar"
+    },
+    {
+     "id": 3349,
+     "order": 9,
+     "needStar": 0,
+     "name": "最后一颗糖在高手桌赢 50 次",
+     "cond": {
+      "kind": "counter",
+      "key": "bar.nim.expert",
+      "target": 50
+     },
+     "award": {
+      "coin": 300000,
+      "exp": 30000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/bar"
     }
    ]
   }

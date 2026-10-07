@@ -230,6 +230,27 @@
   "3084": {
     "name": "Jugar 50 veces en el bar"
   },
+  "3085": {
+    "name": "Jugar una vez a Adivina el vaso"
+  },
+  "3086": {
+    "name": "Jugar una vez al Chile del Diablo"
+  },
+  "3087": {
+    "name": "Jugar una vez a El último caramelo"
+  },
+  "3088": {
+    "name": "Jugar una vez a Mezcla secreta"
+  },
+  "3089": {
+    "name": "Jugar una vez a Trato o no trato"
+  },
+  "3090": {
+    "name": "Jugar 500 veces en el bar"
+  },
+  "3091": {
+    "name": "Jugar 2000 veces en el bar"
+  },
   "3101": {
     "name": "Cocinar platos estrella 10 veces"
   },
@@ -308,6 +329,24 @@
   "3203": {
     "name": "Cerrar 50 operaciones en la Bolsa"
   },
+  "3204": {
+    "name": "Vender ingredientes al sistema una vez"
+  },
+  "3205": {
+    "name": "Comprar ingredientes al sistema una vez"
+  },
+  "3206": {
+    "name": "Malvender al sistema una vez (al precio mínimo)"
+  },
+  "3207": {
+    "name": "Comprar 10 ingredientes raros"
+  },
+  "3208": {
+    "name": "Vender 10 ingredientes raros"
+  },
+  "3209": {
+    "name": "Completar 500 operaciones en el mercado de intercambio"
+  },
   "3221": {
     "name": "Hacer una operación de predicción"
   },
@@ -317,6 +356,27 @@
   "3223": {
     "name": "Ganar una liquidación de predicción"
   },
+  "3224": {
+    "name": "Vender antes de la liquidación una vez"
+  },
+  "3225": {
+    "name": "Tener 100 participaciones en una pregunta"
+  },
+  "3226": {
+    "name": "Ganar 50.000 en una liquidación"
+  },
+  "3227": {
+    "name": "Perder 30.000 en una liquidación (lección aprendida)"
+  },
+  "3228": {
+    "name": "Tener las 200 participaciones en una pregunta"
+  },
+  "3229": {
+    "name": "Ganar 150.000 en una liquidación"
+  },
+  "3230": {
+    "name": "Perder 150.000 en una liquidación"
+  },
   "3241": {
     "name": "Tirar 10 veces en el Ichiban Kuji"
   },
@@ -325,6 +385,21 @@
   },
   "3243": {
     "name": "Ganar el Último Premio"
+  },
+  "3244": {
+    "name": "Sacar un Premio A una vez"
+  },
+  "3245": {
+    "name": "Sacar una vez del Ichiban Kuji de lujo"
+  },
+  "3246": {
+    "name": "Sacar 10 veces del Ichiban Kuji de lujo"
+  },
+  "3247": {
+    "name": "Sacar un Premio A del Ichiban Kuji de lujo"
+  },
+  "3248": {
+    "name": "Ganar el Último Premio del Ichiban Kuji de lujo una vez"
   },
   "3261": {
     "name": "Hacer 10 repartos"
@@ -344,8 +419,74 @@
   "3283": {
     "name": "Aprender 500 platos en calles extranjeras"
   },
+  "3284": {
+    "name": "Mudarse a la calle Chop Suey"
+  },
+  "3285": {
+    "name": "Hacer 30 repartos en la calle Chop Suey"
+  },
+  "3286": {
+    "name": "Aprender 60 platos de la calle Chop Suey"
+  },
+  "3287": {
+    "name": "Nostalgia: aprender todos los platos de la calle Chop Suey"
+  },
   "3301": {
     "name": "Subir todas las recetas a Raro"
+  },
+  "3321": {
+    "name": "Ganar 3 partidas seguidas de piedra, papel o tijera"
+  },
+  "3322": {
+    "name": "Acertar en la Ruleta de números una vez"
+  },
+  "3323": {
+    "name": "Superar la ronda 2 de Adivina el vaso"
+  },
+  "3324": {
+    "name": "Ganar al Chile del Diablo una vez"
+  },
+  "3325": {
+    "name": "Ganar 5 partidas seguidas de piedra, papel o tijera"
+  },
+  "3326": {
+    "name": "Superar las 4 rondas de Adivina el vaso una vez"
+  },
+  "3327": {
+    "name": "Jugar 100 veces a la tragaperras"
+  },
+  "3328": {
+    "name": "Sobrevivir a 3 vasos en el Chile del Diablo"
+  },
+  "3329": {
+    "name": "Ganar 8 partidas seguidas de piedra, papel o tijera"
+  },
+  "3341": {
+    "name": "Ganar al jefe en los dardos una vez"
+  },
+  "3342": {
+    "name": "Ganar El último caramelo en la mesa de principiantes una vez"
+  },
+  "3343": {
+    "name": "Acertar el nivel más difícil de Cóctel Memoria"
+  },
+  "3344": {
+    "name": "Adivinar Mezcla secreta en 6 intentos o menos"
+  },
+  "3345": {
+    "name": "Ganar El último caramelo en la mesa de expertos una vez"
+  },
+  "3346": {
+    "name": "Dar en el centro con los 3 dardos"
+  },
+  "3347": {
+    "name": "Adivinar Mezcla secreta en 4 intentos o menos"
+  },
+  "3348": {
+    "name": "Rechazar todas las ofertas en Trato o no trato y abrir el premio mayor"
+  },
+  "3349": {
+    "name": "Ganar El último caramelo en la mesa de expertos 50 veces"
   },
   "4011": {
     "name": "Registrarse 5 días"

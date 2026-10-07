@@ -230,6 +230,27 @@
   "3084": {
     "name": "Jouer 50 fois au bar"
   },
+  "3085": {
+    "name": "Jouer une fois aux Gobelets"
+  },
+  "3086": {
+    "name": "Jouer une fois au Piment du Diable"
+  },
+  "3087": {
+    "name": "Jouer une fois au dernier bonbon"
+  },
+  "3088": {
+    "name": "Jouer une fois au Mélange secret"
+  },
+  "3089": {
+    "name": "Jouer une fois à À prendre ou à laisser"
+  },
+  "3090": {
+    "name": "Jouer 500 fois au bar"
+  },
+  "3091": {
+    "name": "Jouer 2 000 fois au bar"
+  },
   "3101": {
     "name": "Cuisiner 10 fois des plats signature"
   },
@@ -308,6 +329,24 @@
   "3203": {
     "name": "Conclure 50 échanges à la Bourse"
   },
+  "3204": {
+    "name": "Vendre des ingrédients au système une fois"
+  },
+  "3205": {
+    "name": "Acheter des ingrédients au système une fois"
+  },
+  "3206": {
+    "name": "Brader au système une fois (au prix plancher)"
+  },
+  "3207": {
+    "name": "Acheter 10 ingrédients rares"
+  },
+  "3208": {
+    "name": "Vendre 10 ingrédients rares"
+  },
+  "3209": {
+    "name": "Conclure 500 échanges à la Bourse"
+  },
   "3221": {
     "name": "Faire un échange de prédiction"
   },
@@ -317,6 +356,27 @@
   "3223": {
     "name": "Gagner un règlement de prédiction"
   },
+  "3224": {
+    "name": "Revendre avant le règlement une fois"
+  },
+  "3225": {
+    "name": "Détenir 100 parts sur une question"
+  },
+  "3226": {
+    "name": "Gagner 50 000 en un règlement"
+  },
+  "3227": {
+    "name": "Perdre 30 000 en un règlement (leçon apprise)"
+  },
+  "3228": {
+    "name": "Détenir les 200 parts sur une question"
+  },
+  "3229": {
+    "name": "Gagner 150 000 en un règlement"
+  },
+  "3230": {
+    "name": "Perdre 150 000 en un règlement"
+  },
   "3241": {
     "name": "Tirer 10 fois à l'Ichiban Kuji"
   },
@@ -325,6 +385,21 @@
   },
   "3243": {
     "name": "Gagner le Dernier Prix"
+  },
+  "3244": {
+    "name": "Tirer un Prix A une fois"
+  },
+  "3245": {
+    "name": "Tirer une fois à l’Ichiban Kuji de luxe"
+  },
+  "3246": {
+    "name": "Tirer 10 fois à l’Ichiban Kuji de luxe"
+  },
+  "3247": {
+    "name": "Tirer un Prix A à l’Ichiban Kuji de luxe"
+  },
+  "3248": {
+    "name": "Remporter le Dernier Prix de l’Ichiban Kuji de luxe une fois"
   },
   "3261": {
     "name": "Effectuer 10 livraisons"
@@ -344,8 +419,74 @@
   "3283": {
     "name": "Apprendre 500 plats dans les rues étrangères"
   },
+  "3284": {
+    "name": "Déménager rue Chop Suey"
+  },
+  "3285": {
+    "name": "Faire 30 livraisons rue Chop Suey"
+  },
+  "3286": {
+    "name": "Apprendre 60 plats de la rue Chop Suey"
+  },
+  "3287": {
+    "name": "Mal du pays : apprendre tous les plats de la rue Chop Suey"
+  },
   "3301": {
     "name": "Monter toutes les recettes en Rare"
+  },
+  "3321": {
+    "name": "Gagner 3 parties de chifoumi d’affilée"
+  },
+  "3322": {
+    "name": "Toucher le bon numéro une fois à la Roue des numéros"
+  },
+  "3323": {
+    "name": "Passer la manche 2 des Gobelets"
+  },
+  "3324": {
+    "name": "Gagner au Piment du Diable une fois"
+  },
+  "3325": {
+    "name": "Gagner 5 parties de chifoumi d’affilée"
+  },
+  "3326": {
+    "name": "Réussir les 4 manches des Gobelets une fois"
+  },
+  "3327": {
+    "name": "Jouer 100 fois à la machine à sous"
+  },
+  "3328": {
+    "name": "Survivre à 3 verres au Piment du Diable"
+  },
+  "3329": {
+    "name": "Gagner 8 parties de chifoumi d’affilée"
+  },
+  "3341": {
+    "name": "Battre le patron aux fléchettes une fois"
+  },
+  "3342": {
+    "name": "Gagner au dernier bonbon à la table débutant une fois"
+  },
+  "3343": {
+    "name": "Réussir le niveau le plus difficile du Cocktail Mémoire"
+  },
+  "3344": {
+    "name": "Trouver le Mélange secret en 6 essais ou moins"
+  },
+  "3345": {
+    "name": "Gagner au dernier bonbon à la table expert une fois"
+  },
+  "3346": {
+    "name": "Toucher le centre avec les 3 fléchettes"
+  },
+  "3347": {
+    "name": "Trouver le Mélange secret en 4 essais ou moins"
+  },
+  "3348": {
+    "name": "Refuser toutes les offres à À prendre ou à laisser et ouvrir le gros lot"
+  },
+  "3349": {
+    "name": "Gagner au dernier bonbon à la table expert 50 fois"
   },
   "4011": {
     "name": "Pointer 5 jours"
