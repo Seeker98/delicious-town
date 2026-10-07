@@ -6,7 +6,7 @@ import { analyzeItems } from './analyze';
 /**
  * 商店整理工具的逻辑（问题记录 483）：改银币价、钻石价、银币商店上下架、今日特价池和黑市池。
  * 只写 data/game/shop.json（构建时盖在道具表上），读写文件由调用方给，测试不碰磁盘。
- * “原版”指不带 shop.json 构建出来的值（道具表 + 设计表），保存时只写和原版不同的
+ * “原版”指道具表和设计表池子里的值（下架的按不上架算，见 origValues），保存时只写和原版不同的
  */
 
 interface ShopValues {
