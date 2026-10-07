@@ -348,7 +348,7 @@
     "tuning.temple.guardianRareRate": "打倒 1 倍守护兽掉神秘食材（7 级）的期望个数，乘奖励倍数后整数部分必得、小数部分按概率（个）",
     "tuning.temple.guardianFoodsBase": "打倒 1 倍守护兽掉食材数 ≈ 这个值 ÷ 食材等级，再乘奖励倍数（个）",
     "tuning.temple.guardianFoodsSpread": "守护兽掉食材数的随机浮动范围（个，放大前）",
-    "tuning.temple.guardianRewardHp": "奖励倍数 = 守护兽血量 ÷ 这个值（血）；用买来的普通飞弹打，击败奖励约为银币投入的 85%",
+    "tuning.temple.guardianRewardHp": "奖励倍数 = 守护兽血量 ÷ 这个值（血）；用买来的普通飞弹 (2400) 打，击败奖励加暴击掉的探险图约为银币投入的 90%",
     "tuning.temple.injectCoin": "试炼用银币注入一次的费用（银币）",
     "tuning.temple.refreshCoin": "试炼不指定对象、花银币重抽试炼特色菜的费用（银币；用触手指定对象时不花银币）",
     "tuning.temple.trialCoin": "试炼一次的费用（银币）",

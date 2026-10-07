@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { buildBundle, featureOfKey } from './build';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { FOODS, FUND, GOODS, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { FOODS, FUND, GOODS, GOODS_TYPE, NEWBIE, SPONSOR_HATS, WIKI_HIDDEN_GOODS } from './ids';
+import { deriveGoodsUse } from './goodsUse';
 import { realBuild } from './testBundle';
 import { defaultDataDir, readSourceDir } from './source';
 import { cid, fid, gid } from './testItems';
@@ -58,6 +59,29 @@ describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不�
       expect(tr[GOODS.missileCluster]!.name).toBe(name);
       expect(JSON.stringify(tr)).not.toMatch(/Rapid Missile|misiles? rápidos?|missiles? rapides?/i);
     }
+  });
+});
+
+describe('买了再卖不能赚银币（终审：普通飞弹降到 2000 后，36 个捆成集束飞弹再卖能净赚）', () => {
+  const b = realBuild().bundle!;
+  const byId = new Map(b.goods.map((g) => [g.id, g]));
+  /** 回收价，和服务端 store/rules 的 sellPrice 一样：勋章、宝石、没有银币价的卖不了 */
+  const sell = (id: number) => {
+    const g = byId.get(id)!;
+    return g.coin <= 0 || g.type === GOODS_TYPE.honor || g.type === GOODS_TYPE.gem
+      ? 0
+      : Math.floor(g.coin * b.tuning.shop.sellRate);
+  };
+  it('捆绑道具：得到的东西回收价 ≤ 用掉的东西的银币价（不算捆绑卡本身）', () => {
+    const bad: string[] = [];
+    for (const g of b.goods) {
+      const u = deriveGoodsUse(g);
+      if (u?.kind !== 'bundle') continue;
+      const cost = u.num * byId.get(u.goods)!.coin;
+      const back = u.targetNum * sell(u.targetGoods);
+      if (back > cost) bad.push(`${g.name}: 卖 ${back} > 买 ${cost}`);
+    }
+    expect(bad).toEqual([]);
   });
 });
 

@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
     cluster1007:
-      'Cambios en el guardián del templo: el «Misil rápido» recupera su nombre original, «Misil de racimo», y hace 3200 por disparo en vez de 2000 (algo menos que 36 misiles estándar); el misil estándar baja a 2000 monedas; la recompensa por derrotar al guardián crece con su vida, así que con más estrellas da más ingredientes y más probabilidad de ingredientes misteriosos (a veces más de uno). El valor de prueba ahora llega como mucho al 30 % en vez del 50 % (lo que pase de ahí cuenta como 30 %), y los duelos de la torre y entre amigos ya no cuentan el valor de prueba',
+      'Cambios en el guardián del templo: el «Misil rápido» recupera su nombre original, «Misil de racimo», y hace 3200 por disparo en vez de 2000 (algo menos que 36 misiles estándar); el misil estándar baja a 2400 monedas; la recompensa por derrotar al guardián crece con su vida, así que con más estrellas da más ingredientes y más probabilidad de ingredientes misteriosos (a veces más de uno). El valor de prueba ahora llega como mucho al 30 % en vez del 50 % (lo que pase de ahí cuenta como 30 %), y los duelos de la torre y entre amigos ya no cuentan el valor de prueba',
     ui1007c:
       'Pruebas del templo: el ingrediente principal y el secundario son ahora dos casillas sobre una lista de ingredientes agrupada por nivel, con búsqueda; los niveles por debajo del plato empiezan plegados. Vales de ingredientes de Hermano 13: los niveles son botones que muestran cuántos vales tienes, primero salen los ingredientes que le faltan a tu calle y los que no tienes, con cuántos tienes y cuántos faltan, y se elige con +',
     batch1007b:

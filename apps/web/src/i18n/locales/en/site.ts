@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     cluster1007:
-      'Temple guardian changes: the “Rapid Missile” is back to its original name, the “Cluster Missile”, and deals 3200 per shot instead of 2000 (a bit less than 36 Standard Missiles); Standard Missiles now cost 2000 coins; the reward for defeating the guardian grows with its HP, so higher stars give more ingredients and better odds of mystery ingredients (sometimes more than one). Trial value now caps at 30% instead of 50% (anything above counts as 30%), and tower and friend duels no longer count trial value',
+      'Temple guardian changes: the “Rapid Missile” is back to its original name, the “Cluster Missile”, and deals 3,200 per shot instead of 2,000 (a bit less than 36 Standard Missiles); Standard Missiles now cost 2,400 coins; the reward for defeating the guardian grows with its HP, so higher stars give more ingredients and better odds of mystery ingredients (sometimes more than one). Trial value now caps at 30% instead of 50% (anything above counts as 30%), and tower and friend duels no longer count trial value',
     ui1007c:
       'Temple trials: the main and side ingredients are now two slots above an ingredient list grouped by level, with search; levels below the dish start collapsed. Brother 13’s ingredient vouchers: levels are now buttons showing how many vouchers you have, ingredients your street still needs and ones you don’t own come first with how many you have and need, and you tap + to pick and adjust',
     batch1007b:

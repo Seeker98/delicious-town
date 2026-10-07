@@ -269,8 +269,9 @@ describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）'
     expect(config.missiles.get(gid('普通飞弹'))!.attack).toEqual([90, 110]);
     expect(config.missiles.get(gid('爆裂飞弹'))!.attack).toEqual([80, 130]);
   });
-  it('普通飞弹 2000 银币（用户 2026-10-07 定：打死守护兽的奖励约为银币投入的 85%）；击败奖励以 3 万血为 1 倍', () => {
-    expect(config.requireGoods(gid('普通飞弹')).coin).toBe(2000);
+  it('普通飞弹 2400 银币（用户 2026-10-07 定略低于投入：击败奖励加暴击掉的探险图约为银币投入的 90%）；集束飞弹标价 10 万；击败奖励以 3 万血为 1 倍', () => {
+    expect(config.requireGoods(gid('普通飞弹')).coin).toBe(2400);
+    expect(config.requireGoods(gid('集束飞弹')).coin).toBe(100000);
     expect(config.tuning.temple.guardianRewardHp).toBe(30000);
   });
   it('血量 2 万 + 1 万 × 星级', () => {
