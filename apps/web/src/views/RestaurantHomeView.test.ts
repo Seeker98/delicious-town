@@ -514,7 +514,7 @@ describe('RestaurantHomeView', () => {
     const refuel = w.get('[data-testid="refuel"]');
     expect(refuel.classes()).toContain('dt-link-btn');
     expect(refuel.classes()).not.toContain('btn');
-    expect(refuel.find('i.bi-fuel-pump').exists()).toBe(true);
+    expect(refuel.find('i.bi-droplet-fill').exists()).toBe(true); // 添油用实心油滴，和左边油量的空心油滴成对（问题记录 459）
     expect(refuel.element.closest('.row')).not.toBeNull();
     expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
   });
