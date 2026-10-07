@@ -128,9 +128,7 @@ function hammer(body: { mode: 'coin'; type: number } | { mode: 'diamond' }) {
 </script>
 
 <template>
-  <h6 class="dt-section">NPC</h6>
-  <!-- 13 哥、镇长大胃锅（原来的大胃哥）、卡门的见面礼都在协会（问题记录 441） -->
-
+  <!-- 广场没有 NPC 了：雯姐在酒吧（问题记录 453）；13 哥、镇长大胃锅、卡门的见面礼在协会（问题记录 441） -->
   <h6 class="dt-section">{{ t.town.krab }}</h6>
   <div class="dt-item">
     <div class="dt-item-main">

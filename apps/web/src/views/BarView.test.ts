@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
 import { barData } from '../components/bar/testData';
 import { useToastStore } from '../stores/toast';
+import { useRestaurantStore } from '../stores/restaurant';
+import type { RestaurantDto } from '@dt/shared';
 import BarView from './BarView.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { bar: vi.fn(), townTalk: vi.fn() } }));
@@ -68,6 +70,13 @@ describe('BarView', () => {
     const again = mount(BarView, { global: { stubs } });
     await flushPromises();
     expect(again.get('[data-testid="talk-wenjie"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('区服关了小镇（聊天走小镇的接口）：酒吧不显示和雯姐聊天（终审）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['town'] } as unknown as RestaurantDto;
+    const w = mount(BarView, { global: { stubs } });
+    await flushPromises();
+    expect(w.find('[data-testid="talk-wenjie"]').exists()).toBe(false);
   });
 
   it('面板要求刷新时重新读取', async () => {

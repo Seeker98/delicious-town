@@ -28,6 +28,8 @@ describe('TownPanel', () => {
   it('雯姐的每天聊天搬到了酒吧：广场没有 NPC 聊天了（问题记录 453）', () => {
     const w = mount(TownPanel, { props: { data: townData() } });
     expect(w.find('[data-testid="talk-wenjie"]').exists()).toBe(false);
+    // 广场没有 NPC 了，不留空的“NPC”标题（终审）
+    expect(w.findAll('h6').map((h) => h.text())).not.toContain('NPC');
   });
 
   it('摇钱包：摇过的变灰；提示银币和彩蛋', async () => {
