@@ -801,16 +801,21 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const pool of ['special', 'black'] as const) {
     const list = shopRaw.pools?.[pool];
     if (!list) continue;
-    for (const id of list) {
-      const g = goods.find((x) => x.id === id);
-      if (!g) errors.push(`shop ${pool} pool references unknown goods ${id}`);
-      else if (pool === 'black' && g.diamond <= 0)
-        errors.push(`shop black pool goods ${id} has no diamond price`);
-      else if (pool === 'special' && g.coin <= 0)
-        errors.push(`shop special pool goods ${id} has no coin price`);
-    }
+    for (const id of list)
+      if (!goodsIds.has(id)) errors.push(`shop ${pool} pool references unknown goods ${id}`);
     shopPools[pool] = list;
   }
+  // 最终生效的池子都要有价格：只改了池里东西的价格、池子没写进 shop.json 时也要查（终审：特价抽到 0 价就是白送）
+  for (const pool of ['special', 'black'] as const) {
+    for (const id of shopPools[pool]) {
+      const g = goods.find((x) => x.id === id);
+      if (!g) continue;
+      if (pool === 'black' && g.diamond <= 0) errors.push(`shop black pool goods ${id} has no diamond price`);
+      if (pool === 'special' && g.coin <= 0) errors.push(`shop special pool goods ${id} has no coin price`);
+    }
+  }
+  if ((goods.find((x) => x.id === tuning.shop.specialFallbackGoods)?.coin ?? 1) <= 0)
+    errors.push(`tuning shop.specialFallbackGoods ${tuning.shop.specialFallbackGoods} has no coin price`);
   if (!goodsIds.has(tuning.shop.specialFallbackGoods))
     errors.push(
       `tuning shop.specialFallbackGoods references unknown goods ${tuning.shop.specialFallbackGoods}`,

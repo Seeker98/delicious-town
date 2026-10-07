@@ -188,8 +188,9 @@
         FIELDS.some((f) => edits.get(r.id)[f] !== undefined && edits.get(r.id)[f] !== r[f]);
       const differs = (r, v, f) => (f === 'note' ? false : v[f] !== r.orig[f]);
       // 和服务端 store/rules 的 sellPrice 一样先四舍五入到 6 位小数再取整，免得 2600 × 0.7 算成 1819
+      // 能不能回收看类型，不看保存时的价格：原来没价、改了价的也要显示出来（终审）
       const sell = (r, v) =>
-        r.sellPrice === null
+        !r.sellable || v.coin <= 0
           ? '—'
           : Math.floor(Math.round(v.coin * report.sellRate * 1e6) / 1e6).toLocaleString();
 

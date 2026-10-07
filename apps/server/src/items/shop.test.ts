@@ -35,6 +35,9 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(typeof m.special).toBe('boolean');
     const red = r.rows.find((x) => x.id === RED)!;
     expect(red.black).toBe(true);
+    // 能不能回收看类型（勋章、宝石不能），页面按改后的银币价现算回收价（终审）
+    expect(m.sellable).toBe(true);
+    expect(red.sellable).toBe(false);
     // 不上架、没有价格、不在池子里的不列
     expect(r.rows.every((x) => x.onSale || x.coin > 0 || x.diamond > 0 || x.special || x.black)).toBe(true);
   });

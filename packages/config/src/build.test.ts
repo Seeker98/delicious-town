@@ -379,6 +379,10 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
     expect(b.errors.join('\n')).toMatch(
       new RegExp(`shop special pool goods ${gid('神秘礼券')} has no coin price`),
     );
+    // 池子没改、只把池里的东西改成没价格，也要拦下（终审：特价抽到它就是白送）
+    const free = withShop({ goods: [{ id: MISSILE, coin: 0 }] });
+    expect(free.bundle).toBeNull();
+    expect(free.errors.join()).toContain(`shop special pool goods ${MISSILE} has no coin price`);
     // 负价在读文件时就拦下
     const neg = withShop({ goods: [{ id: RED, coin: -1 }] });
     expect(neg.bundle).toBeNull();

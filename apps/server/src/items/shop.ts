@@ -25,6 +25,8 @@ export interface ShopRow extends ShopValues {
   orig: ShopValues;
   /** 回收价（银币价 × 回收比例）；勋章、宝石、没有银币价的为 null */
   sellPrice: number | null;
+  /** 这种东西能不能回收（勋章、宝石不能）；页面按改后的银币价现算回收价（终审） */
+  sellable: boolean;
   retired: boolean;
   note: string;
 }
@@ -108,6 +110,7 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
         ...now.get(g.id)!,
         orig: orig.get(g.id)!,
         sellPrice: sellPrice(g, config.tuning),
+        sellable: sellPrice({ ...g, coin: 1 }, config.tuning) !== null,
         retired: !!g.retired,
         note: notes.get(g.id) ?? '',
       }));
