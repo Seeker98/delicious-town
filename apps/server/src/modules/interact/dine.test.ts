@@ -57,6 +57,20 @@ describe('白食开始（规格书 13 §13.3）', () => {
     expect(feed.items[0]).toMatchObject({ type: 'dine.start', params: { by: a.restaurantId } });
   });
 
+  it('“吃白食”任务在开始白食时就算完成，结束时不再算一次（问题记录 463）', async () => {
+    const [a, b] = await setup();
+    const seen: string[] = [];
+    t.game.deps.bus.on('action', async (_tx, e) => {
+      const p = e.payload as { key: string };
+      if (e.restId === a.restaurantId && p.key === 'friend.dineAndDash') seen.push(p.key);
+    });
+    await dine().start(a, { restId: b.restaurantId, tableNo: 2 });
+    expect(seen).toHaveLength(1);
+    t.clock.set(new Date(t.clock.now.getTime() + 31 * MIN));
+    await dine().end(a);
+    expect(seen).toHaveLength(1);
+  });
+
   it('没设置头像、已在白食、对方停业、桌子有人、白食位满时拒绝；蟹老板不限人数', async () => {
     const [a, b] = await setup();
     await t.db.updateTable('restaurant').set({ avatar: null }).where('id', '=', a.restaurantId).execute();

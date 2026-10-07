@@ -104,6 +104,8 @@ export function createDine(d: GameDeps) {
               started_at: me.now,
             })
             .execute();
+          // “吃白食”任务开始就算完成，不用等 30 分钟（问题记录 463）；白食本身的结算不变
+          await emitAction(me, 'friend.dineAndDash');
           feedLog(p, 'dine.start', { table: b.tableNo });
           restLog(me, 'dine.started', { host: them.rest.id, hostName: them.rest.name, table: b.tableNo });
           return { hostRestId: them.rest.id, tableNo: b.tableNo, startedAt: since };
@@ -138,7 +140,6 @@ export function createDine(d: GameDeps) {
           gainStrength(me, reward.strength);
           await me.tx.deleteFrom('dine_dash').where('diner_rest_id', '=', me.rest.id).execute();
           await incrementDaily(me.tx, me.rest.id, 'dine.done', 1, gameDay(me.now));
-          await emitAction(me, 'friend.dineAndDash');
           restLog(me, 'dine.ended', { host: them.rest.id, hostName: them.rest.name, ...reward });
           return reward;
         },
