@@ -222,6 +222,8 @@ export const tuningSchema = z.object({
     specialHour: int,
     specialFallbackGoods: int,
     discardable: z.array(int),
+    /** 不能卖回商店的道具（用户 2026-10-08 定：蟹币。100 张神秘礼券换 1 个蟹币，原来能卖 35 万银币） */
+    noSell: z.array(int).default([]),
     maxBuy: int.min(1),
   }),
   store: z.object({ maxBatch: int.min(1) }),

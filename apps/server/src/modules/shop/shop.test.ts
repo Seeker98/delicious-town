@@ -116,6 +116,13 @@ describe('黑市、出售、丢弃', () => {
     await shop().sell(ctx, { goodsId: gid('爆裂飞弹'), num: 3 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 7_700);
   });
+  it('蟹币不能卖回商店（用户 2026-10-08 定：100 张礼券换 1 个蟹币，原来能卖 35 万银币）', async () => {
+    expect(sellPrice(config.requireGoods(GOODS.krabCoin), config.tuning)).toBeNull();
+    const ctx = await newRestaurant(t, { goods: { [GOODS.krabCoin]: 1 } });
+    await expect(shop().sell(ctx, { goodsId: GOODS.krabCoin, num: 1 })).rejects.toMatchObject({
+      params: { reason: 'not_sellable' },
+    });
+  });
   it('只能丢弃升星促销勋章', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 1 } });
     await grantGoods(t.db, config, ctx.restaurantId, GOODS.starPromoHonor, 1, new Date());

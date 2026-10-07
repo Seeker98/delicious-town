@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    krab1008:
+      'Krab Coins can no longer be sold back to the shop; they are only for the slot machine and the mayor’s exchange',
     quest1008:
       'Task changes: reaching 1 star now also gives 1 Mystery Recipe, 1 Delicious Seal, 1 Exploration Map and 9 [Level 1]•Fragment Shards (enough to trade for one level-1 specialty); the recipe and map that the appraisal and exploration tasks used to give are moved here; reaching 2 stars also gives 1 Takeaway Pass; from 1 star, the weekly tasks include “Claim this week’s Exploration Maps” for 3 maps a week; the “collect 4 potted plants” task is gone, and the Ichiban Kuji Last Prize now also gives 1 Krabby Patty; the chapter “Road to Divine Feasts” and “Raise a recipe to Divine”, which can’t be done yet, are hidden for now',
     rank1008:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    krab1008:
+      'Les Pièces Krab ne peuvent plus être revendues à la boutique\u202f; elles servent uniquement à la machine à sous et à l’échange du maire',
     quest1008:
       'Changements de quêtes\u202f: passer à 1 étoile donne aussi 1 Recette mystère, 1 Sceau Délice, 1 Carte d’exploration et 9 [Niveau 1]•Éclat de fragment (de quoi échanger une spécialité de niveau 1)\u202f; la recette et la carte que donnaient les quêtes d’expertise et d’exploration sont déplacées ici\u202f; passer à 2 étoiles donne aussi 1 Pass à emporter\u202f; dès 1 étoile, les quêtes hebdomadaires comprennent «\u00a0Récupérer les cartes d’exploration de la semaine\u00a0», 3 cartes par semaine\u202f; la quête «\u00a0réunir 4 plantes en pot\u00a0» disparaît et le Dernier Prix de l’Ichiban Kuji donne en plus 1 Krabby Patty\u202f; le chapitre «\u00a0La voie des festins divins\u00a0» et «\u00a0Monter une recette en Mets divin\u00a0», pas encore faisables, sont masqués pour l’instant',
     rank1008:
