@@ -130,7 +130,7 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'acquire', 1_200_000);
   });
 
-  it('不能收购：提示原因（关联账号用笼统说法），不弹确认、不买', async () => {
+  it('不能收购：提示原因（关联账号写明最近在同一设备或网络登录过，问题记录 495），不弹确认、不买', async () => {
     vi.mocked(endpoints.acquireRest).mockResolvedValue(rest({ acquireBlock: 'linked' }));
     const confirm = vi.spyOn(window, 'confirm');
     const w = await mountView();
@@ -138,7 +138,9 @@ describe('AcquireView（收购 PR 3）', () => {
     await flushPromises();
     expect(confirm).not.toHaveBeenCalled();
     expect(endpoints.acquireBuy).not.toHaveBeenCalled();
-    expect(useToastStore().items.at(-1)?.text).toBe('暂时不能收购这家店');
+    expect(useToastStore().items.at(-1)?.text).toBe(
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过，不能收购',
+    );
   });
 
   it('价格变了：提示现在的价格，重新读榜', async () => {

@@ -34,6 +34,39 @@ describe('ExchangePanel', () => {
     expect(w.findAll('[data-testid^="ex-row-"]')).toHaveLength(1);
   });
 
+  it('排序（问题记录 499）：不限次数的在前，再是能兑的、材料不够的、已兑完的；同一组按价格从低到高', async () => {
+    const base = exchangeData().items[1]!;
+    const row = (id: number, num: number, have: number, times: number, used: number) => ({
+      ...base,
+      id,
+      need: [{ goodsId: 180, num, have }],
+      times,
+      used,
+    });
+    vi.mocked(endpoints.townExchange).mockResolvedValue(
+      exchangeData({
+        items: [
+          row(11, 8, 5, 1, 0), // 材料不够
+          row(12, 3, 5, 1, 1), // 已兑完
+          row(13, 5, 5, 1, 0), // 能兑，5 个
+          row(14, 2, 0, -1, 0), // 不限次数（材料不够也在最前）
+          row(15, 3, 5, 1, 0), // 能兑，3 个
+          row(16, 1, 5, 1, 1), // 已兑完，更便宜
+        ],
+      }),
+    );
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    expect(w.findAll('[data-testid^="ex-row-"]').map((x) => x.attributes('data-testid'))).toEqual([
+      'ex-row-14',
+      'ex-row-15',
+      'ex-row-13',
+      'ex-row-11',
+      'ex-row-16',
+      'ex-row-12',
+    ]);
+  });
+
   it('兑换多份后重新读取', async () => {
     vi.mocked(endpoints.townExchangeDo).mockResolvedValue({ goodsId: 139, num: 2 });
     const w = mount(ExchangePanel);

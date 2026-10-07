@@ -1027,14 +1027,17 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const f of towerSrc) {
     if (f.challengemaxtimes <= 0) errors.push(`tower_floors ${f.floor} needs positive challengemaxtimes`);
   }
-  const renownShop: RenownShopItem[] = renownRaw.map((r) => ({
-    goodsId: r.goodsId,
-    renown: r.renown,
-    rare: r.rareflag === 1,
-    weeklyLimit: r.weeklyLimit,
-    weekGroup: r.weekGroup,
-    require: r.require,
-  }));
+  const renownShop: RenownShopItem[] = renownRaw
+    .map((r) => ({
+      goodsId: r.goodsId,
+      renown: r.renown,
+      rare: r.rareflag === 1,
+      weeklyLimit: r.weeklyLimit,
+      weekGroup: r.weekGroup,
+      require: r.require,
+    }))
+    // 下架的道具不再卖（问题记录 501：产出类列表自动去掉，不报“还被引用”）
+    .filter((r) => !retired.goods.has(r.goodsId));
   for (const [, id] of tuning.tower.rankGifts)
     if (!goodsIds.has(id)) errors.push(`tuning.tower.rankGifts references unknown goods ${id}`);
   // 厨塔挑战券（GOODS.towerTicket）
@@ -1052,15 +1055,18 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const r of renownRaw)
     if (!goodsIds.has(r.goodsId)) errors.push(`renown_shop references unknown goods ${r.goodsId}`);
   // ---------- 小镇（子项目 4E-1） ----------
-  const goodsExchange: GoodsExchange[] = goodsExRaw.map((e) => ({
-    id: e.id,
-    category: e.category,
-    goodsId: e.goodsId,
-    num: e.num,
-    need: e.needGoods.map((n) => ({ goodsId: n.id, num: n.num })),
-    times: e.times,
-    news: e.newsflag === 1,
-  }));
+  const goodsExchange: GoodsExchange[] = goodsExRaw
+    .map((e) => ({
+      id: e.id,
+      category: e.category,
+      goodsId: e.goodsId,
+      num: e.num,
+      need: e.needGoods.map((n) => ({ goodsId: n.id, num: n.num })),
+      times: e.times,
+      news: e.newsflag === 1,
+    }))
+    // 换到的东西下架了，这一条不再出现（问题记录 501）；要用掉的材料下架了仍然报错，要人工处理
+    .filter((e) => !retired.goods.has(e.goodsId));
   unique(
     'goods_exchange',
     goodsExchange.map((e) => e.id),
@@ -1072,7 +1078,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
         errors.push(`goods_exchange ${e.id} references unknown goods ${n.goodsId}`);
     if (e.times === 0 || e.times < -1) errors.push(`goods_exchange ${e.id} times must be -1 or positive`);
   }
-  const bless: Bless[] = blessRaw.map((x) => ({
+  const blessAll: Bless[] = blessRaw.map((x) => ({
     id: x.id,
     name: x.name,
     type: x.type,
@@ -1083,11 +1089,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     buff: x.buff,
     odds: x.odds,
   }));
+  // 许到的道具下架了，这条星愿不再出现（问题记录 501）；翻译表照完整的列表查，多出来的翻译不算错
+  const bless = blessAll.filter((x) => x.goodsId === null || !retired.goods.has(x.goodsId));
   unique(
     'bless',
-    bless.map((x) => x.id),
+    blessAll.map((x) => x.id),
   );
-  for (const x of bless) {
+  for (const x of blessAll) {
     if (x.goodsId !== null && !goodsIds.has(x.goodsId))
       errors.push(`bless ${x.id} references unknown goods ${x.goodsId}`);
     if (x.type === 2 && x.goodsId === null) errors.push(`bless ${x.id} needs goodsId`);
@@ -1275,7 +1283,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       chapters: chapters.map((c) => ({ id: c.id, name: c.name })),
       questLines: questLines.map((l) => ({ id: l.id, name: l.name })),
       activation: activationTasks,
-      bless,
+      bless: blessAll,
       tower: [...towerFloors.values()].map((f) => ({
         id: f.floor,
         name: f.name,

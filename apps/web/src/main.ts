@@ -9,7 +9,15 @@ import { createAppRouter } from './router';
 import { activeMessages } from './i18n';
 import { useLocaleStore } from './stores/locale';
 import { useToastStore } from './stores/toast';
+import { chunkTarget, reloadOnce } from './utils/chunkReload';
 import { installTabsScroll } from './utils/tabsScroll';
+
+// 发版后预加载旧的页面文件失败（问题记录 497）：刷新一次；10 秒内又失败就照常报错
+// 正在点去别的页面时，刷新到要去的页面（终审：这个报错先到，那时地址还是当前页）
+window.addEventListener('vite:preloadError', (e) => {
+  const to = chunkTarget() ?? location.pathname + location.search + location.hash;
+  if (reloadOnce(to, (url) => location.assign(url))) e.preventDefault();
+});
 
 const pinia = createPinia();
 // 先定好语言再挂载（问题记录 272）：避免先闪一下中文。

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    misc1007d:
+      'Las tarjetas de ampliación pequeña, mediana y grande ya están en la tienda de monedas (30.000, 120.000 y 200.000); el canje del alcalde muestra primero lo ilimitado, luego lo que puedes canjear, lo que te falta y lo agotado, de más barato a más caro en cada grupo; cuando no puedes adquirir un restaurante, el aviso explica que es porque habéis entrado hace poco desde el mismo dispositivo o red; tras una actualización, una página antigua que no puede abrir otra se recarga sola una vez',
     retire1007:
       'Se ha retirado un lote de objetos sin uso: ya no aparecen en la tienda, el mercado negro, la oferta del día ni en ninguna recompensa. Los que ya tienes se siguen mostrando y se pueden usar o vender',
     cluster1007:

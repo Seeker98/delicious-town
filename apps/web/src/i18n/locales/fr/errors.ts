@@ -385,7 +385,8 @@ const errors: Messages['errors'] = {
     pair: () => 'Vos deux restaurants ont fait affaire récemment. Réessayez dans quelques jours',
     buyer_owned: () => "Tant que votre restaurant a un propriétaire, vous ne pouvez pas en racheter d'autres",
     holdings: () => 'Vous ne pouvez plus posséder de restaurants supplémentaires',
-    linked: () => 'Vous ne pouvez pas racheter ce restaurant pour le moment',
+    linked: () =>
+      'Vous et ce restaurant (ou son propriétaire) vous êtes connectés récemment depuis le même appareil ou le même réseau : vous ne pouvez pas le racheter',
     other_shard: () => "Ce restaurant n'est pas sur ce serveur",
     owner_changed: () => 'Ce restaurant vient de changer de propriétaire. Actualisez et regardez à nouveau',
     price_changed: (p) =>

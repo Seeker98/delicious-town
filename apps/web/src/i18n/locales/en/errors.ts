@@ -381,7 +381,8 @@ const errors: Messages['errors'] = {
     pair: () => 'Your two restaurants traded recently. Try again in a few days',
     buyer_owned: () => "While your restaurant is owned, you can't acquire others",
     holdings: () => "You can't own any more restaurants",
-    linked: () => "You can't acquire this restaurant right now",
+    linked: () =>
+      "You and this restaurant (or its owner) recently logged in on the same device or network, so you can't acquire it",
     other_shard: () => "That restaurant isn't on this server",
     owner_changed: () => 'This restaurant just changed owners. Refresh and look again',
     price_changed: (p) =>

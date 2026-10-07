@@ -15,7 +15,7 @@ const t = useT();
 const toast = useToastStore();
 const r = ref<AcquireRestDto | null>(null);
 /** 卡片上的原因：封号、关联账号都用同一句笼统的话，不让人从好友页看出谁被封、谁和自己共用设备（终审 Minor 3） */
-const reasonText = (block: string) => acquireReason(block === 'banned' ? 'linked' : block);
+const reasonText = (block: string) => acquireReason(block);
 const busy = ref(false);
 
 async function load() {
@@ -80,9 +80,13 @@ onMounted(load);
       >
         {{ t.acquire.acquire }}
       </button>
-      <span v-else-if="r.acquireBlock !== 'self'" class="text-muted" data-testid="card-block">{{
-        reasonText(r.acquireBlock)
-      }}</span>
+      <!-- 被封号的店不写原因（审查 Minor 3；终审：只有封号用笼统说法，反而认得出来） -->
+      <span
+        v-else-if="r.acquireBlock !== 'self' && r.acquireBlock !== 'banned'"
+        class="text-muted"
+        data-testid="card-block"
+        >{{ reasonText(r.acquireBlock) }}</span
+      >
       <button
         v-if="r.listed && r.listedBlock === null"
         class="btn btn-sm btn-outline-primary"

@@ -110,11 +110,11 @@ describe('黑市、出售、丢弃', () => {
     });
   });
   it('出售按页面上的单价 × 数量付银币，单价没有浮点误差（终审：确认框写的数要和到账一致）', async () => {
-    // 中扩建卡 45,000 × 0.7 用浮点算是 31,499.999…，向下取整会少 1
-    expect(sellPrice(config.requireGoods(gid('中扩建卡')), config.tuning)).toBe(31_500);
-    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { [gid('中扩建卡')]: 3 } });
-    await shop().sell(ctx, { goodsId: gid('中扩建卡'), num: 3 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 31_500);
+    // 爆裂飞弹 11,000 × 0.7 用浮点算是 7,699.999…，向下取整会少 1（原来用中扩建卡 45,000，问题记录 513 改价后换成它）
+    expect(sellPrice(config.requireGoods(gid('爆裂飞弹')), config.tuning)).toBe(7_700);
+    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { [gid('爆裂飞弹')]: 3 } });
+    await shop().sell(ctx, { goodsId: gid('爆裂飞弹'), num: 3 });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 7_700);
   });
   it('只能丢弃升星促销勋章', async () => {
     const ctx = await newRestaurant(t, { goods: { [gid('普通宣传海报')]: 1 } });
