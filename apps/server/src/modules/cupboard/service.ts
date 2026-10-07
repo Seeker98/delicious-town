@@ -31,6 +31,19 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
   const needOf = (id: number, grade: number) => d.config.requireCookbook(id).needFoods[grade] ?? [];
   const freeHandles = (star: number, t: { freeHandleBase: number; freeHandlePerStar: number }) =>
     t.freeHandleBase + t.freeHandlePerStar * star;
+  /** 本街的菜还要哪些食材、各几个（橱柜和冰箱共用，问题记录 465） */
+  async function streetNeeds(restId: number, streetId: number, maxGrade: number) {
+    const cb = await d.db
+      .selectFrom('restaurant_cookbooks')
+      .select('levels')
+      .where('rest_id', '=', restId)
+      .executeTakeFirstOrThrow();
+    const levels = padLevels(new Uint8Array(cb.levels), d.config.cookbookIndex.slots);
+    const streetIds = d.config.cookbookIndex.idsByStreet.get(streetId) ?? [];
+    const targetGrade = streetTargetGrade(levels, d.config.cookbookIndex.slotOf, streetIds, maxGrade);
+    const needMap = foodsNeedFor(streetIds, levels, d.config.cookbookIndex.slotOf, targetGrade, needOf);
+    return { targetGrade, needMap };
+  }
 
   return {
     async list(ctx: RestCtx): Promise<CupboardDto> {
@@ -41,20 +54,11 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
         .executeTakeFirstOrThrow();
       const { tuning } = await d.shards.settings(ctx.shardId);
       const rows = await foodsMap(d.db, rest.id);
-      const cb = await d.db
-        .selectFrom('restaurant_cookbooks')
-        .select('levels')
-        .where('rest_id', '=', rest.id)
-        .executeTakeFirstOrThrow();
-      const levels = padLevels(new Uint8Array(cb.levels), d.config.cookbookIndex.slots);
-      const streetIds = d.config.cookbookIndex.idsByStreet.get(rest.street_id) ?? [];
-      const targetGrade = streetTargetGrade(
-        levels,
-        d.config.cookbookIndex.slotOf,
-        streetIds,
+      const { targetGrade, needMap } = await streetNeeds(
+        rest.id,
+        rest.street_id,
         tuning.rest.cookbookMaxGrade,
       );
-      const needMap = foodsNeedFor(streetIds, levels, d.config.cookbookIndex.slotOf, targetGrade, needOf);
       const used = await getDaily(d.db, rest.id, HANDLE_KEY, gameDay(d.now()));
       const all = [...rows];
       return {
@@ -97,9 +101,10 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
       const { tuning } = await d.shards.settings(ctx.shardId);
       const rest = await d.db
         .selectFrom('restaurant')
-        .select(['foods_max_num', 'cupboard_num'])
+        .select(['foods_max_num', 'cupboard_num', 'street_id'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
+      const { needMap } = await streetNeeds(ctx.restaurantId, rest.street_id, tuning.rest.cookbookMaxGrade);
       const rows = await d.db
         .selectFrom('cupboard_food')
         .select(['foods_id', 'num', 'fridge_num'])
@@ -116,7 +121,13 @@ export function createCupboardService(d: GameDeps, world: WorldService) {
           const thawCoin = Math.ceil(
             thawable * d.config.requireFood(r.foods_id).coin * tuning.cupboard.thawCoinRate,
           );
-          return { foodsId: r.foods_id, num: r.fridge_num, thawable, thawCoin };
+          return {
+            foodsId: r.foods_id,
+            num: r.fridge_num,
+            thawable,
+            thawCoin,
+            streetNeed: needMap.get(r.foods_id) ?? 0,
+          };
         }),
       };
     },

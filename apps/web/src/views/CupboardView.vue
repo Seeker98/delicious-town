@@ -278,10 +278,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.cupboard.
     <div
       v-for="f in fridge.items"
       :key="f.foodsId"
-      class="d-flex align-items-center border-bottom py-1 small"
+      class="d-flex align-items-center flex-wrap column-gap-2 border-bottom py-1 small"
+      :data-testid="`fridge-${f.foodsId}`"
     >
       {{ t.common.qty(catalog.foodName(f.foodsId), f.num) }}
-      <span v-if="f.thawable === 0" class="text-muted ms-2">{{ t.cupboard.noRoom }}</span>
+      <!-- 和橱柜一样写等级和本街还需几个（问题记录 465） -->
+      <span class="text-muted">{{ foodLevelLabel(levelOf(f.foodsId)) }}</span>
+      <span v-if="f.streetNeed > 0" class="text-muted">{{ t.cupboard.streetNeed(f.streetNeed) }}</span>
+      <span v-if="f.thawable === 0" class="text-muted">{{ t.cupboard.noRoom }}</span>
       <!-- 解冻要花银币：按钮写明个数和费用，点了再确认（问题记录 206） -->
       <button
         class="btn btn-sm btn-outline-primary ms-auto"
