@@ -158,7 +158,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       </div>
       <button
         v-if="rest.id !== mine"
-        class="btn btn-sm btn-outline-success"
+        class="btn btn-sm btn-outline-primary"
         data-testid="act-taste"
         :disabled="busy || rest.special.eaten || rest.state !== 1"
         @click="act(() => endpoints.mcTaste(restId), t.friends.rest.tasted, t.friends.rest.tasteFailed)"
@@ -256,7 +256,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       >
       <template v-else-if="picked.customer === 3 && picked.roachBy !== mine">
         <button
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-primary"
           data-testid="act-kill"
           :disabled="busy"
           @click="

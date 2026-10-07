@@ -59,7 +59,7 @@ onMounted(load);
     </div>
     <button
       v-if="picked.customer === 3"
-      class="btn btn-sm btn-success"
+      class="btn btn-sm btn-primary"
       data-testid="act-kill"
       :disabled="busy"
       @click="act(() => endpoints.roachKill(me, picked!.no), t.rest.floor.killed, t.rest.floor.killFailed)"

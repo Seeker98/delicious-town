@@ -54,7 +54,7 @@ onMounted(load);
 <template>
   <div v-if="!disabled" data-testid="friend-duel">
     <button
-      class="btn btn-sm btn-outline-success"
+      class="btn btn-sm btn-outline-primary"
       data-testid="act-duel"
       :disabled="busy || !info || !!block"
       @click="duel"

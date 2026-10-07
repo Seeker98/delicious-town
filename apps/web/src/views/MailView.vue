@@ -119,7 +119,7 @@ const claimAll = () =>
       </button>
       <button
         v-if="claimable(m)"
-        class="btn btn-sm btn-success"
+        class="btn btn-sm btn-primary"
         :disabled="busy || levelLow(m)"
         :data-testid="`mail-claim-${m.id}`"
         @click="claim(m)"

@@ -641,6 +641,10 @@ describe('RestaurantHomeView', () => {
     const btn = card.find('button');
     expect(btn.text()).toBe('领奖');
     expect(btn.classes()).not.toContain('float-end');
+    // 和签到一样是文字链接：礼物图标加文字，不再是绿色按钮（问题记录 469）
+    expect(btn.classes()).toContain('dt-link-btn');
+    expect(btn.classes()).not.toContain('btn');
+    expect(btn.find('i.bi-gift').exists()).toBe(true);
   });
 
   it('主线行：本章第一个可领的；没有可领的显示第一个没完成的；主线全做完不显示（问题记录 318）', async () => {

@@ -130,6 +130,21 @@ function resultLines(r: DealDto): string[] {
   ];
 }
 const result = computed(() => (local.value?.result ? resultLines(local.value) : []));
+/** 按轮分开的开箱记录：opened 按开的先后排，前 opens[0] 个是第 1 轮，依次往后（问题记录 467） */
+const roundsOpened = computed(() => {
+  const r = local.value;
+  if (!r) return [];
+  const out: string[] = [];
+  let at = 0;
+  for (const [i, n] of (r.opens ?? []).entries()) {
+    const items = r.opened.slice(at, at + n);
+    at += n;
+    if (items.length === 0) break;
+    const x = t.value.bar.deal;
+    out.push(x.roundLine(i + 1, items.map((o) => `${x.box(o.box + 1)} ${prizeText(o)}`).join(x.sep)));
+  }
+  return out;
+});
 function again() {
   local.value = null;
   live.value = '';
@@ -209,6 +224,22 @@ function again() {
           </button>
         </div>
       </div>
+      <!-- 结束时结果放最前面，开箱记录在后（终审） -->
+      <div
+        v-if="local.result"
+        :class="['fw-bold mb-2', local.result === 'deal' ? 'text-primary' : 'text-success']"
+        data-testid="deal-result"
+      >
+        <div v-for="(line, i) in result" :key="i">{{ line }}</div>
+      </div>
+      <template v-if="roundsOpened.length > 0">
+        <div class="fw-bold">{{ t.bar.deal.roundsTitle }}</div>
+        <div class="mb-2">
+          <div v-for="(line, i) in roundsOpened" :key="i" class="dt-meta" :data-testid="`deal-round-${i}`">
+            {{ line }}
+          </div>
+        </div>
+      </template>
       <template v-if="!local.result">
         <div class="fw-bold">{{ t.bar.deal.leftTitle }}</div>
         <div class="dt-deal-prizes" data-testid="deal-left">
@@ -216,13 +247,7 @@ function again() {
         </div>
       </template>
       <template v-else>
-        <div
-          :class="['fw-bold', local.result === 'deal' ? 'text-primary' : 'text-success']"
-          data-testid="deal-result"
-        >
-          <div v-for="(line, i) in result" :key="i">{{ line }}</div>
-        </div>
-        <div class="fw-bold mt-2">{{ t.bar.deal.allTitle }}</div>
+        <div class="fw-bold">{{ t.bar.deal.allTitle }}</div>
         <div class="dt-deal-prizes">
           <span v-for="(p, i) in local.all ?? []" :key="i" class="dt-meta" :data-testid="`deal-all-${i}`">
             {{ t.bar.deal.box(i + 1) }} {{ prizeText(p) }}

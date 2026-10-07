@@ -36,11 +36,10 @@ describe('MoreView', () => {
     expect(mountView().text()).not.toContain('管理后台');
   });
 
-  it('有特色菜、神殿、菜园、酒吧、厨塔、外卖、广场入口；教室并进广场，不再单列（问题记录 122）', () => {
+  it('有神殿、菜园、酒吧、厨塔、外卖、广场入口（特色菜只留首页的入口，问题记录 473）；教室并进广场，不再单列（问题记录 122）', () => {
     useSessionStore().me = me('player');
     const text = mountView().text();
     for (const x of [
-      '特色菜',
       '神殿',
       '广场',
       '菜园',

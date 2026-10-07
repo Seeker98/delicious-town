@@ -21,7 +21,7 @@ const pct = (p: number, target: number) => Math.min(100, Math.round((p / Math.ma
   <div
     :class="[
       'border rounded p-2 small mb-1',
-      { 'border-success dt-task-done': quest.done && !quest.claimed, 'text-muted': quest.claimed },
+      { 'border-primary dt-task-done': quest.done && !quest.claimed, 'text-muted': quest.claimed },
     ]"
     :data-testid="`task-${quest.id}`"
   >
@@ -37,7 +37,7 @@ const pct = (p: number, target: number) => Math.min(100, Math.round((p / Math.ma
     <template v-if="!quest.claimed && !locked">
       <button
         v-if="quest.done"
-        class="btn btn-sm btn-success mt-1"
+        class="btn btn-sm btn-primary mt-1"
         :data-testid="`claim-task-${quest.id}`"
         :disabled="busy"
         @click="$emit('claim')"

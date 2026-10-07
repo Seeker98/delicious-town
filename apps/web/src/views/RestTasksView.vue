@@ -104,7 +104,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           r.claimed
             ? 'btn-light text-muted'
             : act.total >= r.points
-              ? 'btn-success'
+              ? 'btn-primary'
               : 'btn-outline-secondary',
         ]"
         :data-testid="`claim-${r.points}`"
@@ -190,7 +190,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           }}</span>
           <!-- 没领完时灰色并写明还差几个，免得像能点（问题记录 318 试玩反馈）；只差领时写先领完（backlog 318） -->
           <button
-            :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-success' : 'btn-outline-secondary']"
+            :class="['btn btn-sm', tasks.chapter.claimable ? 'btn-primary' : 'btn-outline-secondary']"
             data-testid="claim-chapter"
             :disabled="busy || !tasks.chapter.claimable"
             @click="run(() => endpoints.claimChapter(tasks!.chapter!.id), t.rest.tasks.claimFailed)"
@@ -242,7 +242,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
             tasks.weekly.full.claimed
               ? 'btn-light text-muted'
               : tasks.weekly.full.claimable
-                ? 'btn-success'
+                ? 'btn-primary'
                 : 'btn-outline-secondary',
           ]"
           data-testid="claim-weekly-full"

@@ -101,6 +101,14 @@ describe('文字链接统一（问题记录 451）', () => {
       expect(m[1]).toMatch(/\btext-wrap\b/);
   });
 
+  it('操作按钮只用品牌色：不再有绿色按钮（问题记录 469；事件合约、交易所的“是 / 买”是方向色，不算）', () => {
+    const SIDE_COLOR = new Set(['components/predict/PredictDetailCard.vue', 'views/ExchangeView.vue']);
+    const bad = GAME.filter((f) => !SIDE_COLOR.has(f.path) && /\bbtn-(outline-)?success\b/.test(f.tpl)).map(
+      (f) => f.path,
+    );
+    expect(bad).toEqual([]);
+  });
+
   it('链接文案不自己写箭头（餐厅信息页的加点、厨具）', () => {
     expect(zhCN.rest.info.toPoints(3)).not.toMatch(/[→›]/);
     expect(zhCN.rest.info.toEquip).not.toMatch(/[→›]/);

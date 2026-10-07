@@ -235,7 +235,7 @@ describe('RestTasksView', () => {
     expect(claimed.attributes('disabled')).toBeDefined();
     const ready = w.find('[data-testid="claim-100"]');
     expect(ready.text()).toBe('领 100 点奖励');
-    expect(ready.classes()).toContain('btn-success');
+    expect(ready.classes()).toContain('btn-primary');
     expect(ready.attributes('disabled')).toBeUndefined();
     const far = w.find('[data-testid="claim-150"]');
     expect(far.text()).toBe('150 点（还差 30）');
@@ -248,7 +248,7 @@ describe('RestTasksView', () => {
     expect(w.find('[data-testid="claim-task-2021"]').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ progress: 1, done: true })]));
     const done = await mountView();
-    expect(done.find('[data-testid="task-2021"]').classes()).toContain('border-success');
+    expect(done.find('[data-testid="task-2021"]').classes()).toContain('border-primary'); // 可领的任务卡和按钮一样用品牌色框（问题记录 469）
     await done.find('[data-testid="claim-task-2021"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(2021);
@@ -272,7 +272,7 @@ describe('RestTasksView', () => {
     expect(w.get('[data-testid="task-2021"]').text()).toContain('✓ 已领');
     expect(w.find('[data-testid="claim-chapter"]').attributes('disabled')).toBeDefined();
     // 没领完时不是绿色，写明还差几个（问题记录 318 试玩反馈：绿色按钮点不了像坏了）
-    expect(w.get('[data-testid="claim-chapter"]').classes()).not.toContain('btn-success');
+    expect(w.get('[data-testid="claim-chapter"]').classes()).not.toContain('btn-primary');
     expect(w.get('[data-testid="claim-chapter"]').text()).toBe('还差 1 个任务');
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task({ progress: 1, done: true, claimed: true })], {
@@ -280,7 +280,7 @@ describe('RestTasksView', () => {
       }),
     );
     const ready = await mountView();
-    expect(ready.get('[data-testid="claim-chapter"]').classes()).toContain('btn-success');
+    expect(ready.get('[data-testid="claim-chapter"]').classes()).toContain('btn-primary');
     expect(ready.get('[data-testid="claim-chapter"]').text()).toBe('领章末奖励');
     await ready.get('[data-testid="claim-chapter"]').trigger('click');
     await flushPromises();
@@ -401,7 +401,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     expect(endpoints.claimTask).toHaveBeenCalledWith(4012);
     const full = card.get('[data-testid="claim-weekly-full"]');
     expect(full.attributes('disabled')).toBeDefined();
-    expect(full.classes()).not.toContain('btn-success');
+    expect(full.classes()).not.toContain('btn-primary');
     expect(full.text()).toBe('先领完上面的任务');
   });
 
@@ -411,7 +411,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     );
     const w = await mountView();
     const full = w.get('[data-testid="claim-weekly-full"]');
-    expect(full.classes()).toContain('btn-success');
+    expect(full.classes()).toContain('btn-primary');
     expect(full.text()).toBe('领取');
     expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励：');
     await full.trigger('click');

@@ -280,7 +280,7 @@ onMounted(load);
         </div>
         <div v-if="view.me.owner" class="d-flex flex-wrap gap-1 mt-2">
           <button
-            class="btn btn-sm btn-success"
+            class="btn btn-sm btn-primary"
             :disabled="busy || view.tendedToday"
             data-testid="acquire-tend"
             @click="tend"

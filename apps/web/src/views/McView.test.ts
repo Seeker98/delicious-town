@@ -280,6 +280,12 @@ describe('McView', () => {
     expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（3）');
     await w.find('[data-testid="mc-level-3"]').trigger('click');
     expect(w.find('[data-testid="mc-level-3"]').attributes('aria-pressed')).toBe('true');
+    // 筛选按视觉规范用小号胶囊（问题记录 471），选中的加 active，不用按钮组
+    const lv3 = w.get('[data-testid="mc-level-3"]');
+    expect(lv3.classes()).toContain('active');
+    expect(lv3.classes()).not.toContain('btn');
+    expect(lv3.element.closest('.dt-pills')).not.toBeNull();
+    expect(w.get('[data-testid="mc-road-1"]').element.closest('.dt-pills')).not.toBeNull();
     // 选了 3 级以后道的数也跟着变
     expect(w.find('[data-testid="mc-road-1"]').text()).toBe('一道（1）');
     // 已学一栏这一页没有：标题写 0 / 2，并写明这一页没有

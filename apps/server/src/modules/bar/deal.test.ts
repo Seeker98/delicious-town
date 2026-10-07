@@ -175,6 +175,8 @@ describe('一掷千金：选箱子、开箱子、报价', () => {
     let r = (await open(a, 9)).data;
     expect(r.opened).toEqual([{ box: 9, ...BOXES[9] }]);
     expect(r).toMatchObject({ toOpen: 2, offer: null });
+    // 这一局每轮开几个：前端按轮列出开出的箱子（问题记录 467）
+    expect(r.opens).toEqual([3, 2, 2, 1]);
     expect(r.left).toHaveLength(9);
     expect(r.left[0]!.value).toBe(9000);
     await expect(open(a, 9)).rejects.toMatchObject({ code: 'VALIDATION_FAILED', params: { reason: 'box' } });

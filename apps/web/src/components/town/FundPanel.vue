@@ -111,7 +111,7 @@ onMounted(load);
         </div>
         <button
           v-if="data.deposit.mature"
-          class="btn btn-sm btn-success mt-2"
+          class="btn btn-sm btn-primary mt-2"
           :disabled="busy"
           data-testid="fund-claim"
           @click="claim"

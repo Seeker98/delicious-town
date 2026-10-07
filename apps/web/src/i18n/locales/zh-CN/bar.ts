@@ -217,6 +217,10 @@ export default {
     offer: (coin: string) => `银行家出价：${coin} 银币`,
     yes: '成交',
     no: '不成交，继续开',
+    /** 按轮的开箱记录（问题记录 467） */
+    roundsTitle: '每轮开出的箱子',
+    roundLine: (n: number, list: string) => `第 ${n} 轮：${list}`,
+    sep: '、',
     leftTitle: '还没开出来的奖品',
     dealt: (coin: string) => `成交，得到 ${coin} 银币`,
     yourBox: (what: string) => `你的箱子里是：${what}`,

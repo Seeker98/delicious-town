@@ -503,13 +503,15 @@ onBeforeUnmount(() => {
             t.common.paren(`${Math.min(mainTask.progress, mainTask.target)}/${mainTask.target}`)
           }}</span>
         </div>
+        <!-- 领奖和签到一样是文字链接：礼物图标加文字（问题记录 469） -->
         <button
           v-if="mainTask.done"
-          class="btn btn-sm btn-success"
+          type="button"
+          class="dt-link-btn"
           :disabled="busy"
           @click="act(() => endpoints.claimTask(mainTask!.id), t.home.claimFailed)"
         >
-          {{ t.home.claim }}
+          <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
       </div>
       <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
@@ -523,11 +525,12 @@ onBeforeUnmount(() => {
         </div>
         <button
           v-if="!mainChapter.locked"
-          class="btn btn-sm btn-success"
+          type="button"
+          class="dt-link-btn"
           :disabled="busy"
           @click="act(() => endpoints.claimChapter(mainChapter!.id), t.home.claimFailed)"
         >
-          {{ t.home.claim }}
+          <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
       </div>
       <ActivityBanner />

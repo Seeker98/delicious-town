@@ -261,13 +261,14 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
       </button>
     </div>
 
-    <!-- 按级、按道分页（问题记录 414） -->
+    <!-- 按级、按道分页（问题记录 414）；按视觉规范用小号胶囊（问题记录 471） -->
     <div v-if="allIds.size > 0" class="mb-2" data-testid="mc-filters">
-      <div class="d-flex flex-wrap gap-1 mb-1" role="group" :aria-label="t.mc.filter.levelLabel">
+      <div class="dt-pills mb-1" role="group" :aria-label="t.mc.filter.levelLabel">
         <button
           v-for="x in levelTabs"
           :key="String(x.key)"
-          :class="['btn btn-sm', level === x.key ? 'btn-primary' : 'btn-outline-primary']"
+          type="button"
+          :class="{ active: level === x.key }"
           :aria-pressed="level === x.key"
           :data-testid="`mc-level-${x.key}`"
           @click="level = x.key"
@@ -275,11 +276,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           {{ x.label }}
         </button>
       </div>
-      <div class="d-flex flex-wrap gap-1" role="group" :aria-label="t.mc.filter.roadLabel">
+      <div class="dt-pills mb-0" role="group" :aria-label="t.mc.filter.roadLabel">
         <button
           v-for="x in roadTabs"
           :key="String(x.key)"
-          :class="['btn btn-sm', road === x.key ? 'btn-secondary' : 'btn-outline-secondary']"
+          type="button"
+          :class="{ active: road === x.key }"
           :aria-pressed="road === x.key"
           :data-testid="`mc-road-${x.key}`"
           @click="road = x.key"
@@ -405,7 +407,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           :data-testid="`exchange-num-${r.level}`"
         />
         <button
-          class="btn btn-sm btn-outline-success"
+          class="btn btn-sm btn-outline-primary"
           :disabled="busy || !exPick[r.level] || r.num < o.fragmentPerRemnant"
           @click="exchange(r.level, r.num)"
         >
@@ -422,7 +424,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         <span class="flex-fill">{{ t.mc.groupTitle(t.mc.groups[g.key], g.items.length) }}</span>
         <button
           v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-primary"
           data-testid="learn-all"
           :disabled="busy"
           @click="learnAll"
@@ -455,7 +457,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
         </div>
         <button
           v-if="g.key === 'learnable'"
-          class="btn btn-sm btn-success"
+          class="btn btn-sm btn-primary"
           :data-testid="`learn-${r.mcId}`"
           :disabled="busy"
           @click="act(() => endpoints.mcLearn(r.mcId), t.mc.learnedName(nameOf(r.mcId)), t.mc.learnFailed)"

@@ -45,6 +45,10 @@ describe('"更多"入口精简（问题记录 447）', () => {
       expect(to).not.toContain(x);
   });
 
+  it('特色菜只留首页的入口（问题记录 473）', () => {
+    expect(targets()).not.toContain('/mc');
+  });
+
   it('餐厅信息放在"其他"；厨具入口只写"厨具"', () => {
     const w = mount(MoreLinks, { global: { stubs: { RouterLink: RouterLinkStub } } });
     const groups = w.findAll('.mb-2');
