@@ -19,6 +19,8 @@ import {
 } from './rules';
 import { lockBarState, recordStreak, saveBarState } from './state';
 
+const FG_STREAKS = [3, 5, 8];
+
 /** 每局都计活跃"酒吧娱乐"（action_map：bar.play）和本游戏的计数 */
 async function played(o: Op, game: 'fg' | 'num'): Promise<void> {
   await emitAction(o, 'bar.play');
@@ -36,6 +38,8 @@ export async function playFg(o: Op, hand: number): Promise<FgResultDto> {
   const times = nextTimes(s.fg_result as BarResult | null, s.fg_times, result);
   await saveBarState(o, { fg_result: result, fg_times: times });
   await recordStreak(o, 'fg', result, times);
+  // 支线“酒运”：连胜正好到 3、5、8 的那一局记一次（问题记录 515）
+  if (result === 1 && FG_STREAKS.includes(times)) await emitAction(o, `bar.fg.streak${times}`);
   const lucky = result === 1 && r >= t.fgWinRate;
   let coin = 0;
   let award: RandomAward | null = null;
@@ -72,6 +76,7 @@ export async function playNum(o: Op, num: number): Promise<NumResultDto> {
     return { win, barNum, hint: numHint(num, barNum), times, lucky: false, award: null };
   }
   const lucky = r >= 1 / t.numMax;
+  await emitAction(o, 'bar.num.win');
   const award = await randomAward(o, { level: t.numAwardLevel, onlyGoods: true, noTicket: true });
   opNews(o, 'bar.num', { lucky, award });
   return { win, barNum: num, hint: null, times, lucky, award };

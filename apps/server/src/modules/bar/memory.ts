@@ -66,6 +66,8 @@ export async function memoryAnswer(o: Op, answer: number[]): Promise<MemoryAnswe
   const last = s.level >= m.lengths.length;
   if (last) {
     await endRound(o, 'memory');
+    // 支线“酒桌高手”：答对最后一关（问题记录 515）
+    await emitAction(o, 'bar.memory.top');
     const perfect = await incrementDaily(o.tx, o.rest.id, 'bar.memory.perfect', 1, gameDay(o.now));
     // 每家店每天只写一条新闻（终审 I4：脚本刷屏）
     if (perfect === 1) opNews(o, 'bar.memory', { level: s.level });
