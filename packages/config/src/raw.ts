@@ -453,6 +453,30 @@ const retiredItem = z.object({ id: int, name: z.string().optional(), note: z.str
 export const retiredFile = z.object({ goods: z.array(retiredItem), foods: z.array(retiredItem) }).strict();
 
 /**
+ * data/game/shop.json：商店整理（问题记录 483）；商店整理工具写入，盖在道具表上。
+ * goods 只写改过的字段；pools 写了哪个池就整份替换设计表里的那个池。name 只是方便看 diff
+ */
+const shopItem = z
+  .object({
+    id: int,
+    name: z.string().optional(),
+    coin: int.min(0).optional(),
+    diamond: int.min(0).optional(),
+    onSale: z.boolean().optional(),
+    note: z.string().optional(),
+  })
+  .strict();
+export const shopFile = z
+  .object({
+    goods: z.array(shopItem),
+    pools: z
+      .object({ special: z.array(int).optional(), black: z.array(int).optional() })
+      .strict()
+      .optional(),
+  })
+  .strict();
+
+/**
  * data/game/food_supply.json：食材出现权重向需求靠的比例（问题记录 50）。
  * 不能取 1：没有需求的食材权重变 0、被剔出池子，某级稀有池可能变空（质量期 ②）
  */

@@ -326,6 +326,66 @@ describe('buildBundle（真实数据）', () => {
   });
 });
 
+describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上', () => {
+  const MISSILE = gid('普通飞弹');
+  const RED = gid('[一阶]•红晶原石');
+  const withShop = (shop: unknown) => buildBundle({ ...source(), 'game/shop': shop });
+  const good = (b: ReturnType<typeof buildBundle>, id: number) => b.bundle!.goods.find((g) => g.id === id)!;
+
+  it('现有文件：普通飞弹 2400、集束飞弹 10 万（用户 2026-10-07 定，原版 4000、15 万）', () => {
+    expect(good(realBuild(), MISSILE).coin).toBe(2400);
+    expect(good(realBuild(), GOODS.missileCluster).coin).toBe(100000);
+    const raw = (source()['master/goods'] as Array<{ id: number; coin: number }>).find(
+      (g) => g.id === MISSILE,
+    )!;
+    expect(raw.coin).toBe(4000);
+  });
+
+  it('改银币价、钻石价、上下架；没写的字段不动', () => {
+    const b = withShop({
+      goods: [
+        { id: MISSILE, coin: 1500, onSale: false },
+        { id: RED, diamond: 9 },
+      ],
+    });
+    expect(b.errors).toEqual([]);
+    expect(good(b, MISSILE)).toMatchObject({ coin: 1500, onSale: false, diamond: 0 });
+    expect(good(b, RED).diamond).toBe(9);
+  });
+
+  it('特价池、黑市池写了就整份替换，没写用设计表', () => {
+    const b = withShop({ goods: [], pools: { special: [MISSILE] } });
+    expect(b.bundle!.shopPools.special).toEqual([MISSILE]);
+    expect(b.bundle!.shopPools.black).toEqual(realBuild().bundle!.shopPools.black);
+  });
+
+  it('拦下：不存在的道具、同一道具写两次、已下架的上架、负价、黑市池里没有钻石价、特价池里没有银币价', () => {
+    const retiredId = (source()['game/retired'] as { goods: Array<{ id: number }> }).goods[0]!.id;
+    const b = withShop({
+      goods: [
+        { id: 999999, coin: 1 },
+        { id: MISSILE, coin: 100 },
+        { id: MISSILE, coin: 200 },
+        { id: retiredId, onSale: true, coin: 5 },
+      ],
+      pools: { special: [999998, gid('神秘礼券')], black: [MISSILE] },
+    });
+    expect(b.bundle).toBeNull();
+    expect(b.errors.join('\n')).toMatch(/shop references unknown goods 999999/);
+    expect(b.errors.join('\n')).toMatch(new RegExp(`shop lists goods ${MISSILE} twice`));
+    expect(b.errors.join('\n')).toMatch(new RegExp(`shop puts retired goods ${retiredId} on sale`));
+    expect(b.errors.join('\n')).toMatch(/shop special pool references unknown goods 999998/);
+    expect(b.errors.join('\n')).toMatch(new RegExp(`shop black pool goods ${MISSILE} has no diamond price`));
+    expect(b.errors.join('\n')).toMatch(
+      new RegExp(`shop special pool goods ${gid('神秘礼券')} has no coin price`),
+    );
+    // 负价在读文件时就拦下
+    const neg = withShop({ goods: [{ id: RED, coin: -1 }] });
+    expect(neg.bundle).toBeNull();
+    expect(neg.errors.join()).toContain('game/shop: goods.0.coin');
+  });
+});
+
 describe('buildBundle（坏数据）', () => {
   it('厨具引用了不存在的套装', () => {
     const src = source();
