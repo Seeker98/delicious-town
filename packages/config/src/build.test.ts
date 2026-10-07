@@ -1940,7 +1940,11 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
   });
 
   it('外卖进阶：要钻石的无人机放最后；社交：靠别人的加精、邀请放最后', () => {
-    expect(conds('delivery').map(([k]) => k)).toEqual(['takeaway.grade5', 'takeaway.grade5', 'takeaway.drone']);
+    expect(conds('delivery').map(([k]) => k)).toEqual([
+      'takeaway.grade5',
+      'takeaway.grade5',
+      'takeaway.drone',
+    ]);
     expect(conds('social').map(([k]) => k)).toEqual([
       'looks.door',
       'activity.join',
