@@ -137,6 +137,9 @@ async function exchange() {
         </tr>
       </tbody>
     </table>
+    <div class="small text-muted mb-2" data-testid="slot-rare-every">
+      {{ t.bar.slot.rareEvery(slot.rareEvery) }}
+    </div>
 
     <h6>{{ t.bar.slot.stats }}</h6>
     <div data-testid="slot-stats">

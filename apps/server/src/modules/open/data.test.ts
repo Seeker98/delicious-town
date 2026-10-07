@@ -89,6 +89,8 @@ describe('开放接口数据（问题记录 142）', () => {
         { kind: 'randomGoods', level: 7, num: 1 },
         { kind: 'masterFoods', num: 1 },
         { kind: 'coin', min: 1000, max: 19999 },
+        // 钻石 1~5（问题记录 511，用户 2026-10-07 定；原来 1~3）：数据里写 [1, 6)
+        { kind: 'diamond', min: 1, max: 5 },
       ]),
     );
     expect(JSON.stringify(g.gift)).not.toContain('rate');

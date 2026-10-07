@@ -11,7 +11,7 @@ import { dealView, type DealState } from './deal';
 import { peekRounds } from './round';
 import { spiceTiers, spiceView, type SpiceState } from './spice';
 import { cupTiers, cupView, type CupState } from './cup';
-import { slotFloorLeft, type BarTuning } from './rules';
+import { slotFloorLeft, slotRareEvery, type BarTuning } from './rules';
 
 export async function barView(
   db: Kysely<DB>,
@@ -88,6 +88,7 @@ export async function barView(
       emailVerified: acc.email_verified_at !== null,
       lamp: have(GOODS.magicLamp) > 0,
       floorLeft: slotFloorLeft(s?.slot_fail ?? 0, t),
+      rareEvery: Math.round(slotRareEvery(config.bundle.slotAwards, t, have(GOODS.magicLamp) > 0)),
       pool: config.slotPool.items.map((a) => ({
         id: a.id,
         kind: a.kind,

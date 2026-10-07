@@ -95,6 +95,7 @@ export default {
     exchange: '礼券换蟹币',
     exBtn: (n: number, tickets: number) => `换 ${n} 个 (${tickets} 张礼券)`,
     pool: '奖池',
+    rareEvery: (n: number) => `表里是每格的概率，不算保底；算上保底，平均每 ${n} 次出一次稀有`,
     rare: '稀有',
     stats: '我的统计',
     noStats: '还没抽过',

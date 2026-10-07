@@ -78,6 +78,10 @@ describe('SlotPanel', () => {
     expect(pool.findAll('tr')).toHaveLength(3);
     expect(pool.text()).toContain('3.00%');
     expect(pool.text()).toContain('稀有');
+    // 表上是单格概率，下面写算上保底平均每几次出一次稀有（问题记录 511）
+    expect(w.find('[data-testid="slot-rare-every"]').text()).toBe(
+      '表里是每格的概率，不算保底；算上保底，平均每 90 次出一次稀有',
+    );
     const stats = w.find('[data-testid="slot-stats"]').text();
     expect(stats).toContain('共 9 格');
     expect(stats).toContain('食材101 6 格');

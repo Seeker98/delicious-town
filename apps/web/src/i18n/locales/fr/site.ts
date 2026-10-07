@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    odds1007:
+      'Le cadeau de connexion quotidienne donne maintenant 1 à 5 diamants quand il en donne (1 à 3 avant)\u202f; sous le tableau des lots de la machine à sous, une note précise que les probabilités sont par case sans le lot garanti, et en combien de tirages tombe en moyenne un lot rare en le comptant',
     misc1007d:
       'Les cartes d’agrandissement petite, moyenne et grande sont maintenant à la boutique (30\u202f000, 120\u202f000 et 200\u202f000 pièces)\u202f; l’échange du maire affiche d’abord l’illimité, puis ce que vous pouvez échanger, ce qui vous manque et ce qui est épuisé, du moins cher au plus cher dans chaque groupe\u202f; quand un rachat est bloqué, le message précise que c’est parce que vous vous êtes connectés récemment depuis le même appareil ou réseau\u202f; après une mise à jour, une ancienne page qui n’arrive pas à en ouvrir une nouvelle se recharge une fois',
     retire1007:

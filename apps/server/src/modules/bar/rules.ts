@@ -55,13 +55,15 @@ export function numHint(num: number, barNum: number): NumHint {
   return d < 3 ? 'close' : d < 5 ? 'soft' : 'hard';
 }
 
+type SlotFloor = Pick<BarTuning, 'slotCells' | 'slotFloorSpins' | 'slotFloorRate'>;
+
 /** 连续没出稀有的格数达到 slotFloorSpins 次（每次 slotCells 格）时强制保底 */
-export function slotForced(fail: number, t: BarTuning): boolean {
+export function slotForced(fail: number, t: SlotFloor): boolean {
   return Math.floor(fail / t.slotCells) >= t.slotFloorSpins;
 }
 
 /** 提前保底率 = fail × slotFloorRate × (神灯 ? 2 : 1) */
-export function slotFloorRate(fail: number, lamp: boolean, t: BarTuning): number {
+export function slotFloorRate(fail: number, lamp: boolean, t: SlotFloor): number {
   return fail * t.slotFloorRate * (lamp ? 2 : 1);
 }
 
@@ -72,6 +74,28 @@ export function slotFloorRate(fail: number, lamp: boolean, t: BarTuning): number
 export function slotFloorLeft(fail: number, t: BarTuning): number {
   const total = t.slotFloorSpins * t.slotCells;
   return Math.floor((total - Math.min(fail, total)) / t.slotCells) + 1;
+}
+
+/**
+ * 算上保底，平均每几次出一次稀有（问题记录 511：奖池表只写单格概率，稀有 0.06%，算上保底每格约 0.37%）。
+ * 从 fail = 0 走到下一次稀有：每格先判保底（强制或提前），没保底按权重抽；平均要走的格数 ÷ 每次格数
+ */
+export function slotRareEvery(
+  awards: ReadonlyArray<{ odds: number; rare: boolean }>,
+  t: SlotFloor,
+  lamp: boolean,
+): number {
+  const total = awards.reduce((a, x) => a + x.odds, 0);
+  const rare = awards.filter((x) => x.rare).reduce((a, x) => a + x.odds, 0) / total;
+  let reach = 1;
+  let cells = 0;
+  for (let fail = 0; reach > 0; fail++) {
+    cells += reach;
+    if (slotForced(fail, t)) break;
+    const floor = Math.min(1, slotFloorRate(fail, lamp, t));
+    reach *= (1 - floor) * (1 - rare);
+  }
+  return cells / t.slotCells;
 }
 
 // ---------- 酒吧扩展（子项目 4C-3） ----------

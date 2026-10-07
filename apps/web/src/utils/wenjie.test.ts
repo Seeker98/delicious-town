@@ -9,7 +9,7 @@ const bar = (patch: Partial<BarDto> = {}): BarDto =>
     fg: { result: null, times: 0 },
     cup: { result: null, times: 0, nextCost: 1 },
     num: { result: null, times: 0, cost: 1, max: 9 },
-    slot: { emailVerified: true, lamp: false, floorLeft: 30, pool: [], stats: [] },
+    slot: { emailVerified: true, lamp: false, floorLeft: 30, rareEvery: 90, pool: [], stats: [] },
     krabCoinTickets: 10,
     devil: { stakes: [1], round: null },
     memory: { cost: 1, played: 3, max: 3, flashMs: 600, gapMs: 200, round: null },
@@ -31,7 +31,7 @@ describe('雯姐台词（问题记录 210）', () => {
 
   it('礼券用完提醒找她聊天（问题记录 453：聊天搬到酒吧）；老虎机快保底时提醒；辣杯没喝完时提醒', () => {
     expect(texts(bar({ tickets: 0 })).some((t) => t.includes('找我聊聊天'))).toBe(true);
-    const slot = { emailVerified: true, lamp: false, floorLeft: 3, pool: [], stats: [] };
+    const slot = { emailVerified: true, lamp: false, floorLeft: 3, rareEvery: 90, pool: [], stats: [] };
     expect(texts(bar({ slot })).some((t) => t.includes('再拉 3 次'))).toBe(true);
     const devil = {
       stakes: [1],

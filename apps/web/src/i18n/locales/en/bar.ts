@@ -95,6 +95,8 @@ const bar: Messages['bar'] = {
     exchange: 'Vouchers for Krab Coins',
     exBtn: (n, tickets) => `Get ${n} (${tickets} ${plEn(tickets, 'voucher', 'vouchers')})`,
     pool: 'Prize pool',
+    rareEvery: (n: number) =>
+      `The table shows the odds per slot, not counting the guarantee. With the guarantee, you get a rare prize about once every ${n} spins`,
     rare: 'Rare',
     stats: 'My stats',
     noStats: 'No spins yet',
