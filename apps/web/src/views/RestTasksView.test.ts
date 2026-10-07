@@ -248,7 +248,7 @@ describe('RestTasksView', () => {
     expect(w.find('[data-testid="claim-task-2021"]').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task({ progress: 1, done: true })]));
     const done = await mountView();
-    expect(done.find('[data-testid="task-2021"]').classes()).toContain('border-success');
+    expect(done.find('[data-testid="task-2021"]').classes()).toContain('border-primary'); // 可领的任务卡和按钮一样用品牌色框（问题记录 469）
     await done.find('[data-testid="claim-task-2021"]').trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(2021);
