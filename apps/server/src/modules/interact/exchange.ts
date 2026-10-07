@@ -95,7 +95,8 @@ export function createExchange(d: GameDeps, world: WorldService) {
           .filter(([id, r]) => r.num > 0 && d.config.foods.get(id)?.level === level)
           .sort(([a], [b]) => a - b)
           .map(([id, r]) => ({ foodsId: id, num: r.num })),
-        left: Math.min(Math.max(0, (them.npc ? lim.npc : lim.total) - used), takenLeft ?? Infinity),
+        // 我自己今天还能换几次；对方被换满不算在里面，单独看 takenLeft（终审：混在一起会写成“合计 0 次”）
+        left: Math.max(0, (them.npc ? lim.npc : lim.total) - used),
         takenLeft,
         storm: await storm(ctx.shardId, now),
         npc: them.npc,

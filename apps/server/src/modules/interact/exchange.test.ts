@@ -96,13 +96,14 @@ describe('交换食材（规格书 05 §5.6）', () => {
     ).rejects.toMatchObject({ params: { what: 'exchange_taken', max: 20 } });
   });
 
-  it('剩余次数：取我今天还能换的和对方今天还能被换的；对方先满时写明（问题记录 479）', async () => {
+  it('剩余次数：left 是我今天总共还能换的，对方还能被换几次单独给，不混在一起（问题记录 479，终审）', async () => {
     const [a, b] = await friends();
     const day = gameDay(t.clock.now);
     await incrementDaily(t.db, a.restaurantId, 'exchange.total', 4, day);
     expect(await ex().foods(a, b.restaurantId, 2)).toMatchObject({ left: 6, takenLeft: 20 });
-    await incrementDaily(t.db, b.restaurantId, 'exchange.taken', 18, day);
-    expect(await ex().foods(a, b.restaurantId, 2)).toMatchObject({ left: 2, takenLeft: 2 });
+    // 对方先满：我的 6 次还在，可以去换别的好友
+    await incrementDaily(t.db, b.restaurantId, 'exchange.taken', 20, day);
+    expect(await ex().foods(a, b.restaurantId, 2)).toMatchObject({ left: 6, takenLeft: 0 });
   });
 
   it('对方锁定的食材：平时不能换；飓风天可以换，50% 被抓（2 个 A 白给、得银手镯），对方得镇长的关心', async () => {

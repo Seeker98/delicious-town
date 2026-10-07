@@ -109,6 +109,7 @@ export default {
     left: (n: number) => `今天还能换 ${n} 次`,
     allFriends: '所有好友合计',
     takenLeft: (n: number) => `，对方今天只能再被换 ${n} 次`,
+    takenFull: '，对方今天不能再被换了',
     storm: '；飓风天可以换对方锁定的食材 (有一半概率被抓)',
     theirs: '对方的',
     theirsEmpty: '没有这个等级的食材',

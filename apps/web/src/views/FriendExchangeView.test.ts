@@ -49,20 +49,39 @@ describe('FriendExchangeView', () => {
     expect(endpoints.exchange).toHaveBeenCalledWith({ restId: 2, giveFoodsId: 12, takeFoodsId: 11 });
   });
 
-  it('对方今天快被换满时写明（问题记录 479）；蟹老板不写“所有好友合计”', async () => {
+  it('对方今天快被换满时写明，我自己的合计次数照写（问题记录 479，终审）；蟹老板不写“所有好友合计”', async () => {
+    const theirs = [{ foodsId: 11, num: 3, locked: false, fee: 0, need: 0 }];
+    const mine = [{ foodsId: 12, num: 5 }];
     vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
       level: 1,
-      theirs: [],
-      mine: [],
-      left: 2,
+      theirs,
+      mine,
+      left: 6,
       takenLeft: 2,
       storm: false,
       npc: false,
     });
     const w = await mountView();
     expect(w.get('[data-testid="exchange-left"]').text()).toBe(
-      '今天还能换 2 次 (所有好友合计)，对方今天只能再被换 2 次',
+      '今天还能换 6 次 (所有好友合计)，对方今天只能再被换 2 次',
     );
+    // 对方被换满：我的次数还在，只是不能和它换
+    vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
+      level: 1,
+      theirs,
+      mine,
+      left: 6,
+      takenLeft: 0,
+      storm: false,
+      npc: false,
+    });
+    const full = await mountView();
+    expect(full.get('[data-testid="exchange-left"]').text()).toBe(
+      '今天还能换 6 次 (所有好友合计)，对方今天不能再被换了',
+    );
+    await full.get('[data-testid="theirs-11"]').trigger('click');
+    await full.get('[data-testid="mine-12"]').trigger('click');
+    expect(full.get('[data-testid="confirm"]').attributes('disabled')).toBeDefined();
     vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
       level: 1,
       theirs: [],

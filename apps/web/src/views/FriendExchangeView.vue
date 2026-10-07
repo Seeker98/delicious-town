@@ -20,6 +20,8 @@ const take = ref<number | null>(null);
 const give = ref<number | null>(null);
 const busy = ref(false);
 const fee = computed(() => data.value?.theirs.find((x) => x.foodsId === take.value)?.fee ?? 0);
+/** 和这家还能换几次：我自己的剩余和对方还能被换的取小（问题记录 479） */
+const canSwap = computed(() => Math.min(data.value?.left ?? 0, data.value?.takenLeft ?? Infinity) > 0);
 /**
  * 对方的食材按名字筛（backlog 370：蟹老板的橱柜一级有八九十种；不区分大小写、忽略重音）；
  * 我学菜缺的排前面、缺得多的在前，锁着换不了的排最后。我的那一栏不筛，选好要的再挑给出的
@@ -101,7 +103,8 @@ onMounted(load);
     <p class="small" data-testid="exchange-left">
       {{ t.friends.exchange.left(data.left)
       }}<template v-if="!data.npc">{{ t.common.paren(t.friends.exchange.allFriends) }}</template
-      ><template v-if="data.takenLeft !== null && data.takenLeft <= data.left">{{
+      ><template v-if="data.takenLeft === 0">{{ t.friends.exchange.takenFull }}</template
+      ><template v-else-if="data.takenLeft !== null && data.takenLeft < data.left">{{
         t.friends.exchange.takenLeft(data.takenLeft)
       }}</template
       ><span v-if="data.storm">{{ t.friends.exchange.storm }}</span>
@@ -143,7 +146,7 @@ onMounted(load);
     <button
       class="btn btn-primary w-100"
       data-testid="confirm"
-      :disabled="busy || take === null || give === null || data.left <= 0"
+      :disabled="busy || take === null || give === null || !canSwap"
       @click="confirm"
     >
       {{ t.friends.exchange.btn }}<span v-if="fee > 0">{{ t.friends.exchange.fee(fee) }}</span>

@@ -153,7 +153,7 @@ export interface ExchangeFoodsDto {
   theirs: Array<{ foodsId: number; num: number; locked: boolean; fee: number; need: number }>;
   /** 我这个等级的食材 */
   mine: Array<{ foodsId: number; num: number }>;
-  /** 今天和它还能换几次：好友取“我今天总共还能换的”和 takenLeft 的小者（问题记录 479） */
+  /** 我今天还能换几次：好友是所有好友合计，蟹老板单算（问题记录 479）；和它还能不能换另看 takenLeft */
   left: number;
   /** 对方今天还能被换几次；蟹老板为 null */
   takenLeft: number | null;
