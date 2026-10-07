@@ -51,7 +51,6 @@
     "cupboard.flip": "friend",
     "krab.shake": "town",
     "bar.": "bar",
-    
     "mc.": "mysterious",
     "lesson.": "mysterious",
     "temple.": "temple",
@@ -67,6 +66,15 @@
     "exchange.": "exchange",
     "predict.": "predict",
     "kuji.": "kuji",
-    "activity.": "activity"
+    "activity.": "activity",
+    "town.": "town",
+    "fund.": "fund",
+    "acquire.": "acquire",
+    "gem.": "equip",
+    "activation.": "task",
+    "looks.": "friend",
+    "icon.": "friend",
+    "invite.": "invite",
+    "collection.": "store"
   }
 }

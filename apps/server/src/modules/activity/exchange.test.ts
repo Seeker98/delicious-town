@@ -239,7 +239,11 @@ describe('任务计数（问题记录 318）', () => {
       .execute();
     await t.game.activity.exchange(r, id, 0, 2);
     expect(await eventCount(t, r.restaurantId, 'activity.claim')).toBe(1);
+    // 支线“社交”（问题记录 515）：这个活动第一次兑换记一次“参加”，再换不记
+    expect(await eventCount(t, r.restaurantId, 'activity.join')).toBe(1);
     const act = await t.game.task.activation(r);
     expect(act.items.find((i) => i.name === '领取限时活动奖励')!.count).toBe(1);
+    await t.game.activity.exchange(r, id, 0, 1);
+    expect(await eventCount(t, r.restaurantId, 'activity.join')).toBe(1);
   });
 });

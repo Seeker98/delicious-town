@@ -190,10 +190,10 @@ describe('终审修复', () => {
 });
 
 describe('支线', () => {
-  it('第 1 章只有食谱支线；10 道上品后能领第一档，之后显示下一档', async () => {
+  it('第 1 章有食谱、签到和活跃两条支线（问题记录 515 支线扩充 B 加了签到）；10 道上品后能领第一档，之后显示下一档', async () => {
     const ctx = await fresh();
     let list = await task().tasks(ctx);
-    expect(list.lines.map((l) => l.id)).toEqual([1]);
+    expect(list.lines.map((l) => l.id)).toEqual([1, 26]);
     const first = list.lines[0]!.quest!;
     expect(first).toMatchObject({ key: 'cookbooks.grade3', target: 10, done: false });
     await t.db

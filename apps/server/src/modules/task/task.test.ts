@@ -3,6 +3,7 @@ import { GOODS } from '@dt/config';
 import { gameDay } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 
 const config = testConfig();
@@ -54,6 +55,25 @@ describe('活跃度（规格书 15 §15.2）', () => {
     const r = await task().claimActivation(ctx, 50);
     expect(r.events).toContainEqual({ type: 'gain', kind: 'exp', num: 500 * 10 * 2 });
     await expect(task().claimActivation(ctx, 50)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    expect(await eventCount(t, ctx.restaurantId, 'activation.100')).toBe(0);
+  });
+
+  it('领 100 点那一档记一次（问题记录 515 支线“签到和活跃”），别的档不记', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 30, star_level: 5 } });
+    const day = gameDay(t.clock.now);
+    await t.db
+      .insertInto('daily_counter')
+      .values(
+        config.bundle.activationTasks
+          .filter((a) => a.limitTimes > 0)
+          .map((a) => ({ rest_id: ctx.restaurantId, day, key: `act:${a.id}`, count: a.limitTimes })),
+      )
+      .execute();
+    expect((await task().activation(ctx)).total).toBeGreaterThanOrEqual(100);
+    await task().claimActivation(ctx, 50);
+    expect(await eventCount(t, ctx.restaurantId, 'activation.100')).toBe(0);
+    await task().claimActivation(ctx, 100);
+    expect(await eventCount(t, ctx.restaurantId, 'activation.100')).toBe(1);
   });
 });
 

@@ -203,6 +203,24 @@
   "3043": {
     "name": "Participar en el juego de adivinanzas del Mercado"
   },
+  "3044": {
+    "name": "Hacer un depósito en el Fondo de Desarrollo del Pueblo"
+  },
+  "3045": {
+    "name": "Acertar la pregunta del Alcalde Gran Olla 10 veces"
+  },
+  "3046": {
+    "name": "Acertar la pregunta del Alcalde Gran Olla 50 veces"
+  },
+  "3047": {
+    "name": "Quedar entre los 5 primeros de la clasificación semanal de propinas del Chico hip-hop"
+  },
+  "3048": {
+    "name": "Cambiar el tiempo con el Martillo de Thor"
+  },
+  "3049": {
+    "name": "Pedir un deseo con la Lámpara mágica"
+  },
   "3061": {
     "name": "Dar 10 me gusta"
   },
@@ -277,6 +295,15 @@
   },
   "3124": {
     "name": "Alimentar al Kraken 10 veces"
+  },
+  "3125": {
+    "name": "Conseguir más de 35 de favor del Kraken en una sola comida"
+  },
+  "3126": {
+    "name": "Conseguir un tentáculo del Kraken al alimentarlo 3 veces"
+  },
+  "3127": {
+    "name": "Alimentar al Kraken 50 veces"
   },
   "3141": {
     "name": "Cosechar 10 veces"
@@ -487,6 +514,153 @@
   },
   "3349": {
     "name": "Dar en el centro con los 3 dardos"
+  },
+  "3361": {
+    "name": "Tasar platos estrella 10 veces"
+  },
+  "3362": {
+    "name": "Tasar un plato estrella de nivel 4 o más"
+  },
+  "3363": {
+    "name": "Cocinar una tanda de platos estrella que valga 100.000 monedas o más"
+  },
+  "3364": {
+    "name": "Tasar un plato estrella de nivel 5 o más"
+  },
+  "3381": {
+    "name": "Derrotar al Guardián"
+  },
+  "3382": {
+    "name": "Superar una Prueba 10 veces"
+  },
+  "3383": {
+    "name": "Derrotar al Guardián 30 veces"
+  },
+  "3384": {
+    "name": "Derrotar al Guardián con 5★ o más"
+  },
+  "3401": {
+    "name": "Superar el piso 4 de la Torre de chefs"
+  },
+  "3402": {
+    "name": "Derrotar a los guardianes de la torre 10 veces"
+  },
+  "3403": {
+    "name": "Superar el piso 7 de la Torre de chefs"
+  },
+  "3404": {
+    "name": "Derrotar a los guardianes de la torre 50 veces"
+  },
+  "3405": {
+    "name": "Superar el piso 10 de la Torre de chefs"
+  },
+  "3406": {
+    "name": "Derrotar a los guardianes de la torre 100 veces"
+  },
+  "3407": {
+    "name": "Derrotar a los guardianes de la torre 200 veces"
+  },
+  "3408": {
+    "name": "Derrotar a los guardianes de la torre 300 veces"
+  },
+  "3421": {
+    "name": "Participar en el juego de adivinanzas del Mercado 10 veces"
+  },
+  "3422": {
+    "name": "Acertar 3 o más ingredientes en una adivinanza del Mercado"
+  },
+  "3423": {
+    "name": "Acertar 5 o más ingredientes en una adivinanza del Mercado"
+  },
+  "3441": {
+    "name": "Entregar un pedido con dron"
+  },
+  "3442": {
+    "name": "Completar un reparto de 5★ o más"
+  },
+  "3443": {
+    "name": "Completar 20 repartos de 5★ o más"
+  },
+  "3461": {
+    "name": "Adquirir un restaurante"
+  },
+  "3462": {
+    "name": "Poner a la venta uno de tus restaurantes"
+  },
+  "3463": {
+    "name": "Recibir un dividendo"
+  },
+  "3464": {
+    "name": "Tener 8 restaurantes a la vez"
+  },
+  "3481": {
+    "name": "Subir una gema a Rango 3"
+  },
+  "3482": {
+    "name": "Engarzar 3 gemas en un mismo utensilio"
+  },
+  "3483": {
+    "name": "Subir una gema a Rango 4"
+  },
+  "3484": {
+    "name": "Subir una gema a Rango 5"
+  },
+  "3501": {
+    "name": "Tener 3 placas"
+  },
+  "3502": {
+    "name": "Tener 10 insignias o mascotas"
+  },
+  "3503": {
+    "name": "Tener 7 cuadros"
+  },
+  "3521": {
+    "name": "Registrarse 7 días seguidos"
+  },
+  "3522": {
+    "name": "Reclamar la recompensa de 100 puntos de actividad 10 días"
+  },
+  "3523": {
+    "name": "Registrarse 30 días seguidos"
+  },
+  "3524": {
+    "name": "Reclamar la recompensa de 100 puntos de actividad 30 días"
+  },
+  "3525": {
+    "name": "Registrarse 60 días seguidos"
+  },
+  "3526": {
+    "name": "Registrarse 90 días seguidos"
+  },
+  "3527": {
+    "name": "Reclamar la recompensa de 100 puntos de actividad 100 días"
+  },
+  "3528": {
+    "name": "Registrarse 180 días seguidos"
+  },
+  "3529": {
+    "name": "Registrarse 365 días seguidos"
+  },
+  "3541": {
+    "name": "Cambiar la puerta"
+  },
+  "3542": {
+    "name": "Comprar un título en la tienda de títulos"
+  },
+  "3543": {
+    "name": "Reclamar recompensas en 3 eventos por tiempo limitado distintos"
+  },
+  "3544": {
+    "name": "Que un amigo que invitaste llegue al nivel 10"
+  },
+  "3545": {
+    "name": "Conseguir que una publicación del foro sea destacada"
+  },
+  "3546": {
+    "name": "Que un amigo que invitaste llegue al nivel 30"
+  },
+  "3547": {
+    "name": "Quedar entre los 10 primeros de un evento por tiempo limitado"
   },
   "4011": {
     "name": "Registrarse 5 días"

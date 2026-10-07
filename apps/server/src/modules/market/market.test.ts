@@ -7,6 +7,7 @@ import { foodPrice } from '../../core/prices';
 import { rollShelf } from './rules';
 import { GOODS } from '@dt/config';
 import { fid, gid } from '../../../test/items';
+import { eventCount } from '../../../test/quests';
 
 const config = testConfig();
 const t_ = config.tuning.market;
@@ -269,6 +270,11 @@ describe('竞猜（规格书 06 §6.3）', () => {
       .where('rest_id', '=', five.restaurantId)
       .executeTakeFirstOrThrow();
     expect(g).toMatchObject({ hits: 5 });
+    // 支线“菜场竞猜”（问题记录 515）：猜中 3 种以上、5 种以上
+    expect(await eventCount(t, three.restaurantId, 'market.guess.hit3')).toBe(1);
+    expect(await eventCount(t, three.restaurantId, 'market.guess.hit5')).toBe(0);
+    expect(await eventCount(t, five.restaurantId, 'market.guess.hit3')).toBe(1);
+    expect(await eventCount(t, five.restaurantId, 'market.guess.hit5')).toBe(1);
     t.clock.set(new Date());
   });
 

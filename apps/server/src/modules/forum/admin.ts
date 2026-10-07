@@ -8,6 +8,7 @@ import {
 } from '@dt/shared';
 import type { RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, type Op } from '../../core/op';
 import { gainDiamond } from '../../core/resources';
 import { AppError } from '../../http/errors';
@@ -98,6 +99,8 @@ export async function adminPost(
       set.feature_rewarded = true;
       rewarded = true;
       opNews(author, 'forum.feature', { postId, title: post.title });
+      // 支线“社交”（问题记录 515）：帖子第一次被加精
+      await emitAction(author, 'post.featured');
     }
   } else if (action === 'unfeature') {
     set.featured_at = null;

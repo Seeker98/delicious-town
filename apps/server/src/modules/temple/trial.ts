@@ -133,5 +133,6 @@ export async function startTrial(
   }
   restLog(o, 'temple.trial', { mcId: mc.id, success, worth: addWorth, exp: addExp });
   await emitAction(o, 'temple.trial');
+  if (success) await emitAction(o, 'temple.trial.success');
   return { success, lucky: success && roll >= base, addWorth, addExp, proficiency, curlevel };
 }

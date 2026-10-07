@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { gameTime } from '@dt/shared';
 import { createShard, failRestLog } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { runDueJobs } from '../../worker/periodic';
 import { grantGoods } from '../store/grant';
 import { awardWeekly, payWages } from './weekly';
@@ -64,6 +65,9 @@ describe('打赏周榜（设计文档 §2.4）', () => {
       .where('type', '=', 'hiphop.weekly')
       .execute();
     expect(news).toHaveLength(5);
+    // “小镇”支线（问题记录 515）：前 5 名记一次
+    for (const [i, r] of rests.entries())
+      expect(await eventCount(t, r.restaurantId, 'hiphop.top5')).toBe(i < 5 ? 1 : 0);
   });
 
   it('并列时先打赏的拿前一名；上周和周日 23 点后的打赏不算', async () => {

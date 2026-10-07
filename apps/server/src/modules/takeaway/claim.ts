@@ -138,6 +138,9 @@ export async function settleDelivery(
   await o.tx.updateTable('takeaway_order').set({ state: 3 }).where('id', '=', v.order_id).execute();
   restLog(o, 'takeaway.claim', { deliveryId: v.id, success, coin, exp, renown });
   await emitAction(o, 'takeaway.deliver');
+  // 支线“外卖进阶”（问题记录 515）：用无人机送、送成 5 星以上的单
+  if (drone) await emitAction(o, 'takeaway.drone');
+  if (success && v.grade >= 5) await emitAction(o, 'takeaway.grade5');
   // 支线“四海为家”按店所在的街道另记（问题记录 515：在杂碎街送外卖）；只记任务用得上的街
   const onStreet = `takeaway.deliver.street.${o.rest.street_id}`;
   if (questCounterKeys(o.config).has(onStreet)) await emitAction(o, onStreet);

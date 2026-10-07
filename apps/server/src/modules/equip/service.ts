@@ -15,6 +15,7 @@ import {
 } from '@dt/shared';
 import { emitAction } from '../../core/action';
 import type { GameDeps, RestCtx } from '../../core/deps';
+import { questCounterKeys } from '../../core/questKeys';
 import { invalidState, limitReached, requirement } from '../../core/errors';
 import { opLuck } from '../../core/luck';
 import { opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
@@ -52,6 +53,9 @@ export const PART_COLS = ['part1', 'part2', 'part3', 'part4', 'part5'] as const;
  * 镶着的宝石按配置的阶算（显示、摘除费）：行里的 level 是镶上时记的，六阶蓝冥石、绿玄石以前写成 5 阶
  * （backlog 第 ① 批审查）；配置里没有这颗宝石时退回行里记的
  */
+/** 支线“宝石”的“一件厨具镶满 3 颗宝石”（问题记录 515） */
+const GEM_FULL = 3;
+
 function gemLevel(config: GameConfig, row: Pick<EquipGemRow, 'gem_goods_id' | 'level'>): number {
   return config.goods.get(row.gem_goods_id)?.gem?.level ?? row.level;
 }
@@ -609,6 +613,8 @@ export function createEquipService(d: GameDeps, world: WorldService) {
           .executeTakeFirstOrThrow();
         if (e.worn) await syncEquipEffects(o);
         await emitAction(o, 'equip.gemIn');
+        // 支线“宝石”（问题记录 515）：这一颗镶上后满 3 颗
+        if (Number(used.n) + 1 === GEM_FULL) await emitAction(o, 'equip.gemFull');
         return { gemRowId: row.id };
       });
     },
@@ -688,6 +694,9 @@ export function createEquipService(d: GameDeps, world: WorldService) {
         const exp = r.fail * gem.level * t.gemExpPerLevel;
         gainExp(o, exp);
         const nextLevel = o.config.requireGoods(gem.nextId).gem!.level;
+        // 支线“宝石”（问题记录 515）：升出 3、4、5 阶的颗数；只记任务用得上的阶
+        const key = `gem.level${nextLevel}`;
+        if (r.success > 0 && questCounterKeys(o.config).has(key)) await emitAction(o, key, r.success);
         if (r.success > 0 && nextLevel > t.gemNewsLevel)
           opNews(o, 'gem.levelUp', { goodsId: gem.nextId, num: r.success, name: o.rest.name });
         if (r.fail > 0 && nextLevel >= t.gemBrokenNewsLevel)

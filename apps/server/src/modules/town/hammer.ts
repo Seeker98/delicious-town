@@ -1,6 +1,7 @@
 import { GOODS } from '@dt/config';
 import { gameParts, pickWeighted, type HammerResultDto } from '@dt/shared';
 import { invalidState, notEnough } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, type Op } from '../../core/op';
 import { spendCoin, spendDiamond } from '../../core/resources';
 import { grantGoodsOp, hasValidHonor } from '../store/goods';
@@ -45,6 +46,7 @@ export async function useHammer(o: Op, pick: HammerPick): Promise<HammerResultDt
   await setTownRest(o, { hammer_at: o.now });
   opNews(o, 'weather.change', { from: ws.weather_id, to: to.id, by: o.rest.id });
   restLog(o, 'town.hammer', { mode: pick.mode, from: ws.weather_id, to: to.id });
+  await emitAction(o, 'town.hammer');
   return {
     from: ws.weather_id,
     to: to.id,

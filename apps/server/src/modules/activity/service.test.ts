@@ -52,6 +52,21 @@ describe('玩家接口（设计 §5.1）', () => {
     expect(after.rewards[0]!.claimed).toBe('page');
   });
 
+  it('在不同的活动里第一次领奖各记一次（问题记录 515 支线“社交”）；同一个活动再领不记', async () => {
+    const shardId = await createShard(t.db);
+    const r = await newRestaurant(t, { shardId });
+    const a = await insertActivity(t, { shardId, spec: goals });
+    const b = await insertActivity(t, { shardId, spec: goals });
+    await act(r, 'market.buy', 3);
+    const n = () => eventCount(t, r.restaurantId, 'activity.join');
+    await svc().claim(r, a, 'g0');
+    expect(await n()).toBe(1);
+    await svc().claim(r, a, 'g1');
+    expect(await n()).toBe(1);
+    await svc().claimAll(r, b);
+    expect(await n()).toBe(2);
+  });
+
   it('全部领取一次领完；没有可领时报 nothing', async () => {
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId, patch: { coin: 0 } });

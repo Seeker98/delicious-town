@@ -2,6 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { FUND } from '@dt/config';
 import { createShard } from '../../../test/fixtures';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { setTuning } from '../../../test/town';
 import { listActiveEffects } from '../effects/service';
 
@@ -61,11 +62,14 @@ describe('小镇发展基金（240-2）', () => {
     const d = (await active(r.restaurantId))!;
     expect(d.matures_at.getTime() - d.started_at.getTime()).toBe(7 * DAY);
     expect(d.medal).toBe(FUND.B);
+    // “小镇”支线（问题记录 515）
+    expect(await eventCount(t, r.restaurantId, 'fund.deposit')).toBe(1);
     await expect(svc().deposit(r, 'C')).rejects.toMatchObject({ params: { reason: 'fund_active' } });
     const poor = await newRestaurant(t, { patch: { coin: 999_999 } });
     await expect(svc().deposit(poor, 'C')).rejects.toMatchObject({ code: 'NOT_ENOUGH' });
     expect(await coin(poor.restaurantId)).toBe(999_999);
     expect(await active(poor.restaurantId)).toBeUndefined();
+    expect(await eventCount(t, poor.restaurantId, 'fund.deposit')).toBe(0);
     await expect(svc().deposit(poor, 'nope')).rejects.toMatchObject({ params: { reason: 'bad_tier' } });
   });
 

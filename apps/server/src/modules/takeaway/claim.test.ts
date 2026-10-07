@@ -120,6 +120,29 @@ describe('领取（设计文档 §3.4）', () => {
       goods: { id: GOODS.mysteryTicket, num: 2 },
     });
     expect((await restRow(t, ctx.restaurantId)).diamond).toBe(7);
+    // 支线“外卖进阶”（问题记录 515）
+    expect(await eventCount(t, ctx.restaurantId, 'takeaway.drone')).toBe(1);
+  });
+
+  it('送成 5 星以上的单另记一次；4 星、送失败的不记（问题记录 515 支线“外卖进阶”）', async () => {
+    const { ctx, rider } = await cook({
+      patch: { renown: 1000 },
+      foods: { [fid('猪肉')]: 100, [fid('鸡蛋')]: 100, [fid('香葱')]: 100 },
+    });
+    const n = () => eventCount(t, ctx.restaurantId, 'takeaway.grade5');
+    for (const [grade, rng, want] of [
+      [4, 0.4, 0],
+      [5, 0.9, 0],
+      [5, 0.4, 1],
+      [7, 0.4, 2],
+    ] as const) {
+      rngValues = [rng];
+      const id = await take(ctx, rider, { grade, needRenown: 0 });
+      later();
+      await claim(ctx, id);
+      expect(await n()).toBe(want);
+    }
+    expect(await eventCount(t, ctx.restaurantId, 'takeaway.drone')).toBe(0);
   });
 
   it('失败：经验减半，没有银币、声望、道具；骑手经验 ×2；给失败原因。有咕咕经验不减', async () => {

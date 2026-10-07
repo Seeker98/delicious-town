@@ -10,6 +10,7 @@ import {
   type WishResultDto,
 } from '@dt/shared';
 import { invalidState, notEnough, requirement } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { opNews, restLog, type Op } from '../../core/op';
 import { gainCoin, gainDiamond } from '../../core/resources';
 import type { DB } from '../../db/schema';
@@ -81,6 +82,7 @@ export async function wish(o: Op): Promise<WishResultDto> {
   // 星愿名不放 name：name 是"店名缺失时的兜底"字段（PR26 遗留）
   opNews(o, 'town.bless', { blessId: b.id, blessName: b.name });
   restLog(o, 'town.wish', { blessId: b.id });
+  await emitAction(o, 'town.wish');
   return { bless: blessDto(b) };
 }
 

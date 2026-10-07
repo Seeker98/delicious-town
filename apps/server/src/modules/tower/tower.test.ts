@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
-import { questIn, showQuest } from '../../../test/quests';
+import { eventCount, questIn, showQuest } from '../../../test/quests';
 import { createShard } from '../../../test/fixtures';
 import { setTuning } from '../../../test/town';
 import { addAttrs } from '../equip/rules';
@@ -117,6 +117,8 @@ describe('挑战（设计文档 §3.2）', () => {
     expect(questIn(await t.game.task.tasks(ctx), 2105)).toMatchObject({ progress: 1, done: true });
     const act = await t.game.task.activation(ctx);
     expect(act.items.find((i) => i.name === '厨塔挑战')!.count).toBe(1);
+    // 支线“守塔人”（问题记录 515）
+    expect(await eventCount(t, ctx.restaurantId, 'tower.win')).toBe(1);
   });
 
   it('打赢长老按这一层的概率掉一件它的套装（问题记录 408）；试打不掉', async () => {
@@ -169,6 +171,7 @@ describe('挑战（设计文档 §3.2）', () => {
     const ctx = await newRestaurant(t);
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: false });
     expect(r.data).toMatchObject({ win: false, renown: 6, awards: [] });
+    expect(await eventCount(t, ctx.restaurantId, 'tower.win')).toBe(0);
     expect((await t.game.tower.overview(ctx)).bestFloor).toBe(0);
   });
 
@@ -177,6 +180,7 @@ describe('挑战（设计文档 §3.2）', () => {
     await setDaily(ctx.restaurantId, 'tower.done', 5);
     const r = await t.game.tower.challenge(ctx, { floor: 1, test: true });
     expect(r.data).toMatchObject({ win: true, renown: 0, awards: [], test: true });
+    expect(await eventCount(t, ctx.restaurantId, 'tower.win')).toBe(0);
     expect(await restRow(t, ctx.restaurantId)).toMatchObject({ strength: 99, renown: 0, coin: 0 });
     expect(await t.game.tower.overview(ctx)).toMatchObject({ bestFloor: 0, left: 0 });
     await expect(t.game.tower.challenge(ctx, { floor: 1, test: false })).rejects.toMatchObject({

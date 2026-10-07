@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { acquireShard, acquireStateOf, setAcquireState } from '../../../test/acquire';
 import { createTestGame, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 
 let t: TestGame;
 beforeAll(async () => {
@@ -100,7 +101,10 @@ describe('挂牌、撤牌（收购 PR 1）', () => {
     await expect(svc().list(target, { restId: target.restaurantId, rate: 0.5 })).rejects.toMatchObject({
       params: { reason: 'not_owner' },
     });
+    expect(await eventCount(t, owner.restaurantId, 'acquire.list')).toBe(0);
     const r = await svc().list(owner, { restId: target.restaurantId, rate: 0.75 });
+    // 支线“收购”（问题记录 515）：挂牌记一次，撤牌不记
+    expect(await eventCount(t, owner.restaurantId, 'acquire.list')).toBe(1);
     expect(r.data.rate).toBe(0.75);
     expect(new Date(r.data.until).getTime()).toBeGreaterThan(Date.now() + 2.9 * 86_400_000);
     expect(await state(target.restaurantId)).toMatchObject({ list_rate: 0.75 });

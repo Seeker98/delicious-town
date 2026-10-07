@@ -14,6 +14,7 @@ import {
 import { addDays, gameDay, gameTime } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
+import { emitAction } from '../../core/action';
 import { createOp, flushOp, opNews, restLog, runOp, type Op, type OpResult } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import { opNeedPick } from '../../core/scarcity';
@@ -255,6 +256,8 @@ export function createAcquireService(d: GameDeps) {
         })
         .execute();
       restLog(me, 'acquire.bought', { restId: b.restId, name: target.rest.name, price, way: b.way });
+      // 支线“收购”（问题记录 515）：强收、买挂牌都算
+      await emitAction(me, 'acquire.buy');
       restLog(target, 'acquire.taken', { by: ctx.restaurantId, byName: me.rest.name, price });
       if (price >= t.newsMinPrice)
         opNews(me, 'acquire.big', { restId: b.restId, name: target.rest.name, price, way: b.way });
@@ -378,6 +381,7 @@ export function createAcquireService(d: GameDeps) {
         .set({ list_rate: b.rate, list_until: until })
         .where('rest_id', '=', b.restId)
         .execute();
+      await emitAction(me, 'acquire.list');
       return { restId: b.restId, rate: b.rate, until: until.toISOString() };
     });
   }

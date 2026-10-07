@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 
 const DAY = '2026-10-01';
 let t: TestGame;
@@ -76,6 +77,8 @@ describe('置顶和加精（设计文档 §2.4）', () => {
     expect(await news(a.shardId, 'forum.feature')).toBe(1);
     await f().admin(m, id, 'unfeature');
     expect((await f().admin(m, id, 'feature')).data.rewarded).toBe(false);
+    // 支线“社交”（问题记录 515）：第一次加精记一次
+    expect(await eventCount(t, a.restaurantId, 'post.featured')).toBe(1);
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(20);
     expect(await news(a.shardId, 'forum.feature')).toBe(1);
     await expect(f().deletePost(a, id)).rejects.toMatchObject({ params: { reason: 'post_locked' } });

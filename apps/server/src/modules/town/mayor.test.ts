@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
 import { gameTime } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
+import { eventCount } from '../../../test/quests';
 import { forceHiphopDay } from '../hiphop/day';
 
 const DAY = '2026-10-01';
@@ -42,6 +43,8 @@ describe('镇长问答（设计文档 §2.3）', () => {
     });
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(1);
     await expect(t.game.town.mayor(a, 3)).rejects.toMatchObject({ code: 'ALREADY_DONE' });
+    // “小镇”支线（问题记录 515）：答对记一次
+    expect(await eventCount(t, a.restaurantId, 'town.mayor.right')).toBe(1);
     expect((await t.game.town.overview(a)).mayor).toMatchObject({ answered: true, hiphopOut: true });
   });
 
@@ -52,6 +55,7 @@ describe('镇长问答（设计文档 §2.3）', () => {
     expect(r.data.talk).toBe('mayorWrong');
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorAgainst)).toBe(1);
     expect(await goodsNum(t, a.restaurantId, GOODS.mayorFavor)).toBe(0);
+    expect(await eventCount(t, a.restaurantId, 'town.mayor.right')).toBe(0);
   });
 
   it('餐厅地点答"某家餐厅"就算对，不管是哪家', async () => {

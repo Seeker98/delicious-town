@@ -92,6 +92,11 @@ export async function shootMissiles(
   await addFoodsMerged(o, foods);
   const dtTickets = await drawDtTickets(o, Math.floor(total / 100) * (dream ? 2 : 1));
   await emitAction(o, 'temple.missile');
+  // 支线“守护兽”（问题记录 515）：打倒一次，5 星以上另记
+  if (killed) {
+    await emitAction(o, 'temple.guardian.kill');
+    if (o.rest.star_level >= 5) await emitAction(o, 'temple.guardian.kill5');
+  }
   return {
     shots,
     hpMax,
