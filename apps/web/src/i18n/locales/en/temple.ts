@@ -68,15 +68,15 @@ const temple: Messages['temple'] = {
     noFoods: 'No ingredients to use',
     group: (level, n) => `Level ${level} (${n} ${plEn(n, 'kind', 'kinds')})`,
     rareTag: 'rare',
-    intro: (creatives) =>
-      `Trials raise a signature dish's trial value (value per serving, up to +50%) and trial EXP (restaurant EXP when cooking, up to +150%). Creativity ${creatives}.`,
+    intro: (creatives, worthMax, expMax) =>
+      `Trials raise a signature dish's trial value (value per serving, up to +${worthMax}%) and trial EXP (restaurant EXP when cooking, up to +${expMax}%). Creativity ${creatives}.`,
     help: 'How it works',
     helpItems: [
       'Prepare first: an injection costs 250,000 coins and gives the "Creativity Potion" badge (creativity +25); meditation is free and gives the "Meditation" badge (creativity +5). Badges last 1 hour, and you can do as many trials as you like while they last. Higher creativity means a higher success rate.',
       "When you prepare, one of your level 1–5 signature dishes is picked at random as the trial dish. Don't like it? Spend 20,000 coins to swap it, or use 1 tentacle (from feeding the Kraken) to pick one.",
       'Each trial costs 10,000 coins and uses 1 of your chosen main and side ingredients (2 if they are the same), plus 1 of each ingredient in the dish.',
       'Success depends on three things: creativity, how many levels the ingredients are above the dish (the main ingredient counts more), and rarity (rare = marked "rare" in the list, weight under 100).',
-      'On success: trial EXP +1–4% (most when both are rare); if the main ingredient is rare, trial value +1–2% as well; mastery +800 × mastery level. Trial value caps at 50% (more value per serving), trial EXP at 150% (extra restaurant EXP when cooking).',
+      'On success: trial EXP +1–4% (most when both are rare); if the main ingredient is rare, trial value +1–2% as well; mastery +800 × mastery level. Trial value raises the value per serving when the dish sells (tower and friend duels do not count it); trial EXP gives extra restaurant EXP when cooking. Caps are shown above.',
     ],
     inject: 'Injection (250,000 coins, creativity +25)',
     meditate: 'Meditate (free, creativity +5)',
@@ -84,7 +84,8 @@ const temple: Messages['temple'] = {
     target: 'Trial dish: ',
     targetLevel: (level) => ` (Lv. ${level})`,
     refresh: 'Swap (20,000 coins)',
-    stat: (worth, exp, level) => `Trial value ${worth}% / 50%, trial EXP ${exp}% / 150%, mastery ${level}`,
+    stat: (worth, worthMax, exp, expMax, level) =>
+      `Trial value ${worth}% / ${worthMax}%, trial EXP ${exp}% / ${expMax}%, mastery ${level}`,
     pickByTentacle: (n) => `Pick with a tentacle (own ${n})`,
     pick: 'Pick',
     main: 'Main ingredient',

@@ -399,6 +399,8 @@ export const tuningSchema = z.object({
     guardianRareRate: num,
     guardianFoodsBase: int,
     guardianFoodsSpread: int,
+    /** 击败奖励按血量放大：倍数 = 血量 ÷ 这个值（用户 2026-10-07 定，3 万 = 1 星为 1 倍） */
+    guardianRewardHp: int.min(1),
     injectCoin: int,
     refreshCoin: int,
     trialCoin: int,

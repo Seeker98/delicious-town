@@ -18,7 +18,8 @@ export interface TempleDto {
   missiles: Array<{ goodsId: number; num: number }>;
   maps: Array<{ goodsId: number; num: number; needStrength: number }>;
   /** mcId 为 null = 没准备过；readyMinutes = 准备勋章剩余分钟，0 = 没准备好 */
-  trial: { mcId: number | null; readyMinutes: number; creatives: number };
+  /** worthMax / expMax：本区服试炼价值、试炼经验的上限（百分比，用户 2026-10-07 起价值上限 30） */
+  trial: { mcId: number | null; readyMinutes: number; creatives: number; worthMax: number; expMax: number };
   kraken: {
     targetMcId: number;
     fed: boolean;

@@ -125,7 +125,7 @@ describe('特色菜索引（子项目 4A）', () => {
 describe('神殿索引（子项目 4B-1）', () => {
   it('飞弹、探险图按道具 id 索引；种子池', () => {
     expect(config.missiles.get(gid('集束飞弹'))).toEqual({
-      attack: [2000, 2000],
+      attack: [3200, 3200],
       hitRate: 0.96,
       crit: 0.2,
       critRate: 2,
@@ -264,10 +264,14 @@ describe('外卖数值（子项目 4D）', () => {
 });
 
 describe('守护兽数值（试玩修复 14，问题记录：守护兽太脆）', () => {
-  it('集束飞弹伤害按 tuning 覆盖成 2000；普通、爆裂不变', () => {
-    expect(config.missiles.get(gid('集束飞弹'))!.attack).toEqual([2000, 2000]);
+  it('集束飞弹伤害按 tuning 覆盖成 3200（用户 2026-10-07 定：略低于 36 个普通飞弹）；普通、爆裂不变', () => {
+    expect(config.missiles.get(gid('集束飞弹'))!.attack).toEqual([3200, 3200]);
     expect(config.missiles.get(gid('普通飞弹'))!.attack).toEqual([90, 110]);
     expect(config.missiles.get(gid('爆裂飞弹'))!.attack).toEqual([80, 130]);
+  });
+  it('普通飞弹 2000 银币（用户 2026-10-07 定：打死守护兽的奖励约为银币投入的 85%）；击败奖励以 3 万血为 1 倍', () => {
+    expect(config.requireGoods(gid('普通飞弹')).coin).toBe(2000);
+    expect(config.tuning.temple.guardianRewardHp).toBe(30000);
   });
   it('血量 2 万 + 1 万 × 星级', () => {
     expect(config.tuning.temple.guardianHpBase).toBe(20000);

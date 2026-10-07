@@ -116,11 +116,24 @@ describe('试炼（规格书 09 §9.4）', () => {
     expect(c?.count).toBe(1);
   });
 
-  it('价值 50、经验 150 到上限后不再加；主辅同一种时扣 2 个', async () => {
+  it('价值上限 30（用户 2026-10-07 定，原来 50）：以前攒到 45 的，成功一次压到 30，不算负的增加', async () => {
     const ctx = await ready(win);
     await win.db
       .updateTable('rest_mc')
-      .set({ trial_worth: 50, trial_exp: 150 })
+      .set({ trial_worth: 45 })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    await win.game.temple.prepareTrial(ctx, { way: 2 });
+    const r = await win.game.temple.startTrial(ctx, { mainFoodsId: RARE, subFoodsId: RARE });
+    expect(r.data).toMatchObject({ success: true, addWorth: 0 });
+    expect(await mcRow(win, ctx.restaurantId, MC3.id)).toMatchObject({ trial_worth: 30 });
+  });
+
+  it('价值 30、经验 150 到上限后不再加；主辅同一种时扣 2 个', async () => {
+    const ctx = await ready(win);
+    await win.db
+      .updateTable('rest_mc')
+      .set({ trial_worth: 30, trial_exp: 150 })
       .where('rest_id', '=', ctx.restaurantId)
       .execute();
     await win.game.temple.prepareTrial(ctx, { way: 2 });

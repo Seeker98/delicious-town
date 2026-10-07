@@ -75,15 +75,15 @@ const temple: Messages['temple'] = {
     noFoods: 'No hay ingredientes para usar',
     group: (level, n) => `Nivel ${level} (${n} ${plEs(n, 'tipo', 'tipos')})`,
     rareTag: 'raro',
-    intro: (creatives) =>
-      `Las pruebas suben el valor de prueba de un plato estrella (valor por ración, hasta +50 %) y la EXP de prueba (EXP del restaurante al cocinar, hasta +150 %). Creatividad ${creatives}.`,
+    intro: (creatives, worthMax, expMax) =>
+      `Las pruebas suben el valor de prueba de un plato estrella (valor por ración, hasta +${worthMax} %) y la EXP de prueba (EXP del restaurante al cocinar, hasta +${expMax} %). Creatividad ${creatives}.`,
     help: 'Cómo funciona',
     helpItems: [
       'Prepárate primero: la inyección cuesta 250.000 monedas y da la insignia «Poción de creatividad» (creatividad +25); meditar es gratis y da la insignia «Meditación» (creatividad +5). Las insignias duran 1 hora y mientras duran puedes hacer todas las pruebas que quieras. Cuanta más creatividad, más probabilidad de éxito.',
       'Al prepararte se elige al azar uno de tus platos estrella de nivel 1 a 5 como plato de prueba. ¿No te gusta? Cámbialo por 20.000 monedas o usa 1 tentáculo (de alimentar al Kraken) para elegir uno.',
       'Cada prueba cuesta 10.000 monedas y gasta 1 ingrediente principal y 1 secundario de los que elijas (2 si son el mismo), más 1 de cada ingrediente del plato.',
       'El éxito depende de tres cosas: la creatividad, cuántos niveles están los ingredientes por encima del plato (el principal pesa más) y la rareza (raro = marcado como «raro» en la lista, peso menor de 100).',
-      'Si sale bien: EXP de prueba +1–4 % (más si ambos son raros); si el principal es raro, valor de prueba +1–2 % además; dominio +800 × nivel de dominio. El valor de prueba llega como mucho al 50 % (más valor por ración) y la EXP de prueba al 150 % (EXP extra del restaurante al cocinar).',
+      'Si sale bien: EXP de prueba +1–4 % (más si ambos son raros); si el principal es raro, valor de prueba +1–2 % además; dominio +800 × nivel de dominio. El valor de prueba sube el valor por ración al vender el plato (no cuenta en los duelos de la torre ni entre amigos) y la EXP de prueba da EXP extra del restaurante al cocinar. Los topes están arriba.',
     ],
     inject: 'Inyección (250.000 monedas, creatividad +25)',
     meditate: 'Meditar (gratis, creatividad +5)',
@@ -91,8 +91,8 @@ const temple: Messages['temple'] = {
     target: 'Plato de prueba: ',
     targetLevel: (level) => ` (nv. ${level})`,
     refresh: 'Cambiar (20.000 monedas)',
-    stat: (worth, exp, level) =>
-      `Valor de prueba ${worth}\u00a0% / 50 %, EXP de prueba ${exp}\u00a0% / 150 %, dominio ${level}`,
+    stat: (worth, worthMax, exp, expMax, level) =>
+      `Valor de prueba ${worth}\u00a0% / ${worthMax}\u00a0%, EXP de prueba ${exp}\u00a0% / ${expMax}\u00a0%, dominio ${level}`,
     pickByTentacle: (n) => `Elegir con tentáculo (tienes ${n})`,
     pick: 'Elegir',
     main: 'Ingrediente principal',

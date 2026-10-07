@@ -27,7 +27,7 @@ describe('神殿概览', () => {
     expect(o.missiles).toContainEqual({ goodsId: GOODS.missileCluster, num: 2 });
     expect(o.missiles).toContainEqual({ goodsId: GOODS.missileNormal, num: 0 });
     expect(o.maps).toContainEqual({ goodsId: GOODS.mapHigh, num: 3, needStrength: 5 });
-    expect(o.trial).toEqual({ mcId: null, readyMinutes: 0, creatives: 0 });
+    expect(o.trial).toEqual({ mcId: null, readyMinutes: 0, creatives: 0, worthMax: 30, expMax: 150 });
     const pool = buildPool(
       config.bundle.mysteriousCookbooks.filter((m) => m.appraisable && m.level <= 5),
       (m) => m.odds,

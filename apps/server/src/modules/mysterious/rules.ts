@@ -51,6 +51,8 @@ export interface CookOutcome {
   num: number;
   /** 每份价值 */
   price: number;
+  /** 对决用的每份价值：不含试炼价值（用户 2026-10-07 定） */
+  duelPrice: number;
   /** 本次增加的熟练度 */
   exp: number;
 }
@@ -70,12 +72,11 @@ export function cookDish(i: CookInput, t: McTuning, rng: Rng): CookOutcome {
   const halfStar = Math.floor(i.star / 2);
   const son = i.humanSon ? rng.intMin1(Math.max(1, 4 - halfStar)) : 0;
   const cookie = i.cookie ? rng.intMin1(Math.max(1, 5 - halfStar)) : 0;
-  const price =
-    Math.floor(i.mc.nutritive * ratio * (1 + levelRate + i.trialWorth / 100)) +
-    son +
-    Math.floor(i.coinAdd) +
-    cookie;
-  return { grade, luck, num, price, exp: Math.floor((grade * num) / 200) };
+  const flat = son + Math.floor(i.coinAdd) + cookie;
+  const price = Math.floor(i.mc.nutritive * ratio * (1 + levelRate + i.trialWorth / 100)) + flat;
+  // 对决不吃试炼价值（用户 2026-10-07 定）
+  const duelPrice = Math.floor(i.mc.nutritive * ratio * (1 + levelRate)) + flat;
+  return { grade, luck, num, price, duelPrice, exp: Math.floor((grade * num) / 200) };
 }
 
 /** 熟练度：curexp 为累计值，达到本级 expNext 升级（计划裁定 5） */

@@ -9,7 +9,7 @@ import { drawDtTickets } from '../../core/tickets';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, countGoods, grantGoodsOp, hasValidHonor } from '../store/goods';
 import { addFoodsMerged, badInput, bump, pickFood, toList } from './common';
-import { guardianFoods, guardianHp, shoot } from './rules';
+import { guardianFoods, guardianHp, guardianRareCount, guardianScale, shoot } from './rules';
 
 /** 发射飞弹（规格书 09 §9.1，设计文档 §3.1） */
 export async function shootMissiles(
@@ -74,15 +74,19 @@ export async function shootMissiles(
     await incrementDaily(o.tx, o.rest.id, 'guardian.killed', 1, day);
     // 个人缺料倾向（问题记录 50）
     const needPick = await opNeedPick(o);
-    if (o.rng.chance(t.guardianRareRate + luck / 4)) {
-      rare = needPick(
-        (id) => o.config.foods.get(id)?.level === 7,
+    // 奖励跟着血量涨（用户 2026-10-07 定）：神秘食材的期望个数和普通食材个数都乘倍数
+    const scale = guardianScale(o.rest.star_level, t);
+    const rares = guardianRareCount(t.guardianRareRate * scale + luck / 4, o.rng);
+    for (let k = 0; k < rares; k++) {
+      const id = needPick(
+        (x) => o.config.foods.get(x)?.level === 7,
         () => pickWeighted(o.config.foodPools.get(7)!, o.rng).id,
       );
-      bump(foods, rare);
-      opNews(o, 'temple.guardian.rare', { foodsId: rare });
+      rare ??= id;
+      bump(foods, id);
+      opNews(o, 'temple.guardian.rare', { foodsId: id });
     }
-    for (const x of guardianFoods(t, o.rng))
+    for (const x of guardianFoods(t, o.rng, scale))
       for (let k = 0; k < x.num; k++) bump(foods, pickFood(o, x.level, needPick));
   }
   await addFoodsMerged(o, foods);

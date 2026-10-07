@@ -69,8 +69,8 @@ export default {
     noFoods: '沒有能用的食材',
     group: (level: number, n: number) => `${level} 級 (${n} 種)`,
     rareTag: '稀有',
-    intro: (creatives: number) =>
-      `試煉能提高特色菜的試煉價值 (每份價值，最多 +50%) 和試煉經驗 (烹製時的餐廳經驗，最多 +150%)。創意 ${creatives}。`,
+    intro: (creatives: number, worthMax: number, expMax: number) =>
+      `試煉能提高特色菜的試煉價值 (每份價值，最多 +${worthMax}%) 和試煉經驗 (烹製時的餐廳經驗，最多 +${expMax}%)。創意 ${creatives}。`,
     help: '玩法說明',
     /** 玩法說明：每條一段，<b> 之類的強調去掉了 */
     helpItems: [
@@ -78,7 +78,7 @@ export default {
       '準備時會從你學會的 1~5 級特色菜裡隨機選一道作為試煉物件。不滿意可以花 20,000 銀幣換一道，或者用 1 條觸手 (投餵克拉肯得到) 指定一道。',
       '每次試煉花 10,000 銀幣，消耗你選的主料和輔料各 1 個 (相同時扣 2 個)，再加這道菜的每種食材各 1 個。',
       '成功率看三樣：創意、食材比這道菜高出的等級 (主料影響更大)、食材的稀有度 (稀有 = 食材後面標“稀有”的，權重低於 100)。',
-      '成功後：試煉經驗 +1~4% (主輔都稀有最多)；主料稀有時試煉價值再 +1~2%；熟練度 +800 × 熟練度等級。試煉價值最多 50% (提高每份價值)，試煉經驗最多 150% (烹製時額外得餐廳經驗)。',
+      '成功後：試煉經驗 +1~4% (主輔都稀有最多)；主料稀有時試煉價值再 +1~2%；熟練度 +800 × 熟練度等級。試煉價值提高賣菜時的每份價值 (廚塔和好友對決不算)，試煉經驗讓烹製時額外得餐廳經驗，上限見上面。',
     ] as string[],
     inject: '注射 (250,000 銀幣，創意 +25)',
     meditate: '冥想 (免費，創意 +5)',
@@ -86,8 +86,8 @@ export default {
     target: '試煉物件：',
     targetLevel: (level: number) => ` (${level} 級)`,
     refresh: '換一道 (20,000 銀幣)',
-    stat: (worth: number, exp: number, level: string) =>
-      `當前試煉價值 ${worth}% / 50%，試煉經驗 ${exp}% / 150%，熟練度 ${level}`,
+    stat: (worth: number, worthMax: number, exp: number, expMax: number, level: string) =>
+      `當前試煉價值 ${worth}% / ${worthMax}%，試煉經驗 ${exp}% / ${expMax}%，熟練度 ${level}`,
     pickByTentacle: (n: number) => `用觸手指定 (持有 ${n})`,
     pick: '指定',
     main: '主料',
