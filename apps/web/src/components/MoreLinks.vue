@@ -35,7 +35,6 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
   {
     key: 'play',
     links: [
-      { to: '/mc', icon: 'bi-stars', key: 'mc', feature: 'mysterious' },
       { to: '/temple', icon: 'bi-bank2', key: 'temple', feature: 'temple' },
       { to: '/kuji', icon: 'bi-gift', key: 'kuji', feature: 'kuji' },
       { to: '/yard', icon: 'bi-flower1', key: 'yard', feature: 'yard' },
