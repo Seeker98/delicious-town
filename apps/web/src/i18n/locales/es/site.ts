@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    batch1007b:
+      'Los cambios con amigos ahora son 10 al día entre todos tus amigos, y a cada jugador se le puede cambiar como máximo 20 veces al día, sin importar las estrellas (con muchas estrellas tienes al menos 3 cambios con Don Krab); las gemas cambian de nombre por rango: piedra en bruto, espiritual y divina, luego jade en bruto, espiritual y divino; un icono de regalo junto a la actividad de hoy en la portada indica que hay recompensa por reclamar; en el aula puedes filtrar los platos estrella por nivel al abrir una clase; el mercado premium cierra por ahora; en la tienda de la torre, las estatuas muestran «Máx. 1» donde iría la cantidad',
     parens1007:
       'En la interfaz en chino (incluidas las descripciones de objetos y los nombres de recetas), los paréntesis de ancho completo ahora son de ancho normal con un espacio a cada lado, así cabe más texto en cada línea',
     ui1007:

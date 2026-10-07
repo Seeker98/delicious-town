@@ -112,6 +112,8 @@ const friends: Messages['friends'] = {
     failed: "Échec de l'échange",
     level: (l) => `Niv. ${l}`,
     left: (n) => `Encore ${n} ${plFr(n, 'échange', 'échanges')} aujourd'hui`,
+    allFriends: 'tous amis confondus',
+    takenLeft: (n) => `\u202f; ce joueur ne peut plus être sollicité que ${n} fois aujourd'hui`,
     storm:
       ' ; par temps d’ouragan, vous pouvez prendre ses ingrédients verrouillés (une chance sur deux d’être pris)',
     theirs: 'Les siens',

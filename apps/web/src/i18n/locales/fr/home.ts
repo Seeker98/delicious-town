@@ -44,6 +44,7 @@ const home: Messages['home'] = {
   claim: 'Récupérer',
   claimFailed: 'Échec de la récupération',
   activation: (n) => `Points d'activité du jour : ${n}`,
+  activationClaimable: 'récompense à récupérer',
   dining: {
     before: 'Vous mangez gratis chez',
     after: (table, minutes) => `table ${table}, depuis ${minutes} min`,

@@ -107,7 +107,7 @@ describe('补算已穿厨具的收益加成（问题记录 411）', () => {
       .values({
         equip_id: id,
         rest_id: a.restaurantId,
-        gem_goods_id: gid('[三阶]•智慧石'),
+        gem_goods_id: gid('[三阶]•智慧神石'),
         level: 3,
         cook: 0,
         cutting: 0,

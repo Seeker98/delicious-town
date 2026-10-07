@@ -108,6 +108,8 @@ export default {
     failed: '交換失敗',
     level: (l: number) => `${l} 級`,
     left: (n: number) => `今天還能換 ${n} 次`,
+    allFriends: '所有好友合計',
+    takenLeft: (n: number) => `，對方今天只能再被換 ${n} 次`,
     storm: '；颶風天可以換對方鎖定的食材 (有一半機率被抓)',
     theirs: '對方的',
     theirsEmpty: '沒有這個等級的食材',

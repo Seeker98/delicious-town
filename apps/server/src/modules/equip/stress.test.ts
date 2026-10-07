@@ -198,7 +198,7 @@ describe('锁定和详情', () => {
     seq = [0.01];
     const ctx = await newRestaurant(t, {
       patch: { coin: 1_000_000 },
-      goods: { [GOODS.essence]: 3, [GOODS.backStressOne]: 2, [gid('[一阶]•蓝冥石')]: 1 },
+      goods: { [GOODS.essence]: 3, [GOODS.backStressOne]: 2, [gid('[一阶]•蓝冥原石')]: 1 },
     });
     const id = await piece(ctx, gid('沉默之度玛的静谧之镬'), { base_fire: 12 });
     await eq().lock(ctx, { id, locked: true });
@@ -211,7 +211,7 @@ describe('锁定和详情', () => {
     expect(d.cost).toEqual({ essence: 12, coin: 120_000 });
     expect(d.have).toEqual({ essence: 3, stone: 0, drill: 0 });
     expect(d.backItems).toEqual([{ goodsId: GOODS.backStressOne, num: 2, back: 1 }]);
-    expect(d.gems).toEqual([{ goodsId: gid('[一阶]•蓝冥石'), num: 1, level: 1 }]);
+    expect(d.gems).toEqual([{ goodsId: gid('[一阶]•蓝冥原石'), num: 1, level: 1 }]);
     await eq().lock(ctx, { id, locked: false });
     expect((await row(id)).locked).toBe(false);
     await expect(eq().detail(await newRestaurant(t), id)).rejects.toMatchObject({ code: 'NOT_FOUND' });

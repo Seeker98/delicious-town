@@ -22,7 +22,7 @@ test('厨具：买见习之铲 → 穿戴 → 强化 → 打孔 → 镶嵌 → �
       [10603, 20], // 厨具精华
       [10601, 1], // 强化石
       [10602, 1], // 打孔石
-      [50301, 1], // [一阶]•蓝冥石
+      [50301, 1], // [一阶]•蓝冥原石
     ]) {
       await client.query('insert into store_item (rest_id, goods_id, num) values ($1, $2, $3)', [
         restId,

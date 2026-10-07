@@ -103,6 +103,54 @@ describe('ClassroomPanel', () => {
     expect(endpoints.lessonOpen).toHaveBeenCalledWith(1, 178);
   });
 
+  it('开课选特色菜：按等级从高到低、同级按道排；上面一排按等级筛，换等级时清掉不在这一级的选择（问题记录 475）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [
+        { id: 1, name: '秘·仿膳饽饽', level: 4, road: 2, nutritive: 31, coin: 1, foods: [] },
+        { id: 2, name: '秘·开水白菜', level: 2, road: 1, nutritive: 9, coin: 1, foods: [] },
+        { id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 22, coin: 1, foods: [] },
+        { id: 4, name: '秘·佛跳墙', level: 4, road: 1, nutritive: 33, coin: 1, foods: [] },
+      ],
+    } as never);
+    const row = mc.learned[0]!;
+    vi.mocked(endpoints.mc).mockResolvedValue({
+      learned: [2, 1, 3, 4].map((mcId) => ({ ...row, mcId })),
+    } as McOverviewDto);
+    const w = mount(ClassroomPanel);
+    await flushPromises();
+    const names = () =>
+      w
+        .findAll('[data-testid="open-mc"] option')
+        .slice(1)
+        .map((o) => o.text());
+    expect(names()).toEqual([
+      '秘·佛跳墙 (4 级)',
+      '秘·仿膳饽饽 (4 级)',
+      '秘·凤凰展翅 (3 级)',
+      '秘·开水白菜 (2 级)',
+    ]);
+    // 只列学过的等级
+    expect(w.findAll('[data-testid^="open-lv-"]').map((b) => b.text())).toEqual([
+      '全部',
+      '4 级',
+      '3 级',
+      '2 级',
+    ]);
+    await w.find('[data-testid="open-mc"]').setValue('3');
+    await w.find('[data-testid="open-lv-4"]').trigger('click');
+    expect(names()).toEqual(['秘·佛跳墙 (4 级)', '秘·仿膳饽饽 (4 级)']);
+    // 回到“选择已学的特色菜”这一项
+    expect((w.find('[data-testid="open-mc"]').element as HTMLSelectElement).selectedIndex).toBe(0);
+    await w.find('[data-testid="open-lv-all"]').trigger('click');
+    expect(names()).toHaveLength(4);
+  });
+
   it('剩余时间显示到分钟（backlog 6B-2：以前只到小时）', async () => {
     const soon = new Date(Date.now() + 90 * 60_000 + 30_000).toISOString();
     vi.mocked(endpoints.lessons).mockResolvedValue({

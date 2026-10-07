@@ -153,8 +153,10 @@ export interface ExchangeFoodsDto {
   theirs: Array<{ foodsId: number; num: number; locked: boolean; fee: number; need: number }>;
   /** 我这个等级的食材 */
   mine: Array<{ foodsId: number; num: number }>;
-  /** 今天和它还能换几次 */
+  /** 今天和它还能换几次：好友取“我今天总共还能换的”和 takenLeft 的小者（问题记录 479） */
   left: number;
+  /** 对方今天还能被换几次；蟹老板为 null */
+  takenLeft: number | null;
   /** 飓风天：可以换对方锁定的食材 */
   storm: boolean;
   npc: boolean;

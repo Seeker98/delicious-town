@@ -64,7 +64,6 @@ const market: Messages['market'] = {
       'Con más amigos hay más ayuda y mejores negocios.',
       'Si estás cansado, descansa. La energía se recupera un poco cada ronda.',
       '¿Dudas? Mira la sección «Guías» del foro.',
-      'El mercado premium solo se repone tres veces al día. Si te lo pierdes, toca esperar.',
     ],
     specialLeft: (n) => `${plEs(n, 'Queda', 'Quedan')} ${n} ${plEs(n, 'oferta', 'ofertas')}. ¡Date prisa!`,
     specialSoldOut: (time) => `Las ofertas se agotaron. Próxima reposición a las ${time}.`,

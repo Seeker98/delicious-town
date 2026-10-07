@@ -110,6 +110,8 @@ const friends: Messages['friends'] = {
     failed: 'Swap failed',
     level: (l) => `Lv. ${l}`,
     left: (n) => `${n} ${plEn(n, 'swap', 'swaps')} left today`,
+    allFriends: 'across all friends',
+    takenLeft: (n) => `; they can only be swapped with ${n} more ${plEn(n, 'time', 'times')} today`,
     storm: '. In a hurricane you can take their locked ingredients (50% chance of getting caught)',
     theirs: 'Theirs',
     theirsEmpty: 'No ingredients at this level',

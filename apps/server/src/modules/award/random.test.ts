@@ -95,7 +95,16 @@ describe('物品池、食材池', () => {
     for (const [lv, n] of Object.entries(sizes))
       expect(awardGoodsPool(config.bundle.goods, Number(lv), 0, false), `等级 ${lv}`).toHaveLength(n);
     // 天机石一~五阶的奖励等级 7~11，六阶不进随机奖励
-    const gem = (n: string) => config.bundle.goods.find((g) => g.name === `[${n}阶]•天机石`)!;
+    // 问题记录 493 按阶改名：天机原石、天机灵石……天机神玉
+    const WORD: Record<string, string> = {
+      一: '原石',
+      二: '灵石',
+      三: '神石',
+      四: '原玉',
+      五: '灵玉',
+      六: '神玉',
+    };
+    const gem = (n: string) => config.bundle.goods.find((g) => g.name === `[${n}阶]•天机${WORD[n]}`)!;
     expect(['一', '二', '三', '四', '五'].map((n) => gem(n).awardFlag)).toEqual([7, 8, 9, 10, 11]);
     expect(awardGoodsPool(config.bundle.goods, 11, 0, false)).toEqual(
       expect.arrayContaining(['一', '二', '三', '四', '五'].map((n) => gem(n).id)),

@@ -97,8 +97,14 @@ onMounted(load);
       :placeholder="t.friends.exchange.search"
       data-testid="exchange-search"
     />
-    <p class="small">
-      {{ t.friends.exchange.left(data.left) }}<span v-if="data.storm">{{ t.friends.exchange.storm }}</span>
+    <!-- 和好友换只看每天总数，对方被换满时写明（问题记录 479） -->
+    <p class="small" data-testid="exchange-left">
+      {{ t.friends.exchange.left(data.left)
+      }}<template v-if="!data.npc">{{ t.common.paren(t.friends.exchange.allFriends) }}</template
+      ><template v-if="data.takenLeft !== null && data.takenLeft <= data.left">{{
+        t.friends.exchange.takenLeft(data.takenLeft)
+      }}</template
+      ><span v-if="data.storm">{{ t.friends.exchange.storm }}</span>
     </p>
     <h6>{{ t.friends.exchange.theirs }}</h6>
     <div class="d-flex flex-wrap gap-1 mb-2">

@@ -36,6 +36,30 @@ async function act(fn: () => Promise<void>, fallback: string) {
   }
 }
 const others = computed(() => (data.value?.items ?? []).filter((l) => l.id !== data.value?.mine?.id));
+/**
+ * 开课选特色菜（问题记录 475）：学得多了一长串找不到，按等级从高到低、同级按道排；
+ * 上面一排按等级筛，只列学过的等级
+ */
+const pickLevel = ref<'all' | number>('all');
+const levelOf = (id: number) => catalog.mc(id)?.level ?? 0;
+const sortedMc = computed(() =>
+  (mc.value?.learned ?? [])
+    .map((m) => m.mcId)
+    .sort(
+      (a, b) => levelOf(b) - levelOf(a) || (catalog.mc(a)?.road ?? 0) - (catalog.mc(b)?.road ?? 0) || a - b,
+    ),
+);
+const mcLevels = computed(() => [...new Set(sortedMc.value.map(levelOf))]);
+const shownMc = computed(() =>
+  pickLevel.value === 'all' ? sortedMc.value : sortedMc.value.filter((id) => levelOf(id) === pickLevel.value),
+);
+function setPickLevel(lv: 'all' | number) {
+  pickLevel.value = lv;
+  if (pickMc.value !== null && !shownMc.value.includes(pickMc.value)) {
+    pickMc.value = null;
+    pickCert.value = null;
+  }
+}
 const certsFor = computed(() => {
   const lv = pickMc.value === null ? undefined : catalog.mc(pickMc.value)?.level;
   return (data.value?.certs ?? []).filter((c) => c.num > 0 && lv !== undefined && c.levels.includes(lv));
@@ -117,10 +141,23 @@ onMounted(() =>
     </div>
     <div v-else class="border rounded p-2 mb-2 small" data-testid="open-panel">
       {{ t.town.classroom.openTitle }}
+      <div v-if="mcLevels.length > 1" class="dt-pills my-1" role="group" :aria-label="t.mc.filter.levelLabel">
+        <button
+          v-for="x in ['all' as const, ...mcLevels]"
+          :key="String(x)"
+          type="button"
+          :class="{ active: pickLevel === x }"
+          :aria-pressed="pickLevel === x"
+          :data-testid="`open-lv-${x}`"
+          @click="setPickLevel(x)"
+        >
+          {{ x === 'all' ? t.mc.filter.all : t.mc.filter.level(x) }}
+        </button>
+      </div>
       <select v-model.number="pickMc" class="form-select form-select-sm my-1" data-testid="open-mc">
         <option :value="null" disabled>{{ t.town.classroom.pickMc }}</option>
-        <option v-for="m in mc?.learned ?? []" :key="m.mcId" :value="m.mcId">
-          {{ t.town.classroom.mcOption(catalog.mcName(m.mcId), catalog.mc(m.mcId)?.level) }}
+        <option v-for="id in shownMc" :key="id" :value="id">
+          {{ t.town.classroom.mcOption(catalog.mcName(id), catalog.mc(id)?.level) }}
         </option>
       </select>
       <select v-model.number="pickCert" class="form-select form-select-sm mb-1" data-testid="open-cert">

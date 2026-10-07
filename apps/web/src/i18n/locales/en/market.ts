@@ -62,7 +62,6 @@ const market: Messages['market'] = {
       'More friends means more help, and better business.',
       "Take a break when you're tired. Stamina recovers a little every round.",
       'Stuck? Check the "Guides" board on the forum.',
-      'The premium market only restocks three times a day. Miss it and you wait.',
     ],
     specialLeft: (n) => `${n} ${plEn(n, 'bargain', 'bargains')} left. Be quick!`,
     specialSoldOut: (time) => `Bargains are sold out. Next restock at ${time}.`,

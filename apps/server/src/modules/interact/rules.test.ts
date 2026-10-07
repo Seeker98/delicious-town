@@ -111,8 +111,11 @@ describe('交换（规格书 05 §5.6）', () => {
     expect(exchangeFee({ coin: 100, odds: 50 }, false, f.exchange)).toBe(100);
     expect(exchangeFee({ coin: 100, odds: 50 }, true, f.exchange)).toBe(200);
   });
-  it('次数：14 − ⌊星/2⌋，总数 ×10，对方被换 10 + 星级，蟹老板 8 − 星级', () => {
-    expect(exchangeLimits(3, 2, f.exchange)).toEqual({ perFriend: 13, total: 130, taken: 12, npc: 5 });
+  it('次数（问题记录 479）：每天总共换 10 次、每天最多被换 20 次，不看星级；蟹老板 8 − 星级、最少 3', () => {
+    expect(exchangeLimits(3, f.exchange)).toEqual({ total: 10, taken: 20, npc: 5 });
+    expect(exchangeLimits(0, f.exchange)).toEqual({ total: 10, taken: 20, npc: 8 });
+    // 星级能到 12（泛紫），以前 8 − 星级会变成负数、蟹老板一次都换不了
+    expect(exchangeLimits(12, f.exchange).npc).toBe(3);
   });
   it('被抓后得银手镯的概率', () => {
     expect(bangleRate(3, 95, f.exchange)).toBeCloseTo(0.3 + 3 * 10 * 0.0006);

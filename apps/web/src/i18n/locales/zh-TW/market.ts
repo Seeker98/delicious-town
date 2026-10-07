@@ -57,7 +57,6 @@ export default {
       '好友多了，互相幫忙生意更好做。',
       '累了就歇歇，體力每輪都會恢復一點。',
       '有什麼不懂的，去論壇「攻略」版看看大家的心得。',
-      '高階菜場一天只上新三次，錯過就要等了。',
     ] as string[],
     specialLeft: (n: number) => `特價菜還剩 ${n} 樣，手快有手慢無！`,
     specialSoldOut: (time: string) => `特價菜賣光了，下次 ${time} 進貨。`,

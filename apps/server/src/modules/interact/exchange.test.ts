@@ -79,18 +79,30 @@ describe('交换食材（规格书 05 §5.6）', () => {
     ).rejects.toMatchObject({ code: 'NOT_ENOUGH', params: { kind: 'foods' } });
   });
 
-  it('次数：和这个好友每天 14 − ⌊星/2⌋ 次；对方每天被换 10 + 星级 次', async () => {
+  it('次数（问题记录 479）：每天和所有好友加起来换 10 次；每天最多被换 20 次；不再按单个好友限', async () => {
     const [a, b] = await friends();
     const day = gameDay(t.clock.now);
+    // 以前和同一个好友 14 次就满；现在只看总数
     await incrementDaily(t.db, a.restaurantId, `exchange.with:${b.restaurantId}`, 14, day);
+    await incrementDaily(t.db, a.restaurantId, 'exchange.total', 9, day);
+    await ex().exchange(a, { restId: b.restaurantId, giveFoodsId: F1, takeFoodsId: F2 });
     await expect(
       ex().exchange(a, { restId: b.restaurantId, giveFoodsId: F1, takeFoodsId: F2 }),
-    ).rejects.toMatchObject({ params: { what: 'exchange', max: 14 } });
+    ).rejects.toMatchObject({ params: { what: 'exchange_total', max: 10 } });
     const [c, e] = await friends();
-    await incrementDaily(t.db, e.restaurantId, 'exchange.taken', 10, day);
+    await incrementDaily(t.db, e.restaurantId, 'exchange.taken', 20, day);
     await expect(
       ex().exchange(c, { restId: e.restaurantId, giveFoodsId: F1, takeFoodsId: F2 }),
-    ).rejects.toMatchObject({ params: { what: 'exchange_taken', max: 10 } });
+    ).rejects.toMatchObject({ params: { what: 'exchange_taken', max: 20 } });
+  });
+
+  it('剩余次数：取我今天还能换的和对方今天还能被换的；对方先满时写明（问题记录 479）', async () => {
+    const [a, b] = await friends();
+    const day = gameDay(t.clock.now);
+    await incrementDaily(t.db, a.restaurantId, 'exchange.total', 4, day);
+    expect(await ex().foods(a, b.restaurantId, 2)).toMatchObject({ left: 6, takenLeft: 20 });
+    await incrementDaily(t.db, b.restaurantId, 'exchange.taken', 18, day);
+    expect(await ex().foods(a, b.restaurantId, 2)).toMatchObject({ left: 2, takenLeft: 2 });
   });
 
   it('对方锁定的食材：平时不能换；飓风天可以换，50% 被抓（2 个 A 白给、得银手镯），对方得镇长的关心', async () => {
@@ -174,7 +186,8 @@ describe('交换食材（规格书 05 §5.6）', () => {
       level: 2,
       theirs: [{ foodsId: F2, num: 3, locked: false, fee: fee(F2) }],
       mine: [{ foodsId: F1, num: 5 }],
-      left: 14,
+      left: 10,
+      takenLeft: 20,
       storm: false,
       npc: false,
     });

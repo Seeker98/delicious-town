@@ -109,6 +109,8 @@ const friends: Messages['friends'] = {
     failed: 'No se pudo cambiar',
     level: (l) => `Nv. ${l}`,
     left: (n) => `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'cambio', 'cambios')}`,
+    allFriends: 'entre todos tus amigos',
+    takenLeft: (n) => `; hoy solo pueden cambiarle ${n} ${plEs(n, 'vez', 'veces')} más`,
     storm: '; con huracán puedes tomar sus ingredientes bloqueados (50 % de que te pillen)',
     theirs: 'Los suyos',
     theirsEmpty: 'No hay ingredientes de este nivel',

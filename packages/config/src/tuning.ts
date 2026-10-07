@@ -278,12 +278,15 @@ export const tuningSchema = z.object({
     }),
     exchange: z.object({
       maxLevel: int,
-      base: int,
       feeRate: num,
       lockedFeeMul: num,
-      perDayTotalMul: int,
-      takenBase: int,
+      /** 每天和所有好友加起来能换几次（问题记录 479，不看星级） */
+      perDay: int.min(1),
+      /** 每天最多被别人换走几次（问题记录 479） */
+      takenPerDay: int.min(1),
       npcBase: int,
+      /** 蟹老板次数 = npcBase − 星级，最少这么多（星级能到 12，以前会变成负数） */
+      npcMin: int.min(0),
       stormCaughtRate: num,
       bangleBase: num,
       bangleFactor: num,

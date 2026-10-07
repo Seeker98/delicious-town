@@ -41,7 +41,7 @@ export function createExchange(d: GameDeps, world: WorldService) {
     async foods(ctx: RestCtx, restId: number, level: number): Promise<ExchangeFoodsDto> {
       const them = await d.db
         .selectFrom('restaurant')
-        .select(['shard_id', 'star_level', 'npc'])
+        .select(['shard_id', 'npc'])
         .where('id', '=', restId)
         .executeTakeFirst();
       if (!them || them.shard_id !== ctx.shardId)
@@ -65,10 +65,12 @@ export function createExchange(d: GameDeps, world: WorldService) {
             .orderBy('foods_id')
             .execute()
         ).filter((r) => d.config.foods.get(r.foods_id)?.level === level);
-      const lim = exchangeLimits(me.star_level, them.star_level, t);
-      const used = them.npc
-        ? await getDaily(d.db, ctx.restaurantId, 'exchange.krab', day)
-        : await getDaily(d.db, ctx.restaurantId, `exchange.with:${restId}`, day);
+      const lim = exchangeLimits(me.star_level, t);
+      const used = await getDaily(d.db, ctx.restaurantId, them.npc ? 'exchange.krab' : 'exchange.total', day);
+      // 对方今天还能被换几次（问题记录 479）；蟹老板不限
+      const takenLeft = them.npc
+        ? null
+        : Math.max(0, lim.taken - (await getDaily(d.db, restId, 'exchange.taken', day)));
       // 我学菜还缺几个（backlog 370：蟹老板的橱柜一级八九十种，把缺的排前面）：和个人缺料倾向同一个口径
       const myFoods = await foodsMap(d.db, ctx.restaurantId);
       const need = needMapOf(
@@ -93,7 +95,8 @@ export function createExchange(d: GameDeps, world: WorldService) {
           .filter(([id, r]) => r.num > 0 && d.config.foods.get(id)?.level === level)
           .sort(([a], [b]) => a - b)
           .map(([id, r]) => ({ foodsId: id, num: r.num })),
-        left: Math.max(0, (them.npc ? lim.npc : lim.perFriend) - used),
+        left: Math.min(Math.max(0, (them.npc ? lim.npc : lim.total) - used), takenLeft ?? Infinity),
+        takenLeft,
         storm: await storm(ctx.shardId, now),
         npc: them.npc,
       };
@@ -127,7 +130,7 @@ export function createExchange(d: GameDeps, world: WorldService) {
           const locked = theirs.locked;
           if (locked && !(await storm(me.shardId, me.now, me))) throw invalidState('foods_locked');
 
-          const lim = exchangeLimits(me.rest.star_level, them.rest.star_level, t);
+          const lim = exchangeLimits(me.rest.star_level, t);
           if (them.rest.npc) {
             krab = true;
             if ((await getDaily(me.tx, me.rest.id, 'exchange.krab', day)) >= lim.npc)
@@ -138,14 +141,10 @@ export function createExchange(d: GameDeps, world: WorldService) {
             }
             await incrementDaily(me.tx, me.rest.id, 'exchange.krab', 1, day);
           } else {
-            const withKey = `exchange.with:${them.rest.id}`;
-            if ((await getDaily(me.tx, me.rest.id, withKey, day)) >= lim.perFriend)
-              throw limitReached('exchange', { max: lim.perFriend });
             if ((await getDaily(me.tx, me.rest.id, 'exchange.total', day)) >= lim.total)
               throw limitReached('exchange_total', { max: lim.total });
             if ((await getDaily(me.tx, them.rest.id, 'exchange.taken', day)) >= lim.taken)
               throw limitReached('exchange_taken', { max: lim.taken });
-            await incrementDaily(me.tx, me.rest.id, withKey, 1, day);
             await incrementDaily(me.tx, me.rest.id, 'exchange.total', 1, day);
             await incrementDaily(me.tx, them.rest.id, 'exchange.taken', 1, day);
           }

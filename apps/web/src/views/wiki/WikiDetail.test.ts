@@ -150,7 +150,7 @@ describe('游戏资料详情（问题记录 142）', () => {
           special: true,
           black: 12,
           award: true,
-          gemFrom: { id: 29, name: '[一阶]•天机石' },
+          gemFrom: { id: 29, name: '[一阶]•天机原石' },
         },
       }),
     );
@@ -173,7 +173,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     expect(src.text()).toContain('今日特价');
     expect(src.text()).toContain('钻石黑市：12 钻石');
     expect(src.text()).toContain('随机奖励');
-    expect(src.text()).toContain('两颗[一阶]•天机石');
+    expect(src.text()).toContain('两颗[一阶]•天机原石');
     expect(hrefs(w, '[data-testid="wiki-sources"]')).toContain('/wiki/goods/29');
   });
 

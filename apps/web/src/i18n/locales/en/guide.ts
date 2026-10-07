@@ -66,7 +66,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/market',
-      text: 'Market: the daily market restocks every two hours during the day, the bargain market every hour, and the premium market three times a day',
+      text: 'Market: the daily market restocks every two hours during the day and the bargain market every hour',
     },
     {
       to: '/bar',

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    batch1007b:
+      'Friend swaps are now 10 a day across all friends, and each player can be swapped with at most 20 times a day, regardless of stars (high-star players get at least 3 swaps with Mr. Krab); gems are renamed by tier: Raw, Spirit and Divine Stone, then Raw, Spirit and Divine Jade; a gift icon next to today’s activity on the home page means a reward is ready; the classroom can filter signature dishes by level when opening a class; the premium market is closed for now; in the tower shop, statues show “Own 1 max” where the quantity box would be',
     parens1007:
       'In the Chinese interface (including item descriptions and recipe names), full-width parentheses are now half-width with a space on each side, so more fits on a line',
     ui1007:

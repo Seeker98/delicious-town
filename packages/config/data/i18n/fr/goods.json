@@ -1184,147 +1184,147 @@
     "desc": "Un remerciement aux restaurants qui ont contribué à la ville, obtenu à 6 étoiles. Créativité +41."
   },
   "50001": {
-    "name": "[Rang 1]•Pierre de sagesse",
+    "name": "[Rang 1]•Pierre brute de sagesse",
     "desc": "Créativité +1"
   },
   "50002": {
-    "name": "[Rang 2]•Pierre de sagesse",
+    "name": "[Rang 2]•Pierre spirituelle de sagesse",
     "desc": "Créativité +2"
   },
   "50003": {
-    "name": "[Rang 3]•Pierre de sagesse",
+    "name": "[Rang 3]•Pierre divine de sagesse",
     "desc": "Créativité +4"
   },
   "50004": {
-    "name": "[Rang 4]•Pierre de sagesse",
+    "name": "[Rang 4]•Jade brut de sagesse",
     "desc": "Créativité +8"
   },
   "50005": {
-    "name": "[Rang 5]•Pierre de sagesse",
+    "name": "[Rang 5]•Jade spirituel de sagesse",
     "desc": "Créativité +16"
   },
   "50006": {
-    "name": "[Rang 6]•Pierre de sagesse",
+    "name": "[Rang 6]•Jade divin de sagesse",
     "desc": "Créativité +24"
   },
   "50101": {
-    "name": "[Rang 1]•Cristal rouge",
+    "name": "[Rang 1]•Pierre brute de cristal rouge",
     "desc": "Maîtrise du feu +1"
   },
   "50102": {
-    "name": "[Rang 2]•Cristal rouge",
+    "name": "[Rang 2]•Pierre spirituelle de cristal rouge",
     "desc": "Maîtrise du feu +2"
   },
   "50103": {
-    "name": "[Rang 3]•Cristal rouge",
+    "name": "[Rang 3]•Pierre divine de cristal rouge",
     "desc": "Maîtrise du feu +4"
   },
   "50104": {
-    "name": "[Rang 4]•Cristal rouge",
+    "name": "[Rang 4]•Jade brut de cristal rouge",
     "desc": "Maîtrise du feu +8"
   },
   "50105": {
-    "name": "[Rang 5]•Cristal rouge",
+    "name": "[Rang 5]•Jade spirituel de cristal rouge",
     "desc": "Maîtrise du feu +16"
   },
   "50106": {
-    "name": "[Rang 6]•Cristal rouge",
+    "name": "[Rang 6]•Jade divin de cristal rouge",
     "desc": "Maîtrise du feu +24"
   },
   "50201": {
-    "name": "[Rang 1]•Topaze",
+    "name": "[Rang 1]•Pierre brute de topaze",
     "desc": "Découpe +1"
   },
   "50202": {
-    "name": "[Rang 2]•Topaze",
+    "name": "[Rang 2]•Pierre spirituelle de topaze",
     "desc": "Découpe +2"
   },
   "50203": {
-    "name": "[Rang 3]•Topaze",
+    "name": "[Rang 3]•Pierre divine de topaze",
     "desc": "Découpe +4"
   },
   "50204": {
-    "name": "[Rang 4]•Topaze",
+    "name": "[Rang 4]•Jade brut de topaze",
     "desc": "Découpe +8"
   },
   "50205": {
-    "name": "[Rang 5]•Topaze",
+    "name": "[Rang 5]•Jade spirituel de topaze",
     "desc": "Découpe +16"
   },
   "50206": {
-    "name": "[Rang 6]•Topaze",
+    "name": "[Rang 6]•Jade divin de topaze",
     "desc": "Découpe +24"
   },
   "50301": {
-    "name": "[Rang 1]•Pierre bleue des abysses",
+    "name": "[Rang 1]•Pierre brute des abysses bleus",
     "desc": "Cuisine +1"
   },
   "50302": {
-    "name": "[Rang 2]•Pierre bleue des abysses",
+    "name": "[Rang 2]•Pierre spirituelle des abysses bleus",
     "desc": "Cuisine +2"
   },
   "50303": {
-    "name": "[Rang 3]•Pierre bleue des abysses",
+    "name": "[Rang 3]•Pierre divine des abysses bleus",
     "desc": "Cuisine +4"
   },
   "50304": {
-    "name": "[Rang 4]•Pierre bleue des abysses",
+    "name": "[Rang 4]•Jade brut des abysses bleus",
     "desc": "Cuisine +8"
   },
   "50305": {
-    "name": "[Rang 5]•Pierre bleue des abysses",
+    "name": "[Rang 5]•Jade spirituel des abysses bleus",
     "desc": "Cuisine +16"
   },
   "50306": {
-    "name": "[Rang 6]•Pierre bleue des abysses",
+    "name": "[Rang 6]•Jade divin des abysses bleus",
     "desc": "Cuisine +24"
   },
   "50401": {
-    "name": "[Rang 1]•Pierre verte mystique",
+    "name": "[Rang 1]•Pierre brute du mystère vert",
     "desc": "Assaisonnement +1"
   },
   "50402": {
-    "name": "[Rang 2]•Pierre verte mystique",
+    "name": "[Rang 2]•Pierre spirituelle du mystère vert",
     "desc": "Assaisonnement +2"
   },
   "50403": {
-    "name": "[Rang 3]•Pierre verte mystique",
+    "name": "[Rang 3]•Pierre divine du mystère vert",
     "desc": "Assaisonnement +4"
   },
   "50404": {
-    "name": "[Rang 4]•Pierre verte mystique",
+    "name": "[Rang 4]•Jade brut du mystère vert",
     "desc": "Assaisonnement +8"
   },
   "50405": {
-    "name": "[Rang 5]•Pierre verte mystique",
+    "name": "[Rang 5]•Jade spirituel du mystère vert",
     "desc": "Assaisonnement +16"
   },
   "50406": {
-    "name": "[Rang 6]•Pierre verte mystique",
+    "name": "[Rang 6]•Jade divin du mystère vert",
     "desc": "Assaisonnement +24"
   },
   "50501": {
-    "name": "[Rang 1]•Pierre du destin",
+    "name": "[Rang 1]•Pierre brute du destin",
     "desc": "Chance +1"
   },
   "50502": {
-    "name": "[Rang 2]•Pierre du destin",
+    "name": "[Rang 2]•Pierre spirituelle du destin",
     "desc": "Chance +2"
   },
   "50503": {
-    "name": "[Rang 3]•Pierre du destin",
+    "name": "[Rang 3]•Pierre divine du destin",
     "desc": "Chance +4"
   },
   "50504": {
-    "name": "[Rang 4]•Pierre du destin",
+    "name": "[Rang 4]•Jade brut du destin",
     "desc": "Chance +8"
   },
   "50505": {
-    "name": "[Rang 5]•Pierre du destin",
+    "name": "[Rang 5]•Jade spirituel du destin",
     "desc": "Chance +16"
   },
   "50506": {
-    "name": "[Rang 6]•Pierre du destin",
+    "name": "[Rang 6]•Jade divin du destin",
     "desc": "Chance +24"
   },
   "60000": {

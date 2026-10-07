@@ -35,4 +35,16 @@ describe('ShopPanel', () => {
     expect(w.find('[data-testid="buy-460"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="item-460"]').text()).toContain('声望不够');
   });
+
+  it('雕像的“限拥有 1 个”写在数量框的位置，和银币商店一样，不用挂在名字后面的标签（问题记录 489）', async () => {
+    const w = mount(ShopPanel);
+    await flushPromises();
+    const row = w.get('[data-testid="item-397"]');
+    expect(row.find('.badge').exists()).toBe(false);
+    expect(row.get('[data-testid="limit-397"]').text()).toBe('限拥有 1 个');
+    expect(row.get('[data-testid="limit-397"]').classes()).toEqual(
+      expect.arrayContaining(['dt-qty-text', 'text-nowrap']),
+    );
+    expect(w.find('[data-testid="limit-310"]').exists()).toBe(false);
+  });
 });

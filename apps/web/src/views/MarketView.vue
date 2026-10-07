@@ -25,10 +25,10 @@ const busy = ref(false);
 const guessOpen = ref(false);
 
 const time = timeHM;
+/** 高级菜场暂时隐藏（问题记录 477）：服务端照常进货，恢复时把 premium 加回来 */
 const sections = [
   { key: 'daily', next: 'nextDaily' },
   { key: 'special', next: 'nextSpecial' },
-  { key: 'premium', next: 'nextPremium' },
 ] as const;
 
 /** 特价同一网络的购买间隔（规格书 06；问题记录：买第二个只提示"操作太快"） */
