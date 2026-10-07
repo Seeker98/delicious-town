@@ -329,7 +329,13 @@ describe('buildBundle（真实数据）', () => {
 describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上', () => {
   const MISSILE = gid('普通飞弹');
   const RED = gid('[一阶]•红晶原石');
-  const withShop = (shop: unknown) => buildBundle({ ...source(), 'game/shop': shop });
+  /**
+   * 测试只换 goods 和指定的池子，其余池子沿用真实的 shop.json：设计表的池子里还有下架的道具，
+   * 退回设计表会报“下架的道具还在特价/黑市”（2026-10-07 一批下架后）
+   */
+  const realShop = source()['game/shop'] as { pools?: Record<string, number[]> };
+  const withShop = (shop: { goods: unknown[]; pools?: Record<string, number[]> }) =>
+    buildBundle({ ...source(), 'game/shop': { ...shop, pools: { ...realShop.pools, ...shop.pools } } });
   const good = (b: ReturnType<typeof buildBundle>, id: number) => b.bundle!.goods.find((g) => g.id === id)!;
 
   it('现有文件：普通飞弹 2400、集束飞弹 10 万（用户 2026-10-07 定，原版 4000、15 万）', () => {
@@ -353,7 +359,7 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
     expect(good(b, RED).diamond).toBe(9);
   });
 
-  it('特价池、黑市池写了就整份替换，没写用设计表', () => {
+  it('特价池、黑市池写了就整份替换', () => {
     const b = withShop({ goods: [], pools: { special: [MISSILE] } });
     expect(b.bundle!.shopPools.special).toEqual([MISSILE]);
     expect(b.bundle!.shopPools.black).toEqual(realBuild().bundle!.shopPools.black);

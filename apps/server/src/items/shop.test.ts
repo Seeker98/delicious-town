@@ -4,21 +4,33 @@ import { createShopTool } from './shop';
 import { gid } from '../../test/items';
 
 const src = readSourceDir(defaultDataDir());
+type ShopFile = { goods: Array<{ id: number }>; pools?: { special?: number[]; black?: number[] } };
+/** 真实的 shop.json：池子里已经去掉了下架的道具，测试只换 goods，池子沿用它 */
+const real = src['game/shop'] as ShopFile;
 const MISSILE = gid('普通飞弹');
 const RED = gid('[一阶]•红晶原石');
 
-function tool(shop: unknown = { goods: [] }) {
+function tool(goods: ShopFile['goods'] = real.goods) {
   const written: string[] = [];
   const t = createShopTool({
-    readSource: () => ({ ...src, 'game/shop': written.length ? JSON.parse(written.at(-1)!) : shop }),
+    readSource: () => ({
+      ...src,
+      'game/shop': written.length ? (JSON.parse(written.at(-1)!) as unknown) : { ...real, goods },
+    }),
     writeShop: (text) => written.push(text),
   });
   return { t, written };
 }
 
 describe('商店整理工具（问题记录 483）', () => {
+  it('真实数据（下架的道具还在设计表的池子里）照样出报表，不是空表（2026-10-07 一批下架后发现）', () => {
+    const r = tool().t.report();
+    expect(r.errors).toEqual([]);
+    expect(r.rows.length).toBeGreaterThan(100);
+  });
+
   it('报表：商店相关的道具，带现价、原版价、上下架、特价池和黑市池、回收价；没有构建错误', () => {
-    const { t } = tool({ goods: [{ id: MISSILE, coin: 2400, note: '降价' }] });
+    const { t } = tool([{ id: MISSILE, coin: 2400, note: '降价' } as ShopFile['goods'][number]]);
     const r = t.report();
     expect(r.errors).toEqual([]);
     const m = r.rows.find((x) => x.id === MISSILE)!;
@@ -42,10 +54,18 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(r.rows.every((x) => x.onSale || x.coin > 0 || x.diamond > 0 || x.special || x.black)).toBe(true);
   });
 
+  it('下架的道具：原版的上架按下架后算（不算“改过”），保存时不写它的 onSale', () => {
+    const r = tool().t.report();
+    const retired = r.rows.filter((x) => x.retired);
+    expect(retired.length).toBeGreaterThan(0);
+    expect(retired.every((x) => !x.onSale && !x.orig.onSale)).toBe(true);
+  });
+
   it('保存：只写和原版不同的字段和改过的池子，带名字和备注；先构建，能过才写', () => {
-    const { t, written } = tool();
+    const { t, written } = tool([]);
     const base = t.report();
     const special = base.rows.filter((x) => x.special).map((x) => x.id);
+    const black = base.rows.filter((x) => x.black).map((x) => x.id);
     const res = t.save({
       goods: [
         { id: MISSILE, coin: 2500, diamond: 0, onSale: true, note: '试试' },
@@ -54,17 +74,15 @@ describe('商店整理工具（问题记录 483）', () => {
           base.rows.find((x) => x.id === RED)!.orig,
         ),
       ],
-      pools: {
-        special: special.filter((id) => id !== MISSILE),
-        black: base.rows.filter((x) => x.black).map((x) => x.id),
-      },
+      pools: { special: special.filter((id) => id !== MISSILE), black },
     });
     expect(res.errors).toEqual([]);
     expect(written).toHaveLength(1);
-    const file = JSON.parse(written[0]!) as { goods: unknown[]; pools?: Record<string, number[]> };
+    const file = JSON.parse(written[0]!) as ShopFile & { goods: unknown[] };
     expect(file.goods).toEqual([{ id: MISSILE, name: '普通飞弹', coin: 2500, note: '试试' }]);
-    // 黑市池没变，不写；特价池变了，整份写
-    expect(file.pools).toEqual({ special: special.filter((id) => id !== MISSILE) });
+    // 和设计表不同的池子整份写（真实数据两个池子都去掉了下架的道具）
+    expect(file.pools!.special).toEqual(special.filter((id) => id !== MISSILE));
+    expect(file.pools!.black).toEqual(black);
     expect(written[0]!.endsWith('\n')).toBe(true);
     expect(res.report!.rows.find((x) => x.id === MISSILE)!.coin).toBe(2500);
   });
@@ -75,7 +93,11 @@ describe('商店整理工具（问题记录 483）', () => {
       .report()
       .rows.filter((x) => x.black)
       .map((x) => x.id);
-    const res = t.save({ goods: [], pools: { black: [...black, MISSILE] } });
+    const special = t
+      .report()
+      .rows.filter((x) => x.special)
+      .map((x) => x.id);
+    const res = t.save({ goods: [], pools: { special, black: [...black, MISSILE] } });
     expect(res.report).toBeNull();
     expect(res.errors.join()).toMatch(`shop black pool goods ${MISSILE} has no diamond price`);
     expect(written).toEqual([]);

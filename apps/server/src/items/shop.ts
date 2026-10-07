@@ -6,7 +6,7 @@ import { analyzeItems } from './analyze';
 /**
  * 商店整理工具的逻辑（问题记录 483）：改银币价、钻石价、银币商店上下架、今日特价池和黑市池。
  * 只写 data/game/shop.json（构建时盖在道具表上），读写文件由调用方给，测试不碰磁盘。
- * “原版”指不带 shop.json 构建出来的值（道具表 + 设计表），保存时只写和原版不同的
+ * “原版”指道具表和设计表池子里的值（下架的按不上架算，见 origValues），保存时只写和原版不同的
  */
 
 interface ShopValues {
@@ -82,14 +82,48 @@ const valuesOf = (b: ConfigBundle) => {
     ]),
   );
 };
+/**
+ * 原版值直接从道具表、设计表的池子和下架名单读，不靠“去掉 shop.json 再构建一次”：
+ * 下架的道具还留在设计表的池子里时那次构建会失败，整张表就空了（2026-10-07 一批下架后发现）。
+ * 下架的道具原版也按不上架算（构建时下架会强制下架），免得每个都显示成“改过”
+ */
+function origValues(src: SourceData) {
+  const goods = src['master/goods'] as Array<{
+    id: number;
+    name: string;
+    coin: number;
+    diamond: number;
+    onSale: boolean;
+  }>;
+  const pools = src['designed/shop_pools'] as Array<{ pool: 'special' | 'black'; goods: number[] }>;
+  const retired = new Set(
+    ((src['game/retired'] as { goods?: Array<{ id: number }> } | undefined)?.goods ?? []).map((x) => x.id),
+  );
+  const pool = { special: [] as number[], black: [] as number[] };
+  for (const p of pools) pool[p.pool] = p.goods;
+  const special = new Set(pool.special);
+  const black = new Set(pool.black);
+  const values = new Map<number, ShopValues>(
+    goods.map((g) => [
+      g.id,
+      {
+        coin: g.coin,
+        diamond: g.diamond,
+        onSale: g.onSale && !retired.has(g.id),
+        special: special.has(g.id),
+        black: black.has(g.id),
+      },
+    ]),
+  );
+  return { values, pools: pool, names: new Map(goods.map((g) => [g.id, g.name])) };
+}
 const sameSet = (a: readonly number[], b: readonly number[]) =>
   a.length === b.length && new Set([...a, ...b]).size === a.length;
 
 export function createShopTool(io: { readSource: () => SourceData; writeShop: (text: string) => void }) {
   function reportOf(src: SourceData, file: ShopFile, errors: string[]): ShopReport {
     const cur = buildBundle(src);
-    const base = buildBundle({ ...src, 'game/shop': EMPTY });
-    if (!cur.bundle || !base.bundle) return { sellRate: 0, rows: [], errors: [...errors, ...cur.errors] };
+    if (!cur.bundle) return { sellRate: 0, rows: [], errors: [...new Set([...errors, ...cur.errors])] };
     const config = createGameConfig(cur.bundle);
     const category = new Map(
       analyzeItems(config, retiredOf(cur.bundle))
@@ -97,7 +131,7 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
         .map((r) => [r.id, r.category]),
     );
     const now = valuesOf(cur.bundle);
-    const orig = valuesOf(base.bundle);
+    const orig = origValues(src).values;
     const notes = new Map(file.goods.map((x) => [x.id, x.note ?? '']));
     const relevant = (v: ShopValues) => v.onSale || v.coin > 0 || v.diamond > 0 || v.special || v.black;
     const rows = cur.bundle.goods
@@ -127,10 +161,7 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
     /** 只写和原版不同的；先按新文件构建，能过才写，过不了返回错误、不写 */
     save(body: ShopSaveBody): { errors: string[]; report: ShopReport | null } {
       const src = io.readSource();
-      const base = buildBundle({ ...src, 'game/shop': EMPTY });
-      if (!base.bundle) return { errors: base.errors, report: null };
-      const orig = valuesOf(base.bundle);
-      const names = new Map(base.bundle.goods.map((g) => [g.id, g.name]));
+      const { values: orig, pools: origPools, names } = origValues(src);
       const goods: ShopFile['goods'] = [];
       for (const x of [...body.goods].sort((a, b) => a.id - b.id)) {
         const o = orig.get(x.id);
@@ -145,7 +176,7 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
       const pools: NonNullable<ShopFile['pools']> = {};
       for (const pool of ['special', 'black'] as const) {
         const list = body.pools[pool];
-        if (list && !sameSet(list, base.bundle.shopPools[pool])) pools[pool] = list;
+        if (list && !sameSet(list, origPools[pool])) pools[pool] = list;
       }
       const file: ShopFile = { goods, ...(Object.keys(pools).length > 0 ? { pools } : {}) };
       const next = { ...src, 'game/shop': file };
