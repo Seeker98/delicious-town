@@ -10,6 +10,8 @@ const site: Messages['site'] = {
   changelog: {
     sideA1008:
       'Más misiones secundarias: la línea del bar incluye probar cada juego nuevo y jugar 500 y 2000 veces; dos líneas nuevas, «Suerte en el bar» (rachas de piedra, papel o tijera, superar Adivina el vaso, Chile del Diablo, 100 tiradas en la tragaperras y más) y «As del bar» (dardos, Cóctel Memoria, El último caramelo, Mezcla secreta, Trato o no trato); la Bolsa añade operar con el sistema, malvender al sistema, comprar y vender ingredientes raros y 500 operaciones; las predicciones añaden vender antes de tiempo, tener 100 y 200 participaciones y ganar o perder cierta cantidad en una liquidación; el Ichiban Kuji añade sacar un Premio A y el Ichiban Kuji de lujo; Hogar en todo el mundo añade misiones de la calle Chop Suey, y la última, «Nostalgia», es aprender todos sus platos',
+    krab1008:
+      'Las Monedas Krab ya no se pueden vender a la tienda; solo sirven para la tragaperras y el canje del alcalde',
     quest1008:
       'Cambios en las misiones: al llegar a 1 estrella también recibes 1 Receta misteriosa, 1 Sello Delicia, 1 Mapa de exploración y 9 [Nivel 1]•Trozo de fragmento (suficientes para canjear una especialidad de nivel 1); la receta y el mapa que daban las misiones de tasación y exploración pasan aquí; al llegar a 2 estrellas recibes también 1 Pase a domicilio; desde 1 estrella, las misiones semanales incluyen «Recoger los mapas de exploración de la semana», 3 mapas cada semana; se quita la misión de reunir 4 macetas y el Último Premio del Ichiban Kuji da además 1 Cangreburger; el capítulo «El camino de los festines divinos» y «Subir una receta a Manjar divino», que aún no se pueden hacer, se ocultan por ahora',
     rank1008:

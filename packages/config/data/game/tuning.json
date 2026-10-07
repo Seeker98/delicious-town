@@ -143,7 +143,7 @@
     "guessBonusHours": [12, 18],
     "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "maxBuy": 999 },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006], "maxBuy": 999 },
   "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],

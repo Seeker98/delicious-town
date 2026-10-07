@@ -23,9 +23,9 @@ export interface ShopRow extends ShopValues {
   category: string;
   level: number;
   orig: ShopValues;
-  /** 回收价（银币价 × 回收比例）；勋章、宝石、没有银币价的为 null */
+  /** 回收价（银币价 × 回收比例）；勋章、宝石、没有银币价的、区服数值 shop.noSell 里的（蟹币）为 null */
   sellPrice: number | null;
-  /** 这种东西能不能回收（勋章、宝石不能）；页面按改后的银币价现算回收价（终审） */
+  /** 这种东西能不能回收（勋章、宝石、shop.noSell 里的不能）；页面按改后的银币价现算回收价（终审） */
   sellable: boolean;
   retired: boolean;
   note: string;

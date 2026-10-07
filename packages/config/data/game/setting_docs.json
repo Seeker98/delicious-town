@@ -210,6 +210,7 @@
     "tuning.shop.specialHour": "商店每日特价刷新的游戏时间（点）",
     "tuning.shop.specialFallbackGoods": "特价池为空时用的道具 id",
     "tuning.shop.discardable": "允许丢弃的道具 id 列表",
+    "tuning.shop.noSell": "不能卖回商店的道具 id 列表（蟹币：100 张神秘礼券就能换 1 个，用户 2026-10-08 定）",
     "tuning.shop.maxBuy": "商店一次最多买几个（个）",
     "tuning.store.maxBatch": "仓库批量使用一次最多几个（个）",
     "tuning.world.weatherHours": "天气刷新的游戏时间（整点列表）",
