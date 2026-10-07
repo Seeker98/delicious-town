@@ -75,7 +75,7 @@ describe('餐厅读接口', () => {
     const d = (await get(p.cookie, '/overview')).json.data;
     const names = d.effects.map((e: { name: string }) => e.name);
     expect(names).toContain('厨具');
-    expect(names).toContain('宋嫂套装（3 件）');
+    expect(names).toContain('宋嫂套装 (3 件)');
     expect(names).not.toContain('equip');
     expect(d.icons).toEqual([{ key: 'founder', title: '开服元老' }]);
   });
