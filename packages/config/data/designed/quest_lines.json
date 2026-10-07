@@ -2418,28 +2418,6 @@
      "id": 3381,
      "order": 1,
      "needStar": 0,
-     "name": "打倒一次守护兽",
-     "cond": {
-      "kind": "counter",
-      "key": "temple.guardian.kill",
-      "target": 1
-     },
-     "award": {
-      "coin": 50000,
-      "exp": 5000,
-      "goods": [
-       {
-        "id": 10701,
-        "num": 1
-       }
-      ]
-     },
-     "href": "/temple"
-    },
-    {
-     "id": 3382,
-     "order": 2,
-     "needStar": 0,
      "name": "试炼成功 10 次",
      "cond": {
       "kind": "counter",
@@ -2452,6 +2430,28 @@
       "goods": [
        {
         "id": 10811,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/temple"
+    },
+    {
+     "id": 3382,
+     "order": 2,
+     "needStar": 0,
+     "name": "打倒一次守护兽",
+     "cond": {
+      "kind": "counter",
+      "key": "temple.guardian.kill",
+      "target": 1
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10701,
         "num": 1
        }
       ]
@@ -2602,28 +2602,6 @@
      "id": 3405,
      "order": 5,
      "needStar": 0,
-     "name": "挑战成功厨塔第 10 层",
-     "cond": {
-      "kind": "state",
-      "key": "tower.bestFloor",
-      "target": 10
-     },
-     "award": {
-      "coin": 200000,
-      "exp": 20000,
-      "goods": [
-       {
-        "id": 10007,
-        "num": 3
-       }
-      ]
-     },
-     "href": "/tower"
-    },
-    {
-     "id": 3406,
-     "order": 6,
-     "needStar": 0,
      "name": "击败守塔人 100 次",
      "cond": {
       "kind": "counter",
@@ -2643,8 +2621,8 @@
      "href": "/tower"
     },
     {
-     "id": 3407,
-     "order": 7,
+     "id": 3406,
+     "order": 6,
      "needStar": 0,
      "name": "击败守塔人 200 次",
      "cond": {
@@ -2665,8 +2643,8 @@
      "href": "/tower"
     },
     {
-     "id": 3408,
-     "order": 8,
+     "id": 3407,
+     "order": 7,
      "needStar": 0,
      "name": "击败守塔人 300 次",
      "cond": {
@@ -2681,6 +2659,28 @@
        {
         "id": 10007,
         "num": 5
+       }
+      ]
+     },
+     "href": "/tower"
+    },
+    {
+     "id": 3408,
+     "order": 8,
+     "needStar": 0,
+     "name": "挑战成功厨塔第 10 层",
+     "cond": {
+      "kind": "state",
+      "key": "tower.bestFloor",
+      "target": 10
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
        }
       ]
      },

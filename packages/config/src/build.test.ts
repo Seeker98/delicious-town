@@ -1962,8 +1962,19 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
       ['tower.bestFloor', 7],
       ['tower.bestFloor', 10],
     ]);
-    expect(line('keeper').at(-1)!).toMatchObject({ cond: { key: 'tower.win', target: 300 } });
     expect(line('keeper')[0]!.cond.kind).toBe('state');
+    // 第 10 层要 91 级，放最后，不挡每天都能涨的击败次数（任务清单第二版，用户定）
+    expect(line('keeper').at(-1)!.cond).toMatchObject({ key: 'tower.bestFloor', target: 10 });
+    expect(line('keeper').at(-2)!.cond).toMatchObject({ key: 'tower.win', target: 300 });
+  });
+
+  it('守护兽：便宜的试炼放第 1 档，不让约 70 万的“打倒一次”挡住（任务清单第二版，用户定）', () => {
+    expect(conds('guardian').map(([k]) => k)).toEqual([
+      'temple.trial.success',
+      'temple.guardian.kill',
+      'temple.guardian.kill',
+      'temple.guardian.kill5',
+    ]);
   });
 
   it('签到连续 7/30/60/90/180/365 天、活跃 100 点累计 10/30/100 天（用户定）', () => {
