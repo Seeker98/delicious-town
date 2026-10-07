@@ -220,6 +220,7 @@ const town: Messages['town'] = {
     picked: (n, have) => `${n} of ${have} selected`,
     addOne: (name) => `One more ${name}`,
     subOne: (name) => `One less ${name}`,
+    numOf: (name) => `How many ${name}`,
     have: (n) => `Own ${n}`,
     rule: 'Each voucher gets one common ingredient of the same level. You can pick several kinds at once',
     go: (n) => `Exchange (uses ${n})`,

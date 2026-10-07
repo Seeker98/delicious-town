@@ -225,7 +225,7 @@ const town: Messages['town'] = {
   ticket: {
     got: (list) => `Vous obtenez ${list}`,
     failed: "Échec de l'échange",
-    levelPill: (l, n) => (n > 0 ? `Niveau ${l} × ${n}` : `Niveau ${l}`),
+    levelPill: (l, n) => (n > 0 ? `Niveau ${l}\u202f×\u202f${n}` : `Niveau ${l}`),
     levelLabel: 'Par niveau de bon',
     search: 'Rechercher un ingrédient',
     noMatch: 'Aucun résultat',
@@ -234,6 +234,7 @@ const town: Messages['town'] = {
     picked: (n, have) => `${n} sur ${have} ${plFr(n, 'choisi', 'choisis')}`,
     addOne: (name) => `Un ${name} de plus`,
     subOne: (name) => `Un ${name} de moins`,
+    numOf: (name) => `Combien de ${name}`,
     have: (n) => `Possédé : ${n}`,
     rule: 'Chaque bon donne un ingrédient commun du même niveau. Vous pouvez en choisir plusieurs sortes à la fois',
     go: (n) => `Échanger (${n} ${plFr(n, 'bon', 'bons')})`,

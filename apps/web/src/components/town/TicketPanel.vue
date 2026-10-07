@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
 import type { TicketResultDto, TownExchangeDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -45,11 +45,22 @@ const picks = computed(() =>
   foods.value.map((id) => ({ foodsId: id, num: nums[id] ?? 0 })).filter((p) => p.num > 0),
 );
 const total = computed(() => picks.value.reduce((s, p) => s + p.num, 0));
-const step = (id: number, d: 1 | -1) => {
-  const n = (nums[id] ?? 0) + d;
-  if (n <= 0) delete nums[id];
-  else nums[id] = n;
+/** 这一种最多还能填几个：券数减去别的已选 */
+const roomFor = (id: number) => have.value - (total.value - (nums[id] ?? 0));
+const plusEls = new Map<number, HTMLElement>();
+const setPlusEl = (id: number, el: unknown) => {
+  if (el instanceof HTMLElement) plusEls.set(id, el);
+  else plusEls.delete(id);
 };
+function setNum(id: number, raw: string) {
+  const n = Math.max(0, Math.min(Math.floor(Number(raw)) || 0, roomFor(id)));
+  if (n === 0) {
+    delete nums[id];
+    // 减号和输入框没了，焦点放到这一行的 +
+    void nextTick(() => plusEls.get(id)?.focus());
+  } else nums[id] = n;
+}
+const step = (id: number, d: 1 | -1) => setNum(id, String((nums[id] ?? 0) + d));
 
 const mystery = ref('');
 
@@ -104,7 +115,7 @@ async function run(fn: () => Promise<TicketResultDto>) {
       <div class="dt-card dt-ticket-list py-0" data-testid="lt-list">
         <div v-if="shown.length === 0" class="text-muted py-2">{{ t.town.ticket.noMatch }}</div>
         <div v-for="id in shown" :key="id" class="dt-ticket-row" :data-testid="`lt-food-${id}`">
-          <div class="flex-fill min-w-0">
+          <div class="flex-fill dt-ticket-name">
             <div class="dt-clamp1">{{ catalog.foodName(id) }}</div>
             <div class="dt-meta">
               {{ t.town.ticket.foodHave(haveOf(id))
@@ -113,18 +124,8 @@ async function run(fn: () => Promise<TicketResultDto>) {
               }}</span>
             </div>
           </div>
-          <button
-            v-if="!nums[id]"
-            type="button"
-            class="btn btn-sm btn-outline-primary"
-            :disabled="total >= have"
-            :aria-label="t.town.ticket.addOne(catalog.foodName(id))"
-            :data-testid="`lt-add-${id}`"
-            @click="step(id, 1)"
-          >
-            <i class="bi bi-plus-lg" aria-hidden="true"></i>
-          </button>
-          <div v-else class="d-flex align-items-center gap-1">
+          <!-- 选上以后才出现减号和数量（数量可以直接填）；+ 一直是同一个按钮，点了焦点不丢（终审） -->
+          <template v-if="nums[id]">
             <button
               type="button"
               class="btn btn-sm btn-outline-secondary"
@@ -134,22 +135,33 @@ async function run(fn: () => Promise<TicketResultDto>) {
             >
               <i class="bi bi-dash-lg" aria-hidden="true"></i>
             </button>
-            <span class="dt-ticket-num" aria-live="polite" :data-testid="`lt-num-${id}`">{{ nums[id] }}</span>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-primary"
-              :disabled="total >= have"
-              :aria-label="t.town.ticket.addOne(catalog.foodName(id))"
-              :data-testid="`lt-plus-${id}`"
-              @click="step(id, 1)"
-            >
-              <i class="bi bi-plus-lg" aria-hidden="true"></i>
-            </button>
-          </div>
+            <input
+              :value="nums[id]"
+              type="number"
+              min="0"
+              :max="roomFor(id)"
+              inputmode="numeric"
+              class="form-control form-control-sm dt-ticket-num"
+              :aria-label="t.town.ticket.numOf(catalog.foodName(id))"
+              :data-testid="`lt-num-${id}`"
+              @change="setNum(id, ($event.target as HTMLInputElement).value)"
+            />
+          </template>
+          <button
+            :ref="(el) => setPlusEl(id, el)"
+            type="button"
+            class="btn btn-sm btn-outline-primary"
+            :disabled="total >= have"
+            :aria-label="t.town.ticket.addOne(catalog.foodName(id))"
+            :data-testid="`lt-add-${id}`"
+            @click="step(id, 1)"
+          >
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
       <div class="d-flex align-items-center gap-2 mt-1">
-        <span data-testid="lt-picked">{{ t.town.ticket.picked(total, have) }}</span>
+        <span aria-live="polite" data-testid="lt-picked">{{ t.town.ticket.picked(total, have) }}</span>
         <button
           class="btn btn-sm btn-primary ms-auto"
           :disabled="busy || total === 0 || total > have"
@@ -202,8 +214,12 @@ async function run(fn: () => Promise<TicketResultDto>) {
 .dt-ticket-row:last-child {
   border-bottom: 0;
 }
+/* 名字能缩，长名字截断，不把加减按钮挤出去（终审） */
+.dt-ticket-name {
+  min-width: 0;
+}
 .dt-ticket-num {
-  min-width: 1.5em;
+  width: 3.5rem;
   text-align: center;
 }
 </style>

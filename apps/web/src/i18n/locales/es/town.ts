@@ -228,6 +228,7 @@ const town: Messages['town'] = {
     picked: (n, have) => `${n} de ${have} elegidos`,
     addOne: (name) => `Uno más de ${name}`,
     subOne: (name) => `Uno menos de ${name}`,
+    numOf: (name) => `Cuántos de ${name}`,
     have: (n) => `Tienes ${n}`,
     rule: 'Cada vale da un ingrediente común del mismo nivel. Puedes elegir varios tipos a la vez',
     go: (n) => `Canjear (usa ${n})`,

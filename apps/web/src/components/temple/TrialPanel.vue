@@ -23,7 +23,7 @@ const result = ref<TrialResultDto | null>(null);
 /** 稀有食材：odds < 100（规格书 09 §9.4） */
 const RARE = 100;
 
-onMounted(async () => {
+async function loadFoods() {
   try {
     const [c, m] = await Promise.all([endpoints.cupboard(), endpoints.mc()]);
     foods.value = c.items.filter((x) => x.num > 0);
@@ -31,7 +31,17 @@ onMounted(async () => {
   } catch (e) {
     toast.push(errorMessage(e, t.value.common.loadFailed), 'danger');
   }
-});
+}
+onMounted(loadFoods);
+/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；用光的、不够主辅各一个的去掉，回到主料槽 */
+async function afterTrial() {
+  await loadFoods();
+  const num = (id: number | null) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
+  if (main.value !== null && num(main.value) === 0) main.value = null;
+  if (sub.value !== null && (num(sub.value) === 0 || (sub.value === main.value && num(sub.value) < 2)))
+    sub.value = null;
+  slot.value = main.value === null ? 'main' : 'sub';
+}
 
 const trial = computed(() => props.data.trial);
 const dish = computed(() => (trial.value.mcId === null ? undefined : catalog.mc(trial.value.mcId)));
@@ -108,10 +118,12 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
 const prepare = (way: 1 | 2) => run(() => endpoints.trialPrepare(way), t.value.temple.trial.prepareFailed);
 const refresh = (mcId?: number) =>
   run(() => endpoints.trialRefresh(mcId), t.value.temple.trial.refreshFailed);
-const start = () =>
-  run(async () => {
+const start = async () => {
+  await run(async () => {
     result.value = await endpoints.trialStart(main.value!, sub.value!);
   }, t.value.temple.trial.failed);
+  await afterTrial();
+};
 </script>
 
 <template>
@@ -174,14 +186,16 @@ const start = () =>
           :key="s"
           type="button"
           :class="[
-            'btn btn-sm flex-fill text-start dt-clamp1',
+            'btn btn-sm flex-fill text-start dt-trial-slot',
             slot === s ? 'btn-primary' : 'btn-outline-secondary',
           ]"
           :aria-pressed="slot === s"
           :data-testid="`trial-slot-${s}`"
           @click="slot = s"
         >
-          {{ t.common.colon(t.temple.trial[s]) }}{{ slotName(s === 'main' ? main : sub) }}
+          <!-- 槽名和选中的食材分两行：法文槽名长，挤在一行会把食材名截掉 -->
+          <span class="d-block small opacity-75">{{ t.temple.trial[s] }}</span
+          ><span class="d-block dt-clamp1">{{ slotName(s === 'main' ? main : sub) }}</span>
         </button>
       </div>
       <input
@@ -256,6 +270,10 @@ const start = () =>
 </template>
 
 <style scoped>
+.dt-trial-slot {
+  min-width: 0;
+  flex-basis: 0;
+}
 .dt-trial-foods {
   max-height: 16rem;
   overflow-y: auto;

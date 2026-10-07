@@ -224,6 +224,7 @@ export default {
     picked: (n: number, have: number) => `已選 ${n} / ${have} 張`,
     addOne: (name: string) => `多換一個${name}`,
     subOne: (name: string) => `少換一個${name}`,
+    numOf: (name: string) => `換幾個${name}`,
     have: (n: number) => `持有 ${n} 張`,
     rule: '一張換一個同等級的普通食材，可以一次選多種',
     go: (n: number) => `兌換 (用 ${n} 張)`,

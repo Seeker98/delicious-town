@@ -62,7 +62,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
         .map((a) => a.attributes('href')),
     ).toEqual(['/society/bro13', '/society/carmen']);
     expect(w.findAll('[data-testid^="ex-row-"]').length).toBeGreaterThan(0);
-    expect(w.find('[data-testid="lt-level"]').exists()).toBe(false);
+    expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(false);
     expect(w.find('[data-testid="mt-food"]').exists()).toBe(false);
   });
 

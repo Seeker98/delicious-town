@@ -17,19 +17,32 @@ describe('TicketPanel', () => {
 
   it('N 级券：点 + 选食材，再点加减；合计到券数时不能再加；兑换按选的发（问题记录 491）', async () => {
     vi.mocked(endpoints.townLevelTicket).mockResolvedValue({ foods: [{ foodsId: 101, num: 2 }] });
-    const w = mount(TicketPanel, { props: { data: exchangeData() } });
+    const w = mount(TicketPanel, { props: { data: exchangeData() }, attachTo: document.body });
     expect(w.get('[data-testid="lt-picked"]').text()).toBe('已选 0 / 3 张');
+    // 读屏播报合计（终审：每行一个 live region 太多）
+    expect(w.get('[data-testid="lt-picked"]').attributes('aria-live')).toBe('polite');
     expect(w.get('[data-testid="lt-go"]').attributes('disabled')).toBeDefined();
-    // 没选的只有一个 +，选了才出现加减
+    // 没选的只有一个 +，选了才出现减号和数量
     expect(w.find('[data-testid="lt-minus-101"]').exists()).toBe(false);
+    const plus = w.get('[data-testid="lt-add-101"]').element;
     await w.get('[data-testid="lt-add-101"]').trigger('click');
-    await w.get('[data-testid="lt-plus-101"]').trigger('click');
-    expect(w.get('[data-testid="lt-num-101"]').text()).toBe('2');
+    // 点了以后还是同一个 + 按钮（焦点不丢，终审）
+    expect(w.get('[data-testid="lt-add-101"]').element).toBe(plus);
+    await w.get('[data-testid="lt-add-101"]').trigger('click');
+    const num = () => (w.get('[data-testid="lt-num-101"]').element as HTMLInputElement).value;
+    expect(num()).toBe('2');
+    // 数量可以直接填，超过剩下的券按剩下的算（终审：上百张不用点上百次）
+    await w.get('[data-testid="lt-num-101"]').setValue('9');
+    expect(num()).toBe('3');
+    await w.get('[data-testid="lt-num-101"]').setValue('2');
     await w.get('[data-testid="lt-add-102"]').trigger('click');
     expect(w.get('[data-testid="lt-picked"]').text()).toBe('已选 3 / 3 张');
-    expect(w.get('[data-testid="lt-plus-101"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="lt-add-101"]').attributes('disabled')).toBeDefined();
     await w.get('[data-testid="lt-minus-102"]').trigger('click');
+    await flushPromises();
     expect(w.find('[data-testid="lt-minus-102"]').exists()).toBe(false);
+    // 减到 0 时减号没了，焦点放到这一行的 +
+    expect(document.activeElement).toBe(w.get('[data-testid="lt-add-102"]').element);
     await w.get('[data-testid="lt-go"]').trigger('click');
     await flushPromises();
     expect(endpoints.townLevelTicket).toHaveBeenCalledWith(1, [{ foodsId: 101, num: 2 }]);

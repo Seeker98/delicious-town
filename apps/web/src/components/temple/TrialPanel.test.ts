@@ -137,6 +137,26 @@ describe('TrialPanel', () => {
     ]);
   });
 
+  it('试炼后重读橱柜：数量跟着变，用光的从主辅里去掉、回到主料槽（终审）', async () => {
+    const w = mount(TrialPanel, {
+      props: { data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5 } }) },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [{ foodsId: 423, num: 4, locked: false, streetNeed: 0 }],
+    } as never);
+    await w.get('[data-testid="trial-start"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.cupboard).toHaveBeenCalledTimes(2);
+    expect(w.find('[data-testid="trial-food-150"]').exists()).toBe(false);
+    expect(w.get('[data-testid="trial-food-423"]').text()).toContain('×4');
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('未选');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
+    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+  });
+
   it('主辅选同一种要 2 个：只有 1 个时，另一个槽里这种灰掉（问题记录 487）', async () => {
     vi.mocked(endpoints.cupboard).mockResolvedValue({
       items: [
