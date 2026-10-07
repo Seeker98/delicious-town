@@ -56,7 +56,7 @@ const market: Messages['market'] = {
       'Cuantos más platos sepas cocinar, más clientes vendrán.',
       'Regístrate cada día en la página de inicio para llevarte un regalo.',
       'Don Krab ha vuelto a regatear. Bah.',
-      'La hermana Wen reparte vales en la plaza cada día. Ve a charlar con ella.',
+      'La hermana Wen reparte vales en el bar cada día. Ve a charlar con ella.',
       'El Alcalde Gran Olla puede comerse medio puesto mío en un día.',
       'Date una vuelta por el Gremio: si aciertas la pregunta del Alcalde Gran Olla, hay premio.',
       'Los ingredientes parecen caros, pero una buena receta se amortiza enseguida.',

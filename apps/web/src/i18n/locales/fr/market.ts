@@ -56,7 +56,7 @@ const market: Messages['market'] = {
       'Plus vous savez cuisiner de plats, plus vous avez de clients.',
       'Pointez chaque jour sur l’accueil pour recevoir un cadeau.',
       'M. Krab est encore venu marchander. Pff.',
-      'Sœur Wen offre des bons sur la place tous les jours. Allez discuter avec elle.',
+      'Sœur Wen offre des bons au bar tous les jours. Allez discuter avec elle.',
       'Le Maire Grosse Marmite peut dévorer la moitié de mon étal en une journée.',
       'Passez à la Guilde : répondez bien à la question du Maire Grosse Marmite et vous gagnez un prix.',
       'Les ingrédients semblent chers, mais une bonne recette est vite rentabilisée.',

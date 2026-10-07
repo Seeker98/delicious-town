@@ -58,7 +58,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Place : discutez une fois par jour avec Sœur Wen pour des bons mystère ; secouez la bourse de M. Krab',
+      text: 'Place : secouez la bourse de M. Krab',
     },
     {
       to: '/society/mayor',
@@ -74,7 +74,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/bar',
-      text: 'Bar : quelques mini-jeux par jour ; Cocktail Mémoire et fléchettes donnent des récompenses',
+      text: 'Bar : discutez une fois par jour avec Sœur Wen pour des bons mystère ; quelques mini-jeux par jour, et Cocktail Mémoire et fléchettes donnent des récompenses',
     },
     {
       to: '/tower',

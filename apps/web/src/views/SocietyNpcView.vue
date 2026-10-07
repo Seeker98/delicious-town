@@ -107,7 +107,7 @@ onMounted(() => {
         <template v-if="npc === 'mayor'">
           <!-- 原来广场的大胃哥（问题记录 441：游戏里只有大胃锅，就是镇长），每天聊天送食材和种子 -->
           <template v-if="town">
-            <NpcTalk :data="town" npc="bigEater" @reload="loadTown" />
+            <NpcTalk :talked="town.talked.bigEater" npc="bigEater" @reload="loadTown" />
             <MayorAsk :data="town" @reload="loadTown" />
           </template>
           <ExchangePanel part="goods" />
@@ -120,13 +120,18 @@ onMounted(() => {
           </p>
         </template>
         <template v-else-if="npc === 'bro13'">
-          <NpcTalk v-if="town" :data="town" npc="bro13" @reload="loadTown" />
+          <NpcTalk v-if="town" :talked="town.talked.bro13" npc="bro13" @reload="loadTown" />
           <h6 class="dt-section">{{ t.town.exchange.tickets }}</h6>
           <ExchangePanel part="level" />
         </template>
         <template v-else-if="npc === 'carmen'">
           <!-- 见面礼：原来大胃哥第一次聊天送的神秘食材兑换券（问题记录 441），领过就不再显示 -->
-          <NpcTalk v-if="town && !town.bigEaterGift" :data="town" npc="carmen" @reload="loadTown" />
+          <NpcTalk
+            v-if="town && !town.bigEaterGift"
+            :talked="town.talked.carmen"
+            npc="carmen"
+            @reload="loadTown"
+          />
           <ExchangePanel part="mystery" />
         </template>
       </template>

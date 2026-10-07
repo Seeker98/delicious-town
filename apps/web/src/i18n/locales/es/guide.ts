@@ -58,7 +58,7 @@ const guide: Messages['guide'] = {
     },
     {
       to: '/town',
-      text: 'Plaza: charla una vez al día con la Hermana Wen para recibir vales misteriosos; sacude la bolsa de Don Krab',
+      text: 'Plaza: sacude la bolsa de Don Krab',
     },
     {
       to: '/society/mayor',
@@ -72,7 +72,10 @@ const guide: Messages['guide'] = {
       to: '/market',
       text: 'Mercado: el mercado diario se renueva cada dos horas durante el día, el de ofertas cada hora y el premium tres veces al día',
     },
-    { to: '/bar', text: 'Bar: unos cuantos minijuegos al día; Cóctel Memoria y los dardos dan premios' },
+    {
+      to: '/bar',
+      text: 'Bar: charla una vez al día con la Hermana Wen para recibir vales misteriosos; unos cuantos minijuegos al día, y Cóctel Memoria y los dardos dan premios',
+    },
     {
       to: '/tower',
       text: 'Torre de chefs: desafía a los guardianes de la torre para ganar renombre y gástalo en la tienda de renombre',

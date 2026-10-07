@@ -74,6 +74,8 @@ export interface BarDto {
   /** 银币（一掷千金用银币入场） */
   coin: number;
   krabCoins: number;
+  /** 今天和雯姐聊过没有（问题记录 453：雯姐每天聊一次搬到酒吧） */
+  wenjieTalked: boolean;
   fg: BarGameDto;
   /** 猜酒杯：上一局结果和连续局数；每轮几个杯子、每档奖励；进行中的局 */
   cup: BarGameDto & { cost: number; cups: number[]; tiers: CupTierDto[]; round: CupDto | null };

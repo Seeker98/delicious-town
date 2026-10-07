@@ -148,6 +148,13 @@ describe('酒吧概览', () => {
     expect((await t.game.bar.overview(ctx)).fg).toEqual({ result: 'win', times: 1 });
   });
 
+  it('雯姐每天聊一次搬到酒吧（问题记录 453）：概览写今天聊过没有', async () => {
+    const ctx = await newRestaurant(t);
+    expect((await t.game.bar.overview(ctx)).wenjieTalked).toBe(false);
+    await t.game.town.talk(ctx, { npc: 'wenjie' });
+    expect((await t.game.bar.overview(ctx)).wenjieTalked).toBe(true);
+  });
+
   it('区服关闭 bar：接口报 FEATURE_DISABLED', async () => {
     const ctx = await newRestaurant(t, { goods: { [GOODS.mysteryTicket]: 1 } });
     await t.db

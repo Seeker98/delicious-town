@@ -25,22 +25,9 @@ describe('TownPanel', () => {
     setActivePinia(createPinia());
   });
 
-  it('NPC：聊过的变灰；聊天后提示台词和奖励并通知刷新', async () => {
-    vi.mocked(endpoints.townTalk).mockResolvedValue({
-      npc: 'wenjie',
-      talk: 'wenjie',
-      rewards: [{ kind: 'goods', id: 1, num: 5 }],
-    });
-    const w = mount(TownPanel, {
-      props: { data: townData({ talked: { bigEater: false, wenjie: false, bro13: false, carmen: false } }) },
-    });
-    // 广场居民只剩雯姐（问题记录 441：大胃哥就是镇长大胃锅，和 13 哥一起在协会）
-    expect(w.find('[data-testid="talk-bigEater"]').exists()).toBe(false);
-    await w.find('[data-testid="talk-wenjie"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.townTalk).toHaveBeenCalledWith('wenjie');
-    expect(useToastStore().items.at(-1)!.text).toBe('雯姐：用了飘柔就明显气质上来了! 获得 道具1×5');
-    expect(w.emitted('reload')).toHaveLength(1);
+  it('雯姐的每天聊天搬到了酒吧：广场没有 NPC 聊天了（问题记录 453）', () => {
+    const w = mount(TownPanel, { props: { data: townData() } });
+    expect(w.find('[data-testid="talk-wenjie"]').exists()).toBe(false);
   });
 
   it('摇钱包：摇过的变灰；提示银币和彩蛋', async () => {
@@ -155,9 +142,9 @@ describe('TownPanel', () => {
     });
   });
 
-  it('NPC 和钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {
+  it('钱包的按钮放在右侧操作区，和说明文字分开（问题记录 110）', () => {
     const w = mount(TownPanel, { props: { data: townData() } });
-    for (const id of ['talk-wenjie', 'shake'])
+    for (const id of ['shake'])
       expect(w.find('.dt-item-actions [data-testid="' + id + '"]').exists()).toBe(true);
   });
 

@@ -259,7 +259,7 @@ const bar: Messages['bar'] = {
     name: 'Hermana Wen',
     chat: [
       '¿Otra vez por aquí? ¿A qué jugamos hoy?',
-      '¿Sin vales misteriosos? Ven a charlar conmigo a la plaza, los regalo cada día.',
+      '¿Sin vales misteriosos? Ven a charlar conmigo, los regalo cada día.',
       'En los vasos, cada ronda trae más vasos y mejor premio, pero un fallo te deja sin nada. Sabe cuándo parar.',
       'Uno de los vasos del Chile del Diablo pica muchísimo. Piénsalo antes de beber.',
       'Fíjate bien en el orden del Cóctel Memoria. Las recetas se alargan.',
@@ -269,13 +269,13 @@ const bar: Messages['bar'] = {
       'En los dardos apunta al centro. Cuanto más cerca, más puntos.',
       'Los juegos del bar tienen límite diario. No los gastes todos de golpe.',
       'El Alcalde Gran Olla ha vuelto a gorronear bebida. Qué le vamos a hacer.',
-      'También tengo un puesto en la plaza. Pásate a menudo.',
+      'Ven al bar a charlar conmigo una vez al día. No lo olvides.',
     ],
     memoryLeft: (n) =>
       `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} de Cóctel Memoria. ¿Pones a prueba tu memoria?`,
     dartsLeft: (n) =>
       `Hoy te ${plEs(n, 'queda', 'quedan')} ${n} ${plEs(n, 'partida', 'partidas')} de dardos. Pulso firme.`,
-    noTickets: '¿Sin vales misteriosos? Ven a charlar conmigo a la plaza y te daré algunos.',
+    noTickets: '¿Sin vales misteriosos? Charla conmigo y te daré algunos.',
     slotFloor: (n) => `¡Solo ${n} ${plEs(n, 'tirada', 'tiradas')} más y la tragaperras te asegura un raro!`,
     devilOpen: 'No has terminado el Chile del Diablo. Nada de escaparse.',
   },

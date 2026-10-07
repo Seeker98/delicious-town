@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import BarWenjie from '../components/bar/BarWenjie.vue';
+import NpcTalk from '../components/town/NpcTalk.vue';
 import { onMounted, ref, watch } from 'vue';
 import type { BarDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -59,6 +60,8 @@ onMounted(load);
     }}</span>
   </div>
   <BarWenjie :data="data" />
+  <!-- 雯姐每天聊一次（问题记录 453：从广场搬到酒吧） -->
+  <NpcTalk v-if="data" :talked="data.wenjieTalked" npc="wenjie" class="mb-2" @reload="load" />
   <HiphopCard :place="3" @changed="load" />
   <!-- 七个游戏放不下一排标签页，用可换行的胶囊（视觉规范 §5） -->
   <div class="dt-pills">
