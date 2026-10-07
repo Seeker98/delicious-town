@@ -21,7 +21,8 @@
     "elders": "tsx --env-file=.env.development src/sim/elders.ts",
     "bench:api": "tsx src/cli/bench-api.ts",
     "items": "tsx src/items/main.ts",
-    "renumber:dry": "tsx --env-file=.env.development src/cli/renumber-dry-run.ts"
+    "renumber:dry": "tsx --env-file=.env.development src/cli/renumber-dry-run.ts",
+    "odds": "vitest run -c vitest.odds.config.ts"
   },
   "dependencies": {
     "@dt/config": "workspace:*",

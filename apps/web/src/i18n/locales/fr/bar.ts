@@ -95,6 +95,8 @@ const bar: Messages['bar'] = {
     exchange: 'Bons contre pièces Krab',
     exBtn: (n, tickets) => `En obtenir ${n} (${tickets} ${plFr(tickets, 'bon', 'bons')})`,
     pool: 'Lots',
+    rareEvery: (n: number) =>
+      `Le tableau donne la probabilité par case, sans compter le lot garanti. En le comptant, un lot rare tombe environ tous les ${n} tirages`,
     rare: 'Rare',
     stats: 'Mes statistiques',
     noStats: 'Pas encore joué',

@@ -17,6 +17,7 @@ import {
   slotFloorLeft,
   slotFloorRate,
   slotForced,
+  slotRareEvery,
 } from './rules';
 
 const t = testConfig().tuning.bar;
@@ -118,6 +119,26 @@ describe('老虎机（设计文档 §3.5）', () => {
     expect(slotFloorLeft(298, t)).toBe(1);
     expect(slotFloorLeft(299, t)).toBe(1);
     expect(slotFloorLeft(300, t)).toBe(1);
+  });
+
+  it('算上保底平均每几次出一次稀有（问题记录 511：奖池表只写了单格概率）', () => {
+    // 每次 1 格、第 3 格必出、不提前保底、单格一半稀有：1 + 0.5 + 0.25 = 1.75 格
+    const toy = { ...t, slotCells: 1, slotFloorSpins: 2, slotFloorRate: 0 };
+    const awards = [
+      { odds: 1, rare: true },
+      { odds: 1, rare: false },
+    ];
+    expect(slotRareEvery(awards, toy, false)).toBeCloseTo(1.75, 12);
+    // 提前保底率 0.5 × fail：走到第 2 格的概率 0.5，它提前出保底 0.5、按权重出稀有 0.5 × 0.5，
+    // 走到第 3 格的概率 0.5 × 0.5 × 0.5 = 0.125 → 1 + 0.5 + 0.125
+    expect(slotRareEvery(awards, { ...toy, slotFloorRate: 0.5 }, false)).toBeCloseTo(1.625, 12);
+    // 神灯让提前保底翻倍：第 2 格必出 → 1 + 0.5
+    expect(slotRareEvery(awards, { ...toy, slotFloorRate: 0.5 }, true)).toBeCloseTo(1.5, 12);
+    // 现在的数值：单格 0.06% 的稀有，算上 100 次的保底大约每 90 次出一次（核对工具实测每格约 0.37%）
+    const real = slotRareEvery(testConfig().bundle.slotAwards, t, false);
+    expect(real).toBeGreaterThan(85);
+    expect(real).toBeLessThan(101);
+    expect(slotRareEvery(testConfig().bundle.slotAwards, t, true)).toBeLessThan(real);
   });
 });
 
