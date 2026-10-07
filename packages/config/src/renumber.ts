@@ -2,7 +2,8 @@
  * 重新编号（设计 docs/superpowers/specs/2026-10-05-id-renumber-design.md）：按对照表改写 JSON 里的道具、食材、菜谱编号。
  * 配置数据的一次性改写（scripts/renumber-apply.ts）和数据库迁移 0049 共用。规则按键名认（见 ID_KEYS 等），
  * 是按开发库全部 JSON 列的路径和服务端写日志、新闻的地方清点出来的。
- * 冻结：迁移 0049 依赖它，上线后不要改规则（改了以后在空库上重跑迁移的结果会和线上不一样）
+ * 冻结：迁移 0049 依赖它，上线后不要改已有的规则（改了以后在空库上重跑迁移的结果会和线上不一样）；
+ * 新加的区服数值字段可以补路径（新编号和旧编号不会撞，旧数据里也没有这个字段），比如 shop.noSell
  */
 export type IdKind = 'goods' | 'foods' | 'cookbooks';
 export type IdMaps = Record<IdKind, ReadonlyMap<number, number>>;
