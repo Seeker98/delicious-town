@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    misc1007:
+      'Sister Wen’s daily chat has moved from the square to the bar; the Random Universal Ingredient Pack now gives only a universal ingredient, and the Starter Pack also gives 10 level-1, 10 level-2 and 5 level-3 Universal Ingredients; roaches placed by friends leave on their own after at most 4 hours; level-6 ingredients can’t be traded on the exchange for now, and existing orders for them are withdrawn and returned to your exchange account; the “Eat for free” task now counts as soon as you start; the fridge also shows each ingredient’s level and how many your street still needs; refuelling now uses an oil-drop icon',
     fix1007:
       'A batch of small fixes: finished events on the prediction page now show the most recent first; in the cup game, stopping after round 3 always makes the news and clearing all 4 rounds always gets a town-wide broadcast (no more one-per-day limit), and the reward table stays visible with the current round marked while you decide whether to stop; Last Candy’s table descriptions now follow the actual rules; the acquisition “Mine” page says yesterday’s dividend hasn’t been paid yet until it is; the sign-in and refuel links on the home page are easier to tap; name links inside text are underlined when you hover over them or select them with the keyboard',
     links1007:
