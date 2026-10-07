@@ -501,6 +501,11 @@ a:hover > .dt-go,
 a {
   text-decoration: none;
 }
+/* 没加类的链接（句子、列表里的名字）：鼠标移上去或键盘选中时显示下划线，不只靠颜色和正文区分（用户 2026-10-07 定） */
+a:not([class]):hover,
+a:not([class]):focus-visible {
+  text-decoration: underline;
+}
 .dt-back {
   color: var(--bs-link-color);
   text-decoration: none;

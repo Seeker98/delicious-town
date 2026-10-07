@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     fix1007:
-      'A batch of small fixes: finished events on the prediction page now show the most recent first; in the cup game, stopping after round 3 always makes the news and clearing all 4 rounds always gets a town-wide broadcast (no more one-per-day limit), and the reward table stays visible with the current round marked while you decide whether to stop; Last Candy’s table descriptions now follow the actual rules; the acquisition “Mine” page says yesterday’s dividend hasn’t been paid yet until it is; the sign-in and refuel links on the home page are easier to tap',
+      'A batch of small fixes: finished events on the prediction page now show the most recent first; in the cup game, stopping after round 3 always makes the news and clearing all 4 rounds always gets a town-wide broadcast (no more one-per-day limit), and the reward table stays visible with the current round marked while you decide whether to stop; Last Candy’s table descriptions now follow the actual rules; the acquisition “Mine” page says yesterday’s dividend hasn’t been paid yet until it is; the sign-in and refuel links on the home page are easier to tap; name links inside text are underlined when you hover over them or select them with the keyboard',
     links1007:
       'Text links across the game now look like the ones on the home page: brand color, no underline, a “›” at the end when they take you to another page and a “‹” at the start when they take you back. On-page actions such as resend, refresh, cancel and reply look the same as links, without the underline or the extra padding',
     cup1007:
