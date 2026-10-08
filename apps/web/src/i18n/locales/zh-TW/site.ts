@@ -9,6 +9,7 @@ export default {
   nextRound: (left: string) => `下一輪結算: ${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    gemStrength1008: '寶石頁: 說明末尾那句“體力 N”改成單獨一行“我的體力: N”，寫明是自己現在的體力',
     perf1008:
       '頁面開啟更快: 和伺服器之間少了多餘的往返；餐廳首頁、收益記錄、餐廳資訊、食譜、收購這幾頁的資料改成同時讀取；再次開啟遊戲時直接用已經下載過的檔案',
     pages1008:

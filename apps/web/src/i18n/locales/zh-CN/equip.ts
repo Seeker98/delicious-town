@@ -110,8 +110,9 @@ export default {
   },
   gemPage: {
     title: '宝石',
-    intro: (luck: string, strength: number) =>
-      `两颗同阶合成一颗下一阶，每组耗体力 = 阶数；失败时还有 ${luck} 的幸运补救，失败的每组得 阶数×1000 经验。体力 ${strength}。`,
+    intro: (luck: string) =>
+      `两颗同阶合成一颗下一阶，每组耗体力 = 阶数；失败时还有 ${luck} 的幸运补救，失败的每组得 阶数×1,000 经验。`,
+    myStrength: (n: string) => `我的体力: ${n}`,
     empty: '还没有宝石',
     maxed: '已是最高阶',
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,

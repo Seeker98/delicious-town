@@ -8,6 +8,7 @@ export default {
   nextRound: (left: string) => `下一轮结算: ${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    gemStrength1008: '宝石页: 说明末尾那句“体力 N”改成单独一行“我的体力: N”，写明是自己现在的体力',
     perf1008:
       '页面打开更快: 和服务器之间少了多余的往返；餐厅首页、收益记录、餐厅信息、食谱、收购这几页的数据改成同时读取；再次打开游戏时直接用已经下载过的文件',
     pages1008:

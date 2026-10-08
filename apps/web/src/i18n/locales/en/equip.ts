@@ -112,8 +112,9 @@ const equip: Messages['equip'] = {
   },
   gemPage: {
     title: 'Gems',
-    intro: (luck, strength) =>
-      `Two gems of the same tier combine into one of the next tier; each pair costs stamina equal to its tier. A failure still has a ${luck} lucky save, and each failed pair gives tier × 1,000 EXP. Stamina: ${strength}.`,
+    intro: (luck) =>
+      `Two gems of the same tier combine into one of the next tier; each pair costs Stamina equal to its tier. A failure still has a ${luck} lucky save, and each failed pair gives tier × 1,000 EXP.`,
+    myStrength: (n) => `My Stamina: ${n}`,
     empty: 'No gems yet',
     maxed: 'Highest tier',
     next: (name, rate) => `→ ${name}, success rate ${rate}`,

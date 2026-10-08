@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    gemStrength1008:
+      'Gems page: the “Stamina: N” at the end of the explanation is now its own line, “My Stamina: N”, to make clear it’s your current Stamina',
     perf1008:
       'Faster page loads: fewer extra round trips to the server; the restaurant home page, Income log, Restaurant info, Recipes and Acquisitions now load their data in parallel; reopening the game reuses files already downloaded',
     pages1008:
