@@ -24,9 +24,17 @@ export function poolOptions(url: string, max: number): pg.PoolConfig {
   };
 }
 
+export function createPool(url: string, max: number): pg.Pool {
+  const pool = new pg.Pool(poolOptions(url, max));
+  // 空闲连接被服务端断开（Postgres 重启、backend 被杀、网络抖动）时池子会发 error：没人接就是未捕获异常，
+  // api、worker 全崩。出错的连接 pg-pool 已经移出池子，这里只记日志（终审 I1：常驻连接让这事从偶发变成必然）
+  pool.on('error', (err) => console.warn('idle pg client error', err.message));
+  return pool;
+}
+
 export function createDb(url: string, max = 10, onQuery?: OnQuery): Kysely<DB> {
   return new Kysely<DB>({
-    dialect: new PostgresDialect({ pool: new pg.Pool(poolOptions(url, max)) }),
+    dialect: new PostgresDialect({ pool: createPool(url, max) }),
     log: onQuery
       ? (e) => {
           // 出错的查询也算（backlog 质量期 ③）：慢的失败查询一样要看得到
