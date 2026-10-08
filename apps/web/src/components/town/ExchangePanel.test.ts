@@ -27,7 +27,7 @@ describe('ExchangePanel', () => {
     await flushPromises();
     expect(w.findAll('[data-testid^="ex-row-"]')).toHaveLength(3);
     expect(w.find('[data-testid="ex-2"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="ex-row-2"]').text()).toContain('限兑 1 次，已兑 0 次');
+    expect(w.find('[data-testid="ex-row-2"]').text()).toContain('限兑 1 次, 已兑 0 次');
     expect(w.find('[data-testid="ex-3"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="ex-row-3"]').text()).toContain('已兑完');
     await w.find('[data-testid="cat-dt"]').trigger('click');

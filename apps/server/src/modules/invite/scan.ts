@@ -44,7 +44,7 @@ async function inviterRest(db: Kysely<DB>, inviter: number, shardId: number): Pr
 }
 
 const rewardMail = (restName: string, level: number) =>
-  `你邀请的「${restName}」达到 ${level} 级，感谢你把朋友带到小镇！`;
+  `你邀请的「${restName}」达到 ${level} 级, 感谢你把朋友带到小镇！`;
 
 /**
  * 邀请扫描（设计 §7、裁定 18~21）：新手礼包、10 级和 30 级邀请人奖励、补发待发。
@@ -105,7 +105,7 @@ export async function scanInvites(game: Game, log: JobLogger, shardId: number): 
         restId: row.rest_id,
         minLevel: null,
         title: '欢迎来到小镇',
-        body: '你是被朋友邀请来的，送你一份新手礼包。',
+        body: '你是被朋友邀请来的, 送你一份新手礼包。',
         tpl: { key: 'invite.welcome', params: {} },
         items: tuning.newbie as RewardItems,
         source: 'invite',

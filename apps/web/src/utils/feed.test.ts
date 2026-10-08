@@ -12,12 +12,12 @@ describe('好友动态文案', () => {
     );
     expect(
       describeFeed({ type: 'friend.flip', params: { byName: '甲', outcome: 'food', foodsId: 7 }, at }, food),
-    ).toBe('甲 翻了你的橱柜，拿走了 食材7');
+    ).toBe('甲 翻了你的橱柜, 拿走了 食材7');
     expect(
       describeFeed({ type: 'friend.flip', params: { byName: '甲', outcome: 'caught', coin: 50 }, at }, food),
-    ).toBe('甲 翻你的橱柜被老鼠夹夹住，掉了 50 银币给你');
+    ).toBe('甲 翻你的橱柜被老鼠夹夹住, 掉了 50 银币给你');
     expect(describeFeed({ type: 'dine.expelled', params: { byName: '乙', coin: 10 }, at }, food)).toBe(
-      '乙 把你请出了店，你赔了 10 银币',
+      '乙 把你请出了店, 你赔了 10 银币',
     );
     expect(describeFeed({ type: 'weird', params: {}, at }, food)).toBe('weird');
   });

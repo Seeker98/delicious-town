@@ -14,9 +14,9 @@ export default {
   levelUp: '熟练度升级了',
   bob: '海绵宝宝点了赞',
   cooked: (grade: string, lucky: boolean, num: string, price: string, extra: string) =>
-    `烹制完成: ${grade}${lucky ? ' (幸运)' : ''} ${num} 份，每份 ${price} 银币${extra ? `，${extra}` : ''}`,
+    `烹制完成: ${grade}${lucky ? ' (幸运)' : ''} ${num} 份, 每份 ${price} 银币${extra ? `, ${extra}` : ''}`,
   cookFailed: '烹制失败',
-  dumpConfirm: '倒掉后剩下的份数全部作废，确定吗？',
+  dumpConfirm: '倒掉后剩下的份数全部作废, 确定吗？',
   dumped: '已倒掉',
   dumpFailed: '倒掉失败',
   needStar: '1 星以后才能鉴定和烹制特色菜。',
@@ -30,13 +30,13 @@ export default {
   learned: (n: number) => `已学 (${n})`,
   /** 分页时：这一页几道 / 一共几道 */
   learnedOf: (shown: number, total: number) => `已学 (${shown} / ${total})`,
-  noLearned: '还没有学会特色菜: 在神殿鉴定神秘食谱得到残卷，3 张残卷就能学会。',
+  noLearned: '还没有学会特色菜: 在神殿鉴定神秘食谱得到残卷, 3 张残卷就能学会。',
   dishMeta: (level: number | undefined, road: string, levelName: string) =>
     `${level ?? '?'} 级 · ${road} · ${levelName}`,
   proficiency: (cur: string, next: string | null) => `熟练度 ${cur}${next ? ` / ${next}` : ' (满级)'}`,
   cook: '烹制',
   foods: '食材: ',
-  cookie: (n: number) => `用幸运饼干 (每批 1 个，持有 ${n})`,
+  cookie: (n: number) => `用幸运饼干 (每批 1 个, 持有 ${n})`,
   batches: (n: number) => `${n} 批`,
   /** 按级、按道分页（问题记录 414） */
   filter: {
@@ -60,7 +60,7 @@ export default {
   noRemnants: '没有残卷',
   groupTitle: (title: string, n: number) => `${title} (${n})`,
   learnAll: '全部学会',
-  learnAllTotal: (n: number) => `全部学会 (含其他页，共 ${n} 道)`,
+  learnAllTotal: (n: number) => `全部学会 (含其他页, 共 ${n} 道)`,
   remnantMeta: (level: number | undefined, road: string, coin: string) =>
     `${level ?? '?'} 级 · ${road} · 单价 ${coin}`,
   short: (n: number) => ` · 还差 ${n} 张`,
@@ -75,7 +75,7 @@ export default {
   hiphop: {
     kinds: { food: '食材', coin: '银币', diamond: '钻石' },
     replies: {
-      thanks: '感谢您的支持和鼓励，你们是我进步的动力！',
+      thanks: '感谢您的支持和鼓励, 你们是我进步的动力！',
       wanted: '这些正是我需要的！谢谢！',
     },
     stale: '这些食材看起来不怎么新鲜的样子。',
@@ -87,10 +87,10 @@ export default {
     want: '我想要 ',
     wantHave: (name: string, n: number) => `${name} (你有 ${n} 份)`,
     meta: (worth: string, mine: string) => `单次打赏价值达到 ${worth} 有机会捡到蟹币 · 本周你已打赏 ${mine}`,
-    noFood: '橱柜里没有食材，可以改用银币或钻石打赏',
+    noFood: '橱柜里没有食材, 可以改用银币或钻石打赏',
     pick: '请选择',
     foodOption: (name: string, n: number) => `${name} (${n})`,
-    noWant: '你没有他想要的食材，给别的食材不算打赏价值',
+    noWant: '你没有他想要的食材, 给别的食材不算打赏价值',
     numFood: '份数',
     tip: '打赏',
   },

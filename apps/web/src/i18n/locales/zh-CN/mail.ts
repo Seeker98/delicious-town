@@ -5,7 +5,7 @@ export default {
   claimFailed: '领取失败',
   deleteFailed: '删除失败',
   claimAllPartial: (claimed: number, failed: number) =>
-    `领了 ${claimed} 封，还有 ${failed} 封没领成，稍后再试`,
+    `领了 ${claimed} 封, 还有 ${failed} 封没领成, 稍后再试`,
   claimAll: '一键领取',
   empty: '没有邮件',
   claim: '领取',
@@ -13,7 +13,7 @@ export default {
   daysLeft: (n: number) => ` · 还剩 ${n} 天`,
   needLevel: (n: number) => `· 需 ${n} 级`,
   claimed: '· 已领取',
-  broken: '· 附件已失效，请联系运营',
+  broken: '· 附件已失效, 请联系运营',
   items: (text: string) => `附件: ${text}`,
   redeem: {
     placeholder: '输入兑换码',

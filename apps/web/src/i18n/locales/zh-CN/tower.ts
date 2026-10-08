@@ -13,13 +13,13 @@ export default {
     test: (win: boolean) => `试打: ${win ? '赢了' : '输了'}`,
     win: '你赢了',
     lose: '你输了',
-    renown: (n: number) => `，声望 ${n > 0 ? '+' : ''}${n}`,
-    rank: (n: number) => `，你现在是第 ${n} 名`,
+    renown: (n: number) => `, 声望 ${n > 0 ? '+' : ''}${n}`,
+    rank: (n: number) => `, 你现在是第 ${n} 名`,
     power: (name: string, power: number) => `${name} (厨力 ${power})`,
     /** 比分（问题记录 396）：我的票 : 对方的票 */
     votes: (me: number, them: number) => ` ${me}:${them}`,
     /** 票数持平、按上场评委的总分定胜负 */
-    onTotal: ' (票数相同，比总分)',
+    onTotal: ' (票数相同, 比总分)',
     judgesTitle: '评委点评',
     judges: {
       yardSis: '菜园姐',
@@ -37,7 +37,7 @@ export default {
     judgeOn: (name: string) => `【${name} 点评 我】: `,
     itemVerdict: { win: '大获全胜', close: '不分伯仲', lose: '全军覆没' },
     itemLine: (item: string, verdict: string) => `以[${item}]${verdict}`,
-    commentSep: '，',
+    commentSep: ', ',
     judgeScore: (me: string, them: string) => `比分 ${me}:${them}`,
     /** 双方比拼的特色菜（问题记录 431） */
     dishes: (me: string, them: string) => `【${me}】 VS 【${them}】`,
@@ -49,17 +49,17 @@ export default {
     verdict: { me: '投给你', them: '投给对方', tie: '平' },
     rulesTitle: '赛厨规则',
     rules: [
-      '双方按属性算出色、香、味、形、养五项: 色看厨艺、刀工，香看厨艺、调味，味看火候、调味，形看火候、刀工，养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好，每项多加的随机分越多。',
+      '双方按属性算出色、香、味、形、养五项: 色看厨艺、刀工, 香看厨艺、调味, 味看火候、调味, 形看火候、刀工, 养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好, 每项多加的随机分越多。',
     ],
     /** 每局怎么投票（backlog 396）：total 位评委里请 n 位，先拿到 need 票的赢 */
     rulesVote: (total: number, n: number, need: number) =>
-      `每局从 ${total} 位评委里随机请 ${n} 位，依次比双方在他关注的几项上的总分，高的一方得一票，先拿到 ${need} 票的赢；票数相同时比上场评委打的总分。`,
+      `每局从 ${total} 位评委里随机请 ${n} 位, 依次比双方在他关注的几项上的总分, 高的一方得一票, 先拿到 ${need} 票的赢；票数相同时比上场评委打的总分。`,
     /** 五项各看哪些属性按区服的评分权重拼（backlog 396）；rules 是没有权重时的说明 */
     rulesPart: (item: string, attrs: string[]) => `${item}看${attrs.join('、')}`,
     rulesMc: '在售的特色菜',
     rulesNone: (item: string) => `${item}只看随机分`,
     rulesWeights: (parts: string[]) =>
-      `双方按属性算出色、香、味、形、养五项: ${parts.join('，')}。创意越高、幸运越好，每项多加的随机分越多。`,
+      `双方按属性算出色、香、味、形、养五项: ${parts.join(', ')}。创意越高、幸运越好, 每项多加的随机分越多。`,
     rulesJudges: '评委和他们关注的项目: ',
     awards: (text: string) => `得到 ${text}`,
     /** 打赢长老掉的厨具（backlog 408） */
@@ -68,7 +68,7 @@ export default {
   /** 赛厨长老的装备（问题记录 408） */
   elder: {
     summary: (level: number, stress: number, pct: number) =>
-      `长老装备: ${level} 级，全套强化 +${stress}${pct > 0 ? `；正式挑战打赢有 ${pct}% 掉一件` : ''}`,
+      `长老装备: ${level} 级, 全套强化 +${stress}${pct > 0 ? `；正式挑战打赢有 ${pct}% 掉一件` : ''}`,
     points: (text: string) => `加点: ${text}`,
     piece: (name: string, stress: number, text: string) => `${name} +${stress}: ${text}`,
     attrs: (text: string) => `被挑战时: ${text}`,
@@ -81,7 +81,7 @@ export default {
     night: (floor: number, hour: number) => `${floor} 层以上 ${hour} 点以后才能挑战`,
     tired: '他今天已经累了',
     head: (power: number, left: number, total: number, tickets: number, strength: string) =>
-      `我的进攻厨力 ${power} · 今日还能挑战 ${left}/${total} 次 · 挑战券 ${tickets} (在仓库使用，当天多一次) · 体力 ${strength}`,
+      `我的进攻厨力 ${power} · 今日还能挑战 ${left}/${total} 次 · 挑战券 ${tickets} (在仓库使用, 当天多一次) · 体力 ${strength}`,
     name: (floor: number, name: string) => `${floor} 层 · ${name}`,
     power: (n: number) => `厨力 ${n}`,
     meta: (note: string, level: number, name: string, left: number, max: number) =>
@@ -106,7 +106,7 @@ export default {
     unranked: '未上榜',
     rankN: (n: number) => `第 ${n} 名`,
     head: (left: number, strength: number) => ` · 今日还能挑战 ${left} 次 · 每次 ${strength} 体力`,
-    weekly: '每周一 0 点换新榜: 第 1~3 名、4~8 名、9~15 名有名次礼包，前三名得厨神、厨圣、厨王',
+    weekly: '每周一 0 点换新榜: 第 1~3 名、4~8 名、9~15 名有名次礼包, 前三名得厨神、厨圣、厨王',
     slotName: (name: string, level: number) => `${name} (${level} 级)`,
     empty: '空',
     me: '我',
@@ -120,7 +120,7 @@ export default {
     got: (name: string, n: number) => `换到了 ${name}×${n}`,
     failed: '兑换失败',
     renown: (n: string) => `我的声望 ${n}`,
-    rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换，每人限拥有 1 个',
+    rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换, 每人限拥有 1 个',
     limitOne: '限拥有 1 个',
     meta: (renown: string, bought: number, limit: number) => `${renown} 声望 · 本周 ${bought}/${limit}`,
     btn: '兑换',

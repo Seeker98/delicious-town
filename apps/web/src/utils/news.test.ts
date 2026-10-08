@@ -35,10 +35,10 @@ describe('新闻文案', () => {
 
   it('猜酒杯改版（问题记录 427-5）：新闻写闯过几轮；改版前的旧新闻照旧写连中几次', () => {
     expect(newsText(n('bar.cup', { round: 3, cups: 5 }), names)).toBe(
-      '小王的店在酒吧猜酒杯连闯 3 轮，从 5 个杯子里猜中了骰子',
+      '小王的店在酒吧猜酒杯连闯 3 轮, 从 5 个杯子里猜中了骰子',
     );
     expect(newsText(n('bar.cup.big', { round: 4, cups: 7 }), names)).toBe(
-      '小王的店在酒吧猜酒杯闯过全部 4 轮，从 7 个杯子里猜中了骰子！',
+      '小王的店在酒吧猜酒杯闯过全部 4 轮, 从 7 个杯子里猜中了骰子！',
     );
     expect(newsText(n('bar.cup', { times: 4, lucky: false }), names)).toBe('小王的店在酒吧猜酒杯连中 4 次');
   });
@@ -52,7 +52,7 @@ describe('新闻文案', () => {
 
   it('小镇发展基金（240-2）：按档位选句子，店名带【】，金额按实际；不认识的档位用通用句', () => {
     expect(newsText(n('fund.big', { tier: 'A', coin: 10_000_000 }), names)).toBe(
-      '👑 基石资本强势进场！【小王的店】一次性注资 10,000,000 银币，斩获小镇发展基金 A 级领投席位！',
+      '👑 基石资本强势进场！【小王的店】一次性注资 10,000,000 银币, 斩获小镇发展基金 A 级领投席位！',
     );
     expect(newsText(n('fund.deposit', { tier: 'B', coin: 3_000_000 }), names)).toBe(
       '大手笔！【小王的店】成功锁仓 3,000,000 银币小镇发展基金 B 类份额！',
@@ -85,7 +85,7 @@ describe('新闻文案', () => {
     );
     expect(newsText(n('kuji.big', { tier: 'A' }), names)).toBe('小王的店在一番赏抽中了 A 赏！');
     expect(newsText(n('kuji.big', { tier: 'last' }), names)).toBe(
-      '小王的店抽走了一番赏的最后一张签，拿下最后赏！',
+      '小王的店抽走了一番赏的最后一张签, 拿下最后赏！',
     );
     expect(newsText(n('kuji.win', { tier: 'B' }), names)).toBe('小王的店在一番赏抽中了 B 赏');
   });
@@ -93,16 +93,16 @@ describe('新闻文案', () => {
   it('事件预测开奖（问题记录 268）：结果、参与和押对的店数、派出银币；作废写退款比例；没人押对时不写派出', () => {
     const r = (p: Record<string, unknown>) => newsText({ ...n('predict.result', p), restName: null }, names);
     expect(r({ title: '明天会下雨吗', outcome: true, players: 12, winners: 7, paid: 85000 })).toBe(
-      '事件预测「明天会下雨吗」开奖: 结果为是。12 家店参与，7 家押对，共派出 85,000 银币',
+      '事件预测「明天会下雨吗」开奖: 结果为是。12 家店参与, 7 家押对, 共派出 85,000 银币',
     );
     expect(r({ title: '蟹老板去三街吗', outcome: false, players: 3, winners: 0, paid: 0 })).toBe(
-      '事件预测「蟹老板去三街吗」开奖: 结果为否。3 家店参与，没有人押对',
+      '事件预测「蟹老板去三街吗」开奖: 结果为否。3 家店参与, 没有人押对',
     );
     expect(r({ title: '没人玩', outcome: true, players: 0, winners: 0, paid: 0 })).toBe(
       '事件预测「没人玩」开奖: 结果为是',
     );
     expect(r({ title: '题目写错了', outcome: null, voidRatio: 0.85, players: 4 })).toBe(
-      '事件预测「题目写错了」已作废，参与的店按净投入的 85% 退款',
+      '事件预测「题目写错了」已作废, 参与的店按净投入的 85% 退款',
     );
     // 自动题按题型和参数渲染题目（问题记录 272）
     expect(
@@ -124,7 +124,7 @@ describe('新闻文案', () => {
       `小王的店通过打赏获得 道具${SHARED_GOODS.krabCoin}×4`,
     );
     expect(newsText(n('hiphop.weekly', { rank: 2, goodsId: 109 }), names)).toBe(
-      '恭喜小王的店在每周打赏中获得第 2 名，奖励 道具109 (160 小时)',
+      '恭喜小王的店在每周打赏中获得第 2 名, 奖励 道具109 (160 小时)',
     );
     expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜: 食材3、食材5');
   });
@@ -149,7 +149,7 @@ describe('新闻文案', () => {
 
   it('换天气：雷神锤写明是谁；自动轮换没有店名', () => {
     expect(newsText(n('weather.change', { from: 1, to: 13, by: 7 }), names)).toBe(
-      '小王的店使用雷神锤，晴转暴雨了',
+      '小王的店使用雷神锤, 晴转暴雨了',
     );
     expect(newsText(n('weather.change', { from: 1, to: 13 }, null), names)).toBe('天气变了: 晴转暴雨');
   });

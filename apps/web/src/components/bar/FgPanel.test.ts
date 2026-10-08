@@ -28,7 +28,7 @@ describe('FgPanel', () => {
     await flushPromises();
     expect(endpoints.barFg).toHaveBeenCalledWith(0);
     expect(w.find('[data-testid="fg-result"]').text()).toBe(
-      '你出石头，对方出剪刀: 幸运地赢了 (2 连胜)，得到 银币 200',
+      '你出石头, 对方出剪刀: 幸运地赢了 (2 连胜), 得到 银币 200',
     );
     expect(w.emitted('reload')).toHaveLength(1);
   });
@@ -45,7 +45,7 @@ describe('FgPanel', () => {
     const w = mount(FgPanel, { props: { data: barData() } });
     await w.find('[data-testid="fg-2"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出布，对方出布: 平局，得到银币 30');
+    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出布, 对方出布: 平局, 得到银币 30');
     vi.mocked(endpoints.barFg).mockResolvedValue({
       result: 'lose',
       barHand: 2,
@@ -56,7 +56,7 @@ describe('FgPanel', () => {
     });
     await w.find('[data-testid="fg-0"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出石头，对方出布: 你输了');
+    expect(w.find('[data-testid="fg-result"]').text()).toBe('你出石头, 对方出布: 你输了');
   });
 
   it('礼券不够时按钮灰掉并写明原因', () => {

@@ -3,10 +3,10 @@ export default {
   loadFailed: '获取餐厅信息失败',
   plankton: {
     title: '痞老板赖在店里不走！',
-    body1: '他带来的勋章在赶走前一直有效: 上座率 +50%，但',
+    body1: '他带来的勋章在赶走前一直有效: 上座率 +50%, 但',
     bold: '挑剔率 -120%',
     body2:
-      ' (挑剔顾客不来，没人点菜，只能收基础银币)，每桌耗油 +5。偶尔他本人坐下吃饭时那一桌收益 ×5。赶走后一段时间内他不会再选你的店。',
+      ' (挑剔顾客不来, 没人点菜, 只能收基础银币), 每桌耗油 +5。偶尔他本人坐下吃饭时那一桌收益 ×5。赶走后一段时间内他不会再选你的店。',
     byStrength: '花体力赶走',
     byBook: '用蟹黄堡秘方',
     failed: '赶走失败',
@@ -46,11 +46,11 @@ export default {
   activationClaimable: '有奖励可领',
   dining: {
     before: '正在',
-    after: (table: number, minutes: number) => `第 ${table} 桌白食，已 ${minutes} 分钟`,
+    after: (table: number, minutes: number) => `第 ${table} 桌白食, 已 ${minutes} 分钟`,
     end: '结束白食',
     endFailed: '结束白食失败',
   },
-  guideHint: '新手看这里，有新手兑换码',
+  guideHint: '新手看这里, 有新手兑换码',
   guideCodes: '有可以领的新手兑换码',
   devices: '设施',
   notOpened: '未开通',
@@ -58,7 +58,7 @@ export default {
   empty: '空',
   devicesFailed: '读取设施失败',
   replaceConfirm: (name: string, remain: string) =>
-    `${name}还没到期 (${remain})，替换后不会退还，确定替换吗？`,
+    `${name}还没到期 (${remain}), 替换后不会退还, 确定替换吗？`,
   placeFailed: '摆放失败',
   plaque2: {
     title: '开通第二块牌匾位',
@@ -70,10 +70,10 @@ export default {
     failed: '开通失败',
   },
   pick: '选择要摆放的设施',
-  noChoices: '仓库里没有能放在这里的设施，可以去商店买。',
+  noChoices: '仓库里没有能放在这里的设施, 可以去商店买。',
   switches: '经营开关',
   promo: '大促活动',
-  promoHint: '八折促销: 上座率大增，收益略降',
+  promoHint: '八折促销: 上座率大增, 收益略降',
   cte: '银币转经验',
   cteHint: '需要阿波罗雕像',
   setFailed: '设置失败',
@@ -82,7 +82,7 @@ export default {
   tier: (n: number) => `${n} 档`,
   whatIs: '这是什么？',
   cookfoodsHint: (per: number) =>
-    `挑剔顾客点菜时，如果橱柜里这道菜的每种食材都还有至少 ${per}×N 个 (N 是档位)，就直接消耗这些食材，额外得到经验、名气和掉落；档位越高，留给自己用的食材越多。选“关闭”则不消耗。`,
+    `挑剔顾客点菜时, 如果橱柜里这道菜的每种食材都还有至少 ${per}×N 个 (N 是档位), 就直接消耗这些食材, 额外得到经验、名气和掉落；档位越高, 留给自己用的食材越多。选“关闭”则不消耗。`,
   effects: '生效的加成',
   effectsCount: (n: number, summary: string) => `${n} 项: ${summary}`,
   none: '暂无',

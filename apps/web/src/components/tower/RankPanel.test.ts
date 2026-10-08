@@ -63,7 +63,7 @@ describe('RankPanel', () => {
     await w.find('[data-testid="rc-10"]').trigger('click');
     await flushPromises();
     expect(endpoints.rankChallenge).toHaveBeenCalledWith(10);
-    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1，声望 +2，你现在是第 10 名');
+    expect(w.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1, 声望 +2, 你现在是第 10 名');
   });
 
   it('自己的格子标"我"，排在我后面的不能挑战', async () => {

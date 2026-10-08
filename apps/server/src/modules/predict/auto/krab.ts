@@ -21,7 +21,7 @@ export const krab: AutoKind = {
     const tomorrow = addDays(c.day, 1);
     return {
       title: `明天蟹老板会在 ${from}~${to} 号街出现吗`,
-      description: `以明天 ${w.krabHour} 点系统刷新的位置为准，之后被驱赶改变的不算。`,
+      description: `以明天 ${w.krabHour} 点系统刷新的位置为准, 之后被驱赶改变的不算。`,
       p0: SPAN / total,
       closeAt: gameTime(c.day, 23, 50),
       resolveAt: gameTime(tomorrow, w.krabHour),

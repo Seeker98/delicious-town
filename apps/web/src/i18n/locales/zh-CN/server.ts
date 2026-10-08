@@ -15,29 +15,29 @@ export default {
   mail: table<MailText>()({
     'activity.unclaimed': {
       title: (p) => `《${str(p.activity)}》未领取奖励`,
-      body: () => '活动结束时你还有这些奖励没有领取，现在通过邮件补发给你。',
+      body: () => '活动结束时你还有这些奖励没有领取, 现在通过邮件补发给你。',
     },
     'activity.rank': {
       title: (p) => `《${str(p.activity)}》贡献榜第 ${n(p, 'rank')} 名奖励`,
-      body: () => '感谢你为全服合力做出的贡献，这是你的名次奖励。',
+      body: () => '感谢你为全服合力做出的贡献, 这是你的名次奖励。',
     },
     grant: { title: () => '系统补偿', body: null },
     'quest.compensate': {
       title: () => '任务奖励调整补发',
-      body: () => '升到一星、二星的任务奖励调整了，补上你还没拿到的道具。',
+      body: () => '升到一星、二星的任务奖励调整了, 补上你还没拿到的道具。',
     },
-    'invite.welcome': { title: () => '欢迎来到小镇', body: () => '你是被朋友邀请来的，送你一份新手礼包。' },
+    'invite.welcome': { title: () => '欢迎来到小镇', body: () => '你是被朋友邀请来的, 送你一份新手礼包。' },
     'invite.reward': {
       title: () => '邀请奖励',
-      body: (p) => `你邀请的「${str(p.rest)}」达到 ${n(p, 'level')} 级，感谢你把朋友带到小镇！`,
+      body: (p) => `你邀请的「${str(p.rest)}」达到 ${n(p, 'level')} 级, 感谢你把朋友带到小镇！`,
     },
     'hat.upgrade': {
       title: () => '赞助帽子升级',
-      body: (p) => `餐厅升到六星，${str(p.jade)}升级为${str(p.xuan)}。`,
+      body: (p) => `餐厅升到六星, ${str(p.jade)}升级为${str(p.xuan)}。`,
     },
     'report.handled': {
       title: () => '举报结果',
-      body: (p) => `你举报的${str(p.targetName)}已处理，感谢你维护小镇。`,
+      body: (p) => `你举报的${str(p.targetName)}已处理, 感谢你维护小镇。`,
     },
     'report.rejected': { title: () => '举报结果', body: (p) => `你举报的${str(p.targetName)}经核实未违规。` },
     'report.penalty': {
@@ -47,7 +47,7 @@ export default {
         // 内容已经不在（action = none）时不说"因违规已记录违规"（backlog 6B-1）
         const what = actions[str(p.action)]
           ? `因违规已被${actions[str(p.action)]}`
-          : '被认定违规，已记录在案';
+          : '被认定违规, 已记录在案';
         const ban =
           p.banDays === null || p.banDays === undefined
             ? ''
@@ -70,7 +70,7 @@ export default {
   predict: {
     krab: {
       title: (from: number, to: number) => `明天蟹老板会在 ${from}~${to} 号街出现吗`,
-      desc: (hour: number) => `以明天 ${hour} 点系统刷新的位置为准，之后被驱赶改变的不算。`,
+      desc: (hour: number) => `以明天 ${hour} 点系统刷新的位置为准, 之后被驱赶改变的不算。`,
       note: (day: string, hour: number, street: number) => `${day} ${hour} 点蟹老板刷新在 ${street} 号街`,
     },
     hiphop: {
@@ -82,37 +82,37 @@ export default {
     },
     market: {
       title: (hour: number, level: number) => `今天 ${hour} 点的日常货架会出现 ${level} 级稀有食材吗`,
-      desc: (hour: number) => `以 ${hour} 点系统进货的日常货架为准，玩家手动进的货不算。`,
+      desc: (hour: number) => `以 ${hour} 点系统进货的日常货架为准, 玩家手动进的货不算。`,
       yes: (day: string, hour: number, level: number, foods: string) =>
         `${day} ${hour} 点日常货架上了 ${level} 级稀有食材: ${foods}`,
       no: (day: string, hour: number, level: number) => `${day} ${hour} 点日常货架没有 ${level} 级稀有食材`,
     },
     weather: {
       title: (hour: number, type: string) => `今天 ${hour} 点自动轮换的天气是${type}类吗`,
-      desc: (hour: number) => `以 ${hour} 点系统自动轮换出的天气为准，之后有人用雷神锤改的不算。`,
+      desc: (hour: number) => `以 ${hour} 点系统自动轮换出的天气为准, 之后有人用雷神锤改的不算。`,
       note: (day: string, hour: number, weather: string, type: string) =>
         `${day} ${hour} 点自动轮换的天气是${weather} (${type}类)`,
-      hammer: (weather: string) => `；之后有人用雷神锤改成了${weather}，按题目规则不算`,
+      hammer: (weather: string) => `；之后有人用雷神锤改成了${weather}, 按题目规则不算`,
       /** 天气大类（下标 = 类型） */
       types: ['', '晴', '雨', '雪', '风沙雾霾'],
     },
     stats: {
       title: '今天全服营业银币会超过昨天吗',
       desc: (close: number) =>
-        `以今天全天全服餐厅的营业银币为准，明天 0 点后判定；严格多于昨天才算"是"。${close} 点截止交易。`,
+        `以今天全天全服餐厅的营业银币为准, 明天 0 点后判定；严格多于昨天才算"是"。${close} 点截止交易。`,
       note: (day: string, today: string, prevDay: string, yesterday: string) =>
-        `${day} ${today}，${prevDay} ${yesterday}`,
+        `${day} ${today}, ${prevDay} ${yesterday}`,
     },
-    voidMissing: '数据缺失，自动作废',
+    voidMissing: '数据缺失, 自动作废',
   },
   /** 广场 NPC 台词（照原版 NPCTools） */
   talk: {
     bigEater: '你真有品味! 我也是这样觉得的! 哈哈哈!',
-    carmenFirst: '第一次见面，这张神秘食材兑换券送你。',
+    carmenFirst: '第一次见面, 这张神秘食材兑换券送你。',
     bigEaterFirst: '你! 很有个性是吧!',
     wenjie: '用了飘柔就明显气质上来了!',
     bro13: '爱就直接去做!!!',
-    mayorRight: '谢谢你，我现在就去找他，好好弥补他！',
+    mayorRight: '谢谢你, 我现在就去找他, 好好弥补他！',
     mayorWrong: '你觉得乱说一个位置我就会信吗！',
   },
   /** 外卖配送失败的原因（下标 = 服务端给的序号，原版 takeawayDeliveryFailRessonList） */
@@ -130,7 +130,7 @@ export default {
   appraiseFail: [
     '这只是一堆厕纸而已',
     '上面只有一些看不懂的涂鸦',
-    '字迹被油渍糊住了，什么也看不清',
+    '字迹被油渍糊住了, 什么也看不清',
     '原来是一张过期的菜单',
   ] as string[],
   /** 加成来源的名字（设施、套装、道具的名字来自目录） */

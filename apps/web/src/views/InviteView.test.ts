@@ -36,7 +36,7 @@ describe('InviteView', () => {
   it('规则文案通顺（问题记录 166）', async () => {
     const w = mount(InviteView);
     await flushPromises();
-    expect(w.text()).toContain('好友验证邮箱后，店铺升到 10 级、再升到 30 级时，你各得一份奖励');
+    expect(w.text()).toContain('好友验证邮箱后, 店铺升到 10 级、再升到 30 级时, 你各得一份奖励');
     expect(w.text()).toContain('每月最多计 20 人');
   });
 });

@@ -53,7 +53,7 @@ export default {
     door: '門',
     doorCoin: (n: string) => `${n} 銀`,
     doorOwned: '已擁有',
-    doorHint: '每扇門第一次換上時付銀幣，以後換回來免費',
+    doorHint: '每扇門第一次換上時付銀幣, 以後換回來免費',
     doorSet: '換門成功',
     doorFailed: '換門失敗',
     notice: '公告欄',
@@ -71,7 +71,7 @@ export default {
     owned: '已擁有',
     buyConfirm: (title: string, coin: string) =>
       `花 ${coin} 銀幣購買限定稱號「${title}」？下架後就買不到了。`,
-    bought: (title: string) => `買下了限定稱號「${title}」，可以在下面選擇展示`,
+    bought: (title: string) => `買下了限定稱號「${title}」, 可以在下面選擇展示`,
     buyFailed: '購買稱號失敗',
   },
   tasks: {
@@ -111,7 +111,7 @@ export default {
     lockedLevel: (n: number) => `🔒 ${n} 級解鎖`,
     lockedDays: (n: number) => `🔒 註冊滿 ${n} 天解鎖`,
     lockedEmail: '🔒 驗證郵箱後解鎖',
-    lockedFrozen: '🔒 交易所已被凍結，暫時不能做',
+    lockedFrozen: '🔒 交易所已被凍結, 暫時不能做',
     noActivity: '🔒 現在沒有進行中的限時活動',
     lockedStar: (n: number) => `🔒 ${n} 星解鎖`,
     claimedTask: '✓ 已領',

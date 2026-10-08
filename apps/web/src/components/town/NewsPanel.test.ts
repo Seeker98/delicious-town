@@ -83,11 +83,11 @@ describe('NewsPanel', () => {
       const w = mount(NewsPanel, { props: { data } });
       await flushPromises();
       await w.find('[data-testid="bc-input"]').setValue('你好');
-      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 2 秒');
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中, 还要等 2 秒');
       expect(w.find('[data-testid="bc-send"]').attributes('disabled')).toBeDefined();
       vi.advanceTimersByTime(1000);
       await nextTick();
-      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中，还要等 1 秒');
+      expect(w.find('[data-testid="bc-block"]').text()).toBe('广播冷却中, 还要等 1 秒');
       vi.advanceTimersByTime(1000);
       await nextTick();
       expect(w.find('[data-testid="bc-block"]').exists()).toBe(false);

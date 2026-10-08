@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    zhComma1008:
+      'Texto en chino: las comas pasan a ser una coma inglesa seguida de un espacio, para ahorrar sitio',
     gemStrength1008:
       'Página de gemas: el «Energía: N» del final de la explicación ahora va en su propia línea, «Mi energía: N», para dejar claro que es tu energía actual',
     perf1008:

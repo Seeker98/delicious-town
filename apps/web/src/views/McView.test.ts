@@ -297,7 +297,7 @@ describe('McView', () => {
     await w.find('[data-testid="mc-road-2"]').trigger('click');
     expect(ids(w, 'remnant-num')).toEqual(['remnant-num-5']);
     // “全部学会”会学别的页的，按钮上写明总数
-    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会 (含其他页，共 2 道)');
+    expect(w.find('[data-testid="learn-all"]').text()).toBe('全部学会 (含其他页, 共 2 道)');
   });
 
   it('选择记在本机，重新进页面还在；存的值不对时回到全部', async () => {

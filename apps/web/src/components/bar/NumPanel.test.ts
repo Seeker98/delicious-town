@@ -28,7 +28,7 @@ describe('NumPanel', () => {
     await w.find('[data-testid="num-spin"]').trigger('click');
     await flushPromises();
     expect(endpoints.barNum).toHaveBeenCalledWith(20);
-    expect(w.find('[data-testid="num-result"]').text()).toBe('转到了 18，就差一丝丝了');
+    expect(w.find('[data-testid="num-result"]').text()).toBe('转到了 18, 就差一丝丝了');
     expect(w.emitted('reload')).toHaveLength(1);
   });
 
@@ -44,7 +44,7 @@ describe('NumPanel', () => {
     const w = mount(NumPanel, { props: { data: barData() } });
     await w.find('[data-testid="num-spin"]').trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="num-result"]').text()).toBe('中了！连续中奖 2 次，得到 道具5×1');
+    expect(w.find('[data-testid="num-result"]').text()).toBe('中了！连续中奖 2 次, 得到 道具5×1');
   });
 
   it('礼券不够 8 张时按钮灰掉并写明原因', () => {

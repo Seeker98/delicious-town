@@ -8,6 +8,7 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    zhComma1008: 'Chinese text: commas are now an English comma followed by a space, to save room',
     gemStrength1008:
       'Gems page: the “Stamina: N” at the end of the explanation is now its own line, “My Stamina: N”, to make clear it’s your current Stamina',
     perf1008:

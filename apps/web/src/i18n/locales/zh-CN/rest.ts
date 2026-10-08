@@ -52,7 +52,7 @@ export default {
     door: '门',
     doorCoin: (n: string) => `${n} 银`,
     doorOwned: '已拥有',
-    doorHint: '每扇门第一次换上时付银币，以后换回来免费',
+    doorHint: '每扇门第一次换上时付银币, 以后换回来免费',
     doorSet: '换门成功',
     doorFailed: '换门失败',
     notice: '公告栏',
@@ -70,7 +70,7 @@ export default {
     owned: '已拥有',
     buyConfirm: (title: string, coin: string) =>
       `花 ${coin} 银币购买限定称号「${title}」？下架后就买不到了。`,
-    bought: (title: string) => `买下了限定称号「${title}」，可以在下面选择展示`,
+    bought: (title: string) => `买下了限定称号「${title}」, 可以在下面选择展示`,
     buyFailed: '购买称号失败',
   },
   tasks: {
@@ -110,7 +110,7 @@ export default {
     lockedLevel: (n: number) => `🔒 ${n} 级解锁`,
     lockedDays: (n: number) => `🔒 注册满 ${n} 天解锁`,
     lockedEmail: '🔒 验证邮箱后解锁',
-    lockedFrozen: '🔒 交易所已被冻结，暂时不能做',
+    lockedFrozen: '🔒 交易所已被冻结, 暂时不能做',
     noActivity: '🔒 现在没有进行中的限时活动',
     lockedStar: (n: number) => `🔒 ${n} 星解锁`,
     claimedTask: '✓ 已领',

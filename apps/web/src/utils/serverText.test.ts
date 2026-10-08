@@ -41,17 +41,17 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
   it('简中：系统邮件和服务端原来写的中文一致；没有模板时用原文', () => {
     expect(mailTitle(mail('activity.rank', { activity: '合力', rank: 2 }))).toBe('《合力》贡献榜第 2 名奖励');
     expect(mailBody(mail('invite.reward', { rest: '小店', level: 10 }))).toBe(
-      '你邀请的「小店」达到 10 级，感谢你把朋友带到小镇！',
+      '你邀请的「小店」达到 10 级, 感谢你把朋友带到小镇！',
     );
     expect(mailBody(mail('hat.upgrade', { name: '大橘' }))).toBe(
-      '餐厅升到六星，玉•大橘之帽升级为铉•大橘之帽。',
+      '餐厅升到六星, 玉•大橘之帽升级为铉•大橘之帽。',
     );
     expect(
       mailBody(mail('report.penalty', { target: 'notice', action: 'clear', banDays: 7, note: '发广告' })),
     ).toBe('你的店铺公告因违规已被清空。账号封禁 7 天。\n说明: 发广告');
     expect(mailBody(mail('report.penalty', { target: 'post', action: 'none', banDays: 0, note: 'x' }))).toBe(
       // 内容已经不在（action = none）：以前读作"因违规已记录违规"（backlog 6B-1）
-      '你的帖子被认定违规，已记录在案。账号永久封禁。\n说明: x',
+      '你的帖子被认定违规, 已记录在案。账号永久封禁。\n说明: x',
     );
     // 系统补偿的说明是管理员写的：正文用原文
     expect(mailTitle(mail('grant'))).toBe('系统补偿');
@@ -62,7 +62,7 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
   it('简中：自动预测题的题目、说明、判定依据和服务端原来写的一致', () => {
     const krab = { kind: 'krab', title: '旧', description: '旧说明', params: { from: 3, to: 8, hour: 9 } };
     expect(predictTitle(krab)).toBe('明天蟹老板会在 3~8 号街出现吗');
-    expect(predictDesc(krab)).toBe('以明天 9 点系统刷新的位置为准，之后被驱赶改变的不算。');
+    expect(predictDesc(krab)).toBe('以明天 9 点系统刷新的位置为准, 之后被驱赶改变的不算。');
     // 旧题没存 hour：说明用原文
     expect(predictDesc({ ...krab, params: { from: 3, to: 8 } })).toBe('旧说明');
     expect(
@@ -80,7 +80,7 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
         },
         names,
       ),
-    ).toBe('11月3日 15 点自动轮换的天气是天气2 (雨类)；之后有人用雷神锤改成了天气5，按题目规则不算');
+    ).toBe('11月3日 15 点自动轮换的天气是天气2 (雨类)；之后有人用雷神锤改成了天气5, 按题目规则不算');
     expect(
       predictNote(
         {
@@ -100,9 +100,9 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
         },
         names,
       ),
-    ).toBe('11月3日 1,000，11月2日 1,000');
+    ).toBe('11月3日 1,000, 11月2日 1,000');
     expect(predictNote({ kind: 'market', resultNote: '旧', resultParams: { void: 'missing' } }, names)).toBe(
-      '数据缺失，自动作废',
+      '数据缺失, 自动作废',
     );
     expect(predictTitle({ kind: 'hiphop', title: '旧', params: { place: 9 } })).toBe(
       '明天嘻哈男孩会去某家玩家餐厅吗',

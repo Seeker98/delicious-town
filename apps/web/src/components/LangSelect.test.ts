@@ -69,7 +69,7 @@ describe('语言选择（问题记录 272）', () => {
     await w.get('[data-testid="lang-select"]').setValue('es');
     await flushPromises();
     expect(useLocaleStore().locale).toBe('zh-CN');
-    expect(useToastStore().items.at(-1)!.text).toBe('切换语言失败，请检查网络后再试');
+    expect(useToastStore().items.at(-1)!.text).toBe('切换语言失败, 请检查网络后再试');
     expect((w.get('[data-testid="lang-select"]').element as HTMLSelectElement).value).toBe('zh-CN');
   });
 });
@@ -163,6 +163,6 @@ describe('backlog 多语言：存到账号、跟随账号失败时提示', () =>
     vi.spyOn(LOADERS, 'zh-TW').mockRejectedValueOnce(new Error('offline'));
     await useSessionStore().applyMe(me('zh-TW'));
     expect(useLocaleStore().locale).toBe('zh-CN');
-    expect(useToastStore().items.map((x) => x.text)).toContain('切换语言失败，请检查网络后再试');
+    expect(useToastStore().items.map((x) => x.text)).toContain('切换语言失败, 请检查网络后再试');
   });
 });

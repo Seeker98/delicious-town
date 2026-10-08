@@ -70,7 +70,7 @@ describe('报错文案按语言（问题记录 272）', () => {
         have === undefined ? { reason: 'star', need: 4 } : { reason: 'star', need: 4, have },
       );
     expect(star()).toBe('星级不够 (需要 4 星)');
-    expect(star(3)).toBe('星级不够 (需要 4 星，当前 3 星)');
+    expect(star(3)).toBe('星级不够 (需要 4 星, 当前 3 星)');
     await useLocaleStore().set('en');
     expect(star(1)).toBe('Not enough stars (4 stars required, you have 1 star)');
     await useLocaleStore().set('fr');

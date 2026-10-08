@@ -6,9 +6,9 @@ export default {
   cancel: '取消',
   language: '語言',
   loadFailed: '讀取失敗',
-  langLoadFailed: '切換語言失敗，請檢查網路後再試',
+  langLoadFailed: '切換語言失敗, 請檢查網路後再試',
   /** 已切換，但沒存到賬號（backlog 多語言） */
-  langSaveFailed: '語言已切換，但沒能儲存到賬號，下次重新整理會回到原來的語言',
+  langSaveFailed: '語言已切換, 但沒能儲存到賬號, 下次重新整理會回到原來的語言',
   collapse: '收起',
   expand: '展開',
   prevPage: '上一頁',

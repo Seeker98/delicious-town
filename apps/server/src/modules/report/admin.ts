@@ -214,11 +214,11 @@ export function createAdminReports(game: Game) {
             note: b.note,
           },
         });
-        await mailReporters(o, c, `你举报的${typeName}已处理，感谢你维护小镇。`, 'report.handled');
+        await mailReporters(o, c, `你举报的${typeName}已处理, 感谢你维护小镇。`, 'report.handled');
         const ban =
           b.banDays === undefined ? '' : b.banDays === 0 ? '账号永久封禁。' : `账号封禁 ${b.banDays} 天。`;
         // 内容已经不在（action = none）时不说"因违规已记录违规"（backlog 6B-1）
-        const what = action === 'none' ? '被认定违规，已记录在案' : `因违规已被${ACTION_TEXT[action]}`;
+        const what = action === 'none' ? '被认定违规, 已记录在案' : `因违规已被${ACTION_TEXT[action]}`;
         await sendMail(o.tx, {
           scope: 'rest',
           shardId: c.shard_id,

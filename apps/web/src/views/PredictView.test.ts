@@ -121,8 +121,8 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(help).toContain('手续费 2%');
     expect(help).toContain('作废');
     const hold = w.get('[data-testid="pd-hold"]').text();
-    expect(hold).toContain('结果为是: 得 4,000 银币，盈亏 +1,500');
-    expect(hold).toContain('结果为否: 得 1,000 银币，盈亏 -1,500');
+    expect(hold).toContain('结果为是: 得 4,000 银币, 盈亏 +1,500');
+    expect(hold).toContain('结果为否: 得 1,000 银币, 盈亏 -1,500');
     expect(hold).toContain('净投入 2,500');
   });
 
@@ -183,8 +183,8 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(mine).toContain('卖出否 2 份');
     expect(mine).toContain('买入是 3 份');
     // 每笔写每份均价和实际花费 / 得到（含手续费）（问题记录 264）
-    expect(mine).toContain('每份约 536，得到 1,049');
-    expect(mine).toContain('每份约 547，花费 1,673');
+    expect(mine).toContain('每份约 536, 得到 1,049');
+    expect(mine).toContain('每份约 547, 花费 1,673');
   });
 
   it('价格走势不到两个点时不画空图，写一行提示（问题记录 278）', async () => {
@@ -246,7 +246,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(help).toContain('止盈');
     const trades = w.get('[data-testid="pd-trades"]').text();
     expect(trades).toContain('全服最近成交');
-    expect(trades).toContain('买入是 2 份，每份约 550');
+    expect(trades).toContain('买入是 2 份, 每份约 550');
     expect(trades).toContain('成交后"是" 63%');
   });
 
@@ -261,7 +261,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await w.get('[data-testid="pd-ended-2"]').trigger('click');
     await flushPromises();
     const r = w.get('[data-testid="pd-result"]').text();
-    expect(r).toContain('已作废: 退回净投入的 85%，共 1,700');
+    expect(r).toContain('已作废: 退回净投入的 85%, 共 1,700');
     expect(r).toContain('本局盈亏 -300');
   });
 
@@ -325,7 +325,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await flushPromises();
     const seen = predictQuote({ y: 55, n: 0, b: 100 }, 'no', 'buy', 3, { unit: 1000, feeRate: 0.02 }).total;
     expect(endpoints.predictTrade).toHaveBeenCalledWith(1, { side: 'no', dir: 'buy', qty: 3, limit: seen });
-    expect(useToastStore().items.at(-1)?.text).toContain('买入否 3 份，花费 1,224 银币');
+    expect(useToastStore().items.at(-1)?.text).toContain('买入否 3 份, 花费 1,224 银币');
     expect(endpoints.predictList).toHaveBeenCalledTimes(2);
   });
 
@@ -369,7 +369,7 @@ describe('出题人不能交易自己出的题（backlog 238-1）', () => {
     await flushPromises();
     await w.get('[data-testid="pd-event-1"]').trigger('click');
     await flushPromises();
-    expect(w.get('[data-testid="pd-own"]').text()).toBe('这道题是你出的，不能交易');
+    expect(w.get('[data-testid="pd-own"]').text()).toBe('这道题是你出的, 不能交易');
     expect(w.get('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
     vi.mocked(endpoints.predictDetail).mockResolvedValue(detail);
     const other = mount(PredictView);
@@ -406,7 +406,7 @@ describe('backlog 238-1：事件合约页', () => {
     // 详情里已持有"是" 4 份
     const w = await open(list({ maxHold: 10 }));
     await w.find('[data-testid="pd-qty"]').setValue('7');
-    expect(w.find('[data-testid="pd-limit"]').text()).toContain('每边最多持有 10 份，还能买 6 份');
+    expect(w.find('[data-testid="pd-limit"]').text()).toContain('每边最多持有 10 份, 还能买 6 份');
     expect(w.find('[data-testid="pd-submit"]').attributes('disabled')).toBeDefined();
     await w.find('[data-testid="pd-qty"]').setValue('6');
     expect(w.find('[data-testid="pd-limit"]').exists()).toBe(false);

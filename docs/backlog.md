@@ -303,3 +303,9 @@
 ## 宝石页体力（问题记录 532）终审小问题
 
 - 英文里还有几处小写的 stamina（equip.ts 的 gemOption“costs N stamina”、guide.ts“cost stamina; stamina cards”），别处都写大写 Stamina
+
+## 简中逗号改英文逗号加空格（问题记录 534）终审小问题
+
+- 语言包没有防回退的检查：配置数据已有 build.test 核对，简中语言包可以仿照 parens.test 用 AST 查字符串里不再出现“，”；parens.test 的 `/\) [，。：；！？]/` 里的“，”已不会出现，可以顺手更新
+- 千分位和分隔逗号挨在一起不好读：竞猜判定依据“11月3日 1,000, 11月2日 1,000”（server.ts、predict/auto/stats.ts）、竞猜“每份约 1,234, 花费 12,340”（predict.ts）；可以改用“；”或“ · ”分隔
+- streetDesc.ts 的 join 不再用到 lang 参数，可以去掉

@@ -23,15 +23,15 @@ export default {
   /** 问题记录 140：万能食材能不能换稀有食材 */
   master1: '2 个一级万能食材换 1 个随机二级稀有食材。',
   master2: '2 个二级万能食材换 1 个随机三级稀有食材。',
-  masterHigh: '三级及以上的万能食材不能兑换稀有食材，只能在学食谱时顶替同级缺的那一种食材。',
+  masterHigh: '三级及以上的万能食材不能兑换稀有食材, 只能在学食谱时顶替同级缺的那一种食材。',
   handleHint: (decomposeMax: number, composeMax: number) =>
-    `一次最多分解 ${decomposeMax}，合成 ${composeMax} (合成要偶数个)。分解: 1 个 → 2 次机会得到低一级食材；合成: 2 个 → 1 次机会得到高一级食材，不会合出橱柜里已经堆满的食材。`,
+    `一次最多分解 ${decomposeMax}, 合成 ${composeMax} (合成要偶数个)。分解: 1 个 → 2 次机会得到低一级食材；合成: 2 个 → 1 次机会得到高一级食材, 不会合出橱柜里已经堆满的食材。`,
   handleResult: (success: number, chances: number, strengthUsed: boolean) =>
-    `成功 ${success}/${chances} 次${strengthUsed ? '，消耗 1 体力' : ''}`,
+    `成功 ${success}/${chances} 次${strengthUsed ? ', 消耗 1 体力' : ''}`,
   handleFailed: '处理失败',
   exchangeFailed: '兑换失败',
   loadFailed: '读取橱柜失败',
-  thawConfirm: (n: number, name: string, coin: string) => `解冻 ${n} 个${name}，花费 ${coin} 银币？`,
+  thawConfirm: (n: number, name: string, coin: string) => `解冻 ${n} 个${name}, 花费 ${coin} 银币？`,
   thawFailed: '解冻失败',
   fridgeEmpty: '冰箱是空的',
   noRoom: '橱柜放不下',

@@ -3,7 +3,7 @@
 export default {
   redeem: {
     title: '兌換碼',
-    note: '兌換碼由運營發放，不分大小寫；同一個碼每家店只能用一次，獎勵當場到賬。',
+    note: '兌換碼由運營發放, 不分大小寫；同一個碼每家店只能用一次, 獎勵當場到賬。',
   },
   weather: {
     loadFailed: '讀取天氣失敗',
@@ -13,8 +13,8 @@ export default {
     until: (time: string) => `持續到 ${time}`,
     /** 蟹老闆所在街道：前半句、街名（加粗）、後半句 */
     krabPre: '蟹老闆今天在 ',
-    krabPost: ': 在這條街營業，遇到神秘顧客的機會更大。',
-    holiday: (n: number) => `今天是節日，美味券掉落機率 ×${n}`,
+    krabPost: ': 在這條街營業, 遇到神秘顧客的機會更大。',
+    holiday: (n: number) => `今天是節日, 美味券掉落機率 ×${n}`,
     hammer: '持有雷神錘可以換天氣: ',
     toSquare: '去廣場',
   },
@@ -22,12 +22,12 @@ export default {
     title: '邀請好友',
     loadFailed: '讀取邀請資訊失敗',
     copied: '已複製',
-    copyFailed: '複製失敗，請手動選中複製',
+    copyFailed: '複製失敗, 請手動選中複製',
     myCode: '我的邀請碼',
     copy: '複製',
     copyLink: '複製連結',
     rules: (cap: number) =>
-      `好友開店就能領新手禮包；好友驗證郵箱後，店鋪升到 10 級、再升到 30 級時，你各得一份獎勵。每月最多計 ${cap} 人。`,
+      `好友開店就能領新手禮包；好友驗證郵箱後, 店鋪升到 10 級、再升到 30 級時, 你各得一份獎勵。每月最多計 ${cap} 人。`,
     month: (n: number, cap: number) => `本月已計 ${n} / ${cap}`,
     empty: '還沒有邀請到好友',
     level: (n: number) => `${n} 級`,

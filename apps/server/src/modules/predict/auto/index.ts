@@ -141,7 +141,7 @@ export async function resolveAutoEvents(
           finalizeEvent(
             tx,
             e.id,
-            { status: 'void', outcome: null, note: '数据缺失，自动作废', noteParams: { void: 'missing' } },
+            { status: 'void', outcome: null, note: '数据缺失, 自动作废', noteParams: { void: 'missing' } },
             now,
           ),
         );

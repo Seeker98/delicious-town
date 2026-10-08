@@ -42,7 +42,7 @@ describe('MemoryPanel', () => {
   it('开局后依次闪出配方，展示时不能点；展示完才能点', async () => {
     vi.mocked(endpoints.barMemoryStart).mockResolvedValue(round([2, 5, 2]));
     const w = mount(MemoryPanel, { props: { data: barData() } });
-    expect(w.find('[data-testid="mem-played"]').text()).toBe('今天 0/20 局，每局 1 张神秘礼券');
+    expect(w.find('[data-testid="mem-played"]').text()).toBe('今天 0/20 局, 每局 1 张神秘礼券');
     await w.find('[data-testid="mem-start"]').trigger('click');
     await flushPromises();
     expect(lit(w)).toBe(2);
@@ -143,7 +143,7 @@ describe('MemoryPanel', () => {
     for (const i of [1, 3, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="mem-result"]').text()).toBe(
-      '超时了，要在 7.5 秒内答完。配方是: 伏特加、柠檬、伏特加',
+      '超时了, 要在 7.5 秒内答完。配方是: 伏特加、柠檬、伏特加',
     );
   });
 
