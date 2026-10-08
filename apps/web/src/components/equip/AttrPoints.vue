@@ -48,7 +48,8 @@ onMounted(() => store.refresh().catch(() => undefined));
 </script>
 
 <template>
-  <div v-if="left > 0" class="border rounded p-2 mb-2 small">
+  <!-- 锚点：餐厅信息页“有 N 点可加”、主线“分配属性点”直接落到这里（530 遗留） -->
+  <div v-if="left > 0" id="attr-points" class="border rounded p-2 mb-2 small">
     <b data-testid="attr-left">{{ t.equip.points.left(left) }}</b>
     <div class="row g-1 mt-1">
       <div v-for="f in FIELDS" :key="f" class="col-4">

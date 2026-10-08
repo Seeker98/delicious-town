@@ -118,6 +118,26 @@ describe('克拉肯（规格书 09 §9.5）', () => {
     expect(m.trial_exp).toBe(4);
   });
 
+  it('负好感度扣试炼价值：按封顶后生效的值扣（上限改小前存下的 45 按 30 算，扣 1 变 29，不是 44）', async () => {
+    const ctx = await newRestaurant(win, { patch: { star_level: 1 } });
+    const target = krakenTarget(pool, ctx.shardId, day);
+    const other = config.bundle.mysteriousCookbooks.find((m) => m.level <= 5 && m.road !== target.road)!;
+    const max = config.bundle.tuning.temple.trialWorthMax;
+    await win.db
+      .insertInto('rest_mc')
+      .values({ rest_id: ctx.restaurantId, mc_id: other.id, way: 1, trial_worth: max + 15 })
+      .execute();
+    await serve(win, ctx, other.id, 200, 100, 1);
+    const r = await win.game.temple.feedKraken(ctx, { num: 100 });
+    expect(r.data).toMatchObject({ punish: { kind: 'worth', value: 1 } });
+    const m = await win.db
+      .selectFrom('rest_mc')
+      .select('trial_worth')
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(m.trial_worth).toBe(max - 1);
+  });
+
   it('负好感度且没有试炼加成：25% 遗忘（随机数 0 必中）；这道菜已不在时跳过惩罚（Review Focus 4）', async () => {
     const a = await newRestaurant(win, { patch: { star_level: 1 } });
     const target = krakenTarget(pool, a.shardId, day);

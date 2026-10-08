@@ -44,7 +44,7 @@ const home: Messages['home'] = {
   claim: 'Reclamar',
   claimFailed: 'No se pudo reclamar',
   activation: (n) => `Puntos de actividad de hoy: ${n}`,
-  activationClaimable: 'hay recompensa por reclamar',
+  activationClaimable: ', hay recompensa por reclamar',
   dining: {
     before: 'Comiendo gratis en',
     after: (table, minutes) => `mesa ${table}, desde hace ${minutes} min`,

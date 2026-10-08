@@ -77,7 +77,7 @@ const equip: Messages['equip'] = {
     holeNote: (max, coinPerLevel) =>
       `(up to ${max} ${plEn(max, 'socket', 'sockets')}; ${coinPerLevel ? `removing costs tier × ${coinPerLevel} ${plEn(coinPerLevel, 'coin', 'coins')}` : 'removing is free right now (below 2 stars or on acid rain days)'})`,
     ungem: 'Remove',
-    gemOption: (name, num, level) => `${name} (you have ${num}; costs ${level} stamina)`,
+    gemOption: (name, num, level) => `${name} (you have ${num}; costs ${level} Stamina)`,
     inlay: 'Socket',
     drill: (n) => `Drill a socket (Drill Stone; you have ${n})`,
     lock: 'Lock',

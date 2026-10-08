@@ -36,7 +36,7 @@ export const stats: AutoKind = {
     const f = (n: number) => n.toLocaleString('en-US');
     return {
       outcome: today > yesterday,
-      note: `${dayLabel(day)} ${f(today)}, ${dayLabel(addDays(day, -1))} ${f(yesterday)}`,
+      note: `${dayLabel(day)} ${f(today)}；${dayLabel(addDays(day, -1))} ${f(yesterday)}`,
       noteParams: { day, today, prevDay: addDays(day, -1), yesterday },
     };
   },

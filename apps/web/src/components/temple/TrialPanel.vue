@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { CupboardFoodDto, McLearnedDto, TempleDto, TrialResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -33,13 +33,10 @@ async function loadFoods() {
   }
 }
 onMounted(loadFoods);
-/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；用光的、不够主辅各一个的去掉，回到主料槽 */
+/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；不够扣的从主辅里去掉，回到主料槽 */
 async function afterTrial() {
   await loadFoods();
-  const num = (id: number | null) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
-  if (main.value !== null && num(main.value) === 0) main.value = null;
-  if (sub.value !== null && (num(sub.value) === 0 || (sub.value === main.value && num(sub.value) < 2)))
-    sub.value = null;
+  dropShort();
   slot.value = main.value === null ? 'main' : 'sub';
 }
 
@@ -66,16 +63,53 @@ const groups = computed(() => {
     .sort(([a], [b]) => b - a)
     .map(([lv, list]) => ({ lv, list: list.sort((a, b) => a.foodsId - b.foodsId) }));
 });
-/** 手动展开 / 收起过的组；没动过的按“不低于这道菜的等级”决定 */
+/**
+ * 手动展开 / 收起过的组；没动过的按“不低于这道菜的等级”决定。
+ * 搜索时默认全部展开，这时点组名只记在 searchToggled，换了搜索词就清掉，不影响平时的（487 遗留）
+ */
 const toggled = ref(new Map<number, boolean>());
+const searchToggled = ref(new Map<number, boolean>());
+const searching = computed(() => q.value.trim() !== '');
 const isOpen = (lv: number) =>
-  q.value.trim() !== '' || (toggled.value.get(lv) ?? lv >= (dish.value?.level ?? 0));
+  searching.value
+    ? (searchToggled.value.get(lv) ?? true)
+    : (toggled.value.get(lv) ?? lv >= (dish.value?.level ?? 0));
 function toggleGroup(lv: number) {
-  toggled.value = new Map(toggled.value).set(lv, !isOpen(lv));
+  const m = searching.value ? searchToggled : toggled;
+  m.value = new Map(m.value).set(lv, !isOpen(lv));
 }
-/** 另一个槽已经选了同一种、只有 1 个时不能再选 */
-const blockedFood = (f: CupboardFoodDto) =>
-  (slot.value === 'main' ? sub.value : main.value) === f.foodsId && f.num < 2;
+watch(q, () => (searchToggled.value = new Map()));
+/** 换了试炼对象：默认展开的等级跟着变，手动展开 / 收起的记录作废（487 遗留） */
+watch(
+  () => trial.value.mcId,
+  () => {
+    toggled.value = new Map();
+    dropShort();
+  },
+);
+/** 持有几个 */
+const numOf = (id: number) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
+/** 这道菜本身每样食材扣 1 个（服务端 trial.ts） */
+const dishNeed = (id: number) => (dish.value?.foods ?? []).filter((x) => x === id).length;
+/**
+ * 选这种要几个：这个槽 1 个，另一个槽也是它再 1 个，这道菜本身的食材每样再扣 1 个。
+ * 不够时灰掉（487 遗留：原来只看另一个槽，这道菜本身要的点开始才由服务端报不够）
+ */
+const blockedFood = (f: CupboardFoodDto) => {
+  const other = (slot.value === 'main' ? sub.value : main.value) === f.foodsId ? 1 : 0;
+  return f.num < 1 + other + dishNeed(f.foodsId);
+};
+/** 已选的不够扣了（试炼后数量变少、换了试炼对象）：先看主料，再看辅料（终审 I3） */
+function dropShort() {
+  const need = (id: number) => (main.value === id ? 1 : 0) + (sub.value === id ? 1 : 0) + dishNeed(id);
+  if (main.value !== null && numOf(main.value) < need(main.value)) main.value = null;
+  if (sub.value !== null && numOf(sub.value) < need(sub.value)) sub.value = null;
+}
+/** 这道菜本身要的食材不够（列表里只有持有的，一个都没有的看不到）：写进不能开始的原因 */
+const dishShort = computed(() =>
+  [...new Set(dish.value?.foods ?? [])].filter((id) => numOf(id) < dishNeed(id)),
+);
+const anyBlocked = computed(() => groups.value.some((g) => isOpen(g.lv) && g.list.some(blockedFood)));
 function pickFood(id: number) {
   if (slot.value === 'main') {
     main.value = id;
@@ -99,6 +133,8 @@ const block = computed(() => {
   if (props.data.star < 1) return t.value.temple.needStar(x.what);
   if (trial.value.readyMinutes === 0) return x.notReady;
   if (trial.value.mcId === null) return x.noTarget;
+  if (dishShort.value.length > 0)
+    return x.dishShort(dishShort.value.map((id) => catalog.foodName(id)).join(t.value.events.sep));
   if (main.value === null || sub.value === null) return x.pickFoods;
   return '';
 });
@@ -160,7 +196,13 @@ const start = async () => {
       <div class="mb-1" data-testid="trial-target">
         {{ t.temple.trial.target }}<b>{{ dish.name }}</b
         >{{ t.temple.trial.targetLevel(dish.level) }}
-        <button class="dt-link-btn" data-testid="trial-refresh" :disabled="busy" @click="refresh()">
+        <button
+          type="button"
+          class="dt-link-btn"
+          data-testid="trial-refresh"
+          :disabled="busy"
+          @click="refresh()"
+        >
           {{ t.temple.trial.refresh }}
         </button>
         <div v-if="stat" class="text-muted">
@@ -208,7 +250,9 @@ const start = async () => {
         data-testid="trial-search"
       />
       <div class="dt-card dt-trial-foods mb-1" data-testid="trial-foods">
-        <div v-if="groups.length === 0" class="text-muted">{{ t.temple.trial.noFoods }}</div>
+        <div v-if="groups.length === 0" class="text-muted">
+          {{ searching ? t.temple.trial.noMatch : t.temple.trial.noFoods }}
+        </div>
         <div v-for="g in groups" :key="g.lv" class="mb-1">
           <button
             type="button"
@@ -230,6 +274,7 @@ const start = async () => {
                 f.foodsId === main || f.foodsId === sub ? 'btn-primary' : 'btn-outline-secondary',
               ]"
               :disabled="blockedFood(f)"
+              :aria-pressed="f.foodsId === main || f.foodsId === sub"
               :data-testid="`trial-food-${f.foodsId}`"
               @click="pickFood(f.foodsId)"
             >
@@ -248,6 +293,9 @@ const start = async () => {
             </button>
           </div>
         </div>
+      </div>
+      <div v-if="anyBlocked" class="text-muted" data-testid="trial-blocked-note">
+        {{ t.temple.trial.blockedNote }}
       </div>
       <div v-if="rate !== null" class="text-muted" data-testid="trial-rate">
         {{ t.temple.trial.rate((rate * 100).toFixed(1)) }}
@@ -279,5 +327,9 @@ const start = async () => {
 .dt-trial-foods {
   max-height: 16rem;
   overflow-y: auto;
+}
+/* 第一个组名不要上边距：卡片自己有内边距，原来上面多一截空白（487 遗留） */
+.dt-trial-foods > div:first-child > .dt-group-label {
+  margin-top: 0;
 }
 </style>

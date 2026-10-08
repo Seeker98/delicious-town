@@ -107,7 +107,7 @@ const friends: Messages['friends'] = {
     rule: "Donnez 2 ingrédients d'un niveau contre 1 des siens du même niveau. Niveaux 1 à 5 uniquement.",
     loadFailed: 'Impossible de charger les ingrédients',
     caught: 'Pas de chance ! Vous avez été pris en échangeant un ingrédient verrouillé',
-    redPants: (name) => `Échange fait, mais il avait un slip rouge : vous perdez 1 ${name} de plus`,
+    redPants: (name) => `Échange fait, mais il avait un slip rouge\u202f: vous perdez 1 ${name} de plus`,
     done: 'Échange fait',
     failed: "Échec de l'échange",
     level: (l) => `Niv. ${l}`,
@@ -116,7 +116,7 @@ const friends: Messages['friends'] = {
     takenLeft: (n) => `\u202f; ce joueur ne peut plus être sollicité que ${n} fois aujourd'hui`,
     takenFull: "\u202f; ce joueur ne peut plus être sollicité aujourd'hui",
     storm:
-      ' ; par temps d’ouragan, vous pouvez prendre ses ingrédients verrouillés (une chance sur deux d’être pris)',
+      '\u202f; par temps d’ouragan, vous pouvez prendre ses ingrédients verrouillés (une chance sur deux d’être pris)',
     theirs: 'Les siens',
     theirsEmpty: 'Aucun ingrédient de ce niveau',
     mine: 'Vous donnez (2 à chaque fois)',

@@ -58,6 +58,8 @@ watch(
       href="#"
       :class="['flex-fill text-center small py-1', { 'dt-more-on': moreOpen }]"
       data-testid="tab-more"
+      role="button"
+      :aria-expanded="moreOpen"
       @click.prevent="moreOpen = !moreOpen"
     >
       <i class="bi bi-grid d-block fs-5"></i>{{ t.nav.tabs.more }}

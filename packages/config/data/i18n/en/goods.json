@@ -125,11 +125,11 @@
   },
   "10409": {
     "name": "Small Stamina Card",
-    "desc": "Restores 20 stamina"
+    "desc": "Restores 20 Stamina"
   },
   "10410": {
     "name": "Stamina Card",
-    "desc": "Restores 100 stamina"
+    "desc": "Restores 100 Stamina"
   },
   "10411": {
     "name": "Rename Card",
@@ -1805,7 +1805,7 @@
   },
   "61401": {
     "name": "Midnight Roach Slayer",
-    "desc": "Nobody knows where he came from; all we know is roaches flee wherever he goes... Effect: squashing a roach costs at most 2 stamina between 23:00 and 7:00 and at most 3 at other times, and rewards for squashing friends' roaches +50%"
+    "desc": "Nobody knows where he came from; all we know is roaches flee wherever he goes... Effect: squashing a roach costs at most 2 Stamina between 23:00 and 7:00 and at most 3 at other times, and rewards for squashing friends' roaches +50%"
   },
   "61402": {
     "name": "Eco Ambassador",
@@ -1845,7 +1845,7 @@
   },
   "61411": {
     "name": "Like King",
-    "desc": "Generous and kind, making friends through likes and sharing a love of cooking! Final EXP income +5%; your first 10 likes for friends each day have a 30% chance of giving 1–3 stamina!"
+    "desc": "Generous and kind, making friends through likes and sharing a love of cooking! Final EXP income +5%; your first 10 likes for friends each day have a 30% chance of giving 1–3 Stamina!"
   },
   "61412": {
     "name": "Old Grandfather Clock",
@@ -1865,7 +1865,7 @@
   },
   "61416": {
     "name": "Racing Heart",
-    "desc": "Forever young and passionate! EXP from eating for free is tripled at settlement (even if you're asked to leave)! And leaving on your own gives 50% more stamina!"
+    "desc": "Forever young and passionate! EXP from eating for free is tripled at settlement (even if you're asked to leave)! And leaving on your own gives 50% more Stamina!"
   },
   "61417": {
     "name": "Golden Key",
@@ -1885,11 +1885,11 @@
   },
   "61421": {
     "name": "Violet Hourglass",
-    "desc": "A magical violet hourglass that can turn back time! Natural stamina recovery is doubled! Facilities placed in your restaurant last 15% longer!"
+    "desc": "A magical violet hourglass that can turn back time! Natural Stamina recovery is doubled! Facilities placed in your restaurant last 15% longer!"
   },
   "61422": {
     "name": "Voodoo Doll",
-    "desc": "A cursed rag doll! Squashing roaches and raiding pantries have a 25% chance of using no stamina! And when a mousetrap catches you while raiding, there's a 50% chance you drop no coins!"
+    "desc": "A cursed rag doll! Squashing roaches and raiding pantries have a 25% chance of using no Stamina! And when a mousetrap catches you while raiding, there's a 50% chance you drop no coins!"
   },
   "61423": {
     "name": "Rosy Scroll",
@@ -1897,7 +1897,7 @@
   },
   "61424": {
     "name": "Holy Light Blessing",
-    "desc": "Blessed by the Star God's holy light: max stamina +100!"
+    "desc": "Blessed by the Star God's holy light: max Stamina +100!"
   },
   "61425": {
     "name": "Star and Moon Scroll",

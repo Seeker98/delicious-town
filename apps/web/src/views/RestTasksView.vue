@@ -81,9 +81,16 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <!-- 选项卡和去活跃页的入口在同一行：下边框画在外层，入口放不下时缩短，不挤到第二行（问题记录 530、终审 I1） -->
-  <div class="d-flex align-items-end border-bottom mb-3" data-testid="task-tabs-row">
-    <ul class="nav nav-tabs border-bottom-0 flex-shrink-0" role="tablist" data-testid="task-tabs">
+  <!--
+    选项卡和去活跃页的入口在同一行，下边框画在外层（问题记录 530、终审 I1）。
+    放不下时（西、法文的手机屏幕）入口整个挪到选项卡上面靠右，不截成“Acti…”；选项卡照旧贴着下边框（530 遗留）。反向换行时交叉轴也反了：align-items-start 才是贴底
+  -->
+  <div class="d-flex flex-wrap-reverse align-items-start border-bottom mb-3" data-testid="task-tabs-row">
+    <ul
+      class="nav nav-tabs border-bottom-0 flex-shrink-0 dt-tabs-tight"
+      role="tablist"
+      data-testid="task-tabs"
+    >
       <li v-for="x in TABS" :key="x" class="nav-item">
         <button
           type="button"
@@ -100,8 +107,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </ul>
     <RouterLink
       to="/rest/activation"
-      class="dt-go small text-truncate ms-auto ps-2 pb-2"
-      style="min-width: 0"
+      class="dt-go small text-nowrap ms-auto ps-2 pb-2"
       data-testid="to-activation"
       >{{ t.rest.tasks.activationLink }}</RouterLink
     >
@@ -243,3 +249,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
     </section>
   </template>
 </template>
+
+<style scoped>
+/* 选项卡左右内边距收窄（默认 1rem）：西、法文在手机上给去活跃页的入口留出地方，不截成“Acti…”（530 遗留） */
+.dt-tabs-tight .nav-link {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+</style>

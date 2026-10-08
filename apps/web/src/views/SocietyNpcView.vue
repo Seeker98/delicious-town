@@ -89,7 +89,7 @@ onMounted(() => {
     <NpcCard v-if="CARD[npc]" :key="npc" :npc="CARD[npc]!" />
     <div v-if="restFailed" class="small text-muted" data-testid="npc-rest-failed">
       {{ t.town.restFailed }}
-      <button class="dt-link-btn" data-testid="npc-rest-retry" @click="loadRest">
+      <button type="button" class="dt-link-btn" data-testid="npc-rest-retry" @click="loadRest">
         {{ t.town.retry }}
       </button>
     </div>
@@ -100,7 +100,7 @@ onMounted(() => {
       <template v-else>
         <div v-if="townFailed" class="small text-muted" data-testid="npc-town-failed">
           {{ t.town.loadFailed }}
-          <button class="dt-link-btn" data-testid="npc-town-retry" @click="loadTown">
+          <button type="button" class="dt-link-btn" data-testid="npc-town-retry" @click="loadTown">
             {{ t.town.retry }}
           </button>
         </div>

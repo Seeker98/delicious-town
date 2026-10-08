@@ -43,7 +43,7 @@ export default {
   claim: '领奖',
   claimFailed: '领取失败',
   activation: (n: number) => `今日活跃 ${n}`,
-  activationClaimable: '有奖励可领',
+  activationClaimable: ', 有奖励可领',
   dining: {
     before: '正在',
     after: (table: number, minutes: number) => `第 ${table} 桌白食, 已 ${minutes} 分钟`,

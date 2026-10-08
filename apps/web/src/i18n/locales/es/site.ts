@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ux1008:
+      'Al cambiar de página se vuelve arriba (antes se quedaba a la altura de la página anterior); «N puntos por asignar» en la Info del restaurante lleva directamente al cuadro de puntos de la página de Utensilios; al elegir ingredientes de prueba, los que no alcanzan porque el plato también los usa salen en gris con el motivo, y una búsqueda sin resultados lo indica; la penalización del Kraken al valor de prueba usa el valor que realmente se aplica; en móviles, el enlace a la actividad de la página de Misiones pasa encima de las pestañas cuando no cabe; además, algunos arreglos pequeños en botones y textos para lectores de pantalla',
     zhComma1008:
       'Texto en chino: las comas pasan a ser una coma inglesa seguida de un espacio, para ahorrar sitio',
     gemStrength1008:

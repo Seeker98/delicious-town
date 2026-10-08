@@ -60,6 +60,7 @@ export default {
     notReady: '先注射或冥想做好準備',
     noTarget: '還沒有試煉物件',
     pickFoods: '選好主料和輔料',
+    dishShort: (names: string) => `這道菜本身的食材不夠: ${names}`,
     prepareFailed: '準備失敗',
     refreshFailed: '更換失敗',
     failed: '試煉失敗',
@@ -67,6 +68,8 @@ export default {
     slotEmpty: '未選',
     search: '搜尋食材',
     noFoods: '沒有能用的食材',
+    noMatch: '沒有找到',
+    blockedNote: '灰掉的不夠扣: 主料、輔料各扣 1 個, 這道菜本身的食材每樣也扣 1 個',
     group: (level: number, n: number) => `${level} 級 (${n} 種)`,
     rareTag: '稀有',
     intro: (creatives: number, worthMax: number, expMax: number) =>

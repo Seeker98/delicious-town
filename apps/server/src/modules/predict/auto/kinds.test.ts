@@ -284,7 +284,7 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     const tie = (await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!;
     expect(tie).toEqual({
       outcome: false,
-      note: '11月3日 1,000, 11月2日 1,000',
+      note: '11月3日 1,000；11月2日 1,000',
       noteParams: { day: DAY, today: 1000, prevDay: addDays(DAY, -1), yesterday: 1000 },
     });
     await income(DAY, 1);

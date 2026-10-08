@@ -69,12 +69,16 @@ const temple: Messages['temple'] = {
     notReady: "Préparez-vous d'abord avec une injection ou une méditation",
     noTarget: "Pas encore de plat d'épreuve",
     pickFoods: 'Choisissez un ingrédient principal et un secondaire',
+    dishShort: (names) => `Pas assez des ingrédients du plat lui-même\u202f: ${names}`,
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",
     slotEmpty: 'non choisi',
     search: 'Rechercher un ingrédient',
     noFoods: 'Aucun ingrédient utilisable',
+    noMatch: 'Aucun résultat',
+    blockedNote:
+      'Les ingrédients grisés sont en nombre insuffisant\u202f: l’ingrédient principal et le secondaire en prennent 1 chacun, et chaque ingrédient du plat lui-même en prend 1 de plus',
     group: (level, n) => `Niveau ${level} (${n} ${plFr(n, 'sorte', 'sortes')})`,
     rareTag: 'rare',
     intro: (creatives, worthMax, expMax) =>

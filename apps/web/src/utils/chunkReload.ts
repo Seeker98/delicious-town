@@ -13,7 +13,14 @@ export function isChunkLoadError(e: unknown): boolean {
   return /dynamically imported module|Importing a module script failed|Unable to preload CSS/i.test(msg);
 }
 
-export function reloadOnce(to: string, go: (url: string) => void, now = Date.now()): boolean {
+/** 断网时不刷（495~513 遗留）：加载失败是因为没网，刷了只会落到浏览器的离线页，也别占掉 10 秒的窗口 */
+export function reloadOnce(
+  to: string,
+  go: (url: string) => void,
+  now = Date.now(),
+  online = typeof navigator === 'undefined' || navigator.onLine,
+): boolean {
+  if (!online) return false;
   try {
     const last = Number(sessionStorage.getItem(KEY) ?? 0);
     if (now - last < WINDOW_MS) return false;

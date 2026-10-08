@@ -183,8 +183,8 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(mine).toContain('卖出否 2 份');
     expect(mine).toContain('买入是 3 份');
     // 每笔写每份均价和实际花费 / 得到（含手续费）（问题记录 264）
-    expect(mine).toContain('每份约 536, 得到 1,049');
-    expect(mine).toContain('每份约 547, 花费 1,673');
+    expect(mine).toContain('每份约 536 · 得到 1,049');
+    expect(mine).toContain('每份约 547 · 花费 1,673');
   });
 
   it('价格走势不到两个点时不画空图，写一行提示（问题记录 278）', async () => {
@@ -246,7 +246,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(help).toContain('止盈');
     const trades = w.get('[data-testid="pd-trades"]').text();
     expect(trades).toContain('全服最近成交');
-    expect(trades).toContain('买入是 2 份, 每份约 550');
+    expect(trades).toContain('买入是 2 份 · 每份约 550');
     expect(trades).toContain('成交后"是" 63%');
   });
 

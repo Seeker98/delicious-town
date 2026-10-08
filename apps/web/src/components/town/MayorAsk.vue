@@ -86,6 +86,7 @@ async function ask(place: HiphopPlace) {
           class="btn btn-sm btn-outline-primary"
           :disabled="busy || waiting"
           data-testid="mayor-open"
+          :aria-expanded="open"
           @click="open = !open"
         >
           {{ t.town.mayorOpen }}

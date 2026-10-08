@@ -60,12 +60,16 @@ const temple: Messages['temple'] = {
     notReady: 'Prepare first with an injection or meditation',
     noTarget: 'No trial dish yet',
     pickFoods: 'Pick a main and a side ingredient',
+    dishShort: (names) => `Not enough of the dish’s own ingredients: ${names}`,
     prepareFailed: "Couldn't prepare",
     refreshFailed: "Couldn't change the dish",
     failed: 'Trial failed',
     slotEmpty: 'not chosen',
     search: 'Search ingredients',
     noFoods: 'No ingredients to use',
+    noMatch: 'Nothing found',
+    blockedNote:
+      'Greyed-out ingredients are too few: the main and side ingredients take 1 each, and each of the dish’s own ingredients takes 1 more',
     group: (level, n) => `Level ${level} (${n} ${plEn(n, 'kind', 'kinds')})`,
     rareTag: 'rare',
     intro: (creatives, worthMax, expMax) =>

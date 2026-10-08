@@ -102,7 +102,7 @@ export default {
       desc: (close: number) =>
         `以今天全天全服餐廳的營業銀幣為準, 明天 0 點後判定；嚴格多於昨天才算"是"。${close} 點截止交易。`,
       note: (day: string, today: string, prevDay: string, yesterday: string) =>
-        `${day} ${today}, ${prevDay} ${yesterday}`,
+        `${day} ${today}；${prevDay} ${yesterday}`,
     },
     voidMissing: '資料缺失, 自動作廢',
   },

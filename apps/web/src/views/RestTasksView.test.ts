@@ -300,8 +300,11 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     // 入口放在选项卡那一行的右边，不单独占一行（问题记录 530）
     expect(w.find('[data-testid="task-tabs-row"] [data-testid="to-activation"]').exists()).toBe(true);
     expect(w.find('[data-testid="task-tabs"] [data-testid="to-activation"]').exists()).toBe(false);
-    // 放不下时缩短显示，不挤到第二行
-    expect(w.get('[data-testid="to-activation"]').classes()).toContain('text-truncate');
+    // 放不下时（西、法文的手机屏幕）入口整个挪到选项卡上面，不截成“Acti…”；选项卡照旧贴着下边框（530 遗留）
+    expect(w.get('[data-testid="to-activation"]').classes()).toContain('text-nowrap');
+    expect(w.get('[data-testid="task-tabs-row"]').classes()).toEqual(
+      expect.arrayContaining(['flex-wrap-reverse', 'align-items-start']),
+    );
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-main',
     ]);

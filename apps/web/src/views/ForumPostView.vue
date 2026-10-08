@@ -224,6 +224,7 @@ async function submit() {
       </div>
       <div class="dt-item-actions">
         <button
+          type="button"
           v-if="data.can.reply && !r.deleted"
           class="dt-link-btn"
           :data-testid="`reply-to-${r.floor}`"
@@ -232,6 +233,7 @@ async function submit() {
           {{ t.forum.post.reply }}
         </button>
         <button
+          type="button"
           v-if="r.canDelete"
           class="dt-link-btn text-danger"
           :disabled="busy"

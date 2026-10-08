@@ -4,6 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
 import TicketPanel from './TicketPanel.vue';
 import { exchangeData } from './testData';
+import en from '../../i18n/locales/en';
+import es from '../../i18n/locales/es';
+import fr from '../../i18n/locales/fr';
 
 vi.mock('../../api/endpoints', () => ({
   endpoints: { townLevelTicket: vi.fn(), townMysteryTicket: vi.fn() },
@@ -96,6 +99,25 @@ describe('TicketPanel', () => {
     await w.find('[data-testid="mt-go"]').trigger('click');
     await flushPromises();
     expect(endpoints.townMysteryTicket).toHaveBeenCalledWith(702);
+  });
+
+  it('兑换请求进行中加减、数量都不能动：兑换完会清空，点了也会被盖掉（491 遗留）', async () => {
+    vi.mocked(endpoints.townLevelTicket).mockReturnValue(new Promise(() => undefined));
+    const w = mount(TicketPanel, { props: { data: exchangeData() } });
+    await w.get('[data-testid="lt-add-101"]').trigger('click');
+    await w.get('[data-testid="lt-go"]').trigger('click');
+    for (const id of ['lt-add-101', 'lt-minus-101', 'lt-num-101'])
+      expect(w.get(`[data-testid="${id}"]`).attributes('disabled'), id).toBeDefined();
+  });
+
+  it('英西法的“已选”带券的单位；法文冒号前用窄空格（491 遗留）', () => {
+    expect(en.town.ticket.picked(1, 3)).toBe('1 of 3 vouchers selected');
+    expect(es.town.ticket.picked(2, 3)).toBe('2 de 3 vales elegidos');
+    expect(en.town.ticket.picked(1, 1)).toBe('1 of 1 voucher selected');
+    expect(es.town.ticket.picked(1, 1)).toBe('1 de 1 vale elegido');
+    expect(fr.town.ticket.picked(1, 3)).toBe('1 bon sur 3 choisi');
+    expect(fr.town.ticket.picked(2, 3)).toBe('2 bons sur 3 choisis');
+    expect(fr.town.ticket.have(3)).toBe('Possédé : 3');
   });
 
   it('兑换失败后也通知刷新', async () => {
