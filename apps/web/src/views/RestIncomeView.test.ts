@@ -59,6 +59,26 @@ describe('收益记录页（问题记录 530）', () => {
     expect(cells[2]!.classes()).toContain('text-end');
   });
 
+  it('不是今天（北京时间）的记录带日期（终审 M3：0 点后第一页会混进昨天的）', async () => {
+    vi.mocked(endpoints.income).mockResolvedValue({
+      ...page,
+      items: [{ ...page.items[0]!, roundNo: 1, at: '2026-10-06T04:04:00Z' }],
+    });
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    expect(w.findAll('tbody tr')[0]!.findAll('td')[0]!.text()).toContain('10/06');
+  });
+
+  it('合计正好是 0、分项不是 0 的照样列出（终审 M5：天气扣的看得到）', async () => {
+    vi.mocked(endpoints.buffs).mockResolvedValue({
+      ...buffs,
+      rates: { ...buffs.rates, spRate: { total: 0, parts: { base: 0.1, weather: -0.1 } } },
+    } as never);
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    expect(w.get('[data-testid="income-buffs"]').text()).toContain('挑剔率');
+  });
+
   it('加成收在一个默认收起的区块里，只列不是 0 的项', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();

@@ -81,27 +81,31 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <ul class="nav nav-tabs mb-3" role="tablist" data-testid="task-tabs">
-    <li v-for="x in TABS" :key="x" class="nav-item">
-      <button
-        type="button"
-        role="tab"
-        :class="['nav-link', { active: tab === x }]"
-        :aria-selected="tab === x"
-        :data-testid="`tab-${x}`"
-        @click="setTab(x)"
-      >
-        {{ t.rest.tasks.tabs[x]
-        }}<i v-if="claimable[x]" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${x}`"></i>
-      </button>
-    </li>
-    <!-- 去活跃页的入口放在选项卡这一行的右边，不单独占一行（问题记录 530） -->
-    <li class="nav-item ms-auto align-self-center small">
-      <RouterLink to="/rest/activation" class="dt-go" data-testid="to-activation">{{
-        t.rest.tasks.activationLink
-      }}</RouterLink>
-    </li>
-  </ul>
+  <!-- 选项卡和去活跃页的入口在同一行：下边框画在外层，入口放不下时缩短，不挤到第二行（问题记录 530、终审 I1） -->
+  <div class="d-flex align-items-end border-bottom mb-3" data-testid="task-tabs-row">
+    <ul class="nav nav-tabs border-bottom-0 flex-shrink-0" role="tablist" data-testid="task-tabs">
+      <li v-for="x in TABS" :key="x" class="nav-item">
+        <button
+          type="button"
+          role="tab"
+          :class="['nav-link', { active: tab === x }]"
+          :aria-selected="tab === x"
+          :data-testid="`tab-${x}`"
+          @click="setTab(x)"
+        >
+          {{ t.rest.tasks.tabs[x]
+          }}<i v-if="claimable[x]" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${x}`"></i>
+        </button>
+      </li>
+    </ul>
+    <RouterLink
+      to="/rest/activation"
+      class="dt-go small text-truncate ms-auto ps-2 pb-2"
+      style="min-width: 0"
+      data-testid="to-activation"
+      >{{ t.rest.tasks.activationLink }}</RouterLink
+    >
+  </div>
   <template v-if="tasks">
     <!-- 主线：当前章 -->
     <section v-if="tab === 'main'" class="dt-card mb-3" data-testid="card-main">

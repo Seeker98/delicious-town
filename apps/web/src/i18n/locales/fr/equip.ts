@@ -11,7 +11,7 @@ const equip: Messages['equip'] = {
     'Puissance = somme des cinq caractéristiques + Chance/2, indicatif seulement\u202f; les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition',
   notesTitle: 'Comment ces chiffres sont calculés',
   duelNote:
-    "L'attaque et la défense en duel incluent tous les bonus de Chance et les bonus d’attaque et de défense des ensembles\u202f; la Tour des chefs affiche celui d’attaque",
+    'L’attaque et la défense en duel incluent tous les bonus de Chance et les bonus d’attaque et de défense des ensembles\u202f; la Tour des chefs affiche celui d’attaque',
   duelPower: (attack, defend) => `En duel\u202f: attaque ${attack}, défense ${defend}`,
   income: (coin, exp, gold) =>
     `Bonus de revenus de l’équipement\u202f: pièces finales ${coin}, EXP finale ${exp}, or du plat signature ${gold}`,

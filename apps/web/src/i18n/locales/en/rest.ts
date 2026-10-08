@@ -96,7 +96,7 @@ const rest: Messages['rest'] = {
     noSide: 'No side quests right now',
     tabs: { main: 'Main', weekly: 'Weekly', side: 'Side' },
     noWeekly: 'No weekly quests right now',
-    activationLink: 'Check-in & daily activity',
+    activationLink: 'Daily activity',
     award: (text) => `Reward: ${text}`,
     claimTask: 'Claim',
     claimFailed: 'Could not claim',

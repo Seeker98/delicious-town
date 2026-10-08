@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import type { BuffsDto, IncomePageDto, RoundSummaryDto } from '@dt/shared';
+import { gameDay, type BuffsDto, type IncomePageDto, type RoundSummaryDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { describeEffects } from '../utils/effects';
 import { effectName } from '../utils/serverText';
 import { useCatalogStore } from '../stores/catalog';
-import { formatNum, timeHM } from '../utils/format';
+import { formatNum, gameDateTime, timeHM } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 import { PART_LABELS, pct, RATE_LABELS } from '../utils/labels';
 
 const t = useT();
@@ -19,6 +20,20 @@ const today = ref<IncomePageDto['today'] | null>(null);
 /** 付钱的客人数：普通、挑剔、章鱼哥、痞老板、蟹老板（不算空桌、蟑螂、白食） */
 const PAYING = ['1', '2', '6', '7', '8'];
 const guests = (c: Record<string, number>) => PAYING.reduce((n, k) => n + (c[k] ?? 0), 0);
+/** 今天（北京时间）的只写时:分，不是今天的带日期（终审 M3：0 点后第一页会混进昨天的） */
+const roundTime = (at: string) =>
+  gameDay(new Date(at)) !== gameDay(new Date(serverNowMs()))
+    ? gameDateTime(at, {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : timeHM(at);
+/** 合计不是 0，或者有分项不是 0（正负抵消时也让玩家看到天气在扣，终审 M5） */
+const shown = (r: { total: number; parts: Record<string, number> }) =>
+  r.total !== 0 || Object.values(r.parts).some((v) => v !== 0);
 const buffs = ref<BuffsDto | null>(null);
 const error = ref('');
 
@@ -63,7 +78,7 @@ onMounted(async () => {
       </thead>
       <tbody>
         <tr v-for="r in items" :key="r.roundNo">
-          <td>{{ timeHM(r.at) }}</td>
+          <td class="text-nowrap">{{ roundTime(r.at) }}</td>
           <td class="text-end">{{ formatNum(guests(r.customers)) }}</td>
           <td class="text-end">{{ formatNum(r.coin) }}</td>
           <td class="text-end">{{ formatNum(r.exp) }}</td>
@@ -80,7 +95,7 @@ onMounted(async () => {
     <h6 class="mt-2">{{ t.rest.income.buffs }}</h6>
     <div v-if="buffs?.rates" class="small mb-3">
       <template v-for="(meta, key) in RATE_LABELS" :key="key">
-        <div v-if="buffs.rates[key] && buffs.rates[key]!.total !== 0" class="mb-1">
+        <div v-if="buffs.rates[key] && shown(buffs.rates[key]!)" class="mb-1">
           <b>{{ meta.label }} {{ fmt(key, buffs.rates[key]!.total) }}</b>
           <span v-for="(v, p) in buffs.rates[key]!.parts" :key="p" class="dt-tag ms-1">
             {{ PART_LABELS[p] ?? p }} {{ fmt(key, v) }}

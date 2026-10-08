@@ -140,6 +140,12 @@ describe('RestActivationView', () => {
     expect(w.find('[data-testid="activation-head"] [data-testid="signin"]').exists()).toBe(true);
   });
 
+  it('读取失败、还没读到时也有去任务页的入口（终审 M2）', async () => {
+    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
+  });
+
   it('签到按钮', async () => {
     const w = await mountView();
     await w.find('[data-testid="signin"]').trigger('click');
