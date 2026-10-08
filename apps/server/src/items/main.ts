@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { defaultDataDir, readSourceDir } from '@dt/config';
+import { fromPage } from './origin';
 import { createShopTool, shopSaveBody } from './shop';
 import { createItemsTool, originalSources, saveBody } from './tool';
 
@@ -45,10 +46,6 @@ async function readBody(req: IncomingMessage): Promise<unknown> {
 }
 
 const port = Number(process.argv[2] ?? 5199);
-/** 只收本页发的 JSON：别的网站跨站发的表单、纯文本请求不能改写文件（终审 m8） */
-const fromPage = (req: IncomingMessage) =>
-  !!req.headers['content-type']?.startsWith('application/json') &&
-  (req.headers.origin === undefined || req.headers.origin === `http://127.0.0.1:${port}`);
 
 createServer((req, res) => {
   void (async () => {
@@ -60,14 +57,14 @@ createServer((req, res) => {
       if (req.method === 'GET' && req.url === '/api/shop')
         return send(res, 200, 'application/json', JSON.stringify(shop.report()));
       if (req.method === 'POST' && req.url === '/api/retired') {
-        if (!fromPage(req)) return send(res, 403, 'text/plain', 'forbidden');
+        if (!fromPage(req, port)) return send(res, 403, 'text/plain', 'forbidden');
         const body = saveBody.safeParse(await readBody(req));
         if (!body.success)
           return send(res, 400, 'application/json', JSON.stringify({ errors: ['bad body'] }));
         return send(res, 200, 'application/json', JSON.stringify(tool.save(body.data)));
       }
       if (req.method === 'POST' && req.url === '/api/shop') {
-        if (!fromPage(req)) return send(res, 403, 'text/plain', 'forbidden');
+        if (!fromPage(req, port)) return send(res, 403, 'text/plain', 'forbidden');
         const body = shopSaveBody.safeParse(await readBody(req));
         if (!body.success)
           return send(res, 400, 'application/json', JSON.stringify({ errors: ['bad body'] }));

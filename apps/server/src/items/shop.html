@@ -318,14 +318,32 @@
             black: vals.filter(({ v }) => v.black).map(({ r }) => r.id),
           },
         };
+        $('save').disabled = true;
         $('msg').textContent = '保存中…';
-        const res = await fetch('/api/shop', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        const out = await res.json();
-        if (out.errors && out.errors.length) {
+        let out;
+        try {
+          const res = await fetch('/api/shop', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const text = await res.text();
+          try {
+            out = JSON.parse(text);
+          } catch {
+            // 403、500 回的是纯文本
+            throw new Error(`HTTP ${res.status}：${text.slice(0, 200)}`);
+          }
+          if (!Array.isArray(out.errors)) throw new Error(`HTTP ${res.status}：返回格式不对`);
+        } catch (e) {
+          // 失败也要恢复按钮、说清原因，不能一直停在“保存中…”（商店整理终审）
+          showErrors([]);
+          updateButtons();
+          $('msg').textContent = `保存失败：${e.message}`;
+          return;
+        }
+        if (out.errors.length) {
+          updateButtons();
           showErrors(out.errors);
           $('msg').textContent = '没保存：构建不过，见上面';
           return;
