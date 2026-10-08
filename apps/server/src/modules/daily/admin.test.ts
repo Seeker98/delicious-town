@@ -14,7 +14,7 @@ const facts = {
   day: 'x',
   shopCount: 1,
   summary: [],
-  topIncome: [{ rest: '{r:5}', coin: 1 }],
+  topIncome: [{ rest: '{r:2147480000}', coin: 1 }],
   events: [],
   names: {},
 };
@@ -81,7 +81,7 @@ describe('小镇日报后台（HTTP）', () => {
 
   it('mod 看不到（404）；admin 看列表和详情', async () => {
     const shardId = await createShard(ctx.deps.db);
-    await put(shardId, y(), 'draft', art('昨天', '{r:5} 开张'));
+    await put(shardId, y(), 'draft', art('昨天', '{r:2147480000} 开张'));
     await put(shardId, addDays(y(), -1), 'pending');
     expect((await get(`/daily?shardId=${shardId}`, mod.cookie)).status).toBe(404);
     const list = await get(`/daily?shardId=${shardId}`);
@@ -91,7 +91,11 @@ describe('小镇日报后台（HTTP）', () => {
     ]);
     expect(list.json.data[0]).toMatchObject({ status: 'draft', tokensIn: 3000, tokensOut: 900 });
     const one = await get(`/daily/${shardId}/${y()}`);
-    expect(one.json.data).toMatchObject({ facts, rests: { 5: null }, content: { en: { title: '昨天 en' } } });
+    expect(one.json.data).toMatchObject({
+      facts,
+      rests: { 2147480000: null },
+      content: { en: { title: '昨天 en' } },
+    });
     expect((await get(`/daily/${shardId}/2020-01-01`)).status).toBe(404);
   });
 
@@ -120,12 +124,12 @@ describe('小镇日报后台（HTTP）', () => {
     });
     expect(bad.json).toMatchObject({ code: 'INVALID_STATE', params: { reason: 'daily_check' } });
     const okRes = await post(`/daily/${shardId}/${y()}/edit`, {
-      zh: { title: '小镇日报', body: '{r:5} 开张' },
-      en: { title: 'Daily', body: '{r:5} opened' },
+      zh: { title: '小镇日报', body: '{r:2147480000} 开张' },
+      en: { title: 'Daily', body: '{r:2147480000} opened' },
     });
     expect(okRes.json.data).toMatchObject({
       status: 'draft',
-      content: { 'zh-TW': { title: '小鎮日報' }, en: { body: '{r:5} opened' } },
+      content: { 'zh-TW': { title: '小鎮日報' }, en: { body: '{r:2147480000} opened' } },
     });
     expect(await audits(`daily:${shardId}:${y()}`)).toEqual(['daily.edit']);
   });
