@@ -5,6 +5,7 @@ import { createMemoryHistory, createRouter } from 'vue-router';
 import type { CookbookListDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
+import { useRestaurantStore } from '../stores/restaurant';
 import CookbooksView from './CookbooksView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -40,12 +41,37 @@ const list: CookbookListDto = {
 
 describe('CookbooksView', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     localStorage.clear();
     setActivePinia(createPinia());
     vi.mocked(endpoints.overview).mockResolvedValue({ streetId: 0 } as never);
     vi.mocked(endpoints.starNeed).mockResolvedValue(starNeed(15));
     vi.mocked(endpoints.cookbookList).mockResolvedValue(list);
     vi.mocked(endpoints.learn).mockResolvedValue({ cookbookId: 194, grade: 1, learnType: '0' });
+  });
+
+  it('记着本店时按记着的街道马上读列表，不等餐厅回来（性能排查 2026-10-08：原来多一轮往返）', async () => {
+    useRestaurantStore().rest = { id: 1, streetId: 1, starLevel: 0 } as never;
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenCalledWith({ street: 1, page: 1, filter: 'all' });
+  });
+
+  it('记着的街道过时了（别处搬了街）：餐厅读回来后换到新的街', async () => {
+    useRestaurantStore().rest = { id: 1, streetId: 1, starLevel: 0 } as never;
+    vi.mocked(endpoints.overview).mockResolvedValue({ id: 1, streetId: 2, starLevel: 0 } as never);
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/', component: CookbooksView }],
+    });
+    mount(CookbooksView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 2, page: 1, filter: 'all' });
   });
 
   it('可学的食谱能点"学习"，学完刷新列表；不能学的按钮禁用', async () => {

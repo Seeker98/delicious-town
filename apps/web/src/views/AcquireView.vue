@@ -37,12 +37,15 @@ const pct = (x: number) => formatPct(x, { digits: 0 });
 const heat = (h: number) => formatNum(Number(h.toFixed(2)));
 
 async function load() {
+  // “我的”之外也要知道规则数、我是不是被收购了（身价榜、在售的按钮用）；和榜单一起读（性能排查 2026-10-08）
+  const mine = tab.value === 'mine' || !view.value ? endpoints.acquire() : null;
+  // 先挂上处理：榜单读失败提前跳出时，这个的失败不成为没人接的 rejection
+  mine?.catch(() => undefined);
   try {
     if (tab.value === 'price') price.value = (await endpoints.acquireRank('price')).price;
     else if (tab.value === 'invest') invest.value = (await endpoints.acquireRank('invest')).invest;
     else if (tab.value === 'market') market.value = (await endpoints.acquireMarket()).items;
-    // “我的”之外也要知道规则数、我是不是被收购了（身价榜、在售的按钮用）
-    if (tab.value === 'mine' || !view.value) view.value = await endpoints.acquire();
+    if (mine) view.value = await mine;
     loaded.value = true;
   } catch (e) {
     toast.push(errorMessage(e, t.value.acquire.loadFailed), 'danger');

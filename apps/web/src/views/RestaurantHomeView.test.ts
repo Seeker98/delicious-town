@@ -162,6 +162,23 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([quest()]));
   });
 
+  it('概况、任务、白食一起读，不等概况回来（性能排查 2026-10-08：原来一个接一个，线上多两轮往返）', async () => {
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
+    await mountView();
+    expect(endpoints.tasks).toHaveBeenCalled();
+    expect(endpoints.dineCurrent).toHaveBeenCalled();
+  });
+
+  it('白食读失败照旧整页报错，任务读失败只少主线行', async () => {
+    vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.find('.alert-danger').exists()).toBe(false);
+    expect(w.find('[data-testid="rest-name"]').exists()).toBe(true);
+    vi.mocked(endpoints.dineCurrent).mockRejectedValue(new Error('x'));
+    const w2 = await mountView();
+    expect(w2.find('.alert-danger').exists()).toBe(true);
+  });
+
   it('6 星起显示挑剔消耗食材档位，并说明每档保留多少（问题记录 220）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, starLevel: 6, cookfoodsPerFlag: 40 });
     const w = await mountView();

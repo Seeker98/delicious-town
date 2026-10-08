@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    perf1008:
+      'Faster page loads: fewer extra round trips to the server; the restaurant home page, Income log, Restaurant info, Recipes and Acquisitions now load their data in parallel; reopening the game reuses files already downloaded',
     pages1008:
       'Income page: the log is now at the top with today’s totals and a Guests column, and bonuses are folded into an expandable section that only lists non-zero items; the links between the Quests and activity pages no longer take a line of their own; the Gear page shows slots and buttons first, with the notes on chef power and the rest under “How these numbers work”; gear details list only stats that have a value and say plainly when an item can’t hold gems',
     fixes1008:

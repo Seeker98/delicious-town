@@ -38,6 +38,12 @@ describe('RestInfoView', () => {
     vi.mocked(endpoints.restLog).mockResolvedValue({ items: [], nextBefore: null });
   });
 
+  it('餐厅和日志一起读，不等餐厅回来（性能排查 2026-10-08）', async () => {
+    vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
+    await mountView();
+    expect(endpoints.restLog).toHaveBeenCalled();
+  });
+
   it('只读显示属性；加点挪到厨具页，这里放链接（问题记录：加点在餐厅信息里很难找）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue(rest(3));
     const w = await mountView();

@@ -38,6 +38,13 @@ describe('收益记录页（问题记录 530）', () => {
     vi.mocked(endpoints.buffs).mockResolvedValue(buffs);
   });
 
+  it('记录和加成一起读，不等记录回来（性能排查 2026-10-08）', async () => {
+    vi.mocked(endpoints.income).mockReturnValue(new Promise(() => undefined));
+    mount(RestIncomeView);
+    await flushPromises();
+    expect(endpoints.buffs).toHaveBeenCalled();
+  });
+
   it('收益记录在最上面，先写今天的小计', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();

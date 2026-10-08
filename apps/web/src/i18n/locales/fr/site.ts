@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    perf1008:
+      "Pages plus rapides à charger\u202f: moins d'allers-retours inutiles avec le serveur\u202f; l'accueil du restaurant, l'Historique des gains, les Infos du restaurant, les Recettes et les Rachats chargent leurs données en même temps\u202f; en rouvrant le jeu, les fichiers déjà téléchargés sont réutilisés",
     pages1008:
       "Page des revenus\u202f: l'historique est désormais en haut, avec les totaux du jour et une colonne Clients, et les bonus sont regroupés dans une section dépliable qui n'affiche que ceux différents de 0\u202f; les liens entre les Quêtes et la page d'activité n'occupent plus une ligne à part\u202f; la page Équipement affiche d'abord les emplacements et les boutons, et les explications sur la puissance et le reste passent dans «\u202fComment ces chiffres sont calculés\u202f»\u202f; le détail d'un ustensile n'affiche que les caractéristiques non nulles et indique clairement quand il ne peut pas recevoir de gemmes",
     fixes1008:

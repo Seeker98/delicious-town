@@ -111,6 +111,12 @@ describe('AcquireView（收购 PR 3）', () => {
     });
   });
 
+  it('第一次打开时榜单和“我的”一起读，不等榜单回来（性能排查 2026-10-08）', async () => {
+    vi.mocked(endpoints.acquireRank).mockReturnValue(new Promise(() => undefined));
+    await mountView();
+    expect(endpoints.acquire).toHaveBeenCalled();
+  });
+
   it('身价榜：身价、热度、老板；自己的店不给收购按钮；收购前确认价格、对方得多少、税', async () => {
     const w = await mountView();
     const row = w.get('[data-testid="acquire-price-2"]').text();
