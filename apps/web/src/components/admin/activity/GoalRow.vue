@@ -41,6 +41,7 @@ const awardErr = () => errUnder(props.errors, `${props.path}.award`);
       <RewardItemsEditor
         :model-value="goal.award"
         :hats="true"
+        presets
         :id-prefix="idPrefix"
         @update:model-value="set({ award: $event })"
       />

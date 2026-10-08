@@ -1,17 +1,31 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { GRANT_LIMITS, HAT_NAME_MAX, MAIL_HATS_MAX, type RewardItems } from '@dt/shared';
+import {
+  ACTIVITY_REWARD_PRESETS,
+  GRANT_LIMITS,
+  HAT_NAME_MAX,
+  MAIL_HATS_MAX,
+  type ActivityRewardPreset,
+  type RewardItems,
+} from '@dt/shared';
 import { useCatalogStore } from '../../stores/catalog';
 import CatalogPicker from './CatalogPicker.vue';
 
 /**
  * 附件编辑器（补偿、后台邮件共用；子项目 6A）：银币、钻石、经验、道具、食材，可选命名帽子。
  * 输出只含填了的项；超出单项上限时通过 over 事件给出提示。父组件要清空时换一个 key 重新挂载。
- * 道具、食材用搜索下拉选（问题记录 270）；goodsOnly 只留道具行（战令解锁价格，backlog 148-1）
+ * 道具、食材用搜索下拉选（问题记录 270）；goodsOnly 只留道具行（战令解锁价格，backlog 148-1）；
+ * presets 显示活动的推荐奖励（问题记录 505），点一下加一行，已有这一样就加数量
  */
 const props = withDefaults(
-  defineProps<{ modelValue: RewardItems; hats?: boolean; idPrefix?: string; goodsOnly?: boolean }>(),
-  { hats: false, idPrefix: 'ri', goodsOnly: false },
+  defineProps<{
+    modelValue: RewardItems;
+    hats?: boolean;
+    idPrefix?: string;
+    goodsOnly?: boolean;
+    presets?: boolean;
+  }>(),
+  { hats: false, idPrefix: 'ri', goodsOnly: false, presets: false },
 );
 const emit = defineEmits<{ 'update:modelValue': [RewardItems]; over: [string[]] }>();
 const catalog = useCatalogStore();
@@ -27,6 +41,13 @@ const hatRows = ref<Array<{ tier: 'jade' | 'xuan'; name: string }>>(
   (props.modelValue.hats ?? []).map((h) => ({ ...h })),
 );
 const fmt = (n: number) => n.toLocaleString('en-US');
+
+function addPreset(p: ActivityRewardPreset) {
+  const rows = p.kind === 'goods' ? goods.value : foods.value;
+  const row = rows.find((r) => r.id === p.id);
+  if (row) row.num = Number(row.num || 0) + p.num;
+  else rows.push({ id: p.id, num: p.num });
+}
 
 function items(): RewardItems {
   const out: RewardItems = {};
@@ -74,6 +95,24 @@ watch(
 
 <template>
   <div>
+    <details v-if="presets && !goodsOnly" class="mb-2" :data-testid="tid('presets')">
+      <summary class="dt-meta">推荐奖励</summary>
+      <div class="dt-meta my-1">
+        平时缺、主线要用的。7 天的活动建议万能食材合计 10~15 个、食材随机券 10~20 张（问题记录 505 的分析）。
+      </div>
+      <div class="d-flex flex-wrap gap-1">
+        <button
+          v-for="p in ACTIVITY_REWARD_PRESETS"
+          :key="`${p.kind}-${p.id}`"
+          type="button"
+          class="btn btn-outline-secondary btn-sm"
+          :data-testid="tid(`preset-${p.kind}-${p.id}`)"
+          @click="addPreset(p)"
+        >
+          {{ p.name }} +{{ p.num }}
+        </button>
+      </div>
+    </details>
     <div v-if="!goodsOnly" class="d-flex flex-wrap gap-2 mb-2">
       <input
         v-model.number="coin"
