@@ -83,5 +83,6 @@ export async function dailyHead(db: Kysely<DB>, shardId: number, now: Date): Pro
   const title = Object.fromEntries(
     (['zh-CN', 'en', 'zh-TW'] as DailyLang[]).map((l) => [l, c[l].title]),
   ) as Record<DailyLang, string>;
-  return { day, title, rests: await restNames(db, title['zh-CN']) };
+  // 三种语言的标题都看：英文标题里可以有简中标题里没有的店（终审 I4）
+  return { day, title, rests: await restNames(db, Object.values(title).join('\n')) };
 }

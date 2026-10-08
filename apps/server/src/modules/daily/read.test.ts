@@ -132,4 +132,18 @@ describe('小镇日报：玩家看', () => {
     });
     expect((await headlines(t.db, shardId)).daily).toBeNull();
   });
+
+  it('首页头条：英文标题里有、简中标题里没有的店也给名字（终审 I4）', async () => {
+    const { shardId, a } = await shard();
+    const r = `{r:${a.restaurantId}}`;
+    await put(shardId, Y, 'published', {
+      content: {
+        'zh-CN': { title: '大赏出炉', body: `${r} ${r}` },
+        en: { title: `${r} wins big`, body: r },
+        'zh-TW': { title: '大賞出爐', body: `${r} ${r}` },
+      },
+    });
+    const head = (await headlines(t.db, shardId, { daily: true, now: t.clock.now })).daily!;
+    expect(head.rests[a.restaurantId]).toBeTruthy();
+  });
 });
