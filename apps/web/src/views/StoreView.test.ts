@@ -321,3 +321,29 @@ describe('StoreView 新道具（问题记录 276：页面开着时服务器加�
     expect(w.text()).toContain('剩余 1 小时 31 分');
   });
 });
+
+describe('仓库记录的时间（backlog：选“昨天”“更早”时看不出是哪天）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.store).mockResolvedValue(structuredClone(data));
+    vi.mocked(endpoints.storeRecords).mockResolvedValue([
+      { kind: 'coin', itemId: null, delta: 100, source: 'shop.sell', at: new Date().toISOString() },
+      { kind: 'coin', itemId: null, delta: 100, source: 'shop.sell', at: '2026-10-06T04:05:06Z' },
+    ]);
+  });
+
+  it('今天的记录只写时间；不是今天的带日期（北京时间），不管选的是哪个时间段（终审 M2：选“12 小时”也会跨午夜）', async () => {
+    const w = mount(StoreView);
+    await flushPromises();
+    await w
+      .findAll('a.nav-link')
+      .find((a) => a.text() === '道具流水')!
+      .trigger('click');
+    await flushPromises();
+    const time = (i: number) => w.get(`[data-testid="record-time-${i}"]`).text();
+    expect(time(0)).toMatch(/^\d\d:\d\d:\d\d$/);
+    expect(time(1)).toContain('10/06');
+    expect(time(1)).toContain('12:05');
+  });
+});

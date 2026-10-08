@@ -22,7 +22,8 @@ describe('百分数按语言写（视觉第三轮记下的）', () => {
     expect(formatPct(0.408)).toMatch(/^40,8[\u00a0\u202f]%$/);
     await useLocaleStore().set('es');
     expect(formatPct(0.408)).toMatch(/^40,8[\u00a0\u202f]%$/);
-  });
+    // 第一次切到英西法要现编译整份文案，全量测试时机器忙会超过默认的 15 秒（backlog）
+  }, 60_000);
 
   it('位数、固定小数位、正负号', async () => {
     expect(formatPct(0.4, { min: 1 })).toBe('40.0%');

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fixes1008:
+      "Les comptes à rebours et les temps restants suivent désormais l'heure du serveur, même si l'horloge de votre appareil est décalée\u202f; remplacer un équipement qui n'a pas expiré demande toujours confirmation\u202f; dans l'Historique des objets, les entrées qui ne sont pas d'aujourd'hui affichent la date\u202f; les grands nombres de progression des quêtes ont un séparateur de milliers\u202f; la quête principale «\u202fPlacer un équipement\u202f» mène désormais à l'accueil\u202f; Progression des recettes affiche «\u202fChargement\u202f» pendant le chargement",
     tasksSplit1008:
       "Le pointage et l'activité du jour ont désormais leur propre page, ouverte depuis les points d'activité de l'accueil\u202f; la page Quêtes a trois onglets (Principale, Hebdo, Secondaires), avec une icône cadeau sur ceux qui ont des récompenses à récupérer, et s'ouvre depuis le nouveau lien Quêtes sur la ligne de la quête principale de l'accueil\u202f; l'entrée Quêtes a été retirée du menu Plus",
     cookbookProgress1008:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fixes1008:
+      'Las cuentas atrás y los tiempos restantes siguen ahora la hora del servidor, así que son correctos aunque el reloj de tu dispositivo vaya mal; sustituir una instalación que no ha caducado siempre pide confirmación; las entradas del Registro de objetos que no son de hoy muestran la fecha; los números grandes del progreso de misiones llevan separador de miles; la misión principal «Colocar una instalación» lleva ahora a la página de inicio; Progreso de recetas muestra «Cargando» mientras carga',
     tasksSplit1008:
       'El registro y la actividad del día tienen ahora su propia página, que se abre desde los puntos de actividad de la página de inicio; la página de Misiones tiene tres pestañas (Principal, Semanales, Secundarias), con un icono de regalo en las que tienen premios por recoger, y se abre desde el nuevo enlace Misiones de la fila de la misión principal en la página de inicio; se quitó la entrada de Misiones del menú Más',
     cookbookProgress1008:

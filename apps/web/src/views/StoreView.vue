@@ -2,7 +2,7 @@
 import { remainText } from '../utils/remain';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
-import { SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
+import { gameDay, SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
@@ -10,7 +10,8 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
-import { formatNum, gameTimeOfDay } from '../utils/format';
+import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
@@ -44,6 +45,17 @@ const groups = computed(() =>
     : [],
 );
 const RANGES = ['1h', '6h', '12h', 'today', 'yesterday', 'before'] as const;
+/** 今天（北京时间）的记录只写时间；不是今天的带上日期（backlog：看不出是哪天；终审：选 12 小时也会跨午夜） */
+const recordTime = (at: string) =>
+  gameDay(new Date(at)) !== gameDay(new Date(serverNowMs()))
+    ? gameDateTime(at, {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : gameTimeOfDay(at);
 
 async function load() {
   data.value = await endpoints.store(type.value);
@@ -202,7 +214,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       <option v-for="r in RANGES" :key="r" :value="r">{{ t.store.ranges[r] }}</option>
     </select>
     <div v-for="(r, i) in records" :key="i" class="d-flex border-bottom py-1 small">
-      <span class="text-muted me-2">{{ gameTimeOfDay(r.at) }}</span>
+      <span class="text-muted me-2" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
       {{ recordName(r) }}
       <b :class="['ms-auto', r.delta >= 0 ? 'text-success' : 'text-danger']"
         >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b

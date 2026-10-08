@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { QuestDto } from '@dt/shared';
 import { useT } from '../composables/useT';
+import { formatNum } from '../utils/format';
 
 /** 一个任务卡片（问题记录 318）：主线、支线当前档、每周任务共用 */
 defineProps<{
@@ -33,7 +34,7 @@ const pct = (p: number, target: number) => Math.min(100, Math.round((p / Math.ma
       <span v-else-if="locked" class="ms-auto text-nowrap">{{ locked }}</span>
       <!-- 目标为 0 的（每周“领取本周探险图”，问题记录 515）不写进度 -->
       <span v-else-if="quest.target > 0" class="ms-auto"
-        >{{ Math.min(quest.progress, quest.target) }}/{{ quest.target }}</span
+        >{{ formatNum(Math.min(quest.progress, quest.target)) }}/{{ formatNum(quest.target) }}</span
       >
     </div>
     <div class="text-muted">{{ t.rest.tasks.award(award) }}</div>

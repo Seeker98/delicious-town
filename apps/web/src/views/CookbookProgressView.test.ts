@@ -78,3 +78,17 @@ describe('食谱进度一览（问题记录：食谱页加进度一览）', () =
     expect(rows[0]!.findAll('td')[3]!.classes()).not.toContain('text-success');
   });
 });
+
+describe('进度一览加载中（backlog）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  it('数据回来之前写加载中', async () => {
+    vi.mocked(endpoints.cookbookProgress).mockReturnValue(new Promise(() => {}));
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: {} }],
+    });
+    const w = mount(CookbookProgressView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.get('[data-testid="progress-loading"]').text()).toBe('加载中……');
+  });
+});

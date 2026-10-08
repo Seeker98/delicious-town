@@ -8,6 +8,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 
 const DINE_MINUTES = 30;
 const session = useSessionStore();
@@ -44,7 +45,7 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
 }
 
 const dinedMinutes = (x: TableDto) =>
-  x.freeloaderSince ? Math.floor((Date.now() - Date.parse(x.freeloaderSince)) / 60_000) : 0;
+  x.freeloaderSince ? Math.floor((serverNowMs() - Date.parse(x.freeloaderSince)) / 60_000) : 0;
 
 onMounted(load);
 </script>

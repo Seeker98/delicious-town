@@ -11,6 +11,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum, timeHM } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -35,7 +36,7 @@ const sections = [
 const specialWait = computed(() => {
   const until = data.value?.specialCooldownUntil;
   if (!until) return 0;
-  return Math.max(0, Math.ceil((new Date(until).getTime() - Date.now()) / 60_000));
+  return Math.max(0, Math.ceil((new Date(until).getTime() - serverNowMs()) / 60_000));
 });
 const sectionNote = (key: string) =>
   key === 'special' && data.value ? t.value.market.specialNote(data.value.specialCooldownMin) : '';

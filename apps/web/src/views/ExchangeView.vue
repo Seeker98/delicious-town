@@ -10,6 +10,7 @@ import { timeLeft } from '../utils/activity';
 import { formatNum, formatPct } from '../utils/format';
 import { matchText } from '../utils/match';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
+import { serverNowMs } from '../utils/serverNow';
 
 /** 交易所（问题记录 156，156-1 设计 §8）：选食材 → 盘口 → 下单；我的挂单、账户、成交 */
 const catalog = useCatalogStore();
@@ -72,7 +73,7 @@ const blocked = computed(() =>
   me.value?.frozen ? t.value.exchange.frozen : me.value && !me.value.eligible ? reasonOf(me.value) : '',
 );
 /** 冷静期的所得（156-2 设计 §8）：到期的转进账户要靠"全部取出"，所以分开显示（终审 I2） */
-const isReady = (at: string) => new Date(at).getTime() <= Date.now();
+const isReady = (at: string) => new Date(at).getTime() <= serverNowMs();
 const readyHolds = computed(() => me.value?.holds.filter((h) => isReady(h.releaseAt)) ?? []);
 const pendingHolds = computed(() => me.value?.holds.filter((h) => !isReady(h.releaseAt)) ?? []);
 function holdText(list: ExchangeMeDto['holds']): string {

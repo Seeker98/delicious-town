@@ -29,6 +29,7 @@ export interface ActivityRewardPreset {
 
 export const ACTIVITY_REWARD_PRESETS: readonly ActivityRewardPreset[] = [
   // 主力：学菜缺一种食材时顶上，稀有的也行；7 天活动合计 10~15 个
+  { kind: 'foods', id: 9001, name: '一级万能食材', num: 2 },
   { kind: 'foods', id: 9002, name: '二级万能食材', num: 2 },
   { kind: 'foods', id: 9003, name: '三级万能食材', num: 2 },
   { kind: 'foods', id: 9004, name: '四级万能食材', num: 1 },
@@ -43,4 +44,7 @@ export const ACTIVITY_REWARD_PRESETS: readonly ActivityRewardPreset[] = [
   { kind: 'goods', id: 10504, name: '协会油壶扩容凭证', num: 1 },
   { kind: 'goods', id: 10404, name: '大扩容卡', num: 1 },
   { kind: 'goods', id: 10408, name: '保险卡', num: 1 },
+  // 新手（0~2 星）缺的：商店都能买，给少量就够（终审：分析文档第二节有、清单里没有）
+  { kind: 'goods', id: 10413, name: '餐桌A', num: 1 },
+  { kind: 'goods', id: 10405, name: '小扩建卡', num: 1 },
 ];

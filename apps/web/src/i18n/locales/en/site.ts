@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fixes1008:
+      'Countdowns and remaining times now follow server time, so they stay right even if your device clock is off; replacing a facility that has not expired always asks first; entries in the Item log that are not from today show the date; large quest progress numbers have thousands separators; the main quest “Place a facility” now goes to the home page; Recipe progress shows “Loading” while it loads',
     tasksSplit1008:
       'Check-in and daily activity now have their own page, opened from the activity points on the home page; the Quests page has three tabs (Main, Weekly, Side), with a gift icon on tabs that have rewards to claim, and is opened from the new Quests link on the main-quest row of the home page; the Quests entry was removed from the More menu',
     cookbookProgress1008:

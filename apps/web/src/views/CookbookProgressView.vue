@@ -42,6 +42,7 @@ onMounted(async () => {
     >
   </div>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
+  <div v-else-if="!data" class="text-muted small" data-testid="progress-loading">{{ t.common.loading }}</div>
   <template v-if="data">
     <ul class="list-unstyled small mb-3" data-testid="progress-summary">
       <li v-for="(g, i) in grades" :key="g">

@@ -11,6 +11,7 @@ import { useMailStore } from '../stores/mail';
 import { useToastStore } from '../stores/toast';
 import { rewardSummary } from '../utils/reward';
 import { mailBody, mailTitle } from '../utils/serverText';
+import { serverNowMs } from '../utils/serverNow';
 
 /** 邮箱（子项目 6A）：领取附件、一键全领、删除；顶部是兑换码输入框（6A-2） */
 const catalog = useCatalogStore();
@@ -46,7 +47,7 @@ const claimable = (m: MailDto) => hasItems(m) && !m.claimed && !m.broken;
 const levelLow = (m: MailDto) => m.minLevel !== null && level.value < m.minLevel;
 const anyClaimable = computed(() => items.value.some((m) => claimable(m) && !levelLow(m)));
 const daysLeft = (m: MailDto) =>
-  Math.max(0, Math.ceil((new Date(m.expiresAt).getTime() - Date.now()) / 86_400_000));
+  Math.max(0, Math.ceil((new Date(m.expiresAt).getTime() - serverNowMs()) / 86_400_000));
 const sentAt = (m: MailDto) =>
   gameDateTime(m.createdAt, {
     month: '2-digit',

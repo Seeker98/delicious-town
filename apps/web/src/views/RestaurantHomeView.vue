@@ -23,6 +23,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 import { remainText } from '../utils/remain';
 import { effectName } from '../utils/serverText';
 import { CUSTOMER_NAMES } from '../utils/labels';
@@ -172,7 +173,7 @@ function place(goodsId: number) {
   const current = rest.value?.devices.find((d) => d.slot === slot);
   if (
     current?.goodsId &&
-    (current.expiresAt === null || new Date(current.expiresAt).getTime() > Date.now()) &&
+    (current.expiresAt === null || new Date(current.expiresAt).getTime() > serverNowMs()) &&
     !window.confirm(
       t.value.home.replaceConfirm(catalog.goodsName(current.goodsId), expiresText(current.expiresAt)),
     )
@@ -514,7 +515,9 @@ onBeforeUnmount(() => {
           <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
           }}{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
           <span class="text-muted">{{
-            t.common.paren(`${Math.min(mainTask.progress, mainTask.target)}/${mainTask.target}`)
+            t.common.paren(
+              `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,
+            )
           }}</span>
         </div>
         <!-- 领奖和签到一样是文字链接：礼物图标加文字（问题记录 469） -->
