@@ -63,6 +63,25 @@ describe('每天的收入汇总（收购 PR 1）', () => {
     expect(best).toEqual({ rest_id: a.restaurantId, day_coin: 350, day_rounds: 3 });
   });
 
+  it('单日最高只写本区服的店：别的区服同一天已有的汇总不跟着写进来（支线“经营”终审遗留：缺的测试）', async () => {
+    const [sa, sb] = [await createShard(t.db), await createShard(t.db)];
+    const a = await newRestaurant(t, { shardId: sa });
+    const b = await newRestaurant(t, { shardId: sb });
+    await round(a.restaurantId, 100, gameTime('2026-10-05', 1), 1);
+    // 区服 B 的店同一天已经有汇总（它自己那个区服的任务写的）
+    await t.db
+      .insertInto('rest_income_day')
+      .values({ rest_id: b.restaurantId, day: '2026-10-05', coin: 999_999, rounds: 300 })
+      .execute();
+    await aggregateIncomeDay(t.db, sa, '2026-10-05');
+    const best = await t.db
+      .selectFrom('rest_income_best')
+      .select('rest_id')
+      .where('rest_id', 'in', [a.restaurantId, b.restaurantId])
+      .execute();
+    expect(best.map((r) => r.rest_id)).toEqual([a.restaurantId]);
+  });
+
   it('区间合计 [from, to)；清理某天以前的', async () => {
     const shardId = await createShard(t.db);
     const a = await newRestaurant(t, { shardId });

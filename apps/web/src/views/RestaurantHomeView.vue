@@ -797,6 +797,7 @@ onBeforeUnmount(() => {
         type="button"
         class="dt-link-btn d-block mt-1"
         data-testid="effects-more"
+        :aria-expanded="effectsAll"
         @click="effectsAll = !effectsAll"
       >
         {{ effectsAll ? t.home.collapse : t.home.expandAll(rest.effects.length) }}

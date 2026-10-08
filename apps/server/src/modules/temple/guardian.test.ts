@@ -6,6 +6,8 @@ import { questIn, showQuest } from '../../../test/quests';
 import { grantGoods } from '../store/grant';
 import { GOODS } from '@dt/config';
 import { gid } from '../../../test/items';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
 
 const config = testConfig();
 let t: TestGame;
@@ -115,5 +117,41 @@ describe('守护兽（规格书 09 §9.1）', () => {
     win.game.shards.invalidate(ctx.shardId);
     const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 1 });
     expect(r.data.shots[0]!.damage).toBe(3000);
+  });
+});
+
+describe('守护兽一次掉几个神秘食材（集束飞弹那次的遗留：缺的测试）', () => {
+  it('期望超过 1 个时一次掉多个：都进橱柜，每个各发一条新闻，drops.rare 是第一个', async () => {
+    const shardId = await createShard(win.db);
+    // 掉率调到 1：5 星放大 7/3 倍，期望约 2.3 个，随机数 0 时整数部分 2 个再加 1 个
+    await setTuning(win, shardId, { temple: { guardianRareRate: 1 } });
+    const ctx = await newRestaurant(win, {
+      shardId,
+      patch: { star_level: 5 },
+      goods: { [GOODS.missileCluster]: 20 },
+    });
+    const r = await win.game.temple.missile(ctx, { goodsId: GOODS.missileCluster, num: 99 });
+    expect(r.data.killed).toBe(true);
+    const rares = r.data.drops.foods.filter((f) => config.requireFood(f.foodsId).level === 7);
+    const n = rares.reduce((s, f) => s + f.num, 0);
+    expect(n).toBeGreaterThanOrEqual(3);
+    expect(rares.map((f) => f.foodsId)).toContain(r.data.drops.rare);
+    const news = await win.db
+      .selectFrom('news')
+      .select('params')
+      .where('rest_id', '=', ctx.restaurantId)
+      .where('type', '=', 'temple.guardian.rare')
+      .execute();
+    expect(news).toHaveLength(n);
+    // 都进了橱柜
+    for (const f of rares) {
+      const row = await win.db
+        .selectFrom('cupboard_food')
+        .select('num')
+        .where('rest_id', '=', ctx.restaurantId)
+        .where('foods_id', '=', f.foodsId)
+        .executeTakeFirst();
+      expect(row?.num ?? 0).toBeGreaterThanOrEqual(f.num);
+    }
   });
 });

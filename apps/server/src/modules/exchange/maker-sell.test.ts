@@ -117,6 +117,18 @@ describe('卖给系统（问题记录 244）', () => {
     expect(await have(seller.restaurantId, f.id)).toBe(30);
   });
 
+  it('7 级食材：盘口里没有系统的买档，卖给系统整单拒绝，食材不扣（经济修正终审遗留：原来只测了报价）', async () => {
+    const shardId = await createShard(t.db);
+    const f = [...t.deps.config.foods.values()].find((x) => x.level === 7 && isTradable(x))!;
+    const seller = await trader(t, { shardId, coin: 0, foods: { [f.id]: 3 } });
+    const bk = await svc().book(seller, f.id);
+    expect(bk.bids.find((b) => b.system)).toBeUndefined();
+    await expect(svc().sellToSystem(seller, { foodsId: f.id, qty: 1, price: 1 })).rejects.toMatchObject({
+      params: { reason: 'exchange_no_system_bid' },
+    });
+    expect(await have(seller.restaurantId, f.id)).toBe(3);
+  });
+
   it('普通卖单仍然不能低于挂单下限，按下限挂的卖单也不会和兜底档成交', async () => {
     const { shardId, f, seller, sys } = await setup();
     const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day());

@@ -37,6 +37,21 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     expect((await counters(ctx))['bar.fg.streak3']).toBe(2);
   });
 
+  it('划拳平局打断连胜：连赢 3 局、平一局、再赢 3 局，“连胜 3”记两次（515 遗留：缺的测试）', async () => {
+    const ctx = await rich();
+    rngValues = [0.1, 0.99]; // 胜；奖励发经验
+    for (let i = 0; i < 3; i++) await bar().fg(ctx, { hand: 0 });
+    expect((await counters(ctx))['bar.fg.streak3']).toBe(1);
+    rngValues = [0.45]; // 平局（胜率 0.25 + 幸运，再往上 0.25 是平局）
+    await bar().fg(ctx, { hand: 0 });
+    rngValues = [0.1, 0.99];
+    for (let i = 0; i < 2; i++) await bar().fg(ctx, { hand: 0 });
+    // 平局以后只赢了 2 局：还没到 3
+    expect((await counters(ctx))['bar.fg.streak3']).toBe(1);
+    await bar().fg(ctx, { hand: 0 });
+    expect((await counters(ctx))['bar.fg.streak3']).toBe(2);
+  });
+
   it('转数字转中记一次，没中不记', async () => {
     const ctx = await rich();
     rngValues = [0.5, 0];
@@ -91,6 +106,22 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     expect([c['bar.darts.win'], c['bar.darts.perfect']]).toEqual([1, 1]);
   });
 
+  it('飞镖三镖全中但和老板打平：记“全中靶心”，不记“赢老板”（515 遗留：缺的测试）', async () => {
+    const ctx = await rich();
+    // 随机数 0：老板三镖都是 50 分（权重表第一项）
+    rngValues = [0];
+    await bar().dartsStart(ctx);
+    for (let i = 0; i < 3; i++) {
+      rngValues = [0, 0.25];
+      await bar().dartsAim(ctx);
+      rngValues = [0.99];
+      const r = await bar().dartsThrow(ctx, { elapsedMs: 0 });
+      if (i === 2) expect(r.data.result).toBe('draw');
+    }
+    const c = await counters(ctx);
+    expect([c['bar.darts.win'], c['bar.darts.perfect']]).toEqual([undefined, 1]);
+  });
+
   it('记忆调酒：答对最后一关（7 种）记一次', async () => {
     const ctx = await rich();
     rngValues = [0];
@@ -140,6 +171,21 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     await bar().spiceGuess(ctx, { guess: pool.slice(0, t.deps.config.tuning.bar.spice.length) });
     const c = await counters(ctx);
     expect([c['bar.spice.win6'], c['bar.spice.win4']]).toEqual([1, 1]);
+  });
+
+  it('秘制调料第 5 次才猜中：只记“6 次以内”，不记“4 次以内”（515 遗留：缺的测试）', async () => {
+    const ctx = await rich();
+    rngValues = [0];
+    const { kinds, length } = t.deps.config.tuning.bar.spice;
+    const pool = Array.from({ length: kinds }, (_, i) => i);
+    for (let i = pool.length - 1; i > 0; i--) [pool[i], pool[0]] = [pool[0]!, pool[i]!];
+    await bar().spiceStart(ctx);
+    // 前 4 次猜别的几种（一个都不对），第 5 次猜中
+    const wrong = pool.slice(length, length * 2);
+    for (let i = 0; i < 4; i++) await bar().spiceGuess(ctx, { guess: wrong });
+    await bar().spiceGuess(ctx, { guess: pool.slice(0, length) });
+    const c = await counters(ctx);
+    expect([c['bar.spice.win6'], c['bar.spice.win4']]).toEqual([1, undefined]);
   });
 
   it('一掷千金：一路不成交、开出这一局最大的奖记一次；没开到最大的不记', async () => {

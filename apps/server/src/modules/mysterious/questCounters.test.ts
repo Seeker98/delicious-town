@@ -17,15 +17,19 @@ describe('鉴定出高级特色菜', () => {
   it('每张鉴定出来的 4 级以上记一次 l4，5 级以上另记 l5', async () => {
     const ctx = await newRestaurant(t, {
       patch: { star_level: 1 },
-      goods: { [GOODS.mysteryRecipe]: 10, [GOODS.krabburgerBook]: 10 },
+      goods: { [GOODS.mysteryRecipe]: 200, [GOODS.krabburgerBook]: 200 },
     });
-    const r = await t.game.mysterious.appraise(ctx, {
-      toolId: GOODS.krabburgerBook,
-      times: 10,
-      noRetry: false,
-    });
-    const levels = r.data.results.filter((x) => x.ok).map((x) => config.requireMc(x.mcId!).level);
-    expect(levels.length).toBe(10);
+    // 蟹黄堡秘方鉴定出 3~5 级：一直鉴定到出了 4 级以上（515 遗留：原来只鉴定一次，全是 3 级时两个断言都是 0 = 0）
+    const levels: number[] = [];
+    for (let i = 0; i < 20 && !levels.some((l) => l >= 4); i++) {
+      const r = await t.game.mysterious.appraise(ctx, {
+        toolId: GOODS.krabburgerBook,
+        times: 10,
+        noRetry: false,
+      });
+      levels.push(...r.data.results.filter((x) => x.ok).map((x) => config.requireMc(x.mcId!).level));
+    }
+    expect(levels.some((l) => l >= 4)).toBe(true);
     expect(await count(ctx.restaurantId, 'mc.appraise.l4')).toBe(levels.filter((l) => l >= 4).length);
     expect(await count(ctx.restaurantId, 'mc.appraise.l5')).toBe(levels.filter((l) => l >= 5).length);
   });

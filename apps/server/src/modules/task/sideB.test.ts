@@ -3,6 +3,7 @@ import { DEVICE_TYPE, FUND_MEDALS, GOODS_TYPE } from '@dt/config';
 import { acquireShard, setAcquireState } from '../../../test/acquire';
 import { createTestGame, newRestaurant, type TestGame } from '../../../test/game';
 import { questIn, showQuest } from '../../../test/quests';
+import { backfill as backfillSignin } from '../../db/migrations/0058_signin_streak';
 
 /** 支线扩充 B 的状态条件（问题记录 515，方案第八节）：任务页按现在的数算，以前达到的也算 */
 let t: TestGame;
@@ -38,6 +39,31 @@ describe('连续签到（历史最长）', () => {
       .executeTakeFirstOrThrow();
     expect(row).toMatchObject({ last_day: '2026-11-05', streak: 1, best: 3 });
     expect(await progress(ctx, 'signin.best', 7)).toBe(3);
+  });
+
+  it('迁移补出来的连续签到，第二天接着签能连上（515 遗留：缺的测试）', async () => {
+    const ctx = await newRestaurant(t);
+    await t.db
+      .insertInto('daily_counter')
+      .values(
+        ['2026-12-01', '2026-12-02', '2026-12-03'].map((day) => ({
+          rest_id: ctx.restaurantId,
+          day,
+          key: 'signin',
+          count: 1,
+        })),
+      )
+      .execute();
+    await backfillSignin(t.db);
+    t.clock.set(new Date('2026-12-04T04:00:00Z'));
+    await t.game.task.signIn(ctx);
+    t.clock.set(new Date());
+    const row = await t.db
+      .selectFrom('signin_streak')
+      .selectAll()
+      .where('rest_id', '=', ctx.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(row).toMatchObject({ last_day: '2026-12-04', streak: 4, best: 4 });
   });
 
   it('没签过为 0', async () => {
@@ -128,5 +154,26 @@ describe('其他状态条件', () => {
     ]);
     expect(await progress(ctx, 'invite.level10', 1)).toBe(2);
     expect(await progress(ctx, 'invite.level30', 1)).toBe(1);
+  });
+});
+
+describe('社交支线：没有进行中的限时活动时跳过活动那两档（515 遗留：缺的测试）', () => {
+  it('换门面做完后直接到买称号，买完称号直接到帖子加精', async () => {
+    const ctx = await newRestaurant(t);
+    const social = t.deps.config.bundle.questLines.find((l) => l.key === 'social')!;
+    const inLine = t.deps.config.bundle.quests
+      .filter((q) => q.line === social.id)
+      .sort((a, b) => a.order - b.order);
+    const [door, acts3, title, top10, essence] = inLine;
+    expect([acts3!.feature, top10!.feature]).toEqual(['activity', 'activity']);
+    await showQuest(t, ctx.restaurantId, door!.id);
+    const done = (id: number) =>
+      t.db.insertInto('quest_done').values({ rest_id: ctx.restaurantId, quest_id: id }).execute();
+    const current = async () =>
+      (await t.game.task.tasks(ctx)).lines.find((l) => l.id === social.id)?.quest?.id;
+    await done(door!.id);
+    expect(await current()).toBe(title!.id);
+    await done(title!.id);
+    expect(await current()).toBe(essence!.id);
   });
 });

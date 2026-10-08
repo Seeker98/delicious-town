@@ -67,6 +67,27 @@ describe('ExchangePanel', () => {
     ]);
   });
 
+  it('填了份数以后顺序不变：材料只够 1 份的填 9 份也不挪到“材料不够”那组（495~513 遗留：缺的测试）', async () => {
+    const base = exchangeData().items[1]!;
+    const row = (id: number, num: number, have: number) => ({
+      ...base,
+      id,
+      need: [{ goodsId: 180, num, have }],
+      times: 9,
+      used: 0,
+    });
+    vi.mocked(endpoints.townExchange).mockResolvedValue(
+      exchangeData({ items: [row(21, 3, 5), row(22, 2, 5), row(23, 9, 1)] }),
+    );
+    const w = mount(ExchangePanel);
+    await flushPromises();
+    const order = () => w.findAll('[data-testid^="ex-row-"]').map((x) => x.attributes('data-testid'));
+    const before = order();
+    expect(before).toEqual(['ex-row-22', 'ex-row-21', 'ex-row-23']);
+    await w.get('[data-testid="ex-num-22"]').setValue(9);
+    expect(order()).toEqual(before);
+  });
+
   it('兑换多份后重新读取', async () => {
     vi.mocked(endpoints.townExchangeDo).mockResolvedValue({ goodsId: 139, num: 2 });
     const w = mount(ExchangePanel);

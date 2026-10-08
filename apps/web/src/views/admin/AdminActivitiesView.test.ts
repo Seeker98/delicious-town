@@ -144,6 +144,10 @@ describe('AdminActivitiesView', () => {
     expect(w.find('[data-testid="ac-starts"]').attributes('disabled')).toBeDefined();
     expect(w.find('fieldset[data-testid="ac-def"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="ac-title"]').attributes('disabled')).toBeUndefined();
+    // 推荐奖励的按钮也在禁用的 fieldset 里：点不了（505 遗留：缺的测试）
+    const presetBtns = w.findAll('button[data-testid*="-preset-"]');
+    expect(presetBtns.length).toBeGreaterThan(0);
+    expect(presetBtns.every((b) => b.element.matches(':disabled'))).toBe(true);
   });
 });
 

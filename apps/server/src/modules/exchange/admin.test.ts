@@ -214,6 +214,30 @@ describe('后台系统做市汇总（156-3 设计 §7）', () => {
   });
 });
 
+describe('系统不收购的等级在后台汇总里（经济修正终审遗留：缺的测试）', () => {
+  it('区服把 6 级改成不收：有库存的照样列，收购价写空，卖价照旧', async () => {
+    const shardId = await createShard(t.db);
+    const f = [...t.deps.config.foods.values()].find((x) => x.level === 6 && x.odds < 100 && x.odds > 0)!;
+    const ref = await refPrice(
+      t.db,
+      t.deps.config,
+      t.deps.config.tuning.exchange,
+      ONE,
+      shardId,
+      f.id,
+      gameDay(t.clock.now),
+    );
+    const band = priceBand(ref, t.deps.config.tuning.exchange);
+    const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 5 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: band.min, qty: 5 });
+    await setTuning(t, shardId, { exchange: { maker: { noBidLevels: [6] } } });
+    const row = (await admin().maker(shardId)).foods.find((x) => x.foodsId === f.id)!;
+    expect(row.stock).toBe(5);
+    expect(row.bid).toBeNull();
+    expect(row.ask).toBeGreaterThan(0);
+  });
+});
+
 describe('backlog 156-3：系统做市关闭', () => {
   it('maker.enabled = false 时汇总里写明已关闭', async () => {
     const shardId = await createShard(t.db);

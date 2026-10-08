@@ -5,6 +5,8 @@ import { eventCount } from '../../../test/quests';
 import { createTestGame, foodNum, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import { GOODS } from '@dt/config';
 import { fid } from '../../../test/items';
+import { createShard } from '../../../test/fixtures';
+import { setTuning } from '../../../test/town';
 
 const config = testConfig();
 let t: TestGame;
@@ -187,5 +189,14 @@ describe('试炼（规格书 09 §9.4）', () => {
       code: 'VALIDATION_FAILED',
       params: { reason: 'bad_food' },
     });
+  });
+});
+
+describe('区服改了试炼价值上限（集束飞弹那次的遗留：缺的测试）', () => {
+  it('神殿页写的上限跟着区服数值变', async () => {
+    const shardId = await createShard(win.db);
+    await setTuning(win, shardId, { temple: { trialWorthMax: 45 } });
+    const ctx = await newRestaurant(win, { shardId, patch: { star_level: 1 } });
+    expect((await win.game.temple.overview(ctx)).trial.worthMax).toBe(45);
   });
 });

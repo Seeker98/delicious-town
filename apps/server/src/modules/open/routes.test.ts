@@ -84,6 +84,8 @@ describe('开放接口的跨域和缓存细节（问题记录 142 终审）', ()
     expect(pre.headers['access-control-allow-credentials']).toBeUndefined();
     expect(String(pre.headers['access-control-allow-headers']).toLowerCase()).toContain('if-none-match');
     expect(String(pre.headers['access-control-allow-methods'])).toContain('GET');
+    // 开放接口的预检缓存一天：全局 cors 先写 7200，这里在 onSend 里改写（性能排查终审遗留：缺的测试）
+    expect(pre.headers['access-control-max-age']).toBe('86400');
     const r = await call(ctx.app, 'GET', `/api/v1/open/goods/${GOODS.mysteryTicket}`, {
       headers: { origin: 'https://tool.example' },
     });

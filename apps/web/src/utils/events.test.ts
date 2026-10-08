@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, describe, expect, it } from 'vitest';
+import { activeMessages } from '../i18n';
+import { useLocaleStore } from '../stores/locale';
 import { eventText, eventsSummary, logText, mergeEvents, recordLabel } from './events';
 
 const names = { goodsName: (id: number) => ({ 1: '神秘礼券' })[id] ?? `道具${id}`, foodName: () => '大米' };
@@ -306,5 +309,28 @@ describe('交易所日志（156-1）', () => {
     expect(log('predict.refund', { title: '会下雨吗', coin: 900, net: 1000 })).toBe(
       '预测「会下雨吗」已作废, 退回 900 银币, 本局盈亏 -100',
     );
+  });
+});
+
+describe('流水名称按语言（fix/batch-1008 遗留：道具流水只测了简中）', () => {
+  afterEach(async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('zh-CN');
+  });
+  const en = {
+    goodsName: () => 'Mystery Voucher',
+    foodName: () => 'Rice',
+    mcName: (id: number) => `Dish ${id}`,
+  };
+
+  it('英文：资源、残卷、种子、菜篮的名称都是英文，不夹中文', async () => {
+    setActivePinia(createPinia());
+    await useLocaleStore().set('en');
+    const labels = ['coin', 'diamond', 'exp', 'renown', 'remnant', 'seed', 'basket'].map((kind) =>
+      recordLabel({ kind, itemId: 7 }, en),
+    );
+    expect(labels.filter((x) => /[\u4e00-\u9fff]/.test(x))).toEqual([]);
+    expect(recordLabel({ kind: 'coin', itemId: null }, en)).toBe(activeMessages().events.kind.coin);
+    expect(recordLabel({ kind: 'remnant', itemId: 7 }, en)).toContain('Dish 7');
   });
 });
