@@ -1,6 +1,7 @@
 #!/bin/sh
-# 每晚由宿主机 cron 调用：0 4 * * * /opt/dt/infra/backup.sh
-# 保留期（14 天）用 R2 存储桶的生命周期规则控制，见 docs/deploy.md
+# 每晚由宿主机 cron 调用：0 4 * * * bash /opt/dt/infra/backup.sh >> /var/log/dt-backup.log 2>&1
+# （用 bash 调用，不要 chmod +x：仓库里的文件一改，deploy.sh 就拒绝部署）
+# 保留期（14 天）用 R2 存储桶的生命周期规则控制，见 docs/deploy.md 第 5 步；恢复演练见 docs/deploy.md“备份恢复演练”
 set -eu
 cd "$(dirname "$0")"
 

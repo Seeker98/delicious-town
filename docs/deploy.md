@@ -5,7 +5,7 @@
 2. 一个域名，托管到 Cloudflare（免费账户即可）
 3. Cloudflare Turnstile：创建一个站点，记下 site key 和 secret key
 4. 发信服务：Brevo 或 Resend，拿到 SMTP 地址和账号
-5. Cloudflare R2：创建存储桶 `dt-backup`，生成 API 令牌；在存储桶的生命周期规则里设置"14 天后删除"
+5. Cloudflare R2：创建存储桶 `dt-backup`，生成 API 令牌；在存储桶的生命周期规则里设置"14 天后删除"（备份用的令牌只有读写对象的权限，读不到生命周期规则，要在 Cloudflare 后台看）
 
 ## 二、服务端（VPS）
 1. 把仓库放到 `/opt/dt`
@@ -23,6 +23,28 @@
 7. 备份：`crontab -e` 加入 `0 4 * * * bash /opt/dt/infra/backup.sh >> /var/log/dt-backup.log 2>&1`。用 `bash` 调用，不要 `chmod +x`：仓库里的文件一改（连权限也算），`deploy.sh` 就会因为“服务器上的仓库有未提交的改动”拒绝部署（2026-10-06 因此连续 8 次部署失败）
 
 VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进来）。
+
+## 备份恢复演练
+
+隔一段时间（以及改了 backup.sh、换了 Postgres 版本以后）确认一次备份真的能恢复。2026-10-08 做过一次：最新的 `dt-20261007T200001Z.dump` 恢复出 160 张表，迁移停在 0055（0056 在备份后 32 分钟才执行），各表行数和线上同一量级。
+
+1. 服务器上从 R2 取最新一份到 /tmp（备份令牌、地址都在 `infra/.env`，值带引号要去掉）：
+   ```bash
+   cd /opt/dt/infra
+   env_get() { grep -E "^$1=" .env | head -1 | cut -d= -f2- | tr -d "\"'\r"; }
+   AWS="docker run --rm -v /tmp:/tmp -e AWS_ACCESS_KEY_ID=$(env_get AWS_ACCESS_KEY_ID) -e AWS_SECRET_ACCESS_KEY=$(env_get AWS_SECRET_ACCESS_KEY) -e AWS_DEFAULT_REGION=auto amazon/aws-cli"
+   LATEST=$($AWS s3 ls "s3://$(env_get R2_BUCKET)/db/" --endpoint-url "$(env_get R2_ENDPOINT)" | awk '{print $4}' | sort | tail -1)
+   $AWS s3 cp "s3://$(env_get R2_BUCKET)/db/$LATEST" /tmp/restore-check.dump --endpoint-url "$(env_get R2_ENDPOINT)"
+   ```
+2. 拷回本机（`scp root@<服务器>:/tmp/restore-check.dump .`），删掉服务器上的这份：`rm /tmp/restore-check.dump`。
+3. 本机开发库的容器里建一个临时库恢复（不动开发库本身）：
+   ```bash
+   docker cp restore-check.dump dt-dev-postgres-1:/tmp/restore-check.dump
+   docker exec dt-dev-postgres-1 psql -U dt -d postgres -c "create database dt_restore_check"
+   docker exec dt-dev-postgres-1 pg_restore -U dt -d dt_restore_check --no-owner --exit-on-error /tmp/restore-check.dump
+   ```
+4. 核对：表数（`select count(*) from pg_tables where schemaname='public'`）、最新迁移（`select name from kysely_migration order by name desc limit 1`，和线上同一时刻的对得上）、几张主要的表的行数（restaurant、account、store_item、cupboard_food、job_run）和线上同一量级。
+5. 删掉临时库和文件：`drop database dt_restore_check`、容器里和本机的 `restore-check.dump`。
 
 ## 三、前端（Cloudflare Pages）
 1. Pages → 连接 Git 仓库
@@ -96,7 +118,7 @@ docker compose -f compose.prod.yml up -d
 
 ## 子项目 2A 之后的变化
 
-- worker 现在承担所有周期任务（结算每 4 分钟、体力、老鼠、天气、菜场、商店特价），每 5 秒检查一次到期任务，执行记录在 `job_run` 表（保留 7 天）。**生产环境必须至少跑一个 worker**，两个 worker 时只有主节点执行。
+- worker 现在承担所有周期任务（结算每 4 分钟、体力、老鼠、天气、菜场、商店特价），每 5 秒检查一次到期任务，执行记录在 `job_run` 表（保留 7 天）。**生产环境必须至少跑一个 worker**，现在只跑一个（2026-10-08 起，省内存；多个时也只有主节点执行）。
 - `ENABLE_TEST_API` 只能在开发环境开启；生产环境设成 true 会拒绝启动。
 - 结算并发数和批大小在配置 `tuning.settlement.concurrency / batchSize`，数据库连接池 `DB_POOL_SIZE` 应不小于并发数 + 4。
 - 区服数值可以通过 `shard_config.override.tuning` 覆盖（深合并，覆盖后重新校验；写错会导致该区服操作报错，修改前先用 `pnpm sim --tuning` 验证）。
@@ -168,7 +190,6 @@ docker compose -f compose.prod.yml up -d
 - 老虎机奖池来自配置包的 `dataset/bar_slot_machine_award`（22 项）
 - 任务 13、108 的链接改为 `/bar`；新状态键 `honor.potCount`（支线"集齐 4 株盆栽"）
 
-
 ## 厨塔（子项目 4C-2）
 
 - 迁移 0012 新建 `tower_state`（每店打赢过的最高层）、`tower_watchman_mc`（守塔人当天的菜）、`tower_rank`（每区服每周的赛厨榜）
@@ -177,7 +198,6 @@ docker compose -f compose.prod.yml up -d
 - 数值在 `tuning.tower`（次数、体力、声望、切磋奖励档位、名次礼包、换菜时间）
 - 守塔人来自配置包的 `dataset/tower_floors`，属性在构建时按原版厨力校准；声望商店从 `extra` 挪到正式字段 `renownShop`
 - 活跃映射新增 `tower.rank` → "与好友赛厨"
-
 
 ## 外卖（子项目 4D）
 
