@@ -17,11 +17,11 @@ function window(now: Date): string[] {
   return Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(y, -i));
 }
 
-/** 正文里的店：现在的名字，不存在为 null */
-async function restNames(db: Kysely<DB>, content: DailyContent): Promise<Record<string, string | null>> {
+/** 文字里的店记号：现在的名字，不存在为 null（各语言记号一样，看简中就行） */
+export async function restNames(db: Kysely<DB>, text: string): Promise<Record<string, string | null>> {
   const ids = [
     ...new Set(
-      tokensIn(`${content['zh-CN'].title}\n${content['zh-CN'].body}`)
+      tokensIn(text)
         .filter((x) => x.startsWith('r:'))
         .map((x) => Number(x.slice(2))),
     ),
@@ -56,7 +56,7 @@ export async function readDaily(
   if (row.status === 'published' && row.content) {
     const content = row.content as DailyContent;
     out.article = content;
-    out.rests = await restNames(db, content);
+    out.rests = await restNames(db, `${content['zh-CN'].title}\n${content['zh-CN'].body}`);
     return out;
   }
   const ids = ((row.facts as Partial<DailyFacts>).events ?? []).slice(0, FALLBACK_SIZE).map((e) => e.newsId);
@@ -83,5 +83,5 @@ export async function dailyHead(db: Kysely<DB>, shardId: number, now: Date): Pro
   const title = Object.fromEntries(
     (['zh-CN', 'en', 'zh-TW'] as DailyLang[]).map((l) => [l, c[l].title]),
   ) as Record<DailyLang, string>;
-  return { day, title };
+  return { day, title, rests: await restNames(db, title['zh-CN']) };
 }

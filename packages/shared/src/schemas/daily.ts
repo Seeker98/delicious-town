@@ -34,6 +34,8 @@ export interface DailyDto {
 export interface DailyHeadDto {
   day: string;
   title: Record<DailyLang, string>;
+  /** 标题里的店：现在的名字 */
+  rests: Record<string, string | null>;
 }
 
 /** 后台（admin）：列表一行 */

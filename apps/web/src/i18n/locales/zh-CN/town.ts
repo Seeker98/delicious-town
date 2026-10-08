@@ -92,6 +92,18 @@ export default {
     horns: (n: number) => `喇叭 ${n} 个, 每次用 1 个`,
     empty: '还没有新闻',
   },
+  /** 小镇日报（2026-10-08） */
+  daily: {
+    title: '小镇日报',
+    fallbackTitle: '今日要闻',
+    pending: '这一天的日报还在编辑中, 先看看要闻',
+    none: '这一天没有日报',
+    englishOnly: '仅英文',
+    closed: '已关店',
+    prev: '前一天',
+    next: '后一天',
+    loadFailed: '读取日报失败',
+  },
   rank: {
     loadFailed: '读取排行失败',
     /** 大类名（顺序和 @dt/shared 的 RANK_GROUPS 一致） */

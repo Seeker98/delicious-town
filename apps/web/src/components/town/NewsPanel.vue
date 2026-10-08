@@ -4,6 +4,7 @@ import { BROADCAST_NEWS, isBroadcastStyle, type NewsDto, type TownDto } from '@d
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
 import ReportButton from '../ReportButton.vue';
+import DailyCard from './DailyCard.vue';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useSessionStore } from '../../stores/session';
@@ -73,6 +74,8 @@ async function send() {
 </script>
 
 <template>
+  <!-- 小镇日报（2026-10-08）：区服没开时卡片自己不显示 -->
+  <DailyCard />
   <div class="d-flex gap-1 mb-1">
     <input
       v-model="text"

@@ -110,12 +110,25 @@ describe('小镇日报：玩家看', () => {
   });
 
   it('首页头条：昨天的已发布才带日报标题；没开日报不带', async () => {
-    const { shardId } = await shard();
+    const { shardId, a } = await shard();
     expect((await headlines(t.db, shardId, { daily: true, now: t.clock.now })).daily).toBeNull();
-    await put(shardId, Y, 'published', { content: article('昨天', 'x') });
+    await put(shardId, Y, 'published', { content: article(`{r:${a.restaurantId}} 的昨天`, 'x') });
+    const name = (
+      await t.db
+        .selectFrom('restaurant')
+        .select('name')
+        .where('id', '=', a.restaurantId)
+        .executeTakeFirstOrThrow()
+    ).name;
     expect((await headlines(t.db, shardId, { daily: true, now: t.clock.now })).daily).toEqual({
       day: Y,
-      title: { 'zh-CN': '昨天', en: '昨天-en', 'zh-TW': '昨天-tw' },
+      title: {
+        'zh-CN': `{r:${a.restaurantId}} 的昨天`,
+        en: `{r:${a.restaurantId}} 的昨天-en`,
+        'zh-TW': `{r:${a.restaurantId}} 的昨天-tw`,
+      },
+      // 标题里的店也给现在的名字
+      rests: { [a.restaurantId]: name },
     });
     expect((await headlines(t.db, shardId)).daily).toBeNull();
   });

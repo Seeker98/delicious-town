@@ -103,6 +103,18 @@ const town: Messages['town'] = {
     horns: (n) => `${n} ${plFr(n, 'klaxon', 'klaxons')}, 1 par annonce`,
     empty: 'Pas encore de nouvelles',
   },
+  /** 小镇日报（2026-10-08） */
+  daily: {
+    title: 'Journal de la ville',
+    fallbackTitle: 'Les titres',
+    pending: 'Le journal de ce jour est encore en préparation. Voici les titres en attendant',
+    none: 'Pas de journal ce jour-là',
+    englishOnly: 'En anglais uniquement',
+    closed: 'Fermé',
+    prev: 'Jour précédent',
+    next: 'Jour suivant',
+    loadFailed: 'Impossible de charger le journal de la ville',
+  },
   rank: {
     loadFailed: 'Impossible de charger les classements',
     groups: [

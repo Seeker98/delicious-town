@@ -93,6 +93,18 @@ export default {
     horns: (n: number) => `喇叭 ${n} 個, 每次用 1 個`,
     empty: '還沒有新聞',
   },
+  /** 小鎮日報（2026-10-08） */
+  daily: {
+    title: '小鎮日報',
+    fallbackTitle: '今日要聞',
+    pending: '這一天的日報還在編輯中, 先看看要聞',
+    none: '這一天沒有日報',
+    englishOnly: '僅英文',
+    closed: '已關店',
+    prev: '前一天',
+    next: '後一天',
+    loadFailed: '讀取日報失敗',
+  },
   rank: {
     loadFailed: '讀取排行失敗',
     /** 大類名（順序和 @dt/shared 的 RANK_GROUPS 一致） */

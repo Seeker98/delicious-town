@@ -8,7 +8,15 @@ import { useSessionStore } from '../../stores/session';
 import NewsPanel from './NewsPanel.vue';
 import { townData } from './testData';
 
-vi.mock('../../api/endpoints', () => ({ endpoints: { townNews: vi.fn(), townBroadcast: vi.fn() } }));
+vi.mock('../../api/endpoints', () => ({
+  endpoints: {
+    townNews: vi.fn(),
+    townBroadcast: vi.fn(),
+    townDaily: vi
+      .fn()
+      .mockResolvedValue({ day: '2026-10-08', days: [], article: null, fallback: [], rests: {} }),
+  },
+}));
 
 const item = (id: number, type = 'star.up', params: Record<string, unknown> = { star: 1 }): NewsDto => ({
   id,

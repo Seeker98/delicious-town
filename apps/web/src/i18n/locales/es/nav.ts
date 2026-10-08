@@ -54,6 +54,12 @@ const nav: Messages['nav'] = {
     claimable: (n) => `${n} por reclamar`,
     view: 'Ver',
   },
-  news: { title: 'Noticias del pueblo', more: 'Más', broadcast: '[Anuncio] ', empty: 'Aún no hay noticias' },
+  news: {
+    daily: 'Diario del pueblo: ',
+    title: 'Noticias del pueblo',
+    more: 'Más',
+    broadcast: '[Anuncio] ',
+    empty: 'Aún no hay noticias',
+  },
 };
 export default nav;

@@ -14,7 +14,7 @@ import { writeAudit } from '../admin/audit';
 import { checkArticle, parseArticle, sameTokens, toTw } from './check';
 import type { DailyFacts } from './facts';
 import { generateDaily, type DailyContent } from './generate';
-import { tokensIn } from './facts';
+import { restNames } from './read';
 
 /** 后台列表看几天 */
 const LIST_DAYS = 30;
@@ -51,23 +51,13 @@ export function createAdminDaily(game: Game) {
   async function detail(shardId: number, day: string): Promise<AdminDailyDetailDto> {
     const r = await find(shardId, day);
     const content = r.content as DailyContent | null;
-    const ids = content
-      ? [
-          ...new Set(
-            tokensIn(`${content['zh-CN'].title}\n${content['zh-CN'].body}`).filter((x) => x.startsWith('r:')),
-          ),
-        ].map((x) => Number(x.slice(2)))
-      : [];
-    const names =
-      ids.length > 0
-        ? await db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ids).execute()
-        : [];
-    const found = new Map(names.map((x) => [x.id, x.name]));
+    // 正文和素材里的店都给名字：后台改稿时知道记号是哪家
+    const article = content ? `${content['zh-CN'].title}\n${content['zh-CN'].body}` : '';
     return {
       ...toRow(r),
       facts: r.facts,
       content,
-      rests: Object.fromEntries(ids.map((id) => [String(id), found.get(id) ?? null])),
+      rests: await restNames(db, `${article}\n${JSON.stringify(r.facts)}`),
     };
   }
 
