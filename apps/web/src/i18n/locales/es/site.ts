@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    perf1008:
+      'Las páginas cargan más rápido: menos idas y vueltas innecesarias con el servidor; la página principal del restaurante, el Registro de ingresos, la Info del restaurante, las Recetas y las Adquisiciones cargan sus datos a la vez; al volver a abrir el juego se reutilizan los archivos ya descargados',
     pages1008:
       'Página de ingresos: el historial está ahora arriba, con los totales de hoy y una columna de clientes, y las bonificaciones van en una sección desplegable que solo muestra las que no son 0; los enlaces entre Misiones y la página de actividad ya no ocupan una línea propia; la página de Equipo muestra primero los huecos y los botones, y las notas sobre el poder de chef y lo demás van en «Cómo se calculan estos números»; el detalle del equipo solo muestra los atributos con valor y dice claramente cuándo un objeto no admite gemas',
     fixes1008:

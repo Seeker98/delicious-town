@@ -100,6 +100,12 @@ async function loadGuideCodes() {
 async function load() {
   void loadAnnouncements();
   void loadSignIn();
+  // 概况、任务、白食互不依赖，一起读（性能排查 2026-10-08：原来一个接一个，线上多两轮往返）
+  const tasksReq = endpoints.tasks();
+  const dineReq = endpoints.dineCurrent();
+  // 先挂上处理：概况读失败提前跳出时，这两个的失败不成为没人接的 rejection
+  tasksReq.catch(() => undefined);
+  dineReq.catch(() => undefined);
   try {
     await store.refresh();
     void loadGuideCodes();
@@ -107,7 +113,7 @@ async function load() {
     // 本章任务都领完时显示章末奖励，章锁定时写解锁条件
     // 任务单独读：读失败（比如前端先上线、服务端还没更新）只少了主线行，不让整个首页报错（问题记录 327）
     try {
-      const q = await endpoints.tasks();
+      const q = await tasksReq;
       // 补领的任务（backlog 318）只在能领时占主线行，没完成的不显示；旧服务端没有 leftover 时按空的算
       const ready =
         q.main.find((x) => x.done && !x.claimed) ?? (q.leftover ?? []).find((x) => x.done && !x.claimed);
@@ -120,7 +126,7 @@ async function load() {
       mainChapter.value = null;
       mainAllDone.value = false;
     }
-    dining.value = await endpoints.dineCurrent();
+    dining.value = await dineReq;
     error.value = '';
   } catch (e) {
     error.value = errorMessage(e, t.value.home.loadFailed);

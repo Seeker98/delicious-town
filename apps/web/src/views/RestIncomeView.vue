@@ -51,8 +51,10 @@ async function more() {
   }
 }
 onMounted(async () => {
+  // 记录和加成一起读（性能排查 2026-10-08：原来一个接一个，线上多一轮往返）
+  const b = endpoints.buffs().catch(() => null);
   await more();
-  buffs.value = await endpoints.buffs().catch(() => null);
+  buffs.value = await b;
 });
 </script>
 

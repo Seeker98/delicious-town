@@ -290,3 +290,12 @@
 - 厨具页加点框挪到了下面：餐厅信息页“还有 N 点可加”和主线“分配属性点”都跳到 /rest/equip 顶部，可以加锚点或自动滚过去
 - 任务页去活跃页的入口在 360 宽的西、法文下会截成“Acti…”（选项卡占满了），390 宽放得下
 - 缺的测试：今日小计在北京时间 0 点前后的边界、翻页（带 before）时不返回 today；前端 today 不存在、客人列夹具里没有 9 和 -3
+
+## 性能排查（2026-10-08，perf/1008）终审小问题
+
+- 常驻连接永不回收：长寿的 backend 会攒 relcache（按天分区的表越来越多），人少时栈底的连接可能几天不用；可加 `maxLifetimeSeconds: 1800`，worker 的常驻数可以小一点
+- `/assets/*` 设成 immutable 后，旧版本的懒加载文件被删时 SPA 兜底会回 200 的 index.html，浏览器把它当成那个 JS 缓存一年；回滚、revert 让哈希回到原值时会一直读到错的。可以在 `vite:preloadError` 里先 `fetch(url, { cache: 'reload' })` 再重载，或让 `/assets/*` 不走兜底
+- 食谱页先按记着的餐厅读列表后，下一星要求可能在餐厅刷新前就用旧的店 id、星级拼缓存键；同一个标签页里换号、换区服时餐厅 store 没清，可能用上一家店的数字显示搬街提示。可以等刷新完再读，或登出、换区服时清餐厅 store
+- preconnect 不带 crossorigin，能给带凭证的正式请求用，但 CORS 预检不带凭证，Chrome 可能另开连接；上线后在 DevTools 的 Connection ID 列确认，必要时再加一个带 crossorigin 的
+- `VITE_API_BASE` 不是完整网址时 `new URL` 会让 vite 配置加载失败，报错看不出原因
+- 缺的测试：开放接口的 OPTIONS 返回 max-age 86400（全局 cors 先写 7200，开放接口在 onSend 里改写，读代码确认能覆盖）

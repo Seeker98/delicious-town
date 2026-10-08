@@ -68,6 +68,20 @@ describe('框架', () => {
     expect(JSON.parse(r.body).code).toBe('VALIDATION_FAILED');
   });
 
+  it('预检结果让浏览器缓存 2 小时（性能排查 2026-10-08：没写时 Chrome 只缓存 5 秒，线上每个请求都多一次往返）', async () => {
+    const pre = await ctx.app.inject({
+      method: 'OPTIONS',
+      url: '/api/v1/restaurant/overview',
+      headers: {
+        origin: ctx.deps.env.WEB_ORIGIN,
+        'access-control-request-method': 'GET',
+        'access-control-request-headers': 'x-device-id',
+      },
+    });
+    expect(pre.statusCode).toBe(204);
+    expect(pre.headers['access-control-max-age']).toBe('7200');
+  });
+
   it('默认不信任 CF-Connecting-IP', async () => {
     const r = await call(ctx.app, 'GET', '/t/ip', {
       headers: { 'cf-connecting-ip': '9.9.9.9' },

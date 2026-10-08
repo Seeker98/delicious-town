@@ -25,7 +25,8 @@ async function moreLogs() {
   next.value = page.nextBefore;
 }
 onMounted(async () => {
-  await store.refresh().catch(() => undefined);
+  // 餐厅和日志一起读（性能排查 2026-10-08：原来一个接一个，线上多一轮往返）
+  void store.refresh().catch(() => undefined);
   try {
     await moreLogs();
     logsState.value = 'ok';

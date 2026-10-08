@@ -170,6 +170,16 @@ watch(
 onMounted(async () => {
   // 搬街提示要知道本店在哪条街：地址里带了街道时也读一次餐厅（不改所选街道）
   if (fromQuery !== null && !restaurant.rest) void restaurant.refresh().catch(() => null);
+  // 记着本店（从首页过来通常有）：按记着的街道马上读列表，餐厅在后台刷新，搬过街时再换（性能排查 2026-10-08：原来多一轮往返）
+  const cached = fromQuery === null ? restaurant.rest : null;
+  if (cached) {
+    if (cached.streetId !== street.value) street.value = cached.streetId;
+    else void load();
+    const rest = await restaurant.refresh().catch(() => null);
+    if (rest && rest.streetId !== cached.streetId && street.value === cached.streetId)
+      street.value = rest.streetId;
+    return;
+  }
   if (fromQuery === null) {
     const rest = await restaurant.refresh().catch(() => null);
     // 换街道时由上面的 watch 读列表
