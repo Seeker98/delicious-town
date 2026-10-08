@@ -52,7 +52,7 @@ const tower: Messages['tower'] = {
     rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
     rulesMc: 'the signature dish on sale',
     /** 特色菜那一项不算试炼价值（集束飞弹那次的遗留：只在试炼说明里写了） */
-    rulesMcNoTrial: 'The signature dish counts at its base value per portion, without trial value.',
+    rulesMcNoTrial: 'The signature dish counts at its base value per serving, without trial value.',
     rulesNone: (item) => `${item} (random bonus only)`,
     rulesWeights: (parts) =>
       `Each side gets five scores from its stats: ${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}. Higher Creativity and Luck add a bigger random bonus to every score.`,

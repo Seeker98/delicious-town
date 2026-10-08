@@ -87,7 +87,12 @@ describe('商店整理工具（问题记录 483）', () => {
   });
 
   it('保存：只写和原版不同的字段和改过的池子，带名字和备注；先构建，能过才写', () => {
-    const { t, written } = tool([]);
+    // 设计表自己给：特价池和 shop.json 一样、黑市池少第一样，保存时两个池子都和设计表不同（终审：原来靠真实数据此刻不同）
+    const design = [
+      { pool: 'special', goods: real.pools!.special! },
+      { pool: 'black', goods: real.pools!.black!.slice(1) },
+    ];
+    const { t, written } = tool([], design);
     const base = t.report();
     const special = base.rows.filter((x) => x.special).map((x) => x.id);
     const black = base.rows.filter((x) => x.black).map((x) => x.id);
@@ -105,7 +110,7 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(written).toHaveLength(1);
     const file = JSON.parse(written[0]!) as ShopFile & { goods: unknown[] };
     expect(file.goods).toEqual([{ id: MISSILE, name: '普通飞弹', coin: 2500, note: '试试' }]);
-    // 和设计表不同的池子整份写（真实的 shop.json 两个池子都比设计表少几样）
+    // 和设计表不同的池子整份写
     expect(file.pools!.special).toEqual(special.filter((id) => id !== MISSILE));
     expect(file.pools!.black).toEqual(black);
     expect(written[0]!.endsWith('\n')).toBe(true);
