@@ -28,7 +28,9 @@
     "kuji.draw": "一番赏抽赏",
     "activity.claim": "领取限时活动奖励",
     "post.create": "论坛发帖或回复",
-    "post.reply": "论坛发帖或回复"
+    "post.reply": "论坛发帖或回复",
+    "thumbs.up": "点赞或被赞",
+    "thumbs.received": "点赞或被赞"
   },
   "features": {
     "rest.": "restaurant",

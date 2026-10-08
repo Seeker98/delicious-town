@@ -1,15 +1,16 @@
 {
  "source": "新设计（问题记录 318）",
  "rule": "原游戏活跃度之外新增的项目和档位；构建时和 dataset/activation_tasks、activation_rewards 合并",
- "count": 5,
+ "count": 6,
  "data": {
   "tasks": [
    { "id": 901, "name": "交易所成交", "points": 5, "limit": 1, "needStar": 0 },
    { "id": 902, "name": "事件预测交易", "points": 5, "limit": 1, "needStar": 0 },
-   { "id": 903, "name": "一番赏抽赏", "points": 5, "limit": 1, "needStar": 0 },
+   { "id": 903, "name": "一番赏抽赏", "points": 10, "limit": 1, "needStar": 0 },
    { "id": 904, "name": "领取限时活动奖励", "points": 5, "limit": 1, "needStar": 0 },
-   { "id": 905, "name": "论坛发帖或回复", "points": 3, "limit": 1, "needStar": 0 }
+   { "id": 905, "name": "论坛发帖或回复", "points": 3, "limit": 1, "needStar": 0 },
+   { "id": 906, "name": "点赞或被赞", "points": 2, "limit": 5, "needStar": 0 }
   ],
-  "rewards": [{ "points": 180, "award": { "goods": [{ "id": 10001, "num": 10 }] } }]
+  "rewards": [{ "points": 180, "award": {"goods":[{"id":10704,"num":1}]} }]
  }
 }

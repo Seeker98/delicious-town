@@ -1363,8 +1363,27 @@ describe('活跃度新增项目（问题记录 318）', () => {
     for (const n of ['交易所成交', '事件预测交易', '一番赏抽赏', '领取限时活动奖励', '论坛发帖或回复'])
       expect(byName.has(n), n).toBe(true);
     const max = b.activationTasks.reduce((s, a) => s + a.points * a.limitTimes, 0);
-    expect(max).toBe(193);
+    // 2026-10-08 用户调整后：一番赏 10 点；酒吧 2 点 × 10 次；买菜 5 点 × 2 次；合成分解 3 点 × 5 次；厨塔 5 点 × 2 次；新增点赞或被赞 2 点 × 5 次
+    expect(max).toBe(220);
+    const pl = (n: string) => [byName.get(n)?.points, byName.get(n)?.limitTimes];
+    expect(pl('一番赏抽赏')).toEqual([10, 1]);
+    expect(pl('酒吧娱乐')).toEqual([2, 10]);
+    expect(pl('菜场买菜')).toEqual([5, 2]);
+    expect(pl('合成或分解食材')).toEqual([3, 5]);
+    expect(pl('厨塔挑战')).toEqual([5, 2]);
+    expect(pl('点赞或被赞')).toEqual([2, 5]);
+    expect(b.actionMap.activation['thumbs.up']).toBe('点赞或被赞');
+    expect(b.actionMap.activation['thumbs.received']).toBe('点赞或被赞');
     expect(b.activationRewards.map((r) => r.points)).toEqual([50, 100, 120, 150, 180]);
+    // 各档奖励（用户 2026-10-08 定）：低档多给礼券、银币；120 档一番赏券 + 4 钻；经验挪到 150 和小体力卡一起；180 探险图
+    const award = (pts: number) => b.activationRewards.find((r) => r.points === pts)!.award;
+    expect(award(50)).toEqual({ exp: 500, goods: [{ id: GOODS.mysteryTicket, num: 10 }] });
+    expect(award(100)).toEqual({ diamond: 2, coin: 10_000 });
+    expect(award(120)).toEqual({ diamond: 4 });
+    expect(award(150)).toEqual({ exp: 1000, goods: [{ id: gid('小体力卡'), num: 2 }] });
+    expect(award(180)).toEqual({ goods: [{ id: gid('探险图'), num: 1 }] });
+    // 一番赏券跟着 120 档送（线上已经这样改了，默认也改）
+    expect(b.tuning.kuji.activeTicketPoints).toBe(120);
     expect(b.actionMap.activation['exchange.fill']).toBe('交易所成交');
     expect(b.actionMap.activation['post.create']).toBe('论坛发帖或回复');
     expect(b.actionMap.activation['post.reply']).toBe('论坛发帖或回复');
@@ -1372,6 +1391,14 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(featureOfKey('exchange.fill', b.actionMap.features)).toBe('exchange');
     expect(featureOfKey('predict.win', b.actionMap.features)).toBe('predict');
     expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
+  });
+
+  it('活跃度原表档位奖励里的道具也查编号（活跃度调整终审：原来只查新增档位）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const rewards = structuredClone(src['dataset/activation_rewards']) as Array<{ note: string }>;
+    rewards[0]!.note = JSON.stringify({ goods: [{ id: 999999, num: 1 }] });
+    const { errors } = buildBundle({ ...src, 'dataset/activation_rewards': rewards });
+    expect(errors.join('\n')).toMatch(/activation_reward 50.*999999/);
   });
 });
 
