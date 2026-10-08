@@ -49,8 +49,8 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: 'Check in on the home page: once a day, for a check-in gift pack' },
     {
-      to: '/rest/tasks',
-      text: 'Tasks & activity: do daily tasks to earn activity points and claim activity rewards; weekly quests reset on Monday at 00:00',
+      to: '/rest/activation',
+      text: 'Daily activity: do daily tasks to earn activity points and claim activity rewards',
     },
     {
       to: '/town',
@@ -126,7 +126,7 @@ const guide: Messages['guide'] = {
       q: 'How do I get diamonds? ',
       a: [
         'The daily check-in pack can contain some; the 100- and 150-point daily activity rewards; ',
-        { to: '/rest/tasks', text: 'weekly quests' },
+        { to: '/rest/tasks?tab=weekly', text: 'weekly quests' },
         '; the Chef ranking and monthly Kraken affinity ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
       ],
     },

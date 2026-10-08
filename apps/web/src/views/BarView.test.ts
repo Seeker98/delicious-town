@@ -64,7 +64,7 @@ describe('BarView', () => {
     await w.get('[data-testid="talk-wenjie"]').trigger('click');
     await flushPromises();
     expect(endpoints.townTalk).toHaveBeenCalledWith('wenjie');
-    expect(useToastStore().items.at(-1)!.text).toBe('雯姐：用了飘柔就明显气质上来了! 获得 道具1×5');
+    expect(useToastStore().items.at(-1)!.text).toBe('雯姐: 用了飘柔就明显气质上来了! 获得 道具1×5');
     expect(endpoints.bar).toHaveBeenCalledTimes(2);
     vi.mocked(endpoints.bar).mockResolvedValue(barData({ wenjieTalked: true }));
     const again = mount(BarView, { global: { stubs } });

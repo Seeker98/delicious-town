@@ -10,7 +10,7 @@ export default {
   duel: {
     /** 色香味形养（下标对应分数） */
     items: ['色', '香', '味', '形', '养'],
-    test: (win: boolean) => `试打：${win ? '赢了' : '输了'}`,
+    test: (win: boolean) => `试打: ${win ? '赢了' : '输了'}`,
     win: '你赢了',
     lose: '你输了',
     renown: (n: number) => `，声望 ${n > 0 ? '+' : ''}${n}`,
@@ -34,7 +34,7 @@ export default {
       xiaoKai: '小凯',
     },
     /** 评委点评（问题记录 431）：【评委 点评 我】：以[项]胜负，……，比分 我:对方 */
-    judgeOn: (name: string) => `【${name} 点评 我】：`,
+    judgeOn: (name: string) => `【${name} 点评 我】: `,
     itemVerdict: { win: '大获全胜', close: '不分伯仲', lose: '全军覆没' },
     itemLine: (item: string, verdict: string) => `以[${item}]${verdict}`,
     commentSep: '，',
@@ -49,7 +49,7 @@ export default {
     verdict: { me: '投给你', them: '投给对方', tie: '平' },
     rulesTitle: '赛厨规则',
     rules: [
-      '双方按属性算出色、香、味、形、养五项：色看厨艺、刀工，香看厨艺、调味，味看火候、调味，形看火候、刀工，养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好，每项多加的随机分越多。',
+      '双方按属性算出色、香、味、形、养五项: 色看厨艺、刀工，香看厨艺、调味，味看火候、调味，形看火候、刀工，养看火候、调味、刀工和在售的特色菜。创意越高、幸运越好，每项多加的随机分越多。',
     ],
     /** 每局怎么投票（backlog 396）：total 位评委里请 n 位，先拿到 need 票的赢 */
     rulesVote: (total: number, n: number, need: number) =>
@@ -59,20 +59,20 @@ export default {
     rulesMc: '在售的特色菜',
     rulesNone: (item: string) => `${item}只看随机分`,
     rulesWeights: (parts: string[]) =>
-      `双方按属性算出色、香、味、形、养五项：${parts.join('，')}。创意越高、幸运越好，每项多加的随机分越多。`,
-    rulesJudges: '评委和他们关注的项目：',
+      `双方按属性算出色、香、味、形、养五项: ${parts.join('，')}。创意越高、幸运越好，每项多加的随机分越多。`,
+    rulesJudges: '评委和他们关注的项目: ',
     awards: (text: string) => `得到 ${text}`,
     /** 打赢长老掉的厨具（backlog 408） */
-    elderDrop: (name: string) => `长老掉落：${name}`,
+    elderDrop: (name: string) => `长老掉落: ${name}`,
   },
   /** 赛厨长老的装备（问题记录 408） */
   elder: {
     summary: (level: number, stress: number, pct: number) =>
-      `长老装备：${level} 级，全套强化 +${stress}${pct > 0 ? `；正式挑战打赢有 ${pct}% 掉一件` : ''}`,
-    points: (text: string) => `加点：${text}`,
-    piece: (name: string, stress: number, text: string) => `${name} +${stress}：${text}`,
-    attrs: (text: string) => `被挑战时：${text}`,
-    drops: (names: string) => `可能掉落：${names}`,
+      `长老装备: ${level} 级，全套强化 +${stress}${pct > 0 ? `；正式挑战打赢有 ${pct}% 掉一件` : ''}`,
+    points: (text: string) => `加点: ${text}`,
+    piece: (name: string, stress: number, text: string) => `${name} +${stress}: ${text}`,
+    attrs: (text: string) => `被挑战时: ${text}`,
+    drops: (names: string) => `可能掉落: ${names}`,
     sep: '、',
   },
   floor: {
@@ -106,7 +106,7 @@ export default {
     unranked: '未上榜',
     rankN: (n: number) => `第 ${n} 名`,
     head: (left: number, strength: number) => ` · 今日还能挑战 ${left} 次 · 每次 ${strength} 体力`,
-    weekly: '每周一 0 点换新榜：第 1~3 名、4~8 名、9~15 名有名次礼包，前三名得厨神、厨圣、厨王',
+    weekly: '每周一 0 点换新榜: 第 1~3 名、4~8 名、9~15 名有名次礼包，前三名得厨神、厨圣、厨王',
     slotName: (name: string, level: number) => `${name} (${level} 级)`,
     empty: '空',
     me: '我',

@@ -29,7 +29,7 @@ export default {
     title: '菜场竞猜',
     hint: (hour: string) => `猜下一轮日常菜场 (${hour} 点) 上什么菜`,
     last: (n: number) => `上次猜中 ${n} 种`,
-    joined: (list: string) => `已报名：${list}`,
+    joined: (list: string) => `已报名: ${list}`,
     rule: (max: number, cost: number) => `最多选 ${max} 种，花 ${cost} 张神秘礼券`,
     join: (n: number) => `报名 (${n} 种)`,
   },

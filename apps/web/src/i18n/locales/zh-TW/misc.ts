@@ -13,9 +13,9 @@ export default {
     until: (time: string) => `持續到 ${time}`,
     /** 蟹老闆所在街道：前半句、街名（加粗）、後半句 */
     krabPre: '蟹老闆今天在 ',
-    krabPost: '：在這條街營業，遇到神秘顧客的機會更大。',
+    krabPost: ': 在這條街營業，遇到神秘顧客的機會更大。',
     holiday: (n: number) => `今天是節日，美味券掉落機率 ×${n}`,
-    hammer: '持有雷神錘可以換天氣：',
+    hammer: '持有雷神錘可以換天氣: ',
     toSquare: '去廣場',
   },
   invite: {

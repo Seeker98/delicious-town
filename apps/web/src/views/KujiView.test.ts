@@ -107,7 +107,7 @@ describe('KujiView（一番赏设计 §7.2）', () => {
     const { w } = await mountWithRouter('/kuji');
     await flushPromises();
     const th = w.get('[data-testid="kj-theme"]').text();
-    expect(th).toContain('7 月主题：夏日冰饮');
+    expect(th).toContain('7 月主题: 夏日冰饮');
     expect(th).toContain('刨冰');
   });
 

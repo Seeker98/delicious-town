@@ -3,7 +3,6 @@ export default {
   tabs: { rest: '餐厅', cookbooks: '食谱', cupboard: '橱柜', market: '菜场', friends: '好友', more: '更多' },
   groups: { manage: '经营', play: '玩法', other: '其他' },
   links: {
-    tasks: '任务与活跃',
     activities: '限时活动',
     exchange: '交易所',
     predict: '事件预测',

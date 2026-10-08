@@ -73,12 +73,12 @@ describe('新闻文案', () => {
   });
 
   it('小镇新增的几种', () => {
-    expect(newsText(n('town.broadcast', { text: '大家好' }), names)).toBe('小王的店：大家好');
+    expect(newsText(n('town.broadcast', { text: '大家好' }), names)).toBe('小王的店: 大家好');
     expect(newsText(n('town.bless', { blessId: 1, name: '五谷丰登' }), names)).toBe(
-      '小王的店许愿得到星愿：五谷丰登',
+      '小王的店许愿得到星愿: 五谷丰登',
     );
     expect(newsText(n('town.shake.lucky', { goodsId: 180, num: 1 }), names)).toBe(
-      '恭喜小王的店伸进蟹老板裤兜里掏出：道具180×1',
+      '恭喜小王的店伸进蟹老板裤兜里掏出: 道具180×1',
     );
     expect(newsText(n('town.exchange', { exchangeId: 2, goodsId: 238, num: 1 }), names)).toBe(
       '小王的店在镇长大胃锅处兑换了 道具238×1',
@@ -93,13 +93,13 @@ describe('新闻文案', () => {
   it('事件预测开奖（问题记录 268）：结果、参与和押对的店数、派出银币；作废写退款比例；没人押对时不写派出', () => {
     const r = (p: Record<string, unknown>) => newsText({ ...n('predict.result', p), restName: null }, names);
     expect(r({ title: '明天会下雨吗', outcome: true, players: 12, winners: 7, paid: 85000 })).toBe(
-      '事件预测「明天会下雨吗」开奖：结果为是。12 家店参与，7 家押对，共派出 85,000 银币',
+      '事件预测「明天会下雨吗」开奖: 结果为是。12 家店参与，7 家押对，共派出 85,000 银币',
     );
     expect(r({ title: '蟹老板去三街吗', outcome: false, players: 3, winners: 0, paid: 0 })).toBe(
-      '事件预测「蟹老板去三街吗」开奖：结果为否。3 家店参与，没有人押对',
+      '事件预测「蟹老板去三街吗」开奖: 结果为否。3 家店参与，没有人押对',
     );
     expect(r({ title: '没人玩', outcome: true, players: 0, winners: 0, paid: 0 })).toBe(
-      '事件预测「没人玩」开奖：结果为是',
+      '事件预测「没人玩」开奖: 结果为是',
     );
     expect(r({ title: '题目写错了', outcome: null, voidRatio: 0.85, players: 4 })).toBe(
       '事件预测「题目写错了」已作废，参与的店按净投入的 85% 退款',
@@ -115,7 +115,7 @@ describe('新闻文案', () => {
         winners: 0,
         paid: 0,
       }),
-    ).toBe('事件预测「明天蟹老板会在 3~8 号街出现吗」开奖：结果为是');
+    ).toBe('事件预测「明天蟹老板会在 3~8 号街出现吗」开奖: 结果为是');
   });
 
   it('嘻哈男孩和手动进货（4E-2）', () => {
@@ -126,15 +126,15 @@ describe('新闻文案', () => {
     expect(newsText(n('hiphop.weekly', { rank: 2, goodsId: 109 }), names)).toBe(
       '恭喜小王的店在每周打赏中获得第 2 名，奖励 道具109 (160 小时)',
     );
-    expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜：食材3、食材5');
+    expect(newsText(n('market.manual', { foods: [3, 5] }), names)).toBe('小王的店已进货日常菜: 食材3、食材5');
   });
 
   it('星愿名不再占用店名字段：店不存在时显示"某家餐厅"（PR26 遗留）', () => {
     expect(newsText(n('town.bless', { blessId: 1, blessName: '五谷丰登' }, null), names)).toBe(
-      '某家餐厅许愿得到星愿：五谷丰登',
+      '某家餐厅许愿得到星愿: 五谷丰登',
     );
     expect(newsText(n('town.bless', { blessId: 1, name: '五谷丰登' }), names)).toBe(
-      '小王的店许愿得到星愿：五谷丰登',
+      '小王的店许愿得到星愿: 五谷丰登',
     );
   });
 
@@ -151,7 +151,7 @@ describe('新闻文案', () => {
     expect(newsText(n('weather.change', { from: 1, to: 13, by: 7 }), names)).toBe(
       '小王的店使用雷神锤，晴转暴雨了',
     );
-    expect(newsText(n('weather.change', { from: 1, to: 13 }, null), names)).toBe('天气变了：晴转暴雨');
+    expect(newsText(n('weather.change', { from: 1, to: 13 }, null), names)).toBe('天气变了: 晴转暴雨');
   });
 
   it('店不存在时用新闻里记下的名字，都没有时写"某家餐厅"；未知类型不报错', () => {
@@ -188,6 +188,6 @@ describe('全服合力贡献榜新闻（148-3）', () => {
         ),
         names,
       ),
-    ).toBe('《国庆合力》贡献榜：第 1 名 甲餐厅 (1,234 分)、第 2 名 乙餐厅 (1,100 分)');
+    ).toBe('《国庆合力》贡献榜: 第 1 名 甲餐厅 (1,234 分)、第 2 名 乙餐厅 (1,100 分)');
   });
 });

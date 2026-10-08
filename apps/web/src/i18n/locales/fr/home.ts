@@ -41,6 +41,7 @@ const home: Messages['home'] = {
   signInBtn: 'Pointer',
   signInFailed: 'Échec du pointage',
   mainTag: 'Principale',
+  tasksLink: 'Quêtes',
   claim: 'Récupérer',
   claimFailed: 'Échec de la récupération',
   activation: (n) => `Points d'activité du jour : ${n}`,

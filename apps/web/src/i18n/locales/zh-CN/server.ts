@@ -54,7 +54,7 @@ export default {
             : num(p.banDays) === 0
               ? '账号永久封禁。'
               : `账号封禁 ${num(p.banDays)} 天。`;
-        return `你的${str(p.targetName)}${what}。${ban}\n说明：${str(p.note)}`;
+        return `你的${str(p.targetName)}${what}。${ban}\n说明: ${str(p.note)}`;
       },
     },
   }),
@@ -84,7 +84,7 @@ export default {
       title: (hour: number, level: number) => `今天 ${hour} 点的日常货架会出现 ${level} 级稀有食材吗`,
       desc: (hour: number) => `以 ${hour} 点系统进货的日常货架为准，玩家手动进的货不算。`,
       yes: (day: string, hour: number, level: number, foods: string) =>
-        `${day} ${hour} 点日常货架上了 ${level} 级稀有食材：${foods}`,
+        `${day} ${hour} 点日常货架上了 ${level} 级稀有食材: ${foods}`,
       no: (day: string, hour: number, level: number) => `${day} ${hour} 点日常货架没有 ${level} 级稀有食材`,
     },
     weather: {
@@ -140,6 +140,6 @@ export default {
     hangover: '宿醉',
     suit: (name: string, need: number) => `${name} (${need} 件)`,
     suitFallback: '套装',
-    bless: (name: string) => `今日星愿：${name}`,
+    bless: (name: string) => `今日星愿: ${name}`,
   },
 };

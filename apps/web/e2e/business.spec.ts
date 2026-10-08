@@ -11,7 +11,7 @@ test('经营循环：签到 → 推进一轮看到收益 → 加油领主线 →
   await registerAndOpen(page, request);
 
   // 签到
-  await page.goto('/rest/tasks');
+  await page.goto('/rest/activation');
   await page.getByTestId('signin').click();
   await expect(page.getByText('每日签到礼包')).toBeVisible();
 

@@ -13,7 +13,7 @@ export default {
     hint: (street: string, cost: string) =>
       `現在在 ${street}。需要 1 張搬家卡 (持有搬家處工作證時免)，花費約 ${cost} 銀幣 (幸運時半價)。`,
     pick: '選擇新街道',
-    bonus: (desc: string) => `街道加成：${desc}`,
+    bonus: (desc: string) => `街道加成: ${desc}`,
     option: (name: string, cook: string) => `${name} (${cook})`,
     btn: '搬家',
     done: (street: string) => `已經搬到 ${street}`,
@@ -38,7 +38,7 @@ export default {
   star: {
     title: (star: number) => `升星 (當前 ${star} 星)`,
     notOpen: (star: number) => `${star} 星暫未開放`,
-    award: '獎勵：',
+    award: '獎勵: ',
     maxed: '已經是最高星級',
     btn: (star: number) => `升到 ${star} 星`,
     done: (star: number) => `恭喜升到 ${star} 星！`,
@@ -46,5 +46,5 @@ export default {
   },
   /** 升星、擴容的條件清單 */
   needs: { level: '餐廳等級', star: '星級', cookbooks: '已學食譜', coin: '銀幣' } as Record<string, string>,
-  needLine: (label: string, have: string, need: string) => `${label}：${have} / ${need}`,
+  needLine: (label: string, have: string, need: string) => `${label}: ${have} / ${need}`,
 };

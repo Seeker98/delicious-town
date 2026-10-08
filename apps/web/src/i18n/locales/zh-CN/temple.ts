@@ -12,20 +12,20 @@ export default {
     btn: (n: number) => `探险 ×${n}`,
     strength: (n: string) => `体力 ${n}`,
     result: (ok: number, fail: number) => `成功 ${ok} 次，迷路 ${fail} 次`,
-    rare: (list: string) => `神秘食材：${list}`,
-    foods: (list: string) => `食材：${list}`,
+    rare: (list: string) => `神秘食材: ${list}`,
+    foods: (list: string) => `食材: ${list}`,
     exp: (n: number) => `煤油灯带来经验 ${n}`,
   },
   appraise: {
     what: '鉴定',
-    noRecipe: '没有神秘食谱：每次鉴定要消耗 1 个神秘食谱和 1 个鉴定道具 (神秘食谱在商店有售)',
+    noRecipe: '没有神秘食谱: 每次鉴定要消耗 1 个神秘食谱和 1 个鉴定道具 (神秘食谱在商店有售)',
     noTool: '没有这个鉴定道具，换一个试试',
     done: (n: number, ok: number) => `鉴定 ${n} 次，成功 ${ok} 次`,
     failed: '鉴定失败',
     title: '鉴定神秘食谱',
     rule: (n: number) => `每次消耗 1 个神秘食谱和 1 个鉴定道具，成功得到残卷。持有神秘食谱 ${n} 个。`,
     /** 鉴定道具怎么获得（问题记录 415） */
-    how: (parts: string) => `获得：${parts}`,
+    how: (parts: string) => `获得: ${parts}`,
     howShop: (coin: string) => `银币商店 ${coin}`,
     howBlack: (diamond: number) => `黑市 ${diamond} 钻`,
     howAward: '厨塔和酒吧等的随机奖励',
@@ -51,7 +51,7 @@ export default {
     hit: (damage: string, crit: boolean, killed: boolean) =>
       `伤害 ${damage}${crit ? ' (暴击)' : ''}${killed ? '，击败了守护兽！' : ''}`,
     drops: (tickets: number, maps: number, seals: number, dt: number) =>
-      `掉落：神秘礼券 ${tickets}、探险图 ${maps}、厨神玉玺 ${seals}、美味券 ${dt}`,
+      `掉落: 神秘礼券 ${tickets}、探险图 ${maps}、厨神玉玺 ${seals}、美味券 ${dt}`,
     dropFoods: (list: string) => `；食材 ${list}`,
   },
   trial: {
@@ -73,16 +73,16 @@ export default {
     help: '玩法说明',
     /** 玩法说明：每条一段，<b> 之类的强调去掉了 */
     helpItems: [
-      '先准备：注射花 250,000 银币，得"创意药水"勋章 (创意 +25)；冥想免费，得"冥想"勋章 (创意 +5)。勋章 1 小时内有效，有效期内可以试炼任意次，创意越高成功率越高。',
+      '先准备: 注射花 250,000 银币，得"创意药水"勋章 (创意 +25)；冥想免费，得"冥想"勋章 (创意 +5)。勋章 1 小时内有效，有效期内可以试炼任意次，创意越高成功率越高。',
       '准备时会从你学会的 1~5 级特色菜里随机选一道作为试炼对象。不满意可以花 20,000 银币换一道，或者用 1 条触手 (投喂克拉肯得到) 指定一道。',
       '每次试炼花 10,000 银币，消耗你选的主料和辅料各 1 个 (相同时扣 2 个)，再加这道菜的每种食材各 1 个。',
-      '成功率看三样：创意、食材比这道菜高出的等级 (主料影响更大)、食材的稀有度 (稀有 = 食材后面标“稀有”的，权重低于 100)。',
-      '成功后：试炼经验 +1~4% (主辅都稀有最多)；主料稀有时试炼价值再 +1~2%；熟练度 +800 × 熟练度等级。试炼价值提高卖菜时的每份价值 (厨塔和好友对决不算)，试炼经验让烹制时额外得餐厅经验，上限见上面。',
+      '成功率看三样: 创意、食材比这道菜高出的等级 (主料影响更大)、食材的稀有度 (稀有 = 食材后面标“稀有”的，权重低于 100)。',
+      '成功后: 试炼经验 +1~4% (主辅都稀有最多)；主料稀有时试炼价值再 +1~2%；熟练度 +800 × 熟练度等级。试炼价值提高卖菜时的每份价值 (厨塔和好友对决不算)，试炼经验让烹制时额外得餐厅经验，上限见上面。',
     ] as string[],
     inject: '注射 (250,000 银币，创意 +25)',
     meditate: '冥想 (免费，创意 +5)',
     readyLeft: (min: number) => `准备勋章还剩 ${min} 分钟`,
-    target: '试炼对象：',
+    target: '试炼对象: ',
     targetLevel: (level: number) => ` (${level} 级)`,
     refresh: '换一道 (20,000 银币)',
     stat: (worth: number, worthMax: number, exp: number, expMax: number, level: string) =>
@@ -94,7 +94,7 @@ export default {
     rate: (pct: string) => `预计成功率 ${pct}% (不含幸运)；另扣 10,000 银币和这道菜的每种食材各 1 个`,
     start: '开始试炼',
     success: (lucky: boolean, worth: number, exp: number, prof: number) =>
-      `试炼成功${lucky ? ' (幸运)' : ''}：试炼价值 +${worth}%、试炼经验 +${exp}%，熟练度 +${prof}`,
+      `试炼成功${lucky ? ' (幸运)' : ''}: 试炼价值 +${worth}%、试炼经验 +${exp}%，熟练度 +${prof}`,
     fail: '试炼失败',
   },
   kraken: {
@@ -110,9 +110,9 @@ export default {
     failed: '投喂失败',
     exFailed: '兑换失败',
     refreshFailed: '刷新失败',
-    wants: '克拉肯今天想吃：',
+    wants: '克拉肯今天想吃: ',
     wantsMeta: (road: string, hours: string) => ` (${road}；投喂时间 ${hours})`,
-    current: (name: string, grade: string, left: number) => `在售：${name} ${grade}，剩 ${left} 份`,
+    current: (name: string, grade: string, left: number) => `在售: ${name} ${grade}，剩 ${left} 份`,
     feed: (n: number) => `投喂 ${n} 份`,
     favor: (n: number) => `好感度 ${n} `,
     relation: { same: ' (正是它想吃的)', road: ' (同一道)', other: ' (不太合口味)' },

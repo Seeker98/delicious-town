@@ -127,11 +127,13 @@ const quests = (main: QuestDto[], patch: Partial<QuestsDto> = {}): QuestsDto => 
   ...patch,
 });
 
-async function mountView() {
+/** path 可以带 ?tab=weekly / side（问题记录：任务页分三个选项卡） */
+async function mountView(path = '/') {
   const router = createRouter({
     history: createMemoryHistory(),
     routes: [{ path: '/', component: RestTasksView }],
   });
+  await router.push(path);
   const w = mount(RestTasksView, { global: { plugins: [router] } });
   await flushPromises();
   return w;
@@ -146,7 +148,7 @@ describe('RestTasksView', () => {
     vi.mocked(endpoints.signIn).mockResolvedValue({});
   });
 
-  it('任务名、活跃项名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
+  it('任务名按目录取当前语言；目录里没有时用服务端给的（问题记录 272）', async () => {
     useCatalogStore().apply({
       version: 'v:en',
       goods: [],
@@ -169,77 +171,6 @@ describe('RestTasksView', () => {
     });
     const w = await mountView();
     expect(w.text()).toContain('Refill oil once');
-    expect(w.get('[data-testid="act-1"]').text()).toContain('Check in');
-    expect(w.get('[data-testid="act-2"]').text()).toContain('打蟑螂');
-  });
-
-  it('签到按钮', async () => {
-    const w = await mountView();
-    await w.find('[data-testid="signin"]').trigger('click');
-    await flushPromises();
-    expect(endpoints.signIn).toHaveBeenCalled();
-  });
-
-  it('活跃项：没做满的写进度排前面，星级不够的写几星开放，做满的标"✓ 已满"排后面（问题记录：灰色黑色分不清）', async () => {
-    const w = await mountView();
-    expect(w.findAll('[data-testid^="act-"]').map((x) => x.attributes('data-testid'))).toEqual([
-      'act-2',
-      'act-50',
-      'act-901',
-      'act-903',
-      'act-1',
-    ]);
-    expect(w.find('[data-testid="act-2"]').text()).toContain('3/12');
-    expect(w.find('[data-testid="act-50"]').text()).toContain('🔒 2 星开放');
-    expect(w.find('[data-testid="act-50"]').classes()).toContain('dt-act-locked');
-    // 等级不够、区服没开的也标锁定（问题记录 360）
-    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 30 级解锁');
-    expect(w.find('[data-testid="act-901"]').classes()).toContain('dt-act-locked');
-    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 本服未开放');
-    expect(w.find('[data-testid="act-1"]').text()).toContain('✓ 已满');
-    expect(w.find('[data-testid="act-1"]').classes()).toContain('dt-act-done');
-  });
-
-  it('交易所注册天数不够、邮箱没验证，没有能领奖的限时活动，也标锁定写原因（backlog 第 ⑥ 批）', async () => {
-    const item = (id: number, blocked: 'days' | 'email' | 'frozen' | 'noActivity', needDays = 0) => ({
-      id,
-      name: String(id),
-      points: 5,
-      limit: 1,
-      count: 0,
-      needStar: 0,
-      needLevel: 0,
-      needDays,
-      blocked,
-      off: false,
-    });
-    vi.mocked(endpoints.activation).mockResolvedValue(
-      act({
-        items: [item(901, 'days', 7), item(902, 'email'), item(903, 'frozen'), item(904, 'noActivity')],
-      }),
-    );
-    const w = await mountView();
-    expect(w.find('[data-testid="act-901"]').text()).toContain('🔒 注册满 7 天解锁');
-    expect(w.find('[data-testid="act-902"]').text()).toContain('🔒 验证邮箱后解锁');
-    // 交易所被冻结的店（backlog 下架编号审查）
-    expect(w.find('[data-testid="act-903"]').text()).toContain('🔒 交易所已被冻结');
-    expect(w.find('[data-testid="act-904"]').text()).toContain('现在没有进行中的限时活动');
-    for (const id of [901, 902, 903, 904])
-      expect(w.find(`[data-testid="act-${id}"]`).classes()).toContain('dt-act-locked');
-  });
-
-  it('活跃奖励三种样子：已领、可以领（实心）、还差几点', async () => {
-    const w = await mountView();
-    const claimed = w.find('[data-testid="claim-50"]');
-    expect(claimed.text()).toBe('✓ 已领 50 点');
-    expect(claimed.attributes('disabled')).toBeDefined();
-    const ready = w.find('[data-testid="claim-100"]');
-    expect(ready.text()).toBe('领 100 点奖励');
-    expect(ready.classes()).toContain('btn-primary');
-    expect(ready.attributes('disabled')).toBeUndefined();
-    const far = w.find('[data-testid="claim-150"]');
-    expect(far.text()).toBe('150 点 (还差 30)');
-    expect(far.attributes('disabled')).toBeDefined();
   });
 
   it('任务卡片：没完成时显示进度条、不放按钮；完成后绿边和领奖按钮', async () => {
@@ -314,30 +245,15 @@ describe('RestTasksView', () => {
     );
     const w = await mountView();
     expect(w.get('[data-testid="chapter"]').text()).toContain('🔒 5 级解锁');
-    expect(w.get('[data-testid="line-1"]').text()).toContain('把 10 道食谱升到上品');
-    expect(w.get('[data-testid="line-1"]').text()).toContain('0/6');
-    expect(w.get('[data-testid="line-2"]').text()).toContain('🔒 2 星解锁');
-    expect(w.find('[data-testid="claim-task-3042"]').exists()).toBe(false);
-    expect(w.get('[data-testid="line-3"]').text()).toContain('已全部完成');
+    const side = await mountView('/?tab=side');
+    expect(side.get('[data-testid="line-1"]').text()).toContain('把 10 道食谱升到上品');
+    expect(side.get('[data-testid="line-1"]').text()).toContain('0/6');
+    expect(side.get('[data-testid="line-2"]').text()).toContain('🔒 2 星解锁');
+    expect(side.find('[data-testid="claim-task-3042"]').exists()).toBe(false);
+    expect(side.get('[data-testid="line-3"]').text()).toContain('已全部完成');
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     const done = await mountView();
     expect(done.text()).toContain('主线已全部完成');
-  });
-});
-
-describe('活跃奖励另送一番赏券（backlog 一番赏）', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    setActivePinia(createPinia());
-    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
-  });
-  it('写明哪一档另送几张券；区服关掉一番赏时不写', async () => {
-    vi.mocked(endpoints.activation).mockResolvedValue(act({ kujiTicket: { points: 150, num: 1 } }));
-    expect((await mountView()).get('[data-testid="act-kuji-hint"]').text()).toBe(
-      '领 150 点奖励另送一番赏抽赏券 ×1',
-    );
-    vi.mocked(endpoints.activation).mockResolvedValue(act());
-    expect((await mountView()).find('[data-testid="act-kuji-hint"]').exists()).toBe(false);
   });
 });
 
@@ -373,26 +289,38 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     vi.mocked(endpoints.activation).mockResolvedValue(act());
   });
 
-  it('四块依次是今日活跃、主线、每周、支线（问题记录 325：每天都要做的放最上面）', async () => {
+  it('三个选项卡：主线、每周、支线，默认主线；切换只显示那一块，写进地址；有能领的卡加礼物图标（问题记录：活跃和任务拆页）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([false, false, false, false]) }),
     );
     const w = await mountView();
+    expect(w.findAll('[data-testid^="tab-"]').map((x) => x.text())).toEqual(['主线', '每周', '支线']);
+    expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
+    expect(w.get('[data-testid="to-activation"]').attributes('href')).toBe('/rest/activation');
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
-      'card-activation',
       'card-main',
+    ]);
+    // 每周 4 个都完成没领：每周卡有礼物图标，主线没有
+    expect(w.find('[data-testid="gift-tab-weekly"]').exists()).toBe(true);
+    expect(w.find('[data-testid="gift-tab-main"]').exists()).toBe(false);
+    await w.get('[data-testid="tab-weekly"]').trigger('click');
+    await flushPromises();
+    expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-weekly',
+    ]);
+    expect(w.get('[data-testid="tab-weekly"]').classes()).toContain('active');
+    await w.get('[data-testid="tab-side"]').trigger('click');
+    await flushPromises();
+    expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-lines',
     ]);
-    expect(w.get('[data-testid="card-main"]').text()).toContain('主线');
-    expect(w.get('[data-testid="card-activation"]').text()).toContain('今日活跃 120');
   });
 
   it('每周：写组别和剩余时间；单个任务能领；没领完时全完成奖励灰色写还差几个', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([true, false, false, false]) }),
     );
-    const w = await mountView();
+    const w = await mountView('/?tab=weekly');
     const card = w.get('[data-testid="card-weekly"]');
     expect(card.text()).toContain('每周任务 · A 组');
     expect(card.text()).toContain('2 天 3 小时');
@@ -409,22 +337,23 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([true, true, true, true]) }),
     );
-    const w = await mountView();
+    const w = await mountView('/?tab=weekly');
     const full = w.get('[data-testid="claim-weekly-full"]');
     expect(full.classes()).toContain('btn-primary');
     expect(full.text()).toBe('领取');
-    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励：');
+    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励: ');
     await full.trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(4019);
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], { weekly: weekly([true, true, true, true], true) }),
     );
-    const done = await mountView();
+    const done = await mountView('/?tab=weekly');
     expect(done.get('[data-testid="claim-weekly-full"]').text()).toBe('✓ 已领取');
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
-    const none = await mountView();
+    const none = await mountView('/?tab=weekly');
     expect(none.find('[data-testid="card-weekly"]').exists()).toBe(false);
+    expect(none.get('[data-testid="no-weekly"]').text()).toBe('现在没有每周任务');
   });
 });
 
@@ -500,7 +429,7 @@ describe('任务页终审遗留（backlog 318）', () => {
         ]),
       }),
     );
-    const card = (await mountView()).get('[data-testid="card-weekly"]');
+    const card = (await mountView('/?tab=weekly')).get('[data-testid="card-weekly"]');
     expect(card.findAll('[data-testid^="task-40"]').map((x) => x.attributes('data-testid'))).toEqual([
       'task-4013',
       'task-4012',
@@ -512,24 +441,15 @@ describe('任务页终审遗留（backlog 318）', () => {
     expect(card.get('[data-testid="claim-weekly-full"]').text()).toBe('还差 2 个任务');
   });
 
-  it('每周全完成奖励领过后和活跃奖励的已领一个样子（浅灰底）', async () => {
+  it('每周全完成奖励领过后是浅灰底（和活跃页已领的奖励一个样子）', async () => {
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([task()], {
         weekly: weeklyOf([task({ id: 4011, progress: 1, done: true, claimed: true })], { claimed: true }),
       }),
     );
-    const w = await mountView();
+    const w = await mountView('/?tab=weekly');
     const full = w.get('[data-testid="claim-weekly-full"]');
-    const claimedAct = w.get('[data-testid="claim-50"]');
     expect(full.classes()).toEqual(expect.arrayContaining(['btn-light', 'text-muted']));
-    expect(claimedAct.classes()).toEqual(expect.arrayContaining(['btn-light', 'text-muted']));
     expect(full.classes()).not.toContain('btn-outline-secondary');
-  });
-
-  it('活跃度块的标题和另外三块一样用卡片标题样式', async () => {
-    vi.mocked(endpoints.tasks).mockResolvedValue(quests([task()]));
-    const card = (await mountView()).get('[data-testid="card-activation"]');
-    expect(card.find('h6').exists()).toBe(false);
-    expect(card.get('.dt-card-title').text()).toBe('今日活跃 120');
   });
 });

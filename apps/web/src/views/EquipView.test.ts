@@ -125,10 +125,10 @@ describe('EquipView', () => {
     expect(w.text()).toContain('真爱套装 (3/5)');
     expect(w.text()).toContain('上座率+5%, 挑剔率+3%');
     // 赛厨时的厨力（问题记录 417）
-    expect(w.find('[data-testid="duel-power"]').text()).toContain('赛厨时：进攻 9、防守 8');
+    expect(w.find('[data-testid="duel-power"]').text()).toContain('赛厨时: 进攻 9、防守 8');
     // 厨具收益加成（问题记录 411）
     expect(w.find('[data-testid="gear-income"]').text()).toContain(
-      '厨具收益加成：最终银币 +1.2%、最终经验 +0.75%、特色菜金牌 +0.9%',
+      '厨具收益加成: 最终银币 +1.2%、最终经验 +0.75%、特色菜金牌 +0.9%',
     );
   });
 

@@ -115,11 +115,11 @@ describe('AppraisePanel：按钮灰掉时写明原因（问题记录：鉴定按
     await flushPromises();
     // 默认选有货的 165：不在商店卖
     expect(w.find('[data-testid="tool-how"]').text()).toBe(
-      '获得：黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
+      '获得: 黑市 30 钻、厨塔和酒吧等的随机奖励、昨日特色菜冠军',
     );
     await w.find('[data-testid="tool"]').setValue(163);
     expect(w.find('[data-testid="tool-how"]').text()).toBe(
-      '获得：银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、持有捕梦网时，神殿守护兽暴击掉落',
+      '获得: 银币商店 90,000、黑市 8 钻、厨塔和酒吧等的随机奖励、持有捕梦网时，神殿守护兽暴击掉落',
     );
   });
 });

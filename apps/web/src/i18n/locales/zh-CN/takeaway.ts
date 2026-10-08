@@ -47,7 +47,7 @@ export default {
   deliveries: {
     claimFailed: '领取失败',
     noDiamond: (n: number) => `钻石不够 (要 ${n})`,
-    failedReason: (reason: string) => `配送失败：${reason}`,
+    failedReason: (reason: string) => `配送失败: ${reason}`,
     forced: '配送成功 (边牧帮了忙)',
     drone: '无人机送到了',
     success: '配送成功',
@@ -80,7 +80,7 @@ export default {
     hired: (name: string) => `雇了${name}当骑手`,
     hireFailed: '雇佣失败',
     dismissConfirm: (name: string, coin: string, exp: string) =>
-      `解雇${name}：花 ${coin} 银币，得到 ${exp} 经验，确定吗？`,
+      `解雇${name}: 花 ${coin} 银币，得到 ${exp} 经验，确定吗？`,
     dismissFailed: '解雇失败',
     count: (n: number, cap: number) => `骑手 ${n}/${cap} (自己这个骑手升级后上限会增加)`,
     self: ' (自己)',

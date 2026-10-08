@@ -10,18 +10,18 @@ export default {
     short: '殘卷不夠 (3 張學會一道)',
     learned: '已學會的菜 (殘卷可出售或分解)',
   },
-  learnedAll: (n: number, names: string) => `學會了 ${n} 道特色菜：${names}`,
+  learnedAll: (n: number, names: string) => `學會了 ${n} 道特色菜: ${names}`,
   learnFailed: '學習失敗',
   levelUp: '熟練度升級了',
   bob: '海綿寶寶點了贊',
   cooked: (grade: string, lucky: boolean, num: string, price: string, extra: string) =>
-    `烹製完成：${grade}${lucky ? ' (幸運)' : ''} ${num} 份，每份 ${price} 銀幣${extra ? `，${extra}` : ''}`,
+    `烹製完成: ${grade}${lucky ? ' (幸運)' : ''} ${num} 份，每份 ${price} 銀幣${extra ? `，${extra}` : ''}`,
   cookFailed: '烹製失敗',
   dumpConfirm: '倒掉後剩下的份數全部作廢，確定嗎？',
   dumped: '已倒掉',
   dumpFailed: '倒掉失敗',
   needStar: '1 星以後才能鑑定和烹製特色菜。',
-  onSale: '在售：',
+  onSale: '在售: ',
   lucky: ' (幸運)',
   saleMeta: (left: string, total: string, price: string, eaten: number) =>
     `剩餘 ${left} / ${total} 份 · 每份 ${price} 銀幣 · 被品嚐 ${eaten} 次`,
@@ -31,12 +31,12 @@ export default {
   learned: (n: number) => `已學 (${n})`,
   /** 分頁時：這一頁幾道 / 一共幾道 */
   learnedOf: (shown: number, total: number) => `已學 (${shown} / ${total})`,
-  noLearned: '還沒有學會特色菜：在神殿鑑定神秘食譜得到殘卷，3 張殘卷就能學會。',
+  noLearned: '還沒有學會特色菜: 在神殿鑑定神秘食譜得到殘卷，3 張殘卷就能學會。',
   dishMeta: (level: number | undefined, road: string, levelName: string) =>
     `${level ?? '?'} 級 · ${road} · ${levelName}`,
   proficiency: (cur: string, next: string | null) => `熟練度 ${cur}${next ? ` / ${next}` : ' (滿級)'}`,
   cook: '烹製',
-  foods: '食材：',
+  foods: '食材: ',
   cookie: (n: number) => `用幸運餅乾 (每批 1 個，持有 ${n})`,
   batches: (n: number) => `${n} 批`,
   /** 按級、按道分頁（問題記錄 414） */
@@ -50,7 +50,7 @@ export default {
   },
   /** 碎片兌換指定殘卷（問題記錄 415） */
   exchange: {
-    title: (n: number) => `碎片兌換：${n} 張同級碎片換 1 張任選一道的殘卷 (只能選還沒學會、能鑑定出來的)`,
+    title: (n: number) => `碎片兌換: ${n} 張同級碎片換 1 張任選一道的殘卷 (只能選還沒學會、能鑑定出來的)`,
     have: (level: number, n: number) => `${level} 級碎片 ${n} 張`,
     pick: '選一道菜',
     btn: (n: number) => `換 ${n} 張`,

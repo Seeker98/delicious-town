@@ -11,9 +11,9 @@ export default {
   /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
   /** 賽廚時的廚力（問題記錄 417） */
   duelPower: (attack: string, defend: string) =>
-    `賽廚時：進攻 ${attack}、防守 ${defend} (算上所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個)`,
+    `賽廚時: 進攻 ${attack}、防守 ${defend} (算上所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個)`,
   income: (coin: string, exp: string, gold: string) =>
-    `廚具收益加成：最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
+    `廚具收益加成: 最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
   incomeNote: ' (廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少)',
   empty: '空',
   noPieces: '沒有這個部位的廚具',
@@ -24,7 +24,7 @@ export default {
   unwearFailed: '卸下失敗',
   unwearAll: '全部卸下',
   suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
-  suitTier: (need: number, desc: string) => `${need} 件：${desc}`,
+  suitTier: (need: number, desc: string) => `${need} 件: ${desc}`,
   gem: '寶石',
   presets: '預設',
   batch: '一鍵處理',
@@ -36,7 +36,7 @@ export default {
   presetName: '預設名稱',
   saveCurrent: '儲存當前',
   saveFailed: '儲存失敗',
-  skipped: (parts: string) => `等級不夠，這些部位留空：${parts}`,
+  skipped: (parts: string) => `等級不夠，這些部位留空: ${parts}`,
   salvageWay: '分解成精華',
   sellWay: '出售',
   batchNote: '只列出未鎖定、未穿戴、沒強化、沒寶石、不在預設裡的廚具',
@@ -62,7 +62,7 @@ export default {
       ` (基礎 ${base} + 幸運 ${luck} + 天氣 ${weather} + 保底 ${floor})`,
     next: (gain: number, total: number) => `成功後屬性總和 +${gain} (到 ${total}，不含寶石)`,
     cost: (essence: number, have: number, coin: string) =>
-      `消耗：精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
+      `消耗: 精華 ×${essence} (有 ${have})、銀幣 ${coin}`,
     useStone: (n: number) => `用強化石 (必定成功，有 ${n})`,
     maxed: '已經強化到最高',
     backOption: (name: string, back: number, num: number) => `${name} (回退 ${back} 級，有 ${num})`,
@@ -90,7 +90,7 @@ export default {
     historyFail: '失敗',
     tags: { stone: ' (強化石)', lucky: ' (幸運)', floor: ' (保底)' },
     stressOk: (stress: number, attr: string, val: number, extra: string) =>
-      `強化成功 +${stress}：${attr} +${val}${extra}`,
+      `強化成功 +${stress}: ${attr} +${val}${extra}`,
     stressMiss: '強化失敗，下次成功率會提高',
     stressFailed: '強化失敗',
     confirmRollback: (item: string, n: number, waste: number) =>
@@ -114,7 +114,7 @@ export default {
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,
     levelUp: (n: number) => `升階 ×${n}`,
     done: (success: number, lucky: number, fail: number, exp: string | null) =>
-      `升階完成：成功 ${success}${lucky > 0 ? ` (含幸運補救 ${lucky})` : ''}，失敗 ${fail}${exp ? `，得到經驗 ${exp}` : ''}`,
+      `升階完成: 成功 ${success}${lucky > 0 ? ` (含幸運補救 ${lucky})` : ''}，失敗 ${fail}${exp ? `，得到經驗 ${exp}` : ''}`,
     failed: '升階失敗',
     loadFailed: '讀取寶石失敗',
   },

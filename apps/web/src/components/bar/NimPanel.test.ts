@@ -152,7 +152,7 @@ describe('NimPanel', () => {
         ),
       },
     });
-    expect(w.text()).toContain('抛硬币：调酒师先拿');
+    expect(w.text()).toContain('抛硬币: 调酒师先拿');
   });
 
   it('结束：写输赢和声望，有再来一局', async () => {

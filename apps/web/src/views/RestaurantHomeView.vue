@@ -38,6 +38,8 @@ const busy = ref(false);
 const mainTask = ref<QuestDto | null>(null);
 /** 没有可领的任务时：本章任务都领了 → 章末奖励；当前章锁定 → 解锁条件（问题记录 318） */
 const mainChapter = ref<QuestsDto['chapter']>(null);
+/** 主线全做完（终审 C1：这时也要有一行放任务入口，每周和支线还要从这里进） */
+const mainAllDone = ref(false);
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 /** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */
 const mainChapterText = computed(() => {
@@ -111,9 +113,11 @@ async function load() {
       const chapterRow = q.chapter && (q.chapter.claimable || q.chapter.locked);
       mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
       mainChapter.value = !ready && chapterRow ? q.chapter : null;
+      mainAllDone.value = q.allMainDone;
     } catch {
       mainTask.value = null;
       mainChapter.value = null;
+      mainAllDone.value = false;
     }
     dining.value = await endpoints.dineCurrent();
     error.value = '';
@@ -208,6 +212,8 @@ const strengthText = computed(() =>
 
 /** 餐厅卡底部（问题记录 447）：原来的厨具、仓库、商店入口换成食谱数和在售特色菜；区服关了的不显示 */
 const showBooks = computed(() => store.featureOn('cookbook'));
+/** 任务入口看区服功能开关（原来“更多”里的入口也看） */
+const showTasks = computed(() => store.featureOn('task'));
 const showSpecial = computed(() => store.featureOn('mysterious'));
 /** 菜名和几级分两段：放不下时只截菜名（审查 I2） */
 const specialName = computed(() => {
@@ -491,7 +497,7 @@ onBeforeUnmount(() => {
         </span>
         <RouterLink
           v-if="activeTotal !== null"
-          to="/rest/tasks"
+          to="/rest/activation"
           class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
           >{{ t.home.activation(activeTotal)
@@ -521,6 +527,14 @@ onBeforeUnmount(() => {
         >
           <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
+        <!-- 任务入口（问题记录：“更多”里的任务入口去掉，从这里进） -->
+        <RouterLink
+          v-else-if="showTasks"
+          to="/rest/tasks"
+          class="dt-go text-nowrap"
+          data-testid="home-tasks-link"
+          >{{ t.home.tasksLink }}</RouterLink
+        >
       </div>
       <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
         <div class="flex-fill">
@@ -540,6 +554,21 @@ onBeforeUnmount(() => {
         >
           <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
+        <RouterLink
+          v-else-if="showTasks"
+          to="/rest/tasks"
+          class="dt-go text-nowrap"
+          data-testid="home-tasks-link"
+          >{{ t.home.tasksLink }}</RouterLink
+        >
+      </div>
+      <div v-else-if="showTasks" class="dt-todo-row" data-testid="main-task">
+        <div class="flex-fill">
+          <i class="bi bi-flag me-1"></i>{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}
+        </div>
+        <RouterLink to="/rest/tasks" class="dt-go text-nowrap" data-testid="home-tasks-link">{{
+          t.home.tasksLink
+        }}</RouterLink>
       </div>
       <ActivityBanner />
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">

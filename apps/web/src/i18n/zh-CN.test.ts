@@ -3,7 +3,7 @@ import { errorText, setNameResolver } from './zh-CN';
 
 describe('错误文案', () => {
   it('封禁带原因', () => {
-    expect(errorText('ACCOUNT_BANNED', { reason: '刷分' })).toBe('账号已被封禁：刷分');
+    expect(errorText('ACCOUNT_BANNED', { reason: '刷分' })).toBe('账号已被封禁: 刷分');
   });
   it('资源不够时说清楚缺什么', () => {
     setNameResolver({
@@ -79,7 +79,7 @@ describe('好友互动的错误文案', () => {
 describe('厨塔的错误文案', () => {
   it('按 reason / what 出文案', () => {
     expect(errorText('INVALID_STATE', { reason: 'floor_locked', minLevel: 11, needFloor: 1 })).toBe(
-      '这一层还没解锁：餐厅等级要够，并且先打赢下一层',
+      '这一层还没解锁: 餐厅等级要够，并且先打赢下一层',
     );
     expect(errorText('INVALID_STATE', { reason: 'rank_taken' })).toBe('这个名次已经有人了');
     expect(errorText('LIMIT_REACHED', { what: 'tower', max: 5 })).toBe(

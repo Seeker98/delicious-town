@@ -24,6 +24,6 @@ export default {
   times: '×',
   parenOpen: ' (',
   parenClose: ')',
-  colon: (s: string) => `${s}：`,
+  colon: (s: string) => `${s}: `,
   semi: '；',
 };

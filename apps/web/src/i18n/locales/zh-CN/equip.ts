@@ -10,9 +10,9 @@ export default {
   /** 穿戴厨具（含宝石）的收益加成（问题记录 411） */
   /** 赛厨时的厨力（问题记录 417） */
   duelPower: (attack: string, defend: string) =>
-    `赛厨时：进攻 ${attack}、防守 ${defend} (算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个)`,
+    `赛厨时: 进攻 ${attack}、防守 ${defend} (算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个)`,
   income: (coin: string, exp: string, gold: string) =>
-    `厨具收益加成：最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
+    `厨具收益加成: 最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
   incomeNote: ' (厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少)',
   empty: '空',
   noPieces: '没有这个部位的厨具',
@@ -23,7 +23,7 @@ export default {
   unwearFailed: '卸下失败',
   unwearAll: '全部卸下',
   suitName: (name: string, count: number, max: number) => `${name} (${count}/${max})`,
-  suitTier: (need: number, desc: string) => `${need} 件：${desc}`,
+  suitTier: (need: number, desc: string) => `${need} 件: ${desc}`,
   gem: '宝石',
   presets: '预设',
   batch: '一键处理',
@@ -35,7 +35,7 @@ export default {
   presetName: '预设名称',
   saveCurrent: '保存当前',
   saveFailed: '保存失败',
-  skipped: (parts: string) => `等级不够，这些部位留空：${parts}`,
+  skipped: (parts: string) => `等级不够，这些部位留空: ${parts}`,
   salvageWay: '分解成精华',
   sellWay: '出售',
   batchNote: '只列出未锁定、未穿戴、没强化、没宝石、不在预设里的厨具',
@@ -61,7 +61,7 @@ export default {
       ` (基础 ${base} + 幸运 ${luck} + 天气 ${weather} + 保底 ${floor})`,
     next: (gain: number, total: number) => `成功后属性总和 +${gain} (到 ${total}，不含宝石)`,
     cost: (essence: number, have: number, coin: string) =>
-      `消耗：精华 ×${essence} (有 ${have})、银币 ${coin}`,
+      `消耗: 精华 ×${essence} (有 ${have})、银币 ${coin}`,
     useStone: (n: number) => `用强化石 (必定成功，有 ${n})`,
     maxed: '已经强化到最高',
     backOption: (name: string, back: number, num: number) => `${name} (回退 ${back} 级，有 ${num})`,
@@ -89,7 +89,7 @@ export default {
     historyFail: '失败',
     tags: { stone: ' (强化石)', lucky: ' (幸运)', floor: ' (保底)' },
     stressOk: (stress: number, attr: string, val: number, extra: string) =>
-      `强化成功 +${stress}：${attr} +${val}${extra}`,
+      `强化成功 +${stress}: ${attr} +${val}${extra}`,
     stressMiss: '强化失败，下次成功率会提高',
     stressFailed: '强化失败',
     confirmRollback: (item: string, n: number, waste: number) =>
@@ -113,7 +113,7 @@ export default {
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,
     levelUp: (n: number) => `升阶 ×${n}`,
     done: (success: number, lucky: number, fail: number, exp: string | null) =>
-      `升阶完成：成功 ${success}${lucky > 0 ? ` (含幸运补救 ${lucky})` : ''}，失败 ${fail}${exp ? `，得到经验 ${exp}` : ''}`,
+      `升阶完成: 成功 ${success}${lucky > 0 ? ` (含幸运补救 ${lucky})` : ''}，失败 ${fail}${exp ? `，得到经验 ${exp}` : ''}`,
     failed: '升阶失败',
     loadFailed: '读取宝石失败',
   },

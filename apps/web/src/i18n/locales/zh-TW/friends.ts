@@ -45,7 +45,7 @@ export default {
     closed: ' · 停業中',
     door: '門',
     equips: '廚具',
-    special: '特色菜：',
+    special: '特色菜: ',
     specialLine: (grade: string, left: number, price: number) =>
       `${grade} · 剩 ${left} 份 · 每份 ${price} 銀幣`,
     tasted: '品嚐成功，體力增加了',
@@ -77,7 +77,7 @@ export default {
     killDone: '今天在這家店滅的蟑螂夠多了，留點給別人吧',
   },
   tables: {
-    freeloader: (name: string | null) => `白食：${name ?? '好友'}`,
+    freeloader: (name: string | null) => `白食: ${name ?? '好友'}`,
     floor: (n: number) => `${n} 樓`,
   },
   flip: {

@@ -242,11 +242,11 @@ describe('CookbooksView', () => {
     await router.push('/cookbooks');
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
-    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：上座率+35%');
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成: 上座率+35%');
     expect(w.find('[data-testid="street-focus"]').exists()).toBe(false);
     await w.get('select').setValue('3');
     await flushPromises();
-    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成：每桌经验+4');
+    expect(w.get('[data-testid="street-desc"]').text()).toBe('街道加成: 每桌经验+4');
     // 街道类型和为什么是这个加成（问题记录 380、378 方案 C）；新手街没有类型
     expect(w.get('[data-testid="street-focus"]').text()).toBe('经验街');
     expect(w.get('[data-testid="street-theme"]').text()).toBe('川菜麻辣讲究火候');

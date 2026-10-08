@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    tasksSplit1008:
+      'El registro y la actividad del día tienen ahora su propia página, que se abre desde los puntos de actividad de la página de inicio; la página de Misiones tiene tres pestañas (Principal, Semanales, Secundarias), con un icono de regalo en las que tienen premios por recoger, y se abre desde el nuevo enlace Misiones de la fila de la misión principal en la página de inicio; se quitó la entrada de Misiones del menú Más',
     cookbookProgress1008:
       'La página de Recetas tiene un nuevo Resumen de progreso: el progreso total por calidad y, por calle, cuántas recetas tienes de cada calidad o mejor; tu calle actual aparece resaltada y las casillas completas, en verde',
     gameTime1008:

@@ -52,7 +52,7 @@ describe('GuideView（问题记录 150）', () => {
     expect(faq.text()).toContain('钻石怎么获得');
     expect(faq.text()).toContain('蟹黄堡怎么获得');
     const links = faq.findAll('a').map((x) => x.attributes('href'));
-    expect(links).toEqual(expect.arrayContaining(['/bar', '/society/mayor', '/rest/tasks']));
+    expect(links).toEqual(expect.arrayContaining(['/bar', '/society/mayor', '/rest/tasks?tab=weekly']));
   });
 
   it('五块内容都在', async () => {

@@ -485,7 +485,7 @@ describe('ActivitiesView 全服合力（148-3）', () => {
     expect(w.find('[data-testid="coop-bar-21"]').attributes('style')).toContain('width: 50%');
     expect(text(w, 'coop-hint-21-1')).toBe('全服还差 450 分');
     expect(w.find('[data-testid="coop-hint-21-0"]').exists()).toBe(false);
-    expect(w.find('[data-testid="activity-21"]').text()).toContain('第 2~3 名：钻石 1');
+    expect(w.find('[data-testid="activity-21"]').text()).toContain('第 2~3 名: 钻石 1');
     expect(w.find('[data-testid="claim-21-s0"]').exists()).toBe(true);
     const rows = w.findAll('[data-testid="coop-top-21"] tr');
     expect(rows[1]!.classes()).toContain('fw-bold');

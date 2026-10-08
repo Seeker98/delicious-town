@@ -108,7 +108,7 @@ export default {
     },
     'temple.trial': (p, names) =>
       p.success
-        ? `「${mcNameOf(names, n(p, 'mcId'))}」试炼成功：试炼价值 +${n(p, 'worth')}%、试炼经验 +${n(p, 'exp')}%`
+        ? `「${mcNameOf(names, n(p, 'mcId'))}」试炼成功: 试炼价值 +${n(p, 'worth')}%、试炼经验 +${n(p, 'exp')}%`
         : `「${mcNameOf(names, n(p, 'mcId'))}」试炼失败`,
     'kraken.forget': (p, names) => `克拉肯很不满意，你遗忘了特色菜「${mcNameOf(names, n(p, 'mcId'))}」`,
     'equip.stress': (p, names) =>
@@ -136,7 +136,7 @@ export default {
     'goods.drop': (p, names) => `超过持有上限，丢掉了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
     'device.place': (p, names) => `摆放了 ${names.goodsName(n(p, 'goodsId'))}`,
     'store.use': (p, names) => `使用了 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}`,
-    'admin.grant': (p) => `系统补偿：${String(p.reason ?? '')}`,
+    'admin.grant': (p) => `系统补偿: ${String(p.reason ?? '')}`,
     redeem: (p) => `使用了兑换码 ${String(p.code ?? '')}`,
     // 问题记录 154：以下类型原来显示英文类型名
     'bar.darts': (p) => `酒吧飞镖${p.result === 'win' ? '赢了' : p.result === 'draw' ? '打平' : '输了'}`,
@@ -207,20 +207,20 @@ export default {
     'town.talk': () => '和小镇居民聊了天',
     'town.wish': () => '在广场许了愿',
     'exchange.order': (p, names) =>
-      `在交易所挂${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? ` (当场成交 ${n(p, 'filled')} 个)` : ''}${heldNote(p)}`,
+      `在交易所挂${p.side === 'buy' ? '买' : '卖'}单: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${n(p, 'filled') > 0 ? ` (当场成交 ${n(p, 'filled')} 个)` : ''}${heldNote(p)}`,
     'exchange.fill': (p, names) =>
       p.side === 'sell'
-        ? `交易所卖单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (所得在交易所账户)'}`
-        : `交易所买单成交：${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所账户)'}`,
+        ? `交易所卖单成交: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}，手续费 ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (所得在交易所账户)'}`
+        : `交易所买单成交: ${names.foodName(n(p, 'foodsId'))} ×${n(p, 'qty')}，单价 ${formatNum(n(p, 'price'))}${p.held ? heldNote(p) : ' (食材在交易所账户)'}`,
     'exchange.cancel': (p, names) =>
-      `撤销交易所${p.side === 'buy' ? '买' : '卖'}单：${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
+      `撤销交易所${p.side === 'buy' ? '买' : '卖'}单: ${names.foodName(n(p, 'foodsId'))}，退回 ${n(p, 'left')} 个`,
     'exchange.expire': (p, names) =>
-      `交易所${p.side === 'buy' ? '买' : '卖'}单过期：${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个的冻结退回交易所账户`,
-    'exchange.withdraw': (p, names) => `从交易所账户取出：${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
+      `交易所${p.side === 'buy' ? '买' : '卖'}单过期: ${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个的冻结退回交易所账户`,
+    'exchange.withdraw': (p, names) => `从交易所账户取出: ${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
     'exchange.freezeCancel': (p, names) =>
-      `交易所被冻结，${p.side === 'buy' ? '买' : '卖'}单撤销：${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个退回交易所账户`,
+      `交易所被冻结，${p.side === 'buy' ? '买' : '卖'}单撤销: ${names.foodName(n(p, 'foodsId'))}，剩余 ${n(p, 'left')} 个退回交易所账户`,
     'exchange.confiscate': (p, names) =>
-      `交易所冻结中的所得被没收：${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
+      `交易所冻结中的所得被没收: ${coinFoods(p, names, (c) => `银币 ${c}`, '、')}`,
     'predict.trade': (p) =>
       `预测「${String(p.title ?? '')}」${p.dir === 'sell' ? '卖出' : '买入'}${p.side === 'no' ? '否' : '是'} ${n(p, 'qty')} 份，成交额 ${formatNum(n(p, 'amount'))}，手续费 ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>
@@ -235,21 +235,21 @@ export default {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `${k} 赏 ×${v}`)
         .join('、');
-      return `${p.line === 'deluxe' ? '豪华' : ''}一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张：${tiers}${p.last ? '，并拿下最后赏' : ''}`;
+      return `${p.line === 'deluxe' ? '豪华' : ''}一番赏第 ${n(p, 'seq')} 池抽了 ${n(p, 'num')} 张: ${tiers}${p.last ? '，并拿下最后赏' : ''}`;
     },
     // 小镇发展基金（backlog 基金）：档位名跟着发展基金页的叫法
     'fund.deposit': (p) =>
       `向小镇发展基金存入 ${formatNum(n(p, 'coin'))} 银币 (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `领取小镇发展基金：拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'medal'))}`,
+      `领取小镇发展基金: 拿回 ${formatNum(n(p, 'coin'))} 银币和${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) => `提前取出小镇发展基金，拿回 ${formatNum(n(p, 'coin'))} 银币`,
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
     'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,
     'mail.claim': (p) => `领取了邮件「${String(p.title ?? '')}」的附件`,
     'admin.rename': (p) =>
-      `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」：${String(p.reason ?? '')}`,
-    'market.guess': (p) => `菜场竞猜开奖：猜中 ${n(p, 'hits')} 种`,
+      `管理员把店名从「${String(p.from ?? '')}」改为「${String(p.to ?? '')}」: ${String(p.reason ?? '')}`,
+    'market.guess': (p) => `菜场竞猜开奖: 猜中 ${n(p, 'hits')} 种`,
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
       return `菜场竞猜 ${day} ${Number(hour)} 点那一轮没有开奖，退还了报名费`;

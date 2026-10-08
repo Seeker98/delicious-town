@@ -29,7 +29,7 @@ function predictResult(p: P): string {
   if (p.outcome === null || p.outcome === undefined) {
     return `${head}已作廢，參與的店按淨投入的 ${Math.round(num(p.voidRatio) * 100)}% 退款`;
   }
-  const result = `${head}開獎：結果為${p.outcome ? '是' : '否'}`;
+  const result = `${head}開獎: 結果為${p.outcome ? '是' : '否'}`;
   const players = num(p.players);
   if (players === 0) return result;
   const winners = num(p.winners);
@@ -69,11 +69,11 @@ export default {
     'hiphop.weekly': (w, p, x) =>
       `恭喜${w}在每週打賞中獲得第 ${num(p.rank)} 名，獎勵 ${x.goodsName(num(p.goodsId))} (160 小時)`,
     'market.manual': (w, p, x) =>
-      `${w}已進貨日常菜：${list(p.foods)
+      `${w}已進貨日常菜: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join('、')}`,
     'market.restock': (_w, p, x) =>
-      `菜場進貨了：${list(p.foods)
+      `菜場進貨了: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join('、')}`,
     'mc.champion': (w, p) => `${w}成為昨日特色菜價值第一 (${formatNum(num(p.value))})`,
@@ -84,7 +84,7 @@ export default {
     'rest.move': (w, p, x) => `${w}搬到了${x.streetName(num(p.to))}`,
     'rest.rename': (_w, p) => `${str(p.from)} 改名為 ${str(p.to)}`,
     'restaurant.open': (w) => `${w}開業了`,
-    'shop.special': (_w, p, x) => `商店今日特價：${x.goodsName(num(p.goodsId))}`,
+    'shop.special': (_w, p, x) => `商店今日特價: ${x.goodsName(num(p.goodsId))}`,
     'star.up': (w, p) => `${w}升到了 ${num(p.star)} 星`,
     'takeaway.customer': (w, p, x) => `${w}送外賣時遇到了${x.goodsName(num(p.goodsId))}`,
     'temple.explore.rare': (w, p, x) =>
@@ -93,13 +93,13 @@ export default {
         .join('、')}`,
     'temple.guardian.rare': (w, p, x) => `${w}擊敗守護獸獲得 ${x.foodName(num(p.foodsId))}`,
     'activity.coopRank': (_w, p) =>
-      `《${str(p.title)}》貢獻榜：${list(p.top)
+      `《${str(p.title)}》貢獻榜: ${list(p.top)
         .map(
           (r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)} (${formatNum(num((r as P).points))} 分)`,
         )
         .join('、')}`,
     'tower.rank.week': (_w, p) =>
-      `廚塔周榜：${list(p.top)
+      `廚塔周榜: ${list(p.top)
         .map((r) => `第 ${num((r as P).rank)} 名 ${str((r as P).name)}`)
         .join('，')}`,
     'tower.shop.rare': (w, p, x) => `${w}在廚塔商店兌換了 ${x.goodsName(num(p.goodsId))}`,
@@ -108,11 +108,11 @@ export default {
     'weather.change': (w, p, x) =>
       p.by !== undefined
         ? `${w}使用雷神錘，${x.weatherName(num(p.from))}轉${x.weatherName(num(p.to))}了`
-        : `天氣變了：${x.weatherName(num(p.from))}轉${x.weatherName(num(p.to))}`,
-    'town.broadcast': (w, p) => `${w}：${str(p.text)}`,
-    'town.bless': (w, p) => `${w}許願得到星願：${str(p.blessName) || str(p.name)}`,
+        : `天氣變了: ${x.weatherName(num(p.from))}轉${x.weatherName(num(p.to))}`,
+    'town.broadcast': (w, p) => `${w}: ${str(p.text)}`,
+    'town.bless': (w, p) => `${w}許願得到星願: ${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>
-      `恭喜${w}伸進蟹老闆褲兜裡掏出：${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
+      `恭喜${w}伸進蟹老闆褲兜裡掏出: ${x.goodsName(num(p.goodsId))}×${num(p.num)}`,
     // 豪華一番賞（240-2）的新聞帶 line: 'deluxe'
     'kuji.big': (w, p) =>
       p.tier === 'last'

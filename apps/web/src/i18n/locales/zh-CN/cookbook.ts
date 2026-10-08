@@ -2,7 +2,7 @@
 export default {
   filters: { all: '全部', learnable: '可学', upgradable: '可升级', unlearned: '未学', learned: '已学' },
   loadFailed: '读取食谱失败',
-  streetDesc: (desc: string) => `街道加成：${desc}`,
+  streetDesc: (desc: string) => `街道加成: ${desc}`,
   moveHint: (star: number, need: string, gap: string) =>
     `本街剩下的菜全学会，也凑不够升 ${star} 星要的 ${need} 道 (还差 ${gap} 道)。本街学得差不多、几天学不到新菜时，就换一条菜多的街。`,
   moveLink: '去搬家',
@@ -27,7 +27,7 @@ export default {
     title: '食谱进度一览',
     back: '返回食谱',
     summary: (grade: string, n: string, total: string, pct: string) =>
-      `${grade}及以上：${n} / ${total} (${pct})`,
+      `${grade}及以上: ${n} / ${total} (${pct})`,
     note: '每格是这一品级及以上的道数；当前所在的街高亮，学满的标绿。',
     street: '街道',
     all: '全部',

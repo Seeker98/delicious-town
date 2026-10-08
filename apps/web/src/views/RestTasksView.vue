@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import type { ActivationDto, AwardDto, QuestDto, QuestsDto } from '@dt/shared';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import QuestCard from '../components/QuestCard.vue';
 import { useT } from '../composables/useT';
@@ -15,7 +16,6 @@ const catalog = useCatalogStore();
 const toast = useToastStore();
 const t = useT();
 const tasks = ref<QuestsDto | null>(null);
-const act = ref<ActivationDto | null>(null);
 const busy = ref(false);
 
 function awardText(a: AwardDto): string {
@@ -32,7 +32,7 @@ function awardText(a: AwardDto): string {
 }
 
 async function load() {
-  [tasks.value, act.value] = await Promise.all([endpoints.tasks(), endpoints.activation()]);
+  tasks.value = await endpoints.tasks();
 }
 async function run(fn: () => Promise<unknown>, fallback: string) {
   busy.value = true;
@@ -45,29 +45,6 @@ async function run(fn: () => Promise<unknown>, fallback: string) {
     busy.value = false;
   }
 }
-type ActItem = ActivationDto['items'][number];
-/** 活跃项的状态：做满 / 没开放（区服关了、星级或等级不够，问题记录 360） / 进行中（问题记录：灰色黑色分不清） */
-function stateOf(i: ActItem): 'done' | 'locked' | 'open' {
-  if (i.count >= i.limit) return 'done';
-  return lockText(i) === null ? 'open' : 'locked';
-}
-/** 锁定时写哪一条：区服没开 → 星级 → 等级 → 注册天数、邮箱、交易所冻结、没有限时活动（backlog 第 ⑥ 批） */
-function lockText(i: ActItem): string | null {
-  const x = t.value.rest.tasks;
-  if (i.off) return x.off;
-  if ((act.value?.star ?? 0) < i.needStar) return x.locked(i.needStar);
-  if ((act.value?.level ?? 0) < i.needLevel) return x.lockedLevel(i.needLevel);
-  if (i.blocked === 'days') return x.lockedDays(i.needDays);
-  if (i.blocked === 'email') return x.lockedEmail;
-  if (i.blocked === 'frozen') return x.lockedFrozen;
-  if (i.blocked === 'noActivity') return x.noActivity;
-  return null;
-}
-const ORDER = { open: 0, locked: 1, done: 2 } as const;
-const items = computed(() =>
-  [...(act.value?.items ?? [])].sort((a, b) => ORDER[stateOf(a)] - ORDER[stateOf(b)]),
-);
-const pct = (count: number, limit: number) => Math.min(100, Math.round((count / Math.max(1, limit)) * 100));
 /** 本章任务：可领的在前，没完成的其次，已领的最后（问题记录 318） */
 const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
 const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
@@ -78,79 +55,55 @@ const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
 const leftText = (unfinished: number) =>
   unfinished > 0 ? t.value.rest.tasks.chapterLeft(unfinished) : t.value.rest.tasks.claimFirst;
 
+/**
+ * 三个选项卡：主线、每周、支线（问题记录：活跃和任务页太长，活跃单拎出来，任务分卡；用户 2026-10-08 定每周单独一卡）。
+ * 当前卡写在地址里（?tab=），从首页、指引直接进到每周
+ */
+const TABS = ['main', 'weekly', 'side'] as const;
+type Tab = (typeof TABS)[number];
+const route = useRoute();
+const router = useRouter();
+const tab = computed<Tab>(() => TABS.find((x) => x === route.query.tab) ?? 'main');
+const setTab = (x: Tab) => void router.replace({ query: { ...route.query, tab: x } });
+const canClaim = (x: QuestDto) => x.done && !x.claimed;
+/** 卡上有能领的时候加一个礼物图标 */
+const claimable = computed<Record<Tab, boolean>>(() => {
+  const q = tasks.value;
+  if (!q) return { main: false, weekly: false, side: false };
+  return {
+    main: q.main.some(canClaim) || (q.leftover ?? []).some(canClaim) || !!q.chapter?.claimable,
+    weekly: !!q.weekly && (q.weekly.quests.some(canClaim) || q.weekly.full.claimable),
+    side: q.lines.some((l) => !!l.quest && l.lockedStar === null && canClaim(l.quest)),
+  };
+});
+
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>
 
 <template>
-  <!-- 四块：今日活跃、主线、每周、支线（问题记录 318 设计 §10；问题记录 325：每天都要做的签到和活跃放最上面） -->
-  <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
-    <div class="d-flex align-items-center mb-2">
-      <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
+  <div class="text-end small mb-1">
+    <RouterLink to="/rest/activation" class="dt-go" data-testid="to-activation">{{
+      t.rest.tasks.activationLink
+    }}</RouterLink>
+  </div>
+  <ul class="nav nav-tabs mb-3" role="tablist" data-testid="task-tabs">
+    <li v-for="x in TABS" :key="x" class="nav-item">
       <button
-        class="btn btn-sm btn-primary ms-auto"
-        data-testid="signin"
-        :disabled="busy || act.signedIn"
-        @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"
+        type="button"
+        role="tab"
+        :class="['nav-link', { active: tab === x }]"
+        :aria-selected="tab === x"
+        :data-testid="`tab-${x}`"
+        @click="setTab(x)"
       >
-        {{ act.signedIn ? t.rest.tasks.signedIn : t.rest.tasks.signIn }}
+        {{ t.rest.tasks.tabs[x]
+        }}<i v-if="claimable[x]" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${x}`"></i>
       </button>
-    </div>
-    <div class="d-flex flex-wrap gap-1 mb-2">
-      <button
-        v-for="r in act.rewards"
-        :key="r.points"
-        :class="[
-          'btn btn-sm',
-          r.claimed
-            ? 'btn-light text-muted'
-            : act.total >= r.points
-              ? 'btn-primary'
-              : 'btn-outline-secondary',
-        ]"
-        :data-testid="`claim-${r.points}`"
-        :disabled="busy || r.claimed || act.total < r.points"
-        @click="run(() => endpoints.claimActivation(r.points), t.rest.tasks.claimFailed)"
-      >
-        <template v-if="r.claimed">{{ t.rest.tasks.claimed(r.points) }}</template>
-        <template v-else-if="act.total >= r.points">{{
-          t.rest.tasks.claim(r.points, r.multiplier > 1)
-        }}</template>
-        <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
-      </button>
-    </div>
-    <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->
-    <div v-if="act.kujiTicket" class="small text-muted mb-2" data-testid="act-kuji-hint">
-      {{ t.rest.tasks.kujiHint(act.kujiTicket.points, act.kujiTicket.num) }}
-    </div>
-    <div class="dt-act-grid small">
-      <div
-        v-for="i in items"
-        :key="i.id"
-        :class="[
-          'dt-act',
-          { 'dt-act-done': stateOf(i) === 'done', 'dt-act-locked': stateOf(i) === 'locked' },
-        ]"
-        :data-testid="`act-${i.id}`"
-      >
-        <div class="d-flex align-items-center gap-1">
-          <span class="dt-clamp2">{{ catalog.data('activation', i.id)?.name ?? i.name }}</span>
-          <span v-if="stateOf(i) === 'done'" class="ms-auto text-success text-nowrap">{{
-            t.rest.tasks.full
-          }}</span>
-          <span v-else-if="stateOf(i) !== 'locked'" class="ms-auto text-nowrap"
-            >{{ i.count }}/{{ i.limit }}</span
-          >
-        </div>
-        <!-- 锁定原因（注册天数、邮箱、没有活动）英法西文很长：单独一行放在进度条的位置，不挤名字（视觉第三轮） -->
-        <div v-if="stateOf(i) === 'locked'" class="dt-act-lock">{{ lockText(i) }}</div>
-        <div v-else class="dt-act-bar"><div :style="{ width: `${pct(i.count, i.limit)}%` }"></div></div>
-        <div class="dt-act-pts">{{ t.rest.tasks.per(i.points) }}</div>
-      </div>
-    </div>
-  </section>
+    </li>
+  </ul>
   <template v-if="tasks">
     <!-- 主线：当前章 -->
-    <section class="dt-card mb-3" data-testid="card-main">
+    <section v-if="tab === 'main'" class="dt-card mb-3" data-testid="card-main">
       <div class="dt-card-title mb-1">{{ t.rest.tasks.main }}</div>
       <div v-if="tasks.allMainDone" class="small text-muted">{{ t.rest.tasks.mainDone }}</div>
       <template v-else-if="tasks.chapter">
@@ -218,7 +171,10 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
       </div>
     </section>
     <!-- 每周：按当前星级分组，周一 0 点刷新 -->
-    <section v-if="tasks.weekly" class="dt-card mb-3" data-testid="card-weekly">
+    <section v-if="tab === 'weekly' && !tasks.weekly" class="dt-card mb-3">
+      <div class="small text-muted" data-testid="no-weekly">{{ t.rest.tasks.noWeekly }}</div>
+    </section>
+    <section v-if="tab === 'weekly' && tasks.weekly" class="dt-card mb-3" data-testid="card-weekly">
       <div class="d-flex align-items-center mb-1">
         <span class="dt-card-title flex-fill">{{ t.rest.tasks.weekly(tasks.weekly.group) }}</span>
         <span class="small text-muted text-nowrap">{{ timeLeft(tasks.weekly.endsAt) }}</span>
@@ -260,7 +216,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
       </div>
     </section>
     <!-- 支线：每条一次显示一档 -->
-    <section class="dt-card mb-3" data-testid="card-lines">
+    <section v-if="tab === 'side'" class="dt-card mb-3" data-testid="card-lines">
       <div class="dt-card-title mb-1">{{ t.rest.tasks.side }}</div>
       <div v-if="tasks.lines.length === 0" class="small text-muted">{{ t.rest.tasks.noSide }}</div>
       <div v-for="l in tasks.lines" :key="l.id" class="mb-2" :data-testid="`line-${l.id}`">

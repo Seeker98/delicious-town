@@ -165,7 +165,7 @@ describe('AcquireView（收购 PR 3）', () => {
     vi.mocked(endpoints.acquireRest).mockResolvedValue(rest({ ...listed, listedBlock: null }));
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = await mountView('/acquire?tab=market');
-    expect(w.get('[data-testid="acquire-market-2"]').text()).toContain('挂牌 50%：600,000 银币');
+    expect(w.get('[data-testid="acquire-market-2"]').text()).toContain('挂牌 50%: 600,000 银币');
     await w.get('[data-testid="acquire-listed-2"]').trigger('click');
     await flushPromises();
     expect(confirm.mock.calls[0]![0]).toContain('「老板店」得 540,000 银币，税 60,000 银币');

@@ -23,7 +23,7 @@ describe('个人日志文案', () => {
     expect(logText({ type: 'krab.angry', params: {}, at: '' }, names)).toBe('蟹老板扫兴而归');
     expect(logText({ type: 'unknown.type', params: {}, at: '' }, names)).toBe('unknown.type');
     expect(logText({ type: 'admin.grant', params: { reason: '停服补偿' }, at: '' }, names)).toBe(
-      '系统补偿：停服补偿',
+      '系统补偿: 停服补偿',
     );
     expect(logText({ type: 'mail.claim', params: { title: '开服礼' }, at: '' }, names)).toBe(
       '领取了邮件「开服礼」的附件',
@@ -37,7 +37,7 @@ describe('个人日志文案', () => {
     ).toBe('领取了邮件「欢迎来到小镇」的附件');
     expect(
       logText({ type: 'admin.rename', params: { from: 'A', to: 'B', reason: '违规' }, at: '' }, names),
-    ).toBe('管理员把店名从「A」改为「B」：违规');
+    ).toBe('管理员把店名从「A」改为「B」: 违规');
     expect(logText({ type: 'redeem', params: { code: 'KAIFU' }, at: '' }, names)).toBe('使用了兑换码 KAIFU');
     expect(logText({ type: 'market.guess.refund', params: { period: '2026-09-30@10' }, at: '' }, names)).toBe(
       '菜场竞猜 2026-09-30 10 点那一轮没有开奖，退还了报名费',
@@ -126,7 +126,7 @@ describe('神殿（子项目 4B-1）', () => {
         { type: 'temple.trial', params: { mcId: 3, success: true, worth: 1, exp: 2 }, at } as never,
         names,
       ),
-    ).toBe('「秘·3」试炼成功：试炼价值 +1%、试炼经验 +2%');
+    ).toBe('「秘·3」试炼成功: 试炼价值 +1%、试炼经验 +2%');
     expect(logText({ type: 'temple.trial', params: { mcId: 3, success: false }, at } as never, names)).toBe(
       '「秘·3」试炼失败',
     );
@@ -213,22 +213,22 @@ describe('交易所日志（156-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(log('exchange.order', { side: 'buy', foodsId: 3, price: 100, qty: 5, filled: 2 })).toBe(
-      '在交易所挂买单：食材3 ×5，单价 100 (当场成交 2 个)',
+      '在交易所挂买单: 食材3 ×5，单价 100 (当场成交 2 个)',
     );
     expect(log('exchange.fill', { side: 'sell', foodsId: 3, price: 100, qty: 2, fee: 10 })).toBe(
-      '交易所卖单成交：食材3 ×2，单价 100，手续费 10 (所得在交易所账户)',
+      '交易所卖单成交: 食材3 ×2，单价 100，手续费 10 (所得在交易所账户)',
     );
     expect(log('exchange.cancel', { side: 'sell', foodsId: 3, price: 100, left: 1 })).toBe(
-      '撤销交易所卖单：食材3，退回 1 个',
+      '撤销交易所卖单: 食材3，退回 1 个',
     );
     expect(log('exchange.expire', { side: 'buy', foodsId: 3, price: 100, left: 1 })).toBe(
-      '交易所买单过期：食材3，剩余 1 个的冻结退回交易所账户',
+      '交易所买单过期: 食材3，剩余 1 个的冻结退回交易所账户',
     );
     expect(log('exchange.withdraw', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
-      '从交易所账户取出：银币 950、食材3×2',
+      '从交易所账户取出: 银币 950、食材3×2',
     );
     expect(log('exchange.fill', { side: 'buy', foodsId: 3, price: 100, qty: 2, fee: 0, held: true })).toBe(
-      '交易所买单成交：食材3 ×2，单价 100 (可疑成交，所得冻结 24 小时)',
+      '交易所买单成交: 食材3 ×2，单价 100 (可疑成交，所得冻结 24 小时)',
     );
   });
 
@@ -245,12 +245,12 @@ describe('交易所日志（156-1）', () => {
         held: true,
         holdHours: 48,
       }),
-    ).toBe('交易所买单成交：食材3 ×2，单价 100 (可疑成交，所得冻结 48 小时)');
+    ).toBe('交易所买单成交: 食材3 ×2，单价 100 (可疑成交，所得冻结 48 小时)');
     expect(log('exchange.freezeCancel', { side: 'sell', foodsId: 3, price: 100, left: 2 })).toBe(
-      '交易所被冻结，卖单撤销：食材3，剩余 2 个退回交易所账户',
+      '交易所被冻结，卖单撤销: 食材3，剩余 2 个退回交易所账户',
     );
     expect(log('exchange.confiscate', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
-      '交易所冻结中的所得被没收：银币 950、食材3×2',
+      '交易所冻结中的所得被没收: 银币 950、食材3×2',
     );
   });
 
@@ -261,7 +261,7 @@ describe('交易所日志（156-1）', () => {
       '向小镇发展基金存入 3,000,000 银币 (B·增值资本)',
     );
     expect(log('fund.claim', { tier: 'B', coin: 2700000, medal: 93102 })).toBe(
-      '领取小镇发展基金：拿回 2,700,000 银币和道具93102',
+      '领取小镇发展基金: 拿回 2,700,000 银币和道具93102',
     );
     expect(log('fund.withdraw', { tier: 'C', coin: 700000 })).toBe('提前取出小镇发展基金，拿回 700,000 银币');
   });
@@ -273,14 +273,14 @@ describe('交易所日志（156-1）', () => {
     // 活跃奖励另送的券（backlog 一番赏）
     expect(log('kuji.activation', { points: 150, num: 1 })).toBe('领取活跃 150 点奖励，另得一番赏抽赏券 ×1');
     expect(log('kuji.draw', { seq: 2, num: 3, tiers: { A: 1, F: 2 }, last: true })).toBe(
-      '一番赏第 2 池抽了 3 张：A 赏 ×1、F 赏 ×2，并拿下最后赏',
+      '一番赏第 2 池抽了 3 张: A 赏 ×1、F 赏 ×2，并拿下最后赏',
     );
     // 豪华一番赏（240-2 终审）：记录写明是豪华签券、豪华池
     expect(log('kuji.buy', { num: 2, coin: 600000, line: 'deluxe' })).toBe(
       '买了豪华签券 ×2，花费 600,000 银币',
     );
     expect(log('kuji.draw', { seq: 1, num: 1, tiers: { D: 1 }, last: false, line: 'deluxe' })).toBe(
-      '豪华一番赏第 1 池抽了 1 张：D 赏 ×1',
+      '豪华一番赏第 1 池抽了 1 张: D 赏 ×1',
     );
   });
 

@@ -82,7 +82,7 @@ describe('协会里的 NPC 页（问题记录 441、443）', () => {
     expect(w.find('[data-testid="lt-level-1"]').exists()).toBe(false);
     expect(w.find('[data-testid^="ex-row-"]').exists()).toBe(false);
     expect(w.find('[data-testid="talk-carmen"]').exists()).toBe(true);
-    expect(w.text()).toContain('见面礼：神秘食材兑换券 (每家店一次)');
+    expect(w.text()).toContain('见面礼: 神秘食材兑换券 (每家店一次)');
     vi.mocked(endpoints.town).mockResolvedValue(townData({ bigEaterGift: true }));
     const got = await mountAt('carmen');
     expect(got.find('[data-testid="talk-carmen"]').exists()).toBe(false);
