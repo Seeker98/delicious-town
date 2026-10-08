@@ -120,7 +120,7 @@ export default {
     got: (name: string, n: number) => `换到了 ${name}×${n}`,
     failed: '兑换失败',
     renown: (n: string) => `我的声望 ${n}`,
-    rule: '美味券常驻；雕像每周轮换，每人限拥有 1 个',
+    rule: '美味券、四级和五级食材随机券常驻；雕像每周轮换，每人限拥有 1 个',
     limitOne: '限拥有 1 个',
     meta: (renown: string, bought: number, limit: number) => `${renown} 声望 · 本周 ${bought}/${limit}`,
     btn: '兑换',
