@@ -112,8 +112,9 @@ const equip: Messages['equip'] = {
   },
   gemPage: {
     title: 'Gemmes',
-    intro: (luck, strength) =>
-      `Deux gemmes du même rang en donnent une du rang suivant ; chaque paire coûte autant d'énergie que son rang. Un échec a encore ${luck} de chance d'être rattrapé, et chaque paire ratée rapporte rang\u202f×\u202f1 000 EXP. Énergie : ${strength}.`,
+    intro: (luck) =>
+      `Deux gemmes du même rang en donnent une du rang suivant\u202f; chaque paire coûte autant d'énergie que son rang. Un échec a encore ${luck} de chance d'être rattrapé, et chaque paire ratée rapporte rang\u202f×\u202f1\u202f000 EXP.`,
+    myStrength: (n) => `Mon énergie\u202f: ${n}`,
     empty: 'Pas encore de gemme',
     maxed: 'Rang maximum',
     next: (name, rate) => `→ ${name}, taux de réussite ${rate}`,

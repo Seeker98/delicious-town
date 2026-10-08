@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    gemStrength1008:
+      'Página de gemas: el «Energía: N» del final de la explicación ahora va en su propia línea, «Mi energía: N», para dejar claro que es tu energía actual',
     perf1008:
       'Las páginas cargan más rápido: menos idas y vueltas innecesarias con el servidor; la página principal del restaurante, el Registro de ingresos, la Info del restaurante, las Recetas y las Adquisiciones cargan sus datos a la vez; al volver a abrir el juego se reutilizan los archivos ya descargados',
     pages1008:

@@ -111,8 +111,9 @@ export default {
   },
   gemPage: {
     title: '寶石',
-    intro: (luck: string, strength: number) =>
-      `兩顆同階合成一顆下一階，每組耗體力 = 階數；失敗時還有 ${luck} 的幸運補救，失敗的每組得 階數×1000 經驗。體力 ${strength}。`,
+    intro: (luck: string) =>
+      `兩顆同階合成一顆下一階，每組耗體力 = 階數；失敗時還有 ${luck} 的幸運補救，失敗的每組得 階數×1,000 經驗。`,
+    myStrength: (n: string) => `我的體力: ${n}`,
     empty: '還沒有寶石',
     maxed: '已是最高階',
     next: (name: string, rate: string) => `→ ${name}，成功率 ${rate}`,

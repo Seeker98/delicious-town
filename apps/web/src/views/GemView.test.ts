@@ -26,6 +26,15 @@ describe('GemView', () => {
     vi.mocked(endpoints.gemLevelUp).mockResolvedValue({ success: 1, lucky: 0, fail: 1, exp: 1000 });
   });
 
+  it('自己的体力单独一行写“我的体力: N”，不接在规则说明后面（问题记录 532：原来末尾一句“体力 N。”看不懂）', async () => {
+    vi.mocked(endpoints.gems).mockResolvedValue({ ...structuredClone(data), strength: 1234 });
+    const w = mount(GemView);
+    await flushPromises();
+    expect(w.get('[data-testid="gem-strength"]').text()).toBe('我的体力: 1,234');
+    expect(w.get('[data-testid="gem-intro"]').text()).not.toContain('体力 1');
+    expect(w.get('[data-testid="gem-intro"]').text()).toMatch(/经验。$/);
+  });
+
   it('组数不超过 持有/2；最高阶不能升；结果提示成功、失败和经验', async () => {
     const w = mount(GemView);
     await flushPromises();

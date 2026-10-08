@@ -111,8 +111,9 @@ const equip: Messages['equip'] = {
   },
   gemPage: {
     title: 'Gemas',
-    intro: (luck, strength) =>
-      `Dos gemas del mismo rango se combinan en una del rango siguiente; cada par cuesta tanta energía como su rango. Un fallo aún tiene un ${luck} de rescate por suerte, y cada par fallido da rango × 1.000 EXP. Energía: ${strength}.`,
+    intro: (luck) =>
+      `Dos gemas del mismo rango se combinan en una del rango siguiente; cada par cuesta tanta energía como su rango. Un fallo aún tiene un ${luck} de rescate por suerte, y cada par fallido da rango × 1.000 EXP.`,
+    myStrength: (n) => `Mi energía: ${n}`,
     empty: 'Aún no tienes gemas',
     maxed: 'Rango máximo',
     next: (name, rate) => `→ ${name}, probabilidad de éxito ${rate}`,
