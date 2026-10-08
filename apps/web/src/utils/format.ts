@@ -36,7 +36,6 @@ export function formatPct(x: number, o: { digits?: number; min?: number; sign?: 
   return o.sign && !/^[+\-−]/.test(s) ? `+${s}` : s;
 }
 
-/** 食材等级的显示名：7 级是神秘食材、9 级是万能食材（问题记录） */
 /**
  * 玩家看到的时间都按北京时间（游戏时间），和顶上的时钟、游戏日一致，不看设备时区
  * （问题记录：设备在别的时区时，小镇新闻的时间和顶上的时钟对不上）
@@ -58,6 +57,7 @@ export const timeHM = (iso: string) =>
     minute: '2-digit',
   });
 
+/** 食材等级的显示名：7 级是神秘食材、9 级是万能食材（问题记录） */
 export function foodLevelLabel(level: number): string {
   return activeMessages().labels.foodLevel(level);
 }

@@ -270,3 +270,11 @@
 - 活动的奖励编辑器都没监听超量提示，超过 9999 只显示红字、照样能点保存，要等服务端报错（原来就这样）
 - 推荐清单是一份通用清单，没有分析文档第二节说的新手那几样（一级万能食材、餐桌A、小扩建卡）
 - 快速模拟的机器人不花声望，看不到声望商店的四、五级食材随机券对升星的影响
+
+## 时间按北京时间显示终审小问题（2026-10-08）
+
+- 一批倒计时用设备时钟 Date.now()，不是服务器时钟：MailView 剩余天数、MarketView、PredictView、ExchangeView、FriendFlipView、RestFloorView、RestLookView、ActivitiesView、utils/activity.ts 和 utils/remain.ts 的默认 now；设备时间不准或开发环境快进时钟时和顶上的时钟对不上，改法是统一用 useServerClock
+- 服务端还有几处用数据库 now() 的时间（邮件发送和到期、已读删除时间、注册时间、邀请奖励 sent_at），开发环境快进时钟后会比新闻、日志早；线上没影响
+- 仓库记录选“昨天”“更早”时只显示时:分:秒，看不出是哪天
+- 几个文件里新加的 import 插在第一行后面，位置不好看（没有 import 顺序规则）
+- format.test 的北京时间断言只在测试机不是 Asia/Shanghai 时区时才有效

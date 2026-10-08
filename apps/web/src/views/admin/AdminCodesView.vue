@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime, fromGameInput } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { AdminCodeDto, RewardItems } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -49,8 +50,8 @@ async function loadList() {
 onMounted(() => void loadList());
 watch(() => admin.shardId, loadList);
 
-/** datetime-local 的值按本地时间解析，转成 ISO；空就不传 */
-const iso = (v: string) => (v ? { value: new Date(v).toISOString() } : null);
+/** datetime-local 的值按北京时间解析，转成 ISO；空就不传（终审：不跟着设备时区） */
+const iso = (v: string) => (v ? { value: fromGameInput(v) } : null);
 
 async function create() {
   const shardId = admin.shardId;
@@ -155,7 +156,7 @@ async function enable(c: AdminCodeDto) {
   }
 }
 
-const fmt = (s: string | null) => (s ? new Date(s).toLocaleString('zh-CN') : '');
+const fmt = (s: string | null) => (s ? adminTime(s) : '');
 const period = (c: AdminCodeDto) =>
   c.startsAt || c.endsAt ? `${fmt(c.startsAt) || '现在'} ~ ${fmt(c.endsAt) || '不限'}` : '不限';
 </script>
@@ -212,7 +213,7 @@ const period = (c: AdminCodeDto) =>
     </div>
     <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
       <label
-        >开始
+        >开始（北京时间）
         <input
           v-model="startsAt"
           type="datetime-local"
@@ -220,7 +221,7 @@ const period = (c: AdminCodeDto) =>
           data-testid="code-starts"
       /></label>
       <label
-        >结束
+        >结束（北京时间）
         <input
           v-model="endsAt"
           type="datetime-local"

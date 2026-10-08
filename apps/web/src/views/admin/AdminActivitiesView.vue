@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime, fromGameInput, toGameInput } from '../../utils/gameInput';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import type {
   ActivityInput,
@@ -45,10 +46,8 @@ function focusFirstError() {
   (input as HTMLElement | null | undefined)?.focus({ preventScroll: true });
 }
 
-const local = (d: Date) => {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-};
+/** 输入框按北京时间（终审：后台的机器在别的时区时不能跟着设备走） */
+const local = toGameInput;
 const localOf = (isoString: string) => local(new Date(isoString));
 const scope = ref<'shard' | 'all'>('shard');
 const title = ref('');
@@ -110,7 +109,7 @@ const formKey = ref(0);
 /** 服务端给的原始时间：本地输入框只精确到分钟，没改时原样发回（终审 I2） */
 const orig = ref<{ startsAt: string; endsAt: string } | null>(null);
 const iso = (local: string, original: string | undefined) =>
-  original !== undefined && local === localOf(original) ? original : new Date(local).toISOString();
+  original !== undefined && local === localOf(original) ? original : fromGameInput(local);
 
 function fill(a: AdminActivityDto | null, copy = false) {
   formKey.value++;
@@ -220,7 +219,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
         <td>{{ a.title }}</td>
         <td>{{ a.shardId ?? '全服' }}</td>
         <td>{{ KIND[a.kind] }}</td>
-        <td>{{ new Date(a.startsAt).toLocaleString() }} ~ {{ new Date(a.endsAt).toLocaleString() }}</td>
+        <td>{{ adminTime(a.startsAt) }} ~ {{ adminTime(a.endsAt) }}</td>
         <td>{{ stateText(a) }}</td>
         <td>{{ a.participants }}</td>
         <td class="text-nowrap">
@@ -309,7 +308,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
     ></textarea>
     <div v-if="errors.body" class="text-danger small" data-testid="err-body">{{ errors.body }}</div>
     <div class="d-flex gap-2 align-items-center mb-2 small">
-      开始
+      开始（北京时间）
       <input
         v-model="startsAt"
         type="datetime-local"
@@ -317,7 +316,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
         data-testid="ac-starts"
         :disabled="started"
       />
-      结束
+      结束（北京时间）
       <input
         v-model="endsAt"
         type="datetime-local"

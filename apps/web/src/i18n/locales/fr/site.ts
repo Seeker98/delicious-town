@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     gameTime1008:
-      "Toutes les heures affichées dans le jeu (nouvelles de la ville, courrier, forum, fil des amis, historique de l'entrepôt, etc.) sont désormais à l'heure de Pékin, comme l'horloge en haut de la page, et non plus selon le fuseau horaire de votre appareil\u202f; le guide du débutant précise que l'énergie se recharge d'1 point toutes les 10 minutes",
+      "Toutes les heures affichées dans le jeu (nouvelles de la ville, courrier, forum, fil des amis, historique de l'entrepôt, etc.) sont désormais à l'heure de Pékin, comme l'horloge en haut de la page, et non plus selon le fuseau horaire de votre appareil\u202f; le guide du débutant précise que l'énergie se recharge d'un point toutes les 10 minutes",
     renownTicket1008:
       'La boutique de renommée de la Tour des chefs propose désormais en permanence des Tickets d’ingrédient aléatoire niv. 4 (50 de renommée, 3 par semaine) et niv. 5 (80 de renommée, 2 par semaine)',
     economy1008:

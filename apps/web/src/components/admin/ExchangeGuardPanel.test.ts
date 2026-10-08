@@ -1,3 +1,4 @@
+import { adminTime } from '../../utils/gameInput';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -76,9 +77,7 @@ describe('后台交易所标签（156-2 设计 §7）', () => {
     useAdminStore().me = { accountId: 1, username: 'm', role: 'mod' };
     const w = mount(ExchangeGuardPanel);
     await flushPromises();
-    expect(w.get('[data-testid="exg-frozen-5"]').text()).toContain(
-      new Date('2026-10-02T00:00:00Z').toLocaleString('zh-CN'),
-    );
+    expect(w.get('[data-testid="exg-frozen-5"]').text()).toContain(adminTime('2026-10-02T00:00:00Z'));
   });
 
   it('协管：能冻结、能解冻，看不到没收按钮', async () => {

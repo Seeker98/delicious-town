@@ -111,7 +111,7 @@ describe('后台预测页（238-1 设计 §7.3）', () => {
       shardId: 3,
       title: '蟹老板明天在 1~6 号街吗',
       description: '',
-      closeAt: new Date('2026-10-03T12:00').toISOString(),
+      closeAt: '2026-10-03T04:00:00.000Z', // 北京时间 12:00
       p0: 40,
     });
   });

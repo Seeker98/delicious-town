@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { GrantDto, GrantItems, RewardItems } from '@dt/shared';
@@ -269,7 +270,7 @@ watch(() => admin.shardId, loadList);
           }}<span v-if="g.failedCount" class="text-danger">（失败 {{ g.failedCount }}）</span>
         </td>
         <td>{{ g.actor ?? '—' }}</td>
-        <td>{{ new Date(g.createdAt).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(g.createdAt) }}</td>
       </tr>
     </tbody>
   </table>

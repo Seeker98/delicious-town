@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime, fromGameInput } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import { predictPercent, type PredictAdminRow } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -49,7 +50,7 @@ function create() {
         shardId,
         title: title.value.trim(),
         description: description.value.trim(),
-        closeAt: new Date(closeAt.value).toISOString(),
+        closeAt: fromGameInput(closeAt.value),
         p0: Number(p0.value),
         ...(b.value === '' ? {} : { b: Number(b.value) }),
       }),
@@ -101,7 +102,7 @@ onMounted(() => void load());
       placeholder="说明、判定依据（选填）"
       data-testid="apd-desc"
     />
-    截止
+    截止（北京时间）
     <input
       v-model="closeAt"
       type="datetime-local"
@@ -162,7 +163,7 @@ onMounted(() => void load());
             {{ r.resultNote }}
           </div>
         </td>
-        <td>{{ new Date(r.closeAt).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(r.closeAt) }}</td>
         <td class="text-end">{{ predictPercent(r.price) }}%</td>
         <td class="text-end">{{ r.trades }} / {{ r.holders }}</td>
         <td class="text-end">{{ formatNum(r.fees) }}</td>
