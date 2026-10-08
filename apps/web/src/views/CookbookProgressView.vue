@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import type { CookbookProgressDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -10,6 +10,7 @@ import { formatNum, formatPct } from '../utils/format';
 
 /** 食谱进度一览（问题记录：食谱页加进度一览，参考 data/食谱进度一览-alu.txt）：每格是这一品级及以上的道数 */
 const t = useT();
+const route = useRoute();
 const catalog = useCatalogStore();
 const data = ref<CookbookProgressDto | null>(null);
 const error = ref('');
@@ -32,7 +33,13 @@ onMounted(async () => {
 <template>
   <div class="d-flex align-items-center gap-2 mb-2">
     <h6 class="mb-0">{{ t.cookbook.progress.title }}</h6>
-    <RouterLink to="/cookbooks" class="dt-go small">{{ t.cookbook.progress.back }}</RouterLink>
+    <!-- 返回上一级用 dt-back；带回原来看的街、页码、筛选（终审） -->
+    <RouterLink
+      :to="{ path: '/cookbooks', query: route.query }"
+      class="small dt-back"
+      data-testid="progress-back"
+      >{{ t.cookbook.progress.back }}</RouterLink
+    >
   </div>
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
   <template v-if="data">
@@ -76,7 +83,9 @@ onMounted(async () => {
           <tr class="fw-bold">
             <th scope="row" class="text-start">{{ t.cookbook.progress.all }}</th>
             <td>{{ formatNum(total - (allRow[0] ?? 0)) }}</td>
-            <td v-for="(n, i) in allRow" :key="i">{{ formatNum(n) }}</td>
+            <td v-for="(n, i) in allRow" :key="i" :class="{ 'text-success': n === total }">
+              {{ formatNum(n) }}
+            </td>
           </tr>
         </tbody>
       </table>

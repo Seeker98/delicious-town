@@ -59,6 +59,17 @@ describe('食谱进度一览（问题记录：食谱页加进度一览）', () =
     ]);
   });
 
+  it('返回食谱带回原来的街和页码（终审）', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: {} }],
+    });
+    await router.push('/cookbooks/progress?street=2&page=3');
+    const w = mount(CookbookProgressView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(w.find('[data-testid="progress-back"]').attributes('href')).toBe('/cookbooks?street=2&page=3');
+  });
+
   it('当前所在的街高亮；一列学满的格子标绿', async () => {
     const w = await mountView();
     const rows = w.findAll('tbody tr');

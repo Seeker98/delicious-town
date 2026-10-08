@@ -217,9 +217,12 @@ onMounted(async () => {
         formatNum(list.allTotal),
       )
     }}
-    <RouterLink to="/cookbooks/progress" class="dt-go ms-1" data-testid="progress-link">{{
-      t.cookbook.progress.link
-    }}</RouterLink>
+    <RouterLink
+      :to="{ path: '/cookbooks/progress', query: route.query }"
+      class="dt-go ms-1"
+      data-testid="progress-link"
+      >{{ t.cookbook.progress.link }}</RouterLink
+    >
   </div>
   <!-- 本街剩下的菜全学会也凑不够下一星（问题记录 378 后续）：提示学得差不多就搬街 -->
   <div

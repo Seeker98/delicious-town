@@ -199,8 +199,17 @@ describe('食谱进度一览（问题记录：食谱页加进度一览）', () =
     const zhou = t.deps.config.requireCookbook(ZHOU).streetId;
     const ji = t.deps.config.requireCookbook(JI).streetId;
     expect(row(zhou).total).toBe(idx.idsByStreet.get(zhou)!.length);
-    expect(row(zhou).atLeast).toEqual([1, 1, 1, 1, 1, 0, 0].slice(0, max));
-    expect(row(ji).atLeast).toEqual([1, 1, 0, 0, 0, 0, 0].slice(0, max));
+    const upTo = (g: number) => Array.from({ length: max }, (_, i) => (i < g ? 1 : 0));
+    expect(row(zhou).atLeast).toEqual(upTo(5));
+    expect(row(ji).atLeast).toEqual(upTo(2));
+    // 品级超过区服上限（上限下调过）时截在最后一列
+    levels[idx.slotOf[ZHOU]!] = max + 1;
+    await t.db
+      .updateTable('restaurant_cookbooks')
+      .set({ levels: Buffer.from(levels) })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    expect((await cb().progress(ctx)).streets.find((s) => s.streetId === zhou)!.atLeast).toEqual(upTo(max));
     // 每条有菜的街都在，总数加起来是全部食谱数
     expect(p.streets.reduce((s, x) => s + x.total, 0)).toBe(t.deps.config.cookbooks.size);
   });
