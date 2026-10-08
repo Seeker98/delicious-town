@@ -17,6 +17,7 @@ import { registerQueryStats } from './infra/queryStats';
 import { subscribeSettings } from './infra/settingsBus';
 import { testApiRoutes } from './http/testApi';
 import type { Captcha } from './infra/captcha';
+import type { Writer } from './infra/writer';
 import type { ShiftClock } from './infra/clock';
 import type { Mailer } from './infra/mailer';
 import { registerModules } from './modules';
@@ -39,6 +40,8 @@ export interface AppDeps {
   config: GameConfig;
   mailer: Mailer;
   captcha: Captcha;
+  /** 小镇日报的写稿器；没配 DAILY_AI_KEY 时为空，只生成素材 */
+  writer?: Writer;
   bus: EventBus;
   sessions: SessionStore;
   now: () => Date;

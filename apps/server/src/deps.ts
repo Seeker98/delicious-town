@@ -6,6 +6,7 @@ import { EventBus } from './events/bus';
 import { disabledCaptcha, turnstileCaptcha } from './infra/captcha';
 import { createShiftClock } from './infra/clock';
 import { smtpMailer } from './infra/mailer';
+import { openAiWriter } from './infra/writer';
 import { createRedis } from './infra/redis';
 import { setSeedSecret } from './core/seed';
 import { createSessionStore } from './security/sessionStore';
@@ -22,6 +23,9 @@ export function createDeps(env: Env): AppDeps {
     config: loadGameConfig(env.CONFIG_BUNDLE_PATH),
     mailer: smtpMailer(env.SMTP_URL, env.MAIL_FROM),
     captcha: env.TURNSTILE_SECRET ? turnstileCaptcha(env.TURNSTILE_SECRET) : disabledCaptcha(),
+    writer: env.DAILY_AI_KEY
+      ? openAiWriter({ baseUrl: env.DAILY_AI_BASE_URL, key: env.DAILY_AI_KEY, model: env.DAILY_AI_MODEL })
+      : undefined,
     bus: new EventBus(),
     sessions: createSessionStore(redis, env.SESSION_TTL_DAYS * 86400),
     now: clock ? clock.now : () => new Date(),
