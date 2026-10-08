@@ -1363,7 +1363,17 @@ describe('活跃度新增项目（问题记录 318）', () => {
     for (const n of ['交易所成交', '事件预测交易', '一番赏抽赏', '领取限时活动奖励', '论坛发帖或回复'])
       expect(byName.has(n), n).toBe(true);
     const max = b.activationTasks.reduce((s, a) => s + a.points * a.limitTimes, 0);
-    expect(max).toBe(193);
+    // 2026-10-08 用户调整后：一番赏 10 点；酒吧 2 点 × 10 次；买菜 5 点 × 2 次；合成分解 3 点 × 5 次；厨塔 5 点 × 2 次；新增点赞或被赞 2 点 × 5 次
+    expect(max).toBe(220);
+    const pl = (n: string) => [byName.get(n)?.points, byName.get(n)?.limitTimes];
+    expect(pl('一番赏抽赏')).toEqual([10, 1]);
+    expect(pl('酒吧娱乐')).toEqual([2, 10]);
+    expect(pl('菜场买菜')).toEqual([5, 2]);
+    expect(pl('合成或分解食材')).toEqual([3, 5]);
+    expect(pl('厨塔挑战')).toEqual([5, 2]);
+    expect(pl('点赞或被赞')).toEqual([2, 5]);
+    expect(b.actionMap.activation['thumbs.up']).toBe('点赞或被赞');
+    expect(b.actionMap.activation['thumbs.received']).toBe('点赞或被赞');
     expect(b.activationRewards.map((r) => r.points)).toEqual([50, 100, 120, 150, 180]);
     expect(b.actionMap.activation['exchange.fill']).toBe('交易所成交');
     expect(b.actionMap.activation['post.create']).toBe('论坛发帖或回复');

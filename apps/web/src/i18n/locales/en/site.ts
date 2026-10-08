@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    act1008:
+      'Activity points changes: an Ichiban Kuji draw gives 10 points; having fun at the bar gives 2 points each time, up to 10 times a day; buying at the Market counts twice a day; combining or breaking down ingredients gives 3 points each time, up to 5 times; Chef Tower challenges give 5 points each time, up to 2 times; new item “Give or receive a thumbs-up”, 2 points each time, up to 5 times. The daily maximum goes from 193 to 220 points',
     retire1008:
       'Another batch of items can no longer be obtained (44 kinds, including zodiac animals, pets, potted plants, ornaments and a few plaques): the 36 exchanges at Mayor Big Pot’s that gave them are gone. Items you already own keep their effects',
     text1008:

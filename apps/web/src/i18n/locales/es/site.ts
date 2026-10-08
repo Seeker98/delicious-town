@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    act1008:
+      'Cambios en los puntos de actividad: una tirada de Ichiban Kuji da 10 puntos; divertirse en el bar da 2 puntos cada vez, hasta 10 veces al día; comprar en el Mercado cuenta 2 veces al día; combinar o descomponer ingredientes da 3 puntos cada vez, hasta 5 veces; los desafíos de la Torre de chefs dan 5 puntos cada vez, hasta 2 veces; nueva tarea «Dar o recibir un me gusta», 2 puntos cada vez, hasta 5 veces. El máximo diario pasa de 193 a 220 puntos',
     retire1008:
       'Otro lote de objetos ya no se puede conseguir (44 tipos, entre ellos animales del zodiaco, mascotas, plantas, adornos y algunas placas): desaparecen los 36 canjes del alcalde que los daban. Los que ya tienes mantienen sus efectos',
     text1008:

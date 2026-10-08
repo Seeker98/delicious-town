@@ -90,3 +90,16 @@ describe('点赞（规格书 13 §13.7）', () => {
     expect((await th().returnAll(b)).data.ok).toEqual([]);
   });
 });
+
+describe('活跃度“点赞或被赞”（用户 2026-10-08 加的，2 点、每天 5 次）', () => {
+  it('点一次赞：自己和对方各记一次，各加 2 点', async () => {
+    const [a, b] = await friends();
+    const item = async (ctx: typeof a) =>
+      (await t.game.task.activation(ctx)).items.find((x) => x.name === '点赞或被赞')!;
+    const [a0, b0] = [await item(a), await item(b)];
+    expect([a0.points, a0.limit, a0.count, a0.off]).toEqual([2, 5, 0, false]);
+    await th().up(a, b.restaurantId);
+    expect((await item(a)).count).toBe(1);
+    expect((await item(b)).count).toBe(1);
+  });
+});

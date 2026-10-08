@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    act1008:
+      "Points d'activité\u202f: un tirage Ichiban Kuji rapporte 10 points\u202f; s'amuser au bar rapporte 2 points à chaque fois, jusqu'à 10 fois par jour\u202f; acheter au Marché compte 2 fois par jour\u202f; combiner ou décomposer des ingrédients rapporte 3 points à chaque fois, jusqu'à 5 fois\u202f; les défis de la Tour des chefs rapportent 5 points à chaque fois, jusqu'à 2 fois\u202f; nouvelle tâche «\u202fDonner ou recevoir un pouce levé\u202f», 2 points à chaque fois, jusqu'à 5 fois. Le maximum quotidien passe de 193 à 220 points",
     retire1008:
       'Un autre lot d’objets ne peut plus être obtenu (44 sortes, dont des animaux du zodiaque, des animaux de compagnie, des plantes, des bibelots et quelques plaques)\u202f: les 36 échanges du maire qui les donnaient disparaissent. Ceux que vous possédez déjà gardent leurs effets',
     text1008:
