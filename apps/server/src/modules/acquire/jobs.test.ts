@@ -206,3 +206,11 @@ describe('每天的收购任务（收购 PR 1）', () => {
     expect(incomeJob!.period(gameTime('2026-10-10', 9), settings)).toBe('income-day-2026-10-10');
   });
 });
+
+describe('分红任务失败后重试（稳健性批）', () => {
+  it('分红要等前一天的收入汇总好，没汇总好会失败：打开 retry；汇总、身价任务不重试', () => {
+    const jobs = acquireJobs(t.game.deps);
+    expect(jobs.find((j) => j.name === 'acquire-dividend')!.retry).toBe(true);
+    expect(jobs.find((j) => j.name === 'acquire-day')!.retry).toBeUndefined();
+  });
+});

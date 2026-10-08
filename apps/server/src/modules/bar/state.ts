@@ -1,7 +1,7 @@
-import { sql } from 'kysely';
-import { gameDay, weekStart } from '@dt/shared';
+import { sql, type Kysely } from 'kysely';
+import { addDays, gameDay, weekStart } from '@dt/shared';
 import type { Op } from '../../core/op';
-import type { BarStateRow } from '../../db/schema';
+import type { BarStateRow, DB } from '../../db/schema';
 import type { BarResult } from './rules';
 
 export type BarStatePatch = Partial<Omit<BarStateRow, 'rest_id'>>;
@@ -46,4 +46,14 @@ export async function recordStreak(
         .where('bar_streak_best.times', '<', sql<number>`excluded.times`),
     )
     .execute();
+}
+
+/**
+ * 连胜榜只读本周和上周（问题记录 517），三周以前的删掉（517 遗留：原来一直不删）；
+ * worker 每 6 小时跟每日计数一起清，返回删了几行
+ */
+export async function pruneStreakBest(db: Kysely<DB>, now: Date): Promise<number> {
+  const keepFrom = weekStart(addDays(gameDay(now), -14));
+  const r = await db.deleteFrom('bar_streak_best').where('week', '<', keepFrom).executeTakeFirst();
+  return Number(r.numDeletedRows);
 }

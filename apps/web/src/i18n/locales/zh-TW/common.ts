@@ -7,6 +7,7 @@ export default {
   language: '語言',
   loadFailed: '讀取失敗',
   langLoadFailed: '切換語言失敗, 請檢查網路後再試',
+  offline: '網路斷了, 連上後再點一次',
   /** 已切換，但沒存到賬號（backlog 多語言） */
   langSaveFailed: '語言已切換, 但沒能儲存到賬號, 下次重新整理會回到原來的語言',
   collapse: '收起',

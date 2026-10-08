@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    robust1008:
+      "Si le dividende de rachat n'est pas versé, il est retenté 10 minutes plus tard (avant, il fallait attendre le lendemain)\u202f; ouvrir une nouvelle page hors ligne affiche désormais un message au lieu de ne rien faire\u202f; l'horloge en haut se resynchronise avec le serveur quand vous revenez dans l'appli\u202f; après une déconnexion ou un changement de compte, les pastilles du courrier et des demandes d'ami n'affichent plus les chiffres du compte précédent",
     ux1008:
       "En changeant de page, on revient en haut (avant, on restait à la hauteur de la page précédente)\u202f; «\u202fN points à répartir\u202f» dans les Infos du restaurant mène directement au cadre des points de la page Ustensiles\u202f; en choisissant les ingrédients d'épreuve, ceux qui ne suffisent pas parce que le plat les utilise aussi sont grisés avec la raison, et une recherche sans résultat l'indique\u202f; la pénalité du Kraken sur la valeur d'épreuve s'applique à la valeur réellement prise en compte\u202f; sur mobile, le lien vers l'activité de la page des Quêtes passe au-dessus des onglets quand il ne tient pas\u202f; et quelques petites corrections sur des boutons et des textes pour lecteurs d'écran",
     zhComma1008:

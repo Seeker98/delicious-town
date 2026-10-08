@@ -41,6 +41,26 @@ describe('道具目录按语言（问题记录 272）', () => {
     expect(useCatalogStore().goodsName(85)).toBe('体力卡');
   });
 
+  it('几处同时调 load（App 和打开的页面）：只请求一次（稳健性批）', async () => {
+    vi.mocked(endpoints.catalog).mockResolvedValue(cat('体力卡'));
+    const c = useCatalogStore();
+    await Promise.all([c.load(), c.load(), c.load()]);
+    expect(endpoints.catalog).toHaveBeenCalledTimes(1);
+    expect(c.goodsName(85)).toBe('体力卡');
+    // 读完以后再调不再请求；读失败的话下次照样能再读
+    await c.load();
+    expect(endpoints.catalog).toHaveBeenCalledTimes(1);
+  });
+
+  it('读失败不卡住：下次 load 重新请求', async () => {
+    vi.mocked(endpoints.catalog).mockRejectedValueOnce(new Error('net')).mockResolvedValue(cat('体力卡'));
+    const c = useCatalogStore();
+    await expect(c.load()).rejects.toThrow('net');
+    await c.load();
+    expect(endpoints.catalog).toHaveBeenCalledTimes(2);
+    expect(c.loaded).toBe(true);
+  });
+
   it('切换语言后重新读目录，名字跟着变', async () => {
     vi.mocked(endpoints.catalog).mockResolvedValueOnce(cat('体力卡'));
     const c = useCatalogStore();

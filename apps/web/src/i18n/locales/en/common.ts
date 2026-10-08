@@ -7,6 +7,7 @@ const common: Messages['common'] = {
   language: 'Language',
   loadFailed: 'Failed to load',
   langLoadFailed: 'Could not switch language. Check your connection and try again.',
+  offline: 'You’re offline. Try again once you’re connected',
   langSaveFailed:
     'Language switched, but it could not be saved to your account. It will revert after a refresh.',
   collapse: 'Show less',

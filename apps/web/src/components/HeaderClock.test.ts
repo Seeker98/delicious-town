@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
+import { serverNowMs } from '../utils/serverNow';
 import HeaderClock from './HeaderClock.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { serverTime: vi.fn() } }));
@@ -28,6 +29,22 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
     const f = mount(HeaderClock);
     await flushPromises();
     expect(f.get('[data-testid="clock"]').text()).toBe('13:30');
+  });
+
+  it('读到时间后记下全站用的服务器时差；从后台切回来重新对一次时（稳健性批：原来只在挂载时对一次，休眠、设备对时后就不准）', async () => {
+    const w = mount(HeaderClock);
+    await flushPromises();
+    expect(serverNowMs()).toBe(Date.parse('2026-10-04T06:30:10Z'));
+    // 设备休眠回来：服务器时间往前走了 2 小时，本机时钟没动
+    vi.mocked(endpoints.serverTime).mockClear().mockResolvedValue({ now: '2026-10-04T08:30:10Z' });
+    const vis = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushPromises();
+    expect(endpoints.serverTime).toHaveBeenCalled();
+    expect(serverNowMs()).toBe(Date.parse('2026-10-04T08:30:10Z'));
+    expect(w.get('[data-testid="clock"]').text()).toBe('16:30');
+    vis.mockRestore();
+    w.unmount();
   });
 
   it('按服务器时间、北京时间显示时:分；点开写日期和下一轮结算倒计时', async () => {

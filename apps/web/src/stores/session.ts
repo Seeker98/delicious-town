@@ -2,17 +2,24 @@ import { defineStore } from 'pinia';
 import { DEFAULT_LOCALE, isLocale, type MeDto, type SelectShardResult } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { activeMessages } from '../i18n';
+import { useFriendsStore } from './friends';
 import { useLocaleStore } from './locale';
+import { useMailStore } from './mail';
 import { useRestaurantStore } from './restaurant';
 import { useToastStore } from './toast';
 
 /**
- * 记着的餐厅不是现在这家店（退出、换号、换区服）就清掉（性能排查终审遗留）：
- * 食谱页先按记着的店读列表、拼下一星要求的缓存键，同一个标签页里换号后会用上一家店的数字
+ * 换了一家店（退出、换号、换区服）就清掉记着的上一家店的东西：
+ * - 餐厅：食谱页先按记着的店读列表、拼下一星要求的缓存键（性能排查终审遗留）
+ * - 邮件未读数（30 秒内不重读）、好友申请红点：新账号最多看到 30 秒旧的数（稳健性批）
  */
-function forgetOtherRestaurant(restaurantId: number | null) {
+function forgetOtherRestaurant(before: number | null, after: number | null) {
   const r = useRestaurantStore();
-  if (r.rest && r.rest.id !== restaurantId) r.$reset();
+  if (r.rest && r.rest.id !== after) r.$reset();
+  if (before !== after) {
+    useMailStore().$reset();
+    useFriendsStore().$reset();
+  }
 }
 
 export const useSessionStore = defineStore('session', {
@@ -36,8 +43,9 @@ export const useSessionStore = defineStore('session', {
      * - 没设过或值不合法：多语言上线前注册的都是中文玩家，用简中并存到账号，不按浏览器语言猜
      */
     async applyMe(me: MeDto | null) {
+      const before = this.me?.restaurantId ?? null;
       this.me = me;
-      forgetOtherRestaurant(me?.restaurantId ?? null);
+      forgetOtherRestaurant(before, me?.restaurantId ?? null);
       if (!me) return;
       const locale = useLocaleStore();
       if (locale.pendingPick) {
@@ -63,14 +71,17 @@ export const useSessionStore = defineStore('session', {
       } finally {
         this.me = null;
         useRestaurantStore().$reset();
+        useMailStore().$reset();
+        useFriendsStore().$reset();
       }
     },
     /** 进入一个区服（选区服页、我的账号页）：账号里的区服和店跟着改，记着的别家店清掉 */
     async enterShard(shardId: number): Promise<SelectShardResult> {
       const r = await endpoints.selectShard(shardId);
+      const before = this.me?.restaurantId ?? null;
       if (this.me)
         this.me = { ...this.me, shardId: r.shardId, restaurantId: r.restaurantId, npcRestId: r.npcRestId };
-      forgetOtherRestaurant(r.restaurantId);
+      forgetOtherRestaurant(before, r.restaurantId);
       return r;
     },
   },
