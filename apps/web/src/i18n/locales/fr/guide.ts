@@ -53,8 +53,8 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: "Pointer sur la page d'accueil : une fois par jour, pour un pack de pointage" },
     {
-      to: '/rest/tasks',
-      text: "Tâches et activité : faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses ; les quêtes hebdomadaires repartent le lundi à 0 h",
+      to: '/rest/activation',
+      text: "Activité du jour : faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses ; les quêtes hebdomadaires repartent le lundi à 0 h",
     },
     {
       to: '/town',
@@ -133,7 +133,7 @@ const guide: Messages['guide'] = {
       q: 'Comment obtenir des diamants ? ',
       a: [
         "Le pack de pointage quotidien peut en contenir ; les récompenses d'activité de 100 et 150 points ; ",
-        { to: '/rest/tasks', text: 'les quêtes hebdomadaires' },
+        { to: '/rest/tasks?tab=weekly', text: 'les quêtes hebdomadaires' },
         ' ; les packs du classement des chefs et du classement mensuel d’affinité du Kraken ; les prix A, B, C et Dernier Prix de l’Ichiban Kuji ; les amis invités qui atteignent les niv. 10 et 30 ; un message du forum mis en avant ; les récompenses d’événements et les codes cadeaux.',
       ],
     },

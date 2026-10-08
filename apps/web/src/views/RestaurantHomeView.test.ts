@@ -396,6 +396,8 @@ describe('RestaurantHomeView', () => {
     expect(main.find('.dt-tag').exists()).toBe(false);
     expect(main.find('i.bi-flag').exists()).toBe(true);
     expect(main.text()).toContain('主线：填一次油');
+    // 还没完成时右边是任务入口（问题记录：“更多”里的任务入口去掉，从首页主线那一行进）
+    expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
     expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
     expect(w.get('[data-testid="guide-hint"]').find('i.bi-lightbulb').exists()).toBe(true);
     for (const row of w.get('[data-testid="home-todo"]').findAll('.dt-todo-row'))
@@ -497,7 +499,7 @@ describe('RestaurantHomeView', () => {
     expect(todo.find('[data-testid="main-task"]').exists()).toBe(true);
     const act = todo.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 18');
-    expect(act.attributes('href')).toBe('/rest/tasks');
+    expect(act.attributes('href')).toBe('/rest/activation');
     // 顺序：餐厅 → 待办 → 小镇动态 → 设施
     const pos = (sel: string) => w.html().indexOf(sel);
     expect(pos('data-testid="home-status"')).toBeLessThan(pos('data-testid="home-todo"'));
@@ -658,6 +660,8 @@ describe('RestaurantHomeView', () => {
     let w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('学会第一道食谱');
     expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(true);
+    // 能领时显示领取，不显示任务入口
+    expect(w.find('[data-testid="home-tasks-link"]').exists()).toBe(false);
     vi.mocked(endpoints.tasks).mockResolvedValue(
       quests([
         quest({ id: 2021, progress: 1, done: true, claimed: true }),
@@ -837,7 +841,7 @@ describe('RestaurantHomeView', () => {
     expect(signed.get('.visually-hidden').text()).toBe('已签到');
     const act = row.get('[data-testid="home-activation"]');
     expect(act.text()).toContain('今日活跃 10');
-    expect(act.attributes('href')).toBe('/rest/tasks');
+    expect(act.attributes('href')).toBe('/rest/activation');
     // 问题记录 445：不再写签到领到了什么
     expect(w.find('[data-testid="home-signin-gift"]').exists()).toBe(false);
   });

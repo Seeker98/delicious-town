@@ -11,7 +11,6 @@ const nav: Messages['nav'] = {
   },
   groups: { manage: 'Gestion', play: 'Jeux', other: 'Autres' },
   links: {
-    tasks: 'Tâches et activité',
     activities: 'Événements',
     exchange: 'Bourse',
     predict: 'Prédictions',

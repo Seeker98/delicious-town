@@ -92,6 +92,8 @@ const rest: Messages['rest'] = {
     mainDone: 'Quête principale terminée',
     side: 'Quêtes secondaires',
     noSide: 'Aucune quête secondaire pour le moment',
+    tabs: { main: 'Principale', weekly: 'Hebdo', side: 'Secondaires' },
+    noWeekly: 'Aucune quête hebdomadaire pour le moment',
     award: (text) => `Récompense : ${text}`,
     claimTask: 'Récupérer',
     claimFailed: 'Impossible de récupérer',

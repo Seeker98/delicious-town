@@ -91,6 +91,8 @@ const rest: Messages['rest'] = {
     mainDone: 'Misión principal completada',
     side: 'Misiones secundarias',
     noSide: 'Ahora no hay misiones secundarias',
+    tabs: { main: 'Principal', weekly: 'Semanales', side: 'Secundarias' },
+    noWeekly: 'Ahora no hay misiones semanales',
     award: (text) => `Premio: ${text}`,
     claimTask: 'Recoger',
     claimFailed: 'No se pudo recoger',

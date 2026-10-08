@@ -48,7 +48,7 @@ export default {
   daily: '每天的固定事项',
   dailyItems: [
     { to: '/', text: '首页签到：每天一次，送一个签到礼包' },
-    { to: '/rest/tasks', text: '任务与活跃：做日常任务攒活跃度，领活跃奖励；每周任务周一 0 点重置' },
+    { to: '/rest/activation', text: '今日活跃：做日常任务攒活跃度，领活跃奖励；每周任务周一 0 点重置' },
     { to: '/town', text: '广场：摇一摇蟹老板的钱袋' },
     {
       to: '/society/mayor',
@@ -92,7 +92,7 @@ export default {
       q: '钻石怎么获得？',
       a: [
         '每日签到礼包有机会开出；每天活跃满 100 点、150 点的奖励；',
-        { to: '/rest/tasks', text: '每周任务' },
+        { to: '/rest/tasks?tab=weekly', text: '每周任务' },
         '；赛厨排名、克拉肯月好感排名的礼包；一番赏 A、B、C 赏和最后赏；邀请的好友升到 10 级、30 级；论坛帖子被设为精华；限时活动奖励和兑换码。',
       ],
     },

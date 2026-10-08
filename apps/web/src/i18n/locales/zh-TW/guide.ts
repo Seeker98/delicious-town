@@ -49,7 +49,7 @@ export default {
   daily: '每天的固定事項',
   dailyItems: [
     { to: '/', text: '首頁簽到：每天一次，送一個簽到禮包' },
-    { to: '/rest/tasks', text: '任務與活躍：做日常任務攢活躍度，領活躍獎勵；每週任務週一 0 點重置' },
+    { to: '/rest/activation', text: '今日活躍：做日常任務攢活躍度，領活躍獎勵；每週任務週一 0 點重置' },
     { to: '/town', text: '廣場：搖一搖蟹老闆的錢袋' },
     {
       to: '/society/mayor',
@@ -93,7 +93,7 @@ export default {
       q: '鑽石怎麼獲得？',
       a: [
         '每日簽到禮包有機會開出；每天活躍滿 100 點、150 點的獎勵；',
-        { to: '/rest/tasks', text: '每週任務' },
+        { to: '/rest/tasks?tab=weekly', text: '每週任務' },
         '；賽廚排名、克拉肯月好感排名的禮包；一番賞 A、B、C 賞和最後賞；邀請的好友升到 10 級、30 級；論壇帖子被設為精華；限時活動獎勵和兌換碼。',
       ],
     },

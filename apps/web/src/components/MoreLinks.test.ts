@@ -45,6 +45,12 @@ describe('"更多"入口精简（问题记录 447）', () => {
       expect(to).not.toContain(x);
   });
 
+  it('去掉任务与活跃：活跃从首页“今日活跃”进，任务从首页主线那一行进（问题记录：活跃和任务拆页）', () => {
+    const to = targets();
+    expect(to).not.toContain('/rest/tasks');
+    expect(to).not.toContain('/rest/activation');
+  });
+
   it('特色菜只留首页的入口（问题记录 473）', () => {
     expect(targets()).not.toContain('/mc');
   });

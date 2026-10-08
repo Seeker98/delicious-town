@@ -491,7 +491,7 @@ onBeforeUnmount(() => {
         </span>
         <RouterLink
           v-if="activeTotal !== null"
-          to="/rest/tasks"
+          to="/rest/activation"
           class="dt-go ms-auto d-inline-block py-1"
           data-testid="home-activation"
           >{{ t.home.activation(activeTotal)
@@ -521,6 +521,10 @@ onBeforeUnmount(() => {
         >
           <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
+        <!-- 任务入口（问题记录：“更多”里的任务入口去掉，从这里进） -->
+        <RouterLink v-else to="/rest/tasks" class="dt-go text-nowrap" data-testid="home-tasks-link">{{
+          t.home.tasksLink
+        }}</RouterLink>
       </div>
       <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
         <div class="flex-fill">
@@ -540,6 +544,9 @@ onBeforeUnmount(() => {
         >
           <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
         </button>
+        <RouterLink v-else to="/rest/tasks" class="dt-go text-nowrap" data-testid="home-tasks-link">{{
+          t.home.tasksLink
+        }}</RouterLink>
       </div>
       <ActivityBanner />
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">

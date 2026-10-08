@@ -22,7 +22,6 @@ const GROUPS: Array<{ key: keyof Messages['nav']['groups']; links: Link[] }> = [
   {
     key: 'manage',
     links: [
-      { to: '/rest/tasks', icon: 'bi-check2-square', key: 'tasks', feature: 'task' },
       { to: '/activities', icon: 'bi-calendar-event', key: 'activities', feature: 'activity' },
       { to: '/exchange', icon: 'bi-graph-up-arrow', key: 'exchange', feature: 'exchange' },
       // 事件预测关掉后入口保留：页面只能查看持仓和结算结果，不能买卖（backlog 238-1）

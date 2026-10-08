@@ -40,6 +40,7 @@ const home: Messages['home'] = {
   signInBtn: 'Registrarse',
   signInFailed: 'No se pudo registrar',
   mainTag: 'Principal',
+  tasksLink: 'Misiones',
   claim: 'Reclamar',
   claimFailed: 'No se pudo reclamar',
   activation: (n) => `Puntos de actividad de hoy: ${n}`,

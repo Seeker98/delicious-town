@@ -79,6 +79,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/rest/activation',
+    name: 'activation',
+    component: () => import('./views/RestActivationView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/rest/tasks',
     name: 'tasks',
     component: () => import('./views/RestTasksView.vue'),

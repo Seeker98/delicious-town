@@ -38,6 +38,8 @@ export default {
   signInBtn: '签到',
   signInFailed: '签到失败',
   mainTag: '主线',
+  /** 首页主线那一行右边的任务入口（问题记录：活跃和任务拆页） */
+  tasksLink: '任务',
   claim: '领奖',
   claimFailed: '领取失败',
   activation: (n: number) => `今日活跃 ${n}`,

@@ -91,6 +91,8 @@ const rest: Messages['rest'] = {
     mainDone: 'Main quest complete',
     side: 'Side quests',
     noSide: 'No side quests right now',
+    tabs: { main: 'Main', weekly: 'Weekly', side: 'Side' },
+    noWeekly: 'No weekly quests right now',
     award: (text) => `Reward: ${text}`,
     claimTask: 'Claim',
     claimFailed: 'Could not claim',

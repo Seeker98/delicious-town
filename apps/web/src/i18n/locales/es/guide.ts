@@ -53,8 +53,8 @@ const guide: Messages['guide'] = {
   dailyItems: [
     { to: '/', text: 'Regístrate en la página de inicio: una vez al día, por un pack de registro' },
     {
-      to: '/rest/tasks',
-      text: 'Tareas y actividad: haz las tareas diarias para sumar puntos de actividad y recoger sus premios; las misiones semanales se reinician el lunes a las 0:00',
+      to: '/rest/activation',
+      text: 'Actividad del día: haz las tareas diarias para sumar puntos de actividad y recoger sus premios; las misiones semanales se reinician el lunes a las 0:00',
     },
     {
       to: '/town',
@@ -133,7 +133,7 @@ const guide: Messages['guide'] = {
       q: '¿Cómo consigo diamantes? ',
       a: [
         'El pack de registro diario puede traer algunos; los premios de actividad de 100 y 150 puntos; ',
-        { to: '/rest/tasks', text: 'las misiones semanales' },
+        { to: '/rest/tasks?tab=weekly', text: 'las misiones semanales' },
         '; los packs de la clasificación de chefs y de la clasificación mensual de afinidad del Kraken; los premios A, B, C y Último premio del Ichiban Kuji; los amigos invitados que llegan a nv. 10 y 30; un mensaje del foro destacado; los premios de eventos y los códigos.',
       ],
     },

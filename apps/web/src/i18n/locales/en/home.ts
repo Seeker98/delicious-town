@@ -40,6 +40,7 @@ const home: Messages['home'] = {
   signInBtn: 'Check in',
   signInFailed: 'Check-in failed',
   mainTag: 'Main',
+  tasksLink: 'Quests',
   claim: 'Claim',
   claimFailed: 'Claim failed',
   activation: (n) => `Activity points today: ${n}`,

@@ -39,6 +39,8 @@ export default {
   signInBtn: '簽到',
   signInFailed: '簽到失敗',
   mainTag: '主線',
+  /** 首頁主線那一行右邊的任務入口（問題記錄：活躍和任務拆頁） */
+  tasksLink: '任務',
   claim: '領獎',
   claimFailed: '領取失敗',
   activation: (n: number) => `今日活躍 ${n}`,

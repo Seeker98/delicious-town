@@ -4,7 +4,6 @@ export default {
   tabs: { rest: '餐廳', cookbooks: '食譜', cupboard: '櫥櫃', market: '菜場', friends: '好友', more: '更多' },
   groups: { manage: '經營', play: '玩法', other: '其他' },
   links: {
-    tasks: '任務與活躍',
     activities: '限時活動',
     exchange: '交易所',
     predict: '事件預測',
