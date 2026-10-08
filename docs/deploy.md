@@ -24,26 +24,30 @@
 
 VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进来）。
 
-## 备份恢复演练
+## 二之二、备份恢复演练
 
-隔一段时间（以及改了 backup.sh、换了 Postgres 版本以后）确认一次备份真的能恢复。2026-10-08 做过一次：最新的 `dt-20261007T200001Z.dump` 恢复出 160 张表，迁移停在 0055（0056 在备份后 32 分钟才执行），各表行数和线上同一量级。
+隔一段时间（以及改了 backup.sh、换了 Postgres 版本以后）确认一次备份真的能恢复。2026-10-08 做过一次：最新的 `dt-20261007T200001Z.dump` 恢复成功，迁移停在 0055（0056 在备份后 32 分钟才执行），各表行数和线上同一量级。
 
-1. 服务器上从 R2 取最新一份到 /tmp（备份令牌、地址都在 `infra/.env`，值带引号要去掉）：
+dump 里是线上数据（密码哈希、邮箱、随机种子密钥 `server_secret`），核对完马上删掉。
+
+1. 服务器上从 R2 取最新一份到 /tmp（取值和 backup.sh 一样：同一个键写了两次时取最后一行、去掉引号；密钥只放进环境变量，不写在命令行上）：
    ```bash
    cd /opt/dt/infra
-   env_get() { grep -E "^$1=" .env | head -1 | cut -d= -f2- | tr -d "\"'\r"; }
-   AWS="docker run --rm -v /tmp:/tmp -e AWS_ACCESS_KEY_ID=$(env_get AWS_ACCESS_KEY_ID) -e AWS_SECRET_ACCESS_KEY=$(env_get AWS_SECRET_ACCESS_KEY) -e AWS_DEFAULT_REGION=auto amazon/aws-cli"
-   LATEST=$($AWS s3 ls "s3://$(env_get R2_BUCKET)/db/" --endpoint-url "$(env_get R2_ENDPOINT)" | awk '{print $4}' | sort | tail -1)
-   $AWS s3 cp "s3://$(env_get R2_BUCKET)/db/$LATEST" /tmp/restore-check.dump --endpoint-url "$(env_get R2_ENDPOINT)"
+   env_get() { sed -n "s/^$1=//p" .env | tail -n 1 | sed 's/^"\(.*\)"$/\1/'; }
+   export AWS_ACCESS_KEY_ID="$(env_get AWS_ACCESS_KEY_ID)" AWS_SECRET_ACCESS_KEY="$(env_get AWS_SECRET_ACCESS_KEY)"
+   EP="$(env_get R2_ENDPOINT)"; BK="$(env_get R2_BUCKET)"
+   AWS="docker run --rm -v /tmp:/tmp -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=auto amazon/aws-cli"
+   LATEST=$($AWS s3 ls "s3://$BK/db/" --endpoint-url "$EP" | awk '{print $4}' | grep '^dt-' | sort | tail -1)
+   $AWS s3 cp "s3://$BK/db/$LATEST" /tmp/restore-check.dump --endpoint-url "$EP"
    ```
 2. 拷回本机（`scp root@<服务器>:/tmp/restore-check.dump .`），删掉服务器上的这份：`rm /tmp/restore-check.dump`。
-3. 本机开发库的容器里建一个临时库恢复（不动开发库本身）：
+3. 本机开发库的容器里建一个临时库恢复（不动开发库本身）。在 Windows 的 Git Bash 里要先 `export MSYS_NO_PATHCONV=1`，不然 `/tmp/...` 会被改写成 Windows 路径；PowerShell 里直接运行：
    ```bash
    docker cp restore-check.dump dt-dev-postgres-1:/tmp/restore-check.dump
    docker exec dt-dev-postgres-1 psql -U dt -d postgres -c "create database dt_restore_check"
    docker exec dt-dev-postgres-1 pg_restore -U dt -d dt_restore_check --no-owner --exit-on-error /tmp/restore-check.dump
    ```
-4. 核对：表数（`select count(*) from pg_tables where schemaname='public'`）、最新迁移（`select name from kysely_migration order by name desc limit 1`，和线上同一时刻的对得上）、几张主要的表的行数（restaurant、account、store_item、cupboard_food、job_run）和线上同一量级。
+4. 核对：最新迁移（`select name from kysely_migration order by name desc limit 1`，和线上同一时刻的对得上）、几张主要的表的行数（restaurant、account、store_item、cupboard_food、job_run）和线上同一量级。表数（`pg_tables`）会把按天建的分区也算进去，每天都不一样，只能和线上同一时刻的比。
 5. 删掉临时库和文件：`drop database dt_restore_check`、容器里和本机的 `restore-check.dump`。
 
 ## 三、前端（Cloudflare Pages）
