@@ -27,5 +27,15 @@ const cookbook: Messages['cookbook'] = {
   info: (street, level, taste, coin) => `${street} · Difficulty ${level} · Taste ${taste} · Price ${coin}`,
   grade: 'Grade',
   foodsNeeded: 'Ingredients needed',
+  progress: {
+    link: 'Progress overview',
+    title: 'Recipe progress',
+    back: 'Back to recipes',
+    summary: (grade, n, total, pct) => `${grade} or better: ${n} / ${total} (${pct})`,
+    note: 'Each cell counts recipes at this grade or better; your current street is highlighted and completed cells are green.',
+    street: 'Street',
+    all: 'All',
+    loadFailed: "Couldn't load recipe progress",
+  },
 };
 export default cookbook;

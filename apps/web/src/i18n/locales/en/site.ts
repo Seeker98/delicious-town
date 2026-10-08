@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    cookbookProgress1008:
+      'The Recipes page has a new Progress overview: total progress by grade, plus how many recipes each street has at each grade or better, with your current street highlighted and completed cells in green',
     gameTime1008:
       'All times shown in the game (town news, mail, forum, friend feed, storage records and more) now use Beijing time, matching the clock at the top of the page instead of your device time zone; the beginner guide now says stamina recovers 1 point every 10 minutes',
     renownTicket1008:

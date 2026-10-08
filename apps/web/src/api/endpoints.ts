@@ -86,6 +86,7 @@ import type {
   CatalogDto,
   CookbookDetailDto,
   CookbookListDto,
+  CookbookProgressDto,
   CupboardDto,
   DeviceOptionsDto,
   DineCurrentDto,
@@ -251,6 +252,7 @@ export const endpoints = {
 
   cookbookList: (q: { street: number; page: number; filter: string }) =>
     api.get<CookbookListDto>(`/api/v1/cookbook/list${qs(q)}`),
+  cookbookProgress: () => api.get<CookbookProgressDto>('/api/v1/cookbook/progress'),
   cookbookDetail: (id: number) => api.get<CookbookDetailDto>(`/api/v1/cookbook/detail/${id}`),
   foodsNeed: (q: { street?: number; target: number; foodLevel?: number }) =>
     api.get<FoodsNeedDto>(`/api/v1/cookbook/foods-need${qs(q)}`),

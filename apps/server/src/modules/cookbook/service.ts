@@ -3,6 +3,7 @@ import type { Kysely } from 'kysely';
 import {
   ErrorCode,
   type CookbookDetailDto,
+  type CookbookProgressDto,
   type CookbookListDto,
   type CookbookListQuery,
   type CookbookRowDto,
@@ -127,6 +128,32 @@ export function createCookbookService(d: GameDeps) {
         allTotal: d.config.cookbooks.size,
         gradeCounts: counts.grade,
       };
+    },
+
+    /** 食谱进度一览：所有街一次算好（问题记录：食谱页加进度一览） */
+    async progress(ctx: RestCtx): Promise<CookbookProgressDto> {
+      const [levels, max, rest] = await Promise.all([
+        levelsOf(d.db, ctx.restaurantId),
+        maxGrade(ctx.shardId),
+        d.db
+          .selectFrom('restaurant')
+          .select('street_id')
+          .where('id', '=', ctx.restaurantId)
+          .executeTakeFirstOrThrow(),
+      ]);
+      const idx = d.config.cookbookIndex;
+      const streets: CookbookProgressDto['streets'] = [];
+      for (const s of d.config.bundle.streets) {
+        const ids = idx.idsByStreet.get(s.id) ?? [];
+        if (ids.length === 0) continue;
+        const atLeast = new Array<number>(max).fill(0);
+        for (const id of ids) {
+          const g = Math.min(gradeOf(levels, idx.slotOf, id), max);
+          for (let i = 0; i < g; i++) atLeast[i]! += 1;
+        }
+        streets.push({ streetId: s.id, total: ids.length, atLeast });
+      }
+      return { maxGrade: max, street: rest.street_id, streets };
     },
 
     async detail(ctx: RestCtx, id: number): Promise<CookbookDetailDto> {

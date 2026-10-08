@@ -49,6 +49,16 @@ export interface CookbookListDto {
   gradeCounts: number[];
 }
 
+/** 食谱进度一览（问题记录：食谱页加进度一览）：每条街的总数和各品级及以上的道数 */
+export interface CookbookProgressDto {
+  /** 开放到第几品级（区服数值 rest.cookbookMaxGrade） */
+  maxGrade: number;
+  /** 店现在所在的街 */
+  street: number;
+  /** 按街道表的顺序，只列有菜的街；atLeast[i] = 品级 ≥ i+1 的道数 */
+  streets: Array<{ streetId: number; total: number; atLeast: number[] }>;
+}
+
 export interface CookbookDetailDto {
   id: number;
   name: string;

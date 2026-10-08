@@ -177,3 +177,40 @@ describe('菜谱详情（240-1）', () => {
     expect(detail.coin).toBe(Math.floor(testConfig().requireCookbook(cid('桑椹葡萄粥')).coin * 0.5));
   });
 });
+
+describe('食谱进度一览（问题记录：食谱页加进度一览）', () => {
+  it('每条街的总数、各品级及以上的道数；只列开放的品级；带当前所在的街', async () => {
+    const ctx = await newRestaurant(t);
+    const idx = t.deps.config.cookbookIndex;
+    const levels = new Uint8Array(idx.slots);
+    // 新手街：桑椹葡萄粥金牌（5），湖南街：白斩鸡中品（2）
+    levels[idx.slotOf[ZHOU]!] = 5;
+    levels[idx.slotOf[JI]!] = 2;
+    await t.db
+      .updateTable('restaurant_cookbooks')
+      .set({ levels: Buffer.from(levels) })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    const p = await cb().progress(ctx);
+    const max = t.deps.config.tuning.rest.cookbookMaxGrade;
+    expect(p.maxGrade).toBe(max);
+    expect(p.street).toBe((await restRow(t, ctx.restaurantId)).street_id);
+    const row = (street: number) => p.streets.find((s) => s.streetId === street)!;
+    const zhou = t.deps.config.requireCookbook(ZHOU).streetId;
+    const ji = t.deps.config.requireCookbook(JI).streetId;
+    expect(row(zhou).total).toBe(idx.idsByStreet.get(zhou)!.length);
+    const upTo = (g: number) => Array.from({ length: max }, (_, i) => (i < g ? 1 : 0));
+    expect(row(zhou).atLeast).toEqual(upTo(5));
+    expect(row(ji).atLeast).toEqual(upTo(2));
+    // 品级超过区服上限（上限下调过）时截在最后一列
+    levels[idx.slotOf[ZHOU]!] = max + 1;
+    await t.db
+      .updateTable('restaurant_cookbooks')
+      .set({ levels: Buffer.from(levels) })
+      .where('rest_id', '=', ctx.restaurantId)
+      .execute();
+    expect((await cb().progress(ctx)).streets.find((s) => s.streetId === zhou)!.atLeast).toEqual(upTo(max));
+    // 每条有菜的街都在，总数加起来是全部食谱数
+    expect(p.streets.reduce((s, x) => s + x.total, 0)).toBe(t.deps.config.cookbooks.size);
+  });
+});

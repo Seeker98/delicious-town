@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    cookbookProgress1008:
+      'La página de Recetas tiene un nuevo Resumen de progreso: el progreso total por calidad y, por calle, cuántas recetas tienes de cada calidad o mejor; tu calle actual aparece resaltada y las casillas completas, en verde',
     gameTime1008:
       'Todas las horas del juego (noticias del pueblo, correo, foro, novedades de amigos, registros del almacén y más) usan ahora la hora de Pekín, igual que el reloj de la parte superior, en lugar de la zona horaria de tu dispositivo; la guía de inicio indica que la energía se recupera 1 punto cada 10 minutos',
     renownTicket1008:

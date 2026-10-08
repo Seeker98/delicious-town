@@ -22,4 +22,16 @@ export default {
     `${street} · 難度 ${level} · 口味 ${taste} · 售價 ${coin}`,
   grade: '品級',
   foodsNeeded: '所需食材',
+  /** 食譜進度一覽（問題記錄：食譜頁加進度一覽） */
+  progress: {
+    link: '進度一覽',
+    title: '食譜進度一覽',
+    back: '返回食譜',
+    summary: (grade: string, n: string, total: string, pct: string) =>
+      `${grade}及以上：${n} / ${total} (${pct})`,
+    note: '每格是這一品級及以上的道數；當前所在的街高亮，學滿的標綠。',
+    street: '街道',
+    all: '全部',
+    loadFailed: '讀取食譜進度失敗',
+  },
 };

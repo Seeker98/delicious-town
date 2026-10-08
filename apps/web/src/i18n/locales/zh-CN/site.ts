@@ -8,6 +8,8 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    cookbookProgress1008:
+      '食谱页加了“进度一览”：按品级看总进度，再按街道列出每一品级及以上学了多少道，当前所在的街高亮、学满的标绿',
     gameTime1008:
       '游戏里显示的时间 (小镇新闻、邮件、论坛、好友动态、仓库记录等) 统一按北京时间，和页面顶上的时钟一致，不再跟着设备的时区；新手指引写明体力每 10 分钟恢复 1 点',
     renownTicket1008:

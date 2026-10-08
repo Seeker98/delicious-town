@@ -27,5 +27,15 @@ const cookbook: Messages['cookbook'] = {
   info: (street, level, taste, coin) => `${street} · Difficulté ${level} · Goût ${taste} · Prix ${coin}`,
   grade: 'Qualité',
   foodsNeeded: 'Ingrédients requis',
+  progress: {
+    link: 'Vue d’ensemble',
+    title: 'Progression des recettes',
+    back: 'Retour aux recettes',
+    summary: (grade, n, total, pct) => `${grade} ou mieux\u202f: ${n} / ${total} (${pct})`,
+    note: 'Chaque case compte les recettes de cette qualité ou mieux\u202f; votre rue actuelle est mise en évidence et les cases complètes sont en vert.',
+    street: 'Rue',
+    all: 'Toutes',
+    loadFailed: 'Impossible de charger la progression des recettes',
+  },
 };
 export default cookbook;

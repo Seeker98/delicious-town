@@ -73,6 +73,8 @@ describe('CookbooksView', () => {
     const w = mount(CookbooksView, { global: { plugins: [router] } });
     await flushPromises();
     expect(w.find('[data-testid="cookbook-counts"]').text()).toContain('共学会 0 / 2,331 道');
+    // 进度一览入口（问题记录：食谱页加进度一览）
+    expect(w.find('[data-testid="progress-link"]').attributes('href')).toMatch(/^\/cookbooks\/progress/);
     await w.find('[data-testid="filter-upgradable"]').trigger('click');
     await flushPromises();
     expect(endpoints.cookbookList).toHaveBeenLastCalledWith({ street: 0, page: 1, filter: 'upgradable' });

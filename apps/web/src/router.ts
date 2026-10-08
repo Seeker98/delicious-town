@@ -254,6 +254,12 @@ export const routes: RouteRecordRaw[] = [
     meta: { needRestaurant: true },
   },
   {
+    path: '/cookbooks/progress',
+    name: 'cookbook-progress',
+    component: () => import('./views/CookbookProgressView.vue'),
+    meta: { needRestaurant: true },
+  },
+  {
     path: '/cookbooks/:id',
     name: 'cookbook',
     component: () => import('./views/CookbookInfoView.vue'),
