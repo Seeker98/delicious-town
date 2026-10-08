@@ -5,6 +5,7 @@ import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { activeLocale } from '../i18n';
 import { useServerClock } from '../utils/serverClock';
+import { setServerOffset } from '../utils/serverNow';
 
 /**
  * 顶栏的当前时间（问题记录 348）：按服务器时间走（本机时钟不准也对），北京时间；
@@ -41,6 +42,7 @@ const ready = ref(false);
 onMounted(async () => {
   try {
     server.value = (await endpoints.serverTime()).now;
+    setServerOffset(server.value);
   } catch {
     // 读不到就按本机时间
   }

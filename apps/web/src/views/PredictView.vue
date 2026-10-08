@@ -10,6 +10,7 @@ import { formatNum } from '../utils/format';
 import { predictNote, predictTitle } from '../utils/serverText';
 import { useCatalogStore } from '../stores/catalog';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
+import { serverNowMs } from '../utils/serverNow';
 
 /** 事件预测（238-1 设计 §7.2）：用银币买卖"是/否"份额，系统按公式报价 */
 const toast = useToastStore();
@@ -64,7 +65,7 @@ const helpItems = computed(() => {
 });
 const signed = (n: number) => `${n > 0 ? '+' : ''}${formatNum(n)}`;
 const leftText = (closeAt: string) => {
-  const ms = new Date(closeAt).getTime() - Date.now();
+  const ms = new Date(closeAt).getTime() - serverNowMs();
   const p = t.value.predict;
   if (ms <= 0) return p.closedAt;
   const m = Math.floor(ms / 60_000);

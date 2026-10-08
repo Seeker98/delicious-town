@@ -10,7 +10,7 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
-import { formatNum, gameTimeOfDay } from '../utils/format';
+import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
 import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
@@ -44,6 +44,17 @@ const groups = computed(() =>
     : [],
 );
 const RANGES = ['1h', '6h', '12h', 'today', 'yesterday', 'before'] as const;
+/** 今天以内只写时间；昨天、更早带上日期（backlog：看不出是哪天） */
+const recordTime = (at: string) =>
+  range.value === 'yesterday' || range.value === 'before'
+    ? gameDateTime(at, {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    : gameTimeOfDay(at);
 
 async function load() {
   data.value = await endpoints.store(type.value);
@@ -202,7 +213,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       <option v-for="r in RANGES" :key="r" :value="r">{{ t.store.ranges[r] }}</option>
     </select>
     <div v-for="(r, i) in records" :key="i" class="d-flex border-bottom py-1 small">
-      <span class="text-muted me-2">{{ gameTimeOfDay(r.at) }}</span>
+      <span class="text-muted me-2" :data-testid="`record-time-${i}`">{{ recordTime(r.at) }}</span>
       {{ recordName(r) }}
       <b :class="['ms-auto', r.delta >= 0 ? 'text-success' : 'text-danger']"
         >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b

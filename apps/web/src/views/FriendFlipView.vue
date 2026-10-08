@@ -7,6 +7,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { serverNowMs } from '../utils/serverNow';
 
 const route = useRoute();
 const toast = useToastStore();
@@ -19,7 +20,7 @@ const busy = ref(false);
 
 const coolOf = (slot: number) => data.value?.cooling.find((c) => c.slotNo === slot) ?? null;
 function left(until: string): string {
-  const ms = Math.max(0, Date.parse(until) - Date.now());
+  const ms = Math.max(0, Date.parse(until) - serverNowMs());
   const h = Math.floor(ms / 3600_000);
   const m = Math.floor((ms % 3600_000) / 60_000);
   return t.value.friends.flip.left(h, m);

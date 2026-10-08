@@ -45,5 +45,6 @@ describe('玩法攻略的单复数（第 ⑧ 批审查）', () => {
     await useLocaleStore().set('fr');
     expect(takeaway()).toContain('1 étoile et');
     expect(takeaway()).toContain('1 million de pièces');
-  });
+    // 第一次切到英西法要现编译整份文案，全量测试时机器忙会超过默认的 15 秒（backlog）
+  }, 60_000);
 });

@@ -453,3 +453,17 @@ describe('任务页终审遗留（backlog 318）', () => {
     expect(full.classes()).not.toContain('btn-outline-secondary');
   });
 });
+
+describe('任务卡的进度数字（backlog：经营支线的目标值最大最显眼）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+  it('进度和目标都有千分位', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task({ id: 2021, target: 1_000_000, progress: 123_456 })]),
+    );
+    const w = await mountView();
+    expect(w.get('[data-testid="task-2021"]').text()).toContain('123,456/1,000,000');
+  });
+});

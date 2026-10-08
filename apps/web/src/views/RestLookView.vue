@@ -9,6 +9,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
 import { remainText } from '../utils/remain';
+import { serverNowMs } from '../utils/serverNow';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -43,7 +44,7 @@ async function act(fn: () => Promise<unknown>, ok: string, fallback: string) {
 
 /** 限定称号（240-2）：还剩几天下架，不足一天算 0（显示“今天下架”） */
 function daysLeft(endsAt: string): number {
-  return Math.max(0, Math.floor((new Date(endsAt).getTime() - Date.now()) / 86_400_000));
+  return Math.max(0, Math.floor((new Date(endsAt).getTime() - serverNowMs()) / 86_400_000));
 }
 
 function buyIcon(key: string, fallbackTitle: string, coin: number) {

@@ -514,7 +514,9 @@ onBeforeUnmount(() => {
           <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
           }}{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
           <span class="text-muted">{{
-            t.common.paren(`${Math.min(mainTask.progress, mainTask.target)}/${mainTask.target}`)
+            t.common.paren(
+              `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,
+            )
           }}</span>
         </div>
         <!-- 领奖和签到一样是文字链接：礼物图标加文字（问题记录 469） -->

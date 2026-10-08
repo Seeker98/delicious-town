@@ -14,6 +14,7 @@ import ActivityStrip from '../components/activity/ActivityStrip.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { defaultSelection, orderActivities, timeLeft } from '../utils/activity';
+import { serverNowMs } from '../utils/serverNow';
 
 /** 限时活动（问题记录 148，设计 §7.2） */
 const toast = useToastStore();
@@ -64,7 +65,7 @@ function unlock(a: ActivityDto) {
 }
 /** 兑换活动：结束后兑换期内还能换（148-2 设计 §7） */
 const exchangeOpen = (a: ActivityDto) =>
-  a.exchangeUntil !== null && new Date(a.exchangeUntil).getTime() > Date.now();
+  a.exchangeUntil !== null && new Date(a.exchangeUntil).getTime() > serverNowMs();
 const exchange = (a: ActivityDto, i: number, n: number) =>
   run(() => endpoints.activityExchange(a.id, i, n), t.value.activity.exchanged);
 function endNote(a: ActivityDto): string {
