@@ -17,6 +17,9 @@ import { activeMessages } from '../i18n';
 /** 浏览器缓存按语言分开（问题记录 272） */
 const keyOf = (l: string) => `dt_catalog_${l}`;
 
+/** 正在进行的首次读取：几处同时调 load 时共用 */
+let loading: Promise<void> | null = null;
+
 export const useCatalogStore = defineStore('catalog', {
   state: () => ({
     goodsMap: new Map<number, CatalogGoodsDto>(),
@@ -60,17 +63,25 @@ export const useCatalogStore = defineStore('catalog', {
         seedName: (id) => this.seedName(id),
       });
     },
-    /** 目录按配置版本缓存在浏览器里（只是加速；读不到时直接请求） */
-    async load() {
-      if (this.loaded) return;
-      const l = activeLocale();
-      try {
-        const cached = localStorage.getItem(keyOf(l));
-        if (cached) this.apply(JSON.parse(cached) as CatalogDto);
-      } catch {
-        // 存储不可用时忽略
-      }
-      await this.reload(l);
+    /**
+     * 目录按配置版本缓存在浏览器里（只是加速；读不到时直接请求）。
+     * 几处同时调（App 和刚打开的页面）只请求一次（稳健性批）；读失败不记住，下次照样重读
+     */
+    load(): Promise<void> {
+      if (this.loaded) return Promise.resolve();
+      loading ??= (async () => {
+        const l = activeLocale();
+        try {
+          const cached = localStorage.getItem(keyOf(l));
+          if (cached) this.apply(JSON.parse(cached) as CatalogDto);
+        } catch {
+          // 存储不可用时忽略
+        }
+        await this.reload(l);
+      })().finally(() => {
+        loading = null;
+      });
+      return loading;
     },
     /** 按语言重新读目录（切换语言时调用，问题记录 272） */
     async reload(l: Locale = activeLocale()): Promise<void> {

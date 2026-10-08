@@ -132,9 +132,11 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
       run: async ({ shardId, now, settings }) => runAcquireDay(d, shardId, now, settings.tuning.acquire),
     },
     {
-      // 排在 acquire-day 后面：前一天的收入已经汇总好
+      // 排在 acquire-day 后面：前一天的收入已经汇总好。没汇总好时会失败，10 分钟后再试
+      // （稳健性批：原来不重试，收购“我的”整天写“昨天的分红还没发”）
       name: 'acquire-dividend',
       feature: 'acquire',
+      retry: true,
       period: (now) => {
         const day = after0005(now);
         return day === null ? null : `acquire-dividend-${day}`;

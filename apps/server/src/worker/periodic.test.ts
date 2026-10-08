@@ -88,3 +88,86 @@ describe('runDueJobs', () => {
     expect(bad.run).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('失败后重试（retry，收购分红：前一天收入没汇总好时会失败，原来一整天都写“还没发”）', () => {
+  it('失败 10 分钟后再抢一次；成功了照常记完成，记着试了几次', async () => {
+    const shardId = await createShard(t.db);
+    let fail = true;
+    const run = vi.fn(async () => {
+      if (fail) throw new Error('income not ready');
+      return { paid: 3 };
+    });
+    const j: PeriodicJob = { name: 'retry-ok', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    // 10 分钟内不重跑
+    t.clock.set(new Date(start.getTime() + 5 * 60_000));
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(run).toHaveBeenCalledTimes(1);
+    fail = false;
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    const r = await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(r.map((x) => x.ok)).toEqual([true]);
+    expect(run).toHaveBeenCalledTimes(2);
+    const row = await t.db
+      .selectFrom('job_run')
+      .selectAll()
+      .where('shard_id', '=', shardId)
+      .where('job', '=', 'retry-ok')
+      .executeTakeFirstOrThrow();
+    expect(row.finished_at).not.toBeNull();
+    expect(row.stats).toEqual({ paid: 3 });
+    t.clock.set(start);
+  });
+
+  it('连着失败 5 次就不再试；没开 retry 的任务照旧只跑一次', async () => {
+    const shardId = await createShard(t.db);
+    const run = vi.fn(async () => {
+      throw new Error('boom');
+    });
+    const j: PeriodicJob = { ...job('retry-bad', 'shop', 'k', run), retry: true };
+    const start = t.clock.now;
+    for (let i = 0; i < 8; i++) {
+      t.clock.set(new Date(start.getTime() + i * 11 * 60_000));
+      await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    }
+    expect(run).toHaveBeenCalledTimes(5);
+    const row = await t.db
+      .selectFrom('job_run')
+      .select('stats')
+      .where('shard_id', '=', shardId)
+      .where('job', '=', 'retry-bad')
+      .executeTakeFirstOrThrow();
+    expect(row.stats).toMatchObject({ error: 'boom', attempts: 5 });
+    t.clock.set(start);
+  });
+});
+
+describe('重抢时就记下第几次（稳健性批终审：原来失败时才写，重跑中途进程崩了会按同一个次数一直重抢）', () => {
+  it('重跑开始时 job_run 里的次数已经加 1', async () => {
+    const shardId = await createShard(t.db);
+    const seen: unknown[] = [];
+    let first = true;
+    const run = vi.fn(async () => {
+      if (first) {
+        first = false;
+        throw new Error('boom');
+      }
+      const row = await t.db
+        .selectFrom('job_run')
+        .select('stats')
+        .where('shard_id', '=', shardId)
+        .where('job', '=', 'retry-count')
+        .executeTakeFirstOrThrow();
+      seen.push(row.stats);
+      return { ok: 1 };
+    });
+    const j: PeriodicJob = { name: 'retry-count', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(seen).toEqual([{ error: 'boom', attempts: 2 }]);
+    t.clock.set(start);
+  });
+});

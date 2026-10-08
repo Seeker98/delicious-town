@@ -8,7 +8,9 @@ import {
 } from 'vue-router';
 import { installChunkReload } from './utils/chunkReload';
 import { resolveGuard, type RouteFlags } from './guard';
+import { activeMessages } from './i18n';
 import { useSessionStore } from './stores/session';
+import { useToastStore } from './stores/toast';
 
 /** 广场搬到协会的标签（问题记录 441）：旧的 /town?tab=… 转到这里 */
 const TOWN_MOVED: Record<string, string> = {
@@ -501,6 +503,10 @@ export function createAppRouter(pinia: Pinia): Router {
     return resolveGuard(to.meta as RouteFlags, session.me, to.fullPath);
   });
   // 发版后旧页面加载不到旧的页面文件：刷新一次转到要去的页面（问题记录 497）
-  installChunkReload(router, (url) => window.location.assign(url));
+  installChunkReload(
+    router,
+    (url) => window.location.assign(url),
+    () => useToastStore(pinia).push(activeMessages().common.offline, 'danger'),
+  );
   return router;
 }

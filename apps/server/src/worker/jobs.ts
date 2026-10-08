@@ -4,6 +4,7 @@ import type { DB } from '../db/schema';
 import type { Game } from '../game';
 import { processGrants } from '../modules/admin/grants';
 import { cleanLoginTrace } from '../modules/account/loginTrace';
+import { pruneStreakBest } from '../modules/bar/state';
 import { pruneDailyCounters } from '../modules/counter/dailyCounter';
 import { runOpsScan } from '../modules/ops/scan';
 import { runDueJobs } from './periodic';
@@ -46,11 +47,12 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       },
     },
     {
-      // 每日计数只留 30 天（backlog 374）
+      // 每日计数只留 30 天（backlog 374）；酒吧连胜榜三周以前的也一起清（517 遗留）
       name: 'daily-counter-clean',
       intervalMs: 6 * 3_600_000,
       run: async () => {
         await pruneDailyCounters(db, now());
+        await pruneStreakBest(db, now());
       },
     },
     {

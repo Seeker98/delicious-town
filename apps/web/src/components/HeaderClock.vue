@@ -35,17 +35,28 @@ watch(open, (v) => {
 onBeforeUnmount(() => {
   document.removeEventListener('pointerdown', onDown);
   document.removeEventListener('keydown', onKey);
+  document.removeEventListener('visibilitychange', onVisible);
 });
 /** 拿到服务器时间（或读失败）之前不显示，免得先闪一下本机时间 */
 const ready = ref(false);
 
-onMounted(async () => {
+/** 向服务器对一次时：全站的服务器时差也跟着更新 */
+async function syncTime() {
   try {
     server.value = (await endpoints.serverTime()).now;
     setServerOffset(server.value);
   } catch {
-    // 读不到就按本机时间
+    // 读不到就按本机时间（或上次对过的）
   }
+}
+/** 从后台切回来重新对一次（稳健性批：原来只在挂载时对一次，手机休眠、设备对时后就不准） */
+const onVisible = () => {
+  if (document.visibilityState === 'visible') void syncTime();
+};
+onMounted(async () => {
+  // 先挂监听再等：还没读到时间就卸载时，卸载里能删掉（终审）
+  document.addEventListener('visibilitychange', onVisible);
+  await syncTime();
   ready.value = true;
 });
 

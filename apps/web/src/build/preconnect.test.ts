@@ -30,3 +30,12 @@ describe('静态文件的缓存头（Cloudflare Pages 的 _headers）', () => {
     expect(text).not.toMatch(/index\.html/);
   });
 });
+
+describe('VITE_API_BASE 写错时（稳健性批：原来 new URL 直接报 Invalid URL，看不出是哪个设置）', () => {
+  it('不是完整网址：报错写明是 VITE_API_BASE、现在的值和该怎么写', () => {
+    expect(() => preconnectTags('/api')).toThrow(/VITE_API_BASE/);
+    expect(() => preconnectTags('/api')).toThrow('"/api"');
+    expect(() => preconnectTags('/api')).toThrow('https://');
+    expect(() => preconnectTags('api.example.com')).toThrow(/VITE_API_BASE/);
+  });
+});

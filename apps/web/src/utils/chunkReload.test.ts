@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import { chunkTarget, installChunkReload, isChunkLoadError, reloadOnce } from './chunkReload';
+import { bustThenGo, chunkTarget, installChunkReload, isChunkLoadError, reloadOnce } from './chunkReload';
 
 describe('发版后页面文件加载不到时自动刷新一次（问题记录 497）', () => {
   beforeEach(() => sessionStorage.clear());
@@ -72,9 +72,65 @@ describe('发版后页面文件加载不到时自动刷新一次（问题记录 
     });
     await router.push('/rest/tasks?tab=main').catch(() => undefined);
     expect(during).toBe('/rest/tasks?tab=main');
-    expect(go).toHaveBeenCalledWith('/rest/tasks?tab=main');
+    await vi.waitFor(() => expect(go).toHaveBeenCalledWith('/rest/tasks?tab=main'));
     // 导航结束（失败）后不再记着
     expect(chunkTarget()).toBeNull();
+  });
+
+  it('刷新前先强制重拉加载失败的那个文件（稳健性批：/assets 缓存一年，回滚时 SPA 兜底回的 index.html 会被当成这个 JS 缓存住）', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(''));
+    const go = vi.fn();
+    const err = new TypeError(
+      'Failed to fetch dynamically imported module: https://game.delicious.trade/assets/RestTasksView-x.js',
+    );
+    expect(reloadOnce('/rest/tasks', bustThenGo(err, go), 3_000_000)).toBe(true);
+    await vi.waitFor(() => expect(go).toHaveBeenCalledWith('/rest/tasks'));
+    expect(fetchSpy).toHaveBeenCalledWith('https://game.delicious.trade/assets/RestTasksView-x.js', {
+      cache: 'reload',
+    });
+    // CSS 的预加载报错是相对地址
+    fetchSpy.mockClear();
+    const go2 = vi.fn();
+    bustThenGo(new Error('Unable to preload CSS for /assets/x-1.css'), go2)('/');
+    await vi.waitFor(() => expect(go2).toHaveBeenCalledWith('/'));
+    expect(fetchSpy).toHaveBeenCalledWith('/assets/x-1.css', { cache: 'reload' });
+    fetchSpy.mockRestore();
+  });
+
+  it('重拉要读完响应体（终审：只等到响应头就跳页，缓存可能只写了一半）；真正刷新时再记一次时间，10 秒窗口从刷新时算（终审）', async () => {
+    const body = vi.fn(async () => new ArrayBuffer(0));
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ arrayBuffer: body } as never);
+    const go = vi.fn();
+    expect(
+      reloadOnce('/x', bustThenGo(new Error('Unable to preload CSS for /assets/y.css'), go), 5_000_000),
+    ).toBe(true);
+    await vi.waitFor(() => expect(go).toHaveBeenCalled());
+    expect(body).toHaveBeenCalled();
+    expect(Number(sessionStorage.getItem('dt_chunk_reload_at'))).toBeGreaterThan(5_000_000);
+    fetchSpy.mockRestore();
+  });
+
+  it('断网时点到没加载过的页面：不刷新，提示网络断了（稳健性批：原来点了没反应）', async () => {
+    const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+    const go = vi.fn();
+    const offline = vi.fn();
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/', component: { template: '<div />' } },
+        {
+          path: '/mail',
+          component: () =>
+            Promise.reject(new TypeError('Failed to fetch dynamically imported module: /assets/Mail.js')),
+        },
+      ],
+    });
+    installChunkReload(router, go, offline);
+    await router.push('/');
+    await router.push('/mail').catch(() => undefined);
+    expect(offline).toHaveBeenCalledTimes(1);
+    expect(go).not.toHaveBeenCalled();
+    online.mockRestore();
   });
 
   it('别的导航错误照常打到控制台，不刷新', async () => {

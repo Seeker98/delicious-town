@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { sql } from 'kysely';
 import { addDays, gameTime } from '@dt/shared';
 import { acquireShard } from '../../../test/acquire';
 import { createShard } from '../../../test/fixtures';
@@ -239,6 +240,23 @@ describe('分红（收购 PR 2）', () => {
     await pay(shardId);
     expect(await coin(a0.restaurantId)).toBe(0);
     expect((await dividends(a0.restaurantId)).map((d) => d.coin)).toEqual([250_000, 0]);
+  });
+
+  it('前一天的收入还没汇总（汇总任务那天没跑成）但结算记录在：先补汇总再照常发（稳健性批终审 I1：原来报错，那天的分红就没了）', async () => {
+    const shardId = await createShard(t.db);
+    const o = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const x = await newRestaurant(t, { shardId });
+    // 汇总任务是整个区服一起汇总的：昨天没跑成就谁都没有，老板的只有前天及更早的
+    for (let i = 2; i <= 8; i++) await income(o.restaurantId, addDays(TODAY, -i), 10_000_000);
+    await own(x.restaurantId, shardId, o.restaurantId);
+    // 被收购的店前一天结算 100 轮、每轮 1 万银币，只有结算记录，没有每天汇总
+    await sql`
+      insert into income_round (rest_id, round_no, coin, exp, oil, customers, rates, drops, created_at)
+      select ${x.restaurantId}, g, 10000, 0, 0, '{}', '{}', '[]', ${gameTime(YDAY, 1)}::timestamptz + g * interval '1 minute'
+      from generate_series(1, 100) g`.execute(t.db);
+    await pay(shardId);
+    expect((await dividends(o.restaurantId)).map((d) => d.coin)).toEqual([50_000]);
+    expect(await coin(o.restaurantId)).toBe(50_000);
   });
 
   it('前一天的收入没汇总上：报错（留在任务记录里），不发', async () => {

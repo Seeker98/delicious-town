@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    robust1008:
+      'Dividendos de adquisición: si los ingresos del día anterior aún no están contabilizados, primero se contabilizan y luego se pagan, y un pago fallido se reintenta 10 minutos después (antes los dividendos de ese día se perdían); al abrir una página nueva sin conexión ahora se avisa en vez de no hacer nada; el reloj de arriba se vuelve a sincronizar con el servidor al volver a la app; al cerrar sesión o cambiar de cuenta, los indicadores de correo y de solicitudes de amistad ya no muestran los números de la cuenta anterior',
     ux1008:
       'Al cambiar de página se vuelve arriba (antes se quedaba a la altura de la página anterior); «N puntos por asignar» en la Info del restaurante lleva directamente al cuadro de puntos de la página de Utensilios; al elegir ingredientes de prueba, los que no alcanzan porque el plato también los usa salen en gris con el motivo, y una búsqueda sin resultados lo indica; la penalización del Kraken al valor de prueba usa el valor que realmente se aplica; en móviles, el enlace a la actividad de la página de Misiones pasa encima de las pestañas cuando no cabe; además, algunos arreglos pequeños en botones y textos para lectores de pantalla',
     zhComma1008:

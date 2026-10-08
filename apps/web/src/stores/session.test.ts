@@ -2,7 +2,9 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MeDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useFriendsStore } from './friends';
 import { useLocaleStore } from './locale';
+import { useMailStore } from './mail';
 import { useRestaurantStore } from './restaurant';
 import { useSessionStore } from './session';
 
@@ -67,5 +69,44 @@ describe('换号、换区服时清掉记着的餐厅（性能排查终审遗留�
     expect(res.restaurantId).toBe(20);
     expect(s.me).toMatchObject({ shardId: 2, restaurantId: 20 });
     expect(r.rest).toBeNull();
+  });
+});
+
+describe('换号、换区服时邮件未读数和好友申请红点也清掉（稳健性批：原来新账号最多看到 30 秒旧的数）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    useLocaleStore().locale = 'zh-CN';
+  });
+  const dirty = () => {
+    const mail = useMailStore();
+    mail.unread = 5;
+    mail.at = Date.now();
+    useFriendsStore().pending = 2;
+    return mail;
+  };
+
+  it('退出登录：清掉', async () => {
+    const mail = dirty();
+    await useSessionStore().logout();
+    expect(mail.unread).toBe(0);
+    expect(mail.at).toBe(0);
+    expect(useFriendsStore().pending).toBe(0);
+  });
+
+  it('换了一家店（换账号、进别的区服）：清掉；还是同一家店：留着', async () => {
+    const s = useSessionStore();
+    await s.applyMe(me({ restaurantId: 10 }));
+    const mail = dirty();
+    await s.applyMe(me({ restaurantId: 10 }));
+    expect(mail.unread).toBe(5);
+    vi.mocked(endpoints.selectShard).mockResolvedValue({
+      shardId: 2,
+      restaurantId: 20,
+      npcRestId: null,
+    } as never);
+    await s.enterShard(2);
+    expect(mail.unread).toBe(0);
+    expect(useFriendsStore().pending).toBe(0);
   });
 });

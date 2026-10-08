@@ -1,12 +1,15 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
+import { serverNowMs } from '../utils/serverNow';
 import HeaderClock from './HeaderClock.vue';
 
 vi.mock('../api/endpoints', () => ({ endpoints: { serverTime: vi.fn() } }));
 
 describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
+  // 每条测试挂的时钟都卸掉：不然前面的实例也会响应切回前台的事件
+  enableAutoUnmount(afterEach);
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] });
@@ -28,6 +31,37 @@ describe('HeaderClock（问题记录 348：顶栏的当前时间）', () => {
     const f = mount(HeaderClock);
     await flushPromises();
     expect(f.get('[data-testid="clock"]').text()).toBe('13:30');
+  });
+
+  it('读到时间后记下全站用的服务器时差；从后台切回来重新对一次时（稳健性批：原来只在挂载时对一次，休眠、设备对时后就不准）', async () => {
+    const w = mount(HeaderClock);
+    await flushPromises();
+    expect(serverNowMs()).toBe(Date.parse('2026-10-04T06:30:10Z'));
+    // 设备休眠回来：服务器时间往前走了 2 小时，本机时钟没动
+    vi.mocked(endpoints.serverTime).mockClear().mockResolvedValue({ now: '2026-10-04T08:30:10Z' });
+    const vis = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushPromises();
+    expect(endpoints.serverTime).toHaveBeenCalled();
+    expect(serverNowMs()).toBe(Date.parse('2026-10-04T08:30:10Z'));
+    expect(w.get('[data-testid="clock"]').text()).toBe('16:30');
+    vis.mockRestore();
+    w.unmount();
+  });
+
+  it('还没读到时间就卸载了：之后切回前台不再去对时（终审：监听器原来在等待之后才加，卸载时删不掉）', async () => {
+    let done: (v: { now: string }) => void = () => undefined;
+    vi.mocked(endpoints.serverTime).mockReturnValueOnce(new Promise((r) => (done = r)));
+    const w = mount(HeaderClock);
+    w.unmount();
+    done({ now: '2026-10-04T06:30:10Z' });
+    await flushPromises();
+    vi.mocked(endpoints.serverTime).mockClear();
+    const vis = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('visible');
+    document.dispatchEvent(new Event('visibilitychange'));
+    await flushPromises();
+    expect(endpoints.serverTime).not.toHaveBeenCalled();
+    vis.mockRestore();
   });
 
   it('按服务器时间、北京时间显示时:分；点开写日期和下一轮结算倒计时', async () => {

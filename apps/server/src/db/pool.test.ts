@@ -9,6 +9,8 @@ describe('连接池（性能排查 2026-10-08）', () => {
     expect(o.max).toBe(20);
     expect(o.min).toBe(4);
     expect(o.idleTimeoutMillis).toBe(60_000);
+    // 常驻连接 30 分钟换一次：长寿的连接会一直攒按天分区的表的缓存（性能排查终审遗留）
+    expect(o.maxLifetimeSeconds).toBe(1800);
   });
 
   it('上限比常驻数小时（命令行工具只开 1 条）不超过上限', () => {

@@ -7,6 +7,7 @@ const common: Messages['common'] = {
   language: 'Idioma',
   loadFailed: 'Error al cargar',
   langLoadFailed: 'No se pudo cambiar el idioma. Comprueba tu conexión e inténtalo de nuevo.',
+  offline: 'Sin conexión. Vuelve a intentarlo cuando tengas conexión',
   langSaveFailed: 'Idioma cambiado, pero no se pudo guardar en tu cuenta. Volverá al anterior al recargar.',
   collapse: 'Mostrar menos',
   expand: 'Mostrar',

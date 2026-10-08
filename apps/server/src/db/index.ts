@@ -20,6 +20,8 @@ export function poolOptions(url: string, max: number): pg.PoolConfig {
     max,
     min: Math.min(4, max),
     idleTimeoutMillis: 60_000,
+    // 常驻的也 30 分钟换一次：长寿的连接会一直攒按天分区的表的缓存，人少时栈底的几条可能几天不用（性能排查终审遗留）
+    maxLifetimeSeconds: 1800,
     connectionTimeoutMillis: 10_000,
   };
 }

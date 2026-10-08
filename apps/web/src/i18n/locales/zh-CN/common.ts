@@ -6,6 +6,7 @@ export default {
   language: '语言',
   loadFailed: '读取失败',
   langLoadFailed: '切换语言失败, 请检查网络后再试',
+  offline: '网络断了, 连上后再点一次',
   /** 已切换，但没存到账号（backlog 多语言） */
   langSaveFailed: '语言已切换, 但没能保存到账号, 下次刷新会回到原来的语言',
   collapse: '收起',

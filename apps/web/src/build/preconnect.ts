@@ -9,5 +9,10 @@ export function preconnectTags(
   apiBase: string | undefined,
 ): Array<HtmlTagDescriptor & { attrs: { rel: string; href: string } }> {
   if (!apiBase) return [];
+  // 写错时说清楚是哪个设置（稳健性批：原来 new URL 直接报 Invalid URL，构建或开发时转换 index.html 失败也看不出原因）
+  if (!URL.canParse(apiBase))
+    throw new Error(
+      `VITE_API_BASE 要写完整网址，例如 https://api.example.com，现在是 ${JSON.stringify(apiBase)}`,
+    );
   return [{ tag: 'link', attrs: { rel: 'preconnect', href: new URL(apiBase).origin }, injectTo: 'head' }];
 }
