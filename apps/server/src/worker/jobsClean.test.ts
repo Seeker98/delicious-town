@@ -16,7 +16,7 @@ describe('清理任务互不连累（稳健性批终审：每日计数清理出�
         return { where: () => ({ executeTakeFirst: async () => ({ numDeletedRows: 0n }) }) };
       },
     };
-    const game = { app: { db, redis: {} }, deps: { now: () => new Date() } } as unknown as Game;
+    const game = { app: { db, redis: {} }, deps: { now: () => new Date() }, jobs: [] } as unknown as Game;
     const jobs = workerJobs(game, { error: vi.fn() });
     const errors: string[] = [];
     for (const j of jobs.filter((x) => x.name.endsWith('-clean') && x.name !== 'login-trace-clean'))
