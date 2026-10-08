@@ -7,6 +7,7 @@ import { endpoints } from '../api/endpoints';
 import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
 import RestaurantHomeView from './RestaurantHomeView.vue';
+import { setServerOffset } from '../utils/serverNow';
 
 /** 问题记录 318：主线任务、任务列表 */
 const quest = (patch: Partial<QuestDto> = {}): QuestDto => ({
@@ -277,6 +278,35 @@ describe('RestaurantHomeView', () => {
     await flushPromises();
     expect(endpoints.placeDevice).toHaveBeenCalledWith(1, 14);
     confirm.mockRestore();
+  });
+
+  it('替换设施时“还没到期”按服务器时间判断：设备时间快了也要先确认（终审 I2：不然没到期的设施直接作废）', async () => {
+    // 服务器比本机慢 2 小时；设施按服务器时间还剩 1 小时，按本机时间已经过期 1 小时
+    setServerOffset(new Date(Date.now() - 2 * 3_600_000).toISOString());
+    const expiresAt = new Date(Date.now() - 3_600_000).toISOString();
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      devices: [
+        { slot: 1, name: '宣传海报', deviceType: 1, needStar: 0, unlocked: true, goodsId: 13, expiresAt },
+      ],
+    });
+    vi.mocked(endpoints.devices).mockResolvedValue({
+      slots: dto.devices,
+      store: [{ goodsId: 14, deviceType: 1, num: 1 }],
+    } as never);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const w = await mountView();
+    await w.find('[data-testid="slot-1"]').trigger('click');
+    await flushPromises();
+    await w
+      .findAll('button')
+      .find((b) => b.text().includes('×1'))!
+      .trigger('click');
+    await flushPromises();
+    expect(confirm).toHaveBeenCalled();
+    expect(endpoints.placeDevice).not.toHaveBeenCalled();
+    confirm.mockRestore();
+    setServerOffset(new Date().toISOString());
   });
 
   it('设施选择：星级不够的高档海报变灰并写几星可用（backlog 146）', async () => {

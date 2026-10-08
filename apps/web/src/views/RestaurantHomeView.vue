@@ -23,6 +23,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 import { remainText } from '../utils/remain';
 import { effectName } from '../utils/serverText';
 import { CUSTOMER_NAMES } from '../utils/labels';
@@ -172,7 +173,7 @@ function place(goodsId: number) {
   const current = rest.value?.devices.find((d) => d.slot === slot);
   if (
     current?.goodsId &&
-    (current.expiresAt === null || new Date(current.expiresAt).getTime() > Date.now()) &&
+    (current.expiresAt === null || new Date(current.expiresAt).getTime() > serverNowMs()) &&
     !window.confirm(
       t.value.home.replaceConfirm(catalog.goodsName(current.goodsId), expiresText(current.expiresAt)),
     )

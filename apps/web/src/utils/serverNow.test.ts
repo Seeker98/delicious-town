@@ -28,3 +28,20 @@ describe('按服务器时间的“现在”（backlog：倒计时用了设备时
     );
   });
 });
+
+describe('时差是响应式的（终审 I1：页面数据比 /time 先回来时，computed 要跟着更新）', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    setServerOffset(new Date().toISOString());
+  });
+  it('设好时差后，依赖 serverNowMs 的 computed 重新计算', async () => {
+    const { computed } = await import('vue');
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-08T00:00:00Z'));
+    setServerOffset('2026-10-08T00:00:00Z');
+    const left = computed(() => Math.round((Date.parse('2026-10-08T10:00:00Z') - serverNowMs()) / 3_600_000));
+    expect(left.value).toBe(10);
+    setServerOffset('2026-10-08T08:00:00Z');
+    expect(left.value).toBe(2);
+  });
+});

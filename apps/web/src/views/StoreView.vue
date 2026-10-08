@@ -2,7 +2,7 @@
 import { remainText } from '../utils/remain';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
-import { SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
+import { gameDay, SHARED_GOODS, type LedgerRecordDto, type StoreDto, type StoreItemDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
@@ -11,6 +11,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
 import { formatNum, gameDateTime, gameTimeOfDay } from '../utils/format';
+import { serverNowMs } from '../utils/serverNow';
 import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
@@ -44,9 +45,9 @@ const groups = computed(() =>
     : [],
 );
 const RANGES = ['1h', '6h', '12h', 'today', 'yesterday', 'before'] as const;
-/** 今天以内只写时间；昨天、更早带上日期（backlog：看不出是哪天） */
+/** 今天（北京时间）的记录只写时间；不是今天的带上日期（backlog：看不出是哪天；终审：选 12 小时也会跨午夜） */
 const recordTime = (at: string) =>
-  range.value === 'yesterday' || range.value === 'before'
+  gameDay(new Date(at)) !== gameDay(new Date(serverNowMs()))
     ? gameDateTime(at, {
         month: '2-digit',
         day: '2-digit',

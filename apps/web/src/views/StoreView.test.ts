@@ -328,11 +328,12 @@ describe('仓库记录的时间（backlog：选“昨天”“更早”时看不
     setActivePinia(createPinia());
     vi.mocked(endpoints.store).mockResolvedValue(structuredClone(data));
     vi.mocked(endpoints.storeRecords).mockResolvedValue([
+      { kind: 'coin', itemId: null, delta: 100, source: 'shop.sell', at: new Date().toISOString() },
       { kind: 'coin', itemId: null, delta: 100, source: 'shop.sell', at: '2026-10-06T04:05:06Z' },
     ]);
   });
 
-  it('今天以内只写时间；昨天、更早带日期（北京时间）', async () => {
+  it('今天的记录只写时间；不是今天的带日期（北京时间），不管选的是哪个时间段（终审 M2：选“12 小时”也会跨午夜）', async () => {
     const w = mount(StoreView);
     await flushPromises();
     await w
@@ -340,11 +341,9 @@ describe('仓库记录的时间（backlog：选“昨天”“更早”时看不
       .find((a) => a.text() === '道具流水')!
       .trigger('click');
     await flushPromises();
-    const time = () => w.get('[data-testid="record-time-0"]').text();
-    expect(time()).toBe('12:05:06');
-    await w.get('select').setValue('yesterday');
-    await flushPromises();
-    expect(time()).toContain('10/06');
-    expect(time()).toContain('12:05');
+    const time = (i: number) => w.get(`[data-testid="record-time-${i}"]`).text();
+    expect(time(0)).toMatch(/^\d\d:\d\d:\d\d$/);
+    expect(time(1)).toContain('10/06');
+    expect(time(1)).toContain('12:05');
   });
 });
