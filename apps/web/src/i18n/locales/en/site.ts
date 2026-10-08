@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     punct1008:
-      'French and Spanish text: consistent punctuation spacing. French uses a narrow non-breaking space before colons, semicolons, question marks, exclamation marks and percent signs and inside « » quotes; Spanish uses a non-breaking space between a number and the percent sign, so these signs no longer wrap onto a line of their own',
+      'French and Spanish text: consistent punctuation spacing. French uses a narrow non-breaking space before : ; ? ! and %, and inside « » quotes; Spanish uses a non-breaking space between a number and the percent sign, so these signs no longer wrap onto a line of their own',
     robust1008:
       'Acquisition dividends: if the previous day’s income hasn’t been tallied yet, it is tallied first and the dividends are paid, and a failed payout is retried 10 minutes later (that day’s dividends used to be skipped); opening a new page while offline now says you’re offline instead of doing nothing; the clock at the top re-syncs with the server when you come back to the app; after logging out or switching accounts, the mail and friend-request badges no longer show the previous account’s counts',
     ux1008:

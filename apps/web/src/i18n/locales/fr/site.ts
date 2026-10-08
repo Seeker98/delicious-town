@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     punct1008:
-      "Textes en français et en espagnol\u202f: l'espacement de la ponctuation est désormais uniforme. En français, une espace fine insécable avant les deux-points, les points-virgules, les points d'interrogation et d'exclamation et le symbole pourcentage, ainsi qu'à l'intérieur des guillemets\u202f; en espagnol, une espace insécable entre un nombre et le symbole pourcentage. Ces signes ne passent donc plus seuls à la ligne",
+      "Textes en français et en espagnol\u202f: l'espacement de la ponctuation est désormais uniforme. En français, une espace fine insécable avant les deux-points, les points-virgules, les points d'interrogation et d'exclamation et le signe de pourcentage, ainsi qu'à l'intérieur des guillemets\u202f; en espagnol, une espace insécable entre un nombre et le signe de pourcentage. Ces signes ne passent donc plus seuls à la ligne",
     robust1008:
       "Dividendes de rachat\u202f: si les revenus de la veille ne sont pas encore comptabilisés, ils le sont d'abord puis les dividendes sont versés, et un versement raté est retenté 10 minutes plus tard (avant, les dividendes de ce jour-là étaient perdus)\u202f; ouvrir une nouvelle page hors ligne affiche désormais un message au lieu de ne rien faire\u202f; l'horloge en haut se resynchronise avec le serveur quand vous revenez dans l'appli\u202f; après une déconnexion ou un changement de compte, les pastilles du courrier et des demandes d'ami n'affichent plus les chiffres du compte précédent",
     ux1008:
