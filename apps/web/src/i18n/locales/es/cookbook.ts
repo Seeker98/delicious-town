@@ -27,5 +27,15 @@ const cookbook: Messages['cookbook'] = {
   info: (street, level, taste, coin) => `${street} · Dificultad ${level} · Sabor ${taste} · Precio ${coin}`,
   grade: 'Calidad',
   foodsNeeded: 'Ingredientes necesarios',
+  progress: {
+    link: 'Resumen de progreso',
+    title: 'Progreso de recetas',
+    back: 'Volver a recetas',
+    summary: (grade, n, total, pct) => `${grade} o mejor: ${n} / ${total} (${pct})`,
+    note: 'Cada casilla cuenta las recetas de esta calidad o mejor; tu calle actual aparece resaltada y las casillas completas, en verde.',
+    street: 'Calle',
+    all: 'Todas',
+    loadFailed: 'No se pudo cargar el progreso de recetas',
+  },
 };
 export default cookbook;

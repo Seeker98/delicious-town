@@ -8,6 +8,7 @@ import type { CookbookService } from './service';
 export function cookbookRoutes(svc: CookbookService): FastifyPluginAsync {
   return async (r) => {
     r.get('/list', async (req) => ok(await svc.list(restCtxOf(req), parse(cookbookListQuery, req.query))));
+    r.get('/progress', async (req) => ok(await svc.progress(restCtxOf(req))));
     r.get('/detail/:id', async (req) =>
       ok(await svc.detail(restCtxOf(req), parse(cookbookIdParam, req.params).id)),
     );

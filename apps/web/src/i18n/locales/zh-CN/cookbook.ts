@@ -21,4 +21,16 @@ export default {
     `${street} · 难度 ${level} · 口味 ${taste} · 售价 ${coin}`,
   grade: '品级',
   foodsNeeded: '所需食材',
+  /** 食谱进度一览（问题记录：食谱页加进度一览） */
+  progress: {
+    link: '进度一览',
+    title: '食谱进度一览',
+    back: '返回食谱',
+    summary: (grade: string, n: string, total: string, pct: string) =>
+      `${grade}及以上：${n} / ${total} (${pct})`,
+    note: '每格是这一品级及以上的道数；当前所在的街高亮，学满的标绿。',
+    street: '街道',
+    all: '全部',
+    loadFailed: '读取食谱进度失败',
+  },
 };
