@@ -135,6 +135,18 @@ export function createTaskService(d: GameDeps) {
           'lv10', count(distinct invitee_account_id) filter (where stage = 'lv10'),
           'lv30', count(distinct invitee_account_id) filter (where stage = 'lv30'))
           from invite_reward where inviter_account_id = ${rest.account_id})`.as('invited'),
+        // 支线“经营”（任务清单第二版）
+        sql<number>`coalesce((select jsonb_array_length(tables) from restaurant_tables where rest_id = ${rest.id}), 0)`.as(
+          'tables',
+        ),
+        sql<number>`(select count(*) from restaurant_device where rest_id = ${rest.id}
+          and (expires_at is null or expires_at > ${now}))`.as('devices'),
+        sql<{
+          coin: number;
+          rounds: number;
+        } | null>`(select json_build_object('coin', day_coin, 'rounds', day_rounds) from rest_income_best where rest_id = ${rest.id})`.as(
+          'best',
+        ),
       ])
       .executeTakeFirstOrThrow();
     const available = (f: string) => featureAvailable(settings, f) && (f !== 'activity' || facts.running);
@@ -155,6 +167,10 @@ export function createTaskService(d: GameDeps) {
       'invite.level10': Number(facts.invited.lv10),
       'invite.level30': Number(facts.invited.lv30),
       ...collectionOf(facts.owned, facts.honors, d.config),
+      'rest.tables': Number(facts.tables),
+      'rest.devices': Number(facts.devices),
+      'rest.bestDayCoin': Number(facts.best?.coin ?? 0),
+      'rest.bestRounds': Number(facts.best?.rounds ?? 0),
     };
     const progress = (c: QuestCond) =>
       c.kind === 'counter' ? counterOf(c.key, counters) : (stateValue(c.key, rest, counts, extra) ?? 0);

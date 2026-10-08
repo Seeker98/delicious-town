@@ -1325,13 +1325,13 @@ describe('活跃度新增项目（问题记录 318）', () => {
 });
 
 describe('任务配置（问题记录 318）', () => {
-  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 27 条（515 支线扩充 A 加了酒运、酒桌高手，B 加了 10 条）；每周 3 组；id 不重复', () => {
+  it('11 章（第 12 章暂未开放，问题记录 515）；主线按章排；支线 28 条（515 支线扩充 A 加了酒运、酒桌高手，B 加了 10 条，之后加了经营）；每周 3 组；id 不重复', () => {
     const b = realBuild().bundle!;
     expect(b.chapters.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
     const mains = b.quests.filter((q) => q.line === null);
     expect(mains.every((q) => q.id === 2000 + q.chapter * 20 + q.order)).toBe(true);
     expect(new Set(mains.map((q) => q.chapter))).toEqual(new Set(b.chapters.map((c) => c.id)));
-    expect(b.questLines).toHaveLength(27);
+    expect(b.questLines).toHaveLength(28);
     const sides = b.quests.filter((q) => q.line !== null);
     expect(sides.every((q) => q.id === 3000 + q.line! * 20 + q.order)).toBe(true);
     expect(b.weeklyGroups.map((g) => [g.key, g.minStar, g.maxStar, g.quests.length])).toEqual([
@@ -1347,12 +1347,12 @@ describe('任务配置（问题记录 318）', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('奖励总量：主线 1,072 万、支线 1,465 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万）；经验 = 银币 ÷ 10', () => {
+  it('奖励总量：主线 1,072 万、支线 1,603 万银币（第 12 章、天馔一档暂未开放；515 支线扩充 A 加了 437 万、B 加了 677 万、经营 138 万）；经验 = 银币 ÷ 10', () => {
     const b = realBuild().bundle!;
     const coin = (main: boolean) =>
       b.quests.filter((q) => (q.line === null) === main).reduce((s, q) => s + (q.award.coin ?? 0), 0);
     expect(coin(true)).toBe(10_720_000);
-    expect(coin(false)).toBe(14_648_000);
+    expect(coin(false)).toBe(16_028_000);
     for (const q of b.quests) expect(q.award.exp ?? 0, String(q.id)).toBe((q.award.coin ?? 0) / 10);
   });
 
@@ -1999,5 +1999,28 @@ describe('支线扩充 B：其他模块（docs/superpowers/specs/2026-10-08-side
     expect(f('looks.door')).toBe('friend');
     expect(f('invite.level10')).toBe('invite');
     expect(f('activity.top10')).toBe('activity');
+  });
+});
+
+describe('支线“经营”（任务清单第二版，用户定）', () => {
+  const b = realBuild().bundle!;
+  const l = b.questLines.find((x) => x.key === 'business')!;
+  const steps = b.quests.filter((q) => q.line === l.id).sort((x, y) => x.order - y.order);
+
+  it('第 2 章出现，12 档，全是状态条件，归餐厅、油壶功能（都不能关）', () => {
+    expect(l.chapter).toBe(2);
+    expect(steps).toHaveLength(12);
+    expect(steps.every((q) => q.cond.kind === 'state')).toBe(true);
+    expect(new Set(steps.map((q) => q.feature))).toEqual(new Set(['restaurant', 'growth']));
+  });
+
+  it('单日结算 10/30/50/100 万（按快速模拟定）；餐桌 16/32/48；油壶 4、6 级；营业 180、350 轮', () => {
+    const t = (key: string) => steps.filter((q) => q.cond.key === key).map((q) => q.cond.target);
+    expect(t('rest.bestDayCoin')).toEqual([100_000, 300_000, 500_000, 1_000_000]);
+    expect(t('rest.tables')).toEqual([16, 32, 48]);
+    expect(t('oil.level')).toEqual([4, 6]);
+    expect(t('rest.bestRounds')).toEqual([180, 350]);
+    expect(t('rest.devices')).toEqual([6]);
+    expect(steps.reduce((s, q) => s + (q.award.coin ?? 0), 0)).toBe(1_380_000);
   });
 });

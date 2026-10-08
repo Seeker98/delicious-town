@@ -20,6 +20,11 @@ export const QUEST_STATE_KEYS: ReadonlySet<string> = new Set([
   'signin.best',
   'invite.level10',
   'invite.level30',
+  // 支线“经营”（任务清单第二版）
+  'rest.tables',
+  'rest.devices',
+  'rest.bestDayCoin',
+  'rest.bestRounds',
 ]);
 
 export const isQuestStateKey = (k: string): boolean =>

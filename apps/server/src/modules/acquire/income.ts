@@ -20,6 +20,14 @@ export async function aggregateIncomeDay(db: Kysely<DB>, shardId: number, day: s
       and i.rest_id in (select id from restaurant where shard_id = ${shardId})
     group by i.rest_id
     on conflict (rest_id, day) do update set coin = excluded.coin, rounds = excluded.rounds`.execute(db);
+  // 支线“经营”（任务清单第二版）：历史单日最高，两样各取最大
+  await sql`
+    insert into rest_income_best (rest_id, day_coin, day_rounds)
+    select d.rest_id, d.coin, d.rounds from rest_income_day d
+    where d.day = ${day}::date and d.rest_id in (select id from restaurant where shard_id = ${shardId})
+    on conflict (rest_id) do update set
+      day_coin = greatest(rest_income_best.day_coin, excluded.day_coin),
+      day_rounds = greatest(rest_income_best.day_rounds, excluded.day_rounds)`.execute(db);
   return Number(r.numAffectedRows ?? 0);
 }
 

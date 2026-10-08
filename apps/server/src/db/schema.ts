@@ -1231,6 +1231,13 @@ export interface RestIncomeDayTable {
   rounds: number;
 }
 
+/** 支线“经营”（任务清单第二版）：历史单日最高结算银币、最多营业轮数，两样各取最大 */
+export interface RestIncomeBestTable {
+  rest_id: number;
+  day_coin: number;
+  day_rounds: number;
+}
+
 /** 每家店的收购状态（问题记录 421）：2 星以上、或被收购过的店才有行 */
 export interface AcquireStateTable {
   rest_id: number;
@@ -1463,6 +1470,7 @@ export interface DB {
   kuji_pool: KujiPoolTable;
   fund_deposit: FundDepositTable;
   rest_income_day: RestIncomeDayTable;
+  rest_income_best: RestIncomeBestTable;
   acquire_state: AcquireStateTable;
   acquire_log: AcquireLogTable;
   acquire_block: AcquireBlockTable;

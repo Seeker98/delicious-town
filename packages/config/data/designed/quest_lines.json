@@ -1,7 +1,7 @@
 {
  "source": "新设计（问题记录 318）",
  "rule": "玩法支线：在开启章开始时出现，一次显示一档；档位 id = 3000 + 支线×20 + 顺序",
- "count": 27,
+ "count": 28,
  "data": [
   {
    "id": 1,
@@ -3455,6 +3455,278 @@
       ]
      },
      "href": "/invite"
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "key": "business",
+   "name": "经营",
+   "chapter": 2,
+   "steps": [
+    {
+     "id": 3561,
+     "order": 1,
+     "needStar": 0,
+     "name": "餐桌摆到 16 张",
+     "cond": {
+      "kind": "state",
+      "key": "rest.tables",
+      "target": 16
+     },
+     "award": {
+      "coin": 20000,
+      "exp": 2000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 10
+       }
+      ]
+     },
+     "href": "/rest/floor"
+    },
+    {
+     "id": 3562,
+     "order": 2,
+     "needStar": 0,
+     "name": "一天营业满 180 轮",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestRounds",
+      "target": 180
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/rest/income"
+    },
+    {
+     "id": 3563,
+     "order": 3,
+     "needStar": 0,
+     "name": "一天结算银币到 10 万",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestDayCoin",
+      "target": 100000
+     },
+     "award": {
+      "coin": 30000,
+      "exp": 3000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/rest/income"
+    },
+    {
+     "id": 3564,
+     "order": 4,
+     "needStar": 0,
+     "name": "油壶升到 4 级",
+     "cond": {
+      "kind": "state",
+      "key": "oil.level",
+      "target": 4
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/society/oil"
+    },
+    {
+     "id": 3565,
+     "order": 5,
+     "needStar": 0,
+     "name": "餐桌摆到 32 张",
+     "cond": {
+      "kind": "state",
+      "key": "rest.tables",
+      "target": 32
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10001,
+        "num": 20
+       }
+      ]
+     },
+     "href": "/rest/floor"
+    },
+    {
+     "id": 3566,
+     "order": 6,
+     "needStar": 0,
+     "name": "同时摆着 6 件设施",
+     "cond": {
+      "kind": "state",
+      "key": "rest.devices",
+      "target": 6
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/rest/floor"
+    },
+    {
+     "id": 3567,
+     "order": 7,
+     "needStar": 0,
+     "name": "一天结算银币到 30 万",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestDayCoin",
+      "target": 300000
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/rest/income"
+    },
+    {
+     "id": 3568,
+     "order": 8,
+     "needStar": 0,
+     "name": "一天营业满 350 轮 (全天不断油)",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestRounds",
+      "target": 350
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/rest/income"
+    },
+    {
+     "id": 3569,
+     "order": 9,
+     "needStar": 0,
+     "name": "油壶升到 6 级",
+     "cond": {
+      "kind": "state",
+      "key": "oil.level",
+      "target": 6
+     },
+     "award": {
+      "coin": 100000,
+      "exp": 10000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 1
+       }
+      ]
+     },
+     "href": "/society/oil"
+    },
+    {
+     "id": 3570,
+     "order": 10,
+     "needStar": 0,
+     "name": "餐桌摆到 48 张",
+     "cond": {
+      "kind": "state",
+      "key": "rest.tables",
+      "target": 48
+     },
+     "award": {
+      "coin": 150000,
+      "exp": 15000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/rest/floor"
+    },
+    {
+     "id": 3571,
+     "order": 11,
+     "needStar": 0,
+     "name": "一天结算银币到 50 万",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestDayCoin",
+      "target": 500000
+     },
+     "award": {
+      "coin": 200000,
+      "exp": 20000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 3
+       }
+      ]
+     },
+     "href": "/rest/income"
+    },
+    {
+     "id": 3572,
+     "order": 12,
+     "needStar": 0,
+     "name": "一天结算银币到 100 万",
+     "cond": {
+      "kind": "state",
+      "key": "rest.bestDayCoin",
+      "target": 1000000
+     },
+     "award": {
+      "coin": 500000,
+      "exp": 50000,
+      "goods": [
+       {
+        "id": 10007,
+        "num": 5
+       }
+      ]
+     },
+     "href": "/rest/income"
     }
    ]
   }

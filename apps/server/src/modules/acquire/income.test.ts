@@ -45,6 +45,24 @@ describe('每天的收入汇总（收购 PR 1）', () => {
     expect(await daysOf(other.restaurantId)).toEqual([]);
   });
 
+  it('汇总时记下历史单日最高银币、最多轮数（支线“经营”）：两样各取最大，重跑、清理旧汇总都不变', async () => {
+    const shardId = await createShard(t.db);
+    const a = await newRestaurant(t, { shardId });
+    await round(a.restaurantId, 300, gameTime('2026-10-01', 1), 1);
+    await round(a.restaurantId, 50, gameTime('2026-10-01', 2), 2);
+    for (let i = 0; i < 3; i++) await round(a.restaurantId, 10, gameTime('2026-10-02', 1 + i), 10 + i);
+    await aggregateIncomeDay(t.db, shardId, '2026-10-01');
+    await aggregateIncomeDay(t.db, shardId, '2026-10-02');
+    await aggregateIncomeDay(t.db, shardId, '2026-10-01');
+    await pruneIncomeDays(t.db, shardId, '2026-10-03');
+    const best = await t.db
+      .selectFrom('rest_income_best')
+      .selectAll()
+      .where('rest_id', '=', a.restaurantId)
+      .executeTakeFirstOrThrow();
+    expect(best).toEqual({ rest_id: a.restaurantId, day_coin: 350, day_rounds: 3 });
+  });
+
   it('区间合计 [from, to)；清理某天以前的', async () => {
     const shardId = await createShard(t.db);
     const a = await newRestaurant(t, { shardId });
