@@ -66,7 +66,7 @@ describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不�
 describe('买了再卖不能赚银币（终审：普通飞弹降到 2000 后，36 个捆成集束飞弹再卖能净赚）', () => {
   const b = realBuild().bundle!;
   const byId = new Map(b.goods.map((g) => [g.id, g]));
-  /** 回收价，和服务端 store/rules 的 sellPrice 一样：勋章、宝石、没有银币价的、shop.noSell 里的卖不了 */
+  /** 回收价，按服务端 store/rules 的 sellPrice：勋章、宝石、没有银币价的、shop.noSell 里的卖不了；不算钻石封顶（只会算高，检查更严） */
   const sell = (id: number) => {
     const g = byId.get(id)!;
     return g.coin <= 0 ||

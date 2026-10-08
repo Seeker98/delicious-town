@@ -210,7 +210,7 @@
     "tuning.shop.specialHour": "商店每日特价刷新的游戏时间（点）",
     "tuning.shop.specialFallbackGoods": "特价池为空时用的道具 id",
     "tuning.shop.discardable": "允许丢弃的道具 id 列表",
-    "tuning.shop.noSell": "不能卖回商店的道具 id 列表（蟹币：100 张神秘礼券就能换 1 个，用户 2026-10-08 定；神秘食材兑换券、随机劵、四种探险图：卖店比开店赚得多，经济分析 2026-10-08）",
+    "tuning.shop.noSell": "不能卖回商店的道具 id 列表（蟹币：100 张神秘礼券就能换 1 个，用户 2026-10-08 定；神秘食材兑换券、随机劵、四种探险图、六种残卷碎片：卖店比开店赚得多，经济分析 2026-10-08）",
     "tuning.shop.diamondSellCoin": "有钻石价的道具卖店价不超过 钻石价 × 这个数，防止用钻石在黑市买来卖店换银币（银币 / 钻石）",
     "tuning.shop.maxBuy": "商店一次最多买几个（个）",
     "tuning.store.maxBatch": "仓库批量使用一次最多几个（个）",

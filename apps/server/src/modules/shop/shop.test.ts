@@ -126,7 +126,9 @@ describe('黑市、出售、丢弃', () => {
     await shop().sell(ctx, { goodsId: gid('鞋带'), num: 3 });
     expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 2_000);
   });
-  it('兑换券、随机劵、探险图不能卖回商店，只能拿来用（经济分析 2026-10-08）', () => {
+  it('兑换券、随机劵、探险图、残卷碎片不能卖回商店，只能拿来用（经济分析 2026-10-08）', () => {
+    // 残卷碎片：黑市买神秘食谱鉴定、残卷分解成碎片再卖，每颗钻石约合 5,000 银币（终审 I1）
+    const shards = ['一', '二', '三', '四', '五', '六'].map((n) => `[${n}级]•残卷碎片`);
     for (const name of [
       '神秘食材兑换券',
       '神秘食材随机劵',
@@ -134,6 +136,7 @@ describe('黑市、出售、丢弃', () => {
       '高级探险图',
       '顶级探险图',
       '极品探险图',
+      ...shards,
     ])
       expect(sellPrice(config.requireGoods(gid(name)), config.tuning), name).toBeNull();
   });

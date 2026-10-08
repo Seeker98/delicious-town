@@ -47,7 +47,7 @@ const exchange: Messages['exchange'] = {
     "Pour les ingrédients aussi vendus au marché, le prix d'achat est plafonné à 0,9\u202f×\u202fle prix le plus bas du marché, pour qu'on ne puisse pas acheter au marché et revendre au système avec profit.",
     "Quand le prix d'achat est sous le minimum autorisé pour un ordre, c'est un « prix plancher » (fréquent aux niveaux 3 à 5). On ne peut alors vendre qu'avec le bouton « Vendre au système », ce qui garantit de toujours pouvoir écouler sa marchandise.",
     'Le système achète au plus 100 unités de chaque ingrédient par jour, et chaque joueur peut lui en vendre au plus 20 par jour.',
-    "Le système n'achète pas les ingrédients de niveau 7 ; son stock existant reste en vente.",
+    "Le système n'achète pas les ingrédients de niveau 7\u202f; son stock existant reste en vente.",
   ],
   search: 'Chercher un ingrédient',
   saleTag: (n) => `Vente ${n}`,
