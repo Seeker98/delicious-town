@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    daily1009:
+      "Nouveau\u202f: le Journal de la ville. Chaque matin, il raconte les grands moments de la veille (gros lots de l'Ichiban Kuji, acquisitions, passages d'étoile, résultats des prédictions, etc.). Il se trouve tout en haut des Nouvelles de la ville, avec un lien sur la page d'accueil\u202f; on peut remonter 7 jours et toucher le nom d'un restaurant pour le visiter. Il est rédigé par une IA à partir des nouvelles du jeu et ne parle que de ce qui s'est vraiment passé\u202f; tant que le journal d'un jour n'est pas prêt, ce sont les titres du jour qui s'affichent. Pour l'instant, le journal n'existe qu'en anglais",
     act1008:
       "Points d'activité\u202f: un tirage Ichiban Kuji rapporte 10 points\u202f; s'amuser au bar rapporte 2 points à chaque fois, jusqu'à 10 fois par jour\u202f; acheter au Marché compte 2 fois par jour\u202f; combiner ou décomposer des ingrédients rapporte 3 points à chaque fois, jusqu'à 5 fois\u202f; les défis de la Tour des chefs rapportent 5 points à chaque fois, jusqu'à 2 fois\u202f; nouvelle tâche «\u202fDonner ou recevoir un pouce levé\u202f», 2 points à chaque fois, jusqu'à 5 fois. Le maximum quotidien passe de 193 à 220 points. Les récompenses changent aussi\u202f: 50 points donnent en plus 10 Bons mystère, 100 points donnent en plus 10\u202f000 pièces, 120 points donnent un Ticket Ichiban Kuji et 4 diamants, 150 points donnent de l'EXP et 2 Petites cartes d'énergie, et 180 points donnent 1 Carte d'exploration",
     retire1008:

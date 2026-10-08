@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    daily1009:
+      'Nuevo: el Diario del pueblo. Cada mañana cuenta lo más destacado del día anterior (grandes premios del Ichiban Kuji, adquisiciones, subidas de estrellas, resultados de predicciones y más). Está arriba del todo en Noticias del pueblo y también tiene un enlace en la página de inicio; puedes ver los 7 días anteriores y tocar el nombre de un restaurante para visitarlo. Lo escribe una IA a partir de las noticias del juego y solo cuenta cosas que han pasado de verdad; mientras el diario de un día no está listo, verás los titulares de ese día. Por ahora el diario solo está en inglés',
     act1008:
       'Cambios en los puntos de actividad: una tirada de Ichiban Kuji da 10 puntos; divertirse en el bar da 2 puntos cada vez, hasta 10 veces al día; comprar en el Mercado cuenta 2 veces al día; combinar o descomponer ingredientes da 3 puntos cada vez, hasta 5 veces; los desafíos de la Torre de chefs dan 5 puntos cada vez, hasta 2 veces; nueva tarea «Dar o recibir un me gusta», 2 puntos cada vez, hasta 5 veces. El máximo diario pasa de 193 a 220 puntos. También cambian los premios: 50 puntos dan además 10 Vales misteriosos, 100 puntos dan además 10.000 monedas, 120 puntos dan un Boleto Ichiban Kuji y 4 diamantes, 150 puntos dan EXP y 2 Tarjetas de energía pequeñas, y 180 puntos dan 1 Mapa de exploración',
     retire1008:

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    daily1009:
+      "New: the Town Daily. Every morning it reports the big stories from the day before (Ichiban Kuji top prizes, acquisitions, star-ups, prediction results and more). It sits at the top of Town news with a link on the home page; you can page back 7 days and tap a restaurant's name to visit it. The paper is written by AI from the in-game news and only covers things that really happened; until a day's paper is ready, you'll see that day's headlines instead",
     act1008:
       'Activity points changes: an Ichiban Kuji draw gives 10 points; having fun at the bar gives 2 points each time, up to 10 times a day; buying at the Market counts twice a day; combining or breaking down ingredients gives 3 points each time, up to 5 times; Chef Tower challenges give 5 points each time, up to 2 times; new item “Give or receive a thumbs-up”, 2 points each time, up to 5 times. The daily maximum goes from 193 to 220 points. Rewards changed too: 50 points now also gives 10 Mystery Vouchers, 100 points also gives 10,000 coins, 120 points gives an Ichiban Kuji Ticket and 4 diamonds, 150 points gives EXP and 2 Small Stamina Cards, and 180 points gives 1 Exploration Map',
     retire1008:
