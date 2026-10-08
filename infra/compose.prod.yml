@@ -54,7 +54,9 @@ services:
   worker:
     <<: *server
     command: ['node', 'dist/worker.js']
-    deploy: { replicas: 2 }
+    # 一个就够（用户 2026-10-08 定）：两个时只有主节点跑任务，另一个只占内存（服务器 1 GB，交换区已用 300 多 MB）；
+    # 挂了 Docker 会自动重启（主节点锁随进程释放，马上能拿到）；周期任务按 job_run 只跑一次，重启期间到点的那几期会跳过
+    deploy: { replicas: 1 }
     depends_on:
       migrate: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
