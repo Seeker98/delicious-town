@@ -7,6 +7,9 @@ import { postNews } from '../news/news';
 import { buildFacts, DAILY_TYPES, eventText, tokensIn } from './facts';
 
 const config = testConfig();
+// 道具、食材编号从配置里取（测试里不写死编号）
+const [G1, G2, G3] = [...config.goods.keys()] as [number, number, number];
+const [F1, F2] = [...config.foods.keys()] as [number, number];
 const DAY = '2026-10-07';
 let t: TestGame;
 beforeAll(async () => {
@@ -34,15 +37,15 @@ const SAMPLES: Record<string, object> = {
   'mc.champion': { value: 3665169 },
   'predict.result': { title: '今天 13 点的天气是晴类吗', outcome: true, players: 5, winners: 2, paid: 9000 },
   'star.up': { name: '店', star: 4 },
-  'temple.guardian.rare': { foodsId: 7011 },
-  'temple.explore.rare': { foods: [{ foodsId: 7001, num: 2 }] },
+  'temple.guardian.rare': { foodsId: F1 },
+  'temple.explore.rare': { foods: [{ foodsId: F2, num: 2 }] },
   'plankton.driven': { way: 'book', name: '店' },
-  'equip.stress': { name: '店', stress: 10, goodsId: 40605, lucky: false },
-  'gem.levelUp': { num: 1, name: '店', goodsId: 50404 },
+  'equip.stress': { name: '店', stress: 10, goodsId: G1, lucky: false },
+  'gem.levelUp': { num: 1, name: '店', goodsId: G2 },
   'oil.expand': { name: '店', level: 2 },
   'rest.move': { to: 29, from: 18, name: '店' },
   'mc.cook': { num: 3, mcId: 182, grade: 4 },
-  'shop.special': { tier: '九折', goodsId: 50401 },
+  'shop.special': { tier: '九折', goodsId: G3 },
   'tower.rank.week': { top: [{ name: '店', rank: 1, restId: 25 }], week: '2026-09-28' },
 };
 
@@ -62,9 +65,9 @@ describe('小镇日报素材：每条新闻的简中模板', () => {
       '{r:7} 以 500,000 银币收购了 {r:2}',
     );
     expect(eventText({ type: 'equip.stress', rest_id: 7, params: SAMPLES['equip.stress']! }, config)).toBe(
-      '{r:7} 把 {g:40605} 强化到了 +10',
+      `{r:7} 把 {g:${G1}} 强化到了 +10`,
     );
-    expect(tokensIn('{r:7} 把 {g:40605} 换成 {f:7011}, {r:7}')).toEqual(['f:7011', 'g:40605', 'r:7', 'r:7']);
+    expect(tokensIn('{r:7} 把 {g:5} 换成 {f:3}, {r:7}')).toEqual(['f:3', 'g:5', 'r:7', 'r:7']);
   });
 
   it('不认识的类型、缺参数的新闻返回 null', () => {
@@ -141,8 +144,8 @@ describe('小镇日报素材：挑选和汇总', () => {
     await news(shardId, 'temple.guardian.rare', a.restaurantId, SAMPLES['temple.guardian.rare']!);
     const f = await buildFacts(t.game.deps, shardId, DAY, 30);
     expect(f.names).toEqual({
-      'g:40605': config.goods.get(40605)!.name,
-      'f:7011': config.foods.get(7011)!.name,
+      [`g:${G1}`]: config.goods.get(G1)!.name,
+      [`f:${F1}`]: config.foods.get(F1)!.name,
     });
     expect(f.events.every((e) => e.newsId > 0)).toBe(true);
   });
