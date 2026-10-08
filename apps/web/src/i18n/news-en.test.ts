@@ -62,3 +62,34 @@ describe('新闻、日志、标签按语言（问题记录 272）', () => {
     }
   }, 30_000);
 });
+
+describe('守护兽同一种神秘食材合成一条新闻，两个以上写个数（集束飞弹那次的遗留）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  afterEach(async () => {
+    await useLocaleStore().set('zh-CN');
+  });
+
+  it('五种语言：num 大于 1 时写 ×个数，没有 num 照旧', async () => {
+    const want: Record<string, [string, string]> = {
+      'zh-CN': ['Bob击败守护兽获得 F7101×2', 'Bob击败守护兽获得 F7101'],
+      'zh-TW': ['Bob擊敗守護獸獲得 F7101×2', 'Bob擊敗守護獸獲得 F7101'],
+      en: [
+        'Bob defeated the guardian beast and got F7101×2',
+        'Bob defeated the guardian beast and got F7101',
+      ],
+      es: [
+        'Bob derrotó a la bestia guardiana y obtuvo F7101×2',
+        'Bob derrotó a la bestia guardiana y obtuvo F7101',
+      ],
+      fr: [
+        'Bob a vaincu la bête gardienne et obtenu F7101\u202f×\u202f2',
+        'Bob a vaincu la bête gardienne et obtenu F7101',
+      ],
+    };
+    for (const [l, [two, one]] of Object.entries(want)) {
+      await useLocaleStore().set(l as never);
+      expect(newsText(news('temple.guardian.rare', { foodsId: 7101, num: 2 }), names)).toBe(two);
+      expect(newsText(news('temple.guardian.rare', { foodsId: 7101 }), names)).toBe(one);
+    }
+  });
+});

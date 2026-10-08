@@ -51,6 +51,8 @@ const tower: Messages['tower'] = {
       `Each match, ${n} of the ${total} judges ${plEn(n, 'is', 'are')} picked at random. One by one, each judge compares the two sides’ totals on the scores they care about and votes for the higher one; the first side to ${need} ${plEn(need, 'vote', 'votes')} wins. If the votes are tied, the higher total across the judges who scored wins.`,
     rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
     rulesMc: 'the signature dish on sale',
+    /** 特色菜那一项不算试炼价值（集束飞弹那次的遗留：只在试炼说明里写了） */
+    rulesMcNoTrial: 'The signature dish counts at its base value per portion, without trial value.',
     rulesNone: (item) => `${item} (random bonus only)`,
     rulesWeights: (parts) =>
       `Each side gets five scores from its stats: ${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}. Higher Creativity and Luck add a bigger random bonus to every score.`,

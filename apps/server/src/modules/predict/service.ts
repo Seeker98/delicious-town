@@ -20,6 +20,7 @@ import { AppError } from '../../http/errors';
 import { isFeatureEnabled } from '@dt/config';
 import { frozenReason } from '../exchange/guard';
 import { eligibility } from '../exchange/eligibility';
+import { holdStep } from './holdStep';
 
 const KEEP_DAYS = 7;
 
@@ -131,11 +132,14 @@ export function createPredictService(d: GameDeps) {
       })
       .execute();
     await emitAction(o, 'predict.trade');
-    // 支线“事件预测”（问题记录 515）：卖出记一次；一边持有越过 100、200 份的那一笔各记一次
+    // 支线“事件预测”（问题记录 515）：卖出记一次；一边持有越过 100、200 份的那一笔各记一次。
+    // 区服把持有上限调低时按上限算（终审：原来调到 200 以下这一档做不了，还挡住后面两档）
     if (b.dir === 'sell') await emitAction(o, 'predict.sell');
     else
-      for (const n of [100, 200])
-        if (held[b.side] < n && next[b.side] >= n) await emitAction(o, `predict.hold${n}`);
+      for (const n of [100, 200] as const) {
+        const at = holdStep(n, t.maxHold);
+        if (held[b.side] < at && next[b.side] >= at) await emitAction(o, `predict.hold${n}`);
+      }
     restLog(o, 'predict.trade', {
       title: e.title,
       side: b.side,

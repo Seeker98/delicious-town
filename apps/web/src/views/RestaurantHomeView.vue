@@ -23,6 +23,7 @@ import { useRestaurantStore } from '../stores/restaurant';
 import { useToastStore } from '../stores/toast';
 import { effectChips } from '../utils/effects';
 import { formatNum } from '../utils/format';
+import { questTitle } from '../utils/questName';
 import { serverNowMs } from '../utils/serverNow';
 import { remainText } from '../utils/remain';
 import { effectName } from '../utils/serverText';
@@ -519,7 +520,7 @@ onBeforeUnmount(() => {
         <div class="flex-fill">
           <!-- 和其他行一样用图标开头（问题记录 302），"主线："写成文字 -->
           <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
-          }}{{ catalog.data('tasks', mainTask.id)?.name ?? mainTask.name }}
+          }}{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask) }}
           <span class="text-muted">{{
             t.common.paren(
               `${formatNum(Math.min(mainTask.progress, mainTask.target))}/${formatNum(mainTask.target)}`,

@@ -9,6 +9,7 @@ import {
   foodsTrial,
   guardianFoods,
   guardianRareCount,
+  guardianRareNews,
   guardianScale,
   guardianHp,
   inFeedHours,
@@ -256,5 +257,13 @@ describe('克拉肯（规格书 09 §9.5）', () => {
     const r = pickSeeds(config.seedPool, 3, sequenceRng([0]));
     expect([...r.values()]).toEqual([3]);
     expect(pickShopSlots(pool, 6, sequenceRng([0.3, 0.6]))).toHaveLength(6);
+  });
+});
+
+describe('守护兽神秘食材的新闻（集束飞弹那次的遗留：同一种掉了几个，每个都发一条）', () => {
+  it('同一种合成一条，两个以上带 num；按第一次掉出的顺序', () => {
+    expect(guardianRareNews([7101, 7102, 7101])).toEqual([{ foodsId: 7101, num: 2 }, { foodsId: 7102 }]);
+    expect(guardianRareNews([7103])).toEqual([{ foodsId: 7103 }]);
+    expect(guardianRareNews([])).toEqual([]);
   });
 });

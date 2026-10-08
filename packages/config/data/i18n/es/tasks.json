@@ -297,7 +297,7 @@
     "name": "Alimentar al Kraken 10 veces"
   },
   "3125": {
-    "name": "Conseguir más de 35 de favor del Kraken en una sola comida"
+    "name": "Conseguir más de {n} de favor del Kraken en una sola comida"
   },
   "3126": {
     "name": "Conseguir un tentáculo del Kraken al alimentarlo 3 veces"
@@ -387,7 +387,7 @@
     "name": "Vender antes de la liquidación una vez"
   },
   "3225": {
-    "name": "Tener 100 participaciones en un evento"
+    "name": "Tener {n} participaciones en un evento"
   },
   "3226": {
     "name": "Ganar 50.000 en una liquidación"
@@ -396,7 +396,7 @@
     "name": "Perder 30.000 en una liquidación (lección aprendida)"
   },
   "3228": {
-    "name": "Tener las 200 participaciones en un evento"
+    "name": "Tener las {n} participaciones en un evento"
   },
   "3229": {
     "name": "Ganar 150.000 en una liquidación"
@@ -657,10 +657,10 @@
     "name": "Conseguir que una publicación del foro sea destacada"
   },
   "3546": {
-    "name": "Que un amigo que invitaste llegue al nivel 10"
+    "name": "Que un amigo que invitaste llegue al nivel {n}"
   },
   "3547": {
-    "name": "Que un amigo que invitaste llegue al nivel 30"
+    "name": "Que un amigo que invitaste llegue al nivel {n}"
   },
   "3561": {
     "name": "Tener 16 mesas"

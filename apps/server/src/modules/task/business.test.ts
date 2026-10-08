@@ -31,7 +31,9 @@ describe('支线“经营”', () => {
   it('设施按生效中的算，过期的不算', async () => {
     const ctx = await newRestaurant(t);
     const goods = [...t.deps.config.goods.values()].filter((g) => g.deviceType === 1).map((g) => g.id);
-    const later = new Date(Date.now() + 3_600_000);
+    // 按游戏时钟算（它在文件开头就定住了）：原来按 Date.now()，机器忙时文件开头到这里超过 1 秒，“1 秒前过期”的在游戏时钟看来还没过期
+    const now = t.clock.now;
+    const later = new Date(now.getTime() + 3_600_000);
     await t.db
       .insertInto('restaurant_device')
       .values([
@@ -42,7 +44,7 @@ describe('支线“经营”', () => {
           slot: 3,
           goods_id: goods[0]!,
           placed_at: new Date(),
-          expires_at: new Date(Date.now() - 1000),
+          expires_at: new Date(now.getTime() - 1000),
         },
       ])
       .execute();

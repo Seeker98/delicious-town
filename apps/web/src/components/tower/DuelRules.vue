@@ -30,6 +30,11 @@ const scoreLines = computed(() => {
   });
   return [d.rulesWeights(parts)];
 });
+/** 有特色菜那一项（没给权重时默认的说明里也有）：写明不算试炼价值 */
+const hasMc = computed(() => {
+  const w = props.weights;
+  return !w || w.length !== t.value.tower.duel.items.length || w.some((x) => x.mc > 0);
+});
 const vote = computed(() =>
   t.value.tower.duel.rulesVote(DUEL_JUDGES.length, props.judgeCount, Math.floor(props.judgeCount / 2) + 1),
 );
@@ -46,6 +51,7 @@ const judges = computed(() => {
   <details class="small text-muted mb-2" data-testid="duel-rules">
     <summary>{{ t.tower.duel.rulesTitle }}</summary>
     <p v-for="(line, i) in scoreLines" :key="i" class="mb-1 mt-1">{{ line }}</p>
+    <p v-if="hasMc" class="mb-1" data-testid="duel-rules-mc">{{ t.tower.duel.rulesMcNoTrial }}</p>
     <p class="mb-1">{{ vote }}</p>
     <div>{{ t.tower.duel.rulesJudges }}</div>
     <ul class="list-inline mb-0">

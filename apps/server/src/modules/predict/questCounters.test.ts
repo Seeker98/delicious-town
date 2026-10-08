@@ -45,6 +45,21 @@ describe('事件预测支线的计数（问题记录 515）', () => {
     expect(await count(a.restaurantId, 'predict.hold200')).toBe(1);
   });
 
+  it('区服把持有上限调到 200 以下：持满上限就算“持有满 200 份”那一档（终审：原来这一档做不了，还挡住后面两档）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({ shard_id: shardId, override: JSON.stringify({ tuning: { predict: { maxHold: 150 } } }) })
+      .execute();
+    t.game.shards.invalidate(shardId);
+    const id = await newEvent(t, shardId);
+    const a = await trader(t, { shardId, coin: 10_000_000 });
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 100 });
+    expect(await count(a.restaurantId, 'predict.hold200')).toBe(0);
+    await svc().trade(a, id, { side: 'yes', dir: 'buy', qty: 50 });
+    expect(await count(a.restaurantId, 'predict.hold200')).toBe(1);
+  });
+
   it('判定后结算：押对的按赚的记，押错的按亏的记；作废退款不记', async () => {
     const shardId = await createShard(t.db);
     // 流动性很大，价格基本不动：“是”2 成，买 200 份约 4 万，押对拿回 20 万，赚约 16 万

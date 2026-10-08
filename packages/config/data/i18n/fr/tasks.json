@@ -297,7 +297,7 @@
     "name": "Nourrir le Kraken 10 fois"
   },
   "3125": {
-    "name": "Obtenir plus de 35 de faveur du Kraken en un seul repas"
+    "name": "Obtenir plus de {n} de faveur du Kraken en un seul repas"
   },
   "3126": {
     "name": "Obtenir 3 fois un tentacule du Kraken en le nourrissant"
@@ -387,7 +387,7 @@
     "name": "Revendre avant le règlement une fois"
   },
   "3225": {
-    "name": "Détenir 100 parts sur un événement"
+    "name": "Détenir {n} parts sur un événement"
   },
   "3226": {
     "name": "Gagner 50\u202f000 en un règlement"
@@ -396,7 +396,7 @@
     "name": "Perdre 30\u202f000 en un règlement (leçon apprise)"
   },
   "3228": {
-    "name": "Détenir les 200 parts sur un événement"
+    "name": "Détenir les {n} parts sur un événement"
   },
   "3229": {
     "name": "Gagner 150\u202f000 en un règlement"
@@ -657,10 +657,10 @@
     "name": "Faire mettre en avant un message du forum"
   },
   "3546": {
-    "name": "Qu'un ami invité atteigne le niveau 10"
+    "name": "Qu'un ami invité atteigne le niveau {n}"
   },
   "3547": {
-    "name": "Qu'un ami invité atteigne le niveau 30"
+    "name": "Qu'un ami invité atteigne le niveau {n}"
   },
   "3561": {
     "name": "Avoir 16 tables"

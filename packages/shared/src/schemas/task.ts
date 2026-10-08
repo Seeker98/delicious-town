@@ -18,6 +18,8 @@ export interface QuestDto {
   /** 已领奖 */
   claimed: boolean;
   award: AwardDto;
+  /** 名字里 {n} 代入的数（按区服数值，515 支线扩充 B 遗留）；名字里没有 {n} 的不带 */
+  vars?: { n: number };
 }
 
 export interface QuestsDto {

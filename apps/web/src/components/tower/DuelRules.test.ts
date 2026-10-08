@@ -43,4 +43,18 @@ describe('DuelRules（问题记录 396）', () => {
     // 没给权重（旧接口）时用原来的说明
     expect(mount(DuelRules).text()).toContain('色看厨艺、刀工');
   });
+
+  it('有特色菜那一项时写明不算试炼价值（集束飞弹那次的遗留：只在试炼说明里写了）', () => {
+    const z = { cook: 1, cutting: 0, fire: 0, season: 0, mc: 0 };
+    const note = '特色菜按每份原本的价值算, 不加试炼价值。';
+    expect(mount(DuelRules).find('[data-testid="duel-rules-mc"]').text()).toBe(note);
+    const withMc = [z, z, z, z, { ...z, mc: 0.5 }];
+    expect(mount(DuelRules, { props: { weights: withMc } }).text()).toContain(note);
+    const noMc = [z, z, z, z, z];
+    expect(
+      mount(DuelRules, { props: { weights: noMc } })
+        .find('[data-testid="duel-rules-mc"]')
+        .exists(),
+    ).toBe(false);
+  });
 });

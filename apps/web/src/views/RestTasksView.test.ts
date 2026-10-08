@@ -475,3 +475,53 @@ describe('任务卡的进度数字（backlog：经营支线的目标值最大最
     expect(w.get('[data-testid="task-2021"]').text()).toContain('123,456/1,000,000');
   });
 });
+
+describe('任务名里的 {n} 按区服数值代入（515 支线扩充 B 遗留：原来写死）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    vi.mocked(endpoints.activation).mockResolvedValue(act());
+  });
+
+  it('目录里的翻译和服务端给的名字都代入，数字带千分位', async () => {
+    vi.mocked(endpoints.tasks).mockResolvedValue(
+      quests([task({ id: 2021, name: '一道题持有满 {n} 份', vars: { n: 1500 } })], {
+        lines: [
+          {
+            id: 6,
+            name: '神殿',
+            quest: task({ id: 3125, name: '投喂克拉肯一次好感超过 {n}', vars: { n: 50 } }),
+            lockedStar: null,
+            doneCount: 4,
+            total: 8,
+          },
+        ],
+      }),
+    );
+    useCatalogStore().apply({
+      version: 'v:en',
+      goods: [],
+      foods: [],
+      streets: [],
+      weather: [],
+      devices: [],
+      data: {
+        tasks: [{ id: 3125, name: 'Get more than {n} favor from the Kraken in one feeding' }],
+        chapters: [],
+        questLines: [],
+        activation: [],
+        bless: [],
+        tower: [],
+        formulas: [],
+        kujiThemes: [],
+        proficiency: [],
+        cookbooks: [],
+      },
+    });
+    const main = await mountView();
+    expect(main.get('[data-testid="task-2021"]').text()).toContain('一道题持有满 1,500 份');
+    const side = await mountView('/?tab=side');
+    expect(side.get('[data-testid="line-6"]').text()).toContain('Get more than 50 favor');
+    expect(side.text()).not.toContain('{n}');
+  });
+});
