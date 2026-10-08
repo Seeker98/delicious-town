@@ -57,6 +57,8 @@ export default {
     /** 五项各看哪些属性按区服的评分权重拼（backlog 396）；rules 是没有权重时的说明 */
     rulesPart: (item: string, attrs: string[]) => `${item}看${attrs.join('、')}`,
     rulesMc: '在售的特色菜',
+    /** 特色菜那一项不算试炼价值（集束飞弹那次的遗留：只在试炼说明里写了） */
+    rulesMcNoTrial: '特色菜按每份原本的价值算, 不加试炼价值。',
     rulesNone: (item: string) => `${item}只看随机分`,
     rulesWeights: (parts: string[]) =>
       `双方按属性算出色、香、味、形、养五项: ${parts.join(', ')}。创意越高、幸运越好, 每项多加的随机分越多。`,

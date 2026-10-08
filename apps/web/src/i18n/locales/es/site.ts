@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    text1008:
+      'Números en misiones y reglas: las misiones secundarias del favor del Kraken, el nivel de amigos invitados y las participaciones en Predicciones muestran ahora los valores reales de este servidor; si el límite de participaciones de este servidor es menor que 200, el paso de «tener todas» cuenta con ese límite y ya no bloquea las misiones siguientes; varios ingredientes misteriosos iguales de una misma bestia guardiana salen ahora en una sola noticia; las reglas del duelo de cocina indican que el plato estrella no suma el valor de prueba',
     punct1008:
       'Textos en francés y español: el espaciado de la puntuación ahora es uniforme. En español, entre un número y el símbolo de porcentaje va siempre un espacio de no separación; en francés, un espacio fino de no separación delante de los dos puntos, el punto y coma, los signos de interrogación y exclamación y el de porcentaje, y dentro de las comillas. Así estos signos ya no pasan solos a la línea siguiente',
     robust1008:

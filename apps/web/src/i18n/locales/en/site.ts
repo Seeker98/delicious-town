@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    text1008:
+      'Numbers in quests and rules: the side quests for Kraken favor, invited-friend levels and Predictions shares now show this server’s actual values; if this server’s holding limit is below 200 shares, the “hold the full amount” step counts at the limit and no longer blocks later quests; several of the same mystery ingredient from one guardian beast now show as a single news item; the cook-off rules now say the signature dish doesn’t include trial value',
     punct1008:
       'French and Spanish text: consistent punctuation spacing. French uses a narrow non-breaking space before : ; ? ! and %, and inside « » quotes; Spanish uses a non-breaking space between a number and the percent sign, so these signs no longer wrap onto a line of their own',
     robust1008:

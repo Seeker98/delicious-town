@@ -133,3 +133,15 @@ describe('第 8 批常见数据翻译（问题记录 272）', () => {
     expect(all).toMatch(/i18n en icons unknown id nope/);
   });
 });
+
+describe('任务名里的 {n}（515 支线扩充 B 遗留：数按区服数值代入）', () => {
+  it('简中名字里有 {n} 的，繁中和英法西的名字里也都有', () => {
+    const { bundle } = realBuild();
+    const ids = bundle!.quests.filter((q) => q.name.includes('{n}')).map((q) => String(q.id));
+    expect(ids.length).toBe(5);
+    const bad = (['zh-TW', 'en', 'fr', 'es'] as const).flatMap((l) =>
+      ids.filter((id) => !bundle!.i18n[l].tasks[id]?.name?.includes('{n}')).map((id) => `${l} ${id}`),
+    );
+    expect(bad).toEqual([]);
+  });
+});

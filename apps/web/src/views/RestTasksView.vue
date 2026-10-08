@@ -11,6 +11,7 @@ import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
 import { formatNum } from '../utils/format';
+import { questTitle } from '../utils/questName';
 
 const catalog = useCatalogStore();
 const toast = useToastStore();
@@ -50,7 +51,7 @@ const rank = (x: QuestDto) => (x.claimed ? 2 : x.done ? 0 : 1);
 const mainList = computed(() => [...(tasks.value?.main ?? [])].sort((a, b) => rank(a) - rank(b)));
 const leftoverList = computed(() => [...(tasks.value?.leftover ?? [])].sort((a, b) => rank(a) - rank(b)));
 const weeklyList = computed(() => [...(tasks.value?.weekly?.quests ?? [])].sort((a, b) => rank(a) - rank(b)));
-const questName = (x: QuestDto) => catalog.data('tasks', x.id)?.name ?? x.name;
+const questName = (x: QuestDto) => questTitle(catalog.data('tasks', x.id)?.name ?? x.name, x);
 /** 章末、每周全完成按钮：还有没完成的写还差几个；都完成了只差领写先领完上面的任务（backlog 318） */
 const leftText = (unfinished: number) =>
   unfinished > 0 ? t.value.rest.tasks.chapterLeft(unfinished) : t.value.rest.tasks.claimFirst;

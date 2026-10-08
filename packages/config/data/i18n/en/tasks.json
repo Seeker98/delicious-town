@@ -297,7 +297,7 @@
     "name": "Feed the Kraken 10 times"
   },
   "3125": {
-    "name": "Get more than 35 favor from the Kraken in one feeding"
+    "name": "Get more than {n} favor from the Kraken in one feeding"
   },
   "3126": {
     "name": "Get a Kraken tentacle from feeding 3 times"
@@ -387,7 +387,7 @@
     "name": "Sell before settlement once"
   },
   "3225": {
-    "name": "Hold 100 shares in one event"
+    "name": "Hold {n} shares in one event"
   },
   "3226": {
     "name": "Earn 50,000 in one settlement"
@@ -396,7 +396,7 @@
     "name": "Lose 30,000 in one settlement (a lesson paid for)"
   },
   "3228": {
-    "name": "Hold the full 200 shares in one event"
+    "name": "Hold the full {n} shares in one event"
   },
   "3229": {
     "name": "Earn 150,000 in one settlement"
@@ -657,10 +657,10 @@
     "name": "Get a forum post featured"
   },
   "3546": {
-    "name": "Have a friend you invited reach level 10"
+    "name": "Have a friend you invited reach level {n}"
   },
   "3547": {
-    "name": "Have a friend you invited reach level 30"
+    "name": "Have a friend you invited reach level {n}"
   },
   "3561": {
     "name": "Have 16 tables"

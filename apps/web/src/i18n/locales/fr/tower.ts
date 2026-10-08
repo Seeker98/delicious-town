@@ -51,6 +51,8 @@ const tower: Messages['tower'] = {
       `À chaque duel, ${n} des ${total} juges sont tirés au sort. L’un après l’autre, chaque juge compare le total des deux camps sur ce qui l’intéresse et vote pour le plus élevé\u202f; le premier camp à ${need} ${plFr(need, 'voix', 'voix')} gagne. En cas d’égalité de voix, le plus grand total chez les juges qui ont noté l’emporte.`,
     rulesPart: (item, attrs) => `${item} (${attrs.join(', ')})`,
     rulesMc: 'le plat signature en vente',
+    /** 特色菜那一项不算试炼价值（集束飞弹那次的遗留：只在试炼说明里写了） */
+    rulesMcNoTrial: "Le plat signature compte pour sa valeur de base par portion, sans la valeur d'épreuve.",
     rulesNone: (item) => `${item} (bonus aléatoire seulement)`,
     rulesWeights: (parts) =>
       `Chaque camp obtient cinq notes selon ses attributs\u202f: ${parts.slice(0, -1).join(', ')} et ${parts.at(-1)}. Plus la Créativité et la Chance sont élevées, plus le bonus aléatoire de chaque note est grand.`,

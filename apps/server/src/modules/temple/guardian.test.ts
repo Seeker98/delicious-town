@@ -121,7 +121,7 @@ describe('守护兽（规格书 09 §9.1）', () => {
 });
 
 describe('守护兽一次掉几个神秘食材（集束飞弹那次的遗留：缺的测试）', () => {
-  it('期望超过 1 个时一次掉多个：都进橱柜，每个各发一条新闻，drops.rare 是第一个', async () => {
+  it('期望超过 1 个时一次掉多个：都进橱柜，同一种合成一条新闻（两个以上带 num），drops.rare 是第一个', async () => {
     const shardId = await createShard(win.db);
     // 掉率调到 1：5 星放大 7/3 倍，期望约 2.3 个，随机数 0 时整数部分 2 个再加 1 个
     await setTuning(win, shardId, { temple: { guardianRareRate: 1 } });
@@ -142,7 +142,8 @@ describe('守护兽一次掉几个神秘食材（集束飞弹那次的遗留：�
       .where('rest_id', '=', ctx.restaurantId)
       .where('type', '=', 'temple.guardian.rare')
       .execute();
-    expect(news).toHaveLength(n);
+    expect(news).toHaveLength(rares.length);
+    expect(news.reduce((s, x) => s + Number((x.params as { num?: number }).num ?? 1), 0)).toBe(n);
     // 都进了橱柜
     for (const f of rares) {
       const row = await win.db

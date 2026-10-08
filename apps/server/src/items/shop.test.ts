@@ -10,11 +10,16 @@ const real = src['game/shop'] as ShopFile;
 const MISSILE = gid('普通飞弹');
 const RED = gid('[一阶]•红晶原石');
 
-function tool(goods: ShopFile['goods'] = real.goods) {
+/** 设计表的池子（designed/shop_pools）：测试要的情形自己给，不靠真实数据此刻的样子（数据清理批） */
+type Design = Array<{ pool: string; goods: number[] }>;
+const RETIRED = (src['game/retired'] as { goods: Array<{ id: number }> }).goods.map((g) => g.id);
+
+function tool(goods: ShopFile['goods'] = real.goods, design?: Design) {
   const written: string[] = [];
   const t = createShopTool({
     readSource: () => ({
       ...src,
+      ...(design ? { 'designed/shop_pools': design } : {}),
       'game/shop': written.length ? (JSON.parse(written.at(-1)!) as unknown) : { ...real, goods },
     }),
     writeShop: (text) => written.push(text),
@@ -23,8 +28,13 @@ function tool(goods: ShopFile['goods'] = real.goods) {
 }
 
 describe('商店整理工具（问题记录 483）', () => {
-  it('真实数据（下架的道具还在设计表的池子里）照样出报表，不是空表（2026-10-07 一批下架后发现）', () => {
-    const r = tool().t.report();
+  it('下架的道具还在设计表的池子里也照样出报表，不是空表（2026-10-07 一批下架后发现）', () => {
+    // 真实设计表已经清干净（数据清理批），这里放回几个下架的道具
+    const design = [
+      { pool: 'special', goods: [...real.pools!.special!, ...RETIRED.slice(0, 2)] },
+      { pool: 'black', goods: [...real.pools!.black!, ...RETIRED.slice(0, 2)] },
+    ];
+    const r = tool(real.goods, design).t.report();
     expect(r.errors).toEqual([]);
     expect(r.rows.length).toBeGreaterThan(100);
   });
@@ -58,14 +68,31 @@ describe('商店整理工具（问题记录 483）', () => {
   });
 
   it('下架的道具：原版的上架按下架后算（不算“改过”），保存时不写它的 onSale', () => {
-    const r = tool().t.report();
+    const { t, written } = tool([]);
+    const r = t.report();
     const retired = r.rows.filter((x) => x.retired);
     expect(retired.length).toBeGreaterThan(0);
     expect(retired.every((x) => !x.onSale && !x.orig.onSale)).toBe(true);
+    // 页面每次发全部行：下架的照原样发回来，shop.json 里不写它（数据清理批：原来没真的调用保存）
+    const res = t.save({
+      goods: retired.map((x) => ({ id: x.id, coin: x.coin, diamond: x.diamond, onSale: x.onSale })),
+      pools: {
+        special: r.rows.filter((x) => x.special).map((x) => x.id),
+        black: r.rows.filter((x) => x.black).map((x) => x.id),
+      },
+    });
+    expect(res.errors).toEqual([]);
+    const file = JSON.parse(written.at(-1)!) as ShopFile;
+    expect(file.goods.filter((g) => retired.some((x) => x.id === g.id))).toEqual([]);
   });
 
   it('保存：只写和原版不同的字段和改过的池子，带名字和备注；先构建，能过才写', () => {
-    const { t, written } = tool([]);
+    // 设计表自己给：特价池和 shop.json 一样、黑市池少第一样，保存时两个池子都和设计表不同（终审：原来靠真实数据此刻不同）
+    const design = [
+      { pool: 'special', goods: real.pools!.special! },
+      { pool: 'black', goods: real.pools!.black!.slice(1) },
+    ];
+    const { t, written } = tool([], design);
     const base = t.report();
     const special = base.rows.filter((x) => x.special).map((x) => x.id);
     const black = base.rows.filter((x) => x.black).map((x) => x.id);
@@ -83,7 +110,7 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(written).toHaveLength(1);
     const file = JSON.parse(written[0]!) as ShopFile & { goods: unknown[] };
     expect(file.goods).toEqual([{ id: MISSILE, name: '普通飞弹', coin: 2500, note: '试试' }]);
-    // 和设计表不同的池子整份写（真实数据两个池子都去掉了下架的道具）
+    // 和设计表不同的池子整份写
     expect(file.pools!.special).toEqual(special.filter((id) => id !== MISSILE));
     expect(file.pools!.black).toEqual(black);
     expect(written[0]!.endsWith('\n')).toBe(true);
@@ -141,7 +168,7 @@ describe('商店整理工具（问题记录 483）', () => {
   });
 
   it('池子改回和设计表一样：shop.json 里不写这个池子（483 遗留：缺的测试）', () => {
-    // 设计表的池子换成干净的（真实设计表里还留着下架的道具，按它构建会报错）
+    // 设计表的池子换成和 shop.json 一样的：保存同样的池子时不写进 shop.json
     const design = [
       { pool: 'special', goods: real.pools!.special! },
       { pool: 'black', goods: real.pools!.black! },
@@ -158,5 +185,28 @@ describe('商店整理工具（问题记录 483）', () => {
     const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
     expect(res.errors).toEqual([]);
     expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
+  });
+
+  it('shop.json 里没写的池子用设计表的（2026-10-07 下架批遗留：缺的测试）', () => {
+    const design = [
+      { pool: 'special', goods: real.pools!.special! },
+      { pool: 'black', goods: real.pools!.black!.slice(0, 5) },
+    ];
+    const t = createShopTool({
+      readSource: () => ({
+        ...src,
+        'designed/shop_pools': design,
+        'game/shop': { goods: real.goods, pools: { special: real.pools!.special } },
+      }),
+      writeShop: () => {},
+    });
+    const r = t.report();
+    expect(r.errors).toEqual([]);
+    expect(
+      r.rows
+        .filter((x) => x.black)
+        .map((x) => x.id)
+        .sort(),
+    ).toEqual([...design[1]!.goods].sort());
   });
 });

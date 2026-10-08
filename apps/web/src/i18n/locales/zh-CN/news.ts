@@ -90,7 +90,8 @@ export default {
       `${w}在神殿探险中发现了 ${list(p.foods)
         .map((f) => `${x.foodName(num((f as P).foodsId))}×${num((f as P).num)}`)
         .join('、')}`,
-    'temple.guardian.rare': (w, p, x) => `${w}击败守护兽获得 ${x.foodName(num(p.foodsId))}`,
+    'temple.guardian.rare': (w, p, x) =>
+      `${w}击败守护兽获得 ${x.foodName(num(p.foodsId))}${p.num ? `×${num(p.num)}` : ''}`,
     'activity.coopRank': (_w, p) =>
       `《${str(p.title)}》贡献榜: ${list(p.top)
         .map(

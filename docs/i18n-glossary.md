@@ -82,6 +82,9 @@
 | 强化 / 回退 | Enhance / Undo | Renforcer / Annuler | Mejorar / Deshacer |
 | 精华（厨具） | Essence | Essence | Esencia |
 | 宝石 / 镶嵌 / 打孔 | Gem / Socket / Drill | Gemme / Sertir / Percer | Gema / Engarzar / Abrir engarce |
+| 阶（宝石，名字前的“[一阶]”） | Tier（[Tier 1]） | Rang（[Rang 1]） | Rango（[Rango 1]） |
+| 宝石阶名：原石 / 灵石 / 神石 / 原玉 / 灵玉 / 神玉 | Raw / Spirit / Divine Stone; Raw / Spirit / Divine Jade | Pierre brute / spirituelle / divine ; Jade brut / spirituel / divin | Piedra en bruto / espiritual / divina; Jade en bruto / espiritual / divino |
+| 宝石系列：智慧 / 红晶 / 黄玉 / 蓝冥 / 绿玄 / 天机 | Wisdom / Red Crystal / Topaz / Blue Nether / Green Mystic / Fate | sagesse / cristal rouge / topaze / abysses bleus / mystère vert / destin | sabiduría / cristal rojo / topacio / abismo azul / misterio verde / destino |
 | 预设（厨具） | Preset | Préréglage | Preajuste |
 | 分解 | Salvage | Démonter | Desmontar |
 | 装扮 | Appearance | Apparence | Apariencia |

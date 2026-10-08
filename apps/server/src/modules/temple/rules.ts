@@ -19,6 +19,15 @@ export function guardianRareCount(expected: number, rng: Rng): number {
   return whole + (rng.next() < expected - whole ? 1 : 0);
 }
 
+/**
+ * 神秘食材的新闻（集束飞弹那次的遗留：原来每个各发一条，同一种可能重复）：同一种合成一条，两个以上带 num
+ */
+export function guardianRareNews(ids: number[]): Array<{ foodsId: number; num?: number }> {
+  const count = new Map<number, number>();
+  for (const id of ids) count.set(id, (count.get(id) ?? 0) + 1);
+  return [...count].map(([foodsId, num]) => (num > 1 ? { foodsId, num } : { foodsId }));
+}
+
 export interface ShotInput {
   def: MissileDef;
   luckRate: number;

@@ -97,7 +97,7 @@ const news: Messages['news'] = {
         .map((f) => `${x.foodName(num((f as P).foodsId))}×${num((f as P).num)}`)
         .join(', ')} explorando el templo`,
     'temple.guardian.rare': (w, p, x) =>
-      `${w} derrotó a la bestia guardiana y obtuvo ${x.foodName(num(p.foodsId))}`,
+      `${w} derrotó a la bestia guardiana y obtuvo ${x.foodName(num(p.foodsId))}${p.num ? `×${num(p.num)}` : ''}`,
     'activity.coopRank': (_w, p) =>
       `Clasificación de aportes de «${str(p.title)}»: ${list(p.top)
         .map(

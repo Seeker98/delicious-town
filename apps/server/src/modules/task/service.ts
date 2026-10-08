@@ -6,6 +6,7 @@ import {
   type Quest,
   type QuestCond,
   type ShardSettings,
+  type Tuning,
 } from '@dt/config';
 import {
   addDays,
@@ -43,7 +44,7 @@ import {
   weeklyGroupFor,
   type QuestCtx,
 } from './quests';
-import { activationTotal, stateValue } from './rules';
+import { activationTotal, questVars, stateValue } from './rules';
 import { eligibilityOf } from '../exchange/eligibility';
 
 const SIGNIN_KEY = 'signin';
@@ -177,7 +178,7 @@ export function createTaskService(d: GameDeps) {
     const ctx: QuestCtx = { level: rest.level, star: rest.star_level, done, progress, available };
     const main = mainView(chapters, quests, ctx);
     const lines = lineViews(questLines, quests, ctx, reachedChapter(main, chapters));
-    return { ctx, main, lines, available };
+    return { ctx, main, lines, available, tuning: settings.tuning };
   }
 
   /**
@@ -232,17 +233,21 @@ export function createTaskService(d: GameDeps) {
     return { group, week, list, progress, claimed, allClaimed: list.every((q) => claimed.has(q.id)) };
   }
 
-  const questDto = (q: Quest, progress: number, claimed: boolean): QuestDto => ({
-    id: q.id,
-    name: q.name,
-    href: q.href,
-    key: q.cond.key,
-    target: q.cond.target,
-    progress,
-    done: progress >= q.cond.target,
-    claimed,
-    award: q.award,
-  });
+  const questDto = (q: Quest, progress: number, claimed: boolean, tuning: Tuning): QuestDto => {
+    const vars = questVars(q.cond.key, tuning);
+    return {
+      id: q.id,
+      name: q.name,
+      href: q.href,
+      key: q.cond.key,
+      target: q.cond.target,
+      progress,
+      done: progress >= q.cond.target,
+      claimed,
+      award: q.award,
+      ...(vars ? { vars } : {}),
+    };
+  };
 
   async function questsOf(db: Kysely<DB>, rest: RestaurantRow): Promise<QuestsDto> {
     const s = await snapshot(db, rest);
@@ -262,13 +267,13 @@ export function createTaskService(d: GameDeps) {
         claimedCount: s.main.quests.filter((q) => done.has(q.id)).length,
         doneCount: s.main.quests.filter((q) => done.has(q.id) || progress(q.cond) >= q.cond.target).length,
       },
-      main: s.main.quests.map((q) => questDto(q, progress(q.cond), done.has(q.id))),
-      leftover: s.main.leftover.map((q) => questDto(q, progress(q.cond), false)),
+      main: s.main.quests.map((q) => questDto(q, progress(q.cond), done.has(q.id), s.tuning)),
+      leftover: s.main.leftover.map((q) => questDto(q, progress(q.cond), false, s.tuning)),
       allMainDone: s.main.allDone,
       lines: s.lines.map((l) => ({
         id: l.line.id,
         name: l.line.name,
-        quest: l.quest && questDto(l.quest, progress(l.quest.cond), false),
+        quest: l.quest && questDto(l.quest, progress(l.quest.cond), false, s.tuning),
         lockedStar: l.lockedStar,
         doneCount: l.doneCount,
         total: l.total,

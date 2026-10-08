@@ -43,26 +43,6 @@
       "id": 10903,
       "name": "玄奥配方",
       "onSale": false
-    },
-    {
-      "id": 10908,
-      "name": "净化券",
-      "onSale": false
-    },
-    {
-      "id": 10909,
-      "name": "除藻剂",
-      "onSale": false
-    },
-    {
-      "id": 30511,
-      "name": "[吉祥如意]",
-      "onSale": false
-    },
-    {
-      "id": 30513,
-      "name": "[永恒之味]",
-      "onSale": false
     }
   ],
   "pools": {

@@ -804,7 +804,7 @@
      "id": 3125,
      "order": 5,
      "needStar": 0,
-     "name": "投喂克拉肯一次好感超过 35",
+     "name": "投喂克拉肯一次好感超过 {n}",
      "cond": {
       "kind": "counter",
       "key": "kraken.favorHigh",
@@ -1410,7 +1410,7 @@
      "id": 3225,
      "order": 5,
      "needStar": 0,
-     "name": "一道题持有 100 份",
+     "name": "一道题持有 {n} 份",
      "cond": {
       "kind": "counter",
       "key": "predict.hold100",
@@ -1464,7 +1464,7 @@
      "id": 3228,
      "order": 8,
      "needStar": 0,
-     "name": "一道题持有满 200 份",
+     "name": "一道题持有满 {n} 份",
      "cond": {
       "kind": "counter",
       "key": "predict.hold200",
@@ -3416,7 +3416,7 @@
      "id": 3546,
      "order": 6,
      "needStar": 0,
-     "name": "邀请的好友升到 10 级",
+     "name": "邀请的好友升到 {n} 级",
      "cond": {
       "kind": "state",
       "key": "invite.level10",
@@ -3438,7 +3438,7 @@
      "id": 3547,
      "order": 7,
      "needStar": 0,
-     "name": "邀请的好友升到 30 级",
+     "name": "邀请的好友升到 {n} 级",
      "cond": {
       "kind": "state",
       "key": "invite.level30",
