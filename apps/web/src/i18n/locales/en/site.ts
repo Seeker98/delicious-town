@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    renownTicket1008:
+      'The Chef Tower renown shop now always stocks Level 4 Random Ingredient Tickets (50 renown, 3 per week) and Level 5 Random Ingredient Tickets (80 renown, 2 per week)',
     economy1008:
       'Adjusted a few ways of turning items into coins: items that have a diamond price, however you got them, sell back to the shop for at most 2,000 coins per diamond; Gold Coins in the black market now cost 50 diamonds; Ichiban Kuji tickets now cost 40,000 coins; Mystery Ingredient Vouchers, Random Mystery Ingredient Vouchers, all exploration maps and Fragment Shards can no longer be sold to the shop, only used; the Exchange no longer buys level 7 ingredients (its existing stock is still for sale)',
     business1008:

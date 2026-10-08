@@ -709,7 +709,7 @@ describe('厨塔配置（子项目 4C-2）', () => {
 
   it('声望商店是正式字段', () => {
     const { bundle } = realBuild();
-    expect(bundle!.renownShop).toHaveLength(12);
+    expect(bundle!.renownShop).toHaveLength(14);
     expect(bundle!.renownShop[0]).toEqual({
       goodsId: GOODS.dtTicket,
       renown: 60,
