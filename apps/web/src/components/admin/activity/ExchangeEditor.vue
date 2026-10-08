@@ -200,6 +200,7 @@ const inUse = (i: number) =>
     <RewardItemsEditor
       :model-value="s.award"
       :hats="true"
+      presets
       :id-prefix="`shop${i}`"
       @update:model-value="setShop(i, { award: $event })"
     />

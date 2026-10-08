@@ -72,6 +72,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     <RewardItemsEditor
       :model-value="l.free ?? {}"
       :hats="true"
+      presets
       :id-prefix="`free${i}`"
       @update:model-value="setLevel(i, { free: orNull($event) })"
     />
@@ -86,6 +87,7 @@ const num = (e: Event) => Number((e.target as HTMLInputElement).value);
     <RewardItemsEditor
       :model-value="l.premium ?? {}"
       :hats="true"
+      presets
       :id-prefix="`prem${i}`"
       @update:model-value="setLevel(i, { premium: orNull($event) })"
     />

@@ -90,6 +90,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
     <RewardItemsEditor
       :model-value="m.award"
       :hats="true"
+      presets
       :id-prefix="`ms${i}`"
       @update:model-value="setMs(i, { award: $event })"
     />
@@ -154,6 +155,7 @@ const errsUnder = (prefix: string) => Object.entries(props.errors).filter(([k]) 
     <RewardItemsEditor
       :model-value="r.award"
       :hats="true"
+      presets
       :id-prefix="`rk${i}`"
       @update:model-value="setRank(i, { award: $event })"
     />

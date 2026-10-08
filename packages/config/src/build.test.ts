@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ACTIVITY_REWARD_PRESETS } from '@dt/shared';
 import { buildBundle, featureOfKey } from './build';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -15,6 +16,18 @@ const RENUMBER_MAP = JSON.parse(readFileSync(join(defaultDataDir(), 'renumber', 
 };
 
 const source = () => readSourceDir(defaultDataDir());
+
+describe('后台活动的推荐奖励（问题记录 505）', () => {
+  it('每一项的 id 都是写着的那样道具或食材，没下架（重新编号后要跟着改）', () => {
+    const b = realBuild().bundle!;
+    for (const p of ACTIVITY_REWARD_PRESETS) {
+      const row =
+        p.kind === 'goods' ? b.goods.find((g) => g.id === p.id) : b.foods.find((f) => f.id === p.id);
+      expect(row?.name, p.name).toBe(p.name);
+      expect(row?.retired ?? false, p.name).toBe(false);
+    }
+  });
+});
 
 describe('Wiki 隐藏道具清单（问题记录 142）', () => {
   it('清单里的道具都存在（改了道具 id 时提醒更新清单）', () => {

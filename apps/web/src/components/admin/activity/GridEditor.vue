@@ -64,6 +64,7 @@ watch(
   <RewardItemsEditor
     :model-value="modelValue.lineAward"
     :hats="true"
+    presets
     id-prefix="line"
     @update:model-value="patch({ lineAward: $event })"
   />
@@ -74,6 +75,7 @@ watch(
   <RewardItemsEditor
     :model-value="modelValue.fullAward"
     :hats="true"
+    presets
     id-prefix="full"
     @update:model-value="patch({ fullAward: $event })"
   />

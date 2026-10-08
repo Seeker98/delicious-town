@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useCatalogStore } from '../../stores/catalog';
+import { ACTIVITY_REWARD_PRESETS } from '@dt/shared';
 import RewardItemsEditor from './RewardItemsEditor.vue';
 
 describe('RewardItemsEditor', () => {
@@ -64,5 +65,26 @@ describe('RewardItemsEditor', () => {
   it('写明食材有单种上限：超出橱柜和冰箱的部分会丢弃（问题记录 204）', () => {
     const w = mount(RewardItemsEditor, { props: { modelValue: {}, hats: false } });
     expect(w.find('[data-testid="ri-limits"]').text()).toContain('多出的会丢弃');
+  });
+
+  it('推荐奖励（问题记录 505）：开了 presets 才显示；点一下加一行，再点同一样加数量', async () => {
+    expect(
+      mount(RewardItemsEditor, { props: { modelValue: {} } })
+        .find('[data-testid="ri-presets"]')
+        .exists(),
+    ).toBe(false);
+    const w = mount(RewardItemsEditor, { props: { modelValue: {}, presets: true } });
+    const food = ACTIVITY_REWARD_PRESETS.find((p) => p.kind === 'foods')!;
+    const goods = ACTIVITY_REWARD_PRESETS.find((p) => p.kind === 'goods')!;
+    const btn = (kind: string, id: number) => w.find(`[data-testid="ri-preset-${kind}-${id}"]`);
+    await btn('foods', food.id).trigger('click');
+    await btn('goods', goods.id).trigger('click');
+    await btn('foods', food.id).trigger('click');
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({
+      goods: [{ id: goods.id, num: goods.num }],
+      foods: [{ id: food.id, num: food.num * 2 }],
+    });
+    // 按钮上写名字，不靠目录（目录没加载时也能看懂）
+    expect(btn('foods', food.id).text()).toContain(food.name);
   });
 });

@@ -118,6 +118,17 @@ describe('AdminActivitiesView', () => {
     expect(w.find('[data-testid="err-def.unlock"]').text()).toBe('道具或食材不存在');
   });
 
+  it('各类活动的奖励都有推荐奖励（问题记录 505）；战令的解锁价格没有', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    for (const kind of ['goals', 'grid', 'pass', 'exchange', 'coop']) {
+      await w.find('[data-testid="ac-kind"]').setValue(kind);
+      expect(w.findAll('[data-testid$="-presets"]').length, kind).toBeGreaterThan(0);
+    }
+    expect(w.find('[data-testid="unlock-presets"]').exists()).toBe(false);
+  });
+
   it('已开始的活动编辑时类型、时间、定义只读，只能改标题说明和结束时间', async () => {
     const w = mount(AdminActivitiesView);
     await flushPromises();
