@@ -143,7 +143,7 @@
     "guessBonusHours": [12, 18],
     "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006], "maxBuy": 999 },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707], "diamondSellCoin": 2000, "maxBuy": 999 },
   "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
@@ -407,12 +407,12 @@
     "minLevel": 20, "minAccountDays": 7, "feeRate": 0.05, "bandLow": 0.5, "bandHigh": 2,
     "refMinTrades": 3, "maxOpenOrders": 10, "orderHours": 24, "maxQty": 999, "closedLevels": [6], 
     "suspicious": { "traceDays": 30, "edgeHigh": 1.8, "edgeLow": 0.6, "repeatDays": 7, "repeatCount": 3, "largeAmount": 1000000, "holdHours": 24 },
-    "maker": { "enabled": true, "bidRate": 0.7, "askRate": 1.3, "marketCapRate": 0.9, "dailyBuy": 100, "stockMax": 500, "playerDaily": 20 },
+    "maker": { "enabled": true, "bidRate": 0.7, "askRate": 1.3, "marketCapRate": 0.9, "dailyBuy": 100, "stockMax": 500, "playerDaily": 20, "noBidLevels": [7] },
     "refOverrides": {}
   },
   "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "stats": true, "b": 100, "marketCloseMin": 5, "statsCloseHour": 18 } },
   "kuji": {
-    "price": 20000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 150, "maxPools": 3,
+    "price": 40000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 150, "maxPools": 3,
     "tiers": [
       { "key": "A", "count": 1, "award": { "diamond": 300 }, "icon": "kuji_a", "news": "broadcast" },
       { "key": "B", "count": 2, "award": { "diamond": 100 } },

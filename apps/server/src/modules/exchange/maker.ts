@@ -191,8 +191,10 @@ export async function makerQuote(
   const st = await makerState(db, x.shardId, x.foodsId, x.day);
   const mine = await getDaily(db, x.restId, TO_SYSTEM, x.day);
   const n = makerBuyQty(m, { ...st, playerToday: mine });
+  // 这些等级系统不收，库存照样卖（经济分析 2026-10-08）
+  const noBid = m.noBidLevels.includes(food.level);
   return {
-    bid: p.bid !== null && n > 0 ? { price: p.bid, qty: n, floor: p.floor } : null,
+    bid: p.bid !== null && n > 0 && !noBid ? { price: p.bid, qty: n, floor: p.floor } : null,
     ask: st.stock > 0 ? { price: p.ask, qty: st.stock } : null,
   };
 }

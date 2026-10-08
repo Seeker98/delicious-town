@@ -109,12 +109,40 @@ describe('黑市、出售、丢弃', () => {
       params: { reason: 'not_sellable' },
     });
   });
-  it('出售按页面上的单价 × 数量付银币，单价没有浮点误差（终审：确认框写的数要和到账一致）', async () => {
-    // 爆裂飞弹 11,000 × 0.7 用浮点算是 7,699.999…，向下取整会少 1（原来用中扩建卡 45,000，问题记录 513 改价后换成它）
-    expect(sellPrice(config.requireGoods(gid('爆裂飞弹')), config.tuning)).toBe(7_700);
-    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { [gid('爆裂飞弹')]: 3 } });
-    await shop().sell(ctx, { goodsId: gid('爆裂飞弹'), num: 3 });
-    expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 7_700);
+  it('出售单价没有浮点误差（终审：确认框写的数要和到账一致）', () => {
+    // 11,000 × 0.7 用浮点算是 7,699.999…，向下取整会少 1；现有道具里这样的都有钻石价、按钻石封顶，所以去掉钻石价来测
+    expect(sellPrice({ ...config.requireGoods(gid('爆裂飞弹')), diamond: 0 }, config.tuning)).toBe(7_700);
+  });
+  it('有钻石价的卖店价不超过 钻石价 × shop.diamondSellCoin（经济分析 2026-10-08：一番赏的钻石买鞋带卖店）', async () => {
+    const sp = (name: string) => sellPrice(config.requireGoods(gid(name)), config.tuning);
+    expect(config.tuning.shop.diamondSellCoin).toBe(2_000);
+    expect(sp('鞋带')).toBe(2_000);
+    expect(sp('中扩容卡')).toBe(50_000);
+    expect(sp('神秘食谱')).toBe(10_000);
+    // 银币价 × 0.7 更低的照旧
+    expect(sellPrice({ ...config.requireGoods(gid('鞋带')), coin: 1_000 }, config.tuning)).toBe(700);
+    // 到账和页面上的单价一致
+    const ctx = await newRestaurant(t, { patch: { coin: 0 }, goods: { [gid('鞋带')]: 3 } });
+    await shop().sell(ctx, { goodsId: gid('鞋带'), num: 3 });
+    expect((await restRow(t, ctx.restaurantId)).coin).toBe(3 * 2_000);
+  });
+  it('兑换券、随机劵、探险图不能卖回商店，只能拿来用（经济分析 2026-10-08）', () => {
+    for (const name of [
+      '神秘食材兑换券',
+      '神秘食材随机劵',
+      '探险图',
+      '高级探险图',
+      '顶级探险图',
+      '极品探险图',
+    ])
+      expect(sellPrice(config.requireGoods(gid(name)), config.tuning), name).toBeNull();
+  });
+  it('黑市里能换银币的道具，换到的银币不超过 钻石价 × shop.diamondSellCoin（金币）', () => {
+    for (const id of config.bundle.shopPools.black) {
+      const g = config.requireGoods(id);
+      if (g.use?.kind === 'currency')
+        expect(g.use.coin, g.name).toBeLessThanOrEqual(g.diamond * config.tuning.shop.diamondSellCoin);
+    }
   });
   it('蟹币不能卖回商店（用户 2026-10-08 定：100 张礼券换 1 个蟹币，原来能卖 35 万银币）', async () => {
     expect(sellPrice(config.requireGoods(GOODS.krabCoin), config.tuning)).toBeNull();

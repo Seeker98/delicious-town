@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    economy1008:
+      'Quelques façons de transformer des objets en pièces ont été ajustées : les objets achetés avec des diamants se revendent à la boutique au plus 2 000 pièces par diamant ; les Pièces d’or du marché noir coûtent désormais 50 diamants ; les tickets de l’Ichiban Kuji coûtent désormais 40 000 pièces ; les Bons d’ingrédient mystère, les Bons d’ingrédient mystère au hasard et toutes les cartes d’exploration ne se revendent plus à la boutique, ils servent seulement à être utilisés ; la Bourse n’achète plus les ingrédients de niveau 7 (son stock existant reste en vente)',
     business1008:
       'Nouvelle ligne de quêtes secondaires «\u202fGestion\u202f» (dès le chapitre 2)\u202f: ajouter des tables, améliorer le bidon d’huile, installer des équipements, rester ouvert de nombreux tours en une journée et gagner de 100\u202f000 à 1\u202f000\u202f000 pièces de règlement en une journée. Les pièces et les tours comptent votre meilleure journée\u202f; une journée compte une fois totalisée, juste après minuit',
     sideB1008:

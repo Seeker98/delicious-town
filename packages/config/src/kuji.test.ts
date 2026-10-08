@@ -26,7 +26,7 @@ describe('一番赏配置（设计 §3、§4）', () => {
     }
     expect(b.looks.icons.map((i) => i.key)).toEqual(expect.arrayContaining(['kuji_a', 'kuji_last']));
     const k = b.tuning.kuji;
-    expect(k).toMatchObject({ price: 20000, dailyBuy: 10, maxDraw: 10, activeTickets: 1 });
+    expect(k).toMatchObject({ price: 40000, dailyBuy: 10, maxDraw: 10, activeTickets: 1 });
     expect(k.tiers.map((x) => [x.key, x.count])).toEqual([
       ['A', 1],
       ['B', 2],

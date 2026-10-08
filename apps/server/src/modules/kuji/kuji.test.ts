@@ -37,7 +37,7 @@ describe('看板（一番赏设计 §7.1）', () => {
       ['F', 50, 50],
     ]);
     expect(v.tiers[0]).toMatchObject({ icon: 'kuji_a', big: true });
-    expect(v).toMatchObject({ tickets: 3, price: 20000, buyLeft: 10, maxDraw: 10, recent: [] });
+    expect(v).toMatchObject({ tickets: 3, price: 40000, buyLeft: 10, maxDraw: 10, recent: [] });
   });
 });
 
@@ -46,7 +46,7 @@ describe('买券（一番赏设计 §5.3）', () => {
     const shardId = await createShard(t.db);
     const r = await player(shardId);
     await svc().buy(r, 4);
-    expect(await coin(r.restaurantId)).toBe(1_000_000 - 80_000);
+    expect(await coin(r.restaurantId)).toBe(1_000_000 - 160_000);
     expect(await goodsNum(t, r.restaurantId, T)).toBe(4);
     await expect(svc().buy(r, 7)).rejects.toMatchObject({ params: { what: 'kuji_buy', max: 10, left: 6 } });
     await svc().buy(r, 6);
@@ -360,7 +360,7 @@ describe('backlog 一番赏：抽签结果和看板', () => {
     const shardId = await createShard(t.db);
     const r = await player(shardId, { coin: 100_000 });
     expect((await svc().view(r)).coin).toBe(100_000);
-    expect((await svc().buy(r, 2)).data.coin).toBe(60_000);
+    expect((await svc().buy(r, 2)).data.coin).toBe(20_000);
   });
 });
 
@@ -408,7 +408,7 @@ describe('豪华一番赏（240-2）', () => {
     expect(v).toMatchObject({ line: 'deluxe', price: 300000, buyLeft: 10, maxDraw: 10, theme: null });
     expect(v.pool).toMatchObject({ seq: 1, total: 20, left: 20 });
     const n = await svc().view(r);
-    expect(n).toMatchObject({ line: 'normal', price: 20000 });
+    expect(n).toMatchObject({ line: 'normal', price: 40000 });
     expect(n.pool.total).toBe(80);
   });
 
@@ -417,7 +417,7 @@ describe('豪华一番赏（240-2）', () => {
     const r = await dxPlayer(shardId);
     await svc().buy(r, 10);
     await svc().buy(r, 2, 'deluxe');
-    expect(await coin(r.restaurantId)).toBe(10_000_000 - 200_000 - 600_000);
+    expect(await coin(r.restaurantId)).toBe(10_000_000 - 400_000 - 600_000);
     expect(await goodsNum(t, r.restaurantId, DX)).toBe(2);
     expect((await svc().view(r, 'deluxe')).buyLeft).toBe(8);
     expect((await svc().view(r)).buyLeft).toBe(0);
@@ -499,5 +499,16 @@ describe('豪华一番赏（240-2）', () => {
       .where('id', '=', String(sep.pool.id))
       .executeTakeFirstOrThrow();
     expect(old.status).toBe('expired');
+  });
+});
+
+describe('券价（经济分析 2026-10-08：一番赏的钻石换道具卖店）', () => {
+  it('普通池每张券的期望奖励低于券价；钻石按卖店折算（shop.diamondSellCoin）算银币', () => {
+    const tu = t.deps.config.tuning;
+    const worth = (a: { coin?: number; diamond?: number }) =>
+      (a.coin ?? 0) + (a.diamond ?? 0) * tu.shop.diamondSellCoin;
+    const tickets = tu.kuji.tiers.reduce((s, x) => s + x.count, 0);
+    const total = tu.kuji.tiers.reduce((s, x) => s + x.count * worth(x.award), 0) + worth(tu.kuji.last.award);
+    expect(total / tickets).toBeLessThan(tu.kuji.price);
   });
 });
