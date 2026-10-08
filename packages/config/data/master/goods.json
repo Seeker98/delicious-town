@@ -1,5 +1,5 @@
 {
- "rule": "全部道具的定义（重新编号 PR 1）：src = 来历（original 原版、lore 厨具设定新增、streets 新街道导入、souvenir 节日纪念品和初代手办、kuji 一番赏、newbie 新手券、fund 发展基金、poster 后期海报奖杯、luckGem 天机石）；厨具说明是强化表改写前的；legacyId = 重新编号前的编号，group = 小类（data/game/goods_groups.json）",
+ "rule": "全部道具的定义（重新编号 PR 1）：src = 来历（original 原版、lore 厨具设定新增、streets 新街道导入、souvenir 节日纪念品和初代手办、kuji 一番赏、newbie 新手券、fund 发展基金、poster 后期海报奖杯、luckGem 天机宝石）；厨具说明是强化表改写前的；legacyId = 重新编号前的编号，group = 小类（data/game/goods_groups.json）",
  "data": [
   {"id":10001,"legacyId":1,"src":"original","group":"currency","name":"神秘礼券","type":1,"deviceType":98,"invalidHours":null,"maxNum":9999,"stackable":true,"level":1,"coin":0,"diamond":0,"onSale":false,"awardFlag":1,"desc":"神秘礼券, 用来跟雯姐约(hua)会(quan)的材料","value":null},
   {"id":10002,"legacyId":84,"src":"original","group":"currency","name":"银币","type":0,"deviceType":84,"invalidHours":null,"maxNum":999999999,"stackable":true,"level":1,"coin":1,"diamond":0,"onSale":false,"awardFlag":null,"desc":"1个锈迹斑斑的银币, 看起来像是小镇流通的货币, 使用后获得1银币","value":{"coin":1}},
