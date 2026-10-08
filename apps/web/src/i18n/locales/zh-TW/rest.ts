@@ -24,7 +24,10 @@ export default {
     noRound: '還沒有結算過',
     sources: '加成來源',
     records: '收益記錄',
-    cols: { time: '時間', coin: '銀幣', exp: '經驗', oil: '耗油' },
+    cols: { time: '時間', guests: '客人', coin: '銀幣', exp: '經驗', oil: '耗油' },
+    today: (rounds: number, coin: string, exp: string, oil: string) =>
+      `今天 ${rounds} 輪 · 銀幣 ${coin} · 經驗 ${exp} · 耗油 ${oil}`,
+    bonus: '加成',
     more: '更早的記錄',
   },
   floor: {

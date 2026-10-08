@@ -25,7 +25,10 @@ const rest: Messages['rest'] = {
     noRound: "Aucun tour n'a encore été réglé",
     sources: 'Sources des bonus',
     records: 'Historique des revenus',
-    cols: { time: 'Heure', coin: 'Pièces', exp: 'EXP', oil: 'Huile' },
+    cols: { time: 'Heure', guests: 'Clients', coin: 'Pièces', exp: 'EXP', oil: 'Huile' },
+    today: (rounds, coin, exp, oil) =>
+      `Aujourd’hui\u202f: ${rounds} ${plFr(rounds, 'tour', 'tours')} · ${coin} pièces · ${exp} EXP · ${oil} d’huile`,
+    bonus: 'Bonus',
     more: 'Entrées plus anciennes',
   },
   floor: {
@@ -94,7 +97,7 @@ const rest: Messages['rest'] = {
     noSide: 'Aucune quête secondaire pour le moment',
     tabs: { main: 'Principale', weekly: 'Hebdo', side: 'Secondaires' },
     noWeekly: 'Aucune quête hebdomadaire pour le moment',
-    activationLink: 'Pointage et activité du jour',
+    activationLink: 'Activité',
     award: (text) => `Récompense : ${text}`,
     claimTask: 'Récupérer',
     claimFailed: 'Impossible de récupérer',

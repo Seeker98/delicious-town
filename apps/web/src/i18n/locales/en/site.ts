@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    pages1008:
+      'Income page: the log is now at the top with today’s totals and a Guests column, and bonuses are folded into an expandable section that only lists non-zero items; the links between the Quests and activity pages no longer take a line of their own; the Gear page shows slots and buttons first, with the notes on chef power and the rest under “How these numbers work”; gear details list only stats that have a value and say plainly when an item can’t hold gems',
     fixes1008:
       'Countdowns and remaining times now follow server time, so they stay right even if your device clock is off; replacing a facility that has not expired always asks first; entries in the Item log that are not from today show the date; large quest progress numbers have thousands separators; the main quest “Place a facility” now goes to the home page; Recipe progress shows “Loading” while it loads',
     tasksSplit1008:

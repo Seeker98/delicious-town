@@ -6,14 +6,16 @@ export default {
   /** 属性和数值："厨艺12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '厨力',
-  powerNote: ' (五项之和 + 幸运/2；只作参考，赛厨的胜负看评委按色香味形养打分)',
+  powerNote: '厨力 = 五项之和 + 幸运/2，只作参考；赛厨的胜负看评委按色香味形养打分',
+  /** 厨力等三行的说明收在这里（问题记录 530） */
+  notesTitle: '这些数怎么算',
+  duelNote: '赛厨时的进攻、防守算上了所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个',
   /** 穿戴厨具（含宝石）的收益加成（问题记录 411） */
   /** 赛厨时的厨力（问题记录 417） */
-  duelPower: (attack: string, defend: string) =>
-    `赛厨时: 进攻 ${attack}、防守 ${defend} (算上所有幸运加成和套装的进攻、防守加成；厨塔页显示的是进攻这个)`,
+  duelPower: (attack: string, defend: string) => `赛厨时: 进攻 ${attack}、防守 ${defend}`,
   income: (coin: string, exp: string, gold: string) =>
     `厨具收益加成: 最终银币 ${coin}、最终经验 ${exp}、特色菜金牌 ${gold}`,
-  incomeNote: ' (厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少)',
+  incomeNote: '厨具收益加成: 厨具和宝石的属性越高越多，幸运不算；同样的点数创意最多、调味最少',
   empty: '空',
   noPieces: '没有这个部位的厨具',
   needLevel: (lv: number) => `需要 ${lv} 级`,
@@ -53,6 +55,8 @@ export default {
     failed: '加点失败',
   },
   detail: {
+    noAttrs: '没有属性加成',
+    noGems: '这件不能镶宝石',
     rows: { base: '基础', boost: '强化', gem: '宝石', total: '合计' },
     meta: (part: string, lv: number, worn: boolean) => `${part} · ${lv} 级可穿${worn ? ' · 穿戴中' : ''}`,
     stress: '强化',

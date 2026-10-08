@@ -133,7 +133,17 @@ describe('RestActivationView', () => {
   });
 
   it('有去任务页的入口（终审：以前收藏任务页的玩家两边都能找到）', async () => {
-    expect((await mountView()).get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
+    const w = await mountView();
+    expect(w.get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
+    // 和签到按钮放在卡片标题那一行，不单独占一行（问题记录 530）
+    expect(w.find('[data-testid="activation-head"] [data-testid="to-tasks"]').exists()).toBe(true);
+    expect(w.find('[data-testid="activation-head"] [data-testid="signin"]').exists()).toBe(true);
+  });
+
+  it('读取失败、还没读到时也有去任务页的入口（终审 M2）', async () => {
+    vi.mocked(endpoints.activation).mockRejectedValue(new Error('x'));
+    const w = await mountView();
+    expect(w.get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
   });
 
   it('签到按钮', async () => {

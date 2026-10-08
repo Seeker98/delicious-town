@@ -132,6 +132,22 @@ describe('EquipView', () => {
     );
   });
 
+  it('部位和操作按钮在最上面，属性表在下面；厨力等三行只写数，说明收在“这些数怎么算”里（问题记录 530）', async () => {
+    const w = await mountView();
+    const html = w.html();
+    expect(html.indexOf('data-testid="slot-1"')).toBeLessThan(html.indexOf('data-testid="attr-table"'));
+    expect(html.indexOf('data-testid="open-presets"')).toBeLessThan(html.indexOf('data-testid="attr-table"'));
+    expect(w.get('[data-testid="duel-power"]').text()).toBe('赛厨时: 进攻 9、防守 8');
+    expect(w.get('[data-testid="power-line"]').text()).not.toContain('五项之和');
+    const notes = w.get('[data-testid="equip-notes"]');
+    expect(notes.element.tagName).toBe('DETAILS');
+    expect((notes.element as HTMLDetailsElement).open).toBe(false);
+    expect(notes.text()).toContain('这些数怎么算');
+    expect(notes.text()).toContain('五项之和');
+    expect(notes.text()).toContain('厨塔页显示的是进攻');
+    expect(notes.text()).toContain('幸运不算');
+  });
+
   it('点部位列出厨具；等级不够的不能穿；点穿戴调用接口', async () => {
     const w = await mountView();
     await w.find('[data-testid="slot-1"]').trigger('click');

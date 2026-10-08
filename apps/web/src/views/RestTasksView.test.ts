@@ -297,6 +297,11 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     expect(w.findAll('[data-testid^="tab-"]').map((x) => x.text())).toEqual(['主线', '每周', '支线']);
     expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
     expect(w.get('[data-testid="to-activation"]').attributes('href')).toBe('/rest/activation');
+    // 入口放在选项卡那一行的右边，不单独占一行（问题记录 530）
+    expect(w.find('[data-testid="task-tabs-row"] [data-testid="to-activation"]').exists()).toBe(true);
+    expect(w.find('[data-testid="task-tabs"] [data-testid="to-activation"]').exists()).toBe(false);
+    // 放不下时缩短显示，不挤到第二行
+    expect(w.get('[data-testid="to-activation"]').classes()).toContain('text-truncate');
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-main',
     ]);

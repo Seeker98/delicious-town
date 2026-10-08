@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    pages1008:
+      'Página de ingresos: el historial está ahora arriba, con los totales de hoy y una columna de clientes, y las bonificaciones van en una sección desplegable que solo muestra las que no son 0; los enlaces entre Misiones y la página de actividad ya no ocupan una línea propia; la página de Equipo muestra primero los huecos y los botones, y las notas sobre el poder de chef y lo demás van en «Cómo se calculan estos números»; el detalle del equipo solo muestra los atributos con valor y dice claramente cuándo un objeto no admite gemas',
     fixes1008:
       'Las cuentas atrás y los tiempos restantes siguen ahora la hora del servidor, así que son correctos aunque el reloj de tu dispositivo vaya mal; sustituir una instalación que no ha caducado siempre pide confirmación; las entradas del Registro de objetos que no son de hoy muestran la fecha; los números grandes del progreso de misiones llevan separador de miles; la misión principal «Colocar una instalación» lleva ahora a la página de inicio; Progreso de recetas muestra «Cargando» mientras carga',
     tasksSplit1008:

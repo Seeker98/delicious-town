@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    pages1008:
+      "Page des revenus\u202f: l'historique est désormais en haut, avec les totaux du jour et une colonne Clients, et les bonus sont regroupés dans une section dépliable qui n'affiche que ceux différents de 0\u202f; les liens entre les Quêtes et la page d'activité n'occupent plus une ligne à part\u202f; la page Équipement affiche d'abord les emplacements et les boutons, et les explications sur la puissance et le reste passent dans «\u202fComment ces chiffres sont calculés\u202f»\u202f; le détail d'un ustensile n'affiche que les caractéristiques non nulles et indique clairement quand il ne peut pas recevoir de gemmes",
     fixes1008:
       "Les comptes à rebours et les temps restants suivent désormais l'heure du serveur, même si l'horloge de votre appareil est décalée\u202f; remplacer un équipement qui n'a pas expiré demande toujours confirmation\u202f; dans l'Historique des objets, les entrées qui ne sont pas d'aujourd'hui affichent la date\u202f; les grands nombres de progression des quêtes ont un séparateur de milliers\u202f; la quête principale «\u202fPlacer un équipement\u202f» mène désormais à l'accueil\u202f; Progression des recettes affiche «\u202fChargement\u202f» pendant le chargement",
     tasksSplit1008:

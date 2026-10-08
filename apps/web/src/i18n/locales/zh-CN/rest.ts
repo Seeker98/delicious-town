@@ -23,7 +23,10 @@ export default {
     noRound: '还没有结算过',
     sources: '加成来源',
     records: '收益记录',
-    cols: { time: '时间', coin: '银币', exp: '经验', oil: '耗油' },
+    cols: { time: '时间', guests: '客人', coin: '银币', exp: '经验', oil: '耗油' },
+    today: (rounds: number, coin: string, exp: string, oil: string) =>
+      `今天 ${rounds} 轮 · 银币 ${coin} · 经验 ${exp} · 耗油 ${oil}`,
+    bonus: '加成',
     more: '更早的记录',
   },
   floor: {

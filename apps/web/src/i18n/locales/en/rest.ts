@@ -25,7 +25,10 @@ const rest: Messages['rest'] = {
     noRound: 'No round settled yet',
     sources: 'Bonus sources',
     records: 'Income log',
-    cols: { time: 'Time', coin: 'Coins', exp: 'EXP', oil: 'Oil used' },
+    cols: { time: 'Time', guests: 'Guests', coin: 'Coins', exp: 'EXP', oil: 'Oil used' },
+    today: (rounds, coin, exp, oil) =>
+      `Today: ${rounds} ${plEn(rounds, 'round', 'rounds')} · ${coin} coins · ${exp} EXP · ${oil} oil`,
+    bonus: 'Bonuses',
     more: 'Older entries',
   },
   floor: {
@@ -93,7 +96,7 @@ const rest: Messages['rest'] = {
     noSide: 'No side quests right now',
     tabs: { main: 'Main', weekly: 'Weekly', side: 'Side' },
     noWeekly: 'No weekly quests right now',
-    activationLink: 'Check-in & daily activity',
+    activationLink: 'Daily activity',
     award: (text) => `Reward: ${text}`,
     claimTask: 'Claim',
     claimFailed: 'Could not claim',

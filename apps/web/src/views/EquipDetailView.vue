@@ -25,6 +25,10 @@ const backPick = ref<number | null>(null);
 const busy = ref(false);
 const pct = (x: number) => formatPct(x, { min: 1 });
 const ROWS = ['base', 'boost', 'gem', 'total'] as const;
+/** 只列有数的属性（问题记录 530：六行里大多是 0） */
+const shownAttrs = computed(() =>
+  e.value ? ATTR_KEYS.filter((k) => ROWS.some((r) => e.value![r][k] !== 0)) : [],
+);
 
 async function load() {
   d.value = await endpoints.equipDetail(id);
@@ -117,7 +121,10 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
     <p v-if="desc" class="small text-muted mb-2" data-testid="equip-desc">{{ desc }}</p>
 
     <!-- 每项属性一行（视觉第三轮：六列属性横排，英法西文要左右滑；和厨具页的属性表一致） -->
-    <table class="table table-sm small">
+    <div v-if="shownAttrs.length === 0" class="small text-muted mb-2" data-testid="no-attrs">
+      {{ t.equip.detail.noAttrs }}
+    </div>
+    <table v-else class="table table-sm small">
       <thead>
         <tr>
           <th></th>
@@ -125,7 +132,7 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
         </tr>
       </thead>
       <tbody>
-        <tr v-for="k in ATTR_KEYS" :key="k" :data-testid="`attr-row-${k}`">
+        <tr v-for="k in shownAttrs" :key="k" :data-testid="`attr-row-${k}`">
           <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
           <td v-for="key in ROWS" :key="key" :class="['text-end', { 'fw-bold': key === 'total' }]">
             {{ e[key][k] }}
@@ -180,7 +187,11 @@ onMounted(() => load().catch((err) => toast.push(errorMessage(err, t.value.equip
       </div>
     </div>
 
-    <div class="border rounded p-2 mb-2 small">
+    <!-- 不能镶宝石的厨具只写一句（问题记录 530：原来写“宝石 0/0 (最多 0 孔…)”） -->
+    <div v-if="e.maxHole === 0 && e.gems.length === 0" class="small text-muted mb-2" data-testid="no-gems">
+      {{ t.common.colon(t.equip.detail.gems) }}{{ t.equip.detail.noGems }}
+    </div>
+    <div v-else class="border rounded p-2 mb-2 small">
       <div class="fw-bold mb-1">
         {{ t.equip.detail.gems }} <span data-testid="hole-count">{{ e.gems.length }}/{{ e.curHole }}</span>
         <span class="text-muted">{{

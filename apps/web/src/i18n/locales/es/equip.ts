@@ -8,13 +8,15 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Poder de chef',
   powerNote:
-    '(suma de los cinco atributos + Suerte/2; solo orientativo: los duelos de cocina los deciden jueces que puntúan Color, Aroma, Sabor, Forma y Nutrición)',
-  duelPower: (attack, defend) =>
-    `En los duelos: ataque ${attack}, defensa ${defend} (con todos los extras de Suerte y los de ataque y defensa del conjunto; la Torre de chefs muestra el de ataque)`,
+    'Poder de chef = suma de los cinco atributos + Suerte/2, solo orientativo; los duelos de cocina los deciden jueces que puntúan Color, Aroma, Sabor, Forma y Nutrición',
+  notesTitle: 'Cómo se calculan estos números',
+  duelNote:
+    'El ataque y la defensa en los duelos incluyen todos los extras de Suerte y los de ataque y defensa del conjunto; la Torre de chefs muestra el de ataque',
+  duelPower: (attack, defend) => `En los duelos: ataque ${attack}, defensa ${defend}`,
   income: (coin, exp, gold) =>
     `Bonificación del equipo: monedas finales ${coin}, EXP final ${exp}, oro del plato estrella ${gold}`,
   incomeNote:
-    '(más atributos de equipo y gemas dan más; la Suerte no cuenta; por punto, la Creatividad es la que más y la Sazón la que menos)',
+    'Bonificación del equipo: más atributos de equipo y gemas dan más; la Suerte no cuenta; por punto, la Creatividad es la que más y la Sazón la que menos',
   empty: 'Vacío',
   noPieces: 'No hay utensilios para esta ranura',
   needLevel: (lv) => `Requiere nivel ${lv}`,
@@ -55,6 +57,8 @@ const equip: Messages['equip'] = {
     failed: 'No se pudieron asignar los puntos',
   },
   detail: {
+    noAttrs: 'Sin bonificaciones de atributos',
+    noGems: 'este objeto no admite gemas',
     rows: { base: 'Base', boost: 'Mejora', gem: 'Gemas', total: 'Total' },
     meta: (part, lv, worn) => `${part} · se equipa en nivel ${lv}${worn ? ' · Equipado' : ''}`,
     stress: 'Mejorar',

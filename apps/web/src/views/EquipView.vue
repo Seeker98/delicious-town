@@ -121,44 +121,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
     <h5>
       {{ t.equip.title }} <small class="text-muted">{{ t.equip.count(o.count) }}</small>
     </h5>
-    <!-- 每项属性一行、三列数值：原来属性横排七列，英法西文在手机上要左右滑才看得到后几项（问题记录 304、质量期 ④） -->
-    <div class="table-responsive mb-2" data-testid="attr-table">
-      <table class="table table-sm small mb-0">
-        <thead>
-          <tr>
-            <th></th>
-            <th class="text-end">{{ t.equip.rows.points }}</th>
-            <th class="text-end">{{ t.equip.rows.gear }}</th>
-            <th class="text-end">{{ t.equip.rows.total }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="k in ATTR_KEYS" :key="k">
-            <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
-            <td class="text-end">{{ o.attrs.points[k] }}</td>
-            <td class="text-end">{{ o.attrs.gear[k] }}</td>
-            <td class="text-end fw-bold">{{ o.attrs.total[k] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <AttrPoints @done="load" />
-    <div class="small mb-2">
-      {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
-      <span class="text-muted ms-1">{{ t.equip.powerNote }}</span>
-    </div>
-    <!-- 赛厨时的厨力（问题记录 417）：和厨塔页的对得上 -->
-    <div class="small text-muted mb-2" data-testid="duel-power">
-      {{ t.equip.duelPower(formatNum(o.duelPower.attack), formatNum(o.duelPower.defend)) }}
-    </div>
-    <!-- 厨具收益加成（问题记录 411） -->
-    <div class="small mb-2" data-testid="gear-income">
-      {{
-        t.equip.income(pctText(o.income.coinRate), pctText(o.income.expRate), pctText(o.income.mcGoldRate))
-      }}
-      <span class="text-muted ms-1">{{ t.equip.incomeNote }}</span>
-    </div>
-
     <div class="row g-1 mb-2">
       <div v-for="p in [1, 2, 3, 4, 5]" :key="p" class="col">
         <div
@@ -305,5 +267,50 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.equip.loa
         </button>
       </div>
     </div>
+
+    <!-- 问题记录 530：部位和操作按钮放最上面，属性表和加点放下面 -->
+    <!-- 每项属性一行、三列数值：原来属性横排七列，英法西文在手机上要左右滑才看得到后几项（问题记录 304、质量期 ④） -->
+    <div class="table-responsive mb-2" data-testid="attr-table">
+      <table class="table table-sm small mb-0">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="text-end">{{ t.equip.rows.points }}</th>
+            <th class="text-end">{{ t.equip.rows.gear }}</th>
+            <th class="text-end">{{ t.equip.rows.total }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="k in ATTR_KEYS" :key="k">
+            <th class="fw-normal" scope="row">{{ ATTR_NAMES[k] }}</th>
+            <td class="text-end">{{ o.attrs.points[k] }}</td>
+            <td class="text-end">{{ o.attrs.gear[k] }}</td>
+            <td class="text-end fw-bold">{{ o.attrs.total[k] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <AttrPoints @done="load" />
+    <div class="small mb-1" data-testid="power-line">
+      {{ t.equip.power }} <b data-testid="power">{{ o.attrs.power }}</b>
+    </div>
+    <!-- 赛厨时的厨力（问题记录 417）：和厨塔页的对得上 -->
+    <div class="small mb-1" data-testid="duel-power">
+      {{ t.equip.duelPower(formatNum(o.duelPower.attack), formatNum(o.duelPower.defend)) }}
+    </div>
+    <!-- 厨具收益加成（问题记录 411） -->
+    <div class="small mb-2" data-testid="gear-income">
+      {{
+        t.equip.income(pctText(o.income.coinRate), pctText(o.income.expRate), pctText(o.income.mcGoldRate))
+      }}
+    </div>
+    <details class="small text-muted mb-2" data-testid="equip-notes">
+      <summary>{{ t.equip.notesTitle }}</summary>
+      <ul class="mb-0 ps-3">
+        <li>{{ t.equip.powerNote }}</li>
+        <li>{{ t.equip.duelNote }}</li>
+        <li>{{ t.equip.incomeNote }}</li>
+      </ul>
+    </details>
   </div>
 </template>

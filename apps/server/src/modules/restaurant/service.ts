@@ -268,7 +268,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       const names = await restNames(d.db, ids);
       return r.tables.map((t) => tableDto(t, names));
     },
-    income: (restId: number, q: PageQuery) => incomePage(d.db, restId, q),
+    income: (restId: number, q: PageQuery) => incomePage(d.db, restId, q, d.now()),
     buffs: async (ctx: { shardId: number; restaurantId: number }) =>
       buffsOf(d.db, d.config, ctx.restaurantId, d.now(), equipOff(await shards.settings(ctx.shardId))),
     log: (restId: number, q: PageQuery) => logPage(d.db, restId, q),
