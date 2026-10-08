@@ -27,7 +27,10 @@ export async function aggregateIncomeDay(db: Kysely<DB>, shardId: number, day: s
     where d.day = ${day}::date and d.rest_id in (select id from restaurant where shard_id = ${shardId})
     on conflict (rest_id) do update set
       day_coin = greatest(rest_income_best.day_coin, excluded.day_coin),
-      day_rounds = greatest(rest_income_best.day_rounds, excluded.day_rounds)`.execute(db);
+      day_rounds = greatest(rest_income_best.day_rounds, excluded.day_rounds)
+    where excluded.day_coin > rest_income_best.day_coin or excluded.day_rounds > rest_income_best.day_rounds`.execute(
+    db,
+  );
   return Number(r.numAffectedRows ?? 0);
 }
 

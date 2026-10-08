@@ -3484,7 +3484,7 @@
        }
       ]
      },
-     "href": "/rest/floor"
+     "href": "/store"
     },
     {
      "id": 3562,
@@ -3533,7 +3533,7 @@
     {
      "id": 3564,
      "order": 4,
-     "needStar": 0,
+     "needStar": 1,
      "name": "油壶升到 4 级",
      "cond": {
       "kind": "state",
@@ -3555,7 +3555,7 @@
     {
      "id": 3565,
      "order": 5,
-     "needStar": 0,
+     "needStar": 1,
      "name": "餐桌摆到 32 张",
      "cond": {
       "kind": "state",
@@ -3572,33 +3572,11 @@
        }
       ]
      },
-     "href": "/rest/floor"
+     "href": "/store"
     },
     {
      "id": 3566,
      "order": 6,
-     "needStar": 0,
-     "name": "同时摆着 6 件设施",
-     "cond": {
-      "kind": "state",
-      "key": "rest.devices",
-      "target": 6
-     },
-     "award": {
-      "coin": 50000,
-      "exp": 5000,
-      "goods": [
-       {
-        "id": 10418,
-        "num": 2
-       }
-      ]
-     },
-     "href": "/rest/floor"
-    },
-    {
-     "id": 3567,
-     "order": 7,
      "needStar": 0,
      "name": "一天结算银币到 30 万",
      "cond": {
@@ -3619,8 +3597,8 @@
      "href": "/rest/income"
     },
     {
-     "id": 3568,
-     "order": 8,
+     "id": 3567,
+     "order": 7,
      "needStar": 0,
      "name": "一天营业满 350 轮 (全天不断油)",
      "cond": {
@@ -3641,9 +3619,31 @@
      "href": "/rest/income"
     },
     {
+     "id": 3568,
+     "order": 8,
+     "needStar": 2,
+     "name": "同时摆着 6 件设施",
+     "cond": {
+      "kind": "state",
+      "key": "rest.devices",
+      "target": 6
+     },
+     "award": {
+      "coin": 50000,
+      "exp": 5000,
+      "goods": [
+       {
+        "id": 10418,
+        "num": 2
+       }
+      ]
+     },
+     "href": "/"
+    },
+    {
      "id": 3569,
      "order": 9,
-     "needStar": 0,
+     "needStar": 2,
      "name": "油壶升到 6 级",
      "cond": {
       "kind": "state",
@@ -3665,7 +3665,7 @@
     {
      "id": 3570,
      "order": 10,
-     "needStar": 0,
+     "needStar": 2,
      "name": "餐桌摆到 48 张",
      "cond": {
       "kind": "state",
@@ -3682,7 +3682,7 @@
        }
       ]
      },
-     "href": "/rest/floor"
+     "href": "/store"
     },
     {
      "id": 3571,

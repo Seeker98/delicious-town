@@ -666,7 +666,7 @@
     "name": "Tener 16 mesas"
   },
   "3562": {
-    "name": "Abrir 180 rondas en un día"
+    "name": "Mantener el restaurante abierto 180 rondas en un día"
   },
   "3563": {
     "name": "Ganar 100.000 monedas de liquidación en un día"
@@ -678,13 +678,13 @@
     "name": "Tener 32 mesas"
   },
   "3566": {
-    "name": "Tener 6 instalaciones colocadas a la vez"
-  },
-  "3567": {
     "name": "Ganar 300.000 monedas de liquidación en un día"
   },
+  "3567": {
+    "name": "Mantener el restaurante abierto 350 rondas en un día (sin quedarte sin aceite)"
+  },
   "3568": {
-    "name": "Abrir 350 rondas en un día (sin quedarte sin aceite)"
+    "name": "Tener 6 instalaciones colocadas a la vez"
   },
   "3569": {
     "name": "Mejorar el bidón de aceite al nivel 6"

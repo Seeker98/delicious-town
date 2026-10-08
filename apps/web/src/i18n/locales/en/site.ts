@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     business1008:
-      'New side quest line “Business” (from Chapter 2): add tables, upgrade your oil tank, place facilities, stay open for many rounds in a day, and earn 100,000 to 1,000,000 coins from settlements in one day. Daily coins and rounds count your best day; each day is tallied just after midnight, and the last 14 days are already included',
+      'New side quest line “Business” (from Chapter 2): add tables, upgrade your oil tank, place facilities, stay open for many rounds in a day, and earn 100,000 to 1,000,000 coins from settlements in one day. Daily coins and rounds count your best day; a day counts once it is tallied just after midnight',
     sideB1008:
       "More side quests: new lines Mystery Recipes, Guardian, Tower Keepers, Market Guessing, Takeaway Pro, Acquisitions, Gems, Collection, Check-in & Activity and Social; the Town line adds the Development Fund, the Mayor's question, the Hip-hop Boy's weekly board, Thor's Hammer and the Magic Lamp; the Temple line adds Kraken favor, tentacles and 50 feedings. Check-in streaks count your longest run, and the last 30 days of check-ins are already included",
     sideA1008:

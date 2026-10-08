@@ -678,13 +678,13 @@
     "name": "Avoir 32 tables"
   },
   "3566": {
-    "name": "Avoir 6 équipements installés en même temps"
-  },
-  "3567": {
     "name": "Gagner 300 000 pièces de règlement en une journée"
   },
-  "3568": {
+  "3567": {
     "name": "Rester ouvert 350 tours en une journée (sans manquer d'huile)"
+  },
+  "3568": {
+    "name": "Avoir 6 équipements installés en même temps"
   },
   "3569": {
     "name": "Améliorer le bidon d'huile au niveau 6"

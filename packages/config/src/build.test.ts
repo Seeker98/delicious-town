@@ -2014,6 +2014,23 @@ describe('支线“经营”（任务清单第二版，用户定）', () => {
     expect(new Set(steps.map((q) => q.feature))).toEqual(new Set(['restaurant', 'growth']));
   });
 
+  it('要星级的档标上星级；摆 6 件设施要 2 星，排在不要星级的“30 万”“350 轮”后面，不挡它们（终审）', () => {
+    expect(steps.map((q) => [q.cond.key, q.cond.target, q.needStar])).toEqual([
+      ['rest.tables', 16, 0],
+      ['rest.bestRounds', 180, 0],
+      ['rest.bestDayCoin', 100_000, 0],
+      ['oil.level', 4, 1],
+      ['rest.tables', 32, 1],
+      ['rest.bestDayCoin', 300_000, 0],
+      ['rest.bestRounds', 350, 0],
+      ['rest.devices', 6, 2],
+      ['oil.level', 6, 2],
+      ['rest.tables', 48, 2],
+      ['rest.bestDayCoin', 500_000, 0],
+      ['rest.bestDayCoin', 1_000_000, 0],
+    ]);
+  });
+
   it('单日结算 10/30/50/100 万（按快速模拟定）；餐桌 16/32/48；油壶 4、6 级；营业 180、350 轮', () => {
     const t = (key: string) => steps.filter((q) => q.cond.key === key).map((q) => q.cond.target);
     expect(t('rest.bestDayCoin')).toEqual([100_000, 300_000, 500_000, 1_000_000]);

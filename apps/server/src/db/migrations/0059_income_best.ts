@@ -14,7 +14,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await backfill(db);
 }
 
-/** 按还留着的每天收入汇总（最近 14 天）补上；已有的行取较大的 */
+/** 按还留着的每天收入汇总补上（最多 14 天，汇总从收购上线那天才开始有）；已有的行取较大的 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function backfill(db: Kysely<any>): Promise<void> {
   await sql`insert into rest_income_best (rest_id, day_coin, day_rounds)
