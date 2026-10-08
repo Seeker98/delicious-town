@@ -60,6 +60,35 @@ describe('玩家看得到的数据不用中文括号（用户 2026-10-07 定）'
   });
 });
 
+describe('玩家看得到的数据用英文逗号加空格（问题记录 534，用户 2026-10-08 定）', () => {
+  it('道具、食谱、街道、任务、天气、厨塔、套装、一番赏、装扮的文字：没有“，”，逗号后面带一个空格（千分位除外），不以逗号结尾', () => {
+    const b = realBuild().bundle!;
+    const texts: Array<[string, string | undefined]> = [
+      ...b.goods.map((g) => [`goods ${g.id}`, g.desc] as [string, string | undefined]),
+      ...b.cookbooks.map((c) => [`cookbook ${c.id}`, c.desc] as [string, string | undefined]),
+      ...b.streets.flatMap(
+        (s) =>
+          [
+            [`street ${s.id} desc`, s.desc],
+            [`street ${s.id} theme`, s.theme],
+          ] as Array<[string, string | undefined]>,
+      ),
+      ...b.questLines.map((q) => [`questLine ${q.id}`, q.name] as [string, string | undefined]),
+      ...b.quests.map((q) => [`quest ${q.id}`, q.name] as [string, string | undefined]),
+      ...b.weather.map((w) => [`weather ${w.id}`, w.note] as [string, string | undefined]),
+      ...b.towerFloors.map((f) => [`tower ${f.floor}`, f.note] as [string, string | undefined]),
+      ...b.suits.flatMap((s) =>
+        s.tiers.map((t) => [`suit ${s.id}/${t.need}`, t.desc] as [string, string | undefined]),
+      ),
+      ...b.kujiThemes.map((k) => [`kuji ${k.month}`, k.desc] as [string, string | undefined]),
+      ...b.looks.icons.map((i) => [`icon ${i.key}`, i.desc] as [string, string | undefined]),
+    ];
+    // 逗号后面不是空格、也不是千分位的数字；汉字后面直接接逗号再接数字；以逗号结尾；逗号后面两个空格
+    const bad = /，|,(?![\s\d])|(?<=\D),(?=\d)|,$|, {2,}/m;
+    expect(texts.filter(([, s]) => s && bad.test(s)).map(([k, s]) => `${k}: ${s}`)).toEqual([]);
+  });
+});
+
 describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不是极速飞弹）', () => {
   it('道具名和说明里不再有“极速飞弹”；英西法叫 Cluster / de racimo / à fragmentation', () => {
     const b = realBuild().bundle!;

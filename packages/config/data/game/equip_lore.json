@@ -3,44 +3,44 @@
     {
       "suitid": 4, "name": "沙利叶的灵魂", "maxnum": 4,
       "tiers": [
-        { "neednum": 2, "desc": "上座率+3%, 被挑战时额外提升: 刀工+4%,火候+4%", "value": { "atRate": 0.03, "defendCutting": 0.04, "defendFire": 0.04 } },
-        { "neednum": 4, "desc": "厨艺+4%,调味+4%,幸运+8", "value": { "cook": 0.04, "season": 0.04, "luckValue": 8 } }
+        { "neednum": 2, "desc": "上座率+3%, 被挑战时额外提升: 刀工+4%, 火候+4%", "value": { "atRate": 0.03, "defendCutting": 0.04, "defendFire": 0.04 } },
+        { "neednum": 4, "desc": "厨艺+4%, 调味+4%, 幸运+8", "value": { "cook": 0.04, "season": 0.04, "luckValue": 8 } }
       ]
     },
     {
       "suitid": 5, "name": "度玛的沉默", "maxnum": 3,
       "tiers": [
-        { "neednum": 2, "desc": "刀工+4%,火候+4%", "value": { "cutting": 0.04, "fire": 0.04 } },
+        { "neednum": 2, "desc": "刀工+4%, 火候+4%", "value": { "cutting": 0.04, "fire": 0.04 } },
         { "neednum": 3, "desc": "上座率+4%, 探险时额外降低2%的迷路概率", "value": { "atRate": 0.04, "exploreSuccessRate": 0.02 } }
       ]
     },
     {
       "suitid": 6, "name": "巴贝雷特的裁决", "maxnum": 5,
       "tiers": [
-        { "neednum": 3, "desc": "厨艺+5%,调味+6%", "value": { "cook": 0.05, "season": 0.06 } },
+        { "neednum": 3, "desc": "厨艺+5%, 调味+6%", "value": { "cook": 0.05, "season": 0.06 } },
         { "neednum": 4, "desc": "上座率+8%, 分解食材时5%的概率多得到一个低级食材", "value": { "atRate": 0.08, "operFoodsAddRate": 0.05 } },
-        { "neednum": 5, "desc": "刀工+5%,火候+5%,幸运+16", "value": { "cutting": 0.05, "fire": 0.05, "luckValue": 16 } }
+        { "neednum": 5, "desc": "刀工+5%, 火候+5%, 幸运+16", "value": { "cutting": 0.05, "fire": 0.05, "luckValue": 16 } }
       ]
     },
     {
       "suitid": 7, "name": "茵蔯的堕落", "maxnum": 4,
       "tiers": [
-        { "neednum": 2, "desc": "火候+5%,上座率+3%", "value": { "fire": 0.05, "atRate": 0.03 } },
-        { "neednum": 4, "desc": "厨艺+4%,刀工+4%,幸运+12", "value": { "cook": 0.04, "cutting": 0.04, "luckValue": 12 } }
+        { "neednum": 2, "desc": "火候+5%, 上座率+3%", "value": { "fire": 0.05, "atRate": 0.03 } },
+        { "neednum": 4, "desc": "厨艺+4%, 刀工+4%, 幸运+12", "value": { "cook": 0.04, "cutting": 0.04, "luckValue": 12 } }
       ]
     },
     {
       "suitid": 80, "name": "阿卡玛的神谕", "maxnum": 5,
       "tiers": [
-        { "neednum": 4, "desc": "厨艺+8%,调味+8%", "value": { "cook": 0.08, "season": 0.08 } },
-        { "neednum": 5, "desc": "幸运+32, 被挑战时额外提升: 刀工+6%,火候+6%", "value": { "luckValue": 32, "defendCutting": 0.06, "defendFire": 0.06 } }
+        { "neednum": 4, "desc": "厨艺+8%, 调味+8%", "value": { "cook": 0.08, "season": 0.08 } },
+        { "neednum": 5, "desc": "幸运+32, 被挑战时额外提升: 刀工+6%, 火候+6%", "value": { "luckValue": 32, "defendCutting": 0.06, "defendFire": 0.06 } }
       ]
     },
     {
       "suitid": 82, "name": "古尔图格的意志", "maxnum": 5,
       "tiers": [
-        { "neednum": 4, "desc": "刀工+6%,火候+6%", "value": { "cutting": 0.06, "fire": 0.06 } },
-        { "neednum": 5, "desc": "上座率+6%,幸运+24, 主动挑战时额外提升: 厨艺+5%", "value": { "atRate": 0.06, "luckValue": 24, "attackCook": 0.05 } }
+        { "neednum": 4, "desc": "刀工+6%, 火候+6%", "value": { "cutting": 0.06, "fire": 0.06 } },
+        { "neednum": 5, "desc": "上座率+6%, 幸运+24, 主动挑战时额外提升: 厨艺+5%", "value": { "atRate": 0.06, "luckValue": 24, "attackCook": 0.05 } }
       ]
     }
   ],
