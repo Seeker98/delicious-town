@@ -29,7 +29,7 @@ const guide: Messages['guide'] = {
       ', mais vérifiez d’abord qu’il reste de la place dans le garde-manger.',
     ],
     [
-      "L'énergie se recharge à chaque tour. Apprendre des plats signature, défier la Tour des chefs, écraser des cafards, etc. coûtent de l'énergie ; les cartes d'énergie la rechargent.",
+      "L'énergie se recharge d'un point toutes les 10 minutes (2 quand la chance sourit) jusqu'au maximum. Apprendre des plats signature, défier la Tour des chefs, écraser des cafards, etc. coûtent de l'énergie\u202f; les cartes d'énergie la rechargent.",
     ],
     [
       'Commencez par : répartir vos points dans ',

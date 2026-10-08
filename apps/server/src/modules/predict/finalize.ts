@@ -69,19 +69,24 @@ export async function finalizeEvent(
     title: e.title,
     ...(e.kind !== 'manual' ? { kind: e.kind, eventParams: e.params } : {}),
   };
-  await postNews(tx, {
-    shardId: e.shard_id,
-    type: 'predict.result',
-    params:
-      set.status === 'void'
-        ? { ...base, outcome: null, voidRatio, players: Number(pos.players) }
-        : {
-            ...base,
-            outcome: set.outcome,
-            players: Number(pos.players),
-            winners: Number(pos.winners),
-            paid: Number(pos.won) * e.unit,
-          },
-  });
+  await postNews(
+    tx,
+    {
+      shardId: e.shard_id,
+      type: 'predict.result',
+      params:
+        set.status === 'void'
+          ? { ...base, outcome: null, voidRatio, players: Number(pos.players) }
+          : {
+              ...base,
+              outcome: set.outcome,
+              players: Number(pos.players),
+              winners: Number(pos.winners),
+              paid: Number(pos.won) * e.unit,
+            },
+    },
+    // 用游戏时钟，和别的新闻一致（开发环境快进时钟时，数据库的 now() 会比它早）
+    now,
+  );
   return { title: e.title, voidRatio };
 }

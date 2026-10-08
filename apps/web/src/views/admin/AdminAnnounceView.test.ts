@@ -55,8 +55,9 @@ describe('AdminAnnounceView', () => {
       title: '开服活动',
       body: '欢迎',
       important: true,
-      startsAt: new Date('2026-10-01T08:00').toISOString(),
-      endsAt: new Date('2026-10-08T08:00').toISOString(),
+      // 输入框按北京时间：08:00 = 00:00Z（终审：后台的机器在别的时区时不能跟着设备走）
+      startsAt: '2026-10-01T00:00:00.000Z',
+      endsAt: '2026-10-08T00:00:00.000Z',
     });
   });
 

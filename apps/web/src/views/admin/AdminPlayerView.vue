@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type {
@@ -140,10 +141,10 @@ const rename = () =>
     </h5>
     <div class="small mb-2">
       {{ player.email }}（{{ player.emailVerified ? '已验证' : '未验证' }}） · 注册于
-      {{ new Date(player.createdAt).toLocaleString('zh-CN') }}
+      {{ adminTime(player.createdAt) }}
       <span v-if="player.banned" class="text-danger">
         · 已封禁：{{ player.banReason }}（{{
-          player.bannedUntil ? `封号至 ${new Date(player.bannedUntil).toLocaleString('zh-CN')}` : '永久封号'
+          player.bannedUntil ? `封号至 ${adminTime(player.bannedUntil)}` : '永久封号'
         }}）</span
       >
     </div>
@@ -280,7 +281,7 @@ const rename = () =>
       <table v-if="tab === 'ledger'" class="table table-sm">
         <tbody>
           <tr v-for="(l, i) in ledgerRows" :key="i">
-            <td>{{ new Date(l.at).toLocaleString('zh-CN') }}</td>
+            <td>{{ adminTime(l.at) }}</td>
             <td>{{ l.kind }}{{ l.itemId ? ` #${l.itemId}` : '' }}</td>
             <td :class="l.delta < 0 ? 'text-danger' : 'text-success'">{{ l.delta }}</td>
             <td>{{ l.source }}</td>
@@ -289,14 +290,14 @@ const rename = () =>
       </table>
       <div v-if="tab === 'log'">
         <div v-for="(l, i) in logRows" :key="i">
-          <span class="text-muted">{{ new Date(l.at).toLocaleString('zh-CN') }}</span>
+          <span class="text-muted">{{ adminTime(l.at) }}</span>
           {{ logText(l, catalog) }}
         </div>
       </div>
       <table v-if="tab === 'income'" class="table table-sm">
         <tbody>
           <tr v-for="r in incomeRows" :key="r.roundNo">
-            <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+            <td>{{ adminTime(r.at) }}</td>
             <td>银币 {{ r.coin }}</td>
             <td>经验 {{ r.exp }}</td>
             <td>油 {{ r.oil }}</td>

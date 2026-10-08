@@ -4,11 +4,10 @@ import { useRoute, useRouter } from 'vue-router';
 import type { KujiAwardDto, KujiDrawDto, KujiLine, KujiViewDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
-import { formatNum } from '../utils/format';
+import { formatNum, gameDateTime } from '../utils/format';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 
 /** 一番赏（一番赏设计 §7.2）：奖池看板、买券、抽签 */
@@ -46,7 +45,7 @@ const iconText = (key: string) => {
   return title ? t.value.kuji.iconNamed(title) : t.value.kuji.icon;
 };
 const tierName = (k: string) => (k === 'last' ? t.value.kuji.lastTier : t.value.kuji.tier(k));
-const recentTime = (iso: string) => new Date(iso).toLocaleString(activeLocale());
+const recentTime = (iso: string) => gameDateTime(iso);
 const canDraw = (n: number) =>
   !!data.value &&
   !busy.value &&

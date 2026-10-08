@@ -8,6 +8,8 @@ export default {
   nextRound: (left: string) => `下一轮结算：${left} 后`,
   /** 更新记录：一条一句话，key 对应 data/changelog.ts 的 id */
   changelog: {
+    gameTime1008:
+      '游戏里显示的时间 (小镇新闻、邮件、论坛、好友动态、仓库记录等) 统一按北京时间，和页面顶上的时钟一致，不再跟着设备的时区；新手指引写明体力每 10 分钟恢复 1 点',
     renownTicket1008:
       '厨塔的声望商店常驻四级食材随机券 (50 声望，每周 3 张) 和五级食材随机券 (80 声望，每周 2 张)',
     economy1008:

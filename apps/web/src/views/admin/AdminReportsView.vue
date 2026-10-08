@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import {
   REPORT_REASON_NAMES,
@@ -33,7 +34,7 @@ const DO: Record<string, string> = {
   notice: '清空这家店的公告',
   rest_name: '强制改这家店的店名',
 };
-const when = (s: string | null) => (s ? new Date(s).toLocaleString('zh-CN') : '');
+const when = (s: string | null) => (s ? adminTime(s) : '');
 const short = (s: string) => (s.length > 60 ? `${s.slice(0, 60)}…` : s);
 
 async function load() {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { gameDateTime } from '../utils/format';
 import { RouterLink } from 'vue-router';
 import type { RestLogDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
 import { logText } from '../utils/events';
@@ -64,7 +64,7 @@ onMounted(async () => {
     </div>
     <ul class="list-unstyled small">
       <li v-for="(l, i) in logs" :key="i">
-        <span class="text-muted">{{ new Date(l.at).toLocaleString(activeLocale()) }}</span>
+        <span class="text-muted">{{ gameDateTime(l.at) }}</span>
         {{ logText(l, catalog) }}
       </li>
     </ul>

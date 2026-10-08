@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
+import { gameDateTime } from '../utils/format';
 import { RouterLink, useRouter } from 'vue-router';
 import { FORUM_TABS, type ForumListDto, type ForumPostItemDto, type ForumTab } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useToastStore } from '../stores/toast';
 import { useCountdown } from '../utils/countdown';
@@ -30,7 +30,7 @@ const postWait = useCountdown(
 );
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString(activeLocale(), {
+  gameDateTime(iso, {
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',

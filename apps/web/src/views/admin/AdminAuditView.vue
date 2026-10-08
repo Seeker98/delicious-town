@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { onMounted, ref } from 'vue';
 import type { AuditRowDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -51,7 +52,7 @@ onMounted(() => void load(true));
     </thead>
     <tbody>
       <tr v-for="r in rows" :key="r.id">
-        <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(r.at) }}</td>
         <td>{{ r.actor ?? '命令行' }}</td>
         <td>{{ ACTION_LABEL[r.action] ?? r.action }}</td>
         <td>{{ r.target }}</td>

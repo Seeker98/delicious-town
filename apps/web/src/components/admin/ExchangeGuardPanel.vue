@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import { EXCHANGE_FLAGS, type ExchangeFrozenRow, type ExchangeSuspiciousRow } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -80,7 +81,7 @@ onMounted(() => void load());
     </thead>
     <tbody>
       <tr v-for="r in rows" :key="r.tradeId" :data-testid="`exg-row-${r.tradeId}`">
-        <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(r.at) }}</td>
         <td>{{ catalog.foodName(r.foodsId) }}</td>
         <td>
           {{ formatNum(r.price)
@@ -148,8 +149,8 @@ onMounted(() => void load());
     <span class="flex-fill"
       >{{ f.restName }}（{{ f.username }}）：{{ f.reason
       }}<span class="text-muted">
-        · {{ f.actor ?? '?' }} · {{ new Date(f.at).toLocaleString('zh-CN') }} · 冻结中所得 银币
-        {{ formatNum(f.heldCoin) }}、食材 {{ f.heldFoods }} 个</span
+        · {{ f.actor ?? '?' }} · {{ adminTime(f.at) }} · 冻结中所得 银币 {{ formatNum(f.heldCoin) }}、食材
+        {{ f.heldFoods }} 个</span
       ></span
     >
     <button

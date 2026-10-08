@@ -1,3 +1,4 @@
+import { adminTime } from '../../utils/gameInput';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -124,8 +125,8 @@ describe('backlog 6B-1：举报列表和改名', () => {
   it('待处理列表同时显示最早和最近一次举报时间', async () => {
     const w = await mountView();
     const row = w.get(`[data-testid="report-row-${caseDto.id}"]`).text();
-    expect(row).toContain(new Date(caseDto.createdAt).toLocaleString('zh-CN'));
-    expect(row).toContain(new Date(caseDto.updatedAt).toLocaleString('zh-CN'));
+    expect(row).toContain(adminTime(caseDto.createdAt));
+    expect(row).toContain(adminTime(caseDto.updatedAt));
   });
 
   it('默认店名被占用时，说明是哪个名字，提示填一个新店名', async () => {

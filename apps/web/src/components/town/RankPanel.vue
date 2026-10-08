@@ -4,11 +4,10 @@ import { RouterLink } from 'vue-router';
 import { RANK_BOARDS, RANK_GROUPS, type LeaderboardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
-import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
-import { shortNum } from '../../utils/format';
+import { shortNum, timeHM } from '../../utils/format';
 
 /** 排行榜（4E-2 设计文档 §5）：大类胶囊 + 小类按钮组；厨力榜 10 分钟更新，其他每分钟 */
 const session = useSessionStore();
@@ -36,8 +35,7 @@ const meInRows = computed(() => !!data.value?.rows.some((r) => r.restId === mine
 function pickGroup(g: string) {
   key.value = RANK_BOARDS.find((b) => b.group === g)!.key;
 }
-const hhmm = (iso: string) =>
-  new Date(iso).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' });
+const hhmm = (iso: string) => timeHM(iso);
 const rk = computed(() => t.value.town.rank);
 /** 大类、小类、奖励的名字按语言；键对不上时退回共用定义里的简中 */
 const groupName = (g: string) => rk.value.groups[RANK_GROUPS.indexOf(g)] ?? g;

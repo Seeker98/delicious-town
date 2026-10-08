@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { boostText, type ShardSettingsDto } from '@dt/shared';
@@ -193,7 +194,7 @@ async function save() {
     <div v-if="boosts.length" class="alert alert-warning py-1 small" data-testid="boost-hint">
       当前有全服加成生效（下面显示的是不含加成的数值）：
       <span v-for="b in boosts" :key="b.id" class="me-2">
-        {{ boostText(b.items) }}（至 {{ new Date(b.endsAt).toLocaleString() }}）
+        {{ boostText(b.items) }}（至 {{ adminTime(b.endsAt) }}）
       </span>
     </div>
     <div class="d-flex align-items-center gap-2 mb-2">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime, fromGameInput, toGameInput } from '../../utils/gameInput';
 import { onMounted, ref } from 'vue';
 import type { AdminAnnouncementDto, AnnouncementInput } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -12,11 +13,8 @@ const toast = useToastStore();
 const list = ref<AdminAnnouncementDto[]>([]);
 const busy = ref(false);
 
-/** datetime-local 的值（本地时间，到分钟） */
-const local = (d: Date) => {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
-};
+/** datetime-local 的值（北京时间，到分钟；终审：不跟着设备时区） */
+const local = toGameInput;
 const editing = ref<number | null>(null);
 /** 正在编辑的公告原来的区服：保存时保持不变，不跟着后台当前区服走（终审 I2） */
 const editingShard = ref<number | null>(null);
@@ -64,8 +62,8 @@ async function save() {
     title: title.value.trim(),
     body: body.value.trim(),
     important: important.value,
-    startsAt: new Date(startsAt.value).toISOString(),
-    endsAt: new Date(endsAt.value).toISOString(),
+    startsAt: fromGameInput(startsAt.value),
+    endsAt: fromGameInput(endsAt.value),
   };
   busy.value = true;
   try {
@@ -107,8 +105,10 @@ async function remove(a: AdminAnnouncementDto) {
       <label
         ><input v-model="important" type="checkbox" data-testid="an-important" /> 重要（进游戏弹一次）</label
       >
-      <label>开始 <input v-model="startsAt" type="datetime-local" data-testid="an-starts" /></label>
-      <label>结束 <input v-model="endsAt" type="datetime-local" data-testid="an-ends" /></label>
+      <label
+        >开始（北京时间） <input v-model="startsAt" type="datetime-local" data-testid="an-starts"
+      /></label>
+      <label>结束（北京时间） <input v-model="endsAt" type="datetime-local" data-testid="an-ends" /></label>
     </div>
     <input
       v-model="title"
@@ -159,8 +159,8 @@ async function remove(a: AdminAnnouncementDto) {
         <td>{{ a.title }}</td>
         <td>{{ a.shardId === null ? '全部区服' : `区服 ${a.shardId}` }}</td>
         <td>
-          {{ new Date(a.startsAt).toLocaleString('zh-CN') }} ~
-          {{ new Date(a.endsAt).toLocaleString('zh-CN') }}
+          {{ adminTime(a.startsAt) }} ~
+          {{ adminTime(a.endsAt) }}
         </td>
         <td>{{ a.important ? '是' : '' }}</td>
         <td>{{ a.actor ?? '—' }}</td>

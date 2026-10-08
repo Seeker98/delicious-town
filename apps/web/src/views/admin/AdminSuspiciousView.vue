@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { onMounted, ref, watch } from 'vue';
 import { RouterLink } from 'vue-router';
 import type {
@@ -182,9 +183,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
       </div>
       <div v-for="a in g.accounts" :key="a.accountId" data-testid="sus-multi-account">
         <RouterLink :to="player(a.accountId)">{{ a.username }}</RouterLink>
-        <span class="text-muted">
-          · {{ a.restName ?? '本区没有店' }} · 最近 {{ new Date(a.lastSeen).toLocaleString('zh-CN') }}</span
-        >
+        <span class="text-muted"> · {{ a.restName ?? '本区没有店' }} · 最近 {{ adminTime(a.lastSeen) }}</span>
       </div>
     </div>
   </template>
@@ -207,7 +206,7 @@ const player = (accountId: number) => `/admin/players/${accountId}`;
       </thead>
       <tbody>
         <tr v-for="(r, i) in acquire" :key="i" :data-testid="`sus-acquire-${i}`">
-          <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+          <td>{{ adminTime(r.at) }}</td>
           <td>
             <RouterLink :to="player(r.buyer.accountId)">{{ r.buyer.name }}</RouterLink>
           </td>

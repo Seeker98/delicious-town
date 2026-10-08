@@ -29,7 +29,7 @@ const guide: Messages['guide'] = {
       ', pero antes comprueba que quede hueco en la despensa.',
     ],
     [
-      'La energía se recupera cada ronda. Aprender platos estrella, desafiar la Torre de chefs, aplastar cucarachas, etc. cuestan energía; las tarjetas de energía la recargan.',
+      'La energía se recupera 1 punto cada 10 minutos (2 si tienes suerte) hasta llenarse. Aprender platos estrella, desafiar la Torre de chefs, aplastar cucarachas, etc. cuestan energía; las tarjetas de energía la recargan.',
     ],
     [
       'Empieza por esto: asigna tus puntos en ',

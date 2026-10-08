@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { gameDateTime } from '../utils/format';
 import type { MailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import RedeemBox from '../components/RedeemBox.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -48,7 +48,7 @@ const anyClaimable = computed(() => items.value.some((m) => claimable(m) && !lev
 const daysLeft = (m: MailDto) =>
   Math.max(0, Math.ceil((new Date(m.expiresAt).getTime() - Date.now()) / 86_400_000));
 const sentAt = (m: MailDto) =>
-  new Date(m.createdAt).toLocaleString(activeLocale(), {
+  gameDateTime(m.createdAt, {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',

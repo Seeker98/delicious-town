@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, ref, watch } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import type { ShardHistoryDto } from '@dt/shared';
@@ -54,7 +55,7 @@ async function rollback(version: number) {
     <tbody>
       <tr v-for="(r, i) in rows" :key="r.version">
         <td>{{ r.version }}</td>
-        <td>{{ new Date(r.at).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(r.at) }}</td>
         <td>{{ r.actor ?? '—' }}</td>
         <td>{{ r.note }}</td>
         <td class="text-break">{{ r.changed.join('、') || '（无）' }}</td>

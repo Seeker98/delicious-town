@@ -8,14 +8,12 @@ import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
-import { useLocaleStore } from '../stores/locale';
 import { useToastStore } from '../stores/toast';
 import { recordLabel } from '../utils/events';
-import { formatNum } from '../utils/format';
+import { formatNum, gameTimeOfDay } from '../utils/format';
 import { groupStoreItems } from '../utils/storeSort';
 
 const catalog = useCatalogStore();
-const locale = useLocaleStore();
 const toast = useToastStore();
 const t = useT();
 const tab = ref<'items' | 'souvenirs' | 'records'>('items');
@@ -204,7 +202,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.store.loa
       <option v-for="r in RANGES" :key="r" :value="r">{{ t.store.ranges[r] }}</option>
     </select>
     <div v-for="(r, i) in records" :key="i" class="d-flex border-bottom py-1 small">
-      <span class="text-muted me-2">{{ new Date(r.at).toLocaleTimeString(locale.locale) }}</span>
+      <span class="text-muted me-2">{{ gameTimeOfDay(r.at) }}</span>
       {{ recordName(r) }}
       <b :class="['ms-auto', r.delta >= 0 ? 'text-success' : 'text-danger']"
         >{{ r.delta >= 0 ? '+' : '' }}{{ formatNum(r.delta) }}</b

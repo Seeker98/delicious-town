@@ -65,6 +65,19 @@ describe('开奖上小镇新闻（问题记录 268）', () => {
     ]);
   });
 
+  it('新闻时间用游戏时钟，不用数据库的时间（问题记录：开发环境快进时钟后开奖新闻的时间比别的早几个小时）', async () => {
+    const shardId = await createShard(t.db);
+    const id = await newEvent(t, shardId);
+    await admin().resolve(actor, id, true);
+    const row = await t.db
+      .selectFrom('news')
+      .select('created_at')
+      .where('shard_id', '=', shardId)
+      .where('type', '=', 'predict.result')
+      .executeTakeFirstOrThrow();
+    expect(row.created_at.toISOString()).toBe(t.clock.now.toISOString());
+  });
+
   it('作废：新闻写退款比例；没人参与也照样发', async () => {
     const shardId = await createShard(t.db);
     const id = await newEvent(t, shardId, { title: '题目写错了' });

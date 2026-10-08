@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { onMounted, ref, watch } from 'vue';
 import type { AdminMailDto, RewardItems, SendMailInput } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -191,7 +192,7 @@ async function revoke(m: AdminMailDto) {
         <td>{{ m.items ? rewardSummary(m.items, catalog) : '—' }}</td>
         <td>已领 {{ m.claimedCount }}</td>
         <td>{{ m.actor ?? '系统' }}</td>
-        <td>{{ new Date(m.createdAt).toLocaleString('zh-CN') }}</td>
+        <td>{{ adminTime(m.createdAt) }}</td>
         <td>
           <span v-if="m.revokedAt">已撤回</span>
           <button

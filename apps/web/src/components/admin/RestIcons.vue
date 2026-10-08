@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { adminTime } from '../../utils/gameInput';
 import { computed, onMounted, ref, watch } from 'vue';
 import type { AdminIconDto } from '@dt/shared';
 import { adminApi } from '../../api/admin';
@@ -61,7 +62,7 @@ watch(() => props.restId, load);
       <span v-for="i in icons" :key="i.id" class="badge bg-warning text-dark me-1">
         {{ i.title }}<span v-if="i.shown">（展示中）</span
         ><span v-if="i.expiresAt" :data-testid="`icon-expires-${i.id}`"
-          >（限时，{{ new Date(i.expiresAt).toLocaleString() }} 到期）</span
+          >（限时，{{ adminTime(i.expiresAt) }} 到期）</span
         >
         <button class="btn btn-link btn-sm p-0 ms-1" :disabled="busy" @click="revoke(i)">收回</button>
       </span>

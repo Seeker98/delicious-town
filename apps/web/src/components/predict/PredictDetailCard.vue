@@ -4,10 +4,9 @@ import { predictPercent, predictQuote, type PredictDetailDto, type PredictListDt
 import { ApiError } from '../../api/client';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
-import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
-import { formatNum } from '../../utils/format';
+import { formatNum, gameDateTime } from '../../utils/format';
 import { predictDesc, predictNote } from '../../utils/serverText';
 import { useCatalogStore } from '../../stores/catalog';
 
@@ -28,7 +27,7 @@ const action = (x: { dir: 'buy' | 'sell'; side: 'yes' | 'no' }) =>
   t.value.predict.detail.action(x.dir === 'buy', x.side === 'yes');
 /** 每份均价：成交额 ÷ 份数（不含手续费） */
 const perShare = (x: { amount: number; qty: number }) => formatNum(Math.round(x.amount / x.qty));
-const time = (s: string) => new Date(s).toLocaleString(activeLocale());
+const time = (s: string) => gameDateTime(s);
 
 const quote = computed(() => {
   const d = props.detail;
