@@ -33,6 +33,7 @@ export const IMPLEMENTED_FEATURES: ReadonlySet<string> = new Set([
   'kuji',
   'fund',
   'acquire',
+  'daily',
 ]);
 
 export function featureAvailable(settings: ShardSettings, feature: string): boolean {

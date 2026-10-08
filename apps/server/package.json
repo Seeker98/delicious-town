@@ -7,8 +7,8 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "dev": "tsx watch --env-file=.env.development src/main.ts",
-    "worker:dev": "tsx --env-file=.env.development src/worker.ts",
+    "dev": "tsx watch --env-file=.env.development --env-file-if-exists=.env.local src/main.ts",
+    "worker:dev": "tsx --env-file=.env.development --env-file-if-exists=.env.local src/worker.ts",
     "migrate:dev": "tsx --env-file=.env.development src/cli/migrate.ts",
     "shard": "tsx --env-file=.env.development src/cli/shard.ts",
     "account": "tsx --env-file=.env.development src/cli/account.ts",

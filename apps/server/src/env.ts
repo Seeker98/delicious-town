@@ -34,6 +34,11 @@ const envSchema = z.object({
   DB_QUERY_STATS: bool.default('false'),
   /** 慢查询警告阈值（毫秒）；0 = 不记 */
   DB_SLOW_MS: z.coerce.number().min(0).default(0),
+  /** 小镇日报的 AI 密钥（DeepSeek，OpenAI 兼容接口）；不配就只生成素材、不调用 AI */
+  DAILY_AI_KEY: z.string().default(''),
+  DAILY_AI_BASE_URL: z.string().url().default('https://api.deepseek.com'),
+  /** V4.1 Flash 的模型名（官方文档：旧名 deepseek-v4-flash 也指向它） */
+  DAILY_AI_MODEL: z.string().min(1).default('deepseek-flash'),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -437,6 +437,7 @@
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
+  "daily": { "autoPublish": false, "hour": 0, "minute": 10, "maxEvents": 30 },
   "acquire": {
     "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
     "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,
