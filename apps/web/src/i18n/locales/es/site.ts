@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    retire1008:
+      'Otro lote de objetos ya no se puede conseguir (44 tipos, entre ellos animales del zodiaco, mascotas, plantas, adornos y algunas placas): desaparecen los 36 canjes del alcalde que los daban. Los que ya tienes mantienen sus efectos',
     text1008:
       'Números en misiones y reglas: las misiones secundarias del favor del Kraken, el nivel de amigos invitados y las participaciones en Predicciones muestran ahora los valores reales de este servidor; si el límite de participaciones de este servidor es menor que 200, el paso de «tener todas» cuenta con ese límite y ya no bloquea las misiones siguientes; varios ingredientes misteriosos iguales de una misma bestia guardiana salen ahora en una sola noticia; las reglas del duelo de cocina indican que el plato estrella no suma el valor de prueba',
     punct1008:

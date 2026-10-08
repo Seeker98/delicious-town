@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    retire1008:
+      'Another batch of items can no longer be obtained (44 kinds, including zodiac animals, pets, potted plants, ornaments and a few plaques): the 36 exchanges at Mayor Big Pot’s that gave them are gone. Items you already own keep their effects',
     text1008:
       'Numbers in quests and rules: the side quests for Kraken favor, invited-friend levels and Predictions shares now show this server’s actual values; if this server’s holding limit is below 200 shares, the “hold the full amount” step counts at the limit and no longer blocks later quests; several of the same mystery ingredient from one guardian beast now show as a single news item; the cook-off rules now say the signature dish doesn’t include trial value',
     punct1008:

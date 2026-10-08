@@ -823,11 +823,12 @@ describe('小镇（子项目 4E-1）', () => {
   it('镇长兑换和星愿类型化', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
-    expect(bundle!.goodsExchange).toHaveLength(73);
+    // 73 条里 36 条换到的是 2026-10-08 下架的道具，构建时自动去掉（问题记录 501）
+    expect(bundle!.goodsExchange).toHaveLength(37);
     expect(bundle!.goodsExchange[1]).toEqual({
-      id: 2,
+      id: 10,
       category: 'bg',
-      goodsId: gid('龙-十二生肖'),
+      goodsId: gid('雷神锤'),
       num: 1,
       need: [{ goodsId: gid('蟹黄堡'), num: 8 }],
       times: 1,
