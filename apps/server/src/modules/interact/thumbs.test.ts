@@ -98,6 +98,7 @@ describe('活跃度“点赞或被赞”（用户 2026-10-08 加的，2 点、�
       (await t.game.task.activation(ctx)).items.find((x) => x.name === '点赞或被赞')!;
     const [a0, b0] = [await item(a), await item(b)];
     expect([a0.points, a0.limit, a0.count, a0.off]).toEqual([2, 5, 0, false]);
+    expect(b0.count).toBe(0);
     await th().up(a, b.restaurantId);
     expect((await item(a)).count).toBe(1);
     expect((await item(b)).count).toBe(1);
