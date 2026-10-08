@@ -40,16 +40,16 @@ describe('13 哥食材兑换券页的排序数据（问题记录 491）', () => 
 });
 
 describe('镇长兑换（设计文档 §3.6）', () => {
-  it('兑换页：73 项、持有数、已兑次数、两种券和可换食材', async () => {
+  it('兑换页：37 项 (2026-10-08 下架一批后)、持有数、已兑次数、两种券和可换食材', async () => {
     const a = await newRestaurant(t, {
       goods: { [gid('蟹黄堡')]: 10, [gid('一级食材兑换券')]: 2, [GOODS.mysteryFoodExchange]: 1 },
     });
     const v = await t.game.town.exchangeView(a);
-    expect(v.items).toHaveLength(73);
-    expect(v.items.find((x) => x.id === 2)).toEqual({
-      id: 2,
+    expect(v.items).toHaveLength(37);
+    expect(v.items.find((x) => x.id === 10)).toEqual({
+      id: 10,
       category: 'bg',
-      goodsId: gid('龙-十二生肖'),
+      goodsId: gid('雷神锤'),
       num: 1,
       need: [{ goodsId: gid('蟹黄堡'), num: 8, have: 10 }],
       times: 1,
@@ -64,27 +64,27 @@ describe('镇长兑换（设计文档 §3.6）', () => {
 
   it('限兑 1 次的项：扣材料、给道具、写新闻；第二次被拒', async () => {
     const a = await newRestaurant(t, { goods: { [gid('蟹黄堡')]: 20 } });
-    expect((await t.game.town.exchange(a, { id: 2, num: 1 })).data).toEqual({
-      goodsId: gid('龙-十二生肖'),
+    expect((await t.game.town.exchange(a, { id: 10, num: 1 })).data).toEqual({
+      goodsId: gid('雷神锤'),
       num: 1,
     });
     expect(await goodsNum(t, a.restaurantId, gid('蟹黄堡'))).toBe(12);
-    expect(await goodsNum(t, a.restaurantId, gid('龙-十二生肖'))).toBe(1);
+    expect(await goodsNum(t, a.restaurantId, gid('雷神锤'))).toBe(1);
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['town.exchange'] });
     expect(n).toMatchObject({
       restId: a.restaurantId,
-      params: { exchangeId: 2, goodsId: gid('龙-十二生肖'), num: 1 },
+      params: { exchangeId: 10, goodsId: gid('雷神锤'), num: 1 },
     });
-    await expect(t.game.town.exchange(a, { id: 2, num: 1 })).rejects.toMatchObject({
+    await expect(t.game.town.exchange(a, { id: 10, num: 1 })).rejects.toMatchObject({
       code: 'LIMIT_REACHED',
       params: { what: 'town_exchange', max: 1, used: 1 },
     });
-    expect((await t.game.town.exchangeView(a)).items.find((x) => x.id === 2)!.used).toBe(1);
+    expect((await t.game.town.exchangeView(a)).items.find((x) => x.id === 10)!.used).toBe(1);
   });
 
   it('一次兑多份：限次项超出上限整单拒绝；材料按份数不够时什么都不扣', async () => {
     const a = await newRestaurant(t, { goods: { [gid('蟹黄堡')]: 5 } });
-    await expect(t.game.town.exchange(a, { id: 2, num: 2 })).rejects.toMatchObject({
+    await expect(t.game.town.exchange(a, { id: 10, num: 2 })).rejects.toMatchObject({
       params: { what: 'town_exchange', max: 1, used: 0 },
     });
     await expect(t.game.town.exchange(a, { id: 1, num: 3 })).rejects.toMatchObject({
