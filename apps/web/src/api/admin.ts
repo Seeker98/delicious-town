@@ -1,5 +1,8 @@
 import type {
   AccountRole,
+  AdminDailyDetailDto,
+  AdminDailyEditBody,
+  AdminDailyRowDto,
   AdminItemsDto,
   ActivityInput,
   AdminActivityDto,
@@ -112,6 +115,17 @@ export const adminApi = {
   }) => api.post<{ id: number }>(`${A}/predict`, b),
   predictResolve: (id: number, outcome: boolean, note = '') =>
     api.post<{ ok: true }>(`${A}/predict/${id}/resolve`, { outcome, ...(note ? { note } : {}) }),
+  // 小镇日报（2026-10-08）
+  dailyList: (shardId: number) => api.get<AdminDailyRowDto[]>(`${A}/daily${qs({ shardId })}`),
+  dailyGet: (shardId: number, day: string) => api.get<AdminDailyDetailDto>(`${A}/daily/${shardId}/${day}`),
+  dailyPublish: (shardId: number, day: string) =>
+    api.post<AdminDailyDetailDto>(`${A}/daily/${shardId}/${day}/publish`, {}),
+  dailyHide: (shardId: number, day: string) =>
+    api.post<AdminDailyDetailDto>(`${A}/daily/${shardId}/${day}/hide`, {}),
+  dailyEdit: (shardId: number, day: string, b: AdminDailyEditBody) =>
+    api.post<AdminDailyDetailDto>(`${A}/daily/${shardId}/${day}/edit`, b),
+  dailyRegenerate: (shardId: number, day: string) =>
+    api.post<AdminDailyDetailDto>(`${A}/daily/${shardId}/${day}/regenerate`, {}),
   predictVoid: (id: number, note = '') =>
     api.post<{ ok: true }>(`${A}/predict/${id}/void`, note ? { note } : {}),
   exchangeFreeze: (b: { restId: number; reason: string }) =>
