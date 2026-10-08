@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    business1008:
+      'Nueva línea de misiones secundarias «Negocio» (desde el capítulo 2): añadir mesas, mejorar el bidón de aceite, colocar instalaciones, mantener el restaurante abierto muchas rondas en un día y ganar de 100.000 a 1.000.000 monedas de liquidación en un día. Las monedas y rondas diarias cuentan tu mejor día; cada día cuenta cuando se suma, justo después de medianoche',
     sideB1008:
       'Más misiones secundarias: nuevas líneas Recetas misteriosas, Guardián, Guardianes de la torre, Adivinanzas del Mercado, Reparto experto, Adquisiciones, Gemas, Colección, Registro y actividad y Social; la línea del Pueblo añade el Fondo de Desarrollo, la pregunta del Alcalde, la clasificación semanal del Chico hip-hop, el Martillo de Thor y la Lámpara mágica; la del Templo añade el favor del Kraken, los tentáculos y 50 comidas. Las rachas de registro cuentan tu racha más larga, y los registros de los últimos 30 días ya están incluidos',
     sideA1008:

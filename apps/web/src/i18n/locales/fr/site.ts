@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    business1008:
+      'Nouvelle ligne de quêtes secondaires «\u202fGestion\u202f» (dès le chapitre 2)\u202f: ajouter des tables, améliorer le bidon d’huile, installer des équipements, rester ouvert de nombreux tours en une journée et gagner de 100\u202f000 à 1\u202f000\u202f000 pièces de règlement en une journée. Les pièces et les tours comptent votre meilleure journée\u202f; une journée compte une fois totalisée, juste après minuit',
     sideB1008:
       'Encore des quêtes secondaires\u202f: nouvelles lignes Recettes mystères, Gardien, Gardiens de la tour, Devinettes du Marché, Livraison experte, Acquisitions, Gemmes, Collection, Pointage et activité et Social\u202f; la ligne Ville ajoute le Fonds de développement, la question du Maire, le classement hebdomadaire du Garçon hip-hop, le Marteau de Thor et la Lampe magique\u202f; la ligne Temple ajoute la faveur du Kraken, les tentacules et 50 repas. Les séries de pointage comptent votre plus longue série, et les pointages des 30 derniers jours sont déjà pris en compte',
     sideA1008:
