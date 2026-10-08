@@ -125,7 +125,7 @@ const guide: Messages['guide'] = {
     {
       q: 'How do I get diamonds? ',
       a: [
-        'The daily check-in pack can contain some; the 100- and 150-point daily activity rewards; ',
+        'The daily check-in pack can contain some; the 100- and 120-point daily activity rewards; ',
         { to: '/rest/tasks?tab=weekly', text: 'weekly quests' },
         '; the Chef ranking and monthly Kraken affinity ranking packs; Ichiban Kuji A, B, C and Last prizes; friends you invited reaching Lv. 10 and Lv. 30; a forum post being featured; event rewards and redeem codes.',
       ],

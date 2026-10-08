@@ -1375,6 +1375,15 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(b.actionMap.activation['thumbs.up']).toBe('点赞或被赞');
     expect(b.actionMap.activation['thumbs.received']).toBe('点赞或被赞');
     expect(b.activationRewards.map((r) => r.points)).toEqual([50, 100, 120, 150, 180]);
+    // 各档奖励（用户 2026-10-08 定）：低档多给礼券、银币；120 档一番赏券 + 4 钻；经验挪到 150 和小体力卡一起；180 探险图
+    const award = (pts: number) => b.activationRewards.find((r) => r.points === pts)!.award;
+    expect(award(50)).toEqual({ exp: 500, goods: [{ id: GOODS.mysteryTicket, num: 10 }] });
+    expect(award(100)).toEqual({ diamond: 2, coin: 10_000 });
+    expect(award(120)).toEqual({ diamond: 4 });
+    expect(award(150)).toEqual({ exp: 1000, goods: [{ id: gid('小体力卡'), num: 2 }] });
+    expect(award(180)).toEqual({ goods: [{ id: gid('探险图'), num: 1 }] });
+    // 一番赏券跟着 120 档送（线上已经这样改了，默认也改）
+    expect(b.tuning.kuji.activeTicketPoints).toBe(120);
     expect(b.actionMap.activation['exchange.fill']).toBe('交易所成交');
     expect(b.actionMap.activation['post.create']).toBe('论坛发帖或回复');
     expect(b.actionMap.activation['post.reply']).toBe('论坛发帖或回复');

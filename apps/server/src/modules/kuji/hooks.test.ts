@@ -24,8 +24,8 @@ async function fillActivation(restId: number, _need: number) {
 describe('活跃度送券（一番赏设计 §5.5）', () => {
   it('领取 activeTicketPoints 这一档送 activeTickets 张；其他档（含更高的 180 档）不送；区服关掉一番赏不送', async () => {
     const top = Math.max(...t.deps.config.bundle.activationRewards.map((r) => r.points));
-    // 问题记录 318：新增 180 档后，送券仍在 150 档
-    const at = 150;
+    // 2026-10-08 用户定：送券挪到 120 档（线上先改了区服数值，默认跟着改）
+    const at = 120;
     expect(top).toBeGreaterThan(at);
     const low = Math.min(...t.deps.config.bundle.activationRewards.map((r) => r.points));
     const shardId = await createShard(t.db);
@@ -52,7 +52,7 @@ describe('活跃度送券（一番赏设计 §5.5）', () => {
   });
 
   it('送券写个人日志；活跃度面板写明哪一档送几张，区服关掉一番赏时不写（backlog 一番赏）', async () => {
-    const at = 150;
+    const at = 120;
     const top = Math.max(...t.deps.config.bundle.activationRewards.map((r) => r.points));
     const shardId = await createShard(t.db);
     const r = await newRestaurant(t, { shardId });

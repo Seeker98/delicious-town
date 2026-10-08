@@ -10,7 +10,7 @@
    "dictval": 50,
    "inputtime": "2024-01-26 13:42:07",
    "state": 1,
-   "note": "{\"exp\":500}",
+   "note": "{\"exp\":500,\"goods\":[{\"id\":10001,\"num\":10}]}",
    "curAct": 0,
    "receiveflag": 0
   },
@@ -22,7 +22,7 @@
    "dictval": 100,
    "inputtime": "2024-01-26 13:42:07",
    "state": 1,
-   "note": "{\"diamond\":2}",
+   "note": "{\"diamond\":2,\"coin\":10000}",
    "curAct": 0,
    "receiveflag": 0
   },
@@ -34,7 +34,7 @@
    "dictval": 120,
    "inputtime": "2024-01-26 13:42:07",
    "state": 1,
-   "note": "{\"exp\":1000}",
+   "note": "{\"diamond\":4}",
    "curAct": 0,
    "receiveflag": 0
   },
@@ -46,7 +46,7 @@
    "dictval": 150,
    "inputtime": "2024-01-26 13:42:07",
    "state": 1,
-   "note": "{\"diamond\":4}",
+   "note": "{\"exp\":1000,\"goods\":[{\"id\":10409,\"num\":2}]}",
    "curAct": 0,
    "receiveflag": 0
   }
