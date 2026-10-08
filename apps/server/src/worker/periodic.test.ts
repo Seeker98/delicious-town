@@ -171,3 +171,35 @@ describe('重抢时就记下第几次（稳健性批终审：原来失败时才�
     t.clock.set(start);
   });
 });
+
+describe('跑到一半进程没了（backlog：部署时被强杀，job_run 抢占了却没写完成也没写出错，开了 retry 也不重跑）', () => {
+  const claimDead = (shardId: number, name: string, at: Date) =>
+    t.db.insertInto('job_run').values({ shard_id: shardId, job: name, period: 'k', started_at: at }).execute();
+
+  it('开了 retry 的：没完成也没出错的抢占 30 分钟后再抢一次，之前不抢', async () => {
+    const shardId = await createShard(t.db);
+    const run = vi.fn(async () => ({ paid: 1 }));
+    const j: PeriodicJob = { name: 'retry-dead', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await claimDead(shardId, 'retry-dead', start);
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(run).not.toHaveBeenCalled();
+    t.clock.set(new Date(start.getTime() + 31 * 60_000));
+    const r = await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(r.map((x) => x.ok)).toEqual([true]);
+    expect(run).toHaveBeenCalledTimes(1);
+    t.clock.set(start);
+  });
+
+  it('没开 retry 的照旧不重跑', async () => {
+    const shardId = await createShard(t.db);
+    const a = job('dead-once', 'shop', 'k');
+    const start = t.clock.now;
+    await claimDead(shardId, 'dead-once', start);
+    t.clock.set(new Date(start.getTime() + 60 * 60_000));
+    await runDueJobs(deps(), [a], { shardIds: [shardId] });
+    expect(a.run).not.toHaveBeenCalled();
+    t.clock.set(start);
+  });
+});

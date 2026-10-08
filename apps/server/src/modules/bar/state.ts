@@ -50,7 +50,7 @@ export async function recordStreak(
 
 /**
  * 连胜榜只读本周和上周（问题记录 517），三周以前的删掉（517 遗留：原来一直不删）；
- * worker 每 6 小时跟每日计数一起清，返回删了几行
+ * worker 每 6 小时清一次（streak-best-clean），返回删了几行
  */
 export async function pruneStreakBest(db: Kysely<DB>, now: Date): Promise<number> {
   const keepFrom = weekStart(addDays(gameDay(now), -14));
