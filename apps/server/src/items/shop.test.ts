@@ -197,6 +197,11 @@ describe('商店整理工具（问题记录 483）', () => {
     });
     const r = t.report();
     expect(r.errors).toEqual([]);
-    expect(r.rows.filter((x) => x.black).map((x) => x.id).sort()).toEqual([...design[1]!.goods].sort());
+    expect(
+      r.rows
+        .filter((x) => x.black)
+        .map((x) => x.id)
+        .sort(),
+    ).toEqual([...design[1]!.goods].sort());
   });
 });
