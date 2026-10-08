@@ -29,6 +29,14 @@ const BLOCK_BTN_LINK = new Set([
   'views/MailView.vue',
 ]);
 
+/**
+ * 模板里的 <button>、<a> 开标签：引号里的内容整段跳过（稳健性批：原来用 [^>]*，属性值里有 >=、=> 时提前截断，
+ * 写在它后面的 type、@click 就看不到了）
+ */
+function tagsOf(tpl: string): string[] {
+  return [...tpl.matchAll(/<(?:button|a)\b(?:[^>"']|"[^"]*"|'[^']*')*>/g)].map((m) => m[0]);
+}
+
 describe('文字链接统一（问题记录 451）', () => {
   it('全站链接不带下划线；返回链接由样式在开头加“‹”（读屏不读）', () => {
     expect(css).toMatch(/(^|\n)a\s*\{[^}]*text-decoration:\s*none/);
@@ -119,7 +127,7 @@ describe('文字链接统一（问题记录 451）', () => {
     const noType: string[] = [];
     const noExpanded: string[] = [];
     for (const f of GAME) {
-      for (const [tag] of f.tpl.matchAll(/<(?:button|a)\b[^>]*>/gs)) {
+      for (const tag of tagsOf(f.tpl)) {
         if (tag.startsWith('<button') && /dt-link-btn/.test(tag) && !/\btype=/.test(tag)) noType.push(f.path);
         if (/@click(?:\.prevent)?="(\w+) = !\1"/.test(tag) && !/aria-(expanded|pressed)/.test(tag))
           noExpanded.push(f.path);
@@ -127,6 +135,11 @@ describe('文字链接统一（问题记录 451）', () => {
     }
     expect(noType).toEqual([]);
     expect(noExpanded).toEqual([]);
+  });
+
+  it('扫标签时属性值里的 >=、=> 不会把标签截断', () => {
+    const [tag] = tagsOf('<button :disabled="a >= b" class="dt-link-btn" @click="() => go()">x</button>');
+    expect(tag).toBe('<button :disabled="a >= b" class="dt-link-btn" @click="() => go()">');
   });
 
   it('链接文案不自己写箭头（餐厅信息页的加点、厨具）', () => {

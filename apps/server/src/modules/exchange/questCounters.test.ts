@@ -72,4 +72,25 @@ describe('交易所支线的计数（问题记录 515）', () => {
     expect(await count(s.restaurantId, 'exchange.rare.sell')).toBe(4);
     expect(await count(b.restaurantId, 'exchange.system.buy')).toBe(0);
   });
+
+  it('同 IP 的成交被冻结：两边都不记“买卖稀有食材”（515 遗留：缺的测试）', async () => {
+    const shardId = await createShard(t.db);
+    const f = lv6();
+    const ref = await refPrice(t.db, t.deps.config, tune(), ONE, shardId, f.id, day());
+    const s = await trader(t, { shardId, coin: 0, foods: { [f.id]: 10 } });
+    await svc().place(s, { foodsId: f.id, side: 'sell', price: ref, qty: 2 });
+    const b = await trader(t, { shardId, coin: 100_000_000 });
+    const trace = (accountId: number, ip: string, deviceId: string) =>
+      t.db
+        .insertInto('login_trace')
+        .values({ account_id: accountId, ip, device_id: deviceId, last_seen: t.clock.now })
+        .execute();
+    await trace(s.accountId, '10.9.9.9', 'dev-held-s');
+    await trace(b.accountId, '10.9.9.9', 'dev-held-b');
+    const r = await svc().place(b, { foodsId: f.id, side: 'buy', price: ref, qty: 2 });
+    expect(r.data.fills.every((x) => x.held)).toBe(true);
+    expect(r.data.fills.length).toBeGreaterThan(0);
+    expect(await count(b.restaurantId, 'exchange.rare.buy')).toBe(0);
+    expect(await count(s.restaurantId, 'exchange.rare.sell')).toBe(0);
+  });
 });

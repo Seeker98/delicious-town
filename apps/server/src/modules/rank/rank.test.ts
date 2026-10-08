@@ -153,6 +153,38 @@ describe('排行榜（设计文档 §2.6）', () => {
     expect(await rows('bar.cup.win.thisWeek')).toEqual([]);
   });
 
+  it('酒吧跨周：周日达到的记录周一 0 点后到了上周榜，本周榜清空；转数字连不中、猜酒杯连败的上周榜也能读（517 遗留：缺的测试）', async () => {
+    const [a, b, c] = await rests(3);
+    const best = (restId: number, game: string, result: 1 | -1, times: number) =>
+      t.db
+        .insertInto('bar_streak_best')
+        .values({
+          rest_id: restId,
+          game,
+          result,
+          week: '2026-09-28',
+          times,
+          reached_at: gameTime('2026-10-04', 22),
+        })
+        .execute();
+    // 周日（10-04）晚上达到的：算在 09-28 这一周
+    await best(a!.restaurantId, 'fg', 1, 5);
+    await best(b!.restaurantId, 'num', -1, 4);
+    await best(c!.restaurantId, 'cup', -1, 2);
+    const rows = (key: string) => board(a!, key).then((d) => d.rows.map((x) => [x.restId, x.value]));
+    t.clock.set(gameTime('2026-10-04', 23));
+    t.game.rank.clearCache();
+    expect(await rows('bar.fg.win.thisWeek')).toEqual([[a!.restaurantId, 5]]);
+    // 周一 0 点后：本周（10-05）还没人玩，上周就是刚过去的那一周
+    t.clock.set(gameTime('2026-10-05', 0, 5));
+    t.game.rank.clearCache();
+    expect(await rows('bar.fg.win.thisWeek')).toEqual([]);
+    expect(await rows('bar.fg.win.lastWeek')).toEqual([[a!.restaurantId, 5]]);
+    expect(await rows('bar.num.lose.lastWeek')).toEqual([[b!.restaurantId, 4]]);
+    expect(await rows('bar.cup.lose.lastWeek')).toEqual([[c!.restaurantId, 2]]);
+    expect(await rows('bar.num.win.lastWeek')).toEqual([]);
+  });
+
   it('特色菜昨日价值：单批最大值', async () => {
     const [a] = await rests(1);
     const cook = (total: number, price: number, at: Date) =>

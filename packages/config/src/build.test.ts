@@ -2057,7 +2057,7 @@ describe('支线“经营”（任务清单第二版，用户定）', () => {
   const l = b.questLines.find((x) => x.key === 'business')!;
   const steps = b.quests.filter((q) => q.line === l.id).sort((x, y) => x.order - y.order);
 
-  it('第 2 章出现，12 档，全是状态条件，归餐厅、油壶功能（都不能关）', () => {
+  it('第 2 章出现，12 档，全是状态条件，归餐厅、油壶功能', () => {
     expect(l.chapter).toBe(2);
     expect(steps).toHaveLength(12);
     expect(steps.every((q) => q.cond.kind === 'state')).toBe(true);

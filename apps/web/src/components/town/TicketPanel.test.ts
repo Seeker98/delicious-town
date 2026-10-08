@@ -91,6 +91,19 @@ describe('TicketPanel', () => {
     expect(ids()).toEqual(['lt-food-103']);
   });
 
+  it('切换等级：已选的和搜索词都清空（491 遗留：缺的测试）', async () => {
+    const w = mount(TicketPanel, {
+      props: { data: exchangeData({ levelTickets: [3, 0, 2, 0, 0] }), part: 'level' },
+    });
+    await w.get('[data-testid="lt-add-101"]').trigger('click');
+    await w.get('[data-testid="lt-search"]').setValue('料');
+    await w.get('[data-testid="lt-level-3"]').trigger('click');
+    expect((w.get('[data-testid="lt-search"]').element as HTMLInputElement).value).toBe('');
+    await w.get('[data-testid="lt-level-1"]').trigger('click');
+    expect(w.find('[data-testid="lt-minus-101"]').exists()).toBe(false);
+    expect(w.get('[data-testid="lt-picked"]').text()).toBe('已选 0 / 3 张');
+  });
+
   it('神秘券：选一种食材再换', async () => {
     vi.mocked(endpoints.townMysteryTicket).mockResolvedValue({ foods: [{ foodsId: 702, num: 1 }] });
     const w = mount(TicketPanel, { props: { data: exchangeData() } });

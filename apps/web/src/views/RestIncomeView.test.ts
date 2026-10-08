@@ -66,6 +66,25 @@ describe('收益记录页（问题记录 530）', () => {
     expect(cells[2]!.classes()).toContain('text-end');
   });
 
+  it('客人列只算付钱的：白食(9)、被赶走的(-3)也不算（530 遗留：缺的测试）', async () => {
+    vi.mocked(endpoints.income).mockResolvedValue({
+      ...page,
+      items: [{ ...page.items[0]!, customers: { '1': 2, '7': 1, '9': 4, '-3': 2, '0': 1 } }],
+    });
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    expect(w.findAll('tbody tr')[0]!.findAll('td')[1]!.text()).toBe('3');
+  });
+
+  it('接口没给今日小计（旧服务端）：不写那一行，记录照常（530 遗留：缺的测试）', async () => {
+    const { today: _, ...noToday } = page;
+    vi.mocked(endpoints.income).mockResolvedValue(noToday);
+    const w = mount(RestIncomeView);
+    await flushPromises();
+    expect(w.find('[data-testid="income-today"]').exists()).toBe(false);
+    expect(w.findAll('tbody tr')).toHaveLength(1);
+  });
+
   it('不是今天（北京时间）的记录带日期（终审 M3：0 点后第一页会混进昨天的）', async () => {
     vi.mocked(endpoints.income).mockResolvedValue({
       ...page,

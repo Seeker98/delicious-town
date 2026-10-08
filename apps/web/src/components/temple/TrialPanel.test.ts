@@ -316,6 +316,38 @@ describe('TrialPanel', () => {
     expect(open()).toBe('true');
   });
 
+  it('主辅都选了以后再换主料：槽位停在主料，不跳到辅料（487 遗留：缺的测试）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 150, name: '稀有料', level: 5, odds: 70, coin: 1, type: 0 },
+        { id: 423, name: '普通料', level: 5, odds: 100, coin: 1, type: 0 },
+        { id: 31, name: '三级料', level: 3, odds: 100, coin: 1, type: 0 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [{ id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 1, coin: 1, foods: [] }],
+    } as never);
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [150, 423, 31].map((foodsId) => ({ foodsId, num: 5, locked: false, streetNeed: 0 })),
+    } as never);
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    await w.get('[data-testid="trial-slot-main"]').trigger('click');
+    await w.get('[data-testid="trial-food-31"]').trigger('click');
+    expect(w.get('[data-testid="trial-slot-main"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('三级料');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
+  });
+
   it('有玩法说明，显示试炼对象当前的试炼价值和经验及上限（问题记录：试炼的选项说明不够）', async () => {
     vi.mocked(endpoints.mc).mockResolvedValue({
       learned: [

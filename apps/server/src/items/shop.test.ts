@@ -105,4 +105,58 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(res.errors.join()).toMatch(`shop black pool goods ${MISSILE} has no diamond price`);
     expect(written).toEqual([]);
   });
+
+  it('改回原版值：这条从 shop.json 里删掉（483 遗留：缺的测试）', () => {
+    const base = tool([]).t.report();
+    const orig = base.rows.find((x) => x.id === MISSILE)!.orig;
+    // 原来改过飞弹的银币价
+    const { t, written } = tool([{ id: MISSILE, coin: orig.coin + 100 } as never]);
+    expect(t.report().rows.find((x) => x.id === MISSILE)!.coin).toBe(orig.coin + 100);
+    const res = t.save({
+      goods: [{ id: MISSILE, coin: orig.coin, diamond: orig.diamond, onSale: orig.onSale }],
+      pools: {
+        special: base.rows.filter((x) => x.special).map((x) => x.id),
+        black: base.rows.filter((x) => x.black).map((x) => x.id),
+      },
+    });
+    expect(res.errors).toEqual([]);
+    const file = JSON.parse(written.at(-1)!) as ShopFile;
+    expect(file.goods.find((x) => x.id === MISSILE)).toBeUndefined();
+  });
+
+  it('只有备注的条目（值和原版一样）保留，写名字和备注（483 遗留：缺的测试）', () => {
+    const { t, written } = tool([]);
+    const base = t.report();
+    const orig = base.rows.find((x) => x.id === RED)!.orig;
+    const res = t.save({
+      goods: [{ id: RED, coin: orig.coin, diamond: orig.diamond, onSale: orig.onSale, note: '先别动' }],
+      pools: {
+        special: base.rows.filter((x) => x.special).map((x) => x.id),
+        black: base.rows.filter((x) => x.black).map((x) => x.id),
+      },
+    });
+    expect(res.errors).toEqual([]);
+    const file = JSON.parse(written.at(-1)!) as { goods: unknown[] };
+    expect(file.goods).toEqual([{ id: RED, name: '[一阶]•红晶原石', note: '先别动' }]);
+  });
+
+  it('池子改回和设计表一样：shop.json 里不写这个池子（483 遗留：缺的测试）', () => {
+    // 设计表的池子换成干净的（真实设计表里还留着下架的道具，按它构建会报错）
+    const design = [
+      { pool: 'special', goods: real.pools!.special! },
+      { pool: 'black', goods: real.pools!.black! },
+    ];
+    const written: string[] = [];
+    const t = createShopTool({
+      readSource: () => ({
+        ...src,
+        'designed/shop_pools': design,
+        'game/shop': written.length ? (JSON.parse(written.at(-1)!) as unknown) : real,
+      }),
+      writeShop: (text) => written.push(text),
+    });
+    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
+    expect(res.errors).toEqual([]);
+    expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
+  });
 });

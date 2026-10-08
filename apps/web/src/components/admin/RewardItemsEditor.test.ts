@@ -87,4 +87,29 @@ describe('RewardItemsEditor', () => {
     // 按钮上写名字，不靠目录（目录没加载时也能看懂）
     expect(btn('foods', food.id).text()).toContain(food.name);
   });
+
+  it('推荐奖励：已有这一行但数量是空的，点推荐填上推荐的数量（505 遗留：缺的测试）', async () => {
+    const food = ACTIVITY_REWARD_PRESETS.find((p) => p.kind === 'foods')!;
+    const w = mount(RewardItemsEditor, {
+      props: { modelValue: { foods: [{ id: food.id, num: '' as never }] }, presets: true },
+    });
+    const rows = () => w.findAll('[data-testid^="ri-foods-num-"]').length;
+    const before = rows();
+    expect(before).toBe(1);
+    await w.find(`[data-testid="ri-preset-foods-${food.id}"]`).trigger('click');
+    // 合并进已有的那一行，不另加一行
+    expect(rows()).toBe(before);
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({ foods: [{ id: food.id, num: food.num }] });
+  });
+
+  it('推荐奖励：点到超过 9999 时出红字，报给父组件（505 遗留：缺的测试）', async () => {
+    const goods = ACTIVITY_REWARD_PRESETS.find((p) => p.kind === 'goods')!;
+    const w = mount(RewardItemsEditor, {
+      props: { modelValue: { goods: [{ id: goods.id, num: 9999 }] }, presets: true },
+    });
+    expect(w.find('[data-testid="ri-over"]').exists()).toBe(false);
+    await w.find(`[data-testid="ri-preset-goods-${goods.id}"]`).trigger('click');
+    expect(w.find('[data-testid="ri-over"]').exists()).toBe(true);
+    expect(((w.emitted('over') ?? []).at(-1)![0] as string[]).length).toBeGreaterThan(0);
+  });
 });
