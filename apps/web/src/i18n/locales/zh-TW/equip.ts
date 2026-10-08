@@ -7,14 +7,16 @@ export default {
   /** 屬性和數值："廚藝12" */
   attrValue: (name: string, v: number) => `${name}${v}`,
   power: '廚力',
-  powerNote: ' (五項之和 + 幸運/2；只作參考，賽廚的勝負看評委按色香味形養打分)',
+  powerNote: '廚力 = 五項之和 + 幸運/2，只作參考；賽廚的勝負看評委按色香味形養打分',
+  /** 廚力等三行的說明收在這裡（問題記錄 530） */
+  notesTitle: '這些數怎麼算',
+  duelNote: '賽廚時的進攻、防守算上了所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個',
   /** 穿戴廚具（含寶石）的收益加成（問題記錄 411） */
   /** 賽廚時的廚力（問題記錄 417） */
-  duelPower: (attack: string, defend: string) =>
-    `賽廚時: 進攻 ${attack}、防守 ${defend} (算上所有幸運加成和套裝的進攻、防守加成；廚塔頁顯示的是進攻這個)`,
+  duelPower: (attack: string, defend: string) => `賽廚時: 進攻 ${attack}、防守 ${defend}`,
   income: (coin: string, exp: string, gold: string) =>
     `廚具收益加成: 最終銀幣 ${coin}、最終經驗 ${exp}、特色菜金牌 ${gold}`,
-  incomeNote: ' (廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少)',
+  incomeNote: '廚具收益加成: 廚具和寶石的屬性越高越多，幸運不算；同樣的點數創意最多、調味最少',
   empty: '空',
   noPieces: '沒有這個部位的廚具',
   needLevel: (lv: number) => `需要 ${lv} 級`,
@@ -54,6 +56,8 @@ export default {
     failed: '加點失敗',
   },
   detail: {
+    noAttrs: '沒有屬性加成',
+    noGems: '這件不能鑲寶石',
     rows: { base: '基礎', boost: '強化', gem: '寶石', total: '合計' },
     meta: (part: string, lv: number, worn: boolean) => `${part} · ${lv} 級可穿${worn ? ' · 穿戴中' : ''}`,
     stress: '強化',

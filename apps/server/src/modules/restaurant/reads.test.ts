@@ -90,6 +90,9 @@ describe('餐厅读接口', () => {
     expect(income.items).toHaveLength(1);
     expect(income.items[0].roundNo).toBe(round);
     expect(income.nextBefore).toBeNull();
+    // 第一页带今天（北京时间）的小计（问题记录 530：收益记录页优化）
+    const it0 = income.items[0];
+    expect(income.today).toEqual({ rounds: 1, coin: it0.coin, exp: it0.exp, oil: it0.oil });
     const buffs = (await get(p.cookie, '/buffs')).json.data;
     expect(buffs.roundNo).toBe(round);
     expect(buffs.rates.atRate.parts.base).toBeCloseTo(0.3);

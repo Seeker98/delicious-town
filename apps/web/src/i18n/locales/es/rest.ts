@@ -25,7 +25,10 @@ const rest: Messages['rest'] = {
     noRound: 'Aún no se ha liquidado ninguna ronda',
     sources: 'Origen de las bonificaciones',
     records: 'Historial de ingresos',
-    cols: { time: 'Hora', coin: 'Monedas', exp: 'EXP', oil: 'Aceite' },
+    cols: { time: 'Hora', guests: 'Clientes', coin: 'Monedas', exp: 'EXP', oil: 'Aceite' },
+    today: (rounds, coin, exp, oil) =>
+      `Hoy: ${rounds} ${plEs(rounds, 'ronda', 'rondas')} · ${coin} monedas · ${exp} EXP · ${oil} de aceite`,
+    bonus: 'Bonificaciones',
     more: 'Entradas anteriores',
   },
   floor: {

@@ -8,13 +8,15 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Puissance',
   powerNote:
-    '(somme des cinq caractéristiques + Chance/2 ; indicatif seulement : les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition)',
-  duelPower: (attack, defend) =>
-    `En duel : attaque ${attack}, défense ${defend} (avec tous les bonus de Chance et les bonus d’attaque et de défense des ensembles ; la Tour des chefs affiche celui d’attaque)`,
+    'Puissance = somme des cinq caractéristiques + Chance/2, indicatif seulement\u202f; les duels culinaires sont départagés par des juges qui notent Couleur, Arôme, Goût, Forme et Nutrition',
+  notesTitle: 'Comment ces chiffres sont calculés',
+  duelNote:
+    "L'attaque et la défense en duel incluent tous les bonus de Chance et les bonus d’attaque et de défense des ensembles\u202f; la Tour des chefs affiche celui d’attaque",
+  duelPower: (attack, defend) => `En duel\u202f: attaque ${attack}, défense ${defend}`,
   income: (coin, exp, gold) =>
-    `Bonus de revenus de l’équipement : pièces finales ${coin}, EXP finale ${exp}, or du plat signature ${gold}`,
+    `Bonus de revenus de l’équipement\u202f: pièces finales ${coin}, EXP finale ${exp}, or du plat signature ${gold}`,
   incomeNote:
-    '(plus les caractéristiques de l’équipement et des gemmes sont élevées, plus le bonus est grand ; la Chance ne compte pas ; par point, la Créativité compte le plus et l’Assaisonnement le moins)',
+    'Bonus de revenus de l’équipement\u202f: plus les caractéristiques de l’équipement et des gemmes sont élevées, plus le bonus est grand\u202f; la Chance ne compte pas\u202f; par point, la Créativité compte le plus et l’Assaisonnement le moins',
   empty: 'Vide',
   noPieces: 'Aucun ustensile pour cet emplacement',
   needLevel: (lv) => `Niveau ${lv} requis`,
@@ -55,6 +57,8 @@ const equip: Messages['equip'] = {
     failed: 'Impossible de répartir les points',
   },
   detail: {
+    noAttrs: 'Aucun bonus de caractéristiques',
+    noGems: 'cet ustensile ne peut pas recevoir de gemmes',
     rows: { base: 'Base', boost: 'Renfort', gem: 'Gemmes', total: 'Total' },
     meta: (part, lv, worn) => `${part} · équipable au niveau ${lv}${worn ? ' · Équipé' : ''}`,
     stress: 'Renforcer',

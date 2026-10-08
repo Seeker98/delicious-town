@@ -8,13 +8,15 @@ const equip: Messages['equip'] = {
   attrValue: (name, v) => `${name} ${v}`,
   power: 'Chef power',
   powerNote:
-    '(sum of the five stats + Luck/2; a guide only: cook-offs are decided by judges scoring Look, Aroma, Taste, Shape and Nutrition)',
-  duelPower: (attack, defend) =>
-    `In cook-offs: attack ${attack}, defense ${defend} (with every Luck bonus and set attack/defense bonuses; the Chef Tower shows the attack one)`,
+    'Chef power = sum of the five stats + Luck/2, a guide only; cook-offs are decided by judges scoring Look, Aroma, Taste, Shape and Nutrition',
+  notesTitle: 'How these numbers work',
+  duelNote:
+    'Cook-off attack and defense include every Luck bonus and set attack/defense bonuses; the Chef Tower shows the attack one',
+  duelPower: (attack, defend) => `In cook-offs: attack ${attack}, defense ${defend}`,
   income: (coin, exp, gold) =>
     `Gear income bonus: final coins ${coin}, final EXP ${exp}, signature dish gold ${gold}`,
   incomeNote:
-    '(higher gear and gem stats give more, Luck doesn’t count; Creativity counts most per point, Seasoning least)',
+    'Gear income bonus: higher gear and gem stats give more, Luck doesn’t count; Creativity counts most per point, Seasoning least',
   empty: 'Empty',
   noPieces: 'No cookware for this slot',
   needLevel: (lv) => `Needs level ${lv}`,
@@ -55,6 +57,8 @@ const equip: Messages['equip'] = {
     failed: 'Could not assign points',
   },
   detail: {
+    noAttrs: 'No stat bonuses',
+    noGems: 'this item can’t hold gems',
     rows: { base: 'Base', boost: 'Enhanced', gem: 'Gems', total: 'Total' },
     meta: (part, lv, worn) => `${part} · Level ${lv} to equip${worn ? ' · Equipped' : ''}`,
     stress: 'Enhance',

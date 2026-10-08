@@ -125,12 +125,32 @@ describe('EquipDetailView', () => {
     expect(useToastStore().items.some((x) => x.text.includes('强化成功 +3'))).toBe(true);
   });
 
-  it('属性表每项属性一行，列为基础、强化、宝石、合计（视觉第三轮：六列横排在英法西文下超出屏幕）', async () => {
+  it('属性表每项属性一行，列为基础、强化、宝石、合计；只列有数的属性（视觉第三轮；问题记录 530）', async () => {
     const { w } = await mountView();
     const rows = w.findAll('[data-testid^="attr-row-"]');
-    expect(rows).toHaveLength(6);
+    // 夹具里只有火候（基础 12、强化 3）和厨艺（宝石 1）有数
+    expect(rows.map((x) => x.attributes('data-testid'))).toEqual(['attr-row-cook', 'attr-row-fire']);
     const fire = w.get('[data-testid="attr-row-fire"]');
     expect(fire.findAll('td').map((x) => x.text())).toEqual(['12', '3', '0', '15']);
+    expect(w.find('[data-testid="no-attrs"]').exists()).toBe(false);
+  });
+
+  it('全是 0 时写一句“没有属性加成”，不列表格；不能镶宝石的写一句“这件不能镶宝石”（问题记录 530）', async () => {
+    const zero = detail({
+      base: attrs(),
+      boost: attrs(),
+      gem: attrs(),
+      total: attrs(),
+      gems: [],
+      curHole: 0,
+      maxHole: 0,
+    });
+    vi.mocked(endpoints.equipDetail).mockResolvedValue(zero);
+    const { w } = await mountView();
+    expect(w.get('[data-testid="no-attrs"]').text()).toBe('没有属性加成');
+    expect(w.findAll('[data-testid^="attr-row-"]')).toHaveLength(0);
+    expect(w.get('[data-testid="no-gems"]').text()).toBe('宝石: 这件不能镶宝石');
+    expect(w.find('[data-testid="hole-count"]').exists()).toBe(false);
   });
 
   it('回退、打孔、镶嵌、摘除调用对应接口', async () => {

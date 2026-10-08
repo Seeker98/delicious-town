@@ -57,14 +57,15 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <div class="text-end small mb-1">
-    <RouterLink to="/rest/tasks" class="dt-go" data-testid="to-tasks">{{ t.home.tasksLink }}</RouterLink>
-  </div>
   <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
-    <div class="d-flex align-items-center mb-2">
+    <!-- 去任务页的入口和签到按钮放在标题这一行，不单独占一行（问题记录 530） -->
+    <div class="d-flex align-items-center gap-2 mb-2" data-testid="activation-head">
       <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>
+      <RouterLink to="/rest/tasks" class="dt-go small text-nowrap" data-testid="to-tasks">{{
+        t.home.tasksLink
+      }}</RouterLink>
       <button
-        class="btn btn-sm btn-primary ms-auto"
+        class="btn btn-sm btn-primary text-nowrap"
         data-testid="signin"
         :disabled="busy || act.signedIn"
         @click="run(() => endpoints.signIn(), t.rest.tasks.signInFailed)"

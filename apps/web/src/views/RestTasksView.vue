@@ -81,11 +81,6 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
-  <div class="text-end small mb-1">
-    <RouterLink to="/rest/activation" class="dt-go" data-testid="to-activation">{{
-      t.rest.tasks.activationLink
-    }}</RouterLink>
-  </div>
   <ul class="nav nav-tabs mb-3" role="tablist" data-testid="task-tabs">
     <li v-for="x in TABS" :key="x" class="nav-item">
       <button
@@ -99,6 +94,12 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         {{ t.rest.tasks.tabs[x]
         }}<i v-if="claimable[x]" class="bi bi-gift text-primary ms-1" :data-testid="`gift-tab-${x}`"></i>
       </button>
+    </li>
+    <!-- 去活跃页的入口放在选项卡这一行的右边，不单独占一行（问题记录 530） -->
+    <li class="nav-item ms-auto align-self-center small">
+      <RouterLink to="/rest/activation" class="dt-go" data-testid="to-activation">{{
+        t.rest.tasks.activationLink
+      }}</RouterLink>
     </li>
   </ul>
   <template v-if="tasks">

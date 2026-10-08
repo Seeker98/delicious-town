@@ -1,5 +1,6 @@
 import type { Kysely } from 'kysely';
 import type { Device, GameConfig } from '@dt/config';
+import { gameDay, gameTime } from '@dt/shared';
 import type {
   BuffsDto,
   DeviceSlotDto,
@@ -107,7 +108,13 @@ export function parseCursor(before: string): { at: Date; id: string | null } {
 }
 export const cursorOf = (at: Date, id: string | number) => `${at.toISOString()}~${id}`;
 
-export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): Promise<IncomePageDto> {
+/** now 给了且是第一页时带今天的小计（问题记录 530） */
+export async function incomePage(
+  db: Kysely<DB>,
+  restId: number,
+  q: PageQuery,
+  now?: Date,
+): Promise<IncomePageDto> {
   let s = db
     .selectFrom('income_round')
     .select(['id', 'round_no', 'coin', 'exp', 'oil', 'customers', 'created_at'])
@@ -130,10 +137,25 @@ export async function incomePage(db: Kysely<DB>, restId: number, q: PageQuery): 
     .execute();
   const page = rows.slice(0, q.limit);
   const last = page.at(-1);
-  return {
+  const out: IncomePageDto = {
     items: page.map(roundDto),
     nextBefore: rows.length > q.limit && last ? cursorOf(last.created_at, last.id) : null,
   };
+  if (now && !q.before) {
+    const t = await db
+      .selectFrom('income_round')
+      .select((eb) => [
+        eb.fn.countAll<string>().as('rounds'),
+        eb.fn.coalesce(eb.fn.sum<string>('coin'), eb.lit(0)).as('coin'),
+        eb.fn.coalesce(eb.fn.sum<string>('exp'), eb.lit(0)).as('exp'),
+        eb.fn.coalesce(eb.fn.sum<string>('oil'), eb.lit(0)).as('oil'),
+      ])
+      .where('rest_id', '=', restId)
+      .where('created_at', '>=', gameTime(gameDay(now), 0))
+      .executeTakeFirstOrThrow();
+    out.today = { rounds: Number(t.rounds), coin: Number(t.coin), exp: Number(t.exp), oil: Number(t.oil) };
+  }
+  return out;
 }
 
 export async function buffsOf(
