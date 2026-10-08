@@ -91,7 +91,8 @@ export default {
       `${w}在神殿探險中發現了 ${list(p.foods)
         .map((f) => `${x.foodName(num((f as P).foodsId))}×${num((f as P).num)}`)
         .join('、')}`,
-    'temple.guardian.rare': (w, p, x) => `${w}擊敗守護獸獲得 ${x.foodName(num(p.foodsId))}${p.num ? `×${num(p.num)}` : ''}`,
+    'temple.guardian.rare': (w, p, x) =>
+      `${w}擊敗守護獸獲得 ${x.foodName(num(p.foodsId))}${p.num ? `×${num(p.num)}` : ''}`,
     'activity.coopRank': (_w, p) =>
       `《${str(p.title)}》貢獻榜: ${list(p.top)
         .map(
