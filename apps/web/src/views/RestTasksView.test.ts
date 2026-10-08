@@ -296,6 +296,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     const w = await mountView();
     expect(w.findAll('[data-testid^="tab-"]').map((x) => x.text())).toEqual(['主线', '每周', '支线']);
     expect(w.find('[data-testid="card-activation"]').exists()).toBe(false);
+    expect(w.get('[data-testid="to-activation"]').attributes('href')).toBe('/rest/activation');
     expect(w.findAll('[data-testid^="card-"]').map((x) => x.attributes('data-testid'))).toEqual([
       'card-main',
     ]);

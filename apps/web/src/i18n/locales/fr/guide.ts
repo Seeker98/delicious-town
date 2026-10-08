@@ -54,7 +54,7 @@ const guide: Messages['guide'] = {
     { to: '/', text: "Pointer sur la page d'accueil : une fois par jour, pour un pack de pointage" },
     {
       to: '/rest/activation',
-      text: "Activité du jour : faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses ; les quêtes hebdomadaires repartent le lundi à 0 h",
+      text: "Activité du jour\u202f: faites les tâches du jour pour gagner des points d'activité et récupérer leurs récompenses",
     },
     {
       to: '/town',

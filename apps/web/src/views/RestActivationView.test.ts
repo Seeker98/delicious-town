@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createMemoryHistory, createRouter } from 'vue-router';
 import type { ActivationDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
@@ -87,7 +88,11 @@ const act = (patch: Partial<ActivationDto> = {}): ActivationDto => ({
 });
 
 async function mountView() {
-  const w = mount(RestActivationView);
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/:p(.*)*', component: {} }],
+  });
+  const w = mount(RestActivationView, { global: { plugins: [router] } });
   await flushPromises();
   return w;
 }
@@ -125,6 +130,10 @@ describe('RestActivationView', () => {
     const w = await mountView();
     expect(w.get('[data-testid="act-1"]').text()).toContain('Check in');
     expect(w.get('[data-testid="act-2"]').text()).toContain('打蟑螂');
+  });
+
+  it('有去任务页的入口（终审：以前收藏任务页的玩家两边都能找到）', async () => {
+    expect((await mountView()).get('[data-testid="to-tasks"]').attributes('href')).toBe('/rest/tasks');
   });
 
   it('签到按钮', async () => {

@@ -54,7 +54,7 @@ const guide: Messages['guide'] = {
     { to: '/', text: 'Regístrate en la página de inicio: una vez al día, por un pack de registro' },
     {
       to: '/rest/activation',
-      text: 'Actividad del día: haz las tareas diarias para sumar puntos de actividad y recoger sus premios; las misiones semanales se reinician el lunes a las 0:00',
+      text: 'Actividad del día: haz las tareas diarias para sumar puntos de actividad y recoger sus premios',
     },
     {
       to: '/town',

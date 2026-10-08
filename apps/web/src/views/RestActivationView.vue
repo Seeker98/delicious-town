@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import type { ActivationDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -56,6 +57,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
+  <div class="text-end small mb-1">
+    <RouterLink to="/rest/tasks" class="dt-go" data-testid="to-tasks">{{ t.home.tasksLink }}</RouterLink>
+  </div>
   <section v-if="act" class="dt-card mb-3" data-testid="card-activation">
     <div class="d-flex align-items-center mb-2">
       <span class="dt-card-title flex-fill">{{ t.rest.tasks.today(act.total) }}</span>

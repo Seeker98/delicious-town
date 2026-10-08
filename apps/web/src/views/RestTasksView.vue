@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import QuestCard from '../components/QuestCard.vue';
@@ -71,7 +71,7 @@ const claimable = computed<Record<Tab, boolean>>(() => {
   const q = tasks.value;
   if (!q) return { main: false, weekly: false, side: false };
   return {
-    main: q.main.some(canClaim) || q.leftover.some(canClaim) || !!q.chapter?.claimable,
+    main: q.main.some(canClaim) || (q.leftover ?? []).some(canClaim) || !!q.chapter?.claimable,
     weekly: !!q.weekly && (q.weekly.quests.some(canClaim) || q.weekly.full.claimable),
     side: q.lines.some((l) => !!l.quest && l.lockedStar === null && canClaim(l.quest)),
   };
@@ -81,6 +81,11 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
 </script>
 
 <template>
+  <div class="text-end small mb-1">
+    <RouterLink to="/rest/activation" class="dt-go" data-testid="to-activation">{{
+      t.rest.tasks.activationLink
+    }}</RouterLink>
+  </div>
   <ul class="nav nav-tabs mb-3" role="tablist" data-testid="task-tabs">
     <li v-for="x in TABS" :key="x" class="nav-item">
       <button
@@ -166,9 +171,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
       </div>
     </section>
     <!-- 每周：按当前星级分组，周一 0 点刷新 -->
-    <div v-if="tab === 'weekly' && !tasks.weekly" class="small text-muted" data-testid="no-weekly">
-      {{ t.rest.tasks.noWeekly }}
-    </div>
+    <section v-if="tab === 'weekly' && !tasks.weekly" class="dt-card mb-3">
+      <div class="small text-muted" data-testid="no-weekly">{{ t.rest.tasks.noWeekly }}</div>
+    </section>
     <section v-if="tab === 'weekly' && tasks.weekly" class="dt-card mb-3" data-testid="card-weekly">
       <div class="d-flex align-items-center mb-1">
         <span class="dt-card-title flex-fill">{{ t.rest.tasks.weekly(tasks.weekly.group) }}</span>

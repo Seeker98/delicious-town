@@ -27,7 +27,7 @@ test('后台建兑换码 → 玩家在邮箱页兑换；带邀请链接注册的
   await page.goto('/mail');
   await page.getByTestId('redeem-input').fill(code.toLowerCase());
   await page.getByTestId('redeem-go').click();
-  await expect(page.getByText('兑换成功：银币 4,321')).toBeVisible();
+  await expect(page.getByText('兑换成功: 银币 4,321')).toBeVisible();
 
   await page.goto('/invite');
   const link = (await page.getByTestId('invite-link').innerText()).trim();

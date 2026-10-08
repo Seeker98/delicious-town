@@ -49,7 +49,7 @@ export default {
   daily: '每天的固定事項',
   dailyItems: [
     { to: '/', text: '首頁簽到: 每天一次，送一個簽到禮包' },
-    { to: '/rest/activation', text: '今日活躍: 做日常任務攢活躍度，領活躍獎勵；每週任務週一 0 點重置' },
+    { to: '/rest/activation', text: '今日活躍: 做日常任務攢活躍度，領活躍獎勵' },
     { to: '/town', text: '廣場: 搖一搖蟹老闆的錢袋' },
     {
       to: '/society/mayor',

@@ -94,6 +94,7 @@ const rest: Messages['rest'] = {
     noSide: 'Aucune quête secondaire pour le moment',
     tabs: { main: 'Principale', weekly: 'Hebdo', side: 'Secondaires' },
     noWeekly: 'Aucune quête hebdomadaire pour le moment',
+    activationLink: 'Pointage et activité du jour',
     award: (text) => `Récompense : ${text}`,
     claimTask: 'Récupérer',
     claimFailed: 'Impossible de récupérer',

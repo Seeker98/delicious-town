@@ -50,7 +50,7 @@ const guide: Messages['guide'] = {
     { to: '/', text: 'Check in on the home page: once a day, for a check-in gift pack' },
     {
       to: '/rest/activation',
-      text: 'Daily activity: do daily tasks to earn activity points and claim activity rewards; weekly quests reset on Monday at 00:00',
+      text: 'Daily activity: do daily tasks to earn activity points and claim activity rewards',
     },
     {
       to: '/town',

@@ -671,9 +671,22 @@ describe('RestaurantHomeView', () => {
     w = await mountView();
     expect(w.get('[data-testid="main-task"]').text()).toContain('分配属性点');
     expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
+    // 主线全做完：这一行写已全部完成，右边照样有任务入口（终审 C1：每周和支线还要从这里进）
     vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
     w = await mountView();
-    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+    expect(w.get('[data-testid="main-task"]').text()).toContain('主线已全部完成');
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+    // 任务读不到时也留着入口
+    vi.mocked(endpoints.tasks).mockRejectedValue(new Error('x'));
+    w = await mountView();
+    expect(w.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
+  });
+
+  it('区服关掉任务功能时首页不放任务入口（终审：原来“更多”里的入口看功能开关）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['task'] });
+    vi.mocked(endpoints.tasks).mockResolvedValue(quests([], { chapter: null, allMainDone: true }));
+    const w = await mountView();
+    expect(w.find('[data-testid="home-tasks-link"]').exists()).toBe(false);
   });
 
   it('主线行：补领的任务能领时显示（本章可领的优先）；没完成的补领任务不占主线行（backlog 318 终审）', async () => {
@@ -695,7 +708,9 @@ describe('RestaurantHomeView', () => {
       quests([], { chapter: null, allMainDone: true, leftover: [{ ...left, progress: 0, done: false }] }),
     );
     w = await mountView();
-    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+    // 没完成的补领任务不占主线行：主线全做完时这一行只写已全部完成和任务入口（终审 C1）
+    expect(w.get('[data-testid="main-task"]').text()).not.toContain('领一次限时活动奖励');
+    expect(w.get('[data-testid="main-task"]').text()).toContain('主线已全部完成');
   });
 
   it('任务读失败（比如服务端还没更新）只少了主线行，首页其余照常显示、不报获取餐厅信息失败（问题记录 327）', async () => {
@@ -704,7 +719,9 @@ describe('RestaurantHomeView', () => {
     );
     const w = await mountView();
     expect(w.find('.alert-danger').exists()).toBe(false);
-    expect(w.find('[data-testid="main-task"]').exists()).toBe(false);
+    // 主线行只剩“主线”和任务入口（终审 C1）
+    expect(w.get('[data-testid="main-task"]').text()).toMatch(/^主线/);
+    expect(w.find('[data-testid="home-tasks-link"]').exists()).toBe(true);
     expect(w.find('[data-testid="home-todo"]').exists()).toBe(true);
   });
 

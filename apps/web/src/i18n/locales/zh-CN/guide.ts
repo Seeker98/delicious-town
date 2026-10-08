@@ -48,7 +48,7 @@ export default {
   daily: '每天的固定事项',
   dailyItems: [
     { to: '/', text: '首页签到: 每天一次，送一个签到礼包' },
-    { to: '/rest/activation', text: '今日活跃: 做日常任务攒活跃度，领活跃奖励；每周任务周一 0 点重置' },
+    { to: '/rest/activation', text: '今日活跃: 做日常任务攒活跃度，领活跃奖励' },
     { to: '/town', text: '广场: 摇一摇蟹老板的钱袋' },
     {
       to: '/society/mayor',

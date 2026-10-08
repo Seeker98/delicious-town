@@ -93,6 +93,7 @@ const rest: Messages['rest'] = {
     noSide: 'Ahora no hay misiones secundarias',
     tabs: { main: 'Principal', weekly: 'Semanales', side: 'Secundarias' },
     noWeekly: 'Ahora no hay misiones semanales',
+    activationLink: 'Registro y actividad del día',
     award: (text) => `Premio: ${text}`,
     claimTask: 'Recoger',
     claimFailed: 'No se pudo recoger',
