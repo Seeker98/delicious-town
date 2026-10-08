@@ -20,7 +20,7 @@ describe('清理任务互不连累（稳健性批终审：每日计数清理出�
     const jobs = workerJobs(game, { error: vi.fn() });
     const errors: string[] = [];
     for (const j of jobs.filter((x) => x.name.endsWith('-clean') && x.name !== 'login-trace-clean'))
-      await j.run().catch((e: Error) => errors.push(e.message));
+      await j.run(new AbortController().signal).catch((e: Error) => errors.push(e.message));
     expect(errors).toEqual(['boom']);
     expect(deleted).toEqual(['bar_streak_best']);
   });

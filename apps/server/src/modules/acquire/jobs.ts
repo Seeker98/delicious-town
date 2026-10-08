@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 import { addDays, gameDay, gameParts } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import type { PeriodicJob } from '../../core/jobs';
+import { JobError, type PeriodicJob } from '../../core/jobs';
 import { payDividends } from './dividend';
 import { aggregateIncomeDay, INCOME_KEEP_DAYS, pruneIncomeDays } from './income';
 import { basePrice, windowDays, type T } from './rules';
@@ -144,8 +144,8 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
       },
       run: async ({ shardId, now, settings, log }) => {
         const stats = await payDividends(d, shardId, now, settings.tuning.acquire, log);
-        if (stats.failed > 0) {
-          throw new Error(`acquire dividend: ${stats.failed} owners failed (${stats.owners} paid)`);
+        if (stats.failedOwners.length > 0) {
+          throw new JobError(`acquire dividend: ${stats.failedOwners.length} owners failed`, stats);
         }
         return stats;
       },

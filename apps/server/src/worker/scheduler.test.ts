@@ -102,3 +102,29 @@ describe('停止时等正在跑的任务（backlog：部署时 SIGTERM 不等，
     await expect(s.stop(3000)).resolves.toBe(true);
   });
 });
+
+describe('停止时告诉正在跑的任务（稳健性收尾批终审 I2）', () => {
+  it('run 拿到的 signal 在 stop 时停掉', async () => {
+    vi.useFakeTimers();
+    let seen: AbortSignal | undefined;
+    let release: () => void = () => {};
+    const s = startScheduler(
+      [
+        {
+          name: 'sig',
+          intervalMs: 1000,
+          run: (signal) => {
+            seen = signal;
+            return new Promise<void>((r) => (release = r));
+          },
+        },
+      ],
+      { error: vi.fn() },
+    );
+    expect(seen?.aborted).toBe(false);
+    const p = s.stop(5000);
+    expect(seen?.aborted).toBe(true);
+    release();
+    await expect(p).resolves.toBe(true);
+  });
+});

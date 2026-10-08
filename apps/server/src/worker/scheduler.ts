@@ -1,7 +1,8 @@
 export interface Job {
   name: string;
   intervalMs: number;
-  run: () => Promise<void>;
+  /** signal 在 stop 时停掉：长任务看到就别再开始新的活 */
+  run: (signal: AbortSignal) => Promise<void>;
 }
 
 export interface JobLogger {
@@ -17,13 +18,14 @@ export function startScheduler(jobs: Job[], log: JobLogger): { stop: (waitMs: nu
   const timers: ReturnType<typeof setInterval>[] = [];
   const inflight = new Set<Promise<void>>();
   let stopped = false;
+  const ac = new AbortController();
   for (const job of jobs) {
     let running = false;
     const tick = async () => {
       if (running || stopped) return;
       running = true;
       try {
-        await job.run();
+        await job.run(ac.signal);
       } catch (err) {
         log.error({ err, job: job.name }, 'job failed');
       } finally {
@@ -41,6 +43,7 @@ export function startScheduler(jobs: Job[], log: JobLogger): { stop: (waitMs: nu
   return {
     stop: async (waitMs) => {
       stopped = true;
+      ac.abort();
       timers.forEach((t) => clearInterval(t));
       if (inflight.size === 0) return true;
       let timer: ReturnType<typeof setTimeout> | undefined;

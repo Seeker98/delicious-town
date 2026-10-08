@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import { featureAvailable } from '../core/features';
-import type { PeriodicJob } from '../core/jobs';
+import { JobError, type PeriodicJob } from '../core/jobs';
 import type { DB } from '../db/schema';
 import type { ShardService } from '../modules/shard/service';
 
@@ -31,7 +31,7 @@ export const RETRY_MAX = 5;
 export async function runDueJobs(
   d: PeriodicDeps,
   jobs: PeriodicJob[],
-  opts: { shardIds?: number[] } = {},
+  opts: { shardIds?: number[]; signal?: AbortSignal } = {},
 ): Promise<JobRunResult[]> {
   let q = d.db.selectFrom('shard').select('id').where('status', '=', 'open');
   if (opts.shardIds) {
@@ -43,6 +43,8 @@ export async function runDueJobs(
   for (const { id: shardId } of shards) {
     const settings = await d.shards.settings(shardId);
     for (const job of jobs) {
+      // 停止时不再抢新的（稳健性收尾批终审 I2）：抢了跑不完，没开 retry 的那一期就漏了；没抢的下一个 worker 接着跑
+      if (opts.signal?.aborted) return results;
       if (!featureAvailable(settings, job.feature)) continue;
       const now = d.now();
       const period = job.period(now, settings);
@@ -101,6 +103,7 @@ export async function runDueJobs(
           .updateTable('job_run')
           .set({
             stats: JSON.stringify({
+              ...(err instanceof JobError ? err.stats : {}),
               error: err instanceof Error ? err.message : String(err),
               ...(job.retry ? { attempts: attempt } : {}),
             }),

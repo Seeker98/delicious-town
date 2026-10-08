@@ -79,9 +79,9 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
     {
       name: 'periodic',
       intervalMs: 5_000,
-      run: async () => {
+      run: async (signal) => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
-        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
+        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs, { signal });
       },
     },
     {

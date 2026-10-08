@@ -78,7 +78,14 @@ export async function payDividends(
   now: Date,
   t: T,
   log: Log = NO_LOG,
-): Promise<{ owners: number; rests: number; coin: number; failed: number; linked: number }> {
+): Promise<{
+  owners: number;
+  rests: number;
+  coin: number;
+  failed: number;
+  failedOwners: number[];
+  linked: number;
+}> {
   const today = gameDay(now);
   const day = addDays(today, -1);
   // 前一天的收入还没汇总（汇总任务那天没跑成，它不重试）：先补一次再发（稳健性批终审 I1：原来直接报错，
@@ -107,7 +114,7 @@ export async function payDividends(
     .orderBy('s.owner_rest_id')
     .orderBy('s.rest_id')
     .execute();
-  if (rows.length === 0) return { owners: 0, rests: 0, coin: 0, failed: 0, linked: 0 };
+  if (rows.length === 0) return { owners: 0, rests: 0, coin: 0, failed: 0, failedOwners: [], linked: 0 };
   if (!(await summedDay(d, shardId, day))) throw new Error(`acquire dividend: no income summary for ${day}`);
   const live = rows.filter((r) => !isBanned(r, now));
   const links = await linkedPairs(
@@ -133,7 +140,7 @@ export async function payDividends(
   const w = priceWindow(today, t);
   const days = windowDays(w, await firstIncomeDay(d.db), t);
   const ownerIncome = await incomeSums(d.db, [...byOwner.keys()], w.from, w.to);
-  const stats = { owners: 0, rests: 0, coin: 0, failed: 0, linked };
+  const stats = { owners: 0, rests: 0, coin: 0, failed: 0, failedOwners: [] as number[], linked };
   for (const [ownerId, list] of byOwner) {
     const cap = dividendCap(ownerIncome.get(ownerId) ?? 0, t, days);
     try {
@@ -202,6 +209,7 @@ export async function payDividends(
     } catch (err) {
       log.error({ err, shardId, ownerId, day }, 'acquire dividend failed');
       stats.failed += 1;
+      stats.failedOwners.push(ownerId);
     }
   }
   return stats;
