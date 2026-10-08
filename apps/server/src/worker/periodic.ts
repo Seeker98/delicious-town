@@ -55,7 +55,11 @@ export async function runDueJobs(
       if (!claimed && job.retry) {
         const again = await d.db
           .updateTable('job_run')
-          .set({ started_at: now })
+          // 抢到时就把次数加 1（终审：原来失败时才写，重跑中途进程崩了会按同一个次数一直重抢）
+          .set({
+            started_at: now,
+            stats: sql`jsonb_set(stats, '{attempts}', to_jsonb(coalesce((stats->>'attempts')::int, 1) + 1))`,
+          })
           .where('shard_id', '=', shardId)
           .where('job', '=', job.name)
           .where('period', '=', period)
@@ -63,11 +67,11 @@ export async function runDueJobs(
           .where(sql<boolean>`stats ? 'error'`)
           .where(sql<number>`coalesce((stats->>'attempts')::int, 1)`, '<', RETRY_MAX)
           .where('started_at', '<=', new Date(now.getTime() - RETRY_AFTER_MS))
-          .returning(sql<number>`coalesce((stats->>'attempts')::int, 1)`.as('attempts'))
+          .returning(sql<number>`(stats->>'attempts')::int`.as('attempts'))
           .executeTakeFirst();
         if (again) {
           claimed = { period };
-          attempt = Number(again.attempts) + 1;
+          attempt = Number(again.attempts);
         }
       }
       if (!claimed) continue;

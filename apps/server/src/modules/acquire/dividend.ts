@@ -4,7 +4,7 @@ import { emitAction } from '../../core/action';
 import { restLog, runSystemOp } from '../../core/op';
 import { gainCoin } from '../../core/resources';
 import { isBanned } from '../admin/ban';
-import { incomeSums } from './income';
+import { aggregateIncomeDay, incomeSums } from './income';
 import { capDividends, dividendCap, dividendOf, windowDays, type T } from './rules';
 import { firstIncomeDay, priceWindow } from './state';
 
@@ -58,8 +58,20 @@ interface Pending {
  * 不满 minRounds 轮的不发；每个老板的合计按自己近 priceDays 天的日均收入封顶，超了按比例压。
  * 老板被封不发；老板和被收购的店近 linkDays 天共用过设备或 IP 的，这家不发。每个老板一个事务：某个老板失败只记日志，不影响别人。
  * 分红记录主键 (rest_id, day)，只给还没发过的店发钱，同一天重跑不会重复发；已经发给这个老板的从封顶里扣掉。
- * 前一天的收入一行都没汇总上时报错（任务记录里留下错误），不按 0 发
+ * 前一天的收入没汇总时先补汇总；补完还是一行都没有（那天没有结算记录）时报错（任务记录里留下错误），不按 0 发
  */
+/** 这一天本区服的收入汇总过没有（有一行就算） */
+async function summedDay(d: GameDeps, shardId: number, day: string): Promise<boolean> {
+  const r = await d.db
+    .selectFrom('rest_income_day')
+    .select('rest_id')
+    .where('day', '=', day)
+    .where('rest_id', 'in', d.db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId))
+    .limit(1)
+    .executeTakeFirst();
+  return !!r;
+}
+
 export async function payDividends(
   d: GameDeps,
   shardId: number,
@@ -69,6 +81,9 @@ export async function payDividends(
 ): Promise<{ owners: number; rests: number; coin: number; failed: number; linked: number }> {
   const today = gameDay(now);
   const day = addDays(today, -1);
+  // 前一天的收入还没汇总（汇总任务那天没跑成，它不重试）：先补一次再发（稳健性批终审 I1：原来直接报错，
+  // 这一天的分红就没了）。汇总是覆盖写、单日最高取较大，重复做没有影响；结算记录留 3 天，前一天的还在
+  if (!(await summedDay(d, shardId, day))) await aggregateIncomeDay(d.db, shardId, day);
   const rows = await d.db
     .selectFrom('acquire_state as s')
     .innerJoin('restaurant as o', 'o.id', 's.owner_rest_id')
@@ -93,14 +108,7 @@ export async function payDividends(
     .orderBy('s.rest_id')
     .execute();
   if (rows.length === 0) return { owners: 0, rests: 0, coin: 0, failed: 0, linked: 0 };
-  const summed = await d.db
-    .selectFrom('rest_income_day')
-    .select('rest_id')
-    .where('day', '=', day)
-    .where('rest_id', 'in', d.db.selectFrom('restaurant').select('id').where('shard_id', '=', shardId))
-    .limit(1)
-    .executeTakeFirst();
-  if (!summed) throw new Error(`acquire dividend: no income summary for ${day}`);
+  if (!(await summedDay(d, shardId, day))) throw new Error(`acquire dividend: no income summary for ${day}`);
   const live = rows.filter((r) => !isBanned(r, now));
   const links = await linkedPairs(
     d.db,

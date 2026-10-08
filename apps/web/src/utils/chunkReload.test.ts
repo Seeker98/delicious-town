@@ -97,6 +97,19 @@ describe('发版后页面文件加载不到时自动刷新一次（问题记录 
     fetchSpy.mockRestore();
   });
 
+  it('重拉要读完响应体（终审：只等到响应头就跳页，缓存可能只写了一半）；真正刷新时再记一次时间，10 秒窗口从刷新时算（终审）', async () => {
+    const body = vi.fn(async () => new ArrayBuffer(0));
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({ arrayBuffer: body } as never);
+    const go = vi.fn();
+    expect(
+      reloadOnce('/x', bustThenGo(new Error('Unable to preload CSS for /assets/y.css'), go), 5_000_000),
+    ).toBe(true);
+    await vi.waitFor(() => expect(go).toHaveBeenCalled());
+    expect(body).toHaveBeenCalled();
+    expect(Number(sessionStorage.getItem('dt_chunk_reload_at'))).toBeGreaterThan(5_000_000);
+    fetchSpy.mockRestore();
+  });
+
   it('断网时点到没加载过的页面：不刷新，提示网络断了（稳健性批：原来点了没反应）', async () => {
     const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
     const go = vi.fn();

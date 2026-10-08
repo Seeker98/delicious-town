@@ -54,9 +54,10 @@ const onVisible = () => {
   if (document.visibilityState === 'visible') void syncTime();
 };
 onMounted(async () => {
+  // 先挂监听再等：还没读到时间就卸载时，卸载里能删掉（终审）
+  document.addEventListener('visibilitychange', onVisible);
   await syncTime();
   ready.value = true;
-  document.addEventListener('visibilitychange', onVisible);
 });
 
 const fmt = (o: Intl.DateTimeFormatOptions) =>

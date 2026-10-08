@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     robust1008:
-      'If the acquisition dividend fails to go out, it is retried 10 minutes later (it used to wait until the next day); opening a new page while offline now says you’re offline instead of doing nothing; the clock at the top re-syncs with the server when you come back to the app; after logging out or switching accounts, the mail and friend-request badges no longer show the previous account’s counts',
+      'Acquisition dividends: if the previous day’s income hasn’t been tallied yet, it is tallied first and the dividends are paid, and a failed payout is retried 10 minutes later (that day’s dividends used to be skipped); opening a new page while offline now says you’re offline instead of doing nothing; the clock at the top re-syncs with the server when you come back to the app; after logging out or switching accounts, the mail and friend-request badges no longer show the previous account’s counts',
     ux1008:
       'Switching pages now scrolls back to the top (it used to keep the previous page’s scroll position); “N points to assign” on the Restaurant info page jumps straight to the points box on the Cookware page; when picking trial ingredients, ones you don’t have enough of because the dish itself also uses them are greyed out with the reason, and a search with no results says so; the Kraken’s bad-mood penalty to trial value now uses the value that actually applies; on phones, the activity link on the Quests page moves above the tabs when it doesn’t fit; plus a few small fixes to buttons and screen-reader text',
     zhComma1008: 'Chinese text: commas are now an English comma followed by a space, to save room',

@@ -45,11 +45,24 @@ function failedUrls(err: unknown): string[] {
  */
 export function bustThenGo(err: unknown, go: (url: string) => void): (url: string) => void {
   return (url) => {
+    // 读完响应体：只等到响应头就跳页的话，缓存可能只写了一半（终审）
     const bust = Promise.all(
-      failedUrls(err).map((u) => fetch(u, { cache: 'reload' }).catch(() => undefined)),
+      failedUrls(err).map((u) =>
+        fetch(u, { cache: 'reload' })
+          .then((r) => r.arrayBuffer())
+          .catch(() => undefined),
+      ),
     );
     const timeout = new Promise((r) => setTimeout(r, 3000));
-    void Promise.race([bust, timeout]).finally(() => go(url));
+    void Promise.race([bust, timeout]).finally(() => {
+      // 真正刷新时再记一次时间：10 秒窗口从这里算，不被上面最多 3 秒的等待吃掉（终审）
+      try {
+        sessionStorage.setItem(KEY, String(Date.now()));
+      } catch {
+        // 存储不可用时忽略
+      }
+      go(url);
+    });
   };
 }
 

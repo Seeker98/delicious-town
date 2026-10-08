@@ -142,3 +142,32 @@ describe('失败后重试（retry，收购分红：前一天收入没汇总好�
     t.clock.set(start);
   });
 });
+
+describe('重抢时就记下第几次（稳健性批终审：原来失败时才写，重跑中途进程崩了会按同一个次数一直重抢）', () => {
+  it('重跑开始时 job_run 里的次数已经加 1', async () => {
+    const shardId = await createShard(t.db);
+    const seen: unknown[] = [];
+    let first = true;
+    const run = vi.fn(async () => {
+      if (first) {
+        first = false;
+        throw new Error('boom');
+      }
+      const row = await t.db
+        .selectFrom('job_run')
+        .select('stats')
+        .where('shard_id', '=', shardId)
+        .where('job', '=', 'retry-count')
+        .executeTakeFirstOrThrow();
+      seen.push(row.stats);
+      return { ok: 1 };
+    });
+    const j: PeriodicJob = { name: 'retry-count', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(seen).toEqual([{ error: 'boom', attempts: 2 }]);
+    t.clock.set(start);
+  });
+});
