@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     retire1008:
-      "Un autre lot d'objets inutilisés a été retiré (44 sortes, dont des animaux du zodiaque, des animaux de compagnie, des plantes, des bibelots et quelques plaques)\u202f: les 36 échanges du maire qui les donnaient disparaissent. Ceux que vous possédez déjà restent affichés et peuvent être utilisés ou vendus",
+      'Un autre lot d’objets ne peut plus être obtenu (44 sortes, dont des animaux du zodiaque, des animaux de compagnie, des plantes, des bibelots et quelques plaques)\u202f: les 36 échanges du maire qui les donnaient disparaissent. Ceux que vous possédez déjà gardent leurs effets',
     text1008:
       "Nombres dans les quêtes et les règles\u202f: les quêtes secondaires sur la faveur du Kraken, le niveau des amis invités et les parts de Prédictions affichent désormais les valeurs réelles de ce serveur\u202f; si la limite de parts de ce serveur est inférieure à 200, l'étape «\u202fdétenir toutes les parts\u202f» se base sur cette limite et ne bloque plus les quêtes suivantes\u202f; plusieurs ingrédients mystères identiques d'une même bête gardienne n'apparaissent plus qu'en une seule actualité\u202f; les règles du duel culinaire précisent que le plat signature ne compte pas la valeur d'épreuve",
     punct1008:
