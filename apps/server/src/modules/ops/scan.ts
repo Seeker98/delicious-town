@@ -48,7 +48,7 @@ export async function scanHats(
           restId: row.rest_id,
           minLevel: null,
           title: '赞助帽子升级',
-          body: `餐厅升到六星，${hatDisplayName('jade', name)}升级为${hatDisplayName('xuan', name)}。`,
+          body: `餐厅升到六星, ${hatDisplayName('jade', name)}升级为${hatDisplayName('xuan', name)}。`,
           tpl: { key: 'hat.upgrade', params: { name } },
           items: { hats: [{ tier: 'xuan', name }] },
           source: 'hat',

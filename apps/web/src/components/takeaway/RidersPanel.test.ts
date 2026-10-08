@@ -45,7 +45,7 @@ describe('RidersPanel', () => {
     expect(w.find('[data-testid="dismiss-31"]').exists()).toBe(false);
     await w.find('[data-testid="dismiss-32"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('花 150 银币，得到 1,500 经验');
+    expect(confirm.mock.calls[0]![0]).toContain('花 150 银币, 得到 1,500 经验');
     expect(endpoints.takeawayDismiss).toHaveBeenCalledWith(32);
     expect(w.emitted('reload')).toHaveLength(1);
     confirm.mockRestore();

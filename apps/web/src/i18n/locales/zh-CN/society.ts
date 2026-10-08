@@ -3,14 +3,14 @@ export default {
   title: '协会',
   links: {
     star: { label: '升星', desc: '等级、食谱、凭证够了就能升星' },
-    oil: { label: '油壶扩容', desc: '提高油上限，减少停业' },
+    oil: { label: '油壶扩容', desc: '提高油上限, 减少停业' },
     rename: { label: '改名', desc: '需要改名卡' },
-    move: { label: '搬家', desc: '换一条街，街道勋章跟着换' },
+    move: { label: '搬家', desc: '换一条街, 街道勋章跟着换' },
   },
   move: {
     title: '搬家',
     hint: (street: string, cost: string) =>
-      `现在在 ${street}。需要 1 张搬家卡 (持有搬家处工作证时免)，花费约 ${cost} 银币 (幸运时半价)。`,
+      `现在在 ${street}。需要 1 张搬家卡 (持有搬家处工作证时免), 花费约 ${cost} 银币 (幸运时半价)。`,
     pick: '选择新街道',
     bonus: (desc: string) => `街道加成: ${desc}`,
     option: (name: string, cook: string) => `${name} (${cook})`,
@@ -19,7 +19,7 @@ export default {
     failed: '搬家失败',
   },
   oil: {
-    title: (level: number, max: string) => `油壶扩容 (当前 ${level} 级，上限 ${max})`,
+    title: (level: number, max: string) => `油壶扩容 (当前 ${level} 级, 上限 ${max})`,
     next: (level: number, max: string) => `扩容到 ${level} 级后上限 ${max}`,
     maxed: '已经是最高级',
     btn: '扩容',
@@ -28,7 +28,7 @@ export default {
   },
   rename: {
     title: '改名',
-    hint: '需要 1 张改名卡。新名字最多 9 个字，只能用中文、字母和数字，不能和本服其他餐厅重名。',
+    hint: '需要 1 张改名卡。新名字最多 9 个字, 只能用中文、字母和数字, 不能和本服其他餐厅重名。',
     placeholder: '新名字',
     btn: '改名',
     done: (name: string) => `已改名为「${name}」`,

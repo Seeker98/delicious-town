@@ -319,7 +319,7 @@ describe('游戏资料列表（问题记录 142）', () => {
   it('读失败时写读取失败，并弹提示（设计 §3.4，backlog #115）', async () => {
     vi.mocked(endpoints.openGoods).mockRejectedValue(new Error('net'));
     const w = await mountAt('/wiki/goods');
-    expect(w.get('[data-testid="wiki-error"]').text()).toBe('读取失败，请稍后再试');
+    expect(w.get('[data-testid="wiki-error"]').text()).toBe('读取失败, 请稍后再试');
     expect(useToastStore().items.map((x) => x.variant)).toContain('danger');
   });
 

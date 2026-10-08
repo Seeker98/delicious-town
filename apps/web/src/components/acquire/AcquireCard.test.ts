@@ -46,7 +46,7 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     expect(w.find('[data-testid="card-listed"]').exists()).toBe(false);
     await w.get('[data-testid="card-acquire"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('「乙店」得 900,000 银币，税 100,000 银币');
+    expect(confirm.mock.calls[0]![0]).toContain('「乙店」得 900,000 银币, 税 100,000 银币');
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'acquire', 1_000_000);
     expect(endpoints.acquireRest).toHaveBeenCalledTimes(2);
   });
@@ -59,7 +59,7 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     await flushPromises();
     expect(w.find('[data-testid="card-acquire"]').exists()).toBe(false);
     expect(w.get('[data-testid="card-block"]').text()).toBe(
-      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过，不能收购',
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过, 不能收购',
     );
   });
 
@@ -97,7 +97,7 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     const w = mount(AcquireCard, { props: { restId: 2 } });
     await flushPromises();
     expect(w.text()).not.toContain('身价 1,000,000');
-    expect(w.get('[data-testid="card-block"]').text()).toBe('这家店星级不够，还没有身价');
+    expect(w.get('[data-testid="card-block"]').text()).toBe('这家店星级不够, 还没有身价');
   });
 
   it('对方被封号：卡片上不写原因、不给收购按钮，不透露封号（审查 Minor 3；终审：只有封号用笼统说法会被认出来）', async () => {

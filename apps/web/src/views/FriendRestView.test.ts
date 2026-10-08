@@ -115,7 +115,7 @@ describe('FriendRestView', () => {
     const w = await mountView();
     await w.find('[data-testid="table-2"]').trigger('click');
     expect(w.find('[data-testid="act-kill"]').exists()).toBe(false);
-    expect(w.get('[data-testid="own-roach"]').text()).toBe('这只蟑螂是你放的，自己不能消灭');
+    expect(w.get('[data-testid="own-roach"]').text()).toBe('这只蟑螂是你放的, 自己不能消灭');
   });
 
   it('好友店的蟑螂：写今天还能灭几只；灭够了换成说明，不放按钮（问题记录 374）', async () => {
@@ -126,7 +126,7 @@ describe('FriendRestView', () => {
     const done = await mountView();
     await done.find('[data-testid="table-2"]').trigger('click');
     expect(done.find('[data-testid="act-kill"]').exists()).toBe(false);
-    expect(done.get('[data-testid="kill-done"]').text()).toBe('今天在这家店灭的蟑螂够多了，留点给别人吧');
+    expect(done.get('[data-testid="kill-done"]').text()).toBe('今天在这家店灭的蟑螂够多了, 留点给别人吧');
   });
 
   it('不限（蟹老板的店）时不写剩几只', async () => {

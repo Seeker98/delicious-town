@@ -10,8 +10,8 @@ import { poolOf, rankedOf, type RankedRow } from './coop';
 import { mergeRewards, rewardsOf, SETTLE_DELAY_MS } from './rules';
 import { loadProgress } from './service';
 
-const MAIL_BODY = '活动结束时你还有这些奖励没有领取，现在通过邮件补发给你。';
-const RANK_BODY = '感谢你为全服合力做出的贡献，这是你的名次奖励。';
+const MAIL_BODY = '活动结束时你还有这些奖励没有领取, 现在通过邮件补发给你。';
+const RANK_BODY = '感谢你为全服合力做出的贡献, 这是你的名次奖励。';
 
 /** 一家店补发出错的次数上限（每分钟一次，约半小时）：到了就放弃这家，不再挡住整个区服（backlog 148-1） */
 export const SETTLE_MAX_FAILS = 30;

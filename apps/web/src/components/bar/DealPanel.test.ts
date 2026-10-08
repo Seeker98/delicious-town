@@ -114,7 +114,7 @@ describe('DealPanel', () => {
     await flushPromises();
     expect(endpoints.barDealAnswer).toHaveBeenCalledWith(true);
     const res = w.get('[data-testid="deal-result"]');
-    expect(res.text()).toContain('成交，得到 16,900 银币');
+    expect(res.text()).toContain('成交, 得到 16,900 银币');
     expect(res.text()).toContain('你的箱子里是');
     expect(w.findAll('[data-testid^="deal-all-"]')).toHaveLength(10);
     await w.get('[data-testid="deal-again"]').trigger('click');
@@ -155,7 +155,7 @@ describe('DealPanel', () => {
     });
     const res = w.get('[data-testid="deal-result"]').text();
     expect(res).toContain('1 个放进了冰箱');
-    expect(res).toContain('1 个放不下，丢掉了');
+    expect(res).toContain('1 个放不下, 丢掉了');
   });
 
   it('概览晚到、比手上的局面旧时不覆盖（审查：连点开箱子）', async () => {

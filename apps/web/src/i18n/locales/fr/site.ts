@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    zhComma1008:
+      "Texte chinois\u202f: les virgules deviennent une virgule anglaise suivie d'une espace, pour gagner de la place, comme pour les deux-points",
     gemStrength1008:
       "Page des gemmes\u202f: le «\u202fÉnergie\u202f: N\u202f» à la fin de l'explication est désormais sur sa propre ligne, «\u202fMon énergie\u202f: N\u202f», pour préciser qu'il s'agit de votre énergie actuelle",
     perf1008:

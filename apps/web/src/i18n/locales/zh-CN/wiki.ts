@@ -4,16 +4,16 @@ import { formatNum, formatPct } from '../../../utils/format';
 /** 游戏资料（Wiki）和开放接口说明（问题记录 142） */
 export default {
   title: '游戏资料',
-  intro: '游戏里的道具、食材、菜谱、厨具和街道，数据和游戏配置同步。',
+  intro: '游戏里的道具、食材、菜谱、厨具和街道, 数据和游戏配置同步。',
   searchAll: '在全部资料里搜名字',
   search: '搜索名字',
   noResult: '没有找到',
-  loadFailed: '读取失败，请稍后再试',
+  loadFailed: '读取失败, 请稍后再试',
   notFound: '没有这一条',
   back: '返回列表',
   home: '游戏资料首页',
   more: (n: number) => `再显示 ${n} 条`,
-  maxShown: (n: string) => `最多显示 ${n} 条，用搜索或街道缩小范围`,
+  maxShown: (n: string) => `最多显示 ${n} 条, 用搜索或街道缩小范围`,
   count: (n: number) => `${formatNum(n)} 条`,
   apiLink: '开放接口: 给想研究游戏、做小工具的玩家',
   kinds: { goods: '道具', foods: '食材', cookbooks: '菜谱', equips: '厨具', streets: '街道' },
@@ -65,7 +65,7 @@ export default {
     suit: '套装',
     noSuit: '不属于套装',
     essence: (n: number) => `强化一次要 ${n} 个精华`,
-    holes: (a: number, b: number) => `初始 ${a} 个，最多 ${b} 个`,
+    holes: (a: number, b: number) => `初始 ${a} 个, 最多 ${b} 个`,
     baseAttrs: '基础属性',
     enhance: '强化',
     sockets: '镶嵌孔',
@@ -73,7 +73,7 @@ export default {
     gemLevel: (n: number) => `${n} 阶`,
     nextGem: '下一阶',
     systemPrice: '系统定价',
-    seed: (n: number) => `菜园能种出来，每次收获 ${n} 个`,
+    seed: (n: number) => `菜园能种出来, 每次收获 ${n} 个`,
     fromGrade: (g: string) => `${g}起`,
     street: '街道',
     recommend: (n: number) => `推荐 ${n} 级`,
@@ -91,7 +91,7 @@ export default {
     randomFoods: (level: number, num: number) => `随机 ${level} 级普通食材×${num}`,
     masterFoods: (num: number) => `随机万能食材×${num}`,
     range: (min: string, max: string, unit: string) => `${unit} ${min}~${max}`,
-    note: '只列能开出的东西，不写概率。',
+    note: '只列能开出的东西, 不写概率。',
   },
   sources: {
     special: '今日特价 (每天随机上架)',
@@ -103,87 +103,87 @@ export default {
     renownShop: (n: string, rotating: boolean) => `声望商店: ${n} 声望${rotating ? ' (轮换上架)' : ''}`,
     exchange: '兑换: ',
     times: (n: number) => (n < 0 ? '' : ` (每人限兑 ${n} 次)`),
-    none: '游戏配置里没有直接的获得途径，可能来自活动、礼包、任务或其他玩法。',
+    none: '游戏配置里没有直接的获得途径, 可能来自活动、礼包、任务或其他玩法。',
   },
   /** 玩法攻略（问题记录 384）：来自快速模拟里三种机器人的做法 */
   guide: {
     title: '玩法攻略',
     link: '玩法攻略: 三种节奏怎么玩、每次上线做什么',
     intro:
-      '这份攻略来自游戏的数值模拟: 让机器人按勤快、普通、休闲三种节奏各玩 30 天，下面是它们的做法和进度。数字是模拟估算，真实情况会有出入，仅供参考。',
+      '这份攻略来自游戏的数值模拟: 让机器人按勤快、普通、休闲三种节奏各玩 30 天, 下面是它们的做法和进度。数字是模拟估算, 真实情况会有出入, 仅供参考。',
     sections: [
       {
         title: '三种节奏',
         items: [
-          '勤快: 白天到深夜每小时看一眼。大约第 2 天 1 星、第 7 天 30 级；2 星卡在学会的菜数上: 看到食谱页的搬街提示就搬，越早搬越快。',
+          '勤快: 白天到深夜每小时看一眼。大约第 2 天 1 星、第 7 天 30 级；2 星卡在学会的菜数上: 看到食谱页的搬街提示就搬, 越早搬越快。',
           '普通: 一天看三次 (早上、中午、晚上)。大约第 3 天 1 星、第 9 天 30 级、第 18 天左右 2 星。',
-          '休闲: 每晚看一次。大约第 4 天 1 星、第 23 天左右 30 级；一个月内一般到不了 2 星，慢慢来也没关系。',
+          '休闲: 每晚看一次。大约第 4 天 1 星、第 23 天左右 30 级；一个月内一般到不了 2 星, 慢慢来也没关系。',
         ],
       },
       {
         title: '每次上线按这个顺序做',
         items: [
-          '签到，领活跃奖励。',
+          '签到, 领活跃奖励。',
           '用掉仓库里能直接用的道具: 餐桌、礼包、食材随机券。',
           '属性点全加厨艺。',
           '油少于六成就加油；停业的店加了油就会复业。',
           '灭掉自己店里的蟑螂。',
           '领任务: 主线、支线、章末奖励能领就领。',
-          '空着的设施格摆上设施，仓库里没有就买便宜的。',
-          '升星只差升星凭证和银币时，钱够就买凭证升星；钱不够就先攒着，别花在别处。',
+          '空着的设施格摆上设施, 仓库里没有就买便宜的。',
+          '升星只差升星凭证和银币时, 钱够就买凭证升星；钱不够就先攒着, 别花在别处。',
           '等级、星级够了就扩油壶。',
-          '买餐桌，但要留出加满油的钱，再多留 2 万备用。',
-          '去菜场只买学菜缺的食材: 先看日常菜场，再看特价菜场 (要验证邮箱)。日常菜场每次进货都有一格是新手街缺的食材。',
+          '买餐桌, 但要留出加满油的钱, 再多留 2 万备用。',
+          '去菜场只买学菜缺的食材: 先看日常菜场, 再看特价菜场 (要验证邮箱)。日常菜场每次进货都有一格是新手街缺的食材。',
           '顺手报名菜场竞猜。',
-          '学菜: 先学没学过的，再升级学过的。',
-          '用当天的免体力次数，把学菜用不到的食材合成上去。',
+          '学菜: 先学没学过的, 再升级学过的。',
+          '用当天的免体力次数, 把学菜用不到的食材合成上去。',
         ],
       },
       {
         title: '什么时候搬街',
         items: [
           (n: G) =>
-            `只能学所在街道的菜。${n.startStreet.name}只有 ${formatNum(n.startStreet.cookbooks)} 道，升 2 星要学会 ${formatNum(n.star2Cookbooks)} 道，迟早要搬。`,
-          '本街剩下的菜全学会也凑不够下一星时，食谱页会提示。看到提示就准备搬: 别等最后几道难凑的菜，学得慢下来就去搬家。',
+            `只能学所在街道的菜。${n.startStreet.name}只有 ${formatNum(n.startStreet.cookbooks)} 道, 升 2 星要学会 ${formatNum(n.star2Cookbooks)} 道, 迟早要搬。`,
+          '本街剩下的菜全学会也凑不够下一星时, 食谱页会提示。看到提示就准备搬: 别等最后几道难凑的菜, 学得慢下来就去搬家。',
           (n: G) =>
-            `搬到菜多的街学得快，比如${n.biggestStreet.name}有 ${formatNum(n.biggestStreet.cookbooks)} 道，是菜最多的街。`,
-          '各街分银币街、均衡街、经验街: 缺钱去银币街，赶等级去经验街。搬家页和食谱页写了每条街的类型和加成。',
-          '搬家要一张搬家卡 (有搬家处工作证时免) 和一笔搬街费，幸运时半价。',
+            `搬到菜多的街学得快, 比如${n.biggestStreet.name}有 ${formatNum(n.biggestStreet.cookbooks)} 道, 是菜最多的街。`,
+          '各街分银币街、均衡街、经验街: 缺钱去银币街, 赶等级去经验街。搬家页和食谱页写了每条街的类型和加成。',
+          '搬家要一张搬家卡 (有搬家处工作证时免) 和一笔搬街费, 幸运时半价。',
         ],
       },
       {
         title: '钱先花在哪',
         items: [
-          '先保证有油: 没油就停业，什么都不赚。',
+          '先保证有油: 没油就停业, 什么都不赚。',
           '其次是升星: 升星凭证和升星银币。',
           '然后才是餐桌和设施。',
           (n: G) =>
-            `外卖要 ${n.takeaway.star} 星、${formatNum(n.takeaway.renown)} 声望才能开通 (开通时扣掉这些声望)，还要 ${formatNum(n.takeaway.coin / 10000)} 万银币和 ${formatNum(n.takeaway.diamond)} 钻石，或者一张外卖券；想开的话早点攒。`,
+            `外卖要 ${n.takeaway.star} 星、${formatNum(n.takeaway.renown)} 声望才能开通 (开通时扣掉这些声望), 还要 ${formatNum(n.takeaway.coin / 10000)} 万银币和 ${formatNum(n.takeaway.diamond)} 钻石, 或者一张外卖券；想开的话早点攒。`,
         ],
       },
       {
         title: '其他玩法',
         items: [
-          '每天去广场摇一次蟹老板的钱袋、去酒吧找雯姐聊天；再去协会找镇长大胃锅、13 哥聊天，都有东西送。',
-          '每天打厨塔，输赢都拿声望；第一层的长老是 8 级，大约 10 级能打过 (穿上见习厨具会早一点)。',
+          '每天去广场摇一次蟹老板的钱袋、去酒吧找雯姐聊天；再去协会找镇长大胃锅、13 哥聊天, 都有东西送。',
+          '每天打厨塔, 输赢都拿声望；第一层的长老是 8 级, 大约 10 级能打过 (穿上见习厨具会早一点)。',
           (n: G) =>
             n.exchange.level === n.predict.level && n.exchange.days === n.predict.days
-              ? `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后，能用交易所和事件预测。`
+              ? `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后, 能用交易所和事件预测。`
               : `${n.exchange.level} 级、注册满 ${n.exchange.days} 天并验证邮箱以后能用交易所；事件预测要 ${n.predict.level} 级、注册满 ${n.predict.days} 天。`,
-          '穿上厨具，结算收益会更高。',
+          '穿上厨具, 结算收益会更高。',
           (n: G) =>
-            `${n.newbieExp.maxLevel} 级以下结算经验有额外加成 (1 级 ${formatPct(n.newbieExp.rate, { sign: true })}，逐级减少)，前期升级很快。`,
+            `${n.newbieExp.maxLevel} 级以下结算经验有额外加成 (1 级 ${formatPct(n.newbieExp.rate, { sign: true })}, 逐级减少), 前期升级很快。`,
           (n: G) =>
-            `${n.acquire.minStar} 星以上的餐厅有身价、可以被收购: 在首页“资产”那一行点“收购”进去，付它的身价就能收下，原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}，${formatPct(n.acquire.taxRate, { digits: 0 })} 是税，名下最多 ${n.acquire.maxHoldings} 家。被收购的店每天给老板分红 (前一天结算银币的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}，满 ${n.acquire.minRounds} 轮才发)，被收购的店每天替老板打理一次能得 ${n.acquire.tendFoods} 份食材，老板那天的分红再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收购了也可以按身价赎身，赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
+            `${n.acquire.minStar} 星以上的餐厅有身价、可以被收购: 在首页“资产”那一行点“收购”进去, 付它的身价就能收下, 原主人得 ${formatPct(1 - n.acquire.taxRate, { digits: 0 })}, ${formatPct(n.acquire.taxRate, { digits: 0 })} 是税, 名下最多 ${n.acquire.maxHoldings} 家。被收购的店每天给老板分红 (前一天结算银币的 ${formatPct(n.acquire.dividendRate, { digits: 0 })}, 满 ${n.acquire.minRounds} 轮才发), 被收购的店每天替老板打理一次能得 ${n.acquire.tendFoods} 份食材, 老板那天的分红再多 ${formatPct(n.acquire.tendBonus, { digits: 0 })}。被收购了也可以按身价赎身, 赎身后 ${n.acquire.protectDays} 天内不会再被收购。`,
         ],
       },
       {
         title: '怎么学特色菜',
         items: [
           '学会一道特色菜要 3 张它的残卷；1 星以后能烹制。',
-          '鉴定 (1 星起): 在神殿用 1 张神秘食谱加 1 个鉴定道具，成功就得到随机一道菜的残卷。美味印章 1~6 级、成功率 40% (商店 9 万)；厨神玉玺 2~5 级、52% (商店 30 万)；海霸堡秘方 1~3 级、蟹黄堡秘方 3~5 级，都必定成功，在黑市用钻石买，厨塔、酒吧的随机奖励也会出，蟹黄堡秘方还是昨日特色菜冠军的奖励。',
-          '碎片兑换: 用不上的残卷分解成同级碎片，3 张同级碎片能换 1 张这一级任选一道菜的残卷，想学哪道就攒那一级的碎片。',
-          '学艺: 找会这道菜、开了课的玩家，交学费、花体力学，大多一次就能学会。',
+          '鉴定 (1 星起): 在神殿用 1 张神秘食谱加 1 个鉴定道具, 成功就得到随机一道菜的残卷。美味印章 1~6 级、成功率 40% (商店 9 万)；厨神玉玺 2~5 级、52% (商店 30 万)；海霸堡秘方 1~3 级、蟹黄堡秘方 3~5 级, 都必定成功, 在黑市用钻石买, 厨塔、酒吧的随机奖励也会出, 蟹黄堡秘方还是昨日特色菜冠军的奖励。',
+          '碎片兑换: 用不上的残卷分解成同级碎片, 3 张同级碎片能换 1 张这一级任选一道菜的残卷, 想学哪道就攒那一级的碎片。',
+          '学艺: 找会这道菜、开了课的玩家, 交学费、花体力学, 大多一次就能学会。',
         ],
       },
     ],
@@ -191,7 +191,7 @@ export default {
   api: {
     title: '开放接口',
     intro:
-      '只读的静态游戏数据，和游戏资料页面同一套，给想研究游戏、做小工具的玩家用。不包含任何玩家和区服的实时数据。',
+      '只读的静态游戏数据, 和游戏资料页面同一套, 给想研究游戏、做小工具的玩家用。不包含任何玩家和区服的实时数据。',
     base: '基础地址',
     langParam: '每个接口都可以带 lang 参数选语言: zh-CN (默认)、zh-TW、en、fr、es。',
     endpoints: '接口',
@@ -212,13 +212,13 @@ export default {
     formatText:
       '和游戏接口一样是 { ok, data }；data 里都带 version (配置版本) 和 lang。找不到时返回 404 和错误码。',
     cache: '版本和缓存',
-    cacheText: '游戏数据更新时 version 会变。响应可以缓存一小时；带上次的 ETag 请求，数据没变时返回 304。',
+    cacheText: '游戏数据更新时 version 会变。响应可以缓存一小时；带上次的 ETag 请求, 数据没变时返回 304。',
     cors: '跨域',
     corsText: '任何网站都可以直接在浏览器里读这些接口 (不带登录信息)。',
     limit: '频率限制',
-    limitText: '每个 IP 大约每分钟 120 次，超过时返回 429，稍等再试。',
+    limitText: '每个 IP 大约每分钟 120 次, 超过时返回 429, 稍等再试。',
     example: '示例',
     notIncluded: '不包含',
-    notIncludedText: '玩家、餐厅、区服的实时数据 (天气、交易所价格、排行榜等)，以及掉落概率和活动奖励。',
+    notIncludedText: '玩家、餐厅、区服的实时数据 (天气、交易所价格、排行榜等), 以及掉落概率和活动奖励。',
   },
 };

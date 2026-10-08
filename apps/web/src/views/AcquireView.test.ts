@@ -128,7 +128,7 @@ describe('AcquireView（收购 PR 3）', () => {
     await w.get('[data-testid="acquire-buy-2"]').trigger('click');
     await flushPromises();
     expect(confirm.mock.calls[0]![0]).toBe(
-      '花 1,200,000 银币收购「乙店」？\n「乙店」得 1,080,000 银币，税 120,000 银币。',
+      '花 1,200,000 银币收购「乙店」？\n「乙店」得 1,080,000 银币, 税 120,000 银币。',
     );
     expect(endpoints.acquireBuy).not.toHaveBeenCalled();
     await w.get('[data-testid="acquire-buy-2"]').trigger('click');
@@ -145,7 +145,7 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(confirm).not.toHaveBeenCalled();
     expect(endpoints.acquireBuy).not.toHaveBeenCalled();
     expect(useToastStore().items.at(-1)?.text).toBe(
-      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过，不能收购',
+      '你和这家店 (或它的老板) 最近在同一台设备或同一网络登录过, 不能收购',
     );
   });
 
@@ -157,7 +157,7 @@ describe('AcquireView（收购 PR 3）', () => {
     const w = await mountView();
     await w.get('[data-testid="acquire-buy-2"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.at(-1)?.text).toBe('价格变了，现在是 1,300,000 银币，请重新确认');
+    expect(useToastStore().items.at(-1)?.text).toBe('价格变了, 现在是 1,300,000 银币, 请重新确认');
     expect(endpoints.acquireRank).toHaveBeenCalledTimes(2);
   });
 
@@ -174,7 +174,7 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(w.get('[data-testid="acquire-market-2"]').text()).toContain('挂牌 50%: 600,000 银币');
     await w.get('[data-testid="acquire-listed-2"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('「老板店」得 540,000 银币，税 60,000 银币');
+    expect(confirm.mock.calls[0]![0]).toContain('「老板店」得 540,000 银币, 税 60,000 银币');
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'listed', 600_000);
   });
 
@@ -223,11 +223,11 @@ describe('AcquireView（收购 PR 3）', () => {
     expect(w.text()).toContain('被收购期间不能收购别的店');
     await w.get('[data-testid="acquire-tend"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.at(-1)?.text).toBe('打理好了，得到 5 份食材');
+    expect(useToastStore().items.at(-1)?.text).toBe('打理好了, 得到 5 份食材');
     const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
     await w.get('[data-testid="acquire-redeem"]').trigger('click');
     await flushPromises();
-    expect(confirm.mock.calls[0]![0]).toContain('老板「大老板」得 450,000 银币，税 50,000 银币');
+    expect(confirm.mock.calls[0]![0]).toContain('老板「大老板」得 450,000 银币, 税 50,000 银币');
     expect(endpoints.acquireRedeem).toHaveBeenCalledWith(500_000);
 
     vi.mocked(endpoints.acquire).mockResolvedValue(

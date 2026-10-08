@@ -62,7 +62,7 @@ const split = (lang: DescLang, desc: string): string[] =>
     .split(lang === 'zh-CN' ? /[,，]/ : /,\s*/)
     .map((s) => s.trim())
     .filter((s) => s !== '');
-const join = (lang: DescLang, parts: string[]): string => parts.join(lang === 'zh-CN' ? ',' : ', ');
+const join = (lang: DescLang, parts: string[]): string => parts.join(', ');
 
 function kindOf(lang: DescLang, clause: string): [Kind, number] | null {
   for (const [kind, re] of PATTERNS[lang]) {

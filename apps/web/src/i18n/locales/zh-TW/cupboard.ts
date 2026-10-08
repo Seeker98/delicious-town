@@ -24,15 +24,15 @@ export default {
   /** 問題記錄 140：萬能食材能不能換稀有食材 */
   master1: '2 個一級萬能食材換 1 個隨機二級稀有食材。',
   master2: '2 個二級萬能食材換 1 個隨機三級稀有食材。',
-  masterHigh: '三級及以上的萬能食材不能兌換稀有食材，只能在學食譜時頂替同級缺的那一種食材。',
+  masterHigh: '三級及以上的萬能食材不能兌換稀有食材, 只能在學食譜時頂替同級缺的那一種食材。',
   handleHint: (decomposeMax: number, composeMax: number) =>
-    `一次最多分解 ${decomposeMax}，合成 ${composeMax} (合成要偶數個)。分解: 1 個 → 2 次機會得到低一級食材；合成: 2 個 → 1 次機會得到高一級食材，不會合出櫥櫃裡已經堆滿的食材。`,
+    `一次最多分解 ${decomposeMax}, 合成 ${composeMax} (合成要偶數個)。分解: 1 個 → 2 次機會得到低一級食材；合成: 2 個 → 1 次機會得到高一級食材, 不會合出櫥櫃裡已經堆滿的食材。`,
   handleResult: (success: number, chances: number, strengthUsed: boolean) =>
-    `成功 ${success}/${chances} 次${strengthUsed ? '，消耗 1 體力' : ''}`,
+    `成功 ${success}/${chances} 次${strengthUsed ? ', 消耗 1 體力' : ''}`,
   handleFailed: '處理失敗',
   exchangeFailed: '兌換失敗',
   loadFailed: '讀取櫥櫃失敗',
-  thawConfirm: (n: number, name: string, coin: string) => `解凍 ${n} 個${name}，花費 ${coin} 銀幣？`,
+  thawConfirm: (n: number, name: string, coin: string) => `解凍 ${n} 個${name}, 花費 ${coin} 銀幣？`,
   thawFailed: '解凍失敗',
   fridgeEmpty: '冰箱是空的',
   noRoom: '櫥櫃放不下',

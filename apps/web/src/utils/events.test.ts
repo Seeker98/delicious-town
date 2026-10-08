@@ -40,7 +40,7 @@ describe('个人日志文案', () => {
     ).toBe('管理员把店名从「A」改为「B」: 违规');
     expect(logText({ type: 'redeem', params: { code: 'KAIFU' }, at: '' }, names)).toBe('使用了兑换码 KAIFU');
     expect(logText({ type: 'market.guess.refund', params: { period: '2026-09-30@10' }, at: '' }, names)).toBe(
-      '菜场竞猜 2026-09-30 10 点那一轮没有开奖，退还了报名费',
+      '菜场竞猜 2026-09-30 10 点那一轮没有开奖, 退还了报名费',
     );
   });
 });
@@ -80,14 +80,14 @@ describe('特色菜（子项目 4A）', () => {
     );
     expect(
       logText({ type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: 9 }, at } as never, names),
-    ).toBe('偷学失败，遗忘了 3 道食谱和特色菜「秘·9」');
+    ).toBe('偷学失败, 遗忘了 3 道食谱和特色菜「秘·9」');
     // 问题记录 424 以后：记了 grades 的是降品级（以前的日志没有 grades，照旧写遗忘）
     expect(
       logText(
         { type: 'mc.forget', params: { cookbooks: [1, 2, 3], mcId: null, grades: 1, lost: 2 }, at } as never,
         names,
       ),
-    ).toBe('偷学失败，3 道食谱降了 1 品，其中 2 道忘了');
+    ).toBe('偷学失败, 3 道食谱降了 1 品, 其中 2 道忘了');
   });
 });
 
@@ -131,7 +131,7 @@ describe('神殿（子项目 4B-1）', () => {
       '「秘·3」试炼失败',
     );
     expect(logText({ type: 'kraken.forget', params: { mcId: 3 }, at } as never, names)).toBe(
-      '克拉肯很不满意，你遗忘了特色菜「秘·3」',
+      '克拉肯很不满意, 你遗忘了特色菜「秘·3」',
     );
   });
 });
@@ -154,7 +154,7 @@ describe('菜园（子项目 4B-2）', () => {
         { type: 'yard.stolen', params: { byName: '乙店', foodsId: 101, num: 1, punished: 101 }, at: '' },
         names,
       ),
-    ).toBe('乙店 偷走了你的 大米×1，被边牧逮住，留下了 大米');
+    ).toBe('乙店 偷走了你的 大米×1, 被边牧逮住, 留下了 大米');
   });
 });
 
@@ -193,7 +193,7 @@ describe('问题记录 154：酒吧、外卖的日志有中文文案', () => {
       '记忆调酒第 3 关没调对',
     );
     expect(logText({ type: 'takeaway.claim', params: { success: true, coin: 1200 }, at: '' }, names)).toBe(
-      '外卖送达，获得银币 1,200',
+      '外卖送达, 获得银币 1,200',
     );
   });
 });
@@ -213,22 +213,22 @@ describe('交易所日志（156-1）', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(log('exchange.order', { side: 'buy', foodsId: 3, price: 100, qty: 5, filled: 2 })).toBe(
-      '在交易所挂买单: 食材3 ×5，单价 100 (当场成交 2 个)',
+      '在交易所挂买单: 食材3 ×5, 单价 100 (当场成交 2 个)',
     );
     expect(log('exchange.fill', { side: 'sell', foodsId: 3, price: 100, qty: 2, fee: 10 })).toBe(
-      '交易所卖单成交: 食材3 ×2，单价 100，手续费 10 (所得在交易所账户)',
+      '交易所卖单成交: 食材3 ×2, 单价 100, 手续费 10 (所得在交易所账户)',
     );
     expect(log('exchange.cancel', { side: 'sell', foodsId: 3, price: 100, left: 1 })).toBe(
-      '撤销交易所卖单: 食材3，退回 1 个',
+      '撤销交易所卖单: 食材3, 退回 1 个',
     );
     expect(log('exchange.expire', { side: 'buy', foodsId: 3, price: 100, left: 1 })).toBe(
-      '交易所买单过期: 食材3，剩余 1 个的冻结退回交易所账户',
+      '交易所买单过期: 食材3, 剩余 1 个的冻结退回交易所账户',
     );
     expect(log('exchange.withdraw', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
       '从交易所账户取出: 银币 950、食材3×2',
     );
     expect(log('exchange.fill', { side: 'buy', foodsId: 3, price: 100, qty: 2, fee: 0, held: true })).toBe(
-      '交易所买单成交: 食材3 ×2，单价 100 (可疑成交，所得冻结 24 小时)',
+      '交易所买单成交: 食材3 ×2, 单价 100 (可疑成交, 所得冻结 24 小时)',
     );
   });
 
@@ -245,9 +245,9 @@ describe('交易所日志（156-1）', () => {
         held: true,
         holdHours: 48,
       }),
-    ).toBe('交易所买单成交: 食材3 ×2，单价 100 (可疑成交，所得冻结 48 小时)');
+    ).toBe('交易所买单成交: 食材3 ×2, 单价 100 (可疑成交, 所得冻结 48 小时)');
     expect(log('exchange.freezeCancel', { side: 'sell', foodsId: 3, price: 100, left: 2 })).toBe(
-      '交易所被冻结，卖单撤销: 食材3，剩余 2 个退回交易所账户',
+      '交易所被冻结, 卖单撤销: 食材3, 剩余 2 个退回交易所账户',
     );
     expect(log('exchange.confiscate', { coin: 950, foods: [{ foodsId: 3, num: 2 }] })).toBe(
       '交易所冻结中的所得被没收: 银币 950、食材3×2',
@@ -263,21 +263,21 @@ describe('交易所日志（156-1）', () => {
     expect(log('fund.claim', { tier: 'B', coin: 2700000, medal: 93102 })).toBe(
       '领取小镇发展基金: 拿回 2,700,000 银币和道具93102',
     );
-    expect(log('fund.withdraw', { tier: 'C', coin: 700000 })).toBe('提前取出小镇发展基金，拿回 700,000 银币');
+    expect(log('fund.withdraw', { tier: 'C', coin: 700000 })).toBe('提前取出小镇发展基金, 拿回 700,000 银币');
   });
 
   it('一番赏日志', () => {
     const names = { goodsName: (id: number) => `道具${id}`, foodName: (id: number) => `食材${id}` };
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
-    expect(log('kuji.buy', { num: 3, coin: 60000 })).toBe('买了一番赏抽赏券 ×3，花费 60,000 银币');
+    expect(log('kuji.buy', { num: 3, coin: 60000 })).toBe('买了一番赏抽赏券 ×3, 花费 60,000 银币');
     // 活跃奖励另送的券（backlog 一番赏）
-    expect(log('kuji.activation', { points: 150, num: 1 })).toBe('领取活跃 150 点奖励，另得一番赏抽赏券 ×1');
+    expect(log('kuji.activation', { points: 150, num: 1 })).toBe('领取活跃 150 点奖励, 另得一番赏抽赏券 ×1');
     expect(log('kuji.draw', { seq: 2, num: 3, tiers: { A: 1, F: 2 }, last: true })).toBe(
-      '一番赏第 2 池抽了 3 张: A 赏 ×1、F 赏 ×2，并拿下最后赏',
+      '一番赏第 2 池抽了 3 张: A 赏 ×1、F 赏 ×2, 并拿下最后赏',
     );
     // 豪华一番赏（240-2 终审）：记录写明是豪华签券、豪华池
     expect(log('kuji.buy', { num: 2, coin: 600000, line: 'deluxe' })).toBe(
-      '买了豪华签券 ×2，花费 600,000 银币',
+      '买了豪华签券 ×2, 花费 600,000 银币',
     );
     expect(log('kuji.draw', { seq: 1, num: 1, tiers: { D: 1 }, last: false, line: 'deluxe' })).toBe(
       '豪华一番赏第 1 池抽了 1 张: D 赏 ×1',
@@ -289,22 +289,22 @@ describe('交易所日志（156-1）', () => {
     const log = (type: string, params: Record<string, unknown>) => logText({ type, params, at: '' }, names);
     expect(
       log('predict.trade', { title: '会下雨吗', side: 'yes', dir: 'buy', qty: 3, amount: 1500, fee: 30 }),
-    ).toBe('预测「会下雨吗」买入是 3 份，成交额 1,500，手续费 30');
+    ).toBe('预测「会下雨吗」买入是 3 份, 成交额 1,500, 手续费 30');
     expect(log('predict.settle', { title: '会下雨吗', outcome: true, coin: 3000 })).toBe(
-      '预测「会下雨吗」结果为是，结算得到 3,000 银币',
+      '预测「会下雨吗」结果为是, 结算得到 3,000 银币',
     );
     expect(log('predict.refund', { title: '会下雨吗', coin: 1530 })).toBe(
-      '预测「会下雨吗」已作废，退回 1,530 银币',
+      '预测「会下雨吗」已作废, 退回 1,530 银币',
     );
     // 带净投入时写出本局盈亏（问题记录 254）
     expect(log('predict.settle', { title: '会下雨吗', outcome: false, coin: 0, net: 2500 })).toBe(
-      '预测「会下雨吗」结果为否，结算得到 0 银币，本局盈亏 -2,500',
+      '预测「会下雨吗」结果为否, 结算得到 0 银币, 本局盈亏 -2,500',
     );
     expect(log('predict.settle', { title: '会下雨吗', outcome: true, coin: 4000, net: 2500 })).toBe(
-      '预测「会下雨吗」结果为是，结算得到 4,000 银币，本局盈亏 +1,500',
+      '预测「会下雨吗」结果为是, 结算得到 4,000 银币, 本局盈亏 +1,500',
     );
     expect(log('predict.refund', { title: '会下雨吗', coin: 900, net: 1000 })).toBe(
-      '预测「会下雨吗」已作废，退回 900 银币，本局盈亏 -100',
+      '预测「会下雨吗」已作废, 退回 900 银币, 本局盈亏 -100',
     );
   });
 });

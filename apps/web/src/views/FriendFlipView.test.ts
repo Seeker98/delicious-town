@@ -60,7 +60,7 @@ describe('FriendFlipView：同一家店每人每天的格数（问题记录 374�
   it('翻够了：写明明天再来，格子都不能点', async () => {
     vi.mocked(endpoints.flipSlots).mockResolvedValue({ slots: 5, cooling: [], todayTimes: 3, hostLeft: 0 });
     const w = await mountView();
-    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店已经翻够了，明天再来');
+    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店已经翻够了, 明天再来');
     expect(w.find('[data-testid="slot-1"]').attributes('disabled')).toBeDefined();
   });
 
@@ -87,7 +87,7 @@ describe('FriendFlipView：翻失败后重新读格子（问题记录 374 审查
     const w = await mountView();
     await w.find('[data-testid="slot-1"]').trigger('click');
     await flushPromises();
-    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店已经翻够了，明天再来');
+    expect(w.get('[data-testid="host-left"]').text()).toBe('今天在这家店已经翻够了, 明天再来');
     expect(w.find('[data-testid="slot-1"]').attributes('disabled')).toBeDefined();
   });
 });

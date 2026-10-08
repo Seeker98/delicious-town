@@ -75,7 +75,7 @@ describe('CupboardView', () => {
     const w = mount(CupboardView);
     await flushPromises();
     await w.find('[data-testid="pick-302"]').trigger('click');
-    expect(w.text()).toContain('最多分解 7，合成 6');
+    expect(w.text()).toContain('最多分解 7, 合成 6');
     await w.find('input[type="number"]').setValue('7');
     expect(w.find('[data-testid="compose"]').text()).toBe('合成 ×6');
     await w.find('[data-testid="compose"]').trigger('click');

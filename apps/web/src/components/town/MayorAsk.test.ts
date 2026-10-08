@@ -48,7 +48,7 @@ describe('MayorAsk', () => {
     const w = mount(MayorAsk, {
       props: { data: townData({ mayor: { answered: false, hiphopOut: false, hour: 13 } }) },
     });
-    expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 13 点出来，到时再来告诉镇长');
+    expect(w.get('[data-testid="mayor-row"]').text()).toContain('嘻哈男孩 13 点出来, 到时再来告诉镇长');
     expect(w.get('[data-testid="mayor-open"]').attributes('disabled')).toBeDefined();
   });
 
@@ -90,7 +90,7 @@ describe('MayorAsk', () => {
     await flushPromises();
     expect(endpoints.townMayor).toHaveBeenCalledWith(3);
     expect(useToastStore().items.at(-1)!.text).toBe(
-      '镇长大胃锅: 谢谢你，我现在就去找他，好好弥补他！ 获得 道具231×1',
+      '镇长大胃锅: 谢谢你, 我现在就去找他, 好好弥补他！ 获得 道具231×1',
     );
     expect(w.emitted('reload')).toHaveLength(1);
 

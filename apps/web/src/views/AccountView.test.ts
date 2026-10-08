@@ -112,7 +112,7 @@ describe('backlog 账号：改密码后要重新登录', () => {
     const w = await mountView();
     await fill(w, 'secret123', 'newpass123', 'newpass123');
     await flushPromises();
-    expect(useToastStore().items.at(-1)?.text).toBe('密码已修改，请用新密码重新登录');
+    expect(useToastStore().items.at(-1)?.text).toBe('密码已修改, 请用新密码重新登录');
     expect(useSessionStore().me).toBeNull();
   });
 

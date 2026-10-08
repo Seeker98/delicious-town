@@ -134,7 +134,7 @@ describe('MarketView', () => {
     });
     const w = mount(MarketView);
     await flushPromises();
-    expect(w.find('[data-testid="cap-11"]').text()).toContain('橱柜单种上限 999，已有 3，最多再买 996');
+    expect(w.find('[data-testid="cap-11"]').text()).toContain('橱柜单种上限 999, 已有 3, 最多再买 996');
     await w.find('[data-testid="qty-11"]').setValue(2000);
     await w.find('[data-testid="buy-11"]').trigger('click');
     await flushPromises();
@@ -197,7 +197,7 @@ describe('MarketView', () => {
     const w = mount(MarketView);
     await flushPromises();
     const row = w.find('[data-testid="item-12"]');
-    expect(row.text()).toContain('自己的货，免费');
+    expect(row.text()).toContain('自己的货, 免费');
     expect(row.text()).not.toContain('银币');
     expect(row.text()).not.toContain('限购');
     await w.find('[data-testid="market-manual"]').trigger('click');

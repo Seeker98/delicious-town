@@ -64,7 +64,7 @@ describe('HiphopCard', () => {
     await flushPromises();
     expect(endpoints.hiphopTip).toHaveBeenCalledWith({ place: 1, kind: 'coin', num: 100000 });
     expect(w.find('[data-testid="hiphop-result"]').text()).toBe(
-      '感谢您的支持和鼓励，你们是我进步的动力！额外获得经验 476',
+      '感谢您的支持和鼓励, 你们是我进步的动力！额外获得经验 476',
     );
     expect(w.emitted('changed')).toHaveLength(1);
   });
@@ -107,7 +107,7 @@ describe('HiphopCard', () => {
     await w.find('[data-testid="hiphop-tip"]').trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="hiphop-result"]').text()).toBe(
-      '这些食材看起来不怎么新鲜的样子。感谢您的支持和鼓励，你们是我进步的动力！',
+      '这些食材看起来不怎么新鲜的样子。感谢您的支持和鼓励, 你们是我进步的动力！',
     );
   });
 
@@ -121,7 +121,7 @@ describe('HiphopCard', () => {
       ).selectedOptions[0]!.textContent!.trim(),
     ).toBe('请选择');
     expect(w.find('[data-testid="hiphop-no-want"]').text()).toBe(
-      '你没有他想要的食材，给别的食材不算打赏价值',
+      '你没有他想要的食材, 给别的食材不算打赏价值',
     );
     await w.find('[data-testid="hiphop-num"]').setValue(5);
     expect(w.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeDefined();
@@ -131,7 +131,7 @@ describe('HiphopCard', () => {
     const empty = mount(HiphopCard, { props: { place: 1 } });
     await flushPromises();
     expect(empty.find('[data-testid="hiphop-no-food"]').text()).toBe(
-      '橱柜里没有食材，可以改用银币或钻石打赏',
+      '橱柜里没有食材, 可以改用银币或钻石打赏',
     );
     expect(empty.find('[data-testid="hiphop-tip"]').attributes('disabled')).toBeDefined();
   });

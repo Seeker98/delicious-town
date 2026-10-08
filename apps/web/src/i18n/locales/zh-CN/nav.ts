@@ -39,7 +39,7 @@ export default {
   appName: '美味小镇',
   back: '返回',
   mail: '邮箱',
-  mailUnread: (n: number) => `邮箱，${n} 封未读`,
+  mailUnread: (n: number) => `邮箱, ${n} 封未读`,
   /** 重要公告弹窗的关闭按钮 */
   announceClose: '知道了',
   announceMore: (n: number) => `等 ${n} 条`,

@@ -29,7 +29,7 @@ export const weather: AutoKind = {
     const start = gameTime(c.day, hour);
     return {
       title: `今天 ${hour} 点自动轮换的天气是${WEATHER_TYPE_NAMES[type]}类吗`,
-      description: `以 ${hour} 点系统自动轮换出的天气为准，之后有人用雷神锤改的不算。`,
+      description: `以 ${hour} 点系统自动轮换出的天气为准, 之后有人用雷神锤改的不算。`,
       p0: clampP(p),
       closeAt: new Date(start.getTime() - 5 * 60_000),
       resolveAt: new Date(start.getTime() + SLOT_MS),
@@ -67,7 +67,7 @@ export const weather: AutoKind = {
     if (hammer) {
       const to = c.d.config.weather.get(Number((hammer.params as { to?: number }).to));
       if (to) {
-        note += `；之后有人用雷神锤改成了${to.name}，按题目规则不算`;
+        note += `；之后有人用雷神锤改成了${to.name}, 按题目规则不算`;
         noteParams.hammerTo = to.id;
       }
     }

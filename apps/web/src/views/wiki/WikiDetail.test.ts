@@ -316,7 +316,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     vi.mocked(endpoints.openFood).mockResolvedValue(food);
     const w = await mountAt(WikiFoodView, '/wiki/foods/:id', '/wiki/foods/239');
     expect(w.text()).toContain('稀有');
-    expect(w.text()).toContain('菜园能种出来，每次收获 20 个');
+    expect(w.text()).toContain('菜园能种出来, 每次收获 20 个');
     const cb = w.get('[data-testid="wiki-cookbooks"]');
     expect(cb.text()).toContain('用到它的菜谱 (1 道)');
     expect(cb.text()).toContain('湖南街');
@@ -334,7 +334,7 @@ describe('游戏资料详情（问题记录 142）', () => {
       level: 5,
       coin: 120,
       taste: [2, 5],
-      desc: '湘菜，口味咸鲜',
+      desc: '湘菜, 口味咸鲜',
       grades: Array.from({ length: 10 }, (_, i) => ({
         grade: i + 1,
         foods: [{ foodsId: 239, name: '松露', num: i + 1 }],
@@ -344,7 +344,7 @@ describe('游戏资料详情（问题记录 142）', () => {
     const w = await mountAt(WikiCookbookView, '/wiki/cookbooks/:id', '/wiki/cookbooks/1');
     expect(w.text()).toContain('推荐 5 级');
     expect(w.text()).toContain('甘、咸');
-    expect(w.text()).toContain('湘菜，口味咸鲜');
+    expect(w.text()).toContain('湘菜, 口味咸鲜');
     expect(w.get('[data-testid="wiki-street-link"]').attributes('href')).toBe('/wiki/streets/0');
     const g = w.get('[data-testid="wiki-grades"]');
     expect(g.text()).toContain('天馔');

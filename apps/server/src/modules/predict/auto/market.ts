@@ -29,7 +29,7 @@ export const market: AutoKind = {
     const best = odds.sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5))[0]!;
     return {
       title: `今天 ${hour} 点的日常货架会出现 ${best.level} 级稀有食材吗`,
-      description: `以 ${hour} 点系统进货的日常货架为准，玩家手动进的货不算。`,
+      description: `以 ${hour} 点系统进货的日常货架为准, 玩家手动进的货不算。`,
       p0: clampP(best.p),
       closeAt: new Date(gameTime(c.day, hour).getTime() - closeMin * 60_000),
       resolveAt: gameTime(c.day, hour),

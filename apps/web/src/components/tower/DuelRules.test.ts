@@ -35,7 +35,7 @@ describe('DuelRules（问题记录 396）', () => {
     ];
     const text = mount(DuelRules, { props: { weights } }).text();
     expect(text).toContain(
-      '色看火候，香看调味、厨艺，味看火候、调味，形看刀工、火候，养看调味、刀工、在售的特色菜',
+      '色看火候, 香看调味、厨艺, 味看火候、调味, 形看刀工、火候, 养看调味、刀工、在售的特色菜',
     );
     // 一项的系数全是 0：只看随机分（审查 Minor）
     const allZero = [z, ...weights.slice(1)];

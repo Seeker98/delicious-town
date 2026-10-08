@@ -22,7 +22,7 @@ export const stats: AutoKind = {
     const close = c.settings.tuning.predict.auto.statsCloseHour;
     return {
       title: '今天全服营业银币会超过昨天吗',
-      description: `以今天全天全服餐厅的营业银币为准，明天 0 点后判定；严格多于昨天才算"是"。${close} 点截止交易。`,
+      description: `以今天全天全服餐厅的营业银币为准, 明天 0 点后判定；严格多于昨天才算"是"。${close} 点截止交易。`,
       p0: 0.5,
       closeAt: gameTime(c.day, close),
       resolveAt: gameTime(addDays(c.day, 1), 0, 10),
@@ -36,7 +36,7 @@ export const stats: AutoKind = {
     const f = (n: number) => n.toLocaleString('en-US');
     return {
       outcome: today > yesterday,
-      note: `${dayLabel(day)} ${f(today)}，${dayLabel(addDays(day, -1))} ${f(yesterday)}`,
+      note: `${dayLabel(day)} ${f(today)}, ${dayLabel(addDays(day, -1))} ${f(yesterday)}`,
       noteParams: { day, today, prevDay: addDays(day, -1), yesterday },
     };
   },

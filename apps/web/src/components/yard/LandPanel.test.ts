@@ -74,7 +74,7 @@ describe('LandPanel', () => {
     );
     const land = w.find('[data-testid="land-1"]');
     expect(land.find('[data-testid="plant-water"]').attributes('disabled')).toBeDefined();
-    expect(land.find('[data-testid="plant-block"]').text()).toBe('有虫，先除虫');
+    expect(land.find('[data-testid="plant-block"]').text()).toBe('有虫, 先除虫');
     await land.find('[data-testid="plant-deworm"]').trigger('click');
     await flushPromises();
     expect(endpoints.yardDeworm).toHaveBeenCalledWith(7);

@@ -57,11 +57,11 @@ describe('NimPanel', () => {
     const data = withRound(null);
     data.nim.tables.novice = { ...data.nim.tables.novice, first: 'coin', careless: false };
     const w = mount(NimPanel, { props: { data } });
-    expect(w.get('[data-testid="nim-table-novice"]').text()).toContain('开局抛硬币定谁先拿，调酒师从不失手');
-    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('开局抛硬币定谁先拿，调酒师从不失手');
+    expect(w.get('[data-testid="nim-table-novice"]').text()).toContain('开局抛硬币定谁先拿, 调酒师从不失手');
+    expect(w.get('[data-testid="nim-table-expert"]').text()).toContain('开局抛硬币定谁先拿, 调酒师从不失手');
     data.nim.tables.novice = { ...data.nim.tables.novice, first: 'choose', careless: true };
     const v = mount(NimPanel, { props: { data } });
-    expect(v.get('[data-testid="nim-table-novice"]').text()).toContain('你自己选先后，调酒师有时会走神');
+    expect(v.get('[data-testid="nim-table-novice"]').text()).toContain('你自己选先后, 调酒师有时会走神');
   });
 
   it('次数用完或礼券不够时开局按钮灰掉并写原因', () => {
@@ -90,7 +90,7 @@ describe('NimPanel', () => {
     vi.mocked(endpoints.barNimTake).mockResolvedValue(round({ left: 0, result: 'win', renown: 1 }));
     const w = mount(NimPanel, { props: { data: withRound(round({ left: 2 })) } });
     expect(w.findAll('.dt-nim-candy')).toHaveLength(2);
-    expect(w.text()).toContain('还剩 2 颗，每次拿 1~3 颗');
+    expect(w.text()).toContain('还剩 2 颗, 每次拿 1~3 颗');
     expect(w.get('[data-testid="nim-take-3"]').attributes('disabled')).toBeDefined();
     await w.get('[data-testid="nim-take-2"]').trigger('click');
     await flushPromises();
@@ -119,7 +119,7 @@ describe('NimPanel', () => {
     expect(w.findAll('.dt-nim-candy')).toHaveLength(8);
     expect(w.get('[data-testid="nim-bartender"]').text()).toBe('调酒师拿了 3 颗');
     // 固定的播报区念出调酒师那一步和剩余（#190 审查）
-    expect(w.get('[data-testid="nim-live"]').text()).toBe('调酒师拿了 3 颗 还剩 8 颗，每次拿 1~3 颗');
+    expect(w.get('[data-testid="nim-live"]').text()).toBe('调酒师拿了 3 颗 还剩 8 颗, 每次拿 1~3 颗');
     expect(w.get('[data-testid="nim-take-1"]').attributes('disabled')).toBeUndefined();
     expect(w.get('[data-testid="nim-log"]').text()).toBe('你 1 · 调酒师 3');
   });

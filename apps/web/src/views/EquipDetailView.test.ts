@@ -246,7 +246,7 @@ describe('EquipDetailView', () => {
 
   it('写明强化成功后属性总和到多少；满级不显示（问题记录 120）', async () => {
     const { w } = await mountView();
-    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2 (到 9，不含宝石)');
+    expect(w.find('[data-testid="stress-next"]').text()).toBe('成功后属性总和 +2 (到 9, 不含宝石)');
     vi.mocked(endpoints.equipDetail).mockResolvedValue({ ...detail(), rate: null, next: null });
     const { w: w2 } = await mountView();
     expect(w2.find('[data-testid="stress-next"]').exists()).toBe(false);

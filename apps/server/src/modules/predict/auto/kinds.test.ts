@@ -237,7 +237,7 @@ describe('天气（238-2 设计 §4.4）', () => {
       .execute();
     const r2 = (await weather.resolve(await rctx(shardId), { hour, type: auto.type, period }))!;
     expect(r2.outcome).toBe(true);
-    expect(r2.note).toBe(`${r.note}；之后有人用雷神锤改成了${other.name}，按题目规则不算`);
+    expect(r2.note).toBe(`${r.note}；之后有人用雷神锤改成了${other.name}, 按题目规则不算`);
     expect(r2.noteParams).toEqual({ day: DAY, hour, weather: to, type: auto.type, hammerTo: other.id });
   });
 });
@@ -284,7 +284,7 @@ describe('全服数据（238-2 设计 §4.5）', () => {
     const tie = (await stats.resolve(await rctx(shardId), { day: DAY, metric: 'coin' }))!;
     expect(tie).toEqual({
       outcome: false,
-      note: '11月3日 1,000，11月2日 1,000',
+      note: '11月3日 1,000, 11月2日 1,000',
       noteParams: { day: DAY, today: 1000, prevDay: addDays(DAY, -1), yesterday: 1000 },
     });
     await income(DAY, 1);

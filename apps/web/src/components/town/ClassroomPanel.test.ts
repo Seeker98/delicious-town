@@ -84,7 +84,7 @@ describe('ClassroomPanel', () => {
     await w.find('[data-testid="steal-7"]').trigger('click');
     await flushPromises();
     expect(endpoints.lessonLearn).toHaveBeenCalledWith(7, 2);
-    expect(useToastStore().items.some((x) => x.text.includes('7 道食谱降了 2 品，其中 3 道忘了'))).toBe(true);
+    expect(useToastStore().items.some((x) => x.text.includes('7 道食谱降了 2 品, 其中 3 道忘了'))).toBe(true);
     confirm.mockRestore();
   });
 

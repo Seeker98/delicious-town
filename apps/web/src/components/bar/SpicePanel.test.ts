@@ -195,7 +195,7 @@ describe('SpicePanel', () => {
       award: { kind: 'coin', id: null, num: 800, lucky: false },
     });
     const done = mount(SpicePanel, { props: { data: withRound(r) } });
-    expect(done.get('[data-testid="spice-result"]').text()).toBe('第 8 次猜中了，得到 银币 800');
+    expect(done.get('[data-testid="spice-result"]').text()).toBe('第 8 次猜中了, 得到 银币 800');
     const tiers = [
       { maxTries: 4, awardLevel: 8, renown: 5 },
       { maxTries: 5, awardLevel: 5, renown: 2 },

@@ -356,7 +356,7 @@ describe('终审：交易所页的选食材和取出提示', () => {
     await flushPromises();
     await w.find('[data-testid="ex-withdraw"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.map((x) => x.text)).toContain('已取出；还有 3 个食材放不下，留在交易所账户');
+    expect(useToastStore().items.map((x) => x.text)).toContain('已取出；还有 3 个食材放不下, 留在交易所账户');
   });
 });
 
@@ -422,7 +422,7 @@ describe('交易所页的防作弊提示（156-2）', () => {
     await w.find('[data-testid="ex-submit"]').trigger('click');
     await flushPromises();
     expect(useToastStore().items.map((x) => x.text)).toContain(
-      '已成交 2 个，其中有可疑成交，所得冻结 24 小时',
+      '已成交 2 个, 其中有可疑成交, 所得冻结 24 小时',
     );
   });
 });
@@ -483,7 +483,7 @@ describe('backlog 长尾第 3 批：交易所页面不写死数字', () => {
     await w.find('[data-testid="ex-submit"]').trigger('click');
     await flushPromises();
     expect(useToastStore().items.map((x) => x.text)).toContain(
-      '已成交 2 个，其中有可疑成交，所得冻结 48 小时',
+      '已成交 2 个, 其中有可疑成交, 所得冻结 48 小时',
     );
   });
 

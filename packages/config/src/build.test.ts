@@ -180,7 +180,7 @@ describe('buildBundle（真实数据）', () => {
       '左宗棠鸡 (美国/加拿大)',
     );
     expect(b.cookbooks.filter((c) => c.streetId === 29)).toHaveLength(117);
-    expect(b.cookbooks.find((c) => c.id === cid('开屏武昌鱼'))!.desc).toBe('楚菜，口味辛、咸、鲜');
+    expect(b.cookbooks.find((c) => c.id === cid('开屏武昌鱼'))!.desc).toBe('楚菜, 口味辛、咸、鲜');
   });
 
   it('新街道（问题记录 284）：每道菜 10 个品级、同一品级食材不重复、每条街一枚勋章', () => {
@@ -1763,7 +1763,7 @@ describe('主表手写定义的格式检查（质量期第 ⑦ 批）', () => {
     en['1']!.desc = 'Final EXP and coins +99%, luck +10';
     const goods = structuredClone(src['master/goods']) as M[];
     const medal = goods.find((g) => g.id === 60012)!;
-    medal.desc = '最终经验收益+1%,幸运值+10';
+    medal.desc = '最终经验收益+1%, 幸运值+10';
     const { errors } = buildBundle({ ...src, 'i18n/en/streets': en, 'master/goods': goods });
     // 勋章实际数值从真实数据读，测试不跟着数值改
     const real = realBuild().bundle!;

@@ -72,7 +72,7 @@ describe('玩法攻略（问题记录 384）', () => {
 
   it('攻略里的数按开放接口给的默认配置写，不写死（backlog 384）', async () => {
     const text = (await mountGuide()).text();
-    expect(text).toContain('新手街只有 71 道，升 2 星要学会 120 道');
+    expect(text).toContain('新手街只有 71 道, 升 2 星要学会 120 道');
     expect(text).toContain('测试大街有 345 道');
     expect(text).toContain('外卖要 3 星、999 声望');
     expect(text).toContain('999 万银币和 250 钻石');

@@ -9,13 +9,13 @@ export default {
   unlockConfirm: '確定解鎖進階獎勵嗎？解鎖後之前達到的進階檔位也可以領取。',
   unlocked: '已解鎖',
   exchanged: '已兌換',
-  exchangePeriod: (left: string) => `兌換期，${left}`,
-  exchangeOver: '已結束，活動貨幣已作廢',
-  settling: '結算中，未領的獎勵會發到郵箱',
-  ended: '已結束，未領的獎勵已發到郵箱',
+  exchangePeriod: (left: string) => `兌換期, ${left}`,
+  exchangeOver: '已結束, 活動貨幣已作廢',
+  settling: '結算中, 未領的獎勵會發到郵箱',
+  ended: '已結束, 未領的獎勵已發到郵箱',
   none: '現在沒有進行中的活動。',
   endedShort: '已結束',
-  needLevel: (n: number) => `需要 ${n} 級，達到後才開始計數`,
+  needLevel: (n: number) => `需要 ${n} 級, 達到後才開始計數`,
   claimAll: (n: number) => `全部領取 (${n})`,
   /** 剩餘時間 */
   left: {
@@ -129,7 +129,7 @@ export default {
     unlock: (price: string) => `解鎖 (${price})`,
   },
   exchange: {
-    rule: '活動貨幣不進倉庫，只能在本活動裡兌換；兌換期過後作廢。',
+    rule: '活動貨幣不進倉庫, 只能在本活動裡兌換；兌換期過後作廢。',
     drop: (action: string, chance: string, currency: string, num: number, today: number, cap: number) =>
       `${action} ${chance} 掉 ${currency} ×${num} (今天 ${today}/${cap})`,
     btn: '兌換',
@@ -144,7 +144,7 @@ export default {
     milestone: (n: string) => `全服 ${n} 分`,
     minContribution: (n: string) => ` (個人 ≥ ${n} 分)`,
     board: '貢獻榜',
-    boardSettled: (mailed: boolean) => `貢獻榜已結算${mailed ? '，獎勵已發郵件' : ''}`,
+    boardSettled: (mailed: boolean) => `貢獻榜已結算${mailed ? ', 獎勵已發郵件' : ''}`,
     boardSettling: '貢獻榜結算中',
     rankLine: (rank: string, award: string) => `${rank}: ${award}`,
   },

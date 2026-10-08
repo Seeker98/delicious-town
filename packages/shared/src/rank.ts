@@ -82,7 +82,7 @@ export const RANK_BOARDS: readonly RankBoardDef[] = [
     group: '打赏',
     label: '本周',
     reward:
-      '前 5 名：商店 / 改名处 / 菜场 / 搬家处工作证、保安证 (周日 23 点发，有效 160 小时，周一 7:59 发工资)',
+      '前 5 名：商店 / 改名处 / 菜场 / 搬家处工作证、保安证 (周日 23 点发, 有效 160 小时, 周一 7:59 发工资)',
   },
   { key: 'hiphop.lastWeek', group: '打赏', label: '上周' },
 ];

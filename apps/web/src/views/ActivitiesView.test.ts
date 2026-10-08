@@ -333,7 +333,7 @@ describe('ActivitiesView 兑换活动', () => {
     });
     const w = mount(ActivitiesView);
     await flushPromises();
-    expect(w.text()).toContain('兑换期，还剩 5 小时');
+    expect(w.text()).toContain('兑换期, 还剩 5 小时');
     expect(w.text()).not.toContain('未领的奖励');
   });
 });
@@ -511,7 +511,7 @@ describe('ActivitiesView 全服合力（148-3）', () => {
     });
     const w = mount(ActivitiesView);
     await flushPromises();
-    expect(w.text()).toContain('贡献榜已结算，奖励已发邮件');
+    expect(w.text()).toContain('贡献榜已结算, 奖励已发邮件');
   });
 });
 

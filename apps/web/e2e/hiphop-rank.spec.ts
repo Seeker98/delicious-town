@@ -50,7 +50,7 @@ test('嘻哈男孩、镇长问答、排行', async ({ page, request }) => {
     await page.goto('/society/mayor');
     await page.getByTestId('mayor-open').click();
     await page.getByTestId('mayor-1').click();
-    await expect(page.getByText('谢谢你，我现在就去找他')).toBeVisible();
+    await expect(page.getByText('谢谢你, 我现在就去找他')).toBeVisible();
 
     await page.goto('/town?tab=rank');
     await page.getByTestId('rank-group-等级').click();

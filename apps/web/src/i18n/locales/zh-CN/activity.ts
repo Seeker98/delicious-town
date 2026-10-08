@@ -8,13 +8,13 @@ export default {
   unlockConfirm: '确定解锁进阶奖励吗？解锁后之前达到的进阶档位也可以领取。',
   unlocked: '已解锁',
   exchanged: '已兑换',
-  exchangePeriod: (left: string) => `兑换期，${left}`,
-  exchangeOver: '已结束，活动货币已作废',
-  settling: '结算中，未领的奖励会发到邮箱',
-  ended: '已结束，未领的奖励已发到邮箱',
+  exchangePeriod: (left: string) => `兑换期, ${left}`,
+  exchangeOver: '已结束, 活动货币已作废',
+  settling: '结算中, 未领的奖励会发到邮箱',
+  ended: '已结束, 未领的奖励已发到邮箱',
   none: '现在没有进行中的活动。',
   endedShort: '已结束',
-  needLevel: (n: number) => `需要 ${n} 级，达到后才开始计数`,
+  needLevel: (n: number) => `需要 ${n} 级, 达到后才开始计数`,
   claimAll: (n: number) => `全部领取 (${n})`,
   /** 剩余时间 */
   left: {
@@ -128,7 +128,7 @@ export default {
     unlock: (price: string) => `解锁 (${price})`,
   },
   exchange: {
-    rule: '活动货币不进仓库，只能在本活动里兑换；兑换期过后作废。',
+    rule: '活动货币不进仓库, 只能在本活动里兑换；兑换期过后作废。',
     drop: (action: string, chance: string, currency: string, num: number, today: number, cap: number) =>
       `${action} ${chance} 掉 ${currency} ×${num} (今天 ${today}/${cap})`,
     btn: '兑换',
@@ -143,7 +143,7 @@ export default {
     milestone: (n: string) => `全服 ${n} 分`,
     minContribution: (n: string) => ` (个人 ≥ ${n} 分)`,
     board: '贡献榜',
-    boardSettled: (mailed: boolean) => `贡献榜已结算${mailed ? '，奖励已发邮件' : ''}`,
+    boardSettled: (mailed: boolean) => `贡献榜已结算${mailed ? ', 奖励已发邮件' : ''}`,
     boardSettling: '贡献榜结算中',
     rankLine: (rank: string, award: string) => `${rank}: ${award}`,
   },

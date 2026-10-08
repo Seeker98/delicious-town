@@ -2254,7 +2254,7 @@
      "id": 3347,
      "order": 7,
      "needStar": 0,
-     "name": "一掷千金一路不成交，开出最大奖",
+     "name": "一掷千金一路不成交, 开出最大奖",
      "cond": {
       "kind": "counter",
       "key": "bar.deal.top",
@@ -3134,7 +3134,7 @@
      "id": 3522,
      "order": 2,
      "needStar": 0,
-     "name": "领取 100 点活跃奖励，累计 10 天",
+     "name": "领取 100 点活跃奖励, 累计 10 天",
      "cond": {
       "kind": "counter",
       "key": "activation.100",
@@ -3178,7 +3178,7 @@
      "id": 3524,
      "order": 4,
      "needStar": 0,
-     "name": "领取 100 点活跃奖励，累计 30 天",
+     "name": "领取 100 点活跃奖励, 累计 30 天",
      "cond": {
       "kind": "counter",
       "key": "activation.100",
@@ -3244,7 +3244,7 @@
      "id": 3527,
      "order": 7,
      "needStar": 0,
-     "name": "领取 100 点活跃奖励，累计 100 天",
+     "name": "领取 100 点活跃奖励, 累计 100 天",
      "cond": {
       "kind": "counter",
       "key": "activation.100",

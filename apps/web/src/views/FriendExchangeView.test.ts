@@ -63,7 +63,7 @@ describe('FriendExchangeView', () => {
     });
     const w = await mountView();
     expect(w.get('[data-testid="exchange-left"]').text()).toBe(
-      '今天还能换 6 次 (所有好友合计)，对方今天只能再被换 2 次',
+      '今天还能换 6 次 (所有好友合计), 对方今天只能再被换 2 次',
     );
     // 对方被换满：我的次数还在，只是不能和它换
     vi.mocked(endpoints.exchangeFoods).mockResolvedValue({
@@ -77,7 +77,7 @@ describe('FriendExchangeView', () => {
     });
     const full = await mountView();
     expect(full.get('[data-testid="exchange-left"]').text()).toBe(
-      '今天还能换 6 次 (所有好友合计)，对方今天不能再被换了',
+      '今天还能换 6 次 (所有好友合计), 对方今天不能再被换了',
     );
     await full.get('[data-testid="theirs-11"]').trigger('click');
     await full.get('[data-testid="mine-12"]').trigger('click');

@@ -42,7 +42,7 @@ describe('TownPanel', () => {
     const w = mount(TownPanel, { props: { data: townData() } });
     await w.find('[data-testid="shake"]').trigger('click');
     await flushPromises();
-    expect(useToastStore().items.at(-1)!.text).toBe('摇到银币 12,000，还从裤兜里掏出了 道具180×1');
+    expect(useToastStore().items.at(-1)!.text).toBe('摇到银币 12,000, 还从裤兜里掏出了 道具180×1');
   });
 
   it('星愿：没人许愿时有神灯才能许；自选食材要先选', async () => {
@@ -85,7 +85,7 @@ describe('TownPanel', () => {
       },
     });
     expect(w.find('[data-testid="feast"]').attributes('disabled')).toBeDefined();
-    expect(w.find('[data-testid="feast-block"]').text()).toBe('今天活跃度 30，要 120 才能领');
+    expect(w.find('[data-testid="feast-block"]').text()).toBe('今天活跃度 30, 要 120 才能领');
     expect(w.find('[data-testid="bless-reward"]').text()).toBe('银币 200,000 (持有神灯多领 10%)');
   });
 
@@ -135,7 +135,7 @@ describe('TownPanel', () => {
         },
       });
       const w = mount(TownPanel, { props: { data } });
-      expect(w.find('[data-testid="hammer-block"]').text()).toBe('刚换过天气，3 秒后才能再换');
+      expect(w.find('[data-testid="hammer-block"]').text()).toBe('刚换过天气, 3 秒后才能再换');
       expect(w.find('[data-testid="hammer-1"]').attributes('disabled')).toBeDefined();
       vi.advanceTimersByTime(3000);
       await nextTick();
