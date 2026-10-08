@@ -299,3 +299,7 @@
 - preconnect 不带 crossorigin，能给带凭证的正式请求用，但 CORS 预检不带凭证，Chrome 可能另开连接；上线后在 DevTools 的 Connection ID 列确认，必要时再加一个带 crossorigin 的
 - `VITE_API_BASE` 不是完整网址时 `new URL` 会让 vite 配置加载失败，报错看不出原因
 - 缺的测试：开放接口的 OPTIONS 返回 max-age 86400（全局 cors 先写 7200，开放接口在 onSend 里改写，读代码确认能覆盖）
+
+## 宝石页体力（问题记录 532）终审小问题
+
+- 英文里还有几处小写的 stamina（equip.ts 的 gemOption“costs N stamina”、guide.ts“cost stamina; stamina cards”），别处都写大写 Stamina
