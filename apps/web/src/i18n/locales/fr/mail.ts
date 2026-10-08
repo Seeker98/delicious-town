@@ -16,12 +16,12 @@ const mail: Messages['mail'] = {
   needLevel: (n) => `· niv. ${n} requis`,
   claimed: '· Récupéré',
   broken: "· La pièce jointe n'est plus valide, contactez le support",
-  items: (text) => `Pièces jointes : ${text}`,
+  items: (text) => `Pièces jointes\u202f: ${text}`,
   redeem: {
     placeholder: 'Saisissez un code cadeau',
     label: 'Code cadeau',
     btn: 'Utiliser',
-    done: (text) => `Code utilisé : ${text}`,
+    done: (text) => `Code utilisé\u202f: ${text}`,
     failed: "Échec de l'utilisation du code",
   },
 };

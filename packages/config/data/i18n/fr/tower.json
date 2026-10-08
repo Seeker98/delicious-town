@@ -2,51 +2,51 @@
   "1": {
     "name": "Restaurant modèle apprenti",
     "title": "Gardien apprenti",
-    "note": "Vous avez hâte de me défier, n'est-ce pas ?"
+    "note": "Vous avez hâte de me défier, n'est-ce pas\u202f?"
   },
   "2": {
     "name": "Restaurant modèle débutant",
     "title": "Gardien débutant",
-    "note": "On dirait que vous êtes devenu un vrai cuisinier, mais je ne me laisserai pas faire !"
+    "note": "On dirait que vous êtes devenu un vrai cuisinier, mais je ne me laisserai pas faire\u202f!"
   },
   "3": {
     "name": "Restaurant de Song Sao",
     "title": "Gardienne intermédiaire",
-    "note": "Les adversaires ne cessent de défiler. Pouvez-vous me battre ?"
+    "note": "Les adversaires ne cessent de défiler. Pouvez-vous me battre\u202f?"
   },
   "4": {
     "name": "L'Âme de Sariel",
     "title": "Gardienne supérieure",
-    "note": "Je n'ai pas vu de cuisinier venir me défier depuis des années. Je m'ennuie à mourir !"
+    "note": "Je n'ai pas vu de cuisinier venir me défier depuis des années. Je m'ennuie à mourir\u202f!"
   },
   "5": {
     "name": "Le Jugement de Barbelet",
     "title": "Aîné juge",
-    "note": "Un duel culinaire avec moi, beaucoup ne l'obtiennent pas en dix vies !"
+    "note": "Un duel culinaire avec moi, beaucoup ne l'obtiennent pas en dix vies\u202f!"
   },
   "6": {
     "name": "Duma le Silencieux",
     "title": "Aîné mentor",
-    "note": "Vous semblez né pour cuisiner. Rien ne plaît plus au vieil homme que je suis qu'un duel avec quelqu'un de talent !"
+    "note": "Vous semblez né pour cuisiner. Rien ne plaît plus au vieil homme que je suis qu'un duel avec quelqu'un de talent\u202f!"
   },
   "7": {
     "name": "La Volonté de Gurtug",
     "title": "Vénérable de la tour",
-    "note": "S'il existe une autre vie, je ne remettrai jamais les pieds dans cette tour !"
+    "note": "S'il existe une autre vie, je ne remettrai jamais les pieds dans cette tour\u202f!"
   },
   "8": {
     "name": "L'Oracle d'Akatma",
     "title": "Maîtresse de la tour",
-    "note": "J'ai donné toute ma vie pour en arriver là et je ne tiens plus à rien. Mon seul souhait : que quelqu'un prenne ma place de mon vivant !"
+    "note": "J'ai donné toute ma vie pour en arriver là et je ne tiens plus à rien. Mon seul souhait\u202f: que quelqu'un prenne ma place de mon vivant\u202f!"
   },
   "9": {
     "name": "Anima",
     "title": "Ancien Dieu de la cuisine",
-    "note": "Tout en ce monde n'est que fumée passagère ! Une vie de passion finit en un tas de poussière !"
+    "note": "Tout en ce monde n'est que fumée passagère\u202f! Une vie de passion finit en un tas de poussière\u202f!"
   },
   "10": {
     "name": "Peng Zu",
     "title": "Dieu de la cuisine",
-    "note": "Savez-vous faire du riz sauté aux œufs ?"
+    "note": "Savez-vous faire du riz sauté aux œufs\u202f?"
   }
 }

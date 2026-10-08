@@ -112,7 +112,7 @@ const friends: Messages['friends'] = {
     allFriends: 'entre todos tus amigos',
     takenLeft: (n) => `; a este jugador solo se le puede cambiar ${n} ${plEs(n, 'vez', 'veces')} más`,
     takenFull: '; a este jugador ya no se le puede cambiar hoy',
-    storm: '; con huracán puedes tomar sus ingredientes bloqueados (50 % de que te pillen)',
+    storm: '; con huracán puedes tomar sus ingredientes bloqueados (50\u00a0% de que te pillen)',
     theirs: 'Los suyos',
     theirsEmpty: 'No hay ingredientes de este nivel',
     mine: 'Tú das (2 cada vez)',

@@ -1,126 +1,126 @@
 {
   "1": {
     "name": "Soleado",
-    "note": "Negocio: ocupación +3%"
+    "note": "Negocio: ocupación +3\u00a0%"
   },
   "2": {
     "name": "Nublado",
-    "note": "Negocio: ocupación +5%, EXP final +10%\nA domicilio: monedas +10%"
+    "note": "Negocio: ocupación +5\u00a0%, EXP final +10\u00a0%\nA domicilio: monedas +10\u00a0%"
   },
   "3": {
     "name": "Parcialmente nublado",
-    "note": "¡Precio de los ingredientes del mercado -20%!\nNegocio: ocupación +5%, monedas finales +5%\nA domicilio: monedas +5%"
+    "note": "¡Precio de los ingredientes del mercado -20\u00a0%!\nNegocio: ocupación +5\u00a0%, monedas finales +5\u00a0%\nA domicilio: monedas +5\u00a0%"
   },
   "4": {
     "name": "Tormenta de arena",
-    "note": "¡Éxito al combinar y descomponer ingredientes -50%!\n¡Precio de los ingredientes del mercado +50%!\n¡Precisión de los misiles -25%!\n¡Probabilidad de perderse al explorar +25%!\nNegocio: ocupación +3%, monedas finales +5%, EXP final -50%\nA domicilio: tiempo de entrega +60%, éxito -30%"
+    "note": "¡Éxito al combinar y descomponer ingredientes -50\u00a0%!\n¡Precio de los ingredientes del mercado +50\u00a0%!\n¡Precisión de los misiles -25\u00a0%!\n¡Probabilidad de perderse al explorar +25\u00a0%!\nNegocio: ocupación +3\u00a0%, monedas finales +5\u00a0%, EXP final -50\u00a0%\nA domicilio: tiempo de entrega +60\u00a0%, éxito -30\u00a0%"
   },
   "5": {
     "name": "Viento fuerte",
-    "note": "¡Combinar y descomponer ingredientes siempre sale bien!\n¡Probabilidad de ingredientes misteriosos al explorar +0,8%!\n¡Precisión de los misiles -20%!\nNegocio: clientes exigentes -70%\nA domicilio: tiempo de entrega +50%, éxito -10%"
+    "note": "¡Combinar y descomponer ingredientes siempre sale bien!\n¡Probabilidad de ingredientes misteriosos al explorar +0,8\u00a0%!\n¡Precisión de los misiles -20\u00a0%!\nNegocio: clientes exigentes -70\u00a0%\nA domicilio: tiempo de entrega +50\u00a0%, éxito -10\u00a0%"
   },
   "6": {
     "name": "Arcoíris",
-    "note": "¡Probabilidad de Monedas Krab al dar propina al artista +10%!\n¡Éxito en las pruebas +8%!\nNegocio: EXP final +120%\nA domicilio: tiempo de entrega -20%, EXP +120%, renombre +100%, éxito +20%"
+    "note": "¡Probabilidad de Monedas Krab al dar propina al artista +10\u00a0%!\n¡Éxito en las pruebas +8\u00a0%!\nNegocio: EXP final +120\u00a0%\nA domicilio: tiempo de entrega -20\u00a0%, EXP +120\u00a0%, renombre +100\u00a0%, éxito +20\u00a0%"
   },
   "7": {
     "name": "Huracán",
-    "note": "¡Combinar y descomponer ingredientes siempre sale bien!\n¡Puedes intercambiar ingredientes bloqueados de amigos (comisión doble)!\n¡Probabilidad de ingredientes misteriosos al explorar +1,2%!\n¡Precisión de los misiles -35%!\nNegocio: clientes exigentes -120%\nA domicilio: tiempo de entrega +80%, éxito -80%"
+    "note": "¡Combinar y descomponer ingredientes siempre sale bien!\n¡Puedes intercambiar ingredientes bloqueados de amigos (comisión doble)!\n¡Probabilidad de ingredientes misteriosos al explorar +1,2\u00a0%!\n¡Precisión de los misiles -35\u00a0%!\nNegocio: clientes exigentes -120\u00a0%\nA domicilio: tiempo de entrega +80\u00a0%, éxito -80\u00a0%"
   },
   "8": {
     "name": "Niebla",
-    "note": "¡Probabilidad de mejor calidad al cocinar platos estrella +20%!\n¡Precisión de los misiles -40%!\n¡Probabilidad de perderse al explorar +40%!\nNegocio: clientes exigentes +20%, ocupación +3%, monedas finales +5%\nA domicilio: tiempo de entrega +20%, monedas +20%, éxito -60%"
+    "note": "¡Probabilidad de mejor calidad al cocinar platos estrella +20\u00a0%!\n¡Precisión de los misiles -40\u00a0%!\n¡Probabilidad de perderse al explorar +40\u00a0%!\nNegocio: clientes exigentes +20\u00a0%, ocupación +3\u00a0%, monedas finales +5\u00a0%\nA domicilio: tiempo de entrega +20\u00a0%, monedas +20\u00a0%, éxito -60\u00a0%"
   },
   "9": {
     "name": "Esmog",
-    "note": "¡Precisión de los misiles -10%!\n¡Probabilidad de perderse al explorar +10%!\nNegocio: clientes exigentes +36%, ocupación -80%, monedas finales +100%, EXP final +100%\nA domicilio: tiempo de entrega +40%, monedas +30%, éxito -30%"
+    "note": "¡Precisión de los misiles -10\u00a0%!\n¡Probabilidad de perderse al explorar +10\u00a0%!\nNegocio: clientes exigentes +36\u00a0%, ocupación -80\u00a0%, monedas finales +100\u00a0%, EXP final +100\u00a0%\nA domicilio: tiempo de entrega +40\u00a0%, monedas +30\u00a0%, éxito -30\u00a0%"
   },
   "10": {
     "name": "Lluvia ligera",
-    "note": "¡Precio de los ingredientes del mercado +20%!\nNegocio: ocupación -5%, EXP por mesa +1\nA domicilio: tiempo de entrega -5%, monedas -10%, EXP +20%"
+    "note": "¡Precio de los ingredientes del mercado +20\u00a0%!\nNegocio: ocupación -5\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega -5\u00a0%, monedas -10\u00a0%, EXP +20\u00a0%"
   },
   "11": {
     "name": "Lluvia moderada",
-    "note": "¡Precio de los ingredientes del mercado +30%!\nNegocio: ocupación -8%, EXP por mesa +1\nA domicilio: tiempo de entrega -10%, monedas -20%, EXP +40%"
+    "note": "¡Precio de los ingredientes del mercado +30\u00a0%!\nNegocio: ocupación -8\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega -10\u00a0%, monedas -20\u00a0%, EXP +40\u00a0%"
   },
   "12": {
     "name": "Lluvia fuerte",
-    "note": "¡Precio de los ingredientes del mercado +45%!\nNegocio: ocupación -12%, EXP por mesa +2\nA domicilio: tiempo de entrega -15%, monedas -30%, EXP +60%"
+    "note": "¡Precio de los ingredientes del mercado +45\u00a0%!\nNegocio: ocupación -12\u00a0%, EXP por mesa +2\nA domicilio: tiempo de entrega -15\u00a0%, monedas -30\u00a0%, EXP +60\u00a0%"
   },
   "13": {
     "name": "Aguacero",
-    "note": "¡Precio de los ingredientes del mercado +60%!\n¡Afecto del Kraken al alimentarlo +25%!\nNegocio: ocupación -20%, EXP por mesa +3\nA domicilio: tiempo de entrega -20%, monedas -40%, EXP +80%, éxito -30%"
+    "note": "¡Precio de los ingredientes del mercado +60\u00a0%!\n¡Afecto del Kraken al alimentarlo +25\u00a0%!\nNegocio: ocupación -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -20\u00a0%, monedas -40\u00a0%, EXP +80\u00a0%, éxito -30\u00a0%"
   },
   "14": {
     "name": "Aguanieve",
-    "note": "¡Raciones de platos estrella +8%!\n¡Precio de los ingredientes del mercado +35%!\nNegocio: ocupación -25%, clientes exigentes -10%, EXP por mesa +2\nA domicilio: tiempo de entrega +15%, monedas +30%"
+    "note": "¡Raciones de platos estrella +8\u00a0%!\n¡Precio de los ingredientes del mercado +35\u00a0%!\nNegocio: ocupación -25\u00a0%, clientes exigentes -10\u00a0%, EXP por mesa +2\nA domicilio: tiempo de entrega +15\u00a0%, monedas +30\u00a0%"
   },
   "15": {
     "name": "Nevada ligera",
-    "note": "¡Raciones de platos estrella +2%!\n¡Precio de los ingredientes del mercado +65%!\nNegocio: ocupación -30%, clientes exigentes -20%, EXP por mesa +3\nA domicilio: tiempo de entrega +25%, monedas +50%, EXP -20%"
+    "note": "¡Raciones de platos estrella +2\u00a0%!\n¡Precio de los ingredientes del mercado +65\u00a0%!\nNegocio: ocupación -30\u00a0%, clientes exigentes -20\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega +25\u00a0%, monedas +50\u00a0%, EXP -20\u00a0%"
   },
   "16": {
     "name": "Tormenta",
-    "note": "¡Éxito al mejorar utensilios +10%!\n¡Precio de los ingredientes del mercado +50%!\n¡Críticos de los misiles +5%!\nNegocio: ocupación -10%, EXP por mesa +2\nA domicilio: tiempo de entrega -15%, monedas -15%, EXP +50%"
+    "note": "¡Éxito al mejorar utensilios +10\u00a0%!\n¡Precio de los ingredientes del mercado +50\u00a0%!\n¡Críticos de los misiles +5\u00a0%!\nNegocio: ocupación -10\u00a0%, EXP por mesa +2\nA domicilio: tiempo de entrega -15\u00a0%, monedas -15\u00a0%, EXP +50\u00a0%"
   },
   "17": {
     "name": "Chubascos",
-    "note": "¡Éxito al mejorar utensilios +3%!\n¡Precio de los ingredientes del mercado +10%!\nNegocio: ocupación -5%, EXP por mesa +1\nA domicilio: tiempo de entrega -5%, monedas -10%, EXP +20%"
+    "note": "¡Éxito al mejorar utensilios +3\u00a0%!\n¡Precio de los ingredientes del mercado +10\u00a0%!\nNegocio: ocupación -5\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega -5\u00a0%, monedas -10\u00a0%, EXP +20\u00a0%"
   },
   "18": {
     "name": "Lluvia ácida",
-    "note": "¡Éxito al subir gemas de rango +5%!\n¡Quitar gemas es gratis!\n¡Precio de los ingredientes del mercado +300%!\nNegocio: ocupación -90%, EXP por mesa +2\nA domicilio: tiempo de entrega +100%, monedas +200%, EXP +400%"
+    "note": "¡Éxito al subir gemas de rango +5\u00a0%!\n¡Quitar gemas es gratis!\n¡Precio de los ingredientes del mercado +300\u00a0%!\nNegocio: ocupación -90\u00a0%, EXP por mesa +2\nA domicilio: tiempo de entrega +100\u00a0%, monedas +200\u00a0%, EXP +400\u00a0%"
   },
   "19": {
     "name": "Granizo",
-    "note": "¡Éxito en las pruebas +1%!\n¡Precio de los ingredientes del mercado +40%!\nNegocio: ocupación -20%, clientes exigentes -10%, EXP por mesa +1\nA domicilio: tiempo de entrega +15%, monedas +150%, EXP +250%, éxito -60%"
+    "note": "¡Éxito en las pruebas +1\u00a0%!\n¡Precio de los ingredientes del mercado +40\u00a0%!\nNegocio: ocupación -20\u00a0%, clientes exigentes -10\u00a0%, EXP por mesa +1\nA domicilio: tiempo de entrega +15\u00a0%, monedas +150\u00a0%, EXP +250\u00a0%, éxito -60\u00a0%"
   },
   "20": {
     "name": "Nevada moderada",
-    "note": "¡Raciones de platos estrella +3%!\n¡Precio de los ingredientes del mercado +100%!\nNegocio: ocupación -40%, clientes exigentes -30%, EXP por mesa +3\nA domicilio: tiempo de entrega +35%, monedas +70%, EXP -30%"
+    "note": "¡Raciones de platos estrella +3\u00a0%!\n¡Precio de los ingredientes del mercado +100\u00a0%!\nNegocio: ocupación -40\u00a0%, clientes exigentes -30\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega +35\u00a0%, monedas +70\u00a0%, EXP -30\u00a0%"
   },
   "21": {
     "name": "Nevada fuerte",
-    "note": "¡Raciones de platos estrella +4%!\n¡Precio de los ingredientes del mercado +150%!\nNegocio: ocupación -50%, clientes exigentes -40%, EXP por mesa +4, monedas por mesa +1\nA domicilio: tiempo de entrega +45%, monedas +90%, EXP -40%"
+    "note": "¡Raciones de platos estrella +4\u00a0%!\n¡Precio de los ingredientes del mercado +150\u00a0%!\nNegocio: ocupación -50\u00a0%, clientes exigentes -40\u00a0%, EXP por mesa +4, monedas por mesa +1\nA domicilio: tiempo de entrega +45\u00a0%, monedas +90\u00a0%, EXP -40\u00a0%"
   },
   "22": {
     "name": "Lluvia torrencial",
-    "note": "¡Éxito en las pruebas +2%!\n¡Precio de los ingredientes del mercado +100%!\nNegocio: ocupación -30%, EXP por mesa +5\nA domicilio: tiempo de entrega -30%, monedas -60%, EXP +120%, éxito -50%"
+    "note": "¡Éxito en las pruebas +2\u00a0%!\n¡Precio de los ingredientes del mercado +100\u00a0%!\nNegocio: ocupación -30\u00a0%, EXP por mesa +5\nA domicilio: tiempo de entrega -30\u00a0%, monedas -60\u00a0%, EXP +120\u00a0%, éxito -50\u00a0%"
   },
   "23": {
     "name": "Ventisca",
-    "note": "¡Raciones de platos estrella +5%!\n¡Éxito en las pruebas +3%!\n¡Precio de los ingredientes del mercado +200%!\nNegocio: ocupación -60%, clientes exigentes -50%, EXP por mesa +4, monedas por mesa +1\nA domicilio: tiempo de entrega +55%, monedas +110%, EXP -50%, éxito -50%"
+    "note": "¡Raciones de platos estrella +5\u00a0%!\n¡Éxito en las pruebas +3\u00a0%!\n¡Precio de los ingredientes del mercado +200\u00a0%!\nNegocio: ocupación -60\u00a0%, clientes exigentes -50\u00a0%, EXP por mesa +4, monedas por mesa +1\nA domicilio: tiempo de entrega +55\u00a0%, monedas +110\u00a0%, EXP -50\u00a0%, éxito -50\u00a0%"
   },
   "24": {
     "name": "Tormenta eléctrica",
-    "note": "¡Éxito al mejorar utensilios +12%!\n¡Críticos de los misiles +8%!\nNegocio: clientes exigentes -80%, ocupación -30%, EXP por mesa +3\nA domicilio: tiempo de entrega -15%, monedas -80%, EXP +80%"
+    "note": "¡Éxito al mejorar utensilios +12\u00a0%!\n¡Críticos de los misiles +8\u00a0%!\nNegocio: clientes exigentes -80\u00a0%, ocupación -30\u00a0%, EXP por mesa +3\nA domicilio: tiempo de entrega -15\u00a0%, monedas -80\u00a0%, EXP +80\u00a0%"
   },
   "25": {
     "name": "Tormenta de nieve",
-    "note": "¡Raciones de platos estrella +15%!\n¡Éxito al mejorar utensilios +5%!\n¡Precio de los ingredientes del mercado +100%!\n¡Críticos de los misiles +8%!\nNegocio: ocupación -55%, clientes exigentes -30%, EXP por mesa +5\nA domicilio: tiempo de entrega +25%, monedas +50%"
+    "note": "¡Raciones de platos estrella +15\u00a0%!\n¡Éxito al mejorar utensilios +5\u00a0%!\n¡Precio de los ingredientes del mercado +100\u00a0%!\n¡Críticos de los misiles +8\u00a0%!\nNegocio: ocupación -55\u00a0%, clientes exigentes -30\u00a0%, EXP por mesa +5\nA domicilio: tiempo de entrega +25\u00a0%, monedas +50\u00a0%"
   },
   "27": {
     "name": "Helada",
-    "note": "¡Éxito en las pruebas +3%!\n¡Precio de los ingredientes del mercado +250%!\nNegocio: ocupación -70%, clientes exigentes -100%, EXP por mesa +5, monedas por mesa +10\nA domicilio: tiempo de entrega +150%, monedas +200%, EXP +100%, éxito -50%"
+    "note": "¡Éxito en las pruebas +3\u00a0%!\n¡Precio de los ingredientes del mercado +250\u00a0%!\nNegocio: ocupación -70\u00a0%, clientes exigentes -100\u00a0%, EXP por mesa +5, monedas por mesa +10\nA domicilio: tiempo de entrega +150\u00a0%, monedas +200\u00a0%, EXP +100\u00a0%, éxito -50\u00a0%"
   },
   "28": {
     "name": "Noche despejada",
-    "note": "Negocio: ocupación +10%, clientes exigentes -5%"
+    "note": "Negocio: ocupación +10\u00a0%, clientes exigentes -5\u00a0%"
   },
   "29": {
     "name": "Noche nublada",
-    "note": "¡Precio de los ingredientes del mercado -30%!\nNegocio: ocupación +5%"
+    "note": "¡Precio de los ingredientes del mercado -30\u00a0%!\nNegocio: ocupación +5\u00a0%"
   },
   "30": {
     "name": "Noche con niebla",
-    "note": "¡Probabilidad de mejor calidad al cocinar platos estrella +25%!\n¡Precisión de los misiles -50%!\nNegocio: ocupación +5%, clientes exigentes +10%"
+    "note": "¡Probabilidad de mejor calidad al cocinar platos estrella +25\u00a0%!\n¡Precisión de los misiles -50\u00a0%!\nNegocio: ocupación +5\u00a0%, clientes exigentes +10\u00a0%"
   },
   "31": {
     "name": "Noche estrellada",
-    "note": "¡Éxito al tasar recetas misteriosas +5%!\n¡Críticos de los misiles +15%!\nNegocio: clientes exigentes +20%"
+    "note": "¡Éxito al tasar recetas misteriosas +5\u00a0%!\n¡Críticos de los misiles +15\u00a0%!\nNegocio: clientes exigentes +20\u00a0%"
   },
   "32": {
     "name": "Luna de sangre",
-    "note": "¡Probabilidad de cucaracha en cada mesa duplicada!\n¡Probabilidad de ingredientes misteriosos al explorar +1,5%!\n¡Precio de los ingredientes del mercado +100%!\nNegocio: ocupación -50%, clientes exigentes -99%!"
+    "note": "¡Probabilidad de cucaracha en cada mesa duplicada!\n¡Probabilidad de ingredientes misteriosos al explorar +1,5\u00a0%!\n¡Precio de los ingredientes del mercado +100\u00a0%!\nNegocio: ocupación -50\u00a0%, clientes exigentes -99\u00a0%!"
   }
 }

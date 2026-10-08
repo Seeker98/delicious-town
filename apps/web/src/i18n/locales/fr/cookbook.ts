@@ -10,7 +10,7 @@ const cookbook: Messages['cookbook'] = {
     learned: 'Apprises',
   },
   loadFailed: 'Impossible de charger les recettes',
-  streetDesc: (desc) => `Bonus de la rue : ${desc}`,
+  streetDesc: (desc) => `Bonus de la rue\u202f: ${desc}`,
   moveHint: (star, need, gap) =>
     `Même en apprenant toutes les recettes restantes de cette rue, vous n’atteindrez pas les ${need} recettes demandées pour ${star} ${plFr(star, 'étoile', 'étoiles')} (il en manque ${gap}). Quand vous n’apprenez presque plus rien ici, déménagez dans une rue qui a plus de recettes.`,
   moveHintClose: 'Masquer jusqu’à la prochaine étoile',
@@ -23,7 +23,7 @@ const cookbook: Messages['cookbook'] = {
   upgrade: 'Améliorer',
   useMaster: (level) => `Avec un universel niv. ${level}`,
   counts: (streetLearned, streetTotal, learned, total) =>
-    `Cette rue : ${streetLearned}/${streetTotal} apprises · ${learned} / ${total} ${plFr(total, 'recette', 'recettes')} au total`,
+    `Cette rue\u202f: ${streetLearned}/${streetTotal} apprises · ${learned} / ${total} ${plFr(total, 'recette', 'recettes')} au total`,
   info: (street, level, taste, coin) => `${street} · Difficulté ${level} · Goût ${taste} · Prix ${coin}`,
   grade: 'Qualité',
   foodsNeeded: 'Ingrédients requis',

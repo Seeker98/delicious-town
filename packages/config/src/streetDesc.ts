@@ -22,14 +22,14 @@ const PATTERNS: Record<DescLang, Array<[Kind, RegExp]>> = {
     ['exp', new RegExp(`^final exp(?: income)? ${N}%$`, 'i')],
   ],
   fr: [
-    ['both', new RegExp(`^exp et (?:pièces finales|revenus finaux en pièces) ${N} %$`, 'i')],
-    ['coin', new RegExp(`^(?:pièces finales|revenus finaux en pièces) ${N} %$`, 'i')],
-    ['exp', new RegExp(`^exp finale ${N} %$`, 'i')],
+    ['both', new RegExp(`^exp et (?:pièces finales|revenus finaux en pièces) ${N}\u202f%$`, 'i')],
+    ['coin', new RegExp(`^(?:pièces finales|revenus finaux en pièces) ${N}\u202f%$`, 'i')],
+    ['exp', new RegExp(`^exp finale ${N}\u202f%$`, 'i')],
   ],
   es: [
-    ['both', new RegExp(`^exp (?:y monedas finales|e ingresos finales de monedas) ${N}%$`, 'i')],
-    ['coin', new RegExp(`^(?:monedas finales|ingresos finales de monedas) ${N}%$`, 'i')],
-    ['exp', new RegExp(`^exp final ${N}%$`, 'i')],
+    ['both', new RegExp(`^exp (?:y monedas finales|e ingresos finales de monedas) ${N}\u00a0%$`, 'i')],
+    ['coin', new RegExp(`^(?:monedas finales|ingresos finales de monedas) ${N}\u00a0%$`, 'i')],
+    ['exp', new RegExp(`^exp final ${N}\u00a0%$`, 'i')],
   ],
 };
 
@@ -46,14 +46,14 @@ const WRITE: Record<DescLang, Record<Kind, (p: string) => string>> = {
     exp: (p) => `final EXP ${p}%`,
   },
   fr: {
-    both: (p) => `EXP et pièces finales ${p} %`,
-    coin: (p) => `pièces finales ${p} %`,
-    exp: (p) => `EXP finale ${p} %`,
+    both: (p) => `EXP et pièces finales ${p}\u202f%`,
+    coin: (p) => `pièces finales ${p}\u202f%`,
+    exp: (p) => `EXP finale ${p}\u202f%`,
   },
   es: {
-    both: (p) => `EXP y monedas finales ${p}%`,
-    coin: (p) => `monedas finales ${p}%`,
-    exp: (p) => `EXP final ${p}%`,
+    both: (p) => `EXP y monedas finales ${p}\u00a0%`,
+    coin: (p) => `monedas finales ${p}\u00a0%`,
+    exp: (p) => `EXP final ${p}\u00a0%`,
   },
 };
 

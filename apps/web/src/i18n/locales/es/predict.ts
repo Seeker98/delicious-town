@@ -52,7 +52,7 @@ const predict: Messages['predict'] = {
     sections: { market: 'Mercado', hold: 'Mi posición', trade: 'Operar', records: 'Historial' },
     unitLine: (unit) => `Cada participación paga ${unit} monedas`,
     helpItems: (unit, example, feePct) => [
-      `Al cerrar, cada participación del lado ganador paga ${unit} monedas y el lado perdedor no vale nada. Por ejemplo, si «Sí» está al 63 %, 1 participación cuesta unas ${example} ${plEs(example, 'moneda', 'monedas')}; si sale «Sí» recuperas ${unit}, y si sale «No» pierdes lo que pagaste.`,
+      `Al cerrar, cada participación del lado ganador paga ${unit} monedas y el lado perdedor no vale nada. Por ejemplo, si «Sí» está al 63\u00a0%, 1 participación cuesta unas ${example} ${plEs(example, 'moneda', 'monedas')}; si sale «Sí» recuperas ${unit}, y si sale «No» pierdes lo que pagaste.`,
       'El precio es la probabilidad que todos creen que tiene: cuanta más gente compra «Sí», más caro está «Sí» y más barato «No»; cuanto más compras de una vez, más cara sale cada participación siguiente.',
       'No hace falta esperar al resultado: puedes vender al precio actual en cualquier momento antes del cierre. ¿Crees que te equivocaste? Vende para cortar la pérdida. ¿El precio subió lo suficiente? Vende para asegurar la ganancia. Lo que ganas o pierdes es la diferencia entre lo que obtienes al vender y lo que pagaste al comprar.',
       `Comprar y vender cobran una comisión del ${feePct}\u00a0% (sobre el importe, redondeada hacia arriba).`,

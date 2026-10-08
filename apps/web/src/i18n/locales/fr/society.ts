@@ -6,21 +6,21 @@ const society: Messages['society'] = {
   links: {
     star: {
       label: 'Gagner une étoile',
-      desc: 'Niveau, recettes et certificats suffisants ? Passez à l’étoile suivante',
+      desc: 'Niveau, recettes et certificats suffisants\u202f? Passez à l’étoile suivante',
     },
     oil: { label: "Agrandir le bidon d'huile", desc: "Augmente la réserve d'huile, moins de fermetures" },
     rename: { label: 'Renommer', desc: 'Nécessite une carte de renommage' },
-    move: { label: 'Déménager', desc: 'Changer de rue ; le badge de rue change aussi' },
+    move: { label: 'Déménager', desc: 'Changer de rue\u202f; le badge de rue change aussi' },
   },
   move: {
     title: 'Déménager',
     hint: (street, cost) =>
       `Vous êtes à ${street}. Il faut 1 carte de déménagement (gratuit avec un permis du bureau des déménagements) et environ ${cost} ${plFr(cost, 'pièce', 'pièces')} (moitié prix avec de la chance).`,
     pick: 'Choisir une nouvelle rue',
-    bonus: (desc) => `Bonus de la rue : ${desc}`,
+    bonus: (desc) => `Bonus de la rue\u202f: ${desc}`,
     option: (name, cook) => `${name} (${cook})`,
     btn: 'Déménager',
-    done: (street) => `Déménagé : ${street}`,
+    done: (street) => `Déménagé\u202f: ${street}`,
     failed: 'Échec du déménagement',
   },
   oil: {
@@ -33,22 +33,22 @@ const society: Messages['society'] = {
   },
   rename: {
     title: 'Renommer',
-    hint: "Nécessite 1 carte de renommage. 9 caractères max : caractères chinois, lettres et chiffres. Ne doit pas être le nom d'un autre restaurant du serveur.",
+    hint: "Nécessite 1 carte de renommage. 9 caractères max\u202f: caractères chinois, lettres et chiffres. Ne doit pas être le nom d'un autre restaurant du serveur.",
     placeholder: 'Nouveau nom',
     btn: 'Renommer',
-    done: (name) => `Renommé en « ${name} »`,
+    done: (name) => `Renommé en «\u202f${name}\u202f»`,
     failed: 'Échec du renommage',
   },
   star: {
     title: (star) => `Gagner une étoile (actuellement ${star}★)`,
     notOpen: (star) => `${star}★ n'est pas encore ouvert`,
-    award: 'Récompenses : ',
+    award: 'Récompenses\u202f: ',
     maxed: "Déjà au nombre d'étoiles maximum",
     btn: (star) => `Passer à ${star}★`,
-    done: (star) => `Bravo, vous passez à ${star}★ !`,
+    done: (star) => `Bravo, vous passez à ${star}★\u202f!`,
     failed: "Échec du passage d'étoile",
   },
   needs: { level: 'Niveau du restaurant', star: 'Étoiles', cookbooks: 'Recettes apprises', coin: 'Pièces' },
-  needLine: (label, have, need) => `${label} : ${have} / ${need}`,
+  needLine: (label, have, need) => `${label}\u202f: ${have} / ${need}`,
 };
 export default society;

@@ -10,7 +10,7 @@ const seedNameOf = (names: Names, id: number) => names.seedName?.(id) ?? `Graine
 const holdHours = (p: P) => (p.holdHours === undefined ? 24 : n(p, 'holdHours'));
 const heldNote = (p: P) =>
   p.held
-    ? ` (transaction suspecte : gains gelés pendant ${holdHours(p)} ${plFr(holdHours(p), 'heure', 'heures')})`
+    ? ` (transaction suspecte\u202f: gains gelés pendant ${holdHours(p)} ${plFr(holdHours(p), 'heure', 'heures')})`
     : '';
 const coinFoods = (p: P, names: Names, coin: (s: string) => string) =>
   [
@@ -35,7 +35,7 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'dine.start':
       return `${who} mange gratis à la table ${String(p.table)} de votre restaurant`;
     case 'dine.expelled':
-      return `${who} vous a mis à la porte de son restaurant ; vous avez payé ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
+      return `${who} vous a mis à la porte de son restaurant\u202f; vous avez payé ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
     case 'roach.laid':
       return `${who} a lâché un cafard à la table ${String(p.table)} de votre restaurant`;
     case 'roach.killed':
@@ -97,38 +97,38 @@ const events: Messages['events'] = {
     `${name ?? "Monnaie d'événement"}\u202f×\u202f${num} (monnaie d'événement)`,
   lucky: ' (chanceux)',
   sep: ', ',
-  groupSep: ' ; ',
+  groupSep: '\u202f; ',
   more: (text, count) => `${text} et plus (${count} au total)`,
   logs: {
-    'mc.learn': (p, names) => `A appris le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »`,
+    'mc.learn': (p, names) => `A appris le plat signature «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f»`,
     'mc.levelUp': (p, names) =>
-      `Maîtrise de « ${mcNameOf(names, n(p, 'mcId'))} » au niveau ${n(p, 'curlevel')}`,
+      `Maîtrise de «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» au niveau ${n(p, 'curlevel')}`,
     'mc.forget': (p, names) => {
       const k = Array.isArray(p.cookbooks) ? p.cookbooks.length : 0;
       const lost = typeof p.lost === 'number' ? p.lost : 0;
       if (typeof p.grades === 'number')
-        return `Espionnage raté : ${k} ${plFr(k, 'recette a perdu', 'recettes ont perdu')} ${p.grades} ${plFr(p.grades, 'niveau de qualité', 'niveaux de qualité')}${lost > 0 ? `, dont ${lost} ${plFr(typeof p.lost === 'number' ? p.lost : 0, 'oubliée', 'oubliées')}` : ''}${p.mcId ? ` et vous avez oublié le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
-      return `Espionnage raté : ${k} ${plFr(k, 'recette oubliée', 'recettes oubliées')}${p.mcId ? ` ainsi que le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »` : ''}`;
+        return `Espionnage raté\u202f: ${k} ${plFr(k, 'recette a perdu', 'recettes ont perdu')} ${p.grades} ${plFr(p.grades, 'niveau de qualité', 'niveaux de qualité')}${lost > 0 ? `, dont ${lost} ${plFr(typeof p.lost === 'number' ? p.lost : 0, 'oubliée', 'oubliées')}` : ''}${p.mcId ? ` et vous avez oublié le plat signature «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f»` : ''}`;
+      return `Espionnage raté\u202f: ${k} ${plFr(k, 'recette oubliée', 'recettes oubliées')}${p.mcId ? ` ainsi que le plat signature «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f»` : ''}`;
     },
     'temple.trial': (p, names) =>
       p.success
-        ? `« ${mcNameOf(names, n(p, 'mcId'))} » a réussi l'épreuve : valeur d'épreuve +${n(p, 'worth')}\u202f%, EXP d'épreuve +${n(p, 'exp')}\u202f%`
-        : `« ${mcNameOf(names, n(p, 'mcId'))} » a échoué à l'épreuve`,
+        ? `«\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» a réussi l'épreuve\u202f: valeur d'épreuve +${n(p, 'worth')}\u202f%, EXP d'épreuve +${n(p, 'exp')}\u202f%`
+        : `«\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f» a échoué à l'épreuve`,
     'kraken.forget': (p, names) =>
-      `Le Kraken était mécontent ; vous avez oublié le plat signature « ${mcNameOf(names, n(p, 'mcId'))} »`,
+      `Le Kraken était mécontent\u202f; vous avez oublié le plat signature «\u202f${mcNameOf(names, n(p, 'mcId'))}\u202f»`,
     'equip.stress': (p, names) =>
-      `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')} : ${p.success ? 'réussi' : 'raté'}`,
+      `Renforcement de ${names.goodsName(n(p, 'goodsId'))} à +${n(p, 'to')}\u202f: ${p.success ? 'réussi' : 'raté'}`,
     'level.up': (p) => `Le restaurant passe au niveau ${n(p, 'to')}`,
     'star.up': (p) => `Le restaurant atteint ${n(p, 'star')} ${plFr(n(p, 'star'), 'étoile', 'étoiles')}`,
     'oil.expand': (p) =>
       `Bidon d'huile agrandi au niveau ${n(p, 'level')} (max ${formatNum(n(p, 'oilMax'))})`,
-    'rest.closed': () => "Plus d'huile : le restaurant a fermé",
-    'rest.reopen': () => "Plein d'huile fait : le restaurant a rouvert",
-    'rest.rename': (p) => `Restaurant renommé « ${String(p.to ?? '')} »`,
+    'rest.closed': () => "Plus d'huile\u202f: le restaurant a fermé",
+    'rest.reopen': () => "Plein d'huile fait\u202f: le restaurant a rouvert",
+    'rest.rename': (p) => `Restaurant renommé «\u202f${String(p.to ?? '')}\u202f»`,
     'rest.move': () => 'Le restaurant a déménagé',
     'mouse.escape': () => "Une souris est passée, mais par chance rien n'est arrivé",
     'mouse.trap': (p) =>
-      `La tapette a attrapé une souris : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
+      `La tapette a attrapé une souris\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`,
     'mouse.steal': (p, names) =>
       `Une souris a volé ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     'mouse.nothing': () => "Une souris est passée mais n'a rien volé",
@@ -141,56 +141,56 @@ const events: Messages['events'] = {
     'plankton.appear': () => 'Plancton est venu au restaurant',
     'plankton.driven': () => 'Plancton a été chassé',
     'fridge.drop': (p, names) =>
-      `Frigo plein : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
+      `Frigo plein\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'goods.drop': (p, names) =>
-      `Limite de possession dépassée : ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
+      `Limite de possession dépassée\u202f: ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')} jeté`,
     'device.place': (p, names) => `A installé ${names.goodsName(n(p, 'goodsId'))}`,
     'store.use': (p, names) => `A utilisé ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')}`,
-    'admin.grant': (p) => `Compensation : ${String(p.reason ?? '')}`,
-    redeem: (p) => `Code utilisé : ${String(p.code ?? '')}`,
+    'admin.grant': (p) => `Compensation\u202f: ${String(p.reason ?? '')}`,
+    redeem: (p) => `Code utilisé\u202f: ${String(p.code ?? '')}`,
     'bar.darts': (p) =>
-      `Fléchettes au bar : ${p.result === 'win' ? 'victoire' : p.result === 'draw' ? 'égalité' : 'défaite'}`,
+      `Fléchettes au bar\u202f: ${p.result === 'win' ? 'victoire' : p.result === 'draw' ? 'égalité' : 'défaite'}`,
     'bar.devil': (p) =>
       p.result === 'win'
-        ? `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`
-        : `Piment du Diable : ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, puis K.-O.`,
-    'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')} : ${p.correct ? 'réussi' : 'raté'}`,
+        ? `Piment du Diable\u202f: ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, victoire`
+        : `Piment du Diable\u202f: ${n(p, 'survived')} ${plFr(n(p, 'survived'), 'verre tenu', 'verres tenus')}, puis K.-O.`,
+    'bar.memory': (p) => `Cocktail Mémoire niveau ${n(p, 'level')}\u202f: ${p.correct ? 'réussi' : 'raté'}`,
     'bar.nim': (p) =>
-      `Le dernier bonbon (table ${p.table === 'expert' ? 'experts' : 'débutants'}) : ${p.result === 'win' ? 'gagné' : 'perdu'}`,
+      `Le dernier bonbon (table ${p.table === 'expert' ? 'experts' : 'débutants'})\u202f: ${p.result === 'win' ? 'gagné' : 'perdu'}`,
     'bar.cup': (p) =>
       p.result === 'lose'
-        ? `Gobelets : raté à la manche ${n(p, 'round')}`
+        ? `Gobelets\u202f: raté à la manche ${n(p, 'round')}`
         : p.result === 'clear'
-          ? `Gobelets : les ${n(p, 'round')} manches réussies, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`
-          : `Gobelets : arrêt après ${n(p, 'round')} ${plFr(n(p, 'round'), 'manche', 'manches')}, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`,
+          ? `Gobelets\u202f: les ${n(p, 'round')} manches réussies, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`
+          : `Gobelets\u202f: arrêt après ${n(p, 'round')} ${plFr(n(p, 'round'), 'manche', 'manches')}, ${n(p, 'awards')} ${plFr(n(p, 'awards'), 'récompense', 'récompenses')}`,
     'bar.spice': (p) =>
       p.result === 'win'
-        ? `Mélange secret : trouvé à l’essai ${n(p, 'tries')}`
-        : `Mélange secret : pas trouvé en ${n(p, 'tries')} essais`,
+        ? `Mélange secret\u202f: trouvé à l’essai ${n(p, 'tries')}`
+        : `Mélange secret\u202f: pas trouvé en ${n(p, 'tries')} essais`,
     'bar.deal': (p, names) =>
       p.result === 'deal'
-        ? `À prendre ou à laisser : marché conclu pour ${formatNum(n(p, 'coin'))} pièces`
-        : `À prendre ou à laisser : vous avez ouvert votre boîte et obtenu ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
+        ? `À prendre ou à laisser\u202f: marché conclu pour ${formatNum(n(p, 'coin'))} pièces`
+        : `À prendre ou à laisser\u202f: vous avez ouvert votre boîte et obtenu ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')}`,
     // 收购（问题记录 421）
     'acquire.bought': (p) =>
-      `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} « ${String(p.name ?? '')} »${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,
+      `${p.way === 'listed' ? 'Achat de' : 'Rachat de'} «\u202f${String(p.name ?? '')}\u202f»${p.way === 'listed' ? ' (en vente)' : ''} pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.taken': (p) =>
-      `« ${String(p.byName ?? '')} » a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces`,
+      `«\u202f${String(p.byName ?? '')}\u202f» a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.sold': (p) =>
-      `« ${String(p.to ?? '')} » vous a acheté « ${String(p.name ?? '')} » ; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+      `«\u202f${String(p.to ?? '')}\u202f» vous a acheté «\u202f${String(p.name ?? '')}\u202f»\u202f; vous recevez ${formatNum(n(p, 'got'))} pièces`,
     'acquire.redeemed': (p) =>
-      `Vous avez racheté votre restaurant à « ${String(p.from ?? '')} » pour ${formatNum(n(p, 'price'))} pièces`,
+      `Vous avez racheté votre restaurant à «\u202f${String(p.from ?? '')}\u202f» pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.lost': (p) =>
-      `« ${String(p.name ?? '')} » s’est racheté ; vous recevez ${formatNum(n(p, 'got'))} pièces`,
-    'acquire.released': (p) => `Vous avez libéré « ${String(p.name ?? '')} »`,
+      `«\u202f${String(p.name ?? '')}\u202f» s’est racheté\u202f; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+    'acquire.released': (p) => `Vous avez libéré «\u202f${String(p.name ?? '')}\u202f»`,
     'acquire.freed': (p) =>
-      `« ${String(p.byName ?? '')} » a libéré votre restaurant ; vous êtes de nouveau indépendant`,
+      `«\u202f${String(p.byName ?? '')}\u202f» a libéré votre restaurant\u202f; vous êtes de nouveau indépendant`,
     'acquire.dividend': (p) =>
-      `Dividendes d'hier de vos ${n(p, 'n')} restaurant(s) : ${formatNum(n(p, 'coin'))} pièces`,
+      `Dividendes d'hier de vos ${n(p, 'n')} restaurant(s)\u202f: ${formatNum(n(p, 'coin'))} pièces`,
     'acquire.tended': (p) =>
-      `Vous avez entretenu le restaurant pour votre propriétaire « ${String(p.ownerName ?? '')} » et reçu ${n(p, 'n')} ingrédients`,
-    'dine.started': (p) => `A commencé à manger gratis chez « ${String(p.hostName ?? '')} »`,
-    'dine.ended': (p) => `A fini de manger gratis chez « ${String(p.hostName ?? '')} »`,
+      `Vous avez entretenu le restaurant pour votre propriétaire «\u202f${String(p.ownerName ?? '')}\u202f» et reçu ${n(p, 'n')} ingrédients`,
+    'dine.started': (p) => `A commencé à manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
+    'dine.ended': (p) => `A fini de manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
     'forum.post': (p) => `A publié le sujet n° ${n(p, 'postId')} sur le forum`,
     'forum.reply': (p) => `A répondu au sujet n° ${n(p, 'postId')} du forum`,
     'forum.edit': (p) => `A modifié le sujet n° ${n(p, 'postId')} du forum`,
@@ -213,10 +213,10 @@ const events: Messages['events'] = {
     'takeaway.deliver': () => 'A envoyé une commande à emporter',
     'takeaway.claim': (p) =>
       p.success
-        ? `Commande livrée : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`
+        ? `Commande livrée\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce obtenue', 'pièces obtenues')}`
         : 'La livraison a échoué',
     'takeaway.rebate': (p) =>
-      `Livraison effectuée comme livreur : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${formatNum(n(p, 'exp'))} EXP obtenus`,
+      `Livraison effectuée comme livreur\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${formatNum(n(p, 'exp'))} EXP obtenus`,
     'takeaway.hire': () => 'A embauché un ami comme livreur',
     'takeaway.dismiss': () => 'A payé et libéré un livreur',
     'tower.rank.week': (p, names) =>
@@ -233,31 +233,31 @@ const events: Messages['events'] = {
         ? 'A bien répondu à la question du Maire Grosse Marmite'
         : 'A mal répondu à la question du Maire Grosse Marmite',
     'town.shake': (p) =>
-      `A secoué l'arbre à pièces : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
+      `A secoué l'arbre à pièces\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
     'town.talk': () => 'A discuté avec les habitants',
     'town.wish': () => 'A fait un vœu sur la place',
     'exchange.order': (p, names) =>
-      `Ordre ${side(p)} passé en bourse : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} exécutés immédiatement)` : ''}${heldNote(p)}`,
+      `Ordre ${side(p)} passé en bourse\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${n(p, 'filled') > 0 ? ` (${n(p, 'filled')} exécutés immédiatement)` : ''}${heldNote(p)}`,
     'exchange.fill': (p, names) =>
       p.side === 'sell'
-        ? `Ordre de vente exécuté : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité, frais ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (gains sur votre compte de bourse)'}`
-        : `Ordre d'achat exécuté : ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${p.held ? heldNote(p) : ' (ingrédients sur votre compte de bourse)'}`,
+        ? `Ordre de vente exécuté\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité, frais ${formatNum(n(p, 'fee'))}${p.held ? heldNote(p) : ' (gains sur votre compte de bourse)'}`
+        : `Ordre d'achat exécuté\u202f: ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'qty')} à ${formatNum(n(p, 'price'))} l'unité${p.held ? heldNote(p) : ' (ingrédients sur votre compte de bourse)'}`,
     'exchange.cancel': (p, names) =>
-      `Ordre ${side(p)} annulé : ${names.foodName(n(p, 'foodsId'))}, ${n(p, 'left')} restitués`,
+      `Ordre ${side(p)} annulé\u202f: ${names.foodName(n(p, 'foodsId'))}, ${n(p, 'left')} restitués`,
     'exchange.expire': (p, names) =>
-      `Ordre ${side(p)} expiré : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
+      `Ordre ${side(p)} expiré\u202f: ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.withdraw': (p, names) =>
-      `Retrait du compte de bourse : ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
+      `Retrait du compte de bourse\u202f: ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
     'exchange.freezeCancel': (p, names) =>
-      `Bourse gelée, ordre ${side(p)} annulé : ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
+      `Bourse gelée, ordre ${side(p)} annulé\u202f: ${names.foodName(n(p, 'foodsId'))}, les ${n(p, 'left')} restants reviennent sur votre compte de bourse`,
     'exchange.confiscate': (p, names) =>
-      `Gains gelés de la bourse confisqués : ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
+      `Gains gelés de la bourse confisqués\u202f: ${coinFoods(p, names, (c) => `${c} ${plFr(c, 'pièce', 'pièces')}`)}`,
     'predict.trade': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » : ${p.dir === 'sell' ? 'vendu' : 'acheté'} ${n(p, 'qty')} ${plFr(n(p, 'qty'), 'part', 'parts')} ${p.side === 'no' ? 'Non' : 'Oui'} pour ${formatNum(n(p, 'amount'))}, frais ${formatNum(n(p, 'fee'))}`,
+      `Prédiction «\u202f${String(p.title ?? '')}\u202f»\u202f: ${p.dir === 'sell' ? 'vendu' : 'acheté'} ${n(p, 'qty')} ${plFr(n(p, 'qty'), 'part', 'parts')} ${p.side === 'no' ? 'Non' : 'Oui'} pour ${formatNum(n(p, 'amount'))}, frais ${formatNum(n(p, 'fee'))}`,
     'predict.settle': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » : résultat ${p.outcome ? 'Oui' : 'Non'}, ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce reçue', 'pièces reçues')}${predictNet(p)}`,
+      `Prédiction «\u202f${String(p.title ?? '')}\u202f»\u202f: résultat ${p.outcome ? 'Oui' : 'Non'}, ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce reçue', 'pièces reçues')}${predictNet(p)}`,
     'predict.refund': (p) =>
-      `Prédiction « ${String(p.title ?? '')} » annulée : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce remboursée', 'pièces remboursées')}${predictNet(p)}`,
+      `Prédiction «\u202f${String(p.title ?? '')}\u202f» annulée\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce remboursée', 'pièces remboursées')}${predictNet(p)}`,
     'kuji.buy': (p) =>
       `A acheté ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} d'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} pour ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')}`,
     'kuji.activation': (p) =>
@@ -266,26 +266,27 @@ const events: Messages['events'] = {
       const tiers = Object.entries((p.tiers ?? {}) as Record<string, number>)
         .map(([k, v]) => `prix ${k}\u202f×\u202f${v}`)
         .join(', ');
-      return `A tiré ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} : ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
+      return `A tiré ${n(p, 'num')} ${plFr(n(p, 'num'), 'ticket', 'tickets')} du tirage n° ${n(p, 'seq')} de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''}\u202f: ${tiers}${p.last ? ', plus le Dernier Prix' : ''}`;
     },
     'fund.deposit': (p) =>
       `A déposé ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} dans le Fonds de développement (${fund.tierName(String(p.tier ?? ''))})`,
     'fund.claim': (p, names) =>
-      `A récupéré son dépôt échu du Fonds de développement : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${names.goodsName(n(p, 'medal'))}`,
+      `A récupéré son dépôt échu du Fonds de développement\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce', 'pièces')} et ${names.goodsName(n(p, 'medal'))}`,
     'fund.withdraw': (p) =>
-      `A retiré son dépôt du Fonds de développement avant l'échéance : ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce récupérée', 'pièces récupérées')}`,
-    'activity.claim': (p) => `A récupéré les récompenses de l'événement « ${String(p.title ?? '')} »`,
+      `A retiré son dépôt du Fonds de développement avant l'échéance\u202f: ${formatNum(n(p, 'coin'))} ${plFr(formatNum(n(p, 'coin')), 'pièce récupérée', 'pièces récupérées')}`,
+    'activity.claim': (p) =>
+      `A récupéré les récompenses de l'événement «\u202f${String(p.title ?? '')}\u202f»`,
     'activity.unlock': (p) =>
-      `A débloqué les récompenses premium de l'événement « ${String(p.title ?? '')} »`,
+      `A débloqué les récompenses premium de l'événement «\u202f${String(p.title ?? '')}\u202f»`,
     'activity.exchange': (p) =>
-      `A fait ${String(p.times ?? 1)} ${plFr(String(p.times ?? 1), 'échange', 'échanges')} dans l'événement « ${String(p.title ?? '')} »`,
-    'mail.claim': (p) => `A récupéré les pièces jointes du courrier « ${String(p.title ?? '')} »`,
+      `A fait ${String(p.times ?? 1)} ${plFr(String(p.times ?? 1), 'échange', 'échanges')} dans l'événement «\u202f${String(p.title ?? '')}\u202f»`,
+    'mail.claim': (p) => `A récupéré les pièces jointes du courrier «\u202f${String(p.title ?? '')}\u202f»`,
     'admin.rename': (p) =>
-      `Un administrateur a renommé le restaurant de « ${String(p.from ?? '')} » en « ${String(p.to ?? '')} » : ${String(p.reason ?? '')}`,
-    'market.guess': (p) => `Résultat du pronostic du marché : ${n(p, 'hits')} bonnes réponses`,
+      `Un administrateur a renommé le restaurant de «\u202f${String(p.from ?? '')}\u202f» en «\u202f${String(p.to ?? '')}\u202f»\u202f: ${String(p.reason ?? '')}`,
+    'market.guess': (p) => `Résultat du pronostic du marché\u202f: ${n(p, 'hits')} bonnes réponses`,
     'market.guess.refund': (p) => {
       const [day, hour] = String(p.period ?? '').split('@');
-      return `Le pronostic du marché du ${day} à ${Number(hour)} h n'a pas été tiré ; vos frais d'inscription ont été remboursés`;
+      return `Le pronostic du marché du ${day} à ${Number(hour)} h n'a pas été tiré\u202f; vos frais d'inscription ont été remboursés`;
     },
   },
   feed: describeFeed,

@@ -24,7 +24,7 @@ const common: Messages['common'] = {
   times: '\u202f×\u202f',
   parenOpen: ' (',
   parenClose: ')',
-  colon: (s) => `${s} : `,
-  semi: ' ; ',
+  colon: (s) => `${s}\u202f: `,
+  semi: '\u202f; ',
 };
 export default common;

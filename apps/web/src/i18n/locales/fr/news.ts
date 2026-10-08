@@ -14,20 +14,20 @@ const rank = (k: number) => (k === 1 ? '1er' : `${k}e`);
 function fundNews(w: string, p: P): string {
   const coin = formatNum(num(p.coin));
   if (p.tier === 'A')
-    return `👑 Le capital pilier entre en force ! [${w}] injecte ${coin} ${plFr(coin, 'pièce', 'pièces')} d'un coup et décroche le siège d'investisseur principal de rang A du Fonds de développement !`;
+    return `👑 Le capital pilier entre en force\u202f! [${w}] injecte ${coin} ${plFr(coin, 'pièce', 'pièces')} d'un coup et décroche le siège d'investisseur principal de rang A du Fonds de développement\u202f!`;
   if (p.tier === 'B')
-    return `Coup de maître ! [${w}] verrouille ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe B du Fonds de développement !`;
+    return `Coup de maître\u202f! [${w}] verrouille ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe B du Fonds de développement\u202f!`;
   if (p.tier === 'C')
-    return `L'économie réelle redémarre ! [${w}] a souscrit ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe C du Fonds de développement`;
+    return `L'économie réelle redémarre\u202f! [${w}] a souscrit ${coin} ${plFr(coin, 'pièce', 'pièces')} en parts de classe C du Fonds de développement`;
   return `[${w}] a déposé ${coin} ${plFr(coin, 'pièce', 'pièces')} dans le Fonds de développement`;
 }
 
 function predictResult(p: P): string {
-  const head = `Prédiction « ${str(p.title)} »`;
+  const head = `Prédiction «\u202f${str(p.title)}\u202f»`;
   if (p.outcome === null || p.outcome === undefined) {
     return `${head} annulée. Les participants ont été remboursés à ${Math.round(num(p.voidRatio) * 100)}\u202f% de leur mise nette`;
   }
-  const result = `${head} : résultat ${p.outcome ? 'Oui' : 'Non'}`;
+  const result = `${head}\u202f: résultat ${p.outcome ? 'Oui' : 'Non'}`;
   const players = num(p.players);
   if (players === 0) return result;
   const winners = num(p.winners);
@@ -44,7 +44,7 @@ const news: Messages['news'] = {
         ? `${w} a trouvé le bon gobelet ${num(p.times)} fois de suite au bar`
         : `${w} a réussi ${num(p.round)} ${plFr(num(p.round), 'manche', 'manches')} du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets`,
     'bar.cup.big': (w, p) =>
-      `${w} a réussi ${num(p.round)} ${plFr(num(p.round), 'manche', 'manches')} du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets !`,
+      `${w} a réussi ${num(p.round)} ${plFr(num(p.round), 'manche', 'manches')} du jeu des gobelets au bar et trouvé le dé parmi ${num(p.cups)} gobelets\u202f!`,
     'bar.fg': (w, p) =>
       `${w} a gagné ${num(p.times)} ${plFr(num(p.times), 'manche', 'manches')} de pierre-feuille-ciseaux d'affilée au bar`,
     'bar.num': (w) => `${w} a touché le bon numéro à la roue du bar`,
@@ -56,7 +56,7 @@ const news: Messages['news'] = {
     'bar.spice': (w, p) =>
       `${w} a trouvé le mélange secret du bar en seulement ${num(p.tries)} ${plFr(Number(p.tries), 'essai', 'essais')}`,
     'bar.deal': (w, p, x) =>
-      `${w} a tout refusé au jeu « À prendre ou à laisser » et a ouvert ${x.foodName(num(p.foodsId))}\u202f×\u202f${num(p.num)}`,
+      `${w} a tout refusé au jeu «\u202fÀ prendre ou à laisser\u202f» et a ouvert ${x.foodName(num(p.foodsId))}\u202f×\u202f${num(p.num)}`,
     'bar.darts': (w) => `${w} a mis trois fléchettes dans le mille et a bluffé le patron du bar`,
     'equip.stress': (w, p, x) => `${w} a renforcé ${x.goodsName(num(p.goodsId))} à +${num(p.stress)}`,
     'friend.weekly': (w, p, x) =>
@@ -65,19 +65,19 @@ const news: Messages['news'] = {
       `${w} a raté l'amélioration d'une gemme et a brisé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}`,
     'gem.levelUp': (w, p, x) =>
       `${w} a obtenu ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} en améliorant une gemme`,
-    'forum.pin': (w, p) => `Le message « ${str(p.title)} » de ${w} a été épinglé`,
-    'forum.feature': (w, p) => `Le message « ${str(p.title)} » de ${w} a été mis en avant`,
-    'hiphop.event': (w) => `${w} a lancé un événement hip-hop !`,
+    'forum.pin': (w, p) => `Le message «\u202f${str(p.title)}\u202f» de ${w} a été épinglé`,
+    'forum.feature': (w, p) => `Le message «\u202f${str(p.title)}\u202f» de ${w} a été mis en avant`,
+    'hiphop.event': (w) => `${w} a lancé un événement hip-hop\u202f!`,
     'hiphop.krab': (w, p, x) =>
       `${w} a obtenu ${x.goodsName(SHARED_GOODS.krabCoin)}\u202f×\u202f${num(p.num)} en donnant des pourboires`,
     'hiphop.weekly': (w, p, x) =>
       `Bravo à ${w}, ${rank(num(p.rank))} du classement hebdomadaire des pourboires, qui gagne ${x.goodsName(num(p.goodsId))} (160 heures)`,
     'market.manual': (w, p, x) =>
-      `${w} s'est réapprovisionné en plats du jour : ${list(p.foods)
+      `${w} s'est réapprovisionné en plats du jour\u202f: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join(', ')}`,
     'market.restock': (_w, p, x) =>
-      `Le marché s'est réapprovisionné : ${list(p.foods)
+      `Le marché s'est réapprovisionné\u202f: ${list(p.foods)
         .map((id) => x.foodName(num(id)))
         .join(', ')}`,
     'mc.champion': (w, p) =>
@@ -89,7 +89,7 @@ const news: Messages['news'] = {
     'rest.move': (w, p, x) => `${w} a déménagé à ${x.streetName(num(p.to))}`,
     'rest.rename': (_w, p) => `${str(p.from)} s'appelle désormais ${str(p.to)}`,
     'restaurant.open': (w) => `${w} a ouvert ses portes`,
-    'shop.special': (_w, p, x) => `Promotion du jour à la boutique : ${x.goodsName(num(p.goodsId))}`,
+    'shop.special': (_w, p, x) => `Promotion du jour à la boutique\u202f: ${x.goodsName(num(p.goodsId))}`,
     'star.up': (w, p) => `${w} a atteint ${num(p.star)} ${plFr(num(p.star), 'étoile', 'étoiles')}`,
     'takeaway.customer': (w, p, x) => `${w} a croisé ${x.goodsName(num(p.goodsId))} en livrant à emporter`,
     'temple.explore.rare': (w, p, x) =>
@@ -99,13 +99,13 @@ const news: Messages['news'] = {
     'temple.guardian.rare': (w, p, x) =>
       `${w} a vaincu la bête gardienne et obtenu ${x.foodName(num(p.foodsId))}`,
     'activity.coopRank': (_w, p) =>
-      `Classement des contributions de « ${str(p.title)} » : ${list(p.top)
+      `Classement des contributions de «\u202f${str(p.title)}\u202f»\u202f: ${list(p.top)
         .map(
           (r) => `${rank(num((r as P).rank))} ${str((r as P).name)} (${formatNum(num((r as P).points))} pts)`,
         )
         .join(', ')}`,
     'tower.rank.week': (_w, p) =>
-      `Classement hebdomadaire de la Tour des chefs : ${list(p.top)
+      `Classement hebdomadaire de la Tour des chefs\u202f: ${list(p.top)
         .map((r) => `${rank(num((r as P).rank))} ${str((r as P).name)}`)
         .join(', ')}`,
     'tower.shop.rare': (w, p, x) =>
@@ -114,26 +114,26 @@ const news: Messages['news'] = {
       `${w} a battu l’ancien du ${num(p.floor) === 1 ? '1er' : `${num(p.floor)}e`} étage de la Tour des chefs et a obtenu ${x.goodsName(num(p.goodsId))}`,
     'weather.change': (w, p, x) =>
       p.by !== undefined
-        ? `${w} a utilisé le marteau de Thor : ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`
-        : `Le temps change : ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`,
-    'town.broadcast': (w, p) => `${w} : ${str(p.text)}`,
-    'town.bless': (w, p) => `${w} a fait un vœu et reçu : ${str(p.blessName) || str(p.name)}`,
+        ? `${w} a utilisé le marteau de Thor\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`
+        : `Le temps change\u202f: ${x.weatherName(num(p.from))} laisse place à ${x.weatherName(num(p.to))}`,
+    'town.broadcast': (w, p) => `${w}\u202f: ${str(p.text)}`,
+    'town.bless': (w, p) => `${w} a fait un vœu et reçu\u202f: ${str(p.blessName) || str(p.name)}`,
     'town.shake.lucky': (w, p, x) =>
-      `Bravo ! ${w} a plongé la main dans la poche de M. Krab et en a sorti ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}`,
+      `Bravo\u202f! ${w} a plongé la main dans la poche de M. Krab et en a sorti ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)}`,
     'kuji.big': (w, p) =>
       p.tier === 'last'
-        ? `${w} a tiré le dernier ticket de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} et remporte le Dernier Prix !`
-        : `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} !`,
+        ? `${w} a tiré le dernier ticket de l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''} et remporte le Dernier Prix\u202f!`
+        : `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''}\u202f!`,
     'kuji.win': (w, p) =>
       `${w} a gagné le prix ${str(p.tier)} à l'Ichiban Kuji${p.line === 'deluxe' ? ' de luxe' : ''}`,
     'acquire.big': (w, p) =>
-      `${w} a ${p.way === 'listed' ? 'acheté' : 'racheté'} « ${str(p.name)} » pour ${formatNum(num(p.price))} ${plFr(num(p.price), 'pièce', 'pièces')}`,
+      `${w} a ${p.way === 'listed' ? 'acheté' : 'racheté'} «\u202f${str(p.name)}\u202f» pour ${formatNum(num(p.price))} ${plFr(num(p.price), 'pièce', 'pièces')}`,
     'acquire.redeem': (w, p) =>
       `${w} s'est racheté pour ${formatNum(num(p.price))} ${plFr(num(p.price), 'pièce', 'pièces')}`,
     'fund.big': (w, p) => fundNews(w, p),
     'fund.deposit': (w, p) => fundNews(w, p),
     'icon.buy': (w, p, x) =>
-      `${w} a acheté le titre limité « ${x.icon?.(str(p.key))?.title ?? str(p.title)} »`,
+      `${w} a acheté le titre limité «\u202f${x.icon?.(str(p.key))?.title ?? str(p.title)}\u202f»`,
     'town.exchange': (w, p, x) =>
       `${w} a échangé ${x.goodsName(num(p.goodsId))}\u202f×\u202f${num(p.num)} auprès du Maire Grosse Marmite`,
     'predict.result': (_w, p) => predictResult(p),

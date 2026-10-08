@@ -2,66 +2,66 @@
   "3": {
     "name": "Conjunto de Song Sao",
     "tiers": [
-      "Ocupación +5%, corte +3%",
-      "Control del fuego +5%"
+      "Ocupación +5\u00a0%, corte +3\u00a0%",
+      "Control del fuego +5\u00a0%"
     ]
   },
   "4": {
     "name": "El Alma de Sariel",
     "tiers": [
-      "Ocupación +3%; al ser desafiado, extra: corte +4%, control del fuego +4%",
-      "Cocina +4%, sazón +4%, suerte +8"
+      "Ocupación +3\u00a0%; al ser desafiado, extra: corte +4\u00a0%, control del fuego +4\u00a0%",
+      "Cocina +4\u00a0%, sazón +4\u00a0%, suerte +8"
     ]
   },
   "5": {
     "name": "El Silencio de Duma",
     "tiers": [
-      "Corte +4%, control del fuego +4%",
-      "Ocupación +4%; 2% menos de probabilidad de perderse al explorar"
+      "Corte +4\u00a0%, control del fuego +4\u00a0%",
+      "Ocupación +4\u00a0%; 2\u00a0% menos de probabilidad de perderse al explorar"
     ]
   },
   "6": {
     "name": "El Juicio de Barbelet",
     "tiers": [
-      "Cocina +5%, sazón +6%",
-      "Ocupación +8%; 5% de probabilidad de un ingrediente de nivel inferior extra al descomponer",
-      "Corte +5%, control del fuego +5%, suerte +16"
+      "Cocina +5\u00a0%, sazón +6\u00a0%",
+      "Ocupación +8\u00a0%; 5\u00a0% de probabilidad de un ingrediente de nivel inferior extra al descomponer",
+      "Corte +5\u00a0%, control del fuego +5\u00a0%, suerte +16"
     ]
   },
   "7": {
     "name": "La Caída de Yinchen",
     "tiers": [
-      "Control del fuego +5%, ocupación +3%",
-      "Cocina +4%, corte +4%, suerte +12"
+      "Control del fuego +5\u00a0%, ocupación +3\u00a0%",
+      "Cocina +4\u00a0%, corte +4\u00a0%, suerte +12"
     ]
   },
   "80": {
     "name": "El Oráculo de Akatma",
     "tiers": [
-      "Cocina +8%, sazón +8%",
-      "Suerte +32; al ser desafiado, extra: corte +6%, control del fuego +6%"
+      "Cocina +8\u00a0%, sazón +8\u00a0%",
+      "Suerte +32; al ser desafiado, extra: corte +6\u00a0%, control del fuego +6\u00a0%"
     ]
   },
   "81": {
     "name": "Conjunto del Dios de la Cocina",
     "tiers": [
-      "Cocina +10%",
-      "Sazón +10%; al desafiar, extra: corte +8%, control del fuego +8%",
-      "Clientes exigentes +3%, suerte +36"
+      "Cocina +10\u00a0%",
+      "Sazón +10\u00a0%; al desafiar, extra: corte +8\u00a0%, control del fuego +8\u00a0%",
+      "Clientes exigentes +3\u00a0%, suerte +36"
     ]
   },
   "82": {
     "name": "La Voluntad de Gurtug",
     "tiers": [
-      "Corte +6%, control del fuego +6%",
-      "Ocupación +6%, suerte +24; al desafiar, extra: cocina +5%"
+      "Corte +6\u00a0%, control del fuego +6\u00a0%",
+      "Ocupación +6\u00a0%, suerte +24; al desafiar, extra: cocina +5\u00a0%"
     ]
   },
   "100": {
     "name": "Conjunto Amor Verdadero",
     "tiers": [
-      "Ocupación +5%, clientes exigentes +3%",
-      "Monedas finales +5%, suerte +52"
+      "Ocupación +5\u00a0%, clientes exigentes +3\u00a0%",
+      "Monedas finales +5\u00a0%, suerte +52"
     ]
   }
 }
