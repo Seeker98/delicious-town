@@ -135,6 +135,11 @@ beforeAll(async () => {
     .values({ name: '权限测试', url: 'https://example.com' })
     .returning('id')
     .executeTakeFirstOrThrow();
+  // 小镇日报：详情、发布等要有一行（没有内容，发布报 INVALID_STATE，不是 404）
+  await ctx.deps.db
+    .insertInto('town_daily')
+    .values({ shard_id: shardId, day: DAILY_DAY, status: 'pending', facts: '{}' })
+    .execute();
   ids = {
     shardId,
     accountId: target.accountId,
@@ -156,6 +161,9 @@ beforeAll(async () => {
   };
 });
 afterAll(() => ctx.close());
+
+const DAILY_DAY = '2026-01-01';
+const dailyUrl = (tail = '') => `/api/v1/admin/daily/${ids.shardId}/${DAILY_DAY}${tail}`;
 
 const linkBody = () => ({ name: '权限测试', url: 'https://example.com', note: '', sort: 0 });
 const announceBody = () => ({
@@ -470,6 +478,38 @@ const CASES: Case[] = [
     method: 'POST',
     route: '/api/v1/admin/announcements/:id/delete',
     url: () => `/api/v1/admin/announcements/${ids.announcementId}/delete`,
+    min: 'admin',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/daily',
+    url: () => `/api/v1/admin/daily?shardId=${ids.shardId}`,
+    min: 'admin',
+  },
+  { method: 'GET', route: '/api/v1/admin/daily/:shardId/:day', url: () => dailyUrl(), min: 'admin' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/daily/:shardId/:day/publish',
+    url: () => dailyUrl('/publish'),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/daily/:shardId/:day/hide',
+    url: () => dailyUrl('/hide'),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/daily/:shardId/:day/edit',
+    url: () => dailyUrl('/edit'),
+    body: () => ({ zh: { title: '日报', body: '正文' }, en: { title: 'Daily', body: 'Body' } }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/daily/:shardId/:day/regenerate',
+    url: () => dailyUrl('/regenerate'),
     min: 'admin',
   },
   {
