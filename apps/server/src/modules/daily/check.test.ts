@@ -49,6 +49,21 @@ describe('小镇日报：解析和检查 AI 的输出', () => {
     expect(() => sameTokens(a, { title: 't', body: '{g:40605} {r:7}' })).toThrow('tokens');
   });
 
+  it('写坏的记号（带空格、全角冒号）和多余的花括号不行，否则玩家会看到原样的记号（终审 I2）', () => {
+    for (const bad of ['{r: 12} 收入最高', '{r：12} 收入最高', '{ r:12 } 来了', '{店} 来了', '收入 {r:12'])
+      expect(() => checkArticle({ title: '昨天', body: bad }, facts), bad).toThrow('brace');
+  });
+
+  it('长度按记号算一个字：标题 20 个字加一个店的记号也行（终审 I5）', () => {
+    const title = `{r:1234567}${'镇'.repeat(23)}`;
+    expect(parseArticle(JSON.stringify({ title, body: '镇'.repeat(100) }), 'zh-CN', 80).title).toBe(title);
+    const body = `${'{r:1234567}'.repeat(50)}${'镇'.repeat(550)}`;
+    expect(() => parseArticle(JSON.stringify({ title: 't', body }), 'zh-CN', 80)).not.toThrow();
+    expect(() => parseArticle(JSON.stringify({ title: 't', body: '{r:1}'.repeat(79) }), 'zh-CN', 80)).toThrow(
+      'body',
+    );
+  });
+
   it('繁中：简体转台湾正体，记号不变', () => {
     expect(toTw({ title: '小镇日报', body: '{r:7} 在酒吧里发现了宝藏' })).toEqual({
       title: '小鎮日報',

@@ -25,12 +25,14 @@ export function parseArticle(text: string, lang: 'zh-CN' | 'en', minBody: number
   const title = typeof o.title === 'string' ? o.title.trim() : '';
   const body = typeof o.body === 'string' ? o.body.trim() : '';
   const lim = LIMITS[lang];
-  const len = (s: string) => [...s].length;
+  // 记号算一个字：AI 不会把 {r:1234} 当 8 个字来控制长度（终审 I5）
+  const len = (s: string) => [...s.replace(TOKEN_RE, '#')].length;
   if (len(title) < 1 || len(title) > lim.title) throw new Error(`${lang}: title length ${len(title)}`);
   if (len(body) < minBody || len(body) > lim.body) throw new Error(`${lang}: body length ${len(body)}`);
   return { title, body };
 }
 
+const TOKEN_RE = /\{[rgfmsw]:\d+\}/g;
 const URL_RE = /https?:|www\.|\.(com|net|org|cn|io|xyz|top|me)\b/i;
 
 /** 素材里出现过的记号 */
@@ -47,6 +49,8 @@ export function checkArticle(a: Article, facts: DailyFacts): void {
   for (const s of [a.title, a.body]) {
     if (URL_RE.test(s)) throw new Error('contains url');
     if (/[<>]/.test(s)) throw new Error('contains < or >');
+    // 写坏的记号（{r: 12}、{r：12}）不认，玩家会看到原样的花括号（终审 I2）
+    if (/[{}｛｝]/.test(s.replace(TOKEN_RE, ''))) throw new Error('stray brace');
   }
 }
 
