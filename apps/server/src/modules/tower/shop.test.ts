@@ -12,12 +12,15 @@ afterAll(() => t.close());
 beforeEach(() => t.clock.set(gameTime('2026-09-30', 12)));
 
 describe('声望商店（设计文档 §3.5）', () => {
-  it('本周在售：美味券和本周轮到的两座雕像', async () => {
+  it('本周在售：美味券、四五级食材随机券和本周轮到的两座雕像', async () => {
     const ctx = await newRestaurant(t, { patch: { renown: 123 } });
     const v = await t.game.tower.shop(ctx);
     expect(v.renown).toBe(123);
     expect(v.items).toEqual([
       { goodsId: GOODS.dtTicket, renown: 60, weeklyLimit: 10, bought: 0, rare: false, owned: false },
+      // 问题记录 505：四、五级食材随机券常驻
+      { goodsId: gid('四级食材随机券'), renown: 50, weeklyLimit: 3, bought: 0, rare: false, owned: false },
+      { goodsId: gid('五级食材随机券'), renown: 80, weeklyLimit: 2, bought: 0, rare: false, owned: false },
       { goodsId: GOODS.thinker, renown: 3000, weeklyLimit: 1, bought: 0, rare: true, owned: false },
       { goodsId: gid('史前怪石-雕像'), renown: 3000, weeklyLimit: 1, bought: 0, rare: true, owned: false },
     ]);
@@ -46,7 +49,7 @@ describe('声望商店（设计文档 §3.5）', () => {
     });
     expect((await t.game.tower.buy(ctx, { goodsId: GOODS.thinker, num: 1 })).data).toEqual({ renown: 4000 });
     expect(await goodsNum(t, ctx.restaurantId, GOODS.thinker)).toBe(1);
-    expect((await t.game.tower.shop(ctx)).items[1]).toMatchObject({
+    expect((await t.game.tower.shop(ctx)).items.find((x) => x.goodsId === GOODS.thinker)).toMatchObject({
       goodsId: GOODS.thinker,
       owned: true,
       bought: 1,

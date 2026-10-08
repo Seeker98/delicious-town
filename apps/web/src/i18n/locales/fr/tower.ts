@@ -115,7 +115,7 @@ const tower: Messages['tower'] = {
     got: (name, n) => `Obtenu : ${name}\u202f×\u202f${n}`,
     failed: "Échec de l'échange",
     renown: (n) => `Ma renommée ${n}`,
-    rule: 'Les tickets Délice sont toujours disponibles ; les statues changent chaque semaine et vous ne pouvez en posséder qu’une',
+    rule: 'Les tickets Délice et les Tickets d’ingrédient aléatoire niv. 4 et 5 sont toujours disponibles\u202f; les statues changent chaque semaine et vous ne pouvez en posséder qu’une',
     limitOne: '1 max',
     meta: (renown, bought, limit) => `${renown} renommée · cette semaine ${bought}/${limit}`,
     btn: 'Échanger',

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    renownTicket1008:
+      'La boutique de renommée de la Tour des chefs propose désormais en permanence des Tickets d’ingrédient aléatoire niv. 4 (50 de renommée, 3 par semaine) et niv. 5 (80 de renommée, 2 par semaine)',
     economy1008:
       'Quelques façons de transformer des objets en pièces ont été ajustées\u202f: les objets qui ont un prix en diamants, quelle que soit leur provenance, se revendent à la boutique au plus 2\u202f000 pièces par diamant\u202f; les Pièces d’or du marché noir coûtent désormais 50 diamants\u202f; les tickets de l’Ichiban Kuji coûtent désormais 40\u202f000 pièces\u202f; les Bons d’ingrédient mystère, les Bons d’ingrédient mystère au hasard, toutes les cartes d’exploration et les Éclats de fragment ne se revendent plus à la boutique, ils servent seulement à être utilisés\u202f; la Bourse n’achète plus les ingrédients de niveau 7 (son stock existant reste en vente)',
     business1008:

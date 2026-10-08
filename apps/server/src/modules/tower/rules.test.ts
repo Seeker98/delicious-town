@@ -250,7 +250,26 @@ describe('声望商店（设计文档 §3.5）', () => {
 
   it('本周在售：常驻且没有前置条件的，加上 ISO 周数 % 4 + 1 组的雕像', () => {
     const ids = (day: string) => shopOnSale(config.bundle.renownShop, day).map((x) => x.goodsId);
-    expect(ids('2026-09-30')).toEqual([GOODS.dtTicket, gid('思想者-雕像'), gid('史前怪石-雕像')]);
-    expect(ids('2026-10-05')).toEqual([GOODS.dtTicket, gid('恰克摩尔-雕像'), gid('破-雕像')]);
+    // 四、五级食材随机券常驻（问题记录 505：平时没有来路，用户 2026-10-08 定放声望商店）
+    const common = [GOODS.dtTicket, gid('四级食材随机券'), gid('五级食材随机券')];
+    expect(ids('2026-09-30')).toEqual([...common, gid('思想者-雕像'), gid('史前怪石-雕像')]);
+    expect(ids('2026-10-05')).toEqual([...common, gid('恰克摩尔-雕像'), gid('破-雕像')]);
+  });
+  it('四级食材随机券 50 声望每周 3 张、五级 80 声望每周 2 张（问题记录 505）', () => {
+    const row = (name: string) => config.bundle.renownShop.find((x) => x.goodsId === gid(name));
+    expect(row('四级食材随机券')).toMatchObject({
+      renown: 50,
+      weeklyLimit: 3,
+      rare: false,
+      weekGroup: 0,
+      require: null,
+    });
+    expect(row('五级食材随机券')).toMatchObject({
+      renown: 80,
+      weeklyLimit: 2,
+      rare: false,
+      weekGroup: 0,
+      require: null,
+    });
   });
 });

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    renownTicket1008:
+      'La tienda de renombre de la Torre de chefs ahora siempre vende Vales de ingrediente aleatorio nv. 4 (50 de renombre, 3 por semana) y nv. 5 (80 de renombre, 2 por semana)',
     economy1008:
       'Ajustamos algunas formas de convertir objetos en monedas: los objetos que tienen precio en diamantes, se consigan como se consigan, se venden a la tienda por como máximo 2.000 monedas por diamante; las Monedas de oro del mercado negro ahora cuestan 50 diamantes; los boletos de Ichiban Kuji ahora cuestan 40.000 monedas; los Vales de ingrediente misterioso, los Vales de ingrediente misterioso al azar, todos los mapas de exploración y los Trozos de fragmento ya no se pueden vender a la tienda, solo usar; la Bolsa ya no compra ingredientes de nivel 7 (sus existencias se siguen vendiendo)',
     business1008:

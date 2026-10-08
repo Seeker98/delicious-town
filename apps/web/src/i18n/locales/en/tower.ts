@@ -115,7 +115,7 @@ const tower: Messages['tower'] = {
     got: (name, n) => `Got ${name}×${n}`,
     failed: 'Exchange failed',
     renown: (n) => `My Renown ${n}`,
-    rule: 'Delicious Tickets are always available; statues rotate weekly and you can own only 1',
+    rule: 'Delicious Tickets and Level 4 and 5 Random Ingredient Tickets are always available; statues rotate weekly and you can own only 1',
     limitOne: 'Own 1 max',
     meta: (renown, bought, limit) => `${renown} Renown · this week ${bought}/${limit}`,
     btn: 'Exchange',
