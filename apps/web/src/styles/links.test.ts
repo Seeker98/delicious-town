@@ -30,11 +30,11 @@ const BLOCK_BTN_LINK = new Set([
 ]);
 
 /**
- * 模板里的 <button>、<a> 开标签：引号里的内容整段跳过（稳健性批：原来用 [^>]*，属性值里有 >=、=> 时提前截断，
- * 写在它后面的 type、@click 就看不到了）
+ * 模板里的开标签（默认 <button>、<a>）：引号里的内容整段跳过（稳健性批：原来用 [^>]*，属性值里有 >=、=> 时提前截断，
+ * 写在它后面的 type、@click、class 就看不到了）
  */
-function tagsOf(tpl: string): string[] {
-  return [...tpl.matchAll(/<(?:button|a)\b(?:[^>"']|"[^"]*"|'[^']*')*>/g)].map((m) => m[0]);
+function tagsOf(tpl: string, names = 'button|a'): string[] {
+  return [...tpl.matchAll(new RegExp(`<(?:${names})\\b(?:[^>"']|"[^"]*"|'[^']*')*>`, 'g'))].map((m) => m[0]);
 }
 
 describe('文字链接统一（问题记录 451）', () => {
@@ -69,7 +69,8 @@ describe('文字链接统一（问题记录 451）', () => {
 
   it('只加了 small 的链接（返回、入口）都归到 .dt-go 或 .dt-back；模板里不自己写“‹”', () => {
     const bad = GAME.flatMap((f) =>
-      [...f.tpl.matchAll(/<RouterLink\b[^>]*\bclass="([^"]*)"/g)]
+      tagsOf(f.tpl, 'RouterLink')
+        .flatMap((tag) => [...tag.matchAll(/\sclass="([^"]*)"/g)])
         .map((m) => m[1]!.split(/\s+/).filter((x) => x && x !== 'd-block' && !/^[mp][setbxy]?-\d$/.test(x)))
         // 只剩 small（外边距、d-block 不算）的就是文字入口或返回；底栏、整行等别的类不管
         .filter((toks) => toks.length === 1 && toks[0] === 'small')
@@ -97,8 +98,8 @@ describe('文字链接统一（问题记录 451）', () => {
     ];
     const bad = want.filter(([path, to]) => {
       const tpl = GAME.find((f) => f.path === path)!.tpl;
-      const at = tpl.indexOf(`<RouterLink ${to}`);
-      return at < 0 || !/\bdt-(go|back)\b/.test(tpl.slice(at, tpl.indexOf('>', at)));
+      const tag = tagsOf(tpl, 'RouterLink').find((x) => x.startsWith(`<RouterLink ${to}`));
+      return !tag || !/\bdt-(go|back)\b/.test(tag);
     });
     expect(bad).toEqual([]);
   });
@@ -140,6 +141,9 @@ describe('文字链接统一（问题记录 451）', () => {
   it('扫标签时属性值里的 >=、=> 不会把标签截断', () => {
     const [tag] = tagsOf('<button :disabled="a >= b" class="dt-link-btn" @click="() => go()">x</button>');
     expect(tag).toBe('<button :disabled="a >= b" class="dt-link-btn" @click="() => go()">');
+    // RouterLink 也一样（补测试批终审：原来查 RouterLink 还是 [^>]*）
+    const [link] = tagsOf('<RouterLink :to="n > 0 ? a : b" class="small">x</RouterLink>', 'RouterLink');
+    expect(link).toBe('<RouterLink :to="n > 0 ? a : b" class="small">');
   });
 
   it('链接文案不自己写箭头（餐厅信息页的加点、厨具）', () => {
