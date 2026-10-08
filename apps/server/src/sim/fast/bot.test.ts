@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GOODS, NEWBIE, resolveShardSettings } from '@dt/config';
+import { GOODS, GOODS_TYPE, NEWBIE, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { PERSONAS } from '../bot';
@@ -9,7 +9,7 @@ import { newMarket } from './market';
 import { needPickOf, openFastRest } from './ops';
 import type { FastCtx } from './state';
 import type { FastWorld } from './world';
-import { cid } from '../../../test/items';
+import { cid, gid } from '../../../test/items';
 import { setGrade } from '../../modules/cookbook/rules';
 
 const config = testConfig();
@@ -82,6 +82,31 @@ describe('机器人（设计 §4.5）', () => {
     botTurn(c, b, newMarket(), world(), null);
     expect(b.rest.star).toBe(1);
     expect(c.stats.spend!.star).toBe(100000);
+  });
+
+  it('仓库满了买不进凭证：卖掉用不上的道具腾出格子再买；要用的道具、牌匾、勋章不卖（经济分析 2026-10-08 第五节）', () => {
+    const c = ctx();
+    const b = bot(c);
+    noQuests(b);
+    const need = config.starNeed.get(1)!;
+    b.rest.level = need.needLevel;
+    b.rest.counts.learned = need.needCookbooks;
+    b.rest.coin = 1e9;
+    // 这一回合不再发新东西：不开新手礼包、已签到
+    b.rest.store.delete(NEWBIE.pack);
+    b.rest.daily.set('signin', 1);
+    b.rest.store.delete(GOODS.starCert);
+    b.rest.store.set(gid('喇叭'), { num: 5, expiresAt: null });
+    b.rest.store.set(GOODS.purpleShell, { num: 1, expiresAt: null });
+    const kinds = [...b.rest.store].filter(
+      ([id, s]) => s.num > 0 && config.requireGoods(id).type !== GOODS_TYPE.honor,
+    ).length;
+    b.rest.storeNum = kinds;
+    botTurn(c, b, newMarket(), world(), null);
+    expect(b.rest.star).toBe(1);
+    expect(b.rest.store.has(gid('喇叭'))).toBe(false);
+    expect(c.stats.income['shop.sell']?.coin).toBeGreaterThan(0);
+    expect(b.rest.store.get(GOODS.purpleShell)?.num).toBe(1);
   });
 
   it('升星银币不够时卡点原因有 coin（240-1）', () => {

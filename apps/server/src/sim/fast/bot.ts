@@ -14,6 +14,7 @@ import { moveCost, oilChecks, starChecks, starCoinOf } from '../../modules/growt
 import { clearTable } from '../../modules/interact/tables';
 import { killReward, killStrength } from '../../modules/interact/rules';
 import { personLimit, unitPrice } from '../../modules/market/rules';
+import { sellPrice } from '../../modules/store/rules';
 import {
   CHAPTER_MARK,
   counterOf,
@@ -112,8 +113,53 @@ function buyable(c: FastCtx, r: FastRest, g: Goods, num: number): boolean {
   return true;
 }
 
+/** 机器人自己会用到的道具：按 id 用的、升油壶要的、会直接用掉的；其余卖店腾格子时可以卖 */
+const keepCache = new WeakMap<FastCtx['config'], Set<number>>();
+function keepIds(c: FastCtx): Set<number> {
+  let s = keepCache.get(c.config);
+  if (!s) {
+    s = new Set([
+      GOODS.starCert,
+      GOODS.moveCard,
+      GOODS.tableA,
+      GOODS.mysteryTicket,
+      GOODS.purpleShell,
+      GOODS.loveNecklace,
+      GOODS.adventureMap,
+      GOODS.signInGift,
+    ]);
+    for (const o of c.config.bundle.oilNeed) for (const g of o.needGoods) s.add(g.id);
+    keepCache.set(c.config, s);
+  }
+  return s;
+}
+
+/**
+ * 仓库满了要放新种类时，把用不上、能卖的道具都卖掉（真实玩家会这样清仓库）。
+ * 以前机器人从不清仓库，任务和礼包的杂物占满格子后买不进升星凭证（经济分析 2026-10-08 第五节）
+ */
+function makeRoom(c: FastCtx, r: FastRest): void {
+  const keep = keepIds(c);
+  for (const [id, s] of [...r.store]) {
+    if (s.num <= 0 || keep.has(id)) continue;
+    const g = c.config.requireGoods(id);
+    if (g.type === GOODS_TYPE.honor || g.type === GOODS_TYPE.device) continue;
+    if (g.use && (g.use.kind === 'addTable' || USE_ALL.has(g.use.kind))) continue;
+    const price = sellPrice(g, c.tuning);
+    if (price === null) continue;
+    r.store.delete(id);
+    gainCoin(c, r, price * s.num, 'shop.sell');
+  }
+}
+
+function roomFor(c: FastCtx, r: FastRest, g: Goods): void {
+  if (g.type !== GOODS_TYPE.honor && countGoods(c, r, g.id) === 0 && storeKinds(c, r) >= r.storeNum)
+    makeRoom(c, r);
+}
+
 function shopBuy(c: FastCtx, r: FastRest, goodsId: number, num: number): boolean {
   const g = c.config.requireGoods(goodsId);
+  if (g.onSale && g.coin > 0) roomFor(c, r, g);
   if (!g.onSale || g.coin <= 0 || !buyable(c, r, g, num)) return false;
   // 流出按用途分（问题记录 240）
   const use =
@@ -132,8 +178,9 @@ function shopBuy(c: FastCtx, r: FastRest, goodsId: number, num: number): boolean
 
 function buyBlack(c: FastCtx, r: FastRest, goodsId: number, num: number): boolean {
   const g = c.config.requireGoods(goodsId);
-  if (!c.config.bundle.shopPools.black.includes(g.id) || g.diamond <= 0 || !buyable(c, r, g, num))
-    return false;
+  if (!c.config.bundle.shopPools.black.includes(g.id) || g.diamond <= 0) return false;
+  roomFor(c, r, g);
+  if (!buyable(c, r, g, num)) return false;
   if (!spendDiamond(c, r, g.diamond * num)) return false;
   grantGoods(c, r, g.id, num, 'shop');
   return true;
