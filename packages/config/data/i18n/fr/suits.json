@@ -2,66 +2,66 @@
   "3": {
     "name": "Ensemble de Song Sao",
     "tiers": [
-      "Fréquentation +5 %, découpe +3 %",
-      "Maîtrise du feu +5 %"
+      "Fréquentation +5\u202f%, découpe +3\u202f%",
+      "Maîtrise du feu +5\u202f%"
     ]
   },
   "4": {
     "name": "L'Âme de Sariel",
     "tiers": [
-      "Fréquentation +3 % ; quand on vous défie, en plus : découpe +4 %, maîtrise du feu +4 %",
-      "Cuisine +4 %, assaisonnement +4 %, chance +8"
+      "Fréquentation +3\u202f%\u202f; quand on vous défie, en plus\u202f: découpe +4\u202f%, maîtrise du feu +4\u202f%",
+      "Cuisine +4\u202f%, assaisonnement +4\u202f%, chance +8"
     ]
   },
   "5": {
     "name": "Le Silence de Duma",
     "tiers": [
-      "Découpe +4 %, maîtrise du feu +4 %",
-      "Fréquentation +4 % ; 2 % de risque en moins de se perdre en exploration"
+      "Découpe +4\u202f%, maîtrise du feu +4\u202f%",
+      "Fréquentation +4\u202f%\u202f; 2\u202f% de risque en moins de se perdre en exploration"
     ]
   },
   "6": {
     "name": "Le Jugement de Barbelet",
     "tiers": [
-      "Cuisine +5 %, assaisonnement +6 %",
-      "Fréquentation +8 % ; 5 % de chance d'obtenir un ingrédient de niveau inférieur en plus en décomposant",
-      "Découpe +5 %, maîtrise du feu +5 %, chance +16"
+      "Cuisine +5\u202f%, assaisonnement +6\u202f%",
+      "Fréquentation +8\u202f%\u202f; 5\u202f% de chance d'obtenir un ingrédient de niveau inférieur en plus en décomposant",
+      "Découpe +5\u202f%, maîtrise du feu +5\u202f%, chance +16"
     ]
   },
   "7": {
     "name": "La Chute de Yinchen",
     "tiers": [
-      "Maîtrise du feu +5 %, fréquentation +3 %",
-      "Cuisine +4 %, découpe +4 %, chance +12"
+      "Maîtrise du feu +5\u202f%, fréquentation +3\u202f%",
+      "Cuisine +4\u202f%, découpe +4\u202f%, chance +12"
     ]
   },
   "80": {
     "name": "L'Oracle d'Akatma",
     "tiers": [
-      "Cuisine +8 %, assaisonnement +8 %",
-      "Chance +32 ; quand on vous défie, en plus : découpe +6 %, maîtrise du feu +6 %"
+      "Cuisine +8\u202f%, assaisonnement +8\u202f%",
+      "Chance +32\u202f; quand on vous défie, en plus\u202f: découpe +6\u202f%, maîtrise du feu +6\u202f%"
     ]
   },
   "81": {
     "name": "Ensemble du Dieu de la cuisine",
     "tiers": [
-      "Cuisine +10 %",
-      "Assaisonnement +10 % ; en défiant, en plus : découpe +8 %, maîtrise du feu +8 %",
-      "Clients difficiles +3 %, chance +36"
+      "Cuisine +10\u202f%",
+      "Assaisonnement +10\u202f%\u202f; en défiant, en plus\u202f: découpe +8\u202f%, maîtrise du feu +8\u202f%",
+      "Clients difficiles +3\u202f%, chance +36"
     ]
   },
   "82": {
     "name": "La Volonté de Gurtug",
     "tiers": [
-      "Découpe +6 %, maîtrise du feu +6 %",
-      "Fréquentation +6 %, chance +24 ; en défiant, en plus : cuisine +5 %"
+      "Découpe +6\u202f%, maîtrise du feu +6\u202f%",
+      "Fréquentation +6\u202f%, chance +24\u202f; en défiant, en plus\u202f: cuisine +5\u202f%"
     ]
   },
   "100": {
     "name": "Ensemble Grand Amour",
     "tiers": [
-      "Fréquentation +5 %, clients difficiles +3 %",
-      "Pièces finales +5 %, chance +52"
+      "Fréquentation +5\u202f%, clients difficiles +3\u202f%",
+      "Pièces finales +5\u202f%, chance +52"
     ]
   }
 }

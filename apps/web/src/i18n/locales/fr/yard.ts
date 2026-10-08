@@ -8,7 +8,7 @@ const yard: Messages['yard'] = {
   appraiseDone: (n, ok) => `${n} expertise(s), ${ok} réussie(s)`,
   plant: {
     stages: ['', 'Pousse', 'Semis', 'Croissance', 'Récolte', 'Fanée'],
-    withered: 'Fanée : on ne peut que l’arracher',
+    withered: 'Fanée\u202f: on ne peut que l’arracher',
     witheredShort: 'Fanée',
     ripe: (min) => `Prête à récolter, fane dans ${min} min`,
     canWater: 'Prête à être arrosée',
@@ -47,7 +47,7 @@ const yard: Messages['yard'] = {
     loadFailed: 'Impossible de charger le potager',
     noCoin: (need, have) =>
       `Pas assez de pièces (il en faut ${formatNum(need)}, vous en avez ${formatNum(have)})`,
-    noSeeds: "Pas de graines. Achetez-en ou échangez-en dans l'onglet « Graines »",
+    noSeeds: "Pas de graines. Achetez-en ou échangez-en dans l'onglet «\u202fGraines\u202f»",
     watered: 'Arrosée',
     waterFailed: "Échec de l'arrosage",
     dewormed: 'Un insecte en moins',
@@ -58,7 +58,7 @@ const yard: Messages['yard'] = {
     feedFailed: 'Impossible de fertiliser',
     reaped: 'Récoltée et mise dans le panier',
     reapFailed: 'Échec de la récolte',
-    removeConfirm: 'Arracher cette plante ? 30 % de chances de récupérer 1 graine',
+    removeConfirm: 'Arracher cette plante\u202f? 30\u202f% de chances de récupérer 1 graine',
     removed: 'Arrachée',
     removeFailed: "Impossible de l'arracher",
     strength: (n) => `Énergie ${n}`,
@@ -66,7 +66,7 @@ const yard: Messages['yard'] = {
     fertilizer: 'Engrais',
     fertOption: (name, num, min) => `${name} (${num}, −${min} min à chaque fois)`,
     landHead: (no, level) => `Parcelle ${no} · niv. ${level}`,
-    bonus: (n) => ` (récolte +${n} %)`,
+    bonus: (n) => ` (récolte +${n}\u202f%)`,
     exp: (exp, next) => `EXP ${exp}/${next}`,
     sowed: 'Semée',
     sowFailed: 'Impossible de semer',
@@ -78,10 +78,10 @@ const yard: Messages['yard'] = {
   },
   basket: {
     loadFailed: 'Impossible de charger le panier',
-    storedDropped: (stored, dropped) => `${stored} rangé(s) ; frigo plein, ${dropped} jeté(s)`,
+    storedDropped: (stored, dropped) => `${stored} rangé(s)\u202f; frigo plein, ${dropped} jeté(s)`,
     stored: (n) => `${n} rangé(s)`,
     storeFailed: 'Impossible de ranger dans le garde-manger',
-    rule: "Les récoltes et les vols vont d'abord dans le panier. Les formules utilisent directement l'ingrédient principal du panier ; pour cuisiner, rangez-les d'abord dans le garde-manger (le surplus va au frigo).",
+    rule: "Les récoltes et les vols vont d'abord dans le panier. Les formules utilisent directement l'ingrédient principal du panier\u202f; pour cuisiner, rangez-les d'abord dans le garde-manger (le surplus va au frigo).",
     empty: 'Le panier est vide',
     store: 'Ranger au garde-manger',
   },
@@ -91,7 +91,7 @@ const yard: Messages['yard'] = {
     dewormed: 'Vous avez enlevé un insecte pour lui',
     weeded: 'Vous avez désherbé pour lui',
     caught: (food) => `, mais son border collie vous a attrapé et vous avez laissé ${food}`,
-    stole: (food, num, caught) => `Volé : ${food}×${num}, mis dans votre panier${caught}`,
+    stole: (food, num, caught) => `Volé\u202f: ${food}×${num}, mis dans votre panier${caught}`,
     stealFailed: 'Échec du vol',
     title: (name) => `Potager de ${name}`,
     back: 'Retour à son restaurant',
@@ -102,7 +102,7 @@ const yard: Messages['yard'] = {
   formula: {
     loadFailed: 'Impossible de charger les formules',
     noScroll:
-      "Pas de formule ésotérique : chaque expertise utilise 1 formule ésotérique et 1 outil d'expertise (sceau du dieu cuisinier)",
+      "Pas de formule ésotérique\u202f: chaque expertise utilise 1 formule ésotérique et 1 outil d'expertise (sceau du dieu cuisinier)",
     noTool: "Vous n'avez pas cet outil d'expertise",
     nameFallback: (id) => `Formule ${id}`,
     learned: 'Apprise',
@@ -114,10 +114,10 @@ const yard: Messages['yard'] = {
     noStrength: (n) => `Pas assez d'énergie (${n} chacune)`,
     appraiseFailed: "Échec de l'expertise",
     appraiseTitle: 'Expertiser des formules',
-    toolOption: (name, num, rate) => `${name} (${num}, ${rate} % de réussite)`,
+    toolOption: (name, num, rate) => `${name} (${num}, ${rate}\u202f% de réussite)`,
     appraise: (n) => `Expertiser ×${n}`,
     scrolls: (n) =>
-      `Formules ésotériques ${n} ; en cas de réussite, 25 % donnent un fragment principal, le reste un secondaire`,
+      `Formules ésotériques ${n}\u202f; en cas de réussite, 25\u202f% donnent un fragment principal, le reste un secondaire`,
     piece: (name, main, upgraded) =>
       `${name} fragment ${main ? 'principal' : 'secondaire'}${upgraded ? ' (parchemin étoile-lune)' : ''}`,
     fail: 'Échec',
@@ -135,7 +135,7 @@ const yard: Messages['yard'] = {
     compose: 'Combiner',
     composeEmpty: 'Apprenez une formule pour combiner des ingrédients',
     recipe: (p) =>
-      `${p.name} : ${p.main} (panier ${p.haveMain}) + ${p.sub} (garde-manger ${p.haveSub}) + ${p.add} (garde-manger ${p.haveAdd}) → ${p.res}`,
+      `${p.name}\u202f: ${p.main} (panier ${p.haveMain}) + ${p.sub} (garde-manger ${p.haveSub}) + ${p.add} (garde-manger ${p.haveAdd}) → ${p.res}`,
     composed: 'Combiné',
     composeFailed: 'Échec de la combinaison',
     composeBtn: (n, strength) => `Combiner ×${n} (énergie ${strength})`,

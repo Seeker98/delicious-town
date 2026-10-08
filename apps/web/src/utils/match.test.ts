@@ -18,3 +18,11 @@ describe('matchText（问题记录 316）', () => {
     expect(matchText('anything', '')).toBe(true);
   });
 });
+
+describe('不换行空格当普通空格（法西标点批终审：名字里改成窄空格、不换行空格后，输入普通空格搜不到）', () => {
+  it('“100 %”“« litchi”照样搜得到', () => {
+    expect(matchText('Ratonera 100\u00a0%', '100 %')).toBe(true);
+    expect(matchText('Ormeau «\u202flitchi rouge\u202f»', '« litchi')).toBe(true);
+    expect(matchText('Ratonera 100 %', '100\u00a0%')).toBe(true);
+  });
+});

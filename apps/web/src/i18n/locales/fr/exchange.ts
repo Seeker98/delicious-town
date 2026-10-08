@@ -23,29 +23,29 @@ const exchange: Messages['exchange'] = {
   bookFailed: "Impossible de charger le carnet d'ordres",
   placed: 'Ordre passé',
   heldNote: (hours) =>
-    ` ; certaines exécutions semblent suspectes et leurs gains sont gelés pendant ${hours} ${plFr(hours, 'heure', 'heures')}`,
+    `\u202f; certaines exécutions semblent suspectes et leurs gains sont gelés pendant ${hours} ${plFr(hours, 'heure', 'heures')}`,
   overSystem: (n) =>
-    `Le système ne vous rachète plus que ${n} ${plFr(n, 'unité', 'unités')} ; le reste reste en vente à votre prix et d'autres peuvent l'acheter à bas prix`,
+    `Le système ne vous rachète plus que ${n} ${plFr(n, 'unité', 'unités')}\u202f; le reste reste en vente à votre prix et d'autres peuvent l'acheter à bas prix`,
   filled: (n, partial, held) =>
     `${n} ${plFr(n, 'exécuté', 'exécutés')}${partial ? ', le reste reste en carnet' : ''}${held}`,
   placeFailed: "Échec de l'ordre",
   cancelled: 'Ordre annulé',
   cancelFailed: "Impossible d'annuler",
   withdrawnLeft: (n) =>
-    `Retiré ; ${n} ${plFr(n, 'ingrédient ne rentre pas et reste', 'ingrédients ne rentrent pas et restent')} sur votre compte de bourse`,
+    `Retiré\u202f; ${n} ${plFr(n, 'ingrédient ne rentre pas et reste', 'ingrédients ne rentrent pas et restent')} sur votre compte de bourse`,
   withdrawn: 'Retiré',
   withdrawFailed: 'Échec du retrait',
   loadFailed: 'Impossible de charger la bourse',
   frozenNotice: (reason) =>
-    `Votre compte de bourse est gelé : ${reason}. Contactez un administrateur en cas de question.`,
+    `Votre compte de bourse est gelé\u202f: ${reason}. Contactez un administrateur en cas de question.`,
   intro:
-    'Les joueurs achètent et vendent ici des ingrédients rares. Les prix des ordres doivent être entre la moitié et le double du prix de référence du jour ; le vendeur paie des frais à chaque exécution.',
+    'Les joueurs achètent et vendent ici des ingrédients rares. Les prix des ordres doivent être entre la moitié et le double du prix de référence du jour\u202f; le vendeur paie des frais à chaque exécution.',
   sysHelp: 'Comment le système fixe ses prix',
   sysHelpItems: [
-    "Prix d'achat du système = référence\u202f×\u202f0,7 ; prix de vente du système = référence\u202f×\u202f1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
+    "Prix d'achat du système = référence\u202f×\u202f0,7\u202f; prix de vente du système = référence\u202f×\u202f1,3. Le système ne revend que ce qu'il a acheté aux joueurs.",
     "Le prix de référence est fixé chaque jour d'après les échanges entre joueurs de la veille (ceux du système ne comptent pas), donc les prix du système restent fixes toute la journée.",
     "Pour les ingrédients aussi vendus au marché, le prix d'achat est plafonné à 0,9\u202f×\u202fle prix le plus bas du marché, pour qu'on ne puisse pas acheter au marché et revendre au système avec profit.",
-    "Quand le prix d'achat est sous le minimum autorisé pour un ordre, c'est un « prix plancher » (fréquent aux niveaux 3 à 5). On ne peut alors vendre qu'avec le bouton « Vendre au système », ce qui garantit de toujours pouvoir écouler sa marchandise.",
+    "Quand le prix d'achat est sous le minimum autorisé pour un ordre, c'est un «\u202fprix plancher\u202f» (fréquent aux niveaux 3 à 5). On ne peut alors vendre qu'avec le bouton «\u202fVendre au système\u202f», ce qui garantit de toujours pouvoir écouler sa marchandise.",
     'Le système achète au plus 100 unités de chaque ingrédient par jour, et chaque joueur peut lui en vendre au plus 20 par jour.',
     "Le système n'achète pas les ingrédients de niveau 7\u202f; son stock existant reste en vente.",
   ],
@@ -53,7 +53,7 @@ const exchange: Messages['exchange'] = {
   saleTag: (n) => `Vente ${n}`,
   buyTag: (n) => `Achat ${n}`,
   legendSale: 'Vente N',
-  legendSaleText: ' quelqu’un vend (stock du système compris) ; ',
+  legendSaleText: ' quelqu’un vend (stock du système compris)\u202f; ',
   legendBuy: 'Achat N',
   legendBuyText: ' quelqu’un achète',
   level: (lv) => `Niveau ${lv}`,
@@ -78,9 +78,9 @@ const exchange: Messages['exchange'] = {
   placeSell: 'Passer un ordre de vente',
   account: 'Compte de bourse',
   withdraw: 'Tout retirer',
-  holdsReady: (text) => `Période de gel terminée, retirable : ${text}`,
+  holdsReady: (text) => `Période de gel terminée, retirable\u202f: ${text}`,
   holdsPending: (text, left) =>
-    `Gelé (période de gel des exécutions suspectes) : ${text}, ${left}, retirable ensuite`,
+    `Gelé (période de gel des exécutions suspectes)\u202f: ${text}, ${left}, retirable ensuite`,
   myOrders: 'Mes ordres',
   noOrders: 'Aucun ordre',
   orderLine: (name, price, qty, filled) =>

@@ -5,8 +5,8 @@ const home: Messages['home'] = {
   loadFailed: 'No se pudo cargar tu restaurante',
   plankton: {
     title: '¡Plancton no quiere irse de tu restaurante! ',
-    body1: 'Su insignia sigue activa hasta que lo eches: ocupación +50 %, pero ',
-    bold: 'tasa de exigentes -120 %',
+    body1: 'Su insignia sigue activa hasta que lo eches: ocupación +50\u00a0%, pero ',
+    bold: 'tasa de exigentes -120\u00a0%',
     body2:
       ' (los clientes exigentes no vienen, nadie pide platos y solo cobras las monedas base), y aceite por mesa +5. De vez en cuando él mismo se sienta a comer y esa mesa rinde ×5. Después de echarlo, tardará un tiempo en volver a elegir tu restaurante.',
     byStrength: 'Echarlo con Energía',
@@ -76,7 +76,7 @@ const home: Messages['home'] = {
   noChoices: 'No tienes instalaciones que encajen aquí. Puedes comprarlas en la tienda.',
   switches: 'Ajustes del negocio',
   promo: 'Gran oferta',
-  promoHint: '20 % de descuento: muchos más clientes, ingresos algo menores',
+  promoHint: '20\u00a0% de descuento: muchos más clientes, ingresos algo menores',
   cte: 'Monedas a EXP',
   cteHint: 'Requiere la estatua de Apolo',
   setFailed: 'No se pudo cambiar el ajuste',

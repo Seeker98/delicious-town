@@ -85,18 +85,18 @@ const errors: Messages['errors'] = {
       p.have === undefined
         ? `Pas assez de points d'activité (${s(p.need)} requis)`
         : `Pas assez de points d'activité (${s(p.need)} requis, vous en avez ${s(p.have)})`,
-    avatar: () => "Choisissez un avatar dans « Apparence » avant de manger à l'œil",
+    avatar: () => "Choisissez un avatar dans «\u202fApparence\u202f» avant de manger à l'œil",
     dine_minutes: (p) =>
       `Vous devez manger ${s(p.need)} ${plFr(s(p.need), 'minute', 'minutes')} avant de partir ou d'être renvoyé`,
     renown: (p) =>
       p.what === 'duel'
         ? 'Impossible de défier quelqu’un avec une renommée négative'
         : p.need === undefined
-          ? 'Impossible de mettre un « j’aime » avec une renommée négative'
+          ? 'Impossible de mettre un «\u202fj’aime\u202f» avec une renommée négative'
           : `Pas assez de renommée (voler demande ${s(p.need)})`,
     mc_count: (p) => `Pas assez de plats signature appris (${s(p.need)} requis)`,
     not_learned: () => "Vous n'avez pas encore appris ce plat",
-    double: () => 'Il vous faut « Mission accomplie » pour ajouter un supplément',
+    double: () => 'Il vous faut «\u202fMission accomplie\u202f» pour ajouter un supplément',
     job_honor: (p, n) =>
       p.goodsId
         ? `Il vous faut un ${n.goodsName(Number(p.goodsId))} valide`
@@ -113,13 +113,13 @@ const errors: Messages['errors'] = {
     predict_hold: (p) =>
       `Au plus ${s(p.max)} ${plFr(s(p.max), 'part', 'parts')} de chaque côté par événement`,
     activity_exchange: (p) =>
-      `Chaque joueur peut échanger cet objet ${s(p.limit)} fois ; il en reste ${s(p.left)}`,
+      `Chaque joueur peut échanger cet objet ${s(p.limit)} fois\u202f; il en reste ${s(p.left)}`,
     forum_post: (p) => `Limite de publications du jour atteinte (${s(p.max)})`,
     presets: (p) => `Au plus ${s(p.max)} ${plFr(s(p.max), 'préréglage', 'préréglages')}`,
     market: (p) => `Chaque joueur peut acheter au plus ${s(p.limit)} de ce lot`,
     foods_max: (p) => `Au plus ${s(p.max)} de chaque ingrédient`,
     tables: (p) =>
-      `Toutes les tables sont placées : au plus ${s(p.cap)} (selon le niveau et les étages), vous en avez ${s(p.have)}`,
+      `Toutes les tables sont placées\u202f: au plus ${s(p.cap)} (selon le niveau et les étages), vous en avez ${s(p.have)}`,
     cupboard_slots: (p) => `Votre garde-manger a déjà le maximum d'emplacements (${s(p.max)})`,
     batch: (p) => `Vous pouvez en utiliser au plus ${s(p.max)} à la fois`,
     lock: () => 'Plus aucun emplacement de verrouillage',
@@ -169,9 +169,9 @@ const errors: Messages['errors'] = {
     exchange_frozen: 'Votre compte de bourse est gelé. Contactez un administrateur pour toute question.',
     exchange_no_system_bid: "Le système n'achète pas cet ingrédient pour le moment",
     exchange_price_moved:
-      "Le prix du système a changé. Le carnet d'ordres a été actualisé ; confirmez avant de vendre.",
+      "Le prix du système a changé. Le carnet d'ordres a été actualisé\u202f; confirmez avant de vendre.",
     predict_closed: 'Les transactions sur cet événement sont terminées',
-    predict_own: 'Vous avez créé cette question : vous ne pouvez ni acheter ni vendre de parts',
+    predict_own: 'Vous avez créé cette question\u202f: vous ne pouvez ni acheter ni vendre de parts',
     predict_frozen:
       'Votre bourse est gelée, les prédictions sont donc suspendues aussi. Contactez un administrateur en cas de question',
     kuji_ticket: 'Pas assez de tickets kuji',
@@ -188,9 +188,9 @@ const errors: Messages['errors'] = {
     no_item: "Cet objet d'échange n'existe pas",
     nothing: 'Aucune récompense à réclamer',
     locked_after_start:
-      "L'événement a commencé : vous ne pouvez modifier que le titre, la description et prolonger la fin",
+      "L'événement a commencé\u202f: vous ne pouvez modifier que le titre, la description et prolonger la fin",
     started: "L'événement a commencé et ne peut pas être supprimé",
-    ended: "L'événement est terminé ; ses horaires ne peuvent plus être modifiés",
+    ended: "L'événement est terminé\u202f; ses horaires ne peuvent plus être modifiés",
     wrong_password: "L'ancien mot de passe est incorrect",
     same_password: "Le nouveau mot de passe doit être différent de l'ancien",
     mail_claimed: 'Vous avez déjà réclamé ce courrier',
@@ -211,7 +211,7 @@ const errors: Messages['errors'] = {
     report_daily: 'Vous avez utilisé tous vos signalements du jour',
     report_empty: "Ce restaurant n'a pas d'annonce",
     report_closed: 'Ce signalement a déjà été traité',
-    mail_unclaimed: "Les pièces jointes n'ont pas été réclamées ; impossible de supprimer",
+    mail_unclaimed: "Les pièces jointes n'ont pas été réclamées\u202f; impossible de supprimer",
     locked: "Cet ustensile est verrouillé. Déverrouillez-le d'abord.",
     has_gems: "Cet ustensile porte des gemmes. Retirez-les d'abord.",
     in_preset: "Cet ustensile est dans un préréglage. Supprimez d'abord ce préréglage.",
@@ -245,7 +245,7 @@ const errors: Messages['errors'] = {
     fridge_empty: "Votre frigo n'a pas cet ingrédient",
     cannot_handle: 'Les ingrédients de ce niveau ne peuvent pas être traités ainsi',
     odd_num: 'La combinaison nécessite des ingrédients par paires',
-    other_street: "Seuls les plats de votre rue peuvent être appris ou améliorés ; déménagez d'abord",
+    other_street: "Seuls les plats de votre rue peuvent être appris ou améliorés\u202f; déménagez d'abord",
     no_batch: 'Cet objet ne peut pas être utilisé en lot',
     no_points_to_reset: "Vous n'avez encore dépensé aucun point d'attribut",
     not_on_sale: 'Pas en vente',
@@ -285,26 +285,26 @@ const errors: Messages['errors'] = {
     own_roach: 'Vous ne pouvez pas éliminer les cafards que vous avez posés',
     friend_oil_full: "Le bidon d'huile de votre ami est déjà plein",
     bad_slot: "Cet emplacement de garde-manger n'existe pas",
-    blessed: "Son restaurant est béni par M. Krab ; vous n'avez rien trouvé cette fois",
+    blessed: "Son restaurant est béni par M. Krab\u202f; vous n'avez rien trouvé cette fois",
     level_mismatch: "Vous ne pouvez échanger que des ingrédients de même niveau, jusqu'au niveau 5",
-    foods_locked: "Ce joueur a verrouillé cet ingrédient ; il ne s'échange que pendant un ouragan",
+    foods_locked: "Ce joueur a verrouillé cet ingrédient\u202f; il ne s'échange que pendant un ouragan",
     bad_look: "Ce style n'existe pas",
     same_door: 'Vous avez déjà cette porte',
     icon_not_on_sale: "Ce titre n'est pas en vente en ce moment",
     icon_owned: 'Vous avez déjà ce titre',
-    fund_active: "Vous avez déjà un dépôt ; réclamez-le ou retirez-le d'abord",
+    fund_active: "Vous avez déjà un dépôt\u202f; réclamez-le ou retirez-le d'abord",
     fund_none: 'Aucun dépôt',
     fund_not_mature: 'Pas encore échu',
-    fund_mature: 'Déjà échu : réclamez-le plutôt',
+    fund_mature: 'Déjà échu\u202f: réclamez-le plutôt',
     bad_tier: "Ce rang n'existe pas",
     guardian_down: "Vous avez déjà vaincu le gardien aujourd'hui. Revenez demain.",
-    trial_ready: "Votre médaille d'épreuve est encore valide ; vous pouvez commencer l'épreuve",
+    trial_ready: "Votre médaille d'épreuve est encore valide\u202f; vous pouvez commencer l'épreuve",
     no_trial:
       "Vous ne vous êtes pas préparé à l'épreuve (ou c'est expiré). Faites une injection ou méditez d'abord.",
     not_feed_time: "Ce n'est pas l'heure du repas",
     fed_today: "Vous avez déjà nourri le Kraken aujourd'hui",
     portions:
-      'Pas assez de portions : gardez au moins 1 portion de votre plat signature en vente après le repas',
+      'Pas assez de portions\u202f: gardez au moins 1 portion de votre plat signature en vente après le repas',
     slot_bought: 'Cet emplacement a déjà été échangé',
     mc_cooking: 'Vous avez déjà un plat signature en vente. Écoulez-le ou jetez-le avant de recuisiner.',
     no_cooking: "Aucun plat signature n'est en vente pour le moment",
@@ -315,7 +315,7 @@ const errors: Messages['errors'] = {
     steal_full: 'Trop de monde assiste en douce à ce cours',
     own_lesson: 'Vous ne pouvez pas suivre votre propre cours',
     no_lesson: "Vous n'avez pas de cours en cours",
-    lesson_not_full: "Le cours n'est pas complet ; impossible de le terminer plus tôt",
+    lesson_not_full: "Le cours n'est pas complet\u202f; impossible de le terminer plus tôt",
     target_no_special: "Ce joueur n'a pas de plat signature en vente",
     no_land: "Cette parcelle n'est pas encore cultivée",
     land_busy: 'Quelque chose pousse déjà sur cette parcelle',
@@ -333,7 +333,7 @@ const errors: Messages['errors'] = {
     formula_learned: 'Vous avez déjà appris cette formule',
     seed_shop_closed: "La boutique de graines n'est pas encore ouverte",
     seed_not_sold:
-      'Les graines mystère ne sont pas vendues ; obtenez-les par échange ou en nourrissant le Kraken',
+      'Les graines mystère ne sont pas vendues\u202f; obtenez-les par échange ou en nourrissant le Kraken',
     takeaway_closed: "Vous n'avez pas encore ouvert la livraison",
     order_gone: "Cette commande à emporter n'existe plus",
     order_taken: "Quelqu'un a déjà pris cette commande",
@@ -341,17 +341,17 @@ const errors: Messages['errors'] = {
     delivery_gone: 'Cette livraison a déjà été réclamée',
     broadcast_text: 'Les annonces doivent faire 1 à 64 caractères',
     no_round: 'Cette partie est terminée. Commencez-en une nouvelle.',
-    cup_decide: 'Vous avez trouvé : choisissez d’abord de vous arrêter ou de continuer',
+    cup_decide: 'Vous avez trouvé\u202f: choisissez d’abord de vous arrêter ou de continuer',
     cup_not_won: 'Vous n’avez pas encore trouvé cette manche',
     cup_round: 'Cette partie a avancé. Elle a été rechargée.',
     not_passed: "Vous n'avez pas encore réussi cette étape",
     no_aim: 'Visez avant de lancer',
     need_first: 'Choisissez qui commence',
-    nim_started: 'La partie a déjà commencé ; vous ne pouvez plus choisir qui commence',
+    nim_started: 'La partie a déjà commencé\u202f; vous ne pouvez plus choisir qui commence',
     deal_picked: 'Vous avez déjà choisi votre boîte',
     deal_pick_first: 'Choisissez d’abord votre boîte',
-    deal_offer: 'Le banquier attend votre réponse : accepter ou refuser ?',
-    deal_no_offer: 'Terminez d’abord cette manche ; le banquier n’a pas encore fait d’offre',
+    deal_offer: 'Le banquier attend votre réponse\u202f: accepter ou refuser\u202f?',
+    deal_no_offer: 'Terminez d’abord cette manche\u202f; le banquier n’a pas encore fait d’offre',
     krab_broke: 'La bourse de M. Krab est vide',
     no_bless: "Personne n'a encore fait de vœu aujourd'hui",
     foods_not_allowed: 'Cet ingrédient ne peut pas être échangé',
@@ -363,10 +363,10 @@ const errors: Messages['errors'] = {
     rider_self: 'Vous ne pouvez pas vous licencier vous-même',
     rider_delivering: 'Ce livreur est en livraison. Licenciez-le après la livraison.',
     floor_locked:
-      "Cet étage est verrouillé : le niveau de votre restaurant doit suffire et vous devez battre l'étage inférieur",
+      "Cet étage est verrouillé\u202f: le niveau de votre restaurant doit suffire et vous devez battre l'étage inférieur",
     tower_night: "Les étages 4 et plus ne se défient qu'après 6 h",
     rank_taken: "Quelqu'un occupe déjà ce rang",
-    rank_empty: 'Personne n’occupe ce rang ; vous pouvez le prendre directement',
+    rank_empty: 'Personne n’occupe ce rang\u202f; vous pouvez le prendre directement',
     rank_not_better: 'Vous ne pouvez défier ou prendre qu’un rang supérieur',
     rank_gap: "Dans le top 8, vous ne pouvez défier qu'un joueur à 3 rangs au plus",
     npc: 'Vous ne pouvez pas défier M. Krab',
@@ -376,7 +376,7 @@ const errors: Messages['errors'] = {
     self: () => 'Vous ne pouvez pas racheter votre propre restaurant',
     mine: () => 'Ce restaurant vous appartient déjà',
     npc: () => 'Le restaurant de M. Krab ne peut pas être racheté',
-    banned: () => 'Le compte de ce restaurant est banni ; il ne peut pas être racheté',
+    banned: () => 'Le compte de ce restaurant est banni\u202f; il ne peut pas être racheté',
     not_listed: () => "Ce restaurant n'est pas en vente",
     star: () => "Ce restaurant n'a pas encore assez d'étoiles pour être racheté",
     no_state: () => "Ce restaurant n'a pas encore assez d'étoiles pour avoir une valorisation",
@@ -386,25 +386,25 @@ const errors: Messages['errors'] = {
     buyer_owned: () => "Tant que votre restaurant a un propriétaire, vous ne pouvez pas en racheter d'autres",
     holdings: () => 'Vous ne pouvez plus posséder de restaurants supplémentaires',
     linked: () =>
-      'Vous et ce restaurant (ou son propriétaire) vous êtes connectés récemment depuis le même appareil ou le même réseau : vous ne pouvez pas le racheter',
+      'Vous et ce restaurant (ou son propriétaire) vous êtes connectés récemment depuis le même appareil ou le même réseau\u202f: vous ne pouvez pas le racheter',
     other_shard: () => "Ce restaurant n'est pas sur ce serveur",
     owner_changed: () => 'Ce restaurant vient de changer de propriétaire. Actualisez et regardez à nouveau',
     price_changed: (p) =>
       p.price === undefined
         ? 'Le prix a changé. Actualisez et confirmez à nouveau'
-        : `Le prix a changé : il est maintenant de ${formatNum(Number(p.price))} ${plFr(p.price, 'pièce', 'pièces')}. Confirmez à nouveau`,
+        : `Le prix a changé\u202f: il est maintenant de ${formatNum(Number(p.price))} ${plFr(p.price, 'pièce', 'pièces')}. Confirmez à nouveau`,
     not_owned: () => "Votre restaurant n'appartient à personne",
     not_owner: () => 'Ce restaurant ne vous appartient pas',
     list_rate: (p) =>
-      `Le prix de vente doit être compris entre ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} et 100\u00a0% de la valorisation, par paliers de 5\u00a0%`,
+      `Le prix de vente doit être compris entre ${formatPct(Number(p.min ?? 0.5), { digits: 0 })} et 100\u202f% de la valorisation, par paliers de 5\u202f%`,
     tended: () => "Vous vous êtes déjà occupé du propriétaire aujourd'hui",
   },
   already: {
     activity_reward: 'Vous avez déjà réclamé cette récompense',
     activity_pass: 'Déjà débloqué',
     friend: 'Vous êtes déjà amis',
-    thumb: "Vous lui avez déjà mis un « j'aime » aujourd'hui",
-    thumb_ip: "Quelqu'un sur le même réseau lui a déjà mis un « j'aime » aujourd'hui",
+    thumb: "Vous lui avez déjà mis un «\u202fj'aime\u202f» aujourd'hui",
+    thumb_ip: "Quelqu'un sur le même réseau lui a déjà mis un «\u202fj'aime\u202f» aujourd'hui",
     taste: 'Vous avez déjà goûté ce lot de plats signature',
     lesson: 'Vous avez déjà essayé ce cours',
     steal: 'Vous avez déjà volé sur cette plante',
@@ -417,8 +417,8 @@ const errors: Messages['errors'] = {
     feast: "Vous avez déjà participé au festin aujourd'hui",
   },
   special: {
-    banned: (reason) => `Ce compte a été banni : ${reason}`,
-    targetNotVerified: "Ce joueur n'a pas encore vérifié son e-mail ; impossible d'interagir",
+    banned: (reason) => `Ce compte a été banni\u202f: ${reason}`,
+    targetNotVerified: "Ce joueur n'a pas encore vérifié son e-mail\u202f; impossible d'interagir",
     flipCooldown: 'Cet emplacement de garde-manger est encore en recharge',
     forumPostCooldown: (seconds) => `Vous publiez trop vite. Réessayez dans ${seconds} s.`,
     forumReplyCooldown: (seconds) => `Vous répondez trop vite. Réessayez dans ${seconds} s.`,
@@ -434,7 +434,7 @@ const errors: Messages['errors'] = {
     fragment: (part) => `Fragments de formule ${part === 'main' ? 'principaux' : 'secondaires'}`,
     amount: 'Quantité',
     exchangeFrozen: (why) =>
-      `Votre compte de bourse est gelé : ${why}. Contactez un administrateur pour toute question.`,
+      `Votre compte de bourse est gelé\u202f: ${why}. Contactez un administrateur pour toute question.`,
     priceBand: (min, max) => `Le prix doit être compris entre ${min} et ${max}`,
     postText: (field, max) =>
       `Le ${field === 'title' ? 'titre' : 'texte'} doit faire 1 à ${max} ${plFr(max, 'caractère', 'caractères')}`,

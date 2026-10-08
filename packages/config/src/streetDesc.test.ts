@@ -26,24 +26,24 @@ describe('街道勋章说明里的最终银币、经验收益（问题记录 378
       expRate: 0,
     });
     expect(finalRates('en', 'Final EXP income +40%, luck +10')).toEqual({ coinRate: 0, expRate: 0.4 });
-    expect(finalRates('fr', 'EXP et revenus finaux en pièces +15 %, chance +10')).toEqual({
+    expect(finalRates('fr', 'EXP et revenus finaux en pièces +15\u202f%, chance +10')).toEqual({
       coinRate: 0.15,
       expRate: 0.15,
     });
-    expect(finalRates('fr', 'Revenus finaux en pièces +25 %, EXP par table +2')).toEqual({
+    expect(finalRates('fr', 'Revenus finaux en pièces +25\u202f%, EXP par table +2')).toEqual({
       coinRate: 0.25,
       expRate: 0,
     });
-    expect(finalRates('fr', 'chance +25, EXP finale +8 %')).toEqual({ coinRate: 0, expRate: 0.08 });
-    expect(finalRates('es', 'EXP y monedas finales +15%, suerte +10')).toEqual({
+    expect(finalRates('fr', 'chance +25, EXP finale +8\u202f%')).toEqual({ coinRate: 0, expRate: 0.08 });
+    expect(finalRates('es', 'EXP y monedas finales +15\u00a0%, suerte +10')).toEqual({
       coinRate: 0.15,
       expRate: 0.15,
     });
-    expect(finalRates('es', 'Ingresos finales de monedas +25%, EXP por mesa +2')).toEqual({
+    expect(finalRates('es', 'Ingresos finales de monedas +25\u00a0%, EXP por mesa +2')).toEqual({
       coinRate: 0.25,
       expRate: 0,
     });
-    expect(finalRates('es', 'suerte +25, EXP final +8%')).toEqual({ coinRate: 0, expRate: 0.08 });
+    expect(finalRates('es', 'suerte +25, EXP final +8\u00a0%')).toEqual({ coinRate: 0, expRate: 0.08 });
   });
 
   it('改写：去掉原来的最终收益，按新值写在最前面；首字母大小写跟着位置走', () => {
@@ -60,11 +60,11 @@ describe('街道勋章说明里的最终银币、经验收益（问题记录 378
     expect(setFinalRates('en', 'EXP per table +4, final oil use +2', 0.05, 0)).toBe(
       'Final coins +5%, EXP per table +4, final oil use +2',
     );
-    expect(setFinalRates('fr', 'Clients difficiles +5 %, pièces finales -20 %', 0.25, 0.25)).toBe(
-      'EXP et pièces finales +25 %, clients difficiles +5 %',
+    expect(setFinalRates('fr', 'Clients difficiles +5\u202f%, pièces finales -20\u202f%', 0.25, 0.25)).toBe(
+      'EXP et pièces finales +25\u202f%, clients difficiles +5\u202f%',
     );
-    expect(setFinalRates('es', 'Monedas finales +25%, EXP por mesa +2', 0, 0.15)).toBe(
-      'EXP final +15%, EXP por mesa +2',
+    expect(setFinalRates('es', 'Monedas finales +25\u00a0%, EXP por mesa +2', 0, 0.15)).toBe(
+      'EXP final +15\u00a0%, EXP por mesa +2',
     );
   });
 

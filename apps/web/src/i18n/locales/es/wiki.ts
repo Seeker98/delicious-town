@@ -133,7 +133,7 @@ const wiki: Messages['wiki'] = {
           'Regístrate y recoge las recompensas de puntos de actividad.',
           'Usa los objetos del almacén que se usan directamente: mesas, paquetes de regalo, vales de ingrediente aleatorio.',
           'Pon todos los puntos de atributo en Cocina.',
-          'Echa aceite cuando baje del 60 %; un restaurante cerrado vuelve a abrir en cuanto tiene aceite.',
+          'Echa aceite cuando baje del 60\u00a0%; un restaurante cerrado vuelve a abrir en cuanto tiene aceite.',
           'Elimina las cucarachas de tu propio restaurante.',
           'Recoge las misiones: misión principal, misiones secundarias y recompensas de capítulo en cuanto estén listas.',
           'Llena los huecos de instalaciones vacíos; si no tienes ninguna en el almacén, compra las baratas.',
@@ -188,7 +188,7 @@ const wiki: Messages['wiki'] = {
         title: 'Cómo aprender platos estrella',
         items: [
           'Necesitas 3 fragmentos de un plato para aprenderlo; puedes cocinar desde 1 estrella.',
-          'Tasación (desde 1 estrella): en el Templo, usa 1 Receta misteriosa y 1 objeto de tasación; si sale bien, consigues un fragmento de un plato al azar. El Sello Delicia da niveles 1 a 6 y acierta un 40 % (90 000 en la tienda); el Sello de jade del Dios de la Cocina niveles 2 a 5, un 52 % (300 000 en la tienda); las Fórmulas secretas del Balde de Carnada (niveles 1 a 3) y de la Cangreburger (niveles 3 a 5) siempre aciertan, se venden por diamantes en el mercado negro y también salen en los premios aleatorios de la Torre de chefs y del bar; la de la Cangreburger es además el premio del campeón de platos estrella de ayer.',
+          'Tasación (desde 1 estrella): en el Templo, usa 1 Receta misteriosa y 1 objeto de tasación; si sale bien, consigues un fragmento de un plato al azar. El Sello Delicia da niveles 1 a 6 y acierta un 40\u00a0% (90 000 en la tienda); el Sello de jade del Dios de la Cocina niveles 2 a 5, un 52\u00a0% (300 000 en la tienda); las Fórmulas secretas del Balde de Carnada (niveles 1 a 3) y de la Cangreburger (niveles 3 a 5) siempre aciertan, se venden por diamantes en el mercado negro y también salen en los premios aleatorios de la Torre de chefs y del bar; la de la Cangreburger es además el premio del campeón de platos estrella de ayer.',
           'Canje de trozos: descompón los fragmentos que no necesites en trozos del mismo nivel; 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel, así que guarda trozos del nivel que quieras.',
           'Clases: busca a un jugador que sepa el plato y dé clase, paga la matrícula y algo de energía, y casi siempre lo aprendes a la primera.',
         ],

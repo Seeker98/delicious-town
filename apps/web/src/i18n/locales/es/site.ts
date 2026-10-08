@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    punct1008:
+      'Textos en francés y español: el espaciado de la puntuación ahora es uniforme. En español, entre un número y el símbolo de porcentaje va siempre un espacio de no separación; en francés, un espacio fino de no separación delante de los dos puntos, el punto y coma, los signos de interrogación y exclamación y el de porcentaje, y dentro de las comillas. Así estos signos ya no pasan solos a la línea siguiente',
     robust1008:
       'Dividendos de adquisición: si los ingresos del día anterior aún no están contabilizados, primero se contabilizan y luego se pagan, y un pago fallido se reintenta 10 minutos después (antes los dividendos de ese día se perdían); al abrir una página nueva sin conexión ahora se avisa en vez de no hacer nada; el reloj de arriba se vuelve a sincronizar con el servidor al volver a la app; al cerrar sesión o cambiar de cuenta, los indicadores de correo y de solicitudes de amistad ya no muestran los números de la cuenta anterior',
     ux1008:
@@ -51,7 +53,7 @@ const site: Messages['site'] = {
     retire1007:
       'Se ha retirado un lote de objetos sin uso: ya no aparecen en la tienda, el mercado negro, la oferta del día ni en ninguna recompensa. Los que ya tienes se siguen mostrando y se pueden usar o vender',
     cluster1007:
-      'Cambios en el guardián del templo: el «Misil rápido» recupera su nombre original, «Misil de racimo», y hace 3200 por disparo en vez de 2000 (algo menos que 36 misiles estándar); el misil estándar baja a 2400 monedas; la recompensa por derrotar al guardián crece con su vida, así que con más estrellas da más ingredientes y más probabilidad de ingredientes misteriosos (a veces más de uno). El valor de prueba ahora llega como mucho al 30 % en vez del 50 % (lo que pase de ahí cuenta como 30 %), y los duelos de la torre y entre amigos ya no cuentan el valor de prueba',
+      'Cambios en el guardián del templo: el «Misil rápido» recupera su nombre original, «Misil de racimo», y hace 3200 por disparo en vez de 2000 (algo menos que 36 misiles estándar); el misil estándar baja a 2400 monedas; la recompensa por derrotar al guardián crece con su vida, así que con más estrellas da más ingredientes y más probabilidad de ingredientes misteriosos (a veces más de uno). El valor de prueba ahora llega como mucho al 30\u00a0% en vez del 50\u00a0% (lo que pase de ahí cuenta como 30\u00a0%), y los duelos de la torre y entre amigos ya no cuentan el valor de prueba',
     ui1007c:
       'Pruebas del templo: el ingrediente principal y el secundario son ahora dos casillas sobre una lista de ingredientes agrupada por nivel, con búsqueda; los niveles por debajo del plato empiezan plegados. Vales de ingredientes de Hermano 13: los niveles son botones que muestran cuántos vales tienes, primero salen los ingredientes que le faltan a tu calle y los que no tienes, con cuántos tienes y cuántos faltan, y se elige con +',
     batch1007b:
@@ -89,13 +91,13 @@ const site: Messages['site'] = {
     perf1006:
       'La web descarga unos 140 KB menos la primera vez (la fuente de iconos solo incluye los que usamos), y el Mercado, el Bar, el Ichiban Kuji, el Templo y la Plaza abren más rápido',
     backlog7:
-      'El nombre del restaurante de Don Krab y su mensaje de bienvenida ahora aparecen en tu idioma; los porcentajes siguen el formato de tu idioma (coma decimal y espacio antes de %) y el desglose de la probabilidad de mejora ya no va pegado al número; en la interfaz francesa, «nombre × cantidad» ya no se parte en dos líneas en pantallas estrechas; si tu acceso a la Bolsa está congelado, la Bolsa y las predicciones de la actividad de hoy lo indican; la lista de recetas de la wiki muestra como máximo 1000 y luego sugiere acotar con la búsqueda o la calle, y una calle inexistente en la dirección muestra todas las recetas',
+      'El nombre del restaurante de Don Krab y su mensaje de bienvenida ahora aparecen en tu idioma; los porcentajes siguen el formato de tu idioma (coma decimal y espacio antes de\u00a0%) y el desglose de la probabilidad de mejora ya no va pegado al número; en la interfaz francesa, «nombre × cantidad» ya no se parte en dos líneas en pantallas estrechas; si tu acceso a la Bolsa está congelado, la Bolsa y las predicciones de la actividad de hoy lo indican; la lista de recetas de la wiki muestra como máximo 1000 y luego sugiere acotar con la búsqueda o la calle, y una calle inexistente en la dirección muestra todas las recetas',
     backlog6:
       'Las reglas del duelo indican cuántos jueces usa realmente este servidor; el utensilio que suelta un anciano sale en su propia línea en la tarjeta de resultado y aparece en las noticias; el canje de trozos en los platos estrella permite cambiar varios a la vez; el «Cómo conseguirlo» de los objetos de tasación incluye los golpes críticos al guardián del Templo; las páginas de objetos de la wiki muestran también la Oferta del día, el mercado negro, los premios aleatorios y las mejoras de gemas como fuentes',
     visual1006:
       'Ajustes de diseño en móvil: la tabla de atributos del detalle de utensilios ahora tiene una fila por atributo; los motivos de bloqueo en la actividad de hoy van en su propia línea; el desplegable de canje de trozos en los platos estrella ya no se sale de la pantalla y muestra «Elige un plato»; la lista de bonificaciones y las filas de fragmentos pasan a otra línea si no caben; la tarjeta de resultado del duelo muestra el nombre traducido del anciano y las puntuaciones con la coma decimal',
     stealForget1006:
-      'Fallar al espiar una clase castiga menos: antes olvidabas por completo (nivel de la clase × 3 + 1) recetas al azar; ahora (nivel de la clase × 2 + 1) recetas al azar bajan 1 nivel de calidad y solo se olvidan las de calidad Común; en clases de nivel 4 o más, la probabilidad de olvidar además un plato estrella de nivel inferior baja de nivel × 5 % a nivel × 2 %',
+      'Fallar al espiar una clase castiga menos: antes olvidabas por completo (nivel de la clase × 3 + 1) recetas al azar; ahora (nivel de la clase × 2 + 1) recetas al azar bajan 1 nivel de calidad y solo se olvidan las de calidad Común; en clases de nivel 4 o más, la probabilidad de olvidar además un plato estrella de nivel inferior baja de nivel × 5\u00a0% a nivel × 2\u00a0%',
     frTimes1006:
       'En la interfaz en francés, las cantidades de objetos siguen ahora la tipografía francesa, con espacios alrededor del × (p. ej. «Riz × 3»)',
     web1006:
@@ -103,9 +105,9 @@ const site: Messages['site'] = {
     checks1006:
       'En la actividad de hoy, el mercado y las predicciones de eventos indican si aún faltan días desde el registro o verificar el correo, «Reclamar premios de eventos por tiempo limitado» aparece como no disponible si no hay ningún evento en curso y los repartos muestran las estrellas que exige este servidor. Las piedras de rango 6 azul y verde cuentan ahora como rango 6 (antes costaban energía y la retirada como rango 5)',
     luckGem1006:
-      'Nueva gema, la Piedra del destino: engástala para ganar suerte (rangos 1 a 6: +1, 2, 4, 8, 16, 24). El rango 1 se vende en la tienda de monedas, en la Oferta del día y en el mercado negro, también sale en premios aleatorios y sube de rango como las demás gemas. En el bar, la suerte en Piedra, papel o tijera ahora solo sube la probabilidad de ganar, y siempre queda al menos un 10 % de perder; antes, con mucha suerte, ya no se podía perder',
+      'Nueva gema, la Piedra del destino: engástala para ganar suerte (rangos 1 a 6: +1, 2, 4, 8, 16, 24). El rango 1 se vende en la tienda de monedas, en la Oferta del día y en el mercado negro, también sale en premios aleatorios y sube de rango como las demás gemas. En el bar, la suerte en Piedra, papel o tijera ahora solo sube la probabilidad de ganar, y siempre queda al menos un 10\u00a0% de perder; antes, con mucha suerte, ya no se podía perder',
     mcLearn1006:
-      'Aprender platos estrella es más fácil: descompón los fragmentos que no necesites en trozos, y 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel. El Sello Delicia ahora acierta un 40 % en vez de un 28 %, y el Sello de jade del Dios de la Cocina está en la tienda (300 000). La tasación del Templo indica cómo conseguir cada objeto, y la guía tiene una sección «Cómo aprender platos estrella»',
+      'Aprender platos estrella es más fácil: descompón los fragmentos que no necesites en trozos, y 3 trozos de un nivel te dan 1 fragmento de cualquier plato de ese nivel. El Sello Delicia ahora acierta un 40\u00a0% en vez de un 28\u00a0%, y el Sello de jade del Dios de la Cocina está en la tienda (300 000). La tasación del Templo indica cómo conseguir cada objeto, y la guía tiene una sección «Cómo aprender platos estrella»',
     power1006:
       'La página de equipo ahora muestra tu poder de ataque y de defensa en los duelos (con todos los extras de Suerte y los del conjunto), y la Torre de chefs dice “Mi poder de ataque”, así que ambas páginas coinciden',
     mcTabs1006:
@@ -113,7 +115,7 @@ const site: Messages['site'] = {
     gearIncome1006:
       'El equipo puesto (con gemas) ahora suma monedas finales, EXP final y más probabilidad de platos estrella de oro; más atributos dan más (la Creatividad cuenta más, la Suerte no cuenta) y la página de equipo muestra cuánto. Los platos estrella se venden a los clientes por más según su nivel (nivel 3 ×2,5, nivel 4 ×3,2), porque antes los de nivel 2 a 5 no recuperaban el coste de los ingredientes. Los duelos de cocina siguen usando el valor original por ración',
     elders1006:
-      'Los guardianes de la Torre de chefs ahora son Ancianos: cada piso lleva su propio equipo completo (+3 a +6) y los puntos de atributo de su nivel, que puedes desplegar para verlos. Una victoria real puede soltar una pieza del conjunto del Anciano (20 % en los pisos 1–3, menos más arriba). Los pisos 1–2 son algo más difíciles que antes y los pisos 6–10 bastante más fáciles. El extra aleatorio de la Creatividad en los duelos de cocina baja un poco y ya no vale más que otros atributos',
+      'Los guardianes de la Torre de chefs ahora son Ancianos: cada piso lleva su propio equipo completo (+3 a +6) y los puntos de atributo de su nivel, que puedes desplegar para verlos. Una victoria real puede soltar una pieza del conjunto del Anciano (20\u00a0% en los pisos 1–3, menos más arriba). Los pisos 1–2 son algo más difíciles que antes y los pisos 6–10 bastante más fáciles. El extra aleatorio de la Creatividad en los duelos de cocina baja un poco y ya no vale más que otros atributos',
     duel1006:
       'Los duelos de cocina (Torre de chefs, Clasificación de chefs y duelos con amigos) ahora los deciden jueces: en cada duelo se eligen al azar 5 de 10 jueces, cada uno se fija en algunas de las cinco puntuaciones y gana el primero que llega a 3 votos. Tener mejores atributos es ahora mucho más fiable; la Creatividad y la Suerte dan un extra aleatorio. Mira «Reglas del duelo de cocina» en la página de la Torre de chefs',
     barPrize1006:
@@ -127,7 +129,7 @@ const site: Messages['site'] = {
     batch9:
       'Cada reposición diaria del mercado añade ahora un ingrediente que necesitan las recetas de la Calle de los novatos (Trece especias, Tofu, Azúcar cande…), así que los nuevos jugadores ya no se atascan durante días. La página de recetas, la de mudanza y la wiki del juego muestran si una calle es de monedas, equilibrada o de EXP, y por qué tiene su bonificación',
     streets1005:
-      'Bonificaciones de las calles reequilibradas: las calles que dan más monedas dan menos EXP y al revés, y los ingresos totales de las calles están mucho más igualados. También se aplica a los restaurantes que ya están en una calle: las monedas bajan más en la Calle Guangdong y las Calles Fusión I y II, y la EXP sube más en las Calles Shandong, Grecia y Chop Suey (mira la bonificación de la calle en la página de mudanza). Por debajo del nivel 40, la EXP de cada ronda recibe un extra, +200% en el nivel 1 y menos en cada nivel, así que los nuevos jugadores suben más rápido',
+      'Bonificaciones de las calles reequilibradas: las calles que dan más monedas dan menos EXP y al revés, y los ingresos totales de las calles están mucho más igualados. También se aplica a los restaurantes que ya están en una calle: las monedas bajan más en la Calle Guangdong y las Calles Fusión I y II, y la EXP sube más en las Calles Shandong, Grecia y Chop Suey (mira la bonificación de la calle en la página de mudanza). Por debajo del nivel 40, la EXP de cada ronda recibe un extra, +200\u00a0% en el nivel 1 y menos en cada nivel, así que los nuevos jugadores suben más rápido',
     hostLimit1005:
       'Cada jugador solo puede revolver unos pocos huecos de la despensa por restaurante al día, y eliminar unas pocas cucarachas al día en el restaurante de un mismo amigo (sin límite en el tuyo ni en el de Don Krab). La despensa y el restaurante del amigo muestran cuántas veces te quedan hoy',
     browse1005:
@@ -157,7 +159,7 @@ const site: Messages['site'] = {
     site: 'Se añaden un registro de cambios y una página de enlaces; la barra superior muestra la hora',
     oilToast:
       'Cada mesa con cliente gasta al menos 1 de aceite; los avisos salen arriba y ya no tapan los botones',
-    fund: 'Nuevo Fondo de Desarrollo en la Plaza: deposita monedas 7 días y recupera el 90 % más una medalla de EXP y un título temporal',
+    fund: 'Nuevo Fondo de Desarrollo en la Plaza: deposita monedas 7 días y recupera el 90\u00a0% más una medalla de EXP y un título temporal',
     kujiDeluxe:
       'El Ichiban Kuji suma un sorteo de lujo; el premio A y el último dan el título limitado del mes',
     titleShop: 'Nueva tienda de títulos en Apariencia: títulos temporales a cambio de monedas',

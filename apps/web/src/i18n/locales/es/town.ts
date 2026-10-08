@@ -54,7 +54,7 @@ const town: Messages['town'] = {
   blessPick: (lv, n) => `Ingrediente de nivel ${lv} a elegir ×${n}`,
   blessCoin: (n) => `${n} ${plEs(n, 'moneda', 'monedas')}`,
   blessDiamond: (n) => `${n} ${plEs(n, 'diamante', 'diamantes')}`,
-  lampCoin: ' (+10 % con la lámpara mágica)',
+  lampCoin: ' (+10\u00a0% con la lámpara mágica)',
   lampOne: ' (+1 con la lámpara mágica)',
   feasted: 'Ya lo reclamaste hoy',
   feastNeedAct: (have, need) => `Puntos de actividad de hoy: ${have}. Necesitas ${need}`,

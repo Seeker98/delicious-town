@@ -8,7 +8,7 @@ const activity: Messages['activity'] = {
   claimed: 'Récupéré',
   claimedAll: 'Tout récupéré',
   unlockConfirm:
-    'Débloquer les récompenses premium ? Les paliers premium déjà atteints deviennent aussi récupérables.',
+    'Débloquer les récompenses premium\u202f? Les paliers premium déjà atteints deviennent aussi récupérables.',
   unlocked: 'Débloqué',
   exchanged: 'Échangé',
   exchangePeriod: (left) => `Période d'échange, ${left}`,
@@ -119,7 +119,7 @@ const activity: Messages['activity'] = {
   pass: {
     points: (n) => `Points ${n}`,
     next: (n) => `Encore ${n} pour le palier suivant`,
-    today: "Aujourd'hui : ",
+    today: "Aujourd'hui\u202f: ",
     pointsCol: 'Points',
     free: 'Gratuit',
     premium: 'Premium',
@@ -128,7 +128,7 @@ const activity: Messages['activity'] = {
   exchange: {
     rule: "La monnaie d'événement ne va pas dans l'entrepôt et ne s'utilise que dans cet événement. Elle expire après la période d'échange.",
     drop: (action, chance, currency, num, today, cap) =>
-      `${action} : ${chance} de chances d'obtenir ${currency}\u202f×\u202f${num} (aujourd'hui ${today}/${cap})`,
+      `${action}\u202f: ${chance} de chances d'obtenir ${currency}\u202f×\u202f${num} (aujourd'hui ${today}/${cap})`,
     btn: 'Échanger',
   },
   coop: {
@@ -143,7 +143,7 @@ const activity: Messages['activity'] = {
     board: 'Classement des contributions',
     boardSettled: (mailed) => `Classement clôturé${mailed ? ', récompenses envoyées par courrier' : ''}`,
     boardSettling: 'Classement en cours de clôture',
-    rankLine: (rank, award) => `${rank} : ${award}`,
+    rankLine: (rank, award) => `${rank}\u202f: ${award}`,
   },
 };
 export default activity;
