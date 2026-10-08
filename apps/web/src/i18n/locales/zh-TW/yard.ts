@@ -101,7 +101,7 @@ export default {
   },
   formula: {
     loadFailed: '讀取配方失敗',
-    noScroll: '沒有玄奧配方：每次鑑定要 1 個玄奧配方和 1 個鑑定道具 (廚神玉璽)',
+    noScroll: '沒有玄奧配方: 每次鑑定要 1 個玄奧配方和 1 個鑑定道具 (廚神玉璽)',
     noTool: '沒有這個鑑定道具',
     nameFallback: (id: number) => `配方${id}`,
     learned: '已學會',
@@ -142,7 +142,7 @@ export default {
       haveAdd: number;
       res: string;
     }) =>
-      `${p.name}：${p.main} (菜籃 ${p.haveMain}) + ${p.sub} (櫥櫃 ${p.haveSub}) + ${p.add} (櫥櫃 ${p.haveAdd}) → ${p.res}`,
+      `${p.name}: ${p.main} (菜籃 ${p.haveMain}) + ${p.sub} (櫥櫃 ${p.haveSub}) + ${p.add} (櫥櫃 ${p.haveAdd}) → ${p.res}`,
     composed: '合成成功',
     composeFailed: '合成失敗',
     composeBtn: (n: number, strength: number) => `合成 ×${n} (體力 ${strength})`,

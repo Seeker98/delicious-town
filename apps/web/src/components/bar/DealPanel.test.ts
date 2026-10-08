@@ -96,7 +96,7 @@ describe('DealPanel', () => {
     vi.mocked(endpoints.barDealAnswer).mockResolvedValue(round({ mine: 0, round: 1, toOpen: 2 }));
     const w = mount(DealPanel, { props: { data: withRound(offered) } });
     expect(w.get('[data-testid="deal-box-3"]').attributes('disabled')).toBeDefined();
-    expect(w.get('[data-testid="deal-offer"]').text()).toContain('银行家出价：16,900 银币');
+    expect(w.get('[data-testid="deal-offer"]').text()).toContain('银行家出价: 16,900 银币');
     await w.get('[data-testid="deal-no"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDealAnswer).toHaveBeenCalledWith(false);
@@ -208,8 +208,8 @@ describe('DealPanel', () => {
     });
     const rows = w.findAll('[data-testid^="deal-round-"]');
     expect(rows).toHaveLength(2);
-    expect(rows[0]!.text()).toBe('第 1 轮：5 号 食材101×2、8 号 食材101×2、3 号 食材101×2');
-    expect(rows[1]!.text()).toBe('第 2 轮：10 号 食材101×2');
+    expect(rows[0]!.text()).toBe('第 1 轮: 5 号 食材101×2、8 号 食材101×2、3 号 食材101×2');
+    expect(rows[1]!.text()).toBe('第 2 轮: 10 号 食材101×2');
   });
 
   it('结束后先写结果，开箱记录排在结果后面（终审）', () => {

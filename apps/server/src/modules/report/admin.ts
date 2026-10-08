@@ -225,7 +225,7 @@ export function createAdminReports(game: Game) {
           restId: c.target_rest_id,
           minLevel: null,
           title: '违规处理通知',
-          body: `你的${typeName}${what}。${ban}\n说明：${b.note}`,
+          body: `你的${typeName}${what}。${ban}\n说明: ${b.note}`,
           tpl: {
             key: 'report.penalty',
             params: { target: c.target_type, action, banDays: b.banDays ?? null, note: b.note },

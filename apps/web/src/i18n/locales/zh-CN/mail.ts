@@ -14,12 +14,12 @@ export default {
   needLevel: (n: number) => `· 需 ${n} 级`,
   claimed: '· 已领取',
   broken: '· 附件已失效，请联系运营',
-  items: (text: string) => `附件：${text}`,
+  items: (text: string) => `附件: ${text}`,
   redeem: {
     placeholder: '输入兑换码',
     label: '兑换码',
     btn: '兑换',
-    done: (text: string) => `兑换成功：${text}`,
+    done: (text: string) => `兑换成功: ${text}`,
     failed: '兑换失败',
   },
 };

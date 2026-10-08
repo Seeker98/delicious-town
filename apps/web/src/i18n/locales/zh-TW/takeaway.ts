@@ -48,7 +48,7 @@ export default {
   deliveries: {
     claimFailed: '領取失敗',
     noDiamond: (n: number) => `鑽石不夠 (要 ${n})`,
-    failedReason: (reason: string) => `配送失敗：${reason}`,
+    failedReason: (reason: string) => `配送失敗: ${reason}`,
     forced: '配送成功 (邊牧幫了忙)',
     drone: '無人機送到了',
     success: '配送成功',
@@ -81,7 +81,7 @@ export default {
     hired: (name: string) => `僱了${name}當騎手`,
     hireFailed: '僱傭失敗',
     dismissConfirm: (name: string, coin: string, exp: string) =>
-      `解僱${name}：花 ${coin} 銀幣，得到 ${exp} 經驗，確定嗎？`,
+      `解僱${name}: 花 ${coin} 銀幣，得到 ${exp} 經驗，確定嗎？`,
     dismissFailed: '解僱失敗',
     count: (n: number, cap: number) => `騎手 ${n}/${cap} (自己這個騎手升級後上限會增加)`,
     self: ' (自己)',

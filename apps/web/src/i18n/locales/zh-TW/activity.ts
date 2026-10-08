@@ -122,7 +122,7 @@ export default {
   pass: {
     points: (n: number) => `積分 ${n}`,
     next: (n: number) => `下一檔還差 ${n}`,
-    today: '今天：',
+    today: '今天: ',
     pointsCol: '積分',
     free: '普通',
     premium: '進階',
@@ -146,6 +146,6 @@ export default {
     board: '貢獻榜',
     boardSettled: (mailed: boolean) => `貢獻榜已結算${mailed ? '，獎勵已發郵件' : ''}`,
     boardSettling: '貢獻榜結算中',
-    rankLine: (rank: string, award: string) => `${rank}：${award}`,
+    rankLine: (rank: string, award: string) => `${rank}: ${award}`,
   },
 };

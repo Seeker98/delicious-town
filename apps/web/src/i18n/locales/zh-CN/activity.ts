@@ -121,7 +121,7 @@ export default {
   pass: {
     points: (n: number) => `积分 ${n}`,
     next: (n: number) => `下一档还差 ${n}`,
-    today: '今天：',
+    today: '今天: ',
     pointsCol: '积分',
     free: '普通',
     premium: '进阶',
@@ -145,6 +145,6 @@ export default {
     board: '贡献榜',
     boardSettled: (mailed: boolean) => `贡献榜已结算${mailed ? '，奖励已发邮件' : ''}`,
     boardSettling: '贡献榜结算中',
-    rankLine: (rank: string, award: string) => `${rank}：${award}`,
+    rankLine: (rank: string, award: string) => `${rank}: ${award}`,
   },
 };

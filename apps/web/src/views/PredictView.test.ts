@@ -121,8 +121,8 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(help).toContain('手续费 2%');
     expect(help).toContain('作废');
     const hold = w.get('[data-testid="pd-hold"]').text();
-    expect(hold).toContain('结果为是：得 4,000 银币，盈亏 +1,500');
-    expect(hold).toContain('结果为否：得 1,000 银币，盈亏 -1,500');
+    expect(hold).toContain('结果为是: 得 4,000 银币，盈亏 +1,500');
+    expect(hold).toContain('结果为否: 得 1,000 银币，盈亏 -1,500');
     expect(hold).toContain('净投入 2,500');
   });
 
@@ -177,7 +177,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     expect(r).toContain('卖出共得 1,050');
     expect(r).toContain('手续费合计 80');
     expect(r).toContain('净投入 2,650');
-    expect(r).toContain('结果为是：是 3 份 × 1,000 = 3,000');
+    expect(r).toContain('结果为是: 是 3 份 × 1,000 = 3,000');
     expect(r).toContain('本局盈亏 +350');
     const mine = w.get('[data-testid="pd-mine"]').text();
     expect(mine).toContain('卖出否 2 份');
@@ -261,7 +261,7 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     await w.get('[data-testid="pd-ended-2"]').trigger('click');
     await flushPromises();
     const r = w.get('[data-testid="pd-result"]').text();
-    expect(r).toContain('已作废：退回净投入的 85%，共 1,700');
+    expect(r).toContain('已作废: 退回净投入的 85%，共 1,700');
     expect(r).toContain('本局盈亏 -300');
   });
 
@@ -297,10 +297,10 @@ describe('PredictView（238-1 设计 §7.2）', () => {
     const w = mount(PredictView);
     await flushPromises();
     expect(w.get('[data-testid="pd-auto-1"]').text()).toContain('系统出题');
-    expect(w.get('[data-testid="pd-ended-note-2"]').text()).toContain('判定依据：15 点自动轮换的天气是晴');
+    expect(w.get('[data-testid="pd-ended-note-2"]').text()).toContain('判定依据: 15 点自动轮换的天气是晴');
     await w.get('[data-testid="pd-ended-2"]').trigger('click');
     await flushPromises();
-    expect(w.get('[data-testid="pd-note"]').text()).toContain('判定依据：15 点自动轮换的天气是晴（晴类）');
+    expect(w.get('[data-testid="pd-note"]').text()).toContain('判定依据: 15 点自动轮换的天气是晴（晴类）');
   });
 
   it('提交：调用接口、提示、刷新', async () => {

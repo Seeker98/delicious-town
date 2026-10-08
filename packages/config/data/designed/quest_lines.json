@@ -1870,7 +1870,7 @@
      "id": 3287,
      "order": 7,
      "needStar": 0,
-     "name": "思乡之情：学会杂碎街全部菜",
+     "name": "思乡之情: 学会杂碎街全部菜",
      "cond": {
       "kind": "state",
       "key": "cookbooks.street.29",

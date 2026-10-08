@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    tasksSplit1008:
+      "Le pointage et l'activité du jour ont désormais leur propre page, ouverte depuis les points d'activité de l'accueil\u202f; la page Quêtes a trois onglets (Principale, Hebdo, Secondaires), avec une icône cadeau sur ceux qui ont des récompenses à récupérer, et s'ouvre depuis le nouveau lien Quêtes sur la ligne de la quête principale de l'accueil\u202f; l'entrée Quêtes a été retirée du menu Plus",
     cookbookProgress1008:
       'La page Recettes propose une Vue d’ensemble de la progression\u202f: la progression totale par qualité, puis, rue par rue, le nombre de recettes de chaque qualité ou mieux, avec votre rue actuelle mise en évidence et les cases complètes en vert',
     gameTime1008:

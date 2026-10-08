@@ -100,7 +100,7 @@ export default {
   },
   formula: {
     loadFailed: '读取配方失败',
-    noScroll: '没有玄奥配方：每次鉴定要 1 个玄奥配方和 1 个鉴定道具 (厨神玉玺)',
+    noScroll: '没有玄奥配方: 每次鉴定要 1 个玄奥配方和 1 个鉴定道具 (厨神玉玺)',
     noTool: '没有这个鉴定道具',
     nameFallback: (id: number) => `配方${id}`,
     learned: '已学会',
@@ -141,7 +141,7 @@ export default {
       haveAdd: number;
       res: string;
     }) =>
-      `${p.name}：${p.main} (菜篮 ${p.haveMain}) + ${p.sub} (橱柜 ${p.haveSub}) + ${p.add} (橱柜 ${p.haveAdd}) → ${p.res}`,
+      `${p.name}: ${p.main} (菜篮 ${p.haveMain}) + ${p.sub} (橱柜 ${p.haveSub}) + ${p.add} (橱柜 ${p.haveAdd}) → ${p.res}`,
     composed: '合成成功',
     composeFailed: '合成失败',
     composeBtn: (n: number, strength: number) => `合成 ×${n} (体力 ${strength})`,

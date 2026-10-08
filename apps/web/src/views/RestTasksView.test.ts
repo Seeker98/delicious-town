@@ -340,7 +340,7 @@ describe('RestTasksView 四块和每周任务（问题记录 318 PR 2）', () =>
     const full = w.get('[data-testid="claim-weekly-full"]');
     expect(full.classes()).toContain('btn-primary');
     expect(full.text()).toBe('领取');
-    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励：');
+    expect(w.get('[data-testid="card-weekly"]').text()).toContain('全完成奖励: ');
     await full.trigger('click');
     await flushPromises();
     expect(endpoints.claimTask).toHaveBeenCalledWith(4019);

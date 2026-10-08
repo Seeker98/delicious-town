@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    tasksSplit1008:
+      'Check-in and daily activity now have their own page, opened from the activity points on the home page; the Quests page has three tabs (Main, Weekly, Side), with a gift icon on tabs that have rewards to claim, and is opened from the new Quests link on the main-quest row of the home page; the Quests entry was removed from the More menu',
     cookbookProgress1008:
       'The Recipes page has a new Progress overview: total progress by grade, plus how many recipes each street has at each grade or better, with your current street highlighted and completed cells in green',
     gameTime1008:

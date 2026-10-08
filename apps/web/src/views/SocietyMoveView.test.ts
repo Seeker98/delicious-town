@@ -31,7 +31,7 @@ describe('SocietyMoveView', () => {
     await flushPromises();
     expect(w.find('[data-testid="move-bonus"]').exists()).toBe(false);
     await w.find('select').setValue(24);
-    expect(w.get('[data-testid="move-bonus"]').text()).toBe('街道加成：探险时获得神秘食材概率+2%,幸运值+25');
+    expect(w.get('[data-testid="move-bonus"]').text()).toBe('街道加成: 探险时获得神秘食材概率+2%,幸运值+25');
     // 街道类型和为什么是这个加成（问题记录 380、378 方案 C）
     expect(w.get('[data-testid="move-focus"]').text()).toBe('均衡街');
     expect(w.get('[data-testid="move-theme"]').text()).toBe('香料集市与沙漠商队');

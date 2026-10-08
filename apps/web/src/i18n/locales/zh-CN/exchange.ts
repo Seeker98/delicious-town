@@ -30,7 +30,7 @@ export default {
   withdrawn: '已取出',
   withdrawFailed: '取出失败',
   loadFailed: '读取交易所失败',
-  frozenNotice: (reason: string) => `你的交易所已被冻结：${reason}。有疑问请联系管理员。`,
+  frozenNotice: (reason: string) => `你的交易所已被冻结: ${reason}。有疑问请联系管理员。`,
   intro: '玩家之间买卖稀有食材。挂单价要在当天参考价的一半到两倍之间；卖方成交时扣手续费。',
   sysHelp: '系统报价怎么算',
   sysHelpItems: [
@@ -70,8 +70,8 @@ export default {
   placeSell: '挂卖单',
   account: '交易所账户',
   withdraw: '全部取出',
-  holdsReady: (text: string) => `冷静期已过，可以取出：${text}`,
-  holdsPending: (text: string, left: string) => `冻结中 (可疑成交的冷静期)：${text}，${left}，到时可取`,
+  holdsReady: (text: string) => `冷静期已过，可以取出: ${text}`,
+  holdsPending: (text: string, left: string) => `冻结中 (可疑成交的冷静期): ${text}，${left}，到时可取`,
   myOrders: '我的挂单',
   noOrders: '没有挂单',
   orderLine: (name: string, price: string, qty: number, filled: number) =>

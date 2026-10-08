@@ -30,7 +30,7 @@ describe('SlotPanel', () => {
     await flushPromises();
     expect(endpoints.barSlot).toHaveBeenCalledWith(1);
     const text = w.find('[data-testid="slot-result"]').text();
-    expect(text).toContain('第 1 次：食材101 / 空 / 道具180');
+    expect(text).toContain('第 1 次: 食材101 / 空 / 道具180');
     expect(text).toContain('得到 食材101×1、道具180×1');
     expect(w.emitted('reload')).toHaveLength(1);
   });

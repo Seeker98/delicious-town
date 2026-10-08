@@ -82,7 +82,7 @@ export const market: AutoKind = {
     return rare.length > 0
       ? {
           outcome: true,
-          note: `${when}日常货架上了 ${level} 级稀有食材：${rare.map((f) => f.name).join('、')}`,
+          note: `${when}日常货架上了 ${level} 级稀有食材: ${rare.map((f) => f.name).join('、')}`,
           noteParams,
         }
       : { outcome: false, note: `${when}日常货架没有 ${level} 级稀有食材`, noteParams };

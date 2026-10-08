@@ -33,7 +33,7 @@ describe('NewsPanel', () => {
     await flushPromises();
     const rows = w.findAll('[data-testid="news-row"]');
     expect(rows).toHaveLength(2);
-    expect(rows[0]!.text()).toContain('小王的店：你好');
+    expect(rows[0]!.text()).toContain('小王的店: 你好');
     expect(rows[0]!.classes()).toContain('text-primary');
     await w.find('[data-testid="news-more"]').trigger('click');
     await flushPromises();
@@ -109,7 +109,7 @@ describe('NewsPanel', () => {
     });
     const w = mount(NewsPanel, { props: { data: townData() } });
     await flushPromises();
-    expect(w.find('[data-testid="news-row"]').text()).toContain('【广播】小王的店：你好');
+    expect(w.find('[data-testid="news-row"]').text()).toContain('【广播】小王的店: 你好');
   });
 
   it('加载更多连点两次只请求一次（终审 I6）', async () => {

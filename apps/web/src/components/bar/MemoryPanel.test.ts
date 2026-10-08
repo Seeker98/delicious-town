@@ -100,7 +100,7 @@ describe('MemoryPanel', () => {
     await advance(2200);
     for (const i of [1, 1, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
     await flushPromises();
-    expect(w.find('[data-testid="mem-result"]').text()).toBe('记错了。正确的配方是：伏特加、柠檬、伏特加');
+    expect(w.find('[data-testid="mem-result"]').text()).toBe('记错了。正确的配方是: 伏特加、柠檬、伏特加');
 
     const passed = barData();
     passed.memory.round = { level: 1, passed: true, seq: null, leftMs: null };
@@ -143,7 +143,7 @@ describe('MemoryPanel', () => {
     for (const i of [1, 3, 1]) await w.find(`[data-testid="mix-${i}"]`).trigger('click');
     await flushPromises();
     expect(w.find('[data-testid="mem-result"]').text()).toBe(
-      '超时了，要在 7.5 秒内答完。配方是：伏特加、柠檬、伏特加',
+      '超时了，要在 7.5 秒内答完。配方是: 伏特加、柠檬、伏特加',
     );
   });
 

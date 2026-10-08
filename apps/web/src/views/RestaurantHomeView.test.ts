@@ -395,7 +395,7 @@ describe('RestaurantHomeView', () => {
     const main = w.get('[data-testid="main-task"]');
     expect(main.find('.dt-tag').exists()).toBe(false);
     expect(main.find('i.bi-flag').exists()).toBe(true);
-    expect(main.text()).toContain('主线：填一次油');
+    expect(main.text()).toContain('主线: 填一次油');
     // 还没完成时右边是任务入口（问题记录：“更多”里的任务入口去掉，从首页主线那一行进）
     expect(main.get('[data-testid="home-tasks-link"]').attributes('href')).toBe('/rest/tasks');
     expect(w.get('[data-testid="dine-card"]').find('i.bi-cup-hot').exists()).toBe(true);
@@ -607,7 +607,7 @@ describe('RestaurantHomeView', () => {
       },
     });
     const w = await mountView();
-    expect(w.find('[data-testid="home-broadcast"]').text()).toContain('小王的店：大家好');
+    expect(w.find('[data-testid="home-broadcast"]').text()).toContain('小王的店: 大家好');
     expect(w.findAll('[data-testid="home-news"]').map((x) => x.text())).toEqual([
       expect.stringContaining('小王的店升到了 2 星'),
     ]);
@@ -631,7 +631,7 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     expect(w.findAll('[data-testid="effect-group"]')[0]!.text()).toBe('今日星愿');
-    expect(w.findAll('[data-testid="effect-row"]')[0]!.text()).toContain('今日星愿：招财进宝');
+    expect(w.findAll('[data-testid="effect-row"]')[0]!.text()).toContain('今日星愿: 招财进宝');
   });
 
   it('主线任务的领奖按钮和文字垂直居中，不再用浮动（问题记录 118）', async () => {
@@ -713,7 +713,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.tasks).mockResolvedValue({ ...all, chapter: { ...all.chapter!, claimable: true } });
     let w = await mountView();
     const row = w.get('[data-testid="main-task"]');
-    expect(row.text()).toContain('主线：第 1 章 开张大吉 章末奖励');
+    expect(row.text()).toContain('主线: 第 1 章 开张大吉 章末奖励');
     await row.get('button').trigger('click');
     await flushPromises();
     expect(endpoints.claimChapter).toHaveBeenCalledWith(1);
@@ -722,7 +722,7 @@ describe('RestaurantHomeView', () => {
     );
     w = await mountView();
     // 冒号后不多空格（终审小项）
-    expect(w.get('[data-testid="main-task"]').text()).toContain('主线：第 2 章 小店经营');
+    expect(w.get('[data-testid="main-task"]').text()).toContain('主线: 第 2 章 小店经营');
     expect(w.get('[data-testid="main-task"]').text()).toContain('🔒 5 级解锁');
     expect(w.get('[data-testid="main-task"]').find('button').exists()).toBe(false);
   });
@@ -885,14 +885,14 @@ describe('RestaurantHomeView', () => {
     expect(cb.text()).toContain('食谱 12/3,810');
     expect(cb.attributes('href')).toBe('/cookbooks');
     const sp = books.get('[data-testid="home-special"]');
-    expect(sp.text()).toBe('特色菜：无');
+    expect(sp.text()).toBe('特色菜: 无');
     expect(sp.attributes('href')).toBe('/mc');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, special: { id: 3, level: 5 } });
     const w2 = await mountView();
     const sp2 = w2.get('[data-testid="home-special"]');
-    expect(sp2.text()).toMatch(/^特色菜：.+ \(5 级\)$/);
+    expect(sp2.text()).toMatch(/^特色菜: .+ \(5 级\)$/);
     // 放不下时只截菜名，几级不截（审查 I2）
-    expect(sp2.get('.text-truncate').text()).toMatch(/^特色菜：/);
+    expect(sp2.get('.text-truncate').text()).toMatch(/^特色菜: /);
     expect(sp2.get('.flex-shrink-0').text()).toBe('(5 级)');
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, disabledFeatures: ['mysterious'] });
     const w3 = await mountView();
@@ -907,7 +907,7 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="home-assets"]').exists()).toBe(false);
     vi.mocked(endpoints.overview).mockResolvedValue({ ...dto, assets: 195_002 });
     const row = (await mountView()).get('[data-testid="home-assets"]');
-    expect(row.text()).toContain('资产：195,002');
+    expect(row.text()).toContain('资产: 195,002');
     const link = row.get('a');
     expect(link.attributes('href')).toBe('/acquire');
     expect(link.classes()).toContain('dt-go');

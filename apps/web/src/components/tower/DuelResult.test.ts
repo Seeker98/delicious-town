@@ -20,7 +20,7 @@ describe('DuelResult', () => {
 
   it('试打没有声望；赛厨榜写新名次；输了', () => {
     const test = mount(DuelResult, { props: { result: duelResult({ test: true, renown: 0, awards: [] }) } });
-    expect(test.find('[data-testid="duel-headline"]').text()).toBe('试打：赢了 3:1');
+    expect(test.find('[data-testid="duel-headline"]').text()).toBe('试打: 赢了 3:1');
     expect(test.find('[data-testid="duel-awards"]').exists()).toBe(false);
     const rank = mount(DuelResult, { props: { result: duelResult({ renown: 2, rank: 1 }) } });
     expect(rank.find('[data-testid="duel-headline"]').text()).toBe('你赢了 3:1，声望 +2，你现在是第 1 名');
@@ -36,7 +36,7 @@ describe('DuelResult', () => {
     const rows = w.findAll('[data-testid="duel-judge"]');
     expect(rows).toHaveLength(4);
     // 老乔（原来的卡门）看色、香；戈登（原来的老穷头）看形、养
-    expect(rows[0]!.text()).toContain('【老乔 点评 我】：以[色]大获全胜，以[香]大获全胜，比分 39.8:16.1');
+    expect(rows[0]!.text()).toContain('【老乔 点评 我】: 以[色]大获全胜，以[香]大获全胜，比分 39.8:16.1');
     expect(rows[0]!.text()).toContain('投给你');
     expect(rows[1]!.text()).toContain('【戈登 点评 我】');
     expect(rows[1]!.text()).toContain('投给对方');
@@ -103,7 +103,7 @@ describe('DuelResult', () => {
     const w = mount(DuelResult, {
       props: { result: duelResult({ judges: [{ id: 'newbie' as never, me: 12, them: 10 }], votes: [1, 0] }) },
     });
-    expect(w.find('[data-testid="duel-judge"]').text()).toContain('【newbie 点评 我】：比分 12:10');
+    expect(w.find('[data-testid="duel-judge"]').text()).toContain('【newbie 点评 我】: 比分 12:10');
     expect(w.find('[data-testid="duel-judge"]').text()).not.toContain('undefined');
   });
 

@@ -20,7 +20,7 @@ describe('RedeemBox', () => {
     await w.find('[data-testid="redeem-go"]').trigger('click');
     await flushPromises();
     expect(endpoints.redeem).toHaveBeenCalledWith('kaifu');
-    expect(w.text()).toContain('兑换成功：银币 100');
+    expect(w.text()).toContain('兑换成功: 银币 100');
     expect((w.find('[data-testid="redeem-input"]').element as HTMLInputElement).value).toBe('');
     expect(w.emitted('redeemed')).toHaveLength(1);
     vi.mocked(endpoints.redeem).mockRejectedValue(new ApiError('INVALID_STATE', { reason: 'code_used' }));

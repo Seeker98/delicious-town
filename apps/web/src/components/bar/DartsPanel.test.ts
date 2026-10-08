@@ -48,7 +48,7 @@ describe('DartsPanel', () => {
     await w.find('[data-testid="darts-throw"]').trigger('click');
     await flushPromises();
     expect(endpoints.barDartsThrow).toHaveBeenCalledWith(225);
-    expect(w.find('[data-testid="darts-throws"]').text()).toContain('第 1 镖：0 分');
+    expect(w.find('[data-testid="darts-throws"]').text()).toContain('第 1 镖: 0 分');
     expect(w.find('[data-testid="darts-aim"]').exists()).toBe(true);
   });
 
@@ -103,7 +103,7 @@ describe('DartsPanel', () => {
     expect(w.find('.dt-board-r5').exists()).toBe(true);
     // 靶子有文字说明（PR28 遗留）
     expect(w.find('.dt-board').attributes('aria-label')).toBe(
-      '靶条：正中 50 分，向外依次 25、10、5 分，边缘 0 分',
+      '靶条: 正中 50 分，向外依次 25、10、5 分，边缘 0 分',
     );
     await w.find('[data-testid="darts-aim"]').trigger('click');
     await flushPromises();

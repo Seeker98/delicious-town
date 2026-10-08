@@ -40,9 +40,9 @@ describe('CupPanel', () => {
     );
     const w = mount(CupPanel, { props: { data: withRound(null) } });
     expect(w.text()).toContain('每局 1 张神秘礼券。一局最多 4 轮');
-    expect(w.get('[data-testid="cup-tier-0"]').text()).toBe('第 1 轮 (2 个杯子)：1 份奖励');
-    expect(w.get('[data-testid="cup-tier-2"]').text()).toBe('第 3 轮 (5 个杯子)：4 份奖励，上新闻');
-    expect(w.get('[data-testid="cup-tier-3"]').text()).toBe('第 4 轮 (7 个杯子)：8 份奖励，全服广播');
+    expect(w.get('[data-testid="cup-tier-0"]').text()).toBe('第 1 轮 (2 个杯子): 1 份奖励');
+    expect(w.get('[data-testid="cup-tier-2"]').text()).toBe('第 3 轮 (5 个杯子): 4 份奖励，上新闻');
+    expect(w.get('[data-testid="cup-tier-3"]').text()).toBe('第 4 轮 (7 个杯子): 8 份奖励，全服广播');
     expect(cupButtons(w)).toHaveLength(2);
     await w.get('[data-testid="cup-1"]').trigger('click');
     await flushPromises();
@@ -63,7 +63,7 @@ describe('CupPanel', () => {
       round({ round: 1, cups: 3, won: true, last: { pick: 2, ball: 2, win: true, lucky: true } }),
     );
     const w = mount(CupPanel, { props: { data: withRound(round({ round: 1, cups: 3 })) } });
-    expect(w.text()).toContain('第 2 轮：3 个杯子，选一个');
+    expect(w.text()).toContain('第 2 轮: 3 个杯子，选一个');
     await w.get('[data-testid="cup-2"]').trigger('click');
     await flushPromises();
     expect(endpoints.barCupGuess).toHaveBeenCalledWith(2, 1);
@@ -88,7 +88,7 @@ describe('CupPanel', () => {
     await flushPromises();
     expect(endpoints.barCupNext).toHaveBeenCalled();
     expect(cupButtons(w)).toHaveLength(5);
-    expect(w.get('[data-testid="cup-live"]').text()).toBe('第 3 轮：5 个杯子，选一个');
+    expect(w.get('[data-testid="cup-live"]').text()).toBe('第 3 轮: 5 个杯子，选一个');
     expect(w.get('[data-testid="cup-4"]').attributes('disabled')).toBeUndefined();
   });
 

@@ -104,7 +104,7 @@ describe('SpicePanel', () => {
     await w.get('[data-testid="spice-submit"]').trigger('click');
     await flushPromises();
     expect(endpoints.barSpiceGuess).toHaveBeenCalledWith([2, 0, 9, 4]);
-    expect(w.get('[data-testid="spice-row-0"]').text()).toBe('第 1 次：酱油、盐、辣椒、料酒 1A2B');
+    expect(w.get('[data-testid="spice-row-0"]').text()).toBe('第 1 次: 酱油、盐、辣椒、料酒 1A2B');
     expect(w.text()).toContain('还能猜 7 次');
     expect(w.get('[data-testid="spice-slot-0"]').text()).toBe('');
   });
@@ -126,7 +126,7 @@ describe('SpicePanel', () => {
     expect(done.get('[data-testid="spice-result"]').text()).toContain('第 1 次猜中了');
     expect(done.get('[data-testid="spice-result"]').text()).toContain('声望 +5');
     expect(done.get('[data-testid="spice-result"]').text()).toContain('银币 800');
-    expect(done.get('[data-testid="spice-secret"]').text()).toBe('配方：醋、糖、料酒、盐');
+    expect(done.get('[data-testid="spice-secret"]').text()).toBe('配方: 醋、糖、料酒、盐');
     expect(done.find('[data-testid="spice-submit"]').exists()).toBe(false);
     expect(done.find('[data-testid="spice-again"]').exists()).toBe(true);
   });
@@ -160,15 +160,15 @@ describe('SpicePanel', () => {
     await pick(w, [0, 1, 2, 3]);
     await w.get('[data-testid="spice-submit"]').trigger('click');
     await flushPromises();
-    expect(w.get('[data-testid="spice-live"]').text()).toBe('第 1 次：盐、糖、酱油、醋 2A1B');
+    expect(w.get('[data-testid="spice-live"]').text()).toBe('第 1 次: 盐、糖、酱油、醋 2A1B');
     expect(w.findAll('[data-testid^="spice-row-"][aria-live]')).toHaveLength(0);
   });
 
   it('空位按钮的读屏标签写出里面是哪种调料（审查 I2）', async () => {
     const w = mount(SpicePanel, { props: { data: withRound(round()) } });
     await pick(w, [6]);
-    expect(w.get('[data-testid="spice-slot-0"]').attributes('aria-label')).toBe('第 1 位：八角 (点一下拿掉)');
-    expect(w.get('[data-testid="spice-slot-1"]').attributes('aria-label')).toBe('第 2 位：空');
+    expect(w.get('[data-testid="spice-slot-0"]').attributes('aria-label')).toBe('第 1 位: 八角 (点一下拿掉)');
+    expect(w.get('[data-testid="spice-slot-1"]').attributes('aria-label')).toBe('第 2 位: 空');
   });
 
   it('别的错误（比如网络）：不退回开局页面，用概览里的局面', async () => {

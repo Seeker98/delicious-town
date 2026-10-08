@@ -55,7 +55,7 @@ describe('RankPanel', () => {
     await flushPromises();
     expect(endpoints.rank).toHaveBeenLastCalledWith('hiphop.week');
     expect(w.find('[data-testid="rank-reward"]').text()).toContain('工作证');
-    expect(w.find('[data-testid="rank-me"]').text()).toBe('我：第 53 名 · 10');
+    expect(w.find('[data-testid="rank-me"]').text()).toBe('我: 第 53 名 · 10');
   });
 
   it('shortNum：亿、万缩写', () => {

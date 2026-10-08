@@ -59,7 +59,7 @@ describe('DeliveriesPanel', () => {
     await w.find('[data-testid="claim-21"]').trigger('click');
     await flushPromises();
     expect(endpoints.takeawayClaim).toHaveBeenCalledWith(21, false);
-    expect(w.find('[data-testid="result-head"]').text()).toBe('配送失败：顾客退单了!');
+    expect(w.find('[data-testid="result-head"]').text()).toBe('配送失败: 顾客退单了!');
     expect(w.find('[data-testid="result"]').text()).toContain('骑手经验 +12');
   });
 

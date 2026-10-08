@@ -31,7 +31,7 @@ export default {
   withdrawn: '已取出',
   withdrawFailed: '取出失敗',
   loadFailed: '讀取交易所失敗',
-  frozenNotice: (reason: string) => `你的交易所已被凍結：${reason}。有疑問請聯絡管理員。`,
+  frozenNotice: (reason: string) => `你的交易所已被凍結: ${reason}。有疑問請聯絡管理員。`,
   intro: '玩家之間買賣稀有食材。掛單價要在當天參考價的一半到兩倍之間；賣方成交時扣手續費。',
   sysHelp: '系統報價怎麼算',
   sysHelpItems: [
@@ -71,8 +71,8 @@ export default {
   placeSell: '掛賣單',
   account: '交易所賬戶',
   withdraw: '全部取出',
-  holdsReady: (text: string) => `冷靜期已過，可以取出：${text}`,
-  holdsPending: (text: string, left: string) => `凍結中 (可疑成交的冷靜期)：${text}，${left}，到時可取`,
+  holdsReady: (text: string) => `冷靜期已過，可以取出: ${text}`,
+  holdsPending: (text: string, left: string) => `凍結中 (可疑成交的冷靜期): ${text}，${left}，到時可取`,
   myOrders: '我的掛單',
   noOrders: '沒有掛單',
   orderLine: (name: string, price: string, qty: number, filled: number) =>

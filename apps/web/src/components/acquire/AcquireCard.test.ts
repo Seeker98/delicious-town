@@ -76,8 +76,8 @@ describe('AcquireCard（对方餐厅页，收购 PR 3）', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
     const w = mount(AcquireCard, { props: { restId: 2 } });
     await flushPromises();
-    expect(w.text()).toContain('老板：老板店');
-    expect(w.text()).toContain('挂牌 60%：600,000 银币');
+    expect(w.text()).toContain('老板: 老板店');
+    expect(w.text()).toContain('挂牌 60%: 600,000 银币');
     await w.get('[data-testid="card-listed"]').trigger('click');
     await flushPromises();
     expect(endpoints.acquireBuy).toHaveBeenCalledWith(2, 'listed', 600_000);

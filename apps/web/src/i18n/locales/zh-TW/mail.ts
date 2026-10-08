@@ -15,12 +15,12 @@ export default {
   needLevel: (n: number) => `· 需 ${n} 級`,
   claimed: '· 已領取',
   broken: '· 附件已失效，請聯絡運營',
-  items: (text: string) => `附件：${text}`,
+  items: (text: string) => `附件: ${text}`,
   redeem: {
     placeholder: '輸入兌換碼',
     label: '兌換碼',
     btn: '兌換',
-    done: (text: string) => `兌換成功：${text}`,
+    done: (text: string) => `兌換成功: ${text}`,
     failed: '兌換失敗',
   },
 };

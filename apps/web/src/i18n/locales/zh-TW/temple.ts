@@ -13,20 +13,20 @@ export default {
     btn: (n: number) => `探險 ×${n}`,
     strength: (n: string) => `體力 ${n}`,
     result: (ok: number, fail: number) => `成功 ${ok} 次，迷路 ${fail} 次`,
-    rare: (list: string) => `神秘食材：${list}`,
-    foods: (list: string) => `食材：${list}`,
+    rare: (list: string) => `神秘食材: ${list}`,
+    foods: (list: string) => `食材: ${list}`,
     exp: (n: number) => `煤油燈帶來經驗 ${n}`,
   },
   appraise: {
     what: '鑑定',
-    noRecipe: '沒有神秘食譜：每次鑑定要消耗 1 個神秘食譜和 1 個鑑定道具 (神秘食譜在商店有售)',
+    noRecipe: '沒有神秘食譜: 每次鑑定要消耗 1 個神秘食譜和 1 個鑑定道具 (神秘食譜在商店有售)',
     noTool: '沒有這個鑑定道具，換一個試試',
     done: (n: number, ok: number) => `鑑定 ${n} 次，成功 ${ok} 次`,
     failed: '鑑定失敗',
     title: '鑑定神秘食譜',
     rule: (n: number) => `每次消耗 1 個神秘食譜和 1 個鑑定道具，成功得到殘卷。持有神秘食譜 ${n} 個。`,
     /** 鑑定道具怎麼獲得（問題記錄 415） */
-    how: (parts: string) => `獲得：${parts}`,
+    how: (parts: string) => `獲得: ${parts}`,
     howShop: (coin: string) => `銀幣商店 ${coin}`,
     howBlack: (diamond: number) => `黑市 ${diamond} 鑽`,
     howAward: '廚塔和酒吧等的隨機獎勵',
@@ -52,7 +52,7 @@ export default {
     hit: (damage: string, crit: boolean, killed: boolean) =>
       `傷害 ${damage}${crit ? ' (暴擊)' : ''}${killed ? '，擊敗了守護獸！' : ''}`,
     drops: (tickets: number, maps: number, seals: number, dt: number) =>
-      `掉落：神秘禮券 ${tickets}、探險圖 ${maps}、廚神玉璽 ${seals}、美味券 ${dt}`,
+      `掉落: 神秘禮券 ${tickets}、探險圖 ${maps}、廚神玉璽 ${seals}、美味券 ${dt}`,
     dropFoods: (list: string) => `；食材 ${list}`,
   },
   trial: {
@@ -74,16 +74,16 @@ export default {
     help: '玩法說明',
     /** 玩法說明：每條一段，<b> 之類的強調去掉了 */
     helpItems: [
-      '先準備：注射花 250,000 銀幣，得"創意藥水"勳章 (創意 +25)；冥想免費，得"冥想"勳章 (創意 +5)。勳章 1 小時內有效，有效期內可以試煉任意次，創意越高成功率越高。',
+      '先準備: 注射花 250,000 銀幣，得"創意藥水"勳章 (創意 +25)；冥想免費，得"冥想"勳章 (創意 +5)。勳章 1 小時內有效，有效期內可以試煉任意次，創意越高成功率越高。',
       '準備時會從你學會的 1~5 級特色菜裡隨機選一道作為試煉物件。不滿意可以花 20,000 銀幣換一道，或者用 1 條觸手 (投餵克拉肯得到) 指定一道。',
       '每次試煉花 10,000 銀幣，消耗你選的主料和輔料各 1 個 (相同時扣 2 個)，再加這道菜的每種食材各 1 個。',
-      '成功率看三樣：創意、食材比這道菜高出的等級 (主料影響更大)、食材的稀有度 (稀有 = 食材後面標“稀有”的，權重低於 100)。',
-      '成功後：試煉經驗 +1~4% (主輔都稀有最多)；主料稀有時試煉價值再 +1~2%；熟練度 +800 × 熟練度等級。試煉價值提高賣菜時的每份價值 (廚塔和好友對決不算)，試煉經驗讓烹製時額外得餐廳經驗，上限見上面。',
+      '成功率看三樣: 創意、食材比這道菜高出的等級 (主料影響更大)、食材的稀有度 (稀有 = 食材後面標“稀有”的，權重低於 100)。',
+      '成功後: 試煉經驗 +1~4% (主輔都稀有最多)；主料稀有時試煉價值再 +1~2%；熟練度 +800 × 熟練度等級。試煉價值提高賣菜時的每份價值 (廚塔和好友對決不算)，試煉經驗讓烹製時額外得餐廳經驗，上限見上面。',
     ] as string[],
     inject: '注射 (250,000 銀幣，創意 +25)',
     meditate: '冥想 (免費，創意 +5)',
     readyLeft: (min: number) => `準備勳章還剩 ${min} 分鐘`,
-    target: '試煉物件：',
+    target: '試煉物件: ',
     targetLevel: (level: number) => ` (${level} 級)`,
     refresh: '換一道 (20,000 銀幣)',
     stat: (worth: number, worthMax: number, exp: number, expMax: number, level: string) =>
@@ -95,7 +95,7 @@ export default {
     rate: (pct: string) => `預計成功率 ${pct}% (不含幸運)；另扣 10,000 銀幣和這道菜的每種食材各 1 個`,
     start: '開始試煉',
     success: (lucky: boolean, worth: number, exp: number, prof: number) =>
-      `試煉成功${lucky ? ' (幸運)' : ''}：試煉價值 +${worth}%、試煉經驗 +${exp}%，熟練度 +${prof}`,
+      `試煉成功${lucky ? ' (幸運)' : ''}: 試煉價值 +${worth}%、試煉經驗 +${exp}%，熟練度 +${prof}`,
     fail: '試煉失敗',
   },
   kraken: {
@@ -111,9 +111,9 @@ export default {
     failed: '投餵失敗',
     exFailed: '兌換失敗',
     refreshFailed: '重新整理失敗',
-    wants: '克拉肯今天想吃：',
+    wants: '克拉肯今天想吃: ',
     wantsMeta: (road: string, hours: string) => ` (${road}；投餵時間 ${hours})`,
-    current: (name: string, grade: string, left: number) => `在售：${name} ${grade}，剩 ${left} 份`,
+    current: (name: string, grade: string, left: number) => `在售: ${name} ${grade}，剩 ${left} 份`,
     feed: (n: number) => `投餵 ${n} 份`,
     favor: (n: number) => `好感度 ${n} `,
     relation: { same: ' (正是它想吃的)', road: ' (同一道)', other: ' (不太合口味)' },

@@ -90,7 +90,7 @@ describe('MayorAsk', () => {
     await flushPromises();
     expect(endpoints.townMayor).toHaveBeenCalledWith(3);
     expect(useToastStore().items.at(-1)!.text).toBe(
-      '镇长大胃锅：谢谢你，我现在就去找他，好好弥补他！ 获得 道具231×1',
+      '镇长大胃锅: 谢谢你，我现在就去找他，好好弥补他！ 获得 道具231×1',
     );
     expect(w.emitted('reload')).toHaveLength(1);
 

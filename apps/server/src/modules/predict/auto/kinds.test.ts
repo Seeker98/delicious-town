@@ -193,7 +193,7 @@ describe('菜场（238-2 设计 §4.3）', () => {
     const yes = (await market.resolve(await rctx(shardId), params))!;
     expect(yes).toEqual({
       outcome: true,
-      note: `11月3日 12 点日常货架上了 2 级稀有食材：${rare2.name}`,
+      note: `11月3日 12 点日常货架上了 2 级稀有食材: ${rare2.name}`,
       noteParams: { day: DAY, hour: 12, level: 2, foods: [rare2.id] },
     });
   });
