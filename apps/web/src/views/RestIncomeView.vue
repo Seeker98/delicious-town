@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { gameDay, PAYING_CUSTOMERS, type BuffsDto, type IncomePageDto, type RoundSummaryDto } from '@dt/shared';
+import {
+  gameDay,
+  PAYING_CUSTOMERS,
+  type BuffsDto,
+  type IncomePageDto,
+  type RoundSummaryDto,
+} from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';

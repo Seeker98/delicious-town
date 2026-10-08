@@ -13,10 +13,7 @@ export interface JobLogger {
  * stop 不再开始新的一次，等正在跑的跑完（最多 waitMs）；等完返回 true，到点还没完返回 false
  * （backlog：原来不等，部署时 10 秒后被强杀，周期任务那一期抢占了却没跑完，之后不会再跑）
  */
-export function startScheduler(
-  jobs: Job[],
-  log: JobLogger,
-): { stop: (waitMs: number) => Promise<boolean> } {
+export function startScheduler(jobs: Job[], log: JobLogger): { stop: (waitMs: number) => Promise<boolean> } {
   const timers: ReturnType<typeof setInterval>[] = [];
   const inflight = new Set<Promise<void>>();
   let stopped = false;

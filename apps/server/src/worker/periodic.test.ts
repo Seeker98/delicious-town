@@ -174,7 +174,10 @@ describe('重抢时就记下第几次（稳健性批终审：原来失败时才�
 
 describe('跑到一半进程没了（backlog：部署时被强杀，job_run 抢占了却没写完成也没写出错，开了 retry 也不重跑）', () => {
   const claimDead = (shardId: number, name: string, at: Date) =>
-    t.db.insertInto('job_run').values({ shard_id: shardId, job: name, period: 'k', started_at: at }).execute();
+    t.db
+      .insertInto('job_run')
+      .values({ shard_id: shardId, job: name, period: 'k', started_at: at })
+      .execute();
 
   it('开了 retry 的：没完成也没出错的抢占 30 分钟后再抢一次，之前不抢', async () => {
     const shardId = await createShard(t.db);

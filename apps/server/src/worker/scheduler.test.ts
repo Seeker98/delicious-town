@@ -84,10 +84,9 @@ describe('停止时等正在跑的任务（backlog：部署时 SIGTERM 不等，
 
   it('等不完就到点返回 false，不卡住退出', async () => {
     vi.useFakeTimers();
-    const s = startScheduler(
-      [{ name: 'stuck', intervalMs: 1000, run: () => new Promise<void>(() => {}) }],
-      { error: vi.fn() },
-    );
+    const s = startScheduler([{ name: 'stuck', intervalMs: 1000, run: () => new Promise<void>(() => {}) }], {
+      error: vi.fn(),
+    });
     let stopped: boolean | undefined;
     void s.stop(3000).then((done) => (stopped = done));
     await vi.advanceTimersByTimeAsync(2900);

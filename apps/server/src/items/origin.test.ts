@@ -17,7 +17,9 @@ describe('道具、商店整理工具只收本页发的 JSON（终审 m8；商�
     expect(fromPage(req({ ...JSON_TYPE, origin: 'https://evil.example' }), 5199)).toBe(false);
     expect(fromPage(req({ ...JSON_TYPE, origin: 'http://127.0.0.1:5173' }), 5199)).toBe(false);
     expect(fromPage(req({ ...JSON_TYPE, origin: 'http://localhost.evil.example:5199' }), 5199)).toBe(false);
-    expect(fromPage(req({ 'content-type': 'text/plain', origin: 'http://127.0.0.1:5199' }), 5199)).toBe(false);
+    expect(fromPage(req({ 'content-type': 'text/plain', origin: 'http://127.0.0.1:5199' }), 5199)).toBe(
+      false,
+    );
     expect(fromPage(req({ origin: 'http://127.0.0.1:5199' }), 5199)).toBe(false);
   });
 });
