@@ -33,6 +33,8 @@ export interface ShopRow extends ShopValues {
 
 export interface ShopReport {
   sellRate: number;
+  /** 有钻石价的回收价不超过 钻石价 × 这个数（经济分析 2026-10-08） */
+  diamondSellCoin: number;
   rows: ShopRow[];
   errors: string[];
 }
@@ -123,7 +125,8 @@ const sameSet = (a: readonly number[], b: readonly number[]) =>
 export function createShopTool(io: { readSource: () => SourceData; writeShop: (text: string) => void }) {
   function reportOf(src: SourceData, file: ShopFile, errors: string[]): ShopReport {
     const cur = buildBundle(src);
-    if (!cur.bundle) return { sellRate: 0, rows: [], errors: [...new Set([...errors, ...cur.errors])] };
+    if (!cur.bundle)
+      return { sellRate: 0, diamondSellCoin: 0, rows: [], errors: [...new Set([...errors, ...cur.errors])] };
     const config = createGameConfig(cur.bundle);
     const category = new Map(
       analyzeItems(config, retiredOf(cur.bundle))
@@ -148,7 +151,12 @@ export function createShopTool(io: { readSource: () => SourceData; writeShop: (t
         retired: !!g.retired,
         note: notes.get(g.id) ?? '',
       }));
-    return { sellRate: config.tuning.shop.sellRate, rows, errors };
+    return {
+      sellRate: config.tuning.shop.sellRate,
+      diamondSellCoin: config.tuning.shop.diamondSellCoin,
+      rows,
+      errors,
+    };
   }
 
   return {

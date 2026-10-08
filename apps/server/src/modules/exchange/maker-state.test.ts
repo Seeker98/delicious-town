@@ -58,6 +58,25 @@ describe('系统库存和每日收购（156-3 设计 §5）', () => {
     };
     expect(await makerQuote(t.db, { ...x, tuning: off })).toEqual({ bid: null, ask: null });
   });
+  it('maker.noBidLevels 里的等级系统不收、有库存照样卖；默认是 7 级（经济分析 2026-10-08）', async () => {
+    expect(t.deps.config.tuning.exchange.maker.noBidLevels).toEqual([7]);
+    const shardId = await createShard(t.db);
+    const f = lv6();
+    const r = await trader(t, { shardId });
+    await addStock(t.db, shardId, f.id, 2);
+    const tu = t.deps.config.tuning;
+    const off = { ...tu, exchange: { ...tu.exchange, maker: { ...tu.exchange.maker, noBidLevels: [6] } } };
+    const q = await makerQuote(t.db, {
+      config: t.deps.config,
+      tuning: off,
+      shardId,
+      foodsId: f.id,
+      day: gameDay(t.clock.now),
+      restId: r.restaurantId,
+      ref: 1000,
+    });
+    expect(q).toEqual({ bid: null, ask: { price: 1300, qty: 2 } });
+  });
   it('参考价被推高：1.3 倍时系统买价仍按初始参考价 × 0.7；1.8 倍时下限已高过它，变成兜底价、价格不变（终审 C1、问题记录 244）', async () => {
     const shardId = await createShard(t.db);
     const f = lv6();

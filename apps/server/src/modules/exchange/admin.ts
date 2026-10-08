@@ -297,7 +297,7 @@ export function createExchangeAdmin(game: Game) {
         foodsId: id,
         stock: stockBy.get(id) ?? 0,
         bought: boughtBy.get(id) ?? 0,
-        bid: p.bid,
+        bid: t.maker.noBidLevels.includes(food.level) ? null : p.bid,
         ask: p.ask,
       };
     });

@@ -224,6 +224,8 @@ export const tuningSchema = z.object({
     discardable: z.array(int),
     /** 不能卖回商店的道具（用户 2026-10-08 定：蟹币。100 张神秘礼券换 1 个蟹币，原来能卖 35 万银币） */
     noSell: z.array(int).default([]),
+    /** 有钻石价的道具卖店价不超过 钻石价 × 这个数（经济分析 2026-10-08：一番赏的钻石买鞋带卖店） */
+    diamondSellCoin: int.min(1),
     maxBuy: int.min(1),
   }),
   store: z.object({ maxBatch: int.min(1) }),
@@ -803,6 +805,8 @@ export const tuningSchema = z.object({
         dailyBuy: int.min(0),
         stockMax: int.min(0),
         playerDaily: int.min(0),
+        /** 系统不收的等级（经济分析 2026-10-08：7 级食材系统收约 70 万，比开店赚得多） */
+        noBidLevels: z.array(int).default([]),
       })
       // 收购倍数要低于卖出倍数，否则从系统买进再卖回给系统能赚钱（156-3 终审 I3）
       .refine((m) => m.bidRate < m.askRate, { message: 'bidRate 要小于 askRate' }),

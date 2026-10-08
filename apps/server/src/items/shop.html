@@ -135,7 +135,8 @@
         <summary>说明</summary>
         <p>
           银币价是银币商店的售价，也是回收价（×
-          <span id="rate"></span>）、今日特价折扣价、道具价值分析的基准；钻石价是黑市售价。 “银币商店”勾选 =
+          <span id="rate"></span>，有钻石价的不超过 钻石价 ×
+          <span id="dsc"></span>）、今日特价折扣价、道具价值分析的基准；钻石价是黑市售价。 “银币商店”勾选 =
           在银币商店上架（还要有银币价）。今日特价从特价池里随机挑一种打折卖；黑市卖黑市池里有钻石价的。
         </p>
         <p>
@@ -189,16 +190,19 @@
       const differs = (r, v, f) => (f === 'note' ? false : v[f] !== r.orig[f]);
       // 和服务端 store/rules 的 sellPrice 一样先四舍五入到 6 位小数再取整，免得 2600 × 0.7 算成 1819
       // 能不能回收看类型，不看保存时的价格：原来没价、改了价的也要显示出来（终审）
-      const sell = (r, v) =>
-        !r.sellable || v.coin <= 0
-          ? '—'
-          : Math.floor(Math.round(v.coin * report.sellRate * 1e6) / 1e6).toLocaleString();
+      // 有钻石价的不超过 钻石价 × diamondSellCoin（经济分析 2026-10-08）
+      const sell = (r, v) => {
+        if (!r.sellable || v.coin <= 0) return '—';
+        const p = Math.floor(Math.round(v.coin * report.sellRate * 1e6) / 1e6);
+        return (v.diamond > 0 ? Math.min(p, v.diamond * report.diamondSellCoin) : p).toLocaleString();
+      };
 
       async function load() {
         const res = await fetch('/api/shop');
         report = await res.json();
         edits = new Map();
         $('rate').textContent = report.sellRate;
+        $('dsc').textContent = report.diamondSellCoin;
         const cats = [...new Set(report.rows.map((r) => r.category))].sort();
         $('cat').innerHTML =
           '<option value="">全部</option>' + cats.map((c) => `<option>${esc(c)}</option>`).join('');

@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    economy1008:
+      'Adjusted a few ways of turning items into coins: items that have a diamond price, however you got them, sell back to the shop for at most 2,000 coins per diamond; Gold Coins in the black market now cost 50 diamonds; Ichiban Kuji tickets now cost 40,000 coins; Mystery Ingredient Vouchers, Random Mystery Ingredient Vouchers, all exploration maps and Fragment Shards can no longer be sold to the shop, only used; the Exchange no longer buys level 7 ingredients (its existing stock is still for sale)',
     business1008:
       'New side quest line “Business” (from Chapter 2): add tables, upgrade your oil tank, place facilities, stay open for many rounds in a day, and earn 100,000 to 1,000,000 coins from settlements in one day. Daily coins and rounds count your best day; a day counts once it is tallied just after midnight',
     sideB1008:

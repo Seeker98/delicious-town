@@ -45,6 +45,7 @@ const exchange: Messages['exchange'] = {
     "For ingredients the market also sells, the buy price is capped at 0.9 × the market's lowest price, so nobody profits by buying at the market and selling to the system.",
     'When the buy price is below the lowest allowed order price it is a "floor price" (common for levels 3–5). You can only use the "Sell to system" button then, so you can always sell what you have.',
     'The system buys at most 100 of each ingredient a day, and each player can sell it at most 20 a day.',
+    'The system does not buy level 7 ingredients; its existing stock is still for sale.',
   ],
   search: 'Search ingredients',
   saleTag: (n) => `Sell ${n}`,

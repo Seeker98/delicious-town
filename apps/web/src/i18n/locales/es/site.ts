@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    economy1008:
+      'Ajustamos algunas formas de convertir objetos en monedas: los objetos que tienen precio en diamantes, se consigan como se consigan, se venden a la tienda por como máximo 2.000 monedas por diamante; las Monedas de oro del mercado negro ahora cuestan 50 diamantes; los boletos de Ichiban Kuji ahora cuestan 40.000 monedas; los Vales de ingrediente misterioso, los Vales de ingrediente misterioso al azar, todos los mapas de exploración y los Trozos de fragmento ya no se pueden vender a la tienda, solo usar; la Bolsa ya no compra ingredientes de nivel 7 (sus existencias se siguen vendiendo)',
     business1008:
       'Nueva línea de misiones secundarias «Negocio» (desde el capítulo 2): añadir mesas, mejorar el bidón de aceite, colocar instalaciones, mantener el restaurante abierto muchas rondas en un día y ganar de 100.000 a 1.000.000 monedas de liquidación en un día. Las monedas y rondas diarias cuentan tu mejor día; cada día cuenta cuando se suma, justo después de medianoche',
     sideB1008:

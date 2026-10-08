@@ -50,6 +50,9 @@ describe('商店整理工具（问题记录 483）', () => {
     // 能不能回收看类型（勋章、宝石不能），页面按改后的银币价现算回收价（终审）
     expect(m.sellable).toBe(true);
     expect(red.sellable).toBe(false);
+    // 有钻石价的回收价按 钻石价 × diamondSellCoin 封顶，页面也按它现算（经济分析 2026-10-08）
+    expect(r.diamondSellCoin).toBe(2000);
+    expect(r.rows.find((x) => x.id === gid('鞋带'))!.sellPrice).toBe(2000);
     // 不上架、没有价格、不在池子里的不列
     expect(r.rows.every((x) => x.onSale || x.coin > 0 || x.diamond > 0 || x.special || x.black)).toBe(true);
   });

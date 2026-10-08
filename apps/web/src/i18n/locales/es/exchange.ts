@@ -45,6 +45,7 @@ const exchange: Messages['exchange'] = {
     'En los ingredientes que también vende el mercado, el precio de compra no supera 0,9 × el precio más bajo del mercado, para que nadie gane comprando en el mercado y vendiendo al sistema.',
     'Cuando el precio de compra queda por debajo del mínimo permitido para órdenes es un «precio suelo» (habitual en los niveles 3 a 5). Entonces solo se puede vender con el botón «Vender al sistema», para que siempre puedas vender lo que tienes.',
     'El sistema compra como mucho 100 unidades de cada ingrediente al día, y cada jugador puede venderle como mucho 20 al día.',
+    'El sistema no compra ingredientes de nivel 7; sus existencias se siguen vendiendo.',
   ],
   search: 'Buscar ingredientes',
   saleTag: (n) => `Venta ${n}`,
