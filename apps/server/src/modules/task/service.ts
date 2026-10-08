@@ -559,7 +559,7 @@ export function createTaskService(d: GameDeps) {
         await grantAward(o, scaled(reward.award, o.rest.level), { multiplier });
         // 支线“签到和活跃”（问题记录 515）：领 100 点这一档的天数
         if (points === 100) await emitAction(o, 'activation.100');
-        // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（问题记录 318：新增 180 档后仍在 150 档）；
+        // 一番赏（一番赏设计 §5.5）：领 activeTicketPoints 这一档额外送券（默认 120 档，2026-10-08 从 150 档挪过来）；
         // 区服关掉一番赏不送
         let kujiTickets = 0;
         const gift = kujiTicketOf(o.settings);

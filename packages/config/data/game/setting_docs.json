@@ -673,7 +673,7 @@
     "tuning.kuji.dailyBuy": "每人每天最多买几张券（张）",
     "tuning.kuji.maxDraw": "一次最多抽几张签（张）",
     "tuning.kuji.activeTickets": "领取活跃度 activeTicketPoints 这一档时额外送几张券（张）",
-    "tuning.kuji.activeTicketPoints": "活跃度领到这一档时额外送一番赏抽赏券（分）；问题记录 318 新增 180 档后仍在 150 档送",
+    "tuning.kuji.activeTicketPoints": "活跃度领到这一档时额外送一番赏抽赏券（分）；默认 120 档（2026-10-08 从 150 档挪过来），必须是一个活跃度档位",
     "tuning.kuji.maxPools": "每个区服每天最多开几池；抽完这么多池后当天不再开新池（池）",
     "tuning.kuji.tiers": "各档：key 档位名、count 张数、award 奖品、icon 限定图标（looks.icons 的 key）、news 播报（broadcast 全服广播 / news 新闻 / 不填不播）",
     "tuning.kuji.last.award.diamond": "最后赏：钻石",

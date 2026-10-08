@@ -787,7 +787,10 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   const activationRewards: ActivationReward[] = [];
   for (const r of actRewardsRaw) {
     try {
-      activationRewards.push({ points: r.dictval, award: raw.awardSchema.parse(JSON.parse(r.note)) });
+      const award = raw.awardSchema.parse(JSON.parse(r.note));
+      activationRewards.push({ points: r.dictval, award });
+      // 原表的档位现在也带道具了（活跃度调整 2026-10-08），和新增档位一样查编号
+      checkAward(`activation_reward ${r.dictval}`, award);
     } catch {
       errors.push(`activation_reward ${r.dictval} note is not a valid award`);
     }

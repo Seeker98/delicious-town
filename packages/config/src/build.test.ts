@@ -1392,6 +1392,14 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(featureOfKey('predict.win', b.actionMap.features)).toBe('predict');
     expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
   });
+
+  it('活跃度原表档位奖励里的道具也查编号（活跃度调整终审：原来只查新增档位）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const rewards = structuredClone(src['dataset/activation_rewards']) as Array<{ note: string }>;
+    rewards[0]!.note = JSON.stringify({ goods: [{ id: 999999, num: 1 }] });
+    const { errors } = buildBundle({ ...src, 'dataset/activation_rewards': rewards });
+    expect(errors.join('\n')).toMatch(/activation_reward 50.*999999/);
+  });
 });
 
 describe('任务配置（问题记录 318）', () => {
