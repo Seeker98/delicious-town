@@ -360,6 +360,7 @@ onMounted(async () => {
         class="btn btn-sm btn-outline-primary"
         :disabled="busy || !!blocked"
         data-testid="ex-sell-sys"
+        :aria-expanded="sysOpen"
         @click="sysOpen = !sysOpen"
       >
         {{ t.exchange.sellSys(formatNum(sysBid.price), !!sysBid.floor) }}

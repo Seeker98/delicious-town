@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import type { CupboardFoodDto, McLearnedDto, TempleDto, TrialResultDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -66,16 +66,37 @@ const groups = computed(() => {
     .sort(([a], [b]) => b - a)
     .map(([lv, list]) => ({ lv, list: list.sort((a, b) => a.foodsId - b.foodsId) }));
 });
-/** 手动展开 / 收起过的组；没动过的按“不低于这道菜的等级”决定 */
+/**
+ * 手动展开 / 收起过的组；没动过的按“不低于这道菜的等级”决定。
+ * 搜索时默认全部展开，这时点组名只记在 searchToggled，换了搜索词就清掉，不影响平时的（487 遗留）
+ */
 const toggled = ref(new Map<number, boolean>());
+const searchToggled = ref(new Map<number, boolean>());
+const searching = computed(() => q.value.trim() !== '');
 const isOpen = (lv: number) =>
-  q.value.trim() !== '' || (toggled.value.get(lv) ?? lv >= (dish.value?.level ?? 0));
+  searching.value
+    ? (searchToggled.value.get(lv) ?? true)
+    : (toggled.value.get(lv) ?? lv >= (dish.value?.level ?? 0));
 function toggleGroup(lv: number) {
-  toggled.value = new Map(toggled.value).set(lv, !isOpen(lv));
+  const m = searching.value ? searchToggled : toggled;
+  m.value = new Map(m.value).set(lv, !isOpen(lv));
 }
-/** 另一个槽已经选了同一种、只有 1 个时不能再选 */
-const blockedFood = (f: CupboardFoodDto) =>
-  (slot.value === 'main' ? sub.value : main.value) === f.foodsId && f.num < 2;
+watch(q, () => (searchToggled.value = new Map()));
+/** 换了试炼对象：默认展开的等级跟着变，手动展开 / 收起的记录作废（487 遗留） */
+watch(
+  () => trial.value.mcId,
+  () => (toggled.value = new Map()),
+);
+/**
+ * 选这种要几个：这个槽 1 个，另一个槽也是它再 1 个，这道菜本身的食材每样再扣 1 个（服务端 trial.ts）。
+ * 不够时灰掉（487 遗留：原来只看另一个槽，这道菜本身要的点开始才由服务端报不够）
+ */
+const blockedFood = (f: CupboardFoodDto) => {
+  const other = (slot.value === 'main' ? sub.value : main.value) === f.foodsId ? 1 : 0;
+  const own = (dish.value?.foods ?? []).filter((x) => x === f.foodsId).length;
+  return f.num < 1 + other + own;
+};
+const anyBlocked = computed(() => groups.value.some((g) => isOpen(g.lv) && g.list.some(blockedFood)));
 function pickFood(id: number) {
   if (slot.value === 'main') {
     main.value = id;
@@ -160,7 +181,13 @@ const start = async () => {
       <div class="mb-1" data-testid="trial-target">
         {{ t.temple.trial.target }}<b>{{ dish.name }}</b
         >{{ t.temple.trial.targetLevel(dish.level) }}
-        <button class="dt-link-btn" data-testid="trial-refresh" :disabled="busy" @click="refresh()">
+        <button
+          type="button"
+          class="dt-link-btn"
+          data-testid="trial-refresh"
+          :disabled="busy"
+          @click="refresh()"
+        >
           {{ t.temple.trial.refresh }}
         </button>
         <div v-if="stat" class="text-muted">
@@ -208,7 +235,9 @@ const start = async () => {
         data-testid="trial-search"
       />
       <div class="dt-card dt-trial-foods mb-1" data-testid="trial-foods">
-        <div v-if="groups.length === 0" class="text-muted">{{ t.temple.trial.noFoods }}</div>
+        <div v-if="groups.length === 0" class="text-muted">
+          {{ searching ? t.temple.trial.noMatch : t.temple.trial.noFoods }}
+        </div>
         <div v-for="g in groups" :key="g.lv" class="mb-1">
           <button
             type="button"
@@ -230,6 +259,7 @@ const start = async () => {
                 f.foodsId === main || f.foodsId === sub ? 'btn-primary' : 'btn-outline-secondary',
               ]"
               :disabled="blockedFood(f)"
+              :aria-pressed="f.foodsId === main || f.foodsId === sub"
               :data-testid="`trial-food-${f.foodsId}`"
               @click="pickFood(f.foodsId)"
             >
@@ -248,6 +278,9 @@ const start = async () => {
             </button>
           </div>
         </div>
+      </div>
+      <div v-if="anyBlocked" class="text-muted" data-testid="trial-blocked-note">
+        {{ t.temple.trial.blockedNote }}
       </div>
       <div v-if="rate !== null" class="text-muted" data-testid="trial-rate">
         {{ t.temple.trial.rate((rate * 100).toFixed(1)) }}
@@ -279,5 +312,9 @@ const start = async () => {
 .dt-trial-foods {
   max-height: 16rem;
   overflow-y: auto;
+}
+/* 第一个组名不要上边距：卡片自己有内边距，原来上面多一截空白（487 遗留） */
+.dt-trial-foods > div:first-child > .dt-group-label {
+  margin-top: 0;
 }
 </style>

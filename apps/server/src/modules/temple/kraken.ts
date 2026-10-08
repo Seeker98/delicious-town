@@ -46,14 +46,16 @@ async function punish(o: Op, mcId: number, t: TempleTuning): Promise<KrakenFeedD
       .execute();
     return { kind: 'exp', value: Math.min(sub, row.trial_exp) };
   }
-  if (row.trial_worth > 0) {
+  // 按封顶后生效的值扣（集束飞弹那次的遗留）：上限改小前存下的值可能超过上限，原来 45 扣成 42、实际生效还是 30
+  const worth = Math.min(row.trial_worth, t.trialWorthMax);
+  if (worth > 0) {
     await o.tx
       .updateTable('rest_mc')
-      .set({ trial_worth: Math.max(0, row.trial_worth - sub) })
+      .set({ trial_worth: Math.max(0, worth - sub) })
       .where('rest_id', '=', o.rest.id)
       .where('mc_id', '=', mcId)
       .execute();
-    return { kind: 'worth', value: Math.min(sub, row.trial_worth) };
+    return { kind: 'worth', value: Math.min(sub, worth) };
   }
   if (o.rng.chance(t.forgetRate)) {
     await o.tx.deleteFrom('rest_mc').where('rest_id', '=', o.rest.id).where('mc_id', '=', mcId).execute();

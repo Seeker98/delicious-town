@@ -39,7 +39,8 @@ const root = ref<HTMLElement | null>(null);
 async function focusNext() {
   await nextTick();
   const r = local.value;
-  const id = r?.result ? 'cup-again' : r?.won ? 'cup-stop' : 'cup-0';
+  // 开新局时礼券不够、杯子都灰着：落到写原因的那行，不丢回页面开头（#194 遗留）
+  const id = r?.result ? 'cup-again' : r?.won ? 'cup-stop' : block.value ? 'block' : 'cup-0';
   root.value?.querySelector<HTMLElement>(`[data-testid="${id}"]`)?.focus();
 }
 
@@ -123,7 +124,7 @@ const nowTier = computed(() => (local.value && local.value.result !== 'lose' ? l
     >
       {{ line }}
     </div>
-    <div v-if="block" class="dt-meta text-danger mt-1" data-testid="block">{{ block }}</div>
+    <div v-if="block" class="dt-meta text-danger mt-1" tabindex="-1" data-testid="block">{{ block }}</div>
     <!-- 读屏的固定播报区：每次猜的结果、进下一轮、结束 -->
     <div class="visually-hidden" aria-live="polite" data-testid="cup-live">{{ live }}</div>
     <div v-if="!decided" class="mt-2 mb-1">{{ pickText(local) }}</div>

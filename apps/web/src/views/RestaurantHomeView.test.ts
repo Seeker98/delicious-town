@@ -926,9 +926,11 @@ describe('RestaurantHomeView', () => {
     const act = w.get('[data-testid="home-activation"]');
     const gift = act.get('[data-testid="home-activation-gift"]');
     expect(gift.get('i.bi-gift').attributes('aria-hidden')).toBe('true');
-    expect(gift.get('.visually-hidden').text()).toBe('有奖励可领');
+    // 读屏读成“今日活跃 40, 有奖励可领”：数字和后半句之间有分隔（问题记录 475~493 遗留）
+    expect(gift.get('.visually-hidden').text()).toBe(', 有奖励可领');
+    expect(act.text()).toBe('今日活跃 40, 有奖励可领');
     // 不加可见文字：链接上看得到的字还是“今日活跃 40”
-    expect(act.text().replace('有奖励可领', '').trim()).toBe('今日活跃 40');
+    expect(act.text().replace(', 有奖励可领', '').trim()).toBe('今日活跃 40');
 
     vi.mocked(endpoints.activation).mockResolvedValue({
       ...base,

@@ -44,7 +44,7 @@ const home: Messages['home'] = {
   claim: 'Claim',
   claimFailed: 'Claim failed',
   activation: (n) => `Activity points today: ${n}`,
-  activationClaimable: 'reward ready to claim',
+  activationClaimable: ', reward ready to claim',
   dining: {
     before: 'Eating for free at',
     after: (table, minutes) => `table ${table}, for ${minutes} min`,

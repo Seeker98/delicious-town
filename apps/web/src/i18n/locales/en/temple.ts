@@ -66,6 +66,9 @@ const temple: Messages['temple'] = {
     slotEmpty: 'not chosen',
     search: 'Search ingredients',
     noFoods: 'No ingredients to use',
+    noMatch: 'Nothing found',
+    blockedNote:
+      'Greyed-out ingredients are too few: the main and side ingredients take 1 each, and each of the dish’s own ingredients takes 1 more',
     group: (level, n) => `Level ${level} (${n} ${plEn(n, 'kind', 'kinds')})`,
     rareTag: 'rare',
     intro: (creatives, worthMax, expMax) =>

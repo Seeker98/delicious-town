@@ -539,6 +539,10 @@ a:not([class]):focus-visible {
   color: var(--dt-muted);
   cursor: not-allowed;
 }
+/* 红字的（撤单、删除）请求进行中也变灰：text-danger 带 !important，要单独盖过（#194 遗留） */
+.dt-link-btn.text-danger:disabled {
+  color: var(--dt-muted) !important;
+}
 .dt-link-btn:focus-visible {
   outline: 2px solid var(--dt-primary);
   outline-offset: 1px;

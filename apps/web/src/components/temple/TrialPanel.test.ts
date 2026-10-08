@@ -186,6 +186,91 @@ describe('TrialPanel', () => {
     expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeUndefined();
   });
 
+  it('这道菜本身也要扣的食材：只有 1 个时选不了主辅料，灰掉并写原因（487 遗留：原来点开始才报不够）', async () => {
+    const cat = useCatalogStore();
+    cat.apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 150, name: '稀有料', level: 5, odds: 70, coin: 1, type: 0 },
+        { id: 423, name: '普通料', level: 5, odds: 100, coin: 1, type: 0 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [{ id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 1, coin: 1, foods: [150] }],
+    } as never);
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [
+        { foodsId: 150, num: 1, locked: false, streetNeed: 0 },
+        { foodsId: 423, num: 2, locked: false, streetNeed: 0 },
+      ],
+    } as never);
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    expect(w.get('[data-testid="trial-food-150"]').attributes('disabled')).toBeDefined();
+    expect(w.get('[data-testid="trial-food-423"]').attributes('disabled')).toBeUndefined();
+    expect(w.get('[data-testid="trial-blocked-note"]').text()).toContain('这道菜本身的食材');
+    // 主辅都选普通料要 2 个，有 2 个：可以
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    expect(w.get('[data-testid="trial-food-423"]').attributes('disabled')).toBeUndefined();
+  });
+
+  it('食材按钮写明选没选（aria-pressed）；搜不到写“没有找到”（487 遗留）', async () => {
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    expect(w.get('[data-testid="trial-food-150"]').attributes('aria-pressed')).toBe('true');
+    expect(w.get('[data-testid="trial-food-423"]').attributes('aria-pressed')).toBe('false');
+    await w.get('[data-testid="trial-search"]').setValue('没有这种');
+    expect(w.get('[data-testid="trial-foods"]').text()).toBe('没有找到');
+  });
+
+  it('搜索时点组名只在这次搜索里收起；清掉搜索回到原来的展开状态；换了试炼对象重新按默认（487 遗留）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 150, name: '稀有料', level: 5, odds: 70, coin: 1, type: 0 },
+        { id: 423, name: '普通料', level: 5, odds: 100, coin: 1, type: 0 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [
+        { id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 1, coin: 1, foods: [] },
+        { id: 4, name: '秘·龙凤呈祥', level: 3, road: 1, nutritive: 1, coin: 1, foods: [] },
+      ],
+    } as never);
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    const open = () => w.get('[data-testid="trial-group-5"]').attributes('aria-expanded');
+    await w.get('[data-testid="trial-search"]').setValue('料');
+    await w.get('[data-testid="trial-group-5"]').trigger('click');
+    expect(open()).toBe('false');
+    await w.get('[data-testid="trial-search"]').setValue('');
+    expect(open()).toBe('true');
+    // 手动收起，换试炼对象后回到默认（不低于这道菜的等级就展开）
+    await w.get('[data-testid="trial-group-5"]').trigger('click');
+    expect(open()).toBe('false');
+    await w.setProps({
+      data: templeData({ trial: { mcId: 4, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+    });
+    expect(open()).toBe('true');
+  });
+
   it('有玩法说明，显示试炼对象当前的试炼价值和经验及上限（问题记录：试炼的选项说明不够）', async () => {
     vi.mocked(endpoints.mc).mockResolvedValue({
       learned: [

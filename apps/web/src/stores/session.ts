@@ -1,9 +1,19 @@
 import { defineStore } from 'pinia';
-import { DEFAULT_LOCALE, isLocale, type MeDto } from '@dt/shared';
+import { DEFAULT_LOCALE, isLocale, type MeDto, type SelectShardResult } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { activeMessages } from '../i18n';
 import { useLocaleStore } from './locale';
+import { useRestaurantStore } from './restaurant';
 import { useToastStore } from './toast';
+
+/**
+ * 记着的餐厅不是现在这家店（退出、换号、换区服）就清掉（性能排查终审遗留）：
+ * 食谱页先按记着的店读列表、拼下一星要求的缓存键，同一个标签页里换号后会用上一家店的数字
+ */
+function forgetOtherRestaurant(restaurantId: number | null) {
+  const r = useRestaurantStore();
+  if (r.rest && r.rest.id !== restaurantId) r.$reset();
+}
 
 export const useSessionStore = defineStore('session', {
   state: () => ({ me: null as MeDto | null, loaded: false }),
@@ -27,6 +37,7 @@ export const useSessionStore = defineStore('session', {
      */
     async applyMe(me: MeDto | null) {
       this.me = me;
+      forgetOtherRestaurant(me?.restaurantId ?? null);
       if (!me) return;
       const locale = useLocaleStore();
       if (locale.pendingPick) {
@@ -51,7 +62,16 @@ export const useSessionStore = defineStore('session', {
         await endpoints.logout();
       } finally {
         this.me = null;
+        useRestaurantStore().$reset();
       }
+    },
+    /** 进入一个区服（选区服页、我的账号页）：账号里的区服和店跟着改，记着的别家店清掉 */
+    async enterShard(shardId: number): Promise<SelectShardResult> {
+      const r = await endpoints.selectShard(shardId);
+      if (this.me)
+        this.me = { ...this.me, shardId: r.shardId, restaurantId: r.restaurantId, npcRestId: r.npcRestId };
+      forgetOtherRestaurant(r.restaurantId);
+      return r;
     },
   },
 });

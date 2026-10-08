@@ -194,6 +194,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.market.lo
           type="button"
           class="dt-link-btn ms-auto"
           data-testid="guess-toggle"
+          :aria-expanded="guessOpen"
           @click="guessOpen = !guessOpen"
         >
           {{ guessOpen ? t.common.collapse : t.common.expand }}

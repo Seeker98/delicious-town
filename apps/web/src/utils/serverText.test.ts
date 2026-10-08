@@ -100,7 +100,7 @@ describe('服务端代码 → 文字（问题记录 272）', () => {
         },
         names,
       ),
-    ).toBe('11月3日 1,000, 11月2日 1,000');
+    ).toBe('11月3日 1,000；11月2日 1,000');
     expect(predictNote({ kind: 'market', resultNote: '旧', resultParams: { void: 'missing' } }, names)).toBe(
       '数据缺失, 自动作废',
     );

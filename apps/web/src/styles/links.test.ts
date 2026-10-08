@@ -109,6 +109,26 @@ describe('文字链接统一（问题记录 451）', () => {
     expect(bad).toEqual([]);
   });
 
+  it('红字的文字按钮（撤单、删除）请求进行中变灰：text-danger 带 !important，要单独盖过（#194 遗留）', () => {
+    expect(css).toMatch(
+      /\.dt-link-btn\.text-danger:disabled\s*\{[^}]*color:\s*var\(--dt-muted\)\s*!important/,
+    );
+  });
+
+  it('文字按钮都写 type="button"；点了展开、收起的开关带 aria-expanded（筛选开关用 aria-pressed）（#194 遗留）', () => {
+    const noType: string[] = [];
+    const noExpanded: string[] = [];
+    for (const f of GAME) {
+      for (const [tag] of f.tpl.matchAll(/<(?:button|a)\b[^>]*>/gs)) {
+        if (tag.startsWith('<button') && /dt-link-btn/.test(tag) && !/\btype=/.test(tag)) noType.push(f.path);
+        if (/@click(?:\.prevent)?="(\w+) = !\1"/.test(tag) && !/aria-(expanded|pressed)/.test(tag))
+          noExpanded.push(f.path);
+      }
+    }
+    expect(noType).toEqual([]);
+    expect(noExpanded).toEqual([]);
+  });
+
   it('链接文案不自己写箭头（餐厅信息页的加点、厨具）', () => {
     expect(zhCN.rest.info.toPoints(3)).not.toMatch(/[→›]/);
     expect(zhCN.rest.info.toEquip).not.toMatch(/[→›]/);

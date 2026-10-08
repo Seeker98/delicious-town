@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { routes } from './router';
+import { routes, scrollFor } from './router';
 
 describe('routes', () => {
   it('游戏资料的页面都不用登录；已开店时显示底部导航；厨具详情跳到道具详情（问题记录 142）', () => {
@@ -33,5 +33,30 @@ describe('routes', () => {
 
   it('旧的教室地址跳到协会的教室（问题记录 122、441）', () => {
     expect(routes.find((r) => r.path === '/classroom')?.redirect).toBe('/society/classroom');
+  });
+});
+
+describe('切页面时的滚动位置', () => {
+  const loc = (path: string, hash = '') => ({ path, hash }) as never;
+
+  it('换了页面回到顶部：原来不处理，在长页面往下滚后点进别的页，新页面停在同样的高度', async () => {
+    expect(await scrollFor(loc('/wiki/guide'), loc('/'), null)).toEqual({ top: 0 });
+  });
+
+  it('同一页只改了地址参数（切标签、翻页）不动；后退、前进回到原来的位置', async () => {
+    expect(await scrollFor(loc('/town'), loc('/town'), null)).toBe(false);
+    expect(await scrollFor(loc('/town'), loc('/'), { left: 0, top: 420 })).toEqual({ left: 0, top: 420 });
+  });
+
+  it('带 #锚点：等那一块读出来再滚过去（厨具页的加点框，530 遗留）；等不到就回到顶部', async () => {
+    const el = document.createElement('div');
+    el.id = 'attr-points';
+    setTimeout(() => document.body.appendChild(el), 50);
+    expect(await scrollFor(loc('/rest/equip', '#attr-points'), loc('/rest/info'), null)).toEqual({
+      el,
+      top: 8,
+    });
+    el.remove();
+    expect(await scrollFor(loc('/rest/equip', '#nope'), loc('/rest/info'), null, 100)).toEqual({ top: 0 });
   });
 });

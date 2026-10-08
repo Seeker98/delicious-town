@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    ux1008:
+      'Switching pages now scrolls back to the top (it used to keep the previous page’s scroll position); “N points to assign” and the main quest “Assign attribute points” jump straight to the points box on the Cookware page; when picking trial ingredients, ones you don’t have enough of because the dish itself also uses them are greyed out with the reason, and a search with no results says so; the Kraken’s bad-mood penalty to trial value now uses the value that actually applies; on phones, the activity link on the Quests page moves above the tabs when it doesn’t fit; plus a few small fixes to buttons and screen-reader text',
     zhComma1008: 'Chinese text: commas are now an English comma followed by a space, to save room',
     gemStrength1008:
       'Gems page: the “Stamina: N” at the end of the explanation is now its own line, “My Stamina: N”, to make clear it’s your current Stamina',
@@ -22,7 +24,7 @@ const site: Messages['site'] = {
     cookbookProgress1008:
       'The Recipes page has a new Progress overview: total progress by grade, plus how many recipes each street has at each grade or better, with your current street highlighted and completed cells in green',
     gameTime1008:
-      'All times shown in the game (town news, mail, forum, friend feed, storage records and more) now use Beijing time, matching the clock at the top of the page instead of your device time zone; the beginner guide now says stamina recovers 1 point every 10 minutes',
+      'All times shown in the game (town news, mail, forum, friend feed, storage records and more) now use Beijing time, matching the clock at the top of the page instead of your device time zone; the beginner guide now says Stamina recovers 1 point every 10 minutes',
     renownTicket1008:
       'The Chef Tower renown shop now always stocks Level 4 Random Ingredient Tickets (50 renown, 3 per week) and Level 5 Random Ingredient Tickets (80 renown, 2 per week)',
     economy1008:
@@ -96,7 +98,7 @@ const site: Messages['site'] = {
     web1006:
       'When swapping ingredients with friends or Mr. Krab you can now search by name, and ingredients you need for your recipes come first with how many you’re missing; the move-street tip on the recipes page can be dismissed until your next star; “Claim all” for deliveries only shows when something has arrived; tapping “Recipes” in the bottom bar while viewing another street takes you back to your own; the Development Fund tab on the square lets you retry if your restaurant fails to load',
     checks1006:
-      'In Today’s activity, the exchange and event predictions now say when you still need more days since sign-up or a verified email, “Claim limited-time event rewards” shows as unavailable when no event is running, and deliveries show the star level this server actually requires. Tier 6 Blue Nether and Green Mystic Stones now count as tier 6 (they used to cost stamina and removal fees as tier 5)',
+      'In Today’s activity, the exchange and event predictions now say when you still need more days since sign-up or a verified email, “Claim limited-time event rewards” shows as unavailable when no event is running, and deliveries show the star level this server actually requires. Tier 6 Blue Nether and Green Mystic Stones now count as tier 6 (they used to cost Stamina and removal fees as tier 5)',
     luckGem1006:
       'New gem, the Fate Stone: socket it for Luck (tiers 1–6 give +1, 2, 4, 8, 16, 24). Tier 1 is sold in the coin shop, Today’s deal and the black market, it also comes from random rewards, and it levels up like the other gems. In the bar, Luck in Rock-paper-scissors now only raises your chance to win, and you always have at least a 10% chance to lose; before, with high Luck you could never lose',
     mcLearn1006:

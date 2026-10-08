@@ -28,14 +28,7 @@ onMounted(async () => {
 async function choose(s: ShardDto) {
   error.value = '';
   try {
-    const r = await endpoints.selectShard(s.id);
-    if (session.me)
-      session.me = {
-        ...session.me,
-        shardId: r.shardId,
-        restaurantId: r.restaurantId,
-        npcRestId: r.npcRestId,
-      };
+    const r = await session.enterShard(s.id);
     await router.push({ name: r.restaurantId ? 'home' : 'create-restaurant' });
   } catch (e) {
     error.value = errorMessage(e, t.value.account.enterFailed);

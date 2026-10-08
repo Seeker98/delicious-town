@@ -206,6 +206,19 @@ describe('CupPanel', () => {
     w.unmount();
   });
 
+  it('再来一局时礼券不够：焦点落到“礼券不够”的说明上，不丢回页面开头（#194 遗留）', async () => {
+    const data = withRound(
+      round({ round: 0, cups: 2, result: 'lose', last: { pick: 0, ball: 1, win: false, lucky: false } }),
+    );
+    data.tickets = 0;
+    const w = mount(CupPanel, { props: { data }, attachTo: document.body });
+    await w.get('[data-testid="cup-again"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="cup-0"]').attributes('disabled')).toBeDefined();
+    expect(document.activeElement?.getAttribute('data-testid')).toBe('block');
+    w.unmount();
+  });
+
   it('猜错以后奖励表不再标这一档（终审）', () => {
     const w = mount(CupPanel, {
       props: {

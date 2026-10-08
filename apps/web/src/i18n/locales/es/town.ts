@@ -233,7 +233,7 @@ const town: Messages['town'] = {
     noMatch: 'No se encontró nada',
     foodHave: (n) => (n > 0 ? `Tienes ${n}` : 'No tienes'),
     short: (n) => `Faltan ${n}`,
-    picked: (n, have) => `${n} de ${have} elegidos`,
+    picked: (n, have) => `${n} de ${have} vales elegidos`,
     addOne: (name) => `Uno más de ${name}`,
     subOne: (name) => `Uno menos de ${name}`,
     numOf: (name) => `Cuántos de ${name}`,

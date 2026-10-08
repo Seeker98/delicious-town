@@ -41,14 +41,7 @@ async function resend() {
 }
 async function enter(shardId: number) {
   try {
-    const r = await endpoints.selectShard(shardId);
-    if (session.me)
-      session.me = {
-        ...session.me,
-        shardId: r.shardId,
-        restaurantId: r.restaurantId,
-        npcRestId: r.npcRestId,
-      };
+    await session.enterShard(shardId);
     await router.push({ name: 'home' });
   } catch (e) {
     msg.value = { ok: false, text: errorMessage(e, t.value.account.enterFailed) };

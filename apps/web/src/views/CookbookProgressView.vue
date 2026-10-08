@@ -23,7 +23,9 @@ const allRow = computed(() =>
 
 onMounted(async () => {
   try {
-    data.value = await endpoints.cookbookProgress();
+    // 目录也等到（读过就不再请求）：不然直接打开这页时街名先显示成编号（fix/batch-1008 遗留）；目录读失败照样显示
+    const [d] = await Promise.all([endpoints.cookbookProgress(), catalog.load().catch(() => undefined)]);
+    data.value = d;
   } catch (e) {
     error.value = errorMessage(e, t.value.cookbook.progress.loadFailed);
   }

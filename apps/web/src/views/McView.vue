@@ -370,7 +370,7 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.mc.loadFa
           >
             {{ t.mc.batches(c.n) }}
           </button>
-          <button class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
+          <button type="button" class="dt-link-btn" @click="preview = null">{{ t.common.cancel }}</button>
         </div>
       </div>
     </div>

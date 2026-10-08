@@ -52,9 +52,12 @@ describe('RestInfoView', () => {
     const link = w.find('[data-testid="to-points"]');
     expect(link.text()).toBe('有 3 点可加'); // 箭头由 .dt-go 加（问题记录 451）
     expect(link.classes()).toContain('dt-go');
-    expect(link.attributes('href')).toBe('/rest/equip');
+    // 有点可加时直接落到厨具页下面的加点框（530 遗留：加点框挪到下面以后要往下翻）
+    expect(link.attributes('href')).toBe('/rest/equip#attr-points');
     vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
-    expect((await mountView()).find('[data-testid="to-points"]').text()).toBe('厨具与加点');
+    const none = (await mountView()).find('[data-testid="to-points"]');
+    expect(none.text()).toBe('厨具与加点');
+    expect(none.attributes('href')).toBe('/rest/equip');
   });
 
   it('日志：读完是空的才写还没有日志；读的时候不写；读失败写读取失败（问题记录 100 终审）', async () => {

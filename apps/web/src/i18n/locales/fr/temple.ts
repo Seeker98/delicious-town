@@ -75,6 +75,9 @@ const temple: Messages['temple'] = {
     slotEmpty: 'non choisi',
     search: 'Rechercher un ingrédient',
     noFoods: 'Aucun ingrédient utilisable',
+    noMatch: 'Aucun résultat',
+    blockedNote:
+      'Les ingrédients grisés sont en nombre insuffisant\u202f: l’ingrédient principal et le secondaire en prennent 1 chacun, et chaque ingrédient du plat lui-même en prend 1 de plus',
     group: (level, n) => `Niveau ${level} (${n} ${plFr(n, 'sorte', 'sortes')})`,
     rareTag: 'rare',
     intro: (creatives, worthMax, expMax) =>

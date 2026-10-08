@@ -81,6 +81,28 @@ describe('食谱进度一览（问题记录：食谱页加进度一览）', () =
 
 describe('进度一览加载中（backlog）', () => {
   beforeEach(() => setActivePinia(createPinia()));
+  it('目录还没读到时也写加载中，不先把街名显示成编号（fix/batch-1008 遗留）', async () => {
+    const catalog = useCatalogStore();
+    catalog.streets = [];
+    let done: () => void = () => undefined;
+    vi.spyOn(catalog, 'load').mockReturnValue(
+      new Promise<void>((r) => {
+        done = () => {
+          catalog.streets = [
+            { id: 0, name: '新手街' },
+            { id: 1, name: '湖南街' },
+          ] as never;
+          r();
+        };
+      }),
+    );
+    const w = await mountView();
+    expect(w.find('[data-testid="progress-loading"]').exists()).toBe(true);
+    done();
+    await flushPromises();
+    expect(w.text()).toContain('湖南街');
+  });
+
   it('数据回来之前写加载中', async () => {
     vi.mocked(endpoints.cookbookProgress).mockReturnValue(new Promise(() => {}));
     const router = createRouter({

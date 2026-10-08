@@ -67,6 +67,8 @@ export default {
     slotEmpty: '未選',
     search: '搜尋食材',
     noFoods: '沒有能用的食材',
+    noMatch: '沒有找到',
+    blockedNote: '灰掉的不夠扣: 主料、輔料各扣 1 個, 這道菜本身的食材每樣也扣 1 個',
     group: (level: number, n: number) => `${level} 級 (${n} 種)`,
     rareTag: '稀有',
     intro: (creatives: number, worthMax: number, expMax: number) =>

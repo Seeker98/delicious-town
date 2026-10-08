@@ -101,7 +101,7 @@ export default {
       desc: (close: number) =>
         `以今天全天全服餐厅的营业银币为准, 明天 0 点后判定；严格多于昨天才算"是"。${close} 点截止交易。`,
       note: (day: string, today: string, prevDay: string, yesterday: string) =>
-        `${day} ${today}, ${prevDay} ${yesterday}`,
+        `${day} ${today}；${prevDay} ${yesterday}`,
     },
     voidMissing: '数据缺失, 自动作废',
   },

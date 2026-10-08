@@ -29,7 +29,7 @@ const guide: Messages['guide'] = {
       ', but check that your pantry has free slots first.',
     ],
     [
-      'Stamina recovers 1 point every 10 minutes (2 when you are lucky) until it is full. Learning signature dishes, challenging the Chef Tower, squashing roaches and more cost stamina; stamina cards top it up.',
+      'Stamina recovers 1 point every 10 minutes (2 when you are lucky) until it is full. Learning signature dishes, challenging the Chef Tower, squashing roaches and more cost Stamina; Stamina Cards top it up.',
     ],
     [
       'Start with these: assign your stat points in ',

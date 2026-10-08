@@ -31,6 +31,14 @@ describe('发版后页面文件加载不到时自动刷新一次（问题记录 
     expect(go).toHaveBeenCalledTimes(2);
   });
 
+  it('断网时不刷：加载失败是因为没网，刷了只会落到浏览器的离线页（495~513 遗留）', () => {
+    const go = vi.fn();
+    expect(reloadOnce('/rest/tasks', go, 2_000_000, false)).toBe(false);
+    expect(go).not.toHaveBeenCalled();
+    // 没占掉 10 秒的窗口：网回来后照样能刷
+    expect(reloadOnce('/rest/tasks', go, 2_001_000, true)).toBe(true);
+  });
+
   it('存储不可用时也能刷（只是不防连刷）', () => {
     const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('blocked');
