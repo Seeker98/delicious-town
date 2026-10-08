@@ -35,3 +35,36 @@ export interface DailyHeadDto {
   day: string;
   title: Record<DailyLang, string>;
 }
+
+/** 后台（admin）：列表一行 */
+export interface AdminDailyRowDto {
+  shardId: number;
+  day: string;
+  status: DailyStatus;
+  /** 简中标题；还没生成成功为 null */
+  title: string | null;
+  tokensIn: number;
+  tokensOut: number;
+  attempts: number;
+  regenerations: number;
+  error: string | null;
+  generatedAt: string | null;
+  publishedAt: string | null;
+}
+
+export interface AdminDailyDetailDto extends AdminDailyRowDto {
+  /** 素材，原样 */
+  facts: unknown;
+  content: Record<DailyLang, DailyArticleDto> | null;
+  rests: Record<string, string | null>;
+}
+
+export const adminDailyListQuery = z.object({ shardId: z.coerce.number().int().positive() });
+export const adminDailyParams = z.object({
+  shardId: z.coerce.number().int().positive(),
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+const articleBody = z.object({ title: z.string().max(200), body: z.string().max(5000) });
+/** 后台手改：简中、英文；繁中由简中重新转 */
+export const adminDailyEditBody = z.object({ zh: articleBody, en: articleBody });
+export type AdminDailyEditBody = z.infer<typeof adminDailyEditBody>;

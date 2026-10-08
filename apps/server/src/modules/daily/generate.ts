@@ -94,6 +94,8 @@ export async function generateDaily(
         attempts: sql<number>`attempts + 1`,
         error: String(err instanceof Error ? err.message : err).slice(0, 500),
         ...(used.model ? { model: used.model } : {}),
+        // 后台重新生成失败也算一次（每次都花钱）
+        ...(o.force ? { regenerations: sql<number>`regenerations + 1` } : {}),
       })
       .execute();
     throw err;
