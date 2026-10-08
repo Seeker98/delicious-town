@@ -318,3 +318,59 @@ describe('分红（收购 PR 2）', () => {
     expect(job.period(gameTime(TODAY, 23, 59), settings)).toBe(`acquire-dividend-${TODAY}`);
   });
 });
+
+describe('有老板没发成时任务记成出错（稳健性收尾批：原来只记日志、任务算成功，自动重试补不上）', () => {
+  /** 只让这个老板的分红写入失败（触发器按老板店号过滤，不影响别的测试） */
+  async function failFor(ownerId: number) {
+    const fn = sql.raw(`test_fail_dividend_${ownerId}`);
+    await sql`create function ${fn}() returns trigger language plpgsql as $$
+      begin
+        if new.owner_rest_id = ${sql.raw(String(ownerId))} then raise exception 'test dividend fail'; end if;
+        return new;
+      end $$`.execute(t.db);
+    await sql`create trigger ${fn} before insert on acquire_dividend for each row execute function ${fn}()`.execute(
+      t.db,
+    );
+    return async () => {
+      await sql`drop trigger if exists ${fn} on acquire_dividend`.execute(t.db);
+      await sql`drop function if exists ${fn}()`.execute(t.db);
+    };
+  }
+
+  it('任务抛错；重跑时只补没发成的，发过的不重复', async () => {
+    const shardId = await createShard(t.db);
+    const ok = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const bad = await newRestaurant(t, { shardId, patch: { coin: 0 } });
+    const [x, y] = [await newRestaurant(t, { shardId }), await newRestaurant(t, { shardId })];
+    for (const [r, o] of [
+      [x, ok],
+      [y, bad],
+    ] as const) {
+      await ownerIncome(o.restaurantId, 10_000_000);
+      await own(r.restaurantId, shardId, o.restaurantId);
+      await income(r.restaurantId, YDAY, 1_000_000);
+    }
+    const job = acquireJobs(t.game.deps).find((j) => j.name === 'acquire-dividend')!;
+    const ctx = {
+      shardId,
+      period: `acquire-dividend-${TODAY}`,
+      now: NOW,
+      settings: { tuning: { acquire: a() } } as never,
+      log: { error: () => {} },
+    };
+    const restore = await failFor(bad.restaurantId);
+    try {
+      await expect(job.run(ctx)).rejects.toThrow(/1 owners failed/);
+    } finally {
+      await restore();
+    }
+    expect(await coin(ok.restaurantId)).toBe(50_000);
+    expect(await coin(bad.restaurantId)).toBe(0);
+    await expect(job.run({ ...ctx, now: gameTime(TODAY, 0, 20) })).resolves.toMatchObject({
+      rests: 1,
+      failed: 0,
+    });
+    expect(await coin(ok.restaurantId)).toBe(50_000);
+    expect(await coin(bad.restaurantId)).toBe(50_000);
+  });
+});

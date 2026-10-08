@@ -1,7 +1,7 @@
 import { sql } from 'kysely';
 import { addDays, gameDay, gameParts } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
-import type { PeriodicJob } from '../../core/jobs';
+import { JobError, type PeriodicJob } from '../../core/jobs';
 import { payDividends } from './dividend';
 import { aggregateIncomeDay, INCOME_KEEP_DAYS, pruneIncomeDays } from './income';
 import { basePrice, windowDays, type T } from './rules';
@@ -132,8 +132,9 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
       run: async ({ shardId, now, settings }) => runAcquireDay(d, shardId, now, settings.tuning.acquire),
     },
     {
-      // 排在 acquire-day 后面：前一天的收入已经汇总好。没汇总好时会失败，10 分钟后再试
-      // （稳健性批：原来不重试，收购“我的”整天写“昨天的分红还没发”）
+      // 排在 acquire-day 后面：前一天的收入已经汇总好（没汇总时先补）。出错 10 分钟后再试
+      // （稳健性批：原来不重试，收购“我的”整天写“昨天的分红还没发”）；
+      // 有老板没发成也算出错，重试时已经发过的店跳过，只补没发成的（稳健性收尾批）
       name: 'acquire-dividend',
       feature: 'acquire',
       retry: true,
@@ -141,8 +142,13 @@ export function acquireJobs(d: GameDeps): PeriodicJob[] {
         const day = after0005(now);
         return day === null ? null : `acquire-dividend-${day}`;
       },
-      run: async ({ shardId, now, settings, log }) =>
-        payDividends(d, shardId, now, settings.tuning.acquire, log),
+      run: async ({ shardId, now, settings, log }) => {
+        const stats = await payDividends(d, shardId, now, settings.tuning.acquire, log);
+        if (stats.failedOwners.length > 0) {
+          throw new JobError(`acquire dividend: ${stats.failedOwners.length} owners failed`, stats);
+        }
+        return stats;
+      },
     },
   ];
 }

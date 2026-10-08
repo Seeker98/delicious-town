@@ -1,7 +1,7 @@
 import { dishCoin } from '../../core/prices';
 import { GOODS, type CookbookIndex } from '@dt/config';
 import { gradeOf } from '../cookbook/rules';
-import type { Rng } from '@dt/shared';
+import { PAYING_CUSTOMERS, type Rng } from '@dt/shared';
 import type { TableResult, TableState } from '../../db/schema';
 import type { Drop, Flags, Rates, SettleGlobals, SettleInput, SettleLog } from './types';
 
@@ -89,7 +89,7 @@ export function dineAccrual(
 }
 
 /** 付费的顾客类型：普通、挑剔、章鱼哥、痞老板、蟹老板 */
-const PAYING: ReadonlySet<number> = new Set([1, 2, 6, 7, 8]);
+const PAYING: ReadonlySet<number> = new Set(PAYING_CUSTOMERS);
 
 const r2 = (x: number) => Math.round(x * 100) / 100;
 

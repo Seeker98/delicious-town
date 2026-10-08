@@ -62,7 +62,8 @@ const split = (lang: DescLang, desc: string): string[] =>
     .split(lang === 'zh-CN' ? /[,，]/ : /,\s*/)
     .map((s) => s.trim())
     .filter((s) => s !== '');
-const join = (lang: DescLang, parts: string[]): string => parts.join(', ');
+/** 各语言都用“, ”连（简中也是，问题记录 534） */
+const join = (parts: string[]): string => parts.join(', ');
 
 function kindOf(lang: DescLang, clause: string): [Kind, number] | null {
   for (const [kind, re] of PATTERNS[lang]) {
@@ -112,7 +113,7 @@ export function setFinalRates(lang: DescLang, desc: string, coinRate: number, ex
     if (coinRate !== 0) head.push(w.coin(pct(coinRate)));
     if (expRate !== 0) head.push(w.exp(pct(expRate)));
   }
-  return join(lang, caseFix(lang, [...head, ...rest]));
+  return join(caseFix(lang, [...head, ...rest]));
 }
 
 /** 构建检查：街道和勋章说明（简中和英法西）里写的最终银币、经验收益要和勋章数值一致 */

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { createShard } from '../../test/fixtures';
 import { createTestGame, type TestGame } from '../../test/game';
-import type { PeriodicJob } from '../core/jobs';
+import { JobError, type PeriodicJob } from '../core/jobs';
 import { runDueJobs } from './periodic';
 
 let t: TestGame;
@@ -169,5 +169,78 @@ describe('重抢时就记下第几次（稳健性批终审：原来失败时才�
     await runDueJobs(deps(), [j], { shardIds: [shardId] });
     expect(seen).toEqual([{ error: 'boom', attempts: 2 }]);
     t.clock.set(start);
+  });
+});
+
+describe('跑到一半进程没了（backlog：部署时被强杀，job_run 抢占了却没写完成也没写出错，开了 retry 也不重跑）', () => {
+  const claimDead = (shardId: number, name: string, at: Date) =>
+    t.db
+      .insertInto('job_run')
+      .values({ shard_id: shardId, job: name, period: 'k', started_at: at })
+      .execute();
+
+  it('开了 retry 的：没完成也没出错的抢占 30 分钟后再抢一次，之前不抢', async () => {
+    const shardId = await createShard(t.db);
+    const run = vi.fn(async () => ({ paid: 1 }));
+    const j: PeriodicJob = { name: 'retry-dead', feature: 'shop', period: () => 'k', run, retry: true };
+    const start = t.clock.now;
+    await claimDead(shardId, 'retry-dead', start);
+    t.clock.set(new Date(start.getTime() + 11 * 60_000));
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(run).not.toHaveBeenCalled();
+    t.clock.set(new Date(start.getTime() + 31 * 60_000));
+    const r = await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    expect(r.map((x) => x.ok)).toEqual([true]);
+    expect(run).toHaveBeenCalledTimes(1);
+    t.clock.set(start);
+  });
+
+  it('没开 retry 的照旧不重跑', async () => {
+    const shardId = await createShard(t.db);
+    const a = job('dead-once', 'shop', 'k');
+    const start = t.clock.now;
+    await claimDead(shardId, 'dead-once', start);
+    t.clock.set(new Date(start.getTime() + 60 * 60_000));
+    await runDueJobs(deps(), [a], { shardIds: [shardId] });
+    expect(a.run).not.toHaveBeenCalled();
+    t.clock.set(start);
+  });
+});
+
+describe('出错时带上任务给的统计（稳健性收尾批终审：分红有老板没发成时，发了多少、谁没发成都丢了）', () => {
+  it('抛 JobError 时它的 stats 和 error、attempts 一起写进 job_run', async () => {
+    const shardId = await createShard(t.db);
+    const run = vi.fn(async () => {
+      throw new JobError('partly failed', { coin: 100, failedOwners: [7] });
+    });
+    const j: PeriodicJob = { name: 'job-error-stats', feature: 'shop', period: () => 'k', run, retry: true };
+    await runDueJobs(deps(), [j], { shardIds: [shardId] });
+    const row = await t.db
+      .selectFrom('job_run')
+      .select(['stats', 'finished_at'])
+      .where('shard_id', '=', shardId)
+      .where('job', '=', 'job-error-stats')
+      .executeTakeFirstOrThrow();
+    expect(row.finished_at).toBeNull();
+    expect(row.stats).toEqual({ coin: 100, failedOwners: [7], error: 'partly failed', attempts: 1 });
+  });
+});
+
+describe('停止时不再抢新的（稳健性收尾批终审 I2：停止等待期间这一轮还会接着抢后面的任务，抢了跑不完就漏一期）', () => {
+  it('signal 停了以后不再抢后面的任务，已经抢的照常跑完', async () => {
+    const shardId = await createShard(t.db);
+    const ac = new AbortController();
+    const first = job(
+      'stop-first',
+      'shop',
+      'k',
+      vi.fn(async () => (ac.abort(), { n: 1 })),
+    );
+    const second = job('stop-second', 'shop', 'k');
+    const r = await runDueJobs(deps(), [first, second], { shardIds: [shardId], signal: ac.signal });
+    expect(r.map((x) => [x.job, x.ok])).toEqual([['stop-first', true]]);
+    expect(second.run).not.toHaveBeenCalled();
+    const claimed = await t.db.selectFrom('job_run').select('job').where('shard_id', '=', shardId).execute();
+    expect(claimed.map((x) => x.job)).toEqual(['stop-first']);
   });
 });

@@ -47,11 +47,18 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       },
     },
     {
-      // 每日计数只留 30 天（backlog 374）；酒吧连胜榜三周以前的也一起清（517 遗留）
+      // 每日计数只留 30 天（backlog 374）
       name: 'daily-counter-clean',
       intervalMs: 6 * 3_600_000,
       run: async () => {
         await pruneDailyCounters(db, now());
+      },
+    },
+    {
+      // 酒吧连胜榜三周以前的清掉（517 遗留）；单独一个任务，每日计数清理出错时不连累
+      name: 'streak-best-clean',
+      intervalMs: 6 * 3_600_000,
+      run: async () => {
         await pruneStreakBest(db, now());
       },
     },
@@ -72,9 +79,9 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
     {
       name: 'periodic',
       intervalMs: 5_000,
-      run: async () => {
+      run: async (signal) => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
-        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs);
+        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs, { signal });
       },
     },
     {

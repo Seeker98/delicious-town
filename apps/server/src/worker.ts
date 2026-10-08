@@ -8,6 +8,9 @@ import { waitForLeadership } from './worker/leader';
 import { startScheduler } from './worker/scheduler';
 import { workerJobs } from './worker/jobs';
 
+/** 收到停止信号后最多等正在跑的任务这么久（compose 里 worker 的 stop_grace_period 是 30 秒） */
+const STOP_WAIT_MS = 25_000;
+
 const env = loadEnv();
 const log = pino({ level: env.LOG_LEVEL });
 const deps = createDeps(env);
@@ -30,7 +33,7 @@ if (leader) {
   log.info('became leader, starting jobs');
   const scheduler = startScheduler(workerJobs(game, log), log);
   await new Promise<void>((resolve) => ac.signal.addEventListener('abort', () => resolve()));
-  scheduler.stop();
+  if (!(await scheduler.stop(STOP_WAIT_MS))) log.warn('jobs still running at shutdown, exiting anyway');
   await leader.end();
 }
 settingsSub.close();

@@ -266,3 +266,40 @@ describe('收购接口（收购 PR 1）', () => {
     );
   });
 });
+
+describe('分红有老板没发成（稳健性收尾批终审 I1：任务记成出错后，整个区服都写“还没发”）', () => {
+  it('只有没发成的老板看到“还没发”，别的老板照常', async () => {
+    const shardId = await openShard();
+    const [a, b, x, y] = [
+      await playerIn(ctx, shardId),
+      await playerIn(ctx, shardId),
+      await playerIn(ctx, shardId),
+      await playerIn(ctx, shardId),
+    ];
+    await ctx.deps.db
+      .insertInto('acquire_state')
+      .values([
+        { rest_id: x.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: a.restId },
+        { rest_id: y.restId, shard_id: shardId, base: 100_000, heat: 1, owner_rest_id: b.restId },
+      ])
+      .execute();
+    await ctx.deps.db
+      .insertInto('job_run')
+      .values({
+        shard_id: shardId,
+        job: 'acquire-dividend',
+        period: `acquire-dividend-${gameDay(ctx.deps.now())}`,
+        started_at: ctx.deps.now(),
+        stats: JSON.stringify({
+          error: 'acquire dividend: 1 owners failed',
+          attempts: 1,
+          failedOwners: [b.restId],
+        }),
+      })
+      .execute();
+    const paid = async (cookie: string) =>
+      (await call(ctx.app, 'GET', '/api/v1/acquire', { cookie })).json.data.dividendPaid;
+    expect(await paid(a.cookie)).toBe(true);
+    expect(await paid(b.cookie)).toBe(false);
+  });
+});

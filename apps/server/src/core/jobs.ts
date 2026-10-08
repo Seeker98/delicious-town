@@ -22,3 +22,16 @@ export interface PeriodicJob {
    */
   retry?: boolean;
 }
+
+/**
+ * 任务部分失败时抛这个：stats 和 error、attempts 一起写进 job_run（稳健性收尾批终审：
+ * 分红有老板没发成时任务记成出错好让重试补上，发了多少、谁没发成也要留着，页面按 failedOwners 判断还没发）
+ */
+export class JobError extends Error {
+  constructor(
+    message: string,
+    readonly stats: Record<string, unknown>,
+  ) {
+    super(message);
+  }
+}

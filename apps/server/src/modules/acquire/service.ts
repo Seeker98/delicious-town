@@ -598,10 +598,14 @@ export function createAcquireService(d: GameDeps) {
       .leftJoin('acquire_tend as td', (j) => j.onRef('td.rest_id', '=', 's.rest_id').on('td.day', '=', today))
       .select(['s.rest_id', 'dv.coin', 'dv.tended', 'td.rest_id as tended_today'])
       // 今天的分红任务跑完没有：零点到任务跑完之间，名下店的“昨天分红”是还没发，不是没有（收购 PR 2 遗留）；
-      // 并进这条查询，条数不变
+      // 并进这条查询，条数不变。有老板没发成时任务记成出错、等重试，只有 failedOwners 里的老板算还没发
+      // （稳健性收尾批终审 I1：原来整个区服都写“还没发”）
       .select(
         sql<boolean>`exists(select 1 from job_run where shard_id = ${ctx.shardId} and job = 'acquire-dividend'
-          and period = ${`acquire-dividend-${today}`} and finished_at is not null)`.as('paid'),
+          and period = ${`acquire-dividend-${today}`} and (finished_at is not null
+            or (stats ? 'failedOwners' and not stats->'failedOwners' @> to_jsonb(${ctx.restaurantId}::int))))`.as(
+          'paid',
+        ),
       )
       .where('s.owner_rest_id', '=', ctx.restaurantId)
       .execute();
