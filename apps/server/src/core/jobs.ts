@@ -8,6 +8,8 @@ export interface JobContext {
   settings: ShardSettings;
   /** worker 的日志：任务内部单个对象出错时记下来继续处理其他对象 */
   log: { error(obj: object, msg: string): void };
+  /** worker 停机时中止（要调外部接口的任务用，比如小镇日报） */
+  signal?: AbortSignal;
 }
 
 /** 周期型任务（设计文档 §6）：period 返回 null 表示此刻不该跑；时点可以随区服 tuning 变化 */
