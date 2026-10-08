@@ -89,6 +89,14 @@ describe('玩家看得到的数据用英文逗号加空格（问题记录 534，
   });
 });
 
+describe('英文“体力”统一写大写的 Stamina（532 遗留，终审）', () => {
+  it('英文的游戏数据翻译里没有小写的 stamina：界面和道具名都写 Stamina', () => {
+    const en = realBuild().bundle!.i18n.en;
+    const text = JSON.stringify(en);
+    expect(text.match(/.{0,30}\bstamina\b.{0,10}/g) ?? []).toEqual([]);
+  });
+});
+
 describe('集束飞弹（用户 2026-10-07 查证：原版叫集束飞弹，不是极速飞弹）', () => {
   it('道具名和说明里不再有“极速飞弹”；英西法叫 Cluster / de racimo / à fragmentation', () => {
     const b = realBuild().bundle!;

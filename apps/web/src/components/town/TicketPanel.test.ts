@@ -113,6 +113,8 @@ describe('TicketPanel', () => {
   it('英西法的“已选”带券的单位；法文冒号前用窄空格（491 遗留）', () => {
     expect(en.town.ticket.picked(1, 3)).toBe('1 of 3 vouchers selected');
     expect(es.town.ticket.picked(2, 3)).toBe('2 de 3 vales elegidos');
+    expect(en.town.ticket.picked(1, 1)).toBe('1 of 1 voucher selected');
+    expect(es.town.ticket.picked(1, 1)).toBe('1 de 1 vale elegido');
     expect(fr.town.ticket.picked(1, 3)).toBe('1 bon sur 3 choisi');
     expect(fr.town.ticket.picked(2, 3)).toBe('2 bons sur 3 choisis');
     expect(fr.town.ticket.have(3)).toBe('Possédé : 3');

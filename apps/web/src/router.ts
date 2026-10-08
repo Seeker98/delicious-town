@@ -450,13 +450,13 @@ export const routes: RouteRecordRaw[] = [
   { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
-/** 等页面里的某一块出现（数据读回来以后才渲染），最多等 wait 毫秒 */
-function waitForEl(selector: string, wait: number): Promise<Element | null> {
+/** 等到条件成立（页面数据读回来以后才渲染、才变高），最多等 wait 毫秒；返回最后一次的结果 */
+function waitUntil<T>(get: () => T, wait: number): Promise<T> {
   return new Promise((resolve) => {
     const start = Date.now();
     const tick = () => {
-      const el = document.querySelector(selector);
-      if (el || Date.now() - start >= wait) resolve(el);
+      const v = get();
+      if (v || Date.now() - start >= wait) resolve(v);
       else setTimeout(tick, 50);
     };
     tick();
@@ -465,19 +465,25 @@ function waitForEl(selector: string, wait: number): Promise<Element | null> {
 
 /**
  * 切页面时的滚动位置：原来不处理，在长页面往下滚后点进别的页，新页面停在同样的高度。
- * 后退、前进回到原来的位置；带 #锚点 的等那一块出现再滚过去（厨具页的加点框，530 遗留）；
- * 换了页面回到顶部；同一页只改地址参数（切标签、翻页）不动
+ * - 换了页面回到顶部；同一页只改地址参数（切标签、翻页）不动
+ * - 后退、前进：等页面够高了再回到原来的位置（数据还没读回来时太短，太早滚会被截到底）
+ * - 带 #锚点：先回到顶部，等那一块出现再滚过去（厨具页的加点框，530 遗留）；等不到就留在顶部
+ * - 等的时候用户已经去了别的页（current 返回 false）就不再滚：vue-router 不管过时的滚动，会把那一页拉走（终审 I2）
  */
 export async function scrollFor(
   to: Pick<RouteLocationNormalized, 'path' | 'hash'>,
   from: Pick<RouteLocationNormalized, 'path'>,
   saved: { left: number; top: number } | null,
-  wait = 3000,
-): Promise<{ el: Element; top: number } | { left?: number; top?: number } | false> {
-  if (saved) return saved;
+  { current = () => true, wait = 3000 }: { current?: () => boolean; wait?: number } = {},
+): Promise<{ el: Element; top: number } | { left: number; top: number } | { top: number } | false> {
+  if (saved) {
+    await waitUntil(() => document.documentElement.scrollHeight >= saved.top + window.innerHeight, wait);
+    return current() ? saved : false;
+  }
   if (to.hash) {
-    const el = await waitForEl(to.hash, wait);
-    return el ? { el, top: 8 } : { top: 0 };
+    window.scrollTo(0, 0);
+    const el = await waitUntil(() => document.querySelector(to.hash), wait);
+    return el && current() ? { el, top: 8 } : false;
   }
   return to.path !== from.path ? { top: 0 } : false;
 }
@@ -486,7 +492,8 @@ export function createAppRouter(pinia: Pinia): Router {
   const router = createRouter({
     history: createWebHistory(),
     routes,
-    scrollBehavior: (to, from, saved) => scrollFor(to, from, saved),
+    scrollBehavior: (to, from, saved) =>
+      scrollFor(to, from, saved, { current: () => router.currentRoute.value.fullPath === to.fullPath }),
   });
   router.beforeEach(async (to) => {
     const session = useSessionStore(pinia);

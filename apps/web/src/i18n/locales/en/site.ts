@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     ux1008:
-      'Switching pages now scrolls back to the top (it used to keep the previous page’s scroll position); “N points to assign” and the main quest “Assign attribute points” jump straight to the points box on the Cookware page; when picking trial ingredients, ones you don’t have enough of because the dish itself also uses them are greyed out with the reason, and a search with no results says so; the Kraken’s bad-mood penalty to trial value now uses the value that actually applies; on phones, the activity link on the Quests page moves above the tabs when it doesn’t fit; plus a few small fixes to buttons and screen-reader text',
+      'Switching pages now scrolls back to the top (it used to keep the previous page’s scroll position); “N points to assign” on the Restaurant info page jumps straight to the points box on the Cookware page; when picking trial ingredients, ones you don’t have enough of because the dish itself also uses them are greyed out with the reason, and a search with no results says so; the Kraken’s bad-mood penalty to trial value now uses the value that actually applies; on phones, the activity link on the Quests page moves above the tabs when it doesn’t fit; plus a few small fixes to buttons and screen-reader text',
     zhComma1008: 'Chinese text: commas are now an English comma followed by a space, to save room',
     gemStrength1008:
       'Gems page: the “Stamina: N” at the end of the explanation is now its own line, “My Stamina: N”, to make clear it’s your current Stamina',

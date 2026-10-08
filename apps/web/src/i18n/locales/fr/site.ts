@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
     ux1008:
-      "En changeant de page, on revient en haut (avant, on restait à la hauteur de la page précédente)\u202f; «\u202fN points à répartir\u202f» et la quête principale «\u202fRépartir des points d'attribut\u202f» mènent directement au cadre des points de la page Ustensiles\u202f; en choisissant les ingrédients d'épreuve, ceux qui ne suffisent pas parce que le plat les utilise aussi sont grisés avec la raison, et une recherche sans résultat l'indique\u202f; la pénalité du Kraken sur la valeur d'épreuve s'applique à la valeur réellement prise en compte\u202f; sur mobile, le lien vers l'activité de la page des Quêtes passe au-dessus des onglets quand il ne tient pas\u202f; et quelques petites corrections sur des boutons et des textes pour lecteurs d'écran",
+      "En changeant de page, on revient en haut (avant, on restait à la hauteur de la page précédente)\u202f; «\u202fN points à répartir\u202f» dans les Infos du restaurant mène directement au cadre des points de la page Ustensiles\u202f; en choisissant les ingrédients d'épreuve, ceux qui ne suffisent pas parce que le plat les utilise aussi sont grisés avec la raison, et une recherche sans résultat l'indique\u202f; la pénalité du Kraken sur la valeur d'épreuve s'applique à la valeur réellement prise en compte\u202f; sur mobile, le lien vers l'activité de la page des Quêtes passe au-dessus des onglets quand il ne tient pas\u202f; et quelques petites corrections sur des boutons et des textes pour lecteurs d'écran",
     zhComma1008:
       "Texte chinois\u202f: les virgules deviennent une virgule anglaise suivie d'une espace, pour gagner de la place",
     gemStrength1008:

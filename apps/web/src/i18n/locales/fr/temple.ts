@@ -69,6 +69,7 @@ const temple: Messages['temple'] = {
     notReady: "Préparez-vous d'abord avec une injection ou une méditation",
     noTarget: "Pas encore de plat d'épreuve",
     pickFoods: 'Choisissez un ingrédient principal et un secondaire',
+    dishShort: (names) => `Pas assez des ingrédients du plat lui-même\u202f: ${names}`,
     prepareFailed: 'Échec de la préparation',
     refreshFailed: 'Impossible de changer de plat',
     failed: "Échec de l'épreuve",

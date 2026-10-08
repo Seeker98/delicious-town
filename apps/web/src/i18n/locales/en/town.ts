@@ -225,7 +225,7 @@ const town: Messages['town'] = {
     noMatch: 'Nothing found',
     foodHave: (n) => (n > 0 ? `Own ${n}` : 'None'),
     short: (n) => `Need ${n}`,
-    picked: (n, have) => `${n} of ${have} vouchers selected`,
+    picked: (n, have) => `${n} of ${have} ${plEn(have, 'voucher', 'vouchers')} selected`,
     addOne: (name) => `One more ${name}`,
     subOne: (name) => `One less ${name}`,
     numOf: (name) => `How many ${name}`,

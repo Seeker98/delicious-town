@@ -220,6 +220,51 @@ describe('TrialPanel', () => {
     expect(w.get('[data-testid="trial-food-423"]').attributes('disabled')).toBeUndefined();
   });
 
+  it('试炼后已选的不够扣了（这道菜本身也要扣）：从主辅里去掉；菜本身要的一个都没有：写明缺什么（终审 I3）', async () => {
+    useCatalogStore().apply({
+      version: 'x',
+      goods: [],
+      foods: [
+        { id: 150, name: '稀有料', level: 5, odds: 70, coin: 1, type: 0 },
+        { id: 423, name: '普通料', level: 5, odds: 100, coin: 1, type: 0 },
+        { id: 31, name: '三级料', level: 3, odds: 100, coin: 1, type: 0 },
+      ],
+      streets: [],
+      weather: [],
+      devices: [],
+      mysterious: [
+        { id: 3, name: '秘·凤凰展翅', level: 3, road: 1, nutritive: 1, coin: 1, foods: [150, 31] },
+      ],
+    } as never);
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [
+        { foodsId: 150, num: 3, locked: false, streetNeed: 0 },
+        { foodsId: 423, num: 5, locked: false, streetNeed: 0 },
+        { foodsId: 31, num: 1, locked: false, streetNeed: 0 },
+      ],
+    } as never);
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    // 试炼扣了主料 1 个、菜本身 1 个：150 剩 1 个，再当主料就不够（主料 1 + 菜本身 1）；31 用光
+    vi.mocked(endpoints.cupboard).mockResolvedValue({
+      items: [
+        { foodsId: 150, num: 1, locked: false, streetNeed: 0 },
+        { foodsId: 423, num: 4, locked: false, streetNeed: 0 },
+      ],
+    } as never);
+    await w.get('[data-testid="trial-start"]').trigger('click');
+    await flushPromises();
+    expect(w.get('[data-testid="trial-slot-main"]').text()).toContain('未选');
+    expect(w.get('[data-testid="trial-slot-sub"]').text()).toContain('普通料');
+    expect(w.get('[data-testid="block"]').text()).toBe('这道菜本身的食材不够: 三级料');
+  });
+
   it('食材按钮写明选没选（aria-pressed）；搜不到写“没有找到”（487 遗留）', async () => {
     const w = mount(TrialPanel, {
       props: {

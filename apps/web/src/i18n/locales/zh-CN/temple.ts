@@ -59,6 +59,7 @@ export default {
     notReady: '先注射或冥想做好准备',
     noTarget: '还没有试炼对象',
     pickFoods: '选好主料和辅料',
+    dishShort: (names: string) => `这道菜本身的食材不够: ${names}`,
     prepareFailed: '准备失败',
     refreshFailed: '更换失败',
     failed: '试炼失败',

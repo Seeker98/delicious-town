@@ -33,13 +33,10 @@ async function loadFoods() {
   }
 }
 onMounted(loadFoods);
-/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；用光的、不够主辅各一个的去掉，回到主料槽 */
+/** 试炼后重读（终审：面板一直挂着，数量和选择会停在试炼前）；不够扣的从主辅里去掉，回到主料槽 */
 async function afterTrial() {
   await loadFoods();
-  const num = (id: number | null) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
-  if (main.value !== null && num(main.value) === 0) main.value = null;
-  if (sub.value !== null && (num(sub.value) === 0 || (sub.value === main.value && num(sub.value) < 2)))
-    sub.value = null;
+  dropShort();
   slot.value = main.value === null ? 'main' : 'sub';
 }
 
@@ -85,17 +82,33 @@ watch(q, () => (searchToggled.value = new Map()));
 /** 换了试炼对象：默认展开的等级跟着变，手动展开 / 收起的记录作废（487 遗留） */
 watch(
   () => trial.value.mcId,
-  () => (toggled.value = new Map()),
+  () => {
+    toggled.value = new Map();
+    dropShort();
+  },
 );
+/** 持有几个 */
+const numOf = (id: number) => foods.value.find((f) => f.foodsId === id)?.num ?? 0;
+/** 这道菜本身每样食材扣 1 个（服务端 trial.ts） */
+const dishNeed = (id: number) => (dish.value?.foods ?? []).filter((x) => x === id).length;
 /**
- * 选这种要几个：这个槽 1 个，另一个槽也是它再 1 个，这道菜本身的食材每样再扣 1 个（服务端 trial.ts）。
+ * 选这种要几个：这个槽 1 个，另一个槽也是它再 1 个，这道菜本身的食材每样再扣 1 个。
  * 不够时灰掉（487 遗留：原来只看另一个槽，这道菜本身要的点开始才由服务端报不够）
  */
 const blockedFood = (f: CupboardFoodDto) => {
   const other = (slot.value === 'main' ? sub.value : main.value) === f.foodsId ? 1 : 0;
-  const own = (dish.value?.foods ?? []).filter((x) => x === f.foodsId).length;
-  return f.num < 1 + other + own;
+  return f.num < 1 + other + dishNeed(f.foodsId);
 };
+/** 已选的不够扣了（试炼后数量变少、换了试炼对象）：先看主料，再看辅料（终审 I3） */
+function dropShort() {
+  const need = (id: number) => (main.value === id ? 1 : 0) + (sub.value === id ? 1 : 0) + dishNeed(id);
+  if (main.value !== null && numOf(main.value) < need(main.value)) main.value = null;
+  if (sub.value !== null && numOf(sub.value) < need(sub.value)) sub.value = null;
+}
+/** 这道菜本身要的食材不够（列表里只有持有的，一个都没有的看不到）：写进不能开始的原因 */
+const dishShort = computed(() =>
+  [...new Set(dish.value?.foods ?? [])].filter((id) => numOf(id) < dishNeed(id)),
+);
 const anyBlocked = computed(() => groups.value.some((g) => isOpen(g.lv) && g.list.some(blockedFood)));
 function pickFood(id: number) {
   if (slot.value === 'main') {
@@ -120,6 +133,8 @@ const block = computed(() => {
   if (props.data.star < 1) return t.value.temple.needStar(x.what);
   if (trial.value.readyMinutes === 0) return x.notReady;
   if (trial.value.mcId === null) return x.noTarget;
+  if (dishShort.value.length > 0)
+    return x.dishShort(dishShort.value.map((id) => catalog.foodName(id)).join(t.value.events.sep));
   if (main.value === null || sub.value === null) return x.pickFoods;
   return '';
 });
