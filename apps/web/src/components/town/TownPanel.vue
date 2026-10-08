@@ -3,12 +3,11 @@ import { computed, ref } from 'vue';
 import type { TownDto, TownRewardDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
-import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { effectChips } from '../../utils/effects';
-import { formatNum } from '../../utils/format';
+import { formatNum, timeHM } from '../../utils/format';
 import { rewardText } from '../../utils/rewards';
 import { useServerClock } from '../../utils/serverClock';
 
@@ -105,10 +104,7 @@ function wish() {
 const hammerBlock = computed(() => {
   const h = props.data.hammer;
   if (!h.has) return t.value.town.hammerNeed;
-  if (clock.pending(h.readyAt))
-    return t.value.town.hammerCool(
-      new Date(h.readyAt).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' }),
-    );
+  if (clock.pending(h.readyAt)) return t.value.town.hammerCool(timeHM(h.readyAt));
   if (clock.pending(h.townReadyAt)) return t.value.town.hammerTown(clock.secondsLeft(h.townReadyAt));
   return '';
 });

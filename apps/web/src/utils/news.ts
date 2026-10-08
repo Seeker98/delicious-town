@@ -1,5 +1,6 @@
 import type { NewsDto } from '@dt/shared';
-import { activeLocale, activeMessages } from '../i18n';
+import { gameDateTime } from './format';
+import { activeMessages } from '../i18n';
 import { predictTitle } from './serverText';
 
 export interface NewsNames {
@@ -43,7 +44,7 @@ export function newsText(n: NewsDto, x: NewsNames): string {
 }
 
 export function newsTime(iso: string): string {
-  return new Date(iso).toLocaleString(activeLocale(), {
+  return gameDateTime(iso, {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',

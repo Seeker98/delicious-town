@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { gameDateTime } from '../utils/format';
 import { RouterLink } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import GameImg from '../components/GameImg.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
@@ -17,7 +17,7 @@ type Tab = 'friends' | 'requests' | 'find' | 'feed';
 const toast = useToastStore();
 const t = useT();
 const TABS = ['friends', 'requests', 'find', 'feed'] as const;
-const feedTime = (iso: string) => new Date(iso).toLocaleString(activeLocale(), { hour12: false });
+const feedTime = (iso: string) => gameDateTime(iso, { hour12: false });
 const catalog = useCatalogStore();
 const friendsStore = useFriendsStore();
 const tab = ref<Tab>('friends');

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { timeHM } from '../../utils/format';
 import type { BarDto, DevilDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
-import { activeLocale } from '../../i18n';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useToastStore } from '../../stores/toast';
 import { roundGone } from './gone';
@@ -29,8 +29,7 @@ watch(
 const round = computed(() => local.value);
 const finished = computed(() => !!round.value?.result);
 
-const hhmm = (iso: string) =>
-  new Date(iso).toLocaleTimeString(activeLocale(), { hour: '2-digit', minute: '2-digit' });
+const hhmm = (iso: string) => timeHM(iso);
 /** 我刚喝的那一杯：状态里先说我的结果，再说调酒师的（PR28 遗留：分两步说明） */
 const mineCup = ref<number | null>(null);
 const status = computed(() => {

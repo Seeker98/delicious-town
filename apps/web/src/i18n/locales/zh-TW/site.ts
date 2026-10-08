@@ -9,6 +9,8 @@ export default {
   nextRound: (left: string) => `下一輪結算：${left} 後`,
   /** 更新記錄：一條一句話，key 對應 data/changelog.ts 的 id */
   changelog: {
+    gameTime1008:
+      '遊戲裡顯示的時間 (小鎮新聞、郵件、論壇、好友動態、倉庫記錄等) 統一按北京時間，和頁面頂上的時鐘一致，不再跟著裝置的時區；新手指引寫明體力每 10 分鐘恢復 1 點',
     renownTicket1008:
       '廚塔的聲望商店常駐四級食材隨機券 (50 聲望，每週 3 張) 和五級食材隨機券 (80 聲望，每週 2 張)',
     economy1008:

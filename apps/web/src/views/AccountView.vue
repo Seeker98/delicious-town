@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import LangSelect from '../components/LangSelect.vue';
+import { gameDate } from '../utils/format';
 import { onMounted, ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import type { AccountProfileDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
-import { useLocaleStore } from '../stores/locale';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
@@ -22,7 +22,6 @@ const newPw2 = ref('');
 const busy = ref(false);
 const t = useT();
 const restStore = useRestaurantStore();
-const locale = useLocaleStore();
 
 onMounted(async () => {
   try {
@@ -106,7 +105,7 @@ async function logout() {
         }}</span>
       </dd>
       <dt>{{ t.account.registered }}</dt>
-      <dd>{{ new Date(p.createdAt).toLocaleDateString(locale.locale) }}</dd>
+      <dd>{{ gameDate(p.createdAt) }}</dd>
       <dt>{{ t.account.email }}</dt>
       <dd>
         {{ p.email }}

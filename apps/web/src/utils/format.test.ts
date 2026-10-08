@@ -1,7 +1,8 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { useLocaleStore } from '../stores/locale';
-import { formatPct } from './format';
+import { formatPct, gameDate, gameDateTime, timeHM } from './format';
+import { newsTime } from './news';
 
 describe('百分数按语言写（视觉第三轮记下的）', () => {
   beforeEach(() => setActivePinia(createPinia()));
@@ -29,5 +30,22 @@ describe('百分数按语言写（视觉第三轮记下的）', () => {
     expect(formatPct(0.05, { sign: true })).toBe('+5%');
     expect(formatPct(-0.05, { sign: true })).toBe('-5%');
     expect(formatPct(0, { sign: true })).toBe('+0%');
+  });
+});
+
+describe('玩家看到的时间都按北京时间（问题记录：小镇新闻的时间和顶上的时钟对不上）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  // 04:00Z 是北京 12:00；设备在伦敦是 05:00、在 UTC 是 04:00
+  const at = '2026-09-30T04:00:00.000Z';
+
+  it('时:分、日期时间、日期都换算成北京时间，不看设备时区', () => {
+    expect(timeHM(at)).toBe('12:00');
+    expect(gameDateTime(at, { hour: '2-digit', minute: '2-digit', hour12: false })).toContain('12:00');
+    expect(gameDateTime('2026-09-30T20:00:00.000Z', { month: 'numeric', day: 'numeric' })).toContain('10');
+    expect(gameDate('2026-09-30T20:00:00.000Z')).toContain('10');
+  });
+
+  it('新闻时间按北京时间', () => {
+    expect(newsTime(at)).toContain('12:00');
   });
 });

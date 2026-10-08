@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { gameDateTime } from '../utils/format';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { ForumAdminAction, ForumPostDetailDto, ForumReadsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
-import { activeLocale } from '../i18n';
 import ReportButton from '../components/ReportButton.vue';
 import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
@@ -32,7 +32,7 @@ const replyWait = useCountdown(
 );
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString(activeLocale(), {
+  gameDateTime(iso, {
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',

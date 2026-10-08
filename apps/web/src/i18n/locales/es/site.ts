@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    gameTime1008:
+      'Todas las horas del juego (noticias del pueblo, correo, foro, novedades de amigos, registros del almacén y más) usan ahora la hora de Pekín, igual que el reloj de la parte superior, en lugar de la zona horaria de tu dispositivo; la guía de inicio indica que la energía se recupera 1 punto cada 10 minutos',
     renownTicket1008:
       'La tienda de renombre de la Torre de chefs ahora siempre vende Vales de ingrediente aleatorio nv. 4 (50 de renombre, 3 por semana) y nv. 5 (80 de renombre, 2 por semana)',
     economy1008:
