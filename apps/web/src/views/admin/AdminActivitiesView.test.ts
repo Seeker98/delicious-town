@@ -126,6 +126,12 @@ describe('AdminActivitiesView', () => {
       await w.find('[data-testid="ac-kind"]').setValue(kind);
       expect(w.findAll('[data-testid$="-presets"]').length, kind).toBeGreaterThan(0);
     }
+    // 切回战令再看解锁价格（终审：停在合力时战令编辑器没挂载，断言是空的）
+    await w.find('[data-testid="ac-kind"]').setValue('pass');
+    expect(
+      w.find('[data-testid="unlock-goods-id-0"]').exists() ||
+        w.find('[data-testid="unlock-add-goods"]').exists(),
+    ).toBe(true);
     expect(w.find('[data-testid="unlock-presets"]').exists()).toBe(false);
   });
 

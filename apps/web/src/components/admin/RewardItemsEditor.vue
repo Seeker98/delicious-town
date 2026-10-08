@@ -98,8 +98,7 @@ watch(
     <details v-if="presets && !goodsOnly" class="mb-2" :data-testid="tid('presets')">
       <summary class="dt-meta">推荐奖励</summary>
       <div class="dt-meta my-1">
-        平时缺、主线要用的。7 天的活动万能食材合计 10~15 个、食材随机券 10~20 张，见
-        docs/design/限时活动道具-2026-10-08.md。
+        平时缺、主线要用的。7 天的活动建议万能食材合计 10~15 个、食材随机券 10~20 张（问题记录 505 的分析）。
       </div>
       <div class="d-flex flex-wrap gap-1">
         <button
