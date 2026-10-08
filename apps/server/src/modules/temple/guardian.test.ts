@@ -134,8 +134,8 @@ describe('守护兽一次掉几个神秘食材（集束飞弹那次的遗留：�
     expect(r.data.killed).toBe(true);
     const rares = r.data.drops.foods.filter((f) => config.requireFood(f.foodsId).level === 7);
     const n = rares.reduce((s, f) => s + f.num, 0);
-    expect(n).toBeGreaterThanOrEqual(3);
-    expect(rares.map((f) => f.foodsId)).toContain(r.data.drops.rare);
+    expect(n).toBe(3);
+    expect(r.data.drops.rare).toBe(rares[0]!.foodsId);
     const news = await win.db
       .selectFrom('news')
       .select('params')

@@ -43,7 +43,8 @@ describe('酒吧支线的计数（问题记录 515）', () => {
     for (let i = 0; i < 3; i++) await bar().fg(ctx, { hand: 0 });
     expect((await counters(ctx))['bar.fg.streak3']).toBe(1);
     rngValues = [0.45]; // 平局（胜率 0.25 + 幸运，再往上 0.25 是平局）
-    await bar().fg(ctx, { hand: 0 });
+    // 确认这一局真是平局（终审：数值一改 0.45 可能落到“输”，测试就变成在测输打断连胜）
+    expect((await bar().fg(ctx, { hand: 0 })).data.result).toBe('draw');
     rngValues = [0.1, 0.99];
     for (let i = 0; i < 2; i++) await bar().fg(ctx, { hand: 0 });
     // 平局以后只赢了 2 局：还没到 3

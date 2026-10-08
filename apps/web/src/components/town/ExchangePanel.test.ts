@@ -67,7 +67,7 @@ describe('ExchangePanel', () => {
     ]);
   });
 
-  it('填了份数以后顺序不变：材料只够 1 份的填 9 份也不挪到“材料不够”那组（495~513 遗留：缺的测试）', async () => {
+  it('填了份数以后顺序不变：材料只够 2 份的填 9 份也不挪到“材料不够”那组（495~513 遗留：缺的测试）', async () => {
     const base = exchangeData().items[1]!;
     const row = (id: number, num: number, have: number) => ({
       ...base,

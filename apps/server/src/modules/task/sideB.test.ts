@@ -54,10 +54,13 @@ describe('连续签到（历史最长）', () => {
         })),
       )
       .execute();
-    await backfillSignin(t.db);
+    await backfillSignin(t.db, [ctx.restaurantId]);
     t.clock.set(new Date('2026-12-04T04:00:00Z'));
-    await t.game.task.signIn(ctx);
-    t.clock.set(new Date());
+    try {
+      await t.game.task.signIn(ctx);
+    } finally {
+      t.clock.set(new Date());
+    }
     const row = await t.db
       .selectFrom('signin_streak')
       .selectAll()

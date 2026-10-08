@@ -17,17 +17,19 @@ export async function up(db: Kysely<any>): Promise<void> {
 
 /**
  * 按还留着的每日签到计数（最近 30 天）补上：每段连着的天数，最后一段是现在的连续天数，最长的一段是历史最长。
- * 更早的记录已经清掉了，补不回来；已有的行不动
+ * 更早的记录已经清掉了，补不回来；已有的行不动。
+ * restIds 只给测试用：只补这几家，不碰共用测试库里别的测试的数据（迁移本身全表补）
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function backfill(db: Kysely<any>): Promise<void> {
+export async function backfill(db: Kysely<any>, restIds?: number[]): Promise<void> {
+  const only = restIds ? sql`and rest_id in (${sql.join(restIds)})` : sql``;
   await sql`insert into signin_streak (rest_id, last_day, streak, best)
     select rest_id, max(last_day), (array_agg(n order by last_day desc))[1], max(n)
     from (
       select rest_id, count(*)::int as n, max(day) as last_day
       from (
         select rest_id, day, day - (row_number() over (partition by rest_id order by day))::int as grp
-        from daily_counter where key = 'signin' and count > 0
+        from daily_counter where key = 'signin' and count > 0 ${only}
       ) g
       group by rest_id, grp
     ) runs
