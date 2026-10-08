@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { gameDay, type BuffsDto, type IncomePageDto, type RoundSummaryDto } from '@dt/shared';
+import { gameDay, PAYING_CUSTOMERS, type BuffsDto, type IncomePageDto, type RoundSummaryDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
@@ -17,9 +17,8 @@ const items = ref<RoundSummaryDto[]>([]);
 const next = ref<string | null>(null);
 /** 今天（北京时间）的小计，第一页带来（问题记录 530） */
 const today = ref<IncomePageDto['today'] | null>(null);
-/** 付钱的客人数：普通、挑剔、章鱼哥、痞老板、蟹老板（不算空桌、蟑螂、白食） */
-const PAYING = ['1', '2', '6', '7', '8'];
-const guests = (c: Record<string, number>) => PAYING.reduce((n, k) => n + (c[k] ?? 0), 0);
+/** 付钱的客人数（类型和结算共用 shared 的 PAYING_CUSTOMERS） */
+const guests = (c: Record<string, number>) => PAYING_CUSTOMERS.reduce((n, k) => n + (c[String(k)] ?? 0), 0);
 /** 今天（北京时间）的只写时:分，不是今天的带日期（终审 M3：0 点后第一页会混进昨天的） */
 const roundTime = (at: string) =>
   gameDay(new Date(at)) !== gameDay(new Date(serverNowMs()))

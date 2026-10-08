@@ -19,6 +19,9 @@ export interface TableDto {
   last?: TableResultDto;
 }
 
+/** 付钱的顾客类型：普通、挑剔、章鱼哥、痞老板、蟹老板（不算空桌、蟑螂、白食）；结算和收益记录的“客人”列共用 */
+export const PAYING_CUSTOMERS: readonly number[] = [1, 2, 6, 7, 8];
+
 export interface EffectDto {
   sourceType: string;
   sourceId: number;
