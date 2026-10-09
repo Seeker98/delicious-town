@@ -658,6 +658,19 @@ describe('RestaurantHomeView', () => {
     expect(w.find('[data-testid="home-feed"]').exists()).toBe(false);
   });
 
+  it('店里有蟑螂时“楼层餐桌”链接前加虫子图标；没有时不加（问题记录 561）', async () => {
+    let w = await mountView();
+    expect(w.find('[data-testid="home-floor-roach"]').exists()).toBe(false);
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      ...dto,
+      tables: [...dto.tables.slice(1), { no: 1, floor: 1, customer: 3, roach: true, roachBy: null }],
+    });
+    w = await mountView();
+    const icon = w.get('[data-testid="home-floor-roach"]');
+    expect(icon.classes()).toContain('bi-bug');
+    expect(icon.element.closest('a')!.getAttribute('href')).toBe('/rest/floor');
+  });
+
   it('小镇新闻：最新广播 + 3 条新闻，点"更多"去小镇页', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       ...dto,

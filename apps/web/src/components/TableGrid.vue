@@ -10,6 +10,12 @@ const floor = ref(1);
 const t = useT();
 const floors = computed(() => [...new Set(props.tables.map((t) => t.floor))].sort((a, b) => a - b));
 const shown = computed(() => props.tables.filter((t) => t.floor === floor.value));
+/** 每层几只蟑螂（问题记录 561：有蟑螂的楼层在按钮上标出来） */
+const roaches = computed(() => {
+  const m = new Map<number, number>();
+  for (const x of props.tables) if (x.customer === 3) m.set(x.floor, (m.get(x.floor) ?? 0) + 1);
+  return m;
+});
 
 function label(x: TableDto): string {
   if (x.customer === 9) return t.value.friends.tables.freeloader(x.freeloaderName ?? null);
@@ -26,7 +32,14 @@ function label(x: TableDto): string {
       :class="['btn btn-sm', f === floor ? 'btn-primary' : 'btn-outline-primary']"
       @click="floor = f"
     >
-      {{ t.friends.tables.floor(f) }}
+      {{ t.friends.tables.floor(f)
+      }}<span
+        v-if="roaches.get(f)"
+        :class="['ms-1', { 'text-danger': f !== floor }]"
+        :title="t.friends.roaches(roaches.get(f)!)"
+        :data-testid="`floor-roach-${f}`"
+        ><i class="bi bi-bug" aria-hidden="true"></i>{{ roaches.get(f) }}</span
+      >
     </button>
   </div>
   <div class="row g-1">
