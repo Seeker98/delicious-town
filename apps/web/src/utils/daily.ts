@@ -29,7 +29,7 @@ function segments(
   return out;
 }
 
-/** 正文按空行分段，每段拆成文字和店 */
+/** 正文按换行分段（AI 有时只用一个换行，backlog），空行去掉；每段拆成文字和店 */
 export function dailyParagraphs(
   body: string,
   rests: Record<string, string | null>,
@@ -37,7 +37,7 @@ export function dailyParagraphs(
   closed: string,
 ): DailySeg[][] {
   return body
-    .split(/\n\s*\n/)
+    .split(/\n+/)
     .map((p) => p.trim())
     .filter((p) => p !== '')
     .map((p) => segments(p, rests, names, closed));

@@ -28,6 +28,10 @@ describe('小镇日报正文', () => {
     ]);
   });
 
+  it('AI 用单个换行分段时也分开（backlog）', () => {
+    expect(dailyParagraphs('第一段\n第二段\n\n\n第三段', {}, names, '已关店')).toHaveLength(3);
+  });
+
   it('标题：记号换成纯文字', () => {
     expect(dailyPlain('{r:1} 的好日子 {f:7}', { 1: '小面馆' }, names, '已关店')).toBe('小面馆 的好日子 f7');
     expect(dailyPlain('{r:9} 来了', {}, names, '已关店')).toBe('已关店 来了');
