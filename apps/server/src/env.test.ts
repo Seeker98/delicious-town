@@ -31,6 +31,15 @@ describe('loadEnv', () => {
     expect(env.COOKIE_DOMAIN).toBeUndefined();
   });
 
+  it('COOKIE_DOMAIN 要是网页域名本身或它的上级域名，填错就启动不了（填错会让所有人掉线还登录不上）', () => {
+    expect(loadEnv({ ...base, COOKIE_DOMAIN: 'localhost' }).COOKIE_DOMAIN).toBe('localhost');
+    const prod = { ...base, WEB_ORIGIN: 'https://game.delicious.trade' };
+    expect(loadEnv({ ...prod, COOKIE_DOMAIN: 'delicious.trade' }).COOKIE_DOMAIN).toBe('delicious.trade');
+    expect(loadEnv({ ...prod, COOKIE_DOMAIN: '.delicious.trade' }).COOKIE_DOMAIN).toBe('delicious.trade');
+    expect(() => loadEnv({ ...prod, COOKIE_DOMAIN: 'api.delicious.trade' })).toThrow('COOKIE_DOMAIN');
+    expect(() => loadEnv({ ...prod, COOKIE_DOMAIN: 'icious.trade' })).toThrow('COOKIE_DOMAIN');
+  });
+
   it('缺少必填项时报错', () => {
     expect(() => loadEnv({ ...base, DATABASE_URL: undefined })).toThrow();
   });
