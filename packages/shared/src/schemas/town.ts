@@ -8,6 +8,9 @@ export const npcKey = z.enum(['bigEater', 'wenjie', 'bro13', 'carmen']);
 export type NpcKey = z.infer<typeof npcKey>;
 
 export const townNewsQuery = z.object({ before: z.coerce.number().int().positive().optional() });
+/** 兑换页是哪位 NPC 的（backlog 1010）：只有 13 哥的食材券页要我有几个、本街要几个；不传按 13 哥（旧网页） */
+export const townExchangeQuery = z.object({ part: z.enum(['goods', 'level', 'mystery']).optional() });
+export type TownExchangePart = NonNullable<z.infer<typeof townExchangeQuery>['part']>;
 export const townBroadcastBody = z.object({ text: z.string().max(500) });
 export const townTalkBody = z.object({ npc: npcKey });
 export const townHammerBody = z.discriminatedUnion('mode', [

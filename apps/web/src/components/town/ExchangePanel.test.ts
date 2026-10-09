@@ -22,6 +22,15 @@ describe('ExchangePanel', () => {
     vi.mocked(endpoints.townExchange).mockResolvedValue(exchangeData());
   });
 
+  it('请求时带上是哪位 NPC 的页（backlog 1010：只有 13 哥的页查本街需求）', async () => {
+    mount(ExchangePanel);
+    await flushPromises();
+    expect(endpoints.townExchange).toHaveBeenLastCalledWith('goods');
+    mount(ExchangePanel, { props: { part: 'level' } });
+    await flushPromises();
+    expect(endpoints.townExchange).toHaveBeenLastCalledWith('level');
+  });
+
   it('按分类显示；材料不够、次数用完的灰掉并写明', async () => {
     const w = mount(ExchangePanel);
     await flushPromises();

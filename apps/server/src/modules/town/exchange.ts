@@ -1,6 +1,11 @@
 import { sql, type Kysely } from 'kysely';
 import { GOODS, type GameConfig, type Tuning } from '@dt/config';
-import type { TicketResultDto, TownExchangeDto, TownExchangeResultDto } from '@dt/shared';
+import type {
+  TicketResultDto,
+  TownExchangeDto,
+  TownExchangePart,
+  TownExchangeResultDto,
+} from '@dt/shared';
 import { invalidState, limitReached } from '../../core/errors';
 import { opNews, restLog, type Op } from '../../core/op';
 import type { DB } from '../../db/schema';
@@ -33,6 +38,7 @@ export async function exchangeView(
   tuning: Tuning,
   restId: number,
   now: Date,
+  part?: TownExchangePart,
 ): Promise<TownExchangeDto> {
   const town = tuning.town;
   const list = [...config.goodsExchange.values()].sort((a, b) => a.id - b.id);
@@ -49,16 +55,19 @@ export async function exchangeView(
   // 13 哥的食材兑换券页按“本街要的 → 我没有的 → 其他”排（问题记录 491）：每种我有几个、本街还要几个
   const levelFoods = levels.map((l) => levelFoodIds(config, town, l));
   const listed = new Set(levelFoods.flat());
-  const rest = await db
-    .selectFrom('restaurant')
-    .select('street_id')
-    .where('id', '=', restId)
-    .executeTakeFirstOrThrow();
-  const { needMap } = await streetNeeds(db, config, restId, rest.street_id, tuning.rest.cookbookMaxGrade);
   const foodHave: Record<number, number> = {};
-  for (const [id, r] of await foodsMap(db, restId)) if (r.num > 0 && listed.has(id)) foodHave[id] = r.num;
   const streetNeed: Record<number, number> = {};
-  for (const [id, n] of needMap) if (n > 0 && listed.has(id)) streetNeed[id] = n;
+  // 镇长、卡门的页用不着，不查（backlog 1010）
+  if (part === undefined || part === 'level') {
+    const rest = await db
+      .selectFrom('restaurant')
+      .select('street_id')
+      .where('id', '=', restId)
+      .executeTakeFirstOrThrow();
+    const { needMap } = await streetNeeds(db, config, restId, rest.street_id, tuning.rest.cookbookMaxGrade);
+    for (const [id, r] of await foodsMap(db, restId)) if (r.num > 0 && listed.has(id)) foodHave[id] = r.num;
+    for (const [id, n] of needMap) if (n > 0 && listed.has(id)) streetNeed[id] = n;
+  }
   return {
     items: list.map((e) => ({
       id: e.id,

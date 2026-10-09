@@ -6,6 +6,7 @@ import type {
   ShakeResultDto,
   TownDto,
   TownExchangeDto,
+  TownExchangePart,
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
@@ -53,9 +54,9 @@ export function createTownService(d: GameDeps, world: WorldService) {
     talk(ctx: RestCtx, b: { npc: NpcKey }) {
       return op(ctx, 'town.talk', (o) => talk(o, b.npc));
     },
-    async exchangeView(ctx: RestCtx): Promise<TownExchangeDto> {
+    async exchangeView(ctx: RestCtx, part?: TownExchangePart): Promise<TownExchangeDto> {
       const s = await d.shards.ensureFeature(ctx.shardId, 'town');
-      return exchangeView(d.db, d.config, s.tuning, ctx.restaurantId, d.now());
+      return exchangeView(d.db, d.config, s.tuning, ctx.restaurantId, d.now(), part);
     },
     exchange(ctx: RestCtx, b: { id: number; num: number }) {
       return op(ctx, 'town.exchange', (o) => doExchange(o, b.id, b.num));
