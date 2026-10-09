@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    backlog1010:
+      'Chaque bouton de récompense d’activité indique maintenant ce que donne ce palier. Quand quelqu’un finit de manger gratis et s’en va, un patron banni ne reçoit plus d’objet, et l’objet du patron n’est jamais un Bon mystère. Le classement des bons gagnés au Piment du Diable compte désormais le gain net (gain moins la mise), et la table des gains ne change plus en cours de partie. Quand quelqu’un répond à une réponse de l’auteur du sujet, le journal précise laquelle, et répondre à un message supprimé ne prévient plus son auteur. La page d’invitation affiche les niveaux de récompense de votre serveur. Les gardiens de la tour s’appellent désormais Veilleurs de la tour, pour ne plus les confondre avec le Gardien. Quelques textes, libellés pour lecteurs d’écran et l’emplacement des messages ont aussi été corrigés',
     fix1010:
       'Les souris choisissent désormais quoi voler selon la quantité\u202f: ce que vous avez en abondance est pris plus souvent, et les ingrédients rares dont vous n’avez que quelques unités sont rarement touchés. Dans Étages et tables, les tables d’une même rangée ont maintenant la même hauteur',
     rank1010:

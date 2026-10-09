@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    backlog1010:
+      "Each daily activity reward button now shows what that tier gives. When a free diner finishes and leaves, a banned owner no longer gets an item, and the owner's item is never a Mystery Voucher. The Devil's Chili board for vouchers won now counts net winnings (payout minus stake), and the payout table no longer changes in the middle of a game. When someone replies to the original poster's own reply, the feed says which one, and replies to deleted posts no longer notify their author. The invite page shows the reward levels set for your server. Also fixed some wording, screen reader labels and where messages pop up",
     fix1010:
       'Mice now pick what to steal by quantity: ingredients you have plenty of are taken more often, and rare ones you only hold a few of are rarely touched. On Floors & tables, tables in the same row are now the same height',
     rank1010:

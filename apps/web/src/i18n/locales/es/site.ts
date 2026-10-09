@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    backlog1010:
+      'Cada botón de premio de actividad muestra ahora qué da ese nivel. Cuando alguien termina de comer gratis y se va, el dueño baneado ya no recibe objeto y el objeto del dueño nunca es un Vale misterioso. La clasificación de vales ganados del Chile del Diablo cuenta ahora la ganancia neta (lo cobrado menos la apuesta) y la tabla de pagos ya no cambia a mitad de partida. Si alguien responde a una respuesta del autor del tema, el registro dice cuál, y responder a mensajes borrados ya no avisa a su autor. La página de invitaciones muestra los niveles de premio del servidor. Los guardianes de la torre se llaman ahora Vigías de la torre, para no confundirlos con el Guardián. También se corrigieron algunos textos, etiquetas para lectores de pantalla y la posición de los avisos',
     fix1010:
       'Los ratones eligen ahora qué robar según la cantidad: lo que tienes en abundancia se llevan más a menudo y los ingredientes raros de los que solo tienes unos pocos casi nunca se tocan. En Plantas y mesas, las mesas de una misma fila tienen ahora la misma altura',
     rank1010:
