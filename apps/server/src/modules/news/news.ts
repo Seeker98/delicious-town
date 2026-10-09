@@ -69,7 +69,9 @@ export async function headlines(
   o: { daily?: boolean; now?: Date; broadcastHours?: number } = {},
 ): Promise<HeadlinesDto> {
   const since =
-    o.now && o.broadcastHours !== undefined ? new Date(o.now.getTime() - o.broadcastHours * 3_600_000) : undefined;
+    o.now && o.broadcastHours !== undefined
+      ? new Date(o.now.getTime() - o.broadcastHours * 3_600_000)
+      : undefined;
   const [news, bc, daily] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
     listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
