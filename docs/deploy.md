@@ -70,21 +70,25 @@ dump 里是线上数据（密码哈希、邮箱、随机种子密钥 `server_sec
 
 **第一步：Cookie 改成整个域名（切换前几天做）**
 - 现在登录 Cookie 只属于 `api.`，换到 `game.` 后带不过去，所有人会掉线一次。
-- **先确认线上已经部署了带补发逻辑的版本**：`/opt/dt` 的 `git log` 里要有它的合并提交。旧版本配上 `COOKIE_DOMAIN` 后，登录时只设新的 Cookie、不删旧的，有旧 Cookie 的玩家会登录后马上又掉线。
-- **先清理 DNS**：配了以后，登录 Cookie 会发给 `<域名>` 下的**每一个**子域名（只是网页脚本读不到）。DNS 里指向第三方的记录要先删掉，或者挪到别的域名：邮件服务的点击跟踪、退信域名、状态页、已经不用的 CNAME 等。
-- `infra/.env` 加 `COOKIE_DOMAIN=<域名>`（不带 `game.`、`api.`），然后 `docker compose -f compose.prod.yml up -d api`。
+- **先确认线上已经部署了带补发逻辑的版本**：`cd /opt/dt && git log --oneline -3` 里要有它的合并提交（#242）。旧版本配上 `COOKIE_DOMAIN` 后，登录时只设新的 Cookie、不删旧的，有旧 Cookie 的玩家会登录后马上又掉线。
+- **先清理 DNS**：配了以后，登录 Cookie 会发给 `<域名>` 下的**每一个**子域名（只是网页脚本读不到）。DNS 里指向第三方的记录要先删掉，或者挪到别的域名：邮件服务的点击跟踪、退信域名、状态页、已经不用的 CNAME 等。只看能用网页访问的 CNAME、A、AAAA 记录（MX、TXT 不相关）；有通配符记录 `*.<域名>` 的话要特别小心。
+- `infra/.env` 加 `COOKIE_DOMAIN=<域名>`（不带 `game.`、`api.`），然后 `docker compose -f compose.prod.yml up -d --force-recreate api`（worker 不用动）。
+- **马上确认 API 起来了**：`COOKIE_DOMAIN` 填错（不是网页域名的上级域名）API 会拒绝启动，整站不可用。看 `docker compose -f compose.prod.yml ps` 里 api 是 healthy，再 `curl https://api.<域名>/readyz`。
+- 浏览器里确认：刷新游戏 → 开发者工具 → Application → Cookies，`dt_sid` 的 Domain 是 `.<域名>`，还多了一个 `dt_cd`。
 - 之后已登录的玩家下一次请求会补发一次整个域名的 Cookie，同时删掉只属于 `api.` 的旧 Cookie（代码见 `security/session.ts`）。
-- 等几天，活跃玩家基本都补发过了再切换；没补到的只要重新登录一次。
+- 等 3~7 天，活跃玩家基本都补发过了再切换（服务器不记谁补过，没法精确统计）；没补到的只要重新登录一次。
 - api 有 2 个副本，重启的那一小会儿，旧副本处理的登录还会发旧 Cookie，个别玩家可能要多登录一次。
 - **加上以后不能直接删掉**：删了的话，服务器改发只属于子域名的 Cookie，但不会删整个域名的旧 Cookie，旧的排在前面，玩家会一直登录不进去（最长 30 天）。以后要改 Cookie 的范围，得像这次一样：发新的同时删旧的。
 
 **第二步：在测试域名上演练（不影响玩家）**
-1. Pages → Settings → Environment variables → **Preview**：删掉 `VITE_API_BASE`（只影响预览部署）；`VITE_TURNSTILE_SITEKEY`、`NODE_VERSION` 在 Preview 里也要有。
-2. 推一个分支（如 `same-origin`），记下预览地址 `same-origin.<项目名>.pages.dev`。
+1. 预览的环境变量：Pages 项目 → **Settings**，页面**最上方**有环境切换（Production / Preview），切到 Preview 后，在 Variables and Secrets 里删掉 `VITE_API_BASE`（只影响预览部署）；`VITE_TURNSTILE_SITEKEY`、`NODE_VERSION` 在 Preview 里也要有。
+2. 推一个分支，或者直接用同域名那个 PR 的分支（2026-10 演练用的是 `feat/same-origin`）。预览的**固定地址**是 `<分支名>.<项目名>.pages.dev`，分支名里的 `/` 换成 `-`，如 `feat-same-origin.delicious-town.pages.dev`。
+   - **要在删变量之后构建**：删变量之前构建的预览里写死了 `https://api.<域名>`，在 beta 上登录会报 CORS。往这个分支推一个空提交（`git commit --allow-empty`）就会重新构建。
+   - 预览没构建的话，看 Settings → Builds 里的预览分支设置是不是包含这个分支。
 3. 隧道 → Public Hostname 依次添加：
    1. `beta.<域名>`，Path 填 `^/api/` → Service：`HTTP`，`api:3000`
-   2. `beta.<域名>`，Path 留空 → Service：`HTTPS`，`same-origin.<项目名>.pages.dev`。在 Additional application settings 里：
-      - HTTP Settings → **HTTP Host Header** 填 `same-origin.<项目名>.pages.dev`；
+   2. `beta.<域名>`，Path 留空 → Service：`HTTPS`，分支的固定地址 `<分支名>.<项目名>.pages.dev`（**不要用**带一串随机字符的某次部署地址，那个固定在那一次构建上）。在 Additional application settings 里：
+      - HTTP Settings → **HTTP Host Header** 填同一个地址；
       - TLS → **Origin Server Name** 同样填它。
    3. 两条的顺序：带 Path 的要排在前面（按列表顺序匹配），后台加的顺序不对就拖过来。
 4. Turnstile 站点的 Hostname 列表加上 `beta.<域名>`，不然注册、登录的人机验证会失败。
@@ -92,7 +96,8 @@ dump 里是线上数据（密码哈希、邮箱、随机种子密钥 `server_sec
    - 能登录、能玩；
    - 开发者工具的 Network 里，接口是 `beta.<域名>/api/...`，没有 OPTIONS；
    - `/assets/*` 第二次加载时响应头有 `cf-cache-status: HIT`；
-   - `curl -s https://beta.<域名>/api/v1/public/shards` 回的是 JSON，不是网页；
+   - `curl -s https://beta.<域名>/api/v1/public/announcements` 回的是 `{"ok":true,...}`，`/api/v1/nope` 回 API 自己的 `{"ok":false,"code":"NOT_FOUND"}`，都不是网页；
+   - 直接打开 `https://beta.<域名>/town` 能显示（单页应用的兜底）；
    - `curl -I https://beta.<域名>/` 的 HTML 是 `cf-cache-status: DYNAMIC`，不能被节点缓存。区服规则里不能有匹配它的 Cache Everything、Browser Cache TTL。
 6. 不要加“pages.dev 跳转到正式域名”的重定向（网上常推荐），经过隧道会绕成死循环。`*.pages.dev` 预览如果开了 Cloudflare Access 保护，演练会被拦住。
 7. 演练完删掉 `beta.` 的两条路由、它的 DNS 记录和 Turnstile 里的这个域名：它也会收到登录 Cookie。
@@ -104,13 +109,16 @@ dump 里是线上数据（密码哈希、邮箱、随机种子密钥 `server_sec
    2. `game.<域名>`，Path 留空 → `HTTPS`，`<项目名>.pages.dev`，HTTP Host Header 和 Origin Server Name 都填 `<项目名>.pages.dev`
    3. 带 Path 的排在前面。
 3. 这时页面是旧版，还在请求 `api.` 跨域，照样能用。
-4. Pages → Settings → Environment variables → **Production**：删掉 `VITE_API_BASE`，再到 Deployments 里对最新一次点 Retry deployment。部署完以后，新打开的页面就改走同域名。
+4. Pages → Settings（顶部切到 **Production**）→ Variables and Secrets：删掉 `VITE_API_BASE`，然后往 main 推一个空提交触发重新构建（Retry deployment 不一定读新的变量）。部署完以后，新打开的页面就改走同域名：开发者工具里接口是 `game.<域名>/api/...`。
 5. 检查：
    - 第二步的几项照着看一遍；
    - 过一天看 API 日志里 OPTIONS 的数量，应该接近 0（命令见下）。
 6. `api.<域名>` 至少保留两周：还开着旧页面的玩家要用。CORS 照常允许 `game.`。
 7. 只对主机名 `api.` 配过的防火墙、限流等规则，要同样加到 `game.` 的 `/api/` 路径上。
 8. 发版后如果白屏：清一下 Cloudflare 缓存（Caching → Purge Everything）。不存在的 `/assets` 地址会拿到首页内容，还带着一年的缓存头。
+9. 如果 Pages 开了 Web Analytics（Pages 自定义域名自动注入的那种），切换后可能不再统计，要另外加统计代码。
+10. 两周后：隧道里删掉 `api.` 那条和它的 DNS 记录。
+11. 请之前说慢的大陆玩家同一时段再试，对比感受。
 
 ```bash
 cd /opt/dt/infra && docker compose -f compose.prod.yml logs --since 24h --no-log-prefix api \
@@ -118,7 +126,7 @@ cd /opt/dt/infra && docker compose -f compose.prod.yml logs --since 24h --no-log
 ```
 
 **回退**（顺序不能反：先换回跨域的网页，再换入口，不然中间 API 请求会拿到网页而全部失败）：
-1. Production 环境变量加回 `VITE_API_BASE=https://api.<域名>`，Retry deployment，等它上线。经过隧道也能用：CORS 允许 `game.`。多数情况到这一步就够了，隧道的路由可以留着。
+1. Production 环境变量加回 `VITE_API_BASE=https://api.<域名>`，推空提交重新构建，等它上线。经过隧道也能用：CORS 允许 `game.`。多数情况到这一步就够了，隧道的路由可以留着。
 2. 真要换回 Pages 直接提供：隧道里删掉 `game.` 的两条，DNS 里删掉 `game` 那条 CNAME，再在 Pages 重新加自定义域名 `game.<域名>`（证书生效要几分钟）。
 
 `COOKIE_DOMAIN` **不能删**（见第一步）。
