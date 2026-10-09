@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    ui1009:
+      'Les messages d’action s’affichent désormais en petites pastilles en bas de l’écran au lieu de masquer le haut de la page, et les messages de réussite disparaissent plus vite. Sur la page des revenus, la section des bonus, repliée, est de nouveau en haut',
     titles1009:
       'Les badges de titre ont désormais le même style jaune sur votre accueil et chez les autres restaurants. Vous pouvez maintenant recevoir des titres par courrier ou code cadeau\u202f; les titres temporaires indiquent leur durée. Après réception, choisissez ceux à afficher sur la page Apparence',
     devil1009:

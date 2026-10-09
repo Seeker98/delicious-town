@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    ui1009:
+      'Los avisos de acciones aparecen ahora como pequeñas cápsulas en la parte inferior de la pantalla, sin tapar la parte superior de la página, y los de éxito duran menos. En la página de ingresos, la sección de bonificaciones, plegada, vuelve a estar arriba',
     titles1009:
       'Las insignias de título usan ahora el mismo estilo amarillo en tu inicio y al visitar otros restaurantes. Ahora puedes recibir títulos por correo o código de canje; los temporales indican cuánto duran. Tras reclamarlos, elige cuáles mostrar en la página Apariencia',
     devil1009:
