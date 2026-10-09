@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1010:
+      'Los ratones eligen ahora qué robar según la cantidad: lo que tienes en abundancia se llevan más a menudo y los ingredientes raros de los que solo tienes unos pocos casi nunca se tocan. En Plantas y mesas, las mesas de una misma fila tienen ahora la misma altura',
     rank1010:
       'Las clasificaciones tienen ahora tablas de esta semana y de la pasada para más juegos del bar: Dardos (victorias), El último caramelo (mesas de principiantes y de expertos por separado), Mezcla secreta (menos intentos en una partida y mezclas acertadas), Cóctel Memoria (rondas completas), Chile del Diablo (vales ganados) y Trato o no trato (premios mayores). Salvo en Cóctel Memoria, el conteo empieza con esta actualización',
     ui1010:

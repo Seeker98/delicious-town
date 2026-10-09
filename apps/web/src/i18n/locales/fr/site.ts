@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    fix1010:
+      'Les souris choisissent désormais quoi voler selon la quantité\u202f: ce que vous avez en abondance est pris plus souvent, et les ingrédients rares dont vous n’avez que quelques unités sont rarement touchés. Dans Étages et tables, les tables d’une même rangée ont maintenant la même hauteur',
     rank1010:
       'Les classements ont désormais des tableaux de cette semaine et de la semaine dernière pour d’autres jeux du bar\u202f: Fléchettes (victoires), Le dernier bonbon (tables débutants et experts séparées), Mélange secret (moins d’essais en une partie et mélanges trouvés), Cocktail Mémoire (parcours complets), Piment du Diable (bons gagnés) et À prendre ou à laisser (gros lots). Sauf pour Cocktail Mémoire, le décompte commence avec cette mise à jour',
     ui1010:
