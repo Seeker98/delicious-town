@@ -78,6 +78,18 @@ const preview = computed(() => {
     paras: dailyParagraphs(zh.value.body, d.rests, names, '已关店').map((p) => p.map((s) => s.text).join('')),
   };
 });
+/** 改了没保存（终审 I3）：发布的是存着的内容，没保存就发布会把改动丢掉，所以先保存 */
+const dirty = computed(() => {
+  const c = cur.value?.content;
+  const zh0 = c?.['zh-CN'] ?? { title: '', body: '' };
+  const en0 = c?.en ?? { title: '', body: '' };
+  return (
+    zh.value.title !== zh0.title ||
+    zh.value.body !== zh0.body ||
+    en.value.title !== en0.title ||
+    en.value.body !== en0.body
+  );
+});
 const factsText = computed(() => (cur.value ? JSON.stringify(cur.value.facts, null, 2) : ''));
 
 watch(
@@ -159,7 +171,7 @@ onMounted(() => void load());
           </button>
           <button
             class="btn btn-sm btn-primary"
-            :disabled="busy || !cur.content || cur.status === 'published'"
+            :disabled="busy || dirty || !cur.content || cur.status === 'published'"
             data-testid="adl-publish"
             @click="publish"
           >
@@ -167,7 +179,7 @@ onMounted(() => void load());
           </button>
           <button
             class="btn btn-sm btn-outline-secondary"
-            :disabled="busy || cur.status === 'hidden'"
+            :disabled="busy || dirty || cur.status === 'hidden'"
             data-testid="adl-hide"
             @click="hide"
           >
@@ -175,12 +187,15 @@ onMounted(() => void load());
           </button>
           <button
             class="btn btn-sm btn-outline-danger"
-            :disabled="busy || cur.status === 'published'"
+            :disabled="busy || dirty || cur.status === 'published'"
             data-testid="adl-regenerate"
             @click="regenerate"
           >
             重新生成
           </button>
+        </div>
+        <div v-if="dirty" class="small text-danger mt-1" data-testid="adl-dirty">
+          有没保存的修改: 先保存, 才能发布、撤下或重新生成
         </div>
       </div>
       <div class="col-md-6">

@@ -109,4 +109,22 @@ describe('后台小镇日报页', () => {
     expect(adminApi.dailyRegenerate).toHaveBeenCalledWith(3, '2026-10-08');
     expect(push).toHaveBeenLastCalledWith(expect.any(String), 'danger');
   });
+  it('改了没保存：发布、撤下、重新生成都灰掉并提示，保存后恢复（终审 I3）', async () => {
+    const w = await open();
+    await w.findAll('[data-testid="adl-row"]')[0]!.trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="adl-publish"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="adl-en-body"]').setValue('fixed {r:7} reached 4 stars');
+    for (const b of ['adl-publish', 'adl-hide', 'adl-regenerate'])
+      expect(w.find(`[data-testid="${b}"]`).attributes('disabled'), b).toBeDefined();
+    expect(w.find('[data-testid="adl-dirty"]').exists()).toBe(true);
+    vi.mocked(adminApi.dailyEdit).mockResolvedValue({
+      ...detail,
+      content: { ...detail.content!, en: { title: 'Busy day', body: 'fixed {r:7} reached 4 stars' } },
+    });
+    await w.find('[data-testid="adl-save"]').trigger('click');
+    await flushPromises();
+    expect(w.find('[data-testid="adl-publish"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="adl-dirty"]').exists()).toBe(false);
+  });
 });
