@@ -6,6 +6,7 @@ import { useT } from '../../composables/useT';
 import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
+import { formatPct } from '../../utils/format';
 import { matchText } from '../../utils/match';
 
 const props = defineProps<{ data: TempleDto }>();
@@ -298,7 +299,7 @@ const start = async () => {
         {{ t.temple.trial.blockedNote }}
       </div>
       <div v-if="rate !== null" class="text-muted" data-testid="trial-rate">
-        {{ t.temple.trial.rate((rate * 100).toFixed(1)) }}
+        {{ t.temple.trial.rate(formatPct(rate, { digits: 1, min: 1 })) }}
       </div>
     </template>
     <button
