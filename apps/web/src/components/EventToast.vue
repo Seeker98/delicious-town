@@ -10,17 +10,7 @@ const toast = useToastStore();
     <div
       v-for="t in toast.items"
       :key="t.id"
-      :class="[
-        'alert',
-        `alert-${t.variant}`,
-        'dt-toast-pill',
-        'rounded-pill',
-        'py-1',
-        'px-3',
-        'mb-1',
-        'small',
-        'shadow-sm',
-      ]"
+      :class="['alert', `alert-${t.variant}`, 'dt-toast-pill', 'py-1', 'px-3', 'mb-1', 'small', 'shadow-sm']"
       data-testid="toast"
     >
       {{ t.render ? t.render() : t.text }}

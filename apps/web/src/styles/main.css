@@ -134,7 +134,7 @@ body {
   font-size: 12px;
   white-space: nowrap;
 }
-/* 问题记录 344：顶栏（44px）下面；不拦截点击，按钮在提示下面也点得到 */
+/* 问题记录 344：不拦截点击，按钮在提示下面也点得到 */
 /* 提示（问题记录 545）：屏幕下方、底栏上面，一条一个小胶囊，宽度跟着文字，新的在下面 */
 .dt-toasts {
   position: fixed;
@@ -153,6 +153,8 @@ body {
 .dt-toast-pill {
   max-width: 100%;
   text-align: center;
+  /* 固定圆角：一行时是胶囊，英法西的得失汇总折成几行时是圆角矩形（rounded-pill 会变成大椭圆，终审） */
+  border-radius: 16px;
 }
 .dt-toasts-passthrough,
 .dt-toasts-passthrough * {

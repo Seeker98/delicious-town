@@ -9,7 +9,7 @@ const site: Messages['site'] = {
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
     ui1009:
-      'Action messages now appear as small pills near the bottom of the screen instead of covering the top of the page, and success messages disappear sooner. On the income page, the collapsed bonus section is back at the top',
+      'Action messages now appear as small pills near the bottom of the screen instead of covering the top of the page, and short success messages disappear sooner. On the income page, the collapsed bonus section is back at the top',
     titles1009:
       'Title badges now share one yellow style on your home page and when visiting other restaurants. You may now receive titles by mail or redeem code; timed titles show how long they last. After claiming, choose which to show on the Appearance page',
     devil1009:

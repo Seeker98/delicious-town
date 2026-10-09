@@ -11,18 +11,34 @@ describe('EventToast', () => {
     vi.useFakeTimers();
   });
 
-  it('成功提示 2 秒、普通提示 3 秒、错误提示 5 秒后自动消失（问题记录 344、545）', async () => {
+  it.each([
+    ['success', 2000],
+    ['info', 3000],
+    ['danger', 5000],
+  ] as const)(
+    '%s 提示 %i ms 后自动消失（问题记录 344、545：成功 2 秒、普通 3 秒、错误 5 秒）',
+    async (variant, ms) => {
+      const toast = useToastStore();
+      const w = mount(EventToast);
+      toast.push('提示', variant);
+      vi.advanceTimersByTime(ms - 1);
+      await w.vm.$nextTick();
+      expect(w.findAll('[data-testid="toast"]')).toHaveLength(1);
+      vi.advanceTimersByTime(1);
+      await w.vm.$nextTick();
+      expect(w.findAll('[data-testid="toast"]')).toHaveLength(0);
+      vi.useRealTimers();
+    },
+  );
+
+  it('调用方给了时长就按给的（得失汇总文字长，停 4 秒）', async () => {
     const toast = useToastStore();
     const w = mount(EventToast);
-    toast.push('获得 银币 100');
-    toast.push('银币不够', 'danger');
+    toast.push('获得 银币 100、钻石 2、经验 300', 'success', 4000);
+    vi.advanceTimersByTime(3999);
     await w.vm.$nextTick();
-    expect(w.findAll('[data-testid="toast"]').map((x) => x.text())).toEqual(['获得 银币 100', '银币不够']);
-    vi.advanceTimersByTime(2000);
-    await w.vm.$nextTick();
-    expect(w.findAll('[data-testid="toast"]').map((x) => x.text())).toEqual(['银币不够']);
-    toast.push('称号「X」已过期', 'info');
-    vi.advanceTimersByTime(3000);
+    expect(w.findAll('[data-testid="toast"]')).toHaveLength(1);
+    vi.advanceTimersByTime(1);
     await w.vm.$nextTick();
     expect(w.findAll('[data-testid="toast"]')).toHaveLength(0);
     vi.useRealTimers();
@@ -46,6 +62,8 @@ describe('EventToast', () => {
     await w.vm.$nextTick();
     expect(w.get('.dt-toasts').classes()).toContain('dt-toasts-bottom');
     expect(w.get('[data-testid="toast"]').classes()).toContain('dt-toast-pill');
+    // 多行时 rounded-pill 会变成大椭圆，圆角固定写在 .dt-toast-pill 里（终审）
+    expect(w.get('[data-testid="toast"]').classes()).not.toContain('rounded-pill');
     vi.useRealTimers();
   });
 
