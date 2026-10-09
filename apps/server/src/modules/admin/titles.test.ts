@@ -52,6 +52,12 @@ describe('后台称号', () => {
     expect(byNote.map((x: { key: string }) => x.key)).toEqual([c.key]);
     const byTitle = (await get(`${A}?q=${encodeURIComponent('开服')}`)).json.data;
     expect(byTitle.map((x: { key: string }) => x.key)).toContain('founder');
+    // % 和 _ 按字面搜，不当通配符
+    const pct = await create({ title: '百分百%' });
+    const byPct = (await get(`${A}?q=${encodeURIComponent('%')}`)).json.data;
+    expect(
+      byPct.filter((x: { id: number | null }) => x.id !== null).map((x: { key: string }) => x.key),
+    ).toEqual([pct.key]);
   });
 
   it('改名后玩家页显示新名字；清掉说明；停用；拥有人数', async () => {

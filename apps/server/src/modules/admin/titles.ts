@@ -83,7 +83,7 @@ export function createAdminTitles(game: Game) {
     async list(q?: string): Promise<AdminTitleDto[]> {
       let cq = customQuery().orderBy('c.id', 'desc');
       if (q) {
-        const like = `%${q.replace(/[\%_]/g, (c) => `\${c}`)}%`;
+        const like = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
         cq = cq.where((eb) => eb.or([eb('c.title', 'ilike', like), eb('c.note', 'ilike', like)]));
       }
       const [rows, n] = await Promise.all([cq.execute(), owners()]);
