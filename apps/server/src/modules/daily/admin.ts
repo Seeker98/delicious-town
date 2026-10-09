@@ -57,7 +57,7 @@ export function createAdminDaily(game: Game) {
       ...toRow(r),
       facts: r.facts,
       content,
-      rests: await restNames(db, `${article}\n${JSON.stringify(r.facts)}`),
+      rests: await restNames(db, shardId, `${article}\n${JSON.stringify(r.facts)}`),
     };
   }
 

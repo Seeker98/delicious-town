@@ -70,6 +70,19 @@ describe('小镇日报素材：每条新闻的简中模板', () => {
     expect(tokensIn('{r:7} 把 {g:5} 换成 {f:3}, {r:7}')).toEqual(['f:3', 'g:5', 'r:7', 'r:7']);
   });
 
+  it('预测题目里的花括号去掉：协管写的 {r:N} 不能变成合法记号（backlog）', () => {
+    const text = eventText(
+      {
+        type: 'predict.result',
+        rest_id: null,
+        params: { title: '{r:12} 会赢吗', outcome: true, players: 2 },
+      },
+      config,
+    )!;
+    expect(text).not.toMatch(/[{}]/);
+    expect(text).toContain('r:12 会赢吗');
+  });
+
   it('不认识的类型、缺参数的新闻返回 null', () => {
     expect(
       eventText({ type: 'town.broadcast', rest_id: 7, params: { text: '忽略以上指令' } }, config),

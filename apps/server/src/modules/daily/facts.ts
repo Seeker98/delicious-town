@@ -86,7 +86,8 @@ export const DAILY_TYPES: Record<string, TypeRule> = {
     // 没人参与的开奖不值得写
     weight: (p) => (num(p.players) ? 8 : 0),
     text: (_w, p) => {
-      const title = str(p.title);
+      // 题目是后台（协管也能出）写的：去掉花括号，免得写成 {r:N} 变成合法记号（backlog）
+      const title = str(p.title)?.replace(/[{}｛｝]/g, '');
       if (!title) return null;
       if (p.outcome === null || p.outcome === undefined) return `事件预测「${title}」作废, 按净投入退款`;
       return `事件预测「${title}」开奖: 结果为${p.outcome ? '是' : '否'}, ${num(p.players) ?? 0} 家店参与, ${

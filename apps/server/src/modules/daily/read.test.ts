@@ -75,6 +75,17 @@ describe('小镇日报：玩家看', () => {
     expect(r.fallback).toEqual([]);
   });
 
+  it('记号里的店只认本区服的：别的区服的店当作不存在（backlog）', async () => {
+    const { shardId, a } = await shard();
+    const other = await shard();
+    await put(shardId, Y, 'published', {
+      content: article('跨区', `{r:${a.restaurantId}} 和 {r:${other.a.restaurantId}}`),
+    });
+    const r = await t.game.town.daily(a, Y);
+    expect(r.rests[a.restaurantId]).toBeTruthy();
+    expect(r.rests[other.a.restaurantId]).toBeNull();
+  });
+
   it('没发布（草稿、撤下、还没生成）的那天：没有文章，给“今日要闻”，按素材的顺序', async () => {
     const { shardId, a } = await shard();
     const at = gameTime(Y, 10);
