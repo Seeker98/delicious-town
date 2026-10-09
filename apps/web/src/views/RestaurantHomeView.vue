@@ -345,7 +345,12 @@ onBeforeUnmount(() => {
           {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b></span
         >
         <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
-        <span v-if="rest.icons.length > 0" data-testid="my-icons">
+        <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
+        <span
+          v-if="rest.icons.length > 0"
+          class="d-inline-flex align-items-center flex-wrap"
+          data-testid="my-icons"
+        >
           <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
         </span>
       </div>
@@ -595,7 +600,7 @@ onBeforeUnmount(() => {
     <div class="dt-card my-2 small" data-testid="home-devices">
       <div class="dt-card-title mb-1">{{ t.home.devices }}</div>
       <div class="row g-1">
-        <div v-for="d in rest.devices" :key="d.slot" class="col-3">
+        <div v-for="d in rest.devices" :key="d.slot" class="col-4">
           <button
             class="btn btn-light border w-100 h-100 p-1 dt-slot"
             :data-testid="`slot-${d.slot}`"

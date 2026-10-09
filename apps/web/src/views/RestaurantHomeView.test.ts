@@ -392,6 +392,10 @@ describe('RestaurantHomeView', () => {
     // 称号徽章和访问好友页统一成黄底（问题记录 539，推翻 198 的浅色描边）
     const chip = w.find('[data-testid="my-icons"] [data-testid="icon-tag"]');
     expect(chip.classes()).toContain('bg-warning');
+    // 称号放在弹性盒里，按同一行的行高居中（问题记录 563：按文字基线对齐时底色框比文字低约 1 像素）
+    expect(w.get('[data-testid="my-icons"]').classes()).toEqual(
+      expect.arrayContaining(['d-inline-flex', 'align-items-center']),
+    );
     // 经验条也不再用亮黄色（问题记录 212）
     expect(w.find('[data-testid="exp-bar"]').classes()).toContain('dt-exp-bar');
     expect(w.find('[data-testid="exp-bar"]').classes()).not.toContain('bg-warning');
@@ -566,7 +570,8 @@ describe('RestaurantHomeView', () => {
     expect(refuel.classes()).not.toContain('btn');
     expect(refuel.find('i.bi-droplet-fill').exists()).toBe(true); // 添油用实心油滴，和左边油量的空心油滴成对（问题记录 459）
     expect(refuel.element.closest('.row')).not.toBeNull();
-    expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-3')).toBe(true);
+    // 设施每行三个（问题记录 577）
+    expect(w.find('[data-testid="slot-1"]').element.parentElement!.classList.contains('col-4')).toBe(true);
   });
 
   it('生效的加成默认折叠成一行摘要，点开看全部（问题记录 280）', async () => {
