@@ -1215,7 +1215,13 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   }
 
   // ---------- 新手兑换码（问题记录 150） ----------
-  const newbieCodes = checkNewbieCodes(newbieCodesRaw, goodsIds, foodIds, errors);
+  const newbieCodes = checkNewbieCodes(
+    newbieCodesRaw,
+    goodsIds,
+    foodIds,
+    new Set(looks.icons.map((i) => i.key)),
+    errors,
+  );
 
   // ---------- 区服数值说明（问题记录 126） ----------
   checkSettingDocs(
