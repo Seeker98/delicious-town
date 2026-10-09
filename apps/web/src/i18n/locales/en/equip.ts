@@ -54,6 +54,7 @@ const equip: Messages['equip'] = {
   points: {
     left: (n) => `${n} ${n === 1 ? 'point' : 'points'} left`,
     allocate: (n) => `Assign (${n})`,
+    all: 'All',
     failed: 'Could not assign points',
   },
   detail: {
