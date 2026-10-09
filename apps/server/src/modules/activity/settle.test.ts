@@ -154,7 +154,7 @@ describe('全服合力结算（148-3 设计 §7）', () => {
       await newRestaurant(t, { shardId }),
     ];
     const end = new Date(t.clock.now.getTime() + H);
-    await insertActivity(t, {
+    const id = await insertActivity(t, {
       shardId,
       spec: { ...coop, def: { ...coop.def, ranks: [{ from: 1, to: 1, award: { diamond: 3 } }] } },
       endsAt: end,
@@ -165,6 +165,8 @@ describe('全服合力结算（148-3 设计 §7）', () => {
     await act(c, 'market.buy', 1);
     const after = new Date(end.getTime() + 3 * 60_000);
     await settleActivities(t.game.deps, shardId, after, log);
+    // 模拟上一轮没写完结算记录：重跑时靠领奖记录 top10 不重复记（终审：原来第二次结算直接跳过，没测到）
+    await t.db.deleteFrom('activity_settle').where('activity_id', '=', id).execute();
     await settleActivities(t.game.deps, shardId, after, log);
     for (const r of [a, b, c]) expect(await eventCount(t, r.restaurantId, 'activity.top10')).toBe(1);
   });
