@@ -55,6 +55,32 @@ describe('新闻读取（设计文档 §3.1）', () => {
     expect((await headlines(t.db, (await newRestaurant(t)).shardId)).broadcast).toBeNull();
   });
 
+  it('首页广播只显示 broadcastHours 小时内的（问题记录 553）；不给小时数时不限', async () => {
+    const a = await newRestaurant(t);
+    const s = a.shardId;
+    const now = t.clock.now;
+    const hoursAgo = (h: number) => new Date(now.getTime() - h * 3_600_000);
+    await postNews(t.db, { shardId: s, type: 'town.broadcast', params: { text: '旧' } }, hoursAgo(13));
+    expect((await headlines(t.db, s, { now, broadcastHours: 12 })).broadcast).toBeNull();
+    expect((await headlines(t.db, s, { now })).broadcast).toMatchObject({ params: { text: '旧' } });
+    await postNews(t.db, { shardId: s, type: 'town.broadcast', params: { text: '新' } }, hoursAgo(11));
+    expect((await headlines(t.db, s, { now, broadcastHours: 12 })).broadcast).toMatchObject({
+      params: { text: '新' },
+    });
+  });
+
+  it('首页概览的广播按区服数值 town.broadcast.homeHours 截止', async () => {
+    const a = await newRestaurant(t);
+    const hours = (await t.game.shards.settings(a.shardId)).tuning.town.broadcast.homeHours;
+    expect(hours).toBe(12);
+    await postNews(
+      t.db,
+      { shardId: a.shardId, type: 'town.broadcast', params: { text: '过期' } },
+      new Date(t.clock.now.getTime() - (hours + 1) * 3_600_000),
+    );
+    expect((await t.game.restaurant.overview(a.restaurantId)).headlines.broadcast).toBeNull();
+  });
+
   it('小镇新闻接口：每页 pageSize 条，hasMore', async () => {
     const a = await newRestaurant(t);
     for (let i = 0; i < 52; i++)

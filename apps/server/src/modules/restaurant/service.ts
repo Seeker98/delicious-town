@@ -114,7 +114,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       deviceSlots(d.db, d.config, row, now),
       lastRound(d.db, restId),
       shownIcons(restId),
-      settingsP.then((st) => headlines(d.db, row.shard_id, { daily: isFeatureEnabled(st, 'daily'), now })),
+      settingsP.then((st) =>
+        headlines(d.db, row.shard_id, {
+          daily: isFeatureEnabled(st, 'daily'),
+          now,
+          broadcastHours: st.tuning.town.broadcast.homeHours,
+        }),
+      ),
       // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
       settingsP.then((st) => (isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [])),
       todayBless(d.db, d.config, row.shard_id, now),

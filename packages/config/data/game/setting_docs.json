@@ -568,6 +568,7 @@
     "tuning.town.broadcast.minStar": "用喇叭需要的星级（星）",
     "tuning.town.broadcast.cooldownSec": "用喇叭的冷却（秒）",
     "tuning.town.broadcast.maxLen": "喇叭内容最多几个字（字）",
+    "tuning.town.broadcast.homeHours": "首页只显示多少小时内的广播，更早的只在小镇新闻里（小时）",
     "tuning.town.npc.bigEaterLevelWeights": "和镇长大胃锅聊天给的食材等级权重（列表，下标 0 是 1 级）",
     "tuning.town.npc.bigEaterNum": "镇长大胃锅给的食材个数范围（[最少, 最多]）",
     "tuning.town.npc.wenjieNum": "雯姐给的神秘礼券张数范围（[最少, 最多]）",
