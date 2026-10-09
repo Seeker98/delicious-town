@@ -2,7 +2,18 @@ import { z } from 'zod';
 import type { GameConfig } from '@dt/config';
 import { collectionEffects } from '../../modules/effects/collection';
 import type { Persona } from '../bot';
-import { gainCoin, gainDiamond, gainExp, gainRenown, gainStrength, grantGoods } from './ops';
+import { awardFoodsPool, pickPrizeFood, prizeFoodPools, prizeFoodTier } from '../../modules/award/random';
+import {
+  addFoods,
+  gainCoin,
+  gainDiamond,
+  gainExp,
+  gainRenown,
+  gainStrength,
+  grantGoods,
+  luckOf,
+  needPickOf,
+} from './ops';
 import type { FastCtx, FastRest } from './state';
 
 /** 旁支产出表（快速模拟设计 §5）：按来源和等级段写每天平均产出 */
@@ -32,6 +43,17 @@ const rowSchema = z
       .array(z.object({ id: z.number().int().positive(), num: z.number().int().positive() }))
       .optional(),
     effects: z.record(z.number()).optional(),
+    /**
+     * 随机奖励里的食材（问题记录 50 验证）：每天平均抽几次、奖励等级、是不是酒吧小游戏。
+     * 和 award/random.ts 同一套池子和个人缺料倾向；次数按参与度打折后随机取整
+     */
+    randomFoods: z
+      .array(
+        z
+          .object({ times: nonNeg, level: z.number().int().min(1).max(10), bar: z.boolean().optional() })
+          .strict(),
+      )
+      .optional(),
     note: z.string().optional(),
   })
   .strict();
@@ -91,6 +113,37 @@ export function rowsFor(t: SideTable, level: number): SideRow[] {
   return [...best.values()];
 }
 
+/** 和 award/random.ts 的 randomAward 抽食材那一段一致；池子空时返回 null（真实里改发银币，这里不发） */
+function drawRandomFood(
+  c: FastCtx,
+  level: number,
+  bar: boolean,
+  needPick: ReturnType<typeof needPickOf>,
+): number | null {
+  const foods = c.config.bundle.foods;
+  const levelOf = (f: number) => c.config.foods.get(f)?.level ?? 99;
+  if (bar) {
+    const tier = prizeFoodTier(c.tuning.bar.prize.foodTiers, level);
+    const [lo, hi] = tier.levels;
+    const id = needPick(
+      (f) => levelOf(f) >= lo && levelOf(f) <= hi,
+      () => {
+        const { normal, rare } = prizeFoodPools(foods, tier.levels);
+        const fallback = normal.length === 0 && rare.length === 0 ? awardFoodsPool(foods, level) : [];
+        return pickPrizeFood(normal, rare, tier.rare, fallback, c.rng) ?? -1;
+      },
+    );
+    return id < 0 ? null : id;
+  }
+  const pool = awardFoodsPool(foods, level);
+  const max = Math.min(level, 5);
+  const id = needPick(
+    (f) => levelOf(f) <= max,
+    () => (pool.length === 0 ? -1 : pool[c.rng.int(pool.length)]!),
+  );
+  return id < 0 ? null : id;
+}
+
 /** 每天一次：数值按参与度向下取整；常驻加成不打折，按当前等级段整体替换 */
 export function applySide(c: FastCtx, r: FastRest, t: SideTable, persona: Persona['key']): void {
   const share = t.participation[persona];
@@ -107,6 +160,19 @@ export function applySide(c: FastCtx, r: FastRest, t: SideTable, persona: Person
     gainStrength(c, r, n(row.strength));
     gainRenown(c, r, n(row.renown));
     for (const g of row.goods ?? []) grantGoods(c, r, g.id, n(g.num), source);
+    if (row.randomFoods?.length) {
+      // 缺料清单按天近似：一天算一次（真实是每局、每次胜利各算一次，当天抽到的不回头减），幸运翻倍按幸运率
+      const needPick = needPickOf(c, r);
+      const luck = luckOf(c, r).rate;
+      for (const rf of row.randomFoods) {
+        const x = rf.times * share;
+        const times = Math.floor(x) + (c.rng.next() < x - Math.floor(x) ? 1 : 0);
+        for (let i = 0; i < times; i++) {
+          const id = drawRandomFood(c, rf.level, rf.bar ?? false, needPick);
+          if (id !== null) addFoods(c, r, id, c.rng.next() < luck ? 2 : 1);
+        }
+      }
+    }
     if (row.effects && Object.keys(row.effects).length > 0) {
       r.effects.push({
         sourceType: 'side',

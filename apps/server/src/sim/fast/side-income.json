@@ -20,7 +20,11 @@
     {
       "source": "bar",
       "minLevel": 1,
-      "note": "酒吧主要用神秘礼券换食材和蟹币，对主线的银币、经验贡献很小，暂记 0"
+      "randomFoods": [
+        { "times": 1.4, "level": 3, "bar": true },
+        { "times": 1.4, "level": 5, "bar": true }
+      ],
+      "note": "酒吧主要用神秘礼券换食材和蟹币，对主线的银币、经验贡献很小，银币经验记 0。随机食材（问题记录 50 验证）：每天约 4 次奖励（神秘礼券约 10 张），食材占 7 成，奖励档次一半按 3、一半按 5；和真实一样带个人缺料倾向"
     },
     {
       "source": "yard",
@@ -31,7 +35,11 @@
       "source": "tower",
       "minLevel": 10,
       "renown": 30,
-      "note": "每天 dailyBase 5 次挑战 × winRenownBase 6 声望；守塔人门槛按 10 级估"
+      "randomFoods": [
+        { "times": 2, "level": 4 },
+        { "times": 2.5, "level": 4 }
+      ],
+      "note": "每天 dailyBase 5 次挑战 × winRenownBase 6 声望；守塔人门槛按 10 级估。随机食材（估算）：守塔人赢第 F 层给 F 次随机奖励、等级 F+2（tower.ts），按 10~30 级常打第 2 层：5 次约赢 4 次 × 2 次 × 食材 1/4 = 2 次、4 级；排位每天 10 次约赢 5 次，当天前 10 次赢各给 2 次 4 级奖励（sparAwards）：5 × 2 × 1/4 = 2.5 次、4 级。声望仍是原来的粗估，没跟着层数改"
     },
     {
       "source": "temple",
