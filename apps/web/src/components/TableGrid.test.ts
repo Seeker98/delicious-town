@@ -79,3 +79,25 @@ describe('每桌点的菜（问题记录 559）', () => {
     expect(w.find('[data-testid="table-dish-3"]').exists()).toBe(false);
   });
 });
+
+describe('同一排格子一样高（问题记录 585）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  it('格子撑满这一排的高度：多一行菜名、白食者名字折行、已消灭的蟑螂都不会让这一排高低不齐', () => {
+    const w = mount(TableGrid, {
+      props: {
+        tables: [
+          { no: 1, floor: 1, customer: 1 },
+          {
+            no: 2,
+            floor: 1,
+            customer: 9,
+            freeloaderRestId: 5,
+            freeloaderName: '一个很长的店名',
+            freeloaderSince: 'x',
+          },
+        ],
+      },
+    });
+    for (const no of [1, 2]) expect(w.get(`[data-testid="table-${no}"]`).classes()).toContain('h-100');
+  });
+});

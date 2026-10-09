@@ -55,7 +55,7 @@ function label(x: TableDto): string {
       <button
         type="button"
         :class="[
-          'w-100 border rounded p-1 small text-center bg-transparent',
+          'w-100 h-100 border rounded p-1 small text-center bg-transparent',
           { 'border-primary border-2': selected === x.no, 'text-danger': x.customer === 3 },
         ]"
         :data-testid="`table-${x.no}`"
