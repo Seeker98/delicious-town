@@ -1120,20 +1120,6 @@ details.dt-card > summary {
   top: -4px;
   right: -8px;
 }
-/* 浅色描边小标签（问题记录 198：个性图标不再是大黄块）；
-   .dt-chip（生效的加成）、.dt-tag（品级等小标签）都已有别的用处，不能重名（问题记录 212） */
-.dt-icon-tag {
-  display: inline-block;
-  padding: 1px 8px;
-  font-size: 12px;
-  line-height: 1.5;
-  /* 浅底上的小字要够深：对比度约 6.3 */
-  color: #a3360a;
-  background: var(--dt-primary-soft);
-  border: 1px solid #ffd8a8;
-  border-radius: 999px;
-}
-
 /* 限时活动九宫格（148-1） */
 .dt-grid-board {
   display: grid;

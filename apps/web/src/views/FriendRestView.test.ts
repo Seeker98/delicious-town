@@ -89,6 +89,7 @@ describe('FriendRestView', () => {
     const w = await mountView();
     expect(w.text()).toContain('欢迎光临');
     expect(w.text()).toContain('开服元老');
+    expect(w.find('[data-testid="icon-tag"]').text()).toBe('开服元老');
     await w.find('[data-testid="table-1"]').trigger('click');
     await w.find('[data-testid="act-dine"]').trigger('click');
     await flushPromises();

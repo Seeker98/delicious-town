@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconTag from '../components/IconTag.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
@@ -338,9 +339,7 @@ onBeforeUnmount(() => {
         >
         <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
         <span v-if="rest.icons.length > 0" data-testid="my-icons">
-          <span v-for="i in rest.icons" :key="i.key" class="dt-icon-tag me-1">{{
-            catalog.icon(i.key)?.title ?? i.title
-          }}</span>
+          <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
         </span>
       </div>
       <!-- 经验条紧跟等级那一行（问题记录 172：原来卡在资源数字和油量中间） -->
