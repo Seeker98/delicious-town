@@ -1764,6 +1764,29 @@ describe('豪华一番赏（240-2）', () => {
         ],
       }),
     ).toMatch(/devil.*payouts/);
+    // 押注档位不能重复；押得多的那行每一格都不比押得少的少（backlog 1010）
+    expect(withDevil({ stakes: [1, 5, 5, 20] })).toMatch(/devil.*stakes/);
+    expect(
+      withDevil({
+        payouts: [
+          [1, 2, 3],
+          [7, 9, 12],
+          [14, 8, 25],
+          [27, 36, 49],
+        ],
+      }),
+    ).toMatch(/devil.*payouts/);
+    expect(
+      withDevil({
+        stakes: [20, 10, 5, 1],
+        payouts: [
+          [27, 36, 49],
+          [14, 18, 25],
+          [7, 9, 12],
+          [1, 2, 3],
+        ],
+      }),
+    ).toBe('');
   });
 
   it('送一番赏券的活跃度档不在活跃奖励里时报错（质量期 ②）', () => {

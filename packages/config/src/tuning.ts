@@ -544,6 +544,21 @@ export const tuningSchema = z.object({
             path: ['payouts'],
             message: `devil payouts must have one row per stake, ${per} non-decreasing numbers each`,
           });
+        // 押注档位不重复；押得多的那行每一格都不比押得少的少（backlog 1010）
+        if (new Set(d.stakes).size !== d.stakes.length)
+          ctx.addIssue({ code: 'custom', path: ['stakes'], message: 'devil stakes must be unique' });
+        else if (ok) {
+          const order = d.stakes.map((_, i) => i).sort((a, b) => d.stakes[a]! - d.stakes[b]!);
+          const mono = order.every(
+            (r, k) => k === 0 || d.payouts[r]!.every((v, i) => v >= d.payouts[order[k - 1]!]![i]!),
+          );
+          if (!mono)
+            ctx.addIssue({
+              code: 'custom',
+              path: ['payouts'],
+              message: 'devil payouts must not pay less for a bigger stake',
+            });
+        }
       }),
     /** 记忆调酒 */
     memory: z.object({
