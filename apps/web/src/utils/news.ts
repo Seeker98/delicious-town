@@ -1,6 +1,6 @@
 import type { NewsDto } from '@dt/shared';
 import { gameDateTime } from './format';
-import { activeMessages } from '../i18n';
+import { activeLocale, activeMessages } from '../i18n';
 import { predictTitle } from './serverText';
 
 export interface NewsNames {
@@ -27,19 +27,24 @@ export function newsText(n: NewsDto, x: NewsNames): string {
   const who = n.restName ?? (name || m.someone);
   // 自动预测题的题目按题型和参数、当前语言渲染（问题记录 272）
   const p = n.params;
+  const blessKnown = typeof p.blessId === 'number' && x.data?.('bless', p.blessId);
+  const zh = activeLocale() === 'zh-CN' || activeLocale() === 'zh-TW';
   const params =
-    n.type === 'town.bless' && typeof p.blessId === 'number' && x.data?.('bless', p.blessId)
-      ? { ...p, blessName: x.data('bless', p.blessId)!.name }
-      : n.type === 'predict.result' && typeof p.kind === 'string'
-        ? {
-            ...p,
-            title: predictTitle({
-              kind: p.kind,
-              title: String(p.title ?? ''),
-              params: (p.eventParams ?? {}) as Record<string, unknown>,
-            }),
-          }
-        : p;
+    n.type === 'town.bless' && blessKnown
+      ? { ...p, blessName: blessKnown.name }
+      : n.type === 'town.bless' && !zh
+        ? // 下架去掉的星愿目录里没有译名，记下的是简中名：外文写“一个星愿”（backlog）
+          { ...p, blessName: m.blessGone }
+        : n.type === 'predict.result' && typeof p.kind === 'string'
+          ? {
+              ...p,
+              title: predictTitle({
+                kind: p.kind,
+                title: String(p.title ?? ''),
+                params: (p.eventParams ?? {}) as Record<string, unknown>,
+              }),
+            }
+          : p;
   return r(who, params, x);
 }
 

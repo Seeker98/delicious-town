@@ -140,5 +140,7 @@ const news: Messages['news'] = {
   },
   unknown: "Il s'est passé quelque chose en ville",
   someone: 'Un restaurant',
+  /** 目录里已经没有的星愿（下架去掉了），外文里不显示中文名 */
+  blessGone: 'un vœu étoilé',
 };
 export default news;
