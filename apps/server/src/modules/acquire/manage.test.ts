@@ -121,3 +121,33 @@ describe('挂牌、撤牌（收购 PR 1）', () => {
     });
   });
 });
+
+describe('收购的餐厅动态写在对的店（backlog 1010 补测）', () => {
+  const feedTypes = async (ctx: Parameters<typeof t.game.social.reads.feed>[0]) =>
+    (await t.game.social.reads.feed(ctx, { limit: 30 })).items.map((x) => x.type);
+
+  it('被收购的店看到被收购；赎身时原老板看到被赎回；放手时被放的店看到', async () => {
+    const shardId = await acquireShard(t);
+    const buyer = await newRestaurant(t, { shardId, patch: { coin: 5_000_000 } });
+    const target = await newRestaurant(t, { shardId, patch: { coin: 5_000_000, star_level: 2 } });
+    await setState(target.restaurantId, shardId);
+    await svc().buy(buyer, { restId: target.restaurantId, way: 'acquire', expect: 1_000_000 });
+    expect(await feedTypes(target)).toContain('acquire.taken');
+    expect(await feedTypes(buyer)).not.toContain('acquire.taken');
+
+    await setState(target.restaurantId, shardId, {
+      owner_rest_id: buyer.restaurantId,
+      protected_until: null,
+    });
+    const price = (await state(target.restaurantId)).heat * 1_000_000;
+    await svc().redeem(target, { expect: price });
+    expect(await feedTypes(buyer)).toContain('acquire.lost');
+    expect(await feedTypes(target)).not.toContain('acquire.lost');
+
+    const other = await newRestaurant(t, { shardId, patch: { star_level: 2 } });
+    await setState(other.restaurantId, shardId, { owner_rest_id: buyer.restaurantId });
+    await svc().release(buyer, { restId: other.restaurantId });
+    expect(await feedTypes(other)).toContain('acquire.freed');
+    expect(await feedTypes(buyer)).not.toContain('acquire.freed');
+  });
+});

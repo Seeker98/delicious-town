@@ -202,7 +202,8 @@ describe('商店整理工具（问题记录 483）', () => {
       writeShop: (text) => written.push(text),
     });
     const row = t.report().rows.find((x) => x.id === RETIRED[0]);
-    if (row) expect(row.orig.special).toBe(false);
+    expect(row).toBeDefined();
+    expect(row!.orig.special).toBe(false);
     const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
     expect(res.errors).toEqual([]);
     expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();

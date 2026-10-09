@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { describeFeed } from './feed';
+import type { RestLogDto } from '@dt/shared';
+import { logText } from './events';
 
 const at = '2026-09-30T00:00:00.000Z';
+/** 动态的文案走 logText（backlog 1010：原来的 describeFeed 只剩测试在用，删了） */
+const describeFeed = (item: RestLogDto, foodName: (id: number) => string) =>
+  logText(item, { foodName, goodsName: (id) => `道具${id}` });
 const food = (id: number) => `食材${id}`;
 
 describe('好友动态文案', () => {

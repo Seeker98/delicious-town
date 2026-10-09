@@ -1,6 +1,6 @@
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { RestLogDto } from '@dt/shared';
 import { markFeedSeen } from '../../utils/feed';
 import HomeFeed from './HomeFeed.vue';
@@ -32,6 +32,19 @@ describe('首页餐厅动态（问题记录 553）', () => {
     expect(rows[1]!.text()).toContain('老鼠偷走了');
     const more = w.find('[data-testid="home-feed-more"]').findComponent(RouterLinkStub);
     expect(more.props('to')).toBe('/friends?tab=feed');
+  });
+
+  it('浏览器存不了东西（读 localStorage 抛异常）时卡片照常显示，都算没看过（backlog 1010 补测）', () => {
+    const get = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+    try {
+      const w = mountIt([item('thumb', { byName: '甲' }, '2026-10-09T10:00:00.000Z')]);
+      expect(w.findAll('[data-testid="home-feed-row"]')).toHaveLength(1);
+      expect(w.find('[data-testid="home-feed-row"]').text()).toContain('甲 给你点了赞');
+    } finally {
+      get.mockRestore();
+    }
   });
 
   it('帖子被回复：点了去那个帖子', () => {
