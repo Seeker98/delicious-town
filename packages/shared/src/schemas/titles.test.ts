@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { grantIconBody } from './admin';
 import { activityBody } from './activity';
 import { rewardItems, rewardItemsNoIcons, sendMailBody } from './mail';
@@ -101,5 +101,21 @@ describe('邮件发给几家店、后台直接发称号', () => {
     expect(grantIconBody.safeParse({ key: 'founder', days: 7, until: '2026-12-01T00:00:00Z' }).success).toBe(
       false,
     );
+  });
+});
+
+describe('没有 Intl.Segmenter 的环境（老 WebView）', () => {
+  it('加载模块不报错，字数退回按码位', async () => {
+    const saved = Intl.Segmenter;
+    // @ts-expect-error 模拟老环境
+    delete Intl.Segmenter;
+    try {
+      vi.resetModules();
+      const m = await import('./titles');
+      expect(m.graphemeLen('ab')).toBe(2);
+    } finally {
+      Intl.Segmenter = saved;
+      vi.resetModules();
+    }
   });
 });

@@ -28,9 +28,19 @@ export function cleanTitleText(s: string): string {
   return s.replace(STRIP, '').trim();
 }
 
-const segmenter = new Intl.Segmenter('zh', { granularity: 'grapheme' });
+/**
+ * 用到时才建：shared 玩家网页也会加载，老的安卓 WebView 没有 Intl.Segmenter，
+ * 模块加载时就建会让整个网页打不开；没有时退回按码位数（只影响后台的字数提示）
+ */
+let segmenter: Intl.Segmenter | null | undefined;
 /** 按字素数：👨‍🍳、国旗都算 1 个 */
 export function graphemeLen(s: string): number {
+  if (segmenter === undefined)
+    segmenter =
+      typeof Intl !== 'undefined' && 'Segmenter' in Intl
+        ? new Intl.Segmenter('zh', { granularity: 'grapheme' })
+        : null;
+  if (!segmenter) return [...s].length;
   let n = 0;
   for (const _ of segmenter.segment(s)) n++;
   return n;
