@@ -264,7 +264,10 @@ describe('小镇新闻里的店名能点（问题记录 567）', () => {
     await flushPromises();
     const rows = w.findAll('[data-testid="news-row"]');
     const links = (i: number) =>
-      rows[i]!.findAllComponents(RouterLinkStub).map((l) => [l.text(), l.props('to')]);
+      rows[i]!.findAllComponents(RouterLinkStub).map((l: { text(): string; props(k: 'to'): unknown }) => [
+        l.text(),
+        l.props('to'),
+      ]);
     expect(links(0)).toEqual([['小王的店', '/friends/7']]);
     expect(links(1)).toEqual([]);
     expect(rows[1]!.text()).toContain('我的店');
