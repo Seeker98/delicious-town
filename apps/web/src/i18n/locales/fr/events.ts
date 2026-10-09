@@ -181,11 +181,11 @@ const events: Messages['events'] = {
     'acquire.taken': (p) =>
       `«\u202f${String(p.byName ?? '')}\u202f» a racheté votre restaurant pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.sold': (p) =>
-      `«\u202f${String(p.to ?? '')}\u202f» vous a acheté «\u202f${String(p.name ?? '')}\u202f»\u202f; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+      `«\u202f${String(p.to ?? '')}\u202f» vous a acheté «\u202f${String(p.name ?? '')}\u202f»\u202f; vous avez reçu ${formatNum(n(p, 'got'))} pièces`,
     'acquire.redeemed': (p) =>
       `Vous avez racheté votre restaurant à «\u202f${String(p.from ?? '')}\u202f» pour ${formatNum(n(p, 'price'))} pièces`,
     'acquire.lost': (p) =>
-      `«\u202f${String(p.name ?? '')}\u202f» s’est racheté\u202f; vous recevez ${formatNum(n(p, 'got'))} pièces`,
+      `«\u202f${String(p.name ?? '')}\u202f» s’est racheté\u202f; vous avez reçu ${formatNum(n(p, 'got'))} pièces`,
     'acquire.released': (p) => `Vous avez libéré «\u202f${String(p.name ?? '')}\u202f»`,
     'acquire.freed': (p) =>
       `«\u202f${String(p.byName ?? '')}\u202f» a libéré votre restaurant\u202f; vous êtes de nouveau indépendant`,
@@ -200,8 +200,8 @@ const events: Messages['events'] = {
       const got = !a?.num
         ? ''
         : a.kind === 'goods'
-          ? `\u202f; vous recevez ${names.goodsName(Number(a.id))}\u202f×\u202f${a.num}`
-          : `\u202f; vous recevez ${formatNum(a.num)} ${plFr(String(a.num), 'pièce', 'pièces')}`;
+          ? `\u202f; vous avez reçu ${names.goodsName(Number(a.id))}\u202f×\u202f${a.num}`
+          : `\u202f; vous avez reçu ${formatNum(a.num)} ${plFr(String(a.num), 'pièce', 'pièces')}`;
       const coin = n(p, 'coin');
       return `${String(p.byName ?? "Quelqu'un")} a fini de manger gratis à la table ${n(p, 'table')} et est parti en emportant ${formatNum(coin)} ${plFr(String(coin), 'pièce', 'pièces')}${got}`;
     },
@@ -222,7 +222,7 @@ const events: Messages['events'] = {
       `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} ${plFr(formatNum(n(p, 'cost')), 'pièce', 'pièces')}`,
     'market.share': (p, names) =>
       p.byName
-        ? `${String(p.byName)} a acheté ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} de votre réapprovisionnement\u202f; vous recevez ${formatNum(n(p, 'coin'))} pièces`
+        ? `${String(p.byName)} a acheté ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} de votre réapprovisionnement\u202f; vous avez reçu ${formatNum(n(p, 'coin'))} ${plFr(String(n(p, 'coin')), 'pièce', 'pièces')}`
         : `Vos ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} réapprovisionnés ont été achetés`,
     'takeaway.open': () => 'A ouvert la vente à emporter',
     'takeaway.refresh': (p) => `A actualisé les commandes à emporter (${n(p, 'times')} fois aujourd'hui)`,

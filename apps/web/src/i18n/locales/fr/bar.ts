@@ -126,7 +126,7 @@ const bar: Messages['bar'] = {
     rule2:
       'Si le barman tombe dessus, vous gagnez\u202f: plus vous tenez de verres, plus vous récupérez (voir le tableau, mise comprise).',
     /** 今天的局数（2026-10-09 加了每日上限） */
-    today: (played, max) => `Aujourd'hui\u202f: ${played}/${max} parties`,
+    today: (played, max) => `Aujourd'hui\u202f: ${played}/${max} ${plFr(max, 'partie', 'parties')}`,
     /** 赔付表：表头第一列和“活过 n 杯”列 */
     payoutHead: 'Mise',
     payoutCol: (n) => `${n} ${n === 1 ? 'verre tenu' : 'verres tenus'}`,
@@ -254,7 +254,7 @@ const bar: Messages['bar'] = {
   darts: {
     aimFailed: 'Impossible de viser',
     throwFailed: 'Impossible de lancer',
-    head: (mine, boss) => `Vous ${mine}\u202f: ${boss} le patron, `,
+    head: (mine, boss) => `Vous ${mine}\u202f:\u202f${boss} le patron, `,
     win: (award) => `vous gagnez\u202f! ${award}`,
     draw: (n) => `égalité. ${n} ${plFr(n, 'bon mystère remboursé', 'bons mystère remboursés')}`,
     lose: 'vous perdez',

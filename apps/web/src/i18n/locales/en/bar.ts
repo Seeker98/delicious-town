@@ -122,7 +122,7 @@ const bar: Messages['bar'] = {
     rule2:
       'If the bartender gets it, you win. The more cups you survive, the more you win back (see the table; amounts include your stake).',
     /** 今天的局数（2026-10-09 加了每日上限） */
-    today: (played, max) => `Today ${played}/${max} games`,
+    today: (played, max) => `Today ${played}/${max} ${plEn(max, 'game', 'games')}`,
     /** 赔付表：表头第一列和“活过 n 杯”列 */
     payoutHead: 'Stake',
     payoutCol: (n) => `${n} ${n === 1 ? 'cup' : 'cups'} survived`,

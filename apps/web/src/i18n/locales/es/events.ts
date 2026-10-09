@@ -220,7 +220,7 @@ const events: Messages['events'] = {
       `Te abasteciste a mano en el mercado por ${formatNum(n(p, 'cost'))} ${plEs(formatNum(n(p, 'cost')), 'moneda', 'monedas')}`,
     'market.share': (p, names) =>
       p.byName
-        ? `${String(p.byName)} compró ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} de tu reposición manual; recibiste ${formatNum(n(p, 'coin'))} monedas`
+        ? `${String(p.byName)} compró ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} de tu reposición manual; recibiste ${formatNum(n(p, 'coin'))} ${plEs(String(n(p, 'coin')), 'moneda', 'monedas')}`
         : `Compraron tus ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} de la reposición manual`,
     'takeaway.open': () => 'Abriste el servicio a domicilio',
     'takeaway.refresh': (p) =>
