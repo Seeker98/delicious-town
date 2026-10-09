@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1009:
+      'A batch of small fixes: the Love Necklace description no longer mentions the premium market; the limited-event task for reaching the top 10 of a contribution ranking now also counts places 4 to 10; the Town Daily can page back to earlier days and splits paragraphs more reliably; the automatic refresh after an update no longer wipes your browser\'s "forward" history; wishes that have been removed no longer show a Chinese name in the news',
     daily1009:
       "New: the Town Daily. Every morning it reports the big stories from the day before (Ichiban Kuji top prizes, acquisitions, star-ups, prediction results and more). It sits at the top of Town news with a link on the home page; you can page back 7 days and tap a restaurant's name to visit it. The paper is written by AI from the in-game news and only covers things that really happened; until a day's paper is ready, you'll see that day's headlines instead",
     act1008:
