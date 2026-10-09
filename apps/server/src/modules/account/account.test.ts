@@ -204,7 +204,7 @@ describe('账号邮件按语言（问题记录 272）', () => {
     await call(ctx.app, 'POST', `${A}/lang`, { cookie, body: { lang: 'fr' } });
     await call(ctx.app, 'POST', `${A}/forgot-password`, { body: { email, captchaToken: 't' } });
     const reset = ctx.mailer.lastTo(email)!;
-    expect(reset.subject).toBe('Delicious Town : réinitialiser votre mot de passe');
+    expect(reset.subject).toBe('Delicious Town\u202f: réinitialiser votre mot de passe');
     expect(reset.text).toContain('/reset-password?token=');
     const u = await registerUser(ctx.app);
     expect(ctx.mailer.lastTo(u.email)!.subject).toBe('美味小镇：验证你的邮箱');
