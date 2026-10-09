@@ -114,7 +114,7 @@ describe('没有 Intl.Segmenter 的环境（老 WebView）', () => {
       const m = await import('./titles');
       expect(m.graphemeLen('ab')).toBe(2);
     } finally {
-      Intl.Segmenter = saved;
+      Object.defineProperty(Intl, 'Segmenter', { value: saved, configurable: true, writable: true });
       vi.resetModules();
     }
   });
