@@ -11,7 +11,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
-import { checkRewardItems } from '../mail/reward';
+import { checkRewardIcons, checkRewardItems } from '../mail/reward';
 import { randomCode } from './code';
 
 const LIST_MAX = 100;
@@ -95,12 +95,15 @@ export function createAdminCodes(game: Game) {
     return toDto(first, { count: Number(agg.count), used: Number(agg.used), disabled: agg.disabled });
   }
 
-  async function checkInput(b: { items: RewardItems; shardId?: number }) {
+  /** 返回要存的附件：称号的名字换成快照（定制称号设计 三） */
+  async function checkInput(b: { items: RewardItems; shardId?: number }): Promise<RewardItems> {
     checkRewardItems(config, b.items);
+    const items = await checkRewardIcons(db, config, b.items, game.deps.now());
     if (b.shardId) {
       const shard = await db.selectFrom('shard').select('id').where('id', '=', b.shardId).executeTakeFirst();
       if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
     }
+    return items;
   }
 
   const common = (b: CreateSharedCodeInput | CreateBatchInput, actor: AdminActor) => ({
@@ -179,7 +182,7 @@ export function createAdminCodes(game: Game) {
 
     /** 建通用码：不填码就随机生成（撞重换一个）；自定的码已存在时报错 */
     async createShared(actor: AdminActor, b: CreateSharedCodeInput): Promise<AdminCodeDto> {
-      await checkInput(b);
+      b = { ...b, items: await checkInput(b) };
       const id = await db.transaction().execute(async (tx) => {
         let row: { id: number } | undefined;
         for (let i = 0; i < (b.code ? 1 : RETRIES) && !row; i++) {
@@ -221,7 +224,7 @@ export function createAdminCodes(game: Game) {
         throw new AppError(ErrorCode.VALIDATION_FAILED, 400, {
           issues: [{ path: 'count', message: 'too_big', max: config.tuning.redeem.batchMax }],
         });
-      await checkInput(b);
+      b = { ...b, items: await checkInput(b) };
       const batchId = await db.transaction().execute(async (tx) => {
         const values = common(b, actor);
         const ids: number[] = [];
