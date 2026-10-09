@@ -13,7 +13,7 @@ import {
 } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState, limitReached, requirement } from '../../core/errors';
-import { emitAction, emitActionFor } from '../../core/action';
+import { actionRests, emitAction, emitActionFor } from '../../core/action';
 import { restLog, runOp, type Op } from '../../core/op';
 import { gainCoin, spendCoin } from '../../core/resources';
 import type { DB } from '../../db/schema';
@@ -434,9 +434,14 @@ export function createExchangeService(d: GameDeps) {
     // 加锁顺序一致，不会死锁（和 creditWallets 一样）
     if (fills.some((x) => !x.held)) makers.add(o.rest.id);
     for (const id of makers) count(id, 'exchange.fill', 1);
-    for (const id of [...quest.keys()].sort((a, b) => a - b))
+    const ids = [...quest.keys()].sort((a, b) => a - b);
+    const others = await actionRests(
+      o,
+      ids.filter((id) => id !== o.rest.id),
+    );
+    for (const id of ids)
       for (const [key, n] of quest.get(id)!)
-        await (id === o.rest.id ? emitAction(o, key, n) : emitActionFor(o, id, key, n));
+        await (id === o.rest.id ? emitAction(o, key, n) : emitActionFor(o, others.get(id)!, key, n));
     restLog(o, 'exchange.order', {
       ...(opts.toSystem ? { toSystem: true } : {}),
       side: b.side,

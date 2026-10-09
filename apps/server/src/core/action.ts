@@ -11,20 +11,33 @@ export async function emitAction(op: Op, key: string, n = 1): Promise<void> {
   });
 }
 
+/** 另一家店的星级和等级（发动作事件用） */
+export interface ActionRest {
+  id: number;
+  star_level: number;
+  level: number;
+}
+
+/** 一次读出几家店的星级和等级（不锁行）：每家挂单方几个计数也只读一次（backlog 1010） */
+export async function actionRests(op: Op, ids: number[]): Promise<Map<number, ActionRest>> {
+  if (ids.length === 0) return new Map();
+  const rows = await op.tx
+    .selectFrom('restaurant')
+    .select(['id', 'star_level', 'level'])
+    .where('id', 'in', ids)
+    .execute();
+  return new Map(rows.map((r) => [r.id, r]));
+}
+
 /**
  * 给另一家店发动作事件（问题记录 318：交易所成交时挂单方也计数）。
- * 只读那家店的星级和等级（不锁行），活跃项的星级要求、限时活动的等级门槛按它自己的算（backlog 318）
+ * 活跃项的星级要求、限时活动的等级门槛按那家店自己的算（backlog 318），星级和等级用 actionRests 读好传进来
  */
-export async function emitActionFor(op: Op, restId: number, key: string, n = 1): Promise<void> {
-  const r = await op.tx
-    .selectFrom('restaurant')
-    .select(['star_level', 'level'])
-    .where('id', '=', restId)
-    .executeTakeFirstOrThrow();
+export async function emitActionFor(op: Op, r: ActionRest, key: string, n = 1): Promise<void> {
   await op.deps.bus.emit(op.tx, {
     name: 'action',
     shardId: op.shardId,
-    restId,
+    restId: r.id,
     payload: { key, n, star: r.star_level, level: r.level, at: op.now.toISOString() },
     events: [],
   });
