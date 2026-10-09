@@ -142,17 +142,20 @@ export function createDine(d: GameDeps) {
           await me.tx.deleteFrom('dine_dash').where('diner_rest_id', '=', me.rest.id).execute();
           await incrementDaily(me.tx, me.rest.id, 'dine.done', 1, gameDay(me.now));
           restLog(me, 'dine.ended', { host: them.rest.id, hostName: them.rest.name, ...reward });
-          // 店主得 1 个随机道具（问题记录 565；被请走时店主已经拿 2 倍银币，不给），物品池空时随机奖励改发银币
-          const a = await randomAward(them, {
-            level: them.tuning.friend.dine.hostAwardLevel,
-            onlyGoods: true,
-            source: 'dine.host',
-          });
+          // 店主得 1 个随机道具（问题记录 565；被请走时店主已经拿 2 倍银币，不给），物品池空时随机奖励改发银币。
+          // 蟹老板（NPC）的店不给：全服每天都能去吃，NPC 店会一直收道具（终审）
+          const a = them.rest.npc
+            ? null
+            : await randomAward(them, {
+                level: them.tuning.friend.dine.hostAwardLevel,
+                onlyGoods: true,
+                source: 'dine.host',
+              });
           // 店主那边：谁吃完走了、从店里吃走多少银币、自己得到了什么（问题记录 553、565）
           feedLog(p, 'dine.left', {
             table: r.table_no,
             coin: seat.acc.coin,
-            award: { kind: a.kind, id: a.id, num: a.num },
+            ...(a ? { award: { kind: a.kind, id: a.id, num: a.num } } : {}),
           });
           return reward;
         },
