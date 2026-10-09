@@ -28,3 +28,22 @@ describe('排行', () => {
     ]);
   });
 });
+
+describe('越小越好的榜（问题记录 569：秘制调料最少几次猜中）', () => {
+  it('asc：值小的在前；同值时 tie 大的在前（先达到的）；值 0 照样去掉', () => {
+    const r = rankRows(
+      [
+        { restId: 1, name: 'a', value: 5, tie: 1 },
+        { restId: 2, name: 'b', value: 3, tie: 1 },
+        { restId: 3, name: 'c', value: 3, tie: 9 },
+        { restId: 4, name: 'd', value: 0 },
+      ],
+      { asc: true },
+    );
+    expect(r.map((x) => [x.restId, x.rank])).toEqual([
+      [3, 1],
+      [2, 2],
+      [1, 3],
+    ]);
+  });
+});

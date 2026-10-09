@@ -1,4 +1,4 @@
-import { ErrorCode, RANK_KEYS, type LeaderboardDto } from '@dt/shared';
+import { ErrorCode, RANK_BOARDS, RANK_KEYS, type LeaderboardDto } from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { AppError } from '../../http/errors';
 import { BOARD_SOURCES } from './boards';
@@ -28,7 +28,9 @@ export function createRankService(d: GameDeps) {
       if (!hit || now.getTime() - hit.at >= ttl) {
         const entry = {
           at: now.getTime(),
-          rows: source({ db: d.db, shardId: ctx.shardId, now, config: d.config }).then(rankRows),
+          rows: source({ db: d.db, shardId: ctx.shardId, now, config: d.config }).then((rows) =>
+            rankRows(rows, { asc: RANK_BOARDS.find((b) => b.key === key)?.asc }),
+          ),
         };
         entry.rows.catch(() => {
           if (cache.get(ck) === entry) cache.delete(ck);

@@ -152,7 +152,7 @@ const thumbs =
  * result = 1 为连胜 / 连中，-1 为连败 / 连不中；同样高的先达到的在前
  */
 const bar =
-  (game: 'fg' | 'cup' | 'num', result: 1 | -1, p: 'thisWeek' | 'lastWeek'): Source =>
+  (game: 'fg' | 'cup' | 'num' | 'spice', result: 1 | -1, p: 'thisWeek' | 'lastWeek'): Source =>
   (c) =>
     run(
       c,
@@ -199,6 +199,11 @@ const hiphop =
   };
 
 const PERIODS: Period[] = ['today', 'yesterday', 'thisWeek', 'lastWeek'];
+/** 只有本周、上周的计数榜（问题记录 569） */
+const weekSources = (prefix: string, key: string): Record<string, Source> => ({
+  [`${prefix}.thisWeek`]: counter(key, 'thisWeek'),
+  [`${prefix}.lastWeek`]: counter(key, 'lastWeek'),
+});
 const periodSources = (prefix: string, key: string): Record<string, Source> =>
   Object.fromEntries(PERIODS.map((p) => [`${prefix}.${p}`, counter(key, p)]));
 
@@ -235,6 +240,16 @@ export const BOARD_SOURCES: Record<string, Source> = {
   'bar.num.win.lastWeek': bar('num', 1, 'lastWeek'),
   'bar.num.lose.thisWeek': bar('num', -1, 'thisWeek'),
   'bar.num.lose.lastWeek': bar('num', -1, 'lastWeek'),
+  // 新出的酒吧游戏（问题记录 569）：本周、上周按每日计数加起来；秘制调料最少几次猜中记在 bar_streak_best，越小越靠前
+  ...weekSources('bar.darts.win', 'bar.darts.win'),
+  ...weekSources('bar.nim.novice', 'bar.nim.win.novice'),
+  ...weekSources('bar.nim.expert', 'bar.nim.win.expert'),
+  'bar.spice.best.thisWeek': bar('spice', 1, 'thisWeek'),
+  'bar.spice.best.lastWeek': bar('spice', 1, 'lastWeek'),
+  ...weekSources('bar.spice.win', 'bar.spice.win'),
+  ...weekSources('bar.memory.top', 'bar.memory.perfect'),
+  ...weekSources('bar.devil.payout', 'bar.devil.payout'),
+  ...weekSources('bar.deal.top', 'bar.deal.top'),
   'mc.today': mc('value', 'today'),
   'mc.yesterday': mc('value', 'yesterday'),
   'mc.best': mc('value'),
