@@ -98,6 +98,10 @@ describe('同一排格子一样高（问题记录 585）', () => {
         ],
       },
     });
-    for (const no of [1, 2]) expect(w.get(`[data-testid="table-${no}"]`).classes()).toContain('h-100');
+    // 内容靠上排：按钮默认把内容垂直居中，撑高以后短格子的桌号会比旁边低半行（终审）
+    for (const no of [1, 2])
+      expect(w.get(`[data-testid="table-${no}"]`).classes()).toEqual(
+        expect.arrayContaining(['h-100', 'd-flex', 'flex-column', 'justify-content-start']),
+      );
   });
 });
