@@ -36,6 +36,10 @@ const rest: Messages['rest'] = {
     loadFailed: 'Impossible de charger les tables',
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Dernier tour ${coin} ${plFr(coin, 'pièce', 'pièces')} / ${exp} EXP`,
+    ordered: (dish, req, grade, ok) =>
+      `A commandé «\u202f${dish}\u202f», voulait ${req}, le vôtre est ${grade}\u202f: ${ok ? 'satisfait' : 'pas satisfait'}`,
+    orderedNone: (req) => `Voulait un plat ${req}, mais vous n’en avez appris aucun à lui servir`,
+    ateSpecial: (name, n) => `A mangé la spécialité «\u202f${name}\u202f»\u202f×\u202f${n}`,
     kill: 'Écraser le cafard',
     killed: 'Cafard écrasé',
     killFailed: "Impossible d'écraser le cafard",

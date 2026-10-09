@@ -6,6 +6,7 @@ import {
   befriend,
   createTestGame,
   newPair,
+  goodsNum,
   newRestaurant,
   restRow,
   setTables,
@@ -13,6 +14,8 @@ import {
   type NewRestaurantOptions,
   type TestGame,
 } from '../../../test/game';
+import { createShard } from '../../../test/fixtures';
+import { awardGoodsPool } from '../award/random';
 import { settleShardRound } from '../settlement/runner';
 import { grantGoods } from '../store/grant';
 
@@ -156,6 +159,92 @@ describe('白食结束、请走', () => {
       type: 'dine.left',
       params: { by: a.restaurantId, table: 3, coin: 100 },
     });
+  });
+
+  it('白食者正常吃完走了，店主得到 1 个随机道具（问题记录 565），写进动态；等级是区服数值', async () => {
+    const [a, b] = await setup();
+    expect((await t.game.shards.settings(b.shardId)).tuning.friend.dine.hostAwardLevel).toBe(2);
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    t.clock.advance(31 * MIN);
+    await dine().end(a);
+    const left = (await t.game.social.reads.feed(b, { limit: 30 })).items.find(
+      (x) => x.type === 'dine.left',
+    )!;
+    const award = left.params.award as { kind: string; id: number | null; num: number };
+    expect(['goods', 'coin']).toContain(award.kind);
+    expect(award.num).toBeGreaterThan(0);
+    if (award.kind === 'goods')
+      expect(await goodsNum(t, b.restaurantId, award.id!)).toBeGreaterThanOrEqual(award.num);
+  });
+
+  it('店主得的道具按区服数值 hostAwardLevel 的物品池抽，流水来源是 dine.host（终审）', async () => {
+    const shardId = await createShard(t.db);
+    await t.db
+      .insertInto('shard_config')
+      .values({
+        shard_id: shardId,
+        override: JSON.stringify({ tuning: { friend: { dine: { hostAwardLevel: 1 } } } }),
+      })
+      .execute();
+    t.clock.set(new Date());
+    const [a, b] = await newPair(t, { shardId, patch: { avatar: 1, coin: 1000 } });
+    await befriend(t, a.restaurantId, b.restaurantId);
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    t.clock.advance(31 * MIN);
+    await dine().end(a);
+    const left = (await t.game.social.reads.feed(b, { limit: 30 })).items.find(
+      (x) => x.type === 'dine.left',
+    )!;
+    const award = left.params.award as { kind: string; id: number; num: number };
+    expect(award.kind).toBe('goods');
+    expect(awardGoodsPool(config.bundle.goods, 1, 0, false)).toContain(award.id);
+    const led = await t.db
+      .selectFrom('ledger')
+      .select(['source'])
+      .where('rest_id', '=', b.restaurantId)
+      .where('item_id', '=', award.id)
+      .execute();
+    expect(led.map((x) => x.source)).toContain('dine.host');
+  });
+
+  it('在蟹老板（NPC）店里白食，结束时不给 NPC 店发道具（终审：全服每天都去吃，NPC 店会一直收道具）', async () => {
+    const [a, b] = await setup({ patch: { npc: true } });
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    t.clock.advance(31 * MIN);
+    const before = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    await dine().end(a);
+    const after = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    expect(after).toEqual(before);
+    const left = (await t.game.social.reads.feed(b, { limit: 30 })).items.find(
+      (x) => x.type === 'dine.left',
+    )!;
+    expect(left.params).not.toHaveProperty('award');
+  });
+
+  it('被店主请走时店主不再得道具（已经拿 2 倍银币）', async () => {
+    const [a, b] = await setup();
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    t.clock.advance(31 * MIN);
+    const before = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    await dine().expel(b, { tableNo: 1 });
+    const after = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    expect(after).toEqual(before);
   });
 
   it('激动的心：经验 ×3、体力 ×1.5', async () => {

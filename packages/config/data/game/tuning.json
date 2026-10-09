@@ -164,7 +164,7 @@
   "friend": {
     "requireVerifiedEmail": true,
     "maxFriends": 199,
-    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "heartExpMul": 3, "heartStrengthMul": 1.5, "baseSeats": 1 },
+    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "heartExpMul": 3, "heartStrengthMul": 1.5, "baseSeats": 1, "hostAwardLevel": 2 },
     "roach": {
       "layBase": 3, "layLevelRate": 0.2, "layCoin": 5, "layExp": 5,
       "killCoin": 10, "killExp": 5, "killCoinLevelRate": 0.5, "killSelfRate": 1.5,

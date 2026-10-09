@@ -282,6 +282,41 @@ describe('逐桌分配（规格书 01 §1.5）', () => {
     expect(r.tables[0]!.last!.exp).toBe(100 * portions);
   });
 
+  it('每桌记下吃了几份哪道特色菜，餐桌页显示用（问题记录 559）；没吃的桌不记', () => {
+    const normal = settle(
+      { special: { price: 100, level: 3, leftNum: 1, mcId: 42 } },
+      {},
+      [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9],
+    );
+    expect(normal.tables[0]!.last).toMatchObject({ type: 1, mcId: 42, mcNum: 1 });
+    expect(normal.tables[1]!.last).not.toHaveProperty('mcNum');
+    const rng = [0.5, 0.65, 0.9, 0.05, 0.3, 0, 0.9, 0.9, 0.9];
+    const picky = settle(
+      { cookbooks: { [cid('桑椹葡萄粥')]: 1 }, special: { price: 100, level: 3, leftNum: 5, mcId: 42 } },
+      {},
+      rng,
+    );
+    expect(picky.tables[0]!.last).toMatchObject({
+      type: 2,
+      cookbookId: cid('桑椹葡萄粥'),
+      satisfied: true,
+      mcId: 42,
+      mcNum: 2,
+    });
+    const none = settle({}, {}, [0.5, 0.65, 0.9, 0.9, 0.9, 0.9, 0.9]);
+    expect(none.tables[0]!.last).not.toHaveProperty('mcNum');
+    expect(none.tables[0]!.last).not.toHaveProperty('mcId');
+  });
+
+  it('章鱼哥吃掉的特色菜也记下（问题记录 559）', () => {
+    const r = settle(
+      { rest: { star: 3, streetId: 1 }, special: { price: 100, level: 3, leftNum: 10, mcId: 7 } },
+      { krabStreet: 1 },
+      [0.5, 0.65, 0.9, 0.001, 0.9, 0.9, 0.9, 0.9, 0.9],
+    );
+    expect(r.tables[0]!.last).toMatchObject({ type: 6, mcId: 7, mcNum: rules.settlement.squidwardPortions });
+  });
+
   it('特色菜卖出倍率按特色菜等级：1 级 ×1.3', () => {
     const r = settle(
       { special: { price: 100, level: 1, leftNum: 1 } },

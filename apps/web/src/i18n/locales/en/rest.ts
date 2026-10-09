@@ -36,6 +36,10 @@ const rest: Messages['rest'] = {
     loadFailed: 'Could not load tables',
     tableNo: (n) => `Table ${n}`,
     last: (coin, exp) => `Last round ${coin} ${plEn(coin, 'coin', 'coins')} / ${exp} EXP`,
+    ordered: (dish, req, grade, ok) =>
+      `Ordered "${dish}", wanted ${req}, yours is ${grade}: ${ok ? 'satisfied' : 'not satisfied'}`,
+    orderedNone: (req) => `Wanted a ${req} dish, but you haven't learned one you can serve`,
+    ateSpecial: (name, n) => `Ate the special "${name}" ×${n}`,
     kill: 'Squash the roach',
     killed: 'Roach squashed',
     killFailed: 'Could not squash the roach',

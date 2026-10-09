@@ -112,7 +112,7 @@ export async function settleOne(
       ? undefined
       : await op.tx
           .selectFrom('mc_cook')
-          .select(['id', 'price', 'level', 'left_num'])
+          .select(['id', 'mc_id', 'price', 'level', 'left_num'])
           .where('id', '=', op.rest.mc_cook_id)
           .executeTakeFirst();
   let cupboard: Map<number, number> | null = null;
@@ -131,7 +131,9 @@ export async function settleOne(
       tr.tables,
       tr.levels,
       agg,
-      cook && cook.left_num > 0 ? { price: cook.price, level: cook.level, leftNum: cook.left_num } : null,
+      cook && cook.left_num > 0
+        ? { price: cook.price, level: cook.level, leftNum: cook.left_num, mcId: cook.mc_id }
+        : null,
       cupboard,
       op.now,
     ),

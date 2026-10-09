@@ -57,8 +57,6 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'lesson.taught':
       if (!p.success) return `${who} ${p.type === 2 ? 'no logró espiar' : 'no aprendió nada'} en tu clase`;
       return `${who} ${p.type === 2 ? 'espió con éxito' : 'aprendió un plato estrella'} en tu clase`;
-    case 'dine.left':
-      return `${who} terminó de comer gratis en la mesa ${String(p.table)} y se fue, llevándose ${String(p.coin)} ${plEs(String(p.coin), 'moneda', 'monedas')}`;
     case 'forum.replied':
       return p.toFloor
         ? `${who} respondió a tu #${String(p.toFloor)} en «${String(p.title ?? '')}»`
@@ -195,6 +193,16 @@ const events: Messages['events'] = {
       `Atendiste el restaurante para tu dueño «${String(p.ownerName ?? '')}» y recibiste ${n(p, 'n')} ingredientes`,
     'dine.started': (p) => `Empezaste a comer gratis en «${String(p.hostName ?? '')}»`,
     'dine.ended': (p) => `Terminaste de comer gratis en «${String(p.hostName ?? '')}»`,
+    'dine.left': (p, names) => {
+      const a = (p.award ?? null) as { kind?: string; id?: number | null; num?: number } | null;
+      const got = !a?.num
+        ? ''
+        : a.kind === 'goods'
+          ? `; recibiste ${names.goodsName(Number(a.id))}×${a.num}`
+          : `; recibiste ${formatNum(a.num)} ${plEs(String(a.num), 'moneda', 'monedas')}`;
+      const coin = n(p, 'coin');
+      return `${String(p.byName ?? 'Alguien')} terminó de comer gratis en la mesa ${n(p, 'table')} y se fue, llevándose ${formatNum(coin)} ${plEs(String(coin), 'moneda', 'monedas')}${got}`;
+    },
     'forum.post': (p) => `Publicaste el tema n.º ${n(p, 'postId')} en el foro`,
     'forum.reply': (p) => `Respondiste al tema n.º ${n(p, 'postId')} del foro`,
     'forum.edit': (p) => `Editaste el tema n.º ${n(p, 'postId')} del foro`,

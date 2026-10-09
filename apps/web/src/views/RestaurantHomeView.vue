@@ -230,6 +230,8 @@ const strengthText = computed(() =>
 const showBooks = computed(() => store.featureOn('cookbook'));
 /** 任务入口看区服功能开关（原来“更多”里的入口也看） */
 const showTasks = computed(() => store.featureOn('task'));
+/** 店里有蟑螂时“楼层餐桌”前加虫子图标（问题记录 561） */
+const hasRoach = computed(() => !!store.rest?.tables.some((x) => x.customer === 3));
 const showSpecial = computed(() => store.featureOn('mysterious'));
 /** 菜名和几级分两段：放不下时只截菜名（审查 I2） */
 const specialName = computed(() => {
@@ -345,7 +347,12 @@ onBeforeUnmount(() => {
           {{ t.home.level }} <b data-testid="rest-level">{{ rest.level }}</b></span
         >
         <span v-if="rest.state === 2" class="badge bg-danger">{{ t.home.closed }}</span>
-        <span v-if="rest.icons.length > 0" data-testid="my-icons">
+        <!-- 弹性盒按行高居中：按文字基线对齐时底色框比文字低约 1 像素（问题记录 563） -->
+        <span
+          v-if="rest.icons.length > 0"
+          class="d-inline-flex align-items-center flex-wrap"
+          data-testid="my-icons"
+        >
           <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
         </span>
       </div>
@@ -419,7 +426,10 @@ onBeforeUnmount(() => {
         <div v-if="!rest.lastRound" class="d-flex flex-wrap align-items-center gap-2">
           <span class="dt-shrink text-muted">{{ t.home.noRound }}</span>
           <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
-          <RouterLink to="/rest/floor" class="dt-go">{{ t.home.floor }}</RouterLink>
+          <RouterLink to="/rest/floor" class="dt-go"
+            ><i v-if="hasRoach" class="bi bi-bug text-danger me-1" data-testid="home-floor-roach"></i
+            >{{ t.home.floor }}</RouterLink
+          >
         </div>
         <div v-if="rest.lastRound" class="d-flex align-items-center gap-2">
           <!-- 每一项不拆开，放不下时整项换到下一行（法文“收益记录”长，原来被挤出屏幕） -->
@@ -447,7 +457,10 @@ onBeforeUnmount(() => {
           <span class="dt-shrink text-muted dt-clamp1" data-testid="last-round-guests">{{
             customers || t.home.noGuests
           }}</span>
-          <RouterLink to="/rest/floor" class="dt-go">{{ t.home.floor }}</RouterLink>
+          <RouterLink to="/rest/floor" class="dt-go"
+            ><i v-if="hasRoach" class="bi bi-bug text-danger me-1" data-testid="home-floor-roach"></i
+            >{{ t.home.floor }}</RouterLink
+          >
         </div>
       </div>
       <!-- 食谱数、在售特色菜（问题记录 447）：原来的厨具、仓库、商店入口 -->
@@ -595,7 +608,7 @@ onBeforeUnmount(() => {
     <div class="dt-card my-2 small" data-testid="home-devices">
       <div class="dt-card-title mb-1">{{ t.home.devices }}</div>
       <div class="row g-1">
-        <div v-for="d in rest.devices" :key="d.slot" class="col-3">
+        <div v-for="d in rest.devices" :key="d.slot" class="col-4">
           <button
             class="btn btn-light border w-100 h-100 p-1 dt-slot"
             :data-testid="`slot-${d.slot}`"

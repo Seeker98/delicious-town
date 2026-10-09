@@ -24,6 +24,13 @@ function topLevelSelectors(src: string): string[] {
 }
 
 describe('main.css', () => {
+  it('强调色文字和链接、按钮用同一个深橙色（问题记录 575：广播是亮橙、日报链接是深橙，看着不一样）', () => {
+    const at = css.indexOf('.text-primary {');
+    expect(at).toBeGreaterThan(-1);
+    const rule = css.slice(at, css.indexOf('}', at));
+    expect(rule).toContain('color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important');
+  });
+
   it('同一个类不在顶层定义两次，免得后写的悄悄覆盖前面的（问题记录 212：.dt-chip 撞名）', () => {
     const seen = new Map<string, number>();
     for (const s of topLevelSelectors(css)) seen.set(s, (seen.get(s) ?? 0) + 1);

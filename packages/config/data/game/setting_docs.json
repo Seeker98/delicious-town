@@ -232,6 +232,7 @@
     "tuning.friend.dine.heartExpMul": "有\"激动的心\"时白食经验倍数（倍）",
     "tuning.friend.dine.heartStrengthMul": "有\"激动的心\"时白食体力倍数（倍）",
     "tuning.friend.dine.baseSeats": "一家店同时能被几人白食 = 这个值 + 星级（人）",
+    "tuning.friend.dine.hostAwardLevel": "白食者正常吃完离开时，店主得到的随机道具的奖励等级（问题记录 565；被请走时不给）",
     "tuning.friend.roach.layBase": "每天放蟑螂上限 = 这个值 × (星级+1)（只）",
     "tuning.friend.roach.layLevelRate": "放蟑螂奖励每级增加的比例（比例）",
     "tuning.friend.roach.layCoin": "放一只蟑螂的银币奖励基数（银币）",

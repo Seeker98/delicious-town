@@ -54,6 +54,7 @@ const equip: Messages['equip'] = {
   points: {
     left: (n) => `${n} point${n > 1 ? 's' : ''} restant${n > 1 ? 's' : ''}`,
     allocate: (n) => `Répartir (${n})`,
+    all: 'Tout',
     failed: 'Impossible de répartir les points',
   },
   detail: {
