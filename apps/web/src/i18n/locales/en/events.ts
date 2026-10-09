@@ -57,8 +57,6 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (!p.success)
         return `${who} ${p.type === 2 ? 'failed to sneak a lesson' : "didn't learn anything"} in your class`;
       return `${who} ${p.type === 2 ? 'snuck a lesson' : 'learned a signature dish'} in your class`;
-    case 'dine.left':
-      return `${who} finished eating for free at table ${String(p.table)} and left, taking ${String(p.coin)} ${plEn(String(p.coin), 'coin', 'coins')}`;
     case 'forum.replied':
       return p.toFloor
         ? `${who} replied to your #${String(p.toFloor)} in "${String(p.title ?? '')}"`
@@ -193,6 +191,16 @@ const events: Messages['events'] = {
       `Tended the restaurant for your owner "${String(p.ownerName ?? '')}" and got ${n(p, 'n')} ingredients`,
     'dine.started': (p) => `Started eating for free at "${String(p.hostName ?? '')}"`,
     'dine.ended': (p) => `Finished eating for free at "${String(p.hostName ?? '')}"`,
+    'dine.left': (p, names) => {
+      const a = (p.award ?? null) as { kind?: string; id?: number | null; num?: number } | null;
+      const got = !a?.num
+        ? ''
+        : a.kind === 'goods'
+          ? `; you got ${names.goodsName(Number(a.id))}×${a.num}`
+          : `; you got ${formatNum(a.num)} ${plEn(String(a.num), 'coin', 'coins')}`;
+      const coin = n(p, 'coin');
+      return `${String(p.byName ?? 'Someone')} finished eating for free at table ${n(p, 'table')} and left, taking ${formatNum(coin)} ${plEn(String(coin), 'coin', 'coins')}${got}`;
+    },
     'forum.post': (p) => `Posted forum thread #${n(p, 'postId')}`,
     'forum.reply': (p) => `Replied to forum thread #${n(p, 'postId')}`,
     'forum.edit': (p) => `Edited forum thread #${n(p, 'postId')}`,

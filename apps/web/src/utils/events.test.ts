@@ -103,6 +103,14 @@ describe('餐厅动态新类型（问题记录 553）', () => {
       '甲 在你店里第 3 桌吃完白食走了, 吃走了 120 银币',
     );
   });
+  it('白食者吃完走了，店主得到的道具或银币写在后面（问题记录 565）', () => {
+    expect(
+      text('dine.left', { byName: '甲', table: 3, coin: 120, award: { kind: 'goods', id: 1, num: 2 } }),
+    ).toBe('甲 在你店里第 3 桌吃完白食走了, 吃走了 120 银币, 你得到了 神秘礼券×2');
+    expect(
+      text('dine.left', { byName: '甲', table: 3, coin: 120, award: { kind: 'coin', id: null, num: 50 } }),
+    ).toBe('甲 在你店里第 3 桌吃完白食走了, 吃走了 120 银币, 你得到了 50 银币');
+  });
   it('帖子被回复：回复帖子、回复某一层；匿名写"有人"', () => {
     expect(text('forum.replied', { byName: '甲', postId: 5, title: '求助', floor: 2 })).toBe(
       '甲 回复了你的帖子「求助」',
