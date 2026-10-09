@@ -226,6 +226,17 @@ export const FEED_TYPES = [
 ] as const;
 const FEED_DAYS = 3;
 
+/** 累计获赞（问题记录 553）：用任务的全历史计数 thumbs.received，不用数点赞表 */
+export async function thumbsReceived(db: Kysely<DB>, restId: number): Promise<number> {
+  const r = await db
+    .selectFrom('event_counter')
+    .select('count')
+    .where('rest_id', '=', restId)
+    .where('key', '=', 'thumbs.received')
+    .executeTakeFirst();
+  return r ? Number(r.count) : 0;
+}
+
 /** 餐厅动态（最近 FEED_DAYS 天）：好友页"动态"卡翻页，首页取最新几条 */
 export function feedPage(db: Kysely<DB>, restId: number, q: PageQuery, now: Date): Promise<LogPageDto> {
   return logPage(db, restId, q, {

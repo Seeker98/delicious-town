@@ -30,7 +30,17 @@ import { grantGoods } from '../store/grant';
 import { iconLive } from '../friend/looks';
 import { normalizeCounts } from '../settlement/globals';
 import type { WorldService } from '../world/service';
-import { buffsOf, deviceSlots, feedPage, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
+import {
+  buffsOf,
+  deviceSlots,
+  feedPage,
+  incomePage,
+  lastRound,
+  logPage,
+  restNames,
+  tableDto,
+  thumbsReceived,
+} from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 import { iconDefs } from '../icons/defs';
 
@@ -102,7 +112,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
-    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed] =
+    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed, thumbs] =
       await Promise.all([
         d.db
           .selectFrom('restaurant_tables')
@@ -128,6 +138,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         ),
         todayBless(d.db, d.config, row.shard_id, now),
         feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
+        thumbsReceived(d.db, restId),
       ]);
     const tuning = settings.tuning;
     const growth = tuning.growth;
@@ -141,6 +152,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: news,
       feed,
+      thumbs,
       boosts: boosts.map((b) => ({
         id: b.id,
         title: b.title,

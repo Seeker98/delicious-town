@@ -72,6 +72,7 @@ export interface OverviewExtra {
   cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
   feed: RestLogDto[];
+  thumbs: number;
   disabledFeatures: string[];
   acquireOwner?: { restId: number; name: string } | null;
   /** 名下的店身价合计（问题记录 447）；区服关了收购为 null */
@@ -146,6 +147,7 @@ export function toRestaurantDto(
     boosts: extra.boosts,
     headlines: extra.headlines,
     feed: extra.feed,
+    thumbs: extra.thumbs,
     disabledFeatures: extra.disabledFeatures,
     acquireOwner: extra.acquireOwner ?? null,
     assets: extra.assets,

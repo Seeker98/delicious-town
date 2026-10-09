@@ -18,7 +18,7 @@ import { AppError } from '../../http/errors';
 import { getDaily } from '../counter/dailyCounter';
 import { flipHostKey, flipSlots, killHostKey, perHostLeft } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
-import { feedPage, restNames, tableDto } from '../restaurant/reads';
+import { feedPage, restNames, tableDto, thumbsReceived } from '../restaurant/reads';
 import { equipDisplayName } from '../equip/hats';
 import { iconLive } from './looks';
 import { iconDefs } from '../icons/defs';
@@ -322,6 +322,7 @@ export function createFriendReads(d: GameDeps) {
         plaques,
         tables: tables.map((x) => tableDto(x, names)),
         thumbedToday: thumbed !== undefined,
+        thumbs: await thumbsReceived(d.db, restId),
         // 今天在这家好友店还能灭几只（问题记录 374）；自己店、蟹老板的店不限
         killLeft:
           restId === ctx.restaurantId || r.npc
