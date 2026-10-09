@@ -136,7 +136,7 @@ async function revoke(m: AdminMailDto) {
   <form v-else class="small border rounded p-2 mb-3" @submit.prevent="send">
     <div class="d-flex flex-wrap gap-2 mb-2 align-items-center">
       <select v-model="scope" class="form-select form-select-sm w-auto" data-testid="mail-scope">
-        <option value="rest">单家餐厅</option>
+        <option value="rest">一家或几家餐厅</option>
         <option value="shard">当前区服</option>
         <option value="all">全部区服</option>
       </select>
