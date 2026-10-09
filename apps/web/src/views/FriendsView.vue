@@ -80,8 +80,9 @@ async function show(next: Tab) {
       if (mine === seq) {
         feed.value = f.items;
         thumbs.value = th;
-        // 首页餐厅动态的小圆点按这个算（问题记录 553）
-        if (restStore.rest) markFeedSeen(restStore.rest.id, f.items);
+        // 首页餐厅动态的小圆点按这个算（问题记录 553）；刷新页面直接进来时还没读过餐厅，先读（backlog 1010）
+        const rest = restStore.rest ?? (await restStore.refresh().catch(() => null));
+        if (rest && mine === seq) markFeedSeen(rest.id, f.items);
       }
     }
   } catch (e) {
