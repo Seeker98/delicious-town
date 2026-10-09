@@ -87,8 +87,8 @@ export async function devilDrink(o: Op, cup: number): Promise<DevilDto> {
     await endRound(o, 'devil');
     const payout = devilPayout(t, s.stake, s.survived);
     await grantGoodsOp(o, GOODS.mysteryTicket, payout);
-    // 排行“本周赢得礼券”（问题记录 569）
-    await incrementDaily(o.tx, o.rest.id, 'bar.devil.payout', payout, gameDay(o.now));
+    // 排行“本周赢得礼券”（问题记录 569）记净赚：拿回的减去押注（backlog 1010）
+    if (payout > s.stake) await incrementDaily(o.tx, o.rest.id, 'bar.devil.payout', payout - s.stake, gameDay(o.now));
     if (s.survived >= t.newsSurvived) opNews(o, 'bar.devil', { stake: s.stake, payout });
     // 支线“酒运”：赢、活过 3 杯（问题记录 515）
     await emitAction(o, 'bar.devil.win');
