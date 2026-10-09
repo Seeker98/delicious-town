@@ -1,4 +1,5 @@
-FROM node:22-alpine AS build
+# 基础镜像从 Google 的 Docker Hub 镜像站 mirror.gcr.io 拉，内容和官方 node 镜像一样（2026-10-10 CI 连不上 Docker Hub）
+FROM mirror.gcr.io/library/node:22-alpine AS build
 RUN npm i -g pnpm@10
 WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
@@ -8,7 +9,7 @@ RUN pnpm install --frozen-lockfile --filter "@dt/server..."
 RUN pnpm --filter @dt/config build && pnpm --filter @dt/server build
 RUN pnpm deploy --filter @dt/server --prod --legacy /out
 
-FROM node:22-alpine
+FROM mirror.gcr.io/library/node:22-alpine
 ENV NODE_ENV=production CONFIG_BUNDLE_PATH=/app/config/bundle.json
 WORKDIR /app
 COPY --from=build /out/node_modules ./node_modules
