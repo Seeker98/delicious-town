@@ -44,7 +44,7 @@ else
 fi
 "${COMPOSE[@]}" up -d
 
-# 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），两个副本都要通过
+# 等所有 api 容器变成 healthy：最多 3 分钟。读 compose 自己的健康检查结果（每 10 秒查一次 /readyz），有几个副本都要通过
 api_healthy() {
   local ids status
   ids=$("${COMPOSE[@]}" ps -q api)

@@ -40,7 +40,9 @@ services:
 
   api:
     <<: *server
-    deploy: { replicas: 2 }
+    # 一个（用户 2026-10-10 定）：服务器 1 GB 单核，两个副本不多出算力，第二个只占内存（一个约 60~100 MB，交换区已用近 600 MB）；
+    # 挂了 Docker 会自动重启
+    deploy: { replicas: 1 }
     depends_on:
       migrate: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
