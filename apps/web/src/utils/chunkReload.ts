@@ -32,6 +32,19 @@ export function reloadOnce(
   return true;
 }
 
+type Loc = Pick<Location, 'pathname' | 'search' | 'hash' | 'assign' | 'reload'>;
+
+/**
+ * 刷新到要去的页面：地址栏已经是那一页（后退、前进时浏览器先换了地址）就原地刷新，
+ * 不然 assign 会多压一条记录、把“前进”的记录清掉（backlog）；别的情况照常转过去
+ */
+export function goOrReload(loc: Loc = location): (url: string) => void {
+  return (url) => {
+    if (loc.pathname + loc.search + loc.hash === url) loc.reload();
+    else loc.assign(url);
+  };
+}
+
 /** 报错里加载失败的文件地址（绝对或 /assets/ 开头的相对地址） */
 function failedUrls(err: unknown): string[] {
   const msg = err instanceof Error ? err.message : '';

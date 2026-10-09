@@ -6,7 +6,7 @@ import {
   type Router,
   type RouteRecordRaw,
 } from 'vue-router';
-import { installChunkReload } from './utils/chunkReload';
+import { goOrReload, installChunkReload } from './utils/chunkReload';
 import { resolveGuard, type RouteFlags } from './guard';
 import { activeMessages } from './i18n';
 import { useSessionStore } from './stores/session';
@@ -504,10 +504,8 @@ export function createAppRouter(pinia: Pinia): Router {
     return resolveGuard(to.meta as RouteFlags, session.me, to.fullPath);
   });
   // 发版后旧页面加载不到旧的页面文件：刷新一次转到要去的页面（问题记录 497）
-  installChunkReload(
-    router,
-    (url) => window.location.assign(url),
-    () => useToastStore(pinia).push(activeMessages().common.offline, 'danger'),
+  installChunkReload(router, goOrReload(), () =>
+    useToastStore(pinia).push(activeMessages().common.offline, 'danger'),
   );
   return router;
 }
