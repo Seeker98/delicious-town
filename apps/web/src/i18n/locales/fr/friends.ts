@@ -57,6 +57,7 @@ const friends: Messages['friends'] = {
     thumbed: 'Pouce envoyé',
     thumbFailed: "Impossible d'envoyer un pouce",
     thumbedAlready: 'Pouce donné',
+    thumbsTotal: (n: string) => `Pouces levés ${n}`,
     thumb: 'Pouce',
     refuel: "Faire le plein d'huile",
     flip: 'Fouiller le garde-manger',

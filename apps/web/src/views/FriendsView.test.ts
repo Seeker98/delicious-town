@@ -3,6 +3,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
+import { useRestaurantStore } from '../stores/restaurant';
+import { feedSeenAt } from '../utils/feed';
 import FriendsView from './FriendsView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -123,6 +125,33 @@ describe('FriendsView', () => {
     await flushPromises();
     expect(endpoints.friendFeed).toHaveBeenCalled();
     expect(w.text()).toContain('乙店 给你点了赞');
+  });
+
+  it('地址带 ?tab=feed 直接打开动态卡；新类型用统一文案，帖子回复能点；记下看过的最新一条（问题记录 553）', async () => {
+    vi.mocked(endpoints.friendFeed).mockResolvedValue({
+      items: [
+        { type: 'acquire.taken', params: { byName: '丙', price: 5000 }, at: '2026-10-09T05:00:00.000Z' },
+        {
+          type: 'forum.replied',
+          params: { byName: '丁', postId: 8, title: '攻略', floor: 2 },
+          at: '2026-10-09T04:00:00.000Z',
+        },
+      ],
+    } as never);
+    vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
+    useRestaurantStore().rest = { id: 5 } as never;
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [{ path: '/:p(.*)*', component: FriendsView }],
+    });
+    await router.push('/friends?tab=feed');
+    const w = mount(FriendsView, { global: { plugins: [router] } });
+    await flushPromises();
+    expect(endpoints.friendFeed).toHaveBeenCalled();
+    expect(w.text()).toContain('「丙」花 5,000 银币收购了你的餐厅');
+    expect(w.find('a[href="/forum/8"]').text()).toContain('丁 回复了你的帖子「攻略」');
+    expect(feedSeenAt(5)).toBe('2026-10-09T05:00:00.000Z');
+    localStorage.clear();
   });
 
   it('好友行紧凑：店名、等级、状态在同一行（问题记录 168）', async () => {

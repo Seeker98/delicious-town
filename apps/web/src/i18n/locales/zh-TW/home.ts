@@ -41,8 +41,9 @@ export default {
   mainTag: '主線',
   /** 首頁主線那一行右邊的任務入口（問題記錄：活躍和任務拆頁） */
   tasksLink: '任務',
-  claim: '領獎',
-  claimFailed: '領取失敗',
+  /** 首頁餐廳動態卡（問題記錄 553） */
+  feedTitle: '餐廳動態',
+  feedNew: '新',
   activation: (n: number) => `今日活躍 ${n}`,
   activationClaimable: ', 有獎勵可領',
   dining: {

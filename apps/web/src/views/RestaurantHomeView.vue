@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { firstClaimableTab, type TaskTab } from '../utils/tasks';
 import IconTag from '../components/IconTag.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -15,6 +16,7 @@ import { endpoints } from '../api/endpoints';
 import ActivityBanner from '../components/ActivityBanner.vue';
 import AnnounceBanner from '../components/AnnounceBanner.vue';
 import GameImg from '../components/GameImg.vue';
+import HomeFeed from '../components/town/HomeFeed.vue';
 import HomeNews from '../components/town/HomeNews.vue';
 import { useT } from '../composables/useT';
 import type { Messages } from '../i18n';
@@ -43,6 +45,9 @@ const mainTask = ref<QuestDto | null>(null);
 const mainChapter = ref<QuestsDto['chapter']>(null);
 /** 主线全做完（终审 C1：这时也要有一行放任务入口，每周和支线还要从这里进） */
 const mainAllDone = ref(false);
+/** 任务页第一个有奖励可领的卡（问题记录 555）；读不到任务时为 null */
+const claimTab = ref<TaskTab | null>(null);
+const tasksTo = computed(() => (claimTab.value ? `/rest/tasks?tab=${claimTab.value}` : '/rest/tasks'));
 const chapterName = (c: NonNullable<QuestsDto['chapter']>) => catalog.data('chapters', c.id)?.name ?? c.name;
 /** "主线：第 2 章 小店经营"：拼成一段，模板里换行不会在冒号后多出空格 */
 const mainChapterText = computed(() => {
@@ -123,10 +128,12 @@ async function load() {
       mainTask.value = ready ?? (chapterRow ? null : (q.main.find((x) => !x.done) ?? null));
       mainChapter.value = !ready && chapterRow ? q.chapter : null;
       mainAllDone.value = q.allMainDone;
+      claimTab.value = firstClaimableTab(q);
     } catch {
       mainTask.value = null;
       mainChapter.value = null;
       mainAllDone.value = false;
+      claimTab.value = null;
     }
     dining.value = await dineReq;
     error.value = '';
@@ -514,9 +521,12 @@ onBeforeUnmount(() => {
           ></RouterLink
         >
       </div>
-      <!-- flex 让领奖按钮和文字垂直居中（问题记录 118） -->
-      <div v-if="mainTask" class="dt-todo-row" data-testid="main-task">
-        <div class="flex-fill">
+      <!--
+        主线这一行：左边是本章第一个能领的 / 第一个没完成的任务，或章末奖励、解锁条件；右边是任务入口。
+        首页不直接领奖（问题记录 555）：主线、章末、每周、支线任意能领时入口加礼物图标，点进第一个能领的卡
+      -->
+      <div v-if="mainTask || mainChapter || showTasks" class="dt-todo-row" data-testid="main-task">
+        <div v-if="mainTask" class="flex-fill">
           <!-- 和其他行一样用图标开头（问题记录 302），"主线："写成文字 -->
           <i class="bi bi-flag me-1"></i>{{ t.common.colon(t.home.mainTag)
           }}{{ questTitle(catalog.data('tasks', mainTask.id)?.name ?? mainTask.name, mainTask) }}
@@ -526,27 +536,7 @@ onBeforeUnmount(() => {
             )
           }}</span>
         </div>
-        <!-- 领奖和签到一样是文字链接：礼物图标加文字（问题记录 469） -->
-        <button
-          v-if="mainTask.done"
-          type="button"
-          class="dt-link-btn"
-          :disabled="busy"
-          @click="act(() => endpoints.claimTask(mainTask!.id), t.home.claimFailed)"
-        >
-          <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
-        </button>
-        <!-- 任务入口（问题记录：“更多”里的任务入口去掉，从这里进） -->
-        <RouterLink
-          v-else-if="showTasks"
-          to="/rest/tasks"
-          class="dt-go text-nowrap"
-          data-testid="home-tasks-link"
-          >{{ t.home.tasksLink }}</RouterLink
-        >
-      </div>
-      <div v-else-if="mainChapter" class="dt-todo-row" data-testid="main-task">
-        <div class="flex-fill">
+        <div v-else-if="mainChapter" class="flex-fill">
           <i class="bi bi-flag me-1"></i>{{ mainChapterText }}
           <span v-if="mainChapter.locked" class="text-muted">{{
             mainChapter.needStar > 0
@@ -554,30 +544,17 @@ onBeforeUnmount(() => {
               : t.rest.tasks.lockedLevel(mainChapter.needLevel)
           }}</span>
         </div>
-        <button
-          v-if="!mainChapter.locked"
-          type="button"
-          class="dt-link-btn"
-          :disabled="busy"
-          @click="act(() => endpoints.claimChapter(mainChapter!.id), t.home.claimFailed)"
-        >
-          <i class="bi bi-gift me-1" aria-hidden="true"></i>{{ t.home.claim }}
-        </button>
-        <RouterLink
-          v-else-if="showTasks"
-          to="/rest/tasks"
-          class="dt-go text-nowrap"
-          data-testid="home-tasks-link"
-          >{{ t.home.tasksLink }}</RouterLink
-        >
-      </div>
-      <div v-else-if="showTasks" class="dt-todo-row" data-testid="main-task">
-        <div class="flex-fill">
+        <div v-else class="flex-fill">
           <i class="bi bi-flag me-1"></i>{{ mainAllDone ? t.rest.tasks.mainDone : t.rest.tasks.main }}
         </div>
-        <RouterLink to="/rest/tasks" class="dt-go text-nowrap" data-testid="home-tasks-link">{{
-          t.home.tasksLink
-        }}</RouterLink>
+        <!-- 任务入口（问题记录：“更多”里的任务入口去掉，从这里进）；礼物图标和活跃入口的一样 -->
+        <RouterLink v-if="showTasks" :to="tasksTo" class="dt-go text-nowrap" data-testid="home-tasks-link"
+          >{{ t.home.tasksLink
+          }}<span v-if="claimTab" class="text-primary ms-1" data-testid="home-tasks-gift"
+            ><i class="bi bi-gift" aria-hidden="true"></i
+            ><span class="visually-hidden">{{ t.home.activationClaimable }}</span></span
+          ></RouterLink
+        >
       </div>
       <ActivityBanner />
       <div v-if="dining" class="dt-todo-row" data-testid="dine-card">
@@ -610,6 +587,8 @@ onBeforeUnmount(() => {
       >
     </div>
 
+    <!-- 餐厅动态在小镇新闻上面（问题记录 553） -->
+    <HomeFeed :items="rest.feed" :rest-id="rest.id" />
     <HomeNews :headlines="rest.headlines" />
 
     <div class="dt-card my-2 small" data-testid="home-devices">

@@ -8,6 +8,7 @@ const rest: Messages['rest'] = {
     toEquip: 'Cookware & points',
     capacity: 'Capacity',
     tableNum: 'Max tables',
+    thumbs: (n: string) => `Thumbs-up received: ${n}`,
     cupboardNum: 'Pantry slots',
     foodsMaxNum: 'Max per ingredient',
     foodsLockNum: 'Locked slots',

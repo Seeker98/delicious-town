@@ -19,6 +19,7 @@ const rest = (attrLeft: number) =>
     foodsLockNum: 15,
     storeNum: 20,
     oilLevel: 1,
+    thumbs: 56,
   }) as unknown as RestaurantDto;
 
 async function mountView() {
@@ -42,6 +43,12 @@ describe('RestInfoView', () => {
     vi.mocked(endpoints.overview).mockReturnValue(new Promise(() => undefined));
     await mountView();
     expect(endpoints.restLog).toHaveBeenCalled();
+  });
+
+  it('容量那组带累计获赞（问题记录 553）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue(rest(0));
+    const w = await mountView();
+    expect(w.get('[data-testid="info-thumbs"]').text()).toBe('累计获赞 56');
   });
 
   it('只读显示属性；加点挪到厨具页，这里放链接（问题记录：加点在餐厅信息里很难找）', async () => {

@@ -56,6 +56,7 @@ const friends: Messages['friends'] = {
     thumbed: 'Me gusta enviado',
     thumbFailed: 'No se pudo dar me gusta',
     thumbedAlready: 'Te gusta',
+    thumbsTotal: (n: string) => `Me gusta ${n}`,
     thumb: 'Me gusta',
     refuel: 'Llenarle el aceite',
     flip: 'Revolver la despensa',

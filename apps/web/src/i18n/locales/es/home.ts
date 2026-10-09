@@ -41,8 +41,8 @@ const home: Messages['home'] = {
   signInFailed: 'No se pudo registrar',
   mainTag: 'Principal',
   tasksLink: 'Misiones',
-  claim: 'Reclamar',
-  claimFailed: 'No se pudo reclamar',
+  feedTitle: 'Actividad del restaurante',
+  feedNew: 'nuevo',
   activation: (n) => `Puntos de actividad de hoy: ${n}`,
   activationClaimable: ', hay recompensa por reclamar',
   dining: {
