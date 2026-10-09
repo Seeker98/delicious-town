@@ -2,12 +2,20 @@
 import { computed, ref } from 'vue';
 import type { TableDto } from '@dt/shared';
 import { useT } from '../composables/useT';
+import { useCatalogStore } from '../stores/catalog';
+import { tableDish } from '../utils/tableOrder';
 import { CUSTOMER_NAMES } from '../utils/labels';
 
 const props = defineProps<{ tables: TableDto[]; selected?: number | null }>();
 const emit = defineEmits<{ pick: [table: TableDto] }>();
 const floor = ref(1);
 const t = useT();
+const catalog = useCatalogStore();
+/** 点菜、吃特色菜用的名字（问题记录 559） */
+const dishNames = {
+  cookbookName: (id: number) => catalog.data('cookbooks', id)?.name ?? `#${id}`,
+  mcName: (id: number) => catalog.mcName(id),
+};
 const floors = computed(() => [...new Set(props.tables.map((t) => t.floor))].sort((a, b) => a - b));
 const shown = computed(() => props.tables.filter((t) => t.floor === floor.value));
 /** 每层几只蟑螂（问题记录 561：有蟑螂的楼层在按钮上标出来） */
@@ -55,6 +63,14 @@ function label(x: TableDto): string {
       >
         <div class="fw-bold">{{ x.no }}</div>
         <div><i v-if="x.customer === 3" class="bi bi-bug me-1"></i>{{ label(x) }}</div>
+        <!-- 这桌点的菜：挑剔顾客、蟹老板写点的菜，普通顾客、章鱼哥写吃的特色菜（问题记录 559） -->
+        <div
+          v-if="tableDish(x.last, dishNames)"
+          class="text-muted dt-clamp1"
+          :data-testid="`table-dish-${x.no}`"
+        >
+          {{ tableDish(x.last, dishNames) }}
+        </div>
       </button>
     </div>
   </div>

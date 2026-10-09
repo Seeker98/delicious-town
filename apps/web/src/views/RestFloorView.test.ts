@@ -2,6 +2,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import { useSessionStore } from '../stores/session';
 import RestFloorView from './RestFloorView.vue';
 
@@ -64,5 +65,35 @@ describe('RestFloorView', () => {
     await w.find('[data-testid="act-expel"]').trigger('click');
     await flushPromises();
     expect(endpoints.dineExpel).toHaveBeenCalledWith(2);
+  });
+
+  it('点开一桌写点了什么、要几品、你的几品、满不满意，吃了特色菜再写一行（问题记录 559）', async () => {
+    const catalog = useCatalogStore();
+    catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
+    catalog.mcMap = new Map([[42, { id: 42, name: '佛跳墙' }]]) as never;
+    vi.mocked(endpoints.floor).mockResolvedValue([
+      {
+        no: 4,
+        floor: 1,
+        customer: 2,
+        last: {
+          type: 2,
+          coin: 30,
+          exp: 5,
+          oil: 3,
+          req: 3,
+          grade: 2,
+          cookbookId: 5,
+          satisfied: false,
+          mcId: 42,
+          mcNum: 1,
+        },
+      },
+    ]);
+    const w = mount(RestFloorView);
+    await flushPromises();
+    await w.find('[data-testid="table-4"]').trigger('click');
+    const lines = w.findAll('[data-testid="table-order"]').map((x) => x.text());
+    expect(lines).toEqual(['点了「宫保鸡丁」, 要上品, 你的是中品, 不满意', '吃了特色菜「佛跳墙」×1']);
   });
 });

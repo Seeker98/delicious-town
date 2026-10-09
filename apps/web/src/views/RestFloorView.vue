@@ -8,12 +8,19 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useSessionStore } from '../stores/session';
 import { useToastStore } from '../stores/toast';
 import { formatNum } from '../utils/format';
+import { useCatalogStore } from '../stores/catalog';
+import { tableOrderLines } from '../utils/tableOrder';
 import { serverNowMs } from '../utils/serverNow';
 
 const DINE_MINUTES = 30;
 const session = useSessionStore();
 const toast = useToastStore();
 const t = useT();
+const catalog = useCatalogStore();
+const dishNames = {
+  cookbookName: (id: number) => catalog.data('cookbooks', id)?.name ?? `#${id}`,
+  mcName: (id: number) => catalog.mcName(id),
+};
 const tables = ref<TableDto[]>([]);
 const picked = ref<TableDto | null>(null);
 const error = ref('');
@@ -57,6 +64,15 @@ onMounted(load);
     <div class="mb-1">{{ t.rest.floor.tableNo(picked.no) }}</div>
     <div v-if="picked.last && picked.last.type !== 0" class="text-muted mb-1">
       {{ t.rest.floor.last(formatNum(Math.floor(picked.last.coin)), formatNum(Math.floor(picked.last.exp))) }}
+    </div>
+    <!-- 点了什么、要几品、你的几品、满不满意；吃了特色菜再写一行（问题记录 559） -->
+    <div
+      v-for="(line, i) in tableOrderLines(picked.last, dishNames)"
+      :key="i"
+      class="mb-1"
+      data-testid="table-order"
+    >
+      {{ line }}
     </div>
     <button
       v-if="picked.customer === 3"

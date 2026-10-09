@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { useCatalogStore } from '../stores/catalog';
 import TableGrid from './TableGrid.vue';
 
 describe('TableGrid', () => {
@@ -50,5 +51,31 @@ describe('有蟑螂的楼层标出来（问题记录 561）', () => {
     const r = w.get('[data-testid="floor-roach-2"]');
     expect(r.find('i.bi-bug').exists()).toBe(true);
     expect(r.text()).toContain('2');
+  });
+});
+
+describe('每桌点的菜（问题记录 559）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+  it('顾客类型下面一行写点的菜或吃的特色菜；都没有时不加这一行', () => {
+    const catalog = useCatalogStore();
+    catalog.dataMap = new Map([['cookbooks:5', { id: 5, name: '宫保鸡丁' }]]) as never;
+    catalog.mcMap = new Map([[42, { id: 42, name: '佛跳墙' }]]) as never;
+    const w = mount(TableGrid, {
+      props: {
+        tables: [
+          {
+            no: 1,
+            floor: 1,
+            customer: 2,
+            last: { type: 2, coin: 1, exp: 1, oil: 1, req: 3, grade: 2, cookbookId: 5 },
+          },
+          { no: 2, floor: 1, customer: 1, last: { type: 1, coin: 1, exp: 1, oil: 1, mcId: 42, mcNum: 1 } },
+          { no: 3, floor: 1, customer: 1, last: { type: 1, coin: 1, exp: 1, oil: 1 } },
+        ],
+      },
+    });
+    expect(w.get('[data-testid="table-dish-1"]').text()).toBe('宫保鸡丁');
+    expect(w.get('[data-testid="table-dish-2"]').text()).toBe('佛跳墙');
+    expect(w.find('[data-testid="table-dish-3"]').exists()).toBe(false);
   });
 });
