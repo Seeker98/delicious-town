@@ -100,7 +100,8 @@ describe('小镇日报：生成一天', () => {
       ...o,
       force: true,
     });
-    expect((await row(shardId))!.regenerations).toBe(1);
+    // 重新生成的次数由后台先原子地加（backlog），这里不再加
+    expect((await row(shardId))!).toMatchObject({ status: 'draft', attempts: 2, regenerations: 0 });
     await t.db
       .updateTable('town_daily')
       .set({ status: 'published' })
@@ -112,6 +113,79 @@ describe('小镇日报：生成一天', () => {
         force: true,
       }),
     ).rejects.toMatchObject({ code: 'INVALID_STATE' });
+  });
+
+  /** 写稿器：第一次调用时先跑 during（模拟别人同时改了这一行），再照常回复 */
+  function racingWriter(replies: string[], during: () => Promise<unknown>): Writer {
+    const w = scriptedWriter(replies);
+    let first = true;
+    return {
+      async chat(system, user, signal) {
+        if (first) {
+          first = false;
+          await during();
+        }
+        return w.chat(system, user, signal);
+      },
+    };
+  }
+
+  it('重新生成期间有人手改了：不盖掉，报内容已变；花掉的 token 照样记上（backlog）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply(r)]), shardId, DAY, o);
+    const edited = {
+      'zh-CN': { title: '手改的', body: 'x' },
+      en: { title: 'e', body: 'x' },
+      'zh-TW': { title: 't', body: 'x' },
+    };
+    const w = racingWriter([zhReply(r), enReply(r)], () =>
+      t.db
+        .updateTable('town_daily')
+        .set({ content: JSON.stringify(edited) })
+        .where('shard_id', '=', shardId)
+        .execute(),
+    );
+    await expect(generateDaily(t.game.deps, w, shardId, DAY, { ...o, force: true })).rejects.toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'daily_changed' },
+    });
+    const x = (await row(shardId))!;
+    expect((x.content as { 'zh-CN': { title: string } })['zh-CN'].title).toBe('手改的');
+    expect(x.tokens_in).toBe(400);
+  });
+
+  it('周期任务写的时候后台已经发布了：不盖掉，返回现在的状态；token 照样记上（backlog）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await t.db
+      .insertInto('town_daily')
+      .values({ shard_id: shardId, day: DAY, status: 'pending', facts: '{}' })
+      .execute();
+    const w = racingWriter([zhReply(r), enReply(r)], () =>
+      t.db
+        .updateTable('town_daily')
+        .set({ status: 'published', content: JSON.stringify({ 'zh-CN': { title: '后台的', body: 'x' } }) })
+        .where('shard_id', '=', shardId)
+        .execute(),
+    );
+    expect((await generateDaily(t.game.deps, w, shardId, DAY, o)).status).toBe('published');
+    const x = (await row(shardId))!;
+    expect((x.content as { 'zh-CN': { title: string } })['zh-CN'].title).toBe('后台的');
+    expect(x.tokens_in).toBe(200);
+  });
+
+  it('已有稿子的行：AI 失败时素材不换（素材和稿子对得上，backlog）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply(r)]), shardId, DAY, o);
+    const before = (await row(shardId))!.facts;
+    await postNews(
+      t.db,
+      { shardId, type: 'kuji.big', restId: Number(r.slice(3, -1)), params: { tier: 'A' } },
+      gameTime(DAY, 11),
+    );
+    await expect(
+      generateDaily(t.game.deps, scriptedWriter([new Error('boom')]), shardId, DAY, { ...o, force: true }),
+    ).rejects.toThrow('boom');
+    expect((await row(shardId))!.facts).toEqual(before);
   });
 });
 

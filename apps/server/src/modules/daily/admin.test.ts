@@ -159,6 +159,35 @@ describe('小镇日报后台（HTTP）', () => {
     expect((await post(`/daily/${shardId}/${y()}/regenerate`)).json.code).toBe('INVALID_STATE');
     expect(await audits(`daily:${shardId}:${y()}`)).toEqual(['daily.regenerate']);
   });
+
+  it('重新生成只限最近 28 天（更早的新闻已经删了，backlog）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    const old = addDays(y(), -28);
+    await put(shardId, old, 'draft', art('很早', 'x'));
+    expect((await post(`/daily/${shardId}/${old}/regenerate`)).json).toMatchObject({
+      code: 'INVALID_STATE',
+      params: { reason: 'daily_too_old' },
+    });
+  });
+
+  it('同时点两次、只剩 1 次额度：只有一次真的调 AI（次数先原子地加，backlog）', async () => {
+    const shardId = await createShard(ctx.deps.db);
+    await put(shardId, y(), 'draft', art('旧的', 'x'));
+    await ctx.deps.db
+      .updateTable('town_daily')
+      .set({ regenerations: 9 })
+      .where('shard_id', '=', shardId)
+      .execute();
+    writer.calls = 0;
+    const codes = (
+      await Promise.all([
+        post(`/daily/${shardId}/${y()}/regenerate`),
+        post(`/daily/${shardId}/${y()}/regenerate`),
+      ])
+    ).map((x) => x.json.code ?? 'ok');
+    expect(codes.sort()).toEqual(['LIMIT_REACHED', 'ok']);
+    expect(writer.calls).toBe(2);
+  });
 });
 
 describe('小镇日报后台：没配密钥', () => {
