@@ -21,6 +21,8 @@ export interface SpecialDish {
   price: number;
   level: number;
   leftNum: number;
+  /** 哪道特色菜：每桌记下吃的是哪道（问题记录 559），卖完以后餐桌页也写得出名字；快速模拟不给 */
+  mcId?: number;
 }
 
 export interface SettleInput {

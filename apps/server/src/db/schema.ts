@@ -32,6 +32,9 @@ export interface TableResult {
   grade?: number;
   cookbookId?: number;
   satisfied?: boolean;
+  /** 这桌吃了几份哪道特色菜（问题记录 559）；没吃不记 */
+  mcId?: number;
+  mcNum?: number;
 }
 
 /** 已学食谱的派生计数：grade[L] = 当前品级恰好为 L 的食谱数；street[s] = 该街道已学数 */
