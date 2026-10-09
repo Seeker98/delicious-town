@@ -11,10 +11,11 @@ const envSchema = z.object({
   REDIS_URL: z.string().url(),
   CONFIG_BUNDLE_PATH: z.string().min(1),
   WEB_ORIGIN: z.string().url(),
+  /** 登录 Cookie 的域名（网页和 API 同域名的过渡，见 docs/deploy.md 三之二）；前面的点去掉 */
   COOKIE_DOMAIN: z
     .string()
     .optional()
-    .transform((v) => (v ? v : undefined)),
+    .transform((v) => (v ? v.replace(/^\./, '') : undefined)),
   COOKIE_SECURE: bool.default('false'),
   TRUST_CF_HEADER: bool.default('false'),
   TURNSTILE_SECRET: z.string().default(''),
@@ -45,6 +46,12 @@ export type Env = z.infer<typeof envSchema>;
 
 export function loadEnv(source: Record<string, string | undefined> = process.env): Env {
   const env = envSchema.parse(source);
+  // 填错（比如填成 api 子域名）浏览器会拒收这个 Cookie，同时旧 Cookie 又被删掉：所有人掉线还登录不上
+  if (env.COOKIE_DOMAIN) {
+    const host = new URL(env.WEB_ORIGIN).hostname;
+    if (host !== env.COOKIE_DOMAIN && !host.endsWith(`.${env.COOKIE_DOMAIN}`))
+      throw new Error(`COOKIE_DOMAIN ${env.COOKIE_DOMAIN} must be ${host} or a parent domain of it`);
+  }
   if (env.NODE_ENV === 'production') {
     if (!env.TURNSTILE_SECRET) throw new Error('TURNSTILE_SECRET is required in production');
     if (!env.COOKIE_SECURE) throw new Error('COOKIE_SECURE must be true in production');

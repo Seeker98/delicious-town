@@ -60,10 +60,16 @@ describe('换成同域名前：已登录的会话补发一次整个域名的 Coo
     });
     try {
       const token = await app.deps.sessions.create(4545);
+      const before = await app.deps.sessions.get(token);
       const first = await call(app.app, 'GET', '/t/whoami', { cookie: `dt_sid=${token}` });
       expect(first.json.data.accountId).toBe(4545);
       expect(setCookie(first)).toMatch(new RegExp(`dt_sid=${token};.*Domain=delicious.test`, 'i'));
-      const second = await call(app.app, 'GET', '/t/whoami', { cookie: `dt_sid=${token}` });
+      // 补没补过记在标记 Cookie 里，不写会话（终审：写会话会和选区服等请求互相覆盖）
+      expect(setCookie(first)).toMatch(/dt_cd=delicious.test;.*Domain=delicious.test/i);
+      expect(await app.deps.sessions.get(token)).toEqual(before);
+      const second = await call(app.app, 'GET', '/t/whoami', {
+        cookie: `dt_sid=${token}; dt_cd=delicious.test`,
+      });
       expect(setCookie(second)).toBe('');
       // 无效的会话不补
       expect(setCookie(await call(app.app, 'GET', '/t/whoami', { cookie: 'dt_sid=garbage' }))).toBe('');
@@ -99,6 +105,8 @@ describe('配了 COOKIE_DOMAIN 时，发、清 Cookie 都顺手删掉只属于�
       };
       const set = list(await call(app.app, 'GET', '/t/set'));
       expect(set.some((c) => /^dt_sid=tok;/.test(c) && /Domain=delicious\.test/i.test(c))).toBe(true);
+      // 登录时也带上标记，下一次请求不用再补发
+      expect(set.some((c) => /^dt_cd=delicious\.test;/.test(c))).toBe(true);
       expect(
         set.some((c) => /^dt_sid=;/.test(c) && !/Domain=/i.test(c) && /Expires=Thu, 01 Jan 1970/i.test(c)),
       ).toBe(true);
