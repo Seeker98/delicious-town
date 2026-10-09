@@ -102,6 +102,14 @@ describe('FriendRestView', () => {
     expect(w.get('[data-testid="friend-thumbs"]').text()).toBe('累计获赞 1,234');
   });
 
+  it('旧服务端没有 thumbs：不显示累计获赞（终审：前端先上线）', async () => {
+    const { thumbs: _t, ...old } = detail();
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(old as ReturnType<typeof detail>);
+    const w = await mountView();
+    expect(w.find('[data-testid="friend-thumbs"]').exists()).toBe(false);
+    expect(w.text()).toContain('欢迎光临');
+  });
+
   it('点蟑螂可以消灭', async () => {
     const w = await mountView();
     await w.find('[data-testid="table-2"]').trigger('click');

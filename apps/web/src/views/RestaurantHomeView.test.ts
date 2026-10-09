@@ -644,6 +644,15 @@ describe('RestaurantHomeView', () => {
     expect(pos('data-testid="home-feed"')).toBeLessThan(pos('data-testid="home-news-more"'));
   });
 
+  it('旧服务端的概览没有 feed、thumbs：首页照常显示，只是没有餐厅动态卡（终审：前端先上线）', async () => {
+    const { feed: _f, thumbs: _t, ...old } = dto;
+    vi.mocked(endpoints.overview).mockResolvedValue(old as RestaurantDto);
+    const w = await mountView();
+    expect(w.find('.alert-danger').exists()).toBe(false);
+    expect(w.find('[data-testid="home-todo"]').exists()).toBe(true);
+    expect(w.find('[data-testid="home-feed"]').exists()).toBe(false);
+  });
+
   it('小镇新闻：最新广播 + 3 条新闻，点"更多"去小镇页', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       ...dto,

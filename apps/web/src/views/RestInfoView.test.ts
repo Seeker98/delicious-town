@@ -51,6 +51,14 @@ describe('RestInfoView', () => {
     expect(w.get('[data-testid="info-thumbs"]').text()).toBe('累计获赞 56');
   });
 
+  it('旧服务端没有 thumbs：不显示累计获赞（终审：前端先上线）', async () => {
+    const { thumbs: _t, ...old } = rest(0) as RestaurantDto & { thumbs: number };
+    vi.mocked(endpoints.overview).mockResolvedValue(old as RestaurantDto);
+    const w = await mountView();
+    expect(w.find('[data-testid="info-thumbs"]').exists()).toBe(false);
+    expect(w.text()).toContain('幸运 6');
+  });
+
   it('只读显示属性；加点挪到厨具页，这里放链接（问题记录：加点在餐厅信息里很难找）', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue(rest(3));
     const w = await mountView();

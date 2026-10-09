@@ -588,7 +588,8 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- 餐厅动态在小镇新闻上面（问题记录 553） -->
-    <HomeFeed :items="rest.feed" :rest-id="rest.id" />
+    <!-- 旧服务端的概览没有 feed（前端可能先上线，问题记录 327 同理） -->
+    <HomeFeed :items="rest.feed ?? []" :rest-id="rest.id" />
     <HomeNews :headlines="rest.headlines" />
 
     <div class="dt-card my-2 small" data-testid="home-devices">
