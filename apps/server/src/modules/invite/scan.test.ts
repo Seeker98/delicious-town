@@ -146,6 +146,10 @@ describe('邀请好友页', () => {
     expect((await t.game.invite.overview(me)).code).toBe(first.code);
     expect(first.monthCount).toBe(1);
     expect(first.monthlyCap).toBe(20);
+    // 两档等级跟区服数值走，页面说明不再写死（backlog 1010）
+    expect(first.levels).toEqual({ lv10: 10, lv30: 30 });
+    await setTuning(t, shardId, { invite: { levels: { lv10: 8, lv30: 25 } } });
+    expect((await t.game.invite.overview(me)).levels).toEqual({ lv10: 8, lv30: 25 });
     expect(first.invitees).toEqual([
       expect.objectContaining({ level: 12, verified: true, lv10: 'sent', lv30: null }),
     ]);

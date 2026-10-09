@@ -12,5 +12,7 @@ export interface InviteDto {
   code: string;
   monthCount: number;
   monthlyCap: number;
+  /** 两档奖励的等级（区服数值，backlog 1010：页面说明不再写死 10、30 级） */
+  levels: { lv10: number; lv30: number };
   invitees: InviteeDto[];
 }

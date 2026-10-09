@@ -19,6 +19,9 @@ onMounted(async () => {
   }
 });
 
+/** 两档奖励的等级；旧服务端没给时按 10、30 级（backlog 1010） */
+const levels = computed(() => data.value?.levels ?? { lv10: 10, lv30: 30 });
+
 const link = computed(() => (data.value ? `${location.origin}/register?invite=${data.value.code}` : ''));
 
 async function copy(text: string) {
@@ -61,7 +64,7 @@ function stageText(level: number, s: InviteStatus | null): string | null {
     </div>
     <div class="dt-card small mb-2">
       <div class="mb-1">
-        {{ t.misc.invite.rules(data.monthlyCap) }}
+        {{ t.misc.invite.rules(data.monthlyCap, levels.lv10, levels.lv30) }}
       </div>
       <div class="fw-bold">{{ t.misc.invite.month(data.monthCount, data.monthlyCap) }}</div>
     </div>
@@ -74,8 +77,8 @@ function stageText(level: number, s: InviteStatus | null): string | null {
       <div v-else class="dt-meta">{{ t.misc.invite.noRest }}</div>
       <div class="dt-meta">
         <span v-if="!f.verified" class="text-danger me-2">{{ t.misc.invite.unverified }}</span>
-        <span v-if="stageText(10, f.lv10)" class="me-2">{{ stageText(10, f.lv10) }}</span>
-        <span v-if="stageText(30, f.lv30)">{{ stageText(30, f.lv30) }}</span>
+        <span v-if="stageText(levels.lv10, f.lv10)" class="me-2">{{ stageText(levels.lv10, f.lv10) }}</span>
+        <span v-if="stageText(levels.lv30, f.lv30)">{{ stageText(levels.lv30, f.lv30) }}</span>
       </div>
     </div>
   </template>

@@ -25,8 +25,8 @@ export default {
     myCode: '我的邀请码',
     copy: '复制',
     copyLink: '复制链接',
-    rules: (cap: number) =>
-      `好友开店就能领新手礼包；好友验证邮箱后, 店铺升到 10 级、再升到 30 级时, 你各得一份奖励。每月最多计 ${cap} 人。`,
+    rules: (cap: number, lv1: number, lv2: number) =>
+      `好友开店就能领新手礼包；好友验证邮箱后, 店铺升到 ${lv1} 级、再升到 ${lv2} 级时, 你各得一份奖励。每月最多计 ${cap} 人。`,
     month: (n: number, cap: number) => `本月已计 ${n} / ${cap}`,
     empty: '还没有邀请到好友',
     level: (n: number) => `${n} 级`,

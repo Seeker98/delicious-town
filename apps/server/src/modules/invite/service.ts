@@ -69,6 +69,7 @@ export function createInviteService(d: GameDeps) {
         code,
         monthCount: await monthCount(d.db, ctx.accountId, month),
         monthlyCap: s.tuning.invite.monthlyCap,
+        levels: s.tuning.invite.levels,
         invitees: rows.map((r) => ({
           restName: r.name ?? null,
           shardName: r.shard_name ?? null,
