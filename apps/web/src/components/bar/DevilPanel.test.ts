@@ -38,6 +38,21 @@ describe('DevilPanel', () => {
     expect(w.findAll('[data-testid^="devil-cup-"]')).toHaveLength(6);
   });
 
+  it('显示今天的局数和赔付表（2026-10-09）；局数用完时押注都灰掉', async () => {
+    const w = mount(DevilPanel, { props: { data: barData() } });
+    expect(w.find('[data-testid="devil-played"]').text()).toContain('3/20');
+    const rows = w.findAll('[data-testid="devil-payout-row"]');
+    expect(rows).toHaveLength(4);
+    expect(rows[3]!.text()).toContain('20');
+    expect(rows[3]!.text()).toContain('49');
+    expect(w.text()).not.toContain('1.4');
+    const full = mount(DevilPanel, {
+      props: { data: barData({ devil: { ...barData().devil, played: 20 } }) },
+    });
+    expect(full.find('[data-testid="devil-stake-1"]').attributes('disabled')).toBeDefined();
+    expect(full.text()).toContain('今天的局数用完了');
+  });
+
   it('进行中：喝过的杯不能点，点一杯就喝；调酒师没事时提示轮到你', async () => {
     const data = barData();
     data.devil.round = round({ cups: ['me', 'bartender', null, null, null, null], survived: 1 });

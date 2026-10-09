@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    devil1009:
+      "Piment du Diable\u202f: 20 parties par jour au maximum\u202f; les gains suivent désormais un tableau fixe. Avec une mise de 1 bon, tenir 1/2/3 verres rapporte 1/2/3 (comme avant)\u202f; une mise de 5 rapporte 7/9/12, 10 rapporte 14/18/25 et 20 rapporte 27/36/49, un peu moins qu'avant. Le tableau est affiché dans le jeu",
     fix1009:
       "Une série de petites corrections\u202f: la description du Collier d'amour ne mentionne plus le marché de luxe\u202f; l'étape de quête secondaire pour entrer dans le top 10 du classement des contributions d'un événement limité compte désormais toutes les places jusqu'à 10, pas seulement celles qui reçoivent une récompense\u202f; le Journal de la ville permet de revenir aux jours précédents et découpe mieux les paragraphes\u202f; la réussite estimée de l'Épreuve utilise la virgule décimale\u202f; ponctuation corrigée dans les e-mails d'inscription et de réinitialisation\u202f; les vœux retirés n'apparaissent plus avec un nom chinois dans les nouvelles",
     daily1009:

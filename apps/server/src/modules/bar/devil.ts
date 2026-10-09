@@ -1,9 +1,10 @@
 import { GOODS } from '@dt/config';
-import { ErrorCode, type DevilDto } from '@dt/shared';
+import { ErrorCode, gameDay, type DevilDto } from '@dt/shared';
 import { emitAction } from '../../core/action';
-import { invalidState } from '../../core/errors';
+import { invalidState, limitReached } from '../../core/errors';
 import { invalidateAgg } from '../../core/luck';
 import { opNews, restLog, type Op } from '../../core/op';
+import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { AppError } from '../../http/errors';
 import { upsertEffectSource } from '../effects/service';
 import { consumeGoods, grantGoodsOp } from '../store/goods';
@@ -41,11 +42,15 @@ export function devilView(s: DevilState): DevilDto {
   return dto(s);
 }
 
-/** 开局（设计文档 §2.1）：扣押注，特辣酒位置只存在服务端 */
+/** 开局（设计文档 §2.1）：扣押注，特辣酒位置只存在服务端；每天最多 dailyMax 局（2026-10-09） */
 export async function devilStart(o: Op, stake: number): Promise<DevilDto> {
   const t = o.tuning.bar.devil;
   if (!t.stakes.includes(stake)) throw badInput('stake');
   await assertNoRound(o, 'devil');
+  const day = gameDay(o.now);
+  if ((await getDaily(o.tx, o.rest.id, 'bar.devil', day)) >= t.dailyMax)
+    throw limitReached('bar_daily', { max: t.dailyMax });
+  await incrementDaily(o.tx, o.rest.id, 'bar.devil', 1, day);
   await consumeGoods(o, GOODS.mysteryTicket, stake);
   const s: DevilState = { stake, spiked: o.rng.int(t.cups), cups: Array(t.cups).fill(null), survived: 0 };
   await saveRound(o, 'devil', s);
@@ -80,7 +85,7 @@ export async function devilDrink(o: Op, cup: number): Promise<DevilDto> {
   s.cups[pick] = 'bartender';
   if (pick === s.spiked) {
     await endRound(o, 'devil');
-    const payout = devilPayout(s.stake, s.survived, t.rate);
+    const payout = devilPayout(t, s.stake, s.survived);
     await grantGoodsOp(o, GOODS.mysteryTicket, payout);
     if (s.survived >= t.newsSurvived) opNews(o, 'bar.devil', { stake: s.stake, payout });
     // 支线“酒运”：赢、活过 3 杯（问题记录 515）

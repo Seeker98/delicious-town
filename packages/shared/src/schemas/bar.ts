@@ -94,7 +94,8 @@ export interface BarDto {
   };
   /** 多少张礼券换 1 个蟹币 */
   krabCoinTickets: number;
-  devil: { stakes: number[]; round: DevilDto | null };
+  /** payouts：每档押注一行，第 k 个是活过 k 杯赢了拿回的礼券数；played/max：今天局数和上限（2026-10-09） */
+  devil: { stakes: number[]; payouts: number[][]; played: number; max: number; round: DevilDto | null };
   memory: {
     cost: number;
     played: number;

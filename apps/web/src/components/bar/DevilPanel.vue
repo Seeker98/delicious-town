@@ -27,6 +27,8 @@ watch(
   { immediate: true },
 );
 const round = computed(() => local.value);
+/** 今天的局数用完了（2026-10-09 起每天最多 dailyMax 局） */
+const limited = computed(() => props.data.devil.played >= props.data.devil.max);
 const finished = computed(() => !!round.value?.result);
 
 const hhmm = (iso: string) => timeHM(iso);
@@ -85,6 +87,24 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
       <div>{{ t.bar.devil.rule2 }}</div>
       <div>{{ t.bar.devil.rule3 }}</div>
     </div>
+    <table class="table table-sm small mb-2 w-auto" data-testid="devil-payouts">
+      <thead>
+        <tr>
+          <th>{{ t.bar.devil.payoutHead }}</th>
+          <th v-for="(_, k) in data.devil.payouts[0]" :key="k">{{ t.bar.devil.payoutCol(k + 1) }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(row, i) in data.devil.payouts" :key="i" data-testid="devil-payout-row">
+          <td>{{ data.devil.stakes[i] }}</td>
+          <td v-for="(v, k) in row" :key="k">{{ v }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="dt-meta mb-2" data-testid="devil-played">
+      {{ t.bar.devil.today(data.devil.played, data.devil.max) }}
+      <span v-if="limited && !round" class="text-danger ms-1">{{ t.bar.noMoreToday }}</span>
+    </div>
     <template v-if="!round">
       <div class="mb-1">{{ t.bar.devil.askStake }}</div>
       <div class="d-flex flex-wrap gap-1">
@@ -92,7 +112,7 @@ async function run(fn: () => Promise<DevilDto>, fallback: string) {
           v-for="s in data.devil.stakes"
           :key="s"
           class="btn btn-sm btn-outline-primary"
-          :disabled="busy || data.tickets < s"
+          :disabled="busy || limited || data.tickets < s"
           :data-testid="`devil-stake-${s}`"
           @click="run(() => endpoints.barDevilStart(s), t.bar.startFailed)"
         >

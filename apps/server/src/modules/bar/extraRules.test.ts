@@ -3,13 +3,13 @@ import { testConfig } from '../../../test/config';
 import { dartScore, dartX, devilPayout, memoryWindow } from './rules';
 
 describe('酒吧扩展规则（4C-3）', () => {
-  it('魔鬼辣杯赔付四舍五入（终审：押 1 张时向下取整，活过 1、2 杯都只拿回本金）', () => {
-    expect(devilPayout(10, 1, 1.4)).toBe(14);
-    expect(devilPayout(10, 2, 1.4)).toBe(20);
-    expect(devilPayout(10, 3, 1.4)).toBe(27);
-    expect(devilPayout(1, 1, 1.4)).toBe(1);
-    expect(devilPayout(1, 2, 1.4)).toBe(2);
-    expect(devilPayout(1, 3, 1.4)).toBe(3);
+  it('魔鬼辣杯按赔付表赔（2026-10-09：押 1 是 1/2/3，其余 1.35 倍取整）；不在表里的押注、杯数赔 0', () => {
+    const d = testConfig().tuning.bar.devil;
+    expect([1, 2, 3].map((k) => devilPayout(d, 1, k))).toEqual([1, 2, 3]);
+    expect([1, 2, 3].map((k) => devilPayout(d, 10, k))).toEqual([14, 18, 25]);
+    expect([1, 2, 3].map((k) => devilPayout(d, 20, k))).toEqual([27, 36, 49]);
+    expect(devilPayout(d, 3, 1)).toBe(0);
+    expect(devilPayout(d, 10, 4)).toBe(0);
   });
   it('飞镖三角波：相位 0 从 -1 出发，半周期到 1，一周期回到 -1', () => {
     expect(dartX(0, 1000, 0)).toBeCloseTo(-1);

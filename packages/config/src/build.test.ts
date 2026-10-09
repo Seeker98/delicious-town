@@ -885,7 +885,14 @@ describe('酒吧扩展（子项目 4C-3）', () => {
     expect(bar.devil).toEqual({
       stakes: [1, 5, 10, 20],
       cups: 6,
-      rate: 1.4,
+      // 2026-10-09 用户定：押 1 是 1/2/3，其余 1.35 倍取整；每天最多 20 局
+      payouts: [
+        [1, 2, 3],
+        [7, 9, 12],
+        [14, 18, 25],
+        [27, 36, 49],
+      ],
+      dailyMax: 20,
       hangoverMinutes: 60,
       hangoverAtRate: -0.1,
       newsSurvived: 3,
@@ -1716,6 +1723,38 @@ describe('豪华一番赏（240-2）', () => {
       expect(bundle).toBeNull();
       expect(errors.join('\n')).toContain('deluxeMonths');
     }
+  });
+
+  it('魔鬼辣杯赔付表：每档押注一行，每行是活过 1~杯数/2 杯拿回的张数，不能比上一杯少（2026-10-09）', () => {
+    const src = source();
+    type Devil = { stakes: number[]; cups: number; payouts: number[][] };
+    const withDevil = (patch: Partial<Devil>) => {
+      const tuning = structuredClone(src['game/tuning']) as { bar: { devil: Devil } };
+      Object.assign(tuning.bar.devil, patch);
+      return buildBundle({ ...src, 'game/tuning': tuning }).errors.join('\n');
+    };
+    expect(withDevil({})).toBe('');
+    expect(withDevil({ payouts: [[1, 2, 3]] })).toMatch(/devil.*payouts/);
+    expect(
+      withDevil({
+        payouts: [
+          [1, 2],
+          [7, 9, 12],
+          [14, 18, 25],
+          [27, 36, 49],
+        ],
+      }),
+    ).toMatch(/devil.*payouts/);
+    expect(
+      withDevil({
+        payouts: [
+          [1, 2, 3],
+          [7, 9, 8],
+          [14, 18, 25],
+          [27, 36, 49],
+        ],
+      }),
+    ).toMatch(/devil.*payouts/);
   });
 
   it('送一番赏券的活跃度档不在活跃奖励里时报错（质量期 ②）', () => {

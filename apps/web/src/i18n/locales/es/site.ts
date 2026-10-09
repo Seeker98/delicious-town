@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    devil1009:
+      'Cambios en el Chile del Diablo: hasta 20 partidas al día; lo que ganas sigue ahora una tabla fija. Apostando 1 vale, aguantar 1/2/3 vasos devuelve 1/2/3 (igual que antes); con 5 devuelve 7/9/12, con 10 devuelve 14/18/25 y con 20 devuelve 27/36/49, algo menos que antes. La tabla aparece en el juego',
     fix1009:
       'Una tanda de pequeños arreglos: la descripción del Collar del amor ya no menciona el mercado premium; la etapa de misión secundaria de entrar en el top 10 de la clasificación de aportes de un evento limitado ahora cuenta todos los puestos hasta el 10, no solo los que reciben premio; el Diario del pueblo permite volver a días anteriores y separa mejor los párrafos; el éxito estimado de la Prueba usa coma decimal; los deseos retirados ya no aparecen con nombre chino en las noticias',
     daily1009:
