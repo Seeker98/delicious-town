@@ -103,6 +103,18 @@ const town: Messages['town'] = {
     horns: (n) => `${n} ${plEs(n, 'bocina', 'bocinas')}, 1 por anuncio`,
     empty: 'Aún no hay noticias',
   },
+  /** 小镇日报（2026-10-08） */
+  daily: {
+    title: 'Diario del pueblo',
+    fallbackTitle: 'Titulares',
+    pending: 'El diario de este día aún se está editando. Por ahora, estos son los titulares',
+    none: 'No hay diario para este día',
+    englishOnly: 'Solo en inglés',
+    closed: 'Cerrado',
+    prev: 'Día anterior',
+    next: 'Día siguiente',
+    loadFailed: 'No se pudo cargar el diario del pueblo',
+  },
   rank: {
     loadFailed: 'No se pudieron cargar las clasificaciones',
     groups: [

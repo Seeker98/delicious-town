@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { DailyHeadDto } from './daily';
 
 const id = z.number().int().positive();
 
@@ -42,6 +43,8 @@ export interface NewsPageDto {
 export interface HeadlinesDto {
   news: NewsDto[];
   broadcast: NewsDto | null;
+  /** 小镇日报入口（2026-10-08）：区服开了日报、昨天的已发布时才有 */
+  daily: DailyHeadDto | null;
 }
 
 /** 小镇玩法获得的东西；银币、钻石的 id 为 null */

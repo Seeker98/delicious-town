@@ -1,8 +1,17 @@
-import type { HiphopPlace, NewsPageDto, NpcKey, ShakeResultDto, TownDto, TownExchangeDto } from '@dt/shared';
+import type {
+  DailyDto,
+  HiphopPlace,
+  NewsPageDto,
+  NpcKey,
+  ShakeResultDto,
+  TownDto,
+  TownExchangeDto,
+} from '@dt/shared';
 import type { GameDeps, RestCtx } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import { createOp, flushOp, runOp, type Op, type OpResult } from '../../core/op';
 import { withRestaurants } from '../../db/tx';
+import { readDaily } from '../daily/read';
 import { listNews } from '../news/news';
 import { npcIdOf } from '../npc/npc';
 import type { HammerPick } from '../world/rules';
@@ -29,6 +38,11 @@ export function createTownService(d: GameDeps, world: WorldService) {
       const size = s.tuning.town.news.pageSize;
       const items = await listNews(d.db, ctx.shardId, { before: q.before, limit: size + 1 });
       return { items: items.slice(0, size), hasMore: items.length > size };
+    },
+    /** 小镇日报（2026-10-08）：不带日期取最近一份已发布的 */
+    async daily(ctx: RestCtx, day: string | undefined): Promise<DailyDto> {
+      await d.shards.ensureFeature(ctx.shardId, 'daily');
+      return readDaily(d.db, ctx.shardId, day, d.now());
     },
     broadcast(ctx: RestCtx, b: { text: string }) {
       return op(ctx, 'town.broadcast', (o) => broadcast(o, b.text));

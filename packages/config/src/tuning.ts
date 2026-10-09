@@ -863,6 +863,14 @@ export const tuningSchema = z.object({
       needMax: z.number().min(0).max(1),
     })
     .refine((s) => s.needBase <= s.needMax, { message: 'scarcity needBase must not exceed needMax' }),
+  /** 小镇日报（2026-10-08）：游戏时间 hour:minute 以后写前一天的日报；autoPublish 关着时写好先等后台审核 */
+  daily: z.object({
+    autoPublish: z.boolean(),
+    hour: int.min(0).max(23),
+    minute: int.min(0).max(59),
+    /** 逐条交给 AI 的新闻最多几条 */
+    maxEvents: int.min(5).max(60),
+  }),
   /**
    * 收购（问题记录 421）：身价 = 基础身价 × 热度；基础身价 = 近 priceDays 天日均结算银币 × priceMultiple，不低于 minPrice。
    * 钱只在玩家之间流动，系统只收 taxRate；分红、打理的数值在收购 PR 2 用到

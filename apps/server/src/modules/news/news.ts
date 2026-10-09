@@ -1,6 +1,7 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 import { BROADCAST_STYLE_NEWS, type HeadlinesDto, type NewsDto } from '@dt/shared';
 import type { DB } from '../../db/schema';
+import { dailyHead } from '../daily/read';
 
 export interface NewsInput {
   shardId: number;
@@ -28,6 +29,8 @@ export interface ListNewsOptions {
   limit: number;
   only?: string[];
   not?: string[];
+  /** 只要这些编号（小镇日报的“今日要闻”） */
+  ids?: number[];
 }
 
 /** 本区服新闻，按 id 倒序；店名取当前名字（左连接，店不存在时为 null） */
@@ -40,6 +43,7 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
   if (o.before !== undefined) q = q.where('n.id', '<', o.before);
   if (o.only && o.only.length > 0) q = q.where('n.type', 'in', o.only);
   if (o.not && o.not.length > 0) q = q.where('n.type', 'not in', o.not);
+  if (o.ids) q = o.ids.length > 0 ? q.where('n.id', 'in', o.ids) : q.where(sql<boolean>`false`);
   const rows = await q.orderBy('n.id', 'desc').limit(o.limit).execute();
   return rows.map((r) => ({
     // news.id 是 bigint，驱动返回字符串
@@ -52,12 +56,17 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
   }));
 }
 
-/** 首页头条（设计文档 裁定 21） */
-export async function headlines(db: Kysely<DB>, shardId: number): Promise<HeadlinesDto> {
-  const [news, bc] = await Promise.all([
+/** 首页头条（设计文档 裁定 21）；daily：区服开了小镇日报时带昨天日报的标题 */
+export async function headlines(
+  db: Kysely<DB>,
+  shardId: number,
+  o: { daily?: boolean; now?: Date } = {},
+): Promise<HeadlinesDto> {
+  const [news, bc, daily] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
     listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
     listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS] }),
+    o.daily && o.now ? dailyHead(db, shardId, o.now) : null,
   ]);
-  return { news, broadcast: bc[0] ?? null };
+  return { news, broadcast: bc[0] ?? null, daily };
 }

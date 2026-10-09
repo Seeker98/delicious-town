@@ -49,5 +49,5 @@ export default {
     claimable: (n: number) => `可領 ${n} 份`,
     view: '檢視',
   },
-  news: { title: '小鎮新聞', more: '更多', broadcast: '【廣播】', empty: '還沒有新聞' },
+  news: { daily: '小鎮日報: ', title: '小鎮新聞', more: '更多', broadcast: '【廣播】', empty: '還沒有新聞' },
 };

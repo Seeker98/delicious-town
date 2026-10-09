@@ -1,6 +1,7 @@
 import type { Kysely } from 'kysely';
 import { dropPartitionsBefore, ensureDailyPartitions } from '../db/partitions';
 import type { DB } from '../db/schema';
+import type { PeriodicJob } from '../core/jobs';
 import type { Game } from '../game';
 import { processGrants } from '../modules/admin/grants';
 import { cleanLoginTrace } from '../modules/account/loginTrace';
@@ -34,9 +35,23 @@ export async function maintainPartitions(
   return { created, dropped };
 }
 
+/**
+ * 要调外部接口、一次可能跑一两分钟的周期任务（小镇日报调 AI）：单独一个循环跑，
+ * 不然会拖住同一循环里所有区服的结算、预测等（小镇日报终审 I1）
+ */
+const SLOW_JOBS: ReadonlySet<string> = new Set(['town-daily']);
+
+export function splitPeriodic(jobs: PeriodicJob[]): { fast: PeriodicJob[]; slow: PeriodicJob[] } {
+  return {
+    fast: jobs.filter((j) => !SLOW_JOBS.has(j.name)),
+    slow: jobs.filter((j) => SLOW_JOBS.has(j.name)),
+  };
+}
+
 export function workerJobs(game: Game, log: JobLogger): Job[] {
   const { db, redis } = game.app;
   const now = () => game.deps.now();
+  const { fast, slow } = splitPeriodic(game.jobs);
   return [
     {
       // 登录记录只留 30 天（子项目 6B-2）
@@ -81,7 +96,14 @@ export function workerJobs(game: Game, log: JobLogger): Job[] {
       intervalMs: 5_000,
       run: async (signal) => {
         if (game.app.clock) await pullOffset(game.app.clock, game.app.redis);
-        await runDueJobs({ db, shards: game.shards, now, log }, game.jobs, { signal });
+        await runDueJobs({ db, shards: game.shards, now, log }, fast, { signal });
+      },
+    },
+    {
+      name: 'periodic-slow',
+      intervalMs: 60_000,
+      run: async (signal) => {
+        await runDueJobs({ db, shards: game.shards, now, log }, slow, { signal });
       },
     },
     {

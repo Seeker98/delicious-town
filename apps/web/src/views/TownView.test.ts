@@ -10,6 +10,9 @@ vi.mock('../api/endpoints', () => ({
   endpoints: {
     town: vi.fn(),
     townNews: vi.fn(),
+    townDaily: vi
+      .fn()
+      .mockResolvedValue({ day: '2026-10-08', days: [], article: null, fallback: [], rests: {} }),
     townExchange: vi.fn(),
     rank: vi.fn(),
     catalog: vi.fn(),

@@ -17,6 +17,8 @@ const links = computed(() => [
   { to: '/admin/grants', label: '补偿' },
   { to: '/admin/mail', label: '邮件' },
   { to: '/admin/announce', label: '公告' },
+  // 小镇日报只有管理员能看、能审
+  ...(admin.me?.role === 'admin' ? [{ to: '/admin/daily', label: '日报' }] : []),
   { to: '/admin/links', label: '友情链接' },
   { to: '/admin/activities', label: '活动' },
   { to: '/admin/predict', label: '预测' },

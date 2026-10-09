@@ -44,7 +44,6 @@
 .bi-chat-square-text::before { content: "\f264"; }
 .bi-check-circle::before { content: "\f26b"; }
 .bi-check2::before { content: "\f272"; }
-.bi-check2-square::before { content: "\f271"; }
 .bi-chevron-down::before { content: "\f282"; }
 .bi-chevron-left::before { content: "\f284"; }
 .bi-chevron-right::before { content: "\f285"; }
@@ -83,6 +82,7 @@
 .bi-megaphone::before { content: "\f484"; }
 .bi-mortarboard::before { content: "\f6fe"; }
 .bi-music-note-beamed::before { content: "\f49e"; }
+.bi-newspaper::before { content: "\f4a3"; }
 .bi-palette::before { content: "\f4b1"; }
 .bi-pencil::before { content: "\f4cb"; }
 .bi-people::before { content: "\f4d0"; }

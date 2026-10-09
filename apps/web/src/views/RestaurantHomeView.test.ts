@@ -96,7 +96,7 @@ const dto: RestaurantDto = {
   cookfoodsPerFlag: 50,
   plaque2Open: false,
   plaque2Cost: { star: 3, coin: 15_000_000, diamond: 188 },
-  headlines: { news: [], broadcast: null },
+  headlines: { news: [], broadcast: null, daily: null },
   boosts: [],
   disabledFeatures: [],
   acquireOwner: null,
@@ -633,6 +633,7 @@ describe('RestaurantHomeView', () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       ...dto,
       headlines: {
+        daily: null,
         broadcast: {
           id: 9,
           type: 'town.broadcast',

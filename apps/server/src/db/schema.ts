@@ -1238,6 +1238,31 @@ export interface RestIncomeBestTable {
   day_rounds: number;
 }
 
+/** 小镇日报的状态：pending 还没生成成功 / draft 待审 / published 已发布 / hidden 撤下 */
+export type DailyStatus = 'pending' | 'draft' | 'published' | 'hidden';
+
+/** 小镇日报（2026-10-08）：每区服每天一行 */
+export interface TownDailyTable {
+  shard_id: number;
+  /** 游戏日 YYYY-MM-DD（写的是这一天的事） */
+  day: string;
+  status: DailyStatus;
+  /** 素材，见 modules/daily/facts.ts */
+  facts: Json<unknown>;
+  /** { 'zh-CN' | 'en' | 'zh-TW': { title, body } }；没生成成功时为 null */
+  content: ColumnType<unknown | null, string | null | undefined, string | null>;
+  model: Nullable<string>;
+  tokens_in: Default<number>;
+  tokens_out: Default<number>;
+  attempts: Default<number>;
+  regenerations: Default<number>;
+  error: Nullable<string>;
+  generated_at: TsNullable;
+  published_at: TsNullable;
+  published_by: Nullable<number>;
+  created_at: TsDefault;
+}
+
 /** 每家店的收购状态（问题记录 421）：2 星以上、或被收购过的店才有行 */
 export interface AcquireStateTable {
   rest_id: number;
@@ -1471,6 +1496,7 @@ export interface DB {
   fund_deposit: FundDepositTable;
   rest_income_day: RestIncomeDayTable;
   rest_income_best: RestIncomeBestTable;
+  town_daily: TownDailyTable;
   acquire_state: AcquireStateTable;
   acquire_log: AcquireLogTable;
   acquire_block: AcquireBlockTable;

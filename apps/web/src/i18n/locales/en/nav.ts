@@ -54,6 +54,12 @@ const nav: Messages['nav'] = {
     claimable: (n) => `${n} to claim`,
     view: 'View',
   },
-  news: { title: 'Town news', more: 'More', broadcast: '[Broadcast] ', empty: 'No news yet' },
+  news: {
+    daily: 'Town Daily: ',
+    title: 'Town news',
+    more: 'More',
+    broadcast: '[Broadcast] ',
+    empty: 'No news yet',
+  },
 };
 export default nav;

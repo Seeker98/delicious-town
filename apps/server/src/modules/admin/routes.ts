@@ -5,6 +5,9 @@ import {
   adminRenameBody,
   activityBody,
   announcementBody,
+  adminDailyEditBody,
+  adminDailyListQuery,
+  adminDailyParams,
   linkBody,
   auditQuery,
   createGrantBody,
@@ -59,6 +62,7 @@ import { createPredictAdmin } from '../predict/admin';
 import { createAdminReports } from '../report/admin';
 import { createAdminActivity } from '../activity/admin';
 import { createAdminAnnounce } from '../announce/admin';
+import { createAdminDaily } from '../daily/admin';
 import { createSite } from '../site/service';
 import { distribution, economy, settlementRounds } from './stats';
 
@@ -320,6 +324,38 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
       await activities.remove(a, id(req));
       return ok(null);
     });
+    // 小镇日报（2026-10-08）：看、发布、撤下、手改、重新生成，都要 admin
+    const daily = createAdminDaily(game);
+    r.get('/daily', async (req) => {
+      await requireRole(db, req, 'admin');
+      return ok(await daily.list(parse(adminDailyListQuery, req.query).shardId));
+    });
+    r.get('/daily/:shardId/:day', async (req) => {
+      await requireRole(db, req, 'admin');
+      const p = parse(adminDailyParams, req.params);
+      return ok(await daily.detail(p.shardId, p.day));
+    });
+    r.post('/daily/:shardId/:day/publish', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      const p = parse(adminDailyParams, req.params);
+      return ok(await daily.publish(a, p.shardId, p.day));
+    });
+    r.post('/daily/:shardId/:day/hide', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      const p = parse(adminDailyParams, req.params);
+      return ok(await daily.hide(a, p.shardId, p.day));
+    });
+    r.post('/daily/:shardId/:day/edit', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      const p = parse(adminDailyParams, req.params);
+      return ok(await daily.edit(a, p.shardId, p.day, parse(adminDailyEditBody, req.body)));
+    });
+    r.post('/daily/:shardId/:day/regenerate', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      const p = parse(adminDailyParams, req.params);
+      return ok(await daily.regenerate(a, p.shardId, p.day));
+    });
+
     const announces = createAdminAnnounce(game);
     r.get('/announcements', async (req) => {
       await requireRole(db, req, 'mod');

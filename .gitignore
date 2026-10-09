@@ -12,3 +12,6 @@ apps/web/public/pack/
 apps/web/playwright-report/
 apps/web/test-results/
 sim-out/
+
+# 本地密钥（小镇日报的 AI 密钥等），不提交
+.env.local

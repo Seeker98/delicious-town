@@ -18,6 +18,10 @@ describe('loadEnv', () => {
     expect(env.COOKIE_DOMAIN).toBeUndefined();
     // 默认连接池要能容纳结算并发（tuning.settlement.concurrency 16）+ 4（docs/deploy.md）
     expect(env.DB_POOL_SIZE).toBe(20);
+    // 小镇日报：不配密钥就不调用 AI
+    expect(env.DAILY_AI_KEY).toBe('');
+    expect(env.DAILY_AI_BASE_URL).toBe('https://api.deepseek.com');
+    expect(env.DAILY_AI_MODEL).toBe('deepseek-flash');
   });
 
   it('解析布尔值和空字符串', () => {

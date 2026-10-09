@@ -95,6 +95,18 @@ const town: Messages['town'] = {
     horns: (n) => `${n} ${n === 1 ? 'horn' : 'horns'}, 1 per broadcast`,
     empty: 'No news yet',
   },
+  /** 小镇日报（2026-10-08） */
+  daily: {
+    title: 'Town Daily',
+    fallbackTitle: 'Headlines',
+    pending: "This day's paper is still being edited. Here are the headlines for now",
+    none: 'No paper for this day',
+    englishOnly: 'English only',
+    closed: 'Closed',
+    prev: 'Previous day',
+    next: 'Next day',
+    loadFailed: "Couldn't load the Town Daily",
+  },
   rank: {
     loadFailed: "Couldn't load rankings",
     groups: [

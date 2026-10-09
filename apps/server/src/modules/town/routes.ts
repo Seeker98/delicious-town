@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import {
+  dailyQuery,
   mayorBody,
   townBroadcastBody,
   townExchangeBody,
@@ -19,6 +20,9 @@ export function townRoutes(svc: TownService): FastifyPluginAsync {
   return async (r) => {
     r.get('/town', async (req) => ok(await svc.overview(restCtxOf(req))));
     r.get('/town/news', async (req) => ok(await svc.news(restCtxOf(req), parse(townNewsQuery, req.query))));
+    r.get('/town/daily', async (req) =>
+      ok(await svc.daily(restCtxOf(req), parse(dailyQuery, req.query).day)),
+    );
     r.post('/town/broadcast', async (req) =>
       okOp(await svc.broadcast(restCtxOf(req), parse(townBroadcastBody, req.body))),
     );

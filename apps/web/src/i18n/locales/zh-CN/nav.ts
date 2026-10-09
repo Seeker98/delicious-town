@@ -48,5 +48,5 @@ export default {
     claimable: (n: number) => `可领 ${n} 份`,
     view: '查看',
   },
-  news: { title: '小镇新闻', more: '更多', broadcast: '【广播】', empty: '还没有新闻' },
+  news: { daily: '小镇日报: ', title: '小镇新闻', more: '更多', broadcast: '【广播】', empty: '还没有新闻' },
 };

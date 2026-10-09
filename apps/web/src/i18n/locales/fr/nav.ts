@@ -55,6 +55,7 @@ const nav: Messages['nav'] = {
     view: 'Voir',
   },
   news: {
+    daily: 'Journal de la ville\u202f: ',
     title: 'Nouvelles de la ville',
     more: 'Plus',
     broadcast: '[Annonce] ',

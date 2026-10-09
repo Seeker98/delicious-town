@@ -43,6 +43,7 @@ import type {
   FeastResultDto,
   HammerResultDto,
   NewsPageDto,
+  DailyDto,
   NpcKey,
   ShakeResultDto,
   TalkResultDto,
@@ -481,6 +482,9 @@ export const endpoints = {
   town: () => api.get<TownDto>('/api/v1/town'),
   townNews: (before?: number) =>
     api.get<NewsPageDto>(before === undefined ? '/api/v1/town/news' : `/api/v1/town/news?before=${before}`),
+  /** 小镇日报（2026-10-08）：不带日期取最近一份已发布的 */
+  townDaily: (day?: string) =>
+    api.get<DailyDto>(day === undefined ? '/api/v1/town/daily' : `/api/v1/town/daily?day=${day}`),
   townExchange: () => api.get<TownExchangeDto>('/api/v1/town/exchange'),
   townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
   townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),

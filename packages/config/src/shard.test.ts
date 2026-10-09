@@ -52,9 +52,13 @@ describe('backlog 156-1：交易所参考价覆盖值上限', () => {
 });
 
 describe('功能开关默认值（收购 PR 1）', () => {
-  it('收购默认开（收购 PR 3），区服覆盖里写 false 关掉；默认关的功能现在一个也没有', () => {
+  it('收购默认开（收购 PR 3），区服覆盖里写 false 关掉；默认关的只有小镇日报', () => {
     const base = resolveShardSettings(config, {});
-    expect(DEFAULT_OFF_FEATURES).toEqual([]);
+    expect(DEFAULT_OFF_FEATURES).toEqual(['daily']);
+    expect(isFeatureEnabled(base, 'daily')).toBe(false);
+    expect(isFeatureEnabled(resolveShardSettings(config, { features: { daily: true } }), 'daily')).toBe(true);
+    // 小镇日报的数值：默认人工审核（用户 2026-10-08 定），游戏时间 00:10 以后生成
+    expect(base.tuning.daily).toEqual({ autoPublish: false, hour: 0, minute: 10, maxEvents: 30 });
     expect(isFeatureEnabled(base, 'acquire')).toBe(true);
     expect(isFeatureEnabled(resolveShardSettings(config, { features: { acquire: false } }), 'acquire')).toBe(
       false,
