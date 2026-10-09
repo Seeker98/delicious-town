@@ -78,13 +78,7 @@
     "an2025CoinBonus": 0.16
   },
   "strength": { "regen": 1, "luckyRegen": 2 },
-  "mouse": {
-    "rateBase": 0.16,
-    "ratePerStar": 0.01,
-    "newbieFactor": 0.5,
-    "luckDivisor": 2,
-    "trapCoinPerLevel": 20
-  },
+  "mouse": { "rateBase": 0.16, "ratePerStar": 0.01, "newbieFactor": 0.5, "luckDivisor": 2, "trapCoinPerLevel": 20 },
   "growth": {
     "plaque2Star": 3,
     "plaque2Coin": 15000000,
@@ -112,8 +106,7 @@
     "dailyHours": [8, 10, 12, 14, 16, 18, 20],
     "dailyKinds": 5,
     "dailyKindsLastHour": 20,
-    "dailyKindsLast": 6,
-    "dailyNewbieKinds": 1,
+    "dailyKindsLast": 6, "dailyNewbieKinds": 1,
     "dailyStock": 5999,
     "dailyRareStock": 2048,
     "dailyLevelWeights": [
@@ -148,21 +141,9 @@
     "guessCost": 2,
     "guessMaxPick": 6,
     "guessBonusHours": [12, 18],
-    "manualCost": 1000000,
-    "manualKinds": 4,
-    "manualStock": 1000,
-    "manualPersonMax": 99,
-    "manualShare": 0.25
+    "manualCost": 1000000, "manualKinds": 4, "manualStock": 1000, "manualPersonMax": 99, "manualShare": 0.25
   },
-  "shop": {
-    "sellRate": 0.7,
-    "specialHour": 12,
-    "specialFallbackGoods": 30201,
-    "discardable": [60202],
-    "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806],
-    "diamondSellCoin": 2000,
-    "maxBuy": 999
-  },
+  "shop": { "sellRate": 0.7, "specialHour": 12, "specialFallbackGoods": 30201, "discardable": [60202], "noSell": [10006, 10110, 10210, 10704, 10705, 10706, 10707, 10801, 10802, 10803, 10804, 10805, 10806], "diamondSellCoin": 2000, "maxBuy": 999 },
   "store": { "maxBatch": 99 },
   "world": {
     "weatherHours": [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
@@ -183,74 +164,27 @@
   "friend": {
     "requireVerifiedEmail": true,
     "maxFriends": 199,
-    "dine": {
-      "minMinutes": 30,
-      "strengthPerHour": 20,
-      "strengthMax": 100,
-      "heartExpMul": 3,
-      "heartStrengthMul": 1.5,
-      "baseSeats": 1
-    },
+    "dine": { "minMinutes": 30, "strengthPerHour": 20, "strengthMax": 100, "heartExpMul": 3, "heartStrengthMul": 1.5, "baseSeats": 1 },
     "roach": {
-      "layBase": 3,
-      "layLevelRate": 0.2,
-      "layCoin": 5,
-      "layExp": 5,
-      "killCoin": 10,
-      "killExp": 5,
-      "killCoinLevelRate": 0.5,
-      "killSelfRate": 1.5,
+      "layBase": 3, "layLevelRate": 0.2, "layCoin": 5, "layExp": 5,
+      "killCoin": 10, "killExp": 5, "killCoinLevelRate": 0.5, "killSelfRate": 1.5,
       "killStrength": { "self": 1, "friend": 2, "npc": 0 },
-      "ticketRate": 0.1,
-      "ticketMax": 3,
-      "killPerHostDaily": 3
+      "ticketRate": 0.1, "ticketMax": 3, "killPerHostDaily": 3
     },
     "flip": {
-      "baseSlots": 5,
-      "slotsPerStar": 5,
-      "coolHours": 22,
-      "coolRandHours": 4,
-      "npcCoolHours": 10,
-      "cheapTimes": 100,
-      "perHostDaily": 3,
-      "caughtCoinPerLevel": 100,
-      "npcCaughtCoinPerStar": 10,
-      "hitRate": 0.3,
-      "blessedRate": 0.8,
-      "handleFoodsRate": 0.9,
-      "handleFoodsRatePerStar": 0.01,
-      "luckDivisor": 3
+      "baseSlots": 5, "slotsPerStar": 5, "coolHours": 22, "coolRandHours": 4, "npcCoolHours": 10,
+      "cheapTimes": 100, "perHostDaily": 3, "caughtCoinPerLevel": 100, "npcCaughtCoinPerStar": 10,
+      "hitRate": 0.3, "blessedRate": 0.8, "handleFoodsRate": 0.9, "handleFoodsRatePerStar": 0.01, "luckDivisor": 3
     },
     "exchange": {
-      "maxLevel": 5,
-      "feeRate": 0.5,
-      "lockedFeeMul": 2,
-      "perDay": 10,
-      "takenPerDay": 20,
-      "npcBase": 8,
-      "npcMin": 3,
-      "stormCaughtRate": 0.5,
-      "bangleBase": 0.3,
-      "bangleFactor": 0.0006
+      "maxLevel": 5, "feeRate": 0.5, "lockedFeeMul": 2, "perDay": 10, "takenPerDay": 20,
+      "npcBase": 8, "npcMin": 3, "stormCaughtRate": 0.5, "bangleBase": 0.3, "bangleFactor": 0.0006
     },
     "thumbs": { "rewardTimes": 10, "ticketMax": 2, "overRenown": -1, "strengthMax": 3 },
     "refuel": { "bigTank": 8000, "drawsPerChunk": 2 },
     "npc": {
-      "name": "蟹老板",
-      "level": 60,
-      "star": 5,
-      "tables": 32,
-      "oil": 1000000000,
-      "avatar": 12,
-      "door": 7,
-      "roachRate": 0.02,
-      "restockRanges": [
-        [100, 300],
-        [60, 200],
-        [30, 120],
-        [20, 80],
-        [10, 50]
-      ]
+      "name": "蟹老板", "level": 60, "star": 5, "tables": 32, "oil": 1000000000, "avatar": 12, "door": 7,
+      "roachRate": 0.02, "restockRanges": [[100, 300], [60, 200], [30, 120], [20, 80], [10, 50]]
     }
   },
   "equip": {
@@ -282,137 +216,62 @@
     "cookNums": [1, 5, 10, 15, 25, 50],
     "baseNum": 360,
     "highLevel": 5,
-    "highLevelNumRange": [0.7, 0.95],
+    "highLevelNumRange": [0.70, 0.95],
     "gradeBounds": [0.5, 0.8, 0.95, 1.05, 1.15, 1.25],
-    "gradeRatio": [
-      [0, 0.3],
-      [0.28, 0.52],
-      [0.5, 0.64],
-      [0.62, 0.76],
-      [0.74, 0.88],
-      [0.86, 1.0],
-      [0.98, 1.12]
-    ],
+    "gradeRatio": [[0, 0.30], [0.28, 0.52], [0.50, 0.64], [0.62, 0.76], [0.74, 0.88], [0.86, 1.00], [0.98, 1.12]],
     "levelBonusPerLevel": 0.04,
-    "roadSame": 0.02,
-    "roadSameMax": 0.3,
-    "roadOther": 0.005,
-    "roadOtherMax": 0.1,
+    "roadSame": 0.02, "roadSameMax": 0.30, "roadOther": 0.005, "roadOtherMax": 0.10,
     "cookNumPowerDiv": 400,
     "bobRatePerNutritive": 0.0002,
     "appraiseRetryBelow": 5,
-    "tasteDaily": 2,
-    "tasteAwardMax": 20,
-    "tasteMcRate": 0.016,
-    "tasteGradeFactor": 0.2,
-    "lessonLearnRate": 0.9,
-    "lessonStealRate": 0.4,
-    "lessonStealPerLevel": 0.02,
-    "thinkerStealBonus": 0.05,
-    "learnStrength": 50,
-    "stealStrength": 80,
-    "tuitionTimes": 3,
-    "teacherShare": 2,
-    "learnFragments": 2,
-    "teacherFragments": 1,
-    "forgetPerLevel": 2,
-    "forgetGrades": 1,
-    "forgetMcFromLevel": 4,
-    "forgetMcPerLevel": 0.02,
+    "tasteDaily": 2, "tasteAwardMax": 20, "tasteMcRate": 0.016, "tasteGradeFactor": 0.2,
+    "lessonLearnRate": 0.9, "lessonStealRate": 0.4, "lessonStealPerLevel": 0.02, "thinkerStealBonus": 0.05,
+    "learnStrength": 50, "stealStrength": 80,
+    "tuitionTimes": 3, "teacherShare": 2, "learnFragments": 2, "teacherFragments": 1,
+    "forgetPerLevel": 2, "forgetGrades": 1, "forgetMcFromLevel": 4, "forgetMcPerLevel": 0.02,
     "forceCloseCoinPerLevel": 50000,
     "championHour": 9,
     "championGoodsId": 10814
   },
   "temple": {
-    "guardianHpBase": 20000,
-    "guardianHpPerStar": 10000,
-    "missileAttack": [[10701, 3200, 3200]],
-    "missileTicketRate": 0.1,
-    "missileMapRate": 0.03,
-    "guardianRareRate": 0.25,
-    "guardianFoodsBase": 60,
-    "guardianFoodsSpread": 10,
-    "guardianRewardHp": 30000,
-    "injectCoin": 250000,
-    "refreshCoin": 20000,
-    "trialCoin": 10000,
-    "trialWorthMax": 30,
-    "trialExpMax": 150,
-    "trialProficiencyPerLevel": 800,
-    "trialCap": 0.6,
-    "rareOdds": 100,
-    "krakenHours": [
-      [11, 14],
-      [17, 21]
-    ],
+    "guardianHpBase": 20000, "guardianHpPerStar": 10000, "missileAttack": [[10701, 3200, 3200]],
+    "missileTicketRate": 0.10, "missileMapRate": 0.03,
+    "guardianRareRate": 0.25, "guardianFoodsBase": 60, "guardianFoodsSpread": 10, "guardianRewardHp": 30000,
+    "injectCoin": 250000, "refreshCoin": 20000, "trialCoin": 10000,
+    "trialWorthMax": 30, "trialExpMax": 150, "trialProficiencyPerLevel": 800,
+    "trialCap": 0.6, "rareOdds": 100,
+    "krakenHours": [[11, 14], [17, 21]],
     "krakenRates": { "same": 2.4, "road": 1, "other": 0.5 },
-    "krabCoinRate": 0.32,
-    "tentacleFavor": 35,
-    "tentacleRate": 0.3,
-    "forgetRate": 0.25,
-    "shopSlots": 6,
-    "shopExclude": [249]
+    "krabCoinRate": 0.32, "tentacleFavor": 35, "tentacleRate": 0.3, "forgetRate": 0.25,
+    "shopSlots": 6, "shopExclude": [249]
   },
   "yard": {
-    "maxLands": 9,
-    "landBaseCoin": 50000,
-    "landMaxLevel": 10,
-    "yieldPerLevel": 8,
-    "dryWaterSub": 5,
-    "dryWaterMinRate": 0.5,
-    "removeSeedRate": 0.3,
-    "stealKeepRate": 0.7,
-    "stealMax": 2,
-    "reapPunishRate": 0.25,
-    "seedShop": true,
-    "seedPriceRate": 1,
-    "formulaMainRate": 0.25,
-    "formulaAppraiseRatePerLuck": 0.1,
-    "composeStrength": 3,
-    "composeCritRate": 0.1,
-    "essenceMain": 3,
-    "essenceSub": 1,
+    "maxLands": 9, "landBaseCoin": 50000, "landMaxLevel": 10, "yieldPerLevel": 8,
+    "dryWaterSub": 5, "dryWaterMinRate": 0.5, "removeSeedRate": 0.3,
+    "stealKeepRate": 0.7, "stealMax": 2, "reapPunishRate": 0.25,
+    "seedShop": true, "seedPriceRate": 1,
+    "formulaMainRate": 0.25, "formulaAppraiseRatePerLuck": 0.1,
+    "composeStrength": 3, "composeCritRate": 0.1,
+    "essenceMain": 3, "essenceSub": 1,
     "events": {
-      "minutes": [7, 27, 47],
-      "nightMinute": 27,
-      "dayFrom": 7,
-      "dayTo": 22,
-      "wormEatRate": 0.2,
-      "grassEatRate": 0.03,
-      "dryDeath": 100,
-      "grassRate": 0.008,
-      "grassDryFactor": 3,
-      "dryAddRate": 0.1,
-      "dryStartRate": 0.002,
-      "dryStartGrassRate": 0.008,
-      "wormRate": 0.003
+      "minutes": [7, 27, 47], "nightMinute": 27, "dayFrom": 7, "dayTo": 22,
+      "wormEatRate": 0.2, "grassEatRate": 0.03, "dryDeath": 100,
+      "grassRate": 0.008, "grassDryFactor": 3, "dryAddRate": 0.1,
+      "dryStartRate": 0.002, "dryStartGrassRate": 0.008, "wormRate": 0.003
     }
   },
   "bar": {
-    "fgWinRate": 0.25,
-    "fgDrawRate": 0.25,
-    "fgLoseMin": 0.1,
-    "fgNewsStreak": 5,
+    "fgWinRate": 0.25, "fgDrawRate": 0.25, "fgLoseMin": 0.1, "fgNewsStreak": 5,
     "cup": {
-      "cost": 1,
-      "cups": [2, 3, 5, 7],
-      "maxRate": 0.95,
+      "cost": 1, "cups": [2, 3, 5, 7], "maxRate": 0.95,
       "tiers": [
-        { "awards": 1, "level": 2, "news": null },
-        { "awards": 2, "level": 4, "news": null },
-        { "awards": 4, "level": 6, "news": "news" },
-        { "awards": 8, "level": 10, "news": "broadcast" }
+        { "awards": 1, "level": 2, "news": null }, { "awards": 2, "level": 4, "news": null },
+        { "awards": 4, "level": 6, "news": "news" }, { "awards": 8, "level": 10, "news": "broadcast" }
       ]
     },
-    "numMax": 25,
-    "numCost": 8,
-    "numLuckDiv": 20,
-    "numAwardLevel": 10,
+    "numMax": 25, "numCost": 8, "numLuckDiv": 20, "numAwardLevel": 10,
     "krabCoinTickets": 100,
-    "slotCells": 3,
-    "slotFloorSpins": 100,
-    "slotFloorRate": 0.0000016,
-    "slotFloorAwardId": 100,
+    "slotCells": 3, "slotFloorSpins": 100, "slotFloorRate": 0.0000016, "slotFloorAwardId": 100,
     "awardRates": { "foods": 0.25, "goods": 0.15, "coin": 0.3, "exp": 0.3 },
     "prize": {
       "rates": { "foods": 0.7, "goods": 0.15, "coin": 0.075, "exp": 0.075 },
@@ -424,80 +283,30 @@
         { "minLevel": 6, "levels": [5, 5], "rare": 0.6 }
       ]
     },
-    "devil": {
-      "stakes": [1, 5, 10, 20],
-      "cups": 6,
-      "payouts": [
-        [1, 2, 3],
-        [7, 9, 12],
-        [14, 18, 25],
-        [27, 36, 49]
-      ],
-      "dailyMax": 20,
-      "hangoverMinutes": 60,
-      "hangoverAtRate": -0.1,
-      "newsSurvived": 3
-    },
+    "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "payouts": [[1, 2, 3], [7, 9, 12], [14, 18, 25], [27, 36, 49]], "dailyMax": 20, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
     "memory": {
-      "cost": 1,
-      "dailyMax": 20,
-      "ingredients": 8,
-      "lengths": [3, 5, 7],
-      "awardLevels": [2, 4, 8],
-      "flashMs": 600,
-      "gapMs": 200,
-      "earlyMs": 300,
-      "answerBaseMs": 3000,
-      "answerPerItemMs": 1500
+      "cost": 1, "dailyMax": 20, "ingredients": 8, "lengths": [3, 5, 7], "awardLevels": [2, 4, 8],
+      "flashMs": 600, "gapMs": 200, "earlyMs": 300, "answerBaseMs": 3000, "answerPerItemMs": 1500
     },
     "darts": {
-      "cost": 2,
-      "dailyMax": 20,
-      "periodMs": [900, 1400],
-      "futureMs": 100,
-      "latencyMs": 1500,
-      "rings": [
-        [0.05, 50],
-        [0.15, 25],
-        [0.3, 10],
-        [0.5, 5]
-      ],
-      "bossOdds": [
-        [50, 10],
-        [25, 30],
-        [10, 35],
-        [5, 20],
-        [0, 5]
-      ],
-      "winLevel": 5,
-      "perfectLevel": 6,
-      "tieRefund": 1
+      "cost": 2, "dailyMax": 20, "periodMs": [900, 1400], "futureMs": 100, "latencyMs": 1500,
+      "rings": [[0.05, 50], [0.15, 25], [0.3, 10], [0.5, 5]],
+      "bossOdds": [[50, 10], [25, 30], [10, 35], [5, 20], [0, 5]],
+      "winLevel": 5, "perfectLevel": 6, "tieRefund": 1
     },
     "deal": {
-      "cost": 10000,
-      "dailyMax": 3,
+      "cost": 10000, "dailyMax": 3,
       "prizes": [
-        { "kind": "food", "level": 1, "num": 1 },
-        { "kind": "food", "level": 1, "num": 3 },
-        { "kind": "food", "level": 2, "num": 2 },
-        { "kind": "master", "level": 1, "num": 2 },
-        { "kind": "food", "level": 3, "num": 2 },
-        { "kind": "food", "level": 4, "num": 2 },
-        { "kind": "food", "level": 5, "num": 2 },
-        { "kind": "master", "level": 3, "num": 2 },
-        { "kind": "master", "level": 5, "num": 2 },
-        { "kind": "master", "level": 5, "num": 5 }
+        { "kind": "food", "level": 1, "num": 1 }, { "kind": "food", "level": 1, "num": 3 },
+        { "kind": "food", "level": 2, "num": 2 }, { "kind": "master", "level": 1, "num": 2 },
+        { "kind": "food", "level": 3, "num": 2 }, { "kind": "food", "level": 4, "num": 2 },
+        { "kind": "food", "level": 5, "num": 2 }, { "kind": "master", "level": 3, "num": 2 },
+        { "kind": "master", "level": 5, "num": 2 }, { "kind": "master", "level": 5, "num": 5 }
       ],
-      "opens": [3, 2, 2, 1],
-      "offerRates": [0.5, 0.65, 0.8, 0.95],
-      "valueRate": 0.5
+      "opens": [3, 2, 2, 1], "offerRates": [0.5, 0.65, 0.8, 0.95], "valueRate": 0.5
     },
     "spice": {
-      "cost": 2,
-      "dailyMax": 5,
-      "kinds": 10,
-      "length": 4,
-      "tries": 8,
+      "cost": 2, "dailyMax": 5, "kinds": 10, "length": 4, "tries": 8,
       "tiers": [
         { "maxTries": 4, "awardLevel": 8, "renown": 5, "news": true },
         { "maxTries": 6, "awardLevel": 5, "renown": 2, "news": false },
@@ -507,53 +316,20 @@
     "nim": {
       "dailyMax": 10,
       "tables": {
-        "novice": {
-          "cost": 1,
-          "k": [3, 3],
-          "pile": [10, 20],
-          "mistake": 0.5,
-          "first": "choose",
-          "renown": 1,
-          "awardLevel": 2
-        },
-        "expert": {
-          "cost": 2,
-          "k": [3, 5],
-          "pile": [20, 40],
-          "mistake": 0,
-          "first": "coin",
-          "renown": 3,
-          "awardLevel": 5
-        }
+        "novice": { "cost": 1, "k": [3, 3], "pile": [10, 20], "mistake": 0.5, "first": "choose", "renown": 1, "awardLevel": 2 },
+        "expert": { "cost": 2, "k": [3, 5], "pile": [20, 40], "mistake": 0, "first": "coin", "renown": 3, "awardLevel": 5 }
       }
     }
   },
   "tower": {
-    "dailyBase": 5,
-    "nightFloor": 3,
-    "openHour": 6,
-    "testStrength": 1,
-    "strengthPerFloor": 1,
-    "strengthBase": 4,
-    "winRenownBase": 6,
-    "loseRenown": 6,
-    "rankSize": 15,
-    "rankTop": 8,
-    "rankGap": 3,
-    "rankDaily": 10,
-    "rankWinRenown": 2,
-    "rankLoseRenown": 1,
-    "rankGifts": [
-      [1, 20301],
-      [2, 20302],
-      [3, 20303],
-      [8, 20304],
-      [15, 20305]
-    ],
-    "duelStrength": 5,
-    "duelPerFriend": 10,
-    "duelWeakRate": 0.7,
-    "duelStrongRate": 1.15,
+    "dailyBase": 5, "nightFloor": 3, "openHour": 6,
+    "testStrength": 1, "strengthPerFloor": 1, "strengthBase": 4,
+    "winRenownBase": 6, "loseRenown": 6,
+    "rankSize": 15, "rankTop": 8, "rankGap": 3, "rankDaily": 10,
+    "rankWinRenown": 2, "rankLoseRenown": 1,
+    "rankGifts": [[1, 20301], [2, 20302], [3, 20303], [8, 20304], [15, 20305]],
+    "duelStrength": 5, "duelPerFriend": 10,
+    "duelWeakRate": 0.7, "duelStrongRate": 1.15,
     "duelRenown": { "weak": [0, -3], "strong": [6, -2], "normal": [5, -2] },
     "duel": {
       "wave": 0.4,
@@ -566,93 +342,36 @@
       ],
       "judges": 5
     },
-    "elderDropRates": [0.2, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05],
-    "elderNewsFloor": 7,
-    "sparFullAt": 20,
-    "sparFullRenown": 2,
-    "sparMaxAt": 50,
-    "sparAwards": [
-      [10, 2, 4],
-      [20, 2, 2],
-      [999999, 1, 2]
-    ],
-    "sparEquipFlag": 3,
+    "elderDropRates": [0.2, 0.2, 0.2, 0.12, 0.12, 0.12, 0.08, 0.08, 0.05, 0.05], "elderNewsFloor": 7,
+    "sparFullAt": 20, "sparFullRenown": 2, "sparMaxAt": 50,
+    "sparAwards": [[10, 2, 4], [20, 2, 2], [999999, 1, 2]], "sparEquipFlag": 3,
     "watchmanCook": { "hour": 5, "minute": 58, "priceSpread": 0.3 }
   },
   "takeaway": {
-    "openStar": 2,
-    "openRenown": 888,
-    "openCoin": 8880000,
-    "openDiamond": 300,
-    "publicBase": 5,
-    "publicRand": 18,
-    "publicPerOpen": 15,
-    "publicMinOpen": 10,
-    "publicOpenFloor": 30,
+    "openStar": 2, "openRenown": 888, "openCoin": 8880000, "openDiamond": 300,
+    "publicBase": 5, "publicRand": 18, "publicPerOpen": 15, "publicMinOpen": 10, "publicOpenFloor": 30,
     "gradeRates": [0.4, 0.25, 0.15, 0.1, 0.05, 0.035, 0.015],
-    "minutesBase": 20,
-    "minutesPerGrade": 10,
-    "renownPerGrade": 2,
-    "refreshNum": 15,
-    "refreshCoin": 1000000,
-    "refreshRenown": 160,
-    "priceLine": 1000000,
-    "coinRates": [0.24, 0.05],
-    "expRates": [0.72, 0.22],
-    "expDiv": 45,
-    "successFloat": 200,
-    "luckOddsRate": 200,
-    "privateExpRate": 1.5,
-    "friendRiderRate": 0.9,
-    "rebateDiv": 9,
-    "failExpRate": 0.5,
+    "minutesBase": 20, "minutesPerGrade": 10, "renownPerGrade": 2,
+    "refreshNum": 15, "refreshCoin": 1000000, "refreshRenown": 160,
+    "priceLine": 1000000, "coinRates": [0.24, 0.05], "expRates": [0.72, 0.22], "expDiv": 45,
+    "successFloat": 200, "luckOddsRate": 200,
+    "privateExpRate": 1.5, "friendRiderRate": 0.9, "rebateDiv": 9, "failExpRate": 0.5,
     "customer": { "base": 0.015, "luckDiv": 50, "success": 60506, "fail": 60507 },
     "rider": {
-      "maxLevel": 50,
-      "expPerLevel2": 800,
-      "expBase": 500,
-      "timeSubMax": 40,
-      "expAdd": 2,
-      "coinAdd": 1,
-      "renownEvery": 2,
-      "oddsBase": 800,
-      "oddsPerLevel": 5,
-      "oddsMax": 950,
-      "maxNumEvery": 5,
-      "capLevels": [2, 5, 8],
-      "dismissCoin": 50,
-      "dismissExp": 500
+      "maxLevel": 50, "expPerLevel2": 800, "expBase": 500, "timeSubMax": 40,
+      "expAdd": 2, "coinAdd": 1, "renownEvery": 2,
+      "oddsBase": 800, "oddsPerLevel": 5, "oddsMax": 950, "maxNumEvery": 5,
+      "capLevels": [2, 5, 8], "dismissCoin": 50, "dismissExp": 500
     },
-    "awards": [
-      [10001, 56, 0],
-      [10704, 30, 0.2],
-      [10006, 8, 0.5],
-      [10705, 6, 0.5],
-      [10706, 2, 0.8],
-      [10007, 1, 1]
-    ],
-    "keepOpenDays": 1,
-    "keepDoneDays": 7
+    "awards": [[10001, 56, 0], [10704, 30, 0.2], [10006, 8, 0.5], [10705, 6, 0.5], [10706, 2, 0.8], [10007, 1, 1]],
+    "keepOpenDays": 1, "keepDoneDays": 7
   },
   "town": {
     "broadcast": { "minStar": 1, "cooldownSec": 30, "maxLen": 64 },
-    "npc": {
-      "bigEaterLevelWeights": [50, 25, 13, 9, 3],
-      "bigEaterNum": [1, 3],
-      "wenjieNum": [1, 20],
-      "bro13Num": [1, 2]
-    },
+    "npc": { "bigEaterLevelWeights": [50, 25, 13, 9, 3], "bigEaterNum": [1, 3], "wenjieNum": [1, 20], "bro13Num": [1, 2] },
     "shake": {
-      "base": 8000,
-      "rand": 5000,
-      "eggMod": 100,
-      "eggTail": 88,
-      "burgerEvery": 8,
-      "burgerNum": 1,
-      "krabCoinNum": 8,
-      "limitIp": false,
-      "limitDevice": false,
-      "krabDailyCoin": 10000000
+      "base": 8000, "rand": 5000, "eggMod": 100, "eggTail": 88, "burgerEvery": 8, "burgerNum": 1, "krabCoinNum": 8,
+      "limitIp": false, "limitDevice": false, "krabDailyCoin": 10000000
     },
     "hammer": { "cooldownHours": 6, "gapSec": 90, "coin": 100000, "diamond": 8 },
     "bless": { "lampCoinBonus": 0.1 },
@@ -662,47 +381,16 @@
     "exchangeMaxNum": 99
   },
   "hiphop": {
-    "hour": 9,
-    "closeHour": 22,
-    "weeklyHour": 23,
-    "placeWeights": [
-      [1, 10],
-      [2, 10],
-      [3, 10],
-      [4, 10],
-      [5, 10],
-      [6, 10],
-      [9, 7],
-      [10, 5],
-      [11, 5],
-      [12, 5],
-      [13, 5],
-      [14, 5],
-      [15, 5]
-    ],
+    "hour": 9, "closeHour": 22, "weeklyHour": 23,
+    "placeWeights": [[1, 10], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [9, 7], [10, 5], [11, 5], [12, 5], [13, 5], [14, 5], [15, 5]],
     "restActiveDays": 7,
-    "worthBase": 35000,
-    "worthMin": 1.25,
-    "worthRand": 0.8,
-    "krabRate": 0.1,
-    "foodFactor": 1.5,
-    "coinMax": 100000000,
-    "coinWorthDiv": 5,
-    "coinExpDiv": 210,
-    "diamondMax": 9999,
-    "diamondWorthNum": 10001,
-    "diamondWorthDen": 3,
-    "diamondExpMul": 50,
-    "expJitter": 0.1,
-    "requireVerifiedEmail": false,
+    "worthBase": 35000, "worthMin": 1.25, "worthRand": 0.8,
+    "krabRate": 0.1, "foodFactor": 1.5,
+    "coinMax": 100000000, "coinWorthDiv": 5, "coinExpDiv": 210,
+    "diamondMax": 9999, "diamondWorthNum": 10001, "diamondWorthDen": 3, "diamondExpMul": 50,
+    "expJitter": 0.1, "requireVerifiedEmail": false,
     "weeklyCards": [60402, 60403, 60401, 60405, 60404],
-    "wages": [
-      [60401, 20401],
-      [60402, 20402],
-      [60403, 20403],
-      [60405, 20404],
-      [60404, 20405]
-    ]
+    "wages": [[60401, 20401], [60402, 20402], [60403, 20403], [60405, 20404], [60404, 20405]]
   },
   "rank": { "top": 50, "cacheSeconds": 60, "powerCacheSeconds": 600 },
   "mail": { "expiresDays": 30, "listMax": 100 },
@@ -716,62 +404,15 @@
   "ops": { "suspicious": { "barPerfectDaily": 3, "dartsBullDaily": 20, "sharedAccounts": 3, "topN": 50 } },
   "redeem": { "failLimit": 10, "failWindowSec": 3600, "batchMax": 1000 },
   "exchange": {
-    "minLevel": 20,
-    "minAccountDays": 7,
-    "feeRate": 0.05,
-    "bandLow": 0.5,
-    "bandHigh": 2,
-    "refMinTrades": 3,
-    "maxOpenOrders": 10,
-    "orderHours": 24,
-    "maxQty": 999,
-    "closedLevels": [6],
-    "suspicious": {
-      "traceDays": 30,
-      "edgeHigh": 1.8,
-      "edgeLow": 0.6,
-      "repeatDays": 7,
-      "repeatCount": 3,
-      "largeAmount": 1000000,
-      "holdHours": 24
-    },
-    "maker": {
-      "enabled": true,
-      "bidRate": 0.7,
-      "askRate": 1.3,
-      "marketCapRate": 0.9,
-      "dailyBuy": 100,
-      "stockMax": 500,
-      "playerDaily": 20,
-      "noBidLevels": [7]
-    },
+    "minLevel": 20, "minAccountDays": 7, "feeRate": 0.05, "bandLow": 0.5, "bandHigh": 2,
+    "refMinTrades": 3, "maxOpenOrders": 10, "orderHours": 24, "maxQty": 999, "closedLevels": [6], 
+    "suspicious": { "traceDays": 30, "edgeHigh": 1.8, "edgeLow": 0.6, "repeatDays": 7, "repeatCount": 3, "largeAmount": 1000000, "holdHours": 24 },
+    "maker": { "enabled": true, "bidRate": 0.7, "askRate": 1.3, "marketCapRate": 0.9, "dailyBuy": 100, "stockMax": 500, "playerDaily": 20, "noBidLevels": [7] },
     "refOverrides": {}
   },
-  "predict": {
-    "unit": 1000,
-    "feeRate": 0.02,
-    "maxHold": 200,
-    "maxTrade": 100,
-    "defaultB": 100,
-    "minLevel": 20,
-    "minAccountDays": 7,
-    "auto": {
-      "krab": true,
-      "market": true,
-      "weather": true,
-      "stats": true,
-      "b": 100,
-      "marketCloseMin": 5,
-      "statsCloseHour": 18
-    }
-  },
+  "predict": { "unit": 1000, "feeRate": 0.02, "maxHold": 200, "maxTrade": 100, "defaultB": 100, "minLevel": 20, "minAccountDays": 7, "auto": { "krab": true, "market": true, "weather": true, "stats": true, "b": 100, "marketCloseMin": 5, "statsCloseHour": 18 } },
   "kuji": {
-    "price": 40000,
-    "dailyBuy": 10,
-    "maxDraw": 10,
-    "activeTickets": 1,
-    "activeTicketPoints": 120,
-    "maxPools": 3,
+    "price": 40000, "dailyBuy": 10, "maxDraw": 10, "activeTickets": 1, "activeTicketPoints": 120, "maxPools": 3,
     "tiers": [
       { "key": "A", "count": 1, "award": { "diamond": 300 }, "icon": "kuji_a", "news": "broadcast" },
       { "key": "B", "count": 2, "award": { "diamond": 100 } },
@@ -780,11 +421,7 @@
       { "key": "E", "count": 15, "award": { "coin": 15000 } },
       { "key": "F", "count": 50, "award": { "coin": 5000 } }
     ],
-    "last": {
-      "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }] },
-      "icon": "kuji_last",
-      "news": "broadcast"
-    },
+    "last": { "award": { "diamond": 200, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_last", "news": "broadcast" },
     "deluxe": {
       "price": 300000,
       "dailyBuy": 10,
@@ -796,43 +433,21 @@
         { "key": "C", "count": 5, "award": { "coin": 100000 } },
         { "key": "D", "count": 12, "award": { "coin": 50000 } }
       ],
-      "last": {
-        "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }] },
-        "icon": "kuji_dx_last",
-        "news": "broadcast"
-      }
+      "last": { "award": { "diamond": 50, "goods": [{ "id": 10005, "num": 1 }] }, "icon": "kuji_dx_last", "news": "broadcast" }
     }
   },
   "scarcity": { "needBase": 0.05, "needLuckFactor": 0.6, "needMax": 0.3 },
   "daily": { "autoPublish": false, "hour": 0, "minute": 10, "maxEvents": 30 },
   "acquire": {
-    "priceDays": 7,
-    "priceMultiple": 5,
-    "minPrice": 100000,
-    "heatStep": 0.2,
-    "heatListDrop": 0.1,
-    "heatMax": 3,
-    "heatDecay": 0.1,
-    "taxRate": 0.1,
-    "protectDays": 3,
-    "maxHoldings": 10,
-    "maxPerDay": 3,
-    "pairDays": 7,
-    "linkDays": 30,
-    "minStar": 2,
-    "listMinRate": 0.5,
-    "listDays": 3,
-    "dividendRate": 0.05,
-    "tendBonus": 0.5,
-    "minRounds": 90,
-    "dividendCapRate": 0.25,
-    "tendFoods": 5,
+    "priceDays": 7, "priceMultiple": 5, "minPrice": 100000,
+    "heatStep": 0.2, "heatListDrop": 0.1, "heatMax": 3, "heatDecay": 0.1,
+    "taxRate": 0.1, "protectDays": 3, "maxHoldings": 10, "maxPerDay": 3, "pairDays": 7, "linkDays": 30,
+    "minStar": 2, "listMinRate": 0.5, "listDays": 3,
+    "dividendRate": 0.05, "tendBonus": 0.5, "minRounds": 90, "dividendCapRate": 0.25, "tendFoods": 5,
     "newsMinPrice": 10000000
   },
   "fund": {
-    "days": 7,
-    "returnRate": 0.9,
-    "earlyRate": 0.7,
+    "days": 7, "returnRate": 0.9, "earlyRate": 0.7,
     "tiers": [
       { "key": "A", "coin": 10000000, "medal": 61906, "news": "broadcast" },
       { "key": "B", "coin": 3000000, "medal": 61905, "news": "news" },
@@ -840,16 +455,9 @@
     ]
   },
   "forum": {
-    "titleMax": 40,
-    "contentMax": 5000,
-    "replyMax": 500,
-    "queryMax": 20,
-    "postCooldownSec": 60,
-    "postDailyMax": 10,
-    "replyCooldownSec": 60,
-    "pageSize": 20,
-    "excerpt": 60,
-    "readsMax": 200,
+    "titleMax": 40, "contentMax": 5000, "replyMax": 500, "queryMax": 20,
+    "postCooldownSec": 60, "postDailyMax": 10, "replyCooldownSec": 60,
+    "pageSize": 20, "excerpt": 60, "readsMax": 200,
     "featureReward": { "goods": [[10001, 20]], "diamond": 50 }
   }
 }

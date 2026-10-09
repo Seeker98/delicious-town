@@ -124,7 +124,7 @@ const bar: Messages['bar'] = {
     today: (played, max) => `Hoy ${played}/${max} partidas`,
     /** 赔付表：表头第一列和“活过 n 杯”列 */
     payoutHead: 'Apuesta',
-    payoutCol: (n) => `${n} ${n === 1 ? 'vaso' : 'vasos'} aguantados`,
+    payoutCol: (n) => `${n} ${n === 1 ? 'vaso aguantado' : 'vasos aguantados'}`,
     rule3:
       'Si te toca a ti, pierdes la apuesta y tienes resaca 1 hora (ocupación -10\u00a0%). Si vuelve a tocarte con resaca, la hora empieza de nuevo; no se acumula.',
     askStake: '¿Cuántos vales misteriosos apuestas?',
