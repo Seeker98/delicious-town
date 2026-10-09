@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GOODS } from '@dt/config';
-import { roundOf } from '@dt/shared';
+import { roundOf, sequenceRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import {
   befriend,
@@ -229,6 +229,29 @@ describe('白食结束、请走', () => {
     expect(left.params).not.toHaveProperty('award');
   });
 
+  it('店主被封号时，白食者正常吃完走了也不给店主发道具（backlog 1010）', async () => {
+    const [a, b] = await setup();
+    await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
+    t.clock.advance(31 * MIN);
+    await t.db.updateTable('account').set({ banned_at: new Date() }).where('id', '=', b.accountId).execute();
+    const before = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    await dine().end(a);
+    const after = await t.db
+      .selectFrom('store_item')
+      .select(['goods_id', 'num'])
+      .where('rest_id', '=', b.restaurantId)
+      .execute();
+    expect(after).toEqual(before);
+    const left = (await t.game.social.reads.feed(b, { limit: 30 })).items.find(
+      (x) => x.type === 'dine.left',
+    )!;
+    expect(left.params).not.toHaveProperty('award');
+  });
+
   it('被店主请走时店主不再得道具（已经拿 2 倍银币）', async () => {
     const [a, b] = await setup();
     await dine().start(a, { restId: b.restaurantId, tableNo: 1 });
@@ -329,5 +352,33 @@ describe('区服关闭 friend 后的收尾（最终审查 Important 4）', () =>
     await expect(dine().start(a, { restId: b.restaurantId, tableNo: 2 })).rejects.toMatchObject({
       code: 'FEATURE_DISABLED',
     });
+  });
+});
+
+describe('店主的随机道具不出神秘礼券（backlog 1010，和酒吧奖励一致）', () => {
+  // 随机数固定成正好抽到神秘礼券的位置：物品池里有礼券时一定抽到它
+  const pool = awardGoodsPool(config.bundle.goods, 2, 0, false);
+  const at = pool.indexOf(GOODS.mysteryTicket);
+  let g: TestGame;
+  beforeAll(async () => {
+    g = await createTestGame({ rng: () => sequenceRng([(at + 0.5) / pool.length]) });
+  });
+  afterAll(() => g.close());
+
+  it('物品池去掉神秘礼券', async () => {
+    expect(at).toBeGreaterThanOrEqual(0);
+    g.clock.set(new Date());
+    const [a, b] = await newPair(g, { patch: { avatar: 1, coin: 1000 } });
+    await befriend(g, a.restaurantId, b.restaurantId);
+    await g.game.social.dine.start(a, { restId: b.restaurantId, tableNo: 1 });
+    g.clock.advance(31 * MIN);
+    await g.game.social.dine.end(a);
+    const left = (await g.game.social.reads.feed(b, { limit: 30 })).items.find(
+      (x) => x.type === 'dine.left',
+    )!;
+    const award = left.params.award as { kind: string; id: number };
+    expect(award.kind).toBe('goods');
+    expect(award.id).not.toBe(GOODS.mysteryTicket);
+    expect(awardGoodsPool(config.bundle.goods, 2, 0, true)).toContain(award.id);
   });
 });

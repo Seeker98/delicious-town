@@ -12,6 +12,8 @@ import { isBanned } from '../modules/admin/ban';
 export interface PairOp {
   me: Op;
   them: Op;
+  /** 对方账号被封（只有 lenient 的操作会走到这里） */
+  themBanned: boolean;
 }
 
 export interface PairOptions {
@@ -72,7 +74,7 @@ export async function runPairOp<T>(
       throw new AppError(ErrorCode.NOT_FRIEND, 400);
     const me = createOp(deps, tx, meRow, settings, { source: opts.source, ctx });
     const them = createOp(deps, tx, themRow, settings, { source: opts.source, now: me.now, rng: me.rng });
-    const data = await fn({ me, them });
+    const data = await fn({ me, them, themBanned: isBanned(themAcc, deps.now()) });
     for (const e of me.ledger) e.refRestId ??= themRow.id;
     for (const e of them.ledger) e.refRestId ??= meRow.id;
     await flushOp(me);
