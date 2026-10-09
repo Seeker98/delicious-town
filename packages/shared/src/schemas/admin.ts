@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { AccountRole } from './auth';
 import type { BoostActivityDef } from './activity';
 import { pageQuery, type RestaurantDto } from './restaurant';
+import { iconKey, iconValidity, oneValidity } from './titles';
 
 export type AdminRole = 'mod' | 'admin';
 
@@ -258,7 +259,9 @@ export interface AuditPageDto {
   nextBefore: string | null;
 }
 
-export const grantIconBody = z.object({ key: z.string().regex(/^[a-z0-9_-]{1,32}$/) });
+export const grantIconBody = z.object({ key: iconKey, ...iconValidity }).refine(oneValidity, {
+  message: 'days_or_until',
+});
 
 export interface AdminIconDto {
   id: number;

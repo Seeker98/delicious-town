@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { grantItemsShape, grantNonEmpty, grantUnique, type GrantItems } from './admin';
+import { MAIL_ICONS_MAX, MAIL_RESTS_MAX, rewardIcon, type RewardIcon } from './titles';
 
 export const HAT_NAME_MAX = 8;
 export const MAIL_HATS_MAX = 5;
@@ -23,12 +24,28 @@ const hat = z.object({
   name: limitedText(HAT_NAME_MAX).refine((s) => !/[\r\n]/.test(s), { message: 'newline' }),
 });
 
-/** 附件 = 补偿的五项 + 命名帽子（设计 §4） */
+/** 附件 = 补偿的五项 + 命名帽子（设计 §4）+ 称号（定制称号设计 三） */
 export const rewardItems = z
-  .object({ ...grantItemsShape, hats: z.array(hat).max(MAIL_HATS_MAX).optional() })
-  .refine((i) => grantNonEmpty(i) || Boolean(i.hats?.length), { message: 'empty' })
-  .refine(grantUnique, { message: 'duplicate' });
-export type RewardItems = GrantItems & { hats?: Array<{ tier: HatTierKey; name: string }> };
+  .object({
+    ...grantItemsShape,
+    hats: z.array(hat).max(MAIL_HATS_MAX).optional(),
+    icons: z.array(rewardIcon).max(MAIL_ICONS_MAX).optional(),
+  })
+  .refine((i) => grantNonEmpty(i) || Boolean(i.hats?.length) || Boolean(i.icons?.length), {
+    message: 'empty',
+  })
+  .refine(grantUnique, { message: 'duplicate' })
+  .refine((i) => !i.icons || new Set(i.icons.map((x) => x.key)).size === i.icons.length, {
+    message: 'duplicate',
+  });
+export type RewardItems = GrantItems & {
+  hats?: Array<{ tier: HatTierKey; name: string }>;
+  icons?: RewardIcon[];
+};
+/** 活动奖励不支持称号（定制称号设计 三） */
+export const rewardItemsNoIcons = rewardItems.refine((i) => !i.icons?.length, {
+  message: 'icons_not_allowed',
+});
 
 export const mailIdParam = z.object({ id: z.coerce.number().int().positive() });
 
@@ -37,12 +54,17 @@ export const sendMailBody = z
     scope: z.enum(['rest', 'shard', 'all']),
     shardId: z.number().int().positive().optional(),
     restId: z.number().int().positive().optional(),
+    /** 一次发给几家店（定制称号设计 三）：每家一封单店邮件 */
+    restIds: z.array(z.number().int().positive()).min(1).max(MAIL_RESTS_MAX).optional(),
     minLevel: z.number().int().min(1).optional(),
     title: limitedText(MAIL_TITLE_MAX),
     body: limitedText(MAIL_BODY_MAX),
     items: rewardItems.optional(),
   })
-  .refine((b) => b.scope !== 'rest' || b.restId !== undefined, { path: ['restId'], message: 'required' })
+  .refine((b) => b.scope !== 'rest' || b.restId !== undefined || b.restIds !== undefined, {
+    path: ['restId'],
+    message: 'required',
+  })
   .refine((b) => b.scope === 'all' || b.shardId !== undefined, { path: ['shardId'], message: 'required' });
 export type SendMailInput = z.infer<typeof sendMailBody>;
 
