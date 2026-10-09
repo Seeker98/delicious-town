@@ -31,8 +31,12 @@ describe('后台称号', () => {
     const c = await create({ title: ' 🍜面霸 ', desc: '吃了一百碗面', note: '给群主' });
     expect(c).toMatchObject({ key: `c${c.id}`, title: '🍜面霸', desc: '吃了一百碗面', note: '给群主' });
     const list = (await get(A, mod.cookie)).json.data as Array<Record<string, unknown>>;
-    expect(list[0]).toMatchObject({ key: c.key, source: 'custom', owners: 0, retired: false });
-    expect(list[0]!.createdBy).toEqual(expect.any(String));
+    // 别的测试文件同时也在建称号，按 key 找；定制的都排在配置的前面
+    const mine = list.find((x) => x.key === c.key)!;
+    expect(mine).toMatchObject({ source: 'custom', owners: 0, retired: false });
+    expect(mine.createdBy).toEqual(expect.any(String));
+    const lastCustom = list.map((x) => x.source).lastIndexOf('custom');
+    expect(list.slice(0, lastCustom + 1).every((x) => x.source === 'custom')).toBe(true);
     const conf = new Map(list.filter((x) => x.source !== 'custom').map((x) => [x.key, x]));
     expect(conf.get('founder')).toMatchObject({ source: 'general', id: null, title: '开服元老' });
     expect(conf.get('oct26_s')).toMatchObject({ source: 'shop' });

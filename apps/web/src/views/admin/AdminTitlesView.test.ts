@@ -6,6 +6,7 @@ import { adminApi } from '../../api/admin';
 import { ApiError } from '../../api/client';
 import { useAdminStore } from '../../stores/admin';
 import AdminTitlesView from './AdminTitlesView.vue';
+import { resetTitleList, useTitleList } from '../../components/admin/titleList';
 
 vi.mock('../../api/admin', () => ({
   adminApi: { titles: vi.fn(), createTitle: vi.fn(), updateTitle: vi.fn(), deleteTitle: vi.fn() },
@@ -87,5 +88,24 @@ describe('AdminTitlesView（定制称号设计 二）', () => {
     await flushPromises();
     expect(adminApi.deleteTitle).toHaveBeenCalledWith(2);
     expect(w.text()).toContain('只能停用');
+  });
+
+  it('称号页改动后，邮件、兑换码页用的下拉列表跟着刷新', async () => {
+    resetTitleList();
+    await useTitleList().load();
+    expect(useTitleList().list.value).toHaveLength(2);
+    vi.mocked(adminApi.createTitle).mockResolvedValue(
+      row({ key: 'c3', id: 3, title: '饭王', source: 'custom' }),
+    );
+    vi.mocked(adminApi.titles).mockResolvedValue([
+      ...LIST,
+      row({ key: 'c3', id: 3, title: '饭王', source: 'custom' }),
+    ]);
+    const w = mount(AdminTitlesView);
+    await flushPromises();
+    await w.find(T('title-new-title')).setValue('饭王');
+    await w.find(T('title-create')).trigger('click');
+    await flushPromises();
+    expect(useTitleList().list.value.map((x) => x.key)).toContain('c3');
   });
 });

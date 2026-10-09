@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { gameDateTime } from '../utils/format';
-import type { MailDto } from '@dt/shared';
+import type { MailDto, RewardItems } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
 import RedeemBox from '../components/RedeemBox.vue';
@@ -82,11 +82,20 @@ async function toggle(m: MailDto) {
     }
   }
 }
-const claim = (m: MailDto) => run(() => endpoints.mailClaim(m.id), t.value.mail.claimFailed);
+/** 领到的称号已过期（定制称号设计 四）：领取结果里标了 expired，提示一下，不然玩家看不出为什么没拿到 */
+function warnExpired(list: RewardItems[]) {
+  const expired = list.flatMap((i) => (i.icons ?? []).filter((c) => c.expired));
+  if (expired.length > 0) toast.push(rewardSummary({ icons: expired }, catalog), 'info');
+}
+const claim = (m: MailDto) =>
+  run(async () => {
+    warnExpired([(await endpoints.mailClaim(m.id)).items]);
+  }, t.value.mail.claimFailed);
 const remove = (m: MailDto) => run(() => endpoints.mailDelete(m.id), t.value.mail.deleteFailed);
 const claimAll = () =>
   run(async () => {
     const r = await endpoints.mailClaimAll();
+    warnExpired(r.items);
     notice.value = r.failed > 0 ? t.value.mail.claimAllPartial(r.claimed, r.failed) : '';
   }, t.value.mail.claimFailed);
 </script>

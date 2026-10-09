@@ -5,6 +5,7 @@ import type { MailDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useCatalogStore } from '../stores/catalog';
 import { useRestaurantStore } from '../stores/restaurant';
+import { useToastStore } from '../stores/toast';
 import MailView from './MailView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -115,5 +116,24 @@ describe('MailView', () => {
     expect(w.find('[data-testid="mail-delete-9"]').exists()).toBe(true);
     expect(w.text()).toContain('附件已失效');
     expect(w.find('[data-testid="mail-claim-all"]').attributes('disabled')).toBeDefined();
+  });
+
+  it('领到的称号已过期：领取后提示（单封、一键都提示；定制称号设计 四）', async () => {
+    const expired = { key: 'c9', title: '过期了', until: '2026-10-01T00:00:00Z', expired: true as const };
+    vi.mocked(endpoints.mailClaim).mockResolvedValue({ id: 1, items: { icons: [expired] } });
+    const w = mount(MailView);
+    await flushPromises();
+    await w.find('[data-testid="mail-claim-1"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain('称号「过期了」已过期');
+    useToastStore().items = [];
+    vi.mocked(endpoints.mailClaimAll).mockResolvedValue({
+      claimed: 2,
+      failed: 0,
+      items: [{ coin: 1 }, { icons: [expired] }],
+    });
+    await w.find('[data-testid="mail-claim-all"]').trigger('click');
+    await flushPromises();
+    expect(useToastStore().items.map((x) => x.text)).toContain('称号「过期了」已过期');
   });
 });

@@ -119,3 +119,27 @@ describe('没有 Intl.Segmenter 的环境（老 WebView）', () => {
     }
   });
 });
+
+describe('看不见的字（终审）', () => {
+  it('只有零宽连接符、变体选择符、零宽非连接符、填充字符的名字算空；emoji 加连接符的照样保留', () => {
+    const t = titleText(10);
+    for (const bad of [
+      cp(0x200d),
+      cp(0xfe0f),
+      cp(0x200c),
+      cp(0x3164),
+      cp(0x2060, 0x00ad),
+      cp(0x200e, 0x200f),
+    ])
+      expect(issues(t.safeParse(bad)), bad.codePointAt(0)!.toString(16)).toContain('empty');
+    expect(cleanTitleText(`面${cp(0x200c)}霸${cp(0x85)}`)).toBe('面霸');
+    expect(t.parse(CHEF)).toBe(CHEF);
+  });
+
+  it('附件里的名字快照不按 40 个码元卡：长 emoji 的合法称号能发', () => {
+    const family = cp(0x1f468, 0x200d, 0x1f469, 0x200d, 0x1f467, 0x200d, 0x1f466);
+    const title = family.repeat(10);
+    expect(graphemeLen(title)).toBe(10);
+    expect(rewardItems.safeParse({ icons: [{ key: 'c1', title }] }).success).toBe(true);
+  });
+});

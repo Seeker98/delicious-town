@@ -15,17 +15,25 @@ export const iconKey = z.string().regex(/^[a-z0-9_-]{1,32}$/);
 const cp = (n: number) => String.fromCodePoint(n);
 const range = (a: number, b: number) => `${cp(a)}-${cp(b)}`;
 /**
- * 去掉的字符：控制字符（含换行）、零宽空格 U+200B、U+FEFF、方向控制 U+202A~202E、U+2066~2069；
- * emoji 要用的零宽连接符 U+200D、变体选择符 U+FE0F 保留
+ * 去掉的字符：控制字符（C0、C1，含换行）、零宽空格 U+200B、零宽非连接符 U+200C、U+FEFF、
+ * 方向控制 U+200E、U+200F、U+202A~202E、U+2066~2069，看不见的 U+00AD、U+034F、U+2060~2064，
+ * 韩文填充字 U+115F、U+1160、U+3164、U+FFA0（终审：只有这些字的名字会成空白徽章）。
+ * emoji 要用的零宽连接符 U+200D、变体选择符 U+FE00~FE0F 保留
  */
 const STRIP = new RegExp(
-  `[${range(0, 0x1f)}${cp(0x7f)}${cp(0x200b)}${cp(0xfeff)}${range(0x202a, 0x202e)}${range(0x2066, 0x2069)}]`,
+  `[${range(0, 0x1f)}${range(0x7f, 0x9f)}${cp(0xad)}${cp(0x34f)}${cp(0x115f)}${cp(0x1160)}` +
+    `${range(0x200b, 0x200c)}${range(0x200e, 0x200f)}${range(0x202a, 0x202e)}${range(0x2060, 0x2064)}` +
+    `${range(0x2066, 0x2069)}${cp(0x3164)}${cp(0xfeff)}${cp(0xffa0)}]`,
   'gu',
 );
+/** 单独出现时看不见的：连接符、变体选择符；名字去掉它们和空白后要还有字 */
+const JOINERS = new RegExp(`[${cp(0x200d)}${range(0xfe00, 0xfe0f)}]`, 'gu');
 const NEWLINE = /[\r\n]/;
 
+/** 清理后只剩连接符、变体选择符和空白时当作空串 */
 export function cleanTitleText(s: string): string {
-  return s.replace(STRIP, '').trim();
+  const c = s.replace(STRIP, '').trim();
+  return c.replace(JOINERS, '').trim() === '' ? '' : c;
 }
 
 /**
@@ -82,7 +90,7 @@ export const oneValidity = (v: { days?: number; until?: string }) =>
 
 /** 附件里的一个称号：title 是发送时的名字快照，服务端按 key 重新填 */
 export const rewardIcon = z
-  .object({ key: iconKey, title: z.string().max(40).default(''), ...iconValidity })
+  .object({ key: iconKey, title: z.string().max(400).default(''), ...iconValidity })
   .refine(oneValidity, { message: 'days_or_until' });
 export interface RewardIcon {
   key: string;

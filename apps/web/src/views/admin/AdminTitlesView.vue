@@ -7,6 +7,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useAdminStore } from '../../stores/admin';
 import { useToastStore } from '../../stores/toast';
 import { adminTime } from '../../utils/gameInput';
+import { useTitleList } from '../../components/admin/titleList';
 
 /**
  * 后台称号页（问题记录 539，定制称号设计 二）：定制称号的新建、改、停用、删；配置称号只读列出。
@@ -14,6 +15,7 @@ import { adminTime } from '../../utils/gameInput';
  */
 const admin = useAdminStore();
 const toast = useToastStore();
+const titles = useTitleList();
 const list = ref<AdminTitleDto[]>([]);
 const q = ref('');
 const err = ref('');
@@ -56,6 +58,8 @@ async function act(fn: () => Promise<unknown>, done: string) {
     await fn();
     toast.push(done);
     await load();
+    // 邮件、兑换码、玩家页的称号下拉跟着刷新（终审）
+    void titles.load(true).catch(() => undefined);
     return true;
   } catch (e) {
     if (e instanceof ApiError && e.params.reason === 'title_in_use')
