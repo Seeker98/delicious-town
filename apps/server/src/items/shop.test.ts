@@ -187,6 +187,27 @@ describe('商店整理工具（问题记录 483）', () => {
     expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
   });
 
+  it('设计表池子里有下架的道具：原版按去掉它算，不显示“和原版不同”，池子不写进 shop.json（backlog）', () => {
+    const design = [
+      { pool: 'special', goods: [...real.pools!.special!, RETIRED[0]!] },
+      { pool: 'black', goods: real.pools!.black! },
+    ];
+    const written: string[] = [];
+    const t = createShopTool({
+      readSource: () => ({
+        ...src,
+        'designed/shop_pools': design,
+        'game/shop': written.length ? (JSON.parse(written.at(-1)!) as unknown) : { goods: real.goods },
+      }),
+      writeShop: (text) => written.push(text),
+    });
+    const row = t.report().rows.find((x) => x.id === RETIRED[0]);
+    if (row) expect(row.orig.special).toBe(false);
+    const res = t.save({ goods: [], pools: { special: real.pools!.special!, black: real.pools!.black! } });
+    expect(res.errors).toEqual([]);
+    expect(JSON.parse(written.at(-1)!).pools).toBeUndefined();
+  });
+
   it('shop.json 里没写的池子用设计表的（2026-10-07 下架批遗留：缺的测试）', () => {
     const design = [
       { pool: 'special', goods: real.pools!.special! },

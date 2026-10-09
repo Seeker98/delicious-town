@@ -831,7 +831,8 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     for (const id of p.goods) {
       if (!goodsIds.has(id)) errors.push(`shop_pools ${p.pool} references unknown goods ${id}`);
     }
-    shopPools[p.pool] = p.goods;
+    // 设计表池子里下架的道具自动去掉（和产出类列表一样，问题记录 501）；shop.json 里明写的照样拦（backlog）
+    shopPools[p.pool] = p.goods.filter((id) => !retired.goods.has(id));
   }
   // 商店整理写了哪个池就整份替换（问题记录 483）
   for (const pool of ['special', 'black'] as const) {
@@ -843,6 +844,12 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   }
   // 最终生效的池子都要有价格：只改了池里东西的价格、池子没写进 shop.json 时也要查（终审：特价抽到 0 价就是白送）
   for (const pool of ['special', 'black'] as const) {
+    // 同一个道具写两次，特价抽中的概率就翻倍（backlog）
+    const seen = new Set<number>();
+    for (const id of shopPools[pool]) {
+      if (seen.has(id)) errors.push(`shop ${pool} pool lists goods ${id} twice`);
+      seen.add(id);
+    }
     for (const id of shopPools[pool]) {
       const g = goods.find((x) => x.id === id);
       if (!g) continue;
