@@ -145,6 +145,19 @@ describe('白食结束、请走', () => {
     });
   });
 
+  it('白食者吃完走了，店主收到动态：哪一桌、从店里吃走多少银币（问题记录 553）', async () => {
+    const [a, b] = await setup();
+    await dine().start(a, { restId: b.restaurantId, tableNo: 3 });
+    await setAcc(b.restaurantId, 100, 50);
+    t.clock.advance(31 * MIN);
+    await dine().end(a);
+    const feed = await t.game.social.reads.feed(b, { limit: 30 });
+    expect(feed.items[0]).toMatchObject({
+      type: 'dine.left',
+      params: { by: a.restaurantId, table: 3, coin: 100 },
+    });
+  });
+
   it('激动的心：经验 ×3、体力 ×1.5', async () => {
     const [a, b] = await setup();
     await grantGoods(t.db, config, a.restaurantId, GOODS.excitedHeart, 1, t.clock.now);

@@ -30,7 +30,7 @@ import { grantGoods } from '../store/grant';
 import { iconLive } from '../friend/looks';
 import { normalizeCounts } from '../settlement/globals';
 import type { WorldService } from '../world/service';
-import { buffsOf, deviceSlots, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
+import { buffsOf, deviceSlots, feedPage, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 import { iconDefs } from '../icons/defs';
 
@@ -102,29 +102,33 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
     const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
-    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today] = await Promise.all([
-      d.db
-        .selectFrom('restaurant_tables')
-        .select('tables')
-        .where('rest_id', '=', restId)
-        .executeTakeFirstOrThrow(),
-      listActiveEffects(d.db, restId, now),
-      world.ensure(row.shard_id, now),
-      settingsP,
-      deviceSlots(d.db, d.config, row, now),
-      lastRound(d.db, restId),
-      shownIcons(restId),
-      settingsP.then((st) =>
-        headlines(d.db, row.shard_id, {
-          daily: isFeatureEnabled(st, 'daily'),
-          now,
-          broadcastHours: st.tuning.town.broadcast.homeHours,
-        }),
-      ),
-      // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
-      settingsP.then((st) => (isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [])),
-      todayBless(d.db, d.config, row.shard_id, now),
-    ]);
+    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed] =
+      await Promise.all([
+        d.db
+          .selectFrom('restaurant_tables')
+          .select('tables')
+          .where('rest_id', '=', restId)
+          .executeTakeFirstOrThrow(),
+        listActiveEffects(d.db, restId, now),
+        world.ensure(row.shard_id, now),
+        settingsP,
+        deviceSlots(d.db, d.config, row, now),
+        lastRound(d.db, restId),
+        shownIcons(restId),
+        settingsP.then((st) =>
+          headlines(d.db, row.shard_id, {
+            daily: isFeatureEnabled(st, 'daily'),
+            now,
+            broadcastHours: st.tuning.town.broadcast.homeHours,
+          }),
+        ),
+        // 正在生效的全服加成单独列（问题记录 294）；区服关掉限时活动时加成也不生效，不列
+        settingsP.then((st) =>
+          isFeatureEnabled(st, 'activity') ? activeBoosts(d.db, row.shard_id, now) : [],
+        ),
+        todayBless(d.db, d.config, row.shard_id, now),
+        feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
+      ]);
     const tuning = settings.tuning;
     const growth = tuning.growth;
     const dto = toRestaurantDto(row, tables.tables, shownEffects(effects, equipOff(settings)), d.config, {
@@ -136,6 +140,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       plaque2Cost: { star: growth.plaque2Star, coin: growth.plaque2Coin, diamond: growth.plaque2Diamond },
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: news,
+      feed,
       boosts: boosts.map((b) => ({
         id: b.id,
         title: b.title,

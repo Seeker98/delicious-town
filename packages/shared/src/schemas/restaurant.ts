@@ -89,6 +89,8 @@ export interface RestaurantDto {
   boosts: ActiveBoostDto[];
   /** 首页小镇新闻：最新 3 条 + 最新广播 */
   headlines: HeadlinesDto;
+  /** 首页餐厅动态：最近 3 天里最新的 3 条，新的在前（问题记录 553） */
+  feed: RestLogDto[];
   /** 本区服后台关掉的功能，前端据此隐藏入口（问题记录 248） */
   disabledFeatures: string[];
   /** 被收购时的老板（首页提示，收购 PR 3）；区服关了收购时为 null */

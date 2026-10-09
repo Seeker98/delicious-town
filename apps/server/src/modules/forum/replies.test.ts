@@ -110,3 +110,49 @@ describe('任务计数（问题记录 318）', () => {
     expect((await t.game.task.activation(b)).items.find((i) => i.name === '论坛发帖或回复')!.count).toBe(1);
   });
 });
+
+describe('帖子被回复的动态（问题记录 553）', () => {
+  const feedOf = async (ctx: RestCtx) =>
+    (await t.game.social.reads.feed(ctx, { limit: 30 })).items.filter((x) => x.type === 'forum.replied');
+
+  it('楼主收到；回复某一层时那层的人也收到；自己回自己不算', async () => {
+    const { a, b, c, id } = await setup();
+    await reply(a, id, '自己顶一下');
+    expect(await feedOf(a)).toHaveLength(0);
+    later();
+    await reply(b, id, '二楼');
+    expect(await feedOf(a)).toEqual([
+      expect.objectContaining({
+        params: { by: b.restaurantId, byName: expect.any(String), postId: id, title: 't', floor: 2 },
+      }),
+    ]);
+    later();
+    await reply(c, id, '回二楼', { replyTo: 2 });
+    expect((await feedOf(a)).map((x) => x.params.floor)).toEqual([3, 2]);
+    expect(await feedOf(b)).toEqual([
+      expect.objectContaining({
+        params: expect.objectContaining({ by: c.restaurantId, postId: id, floor: 3, toFloor: 2 }),
+      }),
+    ]);
+    expect(await feedOf(c)).toHaveLength(0);
+  });
+
+  it('回复楼主自己的楼层，楼主只收到一条；回复自己的楼层不通知自己', async () => {
+    const { a, b, id } = await setup();
+    await reply(a, id, '一楼');
+    later();
+    await reply(b, id, '回一楼', { replyTo: 1 });
+    expect(await feedOf(a)).toHaveLength(1);
+    later();
+    await reply(b, id, '回自己', { replyTo: 2 });
+    expect(await feedOf(b)).toHaveLength(0);
+    expect(await feedOf(a)).toHaveLength(2);
+  });
+
+  it('匿名回复不带回复者', async () => {
+    const { a, b, id } = await setup();
+    await reply(b, id, '匿名', { anonymous: true });
+    const [x] = await feedOf(a);
+    expect(x!.params).toEqual({ postId: id, title: 't', floor: 1 });
+  });
+});

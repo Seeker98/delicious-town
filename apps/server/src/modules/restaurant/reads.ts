@@ -195,6 +195,45 @@ export async function buffsOf(
   };
 }
 
+/**
+ * 餐厅动态：别人对我做的操作（设计文档 §4.10），加上不在线时店里发生的事（问题记录 553：被收购 / 放手 / 赎回、
+ * 老鼠偷食材、手动进货被买、冰箱满了丢食材）。好友页"动态"卡和首页的"餐厅动态"都用它
+ */
+export const FEED_TYPES = [
+  'dine.start',
+  'dine.expelled',
+  'roach.laid',
+  'roach.killed',
+  'friend.refuel',
+  'friend.flip',
+  'exchange',
+  'thumb',
+  'mc.eaten',
+  'lesson.taught',
+  'friend.apply',
+  'friend.accept',
+  'yard.helped',
+  'yard.stolen',
+  'takeaway.hired',
+  'dine.left',
+  'forum.replied',
+  'acquire.taken',
+  'acquire.freed',
+  'acquire.lost',
+  'mouse.steal',
+  'market.share',
+  'fridge.drop',
+] as const;
+const FEED_DAYS = 3;
+
+/** 餐厅动态（最近 FEED_DAYS 天）：好友页"动态"卡翻页，首页取最新几条 */
+export function feedPage(db: Kysely<DB>, restId: number, q: PageQuery, now: Date): Promise<LogPageDto> {
+  return logPage(db, restId, q, {
+    types: FEED_TYPES,
+    since: new Date(now.getTime() - FEED_DAYS * 86_400_000),
+  });
+}
+
 export async function logPage(
   db: Kysely<DB>,
   restId: number,

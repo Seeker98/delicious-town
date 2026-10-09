@@ -18,29 +18,10 @@ import { AppError } from '../../http/errors';
 import { getDaily } from '../counter/dailyCounter';
 import { flipHostKey, flipSlots, killHostKey, perHostLeft } from '../interact/rules';
 import { isEmptyTable } from '../interact/tables';
-import { logPage, restNames, tableDto } from '../restaurant/reads';
+import { feedPage, restNames, tableDto } from '../restaurant/reads';
 import { equipDisplayName } from '../equip/hats';
 import { iconLive } from './looks';
 import { iconDefs } from '../icons/defs';
-
-/** 好友动态：别人对我做的操作（设计文档 §4.10） */
-export const FEED_TYPES = [
-  'dine.start',
-  'dine.expelled',
-  'roach.laid',
-  'roach.killed',
-  'friend.refuel',
-  'friend.flip',
-  'exchange',
-  'thumb',
-  'mc.eaten',
-  'lesson.taught',
-  'friend.apply',
-  'friend.accept',
-  'yard.helped',
-  'yard.stolen',
-] as const;
-const FEED_DAYS = 3;
 
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
@@ -368,10 +349,7 @@ export function createFriendReads(d: GameDeps) {
     },
 
     feed(ctx: RestCtx, q: PageQuery): Promise<LogPageDto> {
-      return logPage(d.db, ctx.restaurantId, q, {
-        types: FEED_TYPES,
-        since: new Date(d.now().getTime() - FEED_DAYS * 86_400_000),
-      });
+      return feedPage(d.db, ctx.restaurantId, q, d.now());
     },
   };
 }

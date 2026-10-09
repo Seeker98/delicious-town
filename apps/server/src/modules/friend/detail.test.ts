@@ -101,4 +101,55 @@ describe('好友动态（规格书 13 §13.8）', () => {
     const page = await reads().feed(a, { limit: 30 });
     expect(page.items.map((x) => x.type)).toEqual(['thumb']);
   });
+
+  it('问题记录 553 补的类型都在动态里；琐碎的（老鼠没偷到、停业、分红）不在', async () => {
+    const a = await newRestaurant(t);
+    const added = [
+      'takeaway.hired',
+      'dine.left',
+      'forum.replied',
+      'acquire.taken',
+      'acquire.freed',
+      'acquire.lost',
+      'mouse.steal',
+      'market.share',
+      'fridge.drop',
+    ];
+    const left = ['mouse.nothing', 'mouse.escape', 'rest.closed', 'acquire.dividend'];
+    const at = new Date();
+    await t.db
+      .insertInto('rest_log')
+      .values(
+        [...added, ...left].map((type) => ({ rest_id: a.restaurantId, type, params: '{}', created_at: at })),
+      )
+      .execute();
+    const page = await reads().feed(a, { limit: 30 });
+    expect(page.items.map((x) => x.type).sort()).toEqual([...added].sort());
+  });
+});
+
+describe('首页餐厅动态（问题记录 553）', () => {
+  it('概览带最近 3 条动态：只含动态类型、近 3 天，新的在前', async () => {
+    const a = await newRestaurant(t);
+    const now = t.clock.now.getTime();
+    const at = (min: number) => new Date(now - min * 60_000);
+    await t.db
+      .insertInto('rest_log')
+      .values([
+        { rest_id: a.restaurantId, type: 'thumb', params: '{"n":1}', created_at: at(50) },
+        { rest_id: a.restaurantId, type: 'thumb', params: '{"n":2}', created_at: at(40) },
+        { rest_id: a.restaurantId, type: 'mouse.steal', params: '{"n":3}', created_at: at(30) },
+        { rest_id: a.restaurantId, type: 'level.up', params: '{}', created_at: at(20) },
+        { rest_id: a.restaurantId, type: 'dine.left', params: '{"n":4}', created_at: at(10) },
+      ])
+      .execute();
+    const o = await t.game.restaurant.overview(a.restaurantId);
+    expect(o.feed.map((x) => x.params.n)).toEqual([4, 3, 2]);
+    const b = await newRestaurant(t);
+    await t.db
+      .insertInto('rest_log')
+      .values({ rest_id: b.restaurantId, type: 'thumb', params: '{}', created_at: at(4 * 24 * 60) })
+      .execute();
+    expect((await t.game.restaurant.overview(b.restaurantId)).feed).toEqual([]);
+  });
 });
