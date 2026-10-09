@@ -427,7 +427,9 @@ onBeforeUnmount(() => {
           <span class="dt-shrink text-muted">{{ t.home.noRound }}</span>
           <RouterLink to="/rest/income" class="dt-go">{{ t.home.income }}</RouterLink>
           <RouterLink to="/rest/floor" class="dt-go"
-            ><i v-if="hasRoach" class="bi bi-bug text-danger me-1" data-testid="home-floor-roach"></i
+            ><template v-if="hasRoach"
+              ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
+              ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
             >{{ t.home.floor }}</RouterLink
           >
         </div>
@@ -458,7 +460,9 @@ onBeforeUnmount(() => {
             customers || t.home.noGuests
           }}</span>
           <RouterLink to="/rest/floor" class="dt-go"
-            ><i v-if="hasRoach" class="bi bi-bug text-danger me-1" data-testid="home-floor-roach"></i
+            ><template v-if="hasRoach"
+              ><i class="bi bi-bug text-danger me-1" aria-hidden="true" data-testid="home-floor-roach"></i
+              ><span class="visually-hidden">{{ t.home.hasRoach }}</span></template
             >{{ t.home.floor }}</RouterLink
           >
         </div>

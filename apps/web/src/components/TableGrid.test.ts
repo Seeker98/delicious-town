@@ -51,6 +51,8 @@ describe('有蟑螂的楼层标出来（问题记录 561）', () => {
     const r = w.get('[data-testid="floor-roach-2"]');
     expect(r.find('i.bi-bug').exists()).toBe(true);
     expect(r.text()).toContain('2');
+    // 读屏读“蟑螂 2”，不只在 title 里（backlog 1010）
+    expect(r.get('.visually-hidden').text()).toBe('蟑螂 2');
   });
 });
 

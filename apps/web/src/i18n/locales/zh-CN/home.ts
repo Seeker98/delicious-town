@@ -26,6 +26,8 @@ export default {
   noGuests: '没有客人',
   income: '收益记录',
   floor: '楼层餐桌',
+  /** 楼层餐桌前虫子图标的读屏文字（backlog 1010） */
+  hasRoach: '店里有蟑螂',
   noRound: '最近没有结算',
   cookbooks: (learned: string, total: string) => `食谱 ${learned}/${total}`,
   special: (name: string) => `特色菜: ${name}`,

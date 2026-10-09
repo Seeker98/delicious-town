@@ -46,7 +46,8 @@ function label(x: TableDto): string {
         :class="['ms-1', { 'text-danger': f !== floor }]"
         :title="t.friends.roaches(roaches.get(f)!)"
         :data-testid="`floor-roach-${f}`"
-        ><i class="bi bi-bug" aria-hidden="true"></i>{{ roaches.get(f) }}</span
+        ><i class="bi bi-bug" aria-hidden="true"></i><span aria-hidden="true">{{ roaches.get(f) }}</span
+        ><span class="visually-hidden">{{ t.friends.roaches(roaches.get(f)!) }}</span></span
       >
     </button>
   </div>

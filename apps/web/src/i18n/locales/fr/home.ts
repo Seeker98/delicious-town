@@ -29,6 +29,7 @@ const home: Messages['home'] = {
   noGuests: 'Aucun client',
   income: 'Historique des gains',
   floor: 'Étages et tables',
+  hasRoach: 'Des cafards dans le restaurant',
   noRound: 'Aucun tour récent',
   cookbooks: (learned, total) => `Recettes ${learned}/${total}`,
   special: (name) => `Spécialité\u202f: ${name}`,
