@@ -3,6 +3,7 @@ import { GOODS, resolveShardSettings } from '@dt/config';
 import { seededRng } from '@dt/shared';
 import { testConfig } from '../../../test/config';
 import { countGoods, openFastRest } from './ops';
+import { prizeFoodTier } from '../../modules/award/random';
 import { applySide, loadSideTable, rowsFor } from './side';
 import real from './side-income.json';
 import type { FastCtx } from './state';
@@ -74,5 +75,92 @@ describe('旁支产出表（设计 §5）', () => {
     const coin0 = r.coin;
     applySide(ctx, r, table([{ source: 'takeaway', minLevel: 1, coin: 1000 }]), 'diligent');
     expect(r.coin - coin0).toBe(500);
+  });
+});
+
+describe('随机奖励里的食材（问题记录 50 验证：酒吧、厨塔会给食材，缺料倾向主要作用在这里）', () => {
+  /** 发一次旁支产出，返回新增的食材 id → 份数 */
+  const gained = (ctx: FastCtx, r: ReturnType<typeof openFastRest>, t: ReturnType<typeof table>) => {
+    const before = new Map(r.foods);
+    applySide(ctx, r, t, 'diligent');
+    const out = new Map<number, number>();
+    for (const [id, n] of r.foods) if (n > (before.get(id) ?? 0)) out.set(id, n - (before.get(id) ?? 0));
+    return out;
+  };
+  const level = (id: number) => config.foods.get(id)!.level;
+  const odds = (id: number) => config.foods.get(id)!.odds;
+  const noTilt = { ...settings.tuning, scarcity: { needBase: 0, needLuckFactor: 0, needMax: 0 } };
+  const allTilt = { ...settings.tuning, scarcity: { needBase: 1, needLuckFactor: 0, needMax: 1 } };
+
+  it('真实产出表里酒吧、厨塔都写了随机食材', () => {
+    const t = loadSideTable(real, config);
+    for (const s of ['bar', 'tower'] as const)
+      expect(t.rows.find((r) => r.source === s)?.randomFoods?.length ?? 0).toBeGreaterThan(0);
+  });
+
+  it('次数、等级写错报错', () => {
+    expect(() => table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: -1, level: 3 }] }])).toThrow();
+    expect(() => table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: 1, level: 0 }] }])).toThrow();
+  });
+
+  it('普通随机奖励只出权重 100 的普通食材，等级不超过奖励等级（和 award/random.ts 一样）', () => {
+    const ctx = { ...c(), tuning: noTilt };
+    const r = openFastRest(ctx, 1, settings);
+    const got = gained(
+      ctx,
+      r,
+      table([{ source: 'tower', minLevel: 1, randomFoods: [{ times: 200, level: 3 }] }]),
+    );
+    expect(got.size).toBeGreaterThan(0);
+    for (const id of got.keys()) {
+      expect(odds(id)).toBe(100);
+      expect(level(id)).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it('酒吧按奖励档次的等级范围出，可以出稀有', () => {
+    const ctx = { ...c(), tuning: noTilt };
+    const r = openFastRest(ctx, 1, settings);
+    const t = table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: 300, level: 5, bar: true }] }]);
+    const got = gained(ctx, r, t);
+    const [lo, hi] = prizeFoodTier(settings.tuning.bar.prize.foodTiers, 5).levels;
+    for (const id of got.keys()) {
+      expect(level(id)).toBeGreaterThanOrEqual(lo);
+      expect(level(id)).toBeLessThanOrEqual(hi);
+    }
+    expect([...got.keys()].some((id) => odds(id) < 100)).toBe(true);
+  });
+
+  it('缺料倾向必中时，只出本街学菜正缺的食材', () => {
+    const ctx = { ...c(), tuning: allTilt };
+    const r = openFastRest(ctx, 1, settings);
+    const need = new Set<number>();
+    for (const id of config.cookbookIndex.idsByStreet.get(r.streetId) ?? [])
+      for (const f of config.requireCookbook(id).needFoods[1] ?? []) need.add(f.foodsId);
+    const got = gained(
+      ctx,
+      r,
+      table([{ source: 'tower', minLevel: 1, randomFoods: [{ times: 50, level: 5 }] }]),
+    );
+    expect(got.size).toBeGreaterThan(0);
+    for (const id of got.keys()) expect(need.has(id)).toBe(true);
+  });
+
+  it('次数按参与度打折后随机取整：平均值对得上', () => {
+    const ctx = { ...c(), tuning: noTilt };
+    const r = openFastRest(ctx, 1, settings);
+    r.luck = 0;
+    const t = table([{ source: 'tower', minLevel: 1, randomFoods: [{ times: 1.4, level: 1 }] }]);
+    let total = 0;
+    const days = 2000;
+    for (let i = 0; i < days; i++) {
+      const before = [...r.foods.values()].reduce((a, b) => a + b, 0);
+      applySide(ctx, r, t, 'casual');
+      total += [...r.foods.values()].reduce((a, b) => a + b, 0) - before;
+      r.foods.clear();
+    }
+    // casual 参与度 0.4：1.4 × 0.4 = 0.56 次/天；幸运翻倍会让份数略多
+    expect(total / days).toBeGreaterThan(0.5);
+    expect(total / days).toBeLessThan(0.75);
   });
 });
