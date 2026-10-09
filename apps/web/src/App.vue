@@ -46,7 +46,7 @@ onMounted(() => {
       <RouterView :key="locale.locale" />
     </main>
     <AnnouncePopup v-if="inGame" />
-    <EventToast />
+    <EventToast :nav="inGame" />
     <BottomNav v-if="inGame" />
   </div>
 </template>

@@ -150,6 +150,10 @@ body {
 .dt-toasts-bottom {
   bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
+/* 没有底栏的页面（登录、指引、后台）：贴近底部（backlog 1010） */
+.dt-toasts-low {
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
 .dt-toast-pill {
   max-width: 100%;
   text-align: center;
