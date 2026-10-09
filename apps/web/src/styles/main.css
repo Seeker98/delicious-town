@@ -135,14 +135,24 @@ body {
   white-space: nowrap;
 }
 /* 问题记录 344：顶栏（44px）下面；不拦截点击，按钮在提示下面也点得到 */
+/* 提示（问题记录 545）：屏幕下方、底栏上面，一条一个小胶囊，宽度跟着文字，新的在下面 */
 .dt-toasts {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  top: 52px;
   width: calc(100% - 32px);
   max-width: 688px;
   z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dt-toasts-bottom {
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+.dt-toast-pill {
+  max-width: 100%;
+  text-align: center;
 }
 .dt-toasts-passthrough,
 .dt-toasts-passthrough * {

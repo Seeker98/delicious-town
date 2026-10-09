@@ -45,13 +45,14 @@ describe('收益记录页（问题记录 530）', () => {
     expect(endpoints.buffs).toHaveBeenCalled();
   });
 
-  it('收益记录在最上面，先写今天的小计', async () => {
+  it('加成默认收起，放在最上面；下面是收益记录，先写今天的小计（问题记录 551）', async () => {
     const w = mount(RestIncomeView);
     await flushPromises();
     const html = w.html();
-    expect(html.indexOf('data-testid="income-records"')).toBeLessThan(
-      html.indexOf('data-testid="income-buffs"'),
+    expect(html.indexOf('data-testid="income-buffs"')).toBeLessThan(
+      html.indexOf('data-testid="income-records"'),
     );
+    expect(w.get('[data-testid="income-buffs"]').attributes('open')).toBeUndefined();
     expect(w.get('[data-testid="income-today"]').text()).toBe(
       '今天 30 轮 · 银币 123,456 · 经验 7,890 · 耗油 240',
     );

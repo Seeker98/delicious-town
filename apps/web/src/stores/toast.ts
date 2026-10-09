@@ -12,16 +12,22 @@ export interface Toast {
 }
 
 let seq = 0;
+/** 同时显示的上限、各种提示停留的时间（问题记录 545） */
+const MAX_TOASTS = 2;
+const TOAST_MS: Record<Toast['variant'], number> = { success: 2000, info: 3000, danger: 5000 };
 
 export const useToastStore = defineStore('toast', {
   state: () => ({ items: [] as Toast[] }),
   actions: {
-    /** ms 不传时：普通提示 3 秒，错误提示 5 秒（问题记录 344：提示不能点掉了，错误多停一会儿） */
+    /**
+     * ms 不传时：成功提示 2 秒、普通提示 3 秒、错误提示 5 秒（问题记录 344：提示不能点掉了，错误多停一会儿；
+     * 545：改成底部的小胶囊，成功的停短一点）。最多同时 2 条，新的挤掉最早的
+     */
     push(text: string, variant: Toast['variant'] = 'success', ms?: number, render?: () => string) {
       const id = ++seq;
       this.items.push({ id, text, variant, ...(render ? { render } : {}) });
-      if (this.items.length > 5) this.items.shift();
-      setTimeout(() => this.remove(id), ms ?? (variant === 'danger' ? 5000 : 3000));
+      while (this.items.length > MAX_TOASTS) this.items.shift();
+      setTimeout(() => this.remove(id), ms ?? TOAST_MS[variant]);
     },
     remove(id: number) {
       this.items = this.items.filter((t) => t.id !== id);
