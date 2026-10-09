@@ -89,7 +89,7 @@ onMounted(() => store.refresh().catch(() => undefined));
           <button
             type="button"
             class="dt-link-btn"
-            :disabled="remain === 0"
+            :disabled="busy || remain === 0"
             :data-testid="`all-${f}`"
             @click="fillAll(f)"
           >
