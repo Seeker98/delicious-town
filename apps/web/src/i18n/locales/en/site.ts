@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    fix1010:
+      'Mice now pick what to steal by quantity: ingredients you have plenty of are taken more often, and rare ones you only hold a few of are rarely touched. On Floors & tables, tables in the same row are now the same height',
     rank1010:
       'Rankings now have this week and last week boards for more bar games: Darts (wins), Last Candy (beginner and expert tables separately), Secret Blend (fewest guesses in one game, and blends guessed), Memory Mixing (full clears), Devil’s Chili (vouchers won) and Deal or No Deal (top prizes). Apart from Memory Mixing, counting starts with this update',
     ui1010:

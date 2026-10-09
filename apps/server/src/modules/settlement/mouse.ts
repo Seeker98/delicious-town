@@ -1,5 +1,5 @@
 import { GOODS } from '@dt/config';
-import { seededRng } from '@dt/shared';
+import { buildPool, pickWeighted, seededRng } from '@dt/shared';
 import type { GameDeps } from '../../core/deps';
 import { opAgg, opLuck } from '../../core/luck';
 import { restLog, runSystemOp, type Op } from '../../core/op';
@@ -45,7 +45,11 @@ async function visit(op: Op): Promise<{ outcome: Outcome; map: boolean }> {
       outcome = 'nothing';
       restLog(op, 'mouse.nothing');
     } else {
-      const pick = foods[op.rng.int(foods.length)]!;
+      // 按数量加权挑一种（问题记录 581）：只有几份的稀有食材很少被挑中；原来是每种一样的机会
+      const pick = pickWeighted(
+        buildPool(foods, (f) => f.num),
+        op.rng,
+      );
       const num = Math.min(pick.num, op.rng.intMin1(2 * op.rest.star_level + 1));
       await subFoods(op, pick.foods_id, num, { source: 'mouse', event: false });
       outcome = 'stolen';
