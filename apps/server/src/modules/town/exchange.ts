@@ -1,11 +1,6 @@
 import { sql, type Kysely } from 'kysely';
 import { GOODS, type GameConfig, type Tuning } from '@dt/config';
-import type {
-  TicketResultDto,
-  TownExchangeDto,
-  TownExchangePart,
-  TownExchangeResultDto,
-} from '@dt/shared';
+import type { TicketResultDto, TownExchangeDto, TownExchangePart, TownExchangeResultDto } from '@dt/shared';
 import { invalidState, limitReached } from '../../core/errors';
 import { opNews, restLog, type Op } from '../../core/op';
 import type { DB } from '../../db/schema';

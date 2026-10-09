@@ -99,7 +99,9 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
         }}</template>
         <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
         <!-- 这一档送什么写在按钮里（backlog B6），领了才知道不方便 -->
-        <div class="opacity-75" :data-testid="`claim-award-${r.points}`">{{ awardText(r.award, catalog) }}</div>
+        <div class="opacity-75" :data-testid="`claim-award-${r.points}`">
+          {{ awardText(r.award, catalog) }}
+        </div>
       </button>
     </div>
     <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->

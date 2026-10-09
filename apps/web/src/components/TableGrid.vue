@@ -62,11 +62,7 @@ function label(x: TableDto): string {
         <div class="fw-bold">{{ x.no }}</div>
         <div><i v-if="x.customer === 3" class="bi bi-bug me-1"></i>{{ label(x) }}</div>
         <!-- 这桌点的菜：挑剔顾客、蟹老板写点的菜，普通顾客、章鱼哥写吃的特色菜（问题记录 559） -->
-        <div
-          v-if="dishes.get(x.no)"
-          class="text-muted dt-clamp1"
-          :data-testid="`table-dish-${x.no}`"
-        >
+        <div v-if="dishes.get(x.no)" class="text-muted dt-clamp1" :data-testid="`table-dish-${x.no}`">
           {{ dishes.get(x.no) }}
         </div>
       </button>

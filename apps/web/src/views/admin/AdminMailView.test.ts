@@ -129,7 +129,11 @@ describe('AdminMailView', () => {
     const gate = new Promise<void>((r) => (release = r));
     vi.mocked(adminApi.restaurant).mockImplementation(async (id: number) => {
       if (id === 4) await gate;
-      return { overview: { name: `店${id}`, shardId: 1 }, owner: { username: `u${id}` }, shardName: '一服' } as never;
+      return {
+        overview: { name: `店${id}`, shardId: 1 },
+        owner: { username: `u${id}` },
+        shardName: '一服',
+      } as never;
     });
     const w = mount(AdminMailView);
     await flushPromises();

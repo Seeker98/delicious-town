@@ -157,7 +157,9 @@ describe('FriendsView', () => {
 
   it('刷新页面直接打开动态卡（还没读过餐厅）：先读餐厅再记看过（backlog 1010）', async () => {
     vi.mocked(endpoints.friendFeed).mockResolvedValue({
-      items: [{ type: 'acquire.taken', params: { byName: '丙', price: 5000 }, at: '2026-10-09T06:00:00.000Z' }],
+      items: [
+        { type: 'acquire.taken', params: { byName: '丙', price: 5000 }, at: '2026-10-09T06:00:00.000Z' },
+      ],
     } as never);
     vi.mocked(endpoints.thumbsToday).mockResolvedValue([]);
     vi.mocked(endpoints.overview).mockResolvedValue({ id: 6 } as never);

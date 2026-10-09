@@ -62,7 +62,14 @@ describe('任务、活跃奖励的文字 awardText（backlog B6：活跃按钮�
   it('银币、经验、钻石、声望、道具、食材依次写出；没有的不写', () => {
     expect(
       awardText(
-        { coin: 1200, exp: 5000, diamond: 2, renown: 3, goods: [{ id: 7, num: 2 }], foods: [{ id: 9, num: 1 }] },
+        {
+          coin: 1200,
+          exp: 5000,
+          diamond: 2,
+          renown: 3,
+          goods: [{ id: 7, num: 2 }],
+          foods: [{ id: 9, num: 1 }],
+        },
         names,
       ),
     ).toBe('银币 1,200、经验 5,000、钻石 2、声望 3、G7×2、F9×1');

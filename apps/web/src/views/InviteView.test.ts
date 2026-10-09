@@ -47,7 +47,9 @@ describe('InviteView', () => {
       monthCount: 0,
       monthlyCap: 20,
       levels: { lv10: 8, lv30: 25 },
-      invitees: [{ restName: '小明的店', shardName: '一服', level: 9, verified: true, lv10: 'sent', lv30: null }],
+      invitees: [
+        { restName: '小明的店', shardName: '一服', level: 9, verified: true, lv10: 'sent', lv30: null },
+      ],
     });
     const w = mount(InviteView);
     await flushPromises();

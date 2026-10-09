@@ -486,8 +486,7 @@ export const endpoints = {
   /** 小镇日报（2026-10-08）：不带日期取最近一份已发布的 */
   townDaily: (day?: string) =>
     api.get<DailyDto>(day === undefined ? '/api/v1/town/daily' : `/api/v1/town/daily?day=${day}`),
-  townExchange: (part: TownExchangePart) =>
-    api.get<TownExchangeDto>(`/api/v1/town/exchange?part=${part}`),
+  townExchange: (part: TownExchangePart) => api.get<TownExchangeDto>(`/api/v1/town/exchange?part=${part}`),
   townBroadcast: (text: string) => api.post<{ text: string }>('/api/v1/town/broadcast', { text }),
   townTalk: (npc: NpcKey) => api.post<TalkResultDto>('/api/v1/town/talk', { npc }),
   townShake: () => api.post<ShakeResultDto>('/api/v1/town/shake'),

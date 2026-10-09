@@ -27,7 +27,10 @@ async function notifyReplied(
   const rows: Array<{ rest_id: number; params: Record<string, unknown> }> = [];
   // 回的是楼主自己那层：楼主只收一条，带上楼层号（backlog 1010）
   if (post.rest_id !== o.rest.id)
-    rows.push({ rest_id: post.rest_id, params: toRest === post.rest_id ? { ...base, toFloor: b.replyTo } : base });
+    rows.push({
+      rest_id: post.rest_id,
+      params: toRest === post.rest_id ? { ...base, toFloor: b.replyTo } : base,
+    });
   if (toRest !== null && toRest !== o.rest.id && toRest !== post.rest_id)
     rows.push({ rest_id: toRest, params: { ...base, toFloor: b.replyTo } });
   if (rows.length === 0) return;
