@@ -13,7 +13,7 @@ import { useToastStore } from '../../stores/toast';
 import { catalogNames, dailyLang, dailyParagraphs, dailyPlain } from '../../utils/daily';
 import { newsText } from '../../utils/news';
 
-/** 小镇日报（2026-10-08）：AI 写的前一天的报道；没发布时显示“今日要闻” */
+/** 小镇日报（2026-10-08）：AI 写的前一天的报道；没发布时显示“当日要闻” */
 const t = useT();
 const catalog = useCatalogStore();
 const locale = useLocaleStore();

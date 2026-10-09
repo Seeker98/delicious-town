@@ -165,4 +165,11 @@ describe('小镇日报素材：挑选和汇总', () => {
     });
     expect(f.events.every((e) => e.newsId > 0)).toBe(true);
   });
+
+  it('天气变化太多时取最后 8 种（backlog：原来取前 8 种）', async () => {
+    const shardId = await createShard(t.db);
+    for (let i = 1; i <= 10; i++) await news(shardId, 'weather.change', null, { from: i, to: i + 1 }, i);
+    const f = await buildFacts(t.game.deps, shardId, DAY, 30);
+    expect(f.summary).toEqual([`天气: ${[4, 5, 6, 7, 8, 9, 10, 11].map((w) => `{w:${w}}`).join(' → ')}`]);
+  });
 });

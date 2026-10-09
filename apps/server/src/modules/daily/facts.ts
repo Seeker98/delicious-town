@@ -279,8 +279,9 @@ export async function buildFacts(
   if (restocks > 0) summary.push(`菜场进货 ${restocks} 次`);
   if (weather.length > 1)
     summary.push(
+      // 变化太多时取最后 8 种：后面的离写稿时更近
       `天气: ${weather
-        .slice(0, 8)
+        .slice(-8)
         .map((w) => `{w:${w}}`)
         .join(' → ')}`,
     );

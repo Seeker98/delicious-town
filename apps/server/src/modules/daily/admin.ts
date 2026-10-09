@@ -121,7 +121,7 @@ export function createAdminDaily(game: Game) {
         const en = parseArticle(JSON.stringify(b.en), 'en', 1);
         checkArticle(zh, facts);
         sameTokens(zh, en);
-        checkArticle(en, facts);
+        checkArticle(en, facts, 'en');
         content = { 'zh-CN': zh, en, 'zh-TW': toTw(zh) };
       } catch (err) {
         throw invalidState('daily_check', { message: err instanceof Error ? err.message : String(err) });

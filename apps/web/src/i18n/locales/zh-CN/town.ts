@@ -95,7 +95,7 @@ export default {
   /** 小镇日报（2026-10-08） */
   daily: {
     title: '小镇日报',
-    fallbackTitle: '今日要闻',
+    fallbackTitle: '当日要闻',
     pending: '这一天的日报还在编辑中, 先看看要闻',
     none: '这一天没有日报',
     englishOnly: '仅英文',

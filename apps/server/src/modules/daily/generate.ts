@@ -44,7 +44,7 @@ async function write(
   used.out += b.tokensOut;
   const en = parseArticle(b.text, 'en', 1);
   sameTokens(zh, en);
-  checkArticle(en, facts);
+  checkArticle(en, facts, 'en');
   return { 'zh-CN': zh, en, 'zh-TW': toTw(zh) };
 }
 

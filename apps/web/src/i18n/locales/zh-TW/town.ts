@@ -96,7 +96,7 @@ export default {
   /** 小鎮日報（2026-10-08） */
   daily: {
     title: '小鎮日報',
-    fallbackTitle: '今日要聞',
+    fallbackTitle: '當日要聞',
     pending: '這一天的日報還在編輯中, 先看看要聞',
     none: '這一天沒有日報',
     englishOnly: '僅英文',

@@ -54,11 +54,11 @@ describe('DailyCard', () => {
     expect(w.find('[data-testid="daily-english-only"]').exists()).toBe(false);
   });
 
-  it('没发布：显示今日要闻', async () => {
+  it('没发布：显示当日要闻（那一天的要闻，不是今天的）', async () => {
     vi.mocked(endpoints.townDaily).mockResolvedValue(dto({ article: null, fallback: [news(1), news(2)] }));
     const w = mountCard();
     await flushPromises();
-    expect(w.find('[data-testid="daily-title"]').text()).toBe('今日要闻');
+    expect(w.find('[data-testid="daily-title"]').text()).toBe('当日要闻');
     expect(w.findAll('[data-testid="daily-fallback"]')).toHaveLength(2);
     expect(w.text()).toContain('这一天的日报还在编辑中');
   });
