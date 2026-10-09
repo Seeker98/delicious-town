@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { userWithRole } from '../../../test/admin';
 import { createShard } from '../../../test/fixtures';
@@ -113,5 +114,73 @@ describe('后台称号', () => {
       .orderBy('id')
       .execute();
     expect(audit.map((a) => a.action)).toEqual(['title.create', 'title.delete']);
+  });
+
+  /** 另开一个事务做 fn，做完后停住，等 release 才提交 */
+  function holdTx(fn: (tx: typeof ctx.deps.db) => Promise<void>) {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    let ready!: () => void;
+    const started = new Promise<void>((r) => (ready = r));
+    const done = ctx.deps.db.transaction().execute(async (tx) => {
+      await fn(tx);
+      ready();
+      await gate;
+    });
+    return { started, release, done };
+  }
+  const tick = () => new Promise((r) => setTimeout(r, 300));
+
+  it('删称号时正好有一封邮件在发：等邮件提交后再查引用，查到就拒绝（backlog 1010）', async () => {
+    const c = await create({ title: '并发发信' });
+    const shardId = await createShard(ctx.deps.db);
+    const p = await playerIn(ctx, shardId);
+    // 模拟发邮件的事务：锁住称号、写进邮件，还没提交
+    const h = holdTx(async (tx) => {
+      await sql`select id from custom_icon where id = ${c.id} for share`.execute(tx);
+      await tx
+        .insertInto('mail')
+        .values({
+          scope: 'rest',
+          shard_id: shardId,
+          rest_id: p.restId,
+          title: 't',
+          body: 'b',
+          items: JSON.stringify({ icons: [{ key: c.key, title: '并发发信' }] }),
+          source: 'admin',
+        })
+        .execute();
+    });
+    await h.started;
+    const del = post(`${A}/${c.id}/delete`);
+    await tick();
+    h.release();
+    await h.done;
+    expect((await del).json.params).toMatchObject({ reason: 'title_in_use' });
+  });
+
+  it('发邮件时称号正好在被删：等删除提交后发现称号没了，整封拒绝（backlog 1010）', async () => {
+    const c = await create({ title: '并发删除' });
+    const shardId = await createShard(ctx.deps.db);
+    const p = await playerIn(ctx, shardId);
+    const h = holdTx(async (tx) => {
+      await tx.deleteFrom('custom_icon').where('id', '=', c.id).execute();
+    });
+    await h.started;
+    const send = post('/api/v1/admin/mails', {
+      scope: 'rest',
+      shardId,
+      restIds: [p.restId],
+      title: '称号',
+      body: '送你',
+      items: { icons: [{ key: c.key }] },
+    });
+    await tick();
+    h.release();
+    await h.done;
+    const r = await send;
+    expect(r.json.code).toBe('VALIDATION_FAILED');
+    const mails = await ctx.deps.db.selectFrom('mail').select('id').where('rest_id', '=', p.restId).execute();
+    expect(mails).toHaveLength(0);
   });
 });

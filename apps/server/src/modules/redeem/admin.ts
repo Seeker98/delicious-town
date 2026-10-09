@@ -11,7 +11,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
-import { checkRewardIcons, checkRewardItems } from '../mail/reward';
+import { checkRewardIcons, checkRewardItems, lockRewardIcons } from '../mail/reward';
 import { randomCode } from './code';
 
 const LIST_MAX = 100;
@@ -184,6 +184,7 @@ export function createAdminCodes(game: Game) {
     async createShared(actor: AdminActor, b: CreateSharedCodeInput): Promise<AdminCodeDto> {
       b = { ...b, items: await checkInput(b) };
       const id = await db.transaction().execute(async (tx) => {
+        await lockRewardIcons(tx, b.items);
         let row: { id: number } | undefined;
         for (let i = 0; i < (b.code ? 1 : RETRIES) && !row; i++) {
           row = await tx
@@ -226,6 +227,7 @@ export function createAdminCodes(game: Game) {
         });
       b = { ...b, items: await checkInput(b) };
       const batchId = await db.transaction().execute(async (tx) => {
+        await lockRewardIcons(tx, b.items);
         const values = common(b, actor);
         const ids: number[] = [];
         for (let round = 0; round < RETRIES && ids.length < b.count; round++) {
