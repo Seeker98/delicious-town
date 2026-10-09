@@ -734,6 +734,14 @@ describe('酒吧配置（子项目 4C-1）', () => {
     const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
     expect(errors).toContain('tuning.bar.slotFloorAwardId 555 not in slot awards');
   });
+
+  it('保底奖项要是稀有的（“平均每几次出一次稀有”把保底都算成稀有，backlog 1010）', () => {
+    const src = source();
+    const tuning = structuredClone(src['game/tuning']) as { bar: { slotFloorAwardId: number } };
+    tuning.bar.slotFloorAwardId = 99;
+    const { errors } = buildBundle({ ...src, 'game/tuning': tuning });
+    expect(errors).toContain('tuning.bar.slotFloorAwardId 99 is not a rare award');
+  });
 });
 
 describe('厨塔配置（子项目 4C-2）', () => {

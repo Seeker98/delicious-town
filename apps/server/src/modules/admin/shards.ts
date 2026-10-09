@@ -4,6 +4,7 @@ import {
   GOODS_TYPE,
   isFeatureEnabled,
   kujiErrors,
+  slotFloorErrors,
   resolveShardSettings,
   retiredErrors,
   retiredOf,
@@ -96,6 +97,12 @@ export function createAdminShards(game: Game, log?: WarnLog) {
     if (fund.length > 0)
       throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
         issues: fund.map((message) => ({ path: 'tuning.fund', message })),
+      });
+    // 老虎机保底奖（backlog 1010）：和配置构建同一套检查
+    const slot = slotFloorErrors(resolved.tuning.bar.slotFloorAwardId, config.bundle.slotAwards);
+    if (slot.length > 0)
+      throw new AppError(ErrorCode.INVALID_CONFIG, 400, {
+        issues: slot.map((message) => ({ path: 'tuning.bar.slotFloorAwardId', message })),
       });
     // 下架的道具、食材（问题记录 367）：和配置构建同一套检查，区服数值的奖励里不能再写它们
     const retired = retiredErrors(tuningRefs(resolved.tuning), retiredOf(config.bundle));

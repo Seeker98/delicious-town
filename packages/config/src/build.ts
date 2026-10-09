@@ -17,6 +17,7 @@ import { foodWeights } from './foodSupply';
 import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
+import { slotFloorErrors } from './slot';
 import { checkSettingDocs } from './settingDocs';
 import { applyStressTables } from './stressTable';
 import { isNewId, type IdKind } from './renumber';
@@ -989,8 +990,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   for (const level of new Set(tuning.bar.deal.prizes.filter((p) => p.kind === 'food').map((p) => p.level)))
     if (!foods.some((f) => f.level === level && f.odds === 100 && !f.retired))
       errors.push(`tuning.bar.deal.prizes: no common level-${level} food to draw`);
-  if (!slotAwards.some((a) => a.id === tuning.bar.slotFloorAwardId && a.kind !== 'empty'))
-    errors.push(`tuning.bar.slotFloorAwardId ${tuning.bar.slotFloorAwardId} not in slot awards`);
+  errors.push(...slotFloorErrors(tuning.bar.slotFloorAwardId, slotAwards));
   // 神秘礼券、蟹币、神灯（GOODS.mysteryTicket / krabCoin / magicLamp）
   for (const id of [GOODS.mysteryTicket, GOODS.krabCoin, GOODS.magicLamp])
     if (!goodsIds.has(id)) errors.push(`bar references unknown goods ${id}`);
