@@ -18,7 +18,7 @@ describe('后台发个性图标', () => {
     const url = `/api/v1/admin/restaurants/${p.restId}/icons`;
     const g = await call(ctx.app, 'POST', url, { cookie: admin.cookie, body: { key: 'founder' } });
     expect(g.json.data).toEqual([
-      expect.objectContaining({ key: 'founder', title: '开服元老', shown: false }),
+      expect.objectContaining({ key: 'founder', title: '开服元老', shown: true, expiresAt: null }),
     ]);
     expect((await call(ctx.app, 'POST', url, { cookie: mod.cookie, body: { key: 'helper' } })).status).toBe(
       404,
@@ -36,5 +36,36 @@ describe('后台发个性图标', () => {
       .orderBy('id')
       .execute();
     expect(audit.map((a) => a.action)).toEqual(['restaurant.icon.grant', 'restaurant.icon.revoke']);
+  });
+
+  it('有效期：领取后 N 天、到某个时间；先发 7 天再发永久变永久；时间已过报错（定制称号设计 三）', async () => {
+    const admin = await userWithRole(ctx, 'admin');
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const url = `/api/v1/admin/restaurants/${p.restId}/icons`;
+    const post = (body: unknown) => call(ctx.app, 'POST', url, { cookie: admin.cookie, body });
+    const now = ctx.deps.now();
+    const a = await post({ key: 'chef', days: 7 });
+    const exp = new Date(a.json.data[0].expiresAt as string).getTime();
+    expect(Math.abs(exp - (now.getTime() + 7 * 86_400_000))).toBeLessThan(60_000);
+    expect((await post({ key: 'chef' })).json.data[0].expiresAt).toBeNull();
+    const until = new Date(now.getTime() + 3 * 86_400_000).toISOString();
+    expect((await post({ key: 'artist', until })).json.data[1].expiresAt).toBe(until);
+    const past = await post({ key: 'helper', until: '2020-01-01T00:00:00Z' });
+    expect(past.json.code).toBe('VALIDATION_FAILED');
+  });
+
+  it('能发定制称号，返回定制的名字；停用的不能发', async () => {
+    const admin = await userWithRole(ctx, 'admin');
+    const p = await playerIn(ctx, await createShard(ctx.deps.db));
+    const url = `/api/v1/admin/restaurants/${p.restId}/icons`;
+    const [ok, off] = await ctx.deps.db
+      .insertInto('custom_icon')
+      .values([{ title: '老王的红烧肉' }, { title: '停用的', retired: true }])
+      .returning('id')
+      .execute();
+    const g = await call(ctx.app, 'POST', url, { cookie: admin.cookie, body: { key: `c${ok!.id}` } });
+    expect(g.json.data).toEqual([expect.objectContaining({ key: `c${ok!.id}`, title: '老王的红烧肉' })]);
+    const bad = await call(ctx.app, 'POST', url, { cookie: admin.cookie, body: { key: `c${off!.id}` } });
+    expect(bad.json.code).toBe('VALIDATION_FAILED');
   });
 });

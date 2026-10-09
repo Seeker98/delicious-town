@@ -27,18 +27,18 @@ describe('后台邮件（HTTP）', () => {
     expect((await send(mod.cookie, body)).status).toBe(404);
     const res = await send(admin.cookie, body);
     expect(res.status).toBe(200);
-    expect(res.json.data).toMatchObject({ scope: 'shard', title: '开服礼', claimedCount: 0 });
+    expect(res.json.data).toMatchObject([{ scope: 'shard', title: '开服礼', claimedCount: 0 }]);
     const audit = await t.db
       .selectFrom('audit_log')
       .select('action')
       .where('action', '=', 'mail.send')
-      .where('target', '=', `mail:${res.json.data.id}`)
+      .where('target', '=', `mail:${res.json.data[0].id}`)
       .executeTakeFirst();
     expect(audit).toBeDefined();
     const list = await call(ctx.app, 'GET', `/api/v1/admin/mails?shardId=${r.shardId}`, {
       cookie: mod.cookie,
     });
-    expect(list.json.data.map((m: { id: number }) => m.id)).toContain(res.json.data.id);
+    expect(list.json.data.map((m: { id: number }) => m.id)).toContain(res.json.data[0].id);
   });
 
   it('附件里的道具不存在、单店邮件的店不在该区服时拒绝', async () => {
@@ -77,14 +77,14 @@ describe('后台邮件（HTTP）', () => {
       body: 'b',
       items: { coin: 1 },
     });
-    await t.game.mail.claim(r, res.json.data.id);
-    const rv = await call(ctx.app, 'POST', `/api/v1/admin/mails/${res.json.data.id}/revoke`, {
+    await t.game.mail.claim(r, res.json.data[0].id);
+    const rv = await call(ctx.app, 'POST', `/api/v1/admin/mails/${res.json.data[0].id}/revoke`, {
       cookie: admin.cookie,
       body: {},
     });
     expect(rv.json.data).toMatchObject({ claimedCount: 1 });
     expect(rv.json.data.revokedAt).not.toBeNull();
-    expect((await t.game.mail.list(r)).items.map((m) => m.id)).not.toContain(res.json.data.id);
+    expect((await t.game.mail.list(r)).items.map((m) => m.id)).not.toContain(res.json.data[0].id);
   });
 
   it('补偿改为发邮件：不直接到账，玩家邮箱里出现一封带同样附件的邮件', async () => {

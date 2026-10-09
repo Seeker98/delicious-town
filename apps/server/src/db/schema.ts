@@ -441,6 +441,18 @@ export interface RestDoorTable {
   acquired_at: TsDefault;
 }
 
+/** 定制称号（问题记录 539）：键是 c<id> */
+export interface CustomIconTable {
+  id: Generated<number>;
+  title: string;
+  descr: Nullable<string>;
+  note: Nullable<string>;
+  retired: Default<boolean>;
+  created_by: Nullable<number>;
+  created_at: TsDefault;
+  updated_at: TsDefault;
+}
+
 export interface RestIconTable {
   id: Generated<number>;
   rest_id: number;
@@ -1432,6 +1444,7 @@ export interface DB {
   cupboard_flip: CupboardFlipTable;
   thumb: ThumbTable;
   rest_icon: RestIconTable;
+  custom_icon: CustomIconTable;
   rest_door: RestDoorTable;
   npc_invite: NpcInviteTable;
   equip: EquipTable;

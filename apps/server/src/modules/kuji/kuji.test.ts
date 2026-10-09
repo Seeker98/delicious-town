@@ -433,6 +433,29 @@ describe('豪华一番赏（240-2）', () => {
     expect(await goodsNum(t, s.restaurantId, DX)).toBe(3);
   });
 
+  it('后台先发了限时的 A 赏称号，抽中后变永久（定制称号设计 三）', async () => {
+    t.clock.set(gameTime('2026-10-15', 12));
+    const shardId = await createShard(t.db);
+    const r = await dxPlayer(shardId, { tickets: 20 });
+    await t.db
+      .insertInto('rest_icon')
+      .values({
+        rest_id: r.restaurantId,
+        icon_key: 'kuji_dx_2610_a',
+        expires_at: new Date(t.clock.now.getTime() + 86_400_000),
+      })
+      .execute();
+    await svc().draw(r, 10, 'deluxe');
+    await svc().draw(r, 10, 'deluxe');
+    const row = await t.db
+      .selectFrom('rest_icon')
+      .select('expires_at')
+      .where('rest_id', '=', r.restaurantId)
+      .where('icon_key', '=', 'kuji_dx_2610_a')
+      .executeTakeFirstOrThrow();
+    expect(row.expires_at).toBeNull();
+  });
+
   it('十月开的池发十月称号；抽完发最后赏、开下一池；A 赏和最后赏全服广播且带 line；最近的大赏分线（Review Focus 4、5）', async () => {
     t.clock.set(gameTime('2026-10-15', 12));
     const shardId = await createShard(t.db);

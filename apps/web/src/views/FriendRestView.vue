@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconTag from '../components/IconTag.vue';
 import AcquireCard from '../components/acquire/AcquireCard.vue';
 import HiphopCard from '../components/hiphop/HiphopCard.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -120,9 +121,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
     <!-- 收购（问题记录 421）：蟹老板、自己的店不显示 -->
     <AcquireCard v-if="restStore.featureOn('acquire') && !rest.npc && rest.id !== mine" :rest-id="rest.id" />
     <div v-if="rest.icons.length > 0" class="mb-2">
-      <span v-for="i in rest.icons" :key="i.key" class="badge bg-warning text-dark me-1">{{
-        catalog.icon(i.key)?.title ?? i.title
-      }}</span>
+      <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
     </div>
     <!-- 每个部位一行，强化等级单独标出；名字长时自己折行，不和别的部位挤在一段里（问题记录 323） -->
     <div v-if="equips.length > 0" class="border rounded p-2 mb-2 small" data-testid="friend-equips">

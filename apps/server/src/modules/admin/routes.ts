@@ -13,6 +13,9 @@ import {
   createGrantBody,
   economyQuery,
   grantIconBody,
+  createTitleBody,
+  updateTitleBody,
+  titleListQuery,
   grantListQuery,
   codeListQuery,
   grantPreviewQuery,
@@ -51,6 +54,7 @@ import { createAdminItems } from './items';
 import { auditPage } from './audit';
 import { createAdminGrants } from './grants';
 import { createAdminIcons } from './icons';
+import { createAdminTitles } from './titles';
 import { createLaunchCheck } from './launch';
 import { createAdminPlayers } from './players';
 import { createAdminShards } from './shards';
@@ -128,13 +132,32 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     });
     r.post('/restaurants/:id/icons', async (req) => {
       const a = await requireRole(db, req, 'admin');
-      return ok(await icons.grant(a, id(req), parse(grantIconBody, req.body).key));
+      return ok(await icons.grant(a, id(req), parse(grantIconBody, req.body)));
     });
     r.post('/restaurants/:id/icons/:iconId/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
       const iconId = Number((req.params as { iconId: string }).iconId);
       if (!Number.isInteger(iconId) || iconId <= 0) throw new AppError(ErrorCode.NOT_FOUND, 404);
       return ok(await icons.revoke(a, id(req), iconId));
+    });
+
+    const titles = createAdminTitles(game);
+    r.get('/titles', async (req) => {
+      await requireRole(db, req, 'mod');
+      return ok(await titles.list(parse(titleListQuery, req.query).q));
+    });
+    r.post('/titles', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await titles.create(a, parse(createTitleBody, req.body)));
+    });
+    r.post('/titles/:id', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      return ok(await titles.update(a, id(req), parse(updateTitleBody, req.body)));
+    });
+    r.post('/titles/:id/delete', async (req) => {
+      const a = await requireRole(db, req, 'admin');
+      await titles.remove(a, id(req));
+      return ok(null);
     });
 
     const grants = createAdminGrants(game);

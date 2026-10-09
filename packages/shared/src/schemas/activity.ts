@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ACTIVITY_ACTIONS } from '../activity';
 import { boostDefOf, type BoostItem } from '../boost';
-import { limitedText, rewardItems, type RewardItems } from './mail';
+import { limitedText, rewardItemsNoIcons as rewardItems, type RewardItems } from './mail';
 
 export const ACTIVITY_TITLE_MAX = 40;
 export const ACTIVITY_BODY_MAX = 1000;

@@ -29,5 +29,10 @@ export default {
     exp: (n: string) => `经验 ${n}`,
     renown: (n: string) => `声望 ${n}`,
     hat: (prefix: string, name: string) => `${prefix}•${name}之帽`,
+    /** 称号（问题记录 539）：定制称号的名字在所有语言里都是原文 */
+    icon: (title: string) => `称号「${title}」`,
+    iconDays: (n: number) => ` (领取后 ${n} 天)`,
+    iconUntil: (time: string) => ` (到 ${time})`,
+    iconExpired: (title: string) => `称号「${title}」已过期`,
   },
 };

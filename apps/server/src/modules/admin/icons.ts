@@ -1,13 +1,17 @@
 import { ErrorCode, type AdminIconDto } from '@dt/shared';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
+import { iconDefs } from '../icons/defs';
+import { expiryOf, grantIcon } from '../icons/grant';
 import type { AdminActor } from './access';
 import { writeAudit } from './audit';
 
-/** 后台的个性图标：发放、收回（设计文档 §4.12） */
+const invalid = (path: string, message: string) =>
+  new AppError(ErrorCode.VALIDATION_FAILED, 400, { issues: [{ path, message }] });
+
+/** 后台的个性图标：发放、收回（设计文档 §4.12）；能发定制称号、能限时（问题记录 539） */
 export function createAdminIcons(game: Game) {
   const { db, config } = game.app;
-  const defs = new Map(config.bundle.looks.icons.map((i) => [i.key, i]));
 
   async function list(restId: number): Promise<AdminIconDto[]> {
     const rows = await db
@@ -16,6 +20,11 @@ export function createAdminIcons(game: Game) {
       .where('rest_id', '=', restId)
       .orderBy('id')
       .execute();
+    const defs = await iconDefs(
+      db,
+      config,
+      rows.map((r) => r.icon_key),
+    );
     return rows.map((r) => ({
       id: r.id,
       key: r.icon_key,
@@ -29,24 +38,26 @@ export function createAdminIcons(game: Game) {
   return {
     list,
 
-    async grant(actor: AdminActor, restId: number, key: string): Promise<AdminIconDto[]> {
-      if (!defs.has(key))
-        throw new AppError(ErrorCode.VALIDATION_FAILED, 400, {
-          issues: [{ path: 'key', message: 'unknown' }],
-        });
+    async grant(
+      actor: AdminActor,
+      restId: number,
+      b: { key: string; days?: number; until?: string },
+    ): Promise<AdminIconDto[]> {
+      const def = (await iconDefs(db, config, [b.key])).get(b.key);
+      if (!def) throw invalid('key', 'unknown');
+      if (def.retired) throw invalid('key', 'retired');
+      const now = game.deps.now();
+      const expiresAt = expiryOf(b, now);
+      if (expiresAt === 'expired') throw invalid('until', 'past');
       const r = await db.selectFrom('restaurant').select('id').where('id', '=', restId).executeTakeFirst();
       if (!r) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
       await db.transaction().execute(async (tx) => {
-        await tx
-          .insertInto('rest_icon')
-          .values({ rest_id: restId, icon_key: key, granted_by: actor.accountId })
-          .onConflict((oc) => oc.columns(['rest_id', 'icon_key']).doUpdateSet({ expires_at: null }))
-          .execute();
+        await grantIcon(tx, { restId, key: b.key, expiresAt, now, grantedBy: actor.accountId });
         await writeAudit(tx, {
           actor,
           action: 'restaurant.icon.grant',
           target: `restaurant:${restId}`,
-          detail: { key },
+          detail: { key: b.key, expiresAt: expiresAt?.toISOString() ?? null },
         });
       });
       return list(restId);

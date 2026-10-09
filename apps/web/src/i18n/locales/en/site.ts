@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    titles1009:
+      'Title badges now share one yellow style on your home page and when visiting other restaurants. You may now receive titles by mail or redeem code; timed titles show how long they last. After claiming, choose which to show on the Appearance page',
     devil1009:
       "Devil's Chili changes: up to 20 games a day; winnings now follow a fixed payout table. With a 1-voucher stake, surviving 1/2/3 cups wins back 1/2/3 (same as before); a 5 stake wins back 7/9/12, 10 wins back 14/18/25 and 20 wins back 27/36/49, a little less than before. The table is shown in the game",
     fix1009:

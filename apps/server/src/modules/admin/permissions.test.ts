@@ -18,6 +18,7 @@ let ids: {
   reportIds: number[];
   batchId: number;
   predictId: number;
+  titleId: number;
 };
 let cookies: Record<'player' | 'mod' | 'admin', string>;
 
@@ -140,6 +141,11 @@ beforeAll(async () => {
     .insertInto('town_daily')
     .values({ shard_id: shardId, day: DAILY_DAY, status: 'pending', facts: '{}' })
     .execute();
+  const title = await ctx.deps.db
+    .insertInto('custom_icon')
+    .values({ title: '权限测试' })
+    .returning('id')
+    .executeTakeFirstOrThrow();
   ids = {
     shardId,
     accountId: target.accountId,
@@ -153,6 +159,7 @@ beforeAll(async () => {
     reportIds,
     batchId: single.id,
     predictId: Number(predict.id),
+    titleId: title.id,
   };
   cookies = {
     player: (await userWithRole(ctx, 'player')).cookie,
@@ -321,6 +328,27 @@ const CASES: Case[] = [
   },
   { method: 'GET', route: '/api/v1/admin/grants', url: () => '/api/v1/admin/grants', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/mails', url: () => '/api/v1/admin/mails', min: 'mod' },
+  { method: 'GET', route: '/api/v1/admin/titles', url: () => '/api/v1/admin/titles', min: 'mod' },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/titles',
+    url: () => '/api/v1/admin/titles',
+    body: () => ({ title: '权限新建' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/titles/:id',
+    url: () => `/api/v1/admin/titles/${ids.titleId}`,
+    body: () => ({ note: '改一下' }),
+    min: 'admin',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/titles/:id/delete',
+    url: () => `/api/v1/admin/titles/${ids.titleId}/delete`,
+    min: 'admin',
+  },
   { method: 'GET', route: '/api/v1/admin/codes', url: () => '/api/v1/admin/codes', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/reports', url: () => '/api/v1/admin/reports', min: 'mod' },
   { method: 'GET', route: '/api/v1/admin/launch-check', url: () => '/api/v1/admin/launch-check', min: 'mod' },

@@ -30,5 +30,10 @@ export default {
     exp: (n: string) => `經驗 ${n}`,
     renown: (n: string) => `聲望 ${n}`,
     hat: (prefix: string, name: string) => `${prefix}•${name}之帽`,
+    /** 稱號（問題記錄 539）：定製稱號的名字在所有語言裡都是原文 */
+    icon: (title: string) => `稱號「${title}」`,
+    iconDays: (n: number) => ` (領取後 ${n} 天)`,
+    iconUntil: (time: string) => ` (到 ${time})`,
+    iconExpired: (title: string) => `稱號「${title}」已過期`,
   },
 };

@@ -6,7 +6,7 @@ import { invalidState } from '../../core/errors';
 import { runOp, type Op, type OpResult } from '../../core/op';
 import type { DB } from '../../db/schema';
 import { notFound } from '../equip/service';
-import { brokenItems, grantRewardOp } from './reward';
+import { brokenItems, grantRewardOp, liveIconKeys } from './reward';
 import { AppError } from '../../http/errors';
 import type { JobLogger } from '../../worker/scheduler';
 import { claimBlock, hasItems } from './rules';
@@ -66,6 +66,11 @@ export async function visibleMails(
   ]);
   if (opts.id !== undefined) q = q.where('m.id', '=', opts.id);
   const rows = await q.orderBy('m.created_at', 'desc').orderBy('m.id', 'desc').limit(opts.limit).execute();
+  const icons = await liveIconKeys(
+    db,
+    config,
+    rows.map((r) => (r.items as RewardItems | null) ?? null),
+  );
   return rows.map((r) => ({
     id: r.id,
     title: r.title,
@@ -79,7 +84,7 @@ export async function visibleMails(
     read: r.read_at !== null,
     claimed: r.claimed_at !== null,
     minLevel: r.min_level,
-    broken: brokenItems(config, (r.items as RewardItems | null) ?? null),
+    broken: brokenItems(config, (r.items as RewardItems | null) ?? null, icons),
   }));
 }
 
@@ -114,8 +119,7 @@ export async function claimOne(o: Op, id: number): Promise<MailClaimDto> {
       where mail_state.claimed_at is null
     returning mail_id`.execute(o.tx);
   if (r.rows.length === 0) throw invalidState('mail_claimed');
-  const items = m.items!;
-  await grantRewardOp(o, items, {
+  const items = await grantRewardOp(o, m.items!, {
     source: 'mail.claim',
     logType: 'mail.claim',
     logParams: { mailId: id, title: m.title, ...(m.tpl ? { tpl: m.tpl } : {}) },

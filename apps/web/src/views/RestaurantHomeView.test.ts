@@ -387,10 +387,9 @@ describe('RestaurantHomeView', () => {
     });
     const w = await mountView();
     expect(w.find('[data-testid="my-icons"]').text()).toContain('开服元老');
-    // 个性图标用浅色描边小标签，不再和经验条一样是大黄块（问题记录 198）
-    const chip = w.find('[data-testid="my-icons"] span');
-    expect(chip.classes()).toContain('dt-icon-tag');
-    expect(chip.classes()).not.toContain('bg-warning');
+    // 称号徽章和访问好友页统一成黄底（问题记录 539，推翻 198 的浅色描边）
+    const chip = w.find('[data-testid="my-icons"] [data-testid="icon-tag"]');
+    expect(chip.classes()).toContain('bg-warning');
     // 经验条也不再用亮黄色（问题记录 212）
     expect(w.find('[data-testid="exp-bar"]').classes()).toContain('dt-exp-bar');
     expect(w.find('[data-testid="exp-bar"]').classes()).not.toContain('bg-warning');

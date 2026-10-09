@@ -29,6 +29,10 @@ const util: Messages['util'] = {
     exp: (n) => `${n} EXP`,
     renown: (n) => `${n} renommée`,
     hat: (prefix, name) => `Chapeau ${name} ${prefix}`,
+    icon: (title) => `Titre «\u202f${title}\u202f»`,
+    iconDays: (n) => ` (${n} ${plFr(String(n), 'jour', 'jours')} après réception)`,
+    iconUntil: (time) => ` (jusqu’au ${time})`,
+    iconExpired: (title) => `Titre «\u202f${title}\u202f» expiré`,
   },
 };
 export default util;

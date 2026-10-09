@@ -19,6 +19,7 @@ vi.mock('../../api/admin', () => ({
     rename: vi.fn(),
     setRole: vi.fn(),
     icons: vi.fn().mockResolvedValue([]),
+    titles: vi.fn().mockResolvedValue([]),
   },
 }));
 

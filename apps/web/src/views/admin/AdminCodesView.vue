@@ -34,6 +34,13 @@ const exported = ref<{ batchId: number; text: string } | null>(null);
 
 const search = ref('');
 const hasRewards = computed(() => Object.keys(rewards.value).length > 0);
+/** 附件带称号时的两条提示（定制称号设计 三） */
+const iconSharedHint = computed(() => kind.value === 'shared' && (rewards.value.icons?.length ?? 0) > 0);
+const iconUntilHint = computed(() => {
+  if (!endsAt.value) return false;
+  const end = new Date(fromGameInput(endsAt.value)).getTime();
+  return (rewards.value.icons ?? []).some((i) => i.until && new Date(i.until).getTime() < end);
+});
 /** 选了"当前区服"却没在顶部选区服：以前点了没反应（backlog 兑换码） */
 const noShard = computed(() => scope.value === 'shard' && !admin.shardId);
 const countOk = computed(
@@ -236,7 +243,13 @@ const period = (c: AdminCodeDto) =>
       placeholder="备注（运营自己看，≤ 200 字）"
       data-testid="code-note"
     />
-    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" @over="over = $event" />
+    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" :icons="true" @over="over = $event" />
+    <div v-if="iconSharedHint" class="text-warning small mb-1" data-testid="code-icon-shared-hint">
+      共享码可以被转发，谁拿到都能兑换；称号只想给特定的人，请用一次性码。
+    </div>
+    <div v-if="iconUntilHint" class="text-warning small mb-1" data-testid="code-icon-until-hint">
+      兑换码截止前称号就过期了，过期后兑换会跳过称号（别的照发）。
+    </div>
     <button
       type="button"
       class="btn btn-primary btn-sm"

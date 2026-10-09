@@ -7,6 +7,7 @@ import { invalidState, limitReached } from '../../core/errors';
 import { emitAction } from '../../core/action';
 import { opNews, runOp, setRest, type Op, type OpResult } from '../../core/op';
 import { spendCoin } from '../../core/resources';
+import { iconDefs } from '../icons/defs';
 
 /** 最多同时展示的个性图标数（规格书 02 §2.8） */
 export const MAX_SHOWN_ICONS = 5;
@@ -38,7 +39,6 @@ export function createLooks(d: GameDeps) {
         .select(['door', 'avatar', 'notice'])
         .where('id', '=', ctx.restaurantId)
         .executeTakeFirstOrThrow();
-      const defs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
       const rows = await d.db
         .selectFrom('rest_icon')
         .select(['id', 'icon_key', 'shown', 'expires_at'])
@@ -47,6 +47,7 @@ export function createLooks(d: GameDeps) {
         .orderBy('id')
         .execute();
       const owned = new Set(rows.map((x) => x.icon_key));
+      const defs = await iconDefs(d.db, d.config, owned);
       const doors = await d.db
         .selectFrom('rest_door')
         .select('door_id')
@@ -66,7 +67,7 @@ export function createLooks(d: GameDeps) {
                   id: x.id,
                   key: def.key,
                   title: def.title,
-                  desc: def.desc,
+                  desc: def.desc ?? '',
                   shown: x.shown,
                   expiresAt: x.expires_at?.toISOString() ?? null,
                 },

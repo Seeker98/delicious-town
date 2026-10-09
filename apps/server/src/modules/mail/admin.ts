@@ -4,7 +4,7 @@ import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
 import type { AdminActor } from '../admin/access';
 import { writeAudit } from '../admin/audit';
-import { checkRewardItems } from './reward';
+import { checkRewardIcons, checkRewardItems } from './reward';
 import { sendMail } from './send';
 
 /** 后台邮件（设计 §6、裁定 8、27）：发送、列表、撤回；写操作都写审计 */
@@ -47,8 +47,16 @@ export function createAdminMail(game: Game) {
   }
 
   return {
-    async send(actor: AdminActor, b: SendMailInput): Promise<AdminMailDto> {
-      if (b.items) checkRewardItems(config, b.items);
+    /**
+     * 发邮件。单店范围可以一次给几家店（定制称号设计 三）：去重后每家一封单店邮件，收件人互相看不到；
+     * 有一家不在这个区服就整个拒绝。审计记一条，带全部店和邮件 id
+     */
+    async send(actor: AdminActor, b: SendMailInput): Promise<AdminMailDto[]> {
+      let items = b.items ?? null;
+      if (items) {
+        checkRewardItems(config, items);
+        items = await checkRewardIcons(db, config, items, game.deps.now());
+      }
       if (b.scope !== 'all') {
         const shard = await db
           .selectFrom('shard')
@@ -57,43 +65,50 @@ export function createAdminMail(game: Game) {
           .executeTakeFirst();
         if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
       }
+      const restIds = b.scope === 'rest' ? [...new Set(b.restIds ?? [b.restId!])] : [null];
       if (b.scope === 'rest') {
-        const rest = await db
+        const found = await db
           .selectFrom('restaurant')
           .select('id')
-          .where('id', '=', b.restId!)
+          .where('id', 'in', restIds as number[])
           .where('shard_id', '=', b.shardId!)
-          .executeTakeFirst();
-        if (!rest) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404);
+          .execute();
+        const ok = new Set(found.map((r) => r.id));
+        const missing = (restIds as number[]).filter((id) => !ok.has(id));
+        if (missing.length > 0) throw new AppError(ErrorCode.RESTAURANT_NOT_FOUND, 404, { ids: missing });
       }
-      const id = await db.transaction().execute(async (tx) => {
-        const mailId = await sendMail(tx, {
-          scope: b.scope,
-          shardId: b.scope === 'all' ? null : b.shardId!,
-          restId: b.scope === 'rest' ? b.restId! : null,
-          minLevel: b.minLevel ?? null,
-          title: b.title,
-          body: b.body,
-          items: b.items ?? null,
-          source: 'admin',
-          actorAccountId: actor.accountId,
-        });
+      const ids = await db.transaction().execute(async (tx) => {
+        const mailIds: number[] = [];
+        for (const restId of restIds)
+          mailIds.push(
+            await sendMail(tx, {
+              scope: b.scope,
+              shardId: b.scope === 'all' ? null : b.shardId!,
+              restId,
+              minLevel: b.minLevel ?? null,
+              title: b.title,
+              body: b.body,
+              items,
+              source: 'admin',
+              actorAccountId: actor.accountId,
+            }),
+          );
         await writeAudit(tx, {
           actor,
           action: 'mail.send',
-          target: `mail:${mailId}`,
+          target: `mail:${mailIds[0]}`,
           detail: {
             scope: b.scope,
             shardId: b.shardId ?? null,
-            restId: b.restId ?? null,
+            ...(b.scope === 'rest' ? { restIds, mailIds } : {}),
             minLevel: b.minLevel ?? null,
             title: b.title,
-            items: b.items ?? null,
+            items,
           },
         });
-        return mailId;
+        return mailIds;
       });
-      return one(id);
+      return Promise.all(ids.map(one));
     },
 
     /** 最近 50 封；指定区服时也列出发给全部区服的 */

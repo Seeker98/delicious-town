@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    titles1009:
+      'Les badges de titre ont désormais le même style jaune sur votre accueil et chez les autres restaurants. Vous pouvez maintenant recevoir des titres par courrier ou code cadeau\u202f; les titres temporaires indiquent leur durée. Après réception, choisissez ceux à afficher sur la page Apparence',
     devil1009:
       "Piment du Diable\u202f: 20 parties par jour au maximum\u202f; les gains suivent désormais un tableau fixe. Avec une mise de 1 bon, tenir 1/2/3 verres rapporte 1/2/3 (comme avant)\u202f; une mise de 5 rapporte 7/9/12, 10 rapporte 14/18/25 et 20 rapporte 27/36/49, un peu moins qu'avant. Le tableau est affiché dans le jeu",
     fix1009:

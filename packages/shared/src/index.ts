@@ -34,6 +34,7 @@ export * from './rank';
 export * from './goodsIds';
 export * from './news';
 export * from './schemas/mail';
+export * from './schemas/titles';
 export * from './schemas/announce';
 export * from './schemas/site';
 export * from './schemas/redeem';

@@ -1,5 +1,6 @@
 import type {
   AccountRole,
+  AdminTitleDto,
   AdminDailyDetailDto,
   AdminDailyEditBody,
   AdminDailyRowDto,
@@ -89,7 +90,7 @@ export const adminApi = {
   createGrant: (b: CreateGrantInput) => api.post<GrantDto>(`${A}/grants`, b),
   grants: (shardId?: number) => api.get<GrantDto[]>(`${A}/grants${qs({ shardId })}`),
   mails: (shardId?: number) => api.get<AdminMailDto[]>(`${A}/mails${qs({ shardId })}`),
-  sendMail: (b: SendMailInput) => api.post<AdminMailDto>(`${A}/mails`, b),
+  sendMail: (b: SendMailInput) => api.post<AdminMailDto[]>(`${A}/mails`, b),
   revokeMail: (id: number) => api.post<AdminMailDto>(`${A}/mails/${id}/revoke`, {}),
   reports: (q: { shardId?: number; status?: ReportStatus }) =>
     api.get<ReportCaseDto[]>(`${A}/reports${qs(q)}`),
@@ -173,8 +174,14 @@ export const adminApi = {
   audit: (q: { actor?: string; action?: string; before?: string }) =>
     api.get<AuditPageDto>(`${A}/audit${qs(q)}`),
   icons: (restId: number) => api.get<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`),
-  grantIcon: (restId: number, key: string) =>
-    api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`, { key }),
+  grantIcon: (restId: number, b: { key: string; days?: number; until?: string }) =>
+    api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons`, b),
+  titles: (q?: string) => api.get<AdminTitleDto[]>(`${A}/titles${qs({ q })}`),
+  createTitle: (b: { title: string; desc?: string; note?: string }) =>
+    api.post<AdminTitleDto>(`${A}/titles`, b),
+  updateTitle: (id: number, b: { title?: string; desc?: string; note?: string; retired?: boolean }) =>
+    api.post<AdminTitleDto>(`${A}/titles/${id}`, b),
+  deleteTitle: (id: number) => api.post<null>(`${A}/titles/${id}/delete`, {}),
   revokeIcon: (restId: number, iconId: number) =>
     api.post<AdminIconDto[]>(`${A}/restaurants/${restId}/icons/${iconId}/revoke`),
 };
