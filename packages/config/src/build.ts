@@ -798,6 +798,14 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   activationRewards.push(...actExtra.rewards);
   activationRewards.sort((a, b) => a.points - b.points);
   for (const r of actExtra.rewards) checkAward(`activation_reward ${r.points}`, r.award);
+  // 支线里写死的门槛（backlog）：服务端只在领 100 点那一档时记 activation.100、周榜前 5 名记 hiphop.top5
+  const questKeys = new Set(
+    questLinesRaw.flatMap((l) => l.steps.map((s) => (s.cond.kind === 'counter' ? s.cond.key : ''))),
+  );
+  if (questKeys.has('activation.100') && !activationRewards.some((r) => r.points === 100))
+    errors.push('quest key activation.100 needs a 100-point activation reward');
+  if (questKeys.has('hiphop.top5') && tuning && tuning.hiphop.weeklyCards.length < 5)
+    errors.push('quest key hiphop.top5 needs at least 5 tuning.hiphop.weeklyCards');
 
   const activationNames = new Set(activationTasks.map((a) => a.name));
   for (const [key, name] of Object.entries(actionMap.activation)) {

@@ -1393,6 +1393,21 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
   });
 
+  it('支线写死的门槛：“领 100 点活跃奖励”要有 100 点这一档，“周榜前 5”要有 5 张周榜卡（backlog）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const rewards = (structuredClone(src['dataset/activation_rewards']) as Array<{ dictval: number }>).filter(
+      (r) => r.dictval !== 100,
+    );
+    expect(buildBundle({ ...src, 'dataset/activation_rewards': rewards }).errors).toContain(
+      'quest key activation.100 needs a 100-point activation reward',
+    );
+    const tuning = structuredClone(src['game/tuning']) as { hiphop: { weeklyCards: number[] } };
+    tuning.hiphop.weeklyCards = tuning.hiphop.weeklyCards.slice(0, 4);
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'quest key hiphop.top5 needs at least 5 tuning.hiphop.weeklyCards',
+    );
+  });
+
   it('活跃度原表档位奖励里的道具也查编号（活跃度调整终审：原来只查新增档位）', () => {
     const src = readSourceDir(defaultDataDir());
     const rewards = structuredClone(src['dataset/activation_rewards']) as Array<{ note: string }>;
