@@ -120,7 +120,12 @@ const bar: Messages['bar'] = {
     rule1:
       'Six cups on the table; the bartender made one of them extra spicy. You go first, then take turns picking.',
     rule2:
-      'If the bartender gets it, you win: each cup you survive multiplies the pot by 1.4 (1/2/3 cups win back 1.4/1.96/2.74× your stake).',
+      'If the bartender gets it, you win. The more cups you survive, the more you win back (see the table; amounts include your stake).',
+    /** 今天的局数（2026-10-09 加了每日上限） */
+    today: (played, max) => `Today ${played}/${max} games`,
+    /** 赔付表：表头第一列和“活过 n 杯”列 */
+    payoutHead: 'Stake',
+    payoutCol: (n) => `${n} ${n === 1 ? 'cup' : 'cups'} survived`,
     rule3:
       "If you get it, you lose your stake and you're hungover for 1 hour (occupancy -10%). Getting it again while hungover restarts the hour; it doesn't stack.",
     askStake: 'How many Mystery Vouchers will you bet?',

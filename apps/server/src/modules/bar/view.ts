@@ -47,7 +47,7 @@ export async function barView(
     getDailies(
       db,
       rest.id,
-      ['bar.memory', 'bar.darts', 'bar.nim', 'bar.spice', 'bar.deal', 'town.talk.wenjie'],
+      ['bar.devil', 'bar.memory', 'bar.darts', 'bar.nim', 'bar.spice', 'bar.deal', 'town.talk.wenjie'],
       day,
     ),
   ]);
@@ -99,7 +99,13 @@ export async function barView(
       stats: stats.map((x) => ({ awardId: x.award_id, num: x.num })),
     },
     krabCoinTickets: t.krabCoinTickets,
-    devil: { stakes: t.devil.stakes, round: devil ? devilView(devil) : null },
+    devil: {
+      stakes: t.devil.stakes,
+      payouts: t.devil.payouts,
+      played: daily['bar.devil']!,
+      max: t.devil.dailyMax,
+      round: devil ? devilView(devil) : null,
+    },
     memory: {
       cost: t.memory.cost,
       played: daily['bar.memory']!,

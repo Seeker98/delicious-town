@@ -283,7 +283,7 @@
         { "minLevel": 6, "levels": [5, 5], "rare": 0.6 }
       ]
     },
-    "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "rate": 1.4, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
+    "devil": { "stakes": [1, 5, 10, 20], "cups": 6, "payouts": [[1, 2, 3], [7, 9, 12], [14, 18, 25], [27, 36, 49]], "dailyMax": 20, "hangoverMinutes": 60, "hangoverAtRate": -0.1, "newsSurvived": 3 },
     "memory": {
       "cost": 1, "dailyMax": 20, "ingredients": 8, "lengths": [3, 5, 7], "awardLevels": [2, 4, 8],
       "flashMs": 600, "gapMs": 200, "earlyMs": 300, "answerBaseMs": 3000, "answerPerItemMs": 1500

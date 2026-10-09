@@ -1,6 +1,7 @@
 import { FOODS, GOODS } from '@dt/config';
 import { luckRate, type BarAwardDto } from '@dt/shared';
 import type { TestGame } from '../../../test/game';
+import { devilPayout } from '../../modules/bar/rules';
 import { Mean, Tally, Trials, luckOf, mean, rate, shops, spread, times, trials } from './harness';
 
 /** 酒吧小游戏（设计 4C-1、4C-3 和之后的改版）。每个玩法：期望按数值表算，和实测比 */
@@ -16,6 +17,7 @@ const NO_DAILY = {
       deal: { dailyMax: 1e9 },
       spice: { dailyMax: 1e9 },
       nim: { dailyMax: 1e9 },
+      devil: { dailyMax: 1e9 },
     },
   },
 };
@@ -137,7 +139,7 @@ export async function barOdds(t: TestGame): Promise<void> {
   if (want('devil')) {
     const d = tb.devil;
     for (const stake of [1, d.stakes.at(-1)!]) {
-      const ctxs = await shops(t, 16, RICH);
+      const ctxs = await shops(t, 16, RICH, NO_DAILY);
       const survived = new Tally<string>();
       const back = new Mean();
       const n = times(30_000);
@@ -165,7 +167,7 @@ export async function barOdds(t: TestGame): Promise<void> {
         rate('魔鬼辣杯', `押 ${stake}：${key}`, survived.get(key), n, p);
       }
       let ev = 0;
-      for (let s = 1; 2 * s <= d.cups; s++) ev += Math.round(stake * d.rate ** s) / stake;
+      for (let s = 1; 2 * s <= d.cups; s++) ev += devilPayout(d, stake, s) / stake;
       mean('魔鬼辣杯', `押 ${stake}：拿回 / 押注（不算宿醉）`, back, ev * p);
     }
   }

@@ -517,14 +517,33 @@ export const tuningSchema = z.object({
       })
       .refine((x) => x.cups.length === x.tiers.length, 'cups and tiers must have the same length'),
     /** 魔鬼辣杯（子项目 4C-3） */
-    devil: z.object({
-      stakes: z.array(int.min(1)).min(1),
-      cups: int.min(2),
-      rate: num.min(1),
-      hangoverMinutes: int.min(0),
-      hangoverAtRate: num,
-      newsSurvived: int.min(1),
-    }),
+    devil: z
+      .object({
+        stakes: z.array(int.min(1)).min(1),
+        cups: int.min(2),
+        /**
+         * 赔付表（2026-10-09 用户定）：每档押注一行，第 k 个是活过 k 杯赢了拿回的礼券数（含押注）。
+         * 押 1 是 1/2/3（新手试玩不亏），其余按 1.35 倍取整，庄家约 5%~7%（原来 1.4 倍是玩家赚）
+         */
+        payouts: z.array(z.array(int.min(0))),
+        /** 每天最多几局（原来不限，连续玩可以稳定刷礼券） */
+        dailyMax: int.min(1),
+        hangoverMinutes: int.min(0),
+        hangoverAtRate: num,
+        newsSurvived: int.min(1),
+      })
+      .superRefine((d, ctx) => {
+        const per = Math.floor(d.cups / 2);
+        const ok =
+          d.payouts.length === d.stakes.length &&
+          d.payouts.every((row) => row.length === per && row.every((v, i) => i === 0 || v >= row[i - 1]!));
+        if (!ok)
+          ctx.addIssue({
+            code: 'custom',
+            path: ['payouts'],
+            message: `devil payouts must have one row per stake, ${per} non-decreasing numbers each`,
+          });
+      }),
     /** 记忆调酒 */
     memory: z.object({
       cost: int.min(0),

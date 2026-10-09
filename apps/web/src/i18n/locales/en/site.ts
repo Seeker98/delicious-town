@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    devil1009:
+      "Devil's Chili changes: up to 20 games a day; winnings now follow a fixed payout table. With a 1-voucher stake, surviving 1/2/3 cups wins back 1/2/3 (same as before); a 5 stake wins back 7/9/12, 10 wins back 14/18/25 and 20 wins back 27/36/49, a little less than before. The table is shown in the game",
     fix1009:
       'A batch of small fixes: the Love Necklace description no longer mentions the premium market; the side-quest step for reaching the top 10 of a limited-event contribution ranking now counts every place up to 10, not only the places that get a ranking reward; the Town Daily can page back to earlier days and splits paragraphs more reliably; wishes that have been removed no longer show a Chinese name in the news',
     daily1009:

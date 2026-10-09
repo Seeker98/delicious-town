@@ -124,7 +124,12 @@ const bar: Messages['bar'] = {
     rule1:
       'Six verres sur la table\u202f; le barman en a pimenté un. Vous commencez, puis vous choisissez chacun votre tour.',
     rule2:
-      'Si le barman tombe dessus, vous gagnez\u202f: chaque verre tenu multiplie le pot par 1,4 (1/2/3 verres rapportent 1,4/1,96/2,74 fois la mise).',
+      'Si le barman tombe dessus, vous gagnez\u202f: plus vous tenez de verres, plus vous récupérez (voir le tableau, mise comprise).',
+    /** 今天的局数（2026-10-09 加了每日上限） */
+    today: (played, max) => `Aujourd'hui\u202f: ${played}/${max} parties`,
+    /** 赔付表：表头第一列和“活过 n 杯”列 */
+    payoutHead: 'Mise',
+    payoutCol: (n) => `${n} ${n === 1 ? 'verre tenu' : 'verres tenus'}`,
     rule3:
       "Si c'est vous, vous perdez la mise et avez la gueule de bois pendant 1 heure (fréquentation -10\u202f%). Retomber dessus pendant la gueule de bois relance l'heure, sans cumuler.",
     askStake: 'Combien de bons mystère misez-vous\u202f?',

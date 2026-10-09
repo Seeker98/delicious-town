@@ -119,7 +119,12 @@ const bar: Messages['bar'] = {
     drinkFailed: 'No se pudo beber',
     rule1: 'Seis vasos en la mesa; el barman le echó picante a uno. Empiezas tú y luego elegís por turnos.',
     rule2:
-      'Si le toca al barman, ganas: cada vaso que aguantas multiplica el bote por 1,4 (1/2/3 vasos devuelven 1,4/1,96/2,74 veces la apuesta).',
+      'Si le toca al barman, ganas. Cuantos más vasos aguantes, más recuperas (mira la tabla; las cantidades incluyen la apuesta).',
+    /** 今天的局数（2026-10-09 加了每日上限） */
+    today: (played, max) => `Hoy ${played}/${max} partidas`,
+    /** 赔付表：表头第一列和“活过 n 杯”列 */
+    payoutHead: 'Apuesta',
+    payoutCol: (n) => `${n} ${n === 1 ? 'vaso aguantado' : 'vasos aguantados'}`,
     rule3:
       'Si te toca a ti, pierdes la apuesta y tienes resaca 1 hora (ocupación -10\u00a0%). Si vuelve a tocarte con resaca, la hora empieza de nuevo; no se acumula.',
     askStake: '¿Cuántos vales misteriosos apuestas?',
