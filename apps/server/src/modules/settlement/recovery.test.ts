@@ -88,6 +88,16 @@ describe('老鼠捣乱（规格书 01 §1.9）', () => {
     }
   });
 
+  it('偷哪种按数量加权：只有几份的稀有食材很少被挑中，多的那种被偷得多（问题记录 581）', async () => {
+    const shardId = await alwaysMouseShard();
+    const rare = fid('松茸');
+    const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 900, [rare]: 3 } });
+    for (let i = 0; i < 60; i++) await mouseRound(t.game.deps, shardId, `p581-${i}`, new Date());
+    // 0 星每次偷 1 份：平均挑时稀有食材约一半的次数被挑中，3 份早被偷光；按数量加权时 60 次里平均 0.2 次
+    expect((await foodNum(t, ctx.restaurantId, rare)).num).toBeGreaterThanOrEqual(2);
+    expect((await foodNum(t, ctx.restaurantId, fid('大米'))).num).toBeLessThanOrEqual(900 - 50);
+  });
+
   it('只有锁定的食材时什么也偷不到', async () => {
     const shardId = await alwaysMouseShard();
     const ctx = await newRestaurant(t, { shardId, foods: { [fid('大米')]: 5 } });

@@ -3,6 +3,7 @@ import { settleRestaurant } from '../../modules/settlement/settle';
 import { strengthGain } from '../../modules/settlement/strength';
 import type { SettleGlobals } from '../../modules/settlement/types';
 import { GOODS } from '@dt/config';
+import { buildPool, pickWeighted } from '@dt/shared';
 import {
   aggOf,
   gainCoin,
@@ -86,7 +87,7 @@ export function regenRound(c: FastCtx, r: FastRest): void {
 
 /**
  * 老鼠捣乱一次（settlement/mouse.ts 的 visit）：按幸运逃走；有捕鼠夹按概率抓住给银币；
- * 否则从数量大于 0 的食材里随机偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
+ * 否则从数量大于 0 的食材里按数量加权挑一种（问题记录 581），偷 1~(2×星级+1) 个（快速模型的机器人不锁食材）；另有概率掉探险图
  */
 export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'stolen' | 'nothing' {
   const mt = c.tuning.mouse;
@@ -101,7 +102,10 @@ export function mouseVisit(c: FastCtx, r: FastRest): 'escaped' | 'trapped' | 'st
     const foods = [...r.foods].filter(([, n]) => n > 0).sort((a, b) => a[0] - b[0]);
     if (foods.length === 0) out = 'nothing';
     else {
-      const [id, have] = foods[c.rng.int(foods.length)]!;
+      const [id, have] = pickWeighted(
+        buildPool(foods, ([, n]) => n),
+        c.rng,
+      );
       subFoods(c, r, id, Math.min(have, c.rng.intMin1(2 * r.star + 1)));
       out = 'stolen';
     }

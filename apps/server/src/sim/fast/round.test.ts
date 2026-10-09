@@ -63,6 +63,19 @@ describe('老鼠和体力恢复的节奏（核对发现，设计 §4.4）', () =
     if (out === 'stolen') expect(r.foods.get(fid('猪肉'))).toBe(4);
   });
 
+  it('偷哪种按数量加权，和 settlement/mouse.ts 一样（问题记录 581）', async () => {
+    const { mouseVisit } = await import('./round');
+    const c = mk(12);
+    const r = openFastRest(c, 1, settings);
+    r.luck = -1000;
+    r.foods.clear();
+    r.foods.set(fid('大米'), 900);
+    r.foods.set(fid('松茸'), 3);
+    for (let i = 0; i < 60; i++) mouseVisit(c, r);
+    expect(r.foods.get(fid('松茸'))).toBeGreaterThanOrEqual(2);
+    expect(r.foods.get(fid('大米'))).toBeLessThanOrEqual(900 - 50);
+  });
+
   it('跑一天：体力每 10 分钟恢复一次（不是每轮）', async () => {
     const { runFast } = await import('./run');
     const res = runFast(
