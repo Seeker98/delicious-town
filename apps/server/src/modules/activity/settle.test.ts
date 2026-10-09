@@ -146,6 +146,29 @@ describe('全服合力结算（148-3 设计 §7）', () => {
       ],
     },
   };
+  it('“进前 10 名”不看名次段：只给第 1 名发奖时，第 2、3 名也记上；重跑不重复记（backlog）', async () => {
+    const shardId = await createShard(t.db);
+    const [a, b, c] = [
+      await newRestaurant(t, { shardId }),
+      await newRestaurant(t, { shardId }),
+      await newRestaurant(t, { shardId }),
+    ];
+    const end = new Date(t.clock.now.getTime() + H);
+    await insertActivity(t, {
+      shardId,
+      spec: { ...coop, def: { ...coop.def, ranks: [{ from: 1, to: 1, award: { diamond: 3 } }] } },
+      endsAt: end,
+      title: '只发第一',
+    });
+    await act(a, 'market.buy', 3);
+    await act(b, 'market.buy', 2);
+    await act(c, 'market.buy', 1);
+    const after = new Date(end.getTime() + 3 * 60_000);
+    await settleActivities(t.game.deps, shardId, after, log);
+    await settleActivities(t.game.deps, shardId, after, log);
+    for (const r of [a, b, c]) expect(await eventCount(t, r.restaurantId, 'activity.top10')).toBe(1);
+  });
+
   it('补发里程碑；名次段边界并列都发；积分 0 不发；每区服一条新闻；重跑不重复发邮件', async () => {
     const shardId = await createShard(t.db);
     const a = await newRestaurant(t, { shardId });
