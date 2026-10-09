@@ -57,6 +57,62 @@ dump 里是线上数据（密码哈希、邮箱、随机种子密钥 `server_sec
 4. 环境变量：`VITE_API_BASE=https://api.<域名>`、`VITE_TURNSTILE_SITEKEY=<site key>`、`NODE_VERSION=22`
 5. 自定义域名：`game.<域名>`；`infra/.env` 里的 `WEB_ORIGIN` 要与之一致
 
+## 三之二、网页和 API 同一个域名（服务器转发 Pages，2026-10）
+
+**为什么**：网页在 `game.`、API 在 `api.` 是跨域，每个新的接口地址先多一次预检（OPTIONS）。2026-10-09 线上 6 小时 286 个请求里 62 个是预检。中国大陆玩家经 Cloudflare 洛杉矶节点到法兰克福，一个来回 400~600 毫秒，每进一个新页面就多等一次。
+
+**怎么做**：
+- `game.<域名>` 不再直接用 Pages 的自定义域名，改由隧道接：`/api/*` 交给 API，其余转发到 Pages 自带的 `<项目名>.pages.dev`。
+- 网页不设 `VITE_API_BASE`，就请求同域名的 `/api`，没有预检。
+- 不用 Worker，没有每天请求数的额度。
+- `/assets/*` 带一年的缓存头（`apps/web/public/_headers`），Cloudflare 节点会缓存。HTML 每次回源，多一段法兰克福到 Pages 的路，几十毫秒。
+
+**第一步：Cookie 改成整个域名（切换前几天做）**
+- 现在登录 Cookie 只属于 `api.`，换到 `game.` 后带不过去，所有人会掉线一次。
+- `infra/.env` 加 `COOKIE_DOMAIN=<域名>`（不带 `game.`、`api.`），然后 `docker compose -f compose.prod.yml up -d api`。
+- 之后已登录的玩家下一次请求会补发一次整个域名的 Cookie，同时删掉只属于 `api.` 的旧 Cookie（代码见 `security/session.ts`）。
+- 等几天，活跃玩家基本都补发过了再切换；没补到的只要重新登录一次。
+
+**第二步：在测试域名上演练（不影响玩家）**
+1. Pages → Settings → Environment variables → **Preview**：删掉 `VITE_API_BASE`（只影响预览部署）。
+2. 推一个分支（如 `same-origin`），记下预览地址 `same-origin.<项目名>.pages.dev`。
+3. 隧道 → Public Hostname 依次添加：
+   1. `beta.<域名>`，Path 填 `^/api/` → Service：`HTTP`，`api:3000`
+   2. `beta.<域名>`，Path 留空 → Service：`HTTPS`，`same-origin.<项目名>.pages.dev`。在 Additional application settings 里：
+      - HTTP Settings → **HTTP Host Header** 填 `same-origin.<项目名>.pages.dev`；
+      - TLS → **Origin Server Name** 同样填它。
+   3. 两条的顺序：带 Path 的要排在前面（按列表顺序匹配）。
+4. Turnstile 站点的 Hostname 列表加上 `beta.<域名>`，不然注册、登录的人机验证会失败。
+5. 打开 `https://beta.<域名>`：
+   - 能登录、能玩；
+   - 开发者工具的 Network 里，接口是 `beta.<域名>/api/...`，没有 OPTIONS；
+   - `/assets/*` 第二次加载时响应头有 `cf-cache-status: HIT`。
+
+**第三步：正式切换（挑人少的时候，中间约 1~2 分钟打不开）**
+1. Pages → Custom domains：删掉 `game.<域名>`。DNS 里如果还留着 `game` 的 CNAME 记录，也删掉。
+2. 隧道 → Public Hostname 依次添加：
+   1. `game.<域名>`，Path `^/api/` → `HTTP`，`api:3000`
+   2. `game.<域名>`，Path 留空 → `HTTPS`，`<项目名>.pages.dev`，HTTP Host Header 和 Origin Server Name 都填 `<项目名>.pages.dev`
+   3. 带 Path 的排在前面。
+3. 这时页面是旧版，还在请求 `api.` 跨域，照样能用。
+4. Pages → Settings → Environment variables → **Production**：删掉 `VITE_API_BASE`，再到 Deployments 里对最新一次点 Retry deployment。部署完以后，新打开的页面就改走同域名。
+5. 检查：
+   - 第二步的几项照着看一遍；
+   - 过一天看 API 日志里 OPTIONS 的数量，应该接近 0（命令见下）。
+6. `api.<域名>` 至少保留两周：还开着旧页面的玩家要用。CORS 照常允许 `game.`。
+
+```bash
+cd /opt/dt/infra && docker compose -f compose.prod.yml logs --since 24h --no-log-prefix api \
+  | grep -o '"method":"[A-Z]*"' | sort | uniq -c
+```
+
+**回退**：
+1. 隧道里删掉 `game.` 的两条；
+2. Pages 重新加自定义域名 `game.<域名>`；
+3. Production 环境变量加回 `VITE_API_BASE=https://api.<域名>`，Retry deployment。
+
+`COOKIE_DOMAIN` 不用改回。
+
 ## 四、升级
 ```bash
 cd /opt/dt && git pull

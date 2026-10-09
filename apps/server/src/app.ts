@@ -76,7 +76,7 @@ export async function buildApp(
   });
   registerClientIp(app, deps.env.TRUST_CF_HEADER);
   registerErrorHandling(app);
-  registerSession(app, deps.sessions);
+  registerSession(app, deps.sessions, deps.env);
   registerRateLimit(
     app,
     createRateLimiter(deps.redis),

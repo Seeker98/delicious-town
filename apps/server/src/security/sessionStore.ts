@@ -6,12 +6,17 @@ export interface SessionData {
   shardId: number | null;
   restaurantId: number | null;
   createdAt: string;
+  /** 这个会话的 Cookie 最后按哪个域名发的（换成同域名时补发一次用） */
+  cookieDomain?: string;
 }
 
 export interface SessionStore {
   create(accountId: number): Promise<string>;
   get(token: string): Promise<SessionData | null>;
-  update(token: string, patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId'>>): Promise<void>;
+  update(
+    token: string,
+    patch: Partial<Pick<SessionData, 'shardId' | 'restaurantId' | 'cookieDomain'>>,
+  ): Promise<void>;
   destroy(token: string): Promise<void>;
   destroyAll(accountId: number): Promise<void>;
 }
