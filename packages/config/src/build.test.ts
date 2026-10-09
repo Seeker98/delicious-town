@@ -475,6 +475,12 @@ describe('商店整理（问题记录 483）：game/shop.json 盖在道具表上
     expect(good(b, RED).diamond).toBe(9);
   });
 
+  it('上了银币商店却没有银币价：拦下（backlog 1010：原来不报错，实际又不会上架）', () => {
+    const b = withShop({ goods: [{ id: RED, onSale: true, coin: 0 }] });
+    expect(b.bundle).toBeNull();
+    expect(b.errors).toContain(`shop puts goods ${RED} on sale with no coin price`);
+  });
+
   it('特价池、黑市池写了就整份替换', () => {
     const b = withShop({ goods: [], pools: { special: [MISSILE] } });
     expect(b.bundle!.shopPools.special).toEqual([MISSILE]);

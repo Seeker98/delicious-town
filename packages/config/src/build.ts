@@ -403,6 +403,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (s.diamond !== undefined) g.diamond = s.diamond;
     if (s.onSale !== undefined && !g.retired) g.onSale = s.onSale;
   }
+  // 上了银币商店却没有银币价：商店不列出来（shop/service.ts 要 coin > 0），整理工具里看着却像上架了（backlog 1010）
+  for (const s of shopRaw.goods) {
+    const g = goods.find((x) => x.id === s.id);
+    if (g?.onSale && !(g.coin > 0)) errors.push(`shop puts goods ${s.id} on sale with no coin price`);
+  }
 
   for (const g of goods) {
     for (const item of g.gift ?? []) {
