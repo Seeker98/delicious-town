@@ -48,6 +48,7 @@ const detail = (patch: Partial<FriendRestDto> = {}): FriendRestDto => ({
     { no: 2, floor: 1, customer: 3, roach: true, roachBy: null },
   ],
   thumbedToday: false,
+  thumbs: 1234,
   killLeft: 3,
   equips: [],
   special: null,
@@ -94,6 +95,19 @@ describe('FriendRestView', () => {
     await w.find('[data-testid="act-dine"]').trigger('click');
     await flushPromises();
     expect(endpoints.dineStart).toHaveBeenCalledWith(2, 1);
+  });
+
+  it('等级那一行带累计获赞（问题记录 553）', async () => {
+    const w = await mountView();
+    expect(w.get('[data-testid="friend-thumbs"]').text()).toBe('累计获赞 1,234');
+  });
+
+  it('旧服务端没有 thumbs：不显示累计获赞（终审：前端先上线）', async () => {
+    const { thumbs: _t, ...old } = detail();
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(old as ReturnType<typeof detail>);
+    const w = await mountView();
+    expect(w.find('[data-testid="friend-thumbs"]').exists()).toBe(false);
+    expect(w.text()).toContain('欢迎光临');
   });
 
   it('点蟑螂可以消灭', async () => {

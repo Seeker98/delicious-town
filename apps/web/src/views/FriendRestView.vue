@@ -6,6 +6,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { FriendRestDto, TableDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { formatNum } from '../utils/format';
 import { useT } from '../composables/useT';
 import GameImg from '../components/GameImg.vue';
 import ReportButton from '../components/ReportButton.vue';
@@ -111,8 +112,14 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
           />
         </div>
         <div class="small text-muted">
-          {{ t.friends.rest.info(rest.level, rest.star, rest.renown)
-          }}<span v-if="rest.state !== 1">{{ t.friends.rest.closed }}</span>
+          {{ t.friends.rest.info(rest.level, rest.star, rest.renown) }}
+          <!-- 累计获赞（问题记录 553）；旧服务端没有这一项时不显示（前端可能先上线） -->
+          <template v-if="typeof rest.thumbs === 'number'"
+            >·
+            <span data-testid="friend-thumbs">{{
+              t.friends.rest.thumbsTotal(formatNum(rest.thumbs))
+            }}</span></template
+          ><span v-if="rest.state !== 1">{{ t.friends.rest.closed }}</span>
         </div>
       </div>
       <GameImg :path="`door/${rest.door}`" :alt="t.friends.rest.door" fallback-icon="bi-door-closed" />

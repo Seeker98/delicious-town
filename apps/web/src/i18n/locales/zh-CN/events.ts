@@ -56,6 +56,12 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'lesson.taught':
       if (!p.success) return `${who} 在你的课上${p.type === 2 ? '偷学失败' : '没学会'}`;
       return `${who} 在你的课上${p.type === 2 ? '偷学成功' : '学会了特色菜'}`;
+    case 'dine.left':
+      return `${who} 在你店里第 ${String(p.table)} 桌吃完白食走了, 吃走了 ${String(p.coin)} 银币`;
+    case 'forum.replied':
+      return p.toFloor
+        ? `${who} 回复了你在「${String(p.title ?? '')}」的 #${String(p.toFloor)}`
+        : `${who} 回复了你的帖子「${String(p.title ?? '')}」`;
     case 'thumb':
       return `${who} 给你点了赞`;
     case 'friend.apply':
@@ -186,7 +192,10 @@ export default {
     'hiphop.wage': (p, names) => `领到嘻哈男孩的工资 (${names.goodsName(n(p, 'cardId'))})`,
     'hiphop.weekly': (p, names) => `嘻哈周榜第 ${n(p, 'rank')} 名, 获得 ${names.goodsName(n(p, 'goodsId'))}`,
     'market.manual': (p) => `菜场手动进货, 花费银币 ${formatNum(n(p, 'cost'))}`,
-    'market.share': (p, names) => `你在菜场分享的 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} 被买走了`,
+    'market.share': (p, names) =>
+      p.byName
+        ? `${String(p.byName)} 买走了你手动进货的 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')}, 你分得 ${formatNum(n(p, 'coin'))} 银币`
+        : `你手动进货的 ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} 被买走了`,
     'takeaway.open': () => '开通了外卖',
     'takeaway.refresh': (p) => `刷新了外卖订单 (今天第 ${n(p, 'times')} 次)`,
     'takeaway.deliver': () => '派出了一单外卖',

@@ -141,6 +141,8 @@ export function createDine(d: GameDeps) {
           await me.tx.deleteFrom('dine_dash').where('diner_rest_id', '=', me.rest.id).execute();
           await incrementDaily(me.tx, me.rest.id, 'dine.done', 1, gameDay(me.now));
           restLog(me, 'dine.ended', { host: them.rest.id, hostName: them.rest.name, ...reward });
+          // 店主那边：谁吃完走了、从店里吃走多少银币（问题记录 553）
+          feedLog(p, 'dine.left', { table: r.table_no, coin: seat.acc.coin });
           return reward;
         },
       );

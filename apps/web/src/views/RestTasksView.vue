@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { claimableTabs, TASK_TABS, type TaskTab } from '../utils/tasks';
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
@@ -60,23 +61,14 @@ const leftText = (unfinished: number) =>
  * 三个选项卡：主线、每周、支线（问题记录：活跃和任务页太长，活跃单拎出来，任务分卡；用户 2026-10-08 定每周单独一卡）。
  * 当前卡写在地址里（?tab=），从首页、指引直接进到每周
  */
-const TABS = ['main', 'weekly', 'side'] as const;
-type Tab = (typeof TABS)[number];
+const TABS = TASK_TABS;
+type Tab = TaskTab;
 const route = useRoute();
 const router = useRouter();
 const tab = computed<Tab>(() => TABS.find((x) => x === route.query.tab) ?? 'main');
 const setTab = (x: Tab) => void router.replace({ query: { ...route.query, tab: x } });
-const canClaim = (x: QuestDto) => x.done && !x.claimed;
-/** 卡上有能领的时候加一个礼物图标 */
-const claimable = computed<Record<Tab, boolean>>(() => {
-  const q = tasks.value;
-  if (!q) return { main: false, weekly: false, side: false };
-  return {
-    main: q.main.some(canClaim) || (q.leftover ?? []).some(canClaim) || !!q.chapter?.claimable,
-    weekly: !!q.weekly && (q.weekly.quests.some(canClaim) || q.weekly.full.claimable),
-    side: q.lines.some((l) => !!l.quest && l.lockedStar === null && canClaim(l.quest)),
-  };
-});
+/** 卡上有能领的时候加一个礼物图标（和首页任务入口同一套判断，问题记录 555） */
+const claimable = computed(() => claimableTabs(tasks.value));
 
 onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.tasks.loadFailed), 'danger')));
 </script>

@@ -94,6 +94,35 @@ describe('特色菜（子项目 4A）', () => {
   });
 });
 
+describe('餐厅动态新类型（问题记录 553）', () => {
+  const names = { goodsName: () => '神秘礼券', foodName: () => '大米' };
+  const at = '2026-10-09T00:00:00Z';
+  const text = (type: string, params: Record<string, unknown>) => logText({ type, params, at }, names);
+  it('白食者吃完走了', () => {
+    expect(text('dine.left', { byName: '甲', table: 3, coin: 120 })).toBe(
+      '甲 在你店里第 3 桌吃完白食走了, 吃走了 120 银币',
+    );
+  });
+  it('帖子被回复：回复帖子、回复某一层；匿名写"有人"', () => {
+    expect(text('forum.replied', { byName: '甲', postId: 5, title: '求助', floor: 2 })).toBe(
+      '甲 回复了你的帖子「求助」',
+    );
+    expect(text('forum.replied', { byName: '甲', postId: 5, title: '求助', floor: 3, toFloor: 2 })).toBe(
+      '甲 回复了你在「求助」的 #2',
+    );
+    expect(text('forum.replied', { postId: 5, title: '求助', floor: 2 })).toBe('有人 回复了你的帖子「求助」');
+  });
+  it('手动进货被买：新记录写买家和分成，旧记录照旧', () => {
+    expect(text('market.share', { foodsId: 1, num: 10, byName: '乙', coin: 1250 })).toBe(
+      '乙 买走了你手动进货的 大米×10, 你分得 1,250 银币',
+    );
+    expect(text('market.share', { foodsId: 1, num: 10 })).toBe('你手动进货的 大米×10 被买走了');
+  });
+  it('被雇当骑手', () => {
+    expect(text('takeaway.hired', { byName: '丙' })).toBe('丙 雇你当了外卖骑手');
+  });
+});
+
 describe('终审：流水名称和个人日志里的好友动态', () => {
   const names = { goodsName: () => '神秘礼券', foodName: () => '大米', mcName: (id: number) => `秘·${id}` };
   const at = '2026-09-30T00:00:00Z';

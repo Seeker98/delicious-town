@@ -56,6 +56,7 @@ const friends: Messages['friends'] = {
     thumbed: 'Thumbs-up sent',
     thumbFailed: "Couldn't send a thumbs-up",
     thumbedAlready: 'Thumbed up',
+    thumbsTotal: (n: string) => `Thumbs-up ${n}`,
     thumb: 'Thumbs-up',
     refuel: 'Fill up their oil',
     flip: 'Raid pantry',

@@ -41,8 +41,8 @@ const home: Messages['home'] = {
   signInFailed: 'Check-in failed',
   mainTag: 'Main',
   tasksLink: 'Quests',
-  claim: 'Claim',
-  claimFailed: 'Claim failed',
+  feedTitle: 'Restaurant activity',
+  feedNew: 'new',
   activation: (n) => `Activity points today: ${n}`,
   activationClaimable: ', reward ready to claim',
   dining: {

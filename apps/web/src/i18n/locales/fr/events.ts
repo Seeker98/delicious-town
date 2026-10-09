@@ -58,6 +58,12 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (!p.success)
         return `${who} ${p.type === 2 ? "n'a pas réussi à espionner" : "n'a rien appris"} à votre cours`;
       return `${who} ${p.type === 2 ? 'a espionné avec succès' : 'a appris un plat signature'} à votre cours`;
+    case 'dine.left':
+      return `${who} a fini de manger gratis à la table ${String(p.table)} et est parti en emportant ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
+    case 'forum.replied':
+      return p.toFloor
+        ? `${who} a répondu à votre #${String(p.toFloor)} dans «\u202f${String(p.title ?? '')}\u202f»`
+        : `${who} a répondu à votre sujet «\u202f${String(p.title ?? '')}\u202f»`;
     case 'thumb':
       return `${who} vous a donné un pouce levé`;
     case 'friend.apply':
@@ -207,7 +213,9 @@ const events: Messages['events'] = {
     'market.manual': (p) =>
       `Réapprovisionnement manuel au marché pour ${formatNum(n(p, 'cost'))} ${plFr(formatNum(n(p, 'cost')), 'pièce', 'pièces')}`,
     'market.share': (p, names) =>
-      `Vos ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} partagés au marché ont été achetés`,
+      p.byName
+        ? `${String(p.byName)} a acheté ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} de votre réapprovisionnement\u202f; vous recevez ${formatNum(n(p, 'coin'))} pièces`
+        : `Vos ${names.foodName(n(p, 'foodsId'))}\u202f×\u202f${n(p, 'num')} réapprovisionnés ont été achetés`,
     'takeaway.open': () => 'A ouvert la vente à emporter',
     'takeaway.refresh': (p) => `A actualisé les commandes à emporter (${n(p, 'times')} fois aujourd'hui)`,
     'takeaway.deliver': () => 'A envoyé une commande à emporter',

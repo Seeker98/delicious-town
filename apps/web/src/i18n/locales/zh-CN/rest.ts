@@ -6,6 +6,7 @@ export default {
     toEquip: '厨具与加点',
     capacity: '容量',
     tableNum: '餐桌上限',
+    thumbs: (n: string) => `累计获赞 ${n}`,
     cupboardNum: '橱柜格数',
     foodsMaxNum: '单种食材上限',
     foodsLockNum: '锁定格',

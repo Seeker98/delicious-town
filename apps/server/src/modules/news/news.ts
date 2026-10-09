@@ -31,6 +31,8 @@ export interface ListNewsOptions {
   not?: string[];
   /** 只要这些编号（小镇日报的“今日要闻”） */
   ids?: number[];
+  /** 只要这个时间以后的 */
+  since?: Date;
 }
 
 /** 本区服新闻，按 id 倒序；店名取当前名字（左连接，店不存在时为 null） */
@@ -43,6 +45,7 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
   if (o.before !== undefined) q = q.where('n.id', '<', o.before);
   if (o.only && o.only.length > 0) q = q.where('n.type', 'in', o.only);
   if (o.not && o.not.length > 0) q = q.where('n.type', 'not in', o.not);
+  if (o.since) q = q.where('n.created_at', '>=', o.since);
   if (o.ids) q = o.ids.length > 0 ? q.where('n.id', 'in', o.ids) : q.where(sql<boolean>`false`);
   const rows = await q.orderBy('n.id', 'desc').limit(o.limit).execute();
   return rows.map((r) => ({
@@ -56,16 +59,23 @@ export async function listNews(db: Kysely<DB>, shardId: number, o: ListNewsOptio
   }));
 }
 
-/** 首页头条（设计文档 裁定 21）；daily：区服开了小镇日报时带昨天日报的标题 */
+/**
+ * 首页头条（设计文档 裁定 21）；daily：区服开了小镇日报时带昨天日报的标题。
+ * broadcastHours：广播只要这么多小时内的，更早的只在小镇新闻里（问题记录 553）；不给时不限
+ */
 export async function headlines(
   db: Kysely<DB>,
   shardId: number,
-  o: { daily?: boolean; now?: Date } = {},
+  o: { daily?: boolean; now?: Date; broadcastHours?: number } = {},
 ): Promise<HeadlinesDto> {
+  const since =
+    o.now && o.broadcastHours !== undefined
+      ? new Date(o.now.getTime() - o.broadcastHours * 3_600_000)
+      : undefined;
   const [news, bc, daily] = await Promise.all([
     // 一番赏大赏也算全服广播，和玩家喇叭一起显示（一番赏设计 §6）
     listNews(db, shardId, { limit: 3, not: [...BROADCAST_STYLE_NEWS] }),
-    listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS] }),
+    listNews(db, shardId, { limit: 1, only: [...BROADCAST_STYLE_NEWS], since }),
     o.daily && o.now ? dailyHead(db, shardId, o.now) : null,
   ]);
   return { news, broadcast: bc[0] ?? null, daily };

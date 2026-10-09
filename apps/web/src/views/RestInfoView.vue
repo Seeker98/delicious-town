@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { gameDateTime } from '../utils/format';
+import { formatNum, gameDateTime } from '../utils/format';
 import { RouterLink } from 'vue-router';
 import type { RestLogDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
@@ -58,6 +58,10 @@ onMounted(async () => {
       <div class="col-6">{{ t.rest.info.foodsLockNum }} {{ rest.foodsLockNum }}</div>
       <div class="col-6">{{ t.rest.info.storeNum }} {{ rest.storeNum }}</div>
       <div class="col-6">{{ t.rest.info.oil(rest.oilLevel) }}</div>
+      <!-- 累计获赞（问题记录 553） -->
+      <div v-if="typeof rest.thumbs === 'number'" class="col-6" data-testid="info-thumbs">
+        {{ t.rest.info.thumbs(formatNum(rest.thumbs)) }}
+      </div>
     </div>
     <h6 class="dt-section">{{ t.rest.info.logs }}</h6>
     <div v-if="logsState === 'ok' && logs.length === 0" class="dt-empty" data-testid="logs-empty">

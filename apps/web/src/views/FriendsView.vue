@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { gameDateTime } from '../utils/format';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 import type { FriendRequestDto, FriendsDto, RestBriefDto, RestLogDto, ThumbTodayDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import { useT } from '../composables/useT';
@@ -10,7 +10,9 @@ import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useFriendsStore } from '../stores/friends';
 import { useToastStore } from '../stores/toast';
-import { describeFeed } from '../utils/feed';
+import { logText } from '../utils/events';
+import { feedLink, markFeedSeen } from '../utils/feed';
+import { useRestaurantStore } from '../stores/restaurant';
 import { restName } from '../utils/npcName';
 
 type Tab = 'friends' | 'requests' | 'find' | 'feed';
@@ -20,6 +22,8 @@ const TABS = ['friends', 'requests', 'find', 'feed'] as const;
 const feedTime = (iso: string) => gameDateTime(iso, { hour12: false });
 const catalog = useCatalogStore();
 const friendsStore = useFriendsStore();
+const restStore = useRestaurantStore();
+const route = useRoute();
 const tab = ref<Tab>('friends');
 const sort = ref<'level' | 'star' | 'recent'>('level');
 const list = ref<FriendsDto | null>(null);
@@ -76,6 +80,8 @@ async function show(next: Tab) {
       if (mine === seq) {
         feed.value = f.items;
         thumbs.value = th;
+        // 首页餐厅动态的小圆点按这个算（问题记录 553）
+        if (restStore.rest) markFeedSeen(restStore.rest.id, f.items);
       }
     }
   } catch (e) {
@@ -120,7 +126,8 @@ function returnAll() {
   }, t.value.friends.returnFailed);
 }
 
-onMounted(() => show('friends'));
+// 首页餐厅动态的"更多"带 ?tab=feed 直接进动态卡（问题记录 553）
+onMounted(() => show(route.query.tab === 'feed' ? 'feed' : 'friends'));
 </script>
 
 <template>
@@ -241,7 +248,9 @@ onMounted(() => show('friends'));
     <p v-if="feed.length === 0" class="text-muted small">{{ t.friends.noFeed }}</p>
     <div v-for="(f, i) in feed" :key="i" class="border-bottom py-1 small">
       <span class="text-muted me-2">{{ feedTime(f.at) }}</span>
-      {{ describeFeed(f, (id) => catalog.foodName(id)) }}
+      <!-- 和首页、个人日志同一套文案：动态里也有收购、老鼠这些不是好友做的事（问题记录 553） -->
+      <RouterLink v-if="feedLink(f)" :to="feedLink(f)!">{{ logText(f, catalog) }}</RouterLink>
+      <template v-else>{{ logText(f, catalog) }}</template>
     </div>
   </template>
 </template>

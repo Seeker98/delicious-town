@@ -10,7 +10,8 @@ import { queryCounter } from '../../test/queries';
  */
 const BUDGET: Record<string, number> = {
   '/account/me': 1,
-  '/restaurant/overview': 11,
+  // 12：问题记录 553 加了首页餐厅动态（累计获赞跟着主查询一起读，不多一条）
+  '/restaurant/overview': 12,
   '/task/list': 5,
   '/task/activation': 3,
   '/activities/summary': 2,

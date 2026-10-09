@@ -55,6 +55,7 @@ export default {
     thumbed: '點贊成功',
     thumbFailed: '點贊失敗',
     thumbedAlready: '已點贊',
+    thumbsTotal: (n: string) => `累計獲贊 ${n}`,
     thumb: '點贊',
     refuel: '幫它加滿油',
     flip: '翻櫥櫃',

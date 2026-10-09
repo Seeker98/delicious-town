@@ -260,10 +260,20 @@ export function createMarketService(d: GameDeps, world: WorldService) {
       const snap = await world.ensure(me.shardId, me.now, tx);
       const paid = Math.ceil(unitPrice(0, food, t, snap.weather.effects) * b.num);
       spendCoin(me, paid);
-      gainCoin(owner, Math.floor(paid * t.manualShare), { event: false });
+      const share = Math.floor(paid * t.manualShare);
+      gainCoin(owner, share, { event: false });
       await addFoods(me, food.id, b.num);
       await emitAction(me, 'market.buy');
-      restLog(owner, 'market.share', { itemId: item.id, foodsId: food.id, num: b.num, buyer: me.rest.id });
+      // 进货人的餐厅动态写明谁买的、分到多少（问题记录 553）
+      restLog(owner, 'market.share', {
+        itemId: item.id,
+        foodsId: food.id,
+        num: b.num,
+        buyer: me.rest.id,
+        by: me.rest.id,
+        byName: me.rest.name,
+        coin: share,
+      });
       await flushOp(me);
       await flushOp(owner);
       return { data: { itemId: item.id, foodsId: food.id, num: b.num }, events: me.events };

@@ -46,6 +46,15 @@ describe('点赞（规格书 13 §13.7）', () => {
     expect((await t.game.social.reads.feed(b, { limit: 5 })).items[0]!.type).toBe('thumb');
   });
 
+  it('累计获赞：访问页和自己的概览都带（问题记录 553）；没被赞过是 0', async () => {
+    const [a, b] = await friends();
+    expect((await t.game.social.reads.detail(a, b.restaurantId)).thumbs).toBe(0);
+    await th().up(a, b.restaurantId);
+    expect((await t.game.social.reads.detail(a, b.restaurantId)).thumbs).toBe(1);
+    expect((await t.game.restaurant.overview(b.restaurantId)).thumbs).toBe(1);
+    expect((await t.game.restaurant.overview(a.restaurantId)).thumbs).toBe(0);
+  });
+
   it('同一天不能给同一家点两次；同一 IP 的另一个号也不行', async () => {
     const [a, b] = await friends();
     await th().up(a, b.restaurantId);

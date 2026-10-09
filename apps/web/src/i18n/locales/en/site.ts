@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    feed1009:
+      'The home page has a new Restaurant activity card showing who visited and what happened at your restaurant, with a dot on new entries. Activity now also covers free diners leaving, replies to your forum posts, your restaurant being acquired or let go, a restaurant you own buying itself back, mice stealing ingredients, your manual restock being bought and food thrown away when the fridge is full; being hired as a delivery rider now shows too. Total thumbs-up now appear when visiting a restaurant and on the restaurant info page. The home page only shows broadcasts from the last 12 hours. Quest rewards are no longer claimed from the home page: a gift icon on the Quests link shows when main, weekly or side quests have rewards and takes you there to claim them',
     ui1009:
       'Action messages now appear as small pills near the bottom of the screen instead of covering the top of the page, and short success messages disappear sooner. On the income page, the collapsed bonus section is back at the top',
     titles1009:

@@ -1,5 +1,5 @@
 /*! Bootstrap Icons v1.13.1 | Copyright 2019-2024 The Bootstrap Authors | MIT License | https://github.com/twbs/icons/blob/main/LICENSE */
-/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 78 个图标 */
+/* 由 scripts/gen-icons.mjs 生成，别手改：只含网页用到的 79 个图标 */
 
 @font-face {
   font-display: block;
@@ -48,6 +48,7 @@
 .bi-chevron-left::before { content: "\f284"; }
 .bi-chevron-right::before { content: "\f285"; }
 .bi-chevron-up::before { content: "\f286"; }
+.bi-circle-fill::before { content: "\f287"; }
 .bi-cloud-sun::before { content: "\f2be"; }
 .bi-coin::before { content: "\f634"; }
 .bi-compass::before { content: "\f2d1"; }

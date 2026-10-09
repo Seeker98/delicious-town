@@ -6,6 +6,7 @@ import {
   type DeviceSlotDto,
   type HeadlinesDto,
   type RestaurantDto,
+  type RestLogDto,
   type RoundSummaryDto,
 } from '@dt/shared';
 import type { RestaurantRow, RestaurantTable, TableState } from '../../db/schema';
@@ -70,6 +71,8 @@ export interface OverviewExtra {
   /** 挑剔消耗食材每档保留的数量（区服数值，问题记录 220） */
   cookfoodsPerFlag: number;
   headlines: HeadlinesDto;
+  feed: RestLogDto[];
+  thumbs: number;
   disabledFeatures: string[];
   acquireOwner?: { restId: number; name: string } | null;
   /** 名下的店身价合计（问题记录 447）；区服关了收购为 null */
@@ -143,6 +146,8 @@ export function toRestaurantDto(
     })),
     boosts: extra.boosts,
     headlines: extra.headlines,
+    feed: extra.feed,
+    thumbs: extra.thumbs,
     disabledFeatures: extra.disabledFeatures,
     acquireOwner: extra.acquireOwner ?? null,
     assets: extra.assets,

@@ -96,6 +96,18 @@ describe('菜场手动进货（设计文档 §2.5）', () => {
     expect(paid).toBeGreaterThan(0);
     expect((await restRow(t, owner.restaurantId)).coin - o0).toBe(Math.floor(paid * 0.25));
     expect((await foodNum(t, buyer.restaurantId, item.foods_id)).num).toBe(10);
+    // 进货人的动态：谁买的、分到多少银币（问题记录 553）
+    const feed = await t.game.social.reads.feed(owner, { limit: 5 });
+    expect(feed.items[0]).toMatchObject({
+      type: 'market.share',
+      params: {
+        foodsId: item.foods_id,
+        num: 10,
+        by: buyer.restaurantId,
+        byName: expect.any(String),
+        coin: Math.floor(paid * 0.25),
+      },
+    });
     await m().buy(buyer, { itemId: item.id, num: 89 });
     const o1 = (await restRow(t, owner.restaurantId)).coin;
     await expect(m().buy(buyer, { itemId: item.id, num: 1 })).rejects.toMatchObject({

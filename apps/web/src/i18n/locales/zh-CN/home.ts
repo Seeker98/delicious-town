@@ -40,8 +40,9 @@ export default {
   mainTag: '主线',
   /** 首页主线那一行右边的任务入口（问题记录：活跃和任务拆页） */
   tasksLink: '任务',
-  claim: '领奖',
-  claimFailed: '领取失败',
+  /** 首页餐厅动态卡（问题记录 553） */
+  feedTitle: '餐厅动态',
+  feedNew: '新',
   activation: (n: number) => `今日活跃 ${n}`,
   activationClaimable: ', 有奖励可领',
   dining: {

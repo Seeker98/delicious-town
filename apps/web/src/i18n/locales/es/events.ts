@@ -57,6 +57,12 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'lesson.taught':
       if (!p.success) return `${who} ${p.type === 2 ? 'no logró espiar' : 'no aprendió nada'} en tu clase`;
       return `${who} ${p.type === 2 ? 'espió con éxito' : 'aprendió un plato estrella'} en tu clase`;
+    case 'dine.left':
+      return `${who} terminó de comer gratis en la mesa ${String(p.table)} y se fue, llevándose ${String(p.coin)} ${plEs(String(p.coin), 'moneda', 'monedas')}`;
+    case 'forum.replied':
+      return p.toFloor
+        ? `${who} respondió a tu #${String(p.toFloor)} en «${String(p.title ?? '')}»`
+        : `${who} respondió a tu tema «${String(p.title ?? '')}»`;
     case 'thumb':
       return `${who} te dio un me gusta`;
     case 'friend.apply':
@@ -205,7 +211,9 @@ const events: Messages['events'] = {
     'market.manual': (p) =>
       `Te abasteciste a mano en el mercado por ${formatNum(n(p, 'cost'))} ${plEs(formatNum(n(p, 'cost')), 'moneda', 'monedas')}`,
     'market.share': (p, names) =>
-      `Compraron tus ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} compartidos en el mercado`,
+      p.byName
+        ? `${String(p.byName)} compró ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} de tu reposición manual; recibiste ${formatNum(n(p, 'coin'))} monedas`
+        : `Compraron tus ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} de la reposición manual`,
     'takeaway.open': () => 'Abriste el servicio a domicilio',
     'takeaway.refresh': (p) =>
       `Actualizaste los pedidos a domicilio (${n(p, 'times')} ${plEs(n(p, 'times'), 'vez', 'veces')} hoy)`,

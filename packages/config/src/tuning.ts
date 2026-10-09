@@ -718,7 +718,12 @@ export const tuningSchema = z.object({
     keepDoneDays: int.min(0),
   }),
   town: z.object({
-    broadcast: z.object({ minStar: int.min(0), cooldownSec: int.min(0), maxLen: int.min(1) }),
+    broadcast: z.object({
+      minStar: int.min(0),
+      cooldownSec: int.min(0),
+      maxLen: int.min(1),
+      homeHours: int.min(1),
+    }),
     npc: z.object({
       bigEaterLevelWeights: z.array(num.min(0)).length(5),
       bigEaterNum: z.tuple([int.min(1), int.min(1)]),

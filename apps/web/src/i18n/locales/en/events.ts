@@ -57,6 +57,12 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (!p.success)
         return `${who} ${p.type === 2 ? 'failed to sneak a lesson' : "didn't learn anything"} in your class`;
       return `${who} ${p.type === 2 ? 'snuck a lesson' : 'learned a signature dish'} in your class`;
+    case 'dine.left':
+      return `${who} finished eating for free at table ${String(p.table)} and left, taking ${String(p.coin)} ${plEn(String(p.coin), 'coin', 'coins')}`;
+    case 'forum.replied':
+      return p.toFloor
+        ? `${who} replied to your #${String(p.toFloor)} in "${String(p.title ?? '')}"`
+        : `${who} replied to your post "${String(p.title ?? '')}"`;
     case 'thumb':
       return `${who} gave you a thumbs-up`;
     case 'friend.apply':
@@ -203,7 +209,9 @@ const events: Messages['events'] = {
     'market.manual': (p) =>
       `Restocked at the market manually for ${formatNum(n(p, 'cost'))} ${plEn(formatNum(n(p, 'cost')), 'coin', 'coins')}`,
     'market.share': (p, names) =>
-      `Your shared ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} at the market was bought`,
+      p.byName
+        ? `${String(p.byName)} bought ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} from your manual restock; you got ${formatNum(n(p, 'coin'))} coins`
+        : `Your manually restocked ${names.foodName(n(p, 'foodsId'))}×${n(p, 'num')} was bought`,
     'takeaway.open': () => 'Opened takeaway service',
     'takeaway.refresh': (p) =>
       `Refreshed takeaway orders (${n(p, 'times')} ${plEn(n(p, 'times'), 'time', 'times')} today)`,

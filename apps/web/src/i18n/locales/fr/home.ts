@@ -42,8 +42,8 @@ const home: Messages['home'] = {
   signInFailed: 'Échec du pointage',
   mainTag: 'Principale',
   tasksLink: 'Quêtes',
-  claim: 'Récupérer',
-  claimFailed: 'Échec de la récupération',
+  feedTitle: 'Activité du restaurant',
+  feedNew: 'nouveau',
   activation: (n) => `Points d'activité du jour\u202f: ${n}`,
   activationClaimable: ', récompense à récupérer',
   dining: {
