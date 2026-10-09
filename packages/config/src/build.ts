@@ -1,3 +1,4 @@
+import { CUSTOM_ICON_KEY } from '@dt/shared';
 import { buildI18n } from './i18n';
 import { isQuestStateKey } from './quests';
 import { createHash } from 'node:crypto';
@@ -1251,6 +1252,7 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (iconKeys.has(i.key)) errors.push(`looks: duplicate icon ${i.key}`);
     iconKeys.add(i.key);
     if (i.shop && i.shop.to <= i.shop.from) errors.push(`looks: icon ${i.key} shop must end after it starts`);
+    if (CUSTOM_ICON_KEY.test(i.key)) errors.push(`looks: icon ${i.key} reserved for custom titles`);
   }
   if (!avatarIds.has(tuning.friend.npc.avatar))
     errors.push(`tuning.friend.npc.avatar ${tuning.friend.npc.avatar} not in looks`);

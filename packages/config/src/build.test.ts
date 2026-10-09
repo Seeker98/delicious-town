@@ -1676,6 +1676,15 @@ describe('限定称号（240-2 称号商店）', () => {
       }),
     ).toContain('looks: icon bad_time shop must end after it starts');
   });
+
+  it('配置称号的 key 不能占用定制称号的 c<数字>（问题记录 539）', () => {
+    const src = source();
+    const looks = structuredClone(src['game/looks']) as { icons: Array<Record<string, unknown>> };
+    looks.icons.push({ key: 'c12', title: '撞号', desc: '' });
+    expect(buildBundle({ ...src, 'game/looks': looks }).errors).toContain(
+      'looks: icon c12 reserved for custom titles',
+    );
+  });
 });
 
 describe('豪华一番赏（240-2）', () => {
