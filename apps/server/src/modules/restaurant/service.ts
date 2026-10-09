@@ -32,6 +32,7 @@ import { normalizeCounts } from '../settlement/globals';
 import type { WorldService } from '../world/service';
 import { buffsOf, deviceSlots, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
+import { iconDefs } from '../icons/defs';
 
 export interface RestaurantDeps {
   db: Kysely<DB>;
@@ -43,7 +44,6 @@ export interface RestaurantDeps {
 
 export function createRestaurantService(d: RestaurantDeps, shards: ShardService, world: WorldService) {
   async function shownIcons(restId: number): Promise<Array<{ key: string; title: string }>> {
-    const defs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
     const rows = await d.db
       .selectFrom('rest_icon')
       .select('icon_key')
@@ -52,6 +52,11 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       .where(iconLive(d.now()))
       .orderBy('id')
       .execute();
+    const defs = await iconDefs(
+      d.db,
+      d.config,
+      rows.map((i) => i.icon_key),
+    );
     return rows.flatMap((i) => {
       const def = defs.get(i.icon_key);
       return def ? [{ key: def.key, title: def.title }] : [];

@@ -21,6 +21,7 @@ import { isEmptyTable } from '../interact/tables';
 import { logPage, restNames, tableDto } from '../restaurant/reads';
 import { equipDisplayName } from '../equip/hats';
 import { iconLive } from './looks';
+import { iconDefs } from '../icons/defs';
 
 /** 好友动态：别人对我做的操作（设计文档 §4.10） */
 export const FEED_TYPES = [
@@ -246,18 +247,21 @@ export function createFriendReads(d: GameDeps) {
         d.db,
         tables.flatMap((x) => (x.freeloader ? [x.freeloader.restId] : [])),
       );
-      const iconDefs = new Map(d.config.bundle.looks.icons.map((i) => [i.key, i]));
-      const icons = (
-        await d.db
-          .selectFrom('rest_icon')
-          .select('icon_key')
-          .where('rest_id', '=', restId)
-          .where('shown', '=', true)
-          .where(iconLive(d.now()))
-          .orderBy('id')
-          .execute()
-      ).flatMap((i) => {
-        const def = iconDefs.get(i.icon_key);
+      const iconRows = await d.db
+        .selectFrom('rest_icon')
+        .select('icon_key')
+        .where('rest_id', '=', restId)
+        .where('shown', '=', true)
+        .where(iconLive(d.now()))
+        .orderBy('id')
+        .execute();
+      const defs = await iconDefs(
+        d.db,
+        d.config,
+        iconRows.map((i) => i.icon_key),
+      );
+      const icons = iconRows.flatMap((i) => {
+        const def = defs.get(i.icon_key);
         return def ? [{ key: def.key, title: def.title }] : [];
       });
       const store = await d.db

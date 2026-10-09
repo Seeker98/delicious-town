@@ -7,6 +7,7 @@ import { emitAction } from '../../core/action';
 import { opNews, restLog, runOp, type Op } from '../../core/op';
 import { spendCoin } from '../../core/resources';
 import { grantAward } from '../award/award';
+import { grantIcon } from '../icons/grant';
 import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods, countGoods, grantGoodsOp } from '../store/goods';
 import { currentPool, latestToday, prizesOf, tierLeft, type PoolRow } from './pool';
@@ -22,13 +23,9 @@ const RECENT = 10;
 
 const awardDto = (a: K['last']['award']): KujiAwardDto => JSON.parse(JSON.stringify(a)) as KujiAwardDto;
 
-async function grantIcon(o: Op, key: string): Promise<void> {
-  await o.tx
-    .insertInto('rest_icon')
-    .values({ rest_id: o.rest.id, icon_key: key })
-    .onConflict((oc) => oc.columns(['rest_id', 'icon_key']).doNothing())
-    .execute();
-}
+/** 称号永久：已有限时的同一称号会变永久（定制称号设计 三） */
+const grantKujiIcon = (o: Op, key: string) =>
+  grantIcon(o.tx, { restId: o.rest.id, key, expiresAt: null, now: o.now });
 
 /** 发一档的奖：奖品、图标、新闻（一番赏设计 §5.4、§6） */
 async function prize(
@@ -38,7 +35,7 @@ async function prize(
   pool: PoolRow,
 ) {
   await grantAward(o, p.award, { source: 'kuji' });
-  if (p.icon) await grantIcon(o, p.icon);
+  if (p.icon) await grantKujiIcon(o, p.icon);
   if (p.news)
     opNews(o, p.news === 'broadcast' ? 'kuji.big' : 'kuji.win', {
       tier,

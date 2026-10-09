@@ -128,7 +128,7 @@ export function adminRoutes(game: Game): FastifyPluginAsync {
     });
     r.post('/restaurants/:id/icons', async (req) => {
       const a = await requireRole(db, req, 'admin');
-      return ok(await icons.grant(a, id(req), parse(grantIconBody, req.body).key));
+      return ok(await icons.grant(a, id(req), parse(grantIconBody, req.body)));
     });
     r.post('/restaurants/:id/icons/:iconId/revoke', async (req) => {
       const a = await requireRole(db, req, 'admin');
