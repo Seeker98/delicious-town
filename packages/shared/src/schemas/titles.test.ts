@@ -101,6 +101,14 @@ describe('邮件发给几家店、后台直接发称号', () => {
     ).toBe(false);
   });
 
+  it('店 id、区服 id 超出数据库整数范围时校验失败，不再 500（backlog 1010）', () => {
+    const big = 2 ** 31;
+    expect(sendMailBody.safeParse({ ...mail, restIds: [1, big] }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restId: big }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restId: 1, shardId: big }).success).toBe(false);
+    expect(sendMailBody.safeParse({ ...mail, restIds: [big - 1] }).success).toBe(true);
+  });
+
   it('后台直接发：定制称号的 key、有效期二选一', () => {
     expect(grantIconBody.safeParse({ key: 'c3', days: 7 }).success).toBe(true);
     expect(grantIconBody.safeParse({ key: 'founder', until: '2026-12-01T00:00:00+08:00' }).success).toBe(

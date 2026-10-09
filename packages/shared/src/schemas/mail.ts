@@ -49,13 +49,16 @@ export const rewardItemsNoIcons = rewardItems.refine((i) => !i.icons?.length, {
 
 export const mailIdParam = z.object({ id: z.coerce.number().int().positive() });
 
+/** 数据库 int 主键：超出范围的 id 在校验时就拒绝，不让查询报 500（backlog 1010） */
+const dbId = () => z.number().int().positive().max(2_147_483_647);
+
 export const sendMailBody = z
   .object({
     scope: z.enum(['rest', 'shard', 'all']),
-    shardId: z.number().int().positive().optional(),
-    restId: z.number().int().positive().optional(),
+    shardId: dbId().optional(),
+    restId: dbId().optional(),
     /** 一次发给几家店（定制称号设计 三）：每家一封单店邮件 */
-    restIds: z.array(z.number().int().positive()).min(1).max(MAIL_RESTS_MAX).optional(),
+    restIds: z.array(dbId()).min(1).max(MAIL_RESTS_MAX).optional(),
     minLevel: z.number().int().min(1).optional(),
     title: limitedText(MAIL_TITLE_MAX),
     body: limitedText(MAIL_BODY_MAX),
