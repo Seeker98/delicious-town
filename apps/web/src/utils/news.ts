@@ -37,7 +37,16 @@ const OTHER = String.fromCharCode(0xe001);
  * 新闻拆成几段，店名那段带店编号（问题记录 567）：主语的店（店还在时），收购新闻里被收购的店。
  * 拼回去和 newsText 一字不差
  */
-export function newsParts(n: NewsDto, x: NewsNames): NewsPart[] {
+export function newsParts(raw0: NewsDto, x: NewsNames): NewsPart[] {
+  // 店名、喇叭内容里本身带占位字符时先去掉，免得被当成链接（backlog 1010）
+  const strip = (v: string) => v.split(WHO).join('').split(OTHER).join('');
+  const n: NewsDto = {
+    ...raw0,
+    restName: raw0.restName === null ? null : strip(raw0.restName),
+    params: Object.fromEntries(
+      Object.entries(raw0.params).map(([k, v]) => [k, typeof v === 'string' ? strip(v) : v]),
+    ),
+  };
   const links = new Map<string, { text: string; restId: number }>();
   if (n.restId !== null && n.restName) links.set(WHO, { text: n.restName, restId: n.restId });
   const p = n.params;
