@@ -53,6 +53,7 @@ export default {
   points: {
     left: (n: number) => `剩餘點數 ${n}`,
     allocate: (n: number) => `加點 (${n})`,
+    all: '全加',
     failed: '加點失敗',
   },
   detail: {

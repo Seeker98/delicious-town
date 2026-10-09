@@ -129,8 +129,8 @@ export function allocateTables(
     out.customers[String(type)] = (out.customers[String(type)] ?? 0) + 1;
   };
   /** 规格书 01 §1.7 */
-  const eatSpecial = (portions: number, half: boolean): { coin: number; exp: number } => {
-    if (!special || special.leftNum <= 0) return { coin: 0, exp: 0 };
+  const eatSpecial = (portions: number, half: boolean): { coin: number; exp: number; n: number } => {
+    if (!special || special.leftNum <= 0) return { coin: 0, exp: 0, n: 0 };
     const n = Math.min(portions, special.leftNum);
     special.leftNum -= n;
     out.specialUsed += n;
@@ -139,6 +139,7 @@ export function allocateTables(
     return {
       coin: special.price * sale * n * (1 + flags.mcCoinRate) * (half ? 0.5 : 1),
       exp: (half ? 1 : special.level) * (1 + flags.mcExpRate),
+      n,
     };
   };
 
@@ -156,6 +157,8 @@ export function allocateTables(
     let exp = expBase;
     let mcCoin = 0;
     let mcExp = 0;
+    /** 这桌吃了几份特色菜（问题记录 559） */
+    let mcNum = 0;
     let satisfied = false;
     let type = 0;
     let next: TableState = { no: table.no, floor: table.floor, customer: 0 };
@@ -251,6 +254,7 @@ export function allocateTables(
         const n = Math.min(t.squidwardPortions, special.leftNum);
         special.leftNum -= n;
         out.specialUsed += n;
+        mcNum += n;
         if (flags.flute) {
           exp = special.price * t.squidwardPortions * (1 + flags.mcCoinRate);
           satisfied = true;
@@ -311,6 +315,7 @@ export function allocateTables(
             coin += dishCoin(g.cookbooks.coin[cb]!, t.dishCoinRate) * (1 + g.grade(grade).spCoinAddRate);
             const m = eatSpecial(2, false);
             mcCoin += m.coin;
+            mcNum += m.n;
             mcExp += m.exp;
             if (req >= t.cookfoodsMinGrade && grade >= t.cookfoodsMinGrade) {
               out.candidates.push({ cookbookId: cb, req });
@@ -320,6 +325,7 @@ export function allocateTables(
             if (flags.ali) {
               const m = eatSpecial(1, false);
               mcCoin += m.coin;
+              mcNum += m.n;
               mcExp += m.exp;
             }
           }
@@ -329,6 +335,7 @@ export function allocateTables(
           if (flags.ali) {
             const m = eatSpecial(1, true);
             mcCoin += m.coin;
+            mcNum += m.n;
             mcExp += m.exp;
           }
         }
@@ -340,6 +347,7 @@ export function allocateTables(
       next.customer = 1;
       const m = eatSpecial(1, true);
       mcCoin += m.coin;
+      mcNum += m.n;
       mcExp += m.exp;
     }
 
@@ -364,6 +372,7 @@ export function allocateTables(
       oil: r2(oilT),
       ...extra,
       ...(type === 2 || type === 8 ? { satisfied } : {}),
+      ...(mcNum > 0 ? { mcNum, ...(special?.mcId !== undefined ? { mcId: special.mcId } : {}) } : {}),
     };
     out.tables.push(next);
     count(type);

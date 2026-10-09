@@ -58,8 +58,6 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
       if (!p.success)
         return `${who} ${p.type === 2 ? "n'a pas réussi à espionner" : "n'a rien appris"} à votre cours`;
       return `${who} ${p.type === 2 ? 'a espionné avec succès' : 'a appris un plat signature'} à votre cours`;
-    case 'dine.left':
-      return `${who} a fini de manger gratis à la table ${String(p.table)} et est parti en emportant ${String(p.coin)} ${plFr(String(p.coin), 'pièce', 'pièces')}`;
     case 'forum.replied':
       return p.toFloor
         ? `${who} a répondu à votre #${String(p.toFloor)} dans «\u202f${String(p.title ?? '')}\u202f»`
@@ -197,6 +195,16 @@ const events: Messages['events'] = {
       `Vous avez entretenu le restaurant pour votre propriétaire «\u202f${String(p.ownerName ?? '')}\u202f» et reçu ${n(p, 'n')} ingrédients`,
     'dine.started': (p) => `A commencé à manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
     'dine.ended': (p) => `A fini de manger gratis chez «\u202f${String(p.hostName ?? '')}\u202f»`,
+    'dine.left': (p, names) => {
+      const a = (p.award ?? null) as { kind?: string; id?: number | null; num?: number } | null;
+      const got = !a?.num
+        ? ''
+        : a.kind === 'goods'
+          ? `\u202f; vous recevez ${names.goodsName(Number(a.id))}\u202f×\u202f${a.num}`
+          : `\u202f; vous recevez ${formatNum(a.num)} ${plFr(String(a.num), 'pièce', 'pièces')}`;
+      const coin = n(p, 'coin');
+      return `${String(p.byName ?? "Quelqu'un")} a fini de manger gratis à la table ${n(p, 'table')} et est parti en emportant ${formatNum(coin)} ${plFr(String(coin), 'pièce', 'pièces')}${got}`;
+    },
     'forum.post': (p) => `A publié le sujet n° ${n(p, 'postId')} sur le forum`,
     'forum.reply': (p) => `A répondu au sujet n° ${n(p, 'postId')} du forum`,
     'forum.edit': (p) => `A modifié le sujet n° ${n(p, 'postId')} du forum`,

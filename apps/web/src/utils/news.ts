@@ -20,11 +20,53 @@ export const newsRendered = (): string[] => Object.keys(activeMessages().news.re
 
 /** 新闻文案：店名用当前名字；店已不存在时用新闻里记下的名字，都没有时写"某家餐厅" */
 export function newsText(n: NewsDto, x: NewsNames): string {
+  return render(n, x, null);
+}
+
+/** 新闻的一段：店名带店编号，页面上做成链接（问题记录 567） */
+export interface NewsPart {
+  text: string;
+  restId?: number;
+}
+
+/** 渲染时先用占位字符代替能点的店名，再按占位拆开（文案各语言自己拼，店名在句子里的位置不固定） */
+const WHO = String.fromCharCode(0xe000);
+const OTHER = String.fromCharCode(0xe001);
+
+/**
+ * 新闻拆成几段，店名那段带店编号（问题记录 567）：主语的店（店还在时），收购新闻里被收购的店。
+ * 拼回去和 newsText 一字不差
+ */
+export function newsParts(n: NewsDto, x: NewsNames): NewsPart[] {
+  const links = new Map<string, { text: string; restId: number }>();
+  if (n.restId !== null && n.restName) links.set(WHO, { text: n.restName, restId: n.restId });
+  const p = n.params;
+  if (n.type === 'acquire.big' && typeof p.restId === 'number' && typeof p.name === 'string' && p.name)
+    links.set(OTHER, { text: p.name, restId: p.restId });
+  const raw = render(n, x, links.size > 0 ? { who: links.has(WHO), other: links.has(OTHER) } : null);
+  const out: NewsPart[] = [];
+  let buf = '';
+  for (const ch of raw) {
+    const link = links.get(ch);
+    if (!link) {
+      buf += ch;
+      continue;
+    }
+    if (buf) out.push({ text: buf });
+    buf = '';
+    out.push(link);
+  }
+  if (buf) out.push({ text: buf });
+  return out;
+}
+
+/** mark：哪些店名换成占位字符（newsParts 用） */
+function render(n: NewsDto, x: NewsNames, mark: { who: boolean; other: boolean } | null): string {
   const m = activeMessages().news;
   const r = Object.hasOwn(m.render, n.type) ? m.render[n.type as keyof typeof m.render] : undefined;
   if (!r) return m.unknown;
   const name = typeof n.params.name === 'string' ? n.params.name : '';
-  const who = n.restName ?? (name || m.someone);
+  const who = mark?.who ? WHO : (n.restName ?? (name || m.someone));
   // 自动预测题的题目按题型和参数、当前语言渲染（问题记录 272）
   const p = n.params;
   const blessKnown = typeof p.blessId === 'number' && x.data?.('bless', p.blessId);
@@ -45,7 +87,7 @@ export function newsText(n: NewsDto, x: NewsNames): string {
               }),
             }
           : p;
-  return r(who, params, x);
+  return r(who, mark?.other ? { ...params, name: OTHER } : params, x);
 }
 
 export function newsTime(iso: string): string {

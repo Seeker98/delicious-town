@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { NEWS_TYPES, SHARED_GOODS, type NewsDto } from '@dt/shared';
 import { loadMessages, setActive } from '../i18n';
-import { newsRendered, newsText } from './news';
+import { newsParts, newsRendered, newsText } from './news';
 import { rewardText } from './rewards';
 
 const names = {
@@ -203,5 +203,48 @@ describe('全服合力贡献榜新闻（148-3）', () => {
         names,
       ),
     ).toBe('《国庆合力》贡献榜: 第 1 名 甲餐厅 (1,234 分)、第 2 名 乙餐厅 (1,100 分)');
+  });
+});
+
+describe('小镇新闻里的店名能点（问题记录 567）', () => {
+  it('主语的店带店编号；其余文字不带', () => {
+    expect(newsParts(n('star.up', { star: 2 }), names)).toEqual([
+      { text: '小王的店', restId: 7 },
+      { text: '升到了 2 星' },
+    ]);
+  });
+
+  it('收购新闻：被收购的店也能点', () => {
+    const parts = newsParts(
+      n('acquire.big', { restId: 9, name: '老李的店', price: 100000, way: 'force' }),
+      names,
+    );
+    expect(parts.filter((x) => x.restId).map((x) => [x.text, x.restId])).toEqual([
+      ['小王的店', 7],
+      ['老李的店', 9],
+    ]);
+    expect(parts.map((x) => x.text).join('')).toBe(
+      newsText(n('acquire.big', { restId: 9, name: '老李的店', price: 100000, way: 'force' }), names),
+    );
+  });
+
+  it('店已经不在、系统新闻：没有链接，文字和原来一样', () => {
+    expect(newsParts(n('star.up', { star: 2, name: '旧名' }, null), names)).toEqual([
+      { text: newsText(n('star.up', { star: 2, name: '旧名' }, null), names) },
+    ]);
+    const w = n('weather.change', { from: 1, to: 13 }, null);
+    expect(newsParts(w, names)).toEqual([{ text: newsText(w, names) }]);
+  });
+
+  it('每种新闻拆开再拼回去都和原来的文字一样', () => {
+    for (const type of NEWS_TYPES) {
+      const x = n(type, { name: '甲', restId: 3, star: 1, num: 1, price: 1, from: 1, to: 1 });
+      expect(
+        newsParts(x, names)
+          .map((s) => s.text)
+          .join(''),
+        type,
+      ).toBe(newsText(x, names));
+    }
   });
 });

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import { BROADCAST_NEWS, isBroadcastStyle, type NewsDto, type TownDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { useT } from '../../composables/useT';
@@ -9,7 +10,7 @@ import { errorMessage } from '../../i18n/zh-CN';
 import { useCatalogStore } from '../../stores/catalog';
 import { useSessionStore } from '../../stores/session';
 import { useToastStore } from '../../stores/toast';
-import { newsText, newsTime } from '../../utils/news';
+import { newsParts, newsTime } from '../../utils/news';
 import { useServerClock } from '../../utils/serverClock';
 
 const props = defineProps<{ data: TownDto }>();
@@ -107,7 +108,16 @@ async function send() {
     <!-- 广播只加粗内容，时间保持普通（问题记录 196） -->
     <!-- 一番赏大赏和喇叭一样按广播显示，和首页一致（backlog 一番赏） -->
     <span :class="{ 'fw-bold': isBroadcastStyle(n.type) }" data-testid="news-text"
-      >{{ isBroadcastStyle(n.type) ? t.nav.news.broadcast : '' }}{{ newsText(n, catalog) }}</span
+      >{{
+        isBroadcastStyle(n.type) ? t.nav.news.broadcast : ''
+      }}<!-- 别人的店名链到访问页，方便加好友（问题记录 567）；自己的店不做成链接 --><template
+        v-for="(s, i) in newsParts(n, catalog)"
+        :key="i"
+        ><RouterLink v-if="s.restId !== undefined && s.restId !== myRest" :to="`/friends/${s.restId}`">{{
+          s.text
+        }}</RouterLink
+        ><template v-else>{{ s.text }}</template></template
+      ></span
     >
     <!-- 别人的喇叭可以举报（子项目 6B-1） -->
     <ReportButton

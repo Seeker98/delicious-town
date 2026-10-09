@@ -46,3 +46,15 @@ describe('协会（问题记录 441、443）', () => {
     expect(hrefs(w)).toEqual(['/society/star', '/society/oil', '/society/rename', '/society/move']);
   });
 });
+
+describe('协会入口纵向压缩（问题记录 573）', () => {
+  beforeEach(() => setActivePinia(createPinia()));
+
+  it('上下留白、卡片间距减半，图标小一号；仍是带边框的卡片', async () => {
+    const a = (await mountView()).findAll('a')[0]!;
+    expect(a.classes()).toEqual(expect.arrayContaining(['border', 'rounded', 'py-1', 'px-2', 'mb-1']));
+    expect(a.classes()).not.toContain('p-2');
+    expect(a.classes()).not.toContain('mb-2');
+    expect(a.get('i.bi').classes()).toContain('fs-5');
+  });
+});

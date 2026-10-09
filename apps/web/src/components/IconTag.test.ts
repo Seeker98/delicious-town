@@ -10,3 +10,10 @@ describe('IconTag（称号徽章，定制称号设计 四）', () => {
     expect(s.classes()).toEqual(expect.arrayContaining(['badge', 'bg-warning', 'text-dark']));
   });
 });
+
+describe('称号和同一行文字居中对齐（问题记录 563）', () => {
+  it('按中线对齐，不按文字基线（原来底色框比文字低约 1.5 像素）', () => {
+    const s = mount(IconTag, { props: { title: '主厨' } }).find('[data-testid="icon-tag"]');
+    expect(s.classes()).toContain('align-middle');
+  });
+});

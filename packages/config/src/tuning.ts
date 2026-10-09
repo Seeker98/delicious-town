@@ -249,6 +249,7 @@ export const tuningSchema = z.object({
       heartExpMul: num,
       heartStrengthMul: num,
       baseSeats: int.min(0),
+      hostAwardLevel: int.min(1),
     }),
     roach: z.object({
       layBase: int,

@@ -36,6 +36,10 @@ const rest: Messages['rest'] = {
     loadFailed: 'No se pudieron cargar las mesas',
     tableNo: (n) => `Mesa ${n}`,
     last: (coin, exp) => `Última ronda ${coin} ${plEs(coin, 'moneda', 'monedas')} / ${exp} EXP`,
+    ordered: (dish, req, grade, ok) =>
+      `Pidió «${dish}», quería ${req}, el tuyo es ${grade}: ${ok ? 'satisfecho' : 'no satisfecho'}`,
+    orderedNone: (req) => `Quería un plato ${req}, pero aún no has aprendido ninguno que puedas servirle`,
+    ateSpecial: (name, n) => `Comió la especialidad «${name}» ×${n}`,
     kill: 'Aplastar la cucaracha',
     killed: 'Cucaracha aplastada',
     killFailed: 'No se pudo aplastar la cucaracha',

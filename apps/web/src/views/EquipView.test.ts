@@ -220,6 +220,27 @@ describe('EquipView', () => {
     expect(w.find('[data-testid="preview-cutting"]').text()).toBe('5');
   });
 
+  it('每格最多填剩下的点数，超了自动退回；剩余点数跟着输入减少；“全加”把剩下的都填进这一格（问题记录 557）', async () => {
+    vi.mocked(endpoints.overview).mockResolvedValue({
+      attrLeft: 10,
+      attrs: { cook: 0, cutting: 0, fire: 0, season: 0, creatives: 0 },
+    } as never);
+    const w = await mountView();
+    const input = (k: string) => w.find(`[data-testid="add-${k}"]`).element as HTMLInputElement;
+    await w.find('[data-testid="add-cook"]').setValue('99');
+    expect(input('cook').value).toBe('10');
+    await w.find('[data-testid="add-cook"]').setValue('7');
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 3');
+    await w.find('[data-testid="add-cutting"]').setValue('8');
+    expect(input('cutting').value).toBe('3');
+    expect(w.find('[data-testid="attr-left"]').text()).toBe('剩余点数 0');
+    await w.find('[data-testid="add-cutting"]').setValue('');
+    await w.find('[data-testid="all-fire"]').trigger('click');
+    expect(input('fire').value).toBe('3');
+    expect(w.find('[data-testid="allocate"]').text()).toBe('加点 (10)');
+    expect(w.find('[data-testid="allocate"]').attributes('disabled')).toBeUndefined();
+  });
+
   it('没有剩余点数时不显示加点输入', async () => {
     vi.mocked(endpoints.overview).mockResolvedValue({
       attrLeft: 0,

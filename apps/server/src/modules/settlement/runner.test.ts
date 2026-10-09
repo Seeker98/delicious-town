@@ -223,6 +223,21 @@ describe('特色菜（子项目 4A，规格书 01 §1.7）', () => {
     expect(c.ended_at).toBeNull();
   });
 
+  it('吃了特色菜的桌记下是哪道、几份（问题记录 559）', async () => {
+    const { shardId, ctx } = await withDish(1000);
+    await settle(shardId);
+    const tables = (
+      await t.db
+        .selectFrom('restaurant_tables')
+        .select('tables')
+        .where('rest_id', '=', ctx.restaurantId)
+        .executeTakeFirstOrThrow()
+    ).tables;
+    const ate = tables.filter((x) => x.last?.mcNum);
+    expect(ate.length).toBeGreaterThan(0);
+    for (const x of ate) expect(x.last).toMatchObject({ mcId: 1, mcNum: 1 });
+  });
+
   it('卖完：结束这批（sold）、清空餐厅指针', async () => {
     const { shardId, ctx, cookId } = await withDish(1);
     await settle(shardId);

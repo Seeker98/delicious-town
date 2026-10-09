@@ -46,6 +46,7 @@ const friends: Messages['friends'] = {
     closed: ' · Cerrado',
     door: 'Puerta',
     equips: 'Utensilios',
+    noticeTitle: 'Aviso',
     special: 'Plato estrella: ',
     specialLine: (grade, left, price) =>
       `${grade} · quedan ${left} · ${price} ${plEs(price, 'moneda', 'monedas')} cada uno`,

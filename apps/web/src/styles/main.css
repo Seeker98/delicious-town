@@ -366,6 +366,10 @@ body {
 }
 
 /* ---------- 视觉规范（docs/design/视觉规范.md） ---------- */
+/* 强调色文字和链接、按钮同一个深橙色（问题记录 575：原来广播是亮橙 #d9480f、日报链接是深橙，看着不一样；深橙在白底上也更清楚） */
+.text-primary {
+  color: rgba(var(--dt-primary-ink-rgb), var(--bs-text-opacity, 1)) !important;
+}
 .btn-primary {
   --bs-btn-bg: var(--dt-primary-ink);
   --bs-btn-border-color: var(--dt-primary-ink);

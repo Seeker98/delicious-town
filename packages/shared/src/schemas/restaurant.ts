@@ -115,6 +115,9 @@ export interface TableResultDto {
   grade?: number;
   cookbookId?: number;
   satisfied?: boolean;
+  /** 这桌吃了几份哪道特色菜（问题记录 559）；没吃没有 */
+  mcId?: number;
+  mcNum?: number;
 }
 
 export interface DeviceSlotDto {

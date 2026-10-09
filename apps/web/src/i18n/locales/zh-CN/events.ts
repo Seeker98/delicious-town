@@ -56,8 +56,6 @@ function describeFeed(item: RestLogDto, foodName: (id: number) => string): strin
     case 'lesson.taught':
       if (!p.success) return `${who} 在你的课上${p.type === 2 ? '偷学失败' : '没学会'}`;
       return `${who} 在你的课上${p.type === 2 ? '偷学成功' : '学会了特色菜'}`;
-    case 'dine.left':
-      return `${who} 在你店里第 ${String(p.table)} 桌吃完白食走了, 吃走了 ${String(p.coin)} 银币`;
     case 'forum.replied':
       return p.toFloor
         ? `${who} 回复了你在「${String(p.title ?? '')}」的 #${String(p.toFloor)}`
@@ -180,6 +178,16 @@ export default {
     'acquire.tended': (p) => `替老板「${String(p.ownerName ?? '')}」打理了餐厅, 得到 ${n(p, 'n')} 份食材`,
     'dine.started': (p) => `去「${String(p.hostName ?? '')}」白食`,
     'dine.ended': (p) => `在「${String(p.hostName ?? '')}」白食结束`,
+    /** 白食者吃完走了（店主那边，问题记录 553）；店主得到的道具或银币写在后面（565） */
+    'dine.left': (p, names) => {
+      const a = (p.award ?? null) as { kind?: string; id?: number | null; num?: number } | null;
+      const got = !a?.num
+        ? ''
+        : a.kind === 'goods'
+          ? `, 你得到了 ${names.goodsName(Number(a.id))}×${a.num}`
+          : `, 你得到了 ${formatNum(a.num)} 银币`;
+      return `${String(p.byName ?? '有人')} 在你店里第 ${n(p, 'table')} 桌吃完白食走了, 吃走了 ${formatNum(n(p, 'coin'))} 银币${got}`;
+    },
     'forum.post': (p) => `在论坛发了帖子 #${n(p, 'postId')}`,
     'forum.reply': (p) => `回复了论坛帖子 #${n(p, 'postId')}`,
     'forum.edit': (p) => `编辑了论坛帖子 #${n(p, 'postId')}`,

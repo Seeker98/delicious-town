@@ -34,6 +34,11 @@ export default {
     loadFailed: '读取餐桌失败',
     tableNo: (n: number) => `第 ${n} 桌`,
     last: (coin: string, exp: string) => `上一轮 ${coin} 银 / ${exp} 经`,
+    /** 每桌点的菜（问题记录 559） */
+    ordered: (dish: string, req: string, grade: string, ok: boolean) =>
+      `点了「${dish}」, 要${req}, 你的是${grade}, ${ok ? '满意' : '不满意'}`,
+    orderedNone: (req: string) => `想点${req}的菜, 但你还没学会能给他做的菜`,
+    ateSpecial: (name: string, n: number) => `吃了特色菜「${name}」×${n}`,
     kill: '消灭蟑螂',
     killed: '消灭了蟑螂',
     killFailed: '灭蟑螂失败',
