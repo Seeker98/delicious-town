@@ -11,13 +11,10 @@ const emit = defineEmits<{ pick: [table: TableDto] }>();
 const floor = ref(1);
 const t = useT();
 const catalog = useCatalogStore();
-/** 点菜、吃特色菜用的名字（问题记录 559） */
-const dishNames = {
-  cookbookName: (id: number) => catalog.data('cookbooks', id)?.name ?? `#${id}`,
-  mcName: (id: number) => catalog.mcName(id),
-};
 const floors = computed(() => [...new Set(props.tables.map((t) => t.floor))].sort((a, b) => a - b));
 const shown = computed(() => props.tables.filter((t) => t.floor === floor.value));
+/** 每桌点的菜、吃的特色菜（问题记录 559），每桌只算一次 */
+const dishes = computed(() => new Map(shown.value.map((x) => [x.no, tableDish(x.last, catalog)])));
 /** 每层几只蟑螂（问题记录 561：有蟑螂的楼层在按钮上标出来） */
 const roaches = computed(() => {
   const m = new Map<number, number>();
@@ -66,11 +63,11 @@ function label(x: TableDto): string {
         <div><i v-if="x.customer === 3" class="bi bi-bug me-1"></i>{{ label(x) }}</div>
         <!-- 这桌点的菜：挑剔顾客、蟹老板写点的菜，普通顾客、章鱼哥写吃的特色菜（问题记录 559） -->
         <div
-          v-if="tableDish(x.last, dishNames)"
+          v-if="dishes.get(x.no)"
           class="text-muted dt-clamp1"
           :data-testid="`table-dish-${x.no}`"
         >
-          {{ tableDish(x.last, dishNames) }}
+          {{ dishes.get(x.no) }}
         </div>
       </button>
     </div>

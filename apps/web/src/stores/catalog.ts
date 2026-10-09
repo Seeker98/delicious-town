@@ -119,6 +119,9 @@ export const useCatalogStore = defineStore('catalog', {
     mcName(id: number): string {
       return this.mcMap.get(id)?.name ?? activeMessages().errors.fallbackName.mc(id);
     },
+    cookbookName(id: number): string {
+      return this.data('cookbooks', id)?.name ?? activeMessages().errors.fallbackName.cookbook(id);
+    },
     seedName(id: number): string {
       const s = this.seedsMap.get(id);
       const f = activeMessages().errors.fallbackName;
