@@ -436,6 +436,7 @@ export const routes: RouteRecordRaw[] = [
       { path: 'players/:id', component: () => import('./views/admin/AdminPlayerView.vue') },
       { path: 'grants', component: () => import('./views/admin/AdminGrantsView.vue') },
       { path: 'mail', component: () => import('./views/admin/AdminMailView.vue') },
+      { path: 'titles', component: () => import('./views/admin/AdminTitlesView.vue') },
       { path: 'announce', component: () => import('./views/admin/AdminAnnounceView.vue') },
       { path: 'daily', component: () => import('./views/admin/AdminDailyView.vue') },
       { path: 'links', component: () => import('./views/admin/AdminLinksView.vue') },

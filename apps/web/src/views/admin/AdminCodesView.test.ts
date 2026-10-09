@@ -16,6 +16,7 @@ vi.mock('../../api/admin', () => ({
     disableCode: vi.fn(),
     enableCode: vi.fn(),
     exportCodeBatch: vi.fn(),
+    titles: vi.fn(),
   },
 }));
 
@@ -146,5 +147,38 @@ describe('backlog 后台 1a：兑换码页', () => {
     await w.find('[data-testid="code-enable-7"]').trigger('click');
     await flushPromises();
     expect(adminApi.enableCode).toHaveBeenCalledWith(7);
+  });
+
+  it('附件带称号（定制称号设计 三）：共享码提示会被转发；称号比码先过期时提示', async () => {
+    vi.mocked(adminApi.titles).mockResolvedValue([
+      {
+        key: 'c2',
+        id: 2,
+        title: '面霸',
+        desc: null,
+        note: null,
+        source: 'custom',
+        retired: false,
+        owners: 0,
+        createdBy: null,
+        createdAt: null,
+      },
+    ]);
+    const w = mount(AdminCodesView);
+    await flushPromises();
+    await w.find('[data-testid="code-kind"]').setValue('shared');
+    expect(w.find('[data-testid="code-icon-shared-hint"]').exists()).toBe(false);
+    await w.find('[data-testid="ri-add-icon"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="ri-icon-0-select"]').setValue('c2');
+    expect(w.find('[data-testid="code-icon-shared-hint"]').text()).toContain('一次性码');
+    await w.find('[data-testid="code-ends"]').setValue('2026-11-30T00:00');
+    await w.find('[data-testid="ri-icon-0-mode"]').setValue('until');
+    await w.find('[data-testid="ri-icon-0-until"]').setValue('2026-11-01T00:00');
+    expect(w.find('[data-testid="code-icon-until-hint"]').exists()).toBe(true);
+    await w.find('[data-testid="ri-icon-0-until"]').setValue('2026-12-01T00:00');
+    expect(w.find('[data-testid="code-icon-until-hint"]').exists()).toBe(false);
+    await w.find('[data-testid="code-kind"]').setValue('single');
+    expect(w.find('[data-testid="code-icon-shared-hint"]').exists()).toBe(false);
   });
 });

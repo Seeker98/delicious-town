@@ -12,6 +12,7 @@ vi.mock('../../api/admin', () => ({
     revokeMail: vi.fn(),
     restaurant: vi.fn(),
     searchPlayers: vi.fn(),
+    titles: vi.fn(),
   },
 }));
 
@@ -88,5 +89,44 @@ describe('AdminMailView', () => {
     expect(adminApi.revokeMail).not.toHaveBeenCalled();
     expect(w.find('[data-testid="mail-revoke-8"]').exists()).toBe(false);
     expect(w.text()).toContain('已领 2');
+  });
+
+  it('发给几家店（定制称号设计 三）：逗号或空格分隔，重复的只算一次；有一家查不到就不能发', async () => {
+    const ask = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.mocked(adminApi.restaurant).mockImplementation(async (id: number) => {
+      if (id === 99) throw new Error('404');
+      return {
+        overview: { name: `店${id}`, shardId: 1 },
+        owner: { username: `u${id}` },
+        shardName: '一服',
+      } as never;
+    });
+    const w = mount(AdminMailView);
+    await flushPromises();
+    await w.find('[data-testid="mail-scope"]').setValue('rest');
+    await w.find('[data-testid="mail-title"]').setValue('定制称号');
+    await w.find('[data-testid="mail-body"]').setValue('送你');
+    await w.find('[data-testid="ri-coin"]').setValue('1');
+    await w.find('[data-testid="mail-rest"]').setValue('3, 5 3，99');
+    await flushPromises();
+    expect(w.find('[data-testid="mail-rest-who-3"]').text()).toContain('店3');
+    expect(w.find('[data-testid="mail-rest-who-99"]').classes()).toContain('text-danger');
+    expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="mail-rest"]').setValue('3 5 3');
+    await flushPromises();
+    expect(w.find('[data-testid="mail-send"]').attributes('disabled')).toBeUndefined();
+    await w.find('[data-testid="mail-send"]').trigger('click');
+    await flushPromises();
+    expect(ask.mock.calls[0]![0]).toContain('发给 2 家店（每家一封）');
+    expect(adminApi.sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({ scope: 'rest', shardId: 1, restIds: [3, 5] }),
+    );
+    expect(vi.mocked(adminApi.sendMail).mock.calls[0]![0]).not.toHaveProperty('restId');
+  });
+
+  it('邮件附件可以加称号', async () => {
+    const w = mount(AdminMailView);
+    await flushPromises();
+    expect(w.find('[data-testid="ri-add-icon"]').exists()).toBe(true);
   });
 });

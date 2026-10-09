@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { adminTime } from '../../utils/gameInput';
-import { onMounted, ref, watch } from 'vue';
-import type { AdminMailDto, RewardItems, SendMailInput } from '@dt/shared';
+import { computed, onMounted, ref, watch } from 'vue';
+import { MAIL_RESTS_MAX, type AdminMailDto, type RewardItems, type SendMailInput } from '@dt/shared';
 import { adminApi } from '../../api/admin';
 import RewardItemsEditor from '../../components/admin/RewardItemsEditor.vue';
 import { errorMessage } from '../../i18n/zh-CN';
@@ -10,14 +10,31 @@ import { useCatalogStore } from '../../stores/catalog';
 import { useToastStore } from '../../stores/toast';
 import { rewardSummary } from '../../utils/reward';
 
-/** 后台邮件（子项目 6A）：单店、当前区服、全部区服；附件可带命名帽子；撤回 */
+/** 后台邮件（子项目 6A）：一家或几家店、当前区服、全部区服；附件可带命名帽子、称号（问题记录 539）；撤回 */
 const admin = useAdminStore();
 const catalog = useCatalogStore();
 const toast = useToastStore();
 
 const scope = ref<'rest' | 'shard' | 'all'>('shard');
-const restId = ref<number | ''>('');
-const restWho = ref<{ ok: boolean; text: string } | null>(null);
+/** 一家或几家店的 id：逗号、空格、换行分隔，重复的只算一次（每家一封） */
+const restInput = ref('');
+const restWho = ref<Array<{ id: number; ok: boolean; text: string }>>([]);
+const restIds = computed(() => [
+  ...new Set(
+    restInput.value
+      .split(/[\s,，、]+/)
+      .filter((x) => /^\d+$/.test(x))
+      .map(Number)
+      .filter((n) => n > 0),
+  ),
+]);
+const restsOk = computed(
+  () =>
+    restIds.value.length > 0 &&
+    restIds.value.length <= MAIL_RESTS_MAX &&
+    restWho.value.every((r) => r.ok) &&
+    restWho.value.length === restIds.value.length,
+);
 const minLevel = ref<number | ''>('');
 const title = ref('');
 const body = ref('');
@@ -29,26 +46,26 @@ const list = ref<AdminMailDto[]>([]);
 
 const SCOPE: Record<AdminMailDto['scope'], string> = { rest: '单店', shard: '区服', all: '全部区服' };
 
-/** 填店 id 后查出店名、店主，避免发错人（和补偿页同一套做法） */
+/** 填店 id 后逐个查出店名、店主，避免发错人（和补偿页同一套做法） */
 let whoSeq = 0;
-watch(restId, async () => {
-  const id = Number(restId.value);
+watch(restIds, async (ids) => {
   const seq = ++whoSeq;
-  if (!id) {
-    restWho.value = null;
-    return;
-  }
-  try {
-    const r = await adminApi.restaurant(id);
-    if (seq !== whoSeq) return;
-    const other = admin.shardId && r.overview.shardId !== admin.shardId;
-    restWho.value = {
-      ok: !other,
-      text: `${r.overview.name} · 店主 ${r.owner.username} · ${r.shardName}${other ? ' · 不在当前区服' : ''}`,
-    };
-  } catch {
-    if (seq === whoSeq) restWho.value = { ok: false, text: '找不到这家餐厅（这里填的是餐厅 id）' };
-  }
+  const out = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const r = await adminApi.restaurant(id);
+        const other = admin.shardId && r.overview.shardId !== admin.shardId;
+        return {
+          id,
+          ok: !other,
+          text: `#${id} ${r.overview.name} · 店主 ${r.owner.username} · ${r.shardName}${other ? ' · 不在当前区服' : ''}`,
+        };
+      } catch {
+        return { id, ok: false, text: `#${id} 找不到这家餐厅（这里填的是餐厅 id）` };
+      }
+    }),
+  );
+  if (seq === whoSeq) restWho.value = out;
 });
 
 async function loadList() {
@@ -62,7 +79,8 @@ onMounted(() => void loadList());
 watch(() => admin.shardId, loadList);
 
 function confirmText(): string {
-  if (scope.value === 'rest') return `发给 ${restWho.value?.text ?? ''}`;
+  if (scope.value === 'rest')
+    return `发给 ${restIds.value.length} 家店（每家一封）：${restWho.value.map((r) => r.text).join('；')}`;
   if (scope.value === 'shard') return '发给当前区服所有已开的店（之后开的店收不到）';
   return '发给所有区服所有已开的店（之后开的店收不到）';
 }
@@ -70,8 +88,8 @@ function confirmText(): string {
 async function send() {
   const shardId = admin.shardId;
   if (!shardId || busy.value) return;
-  if (scope.value === 'rest' && !restWho.value?.ok) {
-    toast.push(restWho.value?.text ?? '请先填写餐厅 id', 'danger');
+  if (scope.value === 'rest' && !restsOk.value) {
+    toast.push(`请检查餐厅 id（最多 ${MAIL_RESTS_MAX} 家）`, 'danger');
     return;
   }
   const attach = Object.keys(rewards.value).length > 0 ? rewardSummary(rewards.value, catalog) : '无附件';
@@ -81,7 +99,7 @@ async function send() {
     const b: SendMailInput = {
       scope: scope.value,
       ...(scope.value !== 'all' ? { shardId } : {}),
-      ...(scope.value === 'rest' ? { restId: Number(restId.value) } : {}),
+      ...(scope.value === 'rest' ? { restIds: restIds.value } : {}),
       ...(minLevel.value ? { minLevel: Number(minLevel.value) } : {}),
       title: title.value.trim(),
       body: body.value.trim(),
@@ -124,15 +142,11 @@ async function revoke(m: AdminMailDto) {
       </select>
       <input
         v-if="scope === 'rest'"
-        v-model.number="restId"
-        type="number"
+        v-model="restInput"
         class="form-control form-control-sm w-auto"
-        placeholder="餐厅 id"
+        placeholder="餐厅 id，几家用逗号或空格隔开"
         data-testid="mail-rest"
       />
-      <span v-if="scope === 'rest' && restWho" :class="restWho.ok ? 'text-success' : 'text-danger'">{{
-        restWho.text
-      }}</span>
       <input
         v-model.number="minLevel"
         type="number"
@@ -141,6 +155,16 @@ async function revoke(m: AdminMailDto) {
         data-testid="mail-min-level"
       />
     </div>
+    <ul v-if="scope === 'rest' && restWho.length > 0" class="list-unstyled mb-2">
+      <li
+        v-for="r in restWho"
+        :key="r.id"
+        :class="r.ok ? 'text-success' : 'text-danger'"
+        :data-testid="`mail-rest-who-${r.id}`"
+      >
+        {{ r.text }}
+      </li>
+    </ul>
     <input
       v-model="title"
       class="form-control form-control-sm mb-2"
@@ -156,11 +180,11 @@ async function revoke(m: AdminMailDto) {
       placeholder="正文（≤ 1000 字）"
       data-testid="mail-body"
     ></textarea>
-    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" @over="over = $event" />
+    <RewardItemsEditor :key="formKey" v-model="rewards" :hats="true" :icons="true" @over="over = $event" />
     <button
       type="button"
       class="btn btn-primary btn-sm"
-      :disabled="busy || !title.trim() || !body.trim() || over.length > 0"
+      :disabled="busy || !title.trim() || !body.trim() || over.length > 0 || (scope === 'rest' && !restsOk)"
       data-testid="mail-send"
       @click="send"
     >

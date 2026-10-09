@@ -6,27 +6,31 @@ import {
   GRANT_LIMITS,
   HAT_NAME_MAX,
   MAIL_HATS_MAX,
+  MAIL_ICONS_MAX,
   type ActivityRewardPreset,
   type RewardItems,
 } from '@dt/shared';
 import { useCatalogStore } from '../../stores/catalog';
 import CatalogPicker from './CatalogPicker.vue';
+import TitlePicker from './TitlePicker.vue';
 
 /**
  * 附件编辑器（补偿、后台邮件共用；子项目 6A）：银币、钻石、经验、道具、食材，可选命名帽子。
  * 输出只含填了的项；超出单项上限时通过 over 事件给出提示。父组件要清空时换一个 key 重新挂载。
  * 道具、食材用搜索下拉选（问题记录 270）；goodsOnly 只留道具行（战令解锁价格，backlog 148-1）；
- * presets 显示活动的推荐奖励（问题记录 505），点一下加一行，已有这一样就加数量
+ * presets 显示活动的推荐奖励（问题记录 505），点一下加一行，已有这一样就加数量；
+ * icons 开称号一栏（问题记录 539，只在邮件、兑换码开）：选或新建称号，带有效期
  */
 const props = withDefaults(
   defineProps<{
     modelValue: RewardItems;
     hats?: boolean;
+    icons?: boolean;
     idPrefix?: string;
     goodsOnly?: boolean;
     presets?: boolean;
   }>(),
-  { hats: false, idPrefix: 'ri', goodsOnly: false, presets: false },
+  { hats: false, icons: false, idPrefix: 'ri', goodsOnly: false, presets: false },
 );
 const emit = defineEmits<{ 'update:modelValue': [RewardItems]; over: [string[]] }>();
 const catalog = useCatalogStore();
@@ -40,6 +44,21 @@ const goods = ref<Line[]>((props.modelValue.goods ?? []).map((g) => ({ ...g })))
 const foods = ref<Line[]>((props.modelValue.foods ?? []).map((f) => ({ ...f })));
 const hatRows = ref<Array<{ tier: 'jade' | 'xuan'; name: string }>>(
   (props.modelValue.hats ?? []).map((h) => ({ ...h })),
+);
+type Picked = { key: string; title: string; days?: number; until?: string };
+/** uid 只用来给行做稳定的 key：删掉一行时后面的选择框不会串状态 */
+type IconRow = { uid: number; v: Picked };
+let uid = 0;
+const iconRows = ref<IconRow[]>(
+  (props.modelValue.icons ?? []).map(({ key, title, days, until }) => ({
+    uid: ++uid,
+    v: {
+      key,
+      title,
+      ...(days !== undefined ? { days } : {}),
+      ...(until !== undefined ? { until } : {}),
+    },
+  })),
 );
 const fmt = (n: number) => n.toLocaleString('en-US');
 
@@ -61,6 +80,8 @@ function items(): RewardItems {
   if (lines(foods.value).length > 0) out.foods = lines(foods.value);
   const hats = hatRows.value.filter((h) => h.name.trim()).map((h) => ({ tier: h.tier, name: h.name.trim() }));
   if (props.hats && hats.length > 0) out.hats = hats;
+  const icons = iconRows.value.filter((r) => r.v.key).map((r) => ({ ...r.v }));
+  if (props.icons && icons.length > 0) out.icons = icons;
   return out;
 }
 
@@ -81,6 +102,13 @@ const overLimit = computed(() => {
     hatRows.value.forEach((h, i) => {
       if (!h.name.trim()) out.push(`第 ${i + 1} 顶帽子没填名字`);
     });
+  if (props.icons)
+    iconRows.value.forEach(({ v: r }, i) => {
+      if (!r.key) out.push(`第 ${i + 1} 个称号没选`);
+      else if (r.days !== undefined && !(r.days >= 1 && r.days <= 3650))
+        out.push(`第 ${i + 1} 个称号的有效天数要在 1~3650`);
+      else if (r.until === '') out.push(`第 ${i + 1} 个称号没填到期时间`);
+    });
   return out;
 });
 
@@ -88,7 +116,7 @@ const overLimit = computed(() => {
 reportOverLimit(overLimit);
 
 watch(
-  [coin, diamond, exp, goods, foods, hatRows],
+  [coin, diamond, exp, goods, foods, hatRows, iconRows],
   () => {
     emit('update:modelValue', items());
     emit('over', overLimit.value);
@@ -181,6 +209,17 @@ watch(
         h.name.trim() ? `${h.tier === 'jade' ? '玉' : '铉'}•${h.name.trim()}之帽` : ''
       }}</span>
     </div>
+    <div v-for="(r, i) in iconRows" :key="r.uid" class="d-flex gap-1 mb-1 align-items-start">
+      <TitlePicker v-model="r.v" :create="true" class="flex-fill" :testid="tid(`icon-${i}`)" />
+      <button
+        type="button"
+        class="btn btn-link btn-sm p-0"
+        :data-testid="tid(`icon-${i}-remove`)"
+        @click="iconRows.splice(i, 1)"
+      >
+        删除
+      </button>
+    </div>
     <div v-if="!goodsOnly" class="dt-meta mb-1" :data-testid="tid('limits')">
       单次上限：银币、经验各 ≤ {{ fmt(GRANT_LIMITS.coin) }}；钻石 ≤
       {{ fmt(GRANT_LIMITS.diamond) }}；道具、食材每种 ≤ {{ fmt(GRANT_LIMITS.item) }}。
@@ -217,6 +256,16 @@ watch(
         @click="hatRows.push({ tier: 'jade', name: '' })"
       >
         + 命名帽子
+      </button>
+      <button
+        v-if="icons && !goodsOnly"
+        type="button"
+        class="btn btn-link btn-sm p-0"
+        :disabled="iconRows.length >= MAIL_ICONS_MAX"
+        :data-testid="tid('add-icon')"
+        @click="iconRows.push({ uid: ++uid, v: { key: '', title: '' } })"
+      >
+        + 称号
       </button>
     </div>
   </div>

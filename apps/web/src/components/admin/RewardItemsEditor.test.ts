@@ -1,9 +1,14 @@
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { flushPromises } from '@vue/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { adminApi } from '../../api/admin';
+import { resetTitleList } from './titleList';
 import { useCatalogStore } from '../../stores/catalog';
 import { ACTIVITY_REWARD_PRESETS } from '@dt/shared';
 import RewardItemsEditor from './RewardItemsEditor.vue';
+
+vi.mock('../../api/admin', () => ({ adminApi: { titles: vi.fn(), createTitle: vi.fn() } }));
 
 describe('RewardItemsEditor', () => {
   beforeEach(() => setActivePinia(createPinia()));
@@ -111,5 +116,68 @@ describe('RewardItemsEditor', () => {
     await w.find(`[data-testid="ri-preset-goods-${goods.id}"]`).trigger('click');
     expect(w.find('[data-testid="ri-over"]').exists()).toBe(true);
     expect(((w.emitted('over') ?? []).at(-1)![0] as string[]).length).toBeGreaterThan(0);
+  });
+
+  it('称号（定制称号设计 三）：不开时没有这一栏；开了要选称号、限时要填完', async () => {
+    resetTitleList();
+    vi.mocked(adminApi.titles).mockResolvedValue([
+      {
+        key: 'c2',
+        id: 2,
+        title: '面霸',
+        desc: null,
+        note: null,
+        source: 'custom',
+        retired: false,
+        owners: 0,
+        createdBy: null,
+        createdAt: null,
+      },
+    ]);
+    const off = mount(RewardItemsEditor, { props: { modelValue: {} } });
+    expect(off.find('[data-testid="ri-add-icon"]').exists()).toBe(false);
+    const w = mount(RewardItemsEditor, { props: { modelValue: {}, icons: true } });
+    await w.find('[data-testid="ri-add-icon"]').trigger('click');
+    await flushPromises();
+    expect(w.emitted('over')!.at(-1)![0]).toEqual(['第 1 个称号没选']);
+    await w.find('[data-testid="ri-icon-0-select"]').setValue('c2');
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({ icons: [{ key: 'c2', title: '面霸' }] });
+    expect(w.emitted('over')!.at(-1)![0]).toEqual([]);
+    await w.find('[data-testid="ri-icon-0-mode"]').setValue('days');
+    expect(w.emitted('over')!.at(-1)![0]).toEqual(['第 1 个称号的有效天数要在 1~3650']);
+    await w.find('[data-testid="ri-icon-0-days"]').setValue(30);
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({
+      icons: [{ key: 'c2', title: '面霸', days: 30 }],
+    });
+    await w.find('[data-testid="ri-icon-0-mode"]').setValue('until');
+    expect(w.emitted('over')!.at(-1)![0]).toEqual(['第 1 个称号没填到期时间']);
+    await w.find('[data-testid="ri-icon-0-remove"]').trigger('click');
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({});
+  });
+
+  it('删掉前面的称号行，后面一行选好的不丢', async () => {
+    resetTitleList();
+    const t = (key: string, title: string) => ({
+      key,
+      id: Number(key.slice(1)),
+      title,
+      desc: null,
+      note: null,
+      source: 'custom' as const,
+      retired: false,
+      owners: 0,
+      createdBy: null,
+      createdAt: null,
+    });
+    vi.mocked(adminApi.titles).mockResolvedValue([t('c2', '面霸'), t('c3', '饭王')]);
+    const w = mount(RewardItemsEditor, { props: { modelValue: {}, icons: true } });
+    await w.find('[data-testid="ri-add-icon"]').trigger('click');
+    await w.find('[data-testid="ri-add-icon"]').trigger('click');
+    await flushPromises();
+    await w.find('[data-testid="ri-icon-0-select"]').setValue('c2');
+    await w.find('[data-testid="ri-icon-1-select"]').setValue('c3');
+    await w.find('[data-testid="ri-icon-0-remove"]').trigger('click');
+    expect(w.emitted('update:modelValue')!.at(-1)![0]).toEqual({ icons: [{ key: 'c3', title: '饭王' }] });
+    expect((w.find('[data-testid="ri-icon-0-select"]').element as HTMLSelectElement).value).toBe('c3');
   });
 });
