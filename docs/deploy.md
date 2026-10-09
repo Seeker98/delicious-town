@@ -21,6 +21,10 @@
 5. 建区服：`docker compose -f compose.prod.yml run --rm api node dist/cli/shard.js ensure --id 1 --name 一服`
 6. 检查：`curl https://api.<域名>/readyz` 返回 `{"ok":true,...}`
 7. 备份：`crontab -e` 加入 `0 4 * * * bash /opt/dt/infra/backup.sh >> /var/log/dt-backup.log 2>&1`。用 `bash` 调用，不要 `chmod +x`：仓库里的文件一改（连权限也算），`deploy.sh` 就会因为“服务器上的仓库有未提交的改动”拒绝部署（2026-10-06 因此连续 8 次部署失败）
+8. Docker 守护进程（2026-10-10 加，服务器只有 1 GB）：
+   - `/etc/docker/daemon.json` 写成 `{ "log-driver": "json-file", "log-opts": { "max-size": "10m", "max-file": "3" }, "live-restore": true }`，先 `dockerd --validate --config-file <文件>` 检查，再 `systemctl reload docker`，`docker info --format '{{.LiveRestoreEnabled}}'` 要是 `true`。打开 live-restore 以后重启 Docker 不会连带重启容器。
+   - 新建 `/etc/systemd/system/docker.service.d/gomemlimit.conf`，内容是 `[Service]` 和 `Environment=GOMEMLIMIT=120MiB` 两行，然后 `systemctl daemon-reload && systemctl restart docker`。
+   - 为什么：dockerd 拉镜像、重建容器时内存会冲高（峰值 333 MB），用完不还给系统，6 天后常驻 185 MB、交换区 51 MB；加了以后重启完是 94 MB。以后又涨上去时，`systemctl restart docker` 就能放掉（容器不受影响）。
 
 VPS 防火墙只需开放 SSH，80/443 都不用开（流量全部经 Tunnel 进来）。
 
