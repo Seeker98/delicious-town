@@ -47,7 +47,7 @@ async function chat(writer: Writer, system: string, user: string, used: Used, si
 }
 
 /**
- * 合格的简中先留在进程里（backlog 1010）：翻译失败、重试时素材没变就直接拿来翻译，不重写也不重付。
+ * 合格的简中先留在进程里（backlog 1010）：翻译失败、重试时素材没变就直接拿来翻译（只复用一次），不重写也不重付。
  * 生成成功就删；只是省钱用的，进程重启丢了也没关系
  */
 const zhDrafts = new Map<string, { facts: string; zh: Article }>();
@@ -63,8 +63,11 @@ async function write(
   const factsKey = JSON.stringify(facts);
   const cached = zhDrafts.get(key);
   let zh: Article;
-  if (cached && cached.facts === factsKey) zh = cached.zh;
-  else {
+  // 只复用一次（终审）：翻译总过不了时下次从头写，免得一篇简中卡死一整天
+  if (cached && cached.facts === factsKey) {
+    zh = cached.zh;
+    zhDrafts.delete(key);
+  } else {
     zh = parseArticle(
       await chat(writer, WRITE_SYSTEM, writeUser(facts), used, signal),
       'zh-CN',

@@ -94,6 +94,19 @@ describe('小镇日报：生成一天', () => {
     expect((x.content as { 'zh-CN': { title: string } })['zh-CN'].title).toBe('小镇又热闹了');
   });
 
+  it('合格的简中只复用一次：翻译连着两次过不了，第三次从头写（终审：免得一篇简中卡死一整天）', async () => {
+    const { shardId, r } = await shardWithNews();
+    await expect(
+      generateDaily(t.game.deps, scriptedWriter([zhReply(r), enReply('{r:999}')]), shardId, DAY, o),
+    ).rejects.toThrow();
+    const second = scriptedWriter([enReply('{r:999}')]);
+    await expect(generateDaily(t.game.deps, second, shardId, DAY, o)).rejects.toThrow();
+    expect(second.calls).toHaveLength(1);
+    const third = scriptedWriter([zhReply(r), enReply(r)]);
+    await generateDaily(t.game.deps, third, shardId, DAY, o);
+    expect(third.calls).toHaveLength(2);
+  });
+
   it('简中不合格时下次从头写（backlog 1010）', async () => {
     const { shardId, r } = await shardWithNews();
     await expect(
