@@ -95,6 +95,8 @@ describe('小镇日报素材：挑选和汇总', () => {
     await news(shardId, 'market.restock', null, { shelf: 1, foods: [] }, 3);
     await news(shardId, 'weather.change', null, { from: 1, to: 17 }, 4);
     await news(shardId, 'weather.change', null, { from: 17, to: 1 }, 5);
+    // 天气没变（自动轮换又轮到同一种）的不重复写（试写时出现过“多云 → 多云”）
+    await news(shardId, 'weather.change', null, { from: 1, to: 1 }, 6);
     // 前一天、后一天的不算
     await postNews(
       t.db,
@@ -110,7 +112,7 @@ describe('小镇日报素材：挑选和汇总', () => {
       .insertInto('rest_income_day')
       .values([
         { rest_id: a.restaurantId, day: DAY, coin: 100, rounds: 1 },
-        { rest_id: b.restaurantId, day: DAY, coin: 900, rounds: 1 },
+        { rest_id: b.restaurantId, day: DAY, coin: 1234567, rounds: 1 },
         { rest_id: npc.restaurantId, day: DAY, coin: 99999, rounds: 1 },
       ])
       .execute();
@@ -125,8 +127,9 @@ describe('小镇日报素材：挑选和汇总', () => {
     ]);
     expect(f.summary).toEqual(['新开 2 家店', '菜场进货 1 次', '天气: {w:1} → {w:17} → {w:1}']);
     expect(f.topIncome).toEqual([
-      { rest: `{r:${b.restaurantId}}`, coin: 900 },
-      { rest: `{r:${a.restaurantId}}`, coin: 100 },
+      // 银币带千分位给 AI，它照抄（试写时写成了 100220243）
+      { rest: `{r:${b.restaurantId}}`, coin: '1,234,567' },
+      { rest: `{r:${a.restaurantId}}`, coin: '100' },
     ]);
     expect(f.names['w:17']).toBe(config.weather.get(17)!.name);
     // 店名一律不进素材（防提示注入）：只有记号

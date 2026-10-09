@@ -18,7 +18,8 @@ export interface DailyFacts {
   day: string;
   shopCount: number;
   summary: string[];
-  topIncome: { rest: string; coin: number }[];
+  /** 银币带千分位（AI 照抄数字，给原始数字它就写成 100220243） */
+  topIncome: { rest: string; coin: string }[];
   events: DailyEvent[];
   /** 记号 → 简中名字（店除外），AI 据此知道是什么东西 */
   names: Record<string, string>;
@@ -245,7 +246,8 @@ export async function buildFacts(
     else if (r.type === 'weather.change') {
       const [a, b] = [num(p.from), num(p.to)];
       if (weather.length === 0 && a !== null) weather.push(a);
-      if (b !== null) weather.push(b);
+      // 轮换又轮到同一种天气时不重复写
+      if (b !== null && b !== weather.at(-1)) weather.push(b);
     } else {
       const rule = DAILY_TYPES[r.type]!;
       const weight = rule.weight(p);
@@ -304,7 +306,7 @@ export async function buildFacts(
     day,
     shopCount: Number(shops.n),
     summary,
-    topIncome: top.map((x) => ({ rest: `{r:${x.rest_id}}`, coin: Number(x.coin) })),
+    topIncome: top.map((x) => ({ rest: `{r:${x.rest_id}}`, coin: fmt(Number(x.coin)) })),
     events,
     names: {},
   };

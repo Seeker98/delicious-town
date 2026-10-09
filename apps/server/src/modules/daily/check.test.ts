@@ -6,7 +6,7 @@ const facts: DailyFacts = {
   day: '2026-10-07',
   shopCount: 10,
   summary: ['天气: {w:1} → {w:17}'],
-  topIncome: [{ rest: '{r:12}', coin: 900 }],
+  topIncome: [{ rest: '{r:12}', coin: '900' }],
   events: [{ kind: '强化', text: '{r:7} 把 {g:40605} 强化到了 +10', newsId: 1 }],
   names: { 'g:40605': '铲子', 'w:1': '晴', 'w:17': '小雨' },
 };
