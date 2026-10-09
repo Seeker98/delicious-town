@@ -5,6 +5,8 @@ export interface RankBoardDef {
   label: string;
   /** 这个榜的排行奖励说明 */
   reward?: string;
+  /** 值越小越靠前（问题记录 569：秘制调料最少几次猜中） */
+  asc?: boolean;
 }
 
 export const RANK_GROUPS: readonly string[] = [
@@ -20,6 +22,13 @@ export const RANK_GROUPS: readonly string[] = [
   '划拳',
   '猜酒杯',
   '转数字',
+  // 新出的几种酒吧游戏（问题记录 569；老虎机不排）
+  '飞镖',
+  '最后一颗糖',
+  '秘制调料',
+  '记忆调酒',
+  '魔鬼辣杯',
+  '一掷千金',
   '特色菜',
   '打赏',
 ];
@@ -37,6 +46,15 @@ const periodBoards = (prefix: string, group: string, reward?: string): RankBoard
     group,
     label,
     ...(p === 'lastWeek' && reward ? { reward } : {}),
+  }));
+
+/** 只分本周、上周的榜（问题记录 569：新出的酒吧游戏，按每日计数加起来） */
+const weekBoards = (prefix: string, group: string, what: string, asc?: boolean): RankBoardDef[] =>
+  (['thisWeek', 'lastWeek'] as const).map((p) => ({
+    key: `${prefix}.${p}`,
+    group,
+    label: `${p === 'thisWeek' ? '本周' : '上周'}${what}`,
+    ...(asc ? { asc } : {}),
   }));
 
 export const RANK_BOARDS: readonly RankBoardDef[] = [
@@ -72,6 +90,14 @@ export const RANK_BOARDS: readonly RankBoardDef[] = [
   { key: 'bar.num.win.lastWeek', group: '转数字', label: '上周连中' },
   { key: 'bar.num.lose.thisWeek', group: '转数字', label: '本周连不中' },
   { key: 'bar.num.lose.lastWeek', group: '转数字', label: '上周连不中' },
+  ...weekBoards('bar.darts.win', '飞镖', '胜场'),
+  ...weekBoards('bar.nim.novice', '最后一颗糖', '新手桌胜场'),
+  ...weekBoards('bar.nim.expert', '最后一颗糖', '高手桌胜场'),
+  ...weekBoards('bar.spice.best', '秘制调料', '最少几次猜中', true),
+  ...weekBoards('bar.spice.win', '秘制调料', '猜中次数'),
+  ...weekBoards('bar.memory.top', '记忆调酒', '通关次数'),
+  ...weekBoards('bar.devil.payout', '魔鬼辣杯', '赢得礼券'),
+  ...weekBoards('bar.deal.top', '一掷千金', '开出最大奖'),
   { key: 'mc.today', group: '特色菜', label: '今日价值' },
   { key: 'mc.yesterday', group: '特色菜', label: '昨日价值', reward: '第一名：特色菜冠军 (每天发)' },
   { key: 'mc.best', group: '特色菜', label: '历史价值' },

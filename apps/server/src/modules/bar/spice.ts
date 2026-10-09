@@ -9,6 +9,7 @@ import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import { consumeGoods } from '../store/goods';
 import { badInput } from './common';
 import { assertNoRound, endRound, loadRound, saveRound } from './round';
+import { recordFewest } from './state';
 import { spiceScore, spiceTier } from './rules';
 
 type T = Tuning['bar']['spice'];
@@ -85,6 +86,9 @@ export async function spiceGuess(o: Op, guess: number[]): Promise<SpiceDto> {
     // 支线“酒桌高手”：6 次、4 次以内猜中（问题记录 515）
     if (tries <= 6) await emitAction(o, 'bar.spice.win6');
     if (tries <= 4) await emitAction(o, 'bar.spice.win4');
+    // 排行：猜中次数、本周单局最少几次猜中（问题记录 569）
+    await incrementDaily(o.tx, o.rest.id, 'bar.spice.win', 1, gameDay(o.now));
+    await recordFewest(o, 'spice', tries);
     const award: BarAwardDto = await randomAward(o, { level: x.awardLevel, noTicket: true, bar: true });
     // 每家店每天只写一条新闻（和记忆调酒一样，免得脚本刷屏）
     if (x.news && (await incrementDaily(o.tx, o.rest.id, 'bar.spice.news', 1, gameDay(o.now))) === 1)

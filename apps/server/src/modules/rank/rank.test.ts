@@ -185,6 +185,67 @@ describe('排行榜（设计文档 §2.6）', () => {
     expect(await rows('bar.num.win.lastWeek')).toEqual([]);
   });
 
+  it('新酒吧游戏的本周、上周榜按每日计数加起来（问题记录 569）；最后一颗糖新手桌、高手桌分开', async () => {
+    const [a, b] = await rests(2);
+    const boards: Array<[string, string]> = [
+      ['bar.darts.win', 'bar.darts.win'],
+      ['bar.nim.novice', 'bar.nim.win.novice'],
+      ['bar.nim.expert', 'bar.nim.win.expert'],
+      ['bar.spice.win', 'bar.spice.win'],
+      ['bar.memory.top', 'bar.memory.perfect'],
+      ['bar.devil.payout', 'bar.devil.payout'],
+      ['bar.deal.top', 'bar.deal.top'],
+    ];
+    for (const [, key] of boards) {
+      await counter(a!.restaurantId, key, '2026-09-28', 2);
+      await counter(a!.restaurantId, key, '2026-10-01', 1);
+      await counter(b!.restaurantId, key, '2026-09-30', 5);
+      await counter(b!.restaurantId, key, '2026-09-27', 4);
+    }
+    const rows = (key: string) => board(a!, key).then((d) => d.rows.map((x) => [x.restId, x.value]));
+    for (const [board] of boards) {
+      expect(await rows(`${board}.thisWeek`), board).toEqual([
+        [b!.restaurantId, 5],
+        [a!.restaurantId, 3],
+      ]);
+      expect(await rows(`${board}.lastWeek`), board).toEqual([[b!.restaurantId, 4]]);
+    }
+    // 新手桌和高手桌的计数互不相混
+    await counter(a!.restaurantId, 'bar.nim.win.novice', '2026-09-29', 10);
+    t.game.rank.clearCache();
+    expect(await rows('bar.nim.expert.thisWeek')).toEqual([
+      [b!.restaurantId, 5],
+      [a!.restaurantId, 3],
+    ]);
+  });
+
+  it('秘制调料单局最少几次猜中：越少越靠前，同样少的先达到的在前（问题记录 569）', async () => {
+    const [a, b, c] = await rests(3);
+    const best = (restId: number, week: string, times: number, hour: number) =>
+      t.db
+        .insertInto('bar_streak_best')
+        .values({
+          rest_id: restId,
+          game: 'spice',
+          result: 1,
+          week,
+          times,
+          reached_at: gameTime('2026-09-29', hour),
+        })
+        .execute();
+    await best(a!.restaurantId, '2026-09-28', 5, 10);
+    await best(b!.restaurantId, '2026-09-28', 3, 12);
+    await best(c!.restaurantId, '2026-09-28', 3, 11);
+    await best(a!.restaurantId, '2026-09-21', 2, 10);
+    const rows = (key: string) => board(a!, key).then((d) => d.rows.map((x) => [x.restId, x.rank, x.value]));
+    expect(await rows('bar.spice.best.thisWeek')).toEqual([
+      [c!.restaurantId, 1, 3],
+      [b!.restaurantId, 2, 3],
+      [a!.restaurantId, 3, 5],
+    ]);
+    expect(await rows('bar.spice.best.lastWeek')).toEqual([[a!.restaurantId, 1, 2]]);
+  });
+
   it('特色菜昨日价值：单批最大值', async () => {
     const [a] = await rests(1);
     const cook = (total: number, price: number, at: Date) =>

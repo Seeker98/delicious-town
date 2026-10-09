@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    rank1010:
+      'Rankings now have this week and last week boards for more bar games: Darts (wins), Last Candy (beginner and expert tables separately), Secret Blend (fewest guesses in one game, and blends guessed), Memory Mixing (full clears), Devil’s Chili (vouchers won) and Deal or No Deal (top prizes). Apart from Memory Mixing, counting starts with this update',
     ui1010:
       'When assigning points, each box now stops at the points you have left, and there is an All button. On Floors & tables, each table shows what was ordered or which special was eaten; tap a table to see the grade wanted, your grade and whether the customer was satisfied. Cockroaches are now flagged on the home page Floors & tables link and on the floor buttons. When a free diner finishes and leaves, the owner now gets a random item. Other restaurants’ names in Town news are now links. Visiting a restaurant now shows its street, followed by titles, notice, acquisition and cookware. The Guild page is more compact, home facilities show three per row, titles line up with the text next to them, and highlight colors are now the same dark orange',
     feed1009:

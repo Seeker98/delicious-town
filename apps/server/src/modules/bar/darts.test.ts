@@ -89,6 +89,8 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     const [n] = await listNews(t.db, a.shardId, { limit: 1, only: ['bar.darts'] });
     expect(n).toMatchObject({ restId: a.restaurantId });
     expect(await getDaily(t.db, a.restaurantId, 'bar.darts.bull', DAY)).toBe(3);
+    // 排行“本周胜场”（问题记录 569）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.darts.win', DAY)).toBe(1);
     expect((await t.game.bar.overview(a)).darts.round).toBeNull();
   });
 
@@ -107,6 +109,7 @@ describe('飞镖（4C-3 设计文档 §2.3）', () => {
     await miss(a);
     expect(await miss(a)).toMatchObject({ result: 'lose', boss: [50, 50, 50], refund: 0, award: null });
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(47);
+    expect(await getDaily(t.db, a.restaurantId, 'bar.darts.win', DAY)).toBe(0);
   });
 
   it('每天最多 20 局', async () => {

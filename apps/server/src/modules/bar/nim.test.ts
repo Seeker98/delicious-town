@@ -3,7 +3,7 @@ import { GOODS } from '@dt/config';
 import { gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, restRow, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
-import { incrementDaily } from '../counter/dailyCounter';
+import { getDaily, incrementDaily } from '../counter/dailyCounter';
 import type { NimState } from './nim';
 
 const DAY = '2026-09-30';
@@ -200,12 +200,17 @@ describe('最后一颗糖：先后和拿', () => {
       .where('type', '=', 'bar.nim')
       .executeTakeFirst();
     expect(log?.params).toMatchObject({ table: 'novice', result: 'win' });
+    // 排行按桌分开记胜场（问题记录 569）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.nim.win.novice', DAY)).toBe(1);
+    expect(await getDaily(t.db, a.restaurantId, 'bar.nim.win.expert', DAY)).toBe(0);
   });
 
   it('高手桌赢加 3 点声望', async () => {
     const a = await player();
     await setRound(a, { table: 'expert', k: 4, pile: 30, left: 4, started: true, coin: 'me', log: [] });
     expect((await take(a, 4)).data).toMatchObject({ result: 'win', renown: 3 });
+    expect(await getDaily(t.db, a.restaurantId, 'bar.nim.win.expert', DAY)).toBe(1);
+    expect(await getDaily(t.db, a.restaurantId, 'bar.nim.win.novice', DAY)).toBe(0);
   });
 
   it('调酒师拿到最后一颗：输，没有声望和奖励，局面删掉', async () => {
@@ -216,6 +221,7 @@ describe('最后一颗糖：先后和拿', () => {
     const r = (await take(a, 2)).data;
     expect(r).toMatchObject({ result: 'lose', renown: 0, award: null, left: 0 });
     expect(r.log.at(-1)).toEqual({ who: 'bartender', take: 3 });
+    expect(await getDaily(t.db, a.restaurantId, 'bar.nim.win.expert', DAY)).toBe(0);
     expect((await restRow(t, a.restaurantId)).renown).toBe(before);
     expect(await roundOf(a)).toBeUndefined();
   });

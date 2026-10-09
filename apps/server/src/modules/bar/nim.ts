@@ -73,6 +73,8 @@ async function finish(o: Op, s: NimState, win: boolean): Promise<NimDto> {
     gainRenown(o, t.renown);
     // 支线“酒桌高手”：按桌子分开记赢（问题记录 515）
     await emitAction(o, `bar.nim.${s.table}`);
+    // 排行按桌分开记胜场（问题记录 569）
+    await incrementDaily(o.tx, o.rest.id, `bar.nim.win.${s.table}`, 1, gameDay(o.now));
     award = await randomAward(o, { level: t.awardLevel, noTicket: true, bar: true });
   }
   restLog(o, 'bar.nim', { table: s.table, result: win ? 'win' : 'lose' });

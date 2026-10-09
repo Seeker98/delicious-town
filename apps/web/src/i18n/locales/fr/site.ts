@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    rank1010:
+      'Les classements ont désormais des tableaux de cette semaine et de la semaine dernière pour d’autres jeux du bar\u202f: Fléchettes (victoires), Le dernier bonbon (tables débutants et experts séparées), Mélange secret (moins d’essais en une partie et mélanges trouvés), Cocktail Mémoire (parcours complets), Piment du Diable (bons gagnés) et À prendre ou à laisser (gros lots). Sauf pour Cocktail Mémoire, le décompte commence avec cette mise à jour',
     ui1010:
       'En répartissant les points, chaque case s’arrête aux points restants, et un bouton Tout a été ajouté. Dans Étages et tables, chaque table indique le plat commandé ou la spécialité mangée\u202f; touchez une table pour voir le grade voulu, le vôtre et si le client était satisfait. Les cafards sont désormais signalés sur le lien Étages et tables de l’accueil et sur les boutons d’étage. Quand un client gratuit finit de manger et part, le propriétaire reçoit désormais un objet au hasard. Les noms des autres restaurants dans Nouvelles de la ville sont maintenant des liens. En visitant un restaurant, sa rue s’affiche, suivie des titres, de l’annonce, du rachat et des ustensiles. La page de la Guilde est plus compacte, les installations de l’accueil vont par trois, les titres sont alignés sur le texte voisin et les couleurs d’accent sont désormais le même orange foncé',
     feed1009:

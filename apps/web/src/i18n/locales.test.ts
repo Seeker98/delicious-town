@@ -30,6 +30,17 @@ describe('排行榜的大类和榜名（问题记录 517：大类名按位置对
         expect(rk.boards[b.key] ?? rk.periods[b.key.split('.').at(-1) ?? ''], `${l} ${b.key}`).toBeTruthy();
     }
   }, 30_000);
+
+  it('酒吧的榜都有自己的名字，不只写“本周 / 上周”（问题记录 569：一个游戏下面有好几种榜）', async () => {
+    const bar = RANK_BOARDS.filter((b) => b.key.startsWith('bar.'));
+    expect(bar.map((b) => b.group)).toEqual(
+      expect.arrayContaining(['飞镖', '最后一颗糖', '秘制调料', '记忆调酒', '魔鬼辣杯', '一掷千金']),
+    );
+    for (const l of LOCALES) {
+      const rk = (await loadMessages(l)).town.rank;
+      for (const b of bar) expect(rk.boards[b.key], `${l} ${b.key}`).toBeTruthy();
+    }
+  }, 30_000);
 });
 
 describe('各语言的翻译（问题记录 272）', () => {

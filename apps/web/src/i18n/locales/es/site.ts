@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    rank1010:
+      'Las clasificaciones tienen ahora tablas de esta semana y de la pasada para más juegos del bar: Dardos (victorias), El último caramelo (mesas de principiantes y de expertos por separado), Mezcla secreta (menos intentos en una partida y mezclas acertadas), Cóctel Memoria (rondas completas), Chile del Diablo (vales ganados) y Trato o no trato (premios mayores). Salvo en Cóctel Memoria, el conteo empieza con esta actualización',
     ui1010:
       'Al asignar puntos, cada casilla se detiene en los puntos que te quedan y hay un botón Todo. En Plantas y mesas, cada mesa muestra lo que pidió o la especialidad que comió; toca una mesa para ver el grado pedido, el tuyo y si el cliente quedó satisfecho. Las cucarachas se señalan ahora en el enlace Plantas y mesas del inicio y en los botones de planta. Cuando alguien termina de comer gratis y se va, el dueño recibe ahora un objeto al azar. Los nombres de otros restaurantes en Noticias del pueblo son ahora enlaces. Al visitar un restaurante se ve su calle y, en orden, los títulos, el aviso, la adquisición y los utensilios. La página del Gremio es más compacta, las instalaciones del inicio van de tres en tres, los títulos quedan alineados con el texto de al lado y los colores de resalte son ahora el mismo naranja oscuro',
     feed1009:
