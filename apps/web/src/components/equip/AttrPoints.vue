@@ -71,18 +71,7 @@ onMounted(() => store.refresh().catch(() => undefined));
     <b data-testid="attr-left">{{ t.equip.points.left(remain) }}</b>
     <div class="row g-1 mt-1">
       <div v-for="f in FIELDS" :key="f" class="col-4">
-        <div class="d-flex justify-content-between align-items-baseline">
-          <span class="fw-bold" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</span>
-          <button
-            type="button"
-            class="dt-link-btn"
-            :disabled="remain === 0"
-            :data-testid="`all-${f}`"
-            @click="fillAll(f)"
-          >
-            {{ t.equip.points.all }}
-          </button>
-        </div>
+        <div class="fw-bold" :data-testid="`label-${f}`">{{ ATTR_NAMES[f] }}</div>
         <input
           v-model.number="add[f]"
           type="number"
@@ -92,8 +81,20 @@ onMounted(() => store.refresh().catch(() => undefined));
           placeholder="0"
           :data-testid="`add-${f}`"
         />
-        <div class="text-muted" style="font-size: 11px" :data-testid="`preview-${f}`">
-          {{ preview(f) }}
+        <!-- “全加”放在预览那一行右边：放在名字旁边会和右边一列的名字挨在一起（问题记录 557） -->
+        <div class="d-flex justify-content-between align-items-baseline">
+          <span class="text-muted" style="font-size: 11px" :data-testid="`preview-${f}`">{{
+            preview(f)
+          }}</span>
+          <button
+            type="button"
+            class="dt-link-btn"
+            :disabled="remain === 0"
+            :data-testid="`all-${f}`"
+            @click="fillAll(f)"
+          >
+            {{ t.equip.points.all }}
+          </button>
         </div>
       </div>
       <div class="col-12">
