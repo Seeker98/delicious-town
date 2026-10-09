@@ -32,13 +32,14 @@ const links = computed(() => {
 <template>
   <h5>{{ t.society.title }}</h5>
   <HiphopCard :place="4" />
+  <!-- 纵向压缩（问题记录 573）：上下留白、卡片间距减半，图标小一号 -->
   <RouterLink
     v-for="l in links"
     :key="l.to"
     :to="l.to"
-    class="d-flex align-items-center border rounded p-2 mb-2 text-decoration-none"
+    class="d-flex align-items-center border rounded py-1 px-2 mb-1 text-decoration-none"
   >
-    <i :class="['bi', l.icon, 'fs-4', 'me-2']"></i>
+    <i :class="['bi', l.icon, 'fs-5', 'me-2']"></i>
     <div>
       <div class="fw-bold">{{ l.label }}</div>
       <div class="small text-muted">{{ l.desc }}</div>
