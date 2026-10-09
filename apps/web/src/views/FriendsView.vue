@@ -49,7 +49,7 @@ async function run(fn: () => Promise<void>, fallback: string) {
 
 async function loadRequests() {
   requests.value = await endpoints.friendRequests();
-  friendsStore.pending = requests.value.length;
+  friendsStore.setPending(requests.value.length);
 }
 /**
  * 切标签读取：不走 run 的忙碌拦截（以前列表还在读时点别的标签，标签切过去了却不读，好友 e2e 偶发失败就是这个）；
@@ -68,7 +68,7 @@ async function show(next: Tab) {
       const v = await endpoints.friendRequests();
       if (mine === seq) {
         requests.value = v;
-        friendsStore.pending = v.length;
+        friendsStore.setPending(v.length);
       }
     }
     if (next === 'find') {
