@@ -30,17 +30,7 @@ import { grantGoods } from '../store/grant';
 import { iconLive } from '../friend/looks';
 import { normalizeCounts } from '../settlement/globals';
 import type { WorldService } from '../world/service';
-import {
-  buffsOf,
-  deviceSlots,
-  feedPage,
-  incomePage,
-  lastRound,
-  logPage,
-  restNames,
-  tableDto,
-  thumbsReceived,
-} from './reads';
+import { buffsOf, deviceSlots, feedPage, incomePage, lastRound, logPage, restNames, tableDto } from './reads';
 import { emptyCookbookLevels, initialTables, newRestaurantValues, toRestaurantDto } from './rules';
 import { iconDefs } from '../icons/defs';
 
@@ -95,6 +85,14 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
             .select(sql<string>`coalesce(sum(floor(h.base * h.heat + 0.5)), 0)`.as('v'))
             .whereRef('h.owner_rest_id', '=', 'r.id')
             .as('acquire_assets'),
+        // 累计获赞（问题记录 553）：任务的全历史计数，跟着这条一起读
+        (eb) =>
+          eb
+            .selectFrom('event_counter as ec')
+            .select('ec.count')
+            .whereRef('ec.rest_id', '=', 'r.id')
+            .where('ec.key', '=', 'thumbs.received')
+            .as('thumbs_received'),
       ])
       .where('r.id', '=', restId)
       .executeTakeFirst();
@@ -107,12 +105,13 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       special_left: specialLeft,
       special_ended: specialEnded,
       acquire_assets: assets,
+      thumbs_received: thumbsReceivedNum,
       ...row
     } = joined;
     const now = d.now();
     // 其余十来条查询互不依赖，一起发（质量期 ③：首页最常用的接口，原来一条接一条，查询时间占了八成）
     const settingsP = shards.settings(row.shard_id);
-    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed, thumbs] =
+    const [tables, effects, snap, settings, devices, last, icons, news, boosts, today, feed] =
       await Promise.all([
         d.db
           .selectFrom('restaurant_tables')
@@ -138,7 +137,6 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
         ),
         todayBless(d.db, d.config, row.shard_id, now),
         feedPage(d.db, restId, { limit: 3 }, now).then((p) => p.items),
-        thumbsReceived(d.db, restId),
       ]);
     const tuning = settings.tuning;
     const growth = tuning.growth;
@@ -152,7 +150,7 @@ export function createRestaurantService(d: RestaurantDeps, shards: ShardService,
       cookfoodsPerFlag: tuning.settlement.cookfoodsPerFlag,
       headlines: news,
       feed,
-      thumbs,
+      thumbs: Number(thumbsReceivedNum ?? 0),
       boosts: boosts.map((b) => ({
         id: b.id,
         title: b.title,
