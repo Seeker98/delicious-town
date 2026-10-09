@@ -1,6 +1,6 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { config, flushPromises, mount, RouterLinkStub } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import type { NewsDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
@@ -25,6 +25,15 @@ const item = (id: number, type = 'star.up', params: Record<string, unknown> = { 
   restName: '小王的店',
   params,
   createdAt: '2026-09-30T04:00:00.000Z',
+});
+
+// 新闻里的店名是 RouterLink（问题记录 567），这里不挂路由
+beforeAll(() => {
+  config.global.stubs = { ...config.global.stubs, RouterLink: RouterLinkStub };
+});
+afterAll(() => {
+  const { RouterLink: _r, ...rest } = config.global.stubs as Record<string, unknown>;
+  config.global.stubs = rest as typeof config.global.stubs;
 });
 
 describe('NewsPanel', () => {
@@ -232,5 +241,36 @@ describe('NewsPanel', () => {
     expect(row.classes()).toContain('text-primary');
     expect(row.get('[data-testid="news-text"]').text()).toContain('【广播】');
     expect(row.find('[data-testid="news-report-9"]').exists()).toBe(false);
+  });
+});
+
+describe('小镇新闻里的店名能点（问题记录 567）', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+  });
+
+  it('别人的店名链到访问页；自己的店名不做成链接', async () => {
+    vi.mocked(endpoints.townNews).mockResolvedValue({
+      items: [
+        item(9),
+        { ...item(8), restId: 5, restName: '我的店' },
+        item(7, 'acquire.big', { restId: 3, name: '老李的店', price: 100000, way: 'force' }),
+      ],
+      hasMore: false,
+    });
+    useSessionStore().me = { restaurantId: 5 } as never;
+    const w = mount(NewsPanel, { props: { data: townData() } });
+    await flushPromises();
+    const rows = w.findAll('[data-testid="news-row"]');
+    const links = (i: number) =>
+      rows[i]!.findAllComponents(RouterLinkStub).map((l) => [l.text(), l.props('to')]);
+    expect(links(0)).toEqual([['小王的店', '/friends/7']]);
+    expect(links(1)).toEqual([]);
+    expect(rows[1]!.text()).toContain('我的店');
+    expect(links(2)).toEqual([
+      ['小王的店', '/friends/7'],
+      ['老李的店', '/friends/3'],
+    ]);
   });
 });
