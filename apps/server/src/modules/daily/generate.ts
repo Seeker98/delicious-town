@@ -4,7 +4,7 @@ import type { GameDeps } from '../../core/deps';
 import { invalidState } from '../../core/errors';
 import type { PeriodicJob } from '../../core/jobs';
 import type { DailyStatus } from '../../db/schema';
-import type { Writer } from '../../infra/writer';
+import { WriterError, type Writer } from '../../infra/writer';
 import { checkArticle, parseArticle, sameTokens, toTw, type Article } from './check';
 import { buildFacts, type DailyFacts } from './facts';
 import { TRANSLATE_SYSTEM, translateUser, WRITE_SYSTEM, writeUser } from './prompt';
@@ -26,25 +26,58 @@ export interface GenerateOptions {
 /** 素材少时正文可以短（设计 §六） */
 const minBody = (f: DailyFacts) => (f.events.length >= 3 ? 250 : 80);
 
-/** 调两次 AI，检查，转繁中 */
+type Used = { in: number; out: number; model: string | null };
+
+/** 调一次 AI，记用量；回空内容的那次也记（backlog 1010） */
+async function chat(writer: Writer, system: string, user: string, used: Used, signal?: AbortSignal) {
+  try {
+    const r = await writer.chat(system, user, signal);
+    used.in += r.tokensIn;
+    used.out += r.tokensOut;
+    used.model = r.model;
+    return r.text;
+  } catch (err) {
+    if (err instanceof WriterError) {
+      used.in += err.usage.tokensIn;
+      used.out += err.usage.tokensOut;
+      used.model = err.usage.model;
+    }
+    throw err;
+  }
+}
+
+/**
+ * 合格的简中先留在进程里（backlog 1010）：翻译失败、重试时素材没变就直接拿来翻译，不重写也不重付。
+ * 生成成功就删；只是省钱用的，进程重启丢了也没关系
+ */
+const zhDrafts = new Map<string, { facts: string; zh: Article }>();
+
+/** 调两次 AI（简中已有合格的只调翻译），检查，转繁中 */
 async function write(
   writer: Writer,
   facts: DailyFacts,
-  used: { in: number; out: number; model: string | null },
+  used: Used,
+  key: string,
   signal?: AbortSignal,
 ): Promise<DailyContent> {
-  const a = await writer.chat(WRITE_SYSTEM, writeUser(facts), signal);
-  used.in += a.tokensIn;
-  used.out += a.tokensOut;
-  used.model = a.model;
-  const zh = parseArticle(a.text, 'zh-CN', minBody(facts));
-  checkArticle(zh, facts);
-  const b = await writer.chat(TRANSLATE_SYSTEM, translateUser(zh), signal);
-  used.in += b.tokensIn;
-  used.out += b.tokensOut;
-  const en = parseArticle(b.text, 'en', 1);
+  const factsKey = JSON.stringify(facts);
+  const cached = zhDrafts.get(key);
+  let zh: Article;
+  if (cached && cached.facts === factsKey) zh = cached.zh;
+  else {
+    zh = parseArticle(
+      await chat(writer, WRITE_SYSTEM, writeUser(facts), used, signal),
+      'zh-CN',
+      minBody(facts),
+    );
+    checkArticle(zh, facts);
+    if (zhDrafts.size >= 200) zhDrafts.clear();
+    zhDrafts.set(key, { facts: factsKey, zh });
+  }
+  const en = parseArticle(await chat(writer, TRANSLATE_SYSTEM, translateUser(zh), used, signal), 'en', 1);
   sameTokens(zh, en);
   checkArticle(en, facts, 'en');
+  zhDrafts.delete(key);
   return { 'zh-CN': zh, en, 'zh-TW': toTw(zh) };
 }
 
@@ -85,9 +118,10 @@ export async function generateDaily(
     )
     .execute();
 
-  const used = { in: 0, out: 0, model: null as string | null };
-  // 花掉的 token 和次数无条件记上：这一行中途被别人改了也要记（backlog）
-  const spend = (extra: { error: string } | Record<string, never> = {}) =>
+  const used: Used = { in: 0, out: 0, model: null };
+  // 花掉的 token 和次数无条件记上：这一行中途被别人改了也要记（backlog）；
+  // 错误只记在还没生成成功的行上，已有草稿的不显示过时的错误（backlog 1010，重新生成失败后台当场会报）
+  const spend = (error?: string) =>
     d.db
       .updateTable('town_daily')
       .set({
@@ -95,16 +129,18 @@ export async function generateDaily(
         tokens_out: sql<number>`tokens_out + ${used.out}`,
         attempts: sql<number>`attempts + 1`,
         ...(used.model ? { model: used.model } : {}),
-        ...extra,
+        ...(error !== undefined
+          ? { error: sql<string | null>`case when status = 'pending' then ${error} else error end` }
+          : {}),
       })
       .where('shard_id', '=', shardId)
       .where('day', '=', day)
       .execute();
   let content: DailyContent;
   try {
-    content = await write(writer, facts, used, o.signal);
+    content = await write(writer, facts, used, `${shardId}:${day}`, o.signal);
   } catch (err) {
-    await spend({ error: String(err instanceof Error ? err.message : err).slice(0, 500) });
+    await spend(String(err instanceof Error ? err.message : err).slice(0, 500));
     throw err;
   }
   await spend();
@@ -125,11 +161,13 @@ export async function generateDaily(
     .where('shard_id', '=', shardId)
     .where('day', '=', day)
     .where('status', 'in', allowed);
-  // 重新生成：开始以后被人手改、发布过就不盖（backlog）
+  // 重新生成：开始以后被人手改、发布过、撤下过就不盖（backlog；状态也比，backlog 1010）
   if (o.force)
-    q = q.where(
-      sql<boolean>`content is not distinct from ${existing?.content ? JSON.stringify(existing.content) : null}::jsonb`,
-    );
+    q = q
+      .where(
+        sql<boolean>`content is not distinct from ${existing?.content ? JSON.stringify(existing.content) : null}::jsonb`,
+      )
+      .where('status', '=', existing?.status ?? 'pending');
   const r = await q.executeTakeFirst();
   if (Number(r.numUpdatedRows) === 0) {
     if (o.force) throw invalidState('daily_changed', { day });

@@ -152,6 +152,9 @@ export function createAdminDaily(game: Game) {
       if (day >= today) throw invalidState('daily_future', { day });
       // 新闻只留 30 天：更早的重新生成会拿几乎空的素材盖掉原来的（backlog）
       if (day < addDays(today, -REGEN_DAYS)) throw invalidState('daily_too_old', { day, days: REGEN_DAYS });
+      // 不存在的区服先报出来：下面建行会撞外键报 500（backlog 1010）
+      const shard = await db.selectFrom('shard').select('id').where('id', '=', shardId).executeTakeFirst();
+      if (!shard) throw new AppError(ErrorCode.SHARD_NOT_FOUND, 404);
       // 行不存在先建（素材生成时写），再原子地占一次额度：同时点两次也超不过上限（backlog）
       await db
         .insertInto('town_daily')

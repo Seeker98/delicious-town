@@ -6,6 +6,16 @@ export interface WriterReply {
   model: string;
 }
 
+/** 调用花了钱、但结果不能用（回空内容）：带上用量，调用方照样记账（backlog 1010） */
+export class WriterError extends Error {
+  constructor(
+    message: string,
+    readonly usage: { tokensIn: number; tokensOut: number; model: string },
+  ) {
+    super(message);
+  }
+}
+
 export interface Writer {
   chat(system: string, user: string, signal?: AbortSignal): Promise<WriterReply>;
 }
@@ -52,7 +62,12 @@ export function openAiWriter(o: OpenAiWriterOptions): Writer {
       if (!res.ok) throw new Error(`writer http ${res.status}: ${raw.slice(0, 200)}`);
       const data = JSON.parse(raw) as ChatResponse;
       const text = data.choices?.[0]?.message?.content;
-      if (!text) throw new Error('writer empty reply');
+      if (!text)
+        throw new WriterError('writer empty reply', {
+          tokensIn: data.usage?.prompt_tokens ?? 0,
+          tokensOut: data.usage?.completion_tokens ?? 0,
+          model: data.model ?? o.model,
+        });
       return {
         text,
         tokensIn: data.usage?.prompt_tokens ?? 0,

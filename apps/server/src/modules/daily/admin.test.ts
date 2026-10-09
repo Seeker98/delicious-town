@@ -160,6 +160,12 @@ describe('小镇日报后台（HTTP）', () => {
     expect(await audits(`daily:${shardId}:${y()}`)).toEqual(['daily.regenerate']);
   });
 
+  it('不存在的区服：重新生成报区服不存在，不是 500（backlog 1010）', async () => {
+    const r = await post(`/daily/99999999/${y()}/regenerate`);
+    expect(r.status).toBe(404);
+    expect(r.json.code).toBe('SHARD_NOT_FOUND');
+  });
+
   it('重新生成只限最近 28 天（更早的新闻已经删了，backlog）', async () => {
     const shardId = await createShard(ctx.deps.db);
     const old = addDays(y(), -28);
