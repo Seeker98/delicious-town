@@ -7,6 +7,7 @@ import { useT } from '../composables/useT';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
+import { awardText } from '../utils/reward';
 
 /** 签到和今日活跃（问题记录：活跃和任务页太长，活跃单拎出来；从首页“今日活跃”进来） */
 const catalog = useCatalogStore();
@@ -97,6 +98,8 @@ onMounted(() => load().catch((e) => toast.push(errorMessage(e, t.value.rest.task
           t.rest.tasks.claim(r.points, r.multiplier > 1)
         }}</template>
         <template v-else>{{ t.rest.tasks.need(r.points, r.points - act.total) }}</template>
+        <!-- 这一档送什么写在按钮里（backlog B6），领了才知道不方便 -->
+        <div class="opacity-75" :data-testid="`claim-award-${r.points}`">{{ awardText(r.award, catalog) }}</div>
       </button>
     </div>
     <!-- 哪一档另送一番赏券（backlog 一番赏）：按钮上只写点数，送券写在这里 -->

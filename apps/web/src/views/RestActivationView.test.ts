@@ -204,15 +204,22 @@ describe('RestActivationView', () => {
   it('活跃奖励三种样子：已领、可以领（实心）、还差几点', async () => {
     const w = await mountView();
     const claimed = w.find('[data-testid="claim-50"]');
-    expect(claimed.text()).toBe('✓ 已领 50 点');
+    expect(claimed.text()).toBe('✓ 已领 50 点经验 500');
     expect(claimed.attributes('disabled')).toBeDefined();
     const ready = w.find('[data-testid="claim-100"]');
-    expect(ready.text()).toBe('领 100 点奖励');
+    expect(ready.text()).toBe('领 100 点奖励钻石 2');
     expect(ready.classes()).toContain('btn-primary');
     expect(ready.attributes('disabled')).toBeUndefined();
     const far = w.find('[data-testid="claim-150"]');
-    expect(far.text()).toBe('150 点 (还差 30)');
+    expect(far.text()).toBe('150 点 (还差 30)钻石 5');
     expect(far.attributes('disabled')).toBeDefined();
+  });
+
+  it('每档按钮写出这一档送什么（backlog B6）', async () => {
+    const w = await mountView();
+    expect(w.get('[data-testid="claim-award-50"]').text()).toBe('经验 500');
+    expect(w.get('[data-testid="claim-award-100"]').text()).toBe('钻石 2');
+    expect(w.get('[data-testid="claim-150"]').text()).toContain('钻石 5');
   });
 
   it('写明哪一档另送几张券；区服关掉一番赏时不写', async () => {

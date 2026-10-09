@@ -58,6 +58,17 @@ describe('活跃度（规格书 15 §15.2）', () => {
     expect(await eventCount(t, ctx.restaurantId, 'activation.100')).toBe(0);
   });
 
+  it('奖励列表写的是这家店实际能拿到的：经验已经乘上餐厅等级（backlog B6，按钮上直接写奖励）', async () => {
+    const ctx = await newRestaurant(t, { patch: { level: 10 } });
+    const a = await task().activation(ctx);
+    const r50 = a.rewards.find((r) => r.points === 50)!;
+    expect(r50.award).toMatchObject({ exp: 500 * 10 });
+    for (const r of a.rewards) {
+      const base = config.bundle.activationRewards.find((x) => x.points === r.points)!.award;
+      expect(r.award.exp ?? 0).toBe((base.exp ?? 0) * 10);
+    }
+  });
+
   it('领 100 点那一档记一次（问题记录 515 支线“签到和活跃”），别的档不记', async () => {
     const ctx = await newRestaurant(t, { patch: { level: 30, star_level: 5 } });
     const day = gameDay(t.clock.now);

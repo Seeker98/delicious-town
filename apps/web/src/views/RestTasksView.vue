@@ -6,12 +6,11 @@ import type { AwardDto, QuestDto, QuestsDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
 import QuestCard from '../components/QuestCard.vue';
 import { useT } from '../composables/useT';
-import { activeMessages } from '../i18n';
 import { errorMessage } from '../i18n/zh-CN';
 import { useCatalogStore } from '../stores/catalog';
 import { useToastStore } from '../stores/toast';
 import { timeLeft } from '../utils/activity';
-import { formatNum } from '../utils/format';
+import { awardText as awardTextOf } from '../utils/reward';
 import { questTitle } from '../utils/questName';
 
 const catalog = useCatalogStore();
@@ -21,16 +20,7 @@ const tasks = ref<QuestsDto | null>(null);
 const busy = ref(false);
 
 function awardText(a: AwardDto): string {
-  const m = activeMessages();
-  const r = m.util.reward;
-  const parts: string[] = [];
-  if (a.coin) parts.push(r.coin(formatNum(a.coin)));
-  if (a.exp) parts.push(r.exp(formatNum(a.exp)));
-  if (a.diamond) parts.push(r.diamond(formatNum(a.diamond)));
-  if (a.renown) parts.push(r.renown(formatNum(a.renown)));
-  for (const g of a.goods ?? []) parts.push(t.value.common.qty(catalog.goodsName(g.id), g.num));
-  for (const f of a.foods ?? []) parts.push(t.value.common.qty(catalog.foodName(f.id), f.num));
-  return parts.join(m.events.sep);
+  return awardTextOf(a, catalog);
 }
 
 async function load() {
