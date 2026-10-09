@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import type { FriendRestDto, RestaurantDto } from '@dt/shared';
 import { endpoints } from '../api/endpoints';
+import { useCatalogStore } from '../stores/catalog';
 import { useLocaleStore } from '../stores/locale';
 import { useRestaurantStore } from '../stores/restaurant';
 import { useSessionStore } from '../stores/session';
@@ -110,6 +111,44 @@ describe('FriendRestView', () => {
     expect(w.text()).toContain('欢迎光临');
   });
 
+  it('等级那一行最前面是所在街道；目录里没有这条街时不写（问题记录 571）', async () => {
+    useCatalogStore().streets = [{ id: 3, name: '川菜街' }] as never;
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ streetId: 3 }));
+    expect((await mountView()).get('[data-testid="friend-info"]').text()).toMatch(/^川菜街 · 5 级 · 0 星/);
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(detail({ streetId: 99 }));
+    expect((await mountView()).get('[data-testid="friend-info"]').text()).toMatch(/^5 级 · 0 星/);
+  });
+
+  it('从上到下：称号、公告、收购、厨具（问题记录 571）；公告和厨具框左上角是加粗的标题，和收购一致', async () => {
+    vi.mocked(endpoints.acquireRest).mockResolvedValue({
+      restId: 2,
+      name: '乙店',
+      level: 5,
+      star: 2,
+      base: 100_000,
+      heat: 1,
+      price: 100_000,
+      owner: null,
+      listed: null,
+      taxRate: 0.1,
+      protectedUntil: null,
+      acquireBlock: null,
+      listedBlock: 'not_listed',
+    });
+    vi.mocked(endpoints.friendDetail).mockResolvedValue(
+      detail({ equips: [{ part: 1, goodsId: 30, stress: 3, name: null }] }),
+    );
+    const w = await mountView();
+    const pos = (id: string) => w.html().indexOf(`data-testid="${id}"`);
+    const order = ['icon-tag', 'friend-notice', 'acquire-card', 'friend-equips'].map(pos);
+    expect(order.every((x) => x > -1)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    const notice = w.get('[data-testid="friend-notice"]');
+    expect(notice.get('.fw-bold').text()).toBe('公告');
+    expect(notice.text()).toContain('欢迎光临');
+    expect(w.get('[data-testid="friend-equips"] .fw-bold').text()).toBe('厨具');
+  });
+
   it('点蟑螂可以消灭', async () => {
     const w = await mountView();
     await w.find('[data-testid="table-2"]').trigger('click');
@@ -196,7 +235,7 @@ describe('FriendRestView', () => {
       );
       const w = await mountView();
       const box = w.get('[data-testid="friend-equips"]');
-      expect(box.find('.text-muted').text()).toBe('Cookware');
+      expect(box.find('.fw-bold').text()).toBe('Cookware');
       expect(box.text()).not.toMatch(/[:：]/);
       expect(w.get('[data-testid="friend-equip-1"]').find('span').text()).toBe('Spatula');
     } finally {

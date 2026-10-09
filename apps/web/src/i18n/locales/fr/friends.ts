@@ -47,6 +47,7 @@ const friends: Messages['friends'] = {
     closed: ' · Fermé',
     door: 'Porte',
     equips: 'Ustensiles',
+    noticeTitle: 'Annonce',
     special: 'Plat signature\u202f: ',
     specialLine: (grade, left, price) =>
       `${grade} · reste ${left} · ${price} ${plFr(price, 'pièce', 'pièces')} la part`,

@@ -46,6 +46,7 @@ const friends: Messages['friends'] = {
     closed: ' · Closed',
     door: 'Door',
     equips: 'Cookware',
+    noticeTitle: 'Notice',
     special: 'Signature dish: ',
     specialLine: (grade, left, price) =>
       `${grade} · ${left} left · ${price} ${plEn(price, 'coin', 'coins')} each`,

@@ -30,6 +30,8 @@ const session = useSessionStore();
 const restStore = useRestaurantStore();
 const restId = computed(() => Number(route.params.restId));
 const rest = ref<FriendRestDto | null>(null);
+/** 所在街道（问题记录 571）；目录里没有时为空，不写 */
+const streetLabel = computed(() => (rest.value ? catalog.streetName(rest.value.streetId) : ''));
 const picked = ref<TableDto | null>(null);
 const busy = ref(false);
 const error = ref('');
@@ -111,8 +113,10 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
             testid="rest-name-report"
           />
         </div>
-        <div class="small text-muted">
-          {{ t.friends.rest.info(rest.level, rest.star, rest.renown) }}
+        <!-- 最前面是所在街道（问题记录 571）；目录里没有这条街时不写 -->
+        <div class="small text-muted" data-testid="friend-info">
+          <template v-if="streetLabel">{{ streetLabel }} · </template
+          >{{ t.friends.rest.info(rest.level, rest.star, rest.renown) }}
           <!-- 累计获赞（问题记录 553）；旧服务端没有这一项时不显示（前端可能先上线） -->
           <template v-if="typeof rest.thumbs === 'number'"
             >·
@@ -124,15 +128,22 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       </div>
       <GameImg :path="`door/${rest.door}`" :alt="t.friends.rest.door" fallback-icon="bi-door-closed" />
     </div>
-    <HiphopCard :rest-id="restId" />
-    <!-- 收购（问题记录 421）：蟹老板、自己的店不显示 -->
-    <AcquireCard v-if="restStore.featureOn('acquire') && !rest.npc && rest.id !== mine" :rest-id="rest.id" />
+    <!-- 从上到下：称号、公告、收购、厨具（问题记录 571），嘻哈男孩和特色菜在后面；几个框的标题都是加粗 -->
     <div v-if="rest.icons.length > 0" class="mb-2">
       <IconTag v-for="i in rest.icons" :key="i.key" :title="catalog.icon(i.key)?.title ?? i.title" />
     </div>
+    <div v-if="rest.notice" class="border rounded p-2 mb-2 small" data-testid="friend-notice">
+      <div class="fw-bold">{{ t.friends.rest.noticeTitle }}</div>
+      <div style="white-space: pre-wrap">{{ restNotice(rest.id, rest.notice) }}</div>
+      <div v-if="rest.id !== mine && !rest.npc" class="text-end">
+        <ReportButton target-type="notice" :target-id="rest.id" testid="notice-report" />
+      </div>
+    </div>
+    <!-- 收购（问题记录 421）：蟹老板、自己的店不显示 -->
+    <AcquireCard v-if="restStore.featureOn('acquire') && !rest.npc && rest.id !== mine" :rest-id="rest.id" />
     <!-- 每个部位一行，强化等级单独标出；名字长时自己折行，不和别的部位挤在一段里（问题记录 323） -->
     <div v-if="equips.length > 0" class="border rounded p-2 mb-2 small" data-testid="friend-equips">
-      <div class="text-muted mb-1">{{ t.friends.rest.equips }}</div>
+      <div class="fw-bold mb-1">{{ t.friends.rest.equips }}</div>
       <div class="dt-equip-grid">
         <div
           v-for="(e, i) in equips"
@@ -147,6 +158,7 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
         </div>
       </div>
     </div>
+    <HiphopCard :rest-id="restId" />
     <div
       v-if="rest.special"
       class="border rounded p-2 mb-2 small d-flex align-items-center"
@@ -171,12 +183,6 @@ onBeforeUnmount(() => window.removeEventListener('focus', onFocus));
       >
         {{ rest.special.eaten ? t.friends.rest.tastedAlready : t.friends.rest.taste }}
       </button>
-    </div>
-    <div v-if="rest.notice" class="border rounded p-2 mb-2 small">
-      <div style="white-space: pre-wrap">{{ restNotice(rest.id, rest.notice) }}</div>
-      <div v-if="rest.id !== mine && !rest.npc" class="text-end">
-        <ReportButton target-type="notice" :target-id="rest.id" testid="notice-report" />
-      </div>
     </div>
 
     <div v-if="rest.isFriend" class="d-flex flex-wrap gap-1 mb-2" data-testid="act-bar">
