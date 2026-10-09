@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    titles1009:
+      'Las insignias de título usan ahora el mismo estilo amarillo en tu inicio y al visitar otros restaurantes. Ahora puedes recibir títulos por correo o código de canje; los temporales indican cuánto duran. Tras reclamarlos, elige cuáles mostrar en la página Apariencia',
     devil1009:
       'Cambios en el Chile del Diablo: hasta 20 partidas al día; lo que ganas sigue ahora una tabla fija. Apostando 1 vale, aguantar 1/2/3 vasos devuelve 1/2/3 (igual que antes); con 5 devuelve 7/9/12, con 10 devuelve 14/18/25 y con 20 devuelve 27/36/49, algo menos que antes. La tabla aparece en el juego',
     fix1009:
