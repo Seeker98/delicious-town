@@ -49,6 +49,17 @@ const hasRound = async (c: RestCtx) =>
     .where('game', '=', 'spice')
     .executeTakeFirst()) !== undefined;
 
+/** 本周秘制调料单局最少几次猜中（排行用，问题记录 569） */
+const spiceBest = async (a: RestCtx) =>
+  (
+    await t.db
+      .selectFrom('bar_streak_best')
+      .select('times')
+      .where('rest_id', '=', a.restaurantId)
+      .where('game', '=', 'spice')
+      .executeTakeFirst()
+  )?.times;
+
 describe('秘制调料：开局（设计 §4.2）', () => {
   it('扣 2 张；返回和概览里都没有配方；已有局再开被拒', async () => {
     const a = await player();
@@ -143,6 +154,9 @@ describe('秘制调料：猜', () => {
     expect((await guess(a, SECRET)).data).toMatchObject({ result: 'win', tier: 0 });
     const again = await listNews(t.db, a.shardId, { limit: 5, only: ['bar.spice'] });
     expect(again.filter((n) => n.restId === a.restaurantId)).toHaveLength(1);
+    // 排行：猜中次数、本周单局最少几次（问题记录 569）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.spice.win', DAY)).toBe(2);
+    expect(await spiceBest(a)).toBe(1);
   });
 
   it('第 5 次猜中是中奖（声望 +2）；第 8 次猜中是小奖，也算赢', async () => {
@@ -153,6 +167,8 @@ describe('秘制调料：猜', () => {
     const last = (await guess(a, SECRET)).data;
     expect(last).toMatchObject({ result: 'win', tier: 2, renown: 0, left: 0 });
     expect(last.award).not.toBeNull();
+    // 最少几次只记更少的：先 5 次后 8 次，留 5
+    expect(await spiceBest(a)).toBe(5);
   });
 
   it('第 8 次还没猜中：输，公布配方，没有奖励，局面删掉', async () => {

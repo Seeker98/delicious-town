@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { gameTime, sequenceRng } from '@dt/shared';
+import { gameDay, gameTime, sequenceRng } from '@dt/shared';
 import { createTestGame, goodsNum, newRestaurant, type TestGame } from '../../../test/game';
 import type { RestCtx } from '../../core/deps';
+import { getDaily } from '../counter/dailyCounter';
 import { getEffectAgg, listActiveEffects } from '../effects/service';
 import { listNews } from '../news/news';
 import { GOODS } from '@dt/config';
@@ -48,6 +49,8 @@ describe('魔鬼辣杯（4C-3 设计文档 §2.1）', () => {
     expect(r).toMatchObject({ result: 'win', spiked: 5, survived: 1, payout: 14, lastBartender: 5 });
     expect(r.cups).toEqual(['me', null, null, null, null, 'bartender']);
     expect(await goodsNum(t, a.restaurantId, GOODS.mysteryTicket)).toBe(90 + 14);
+    // 排行“本周赢得礼券”（问题记录 569）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.devil.payout', gameDay(t.clock.now))).toBe(14);
     // 局结束后可以再开
     script = [0];
     await start(a, 1);

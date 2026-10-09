@@ -231,6 +231,8 @@ describe('一掷千金：选箱子、开箱子、报价', () => {
     await setRound(a, { mine: 9, opened: [1, 2, 3, 4, 5, 6, 7, 8], round: 3, offer: 30_000 });
     await answer(a, true);
     expect(await mineNews()).toHaveLength(0);
+    // 排行“本周开出最大奖”只算一路不成交开出的（问题记录 569）
+    expect(await getDaily(t.db, a.restaurantId, 'bar.deal.top', DAY)).toBe(0);
     await setRound(a, { mine: 9, opened: [1, 2, 3, 4, 5, 6, 7, 8], round: 3, offer: 30_000 });
     expect((await answer(a, false)).data).toMatchObject({ result: 'box', prize: BOXES[9] });
     expect((await foodNum(t, a.restaurantId, M5)).num).toBe(5);
@@ -238,6 +240,7 @@ describe('一掷千金：选箱子、开箱子、报价', () => {
     await setRound(a, { mine: 9, opened: [1, 2, 3, 4, 5, 6, 7, 8], round: 3, offer: 30_000 });
     await answer(a, false);
     expect(await mineNews()).toHaveLength(1);
+    expect(await getDaily(t.db, a.restaurantId, 'bar.deal.top', DAY)).toBe(2);
   });
 
   it('没有进行中的局：选、开、回答都报 no_round', async () => {
