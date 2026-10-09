@@ -64,8 +64,30 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- 问题记录 530：收益记录放最上面，先写今天的小计；加成收进默认收起的区块，只列不是 0 的项 -->
+  <!-- 问题记录 530：加成收进默认收起的区块，只列不是 0 的项；551：收起后占地方小，放回最上面，下面是收益记录、先写今天的小计 -->
   <div v-if="error" class="alert alert-danger">{{ error }}</div>
+  <details class="mb-3" data-testid="income-buffs">
+    <summary class="fw-bold">{{ t.rest.income.bonus }}</summary>
+    <h6 class="mt-2">{{ t.rest.income.buffs }}</h6>
+    <div v-if="buffs?.rates" class="small mb-3">
+      <template v-for="(meta, key) in RATE_LABELS" :key="key">
+        <div v-if="buffs.rates[key] && shown(buffs.rates[key]!)" class="mb-1">
+          <b>{{ meta.label }} {{ fmt(key, buffs.rates[key]!.total) }}</b>
+          <span v-for="(v, p) in buffs.rates[key]!.parts" :key="p" class="dt-tag ms-1">
+            {{ PART_LABELS[p] ?? p }} {{ fmt(key, v) }}
+          </span>
+        </div>
+      </template>
+      <div v-if="buffs.seated !== null" class="text-muted">{{ t.rest.income.seated(buffs.seated) }}</div>
+    </div>
+    <div v-else class="text-muted small mb-3">{{ t.rest.income.noRound }}</div>
+    <h6>{{ t.rest.income.sources }}</h6>
+    <ul class="list-unstyled small mb-0">
+      <li v-for="s in buffs?.sources ?? []" :key="`${s.sourceType}-${s.sourceId}`">
+        <b>{{ effectName(s, catalog) }}</b> {{ describeEffects(s.effects) }}
+      </li>
+    </ul>
+  </details>
   <section data-testid="income-records">
     <h6>{{ t.rest.income.records }}</h6>
     <div v-if="today" class="small mb-2" data-testid="income-today">
@@ -97,26 +119,4 @@ onMounted(async () => {
       {{ t.rest.income.more }}
     </button>
   </section>
-  <details class="mb-3" data-testid="income-buffs">
-    <summary class="fw-bold">{{ t.rest.income.bonus }}</summary>
-    <h6 class="mt-2">{{ t.rest.income.buffs }}</h6>
-    <div v-if="buffs?.rates" class="small mb-3">
-      <template v-for="(meta, key) in RATE_LABELS" :key="key">
-        <div v-if="buffs.rates[key] && shown(buffs.rates[key]!)" class="mb-1">
-          <b>{{ meta.label }} {{ fmt(key, buffs.rates[key]!.total) }}</b>
-          <span v-for="(v, p) in buffs.rates[key]!.parts" :key="p" class="dt-tag ms-1">
-            {{ PART_LABELS[p] ?? p }} {{ fmt(key, v) }}
-          </span>
-        </div>
-      </template>
-      <div v-if="buffs.seated !== null" class="text-muted">{{ t.rest.income.seated(buffs.seated) }}</div>
-    </div>
-    <div v-else class="text-muted small mb-3">{{ t.rest.income.noRound }}</div>
-    <h6>{{ t.rest.income.sources }}</h6>
-    <ul class="list-unstyled small mb-0">
-      <li v-for="s in buffs?.sources ?? []" :key="`${s.sourceType}-${s.sourceId}`">
-        <b>{{ effectName(s, catalog) }}</b> {{ describeEffects(s.effects) }}
-      </li>
-    </ul>
-  </details>
 </template>
