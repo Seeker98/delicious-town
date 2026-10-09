@@ -22,3 +22,9 @@ export async function waitForLeadership(
   await client.end();
   return null;
 }
+
+/** 等到收到停止信号；信号已经到了就直接返回（backlog 1010：抢到锁的那一下收到信号，后挂的监听永远等不到） */
+export function untilAborted(signal: AbortSignal): Promise<void> {
+  if (signal.aborted) return Promise.resolve();
+  return new Promise((resolve) => signal.addEventListener('abort', () => resolve(), { once: true }));
+}

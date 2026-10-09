@@ -4,7 +4,7 @@ import { createDeps } from './deps';
 import { loadEnv } from './env';
 import { createGame } from './game';
 import { subscribeSettings } from './infra/settingsBus';
-import { waitForLeadership } from './worker/leader';
+import { untilAborted, waitForLeadership } from './worker/leader';
 import { startScheduler } from './worker/scheduler';
 import { workerJobs } from './worker/jobs';
 
@@ -32,7 +32,7 @@ if (leader) {
   });
   log.info('became leader, starting jobs');
   const scheduler = startScheduler(workerJobs(game, log), log);
-  await new Promise<void>((resolve) => ac.signal.addEventListener('abort', () => resolve()));
+  await untilAborted(ac.signal);
   if (!(await scheduler.stop(STOP_WAIT_MS))) log.warn('jobs still running at shutdown, exiting anyway');
   await leader.end();
 }

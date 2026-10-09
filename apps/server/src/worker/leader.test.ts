@@ -1,6 +1,6 @@
 import pg from 'pg';
 import { describe, expect, it, vi } from 'vitest';
-import { tryLead, waitForLeadership } from './leader';
+import { tryLead, waitForLeadership, untilAborted } from './leader';
 
 const url = () => process.env.DATABASE_URL!;
 const newKey = () => 400_000 + Math.floor(Math.random() * 100_000);
@@ -38,5 +38,24 @@ describe('leader election', () => {
     setTimeout(() => ac.abort(), 150);
     expect(await blocked).toBeNull();
     await leader!.end();
+  });
+});
+
+describe('等停止信号（backlog 1010）', () => {
+  it('信号在挂监听之前就到了：直接返回，不会一直等', async () => {
+    const ac = new AbortController();
+    ac.abort();
+    await expect(untilAborted(ac.signal)).resolves.toBeUndefined();
+  });
+
+  it('之后才到：到了再返回', async () => {
+    const ac = new AbortController();
+    let done = false;
+    const p = untilAborted(ac.signal).then(() => (done = true));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(done).toBe(false);
+    ac.abort();
+    await p;
+    expect(done).toBe(true);
   });
 });
