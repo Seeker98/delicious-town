@@ -101,6 +101,7 @@ describe('随机奖励里的食材（问题记录 50 验证：酒吧、厨塔会
   it('次数、等级写错报错', () => {
     expect(() => table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: -1, level: 3 }] }])).toThrow();
     expect(() => table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: 1, level: 0 }] }])).toThrow();
+    expect(() => table([{ source: 'bar', minLevel: 1, randomFoods: [{ times: 1, level: 11 }] }])).toThrow();
   });
 
   it('普通随机奖励只出权重 100 的普通食材，等级不超过奖励等级（和 award/random.ts 一样）', () => {

@@ -49,7 +49,9 @@ const rowSchema = z
      */
     randomFoods: z
       .array(
-        z.object({ times: nonNeg, level: z.number().int().min(1), bar: z.boolean().optional() }).strict(),
+        z
+          .object({ times: nonNeg, level: z.number().int().min(1).max(10), bar: z.boolean().optional() })
+          .strict(),
       )
       .optional(),
     note: z.string().optional(),
@@ -159,7 +161,7 @@ export function applySide(c: FastCtx, r: FastRest, t: SideTable, persona: Person
     gainRenown(c, r, n(row.renown));
     for (const g of row.goods ?? []) grantGoods(c, r, g.id, n(g.num), source);
     if (row.randomFoods?.length) {
-      // 一次操作算一次缺料清单（和真实一样），幸运翻倍按幸运率
+      // 缺料清单按天近似：一天算一次（真实是每局、每次胜利各算一次，当天抽到的不回头减），幸运翻倍按幸运率
       const needPick = needPickOf(c, r);
       const luck = luckOf(c, r).rate;
       for (const rf of row.randomFoods) {
