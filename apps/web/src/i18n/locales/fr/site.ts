@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Heure actuelle (heure de Pékin)',
   nextRound: (left) => `Prochain tour dans ${left}`,
   changelog: {
+    rank1010:
+      'Les classements ont désormais des tableaux de cette semaine et de la semaine dernière pour d’autres jeux du bar\u202f: Fléchettes (victoires), Le dernier bonbon (tables débutants et experts séparées), Mélange secret (moins d’essais en une partie et mélanges trouvés), Cocktail Mémoire (parcours complets), Piment du Diable (bons gagnés) et À prendre ou à laisser (gros lots). Le décompte commence avec cette mise à jour',
     feed1009:
       'L’accueil a une nouvelle carte «\u202fActivité du restaurant\u202f» qui montre qui est passé chez vous et ce qui s’y est passé, avec un point devant les nouveautés. L’activité inclut désormais aussi les clients gratuits qui partent après avoir mangé, les réponses à vos sujets du forum, le rachat ou la libération de votre restaurant, un restaurant que vous possédez qui se rachète, les souris qui volent des ingrédients, les achats de votre réapprovisionnement et les ingrédients jetés quand le frigo est plein\u202f; l’embauche comme livreur s’affiche aussi désormais. Le total de pouces levés reçus s’affiche en visitant un restaurant et sur la page d’infos du restaurant. L’accueil n’affiche que les annonces des 12 dernières heures. Les récompenses de quêtes ne se récupèrent plus depuis l’accueil\u202f: une icône cadeau sur le lien Quêtes signale les récompenses principales, hebdo ou secondaires à récupérer et vous y mène',
     ui1009:

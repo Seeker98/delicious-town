@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    rank1010:
+      'Las clasificaciones tienen ahora tablas de esta semana y de la pasada para más juegos del bar: Dardos (victorias), El último caramelo (mesas de principiantes y de expertos por separado), Mezcla secreta (menos intentos en una partida y mezclas acertadas), Cóctel Memoria (rondas completas), Chile del Diablo (vales ganados) y Trato o no trato (premios mayores). El conteo empieza con esta actualización',
     feed1009:
       'El inicio tiene una nueva tarjeta «Actividad del restaurante» que muestra quién pasó por tu restaurante y qué ocurrió en él, con un punto en lo nuevo. La actividad incluye ahora también a quien termina de comer gratis y se va, las respuestas a tus temas del foro, cuando adquieren o sueltan tu restaurante, cuando un restaurante tuyo se recompra, los ratones que roban ingredientes, las compras de tu reposición manual y los ingredientes tirados por tener la nevera llena; también aparece ya cuando te contratan como repartidor. El total de me gusta recibidos se ve al visitar un restaurante y en la información del restaurante. El inicio solo muestra los anuncios de las últimas 12 horas. Las recompensas de misiones ya no se reclaman desde el inicio: el enlace Misiones muestra un icono de regalo cuando hay recompensas principales, semanales o secundarias, y te lleva a reclamarlas',
     ui1009:
