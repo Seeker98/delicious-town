@@ -13,7 +13,7 @@ import { useToastStore } from '../../stores/toast';
 import { catalogNames, dailyLang, dailyParagraphs, dailyPlain } from '../../utils/daily';
 import { newsText } from '../../utils/news';
 
-/** 小镇日报（2026-10-08）：AI 写的前一天的报道；没发布时显示“今日要闻” */
+/** 小镇日报（2026-10-08）：AI 写的前一天的报道；没发布时显示“当日要闻” */
 const t = useT();
 const catalog = useCatalogStore();
 const locale = useLocaleStore();
@@ -35,7 +35,10 @@ async function load(day?: string) {
     else toast.push(errorMessage(e, t.value.town.daily.loadFailed), 'danger');
   }
 }
-onMounted(() => void load());
+// 已经知道区服关了日报就不请求（backlog：原来每次进新闻标签都多一次 403）
+onMounted(() => {
+  if (rest.featureOn('daily')) void load();
+});
 
 const names = catalogNames(catalog);
 const lang = computed(() => dailyLang(locale.locale));
@@ -50,10 +53,14 @@ const paras = computed(() =>
     ? dailyParagraphs(article.value.body, data.value.rests, names, t.value.town.daily.closed)
     : [],
 );
-/** days 新的在前：往前翻是下标 +1 */
-const idx = computed(() => (data.value ? data.value.days.indexOf(data.value.day) : -1));
-const prevDay = computed(() => (data.value && idx.value >= 0 ? data.value.days[idx.value + 1] : undefined));
-const nextDay = computed(() => (data.value && idx.value > 0 ? data.value.days[idx.value - 1] : undefined));
+/**
+ * days 新的在前。按日期比较找前后一天，不按下标：选中的那天可能没有稿子、不在 days 里
+ * （刚开日报、或 00:10 前；backlog）
+ */
+const prevDay = computed(() => data.value?.days.find((d) => d < data.value!.day));
+const nextDay = computed(() =>
+  data.value ? [...data.value.days].reverse().find((d) => d > data.value!.day) : undefined,
+);
 </script>
 
 <template>

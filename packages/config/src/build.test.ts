@@ -1393,6 +1393,53 @@ describe('活跃度新增项目（问题记录 318）', () => {
     expect(featureOfKey('activity.claim', b.actionMap.features)).toBe('activity');
   });
 
+  it('设计表池子里的下架道具自动去掉（和产出类列表一样，问题记录 501）；shop.json 里明写的照样拦（backlog）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const retiredId = (src['game/retired'] as { goods: Array<{ id: number }> }).goods[0]!.id;
+    const pools = structuredClone(src['designed/shop_pools']) as Array<{ pool: string; goods: number[] }>;
+    const special = pools.find((p) => p.pool === 'special')!;
+    special.goods.push(retiredId);
+    const shop = structuredClone(src['game/shop']) as { pools?: Record<string, number[]> };
+    delete shop.pools;
+    const { bundle, errors } = buildBundle({ ...src, 'designed/shop_pools': pools, 'game/shop': shop });
+    expect(errors).toEqual([]);
+    expect(bundle!.shopPools.special).not.toContain(retiredId);
+    const explicit = structuredClone(src['game/shop']) as { pools?: Record<string, number[]> };
+    explicit.pools = { ...explicit.pools, special: [...special.goods] };
+    expect(buildBundle({ ...src, 'game/shop': explicit }).errors.join('\n')).toContain(
+      `retired goods ${retiredId} is still used by`,
+    );
+  });
+
+  it('商店池子：同一个池子不能重复写（特价抽中的概率会翻倍，backlog）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const dup = structuredClone(src['game/shop']) as { pools?: Record<string, number[]> };
+    const list =
+      dup.pools?.special ??
+      (src['designed/shop_pools'] as Array<{ pool: string; goods: number[] }>).find(
+        (p) => p.pool === 'special',
+      )!.goods;
+    dup.pools = { ...dup.pools, special: [...list, list[0]!] };
+    expect(buildBundle({ ...src, 'game/shop': dup }).errors).toContain(
+      `shop special pool lists goods ${list[0]} twice`,
+    );
+  });
+
+  it('支线写死的门槛：“领 100 点活跃奖励”要有 100 点这一档，“周榜前 5”要有 5 张周榜卡（backlog）', () => {
+    const src = readSourceDir(defaultDataDir());
+    const rewards = (structuredClone(src['dataset/activation_rewards']) as Array<{ dictval: number }>).filter(
+      (r) => r.dictval !== 100,
+    );
+    expect(buildBundle({ ...src, 'dataset/activation_rewards': rewards }).errors).toContain(
+      'quest key activation.100 needs a 100-point activation reward',
+    );
+    const tuning = structuredClone(src['game/tuning']) as { hiphop: { weeklyCards: number[] } };
+    tuning.hiphop.weeklyCards = tuning.hiphop.weeklyCards.slice(0, 4);
+    expect(buildBundle({ ...src, 'game/tuning': tuning }).errors).toContain(
+      'quest key hiphop.top5 needs at least 5 tuning.hiphop.weeklyCards',
+    );
+  });
+
   it('活跃度原表档位奖励里的道具也查编号（活跃度调整终审：原来只查新增档位）', () => {
     const src = readSourceDir(defaultDataDir());
     const rewards = structuredClone(src['dataset/activation_rewards']) as Array<{ note: string }>;

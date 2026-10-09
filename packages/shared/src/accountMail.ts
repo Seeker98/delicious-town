@@ -40,14 +40,14 @@ export const ACCOUNT_MAILS: Record<Locale, Record<'verify' | 'reset', AccountMai
   },
   fr: {
     verify: {
-      subject: 'Delicious Town : vérifiez votre e-mail',
+      subject: 'Delicious Town\u202f: vérifiez votre e-mail',
       text: (link) =>
-        `Bienvenue à Delicious Town ! Ouvrez le lien ci-dessous dans les 24 heures pour vérifier votre e-mail :\n${link}`,
+        `Bienvenue à Delicious Town\u202f! Ouvrez le lien ci-dessous dans les 24 heures pour vérifier votre e-mail\u202f:\n${link}`,
     },
     reset: {
-      subject: 'Delicious Town : réinitialiser votre mot de passe',
+      subject: 'Delicious Town\u202f: réinitialiser votre mot de passe',
       text: (link) =>
-        `Ouvrez le lien ci-dessous dans l'heure pour réinitialiser votre mot de passe (si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail) :\n${link}`,
+        `Ouvrez le lien ci-dessous dans l'heure pour réinitialiser votre mot de passe (si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail)\u202f:\n${link}`,
     },
   },
   es: {

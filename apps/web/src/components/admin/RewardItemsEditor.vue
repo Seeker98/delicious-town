@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { reportOverLimit } from '../../utils/overLimit';
 import { computed, ref, watch } from 'vue';
 import {
   ACTIVITY_REWARD_PRESETS,
@@ -82,6 +83,9 @@ const overLimit = computed(() => {
     });
   return out;
 });
+
+// 外层页面（活动编辑）据此禁止保存（backlog）
+reportOverLimit(overLimit);
 
 watch(
   [coin, diamond, exp, goods, foods, hatRows],

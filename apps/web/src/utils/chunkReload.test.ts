@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
-import { bustThenGo, chunkTarget, installChunkReload, isChunkLoadError, reloadOnce } from './chunkReload';
+import {
+  bustThenGo,
+  chunkTarget,
+  goOrReload,
+  installChunkReload,
+  isChunkLoadError,
+  reloadOnce,
+} from './chunkReload';
 
 describe('发版后页面文件加载不到时自动刷新一次（问题记录 497）', () => {
   beforeEach(() => sessionStorage.clear());
@@ -149,5 +156,16 @@ describe('发版后页面文件加载不到时自动刷新一次（问题记录 
     expect(go).not.toHaveBeenCalled();
     expect(log).toHaveBeenCalled();
     log.mockRestore();
+  });
+});
+
+describe('刷新时不丢前进记录（backlog：后退、前进时加载失败，刷新会清掉前进记录）', () => {
+  it('地址栏已经是要去的页面：原地刷新；不是：转过去', () => {
+    const loc = { pathname: '/rest/tasks', search: '?tab=a', hash: '', assign: vi.fn(), reload: vi.fn() };
+    goOrReload(loc)('/rest/tasks?tab=a');
+    expect(loc.reload).toHaveBeenCalledTimes(1);
+    expect(loc.assign).not.toHaveBeenCalled();
+    goOrReload(loc)('/town');
+    expect(loc.assign).toHaveBeenCalledWith('/town');
   });
 });

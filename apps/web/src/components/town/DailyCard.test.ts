@@ -5,6 +5,7 @@ import type { DailyDto, NewsDto } from '@dt/shared';
 import { endpoints } from '../../api/endpoints';
 import { ApiError } from '../../api/client';
 import { useLocaleStore } from '../../stores/locale';
+import { useRestaurantStore } from '../../stores/restaurant';
 import DailyCard from './DailyCard.vue';
 
 vi.mock('../../api/endpoints', () => ({ endpoints: { townDaily: vi.fn() } }));
@@ -53,11 +54,11 @@ describe('DailyCard', () => {
     expect(w.find('[data-testid="daily-english-only"]').exists()).toBe(false);
   });
 
-  it('没发布：显示今日要闻', async () => {
+  it('没发布：显示当日要闻（那一天的要闻，不是今天的）', async () => {
     vi.mocked(endpoints.townDaily).mockResolvedValue(dto({ article: null, fallback: [news(1), news(2)] }));
     const w = mountCard();
     await flushPromises();
-    expect(w.find('[data-testid="daily-title"]').text()).toBe('今日要闻');
+    expect(w.find('[data-testid="daily-title"]').text()).toBe('当日要闻');
     expect(w.findAll('[data-testid="daily-fallback"]')).toHaveLength(2);
     expect(w.text()).toContain('这一天的日报还在编辑中');
   });
@@ -83,6 +84,27 @@ describe('DailyCard', () => {
     expect(endpoints.townDaily).toHaveBeenLastCalledWith('2026-10-07');
     expect(w.find('[data-testid="daily-prev"]').attributes('disabled')).toBeDefined();
     expect(w.find('[data-testid="daily-next"]').attributes('disabled')).toBeUndefined();
+  });
+
+  it('选中的那天没有稿子（刚开、或 00:10 前）：还能往前翻到更早的（backlog）', async () => {
+    vi.mocked(endpoints.townDaily)
+      .mockResolvedValueOnce(dto({ day: '2026-10-08', days: ['2026-10-07', '2026-10-06'], article: null }))
+      .mockResolvedValueOnce(dto({ day: '2026-10-07', days: ['2026-10-07', '2026-10-06'] }));
+    const w = mountCard();
+    await flushPromises();
+    expect(w.find('[data-testid="daily-prev"]').attributes('disabled')).toBeUndefined();
+    expect(w.find('[data-testid="daily-next"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="daily-prev"]').trigger('click');
+    await flushPromises();
+    expect(endpoints.townDaily).toHaveBeenLastCalledWith('2026-10-07');
+  });
+
+  it('本地已经知道区服关了日报：不发请求（backlog）', async () => {
+    useRestaurantStore().rest = { disabledFeatures: ['daily'] } as never;
+    const w = mountCard();
+    await flushPromises();
+    expect(endpoints.townDaily).not.toHaveBeenCalled();
+    expect(w.find('[data-testid="daily-card"]').exists()).toBe(false);
   });
 
   it('区服没开日报：整张卡片不显示', async () => {

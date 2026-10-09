@@ -171,6 +171,8 @@
       let report = null;
       /** id → 编辑中的值；保存成功或放弃后清空 */
       let edits = new Map();
+      /** 保存中：改勾选框不让保存按钮重新变成可点（backlog） */
+      let saving = false;
       const FIELDS = ['coin', 'diamond', 'onSale', 'special', 'black', 'note'];
 
       const valueOf = (r) => ({ ...pick(r), ...(edits.get(r.id) ?? {}) });
@@ -267,8 +269,8 @@
       }
       function updateButtons() {
         const any = report.rows.some(dirty);
-        $('save').disabled = !any;
-        $('reset').disabled = !any;
+        $('save').disabled = saving || !any;
+        $('reset').disabled = saving || !any;
       }
       function render() {
         const list = shown();
@@ -318,7 +320,8 @@
             black: vals.filter(({ v }) => v.black).map(({ r }) => r.id),
           },
         };
-        $('save').disabled = true;
+        saving = true;
+        updateButtons();
         $('msg').textContent = '保存中…';
         let out;
         try {
@@ -337,11 +340,13 @@
           if (!Array.isArray(out.errors)) throw new Error(`HTTP ${res.status}：返回格式不对`);
         } catch (e) {
           // 失败也要恢复按钮、说清原因，不能一直停在“保存中…”（商店整理终审）
+          saving = false;
           showErrors([]);
           updateButtons();
           $('msg').textContent = `保存失败：${e.message}`;
           return;
         }
+        saving = false;
         if (out.errors.length) {
           updateButtons();
           showErrors(out.errors);

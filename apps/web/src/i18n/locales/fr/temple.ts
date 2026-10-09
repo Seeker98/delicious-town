@@ -104,7 +104,7 @@ const temple: Messages['temple'] = {
     main: 'Ingrédient principal',
     sub: 'Ingrédient secondaire',
     rate: (pct) =>
-      `Réussite estimée ${pct}\u202f% (hors chance)\u202f; coûte aussi 10 000 pièces et 1 de chaque ingrédient du plat`,
+      `Réussite estimée ${pct} (hors chance)\u202f; coûte aussi 10 000 pièces et 1 de chaque ingrédient du plat`,
     start: "Commencer l'épreuve",
     success: (lucky, worth, exp, prof) =>
       `Épreuve réussie${lucky ? ' (chanceux)' : ''}\u202f: valeur d'épreuve +${worth}\u202f%, EXP d'épreuve +${exp}\u202f%, maîtrise +${prof}`,

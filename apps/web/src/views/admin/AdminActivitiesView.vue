@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { provideOverLimit } from '../../utils/overLimit';
 import { adminTime, fromGameInput, toGameInput } from '../../utils/gameInput';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import type {
@@ -146,7 +147,11 @@ async function load() {
 }
 onMounted(() => void load());
 
+/** 任何一份奖励超过上限都不能保存（backlog） */
+const anyOver = provideOverLimit();
+
 async function save() {
+  if (anyOver.value) return;
   if (busy.value) return;
   // 没选区服时"当前区服"会变成 null，被当成全服活动建出来（backlog 148-1）
   if (scope.value === 'shard' && !editing.value && admin.shardId === null) {
@@ -338,7 +343,7 @@ async function act(fn: () => Promise<unknown>, ok: string, ask: string) {
       <button
         type="button"
         class="btn btn-sm btn-primary me-2"
-        :disabled="busy"
+        :disabled="busy || anyOver"
         data-testid="ac-save"
         @click="save"
       >

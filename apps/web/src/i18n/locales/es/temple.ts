@@ -102,7 +102,7 @@ const temple: Messages['temple'] = {
     main: 'Ingrediente principal',
     sub: 'Ingrediente secundario',
     rate: (pct) =>
-      `Éxito estimado ${pct}\u00a0% (sin contar la suerte); además cuesta 10.000 monedas y 1 de cada ingrediente del plato`,
+      `Éxito estimado ${pct} (sin contar la suerte); además cuesta 10.000 monedas y 1 de cada ingrediente del plato`,
     start: 'Empezar la prueba',
     success: (lucky, worth, exp, prof) =>
       `Prueba superada${lucky ? ' (con suerte)' : ''}: valor de prueba +${worth}\u00a0%, EXP de prueba +${exp}\u00a0%, dominio +${prof}`,

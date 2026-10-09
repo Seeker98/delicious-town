@@ -77,6 +77,23 @@ describe('AdminActivitiesView', () => {
     expect(b.def).toMatchObject({ goals: [{ key: 'signin', target: 1 }, {}, {}, { target: 7 }] });
   });
 
+  it('任何一份奖励超过上限：保存按钮灰掉，点了也不提交（backlog）', async () => {
+    const w = mount(AdminActivitiesView);
+    await flushPromises();
+    await w.find('[data-testid="ac-new"]').trigger('click');
+    await w.find('[data-testid="ac-title"]').setValue('签到');
+    await w.find('[data-testid="ac-signin-template"]').trigger('click');
+    await w.find('[data-testid$="-coin"]').setValue('999999999999');
+    await flushPromises();
+    expect(w.find('[data-testid="ac-save"]').attributes('disabled')).toBeDefined();
+    await w.find('[data-testid="ac-save"]').trigger('click');
+    await flushPromises();
+    expect(adminApi.createActivity).not.toHaveBeenCalled();
+    await w.find('[data-testid$="-coin"]').setValue('100');
+    await flushPromises();
+    expect(w.find('[data-testid="ac-save"]').attributes('disabled')).toBeUndefined();
+  });
+
   it('九宫格：切到 4×4 有 16 格；服务端字段错误显示在对应格子下', async () => {
     vi.mocked(adminApi.createActivity).mockRejectedValue(
       new ApiError('VALIDATION_FAILED', { issues: [{ path: 'def.cells.4.target', message: 'too_small' }] }),

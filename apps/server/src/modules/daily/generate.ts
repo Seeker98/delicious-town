@@ -44,7 +44,7 @@ async function write(
   used.out += b.tokensOut;
   const en = parseArticle(b.text, 'en', 1);
   sameTokens(zh, en);
-  checkArticle(en, facts);
+  checkArticle(en, facts, 'en');
   return { 'zh-CN': zh, en, 'zh-TW': toTw(zh) };
 }
 
@@ -59,64 +59,82 @@ export async function generateDaily(
   day: string,
   o: GenerateOptions,
 ): Promise<{ status: DailyStatus; tokensIn: number; tokensOut: number }> {
-  const existing = await d.db
-    .selectFrom('town_daily')
-    .select('status')
-    .where('shard_id', '=', shardId)
-    .where('day', '=', day)
-    .executeTakeFirst();
+  const row = () =>
+    d.db
+      .selectFrom('town_daily')
+      .select(['status', 'content'])
+      .where('shard_id', '=', shardId)
+      .where('day', '=', day)
+      .executeTakeFirst();
+  const existing = await row();
   if (existing && existing.status !== 'pending') {
     if (!o.force) return { status: existing.status, tokensIn: 0, tokensOut: 0 };
     if (existing.status === 'published') throw invalidState('daily_published', { day });
   }
   const facts = await buildFacts(d, shardId, day, o.maxEvents);
+  // 新行、还没生成成功的行先存素材（玩家看“当日要闻”用）；已有稿子的行等写成功了再连稿子一起换，
+  // 不然 AI 失败时素材和稿子对不上（backlog）
   await d.db
     .insertInto('town_daily')
     .values({ shard_id: shardId, day, status: 'pending', facts: JSON.stringify(facts) })
-    .onConflict((oc) => oc.columns(['shard_id', 'day']).doUpdateSet({ facts: JSON.stringify(facts) }))
+    .onConflict((oc) =>
+      oc
+        .columns(['shard_id', 'day'])
+        .doUpdateSet({ facts: JSON.stringify(facts) })
+        .where('town_daily.status', '=', 'pending'),
+    )
     .execute();
 
   const used = { in: 0, out: 0, model: null as string | null };
-  const allowed: DailyStatus[] = o.force ? ['pending', 'draft', 'hidden'] : ['pending'];
-  const base = d.db
-    .updateTable('town_daily')
-    .where('shard_id', '=', shardId)
-    .where('day', '=', day)
-    .where('status', 'in', allowed);
-  let content: DailyContent;
-  try {
-    content = await write(writer, facts, used, o.signal);
-  } catch (err) {
-    await base
+  // 花掉的 token 和次数无条件记上：这一行中途被别人改了也要记（backlog）
+  const spend = (extra: { error: string } | Record<string, never> = {}) =>
+    d.db
+      .updateTable('town_daily')
       .set({
         tokens_in: sql<number>`tokens_in + ${used.in}`,
         tokens_out: sql<number>`tokens_out + ${used.out}`,
         attempts: sql<number>`attempts + 1`,
-        error: String(err instanceof Error ? err.message : err).slice(0, 500),
         ...(used.model ? { model: used.model } : {}),
-        // 后台重新生成失败也算一次（每次都花钱）
-        ...(o.force ? { regenerations: sql<number>`regenerations + 1` } : {}),
+        ...extra,
       })
+      .where('shard_id', '=', shardId)
+      .where('day', '=', day)
       .execute();
+  let content: DailyContent;
+  try {
+    content = await write(writer, facts, used, o.signal);
+  } catch (err) {
+    await spend({ error: String(err instanceof Error ? err.message : err).slice(0, 500) });
     throw err;
   }
+  await spend();
   const now = d.now();
   const status: DailyStatus = o.autoPublish && !o.force ? 'published' : 'draft';
-  await base
+  const allowed: DailyStatus[] = o.force ? ['pending', 'draft', 'hidden'] : ['pending'];
+  let q = d.db
+    .updateTable('town_daily')
     .set({
       status,
       content: JSON.stringify(content),
-      model: used.model,
-      tokens_in: sql<number>`tokens_in + ${used.in}`,
-      tokens_out: sql<number>`tokens_out + ${used.out}`,
-      attempts: sql<number>`attempts + 1`,
-      regenerations: o.force ? sql<number>`regenerations + 1` : sql<number>`regenerations`,
+      facts: JSON.stringify(facts),
       error: null,
       generated_at: now,
       published_at: status === 'published' ? now : null,
       published_by: null,
     })
-    .execute();
+    .where('shard_id', '=', shardId)
+    .where('day', '=', day)
+    .where('status', 'in', allowed);
+  // 重新生成：开始以后被人手改、发布过就不盖（backlog）
+  if (o.force)
+    q = q.where(
+      sql<boolean>`content is not distinct from ${existing?.content ? JSON.stringify(existing.content) : null}::jsonb`,
+    );
+  const r = await q.executeTakeFirst();
+  if (Number(r.numUpdatedRows) === 0) {
+    if (o.force) throw invalidState('daily_changed', { day });
+    return { status: (await row())?.status ?? 'pending', tokensIn: used.in, tokensOut: used.out };
+  }
   return { status, tokensIn: used.in, tokensOut: used.out };
 }
 

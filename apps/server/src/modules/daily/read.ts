@@ -17,8 +17,12 @@ function window(now: Date): string[] {
   return Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(y, -i));
 }
 
-/** 文字里的店记号：现在的名字，不存在为 null（各语言记号一样，看简中就行） */
-export async function restNames(db: Kysely<DB>, text: string): Promise<Record<string, string | null>> {
+/** 文字里的店记号：现在的名字；不存在、或不是本区服的店为 null（各语言记号一样，看简中就行） */
+export async function restNames(
+  db: Kysely<DB>,
+  shardId: number,
+  text: string,
+): Promise<Record<string, string | null>> {
   const ids = [
     ...new Set(
       tokensIn(text)
@@ -27,7 +31,12 @@ export async function restNames(db: Kysely<DB>, text: string): Promise<Record<st
     ),
   ];
   if (ids.length === 0) return {};
-  const rows = await db.selectFrom('restaurant').select(['id', 'name']).where('id', 'in', ids).execute();
+  const rows = await db
+    .selectFrom('restaurant')
+    .select(['id', 'name'])
+    .where('id', 'in', ids)
+    .where('shard_id', '=', shardId)
+    .execute();
   const found = new Map(rows.map((r) => [r.id, r.name]));
   return Object.fromEntries(ids.map((id) => [String(id), found.get(id) ?? null]));
 }
@@ -56,7 +65,7 @@ export async function readDaily(
   if (row.status === 'published' && row.content) {
     const content = row.content as DailyContent;
     out.article = content;
-    out.rests = await restNames(db, `${content['zh-CN'].title}\n${content['zh-CN'].body}`);
+    out.rests = await restNames(db, shardId, `${content['zh-CN'].title}\n${content['zh-CN'].body}`);
     return out;
   }
   const ids = ((row.facts as Partial<DailyFacts>).events ?? []).slice(0, FALLBACK_SIZE).map((e) => e.newsId);
@@ -84,5 +93,5 @@ export async function dailyHead(db: Kysely<DB>, shardId: number, now: Date): Pro
     (['zh-CN', 'en', 'zh-TW'] as DailyLang[]).map((l) => [l, c[l].title]),
   ) as Record<DailyLang, string>;
   // 三种语言的标题都看：英文标题里可以有简中标题里没有的店（终审 I4）
-  return { day, title, rests: await restNames(db, Object.values(title).join('\n')) };
+  return { day, title, rests: await restNames(db, shardId, Object.values(title).join('\n')) };
 }

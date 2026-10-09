@@ -43,6 +43,15 @@ describe('小镇日报：解析和检查 AI 的输出', () => {
       expect(() => checkArticle({ ...ok, body: bad }, facts), bad).toThrow();
   });
 
+  it('Markdown 标记不行；英文里剩中文不行，记号旁的中文名不算（backlog）', () => {
+    const ok = { title: 'Daily', body: '{r:12} opened' };
+    for (const bad of ['**bold** news', '# Title\nbody', 'use `code`', '__under__'])
+      expect(() => checkArticle({ ...ok, body: bad }, facts, 'en'), bad).toThrow('markdown');
+    expect(() => checkArticle({ ...ok, body: '{r:12} 开张了' }, facts, 'en')).toThrow('chinese');
+    expect(() => checkArticle({ ...ok, body: '{r:12} 开张了' }, facts)).not.toThrow();
+    expect(() => checkArticle({ ...ok, body: '**加粗**' }, facts)).toThrow('markdown');
+  });
+
   it('英文的记号要和简中一模一样', () => {
     const a = { title: 't', body: '{r:7} {g:40605} {r:7}' };
     expect(() => sameTokens(a, { title: 't', body: '{g:40605} {r:7} and {r:7}' })).not.toThrow();

@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { endpoints } from '../../api/endpoints';
 import { useCatalogStore } from '../../stores/catalog';
+import { useLocaleStore } from '../../stores/locale';
 import { templeData } from './testData';
 import TrialPanel from './TrialPanel.vue';
 
@@ -71,6 +72,21 @@ describe('TrialPanel', () => {
     await flushPromises();
     expect(endpoints.trialPrepare).toHaveBeenCalledWith(2);
     expect(w.emitted('reload')).toBeTruthy();
+  });
+
+  it('法语：预计成功率用小数逗号（backlog：原来显示成 45.3 %）', async () => {
+    await useLocaleStore().set('fr');
+    const w = mount(TrialPanel, {
+      props: {
+        data: templeData({ trial: { mcId: 3, readyMinutes: 30, creatives: 5, worthMax: 30, expMax: 150 } }),
+      },
+    });
+    await flushPromises();
+    await w.get('[data-testid="trial-food-150"]').trigger('click');
+    await w.get('[data-testid="trial-food-423"]').trigger('click');
+    const text = w.find('[data-testid="trial-rate"]').text();
+    expect(text).toMatch(/\d,\d\s%/);
+    expect(text).not.toMatch(/\d\.\d/);
   });
 
   it('准备好后选主辅食材开始试炼，显示预计成功率和结果', async () => {

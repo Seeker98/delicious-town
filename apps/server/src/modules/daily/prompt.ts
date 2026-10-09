@@ -30,7 +30,8 @@ Rules:
 1. Keep every token (no spaces inside, e.g. {r:12}) like {r:12}, {g:10704}, {f:7011}, {m:182}, {s:29}, {w:17} exactly as written; the website replaces them with names. Do not add, drop or change tokens, and do not translate them into words.
 2. Translate faithfully: do not add events, numbers or opinions. Keep numbers as they are (use 1,000 style grouping).
 3. Keep the paragraph breaks (blank line between paragraphs). No URLs, HTML or Markdown.
-4. Title at most 80 characters.
+4. The output must contain no Chinese characters: translate everything, including quoted titles (e.g. prediction questions in 「」), into English.
+5. Title at most 80 characters.
 
 Output only one JSON object: {"title": "...", "body": "..."}`;
 

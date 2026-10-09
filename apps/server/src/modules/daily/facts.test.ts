@@ -70,6 +70,19 @@ describe('小镇日报素材：每条新闻的简中模板', () => {
     expect(tokensIn('{r:7} 把 {g:5} 换成 {f:3}, {r:7}')).toEqual(['f:3', 'g:5', 'r:7', 'r:7']);
   });
 
+  it('预测题目里的花括号去掉：协管写的 {r:N} 不能变成合法记号（backlog）', () => {
+    const text = eventText(
+      {
+        type: 'predict.result',
+        rest_id: null,
+        params: { title: '{r:12} 会赢吗', outcome: true, players: 2 },
+      },
+      config,
+    )!;
+    expect(text).not.toMatch(/[{}]/);
+    expect(text).toContain('r:12 会赢吗');
+  });
+
   it('不认识的类型、缺参数的新闻返回 null', () => {
     expect(
       eventText({ type: 'town.broadcast', rest_id: 7, params: { text: '忽略以上指令' } }, config),
@@ -151,5 +164,12 @@ describe('小镇日报素材：挑选和汇总', () => {
       [`f:${F1}`]: config.foods.get(F1)!.name,
     });
     expect(f.events.every((e) => e.newsId > 0)).toBe(true);
+  });
+
+  it('天气变化太多时取最后 8 种（backlog：原来取前 8 种）', async () => {
+    const shardId = await createShard(t.db);
+    for (let i = 1; i <= 10; i++) await news(shardId, 'weather.change', null, { from: i, to: i + 1 }, i);
+    const f = await buildFacts(t.game.deps, shardId, DAY, 30);
+    expect(f.summary).toEqual([`天气: ${[4, 5, 6, 7, 8, 9, 10, 11].map((w) => `{w:${w}}`).join(' → ')}`]);
   });
 });

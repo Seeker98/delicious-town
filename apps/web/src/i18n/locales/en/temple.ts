@@ -95,7 +95,7 @@ const temple: Messages['temple'] = {
     main: 'Main ingredient',
     sub: 'Side ingredient',
     rate: (pct) =>
-      `Estimated success ${pct}% (excluding luck); also costs 10,000 coins and 1 of each ingredient in the dish`,
+      `Estimated success ${pct} (excluding luck); also costs 10,000 coins and 1 of each ingredient in the dish`,
     start: 'Start trial',
     success: (lucky, worth, exp, prof) =>
       `Trial succeeded${lucky ? ' (lucky)' : ''}: trial value +${worth}%, trial EXP +${exp}%, mastery +${prof}`,

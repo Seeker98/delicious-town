@@ -102,7 +102,8 @@ function origValues(src: SourceData) {
     ((src['game/retired'] as { goods?: Array<{ id: number }> } | undefined)?.goods ?? []).map((x) => x.id),
   );
   const pool = { special: [] as number[], black: [] as number[] };
-  for (const p of pools) pool[p.pool] = p.goods;
+  // 原版池子去掉已下架的：设计表里留着下架的道具时，不会一直显示“和原版不同”、池子也不会因此写进 shop.json（backlog）
+  for (const p of pools) pool[p.pool] = p.goods.filter((id) => !retired.has(id));
   const special = new Set(pool.special);
   const black = new Set(pool.black);
   const values = new Map<number, ShopValues>(

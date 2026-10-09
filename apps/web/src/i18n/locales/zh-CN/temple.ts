@@ -94,7 +94,7 @@ export default {
     pick: '指定',
     main: '主料',
     sub: '辅料',
-    rate: (pct: string) => `预计成功率 ${pct}% (不含幸运)；另扣 10,000 银币和这道菜的每种食材各 1 个`,
+    rate: (pct: string) => `预计成功率 ${pct} (不含幸运)；另扣 10,000 银币和这道菜的每种食材各 1 个`,
     start: '开始试炼',
     success: (lucky: boolean, worth: number, exp: number, prof: number) =>
       `试炼成功${lucky ? ' (幸运)' : ''}: 试炼价值 +${worth}%、试炼经验 +${exp}%, 熟练度 +${prof}`,

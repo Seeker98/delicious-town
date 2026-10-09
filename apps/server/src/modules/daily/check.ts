@@ -42,7 +42,7 @@ function allowed(facts: DailyFacts): Set<string> {
 }
 
 /** 记号都要是素材里有的（AI 不能编店）；不能有网址、尖括号 */
-export function checkArticle(a: Article, facts: DailyFacts): void {
+export function checkArticle(a: Article, facts: DailyFacts, lang: 'zh-CN' | 'en' = 'zh-CN'): void {
   const ok = allowed(facts);
   for (const tok of tokensIn(`${a.title}\n${a.body}`))
     if (!ok.has(tok)) throw new Error(`unknown token ${tok}`);
@@ -51,6 +51,10 @@ export function checkArticle(a: Article, facts: DailyFacts): void {
     if (/[<>]/.test(s)) throw new Error('contains < or >');
     // 写坏的记号（{r: 12}、{r：12}）不认，玩家会看到原样的花括号（终审 I2）
     if (/[{}｛｝]/.test(s.replace(TOKEN_RE, ''))) throw new Error('stray brace');
+    // 页面按纯文字显示，Markdown 标记会原样露出来（backlog）
+    if (/\*\*|__|`|^\s*#/m.test(s)) throw new Error('contains markdown');
+    // 英文里剩下没翻的中文（backlog）
+    if (lang === 'en' && /[\u3400-\u9fff\uff00-\uffef]/.test(s)) throw new Error('chinese left in english');
   }
 }
 

@@ -6,6 +6,7 @@ import {
   type AdminDailyEditBody,
   type AdminDailyRowDto,
 } from '@dt/shared';
+import { sql } from 'kysely';
 import { invalidState, limitReached } from '../../core/errors';
 import type { Game } from '../../game';
 import { AppError } from '../../http/errors';
@@ -20,6 +21,10 @@ import { restNames } from './read';
 const LIST_DAYS = 30;
 /** 每区服每天最多重新生成几次（设计 §七） */
 export const MAX_REGENERATIONS = 10;
+/** 能重新生成最近几天（新闻留 30 天，留点余量） */
+const REGEN_DAYS = 28;
+/** 后台重新生成整体超时（两次 AI 调用；Cloudflare 100 秒断开） */
+const REGEN_TIMEOUT_MS = 80_000;
 
 /** 小镇日报后台：看、发布、撤下、手改、重新生成；写操作都写审计 */
 export function createAdminDaily(game: Game) {
@@ -57,7 +62,7 @@ export function createAdminDaily(game: Game) {
       ...toRow(r),
       facts: r.facts,
       content,
-      rests: await restNames(db, `${article}\n${JSON.stringify(r.facts)}`),
+      rests: await restNames(db, shardId, `${article}\n${JSON.stringify(r.facts)}`),
     };
   }
 
@@ -121,7 +126,7 @@ export function createAdminDaily(game: Game) {
         const en = parseArticle(JSON.stringify(b.en), 'en', 1);
         checkArticle(zh, facts);
         sameTokens(zh, en);
-        checkArticle(en, facts);
+        checkArticle(en, facts, 'en');
         content = { 'zh-CN': zh, en, 'zh-TW': toTw(zh) };
       } catch (err) {
         throw invalidState('daily_check', { message: err instanceof Error ? err.message : String(err) });
@@ -143,17 +148,37 @@ export function createAdminDaily(game: Game) {
     async regenerate(actor: AdminActor, shardId: number, day: string): Promise<AdminDailyDetailDto> {
       const writer = game.app.writer;
       if (!writer) throw invalidState('daily_no_key');
-      if (day >= gameDay(d.now())) throw invalidState('daily_future', { day });
-      const r = await base().where('shard_id', '=', shardId).where('day', '=', day).executeTakeFirst();
-      if (r && r.regenerations >= MAX_REGENERATIONS)
+      const today = gameDay(d.now());
+      if (day >= today) throw invalidState('daily_future', { day });
+      // 新闻只留 30 天：更早的重新生成会拿几乎空的素材盖掉原来的（backlog）
+      if (day < addDays(today, -REGEN_DAYS)) throw invalidState('daily_too_old', { day, days: REGEN_DAYS });
+      // 行不存在先建（素材生成时写），再原子地占一次额度：同时点两次也超不过上限（backlog）
+      await db
+        .insertInto('town_daily')
+        .values({ shard_id: shardId, day, status: 'pending', facts: '{}' })
+        .onConflict((oc) => oc.columns(['shard_id', 'day']).doNothing())
+        .execute();
+      const took = await db
+        .updateTable('town_daily')
+        .set({ regenerations: sql<number>`regenerations + 1` })
+        .where('shard_id', '=', shardId)
+        .where('day', '=', day)
+        .where('status', '!=', 'published')
+        .where('regenerations', '<', MAX_REGENERATIONS)
+        .returning('regenerations')
+        .executeTakeFirst();
+      if (!took) {
+        if ((await find(shardId, day)).status === 'published') throw invalidState('daily_published', { day });
         throw limitReached('daily_regenerate', { max: MAX_REGENERATIONS });
-      if (r?.status === 'published') throw invalidState('daily_published', { day });
+      }
       const t = (await d.shards.settings(shardId)).tuning.daily;
       try {
         await generateDaily(d, writer, shardId, day, {
           maxEvents: t.maxEvents,
           autoPublish: false,
           force: true,
+          // 后台是同步请求：赶在 Cloudflare 100 秒超时前结束（backlog）
+          signal: AbortSignal.timeout(REGEN_TIMEOUT_MS),
         });
       } catch (err) {
         if (err instanceof AppError) throw err;

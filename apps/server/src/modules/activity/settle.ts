@@ -181,14 +181,29 @@ export async function settleActivities(
                 source: 'activity',
                 actorAccountId: null,
               });
-              // 支线“社交”（问题记录 515）：贡献榜进前 10 名
-              if (row.rank <= 10) await emitAction(o, 'activity.top10');
               return true;
             });
             if (sent) mails++;
           } catch (err) {
             await onFail(row.restId, err, 'activity rank settle failed');
           }
+        }
+      }
+      // 支线“社交”（问题记录 515）：贡献榜进前 10 名各记一次，不看后台配了哪些名次段发奖
+      // （backlog：名次段只配到第 3 名时第 4~10 名记不上）；领奖记录 top10 防重复
+      for (const row of ranked.filter((x) => x.rank <= 10 && !gaveUp.has(x.restId))) {
+        try {
+          await runSystemOp(d, shardId, row.restId, { source: 'activity', now }, async (o) => {
+            const w = await o.tx
+              .insertInto('activity_claim')
+              .values({ activity_id: a.id, rest_id: row.restId, reward_key: 'top10', via: 'mail' })
+              .onConflict((oc) => oc.doNothing())
+              .returning('reward_key')
+              .executeTakeFirst();
+            if (w) await emitAction(o, 'activity.top10');
+          });
+        } catch (err) {
+          await onFail(row.restId, err, 'activity top10 failed');
         }
       }
     }

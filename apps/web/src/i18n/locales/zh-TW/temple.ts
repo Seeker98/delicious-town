@@ -95,7 +95,7 @@ export default {
     pick: '指定',
     main: '主料',
     sub: '輔料',
-    rate: (pct: string) => `預計成功率 ${pct}% (不含幸運)；另扣 10,000 銀幣和這道菜的每種食材各 1 個`,
+    rate: (pct: string) => `預計成功率 ${pct} (不含幸運)；另扣 10,000 銀幣和這道菜的每種食材各 1 個`,
     start: '開始試煉',
     success: (lucky: boolean, worth: number, exp: number, prof: number) =>
       `試煉成功${lucky ? ' (幸運)' : ''}: 試煉價值 +${worth}%、試煉經驗 +${exp}%, 熟練度 +${prof}`,

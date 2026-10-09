@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Hora actual (hora de Pekín)',
   nextRound: (left) => `Siguiente ronda en ${left}`,
   changelog: {
+    fix1009:
+      'Una tanda de pequeños arreglos: la descripción del Collar del amor ya no menciona el mercado premium; la etapa de misión secundaria de entrar en el top 10 de la clasificación de aportes de un evento limitado ahora cuenta todos los puestos hasta el 10, no solo los que reciben premio; el Diario del pueblo permite volver a días anteriores y separa mejor los párrafos; el éxito estimado de la Prueba usa coma decimal; los deseos retirados ya no aparecen con nombre chino en las noticias',
     daily1009:
       'Nuevo: el Diario del pueblo. Cada mañana cuenta lo más destacado del día anterior (grandes premios del Ichiban Kuji, adquisiciones, subidas de estrellas, resultados de predicciones y más). Está arriba del todo en Noticias del pueblo y también tiene un enlace en la página de inicio; puedes ver los 7 días anteriores y tocar el nombre de un restaurante para visitarlo. Lo escribe una IA a partir de las noticias del juego y solo cuenta cosas que han pasado de verdad; mientras el diario de un día no está listo, verás los titulares de ese día. Por ahora el diario solo está en inglés',
     act1008:
