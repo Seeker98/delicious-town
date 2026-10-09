@@ -52,6 +52,21 @@ describe('AdminTitlesView（定制称号设计 二）', () => {
     expect(ro.find(T('title-edit-2')).exists()).toBe(false);
   });
 
+  it('“已有同名”和全部称号比，不只和当前搜索结果比（backlog 1010）', async () => {
+    resetTitleList();
+    vi.mocked(adminApi.titles).mockImplementation(async (q?: string) =>
+      q ? LIST.filter((x) => x.title.includes(q)) : LIST,
+    );
+    const w = mount(AdminTitlesView);
+    await flushPromises();
+    await w.find(T('title-q')).setValue('开服');
+    await w.find(T('title-search')).trigger('click');
+    await flushPromises();
+    expect(w.find(T('title-row-c2')).exists()).toBe(false);
+    await w.find(T('title-new-title')).setValue('面霸');
+    expect(w.text()).toContain('已有同名称号');
+  });
+
   it('搜索、新建、改、停用', async () => {
     vi.mocked(adminApi.createTitle).mockResolvedValue(
       row({ key: 'c3', id: 3, title: '饭王', source: 'custom' }),

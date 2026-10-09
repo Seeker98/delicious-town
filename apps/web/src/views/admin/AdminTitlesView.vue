@@ -38,15 +38,19 @@ async function load() {
     err.value = errorMessage(e, '读取称号失败');
   }
 }
-onMounted(load);
+onMounted(() => {
+  void load();
+  void titles.load().catch(() => undefined);
+});
 
 const count = (s: string) => graphemeLen(cleanTitleText(s));
 const nt = ref('');
 const nd = ref('');
 const nn = ref('');
+/** 和全部称号比（backlog 1010：原来只和当前搜索结果比，搜着别的时查不出重名） */
 const dup = (title: string, except?: string) => {
   const c = cleanTitleText(title);
-  return c !== '' && list.value.some((t) => !t.retired && t.key !== except && t.title === c);
+  return c !== '' && titles.list.value.some((t) => !t.retired && t.key !== except && t.title === c);
 };
 const canCreate = computed(
   () => count(nt.value) >= 1 && count(nt.value) <= TITLE_MAX && count(nd.value) <= TITLE_DESC_MAX,
