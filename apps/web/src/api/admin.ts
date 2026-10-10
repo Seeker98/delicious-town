@@ -2,6 +2,9 @@ import type {
   AccountRole,
   AdminTitleDto,
   AdminFuturesFoodDto,
+  AdminBulkFoodDto,
+  AdminBulkLotDto,
+  AdminBulkUpdateInput,
   AdminFuturesUpdateInput,
   AdminDailyDetailDto,
   AdminDailyEditBody,
@@ -182,6 +185,12 @@ export const adminApi = {
   futuresFoods: (shardId: number) => api.get<AdminFuturesFoodDto[]>(`${A}/futures/foods${qs({ shardId })}`),
   updateFuturesFoods: (items: AdminFuturesUpdateInput['items']) =>
     api.post<null>(`${A}/futures/foods`, { items }),
+  /** 特许大宗认购（大宗认购设计 §3.2） */
+  bulkFoods: (shardId: number) => api.get<AdminBulkFoodDto[]>(`${A}/bulk/foods${qs({ shardId })}`),
+  updateBulkFoods: (items: AdminBulkUpdateInput['items']) => api.post<null>(`${A}/bulk/foods`, { items }),
+  syncBulkFoods: () => api.post<null>(`${A}/bulk/foods/sync`, {}),
+  bulkLots: (shardId: number) => api.get<AdminBulkLotDto[]>(`${A}/bulk/lots${qs({ shardId })}`),
+  cancelBulkLot: (id: number) => api.post<null>(`${A}/bulk/lots/${id}/cancel`, {}),
   titles: (q?: string) => api.get<AdminTitleDto[]>(`${A}/titles${qs({ q })}`),
   createTitle: (b: { title: string; desc?: string; note?: string }) =>
     api.post<AdminTitleDto>(`${A}/titles`, b),
