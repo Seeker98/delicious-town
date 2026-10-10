@@ -35,6 +35,7 @@ export const IMPLEMENTED_FEATURES: ReadonlySet<string> = new Set([
   'acquire',
   'daily',
   'futures',
+  'wealth',
 ]);
 
 export function featureAvailable(settings: ShardSettings, feature: string): boolean {

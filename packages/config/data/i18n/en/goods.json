@@ -75,6 +75,26 @@
     "name": "Random Mystery Ingredient Voucher",
     "desc": "Gives a random mystery ingredient"
   },
+  "10211": {
+    "name": "Level 1 Market Supply Pack",
+    "desc": "Use it to get 1 level 1 ingredient your street is short of (the street you are on when you use it), or a random level 1 ingredient if it needs none"
+  },
+  "10212": {
+    "name": "Level 2 Market Supply Pack",
+    "desc": "Use it to get 1 level 2 ingredient your street is short of (the street you are on when you use it), or a random level 2 ingredient if it needs none"
+  },
+  "10213": {
+    "name": "Level 3 Market Supply Pack",
+    "desc": "Use it to get 1 level 3 ingredient your street is short of (the street you are on when you use it), or a random level 3 ingredient if it needs none"
+  },
+  "10214": {
+    "name": "Level 4 Market Supply Pack",
+    "desc": "Use it to get 1 level 4 ingredient your street is short of (the street you are on when you use it), or a random level 4 ingredient if it needs none"
+  },
+  "10215": {
+    "name": "Level 5 Market Supply Pack",
+    "desc": "Use it to get 1 level 5 ingredient your street is short of (the street you are on when you use it), or a random level 5 ingredient if it needs none"
+  },
   "10301": {
     "name": "Chef Tower Ticket",
     "desc": "Adds one Chef Tower challenge for today"

@@ -192,7 +192,7 @@ describe('buildBundle（真实数据）', () => {
     const { bundle, errors } = realBuild();
     expect(errors).toEqual([]);
     expect(bundle!.foods).toHaveLength(336); // 313 + 新街道 23 种（问题记录 284）
-    expect(bundle!.goods).toHaveLength(721); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）
+    expect(bundle!.goods).toHaveLength(726); // 新街道勋章 16 枚（问题记录 284）+ 617 + 纪念品 12 件（148-2）+ 一番赏初代手办 4 件、抽赏券 1 张、月度主题手办 48 件 + 一到五级食材随机券 5 张（问题记录 331）+ 豪华签券 1 张（240-2） + 基金勋章 3 枚（240-2） + 后期海报奖杯 8 个（146）+ 天机石 6 阶（419）+ 街市补给包 5 个（理财）
     expect(bundle!.cookbooks).toHaveLength(3810);
     expect(bundle!.streets).toHaveLength(30);
     expect(bundle!.starNeed).toHaveLength(12);

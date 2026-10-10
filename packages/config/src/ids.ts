@@ -135,6 +135,9 @@ export const WIKI_HIDDEN_GOODS: ReadonlySet<number> = new Set<number>([]);
 /** 问题记录 331：新手大礼包；一到五级食材随机券 = foodVoucherBase + 等级（10201~10205）；packCode 是老店补领大礼包的新手码 */
 export const NEWBIE = { pack: 20002, foodVoucherBase: 10200, packCode: 'XINSHOULIBAO' } as const;
 
+/** 食材理财（理财设计 §1.1）：一到五级街市补给包 = packBase + 等级（10211~10215），在“食材随机券”小类里 */
+export const WEALTH = { packBase: 10210 } as const;
+
 /** 240-2：小镇发展基金勋章（定义在主表，game/fund.json 只配称号），C·流动赋能、B·增值资本、A·基石领投 */
 export const FUND = { C: 61904, B: 61905, A: 61906 } as const;
 /** 全部基金勋章：领取时一起去掉（不叠加），也不算进勋章收藏加成（只加经验，不加银币） */

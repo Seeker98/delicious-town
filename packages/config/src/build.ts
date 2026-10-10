@@ -13,8 +13,9 @@ import { deriveGoodsUse } from './goodsUse';
 import { itemRefs, retiredErrors } from './itemRefs';
 import { kujiErrors } from './kuji';
 import { fundErrors } from './fund';
+import { wealthErrors } from './wealth';
 import { foodWeights } from './foodSupply';
-import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS } from './ids';
+import { FUND_MEDALS, GOODS, GOODS_TYPE, NEWBIE, NON_SUIT_IDS, WEALTH } from './ids';
 import { tuningSchema } from './tuning';
 import { checkNewbieCodes } from './newbieCodes';
 import { slotFloorErrors } from './slot';
@@ -341,9 +342,22 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
       errors.push(`goods ${m.id} kuji ticket must be a consumable`);
   }
   // 一到五级食材随机券（问题记录 331）：原来由构建写死，主表可以手改了，按约定检查（终审 I1）：
-  // 每级一张、编号 = foodVoucherBase + 等级、消耗品、用法是随机食材；用法只有随机券能写
+  // 每级一张、编号 = foodVoucherBase + 等级、消耗品、用法是随机食材；用法只有随机券和街市补给包能写。
+  // 街市补给包（理财设计 §1.1）同样每级一个、编号 = WEALTH.packBase + 等级、消耗品、用法 needFood
   const voucherLevels = new Set<number>();
+  const packLevels = new Set<number>();
   for (const m of goodsRaw) {
+    if (m.src === 'wealth') {
+      if (m.type !== GOODS_TYPE.consumable) errors.push(`goods ${m.id} market pack must be a consumable`);
+      if (m.use?.kind !== 'needFood') {
+        errors.push(`goods ${m.id} market pack needs use needFood`);
+        continue;
+      }
+      const want = WEALTH.packBase + m.use.level;
+      if (m.id !== want) errors.push(`goods ${m.id} market pack level ${m.use.level} must be goods ${want}`);
+      else packLevels.add(m.use.level);
+      continue;
+    }
     if (m.src !== 'newbie') {
       if (m.use) errors.push(`goods ${m.id} use is only for food vouchers`);
       continue;
@@ -357,8 +371,10 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
     if (m.id !== want) errors.push(`goods ${m.id} voucher level ${m.use.level} must be goods ${want}`);
     else voucherLevels.add(m.use.level);
   }
-  for (let lv = 1; lv <= 5; lv++)
+  for (let lv = 1; lv <= 5; lv++) {
     if (!voucherLevels.has(lv)) errors.push(`food voucher for level ${lv} is missing`);
+    if (!packLevels.has(lv)) errors.push(`market pack for level ${lv} is missing`);
+  }
   // 新手大礼包（goods 54）：内容按 newbie_pack.json 配（问题记录 331）
   const withPack = builtGoods.map((g) =>
     g.id === newbieRaw.pack.goodsId ? { ...g, gift: newbieRaw.pack.gift, use: { kind: 'gift' as const } } : g,
@@ -486,8 +502,11 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   // 食材随机券那一级要有抽得出的食材：配错时用券会白扣（质量期 ②）
   for (const g of goods) {
     const use = g.use;
-    if (use?.kind === 'randomFood' && !foods.some((f) => f.level === use.level && f.weight > 0))
-      errors.push(`goods ${g.id} randomFood level ${use.level} has no food to draw`);
+    if (
+      (use?.kind === 'randomFood' || use?.kind === 'needFood') &&
+      !foods.some((f) => f.level === use.level && f.weight > 0)
+    )
+      errors.push(`goods ${g.id} ${use.kind} level ${use.level} has no food to draw`);
   }
   unique(
     'cookbooks',
@@ -1282,6 +1301,9 @@ export function buildBundle(src: SourceData, opts: BuildOptions = {}): BuildResu
   // 小镇发展基金（240-2）：同一套检查后台保存区服数值时也跑
   const honorIds = new Set(goods.filter((g) => g.type === GOODS_TYPE.honor).map((g) => g.id));
   errors.push(...fundErrors(tuning.fund, { honorIds }));
+  // 食材理财（理财设计 §3.1）：同一套检查后台保存区服数值时也跑
+  const packIds = new Set(goods.filter((g) => g.use?.kind === 'needFood').map((g) => g.id));
+  errors.push(...wealthErrors(tuning.wealth, { packIds }));
   for (const m of fundRaw.medals)
     if (!iconKeys.has(m.icon)) errors.push(`fund medal ${m.id} icon ${m.icon} not in looks.icons`);
 

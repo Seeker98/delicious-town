@@ -75,6 +75,26 @@
     "name": "Vale de ingrediente misterioso al azar",
     "desc": "Da un ingrediente misterioso al azar"
   },
+  "10211": {
+    "name": "Paquete de suministros del mercado nv. 1",
+    "desc": "Al usarlo, recibes 1 ingrediente de nivel 1 que le falta a tu calle (la calle en la que estés al usarlo), o uno de nivel 1 al azar si no le falta ninguno"
+  },
+  "10212": {
+    "name": "Paquete de suministros del mercado nv. 2",
+    "desc": "Al usarlo, recibes 1 ingrediente de nivel 2 que le falta a tu calle (la calle en la que estés al usarlo), o uno de nivel 2 al azar si no le falta ninguno"
+  },
+  "10213": {
+    "name": "Paquete de suministros del mercado nv. 3",
+    "desc": "Al usarlo, recibes 1 ingrediente de nivel 3 que le falta a tu calle (la calle en la que estés al usarlo), o uno de nivel 3 al azar si no le falta ninguno"
+  },
+  "10214": {
+    "name": "Paquete de suministros del mercado nv. 4",
+    "desc": "Al usarlo, recibes 1 ingrediente de nivel 4 que le falta a tu calle (la calle en la que estés al usarlo), o uno de nivel 4 al azar si no le falta ninguno"
+  },
+  "10215": {
+    "name": "Paquete de suministros del mercado nv. 5",
+    "desc": "Al usarlo, recibes 1 ingrediente de nivel 5 que le falta a tu calle (la calle en la que estés al usarlo), o uno de nivel 5 al azar si no le falta ninguno"
+  },
   "10301": {
     "name": "Entrada de la Torre de chefs",
     "desc": "Añade un desafío a la Torre de chefs para hoy"

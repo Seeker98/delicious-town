@@ -142,3 +142,21 @@ describe('futures（食材期货，期货设计 §8）', () => {
     expect(withF((x) => (x.dailyQuota = [1, 2, 3, 4]))).toBe(false);
   });
 });
+
+describe('wealth（食材理财，理财设计 §3.1）', () => {
+  type W = Record<string, unknown>;
+  const withW = (f: (x: W) => void) => {
+    const t = structuredClone(tuningJson) as unknown as { wealth: W };
+    f(t.wealth);
+    return tuningSchema.safeParse(t).success;
+  };
+  it('默认值合法；提前取出比例在 (0, 1]，期限至少一项，天数、个数、一档金额至少 1', () => {
+    expect(withW(() => undefined)).toBe(true);
+    expect(withW((x) => (x.earlyRate = 0))).toBe(false);
+    expect(withW((x) => (x.earlyRate = 1.1))).toBe(false);
+    expect(withW((x) => (x.terms = []))).toBe(false);
+    expect(withW((x) => ((x.terms as W[])[0]!.days = 0))).toBe(false);
+    expect(withW((x) => ((x.terms as W[])[0]!.perUnit = 0))).toBe(false);
+    expect(withW((x) => (x.unit = 0))).toBe(false);
+  });
+});
