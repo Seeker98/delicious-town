@@ -16,9 +16,15 @@ describe('迁移 0067：许愿树', () => {
     const e = { round_id: id, rest_id: restId, shard_id: shardId, created_at: now };
     await db.insertInto('wish_entry').values(e).execute();
     await expect(db.insertInto('wish_entry').values(e).execute()).rejects.toThrow();
-    const r = await db.selectFrom('wish_round').select(['status']).where('id', '=', id).executeTakeFirstOrThrow();
+    const r = await db
+      .selectFrom('wish_round')
+      .select(['status'])
+      .where('id', '=', id)
+      .executeTakeFirstOrThrow();
     expect(r.status).toBe('open');
     await db.deleteFrom('restaurant').where('id', '=', restId).execute();
-    expect(await db.selectFrom('wish_entry').select('rest_id').where('round_id', '=', id).execute()).toEqual([]);
+    expect(await db.selectFrom('wish_entry').select('rest_id').where('round_id', '=', id).execute()).toEqual(
+      [],
+    );
   });
 });

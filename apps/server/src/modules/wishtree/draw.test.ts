@@ -38,7 +38,8 @@ const roundRow = (id: string) =>
   t.db.selectFrom('wish_round').selectAll().where('id', '=', id).executeTakeFirstOrThrow();
 const entries = (id: string) =>
   t.db.selectFrom('wish_entry').selectAll().where('round_id', '=', id).orderBy('rest_id').execute();
-const mailsOf = (restId: number) => t.db.selectFrom('mail').selectAll().where('rest_id', '=', restId).execute();
+const mailsOf = (restId: number) =>
+  t.db.selectFrom('mail').selectAll().where('rest_id', '=', restId).execute();
 const newsOf = (shardId: number) =>
   t.db
     .selectFrom('news')
@@ -124,7 +125,11 @@ describe('开奖（许愿树设计 §1.1、§3.2）', () => {
     const shardId = await createShard(t.db);
     const ok = await newRestaurant(t, { shardId });
     const bad = await newRestaurant(t, { shardId });
-    await t.db.updateTable('account').set({ banned_at: t.clock.now }).where('id', '=', bad.accountId).execute();
+    await t.db
+      .updateTable('account')
+      .set({ banned_at: t.clock.now })
+      .where('id', '=', bad.accountId)
+      .execute();
     for (let i = 0; i < 5; i++) {
       const id = await mkRound(shardId, [ok.restaurantId, bad.restaurantId]);
       await drawDue(t.game.deps, shardId, t.clock.now);
@@ -141,7 +146,11 @@ describe('开奖（许愿树设计 §1.1、§3.2）', () => {
 
     const only = await createShard(t.db);
     const b2 = await newRestaurant(t, { shardId: only });
-    await t.db.updateTable('account').set({ banned_at: t.clock.now }).where('id', '=', b2.accountId).execute();
+    await t.db
+      .updateTable('account')
+      .set({ banned_at: t.clock.now })
+      .where('id', '=', b2.accountId)
+      .execute();
     const id2 = await mkRound(only, [b2.restaurantId]);
     await drawDue(t.game.deps, only, t.clock.now);
     expect(await roundRow(id2)).toMatchObject({ status: 'empty', entries: 1, winner_rest_id: null });

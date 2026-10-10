@@ -7,7 +7,7 @@ export default {
   help: (hour: number, minLevel: number, titleDays: number, titleName: string) => [
     `每天 ${hour}:00 开奖, 同时树上结出新的道具, 全服都一样`,
     `餐厅 ${minLevel} 级以上每轮可以许 1 次愿, 不花任何东西`,
-    `开奖时从许过愿的餐厅里随机抽 1 家, 得到树上的道具和称号「${titleName}」 (领取后 ${titleDays} 天有效), 通过邮件发放`,
+    `开奖时从许过愿的餐厅里随机抽 1 家, 得到树上的道具和称号「${titleName}」(领取后 ${titleDays} 天有效), 通过邮件发放`,
     '没中的每家得一份随机奖励, 直接发到身上',
   ],
   off: '本区服暂未开放许愿树',

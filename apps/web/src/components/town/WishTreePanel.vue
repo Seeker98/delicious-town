@@ -69,7 +69,9 @@ function mineText(r: WishTreeResultDto): string {
     <div v-if="!data.enabled" class="alert alert-secondary py-1 small" data-testid="wt-off">
       {{ t.wishtree.off }}
     </div>
-    <div v-else-if="!round" class="dt-empty small" data-testid="wt-none">{{ t.wishtree.none(data.hour) }}</div>
+    <div v-else-if="!round" class="dt-empty small" data-testid="wt-none">
+      {{ t.wishtree.none(data.hour) }}
+    </div>
     <div v-if="round" class="dt-card mb-3 small" data-testid="wt-round">
       <div class="text-muted">{{ t.wishtree.today }}</div>
       <div class="fw-bold fs-6 mb-1" data-testid="wt-prize">{{ prizeText(round.goodsId, round.num) }}</div>

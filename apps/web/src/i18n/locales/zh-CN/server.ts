@@ -42,7 +42,8 @@ export default {
     'report.rejected': { title: () => '举报结果', body: (p) => `你举报的${str(p.targetName)}经核实未违规。` },
     'wishtree.win': {
       title: () => '许愿树: 愿望成真',
-      body: (p) => `你在许愿树下许的愿成真了！附件是树上结的道具和称号, 称号领取后 ${n(p, 'titleDays')} 天有效。`,
+      body: (p) =>
+        `你在许愿树下许的愿成真了！附件是树上结的道具和称号, 称号领取后 ${n(p, 'titleDays')} 天有效。`,
     },
     'report.penalty': {
       title: () => '违规处理通知',

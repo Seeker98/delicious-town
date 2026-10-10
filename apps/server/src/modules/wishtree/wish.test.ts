@@ -26,7 +26,11 @@ describe('许愿（许愿树设计 §3.2）', () => {
     const v = (await svc().wish(r)).data;
     expect(v.wished).toBe(true);
     expect(v.round!.entries).toBe(1);
-    const rows = await t.db.selectFrom('wish_entry').selectAll().where('rest_id', '=', r.restaurantId).execute();
+    const rows = await t.db
+      .selectFrom('wish_entry')
+      .selectAll()
+      .where('rest_id', '=', r.restaurantId)
+      .execute();
     expect(rows).toHaveLength(1);
     const log = await t.db
       .selectFrom('rest_log')
@@ -55,9 +59,9 @@ describe('许愿（许愿树设计 §3.2）', () => {
     const r = await newRestaurant(t, { shardId, patch: { level: 10 } });
     t.clock.set(gameTime('2026-10-23', 20, 0));
     await expect(svc().wish(r)).rejects.toMatchObject({ params: { reason: 'wishtree_closed' } });
-    expect(await t.db.selectFrom('wish_entry').select('rest_id').where('rest_id', '=', r.restaurantId).execute()).toEqual(
-      [],
-    );
+    expect(
+      await t.db.selectFrom('wish_entry').select('rest_id').where('rest_id', '=', r.restaurantId).execute(),
+    ).toEqual([]);
   });
 
   it('区服关了许愿树：许愿报 FEATURE_DISABLED，看板还能读（enabled: false）', async () => {
@@ -77,7 +81,14 @@ describe('许愿（许愿树设计 §3.2）', () => {
     const r = await newRestaurant(t, { shardId, patch: { level: 12 } });
     const gone = await newRestaurant(t, { shardId, patch: { level: 12 } });
     const v = await svc().view(r);
-    expect(v).toMatchObject({ enabled: true, hour: 20, minLevel: 10, level: 12, titleDays: 3, wished: false });
+    expect(v).toMatchObject({
+      enabled: true,
+      hour: 20,
+      minLevel: 10,
+      level: 12,
+      titleDays: 3,
+      wished: false,
+    });
     expect(v.round).not.toBeNull();
     // 造一轮开过奖的：中奖店随后被删
     const { id } = await t.db

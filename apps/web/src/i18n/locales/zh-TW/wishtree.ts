@@ -8,7 +8,7 @@ export default {
   help: (hour: number, minLevel: number, titleDays: number, titleName: string) => [
     `每天 ${hour}:00 開獎, 同時樹上結出新的道具, 全服都一樣`,
     `餐廳 ${minLevel} 級以上每輪可以許 1 次願, 不花任何東西`,
-    `開獎時從許過願的餐廳裡隨機抽 1 家, 得到樹上的道具和稱號「${titleName}」 (領取後 ${titleDays} 天有效), 通過郵件發放`,
+    `開獎時從許過願的餐廳裡隨機抽 1 家, 得到樹上的道具和稱號「${titleName}」(領取後 ${titleDays} 天有效), 通過郵件發放`,
     '沒中的每家得一份隨機獎勵, 直接發到身上',
   ],
   off: '本區服暫未開放許願樹',
