@@ -123,3 +123,14 @@ describe('终审修正（界面改版 P1）', () => {
     expect(rule('.btn-outline-secondary.active')).toMatch(/--bs-btn-active-color:\s*var\(--dt-surface\)/);
   });
 });
+
+describe('禁用按钮一眼看出点不了（截图自查）', () => {
+  it('浅紫、中性按钮禁用时是透明底灰边灰字，不再是和可点的浅紫几乎一样的底色', () => {
+    for (const sel of ['.btn-outline-primary', '.btn-outline-secondary,\n.btn-outline-dark,\n.btn-light']) {
+      const r = rule(sel);
+      expect(r, sel).toMatch(/--bs-btn-disabled-bg:\s*transparent/);
+      expect(r, sel).toMatch(/--bs-btn-disabled-border-color:\s*var\(--dt-line-strong\)/);
+      expect(r, sel).toMatch(/--bs-btn-disabled-color:\s*var\(--dt-disabled-text\)/);
+    }
+  });
+});

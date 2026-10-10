@@ -251,8 +251,9 @@ body {
   --bs-btn-active-bg: var(--dt-primary-soft);
   --bs-btn-active-border-color: var(--dt-line-strong);
   --bs-btn-disabled-color: var(--dt-disabled-text);
-  --bs-btn-disabled-bg: var(--dt-disabled-bg);
-  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+  /* 禁用：透明底灰边灰字，和可点的浅底分得开（截图自查） */
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-line-strong);
 }
 /* 中性按钮（切换区服、全部卸下等）：细边、正文色 */
 .btn-outline-secondary,
@@ -268,8 +269,9 @@ body {
   --bs-btn-active-bg: var(--dt-line);
   --bs-btn-active-border-color: var(--dt-line-strong);
   --bs-btn-disabled-color: var(--dt-disabled-text);
-  --bs-btn-disabled-bg: var(--dt-disabled-bg);
-  --bs-btn-disabled-border-color: var(--dt-disabled-bg);
+  /* 禁用：透明底灰边灰字，和可点的浅底分得开（截图自查） */
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--dt-line-strong);
 }
 .btn-link {
   --bs-btn-color: var(--dt-primary-ink);
