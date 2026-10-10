@@ -329,6 +329,10 @@ const events: Messages['events'] = {
       `Suscripción mayorista fallida: pujas insuficientes para ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${formatNum(n(p, 'refunded'))} monedas`,
     'bulk.cancelled': (p, names) =>
       `Suscripción mayorista cancelada: ${names.foodName(n(p, 'foodsId'))}, se devolvieron ${formatNum(n(p, 'refunded'))} monedas`,
+    'wishtree.wish': (p, names) =>
+      `Pediste un deseo en el Árbol de los deseos (el árbol da ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')})`,
+    'wishtree.lost': (p, names) =>
+      `No ganaste el sorteo del Árbol de los deseos (el árbol daba ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')}); recibiste un premio de consolación`,
     'activity.claim': (p) => `Reclamaste las recompensas del evento «${String(p.title ?? '')}»`,
     'activity.unlock': (p) => `Desbloqueaste las recompensas premium del evento «${String(p.title ?? '')}»`,
     'activity.exchange': (p) =>

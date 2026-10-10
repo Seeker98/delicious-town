@@ -305,6 +305,11 @@ export default {
       `大宗認購流拍: ${names.foodName(n(p, 'foodsId'))} 認購不足, 退回 ${formatNum(n(p, 'refunded'))} 銀幣`,
     'bulk.cancelled': (p, names) =>
       `大宗認購取消: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 銀幣`,
+    // 許願樹（許願樹設計 2026-10-11）
+    'wishtree.wish': (p, names) =>
+      `在許願樹下許願 (樹上結的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')})`,
+    'wishtree.lost': (p, names) =>
+      `許願樹開獎沒中 (樹上結的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}), 得到安慰獎`,
     'activity.claim': (p) => `領取了活動「${String(p.title ?? '')}」的獎勵`,
     'activity.unlock': (p) => `解鎖了活動「${String(p.title ?? '')}」的進階獎勵`,
     'activity.exchange': (p) => `在活動「${String(p.title ?? '')}」兌換了 ${String(p.times ?? 1)} 次`,

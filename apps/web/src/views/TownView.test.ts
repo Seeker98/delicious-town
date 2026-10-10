@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMemoryHistory, createRouter } from 'vue-router';
 import { endpoints } from '../api/endpoints';
 import { townData } from '../components/town/testData';
+import { useRestaurantStore } from '../stores/restaurant';
 import TownView from './TownView.vue';
 
 vi.mock('../api/endpoints', () => ({
@@ -20,6 +21,8 @@ vi.mock('../api/endpoints', () => ({
     mc: vi.fn(),
     fund: vi.fn(),
     overview: vi.fn(),
+    wishTree: vi.fn(),
+    wishTreeWish: vi.fn(),
   },
 }));
 
@@ -89,10 +92,10 @@ describe('TownView', () => {
     expect(router.currentRoute.value.query.tab).toBe('town');
   });
 
-  it('页面叫"广场"；标签只剩新闻、居民、排行（问题记录 441：教室、兑换、发展基金搬到协会）', async () => {
+  it('页面叫"广场"；标签是新闻、居民、排行、许愿树（问题记录 441：教室、兑换、发展基金搬到协会）', async () => {
     const w = await mountAt('/town?tab=news');
     expect(w.find('h5').text()).toBe('广场');
-    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '排行']);
+    expect(w.findAll('.nav-link').map((x) => x.text())).toEqual(['新闻', '居民', '排行', '许愿树']);
   });
 
   it.each([
@@ -117,5 +120,26 @@ describe('TownView', () => {
     localStorage.setItem('dt_town_tab', 'exchange');
     const w = await mountAt('/town');
     expect(w.find('[data-testid="tab-news"]').classes()).toContain('active');
+  });
+
+  it('许愿树标签：?tab=wishtree 直接打开；区服关了不显示，地址指定时退回新闻', async () => {
+    vi.mocked(endpoints.wishTree).mockResolvedValue({
+      enabled: true,
+      hour: 20,
+      minLevel: 10,
+      level: 12,
+      titleDays: 3,
+      round: null,
+      wished: false,
+      recent: [],
+    });
+    const w = await mountAt('/town?tab=wishtree');
+    expect(w.find('[data-testid="tab-wishtree"]').classes()).toContain('active');
+    expect(w.find('[data-testid="wt-none"]').exists()).toBe(true);
+
+    useRestaurantStore().rest = { disabledFeatures: ['wishtree'] } as never;
+    const off = await mountAt('/town?tab=wishtree');
+    expect(off.find('[data-testid="tab-wishtree"]').exists()).toBe(false);
+    expect(off.find('[data-testid="tab-news"]').classes()).toContain('active');
   });
 });

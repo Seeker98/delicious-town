@@ -130,6 +130,8 @@ export default {
     'predict.result': (_w, p) => predictResult(p),
     'bulk.deal': (_w, p, x) =>
       `特許大宗認購: ${x.foodName(num(p.foodsId))}×${num(p.sold)} 以 ${formatNum(num(p.price))} 銀幣成交, 認購 ${Math.round((num(p.demand) / Math.max(1, num(p.qty))) * 10) / 10} 倍`,
+    'wishtree.win': (w, p, x) =>
+      `${w}在許願樹下許願成真, 得到了 ${x.goodsName(num(p.goodsId))}×${num(p.num)}！(${num(p.entries)} 人許願)`,
   }),
   /** 沒有文案的新聞類型 */
   unknown: '小鎮發生了一件事',

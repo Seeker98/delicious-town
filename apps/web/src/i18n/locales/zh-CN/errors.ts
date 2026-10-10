@@ -301,6 +301,7 @@ export default {
     wealth_not_mature: '还没到期',
     wealth_mature: '已经到期了, 请直接领取',
     bulk_not_open: '这一批已经结束或取消了',
+    wishtree_closed: '这一轮已经到开奖时间了, 等新的一轮',
     bulk_closed: '已经收盘了, 这次出价无效',
     bulk_cooldown: '出价太快了, 等几秒再试',
     bulk_raise: '加价不够, 每次至少要加到页面上写的价格',
@@ -422,6 +423,7 @@ export default {
     cup_taken: '这杯已经有人喝过了',
     shake: '蟹老板握紧了他的钱袋 (今天已经摇过了)',
     wish: '今天已经有人许过愿了',
+    wishtree: '这一轮你已经许过愿了',
     feast: '今天已经共飨过了',
   },
   /** 带参数的特殊文案 */

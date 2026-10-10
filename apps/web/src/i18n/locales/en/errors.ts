@@ -309,6 +309,7 @@ const errors: Messages['errors'] = {
     wealth_not_mature: 'Not matured yet',
     wealth_mature: 'Already matured — claim it instead',
     bulk_not_open: 'This lot has already ended or been cancelled',
+    wishtree_closed: 'This round has reached its draw time; wait for the next round',
     bulk_closed: 'The lot has closed; this bid does not count',
     bulk_cooldown: 'Too fast; wait a few seconds and try again',
     bulk_raise: 'Not enough of a raise; bid at least the price shown on the page',
@@ -429,6 +430,7 @@ const errors: Messages['errors'] = {
     cup_taken: 'Someone already drank this cup',
     shake: 'Mr. Krab is clutching his money bag (you already shook it today)',
     wish: 'Someone has already made a wish today',
+    wishtree: "You've already made a wish this round",
     feast: "You've already joined the feast today",
   },
   special: {

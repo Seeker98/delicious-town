@@ -304,6 +304,11 @@ export default {
       `大宗认购流拍: ${names.foodName(n(p, 'foodsId'))} 认购不足, 退回 ${formatNum(n(p, 'refunded'))} 银币`,
     'bulk.cancelled': (p, names) =>
       `大宗认购取消: ${names.foodName(n(p, 'foodsId'))}, 退回 ${formatNum(n(p, 'refunded'))} 银币`,
+    // 许愿树（许愿树设计 2026-10-11）
+    'wishtree.wish': (p, names) =>
+      `在许愿树下许愿 (树上结的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')})`,
+    'wishtree.lost': (p, names) =>
+      `许愿树开奖没中 (树上结的是 ${names.goodsName(n(p, 'goodsId'))}×${n(p, 'num')}), 得到安慰奖`,
     'activity.claim': (p) => `领取了活动「${String(p.title ?? '')}」的奖励`,
     'activity.unlock': (p) => `解锁了活动「${String(p.title ?? '')}」的进阶奖励`,
     'activity.exchange': (p) => `在活动「${String(p.title ?? '')}」兑换了 ${String(p.times ?? 1)} 次`,

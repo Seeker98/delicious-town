@@ -311,6 +311,7 @@ const errors: Messages['errors'] = {
     wealth_not_mature: 'Todavía no ha vencido',
     wealth_mature: 'Ya venció: cóbralo',
     bulk_not_open: 'Este lote ya terminó o se canceló',
+    wishtree_closed: 'Esta ronda ya llegó a la hora del sorteo; espera la siguiente',
     bulk_closed: 'El lote ya cerró; esta puja no cuenta',
     bulk_cooldown: 'Demasiado rápido; espera unos segundos y vuelve a intentarlo',
     bulk_raise: 'La subida no basta; puja al menos el precio que indica la página',
@@ -432,6 +433,7 @@ const errors: Messages['errors'] = {
     cup_taken: 'Alguien ya se bebió esta copa',
     shake: 'Don Krab aprieta su bolsa de dinero (hoy ya la sacudiste)',
     wish: 'Hoy alguien ya pidió un deseo',
+    wishtree: 'Ya pediste un deseo en esta ronda',
     feast: 'Hoy ya participaste en el banquete',
   },
   special: {

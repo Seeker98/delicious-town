@@ -41,6 +41,11 @@ const server: Messages['server'] = {
       title: () => 'Résultat du signalement',
       body: (p) => `Le contenu signalé (${str(p.targetName)}) a été vérifié et n'enfreint pas les règles.`,
     },
+    'wishtree.win': {
+      title: () => 'Arbre à vœux\u202f: votre vœu s’est réalisé',
+      body: (p) =>
+        `Votre vœu à l’Arbre à vœux s’est réalisé\u202f! En pièce jointe\u202f: l’objet de l’arbre et un titre, valable ${n(p, 'titleDays')} jours après réception.`,
+    },
     'report.penalty': {
       title: () => "Avis d'infraction",
       body: (p) => {

@@ -2,7 +2,7 @@
 export default {
   title: '广场',
   forum: '论坛',
-  tabs: { news: '新闻', town: '居民', rank: '排行' },
+  tabs: { news: '新闻', town: '居民', rank: '排行', wishtree: '许愿树' },
   loadFailed: '读取广场失败',
   restFailed: '读取餐厅数据失败。',
   retry: '重试',

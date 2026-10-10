@@ -41,6 +41,10 @@ export default {
       body: (p) => `你舉報的${str(p.targetName)}已處理, 感謝你維護小鎮。`,
     },
     'report.rejected': { title: () => '舉報結果', body: (p) => `你舉報的${str(p.targetName)}經核實未違規。` },
+    'wishtree.win': {
+      title: () => '許願樹: 願望成真',
+      body: (p) => `你在許願樹下許的願成真了！附件是樹上結的道具和稱號, 稱號領取後 ${n(p, 'titleDays')} 天有效。`,
+    },
     'report.penalty': {
       title: () => '違規處理通知',
       body: (p) => {

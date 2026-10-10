@@ -41,6 +41,11 @@ const server: Messages['server'] = {
       title: () => 'Report result',
       body: (p) => `The ${str(p.targetName)} you reported was checked and found not to break the rules.`,
     },
+    'wishtree.win': {
+      title: () => 'Wishing Tree: your wish came true',
+      body: (p) =>
+        `Your wish at the Wishing Tree came true! Attached are the item from the tree and a title, valid for ${n(p, 'titleDays')} days after claiming.`,
+    },
     'report.penalty': {
       title: () => 'Rule violation notice',
       body: (p) => {

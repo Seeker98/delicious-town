@@ -324,6 +324,10 @@ const events: Messages['events'] = {
       `Bulk subscription failed: not enough bids for ${names.foodName(n(p, 'foodsId'))}, refunded ${formatNum(n(p, 'refunded'))} coins`,
     'bulk.cancelled': (p, names) =>
       `Bulk subscription cancelled: ${names.foodName(n(p, 'foodsId'))}, refunded ${formatNum(n(p, 'refunded'))} coins`,
+    'wishtree.wish': (p, names) =>
+      `Made a wish at the Wishing Tree (the tree bears ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')})`,
+    'wishtree.lost': (p, names) =>
+      `Didn't win the Wishing Tree draw (the tree bore ${names.goodsName(n(p, 'goodsId'))} ×${n(p, 'num')}); got a consolation reward`,
     'activity.claim': (p) => `Claimed rewards from the event "${String(p.title ?? '')}"`,
     'activity.unlock': (p) => `Unlocked premium rewards for the event "${String(p.title ?? '')}"`,
     'activity.exchange': (p) =>

@@ -310,6 +310,7 @@ const errors: Messages['errors'] = {
     wealth_not_mature: "Pas encore à l'échéance",
     wealth_mature: 'Déjà échu\u202f: récupérez-le plutôt',
     bulk_not_open: 'Ce lot est déjà terminé ou annulé',
+    wishtree_closed: 'Ce tour est arrivé à l’heure du tirage\u202f; attendez le prochain',
     bulk_closed: 'Le lot a clôturé\u202f; cette offre ne compte pas',
     bulk_cooldown: 'Trop rapide\u202f; attendez quelques secondes et réessayez',
     bulk_raise: 'Hausse insuffisante\u202f; proposez au moins le prix indiqué sur la page',
@@ -433,6 +434,7 @@ const errors: Messages['errors'] = {
     cup_taken: "Quelqu'un a déjà bu ce verre",
     shake: "M. Krab serre sa bourse (vous l'avez déjà secouée aujourd'hui)",
     wish: "Quelqu'un a déjà fait un vœu aujourd'hui",
+    wishtree: 'Vous avez déjà fait un vœu pour ce tour',
     feast: "Vous avez déjà participé au festin aujourd'hui",
   },
   special: {

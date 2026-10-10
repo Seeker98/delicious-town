@@ -330,6 +330,10 @@ const events: Messages['events'] = {
       `Souscription en gros annulée faute de demandes\u202f: ${names.foodName(n(p, 'foodsId'))}, ${formatNum(n(p, 'refunded'))} pièces remboursées`,
     'bulk.cancelled': (p, names) =>
       `Souscription en gros annulée\u202f: ${names.foodName(n(p, 'foodsId'))}, ${formatNum(n(p, 'refunded'))} pièces remboursées`,
+    'wishtree.wish': (p, names) =>
+      `Vœu fait à l’Arbre à vœux (l’arbre donne ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')})`,
+    'wishtree.lost': (p, names) =>
+      `Pas gagné au tirage de l’Arbre à vœux (l’arbre donnait ${names.goodsName(n(p, 'goodsId'))}\u202f×\u202f${n(p, 'num')})\u202f; lot de consolation reçu`,
     'activity.claim': (p) =>
       `A récupéré les récompenses de l'événement «\u202f${String(p.title ?? '')}\u202f»`,
     'activity.unlock': (p) =>
