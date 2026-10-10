@@ -43,6 +43,7 @@ import { createWealthService, type WealthService } from './modules/wealth/servic
 import { createBulkService, type BulkService } from './modules/bulk/service';
 import { createWishTreeService, type WishTreeService } from './modules/wishtree/service';
 import { bulkJobs } from './modules/bulk/jobs';
+import { wishTreeJobs } from './modules/wishtree/jobs';
 import { createAcquireService, type AcquireService } from './modules/acquire/service';
 import { createMailService, type MailService } from './modules/mail/service';
 import { createRedeemService, type RedeemService } from './modules/redeem/service';
@@ -149,6 +150,7 @@ export function createGame(app: AppDeps): Game {
   jobs.push(...exchangeJobs(deps));
   jobs.push(...futuresJobs(deps));
   jobs.push(...bulkJobs(deps));
+  jobs.push(...wishTreeJobs(deps));
   jobs.push(...predictJobs(deps));
   jobs.push(...dailyJobs(deps, app.writer));
   return {
