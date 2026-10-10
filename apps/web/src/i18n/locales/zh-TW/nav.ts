@@ -1,7 +1,38 @@
 // 自动生成：由 scripts/gen-zh-tw.mjs 从 zh-CN 转换，不要手改；修订写在 src/i18n/zh-TW-overrides.json
 /** 底部導航、"更多"面板、公告和活動橫幅、首頁新聞卡（問題記錄 272） */
 export default {
-  tabs: { rest: '餐廳', cookbooks: '食譜', cupboard: '櫥櫃', market: '菜場', friends: '好友', more: '更多' },
+  tabs: {
+    rest: '餐廳',
+    cookbooks: '食譜',
+    cupboard: '櫥櫃',
+    market: '菜場',
+    friends: '好友',
+    map: '小鎮',
+    more: '更多',
+  },
+  /** 頂欄標題：沒有現成標題鍵的頁面（介面改版 P2a） */
+  titles: {
+    floor: '樓層餐桌',
+    income: '收益記錄',
+    info: '餐廳資訊',
+    activation: '簽到和今日活躍',
+    tasks: '任務',
+    cookbooks: '食譜',
+    cupboard: '櫥櫃',
+    market: '菜場',
+    store: '倉庫',
+    shop: '商店',
+    friends: '好友',
+    friendRest: '好友餐廳',
+    map: '小鎮',
+    me: '我',
+    help: '幫助中心',
+    weather: '天氣',
+    cookbook: '食譜詳情',
+    equipDetail: '廚具詳情',
+    forumPost: '帖子',
+    wikiItem: '遊戲資料',
+  },
   groups: { manage: '經營', play: '玩法', other: '其他' },
   links: {
     activities: '限時活動',

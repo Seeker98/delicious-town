@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import zhCN from './i18n/locales/zh-CN';
+import { ROOT_PATHS } from './nav/sections';
 import { routes, scrollFor } from './router';
 
 describe('routes', () => {
@@ -14,7 +16,7 @@ describe('routes', () => {
       '/wiki/streets/:id(\\d+)',
       '/wiki/:kind',
     ]);
-    for (const r of wiki) expect(r.meta).toEqual({ public: true, gameChrome: true });
+    for (const r of wiki) expect(r.meta).toMatchObject({ public: true, gameChrome: true });
     const eq = routes.find((r) => r.path.startsWith('/wiki/equips'))!;
     expect((eq.redirect as (to: { params: { id: string } }) => string)({ params: { id: '30' } })).toBe(
       '/wiki/goods/30',
@@ -93,5 +95,27 @@ describe('开发用图库（界面改版 P1）', () => {
   it('测试环境（DEV）注册了 /dev/art，不用登录', () => {
     const r = routes.find((x) => x.path === '/dev/art');
     expect(r?.meta).toEqual({ public: true });
+  });
+});
+
+describe('导航元数据（界面改版 P2a，设计 §4.2）', () => {
+  /** 游戏内页面：要开店的，或已开店时显示导航的 */
+  const game = routes.filter((r) => !r.redirect && (r.meta?.needRestaurant || r.meta?.gameChrome));
+  it('每个游戏内页面都有所属入口和标题', () => {
+    for (const r of game) {
+      expect(r.meta?.section, r.path).toBeTruthy();
+      expect(typeof r.meta?.title, r.path).toBe('function');
+      expect(r.meta!.title!(zhCN), r.path).toBeTruthy();
+    }
+  });
+  it('除了底部 6 个入口，每个游戏内页面都有上一级', () => {
+    for (const r of game) {
+      if (ROOT_PATHS.has(r.path)) expect(r.meta?.parent, r.path).toBeUndefined();
+      else expect(r.meta?.parent, r.path).toBeTruthy();
+    }
+  });
+  it('新增小镇、我、帮助中心；旧的“更多”跳到小镇', () => {
+    for (const p of ['/map', '/me', '/help']) expect(routes.some((r) => r.path === p)).toBe(true);
+    expect(routes.find((r) => r.path === '/more')?.redirect).toBe('/map');
   });
 });

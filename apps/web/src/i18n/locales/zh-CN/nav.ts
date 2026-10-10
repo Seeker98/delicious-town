@@ -1,6 +1,37 @@
 /** 底部导航、"更多"面板、公告和活动横幅、首页新闻卡（问题记录 272） */
 export default {
-  tabs: { rest: '餐厅', cookbooks: '食谱', cupboard: '橱柜', market: '菜场', friends: '好友', more: '更多' },
+  tabs: {
+    rest: '餐厅',
+    cookbooks: '食谱',
+    cupboard: '橱柜',
+    market: '菜场',
+    friends: '好友',
+    map: '小镇',
+    more: '更多',
+  },
+  /** 顶栏标题：没有现成标题键的页面（界面改版 P2a） */
+  titles: {
+    floor: '楼层餐桌',
+    income: '收益记录',
+    info: '餐厅信息',
+    activation: '签到和今日活跃',
+    tasks: '任务',
+    cookbooks: '食谱',
+    cupboard: '橱柜',
+    market: '菜场',
+    store: '仓库',
+    shop: '商店',
+    friends: '好友',
+    friendRest: '好友餐厅',
+    map: '小镇',
+    me: '我',
+    help: '帮助中心',
+    weather: '天气',
+    cookbook: '食谱详情',
+    equipDetail: '厨具详情',
+    forumPost: '帖子',
+    wikiItem: '游戏资料',
+  },
   groups: { manage: '经营', play: '玩法', other: '其他' },
   links: {
     activities: '限时活动',
