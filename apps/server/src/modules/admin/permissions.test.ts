@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { userWithRole } from '../../../test/admin';
 import { createRestaurantFull, createShard } from '../../../test/fixtures';
 import { call, createTestApp, registerUser, type TestContext } from '../../../test/helpers';
+import { FUTURES_INITIAL } from '../../db/migrations/0063_futures';
 
 let ctx: TestContext;
 const routes = new Set<string>();
@@ -347,6 +348,19 @@ const CASES: Case[] = [
     method: 'POST',
     route: '/api/v1/admin/titles/:id/delete',
     url: () => `/api/v1/admin/titles/${ids.titleId}/delete`,
+    min: 'admin',
+  },
+  {
+    method: 'GET',
+    route: '/api/v1/admin/futures/foods',
+    url: () => `/api/v1/admin/futures/foods?shardId=${ids.shardId}`,
+    min: 'mod',
+  },
+  {
+    method: 'POST',
+    route: '/api/v1/admin/futures/foods',
+    url: () => '/api/v1/admin/futures/foods',
+    body: () => ({ items: [{ foodsId: FUTURES_INITIAL[0], enabled: true }] }),
     min: 'admin',
   },
   { method: 'GET', route: '/api/v1/admin/codes', url: () => '/api/v1/admin/codes', min: 'mod' },
