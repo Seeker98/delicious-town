@@ -8,6 +8,8 @@ const site: Messages['site'] = {
   clockTitle: 'Current time (Beijing time)',
   nextRound: (left) => `Next round in ${left}`,
   changelog: {
+    theme1011:
+      'New amethyst colors, with restyled buttons, inputs and tabs. Dark mode is here: choose Match system, Light or Dark under Appearance in My account',
     wishtree1011:
       'The square has a new Wishing Tree: the draw is at 20:00 every day, and the tree bears a new item at the same time. Restaurants at level 10 or above can make 1 free wish per round; at the draw one wishing restaurant is picked to get the item plus the 3-day title “Wish Come True” (sent by mail). Everyone else who wished gets a random reward',
     ui1011:
