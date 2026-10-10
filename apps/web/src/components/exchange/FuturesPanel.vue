@@ -163,23 +163,26 @@ function result(c: FuturesContractDto): string {
         <div v-if="groups.length === 0" class="small text-muted">{{ t.futures.empty }}</div>
         <div v-for="[lv, list] in groups" :key="lv" class="mb-1">
           <div class="dt-group-label">{{ t.futures.level(lv) }}</div>
-          <button
-            v-for="f in list"
-            :key="f.foodsId"
-            type="button"
-            :class="[
-              'btn btn-sm me-1 mb-1 text-start',
-              f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary',
-            ]"
-            :disabled="f.left === 0"
-            :data-testid="`fu-food-${f.foodsId}`"
-            @click="choose(f)"
-          >
-            <span class="fw-bold">{{ catalog.foodName(f.foodsId) }}</span>
-            <span class="d-block small">{{
-              f.left === 0 ? t.futures.soldOut : t.futures.foodLine(formatNum(f.unitPrice), f.left)
-            }}</span>
-          </button>
+          <!-- 一行两个：185 种一个一行太长 -->
+          <div class="row g-1">
+            <div v-for="f in list" :key="f.foodsId" class="col-6">
+              <button
+                type="button"
+                :class="[
+                  'btn btn-sm w-100 h-100 text-start',
+                  f.foodsId === selected ? 'btn-primary' : 'btn-outline-secondary',
+                ]"
+                :disabled="f.left === 0"
+                :data-testid="`fu-food-${f.foodsId}`"
+                @click="choose(f)"
+              >
+                <span class="fw-bold">{{ catalog.foodName(f.foodsId) }}</span>
+                <span class="d-block small">{{
+                  f.left === 0 ? t.futures.soldOut : t.futures.foodLine(formatNum(f.unitPrice), f.left)
+                }}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div v-if="pick" class="dt-card mb-3 small" data-testid="fu-order-box">
