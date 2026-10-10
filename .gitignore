@@ -1,6 +1,8 @@
 node_modules/
 dist/
 generated/
+# 图形雪碧图和名字表是提交进仓库的生成物（pnpm -F @dt/web art 生成，和图标字体一样），页面和 CI 直接用
+!apps/web/src/art/generated/
 .test/
 coverage/
 .env
