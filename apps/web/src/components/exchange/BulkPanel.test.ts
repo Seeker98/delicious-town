@@ -249,6 +249,9 @@ describe('BulkPanel（大宗认购设计 §3.3）', () => {
     const m = el(w, 'bk-mine').text();
     expect(m).toContain('收盘后公布');
     expect(m).not.toContain('入围 2');
+    // 不公布不等于没入围：不用红字（终审）
+    expect(el(w, 'bk-mine-status').classes()).not.toContain('text-danger');
+    expect(el(w, 'bk-mine-status').classes()).toContain('text-muted');
     expect(el(w, 'bk-freeze').text()).toContain('收盘后公布');
     expect(el(w, 'bk-help').text()).toContain('最后 60 分钟');
   });

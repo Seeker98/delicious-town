@@ -208,7 +208,11 @@ function myResult(r: BulkResultDto): string {
       <div v-if="mine" class="dt-card mb-2 small" data-testid="bk-mine">
         <div class="fw-bold mb-1">{{ t.bulk.mineTitle }}</div>
         <div>{{ t.bulk.mineLine(formatNum(mine.price), mine.qty, formatNum(mine.frozen)) }}</div>
-        <div :class="mine.won === mine.qty ? 'text-success' : 'text-danger'">
+        <!-- 停更期间不公布入围情况（won 为 null）：灰字，免得看着像没入围 -->
+        <div
+          :class="mine.won === null ? 'text-muted' : mine.won === mine.qty ? 'text-success' : 'text-danger'"
+          data-testid="bk-mine-status"
+        >
           {{ mineStatus }}
         </div>
         <div v-if="mine.estimate !== null" class="text-muted">
